@@ -12,10 +12,12 @@ module
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolutionComparisonArrows
 
 /-!
-# Augmented comparison values with the derived target fixed
+# Values of augmented cohomology comparisons
 
-The output group is the original derived object. A value equality for the augmentation-comparison
-arrow is transported through its literal homology and computed target maps.
+For an additive-group-valued derived functor, a value of the comparison
+on `Hⁿ(P(I))` is also the value obtained by transporting that cohomology
+class to `Hⁿ(B(K))` and applying the augmented comparison for `K`.
+The derived coefficient group and the class maps are fixed throughout.
 -/
 
 @[expose] public section
@@ -26,7 +28,13 @@ open CategoryTheory CategoryTheory.Limits AlgebraicTopology
 
 namespace CategoryTheory.Functor
 
-/-- Evaluate the computed target map using a proved value of the augmented comparison. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → Ab`, `P : C → Ab` additive, and `α : P ≅ J ⋙ B`.
+Let `ι : X[0] → I`, `κ : J(X)[0] → K` be quasi-isomorphisms and
+`e : J(I) ≅ K`. If the comparison via `α_I` and `B(e)` sends
+`z ∈ Hⁿ(P(I))` to `v ∈ R^nB(J(X))`, then the augmented comparison
+for `K` takes the transported class to that same `v`. -/
 def augmentedComparisonComputedValue
     {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolutions C]
     {D : Type u₂} [Category.{v₂} D] [Abelian D] [HasInjectiveResolutions D]

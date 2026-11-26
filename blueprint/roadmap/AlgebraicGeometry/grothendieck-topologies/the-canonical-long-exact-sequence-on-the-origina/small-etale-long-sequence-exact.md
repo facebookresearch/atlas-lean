@@ -1,3 +1,5 @@
-# Small Etale Long Sequence exact
+# Small étale cohomology windows are exact
 
-Exactness at all three kinds of places in each adjacent-degree window.
+Small étale cohomology windows are exact.
+
+The six-term window of every short exact sheaf sequence is exact in every natural degree.

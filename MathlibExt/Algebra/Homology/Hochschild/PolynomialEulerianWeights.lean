@@ -16,16 +16,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.NormalizedEulerianHodge
 public import MathlibExt.LinearAlgebra.TensorPower.EulerianAntisymmetrization
 
 /-!
-# Eulerian weights of polynomial Hochschild homology
+# The top Eulerian weight of polynomial Hochschild homology
 
-Signed polynomial antisymmetric
-representatives in degree n have Eulerian
-weight n. The polynomial homology
-comparison identifies the raw and
-normalized projectors with that weight.
-The projectors require a rational
-ground algebra; the polynomial comparison
-itself is characteristic free.
+Let `k` be a commutative `ℚ`-algebra, `A = k[X_s | s ∈ σ]`, and `M` a compatible symmetric
+`A`-module. Put `V = σ →₀ k`. The signed antisymmetric polynomial representative of `x ∈ M
+⊗[k] ⋀ⁿ[k] V` has Eulerian weight `n`, and rational convolution with parameter `a` acts on it
+by `a^n`.
+
+The polynomial homology comparison makes these representatives exhaustive. Consequently the
+weight-`i` homology projector in degree `n` is the identity for `i=n` and zero for every other
+weight, on both full and normalized Hochschild homology. The Eulerian projectors use rational
+scalars; the polynomial exterior comparison is defined over a general commutative base ring.
 -/
 
 @[expose] public section
@@ -45,9 +46,23 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k] (σ : Type v)
 local notation "A" => MvPolynomial σ k
 local notation "V" => σ →₀ k
 
+/-- The opposite action on polynomial symmetric coefficients.
+
+For a module over the commutative polynomial algebra, the opposite algebra acts through the
+same scalar action. -/
 local instance polynomialEulerianWeightsOpModule : Module Aᵐᵒᵖ M := Symmetric.opModule A M
+/-- Commutation of polynomial coefficient actions.
+
+The left and opposite actions on a symmetric polynomial coefficient module commute. -/
 local instance polynomialEulerianWeightsActionsComm : SMulCommClass A Aᵐᵒᵖ M := Symmetric.actionsComm A M
+/-- Commutation of ground scalars with opposite polynomial coefficients.
+
+The ground `k`-action commutes with the induced opposite-polynomial action. -/
 local instance polynomialEulerianWeightsKOpComm : SMulCommClass k Aᵐᵒᵖ M := Symmetric.kOpComm k A M
+/-- The ground-to-opposite-polynomial coefficient tower.
+
+The ground and opposite-polynomial actions on the coefficient module form the scalar tower
+used in its symmetric Hochschild complex. -/
 local instance polynomialEulerianWeightsKOpTower : IsScalarTower k Aᵐᵒᵖ M := Symmetric.kOpTower k A M
 
 private theorem nativeCycleClass_congr
@@ -58,7 +73,10 @@ private theorem nativeCycleClass_congr
   subst t
   rfl
 
-/-- The rational convolution on an original polynomial signed degree-n tensor has eigenvalue a^n. -/
+/-- The convolution eigenvalue of a signed polynomial representative.
+
+In degree `n`, rational convolution with parameter `a` sends every signed antisymmetric
+polynomial representative to `algebraMap(ℚ,k)(a^n)` times that representative. -/
 theorem polynomialSignedRepresentative_convolution
     (n : ℕ) (a : ℚ) (x : M ⊗[k] (⋀[k]^n V)) :
     Symmetric.rationalConvolutionOperator k A M n a (polynomialSignedRepresentative k σ M n x) =
@@ -74,8 +92,10 @@ theorem polynomialSignedRepresentative_convolution
     simp only [if_neg hne, smul_zero]
   · simp
 
-/-- The native convolution homology map has the homogeneous eigenvalue on each original polynomial
-  class. -/
+/-- The convolution eigenvalue of a polynomial exterior homology class.
+
+Rational convolution acts on the degree-`n` class of a signed polynomial exterior
+representative by `a^n` through the ground scalar map. -/
 theorem rationalConvolutionHomology_polynomialClass
     (n : ℕ) (a : ℚ) (x : M ⊗[k] (⋀[k]^n V)) :
     Symmetric.rationalConvolutionHomologyMap k A M n a (polynomialAntisymmetricExteriorClass k σ M n x) =
@@ -106,7 +126,10 @@ theorem rationalConvolutionHomology_polynomialClass
     ((HomologicalComplex.moduleCatCycleClass_smul K n (algebraMap ℚ k (a ^ n)) y hy).trans
       (congrArg (algebraMap ℚ k (a ^ n) • ·) hClass.symm))
 
-/-- Native normalization preserves the top Eulerian weight of the signed polynomial representative. -/
+/-- The top Eulerian weight of a normalized polynomial representative.
+
+The normalized weight-`i` operator fixes a degree-`n` signed polynomial representative when
+`i=n` and sends it to zero otherwise. -/
 theorem normalizedPolynomialSignedRepresentative_eulerian
     (n i : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     Symmetric.normalizedEulerianOperator k A M n i
@@ -130,7 +153,10 @@ theorem normalizedPolynomialSignedRepresentative_eulerian
   · rw [if_neg hi] at h ⊢
     exact h.symm.trans P.map_zero
 
-/-- The original homology projector has the exact top weight on every polynomial signed class. -/
+/-- The Eulerian weight of a polynomial exterior homology class.
+
+The full degree-`n` homology projector fixes a signed polynomial exterior class at weight `n`
+and kills it at every other weight. -/
 theorem eulerianHomologyProjector_polynomialClass
     (n i : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     Symmetric.eulerianHomologyProjector k A M n i (polynomialAntisymmetricExteriorClass k σ M n x) =
@@ -164,7 +190,10 @@ theorem eulerianHomologyProjector_polynomialClass
     exact (nativeCycleClass_congr.{u, v, w} (k := k) (C := K) n ((f.f n).hom y) 0 hz hz' hf').trans
       (HomologicalComplex.moduleCatCycleClass_zero K n hz')
 
-/-- The canonical polynomial epsilon isomorphism proves full raw HH purity in every degree. -/
+/-- The pure Eulerian weight of full polynomial Hochschild homology.
+
+On degree-`n` polynomial Hochschild homology, the weight-`i` projector is the identity if
+`i=n` and zero otherwise. -/
 theorem polynomialEulerianHomologyProjector (n i : ℕ) :
     Symmetric.eulerianHomologyProjector k A M n i =
       if i = n then 𝟙 ((Symmetric.chainComplex k A M).homology n) else 0 := by
@@ -194,7 +223,10 @@ theorem polynomialEulerianHomologyProjector (n i : ℕ) :
     exact (congrArg (Symmetric.eulerianHomologyProjector k A M n i).hom hval).trans
       (h.trans (if_neg hi))
 
-/-- Native normalization earns the same full polynomial HH purity on the original normalized homology. -/
+/-- The pure Eulerian weight of normalized polynomial Hochschild homology.
+
+On degree-`n` normalized polynomial homology, the weight-`i` projector is the identity if
+`i=n` and zero otherwise. -/
 theorem normalizedPolynomialEulerianHomologyProjector (n i : ℕ) :
     Symmetric.normalizedEulerianHomologyProjector k A M n i =
       if i = n then 𝟙 ((Symmetric.normalizedChainComplex k A M).homology n) else 0 := by
@@ -203,7 +235,10 @@ theorem normalizedPolynomialEulerianHomologyProjector (n i : ℕ) :
     polynomialEulerianHomologyProjector]
   split_ifs <;> simp only [Category.id_comp, Category.comp_id, zero_comp, comp_zero]
 
-/-- The normalized signed polynomial class has its original top Eulerian homology weight. -/
+/-- The Eulerian weight of a normalized polynomial exterior class.
+
+The normalized degree-`n` homology projector fixes each polynomial exterior class at weight
+`n` and kills it at every other weight. -/
 theorem normalizedEulerianHomologyProjector_polynomialClass
     (n i : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     Symmetric.normalizedEulerianHomologyProjector k A M n i

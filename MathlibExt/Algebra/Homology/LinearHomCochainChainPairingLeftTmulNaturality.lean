@@ -13,6 +13,17 @@ module
 
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairingLeftDescNaturality
 
+/-!
+# Pure-tensor form of left cochain–chain naturality
+
+For a commutative ring R and modules in universe u, let f₁:K₁′→K₁ and f₃:K₃′→K₃ compare
+diagonals by f₃≫Δ=Δ′≫(f₁⊗id_{K₂}). For any fixed coefficient action ρ, the cochain–chain pairing
+obeys κ_{Δ′,ρ}(f₁,p≫φ,x)=κ_{Δ,ρ}(φ,f₃,p+q(x)).
+
+The cochain degree is p, the chain argument degree is p+q, and the output degree is q. The
+formula holds for every cochain and chain element, before taking cycles or homology.
+-/
+
 @[expose] public section
 
 open CategoryTheory MonoidalCategory
@@ -22,8 +33,10 @@ universe u
 
 namespace HomologicalComplex
 
-/-- Left-variable naturality on pure tensors: precomposing the cochain with `f₁`
-    matches pushing the chain argument forward along `f₃` under `f₃ ≫ Δ = Δ' ≫ tensorHom f₁ 𝟙`. -/
+/-- Let R be commutative in universe u, with all modules and nonnegative chain-complex terms in u.
+Let diagonals Δ,Δ′ and maps f₁:K₁′→K₁, f₃:K₃′→K₃ satisfy f₃≫Δ=Δ′≫(f₁⊗id_{K₂}). For actions
+ρ_q:A⊗K₂,q→L_q, p,q∈ℕ, φ:K₁,p→A and x∈K₃′,p+q, one has κ_{Δ′,ρ}((f₁,p≫φ)⊗x)=κ_{Δ,ρ}(φ⊗f₃,p+q(x)).
+It is equality of the two diagonal-and-descriptor evaluations in L_q. -/
 theorem linearHomCochainChainPair_naturality_left_tmul
     {R : Type u} [CommRing R] {A : ModuleCat.{u} R}
     {K₁ K₁' K₂ K₃ K₃' L : ChainComplex (ModuleCat.{u} R) ℕ}

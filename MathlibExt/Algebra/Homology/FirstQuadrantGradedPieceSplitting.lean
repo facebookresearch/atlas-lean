@@ -13,16 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPieceCokernelMap
 
 /-!
-# Splitting data for consecutive horizontal filtration stages
+# Degreewise splittings of consecutive horizontal stages
 
-For an ℕ-indexed downward bicomplex in a preadditive category with a zero
-object and finite coproducts, the inclusion from horizontal stage `p` to
-stage `p+1` has a retraction in each total degree. In total degree `p+1+q`,
-the top-column projection has its canonical section.
+Let `K` be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. In each total degree, the inclusion `F_p → F_(p+1)` has a retraction onto the
+lower-column summands.
 
-The lower-coordinate and top-coordinate projectors sum to the identity.
-Consequently, the consecutive-stage short complex is split and exact, and
-the top-column projection is a cokernel of the preceding-stage inclusion.
+In degree `p+1+q`, the new top-column projection has its summand inclusion as section. The
+lower-coordinate projector plus the top-coordinate projector is the identity on that filtered
+total. These maps give a split short complex, its exactness, and the cokernel universal
+property of the top-column projection.
 -/
 
 @[expose] public section
@@ -40,8 +40,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Retraction from filtration stage `p+1` onto stage `p` in a fixed total
-degree. -/
+/-- The degreewise retraction of a horizontal filtration successor.
+
+Project stage `p+1` through the full total onto the summands belonging to stage `p` in total
+degree `n`. -/
 noncomputable def horizontalFilteredSuccRetraction (p n : ℕ) :
     horizontalFilteredTotalObj K (p + 1) n ⟶
       horizontalFilteredTotalObj K p n :=
@@ -49,6 +51,10 @@ noncomputable def horizontalFilteredSuccRetraction (p n : ℕ) :
     totalToHorizontalFilteredTotal K p n
 
 omit [HasZeroObject C] in
+/-- The retraction identity of a finite filtration-stage inclusion.
+
+The inclusion of stage `p` into `p+1` followed by its lower-stage retraction is the identity
+in every total degree. -/
 @[reassoc (attr := simp)]
 theorem horizontalFilteredTotalMap_succ_retraction (p n : ℕ) :
     horizontalFilteredTotalMap K (Nat.le_succ p) n ≫
@@ -57,7 +63,10 @@ theorem horizontalFilteredTotalMap_succ_retraction (p n : ℕ) :
   rw [horizontalFilteredTotalMap_toTotal_assoc]
   exact horizontalFilteredTotalToTotal_comp_retraction K p n
 
-/-- Section of the top-column projection in total degree `p+1+q`. -/
+/-- The section of a new top-column projection.
+
+In total degree `p+1+q`, include bidegree `(p+1,q)` as the top summand of filtration stage
+`p+1`. -/
 noncomputable def horizontalFilteredTopSection (p q : ℕ) :
     (K.X (p + 1)).X q ⟶
       horizontalFilteredTotalObj K (p + 1) (p + 1 + q) :=
@@ -65,13 +74,19 @@ noncomputable def horizontalFilteredTopSection (p q : ℕ) :
     (horizontalFilteredTopIndex (p + 1) q)
 
 omit [HasZeroObject C] in
+/-- The section identity of a new top-column projection.
+
+The top section followed by top projection is the identity on `K_(p+1,q)`. -/
 @[reassoc (attr := simp)]
 theorem horizontalFilteredTopSection_projection (p q : ℕ) :
     horizontalFilteredTopSection K p q ≫
       horizontalFilteredTopProjection K (p + 1) q = 𝟙 _ :=
   horizontalFilteredTopι_topProjection K (p + 1) q
 
-/-- Consecutive filtration stage followed by projection to the new column. -/
+/-- The finite successor-stage short complex.
+
+In total degree `p+1+q`, use inclusion of stage `p` into `p+1` followed by projection onto the
+new top column. -/
 noncomputable def horizontalFilteredSuccShortComplex (p q : ℕ) :
     ShortComplex C :=
   ShortComplex.mk
@@ -80,6 +95,10 @@ noncomputable def horizontalFilteredSuccShortComplex (p q : ℕ) :
     (horizontalFilteredTotalMap_succ_topProjection K p q)
 
 omit [HasZeroObject C] in
+/-- The summand formula for a successor-stage retraction.
+
+A summand with horizontal index at most `p` retracts to the same lower-stage summand; the new
+top-column summand retracts to zero. -/
 @[reassoc]
 theorem horizontalFilteredTotalι_succRetraction
     (p n : ℕ) (idx : DownNatHorizontalFilteredFiber n (p + 1)) :
@@ -104,8 +123,10 @@ theorem horizontalFilteredTotalι_succRetraction
     _ = _ := ιTotal_totalToHorizontalFilteredTotal K p n _ _ _
 
 omit [HasZeroObject C] in
-/-- The lower-coordinate projector plus the top-coordinate projector is the
-identity on filtration stage `p+1`. -/
+/-- The complementary projector identity of a filtration successor.
+
+On stage `p+1` in degree `p+1+q`, lower retraction followed by inclusion plus top projection
+followed by section is the identity. -/
 theorem horizontalFilteredSucc_complementary_id (p q : ℕ) :
     horizontalFilteredSuccRetraction K p (p + 1 + q) ≫
           horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q) +
@@ -202,7 +223,10 @@ theorem horizontalFilteredSucc_complementary_id (p q : ℕ) :
     have hsum := congrArg₂ (· + ·) hfirst hsecond
     exact hsum.trans ((zero_add _).trans (Category.comp_id _).symm)
 
-/-- The consecutive-stage short complex is split. -/
+/-- The splitting data of a finite successor-stage short complex.
+
+The lower-stage retraction and top-column section, with their complementary projector
+identity, give a splitting of the successor short complex. -/
 noncomputable def horizontalFilteredSuccSplitting (p q : ℕ) :
     (horizontalFilteredSuccShortComplex K p q).Splitting := by
   let S : ShortComplex C := horizontalFilteredSuccShortComplex K p q
@@ -214,12 +238,17 @@ noncomputable def horizontalFilteredSuccSplitting (p q : ℕ) :
   have hid : r ≫ S.f + S.g ≫ s = 𝟙 S.X₂ := horizontalFilteredSucc_complementary_id K p q
   exact { r := r, s := s, f_r := hfr, s_g := hsg, id := hid }
 
+/-- Exactness of a split finite filtration-successor sequence.
+
+The successor-stage short complex is exact by its degreewise splitting. -/
 theorem horizontalFilteredSuccShortComplex_exact (p q : ℕ) :
     (horizontalFilteredSuccShortComplex K p q).Exact :=
   (horizontalFilteredSuccSplitting K p q).exact
 
-/-- The top-column projection is the cokernel of the preceding-stage
-inclusion in total degree `p+1+q`. -/
+/-- The cokernel property of a finite successor top projection.
+
+The top-column projection in degree `p+1+q` is a colimit cofork for the preceding-stage
+inclusion. -/
 noncomputable def horizontalFilteredTopProjectionIsCokernel (p q : ℕ) :
     IsColimit (CokernelCofork.ofπ
       (horizontalFilteredTopProjection K (p + 1) q)

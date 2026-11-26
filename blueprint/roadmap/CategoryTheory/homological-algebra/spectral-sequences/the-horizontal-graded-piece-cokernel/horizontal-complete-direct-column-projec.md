@@ -1,4 +1,6 @@
-# Horizontal Complete Direct Column Projection Map zero f is Iso of degree
+# The zero-column projection isomorphism in a supported degree
 
-The zeroth-stage projection is an isomorphism in every supported
-cochain degree.
+The zero-column projection isomorphism in a supported degree.
+
+At cochain degree `-q`, the complete zero-stage projection onto direct column zero is an
+isomorphism.

@@ -1,5 +1,5 @@
 # Homotopies of the sum tensor maps
 
-- [Map At Homotopy Fst](map-at-homotopy-fst.md)
-- [Map At Homotopy Snd](map-at-homotopy-snd.md)
-- [Map At Homotopy](map-at-homotopy.md)
+- [Tensoring a homotopy in the first factor](map-at-homotopy-fst.md)
+- [Tensoring a homotopy in the second factor](map-at-homotopy-snd.md)
+- [Tensoring homotopies in both factors](map-at-homotopy.md)

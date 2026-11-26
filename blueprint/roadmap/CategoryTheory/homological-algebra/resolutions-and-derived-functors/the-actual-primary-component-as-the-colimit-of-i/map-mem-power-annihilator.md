@@ -1,3 +1,5 @@
-# Map mem power Annihilator
+# Module maps preserve annihilation by an ideal power
 
-A genuine linear coefficient map preserves every actual annihilator stage.
+Module maps preserve annihilation by an ideal power.
+
+If `x ∈ Ann_M(I^n)` and `f : M ⟶ N` is `R`-linear, then `f x ∈ Ann_N(I^n)`.

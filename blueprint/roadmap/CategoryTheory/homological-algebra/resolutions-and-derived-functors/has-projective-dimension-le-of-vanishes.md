@@ -1,6 +1,8 @@
-# Projective-dimension bounds from bounded Ext vanishing
+# Finite module projective dimension from a fixed-probe Ext criterion
 
-Iterating finite free covers converts bounded Ext vanishing below `e`
-into a projective-dimension bound `n`, provided finite free middle terms
-vanish below the fixed top bound `e + n` and finite modules attaining that
-top bound are projective.
+Finite module projective dimension from a fixed-probe Ext criterion.
+
+Assume `R` is commutative Noetherian and `Small.{v} R`. Fix `A : ModuleCat.{v} R`. If every
+finite free module has `Ext(A,-)` vanishing below `e+n`, and every finite module with that
+vanishing is categorically projective, then a finite `M` with `Ext(A,M)` vanishing below `e`
+has projective dimension at most `n`.

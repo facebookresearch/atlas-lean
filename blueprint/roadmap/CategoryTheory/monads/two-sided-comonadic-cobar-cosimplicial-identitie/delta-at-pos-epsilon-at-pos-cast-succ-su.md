@@ -1,3 +1,6 @@
-# Delta At Pos epsilon At Pos cast Succ succ of lt
+# The mixed insertion identity with counit after comultiplication
 
-Distant `δ`/`ε` interchange for `of_gt` (dual of `etaAtPos` version).
+The mixed insertion identity with counit after comultiplication.
+
+For left-end positions `i<j`, comultiplication at `i.castSucc` followed by counit at `j.succ`
+equals counit at `j` followed by comultiplication at `i`.

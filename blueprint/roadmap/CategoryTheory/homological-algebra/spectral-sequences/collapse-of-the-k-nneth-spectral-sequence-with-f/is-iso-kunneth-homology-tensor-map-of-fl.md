@@ -1,4 +1,7 @@
-# Is Iso kunneth Homology Tensor Map of flat homology
+# Flat first terms and flat first homology make the canonical Künneth map invertible
 
-If the first complex is termwise flat and has flat homology, its
-canonical Künneth homology tensor map is an isomorphism.
+For nonnegative R-module chain complexes K,L over a
+commutative ring R, assume each K_i and each H_i(K) is flat.
+Then the canonical cycle map
+⨁_(p+q=n) H_p(K)⊗[R]H_q(L)→H_n(K⊗L)
+is an isomorphism for every n≥0. The second complex L is arbitrary.

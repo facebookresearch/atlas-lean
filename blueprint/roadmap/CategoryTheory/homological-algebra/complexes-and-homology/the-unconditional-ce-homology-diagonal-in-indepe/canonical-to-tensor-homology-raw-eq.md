@@ -1,4 +1,6 @@
-# Canonical To Tensor Homology Raw eq
+# The CE diagonal as a chain-comonoid homology diagonal
 
-This carrier-universe diagonal is the general canonical homology diagonal of the CE chain
-comonoid.
+The CE diagonal as a chain-comonoid homology diagonal.
+
+Under the specified module tensor structure, the CE coproduct homology map is the general
+canonical diagonal of its chain comonoid.

@@ -1,4 +1,6 @@
-# Right Coefficient Lie Ring Module
+# The negative Lie action of right enveloping coefficients
 
-Negative right action of the original Lie generators on an right
-module over the native enveloping algebra.
+The negative Lie action of right enveloping coefficients.
+
+For a left `U_R(L)ᵐᵒᵖ`-module `N`, the bracket `[x,m] = -op(ι(x)) • m` defines a left Lie-
+ring-module structure on its carrier.

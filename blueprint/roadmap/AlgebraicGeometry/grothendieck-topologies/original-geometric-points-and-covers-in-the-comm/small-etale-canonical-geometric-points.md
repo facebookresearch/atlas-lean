@@ -1,3 +1,6 @@
-# Small Etale Canonical Geometric Points
+# Family of residue field geometric points
 
-The original small-universe canonical geometric point family.
+Family of residue field geometric points.
+
+Take the small étale points associated to the canonical separable-closure morphism at each
+point of `X`.

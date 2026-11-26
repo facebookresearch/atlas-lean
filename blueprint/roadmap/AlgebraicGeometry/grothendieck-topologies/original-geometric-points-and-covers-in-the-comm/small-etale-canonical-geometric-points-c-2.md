@@ -1,3 +1,6 @@
-# Small Etale Canonical Geometric Points conservative
+# Residue field geometric points form a conservative family
 
-Stock conservativity of the original actual small-site geometric points.
+Residue field geometric points form a conservative family.
+
+The canonical geometric points obtained from separable closures of residue fields form a
+conservative family of small étale points.

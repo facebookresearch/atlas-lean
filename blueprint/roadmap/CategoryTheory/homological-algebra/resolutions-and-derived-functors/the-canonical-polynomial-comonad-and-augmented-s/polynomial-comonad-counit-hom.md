@@ -1,3 +1,5 @@
-# Polynomial Comonad counit hom
+# The polynomial evaluation counit
 
-The counit is the actual native evaluation map.
+The polynomial evaluation counit.
+
+For `A`, the counit `T(A) → A` is the `k`-algebra evaluation map at the family `a ↦ a`.

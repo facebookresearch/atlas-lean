@@ -1,3 +1,5 @@
-# Matrix Coinvariant Coefficient Map Is Comon Hom
+# Comonoid compatibility of matrix coinvariant coefficient maps
 
-The coefficient map has coalgebra compatibility.
+Comonoid compatibility of matrix coinvariant coefficient maps.
+
+Entry-algebra quotient maps preserve the descended coinvariant comultiplication and counit.

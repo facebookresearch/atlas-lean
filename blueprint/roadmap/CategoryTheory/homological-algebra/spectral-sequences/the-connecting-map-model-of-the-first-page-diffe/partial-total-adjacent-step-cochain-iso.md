@@ -1,4 +1,6 @@
-# Partial Total Adjacent Step Cochain Iso
+# The common filtered-stage isomorphism of adjacent cochain steps
 
-The source object of step `m+1` and the middle object of step `m` are
-the same filtered stage, after cochain extension.
+The common filtered-stage isomorphism of adjacent cochain steps.
+
+The source complex of step `m+1` is isomorphic to the middle complex of step `m` after chain-
+to-cochain extension.

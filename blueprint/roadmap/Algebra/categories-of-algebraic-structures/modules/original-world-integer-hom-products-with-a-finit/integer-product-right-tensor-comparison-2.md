@@ -1,4 +1,6 @@
-# Integer Product Right Tensor Comparison bijective
+# Right finite-projective tensor factor commutes with integer products
 
-Native tensor symmetry transports the earned original product comparison
-to the original right-tensor position, preserving each original projection.
+Right finite-projective tensor factor commutes with integer products.
+
+If `U` is finite and categorically projective, the canonical right-factor integer-product
+comparison is bijective.

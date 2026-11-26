@@ -1,4 +1,6 @@
-# Partial Total E₁Step Iso
+# The uniform core-interval comparison with partial-total steps
 
-Uniform chain-level comparison between the interval selected by the
-increasing core and the `p`th partial-total step.
+The uniform core-interval comparison with partial-total steps.
+
+Use the zero-stage interval comparison in column zero and the successor comparison in positive
+columns.

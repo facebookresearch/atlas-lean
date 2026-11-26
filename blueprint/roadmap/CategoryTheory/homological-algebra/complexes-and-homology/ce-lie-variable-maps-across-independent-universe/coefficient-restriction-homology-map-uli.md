@@ -1,3 +1,6 @@
-# Coefficient Restriction Homology Map ULift
+# The homology map of lifted CE coefficient restriction
 
-Restriction induces the homology map of the lifted CE complexes.
+The homology map of lifted CE coefficient restriction.
+
+Take the degree-`n` homology map of the chain map from restricted `L`-coefficients to their
+`L'`-coefficient complex.

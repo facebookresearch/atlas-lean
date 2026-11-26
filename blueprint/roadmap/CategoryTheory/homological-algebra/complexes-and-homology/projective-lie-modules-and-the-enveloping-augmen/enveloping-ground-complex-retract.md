@@ -1,4 +1,6 @@
-# Enveloping Ground Complex Retract
+# The ground enveloping complex as a free-cover retract
 
-The original ground CE complex is a strict native retract
-of the free-cover CE complex.
+The ground enveloping complex as a free-cover retract.
+
+For `Module.Projective R L`, the Lie inclusion and projection exhibit the ground enveloping
+complex of `L` as a retract of that of its free-module cover `F`.

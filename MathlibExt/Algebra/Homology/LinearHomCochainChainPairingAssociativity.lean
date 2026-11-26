@@ -15,6 +15,22 @@ public import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyLaws
 public import MathlibExt.Algebra.Homology.CochainChainGradedPairingHomology
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairing
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairing
+/-!
+# Mixed cup–cap associativity through compatible comparisons
+
+Let R be commutative and all modules lie in universe u. A cochain graded product P₁₂ and mixed
+pairings P_l,P₂₃,P_r give the two composites (a∪b)⌢_l z and a⌢_r(b⌢₂₃ z). For p,q,r∈ℕ, the chain
+input degrees are (p+q)+r and q+(p+r), and both outputs have degree r. The declarations allow
+specified input maps between these degrees and specified output maps between different target
+complexes.
+
+A mixed associativity equation on cycles, together with compatibility of the input cycle and
+homology maps, descends to the corresponding homology equation. A stronger termwise equation
+descends when both input and output maps also commute with cycles inclusions and homology
+projections. For linear Hom cochains, a componentwise equation involving the four chain
+diagonals and coefficient actions gives the underlying mixed associativity identity.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -30,7 +46,10 @@ namespace HomologicalComplex.CochainChainGradedPairing
 
 variable (R : Type u) [CommRing R]
 
-/-- Evaluate a cochain-chain homology pairing on classes represented by cycles. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. For a
+cochain–chain graded pairing P:K⊗L→M with K a nonnegative cochain complex and L,M chain
+complexes, p,q∈ℕ, x∈Z^pK and y∈Z_{p+q}L, its homology pairing satisfies P_H([x]⊗[y])=[P_Z(x⊗y)]
+in H_qM. The source is H^pK⊗H_{p+q}L, and the brackets are the canonical homology projections. -/
 @[simp]
 lemma pairHomology_π_apply
     {K : CochainComplex (ModuleCat.{u} R) ℕ}
@@ -43,7 +62,13 @@ lemma pairHomology_π_apply
   exact ConcreteCategory.congr_hom
     (tensor_homologyπ_comp_pairHomology P p q) (x ⊗ₜ[R] y)
 
-/-- A heterogeneous cup-cap associativity identity on cycles descends to homology. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. Let
+P₁₂:K₁,K₂→K₁₂ be a cochain graded pairing and P_l:K₁₂,L→M_l, P₂₃:K₂,L→M₂₃, P_r:K₁,M₂₃→M_r mixed
+pairings. For p,q,r∈ℕ put n=(p+q)+r and n′=q+(p+r). Given u_Z:Z_nL→Z_{n′}L, u_H:H_nL→H_{n′}L
+with π_n≫u_H=u_Z≫π_{n′}, and c:H_rM_l→H_rM_r, suppose
+c([P_l^Z(P₁₂^Z(x,y),z)])=[P_r^Z(x,P₂₃^Z(y,u_Zz))] for all cycles x,y,z in degrees p,q,n. Then
+c((a∪_{12}b)⌢_l t)=a⌢_r(b⌢₂₃u_H(t)) for homology classes a,b,t. The tensor-map equation includes
+the ordinary module associator. -/
 theorem pairHomology_associativity
     {K₁ K₂ K₁₂ : CochainComplex (ModuleCat.{u} R) ℕ}
     {L M₂₃ Mₗ Mᵣ : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -103,7 +128,18 @@ theorem pairHomology_associativity
   exact ConcreteCategory.congr_hom hcycles
     ((x₀ ⊗ₜ[R] y₀) ⊗ₜ[R] z₀)
 
-/-- An underlying cup-cap identity descends through explicit input and output comparisons. -/
+/-- Let R be commutative in universe u. Let K₁,K₂,K₁₂ be nonnegative cochain complexes and
+L,M₂₃,M_l,M_r nonnegative chain complexes of R-modules with carriers in u. Let P₁₂ pair K₁,K₂
+into K₁₂, and let P_l:K₁₂,L→M_l, P₂₃:K₂,L→M₂₃ and P_r:K₁,M₂₃→M_r be mixed graded pairings. For
+p,q,r∈ℕ put n=(p+q)+r and n′=q+(p+r).
+
+Choose degreewise maps u_X:L_n→L_{n′}, u_Z:Z_nL→Z_{n′}L, u_H:H_nL→H_{n′}L and
+c_X:(M_l)_r→(M_r)_r, c_Z:Z_rM_l→Z_rM_r, c_H:H_rM_l→H_rM_r. Assume u_Z≫i_{L,n′}=i_{L,n}≫u_X,
+π_{L,n}≫u_H=u_Z≫π_{L,n′}, c_Z≫i_{M_r,r}=i_{M_l,r}≫c_X and π_{M_l,r}≫c_H=c_Z≫π_{M_r,r}.
+
+If c_X(P_l(P₁₂(x,y),z))=P_r(x,P₂₃(y,u_Xz)) on terms of degrees p,q,n, then c_H((a∪_{12}b)⌢_l
+t)=a⌢_r(b⌢₂₃u_H(t)) on cohomology and homology classes. The tensor-map equality uses the
+canonical module associator. -/
 theorem pairHomology_associativity_of_pair
     {K₁ K₂ K₁₂ : CochainComplex (ModuleCat.{u} R) ℕ}
     {L M₂₃ Mₗ Mᵣ : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -200,12 +236,22 @@ namespace HomologicalComplex
 
 variable (R : Type u) [CommRing R]
 
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. The
+category of R-module-valued chain complexes of shape down ℕ is monoidal under the total tensor
+complex. Its homogeneous differential is d(x_p⊗y_q)=dx_p⊗y_q+(-1)^p x_p⊗dy_q, and its associator
+is the canonical tensor associator. This is the tensor structure used in the mixed associativity
+diagrams. -/
 noncomputable local instance mixedAssociativityMonoidalCategory :
     MonoidalCategory (ChainComplex (ModuleCat.{u} R) ℕ) :=
   HomologicalComplex.monoidalCategory (ModuleCat.{u} R) (ComplexShape.down ℕ)
 
-/-- A componentwise diagram gives the mixed Linear-Hom cup--cap pairing
-associativity identity needed before descending to homology. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. Let
+Δ₁₂:K₁₂→K₁⊗K₂ and μ₁₂:A₁⊗A₂→A₁₂ define the Hom cochain cup product. Let Δ_l:L→K₁₂⊗J_l,
+Δ₂₃:L→K₂⊗J₂₃ and Δ_r:M₂₃→K₁⊗J_r, with actions ρ_l:A₁₂⊗J_l→M_l, ρ₂₃:A₂⊗J₂₃→M₂₃ and
+ρ_r:A₁⊗J_r→M_r. For p,q,r, input u:L_{(p+q)+r}→L_{q+(p+r)} and output c:M_l,r→M_r,r, assume for
+every φ:K₁,p→A₁ and ψ:K₂,q→A₂ the descriptor equation Δ_l≫D_l(φ∪ψ)≫c=u≫Δ₂₃≫D₂₃(ψ)≫Δ_r≫D_r(φ).
+Then c((φ∪ψ)⌢_l x)=φ⌢_r(ψ⌢₂₃u(x)) as the mixed tensor pairing identity, including the module
+associator. -/
 public theorem linearHomCochainChainPair_associativity_of_diagrams
     {K₁ K₂ K₁₂ L Jₗ J₂₃ M₂₃ Jᵣ Mₗ Mᵣ :
       ChainComplex (ModuleCat.{u} R) ℕ}

@@ -12,10 +12,16 @@ public import Mathlib.CategoryTheory.Monoidal.Closed.Braided
 public import MathlibExt.Algebra.Homology.GradedPairingHomology
 
 /-!
-# Unit and associativity laws for cochain pairings on homology
+# Unit and associativity laws of homology pairings
 
-Chain-level unit and associativity laws for a cochain graded pairing descend
-to the induced pairing on homology.
+For a graded pairing of natural-index module cochain complexes, the pairing of cycle classes
+is the homology class of their cycle pairing. The inclusion of that cycle pairing in the
+target chain term agrees with the chain-level pairing.
+
+A degree-zero cycle gives a homology unit class. If it satisfies left and right unit
+identities on cycles, its class satisfies those identities in the graded homology family.
+Associativity on chain terms, with the degree-transport isomorphism for natural addition,
+descends to associativity of the graded homology pairing.
 -/
 
 @[expose] public section
@@ -30,6 +36,10 @@ namespace HomologicalComplex.CochainGradedPairing
 
 variable (R : Type u) [CommRing R]
 
+/-- Homology pairing of cycle classes is the paired cycle class.
+
+For cycles `x` in degree `p` and `y` in degree `q`, pairing their homology classes equals the
+homology projection of `P.pairCycles p q (x ⊗ y)` in degree `p + q`. -/
 @[simp]
 lemma pairHomology_π_apply
     {K₁ K₂ K₃ : CochainComplex (ModuleCat.{u} R) ℕ}
@@ -42,6 +52,10 @@ lemma pairHomology_π_apply
     (tensor_homologyπ_comp_pairHomology P p q) (x ⊗ₜ[R] y)
   exact h
 
+/-- Cycle pairing agrees with the chain pairing after inclusion.
+
+Include the paired cycles in the target term of degree `p + q`. This equals the chain pairing
+applied to the two cycle inclusions. -/
 @[simp]
 lemma pairCycles_i_apply
     {K₁ K₂ K₃ : CochainComplex (ModuleCat.{u} R) ℕ}
@@ -52,11 +66,18 @@ lemma pairCycles_i_apply
   have h := ConcreteCategory.congr_hom (P.pairCycles_i p q) (x ⊗ₜ[R] y)
   exact h
 
-/-- Homology class of a degree-zero cocycle, via the canonical quotient projection. -/
+/-- Homology class of a degree-zero cycle.
+
+For `e : K.cycles 0`, `homologyUnitClass R e` is the image of `e` under the degree-zero
+homology projection. -/
 noncomputable def homologyUnitClass
     {K : CochainComplex (ModuleCat.{u} R) ℕ} (e : K.cycles 0) : K.homology 0 :=
   (K.homologyπ 0).hom e
 
+/-- Degree-zero cycle classes commute with cochain maps.
+
+For a cochain map `f : K ⟶ L`, its degree-zero homology map sends the class of `e` to the
+class of `cyclesMap f 0 e`. -/
 @[simp]
 lemma homologyUnitClass_map {K L : CochainComplex (ModuleCat.{u} R) ℕ}
     (f : K ⟶ L) (e : K.cycles 0) :
@@ -96,6 +117,11 @@ private lemma iCycles_transport
   subst h
   simp [cyclesTransportAddHom]
 
+/-- Left cycle unit gives a left unit on graded homology classes.
+
+If a degree-zero cycle `e` is a left unit for the chain pairing on every cycle, after `0 + q =
+q` transport, then pairing its homology class with any degree-`q` class gives that class in
+the graded homology family. -/
 lemma pairHomology_one_mul_mk
     {K : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing K K K)
@@ -143,6 +169,11 @@ lemma pairHomology_one_mul_mk
     exact HEq.trans h2 (heq_of_eq h_hom)
   exact Sigma.ext h_eq h_heq
 
+/-- Right cycle unit gives a right unit on graded homology classes.
+
+If a degree-zero cycle `e` is a right unit for the chain pairing on every cycle, after `p + 0
+= p` transport, then pairing any degree-`p` homology class with the class of `e` gives the
+same graded element. -/
 lemma pairHomology_mul_one_mk
     {K : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing K K K)
@@ -257,6 +288,11 @@ private theorem pairHomology_assoc_mk
   have h_heq := HEq.trans h2 (heq_of_eq h_hom)
   exact Sigma.ext h_eq h_heq
 
+/-- Associative chain pairing gives associative graded homology products.
+
+Assume the two iterated chain pairings agree on all terms after the degree transport `(p + q)
++ r = p + (q + r)`. Then the corresponding iterated homology pairings give equal elements of
+the graded homology family. -/
 theorem pairHomology_assoc_mk_of_pair
     {K : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing K K K)

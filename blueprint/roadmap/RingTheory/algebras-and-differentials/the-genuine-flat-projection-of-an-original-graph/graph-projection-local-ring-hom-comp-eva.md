@@ -1,4 +1,6 @@
-# Graph Projection Local Ring Hom comp evaluation
+# Localized graph evaluation and projection recover the local algebra map
 
-The same original local maps compose to the canonical original
-localized algebra map, so coefficient restriction has its actual action.
+Localized graph evaluation and projection recover the local algebra map.
+
+The local graph projection followed by localized evaluation `e` equals the localization of `f
+: A → B` at `f⁻¹(p)` and `p`.

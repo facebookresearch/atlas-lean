@@ -1,3 +1,5 @@
-# Matrix Coinvariant Coordinate Iso
+# The degreewise quotient coordinates of matrix coinvariant chains
 
-The degree coordinates of the matrix coinvariant complex.
+The degreewise quotient coordinates of matrix coinvariant chains.
+
+Identify a coinvariant chain term with its scalar-adjoint exterior-module quotient.

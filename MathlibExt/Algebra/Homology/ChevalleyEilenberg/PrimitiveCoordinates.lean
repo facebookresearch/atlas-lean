@@ -16,13 +16,17 @@ public import MathlibExt.LinearAlgebra.ExteriorAlgebra.PrimitiveEquation
 public import MathlibExt.Algebra.Category.ModuleCat.Monoidal.UniverseUnitor
 
 /-!
-# Homogeneous coordinates of primitive chains
+# Homogeneous exterior coordinates of primitive CE chains
 
-For a Lie algebra over a commutative ring, the component kernel of the Chevalley–Eilenberg
-primitive equation is the homogeneous primitive submodule of the exterior algebra. The kernel
-inclusions and homogeneous coordinate maps give an isomorphism of chain complexes.
+Let `R` be a commutative ring and `L` an `R`-Lie algebra. In exterior degree `n`, the CE
+primitive-equation component realizes in the exterior tensor square as `Δ(a) - (a ⊗ 1 + 1 ⊗
+a)`.
 
-The ring and Lie carrier may have independent universes.
+Its kernel is exactly the homogeneous primitive submodule of `⋀ⁿ[R] L`. The kernel inclusion
+and homogeneous primitive inclusion give mutually inverse chain maps, identifying the
+primitive chain kernel with the homogeneous primitive complex. In degree one this carrier is
+linearly equivalent to `L`, and the degree-one-to-zero primitive differential vanishes. The
+scalar and Lie carrier universes are independent.
 -/
 
 @[expose] public section
@@ -140,7 +144,10 @@ private theorem leftUnitTerm_realize (n : ℕ) :
     exact congrArg (fun x : ExteriorAlgebra R L => x ⊗ₜ[R] ((show ⋀[R]^n L from a) : ExteriorAlgebra R L))
       (coaug_unit_value R L))
 
-/-- The primitive map realizes as the exterior primitive equation. -/
+/-- The exterior realization of the CE primitive equation.
+
+The degree-`n` primitive map followed by tensor-degree realization equals the exterior-algebra
+primitive equation restricted to homogeneous degree `n`. -/
 theorem nativePrimitiveMap_realize (n : ℕ) :
     (nativePrimitiveMap R L).f n ≫ ExteriorAlgebra.tensorDegreeRealize R L n =
       ModuleCat.ofHom ((ExteriorAlgebra.primitiveEquation R L).comp (⋀[R]^n L).subtype) := by
@@ -187,7 +194,10 @@ theorem nativePrimitiveMap_realize (n : ℕ) :
         (((show ⋀[R]^n L from a) : ExteriorAlgebra R L) ⊗ₜ[R] (1 : ExteriorAlgebra R L) +
           (1 : ExteriorAlgebra R L) ⊗ₜ[R] ((show ⋀[R]^n L from a) : ExteriorAlgebra R L)) = _
       exact (ExteriorAlgebra.primitiveEquation_apply R L _).symm))
-/-- Componentwise vanishing of the primitive map is primitivity. -/
+/-- The homogeneous primitivity criterion for a CE chain.
+
+The primitive-equation component vanishes on `a ∈ ⋀ⁿ[R] L` if and only if `a` belongs to the
+homogeneous primitive submodule. -/
 theorem nativePrimitiveMap_eq_zero_iff (n : ℕ) (a : ⋀[R]^n L) :
     ((nativePrimitiveMap R L).f n).hom a = 0 ↔ a ∈ primitiveDegree R L n := by
   have hr := congrArg (fun f => f.hom a) (nativePrimitiveMap_realize R L n)
@@ -203,17 +213,27 @@ theorem nativePrimitiveMap_eq_zero_iff (n : ℕ) (a : ⋀[R]^n L) :
     apply ExteriorAlgebra.tensorDegreeRealize_injective R L n
     exact hr.trans (ha.trans (map_zero _).symm)
 
-/-- The component kernel has exactly the homogeneous primitive submodule. -/
+/-- The homogeneous kernel of a CE primitive-equation component.
+
+The linear kernel in degree `n` is exactly the homogeneous primitive submodule of the exterior
+algebra. -/
 theorem nativePrimitiveMap_ker (n : ℕ) :
     LinearMap.ker ((nativePrimitiveMap R L).f n).hom = primitiveDegree R L n := by
   ext a
   exact nativePrimitiveMap_eq_zero_iff R L n a
 
+/-- The successor differential in homogeneous primitive coordinates.
+
+The homogeneous primitive complex has successor map given by the restricted primitive
+differential. -/
 @[simp]
 theorem primitiveComplex_d_succ (n : ℕ) :
     (primitiveComplex R L).d (n + 1) n = ModuleCat.ofHom (primitiveDifferential R L n) := by
   simp only [primitiveComplex, ChainComplex.of_d]
 
+/-- The primitive equation of the homogeneous chain inclusion.
+
+The homogeneous primitive inclusion followed by the CE primitive map is the zero chain map. -/
 theorem homogeneousPrimitiveInclusion_zero :
     primitiveComplexInclusion R L ≫ nativePrimitiveMap R L = 0 := by
   apply HomologicalComplex.hom_ext
@@ -224,22 +244,35 @@ theorem homogeneousPrimitiveInclusion_zero :
   let a₀ : primitiveDegree R L n := a
   exact (nativePrimitiveMap_eq_zero_iff R L n a₀.1).mpr a₀.2
 
-/-- The homogeneous primitive complex maps to the kernel by its universal property. -/
+/-- The chain map from homogeneous primitive coordinates to the primitive kernel.
+
+The homogeneous primitive inclusion lifts through the chain kernel of the CE primitive-
+equation map. -/
 def homogeneousPrimitiveToNative : primitiveComplex R L ⟶ nativePrimitiveComplex R L :=
   kernel.lift (nativePrimitiveMap R L) (primitiveComplexInclusion R L)
     (homogeneousPrimitiveInclusion_zero R L)
 
+/-- The inclusion equation of the homogeneous-to-kernel map.
+
+The homogeneous-to-kernel map followed by primitive kernel inclusion is the homogeneous
+primitive chain inclusion. -/
 @[reassoc]
 theorem homogeneousPrimitiveToNative_inclusion :
     homogeneousPrimitiveToNative R L ≫ nativePrimitiveInclusion R L = primitiveComplexInclusion R L :=
   kernel.lift_ι _ _ _
 
+/-- Homogeneous primitivity of a primitive-kernel element.
+
+The degreewise image of the primitive kernel inclusion lies in the corresponding homogeneous
+primitive submodule. -/
 theorem nativeInclusion_mem (n : ℕ) (a : (nativePrimitiveComplex R L).X n) :
     ((nativePrimitiveInclusion R L).f n).hom a ∈ primitiveDegree R L n := by
   apply (nativePrimitiveMap_eq_zero_iff R L n _).mp
   exact congrArg (fun f => f.hom a) (nativePrimitiveInclusion_component R L n)
 
-/-- The primitive kernel maps to its homogeneous primitive coordinates. -/
+/-- The chain map from the primitive kernel to homogeneous coordinates.
+
+Restrict each primitive kernel inclusion component to the homogeneous primitive submodule. -/
 def nativePrimitiveToHomogeneous : nativePrimitiveComplex R L ⟶ primitiveComplex R L where
   f n := ModuleCat.ofHom
     (((nativePrimitiveInclusion R L).f n).hom.codRestrict (primitiveDegree R L n)
@@ -256,6 +289,10 @@ def nativePrimitiveToHomogeneous : nativePrimitiveComplex R L ⟶ primitiveCompl
     rw [ChainData.complex_d_succ] at hc
     exact hc
 
+/-- The inclusion equation of the kernel-to-homogeneous map.
+
+The homogeneous-coordinate map followed by homogeneous primitive inclusion is the primitive
+kernel inclusion. -/
 @[reassoc]
 theorem nativePrimitiveToHomogeneous_inclusion :
     nativePrimitiveToHomogeneous R L ≫ primitiveComplexInclusion R L = nativePrimitiveInclusion R L := by
@@ -266,7 +303,10 @@ theorem nativePrimitiveToHomogeneous_inclusion :
   intro a
   rfl
 
-/-- The coordinate maps are inverse on the kernel. -/
+/-- The inverse identity on the primitive chain kernel.
+
+The kernel-to-homogeneous map followed by the homogeneous-to-kernel map is the identity on the
+primitive kernel complex. -/
 theorem nativePrimitive_coordinate_hom_inv :
     nativePrimitiveToHomogeneous R L ≫ homogeneousPrimitiveToNative R L =
       𝟙 (nativePrimitiveComplex R L) := by
@@ -275,7 +315,10 @@ theorem nativePrimitive_coordinate_hom_inv :
   rw [Category.assoc, homogeneousPrimitiveToNative_inclusion,
     nativePrimitiveToHomogeneous_inclusion, Category.id_comp]
 
-/-- The coordinate maps are inverse on the homogeneous primitive complex. -/
+/-- The inverse identity on homogeneous primitive chains.
+
+The homogeneous-to-kernel map followed by the kernel-to-homogeneous map is the identity on the
+homogeneous primitive complex. -/
 theorem nativePrimitive_coordinate_inv_hom :
     homogeneousPrimitiveToNative R L ≫ nativePrimitiveToHomogeneous R L =
       𝟙 (primitiveComplex R L) := by
@@ -287,24 +330,36 @@ theorem nativePrimitive_coordinate_inv_hom :
   apply Subtype.ext
   exact congrArg (fun f => (f.f n).hom a) (homogeneousPrimitiveToNative_inclusion R L)
 
-/-- The kernel is the homogeneous primitive chain complex, in all characteristics. -/
+/-- The chain isomorphism of primitive kernels and homogeneous primitives.
+
+The two inclusion-preserving coordinate maps identify the CE primitive kernel complex with the
+homogeneous exterior primitive complex. -/
 def nativePrimitiveCoordinateIso : nativePrimitiveComplex R L ≅ primitiveComplex R L where
   hom := nativePrimitiveToHomogeneous R L
   inv := homogeneousPrimitiveToNative R L
   hom_inv_id := nativePrimitive_coordinate_hom_inv R L
   inv_hom_id := nativePrimitive_coordinate_inv_hom R L
 
-/-- The componentwise primitive coordinate equivalence. -/
+/-- The degreewise linear equivalence of primitive CE coordinates.
+
+In degree `n`, the primitive kernel chain term is linearly equivalent to the homogeneous
+exterior primitive submodule. -/
 def nativePrimitiveDegreeEquiv (n : ℕ) :
     (nativePrimitiveComplex R L).X n ≃ₗ[R] primitiveDegree R L n :=
   ((HomologicalComplex.eval (ModuleCat.{max u v} R) (ComplexShape.down ℕ) n).mapIso
     (nativePrimitiveCoordinateIso R L)).toLinearEquiv
 
-/-- Exactly degree-one primitive chains identify with the Lie module. -/
+/-- The Lie-module coordinate of primitive CE degree one.
+
+The degree-one primitive chain term is linearly equivalent to `L` through homogeneous
+primitive and exterior-degree-one coordinates. -/
 def nativePrimitiveDegreeOneEquiv : (nativePrimitiveComplex R L).X 1 ≃ₗ[R] L :=
   (nativePrimitiveDegreeEquiv R L 1).trans (primitiveDegreeOneEquiv R L)
 
-/-- The primitive differential from degree one to degree zero vanishes. -/
+/-- Vanishing of the bottom primitive CE differential.
+
+The primitive kernel differential from degree one to degree zero is zero, as follows from its
+homogeneous primitive coordinate comparison. -/
 theorem nativePrimitiveComplex_d_one_zero : (nativePrimitiveComplex R L).d 1 0 = 0 := by
   let e := (HomologicalComplex.eval (ModuleCat.{max u v} R) (ComplexShape.down ℕ) 0).mapIso
     (nativePrimitiveCoordinateIso R L)

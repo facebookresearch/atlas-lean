@@ -1,3 +1,5 @@
-# Resolution Augmented Data
+# Augmented simplicial data of the comonad bar
 
-The augmented simplicial data of the comonad resolution.
+Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The bar simplicial data augmented at `A` by
+`ε_A : G(A) → A` form augmented simplicial data.

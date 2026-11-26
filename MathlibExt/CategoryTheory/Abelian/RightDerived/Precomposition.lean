@@ -16,6 +16,15 @@ public import Mathlib.CategoryTheory.Abelian.RightDerived
 
 /-!
 # Right-derived precomposition using mapped injective resolutions
+
+Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injectives and homology,
+and `B : D → A` additive. The mapped resolution `F(I)` of `F(X)`
+gives the natural comparison `R^q(F ⋙ B)(X) ≅ R^qB(F(X))`.
+Its components are independent of the resolution of `X`, commute
+with resolution lifts, and preserve the canonical degree-zero maps.
+A natural isomorphism `P ≅ F ⋙ B` gives the same comparison for `P`.
+The category object and morphism universes are independent.
 -/
 @[expose] public section
 noncomputable section
@@ -30,7 +39,10 @@ variable {A : Type u₃} [Category.{v₃} A] [Abelian A]
 variable (F : C ⥤ D) [F.Additive] [F.PreservesInjectiveObjects] [F.PreservesHomology]
 variable (B : D ⥤ A) [B.Additive]
 
-/-- Composite-complex homology is compared with the mapped resolution. -/
+/-- Let `C,D,A` be abelian, `F : C → D` additive and preserving
+injective objects and homology, and `B : D → A` additive. For an injective resolution `I` of `X`, there is a canonical
+cohomology isomorphism `H^q((F ⋙ B)(I)) ≅ H^q(B(F(I)))`, where
+`F(I)` is the mapped injective resolution of `F(X)`. -/
 def rightDerivedPrecompHomologyIso (q : ℕ) {X : C} (I : InjectiveResolution X) :
     (HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q).obj
         (((F ⋙ B).mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex) ≅
@@ -41,14 +53,21 @@ def rightDerivedPrecompHomologyIso (q : ℕ) {X : C} (I : InjectiveResolution X)
     (((Functor.mapHomologicalComplexCompIso (Iso.refl (F ⋙ B)) (ComplexShape.up ℕ)).app
       I.cocomplex).symm)
 
-/-- An arbitrary resolution gives the right-derived precomposition map. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. An injective resolution `I` of `X` gives the comparison
+`R^q(F ⋙ B)(X) ≅ R^qB(F(X))` through the cohomology of `B(F(I))`. -/
 def rightDerivedPrecompIsoWithResolution (q : ℕ) {X : C} (I : InjectiveResolution X) :
     ((F ⋙ B).rightDerived q).obj X ≅ (B.rightDerived q).obj (F.obj X) :=
   I.isoRightDerivedObj (F ⋙ B) q ≪≫
     rightDerivedPrecompHomologyIso F B q I ≪≫
       ((F.mapInjectiveResolution I).isoRightDerivedObj B q).symm
 
-/-- Naturality uses the SAME mapped cocomplex morphism and augmentation. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. For resolutions `I` of `X`, `J` of `Y`, and a resolution lift
+`φ` of `f : X → Y`, the forward comparisons commute with
+`R^q(F ⋙ B)(f)` and `R^qB(F(f))`. -/
 theorem rightDerivedPrecompIsoWithResolution_naturality (q : ℕ)
     {X Y : C} (f : X ⟶ Y) (I : InjectiveResolution X) (J : InjectiveResolution Y)
     (φ : InjectiveResolution.Hom I J f) :
@@ -100,7 +119,10 @@ theorem rightDerivedPrecompIsoWithResolution_naturality (q : ℕ)
     _ = (aI.hom ≫ bI.hom) ≫ (cI.inv ≫ (B.rightDerived q).map (F.map f)) := by rw [← hc]
     _ = _ := by simp only [Category.assoc]
 
-/-- Every resolution choice gives the SAME precomposition component. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Any two injective resolutions of `X` give the same degree-`q`
+precomposition isomorphism `R^q(F ⋙ B)(X) ≅ R^qB(F(X))`. -/
 theorem rightDerivedPrecompIsoWithResolution_eq (q : ℕ) {X : C}
     (I J : InjectiveResolution X) :
     rightDerivedPrecompIsoWithResolution F B q I =
@@ -110,7 +132,10 @@ theorem rightDerivedPrecompIsoWithResolution_eq (q : ℕ) {X : C}
   apply Iso.ext
   simpa only [Functor.map_id, Category.id_comp, Category.comp_id] using h.symm
 
-/-- The all-object natural isomorphism uses the chosen resolution only as a provider. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. The objectwise comparisons form a natural isomorphism
+`R^q(F ⋙ B) ≅ F ⋙ R^qB`. -/
 def rightDerivedPrecompIso (q : ℕ) : (F ⋙ B).rightDerived q ≅ F ⋙ B.rightDerived q :=
   NatIso.ofComponents
     (fun X => rightDerivedPrecompIsoWithResolution F B q (injectiveResolution X))
@@ -119,14 +144,19 @@ def rightDerivedPrecompIso (q : ℕ) : (F ⋙ B).rightDerived q ≅ F ⋙ B.righ
       exact rightDerivedPrecompIsoWithResolution_naturality F B q f
         (injectiveResolution _) (injectiveResolution _) φ)
 
-/-- The fixed natural family retains the comparison computed from ANY original resolution. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. At `X`, the natural precomposition isomorphism is computed by
+any supplied injective resolution `I` of `X`. -/
 theorem rightDerivedPrecompIso_app_eq (q : ℕ) {X : C} (I : InjectiveResolution X) :
     (rightDerivedPrecompIso F B q).app X = rightDerivedPrecompIsoWithResolution F B q I :=
   rightDerivedPrecompIsoWithResolution_eq F B q (injectiveResolution X) I
 
 
 omit [HasInjectiveResolutions C] [HasInjectiveResolutions D] in
-/-- The mapped single-object augmentation keeps its literal degree-zero component. -/
+/-- Let `C,D` be abelian and `F : C → D` additive and preserving
+injective objects and homology. For an injective resolution `I` of `X`,
+the degree-zero coaugmentation of `F(I)` is `F(ι_I⁰)`. -/
 theorem mapInjectiveResolution_iota_zero {X : C} (I : InjectiveResolution X) :
     (F.mapInjectiveResolution I).ι.f 0 = F.map (I.ι.f 0) := by
   dsimp only [Functor.mapInjectiveResolution]
@@ -139,7 +169,10 @@ theorem mapInjectiveResolution_iota_zero {X : C} (I : InjectiveResolution X) :
   rfl
 
 omit [HasInjectiveResolutions C] [HasInjectiveResolutions D] in
-/-- At zero the complex-composition map preserves the canonical augmentation cycles. -/
+/-- Let `C,D,A` be abelian, `F : C → D` additive and preserving
+injective objects and homology, and `B : D → A` additive. For an injective resolution `I` of `X`, the degree-zero
+coaugmentation cycle in `(F ⋙ B)(I)` becomes the cycle in `B(F(I))`
+under the natural complex-composition identification. -/
 theorem rightDerivedPrecomp_cycles_zero {X : C} (I : InjectiveResolution X) :
     I.toRightDerivedZero' (F ⋙ B) ≫ HomologicalComplex.cyclesMap
       (((Functor.mapHomologicalComplexCompIso (Iso.refl (F ⋙ B))
@@ -155,7 +188,11 @@ theorem rightDerivedPrecomp_cycles_zero {X : C} (I : InjectiveResolution X) :
   change (F ⋙ B).map (I.ι.f 0) ≫ 𝟙 _ = B.map (F.map (I.ι.f 0))
   exact Category.comp_id _
 
-/-- The precomposition comparison intertwines the canonical zero-derived maps. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. For an injective resolution `I` of `X`, the canonical map
+`B(F(X)) → R⁰(F ⋙ B)(X)` followed by the resolution-based comparison
+equals the canonical map `B(F(X)) → R⁰B(F(X))`. -/
 theorem rightDerivedPrecompIsoWithResolution_toRightDerivedZero {X : C}
     (I : InjectiveResolution X) :
     (F ⋙ B).toRightDerivedZero.app X ≫
@@ -185,7 +222,11 @@ theorem rightDerivedPrecompIsoWithResolution_toRightDerivedZero {X : C}
     ← Category.assoc, rightDerivedPrecomp_cycles_zero]
   rfl
 
-/-- The fixed natural family preserves zero normalization for every original object. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. For every `X`, the canonical map `B(F(X)) → R⁰(F ⋙ B)(X)`
+followed by the natural precomposition comparison equals the canonical
+map `B(F(X)) → R⁰B(F(X))`. -/
 theorem rightDerivedPrecompIso_toRightDerivedZero (X : C) :
     (F ⋙ B).toRightDerivedZero.app X ≫ (rightDerivedPrecompIso F B 0).hom.app X =
       B.toRightDerivedZero.app (F.obj X) :=
@@ -193,7 +234,10 @@ theorem rightDerivedPrecompIso_toRightDerivedZero (X : C) :
 
 
 omit [HasInjectiveResolutions C] [HasInjectiveResolutions D] in
-/-- Every resolution morphism induces the same homology-composition square. -/
+/-- Let `C,D,A` be abelian, `F : C → D` additive and preserving
+injective objects and homology, and `B : D → A` additive. A lift `φ : I → J` of `f : X → Y` induces cohomology maps
+that commute with the identifications `H^q((F ⋙ B)(I)) ≅ H^q(B(F(I)))`
+and the corresponding identification for `J`. -/
 theorem rightDerivedPrecompHomologyIso_naturality (q : ℕ)
     {X Y : C} {f : X ⟶ Y} {I : InjectiveResolution X} {J : InjectiveResolution Y}
     (φ : InjectiveResolution.Hom I J f) :
@@ -208,13 +252,21 @@ theorem rightDerivedPrecompHomologyIso_naturality (q : ℕ)
     (Functor.mapHomologicalComplexCompIso (Iso.refl (F ⋙ B)) (ComplexShape.up ℕ)).symm
     (HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q)).hom.naturality φ.hom
 
-/-- The component formula is also available directly for its forward morphism. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. The forward component at `X` of the natural comparison is the
+forward map of the comparison computed with any injective resolution
+`I` of `X`. -/
 theorem rightDerivedPrecompIso_hom_app_eq (q : ℕ) {X : C} (I : InjectiveResolution X) :
     (rightDerivedPrecompIso F B q).hom.app X =
       (rightDerivedPrecompIsoWithResolution F B q I).hom :=
   congrArg Iso.hom (rightDerivedPrecompIso_app_eq F B q I)
 
-/-- Canonical zero-derived identifications retain the precomposition map. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. If both `B` and `F ⋙ B` preserve finite limits, the degree-zero
+precomposition comparison followed by `R⁰B(F(X)) ≅ B(F(X))` equals
+the canonical comparison `R⁰(F ⋙ B)(X) ≅ B(F(X))`. -/
 theorem rightDerivedPrecompIso_zeroIsoSelf
     [PreservesFiniteLimits (F ⋙ B)] [PreservesFiniteLimits B] (X : C) :
     (rightDerivedPrecompIso F B 0).hom.app X ≫
@@ -235,7 +287,10 @@ variable {A : Type u₃} [Category.{v₃} A] [Abelian A]
 variable {P Q : C ⥤ A} [P.Additive] [Q.Additive]
 
 omit [HasInjectiveResolutions C] in
-/-- A termwise natural transformation carries the augmentation cycles to each other. -/
+/-- Let `C,A` be abelian, `P,Q : C → A` additive, `α : P → Q`,
+and `I` an injective resolution of `X`. The cycle map induced by
+`α_I` takes the coaugmentation cycle of `P(I)` to `α_X` followed
+by the coaugmentation cycle of `Q(I)`. -/
 theorem mapHomologicalComplex_toRightDerivedZero' (α : P ⟶ Q)
     {X : C} (I : InjectiveResolution X) :
     I.toRightDerivedZero' P ≫ HomologicalComplex.cyclesMap
@@ -249,7 +304,9 @@ theorem mapHomologicalComplex_toRightDerivedZero' (α : P ⟶ Q)
   change P.map (I.ι.f 0) ≫ α.app (I.cocomplex.X 0) = α.app X ≫ Q.map (I.ι.f 0)
   exact α.naturality (I.ι.f 0)
 
-/-- The derived natural transformation respects the canonical degree-zero maps. -/
+/-- Let `C,A` be abelian, with injective resolutions in `C`, and
+`P,Q : C → A` additive. For `α : P → Q`, the canonical zeroth-derived
+maps satisfy `P(X) → R⁰P(X) → R⁰Q(X) = P(X) → Q(X) → R⁰Q(X)`. -/
 theorem rightDerived_toRightDerivedZero (α : P ⟶ Q) (X : C) :
     P.toRightDerivedZero.app X ≫ (NatTrans.rightDerived α 0).app X =
       α.app X ≫ Q.toRightDerivedZero.app X := by
@@ -276,7 +333,11 @@ variable {P Q : C ⥤ A} [P.Additive] [Q.Additive]
 
 
 
-/-- A fixed derived natural isomorphism respects both canonical degree-zero identifications. -/
+/-- Let `C,A` be abelian, with injective resolutions in `C`, and
+`P,Q : C → A` additive and preserving finite limits. A natural
+isomorphism `α : P ≅ Q` satisfies
+`R⁰α_X ≫ e_Q,X = e_P,X ≫ α_X` for the canonical degree-zero
+identifications with `P` and `Q`. -/
 theorem rightDerived_zeroIsoSelf [PreservesFiniteLimits P] [PreservesFiniteLimits Q]
     (α : P ≅ Q) (X : C) :
     (rightDerived α 0).hom.app X ≫ Q.rightDerivedZeroIsoSelf.hom.app X =
@@ -300,12 +361,20 @@ variable (F : C ⥤ D) [F.Additive] [F.PreservesInjectiveObjects] [F.PreservesHo
 variable (B : D ⥤ A) [B.Additive]
 variable {P : C ⥤ A} [P.Additive]
 
-/-- A fixed underived comparison is followed by right-derived precomposition. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. Deriving `α` and then applying precomposition gives a natural
+isomorphism `R^qP ≅ F ⋙ R^qB`. -/
 def rightDerivedPrecompIsoOfIso (α : P ≅ F ⋙ B) (q : ℕ) :
     P.rightDerived q ≅ F ⋙ B.rightDerived q :=
   NatIso.rightDerived α q ≪≫ rightDerivedPrecompIso F B q
 
-/-- The fixed all-degree comparison is computed on ANY source resolution. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. For any injective resolution `I` of `X`, the forward comparison
+`R^qP(X) → R^qB(F(X))` passes through `H^q(P(I))`, the cohomology map
+of `α_I`, the identification with `H^q(B(F(I)))`, and the inverse
+resolution comparison for `B` and `F(I)`. -/
 theorem rightDerivedPrecompIsoOfIso_resolution_formula
     (α : P ≅ F ⋙ B) (q : ℕ) {X : C} (I : InjectiveResolution X) :
     (rightDerivedPrecompIsoOfIso F B α q).hom.app X =
@@ -338,7 +407,11 @@ theorem rightDerivedPrecompIsoOfIso_resolution_formula
       simp only [Category.assoc]
       rfl
 
-/-- The full comparison retains the zero-derived map of its source functor. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. The canonical map `P(X) → R⁰P(X)` followed by the full
+precomposition comparison equals `α_X` followed by
+`B(F(X)) → R⁰B(F(X))`. -/
 theorem rightDerivedPrecompIsoOfIso_toRightDerivedZero
     (α : P ≅ F ⋙ B) (X : C) :
     P.toRightDerivedZero.app X ≫ (rightDerivedPrecompIsoOfIso F B α 0).hom.app X =
@@ -348,7 +421,11 @@ theorem rightDerivedPrecompIsoOfIso_toRightDerivedZero
   rw [← Category.assoc, NatTrans.rightDerived_toRightDerivedZero, Category.assoc,
     rightDerivedPrecompIso_toRightDerivedZero]
 
-/-- Both zero-derived identifications recover the originally fixed comparison. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. If `P` and `B` preserve finite limits, the full degree-zero
+comparison followed by `R⁰B(F(X)) ≅ B(F(X))` equals
+`R⁰P(X) ≅ P(X)` followed by `α_X`. -/
 theorem rightDerivedPrecompIsoOfIso_zeroIsoSelf
     [PreservesFiniteLimits P] [PreservesFiniteLimits B] (α : P ≅ F ⋙ B) (X : C) :
     (rightDerivedPrecompIsoOfIso F B α 0).hom.app X ≫
@@ -367,10 +444,10 @@ namespace CategoryTheory.InjectiveResolution
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolutions C]
 variable {A : Type u₃} [Category.{v₃} A] [Abelian A]
 
-/--
-The canonical resolution-choice comparison is the homology map of ANY bundled comparison over the
-identity.
--/
+/-- Let `C,A` be abelian, with injective resolutions in `C`, and
+`P : C → A` additive. For injective resolutions `I,J` of `X`, any
+resolution map `φ : I → J` over `𝟙 X` induces the forward canonical
+comparison `H^q(P(I)) → H^q(P(J))`. -/
 theorem cohomologyComparisonIso_hom_eq_map {X : C} {I J : InjectiveResolution X}
     (φ : InjectiveResolution.Hom I J (𝟙 X)) (P : C ⥤ A) [P.Additive] (q : ℕ) :
     (cohomologyComparisonIso I J P q).hom =
@@ -401,7 +478,10 @@ variable (F : C ⥤ D) [F.Additive] [F.PreservesInjectiveObjects] [F.PreservesHo
 variable (B : D ⥤ A) [B.Additive]
 variable {P : C ⥤ A} [P.Additive]
 
-/-- The fixed underived map is applied term by term on the same resolution. -/
+/-- Let `C,D,A` be abelian, `F : C → D` additive and preserving
+injective objects and homology, and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. For an injective resolution `I` of `X`, the termwise isomorphism
+`α_I` and complex-composition identification give
+`H^q(P(I)) ≅ H^q(B(F(I)))`. -/
 def rightDerivedPrecompHomologyIsoOfIso (α : P ≅ F ⋙ B) (q : ℕ)
     {X : C} (I : InjectiveResolution X) :
     (HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q).obj
@@ -414,7 +494,10 @@ def rightDerivedPrecompHomologyIsoOfIso (α : P ≅ F ⋙ B) (q : ℕ)
       rightDerivedPrecompHomologyIso F B q I
 
 omit [HasInjectiveResolutions C] [HasInjectiveResolutions D] in
-/-- Every source-resolution map gives the literal homology square. -/
+/-- Let `C,D,A` be abelian, `F : C → D` additive and preserving
+injective objects and homology, and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. For a lift `φ : I → J` of `f : X → Y`, the maps on
+`H^q(P(I))`, `H^q(P(J))` commute with these comparisons and the
+cohomology map of the mapped lift `F(φ)`. -/
 theorem rightDerivedPrecompHomologyIsoOfIso_naturality (α : P ≅ F ⋙ B) (q : ℕ)
     {X Y : C} {f : X ⟶ Y} {I : InjectiveResolution X} {J : InjectiveResolution Y}
     (φ : InjectiveResolution.Hom I J f) :
@@ -439,7 +522,11 @@ theorem rightDerivedPrecompHomologyIsoOfIso_naturality (α : P ≅ F ⋙ B) (q :
         (F.mapInjectiveResolutionHom φ).hom)
   rw [← Category.assoc, ha, Category.assoc, hb, ← Category.assoc]
 
-/-- Every canonical resolution choice comparison commutes with the SAME termwise map. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. For two resolutions `I,J` of `X`, the comparison from
+`H^q(P(I))` to `H^q(B(F(I)))` commutes with the canonical resolution-choice
+comparisons for `P` and for `B`. -/
 theorem rightDerivedPrecompHomologyIsoOfIso_comparison (α : P ≅ F ⋙ B) (q : ℕ)
     {X : C} (I J : InjectiveResolution X) :
     (InjectiveResolution.cohomologyComparisonIso I J P q).hom ≫
@@ -454,7 +541,12 @@ theorem rightDerivedPrecompHomologyIsoOfIso_comparison (α : P ≅ F ⋙ B) (q :
   rw [hl, hr]
   exact rightDerivedPrecompHomologyIsoOfIso_naturality F B α q φ
 
-/-- The arbitrary-resolution formula uses the exact termwise natural isomorphism. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. For any resolution `I` of `X`, the forward comparison
+`R^qP(X) → R^qB(F(X))` is the canonical map to `H^q(P(I))`, followed
+by the termwise coefficient comparison to `H^q(B(F(I)))` and the
+inverse comparison to `R^qB(F(X))`. -/
 theorem rightDerivedPrecompIsoOfIso_resolution_iso (α : P ≅ F ⋙ B) (q : ℕ)
     {X : C} (I : InjectiveResolution X) :
     (rightDerivedPrecompIsoOfIso F B α q).hom.app X =
@@ -477,7 +569,11 @@ variable (F : C ⥤ D) [F.Additive] [F.PreservesInjectiveObjects] [F.PreservesHo
 variable (B : D ⥤ A) [B.Additive] [PreservesFiniteLimits B]
 variable {P : C ⥤ A} [P.Additive]
 
-/-- A source section goes through the zero-derived comparison to the fixed underived map. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`F : C → D` additive and preserving injective objects and homology,
+and `B : D → A` additive. Let `P : C → A` be additive and `α : P ≅ F ⋙ B`. If `B` preserves finite limits, the canonical map
+`P(X) → R⁰P(X)`, followed by the full precomposition comparison and
+`R⁰B(F(X)) ≅ B(F(X))`, equals `α_X`. -/
 theorem rightDerivedPrecompIsoOfIso_zero_section (α : P ≅ F ⋙ B) (X : C) :
     P.toRightDerivedZero.app X ≫
       (rightDerivedPrecompIsoOfIso F B α 0).hom.app X ≫

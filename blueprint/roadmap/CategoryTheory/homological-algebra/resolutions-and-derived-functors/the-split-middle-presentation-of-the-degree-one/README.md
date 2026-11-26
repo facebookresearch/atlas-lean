@@ -1,5 +1,5 @@
 # The split middle presentation of the degree-one horseshoe sign test
 
-- [Presentation Middle Row](presentation-middle-row.md)
-- [Presentation Middle Row Splitting](presentation-middle-row-splitting.md)
-- [Presentation Middle Row short Exact](presentation-middle-row-short-exact.md)
+- [Signed split middle row associated to a presentation map](presentation-middle-row.md)
+- [Retraction and section of the signed split middle row](presentation-middle-row-splitting.md)
+- [Short exactness of the signed split middle row](presentation-middle-row-short-exact.md)

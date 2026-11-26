@@ -1,3 +1,4 @@
-# Integral Convolution Element mul
+# Natural convolution parameters multiply
 
-The native product-alphabet sorting bijection gives convolution composition.
+For a commutative ring `R` and `n,a,b : ℕ`, `integralConvolutionElement R n a *
+integralConvolutionElement R n b = integralConvolutionElement R n (a*b)` in `R[S_n]`.

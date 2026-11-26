@@ -7,6 +7,18 @@ module
 
 public import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyLaws
 
+/-!
+# Scalar commutation identities for cochain pairings on homology
+
+Let `K` be a natural-index cochain complex over a commutative ring and `P`, `Q` two graded
+pairings on it. Fix degrees `p`, `q` and an integer `z`. Suppose the chain-level pairings
+satisfy `P(x,y) = z • Q(y,x)` after transport from degree `p + q` to degree `q + p`.
+
+The same identity holds on all homology classes, as an equality of elements in the graded
+family `n ↦ K.homology n`. The scalar `z` is arbitrary, so the statement includes any
+specified commutation sign.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -51,8 +63,12 @@ private lemma comm_iCycles_transport
   subst h
   simp [commCyclesTransportAddHom]
 
-/-- A signed swap formula on cochains descends to the corresponding
-graded-commutativity formula on cohomology. -/
+/-- Scalar commutation of chain pairings descends to graded homology.
+
+For pairings `P` and `Q`, degrees `p`, `q`, and `z : ℤ`, assume the chain pairing values
+satisfy the stated degree-transported scalar commutation identity on every pair of chain
+terms. Then the degree-`p + q` class of `P.pairHomology(x,y)` equals `z` times the degree-`q +
+p` class of `Q.pairHomology(y,x)` for all homology classes `x` and `y`. -/
 theorem pairHomology_comm_mk_of_pair
     {K : CochainComplex (ModuleCat.{u} R) ℕ}
     (P Q : CochainGradedPairing K K K) (z : ℤ)

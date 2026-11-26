@@ -1,3 +1,6 @@
-# Finsupp Equiv
+# Stable matrix semimodule is equivalent to finitely supported functions
 
-The k-linear equivalence between stable matrices and finitely supported functions on `ℕ × ℕ`.
+Stable matrix semimodule is equivalent to finitely supported functions.
+
+The bijective linear entry map gives a `k`-linear equivalence `Matrix.StableModule k A ≃ₗ[k]
+(ℕ × ℕ) →₀ A`.

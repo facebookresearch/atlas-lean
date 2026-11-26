@@ -15,13 +15,16 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.AssociatedGraded
 public import MathlibExt.Algebra.Lie.UniversalEnveloping.PBW.SymmetricComparison
 
 /-!
-# Basis coordinates and the intrinsic PBW comparison
+# PBW coordinates for the intrinsic associated graded algebra
 
-A chosen ordered basis identifies the basis-indexed PBW graded model with the intrinsic
-associated graded enveloping algebra, preserving symbols, scalars, and multiplication.
+Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L an ordered basis. The PBW
+coordinate model and the intrinsic associated graded algebra share the quotient-layer direct
+sum and are R-algebra equivalent, preserving the symbols and their product.
 
-The resulting symmetric-algebra equivalence has the canonical symmetric comparison as its
-underlying algebra map. Thus the forward map is independent of the basis choice.
+This gives Sym_R(L) ≃ₐ[R] gr(U_R(L)). Its forward algebra map is the canonical
+generator-symbol comparison, so the entire equivalence is independent of the ordered basis and
+its index universe. In particular, that canonical comparison is bijective whenever L is free
+over R.
 -/
 
 @[expose] public section
@@ -38,8 +41,10 @@ variable {R : Type u} [CommRing R]
 
 namespace PBW
 
-/-- The constructed basis wrapper has the linear quotient direct-sum structure, by its addition
-and scalar characteristic laws. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. The
+equivalence from PBW.AssociatedGraded(b) to GradedModule R L is R-linear: it preserves both
+addition and scalar multiplication. Its forward map takes the finite-support quotient-layer
+coordinates, and its inverse returns the associated graded element with those coordinates. -/
 def associatedGradedRawLinearEquiv (b : Module.Basis I R L) :
     PBW.AssociatedGraded b ≃ₗ[R] GradedModule R L where
   __ := associatedGradedRawEquiv b
@@ -48,8 +53,10 @@ def associatedGradedRawLinearEquiv (b : Module.Basis I R L) :
 
 end PBW
 
-/-- The intrinsic graded algebra and the old PBW wrapper have literally the same quotient
-direct-sum carrier. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. There
+is an R-linear equivalence gr(U_R(L)) ≃ₗ[R] PBW.AssociatedGraded(b). Both carriers consist of
+the same finite-support sum of degree quotient layers; the equivalence sends an intrinsic
+quotient-coordinate family to the PBW associated graded element with that family. -/
 def associatedGradedBasisLinearEquiv (b : Module.Basis I R L) :
     AssociatedGraded R L ≃ₗ[R] PBW.AssociatedGraded b :=
   (PBW.associatedGradedRawLinearEquiv b).symm
@@ -95,7 +102,10 @@ theorem associatedGradedBasisLinearEquiv_mul (b : Module.Basis I R L)
       rw [add_mul, map_add, hx z, hy z, map_add, add_mul]
   exact h x y
 
-/-- Equality of the two associated graded products, from their symbol multiplication laws. -/
+/-- For an ordered basis b : Basis I R L of an R-Lie algebra over a commutative ring R, the
+quotient-coordinate linear equivalence gr(U_R(L)) ≃ₗ[R] PBW.AssociatedGraded(b) preserves the
+unit and multiplication and hence is an R-algebra equivalence. The products agree because both
+send degree-n and degree-m symbols to the degree-(n+m) symbol of the enveloping product. -/
 def associatedGradedBasisEquiv (b : Module.Basis I R L) :
     AssociatedGraded R L ≃ₐ[R] PBW.AssociatedGraded b :=
   AlgEquiv.ofLinearEquiv (associatedGradedBasisLinearEquiv b)
@@ -107,7 +117,10 @@ theorem associatedGradedBasisEquiv_symbol (b : Module.Basis I R L) (n : ℕ)
     associatedGradedBasisEquiv b (associatedGradedSymbol R L n u) = PBW.symbol b n u :=
   associatedGradedBasisLinearEquiv_symbol b n u
 
-/-- The free PBW isomorphism on the intrinsic quotient algebra. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L with LinearOrder I. The
+symmetric PBW coordinate equivalence followed by the inverse intrinsic-to-PBW graded
+comparison gives Sym_R(L) ≃ₐ[R] gr(U_R(L)). Its forward map sends the symmetric generator x to
+the degree-one symbol of ι(x). -/
 def symmetricPBWEquivOfBasis (b : Module.Basis I R L) :
     SymmetricAlgebra R L ≃ₐ[R] AssociatedGraded R L :=
   (PBW.symmetricPBWEquiv b).trans (associatedGradedBasisEquiv b).symm
@@ -125,7 +138,10 @@ theorem symmetricPBWEquivOfBasis_ι (b : Module.Basis I R L) (x : L) :
     PBW.generatorSymbol_apply, associatedGradedGeneratorSymbol_apply,
     associatedGradedBasisEquiv_symbol]
 
-/-- The free PBW isomorphism is exactly the canonical symmetric lift. -/
+/-- For an ordered basis b : Basis I R L over a commutative ring R, the underlying R-algebra
+homomorphism of symmetricPBWEquivOfBasis(b) equals symmetricComparison R L. Both maps have
+domain Sym_R(L) and codomain the intrinsic gr(U_R(L)), and send each symmetric generator x to
+symbol_1(ι(x)). -/
 theorem symmetricPBWEquivOfBasis_toAlgHom (b : Module.Basis I R L) :
     (symmetricPBWEquivOfBasis b).toAlgHom = symmetricComparison R L := by
   apply SymmetricAlgebra.algHom_ext
@@ -133,8 +149,11 @@ theorem symmetricPBWEquivOfBasis_toAlgHom (b : Module.Basis I R L) :
   intro x
   exact (symmetricPBWEquivOfBasis_ι b x).trans (symmetricComparison_ι R L x).symm
 
-/-- The isomorphism on the intrinsic graded carrier is independent of the chosen basis and of its
-ordered index type. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and b : Basis I R L and c : Basis J R L two
+bases, with LinearOrder I and LinearOrder J. Then the R-algebra equivalences Sym_R(L) ≃ₐ[R]
+gr(U_R(L)) constructed from b and c are equal. The basis index types may lie in independent
+universes. Equality holds for the entire equivalences because their forward maps are the same
+canonical generator-symbol comparison. -/
 theorem symmetricPBWEquivOfBasis_eq {J : Type w'} [LinearOrder J]
     (b : Module.Basis I R L) (c : Module.Basis J R L) :
     symmetricPBWEquivOfBasis b = symmetricPBWEquivOfBasis c := by
@@ -145,8 +164,11 @@ theorem symmetricPBWEquivOfBasis_eq {J : Type w'} [LinearOrder J]
 
 variable (R L)
 
-/-- PBW for a free underlying module now concerns the intrinsic associated graded algebra and its
-canonical comparison. -/
+/-- Let R be a commutative ring and L an R-Lie algebra whose underlying R-module is free. The
+canonical R-algebra map Sym_R(L) → gr(U_R(L)), taking a symmetric generator x to the
+degree-one symbol of ι(x), is bijective. The assertion concerns the intrinsic
+degree-filtration associated graded algebra and requires neither a specified ordered basis nor
+a finite-rank or characteristic hypothesis. -/
 theorem symmetricComparison_bijective_of_free [Module.Free R L] :
     Function.Bijective (symmetricComparison R L) := by
   classical

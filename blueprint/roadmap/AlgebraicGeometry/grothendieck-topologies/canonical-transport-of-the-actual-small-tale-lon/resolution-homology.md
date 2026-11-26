@@ -1,3 +1,6 @@
-# Resolution Homology
+# Cohomology of sections of an injective resolution
 
-Literal Gamma-resolution homology, without a new quotient or homology construction.
+Cohomology of sections of an injective resolution.
+
+For an injective resolution of `Q`, apply global sections termwise and take cohomology in
+natural degree `q`.

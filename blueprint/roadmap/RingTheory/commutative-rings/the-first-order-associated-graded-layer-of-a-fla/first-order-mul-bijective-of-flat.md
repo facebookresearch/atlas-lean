@@ -1,4 +1,4 @@
-# First Order Mul bijective of flat
+# Flatness makes first-order multiplication bijective
 
-The canonical first-order multiplication map is bijective for a flat
-module.
+For an ideal `I` in a commutative ring `R` and a flat `R`-module `M`, `firstOrderMul I M :
+(M/IM) ⊗[R/I] (I/I²) → IM/I²M` is bijective.

@@ -1,3 +1,5 @@
-# Right Adjoint Coordinates conjugate
+# The coordinates intertwine the transported and exterior right actions
 
-Coordinates intertwine the transported action and the exterior action.
+Let R be a commutative ring, L and S R-Lie algebras, ι : S →ₗ⁅R⁆ L, n : ℕ and e : M ≃ₗ[R]
+⋀[R]^n L coordinates on an R-module M. For s : S and m : M, e(rightAdjointCoordinates(s)(m)) =
+rightDegreeAdjointAction_L(n,s)(e(m)).

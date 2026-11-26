@@ -14,11 +14,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyFiltrationFunctor
 
 /-!
-# The finite total-homology filtered-object functor
+# Filtered total homology of a first-quadrant bicomplex
 
-The finite image filtration on total homology is functorial in the
-first-quadrant bicomplex.  This file packages its underlying total-homology
-map and its stagewise image maps as morphisms of filtered objects.
+Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). Its total complex T
+has horizontal stages G_i for i ∈ ℕ, retaining columns with horizontal index at most i. For n
+∈ ℕ, the images F_iH_n(T) = im(H_n(G_i) → H_n(T)) form an increasing filtration that is
+exhaustive by stage n.
+
+The assignment K ↦ (H_n(T),F_•H_n(T)) is a functor to filtered objects of C indexed by ℕ. A
+bicomplex map f induces H_n(Tot(f)) on the underlying object and the corresponding image map
+on each filtration stage. Object and morphism universes of C are independent.
 -/
 
 @[expose] public section
@@ -35,8 +40,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- Total homology with its finite image filtration, functorial in the
-first-quadrant bicomplex. -/
+/-- Let C be an abelian category and n ∈ ℕ. For a bicomplex K of shape (down ℕ,down ℕ), let T =
+Tot(K) and G_i its horizontal subcomplex retaining columns at most i. The object H_n(T), with
+stages F_i = im(H_n(G_i) → H_n(T)), defines an ℕ-indexed filtered object of C. This assignment
+is functorial in K: a bicomplex map f acts by H_n(Tot(f)) on the underlying homology and by
+the induced image map F_i(K) → F_i(L) on each stage. Those stage maps commute with inclusions
+into total homology. The filtration is exhaustive for i ≥ n. -/
 noncomputable def horizontalFiniteTotalHomologyFilteredObjectFunctor
     (n : ℕ) :
     HomologicalComplex₂ C (ComplexShape.down ℕ)

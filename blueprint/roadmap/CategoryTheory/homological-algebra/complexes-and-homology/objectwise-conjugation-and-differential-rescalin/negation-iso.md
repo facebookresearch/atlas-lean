@@ -1,3 +1,4 @@
-# Negation Iso
+# Alternating-degree isomorphism to the negated chain complex
 
-The constructed `(-1)^n` isomorphism from the original chain differential to its negation.
+Let `C` be preadditive and `K` a nonnegative chain complex. The maps `(-1)^n • id_(K_n)` give a chain isomorphism
+`K ≅ negateDifferentials(K)`.

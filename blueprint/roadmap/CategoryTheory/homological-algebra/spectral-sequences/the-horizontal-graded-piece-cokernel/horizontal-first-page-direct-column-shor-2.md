@@ -1,4 +1,6 @@
-# Horizontal First Page Direct Column Short Exact
+# Short exactness of all complete filtration column sequences
 
-Every horizontal filtration quotient is the corresponding direct
-shifted column.
+Short exactness of all complete filtration column sequences.
+
+For every `p ≥ 0`, the consecutive-stage map and direct-column projection form a short exact
+sequence.

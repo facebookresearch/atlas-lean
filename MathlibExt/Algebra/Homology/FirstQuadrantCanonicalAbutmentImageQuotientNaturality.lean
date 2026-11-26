@@ -16,16 +16,18 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantCanonicalAbutmentCurrentImageNaturality
 
 /-!
-# Naturality of the canonical-abutment nested-image quotient
+# Naturality of the canonical abutment nested-image quotient
 
-A bicomplex map induces a canonical map between the nested-image quotient
-presentations of the canonical abutment.  The comparison from the canonical
-fixed `E` object to that quotient is natural: first transport through the
-inverse canonical cokernel comparison, then use generic naturality of the
-biproduct-to-image-quotient comparison.
+For a first-quadrant bicomplex K in an abelian category and p,q∈ℕ, set m=p+q, ℓ=(p:ℤ)−1 and
+u=m+1. Let a_K:H^{-m}_K(⊥,ℓ)→H^{-m}_K(⊥,p) and b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u) be the relative
+cochain homology maps of the complete horizontal filtration. Their nested-image quotient is
+Q_K=coker(image(a_K≫b_K)→image b_K).
 
-This file does not construct the graded cokernel bridge or the final graded
-naturality theorem.
+A bicomplex morphism f:K→L induces compatible maps on the three relative homology objects and
+therefore on Q_K. The quotient map commutes with the projection from image b_K. The canonical
+abutment term E_K at cuts ⊥≤ℓ≤p≤u and degree -m is isomorphic to Q_K, and this isomorphism
+commutes with the spectral E-map and the quotient map. The construction uses the exact
+connecting sequence with incoming arrow δ:H^{-m-1}_K(p,u)→H^{-m}_K(⊥,p).
 -/
 
 @[expose] public section
@@ -45,8 +47,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- Map between the canonical-abutment nested-image quotients induced by a
-bicomplex morphism. -/
+/-- Let C be an abelian category, f:K→L a morphism of bicomplexes of shape (down ℕ,down ℕ), and
+p,q∈ℕ. Set m=p+q, ℓ=(p:ℤ)−1 and u=m+1. For relative cochain homology of the complete horizontal
+filtration, write a_K:H^{-m}_K(⊥,ℓ)→H^{-m}_K(⊥,p), b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u), and
+Q_K=coker(image(a_K≫b_K)→image b_K). The spectral morphism of f gives maps α,β,τ on these three
+homology objects with a_K≫β=α≫a_L and b_K≫τ=β≫b_L. They induce this quotient morphism Q_K→Q_L. -/
 noncomputable def horizontalCanonicalAbutmentImageQuotientMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     horizontalCanonicalAbutmentImageQuotient K p q ⟶
@@ -74,8 +79,10 @@ noncomputable def horizontalCanonicalAbutmentImageQuotientMapOfBicomplex
     (horizontalCanonicalAbutmentToUpperHomologyMap L p q)
     α β τ ha hb
 
-/-- The canonical nested-image quotient map computes on the cokernel
-projection, with right leg the landed current-image map. -/
+/-- For a morphism f:K→L of first-quadrant bicomplexes in an abelian category and p,q∈ℕ, put m=p+q,
+ℓ=(p:ℤ)−1 and u=m+1. Let a:H^{-m}(⊥,ℓ)→H^{-m}(⊥,p), b:H^{-m}(⊥,p)→H^{-m}(⊥,u), and
+Q=coker(image(a≫b)→image b). If Q_f:Q_K→Q_L is the induced quotient map, I_f:image b_K→image b_L
+the current image map, and π_K,π_L the cokernel projections, then π_K≫Q_f=I_f≫π_L. -/
 @[reassoc]
 theorem horizontalCanonicalAbutmentImageQuotientMapOfBicomplex_π
     (f : K ⟶ L) (p q : ℕ) :
@@ -93,8 +100,12 @@ theorem horizontalCanonicalAbutmentImageQuotientMapOfBicomplex_π
     CategoryTheory.cokernel_π_imageQuotientMap]
   congr 2
 
-/-- The comparison from the canonical fixed `E` object to the nested-image
-quotient is natural under bicomplex morphisms. -/
+/-- Let f:K→L be a first-quadrant bicomplex morphism in an abelian category and p,q∈ℕ. Put m=p+q,
+ℓ=(p:ℤ)−1 and u=m+1. Let E_K be the canonical spectral abutment term at cuts ⊥≤ℓ≤p≤u and degree
+-m. For a_K:H^{-m}_K(⊥,ℓ)→H^{-m}_K(⊥,p) and b_K:H^{-m}_K(⊥,p)→H^{-m}_K(⊥,u), set
+Q_K=coker(image(a_K≫b_K)→image b_K). The canonical isomorphism e_K:E_K≅Q_K is natural:
+E_f≫e_L.hom=e_K.hom≫Q_f, where E_f is the spectral E-map and Q_f the induced nested-image
+quotient map. -/
 theorem horizontalCanonicalAbutmentImageQuotientIso_naturality
     (f : K ⟶ L) (p q : ℕ) :
     horizontalCanonicalAbutmentMapOfBicomplex f p q ≫

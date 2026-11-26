@@ -1,3 +1,6 @@
-# Ι projector Kernel Retraction
+# Identity on the kernel of an idempotent
 
-The splitting earns the split identity.
+In a preadditive category `C`, let `p : X → X` be idempotent
+and suppose its kernel exists. The kernel inclusion
+followed by the complementary retraction is the identity of
+`kernel p`, so these two maps give a split pair.

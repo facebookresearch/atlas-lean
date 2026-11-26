@@ -1,4 +1,6 @@
-# Canonical Ground Andre Quillen Homology Iso
+# The ground-scalar André–Quillen coefficient homology comparison
 
-Native short-complex homology preservation identifies ground-restricted AQ with
-homology of the ground-restricted coefficient complex.
+The ground-scalar André–Quillen coefficient homology comparison.
+
+Homology of the ground-restricted complex `M ⊗[B] L_{B/k}` is isomorphic to restriction of the
+André–Quillen homology `D_n(B/k;M)` along `k → B`.

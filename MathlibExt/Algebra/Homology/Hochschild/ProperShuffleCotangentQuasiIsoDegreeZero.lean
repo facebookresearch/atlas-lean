@@ -16,10 +16,15 @@ public import Mathlib.Algebra.Homology.QuasiIso
 /-!
 # Degree-zero proper-shuffle cotangent comparison
 
-The coefficient cotangent cokernel comparison identifies
-the degree-zero homology map of the proper-shuffle
-augmentation. The augmentation is a quasi-isomorphism
-in degree zero without rationality or flatness assumptions.
+For a commutative ring k, a commutative k-algebra A and a compatible symmetric coefficient
+module M, the proper-shuffle cotangent chain map Ccot → (M ⊗_AΩ¹_{A/k})[0] has the scalar
+cotangent augmentation as its degree-zero component. After identifying the degree-zero homology
+of the single-object target with that target module, its homology map equals the induced
+Leibniz-cokernel comparison.
+
+The cokernel comparison is an isomorphism, so the chain map is a quasi-isomorphism in degree
+zero. This degree-zero result needs neither a rationality nor a coefficient-flatness hypothesis;
+it does not assert vanishing of higher cotangent homology for a general algebra.
 -/
 
 @[expose] public section
@@ -36,14 +41,23 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [IsScalarTower k A M] [SMulCommClass k A M]
 
-/-- The original chain augmentation has the scalar augmentation as its component zero. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let Ccot be the proper quotient restricted along n ↦ n+1 and T the
+canonically lifted coefficient cotangent module M ⊗_AΩ¹_{A/k}. The degree-zero component of
+properShuffleCotangentMap k A M : Ccot → T[0] equals properCotangentScalarAugmentation k A M :
+Ccot₀ → T. -/
 theorem properShuffleCotangentMap_f_zero :
     (properShuffleCotangentMap k A M).f 0 = properCotangentScalarAugmentation k A M := by
   rw [properShuffleCotangentMap_eq, HomologicalComplex.comp_f,
     properCotangentAugmentation_f_zero, ChainComplex.single₀_map_f_zero]
   rfl
 
-/-- Native degree-zero homology of the original chain augmentation is the same coefficient cotangent map. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let Ccot be the proper quotient restricted along n ↦ n+1 and T the
+canonically lifted coefficient cotangent module M ⊗_AΩ¹_{A/k}. Let q : Ccot → T[0] be
+properShuffleCotangentMap and e : H₀(T[0]) ≅ T the single-object homology isomorphism. Then
+H₀(q) ≫ e.hom = properCotangentHomologyZeroMap k A M, the map induced by the scalar augmentation
+through the incoming-boundary cokernel. -/
 @[reassoc]
 theorem properShuffleCotangentMap_homology_zero :
     HomologicalComplex.homologyMap (properShuffleCotangentMap k A M) 0 ≫
@@ -59,7 +73,11 @@ theorem properShuffleCotangentMap_homology_zero :
   exact (ChainComplex.homologyZeroClass_toSingle (properShuffleCotangentMap k A M)).trans
     ((properShuffleCotangentMap_f_zero k A M).trans (properCotangentHomologyZeroMap_class k A M).symm)
 
-/-- The arbitrary-coefficient H0 isomorphism gives degree-zero quasi-isomorphism of the chain map. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. Let Ccot be the proper quotient restricted along n ↦ n+1 and T the
+canonically lifted coefficient cotangent module M ⊗_AΩ¹_{A/k}. The map properShuffleCotangentMap
+k A M : Ccot → T[0] induces an isomorphism on degree-zero homology. Under H₀(T[0]) ≅ T, its
+homology map is the coefficient cotangent cokernel isomorphism H₀(Ccot) ≅ T. -/
 instance properShuffleCotangentMap_quasiIsoAt_zero :
     _root_.QuasiIsoAt (properShuffleCotangentMap k A M) 0 := by
   apply (_root_.quasiIsoAt_iff_isIso_homologyMap _ _).mpr

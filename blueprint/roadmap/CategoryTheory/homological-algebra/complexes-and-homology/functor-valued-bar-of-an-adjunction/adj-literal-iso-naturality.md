@@ -1,4 +1,5 @@
-# Adj Literal Iso naturality
+# The two forgotten adjunction-bar descriptions are naturally isomorphic
 
-Naturality of the honest comparison: literal maps correspond to surrogate
-maps under the iso.
+Let T be a monad on C and φ : alg → alg′ an algebra morphism. The augmented comparison
+e=adjLiteralIso satisfies adjLiteralHom(φ) ≫ e_alg′.hom = e_alg.hom ≫ adjEvaluatedHom(φ). Thus
+the comparison respects the maps induced by every algebra morphism.

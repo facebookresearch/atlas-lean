@@ -1,3 +1,6 @@
-# Small Etale Base Change Terminal Iso id
+# Terminal base change comparison agrees with identity base change
 
-Terminal uniqueness binds the terminal comparison to the same base-change identity.
+Terminal base change comparison agrees with identity base change.
+
+For the identity scheme map, the terminal comparison is the base-change identity isomorphism
+evaluated on the terminal étale object.

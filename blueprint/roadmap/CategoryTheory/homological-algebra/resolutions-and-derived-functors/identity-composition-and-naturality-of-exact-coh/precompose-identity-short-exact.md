@@ -1,3 +1,5 @@
-# Precompose Identity Short Exact
+# Exactness under the identity coefficient functor
 
-The identity input preserves the same literal short exact sequence.
+In a preadditive category `A`, applying the identity functor to a
+short exact short complex `S` gives the same short exact sequence.
+This supplies exactness of identity precomposition.

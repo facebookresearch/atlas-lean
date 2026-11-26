@@ -12,14 +12,18 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Basic
 
 /-!
-# Maps of the nonunital coefficient Hochschild complex
+# Algebra and coefficient maps of nonunital Hochschild complexes
 
-The degree maps are the native tensor maps. Compatibility with the left and right representations proves every face square, and semisimplicial injection generation supplies full naturality. The chain map is
-the map of the alternating complex. No unit-preserving map is used.
+Let A and B be nonunital k-algebra rings and M and N coefficient modules with commuting left
+and right nonunital actions. A multiplicative k-linear map g : A → B and a k-linear f : M → N
+which intertwines both actions define degree maps f ⊗ g^⊗n.
 
-The native categorical maps use a common algebra universe and a common
-coefficient universe; these remain independent of each other and of the ground
-ring. No equality of algebra and coefficient carrier universes is imposed.
+These maps commute with every coefficient Hochschild face and define a morphism of the
+semisimplicial bar objects, hence a chain map of their alternating-face complexes. On a pure
+tensor, m ⊗ a₁ ⊗ … ⊗ a_n maps to f(m) ⊗ g(a₁) ⊗ … ⊗ g(a_n).
+
+The categorical maps use one carrier universe for A and B and another for M and N; both are
+independent of the ground ring's universe.
 -/
 
 @[expose] public section
@@ -46,7 +50,9 @@ variable {k : Type u} [CommRing k]
   (hl : ∀ a m, f (lA a m) = lB (g a) (f m))
   (hr : ∀ a m, f (rA (MulOpposite.op a) m) = rB (MulOpposite.op (g a)) (f m))
 
-/-- The native tensor map induced by the coefficient map and the nonunital algebra map. -/
+/-- Let k be commutative, A and B nonunital k-algebra rings, M and N k-modules, g : A →ₙₐ[k] B and
+f : M →ₗ[k] N. For n : ℕ, degreeMap g f n : M ⊗[k] TensorPower k n A →ₗ[k] N ⊗[k] TensorPower
+k n B is TensorProduct.map f (PiTensorProduct.map (fun _ => g)). -/
 def degreeMap (n : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[k] N ⊗[k] TensorPower k n B :=
   TensorProduct.map f (PiTensorProduct.map (fun _ : Fin n => (g : A →ₗ[k] B)))
@@ -79,23 +85,43 @@ theorem degreeMap_face (n : ℕ) (i : Fin (n + 2)) :
     simp only [ModuleCat.Algebra.Hochschild.hochschildMulAdjacent]
     split_ifs <;> simp only [map_mul]
 
-/-- A morphism of the semisimplicial bars, from the two action squares. -/
+/-- Let k be a commutative ring, A and B nonunital k-algebra rings with k-bilinear multiplication,
+and M and N k-modules. Equip M with commuting nonunital actions l_A : A →ₙₐ[k] End_k M and r_A
+: Aᵐᵒᵖ →ₙₐ[k] End_k M, and N with commuting actions l_B and r_B. Let g : A →ₙₐ[k] B and f : M
+→ₗ[k] N satisfy f(l_A(a)m) = l_B(g(a))f(m) and f(r_A(op a)m) = r_B(op(g(a)))f(m). The degree
+maps f ⊗ g^⊗n define barMap from bar(l_A,r_A) to bar(l_B,r_B). Its naturality follows from
+commutation with the first right-action face, every inner multiplication face and the last
+left-action face. -/
 def barMap : bar lA rA hA ⟶ bar lB rB hB :=
   SemiSimplicialObject.homMk (fun n => ModuleCat.ofHom (degreeMap g f n))
     (fun n i => degreeMap_face lA rA hA lB rB hB g f hl hr n i)
 
-/-- The chain map induced by the native alternating-face functor. -/
+/-- Let k be a commutative ring, A and B nonunital k-algebra rings with k-bilinear multiplication,
+and M and N k-modules. Equip M with commuting nonunital actions l_A : A →ₙₐ[k] End_k M and r_A
+: Aᵐᵒᵖ →ₙₐ[k] End_k M, and N with commuting actions l_B and r_B. Let g : A →ₙₐ[k] B and f : M
+→ₗ[k] N satisfy f(l_A(a)m) = l_B(g(a))f(m) and f(r_A(op a)m) = r_B(op(g(a)))f(m). Applying the
+semisimplicial alternating-face functor to barMap defines complexMap between the two nonunital
+coefficient Hochschild complexes. Its degree-n map is f ⊗ g^⊗n. -/
 def complexMap : complex lA rA hA ⟶ complex lB rB hB :=
   (AlgebraicTopology.semiSimplicialAlternatingFaceMapComplex _).map
     (barMap lA rA hA lB rB hB g f hl hr)
 
-/-- Its components are the tensor maps, with no coordinate choice. -/
+/-- Let k be a commutative ring, A and B nonunital k-algebra rings with k-bilinear multiplication,
+and M and N k-modules. Equip M with commuting nonunital actions l_A : A →ₙₐ[k] End_k M and r_A
+: Aᵐᵒᵖ →ₙₐ[k] End_k M, and N with commuting actions l_B and r_B. Let g : A →ₙₐ[k] B and f : M
+→ₗ[k] N satisfy f(l_A(a)m) = l_B(g(a))f(m) and f(r_A(op a)m) = r_B(op(g(a)))f(m). For n : ℕ,
+complexMap.f n = ModuleCat.ofHom (TensorProduct.map f (PiTensorProduct.map (fun _ : Fin n =>
+g))). -/
 theorem complexMap_f (n : ℕ) :
     (complexMap lA rA hA lB rB hB g f hl hr).f n =
       ModuleCat.ofHom (TensorProduct.map f
         (PiTensorProduct.map (fun _ : Fin n => (g : A →ₗ[k] B)))) := rfl
 
-/-- The map retains the literal coefficient/algebra generator values. -/
+/-- Let k be a commutative ring, A and B nonunital k-algebra rings with k-bilinear multiplication,
+and M and N k-modules. Equip M with commuting nonunital actions l_A : A →ₙₐ[k] End_k M and r_A
+: Aᵐᵒᵖ →ₙₐ[k] End_k M, and N with commuting actions l_B and r_B. Let g : A →ₙₐ[k] B and f : M
+→ₗ[k] N satisfy f(l_A(a)m) = l_B(g(a))f(m) and f(r_A(op a)m) = r_B(op(g(a)))f(m). For n : ℕ, m
+: M and a : Fin n → A, complexMap.f n sends m ⊗ₜ[k] tprod a to f(m) ⊗ₜ[k] tprod(i ↦ g(a_i)). -/
 theorem complexMap_f_tprod (n : ℕ) (m : M) (a : Fin n → A) :
     ((complexMap lA rA hA lB rB hB g f hl hr).f n).hom
       (m ⊗ₜ[k] PiTensorProduct.tprod k a) =

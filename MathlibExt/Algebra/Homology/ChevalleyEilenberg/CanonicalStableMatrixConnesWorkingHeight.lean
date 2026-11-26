@@ -14,14 +14,25 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.MatrixCyclicWorking
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.ConnesComparisonWorkingHeightNaturality
 
 /-!
-# Stable matrix trace chain maps under universe lifting
+# The signed stable matrix trace into the Connes quotient
 
-For a unital algebra over a commutative rational algebra, the cyclic trace chain map on the
-positive tail of the stable matrix Chevalley–Eilenberg complex is determined by its finite
-matrix stages.
+Let k be a commutative ℚ-algebra and A an associative unital k-algebra.
+The positive tail of C = C_*(Mat_∞(A)) has degree-n term C_(n+1)
+and its inherited CE differential. The finite matrix trace maps give
+a chain map W : positiveTail(C) → Cλ(A), where Cλ is the quotient
+by the signed cyclic relation 1−t.
 
-Universe lifting preserves these trace maps. Their naturality under algebra homomorphisms
-holds for coefficient algebras in independent carrier universes.
+On a wedge X₀∧⋯∧X_n represented at a finite matrix stage, W_n is
+(−1)^n times the generalized trace of the tail antisymmetrization:
+∑_(σ∈S_n) sign(σ) [X₀ ⊗ X_(σ(0)+1) ⊗ ⋯ ⊗ X_(σ(n−1)+1)].
+The generalized trace sums entries around all closed matrix-index
+cycles. Equivalently, this is full antisymmetrization normalized
+by 1/(n+1), together with the degree sign (−1)^n.
+
+At H = max(u,v,z), lifting the CE terms and the Connes cokernel
+gives W^H with the same finite-stage values. For a unital algebra
+map f : A → B in an independent world w, put H = max(u,v,w,z).
+Then Cλ^H(f) ∘ W_A^H = W_B^H ∘ positiveTail(C^H(f)).
 -/
 
 @[expose] public section
@@ -39,15 +50,23 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (A : Type v) [Ring A] [Algebra k A]
 
-/-- The cyclic trace chain map from the positive tail of the stable matrix Chevalley–Eilenberg
-complex to the Connes complex. -/
+/-- For a commutative ℚ-algebra k and an associative unital
+k-algebra A, the finite matrix trace gives
+W : positiveTail(C_*(Mat_∞(A))) → Cλ(A).
+In degree n, its value is (−1)^n times the trace of the
+coefficient-fixed tail antisymmetrization on a finite-stage wedge,
+equivalently full antisymmetrization divided by n+1. -/
 def canonicalStableMatrixCyclicWeibelChainMap :
     ChainComplex.positiveTail (canonicalStableMatrixCEComplex k A) ⟶
       ModuleCat.Algebra.Hochschild.NonUnital.connesComplex k A :=
   ChainComplex.positiveTailMap (canonicalStableMatrixCEIso k A).inv ≫
     stableMatrixCyclicWeibelChainMap k A
 
-/-- The stable cyclic trace chain map restricts to the trace map on each finite matrix stage. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A and m ≥ 0, the stable chain trace satisfies
+W ∘ positiveTail(C_*(i_m)) = W_m.
+Here W_m is the signed trace on the finite matrix CE positive tail,
+and both sides have target Cλ(A). -/
 @[reassoc]
 theorem canonicalStableMatrixCyclicWeibelChainMap_finite (m : ℕ) :
     ChainComplex.positiveTailMap (canonicalStableMatrixCEInclusion k A m) ≫
@@ -71,7 +90,11 @@ theorem canonicalStableMatrixCyclicWeibelChainMap_finite (m : ℕ) :
     ((congrArg (fun f => f ≫ stableMatrixCyclicWeibelChainMap k A) ht).trans
       (stableMatrixCyclicWeibelChainMap_ι k A m))
 
-/-- The universe-lifted cyclic trace chain map on the positive tail of the stable matrix complex. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A and H = max(u,v,z), termwise CE lifting and the
+Connes cokernel comparison give the chain map
+W^H : positiveTail(C_*^H(Mat_∞(A))) → Cλ^H(A).
+Its components retain the normalization 1/(n+1) and sign (−1)^n. -/
 def canonicalStableMatrixCyclicWeibelChainMapAtHeight :
     ChainComplex.positiveTail (canonicalStableMatrixCEComplexAtHeight.{u,v,z} k A) ⟶
       ModuleCat.Algebra.Hochschild.NonUnital.connesComplexAtHeight.{u,v,z} k A :=
@@ -81,7 +104,11 @@ def canonicalStableMatrixCyclicWeibelChainMapAtHeight :
         (ComplexShape.down ℕ)).map (canonicalStableMatrixCyclicWeibelChainMap k A) ≫
           (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexLiftIsoAtHeight.{u,v,z} k A).hom
 
-/-- Every finite trace is retained on the full-height canonical stable CE model. -/
+/-- For a commutative ℚ-algebra k, an associative unital
+k-algebra A, H = max(u,v,z) and m ≥ 0, the chosen-height maps
+satisfy W^H ∘ positiveTail(C_*^H(i_m)) = W_m^H.
+The target is the Connes quotient at height H, and the equality
+holds in every degree of the positive-tail complexes. -/
 @[reassoc]
 theorem canonicalStableMatrixCyclicWeibelChainMapAtHeight_finite (m : ℕ) :
     ChainComplex.positiveTailMap (canonicalStableMatrixCEInclusionAtHeight.{u,v,z} k A m) ≫
@@ -118,7 +145,12 @@ theorem canonicalStableMatrixCyclicWeibelChainMapAtHeight_finite (m : ℕ) :
 
 variable {B : Type w} [Ring B] [Algebra k B]
 
-/-- The canonical stable trace chain map preserves independent-universe coefficient maps. -/
+/-- For a commutative ℚ-algebra k, a unital algebra map
+f : A → B and H = max(u,v,w,z), the lifted stable trace maps
+satisfy Cλ^H(f) ∘ W_A^H = W_B^H ∘ positiveTail(C^H(f)).
+The source is the lifted stable CE positive tail for A and the
+target is the lifted Connes complex for B, with independent
+algebra carrier worlds. -/
 private theorem canonicalStableMatrixCyclicWeibelChainMapAtHeight_naturality_proof (f : A →ₐ[k] B) :
     ChainComplex.positiveTailMap (canonicalStableMatrixCoefficientCEMapAtHeight.{u,v,w,z} k A f) ≫
         canonicalStableMatrixCyclicWeibelChainMapAtHeight.{u,w,max u v w z} k B =
@@ -178,7 +210,12 @@ private theorem canonicalStableMatrixCyclicWeibelChainMapAtHeight_naturality_pro
             ((congrArg (fun f => f ≫ q) hA.symm).trans (Category.assoc _ _ _))))))
 
 
-/-- The canonical stable trace chain map preserves independent-universe coefficient maps. -/
+/-- For a commutative ℚ-algebra k, a unital algebra map
+f : A → B and H = max(u,v,w,z), the signed stable trace satisfies
+Cλ^H(f) ∘ W_A^H = W_B^H ∘ positiveTail(C^H(f)).
+This square goes from the chosen-height stable CE positive tail
+for A to Cλ^H(B), retaining both independent algebra worlds
+and the additional height z. -/
 @[reassoc]
 theorem canonicalStableMatrixCyclicWeibelChainMapAtHeight_naturality (f : A →ₐ[k] B) :
     ChainComplex.positiveTailMap (canonicalStableMatrixCoefficientCEMapAtHeight.{u,v,w,z} k A f) ≫

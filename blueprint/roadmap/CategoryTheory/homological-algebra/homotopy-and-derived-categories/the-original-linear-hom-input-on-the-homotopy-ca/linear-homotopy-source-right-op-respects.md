@@ -1,4 +1,6 @@
-# Linear Homotopy Source Right Op respects
+# Source Hom functor respects homotopy with its opposite variance
 
-The right opposite of the original source functor respects the native
-homotopy relation, before the source variable is quotiented.
+Source Hom functor respects homotopy with its opposite variance.
+
+Two homotopic source cochain maps have equal images under the opposite-variance form of the
+source Hom functor. This gives the source quotient compatibility.

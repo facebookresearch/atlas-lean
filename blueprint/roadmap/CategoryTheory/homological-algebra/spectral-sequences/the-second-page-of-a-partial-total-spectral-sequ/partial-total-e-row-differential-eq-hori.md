@@ -1,4 +1,6 @@
-# Partial Total E₁Row Differential eq horizontal Row Homology
+# First-page differential equals horizontal row homology
 
-The actual first-page row differential is the signed horizontal homology
-map.
+First-page differential equals horizontal row homology.
+
+For natural `m` and `q`, `B.partialTotalE₁RowDifferential m q` equals the homology map induced
+by the horizontal degree-one cocycle between the extended signed rows `m + 1` and `m`.

@@ -1,3 +1,6 @@
-# Rational Permutation Action head Fixing cons
+# The head-fixed action in first-factor tensor coordinates
 
-The actual head-fixed rational group-ring action is the original tensor extension of its tail action.
+The head-fixed action in first-factor tensor coordinates.
+
+For a commutative ℚ-algebra k, a k-module V and x ∈ ℚ[Sₙ], the action of h(x) on V⊗(n+1)
+corresponds, under consEquiv : V ⊗ V⊗n ≃ V⊗(n+1), to id_V ⊗ ρₙ(x).

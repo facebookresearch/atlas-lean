@@ -1,5 +1,6 @@
-# Horizontal Direct Column Vertical Cycles Iso
+# The sign-normalized comparison of direct and vertical column cycles
 
-Normalized isomorphism from direct-column cycles to cycles in the
-original vertical column.  The leading scalar cancels the scalar used by the
-untwisting map on the underlying object.
+The sign-normalized comparison of direct and vertical column cycles.
+
+Multiply the untwisting cycle comparison by `(-1)^(p(-p-q))` and use extension to identify
+direct-column cycles with vertical cycles in degree `q`.

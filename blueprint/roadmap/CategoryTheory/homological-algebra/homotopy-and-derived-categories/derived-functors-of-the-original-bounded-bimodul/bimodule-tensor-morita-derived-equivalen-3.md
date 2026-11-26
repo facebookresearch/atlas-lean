@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Derived Equivalence inverse
+# Inverse functor of the bounded localized Morita equivalence
 
-Its entire inverse is the actual localized original bounded P tensor.
+Inverse functor of the bounded localized Morita equivalence.
+
+The equivalence's inverse functor is `bimoduleTensorMoritaDerivedInverseFunctor R S P Q a ha b
+hb`.

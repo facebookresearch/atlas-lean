@@ -14,14 +14,25 @@ public import MathlibExt.RingTheory.MvPolynomial.HomogeneousVariable
 public import Mathlib.LinearAlgebra.ExteriorPower.Basis
 
 /-!
-# Homogeneous boundaries in the arbitrary-variable polynomial Koszul complex
+# Homogeneous cycles and boundaries in the polynomial Koszul complex
 
-Coefficientwise homogeneous projection is transported through the actual
-exterior basis of the free polynomial coefficient module. The original
-Koszul differential raises polynomial coefficient degree by one. Projecting
-the already constructed arbitrary-variable boundary therefore gives an
-actual boundary in the required homogeneous degree. Degree-zero cycles are
-treated separately and vanish in positive exterior degree.
+Let R be a commutative ring, I a linearly ordered variable type and
+P = MvPolynomial I R. The exterior basis of
+K_n = ⋀_P^n(I →₀ P) is indexed by n-element subsets of I, enumerated
+in increasing order. A polynomial coefficient has its own homogeneous
+degree, distinct from the exterior degree n.
+
+The additive projection π_(n,d) takes the degree-d homogeneous component
+of each polynomial coefficient in this basis. The Koszul differential
+∂_n : K_(n+1) → K_n multiplies the ith deletion term by
+(−1)^i X_(s_i), so π_(n,d+1)∂_n = ∂_n π_(n+1,d) and
+π_(n,0)∂_n = 0.
+
+A cycle in positive exterior degree with homogeneous coefficient degree
+d+1 is the boundary of an element with homogeneous coefficient degree d.
+A cycle in positive exterior degree with homogeneous coefficient degree
+zero is zero. These statements hold over arbitrary R and arbitrary I,
+with independent coefficient-ring and variable universes.
 -/
 
 @[expose] public section
@@ -37,12 +48,18 @@ variable (R : Type u) [CommRing R] {I : Type v} [LinearOrder I]
 local notation "P" => MvPolynomial I R
 local notation "K" n => (⋀[P]^n (I →₀ P))
 
-/-- The original exterior basis of the free module on all polynomial variables. -/
+/-- For a commutative ring R and linearly ordered I, put
+P = MvPolynomial I R. The P-basis of ⋀_P^n(I →₀ P) is indexed by
+n-element subsets s of I; its vector is the wedge of the basis
+elements e_i = Finsupp.single i 1 for i ∈ s, in increasing order. -/
 def polynomialExteriorBasis (n : ℕ) : Module.Basis (Set.powersetCard I n) P (K n) :=
   (Finsupp.basisSingleOne (R := P) : Module.Basis I P (I →₀ P)).exteriorPower n
 
-/-- Project the actual polynomial coefficients of an exterior element to a
-fixed homogeneous degree. The map is additive; no polynomial-linearity is claimed. -/
+/-- For a commutative ring R and linearly ordered I, the
+additive map π_(n,d) on ⋀_P^n(I →₀ P) replaces every polynomial
+coefficient in the ordered exterior basis by its degree-d homogeneous
+component, with P = MvPolynomial I R.
+The polynomial coefficient degree is separate from exterior degree n. -/
 def polynomialHomogeneousPart (n d : ℕ) : (K n) →+ (K n) :=
   (polynomialExteriorBasis R n).repr.symm.toAddMonoidHom.comp
     ((Finsupp.mapRange.addMonoidHom
@@ -61,7 +78,11 @@ theorem polynomialHomogeneousPart_repr (n d : ℕ) (z : K n)
   rw [LinearEquiv.apply_symm_apply]
   rfl
 
-/-- Homogeneity of the literal polynomial coefficients in the exterior basis. -/
+/-- For a commutative ring R and linearly ordered I, an element
+z ∈ ⋀_P^n(I →₀ P) is polynomial-homogeneous of degree d if every
+coefficient in its ordered exterior basis is homogeneous of degree d
+in P = MvPolynomial I R. The zero polynomial is permitted as a
+coefficient. -/
 def IsPolynomialHomogeneous (n d : ℕ) (z : K n) : Prop :=
   ∀ s : Set.powersetCard I n, ((polynomialExteriorBasis R n).repr z s).IsHomogeneous d
 
@@ -120,8 +141,11 @@ theorem polynomialHomogeneousPart_neg_one_pow_smul (n d i : ℕ) (z : K n) :
       simp only [pow_succ, mul_smul, neg_one_smul]
       rw [ih, map_neg]
 
-/-- Polynomial coefficient multiplication by variables is the original
-Koszul differential on each scalar multiple of an exterior basis vector. -/
+/-- For a commutative ring R, linearly ordered I, an
+(n+1)-element subset s with increasing enumeration s₀,…,sₙ and
+p ∈ P = MvPolynomial I R, the Koszul differential sends
+p e_s to ∑_(i=0)^n (−1)^i p X_(s_i) e_(s ∖ {s_i}).
+Each remaining wedge is ordered increasingly. -/
 theorem polynomialDifferential_smul_basis (n : ℕ) (p : P)
     (s : Set.powersetCard I (n + 1)) :
     differential P (I →₀ P) (finsuppFunctional P MvPolynomial.X) n
@@ -143,8 +167,11 @@ theorem polynomialDifferential_smul_basis (n : ℕ) (p : P)
   rw [mul_left_comm p ((-1 : P) ^ i.val)]
   rfl
 
-/-- The actual variable Koszul differential raises polynomial coefficient
-degree by one and commutes with the corresponding homogeneous projections. -/
+/-- For a commutative ring R and linearly ordered I, let
+π_(n,d) project the polynomial coefficients in exterior degree n.
+Then π_(n,d+1)(∂_n z) = ∂_n(π_(n+1,d) z) for every
+z ∈ ⋀_P^(n+1)(I →₀ P), n,d ≥ 0. The differential multiplies
+a coefficient by one variable in each signed deletion term. -/
 theorem polynomialHomogeneousPart_differential (n d : ℕ) (z : K (n + 1)) :
     polynomialHomogeneousPart R n (d + 1)
         (differential P (I →₀ P) (finsuppFunctional P MvPolynomial.X) n z) =
@@ -177,8 +204,10 @@ theorem polynomialHomogeneousPart_differential (n d : ℕ) (z : K (n + 1)) :
   intro s hs
   exact hb s _
 
-/-- No degree-zero polynomial coefficients occur in the image of the actual
-variable Koszul differential. -/
+/-- For a commutative ring R and linearly ordered I, the
+degree-zero polynomial-coefficient projection of ∂_n z is zero
+for every z ∈ ⋀_P^(n+1)(I →₀ P), with P = MvPolynomial I R.
+This is an identity in exterior degree n. -/
 theorem polynomialHomogeneousPart_zero_differential (n : ℕ) (z : K (n + 1)) :
     polynomialHomogeneousPart R n 0
       (differential P (I →₀ P) (finsuppFunctional P MvPolynomial.X) n z) = 0 := by
@@ -202,8 +231,11 @@ theorem polynomialHomogeneousPart_zero_differential (n : ℕ) (z : K (n + 1)) :
   simp only [Finsupp.linearCombination_apply, Finsupp.sum, map_sum]
   exact Finset.sum_eq_zero (fun s hs => hb s _)
 
-/-- Every actual positive-exterior cycle of positive homogeneous coefficient
-degree has a constructed boundary in the immediately preceding coefficient degree. -/
+/-- For a commutative ring R and linearly ordered I, let
+z ∈ ⋀_P^(k+1)(I →₀ P) be a Koszul cycle whose exterior-basis
+coefficients are homogeneous of degree d+1. There exists
+w ∈ ⋀_P^(k+2)(I →₀ P) with homogeneous coefficient degree d
+and ∂_(k+1)(w) = z, for k,d ≥ 0 and arbitrary I. -/
 theorem polynomialVariables_homogeneous_exact_cycles (k d : ℕ) (z : K (k + 1))
     (hz : differential P (I →₀ P) (finsuppFunctional P MvPolynomial.X) k z = 0)
     (hhom : IsPolynomialHomogeneous R (k + 1) (d + 1) z) :
@@ -215,8 +247,10 @@ theorem polynomialVariables_homogeneous_exact_cycles (k d : ℕ) (z : K (k + 1))
   rw [← polynomialHomogeneousPart_differential R (k + 1) d w,
     hw, polynomialHomogeneousPart_eq_self R (k + 1) (d + 1) z hhom]
 
-/-- A degree-zero polynomial cycle in positive exterior degree is zero. This
-is the endpoint where a preceding negative coefficient degree has no terms. -/
+/-- For a commutative ring R and linearly ordered I, a Koszul
+cycle z ∈ ⋀_P^(k+1)(I →₀ P) whose exterior-basis coefficients
+are homogeneous of polynomial degree zero must satisfy z = 0.
+Here k ≥ 0, P = MvPolynomial I R and I is arbitrary. -/
 theorem polynomialVariables_homogeneous_zero_cycle (k : ℕ) (z : K (k + 1))
     (hz : differential P (I →₀ P) (finsuppFunctional P MvPolynomial.X) k z = 0)
     (hhom : IsPolynomialHomogeneous R (k + 1) 0 z) : z = 0 := by

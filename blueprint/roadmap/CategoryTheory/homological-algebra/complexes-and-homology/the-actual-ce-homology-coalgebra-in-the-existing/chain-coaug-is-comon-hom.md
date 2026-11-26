@@ -1,4 +1,6 @@
-# Chain Coaug Is Comon Hom
+# Comonoid compatibility of the compared CE coaugmentation
 
-Coaugmentation preservation is from the CE law and the proved unit-comparison comonoid
-isomorphism.
+Comonoid compatibility of the compared CE coaugmentation.
+
+The coaugmentation preserves counit and comultiplication for the compared chain comonoid
+structure.

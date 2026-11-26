@@ -18,6 +18,21 @@ public import MathlibExt.Algebra.Homology.CochainChainGradedPairing
 public import MathlibExt.Algebra.Homology.LinearHomCochainComplex
 public import MathlibExt.Algebra.Homology.TensorDifferentialDownNat
 
+/-!
+# Degree-lowering linear Hom cochain–chain pairings
+
+Let R be a commutative ring and all module carriers lie in its universe u. For nonnegative chain
+complexes K₁,K₂,K₃,L, a chain map Δ:K₃→K₁⊗K₂ and maps ρ_q:A⊗K₂,q→L_q define a pairing
+Hom_R(K₁,p,A)⊗K₃,p+q→L_q. A cochain φ acts after Δ by selecting the (p,q) tensor summand,
+applying φ to its first factor, and then applying ρ_q. The remaining bidegrees contribute zero.
+
+A chain graded pairing A[0]⊗K₂→L supplies the degree-zero action ρ. Its differential
+compatibility makes the mixed pairing a cochain–chain graded pairing with boundary
+d(φ⌢x)=(-1)^p(φ⌢dx−(δφ)⌢x), where x has degree p+q+1 and the output has degree q. The degree
+identifications (p+1)+q=p+(q+1) are included. This construction needs neither a coalgebra law on
+Δ nor a projective-resolution hypothesis.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -36,8 +51,10 @@ variable {K₁ K₂ K₃ L : ChainComplex (ModuleCat.{u} R) ℕ}
 variable {A : ModuleCat.{u} R}
 variable [HasTensor K₁ K₂]
 
-/-- Descend a linear Hom-cochain against the second tensor factor via `ρ`,
-keeping only the `(p, q)`-component. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. Let
+K₁,K₂,L be chain complexes of shape down ℕ, A an R-module, ρ_q:A⊗K₂,q→L_q, and φ:K₁,p→A for
+p,q∈ℕ. This descriptor D_φ:(K₁⊗K₂)_{p+q}→L_q is characterized on the (p,q) summand by (φ⊗id)≫ρ_q
+and is zero on every other summand i+j=p+q. It uses the canonical tensor-complex coproduct. -/
 public noncomputable def linearHomCochainChainPairDesc
     (ρ : ∀ q, A ⊗ K₂.X q ⟶ L.X q) (p q : ℕ)
     (φ : K₁.X p ⟶ A) :
@@ -51,8 +68,10 @@ public noncomputable def linearHomCochainChainPairDesc
         exact (φ ⊗ₘ 𝟙 _) ≫ ρ q
     else 0)
 
-/-- The cochain-chain descriptor is supported only in its specified bidegree,
-with the expected tensor action there. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. For
+K₁,K₂,L,A, actions ρ and φ:K₁,p→A, let D_φ:(K₁⊗K₂)_{p+q}→L_q be the descriptor. If i+j=p+q, then
+ι_{i,j}≫D_φ equals (φ⊗id_{K₂,q})≫ρ_q when i=p, which forces j=q, and equals zero otherwise. The
+equality fixes the descriptor on every total summand. -/
 @[reassoc]
 public lemma ιTensorObj_comp_linearHomCochainChainPairDesc
     (ρ : ∀ q, A ⊗ K₂.X q ⟶ L.X q) (p q i j : ℕ) (hij : i + j = p + q)
@@ -112,7 +131,11 @@ private lemma linearHomCochainChainPairDesc_smul
     simp
   · simp [hi, Linear.comp_smul]
 
-/-- Pair a linear Hom-cochain with a chain after a chain diagonal. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. For
+chain complexes K₁,K₂,K₃,L of shape down ℕ, a chain map Δ:K₃→K₁⊗K₂, actions ρ_q:A⊗K₂,q→L_q and
+p,q∈ℕ, this R-linear pairing Hom_R(K₁,p,A)⊗K₃,p+q→L_q sends φ⊗x to D_φ(Δ_{p+q}(x)). The
+descriptor D_φ selects the (p,q) tensor summand. No compatibility with differentials is required
+of the raw action family ρ. -/
 public noncomputable def linearHomCochainChainPair
     (Δ : K₃ ⟶ tensorObj K₁ K₂)
     (ρ : ∀ q, A ⊗ K₂.X q ⟶ L.X q) (p q : ℕ) :
@@ -129,7 +152,9 @@ public noncomputable def linearHomCochainChainPair
     (fun φ x₁ x₂ => map_add _ _ _)
     (fun r φ x => map_smul _ _ _)
 
-/-- Evaluate the linear cochain-chain pairing on a pure tensor through the descended pairing. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. For
+Δ:K₃→K₁⊗K₂, ρ_q:A⊗K₂,q→L_q, φ:K₁,p→A and x∈K₃,p+q, the pairing satisfies φ⌢x=(Δ_{p+q}≫D_φ)(x).
+Here D_φ is zero on all total bidegrees except (p,q), where it is (φ⊗id)≫ρ_q. -/
 @[simp]
 public lemma linearHomCochainChainPair_tmul
     (Δ : K₃ ⟶ tensorObj K₁ K₂)
@@ -162,7 +187,10 @@ private lemma linearHomCochainComplex_d
       (op K)).d n (n + 1) =
       ModuleCat.ofHom (Linear.leftComp R G (K.d (n + 1) n)) := rfl
 
-/-- Restrict a chain graded pairing with singleton degree-zero source to its degree-`q` action. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. For a
+chain graded pairing B:A[0]⊗K₂→L and q∈ℕ, this map ρ_q:A⊗K₂,q→L_q first identifies A with the
+degree-zero term of A[0], then includes the (0,q) summand in its tensor complex and applies B_q.
+The single-complex factor is concentrated in degree zero. -/
 public noncomputable def chainGradedPairingDegreeZeroAction
     (B : ChainGradedPairing
       ((ChainComplex.single₀ (ModuleCat.{u} R)).obj A) K₂ L)
@@ -171,7 +199,11 @@ public noncomputable def chainGradedPairingDegreeZeroAction
     ιTensorObj ((ChainComplex.single₀ (ModuleCat.{u} R)).obj A) K₂
       0 q q (Nat.zero_add q) ≫ B.f q
 
-/-- Rewrite the degree-zero action through the graded pair and the `0 + q = q` equality iso. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. Let B
+be a chain graded pairing A[0]⊗K₂→L and e:A≅(A[0])_0 the canonical single-term identification.
+For q∈ℕ, its action satisfies ρ_q=(e.hom⊗id_{K₂,q})≫B.pair_{0,q}≫e_L, where e_L identifies
+L_{0+q} with L_q through 0+q=q. The formula retains the homogeneous pairing's specified degree
+transport. -/
 public theorem chainGradedPairingDegreeZeroAction_normalization
     (B : ChainGradedPairing
       ((ChainComplex.single₀ (ModuleCat.{u} R)).obj A) K₂ L)
@@ -429,8 +461,11 @@ private lemma linearHomCochainChainPairDesc_boundary
     simp
   rw [hs, one_smul]
 
-/-- The signed degree-lowering pairing induced by a chain diagonal and a
-degree-zero chain action. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. For
+Δ:K₃→K₁⊗K₂ and a chain graded pairing B:A[0]⊗K₂→L, this pairs the Hom cochain complex
+Hom_R(K₁,A) with K₃ and lands in L. Its degree-(p,q) map is Hom_R(K₁,p,A)⊗K₃,p+q→L_q. For φ of
+degree p and x of degree p+q+1, its boundary identity is d(φ⌢x)=(-1)^p(φ⌢dx−(δφ)⌢x), with the
+canonical identification of (p+1)+q and p+(q+1). -/
 public noncomputable def linearHomCochainChainGradedPairing
     (delta : K₃ ⟶ tensorObj K₁ K₂)
     (B : ChainGradedPairing
@@ -487,7 +522,10 @@ public noncomputable def linearHomCochainChainGradedPairing
         (chainGradedPairingDegreeZeroAction R B)
         (chainGradedPairingDegreeZeroAction_d R B) p q phi)
 
-/-- Identify the graded pairing's `(p, q)`-component with the linear cochain-chain pairing. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. For a
+chain map Δ:K₃→K₁⊗K₂, a chain graded pairing B:A[0]⊗K₂→L and p,q∈ℕ, the (p,q) component of the
+resulting mixed graded pairing equals the raw Hom cochain–chain pairing formed with Δ and the
+normalized action ρ_q of B. Its source is Hom_R(K₁,p,A)⊗K₃,p+q and target L_q. -/
 @[simp]
 public theorem linearHomCochainChainGradedPairing_pair
     (delta : K₃ ⟶ tensorObj K₁ K₂)

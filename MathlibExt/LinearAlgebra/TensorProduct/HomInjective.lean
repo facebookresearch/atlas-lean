@@ -16,15 +16,15 @@ public import Mathlib.LinearAlgebra.TensorProduct.Basis
 public import Mathlib.LinearAlgebra.TensorProduct.Map
 
 /-!
-# Faithfulness of the algebraic tensor action on linear maps
+# Injectivity of tensor evaluation maps over a field
 
-The canonical tensor evaluation maps are injective over a field. Coordinates
-in a basis of the vector factor detect every coefficient linear map. Applying
-this twice proves faithfulness of the tensor action on two spaces, without
-finite-dimension assumptions.
+Let R be a field and M,N,P arbitrary R-vector spaces, with independent scalar and carrier
+universes. The tensor evaluation maps M⊗Hom_R(P,N)→Hom_R(P,M⊗N) and Hom_R(P,M)⊗N→Hom_R(P,M⊗N)
+are injective. Their pure tensors act by p↦m⊗f(p) and p↦f(p)⊗n, respectively.
 
-This injectivity supplies the algebraic faithfulness needed by tensor
-representations and completion maps.
+For vector spaces M,N,M₂,N₂, the canonical action Hom_R(M,M₂)⊗Hom_R(N,N₂)→Hom_R(M⊗N,M₂⊗N₂) is
+also injective, sending f⊗g to m⊗n↦f(m)⊗g(n). Basis coordinates in the vector factors detect the
+coefficient maps; no finite-dimensionality assumption is needed.
 -/
 
 @[expose] public section
@@ -42,7 +42,9 @@ variable {M : Type uM} [AddCommGroup M] [Module R M]
 variable {N : Type uN} [AddCommGroup N] [Module R N]
 variable {P : Type uP} [AddCommGroup P] [Module R P]
 
-/-- Tensoring vectors with linear maps gives a faithful pointwise tensor action. -/
+/-- Let R be a field and M,N,P R-vector spaces in independent universes. The canonical map
+M⊗_RHom_R(P,N)→Hom_R(P,M⊗_R N), taking m⊗f to p↦m⊗f(p), is injective. The dimensions of all
+three vector spaces may be arbitrary. -/
 theorem lTensorHomToHomLTensor_injective :
     Function.Injective (lTensorHomToHomLTensor (RingHom.id R) P M N) := by
   classical
@@ -68,7 +70,9 @@ theorem lTensorHomToHomLTensor_injective :
   rw [← hcoord z i p, ← hcoord w i p] at hc
   exact hc
 
-/-- Tensoring linear maps with vectors also gives a faithful tensor action. -/
+/-- Let R be a field and P,M,N R-vector spaces in independent universes. The canonical map
+Hom_R(P,M)⊗_R N→Hom_R(P,M⊗_R N), taking f⊗n to p↦f(p)⊗n, is injective. The result uses tensor
+interchange and vector-first evaluation injectivity. -/
 theorem rTensorHomToHomRTensor_injective :
     Function.Injective (rTensorHomToHomRTensor (RingHom.id R) P M N) := by
   have hflip (z : (P →ₗ[R] M) ⊗[R] N) (p : P) :
@@ -93,7 +97,9 @@ theorem rTensorHomToHomRTensor_injective :
 variable {M₂ : Type uM₂} [AddCommGroup M₂] [Module R M₂]
 variable {N₂ : Type uN₂} [AddCommGroup N₂] [Module R N₂]
 
-/-- The tensor product of two linear maps acts faithfully on the algebraic tensor of their inputs. -/
+/-- Let R be a field and M,N,M₂,N₂ R-vector spaces with independent carrier universes. The canonical
+map Hom_R(M,M₂)⊗_RHom_R(N,N₂)→Hom_R(M⊗_R N,M₂⊗_R N₂) is injective. Its pure-tensor action is
+(f⊗g)(m⊗n)=f(m)⊗g(n), with no finite-dimensionality assumption. -/
 theorem homTensorHomMap_injective :
     Function.Injective (homTensorHomMap (RingHom.id R) M N M₂ N₂) := by
   have heval (z : (M →ₗ[R] M₂) ⊗[R] (N →ₗ[R] N₂)) (m : M) (n : N) :

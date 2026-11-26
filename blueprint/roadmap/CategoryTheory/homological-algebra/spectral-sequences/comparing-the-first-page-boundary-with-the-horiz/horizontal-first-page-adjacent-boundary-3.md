@@ -1,4 +1,7 @@
-# Horizontal First Page Adjacent Boundary Lift Cycles eq horizontal
+# The adjacent boundary lifted to target cycles is the signed horizontal map
 
-The canonical lift of the adjacent boundary to target cycles is the
-signed transported horizontal cycles map.
+For a nonnegative homological bicomplex K in an abelian
+category, the canonical target-cycle lift of the adjacent
+boundary representative equals (−1)^(q+1) C_(p,q).
+Here C_(p,q) is the horizontal cycles map conjugated by the
+direct-column sign and extension comparisons.

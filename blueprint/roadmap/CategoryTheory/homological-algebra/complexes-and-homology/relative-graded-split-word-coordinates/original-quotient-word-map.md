@@ -1,3 +1,5 @@
-# Original Quotient Word Map
+# The tensor quotient maps every word entry to its residue class
 
-The original quotient tensor map in every original word position.
+Let k be commutative, A a nonunital k-module ring and I a k-subalgebra, with quotient-linear
+map q : A → A/I. For N : ℕ, originalQuotientWordMap N : A^⊗N →ₗ[k] (A/I)^⊗N is
+PiTensorProduct.map (fun _ => q).

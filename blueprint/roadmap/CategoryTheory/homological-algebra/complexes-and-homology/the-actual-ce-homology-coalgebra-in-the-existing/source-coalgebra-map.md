@@ -1,3 +1,6 @@
-# Source Coalgebra Map
+# The lifted-unit CE coalgebra map of a Lie homomorphism
 
-The Lie map is a morphism of the fixed source CE coalgebras.
+The lifted-unit CE coalgebra map of a Lie homomorphism.
+
+A Lie homomorphism induces the canonical CE chain map, which preserves the lifted-unit
+comonoid structure.

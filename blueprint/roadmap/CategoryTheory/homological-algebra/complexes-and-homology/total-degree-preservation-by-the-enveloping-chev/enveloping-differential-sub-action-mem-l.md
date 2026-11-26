@@ -1,4 +1,6 @@
-# Enveloping Differential sub action mem lower Filtration
+# The leading regular-action term of the enveloping differential
 
-Modulo the previous total-degree stage, the original differential is
-exactly its right-regular action summand.
+The leading regular-action term of the enveloping differential.
+
+For a chain in filtration stage `p`, subtracting its action boundary from its full
+differential gives an element of stage `p-1` in the target degree.

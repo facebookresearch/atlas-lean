@@ -1,3 +1,6 @@
-# Gamma Iso Quotient Hom Colimit
+# Power torsion is naturally the colimit of its quotient Hom diagram
 
-The canonical primary-component comparison is natural in the actual coefficient.
+Power torsion is naturally the colimit of its quotient Hom diagram.
+
+The objectwise evaluation colimit isomorphisms give a natural isomorphism from the power-
+torsion functor to the quotient-Hom diagram functor followed by colimit.

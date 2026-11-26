@@ -1,3 +1,6 @@
-# Map End Ring Hom as Hom
+# The carrier morphism of an additive endomorphism-ring map
 
-The endomorphism ring morphism uses precisely the original native functor map.
+The carrier morphism of an additive endomorphism-ring map.
+
+The endomorphism-ring homomorphism induced by `F` has underlying morphism `F.map(a.asHom)` at
+`a ∈ End(X)`.

@@ -16,11 +16,15 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.Along
 /-!
 # Polynomial change of algebra with symmetric coefficients
 
-The original coefficient tensor functor carries the augmentation homotopy
-through an scalar-changing balanced coefficient map. Native Bar
-cancellation gives the original coefficient-first Hochschild algebra map.
-Thus the signed polynomial comparison is natural up to a chain
-homotopy for arbitrary compatible symmetric coefficient maps.
+Let k be a commutative ring, A = k[σ] and B = k[τ]. Give M and N compatible A- and B-module
+structures, respectively, and use their symmetric right actions. A k-algebra map g : A → B and a
+k-linear map f : M → N satisfying f(a·m) = g(a)·f(m) induce maps between the coefficient
+diagonal Koszul complexes and the coefficient enveloping bar complexes.
+
+The balanced tensor transformation along E_A → E_B sends m ⊗ x to f(m) ⊗ x. After cancelling the
+bar endpoints, its bar map becomes the Hochschild word map m ⊗ a₁ ⊗ … ⊗ aₙ ↦ f(m) ⊗ g(a₁) ⊗ … ⊗
+g(aₙ). The antisymmetric diagonal-to-Hochschild comparison commutes with these maps up to the
+chain homotopy induced by the augmentation-preserving projective-resolution comparison.
 -/
 
 @[expose] public section
@@ -55,50 +59,72 @@ local notation "TN" => AdjacentBar.coefficientTensorFunctor k AT N
 local notation "TMc" => Functor.mapHomologicalComplex TM (ComplexShape.down ℕ)
 local notation "TNc" => Functor.mapHomologicalComplex TN (ComplexShape.down ℕ)
 
-/-- The source coefficient has its canonical symmetric opposite action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. M becomes a symmetric A-bimodule by letting aᵐᵒᵖ act on m as a·m.
+This defines its module structure over Aᵐᵒᵖ. -/
 local instance polynomialCoefficientSourceOpModule :
     Module ASᵐᵒᵖ M :=
   Symmetric.opModule AS M
-/-- The original source left and opposite actions commute. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. With the symmetric right action aᵐᵒᵖ·m = a·m, the A- and
+Aᵐᵒᵖ-actions on M commute: a·(bᵐᵒᵖ·m) = bᵐᵒᵖ·(a·m). -/
 local instance polynomialCoefficientSourceActionsComm :
     SMulCommClass AS ASᵐᵒᵖ M :=
   Symmetric.actionsComm AS M
-/-- The source opposite action commutes with the original ground action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The k-action on M commutes with its symmetric Aᵐᵒᵖ-action:
+r·(aᵐᵒᵖ·m) = aᵐᵒᵖ·(r·m). -/
 local instance polynomialCoefficientSourceGroundOpComm :
     SMulCommClass k ASᵐᵒᵖ M :=
   Symmetric.kOpComm k AS M
-/-- The source opposite action retains the original ground scalar tower. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The symmetric Aᵐᵒᵖ-action on M is compatible with k → Aᵐᵒᵖ:
+(r·aᵐᵒᵖ)·m = r·(aᵐᵒᵖ·m). -/
 local instance polynomialCoefficientSourceGroundOpTower :
     IsScalarTower k ASᵐᵒᵖ M :=
   Symmetric.kOpTower k AS M
-/-- The target coefficient has its canonical symmetric opposite action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. N becomes a symmetric B-bimodule by letting bᵐᵒᵖ act on n as b·n.
+This defines its module structure over Bᵐᵒᵖ. -/
 local instance polynomialCoefficientTargetOpModule :
     Module ATᵐᵒᵖ N :=
   Symmetric.opModule AT N
-/-- The original target left and opposite actions commute. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The B- and symmetric Bᵐᵒᵖ-actions on N commute: b·(cᵐᵒᵖ·n) =
+cᵐᵒᵖ·(b·n). -/
 local instance polynomialCoefficientTargetActionsComm :
     SMulCommClass AT ATᵐᵒᵖ N :=
   Symmetric.actionsComm AT N
-/-- The target opposite action commutes with the original ground action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The k-action on N commutes with its symmetric Bᵐᵒᵖ-action:
+r·(bᵐᵒᵖ·n) = bᵐᵒᵖ·(r·n). -/
 local instance polynomialCoefficientTargetGroundOpComm :
     SMulCommClass k ATᵐᵒᵖ N :=
   Symmetric.kOpComm k AT N
-/-- The target opposite action retains the original ground scalar tower. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The symmetric Bᵐᵒᵖ-action on N is compatible with k → Bᵐᵒᵖ:
+(r·bᵐᵒᵖ)·n = r·(bᵐᵒᵖ·n). -/
 local instance polynomialCoefficientTargetGroundOpTower :
     IsScalarTower k ATᵐᵒᵖ N :=
   Symmetric.kOpTower k AT N
-/-- The source coefficient carries the right enveloping action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. M has the right module structure over E_A = A ⊗[k] Aᵐᵒᵖ defined by
+m·(a ⊗ bᵐᵒᵖ) = b·(a·m). Symmetry identifies this action with multiplication by ab on M. -/
 local instance polynomialCoefficientSourceEnvelopingModule :
     Module ESᵐᵒᵖ M :=
   EnvelopingCoefficient.rightEnvelopingModule k AS M
-/-- The target coefficient carries the right enveloping action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. N has the right module structure over E_B = B ⊗[k] Bᵐᵒᵖ defined by
+n·(b ⊗ cᵐᵒᵖ) = c·(b·n). Symmetry identifies this action with multiplication by bc on N. -/
 local instance polynomialCoefficientTargetEnvelopingModule :
     Module ETᵐᵒᵖ N :=
   EnvelopingCoefficient.rightEnvelopingModule k AT N
 
 include hf in
-/-- Symmetry and the original coefficient action law earn compatibility
-with the mapped right-enveloping actions. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m). Let
+φ : E_A → E_B be induced by g on both enveloping factors. For every e ∈ E_A and m ∈ M, f(eᵐᵒᵖ·m)
+= (φe)ᵐᵒᵖ·f(m). -/
 theorem coefficientEnvelopingAlgebraLaw (e : ES) (m : M) :
     f (MulOpposite.op e • m) = MulOpposite.op (φ e) • f m := by
   change f (EnvelopingCoefficient.rightEnvelopingAction k AS M (MulOpposite.op e) m) =
@@ -108,27 +134,39 @@ theorem coefficientEnvelopingAlgebraLaw (e : ES) (m : M) :
     MvPolynomial.polynomialEnvelopingMap_multiplication]
   exact hf (MvPolynomial.diagonalMultiplication k σ e) m
 
-/-- The scalar-changing coefficient natural transformation on
-the original target enveloping left modules. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m). With
+φ : E_A → E_B and restriction of scalars R, the maps M ⊗_{E_A} R(X) → N ⊗_{E_B} X given by m ⊗ x
+↦ f(m) ⊗ x form a natural transformation on chain complexes of left E_B-modules, indexed by ℕ. -/
 def polynomialCoefficientTensorAlong :
     (R ⋙ TM).mapHomologicalComplex (.down ℕ) ⟶ TNc :=
   ModuleCat.BalancedTensor.Along.chainNatTrans k φ f
     (coefficientEnvelopingAlgebraLaw k g f hf)
 
-/-- The coefficient map on the two original polynomial diagonal complexes. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m). The
+semilinear polynomial diagonal Koszul map along φ, followed by the balanced coefficient
+transformation m ⊗ x ↦ f(m) ⊗ x, defines a chain map from the source symmetric coefficient
+diagonal complex to the target one. -/
 def polynomialCoefficientDiagonalAlgebraMap :
     symmetricCoefficientComplex k σ M ⟶ symmetricCoefficientComplex k τ N :=
   (TMc).map (polynomialDiagonalRestrictedMap k g) ≫
     (polynomialCoefficientTensorAlong k g f hf).app (KoszulComplex.polynomialDiagonalComplex k τ)
 
-/-- The coefficient map on the two original tensor-of-Bar complexes. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m). The
+enveloping bar map induced by g, tensored with M and followed by the balanced coefficient
+transformation induced by f, gives a chain map between the coefficient tensor-of-bar complexes
+over A and B. -/
 def polynomialCoefficientBarAlgebraMap :
     AdjacentBar.coefficientTensorComplex k AS M ⟶ AdjacentBar.coefficientTensorComplex k AT N :=
   (TMc).map (AdjacentBar.envelopingBarAlgebraMap k g) ≫
     (polynomialCoefficientTensorAlong k g f hf).app (AdjacentBar.envelopingBar k AT)
 
-/-- Scalar-changing coefficient tensoring retains its original pure Bar
-representative and applies the original algebra map to every factor. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m). For
+n : ℕ, m ∈ M and a degree-n enveloping bar element z, polynomialCoefficientBarAlgebraMap sends m
+⊗_{E_A} z to f(m) ⊗_{E_B} barAlgebraLevelMap(g)(z). -/
 theorem polynomialCoefficientBarAlgebraMap_mk (n : ℕ) (m : M)
     (z : AdjacentBar.envelopingBarDegree k AS n) :
     letI : Module k (AdjacentBar.envelopingBarDegree k AS n) := Module.compHom _ (algebraMap k ES)
@@ -154,8 +192,11 @@ theorem polynomialCoefficientBarAlgebraMap_mk (n : ℕ) (m : M)
   exact hvalue.trans ((congrArg c.hom hmap).trans
     (hc.trans (congrArg (fun y : Y => ModuleCat.BalancedTensor.Along.targetMk k Y (f m) y) hb)))
 
-/-- Apply the coefficient Bar map between the original raw Hochschild
-coordinates. Unit outer factors stay units, and the middle tensor map is literal. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m).
+Starting with a Hochschild word m ⊗ a₁ ⊗ … ⊗ aₙ, passing to the source coefficient bar
+coordinates, applying the bar map and cancelling the target endpoints yields f(m) ⊗ g(a₁) ⊗ … ⊗
+g(aₙ). -/
 theorem polynomialCoefficientBarAlgebraMap_inverse_word
     (n : ℕ) (m : M) (a : Fin n → AS) :
     ((AdjacentBar.coefficientTensorChainIso k AT N).hom.f n).hom
@@ -194,8 +235,11 @@ theorem polynomialCoefficientBarAlgebraMap_inverse_word
       simp only [Fin.snoc_last, Fin.init_snoc, MulOpposite.op_one, one_smul]))
   exact (congrArg (fun x => cT (b x)) hInv).trans ((congrArg cT hbar).trans hOut)
 
-/-- Actual endpoint-sensitive Bar cancellation gives the original raw
-coefficient-first Hochschild algebra map. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m). If
+C_A and C_B denote the coefficient bar-to-Hochschild isomorphisms and B_{g,f} the coefficient
+bar map, then B_{g,f} ≫ C_B.hom = C_A.hom ≫ C_{g,f}, where C_{g,f} applies f to the coefficient
+and g to every Hochschild tensor factor. -/
 @[reassoc]
 theorem polynomialCoefficientBarAlgebraMap_cancellation :
     polynomialCoefficientBarAlgebraMap k g f hf ≫ (AdjacentBar.coefficientTensorChainIso k AT N).hom =
@@ -226,8 +270,11 @@ theorem polynomialCoefficientBarAlgebraMap_cancellation :
         cS.inv_hom_id).trans (Category.id_comp F))
   exact hLeft.trans hRight.symm
 
-/-- Actual scalar-changing diagonal tensoring keeps the original arbitrary
-diagonal element and the semilinear Koszul image. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m). For
+m ∈ M and z ∈ ∧ⁿ_{E_A}(⊕ᵢ∈σ E_Aeᵢ), the coefficient diagonal map sends m ⊗_{E_A} z to f(m)
+⊗_{E_B} ∧ⁿJ_g(z). Here J_g is polynomialDiagonalGeneratorMap, semilinear along the enveloping
+map φ. -/
 theorem polynomialCoefficientDiagonalAlgebraMap_mk (n : ℕ) (m : M)
     (z : ⋀[ES]^n (σ →₀ ES)) :
     letI : Module k (⋀[ES]^n (σ →₀ ES)) := Module.compHom _ (algebraMap k ES)
@@ -255,8 +302,12 @@ theorem polynomialCoefficientDiagonalAlgebraMap_mk (n : ℕ) (m : M)
   exact hvalue.trans ((congrArg c.hom hmap).trans
     (hc.trans (congrArg (fun y : Y => ModuleCat.BalancedTensor.Along.targetMk k Y (f m) y) hd)))
 
-/-- The signed polynomial coefficient comparison is algebra-natural up to
-the tensor image of the projective augmentation homotopy. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m).
+Write F_A and F_B for the antisymmetric coefficient comparisons, C_{g,f} for the Hochschild
+coefficient map and D_{g,f} for the coefficient diagonal map. There is a chain homotopy F_A ≫
+C_{g,f} ∼ D_{g,f} ≫ F_B. It is obtained from the augmentation-preserving diagonal-to-bar
+homotopy by balanced tensoring. -/
 def polynomialAntisymmetricCoefficientMap_algebraHomotopy :
     Homotopy
       (polynomialAntisymmetricCoefficientMap k σ M ≫

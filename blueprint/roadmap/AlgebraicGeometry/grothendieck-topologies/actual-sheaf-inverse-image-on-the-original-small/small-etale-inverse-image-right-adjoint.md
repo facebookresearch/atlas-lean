@@ -1,4 +1,6 @@
-# Small Etale Inverse Image Right Adjoint Iso
+# The affine construction right adjoint is direct image
 
-The transported right adjoint identifies with the same literal original
-direct-image functor, using the actual affine restriction equivalence.
+The affine construction right adjoint is direct image.
+
+Affine pushforward followed by inverse affine restriction is naturally isomorphic to the full-
+site direct-image functor.

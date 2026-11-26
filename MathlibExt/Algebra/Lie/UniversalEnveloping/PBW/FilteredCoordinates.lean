@@ -12,13 +12,18 @@ module
 public import MathlibExt.Algebra.Lie.UniversalEnveloping.PBW.FilteredNormalization
 
 /-!
-# Filtered polynomial coordinates of the native UEA
+# Filtered polynomial coordinates of an enveloping algebra
 
-The actual word filtration is the span of the ordered PBW words within the
-same length bound. Polynomial coordinates identify it with the native
-polynomial total-degree submodule. Right multiplication by a basis Lie
-generator is multiplication by its polynomial variable modulo the previous
-degree. These are module and filtration statements about the original UEA.
+Let `R` be a commutative ring and `L` an `R`-Lie algebra with basis indexed by a linearly
+ordered `I`. The degree-`q` enveloping filtration is the span of ordered PBW words of length
+at most `q`. The polynomial coordinate equivalence identifies it with polynomials of total
+degree at most `q`.
+
+For a word of length at most `q+1`, subtracting the monomial of its multiplicities leaves
+polynomial degree at most `q`. Consequently right multiplication by a basis generator has
+leading coordinate multiplication by the corresponding polynomial variable: for `u` of
+enveloping degree at most `q`, `c(uι(b_i)) - c(u)X_i` has polynomial degree at most `q`. These
+are ground-module and filtration comparisons.
 -/
 
 @[expose] public section
@@ -37,16 +42,26 @@ local notation "U" => UniversalEnvelopingAlgebra R L
 local notation "P" => MvPolynomial I R
 local notation "N" => (OrderedWord I →₀ R)
 
-/-- Ordered PBW words within an actual enveloping degree bound. -/
+/-- The enveloping span of bounded-length ordered PBW words.
+
+For a basis `b`, stage `q` is the `R`-span of enveloping values of ordered words with length
+at most `q`. -/
 def orderedDegreeSpan (b : Module.Basis I R L) (q : ℕ) : Submodule R U :=
   Submodule.span R (orderedWordValue b '' {xs | xs.val.length ≤ q})
 
+/-- Monotonicity of ordered PBW degree spans.
+
+The spans of ordered words increase with the allowed length bound. -/
 theorem orderedDegreeSpan_mono (b : Module.Basis I R L) : Monotone (orderedDegreeSpan b) := by
   intro p q hpq
   apply Submodule.span_mono
   rintro z ⟨xs, hxs, rfl⟩
   exact ⟨xs, hxs.trans hpq, rfl⟩
 
+/-- The degree bound for evaluation of an ordered normal form.
+
+A linear combination of ordered words of length at most `q` evaluates into the corresponding
+ordered PBW degree span. -/
 theorem orderedWordLinear_mem_degreeSpan (b : Module.Basis I R L) (q : ℕ)
     {z : N} (hz : z ∈ normalFormDegreeSpan q) :
     orderedWordLinear b z ∈ orderedDegreeSpan b q := by
@@ -63,6 +78,10 @@ theorem orderedWordLinear_mem_degreeSpan (b : Module.Basis I R L) (q : ℕ)
       rw [map_smul]
       exact (orderedDegreeSpan b q).smul_mem r ih
 
+/-- The ordered degree span containing a basis word.
+
+The enveloping value of any basis word belongs to the span of ordered words of length at most
+its own length. -/
 theorem basisWord_mem_orderedDegreeSpan (b : Module.Basis I R L) (xs : List I) :
     basisWord b xs ∈ orderedDegreeSpan b xs.length := by
   rw [← orderedWordLinear_normalize b xs]
@@ -104,7 +123,10 @@ private theorem word_mem_orderedDegreeSpan (b : Module.Basis I R L) (xs : List L
       rw [UniversalEnvelopingAlgebra.word_cons, List.length_cons]
       exact ι_mul_mem_orderedDegreeSpan b xs.length x ih
 
-/-- Actual words and actual ordered PBW words define the same degree filtration. -/
+/-- The enveloping degree filtration as an ordered PBW span.
+
+For every `q`, the enveloping word-degree filtration equals the span of ordered basis words
+with length at most `q`. -/
 theorem degreeFiltration_eq_orderedDegreeSpan (b : Module.Basis I R L) (q : ℕ) :
     UniversalEnvelopingAlgebra.degreeFiltration R L q = orderedDegreeSpan b q := by
   apply le_antisymm
@@ -123,6 +145,10 @@ private theorem monomial_mem_totalDegree {q : ℕ} {e : I →₀ ℕ} (he : e.de
   rw [MvPolynomial.restrictTotalDegree, MvPolynomial.monomial_mem_restrictSupport]
   exact Or.inl he
 
+/-- The total-degree bound of filtered PBW coordinates.
+
+An element in the ordered PBW span of length at most `q` maps to a polynomial of total degree
+at most `q`. -/
 theorem polynomialCoordinates_mem_totalDegree (b : Module.Basis I R L) (q : ℕ)
     {u : U} (hu : u ∈ orderedDegreeSpan b q) :
     polynomialCoordinates b u ∈ MvPolynomial.restrictTotalDegree I R q := by
@@ -139,6 +165,10 @@ theorem polynomialCoordinates_mem_totalDegree (b : Module.Basis I R L) (q : ℕ)
       rw [map_smul]
       exact (MvPolynomial.restrictTotalDegree I R q).smul_mem r ih
 
+/-- The enveloping degree bound of inverse polynomial coordinates.
+
+A polynomial of total degree at most `q` maps under the inverse PBW coordinate equivalence to
+the ordered degree span of bound `q`. -/
 theorem polynomialCoordinates_symm_mem_degreeSpan (b : Module.Basis I R L) (q : ℕ)
     {p : P} (hp : p ∈ MvPolynomial.restrictTotalDegree I R q) :
     (polynomialCoordinates b).symm p ∈ orderedDegreeSpan b q := by
@@ -161,8 +191,10 @@ theorem polynomialCoordinates_symm_mem_degreeSpan (b : Module.Basis I R L) (q : 
       rw [map_smul]
       exact (orderedDegreeSpan b q).smul_mem r ih
 
-/-- The actual native UEA degree filtration is exactly polynomial total degree
-under the constructed PBW ground-module equivalence. -/
+/-- The degree criterion under polynomial PBW coordinates.
+
+The coordinate polynomial of `u ∈ U_R(L)` has total degree at most `q` if and only if `u`
+belongs to enveloping filtration stage `q`. -/
 theorem polynomialCoordinates_mem_degree_iff (b : Module.Basis I R L) (q : ℕ) (u : U) :
     polynomialCoordinates b u ∈ MvPolynomial.restrictTotalDegree I R q ↔
       u ∈ UniversalEnvelopingAlgebra.degreeFiltration R L q := by
@@ -173,10 +205,17 @@ theorem polynomialCoordinates_mem_degree_iff (b : Module.Basis I R L) (q : ℕ) 
       polynomialCoordinates_symm_mem_degreeSpan b q hu
   · exact polynomialCoordinates_mem_totalDegree b q
 
-/-- Evaluate computed normal forms in their actual polynomial PBW coordinates. -/
+/-- The polynomial evaluation map on ordered normal forms.
+
+Evaluate a finite linear combination of ordered words in the enveloping algebra and then apply
+the polynomial PBW coordinates. -/
 def normalizedPolynomialMap (b : Module.Basis I R L) : N →ₗ[R] P :=
   (polynomialCoordinates b).toLinearMap.comp (orderedWordLinear b)
 
+/-- The polynomial coordinate of a single ordered normal-form term.
+
+A normal-form term with ordered word `xs` and coefficient `r` maps to `r` times the monomial
+of `xs`'s multiplicities. -/
 theorem normalizedPolynomialMap_single (b : Module.Basis I R L) (xs : OrderedWord I) (r : R) :
     normalizedPolynomialMap b (Finsupp.single xs r) =
       r • MvPolynomial.monomial (wordExponent xs.val) 1 := by
@@ -185,6 +224,10 @@ theorem normalizedPolynomialMap_single (b : Module.Basis I R L) (xs : OrderedWor
   change r • polynomialCoordinates b (orderedWordValue b xs) = _
   exact congrArg (fun p : P => r • p) (polynomialCoordinates_orderedWord b xs)
 
+/-- The polynomial coordinate of a normalized basis word.
+
+The polynomial evaluation of the ordered normal form of `xs` equals the PBW coordinate of its
+enveloping basis-word value. -/
 theorem normalizedPolynomialMap_normalize (b : Module.Basis I R L) (xs : List I) :
     normalizedPolynomialMap b (normalize b xs) = polynomialCoordinates b (basisWord b xs) := by
   change polynomialCoordinates b (orderedWordLinear b (normalize b xs)) = _
@@ -207,8 +250,10 @@ private theorem normalizedPolynomialMap_lower_mem (b : Module.Basis I R L)
       rw [map_smul]
       exact (MvPolynomial.restrictTotalDegree I R q).smul_mem r ih
 
-/-- Every actual word has its commutative monomial as leading PBW coordinate,
-with its bracket corrections in the immediately lower polynomial degree. -/
+/-- The leading monomial of a basis word in PBW coordinates.
+
+For a word of length at most `q+1`, its coordinate polynomial minus its multiplicity monomial
+has total degree at most `q`. -/
 theorem polynomialCoordinates_word_leading (b : Module.Basis I R L)
     (xs : List I) (q : ℕ) (hxs : xs.length ≤ q + 1) :
     polynomialCoordinates b (basisWord b xs) - MvPolynomial.monomial (wordExponent xs) 1 ∈
@@ -218,7 +263,10 @@ theorem polynomialCoordinates_word_leading (b : Module.Basis I R L)
   simpa only [map_sub, normalizedPolynomialMap_normalize, normalizedPolynomialMap_single,
     one_smul, canonicalOrderedWord_exponent] using h
 
-/-- The actual right-generator multiplication defect in polynomial coordinates. -/
+/-- The polynomial defect of right multiplication by a Lie basis generator.
+
+For `i ∈ I`, the linear defect map sends `u` to `c(uι(b_i)) - c(u)X_i`, where `c` is the
+polynomial PBW equivalence. -/
 def rightMultiplicationDefect (b : Module.Basis I R L) (i : I) : U →ₗ[R] P where
   toFun u := polynomialCoordinates b (u * UniversalEnvelopingAlgebra.ι R (b i)) -
     polynomialCoordinates b u * MvPolynomial.X i
@@ -227,8 +275,10 @@ def rightMultiplicationDefect (b : Module.Basis I R L) (i : I) : U →ₗ[R] P w
   map_smul' r u := by
     simp only [smul_mul_assoc, map_smul, smul_sub, RingHom.id_apply]
 
-/-- Right multiplication by an actual basis Lie generator has leading term
-its polynomial variable on every actual filtered UEA element. -/
+/-- The degree bound for a right-generator multiplication defect.
+
+If `u` has enveloping degree at most `q`, its right-multiplication defect at a basis generator
+has polynomial total degree at most `q`. -/
 theorem rightMultiplicationDefect_mem_degree (b : Module.Basis I R L)
     (i : I) (q : ℕ) {u : U}
     (hu : u ∈ UniversalEnvelopingAlgebra.degreeFiltration R L q) :

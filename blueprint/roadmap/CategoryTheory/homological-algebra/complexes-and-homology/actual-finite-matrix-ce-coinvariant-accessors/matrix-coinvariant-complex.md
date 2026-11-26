@@ -1,3 +1,6 @@
-# Matrix Coinvariant Complex
+# The scalar special-linear coinvariant matrix CE complex
 
-The finite-matrix scalar-action CE cokernel.
+The scalar special-linear coinvariant matrix CE complex.
+
+Take coinvariants of the matrix CE complex under the adjoint action of scalar special-linear
+matrices.

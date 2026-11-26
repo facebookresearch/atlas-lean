@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Image Comp Fiber Iso hom app down left
+# Lifted geometric composite coordinate preserves the underlying map
 
-Composition image transport retains the original geometric neighborhood map.
+Lifted geometric composite coordinate preserves the underlying map.
+
+The forward image-composition fiber coordinate preserves the scheme map of the lowered
+geometric element.

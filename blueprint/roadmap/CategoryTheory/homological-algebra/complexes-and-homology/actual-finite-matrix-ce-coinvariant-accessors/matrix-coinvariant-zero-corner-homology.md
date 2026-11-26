@@ -1,3 +1,5 @@
-# Matrix Coinvariant Zero Corner Homology Map
+# The matrix coinvariant homology map of zero extension
 
-The quotient homology map of a zero corner.
+The matrix coinvariant homology map of zero extension.
+
+Take the degree-`d` homology map of a coinvariant size-inclusion chain map.

@@ -1,3 +1,6 @@
-# Horizontal Filtered Top Section
+# The section of a new top-column projection
 
-Section of the top-column projection in total degree `p+1+q`.
+The section of a new top-column projection.
+
+In total degree `p+1+q`, include bidegree `(p+1,q)` as the top summand of filtration stage
+`p+1`.

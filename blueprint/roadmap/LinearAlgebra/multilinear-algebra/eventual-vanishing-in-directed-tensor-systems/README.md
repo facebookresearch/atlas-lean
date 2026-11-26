@@ -2,8 +2,8 @@
 
 ## Tensor Product
 
-- [Exists eq zero of map to direct Limit tensor eq zero](exists-eq-zero-of-map-to-direct-limit-te.md)
+- [Eventual vanishing of a directed tensor class](exists-eq-zero-of-map-to-direct-limit-te.md)
 
 ## Direct Limit
 
-- [Zero exact finite family](zero-exact-finite-family.md)
+- [Simultaneous eventual vanishing of a finite family](zero-exact-finite-family.md)

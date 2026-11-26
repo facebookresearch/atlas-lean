@@ -1,4 +1,6 @@
-# Horizontal Filtered Total Map is Iso of le
+# The finite-stage inclusion after all degree summands are present
 
-Before the new horizontal column appears, consecutive filtration stages
-are already equal to the full total object.
+The finite-stage inclusion after all degree summands are present.
+
+For `k ≤ l` and total degree `n ≤ k`, the map from filtration stage `k` to stage `l` is an
+isomorphism in degree `n`.

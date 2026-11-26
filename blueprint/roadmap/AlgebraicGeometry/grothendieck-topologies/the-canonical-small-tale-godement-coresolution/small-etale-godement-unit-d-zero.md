@@ -1,3 +1,5 @@
-# Small Etale Godement Unit d zero
+# Godement unit lands in degree zero cocycles
 
-The original Godement unit is closed for the actual first alternating differential.
+Godement unit lands in degree zero cocycles.
+
+The unit `Q → C⁰` followed by the first Godement differential `C⁰ → C¹` is zero.

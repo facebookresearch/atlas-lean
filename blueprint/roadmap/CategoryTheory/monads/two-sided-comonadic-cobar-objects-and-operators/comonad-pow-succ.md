@@ -1,3 +1,5 @@
-# Comonad Pow succ
+# The successor formula for a comonad power
 
-Successor power unfolds one left-associated copy of `G`.
+The successor formula for a comonad power.
+
+The power `G^(n+1)` is `G ⋙ G^n`.

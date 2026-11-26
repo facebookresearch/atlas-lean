@@ -1,3 +1,6 @@
-# Bimodule Tensor Derived Factors
+# Localized bounded tensor commutes with the localization functors
 
-The original-Q square relates the actual tensor lift to the same original bounded functor.
+Localized bounded tensor commutes with the localization functors.
+
+There is a natural isomorphism `fgModuleDerivedQ R ⋙ bimoduleTensorDerived E ≅ bimoduleTensor
+E ⋙ fgModuleDerivedQ S`.

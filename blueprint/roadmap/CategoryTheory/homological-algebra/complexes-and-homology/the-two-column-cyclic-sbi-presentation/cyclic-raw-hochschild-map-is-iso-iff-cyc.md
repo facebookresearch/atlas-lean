@@ -1,6 +1,6 @@
-# Cyclic Raw Hochschild Map is Iso iff cyclic Homology Map
+# The equivalence of two-column and cyclic homology isomorphisms
 
-Loday, Corollary 2.2.3 on the source's `CC(A){2}` HH presentation
-(2.2.1, printed p. 61 / PDF page 76) and the original cyclic-total homology.
-The algebra map is general: the print says "which need not preserve the
-unit if any" and includes "and conversely" (printed p. 62 / PDF page 77).
+The equivalence of two-column and cyclic homology isomorphisms.
+
+For a nonunital ground-algebra map, the induced maps on `H_n(CC^{(2)})` are isomorphisms for
+all `n` if and only if the maps on `HC_n` are isomorphisms for all `n`.

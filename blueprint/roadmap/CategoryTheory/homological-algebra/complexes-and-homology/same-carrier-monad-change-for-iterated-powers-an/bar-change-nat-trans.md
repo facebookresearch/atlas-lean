@@ -1,8 +1,7 @@
-# Bar Change Nat Trans
+# A natural transformation between two-sided bar functors
 
-Fixed-monad-hom natural transformation packaging `barChangeHom`.
-
-For fixed `h : T ⟶ S`, the family `barChangeHom h R L` is natural in `(R, L)`
-via Mathlib's `Functor.prod` restriction. Both module variables are covariant.
-Same carrier only; no carrier-change, outer-whiskering, evaluation,
-balanced-tensor, or operadic API.
+Let h : T → S be a monad morphism on C and let A,D be categories. Restricting right S-modules
+C → D and left S-modules A → C along h, then taking the T-bar, defines a functor on their
+product category. The maps c_h(R,L) form a natural transformation from this functor to the
+S-bar functor. Its component at (R,L) is the simplicial bar-change map with degree formula
+R(h^n_{L(-)}).

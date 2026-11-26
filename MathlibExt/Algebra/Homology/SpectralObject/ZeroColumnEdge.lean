@@ -17,12 +17,21 @@ public import MathlibExt.Algebra.Homology.SpectralObject.StableIntervalGraded
 public import Mathlib.Algebra.Homology.SpectralObject.SpectralSequence
 
 /-!
-# Native column-zero edges
+# Column-zero representatives and edges of a first-quadrant spectral object
 
-The canonical stage-zero representative and edge of the original native
-first-quadrant homological sequence of a spectral object over `EInt`.
-The edge uses the original page presentation, literal outer maps and the
-selected-image quotient, with lower support alone in its definition.
+Let X be an extended-integer spectral object in an abelian category D, with its first-quadrant
+homological spectral sequence E and d_r of bidegree (-r,r−1). Assume lower support H^n_X(⊥,a)=0
+for every n∈ℤ and finite a<0. For q∈ℕ and n=-q, the stage-zero object A₀=H^n_X(⊥,0) maps
+epimorphically to E^2_{0,q} through the finite-window quotient E_X(⊥,-1,0,1;n) and the page
+presentation at cuts -2≤-1≤0≤1.
+
+The edge ε_q:E^2_{0,q}→H^{-q}_X(⊥,⊤) extends the upper interval to top, passes through the
+stable image quotient, and includes the current image into the full interval object. It
+satisfies ρ_q≫ε_q=u₀, where ρ_q is the stage-zero representative and u₀ the bottom-to-top
+interval map. If also H^{-d}_X(a,⊤)=0 for d∈ℕ and a∈ℤ with d≤a, and E^2_{p,t}=0 for all p≥1,t∈ℕ,
+this edge is an isomorphism. The definition and representative formula use only the lower
+support hypothesis; the invertibility result uses all three stated support conditions. Category
+universes are arbitrary.
 -/
 
 @[expose] public section
@@ -45,8 +54,11 @@ variable (hneg : ∀ (n a : ℤ), a < 0 →
   IsZero ((X.H n).obj
     (mk₁ (homOfLE (bot_le : (⊥ : EInt) ≤ (a : EInt))))))
 
-/-- The original finite-window projection, followed by the bottom-to-page
-outer-left isomorphism and inverse native page presentation. -/
+/-- Let D be abelian and X a spectral object indexed by ℤ∪{⊥,⊤}, with its first-quadrant homological
+spectral sequence E. Assume H^n_X(⊥,a)=0 for all n,a∈ℤ with a<0. For q∈ℕ put n=-q. Let
+g₀:H^n_X(⊥,0)→W=E_X(⊥,-1,0,1;n) be the finite-window cokernel projection, L:W≅E_X(-2,-1,0,1;n)
+the lower-support outer-left comparison, and P:E^2_{0,q}≅E_X(-2,-1,0,1;n) the page presentation.
+The representative ρ_q:H^{-q}_X(⊥,0)→E^2_{0,q} is g₀≫L.hom≫P.inv. -/
 noncomputable def nativeZeroColumnStageZeroRepresentative (q : ℕ) :
     X.stableIntervalStep (-(q : ℤ)) ((0 : ℤ) : EInt) ⟶
       ((X.spectralSequence coreE₁FirstQuadrantHomological).page (2 : ℤ)).X (0, q) :=
@@ -81,7 +93,11 @@ noncomputable def nativeZeroColumnStageZeroRepresentative (q : ℕ) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The canonical stage-zero representative is epic. -/
+/-- Let D be abelian and X a spectral object indexed by ℤ∪{⊥,⊤}, with its first-quadrant homological
+spectral sequence E. Assume H^n_X(⊥,a)=0 for all n,a∈ℤ with a<0. For every q∈ℕ, the
+representative ρ_q:H^{-q}_X(⊥,0)→E^2_{0,q} is epic. It is the finite-window cokernel projection
+followed by the lower-support comparison and the inverse second-page presentation, both
+isomorphisms. -/
 instance nativeZeroColumnStageZeroRepresentative_epi (q : ℕ) :
     Epi (X.nativeZeroColumnStageZeroRepresentative hneg q) := by
   dsimp only [nativeZeroColumnStageZeroRepresentative]
@@ -89,8 +105,12 @@ instance nativeZeroColumnStageZeroRepresentative_epi (q : ℕ) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The defining equation of the representative with the original native page
-presentation and finite-window cokernel projection. -/
+/-- Let D be abelian and X a spectral object indexed by ℤ∪{⊥,⊤}, with its first-quadrant homological
+spectral sequence E. Assume H^n_X(⊥,a)=0 for all n,a∈ℤ with a<0. For q∈ℕ and n=-q, let
+g₀:H^n_X(⊥,0)→W=E_X(⊥,-1,0,1;n), L:W≅E_X(-2,-1,0,1;n), and P:E^2_{0,q}≅E_X(-2,-1,0,1;n) be the
+finite quotient, lower-support comparison and page presentation. The representative satisfies
+ρ_q≫P.hom=g₀≫L.hom. The cuts and spectral degrees n−1,n,n+1 are those of the given page-two
+window. -/
 @[reassoc]
 theorem nativeZeroColumnStageZeroRepresentative_comp_pageXIso_hom (q : ℕ) :
   let n : ℤ := -(q : ℤ)
@@ -124,8 +144,12 @@ theorem nativeZeroColumnStageZeroRepresentative_comp_pageXIso_hom (q : ℕ) :
   dsimp only [nativeZeroColumnStageZeroRepresentative]
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
-/-- The canonical native column-zero edge into the full bottom-to-top interval,
-using lower support and the actual selected-image quotient projection. -/
+/-- Let D be abelian and X a spectral object indexed by ℤ∪{⊥,⊤}, with its first-quadrant homological
+spectral sequence E. Assume H^n_X(⊥,a)=0 for all n,a∈ℤ with a<0. For q∈ℕ and n=-q, this edge
+ε_q:E^2_{0,q}→H^n_X(⊥,⊤) passes through the finite-window page presentation, the lower-support
+comparison, the upper extension 1→⊤, and the stable interval E_X(⊥,-1,0,⊤;n). The stable
+image-cokernel comparison identifies that interval with the current image, because the preceding
+image at -1 is zero. The last arrow is image(H^n_X(⊥,0)→H^n_X(⊥,⊤))→H^n_X(⊥,⊤). -/
 noncomputable def nativeZeroColumnEdge (q : ℕ) :
     ((X.spectralSequence coreE₁FirstQuadrantHomological).page (2 : ℤ)).X (0, q) ⟶
       X.stableIntervalAbutment (-(q : ℤ)) :=
@@ -223,8 +247,11 @@ private theorem nativeZeroColumnProjection_isIso (n : ℤ) :
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The defined edge sends the actual canonical stage-zero representative to
-its original interval map into the full bottom-to-top object. -/
+/-- Let D be abelian and X a spectral object indexed by ℤ∪{⊥,⊤}, with its first-quadrant homological
+spectral sequence E. Assume H^n_X(⊥,a)=0 for all n,a∈ℤ with a<0. For every q∈ℕ, let
+ρ_q:H^{-q}_X(⊥,0)→E^2_{0,q} be the stage-zero representative, ε_q the defined edge into
+H^{-q}_X(⊥,⊤), and u₀:H^{-q}_X(⊥,0)→H^{-q}_X(⊥,⊤) the interval map. Then ρ_q≫ε_q=u₀. This
+equation specifies the edge on all representatives of its epic stage-zero presentation. -/
 @[reassoc]
 theorem nativeZeroColumnEdge_representation (q : ℕ) :
     X.nativeZeroColumnStageZeroRepresentative hneg q ≫ X.nativeZeroColumnEdge hneg q =
@@ -577,8 +604,12 @@ private theorem nativeZeroColumnImageZero_isIso (q : ℕ) :
 include hupper hpos in
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The defined native edge is an isomorphism under upper support and the
-vanishing of every positive column on the original second page. -/
+/-- Let D be abelian and X a spectral object indexed by ℤ∪{⊥,⊤}, with its first-quadrant homological
+spectral sequence E. Assume H^n_X(⊥,a)=0 for all n,a∈ℤ with a<0. Assume additionally
+H^{-d}_X(a,⊤)=0 for every d∈ℕ and finite a∈ℤ satisfying d≤a, and E^2_{p,t}=0 for every p,t∈ℕ
+with p≥1. Then for each q∈ℕ the defined edge ε_q:E^2_{0,q}→H^{-q}_X(⊥,⊤) is an isomorphism.
+Upper support controls the finite-to-top comparison, and the vanishing positive columns makes
+the stage-zero image equal to the full interval object. -/
 theorem isIso_nativeZeroColumnEdge (q : ℕ) : IsIso (X.nativeZeroColumnEdge hneg q) := by
   have := nativeZeroColumnFullRight_isIso X hneg hupper hpos q
   have := nativeZeroColumnImageZero_isIso X hneg hupper hpos q

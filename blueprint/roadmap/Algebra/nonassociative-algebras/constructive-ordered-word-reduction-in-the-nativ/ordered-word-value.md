@@ -1,3 +1,5 @@
-# Ordered Word Value
+# Evaluation of an ordered Lie basis word
 
-Evaluate a weakly increasing word in the original quotient.
+Evaluation of an ordered Lie basis word.
+
+An ordered word is sent to the product of its enveloping basis generators.

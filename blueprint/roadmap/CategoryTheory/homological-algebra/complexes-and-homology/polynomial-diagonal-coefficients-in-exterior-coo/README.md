@@ -2,17 +2,17 @@
 
 ## Bimodule
 
-- [Coefficient Free Exterior Equiv](coefficient-free-exterior-equiv.md)
-- [Coefficient Free Exterior Equiv mk smul basis](coefficient-free-exterior-equiv-mk-smul.md)
-- [Coefficient Free Exterior Equiv mk basis](coefficient-free-exterior-equiv-mk-basis.md)
-- [Coefficient Free Exterior Equiv symm tmul basis](coefficient-free-exterior-equiv-symm-tmu.md)
-- [Coefficient Free Exterior Equiv boundary basis](coefficient-free-exterior-equiv-boundary.md)
+- [Free exterior coordinates of a polynomial coefficient term](coefficient-free-exterior-equiv.md)
+- [An enveloping scalar on a wedge acts on the coefficient](coefficient-free-exterior-equiv-mk-smul.md)
+- [Free coordinates of a balanced variable wedge](coefficient-free-exterior-equiv-mk-basis.md)
+- [Inverse free coordinates of a variable wedge](coefficient-free-exterior-equiv-symm-tmu.md)
+- [The coefficient differential in free exterior coordinates](coefficient-free-exterior-equiv-boundary.md)
 
 ## Symmetric
 
-- [Symmetric Free Exterior Equiv](symmetric-free-exterior-equiv.md)
-- [Symmetric Hochschild Free Exterior Equiv](symmetric-hochschild-free-exterior-equiv.md)
-- [Symmetric Hochschild Differential Form Equiv](symmetric-hochschild-differential-form-e.md)
-- [Symmetric Hochschild Free Exterior Class](symmetric-hochschild-free-exterior-class.md)
-- [Symmetric Hochschild Free Exterior Class coordinates](symmetric-hochschild-free-exterior-class-2.md)
-- [Symmetric Hochschild Free Exterior Class differential Form basis](symmetric-hochschild-free-exterior-class-3.md)
+- [Free exterior coordinates with symmetric coefficients](symmetric-free-exterior-equiv.md)
+- [Symmetric polynomial Hochschild homology has free exterior coordinates](symmetric-hochschild-free-exterior-equiv.md)
+- [Symmetric polynomial Hochschild homology has differential-form coordinates](symmetric-hochschild-differential-form-e.md)
+- [An exterior coefficient element defines a Hochschild class](symmetric-hochschild-free-exterior-class.md)
+- [The exterior class map is inverted by free homology coordinates](symmetric-hochschild-free-exterior-class-2.md)
+- [A variable exterior class has its differential-variable coordinates](symmetric-hochschild-free-exterior-class-3.md)

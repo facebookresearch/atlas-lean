@@ -1,3 +1,6 @@
-# Ring Change Map id
+# Identity ring change is the identity through scalar-restriction comparisons
 
-Identity scalar change is exactly the map given by the two native restriction unitors.
+For identity endpoint ring maps and the identity bimodule
+coefficient, the tensor ring-change map identifies with id
+on A⊗_R B after the canonical input and output restriction
+identity isomorphisms. Its pure value is [x⊗y].

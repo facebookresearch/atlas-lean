@@ -1,3 +1,6 @@
-# Colimit iota comp gamma Iso inv
+# Inverse power-torsion colimit isomorphism recovers evaluation
 
-Its inverse is the same actual evaluation-at-one cocone.
+Inverse power-torsion colimit isomorphism recovers evaluation.
+
+The colimit injection at `n` followed by the inverse power-torsion colimit isomorphism equals
+the quotient Hom evaluation cocone map.

@@ -1,4 +1,6 @@
-# Right Multiplication Defect mem degree
+# The degree bound for a right-generator multiplication defect
 
-Right multiplication by an actual basis Lie generator has leading term
-its polynomial variable on every actual filtered UEA element.
+The degree bound for a right-generator multiplication defect.
+
+If `u` has enveloping degree at most `q`, its right-multiplication defect at a basis generator
+has polynomial total degree at most `q`.

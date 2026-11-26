@@ -15,13 +15,16 @@ public import MathlibExt.Combinatorics.Perm.EulerianCyclicAverage
 public import MathlibExt.Combinatorics.Perm.EulerianRationalFamily
 
 /-!
-# The actual convolution norm identity at two
+# The cyclic norm identity for the second convolution
 
-Multiplying the actual signed descent-polynomial element by the original
-cyclic norm groups its coefficient by all actual rotation cuts. The genuine
-cyclic descent fiber average is twice the original head-fixed tail
-coefficient. This proves the all-degree group-ring identity used for Connes
-B weight shift; no coefficient or norm identity is a hypothesis.
+Let `N=n+1`, `ρ=finRotate N`, and `N_n` be the signed cyclic norm. The coefficient of a
+permutation `σ` in `Λ_N(a)N_n` is its sign times `∑ r : Fin N, P_(N,d(σ(ρ^r)⁻¹))(a)`.
+
+The product `N_n H_n(Λ_n(a))` expands uniquely in rotation and fixed-head coordinates. At
+parameter two these expansions give `Λ_N(2)N_n = 2 • (N_n H_n(Λ_n(2)))`, including the empty
+tail `n=0`.
+
+Reference: Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -39,7 +42,11 @@ private theorem sign_cancel_rotation (n : ℕ) (σ : Perm (Fin (n + 1))) (r : Fi
   have hs := congrArg (fun π : Perm (Fin (n + 1)) => ((π.sign : ℤ) : ℚ)) h
   simpa only [Equiv.Perm.sign_mul, Units.val_mul, Int.cast_mul] using hs
 
-/-- The actual norm product has its original rotation-fiber coefficient normal form. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `a : ℚ`. Write
+`P_(r,d)(X)=(1/r!)∏_(j=0)^(r-1)(X+j-d)`, `Λ_r(a)=∑ σ ∈ S_r, P_(r,descentNumber σ)(a) sign(σ)
+[σ]`, and `N_n=∑ r : Fin N, sign(ρ^r.val) [ρ^r.val]` in the rational group rings. The
+group-ring product is `Λ_N(a)N_n = ∑ σ ∈ S_N, (∑ r : Fin N, P_(N,d(σ*(ρ^r.val)⁻¹))(a)) sign(σ)
+[σ]`. -/
 theorem eulerianLambda_norm_coefficient_sum (n : ℕ) (a : ℚ) :
     eulerianLambda (n + 1) a * signedCyclicNormElement ℚ n =
       ∑ σ : Perm (Fin (n + 1)), MonoidAlgebra.single σ
@@ -83,7 +90,12 @@ theorem eulerianLambda_norm_coefficient_sum (n : ℕ) (a : ℚ) :
       exact (map_sum (MonoidAlgebra.singleAddHom σ) _ Finset.univ).symm
     _ = _ := by rw [Finset.sum_mul]
 
-/-- The original head-fixing norm product has its actual unique permutation decomposition. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `a : ℚ`. Write
+`P_(r,d)(X)=(1/r!)∏_(j=0)^(r-1)(X+j-d)`, `Λ_r(a)=∑ σ ∈ S_r, P_(r,descentNumber σ)(a) sign(σ)
+[σ]`, and `N_n=∑ r : Fin N, sign(ρ^r.val) [ρ^r.val]` in the rational group rings. If `H_n` is
+the fixed-head group-ring map, `N_n H_n(Λ_n(a)) = ∑ r : Fin N, ∑ π ∈ S_n, P_(n,d(π))(a)
+sign(ρ^r.val * H_n(π)) [ρ^r.val * H_n(π)]`, with `H_n(π)` denoting its permutation embedding
+in the summand. -/
 theorem norm_headFixing_eulerianLambda_sum (n : ℕ) (a : ℚ) :
     signedCyclicNormElement ℚ n * headFixingGroupRingMap ℚ n (eulerianLambda n a) =
       ∑ r : Fin (n + 1), ∑ π : Perm (Fin n),
@@ -103,8 +115,9 @@ theorem norm_headFixing_eulerianLambda_sum (n : ℕ) (a : ℚ) :
   simp only [Units.val_mul, Int.cast_mul]
   ring
 
-/-- The actual all-degree convolution operation at two and the actual cyclic norm
-satisfy the original head-fixing identity. The proof uses cyclic descent fibers. -/
+/-- For every `n : ℕ`, the rational convolution family and signed cyclic norm satisfy `Λ_(n+1)(2)
+* N_n = 2 • (N_n * H_n(Λ_n(2)))`, where `H_n : ℚ[S_n] → ℚ[S_(n+1)]` is the fixed-head
+group-ring map. The identity includes `n=0`. -/
 theorem eulerianLambda_two_norm (n : ℕ) :
     eulerianLambda (n + 1) 2 * signedCyclicNormElement ℚ n =
       (2 : ℚ) • (signedCyclicNormElement ℚ n *

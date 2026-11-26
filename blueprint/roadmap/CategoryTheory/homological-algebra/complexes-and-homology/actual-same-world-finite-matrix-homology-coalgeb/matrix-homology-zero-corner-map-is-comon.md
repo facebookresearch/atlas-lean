@@ -1,3 +1,5 @@
-# Matrix Homology Zero Corner Map Is Comon Hom
+# Comonoid compatibility of finite matrix homology size maps
 
-The zero-corner homology map preserves the homology comonoids.
+Comonoid compatibility of finite matrix homology size maps.
+
+The zero-extension homology map preserves the field homology comultiplication and counit.

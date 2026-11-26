@@ -2,8 +2,8 @@
 
 ## Projective Resolution
 
-- [Homotopy](homotopy.md)
+- [Homotopy of projective-resolution comparisons](homotopy.md)
 
 ## Hom
 
-- [Nonempty homotopy](nonempty-homotopy.md)
+- [Extending endpoint homotopies to the horseshoe middle](nonempty-homotopy.md)

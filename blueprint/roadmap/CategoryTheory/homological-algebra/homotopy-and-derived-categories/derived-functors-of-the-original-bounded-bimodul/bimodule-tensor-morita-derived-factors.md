@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Derived Factors
+# Forward Morita tensor commutes with bounded localization
 
-The original forward-Q factorization uses the actual bounded Morita tensor.
+Forward Morita tensor commutes with bounded localization.
+
+The forward localized functor composed after `Q_R` is naturally isomorphic to the forward
+bounded tensor equivalence composed before `Q_S`.

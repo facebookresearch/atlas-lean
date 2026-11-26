@@ -1,4 +1,5 @@
-# Native Tor End Operators commute
+# The two coefficient endomorphism actions commute on Tor
 
-The two actual original native Tor coefficient operators commute
-by the actual native bifunctor's naturality square.
+For f∈End_R(N), g∈End_R(X) over a commutative ring R,
+the endomorphisms Tor_q(f,id) and Tor_q(id,g) commute
+on Tor_q^R(N,X). This is the bifunctor naturality square.

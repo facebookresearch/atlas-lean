@@ -1,4 +1,6 @@
-# Algebra Positive Homology One Class to Kaehler
+# The degree-one class map followed by the Kähler comparison
 
-The homology comparison sends the original homology class
-through the original Kähler representative map.
+The degree-one class map followed by the Kähler comparison.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, class
+followed by algebraPositiveHomologyOneIsoKaehler is algebraPositiveOneToKaehlerLift.

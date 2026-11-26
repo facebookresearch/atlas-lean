@@ -15,16 +15,20 @@ public import MathlibExt.LinearAlgebra.TensorProduct.ModuleMap
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Associator
 
 /-!
-# Morita coefficient tensors and maps
+# Bimodule coefficients under balanced tensoring
 
-For compatible S–R, R–R and R–S bimodules Q, M and P, the coefficient is
-`(Q ⊗_R M) ⊗_R P`. The S-actions on Q and P give a module over
-`S ⊗[k] Sᵐᵒᵖ`.
+Let k be a commutative ring and R, S k-algebras which are rings.
+For an S–R bimodule Q, an R–R bimodule M and an R–S bimodule P, with
+commuting actions and compatible k-module structures, form
+F(M) = (Q ⊗_R M) ⊗_R P. All scalar and carrier universes are independent.
 
-Coefficient maps act on M, commute with scalar actions and reassociation,
-and satisfy identity and composition laws.
-Scalar and coefficient universes are independent; invertibility,
-flatness, field and finite-dimensionality assumptions are not required.
+The outer actions of S are induced from Q and P:
+s [(q ⊗ m) ⊗ p] t = [(s q ⊗ m) ⊗ p t].
+They commute and define a module over S ⊗[k] Sᵐᵒᵖ.
+An R ⊗[k] Rᵐᵒᵖ-linear map f : M → N gives an
+S ⊗[k] Sᵐᵒᵖ-linear map F(M) → F(N) acting only on the middle factor.
+These maps preserve identities, composition and reassociation.
+No invertibility of Q or P is required for this coefficient construction.
 -/
 
 @[expose] public section
@@ -51,11 +55,22 @@ variable (k : Type u) [CommRing k]
   [Module R P] [Module Sᵐᵒᵖ P] [SMulCommClass R Sᵐᵒᵖ P]
   [IsScalarTower k R P] [IsScalarTower k Sᵐᵒᵖ P]
 
-/-- The original left parentheses and original ground-module dictionaries. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+This is the left-parenthesized balanced tensor carrier F(M).
+Its inner quotient has the right R-action induced from the right action
+on M, so the second balancing is well-defined. -/
 abbrev coefficientTensor := assocSource k R R Q M P
 
 set_option linter.unusedSectionVars false in
-/-- Original pure triples determine an additive coefficient map. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+Two additive maps F(M) → C into an additive commutative monoid are
+equal if they agree on every ordered pure triple [(q ⊗ m) ⊗ p]. -/
 @[nolint unusedArguments] -- omitting them would shrink the defs built with it, across modules
 theorem coefficientHom_ext {C : Type c} [AddCommMonoid C]
     {f g : coefficientTensor k R Q M P →+ C}
@@ -75,7 +90,14 @@ theorem coefficientHom_ext {C : Type c} [AddCommMonoid C]
     exact h q m p
   exact DFunLike.congr_fun hp y
 
-/-- The twice-computed left S-action, on the first coefficient factor Q. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+Let S be a k-algebra which is a ring, acting on Q on the left with
+a scalar tower k → S → Q and commuting with its right R-action.
+The induced left S-module structure on F(M) is
+s [(q ⊗ m) ⊗ p] = [(s q ⊗ m) ⊗ p]. -/
 def coefficientLeftModule : Module S (coefficientTensor k R Q M P) := by
   letI := rightModule k R R Q M
   letI := leftModule k R S Q M
@@ -83,13 +105,27 @@ def coefficientLeftModule : Module S (coefficientTensor k R Q M P) := by
   letI := leftRightSMulCommClass k R R Q M S
   exact leftModule k R S (TensorProduct.Balanced k R Q M) P
 
-/-- The computed right S-action, on the final coefficient factor P. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+Let S be a k-algebra which is a ring, acting on P on the right,
+commuting with its left R-action and the k-action.
+The induced right S-module structure on F(M) is
+[(q ⊗ m) ⊗ p] t = [(q ⊗ m) ⊗ p t]. -/
 def coefficientRightModule : Module Sᵐᵒᵖ (coefficientTensor k R Q M P) := by
   letI := rightModule k R R Q M
   exact rightModule k R S (TensorProduct.Balanced k R Q M) P
 
 omit [IsScalarTower k Rᵐᵒᵖ Q] in
-/-- The two earned outer actions commute; this is not supplied by callers. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+Let a k-algebra S act on Q on the left and P on the right, with
+compatible k-actions and commutation with their R-actions.
+The two induced outer actions on F(M) commute:
+s • (t • x) = t • (s • x) for s ∈ S and t ∈ Sᵐᵒᵖ. -/
 theorem coefficientActionsComm :
     letI := coefficientLeftModule k R S Q M P
     letI := coefficientRightModule k R S Q M P
@@ -104,7 +140,14 @@ theorem coefficientActionsComm :
 
 omit [IsScalarTower k Rᵐᵒᵖ Q] [SMulCommClass R Sᵐᵒᵖ P] [IsScalarTower k R P]
   [IsScalarTower k Sᵐᵒᵖ P] [Module Sᵐᵒᵖ P] in
-/-- The original Q compatibility earns the left ground tower of the quotient. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+If a k-algebra S acts on Q on the left, commuting with its right
+R-action and satisfying the scalar tower k → S → Q, then the
+induced S-action on F(M) forms a scalar tower k → S → F(M).
+No right S-action on P is needed for this tower statement. -/
 theorem coefficientLeftTower :
     letI := coefficientLeftModule k R S Q M P
     IsScalarTower k S (coefficientTensor k R Q M P) := by
@@ -118,7 +161,14 @@ theorem coefficientLeftTower :
 
 omit [SMulCommClass S Rᵐᵒᵖ Q] [IsScalarTower k S Q] [IsScalarTower k Rᵐᵒᵖ Q]
   [IsScalarTower k R M] [IsScalarTower k R P] [Module S Q] in
-/-- The original P compatibility earns the right ground tower. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+If a k-algebra S acts on P on the right, commuting with its left
+R-action and satisfying the scalar tower k → Sᵐᵒᵖ → P, then
+the induced right S-action on F(M) forms a scalar tower
+k → Sᵐᵒᵖ → F(M). No left S-action on Q is needed for this statement. -/
 theorem coefficientRightTower :
     letI := coefficientRightModule k R S Q M P
     IsScalarTower k Sᵐᵒᵖ (coefficientTensor k R Q M P) := by
@@ -126,7 +176,13 @@ theorem coefficientRightTower :
   let := coefficientRightModule k R S Q M P
   exact rightScalarTower k R S (TensorProduct.Balanced k R Q M) P
 
-/-- The actual native enveloping-module value combines these original outer actions. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+The commuting outer S-actions define the module structure over
+S ⊗[k] Sᵐᵒᵖ on F(M). A pure scalar s ⊗ t acts by the left S-action
+on Q and the right S-action on P. -/
 def coefficientModule : Module (S ⊗[k] Sᵐᵒᵖ) (coefficientTensor k R Q M P) := by
   letI := coefficientLeftModule k R S Q M P
   letI := coefficientRightModule k R S Q M P
@@ -136,7 +192,13 @@ def coefficientModule : Module (S ⊗[k] Sᵐᵒᵖ) (coefficientTensor k R Q M 
   exact TensorProduct.Algebra.module
 
 set_option linter.unusedSectionVars false in
-/-- Pure triples retain the printed left outer action. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For a k-algebra S acting on Q on the left with compatible k-action
+and commuting right R-action, the induced left scalar has value
+s • [(q ⊗ m) ⊗ p] = [(s • q ⊗ m) ⊗ p]. -/
 @[nolint unusedArguments] -- omitting them cascades via `coefficientModule_tmul_mk`
 theorem coefficientLeftModule_smul_mk (s : S) (q : Q) (m : M) (p : P) :
     letI := rightModule k R R Q M
@@ -156,7 +218,13 @@ theorem coefficientLeftModule_smul_mk (s : S) (q : Q) (m : M) (p : P) :
   rw [leftAction_mk]
 
 set_option linter.unusedSectionVars false in
-/-- The original right S-action acts only on the last factor P. -/
+/-- Let k be a commutative ring and R a ring. Let Q, M, P be
+additive commutative groups with k-module structures, Q a right R-module,
+M an R-bimodule whose two actions commute with each other and k,
+and P a left R-module. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For a k-algebra S acting on P on the right with compatible k-action
+and commuting left R-action, the induced right scalar has value
+t • [(q ⊗ m) ⊗ p] = [(q ⊗ m) ⊗ (t • p)] for t ∈ Sᵐᵒᵖ. -/
 @[nolint unusedArguments] -- omitting them cascades via `coefficientModule_tmul_mk`
 theorem coefficientRightModule_smul_mk (t : Sᵐᵒᵖ) (q : Q) (m : M) (p : P) :
     letI := rightModule k R R Q M
@@ -169,7 +237,13 @@ theorem coefficientRightModule_smul_mk (t : Sᵐᵒᵖ) (q : Q) (m : M) (p : P) 
     (mk k R (TensorProduct.Balanced k R Q M) P (mk k R Q M q m) p) = _
   exact rightAction_mk k R S (TensorProduct.Balanced k R Q M) P t _ p
 
-/-- The native tensor scalar has the actual ordered two-sided coefficient value. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For s ∈ S and t ∈ Sᵐᵒᵖ, the enveloping-ring action has pure value
+(s ⊗ t) • [(q ⊗ m) ⊗ p] = [((s • q) ⊗ m) ⊗ (t • p)].
+The two scalar factors act on the first and last coefficients respectively. -/
 theorem coefficientModule_tmul_mk (s : S) (t : Sᵐᵒᵖ) (q : Q) (m : M) (p : P) :
     letI := rightModule k R R Q M
     letI := coefficientModule k R S Q M P
@@ -194,7 +268,13 @@ variable {k R S Q M P}
   [Module R N] [Module Rᵐᵒᵖ N] [SMulCommClass R Rᵐᵒᵖ N]
   [IsScalarTower k R N] [IsScalarTower k Rᵐᵒᵖ N]
 
-/-- The actual coefficient map is the old balanced map, with earned native S-bimodule linearity. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For an R ⊗[k] Rᵐᵒᵖ-linear map f : M → N between compatible
+R-bimodules, the induced map F(M) → F(N) is
+S ⊗[k] Sᵐᵒᵖ-linear and sends [(q ⊗ m) ⊗ p] to [(q ⊗ f(m)) ⊗ p]. -/
 def coefficientMap
     (f : letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
       letI : Module (R ⊗[k] Rᵐᵒᵖ) N := TensorProduct.Algebra.module
@@ -254,7 +334,13 @@ def coefficientMap
         (fun _ _ => rfl) (fun _ _ => rfl) t) x
 
 set_option linter.unusedSectionVars false in
-/-- The coefficient map keeps the old ground map and its exact native quotient values. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For an R ⊗[k] Rᵐᵒᵖ-linear map f : M → N, the coefficient map on
+F(M) is the balanced three-factor map induced by id_Q, the underlying
+k-linear map f, and id_P. The equality holds on every element of F(M). -/
 @[nolint unusedArguments] -- omitting it cascades via `coefficientMap_mk` into other modules
 theorem coefficientMap_apply
     (f : letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
@@ -268,7 +354,13 @@ theorem coefficientMap_apply
         (fun t m => (TensorProduct.Algebra.toRightLinearMap f).map_smul t m)
         (fun _ _ => rfl) x := rfl
 
-/-- Only the original middle coefficient is changed. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For an R ⊗[k] Rᵐᵒᵖ-linear map f : M → N, the coefficient map has
+pure value coefficientMap(f)([(q ⊗ m) ⊗ p]) = [(q ⊗ f(m)) ⊗ p].
+The ordered outer coefficients q and p remain in their positions. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem coefficientMap_mk
     (f : letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
@@ -309,7 +401,15 @@ theorem coefficientMap_mk
       (LinearMap.id : Q →ₗ[k] Q) g (LinearMap.id : P →ₗ[k] P)
       (fun _ _ => rfl) gL gR (fun _ _ => rfl) q m p).trans (by rfl))
 
-/-- Reassociation is natural for the actual native bimodule coefficient morphism. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For an R ⊗[k] Rᵐᵒᵖ-linear f : M → N, reassociation commutes
+with the induced coefficient map:
+assoc_N ∘ coefficientMap(f) =
+tensor_right(id_Q, f, id_P) ∘ assoc_M.
+The right-parenthesized target is Q ⊗_R (N ⊗_R P). -/
 theorem coefficientMap_assoc
     (f : letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
       letI : Module (R ⊗[k] Rᵐᵒᵖ) N := TensorProduct.Algebra.module
@@ -336,7 +436,12 @@ section FunctorLaws
 
 variable {k R S Q M P}
 
-/-- The actual coefficient construction preserves the native identity morphism. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+The coefficient map induced by id_M is id_(F(M)) as an
+S ⊗[k] Sᵐᵒᵖ-linear map. -/
 @[simp]
 theorem coefficientMap_id :
     letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
@@ -363,7 +468,14 @@ variable {N : Type n} {O : Type o}
   [IsScalarTower k R N] [IsScalarTower k Rᵐᵒᵖ N]
   [IsScalarTower k R O] [IsScalarTower k Rᵐᵒᵖ O]
 
-/-- The same chosen coefficient maps preserve composition. -/
+/-- Let k be a commutative ring and R, S k-algebras which are rings.
+Let Q be an S–R bimodule, M an R–R bimodule, and P an R–S bimodule.
+Their two actions commute, and each action is compatible with the
+given k-module structure. Write F(M) = (Q ⊗_R M) ⊗_R P.
+For R ⊗[k] Rᵐᵒᵖ-linear maps f : M → N and g : N → O between
+compatible R-bimodules, coefficientMap(g ∘ f) =
+coefficientMap(g) ∘ coefficientMap(f) as
+S ⊗[k] Sᵐᵒᵖ-linear maps F(M) → F(O). -/
 theorem coefficientMap_comp
     (f : letI : Module (R ⊗[k] Rᵐᵒᵖ) M := TensorProduct.Algebra.module
       letI : Module (R ⊗[k] Rᵐᵒᵖ) N := TensorProduct.Algebra.module

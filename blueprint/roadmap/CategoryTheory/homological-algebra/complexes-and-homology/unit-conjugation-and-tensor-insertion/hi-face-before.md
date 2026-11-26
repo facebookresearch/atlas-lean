@@ -1,3 +1,6 @@
-# Hi face before
+# The face identity before a conjugation insertion
 
-Faces before the insertion agree with the original source face.
+The face identity before a conjugation insertion.
+
+For `i ≤ j`, the insertion family satisfies `d_i h_(j+1) = h_j d_i`, with the degree-dependent
+face and insertion indices as stated.

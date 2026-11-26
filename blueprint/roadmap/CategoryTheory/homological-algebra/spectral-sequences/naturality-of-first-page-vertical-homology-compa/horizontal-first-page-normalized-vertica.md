@@ -1,4 +1,6 @@
-# Horizontal First Page Normalized Vertical Homology Iso hom naturality
+# Naturality of the sign-normalized first-page comparison
 
-The sign-normalized first-page comparison with vertical homology is
-natural in the bicomplex.
+Naturality of the sign-normalized first-page comparison.
+
+The normalized isomorphisms from first-page objects to column vertical homology commute with
+every bicomplex map at the fixed bidegree.

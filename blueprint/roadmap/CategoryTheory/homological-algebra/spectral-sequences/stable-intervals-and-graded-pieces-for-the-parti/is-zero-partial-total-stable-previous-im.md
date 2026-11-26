@@ -1,4 +1,5 @@
-# Is Zero partial Total Stable Previous Image zero
+# Vanishing of the preceding stable image at filtration degree zero
 
-The selected spectral image at the predecessor of filtration degree zero
-is zero.
+Vanishing of the preceding stable image at filtration degree zero.
+
+The image of the stable step at integer index `-1` in the abutment is zero.

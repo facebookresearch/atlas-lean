@@ -1,3 +1,6 @@
-# Stable Matrix Cyclic Connes Homology Map
+# The matrix-colimit CE map into cyclic quotient homology
 
-The shifted homology map from the colimit CE complex to Connes homology.
+The matrix-colimit CE map into cyclic quotient homology.
+
+The full-colimit-to-tail homology comparison and the colimit trace give a map from full degree
+`n+1` to quotient homology degree `n`.

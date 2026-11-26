@@ -13,12 +13,21 @@ public import MathlibExt.Algebra.Homology.BicomplexFirstColumnMap
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.ConnesComparisonWorkingHeight
 
 /-!
-# Naturality of lifted Connes comparisons
+# Independent-world naturality of the lifted Connes comparison
 
-The first-column projection of a lifted cyclic
-bicomplex defines the comparison and its coefficient
-square over the ground ring. In the rational setting
-it is the hom of the cyclic-to-Connes isomorphism.
+Let k be a commutative ring and A a nonunital k-algebra with k-bilinear
+multiplication. At H = max(u,v,z), the first-column cokernel projection
+gives p_A^H : Tot(D_A^H) → Cλ_A^H. It projects column zero and
+annihilates the positive columns. On homology, the universe-lift
+comparison supplies a map ULift^H HC_n(A) → H_n(Cλ_A^H).
+
+For a nonunital k-algebra map f : A → B, with A and B in independent
+worlds v and w, put H = max(u,v,w,z). The chain and homology squares
+commute: p_B^H ∘ Tot(f) = Cλ^H(f) ∘ p_A^H.
+If k is a ℚ-algebra, the homology projection is the forward map of
+the rational comparison isomorphism. Its inverse satisfies the
+corresponding square H_n(Cλ_A^H) → ULift^H HC_n(B).
+No unit-preservation or equality of the coefficient worlds is assumed.
 -/
 
 @[expose] public section
@@ -34,13 +43,21 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The first-column total projection at the chosen working height. -/
+/-- For a commutative ring k, a nonunital k-algebra A with
+k-bilinear multiplication and H = max(u,v,z), the first-column
+cokernel projection is the chain map Tot(D_A^H) → Cλ_A^H.
+In total degree n it projects the summand (0,n) to the Connes
+quotient and is zero on every summand (p,q) with p > 0. -/
 def cyclicToConnesAtHeight :
     HomologicalComplex₂.total (cyclicBicomplexAtHeight.{u,v,z} k A) (ComplexShape.down ℕ) ⟶
       connesComplexAtHeight.{u,v,z} k A :=
   HomologicalComplex₂.firstColumnCokernelProjection (cyclicBicomplexAtHeight.{u,v,z} k A)
 
-/-- The prescribed lifted HC map followed by the first-column projection on native homology. -/
+/-- For a nonunital k-algebra A and H = max(u,v,z), the map
+ULift^H HC_n(A) → H_n(Cλ_A^H) first identifies lifted cyclic homology
+with the homology of the lifted cyclic total, then applies the
+homology map of its first-column projection. This map is defined
+over any commutative ground ring k. -/
 def cyclicToConnesHomologyAtHeight (n : ℕ) :
     (ModuleCat.uliftFunctor.{max u v z, max u v} k).obj (cyclicHomology k A n) ⟶
       connesHomologyAtHeight.{u,v,z} k A n :=
@@ -50,7 +67,11 @@ def cyclicToConnesHomologyAtHeight (n : ℕ) :
 variable {k A} {B : Type w} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The native total and incoming-cokernel maps preserve the projection across coefficient worlds. -/
+/-- For a nonunital k-algebra map f : A → B, with k, A and B
+in independent worlds u, v and w, put H = max(u,v,w,z).
+The chain maps satisfy p_B^H ∘ Tot(f) = Cλ^H(f) ∘ p_A^H from
+the lifted cyclic total of A to the lifted Connes complex of B.
+The multiplication in both algebras is k-bilinear. -/
 @[reassoc]
 theorem cyclicToConnesAtHeight_naturality (f : A →ₙₐ[k] B) :
     cyclicTotalMapAtHeight.{u,v,w,z} f ≫ cyclicToConnesAtHeight.{u,w,max u v w z} k B =
@@ -59,7 +80,11 @@ theorem cyclicToConnesAtHeight_naturality (f : A →ₙₐ[k] B) :
   HomologicalComplex₂.firstColumnCokernelProjection_naturality
     (cyclicBicomplexMapAtHeight.{u,v,w,z} f)
 
-/-- The homology projection retains its coefficient square at the common height. -/
+/-- For a nonunital k-algebra map f : A → B and n ≥ 0, put all
+objects at H = max(u,v,w,z). The homology projections satisfy
+p_(B,n)^H ∘ HC_n^H(f) = H_n(Cλ^H(f)) ∘ p_(A,n)^H from
+ULift^H HC_n(A) to H_n(Cλ_B^H).
+The carrier worlds of A and B are independent. -/
 @[reassoc]
 theorem cyclicToConnesHomologyAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     cyclicHomologyMapAtHeight.{u,v,w,z} f n ≫
@@ -92,7 +117,10 @@ section Rational
 
 variable [Algebra ℚ k]
 
-/-- The native first-column projection is the exact hom of the prescribed rational comparison. -/
+/-- For a commutative ℚ-algebra k, a nonunital k-algebra A with
+k-bilinear multiplication and H = max(u,v,z), the forward map of
+ULift^H HC_n(A) ≅ H_n(Cλ_A^H) equals the chosen-height homology
+map of the first-column projection, for every n ≥ 0. -/
 theorem cyclicToConnesHomologyIsoAtHeight_hom_eq (n : ℕ) :
     (cyclicToConnesHomologyIsoAtHeight.{u,v,z} k A n).hom =
       cyclicToConnesHomologyAtHeight.{u,v,z} k A n := by
@@ -137,7 +165,11 @@ theorem cyclicToConnesHomologyIsoAtHeight_hom_eq (n : ℕ) :
           (Category.assoc χT.inv ht hp').symm))
   exact hAll.trans (congrArg (fun f => f ≫ hp') hLift.symm)
 
-/-- The prescribed rational comparison itself preserves the independent-world coefficient maps. -/
+/-- For a commutative ℚ-algebra k, a nonunital k-algebra map
+f : A → B and n ≥ 0, let χ_A^H and χ_B^H be the rational
+comparison isomorphisms at H = max(u,v,w,z). Their forward maps
+satisfy χ_B^H.hom ∘ HC_n^H(f) = H_n(Cλ^H(f)) ∘ χ_A^H.hom.
+The square has source ULift^H HC_n(A) and target H_n(Cλ_B^H). -/
 @[reassoc]
 theorem cyclicToConnesHomologyIsoAtHeight_hom_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     cyclicHomologyMapAtHeight.{u,v,w,z} f n ≫
@@ -147,7 +179,12 @@ theorem cyclicToConnesHomologyIsoAtHeight_hom_naturality (f : A →ₙₐ[k] B) 
   rw [cyclicToConnesHomologyIsoAtHeight_hom_eq, cyclicToConnesHomologyIsoAtHeight_hom_eq]
   exact cyclicToConnesHomologyAtHeight_naturality.{u,v,w,z} f n
 
-/-- The inverse rational comparison preserves the same independent-world coefficient square. -/
+/-- For a commutative ℚ-algebra k, a nonunital k-algebra map
+f : A → B and n ≥ 0, the inverse comparison maps at
+H = max(u,v,w,z) satisfy
+(χ_B^H)⁻¹ ∘ H_n(Cλ^H(f)) = HC_n^H(f) ∘ (χ_A^H)⁻¹.
+This square goes from H_n(Cλ_A^H) to ULift^H HC_n(B) and retains
+the independent carrier worlds of both algebras. -/
 @[reassoc]
 theorem cyclicToConnesHomologyIsoAtHeight_inv_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     connesHomologyMapAtHeight.{u,v,w,z} k A f n ≫

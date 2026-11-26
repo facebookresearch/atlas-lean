@@ -1,3 +1,6 @@
-# Left Hom Group Functor map apply
+# Target map formula for the left-module-valued Hom functor
 
-The actual native Hom functor map retains additive postcomposition on every value.
+Target map formula for the left-module-valued Hom functor.
+
+For `g : I ⟶ I'`, an additive map `h : A → I`, and `a : A`, the Hom functor's image of `g`
+evaluates as `g(h a)`.

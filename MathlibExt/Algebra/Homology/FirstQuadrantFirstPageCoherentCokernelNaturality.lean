@@ -18,15 +18,24 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationFiniteComparison
 
 /-!
-# Naturality of the coherent first-page cokernel
+# Naturality of the first-page column cokernel in coherent windows
 
-A bicomplex map commutes with projection from a horizontal filtration stage
-to its top column.  Transporting this square to the complete filtration gives
-a map between the cokernels of coherent first-page windows, and the chosen
-coherent cokernel isomorphisms identify that map with the direct-column map.
+Let K,L be nonnegative homological bicomplexes. In a preadditive category
+with a zero object and finite coproducts, a bicomplex map f : K → L
+commutes with projection of F_p Tot(K) onto its top column p.
+After reindexing total chain degree n to cochain degree −n, the finite
+and complete-stage projections are related by the complete-to-finite
+stage comparison, and both projection squares commute with f.
 
-This file does not construct a mapping-cone, homology, or spectral-page
-naturality comparison.
+For abelian C, choose the coherent first-page lower endpoint
+ℓ_0=−1 and ℓ_(p+1)=p, with upper endpoint p. Let
+t_p : F_(ℓ_p) → F_p be this window map and Q_p=coker(t_p).
+The map f induces Q_p(K) → Q_p(L), and the comparison
+Φ_p : Q_p ≅ D_p with the signed direct column is natural:
+Φ_(L,p) ∘ Q_p(f) = D_p(f) ∘ Φ_(K,p).
+Its projection equation is Φ_p ∘ π_p = Π_p, the complete-stage
+top-column projection. The category object and morphism worlds
+are independent.
 -/
 
 @[expose] public section
@@ -50,8 +59,11 @@ variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
 omit [HasZeroObject C] in
-/-- A finite-stage bicomplex map commutes with projection onto the top
-horizontal-column summand. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in a preadditive category with finite coproducts, the degree p+q
+stage-p map satisfies
+P_(L,p,q) ∘ F_p(f)_(p+q) = f_(p,q) ∘ P_(K,p,q).
+Here P_(p,q) projects F_p T_(p+q) onto its top column term K_(p,q). -/
 @[reassoc]
 theorem horizontalFilteredTotalMapOfBicomplex_topProjection
     (f : K ⟶ L) (p q : ℕ) :
@@ -78,8 +90,12 @@ theorem horizontalFilteredTotalMapOfBicomplex_topProjection
       horizontalFilteredTotalι_topProjection,
       dite_eq_right h, comp_zero, zero_comp]
 
-/-- Supported-degree naturality of the extended finite-stage direct-column
-projection. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in a preadditive category with a zero object and finite coproducts,
+the extended finite-stage projection in degree i=−p−q satisfies
+Π_L^i ∘ extend(F_p(f))^i = D_p(f)^i ∘ Π_K^i.
+The maps use the supported column term K_(p,q) and its
+signed direct-column presentation. -/
 @[reassoc]
 theorem horizontalNaturalDirectColumnProjectionComponent_naturality
     (f : K ⟶ L) (p q : ℕ) :
@@ -108,8 +124,11 @@ theorem horizontalNaturalDirectColumnProjectionComponent_naturality
     rw [horizontalFilteredTotalMapOfBicomplex_topProjection]
   simp only [Category.assoc]
 
-/-- The extended finite-stage direct-column projection is natural under
-bicomplex maps. -/
+/-- For f : K → L between nonnegative homological bicomplexes
+in a preadditive category with a zero object and finite coproducts,
+the finite-stage top-column projection satisfies
+Π_L ∘ extend(F_p(f)) = D_p(f) ∘ Π_K as cochain maps.
+The target direct column is supported in degrees i≤−p. -/
 @[reassoc]
 theorem horizontalNaturalDirectColumnProjectionMap_naturality
     (f : K ⟶ L) (p : ℕ) :
@@ -142,8 +161,11 @@ theorem horizontalNaturalDirectColumnProjectionMap_naturality
       f p q
 
 set_option linter.flexible false in
-/-- The existing upper-stage comparison is the cochain extension of the
-complete-to-finite comparison. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, the cochain
+comparison from complete stage F_p to the finite stage with
+columns a≤p is the extension of their chain-level comparison.
+It reindexes total degree n to cochain degree −n. -/
 theorem horizontalCompleteFiltrationCochainUpperIso_hom_eq_finite
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (p : ℕ) :
@@ -162,8 +184,11 @@ theorem horizontalCompleteFiltrationCochainUpperIso_hom_eq_finite
       (horizontalFirstPageUpperIndex p)).obj.left)
     ComplexShape.embeddingDownNat i
 
-/-- The complete-stage projection is the finite-stage projection transported
-through the complete-to-finite comparison. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, let α_p compare
+the complete stage F_p to its finite-stage cochain presentation.
+Then Π_p^complete = Π_p^finite ∘ α_p as maps to D_p.
+The equality includes the zero-column stage p=0. -/
 theorem horizontalCompleteDirectColumnProjectionMap_eq_finite
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (p : ℕ) :
@@ -208,7 +233,11 @@ theorem horizontalCompleteDirectColumnProjectionMap_eq_finite
         horizontalCompleteFilteredTotalMonoOverUpperIso,
         horizontalCompleteFilteredTotalMonoOverUpperSuccIso]
 
-/-- The complete upper-stage projection is natural under bicomplex maps. -/
+/-- For f : K → L between nonnegative homological bicomplexes
+in a preadditive category with a zero object and finite coproducts,
+the complete projections satisfy
+Π_(L,p) ∘ F_p^complete(f) = D_p(f) ∘ Π_(K,p).
+All maps are integer cochain maps at the upper stage p. -/
 @[reassoc]
 theorem horizontalCompleteDirectColumnProjectionMap_naturality
     (f : K ⟶ L) (p : ℕ) :
@@ -289,8 +318,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The map on the lower endpoint of a coherent first-page window induced by
-a bicomplex map. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in an abelian category, the map on the coherent lower cochain
+endpoint is F_(ℓ_p)(f), with ℓ_0=−1 and ℓ_(p+1)=p.
+It is the extension of the complete filtered chain map to
+cochain degrees −n. -/
 noncomputable abbrev horizontalFirstPageCoherentLowerCochainMapOfBicomplex
     (f : K ⟶ L) (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
@@ -302,8 +334,10 @@ noncomputable abbrev horizontalFirstPageCoherentLowerCochainMapOfBicomplex
       (horizontalFirstPageCoherentLowerIndex p))
     ComplexShape.embeddingDownNat
 
-/-- The map on the upper endpoint of a coherent first-page window induced by
-a bicomplex map. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in an abelian category, the upper endpoint map of the coherent
+column-p window is F_p(f), reindexed as an integer cochain map.
+The upper stage contains horizontal columns at most p. -/
 noncomputable abbrev horizontalFirstPageCoherentUpperCochainMapOfBicomplex
     (f : K ⟶ L) (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
@@ -315,8 +349,11 @@ noncomputable abbrev horizontalFirstPageCoherentUpperCochainMapOfBicomplex
       (horizontalFirstPageUpperIndex p))
     ComplexShape.embeddingDownNat
 
-/-- Bicomplex maps commute with the filtration map spanning a coherent
-first-page window. -/
+/-- For f : K → L between nonnegative homological bicomplexes
+in an abelian category, let t_p^K : F_(ℓ_p)(K) → F_p(K) and
+t_p^L be the coherent window maps. They satisfy
+F_p(f) ∘ t_p^K = t_p^L ∘ F_(ℓ_p)(f),
+with ℓ_0=−1 and ℓ_(p+1)=p. -/
 theorem horizontalFirstPageCoherentMap_naturality_of_bicomplex
     (f : K ⟶ L) (p : ℕ) :
     horizontalFirstPageCoherentMap K p ≫
@@ -343,8 +380,11 @@ theorem horizontalFirstPageCoherentMap_naturality_of_bicomplex
           ComplexShape.embeddingDownNat
   exact hExt
 
-/-- Map between the cokernels of coherent first-page windows induced by a
-bicomplex map. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in an abelian category, the coherent endpoint square induces
+Q_p(f) : coker(t_p^K) → coker(t_p^L).
+Its lower and upper endpoint maps are F_(ℓ_p)(f) and F_p(f),
+respectively, with ℓ_0=−1 and ℓ_(p+1)=p. -/
 noncomputable def horizontalFirstPageCoherentCokernelMapOfBicomplex
     (f : K ⟶ L) (p : ℕ) :
     cokernel (horizontalFirstPageCoherentMap K p) ⟶
@@ -356,8 +396,11 @@ noncomputable def horizontalFirstPageCoherentCokernelMapOfBicomplex
     (horizontalFirstPageCoherentUpperCochainMapOfBicomplex f p)
     (horizontalFirstPageCoherentMap_naturality_of_bicomplex f p)
 
-/-- The coherent cokernel map has the expected formula on the cokernel
-projection. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in an abelian category, the coherent cokernel projections satisfy
+Q_p(f) ∘ π_K = π_L ∘ F_p(f).
+This is the quotient square from the upper stage F_p(K)
+to the coherent cokernel for L. -/
 @[reassoc]
 theorem horizontalFirstPageCoherentCokernelMapOfBicomplex_π
     (f : K ⟶ L) (p : ℕ) :
@@ -367,8 +410,11 @@ theorem horizontalFirstPageCoherentCokernelMapOfBicomplex_π
         cokernel.π (horizontalFirstPageCoherentMap L p) := by
   exact cokernel.π_desc _ _ _
 
-/-- The coherent cokernel isomorphism sends the abstract cokernel projection
-to the complete-stage direct-column projection. -/
+/-- For a nonnegative homological bicomplex K in an abelian
+category, the coherent cokernel isomorphism Φ_p : coker(t_p) ≅ D_p
+satisfies Φ_p ∘ π_p = Π_p.
+Here π_p is the cokernel projection from complete stage F_p,
+and Π_p is the complete top-column projection. -/
 @[reassoc]
 theorem horizontalFirstPageCoherentCokernelIso_π_hom
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -397,8 +443,11 @@ theorem horizontalFirstPageCoherentCokernelIso_π_hom
       unfold horizontalFirstPageCokernelToDirectColumn
       rw [cokernel.π_desc]
 
-/-- The coherent cokernel identification with the direct column is natural
-under bicomplex maps. -/
+/-- For a nonnegative homological bicomplex map f : K → L
+in an abelian category, the coherent cokernel comparisons satisfy
+Φ_(L,p) ∘ Q_p(f) = D_p(f) ∘ Φ_(K,p).
+The source is coker(F_(ℓ_p)(K) → F_p(K)), the target is D_p(L),
+and ℓ_0=−1, ℓ_(p+1)=p. -/
 @[reassoc]
 theorem horizontalFirstPageCoherentCokernelIso_hom_naturality_of_bicomplex
     (f : K ⟶ L) (p : ℕ) :

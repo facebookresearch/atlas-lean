@@ -1,3 +1,5 @@
-# Small Etale Inverse Image Id Iso naturality
+# Inverse image identity comparison is natural in sheaf maps
 
-Identity inverse-image comparison preserves every original sheaf morphism.
+Inverse image identity comparison is natural in sheaf maps.
+
+The identity inverse-image comparison commutes with every sheaf morphism.

@@ -1,19 +1,19 @@
 # Original CE and original canonical Bar resolution comparison
 
-- [Enveloping Trivial Ground Equiv](enveloping-trivial-ground-equiv.md)
-- [Enveloping Canonical Bar Complex](enveloping-canonical-bar-complex.md)
-- [Enveloping Canonical Bar Augmentation](enveloping-canonical-bar-augmentation.md)
+- [Ground restriction of the trivial enveloping module is the lifted scalar module](enveloping-trivial-ground-equiv.md)
+- [The scalar adjunction gives the canonical bar complex of the trivial module](enveloping-canonical-bar-complex.md)
+- [The bar counit augments to the trivial enveloping module](enveloping-canonical-bar-augmentation.md)
 
 ## Free Base
 
-- [Enveloping Canonical Bar Projective Resolution](enveloping-canonical-bar-projective-reso.md)
-- [Enveloping Canonical Bar Homotopy Equiv](enveloping-canonical-bar-homotopy-equiv.md)
-- [Enveloping To Canonical Bar](enveloping-to-canonical-bar.md)
-- [Canonical Bar To Enveloping](canonical-bar-to-enveloping.md)
-- [Enveloping Canonical Bar Homotopy](enveloping-canonical-bar-homotopy.md)
-- [Canonical Bar Enveloping Homotopy](canonical-bar-enveloping-homotopy.md)
+- [Freeness gives the canonical bar projective resolution](enveloping-canonical-bar-projective-reso.md)
+- [The constructed CE and bar resolutions are chain-homotopy equivalent](enveloping-canonical-bar-homotopy-equiv.md)
+- [The CE-to-bar comparison preserves the common augmentation](enveloping-to-canonical-bar.md)
+- [The bar-to-CE comparison preserves the common augmentation](canonical-bar-to-enveloping.md)
+- [The CE-to-bar-to-CE composite is homotopic to the identity](enveloping-canonical-bar-homotopy.md)
+- [The bar-to-CE-to-bar composite is homotopic to the identity](canonical-bar-enveloping-homotopy.md)
 
 ## Coefficients
 
-- [Enveloping Canonical Bar Mapped Homotopy Equiv](enveloping-canonical-bar-mapped-homotopy.md)
-- [Enveloping Canonical Bar Homology Iso](enveloping-canonical-bar-homology-iso.md)
+- [Additive functors preserve the CE and bar comparison homotopies](enveloping-canonical-bar-mapped-homotopy.md)
+- [Mapped CE and canonical bar complexes have isomorphic homology](enveloping-canonical-bar-homology-iso.md)

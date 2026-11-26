@@ -1,4 +1,6 @@
-# Right Tensor Coefficient Iso
+# The chain isomorphism from balanced tensor to right Lie coefficients
 
-The original balanced tensor complex is the original CE coefficient
-complex, with its all-degree differential.
+The chain isomorphism from balanced tensor to right Lie coefficients.
+
+Cancellation of the regular enveloping factor gives an isomorphism from `N ⊗[U_R(L)] C_•` to
+the Chevalley–Eilenberg complex of the right enveloping coefficient module.

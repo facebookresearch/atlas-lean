@@ -1,3 +1,6 @@
-# Cotangent Higher One Nat Iso
+# The weight-one cotangent comparison
 
-Positive degree one is the existing actual cotangent functor.
+The weight-one cotangent comparison.
+
+The higher cotangent functor in weight one is naturally isomorphic to the functor `P ↦ A ⊗[P]
+Ω[P/k]`.

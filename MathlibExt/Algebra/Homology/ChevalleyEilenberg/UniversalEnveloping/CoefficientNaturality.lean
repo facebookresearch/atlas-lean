@@ -13,13 +13,20 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.UniversalEnveloping
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Isomorphism
 
 /-!
-# Coefficient naturality of the enveloping Chevalley–Eilenberg comparison
+# Coefficient naturality of the right-tensor CE comparison
 
-A right enveloping-module homomorphism induces a natural transformation of
-the fixed-right balanced tensor functors. Cancellation coordinates commute
-with the coefficient map by right-module linearity. Under `Module.Free R L`,
-the derived natural transformation is the coefficient Tor map, and the
-Chevalley–Eilenberg/Tor comparison is natural in every degree.
+Let N and N' be right modules over U_R(L) and g : N → N' a right-module morphism. For each
+left U-module X, the balanced tensor map sends [n,x] to [g(n),x]. These maps form a natural
+transformation of the fixed-right tensor functors and give a map of their tensor-applied
+enveloping CE complexes.
+
+Cancellation coordinates [n,w⊗a] ↦ w⊗(n·a) commute with g. They identify these complexes with
+CE coefficients carrying the left Lie action ⁅x,n⁆ = −n·ι(x). The induced transformation on
+left-derived tensor functors is the coefficient map on Tor.
+
+When L is free over R, the CE homology/Tor isomorphisms commute with these coefficient maps in
+every degree. The right modules share their given module-category universe; the Lie and scalar
+carriers may lie in different universes.
 -/
 
 @[expose] public section
@@ -50,7 +57,11 @@ local instance tensorN'_additive :
       ModuleCat.{max u v} U ⥤ ModuleCat.{max u v w} R).Additive :=
   ModuleCat.BalancedTensor.additive R U N'
 
-/-- The original ground-linear balanced map of an right UEA morphism. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let N, N' :
+ModuleCat.{w} Uᵐᵒᵖ be right U-modules and g : N ⟶ N' a Uᵐᵒᵖ-linear morphism. For X :
+ModuleCat.{max u v} U, rightTensorCoefficientComponent gives the R-linear map B(R,U,N,X) →
+B(R,U,N',X) with [n,x] ↦ [g(n),x]. The R-actions are restricted from the U and Uᵐᵒᵖ actions. -/
 def rightTensorCoefficientComponent (X : ModuleCat.{max u v} U) :
     (ModuleCat.BalancedTensor.functor R U N).obj X ⟶
       (ModuleCat.BalancedTensor.functor R U N').obj X := by
@@ -69,8 +80,12 @@ theorem rightTensorCoefficientComponent_mk (X : ModuleCat.{max u v} U) (m : N) (
   exact TensorProduct.Balanced.map_mk f (LinearMap.id : X →ₗ[R] X)
     (fun u m => g.hom.map_smul (op u) m) (fun _ _ => rfl) m x
 
-/-- The underived coefficient natural transformation on the original
-fixed-right tensor functors. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let N, N' :
+ModuleCat.{w} Uᵐᵒᵖ be right U-modules and g : N ⟶ N' a Uᵐᵒᵖ-linear morphism. The maps X ↦
+rightTensorCoefficientComponent g X form a natural transformation
+ModuleCat.BalancedTensor.functor R U N ⟶ ModuleCat.BalancedTensor.functor R U N'. Naturality
+in a left U-module map acts on the X tensor factor. -/
 def rightTensorCoefficientTransformation :
     ModuleCat.BalancedTensor.functor R U N ⟶ ModuleCat.BalancedTensor.functor R U N' where
   app := rightTensorCoefficientComponent R L g
@@ -87,14 +102,24 @@ def rightTensorCoefficientTransformation :
     rw [ModuleCat.BalancedTensor.map_mk, rightTensorCoefficientComponent_mk,
       rightTensorCoefficientComponent_mk, ModuleCat.BalancedTensor.map_mk]
 
-/-- The original mapped tensor complex map induced by the coefficient morphism. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let N, N' :
+ModuleCat.{w} Uᵐᵒᵖ be right U-modules and g : N ⟶ N' a Uᵐᵒᵖ-linear morphism. Evaluating the
+tensor natural transformation on envelopingComplex and mapping it over down ℕ gives
+rightTensorCoefficientComplexMap : rightTensorEnvelopingComplex R L N ⟶
+rightTensorEnvelopingComplex R L N'. In every degree it applies g to the balanced coefficient. -/
 def rightTensorCoefficientComplexMap :
     rightTensorEnvelopingComplex R L N ⟶ rightTensorEnvelopingComplex R L N' :=
   (NatTrans.mapHomologicalComplex (rightTensorCoefficientTransformation R L g)
     (ComplexShape.down ℕ)).app (envelopingComplex R L)
 
-/-- The original all-degree cancellation coordinates commute with the coefficient map, by its
-original right UEA linearity. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let N, N' :
+ModuleCat.{w} Uᵐᵒᵖ be right U-modules and g : N ⟶ N' a Uᵐᵒᵖ-linear morphism. Let e_N and e_N'
+be the isomorphisms from the balanced tensor complexes to CE with rightCoefficients, whose Lie
+action is ⁅x,n⁆ = −op(ι(x)) • n. Then rightTensorCoefficientComplexMap g ≫ e_N'.hom = e_N.hom
+≫ coefficientComplexMap(rightCoefficientsMap g). The coordinate map sends [n,w⊗a] to w⊗(op a •
+n). -/
 theorem rightTensorCoefficientIso_naturality :
     rightTensorCoefficientComplexMap R L g ≫ (rightTensorCoefficientIso R L N').hom =
       (rightTensorCoefficientIso R L N).hom ≫
@@ -132,14 +157,24 @@ theorem rightTensorCoefficientIso_naturality :
       exact hLeft.trans ((congrArg (fun y : rightCoefficients R L N' => w ⊗ₜ[R] y)
         hAction.symm).trans hRight.symm)
 
-/-- The original coefficient Tor map is the native derived natural transformation. -/
+/-- Let R be commutative, L an R-Lie algebra and U its enveloping algebra. Let N, N' :
+ModuleCat.{w} Uᵐᵒᵖ and g : N ⟶ N' be a right-module morphism. Let T₀ = envelopingTrivialObject
+R L be the lifted scalar module with U-action through augmentation. For n : ℕ,
+rightEnvelopingTorCoefficientMap is the component at T₀ of NatTrans.leftDerived
+(rightTensorCoefficientTransformation g) n. It maps Tor_n^U(N,T₀) to Tor_n^U(N',T₀), with Tor
+defined by the fixed-right balanced tensor left-derived functor. -/
 def rightEnvelopingTorCoefficientMap (n : ℕ) :
     rightEnvelopingTor R L N n ⟶ rightEnvelopingTor R L N' n :=
   (NatTrans.leftDerived (rightTensorCoefficientTransformation R L g) n).app
     (envelopingTrivialObject R L)
 
-/-- The CE/Tor comparison is natural for every original coefficient
-map in every degree, with the Tor map independently derived from tensor. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let N, N' :
+ModuleCat.{w} Uᵐᵒᵖ be right U-modules and g : N ⟶ N' a Uᵐᵒᵖ-linear morphism. Assume
+Module.Free R L. For n : ℕ, the CE coefficient homology map H_n(g) followed by the comparison
+e_N' to Tor equals e_N followed by rightEnvelopingTorCoefficientMap g n. The right Lie
+coefficients use ⁅x,n⁆ = −op(ι(x)) • n, and the Tor map is derived from the balanced tensor
+transformation. -/
 theorem rightCoefficientHomologyIsoTor_naturality [Module.Free R L] (n : ℕ) :
     HomologicalComplex.homologyMap
       (coefficientComplexMap R L (rightCoefficients R L N) (rightCoefficientsMap R L g)) n ≫

@@ -1,4 +1,6 @@
-# Horizontal Complete Direct Column Projection Map Is Cokernel
+# The cokernel property of a complete direct-column projection
 
-The direct-column projection exhibits the direct shifted column as the
-cokernel of consecutive complete filtration stages.
+The cokernel property of a complete direct-column projection.
+
+The direct-column projection is a colimit cofork for the consecutive complete-filtration stage
+map.

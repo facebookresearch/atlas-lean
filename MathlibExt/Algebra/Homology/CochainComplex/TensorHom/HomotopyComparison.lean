@@ -16,12 +16,17 @@ public import MathlibExt.Algebra.Homology.HomotopyCategory.TensorFunctor
 public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.FiniteFactorNaturality
 
 /-!
-# Signed Hom–tensor comparisons on homotopy categories
+# Hom–tensor comparisons in homotopy categories
 
-Tensor and product Hom descend through homotopy in every input. The
-comparison is the quotient class of the signed cochain map. Its finite
-tensor-factor restriction requires only bounds and finite
-categorical-projective terms on the third complex.
+For integer module cochains over a commutative ring, tensor and full-product linear Hom
+descend to homotopy categories. The triple category has the Hom source opposite and the Hom
+target and tensor factor covariant. The signed cochain comparison gives a natural
+transformation between the two induced Hom–tensor functors.
+
+Restrict to triples whose third underlying cochain complex is bounded above and below and has
+finite categorically projective terms. The comparison is then a natural isomorphism in the
+homotopy category, induced by the cochain isomorphism. The first two complexes are
+unrestricted.
 -/
 
 @[expose] public section
@@ -37,20 +42,29 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- The original homotopy triples, with only the first Hom input opposite. -/
+/-- Category of Hom–tensor inputs in the homotopy category.
+
+Form the triple category with the first homotopy-category factor opposite and the second and
+third factors covariant, for integer cochain complexes over `R`. -/
 abbrev HomTensorHomotopyTriples :=
   (((HomotopyCategory (ModuleCat.{v} R) (.up ℤ))ᵒᵖ ×
     HomotopyCategory (ModuleCat.{v} R) (.up ℤ)) ×
       HomotopyCategory (ModuleCat.{v} R) (.up ℤ))
 
-/-- The native quotient applied to every original cochain input. -/
+/-- Componentwise quotient from cochain triples to homotopy triples.
+
+Apply the homotopy-category quotient functor to all three cochain inputs, with the opposite
+functor in the first input. -/
 def homTensorHomotopyQuotient :
     HomTensorCoChainTriples.{u, v} R ⥤ HomTensorHomotopyTriples.{u, v} R :=
   ((HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ)).op.prod
       (HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ))).prod
     (HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ))
 
-/-- Every native homotopy-triple map is represented by original cochain maps. -/
+/-- Morphisms between quotient triples have cochain representatives.
+
+Every morphism between the homotopy triples of two given cochain triples is the image of a
+morphism between those cochain triples. -/
 theorem homTensorHomotopyQuotient_map_surjective
     (X Y : HomTensorCoChainTriples.{u, v} R)
     (f : (homTensorHomotopyQuotient R).obj X ⟶
@@ -70,7 +84,10 @@ theorem homTensorHomotopyQuotient_map_surjective
     · exact hb
   · exact hc
 
-/-- The actual source T(H(P,J),U) on native homotopy-category inputs. -/
+/-- Hom followed by tensor as a functor on homotopy triples.
+
+The left functor takes `(P, J, U)` to the homotopy class of `Hom_R(P,J) ⊗_R U`, using the
+linear Hom and tensor homotopy bifunctors. -/
 def homTensorHomotopyLeftFunctor :
     HomTensorHomotopyTriples.{u, v} R ⥤ HomotopyCategory (ModuleCat.{v} R) (.up ℤ) :=
   ((CategoryTheory.Functor.uncurry.obj
@@ -81,7 +98,10 @@ def homTensorHomotopyLeftFunctor :
           HomotopyCategory (ModuleCat.{v} R) (.up ℤ) ⥤
             HomotopyCategory (ModuleCat.{v} R) (.up ℤ))
 
-/-- The actual target H(P,T(J,U)) on native homotopy-category inputs. -/
+/-- Tensor followed by Hom as a functor on homotopy triples.
+
+The right functor takes `(P, J, U)` to the homotopy class of `Hom_R(P,J ⊗_R U)` with the same
+input variance. -/
 def homTensorHomotopyRightFunctor :
     HomTensorHomotopyTriples.{u, v} R ⥤ HomotopyCategory (ModuleCat.{v} R) (.up ℤ) := by
   let A : HomTensorHomotopyTriples.{u, v} R ⥤
@@ -106,19 +126,28 @@ def homTensorHomotopyRightFunctor :
   exact A.prod' B ⋙ CategoryTheory.Functor.uncurry.obj
     (linearHomotopyBifunctor R (C := ModuleCat.{v} R))
 
-/-- The source object is the native quotient of the original tensor/Hom. -/
+/-- Object formula for Hom-then-tensor on homotopy triples.
+
+At a homotopy triple, the left functor is the quotient of the tensor total of the linear Hom
+of the first two underlying cochain complexes with the third complex. -/
 theorem homTensorHomotopyLeftFunctor_obj (X : HomTensorHomotopyTriples.{u, v} R) :
     (homTensorHomotopyLeftFunctor R).obj X =
       (HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ)).obj
         (complexAt R (linearComplex R X.1.1.unop.as X.1.2.as) X.2.as) := rfl
 
-/-- The target object is the native quotient of the original Hom/tensor. -/
+/-- Object formula for tensor-then-Hom on homotopy triples.
+
+At a homotopy triple, the right functor is the quotient of the linear Hom from the first
+underlying complex to the tensor total of the second and third. -/
 theorem homTensorHomotopyRightFunctor_obj (X : HomTensorHomotopyTriples.{u, v} R) :
     (homTensorHomotopyRightFunctor R).obj X =
       (HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ)).obj
         (linearComplex R X.1.1.unop.as (complexAt R X.1.2.as X.2.as)) := rfl
 
-/-- Every original source map retains its exact simultaneous tensor/Hom class. -/
+/-- Hom-then-tensor map on a cochain representative.
+
+On the quotient of a cochain triple morphism, the left homotopy functor is the quotient class
+of `mapAt R (linearComplexMap R f.1.1.unop f.1.2) f.2`. -/
 theorem homTensorHomotopyLeftFunctor_map_original
     {X Y : HomTensorCoChainTriples.{u, v} R} (f : X ⟶ Y) :
     (homTensorHomotopyLeftFunctor R).map ((homTensorHomotopyQuotient R).map f) =
@@ -137,7 +166,10 @@ theorem homTensorHomotopyLeftFunctor_map_original
     (linearHomotopyBifunctor_uncurry_map R f.1.1.unop f.1.2)).trans
     (tensorHomotopyBifunctor_uncurry_map R (linearComplexMap R f.1.1.unop f.1.2) f.2)
 
-/-- Every original target map retains its exact pre/postcomposition class. -/
+/-- Tensor-then-Hom map on a cochain representative.
+
+On the quotient of a cochain triple morphism, the right homotopy functor is the quotient class
+of `linearComplexMap R f.1.1.unop (mapAt R f.1.2 f.2)`. -/
 theorem homTensorHomotopyRightFunctor_map_original
     {X Y : HomTensorCoChainTriples.{u, v} R} (f : X ⟶ Y) :
     (homTensorHomotopyRightFunctor R).map ((homTensorHomotopyQuotient R).map f) =
@@ -154,8 +186,10 @@ theorem homTensorHomotopyRightFunctor_map_original
     (tensorHomotopyBifunctor_uncurry_map R f.1.2 f.2)).trans
     (linearHomotopyBifunctor_uncurry_map R f.1.1.unop (mapAt R f.1.2 f.2))
 
-/-- The natural transformation on all native homotopy classes is exactly
-the quotient of the original signed comparison. -/
+/-- Signed Hom–tensor map as a homotopy natural transformation.
+
+The quotient classes of the signed cochain comparison form a natural transformation from the
+Hom-then-tensor functor to the tensor-then-Hom functor on homotopy triples. -/
 def homTensorHomotopyNatTrans :
     homTensorHomotopyLeftFunctor.{u, v} R ⟶ homTensorHomotopyRightFunctor.{u, v} R where
   app X := (HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ)).map
@@ -188,14 +222,19 @@ def homTensorHomotopyNatTrans :
     exact (congrArg (fun k => k ≫ π.map β) hleft).trans
       (hq.trans (congrArg (fun k => π.map α ≫ k) hright.symm))
 
-/-- On each original cochain triple, the component is the literal comparison class. -/
+/-- Homotopy comparison on a quotient cochain triple.
+
+At the homotopy triple of a cochain triple `X`, the comparison is the quotient image of
+`homTensorComparison R X.1.1.unop X.1.2 X.2`. -/
 theorem homTensorHomotopyNatTrans_app_quotient (X : HomTensorCoChainTriples.{u, v} R) :
     (homTensorHomotopyNatTrans R).app ((homTensorHomotopyQuotient R).obj X) =
       (HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ)).map
         (homTensorComparison R X.1.1.unop X.1.2 X.2) := rfl
 
-/-- Only the original third complex bounds and finite categorical-projective
-terms qualify the homotopy-category restriction. -/
+/-- Underlying third homotopy input has bounded finite projective terms.
+
+A homotopy triple satisfies this property if its third underlying cochain complex has integer
+lower and upper vanishing bounds and each term is finite and categorically projective. -/
 def finiteFactorHomTensorHomotopyProperty : ObjectProperty (HomTensorHomotopyTriples.{u, v} R) :=
   fun X => ∃ L N : ℤ,
     (∀ b : ℤ, b < L → IsZero (X.2.as.X b)) ∧
@@ -203,17 +242,25 @@ def finiteFactorHomTensorHomotopyProperty : ObjectProperty (HomTensorHomotopyTri
     (∀ b : ℤ, CategoryTheory.Projective (X.2.as.X b)) ∧
     (∀ b : ℤ, Module.Finite R (X.2.as.X b))
 
-/-- The native full subcategory retains every original homotopy map class. -/
+/-- Full subcategory of homotopy triples with a bounded finite factor.
+
+Restrict the homotopy triple category by the bounded finite-projective property on the third
+underlying cochain complex. -/
 abbrev FiniteFactorHomTensorHomotopyTriples :=
   (finiteFactorHomTensorHomotopyProperty.{u, v} R).FullSubcategory
 
-/-- The native inclusion retains every homotopy map and forgets only the finite-U qualification. -/
+/-- Inclusion of the bounded finite-factor homotopy triples.
+
+The full-subcategory inclusion retains all morphisms between triples with the prescribed
+third-factor property. -/
 abbrev finiteFactorHomTensorHomotopyInclusion :
     FiniteFactorHomTensorHomotopyTriples.{u, v} R ⥤ HomTensorHomotopyTriples.{u, v} R :=
   ObjectProperty.ι _
 
-/-- The earned original finite-C cochain Iso makes the original homotopy
-comparison component invertible. -/
+/-- Homotopy comparison is invertible on bounded finite-factor triples.
+
+At a triple with bounded finite projective third factor, the homotopy natural transformation
+has an isomorphism as its component. -/
 theorem homTensorHomotopyNatTrans_app_isIso
     (X : FiniteFactorHomTensorHomotopyTriples.{u, v} R) :
     IsIso ((homTensorHomotopyNatTrans R).app X.obj) := by
@@ -233,8 +280,10 @@ theorem homTensorHomotopyNatTrans_app_isIso
   exact he ▸ (inferInstance :
     IsIso ((HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ)).map e.hom))
 
-/-- The finite-C native homotopy natural Iso is the restricted original
-unrestricted signed comparison class. -/
+/-- Natural Hom–tensor isomorphism in the bounded finite-factor homotopy subcategory.
+
+The signed Hom–tensor natural transformation restricts to a natural isomorphism on homotopy
+triples whose third underlying cochain complex is bounded with finite projective terms. -/
 def finiteFactorHomTensorHomotopyNatIso :
     finiteFactorHomTensorHomotopyInclusion.{u, v} R ⋙ homTensorHomotopyLeftFunctor R ≅
       finiteFactorHomTensorHomotopyInclusion.{u, v} R ⋙ homTensorHomotopyRightFunctor R := by
@@ -244,13 +293,19 @@ def finiteFactorHomTensorHomotopyNatIso :
     (fun X => homTensorHomotopyNatTrans_app_isIso R X)
   exact asIso α
 
-/-- Its entire forward transformation remains the restricted comparison class. -/
+/-- Forward homotopy isomorphism is the restricted comparison.
+
+The forward transformation of the restricted homotopy natural isomorphism is the comparison
+whiskered by the full-subcategory inclusion. -/
 theorem finiteFactorHomTensorHomotopyNatIso_hom :
     (finiteFactorHomTensorHomotopyNatIso.{u, v} R).hom =
       CategoryTheory.Functor.whiskerLeft
         (finiteFactorHomTensorHomotopyInclusion R) (homTensorHomotopyNatTrans R) := rfl
 
-/-- Every forward component is the quotient of the literal original map. -/
+/-- Component of the restricted homotopy isomorphism is the signed map's class.
+
+The forward component at a restricted triple is the quotient class of the signed cochain
+comparison on its three underlying complexes. -/
 theorem finiteFactorHomTensorHomotopyNatIso_hom_app
     (X : FiniteFactorHomTensorHomotopyTriples.{u, v} R) :
     (finiteFactorHomTensorHomotopyNatIso R).hom.app X =

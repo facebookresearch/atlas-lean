@@ -1,4 +1,6 @@
-# Coefficient Raw Homology Map At
+# The joint CE homology map between lifted carrier objects
 
-Lower-carrier homology maps, transported independently of Tor through the Chevalley–Eilenberg
-joint map and the exact lift comparisons.
+The joint CE homology map between lifted carrier objects.
+
+Transport the homology map of the lifted joint chain map through the full-complex homology
+lift isomorphisms.

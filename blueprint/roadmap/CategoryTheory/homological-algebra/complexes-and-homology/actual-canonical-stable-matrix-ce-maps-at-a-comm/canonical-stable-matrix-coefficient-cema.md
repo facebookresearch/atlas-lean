@@ -1,3 +1,6 @@
-# Canonical Stable Matrix Coefficient CEMap At Height
+# The lifted stable matrix CE map of an entry-algebra homomorphism
 
-Coefficient universes give canonical CE maps at their common height.
+The lifted stable matrix CE map of an entry-algebra homomorphism.
+
+For `f : A →ₐ[k] B`, entrywise application induces a chain map between lifted stable matrix
+complexes in their common carrier universe.

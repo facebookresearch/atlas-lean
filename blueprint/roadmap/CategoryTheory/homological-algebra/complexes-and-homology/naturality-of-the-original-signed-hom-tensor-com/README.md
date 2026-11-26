@@ -1,6 +1,6 @@
 # Naturality of the original signed Hom–tensor comparison
 
-- [Map At uncurry](map-at-uncurry.md)
-- [Linear Functor uncurry map](linear-functor-uncurry-map.md)
-- [Linear Complex Map v apply](linear-complex-map-v-apply.md)
-- [Hom Tensor Comparison naturality](hom-tensor-comparison-naturality.md)
+- [Uncurried cochain tensor bifunctor has the two-factor tensor map](map-at-uncurry.md)
+- [Uncurried linear Hom functor has precomposition and postcomposition maps](linear-functor-uncurry-map.md)
+- [Linear Hom map evaluates by precomposition and postcomposition](linear-complex-map-v-apply.md)
+- [Signed Hom–tensor comparison is natural in three cochain inputs](hom-tensor-comparison-naturality.md)

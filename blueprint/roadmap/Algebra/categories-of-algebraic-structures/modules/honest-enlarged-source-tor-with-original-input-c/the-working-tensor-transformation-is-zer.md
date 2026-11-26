@@ -1,3 +1,5 @@
-# The working tensor transformation is zero on the zero...
+# The tensor coefficient transformation vanishes on the zero map
 
-The working tensor transformation is zero on the zero original coefficient morphism.
+For (R,S)-bimodules B,B′, the coefficient transformation
+associated with the zero bimodule map is the zero natural
+transformation of the chosen-height tensor functors.

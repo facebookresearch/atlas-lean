@@ -1,3 +1,6 @@
-# Native Primitive Coordinate Iso
+# The chain isomorphism of primitive kernels and homogeneous primitives
 
-The kernel is the homogeneous primitive chain complex, in all characteristics.
+The chain isomorphism of primitive kernels and homogeneous primitives.
+
+The two inclusion-preserving coordinate maps identify the CE primitive kernel complex with the
+homogeneous exterior primitive complex.

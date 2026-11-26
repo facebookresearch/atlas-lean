@@ -16,12 +16,21 @@ public import Mathlib.LinearAlgebra.Quotient.Bilinear
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 /-!
-# The associated graded ring of an ideal-adic filtration
+# The ideal-adic associated graded ring
 
-For an ideal `I` in a commutative ring, this file defines the graded pieces
-`I ^ n / I ^ (n + 1)` and equips their direct sum with its natural commutative
-ring structure.  It also constructs the induced equivalence of associated
-graded rings under an equivalence of the ambient rings.
+Let `R` be a commutative ring and `I` an ideal. The degree-`n` piece is `I^n/I^(n+1)`,
+presented as the quotient of `I^n` by the submodule `I • ⊤` of `I^n`. The symbol map sends a
+representative to its quotient class.
+
+Multiplication of representatives defines `[x]_m [y]_n = [xy]_(m+n)`. These homogeneous
+products, the degree-zero unit `[1]_0`, and the additive structures make `⨁ n : ℕ,
+I^n/I^(n+1)` a commutative ring.
+
+A ring equivalence `e : R ≃+* S` sends each class `[x]_n` to `[e x]_n` for the image ideal
+`I.map e`. This gives additive equivalences of individual degrees and a degree-preserving ring
+equivalence of the direct sums.
+
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 
 @[expose] public section
@@ -34,14 +43,15 @@ universe u v
 
 variable {R : Type u} [CommRing R]
 
-/-- The `n`-th graded piece `I ^ n / I ^ (n + 1)` of the `I`-adic filtration.
-
-The denominator is written as `I • ⊤` inside the subtype `I ^ n`; membership in
-it is equivalent to membership in `I ^ (n + 1)` in the ambient ring. -/
+/-- For an ideal `I` in a commutative ring `R` and `n : ℕ`, the adic degree-`n` piece is
+`I^n/I^(n+1)`. It is represented by `(I^n : Ideal R) ⧸ (I • ⊤ : Submodule R (I^n : Ideal R))`;
+the denominator consists of representatives whose underlying elements lie in `I^(n+1)`. -/
 abbrev adicGradedPiece (I : Ideal R) (n : ℕ) : Type u :=
   (I ^ n : Ideal R) ⧸ (I • ⊤ : Submodule R (I ^ n : Ideal R))
 
-/-- The class of an element of `I ^ n` in `I ^ n / I ^ (n + 1)`. -/
+/-- For an ideal `I` in a commutative ring `R` and `n : ℕ`, `adicSymbol I n : I^n →ₗ[R]
+I.adicGradedPiece n` sends `x : I^n` to its class modulo `I^(n+1)`, namely
+`Submodule.Quotient.mk x`. -/
 def adicSymbol (I : Ideal R) (n : ℕ) :
     (I ^ n : Ideal R) →ₗ[R] I.adicGradedPiece n :=
   (I • ⊤ : Submodule R (I ^ n : Ideal R)).mkQ
@@ -51,7 +61,9 @@ theorem adicSymbol_apply (I : Ideal R) (n : ℕ) (x : (I ^ n : Ideal R)) :
     I.adicSymbol n x = Submodule.Quotient.mk x :=
   rfl
 
-/-- Multiplication of representatives of two ideal-adic graded pieces. -/
+/-- Let `R` be a commutative ring, `I` an ideal, and `m n : ℕ`. For `x : I^m` and `y : I^n`,
+`adicGradedMulRepresentative I m n x y` is the class of `(x : R) * (y : R)` in
+`I^(m+n)/I^(m+n+1)`. The product lies in `I^(m+n)` because `I^m I^n = I^(m+n)`. -/
 def adicGradedMulRepresentative (I : Ideal R) (m n : ℕ)
     (x : (I ^ m : Ideal R)) (y : (I ^ n : Ideal R)) :
     I.adicGradedPiece (m + n) :=
@@ -59,8 +71,9 @@ def adicGradedMulRepresentative (I : Ideal R) (m n : ℕ)
     rw [pow_add]
     exact Ideal.mul_mem_mul x.2 y.2⟩
 
-/-- The bilinear representative multiplication before descending through the
-two quotient modules. -/
+/-- For an ideal `I` in a commutative ring `R` and `m n : ℕ`, this is the `R`-bilinear map `I^m
+→ₗ[R] I^n →ₗ[R] I.adicGradedPiece (m+n)` whose value at `x,y` is the class `[xy]` modulo
+`I^(m+n+1)`. -/
 def adicGradedMulRaw (I : Ideal R) (m n : ℕ) :
     (I ^ m : Ideal R) →ₗ[R] (I ^ n : Ideal R) →ₗ[R] I.adicGradedPiece (m + n) :=
   LinearMap.mk₂ R (adicGradedMulRepresentative I m n)
@@ -97,8 +110,10 @@ def adicGradedMulRaw (I : Ideal R) (m n : ℕ) :
       apply Subtype.ext
       simp [mul_left_comm])
 
-/-- Representative multiplication vanishes when its left input lies in the
-denominator `I ^ (m + 1)`. -/
+/-- Let `R` be a commutative ring, `I` an ideal, and `m n : ℕ`. The submodule `I • ⊤` of `I^m` is
+contained in the kernel of `adicGradedMulRaw I m n`. Equivalently, if the underlying element
+of `x : I^m` belongs to `I^(m+1)`, then the map `y ↦ [xy]` from `I^n` to `I^(m+n)/I^(m+n+1)`
+is zero. -/
 theorem adicGradedMulRaw_left (I : Ideal R) (m n : ℕ) :
     (I • ⊤ : Submodule R (I ^ m : Ideal R)) ≤
       (adicGradedMulRaw I m n).ker := by
@@ -117,8 +132,10 @@ theorem adicGradedMulRaw_left (I : Ideal R) (m n : ℕ) :
     exact Ideal.mul_mem_mul hx' y.2
   simpa only [Ideal.smul_eq_mul, pow_succ'] using hxy
 
-/-- Representative multiplication vanishes when its right input lies in the
-denominator `I ^ (n + 1)`. -/
+/-- Let `R` be a commutative ring, `I` an ideal, and `m n : ℕ`. The submodule `I • ⊤` of `I^n` is
+contained in the kernel of `(adicGradedMulRaw I m n).flip`. Equivalently, if the underlying
+element of `y : I^n` belongs to `I^(n+1)`, then the map `x ↦ [xy]` from `I^m` to
+`I^(m+n)/I^(m+n+1)` is zero. -/
 theorem adicGradedMulRaw_right (I : Ideal R) (m n : ℕ) :
     (I • ⊤ : Submodule R (I ^ n : Ideal R)) ≤
       (adicGradedMulRaw I m n).flip.ker := by
@@ -137,8 +154,9 @@ theorem adicGradedMulRaw_right (I : Ideal R) (m n : ℕ) :
     exact Ideal.mul_mem_mul x.2 hy'
   simpa only [Ideal.smul_eq_mul, pow_succ'] using hxy
 
-/-- Multiplication of ideal-adic graded pieces, obtained by multiplying
-representatives and descending through both quotients. -/
+/-- For an ideal `I` in a commutative ring `R` and `m n : ℕ`, this is the `R`-bilinear homogeneous
+product `(I^m/I^(m+1)) × (I^n/I^(n+1)) → I^(m+n)/I^(m+n+1)`. It sends the quotient classes of
+representatives `x ∈ I^m` and `y ∈ I^n` to the class of `xy`. -/
 noncomputable def adicGradedMul (I : Ideal R) (m n : ℕ) :
     I.adicGradedPiece m →ₗ[R] I.adicGradedPiece n →ₗ[R]
       I.adicGradedPiece (m + n) :=
@@ -297,8 +315,10 @@ noncomputable instance instGMulAdicGradedPiece (I : Ideal R) :
     GradedMonoid.GMul I.adicGradedPiece where
   mul {m n} x y := I.adicGradedMul m n x y
 
-/-- The graded commutative-ring structure on the pieces of an ideal-adic
-filtration. -/
+/-- For an ideal `I` in a commutative ring `R`, the family `n ↦ I.adicGradedPiece n` has a graded
+commutative ring structure. Its multiplication is `[x]_m [y]_n = [xy]_(m+n)` and its unit is
+`[1]_0`. Associativity and commutativity use the degree identifications `(i+j)+k = i+(j+k)`
+and `m+n = n+m`. -/
 noncomputable instance instGCommRingAdicGradedPiece (I : Ideal R) :
     DirectSum.GCommRing I.adicGradedPiece where
   one_mul := by
@@ -339,8 +359,9 @@ noncomputable instance instGCommRingAdicGradedPiece (I : Ideal R) :
     apply congrArg Neg.neg
     exact ofNat_zsmul (GradedMonoid.GOne.one : I.adicGradedPiece 0) (n + 1)
 
-/-- The associated graded ring `⊕ n, I ^ n / I ^ (n + 1)` of the `I`-adic
-filtration. -/
+/-- For an ideal `I` in a commutative ring `R`, `I.adicAssociatedGraded` is the direct sum `⨁ n :
+ℕ, I^n/I^(n+1)`. Homogeneous multiplication is `[x]_m [y]_n = [xy]_(m+n)`, extended additively
+to the direct sum; the multiplicative unit is the degree-zero class of `1`. -/
 noncomputable abbrev adicAssociatedGraded (I : Ideal R) : Type u :=
   ⨁ n : ℕ, I.adicGradedPiece n
 
@@ -348,8 +369,10 @@ section Transport
 
 variable {S : Type v} [CommRing S]
 
-/-- A ring equivalence restricts to a semilinear equivalence between
-corresponding powers of an ideal and its image. -/
+/-- Let `R,S` be commutative rings, `e : R ≃+* S` a ring equivalence, `I : Ideal R`, and `n : ℕ`.
+Writing `J = I.map (e : R →+* S)`, this is an `e`-semilinear equivalence `I^n ≃ₛₗ[e] J^n`. It
+sends `x` to `e x`, its inverse sends `y` to `e.symm y`, and scalar multiplication satisfies
+`E (r • x) = e r • E x`. -/
 noncomputable def adicPowMapEquiv (e : R ≃+* S) (I : Ideal R) (n : ℕ) :
     letI := RingHomInvPair.of_ringEquiv e
     letI := RingHomInvPair.symm (e : R →+* S) (e.symm : S →+* R)
@@ -376,8 +399,10 @@ theorem adicPowMapEquiv_apply (e : R ≃+* S) (I : Ideal R) (n : ℕ)
       ((I.map (e : R →+* S)) ^ n : Ideal S)) : S) = e x :=
   rfl
 
-/-- A ring equivalence carries the denominator `I • ⊤` of an adic graded
-piece to the corresponding denominator for the image ideal. -/
+/-- Let `R,S` be commutative rings, `e : R ≃+* S`, `I : Ideal R`, and `n : ℕ`. For `J = I.map (e :
+R →+* S)`, the image of `(I • ⊤ : Submodule R I^n)` under `I.adicPowMapEquiv e n` is `(J • ⊤ :
+Submodule S J^n)`. Thus the semilinear map on powers takes the denominator representing
+`I^(n+1)` exactly to the denominator representing `J^(n+1)`. -/
 theorem adicPowMapEquiv_denominator (e : R ≃+* S)
     (I : Ideal R) (n : ℕ) :
     (I • ⊤ : Submodule R (I ^ n : Ideal R)).map
@@ -427,8 +452,9 @@ theorem adicPowMapEquiv_denominator (e : R ≃+* S)
     change (y : S) ∈ (I.map (e : R →+* S)) ^ (n + 1)
     exact hy'
 
-/-- Transport of one ideal-adic graded piece under an equivalence of the
-ambient rings. -/
+/-- Let `R,S` be commutative rings, `e : R ≃+* S`, `I : Ideal R`, and `n : ℕ`. With `J = I.map (e
+: R →+* S)`, the induced additive equivalence is `I^n/I^(n+1) ≃+ J^n/J^(n+1)`. It sends `[x]`
+to `[e x]`, and its inverse sends `[y]` to `[e.symm y]`. -/
 noncomputable def adicGradedPieceMapEquiv (e : R ≃+* S)
     (I : Ideal R) (n : ℕ) :
     I.adicGradedPiece n ≃+
@@ -492,8 +518,10 @@ private theorem adicGradedPieceMapEquiv_mul (e : R ≃+* S)
   apply Subtype.ext
   exact e.map_mul x y
 
-/-- The equivalence of ideal-adic associated graded rings induced by an
-equivalence of the ambient commutative rings. -/
+/-- Let `R,S` be commutative rings, `e : R ≃+* S`, and `I : Ideal R`. With `J = I.map (e : R →+*
+S)`, this is the ring equivalence `I.adicAssociatedGraded ≃+* J.adicAssociatedGraded` induced
+in each degree by `[x]_n ↦ [e x]_n`. It preserves the degree-zero unit and the homogeneous
+products `[x]_m [y]_n = [xy]_(m+n)`. -/
 noncomputable def adicAssociatedGradedMapEquiv (e : R ≃+* S)
     (I : Ideal R) :
     I.adicAssociatedGraded ≃+*

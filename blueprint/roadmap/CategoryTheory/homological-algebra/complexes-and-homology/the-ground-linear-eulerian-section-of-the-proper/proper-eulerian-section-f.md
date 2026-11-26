@@ -1,3 +1,6 @@
-# Proper Eulerian Section f
+# Components of the Eulerian proper-quotient section
 
-Every native section component is the original quotient-to-first-image map.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module with its
+symmetric right action. For every n : ℕ, the nth component of properEulerianSection has
+underlying linear map properEulerianSectionLevel k A M n, the
+quotient-to-retained-Eulerian-image section.

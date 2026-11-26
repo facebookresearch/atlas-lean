@@ -1,4 +1,5 @@
-# Em Underlying hom zero eq
+# The forgotten and regular augmentations agree in degree zero
 
-Both augmentations agree in degree zero: each side is `alg.a`. Consumes
-`BarResolution.resolutionAugmented_hom_zero`.
+For a monad T on C and a T-algebra alg=(A,a), the zero-degree augmentations of
+emUnderlyingAugmented(alg) and resolutionAugmented(alg) are equal. Both maps are the algebra
+action a : T(A) → A.

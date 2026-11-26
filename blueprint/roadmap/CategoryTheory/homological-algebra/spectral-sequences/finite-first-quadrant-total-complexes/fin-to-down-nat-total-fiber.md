@@ -1,4 +1,6 @@
-# Fin To Down Nat Total Fiber
+# An index p≤n gives the antidiagonal pair (p,n−p)
 
-Every `p ≤ n` gives the unique bidegree `(p,n-p)` in total degree
-`n`.
+For p∈Fin(n+1), the pair (p,n−p) belongs to the
+nonnegative total-degree fiber at n.
+The subtraction is justified by p≤n and recovers its unique
+vertical coordinate.

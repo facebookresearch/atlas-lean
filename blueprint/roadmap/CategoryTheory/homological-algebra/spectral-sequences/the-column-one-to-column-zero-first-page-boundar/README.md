@@ -1,7 +1,7 @@
 # The column-one to column-zero first-page boundary
 
-- [Horizontal Complete Filtered Total Mono Over zero middle triangle](horizontal-complete-filtered-total-mono.md)
-- [Horizontal First Page Zero Middle Mono Cochain Triangle](horizontal-first-page-zero-middle-mono-c.md)
-- [Horizontal First Page Zero Middle Stage Triangle](horizontal-first-page-zero-middle-stage.md)
-- [Horizontal Complete Zero Section next Map eq filtered](horizontal-complete-zero-section-next-ma.md)
-- [Horizontal Complete One To Zero Direct Column Section d](horizontal-complete-one-to-zero-direct-c.md)
+- [The identity triangle of zero-stage filtration subobjects](horizontal-complete-filtered-total-mono.md)
+- [The zero-stage comparison triangle after cochain extension](horizontal-first-page-zero-middle-mono-c.md)
+- [The zero-stage upper and natural comparison identity](horizontal-first-page-zero-middle-stage.md)
+- [The finite-stage formula for the next map after a zero-column section](horizontal-complete-zero-section-next-ma.md)
+- [The horizontal boundary of the column-one complete section](horizontal-complete-one-to-zero-direct-c.md)

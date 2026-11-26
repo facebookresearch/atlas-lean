@@ -14,12 +14,15 @@ module
 public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.HomTensorDifferential
 
 /-!
-# Naturality of the original signed Hom–tensor comparison
+# Naturality of the signed Hom–tensor comparison
 
-The first Hom source acts contravariantly, and the Hom target and tensor
-factor act covariantly. All three maps are arbitrary original cochain maps.
-The comparison square uses the accepted signed pure-cell values, the original
-linear Hom maps, and the actual tensor maps. No finiteness is needed.
+For integer cochain complexes over a commutative ring, the Hom source `P` varies
+contravariantly, while the Hom target `J` and tensor factor `U` vary covariantly. The Hom maps
+act by source precomposition and target postcomposition; the tensor maps act on both factors.
+
+For arbitrary maps `f : P' → P`, `g : J → J'`, and `h : U → U'`, these maps commute with the
+signed comparison `Hom_R(P,J) ⊗_R U → Hom_R(P,J ⊗_R U)`. The square holds for full-product Hom
+and direct-sum tensor totals.
 -/
 
 @[expose] public section
@@ -38,7 +41,10 @@ local instance (K L : CochainComplex (ModuleCat.{v} R) ℤ) :
   intro n
   infer_instance
 
-/-- The native uncurried tensor functor retains the original simultaneous map. -/
+/-- Uncurried cochain tensor bifunctor has the two-factor tensor map.
+
+The map of the uncurried tensor bifunctor on a pair of cochain morphisms `(f, g)` equals
+`mapAt R f g`. -/
 theorem mapAt_uncurry
     {P P' Q Q' : CochainComplex (ModuleCat.{v} R) ℤ}
     (f : P ⟶ P') (g : Q ⟶ Q') :
@@ -51,7 +57,10 @@ theorem mapAt_uncurry
     CategoryTheory.Functor.map₂HomologicalComplex]
   exact mapAt_precomp_postcomp R f g
 
-/-- The native uncurried Hom functor retains the original two complex maps. -/
+/-- Uncurried linear Hom functor has precomposition and postcomposition maps.
+
+The map of the uncurried linear Hom bifunctor on a morphism of `(Pᵒᵖ, J)` pairs is
+`linearComplexMap R f.1.unop f.2`. -/
 theorem linearFunctor_uncurry_map
     {X Y : (CochainComplex (ModuleCat.{v} R) ℤ)ᵒᵖ ×
       CochainComplex (ModuleCat.{v} R) ℤ} (f : X ⟶ Y) :
@@ -63,7 +72,10 @@ theorem linearFunctor_uncurry_map
   rw [linearComplexMap_comp]
   simp only [Category.id_comp]
 
-/-- The original linear Hom map retains each original source and target value. -/
+/-- Linear Hom map evaluates by precomposition and postcomposition.
+
+For `f : P' ⟶ P`, `g : J ⟶ J'`, and `p + n = q`, the image of a degree-`n` cochain `z`
+evaluates at `x : P'^p` as `(g.f q)(z_(p,q)((f.f p) x))`. -/
 theorem linearComplexMap_v_apply
     {P P' J J' : CochainComplex (ModuleCat.{v} R) ℤ}
     (f : P' ⟶ P) (g : J ⟶ J') (n p q : ℤ) (hpq : p + n = q)
@@ -73,7 +85,11 @@ theorem linearComplexMap_v_apply
   change ((mapLinearOver R f g n z).v p q hpq).hom x = _
   simp only [mapLinearOver_v, ModuleCat.hom_comp, LinearMap.comp_apply]
 
-/-- Naturality in contravariant P and covariant J,U for arbitrary original maps. -/
+/-- Signed Hom–tensor comparison is natural in three cochain inputs.
+
+The tensor map of `linearComplexMap R f g` and `h`, followed by the comparison at `(P', J',
+U')`, equals the comparison at `(P, J, U)` followed by the linear Hom map of `f` and `mapAt R
+g h`. -/
 theorem homTensorComparison_naturality
     {P P' J J' U U' : CochainComplex (ModuleCat.{v} R) ℤ}
     (f : P' ⟶ P) (g : J ⟶ J') (h : U ⟶ U') :

@@ -14,7 +14,16 @@ public import Mathlib.Algebra.Homology.ShortComplex.Abelian
 public import Mathlib.Algebra.Homology.ShortComplex.Exact
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 
-/-! Actual zero objects, monomorphisms and exactness in the category of short complexes. -/
+/-!
+# Componentwise properties of short complexes
+
+In an abelian category C, a short complex whose three objects are zero is a zero object of the
+category of short complexes. A map is a monomorphism if all three component maps are
+monomorphisms.
+
+For a short complex in the abelian category of short complexes, exactness of its three
+coefficient rows implies exactness of the whole short complex.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -24,7 +33,8 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory.ShortComplex
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- A short complex is a zero object when all its actual coefficient objects are zero. -/
+/-- Let C be abelian and S a short complex in C. If S₁,S₂,S₃ are zero objects, then S is a zero
+object in the category of short complexes. -/
 theorem isZero_of_components (S : ShortComplex C)
     (h₁ : IsZero S.X₁) (h₂ : IsZero S.X₂) (h₃ : IsZero S.X₃) : IsZero S := by
   apply (IsZero.iff_id_eq_zero S).mpr
@@ -33,7 +43,8 @@ theorem isZero_of_components (S : ShortComplex C)
   · exact h₂.eq_of_src _ _
   · exact h₃.eq_of_src _ _
 
-/-- Componentwise monomorphisms give an actual monomorphism of short complexes. -/
+/-- Let C be abelian and f : S → T a short-complex map. If f₁ : S₁ → T₁, f₂ : S₂ → T₂ and f₃ : S₃ →
+T₃ are monomorphisms, then f is a monomorphism in the category of short complexes. -/
 theorem mono_of_components {S T : ShortComplex C} (f : S ⟶ T)
     [Mono f.τ₁] [Mono f.τ₂] [Mono f.τ₃] : Mono f where
   right_cancellation {X} a b h := by
@@ -42,8 +53,9 @@ theorem mono_of_components {S T : ShortComplex C} (f : S ⟶ T)
     · exact (cancel_mono f.τ₂).mp (congrArg ShortComplex.Hom.τ₂ h)
     · exact (cancel_mono f.τ₃).mp (congrArg ShortComplex.Hom.τ₃ h)
 
-/-- Actual exactness of all three component rows gives exactness in the abelian
-category of short complexes. -/
+/-- Let C be abelian and S a short complex in the abelian category of short complexes over C. If the
+rows obtained by taking the first, second and third coefficient objects are all exact in C, then
+S is exact as a short complex of short complexes. -/
 theorem exact_of_components (S : ShortComplex (ShortComplex C))
     (h₁ : (S.map (ShortComplex.π₁ : ShortComplex C ⥤ C)).Exact)
     (h₂ : (S.map (ShortComplex.π₂ : ShortComplex C ⥤ C)).Exact)

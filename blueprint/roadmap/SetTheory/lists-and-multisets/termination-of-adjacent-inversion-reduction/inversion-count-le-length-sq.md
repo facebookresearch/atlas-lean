@@ -1,3 +1,4 @@
-# Inversion Count le length sq
+# A length-square bound for list inversions
 
-A uniform finite bound for the inversion count of each word.
+The inversion count of a list of length `n` is at most `n*n`.
+This bound holds over every linearly ordered alphabet, including infinite ones.

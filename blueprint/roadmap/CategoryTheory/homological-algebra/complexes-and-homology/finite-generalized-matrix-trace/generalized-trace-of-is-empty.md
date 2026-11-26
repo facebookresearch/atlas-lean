@@ -1,4 +1,5 @@
-# Generalized Trace of is Empty
+# Generalized trace on an empty matrix index
 
-Empty matrices still have the zero trace; the Morita isomorphism
-claim will require a positive matrix size.
+Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+If ι is empty, the generalized trace is zero in every degree.

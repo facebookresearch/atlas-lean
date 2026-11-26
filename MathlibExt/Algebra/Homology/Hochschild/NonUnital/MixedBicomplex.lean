@@ -21,13 +21,29 @@ public import Mathlib.Algebra.Homology.QuasiIso
 import Mathlib.Tactic.Abel
 
 /-!
-# The Connes homology operator and unital mixed bicomplex
+# Connes operators, mixed totals and cyclic homology
 
-The original Connes zero homotopy supplies B on the original Hochschild
-homology. The original component square and unit-preserving map supply its
-square-zero and naturality laws. Native translated columns give the mixed
-bicomplex. The unital Hochschild comparison uses the bridge,
-with an algebra structure reconstructed from the supplied scalar action.
+For a commutative ring `k` and a nonunital associative ring with
+compatible central `k`-action, cyclic `b,b′,t,N` totalization commutes
+with carrier lifting and nonunital algebra maps. Write
+`C_n(A)=A ⊗[k] A^⊗n` for regular Hochschild chains.
+
+For unital `A`, insertion of `1_A` gives the Connes operator
+`B_n=(1-t_(n+1))s_nN_n`. It satisfies `bB+Bb=0` and `B²=0`,
+induces a degree-one operator on Hochschild homology, and gives a
+mixed bicomplex with supported cell `C_(q-p)(A)` for `p≤q`,
+zero below that region, vertical differential `(-1)^p b`, and
+horizontal differential `B`. Its total has degree-`n` terms
+`⊕_(2p≤n) C_(n-2p)(A)`.
+
+The translated odd `b′` columns contract by unit insertion, giving
+the mixed-to-cyclic comparison and its SBI presentation. The unit-
+preserving condition on an algebra map is explicit wherever Connes
+and normalization maps use it.
+
+## References
+
+* J.-L. Loday, *Cyclic Homology*, §2.1, for the cyclic and mixed bicomplexes and Connes operator.
 -/
 
 @[expose] public section
@@ -47,7 +63,12 @@ universe x
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The finite diagonal coproducts commute with native universe lifting, without a unit. -/
+/-- Let `k` be a commutative ring and `A` a nonunital associative
+ring with a `k`-module action satisfying
+`r•(ab)=(r•a)b=a(r•b)`. Let `C_n(A)=A ⊗[k] A^⊗n` and use
+the cyclic `b,b′,t,N` bicomplex. For any extra carrier height `x`, lifting the cyclic total
+is canonically isomorphic to totalizing the lifted cyclic bicomplex,
+both in module carrier height `max(u,v,x)`. -/
 def cyclicTotalLiftIso.{xTL, uTL, vTL} (k : Type uTL) [CommRing k] (A : Type vTL) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] :
     ((ModuleCat.uliftFunctor.{xTL, max uTL vTL} k).mapHomologicalComplex
@@ -66,7 +87,12 @@ def cyclicTotalLiftIso.{xTL, uTL, vTL} (k : Type uTL) [CommRing k] (A : Type vTL
     infer_instance
   exact HomologicalComplex₂.functorTotalIso U R
 
-/-- The total comparison retains each original cyclic-column coprojection. -/
+/-- Let `k` be a commutative ring and `A` a nonunital associative
+ring with a `k`-module action satisfying
+`r•(ab)=(r•a)b=a(r•b)`. Let `C_n(A)=A ⊗[k] A^⊗n` and use
+the cyclic `b,b′,t,N` bicomplex. For `p+q=n`, the lifted `(p,q)` cyclic-column injection
+followed by the total-lift isomorphism is the corresponding injection
+into the total of the lifted bicomplex. -/
 @[reassoc]
 theorem map_cyclicInclusion_lift.{xIL, uIL, vIL} (k : Type uIL) [CommRing k]
     (A : Type vIL) [NonUnitalRing A] [Module k A]
@@ -90,7 +116,12 @@ theorem map_cyclicInclusion_lift.{xIL, uIL, vIL} (k : Type uIL) [CommRing k]
       (HomologicalComplex₂.functorTotalIsoComponent U R n).hom = _
   exact HomologicalComplex₂.map_ιTotal_functorTotalIsoComponent_hom U R p q n h
 
-/-- Unsupported original cyclic-column coprojections remain zero under the same comparison. -/
+/-- Let `k` be a commutative ring and `A` a nonunital associative
+ring with a `k`-module action satisfying
+`r•(ab)=(r•a)b=a(r•b)`. Let `C_n(A)=A ⊗[k] A^⊗n` and use
+the cyclic `b,b′,t,N` bicomplex. The total-lift comparison preserves the `(p,q)` injection
+interpreted as zero when `p+q≠n`, as well as the genuine injection
+when `p+q=n`. -/
 @[reassoc]
 theorem map_cyclicInclusionOrZero_lift.{xZL, uZL, vZL} (k : Type uZL) [CommRing k]
     (A : Type vZL) [NonUnitalRing A] [Module k A]
@@ -136,7 +167,13 @@ section CyclicTotalMap
 variable {k A} {B : Type w} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The lifted cyclic total map acts on every original column, including zero coordinates. -/
+/-- Let `k` be a commutative ring and `A` a nonunital associative
+ring with a `k`-module action satisfying
+`r•(ab)=(r•a)b=a(r•b)`. Let `C_n(A)=A ⊗[k] A^⊗n` and use
+the cyclic `b,b′,t,N` bicomplex. For a similarly structured `B` and nonunital algebra map
+`f : A →ₙₐ[k] B`, the common-height cyclic total map sends every
+`(p,q)` injection to the target injection after applying `f` to all
+`q+1` word factors, including zero off-antidiagonal injections. -/
 theorem cyclicBicomplexMap_ιTotalOrZero (f : A →ₙₐ[k] B) (p q n : ℕ) :
     HomologicalComplex₂.ιTotalOrZero
       (((((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
@@ -167,7 +204,12 @@ theorem cyclicBicomplexMap_ιTotalOrZero (f : A →ₙₐ[k] B) (p q n : ℕ) :
 
 omit [IsScalarTower k A A] [SMulCommClass k A A]
   [IsScalarTower k B B] [SMulCommClass k B B] in
-/-- The original norm and insertion are natural for any linear map and its insertion vector. -/
+/-- Let `k` be a commutative ring and `A` a nonunital associative
+ring with a `k`-module action satisfying
+`r•(ab)=(r•a)b=a(r•b)`. Let `C_n(A)=A ⊗[k] A^⊗n` and use
+the cyclic `b,b′,t,N` bicomplex. For any `k`-linear map `f : A → B` and insertion vector
+`e : A`, the lifted map on word factors commutes with norm followed
+by insertion, taking `N_A` then `s_e` to `N_B` then `s_(f(e))`. -/
 theorem normInsertWithMapLift_naturality (f : A →ₗ[k] B) (e : A) (n : ℕ) :
     levelMapLift f n ≫
         (ModuleCat.uliftFunctor.{v, max u w} k).map
@@ -195,13 +237,24 @@ end CyclicTotalLift
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The Connes component induces degree one on the original regular homology. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The Connes component induces
+`B_* : H_n(C_*(A)) → H_(n+1)(C_*(A))`. -/
 def connesBoundaryHomology (n : ℕ) :
     (bComplex k A).homology n ⟶ (bComplex k A).homology (n + 1) :=
   (connesBoundaryHomotopy k A).homologyDegreeMap
     (by rfl : (ComplexShape.down ℕ).Rel (n + 1) n)
 
-/-- The induced boundary sends cycles through the original Connes component. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. For any map `x : X → C_n(A)` killed by the outgoing
+Hochschild differential, its homology class followed by `B_*`
+is the class represented by `x ≫ B_n`. -/
 theorem connesBoundaryHomology_representative (n : ℕ) {X : ModuleCat.{max u v} k}
     (x : X ⟶ (bComplex k A).X n)
     (hx : x ≫ (bComplex k A).d n ((ComplexShape.down ℕ).next n) = 0) :
@@ -218,7 +271,12 @@ theorem connesBoundaryHomology_representative (n : ℕ) {X : ModuleCat.{max u v}
     (connesBoundaryHomotopy k A).homologyDegreeMap_cycle_representative
       (by rfl : (ComplexShape.down ℕ).Rel (n + 1) n) x hx
 
-/-- The component square-zero law descends to the original homology objects. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The induced maps satisfy `B_*^n ≫ B_*^(n+1)=0` on
+regular Hochschild homology. -/
 theorem connesBoundaryHomology_square (n : ℕ) :
     connesBoundaryHomology k A n ≫ connesBoundaryHomology k A (n + 1) = 0 := by
   apply Homotopy.homologyDegreeMap_comp_eq_zero
@@ -228,7 +286,13 @@ theorem connesBoundaryHomology_square (n : ℕ) :
     (connesBoundaryHomotopy k A)
   simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A n
 
-/-- Native universe lifting carries the same secondary homotopy. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. Applying the carrier-lift functor to the zero-to-zero
+Connes homotopy gives a homotopy on the lifted regular complex,
+with its degree-one components the lifted `B_n`. -/
 def connesBoundaryHomotopyLift :
     Homotopy
       (0 : ((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
@@ -244,7 +308,12 @@ def connesBoundaryHomotopyLift :
       ((ModuleCat.uliftFunctor.{w, max u v} k).mapHomotopy
         (connesBoundaryHomotopy k A)).comm n
 
-/-- Native lifting retains the original Connes component, with no supplied comparison. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The degree-`n` to degree-`n+1` component of the lifted
+Connes homotopy is precisely the image of `B_n` under carrier lifting. -/
 @[simp]
 theorem connesBoundaryHomotopyLift_hom (n : ℕ) :
     (connesBoundaryHomotopyLift.{u, v, w} k A).hom n (n + 1) =
@@ -258,7 +327,11 @@ section Naturality
 variable {k A} {B : Type w} [Ring B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- Independent-world maps induce the original full-boundary map after native lifting. -/
+/-- Let `k` be commutative and `A,B` unital rings with compatible
+central `k`-module actions, in carriers `v,w`. Let
+`f : A →ₙₐ[k] B` be a nonunital algebra map. Lift the two regular
+complexes to height `max(u,v,w)` using the opposite carrier heights. The word maps of `f` give the chain map between these
+lifted full Hochschild `b`-complexes. -/
 def bComplexMapLift (f : A →ₙₐ[k] B) :
     ((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
       (ComplexShape.down ℕ)).obj (bComplex k A) ⟶
@@ -273,12 +346,21 @@ def bComplexMapLift (f : A →ₙₐ[k] B) :
         (((bComplex k A).d (n + 1) n).hom x.down))
     exact congrArg ULift.up (DFunLike.congr_fun (bComplex_d_natural f n) x.down).symm)
 
-/-- The lifted chain map keeps the original tensor-level map. -/
+/-- Let `k` be commutative and `A,B` unital rings with compatible
+central `k`-module actions, in carriers `v,w`. Let
+`f : A →ₙₐ[k] B` be a nonunital algebra map. Lift the two regular
+complexes to height `max(u,v,w)` using the opposite carrier heights. The degree-`n` component of the lifted chain map is
+`levelMapLift(f,n)`, applying `f` to the coefficient and all `n`
+algebra factors. -/
 @[simp]
 theorem bComplexMapLift_f (f : A →ₙₐ[k] B) (n : ℕ) :
     (bComplexMapLift f).f n = levelMapLift (f : A →ₗ[k] B) n := rfl
 
-/-- Actual unit-preserving maps intertwine the original lifted Connes components. -/
+/-- Let `k` be commutative and `A,B` unital rings with compatible
+central `k`-module actions, in carriers `v,w`. Let
+`f : A →ₙₐ[k] B` be a nonunital algebra map. Lift the two regular
+complexes to height `max(u,v,w)` using the opposite carrier heights. If `f(1_A)=1_B`, the lifted Connes components satisfy
+`f_n ≫ B_B,n = B_A,n ≫ f_(n+1)`. -/
 theorem bComplexMapLift_boundary (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     (bComplexMapLift f).f n ≫ (connesBoundaryHomotopyLift.{u, w, v} k B).hom n (n + 1) =
       (connesBoundaryHomotopyLift.{u, v, w} k A).hom n (n + 1) ≫
@@ -293,7 +375,11 @@ theorem bComplexMapLift_boundary (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : �
       ((connesBoundary k A n).hom x.down))
   exact congrArg ULift.up (DFunLike.congr_fun (connesBoundary_naturality f hOne n) x.down).symm
 
-/-- Actual unit-preserving maps intertwine induced B in independent raw module worlds. -/
+/-- Let `k` be commutative and `A,B` unital rings with compatible
+central `k`-module actions, in carriers `v,w`. Let
+`f : A →ₙₐ[k] B` be a nonunital algebra map. Lift the two regular
+complexes to height `max(u,v,w)` using the opposite carrier heights. If `f(1_A)=1_B`, the induced homology maps on the lifted
+complexes commute with the two degree-one Connes homology operators. -/
 theorem connesBoundaryHomology_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     homologyMap (bComplexMapLift f) n ≫
         (connesBoundaryHomotopyLift.{u, w, v} k B).homologyDegreeMap
@@ -309,12 +395,23 @@ theorem connesBoundaryHomology_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1
 
 end Naturality
 
-/-- The algebra structure is from and retains the supplied ground scalar action. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The scalar map `r ↦ r•1_A` gives a `k`-algebra structure
+whose induced scalar action is the supplied module action. -/
 abbrev regularAlgebra : Algebra k A :=
   Algebra.ofModule (fun r x y => smul_mul_assoc r x y)
     (fun r x y => mul_smul_comm r x y)
 
-/-- The original regular complex uses the unital Hochschild bridge. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. With this algebra structure, the regular complex
+`bComplex(k,A)` is canonically isomorphic to the unital coefficient
+Hochschild chain complex `C_*(A,A)`. -/
 def regularUnitalComplexIso :
     letI := regularAlgebra k A
     bComplex k A ≅ ModuleCat.Algebra.Hochschild.chainComplex k A A := by
@@ -323,7 +420,12 @@ def regularUnitalComplexIso :
   change bComplex k A ≅ ModuleCat.Algebra.Hochschild.chainComplex k A A at e
   exact e
 
-/-- Actual Connes B on the unital Hochschild homology, through the bridge. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. Transporting `B_*` across the unital chain comparison
+gives `H_n(C_*(A,A)) → H_(n+1)(C_*(A,A))`. -/
 def connesBoundaryHomologyUnital (n : ℕ) :
     letI := regularAlgebra k A
     (ModuleCat.Algebra.Hochschild.chainComplex k A A).homology n ⟶
@@ -333,68 +435,139 @@ def connesBoundaryHomologyUnital (n : ℕ) :
   exact (homologyMapIso e n).inv ≫ connesBoundaryHomology k A n ≫
     (homologyMapIso e (n + 1)).hom
 
-/-- The original b/B data construct the canonical mixed complex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The full boundary `b` and components `B_n` form a mixed
+complex, satisfying `bB+Bb=0` and `B²=0`. -/
 def connesMixedComplexModel : MixedComplex (ModuleCat.{max u v} k) :=
   MixedComplex.ofBoundaryHomotopy (bComplex k A) (connesBoundaryHomotopy k A)
     (fun n => by simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A n)
 
-/-- The canonical object retains the original regular b-complex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The underlying chain complex of the constructed mixed
+complex is exactly the regular `b`-complex. -/
 @[simp]
 theorem connesMixedComplexModel_underlying :
     (connesMixedComplexModel k A).underlying = bComplex k A := rfl
 
-/-- Its canonical mixed operator is the original N-insertion-(1-t) map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The degree-`n` mixed operator is `B_n`, equivalently norm,
+unit insertion, and then `1-t_(n+1)` in that order. -/
 @[simp]
 theorem connesMixedComplexModel_B (n : ℕ) :
     (connesMixedComplexModel k A).B n = connesBoundary k A n := connesBoundaryHomotopy_hom k A n
 
-/-- The component-characterized Connes data are from the canonical mixed object. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. Its Connes double data gives cells `C_(q-p)(A)` for
+`p≤q`, zero cells for `q<p`, vertical differential `(-1)^p b`,
+and horizontal differential `B` under the cell identifications. -/
 def connesMixedConnesDoubleData : MixedComplex.ConnesDoubleData (connesMixedComplexModel k A) :=
   MixedComplex.ofBoundaryHomotopyConnesDoubleData (bComplex k A) (connesBoundaryHomotopy k A)
     (fun n => by simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A n)
 
-/-- The generic cyclic data use the canonical mixed object and its comparisons. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The canonical cyclic/SBI data consists of its Connes
+bicomplex, the column-zero comparison from `C_*(A)`, and the
+chain-level translation by two from the column-zero quotient to
+the total. These comparisons have the specified cell components. -/
 def connesMixedGenericCyclicData : MixedComplex.GenericMixedCyclicData (connesMixedComplexModel k A) :=
   (connesMixedComplexModel k A).connesCyclicData
 
-/-- The unital mixed bicomplex is formed from the original b and Connes B. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The Connes mixed bicomplex has both shapes `down ℕ`,
+with cell `C_(q-p)(A)` for `p≤q` and the mixed boundary maps. -/
 def connesMixedBicomplex :
     HomologicalComplex₂ (ModuleCat.{max u v} k) (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   (connesMixedConnesDoubleData k A).K
 
-/-- Canonical Connes packaging retains the entire original homotopy-based bicomplex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The bicomplex from the canonical mixed object equals
+that constructed directly from the regular `b`-complex, its
+Connes zero homotopy, and the component square-zero law. -/
 theorem connesMixedBicomplex_eq_original :
     connesMixedBicomplex k A = ChainComplex.mixedBicomplex (bComplex k A) (connesBoundaryHomotopy k A)
       (fun n => by simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A n) := rfl
 
-/-- The generic cyclic-data model is the same original bicomplex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The model bicomplex of the canonical generic cyclic
+data is the Connes mixed bicomplex. -/
 theorem connesMixedGenericCyclicData_model_K :
     (connesMixedGenericCyclicData k A).model.K = connesMixedBicomplex k A :=
   MixedComplex.ofBoundaryHomotopy_connesBicomplex (bComplex k A)
     (connesBoundaryHomotopy k A) (fun r => by simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A r)
 
-/-- The bottom cell in every translated column retains the original X0. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The bottom supported cell `(p,p)` of the mixed bicomplex
+is canonically isomorphic to `C_0(A)`. -/
 def connesMixedBottomIso (p : ℕ) :
     ((connesMixedBicomplex k A).X p).X p ≅ chainLevel k A A 0 :=
   ChainComplex.mixedColumnIso (bComplex k A) p 0 p (Nat.zero_add p)
 
-/-- Every supported mixed cell has the original printed degree q-p. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. For `p≤q`, the mixed cell `(p,q)` is canonically
+identified with `C_(q-p)(A)`. -/
 def connesMixedCellIso (p q : ℕ) (hpq : p ≤ q) :
     ((connesMixedBicomplex k A).X p).X q ≅ chainLevel k A A (q - p) :=
   ChainComplex.mixedBicomplexCellIso (bComplex k A) (connesBoundaryHomotopy k A)
     (fun r => by simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A r) p q hpq
 
-/-- Native finite-diagonal totalization is the mixed total complex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The finite-antidiagonal total of the mixed bicomplex
+is a nonnegative chain complex, with degree-`n` object
+`⊕_(2p≤n) C_(n-2p)(A)`. -/
 abbrev connesMixedTotal : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   (connesMixedBicomplex k A).total (ComplexShape.down ℕ)
 
-/-- A supported original mixed cell has its total inclusion. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. For `p≤q`, the supported cell identification gives
+`C_(q-p)(A) → mixedTotal_(p+q)` as its total summand injection. -/
 def connesMixedInclusion (p q : ℕ) (hpq : p ≤ q) :
     chainLevel k A A (q - p) ⟶ (connesMixedTotal k A).X (p + q) :=
   (connesMixedCellIso k A p q hpq).inv ≫
     (connesMixedBicomplex k A).ιTotal (ComplexShape.down ℕ) p q (p + q) rfl
 
-/-- The native vertical sign is exactly the original positive Hochschild boundary. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. In column `p`, multiplying the stored vertical map by
+the totalization sign `(-1)^p` gives the ordinary Hochschild
+boundary under the translated-column identifications. -/
 theorem connesMixedTotal_vertical (p n : ℕ) :
     (ComplexShape.down ℕ).ε p •
         ((connesMixedBicomplex k A).X p).d (n + 1 + p) (n + p) =
@@ -405,7 +578,13 @@ theorem connesMixedTotal_vertical (p n : ℕ) :
     (fun r => by simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A r) p (n + 1) n
     (n + 1 + p) (n + p) rfl rfl
 
-/-- The odd quotient is the graded family of translated minus-b-prime columns. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. The graded odd family has component `j` the `b′`-complex
+translated by `2j+1`; its differential is `-b′` in supported
+degrees and its terms vanish below that translation. -/
 def connesOddFamily : ChainComplex (GradedObject ℕ (ModuleCat.{max u v} k)) ℕ where
   X n j := (ChainComplex.mixedColumn (bPrimeComplex k A) (2 * j + 1)).X n
   d n m j := (ChainComplex.mixedColumn (bPrimeComplex k A) (2 * j + 1)).d n m
@@ -416,7 +595,13 @@ def connesOddFamily : ChainComplex (GradedObject ℕ (ModuleCat.{max u v} k)) �
     funext j
     exact (ChainComplex.mixedColumn (bPrimeComplex k A) (2 * j + 1)).d_comp_d n m l
 
-/-- Every odd column contracts by the transported original unit insertion. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-module action. Write `C_*(A)` for its regular
+Hochschild `b`-complex, `t_n` for signed cyclic rotation, and
+`N_n=∑_(i=0)^n t_n^i`. The unit insertion `s_n` gives
+`B_n=(1-t_(n+1)) ∘ s_n ∘ N_n`. Unit insertion contracts every translated odd `b′`
+column, giving a homotopy from identity of the whole graded odd
+family to zero. -/
 def connesOddFamilyContraction : Homotopy (𝟙 (connesOddFamily k A)) 0 where
   hom n m j :=
     (ChainComplex.mixedColumnContraction (bPrimeComplex k A)
@@ -430,12 +615,20 @@ def connesOddFamilyContraction : Homotopy (𝟙 (connesOddFamily k A)) 0 where
     exact (ChainComplex.mixedColumnContraction (bPrimeComplex k A)
       (bPrimeContraction k A) (2 * j + 1)).comm n
 
-/-- The quotient complex is the native coproduct of the odd translated columns. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. The odd total is the chain complex obtained by the
+coproduct of these translated odd columns in each degree. -/
 abbrev connesOddTotal : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   ((GradedObject.total ℕ (ModuleCat.{max u v} k)).mapHomologicalComplex
     (ComplexShape.down ℕ)).obj (connesOddFamily k A)
 
-/-- The native additive coproduct functor transports the quotient contraction. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. The column contractions give a homotopy from identity
+of `O` to zero. -/
 def connesOddContraction : Homotopy (𝟙 (connesOddTotal k A)) 0 where
   hom := ((GradedObject.total ℕ (ModuleCat.{max u v} k)).mapHomotopy
     (connesOddFamilyContraction k A)).hom
@@ -459,13 +652,22 @@ def connesOddContraction : Homotopy (𝟙 (connesOddTotal k A)) 0 where
     exact hIdF.symm.trans ((H.comm n).trans
       (congrArg (fun z : L.X n ⟶ L.X n => dNext n a + prevD n a + z) hZeroF))
 
-/-- Each supported original odd level has its quotient coprojection. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. For `r+2j+1=n`, the supported bar term `C_r` has its
+coproduct injection `K_(j,r,n) : C_r → O_n`. -/
 def connesOddInclusion (j r n : ℕ) (h : r + (2 * j + 1) = n) :
     chainLevel k A A r ⟶ (connesOddTotal k A).X n :=
   (ChainComplex.mixedColumnIso (bPrimeComplex k A) (2 * j + 1) r n h).inv ≫
     Sigma.ι ((connesOddFamily k A).X n) j
 
-/-- Supported original odd levels detect equality of morphisms from the quotient. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. Two morphisms `f,g : O_n → X` to any ground module
+are equal if `K_(j,r,n) ≫ f = K_(j,r,n) ≫ g` for every
+supported pair `r+2j+1=n`. -/
 theorem connesOddTotal_hom_ext {X : ModuleCat.{max u v} k} (n : ℕ)
     {f g : (connesOddTotal k A).X n ⟶ X}
     (h : ∀ j r (hr : r + (2 * j + 1) = n),
@@ -487,7 +689,12 @@ theorem connesOddTotal_hom_ext {X : ModuleCat.{max u v} k} (n : ℕ)
   · exact (ChainComplex.mixedColumn_isZero (bPrimeComplex k A) (2 * j + 1) n
       (by omega)).eq_of_src _ _
 
-/-- The quotient's original odd-column differential is the printed minus-b-prime. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. For `(r+1)+2j+1=n` and `r+2j+1=m`, the injection
+intertwines the differential by
+`K_(j,r+1,n) ≫ d_O(n,m) = -b′_(r+1,r) ≫ K_(j,r,m)`. -/
 theorem connesOddInclusion_d (j r n m : ℕ)
     (hn : (r + 1) + (2 * j + 1) = n) (hm : r + (2 * j + 1) = m) :
     connesOddInclusion k A j (r + 1) n hn ≫ (connesOddTotal k A).d n m =
@@ -529,7 +736,11 @@ theorem connesOddInclusion_d (j r n m : ℕ)
     _ = -(d ≫ e₀.inv ≫ ι₀) := by
       simp only [Category.assoc, Iso.inv_hom_id_assoc, Preadditive.neg_comp, Preadditive.comp_neg]
 
-/-- Original even coordinates have the native mixed-total coprojection. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `T` be the mixed total, with
+`T_n=⊕_(2p+r=n) C_r` and injections `J_(p,r,n)`. For `2p+r=n`, the regular term `C_r` has its
+mixed-total injection `J_(p,r,n) : C_r → T_n`. -/
 def mixedLevelInclusion (p r n : ℕ) (h : 2 * p + r = n) :
     chainLevel k A A r ⟶ (connesMixedTotal k A).X n :=
   (ChainComplex.mixedColumnIso (bComplex k A) p r (r + p) rfl).inv ≫
@@ -537,13 +748,21 @@ def mixedLevelInclusion (p r n : ℕ) (h : 2 * p + r = n) :
       change p + (r + p) = n
       omega)
 
-/-- The same original mixed-level coprojection is zero when its total degree does not match. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `T` be the mixed total, with
+`T_n=⊕_(2p+r=n) C_r` and injections `J_(p,r,n)`. The degree-indexed mixed injection `J_(p,r,n)` is the
+supported injection when `2p+r=n`, and zero otherwise. -/
 def mixedLevelInclusionOrZero (p r n : ℕ) :
     chainLevel k A A r ⟶ (connesMixedTotal k A).X n :=
   (ChainComplex.mixedColumnIso (bComplex k A) p r (r + p) rfl).inv ≫
     (connesMixedBicomplex k A).ιTotalOrZero (ComplexShape.down ℕ) p (r + p) n
 
-/-- Supported total coordinates agree with the original-level inclusion. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `T` be the mixed total, with
+`T_n=⊕_(2p+r=n) C_r` and injections `J_(p,r,n)`. When `2p+r=n`, the zero-extended mixed injection equals
+the supported summand injection. -/
 theorem mixedLevelInclusionOrZero_eq (p r n : ℕ) (h : 2 * p + r = n) :
     mixedLevelInclusionOrZero k A p r n = mixedLevelInclusion k A p r n h := by
   unfold mixedLevelInclusionOrZero mixedLevelInclusion
@@ -551,7 +770,11 @@ theorem mixedLevelInclusionOrZero_eq (p r n : ℕ) (h : 2 * p + r = n) :
     change p + (r + p) = n
     omega)]
 
-/-- Supported original even levels detect equality of maps from the mixed total. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `T` be the mixed total, with
+`T_n=⊕_(2p+r=n) C_r` and injections `J_(p,r,n)`. Two morphisms `f,g : T_n → X` are equal when their
+composites with every `J_(p,r,n)` for `2p+r=n` are equal. -/
 theorem connesMixedTotal_hom_ext {X : ModuleCat.{max u v} k} (n : ℕ)
     {f g : (connesMixedTotal k A).X n ⟶ X}
     (h : ∀ p r (hr : 2 * p + r = n),
@@ -586,22 +809,42 @@ theorem connesMixedTotal_hom_ext {X : ModuleCat.{max u v} k} (n : ℕ)
     let mg : (B.X p).X q ⟶ X := B.ιTotal (ComplexShape.down ℕ) p q n hn ≫ g
     exact hZero.eq_of_src mf mg
 
-/-- An odd coprojection with an unmatched degree is the zero morphism. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. The odd injection `K_(j,r,n)` is defined as zero when
+`r+2j+1≠n`, and as the supported coproduct injection otherwise. -/
 def connesOddInclusionOrZero (j r n : ℕ) :
     chainLevel k A A r ⟶ (connesOddTotal k A).X n :=
   if h : r + (2 * j + 1) = n then connesOddInclusion k A j r n h else 0
 
-/-- Matching odd degrees recover the original quotient coprojection. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `O` be the sum of the odd bar columns translated by `2j+1`,
+so `O_n=⊕_(r+2j+1=n) C_r`, with injections `K_(j,r,n)`. For `r+2j+1=n`, the zero-extended odd injection equals
+the supported coproduct injection. -/
 theorem connesOddInclusionOrZero_eq (j r n : ℕ) (h : r + (2 * j + 1) = n) :
     connesOddInclusionOrZero k A j r n = connesOddInclusion k A j r n h := dif_pos h
 
-/-- The even coordinate projection preserves exactly the original mixed level. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The degreewise even projection `e_n : Z_n → T_n`
+sends column `(2p,r)` to `J_(p,r,n)` and kills every odd column. -/
 def mixedEvenProjection (n : ℕ) :
     (cyclicTotal k A).X n ⟶ (connesMixedTotal k A).X n :=
   (cyclicBicomplex k A).totalDesc (fun c r hn =>
     if hc : Even c then mixedLevelInclusionOrZero k A (c / 2) r n else 0)
 
-/-- Even cyclic coordinates project to their mixed-total coordinate. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. For `2p+r=n`, the even projection satisfies
+`I_(2p,r,n) ≫ e_n = J_(p,r,n)`. -/
 theorem mixedEvenProjection_even (p r n : ℕ) (h : 2 * p + r = n) :
     (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) (2 * p) r n h ≫
         mixedEvenProjection k A n = mixedLevelInclusion k A p r n h := by
@@ -611,7 +854,13 @@ theorem mixedEvenProjection_even (p r n : ℕ) (h : 2 * p + r = n) :
   simp only [dif_pos hp, if_pos hp, hDiv, mixedLevelInclusionOrZero_eq k A p r n h]
   all_goals first | exact dif_pos hp | exact if_pos hp
 
-/-- Original odd cyclic coordinates vanish under the even projection. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. For `2j+1+r=n`, the even projection vanishes after
+`I_(2j+1,r,n)`. -/
 theorem mixedEvenProjection_odd (j r n : ℕ) (h : 2 * j + 1 + r = n) :
     (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) (2 * j + 1) r n h ≫
         mixedEvenProjection k A n = 0 := by
@@ -619,7 +868,13 @@ theorem mixedEvenProjection_odd (j r n : ℕ) (h : 2 * j + 1 + r = n) :
   erw [mixedEvenProjection, HomologicalComplex₂.ι_totalDesc]
   exact dif_neg hj
 
-/-- The original odd coordinate is inserted into its cyclic-total column. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The degreewise odd section `σ_n : O_n → Z_n`
+inserts each odd summand into its cyclic column `2j+1`. -/
 def connesOddSection (n : ℕ) : (connesOddTotal k A).X n ⟶ (cyclicTotal k A).X n :=
   Sigma.desc (fun j =>
     if hj : 2 * j + 1 ≤ n then
@@ -629,7 +884,13 @@ def connesOddSection (n : ℕ) : (connesOddTotal k A).X n ⟶ (cyclicTotal k A).
         (2 * j + 1) (n - (2 * j + 1)) n
     else 0)
 
-/-- The odd section has exactly its original cyclic-column coprojection. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. For `r+2j+1=n`, the odd section satisfies
+`K_(j,r,n) ≫ σ_n = I_(2j+1,r,n)`. -/
 theorem connesOddInclusion_section (j r n : ℕ) (h : r + (2 * j + 1) = n) :
     connesOddInclusion k A j r n h ≫ connesOddSection k A n =
       (cyclicBicomplex k A).ιTotalOrZero (ComplexShape.down ℕ) (2 * j + 1) r n := by
@@ -658,7 +919,13 @@ theorem connesOddInclusion_section (j r n : ℕ) (h : r + (2 * j + 1) = n) :
     _ = v := e.inv_hom_id_assoc v
 
 
-/-- Zero and matching odd coprojections both retain the same original cyclic coordinate. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The equality `K_(j,r,n) ≫ σ_n = I_(2j+1,r,n)` holds
+also for zero-extended injections in every degree `n`. -/
 theorem connesOddInclusionOrZero_section (j r n : ℕ) :
     connesOddInclusionOrZero k A j r n ≫ connesOddSection k A n =
       (cyclicBicomplex k A).ιTotalOrZero (ComplexShape.down ℕ) (2 * j + 1) r n := by
@@ -669,7 +936,14 @@ theorem connesOddInclusionOrZero_section (j r n : ℕ) :
         change 2 * j + 1 + r ≠ n
         omega)] <;> rfl
 
-/-- The positive printed level image omits only the nonexistent negative column at p=0. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The image of mixed coordinate `(p,r)` is
+`I_(2p,r,n) + u_r ≫ I_(2p-1,r+1,n)` for `p>0`.
+At `p=0` it is `I_(0,r,n)`; off total degree `2p+r=n` it is zero. -/
 def mixedToCyclicLevelImage (p r n : ℕ) :
     chainLevel k A A r ⟶ (cyclicTotal k A).X n :=
   let x : chainLevel k A A r ⟶ (cyclicTotal k A).X n :=
@@ -680,7 +954,13 @@ def mixedToCyclicLevelImage (p r n : ℕ) :
         (cyclicBicomplex k A).ιTotalOrZero (ComplexShape.down ℕ) (2 * p - 1) (r + 1) n
   x + y
 
-/-- The positive printed inclusion on each total degree uses N followed by s. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. These coordinate images define the degreewise map
+`i_n : T_n → Z_n` by coproduct descent. -/
 def mixedToCyclicComponent (n : ℕ) :
     (connesMixedTotal k A).X n ⟶ (cyclicTotal k A).X n :=
   (connesMixedBicomplex k A).totalDesc (fun p q hn =>
@@ -720,7 +1000,14 @@ theorem mixedToCyclicComponent_levelImage (p r n : ℕ) (h : 2 * p + r = n) :
         e.inv ≫ f) hCell
     _ = F := e.inv_hom_id_assoc F
 
-/-- The original mixed coordinate is sent by the positive x plus sN formula. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. For `2p+r=n`, the map `i_n` takes `J_(p,r,n)` to
+its even cyclic coordinate plus the `u_r=s_rN_r` correction in
+column `2p-1`; the correction is zero at `p=0`. -/
 theorem mixedToCyclicComponent_inclusion (p r n : ℕ) (h : 2 * p + r = n) :
     mixedLevelInclusion k A p r n h ≫ mixedToCyclicComponent k A n =
       (let x : chainLevel k A A r ⟶ (cyclicTotal k A).X n :=
@@ -748,7 +1035,12 @@ theorem mixedToCyclicComponent_inclusion (p r n : ℕ) (h : 2 * p + r = n) :
     exact congrArg (fun f : chainLevel k A A r ⟶ (cyclicTotal k A).X n => x + f) hy.symm
   · exact by simp only [mixedToCyclicLevelImage, if_neg hp]
 
-/-- The level image is zero outside its mixed-total degree. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The mixed coordinate image is zero whenever `2p+r≠n`. -/
 theorem mixedToCyclicLevelImage_eq_zero (p r n : ℕ) (h : 2 * p + r ≠ n) :
     mixedToCyclicLevelImage k A p r n = 0 := by
   have hz : (cyclicBicomplex k A).ιTotalOrZero (ComplexShape.down ℕ) (2 * p) r n = 0 :=
@@ -772,7 +1064,13 @@ theorem mixedToCyclicLevelImage_eq_zero (p r n : ℕ) (h : 2 * p + r ≠ n) :
     change (0 : X ⟶ Z) + N ≫ S ≫ (0 : Y ⟶ Z) = 0
     exact (congrArg (fun f : X ⟶ Z => (0 : X ⟶ Z) + f) hzero).trans (zero_add 0)
 
-/-- Both matching and zero native mixed coprojections retain the level image. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. Composing the zero-extended `J_(p,r,n)` with `i_n`
+gives its coordinate image for every `p,r,n`. -/
 theorem mixedToCyclicComponent_inclusionOrZero (p r n : ℕ) :
     mixedLevelInclusionOrZero k A p r n ≫ mixedToCyclicComponent k A n =
       mixedToCyclicLevelImage k A p r n := by
@@ -785,21 +1083,41 @@ theorem mixedToCyclicComponent_inclusionOrZero (p r n : ℕ) :
         omega), comp_zero]
     erw [hz, zero_comp, mixedToCyclicLevelImage_eq_zero k A p r n h]
 
-/-- The even quotient image omits the nonexistent preceding odd column at p=0. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The image of even cyclic coordinate `(2p,r)` in `O_n`
+is `-u_r ≫ K_(p-1,r+1,n)` for `p>0`, and zero at `p=0`. -/
 def cyclicToOddEvenImage (p r n : ℕ) :
     chainLevel k A A r ⟶ (connesOddTotal k A).X n :=
   if p = 0 then 0 else
     -(normMap k A r ≫ extraDegeneracy k A r ≫
       connesOddInclusionOrZero k A (p - 1) (r + 1) n)
 
-/-- The quotient is (-sN,id) in the original even/odd coordinates. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The degreewise projection `π_n : Z_n → O_n`
+uses `-s_rN_r` on the preceding odd coordinate of an even column
+and identity on each odd column. -/
 def cyclicToOddComponent (n : ℕ) :
     (cyclicTotal k A).X n ⟶ (connesOddTotal k A).X n :=
   (cyclicBicomplex k A).totalDesc (fun c r hn =>
     if hc : Even c then cyclicToOddEvenImage k A (c / 2) r n
     else connesOddInclusionOrZero k A (c / 2) r n)
 
-/-- The quotient sends an original even coordinate through minus sN. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. For `2p+r=n`, the projection satisfies
+`I_(2p,r,n) ≫ π_n = -u_r ≫ K_(p-1,r+1,n)`, with the
+zero-extended right side zero when `p=0`. -/
 theorem cyclicToOddComponent_even (p r n : ℕ) (h : 2 * p + r = n) :
     (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) (2 * p) r n h ≫
         cyclicToOddComponent k A n =
@@ -828,7 +1146,13 @@ theorem cyclicToOddComponent_even (p r n : ℕ) (h : 2 * p + r = n) :
         connesOddInclusionOrZero k A (p - 1) (r + 1) n)) = _
     exact if_neg hp0
 
-/-- The quotient sends an original odd coordinate by its identity coordinate. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. For `2j+1+r=n`, the projection satisfies
+`I_(2j+1,r,n) ≫ π_n = K_(j,r,n)`. -/
 theorem cyclicToOddComponent_odd (j r n : ℕ) (h : 2 * j + 1 + r = n) :
     (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) (2 * j + 1) r n h ≫
         cyclicToOddComponent k A n = connesOddInclusion k A j r n (by omega) := by
@@ -837,7 +1161,13 @@ theorem cyclicToOddComponent_odd (j r n : ℕ) (h : 2 * j + 1 + r = n) :
   erw [cyclicToOddComponent, HomologicalComplex₂.ι_totalDesc, dite_eq_right hj, hDiv]
   exact connesOddInclusionOrZero_eq k A j r n (by omega)
 
-/-- The even quotient level image is zero outside its original total degree. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The even coordinate image in the odd quotient is zero
+when `2p+r≠n`. -/
 theorem cyclicToOddEvenImage_eq_zero (p r n : ℕ) (h : 2 * p + r ≠ n) :
     cyclicToOddEvenImage k A p r n = 0 := by
   by_cases hp : p = 0
@@ -847,7 +1177,13 @@ theorem cyclicToOddEvenImage_eq_zero (p r n : ℕ) (h : 2 * p + r ≠ n) :
       erw [dif_neg (by omega)]
     simp only [cyclicToOddEvenImage, if_neg hp, hz, comp_zero, neg_zero]
 
-/-- Zero and matching even coprojections both retain the even quotient image. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The zero-extended even cyclic injection followed by
+`π_n` gives its even quotient-coordinate image in every degree. -/
 theorem cyclicToOddComponent_evenOrZero (p r n : ℕ) :
     (cyclicBicomplex k A).ιTotalOrZero (ComplexShape.down ℕ) (2 * p) r n ≫
         cyclicToOddComponent k A n = cyclicToOddEvenImage k A p r n := by
@@ -861,7 +1197,14 @@ theorem cyclicToOddComponent_evenOrZero (p r n : ℕ) :
     change (0 : chainLevel k A A r ⟶ (connesOddTotal k A).X n) = 0
     rfl
 
-/-- Zero and matching odd coprojections both retain the original quotient coordinate. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The zero-extended odd cyclic injection followed by
+`π_n` is the zero-extended odd quotient injection
+`K_(j,r,n)`. -/
 theorem cyclicToOddComponent_oddOrZero (j r n : ℕ) :
     (cyclicBicomplex k A).ιTotalOrZero (ComplexShape.down ℕ) (2 * j + 1) r n ≫
         cyclicToOddComponent k A n = connesOddInclusionOrZero k A j r n := by
@@ -1412,15 +1755,33 @@ theorem mixedToCyclicComponent_comm (n : ℕ) :
   intro p r h
   simpa only [Category.assoc] using mixedToCyclicComponent_cell_comm k A p r n h
 
-/-- The positive printed inclusion is a chain map, with no supplied compatibility. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The maps `i_n`, with the positive `sN` coordinate
+correction, assemble into a chain map `i : T → Z`. -/
 def mixedToCyclic : connesMixedTotal k A ⟶ cyclicTotal k A :=
   ChainComplex.ofHom (mixedToCyclicComponent k A) (mixedToCyclicComponent_comm k A)
 
-/-- The chain map retains its computed positive total-degree component. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The degree-`n` component of the mixed-to-cyclic chain
+map is the coordinate-descent map `i_n`. -/
 @[simp]
 theorem mixedToCyclic_f (n : ℕ) : (mixedToCyclic k A).f n = mixedToCyclicComponent k A n := rfl
 
-/-- The original first column has no negative-column correction. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. The mixed first-column inclusion satisfies
+`J_(0,r,r) ≫ i_r = I_(0,r,r)`; its correction term is zero. -/
 theorem mixedToCyclic_ι_zero (r : ℕ) :
     mixedLevelInclusion k A 0 r r (by omega) ≫ (mixedToCyclic k A).f r =
       (cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) 0 r r (by change 0 + r = r; omega) := by
@@ -1430,7 +1791,14 @@ theorem mixedToCyclic_ι_zero (r : ℕ) :
   exact (cyclicBicomplex k A).ιTotalOrZero_eq (ComplexShape.down ℕ) 0 r r
     (by change 0 + r = r; omega)
 
-/-- Every later column has exactly the original positive sN correction. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Set `C_r=A ⊗[k] A^⊗r`,
+`u_r=s_r ∘ N_r` with unit insertion `s_r` and signed cyclic norm `N_r`. Let `Z` be the cyclic total with column injections
+`I_(c,r,n)`, `T` the mixed total with injections `J_(p,r,n)` for
+`2p+r=n`, and `O` the odd-column total with injections `K_(j,r,n)`
+for `r+2j+1=n`. Each injection is zero outside its indicated degree. For `2(p+1)+r=n`, the mixed-to-cyclic map has value
+`I_(2p+2,r,n) + u_r ≫ I_(2p+1,r+1,n)` on the mixed
+column `(p+1,r)`. -/
 theorem mixedToCyclic_ι_succ (p r n : ℕ) (h : 2 * (p + 1) + r = n) :
     mixedLevelInclusion k A (p + 1) r n h ≫ (mixedToCyclic k A).f n =
       (let x : chainLevel k A A r ⟶ (cyclicTotal k A).X n :=
@@ -1575,11 +1943,21 @@ theorem cyclicToOddComponent_comm (n : ℕ) :
   intro c r h
   simpa only [Category.assoc] using cyclicToOddComponent_cell_comm k A c r n h
 
-/-- The computed (-sN,id) quotient is a chain map to the contractible odd columns. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The degreewise odd projection is a chain map
+`π : Z → O`. -/
 def cyclicToOdd : cyclicTotal k A ⟶ connesOddTotal k A :=
   ChainComplex.ofHom (cyclicToOddComponent k A) (cyclicToOddComponent_comm k A)
 
-/-- The quotient map retains its computed original even/odd components. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The degree-`n` component of `π` is the computed
+projection using `-sN` on even columns and identity on odd columns. -/
 @[simp]
 theorem cyclicToOdd_f (n : ℕ) : (cyclicToOdd k A).f n = cyclicToOddComponent k A n := rfl
 
@@ -1753,12 +2131,22 @@ theorem mixedCyclicSplitting_id (n : ℕ) :
       (cyclicBicomplex k A).ιTotalOrZero_eq (ComplexShape.down ℕ) (2 * j + 1) r n h,
       Category.comp_id]
 
-/-- The printed inclusion and computed odd quotient form the native short complex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The maps `i,π`, with zero composite, define the short
+complex `T → Z → O` of nonnegative chain complexes. -/
 def mixedCyclicShortComplex : ShortComplex (ChainComplex (ModuleCat.{max u v} k) ℕ) :=
   ShortComplex.mk (mixedToCyclic k A) (cyclicToOdd k A)
     (mixedToCyclic_comp_cyclicToOdd k A)
 
-/-- The original even projection and odd insertion earn the degreewise splitting. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. Each degree row `T_n → Z_n → O_n` is split by the
+ even-coordinate retraction and the odd-coordinate section. -/
 def mixedCyclicSplitting (n : ℕ) :
     ((mixedCyclicShortComplex k A).map
       (HomologicalComplex.eval _ (ComplexShape.down ℕ) n)).Splitting where
@@ -1768,35 +2156,64 @@ def mixedCyclicSplitting (n : ℕ) :
   s_g := oddSection_cyclicToOdd k A n
   id := mixedCyclicSplitting_id k A n
 
-/-- Native degreewise-split cancellation earns the equivalence with the positive I. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The degreewise-split short complex and contraction of
+`O` give a chain-homotopy equivalence `T ≃ Z`. -/
 def mixedToCyclicHomotopyEquiv : HomotopyEquiv (connesMixedTotal k A) (cyclicTotal k A) :=
   ChainComplex.homotopyEquivOfDegreewiseSplit (mixedCyclicShortComplex k A)
     (mixedCyclicSplitting k A) (connesOddContraction k A)
 
-/-- The equivalence's forward map is the original positive printed inclusion. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The forward map of this homotopy equivalence is
+`i : T → Z`. -/
 @[simp]
 theorem mixedToCyclicHomotopyEquiv_hom :
     (mixedToCyclicHomotopyEquiv k A).hom = mixedToCyclic k A :=
   ChainComplex.homotopyEquivOfDegreewiseSplit_hom _ _ _
 
-/-- The positive printed inclusion is a quasi-isomorphism, without a supplied certificate. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The mixed-to-cyclic chain map `i` is a quasi-isomorphism. -/
 theorem mixedToCyclic_quasiIso : QuasiIso (mixedToCyclic k A) := by
   simpa only [mixedToCyclicHomotopyEquiv_hom] using
     (mixedToCyclicHomotopyEquiv k A).quasiIso_hom
 
-/-- The mixed total has the already constructed cyclic homology. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. Taking homology gives a canonical comparison
+`H_n(T) ≅ HC_n(k,A)=H_n(Z)`. -/
 def mixedCyclicHomologyIso (n : ℕ) :
     (connesMixedTotal k A).homology n ≅ cyclicHomology k A n :=
   (mixedToCyclicHomotopyEquiv k A).toHomologyIso n
 
-/-- The homology comparison is induced by the positive printed map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The forward map of `H_n(T) ≅ HC_n(k,A)` is
+`H_n(i)`. -/
 @[simp]
 theorem mixedCyclicHomologyIso_hom (n : ℕ) :
     (mixedCyclicHomologyIso k A n).hom = homologyMap (mixedToCyclic k A) n := by
   change homologyMap (mixedToCyclicHomotopyEquiv k A).hom n = _
   rw [mixedToCyclicHomotopyEquiv_hom]
 
-/-- Native lifting commutes with the finite diagonal total of the raw mixed model. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The lifted mixed total is canonically isomorphic to
+the total of the lifted mixed bicomplex:
+`L_ℓ(Tot K_mix) ≅ Tot(L_ℓ K_mix)`. -/
 def connesMixedTotalLiftIso.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -1816,7 +2233,11 @@ def connesMixedTotalLiftIso.{lift, ground, algebra}
     infer_instance
   exact HomologicalComplex₂.functorTotalIso U R
 
-/-- Exact lifting and the native finite-diagonal comparison identify the raw mixed homology. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. Exact lifting and totalization give
+`L_ℓ(H_n(Tot K_mix)) ≅ H_n(Tot(L_ℓ K_mix))`. -/
 def connesMixedHomologyLiftIso.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -1831,7 +2252,12 @@ def connesMixedHomologyLiftIso.{lift, ground, algebra}
     ((connesMixedTotal k A).sc n).mapHomologyIso U
   exact h.symm ≪≫ HomologicalComplex.homologyMapIso (connesMixedTotalLiftIso.{lift} k A) n
 
-/-- Lifted supported coordinates still include the original bar level in the native mixed total. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. For `2p+r=n`, the lifted regular term `L_ℓ(C_r(A))`
+has its supported summand injection into
+`Tot(L_ℓ K_mix)_n`. -/
 def mixedLevelInclusionLift.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (p r n : ℕ) (h : 2 * p + r = n) :
@@ -1847,7 +2273,12 @@ def mixedLevelInclusionLift.{lift, ground, algebra}
       (ComplexShape.down ℕ)).mapHomologicalComplex (ComplexShape.down ℕ)).obj
         (connesMixedBicomplex k A))) (ComplexShape.down ℕ) p (r + p) n (by change p + (r + p) = n; omega)
 
-/-- The original supported inclusion has exactly its computed lifted-column coordinates. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. Lifting a supported mixed-level injection and then
+the total-lift comparison gives the supported injection into
+the total of the lifted mixed bicomplex. -/
 @[reassoc]
 theorem map_mixedLevelInclusion_lift.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
@@ -1879,7 +2310,12 @@ theorem map_mixedLevelInclusion_lift.{lift, ground, algebra}
     (U.map_comp a i)).trans
       ((Category.assoc _ _ _).trans (congrArg (fun f => U.map a ≫ f) hι))
 
-/-- The positive inclusion x+sN is transported by the total comparisons. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. Transporting the lifted positive mixed-to-cyclic
+chain map through the two total-lift comparisons gives
+`i^ℓ : Tot(L_ℓ K_mix) → Tot(L_ℓ K_cyc)`. -/
 def mixedToCyclicLift.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -1896,7 +2332,12 @@ def mixedToCyclicLift.{lift, ground, algebra}
       (ComplexShape.down ℕ)).map (mixedToCyclic k A) ≫
         (cyclicTotalLiftIso.{lift} k A).hom
 
-/-- The transported inclusion retains exactly the original positive chain map. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The lifted comparison satisfies
+`L_ℓ(i) ≫ E_cyc = E_mix ≫ i^ℓ`, where `E` denotes the
+total-lift isomorphism. -/
 @[reassoc]
 theorem map_mixedToCyclic_lift.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
@@ -1912,7 +2353,11 @@ theorem map_mixedToCyclic_lift.{lift, ground, algebra}
   change i ≫ eC.hom = eM.hom ≫ (eM.inv ≫ i ≫ eC.hom)
   exact (eM.hom_inv_id_assoc (i ≫ eC.hom)).symm
 
-/-- Exact native lifting and the total isomorphisms preserve the positive inclusion. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The transported map `i^ℓ` is a quasi-isomorphism,
+by exact carrier lifting of `i` and the two total comparisons. -/
 instance mixedToCyclicLift_quasiIso.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -1921,7 +2366,11 @@ instance mixedToCyclicLift_quasiIso.{lift, ground, algebra}
   unfold mixedToCyclicLift
   infer_instance
 
-/-- The lifted positive inclusion induces the lifted mixed-to-cyclic homology comparison. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The lifted chain comparison induces
+`H_n(Tot(L_ℓ K_mix)) ≅ H_n(Tot(L_ℓ K_cyc))`. -/
 def mixedCyclicHomologyLiftIso.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -1935,14 +2384,23 @@ def mixedCyclicHomologyLiftIso.{lift, ground, algebra}
           (cyclicBicomplex k A))) (ComplexShape.down ℕ)).homology n :=
   asIso (HomologicalComplex.homologyMap (mixedToCyclicLift.{lift} k A) n)
 
-/-- Its forward map is exactly homology of the transported original positive inclusion. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The forward lifted homology comparison is
+`H_n(i^ℓ)`. -/
 theorem mixedCyclicHomologyLiftIso_hom.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
     (mixedCyclicHomologyLiftIso.{lift} k A n).hom =
       HomologicalComplex.homologyMap (mixedToCyclicLift.{lift} k A) n := rfl
 
-/-- Supported original bar coordinates detect maps from the lifted mixed total. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. Morphisms from degree `n` of the lifted mixed total
+to any module at the common height are equal if they agree
+after all supported injections `2p+r=n`. -/
 theorem connesMixedTotalLift_hom_ext.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A]
@@ -1986,7 +2444,13 @@ theorem connesMixedTotalLift_hom_ext.{lift, ground, algebra}
             connesBoundary_square k A j) p q (by omega))
     exact hZero.eq_of_src _ _
 
-/-- Every supported lifted level keeps the original even term and the positive inserted norm. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. On supported coordinate `(p,r)` with `2p+r=n`, `i^ℓ`
+has the lifted even cyclic injection plus the positive lifted
+`s_rN_r` correction in the preceding odd column; at `p=0`
+only the even coordinate remains. -/
 theorem mixedToCyclicLift_inclusion.{lift, ground, algebra}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A]
@@ -2058,7 +2522,11 @@ theorem mixedToCyclicLift_inclusion.{lift, ground, algebra}
     _ = _ := congrArg₂ (fun a b => a + b) he
       (congrArg (fun f => U.map N ≫ U.map s ≫ f) ho)
 
-/-- Native lifting of the original boundary earns square-zero in the original carrier world. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The degree-`n` to `n+1` and `n+1` to `n+2`
+components of the lifted Connes homotopy have zero composite. -/
 theorem connesBoundaryHomotopyLift_square.{ground, algebra, lift}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -2067,7 +2535,11 @@ theorem connesBoundaryHomotopyLift_square.{ground, algebra, lift}
   rw [connesBoundaryHomotopyLift_hom, connesBoundaryHomotopyLift_hom,
     ← Functor.map_comp, connesBoundary_square, Functor.map_zero]
 
-/-- The original lifted b/B data form the canonical mixed object in the shared carrier. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The lifted regular `b`-complex and lifted Connes
+components form a mixed complex at height `max(u,v,ℓ)`. -/
 def connesMixedComplexModelLift.{ground, algebra, lift}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] : MixedComplex (ModuleCat.{max ground algebra lift} k) :=
@@ -2077,7 +2549,11 @@ def connesMixedComplexModelLift.{ground, algebra, lift}
     (connesBoundaryHomotopyLift.{ground, algebra, lift} k A)
     (connesBoundaryHomotopyLift_square.{ground, algebra, lift} k A)
 
-/-- The lifted canonical object retains the complete original lifted b-complex. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. The underlying chain complex of the lifted mixed
+object is `L_ℓ(bComplex(k,A))`. -/
 @[simp]
 theorem connesMixedComplexModelLift_underlying.{ground, algebra, lift}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
@@ -2086,7 +2562,10 @@ theorem connesMixedComplexModelLift_underlying.{ground, algebra, lift}
       ((ModuleCat.uliftFunctor.{lift, max ground algebra} k).mapHomologicalComplex
         (ComplexShape.down ℕ)).obj (bComplex k A) := rfl
 
-/-- Its operator is the native lift of the original Connes B. -/
+/-- Let `k` be a commutative ring in height `u`, `A` a unital
+ring in `v` with compatible central `k`-action, and `ℓ` an extra
+carrier height. Write `L_ℓ` for carrier lifting to `max(u,v,ℓ)`;
+`K_mix,K_cyc` are its mixed and cyclic bicomplexes. Its degree-`n` mixed operator is `L_ℓ(B_n)`. -/
 @[simp]
 theorem connesMixedComplexModelLift_B.{ground, algebra, lift}
     (k : Type ground) [CommRing k] (A : Type algebra) [Ring A] [Module k A]
@@ -2100,8 +2579,11 @@ section MixedNaturality
 variable {k A} {B : Type w} [Ring B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The original independent-carrier algebra map is an canonical mixed-complex morphism.
-Unit compatibility is explicit because the original Connes B uses the unit insertion. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. The full Hochschild chain map with its Connes
+compatibility is a morphism between the lifted mixed complexes. -/
 def connesMixedComplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     connesMixedComplexModelLift.{u, v, w} k A ⟶ connesMixedComplexModelLift.{u, w, v} k B :=
   MixedComplex.ofBoundaryHomotopyMap (connesBoundaryHomotopyLift.{u, v, w} k A)
@@ -2110,12 +2592,20 @@ def connesMixedComplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (connesBoundaryHomotopyLift_square.{u, w, v} k B)
     (bComplexMapLift f) (bComplexMapLift_boundary f hOne)
 
-/-- The canonical mixed map preserves the original full tensor-level chain map. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. The underlying chain map of the lifted mixed morphism
+is the full boundary map `bComplexMapLift(f)`. -/
 @[simp]
 theorem connesMixedComplexMapLift_underlying (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (connesMixedComplexMapLift f hOne).underlying = bComplexMapLift f := rfl
 
-/-- The independent-world raw mixed map transports the column coordinates. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. The mixed-complex morphism induces a map between
+the lifted mixed bicomplexes by their translated-column coordinates. -/
 def connesMixedBicomplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
         (ComplexShape.down ℕ)).mapHomologicalComplex (ComplexShape.down ℕ)).obj
@@ -2147,7 +2637,12 @@ def connesMixedBicomplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (connesMixedComplexMapLift f hOne).underlying
     (fun n => (connesMixedComplexMapLift f hOne).comm_B n)
 
-/-- Every supported mixed component keeps the original bar map in its native coordinates. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. For a supported cell with `n+p=q`, the bicomplex-map
+component, under the lifted cell identifications, is `Φ_n`
+on the regular Hochschild degree `n`. -/
 theorem connesMixedBicomplexMapLift_component (f : A →ₙₐ[k] B) (hOne : f 1 = 1)
     (p n q : ℕ) (h : n + p = q) :
     ((connesMixedBicomplexMapLift f hOne).f p).f q =
@@ -2181,7 +2676,11 @@ theorem connesMixedBicomplexMapLift_component (f : A →ₙₐ[k] B) (hOne : f 1
   exact ChainComplex.mixedBicomplexFunctorMap_component UA UB K L H₀A H₀B hA hB HA HB hcA hcB
     (bComplexMapLift f) (bComplexMapLift_boundary f hOne) p n q h
 
-/-- The preserved finite-diagonal coproducts transport the raw mixed total map. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. Totalization and the carrier-lift comparisons give
+a chain map between the two lifted mixed totals. -/
 def connesMixedTotalMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     ((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
       (ComplexShape.down ℕ)).obj (connesMixedTotal k A) ⟶
@@ -2222,7 +2721,12 @@ def connesMixedTotalMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     HomologicalComplex₂.total.map φ (ComplexShape.down ℕ)
   exact eA.hom ≫ m ≫ eB.inv
 
-/-- The native total of the raw map applies the bar map in every supported coordinate. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. For `2p+r=n`, the lifted supported injection followed
+by the total bicomplex map equals `Φ_r` followed by the
+corresponding target injection. -/
 theorem connesMixedBicomplexMapLift_inclusion (f : A →ₙₐ[k] B) (hOne : f 1 = 1)
     (p r n : ℕ) (h : 2 * p + r = n) :
     mixedLevelInclusionLift.{w} k A p r n h ≫
@@ -2277,7 +2781,13 @@ theorem connesMixedBicomplexMapLift_inclusion (f : A →ₙₐ[k] B) (hOne : f 1
 
 omit [IsScalarTower k A A] [SMulCommClass k A A]
   [IsScalarTower k B B] [SMulCommClass k B B] in
-/-- Unit preservation is needed only to specialize the insertion vector to the target unit. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. The lifted norm and insertion satisfy
+`Φ_n ≫ N_B,n ≫ s_B,n = N_A,n ≫ s_A,n ≫ Φ_(n+1)`;
+unit preservation identifies the transported insertion vector
+with `1_B`. -/
 theorem normInsertMapLift_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     levelMapLift (f : A →ₗ[k] B) n ≫
         (ModuleCat.uliftFunctor.{v, max u w} k).map (normMap k B n) ≫
@@ -2289,7 +2799,12 @@ theorem normInsertMapLift_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n 
   simpa only [extraDegeneracy, hVector, Functor.map_comp, Category.assoc] using
     normInsertWithMapLift_naturality (f : A →ₗ[k] B) (1 : A) n
 
-/-- The positive I intertwines the original raw mixed and cyclic maps in independent worlds. -/
+/-- Let `k` be a commutative ring, `A,B` unital rings with compatible
+central `k`-actions, and `f : A →ₙₐ[k] B` satisfy `f(1_A)=1_B`.
+Lift the two models to the common height `max(u,v,w)`.
+Write `Φ_n` for the degree-`n` full Hochschild word map of `f`. The comparison maps satisfy the chain square
+`Tot(f_mix) ≫ i_B = i_A ≫ Tot(f_cyc)` in the common carrier
+height, with the two positive mixed-to-cyclic comparisons. -/
 theorem mixedToCyclicLift_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     HomologicalComplex₂.total.map (connesMixedBicomplexMapLift f hOne)
         (ComplexShape.down ℕ) ≫ mixedToCyclicLift.{v} k B =

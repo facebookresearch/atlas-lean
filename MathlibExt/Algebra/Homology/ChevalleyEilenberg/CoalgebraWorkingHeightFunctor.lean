@@ -11,11 +11,14 @@ module
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoalgebraWorkingHeight
 
 /-!
-# Universe lifting of Chevalley–Eilenberg maps
+# Functorial lifting of Chevalley–Eilenberg chain maps
 
-For Lie algebras in a common carrier universe, lifting the Chevalley–Eilenberg chain map
-agrees with applying the module universe-lift functor. The ground ring and the signed
-differential are unchanged.
+Let `R` be a commutative ring and let `f : L → L'` be a Lie homomorphism between carriers in a
+common universe. The lifted canonical CE map agrees with applying the module universe-lift
+functor degreewise to the canonical CE chain map.
+
+In every degree the exterior-power component is lifted by `up`, with the same ground action
+and signed differential.
 -/
 
 @[expose] public section
@@ -31,7 +34,10 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
   {L' : Type v} [LieRing L'] [LieAlgebra R L']
 
-/-- The working-height CE map equals the module-lift functor map. -/
+/-- The lifted CE map as a module-functor image.
+
+For a Lie homomorphism in a common carrier universe, the chosen-height CE chain map equals the
+image of the canonical chain map under the module lift functor. -/
 theorem nativeLiftedComplexMapAtHeight_eq_uliftMap (f : L →ₗ⁅R⁆ L') :
     nativeLiftedComplexMapAtHeight.{u,v,v,z} R L f =
       ((ModuleCat.uliftFunctor.{max u v z, max u v} R).mapHomologicalComplex

@@ -1,3 +1,7 @@
-# Lifted Enveloping Trivial Lie Map
+# The scalar-preserving map of lifted trivial enveloping modules
 
-The original lifted trivial module map, with the UEA augmentation law.
+The scalar-preserving map of lifted trivial enveloping modules.
+
+For a Lie map `f`, the lifted trivial-module map takes values in restriction of the target
+along `U(f)` and retains the twice-lifted scalar value. Its linearity follows from
+augmentation naturality.

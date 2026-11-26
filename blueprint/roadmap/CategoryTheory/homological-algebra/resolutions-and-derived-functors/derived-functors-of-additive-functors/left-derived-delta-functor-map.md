@@ -1,3 +1,4 @@
-# Left Derived Delta Functor Map
+# Left-derived coefficient transformations give delta-functor morphisms
 
-Left-derived degree maps form a morphism of the derived δ-functors.
+Let `C,D` be abelian, with projective resolutions in `C`. For additive `F,G : C → D` and `α : F → G`, the maps `L_nα`
+form a morphism of their left-derived homological delta-functors.

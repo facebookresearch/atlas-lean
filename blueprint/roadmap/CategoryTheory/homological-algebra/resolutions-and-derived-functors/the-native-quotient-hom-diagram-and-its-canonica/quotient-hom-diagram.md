@@ -1,3 +1,6 @@
-# Quotient Hom Diagram
+# Quotient Hom diagram of a fixed module
 
-The actual degreewise Hom diagram at a given coefficient.
+Quotient Hom diagram of a fixed module.
+
+The diagram for `I` and `M` has objects `Hom_R(R / I^n, M)` and transition maps induced by the
+quotient projections between ideal-power quotients.

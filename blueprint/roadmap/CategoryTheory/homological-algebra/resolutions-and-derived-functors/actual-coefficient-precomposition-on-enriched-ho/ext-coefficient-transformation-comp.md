@@ -1,3 +1,6 @@
-# Ext Coefficient Transformation comp
+# Ext coefficient transformations compose contravariantly
 
-The native derived composition law retains contravariance in the coefficient.
+Ext coefficient transformations compose contravariantly.
+
+For compatible coefficient maps `f : B → B'` and `g : B' → B''`, the degree-`n` Ext
+transformation of `g`, followed by that of `f`, equals the transformation of `g.comp f`.

@@ -24,13 +24,17 @@ public import Mathlib.Algebra.Homology.DerivedCategory.Ext.Basic
 /-!
 # Hom cochains with a fixed coefficient object
 
-For an integer chain complex `P` and an object `M`, the fixed-coefficient
-Hom complex has degree-`n` group `P.X n ⟶ M`; its differential is
-precomposition with the differential of `P`. It is identified with the full
-Hom cochain product whose target is concentrated in degree zero.
+Let C be a preadditive category and P an integer chain complex. For an object M,
+fixed-coefficient Hom has degree-n group Hom_C(Pₙ,M) and differential f ↦ f ∘ d_P^{n+1,n}. If C
+has a zero object, evaluation identifies this complex with full Hom into the cochain complex
+M[0] concentrated in degree zero.
 
-These coordinates identify the cycle restrictions and the kernel and
-cokernel maps in the fixed-coefficient universal coefficient sequence.
+For abelian C, restriction of cocycles gives the canonical map Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M).
+When every term Pₚ and differential image Bₚ₋₁ is projective, the fixed-coefficient universal
+coefficient sequence is 0 → Ext¹_C(Hₙ₋₁(P),M) → Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M) → 0. Its left map
+has positive Yoneda-extension normalization, and its right map is canonical homology
+restriction. Chosen image splittings give a section. The Ext and Hom groups are moved to their
+common group universe when needed.
 -/
 
 @[expose] public section
@@ -49,17 +53,23 @@ section Preadditive
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C]
 
 omit [HasZeroObject C] in
-/-- Native positive-precomposition Hom of the original integer chain complex. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+The fixed-coefficient Hom cochain complex has degree-n group Hom_C(Pₙ,M) and differential
+d^{n,m}(f)=f ∘ d_P^{m,n}. Thus the differential from n to n+1 is positive precomposition with
+d_P : Pₙ₊₁ → Pₙ; no grading bound on P is imposed. -/
 def homFixedCoefficient (P : ChainComplex C ℤ) (M : C) : CochainComplex AddCommGrpCat.{v} ℤ :=
   ((preadditiveYoneda.obj M).mapHomologicalComplex (ComplexShape.up ℤ)).obj P.op
 
 omit [HasZeroObject C] in
-/-- The degree object is the original morphism group, without a grading bound. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+For every integer n, the degree-n object of Hom(P,M) is the abelian group Hom_C(Pₙ,M). -/
 lemma homFixedCoefficient_X (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     (homFixedCoefficient P M).X n = AddCommGrpCat.of (P.X n ⟶ M) := rfl
 
 omit [HasZeroObject C] in
-/-- The fixed coefficient differential is the original positive precomposition map. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+For integers n,m and f : Pₙ → M, the degree-(n,m) differential of Hom(P,M) sends f to f ∘
+d_P^{m,n}. In particular dⁿ(f)=f ∘ d_P^{n+1,n}, with positive sign. -/
 lemma homFixedCoefficient_d_apply (P : ChainComplex C ℤ) (M : C) (n m : ℤ)
     (f : P.X n ⟶ M) :
     ((homFixedCoefficient P M).d n m).hom f = P.d m n ≫ f := rfl
@@ -73,7 +83,11 @@ private lemma differential_index_transport (P : ChainComplex C ℤ)
   simp only [HomologicalComplex.XIsoOfEq_rfl, Iso.refl_hom, Iso.refl_inv,
     Category.id_comp, Category.comp_id]
 
-/-- Actual target-single coordinates identify all full cochains with the fixed coefficient group. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. For every integer n,
+evaluation gives an additive equivalence between the full degree-n Hom cochain group
+Hom(P,M[0])ⁿ and Hom_C(Pₙ,M). Every other target component is zero. -/
 def homFixedCoefficientCochainEquiv (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence C).functor.obj P)
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M) n ≃+
@@ -114,7 +128,11 @@ def homFixedCoefficientCochainEquiv (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
         exact Preadditive.add_comp (P.X n) (Q.X (n - n)) M (f n) (g n) e.hom }
   exact (homCochainPhysicalPiEquiv P Q n).trans E
 
-/-- The forward comparison is the actual physical degree-n component and target single iso. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. For a degree-n cochain
+z, Eₙ(z) is z's component Pₙ → (M[0])^{n-n}, followed by the canonical identification (M[0])⁰ ≅
+M. -/
 lemma homFixedCoefficientCochainEquiv_apply (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (z : CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence C).functor.obj P)
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M) n) :
@@ -132,7 +150,12 @@ private lemma targetSingleComponent_transport (P : ChainComplex C ℤ) (M : C) (
   subst hq
   rfl
 
-/-- The comparison evaluates the original native (-n,0) component, with no degree unit. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. Under the
+chain-to-cochain reversal Pₙ=P_coch^{-n}, Eₙ(z) is the original component z_{-n,0}, with the
+canonical source and target degree identifications. No scalar factor occurs in this degreewise
+evaluation. -/
 lemma homFixedCoefficientCochainEquiv_apply_zero (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (z : CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence C).functor.obj P)
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M) n) :
@@ -179,7 +202,11 @@ private lemma reindexedPrecomposition_transport (P : ChainComplex C ℤ)
     ((congrArg (fun t : P.X m ⟶ P.X (-(-n)) => t ≫ v) h).trans
       (Category.assoc d b.inv v))
 
-/-- The genuine target single differential leaves the original positive precomposition. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. If m=n+1 and z is a
+degree-n full Hom cochain, then Eₘ(dz)=Eₙ(z) ∘ d_P^{m,n}. Evaluation therefore gives the
+positive-precomposition differential of fixed-coefficient Hom. -/
 lemma homFixedCoefficientCochainEquiv_d (P : ChainComplex C ℤ) (M : C)
     (n m : ℤ) (hnm : n + 1 = m)
     (z : CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence C).functor.obj P)
@@ -228,7 +255,11 @@ lemma homFixedCoefficientCochainEquiv_d (P : ChainComplex C ℤ) (M : C)
               (Category.assoc aₙ v e.hom)).trans
                 (congrArg (fun t : P.X n ⟶ M => P.d m n ≫ t) hEn.symm))))))
 
-/-- The actual full-product target-single Hom complex is native positive-precomposition Hom. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. The evaluation
+equivalences Eₙ form an isomorphism of integer-indexed cochain complexes Hom(P,M[0]) ≅ Hom(P,M),
+where the right-hand differential is positive precomposition. -/
 def homFixedCoefficientIso (P : ChainComplex C ℤ) (M : C) :
     homCochainComplex P ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M) ≅
       homFixedCoefficient P M := by
@@ -262,7 +293,10 @@ def homFixedCoefficientIso (P : ChainComplex C ℤ) (M : C) :
   exact hLeft.trans
     ((homFixedCoefficientCochainEquiv_d P M n m hnm z₀).symm.trans hRight.symm)
 
-/-- The complex comparison retains the actual degreewise full-cochain coordinate map. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. In every integer degree
+n, the forward component of Hom(P,M[0]) ≅ Hom(P,M) sends a cochain z to Eₙ(z) ∈ Hom_C(Pₙ,M). -/
 lemma homFixedCoefficientIso_hom_f_apply (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (z : CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence C).functor.obj P)
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M) n) :
@@ -281,7 +315,11 @@ private lemma targetSingleValue_naturality {M M' : C} (b : M ⟶ M') (q : ℤ)
       (HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) 0 M).hom ≫ b at h
   exact h
 
-/-- The fixed-cochain coordinate comparison retains both actual original variable maps. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. For a chain map f : P′
+→ P, a coefficient map b : M → M′, and a degree-n cochain z, evaluation after the induced full
+Hom map is b ∘ Eₙ(z) ∘ fₙ. It is contravariant in P and covariant in M. -/
 lemma homFixedCoefficientCochainEquiv_map {P P' : ChainComplex C ℤ} {M M' : C}
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
     (z : CochainComplex.HomComplex.Cochain ((cochainComplexEquivalence C).functor.obj P)
@@ -315,14 +353,20 @@ lemma homFixedCoefficientCochainEquiv_map {P P' : ChainComplex C ℤ} {M M' : C}
             (Category.assoc v e.hom b).symm))))
 
 omit [HasZeroObject C] in
-/-- The earned target-single comparison transports the actual native two-variable Hom map. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+For a chain map f : P′ → P and b : M → M′, the induced cochain map Hom(P,M) → Hom(P′,M′) has
+degree-n component k ↦ b ∘ k ∘ fₙ. -/
 def homFixedCoefficientMap {P P' : ChainComplex C ℤ} {M M' : C}
     (f : P' ⟶ P) (b : M ⟶ M') : homFixedCoefficient P M ⟶ homFixedCoefficient P' M' :=
   ((preadditiveYoneda.obj M).mapHomologicalComplex (ComplexShape.up ℤ)).map
     ((HomologicalComplex.opFunctor C (ComplexShape.down ℤ)).map f.op) ≫
     ((preadditiveYoneda.map b).mapHomologicalComplex (ComplexShape.up ℤ)).app P'.op
 
-/-- Simultaneous naturality is a square of the actual computed cochain maps. -/
+/-- Let C be a preadditive category with a zero object, P an integer-indexed chain complex, and M an
+object. Write M[0] for the cochain complex concentrated on M in degree zero, and Eₙ for
+evaluation of a full Hom cochain in its sole surviving target component. For f : P′ → P and b :
+M → M′, the square formed by the full Hom map Hom(P,M[0]) → Hom(P′,M′[0]), the two evaluation
+isomorphisms, and the fixed-coefficient Hom map commutes. -/
 lemma homFixedCoefficientIso_naturality {P P' : ChainComplex C ℤ} {M M' : C}
     (f : P' ⟶ P) (b : M ⟶ M') :
     homCochainComplexMap f ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).map b) ≫
@@ -340,7 +384,9 @@ lemma homFixedCoefficientIso_naturality {P P' : ChainComplex C ℤ} {M M' : C}
     (Category.assoc (f.f n) (homFixedCoefficientCochainEquiv P M n z) b).symm
 
 omit [HasZeroObject C] in
-/-- Every map component is the original source precomposition and coefficient postcomposition. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+For f : P′ → P, b : M → M′, n ∈ ℤ and k : Pₙ → M, the degree-n induced Hom map sends k to b ∘ k
+∘ fₙ. -/
 lemma homFixedCoefficientMap_f_apply {P P' : ChainComplex C ℤ} {M M' : C}
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ) (k : P.X n ⟶ M) :
     ((homFixedCoefficientMap f b).f n).hom k = f.f n ≫ k ≫ b := by
@@ -348,7 +394,8 @@ lemma homFixedCoefficientMap_f_apply {P P' : ChainComplex C ℤ} {M M' : C}
   exact Category.assoc (f.f n) k b
 
 omit [HasZeroObject C] in
-/-- Original identity maps induce the identity fixed-coefficient Hom map. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+The identity maps of P and M induce the identity cochain map on Hom(P,M). -/
 lemma homFixedCoefficientMap_id (P : ChainComplex C ℤ) (M : C) :
     homFixedCoefficientMap (𝟙 P) (𝟙 M) = 𝟙 (homFixedCoefficient P M) := by
   apply HomologicalComplex.hom_ext
@@ -360,7 +407,9 @@ lemma homFixedCoefficientMap_id (P : ChainComplex C ℤ) (M : C) :
     ((Category.id_comp (k ≫ 𝟙 M)).trans (Category.comp_id k))
 
 omit [HasZeroObject C] in
-/-- Composition retains the contravariant original source and covariant coefficient order. -/
+/-- Let C be preadditive, f : P′ → P and f′ : P″ → P′ be integer chain maps, and b : M → M′ and b′ :
+M′ → M″ be coefficient maps. Then Hom(f ∘ f′,b′ ∘ b)=Hom(f′,b′) ∘ Hom(f,b), with the source
+variable contravariant. -/
 lemma homFixedCoefficientMap_comp {P P' P'' : ChainComplex C ℤ} {M M' M'' : C}
     (f : P' ⟶ P) (f' : P'' ⟶ P') (b : M ⟶ M') (b' : M' ⟶ M'') :
     homFixedCoefficientMap (f' ≫ f) (b ≫ b') =
@@ -404,7 +453,9 @@ section Abelian
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The actual Hom of the homology complex has zero differential in every integer degree. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. The
+cochain complex Hom(H(P)⁰,M), where H(P)⁰ has terms Hᵢ(P) and zero differential, has zero
+differential in every pair of integer degrees. -/
 lemma homFixedCoefficient_homologyZeroComplex_d (P : ChainComplex C ℤ) (M : C) (i j : ℤ) :
     (homFixedCoefficient (homologyZeroComplex P) M).d i j = 0 := by
   apply AddCommGrpCat.ext
@@ -412,7 +463,9 @@ lemma homFixedCoefficient_homologyZeroComplex_d (P : ChainComplex C ℤ) (M : C)
   change (homologyZeroComplex P).d j i ≫ f = 0
   exact Limits.zero_comp
 
-/-- Native cycle and homology quotient isos compute the actual zero-source Hom cohomology. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. For
+every integer n, the zero differential gives a canonical isomorphism Hⁿ Hom(H(P)⁰,M) ≅
+Hom_C(Hₙ(P),M). It identifies cohomology with the degree-n morphism group. -/
 def homFixedCoefficientHomologyZeroIso (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     (homFixedCoefficient (homologyZeroComplex P) M).homology n ≅
       AddCommGrpCat.of (P.homology n ⟶ M) := by
@@ -423,7 +476,9 @@ def homFixedCoefficientHomologyZeroIso (P : ChainComplex C ℤ) (M : C) (n : ℤ
       K.iCyclesIso n ((ComplexShape.up ℤ).next n) rfl
         (homFixedCoefficient_homologyZeroComplex_d P M _ _)
 
-/-- The computed Hom cohomology comparison is the original cycle inclusion after the quotient. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. Let
+E : Hⁿ Hom(H(P)⁰,M) ≅ Hom_C(Hₙ(P),M), let π be the Hom cohomology quotient, and let i be its
+cycle inclusion. Then π ≫ E.hom = i, as maps from degree-n Hom cycles to Hom_C(Hₙ(P),M). -/
 @[reassoc]
 lemma homFixedCoefficientHomologyZeroIso_π (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     (homFixedCoefficient (homologyZeroComplex P) M).homologyπ n ≫
@@ -445,7 +500,9 @@ lemma homFixedCoefficientHomologyZeroIso_π (P : ChainComplex C ℤ) (M : C) (n 
     ((congrArg (fun f : K.cycles n ⟶ K.cycles n => f ≫ e.hom) ha).trans
       (Category.id_comp e.hom))
 
-/-- The zero-source comparison retains the actual original coefficient map. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. For
+b : M → M′, the isomorphisms Hⁿ Hom(H(P)⁰,M) ≅ Hom_C(Hₙ(P),M) commute with Hⁿ Hom(id,b) and
+postcomposition by b. -/
 lemma homFixedCoefficientHomologyZeroIso_naturality (P : ChainComplex C ℤ) {M M' : C}
     (b : M ⟶ M') (n : ℤ) :
     homologyMap (homFixedCoefficientMap (𝟙 (homologyZeroComplex P)) b) n ≫
@@ -478,7 +535,11 @@ lemma homFixedCoefficientHomologyZeroIso_naturality (P : ChainComplex C ℤ) {M 
     _ = (π ≫ e.hom) ≫ u := congrArg (fun f => f ≫ u) he.symm
     _ = π ≫ (e.hom ≫ u) := Category.assoc π e.hom u
 
-/-- Outgoing-image projectivity lifts Hom on homology to actual fixed-coefficient cycles. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Assume every outgoing differential image Bₚ₋₁ = im(dₚ : Pₚ → Pₚ₋₁) is projective. Write q : P →
+H(P)⁰ for the resulting chosen projection to the homology complex with zero differential. For
+each integer n, precomposition by qₙ gives a map Hom_C(Hₙ(P),M) → Zⁿ Hom(P,M). A morphism f is
+lifted to the cocycle represented by f ∘ qₙ. -/
 def homFixedCoefficientCycleLift (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p ((ComplexShape.down ℤ).next p)))) :
     AddCommGrpCat.of (P.homology n ⟶ M) ⟶ (homFixedCoefficient P M).cycles n := by
@@ -490,7 +551,11 @@ def homFixedCoefficientCycleLift (P : ChainComplex C ℤ) (M : C) (n : ℤ)
       (homFixedCoefficient_homologyZeroComplex_d P M _ _)
   exact e.inv ≫ cyclesMap (homFixedCoefficientMap q (𝟙 M)) n
 
-/-- The native cycle inclusion gives precisely the actual Hom of the chosen projection. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Assume every outgoing differential image Bₚ₋₁ = im(dₚ : Pₚ → Pₚ₋₁) is projective. Write q : P →
+H(P)⁰ for the resulting chosen projection to the homology complex with zero differential. The
+cycle lift Hom_C(Hₙ(P),M) → Zⁿ Hom(P,M), followed by the cycle inclusion into Hom_C(Pₙ,M), is
+the degree-n component of Hom(q,id_M). -/
 @[reassoc]
 lemma homFixedCoefficientCycleLift_i (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p ((ComplexShape.down ℤ).next p)))) :
@@ -514,7 +579,10 @@ lemma homFixedCoefficientCycleLift_i (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     _ = (𝟙 (K.X n)) ≫ a.f n := congrArg (fun f => f ≫ a.f n) he
     _ = a.f n := Category.id_comp _
 
-/-- The representative is the original qₙ followed by the original morphism Hₙ(P)→M. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Assume every outgoing differential image Bₚ₋₁ = im(dₚ : Pₚ → Pₚ₋₁) is projective. Write q : P →
+H(P)⁰ for the resulting chosen projection to the homology complex with zero differential. For f
+: Hₙ(P) → M, the lifted Hom cocycle has underlying degree-n morphism f ∘ qₙ : Pₙ → M. -/
 lemma homFixedCoefficientCycleLift_apply (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p ((ComplexShape.down ℤ).next p))))
     (f : P.homology n ⟶ M) :
@@ -532,13 +600,20 @@ lemma homFixedCoefficientCycleLift_apply (P : ChainComplex C ℤ) (M : C) (n : �
       ((homFixedCoefficientMap_f_apply q (𝟙 M) n f).trans
         (congrArg (fun g : P.homology n ⟶ M => q.f n ≫ g) (Category.comp_id f))))
 
-/-- The chosen image retractions construct the genuine cohomology class represented by qₙ≫f. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Assume every outgoing differential image Bₚ₋₁ = im(dₚ : Pₚ → Pₚ₋₁) is projective. Write q : P →
+H(P)⁰ for the resulting chosen projection to the homology complex with zero differential. For
+every integer n, the chosen section Hom_C(Hₙ(P),M) → Hⁿ Hom(P,M) sends f to the class [f ∘ qₙ]. -/
 def homFixedCoefficientCohomologyLift (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p ((ComplexShape.down ℤ).next p)))) :
     AddCommGrpCat.of (P.homology n ⟶ M) ⟶ (homFixedCoefficient P M).homology n :=
   homFixedCoefficientCycleLift P M n hI ≫ (homFixedCoefficient P M).homologyπ n
 
-/-- This class is the actual cohomology map of Hom(q,M), after the computed zero-source iso. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Assume every outgoing differential image Bₚ₋₁ = im(dₚ : Pₚ → Pₚ₋₁) is projective. Write q : P →
+H(P)⁰ for the resulting chosen projection to the homology complex with zero differential. The
+cohomology lift is the inverse of Hⁿ Hom(H(P)⁰,M) ≅ Hom_C(Hₙ(P),M), followed by Hⁿ Hom(q,id_M).
+Hence it is the cohomology map induced by the chosen projection q. -/
 lemma homFixedCoefficientCohomologyLift_eq (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p ((ComplexShape.down ℤ).next p)))) :
     homFixedCoefficientCohomologyLift P M n hI =
@@ -571,7 +646,11 @@ lemma homFixedCoefficientCohomologyLift_eq (P : ChainComplex C ℤ) (M : C) (n :
     _ = (e.inv ≫ K.homologyπ n) ≫ homologyMap a n := (Category.assoc _ _ _).symm
     _ = h.inv ≫ homologyMap a n := congrArg (fun f => f ≫ homologyMap a n) hi
 
-/-- The constructed class is natural in M for the same fixed choice of the original q. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Assume every outgoing differential image Bₚ₋₁ = im(dₚ : Pₚ → Pₚ₋₁) is projective. Write q : P →
+H(P)⁰ for the resulting chosen projection to the homology complex with zero differential. For b
+: M → M′, the chosen cohomology sections commute with postcomposition by b and the cohomology
+map Hⁿ Hom(P,b). The same projection q is used for both coefficients. -/
 lemma homFixedCoefficientCohomologyLift_naturality (P : ChainComplex C ℤ) {M M' : C}
     (b : M ⟶ M') (n : ℤ)
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p ((ComplexShape.down ℤ).next p)))) :
@@ -649,14 +728,16 @@ lemma homFixedCoefficientCohomologyLift_naturality (P : ChainComplex C ℤ) {M M
   exact hFirst.trans (hAssoc₁.trans (hMap.trans
     (hAssoc₂.trans (hSquare.trans (hAssoc₃.trans hLast)))))
 
-/-- The actual target single has native homology M in the earned degree-zero coordinate. -/
+/-- Let C be abelian, M an object, and i an integer with i=0. The canonical concentrated-complex
+comparison is Hⁱ(M[0]) ≅ M. -/
 def homFixedCoefficientTargetHomologyIso (M : C) (i : ℤ) (hi : i = 0) :
     ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homology i ≅ M :=
   eqToIso (congrArg
     (fun j : ℤ => ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homology j) hi) ≪≫
       HomologicalComplex.singleObjHomologySelfIso (ComplexShape.up ℤ) 0 M
 
-/-- Its degree transport retains the original native coefficient homology map. -/
+/-- Let C be abelian, b : M → M′ and i=0. The canonical isomorphisms Hⁱ(M[0]) ≅ M and Hⁱ(M′[0]) ≅ M′
+commute with Hⁱ(b[0]) and b. -/
 lemma homFixedCoefficientTargetHomologyIso_naturality {M M' : C} (b : M ⟶ M')
     (i : ℤ) (hi : i = 0) :
     homologyMap ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).map b) i ≫
@@ -667,7 +748,9 @@ lemma homFixedCoefficientTargetHomologyIso_naturality {M M' : C} (b : M ⟶ M')
     Iso.refl_hom, Category.id_comp]
   exact HomologicalComplex.singleObjHomologySelfIso_hom_naturality (ComplexShape.up ℤ) 0 b
 
-/-- The target homology quotient agrees with actual evaluation on its native degree-zero cycle. -/
+/-- Let C be abelian, M an object and i=0. The homology quotient Zⁱ(M[0]) → Hⁱ(M[0]), followed by
+Hⁱ(M[0]) ≅ M, equals the cycle inclusion followed by the canonical degree-i identification
+(M[0])ⁱ ≅ M. -/
 @[reassoc]
 lemma homFixedCoefficientTargetHomologyIso_π (M : C) (i : ℤ) (hi : i = 0) :
     ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homologyπ i ≫
@@ -681,8 +764,10 @@ lemma homFixedCoefficientTargetHomologyIso_π (M : C) (i : ℤ) (hi : i = 0) :
     (ComplexShape.up ℤ) 0 M).trans
       (HomologicalComplex.singleObjCyclesSelfIso_hom (ComplexShape.up ℤ) 0 M)
 
-/-- The full Hom product has one surviving factor because the actual target single is exact
-away from zero. No support restriction on the original integer complex is imposed. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. For
+every integer n, evaluation in degree p=n gives an additive equivalence ∏ₚ
+Hom_C(Hₚ(P),H^{n-p}(M[0])) ≅ Hom_C(Hₙ(P),M). All factors with p≠n are zero, and the product
+still ranges over every integer. -/
 def homFixedCoefficientHomologyProductEquiv (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     (∀ p : ℤ, P.homology p ⟶
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homology (n - p)) ≃+
@@ -720,7 +805,9 @@ def homFixedCoefficientHomologyProductEquiv (P : ChainComplex C ℤ) (M : C) (n 
         exact Preadditive.add_comp (P.homology n) (Q.homology (n - n)) M
           (f n) (g n) e.hom }
 
-/-- The ordinary Hom endpoint evaluates the actual physical source degree n. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. For
+k ∈ ∏ₚ Hom_C(Hₚ(P),H^{n-p}(M[0])), the full-product comparison sends k to kₙ followed by the
+canonical isomorphism H⁰(M[0]) ≅ M. -/
 lemma homFixedCoefficientHomologyProductEquiv_apply (P : ChainComplex C ℤ) (M : C)
     (n : ℤ)
     (f : ∀ p : ℤ, P.homology p ⟶
@@ -728,7 +815,9 @@ lemma homFixedCoefficientHomologyProductEquiv_apply (P : ChainComplex C ℤ) (M 
     homFixedCoefficientHomologyProductEquiv P M n f = f n ≫
       (homFixedCoefficientTargetHomologyIso M (n - n) (by omega)).hom := rfl
 
-/-- The endpoint collapse retains both the original contravariant P map and the coefficient map. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. For
+f : P′ → P, b : M → M′ and an integer n, full-product evaluation commutes with the family kₚ ↦
+H^{n-p}(b[0]) ∘ kₚ ∘ Hₚ(f). On the surviving factor it gives b ∘ kₙ ∘ Hₙ(f). -/
 lemma homFixedCoefficientHomologyProductEquiv_naturality {P P' : ChainComplex C ℤ}
     {M M' : C} (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
     (z : ∀ p : ℤ, P.homology p ⟶
@@ -762,7 +851,10 @@ section Restriction
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- A fixed-coefficient cocycle restricts to a map on P's cycles that kills its true boundaries. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+Assume P has homology in degree n. A cocycle z ∈ Zⁿ Hom(P,M), viewed as a morphism Pₙ → M,
+restricts to Zₙ(P) and kills the incoming boundary map Pₙ₊₁ → Zₙ(P). Equivalently z ∘
+d_P^{n+1,n}=0. -/
 lemma toCycles_homFixedCoefficientCycleValue (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     [P.HasHomology n] (z : (homFixedCoefficient P M).cycles n) :
     (P.sc n).toCycles ≫ (P.iCycles n ≫ ((homFixedCoefficient P M).iCycles n).hom z) = 0 := by
@@ -782,7 +874,10 @@ lemma toCycles_homFixedCoefficientCycleValue (P : ChainComplex C ℤ) (M : C) (n
   exact (Category.assoc S.toCycles S.iCycles f).symm.trans
     ((congrArg (fun a : S.X₁ ⟶ S.X₂ => a ≫ f) hi).trans hf)
 
-/-- Native homology descent constructs the cycle-level restriction with no projectivity premise. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+Assume P has homology in degree n. Restriction to cycles and descent through their homology
+quotient give an additive map Zⁿ Hom(P,M) → Hom_C(Hₙ(P),M); no projectivity hypothesis is
+required. -/
 def homFixedCoefficientCycleRestriction (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     [P.HasHomology n] :
     (homFixedCoefficient P M).cycles n ⟶ AddCommGrpCat.of (P.homology n ⟶ M) :=
@@ -806,7 +901,10 @@ def homFixedCoefficientCycleRestriction (P : ChainComplex C ℤ) (M : C) (n : �
     change S.homologyπ ≫ r (z + z') = S.homologyπ ≫ (r z + r z')
     exact hLeft.trans ((c.map_add z z').trans hRight.symm)))
 
-/-- Its homology representative is the original cycle restriction in C. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+Assume P has homology in degree n. If z is a Hom cocycle and r(z) : Hₙ(P) → M is its canonical
+restriction, then r(z) ∘ πₙ = z ∘ iₙ on Zₙ(P), where iₙ and πₙ are the cycle inclusion and
+homology quotient of P. -/
 @[reassoc]
 lemma homFixedCoefficientCycleRestriction_π (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     [P.HasHomology n] (z : (homFixedCoefficient P M).cycles n) :
@@ -819,7 +917,10 @@ lemma homFixedCoefficientCycleRestriction_π (P : ChainComplex C ℤ) (M : C) (n
     (toCycles_homFixedCoefficientCycleValue P M n z) = S.iCycles ≫ f
   exact S.π_descHomology _ _
 
-/-- An actual fixed-Hom coboundary restricts to zero on homology, without a projectivity premise. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+Assume P has homology in degree n. The Hom coboundary map into Zⁿ Hom(P,M), followed by
+restriction to Hom_C(Hₙ(P),M), is zero. Thus restriction is independent of the representative
+modulo coboundaries. -/
 @[reassoc]
 lemma toCycles_homFixedCoefficientCycleRestriction (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     [P.HasHomology n] :
@@ -853,7 +954,9 @@ lemma toCycles_homFixedCoefficientCycleRestriction (P : ChainComplex C ℤ) (M :
   change (b ≫ r).hom z = 0
   exact (AddCommGrpCat.comp_apply b r z).trans hr
 
-/-- Native homology descent gives the canonical right restriction on Hom cohomology. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+Assume P has homology in degree n. The canonical additive map ρₙ : Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M)
+is induced by restricting cocycles to P's cycles and descending to homology. -/
 def homFixedCoefficientRestriction (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     [P.HasHomology n] :
     (homFixedCoefficient P M).homology n ⟶ AddCommGrpCat.of (P.homology n ⟶ M) :=
@@ -861,7 +964,9 @@ def homFixedCoefficientRestriction (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (homFixedCoefficientCycleRestriction P M n)
     (toCycles_homFixedCoefficientCycleRestriction P M n)
 
-/-- The actual canonical restriction on cohomology has the original cycle representative. -/
+/-- Let C be a preadditive category, P an integer-indexed chain complex in C, and M an object of C.
+Assume P has homology in degree n. The Hom cohomology quotient followed by ρₙ equals the
+cycle-level restriction Zⁿ Hom(P,M) → Hom_C(Hₙ(P),M). -/
 @[reassoc]
 lemma homologyπ_homFixedCoefficientRestriction (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     [P.HasHomology n] :
@@ -930,8 +1035,9 @@ private lemma homFixedCoefficientCycleRestriction_naturality {P P' : ChainComple
   exact (AddCommGrpCat.comp_apply c r' z).trans
     (hValue.trans (AddCommGrpCat.comp_apply r t z).symm)
 
-/-- The canonical cohomology restriction is natural in both original variables, without
-projectivity assumptions on P or its homology. -/
+/-- Let C be preadditive, f : P′ → P an integer chain map, and b : M → M′. Assume P and P′ have
+homology in degree n. Then ρ_{P′,M′} ∘ Hⁿ Hom(f,b) sends a class to b ∘ ρ_{P,M}([z]) ∘ Hₙ(f). No
+projectivity of terms or homology objects is required. -/
 lemma homFixedCoefficientRestriction_naturality {P P' : ChainComplex C ℤ} {M M' : C}
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ) [P.HasHomology n] [P'.HasHomology n] :
     homologyMap (homFixedCoefficientMap f b) n ≫ homFixedCoefficientRestriction P' M' n =
@@ -978,7 +1084,11 @@ section Abelian
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- The chosen image-projective lift is a genuine section of the canonical right map. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Assume every outgoing differential image Bₚ₋₁ = im(dₚ : Pₚ → Pₚ₋₁) is projective. Write q : P →
+H(P)⁰ for the resulting chosen projection to the homology complex with zero differential. The
+chosen section ℓₙ : Hom_C(Hₙ(P),M) → Hⁿ Hom(P,M), f ↦ [f ∘ qₙ], is a right inverse to the
+canonical restriction ρₙ: ρₙ ∘ ℓₙ = id. -/
 lemma homFixedCoefficientCohomologyLift_restriction (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p ((ComplexShape.down ℤ).next p)))) :
     homFixedCoefficientCohomologyLift P M n hI ≫ homFixedCoefficientRestriction P M n =
@@ -1014,7 +1124,9 @@ lemma homFixedCoefficientCohomologyLift_restriction (P : ChainComplex C ℤ) (M 
   change s ≫ g = 𝟙 A
   exact hMap.trans hId
 
-/-- The actual full-Hom cycle restriction, followed by native target-single homology evaluation. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C. Let
+M[0] be concentrated in degree zero. Restricting full Hom cocycles to Zₙ(P) and identifying
+H⁰(M[0]) with M gives a cohomology map Hⁿ Hom(P,M[0]) → Hom_C(Zₙ(P),M). -/
 def homFixedCoefficientCyclesComparison (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     (homCochainComplex P
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M)).homology n ⟶
@@ -1102,8 +1214,11 @@ private lemma homFixedCoefficientCyclesValue (P : ChainComplex C ℤ) (M : C) (n
             ((Category.assoc (P.iCycles n) v eX.hom).trans
               (congrArg (fun t : P.X n ⟶ M => P.iCycles n ≫ t) hφ.symm))))))
 
-/-- The genuine cycle comparison differs from canonical restriction by the native triangular unit.
-This is a map identity for arbitrary P; projectivity is needed only in subsequent exactness. -/
+/-- Let C be an abelian category, P an integer-indexed chain complex in C, and M an object of C.
+Write εₙ=(-1)^{n(n+1)/2} for the triangular sign, E for Hom(P,M[0]) ≅ Hom(P,M), and ρₙ for
+canonical fixed-coefficient restriction. The full-Hom cycle comparison is εₙ times the composite
+Hⁿ(E), then ρₙ, then precomposition with πₙ : Zₙ(P) → Hₙ(P). This identity needs no
+projectivity. -/
 lemma homFixedCoefficientCyclesComparison_eq (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     homFixedCoefficientCyclesComparison P M n =
       HomologicalComplex.homologyMap (homFixedCoefficientIso P M).hom n ≫
@@ -1199,8 +1314,11 @@ section Ext
 universe w
 variable [HasExt.{w} C]
 
-/-- The genuine degree-one Ext product collapses only the actual zero target homology factors.
-The Ext universe is independent of the object and Hom universes. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. For any integer n,
+evaluation at p=n-1 gives an additive equivalence ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(M[0])) ≅
+Ext¹_C(Hₙ₋₁(P),M). Every other factor is zero because M[0] is exact away from degree zero. -/
 def homFixedCoefficientExtProductEquiv (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     (∀ p : ℤ, Ext.{w} (P.homology p)
       (((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homology (n - 1 - p)) 1) ≃+
@@ -1241,7 +1359,11 @@ def homFixedCoefficientExtProductEquiv (P : ChainComplex C ℤ) (M : C) (n : ℤ
         change E (z (n - 1) + z' (n - 1)) = E (z (n - 1)) + E (z' (n - 1))
         exact E.map_add _ _ }
 
-/-- The Ext endpoint uses the actual native Ext functor on the target single homology iso. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. The full Ext-product
+comparison evaluates the factor p=n-1 and pushes that Ext¹ class forward along the canonical
+isomorphism H⁰(M[0]) ≅ M. -/
 lemma homFixedCoefficientExtProductEquiv_apply (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (z : ∀ p : ℤ, Ext.{w} (P.homology p)
       (((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homology (n - 1 - p)) 1) :
@@ -1250,7 +1372,12 @@ lemma homFixedCoefficientExtProductEquiv_apply (P : ChainComplex C ℤ) (M : C) 
         (homFixedCoefficientTargetHomologyIso M (n - 1 - (n - 1)) (by omega)).hom).hom
           (z (n - 1)) := rfl
 
-/-- The Ext endpoint retains both native actions under the earned single-factor collapse. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. For f : P′ → P and b
+: M → M′, the full Ext-product comparison commutes with pullback along Hₚ(f) and pushforward
+along H^{n-1-p}(b[0]). The surviving class is pulled back along Hₙ₋₁(f) and pushed forward along
+b. -/
 lemma homFixedCoefficientExtProductEquiv_naturality {P P' : ChainComplex C ℤ} {M M' : C}
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
     (z : ∀ p : ℤ, Ext.{w} (P.homology p)
@@ -1353,8 +1480,14 @@ lemma homFixedCoefficientExtProductEquiv_naturality {P P' : ChainComplex C ℤ} 
       (congrArg (fun v : Ext.{w} (P.homology i) M 1 =>
         (α.comp v (zero_add 1)).comp ε (add_zero 1)) hCollapse.symm))
 
-/-- The actual fixed-target coordinates use the same native endpoint unit and unweighted middle.
-The tuple is computed without projectivity; both endpoint units come from the cycle comparison. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Put
+εₙ=(-1)^{n(n+1)/2}. In the common group universe max(v,w), the three coordinate isomorphisms
+send ∏ₚ Ext¹_C(Hₚ(P),H^{n-1-p}(M[0])), Hⁿ Hom(P,M[0]), and ∏ₚ Hom_C(Hₚ(P),H^{n-p}(M[0])) to
+Ext¹_C(Hₙ₋₁(P),M), Hⁿ Hom(P,M), and Hom_C(Hₙ(P),M). The endpoint evaluations are multiplied by
+εₙ⁻¹; the middle map is Hⁿ of the full-to-fixed Hom isomorphism and has no scalar weight.
+Projectivity is not needed for these coordinates. -/
 def homFixedCoefficientUCTCoordinates (P : ChainComplex C ℤ) (M : C) (n : ℤ) :
     (AddCommGrpCat.of (∀ p : ℤ, ULift.{v, w}
       (Ext.{w} (P.homology p)
@@ -1394,7 +1527,12 @@ def homFixedCoefficientUCTCoordinates (P : ChainComplex C ℤ) (M : C) (n : ℤ)
       (homFixedCoefficientIso P M)
   exact ⟨eE ≪≫ θE.symm, U.mapIso eM, eH ≪≫ θH.symm⟩
 
-/-- The middle coordinate is exactly the native homology map of physical component evaluation. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. The middle
+fixed-target UCT coordinate sends the class of a full Hom cochain to its image under
+Hⁿ(Hom(P,M[0]) ≅ Hom(P,M)), with the same canonical lift to the common group universe. No
+triangular sign multiplies this middle coordinate. -/
 lemma homFixedCoefficientUCTCoordinates_middle_apply (P : ChainComplex C ℤ) (M : C)
     (n : ℤ)
     (x : (homCochainComplex P
@@ -1402,7 +1540,11 @@ lemma homFixedCoefficientUCTCoordinates_middle_apply (P : ChainComplex C ℤ) (M
     (homFixedCoefficientUCTCoordinates P M n).2.1.hom (ULift.up x) =
       ULift.up ((HomologicalComplex.homologyMap (homFixedCoefficientIso P M).hom n).hom x) := rfl
 
-/-- The right coordinate removes exactly the unit earned from native cycle evaluation. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. For k ∈ ∏ₚ
+Hom_C(Hₚ(P),H^{n-p}(M[0])), the right fixed-target UCT coordinate is the canonical lift of εₙ⁻¹
+times its surviving degree-n factor, where εₙ=(-1)^{n(n+1)/2}. -/
 lemma homFixedCoefficientUCTCoordinates_right_apply (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (k : ∀ p : ℤ, ULift.{w, v} (P.homology p ⟶
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homology (n - p))) :
@@ -1549,22 +1691,14 @@ private lemma homFixedCoefficientUCT_right_raw (P : ChainComplex C ℤ) (M : C) 
     change (S.g ≫ e₃.hom).hom (ULift.up x₀) = (e₂.hom ≫ U.map r).hom (ULift.up x₀)
     exact hLeft.trans hRight.symm
 
-/-- The universal coefficient sequence for an integer chain complex `P` and an object `M`
-in an abelian category `C` with `HasExt.{w} C`. For every `p : ℤ`, the hypotheses require
-`Projective (P.X p)` and `Projective (Abelian.image (P.d p (p - 1)))`.
-
-For every `n : ℤ`, its three terms are
-`Ext¹_C(H_{n-1}(P), M) → Hⁿ(Hom_C(P, M)) → Hom_C(H_n(P), M)`.
-The Hom cochain differential is positive precomposition with the differential of `P`.
-The Ext term is lifted by `AddCommGrpCat.uliftFunctor.{v, w}` and the middle and right terms
-by `AddCommGrpCat.uliftFunctor.{w, v}`, giving a short complex in `AddCommGrpCat.{max v w}`.
-
-The left arrow is the Yoneda-extension injection from the boundary–cycle–homology sequence,
-transported through `homFixedCoefficientUCTCoordinates` with positive Ext-class normalization.
-The right arrow is `AddCommGrpCat.uliftFunctor.{w, v}.map
-(homFixedCoefficientRestriction P M n)`: a cocycle restricts to cycles and descends to `H_n(P)`.
-`homFixedCoefficientUniversalCoefficientSequence_shortExact` proves that these maps form a
-short exact sequence. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Assume that Pₚ and
+im(dₚ : Pₚ → Pₚ₋₁) are projective for every integer p. For n ∈ ℤ, the fixed-coefficient UCT
+short complex has terms Ext¹_C(Hₙ₋₁(P),M) → Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M). All groups are
+compared in universe max(v,w). The first arrow is the positively normalized Yoneda-extension
+injection from boundaries → cycles → homology; the second is canonical homology restriction ρₙ.
+The Hom differential is positive precomposition. -/
 def homFixedCoefficientUniversalCoefficientSequence (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1575,7 +1709,14 @@ def homFixedCoefficientUniversalCoefficientSequence (P : ChainComplex C ℤ) (M 
   let c := homFixedCoefficientUCTCoordinates P M n
   exact S.changeObjects c.1 c.2.1 c.2.2
 
-/-- The coordinate change is the native short-complex isomorphism of the constructed sequence. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Assume that Pₚ and
+im(dₚ : Pₚ → Pₚ₋₁) are projective for every integer p. For n ∈ ℤ, evaluation of the concentrated
+target gives an isomorphism from the full-product UCT short complex for (P,M[0]) to the
+fixed-coefficient UCT short complex. Its left and right components collapse the full Ext and Hom
+products with the triangular-sign normalization, and its middle component is unweighted Hom
+cohomology evaluation. -/
 def homFixedCoefficientUniversalCoefficientSequenceIso (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1588,17 +1729,14 @@ def homFixedCoefficientUniversalCoefficientSequenceIso (P : ChainComplex C ℤ) 
   let c := homFixedCoefficientUCTCoordinates P M n
   exact S.changeObjectsIso c.1 c.2.1 c.2.2
 
-/-- For an integer chain complex `P` in an abelian category `C` with `HasExt.{w} C`, an
-object `M`, and any `n : ℤ`, the fixed-coefficient universal coefficient sequence is short exact:
-`0 → Ext¹_C(H_{n-1}(P), M) → Hⁿ(Hom_C(P, M)) → Hom_C(H_n(P), M) → 0`.
-The hypotheses require every `P.X p` and every `Abelian.image (P.d p (p - 1))`, for all `p : ℤ`,
-to be projective.
-
-The Ext term uses `AddCommGrpCat.uliftFunctor.{v, w}`; the middle and right terms use
-`AddCommGrpCat.uliftFunctor.{w, v}`. All three lie in `AddCommGrpCat.{max v w}`.
-The first map is the positively normalized Yoneda-extension injection from the
-boundary–cycle–homology sequence, and the second is the lifted homology restriction
-`homFixedCoefficientRestriction P M n`. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Assume that Pₚ and
+im(dₚ : Pₚ → Pₚ₋₁) are projective for every integer p. For every integer n there is a short
+exact sequence 0 → Ext¹_C(Hₙ₋₁(P),M) → Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M) → 0. The first arrow is the
+positive Yoneda-extension injection and the second is canonical cycle restriction followed by
+homology descent. Canonical lifts place all groups in universe max(v,w); no support bound on P
+is assumed. -/
 lemma homFixedCoefficientUniversalCoefficientSequence_shortExact
     (P : ChainComplex C ℤ) (M : C) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1608,7 +1746,12 @@ lemma homFixedCoefficientUniversalCoefficientSequence_shortExact
     (homUniversalCoefficientSequenceEngine_shortExact P
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M) n hP hI)
 
-/-- The actual fixed-target right arrow is canonical homology restriction under native lifting. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Assume that Pₚ and
+im(dₚ : Pₚ → Pₚ₋₁) are projective for every integer p. For every integer n, the right arrow of
+the fixed-coefficient UCT sequence is the canonical lift of ρₙ : Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M).
+It restricts a cocycle to cycles and descends through the homology quotient. -/
 lemma homFixedCoefficientUniversalCoefficientSequence_g (P : ChainComplex C ℤ) (M : C)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1629,8 +1772,13 @@ lemma homFixedCoefficientUniversalCoefficientSequence_g (P : ChainComplex C ℤ)
   change e₂.inv ≫ (S.g ≫ e₃.hom) = r
   exact (congrArg (fun a : S.X₂ ⟶ T.X₃ => e₂.inv ≫ a) h).trans (e₂.inv_hom_id_assoc r)
 
-/-- Image-projective retractions give the noncanonical splitting of the fixed-M cohomology sequence.
-Its section is the actual cohomology map represented by qₙ followed by a morphism Hₙ(P)→M. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Assume that Pₚ and
+im(dₚ : Pₚ → Pₚ₋₁) are projective for every integer p. The fixed-coefficient UCT sequence admits
+a chosen splitting. Its section of the right arrow sends f : Hₙ(P) → M to [f ∘ qₙ], where q : P
+→ H(P)⁰ comes from chosen splittings of the outgoing-image sequences. The splitting is not
+canonical in those choices. -/
 def homFixedCoefficientUniversalCoefficientSplitting (P : ChainComplex C ℤ) (M : C)
     (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1656,7 +1804,11 @@ def homFixedCoefficientUniversalCoefficientSplitting (P : ChainComplex C ℤ) (M
           (CategoryTheory.Functor.map_id U A)))
   exact ShortComplex.Splitting.ofExactOfSection S hS.exact s hs hS.mono_f
 
-/-- The left coordinate removes the endpoint unit after actual native Ext target evaluation. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. For a class in ∏ₚ
+Ext¹_C(Hₚ(P),H^{n-1-p}(M[0])), the left fixed-target UCT coordinate is the canonical lift of
+εₙ⁻¹ times the surviving degree-(n-1) Ext class, where εₙ=(-1)^{n(n+1)/2}. -/
 lemma homFixedCoefficientUCTCoordinates_left_apply (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (e : ∀ p : ℤ, ULift.{v, w} (Ext.{w} (P.homology p)
       (((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M).homology
@@ -1665,8 +1817,12 @@ lemma homFixedCoefficientUCTCoordinates_left_apply (P : ChainComplex C ℤ) (M :
       ULift.up ((Int.triangularSign n)⁻¹ •
         homFixedCoefficientExtProductEquiv P M n (fun p : ℤ => (e p).down)) := rfl
 
-/-- The positive native extension class comes from the original boundary/cycles sequence.
-The representative includes the earned image and target-degree transports before evaluation at M. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. A degree-n full Hom
+cocycle on the outgoing-image zero complex of P with target M[0] determines a morphism Bₙ₋₁ → M.
+Pushing the extension 0 → Bₙ₋₁ → Zₙ₋₁(P) → Hₙ₋₁(P) → 0 forward along this morphism gives its
+positive class in Ext¹_C(Hₙ₋₁(P),M). -/
 def homFixedCoefficientPositiveExtClass (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (z : (homCochainComplex (outgoingImageZeroComplex P)
       ((HomologicalComplex.single C (ComplexShape.up ℤ) 0).obj M)).cycles n) :
@@ -1828,8 +1984,14 @@ private lemma homFixedCoefficientUCT_left_positive (P : ChainComplex C ℤ) (M :
     ((congrArg (fun x : Y => ULift.up ((Int.triangularSign n)⁻¹ • x)) hExtInput).trans
       (congrArg ULift.up (inv_smul_smul (Int.triangularSign n) a)))
 
-/-- The actual left injection sends the original positive Ext representative to the Hom image class.
-The image comparison in degree n supplies its unit, which the computed left coordinate removes. -/
+/-- Let C be an abelian category with objects in universe u and morphisms in universe v, P an
+integer-indexed chain complex, M an object, and n an integer. Suppose the groups Ext¹_C(-,-) are
+available in a universe w independent of C's object and morphism universes. Assume that Pₚ and
+im(dₚ : Pₚ → Pₚ₋₁) are projective for every integer p. For a degree-n outgoing-image Hom cocycle
+z with target M[0], the left UCT injection sends its positive Ext¹_C(Hₙ₋₁(P),M) class to the
+cohomology image of [z] under Hom of the outgoing-image projection P → B(P)⁰, followed by the
+unweighted full-to-fixed Hom cohomology comparison. The endpoint triangular signs cancel in
+these coordinates. -/
 lemma homFixedCoefficientUniversalCoefficientSequence_left_representative
     (P : ChainComplex C ℤ) (M : C) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1))))

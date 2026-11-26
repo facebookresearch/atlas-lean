@@ -17,15 +17,16 @@ public import MathlibExt.Algebra.Homology.PartialTotalNegativeVanishing
 public import MathlibExt.Algebra.Homology.PartialTotalStepVanishing
 
 /-!
-# Spectral-sequence vanishing fields for the partial-total filtration
+# Spectral-sequence existence for the partial-total filtration
 
-This file constructs `HasSpectralSequence` for the mapped partial-total
-spectral object.  The two class fields are proved separately from negative
-filtration vanishing and below-row vanishing, then assembled into the exact
-instance required by Mathlib's page construction.
+Let `B` be a first-quadrant bicomplex in an abelian category. The partial-total spectral
+object satisfies the two vanishing conditions for the increasing homological spectral-sequence
+core.
 
-This is an existence-of-pages result only.  No convergence or page-two
-statement is made.
+If a bidegree has no outgoing page-`r` arrow, the associated outer-left interval has zero
+homology by vanishing of negative filtration stages. If it has no incoming page-`r` arrow, the
+outer-right interval has zero homology below the support of its row. These statements
+construct the spectral-sequence instance for all natural bidegrees.
 -/
 
 @[expose] public section
@@ -49,9 +50,12 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
-/-- The first vanishing field required by `HasSpectralSequence`: if `(p,q)`
-has no outgoing page-`r` arrow, the outer-left core interval lies wholly in
-negative filtration degrees and its `H`-object is zero. -/
+/-- Outer-left interval vanishing when a page arrow has no target.
+
+Let `r` and `r'` be integers with `1 ≤ r` and `r + 1 = r'`. Suppose the page-`r` differential
+shape has no arrow out of `pq`. For `n = core.deg pq + 1`, the homology object associated to
+the interval `core.i₀ r' pq ⟶ core.i₀ r pq` is zero. First-quadrant support places this
+interval at negative partial-total stages. -/
 theorem partialTotalSpectralObject_isZero_i₀_le
     (r r' : ℤ) (pq : ℕ × ℕ)
     (hpq : ∀ pq' : ℕ × ℕ,
@@ -78,10 +82,12 @@ theorem partialTotalSpectralObject_isZero_i₀_le
     (by omega) (by omega) (by omega)
   convert hneg using 1; subsingleton
 
-/-- The second vanishing field required by `HasSpectralSequence`: if `(p,q)`
-has no incoming page-`r` arrow, the outer-right core interval is a filtration
-step whose requested homology degree lies below the support of its signed
-row. -/
+/-- Outer-right interval vanishing when a page arrow has no source.
+
+Let `r` and `r'` be integers with `1 ≤ r` and `r + 1 = r'`. Suppose the page-`r` differential
+shape has no arrow into `pq`. For `n = core.deg pq - 1`, the homology object associated to the
+interval `core.i₃ r pq ⟶ core.i₃ r' pq` is zero. First-quadrant support puts this degree below
+the contributing row. -/
 theorem partialTotalSpectralObject_isZero_i₃_le
     (r r' : ℤ) (pq : ℕ × ℕ)
     (hpq : ∀ pq' : ℕ × ℕ,
@@ -158,11 +164,11 @@ theorem partialTotalSpectralObject_isZero_i₃_le
         (homOfLE ((core).i₃_le r (r + 1) (p, q)
           (hrr' := by omega) (hr := hr))))) hdeg'
 
-/-- The mapped partial-total spectral object satisfies the two vanishing
-conditions required to construct the spectral sequence associated to the
-increasing page-one core.
+/-- Spectral sequence of the first-quadrant partial-total object.
 
-This instance makes no convergence or abutment assertion. -/
+The partial-total spectral object of a first-quadrant bicomplex in an abelian category has a
+spectral sequence for the increasing homological core. The required vanishing conditions are
+the outer-left and outer-right interval vanishing statements. -/
 instance partialTotalSpectralObject_hasSpectralSequence :
     B.partialTotalSpectralObject.HasSpectralSequence core where
   isZero_H_obj_mk₁_i₀_le r r' pq hpq n hn hrr' hr :=

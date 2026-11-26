@@ -17,12 +17,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.AnnihilatorQuotient
 public import MathlibExt.LinearAlgebra.TensorProduct.SurjectiveScalarHom
 
 /-!
-# Native finite-projective tensor–Hom coefficient comparison
+# Tensor–Hom comparison for a finite projective Hom domain
 
-The coefficient comparison is the existing native finite-projective
-contraction equivalence. Converting the original categorical projective
-object uses the native `Small R` hypothesis in its original carrier world.
-No basis, splitting, arbitrary comparison or desired IsIso is input data.
+Let R be a commutative ring in universe u, and M,J,U R-modules in carrier universe v. Assume M
+is finitely generated and projective as an object of R-Mod_v. The canonical contraction
+χ:Hom_R(M,J)⊗_R U→Hom_R(M,J⊗_R U), defined by χ(f⊗u)(m)=f(m)⊗u, is an isomorphism.
+
+One construction uses the additional assumption that R can be represented in v. The
+annihilator-quotient construction instead passes through R/Ann_R(M×J×U), whose underlying set
+has a representative in v, and returns the same R-linear contraction map. It yields bijectivity
+and an isomorphism without an ambient-ring smallness premise. Both inverse identities are stated
+on the given R-module carriers; J and U need not be finite or projective.
 -/
 
 @[expose] public section
@@ -37,7 +42,11 @@ universe u v
 
 variable (R : Type u) [CommRing R] [Small.{v} R]
 
-/-- The actual native right tensor–Hom equivalence on original finite-projective coefficients. -/
+/-- Let R be commutative in universe u and M,J,U R-modules in a common carrier universe v. Assume M
+is projective as an object of R-Mod_v and finitely generated over R. Assume also that the
+underlying set of R can be represented in v. This is the R-module isomorphism Hom_R(M,J)⊗_R
+U≅Hom_R(M,J⊗_R U) induced by contraction. Its forward map sends f⊗u to the linear map m↦f(m)⊗u.
+No basis or splitting is chosen as input. -/
 def finiteProjectiveHomTensorIso (M J U : ModuleCat.{v} R)
     [CategoryTheory.Projective M] [Module.Finite R M] :
     ModuleCat.of R ((M →ₗ[R] J) ⊗[R] U) ≅
@@ -45,7 +54,11 @@ def finiteProjectiveHomTensorIso (M J U : ModuleCat.{v} R)
   letI : Module.Projective R M := ModuleCat.projective_of_module_projective M
   exact (_root_.rTensorHomEquivHomRTensor R M J U).toModuleIso
 
-/-- The original canonical coefficient map is the forward map of the earned native Iso. -/
+/-- Let R be commutative in universe u and M,J,U R-modules in a common carrier universe v. Assume M
+is projective as an object of R-Mod_v and finitely generated over R. Assume also that the
+underlying set of R can be represented in v. The forward R-linear map of Hom_R(M,J)⊗_R
+U≅Hom_R(M,J⊗_R U) equals the canonical contraction χ(f⊗u)(m)=f(m)⊗u. This equation identifies
+the comparison map on the Hom and tensor modules. -/
 theorem finiteProjectiveHomTensorIso_hom (M J U : ModuleCat.{v} R)
     [CategoryTheory.Projective M] [Module.Finite R M] :
     (finiteProjectiveHomTensorIso R M J U).hom.hom =
@@ -61,8 +74,11 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- The canonical original R coefficient map is bijective in the original carrier
-world. The actual tuple-annihilator quotient earns its needed small ring. -/
+/-- Let R be commutative in universe u and M,J,U R-modules in a common carrier universe v. Assume M
+is projective as an object of R-Mod_v and finitely generated over R. Then χ:Hom_R(M,J)⊗_R
+U→Hom_R(M,J⊗_R U), χ(f⊗u)(m)=f(m)⊗u, is bijective. The common annihilator quotient
+R/Ann_R(M×J×U) supplies a scalar ring representable in v and preserves this same R-linear map,
+so no such assumption on R is required. -/
 theorem finiteProjectiveHomTensor_bijective (M J U : ModuleCat.{v} R)
     [CategoryTheory.Projective M] [Module.Finite R M] :
     Function.Bijective (TensorProduct.rTensorHomToHomRTensor (.id R) M J U) := by
@@ -100,8 +116,11 @@ theorem finiteProjectiveHomTensor_bijective (M J U : ModuleCat.{v} R)
   rw [← he]
   exact e.bijective
 
-/-- The actual coefficient Iso has the canonical original R map as its forward
-component; no Small R/world equality or desired comparison is a premise. -/
+/-- Let R be commutative in universe u and M,J,U R-modules in a common carrier universe v. Assume M
+is projective as an object of R-Mod_v and finitely generated over R. The contraction
+χ(f⊗u)(m)=f(m)⊗u gives this R-module isomorphism Hom_R(M,J)⊗_R U≅Hom_R(M,J⊗_R U). Bijectivity is
+obtained through the common annihilator quotient, and the returned isomorphism has the given
+R-linear contraction as its forward map. -/
 def finiteProjectiveHomTensorIsoOfAnnihilatorQuotient (M J U : ModuleCat.{v} R)
     [CategoryTheory.Projective M] [Module.Finite R M] :
     ModuleCat.of R ((M →ₗ[R] J) ⊗[R] U) ≅
@@ -109,13 +128,20 @@ def finiteProjectiveHomTensorIsoOfAnnihilatorQuotient (M J U : ModuleCat.{v} R)
   (LinearEquiv.ofBijective (TensorProduct.rTensorHomToHomRTensor (.id R) M J U)
     (finiteProjectiveHomTensor_bijective R M J U)).toModuleIso
 
-/-- Exact original forward-map receipt for the earned original-world coefficient Iso. -/
+/-- Let R be commutative in universe u and M,J,U R-modules in a common carrier universe v. Assume M
+is projective as an object of R-Mod_v and finitely generated over R. Let e:Hom_R(M,J)⊗_R
+U≅Hom_R(M,J⊗_R U) be the annihilator-quotient comparison. Its forward linear map is exactly χ,
+where χ(f⊗u)(m)=f(m)⊗u. The scalar quotient therefore does not change the final R-module
+comparison. -/
 theorem finiteProjectiveHomTensorIsoOfAnnihilatorQuotient_hom (M J U : ModuleCat.{v} R)
     [CategoryTheory.Projective M] [Module.Finite R M] :
     (finiteProjectiveHomTensorIsoOfAnnihilatorQuotient R M J U).hom.hom =
       TensorProduct.rTensorHomToHomRTensor (.id R) M J U := rfl
 
-/-- The earned inverse undoes the canonical original R coefficient map. -/
+/-- Let R be commutative in universe u and M,J,U R-modules in a common carrier universe v. Assume M
+is projective as an object of R-Mod_v and finitely generated over R. For t∈Hom_R(M,J)⊗_R U and
+the canonical comparison e with forward contraction χ, e.inv(χ(t))=t. The equality is the
+inverse identity on the complete source tensor module. -/
 theorem finiteProjectiveHomTensorIsoOfAnnihilatorQuotient_inv_forward
     (M J U : ModuleCat.{v} R) [CategoryTheory.Projective M] [Module.Finite R M]
     (t : (M →ₗ[R] J) ⊗[R] U) :
@@ -127,7 +153,10 @@ theorem finiteProjectiveHomTensorIsoOfAnnihilatorQuotient_inv_forward
   simpa only [c, ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_id,
     LinearMap.id_apply, finiteProjectiveHomTensorIsoOfAnnihilatorQuotient_hom] using h
 
-/-- The canonical original R map recovers the original map from the earned inverse. -/
+/-- Let R be commutative in universe u and M,J,U R-modules in a common carrier universe v. Assume M
+is projective as an object of R-Mod_v and finitely generated over R. For g∈Hom_R(M,J⊗_R U) and
+the annihilator-quotient comparison e, e.hom(e.inv(g))=g. Its forward map is the contraction χ,
+so the equality identifies every target linear map with the contraction of its inverse tensor. -/
 theorem finiteProjectiveHomTensorIsoOfAnnihilatorQuotient_forward_inv
     (M J U : ModuleCat.{v} R) [CategoryTheory.Projective M] [Module.Finite R M]
     (f : M →ₗ[R] J ⊗[R] U) :

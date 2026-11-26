@@ -18,12 +18,17 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 
 /-!
-# Resolved-variable naturality of the original native Tor comparison
+# Resolved-variable naturality of flat scalar-extension Tor cancellation
 
-The actual original resolution lift remains compatible with augmentation
-after the genuine flat scalar extension. This derived square supplies the
-original native Tor computation maps. No augmentation square, naturality
-equation, new resolution, comparison isomorphism or derived functor is assumed.
+Let S be a flat algebra over a commutative ring R, with coefficient carriers in W=max(u,v,w) for
+independent ring universes u,v and lift height w. For h:X→Y and arbitrary projective resolutions
+P_X,P_Y, extending the resolution lift gives a chain map F(P_X)→F(P_Y) whose augmentation square
+commutes with the degree-zero map F(h).
+
+For any S-module N, that square and scalar tensor cancellation yield resolved-variable
+naturality of c_{N,X,q}:U(Tor_q^S(N,F(X)))≅Tor_q^R(U(N),X) in every degree q∈ℕ. Both the forward
+and inverse comparisons commute with the Tor maps induced by h. The coefficient N remains
+arbitrary over S.
 -/
 
 @[expose] public section
@@ -41,8 +46,13 @@ universe u v w
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S]
   [Algebra R S] [Module.Flat R S]
 
-/-- The actual scalar extension of the original resolution lift has its
-genuine augmentation square in the extended-ring complex category. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). Assume S is an R-algebra and flat as an R-module. Write F(X)=S⊗_R X for scalar
+extension and U for restriction to R. Let h:X→Y be an R-module map in W and P_X,P_Y arbitrary
+projective resolutions with augmentations π_X,π_Y. If ℓ:P_X→P_Y is the canonical resolution lift
+of h, then its scalar extension satisfies F(ℓ)≫π_{F(P_Y)}=π_{F(P_X)}≫F(h)[0]. Here F(P_X),F(P_Y)
+are the projective resolutions obtained by flat extension and F(h)[0] is the induced map between
+degree-zero single complexes. -/
 theorem flatScalarExtensionProjectiveResolution_map_lift_comp_π
     {X Y : ModuleCat.{max u v w} R} (h : X ⟶ Y)
     (PX : ProjectiveResolution X) (PY : ProjectiveResolution Y) :
@@ -77,8 +87,12 @@ theorem flatScalarExtensionProjectiveResolution_map_lift_comp_π
     _ = _ := by
       simpa only [Category.assoc] using congrArg (fun k => D.map PX.π ≫ k) hn
 
-/-- The existing original flat native Tor cancellation preserves every
-actual map in its resolved module variable, in every degree and universe. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). Assume S is an R-algebra and flat as an R-module. Write F(X)=S⊗_R X for scalar
+extension and U for restriction to R. For h:X→Y an R-linear map, N an arbitrary S-module in W
+and q∈ℕ, the forward comparisons c satisfy
+U(Tor_q^S(id_N,F(h)))≫c_{N,Y,q}.hom=c_{N,X,q}.hom≫Tor_q^R(id_{U(N)},h). The equality uses the
+scalar-extended lift of h between projective resolutions and its commuting augmentation square. -/
 theorem flatScalarExtensionTorCancellationIso_hom_naturality_resolved
     {X Y : ModuleCat.{max u v w} R} (h : X ⟶ Y)
     (N : ModuleCat.{max u v w} S) (q : ℕ) :
@@ -199,8 +213,12 @@ theorem flatScalarExtensionTorCancellationIso_hom_naturality_resolved
     _ = _ := by
       simpa only [Category.assoc] using congrArg (fun k => H.map aX ≫ bX ≫ cX ≫ k) hP
 
-/-- The actual inverse original Tor cancellation preserves the same
-resolved-variable map in every original degree. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). Assume S is an R-algebra and flat as an R-module. Write F(X)=S⊗_R X for scalar
+extension and U for restriction to R. For h:X→Y an R-linear map, N an S-module in W and q∈ℕ, the
+inverse comparisons satisfy
+Tor_q^R(id_{U(N)},h)≫c_{N,Y,q}.inv=c_{N,X,q}.inv≫U(Tor_q^S(id_N,F(h))). Both sides map
+Tor_q^R(U(N),X) to U(Tor_q^S(N,F(Y))). -/
 theorem flatScalarExtensionTorCancellationIso_inv_naturality_resolved
     {X Y : ModuleCat.{max u v w} R} (h : X ⟶ Y)
     (N : ModuleCat.{max u v w} S) (q : ℕ) :

@@ -15,12 +15,15 @@ public import MathlibExt.Algebra.Category.ModuleCat.DirectedSubmoduleColimit
 public import MathlibExt.Algebra.Category.ModuleCat.TorsionFunctor
 
 /-!
-# The actual primary component as the colimit of its power annihilators
+# Power torsion as the directed union of power annihilators
 
-The categorical natural-number diagram uses the original torsionBySet submodules
-of the same carrier. Its native directed supremum is exactly Ideal.primaryComponent.
-Actual coefficient maps and index inclusions supply the cocone and its naturality.
-No ring object, quotient-Hom model, second colimit engine or book proof is used.
+Let `R` be a commutative ring, `I` an ideal, and `M` an `R`-module in an independent carrier
+universe. The submodule `Ann_M(I^n)` consists of elements killed by every scalar in `I^n`.
+These submodules increase with `n`, and their union is `Γ_I(M) = Ideal.primaryComponent M I`.
+
+Their inclusion maps define a natural-number diagram whose canonical cocone in `Γ_I(M)` is a
+colimit. A module map preserves each power annihilator and induces both the diagram
+transformation and the power-torsion map. These maps commute with the index inclusions.
 -/
 
 @[expose] public section
@@ -34,54 +37,83 @@ namespace ModuleCat.Torsion
 
 variable {R : Type u} [CommRing R]
 
-/-- The original annihilator of all scalars in the actual n-th ideal power. -/
+/-- Submodule annihilated by an ideal power.
+
+For natural `n`, `powerAnnihilator I M n` is the submodule of elements `x : M` satisfying `r •
+x = 0` for every `r ∈ I^n`. -/
 def powerAnnihilator (I : Ideal R) (M : ModuleCat.{v} R) (n : ℕ) : Submodule R M :=
   Submodule.torsionBySet R M (I ^ n : Ideal R)
 
-/-- The native ideal-power law makes the actual annihilator family increasing. -/
+/-- Power-annihilator submodules increase with the exponent.
+
+If `i ≤ j`, then `Ann_M(I^i) ≤ Ann_M(I^j)`, because `I^j ≤ I^i`. -/
 lemma powerAnnihilator_monotone (I : Ideal R) (M : ModuleCat.{v} R) :
     Monotone (powerAnnihilator I M) :=
   fun i j hij => Submodule.torsionBySet_le_torsionBySet_pow i j hij I
 
-/-- The native natural-number category indexes the original stage inclusions. -/
+/-- Natural-number diagram of power-annihilator inclusions.
+
+The diagram has degree-`n` object `ModuleCat.of R (powerAnnihilator I M n)` and, for `i ≤ j`,
+the inclusion of the corresponding annihilator submodules. -/
 def annihilatorDiagram (I : Ideal R) (M : ModuleCat.{v} R) : ℕ ⥤ ModuleCat.{v} R :=
   DirectedSubmoduleColimit.diagram (powerAnnihilator I M) (powerAnnihilator_monotone I M)
 
-/-- The cocone point is the native supremum in the unchanged original carrier. -/
+/-- Power-annihilator cocone in the power-torsion module.
+
+The directed power-annihilator diagram has a canonical cocone whose point is their supremum,
+the power-torsion module `Γ_I(M)`. -/
 def annihilatorCocone (I : Ideal R) (M : ModuleCat.{v} R) : Cocone (annihilatorDiagram I M) :=
   DirectedSubmoduleColimit.cocone (powerAnnihilator I M) (powerAnnihilator_monotone I M)
 
-/-- That point is literally the already canonical primary-component functor object. -/
+/-- Power-annihilator cocone point is the primary component.
+
+The point of `annihilatorCocone I M` equals `(ModuleCat.Torsion.functor I).obj M`, the module
+`Γ_I(M)`. -/
 lemma annihilatorCocone_point (I : Ideal R) (M : ModuleCat.{v} R) :
     (annihilatorCocone I M).pt = (functor I).obj M := rfl
 
-/-- Stage inclusion into the actual primary component, with no comparison certificate. -/
+/-- Inclusion of one power annihilator into power torsion.
+
+The degree-`n` cocone map includes the submodule `Ann_M(I^n)` into `Γ_I(M)`. -/
 def annihilatorInclusion (I : Ideal R) (M : ModuleCat.{v} R) (n : ℕ) :
     ModuleCat.of R (powerAnnihilator I M n) ⟶ (functor I).obj M :=
   (annihilatorCocone I M).ι.app n
 
-/-- Its value remains the original coefficient. -/
+/-- Power-annihilator inclusion preserves the underlying element.
+
+For `x : Ann_M(I^n)`, the underlying element of its image in `Γ_I(M)` is `x.val`. -/
 lemma annihilatorInclusion_val (I : Ideal R) (M : ModuleCat.{v} R)
     (n : ℕ) (x : powerAnnihilator I M n) :
     ((annihilatorInclusion I M n).hom x).val = x.val := rfl
 
-/-- Actual native directed-union data earns the module categorical universal property. -/
+/-- Directed power-annihilator cocone is a colimit.
+
+The canonical cocone from the increasing power-annihilator submodules to `Γ_I(M)` satisfies
+the colimit universal property in the same module category. -/
 def annihilatorIsColimit (I : Ideal R) (M : ModuleCat.{v} R) :
     IsColimit (annihilatorCocone I M) :=
   DirectedSubmoduleColimit.isColimit (powerAnnihilator I M) (powerAnnihilator_monotone I M)
 
-/-- Only this particular annihilator diagram needs a colimit witness. -/
+/-- Power-annihilator diagrams have colimits.
+
+The natural-number diagram of power-annihilator submodules has a colimit, exhibited by the
+canonical cocone in `Γ_I(M)`. -/
 instance annihilatorHasColimit (I : Ideal R) (M : ModuleCat.{v} R) :
     HasColimit (annihilatorDiagram I M) := ⟨_, annihilatorIsColimit I M⟩
 
-/-- All actual natural-number index maps commute with the stage cocone. -/
+/-- Power-annihilator inclusions agree along index transitions.
+
+For `i ≤ j`, inclusion from `Ann_M(I^i)` to `Ann_M(I^j)` followed by the degree-`j` cocone map
+equals the degree-`i` cocone map. -/
 lemma annihilator_index_naturality (I : Ideal R) (M : ModuleCat.{v} R)
     {i j : ℕ} (hij : i ≤ j) :
     (annihilatorDiagram I M).map (homOfLE hij) ≫ annihilatorInclusion I M j =
       annihilatorInclusion I M i :=
   (annihilatorCocone I M).w (homOfLE hij)
 
-/-- A genuine linear coefficient map preserves every actual annihilator stage. -/
+/-- Module maps preserve annihilation by an ideal power.
+
+If `x ∈ Ann_M(I^n)` and `f : M ⟶ N` is `R`-linear, then `f x ∈ Ann_N(I^n)`. -/
 lemma map_mem_powerAnnihilator (I : Ideal R) {M N : ModuleCat.{v} R}
     (f : M ⟶ N) (n : ℕ) (x : M) (hx : x ∈ powerAnnihilator I M n) :
     f.hom x ∈ powerAnnihilator I N n := by
@@ -92,7 +124,10 @@ lemma map_mem_powerAnnihilator (I : Ideal R) {M N : ModuleCat.{v} R}
   change (r : R) • f.hom x = 0
   rw [← map_smul, hr, map_zero]
 
-/-- The original coefficient map, restricted at every power stage. -/
+/-- Module morphism induces a map of power-annihilator diagrams.
+
+A module morphism `f : M ⟶ N` restricts to each power-annihilator submodule and gives a
+natural transformation of their natural-number diagrams. -/
 def annihilatorDiagramMap (I : Ideal R) {M N : ModuleCat.{v} R} (f : M ⟶ N) :
     annihilatorDiagram I M ⟶ annihilatorDiagram I N :=
   DirectedSubmoduleColimit.coefficientDiagramMap
@@ -100,12 +135,18 @@ def annihilatorDiagramMap (I : Ideal R) {M N : ModuleCat.{v} R} (f : M ⟶ N) :
     (powerAnnihilator I N) (powerAnnihilator_monotone I N) f.hom
     (fun n x hx => map_mem_powerAnnihilator I f n x hx)
 
-/-- Stage coefficient maps retain the actual original linear map value. -/
+/-- Power-annihilator diagram map retains the coefficient map's values.
+
+At index `n`, the diagram map induced by `f` sends `x : Ann_M(I^n)` to an element with
+underlying value `f(x.val)`. -/
 lemma annihilatorDiagramMap_val (I : Ideal R) {M N : ModuleCat.{v} R}
     (f : M ⟶ N) (n : ℕ) (x : powerAnnihilator I M n) :
     (((annihilatorDiagramMap I f).app n).hom x).val = f.hom x.val := rfl
 
-/-- Coefficient dependence is a genuine functor to actual categorical diagrams. -/
+/-- Power-annihilator diagrams vary functorially in modules.
+
+The assignment `M ↦ annihilatorDiagram I M` and the restricted maps of module morphisms define
+a functor to natural-number diagrams in the module category. -/
 def annihilatorDiagramFunctor (I : Ideal R) :
     ModuleCat.{v} R ⥤ (ℕ ⥤ ModuleCat.{v} R) where
   obj := annihilatorDiagram I
@@ -123,7 +164,10 @@ def annihilatorDiagramFunctor (I : Ideal R) :
     ext x
     rfl
 
-/-- The stage cocone commutes with the actual native primary-component map. -/
+/-- Power-torsion maps commute with each annihilator cocone map.
+
+For `f : M ⟶ N`, the degree-`n` inclusion into `Γ_I(M)` followed by `Γ_I(f)` equals the
+degree-`n` diagram map followed by inclusion into `Γ_I(N)`. -/
 lemma annihilator_coefficient_naturality (I : Ideal R) {M N : ModuleCat.{v} R}
     (f : M ⟶ N) (n : ℕ) :
     annihilatorInclusion I M n ≫ (functor I).map f =
@@ -132,7 +176,11 @@ lemma annihilator_coefficient_naturality (I : Ideal R) {M N : ModuleCat.{v} R}
   ext x
   rfl
 
-/-- Universal descent equals that same native map, rather than an assumed comparison. -/
+/-- Power-torsion map is the colimit descent of annihilator maps.
+
+The map `Γ_I(f)` induced by a module morphism equals the unique descent from the source power-
+annihilator colimit to the target cocone, after precomposition with the annihilator diagram
+transformation. -/
 lemma primaryComponentMap_eq_annihilatorDesc (I : Ideal R) {M N : ModuleCat.{v} R}
     (f : M ⟶ N) :
     (annihilatorIsColimit I M).desc

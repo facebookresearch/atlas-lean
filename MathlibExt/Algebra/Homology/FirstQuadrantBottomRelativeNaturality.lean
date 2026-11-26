@@ -15,15 +15,17 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationSpectralNaturality
 
 /-!
-# Bicomplex naturality of bottom-relative homology
+# Bicomplex naturality of bottom-relative stage homology
 
-The comparison from bottom-relative spectral-object homology to homology of
-the corresponding complete filtration stage is natural in the bicomplex.
-The proof first establishes the chain-level mapping-cone square and then
-combines naturality of homotopy homology, mapping-cone homology, and the
-extension/reindexing comparison.
+For a morphism f:K→L of first-quadrant bicomplexes in an abelian category, the complete stage
+maps at bottom and at i∈EInt give a morphism between the split short complexes F^K_⊥→F^K_i→F^K_i
+and F^L_⊥→F^L_i→F^L_i. The resulting map of bottom-relative cones commutes with their
+cone-to-stage quasi-isomorphisms.
 
-No total-homology, image-quotient, or successor-page statement is included.
+Consequently the bottom-relative comparisons H^{-n}(⊥,i)≅H_n(G_i) commute with f in every n : ℕ.
+The relative spectral map is taken in cochain degree -n, and the complete-stage map on the other
+side is taken in chain degree n. No relationship between the object's and morphism's universe
+levels is imposed.
 -/
 
 @[expose] public section
@@ -40,8 +42,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The morphism between bottom-stage short complexes induced by a bicomplex
-map. -/
+/-- Let C be an abelian category in arbitrary universes, K,L bicomplexes of shape (down ℕ,down ℕ)
+and f:K→L. Write F^K_i,F^L_i for their complete cochain stages, G^K_i,G^L_i for the chain
+stages, and η_f(i) for the induced cochain stage map. For each i∈EInt, the map from
+F^K_⊥→F^K_i→F^K_i to F^L_⊥→F^L_i→F^L_i has components η_f(⊥),η_f(i),η_f(i). Its first square is
+filtration naturality and its second uses the stage identity arrows. -/
 noncomputable def horizontalBottomStageShortComplexMapOfBicomplex
     (f : K ⟶ L) (i : EInt) :
     horizontalBottomStageShortComplex K i ⟶
@@ -78,7 +83,11 @@ theorem horizontalBottomStageShortComplexMapOfBicomplex_τ₃
       (horizontalCompleteFiltrationCochainDiagramNatTrans f).app i :=
   rfl
 
-/-- The mapping-cone-to-stage comparison commutes with every bicomplex map. -/
+/-- Let C be an abelian category in arbitrary universes, K,L bicomplexes of shape (down ℕ,down ℕ)
+and f:K→L. Write F^K_i,F^L_i for their complete cochain stages, G^K_i,G^L_i for the chain
+stages, and η_f(i) for the induced cochain stage map. For every cut i, let M_f(i) be the induced
+map Cone(F^K_⊥→F^K_i)→Cone(F^L_⊥→F^L_i), and g_K(i),g_L(i) the cone-to-stage maps. Then
+M_f(i)≫g_L(i)=g_K(i)≫η_f(i). -/
 theorem horizontalBottomMappingConeToStage_naturality_of_bicomplex
     (f : K ⟶ L) (i : EInt) :
     (horizontalCompleteFiltrationMappingConeNatTrans f).app
@@ -99,8 +108,11 @@ theorem horizontalBottomMappingConeToStage_naturality_of_bicomplex
     horizontalBottomStageShortComplexMapOfBicomplex_τ₃] using
     CochainComplex.mappingCone.map_descShortComplex SK SL φ
 
-/-- Bottom-relative homology identifies naturally with complete-stage
-homology under bicomplex morphisms. -/
+/-- Let C be an abelian category in arbitrary universes, K,L bicomplexes of shape (down ℕ,down ℕ)
+and f:K→L. Write F^K_i,F^L_i for their complete cochain stages, G^K_i,G^L_i for the chain
+stages, and η_f(i) for the induced cochain stage map. For i∈EInt and n : ℕ, let
+h_f:H^{-n}_K(⊥,i)→H^{-n}_L(⊥,i) be the spectral-object map and e_K,e_L the stage comparison
+isomorphisms. Then h_f≫e_L.hom=e_K.hom≫H_n(G^K_i→G^L_i). -/
 theorem horizontalBottomRelativeHomologyStageIso_naturality_of_bicomplex
     (f : K ⟶ L) (i : EInt) (n : ℕ) :
     ((horizontalCompleteFiltrationSpectralObjectMap f).hom

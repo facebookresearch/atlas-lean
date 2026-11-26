@@ -1,4 +1,5 @@
-# Native Primitive Map one zero
+# Vanishing of the CE primitive equation in exterior degree one
 
-Every exterior degree-one element satisfies the CE primitive equation, without a basis or
-characteristic hypothesis.
+Vanishing of the CE primitive equation in exterior degree one.
+
+The degree-one component of the CE primitive-equation map is zero for every `R`-Lie algebra.

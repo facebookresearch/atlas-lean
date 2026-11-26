@@ -1,8 +1,6 @@
-# Finite Projective Resolving Data
+# Finite projective-resolving additive functors
 
-Projective resolving data together with a finite resolution of every
-target object.
-
-This is the full input needed to define a global Euler inverse.  Results that
-receive the resolutions explicitly should use `ProjectiveResolvingData`
-instead.
+For additive `i : P → A`, with `P` preadditive and `A` abelian,
+finite projective-resolving data combine represented kernels of mapped
+epimorphisms, projective mapped objects, and finite resolutions of
+every target object by these mapped objects.

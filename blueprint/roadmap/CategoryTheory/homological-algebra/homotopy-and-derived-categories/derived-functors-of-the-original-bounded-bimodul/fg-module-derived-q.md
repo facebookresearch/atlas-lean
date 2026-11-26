@@ -1,3 +1,6 @@
-# Fg Module Derived Q
+# Localization functor for bounded finite-module cochains
 
-The canonical original bounded-derived localization functor.
+Localization functor for bounded finite-module cochains.
+
+The functor from bounded finite-module cochains to `FGModuleDerived R` is the canonical
+localization at ambient module quasi-isomorphisms.

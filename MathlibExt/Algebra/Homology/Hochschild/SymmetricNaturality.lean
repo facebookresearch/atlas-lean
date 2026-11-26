@@ -13,12 +13,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricDiagonal
 public import MathlibExt.Algebra.Homology.Hochschild.Maps
 
 /-!
-# Naturality of the symmetric Hochschild diagonal
+# Naturality of the raw symmetric Hochschild diagonal
 
-An algebra homomorphism and a compatible ground-linear
-coefficient map induce tensor maps intertwining the
-symmetric coefficient actions. They commute with
-the diagonal, chain maps and normalization.
+A possibly nonunital k-algebra homomorphism g : A → B induces a k-linear map between any chosen
+universe lifts of the regular coefficients A and B. Multiplicativity makes this lifted map
+compatible with their regular left actions.
+
+For commutative k-algebras A,B and coefficients M,N with symmetric right actions, a k-linear map
+f : M → N satisfying f(a·m) = g(a)·f(m) also respects the right actions. The tensor word maps
+applying g to every algebra factor and f to the coefficient commute with the raw degree-n
+symmetric diagonal. This raw diagonal square requires no unit-preservation hypothesis and allows
+separate source and target algebra and coefficient universes.
 -/
 
 @[expose] public section
@@ -40,8 +45,9 @@ variable {k : Type u} [CommRing k]
   {A : Type v} [Ring A] [Algebra k A]
   {B : Type v'} [Ring B] [Algebra k B]
 
-/-- The algebra map on the canonically lifted regular coefficient.
-The lift heights remain those of the two coefficient worlds. -/
+/-- Let k be a commutative ring, A and B k-algebras with associative ring structures, and g : A
+→ₙₐ[k] B a possibly nonunital algebra map. The map a ↦ the target lift of g(a) defines a
+k-linear map from a chosen universe lift of A to a separately chosen universe lift of B. -/
 def regularCoefficientMap (g : A →ₙₐ[k] B) : ULift.{w} A →ₗ[k] ULift.{w'} B where
   toFun a := ULift.up (g a.down)
   map_add' a b := by
@@ -51,14 +57,17 @@ def regularCoefficientMap (g : A →ₙₐ[k] B) : ULift.{w} A →ₗ[k] ULift.{
     apply ULift.ext
     exact map_smul g r a.down
 
-/-- The lifted regular map acts on the original algebra element. -/
+/-- For a possibly nonunital k-algebra map g : A → B between ring k-algebras and an element a of the
+chosen source lift, regularCoefficientMap g a is the target lift of g applied to the underlying
+element of a. -/
 @[simp]
 theorem regularCoefficientMap_apply (g : A →ₙₐ[k] B) (a : ULift.{w} A) :
     (regularCoefficientMap g : ULift.{w} A →ₗ[k] ULift.{w'} B) a =
       ULift.up (g a.down) := rfl
 
-/-- The regular map respects multiplication along a possibly nonunital
-algebra map, with independent source and target coefficient lifts. -/
+/-- Let g : A →ₙₐ[k] B be a possibly nonunital map between ring k-algebras. For a ∈ A and m in the
+chosen lifted regular coefficient A, the lifted coefficient map satisfies r_g(a·m) =
+g(a)·r_g(m). This is multiplicativity of g, and the source and target lift heights may differ. -/
 theorem regularCoefficientMap_smul (g : A →ₙₐ[k] B)
     (a : A) (m : ULift.{w} A) :
     (regularCoefficientMap g : ULift.{w} A →ₗ[k] ULift.{w'} B) (a • m) =
@@ -80,7 +89,9 @@ variable {k : Type u} [CommRing k]
   [IsScalarTower k B N]
 
 omit [IsScalarTower k A M] [IsScalarTower k B N] in
-/-- Symmetry earns right-action compatibility from the original left-action square. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras, and M,N modules carrying k- and A- or
+B-actions. Give them the symmetric opposite actions aᵐᵒᵖ·m = a·m. For g : A →ₙₐ[k] B and f : M
+→ₗ[k] N satisfying f(a·m) = g(a)·f(m), one has f(aᵐᵒᵖ·m) = (g a)ᵐᵒᵖ·f(m) for all a,m. -/
 theorem rightAction_compatibility (g : A →ₙₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
     letI := opModule A M
@@ -92,10 +103,11 @@ theorem rightAction_compatibility (g : A →ₙₐ[k] B) (f : M →ₗ[k] N)
   change f (a • m) = g a • f m
   exact hf a m
 
-/-- The coefficient/algebra tensor maps commute with the symmetric
-diagonal in every degree, with independent ground, algebra and coefficient
-universes. The only coefficient compatibility premise is the original
-module-map square. Unit preservation is not needed at this raw stage. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Let g : A →ₙₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m).
+In every n : ℕ, L_{g,f} ∘ Δ_A = Δ_B ∘ (L_{g,r_g} ⊗ L_{g,f}), where L applies g to every tail and
+its indicated coefficient map to the head, r_g is the lifted regular map, and Δ is the raw
+symmetric diagonal. Unit preservation is unnecessary. -/
 theorem diagonalRaw_naturality (g : A →ₙₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.linearMap g f n).comp (diagonalRaw k A M n) =

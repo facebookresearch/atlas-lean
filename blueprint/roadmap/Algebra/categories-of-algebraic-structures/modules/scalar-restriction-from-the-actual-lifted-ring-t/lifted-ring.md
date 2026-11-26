@@ -1,3 +1,6 @@
-# Lifted Ring
+# The scalar ring lifted to the coefficient universe
 
-The actual coefficient ring in the actual common carrier world.
+The scalar ring lifted to the coefficient universe.
+
+For `R : Type u`, this ring is `ULift.{v} R`, with carrier universe `max u v` and ring
+operations induced from `R`.

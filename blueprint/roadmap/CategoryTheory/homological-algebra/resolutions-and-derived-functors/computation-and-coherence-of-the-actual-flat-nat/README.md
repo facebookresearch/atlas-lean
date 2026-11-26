@@ -1,24 +1,24 @@
 # Computation and coherence of the actual flat native Tor comparison
 
-- [Scalar Extension Tensor Iso hom tmul](scalar-extension-tensor-iso-hom-tmul.md)
-- [Flat Scalar Extension Tor Base Change Iso hom computation](flat-scalar-extension-tor-base-change-is.md)
-- [Flat Scalar Extension Tor Computation lift](flat-scalar-extension-tor-computation-li.md)
-- [Flat Scalar Extension Tor Base Change Iso hom computation of resolution](flat-scalar-extension-tor-base-change-is-2.md)
+- [Scalar tensor base change has its canonical pure-tensor formula](scalar-extension-tensor-iso-hom-tmul.md)
+- [Flat Tor base change is computed on the chosen source projective resolution](flat-scalar-extension-tor-base-change-is.md)
+- [Augmentation-compatible resolution maps preserve the flat Tor computation tail](flat-scalar-extension-tor-computation-li.md)
+- [Flat Tor base change has the same computation on every source projective resolution](flat-scalar-extension-tor-base-change-is-2.md)
 
 ## Scalar Composition
 
-- [Scalar Extension Tensor Iso hom trans](scalar-extension-tensor-iso-hom-trans.md)
+- [Tensor base change agrees with successive scalar extensions through the scalar associator](scalar-extension-tensor-iso-hom-trans.md)
 
 ## Flat Scalar Tower
 
-- [Flat Scalar Extension Projective Resolution assoc augmentation](flat-scalar-extension-projective-resolut.md)
-- [Flat Scalar Extension Tor Base Change Iso hom trans](flat-scalar-extension-tor-base-change-is-3.md)
-- [Flat Scalar Extension Tor Base Change Iso hom congr](flat-scalar-extension-tor-base-change-is-4.md)
-- [Flat Scalar Extension Tor Base Change Iso hom congr coefficients](flat-scalar-extension-tor-base-change-is-5.md)
-- [Flat Scalar Extension Tor Base Change Iso hom trans coefficients](flat-scalar-extension-tor-base-change-is-6.md)
+- [Scalar-extension association respects direct and iterated resolution augmentations](flat-scalar-extension-projective-resolut.md)
+- [Flat Tor base change satisfies the scalar-extension composition law](flat-scalar-extension-tor-base-change-is-3.md)
+- [Equal flat ring maps give the same Tor comparison through scalar equality transports](flat-scalar-extension-tor-base-change-is-4.md)
+- [Equal-map Tor coherence preserves arbitrary maps in both extended coefficients](flat-scalar-extension-tor-base-change-is-5.md)
+- [Composite flat Tor base change retains arbitrary coefficient maps at both stages](flat-scalar-extension-tor-base-change-is-6.md)
 
 ## Scalar Identity
 
-- [Scalar Extension Tensor Iso hom id](scalar-extension-tensor-iso-hom-id.md)
-- [Flat Scalar Extension Projective Resolution id augmentation](flat-scalar-extension-projective-resolut-2.md)
-- [Flat Scalar Extension Tor Base Change Iso hom id](flat-scalar-extension-tor-base-change-is-7.md)
+- [Identity tensor base change agrees with the scalar-extension unit comparison](scalar-extension-tensor-iso-hom-id.md)
+- [The identity scalar comparison preserves a projective resolution augmentation](flat-scalar-extension-projective-resolut-2.md)
+- [Identity flat Tor base change agrees with the scalar unit on the Tor object](flat-scalar-extension-tor-base-change-is-7.md)

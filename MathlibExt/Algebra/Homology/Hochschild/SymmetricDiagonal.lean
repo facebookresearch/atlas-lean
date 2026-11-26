@@ -16,16 +16,15 @@ public import MathlibExt.Algebra.Category.ModuleCat.Monoidal.Universe
 public import Mathlib.LinearAlgebra.TensorProduct.Associator
 
 /-!
-# The symmetric Hochschild diagonal
+# The coefficient diagonal and Hochschild shuffle pairing
 
-The degreewise diagonal acts on the coefficient and
-multiplies the two ordered algebra tails. Its face
-compatibility gives a chain map, which composes with
-the Eilenberg–Zilber shuffle pairing. The regular
-coefficient is lifted into the common carrier universe.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. In equal
+simplicial degree n, the diagonal sends (a₀ ⊗ a) ⊗ (m ⊗ b) to (a₀.down • m) ⊗ (i ↦ aᵢbᵢ). It
+commutes with each coefficient-bar face. Composing its alternating-face chain map with the
+signed Eilenberg–Zilber shuffle gives a pairing Cₚ(ULift A) ⊗ Cᵩ(M) → Cₚ₊ᵩ(M).
 
-Reference: Loday, Cyclic Homology, second edition,
-§§4.2.1–4.2.2 and 4.2.10.
+For commutative Hochschild diagonals, see J.-L. Loday, Cyclic Homology, 2nd ed., §§4.2.1–4.2.2
+and 4.2.10.
 -/
 
 @[expose] public section
@@ -44,12 +43,18 @@ variable (k : Type u) (A : Type v) (M : Type w) [CommRing k] [CommRing A]
   [Algebra k A] [AddCommGroup M] [Module k M] [Module A M]
   [IsScalarTower k A M]
 
-/-- The original coefficient action after canonically unlifting the regular coefficient alone. -/
+/-- The regular coefficient action in the Hochschild diagonal.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, ULift A ⊗[k]
+M maps to M by a₀ ⊗ m ↦ a₀.down • m. -/
 def diagonalCoefficient : ULift.{w} A ⊗[k] M →ₗ[k] M :=
   (coefficientTensorAction k A M).comp
     (TensorProduct.map (ULift.moduleEquiv : ULift.{w} A ≃ₗ[k] A).toLinearMap LinearMap.id)
 
-/-- The coefficient action is needed to compute the diagonal map's faces. -/
+/-- The pure coefficient value of the Hochschild diagonal.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+diagonalCoefficient(a₀ ⊗ m) = a₀.down • m, retaining the lifted regular coefficient. -/
 lemma diagonalCoefficient_tmul (a0 : ULift.{w} A) (m : M) :
     diagonalCoefficient k A M (a0 ⊗ₜ[k] m) = a0.down • m := by
   unfold diagonalCoefficient
@@ -59,12 +64,18 @@ lemma diagonalCoefficient_tmul (a0 : ULift.{w} A) (m : M) :
   rw [TensorProduct.lift.tmul]
   exact Algebra.lsmul_apply k k M a0.down m
 
-/-- Original A-tail entries are multiplied coordinatewise, rather than concatenated. -/
+/-- Coordinatewise multiplication of two equal-length tensor tails.
+
+For a commutative ring k and a commutative k-algebra A, this k-linear map A⊗n ⊗[k] A⊗n → A⊗n
+multiplies corresponding entries of the two words. -/
 def diagonalTail (n : ℕ) :
     TensorPower k n A ⊗[k] TensorPower k n A →ₗ[k] TensorPower k n A :=
   TensorProduct.lift (PiTensorProduct.map₂ (fun _ : Fin n => LinearMap.mul k A))
 
-/-- Native coordinatewise tail multiplication on the original pure tensor tuples. -/
+/-- The equal-degree diagonal tail formula.
+
+For a commutative ring k, a commutative k-algebra A and a,b : Fin n → A, diagonalTail(tprod(a)
+⊗ tprod(b)) = tprod(i ↦ aᵢbᵢ). -/
 lemma diagonalTail_tprod (n : ℕ) (a b : Fin n → A) :
     diagonalTail k A n
       (PiTensorProduct.tprod k a ⊗ₜ[k] PiTensorProduct.tprod k b) =
@@ -73,7 +84,11 @@ lemma diagonalTail_tprod (n : ℕ) (a b : Fin n → A) :
   rw [TensorProduct.lift.tmul, PiTensorProduct.map₂_tprod_tprod]
   simp only [LinearMap.mul_apply']
 
-/-- The raw diagonal map keeps the original M coefficient and both ordered tail worlds. -/
+/-- The raw coefficient-and-tail diagonal in degree n.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, combine a
+regular-coefficient n-word and an M-coefficient n-word by multiplying corresponding A entries
+and applying the regular head to M. -/
 def diagonalRaw (n : ℕ) :
     (ULift.{w} A ⊗[k] TensorPower k n A) ⊗[k]
         (M ⊗[k] TensorPower k n A) →ₗ[k] M ⊗[k] TensorPower k n A :=
@@ -82,7 +97,10 @@ def diagonalRaw (n : ℕ) :
     (TensorProduct.tensorTensorTensorComm k (ULift.{w} A) (TensorPower k n A)
       M (TensorPower k n A)).toLinearMap
 
-/-- This formula is needed by face compatibility in the diagonal chain-map constructor. -/
+/-- The complete pure-word formula for the raw Hochschild diagonal.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, (a₀ ⊗
+tprod(a)) ⊗ (m ⊗ tprod(b)) maps to (a₀.down • m) ⊗ tprod(i ↦ aᵢbᵢ). -/
 lemma diagonalRaw_tprod (n : ℕ) (a0 : ULift.{w} A) (m : M)
     (a b : Fin n → A) :
     diagonalRaw k A M n
@@ -99,7 +117,11 @@ lemma diagonalRaw_tprod (n : ℕ) (a0 : ULift.{w} A) (m : M)
   rw [TensorProduct.tensorTensorTensorComm_tmul, TensorProduct.map_tmul,
     diagonalCoefficient_tmul, diagonalTail_tprod]
 
-/-- An original coefficient face in the canonical raw/bar coordinates. -/
+/-- A symmetric Hochschild face in raw tensor coordinates.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, face i :
+Cₙ₊₁(M) → Cₙ(M) acts on the first coefficient when i=0, multiplies adjacent entries for
+0<i<n+1, and acts by the last coefficient when i=n+1. -/
 def rawFace (n : ℕ) (i : Fin (n + 2)) :
     ModuleCat.of k (M ⊗[k] TensorPower k (n + 1) A) ⟶
       ModuleCat.of k (M ⊗[k] TensorPower k n A) :=
@@ -107,7 +129,11 @@ def rawFace (n : ℕ) (i : Fin (n + 2)) :
     (coefficientBar k A M).δ i ≫
       (coefficientBarObjIso k A M n).hom
 
-/-- The symmetric endpoints reuse the exact original coefficient face formulas. -/
+/-- The three cases of a symmetric raw face on a tensor word.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, face zero
+removes a₀ and acts by a₀ on m; face n+1 removes aₙ and acts by aₙ; face i=j+1 multiplies
+aⱼaⱼ₊₁. This is an unsigned face formula. -/
 lemma rawFace_tprod (n : ℕ) (i : Fin (n + 2)) (m : M)
     (a : Fin (n + 1) → A) :
     (rawFace k A M n i).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
@@ -128,7 +154,11 @@ lemma rawFace_tprod (n : ℕ) (i : Fin (n + 2)) (m : M)
   rw [ModuleCat.Algebra.Hochschild.face_tprod]
   rfl
 
-/-- Face compatibility is indispensable to instantiate the diagonal chain map. -/
+/-- The raw diagonal commutes with each equal-degree face.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, applying the
+raw diagonal in degree n+1 and then face i equals applying face i to both source words and
+then the degree-n diagonal. -/
 lemma diagonalRaw_face (n : ℕ) (i : Fin (n + 2)) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -196,7 +226,11 @@ lemma diagonalRaw_face (n : ℕ) (i : Fin (n + 2)) :
       exact mul_mul_mul_comm _ _ _ _
     · simp only [ModuleCat.Algebra.Hochschild.hochschildMulAdjacent, ite_eq_right hj]
 
-/-- Actual native levelwise-bar tensors map into the original raw M coefficient level. -/
+/-- The coefficient-bar diagonal component in chain degree n.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, this map
+takes degree n of the alternating-face complex of the levelwise tensor product of the two
+coefficient bars to Cₙ(M). -/
 def diagonalComponent (n : ℕ) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -221,7 +255,11 @@ def diagonalComponent (n : ℕ) :
     (coefficientBarObjIso k A M n).hom) ≫
       ModuleCat.ofHom (diagonalRaw k A M n)
 
-/-- The original raw face dictionary transports the necessary diagonal compatibility. -/
+/-- The coefficient-bar diagonal component intertwines faces.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, its
+degree-n+1 component followed by rawFace(i) equals the tensor product of the two simplicial
+faces followed by its degree-n component. -/
 lemma diagonalComponent_face (n : ℕ) (i : Fin (n + 2)) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -299,7 +337,10 @@ lemma diagonalComponent_face (n : ℕ) (i : Fin (n + 2)) :
       _ = _ := Category.assoc _ _ _
   exact hTyped
 
-/-- The target differential retains the signed original coefficient faces. -/
+/-- The symmetric target differential is the alternating sum of raw faces.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, d : Cₙ₊₁ → Cₙ
+is ∑ᵢ₌₀ⁿ⁺¹ (-1)ⁱ rawFace(n,i), with integer signs. -/
 lemma targetDifferential (n : ℕ) :
     (chainComplex k A M).d (n + 1) n =
       ∑ i : Fin (n + 2), (-1 : ℤ) ^ (i : ℕ) • rawFace k A M n i := by
@@ -312,7 +353,11 @@ lemma targetDifferential (n : ℕ) :
     ModuleCat.Algebra.Hochschild.boundary_eq_sum]
   rfl
 
-/-- The diagonal chain map; its fields use only necessary face compatibility. -/
+/-- The chain map induced by the coefficient simplicial diagonal.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the
+alternating-face complex of coefficientBar(ULift A) ⊗ coefficientBar(M) maps to
+chainComplex(M) through diagonalComponent in every degree. -/
 def diagonalChainMap :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -377,8 +422,11 @@ def diagonalChainMap :
         f ≫ diagonalComponent k A M n) hSource
     exact hTargetComp.trans (hSum.trans hSourceComp.symm))
 
-/-- A constructed native shuffle pairing on the original raw complexes, with only the
-regular coefficient canonically lifted to their common universe. -/
+/-- The signed coefficient Hochschild chain pairing.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the
+Eilenberg–Zilber shuffle followed by the diagonal gives a chain pairing Cₚ(ULift A) ⊗ Cᵩ(M) →
+Cₚ₊ᵩ(M). The shuffle uses integer permutation signs. -/
 def pairing :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -408,7 +456,11 @@ def pairing :
 
 section PairingComponents
 
-/-- Every bidegree is the shuffle in bar coordinates followed by the diagonal. -/
+/-- The shuffle-and-diagonal formula for one coefficient pairing component.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the (p,q)
+component first uses the two coefficient-bar chain isomorphisms, then shuffleBidegree(p,q),
+then diagonalComponent(p+q). -/
 theorem pairing_pair (p q : ℕ) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -478,7 +530,10 @@ theorem pairing_pair (p q : ℕ) :
         Category.id_comp]
       rfl
 
-/-- In empty bidegrees the native pairing is the original coefficient action. -/
+/-- The coefficient pairing in bidegree zero retains the head action.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, two empty
+words with heads a₀ and m pair to (a₀.down • m) ⊗ the empty tensor word. -/
 theorem pairing_pair_zero_zero_tprod (a0 : ULift.{w} A) (m : M)
     (a b : Fin 0 → A) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=

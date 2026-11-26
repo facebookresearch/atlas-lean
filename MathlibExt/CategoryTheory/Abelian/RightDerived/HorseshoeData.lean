@@ -22,19 +22,20 @@ public import Mathlib.CategoryTheory.CommSq
 public import MathlibExt.CategoryTheory.Abelian.Injective.Horseshoe
 
 /-!
-# Long exact sequences from compatible injective resolutions
+# Right-derived long exact sequences from compatible injective resolutions
 
-`Functor.RightDerived.HorseshoeData` records three injective resolutions,
-compatible lifts of a short exact sequence, and degreewise splittings. An
-additive functor sends this diagram to a short exact sequence of complexes.
-Its homology sequence transports to the right-derived functors using the
-chosen resolution comparison isomorphisms.
+In an abelian category `C`, compatible injective horseshoe data for
+`X₁ → X₂ → X₃` consists of three injective resolutions, coaugmentation-
+compatible lifts of the two maps, and a splitting in every cochain degree.
+An additive functor `F : C → D` into an abelian category sends this
+diagram to a short exact sequence of complexes. If `C` has injective
+resolutions, comparison with `R^nF` transports its cohomology long exact
+sequence to right-derived terms. Maps of compatible data give the
+connecting and long-sequence naturality squares.
 
-The connecting morphism and five-arrow sequence are defined once for arbitrary
-compatible data. `HorseshoeData.Hom` provides naturality for compatible resolution
-maps. `HorseshoeData.ofEndpoints` embeds the existing injective horseshoe with
-prescribed endpoint resolutions into this same interface. The Hartshorne facade
-retains its own canonical middle-resolution factory and forwards to this API.
+The middle resolution and degreewise splittings are arbitrary compatible
+choices; the injective horseshoe with prescribed endpoints supplies
+one such choice.
 -/
 
 @[expose] public section
@@ -50,40 +51,57 @@ variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
 namespace Functor.RightDerived
 
-/-- Horseshoe-type input data for the long exact sequence of right-derived
-functors: injective resolutions of the three terms of a short exact sequence
-`S`, with chosen lifts of `S.f` and `S.g` to the resolution complexes, plus a
-degreewise splitting of the resulting diagram of complexes.
-
-The middle resolution and the splittings are arbitrary compatible choices.
-`HorseshoeData.ofEndpoints` supplies such data from the injective horseshoe
-with prescribed endpoint resolutions. Source-specific factories may supply
-other compatible middle resolutions without changing this interface. -/
+/-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, compatible horseshoe data consists of injective resolutions
+`I₁,I₂,I₃`, cochain maps lifting the two sequence maps and preserving
+their coaugmentations, a zero composite, and a splitting of
+`I₁^n → I₂^n → I₃^n` for every `n ∈ ℕ`. -/
 @[ext]
 structure HorseshoeData (S : ShortComplex C) (hS : S.ShortExact) where
-  /-- Chosen injective resolution of the left term -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the left object of the horseshoe data is a chosen injective
+cochain resolution `I₁` of `X₁`, with coaugmentation `X₁[0] → I₁`. -/
   res₁ : InjectiveResolution S.X₁
-  /-- Chosen injective resolution of the middle term -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the middle object of the horseshoe data is a chosen injective
+cochain resolution `I₂` of `X₂`, with coaugmentation `X₂[0] → I₂`. -/
   res₂ : InjectiveResolution S.X₂
-  /-- Chosen injective resolution of the right term -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the right object of the horseshoe data is a chosen injective
+cochain resolution `I₃` of `X₃`, with coaugmentation `X₃[0] → I₃`. -/
   res₃ : InjectiveResolution S.X₃
-  /-- Lift of `S.f` to the resolution complexes -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the left sequence map is lifted to a cochain map
+`φ_f : I₁ → I₂` between the chosen injective resolutions. -/
   φf : res₁.cocomplex ⟶ res₂.cocomplex
-  /-- Lift of `S.g` to the resolution complexes -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the right sequence map is lifted to a cochain map
+`φ_g : I₂ → I₃` between the chosen injective resolutions. -/
   φg : res₂.cocomplex ⟶ res₃.cocomplex
-  /-- The lifts form a complex -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the chosen cochain lifts `φ_f : I₁ → I₂`, `φ_g : I₂ → I₃`
+have zero composite, so they form a short complex of resolutions. -/
   w : φf ≫ φg = 0
-  /-- `φf` lifts `S.f` through the augmentations -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the left lift satisfies the degree-zero coaugmentation
+square `ι₁⁰ ≫ φ_f⁰ = S.f ≫ ι₂⁰`. -/
   lift_f : res₁.ι.f 0 ≫ φf.f 0 = S.f ≫ res₂.ι.f 0
-  /-- `φg` lifts `S.g` through the augmentations -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the right lift satisfies the degree-zero coaugmentation
+square `ι₂⁰ ≫ φ_g⁰ = S.g ≫ ι₃⁰`. -/
   lift_g : res₂.ι.f 0 ≫ φg.f 0 = S.g ≫ res₃.ι.f 0
-  /-- The diagram of resolutions is degreewise split -/
+  /-- For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian
+category `C`, the resolution row `I₁^n → I₂^n → I₃^n` has a chosen
+splitting in `C` for every nonnegative degree `n`. -/
   split : ∀ n, ((HomologicalComplex.eval C (ComplexShape.up ℕ) n).mapShortComplex.obj
     (ShortComplex.mk φf φg w)).Splitting
 
 variable {S : ShortComplex C} {hS : S.ShortExact}
 
-/-- The diagram of injective-resolution complexes determined by the lifts. -/
+/-- Let `C` be abelian and `H` be compatible injective horseshoe
+data for short exact `S : X₁ → X₂ → X₃`, with degreewise split
+resolution diagram `I₁ → I₂ → I₃`. The chosen cochain lifts and their zero composite form the
+short complex of nonnegative cochain complexes `I₁ → I₂ → I₃`. -/
 noncomputable def HorseshoeData.diagram (H : HorseshoeData S hS) :
     ShortComplex (CochainComplex C ℕ) :=
   ShortComplex.mk H.φf H.φg H.w
@@ -98,13 +116,19 @@ omit [HasInjectiveResolutions C] in
 lemma HorseshoeData.diagram_g (H : HorseshoeData S hS) : H.diagram.g = H.φg :=
   rfl
 
-/-- The diagram after applying the additive functor `F`. -/
+/-- Let `C` be abelian and `H` be compatible injective horseshoe
+data for short exact `S : X₁ → X₂ → X₃`, with degreewise split
+resolution diagram `I₁ → I₂ → I₃`. Let `D` be abelian and `F : C → D` additive. Applying `F` to each term and differential gives the short
+complex `F(I₁) → F(I₂) → F(I₃)` of nonnegative cochain complexes in `D`. -/
 noncomputable def HorseshoeData.mapped (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] : ShortComplex (CochainComplex D ℕ) :=
   H.diagram.map (F.mapHomologicalComplex (ComplexShape.up ℕ))
 
 omit [HasInjectiveResolutions C] in
-/-- The resolution diagram is itself short exact: it is degreewise split. -/
+/-- Let `C` be abelian and `H` be compatible injective horseshoe
+data for short exact `S : X₁ → X₂ → X₃`, with degreewise split
+resolution diagram `I₁ → I₂ → I₃`. The diagram `I₁ → I₂ → I₃` is a short exact sequence of
+complexes because each of its degree rows is split exact. -/
 lemma HorseshoeData.diagram_shortExact (H : HorseshoeData S hS) :
     H.diagram.ShortExact := by
   apply HomologicalComplex.shortExact_of_degreewise_shortExact
@@ -113,8 +137,10 @@ lemma HorseshoeData.diagram_shortExact (H : HorseshoeData S hS) :
   rwa [Functor.mapShortComplex_obj] at h
 
 omit [HasInjectiveResolutions C] in
-/-- An additive functor sends the degreewise split resolution diagram to a
-short exact sequence of complexes. -/
+/-- Let `C` be abelian and `H` be compatible injective horseshoe
+data for short exact `S : X₁ → X₂ → X₃`, with degreewise split
+resolution diagram `I₁ → I₂ → I₃`. Let `D` be abelian and `F : C → D` additive. The diagram `F(I₁) → F(I₂) → F(I₃)` is short exact because
+additivity preserves its splitting in every degree. -/
 lemma HorseshoeData.mapped_shortExact (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] : (H.mapped F).ShortExact := by
   apply HomologicalComplex.shortExact_of_degreewise_shortExact
@@ -130,8 +156,10 @@ lemma HorseshoeData.mapped_shortExact (H : HorseshoeData S hS)
     HorseshoeData.mapped, ← ShortComplex.map_comp] at hsplit ⊢
   exact hsplit
 
-/-- The connecting morphism
-`(F.rightDerived n₀).obj S.X₃ ⟶ (F.rightDerived n₁).obj S.X₁`. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, and `H` compatible injective horseshoe data
+for short exact `S : X₁ → X₂ → X₃`. For `n₁=n₀+1`, its cohomology boundary transported by the
+resolution comparisons gives `R^n₀F(X₃) → R^n₁F(X₁)`. -/
 noncomputable def HorseshoeData.delta (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
     (F.rightDerived n₀).obj S.X₃ ⟶ (F.rightDerived n₁).obj S.X₁ :=
@@ -139,22 +167,32 @@ noncomputable def HorseshoeData.delta (H : HorseshoeData S hS)
     ((H.mapped_shortExact F).δ n₀ n₁ h) ≫
       (H.res₁.isoRightDerivedObj F n₁).inv
 
-/-- The homology-level five-arrow window, used as the exact reference for the
-transfer to `rightDerived` terms. -/
+/-- Let `C` be abelian and `H` be compatible injective horseshoe
+data for short exact `S : X₁ → X₂ → X₃`, with degreewise split
+resolution diagram `I₁ → I₂ → I₃`. Let `D` be abelian and `F : C → D` additive. For `n₁=n₀+1`, the cohomology sequence has the five-arrow
+window `H^n₀F(I₁) → H^n₀F(I₂) → H^n₀F(I₃) → H^n₁F(I₁) →
+H^n₁F(I₂) → H^n₁F(I₃)`, with its middle map the connecting morphism. -/
 noncomputable def HorseshoeData.homologySequence (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
     ComposableArrows D 5 :=
   HomologySequence.composableArrows₅ (H.mapped_shortExact F) n₀ n₁ h
 
 omit [HasInjectiveResolutions C] in
-/-- Exactness at the homology level, by the homology long exact sequence. -/
+/-- Let `C` be abelian and `H` be compatible injective horseshoe
+data for short exact `S : X₁ → X₂ → X₃`, with degreewise split
+resolution diagram `I₁ → I₂ → I₃`. Let `D` be abelian and `F : C → D` additive. For `n₁=n₀+1`, the five-arrow cohomology window of the mapped
+horseshoe is exact. Its middle map is the cohomology connecting morphism
+from `H^n₀F(I₃)` to `H^n₁F(I₁)`. -/
 lemma HorseshoeData.homologySequence_exact (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
     (H.homologySequence F n₀ n₁ h).Exact :=
   HomologySequence.composableArrows₅_exact (H.mapped_shortExact F) n₀ n₁ h
 
-/-- The five-arrow window of the long exact sequence in `rightDerived` terms:
-`Rⁿ⁰F X₁ ⟶ Rⁿ⁰F X₂ ⟶ Rⁿ⁰F X₃ ⟶ Rⁿ¹F X₁ ⟶ Rⁿ¹F X₂ ⟶ Rⁿ¹F X₃`. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, and `H` compatible injective horseshoe data
+for short exact `S : X₁ → X₂ → X₃`. For `n₁=n₀+1`, the derived long sequence has the window
+`R^n₀F(X₁) → R^n₀F(X₂) → R^n₀F(X₃) → R^n₁F(X₁) →
+R^n₁F(X₂) → R^n₁F(X₃)`. -/
 noncomputable def HorseshoeData.longSequence (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
     ComposableArrows D 5 :=
@@ -162,8 +200,11 @@ noncomputable def HorseshoeData.longSequence (H : HorseshoeData S hS)
     (H.delta F n₀ n₁ h) ((F.rightDerived n₁).map S.f)
     ((F.rightDerived n₁).map S.g)
 
-/-- Comparison isomorphism between the homology-level and `rightDerived`
-five-arrow windows. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, and `H` compatible injective horseshoe data
+for short exact `S : X₁ → X₂ → X₃`. For `n₁=n₀+1`, the three resolution comparisons in both
+degrees give an isomorphism from the five-arrow cohomology window of
+`F(I₁) → F(I₂) → F(I₃)` to its right-derived window. -/
 noncomputable def HorseshoeData.sequenceIso (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
     H.homologySequence F n₀ n₁ h ≅ H.longSequence F n₀ n₁ h := by
@@ -211,44 +252,76 @@ noncomputable def HorseshoeData.sequenceIso (H : HorseshoeData S hS)
     exact (CommSq.horiz_inv (f := H.res₂.isoRightDerivedObj F n₁)
       (i := H.res₃.isoRightDerivedObj F n₁) ⟨hnat.symm⟩).w.symm
 
-/-- Exactness of the five-arrow window in `rightDerived` terms. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, and `H` compatible injective horseshoe data
+for short exact `S : X₁ → X₂ → X₃`. For `n₁=n₀+1`, its five-arrow window in right-derived terms
+is exact, by transport of the cohomology long exact sequence. -/
 lemma HorseshoeData.longSequence_exact (H : HorseshoeData S hS)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
     (H.longSequence F n₀ n₁ h).Exact :=
   ComposableArrows.exact_of_iso (H.sequenceIso F n₀ n₁ h)
     (H.homologySequence_exact F n₀ n₁ h)
 
-/-- A morphism of horseshoe data over a morphism `α` of short exact
-sequences: lifts of the three components commuting with the resolution
-maps. -/
+/-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, a morphism of data consists of three cochain lifts of the
+components of `α`, preserving their coaugmentations and commuting
+with both resolution-sequence maps. -/
 @[ext]
 structure HorseshoeData.Hom {S₁ S₂ : ShortComplex C}
     {hS₁ : S₁.ShortExact} {hS₂ : S₂.ShortExact}
     (H₁ : HorseshoeData S₁ hS₁) (H₂ : HorseshoeData S₂ hS₂)
     (α : S₁ ⟶ S₂) where
-  /-- Lift of `α.τ₁` to the left resolutions -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the left component is a cochain map `ψ₁ : I₁ → I₁′`
+lifting the map `α₁ : S₁.X₁ → S₂.X₁`. -/
   ψ₁ : H₁.res₁.cocomplex ⟶ H₂.res₁.cocomplex
-  /-- Lift of `α.τ₂` to the middle resolutions -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the middle component is a cochain map `ψ₂ : I₂ → I₂′`
+lifting the map `α₂ : S₁.X₂ → S₂.X₂`. -/
   ψ₂ : H₁.res₂.cocomplex ⟶ H₂.res₂.cocomplex
-  /-- Lift of `α.τ₃` to the right resolutions -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the right component is a cochain map `ψ₃ : I₃ → I₃′`
+lifting the map `α₃ : S₁.X₃ → S₂.X₃`. -/
   ψ₃ : H₁.res₃.cocomplex ⟶ H₂.res₃.cocomplex
-  /-- `ψ₁` lifts `α.τ₁` through the augmentations -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the left cochain lift satisfies the degree-zero equation
+`ι₁⁰ ≫ ψ₁⁰ = α₁ ≫ ι₁′⁰`. -/
   lift₁ : H₁.res₁.ι.f 0 ≫ ψ₁.f 0 = α.τ₁ ≫ H₂.res₁.ι.f 0
-  /-- `ψ₂` lifts `α.τ₂` through the augmentations -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the middle cochain lift satisfies the degree-zero equation
+`ι₂⁰ ≫ ψ₂⁰ = α₂ ≫ ι₂′⁰`. -/
   lift₂ : H₁.res₂.ι.f 0 ≫ ψ₂.f 0 = α.τ₂ ≫ H₂.res₂.ι.f 0
-  /-- `ψ₃` lifts `α.τ₃` through the augmentations -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the right cochain lift satisfies the degree-zero equation
+`ι₃⁰ ≫ ψ₃⁰ = α₃ ≫ ι₃′⁰`. -/
   lift₃ : H₁.res₃.ι.f 0 ≫ ψ₃.f 0 = α.τ₃ ≫ H₂.res₃.ι.f 0
-  /-- Compatibility with the left resolution maps -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the component lifts satisfy the cochain square
+`H₁.φ_f ≫ ψ₂ = ψ₁ ≫ H₂.φ_f`. -/
   comm_φf : H₁.φf ≫ ψ₂ = ψ₁ ≫ H₂.φf
-  /-- Compatibility with the right resolution maps -/
+  /-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, the component lifts satisfy the cochain square
+`H₁.φ_g ≫ ψ₃ = ψ₂ ≫ H₂.φ_g`. -/
   comm_φg : H₁.φg ≫ ψ₃ = ψ₂ ≫ H₂.φg
 
 variable {S₁ S₂ : ShortComplex C} {hS₁ : S₁.ShortExact} {hS₂ : S₂.ShortExact}
   {H₁ : HorseshoeData S₁ hS₁} {H₂ : HorseshoeData S₂ hS₂}
   {α : S₁ ⟶ S₂}
 
-/-- The induced morphism between the mapped short exact sequences of
-complexes. -/
+/-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, an additive `F : C → D` into an abelian category maps the
+three cochain components to a morphism between the short exact
+mapped horseshoe diagrams. -/
 noncomputable def HorseshoeData.Hom.mappedHom
     (e : HorseshoeData.Hom H₁ H₂ α)
     (F : C ⥤ D) [F.Additive] : (H₁.mapped F) ⟶ (H₂.mapped F) := by
@@ -267,7 +340,11 @@ noncomputable def HorseshoeData.Hom.mappedHom
         (F.mapHomologicalComplex (ComplexShape.up ℕ)).map e.ψ₃
     rw [← Functor.map_comp, ← Functor.map_comp, e.comm_φg]
 
-/-- Naturality of the connecting morphism in morphisms of horseshoe data. -/
+/-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, with `C` admitting injective resolutions and additive
+`F : C → D` into abelian `D`, its boundary squares satisfy
+`δ_H₁ ≫ R^n₁F(α₁) = R^n₀F(α₃) ≫ δ_H₂` for `n₁=n₀+1`. -/
 lemma HorseshoeData.Hom.delta_naturality
     (e : HorseshoeData.Hom H₁ H₂ α)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
@@ -349,8 +426,12 @@ lemma HorseshoeData.Hom.delta_naturality
         ((H₂.mapped_shortExact F).δ n₀ n₁ h ≫
           (H₂.res₁.isoRightDerivedObj F n₁).inv)
 
-/-- The induced morphism between the long exact sequences. On each object it
-is `(F.rightDerived _).map` applied to the corresponding component of `α`. -/
+/-- For two compatible injective horseshoe data `H₁,H₂` in an
+abelian category `C` over short exact sequences `S₁,S₂` and a
+sequence map `α : S₁ → S₂`, with `C` admitting injective resolutions and additive
+`F : C → D` into abelian `D`, the induced morphism between the
+five-arrow derived windows has component `R^nF(α_k)` at each
+endpoint and degree. -/
 noncomputable def HorseshoeData.Hom.longSequenceHom
     (e : HorseshoeData.Hom H₁ H₂ α)
     (F : C ⥤ D) [F.Additive] (n₀ n₁ : ℕ) (h : n₀ + 1 = n₁) :
@@ -380,9 +461,10 @@ section Endpoints
 variable (S : ShortComplex C) (hS : S.ShortExact)
   (I₁ : InjectiveResolution S.X₁) (I₃ : InjectiveResolution S.X₃)
 
-/-- Compatible resolution data from the injective horseshoe with prescribed
-endpoint resolutions. Its middle resolution and its two cochain maps are
-the existing horseshoe data without any replacement or comparison choices. -/
+/-- In an abelian category `C`, let `S : X₁ → X₂ → X₃` be short exact
+and fix injective resolutions `I₁,I₃` of its endpoints. The injective
+horseshoe construction supplies compatible data with those endpoint
+resolutions, a middle resolution of `X₂`, and split degree rows. -/
 noncomputable def HorseshoeData.ofEndpoints : HorseshoeData S hS where
   res₁ := I₁
   res₂ := (InjectiveResolution.horseshoe (hS := hS) (I₁ := I₁) (I₃ := I₃)).middle

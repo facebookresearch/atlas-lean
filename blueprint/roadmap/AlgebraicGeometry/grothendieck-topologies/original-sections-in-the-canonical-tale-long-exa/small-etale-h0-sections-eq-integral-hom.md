@@ -1,3 +1,6 @@
-# Small Etale H0 Sections eq integral Hom Terminal
+# Degree zero section coordinate is evaluation of the integral sheaf map
 
-This is exactly A's original integral-generator identification.
+Degree zero section coordinate is evaluation of the integral sheaf map.
+
+Under the Ext-zero-to-Hom equivalence, the terminal-section coordinate equals evaluation of
+the corresponding integral-sheaf morphism.

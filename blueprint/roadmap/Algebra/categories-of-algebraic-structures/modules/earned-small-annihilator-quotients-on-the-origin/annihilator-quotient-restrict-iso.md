@@ -1,4 +1,6 @@
-# Annihilator Quotient Restrict Iso
+# Restriction of the quotient action gives the same module
 
-The native restriction of the actual descended action has the original carrier
-and original R scalar values; both identity components are earned directly.
+Restriction of the quotient action gives the same module.
+
+For `I ≤ ann(M)`, restrict the descended `R ⧸ I`-module along `R → R ⧸ I`. It is isomorphic to
+`ModuleCat.of R M` on the same carrier.

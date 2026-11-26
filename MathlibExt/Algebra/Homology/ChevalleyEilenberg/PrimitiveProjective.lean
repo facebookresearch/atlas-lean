@@ -15,14 +15,15 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.PrimitiveFree
 public import MathlibExt.LinearAlgebra.ExteriorAlgebra.PrimitiveProjective
 
 /-!
-# Primitive chains for projective Lie carriers
+# Primitive CE chains of a projective Lie module
 
-For a Lie algebra whose underlying module over a commutative ring is projective, homogeneous
-primitive chains vanish outside degree one and the primitive differential is zero. The
-primitive complex is isomorphic to the Lie carrier concentrated in degree one.
+For an R-Lie algebra L projective as a module over a commutative ring, homogeneous primitive
+chains vanish outside degree one. The restricted primitive differential is zero, and the
+primitive complex is isomorphic to the lifted Lie carrier concentrated in degree one.
 
-The categorical carrier uses the corresponding universe lift, and the construction agrees with
-the free-carrier specialization.
+The isomorphism uses the primitive-one coordinate in degree one and the unique comparison of
+zero objects elsewhere. Under freeness it equals the free-module comparison. These results
+apply over every commutative ring.
 -/
 
 @[expose] public section
@@ -38,7 +39,9 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- The homogeneous primitive submodule vanishes outside degree one on a projective module. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. For n : ℕ with n ≠ 1, primitiveDegree R L n = ⊥. -/
 theorem primitiveDegree_eq_bot_of_projective [Module.Projective R L] (n : ℕ) (hn : n ≠ 1) :
     primitiveDegree R L n = ⊥ := by
   apply le_antisymm
@@ -48,7 +51,9 @@ theorem primitiveDegree_eq_bot_of_projective [Module.Projective R L] (n : ℕ) (
     simpa only [h] using (⊥ : Submodule R (⋀[R]^n L)).zero_mem
   · exact bot_le
 
-/-- Every primitive component outside degree one is zero on a projective module. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. For n ≠ 1 and a : P.X n, one has a = 0. -/
 theorem nativePrimitiveDegree_eq_zero_of_projective [Module.Projective R L]
     (n : ℕ) (hn : n ≠ 1) (a : (nativePrimitiveComplex R L).X n) : a = 0 := by
   apply (nativePrimitiveDegreeEquiv R L n).injective
@@ -59,7 +64,9 @@ theorem nativePrimitiveDegree_eq_zero_of_projective [Module.Projective R L]
       ((mem_primitiveDegree R L n _).mp (nativePrimitiveDegreeEquiv R L n a).property)
   simpa only [map_zero] using h
 
-/-- The component is a zero object in every other degree. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. For n ≠ 1, IsZero (P.X n) holds. -/
 theorem isZero_nativePrimitiveDegree_of_projective [Module.Projective R L]
     (n : ℕ) (hn : n ≠ 1) : IsZero ((nativePrimitiveComplex R L).X n) := by
   letI : Subsingleton ((nativePrimitiveComplex R L).X n) :=
@@ -67,7 +74,9 @@ theorem isZero_nativePrimitiveDegree_of_projective [Module.Projective R L]
       (nativePrimitiveDegree_eq_zero_of_projective R L n hn b).symm⟩
   exact ModuleCat.isZero_of_subsingleton _
 
-/-- The restricted primitive differential is zero for projective underlying modules. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. For every n : ℕ, primitiveDifferential R L n = 0. -/
 theorem primitiveDifferential_eq_zero_of_projective [Module.Projective R L] (n : ℕ) :
     primitiveDifferential R L n = 0 := by
   cases n with
@@ -81,7 +90,9 @@ theorem primitiveDifferential_eq_zero_of_projective [Module.Projective R L] (n :
           (by omega) a.1 ((mem_primitiveDegree R L ((n + 1) + 1) a.1).mp a.2)
       rw [ha, map_zero, LinearMap.zero_apply]
 
-/-- The primitive differential vanishes on every adjacent pair of degrees. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. For n : ℕ, P.d (n + 1) n = 0. -/
 theorem nativePrimitiveComplex_d_succ_zero_of_projective [Module.Projective R L] (n : ℕ) :
     (nativePrimitiveComplex R L).d (n + 1) n = 0 := by
   let e := (HomologicalComplex.eval (ModuleCat.{max u v} R) (ComplexShape.down ℕ) n).mapIso
@@ -94,7 +105,9 @@ theorem nativePrimitiveComplex_d_succ_zero_of_projective [Module.Projective R L]
   have hZero := congrArg (fun d => (nativePrimitiveCoordinateIso R L).hom.f (n + 1) ≫ d) hd
   exact (hc.symm.trans (hZero.trans comp_zero)).trans (zero_comp).symm
 
-/-- Every primitive differential is zero on a projective module. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. For all i,j : ℕ, P.d i j = 0. -/
 theorem nativePrimitiveComplex_d_eq_zero_of_projective [Module.Projective R L] (i j : ℕ) :
     (nativePrimitiveComplex R L).d i j = 0 := by
   by_cases h : j + 1 = i
@@ -102,7 +115,11 @@ theorem nativePrimitiveComplex_d_eq_zero_of_projective [Module.Projective R L] (
     exact nativePrimitiveComplex_d_succ_zero_of_projective R L j
   · exact (nativePrimitiveComplex R L).shape i j h
 
-/-- The degree-one coordinate and zero objects supply the singleton components. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. nativePrimitiveProjectiveDegreeIso n identifies P.X n
+with (primitiveSingle R L).X n. At n = 1 it uses nativePrimitiveOneIso and the single-object
+coordinate, and elsewhere both objects are zero. -/
 def nativePrimitiveProjectiveDegreeIso [Module.Projective R L] (n : ℕ) :
     (nativePrimitiveComplex R L).X n ≅ (primitiveSingle R L).X n := by
   by_cases h : n = 1
@@ -114,8 +131,11 @@ def nativePrimitiveProjectiveDegreeIso [Module.Projective R L] (n : ℕ) :
       (HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 1
         (ModuleCat.of R (ULift.{u} L)) n h)
 
-/-- The primitive complex of a projective Lie module is its carrier in degree one, in every
-characteristic and with the universe comparison. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. nativePrimitiveSingleIsoOfProjective : P ≅
+primitiveSingle R L is the chain isomorphism with components
+nativePrimitiveProjectiveDegreeIso. -/
 def nativePrimitiveSingleIsoOfProjective [Module.Projective R L] :
     nativePrimitiveComplex R L ≅ primitiveSingle R L :=
   HomologicalComplex.Hom.isoOfComponents (nativePrimitiveProjectiveDegreeIso R L)
@@ -123,7 +143,11 @@ def nativePrimitiveSingleIsoOfProjective [Module.Projective R L] :
       simp only [primitiveSingle, HomologicalComplex.single_obj_d,
         nativePrimitiveComplex_d_eq_zero_of_projective, comp_zero, zero_comp])
 
-/-- The projective comparison has exactly the degree-one coordinate. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. Its degree-one forward component is
+nativePrimitiveOneIso.hom followed by the inverse single-object self coordinate into
+(primitiveSingle R L).X 1. -/
 theorem nativePrimitiveSingleIsoOfProjective_hom_f_one [Module.Projective R L] :
     (nativePrimitiveSingleIsoOfProjective R L).hom.f 1 =
       (nativePrimitiveOneIso R L).hom ≫
@@ -134,7 +158,10 @@ theorem nativePrimitiveSingleIsoOfProjective_hom_f_one [Module.Projective R L] :
     Iso.trans_hom, Iso.symm_hom]
   rfl
 
-/-- The projective theorem preserves the free specialization as the same isomorphism. -/
+/-- Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. If Module.Free R L holds, nativePrimitiveSingleIsoOfProjective R L =
+nativePrimitiveSingleIso R L as chain-complex isomorphisms. -/
 theorem nativePrimitiveSingleIsoOfProjective_eq_of_free [Module.Free R L] :
     nativePrimitiveSingleIsoOfProjective R L = nativePrimitiveSingleIso R L := by
   apply Iso.ext

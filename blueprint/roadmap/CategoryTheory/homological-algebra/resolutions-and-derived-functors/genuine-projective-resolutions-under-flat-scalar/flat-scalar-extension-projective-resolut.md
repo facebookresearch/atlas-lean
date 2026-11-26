@@ -1,4 +1,6 @@
-# Flat Scalar Extension Projective Resolution
+# Flat scalar extension gives the projective resolution of the extended module
 
-Flat scalar extension of the original projective resolution, through
-the real scalar-extension adjunction and exact functor.
+For commutative rings R,S with S flat over R and
+M∈ModuleCat^Γ(R), a projective resolution P of M maps to
+a projective resolution of S⊗[R]M.
+Here Γ=max(u,v,w), with independent ring and carrier heights.

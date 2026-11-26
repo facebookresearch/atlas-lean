@@ -1,4 +1,5 @@
-# Horizontal Filtered Total DComplex
+# The differential between finite filtered-complex terms
 
-The filtered total differential with both objects displayed through the
-bundled filtered complex.
+The differential between finite filtered-complex terms.
+
+For stage `k`, use its filtered total differential from total degree `n` to degree `m`.

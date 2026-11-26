@@ -1,5 +1,5 @@
 # Triple tensor products of homological complexes
 
-- [ΙTensor Obj₃Left](tensor-obj-left.md)
-- [ΙTensor Obj₃Right](tensor-obj-right.md)
-- [ΙTensor Obj₃Right associator inv](tensor-obj-right-associator-inv.md)
+- [The homogeneous inclusion into a left-associated triple tensor](tensor-obj-left.md)
+- [The homogeneous inclusion into a right-associated triple tensor](tensor-obj-right.md)
+- [The inverse associator commutes with a tridegree inclusion](tensor-obj-right-associator-inv.md)

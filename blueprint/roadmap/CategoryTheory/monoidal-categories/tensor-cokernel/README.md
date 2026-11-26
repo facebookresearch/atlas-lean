@@ -2,21 +2,21 @@
 
 ## Cokernel Cofork
 
-- [Tensor hom ext](tensor-hom-ext.md)
-- [Epi tensor π](epi-tensor.md)
-- [Tensor Desc](tensor-desc.md)
-- [Tensor π desc](tensor-desc-2.md)
-- [Tensor Desc unique](tensor-desc-unique.md)
-- [Tensor Desc comp](tensor-desc-comp.md)
-- [Tensor Desc naturality](tensor-desc-naturality.md)
-- [Tensor Iso](tensor-iso.md)
-- [Tensor π comp tensor Iso hom](tensor-comp-tensor-iso-hom.md)
-- [Π comp tensor Iso inv](comp-tensor-iso-inv.md)
+- [Maps determined by two tensor quotient projections](tensor-hom-ext.md)
+- [The tensor quotient projection is epic](epi-tensor.md)
+- [Descent through two tensor cokernel presentations](tensor-desc.md)
+- [Value of descent after the tensor quotient map](tensor-desc-2.md)
+- [Uniqueness of descent through tensor presentations](tensor-desc-unique.md)
+- [Postcomposition of tensor quotient descent](tensor-desc-comp.md)
+- [Naturality between tensor quotient presentations](tensor-desc-naturality.md)
+- [Tensor of presentations identifies a relation cokernel](tensor-iso.md)
+- [Forward comparison of tensor quotient projections](tensor-comp-tensor-iso-hom.md)
+- [Inverse comparison of tensor quotient projections](comp-tensor-iso-inv.md)
 
 ## Limits
 
-- [Tensor Cokernel Desc](tensor-cokernel-desc.md)
-- [Epi tensor cokernel π](epi-tensor-cokernel.md)
-- [Tensor Cokernel Desc unique](tensor-cokernel-desc-unique.md)
-- [Tensor Cokernel Desc naturality](tensor-cokernel-desc-naturality.md)
-- [Tensor Cokernel Iso](tensor-cokernel-iso.md)
+- [Descent through the tensor of chosen cokernels](tensor-cokernel-desc.md)
+- [Tensor of chosen cokernel projections is epic](epi-tensor-cokernel.md)
+- [Uniqueness after the chosen tensor quotient projections](tensor-cokernel-desc-unique.md)
+- [Naturality of descent through chosen tensor cokernels](tensor-cokernel-desc-naturality.md)
+- [Tensor cokernels as the cokernel of tensor relations](tensor-cokernel-iso.md)

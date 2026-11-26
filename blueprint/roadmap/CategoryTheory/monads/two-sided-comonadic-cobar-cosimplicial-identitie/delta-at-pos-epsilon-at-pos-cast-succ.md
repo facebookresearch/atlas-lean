@@ -1,4 +1,6 @@
-# Delta At Pos epsilon At Pos cast Succ
+# The first counit identity after a comultiplication insertion
 
-Counit cancels comultiplication at the `castSucc` position. Dual of
-`Monad.muAtPos_etaAtPos_castSucc`.
+The first counit identity after a comultiplication insertion.
+
+Comultiplication at position `i` followed by counit contraction at `i.castSucc` is the
+identity.

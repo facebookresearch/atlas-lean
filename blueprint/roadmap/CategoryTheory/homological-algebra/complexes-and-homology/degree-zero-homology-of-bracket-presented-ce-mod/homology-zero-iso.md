@@ -1,4 +1,6 @@
-# Homology Zero Iso
+# The categorical scalar isomorphism of CE homology degree zero
 
-Degree-zero homology of a bracket-presented CE model, identified with the coefficient module
-in the universe of the model's exterior powers.
+The categorical scalar isomorphism of CE homology degree zero.
+
+Degree-zero homology of a bracket-presented model is isomorphic to the lifted regular
+coefficient module.

@@ -13,11 +13,13 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.ShortExact
 public import Mathlib.Algebra.Homology.HomotopyCategory.Triangulated
 
 /-!
-# Mapping-cone composition and short-complex quotients
+# Cone-composition boundaries and short-complex descendants
 
-Composing the third morphism of a mapping-cone composition triangle with the
-shift of the canonical cone-to-quotient map replaces the shifted cone
-inclusion by the shifted quotient map.
+For a short complex `S : K → L → M` of integer cochains in an
+abelian category and any `g : L → X`, composing the third map of
+the cone composition triangle with the shifted descendant
+`Cone(S.f)[1] → M[1]` gives the ordinary cone boundary for `g`
+followed by `S.g[1]`. No exactness of the short complex is required.
 -/
 
 @[expose] public section
@@ -36,8 +38,11 @@ namespace CochainComplex.mappingCone
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The mapping-cone composition connecting morphism, followed by the
-canonical cone-to-quotient map of a short complex. -/
+/-- In an abelian category `C`, let `S : K → L → M` be a short
+complex of integer cochains and `g : L → X`. The third map of
+`mappingConeCompTriangle(S.f,g)`, followed by the descendant
+`Cone(S.f) → M` shifted by one, equals the third map of the cone
+triangle of `g` followed by `S.g[1]`. -/
 @[reassoc]
 theorem mappingConeCompTriangle_mor₃_comp_descShortComplex_shift
     (S : ShortComplex (CochainComplex C ℤ))

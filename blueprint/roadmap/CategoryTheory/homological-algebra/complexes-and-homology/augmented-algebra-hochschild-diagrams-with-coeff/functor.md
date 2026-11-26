@@ -1,3 +1,6 @@
-# Functor
+# The augmented Hochschild functor with module coefficients
 
-The original coefficient/algebra Hochschild functor for arbitrary M.
+The augmented Hochschild functor with module coefficients.
+
+For fixed `B` and `M`, this functor sends `P → B` to its Hochschild complex with coefficient
+action through `P → B`.

@@ -1,3 +1,6 @@
-# Higher Ground Functor map
+# The morphism formula for higher ground cotangent modules
 
-The ground-level operator is native restriction of the same cotangent morphism.
+The morphism formula for higher ground cotangent modules.
+
+For `f : P → Q` over `B`, the weight-`q` map is restriction of the higher cotangent map
+induced by `f`.

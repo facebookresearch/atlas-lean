@@ -1,3 +1,6 @@
-# Vertical Homology Complex Map Of Shapes
+# Map of shape-generic vertical-homology complexes
 
-The map between vertical-homology complexes induced by a bicomplex map.
+Let `C` have zero morphisms and chosen homology, and
+`f : K → L` be a map of bicomplexes of independent shapes `c₁,c₂`.
+For `q : I₂`, row homology gives a map between their horizontal
+vertical-homology complexes.

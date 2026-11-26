@@ -2,20 +2,20 @@
 
 ## Algebra
 
-- [Canonical Stable Matrix Coefficient Alg Hom](canonical-stable-matrix-coefficient-alg.md)
-- [Canonical Stable Matrix Coefficient Alg Hom inclusion](canonical-stable-matrix-coefficient-alg-2.md)
-- [Canonical Stable Matrix Coefficient Alg Hom id](canonical-stable-matrix-coefficient-alg-3.md)
-- [Canonical Stable Matrix Coefficient Alg Hom comp](canonical-stable-matrix-coefficient-alg-4.md)
-- [Canonical Stable Matrix Coefficient Lie Hom](canonical-stable-matrix-coefficient-lie.md)
-- [Canonical Stable Matrix Coefficient Lie Hom inclusion](canonical-stable-matrix-coefficient-lie-2.md)
+- [An algebra map descends to the stable nonunital matrix algebra](canonical-stable-matrix-coefficient-alg.md)
+- [The stable algebra coefficient map retains every finite matrix value](canonical-stable-matrix-coefficient-alg-2.md)
+- [The identity algebra map induces the identity stable matrix map](canonical-stable-matrix-coefficient-alg-3.md)
+- [Stable matrix coefficient maps preserve algebra-map composition](canonical-stable-matrix-coefficient-alg-4.md)
+- [The stable coefficient map is a commutator Lie map](canonical-stable-matrix-coefficient-lie.md)
+- [The stable Lie coefficient map commutes with finite Lie inclusions](canonical-stable-matrix-coefficient-lie-2.md)
 
 ## Complex
 
-- [Canonical Stable Matrix Coefficient CEMap](canonical-stable-matrix-coefficient-cema.md)
-- [Canonical Stable Matrix Coefficient CEMap inclusion](canonical-stable-matrix-coefficient-cema-2.md)
-- [Canonical Stable Matrix CEIso naturality](canonical-stable-matrix-ceiso-naturality.md)
-- [Canonical Stable Matrix CEIso inv naturality](canonical-stable-matrix-ceiso-inv-natura.md)
+- [The CE map of a stable coefficient Lie homomorphism](canonical-stable-matrix-coefficient-cema.md)
+- [Finite CE coefficient maps commute with stable CE inclusions](canonical-stable-matrix-coefficient-cema-2.md)
+- [The finite-to-stable CE isomorphism is coefficient-natural](canonical-stable-matrix-ceiso-naturality.md)
+- [The inverse finite-to-stable CE isomorphism is coefficient-natural](canonical-stable-matrix-ceiso-inv-natura.md)
 
 ## Rational
 
-- [Canonical Stable Matrix Cyclic Homology Map naturality](canonical-stable-matrix-cyclic-homology.md)
+- [The stable Lie-to-cyclic homology map is coefficient-natural](canonical-stable-matrix-cyclic-homology.md)

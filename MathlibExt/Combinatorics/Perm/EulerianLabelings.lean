@@ -13,14 +13,19 @@ public import MathlibExt.Combinatorics.Perm.EulerianCuts
 public import MathlibExt.Data.Sym.SortedTuple
 
 /-!
-# Actual descent-compatible labelings and stable-sort fibers
+# Descent labelings and stable sorting fibers
 
-The original finite descent prefix counts the required rises before a
-letter. Subtracting that prefix gives a monotone labeling in the
-smaller original alphabet, and adding it gives the inverse. Native sorting
-characterizes the original stable-sort fiber. The cardinality is therefore
-the original descent-binomial count, including the empty-alphabet cases.
-No stable-sort fiber count or Eulerian composition law is supplied.
+For `σ ∈ S_N`, define the descent prefix `r_i` to be the number of descent positions before
+`i`. A descent labeling is nondecreasing and rises strictly at every descent of `σ`.
+
+For positive length `N` and alphabet size `m>d`, subtracting `r_i` from a descent labeling
+gives a nondecreasing labeling in `Fin(m-d)`; adding `r_i` gives the inverse. The number of
+such labelings is `choose(N+m-1-d,N)`.
+
+The stable-sort fiber `sort f = σ` is equivalent to descent labelings by `f ↦ f ∘ σ`, with
+inverse `g ↦ g ∘ σ⁻¹`.
+
+Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 3.
 -/
 
 @[expose] public section
@@ -30,21 +35,29 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- The original number of actual descent positions before the original letter. -/
+/-- Let `N : ℕ`, `σ ∈ S_N`, and `Des(σ)` be its adjacent descent positions. Put `d = descentNumber
+σ` and `r_i = |{j ∈ Des(σ) | j<i}|`. A descent labeling in alphabet `Fin m` is a nondecreasing
+`g : Fin N → Fin m` with `g(j)<g(j+1)` at each descent. For `i : Fin N`, `descentPrefix σ i =
+r_i` counts descent positions strictly before `i`. -/
 def descentPrefix {n : ℕ} (σ : Perm (Fin n)) (i : Fin n) : ℕ :=
   ((descentPositions σ).filter (fun j => j.val < i.val)).card
 
-/-- An actual weak labeling whose actual adjacent descents require strict rises. -/
+/-- Let `N : ℕ`, `σ ∈ S_N`, and `Des(σ)` be its adjacent descent positions. Put `d = descentNumber
+σ` and `r_i = |{j ∈ Des(σ) | j<i}|`. A descent labeling in alphabet `Fin m` is a nondecreasing
+`g : Fin N → Fin m` with `g(j)<g(j+1)` at each descent. `DescentLabeling σ m` is the subtype
+of labelings with these monotonicity and strict-descent-rise conditions. -/
 abbrev DescentLabeling {n : ℕ} (σ : Perm (Fin n)) (m : ℕ) :=
   {g : Fin n → Fin m // Monotone g ∧
     ∀ (j : Fin n) (h : j.val + 1 < n),
       j ∈ descentPositions σ → g j < g ⟨j.val + 1, h⟩}
 
-/-- The actual descent prefix before the first original letter is zero. -/
+/-- For `n : ℕ` and `σ ∈ S_(n+1)`, `descentPrefix σ 0 = 0` because no descent position precedes
+the first position. -/
 theorem descentPrefix_zero {n : ℕ} (σ : Perm (Fin (n + 1))) : descentPrefix σ 0 = 0 := by
   simp [descentPrefix]
 
-/-- The actual prefix rises by one precisely at an original adjacent descent. -/
+/-- For `n : ℕ`, `σ ∈ S_(n+1)`, and `i : Fin n`, the prefixes satisfy `r_(i.succ) = r_(i.castSucc)
++ (if i.castSucc ∈ Des(σ) then 1 else 0)`. -/
 theorem descentPrefix_succ {n : ℕ} (σ : Perm (Fin (n + 1))) (i : Fin n) :
     descentPrefix σ i.succ = descentPrefix σ i.castSucc +
       if i.castSucc ∈ descentPositions σ then 1 else 0 := by
@@ -102,7 +115,10 @@ theorem descentPrefix_succ {n : ℕ} (σ : Perm (Fin (n + 1))) (i : Fin n) :
   · simp only [ite_eq_left hi, Finset.card_insert_of_notMem hnot]
   · simp only [ite_eq_right hi, Nat.add_zero]
 
-/-- The actual descent prefixes are monotone in the original letter order. -/
+/-- Let `N : ℕ`, `σ ∈ S_N`, and `Des(σ)` be its adjacent descent positions. Put `d = descentNumber
+σ` and `r_i = |{j ∈ Des(σ) | j<i}|`. A descent labeling in alphabet `Fin m` is a nondecreasing
+`g : Fin N → Fin m` with `g(j)<g(j+1)` at each descent. The natural-number function `i ↦
+descentPrefix σ i` is monotone on `Fin N`. -/
 theorem descentPrefix_monotone {n : ℕ} (σ : Perm (Fin n)) : Monotone (descentPrefix σ) := by
   intro i j hij
   apply Finset.card_le_card
@@ -110,7 +126,8 @@ theorem descentPrefix_monotone {n : ℕ} (σ : Perm (Fin n)) : Monotone (descent
   obtain ⟨hx, hlt⟩ := Finset.mem_filter.mp hx
   exact Finset.mem_filter.mpr ⟨hx, lt_of_lt_of_le hlt hij⟩
 
-/-- Before the last letter the actual prefix contains every original descent. -/
+/-- For `n : ℕ` and `σ ∈ S_(n+1)`, the prefix before the last position is `descentPrefix σ
+(Fin.last n) = descentNumber σ`. -/
 theorem descentPrefix_last {n : ℕ} (σ : Perm (Fin (n + 1))) :
     descentPrefix σ (Fin.last n) = descentNumber σ := by
   unfold descentPrefix descentNumber
@@ -121,7 +138,8 @@ theorem descentPrefix_last {n : ℕ} (σ : Perm (Fin (n + 1))) :
   simp only [Fin.val_last]
   omega
 
-/-- Every actual descent labeling contains all required rises before each original letter. -/
+/-- Let `n,m : ℕ`, `σ ∈ S_(n+1)`, and `g : DescentLabeling σ m`. For every position `i :
+Fin(n+1)`, `descentPrefix σ i ≤ (g i).val`. -/
 theorem descentPrefix_le_label {n m : ℕ} (σ : Perm (Fin (n + 1)))
     (g : DescentLabeling σ m) (i : Fin (n + 1)) : descentPrefix σ i ≤ (g.val i).val := by
   induction i using Fin.induction with
@@ -142,7 +160,8 @@ theorem descentPrefix_le_label {n m : ℕ} (σ : Perm (Fin (n + 1)))
       have h : (g.val i.castSucc).val ≤ (g.val i.succ).val := g.property.1 hindex
       exact hi.trans h
 
-/-- Subtracting the actual descent prefix gives an actual weak monotone integer labeling. -/
+/-- Let `n,m : ℕ`, `σ ∈ S_(n+1)`, and `g : DescentLabeling σ m`. The natural-number function `i ↦
+(g i).val - descentPrefix σ i` is monotone, with subtraction in `ℕ`. -/
 theorem label_sub_descentPrefix_monotone {n m : ℕ} (σ : Perm (Fin (n + 1)))
     (g : DescentLabeling σ m) : Monotone (fun i => (g.val i).val - descentPrefix σ i) := by
   apply Fin.monotone_iff_le_succ.mpr
@@ -166,14 +185,17 @@ theorem label_sub_descentPrefix_monotone {n m : ℕ} (σ : Perm (Fin (n + 1)))
     have hg : (g.val i.castSucc).val ≤ (g.val i.succ).val := g.property.1 hindex
     omega
 
-/-- A nonempty actual descent labeling requires a strictly larger alphabet than the actual descent count. -/
+/-- For `n,m : ℕ`, `σ ∈ S_(n+1)`, and any `g : DescentLabeling σ m`, `descentNumber σ < m`. The
+positive word length forces room for every required strict rise. -/
 theorem descentNumber_lt_labelAlphabet {n m : ℕ} (σ : Perm (Fin (n + 1)))
     (g : DescentLabeling σ m) : descentNumber σ < m := by
   have h := descentPrefix_le_label σ g (Fin.last n)
   rw [descentPrefix_last] at h
   exact h.trans_lt (g.val (Fin.last n)).isLt
 
-/-- Subtracting the actual required rises and adding them back gives a labeling equivalence. -/
+/-- Let `n,m : ℕ`, `σ ∈ S_(n+1)`, and `d = descentNumber σ < m`. There is an equivalence
+`DescentLabeling σ m ≃ {h : Fin(n+1) → Fin(m-d) // Monotone h}`. It sends `g_i` to the finite
+index with value `g_i.val - descentPrefix σ i`; its inverse adds the same prefix. -/
 def descentLabelingEquivMonotone {n : ℕ} (σ : Perm (Fin (n + 1))) (m : ℕ)
     (hm : descentNumber σ < m) :
     DescentLabeling σ m ≃ {g : Fin (n + 1) → Fin (m - descentNumber σ) // Monotone g} where
@@ -220,7 +242,9 @@ def descentLabelingEquivMonotone {n : ℕ} (σ : Perm (Fin (n + 1))) (m : ℕ)
     change (g.val i).val + descentPrefix σ i - descentPrefix σ i = (g.val i).val
     exact Nat.add_sub_cancel _ _
 
-/-- The original compatible descent labelings have the descent-binomial cardinality. -/
+/-- For `n,m : ℕ` and `σ ∈ S_(n+1)`, writing `d = descentNumber σ`, `Fintype.card (DescentLabeling
+σ m) = Nat.choose (n+m-d) (n+1)`. This includes the empty-labeling cases when the alphabet has
+too few labels. -/
 theorem card_descentLabeling {n : ℕ} (σ : Perm (Fin (n + 1))) (m : ℕ) :
     Fintype.card (DescentLabeling σ m) = (n + m - descentNumber σ).choose (n + 1) := by
   classical
@@ -232,7 +256,9 @@ theorem card_descentLabeling {n : ℕ} (σ : Perm (Fin (n + 1))) (m : ℕ) :
       ⟨fun g => hm (descentNumber_lt_labelAlphabet σ g)⟩
     rw [Fintype.card_of_isEmpty, Nat.choose_eq_zero_of_lt (by omega)]
 
-/-- The native stable sorting of an original labeling has strict rises at its actual descents. -/
+/-- For `n,m : ℕ` and `σ ∈ S_n`, the fiber `{f : Fin n → Fin m // Tuple.sort f = σ}` is equivalent
+to `DescentLabeling σ m`. The forward map is `f ↦ f ∘ σ`; the inverse is `g ↦ g ∘ σ⁻¹`. This
+includes `n=0`. -/
 def sortFiberEquivDescentLabeling {n m : ℕ} (σ : Perm (Fin n)) :
     {f : Fin n → Fin m // Tuple.sort f = σ} ≃ DescentLabeling σ m where
   toFun f :=
@@ -295,7 +321,8 @@ def sortFiberEquivDescentLabeling {n m : ℕ} (σ : Perm (Fin n)) :
     funext i
     exact congrArg g.val (σ.symm_apply_apply i)
 
-/-- The actual native stable-sort fiber has the original descent-binomial cardinality. -/
+/-- For `n,m : ℕ` and `σ ∈ S_(n+1)`, `Fintype.card {f : Fin(n+1) → Fin m // Tuple.sort f = σ} =
+Nat.choose (n+m-descentNumber σ) (n+1)`. -/
 theorem card_sortFiber {n : ℕ} (σ : Perm (Fin (n + 1))) (m : ℕ) :
     Fintype.card {f : Fin (n + 1) → Fin m // Tuple.sort f = σ} =
       (n + m - descentNumber σ).choose (n + 1) := by

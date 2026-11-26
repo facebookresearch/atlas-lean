@@ -1,3 +1,6 @@
-# Exists of Finite
+# Finite representative of every stable matrix semimodule element
 
-Every stable matrix is represented in a finite matrix stage.
+Finite representative of every stable matrix semimodule element.
+
+Every element of `Matrix.StableModule k A` is the class of an `n × n` matrix for some natural
+`n`.

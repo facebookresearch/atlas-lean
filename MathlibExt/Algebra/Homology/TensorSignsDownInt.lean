@@ -17,8 +17,11 @@ public import Mathlib.Algebra.Homology.ComplexShapeSigns
 
 namespace ComplexShape
 
-/-- Signs for `down ℤ` (Mathlib provides `down ℕ` and `up ℤ` only):
-enables `TotalComplexShape (down ℤ) (down ℤ) (down ℤ)`. -/
+/-- For the chain-complex shape down ℤ, the tensor sign in degree p is
+ε(p) = p.negOnePow = (-1)^p, for positive and negative integers alike.
+On a summand K_p ⊗ L_q in total degree p + q, this gives the differential
+d_K ⊗ id + (-1)^p id ⊗ d_L. These signs supply the total-complex shape
+for tensoring two integer-graded chain complexes. -/
 instance : TensorSigns (down ℤ) where
   ε' := MonoidHom.mk' (fun n : Multiplicative ℤ => (n.toAdd).negOnePow)
     (fun x y => Int.negOnePow_add x.toAdd y.toAdd)

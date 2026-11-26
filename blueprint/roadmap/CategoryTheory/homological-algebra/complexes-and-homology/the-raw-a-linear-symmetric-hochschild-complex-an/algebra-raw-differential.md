@@ -1,3 +1,6 @@
-# Algebra Raw Differential
+# The A-linear Hochschild differential on coefficient tensor chains
 
-The original raw boundary as an morphism of algebra modules.
+The A-linear Hochschild differential on coefficient tensor chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, this is b : M
+⊗[k] A⊗(n+1) → M ⊗[k] A⊗n, viewed as A-linear through multiplication on M.

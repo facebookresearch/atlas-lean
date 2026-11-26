@@ -1,4 +1,6 @@
-# Small Etale Geometric Sheaf Fiber preserves Finite Limits
+# Geometric sheaf fibers preserve finite limits
 
-The actual geometric stalk functor preserves finite limits in the common
-coefficient universe.
+Geometric sheaf fibers preserve finite limits.
+
+The geometric stalk functor with additive-group coefficients in `max u w` preserves finite
+limits.

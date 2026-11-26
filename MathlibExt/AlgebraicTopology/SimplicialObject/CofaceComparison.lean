@@ -18,7 +18,17 @@ public import Mathlib.Algebra.Category.Grp.Abelian
 public import Mathlib.CategoryTheory.Monoidal.Limits.Colimits
 
 /-!
-## # Coface comparisons, alternating complexes and conditional AW pairing transport
+# Coface comparisons and alternating cochain pairings
+
+For cosimplicial objects A and B in a category C, a coface comparison consists of maps e_n : Aⁿ
+→ Bⁿ satisfying δ_i^A ≫ e_{n+1} = e_n ≫ δ_i^B. It is natural for all injective simplex maps. In
+a preadditive category these components form a map of alternating coface complexes, with
+differential ∑_i (−1)^i δ_i; degreewise isomorphisms give an isomorphism of these complexes.
+
+Coface comparisons transport front/back Alexander–Whitney pairings when the degreewise tensor
+squares commute. For cosimplicial abelian groups, signed cochain pairings given by these
+formulas induce the corresponding natural cohomology pairings. The coefficient categories of the
+functor-transport construction may have independent universes.
 -/
 
 @[expose] public section
@@ -34,19 +44,22 @@ namespace AlgebraicTopology.CosimplicialCup
 
 variable {C : Type uC} [Category.{vC} C]
 
-/--
-A comparison in every degree with the coface squares. Codegeneracy compatibility is not needed for
-the alternating complex or AW cup.
--/
+/-- Let C be a category and A,B cosimplicial objects of C. A CofaceComparison consists of maps e_n :
+Aⁿ → Bⁿ for n ∈ ℕ such that δ_i^A ≫ e_{n+1} = e_n ≫ δ_i^B for every i ∈ Fin(n+2). Compatibility
+with codegeneracies is not part of this data. -/
 structure CofaceComparison (A B : CosimplicialObject C) where
-  /-- The comparison morphism in degree `n`. -/
+  /-- Let C be a category, A,B cosimplicial objects, and e a coface comparison. For n ∈ ℕ, e.app(n) is
+its map A([n]) → B([n]) in cosimplicial degree n. -/
   app (n : ℕ) : A.obj (SimplexCategory.mk n) ⟶ B.obj (SimplexCategory.mk n)
-  /-- Every original coface commutes with the comparison. -/
+  /-- Let C be a category and e : A → B a coface comparison between cosimplicial objects. For n ∈ ℕ
+and i ∈ Fin(n+2), its coface law is δ_i^A ≫ e_{n+1} = e_n ≫ δ_i^B as maps Aⁿ → B^{n+1}. -/
   coface (n : ℕ) (i : Fin (n + 2)) :
     A.δ i ≫ app (n + 1) = app n ≫ B.δ i
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The coface squares imply naturality for every injective simplex map. -/
+/-- Let C be a category, A,B cosimplicial objects and e a coface comparison. For an injective
+simplex map f : [m] → [n], one has A(f) ≫ e_n = e_m ≫ B(f). The coface-square laws alone imply
+this naturality. -/
 theorem CofaceComparison.naturality_mono {A B : CosimplicialObject C}
     (e : CofaceComparison A B) {x y : SimplexCategory} (f : x ⟶ y) [Mono f] :
     A.map f ≫ e.app y.len = e.app x.len ≫ B.map f := by
@@ -64,7 +77,9 @@ theorem CofaceComparison.naturality_mono {A B : CosimplicialObject C}
     rw [Category.assoc, hδ, ← Category.assoc, hf, Category.assoc]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same coface comparison gives the alternating-cochain map. -/
+/-- Let C be preadditive, A,B cosimplicial objects, and e a coface comparison. Its components e_n
+form a map Alt(A) → Alt(B) of nonnegative cochain complexes, where Alt(A)^n=Aⁿ and
+d_A^n=∑_{i∈Fin(n+2)}(−1)^i δ_i^A. -/
 def CofaceComparison.alternatingMap [Preadditive C] {A B : CosimplicialObject C}
     (e : CofaceComparison A B) :
     AlternatingCofaceMapComplex.obj A ⟶ AlternatingCofaceMapComplex.obj B :=
@@ -96,10 +111,10 @@ private theorem backMono (p q n : ℕ) (h : p + q = n) :
   omega
 
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-Literal front/back AW pairing naturality follows from the coface maps and the degreewise tensor
-square.
--/
+/-- Let C be monoidal, A,A′,B,B′,D,D′ cosimplicial objects, and a,b,c coface comparisons between the
+respective pairs. Let m_n : Aⁿ⊗Bⁿ → Dⁿ and m′_n : A′ⁿ⊗B′ⁿ → D′ⁿ satisfy (a_n⊗b_n) ≫ m′_n = m_n ≫
+c_n in every degree. For p,q,n ∈ ℕ with p+q=n, the front/back pairings satisfy (a_p⊗b_q) ≫
+AW(m′)_{p,q} = AW(m)_{p,q} ≫ c_n. No coface law on m or m′ is required for this comparison. -/
 theorem awPair_cofaceComparison [MonoidalCategory C]
     {A A' B B' D D' : CosimplicialObject C}
     (a : CofaceComparison A A') (b : CofaceComparison B B')
@@ -122,20 +137,27 @@ theorem awPair_cofaceComparison [MonoidalCategory C]
   rw [← Category.assoc, tensorHom_comp_tensorHom, ← ha, ← hb,
     ← tensorHom_comp_tensorHom, Category.assoc, hm n, ← Category.assoc]
 
-/-- Coface-compatible degree isomorphisms. -/
+/-- Let C be a category and A,B cosimplicial objects. A CofaceIso consists of isomorphisms e_n : Aⁿ
+≅ Bⁿ for all n ∈ ℕ whose forward maps satisfy δ_i^A ≫ e_{n+1}.hom = e_n.hom ≫ δ_i^B for i ∈
+Fin(n+2). -/
 structure CofaceIso (A B : CosimplicialObject C) where
-  /-- The coefficient isomorphism in degree `n`. -/
+  /-- Let C be a category, A,B cosimplicial objects and e a coface-compatible isomorphism. For n ∈ ℕ,
+e.app(n) is the isomorphism A([n]) ≅ B([n]) in degree n. -/
   app (n : ℕ) : A.obj (SimplexCategory.mk n) ≅ B.obj (SimplexCategory.mk n)
-  /-- The forward isomorphisms commute with every original coface. -/
+  /-- Let C be a category and e a coface-compatible degreewise isomorphism between cosimplicial
+objects A,B. For n ∈ ℕ and i ∈ Fin(n+2), δ_i^A ≫ e_{n+1}.hom = e_n.hom ≫ δ_i^B. -/
   coface (n : ℕ) (i : Fin (n + 2)) :
     A.δ i ≫ (app (n + 1)).hom = (app n).hom ≫ B.δ i
 
-/-- The forward comparison retains the given degree isomorphisms literally. -/
+/-- Let C be a category and e a coface-compatible degreewise isomorphism A ≅ B of cosimplicial
+objects. The coface comparison homComparison has degree-n map e_n.hom : Aⁿ → Bⁿ and the given
+forward coface-square laws. -/
 def CofaceIso.homComparison {A B : CosimplicialObject C} (e : CofaceIso A B) :
     CofaceComparison A B := ⟨fun n => (e.app n).hom, e.coface⟩
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The inverse degree isomorphisms also commute with the cofaces. -/
+/-- Let C be a category and e a coface-compatible degreewise isomorphism A ≅ B. Its inverses e_n.inv
+form a coface comparison B → A, with δ_i^B ≫ e_{n+1}.inv = e_n.inv ≫ δ_i^A. -/
 def CofaceIso.invComparison {A B : CosimplicialObject C} (e : CofaceIso A B) :
     CofaceComparison B A where
   app n := (e.app n).inv
@@ -145,7 +167,9 @@ def CofaceIso.invComparison {A B : CosimplicialObject C} (e : CofaceIso A B) :
     rw [e.coface n i]
     simp only [← Category.assoc, Iso.inv_hom_id, Category.id_comp]
 
-/-- The literal degree isomorphisms form an isomorphism of alternating complexes. -/
+/-- Let C be preadditive and e a coface-compatible degreewise isomorphism between cosimplicial
+objects A,B. The forward and inverse comparisons form an isomorphism Alt(A) ≅ Alt(B), with
+degree-n maps e_n.hom and e_n.inv. The alternating differential is ∑_i(−1)^iδ_i. -/
 def CofaceIso.alternatingIso [Preadditive C] {A B : CosimplicialObject C}
     (e : CofaceIso A B) :
     AlternatingCofaceMapComplex.obj A ≅ AlternatingCofaceMapComplex.obj B where
@@ -167,11 +191,11 @@ section Homology
 variable {A A' B B' D D' : CosimplicialObject AddCommGrpCat.{s}}
 
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-The original homology pairings commute under the coface comparison. The pairing components are
-supplied by their literal front/back definitions; the cochain or cohomology naturality law is
-proved here.
--/
+/-- Let A,A′,B,B′,D,D′ be cosimplicial abelian groups with coface comparisons a,b,c. Let P and Q be
+signed cochain pairings of their alternating complexes, with components given by front/back
+formulas from degreewise maps m_n and m′_n. Assume (a_n⊗b_n) ≫ m′_n = m_n ≫ c_n for every n. For
+p,q ∈ ℕ, the induced cohomology pairings satisfy (H^p(Alt(a))⊗H^q(Alt(b))) ≫ Q_H = P_H ≫
+H^{p+q}(Alt(c)), as maps H^p(Alt(A))⊗_ℤH^q(Alt(B)) → H^{p+q}(Alt(D′)). -/
 theorem pairHomology_cofaceComparison
     (a : CofaceComparison A A') (b : CofaceComparison B B')
     (c : CofaceComparison D D')
@@ -203,10 +227,9 @@ theorem pairHomology_cofaceComparison
 end Homology
 
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-An functor comparison carries literal coface isomorphisms through the two functors, retaining
-their component maps.
--/
+/-- Let C,D,E be categories, A a cosimplicial C-object, B a cosimplicial D-object, J : C → D, Γ : C
+→ E, I : D → E, and g : Γ ≅ IJ a natural isomorphism. A coface-compatible isomorphism a : J(A) ≅
+B gives one Γ(A) ≅ I(B), whose degree-n component is g_{Aⁿ} followed by I(a_n). -/
 def cofaceIsoWhiskerNatIso {C : Type uC} [Category.{vC} C]
     {D : Type uD} [Category.{vD} D] {E : Type uE} [Category.{vE} E]
     (A : CosimplicialObject C) (B : CosimplicialObject D) (J : C ⥤ D)

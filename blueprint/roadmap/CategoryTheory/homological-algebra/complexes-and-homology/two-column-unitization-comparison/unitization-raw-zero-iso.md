@@ -1,3 +1,5 @@
-# Unitization Raw Zero Iso
+# The bottom coordinate of the first-two-column cyclic total
 
-The original bottom raw total has only its original zero-column coordinate.
+The bottom coordinate of the first-two-column cyclic total.
+
+Degree zero contains only the zero-column tensor term and is isomorphic to `C_0(A)`.

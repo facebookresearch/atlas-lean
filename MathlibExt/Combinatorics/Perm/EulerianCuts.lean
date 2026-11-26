@@ -13,13 +13,16 @@ public import MathlibExt.Combinatorics.Perm.ShuffleDescents
 public import MathlibExt.Data.Sym.Containing
 
 /-!
-# Exact ordered-cut counts for Eulerian permutations
+# Descent-compatible cut multisets
 
-Each original adjacent descent forces its original successor position to
-appear among the ordered cut boundaries. Removing one copy of each actual
-required boundary is the symmetric-power bijection. Native stars
-and bars proves the resulting binomial count, without a supplied Eulerian
-coefficient or label-count certificate.
+For a permutation `σ ∈ S_n`, every descent at position `j` determines the cut boundary `j+1`
+in `Fin(n+1)`. A compatible multiset of `m` cuts contains every one of these boundaries at
+least once.
+
+Writing `d = descentNumber σ`, its cardinality is `Nat.choose (n+m-d) n`. Repeated cuts and
+the endpoint cut positions are allowed.
+
+Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1.
 -/
 
 @[expose] public section
@@ -27,27 +30,37 @@ noncomputable section
 
 namespace Equiv.Perm
 
-/-- The actual successor positions of the original adjacent descents. -/
+/-- Let `n : ℕ`, `σ ∈ S_n = Equiv.Perm (Fin n)`, and `Des(σ) = {j | j+1<n and σ(j)>σ(j+1)}`. Put
+`d = |Des(σ)|`. `descentBoundaries σ` is the subset `{j+1 | j ∈ Des(σ)}` of `Fin(n+1)`,
+obtained by the injective successor map. -/
 def descentBoundaries {n : ℕ} (σ : Perm (Fin n)) : Finset (Fin (n + 1)) :=
   (descentPositions σ).map ⟨Fin.succ, Fin.succ_injective n⟩
 
-/-- Every original descent contributes exactly one actual cut boundary. -/
+/-- Let `n : ℕ`, `σ ∈ S_n = Equiv.Perm (Fin n)`, and `Des(σ) = {j | j+1<n and σ(j)>σ(j+1)}`. Put
+`d = |Des(σ)|`. The successor-boundary set has cardinality `(descentBoundaries σ).card =
+descentNumber σ = d`. -/
 theorem card_descentBoundaries {n : ℕ} (σ : Perm (Fin n)) :
     (descentBoundaries σ).card = descentNumber σ := by
   rw [descentBoundaries, Finset.card_map]
   rfl
 
-/-- Original cut boundaries contain no more positions than the original word length. -/
+/-- Let `n : ℕ`, `σ ∈ S_n = Equiv.Perm (Fin n)`, and `Des(σ) = {j | j+1<n and σ(j)>σ(j+1)}`. Put
+`d = |Des(σ)|`. `(descentBoundaries σ).card ≤ n`, including the empty word `n=0`. -/
 theorem descentBoundaries_card_le {n : ℕ} (σ : Perm (Fin n)) :
     (descentBoundaries σ).card ≤ n := by
   rw [card_descentBoundaries]
   exact (Finset.card_le_univ (descentPositions σ)).trans_eq (Fintype.card_fin n)
 
-/-- The actual weak ordered cut multiset containing every original descent boundary. -/
+/-- Let `n : ℕ`, `σ ∈ S_n = Equiv.Perm (Fin n)`, and `Des(σ) = {j | j+1<n and σ(j)>σ(j+1)}`. Put
+`d = |Des(σ)|`. For `m : ℕ`, `CompatibleEulerianCuts σ m` consists of multisets `c : Sym
+(Fin(n+1)) m` containing one copy of every element of `descentBoundaries σ`. These are weakly
+ordered cut positions, with repetitions permitted. -/
 abbrev CompatibleEulerianCuts {n : ℕ} (σ : Perm (Fin n)) (m : ℕ) :=
   {c : Sym (Fin (n + 1)) m // (descentBoundaries σ).val ≤ c.val}
 
-/-- The compatible-cut count is the original descent-binomial coefficient. -/
+/-- Let `n : ℕ`, `σ ∈ S_n = Equiv.Perm (Fin n)`, and `Des(σ) = {j | j+1<n and σ(j)>σ(j+1)}`. Put
+`d = |Des(σ)|`. For every `m : ℕ`, `Fintype.card (CompatibleEulerianCuts σ m) = Nat.choose
+(n+m-d) n`. -/
 theorem card_compatibleEulerianCuts {n : ℕ} (σ : Perm (Fin n)) (m : ℕ) :
     Fintype.card (CompatibleEulerianCuts σ m) = (n + m - descentNumber σ).choose n := by
   classical

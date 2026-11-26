@@ -1,3 +1,4 @@
-# Opposite Of Commuting Action actions Comm
+# The left and opposite scalar actions commute
 
-The original and canonical opposite actions commute by the source scalar-commutation law.
+Let `A` be a semiring and `M` an `A`-semimodule whose scalar operators commute: `a • (b • m)=b
+• (a • m)` for all `a,b,m`. For the constructed `Aᵐᵒᵖ`-action, `SMulCommClass A Aᵐᵒᵖ M` holds.

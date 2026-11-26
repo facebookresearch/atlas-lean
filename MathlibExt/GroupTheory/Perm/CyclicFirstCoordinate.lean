@@ -13,12 +13,15 @@ public import Mathlib.GroupTheory.Perm.Fin
 public import MathlibExt.Logic.Equiv.Fin.Rotate
 
 /-!
-# Separating the first coordinate modulo finite cyclic rotation
+# First-coordinate decomposition by finite cyclic rotation
 
-Every permutation of a nonempty finite ordinal has a unique expression as
-a permutation fixing zero followed by a cyclic shift of the input positions.
-Both maps use native permutation composition and finite rotation. The sign
-of the shift is the original `(-1)^(n j)`.
+For n : ℕ, extend a permutation σ of Fin n to fix 0 in Fin(n+1), and let shift_j add j modulo
+n+1 to every input position. Every permutation τ of Fin(n+1) has the unique expression τ =
+fixFirst(σ) · shift_j⁻¹, where j = τ⁻¹(0). Its remaining component is the tail permutation of τ
+· shift_j, which fixes 0.
+
+The sign of shift_j is (-1)^{n·j}, and the sign of the decomposition is sign(σ)·(-1)^{n·j}. The
+formulas also include n=0, when Fin(n+1)=Fin1 and the tail permutation is empty.
 -/
 
 @[expose] public section
@@ -30,7 +33,8 @@ open Fin.NatCast
 
 namespace Equiv.Perm
 
-/-- The native permutation extending a tail permutation and fixing the first coordinate. -/
+/-- For n : ℕ and σ a permutation of Fin n, fixFirst n σ is the permutation of Fin(n+1) satisfying 0
+↦ 0 and j+1 ↦ σ(j)+1 for every j ∈ Fin n. -/
 def fixFirst (n : ℕ) (σ : Perm (Fin n)) : Perm (Fin (n + 1)) :=
   decomposeFin.symm (0, σ)
 
@@ -43,7 +47,9 @@ theorem fixFirst_succ (n : ℕ) (σ : Perm (Fin n)) (j : Fin n) :
     fixFirst n σ j.succ = (σ j).succ := by
   simp only [fixFirst, decomposeFin_symm_apply_succ, swap_self, refl_apply]
 
-/-- The inverse tail of a native zero-fixing permutation. -/
+/-- For n : ℕ and any permutation τ of Fin(n+1), tailOfFixFirst n τ is the second component of
+decomposeFin τ. When τ(0)=0, it is the tail permutation characterized by
+τ(j+1)=tailOfFixFirst(τ)(j)+1. -/
 def tailOfFixFirst (n : ℕ) (τ : Perm (Fin (n + 1))) : Perm (Fin n) :=
   (decomposeFin τ).2
 
@@ -59,7 +65,8 @@ theorem fixFirst_tailOfFixFirst (n : ℕ) (τ : Perm (Fin (n + 1))) (hτ : τ 0 
   change decomposeFin.symm (0, tailOfFixFirst n τ) = τ
   exact (congrArg decomposeFin.symm hp).symm.trans (decomposeFin.symm_apply_apply τ)
 
-/-- Every native finite rotation power adds its original residue to the input position. -/
+/-- For n,j : ℕ and i ∈ Fin(n+1), (finRotate(n+1))ʲ(i) = i+j modulo n+1, where j is cast to its
+residue in Fin(n+1). -/
 theorem finRotate_pow_apply (n j : ℕ) (i : Fin (n + 1)) :
     (finRotate (n + 1) ^ j) i = i + (j : Fin (n + 1)) := by
   induction j with
@@ -68,7 +75,8 @@ theorem finRotate_pow_apply (n j : ℕ) (i : Fin (n + 1)) :
       simp only [pow_succ', Equiv.Perm.mul_apply, ih, finRotate_apply,
         Nat.cast_succ, add_assoc]
 
-/-- The concrete native rotation used in the first-coordinate decomposition. -/
+/-- For n : ℕ and j ∈ Fin(n+1), shiftFirst n j is the j-th power of the cyclic rotation of Fin(n+1).
+It sends i to i+j modulo n+1. -/
 def shiftFirst (n : ℕ) (j : Fin (n + 1)) : Perm (Fin (n + 1)) :=
   finRotate (n + 1) ^ j.val
 
@@ -77,12 +85,15 @@ theorem shiftFirst_zero (n : ℕ) (j : Fin (n + 1)) : shiftFirst n j 0 = j := by
   rw [shiftFirst, finRotate_pow_apply]
   simp
 
-/-- The native sign of a shift is the exact original power, including `Fin 1`. -/
+/-- For n : ℕ and j ∈ Fin(n+1), the permutation shiftFirst n j has sign (-1)^{n·j.val} in ℤˣ. This
+includes n=0 and the one-element ordinal Fin1. -/
 theorem shiftFirst_sign (n : ℕ) (j : Fin (n + 1)) :
     (shiftFirst n j).sign = (-1 : ℤˣ) ^ (n * j.val) := by
   rw [shiftFirst, map_pow, sign_finRotate, Nat.add_sub_cancel, ← pow_mul]
 
-/-- The actual decomposition into the zero position and the remaining native permutation. -/
+/-- For n : ℕ, cyclicFirstEquiv is a bijection Fin(n+1) × Perm(Fin n) ≃ Perm(Fin(n+1)). It sends
+(j,σ) to fixFirst(σ)·shift_j⁻¹. Its inverse sends τ to j=τ⁻¹(0) and the tail permutation of
+τ·shift_j, which fixes 0. -/
 def cyclicFirstEquiv (n : ℕ) : Fin (n + 1) × Perm (Fin n) ≃ Perm (Fin (n + 1)) where
   toFun p := fixFirst n p.2 * (shiftFirst n p.1)⁻¹
   invFun τ :=
@@ -111,7 +122,8 @@ def cyclicFirstEquiv (n : ℕ) : Fin (n + 1) × Perm (Fin n) ≃ Perm (Fin (n + 
     rw [fixFirst_tailOfFixFirst n _ (by simp [Equiv.Perm.mul_apply]),
       mul_assoc, mul_inv_cancel, mul_one]
 
-/-- The decomposition sign is the native tail sign times the same signed rotation. -/
+/-- For n : ℕ, j ∈ Fin(n+1) and σ ∈ Perm(Fin n), the sign of cyclicFirstEquiv n (j,σ) equals
+sign(σ)·(-1)^{n·j.val} in ℤˣ. -/
 theorem cyclicFirstEquiv_sign (n : ℕ) (j : Fin (n + 1)) (σ : Perm (Fin n)) :
     (cyclicFirstEquiv n (j, σ)).sign = σ.sign * (-1 : ℤˣ) ^ (n * j.val) := by
   change (fixFirst n σ * (shiftFirst n j)⁻¹).sign = _

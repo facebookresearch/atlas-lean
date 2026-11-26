@@ -13,11 +13,15 @@ public import Mathlib.CategoryTheory.Sites.Limits
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Componentwise kernels of abelian sheaves
+# Componentwise kernel criteria for additive-group sheaves
 
-Kernels are constructed componentwise without a sheafification or
-abelian-sheaf hypothesis. The final equivalence assumes the balanced-category
-and homology hypotheses in a common coefficient universe.
+Let J be a Grothendieck topology on a category C and S₁ →^f S₂ →^g S₃ a short complex of
+additive-group sheaves. If every section map f_U is injective and has image equal to ker(g_U),
+then f with fg=0 is a kernel of g. Conversely, a kernel fork gives these component conditions.
+
+When the sheaf category is balanced and S has homology, categorical exactness of S together
+with monicity of f is equivalent to those same componentwise conditions. No sectionwise
+surjectivity of g is asserted.
 -/
 
 @[expose] public section
@@ -31,8 +35,10 @@ namespace CategoryTheory.ShortComplex
 variable {C : Type u} [Category.{v} C] {J : GrothendieckTopology C}
   (S : ShortComplex (Sheaf J AddCommGrpCat.{w}))
 
-/-- The literal componentwise left exact condition constructs the actual
-kernel fork, by stock evaluation and full faithful limit reflection. -/
+/-- Let J be a Grothendieck topology on C and S a short complex of AddCommGrpCat.{w}-valued
+sheaves. Suppose each f_U : S₁(U) → S₂(U) is injective and range(f_U)={x | g_U(x)=0}. Then the
+fork with inclusion S.f and zero composite S.f≫S.g is a limiting kernel fork of S.g in the
+sheaf category. -/
 noncomputable def sheafKernelOfComponents
     (hinj : ∀ U : C, Function.Injective (S.f.hom.app (Opposite.op U)))
     (hexact : ∀ U : C, Set.range (S.f.hom.app (Opposite.op U)) =
@@ -54,8 +60,9 @@ noncomputable def sheafKernelOfComponents
   exact isLimitOfReflects V
     ((KernelFork.isLimitMapConeEquiv _ V).symm hT)
 
-/-- An actual kernel fork gives the literal injectivity and range=kernel
-properties of every original component, using only preserved limits. -/
+/-- For a short complex S of additive-group sheaves on a site (C,J), if S.f with its zero
+composite is a kernel of S.g, then f_U is injective and range(f_U)=ker(g_U) for every U ∈ C.
+The conditions follow by evaluating the preserved kernel at each site object. -/
 theorem sheaf_components_of_kernel
     (h : IsLimit (KernelFork.ofι S.f S.zero)) :
     (∀ U : C, Function.Injective (S.f.hom.app (Opposite.op U))) ∧
@@ -75,8 +82,10 @@ theorem sheaf_components_of_kernel
   · intro U
     exact congrArg SetLike.coe (hU U).1.ab_range_eq_ker
 
-/-- With the stock balanced-category and homology hypotheses, categorical
-left exactness is equivalent to its literal original components. -/
+/-- Let S be a short complex of AddCommGrpCat.{w}-valued sheaves on (C,J). Assume the sheaf
+category is balanced and S.HasHomology. Then S.Exact ∧ Mono(S.f) holds if and only if every
+f_U is injective and range(f_U)=ker(g_U). This is a left-exactness criterion using the same
+section morphisms. -/
 theorem sheaf_exact_mono_iff_components
     [Balanced (Sheaf J AddCommGrpCat.{w})] [S.HasHomology] :
     S.Exact ∧ Mono S.f ↔

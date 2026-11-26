@@ -1,3 +1,5 @@
-# Matrix Cyclic Chain Map f
+# The positive-bracket component of a finite matrix cyclic chain map
 
-The chain-map component is exactly the positive-convention degree map.
+The positive-bracket component of a finite matrix cyclic chain map.
+
+The degree-`n` component is the tail-alternating closed-cycle trace degree map.

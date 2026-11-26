@@ -1,3 +1,6 @@
-# Normal Form Lower Span
+# The strictly shorter submodule of ordered normal forms
 
-Finite combinations of ordered words strictly shorter than `q`.
+The strictly shorter submodule of ordered normal forms.
+
+Stage `q` is spanned by the single ordered-word terms whose word length is strictly less than
+`q`.

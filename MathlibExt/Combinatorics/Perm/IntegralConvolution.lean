@@ -16,16 +16,19 @@ public import Mathlib.Algebra.MonoidAlgebra.Basic
 public import Mathlib.Tactic.Ring
 
 /-!
-# Integral signed convolution operations
+# Integral convolution and the parameter-signed lambda elements
 
-Each finite alphabet labeling contributes its stable-sorting permutation
-with its integer sign. A product-alphabet bijection proves multiplication
-of convolution parameters over every commutative coefficient ring.
+For a commutative ring `R`, define `C_n(m)` in `R[S_n]` by summing every labeling `f : Fin n →
+Fin m`, with contribution `sign(sort f) [sort f]`. Its coefficient at `σ` is the size of the
+sorting fiber at `σ`, multiplied by `sign σ`.
 
-The signed positive-integer operation multiplies the convolution value at
-`m` by `(-1)^(m - 1)`. Its composition consequently has the parity scalar
-`(-1)^((l - 1)(m - 1))`. The convolution itself is defined for all natural
-parameters, including zero.
+These elements satisfy `C_n(a)C_n(b)=C_n(ab)` for all natural parameters. The empty word gives
+`C_0(m)=1`; a positive word with empty alphabet gives `C_n(0)=0`.
+
+For `m>0`, the parameter-signed lambda element is `λ_n(m)=(-1)^(m-1) C_n(m)`. Its composition
+law is `λ_n(l)λ_n(m)=(-1)^((l-1)(m-1)) λ_n(lm)` for positive `l,m`.
+
+Reference: Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -39,11 +42,15 @@ namespace Equiv.Perm
 
 variable (R : Type u) [CommRing R]
 
-/-- The actual signed permutation sum of all original finite alphabet labelings. -/
+/-- Let `R` be a commutative ring and `n,m : ℕ`. Define `C_n(m) = ∑ f : Fin n → Fin m, sign(sort
+f) [sort f]` in `R[S_n]`, with integer signs cast to `R`. `integralConvolutionElement R n m`
+is this finite sum, with each labeling contributing its stable-sorting permutation. -/
 def integralConvolutionElement (n m : ℕ) : MonoidAlgebra R (Perm (Fin n)) :=
   ∑ f : Fin n → Fin m, MonoidAlgebra.single (Tuple.sort f) (((Tuple.sort f).sign : ℤ) : R)
 
-/-- The actual integral coefficient is the cardinality of its sorting fibre times its sign. -/
+/-- Let `R` be a commutative ring and `n,m : ℕ`. Define `C_n(m) = ∑ f : Fin n → Fin m, sign(sort
+f) [sort f]` in `R[S_n]`, with integer signs cast to `R`. `C_n(m) = ∑ σ ∈ S_n, |{f : Fin n →
+Fin m | sort f=σ}| * sign(σ) [σ]`, with the cardinality and sign cast to `R`. -/
 theorem integralConvolutionElement_eq_fiber_sum (n m : ℕ) :
     integralConvolutionElement R n m =
       ∑ σ : Perm (Fin n), MonoidAlgebra.single σ
@@ -64,7 +71,9 @@ theorem integralConvolutionElement_eq_fiber_sum (n m : ℕ) :
   rw [Finset.sum_const, Finset.card_univ, ← Nat.cast_smul_eq_nsmul R,
     MonoidAlgebra.smul_single, smul_eq_mul]
 
-/-- The original coefficient is computed by the actual sorting fibre, over every coefficient ring. -/
+/-- Let `R` be a commutative ring and `n,m : ℕ`. Define `C_n(m) = ∑ f : Fin n → Fin m, sign(sort
+f) [sort f]` in `R[S_n]`, with integer signs cast to `R`. For `σ ∈ S_n`, the coefficient of
+`[σ]` is `|{f : Fin n → Fin m | sort f=σ}| * sign(σ)` in `R`. -/
 theorem integralConvolutionElement_coefficient (n m : ℕ) (σ : Perm (Fin n)) :
     (integralConvolutionElement R n m).coeff σ =
       (Fintype.card {f : Fin n → Fin m // Tuple.sort f = σ} : R) * (((σ.sign : ℤ) : R)) := by
@@ -73,7 +82,9 @@ theorem integralConvolutionElement_coefficient (n m : ℕ) (σ : Perm (Fin n)) :
   simp only [MonoidAlgebra.coeff_sum, Finsupp.finsetSum_apply, MonoidAlgebra.coeff_single,
     Finsupp.single_apply, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
-/-- The actual positive-degree integral coefficient is the native descent-binomial count. -/
+/-- Let `R` be a commutative ring, `n,m : ℕ`, and `σ ∈ S_(n+1)`. The coefficient of `[σ]` in
+`integralConvolutionElement R (n+1) m` is `Nat.choose (n+m-descentNumber σ) (n+1) * sign(σ)`,
+with both integer factors cast to `R`. -/
 theorem integralConvolutionElement_coefficient_succ (n m : ℕ) (σ : Perm (Fin (n + 1))) :
     (integralConvolutionElement R (n + 1) m).coeff σ =
       (((n + m - descentNumber σ).choose (n + 1) : ℕ) : R) * (((σ.sign : ℤ) : R)) := by
@@ -81,7 +92,9 @@ theorem integralConvolutionElement_coefficient_succ (n m : ℕ) (σ : Perm (Fin 
 
 variable {S : Type*} [CommRing S]
 
-/-- A coefficient ring map preserves the original integral operation. -/
+/-- For commutative rings `R,S`, a ring homomorphism `f : R →+* S`, and `n,m : ℕ`, the
+coefficient-wise group-ring map sends `integralConvolutionElement R n m` to
+`integralConvolutionElement S n m`. -/
 theorem map_integralConvolutionElement (f : R →+* S) (n m : ℕ) :
     (MonoidAlgebra.mapRingHom (Perm (Fin n)) f) (integralConvolutionElement R n m) =
       integralConvolutionElement S n m := by
@@ -89,7 +102,8 @@ theorem map_integralConvolutionElement (f : R →+* S) (n m : ℕ) :
   rw [integralConvolutionElement, map_sum, integralConvolutionElement]
   simp only [MonoidAlgebra.mapRingHom_single, map_intCast]
 
-/-- The native product-alphabet sorting bijection gives convolution composition. -/
+/-- For a commutative ring `R` and `n,a,b : ℕ`, `integralConvolutionElement R n a *
+integralConvolutionElement R n b = integralConvolutionElement R n (a*b)` in `R[S_n]`. -/
 theorem integralConvolutionElement_mul (n a b : ℕ) :
     integralConvolutionElement R n a * integralConvolutionElement R n b =
       integralConvolutionElement R n (a * b) := by
@@ -116,7 +130,8 @@ theorem integralConvolutionElement_mul (n a b : ℕ) :
   rw [show Tuple.successiveStableFinLabelsEquiv n a b (e.symm h) = h from e.apply_symm_apply h] at hp
   rw [← hp]
 
-/-- The original degree-zero empty word has the actual unit convolution for every alphabet. -/
+/-- For a commutative ring `R` and every `m : ℕ`, `integralConvolutionElement R 0 m = 1` in
+`R[S_0]`, since there is one empty labeling. -/
 theorem integralConvolutionElement_degree_zero (m : ℕ) :
     integralConvolutionElement R 0 m = 1 := by
   classical
@@ -126,7 +141,8 @@ theorem integralConvolutionElement_degree_zero (m : ℕ) :
   rw [integralConvolutionElement, Fintype.sum_unique, hs]
   simp only [Equiv.Perm.sign_one, Units.val_one, Int.cast_one, ← MonoidAlgebra.one_def]
 
-/-- The empty alphabet has no positive-degree labels, so the actual operation is zero. -/
+/-- For a commutative ring `R` and `n : ℕ` with `0<n`, `integralConvolutionElement R n 0 = 0`
+because no labeling `Fin n → Fin 0` exists. -/
 theorem integralConvolutionElement_zero_parameter (n : ℕ) (hn : 0 < n) :
     integralConvolutionElement R n 0 = 0 := by
   classical
@@ -134,12 +150,14 @@ theorem integralConvolutionElement_zero_parameter (n : ℕ) (hn : 0 < n) :
     ⟨fun f => Fin.elim0 (f ⟨0, hn⟩)⟩
   rw [integralConvolutionElement, Finset.univ_eq_empty, Finset.sum_empty]
 
-/-- The signed integer operation includes `(-1)^(m - 1)` at positive parameter `m`.
-The convolution operation is defined for every natural parameter. -/
+/-- Let `R` be a commutative ring and `n,m : ℕ`. Define `C_n(m) = ∑ f : Fin n → Fin m, sign(sort
+f) [sort f]` in `R[S_n]`, with integer signs cast to `R`. For `0<m`, `trueLambdaElement R n m
+hm = (-1:R)^(m-1) • C_n(m)`. The sign depends on the positive parameter `m`. -/
 def trueLambdaElement (n m : ℕ) (_hm : 0 < m) : MonoidAlgebra R (Perm (Fin n)) :=
   (-1 : R) ^ (m - 1) • integralConvolutionElement R n m
 
-/-- In chain degree zero, every positive true-lambda parameter retains its exact sign. -/
+/-- For a commutative ring `R` and `m : ℕ` with `0<m`, `trueLambdaElement R 0 m hm = (-1:R)^(m-1)
+• 1` in `R[S_0]`. -/
 theorem trueLambdaElement_degree_zero (m : ℕ) (hm : 0 < m) :
     trueLambdaElement R 0 m hm = (-1 : R) ^ (m - 1) • (1 : MonoidAlgebra R (Perm (Fin 0))) := by
   rw [trueLambdaElement, integralConvolutionElement_degree_zero]
@@ -157,8 +175,9 @@ private theorem trueLambda_sign_composition (a b : ℕ) :
   conv_rhs => rw [← pow_add, ht, pow_add, pow_mul]
   simp only [neg_one_sq, one_pow, one_mul]
 
-/-- True positive-integer lambda operations compose with the actual parity scalar.
-The scalar is derived from their original definition, not from a renamed convolution law. -/
+/-- For a commutative ring `R`, `n,l,m : ℕ`, and `0<l`, `0<m`, the signed lambda elements satisfy
+`λ_n(l) * λ_n(m) = (-1:R)^((l-1)*(m-1)) • λ_n(l*m)`, where `λ_n(r)=trueLambdaElement R n r` at
+a positive parameter. -/
 theorem trueLambdaElement_mul (n l m : ℕ) (hl : 0 < l) (hm : 0 < m) :
     trueLambdaElement R n l hl * trueLambdaElement R n m hm =
       (-1 : R) ^ ((l - 1) * (m - 1)) • trueLambdaElement R n (l * m) (Nat.mul_pos hl hm) := by

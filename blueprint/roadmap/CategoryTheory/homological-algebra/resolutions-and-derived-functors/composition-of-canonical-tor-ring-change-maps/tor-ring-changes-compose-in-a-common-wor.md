@@ -1,4 +1,8 @@
-# Tor ring changes compose in a common working universe...
+# Tor composition is coherent at the common independent-carrier height
 
-Tor ring changes compose in a common working universe containing all three
-acting rings and carrier universes, without an outer-ring size hypothesis.
+For three endpoint ring pairs, compatible semilinear
+coefficient maps f,f′ and source maps g,g′, all Tor changes
+are compared in Γ=max(r,r′,r″,a,a′,a″,b,b′,b″,z).
+The first change followed by the restricted second change
+and the canonical output-restriction comparison equals
+the change for their composites, in every degree n≥0.

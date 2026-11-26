@@ -1,4 +1,6 @@
-# Horizontal Complete Filtration Cochain Mono Lower Succ Iso
+# The lower cochain-stage comparison of a positive first-page window
 
-Canonical cochain identification of a positive lower stage with its
-natural-stage presentation.
+The lower cochain-stage comparison of a positive first-page window.
+
+Forget the lower subobject comparison and extend to identify the lower complete cochain stage
+with the extension of natural stage `p`.

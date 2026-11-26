@@ -1,5 +1,5 @@
 # Associativity of front/back cosimplicial pairings
 
-- [Pairing naturality mono](pairing-naturality-mono.md)
-- [Aw Pair](aw-pair.md)
-- [Aw Pair assoc](aw-pair-assoc.md)
+- [Coface-compatible tensor pairings are natural for injective simplex maps](pairing-naturality-mono.md)
+- [Front/back Alexander–Whitney pairing in a fixed total degree](aw-pair.md)
+- [Associativity formula for ternary front/back pairings](aw-pair-assoc.md)

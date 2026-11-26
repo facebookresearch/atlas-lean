@@ -1,3 +1,6 @@
-# Hom Tensor Finite Factor Inverse Piece forward eq zero
+# Nonmatching inverse piece vanishes on a source summand
 
-The same actual inverse piece vanishes on every different U summand.
+Nonmatching inverse piece vanishes on a source summand.
+
+For a source cell `(a, b)`, the inverse piece in factor degree `k ≠ b` sends its forward image
+to zero.

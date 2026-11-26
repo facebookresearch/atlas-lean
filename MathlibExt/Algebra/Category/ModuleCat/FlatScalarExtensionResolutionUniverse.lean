@@ -18,13 +18,17 @@ public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 public import MathlibExt.Algebra.Category.ModuleCat.Monoidal.UniverseCompatibility
 
 /-!
-# Genuine projective resolutions under flat scalar extension
+# Projective resolutions transported by flat scalar extension
 
-The actual extension-of-scalars functor is exact for the original flat
-ring map and preserves projectives through its actual adjunction with
-restriction of scalars. It therefore sends an original projective
-resolution to an actual projective resolution over the scalar algebra.
-This supplies the genuine flat base-change Tor comparison.
+Let R,S be commutative rings, S an R-algebra flat as an R-module,
+and Γ=max(u,v,w). Extension of scalars sends a projective resolution
+P of an R-module M in world Γ to a projective resolution of S⊗[R]M
+in the S-module category at the same height.
+
+Its complex is the termwise scalar extension of P. Flatness preserves
+the augmentation quasi-isomorphism, while the extension/restriction
+adjunction preserves projective terms. The ring worlds u,v and the
+additional carrier height w are independent.
 -/
 
 @[expose] public section
@@ -42,8 +46,10 @@ namespace ModuleCat.UniverseTensor
 
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S] [Algebra R S] [Module.Flat R S]
 
-/-- Flat scalar extension of the original projective resolution, through
-the real scalar-extension adjunction and exact functor. -/
+/-- For commutative rings R,S with S flat over R and
+M∈ModuleCat^Γ(R), a projective resolution P of M maps to
+a projective resolution of S⊗[R]M.
+Here Γ=max(u,v,w), with independent ring and carrier heights. -/
 def flatScalarExtensionProjectiveResolution
     {M : ModuleCat.{max u v w} R} (P : ProjectiveResolution M) :
     ProjectiveResolution ((extendScalars.{u,v,max u v w} (algebraMap R S)).obj M) := by
@@ -62,8 +68,11 @@ def flatScalarExtensionProjectiveResolution
       (extendRestrictScalarsAdj.{max u v w,u,v} (algebraMap R S))
   exact F.mapProjectiveResolution P
 
-/-- The actual scalar-extended resolution uses the original scalar-extension
-complex, with no independently chosen replacement resolution. -/
+/-- For S flat over the commutative ring R and a projective
+resolution P of M at height Γ=max(u,v,w), the complex of
+the extended resolution is (S⊗[R]−)(P) term by term.
+Its differential and augmentation are the scalar extensions
+of those of P. -/
 theorem flatScalarExtensionProjectiveResolution_complex
     {M : ModuleCat.{max u v w} R} (P : ProjectiveResolution M) :
     (flatScalarExtensionProjectiveResolution R S P).complex =

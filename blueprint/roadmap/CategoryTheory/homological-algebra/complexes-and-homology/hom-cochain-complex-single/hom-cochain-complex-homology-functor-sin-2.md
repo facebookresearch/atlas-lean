@@ -1,3 +1,6 @@
-# Hom Cochain Complex Homology Functor Single Iso
+# Supported cohomology of a single-object Hom complex is Coyoneda
 
-`H^j(Hom(single_j R, -))` is `Hom(R, -)` as coefficient functors.
+Supported cohomology of a single-object Hom complex is Coyoneda.
+
+The degree-`j` cohomology coefficient functor of Hom cochains from `A[j]` is naturally
+isomorphic to `Hom_C(A,-)`.

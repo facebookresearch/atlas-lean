@@ -16,14 +16,14 @@ public import
   MathlibExt.Algebra.Homology.FirstQuadrantFirstPageRowNaturality
 
 /-!
-# Naturality of the first-page homology tail comparison
+# First-page homology and horizontal homology of vertical columns
 
-The inverse row-homology comparison followed by homology of the normalized
-row comparison identifies homology of the first page with horizontal
-homology of vertical homology.  This two-factor comparison is natural under
-bicomplex maps.
+Let `K` be a first-quadrant bicomplex in an abelian category. Restrict the first page to the
+row of vertical degree `q`. The row homology comparison and normalized row-complex isomorphism
+identify homology of the first page at `(p,q)` with `H_p(H_q^{vertical}(K))`.
 
-No successor-page or page-two comparison is asserted here.
+The comparison is natural in bicomplex maps, using the restricted first-page row map and the
+horizontal complex of column vertical-homology maps.
 -/
 
 @[expose] public section
@@ -40,9 +40,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- Homology of the first page is naturally identified with horizontal
-homology of the vertical-homology complex, before any successor-page
-comparison. -/
+/-- The horizontal-of-vertical comparison for first-page homology.
+
+Compose the inverse row-restriction homology comparison with homology of the normalized row-
+complex isomorphism to identify first-page homology at `(p,q)` with
+`H_p(K.verticalHomologyComplex q)`. -/
 noncomputable def horizontalFirstPageHomologyVerticalHorizontalHomologyIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (p q : ℕ) :
@@ -53,8 +55,10 @@ noncomputable def horizontalFirstPageHomologyVerticalHorizontalHomologyIso
     HomologicalComplex.homologyMapIso
       (horizontalFirstPageRowComplexIsoVerticalHomologyComplex K q) p
 
-/-- The first-page homology tail comparison is natural under bicomplex
-maps, in map-first orientation. -/
+/-- Naturality of the horizontal-of-vertical first-page homology comparison.
+
+The homology map of a bicomplex-induced first-page map commutes with the comparison and with
+homology of the induced vertical-homology row map. -/
 @[reassoc]
 theorem
     horizontalFirstPageHomologyVerticalHorizontalHomologyIso_hom_naturality_of_bicomplex

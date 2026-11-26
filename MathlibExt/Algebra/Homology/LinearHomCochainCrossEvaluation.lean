@@ -25,11 +25,17 @@ import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 import MathlibExt.Algebra.Homology.LinearHomCochainChainPairingLeftNaturality
 
 /-!
-# Linear-Hom external pairings evaluated on homology cross products
+# External Hom cochains evaluated on homology tensor products
 
-An external linear-Hom cochain pairing and a homology cross product evaluate
-as the tensor of the two factor evaluations.  The main theorem permits the
-chain cross product and coproduct to be inverse only up to homotopy.
+Let R be commutative and all module carriers lie in universe u. For chain complexes K₁,K₂,
+coefficient modules M,N,L and μ:M⊗N→L, the external Hom cochain product evaluates on the
+homology tensor product as μ applied to the two factor evaluations. The tensor factors
+(α⊗β)⊗(x⊗y) are regrouped as (α⊗x)⊗(β⊗y) by ordinary module braiding and associators.
+
+More generally, let T=K₁⊗K₂, σ:T→K₀, c:K₀→K₃ and a:K₃→T be chain maps with ((σ≫c)≫a) homotopic
+to id_T. Evaluation of the external product formed with a on the cross product formed with σ and
+then mapped by c gives the same factor-evaluation formula. Only this one-sided homotopy on T is
+required; the two intermediate chain complexes remain distinct.
 -/
 
 @[expose] public section
@@ -47,17 +53,22 @@ namespace HomologicalComplex
 
 variable (R : Type u) [CommRing R]
 
-/-- The monoidal structure on chain complexes of `R`-modules used in this
-file, installed locally so that tensor notation refers to the total-complex
-tensor product. -/
+/-- Let R be commutative in universe u, with all module carriers and nonnegative chain terms in u.
+The category of chain complexes of shape down ℕ is monoidal under the total tensor complex,
+whose homogeneous differential is dx_p⊗y_q+(-1)^p x_p⊗dy_q. Its module tensor associators and
+the ordinary module braiding regroup the four coefficient and homology factors in the evaluation
+identity. -/
 noncomputable local instance linearHomCrossEvaluationMonoidalCategory :
     MonoidalCategory (ChainComplex (ModuleCat.{u} R) ℕ) :=
   HomologicalComplex.monoidalCategory
     (ModuleCat.{u} R) (ComplexShape.down ℕ)
 
-/-- Evaluation of the identity-tensor external cochain pairing against the
-identity-tensor homology pairing is the middle-four tensor of the two factor
-evaluations, followed by the coefficient pairing. -/
+/-- Let R be commutative in universe u, with all module carriers and nonnegative chain terms in u.
+Let T=K₁⊗K₂, M,N,L be coefficient modules, μ:M⊗N→L and p,q∈ℕ. The identity diagonal on T defines
+cup:H^pHom(K₁,M)⊗H^qHom(K₂,N)→H^{p+q}Hom(T,L), and the identity tensor chain map gives
+cross:H_pK₁⊗H_qK₂→H_{p+q}T. Then ev_{T,L}(cup(α,β),cross(x,y))=μ(ev_{K₁,M}(α,x)⊗ev_{K₂,N}(β,y)).
+The full tensor-map formula regroups the middle two factors by ordinary module interchange and
+introduces no degree-sign multiplier. -/
 public theorem linearHomCochainTensorEvaluation
     {K₁ K₂ : ChainComplex (ModuleCat.{u} R) ℕ} [K₁.HasTensor K₂]
     (M N L : ModuleCat.{u} R) (mu : M ⊗ N ⟶ L) (p q : ℕ) :
@@ -180,10 +191,12 @@ public theorem linearHomCochainTensorEvaluation
       simpa only [dite_eq_left, ModuleCat.comp_apply,
         ModuleCat.MonoidalCategory.tensorHom_tmul] using hDesc
 
-/-- If a chain cross product followed by a chain coproduct is homotopic to
-the identity, evaluation of the induced external cohomology product on the
-induced homology cross product is the middle-four tensor of factor
-evaluations. -/
+/-- Let R be commutative in universe u, with all module carriers and nonnegative chain terms in u.
+Put T=K₁⊗K₂ and take chain maps σ:T→K₀, c:K₀→K₃, a:K₃→T with a homotopy from ((σ≫c)≫a) to id_T.
+For μ:M⊗N→L and p,q∈ℕ, a defines a cup product into H^{p+q}Hom(K₃,L), while σ defines a cross
+product into H_{p+q}K₀. One has
+ev_{K₃,L}(cup_a(α,β),H_{p+q}(c)(cross_σ(x,y)))=μ(ev_{K₁,M}(α,x)⊗ev_{K₂,N}(β,y)). The stated
+four-factor tensor equation retains σ,c,a and the one-sided homotopy. -/
 public theorem linearHomCochainCrossEvaluation_of_homotopy
     {K₁ K₂ K₀ K₃ : ChainComplex (ModuleCat.{u} R) ℕ}
     [K₁.HasTensor K₂]

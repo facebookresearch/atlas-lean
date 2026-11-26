@@ -1,4 +1,5 @@
-# Matrix Cyclic Weibel Chain Map
+# The finite matrix cyclic chain map from the canonical positive CE tail
 
-The finite-matrix cyclic trace chain map from the positive tail of the canonical
-Chevalley–Eilenberg complex.
+The finite matrix cyclic chain map from the canonical positive CE tail.
+
+Compose the degree-signed exterior chain map with generalized matrix trace.

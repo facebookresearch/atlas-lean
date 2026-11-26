@@ -15,14 +15,15 @@ public import MathlibExt.Combinatorics.Perm.EulerianProjectors
 public import MathlibExt.Combinatorics.Perm.EulerianRationalFamily
 
 /-!
-# Actual Eulerian action on full exterior antisymmetrization
+# Eulerian operators on antisymmetric tensors
 
-The neutral actual sign action gives the factorial norm on the entire
-original exterior image. The rational top projector therefore
-fixes that image, and orthogonality kills the other weights in every degree.
-No freeness or flatness is used; the rational premise belongs to the actual
-Eulerian coefficients, and no characteristic free isomorphism is inferred
-from the factorial composite.
+Let k be a commutative ℚ-algebra and M,V k-modules. On M ⊗ V⊗n, let F = id_M ⊗ Aₙ be the
+exterior antisymmetrization. The rational Eulerian projector eₙ⁽ⁿ⁾ fixes the image of F, every
+projector eₙ⁽ⁱ⁾ with i ≠ n kills it, and the convolution family Λₙ(a) acts there by aⁿ for a ∈
+ℚ.
+
+The Eulerian idempotents and their signed top term are discussed in J.-L. Loday, Cyclic
+Homology, 2nd ed., §4.5.
 -/
 
 @[expose] public section
@@ -38,7 +39,11 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (V : Type v) [AddCommGroup V] [Module k V]
   (M : Type w) [AddCommGroup M] [Module k M]
 
-/-- An original rational group-ring generator has its actual coefficient-fixed place action. -/
+/-- The action of a rational permutation monomial.
+
+For a commutative ℚ-algebra k, k-modules M,V, σ ∈ Sₙ and c ∈ ℚ, the coefficient tensor
+action of c[σ] is algebraMap(c) · ρₙ(σ). The operator ρₙ(σ) fixes M and sends a tensor word
+a to a ∘ σ⁻¹. -/
 theorem coefficientRationalPermutationAction_single (n : ℕ)
     (σ : Equiv.Perm (Fin n)) (c : ℚ) :
     coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (MonoidAlgebra.single σ c) =
@@ -48,7 +53,10 @@ theorem coefficientRationalPermutationAction_single (n : ℕ)
       (MonoidAlgebra.single σ c)) = _
   rw [MonoidAlgebra.mapRingHom_single, coefficientPermutationGroupAlgebraAction_single]
 
-/-- The actual highest Eulerian projector fixes the entire original signed exterior image. -/
+/-- The top Eulerian projector fixes antisymmetrized tensors.
+
+For a commutative ℚ-algebra k and k-modules M,V, let F = id_M ⊗ Aₙ : M ⊗ ⋀ⁿV → M ⊗ V⊗n. Then
+the action of eₙ⁽ⁿ⁾ satisfies eₙ⁽ⁿ⁾ ∘ F = F. -/
 theorem coefficientEulerian_top_exteriorAntisymmetrization (n : ℕ) :
     (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n
       (Equiv.Perm.eulerianElement n n)).comp
@@ -92,7 +100,10 @@ theorem coefficientEulerian_top_exteriorAntisymmetrization (n : ℕ) :
     rw [← map_natCast (algebraMap ℚ k), ← map_mul, inv_mul_cancel₀ hfac, map_one]
   rw [hscalar, one_smul]
 
-/-- Every other actual Eulerian weight vanishes on the original exterior image. -/
+/-- Eulerian weights of antisymmetrized tensors.
+
+For a commutative ℚ-algebra k and k-modules M,V, the action of eₙ⁽ⁱ⁾ on F = id_M ⊗ Aₙ is F
+when i = n and zero when i ≠ n. Thus the exterior image has Eulerian weight n. -/
 theorem coefficientEulerian_exteriorAntisymmetrization (n i : ℕ) :
     (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n
       (Equiv.Perm.eulerianElement n i)).comp
@@ -113,7 +124,10 @@ theorem coefficientEulerian_exteriorAntisymmetrization (n i : ℕ) :
     rw [← coefficientEulerian_top_exteriorAntisymmetrization k V M n,
       ← LinearMap.comp_assoc, hzero, LinearMap.zero_comp]
 
-/-- The full actual rational convolution acts on exterior words by its homogeneous top eigenvalue. -/
+/-- The convolution eigenvalue on antisymmetrized tensors.
+
+For a commutative ℚ-algebra k, k-modules M,V and a ∈ ℚ, the action of Λₙ(a) = ∑ᵢaⁱeₙ⁽ⁱ⁾
+satisfies Λₙ(a) ∘ (id_M ⊗ Aₙ) = algebraMap(aⁿ) · (id_M ⊗ Aₙ). -/
 theorem coefficientConvolution_exteriorAntisymmetrization (n : ℕ) (a : ℚ) :
     (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n
       (Equiv.Perm.eulerianLambda n a)).comp

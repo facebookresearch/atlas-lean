@@ -1,3 +1,4 @@
-# Diagonal Multiplication difference
+# Diagonal multiplication kills the differences
 
-The actual multiplication augmentation kills each original diagonal difference.
+Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For every `i : σ`, `diagonalMultiplication k σ (X_i ⊗ op(1) - 1 ⊗ op(X_i)) = 0`.

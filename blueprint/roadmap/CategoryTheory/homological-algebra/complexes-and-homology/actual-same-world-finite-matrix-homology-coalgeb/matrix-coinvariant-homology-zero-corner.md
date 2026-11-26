@@ -1,3 +1,5 @@
-# Matrix Coinvariant Homology Zero Corner Map
+# The graded size map of matrix coinvariant homology
 
-The zero-corner map on the graded coinvariant homology.
+The graded size map of matrix coinvariant homology.
+
+Take homology of the compared coinvariant zero-extension chain map in every degree.

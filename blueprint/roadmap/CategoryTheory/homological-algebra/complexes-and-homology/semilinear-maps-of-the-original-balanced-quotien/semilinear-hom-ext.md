@@ -1,3 +1,6 @@
-# Semilinear Hom ext
+# Pure classes determine a semilinear map from a balanced quotient
 
-Pure balanced classes determine a semilinear map even when its ground changes.
+Pure classes determine a semilinear map from a balanced quotient.
+
+Two `σ`-semilinear maps from `Balanced k R M N` to a `k'`-module `P` are equal if they agree
+on `[m ⊗ n]` for every pair `m, n`.

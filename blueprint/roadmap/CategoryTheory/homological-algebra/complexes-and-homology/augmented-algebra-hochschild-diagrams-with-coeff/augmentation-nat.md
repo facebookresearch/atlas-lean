@@ -1,3 +1,6 @@
-# Augmentation Nat
+# The natural Hochschild augmentation with arbitrary module coefficients
 
-The original Hochschild augmentation is a natural transformation, for every original coefficient M.
+The natural Hochschild augmentation with arbitrary module coefficients.
+
+The terminal algebra maps induce a natural transformation to the constant chain complex of `B`
+with coefficients `M`, retaining the coefficient value.

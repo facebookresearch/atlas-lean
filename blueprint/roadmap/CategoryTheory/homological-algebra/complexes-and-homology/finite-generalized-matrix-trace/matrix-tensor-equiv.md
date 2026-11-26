@@ -1,4 +1,5 @@
-# Matrix Tensor Equiv
+# The tensor description of a finite matrix module
 
-The finite matrix-module identification used in Loday 1.2.1.
-It is assembled from native finite-product tensor equivalences.
+For k commutative, M a k-module and finite ι, the k-linear
+equivalence Mat_ι(k)⊗[k]M≃Mat_ι(M) sends U⊗m to the
+entrywise scalar matrix (U_{ij}•m).

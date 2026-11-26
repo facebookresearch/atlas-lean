@@ -1,3 +1,6 @@
-# Hom Map
+# Target postcomposition on the right-module Hom object
 
-Postcomposition maps the actual Hom objects.
+Target postcomposition on the right-module Hom object.
+
+A right `S`-module morphism `g : C ⟶ C'` induces a right `R`-module morphism from
+`Hom_(Sᵐᵒᵖ)(B, C)` to `Hom_(Sᵐᵒᵖ)(B, C')` by postcomposition.

@@ -1,6 +1,6 @@
 # Composition of split short complexes
 
-- [Comp Left zero](comp-left-zero.md)
-- [Comp Left](comp-left.md)
-- [Comp Left Cokernel Cofork](comp-left-cokernel-cofork.md)
-- [Comp Left Cokernel Cofork Is Colimit](comp-left-cokernel-cofork-is-colimit.md)
+- [The composite left arrow is killed by the selected biproduct quotient](comp-left-zero.md)
+- [The composite of two split left arrows gives a split short complex](comp-left.md)
+- [The selected cokernel cofork of a composite split left arrow](comp-left-cokernel-cofork.md)
+- [The biproduct quotient is a cokernel of the composite split left arrow](comp-left-cokernel-cofork-is-colimit.md)

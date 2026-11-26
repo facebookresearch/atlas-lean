@@ -1,7 +1,7 @@
 # Quillen exact functors
 
-- [Is Exact](is-exact.md)
-- [Map is Pullback of is Admissible Mono of is Admissible Epi](map-is-pullback-of-is-admissible-mono-of.md)
-- [Map is Pushout of is Admissible Epi of is Admissible Mono](map-is-pushout-of-is-admissible-epi-of-i.md)
-- [Map is Pushout of is Admissible Mono](map-is-pushout-of-is-admissible-mono.md)
-- [Reflects Admissible Exact](reflects-admissible-exact.md)
+- [Exact functors between Quillen exact categories](is-exact.md)
+- [Exact functors preserve admissible pullback squares](map-is-pullback-of-is-admissible-mono-of.md)
+- [Exact functors preserve admissible pushout squares](map-is-pushout-of-is-admissible-epi-of-i.md)
+- [Exact functors preserve pushout along admissible monos](map-is-pushout-of-is-admissible-mono.md)
+- [Reflection of admissible exact sequences](reflects-admissible-exact.md)

@@ -1,4 +1,7 @@
-# Projective Free Cover
+# The free module on the Lie-algebra carrier
 
-A separate carrier for the free module on the original Lie algebra.
-Its Lie bracket is installed from the actual projective section below.
+For a commutative ring R and an R-Lie algebra L, the free
+cover carrier is F = L →₀ R, the finitely supported R-valued
+functions on L. Its world is max(u,v), where R and L have
+independent carrier worlds u and v. Its module basis is indexed
+by the elements of L.

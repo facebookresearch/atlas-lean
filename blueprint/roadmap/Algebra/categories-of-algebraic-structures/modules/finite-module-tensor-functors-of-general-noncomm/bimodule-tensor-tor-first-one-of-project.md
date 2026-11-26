@@ -1,3 +1,6 @@
-# Bimodule Tensor tor First one of projective
+# Projective right coefficient has zero Tor one against every left module
 
-Projectivity of the original right coefficient earns its canonical Tor₁ flatness condition.
+Projective right coefficient has zero Tor one against every left module.
+
+If the right `R`-module `E` is projective as an `Rᵐᵒᵖ`-module, then `Tor¹_R(E, N)` is zero for
+every left `R`-module `N`.

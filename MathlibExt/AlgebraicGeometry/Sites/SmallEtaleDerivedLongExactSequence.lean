@@ -13,7 +13,23 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleLongExactSequenceNatu
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleLongExactSequenceSections
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.ResolutionComparison
 
-/-! # Canonical transport of the actual small étale long exact sequence -/
+/-!
+# Cohomology comparisons and derived section exact sequences
+
+For a scheme `X : Scheme.{u}`, use abelian sheaves with coefficient universe `λ = max u w`.
+Their small étale cohomology groups compare with `R^qΓ` in every natural degree. In degree
+zero the coordinate is evaluation on the identity étale object. In positive degrees it is
+determined by closed integral-sheaf maps into an injective resolution, with the section cycles
+quotiented by boundaries.
+
+Transport the cohomological connecting map through these comparisons to obtain `R^nΓ(S₃) →
+R^(n+1)Γ(S₁)` for each short exact sequence. The resulting six-term windows are exact, natural
+in sequence morphisms, and have an injective first map in degree zero.
+
+Injective-resolution coordinates give the same boundary after changing resolutions and commute
+with resolution maps over sequence morphisms. The section and representative normalizations
+uniquely determine the comparison family.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -22,25 +38,40 @@ universe u w v v'
 
 namespace AlgebraicGeometry.Scheme.DerivedSections.CanonicalLongExactSequence
 
-/-- Abelian sheaves on the small étale site of X with values in the common universe. -/
+/-- Abelian sheaves in the common coefficient universe.
+
+For `X : Scheme.{u}`, these are sheaves on `X.smallEtaleTopology` with values in additive
+groups of universe `max u w`. -/
 abbrev CommonSheaf (X : Scheme.{u}) :=
   Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
 
-/-- The global sections functor for abelian sheaves on X in the common universe. -/
+/-- Global sections in the common coefficient universe.
+
+The functor `gamma X` is `Sheaf.Γ` for the small étale topology with additive-group
+coefficients in universe `max u w`. -/
 abbrev gamma (X : Scheme.{u}) :=
   Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}
 
-/-- Small étale cohomology of Q in degree q. -/
+/-- Small étale cohomology in a fixed natural degree.
+
+For a common-universe sheaf `Q`, `cohomology X Q q` is its small étale cohomology group
+`Sheaf.H Q q` in natural degree `q`. -/
 abbrev cohomology (X : Scheme.{u}) (Q : CommonSheaf.{u, w} X) (q : ℕ) :=
   Sheaf.H.{max u w, max u w, u, u + 1} Q q
 
-/-- The value on Q of the right derived global sections functor in degree q. -/
+/-- Right derived global sections in a fixed natural degree.
+
+For a common-universe sheaf `Q`, evaluate the degree-`q` right-derived global-sections functor
+at `Q`. -/
 abbrev derived (X : Scheme.{u}) (Q : CommonSheaf.{u, w} X) (q : ℕ) :=
   ((gamma.{u, w} X).rightDerived q).obj Q
 
 variable (X : Scheme.{u})
 
-/-- The actual section identification in degree zero, using the existing canonical maps. -/
+/-- Degree zero comparison from cohomology to derived sections.
+
+Identify `H⁰(X,Q)` with sections on the identity étale object, then with global sections, and
+then with degree-zero right-derived global sections. -/
 def zeroEquiv (Q : CommonSheaf.{u, w} X) :
     cohomology.{u, w} X Q 0 ≃+ derived.{u, w} X Q 0 :=
   (smallEtaleH0Sections.{u, w} X Q).trans
@@ -48,6 +79,10 @@ def zeroEquiv (Q : CommonSheaf.{u, w} X) :
       (identityEtaleIsTerminal X)).app Q).addCommGroupIsoToAddEquiv.symm.trans
         (((gamma.{u, w} X).rightDerivedZeroIsoSelf.app Q).addCommGroupIsoToAddEquiv.symm))
 
+/-- Degree zero comparison preserves terminal section values.
+
+The degree-zero comparison followed by the derived-zero global-sections coordinate and
+terminal-object evaluation equals the degree-zero cohomology section coordinate. -/
 theorem zeroEquiv_sections (Q : CommonSheaf.{u, w} X)
     (x : cohomology.{u, w} X Q 0) :
     (Sheaf.ΓNatIsoSheafSections X.smallEtaleTopology AddCommGrpCat.{max u w}
@@ -60,6 +95,10 @@ theorem zeroEquiv_sections (Q : CommonSheaf.{u, w} X)
   change a0 (r0 (r0.symm (a0.symm (smallEtaleH0Sections.{u, w} X Q x)))) = _
   rw [r0.apply_symm_apply, a0.apply_symm_apply]
 
+/-- Degree zero comparison is natural in sheaf maps.
+
+For a sheaf morphism, its degree-zero cohomology map commutes with the comparison to the
+degree-zero right-derived global-sections map. -/
 theorem zeroEquiv_naturality {Q Q' : CommonSheaf.{u, w} X} (f : Q ⟶ Q')
     (x : cohomology.{u, w} X Q 0) :
     zeroEquiv.{u, w} X Q' (Sheaf.H.map f 0 x) =
@@ -88,16 +127,28 @@ theorem zeroEquiv_naturality {Q Q' : CommonSheaf.{u, w} X} (f : Q ⟶ Q')
         (D.hom.app Q (zeroEquiv.{u, w} X Q x))) := hs.symm
     _ = _ := congrArg (S.hom.app Q') hd.symm
 
-/-- C's internally chosen original cycle presentation, with no supplied certificate. -/
+/-- Positive cohomology classes from resolution section cycles.
+
+For degree `n + 1`, the presentation is an additive map from the kernel of the outgoing
+global-section differential in the chosen injective resolution to small étale cohomology. -/
 def presentation : ∀ (Q : CommonSheaf.{u, w} X) (n : ℕ),
     (positiveShort.{u, w} X Q n).g.hom.ker →+ cohomology.{u, w} X Q (n + 1) :=
   Classical.choose (positive_ext_original_map_naturality.{u, w} X)
 
-/-- C's unique actual positive comparison family. -/
+/-- Positive cohomology comparison with derived global sections.
+
+For every sheaf and natural `n`, choose the additive equivalence from degree-`n + 1` small
+étale cohomology to right-derived global sections determined by resolution representatives. -/
 def positiveEquiv : ∀ (Q : CommonSheaf.{u, w} X) (n : ℕ),
     cohomology.{u, w} X Q (n + 1) ≃+ derived.{u, w} X Q (n + 1) :=
   Classical.choose (Classical.choose_spec (positive_ext_original_map_naturality.{u, w} X))
 
+/-- Positive comparison is normalized natural and unique.
+
+The presentation is surjective with kernel the section boundaries; the comparison sends its
+values to the corresponding derived cycle classes and respects all closed integral-sheaf
+representatives. It is natural in sheaf maps and uniquely determined among comparison families
+satisfying these representative conditions. -/
 theorem positiveEquiv_spec :
     positiveExtPacket.{u, w} X (presentation.{u, w} X) (positiveEquiv.{u, w} X) ∧
     (∀ (Q Q' : CommonSheaf.{u, w} X) (τ : Q ⟶ Q') (n : ℕ)
@@ -108,18 +159,30 @@ theorem positiveEquiv_spec :
   Classical.choose_spec
     (Classical.choose_spec (positive_ext_original_map_naturality.{u, w} X))
 
-/-- One common-universe family, with the actual section map at zero and C's family thereafter. -/
+/-- Cohomology comparison in every natural degree.
+
+Use the terminal-section comparison in degree zero and the normalized positive comparison in
+degree `n + 1` to define `H^q(X,Q) ≃+ R^qΓ(Q)` for every natural `q`. -/
 def canonicalEquiv (Q : CommonSheaf.{u, w} X) (q : ℕ) :
     cohomology.{u, w} X Q q ≃+ derived.{u, w} X Q q :=
   match q with
   | 0 => zeroEquiv.{u, w} X Q
   | n + 1 => positiveEquiv.{u, w} X Q n
 
+/-- All degree comparison has the positive representative normalization.
+
+In positive degrees, the canonical family has a surjective resolution-cycle presentation with
+kernel the boundaries, agrees with derived cycle classes, and represents closed maps from the
+integral sheaf by their Ext classes. -/
 theorem canonicalEquiv_positive_packet :
     positiveExtPacket.{u, w} X (presentation.{u, w} X)
       (fun Q n => canonicalEquiv.{u, w} X Q (n + 1)) :=
   (positiveEquiv_spec.{u, w} X).1
 
+/-- All degree comparison has the degree zero section normalization.
+
+In degree zero, composing the canonical comparison with the derived-zero and global-section
+coordinates gives the terminal-section value of the cohomology class. -/
 theorem canonicalEquiv_zero_sections (Q : CommonSheaf.{u, w} X)
     (x : cohomology.{u, w} X Q 0) :
     (Sheaf.ΓNatIsoSheafSections X.smallEtaleTopology AddCommGrpCat.{max u w}
@@ -128,6 +191,11 @@ theorem canonicalEquiv_zero_sections (Q : CommonSheaf.{u, w} X)
         (canonicalEquiv.{u, w} X Q 0 x)) = smallEtaleH0Sections.{u, w} X Q x :=
   zeroEquiv_sections.{u, w} X Q x
 
+/-- Cohomology comparison is natural in every degree.
+
+For any sheaf map and natural degree `q`, applying its cohomology map and then the target
+comparison equals applying the source comparison and then its right-derived global-sections
+map. -/
 theorem canonicalEquiv_naturality {Q Q' : CommonSheaf.{u, w} X} (τ : Q ⟶ Q')
     (q : ℕ) (x : cohomology.{u, w} X Q q) :
     canonicalEquiv.{u, w} X Q' q (Sheaf.H.map τ q x) =
@@ -136,6 +204,11 @@ theorem canonicalEquiv_naturality {Q Q' : CommonSheaf.{u, w} X} (τ : Q ⟶ Q')
   | zero => exact zeroEquiv_naturality.{u, w} X τ x
   | succ n => exact (positiveEquiv_spec.{u, w} X).2.1 Q Q' τ n x
 
+/-- Section and representative normalization determine the comparison.
+
+A family of additive cohomology-to-derived equivalences equals the canonical family if it has
+the degree-zero terminal-section normalization and a positive resolution-cycle presentation
+with the stated boundary and representative normalization. -/
 theorem canonicalEquiv_unique
     (e : ∀ (Q : CommonSheaf.{u, w} X) (q : ℕ),
       cohomology.{u, w} X Q q ≃+ derived.{u, w} X Q q)
@@ -160,6 +233,11 @@ theorem canonicalEquiv_unique
       exact (h0 Q x).trans (canonicalEquiv_zero_sections.{u, w} X Q x).symm
   | succ n => exact congrFun (congrFun hpos Q) n
 
+/-- Positive comparison evaluates a closed integral sheaf representative.
+
+For a closed map from the integral sheaf to injective-resolution term `n + 1`, its terminal
+section is a resolution section cycle, and the comparison sends its Ext representative class
+to the derived cycle class of that section. -/
 theorem canonicalEquiv_representative (Q : CommonSheaf.{u, w} X) (n : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X (n + 1))
     (hf : f ≫ (injectiveResolution Q).cocomplex.d (n + 1) (n + 2) = 0) :
@@ -173,11 +251,18 @@ theorem canonicalEquiv_representative (Q : CommonSheaf.{u, w} X) (n : ℕ)
   rw [← hp]
   exact ((canonicalEquiv_positive_packet.{u, w} X) Q n).2.2.1 z
 
-/-- The canonical isomorphism from small étale cohomology to derived global sections. -/
+/-- Cohomology comparison as an additive group isomorphism.
+
+Bundle the canonical additive equivalence `H^q(X,Q) ≃+ R^qΓ(Q)` as an isomorphism in the
+additive-group category. -/
 def comparisonIso (Q : CommonSheaf.{u, w} X) (q : ℕ) :
     AddCommGrpCat.of (cohomology.{u, w} X Q q) ≅ derived.{u, w} X Q q :=
   (canonicalEquiv.{u, w} X Q q).toAddCommGrpIso
 
+/-- Group comparison isomorphisms commute with sheaf maps.
+
+The additive-group morphism of the cohomology map followed by the target comparison equals the
+source comparison followed by the derived global-sections morphism. -/
 @[reassoc]
 theorem comparisonIso_naturality {Q Q' : CommonSheaf.{u, w} X} (τ : Q ⟶ Q') (q : ℕ) :
     AddCommGrpCat.ofHom (Sheaf.H.map τ q) ≫ (comparisonIso.{u, w} X Q' q).hom =
@@ -185,6 +270,10 @@ theorem comparisonIso_naturality {Q Q' : CommonSheaf.{u, w} X} (τ : Q ⟶ Q') (
   ext x
   exact canonicalEquiv_naturality.{u, w} X τ q x
 
+/-- Inverse cohomology comparison is natural.
+
+The inverse canonical equivalence commutes with the right-derived global-sections map and the
+corresponding cohomology map of a sheaf morphism. -/
 theorem canonicalEquiv_symm_naturality {Q Q' : CommonSheaf.{u, w} X} (τ : Q ⟶ Q')
     (q : ℕ) (x : derived.{u, w} X Q q) :
     (canonicalEquiv.{u, w} X Q' q).symm (((gamma.{u, w} X).rightDerived q).map τ x) =
@@ -195,13 +284,20 @@ theorem canonicalEquiv_symm_naturality {Q Q' : CommonSheaf.{u, w} X} (τ : Q ⟶
 variable {X}
   {S T : ShortComplex (CommonSheaf.{u, w} X)}
 
-/-- Explicit canonical transport of the same intrinsic extension-class boundary. -/
+/-- Connecting map transported to derived global sections.
+
+For a short exact sheaf sequence, transport its connecting map `H^n(S₃) → H^(n+1)(S₁)` through
+the canonical comparisons to obtain an additive map `R^nΓ(S₃) → R^(n+1)Γ(S₁)`. -/
 def derivedBoundary (hS : S.ShortExact) (n : ℕ) :
     derived.{u, w} X S.X₃ n →+ derived.{u, w} X S.X₁ (n + 1) :=
   (canonicalEquiv.{u, w} X S.X₁ (n + 1)).toAddMonoidHom.comp
     ((smallEtaleConnectingMap.{u, w} hS n).comp
       (canonicalEquiv.{u, w} X S.X₃ n).symm.toAddMonoidHom)
 
+/-- Transported connecting map respects the cohomology comparison.
+
+The transported boundary applied to the compared source class equals the comparison of its
+small étale connecting class. -/
 theorem derivedBoundary_comparison (hS : S.ShortExact) (n : ℕ)
     (x : cohomology.{u, w} X S.X₃ n) :
     derivedBoundary.{u, w} hS n (canonicalEquiv.{u, w} X S.X₃ n x) =
@@ -211,6 +307,10 @@ theorem derivedBoundary_comparison (hS : S.ShortExact) (n : ℕ)
       ((canonicalEquiv.{u, w} X S.X₃ n).symm (canonicalEquiv.{u, w} X S.X₃ n x))) = _
   rw [AddEquiv.symm_apply_apply]
 
+/-- Transported connecting maps are natural in short exact sequences.
+
+For a morphism of short exact sequences, the degree-`n` map on the quotient sheaf commutes
+with the transported boundary and the degree-`n + 1` map on the kernel sheaf. -/
 theorem derivedBoundary_naturality (hS : S.ShortExact) (hT : T.ShortExact)
     (α : S ⟶ T) (n : ℕ) (x : derived.{u, w} X S.X₃ n) :
     derivedBoundary.{u, w} hT n (((gamma.{u, w} X).rightDerived n).map α.τ₃ x) =
@@ -223,7 +323,11 @@ theorem derivedBoundary_naturality (hS : S.ShortExact) (hT : T.ShortExact)
     canonicalEquiv_naturality]
   rfl
 
-/-- The literal actual right-derived maps in every adjacent-degree window. -/
+/-- Six term derived section sequence.
+
+For a short exact sequence, take the three right-derived section objects in degree `n`, the
+transported boundary, and the three objects in degree `n + 1`, with the induced first and
+second sheaf maps in each degree. -/
 def derivedSequence (hS : S.ShortExact) (n : ℕ) :
     ComposableArrows AddCommGrpCat.{max u w} 5 :=
   ComposableArrows.mk₅ (((gamma.{u, w} X).rightDerived n).map S.f)
@@ -232,8 +336,10 @@ def derivedSequence (hS : S.ShortExact) (n : ℕ) :
     (((gamma.{u, w} X).rightDerived (n + 1)).map S.f)
     (((gamma.{u, w} X).rightDerived (n + 1)).map S.g)
 
-/-- Compare the windows of five arrows for small étale cohomology and derived global sections
-in degrees n and n + 1. -/
+/-- Cohomology and derived section windows are isomorphic.
+
+The six canonical cohomology comparison isomorphisms identify the small étale long-sequence
+window with the window of right-derived sections and its transported boundary. -/
 def sequenceComparison (hS : S.ShortExact) (n : ℕ) :
     smallEtaleLongSequence.{u, w} hS n ≅ derivedSequence.{u, w} hS n := by
   refine ComposableArrows.isoMk₅ (comparisonIso.{u, w} X S.X₁ n)
@@ -247,11 +353,18 @@ def sequenceComparison (hS : S.ShortExact) (n : ℕ) :
   · exact comparisonIso_naturality.{u, w} X S.f (n + 1)
   · exact comparisonIso_naturality.{u, w} X S.g (n + 1)
 
+/-- Derived section windows are exact.
+
+Every six-term derived-section window of a short exact common-universe sheaf sequence is
+exact. -/
 theorem derivedSequence_exact (hS : S.ShortExact) (n : ℕ) :
     (derivedSequence.{u, w} hS n).Exact :=
   ComposableArrows.exact_of_iso (sequenceComparison.{u, w} hS n)
     (smallEtaleLongSequence_exact.{u, w} hS n)
 
+/-- The first degree zero derived section map is injective.
+
+For a short exact sheaf sequence, the map `R⁰Γ(S.f)` is injective. -/
 theorem derivedSequence_initial_injective (hS : S.ShortExact) :
     Function.Injective (((gamma.{u, w} X).rightDerived 0).map S.f) := by
   intro a b hab
@@ -259,8 +372,10 @@ theorem derivedSequence_initial_injective (hS : S.ShortExact) :
   apply smallEtaleLongSequence_initial_injective hS
   rw [← canonicalEquiv_symm_naturality, ← canonicalEquiv_symm_naturality, hab]
 
-/-- The morphism between windows of derived global sections induced by a morphism
-of short exact sequences. -/
+/-- Morphisms of derived section windows.
+
+A morphism of short exact sheaf sequences induces a morphism of their six-term derived-section
+windows by the derived maps on its three components in each degree. -/
 def derivedSequenceHom (hS : S.ShortExact) (hT : T.ShortExact) (α : S ⟶ T) (n : ℕ) :
     derivedSequence.{u, w} hS n ⟶ derivedSequence.{u, w} hT n := by
   refine ComposableArrows.homMk₅ (((gamma.{u, w} X).rightDerived n).map α.τ₁)
@@ -300,8 +415,10 @@ def derivedSequenceHom (hS : S.ShortExact) (hT : T.ShortExact) (α : S ⟶ T) (n
       ((congrArg ((gamma.{u, w} X).rightDerived (n + 1)).map α.comm₂₃.symm).trans
         (((gamma.{u, w} X).rightDerived (n + 1)).map_comp α.τ₂ T.g))
 
-/-- Assign each short exact sequence its window of five arrows for derived global sections
-in degrees n and n + 1. -/
+/-- Derived section windows form a functor.
+
+For fixed degree `n`, send short exact sheaf sequences and their morphisms to the six-term
+derived-section windows in degrees `n` and `n + 1`. -/
 def derivedSequenceFunctor (X : Scheme.{u}) (n : ℕ) :
     ShortExactSequence (CommonSheaf.{u, w} X) ⥤ ComposableArrows AddCommGrpCat.{max u w} 5 where
   obj S := derivedSequence.{u, w} S.property n
@@ -323,7 +440,10 @@ def derivedSequenceFunctor (X : Scheme.{u}) (n : ℕ) :
     · exact ((gamma.{u, w} X).rightDerived (n + 1)).map_comp α.hom.τ₂ β.hom.τ₂
     · exact ((gamma.{u, w} X).rightDerived (n + 1)).map_comp α.hom.τ₃ β.hom.τ₃
 
-/-- The natural comparison between the small étale and derived global sections sequence functors. -/
+/-- Window comparison is natural in short exact sequences.
+
+The cohomology-to-derived section isomorphisms give a natural isomorphism between the two six-
+term window functors. -/
 def sequenceComparisonNatIso (X : Scheme.{u}) (n : ℕ) :
     smallEtaleLongSequenceFunctor.{u, w} X n ≅ derivedSequenceFunctor.{u, w} X n :=
   NatIso.ofComponents (fun S => sequenceComparison.{u, w} S.property n) (by
@@ -336,7 +456,10 @@ def sequenceComparisonNatIso (X : Scheme.{u}) (n : ℕ) :
     · exact comparisonIso_naturality.{u, w} X α.hom.τ₂ (n + 1)
     · exact comparisonIso_naturality.{u, w} X α.hom.τ₃ (n + 1))
 
-/-- The six components are precisely the same original right-derived morphism maps. -/
+/-- Six component formulas for a derived window morphism.
+
+The six components are the degree-`n` derived maps of the three sheaf components, followed by
+their degree-`n + 1` derived maps, in that order. -/
 def DerivedSequenceComponents (X : Scheme.{u}) (n : ℕ)
     {S T : ShortExactSequence (CommonSheaf.{u, w} X)} (α : S ⟶ T) : Prop :=
   let m := (derivedSequenceFunctor.{u, w} X n).map α
@@ -347,6 +470,10 @@ def DerivedSequenceComponents (X : Scheme.{u}) (n : ℕ)
   m.app 4 = ((gamma.{u, w} X).rightDerived (n + 1)).map α.hom.τ₂ ∧
   m.app 5 = ((gamma.{u, w} X).rightDerived (n + 1)).map α.hom.τ₃
 
+/-- Derived window functor has the six displayed component maps.
+
+Every morphism image under the derived window functor satisfies the six component formulas for
+degrees `n` and `n + 1`. -/
 theorem derivedSequenceFunctor_components (X : Scheme.{u}) (n : ℕ)
     {S T : ShortExactSequence (CommonSheaf.{u, w} X)} (α : S ⟶ T) :
     DerivedSequenceComponents.{u, w} X n α := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
@@ -368,15 +495,20 @@ private theorem conjugate_boundary_naturality {C : Type v} [Category.{v'} C]
   simp only [Category.assoc]
   rw [← hB, reassoc_of% hδ, reassoc_of% hA]
 
-/-- Literal Gamma-resolution homology, without a new quotient or homology construction. -/
+/-- Cohomology of sections of an injective resolution.
+
+For an injective resolution of `Q`, apply global sections termwise and take cohomology in
+natural degree `q`. -/
 abbrev resolutionHomology (X : Scheme.{u}) {Q : CommonSheaf.{u, w} X}
     (R : InjectiveResolution Q) (q : ℕ) :=
   (HomologicalComplex.homologyFunctor AddCommGrpCat.{max u w} (ComplexShape.up ℕ) q).obj
     (((gamma.{u, w} X).mapHomologicalComplex (ComplexShape.up ℕ)).obj R.cocomplex)
 
-/-- The connecting map between homology groups of the global sections of the chosen endpoint
-injective resolutions, obtained by conjugating the derived boundary with their comparison
-isomorphisms. -/
+/-- Connecting map in injective resolution section coordinates.
+
+Conjugate the transported derived-section boundary by the source and target injective-
+resolution cohomology isomorphisms to obtain a map from resolution section cohomology in
+degree `n` to degree `n + 1`. -/
 def resolutionBoundary (hS : S.ShortExact) (n : ℕ)
     (R₁ : InjectiveResolution S.X₁) (R₃ : InjectiveResolution S.X₃) :
     resolutionHomology.{u, w} X R₃ n ⟶ resolutionHomology.{u, w} X R₁ (n + 1) :=
@@ -384,6 +516,10 @@ def resolutionBoundary (hS : S.ShortExact) (n : ℕ)
     AddCommGrpCat.ofHom (derivedBoundary.{u, w} hS n) ≫
       (R₁.isoRightDerivedObj (gamma.{u, w} X) (n + 1)).hom
 
+/-- Resolution boundary is independent of the chosen resolutions.
+
+Changing the injective resolutions of the kernel and quotient sheaves through their canonical
+cohomology comparisons commutes with the resolution-coordinate connecting map. -/
 theorem resolutionBoundary_comparison (hS : S.ShortExact) (n : ℕ)
     (R₁ J₁ : InjectiveResolution S.X₁) (R₃ J₃ : InjectiveResolution S.X₃) :
     resolutionBoundary.{u, w} hS n R₁ R₃ ≫
@@ -396,14 +532,20 @@ theorem resolutionBoundary_comparison (hS : S.ShortExact) (n : ℕ)
     (J₁.isoRightDerivedObj (gamma.{u, w} X) (n + 1))
     (AddCommGrpCat.ofHom (derivedBoundary.{u, w} hS n))
 
-/-- The homology map induced by applying global sections to a comparison of
-injective resolutions. -/
+/-- Resolution morphism induces a section cohomology map.
+
+A morphism of injective resolutions over a sheaf map induces the degree-`q` cohomology map
+after applying global sections to its cochain map. -/
 abbrev resolutionMap {Q Q' : CommonSheaf.{u, w} X} {R : InjectiveResolution Q}
     {R' : InjectiveResolution Q'} {τ : Q ⟶ Q'} (φ : R.Hom R' τ) (q : ℕ) :=
   ((gamma.{u, w} X).mapHomologicalComplex (ComplexShape.up ℕ) ⋙
     HomologicalComplex.homologyFunctor AddCommGrpCat.{max u w} (ComplexShape.up ℕ) q).map φ.hom
 
-/-- Every actual cochain comparison over every original sequence morphism commutes with δ. -/
+/-- Resolution boundaries commute with compatible resolution morphisms.
+
+A morphism of short exact sequences and resolution maps over its first and third sheaf
+components give a commutative square with the resolution-coordinate boundaries in degrees `n`
+and `n + 1`. -/
 theorem resolutionBoundary_naturality (hS : S.ShortExact) (hT : T.ShortExact)
     (α : S ⟶ T) (n : ℕ)
     {R₁ : InjectiveResolution S.X₁} {R₃ : InjectiveResolution S.X₃}
@@ -437,7 +579,11 @@ theorem resolutionBoundary_naturality (hS : S.ShortExact) (hT : T.ShortExact)
     (((gamma.{u, w} X).rightDerived (n + 1)).map α.τ₁)
     (resolutionMap.{u, w} φ₃ n) (resolutionMap.{u, w} φ₁ (n + 1)) h₃ h₁ hδ
 
-/-- A parent family with the original q0 and full positive laws is the restriction of this E. -/
+/-- Lifted coefficient comparisons agree with the canonical family.
+
+A comparison family on coefficient-lifted sheaves agrees in every degree with the canonical
+family if it has the degree-zero section normalization and its positive part agrees with a
+normalized common-universe resolution presentation. -/
 theorem original_family_agreement
     (eo : ∀ (F : Sheaf X.smallEtaleTopology AddCommGrpCat.{w}) (q : ℕ),
       cohomology.{u, w} X ((liftCoefficients.{u, w} X).obj F) q ≃+
@@ -469,7 +615,11 @@ theorem original_family_agreement
         (canonicalEquiv_zero_sections.{u, w} X ((liftCoefficients.{u, w} X).obj F) x).symm
   | succ n => exact (hsucc F n).trans (congrFun (congrFun hpos _) n)
 
-/-- The exact original zero and positive laws that force the all-degree family. -/
+/-- Normalized cohomology comparison family.
+
+A family of additive equivalences is normalized if its degree-zero values are terminal
+sections and its positive values admit a surjective cycle presentation with boundary kernel
+and the integral-sheaf representative condition. -/
 def CanonicalFamily (X : Scheme.{u})
     (e : ∀ (Q : CommonSheaf.{u, w} X) (q : ℕ),
       cohomology.{u, w} X Q q ≃+ derived.{u, w} X Q q) : Prop :=
@@ -480,6 +630,10 @@ def CanonicalFamily (X : Scheme.{u})
         smallEtaleH0Sections.{u, w} X Q x) ∧
   ∃ p, positiveExtPacket.{u, w} X p (fun Q n => e Q (n + 1))
 
+/-- Normalized cohomology comparison families are unique.
+
+Every normalized comparison family from small étale cohomology to right-derived global
+sections equals the canonical family. -/
 theorem canonicalFamily_unique (X : Scheme.{u})
     (e : ∀ (Q : CommonSheaf.{u, w} X) (q : ℕ),
       cohomology.{u, w} X Q q ≃+ derived.{u, w} X Q q)
@@ -487,7 +641,10 @@ theorem canonicalFamily_unique (X : Scheme.{u})
   obtain ⟨p, hp⟩ := h.2
   exact canonicalEquiv_unique.{u, w} X e h.1 p hp
 
-/-- Full original sequence functor laws and all actual components and squares. -/
+/-- Component naturality and functor laws of derived windows.
+
+These laws state the six component formulas, commutation with every composite arrow of each
+window, preservation of identity sequence morphisms, and preservation of their composition. -/
 def DerivedFunctorLaws (X : Scheme.{u}) (n : ℕ) : Prop :=
   let F := derivedSequenceFunctor.{u, w} X n
   (∀ (S T : ShortExactSequence (CommonSheaf.{u, w} X)) (α : S ⟶ T),
@@ -500,14 +657,22 @@ def DerivedFunctorLaws (X : Scheme.{u}) (n : ℕ) : Prop :=
   ∀ (S T U : ShortExactSequence (CommonSheaf.{u, w} X)) (α : S ⟶ T) (β : T ⟶ U),
     F.map (α ≫ β) = F.map α ≫ F.map β
 
+/-- Derived window functors satisfy their component and functor laws.
+
+For every natural degree, the derived-window functor has the stated component formulas and
+satisfies arrow naturality, identity, and composition laws. -/
 theorem derivedFunctorLaws (X : Scheme.{u}) (n : ℕ) : DerivedFunctorLaws.{u, w} X n :=
   ⟨fun _ _ α => derivedSequenceFunctor_components.{u, w} X n α,
     fun _ _ α _ _ h => ((derivedSequenceFunctor.{u, w} X n).map α).naturality (homOfLE h),
     (derivedSequenceFunctor.{u, w} X n).map_id,
     fun _ _ _ α β => (derivedSequenceFunctor.{u, w} X n).map_comp α β⟩
 
-/-- Complete literal right-derived LES, original class laws, natural comparison
-and resolution square. -/
+/-- Normalized derived section comparisons and exact sequence laws.
+
+The canonical family has the section and positive-representative normalizations, is natural
+and unique, and gives exact six-term windows with an injective first degree-zero map. Its
+boundary and window comparisons are natural, while the resolution-coordinate boundaries
+commute with changes of resolution and compatible resolution morphisms. -/
 theorem original_small_etale_derived_long_exact_sequence (X : Scheme.{u}) :
     positiveExtPacket.{u, w} X (presentation.{u, w} X)
       (fun Q n => canonicalEquiv.{u, w} X Q (n + 1)) ∧

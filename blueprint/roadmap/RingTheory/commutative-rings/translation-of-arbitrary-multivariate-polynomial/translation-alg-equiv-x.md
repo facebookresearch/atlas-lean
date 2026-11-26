@@ -1,3 +1,4 @@
-# Translation Alg Equiv X
+# Translation of a polynomial variable
 
-The forward map changes only the original variable coordinate.
+Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. For `i : σ`, `translationAlgEquiv
+R t (X i) = X i + C(t i)`.

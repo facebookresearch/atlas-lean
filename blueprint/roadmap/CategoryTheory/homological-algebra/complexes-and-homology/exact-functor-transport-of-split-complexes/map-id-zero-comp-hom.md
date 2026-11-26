@@ -1,3 +1,4 @@
-# Map Id Zero comp hom
+# Composition of additive functors on contractions
 
-Successive additive functors and their composite have the same native contraction components.
+Let C,D,E be preadditive categories, F:C⥤D and G:D⥤E additive, and H:1_K∼0 a contraction of a
+c-complex K in C. Mapping first by F then by G has the same components as mapping by F⋙G.

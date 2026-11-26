@@ -1,4 +1,6 @@
-# Polynomial Quotient Target Iso
+# The lifted quotient and coefficient targets are isomorphic
 
-Actual native up/down on the quotient and coefficient targets, with the
-original computed polynomial-linear quotient equivalence between them.
+For a commutative ring R in world u and arbitrary I in
+world v, the polynomial-linear quotient equivalence induces
+ULift^max(u,v)(P/(X_i)) ≅ ULift^max(u,v) R in ModuleCat(P).
+The coefficient action on R is constant-coefficient evaluation.

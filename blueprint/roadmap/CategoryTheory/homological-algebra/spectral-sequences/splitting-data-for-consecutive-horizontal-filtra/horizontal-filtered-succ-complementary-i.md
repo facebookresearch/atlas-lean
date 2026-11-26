@@ -1,4 +1,6 @@
-# Horizontal Filtered Succ complementary id
+# The complementary projector identity of a filtration successor
 
-The lower-coordinate projector plus the top-coordinate projector is the
-identity on filtration stage `p+1`.
+The complementary projector identity of a filtration successor.
+
+On stage `p+1` in degree `p+1+q`, lower retraction followed by inclusion plus top projection
+followed by section is the identity.

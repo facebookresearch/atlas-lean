@@ -1,4 +1,6 @@
-# Kunneth Stable Page Graded Iso hom
+# The partial-total map of the stable Künneth graded comparison
 
-The ordinary-target stable-page coordinate has the literal generic
-partial-total grading morphism.
+The partial-total map of the stable Künneth graded comparison.
+
+The forward ordinary-tensor filtration comparison is the forward partial-total stable-page
+grading isomorphism.

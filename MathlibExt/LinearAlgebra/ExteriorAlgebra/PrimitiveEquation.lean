@@ -14,12 +14,14 @@ module
 public import MathlibExt.LinearAlgebra.ExteriorAlgebra.Coalgebra
 
 /-!
-# The actual reduced primitive equation for the exterior coalgebra
+# The reduced exterior primitive equation
 
-The counit condition follows from the primitive coproduct equation by
-counitality and additive cancellation. No division by two and no
-characteristic hypothesis is needed. This is the actual primitive equation
-for the constructed exterior coproduct and its actual multiplicative unit.
+For an R-module M over a commutative ring R, define the R-linear map ∆̄ : ExteriorAlgebra R M
+→ ExteriorAlgebra R M ⊗_R ExteriorAlgebra R M by ∆̄(a)=∆(a)−a⊗1−1⊗a.
+
+Its zero set is exactly the set of primitive elements. The zero-counit condition follows from
+the coproduct equation by counitality and additive cancellation, so no characteristic or
+invertibility-of-two hypothesis is needed.
 -/
 
 @[expose] public section
@@ -37,7 +39,9 @@ variable (M : Type v) [AddCommGroup M] [Module R M]
 
 local notation "E" => ExteriorAlgebra R M
 
-/-- The actual reduced primitive map on the exterior algebra. -/
+/-- Let R be a commutative ring and M an R-module. For E=ExteriorAlgebra R M, define the R-linear
+map E → E⊗_R E by a ↦ ∆(a)−a⊗1−1⊗a, using the exterior coproduct and its unit. This map
+vanishes precisely when the coproduct has the primitive form. -/
 def primitiveEquation : E →ₗ[R] E ⊗[R] E :=
   coproduct R M - ((TensorProduct.mk R E E).flip (1 : E) + TensorProduct.mk R E E (1 : E))
 
@@ -45,7 +49,10 @@ def primitiveEquation : E →ₗ[R] E ⊗[R] E :=
 theorem primitiveEquation_apply (a : E) :
     primitiveEquation R M a = coproduct R M a - (a ⊗ₜ[R] (1 : E) + (1 : E) ⊗ₜ[R] a) := rfl
 
-/-- The actual reduced equation is equivalent to native primitivity over every commutative ring. -/
+/-- For an R-module M over a commutative ring R and a ∈ ExteriorAlgebra R M, ∆(a)−a⊗1−1⊗a=0 if and
+only if a is (1,1)-skew primitive. The coproduct equation implies the zero-counit condition by
+counitality and additive cancellation. Thus the equivalence holds over every commutative ring,
+without a characteristic assumption. -/
 theorem primitiveEquation_eq_zero_iff (a : E) :
     primitiveEquation R M a = 0 ↔ Coalgebra.IsSkewPrimitiveElem R (1 : E) (1 : E) a := by
   constructor

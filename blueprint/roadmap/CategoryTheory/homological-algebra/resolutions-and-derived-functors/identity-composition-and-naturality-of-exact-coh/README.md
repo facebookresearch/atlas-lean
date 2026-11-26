@@ -2,11 +2,11 @@
 
 ## Cohomological Delta Functor
 
-- [Precompose Change Hom](precompose-change-hom.md)
-- [Precompose Comp Short Exact](precompose-comp-short-exact.md)
-- [Precompose Comp Iso](precompose-comp-iso.md)
-- [Precompose Identity Short Exact](precompose-identity-short-exact.md)
-- [Precompose Identity Iso](precompose-identity-iso.md)
-- [Delta precompose map app](delta-precompose-map-app.md)
-- [Equal system connecting](equal-system-connecting.md)
-- [Original precompose connector](original-precompose-connector.md)
+- [Delta-functor morphism from a change of exact input](precompose-change-hom.md)
+- [Exactness of a composite coefficient functor](precompose-comp-short-exact.md)
+- [Associativity of exact delta-functor precomposition](precompose-comp-iso.md)
+- [Exactness under the identity coefficient functor](precompose-identity-short-exact.md)
+- [Identity law of exact delta-functor precomposition](precompose-identity-iso.md)
+- [Degree map of a precomposed delta-functor morphism](delta-precompose-map-app.md)
+- [Connecting components of equal delta functors](equal-system-connecting.md)
+- [Connecting morphism of exact precomposition](original-precompose-connector.md)

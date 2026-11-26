@@ -14,10 +14,16 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleInverseImageStalks
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleCoefficientSections
 
 /-!
-# Global-section pullback on small étale sites
+# Pullback of global sections on small étale sites
 
-Global-section pullback respects identity and composition for morphisms of
-schemes.
+For a scheme `X`, global sections agree with evaluation on the identity étale object. A scheme
+morphism `f : X → Y` therefore gives `Γ_Y(F) → Γ_X(f^*F)`: apply the inverse-image adjunction
+unit at the identity object of `Y` and restrict along its base-change identification with the
+identity object of `X`.
+
+For coefficients in universe `max u w`, these maps respect identity and composition of scheme
+morphisms through the inverse-image coherence isomorphisms. The terminal-object, unit, and
+base-change comparisons specify these equalities on sections.
 -/
 
 @[expose] public section
@@ -34,21 +40,28 @@ open CategoryTheory CategoryTheory.Limits Opposite
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- Identify global sections with evaluation at the terminal object of the small étale site. -/
+/-- Global sections as evaluation on the identity étale object.
+
+The global-sections functor is naturally isomorphic to sheaf evaluation at `X → X`. -/
 abbrev smallEtaleGlobalTerminalIso (X : Scheme.{u}) :
     Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w} ≅
       (sheafSections X.smallEtaleTopology AddCommGrpCat.{max u w}).obj
         (op (Scheme.Etale.mk (𝟙 X))) :=
   Sheaf.ΓNatIsoSheafSections _ _ (identityEtaleIsTerminal X)
 
-/-- The actual original terminal étale object is preserved by every base change. -/
+/-- Base change of the terminal étale object is terminal.
+
+For `f : X → Y`, the base change of `Y → Y` is canonically isomorphic to `X → X`. -/
 def smallEtaleBaseChangeTerminalIso {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleBaseChange f).obj (Scheme.Etale.mk (𝟙 Y)) ≅ Scheme.Etale.mk (𝟙 X) := by
   let := smallEtaleBaseChange_preservesFiniteLimits f
   exact ((identityEtaleIsTerminal Y).isTerminalObj (smallEtaleBaseChange f)
     (Scheme.Etale.mk (𝟙 Y))).uniqueUpToIso (identityEtaleIsTerminal X)
 
-/-- Pull back actual Γ through its actual adjunction unit and original terminal restriction. -/
+/-- Pullback map on global sections.
+
+The inverse-image adjunction unit and terminal-object comparison define a natural
+transformation `Γ_Y ⟶ f^* ⋙ Γ_X`. -/
 def smallEtalePullbackGlobalSections {X Y : Scheme.{u}} (f : X ⟶ Y) :
     Sheaf.Γ Y.smallEtaleTopology AddCommGrpCat.{max u w} ⟶
       smallEtaleInverseImage.{u, w} f ⋙ Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w} :=
@@ -67,7 +80,10 @@ def smallEtalePullbackGlobalSections {X Y : Scheme.{u}} (f : X ⟶ Y) :
 
 set_option backward.isDefEq.respectTransparency false in
 -- V1 implicit simplification did not unfold the same terminal-evaluation components.
-/-- The actual Γ pullback retains its literal original terminal component. -/
+/-- Global section pullback in terminal object coordinates.
+
+The pullback map followed by terminal evaluation on `X` equals terminal evaluation on `Y`, the
+adjunction-unit component, and restriction along the inverse base-change terminal isomorphism. -/
 theorem smallEtalePullbackGlobalSections_terminal_section {X Y : Scheme.{u}} (f : X ⟶ Y)
     (Q : Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtalePullbackGlobalSections.{u, w} f).app Q ≫
@@ -91,14 +107,20 @@ theorem smallEtalePullbackGlobalSections_terminal_section {X Y : Scheme.{u}} (f 
     (Category.comp_id (((smallEtaleInverseImage.{u, w} f).obj Q).obj.map
       (smallEtaleBaseChangeTerminalIso f).inv.op))
 
-/-- Terminal uniqueness binds the terminal comparison to the same base-change identity. -/
+/-- Terminal base change comparison agrees with identity base change.
+
+For the identity scheme map, the terminal comparison is the base-change identity isomorphism
+evaluated on the terminal étale object. -/
 theorem smallEtaleBaseChangeTerminalIso_id (X : Scheme.{u}) :
     smallEtaleBaseChangeTerminalIso (𝟙 X) =
       (smallEtaleBaseChangeId X).app (Scheme.Etale.mk (𝟙 X)) := by
   apply Iso.ext
   exact (identityEtaleIsTerminal X).hom_ext _ _
 
-/-- The actual identity unit has the literal original terminal restriction coordinate. -/
+/-- Identity inverse image unit agrees with base change restriction.
+
+The identity adjunction unit followed by the inverse-image identity comparison has section
+component the restriction along the base-change identity isomorphism. -/
 theorem smallEtaleInverseImageIdIso_unit_app (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (U : X.Etale) :
     ((smallEtaleInverseImageAdjunction.{u, w} (𝟙 X)).unit.app Q).hom.app (op U) ≫
@@ -115,6 +137,10 @@ theorem smallEtaleInverseImageIdIso_unit_app (X : Scheme.{u})
 
 set_option backward.isDefEq.respectTransparency false in
 -- The actual terminal restriction and adjunction unit enter the same identity comparison.
+/-- Pullback of global sections along the identity is the identity.
+
+Compose the identity pullback map with the inverse-image identity coordinate; the resulting
+natural transformation is the identity on global sections. -/
 theorem smallEtalePullbackGlobalSections_id (X : Scheme.{u}) :
     smallEtalePullbackGlobalSections.{u, w} (𝟙 X) ≫
       Functor.whiskerRight (smallEtaleInverseImageIdIso.{u, w} X).hom
@@ -176,7 +202,10 @@ open CategoryTheory CategoryTheory.Limits Opposite
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The same canonical direct-image composition has its original restriction component. -/
+/-- Direct image composition comparison on sections.
+
+The forward composition comparison at an étale object is restriction of the sheaf along the
+base-change composition isomorphism. -/
 theorem smallEtaleDirectImageCompIso_hom_app_hom_app
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (U : Z.Etale) :
@@ -184,7 +213,10 @@ theorem smallEtaleDirectImageCompIso_hom_app_hom_app
       R.obj.map ((smallEtaleBaseChangeComp f g).hom.app U).op := by
   exact smallEtaleDirectImageCompTo_hom_app_hom_app.{u, w} f g (f ≫ g) rfl R (op U)
 
-/-- The genuine composed adjunction unit has the literal original two-stage section coordinate. -/
+/-- Successive inverse image units agree with the composite unit.
+
+For `f : X → Y` and `g : Y → Z`, the successive units and base-change restriction equal the
+composite unit followed by the inverse of the inverse-image composition comparison. -/
 theorem smallEtaleInverseImageCompIso_unit_app
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (Q : Sheaf Z.smallEtaleTopology AddCommGrpCat.{max u w}) (U : Z.Etale) :
@@ -212,7 +244,10 @@ theorem smallEtaleInverseImageCompIso_unit_app
   rw [smallEtaleDirectImageCompIso_hom_app_hom_app] at hv
   exact hv
 
-/-- Terminal uniqueness supplies the actual base-change composition equality. -/
+/-- Terminal object base change comparisons compose.
+
+The base-change composition comparison at the terminal object, followed by the two terminal
+identifications, equals the terminal identification for the composite scheme map. -/
 theorem smallEtaleBaseChangeTerminalIso_comp
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     (smallEtaleBaseChangeComp f g).app (Scheme.Etale.mk (𝟙 Z)) ≪≫
@@ -221,7 +256,10 @@ theorem smallEtaleBaseChangeTerminalIso_comp
   apply Iso.ext
   exact (identityEtaleIsTerminal X).hom_ext _ _
 
-/-- The corresponding inverse restriction is the SAME original two-stage arrow. -/
+/-- Inverse terminal base change comparison factors through composition.
+
+The inverse terminal comparison for `f ≫ g`, followed by base-change composition, equals the
+two inverse terminal comparisons with the second transported by base change along `f`. -/
 theorem smallEtaleBaseChangeTerminalIso_comp_inv
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     (smallEtaleBaseChangeTerminalIso (f ≫ g)).inv ≫
@@ -237,7 +275,10 @@ theorem smallEtaleBaseChangeTerminalIso_comp_inv
   rw [Category.assoc, Iso.hom_inv_id_app, Category.comp_id]
   exact h.symm
 
-/-- Cancel the inverse mate component in the SAME actual unit composition equation. -/
+/-- Forward inverse image composition comparison identifies the composite unit.
+
+Successive adjunction units, base-change restriction, and the forward inverse-image
+composition map give the adjunction unit of the composite scheme morphism. -/
 theorem smallEtaleInverseImageCompIso_unit_hom_app
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z)
     (Q : Sheaf Z.smallEtaleTopology AddCommGrpCat.{max u w}) (U : Z.Etale) :
@@ -263,6 +304,10 @@ theorem smallEtaleInverseImageCompIso_unit_hom_app
 
 set_option backward.isDefEq.respectTransparency false in
 -- Every section map below is an actual unit, original restriction, or canonical mate component.
+/-- Global section pullbacks respect composition of scheme maps.
+
+Pull back first along `g` and then along `f`, and apply the inverse-image composition
+coordinate. The resulting map equals pullback along `f ≫ g`. -/
 theorem smallEtalePullbackGlobalSections_comp
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     smallEtalePullbackGlobalSections.{u, w} g ≫

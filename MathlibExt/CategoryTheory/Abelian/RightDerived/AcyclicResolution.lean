@@ -13,15 +13,17 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolution
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.OpDuality
 public import Mathlib.CategoryTheory.Limits.Preserves.Opposites
 
+/- The proof passes to the opposite augmentation and the left-derived acyclic comparison; projective resolutions in the opposite category are constructed locally from injective resolutions. -/
+
 /-!
-# Right-derived objects computed from acyclic resolutions
+# Right-derived cohomology computed by acyclic resolutions
 
-An additive functor preserving finite limits can be computed on any augmented acyclic cocomplex
-whose terms have zero positive right-derived values. The proof uses the opposite augmentation,
-op-duality, and the neutral left-derived acyclic-resolution comparison.
-
-Projective resolution availability in the opposite category is constructed locally from injective
-resolutions. No global reverse instance is declared.
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. A coaugmentation
+quasi-isomorphism `X[0] → I` whose terms satisfy
+`R^(j+1)F(I^q)=0` for every `q,j` gives a comparison
+`R^nF(X) ≅ Hⁿ(F(I))` in every degree. The terms of `I` need not
+be injective.
 -/
 
 @[expose] public section
@@ -35,10 +37,12 @@ namespace CategoryTheory.Functor
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
-/--
-A right-derived object computed from an augmented cocomplex with termwise vanishing positive
-right-derived values.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. There is a comparison `R^nF(X) ≅ Hⁿ(F(I))` in every degree
+`n`, computing right derivation from the termwise acyclic coaugmented
+complex `I`. -/
 noncomputable def rightDerivedObjIsoHomologyOfAcyclicResolution
     (F : C ⥤ D) [F.Additive] [PreservesFiniteLimits F]
     {X : C} (I : CochainComplex C ℕ)

@@ -1,4 +1,6 @@
-# Horizontal Direct Column Vertical Cycles Iso hom i Cycles
+# The inclusion formula for normalized direct-column cycle comparison
 
-The normalized cycle isomorphism carries cycle inclusion to the canonical
-degree identification of the direct column.
+The inclusion formula for normalized direct-column cycle comparison.
+
+The normalized cycle isomorphism followed by vertical cycle inclusion equals direct-column
+cycle inclusion followed by its degree-object isomorphism.

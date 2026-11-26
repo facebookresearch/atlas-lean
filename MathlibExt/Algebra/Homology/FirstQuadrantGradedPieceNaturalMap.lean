@@ -13,12 +13,15 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantGradedPieceCokernel
 
 /-!
-# Natural-stage projection onto a horizontal graded piece
+# Natural finite-stage cochain projections to direct columns
 
-The graded-piece projection is constructed directly from the natural finite
-filtration stage.  Its cochain-map law follows from the filtered-differential
-calculation, and the inclusion of stage `p` into stage `p+1` is proved to have
-zero composite with the new-column projection.
+Let `K` be a first-quadrant bicomplex in a preadditive category with a zero object and finite
+coproducts. Extend finite stage `F_p` to cochain degrees and project its top bidegree `(p,q)`
+to the direct signed column at degree `-p-q`.
+
+The components commute with the filtered total differential and the vertical differential
+signed by `(-1)^p`, and are zero above degree `-p`. They form a cochain map. The extended
+stage inclusion `F_p → F_(p+1)` has zero composite with the new direct-column projection.
 -/
 
 @[expose] public section
@@ -39,6 +42,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
+/-- The direct-column component projection of an extended finite stage.
+
+At degree `-p-q`, use the finite top-column projection and the inverse direct-column object
+comparison. -/
 noncomputable def horizontalNaturalDirectColumnProjectionComponent (p q : ℕ) :
     ((horizontalFilteredTotalComplex K p).extend
       ComplexShape.embeddingDownNat).X (-(p : ℤ) - q) ⟶
@@ -49,6 +56,9 @@ noncomputable def horizontalNaturalDirectColumnProjectionComponent (p q : ℕ) :
     horizontalFilteredTopProjection K p q ≫
     (horizontalDirectColumnCochainXIso K p q).inv
 
+/-- The finite-stage direct-column projection in every cochain degree.
+
+Use the supported component when `i ≤ -p` and zero when `i>-p`. -/
 noncomputable def horizontalNaturalDirectColumnProjection (p : ℕ) (i : ℤ) :
     ((horizontalFilteredTotalComplex K p).extend
       ComplexShape.embeddingDownNat).X i ⟶
@@ -65,6 +75,9 @@ noncomputable def horizontalNaturalDirectColumnProjection (p : ℕ) (i : ℤ) :
           (horizontalColumnDegree_spec p i hi).symm)
   · exact 0
 
+/-- The supported component formula for finite-stage column projection.
+
+At degree `-p-q`, the arbitrary-degree finite-stage projection equals its `(p,q)` component. -/
 theorem horizontalNaturalDirectColumnProjection_eq_component (p q : ℕ) :
     horizontalNaturalDirectColumnProjection K p (-(p : ℤ) - q) =
       horizontalNaturalDirectColumnProjectionComponent K p q := by
@@ -72,12 +85,19 @@ theorem horizontalNaturalDirectColumnProjection_eq_component (p q : ℕ) :
   rw [dite_eq_left (show -(p : ℤ) - q ≤ -(p : ℤ) by omega)]
   simp [horizontalColumnDegree]
 
+/-- The finite-stage column projection above support.
+
+In cochain degree `i>-p`, the projection to direct column `p` is zero. -/
 theorem horizontalNaturalDirectColumnProjection_eq_zero_of_lt
     (p : ℕ) (i : ℤ) (hi : -(p : ℤ) < i) :
     horizontalNaturalDirectColumnProjection K p i = 0 := by
   unfold horizontalNaturalDirectColumnProjection
   rw [dite_eq_right (by lia)]
 
+/-- Differential compatibility of finite-stage direct-column components.
+
+The supported components commute with the extended filtered differential and the direct-column
+signed vertical differential. -/
 theorem horizontalNaturalDirectColumnProjectionComponent_comm (p q : ℕ) :
     horizontalNaturalDirectColumnProjectionComponent K p (q + 1) ≫
         (horizontalDirectColumnCochain K p).d (-(p : ℤ) - (q + 1))
@@ -112,7 +132,9 @@ theorem horizontalNaturalDirectColumnProjectionComponent_comm (p q : ℕ) :
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
   rw [horizontalFilteredTotalD_topProjection]
 
-/-- The natural-stage top-column projections form a cochain map. -/
+/-- The finite-stage cochain projection onto its direct column.
+
+Assemble the supported component maps and zero unsupported components into a cochain map. -/
 noncomputable def horizontalNaturalDirectColumnProjectionMap (p : ℕ) :
     (horizontalFilteredTotalComplex K p).extend
         ComplexShape.embeddingDownNat ⟶
@@ -135,6 +157,10 @@ noncomputable def horizontalNaturalDirectColumnProjectionMap (p : ℕ) :
         horizontalNaturalDirectColumnProjection_eq_component K p q]
       exact horizontalNaturalDirectColumnProjectionComponent_comm K p q
 
+/-- The preceding-stage vanishing identity in a supported new-column degree.
+
+At degree `-(p+1)-q`, the extended inclusion from stage `p` into `p+1` followed by the new-
+column component projection is zero. -/
 theorem horizontalNaturalDirectColumnProjectionComponent_stageMap_zero
     (p q : ℕ) :
     ((ComplexShape.embeddingDownNat.extendFunctor C).map
@@ -154,8 +180,10 @@ theorem horizontalNaturalDirectColumnProjectionComponent_stageMap_zero
   rw [horizontalFilteredTotalMap_succ_topProjection_assoc]
   simp
 
-/-- The natural consecutive-stage inclusion is annihilated by the new-column
-projection. -/
+/-- The zero-composite chain identity for consecutive finite stages.
+
+The extended stage inclusion `F_p → F_(p+1)` followed by projection to direct column `p+1` is
+the zero cochain map. -/
 theorem horizontalNaturalDirectColumnProjectionMap_stageMap_zero (p : ℕ) :
     (ComplexShape.embeddingDownNat.extendFunctor C).map
         (horizontalFilteredTotalComplexMap K (Nat.le_succ p)) ≫

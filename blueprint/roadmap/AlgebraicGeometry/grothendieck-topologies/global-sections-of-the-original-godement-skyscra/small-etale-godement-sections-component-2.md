@@ -1,3 +1,6 @@
-# Small Etale Godement Sections Component projection
+# Section comparison at a coefficient coordinate
 
-Every coordinate is the same actual skyscraper global-section evaluation.
+Section comparison at a coefficient coordinate.
+
+The comparison followed by projection at `x` equals global sections of the skyscraper
+projection followed by its individual section isomorphism.

@@ -17,12 +17,18 @@ public import Mathlib.Algebra.Homology.SingleHomology
 public import Mathlib.Tactic.Abel
 
 /-!
-# Terminal-face extra degeneracies and the original alternating complex
+# Terminal-face extra degeneracies and alternating augmentation
 
-A right extra degeneracy contracts the actual alternating face-map complex
-to its augmentation point. The native homotopy has component (-1)^n s_n.
-The single-zero maps follow Mathlib's ExtraDegeneracy.homotopyEquiv
-construction (Joël Riou); the signed cancellation uses the terminal face.
+Let `X` be an augmented simplicial object in a preadditive category and let `s_n : X_n →
+X_(n+1)` be a right extra degeneracy, with augmentation section `s'`. The alternating
+differential satisfies `d s_0 = s' ε - id` in degree zero and the terminal-face recurrence in
+positive degrees.
+
+With a zero object, the augmentation to the point concentrated in degree zero and the section
+from `s'` are a chain homotopy equivalence. The homotopy of the augmentation–section composite
+with the identity has component `(-1)^n s_n`. It yields a quasi-isomorphism when the
+alternating complex has homology in every degree. The single-zero augmentation and section
+follow Joël Riou's extra-degeneracy homotopy construction.
 -/
 
 @[expose] public section
@@ -41,7 +47,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 local notation "K" => CategoryTheory.Functor.obj (drop ⋙ alternatingFaceMapComplex C) X
 
-/-- The terminal contraction has the actual augmentation discrepancy in degree zero. -/
+/-- The degree-zero terminal extra-degeneracy identity.
+
+For the alternating complex, extra degeneracy followed by the degree-one boundary equals the
+augmentation followed by its section minus the identity. -/
 theorem s_comp_d_zero :
     ed.s 0 ≫ (K).d 1 0 = X.hom.app (Opposite.op (SimplexCategory.mk 0)) ≫ ed.s' - 𝟙 _ := by
   simp only [Functor.comp_obj, drop_obj]
@@ -53,7 +62,10 @@ theorem s_comp_d_zero :
     pow_zero, pow_one, one_smul, neg_one_smul, Preadditive.comp_neg,
     hlast, ed.s₀_comp_δ₀, ed.s_comp_δ_last, sub_eq_add_neg, Functor.id_obj]
 
-/-- Splitting the actual alternating differential at its terminal face gives the recurrence. -/
+/-- The successor terminal extra-degeneracy recurrence.
+
+In degree `n+1`, the boundary after extra degeneracy equals extra degeneracy after the
+previous boundary plus `(-1)^(n+2)` times the identity. -/
 theorem s_comp_d_succ (n : ℕ) :
     ed.s (n + 1) ≫ (K).d ((n + 1) + 1) (n + 1) =
       (K).d (n + 1) n ≫ ed.s n + (-1 : ℤ) ^ ((n + 1) + 1) • 𝟙 _ := by
@@ -69,22 +81,35 @@ section Homotopy
 
 variable [HasZeroObject C]
 
+/-- Homology of an augmentation point concentrated in degree zero.
+
+In a preadditive category with a zero object, the single-zero chain complex on the
+augmentation point has homology in every nonnegative degree. -/
 local instance pointSingleHasHomology :
     ∀ n : ℕ, ((point ⋙ ChainComplex.single₀ C).obj X).HasHomology n := by
   intro n
   change ((ChainComplex.single₀ C).obj X.right).HasHomology n
   infer_instance
 
-/-- The actual native augmentation of the original alternating complex. -/
+/-- The alternating chain augmentation of a right extra-degeneracy object.
+
+The augmented simplicial structure gives a chain map from its alternating-face complex to the
+augmentation point concentrated in degree zero. -/
 def augmentation (_ed : RightExtraDegeneracy X) :
     K ⟶ (ChainComplex.single₀ C).obj X.right :=
   AlternatingFaceMapComplex.ε.app X
 
-/-- The actual degree-zero section induced by the right extra degeneracy. -/
+/-- The chain section supplied by a right extra degeneracy.
+
+The augmentation section `s'` defines the degree-zero component of a chain map from the
+single-zero point complex into the alternating complex. -/
 def sectionMap : (ChainComplex.single₀ C).obj X.right ⟶ K :=
   (ChainComplex.fromSingle₀Equiv _ _).symm (by exact ed.s')
 
-/-- The actual original-chain homotopy has component (-1)^n times the extra degeneracy. -/
+/-- The signed terminal extra-degeneracy chain homotopy.
+
+The augmentation followed by its section is homotopic to the identity on alternating chains,
+with component `(-1)^n s_n` from degree `n` to degree `n+1`. -/
 def homotopy :
     _root_.Homotopy
       (augmentation ed ≫ sectionMap ed)
@@ -123,12 +148,17 @@ def homotopy :
           smul_add, smul_smul, hlast, hsign, neg_smul, neg_one_smul]
         abel
 
-/-- The actual homotopy's nonzero component retains the terminal-face sign. -/
+/-- The successor component of the terminal extra-degeneracy homotopy.
+
+The homotopy map from degree `n` to degree `n+1` is `(-1)^n` times the right extra degeneracy. -/
 theorem homotopy_hom_succ (n : ℕ) :
     (homotopy ed).hom n (n + 1) = (-1 : ℤ) ^ n • ed.s n := by
   simp only [homotopy, Pi.single_eq_same]
 
-/-- A right extra degeneracy gives the native original-chain augmentation equivalence. -/
+/-- The alternating augmentation equivalence from a right extra degeneracy.
+
+The alternating complex is chain homotopy equivalent to the augmentation point concentrated in
+degree zero, with forward map augmentation and inverse map the extra-degeneracy section. -/
 def homotopyEquiv :
     _root_.HomotopyEquiv K ((ChainComplex.single₀ C).obj X.right) where
   hom := augmentation ed
@@ -139,11 +169,17 @@ def homotopyEquiv :
       dsimp% ChainComplex.fromSingle₀Equiv_symm_apply_f_zero (C := K)])
   homotopyHomInvId := homotopy ed
 
-/-- The equivalence's forward map is the actual native augmentation. -/
+/-- The forward map of the right extra-degeneracy augmentation equivalence.
+
+The forward homotopy-equivalence map is the alternating-face augmentation to the single-zero
+point complex. -/
 theorem homotopyEquiv_hom :
     (homotopyEquiv ed).hom = AlternatingFaceMapComplex.ε.app X := rfl
 
-/-- The actual augmentation is a quasi-isomorphism at the available native homology objects. -/
+/-- The right extra-degeneracy augmentation quasi-isomorphism.
+
+If the alternating complex has homology in every nonnegative degree, its augmentation to the
+point concentrated in degree zero is a quasi-isomorphism. -/
 theorem quasiIso_augmentation (ed : RightExtraDegeneracy X)
     [∀ n : ℕ, (K).HasHomology n] :
     QuasiIso (AlternatingFaceMapComplex.ε.app X) := by

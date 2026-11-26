@@ -1,4 +1,6 @@
-# Standard Ambient Left Operator scalar
+# Left support multiplication is the corresponding ambient scalar
 
-Resolved coefficient multiplication by `iV x` is multiplication by
-the actual ambient scalar `x ⊗ 1` on the original native Tor.
+For x∈A⊗K B, the V-support operator given by i_V(x)
+on standard ambient Tor equals multiplication by x⊗1_C
+in the ambient ring S. This identifies the coefficient
+multiplication with the existing S-module action.

@@ -18,12 +18,16 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Linarith
 
 /-!
-# Intertwining finite dyadic projector families
+# Intertwining finite families of dyadically weighted projectors
 
-For finite complete orthogonal projector families over a rational ground
-algebra, a map intertwining the weighted sums with weights `2^i` intertwines
-every projector. Distinct powers of two and invertible rational scalars
-force the off-diagonal components to vanish.
+Let V and W be modules over a commutative ℚ-algebra k. For orthogonal idempotent families p_i
+and q_j supported in degrees at most N and M, form the weighted endomorphisms S_p = ∑ i =
+0,…,N, 2^i p_i and S_q = ∑ j = 0,…,M, 2^j q_j, with the rational weights mapped into k.
+
+If a k-linear map T satisfies T ∘ S_p = S_q ∘ T, every off-diagonal component q_j ∘ T ∘ p_i is
+zero for i ≠ j. If both finite projector sums are the identity, T commutes with each matching
+projector: T ∘ p_i = q_i ∘ T for every i : ℕ. The argument uses the inverse in ℚ of the
+nonzero weight difference 2^i − 2^j.
 -/
 
 @[expose] public section
@@ -39,7 +43,9 @@ variable {k : Type u} [CommRing k] [Algebra ℚ k]
   {V : Type v} [AddCommGroup V] [Module k V]
   {W : Type w} [AddCommGroup W] [Module k W]
 
-/-- The actual finite dyadic weighted projector sum. -/
+/-- For a commutative ℚ-algebra k, a k-module V, an endomorphism family p : ℕ → Module.End k V and
+N : ℕ, define dyadicProjectorSum p N = ∑ i : Fin (N + 1), algebraMap ℚ k (2^i.val) • p i.val.
+The sum includes indices zero through N. -/
 def dyadicProjectorSum (p : ℕ → Module.End k V) (N : ℕ) : Module.End k V :=
   ∑ i : Fin (N + 1), algebraMap ℚ k ((2 : ℚ) ^ i.val) • p i.val
 
@@ -85,7 +91,12 @@ private theorem comp_dyadicProjectorSum (p : ℕ → Module.End k V) (N i : ℕ)
     simp [hji]
   · simp
 
-/-- A dyadic intertwiner has actual zero off-diagonal projector components. -/
+/-- Let k be a commutative ℚ-algebra, V and W k-modules, and p_i : V →ₗ[k] V and q_j : W →ₗ[k] W
+families indexed by ℕ. Assume p_i ∘ p_j equals p_i when i = j and zero otherwise, and the same
+orthogonality and idempotence equations hold for q. Suppose p_i = 0 for i > N and q_j = 0 for
+j > M. If T : V →ₗ[k] W satisfies T ∘ dyadicProjectorSum p N = dyadicProjectorSum q M ∘ T,
+then q_j ∘ T ∘ p_i = 0 for every i, j : ℕ with i ≠ j. Completeness of the two projector sums
+is not needed for this conclusion. -/
 theorem dyadicProjectorIntertwiner_cross_zero (p : ℕ → Module.End k V) (q : ℕ → Module.End k W)
     (N M : ℕ) (T : V →ₗ[k] W)
     (hp : ∀ i j : ℕ, (p i).comp (p j) = if i = j then p i else 0)
@@ -116,8 +127,12 @@ theorem dyadicProjectorIntertwiner_cross_zero (p : ℕ → Module.End k V) (q : 
     · rw [hqsupport j (Nat.lt_of_not_ge hj), LinearMap.zero_comp]
   · rw [hpsupport i (Nat.lt_of_not_ge hi), LinearMap.comp_zero, LinearMap.comp_zero]
 
-/-- The actual finite complete projector sums force every actual projector square to commute with the original
-  dyadic intertwiner. -/
+/-- Let k be a commutative ℚ-algebra, V and W k-modules, and p_i : V →ₗ[k] V and q_j : W →ₗ[k] W
+families indexed by ℕ. Assume p_i ∘ p_j equals p_i when i = j and zero otherwise, and the same
+orthogonality and idempotence equations hold for q. Suppose p_i = 0 for i > N and q_j = 0 for
+j > M. Assume also ∑ i = 0,…,N, p_i = 𝟙 V and ∑ j = 0,…,M, q_j = 𝟙 W. If T : V →ₗ[k] W
+satisfies T ∘ dyadicProjectorSum p N = dyadicProjectorSum q M ∘ T, then T ∘ p_i = q_i ∘ T for
+every i : ℕ, including indices outside either support bound. -/
 theorem dyadicProjectorIntertwiner_comp (p : ℕ → Module.End k V) (q : ℕ → Module.End k W)
     (N M : ℕ) (T : V →ₗ[k] W)
     (hp : ∀ i j : ℕ, (p i).comp (p j) = if i = j then p i else 0)

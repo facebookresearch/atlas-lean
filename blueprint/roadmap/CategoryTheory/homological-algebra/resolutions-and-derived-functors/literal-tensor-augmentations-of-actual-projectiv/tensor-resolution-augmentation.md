@@ -1,4 +1,6 @@
-# Tensor Resolution Augmentation
+# Tensor augmentation of two projective resolutions
 
-The actual tensor of the two original resolution augmentations, with the
-canonical identification of the tensor of degree-zero singles.
+Tensor augmentation of two projective resolutions.
+
+For projective resolutions `P` of `M` and `Q` of `N`, the tensor-total augmentation is
+`tensorAugmentation R P.π Q.π`, with target `(M ⊗ N)[0]`.

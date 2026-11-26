@@ -97,8 +97,12 @@ private noncomputable instance tensorLeftDegreePieces_preservesColimitsOfShape
       (eval C (ComplexShape.down ℕ) i.as.val.2 ⋙ tensorLeft (K.X i.as.val.1))
     infer_instance)
 
-/-- If tensoring on the left in `C` preserves `J`-colimits, then so does
-tensoring on the left in nonnegatively graded chain complexes over `C`. -/
+/-- Let `C` be preadditive and monoidal with a zero object and
+finite colimits. Suppose tensor is additive in both variables and
+both left and right tensoring preserve finite coproducts. Let `J`
+be a category and `C` have colimits of shape `J`. If every left tensor functor `A ⊗ -` on `C` preserves
+`J`-colimits, then for any nonnegative chain complex `K`, left
+tensoring `K ⊗ -` on chain complexes also preserves `J`-colimits. -/
 noncomputable instance tensorLeft_preservesColimitsOfShape
     (K : ChainComplex C ℕ) :
     PreservesColimitsOfShape J (tensorLeft K) := by
@@ -151,8 +155,12 @@ private noncomputable instance tensorRightDegreePieces_preservesColimitsOfShape
       (eval C (ComplexShape.down ℕ) i.as.val.1 ⋙ tensorRight (K.X i.as.val.2))
     infer_instance)
 
-/-- If tensoring on the right in `C` preserves `J`-colimits, then so does
-tensoring on the right in nonnegatively graded chain complexes over `C`. -/
+/-- Let `C` be preadditive and monoidal with a zero object and
+finite colimits. Suppose tensor is additive in both variables and
+both left and right tensoring preserve finite coproducts. Let `J`
+be a category and `C` have colimits of shape `J`. If every right tensor functor `- ⊗ A` on `C` preserves
+`J`-colimits, then for any nonnegative chain complex `K`, right
+tensoring `- ⊗ K` on chain complexes also preserves `J`-colimits. -/
 noncomputable instance tensorRight_preservesColimitsOfShape
     (K : ChainComplex C ℕ) :
     PreservesColimitsOfShape J (tensorRight K) := by

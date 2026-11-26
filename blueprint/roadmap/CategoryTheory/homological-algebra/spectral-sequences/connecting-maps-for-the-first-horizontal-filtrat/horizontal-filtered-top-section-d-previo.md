@@ -1,5 +1,6 @@
-# Horizontal Filtered Top Section d previous Column Projection
+# The signed previous-column component of a filtered top boundary
 
-The filtered total differential from the top column to the preceding
-column is the horizontal bicomplex differential, with the totalization's
-explicit first-coordinate sign.
+The signed previous-column component of a filtered top boundary.
+
+The top section of column `p+1`, followed by the filtered total differential and preceding-
+column projection, is the horizontal map multiplied by the first-coordinate total sign.

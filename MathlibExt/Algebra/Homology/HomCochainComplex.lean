@@ -15,6 +15,20 @@ public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
+/-!
+# Contravariant Hom cochains of natural-index chain complexes
+
+In a preadditive category `C`, the Hom cochain complex of a chain complex `K` and a
+coefficient object `G` has degree-`n` group `Hom_C(K_n,G)`, with differential given by
+precomposition with `K.d (n+1) n`. It is contravariant in `K`, covariant in `G`, and additive.
+The coefficient functor also gives its cohomology groups as functors of `G`.
+
+Chain homotopies and homotopy equivalences induce the corresponding Hom cochain homotopies and
+cohomology isomorphisms, with the chain direction reversed. An additive fully faithful functor
+identifies these Hom cochains by applying its morphism map in every degree. Object and
+morphism universes are independent.
+-/
+
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits
@@ -25,19 +39,29 @@ namespace HomologicalComplex
 
 variable (C : Type u) [Category.{v} C] [Preadditive C]
 
+/-- Contravariant Hom cochain functor with a fixed coefficient.
+
+For `G : C`, take a natural-index chain complex `K` to the cochain complex with degree-`n`
+additive group `K.X n ⟶ G`. A chain map acts by precomposition, reversing its direction. -/
 noncomputable def homCochainComplexFunctor (G : C) :
     (ChainComplex C ℕ)ᵒᵖ ⥤ CochainComplex AddCommGrpCat.{v} ℕ :=
   HomologicalComplex.opFunctor C (ComplexShape.down ℕ) ⋙
     (preadditiveYoneda.obj G).mapHomologicalComplex (ComplexShape.up ℕ)
 
+/-- Fixed-coefficient Hom cochain functor is additive.
+
+The contravariant Hom cochain functor preserves addition of chain maps. -/
 noncomputable instance homCochainComplexFunctor_additive (G : C) :
     (homCochainComplexFunctor (C := C) G).Additive := by
   change (HomologicalComplex.opFunctor C (ComplexShape.down ℕ) ⋙
     (preadditiveYoneda.obj G).mapHomologicalComplex ((ComplexShape.down ℕ).symm)).Additive
   infer_instance
 
-/-- The contravariant Hom-cochain functor `Hom(-, G)` preserves limits of shape `J`
-when `Cᵒᵖ` has limits of that shape. -/
+/-- Contravariant Hom cochains preserve limits in the opposite chain category.
+
+For a category `J : Type v` with morphisms in universe `v`, assume `Cᵒᵖ` has limits of shape
+`J`. Then the fixed-coefficient Hom cochain functor preserves limits of that shape from
+`(ChainComplex C ℕ)ᵒᵖ`. -/
 noncomputable instance homCochainComplexFunctor_preservesLimitsOfShape
     {J : Type v} [Category.{v} J] [HasLimitsOfShape J Cᵒᵖ] (G : C) :
     PreservesLimitsOfShape J (homCochainComplexFunctor C G) := by
@@ -66,6 +90,10 @@ noncomputable instance homCochainComplexFunctor_preservesLimitsOfShape
     ((preadditiveYoneda.obj G).mapHomologicalComplex (ComplexShape.up ℕ))
     hOp hMap
 
+/-- Hom cochain bifunctor with covariant coefficients.
+
+The assignment `G ↦ homCochainComplexFunctor C G` is a functor in the coefficient object. Its
+two-variable Hom construction is covariant in `G` and contravariant in the chain complex. -/
 noncomputable def homCochainComplexBifunctor :
     C ⥤ ((ChainComplex C ℕ)ᵒᵖ ⥤ CochainComplex AddCommGrpCat.{v} ℕ) where
   obj G := homCochainComplexFunctor C G
@@ -74,13 +102,19 @@ noncomputable def homCochainComplexBifunctor :
     (NatTrans.mapHomologicalComplex
       (preadditiveYoneda.map f) (ComplexShape.up ℕ))
 
+/-- Degree object of the fixed-coefficient Hom cochain complex.
+
+In degree `n`, the Hom cochain complex of `K` and `G` has additive group `K.X n ⟶ G`. -/
 @[simp]
 lemma homCochainComplexFunctor_obj_X (G : C)
     (K : ChainComplex C ℕ) (n : ℕ) :
     ((homCochainComplexFunctor C G).obj (Opposite.op K)).X n =
       AddCommGrpCat.of (K.X n ⟶ G) := rfl
 
-/-- Functor `G ↦ H^n(Hom(K, G))` for a fixed chain complex `K`. -/
+/-- Hom cochain cohomology as a coefficient functor.
+
+For a chain complex `K` and natural degree `n`, take the degree-`n` cohomology of its Hom
+cochain complex to define a functor `C ⥤ AddCommGrpCat` in the coefficient object. -/
 noncomputable def homCochainComplexHomologyFunctor (K : ChainComplex C ℕ) (n : ℕ) :
     C ⥤ AddCommGrpCat.{v} :=
   homCochainComplexBifunctor C ⋙
@@ -96,14 +130,20 @@ open HomologicalComplex
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L : ChainComplex C ℕ} {f g : K ⟶ L}
 
-/-- Applying `Hom(-, G)` to chain-homotopic maps gives homotopic cochain maps. -/
+/-- Chain homotopy induces a contravariant Hom cochain homotopy.
+
+A homotopy between chain maps `f, g : K ⟶ L` induces a homotopy between their Hom cochain maps
+from `Hom(L,G)` to `Hom(K,G)`. -/
 noncomputable def mapHomCochainComplex (h : Homotopy f g) (G : C) :
     Homotopy
       ((HomologicalComplex.homCochainComplexFunctor C G).map f.op)
       ((HomologicalComplex.homCochainComplexFunctor C G).map g.op) :=
   (preadditiveYoneda.obj G).mapHomotopy h.op
 
-/-- Chain-homotopic maps induce equal maps on the cohomology of `Hom(-, G)`. -/
+/-- Homotopic chain maps induce equal Hom cohomology maps.
+
+If `f` and `g` are homotopic and the two Hom cochain complexes have homology in degree `n`,
+then their contravariant Hom maps induce the same degree-`n` cohomology map. -/
 lemma homCochainComplex_homologyMap_eq (h : Homotopy f g) (G : C) (n : ℕ)
     [((HomologicalComplex.homCochainComplexFunctor C G).obj
       (Opposite.op L)).HasHomology n]
@@ -121,6 +161,11 @@ namespace HomologicalComplex
 
 variable {C D : Type u} [Category.{v} C] [Category.{v} D] [Preadditive C] [Preadditive D]
 
+/-- Fully faithful additive functor identifies Hom cochains objectwise.
+
+For an additive fully faithful functor `F : C ⥤ D`, the Hom cochain complex of `K` and `G` is
+isomorphic to that of the image complex and `F.obj G`. Its degree maps apply `F.map` to Hom
+morphisms. -/
 noncomputable def homCochainComplexObjIsoOfFullyFaithful
     (F : C ⥤ D) [F.Additive] (hF : F.FullyFaithful) (G : C) (K : ChainComplex C ℕ) :
     (homCochainComplexFunctor C G).obj (Opposite.op K) ≅
@@ -136,6 +181,11 @@ noncomputable def homCochainComplexObjIsoOfFullyFaithful
       change F.map (K.d j i) ≫ F.map f' = F.map (K.d j i ≫ f')
       rw [← F.map_comp])
 
+/-- Fully faithful Hom cochain comparison is natural in the chain complex.
+
+For additive fully faithful `F`, the fixed-coefficient Hom functor in `C` is naturally
+isomorphic to mapping chain complexes through `F` and taking Hom cochains into `F.obj G` in
+`D`. -/
 noncomputable def homCochainComplexFunctorIsoOfFullyFaithful
     (F : C ⥤ D) [F.Additive] (hF : F.FullyFaithful) (G : C) :
     homCochainComplexFunctor (C := C) G ≅
@@ -149,6 +199,10 @@ noncomputable def homCochainComplexFunctorIsoOfFullyFaithful
       change F.map (f.unop.f n ≫ g') = F.map (f.unop.f n) ≫ F.map g'
       rw [F.map_comp])
 
+/-- Fully faithful Hom cochain coordinate applies the functor to a morphism.
+
+At chain complex `K` and degree `n`, the forward comparison sends `f : K.X n ⟶ G` to `F.map
+f`. -/
 @[simp]
 lemma homCochainComplexFunctorIsoOfFullyFaithful_hom_app_f_apply
     (F : C ⥤ D) [F.Additive] (hF : F.FullyFaithful) (G : C)
@@ -156,8 +210,11 @@ lemma homCochainComplexFunctorIsoOfFullyFaithful_hom_app_f_apply
     ((homCochainComplexFunctorIsoOfFullyFaithful F hF G).hom.app (Opposite.op K)).f n f =
       F.map f := rfl
 
-/-- The fully faithful comparison for Hom-cochains, natural in the target
-object as well as in the source chain complex. -/
+/-- Fully faithful comparison is natural in both Hom cochain inputs.
+
+The Hom cochain bifunctor in `C` is naturally isomorphic to the corresponding construction in
+`D` after mapping both the coefficient and the chain complex through an additive fully
+faithful `F`. -/
 noncomputable def homCochainComplexBifunctorIsoOfFullyFaithful
     (F : Functor C D) [F.Additive] (hF : F.FullyFaithful) :
     homCochainComplexBifunctor C ≅
@@ -180,6 +237,10 @@ namespace HomologicalComplex.HomotopyEquiv
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L : ChainComplex C ℕ}
 
+/-- Chain homotopy equivalence gives the reversed Hom cochain equivalence.
+
+A homotopy equivalence `K ≃ L` induces a homotopy equivalence from the Hom cochains of `L` to
+those of `K`, using precomposition with its forward and inverse chain maps. -/
 public noncomputable def mapHomCochainComplex (e : HomotopyEquiv K L) (G : C) :
     HomotopyEquiv ((homCochainComplexFunctor C G).obj (Opposite.op L))
       ((homCochainComplexFunctor C G).obj (Opposite.op K)) where
@@ -192,7 +253,10 @@ public noncomputable def mapHomCochainComplex (e : HomotopyEquiv K L) (G : C) :
     have h := e.homotopyHomInvId.mapHomCochainComplex (G := G)
     simpa [Functor.map_comp, Functor.map_id] using h
 
-/-- Natural iso `Hⁿ(Hom(L, -)) ≅ Hⁿ(Hom(K, -))` from `e : K ≃ L`, natural in `G`. -/
+/-- Chain homotopy equivalence gives natural Hom cohomology isomorphisms.
+
+For a homotopy equivalence `K ≃ L` and natural degree `n`, the coefficient functors `H^n
+Hom(L,-)` and `H^n Hom(K,-)` are naturally isomorphic. -/
 public noncomputable def homCochainComplexHomologyNatIso {K L : ChainComplex C ℕ}
     (e : HomotopyEquiv K L) (n : ℕ) :
     homCochainComplexHomologyFunctor (C := C) L n ≅

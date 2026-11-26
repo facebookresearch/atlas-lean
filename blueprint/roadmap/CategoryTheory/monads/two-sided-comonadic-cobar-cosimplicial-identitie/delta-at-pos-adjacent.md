@@ -1,5 +1,6 @@
-# Delta At Pos adjacent
+# The coassociativity identity of adjacent comultiplication insertions
 
-Adjacent comultiplication insertions coassociate: two successive insertions
-at `k` and `k + 1` agree with the pair at `k` and `k`. Dual of
-`Monad.muAtPos_adjacent` with composition order dualized.
+The coassociativity identity of adjacent comultiplication insertions.
+
+After inserting at `k`, inserting at the two positions of the resulting split factor gives the
+same composite.

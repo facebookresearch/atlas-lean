@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Map succ
+# The coherent filtration map in a positive column
 
-At a positive column, the coherent filtration map is the canonical map
-between the preceding and current upper stages.
+The coherent filtration map in a positive column.
+
+At column `p+1`, the coherent map is the next-stage filtration map from the preceding upper
+stage.

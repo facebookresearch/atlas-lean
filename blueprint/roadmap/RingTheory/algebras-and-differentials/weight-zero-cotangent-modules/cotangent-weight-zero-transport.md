@@ -1,3 +1,6 @@
-# Cotangent Weight Zero Transport
+# The weight-zero map between augmented algebras
 
-Transport through the actual regular tensor unitors is the weight-zero map.
+The weight-zero map between augmented algebras.
+
+For `f : P → Q` over `A`, compose the unitor `A ⊗[P] P → A` with the inverse unitor `A → A
+⊗[Q] Q`.

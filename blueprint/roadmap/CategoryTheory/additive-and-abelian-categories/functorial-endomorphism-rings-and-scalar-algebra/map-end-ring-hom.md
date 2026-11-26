@@ -1,3 +1,6 @@
-# Map End Ring Hom
+# The endomorphism-ring homomorphism of an additive functor
 
-Additive functors send the native endomorphism ring to the native endomorphism ring.
+The endomorphism-ring homomorphism of an additive functor.
+
+For an object `X`, an additive functor sends each endomorphism to its functorial image,
+preserving ring addition, multiplication, zero, and identity.

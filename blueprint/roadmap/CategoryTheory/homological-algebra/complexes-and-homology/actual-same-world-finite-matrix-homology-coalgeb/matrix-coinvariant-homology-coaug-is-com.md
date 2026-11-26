@@ -1,3 +1,5 @@
-# Matrix Coinvariant Homology Coaug Is Comon Hom
+# Comonoid compatibility of matrix coinvariant homology coaugmentation
 
-The coinvariant homology coaugmentation is a comonoid morphism.
+Comonoid compatibility of matrix coinvariant homology coaugmentation.
+
+The graded coinvariant coaugmentation preserves the homology comultiplication and counit.

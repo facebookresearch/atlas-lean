@@ -14,12 +14,17 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageBoundaryComparis
 public import MathlibExt.Algebra.Homology.MappingConeCokernelConnecting
 
 /-!
-# The first-page differential of the horizontal-filtration spectral sequence
+# The differential of the horizontal-filtration first page
 
-The first page is compared coherently with the homology of the direct columns.
-The filtration connecting morphism defining the spectral-sequence differential
-is identified with the adjacent-column connecting morphism, including the edge
-from column one to column zero.
+Let `K` be a first-quadrant bicomplex in an abelian category. Choose coherent filtration
+windows for column `p`: its upper endpoint is the column's upper stage, and the lower endpoint
+in a positive column is the preceding upper endpoint. The relative homology is taken in
+cochain degree `-p-q`.
+
+These windows identify the first-page object at `(p,q)` with direct-column and vertical
+homology. The differential from `(p+1,q)` to `(p,q)` is the adjacent-column connecting map.
+Under the coherent vertical-homology isomorphisms, it is `(-1)^(q+1)` times `H_q(K.d(p+1,p))`.
+The formulas include `p=0`, hence the edge from column one to column zero.
 -/
 
 @[expose] public section
@@ -41,8 +46,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- The upper filtration index for column `p` is the first-page lower index
-for column `p+1`. -/
+/-- The common endpoint of consecutive first-page filtration windows.
+
+The upper endpoint for column `p` is the lower endpoint selected for column `p+1` by the
+first-page indexing data. -/
 theorem horizontalFirstPageUpperIndex_eq_i₁_succ (p q : ℕ) :
     horizontalFirstPageUpperIndex p =
       CategoryTheory.Abelian.SpectralObject.coreE₁FirstQuadrantHomological.i₁
@@ -50,29 +57,34 @@ theorem horizontalFirstPageUpperIndex_eq_i₁_succ (p q : ℕ) :
   change horizontalFirstPageUpperIndex p = horizontalFirstPageLowerIndex (p + 1)
   exact horizontalFirstPageUpperIndex_eq_lowerIndex_succ p
 
-/-- The upper filtration index is the first-page upper endpoint. -/
+/-- The upper endpoint of a first-page filtration window.
+
+The chosen upper index for column `p` equals the first-page upper endpoint at `(p,q)`. -/
 theorem horizontalFirstPageUpperIndex_eq_i₂ (p q : ℕ) :
     horizontalFirstPageUpperIndex p =
       CategoryTheory.Abelian.SpectralObject.coreE₁FirstQuadrantHomological.i₂
         (p, q) := by
   rfl
 
-/-- The total-complex degree used at bidegree `(p,q)` is the degree selected
-by the first-quadrant first-page data. -/
+/-- The cochain degree of a first-page bidegree.
+
+The first-page indexing data selects degree `-p-q` at bidegree `(p,q)`. -/
 theorem horizontalFirstPageDegree_eq (p q : ℕ) :
     -(p : ℤ) - q =
       CategoryTheory.Abelian.SpectralObject.coreE₁FirstQuadrantHomological.deg
         (p, q) := by
   rfl
 
-/-- Coherent lower endpoints for consecutive first-page filtration windows.
-The positive-column lower endpoint is literally the previous upper endpoint. -/
+/-- The coherent lower endpoints of first-page filtration windows.
+
+At column zero use its chosen lower index; at column `p+1` use the upper index of column `p`. -/
 abbrev horizontalFirstPageCoherentLowerIndex : ℕ → EInt
   | 0 => horizontalFirstPageLowerIndex 0
   | p + 1 => horizontalFirstPageUpperIndex p
 
-/-- The coherent lower endpoint is the lower endpoint chosen by the
-first-page spectral-sequence data. -/
+/-- The first-page lower endpoint in coherent coordinates.
+
+The coherent lower index equals the lower endpoint selected by the first-page indexing data. -/
 theorem horizontalFirstPageCoherentLowerIndex_eq_i₁ (p q : ℕ) :
     horizontalFirstPageCoherentLowerIndex p =
       CategoryTheory.Abelian.SpectralObject.coreE₁FirstQuadrantHomological.i₁
@@ -81,14 +93,19 @@ theorem horizontalFirstPageCoherentLowerIndex_eq_i₁ (p q : ℕ) :
   | zero => rfl
   | succ p => exact horizontalFirstPageUpperIndex_eq_i₁_succ p q
 
-/-- Each coherent lower endpoint lies below its corresponding upper endpoint. -/
+/-- The order relation of coherent first-page window endpoints.
+
+For every column, the coherent lower endpoint lies below its upper endpoint. -/
 theorem horizontalFirstPageCoherentIndex_le :
     (p : ℕ) → horizontalFirstPageCoherentLowerIndex p ≤
       horizontalFirstPageUpperIndex p
   | 0 => horizontalFirstPageIndex_le 0
   | p + 1 => horizontalFirstPageUpperIndex_le_succ p
 
-/-- The filtration map spanning the coherent window for column `p`. -/
+/-- The filtration map of a coherent first-page window.
+
+Use the complete filtration diagram map from the coherent lower stage of column `p` to its
+upper stage. -/
 noncomputable abbrev horizontalFirstPageCoherentMap (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageCoherentLowerIndex p) ⟶
@@ -97,22 +114,26 @@ noncomputable abbrev horizontalFirstPageCoherentMap (p : ℕ) :
   (horizontalCompleteFiltrationCochainDiagram K).map
     (homOfLE (horizontalFirstPageCoherentIndex_le p))
 
-/-- At column zero, the coherent filtration map is the original first-page
-filtration map. -/
+/-- The coherent filtration map in column zero.
+
+The zero-column coherent map is its first-page filtration map. -/
 theorem horizontalFirstPageCoherentMap_zero :
     horizontalFirstPageCoherentMap K 0 =
       horizontalFirstPageFiltrationMap K 0 := by
   rfl
 
-/-- At a positive column, the coherent filtration map is the canonical map
-between the preceding and current upper stages. -/
+/-- The coherent filtration map in a positive column.
+
+At column `p+1`, the coherent map is the next-stage filtration map from the preceding upper
+stage. -/
 theorem horizontalFirstPageCoherentMap_succ (p : ℕ) :
     horizontalFirstPageCoherentMap K (p + 1) =
       horizontalFirstPageNextFiltrationMap K p := by
   rfl
 
-/-- The canonical map from the upper stage for column `p` to that for
-column `p+1`. -/
+/-- The map between successive first-page upper stages.
+
+The complete filtration diagram maps the upper stage of column `p` to that of column `p+1`. -/
 noncomputable def horizontalFirstPageCoherentSuccessorMap (p : ℕ) :
     (horizontalCompleteFiltrationCochainDiagram K).obj
         (horizontalFirstPageUpperIndex p) ⟶
@@ -121,28 +142,35 @@ noncomputable def horizontalFirstPageCoherentSuccessorMap (p : ℕ) :
   (horizontalCompleteFiltrationCochainDiagram K).map
     (homOfLE (horizontalFirstPageUpperIndex_le_succ p))
 
-/-- The coherent successor map is the coherent filtration map for the next
-column. -/
+/-- The successor upper-stage map as the next coherent window.
+
+The upper-stage successor map is the coherent filtration map for column `p+1`. -/
 theorem horizontalFirstPageCoherentSuccessorMap_eq_map_succ (p : ℕ) :
     horizontalFirstPageCoherentSuccessorMap K p =
       horizontalFirstPageCoherentMap K (p + 1) := by
   rfl
 
-/-- The coherent successor map agrees with the previously constructed
-next-stage filtration map. -/
+/-- The successor upper-stage map as the next filtration map.
+
+The coherent upper-stage successor is the next-stage complete filtration map. -/
 theorem horizontalFirstPageCoherentSuccessorMap_eq_next (p : ℕ) :
     horizontalFirstPageCoherentSuccessorMap K p =
       horizontalFirstPageNextFiltrationMap K p :=
   (horizontalFirstPageCoherentSuccessorMap_eq_map_succ K p).trans
     (horizontalFirstPageCoherentMap_succ K p)
 
-/-- Relative homology of the coherent filtration window for `(p,q)`. -/
+/-- The relative homology of a coherent first-page window.
+
+For `(p,q)`, take the spectral object's relative homology of the coherent lower-to-upper
+filtration map in cochain degree `-p-q`. -/
 noncomputable abbrev horizontalFirstPageCoherentRelativeHomology (p q : ℕ) : C :=
   ((horizontalCompleteFiltrationSpectralObject K).H (-(p : ℤ) - q)).obj
     (mk₁ (homOfLE (horizontalFirstPageCoherentIndex_le p)))
 
-/-- The spectral-sequence first-page object identified with the relative
-homology of its coherent filtration window. -/
+/-- The relative-homology coordinate of a first-page object.
+
+The first-page object at `(p,q)` is isomorphic to relative homology of its coherent window at
+degree `-p-q`. -/
 noncomputable def horizontalFirstPageCoherentXIso (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).X (p, q) ≅
       horizontalFirstPageCoherentRelativeHomology K p q :=
@@ -154,8 +182,10 @@ noncomputable def horizontalFirstPageCoherentXIso (p q : ℕ) :
     (horizontalFirstPageUpperIndex_eq_i₂ p q)
     (-(p : ℤ) - q) (horizontalFirstPageDegree_eq p q)
 
-/-- The cokernel of the coherent filtration map is the corresponding direct
-column complex. -/
+/-- The direct-column cokernel of a coherent filtration window.
+
+The cokernel of the coherent window map is isomorphic to the direct column complex, with the
+separate zero-column comparison at `p=0`. -/
 noncomputable def horizontalFirstPageCoherentCokernelIso :
     (p : ℕ) →
       cokernel (horizontalFirstPageCoherentMap K p) ≅
@@ -167,8 +197,10 @@ noncomputable def horizontalFirstPageCoherentCokernelIso :
       rw [horizontalFirstPageCoherentMap_succ]
       exact horizontalFirstPageAdjacentRightIso K p
 
-/-- The mapping cone of a coherent filtration map maps to the corresponding
-direct column through its cokernel sequence. -/
+/-- The mapping-cone comparison of a coherent window with its direct column.
+
+The mapping cone maps through the cokernel sequence and the coherent cokernel isomorphism to
+the direct column. -/
 noncomputable def horizontalFirstPageCoherentMappingConeToDirectColumn
     (p : ℕ) :
     CochainComplex.mappingCone (horizontalFirstPageCoherentMap K p) ⟶
@@ -177,7 +209,10 @@ noncomputable def horizontalFirstPageCoherentMappingConeToDirectColumn
       (ShortComplex.cokernelSequence (horizontalFirstPageCoherentMap K p)) ≫
     (horizontalFirstPageCoherentCokernelIso K p).hom
 
-/-- The mapping-cone-to-column comparison is a quasi-isomorphism. -/
+/-- The quasi-isomorphism from a coherent window cone to its direct column.
+
+The coherent filtration map is monic, so its cone-to-cokernel map and direct-column comparison
+give a quasi-isomorphism. -/
 theorem horizontalFirstPageCoherentMappingConeToDirectColumn_quasiIso
     (p : ℕ) :
     QuasiIso (horizontalFirstPageCoherentMappingConeToDirectColumn K p) := by
@@ -199,8 +234,10 @@ theorem horizontalFirstPageCoherentMappingConeToDirectColumn_quasiIso
   dsimp [horizontalFirstPageCoherentMappingConeToDirectColumn]
   infer_instance
 
-/-- Coherent relative homology is canonically the homology of the direct
-column complex. -/
+/-- The direct-column homology of a coherent filtration window.
+
+Its relative homology at degree `-p-q` is canonically isomorphic to direct-column homology in
+that degree. -/
 noncomputable def horizontalFirstPageCoherentRelativeHomologyDirectColumnIso
     (p q : ℕ) :
     horizontalFirstPageCoherentRelativeHomology K p q ≅
@@ -236,8 +273,10 @@ noncomputable def horizontalFirstPageCoherentRelativeHomologyDirectColumnIso
           (ComplexShape.up ℤ) n).app M ≪≫
         isoOfQuasiIsoAt g n
 
-/-- The forward relative-homology comparison is induced by the canonical
-mapping-cone-to-column map. -/
+/-- The homology map of the coherent window-to-column comparison.
+
+The forward relative-homology isomorphism is the homotopy-category homology comparison
+followed by homology of the cone-to-column map. -/
 theorem horizontalFirstPageCoherentRelativeHomologyDirectColumnIso_hom
     (p q : ℕ) :
     (horizontalFirstPageCoherentRelativeHomologyDirectColumnIso K p q).hom =
@@ -250,16 +289,20 @@ theorem horizontalFirstPageCoherentRelativeHomologyDirectColumnIso_hom
   cases p <;>
     simp [horizontalFirstPageCoherentRelativeHomologyDirectColumnIso]
 
-/-- Coherent identification of a first-page object with direct-column
-homology. -/
+/-- The coherent direct-column coordinate of a first-page object.
+
+Compose the relative-window comparison with the cone-to-column homology comparison. -/
 noncomputable def horizontalFirstPageCoherentDirectColumnIso (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).X (p, q) ≅
       (horizontalDirectColumnCochain K p).homology (-(p : ℤ) - q) :=
   horizontalFirstPageCoherentXIso K p q ≪≫
     horizontalFirstPageCoherentRelativeHomologyDirectColumnIso K p q
 
-/-- The native precomposition composite with directly computed endpoint maps
-and an earned equality to the canonical composite. -/
+/-- Precomposition transport of a cokernel-composition sequence.
+
+Given `f'=e.hom ≫ f` and an isomorphism from the cokernel-composition sequence of `f,g` to a
+short complex `T`, the transported sequence of `f',g` has an isomorphism to `T` together with
+its equality to the canonical composite. -/
 noncomputable def cokernelPrecompShortComplexIsoData
     {X Y Z X' : CochainComplex C ℤ} (f : X ⟶ Y) (g : Y ⟶ Z)
     (e : X' ≅ X) (f' : X' ⟶ Y) (h : f' = e.hom ≫ f)
@@ -292,8 +335,10 @@ noncomputable def cokernelPrecompShortComplexIsoData
   · change E.hom.τ₃ = P.hom.τ₃ ≫ E.hom.τ₃
     rw [hP, Category.id_comp]
 
-/-- The cokernel-composition sequence for a coherent filtration window,
-identified with the adjacent direct-column short exact sequence. -/
+/-- The adjacent-column sequence of coherent filtration windows.
+
+The cokernel-composition short complex of a window map and its successor is isomorphic to the
+adjacent direct-column short exact sequence. -/
 noncomputable def horizontalFirstPageCoherentAdjacentShortComplexIso :
     (p : ℕ) →
       CategoryTheory.cokernelCompShortComplex
@@ -311,8 +356,10 @@ noncomputable def horizontalFirstPageCoherentAdjacentShortComplexIso :
           (horizontalFirstPageNextFiltrationMap_eq_middle K p)
           (horizontalFirstPageAdjacentShortComplexIso K (p + 1))).1
 
-/-- The right endpoint of one adjacent-column comparison agrees, through the
-canonical cokernel identification, with the next comparison's left endpoint. -/
+/-- The shared endpoint of consecutive adjacent-column comparisons.
+
+The right endpoint map of one comparison equals its cokernel identification followed by the
+next comparison's left endpoint map. -/
 theorem horizontalFirstPageAdjacentShortComplexIso_endpoint (p : ℕ) :
     (horizontalFirstPageAdjacentShortComplexIso K p).hom.τ₃ =
       (horizontalFirstPageNextCokernelIso K p).hom ≫
@@ -321,8 +368,9 @@ theorem horizontalFirstPageAdjacentShortComplexIso_endpoint (p : ℕ) :
     horizontalFirstPageAdjacentLeftIso,
     horizontalFirstPageAdjacentRightIso]
 
-/-- The left endpoint of the coherent adjacent-column comparison is the
-chosen coherent cokernel comparison. -/
+/-- The left endpoint map of a coherent adjacent-column comparison.
+
+The left component is the coherent cokernel-to-direct-column comparison for column `p`. -/
 theorem horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁
     (p : ℕ) :
     (horizontalFirstPageCoherentAdjacentShortComplexIso K p).hom.τ₁ =
@@ -346,8 +394,10 @@ theorem horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁
             (horizontalFirstPageAdjacentShortComplexIso K (p + 1)).hom.τ₁ =
           (horizontalFirstPageCoherentCokernelIso K (p + 1)).hom from rfl)
 
-/-- Consecutive coherent adjacent-column comparisons use literally the same
-map at their common endpoint. -/
+/-- Coherence of the shared endpoint in adjacent first-page windows.
+
+The right endpoint of one coherent adjacent comparison is the same map as the left endpoint of
+the next. -/
 theorem horizontalFirstPageCoherentAdjacentShortComplexIso_endpoint_coherence
     (p : ℕ) :
     (horizontalFirstPageCoherentAdjacentShortComplexIso K p).hom.τ₃ =
@@ -357,8 +407,9 @@ theorem horizontalFirstPageCoherentAdjacentShortComplexIso_endpoint_coherence
   | zero => rfl
   | succ p => rfl
 
-/-- The right endpoint of the coherent adjacent-column comparison is the
-chosen coherent cokernel comparison for the next column. -/
+/-- The right endpoint map of a coherent adjacent-column comparison.
+
+The right component is the coherent cokernel-to-direct-column comparison for column `p+1`. -/
 theorem horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₃
     (p : ℕ) :
     (horizontalFirstPageCoherentAdjacentShortComplexIso K p).hom.τ₃ =
@@ -366,7 +417,9 @@ theorem horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₃
   rw [horizontalFirstPageCoherentAdjacentShortComplexIso_endpoint_coherence,
     horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₁]
 
-/-- Inverse form of the coherent right-endpoint comparison. -/
+/-- The inverse right endpoint of a coherent adjacent-column comparison.
+
+The inverse right component is the inverse coherent cokernel comparison for column `p+1`. -/
 theorem horizontalFirstPageCoherentAdjacentShortComplexIso_inv_τ₃
     (p : ℕ) :
     (horizontalFirstPageCoherentAdjacentShortComplexIso K p).inv.τ₃ =
@@ -377,8 +430,10 @@ theorem horizontalFirstPageCoherentAdjacentShortComplexIso_inv_τ₃
     (horizontalFirstPageCoherentCokernelIso K (p + 1))).2
   exact horizontalFirstPageCoherentAdjacentShortComplexIso_hom_τ₃ K p
 
-/-- Connecting map obtained directly from the coherent filtration window,
-transported to direct-column homology. -/
+/-- The coherent-window connecting map in direct-column coordinates.
+
+Transport the cokernel-composition connecting morphism to direct-column homology from degree
+`-(p+1)-q` to `-p-q`. -/
 noncomputable def horizontalFirstPageCoherentConnectingMap (p q : ℕ) :
     (horizontalDirectColumnCochain K (p + 1)).homology
         (-((p + 1 : ℕ) : ℤ) - q) ⟶
@@ -397,8 +452,10 @@ noncomputable def horizontalFirstPageCoherentConnectingMap (p q : ℕ) :
           (by simp only [ComplexShape.up_Rel]; push_cast; omega) ≫
     HomologicalComplex.homologyMap e.hom.τ₁ (-(p : ℤ) - q)
 
-/-- The coherent filtration connecting map is the previously constructed
-adjacent-column connecting map. -/
+/-- Equality of coherent-window and adjacent-column connecting maps.
+
+The transported connecting map of the coherent filtration window equals the adjacent direct-
+column connecting morphism. -/
 theorem horizontalFirstPageCoherentConnectingMap_eq_adjacent (p q : ℕ) :
     horizontalFirstPageCoherentConnectingMap K p q =
       horizontalFirstPageAdjacentConnectingMap K p q := by
@@ -430,8 +487,10 @@ theorem horizontalFirstPageCoherentConnectingMap_eq_adjacent (p q : ℕ) :
   rw [← HomologicalComplex.homologyMap_comp_assoc, he,
     HomologicalComplex.homologyMap_id, Category.id_comp]
 
-/-- Under the coherent direct-column identifications, the actual differential
-on the spectral sequence's first page is the coherent connecting map. -/
+/-- The first-page differential in coherent direct-column coordinates.
+
+The differential from `(p+1,q)` to `(p,q)` corresponds to the coherent-window connecting map
+under the source and target direct-column isomorphisms. -/
 theorem horizontalFirstPage_d_coherentDirectColumn (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).d
         (p + 1, q) (p, q) ≫
@@ -536,8 +595,10 @@ theorem horizontalFirstPage_d_coherentDirectColumn (p q : ℕ) :
   simpa only [X, f, g, n, j, eS, eT, Category.assoc] using
     congrArg (fun z => (horizontalFirstPageCoherentXIso K (p + 1) q).hom ≫ z) hRelative
 
-/-- Under the coherent direct-column identifications, the first-page
-differential is the adjacent-column connecting map. -/
+/-- The adjacent-column formula for the first-page differential.
+
+In coherent direct-column homology coordinates, the first-page differential is the adjacent-
+column connecting morphism for every `p,q ≥ 0`. -/
 theorem horizontalFirstPage_d_coherentDirectColumn_eq_adjacent (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).d
         (p + 1, q) (p, q) ≫
@@ -547,16 +608,20 @@ theorem horizontalFirstPage_d_coherentDirectColumn_eq_adjacent (p q : ℕ) :
   rw [horizontalFirstPage_d_coherentDirectColumn K p q,
     horizontalFirstPageCoherentConnectingMap_eq_adjacent K p q]
 
-/-- Coherent identification of a first-page object with ordinary vertical
-homology in its column. -/
+/-- The coherent vertical-homology coordinate of a first-page object.
+
+Compose the coherent direct-column isomorphism with the direct-column comparison to
+`H_q(K_p)`. -/
 noncomputable def horizontalFirstPageCoherentVerticalHomologyIso (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).X (p, q) ≅
       (K.X p).homology q :=
   horizontalFirstPageCoherentDirectColumnIso K p q ≪≫
     horizontalDirectColumnHomologyIso K p q
 
-/-- After transport to ordinary vertical homology, the actual first-page
-differential is the adjacent-column connecting map. -/
+/-- The adjacent connecting formula in vertical-homology coordinates.
+
+The coherent vertical-homology comparison identifies the first-page differential with the
+adjacent vertical connecting map. -/
 theorem horizontalFirstPage_d_coherentVerticalHomology_eq_adjacent
     (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).d
@@ -570,8 +635,10 @@ theorem horizontalFirstPage_d_coherentVerticalHomology_eq_adjacent
   dsimp [horizontalFirstPageAdjacentVerticalConnectingMap]
   simp only [Category.assoc, Iso.hom_inv_id_assoc]
 
-/-- After the coherent vertical-homology transport, the actual first-page
-differential is `(-1)^(q+1)` times the horizontal homology map. -/
+/-- The sign of the first-page differential in coherent vertical coordinates.
+
+For every `p,q ≥ 0`, the differential from `(p+1,q)` to `(p,q)` is `(-1)^(q+1)` times the
+vertical-homology map of the horizontal bicomplex differential. -/
 theorem horizontalFirstPage_d_coherentVerticalHomology_eq_horizontal
     (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page 1).d

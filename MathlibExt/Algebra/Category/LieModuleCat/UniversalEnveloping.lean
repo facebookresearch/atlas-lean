@@ -15,13 +15,16 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.Algebra.Algebra.RestrictScalars
 
 /-!
-# Lie modules and universal-enveloping-algebra modules
+# Lie modules and modules over the universal enveloping algebra
 
-A left module over `U(L)` restricts to a Lie module through `ι : L → U(L)`.
-Conversely, the universal property extends a Lie representation to an
-associative representation of `U(L)`. These constructions give an equivalence
-of the two module categories, with identity maps on the coefficient carriers.
-The scalar, Lie, and coefficient universes are independent.
+Let `R` be a commutative ring, `L` an `R`-Lie algebra, and `U = U_R(L)` its universal
+enveloping algebra. A left `U`-module restricts to a left `L`-module by `[x,m] = ι(x) • m`,
+with ground action `r • m = algebraMap(R,U)(r) • m`.
+
+The universal property extends the representation `L → End_R(M)` of a left Lie module to `U
+→ₐ[R] End_R(M)`. Extension and restriction give inverse equivalences of module categories. The
+unit, counit, and hom-set bijection retain coefficient values, and the scalar-ring, Lie-
+algebra, and coefficient-carrier universes are independent.
 -/
 
 @[expose] public section
@@ -41,7 +44,10 @@ local notation "U" => UniversalEnvelopingAlgebra R L
 
 attribute [local instance] LieRing.ofAssociativeRing
 
-/-- Native restriction retains the U-module carrier and its original scalar image. -/
+/-- A Lie module obtained from an enveloping-algebra module.
+
+For a left `U_R(L)`-module `M`, restrict scalars along `R → U_R(L)` and define `[x,m] = ι(x) •
+m`. The coefficient carrier is `M`. -/
 @[implicit_reducible]
 def restrictObj (M : ModuleCat.{w} U) : LieModuleCat.{w} R L := by
   letI : Module R M := Module.compHom M (algebraMap R U)
@@ -52,19 +58,28 @@ def restrictObj (M : ModuleCat.{w} U) : LieModuleCat.{w} R L := by
   letI : LieModule R L M := LieModule.compLieHom M (UniversalEnvelopingAlgebra.ι R)
   exact LieModuleCat.of R L M
 
-/-- The left Lie action is precisely the left action of the native Lie generator. -/
+/-- The generator action in an enveloping-module restriction.
+
+For `x ∈ L` and `m ∈ M`, the restricted Lie action is left multiplication by the universal
+generator: `[x,m] = ι(x) • m`. -/
 @[simp]
 theorem restrictObj_lie (M : ModuleCat.{w} U) (x : L) (m : restrictObj R L M) :
     ⁅x, m⁆ = @SMul.smul U M M.isModule.toDistribMulAction.toMulAction.toSMul
       (UniversalEnvelopingAlgebra.ι R x) (show M from m) := rfl
 
-/-- Ground scalars are the native scalar restriction, not an extra caller dictionary. -/
+/-- The ground action in an enveloping-module restriction.
+
+For `r ∈ R` and `m ∈ M`, the restricted scalar action is `algebraMap(R,U)(r) • m` using the
+given `U`-module action. -/
 @[simp]
 theorem restrictObj_smul (M : ModuleCat.{w} U) (r : R) (m : restrictObj R L M) :
     r • m = @SMul.smul U M M.isModule.toDistribMulAction.toMulAction.toSMul
       (algebraMap R U r) (show M from m) := rfl
 
-/-- An original U-linear morphism is the same native function as a Lie-module morphism. -/
+/-- A Lie-module map obtained from an enveloping-module map.
+
+A `U_R(L)`-linear morphism defines an `R`-linear map between the restricted Lie modules,
+commuting with each generator action. -/
 def restrictMap {M N : ModuleCat.{w} U} (f : M ⟶ N) :
     restrictObj R L M ⟶ restrictObj R L N where
   toLinearMap := ((ModuleCat.restrictScalars (algebraMap R U)).map f).hom
@@ -74,11 +89,17 @@ def restrictMap {M N : ModuleCat.{w} U} (f : M ⟶ N) :
       (UniversalEnvelopingAlgebra.ι R x) • (f.hom (show M from m) : N)
     exact f.hom.map_smul _ (show M from m)
 
+/-- The value of an enveloping-module map after Lie restriction.
+
+For `f : M ⟶ N`, the restricted Lie-module map has value `f.hom(m)` at `m ∈ M`. -/
 @[simp]
 theorem restrictMap_apply {M N : ModuleCat.{w} U} (f : M ⟶ N) (m : M) :
     restrictMap R L f m = f.hom m := rfl
 
-/-- Native scalar restriction and Lie pullback are functorial on the original modules. -/
+/-- The restriction functor from enveloping modules to Lie modules.
+
+This sends a left `U_R(L)`-module to its Lie action through `ι : L → U_R(L)` and retains the
+values of its module morphisms. -/
 def restrictFunctor : ModuleCat.{w} U ⥤ LieModuleCat.{w} R L where
   obj := restrictObj R L
   map := restrictMap R L
@@ -91,37 +112,59 @@ def restrictFunctor : ModuleCat.{w} U ⥤ LieModuleCat.{w} R L where
     intro m
     rfl
 
-/-- The canonical associative representation supplied by the native universal property. -/
+/-- The enveloping-algebra representation of a Lie module.
+
+For a left Lie module `M`, the universal property gives `U_R(L) →ₐ[R] End_R(M)` extending the
+action map `L → End_R(M)`. -/
 def representation (M : LieModuleCat.{w} R L) : U →ₐ[R] Module.End R M :=
   UniversalEnvelopingAlgebra.lift R (LieModule.toEnd R L M)
 
+/-- The lifted representation on a Lie generator.
+
+For `x ∈ L` and `m ∈ M`, the extended representation satisfies `ρ(ι(x))(m) = [x,m]`. -/
 theorem representation_ι (M : LieModuleCat.{w} R L) (x : L) (m : M) :
     representation R L M (UniversalEnvelopingAlgebra.ι R x) m = ⁅x, m⁆ := by
   rw [representation, UniversalEnvelopingAlgebra.lift_ι_apply]
   rfl
 
-/-- The left U-action on an original Lie-module carrier. -/
+/-- The enveloping-module action on a Lie-module carrier.
+
+The representation `ρ : U_R(L) →ₐ[R] End_R(M)` defines a left `U_R(L)`-module structure on `M`
+by `a • m = ρ(a)(m)`. -/
 @[instance_reducible]
 def representationModule (M : LieModuleCat.{w} R L) : Module U M :=
   Module.compHom M (representation R L M).toRingHom
 
-/-- The canonical represented module retains the original carrier. -/
+/-- The enveloping-module object associated to a Lie module.
+
+A left Lie module `M` is regarded as a left `U_R(L)`-module via its extended representation,
+retaining its coefficient carrier. -/
 @[implicit_reducible]
 def representObj (M : LieModuleCat.{w} R L) : ModuleCat.{w} U :=
   letI := representationModule R L M
   ModuleCat.of U M
 
+/-- The action formula for an associated enveloping module.
+
+For `a ∈ U_R(L)`, its action on the represented module is `a • m = ρ(a)(m)`, where `ρ` extends
+the Lie representation. -/
 @[simp]
 theorem representObj_smul (M : LieModuleCat.{w} R L) (a : U) (m : representObj R L M) :
     a • m = representation R L M a (m : M) := rfl
 
-/-- Restricting the represented scalar action recovers the original ground action. -/
+/-- The lifted representation on ground scalars.
+
+For `r ∈ R`, the extended representation acts by the given coefficient scalar action:
+`ρ(algebraMap(R,U)(r))(m) = r • m`. -/
 theorem representation_algebraMap (M : LieModuleCat.{w} R L) (r : R) (m : M) :
     representation R L M (algebraMap R U r) m = r • m := by
   rw [(representation R L M).commutes]
   rfl
 
-/-- The represented-to-restricted round trip keeps the original Lie action. -/
+/-- Recovery of the Lie action after representation and restriction.
+
+Extending a Lie module to `U_R(L)` and restricting back to `L` gives the same bracket action
+on its coefficient carrier. -/
 theorem restrict_represent_lie (M : LieModuleCat.{w} R L) (x : L)
     (m : restrictObj R L (representObj R L M)) :
     ⁅x, m⁆ = @Bracket.bracket L M M.lieRingModule.toBracket x (show M from m) := by
@@ -129,7 +172,10 @@ theorem restrict_represent_lie (M : LieModuleCat.{w} R L) (x : L)
   change representation R L M (UniversalEnvelopingAlgebra.ι R x) (show M from m) = _
   exact representation_ι R L M x (show M from m)
 
-/-- The same round trip keeps the original ground scalar action. -/
+/-- Recovery of ground scalars after representation and restriction.
+
+Extending a Lie module to `U_R(L)` and restricting back gives the same `R`-scalar action on
+its coefficient carrier. -/
 theorem restrict_represent_smul (M : LieModuleCat.{w} R L) (r : R)
     (m : restrictObj R L (representObj R L M)) :
     r • m = @SMul.smul R M M.moduleStructure.toDistribMulAction.toMulAction.toSMul
@@ -146,7 +192,9 @@ private theorem native_induction {P : U → Prop}
     (hAdd : ∀ a b : U, P a → P b → P (a + b)) (a : U) : P a :=
   UniversalEnvelopingAlgebra.induction R L hR hι hMul hAdd a
 
-/-- A native Lie-module morphism intertwines the lifted associative representations. -/
+/-- Intertwining of lifted enveloping-algebra representations.
+
+For a Lie-module map `f : M → N`, every `a ∈ U_R(L)` satisfies `f(ρ_M(a)(m)) = ρ_N(a)(f(m))`. -/
 theorem representation_map {M N : LieModuleCat.{w} R L} (f : M ⟶ N) (a : U) (m : M) :
     f (representation R L M a m) = representation R L N a (f m) := by
   let f' : M →ₗ⁅R,L⁆ N := f
@@ -172,8 +220,10 @@ theorem representation_map {M N : LieModuleCat.{w} R L} (f : M ⟶ N) (a : U) (m
         exact (f'.map_add _ _).trans (congrArg₂ (· + ·) (ha m) (hb m))) a
   exact h a m
 
-/-- The original native Lie-module map becomes U-linear by compatibility of the associative
-representations. -/
+/-- The enveloping-module map associated to a Lie-module morphism.
+
+A Lie-module map is linear over `U_R(L)` for the extended representations, hence defines a
+morphism between the associated enveloping modules. -/
 def representMap {M N : LieModuleCat.{w} R L} (f : M ⟶ N) :
     representObj R L M ⟶ representObj R L N := by
   let F : M →ₗ⁅R,L⁆ N := f.hom
@@ -187,11 +237,17 @@ def representMap {M N : LieModuleCat.{w} R L} (f : M ⟶ N) :
         change F (representation R L M a m) = representation R L N a (F m)
         exact representation_map R L f a m }
 
+/-- The value of a represented Lie-module morphism.
+
+For a Lie-module map `f : M ⟶ N`, the associated `U_R(L)`-linear morphism has value `f(m)`. -/
 @[simp]
 theorem representMap_apply {M N : LieModuleCat.{w} R L} (f : M ⟶ N) (m : M) :
     (representMap R L f).hom m = f m := rfl
 
-/-- Canonical associative representations are functorial in native Lie-module maps. -/
+/-- The representation functor to enveloping modules.
+
+This sends a left Lie module to its extended `U_R(L)`-action and a Lie-module morphism to the
+corresponding enveloping-linear map. -/
 def representFunctor : LieModuleCat.{w} R L ⥤ ModuleCat.{w} U where
   obj := representObj R L
   map := representMap R L
@@ -206,7 +262,10 @@ def representFunctor : LieModuleCat.{w} R L ⥤ ModuleCat.{w} U where
     intro m
     rfl
 
-/-- Lifting the restricted generator action returns the original U-action. -/
+/-- Recovery of an enveloping representation from its Lie restriction.
+
+The representation obtained by restricting a `U_R(L)`-module to `L` and extending again equals
+its given left multiplication representation. -/
 theorem representation_restrict (M : ModuleCat.{w} U) :
     representation R L (restrictObj R L M) =
       (show U →ₐ[R] Module.End R (restrictObj R L M) from by
@@ -223,7 +282,10 @@ theorem representation_restrict (M : ModuleCat.{w} U) :
       (UniversalEnvelopingAlgebra.ι R x) (show M from m)
   rw [representation_ι, restrictObj_lie]
 
-/-- The represented restriction has exactly the original left U-module action. -/
+/-- Recovery of the enveloping action after Lie restriction.
+
+For a left `U_R(L)`-module `M`, restricting to `L` and representing again retains `a • m` for
+every `a ∈ U_R(L)`. -/
 theorem represent_restrict_smul (M : ModuleCat.{w} U) (a : U)
     (m : representObj R L (restrictObj R L M)) :
     a • m = @SMul.smul U M M.isModule.toDistribMulAction.toMulAction.toSMul
@@ -233,7 +295,10 @@ theorem represent_restrict_smul (M : ModuleCat.{w} U) (a : U)
   rw [representation_restrict]
   rfl
 
-/-- The unit keeps the original carrier and both scalar/Lie actions. -/
+/-- The unit isomorphism for Lie-module representation.
+
+A Lie module is isomorphic to the Lie restriction of its associated enveloping module. Both
+component maps are identity functions, preserving the ground and Lie actions. -/
 def unitIso (M : LieModuleCat.{w} R L) :
     M ≅ restrictObj R L (representObj R L M) where
   hom :=
@@ -271,7 +336,10 @@ def unitIso (M : LieModuleCat.{w} R L) :
     intro m
     rfl
 
-/-- The counit keeps the original left U-module carrier and action. -/
+/-- The counit isomorphism for enveloping-module restriction.
+
+The enveloping module associated to the Lie restriction of a `U_R(L)`-module `M` is isomorphic
+to `M` by identity functions on its carrier. -/
 def counitIso (M : ModuleCat.{w} U) :
     representObj R L (restrictObj R L M) ≅ M where
   hom := (ModuleCat.homEquiv (M := representObj R L (restrictObj R L M)) (N := M)).symm
@@ -297,7 +365,10 @@ def counitIso (M : ModuleCat.{w} U) :
     intro m
     rfl
 
-/-- The unit is natural for every native Lie-module morphism. -/
+/-- Naturality of the Lie-module unit isomorphism.
+
+The identity functor on Lie modules is naturally isomorphic to representation followed by
+restriction, with the carrier-identity unit as its components. -/
 def unitNatIso :
     𝟭 (LieModuleCat.{w} R L) ≅ representFunctor R L ⋙ restrictFunctor R L :=
   NatIso.ofComponents (unitIso R L) (by
@@ -306,7 +377,10 @@ def unitNatIso :
     intro m
     rfl)
 
-/-- The counit is natural for every original U-linear morphism. -/
+/-- Naturality of the enveloping-module counit isomorphism.
+
+Restriction followed by representation is naturally isomorphic to the identity functor on
+`U_R(L)`-modules, with the carrier-identity counit as its components. -/
 def counitNatIso :
     restrictFunctor R L ⋙ representFunctor R L ≅ 𝟭 (ModuleCat.{w} U) :=
   NatIso.ofComponents (counitIso R L) (by
@@ -316,8 +390,11 @@ def counitNatIso :
     intro m
     rfl)
 
-/-- Canonical representations and restriction identify the native categories,
-without a basis, PBW theorem or scalar-size hypothesis. -/
+/-- The equivalence of Lie modules and enveloping-algebra modules.
+
+For a commutative ring `R` and an `R`-Lie algebra `L`, extension of the Lie representation and
+restriction along `ι` give an equivalence `LieModuleCat R L ≌ ModuleCat (U_R(L))` in each
+coefficient universe. -/
 def equivalence : LieModuleCat.{w} R L ≌ ModuleCat.{w} U where
   functor := representFunctor R L
   inverse := restrictFunctor R L
@@ -329,16 +406,25 @@ def equivalence : LieModuleCat.{w} R L ≌ ModuleCat.{w} U where
     intro m
     rfl
 
+/-- The coefficient formula for the Lie-module unit.
+
+The forward unit isomorphism sends every coefficient element `m` to itself. -/
 @[simp]
 theorem unitIso_hom_apply (M : LieModuleCat.{w} R L) (m : M) :
     (unitIso R L M).hom m = m := rfl
 
+/-- The coefficient formula for the enveloping-module counit.
+
+The forward counit isomorphism sends every coefficient element `m` to itself. -/
 @[simp]
 theorem counitIso_hom_apply (M : ModuleCat.{w} U)
     (m : representObj R L (restrictObj R L M)) :
     (counitIso R L M).hom.hom m = m := rfl
 
-/-- The generator action characterizes the associative representation uniquely. -/
+/-- Uniqueness of the representation extending a Lie action.
+
+If an `R`-algebra homomorphism `ρ : U_R(L) → End_R(M)` satisfies `ρ(ι(x))(m) = [x,m]` for all
+`x ∈ L` and `m ∈ M`, it equals the universal extended representation. -/
 theorem representation_unique (M : LieModuleCat.{w} R L)
     (ρ : U →ₐ[R] Module.End R M)
     (hρ : ∀ (x : L) (m : M), ρ (UniversalEnvelopingAlgebra.ι R x) m = ⁅x, m⁆) :
@@ -353,17 +439,28 @@ theorem representation_unique (M : LieModuleCat.{w} R L)
   rw [representation_ι]
   exact hρ x m
 
-/-- A U-linear morphism between represented modules recovers the original Lie-module map. -/
+/-- The Lie-module map recovered from an enveloping-linear map.
+
+A morphism between the enveloping modules associated to `M` and `N` defines a Lie-module map
+by restriction and the unit isomorphisms. -/
 def toLieMap {M N : LieModuleCat.{w} R L}
     (f : representObj R L M ⟶ representObj R L N) : M ⟶ N :=
   (unitIso R L M).hom ≫ restrictMap R L f ≫ (unitIso R L N).inv
 
+/-- The value of a recovered Lie-module map.
+
+For an enveloping-linear map `f` between represented modules, its recovered Lie-module map has
+value `f.hom(m)`. -/
 @[simp]
 theorem toLieMap_apply {M N : LieModuleCat.{w} R L}
     (f : representObj R L M ⟶ representObj R L N) (m : M) :
     toLieMap R L f m = f.hom m := rfl
 
-/-- The native Hom equivalence uses the original functions in both directions. -/
+/-- The hom-set bijection between Lie maps and enveloping-linear maps.
+
+For Lie modules `M` and `N`, extending and restricting maps give a bijection between `M ⟶ N`
+and the `U_R(L)`-linear morphisms of their associated enveloping modules. Both directions
+retain coefficient values. -/
 def homEquiv (M N : LieModuleCat.{w} R L) :
     (M ⟶ N) ≃ (representObj R L M ⟶ representObj R L N) where
   toFun := representMap R L
@@ -378,7 +475,9 @@ def homEquiv (M N : LieModuleCat.{w} R L) :
     intro m
     rfl
 
-/-- Canonical representations retain addition of original Lie-module maps. -/
+/-- Additivity of the enveloping representation functor.
+
+Passing from Lie-module maps to enveloping-linear maps preserves addition. -/
 instance representFunctor_additive : (representFunctor R L).Additive where
   map_add {M N} f g := by
     apply ModuleCat.hom_ext
@@ -386,14 +485,19 @@ instance representFunctor_additive : (representFunctor R L).Additive where
     intro m
     rfl
 
-/-- Native scalar/Lie restriction retains addition of original U-linear maps. -/
+/-- Additivity of enveloping-module Lie restriction.
+
+Restricting `U_R(L)`-module maps to Lie-module maps preserves addition. -/
 instance restrictFunctor_additive : (restrictFunctor R L).Additive where
   map_add {M N} f g := by
     apply LieModuleHom.ext
     intro m
     rfl
 
-/-- Forgetting the restricted Lie action is the original native scalar restriction. -/
+/-- The scalar-module comparison after enveloping restriction.
+
+Lie restriction followed by forgetting the Lie action is naturally isomorphic to scalar
+restriction along `R → U_R(L)`, with identity component maps. -/
 def restrictForgetIso : restrictFunctor R L ⋙ LieModuleCat.forget R L ≅
     ModuleCat.restrictScalars (algebraMap R U) :=
   NatIso.ofComponents (fun M => Iso.refl _) (by

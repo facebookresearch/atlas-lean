@@ -12,6 +12,19 @@ public import MathlibExt.Algebra.Homology.HomCochainComplex
 public import Mathlib.Algebra.Category.Grp.Zero
 public import Mathlib.Algebra.Homology.SingleHomology
 
+/-!
+# Hom cochains of a single chain object
+
+Let `C` be a preadditive category with a zero object. For an object `A` placed in natural
+chain degree `j`, the Hom cochain complex into `G` is naturally the single cochain complex in
+degree `j` on the additive group `Hom_C(A,G)`.
+
+Its cohomology is that Hom group in degree `j` and zero in every other natural degree. The
+degree-zero versions use the canonical zero-single functors. A homotopy equivalence from a
+chain complex to such a single complex transports these coefficient-natural cohomology
+descriptions.
+-/
+
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits
@@ -22,7 +35,10 @@ namespace HomologicalComplex
 
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C]
 
-/-- `Hom(-, G)` on the `0`-single chain complex is the `0`-single cochain. -/
+/-- Hom cochains of a degree-zero single object are a degree-zero single Hom group.
+
+For objects `A` and `G`, the Hom cochain complex of `A[0]` into `G` is isomorphic to the
+degree-zero single cochain complex on `Hom_C(A,G)`. -/
 noncomputable def homCochainComplexSingle₀Iso (R G : C) :
     (homCochainComplexFunctor C G).obj
         (Opposite.op ((ChainComplex.single₀ C).obj R)) ≅
@@ -61,6 +77,10 @@ noncomputable def homCochainComplexSingle₀Iso (R G : C) :
       simp only [hY, hX, comp_zero, zero_comp])
 
 set_option backward.isDefEq.respectTransparency.types false in
+/-- Degree-zero single Hom comparison is the identity on its Hom group.
+
+The forward component in degree zero of the single-object Hom cochain comparison is the
+identity. -/
 @[simp]
 lemma homCochainComplexSingle₀Iso_hom_f_zero (R G : C) :
     (homCochainComplexSingle₀Iso (C := C) R G).hom.f 0 = 𝟙 _ := by
@@ -68,13 +88,18 @@ lemma homCochainComplexSingle₀Iso_hom_f_zero (R G : C) :
   ext f
   exact Category.id_comp f
 
-/-- Functor `G ↦ Hom(single₀ R, G)` as a cochain complex. -/
+/-- Coefficient Hom cochain functor of a degree-zero single object.
+
+For fixed object `A`, take coefficients `G` to the Hom cochain complex of `A[0]` into `G`. -/
 noncomputable def homCochainComplexSingle₀Functor (R : C) :
     C ⥤ CochainComplex AddCommGrpCat.{v} ℕ :=
   homCochainComplexBifunctor C ⋙
     (evaluation _ _).obj (Opposite.op ((ChainComplex.single₀ C).obj R))
 
-/-- `Hom(single₀ R, -)` is naturally isomorphic to `single₀ (R ⟶ -)`. -/
+/-- Degree-zero single Hom cochain comparison is natural in coefficients.
+
+The Hom cochain coefficient functor of `A[0]` is naturally isomorphic to `Hom_C(A,-)` followed
+by the degree-zero single cochain functor. -/
 noncomputable def homCochainComplexSingle₀NatIso (R : C) :
     homCochainComplexSingle₀Functor (C := C) R ≅
       preadditiveCoyoneda.obj (Opposite.op R) ⋙
@@ -94,7 +119,10 @@ noncomputable def homCochainComplexSingle₀NatIso (R : C) :
           (isZero_single_obj_X (ComplexShape.up ℕ) 0
             (AddCommGrpCat.of (R ⟶ G')) n hn).eq_of_tgt _ _)
 
-/-- `H⁰(Hom(single₀ R, -))` as coefficient functors is `Hom(R, -)`. -/
+/-- Zeroth cohomology of single-object Hom cochains is Coyoneda.
+
+The degree-zero Hom cochain cohomology coefficient functor of `A[0]` is naturally isomorphic
+to the additive Hom functor `Hom_C(A,-)`. -/
 noncomputable def homCochainComplexHomologyFunctorSingle₀Iso (R : C) :
     homCochainComplexHomologyFunctor C ((ChainComplex.single₀ C).obj R) 0 ≅
       preadditiveCoyoneda.obj (Opposite.op R) := by
@@ -110,21 +138,30 @@ noncomputable def homCochainComplexHomologyFunctorSingle₀Iso (R : C) :
           (ComplexShape.up ℕ) 0) ≪≫
       F.rightUnitor
 
-/-- Functor `G ↦ Hom(single_j R, G)` as cochain complexes. -/
+/-- Coefficient Hom cochain functor of an object in degree j.
+
+For fixed `A` and natural `j`, take `G` to the Hom cochain complex of the chain single object
+`A[j]` into `G`. -/
 noncomputable def homCochainComplexSingleFunctor (R : C) (j : ℕ) :
     C ⥤ CochainComplex AddCommGrpCat.{v} ℕ :=
   homCochainComplexBifunctor C ⋙
     (evaluation _ _).obj
       (Opposite.op ((HomologicalComplex.single C (ComplexShape.down ℕ) j).obj R))
 
-/-- `Hom(single R j, -)` evaluated at `j` is `Hom(R, -)`. -/
+/-- Evaluation in the supported Hom degree is the Hom group.
+
+Evaluate the coefficient Hom cochain functor of `A[j]` in cochain degree `j`; the resulting
+functor is naturally isomorphic to `Hom_C(A,-)`. -/
 noncomputable def homCochainComplexSingleEvalIso (R : C) (j : ℕ) :
     homCochainComplexSingleFunctor (C := C) R j ⋙
         HomologicalComplex.eval AddCommGrpCat.{v} (ComplexShape.up ℕ) j ≅
       preadditiveCoyoneda.obj (Opposite.op R) :=
   preadditiveCoyoneda.mapIso ((singleObjXSelf (ComplexShape.down ℕ) j R).symm.op)
 
-/-- `Hom(single_j R, -)` at degree `j` corresponds to `single_j (R ⟶ -)` at `j`. -/
+/-- Supported coordinate matches the single cochain Hom construction.
+
+The degree-`j` evaluation of Hom cochains from `A[j]` is naturally isomorphic to `Hom_C(A,-)`
+followed by the degree-`j` single cochain functor and evaluation at `j`. -/
 noncomputable def homCochainComplexSingleSupportedIso (R : C) (j : ℕ) :
     homCochainComplexSingleFunctor (C := C) R j ⋙
         HomologicalComplex.eval AddCommGrpCat.{v} (ComplexShape.up ℕ) j ≅
@@ -136,7 +173,10 @@ noncomputable def homCochainComplexSingleSupportedIso (R : C) (j : ℕ) :
       (HomologicalComplex.singleCompEvalIsoSelf AddCommGrpCat.{v}
         (ComplexShape.up ℕ) j)).symm
 
-/-- `Hom(-, G)` on the `j`-single complex equals the `j`-single cochain. -/
+/-- Hom cochains of a single chain object are a single cochain Hom group.
+
+For objects `A`, `G` and natural degree `j`, the Hom cochain complex of `A[j]` into `G` is
+isomorphic to the single cochain complex in degree `j` on `Hom_C(A,G)`. -/
 noncomputable def homCochainComplexSingleIso (R G : C) (j : ℕ) :
     (homCochainComplexFunctor C G).obj
         (Opposite.op ((HomologicalComplex.single C (ComplexShape.down ℕ) j).obj R)) ≅
@@ -177,6 +217,10 @@ noncomputable def homCochainComplexSingleIso (R G : C) (j : ℕ) :
       simp only [hY, hX, comp_zero, zero_comp])
 
 set_option backward.isDefEq.respectTransparency.types false in
+/-- Supported component of the single Hom cochain isomorphism.
+
+The forward component of the single Hom cochain isomorphism in degree `j` is the supported
+evaluation-coordinate isomorphism at coefficient `G`. -/
 @[simp]
 lemma homCochainComplexSingleIso_hom_f_self (R G : C) (j : ℕ) :
     (homCochainComplexSingleIso (C := C) R G j).hom.f j =
@@ -185,7 +229,10 @@ lemma homCochainComplexSingleIso_hom_f_self (R G : C) (j : ℕ) :
   simp [Hom.isoOfComponents]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- `Hom(single_j R, -)` as `single_j (R ⟶ -)`, natural in the coefficient. -/
+/-- Single-degree Hom cochain isomorphism is coefficient-natural.
+
+The coefficient Hom functor of the single chain object `A[j]` is naturally isomorphic to
+`Hom_C(A,-)` followed by the single cochain functor in degree `j`. -/
 noncomputable def homCochainComplexSingleNatIso (R : C) (j : ℕ) :
     homCochainComplexSingleFunctor (C := C) R j ≅
       preadditiveCoyoneda.obj (Opposite.op R) ⋙
@@ -206,7 +253,10 @@ noncomputable def homCochainComplexSingleNatIso (R : C) (j : ℕ) :
           (isZero_single_obj_X (ComplexShape.up ℕ) j (AddCommGrpCat.of (R ⟶ G')) n hn).eq_of_tgt
             _ _)
 
-/-- `H^j(Hom(single_j R, -))` is `Hom(R, -)` as coefficient functors. -/
+/-- Supported cohomology of a single-object Hom complex is Coyoneda.
+
+The degree-`j` cohomology coefficient functor of Hom cochains from `A[j]` is naturally
+isomorphic to `Hom_C(A,-)`. -/
 noncomputable def homCochainComplexHomologyFunctorSingleIso (R : C) (j : ℕ) :
     homCochainComplexHomologyFunctor C
         ((HomologicalComplex.single C (ComplexShape.down ℕ) j).obj R) j ≅
@@ -222,7 +272,10 @@ noncomputable def homCochainComplexHomologyFunctorSingleIso (R : C) (j : ℕ) :
         (homologyFunctorSingleIso AddCommGrpCat.{v} (ComplexShape.up ℕ) j) ≪≫
       F.rightUnitor
 
-/-- `H^n(Hom(single_j R, -))` vanishes for `n ≠ j`. -/
+/-- Single-object Hom cohomology vanishes away from its degree.
+
+For `n ≠ j`, the degree-`n` cohomology coefficient functor of Hom cochains from the single
+object `A[j]` is zero. -/
 theorem isZero_homCochainComplexHomologyFunctorSingle (R : C) (j n : ℕ) (hn : n ≠ j) :
     IsZero (homCochainComplexHomologyFunctor C
         ((HomologicalComplex.single C (ComplexShape.down ℕ) j).obj R) n) := by
@@ -248,7 +301,10 @@ namespace HomologicalComplex.HomotopyEquiv
 
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C]
 
-/-- `H^j(Hom(K, -))` transported along `K ≃ single_j R`. -/
+/-- Homotopy equivalence to a single object identifies supported Hom cohomology.
+
+If `K` is homotopy equivalent to `A[j]`, then its degree-`j` Hom cochain cohomology
+coefficient functor is naturally isomorphic to `Hom_C(A,-)`. -/
 noncomputable def homCochainComplexHomologyFunctorIsoOfSingle
     {K : ChainComplex C ℕ} {R : C} {j : ℕ}
     (e : HomotopyEquiv K ((HomologicalComplex.single C (ComplexShape.down ℕ) j).obj R)) :
@@ -257,7 +313,10 @@ noncomputable def homCochainComplexHomologyFunctorIsoOfSingle
   (homCochainComplexHomologyNatIso e j).symm ≪≫
     homCochainComplexHomologyFunctorSingleIso (C := C) R j
 
-/-- `H^n(Hom(K, -))` vanishes for `n ≠ j` when `K ≃ single_j R`. -/
+/-- Homotopy-single chain complex has no other Hom cohomology.
+
+For a homotopy equivalence `K ≃ A[j]` and `n ≠ j`, the degree-`n` Hom cochain cohomology
+coefficient functor of `K` is zero. -/
 theorem isZero_homCochainComplexHomologyFunctor_of_single
     {K : ChainComplex C ℕ} {R : C} {j : ℕ}
     (e : HomotopyEquiv K ((HomologicalComplex.single C (ComplexShape.down ℕ) j).obj R))
@@ -266,7 +325,10 @@ theorem isZero_homCochainComplexHomologyFunctor_of_single
   have h := isZero_homCochainComplexHomologyFunctorSingle (C := C) R j n hn
   exact (Iso.isZero_iff (homCochainComplexHomologyNatIso e n)).mp h
 
-/-- `H⁰(Hom(K, -))` transported along `K ≃ single₀ R`. -/
+/-- Homotopy equivalence to degree zero identifies zeroth Hom cohomology.
+
+If `K` is homotopy equivalent to the degree-zero single object `A[0]`, its zeroth Hom cochain
+cohomology coefficient functor is naturally isomorphic to `Hom_C(A,-)`. -/
 noncomputable def homCochainComplexHomologyFunctorIsoOfSingle₀
     {K : ChainComplex C ℕ} {R : C}
     (e : HomotopyEquiv K ((ChainComplex.single₀ C).obj R)) :
@@ -274,7 +336,10 @@ noncomputable def homCochainComplexHomologyFunctorIsoOfSingle₀
       preadditiveCoyoneda.obj (Opposite.op R) :=
   homCochainComplexHomologyFunctorIsoOfSingle (C := C) e
 
-/-- `Hⁿ(Hom(K, -))` is zero for `n ≠ 0` when `K ≃ single₀ R`. -/
+/-- Homotopy degree-zero single complex has vanishing positive Hom cohomology.
+
+If `K` is homotopy equivalent to `A[0]`, its degree-`n` Hom cochain cohomology coefficient
+functor is zero whenever `n ≠ 0`. -/
 theorem isZero_homCochainComplexHomologyFunctor_of_single₀
     {K : ChainComplex C ℕ} {R : C}
     (e : HomotopyEquiv K ((ChainComplex.single₀ C).obj R))

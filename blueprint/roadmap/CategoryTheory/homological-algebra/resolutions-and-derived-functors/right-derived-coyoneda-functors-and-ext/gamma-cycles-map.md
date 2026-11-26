@@ -1,6 +1,7 @@
-# Gamma Cycles Map
+# Cocycle map induced by an injective-resolution lift
 
-The induced map on cocycles for naturality: postcomposition with a lift
-between injective resolutions. The goal is first exposed as a pure-`C`
-equation via `show`, so the commutation rewrite never touches subgroup
-membership.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. For an injective resolution `I′` of `Y′` and a lift
+`φ : I → I′` of `g : Y → Y′`, the map on degree-`n` cocycles
+is postcomposition `f ↦ f ≫ φ^n`.

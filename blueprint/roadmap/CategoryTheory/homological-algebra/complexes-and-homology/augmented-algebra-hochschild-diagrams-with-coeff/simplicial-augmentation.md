@@ -1,3 +1,6 @@
-# Simplicial Augmentation
+# The simplicial Hochschild augmentation with module coefficients
 
-The original simplicial augmentation maps every original tail and keeps the coefficient head.
+The simplicial Hochschild augmentation with module coefficients.
+
+For `P_• → B`, its algebra augmentation induces a map to the constant simplicial diagram on
+the Hochschild complex of `B` with coefficients `M`.

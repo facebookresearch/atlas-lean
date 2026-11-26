@@ -1,4 +1,6 @@
-# Lifted Unit Chain
+# The chain category with lifted scalar unit
 
-The existing same-world chain category with the fixed lifted-unit
-UniverseTensor dictionary. This is an identity carrier type synonym.
+For a commutative ring R in world u, the lifted-unit
+chain category consists of ChainComplex(ModuleCat^u(R),ℕ)
+with tensor unit (ULift^u R)[0].
+Its underlying complexes and morphisms are the usual R-module chains.

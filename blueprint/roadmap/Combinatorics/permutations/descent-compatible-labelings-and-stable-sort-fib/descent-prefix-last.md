@@ -1,3 +1,4 @@
-# Descent Prefix last
+# The final prefix counts all descents
 
-Before the last letter the actual prefix contains every original descent.
+For `n : ℕ` and `σ ∈ S_(n+1)`, the prefix before the last position is `descentPrefix σ
+(Fin.last n) = descentNumber σ`.

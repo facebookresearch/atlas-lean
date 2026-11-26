@@ -18,12 +18,25 @@ public import MathlibExt.Algebra.Category.ModuleCat.UliftCoherence
 public import Mathlib.Algebra.Category.ModuleCat.Projective
 
 /-!
-# Independent carrier universes for enriched balanced tensor
+# Balanced tensor with independently sized source and coefficient modules
 
-The source carrier aGlobal and coefficient carrier bGlobal need not contain
-R. The working category has Gamma = max(rGlobal,aGlobal,bGlobal,zGlobal),
-where free presentations supply projective resolutions. The outer ring S
-need not be small in Gamma. Source maps are lifted by the module functor.
+Let R,S be arbitrary rings and B an (R,S)-bimodule: R acts on the left,
+S on the right, and these actions commute. For a right R-module X,
+the balanced product X⊗_R B is formed as an abelian-group tensor
+quotient with relation (x·r)⊗b=x⊗(r·b). It is a right S-module by
+(x⊗b)·s=x⊗(b·s).
+
+The ring, source and coefficient worlds r,s,a,b are independent.
+The unlifted quotient has carrier world max(a,b). For an additional
+height z, put Γ=max(r,a,b,z). Lifting both input carriers gives the
+tensor functor from source world a to right S-modules in world Γ.
+The ring S need not fit in Γ.
+
+Down/up on both factors give an S-linear carrier equivalence.
+After lifting the entire unlifted quotient to Γ, they give a natural
+categorical isomorphism. Increasing Γ to Γ′=max(r,a,b,z,t) is
+compatible with tensoring and with flattening the two coefficient
+lifts; all comparisons retain the ordered pure balanced classes.
 -/
 
 @[expose] public section
@@ -39,14 +52,22 @@ variable (R : Type rGlobal) (S : Type sGlobal) [Ring R] [Ring S]
   (B : Type bGlobal) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
   [SMulCommClass R Sᵐᵒᵖ B]
 
-/-- The tensor functor in the common carrier category. -/
+/-- For rings R,S and an (R,S)-bimodule B, put
+Γ=max(r,a,b,z). The common-height tensor functor sends
+X∈ModuleCat^Γ(Rᵒᵖ) to X⊗_R ULift^Γ B in ModuleCat^Γ(Sᵒᵖ).
+The output right S-action is carried by the coefficient B,
+independently of the ring world s. -/
 def largeTensorFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
     ModuleCat.{max r a b z} Rᵐᵒᵖ ⥤ ModuleCat.{max r a b z} Sᵐᵒᵖ :=
   tensorFunctor R S (ULift.{max r a b z} B)
 
-/-- Underived input lifting does not assume projective resolutions in the raw world. -/
+/-- For rings R,S and an (R,S)-bimodule B, the height-Γ
+tensor functor sends a right R-module X in world a to
+ULift^Γ X⊗_R ULift^Γ B, Γ=max(r,a,b,z).
+Its target is ModuleCat^Γ(Sᵒᵖ), and source lifting imposes no
+projective-resolution hypothesis in world a. -/
 def tensorFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -54,38 +75,58 @@ def tensorFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
   ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ ⋙
     largeTensorFunctorAt.{z, r, s, a, b} R S B
 
-/-- The object is the existing balanced quotient of both actual native lifts. -/
+/-- For rings R,S, an (R,S)-bimodule B and a right R-module
+X in world a, the chosen-height object is
+ULift^Γ X⊗_R ULift^Γ B, with Γ=max(r,a,b,z).
+It is a right S-module in carrier world Γ. -/
 abbrev tensorObjAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ) :
     ModuleCat.{max r a b z} Sᵐᵒᵖ :=
   (tensorFunctorAt.{z, r, s, a, b} R S B).obj X
 
-/-- The raw quotient retains its original two carriers and computed outer action. -/
+/-- For rings R,S, an (R,S)-bimodule B in world b and a
+right R-module X in world a, the unlifted tensor object is
+X⊗_R B with right S-action on B.
+Its carrier has world max(a,b), independently of the ring worlds. -/
 def originalTensorObj (X : ModuleCat.{aGlobal} Rᵐᵒᵖ) : ModuleCat.{max aGlobal bGlobal} Sᵐᵒᵖ :=
   letI := TensorProduct.Balanced.rightModule ℤ R S X B
   ModuleCat.of Sᵐᵒᵖ (TensorProduct.Balanced ℤ R X B)
 
-/-- A pure representative in the original, differently sized balanced quotient. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+the pure representative [x⊗b] lies in the unlifted right
+S-module X⊗_R B. It is the class in the abelian-group quotient
+imposing the R-balancing relation. -/
 def originalTensorMk (X : ModuleCat.{aGlobal} Rᵐᵒᵖ) (x : X) (y : B) :
     originalTensorObj R S B X :=
   TensorProduct.Balanced.mk ℤ R X B x y
 
-/-- The retained quotient moves the original right R action to the left coefficient. -/
+/-- For a right R-module X, an (R,S)-bimodule B, r∈R,
+x∈X and b∈B, the pure classes satisfy
+[(x·r)⊗b]=[x⊗(r·b)] in X⊗_R B.
+The multiplication order is the right action on X followed
+by the left action on B. -/
 theorem originalTensorMk_balance (X : ModuleCat.{aGlobal} Rᵐᵒᵖ)
     (rGlobal : R) (x : X) (y : B) :
     originalTensorMk R S B X (op rGlobal • x) y =
       originalTensorMk R S B X x (rGlobal • y) :=
   TensorProduct.Balanced.balance ℤ R X B rGlobal x y
 
-/-- The outer action is the original right S action on the coefficient, in order. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+t∈Sᵒᵖ acts on the balanced class by
+t•[x⊗b]=[x⊗(t•b)].
+The commuting coefficient actions make this action compatible
+with the R-balancing relation. -/
 theorem originalTensorMk_smul (X : ModuleCat.{aGlobal} Rᵐᵒᵖ)
     (t : Sᵐᵒᵖ) (x : X) (y : B) :
     t • originalTensorMk R S B X x y =
       originalTensorMk R S B X x (t • y) := by
   exact TensorProduct.Balanced.rightModule_smul_mk ℤ R S X B t x y
 
-/-- An actual input morphism acts on the original quotient before any universe lift. -/
+/-- For rings R,S, an (R,S)-bimodule B and a right
+R-linear map f:X→Y between source modules in world a,
+the unlifted tensor map X⊗_R B→Y⊗_R B applies f to the first
+factor. It is right S-linear. -/
 def originalTensorMap {X Y : ModuleCat.{aGlobal} Rᵐᵒᵖ} (f : X ⟶ Y) :
     originalTensorObj R S B X ⟶ originalTensorObj R S B Y := by
   letI := TensorProduct.Balanced.rightModule ℤ R S X B
@@ -94,7 +135,10 @@ def originalTensorMap {X Y : ModuleCat.{aGlobal} Rᵐᵒᵖ} (f : X ⟶ Y) :
     (TensorProduct.Balanced.CoefficientHom.tensorMap
       (R := R) (S := S) (B := B) (A := X) (A' := Y) f.hom)
 
-/-- The original input map changes exactly the first pure representative. -/
+/-- For a right R-linear map f:X→Y and an (R,S)-bimodule B,
+the induced map on unlifted balanced products satisfies
+(f⊗id)([x⊗b])=[f(x)⊗b].
+The coefficient and its outer right S-action are fixed. -/
 theorem originalTensorMap_mk {X Y : ModuleCat.{aGlobal} Rᵐᵒᵖ}
     (f : X ⟶ Y) (x : X) (y : B) :
     (originalTensorMap R S B f).hom (originalTensorMk R S B X x y) =
@@ -102,7 +146,10 @@ theorem originalTensorMap_mk {X Y : ModuleCat.{aGlobal} Rᵐᵒᵖ}
   exact TensorProduct.Balanced.CoefficientHom.tensorMap_mk
     (R := R) (S := S) (B := B) (A := X) (A' := Y) f.hom x y
 
-/-- The underived original-carrier tensor functor uses native balanced maps. -/
+/-- For rings R,S and an (R,S)-bimodule B in world b,
+X↦X⊗_R B defines a functor
+ModuleCat^a(Rᵒᵖ)→ModuleCat^max(a,b)(Sᵒᵖ).
+Its morphisms apply the input right R-linear map to the first factor. -/
 def originalTensorFunctor :
     ModuleCat.{aGlobal} Rᵐᵒᵖ ⥤ ModuleCat.{max aGlobal bGlobal} Sᵐᵒᵖ where
   obj := originalTensorObj R S B
@@ -132,7 +179,9 @@ def originalTensorFunctor :
     exact TensorProduct.Balanced.CoefficientHom.tensorMap_comp
       (R := R) (S := S) (B := B) (A := X) (A' := Y) (A'' := Z) f.hom g.hom
 
-/-- Additivity of the original tensor functor is earned on its actual maps. -/
+/-- For rings R,S and an (R,S)-bimodule B, the unlifted
+functor X↦X⊗_R B preserves sums of right R-linear maps.
+On a pure class, (f+g)⊗id has value [f(x)⊗b]+[g(x)⊗b]. -/
 theorem originalTensorFunctor_additive : (originalTensorFunctor R S B).Additive := by
   refine ⟨?_⟩
   intro X Y f g
@@ -149,20 +198,31 @@ theorem originalTensorFunctor_additive : (originalTensorFunctor R S B).Additive 
   exact TensorProduct.Balanced.CoefficientHom.tensorMap_add
     (R := R) (S := S) (B := B) (A := X) (A' := Y) f.hom g.hom
 
-/-- Bundle the earned additivity without registering another global action instance. -/
+/-- For rings R,S and an (R,S)-bimodule B, the functor
+ModuleCat^a(Rᵒᵖ)→ModuleCat^max(a,b)(Sᵒᵖ),
+X↦X⊗_R B, has its additive functor structure from the
+additivity of balanced tensor maps in the source morphism. -/
 def originalTensorAdditiveFunctor :
     ModuleCat.{aGlobal} Rᵐᵒᵖ ⥤+ ModuleCat.{max aGlobal bGlobal} Sᵐᵒᵖ := by
   letI := originalTensorFunctor_additive R S B
   exact AdditiveFunctor.of (originalTensorFunctor R S B)
 
-/-- The actual input map is the native tensor functor applied to native input lifting. -/
+/-- For rings R,S, an (R,S)-bimodule B and f:X→Y,
+the height-Γ tensor morphism is
+ULift^Γ X⊗_R ULift^Γ B→ULift^Γ Y⊗_R ULift^Γ B,
+using the lifted input map on the first factor.
+Here Γ=max(r,a,b,z), with the ring and carrier worlds independent. -/
 def tensorMapAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] {X Y : ModuleCat.{a} Rᵐᵒᵖ} (f : X ⟶ Y) :
     tensorObjAt.{z, r, s, a, b} R S B X ⟶ tensorObjAt.{z, r, s, a, b} R S B Y :=
   (tensorFunctorAt.{z, r, s, a, b} R S B).map f
 
-/-- Original representatives are sent by up-f-down on the first input. -/
+/-- For a right R-linear map f:X→Y and an (R,S)-bimodule B,
+the height-Γ tensor map sends
+[up(x)⊗up(b)] to [up(f(x))⊗up(b)].
+Both carriers are lifted to Γ=max(r,a,b,z), while the
+outer S-action stays on B. -/
 theorem tensorMapAt_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] {X Y : ModuleCat.{a} Rᵐᵒᵖ}
@@ -181,7 +241,11 @@ theorem tensorMapAt_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring 
     (ULift.up x) (ULift.up y)
   exact h
 
-/-- Down on both factors is earned outer-linear by the original balanced map. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+down on both factors gives the Sᵒᵖ-linear map
+ULift^Γ X⊗_R ULift^Γ B→X⊗_R B.
+It sends each lifted pure class to the class of its two
+underlying factors. -/
 def tensorUnliftAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ) :
@@ -195,7 +259,10 @@ def tensorUnliftAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     TensorProduct.Balanced.uliftRightCarrierEquiv ℤ R S X B
   exact e.toLinearMap
 
-/-- Up on both factors is the actual inverse outer-linear quotient map. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+up on both factors gives the Sᵒᵖ-linear map
+X⊗_R B→ULift^Γ X⊗_R ULift^Γ B.
+It is inverse to down on both tensor factors. -/
 def tensorLiftAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ) :
@@ -209,7 +276,10 @@ def tensorLiftAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     TensorProduct.Balanced.uliftRightCarrierEquiv ℤ R S X B
   exact e.symm.toLinearMap
 
-/-- Down on pure representatives retains their original noncommutative balance. -/
+/-- For x∈ULift^Γ X and b∈ULift^Γ B, the down map satisfies
+d([x⊗b])=[x.down⊗b.down] in X⊗_R B.
+The source is a right R-module and B is an (R,S)-bimodule,
+so this formula preserves balancing and the right S-action. -/
 theorem tensorUnliftAt_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ)
@@ -220,7 +290,10 @@ theorem tensorUnliftAt_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ri
       TensorProduct.Balanced.mk ℤ R X B x.down y.down := by
   exact TensorProduct.Balanced.uliftRightCarrierEquiv_mk ℤ R S X B x y
 
-/-- Up retains the same original pure representative. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+the inverse carrier lift satisfies
+u([x⊗b])=[up(x)⊗up(b)].
+The target has both carriers at Γ=max(r,a,b,z). -/
 theorem tensorLiftAt_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ) (x : X) (y : B) :
@@ -229,7 +302,11 @@ theorem tensorLiftAt_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring
         (ULift.{max r a b z} B) (ULift.up x) (ULift.up y) := by
   exact TensorProduct.Balanced.uliftRightCarrierEquiv_symm_mk ℤ R S X B x y
 
-/-- An actual linear equivalence compares the differently sized quotient carriers. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+down/up on both factors give
+ULift^Γ X⊗_R ULift^Γ B≃ₗ[Sᵒᵖ]X⊗_R B
+as carrier modules, with Γ=max(r,a,b,z) and the unlifted
+carrier in world max(a,b). -/
 def tensorCarrierEquivAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ) :
@@ -240,7 +317,11 @@ def tensorCarrierEquivAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Rin
   letI := TensorProduct.Balanced.rightModule ℤ R S X B
   exact TensorProduct.Balanced.uliftRightCarrierEquiv ℤ R S X B
 
-/-- A category isomorphism compares the large tensor only after lifting the whole output. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+there is an isomorphism in ModuleCat^Γ(Sᵒᵖ)
+ULift^Γ X⊗_R ULift^Γ B ≅ ULift^Γ(X⊗_R B).
+It is the carrier down equivalence followed by lifting the
+entire unlifted balanced quotient. -/
 def tensorOutputLiftIsoAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ) :
@@ -256,7 +337,10 @@ def tensorOutputLiftIsoAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ri
     TensorProduct.Balanced.uliftRightEquiv ℤ R S X B
   exact e.toModuleIso
 
-/-- The whole-output comparison sends a lifted pure tensor to the lifted original class. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+the forward output comparison sends [x⊗b], with both factors
+lifted to Γ, to up([x.down⊗b.down]).
+The target is the lift of the entire unlifted tensor object. -/
 theorem tensorOutputLiftIsoAt_hom_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -268,7 +352,10 @@ theorem tensorOutputLiftIsoAt_hom_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [
       ULift.up (originalTensorMk R S B X x.down y.down) := by
   exact TensorProduct.Balanced.uliftRightEquiv_mk ℤ R S X B x y
 
-/-- The inverse whole-output comparison is the actual pair of native input lifts. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+the inverse whole-output comparison sends
+up([x⊗b]) to [up(x)⊗up(b)].
+It identifies two lifts of the same balanced tensor class. -/
 theorem tensorOutputLiftIsoAt_inv_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -279,7 +366,10 @@ theorem tensorOutputLiftIsoAt_inv_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [
         (ULift.{max r a b z} B) (ULift.up x) (ULift.up y) := by
   exact TensorProduct.Balanced.uliftRightEquiv_symm_mk ℤ R S X B x y
 
-/-- Original input maps commute with the computed whole-output universe comparison. -/
+/-- For rings R,S, an (R,S)-bimodule B and a right
+R-linear map f:X→Y, let e_X,e_Y compare lifted-factor tensors
+with the lifts of their unlifted quotients.
+They satisfy e_Y∘T_Γ(f)=ULift(f⊗id_B)∘e_X. -/
 theorem tensorOutputLiftIsoAt_naturality.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -311,7 +401,10 @@ theorem tensorOutputLiftIsoAt_naturality.{z, r, s, a, b} (R : Type r) (S : Type 
     ULift.up ((originalTensorMap R S B f).hom (originalTensorMk R S B X x y))
   rw [originalTensorMap_mk]
 
-/-- The independent-carrier tensor is naturally the whole-output lift of the original model. -/
+/-- For rings R,S and an (R,S)-bimodule B, the
+height-Γ tensor functor is naturally isomorphic to the
+unlifted functor X↦X⊗_R B followed by whole-output lifting.
+The component sends [up(x)⊗up(b)] to up([x⊗b]). -/
 def tensorOutputLiftNatIsoAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -321,7 +414,11 @@ def tensorOutputLiftNatIsoAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] 
   NatIso.ofComponents (tensorOutputLiftIsoAt R S B)
     (fun {X Y} f => tensorOutputLiftIsoAt_naturality R S B f)
 
-/-- The original common-carrier native tensor functor is recovered through the whole-output lift. -/
+/-- For rings R,S and an (R,S)-bimodule C whose source and
+coefficient carriers both have world v, the chosen-height
+tensor functor is naturally the original common-world tensor
+functor followed by lifting its output to max(r,v,z).
+This comparison is underived and uses no source projectivity hypothesis. -/
 def tensorOriginalLiftIsoAt.{z, r, s, v}
     (R : Type r) (S : Type s) [Ring R] [Ring S]
     (C : Type v) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
@@ -333,21 +430,31 @@ def tensorOriginalLiftIsoAt.{z, r, s, v}
 section Heights
 
 
-/-- Flatten the actual coefficient lifts in a sufficient larger carrier world. -/
+/-- For a left R-module B and Γ=max(r,a,b,z),
+Γ′=max(r,a,b,z,t), there is an R-linear equivalence
+ULift^Γ′(ULift^Γ B)≃ULift^Γ′B.
+It sends up(up(b)) to up(b), with the reverse map inserting
+the inner lift. -/
 def coefficientFlattenEquivAt.{t, z, r, a, b} (R : Type r) [Ring R]
     (B : Type b) [AddCommGroup B] [Module R B] :
     ULift.{max r a b z t} (ULift.{max r a b z} B) ≃ₗ[R]
       ULift.{max r a b z t} B :=
   ModuleCat.uliftFlattenEquiv.{max r a b z, max r a b z t} R B
 
-/-- Coefficient flattening retains the original right S action. -/
+/-- For a coefficient B with left R- and right S-actions,
+the flattening map ULift^Γ′(ULift^Γ B)→ULift^Γ′B
+intertwines the Sᵒᵖ-action.
+Its value on s•up(up(b)) is up(s•b). -/
 theorem coefficientFlattenEquivAt_outer.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     (s : Sᵐᵒᵖ) (x : ULift.{max r a b z t} (ULift.{max r a b z} B)) :
     coefficientFlattenEquivAt.{t, z, r, a, b} R B (s • x) =
       s • coefficientFlattenEquivAt.{t, z, r, a, b} R B x := rfl
 
-/-- The actual tensor coefficient comparison eliminates a double coefficient lift. -/
+/-- For rings R,S and an (R,S)-bimodule B, tensoring
+with ULift^Γ′(ULift^Γ B) is naturally isomorphic to tensoring
+with ULift^Γ′B on right R-modules in world Γ′.
+The comparison acts by flattening the coefficient factor. -/
 def tensorCoefficientFlattenIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -359,8 +466,11 @@ def tensorCoefficientFlattenIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [
     (coefficientFlattenEquivAt.{t, z, r, a, b} R B)
     (coefficientFlattenEquivAt_outer.{t, z, r, s, a, b} R S B)
 
-/-- Increasing the working universe commutes with the actual ordered balanced tensor.
-The coefficient inverse and both module lifts are constructed, not provided as data. -/
+/-- For rings R,S and an (R,S)-bimodule B, put
+Γ=max(r,a,b,z), Γ′=max(r,a,b,z,t).
+Tensoring at Γ′ after lifting the input is naturally isomorphic
+to tensoring at Γ and lifting the whole output to Γ′.
+The common source is ModuleCat^Γ(Rᵒᵖ). -/
 def tensorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -374,7 +484,11 @@ def tensorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Rin
     tensorOutputLiftNatIsoAt.{max r a b z t, r, s, max r a b z, max r a b z}
       R S (ULift.{max r a b z} B)
 
-/-- The height comparison has the actual original pure value in the lower tensor. -/
+/-- For a right R-module X in world Γ and an (R,S)-bimodule B,
+the height comparison Γ→Γ′ sends
+[up_(Γ′)(x)⊗up_(Γ′)(b)] to
+up_(Γ′)([x⊗up_Γ(b)]).
+This is its forward map to the lifted lower-height tensor output. -/
 theorem tensorHeightIsoAt_hom_mk.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -421,7 +535,11 @@ theorem tensorHeightIsoAt_hom_mk.{t, z, r, s, a, b} (R : Type r) (S : Type s) [R
     (tensorOutputLiftIsoAt.{max r a b z t, r, s, max r a b z, max r a b z}
       R S (ULift.{max r a b z} B) X).hom.hom hCoeff').trans hOut
 
-/-- The inverse height comparison keeps the same two original factors. -/
+/-- For a right R-module X in world Γ and an (R,S)-bimodule B,
+the inverse height comparison sends
+up_(Γ′)([x⊗up_Γ(b)]) to
+[up_(Γ′)(x)⊗up_(Γ′)(b)].
+The balanced class and its factor order are unchanged. -/
 theorem tensorHeightIsoAt_inv_mk.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]

@@ -1,4 +1,7 @@
-# Original Intrinsic Ambient Tensor Tor Equiv symm apply
+# The support-linear intrinsic inverse has the same inverse value
 
-The inverse tensor-linear upgrade has exactly the original inverse
-comparison map, with all original carrier coordinates retained.
+For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For z∈Tor_q^B(V,W), the inverse T-linear equivalence
+has value φ_intr⁻¹(z).

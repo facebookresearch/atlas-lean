@@ -1,8 +1,8 @@
 # Isomorphism and functor coherence of splitting data
 
-- [Hom XIso Of Eq](hom-xiso-of-eq.md)
-- [Of Iso reflexive](of-iso-reflexive.md)
-- [Map of Iso](map-of-iso.md)
-- [Map nat Iso](map-nat-iso.md)
-- [Map comp iso](map-comp-iso.md)
-- [Of Iso normalize](of-iso-normalize.md)
+- [Splitting components under equality of indices](hom-xiso-of-eq.md)
+- [Reflexive normalization commutes with isomorphism transport](of-iso-reflexive.md)
+- [Functor mapping commutes with splitting transport](map-of-iso.md)
+- [Natural isomorphisms identify functor-mapped splittings](map-nat-iso.md)
+- [Splitting transport through an isomorphic composite functor](map-comp-iso.md)
+- [Square-zero normalization commutes with isomorphism transport](of-iso-normalize.md)

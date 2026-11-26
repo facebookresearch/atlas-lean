@@ -12,12 +12,17 @@ module
 public import MathlibExt.LinearAlgebra.TensorProduct.DirectLimit.Diagonal
 
 /-!
-# Eventual vanishing in directed tensor systems
+# Eventual vanishing in directed module and tensor systems
 
-If a tensor at one stage vanishes after both factors are mapped to direct
-limits, it vanishes after a common later transition. This follows from
-the tensor/direct-limit equivalence and eventual vanishing in module
-direct limits.
+Let R be a commutative ring and G_i a system of R-modules with additive
+commutative group structures over a directed preorder with decidable
+equality. The R-linear transitions f_ij satisfy identity and composition.
+
+If x ∈ G_i ⊗[R] G_i becomes zero after mapping both factors to lim G,
+then (f_ij ⊗ f_ij)(x) is zero at some common later stage j ≥ i.
+Likewise, a finite family of elements of G_i whose images vanish in lim G
+is killed simultaneously at one later stage. The index set itself need
+not be finite, and no injectivity condition on transitions is required.
 -/
 
 @[expose] public section
@@ -36,8 +41,13 @@ variable {G : ι → Type*} [∀ i, AddCommGroup (G i)] [∀ i, Module R (G i)]
 variable (f : ∀ i j, i ≤ j → G i →ₗ[R] G j)
 variable [DirectedSystem G (f · · ·)]
 
-/-- A stagewise tensor which vanishes after both factors map to the direct
-limit vanishes after one common enlargement. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+If x ∈ G_i ⊗[R] G_i maps to zero under of_i ⊗ of_i in
+(lim G) ⊗[R] (lim G), then there is j ≥ i with
+(f_ij ⊗ f_ij)(x) = 0. Both tensor factors use this same later stage. -/
 theorem exists_eq_zero_of_map_to_directLimit_tensor_eq_zero
     {i : ι} (x : G i ⊗[R] G i)
     (hx : TensorProduct.map
@@ -57,8 +67,13 @@ variable {G : ι → Type*} [∀ i, AddCommGroup (G i)] [∀ i, Module R (G i)]
 variable (f : ∀ i j, i ≤ j → G i →ₗ[R] G j)
 variable [DirectedSystem G (f · · ·)]
 
-/-- A finite family from one stage which vanishes in a module direct limit
-is killed simultaneously at one common later stage. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+For a finite index type I and a family x_a ∈ G_i whose images
+of_i(x_a) vanish in lim G, there is a single j ≥ i such that
+f_ij(x_a) = 0 for every a ∈ I. An empty family is allowed. -/
 theorem of.zero_exact_finite_family
     {I : Type*} [Finite I] {i : ι} (x : I → G i)
     (hx : ∀ a, Module.DirectLimit.of R ι G f i (x a) = 0) :

@@ -1,4 +1,5 @@
-# Tensoring Left same Universe
+# Zero-height tensoring-left agrees with ordinary module tensoring-left
 
-The actual tensoring-left functor agrees with the explicitly bound
-original Mathlib tensoring-left functor at the original native universe.
+Let R be commutative in universe u and all coefficient carriers lie in u. The
+zero-additional-height tensoring-left functor equals the ordinary module tensoring-left functor:
+it sends M to N↦M⊗_R N and coefficient morphisms to their tensor natural transformations.

@@ -1,4 +1,5 @@
-# Cocycle wi
+# Cocycle inclusion is annihilated by the outgoing differential
 
-The inclusion lands in cycles. The index equality is rewritten in the
-pure-`C` hypothesis (never in the goal, whose `X₃` type depends on it).
+Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The cocycle inclusion followed by the outgoing Hom-complex
+differential is zero.

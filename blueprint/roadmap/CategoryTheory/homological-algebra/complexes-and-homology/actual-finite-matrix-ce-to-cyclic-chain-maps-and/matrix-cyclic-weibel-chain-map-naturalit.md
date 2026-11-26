@@ -1,3 +1,6 @@
-# Matrix Cyclic Weibel Chain Map naturality
+# Coefficient naturality of canonical-tail matrix cyclic chain maps
 
-The whole matrix lambda family is natural under every coefficient algebra map.
+Coefficient naturality of canonical-tail matrix cyclic chain maps.
+
+The canonical positive-tail coefficient map and cyclic quotient coefficient map commute with
+the degree-signed trace chain map.

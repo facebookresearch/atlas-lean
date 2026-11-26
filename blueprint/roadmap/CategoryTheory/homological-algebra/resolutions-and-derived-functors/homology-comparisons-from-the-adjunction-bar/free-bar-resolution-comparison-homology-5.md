@@ -1,3 +1,6 @@
-# Free Bar Resolution Comparison Homology Map comp
+# Composition law for mapped adjunction bar homology comparisons
 
-Endpoint composition agrees on homology with the two original Bar comparisons.
+Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. Let `E` be preadditive and `T : D → E` additive. For `f : M → N`, `g : N → Z`, with the three displayed
+mapped bar homologies existing in degree `n`, comparison over
+`f ≫ g` equals the composite comparison maps over `f` and `g`.

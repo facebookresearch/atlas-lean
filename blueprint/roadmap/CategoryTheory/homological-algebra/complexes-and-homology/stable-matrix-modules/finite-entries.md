@@ -1,3 +1,6 @@
-# Finite Entries
+# Finite matrix entries extended by zero
 
-The entries of a finite matrix, extended by zero to natural-number coordinates.
+Finite matrix entries extended by zero.
+
+For an `n × n` matrix `B`, define its entry function on natural indices by `B i j` inside the
+first `n` rows and columns and by zero outside that square.

@@ -16,6 +16,19 @@ public import MathlibExt.CategoryTheory.Abelian.Ext.DerivedCoyoneda
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.ResolutionComparison
 public import MathlibExt.Algebra.Homology.Functor
 
+/-!
+# Positive cohomology from injective resolution section cycles
+
+Apply global sections to an injective resolution of a common-universe abelian sheaf. In degree
+`n + 1`, its section cycles are the kernel of the outgoing differential, and its boundaries
+are the image of the preceding differential.
+
+There are additive presentations of positive small étale cohomology by these cycles with
+boundary kernel, and additive comparisons to right-derived global sections. Closed maps from
+the integral sheaf represent the same Ext classes as their section cycles under these
+comparisons.
+-/
+
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -23,13 +36,19 @@ open CategoryTheory CategoryTheory.Limits Opposite
 universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections
 variable (X : Scheme.{u})
-/-- The literal three-term sections complex in each positive degree. -/
+/-- Three adjacent section terms of an injective resolution.
+
+Take global sections of the chosen injective resolution and form the short complex in degrees
+`n`, `n + 1`, and `n + 2`. -/
 abbrev positiveShort (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     ShortComplex AddCommGrpCat.{max u w} :=
   (((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).mapHomologicalComplex
     (ComplexShape.up ℕ)).obj (injectiveResolution Q).cocomplex).sc' n (n + 1) (n + 2)
 
-/-- The literal sections-homology class followed by the canonical derived-object comparison. -/
+/-- Derived section class of a positive resolution cycle.
+
+Project a section cycle in degree `n + 1` to resolution cohomology and apply the inverse
+resolution-to-derived coordinate to obtain its right-derived global-section class. -/
 def positiveCycleClass (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ)
     (z : (positiveShort.{u, w} X Q n).g.hom.ker) :
     ((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived (n + 1)).obj Q :=
@@ -414,7 +433,12 @@ end AlgebraicGeometry.Scheme.DerivedSections.Reuse
 namespace AlgebraicGeometry.Scheme.DerivedSections
 variable (X : Scheme.{u})
 
-/-- The complete cycle-map and comparison families, with every representative identified. -/
+/-- Positive Ext comparison preserves section cycle representatives.
+
+There exist simultaneous cycle-presentation and cohomology-to-derived equivalence families for
+all sheaves and positive degrees. Each presentation is surjective with kernel the boundaries;
+the equivalence sends its values to derived cycle classes and agrees with every closed
+integral-sheaf Ext representative. -/
 theorem positive_ext_cycle_comparison :
     let Γ := Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}
     ∃ p : ∀ (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ),

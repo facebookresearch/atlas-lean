@@ -1,3 +1,6 @@
-# Coefficient Original Homology Map At
+# The joint CE homology map on independent unlifted carriers
 
-The raw homology map, as a ground-linear map across the two independent carrier universes.
+The joint CE homology map on independent unlifted carriers.
+
+The lifted joint homology map, composed with coefficient-carrier up and down equivalences,
+gives a ground-linear map between the unlifted homology carriers.

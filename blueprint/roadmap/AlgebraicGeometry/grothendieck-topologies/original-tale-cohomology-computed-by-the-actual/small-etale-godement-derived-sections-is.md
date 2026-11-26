@@ -1,3 +1,6 @@
-# Small Etale Godement Derived Sections Iso
+# Godement section cohomology computes derived global sections
 
-Native right-derived global sections are the homology of the actual Godement complex.
+Godement section cohomology computes derived global sections.
+
+For each sheaf and natural `n`, `R^nΓ(Q)` is isomorphic to degree-`n` cohomology of its
+Godement section complex.

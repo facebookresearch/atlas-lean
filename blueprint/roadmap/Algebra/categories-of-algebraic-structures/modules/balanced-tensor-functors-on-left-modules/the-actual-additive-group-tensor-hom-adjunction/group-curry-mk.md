@@ -1,3 +1,6 @@
-# Group Curry mk
+# Right-variable currying evaluates on pure balanced classes
 
-Currying uses the original function on the original pure tensor class.
+Right-variable currying evaluates on pure balanced classes.
+
+For an additive balanced tensor map `f`, the curried value at `m` evaluated at `n` is `f([m ⊗
+n])`.

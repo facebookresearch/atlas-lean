@@ -1,3 +1,5 @@
-# Ideal Word Span all eq range
+# The all-ideal word span is the range of tensorized ideal inclusion
 
-The all-ideal word span is the image of the original ideal inclusion on every tensor factor.
+Let k be commutative, A a nonunital k-module ring and I a k-subalgebra. For n : ℕ,
+idealWordSpan n n equals the range of PiTensorProduct.map (fun _ => I.subtypeHom) : I^⊗n →
+A^⊗n.

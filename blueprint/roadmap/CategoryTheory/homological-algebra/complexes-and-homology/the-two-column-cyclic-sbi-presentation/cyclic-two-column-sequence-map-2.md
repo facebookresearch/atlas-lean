@@ -1,3 +1,6 @@
-# Cyclic Two Column Sequence Map τ₁
+# The retained-column component of a cyclic sequence map
 
-The first component is the native partial-total map, retaining both columns.
+The retained-column component of a cyclic sequence map.
+
+The first component of the sequence map induced by `f` is its partial-total map on columns
+zero and one.

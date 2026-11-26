@@ -1,3 +1,5 @@
-# Trivial
+# The trivial right Lie action on a scalar module
 
-Trivial right coefficients have the zero action.
+The trivial right Lie action on a scalar module.
+
+For an `R`-module `M`, the zero action of `L` makes `M` a right Lie module.

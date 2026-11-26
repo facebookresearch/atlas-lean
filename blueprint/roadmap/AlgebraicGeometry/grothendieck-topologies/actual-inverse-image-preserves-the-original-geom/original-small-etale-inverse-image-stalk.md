@@ -1,5 +1,8 @@
-# Original small etale inverse image stalks
+# Natural coherent preservation of common universe geometric stalks
 
-The complete original geometric-stalk comparison family, with its actual
-additive values, naturality, original-neighborhood coordinate law, and both
-identity/composition compatibility diagrams for the same canonical κ.
+Natural coherent preservation of common universe geometric stalks.
+
+For every scheme map and geometric point over a separably closed field in universe `u`, the
+common stalk comparison is an additive equivalence natural in sheaf maps. Its right-adjoint
+section coordinates are the stated fiber reindexings, and the comparisons satisfy the identity
+and composition equations.

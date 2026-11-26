@@ -16,11 +16,18 @@ public import MathlibExt.Algebra.Homology.SpectralSequence.TwoColumnHomological
 public import MathlibExt.Algebra.Homology.PartialTotalEdgeMaps
 
 /-!
-# An explicit two-column partial-total survivor coordinate
+# Spectral-object survivor coordinates for two-column partial totals
 
-This file constructs a spectral-object-backed finite coordinate for the
-partial-total spectral sequence. No equality with the generic two-column
-spectral-sequence `IsTwoColumnAtTwo.pageTwoToPageIso` is asserted.
+Let B be a bicomplex of shape (down ℕ,down ℕ) in an abelian category, and E its increasing
+homological partial-total spectral sequence, with d_r of bidegree (-r,r−1). If E^2_{p,q}=0 for
+every p≥2, the terms in columns zero and one survive: for p≤1 the spectral-object page
+transitions give a canonical isomorphism E^2_{p,q}≅E^{2+k}_{p,q} for each k∈ℕ.
+
+For column zero, the specified map from the chosen second page to the stable interval agrees
+with that finite survivor coordinate at k=q, followed by the stable-page isomorphism
+E^{q+2}_{0,q}≅E_Y(⊥,-1,0,⊤;−q). Thus the coordinate describes the zero-column edge's own
+page-to-stable arrow. All support, integer cuts and cochain degrees are kept in the given
+spectral object, with arbitrary category universes.
 -/
 
 @[expose] public section
@@ -621,9 +628,13 @@ private theorem partialTotalTwoColumnDirectPageToStable_succ
 -/
 
 unseal CategoryTheory.Abelian.SpectralObject.spectralSequence in
-/-- The spectral-object-backed explicit coordinate from the chosen page two
-to a later surviving partial-total page. No equality with the generic
-two-column spectral-sequence `IsTwoColumnAtTwo.pageTwoToPageIso` is asserted. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+k,p,q∈ℕ with p≤1, this is the spectral-object survivor isomorphism E^2_{p,q}≅E^{2+k}_{p,q}, with
+source the chosen second-page object of the partial-total spectral sequence. It is built from
+the page-transition coordinates of the spectral object at cuts p−r≤p−1≤p≤p+r−1 and cochain
+degree −p−q for r≥2. Two-column support kills the incoming and outgoing higher differentials at
+these columns. -/
 noncomputable def partialTotalTwoColumnPageTwoToPageIso
     (h₂ :
       CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
@@ -1176,9 +1187,13 @@ private theorem partialTotalTwoColumnDirectPageToStable_terminal
   rw [hAligned]
   rw [reassoc_of% hPage]
 
-/-- Under a two-column page-two hypothesis, the literal existing zero-column
-page-to-stable map is the explicit finite survivor coordinate followed by
-the stable-page coordinate. -/
+/-- Let C be abelian and B a bicomplex of shape (down ℕ,down ℕ). Write E^r_{p,q} for its increasing
+homological partial-total spectral sequence, and assume E^2_{p,q}=0 for every p≥2 and q∈ℕ. For
+q∈ℕ, let θ_q:E^2_{0,q}→S_{q,0} be the specified zero-column page-to-stable map, with
+S_{q,0}=E_Y(⊥,-1,0,⊤;−q). Let e_q:E^2_{0,q}≅E^{2+q}_{0,q} be the spectral-object survivor
+coordinate and s_q:E^{q+2}_{0,q}≅S_{q,0} the stable-page comparison, identifying equal page
+indices and total-degree expressions. Then θ_q=(e_q≪≫s_q).hom. The equality identifies the map
+used in the zero-column edge with this finite composite. -/
 theorem partialTotalZeroColumnPageToStable_eq_pageTwoToStable_of_twoColumn
     (h₂ : CategoryTheory.SpectralSequence.IncreasingHomological.IsTwoColumnAtTwo E)
     (q : ℕ) :

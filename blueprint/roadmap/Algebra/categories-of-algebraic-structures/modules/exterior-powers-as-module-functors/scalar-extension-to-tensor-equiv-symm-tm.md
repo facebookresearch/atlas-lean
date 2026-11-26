@@ -1,3 +1,6 @@
-# Scalar Extension To Tensor Equiv symm tmul
+# The inverse pure-tensor formula for scalar extension
 
-The inverse scalar transport recovers the same native pure tensor.
+The inverse pure-tensor formula for scalar extension.
+
+The inverse equivalence sends `s ⊗ m ∈ S ⊗[R] M` to the same representative in extension of
+scalars along `R → S`.

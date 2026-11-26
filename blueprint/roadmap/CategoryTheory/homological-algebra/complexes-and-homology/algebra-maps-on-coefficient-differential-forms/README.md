@@ -2,18 +2,18 @@
 
 ## Raw
 
-- [Kaehler Algebra Map](kaehler-algebra-map.md)
-- [Kaehler Algebra Map D](kaehler-algebra-map-d.md)
-- [Algebra Coefficient Semilinear Map](algebra-coefficient-semilinear-map.md)
-- [Coefficient Form Algebra Semilinear Map](coefficient-form-algebra-semilinear-map.md)
-- [Coefficient Form Algebra Linear Map](coefficient-form-algebra-linear-map.md)
-- [Coefficient Form Algebra Linear Map differential Word](coefficient-form-algebra-linear-map-diff.md)
+- [Universal differentials under an algebra map](kaehler-algebra-map.md)
+- [Differentiating algebra images](kaehler-algebra-map-d.md)
+- [The semilinear structure of a coefficient map](algebra-coefficient-semilinear-map.md)
+- [Algebra maps on coefficient differential forms](coefficient-form-algebra-semilinear-map.md)
+- [The ground-linear map of coefficient forms](coefficient-form-algebra-linear-map.md)
+- [The form map on differential words](coefficient-form-algebra-linear-map-diff.md)
 
 ## Complexes
 
-- [Coefficient Form Algebra Complex Map](coefficient-form-algebra-complex-map.md)
-- [Original Algebra Coefficient Chain Map](original-algebra-coefficient-chain-map.md)
-- [Original Algebra Coefficient Chain Map f](original-algebra-coefficient-chain-map-f.md)
-- [Original Algebra Coefficient Chain Map tprod](original-algebra-coefficient-chain-map-t.md)
-- [Coefficient Form Algebra Complex Map word](coefficient-form-algebra-complex-map-wor.md)
-- [Coefficient Differential Form Chain Map algebra](coefficient-differential-form-chain-map.md)
+- [The form-complex map under algebra change](coefficient-form-algebra-complex-map.md)
+- [The combined algebra and coefficient chain map](original-algebra-coefficient-chain-map.md)
+- [The linear map in each Hochschild degree](original-algebra-coefficient-chain-map-f.md)
+- [The value on a coefficient tensor word](original-algebra-coefficient-chain-map-t.md)
+- [The value on a lifted differential word](coefficient-form-algebra-complex-map-wor.md)
+- [The algebra naturality square for form projections](coefficient-differential-form-chain-map.md)

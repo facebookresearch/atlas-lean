@@ -15,11 +15,16 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.GroupAdjuncti
 public import Mathlib.Algebra.Ring.Equiv
 
 /-!
-# Currying balanced tensor in its left-module factor
+# Balanced tensor–Hom adjunctions in both module variables
 
-The function object carries the domain action, with the Rᵐᵒᵖᵐᵒᵖ action
-restricted along `RingEquiv.opOp`. The tensor object retains its integer
-module structure.
+Let `A` be a right `R`-module, `B` a left `R`-module, and `I` an additive commutative group.
+The additive Hom group from `A` to `I` has left action `(r h)(a) = h(a r)`, while the Hom
+group from `B` to `I` has right action `(h r)(b) = h(r b)`.
+
+Evaluation identifies additive maps `A ⊗_R B → I` with `R`-linear maps `B → Hom_ℤ(A, I)` and
+with `Rᵐᵒᵖ`-linear maps `A → Hom_ℤ(B, I)`. These coordinates are natural and give a right
+adjoint to balanced tensor in each module variable. The Hom functors act on target-group maps
+by postcomposition. The common carrier universe is independent of the ring universe.
 -/
 
 @[expose] public section
@@ -34,19 +39,29 @@ namespace ModuleCat.BalancedTensor
 
 variable (R : Type u) [Ring R]
 
-/-- The original pure balanced class, in the existing two-variable group object. -/
+/-- Pure element of the group-valued balanced tensor.
+
+For a right module `A`, a left module `B`, and elements `a` and `b`, `groupPure R A B a b` is
+the integer-ground balanced class `[a ⊗ b]`. -/
 def groupPure (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R) (a : A) (b : B) :
     ((groupBifunctor R).obj A).obj B := by
   letI : Module ℤ B := Module.compHom B (algebraMap ℤ R)
   exact TensorProduct.Balanced.mk ℤ R A B a b
 
-/-- The native double-opposite domain action gives the actual left R Hom module. -/
+/-- Left R action on additive Hom from a right module.
+
+For a right `R`-module `A`, the additive maps from `A` to `I` form a left `R`-module by domain
+precomposition. The action is obtained from the right-domain action and the double-opposite
+ring equivalence. -/
 def leftHomGroupModule (A : ModuleCat.{v} Rᵐᵒᵖ) (I : AddCommGrpCat.{v}) :
     Module R ((forget₂ (ModuleCat Rᵐᵒᵖ) AddCommGrpCat).obj A ⟶ I) := by
   letI := ChainComplex.homGroupModule Rᵐᵒᵖ A I
   exact Module.compHom _ (RingEquiv.opOp R).toRingHom
 
-/-- The left scalar acts by the original right action on the domain. -/
+/-- Left Hom action evaluates by the right domain action.
+
+For `r : R`, an additive map `f : A → I`, and `a : A`, the induced left Hom action satisfies
+`(r • f)(a) = f(op r • a)`. -/
 theorem leftHomGroupModule_smul_apply (A : ModuleCat.{v} Rᵐᵒᵖ)
     (I : AddCommGrpCat.{v}) (r : R)
     (f : (forget₂ (ModuleCat Rᵐᵒᵖ) AddCommGrpCat).obj A ⟶ I) (a : A) :
@@ -57,7 +72,10 @@ theorem leftHomGroupModule_smul_apply (A : ModuleCat.{v} Rᵐᵒᵖ)
   change (op (op r) • f).hom a = f.hom (op r • a)
   exact ChainComplex.homGroupModule_smul_apply Rᵐᵒᵖ A I (op (op r)) f a
 
-/-- Original right-module precomposition is linear for the earned left Hom action. -/
+/-- Left-linear precomposition on Hom from right modules.
+
+A right-module morphism `g : A' ⟶ A` induces an `R`-linear map from additive maps `A → I` to
+additive maps `A' → I` by precomposition. -/
 def leftHomGroupPrecomp {A A' : ModuleCat.{v} Rᵐᵒᵖ} (g : A' ⟶ A)
     (I : AddCommGrpCat.{v}) :
     letI := leftHomGroupModule R A I
@@ -74,7 +92,9 @@ def leftHomGroupPrecomp {A A' : ModuleCat.{v} Rᵐᵒᵖ} (g : A' ⟶ A)
       map_add' := f.map_add
       map_smul' := fun r x => f.map_smul (op (op r)) x }
 
-/-- The same precomposition has its original pointwise value. -/
+/-- Evaluation of Hom precomposition from a right-module domain.
+
+For an additive map `f : A → I` and `a : A'`, the precomposition map evaluates as `f(g a)`. -/
 theorem leftHomGroupPrecomp_apply {A A' : ModuleCat.{v} Rᵐᵒᵖ} (g : A' ⟶ A)
     (I : AddCommGrpCat.{v})
     (f : (forget₂ (ModuleCat Rᵐᵒᵖ) AddCommGrpCat).obj A ⟶ I) (a : A') :
@@ -82,7 +102,10 @@ theorem leftHomGroupPrecomp_apply {A A' : ModuleCat.{v} Rᵐᵒᵖ} (g : A' ⟶ 
     letI := leftHomGroupModule R A' I
     (leftHomGroupPrecomp R g I f).hom a = f.hom (g.hom a) := rfl
 
-/-- Original tensor currying in the left-module variable, retaining its domain action. -/
+/-- Currying a balanced tensor map in the left-module variable.
+
+An additive map `f : A ⊗_R B → I` gives an `R`-linear map from `B` to additive maps `A → I`,
+with the left action defined by precomposition using the right action on `A`. -/
 def groupCurryLeft (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) (f : ((groupBifunctor R).obj A).obj B ⟶ I) :
     letI := leftHomGroupModule R A I
@@ -129,13 +152,19 @@ def groupCurryLeft (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
       f.hom (groupPure R A B (op r • a) b)
     exact congrArg f.hom (TensorProduct.Balanced.balance ℤ R A B r a b).symm
 
-/-- Its actual evaluation is the original coefficient-first pure tensor value. -/
+/-- Left-variable currying evaluates on pure tensor classes.
+
+For `a : A` and `b : B`, the map obtained by left-variable currying satisfies `(groupCurryLeft
+f b)(a) = f([a ⊗ b])`. -/
 theorem groupCurryLeft_mk (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) (f : ((groupBifunctor R).obj A).obj B ⟶ I) (a : A) (b : B) :
     letI := leftHomGroupModule R A I
     (groupCurryLeft R A B I f b).hom a = f.hom (groupPure R A B a b) := rfl
 
-/-- Transpose the original Hom function back to the existing right-module currying. -/
+/-- Transposing a left-linear map into an additive Hom group.
+
+A left-linear map `g : B → Hom_ℤ(A, I)` transposes to a right-linear map `A → Hom_ℤ(B, I)` by
+interchanging its two evaluation variables. -/
 def transposeLeftHom (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v})
     (g : letI := leftHomGroupModule R A I
@@ -166,7 +195,10 @@ def transposeLeftHom (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     rw [g.map_smul, leftHomGroupModule_smul_apply]
     rfl
 
-/-- Uncurrying uses the already proved group tensor–Hom map on the same quotient. -/
+/-- Uncurrying a left-linear map to an additive Hom group.
+
+An `R`-linear map `B → Hom_ℤ(A, I)` defines an additive map from `A ⊗_R B` to `I`, by
+transposition and balanced evaluation. -/
 def groupUncurryLeft (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v})
     (g : letI := leftHomGroupModule R A I
@@ -174,7 +206,9 @@ def groupUncurryLeft (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     ((groupBifunctor R).obj A).obj B ⟶ I :=
   groupUncurry R A B I (transposeLeftHom R A B I g)
 
-/-- The inverse map has exactly the original two-variable evaluation. -/
+/-- Left-variable uncurrying on pure tensor classes.
+
+For a left-linear map `g : B → Hom_ℤ(A, I)`, the uncurried map sends `[a ⊗ b]` to `(g b)(a)`. -/
 theorem groupUncurryLeft_mk (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v})
     (g : letI := leftHomGroupModule R A I
@@ -187,7 +221,10 @@ theorem groupUncurryLeft_mk (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (TensorProduct.Balanced.mk ℤ R A B a b) = (g b).hom a
   exact groupUncurry_mk R A B I (transposeLeftHom R A B I g) a b
 
-/-- The actual left-domain Hom map is native additive postcomposition. -/
+/-- Left-linear postcomposition on additive Hom groups.
+
+A target-group morphism `g : I ⟶ I'` induces an `R`-linear map `Hom_ℤ(A, I) → Hom_ℤ(A, I')` by
+postcomposition, for fixed right module `A`. -/
 def leftHomGroupMap (A : ModuleCat.{v} Rᵐᵒᵖ) {I I' : AddCommGrpCat.{v}}
     (g : I ⟶ I') :
     letI := leftHomGroupModule R A I
@@ -210,7 +247,11 @@ def leftHomGroupMap (A : ModuleCat.{v} Rᵐᵒᵖ) {I I' : AddCommGrpCat.{v}}
   rw [leftHomGroupModule_smul_apply, leftHomGroupModule_smul_apply]
   rfl
 
-/-- The original Hom objects and postcomposition maps form the actual right adjoint. -/
+/-- Additive Hom from a right module as a left-module-valued functor.
+
+For a fixed right `R`-module `A`, the functor from additive groups to left `R`-modules takes
+`I` to `Hom_ℤ(A, I)` with domain-precomposition action and sends target maps to
+postcomposition. -/
 def leftHomGroupFunctor (A : ModuleCat.{v} Rᵐᵒᵖ) :
     AddCommGrpCat.{v} ⥤ ModuleCat.{v} R where
   obj I := by
@@ -249,13 +290,19 @@ def leftHomGroupFunctor (A : ModuleCat.{v} Rᵐᵒᵖ) :
     change f ≫ (g ≫ h) = (f ≫ g) ≫ h
     exact (Category.assoc f g h).symm
 
-/-- The actual native Hom functor map retains additive postcomposition on every value. -/
+/-- Target map formula for the left-module-valued Hom functor.
+
+For `g : I ⟶ I'`, an additive map `h : A → I`, and `a : A`, the Hom functor's image of `g`
+evaluates as `g(h a)`. -/
 theorem leftHomGroupFunctor_map_apply (A : ModuleCat.{v} Rᵐᵒᵖ)
     {I I' : AddCommGrpCat.{v}} (g : I ⟶ I')
     (h : (leftHomGroupFunctor R A).obj I) (a : A) :
     (((leftHomGroupFunctor R A).map g).hom h).hom a = g.hom (h.hom a) := rfl
 
-/-- The existing pure-evaluation curry/uncurry maps are inverse on the original objects. -/
+/-- Hom-set equivalence for tensor in the left-module variable.
+
+Additive maps `A ⊗_R B → I` are in bijection with morphisms `B ⟶ (leftHomGroupFunctor R A).obj
+I` of left `R`-modules. -/
 def groupLeftTensorHomEquiv (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) :
     (((groupBifunctor R).obj A).obj B ⟶ I) ≃
@@ -312,7 +359,10 @@ def groupLeftTensorHomEquiv (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
         simpa only [u, c, L, leftHomGroupFunctor] using hPack.trans hG
     }
 
-/-- The actual native hom-set equivalence evaluates the original pure tensor function. -/
+/-- Forward left-variable tensor–Hom equivalence on elements.
+
+The morphism corresponding to an additive tensor map `f`, evaluated first at `b` and then at
+`a`, gives `f([a ⊗ b])`. -/
 theorem groupLeftTensorHomEquiv_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) (f : ((groupBifunctor R).obj A).obj B ⟶ I) (b : B) (a : A) :
     (((groupLeftTensorHomEquiv R A B I) f).hom b).hom a =
@@ -333,7 +383,10 @@ theorem groupLeftTensorHomEquiv_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : Module
         (L b).hom a) (ModuleCat.hom_ofHom c)
   exact hValue.trans (hRaw.trans (groupCurryLeft_mk R A B I f a b))
 
-/-- The inverse native hom-set equivalence retains the original two-variable evaluation. -/
+/-- Inverse left-variable tensor–Hom equivalence on pure classes.
+
+The additive tensor map corresponding to a left-module morphism `g : B ⟶ Hom_ℤ(A, I)` sends
+`[a ⊗ b]` to `(g b)(a)`. -/
 theorem groupLeftTensorHomEquiv_symm_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) (g : B ⟶ (leftHomGroupFunctor R A).obj I) (a : A) (b : B) :
     ((groupLeftTensorHomEquiv R A B I).symm g).hom (groupPure R A B a b) =
@@ -354,7 +407,10 @@ theorem groupLeftTensorHomEquiv_symm_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : M
   have hRaw : (L b).hom a = (g.hom b).hom a := rfl
   exact hValue.trans ((groupUncurryLeft_mk R A B I L a b).trans hRaw)
 
-/-- The computed group tensor is left adjoint to the computed original-domain Hom functor. -/
+/-- Balanced tensor with fixed right factor has an additive Hom right adjoint.
+
+For a fixed right module `A`, the functor `A ⊗_R -` to additive groups is left adjoint to
+`leftHomGroupFunctor R A`. -/
 def groupLeftTensorAdjunction (A : ModuleCat.{v} Rᵐᵒᵖ) :
     (groupBifunctor R).obj A ⊣ leftHomGroupFunctor R A :=
   Adjunction.mkOfHomEquiv
@@ -418,12 +474,18 @@ def groupLeftTensorAdjunction (A : ModuleCat.{v} Rᵐᵒᵖ) :
         exact hLeft.trans (hEval.trans ((congrArg g.hom hFirst.symm).trans
           (hMap.symm.trans hValue.symm))) }
 
-/-- Right exactness of the actual second-variable tensor is earned by its adjunction. -/
+/-- Tensoring with a fixed right module is a left adjoint.
+
+For every right `R`-module `A`, the group-valued functor `(groupBifunctor R).obj A` is a left
+adjoint, with right adjoint the left-module-valued additive Hom functor. -/
 instance groupBifunctor_obj_isLeftAdjoint (A : ModuleCat.{v} Rᵐᵒᵖ) :
     ((groupBifunctor R).obj A).IsLeftAdjoint :=
   ⟨leftHomGroupFunctor R A, ⟨groupLeftTensorAdjunction R A⟩⟩
 
-/-- Original-domain group Hom postcomposition with its existing Rᵐᵒᵖ action. -/
+/-- Right-linear postcomposition on additive Hom groups.
+
+A target-group morphism `g : I ⟶ I'` gives an `Rᵐᵒᵖ`-linear map `Hom_ℤ(B, I) → Hom_ℤ(B, I')`
+by postcomposition, for fixed left module `B`. -/
 def rightHomGroupMap (B : ModuleCat.{v} R) {I I' : AddCommGrpCat.{v}} (g : I ⟶ I') :
     letI := ChainComplex.homGroupModule R B I
     letI := ChainComplex.homGroupModule R B I'
@@ -445,7 +507,10 @@ def rightHomGroupMap (B : ModuleCat.{v} R) {I I' : AddCommGrpCat.{v}} (g : I ⟶
   rw [ChainComplex.homGroupModule_smul_apply, ChainComplex.homGroupModule_smul_apply]
   rfl
 
-/-- The actual native right-domain Hom right adjoint in the first tensor variable. -/
+/-- Additive Hom from a left module as a right-module-valued functor.
+
+For fixed left `R`-module `B`, the functor from additive groups to right `R`-modules takes `I`
+to `Hom_ℤ(B, I)` with domain-precomposition action and acts on target maps by postcomposition. -/
 def rightHomGroupFunctor (B : ModuleCat.{v} R) :
     AddCommGrpCat.{v} ⥤ ModuleCat.{v} Rᵐᵒᵖ where
   obj I := by
@@ -482,13 +547,19 @@ def rightHomGroupFunctor (B : ModuleCat.{v} R) :
     intro f
     exact (Category.assoc f g h).symm
 
-/-- The actual right-domain Hom functor map retains original additive postcomposition. -/
+/-- Target map formula for the right-module-valued Hom functor.
+
+For `g : I ⟶ I'`, an additive map `h : B → I`, and `b : B`, the right-module-valued Hom
+functor's image of `g` evaluates as `g(h b)`. -/
 theorem rightHomGroupFunctor_map_apply (B : ModuleCat.{v} R)
     {I I' : AddCommGrpCat.{v}} (g : I ⟶ I')
     (h : (rightHomGroupFunctor R B).obj I) (b : B) :
     (((rightHomGroupFunctor R B).map g).hom h).hom b = g.hom (h.hom b) := rfl
 
-/-- The proved original group currying supplies the actual first-variable hom-set equivalence. -/
+/-- Hom-set equivalence for tensor in the right-module variable.
+
+Additive maps `A ⊗_R B → I` are in bijection with right-module morphisms `A ⟶
+(rightHomGroupFunctor R B).obj I`. -/
 def groupRightTensorHomEquiv (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) :
     (((groupBifunctor R).obj A).obj B ⟶ I) ≃
@@ -545,7 +616,10 @@ def groupRightTensorHomEquiv (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R
         simpa only [u, c, L, rightHomGroupFunctor] using hPack.trans hG
     }
 
-/-- The actual native first-variable hom-set equivalence keeps the original tensor value. -/
+/-- Forward right-variable tensor–Hom equivalence on elements.
+
+The right-module morphism corresponding to an additive tensor map `f`, evaluated first at `a`
+and then at `b`, gives `f([a ⊗ b])`. -/
 theorem groupRightTensorHomEquiv_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) (f : ((groupBifunctor R).obj A).obj B ⟶ I) (a : A) (b : B) :
     (((groupRightTensorHomEquiv R A B I) f).hom a).hom b =
@@ -567,7 +641,10 @@ theorem groupRightTensorHomEquiv_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : Modul
         (L a).hom b) (ModuleCat.hom_ofHom c)
   exact hValue.trans (hRaw.trans (groupCurry_mk R A B I f a b))
 
-/-- The inverse native first-variable hom-set map keeps the original function evaluation. -/
+/-- Inverse right-variable tensor–Hom equivalence on pure classes.
+
+The additive tensor map corresponding to a right-module morphism `g : A ⟶ Hom_ℤ(B, I)` sends
+`[a ⊗ b]` to `(g a)(b)`. -/
 theorem groupRightTensorHomEquiv_symm_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) (g : A ⟶ (rightHomGroupFunctor R B).obj I) (a : A) (b : B) :
     ((groupRightTensorHomEquiv R A B I).symm g).hom (groupPure R A B a b) =
@@ -589,7 +666,10 @@ theorem groupRightTensorHomEquiv_symm_apply (A : ModuleCat.{v} Rᵐᵒᵖ) (B : 
   have hRaw : (L a).hom b = (g.hom a).hom b := rfl
   exact hValue.trans ((groupUncurry_mk R A B I L a b).trans hRaw)
 
-/-- Both first-variable adjunction maps are the existing original group maps. -/
+/-- Balanced tensor with fixed left factor has an additive Hom right adjoint.
+
+For a fixed left `R`-module `B`, the functor `- ⊗_R B` from right modules to additive groups
+is left adjoint to `rightHomGroupFunctor R B`. -/
 def groupRightTensorAdjunction (B : ModuleCat.{v} R) :
     (groupBifunctor R).flip.obj B ⊣ rightHomGroupFunctor R B :=
   Adjunction.mkOfHomEquiv
@@ -652,7 +732,10 @@ def groupRightTensorAdjunction (B : ModuleCat.{v} R) :
         exact hLeft.trans (hEval.trans ((congrArg g.hom hFirst.symm).trans
           (hMap.symm.trans hValue.symm))) }
 
-/-- Right exactness in the first tensor variable follows from the actual adjunction. -/
+/-- Tensoring with a fixed left module is a left adjoint.
+
+For every left `R`-module `B`, the group-valued tensor functor with fixed left factor is a
+left adjoint, with right adjoint the right-module-valued additive Hom functor. -/
 instance groupBifunctor_flip_obj_isLeftAdjoint (B : ModuleCat.{v} R) :
     ((groupBifunctor R).flip.obj B).IsLeftAdjoint :=
   ⟨rightHomGroupFunctor R B, ⟨groupRightTensorAdjunction R B⟩⟩

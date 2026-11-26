@@ -1,5 +1,7 @@
-# Tensor Projective Resolution Associator Hom
+# Associator morphism between iterated tensor projective resolutions
 
-The original ordered total associator is a genuine resolution map between
-both actual iterated tensor resolutions. All four vanishing hypotheses are
-literal positive native Tor conditions for the original coefficients.
+Associator morphism between iterated tensor projective resolutions.
+
+For resolutions of `M`, `N`, and `V`, assume vanishing of every positive Tor degree for `(M,
+N)`, `(N, V)`, `(M ⊗ N, V)`, and `(M, N ⊗ V)`. The total associator defines a morphism between
+the left- and right-parenthesized tensor resolutions covering `(M ⊗ N) ⊗ V → M ⊗ (N ⊗ V)`.

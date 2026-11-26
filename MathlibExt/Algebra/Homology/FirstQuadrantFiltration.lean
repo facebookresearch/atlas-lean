@@ -13,12 +13,20 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantTotal
 
 /-!
-# Degreewise horizontal filtration of a first-quadrant total
+# Finite horizontal coordinates and their degreewise splitting
 
-In total degree `n`, horizontal filtration stage `k` is the finite coproduct
-of bicomplex terms with coordinates `i, j` satisfying `i+j=n` and `i≤k`.
-Its inclusion into the full total degree has an explicit coordinate
-projection and is a split monomorphism.
+Let C be a preadditive category with a zero object and finite coproducts,
+and let K be a bicomplex with both indices in ℕ and both differentials
+lowering degree. Its total-degree n object is
+T_n = ⨁_(p+q=n) K_(p,q).
+
+The horizontal stage k is the finite coproduct
+F_k T_n = ⨁_(p+q=n, p≤k) K_(p,q).
+Including these coordinates gives i_(k,n) : F_k T_n → T_n.
+The coordinate projection r_(k,n) retains each allowed summand and
+sends all p > k summands to zero. It satisfies r_(k,n)i_(k,n) = id,
+so every stage inclusion is a split monomorphism in C.
+The category object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -39,12 +47,21 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- Degree `n` of the horizontal filtration at stage `k`. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, the degree-n
+object at horizontal stage k is
+F_k T_n = ⨁_(p+q=n, p≤k) K_(p,q).
+Both the total-degree equation and the horizontal bound determine
+the finite index set. -/
 noncomputable def horizontalFilteredTotalObj (k n : ℕ) : C :=
   ∐ fun pq : DownNatHorizontalFilteredFiber n k =>
     (K.X pq.val.val.1).X pq.val.val.2
 
-/-- Inclusion of one allowed bidegree in a horizontal filtration object. -/
+/-- For a nonnegative homological bicomplex K and p+q=n with
+p≤k, the filtered summand inclusion is
+K_(p,q) → F_k T_n = ⨁_(a+b=n, a≤k) K_(a,b).
+It is the corresponding coproduct leg in the preadditive target
+category with finite coproducts. -/
 noncomputable def horizontalFilteredTotalι (k n : ℕ)
     (pq : DownNatHorizontalFilteredFiber n k) :
     (K.X pq.val.val.1).X pq.val.val.2 ⟶
@@ -56,8 +73,10 @@ noncomputable def horizontalFilteredTotalι (k n : ℕ)
     exact Sigma.ι (fun pq : DownNatHorizontalFilteredFiber n k =>
       (K.X pq.val.val.1).X pq.val.val.2) pq
 
-/-- Inclusion of the horizontal filtration object into the full total
-degree. -/
+/-- For a nonnegative homological bicomplex K, the map
+i_(k,n) : F_k T_n → Tot(K)_n includes the finite summands
+with p+q=n and p≤k into the full antidiagonal coproduct.
+It acts by the identity on each retained bidegree. -/
 noncomputable def horizontalFilteredTotalToTotal (k n : ℕ) :
     horizontalFilteredTotalObj K k n ⟶
       (K.total (ComplexShape.down ℕ)).X n :=
@@ -99,8 +118,11 @@ theorem horizontalFilteredTotalι_toTotal (k n : ℕ)
     (fun pq => 𝟙 ((K.X pq.val.val.1).X pq.val.val.2)) pq).trans
       (Category.id_comp _)
 
-/-- Projection from the full total degree onto horizontal coordinates at
-most `k`. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, the coordinate projection
+r_(k,n) : Tot(K)_n → F_k T_n is the filtered inclusion on each
+summand with p≤k and zero on each summand with p>k.
+The total-degree condition is p+q=n. -/
 noncomputable def totalToHorizontalFilteredTotal (k n : ℕ) :
     (K.total (ComplexShape.down ℕ)).X n ⟶
       horizontalFilteredTotalObj K k n :=
@@ -121,7 +143,11 @@ theorem ιTotal_totalToHorizontalFilteredTotal
   exact K.ι_totalDesc _ p q h
 
 omit [HasZeroObject C] in
-/-- The filtration inclusion is split by the coordinate projection. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, the maps
+F_k T_n → Tot(K)_n → F_k T_n satisfy r_(k,n) ∘ i_(k,n) = id.
+The splitting is degreewise and is determined by the retained
+horizontal coordinates p≤k. -/
 theorem horizontalFilteredTotalToTotal_comp_retraction (k n : ℕ) :
     horizontalFilteredTotalToTotal K k n ≫
         totalToHorizontalFilteredTotal K k n =
@@ -136,7 +162,11 @@ theorem horizontalFilteredTotalToTotal_comp_retraction (k n : ℕ) :
     ιTotal_totalToHorizontalFilteredTotal, dite_eq_left hp]
   exact (Category.comp_id _).symm
 
-/-- Explicit split-monomorphism structure on the filtration inclusion. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, the inclusion
+i_(k,n) : F_k T_n → Tot(K)_n has split-monomorphism data with
+retraction r_(k,n), the projection to horizontal coordinates p≤k.
+Its retraction identity is r_(k,n)i_(k,n) = id. -/
 noncomputable def horizontalFilteredTotalToTotalSplitMono (k n : ℕ) :
     SplitMono (horizontalFilteredTotalToTotal K k n) where
   retraction := totalToHorizontalFilteredTotal K k n

@@ -1,5 +1,5 @@
 # Vanishing on negative partial-total filtration intervals
 
-- [Is Zero partial Total Cochain Filtration obj of neg](is-zero-partial-total-cochain-filtration.md)
-- [Is Zero partial Total Spectral Object HObj of neg](is-zero-partial-total-spectral-object-ho.md)
-- [Is Zero partial Total Spectral Object HObj bot to neg](is-zero-partial-total-spectral-object-ho-2.md)
+- [Negative finite partial-total cochain stage is zero](is-zero-partial-total-cochain-filtration.md)
+- [Spectral-object homology between negative finite stages vanishes](is-zero-partial-total-spectral-object-ho.md)
+- [Spectral-object homology from bottom to a negative stage vanishes](is-zero-partial-total-spectral-object-ho-2.md)

@@ -1,3 +1,5 @@
-# Homogeneous Component zero eq self of mem degree zero
+# Degree-zero bounded polynomial equals its constant component
 
-The degree-zero cutoff consists of its own homogeneous component.
+Degree-zero bounded polynomial equals its constant component.
+
+If `p` is supported in total degree at most zero, then `homogeneousComponent 0 p = p`.

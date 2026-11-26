@@ -1,3 +1,6 @@
-# Cobar Coface
+# The natural coface between two-sided cobar degree functors
 
-Cofaces assemble into natural transformations `C_n ⟶ C_{n+1}`.
+The natural coface between two-sided cobar degree functors.
+
+For `i : Fin (n+2)`, the endpoint coactions and interior comultiplication insertions define a
+natural transformation from degree `n` to degree `n+1`.

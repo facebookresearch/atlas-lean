@@ -1,3 +1,6 @@
-# Stable Matrix Positive Tail
+# The canonical positive tail of the matrix CE colimit
 
-The positive tail of the colimit, with the negative CE differential.
+The canonical positive tail of the matrix CE colimit.
+
+Restrict the colimit CE complex to positive exterior degrees, retaining its canonical
+differential.

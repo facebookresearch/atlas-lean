@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Inverse Functor eq
+# Inverse finite tensor functor agrees with the Morita restriction
 
-The inverse canonical Morita restriction retains the whole actual inverse tensor functor.
+Inverse finite tensor functor agrees with the Morita restriction.
+
+The finite-module functor tensoring by `P` equals the inverse functor of the finite-module
+equivalence induced by the contraction-based Morita equivalence.

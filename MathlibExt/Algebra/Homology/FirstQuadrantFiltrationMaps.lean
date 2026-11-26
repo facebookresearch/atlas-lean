@@ -13,12 +13,18 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFilteredComplex
 
 /-!
-# Maps and exhaustiveness for the first-quadrant filtration
+# Stage inclusions and degreewise exhaustiveness of the horizontal filtration
 
-An inequality of horizontal stages induces a chain map between the
-corresponding filtered total complexes, compatible with both inclusions into
-the full total. In total degree `n`, every stage `k ≥ n` is canonically
-isomorphic to the full total degree.
+Let C be preadditive with a zero object and finite coproducts, and let K
+be a nonnegative homological bicomplex. For k≤l, the finite coordinate
+inclusion F_k T_n → F_l T_n sends each summand K_(p,q), p+q=n,
+p≤k, to the same summand at stage l.
+
+These maps commute with the restricted differentials and form chain
+maps F_k T → F_l T, compatible with both inclusions into Tot(K).
+If n≤k, the projection Tot(K)_n → F_k T_n is also inverse to its
+inclusion, so F_k T_n ≅ Tot(K)_n. The comparison concerns the chosen
+degree n; the category object and morphism worlds are independent.
 -/
 
 @[expose] public section
@@ -53,7 +59,10 @@ def horizontalFilteredTotalMapComponent
         (horizontalFilteredTotalIndexMap (n := n) h pq).val.val.2 :=
   eqToHom (by rfl)
 
-/-- Degreewise inclusion from filtration stage `k` to stage `l`. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, k≤l gives
+F_k T_n → F_l T_n by including the same bidegrees p+q=n, p≤k.
+Each component is the identity on K_(p,q) and uses p≤k≤l. -/
 noncomputable def horizontalFilteredTotalMap
     {k l : ℕ} (h : k ≤ l) (n : ℕ) :
     horizontalFilteredTotalObj K k n ⟶
@@ -139,7 +148,10 @@ theorem horizontalFilteredTotalMap_toTotal
           (K.X pq.val.val.1).X pq.val.val.2) pq ≫
         horizontalFilteredTotalToTotal K k n := rfl
 
-/-- Inclusion of filtration stages as a chain map. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, the degreewise
+inclusions for k≤l define a chain map F_k T → F_l T.
+It is compatible with the two inclusions into Tot(K). -/
 noncomputable def horizontalFilteredTotalComplexMap
     {k l : ℕ} (h : k ≤ l) :
     horizontalFilteredTotalComplex K k ⟶
@@ -185,8 +197,10 @@ noncomputable def horizontalFilteredTotalComplexMap
         (Category.assoc _ _ _).symm
 
 omit [HasZeroObject C] in
-/-- Once `n ≤ k`, the stage-`k` filtration object in total degree `n` is the
-whole total degree. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts and n≤k, the maps
+Tot(K)_n → F_k T_n → Tot(K)_n satisfy i_(k,n)r_(k,n) = id.
+Every bidegree on the antidiagonal has p≤n≤k. -/
 theorem totalToHorizontalFilteredTotal_comp_toTotal_of_le
     (k n : ℕ) (h : n ≤ k) :
     totalToHorizontalFilteredTotal K k n ≫
@@ -198,8 +212,10 @@ theorem totalToHorizontalFilteredTotal_comp_toTotal_of_le
     dite_eq_left ((downNatTotalFiber_fst_le n ⟨(p, q), hpq⟩).trans h)]
   rw [Category.comp_id]
 
-/-- Eventual degreewise isomorphism from a filtration stage to the full
-total. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts and n≤k, the explicit isomorphism
+F_k T_n ≅ Tot(K)_n has forward map i_(k,n), the coordinate inclusion,
+and inverse r_(k,n), the total-to-stage projection. -/
 noncomputable def horizontalFilteredTotalIsoOfLE
     (k n : ℕ) (h : n ≤ k) :
     horizontalFilteredTotalObj K k n ≅

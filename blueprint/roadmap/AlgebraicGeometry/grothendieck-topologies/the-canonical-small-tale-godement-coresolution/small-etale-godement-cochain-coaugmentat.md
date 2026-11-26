@@ -1,3 +1,5 @@
-# Small Etale Godement Cochain Coaugmentation
+# Cochain coaugmentation from the sheaf in degree zero
 
-The original unit supplies the actual cochain coaugmentation from the original sheaf.
+Cochain coaugmentation from the sheaf in degree zero.
+
+The Godement unit, with its vanishing first differential, defines a cochain map `Q[0] → C*`.

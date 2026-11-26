@@ -13,21 +13,16 @@ public import MathlibExt.Algebra.Homology.LinearYonedaCochainPairing
 public import MathlibExt.AlgebraicTopology.SimplicialObject.AlexanderWhitney.ChainMap
 
 /-!
-# Alexander--Whitney maps and linear-Yoneda pairings
+# Alexander–Whitney components selected by a linear-Yoneda pairing
 
-The Alexander--Whitney component is a sum over every split of a simplicial
-degree.  A linear-Yoneda pairing descriptor selects one bidegree, so its
-composite with the Alexander--Whitney component is exactly the corresponding
-front-face/back-face summand.
+Let C be a preadditive monoidal category with tensor additive in both variables, and X,Y
+simplicial objects whose alternating chain complexes have a tensor total. The degree-n
+Alexander–Whitney map sums the front/back split over s∈Fin(n+1).
 
-The split is indexed by `s : Fin (n + 1)`, with complementary degree
-`n - s`.  This formulation avoids transports while covering every pair of
-nonnegative degrees summing to `n`.
-
-## Main declaration
-
-* `AlgebraicTopology.AlexanderWhitney.alternatingComponent_comp_linearYonedaPairingDescOfEq`
-* `AlgebraicTopology.AlexanderWhitney.alternatingComponent_comp_linearYonedaPairingDesc`
+A linear-Yoneda pairing descriptor selecting degrees p,q with p+q=n picks exactly the term
+(frontFace X⊗backFace Y) followed by the coefficient maps and their multiplication. The front
+face retains vertices 0 through p; the back face retains vertices p through n.
+Complementary-degree equality transports keep this formula valid for the presentation q=n−p.
 -/
 
 @[expose] public section
@@ -58,8 +53,9 @@ set_option backward.isDefEq.respectTransparency false in
 omit [Preadditive C] [MonoidalCategory C] [MonoidalPreadditive C]
   [(curriedTensor C).Additive]
   [∀ Z : C, ((curriedTensor C).obj Z).Additive] in
-/-- The front face for the canonical complementary degree `(p + q) - p`
-agrees with the front face for the specified degree `q`. -/
+/-- Let C be a category and X a simplicial object. For p,q ∈ ℕ, the front face X_{p+q} → X_p
+computed with complement (p+q)−p equals the front face computed with complement q. Both are
+induced by the inclusion of the first p+1 vertices. -/
 theorem frontFace_add_sub (p q : ℕ) :
     frontFace (C := C) X
         (show p + (p + q - p) = p + q by omega) =
@@ -70,8 +66,9 @@ set_option backward.isDefEq.respectTransparency false in
 set_option linter.style.multiGoal false in
 omit [MonoidalCategory C] [MonoidalPreadditive C] [(curriedTensor C).Additive]
   [∀ Z : C, ((curriedTensor C).obj Z).Additive] in
-/-- Transporting the canonical complementary-degree back face from
-`(p + q) - p` to `q` gives the specified back face. -/
+/-- For a simplicial object Y in a preadditive category C and p,q ∈ ℕ, the back face Y_{p+q} →
+Y_{(p+q)−p}, followed by the alternating-complex term isomorphism for (p+q)−p=q, equals the
+back face Y_{p+q} → Y_q. It retains the last q+1 vertices. -/
 theorem backFace_add_sub_comp_XIsoOfEq (p q : ℕ) :
     backFace (C := C) Y
         (show p + (p + q - p) = p + q by omega) ≫
@@ -96,8 +93,11 @@ theorem backFace_add_sub_comp_XIsoOfEq (p q : ℕ) :
     simp
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The Alexander--Whitney component at total degree `p + q` selects the
-requested `(p,q)` linear-Yoneda pairing descriptor. -/
+/-- Let C be preadditive monoidal with tensor additive in both variables, and X,Y simplicial
+objects whose alternating chain tensor exists. For μ : M⊗N → P, φ : X_p → M, and ψ : Y_q → N,
+the degree-(p+q) Alexander–Whitney component followed by the linear-Yoneda pairing descriptor
+equals (frontFace X⊗backFace Y)≫(φ⊗ψ)≫μ. The descriptor selects the tensor-total summand at
+(p,q). -/
 theorem alternatingComponent_comp_linearYonedaPairingDesc
     (mu : M ⊗ N ⟶ P) (p q : ℕ)
     (phi : X.obj (Opposite.op (SimplexCategory.mk p)) ⟶ M)
@@ -137,9 +137,11 @@ theorem alternatingComponent_comp_linearYonedaPairingDesc
     rw [HomologicalComplex.ιTensorObj_comp_linearYonedaPairingDescOfEq]
     simp [hne]
 
-/-- Composing an Alexander--Whitney component with a linear-Yoneda pairing
-descriptor selects exactly the front-face/back-face term in the requested
-bidegree. -/
+/-- Let C be preadditive monoidal with tensor additive in both variables, X,Y simplicial objects
+with alternating chain tensor, n ∈ ℕ, and s∈Fin(n+1). For φ : X_s → M, ψ : Y_{n−s} → N, and μ
+: M⊗N → P, the degree-n Alexander–Whitney map followed by the descriptor for s+(n−s)=n equals
+the front-face/back-face map followed by φ⊗ψ and μ. It selects the split (s,n−s) with no
+additional sign. -/
 theorem alternatingComponent_comp_linearYonedaPairingDescOfEq
     (mu : M ⊗ N ⟶ P) (n : ℕ) (s : Fin (n + 1))
     (phi : X.obj (Opposite.op (SimplexCategory.mk s)) ⟶ M)

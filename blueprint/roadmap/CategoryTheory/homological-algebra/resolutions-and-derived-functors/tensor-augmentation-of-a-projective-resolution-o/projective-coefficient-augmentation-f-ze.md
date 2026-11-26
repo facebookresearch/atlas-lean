@@ -1,3 +1,5 @@
-# Projective Coefficient Augmentation f zero
+# Degree-zero component of the coefficient tensor augmentation
 
-Component zero is the tensor map of the original projective augmentation.
+Let `R` be a commutative ring in universe `u`, `M` an `R`-module
+in universe `v`, and `X` an `R`-module in universe `max(u,w)`. Let `P` be a projective resolution of `X`. The degree-zero component of the coefficient tensor
+augmentation is the tensor-functor image of `π₀ : P₀ → X`.

@@ -1,3 +1,6 @@
-# Horizontal First Page Coherent Relative Homology
+# The relative homology of a coherent first-page window
 
-Relative homology of the coherent filtration window for `(p,q)`.
+The relative homology of a coherent first-page window.
+
+For `(p,q)`, take the spectral object's relative homology of the coherent lower-to-upper
+filtration map in cochain degree `-p-q`.

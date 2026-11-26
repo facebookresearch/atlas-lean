@@ -1,3 +1,8 @@
-# Left Tensor
+# The tensor map of a left coefficient representation
 
-The left coefficient action descends through the native tensor product.
+Let k be a commutative ring, A a nonunital associative ring with
+a k-module structure, and M a k-module. A left representation
+l : A → End_k(M) or right representation r : Aᵐᵒᵖ → End_k(M)
+is multiplicative and k-linear.
+The left representation induces the k-linear tensor action
+A ⊗[k] M → M, a ⊗ m ↦ l(a)m.

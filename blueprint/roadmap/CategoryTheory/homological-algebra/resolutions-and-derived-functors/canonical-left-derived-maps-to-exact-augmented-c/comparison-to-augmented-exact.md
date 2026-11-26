@@ -1,4 +1,6 @@
-# Comparison To Augmented Exact
+# Comparison from a projective resolution into an exact augmented complex
 
-A chosen comparison to the exact augmented target. Choice precedes the additive functor and its
-homology, so the lift does not depend on that functor.
+In an abelian category `C`, let `P` be a projective resolution of
+`X`, `ρ : Q → Y[0]` a quasi-isomorphism of nonnegative chain
+complexes, and `f : X → Y`. There is a chain map `a : P → Q`
+satisfying `a ≫ ρ = π_P ≫ f[0]`.

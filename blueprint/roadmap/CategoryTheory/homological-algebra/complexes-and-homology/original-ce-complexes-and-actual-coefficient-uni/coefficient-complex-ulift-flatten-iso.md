@@ -1,4 +1,6 @@
-# Coefficient Complex ULift Flatten Iso
+# The flattening isomorphism of successive CE complex lifts
 
-Flattening of the whole-complex lifts. This is the composition comparison used by the
-working-height tensor providers.
+The flattening isomorphism of successive CE complex lifts.
+
+Lifting the coefficient complex first by `z` and then by `t` is isomorphic to its lift by `max
+z t`.

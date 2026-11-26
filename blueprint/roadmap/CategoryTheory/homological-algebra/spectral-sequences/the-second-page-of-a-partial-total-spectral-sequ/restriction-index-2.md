@@ -1,3 +1,6 @@
-# Restriction Index
+# Canonical neighbor identities for first-page row restriction
 
-The canonical row-restriction index data at `(p, q)`.
+Canonical neighbor identities for first-page row restriction.
+
+The fixed-row embedding satisfies the middle, predecessor, and successor identities at every
+natural bidegree `(p, q)`. These give `χ.RestrictionIndex p q`.

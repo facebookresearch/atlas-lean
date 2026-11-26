@@ -1,3 +1,6 @@
-# Unitization Relative Normalization ι
+# The kernel-inclusion formula for relative normalization
 
-The restricted map retains the complete original normalization projection.
+The kernel-inclusion formula for relative normalization.
+
+Relative normalization followed by the reduced kernel inclusion equals the relative kernel
+inclusion followed by the full unitization normalization projection.

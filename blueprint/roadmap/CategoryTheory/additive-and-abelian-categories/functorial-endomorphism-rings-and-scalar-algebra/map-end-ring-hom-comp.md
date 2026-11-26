@@ -1,3 +1,6 @@
-# Map End Ring Hom comp
+# Composition of additive endomorphism-ring maps
 
-Endomorphism-ring transport respects functor composition.
+Composition of additive endomorphism-ring maps.
+
+The ring homomorphism induced by `F ⋙ G` is the map induced by `F` followed by that induced by
+`G` at `F(X)`.

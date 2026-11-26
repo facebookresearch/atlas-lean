@@ -1,3 +1,5 @@
-# Of Iso prev D hom
+# Incoming splitting projector under isomorphism transport
 
-Incoming degree projectors are conjugated by actual complex isomorphisms.
+Let K,L be c-complexes in a preadditive category C, s a splitting of K and e:K≅L a complex
+isomorphism. The inverse-first projector of the transported splitting satisfies prevD
+i(s.ofIso e).hom = e.inv.f i≫prevD i s.hom≫e.hom.f i.

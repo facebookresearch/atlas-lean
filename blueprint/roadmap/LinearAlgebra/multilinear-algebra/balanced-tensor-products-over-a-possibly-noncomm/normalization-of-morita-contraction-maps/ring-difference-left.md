@@ -1,3 +1,10 @@
-# Ring Difference left
+# Left multiplication preserved by the transported discrepancy
 
-The transported automorphism retains the actual left R action as well.
+Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The transported map α also preserves the left R-action:
+α(r x) = r α(x) for r, x ∈ R.

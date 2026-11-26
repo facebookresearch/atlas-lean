@@ -14,13 +14,16 @@ module
 public import MathlibExt.AlgebraicTopology.DoldKan.AdditiveNormalization
 
 /-!
-# Coherence of additive normalization
+# Coherence of the additive Moore normalization comparison
 
-The Moore-inclusion square characterizes the normalization comparison.
-Alternating-complex transport has identity components and respects
-identity and composition comparisons and natural transformations of
-additive functors. These squares give coherence of the normalization
-isomorphism.
+Let C,D,E be abelian categories, N their normalized Moore functors, and F : C → D, G : D → E
+additive functors. The canonical comparisons ν_F : F_*N(X) ≅ N(X⋙F) are coherent with identity
+and composition of functors, using the chain-prolongation comparison and simplicial
+associators.
+
+They are also natural in every natural transformation between additive functors. No exactness
+or kernel-preservation condition on those functors is imposed, and all category universes may
+be independent.
 -/
 
 @[expose] public section
@@ -47,7 +50,9 @@ private theorem alternatingTransport_id (X : SimplicialObject C) :
   change (𝟙 _) ≫ 𝟙 _ = 𝟙 _
   rw [Category.comp_id]
 
-/-- The identity functor gives the native identity normalization comparison. -/
+/-- Let C be abelian and X a simplicial object of C. The forward normalization map ν_Id : Id_*N(X)
+→ N(X⋙Id) followed by N of the simplicial right-unitor X⋙Id≅X equals the forward chain
+identity-prolongation comparison at N(X). This fixes the identity coherence morphism. -/
 theorem mooreCompMapIso_id_hom (X : SimplicialObject C) :
     (((mooreCompMapIso (𝟭 C)).app X)).hom ≫
         (normalizedMooreComplex C).map (Functor.rightUnitor X).hom =
@@ -80,7 +85,9 @@ theorem mooreCompMapIso_id_hom (X : SimplicialObject C) :
     _ = _ := (Functor.mapHomologicalComplexIdIso C (ComplexShape.down ℕ)).hom.naturality
       (inclusionOfMooreComplexMap X)
 
-/-- Identity coherence as an equality of the actual isomorphisms. -/
+/-- For an abelian category C and simplicial object X, compose the normalization isomorphism
+ν_Id(X) with N applied to the right-unitor X⋙Id≅X. The resulting isomorphism equals the chain
+identity-prolongation isomorphism at N(X). -/
 theorem mooreCompMapIso_id (X : SimplicialObject C) :
     ((mooreCompMapIso (𝟭 C)).app X) ≪≫
         (normalizedMooreComplex C).mapIso (Functor.rightUnitor X) =
@@ -104,8 +111,10 @@ private theorem alternatingTransport_comp (X : SimplicialObject C) :
   change (𝟙 _) ≫ 𝟙 _ = G.map (𝟙 _) ≫ 𝟙 _ ≫ 𝟙 _
   rw [G.map_id, Category.comp_id, Category.id_comp]
 
-/-- Composition coherence retains the native chain-functor composition map
-and the original simplicial associator, in independent category worlds. -/
+/-- Let F : C → D and G : D → E be additive functors between abelian categories, X a simplicial
+object, ν the normalization comparisons, and Φ the chain-prolongation composition map. Then
+Φ.hom≫ν_{F⋙G}(X).hom = G_*(ν_F(X).hom)≫ν_G(X⋙F).hom≫N_E(assoc(X,F,G).hom). Both maps start at
+G_*F_*N_C(X), and the associator identifies (X⋙F)⋙G with X⋙(F⋙G). -/
 theorem mooreCompMapIso_comp_hom (X : SimplicialObject C) :
     (Functor.mapHomologicalComplexCompIso (Iso.refl (F ⋙ G))
         (ComplexShape.down ℕ)).hom.app ((normalizedMooreComplex C).obj X) ≫
@@ -181,7 +190,10 @@ theorem mooreCompMapIso_comp_hom (X : SimplicialObject C) :
               (((mooreCompMapIso G).app (X ⋙ F))).hom ≫ z) hIncl.symm)
     _ = _ := by simp only [Category.assoc]
 
-/-- Composition coherence as an equality of canonical normalization isomorphisms. -/
+/-- For additive F : C → D and G : D → E between abelian categories and a simplicial object X, the
+chain-composition isomorphism followed by ν_{F⋙G}(X) equals G_* applied to ν_F(X), followed by
+ν_G(X⋙F), then N_E of the simplicial associator. This is equality of the complete chain
+isomorphisms. -/
 theorem mooreCompMapIso_comp (X : SimplicialObject C) :
     (Functor.mapHomologicalComplexCompIso (Iso.refl (F ⋙ G))
         (ComplexShape.down ℕ)).app ((normalizedMooreComplex C).obj X) ≪≫
@@ -207,8 +219,9 @@ private theorem alternatingTransport_natTrans (X : SimplicialObject C) :
   change τ.app _ ≫ 𝟙 _ = 𝟙 _ ≫ τ.app _
   rw [Category.comp_id, Category.id_comp]
 
-/-- Canonical normalization is natural in every natural transformation of
-additive functors, with no exactness or kernel-preservation hypothesis. -/
+/-- Let C,D be abelian, F₁,F₂ : C → D additive, and τ : F₁ → F₂ any natural transformation. For a
+simplicial object X, τ_* at N_C(X) followed by ν_{F₂}(X).hom equals ν_{F₁}(X).hom followed by
+N_D(X◁τ). No exactness hypothesis on the functors is required. -/
 @[reassoc]
 theorem mooreCompMapIso_natTrans (X : SimplicialObject C) :
     (NatTrans.mapHomologicalComplex τ (ComplexShape.down ℕ)).app

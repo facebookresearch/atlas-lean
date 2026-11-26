@@ -1,3 +1,5 @@
-# Hom Cochain Complex Single₀Functor
+# Coefficient Hom cochain functor of a degree-zero single object
 
-Functor `G ↦ Hom(single₀ R, G)` as a cochain complex.
+Coefficient Hom cochain functor of a degree-zero single object.
+
+For fixed object `A`, take coefficients `G` to the Hom cochain complex of `A[0]` into `G`.

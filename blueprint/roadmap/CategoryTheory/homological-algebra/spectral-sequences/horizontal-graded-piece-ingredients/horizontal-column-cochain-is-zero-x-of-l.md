@@ -1,3 +1,5 @@
-# Horizontal Column Cochain is Zero X of lt
+# The upper support bound of a shifted vertical column
 
-The shifted `p`th column is zero in cochain degrees strictly above `-p`.
+The upper support bound of a shifted vertical column.
+
+The column cochain object is zero whenever the cochain degree is strictly above `-p`.

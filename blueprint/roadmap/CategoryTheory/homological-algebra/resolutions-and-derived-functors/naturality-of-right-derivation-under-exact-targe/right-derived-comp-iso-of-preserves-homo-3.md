@@ -1,3 +1,6 @@
-# Right Derived Comp Iso Of Preserves Homology hom naturality target
+# Forward postcomposition comparison is natural in the target functor
 
-The canonical comparison is natural in an arbitrary transformation of exact targets.
+Let `C`, `D`, `E` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and `U,V : D → E` additive and preserving homology.
+For `τ : U → V`, the forward comparison satisfies
+`τ_(R^nF) ≫ e_V = e_U ≫ R^n(F ⋙ τ)` as natural transformations.

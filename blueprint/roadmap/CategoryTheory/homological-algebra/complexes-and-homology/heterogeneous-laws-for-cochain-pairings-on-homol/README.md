@@ -1,5 +1,5 @@
 # Heterogeneous laws for cochain pairings on homology
 
-- [Pair Homology associativity](pair-homology-associativity.md)
-- [Pair Homology left unit](pair-homology-left-unit.md)
-- [Pair Homology right unit](pair-homology-right-unit.md)
+- [Cycle associativity with distinct outputs descends to homology](pair-homology-associativity.md)
+- [Heterogeneous left cycle unit descends to a homology unit](pair-homology-left-unit.md)
+- [Heterogeneous right cycle unit descends to a homology unit](pair-homology-right-unit.md)

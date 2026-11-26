@@ -13,13 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFirstPageCompleteBoundary
 
 /-!
-# The column-one to column-zero first-page boundary
+# The first-page boundary from column one to column zero
 
-The zero column uses the direct complete-stage section rather than the
-positive-column natural-stage section.  This file proves the missing
-coherence triangle at stage zero, transports that section through the next
-filtration map, and identifies the resulting edge differential with the
-horizontal bicomplex differential from column one to column zero.
+Let `K` be a first-quadrant bicomplex in an abelian category. Column zero uses its direct
+complete upper-stage comparison, and the middle-stage comparison with the lower stage of
+column one is coherent with it.
+
+The column-zero section followed by the next filtration map is its finite inclusion into stage
+one. On vertical cycles, the boundary of the column-one section is the horizontal map
+`K.d(1,0)`, followed by the column-zero section and next filtration map, at cochain degrees
+`-1-q` and `-q`.
 -/
 
 @[expose] public section
@@ -39,9 +42,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-/-- At stage zero, the upper-stage identification, the common-middle
-identification, and the lower successor-stage identification form the
-identity triangle in the filtration-subobject category. -/
+/-- The identity triangle of zero-stage filtration subobjects.
+
+The upper zero-stage, middle-stage, and next lower-stage comparisons compose to the identity
+isomorphism in the filtration-subobject category. -/
 theorem horizontalCompleteFilteredTotalMonoOver_zero_middle_triangle :
     (horizontalCompleteFilteredTotalMonoOverUpperIso K 0).symm ≪≫
       horizontalCompleteFilteredTotalMonoOverMiddleIso K 0 ≪≫
@@ -50,8 +54,10 @@ theorem horizontalCompleteFilteredTotalMonoOver_zero_middle_triangle :
   apply Iso.ext
   apply Subsingleton.elim
 
-/-- The zero-stage middle triangle after forgetting filtration subobjects and
-applying chain-to-cochain extension. -/
+/-- The zero-stage comparison triangle after cochain extension.
+
+Forgetting the subobjects and extending to cochain complexes carries the zero-stage
+isomorphism triangle to the identity. -/
 theorem horizontalFirstPageZeroMiddleMonoCochainTriangle :
     (horizontalCompleteFiltrationCochainMonoUpperIso K 0).symm ≪≫
       horizontalFirstPageMiddleStageIso K 0 ≪≫
@@ -67,8 +73,10 @@ theorem horizontalFirstPageZeroMiddleMonoCochainTriangle :
     horizontalFirstPageMiddleStageIso,
     horizontalCompleteFiltrationCochainMonoLowerSuccIso, G] using h
 
-/-- The direct upper-stage comparison at column zero is coherent with the
-middle-stage, lower-stage, and natural-stage comparisons. -/
+/-- The zero-stage upper and natural comparison identity.
+
+The direct upper-stage inverse, middle-stage map, next lower-stage map, and natural-stage map
+compose to the identity. -/
 theorem horizontalFirstPageZeroMiddleStageTriangle :
     (horizontalCompleteFiltrationCochainUpperIso K 0).inv ≫
       (horizontalFirstPageMiddleStageIso K 0).hom ≫
@@ -94,8 +102,10 @@ theorem horizontalFirstPageZeroMiddleStageTriangle :
       rw [h]
     _ = _ := by simp
 
-/-- The complete-stage section of column zero followed by the next
-filtration map is its finite-stage inclusion into stage one. -/
+/-- The finite-stage formula for the next map after a zero-column section.
+
+At degree `-q`, the column-zero complete section followed by the next filtration map equals
+its finite inclusion into stage one, transported by the stage comparisons. -/
 theorem horizontalCompleteZeroSection_nextMap_eq_filtered (q : ℕ) :
     (horizontalDirectColumnCochainXIso K 0 q).inv ≫
       horizontalCompleteDirectColumnSectionComponent K 0 q ≫
@@ -186,9 +196,10 @@ theorem horizontalCompleteZeroSection_nextMap_eq_filtered (q : ℕ) :
   exact horizontalFilteredTotalι_map K (Nat.le_succ 0) (0 + q)
     (horizontalFilteredTopIndex 0 q)
 
-/-- On vertical cycles, the cochain differential of the column-one section
-is the horizontal bicomplex differential followed by the column-zero section
-and the next complete filtration map. -/
+/-- The horizontal boundary of the column-one complete section.
+
+On vertical cycles, the section differential from degree `-1-q` to `-q` is `K.d(1,0)`,
+followed by the zero-column section and next complete filtration map. -/
 theorem horizontalCompleteOneToZeroDirectColumnSection_d (q : ℕ) :
     (horizontalDirectColumnCochain K (0 + 1)).iCycles
         (-((0 + 1 : ℕ) : ℤ) - q) ≫

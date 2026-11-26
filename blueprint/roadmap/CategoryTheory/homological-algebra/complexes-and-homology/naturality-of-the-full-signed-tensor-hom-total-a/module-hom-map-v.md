@@ -1,3 +1,6 @@
-# Module Hom Map v
+# Inner module Hom map acts by precomposition and postcomposition
 
-The earned enriched inner-Hom map has the original pointwise pre/postcomposition.
+Inner module Hom map acts by precomposition and postcomposition.
+
+For `g : Q' ⟶ Q` and `h : I ⟶ I'`, the inner Hom map takes a coordinate `z_(c,d)` of degree
+`b`, where `c + b = d`, to the function `y ↦ (h.f d)(z_(c,d)((g.f (-c)) y))`.

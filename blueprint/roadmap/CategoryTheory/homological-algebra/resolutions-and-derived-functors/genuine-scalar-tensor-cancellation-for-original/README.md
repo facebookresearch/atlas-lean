@@ -1,5 +1,5 @@
 # Genuine scalar tensor cancellation for original Tor
 
-- [Scalar Tensor Cancellation Iso](scalar-tensor-cancellation-iso.md)
-- [Scalar Tensor Cancellation Nat Iso](scalar-tensor-cancellation-nat-iso.md)
-- [Flat Scalar Extension Tor Cancellation Iso](flat-scalar-extension-tor-cancellation-i.md)
+- [An extended-ring coefficient cancels scalar extension inside its tensor product](scalar-tensor-cancellation-iso.md)
+- [Scalar tensor cancellation is natural in the base-ring module](scalar-tensor-cancellation-nat-iso.md)
+- [Flat scalar extension cancels in Tor against arbitrary extended-ring coefficients](flat-scalar-extension-tor-cancellation-i.md)

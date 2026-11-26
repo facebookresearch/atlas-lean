@@ -1,6 +1,7 @@
-# Term Differential naturality
+# Naturality of lifted Cartan–Eilenberg term differentials
 
-The term comparisons strictly commute with the lifted original-chain
-differentials.  The proof pastes the three horseshoe squares
-`termHom (j+1)` projection, `cyclesHom j` inclusion, and `termHom j`
-inclusion; no sign occurs.
+Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For every j ∈ ℕ, the term
+comparison maps commute with the lifted original differential Dⱼ: Q.Dⱼ ∘ F.termⱼ₊₁ = F.termⱼ ∘
+P.Dⱼ. No sign occurs in this square.

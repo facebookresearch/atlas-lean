@@ -1,3 +1,6 @@
-# Cycles Tensor Sequence f
+# First arrow of the cycles tensor sequence is the tensor inclusion
 
-The first total map is tensoring the original cycles inclusion with the identity of Q.
+First arrow of the cycles tensor sequence is the tensor inclusion.
+
+The first arrow is the tensor-total map of the cycles-complex inclusion into `P` and the
+identity on `Q`.

@@ -1,3 +1,6 @@
-# Matrix Coinvariant Projection
+# The projection to scalar-adjoint matrix coinvariants
 
-Its projection from the canonical matrix CE complex.
+The projection to scalar-adjoint matrix coinvariants.
+
+The canonical matrix CE complex maps to its scalar special-linear adjoint coinvariant
+quotient.

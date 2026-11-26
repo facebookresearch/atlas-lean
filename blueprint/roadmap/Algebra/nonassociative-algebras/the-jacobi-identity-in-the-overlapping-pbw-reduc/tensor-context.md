@@ -1,3 +1,5 @@
-# Tensor Context
+# The linear tensor map given by fixed left and right factors
 
-Fixed left and right tensor factors give an actual scalar-linear context.
+The linear tensor map given by fixed left and right factors.
+
+For `p,s ∈ T_R(L)`, this `R`-linear map sends `a` to `p*a*s`.

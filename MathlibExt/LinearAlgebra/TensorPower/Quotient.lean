@@ -15,12 +15,18 @@ public import Mathlib.LinearAlgebra.TensorProduct.Quotient
 public import Mathlib.LinearAlgebra.Isomorphisms
 
 /-!
-# Quotients of tensor powers and coefficient tensors
+# Factorwise quotients of tensor powers
 
-Quotienting every tensor factor by a ground submodule quotients the tensor
-power by the span of pure tensors with a factor in that submodule. The same
-statement retains an arbitrary coefficient module. All maps use the original
-modules and linear maps; no algebra, unit or flatness hypothesis is needed.
+Let k be a commutative ring, A a k-module and S ≤ A a submodule. The factorwise projection qₙ :
+A⊗n → (A/S)⊗n is surjective. Its kernel Rₙ(S) is the span of pure tensors having at least one
+entry in S, giving A⊗n/Rₙ(S) ≃ (A/S)⊗n.
+
+For any k-module M, the map id_M ⊗ qₙ has kernel spanned by m ⊗ tprod(a) with an entry of a in
+S. This yields the corresponding coefficient quotient equivalence and descent of linear maps
+annihilating those generators. These constructions are natural in coefficient maps and module
+maps preserving the chosen submodules.
+
+For tensor products, quotients and right exactness, see N. Bourbaki, Algebra I, Chapter III.
 -/
 
 @[expose] public section
@@ -35,24 +41,36 @@ namespace TensorPower
 
 variable {k : Type u} [CommRing k] {A : Type v} [AddCommGroup A] [Module k A]
 
-/-- The original quotient map applied to every factor. -/
+/-- The factorwise projection to a tensor power of a quotient.
+
+For a commutative ring k, a k-module A and S ≤ A, qₙ : A⊗n → (A/S)⊗n applies the quotient
+projection A → A/S to each tensor factor. -/
 def quotientMap (S : Submodule k A) (n : ℕ) :
     TensorPower k n A →ₗ[k] TensorPower k n (A ⧸ S) :=
   PiTensorProduct.map (fun _ : Fin n => S.mkQ)
 
-/-- Every pure tuple is sent to the tuple of its actual quotient classes. -/
+/-- The quotient classes of the entries of a tensor word.
+
+For a commutative ring k, a k-module A, S ≤ A and a : Fin n → A, qₙ(tprod(a)) = tprod(i ↦ [a
+i]) in (A/S)⊗n. -/
 @[simp]
 theorem quotientMap_tprod (S : Submodule k A) (n : ℕ) (a : Fin n → A) :
     quotientMap S n (PiTensorProduct.tprod k a) =
       PiTensorProduct.tprod k (fun i => S.mkQ (a i)) :=
   PiTensorProduct.map_tprod _ _
 
-/-- The ground span of the pure tensors with a factor in the given submodule. -/
+/-- The relation submodule for factorwise quotienting.
+
+For a commutative ring k, a k-module A and S ≤ A, Rₙ(S) is the k-span in A⊗n of tprod(a)
+such that a i ∈ S for at least one i ∈ Fin n. -/
 def quotientRelations (S : Submodule k A) (n : ℕ) : Submodule k (TensorPower k n A) :=
   Submodule.span k {x | ∃ a : Fin n → A, (∃ i, a i ∈ S) ∧
     PiTensorProduct.tprod k a = x}
 
-/-- There is no factor to quotient in degree zero. -/
+/-- The degree-zero relation submodule is zero.
+
+For a commutative ring k, a k-module A and S ≤ A, R₀(S) = 0 in A⊗0: an empty tensor word has
+no entry belonging to S. -/
 @[simp]
 theorem quotientRelations_zero (S : Submodule k A) : quotientRelations S 0 = ⊥ := by
   apply le_antisymm ?_ bot_le
@@ -60,7 +78,9 @@ theorem quotientRelations_zero (S : Submodule k A) : quotientRelations S 0 = ⊥
   rintro x ⟨a, ⟨i, hi⟩, rfl⟩
   exact Fin.elim0 i
 
-/-- Quotient classes of pure tuples still span the target tensor power. -/
+/-- Surjectivity of the factorwise tensor quotient.
+
+For a commutative ring k, a k-module A, S ≤ A and n ≥ 0, qₙ : A⊗n → (A/S)⊗n is surjective. -/
 theorem quotientMap_surjective (S : Submodule k A) (n : ℕ) :
     Function.Surjective (quotientMap S n) := by
   intro y
@@ -75,7 +95,10 @@ theorem quotientMap_surjective (S : Submodule k A) (n : ℕ) :
       obtain ⟨y, rfl⟩ := hy
       exact ⟨x + y, map_add _ _ _⟩
 
-/-- The stated tensor relations are killed by the actual quotient map. -/
+/-- Factor relations vanish under the quotient projection.
+
+For a commutative ring k, a k-module A and S ≤ A, Rₙ(S) ≤ ker(qₙ), since a pure tensor with
+an entry in S has a zero quotient entry. -/
 theorem quotientRelations_le_ker (S : Submodule k A) (n : ℕ) :
     quotientRelations S n ≤ LinearMap.ker (quotientMap S n) := by
   apply Submodule.span_le.mpr
@@ -113,7 +136,10 @@ private theorem cons_tmul_mem_quotientRelations_of_first (S : Submodule k A) (n 
     exact Submodule.subset_span ⟨Fin.cons a b, ⟨0, by simpa using ha⟩, rfl⟩
   exact h (show y ∈ (⊤ : Submodule k (TensorPower k n A)) from Submodule.mem_top)
 
-/-- Right exactness gives precisely the advertised kernel, in every degree. -/
+/-- The kernel of a factorwise tensor quotient.
+
+For a commutative ring k, a k-module A and S ≤ A, ker(qₙ) = Rₙ(S), the span of pure tensors
+with at least one entry in S. -/
 theorem quotientMap_ker (S : Submodule k A) (n : ℕ) :
     LinearMap.ker (quotientMap S n) = quotientRelations S n := by
   induction n with
@@ -170,13 +196,19 @@ theorem quotientMap_ker (S : Submodule k A) (n : ℕ) :
       simpa only [Submodule.mem_comap, LinearEquiv.coe_coe,
         LinearEquiv.apply_symm_apply] using h
 
-/-- The actual quotient of the tensor power by its factor relations. -/
+/-- The quotient tensor-power equivalence.
+
+For a commutative ring k, a k-module A and S ≤ A, qₙ induces a k-linear equivalence
+A⊗n/Rₙ(S) ≃ (A/S)⊗n. -/
 def quotientEquiv (S : Submodule k A) (n : ℕ) :
     (TensorPower k n A ⧸ quotientRelations S n) ≃ₗ[k] TensorPower k n (A ⧸ S) :=
   (Submodule.quotEquivOfEq _ _ (quotientMap_ker S n).symm).trans
     ((quotientMap S n).quotKerEquivOfSurjective (quotientMap_surjective S n))
 
-/-- The quotient equivalence retains the classes of the actual factors. -/
+/-- The pure-tensor coordinates of the quotient equivalence.
+
+For a commutative ring k, a k-module A, S ≤ A and a : Fin n → A, the class of tprod(a)
+modulo Rₙ(S) maps to tprod(i ↦ [a i]) in (A/S)⊗n. -/
 @[simp]
 theorem quotientEquiv_mk_tprod (S : Submodule k A) (n : ℕ) (a : Fin n → A) :
     quotientEquiv S n (Submodule.Quotient.mk (PiTensorProduct.tprod k a)) =
@@ -187,24 +219,36 @@ theorem quotientEquiv_mk_tprod (S : Submodule k A) (n : ℕ) (a : Fin n → A) :
 
 variable (S : Submodule k A) (M : Type w) [AddCommGroup M] [Module k M]
 
-/-- The coefficient is retained, and only the tensor-power factors are quotiented. -/
+/-- The factorwise quotient with a fixed coefficient module.
+
+For a commutative ring k, k-modules A,M and S ≤ A, Qₙ = id_M ⊗ qₙ maps M ⊗ A⊗n to M ⊗
+(A/S)⊗n and retains the coefficient in M. -/
 def coefficientQuotientMap (n : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[k] M ⊗[k] TensorPower k n (A ⧸ S) :=
   TensorProduct.map LinearMap.id (quotientMap S n)
 
-/-- Actual pure coefficient tensors map to their factorwise quotient classes. -/
+/-- The quotient coordinates of a coefficient tensor word.
+
+For a commutative ring k, k-modules A,M, S ≤ A, m ∈ M and a : Fin n → A, Qₙ(m ⊗ tprod(a)) =
+m ⊗ tprod(i ↦ [a i]). -/
 @[simp]
 theorem coefficientQuotientMap_tmul_tprod (n : ℕ) (m : M) (a : Fin n → A) :
     coefficientQuotientMap S M n (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[k] PiTensorProduct.tprod k (fun i => S.mkQ (a i)) := by
   rw [coefficientQuotientMap, TensorProduct.map_tmul, LinearMap.id_apply, quotientMap_tprod]
 
-/-- The coefficient version of the same ground tensor relations. -/
+/-- The factor relations with an arbitrary coefficient.
+
+For a commutative ring k, k-modules A,M and S ≤ A, Dₙ(S,M) is the span in M ⊗ A⊗n of m ⊗
+tprod(a) with a i ∈ S for some i ∈ Fin n. -/
 def coefficientQuotientRelations (n : ℕ) : Submodule k (M ⊗[k] TensorPower k n A) :=
   Submodule.span k {x | ∃ (m : M) (a : Fin n → A), (∃ i, a i ∈ S) ∧
     m ⊗ₜ[k] PiTensorProduct.tprod k a = x}
 
-/-- The original quotient map remains surjective with arbitrary coefficients. -/
+/-- Surjectivity of the coefficient tensor quotient.
+
+For a commutative ring k, k-modules A,M and S ≤ A, Qₙ : M ⊗ A⊗n → M ⊗ (A/S)⊗n is surjective
+for every n ≥ 0 and every coefficient module M. -/
 theorem coefficientQuotientMap_surjective (n : ℕ) :
     Function.Surjective (coefficientQuotientMap S M n) :=
   TensorProduct.map_surjective (g := LinearMap.id) Function.surjective_id
@@ -220,7 +264,10 @@ private theorem tmul_mem_coefficientQuotientRelations (n : ℕ) (m : M)
     exact Submodule.subset_span ⟨m, a, ⟨i, hi⟩, rfl⟩
   exact h hy
 
-/-- The kernel consists exactly of the stated degenerate coefficient tensors. -/
+/-- The kernel of the coefficient tensor quotient.
+
+For a commutative ring k, k-modules A,M and S ≤ A, ker(Qₙ) = Dₙ(S,M), the span of
+coefficient tensor words with an entry in S. -/
 theorem coefficientQuotientMap_ker (n : ℕ) :
     LinearMap.ker (coefficientQuotientMap S M n) =
       coefficientQuotientRelations S M n := by
@@ -241,7 +288,11 @@ theorem coefficientQuotientMap_ker (n : ℕ) :
       (PiTensorProduct.tprod k).map_coord_zero i
         ((Submodule.Quotient.mk_eq_zero S).2 hi), TensorProduct.tmul_zero]
 
-/-- The quotient equivalence retains every original coefficient, in independent universes. -/
+/-- The coefficient tensor quotient equivalence.
+
+For a commutative ring k, k-modules A,M and S ≤ A, Qₙ induces (M ⊗ A⊗n)/Dₙ(S,M) ≃ M ⊗
+(A/S)⊗n as k-modules. The coefficient and tensor-factor modules may lie in different
+universes. -/
 def coefficientQuotientEquiv (n : ℕ) :
     (M ⊗[k] TensorPower k n A ⧸ coefficientQuotientRelations S M n) ≃ₗ[k]
       M ⊗[k] TensorPower k n (A ⧸ S) :=
@@ -249,7 +300,10 @@ def coefficientQuotientEquiv (n : ℕ) :
     ((coefficientQuotientMap S M n).quotKerEquivOfSurjective
       (coefficientQuotientMap_surjective S M n))
 
-/-- The actual pure coefficient representative of the quotient equivalence. -/
+/-- The coefficient word coordinates of the quotient equivalence.
+
+For a commutative ring k, k-modules A,M, S ≤ A, m ∈ M and a : Fin n → A, the class of m ⊗
+tprod(a) modulo Dₙ(S,M) maps to m ⊗ tprod(i ↦ [a i]). -/
 @[simp]
 theorem coefficientQuotientEquiv_mk_tmul_tprod (n : ℕ) (m : M) (a : Fin n → A) :
     coefficientQuotientEquiv S M n
@@ -260,7 +314,10 @@ theorem coefficientQuotientEquiv_mk_tmul_tprod (n : ℕ) (m : M) (a : Fin n → 
       (Submodule.Quotient.mk (m ⊗ₜ[k] PiTensorProduct.tprod k a)) = _
   rw [LinearMap.quotKerEquivOfSurjective_apply_mk, coefficientQuotientMap_tmul_tprod]
 
-/-- The inverse takes an actual quotient-map value back to its original quotient class. -/
+/-- The inverse equivalence on a projected coefficient tensor.
+
+For a commutative ring k, k-modules A,M, S ≤ A and x ∈ M ⊗ A⊗n, the inverse coefficient
+quotient equivalence sends Qₙ(x) to the class of x modulo Dₙ(S,M). -/
 theorem coefficientQuotientEquiv_symm_apply_map (n : ℕ)
     (x : M ⊗[k] TensorPower k n A) :
     (coefficientQuotientEquiv S M n).symm (coefficientQuotientMap S M n x) =
@@ -272,7 +329,10 @@ theorem coefficientQuotientEquiv_symm_apply_map (n : ℕ)
 
 variable {N : Type z} [AddCommGroup N] [Module k N]
 
-/-- Killing the ground relation submodule is exactly killing its pure generators. -/
+/-- The generator criterion for annihilating coefficient relations.
+
+For a commutative ring k, k-modules A,M,N, S ≤ A and a k-linear map f : M ⊗ A⊗n → N, Dₙ(S,M)
+≤ ker(f) exactly when f(m ⊗ tprod(a)) = 0 whenever a i ∈ S for some i. -/
 theorem coefficientQuotientRelations_le_ker_iff (n : ℕ)
     (f : M ⊗[k] TensorPower k n A →ₗ[k] N) :
     coefficientQuotientRelations S M n ≤ LinearMap.ker f ↔
@@ -286,14 +346,20 @@ theorem coefficientQuotientRelations_le_ker_iff (n : ℕ)
     rintro x ⟨m, a, ⟨i, hi⟩, rfl⟩
     exact h m a i hi
 
-/-- Universal descent through the actual factorwise quotient, for arbitrary ground maps. -/
+/-- Descent of a linear map through the factorwise quotient.
+
+For a commutative ring k, k-modules A,M,N, S ≤ A and f : M ⊗ A⊗n → N with Dₙ(S,M) ≤ ker(f),
+this is the induced k-linear map M ⊗ (A/S)⊗n → N. -/
 def liftCoefficientQuotient (n : ℕ) (f : M ⊗[k] TensorPower k n A →ₗ[k] N)
     (h : coefficientQuotientRelations S M n ≤ LinearMap.ker f) :
     M ⊗[k] TensorPower k n (A ⧸ S) →ₗ[k] N :=
   ((coefficientQuotientRelations S M n).liftQ f h).comp
     (coefficientQuotientEquiv S M n).symm.toLinearMap
 
-/-- The universal map retains the original values before quotienting. -/
+/-- The defining identity for a descended coefficient map.
+
+For a commutative ring k, k-modules A,M,N, S ≤ A and a k-linear map f annihilating Dₙ(S,M),
+its descent f̄ satisfies f̄ ∘ Qₙ = f. -/
 theorem liftCoefficientQuotient_comp (n : ℕ)
     (f : M ⊗[k] TensorPower k n A →ₗ[k] N)
     (h : coefficientQuotientRelations S M n ≤ LinearMap.ker f) :
@@ -304,7 +370,10 @@ theorem liftCoefficientQuotient_comp (n : ℕ)
     ((coefficientQuotientEquiv S M n).symm (coefficientQuotientMap S M n x)) = f x
   rw [coefficientQuotientEquiv_symm_apply_map, Submodule.liftQ_apply]
 
-/-- The factorwise quotient is epic for actual linear maps. -/
+/-- Cancellation after the coefficient quotient projection.
+
+For a commutative ring k, k-modules A,M,N and S ≤ A, two k-linear maps f,g : M ⊗ (A/S)⊗n → N
+are equal if f ∘ Qₙ = g ∘ Qₙ. -/
 theorem coefficientQuotientMap_cancel (n : ℕ)
     {f g : M ⊗[k] TensorPower k n (A ⧸ S) →ₗ[k] N}
     (h : f.comp (coefficientQuotientMap S M n) =
@@ -317,7 +386,11 @@ theorem coefficientQuotientMap_cancel (n : ℕ)
 variable {S M} {B : Type z} [AddCommGroup B] [Module k B]
   {T : Submodule k B} {M' : Type t} [AddCommGroup M'] [Module k M']
 
-/-- Every ground-linear coefficient/factor map preserving the submodule gives the actual square. -/
+/-- Naturality of coefficient tensor quotients.
+
+For a commutative ring k, k-linear maps g : M → M′ and f : A → B, and submodules S ≤ A, T ≤
+B with f(S) ⊆ T, let f̄ : A/S → B/T be the induced map. Then (g ⊗ f̄⊗n) ∘ Qₙ,S = Qₙ,T ∘ (g ⊗
+f⊗n). -/
 theorem coefficientQuotientMap_naturality (g : M →ₗ[k] M') (f : A →ₗ[k] B)
     (h : S ≤ T.comap f) (n : ℕ) :
     (TensorProduct.map g (PiTensorProduct.map (fun _ : Fin n => S.mapQ T f h))).comp

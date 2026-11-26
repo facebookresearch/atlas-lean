@@ -1,3 +1,4 @@
-# Truncated Alternating Face Map Complex obj X
+# The truncation functor retains the degree object
 
-The functor retains all original objects.
+For a semisimplicial object X in a preadditive category C and every n : ℕ, the degree-n term
+of (truncatedAlternatingFaceMapComplex C).obj X is X _⦋n⦌ₛ.

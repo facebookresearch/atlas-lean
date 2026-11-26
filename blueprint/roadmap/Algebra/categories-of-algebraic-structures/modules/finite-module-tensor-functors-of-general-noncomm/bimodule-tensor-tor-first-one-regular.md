@@ -1,3 +1,6 @@
-# Bimodule Tensor tor First one regular
+# Regular right module has zero Tor one
 
-The actual regular right module is projective, so its original tensor is right flat.
+Regular right module has zero Tor one.
+
+For every left `R`-module `N`, `Tor¹_R(R, N)` is zero when `R` is given its regular right
+action.

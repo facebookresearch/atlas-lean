@@ -1,5 +1,6 @@
-# Partial Total E₁Step Iso app one heq
+# The upper finite-stage component of a core-interval comparison
 
-The upper component of the page-one interval coordinate is the
-canonical finite-stage coordinate, up to the endpoint identification built
-into the increasing core.
+The upper finite-stage component of a core-interval comparison.
+
+The upper component of the first-page interval isomorphism is heterogeneously equal to the
+finite-stage filtration-object isomorphism.

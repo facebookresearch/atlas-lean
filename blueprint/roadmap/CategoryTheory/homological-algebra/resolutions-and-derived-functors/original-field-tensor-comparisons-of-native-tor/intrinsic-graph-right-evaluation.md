@@ -1,3 +1,5 @@
-# Intrinsic Graph Right Evaluation
+# The right intrinsic graph evaluation uses the map into W
 
-The original second graph evaluation uses the actual B map to W.
+For a K-algebra map b:B→W, evaluation of the middle
+B-factor in W gives (V⊗K W)⊗K B→V⊗K W.
+It multiplies the W-factor by b of the middle coefficient.

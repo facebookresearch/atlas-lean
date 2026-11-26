@@ -1,3 +1,6 @@
-# Unitization Scalar Complex Inclusion augmentation
+# The chain retraction equation for lifted scalar inclusion
 
-Both original split maps retain their chain-level identity.
+The chain retraction equation for lifted scalar inclusion.
+
+The scalar chain inclusion followed by its augmentation is the identity on the lifted scalar
+Hochschild complex.

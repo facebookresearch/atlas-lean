@@ -1,4 +1,6 @@
-# Complex
+# The Hochschild complex of an algebra augmented to its coefficient algebra
 
-The original symmetric coefficient `B` acts through the given algebra
-augmentation, with its original ground module retained.
+The Hochschild complex of an algebra augmented to its coefficient algebra.
+
+For `P → B`, the coefficient algebra `B` acts through the augmentation on both sides, and the
+degree-`q` chain term is `B ⊗[k] P^⊗q`.

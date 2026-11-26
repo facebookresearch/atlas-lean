@@ -1,4 +1,8 @@
-# Tor Balance Iso
+# Natural balance isomorphism between the two Tor derivations
 
-Opposite-variable balance is earned from the two genuine projective
-resolution augmentations and is natural in both original modules.
+Natural balance isomorphism between the two Tor derivations.
+
+Assuming projective resolutions in both module categories, the second-variable and first-
+variable derived tensor bifunctors are naturally isomorphic in every natural degree `n`.
+Tensoring with projective resolution terms supplies the required exactness in the other
+variable.

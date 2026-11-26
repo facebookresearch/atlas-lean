@@ -1,47 +1,47 @@
 # Native field-tensor Tor localization, support, and length
 
-- [Balanced Support Map](balanced-support-map.md)
-- [Intrinsic Support Map](intrinsic-support-map.md)
-- [Intrinsic Support Map tmul](intrinsic-support-map-tmul.md)
-- [Intrinsic Support Map surjective](intrinsic-support-map-surjective.md)
+- [The balancing quotient from the K tensor to the B tensor](balanced-support-map.md)
+- [The intrinsic graph ambient maps to its balanced support algebra](intrinsic-support-map.md)
+- [The intrinsic support map retains x a(c) and y in order](intrinsic-support-map-tmul.md)
+- [The intrinsic support quotient is surjective](intrinsic-support-map-surjective.md)
 
 ## Standard Ambient
 
-- [Standard Support Map](standard-support-map.md)
-- [Standard Support Map tmul](standard-support-map-tmul.md)
-- [Standard Support Map surjective](standard-support-map-surjective.md)
+- [The standard triple ambient maps to the balanced support algebra](standard-support-map.md)
+- [The standard support map has its three-factor value](standard-support-map-tmul.md)
+- [Surjective coefficient maps give a surjective standard support map](standard-support-map-surjective.md)
 
 ## Standard Native
 
-- [Standard Ambient Native Tor](standard-ambient-native-tor.md)
-- [Standard Ambient Left Operator scalar](standard-ambient-left-operator-scalar.md)
-- [Standard Ambient Right Operator scalar](standard-ambient-right-operator-scalar.md)
-- [Standard Ambient Native Tor smul](standard-ambient-native-tor-smul.md)
-- [Standard Ambient Support Restriction Iso](standard-ambient-support-restriction-iso.md)
+- [The standard ambient Tor before restricting its scalars](standard-ambient-native-tor.md)
+- [Left support multiplication is the corresponding ambient scalar](standard-ambient-left-operator-scalar.md)
+- [Right support multiplication is the corresponding ambient scalar](standard-ambient-right-operator-scalar.md)
+- [The standard ambient action is restriction of the balanced support action](standard-ambient-native-tor-smul.md)
+- [The standard ambient module is the restricted support module](standard-ambient-support-restriction-iso.md)
 
 ## Intrinsic Native
 
-- [Intrinsic Ambient Native Tor](intrinsic-ambient-native-tor.md)
-- [Intrinsic Ambient Left Operator scalar](intrinsic-ambient-left-operator-scalar.md)
-- [Intrinsic Ambient Right Operator scalar](intrinsic-ambient-right-operator-scalar.md)
-- [Intrinsic Ambient Middle scalar](intrinsic-ambient-middle-scalar.md)
-- [Intrinsic Ambient Native Tor smul](intrinsic-ambient-native-tor-smul.md)
-- [Intrinsic Ambient Native Tor scalar Tower](intrinsic-ambient-native-tor-scalar-towe.md)
+- [The intrinsic graph Tor retains its ambient scalars](intrinsic-ambient-native-tor.md)
+- [The intrinsic V operator is its ambient tensor inclusion](intrinsic-ambient-left-operator-scalar.md)
+- [The intrinsic W operator is its ambient tensor inclusion](intrinsic-ambient-right-operator-scalar.md)
+- [The intrinsic middle scalar agrees with its image in V](intrinsic-ambient-middle-scalar.md)
+- [The intrinsic ambient action is restriction of the support action](intrinsic-ambient-native-tor-smul.md)
+- [The intrinsic ambient and support actions form a scalar tower](intrinsic-ambient-native-tor-scalar-towe.md)
 
 ## Standard Prime Local
 
-- [Standard Ambient Tor At Prime](standard-ambient-tor-at-prime.md)
-- [Standard Ambient Native Tor scalar Tower](standard-ambient-native-tor-scalar-tower.md)
-- [Standard Ambient Tor At Prime length](standard-ambient-tor-at-prime-length.md)
-- [Standard Ambient Native Tor support](standard-ambient-native-tor-support.md)
+- [The standard Tor object at an inverse-image support prime](standard-ambient-tor-at-prime.md)
+- [The standard ambient and support actions form a scalar tower](standard-ambient-native-tor-scalar-tower.md)
+- [The standard local ambient Tor length equals the local middle-Tor length](standard-ambient-tor-at-prime-length.md)
+- [The standard ambient support is the prime image of middle-Tor support](standard-ambient-native-tor-support.md)
 
 ## Intrinsic Prime Local
 
-- [Intrinsic Ambient Tor At Prime](intrinsic-ambient-tor-at-prime.md)
-- [Intrinsic Ambient Tor At Prime length](intrinsic-ambient-tor-at-prime-length.md)
-- [Intrinsic Ambient Native Tor support](intrinsic-ambient-native-tor-support.md)
+- [The intrinsic local Tor is over the inverse-image ambient prime](intrinsic-ambient-tor-at-prime.md)
+- [The intrinsic local ambient length equals the local middle-Tor length](intrinsic-ambient-tor-at-prime-length.md)
+- [The intrinsic ambient support is the prime image of middle-Tor support](intrinsic-ambient-native-tor-support.md)
 
 ## Field Comparison
 
-- [Field Tensor Tor At Prime length eq](field-tensor-tor-at-prime-length-eq.md)
-- [Field Tensor Tor At Prime finite Euler](field-tensor-tor-at-prime-finite-euler.md)
+- [Over a field the two local ambient Tor lengths agree](field-tensor-tor-at-prime-length-eq.md)
+- [Finite lengths and eventual vanishing transfer with equality of finite Euler sums](field-tensor-tor-at-prime-finite-euler.md)

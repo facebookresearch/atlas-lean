@@ -14,12 +14,22 @@ public import MathlibExt.Algebra.Homology.ShortComplex.PreservesHomology
 public import Mathlib.CategoryTheory.Functor.Currying
 
 /-!
-# Computation and coherence of the actual flat native Tor comparison
+# Resolution computation and coherence of flat Tor base change
 
-The existing base-change comparison is computed on the original projective
-resolution. Its tensor chain map and homology comparison retain the actual
-scalar-extension functor. No replacement Tor object or supplied comparison
-is used.
+For a flat map between commutative rings R→S, scalar extension F gives
+β_q:F(Tor_q^R(M,X))≅Tor_q^S(FM,FX). The tensor comparison χ sends s⊗(m⊗x) to (s⊗m)⊗(1⊗x). For
+any projective resolution P of X, β_q is computed by the resolution's derived-functor
+comparison, exact homology transport by F, the termwise tensor comparison, and the inverse
+derived-functor comparison for F(P). Augmentation-compatible maps between resolutions preserve
+this composite. These computation statements allow independent ring universes u,v and
+coefficient height W=max(u,v,w).
+
+The identity, equal-map and composite-map laws use rings and coefficients placed in a common
+universe U. For flat f:R→S and g:S→T, the scalar associator a:(g∘f)_*≅g_*f_* identifies direct
+Tor base change with the two successive comparisons. The equality remains valid after arbitrary
+maps in both coefficient variables. Equal ring maps give the same comparison through their
+equality-induced scalar transports, and identity base change agrees with the scalar unit
+isomorphism.
 -/
 
 public section
@@ -36,7 +46,10 @@ universe u v w
 
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S]
 
-/-- The canonical scalar tensor comparison retains the actual scalar and two coefficients. -/
+/-- Let R,S be commutative rings in universes u,v and all module carriers lie in W=max(u,v,w), with
+w independent. For a ring map f:R→S, R-modules M,X in W, s∈S, m∈M and x∈X, the comparison
+χ_f:S⊗_R(M⊗_R X)≅(S⊗_R M)⊗_S(S⊗_R X) satisfies χ_f.hom(s⊗(m⊗x))=(s⊗m)⊗(1⊗x). The scalar actions
+are those induced by f. -/
 theorem scalarExtensionTensorIso_hom_tmul (f : R →+* S)
     (M X : ModuleCat.{max u v w} R) (s : S) (m : M) (x : X) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
@@ -56,7 +69,11 @@ theorem scalarExtensionTensorIso_hom_tmul (f : R →+* S)
 
 variable [Algebra R S] [Module.Flat R S]
 
-/-- The canonical flat Tor base-change hom has its actual source-resolution computation. -/
+/-- Let R,S be commutative rings in universes u,v and all module carriers lie in W=max(u,v,w), with
+w independent. Assume S is a flat R-algebra and write F=S⊗_R(-). For M,X in W and q∈ℕ, choose
+the canonical projective resolution P of X and put Q=F(P), K=M⊗_R P. Let
+a_P:Tor_q^R(M,X)≅H_q(K), b:F(H_qK)≅H_q(FK), c:FK≅FM⊗_S Q, and a_Q:Tor_q^S(FM,FX)≅H_q(FM⊗Q) be
+the canonical comparisons. Then β_q.hom=F(a_P.hom)≫b.hom≫H_q(c.hom)≫a_Q.inv. -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_computation
     (M X : ModuleCat.{max u v w} R) (q : ℕ) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
@@ -148,7 +165,12 @@ theorem flatScalarExtensionTorBaseChangeIso_hom_computation
       congrArg (fun k => a ≫ b ≫ k) (Category.assoc (t ≫ d.inv) d.hom e).symm
     _ = _ := congrArg (fun k => a ≫ b ≫ k ≫ e) hd'
 
-/-- The actual tensor-complex and homology comparisons retain a lift between source resolutions. -/
+/-- Let R,S be commutative rings in universes u,v and all module carriers lie in W=max(u,v,w), with
+w independent. Assume S is a flat R-algebra and write F=S⊗_R(-). Let M,X be R-modules in W, q∈ℕ,
+P,P′ projective resolutions of X and φ:P→P′ a chain map with φ_0≫π′_0=π_0. Put K=M⊗P, K′=M⊗P′,
+and μ=id_M⊗φ. For each resolution let d_P:F(H_qK)→Tor_q^S(FM,FX) be homology transport, the
+tensor-complex comparison and the inverse extended-resolution comparison. Then
+F(H_qμ)≫d_{P′}=d_P. -/
 theorem flatScalarExtensionTorComputation_lift
     (M X : ModuleCat.{max u v w} R) (q : ℕ)
     (P P' : ProjectiveResolution X) (φ : P.complex ⟶ P'.complex)
@@ -262,7 +284,11 @@ theorem flatScalarExtensionTorComputation_lift
     _ = _ := congrArg (fun k => ((K.sc q).mapHomologyIso F).inv ≫
       HomologicalComplex.homologyMap c.hom q ≫ k) hQ
 
-/-- The existing flat native Tor comparison is computed on any actual projective source resolution. -/
+/-- Let R,S be commutative rings in universes u,v and all module carriers lie in W=max(u,v,w), with
+w independent. Assume S is a flat R-algebra and write F=S⊗_R(-). For M,X in W, q∈ℕ and any
+projective resolution P of X, put Q=F(P), K=M⊗_R P. With a_P:Tor_q^R(M,X)≅H_qK,
+b:F(H_qK)≅H_q(FK), c:FK≅FM⊗_S Q and a_Q:Tor_q^S(FM,FX)≅H_q(FM⊗Q), the canonical base-change map
+is β_q.hom=F(a_P.hom)≫b.hom≫H_q(c.hom)≫a_Q.inv. -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_computation_of_resolution
     (M X : ModuleCat.{max u v w} R) (q : ℕ) (P : ProjectiveResolution X) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) := tensorStructure.{u, max v w}
@@ -344,7 +370,10 @@ section ScalarComposition
 universe u₀
 variable (R₀ S₀ T₀ : Type u₀) [CommRing R₀] [CommRing S₀] [CommRing T₀]
 
-/-- Scalar tensor base change agrees with two successive actual scalar extensions. -/
+/-- Let R,S,T be commutative rings and coefficient modules in a common universe U. For ring maps
+f:R→S and g:S→T, write F=f_*, G=g_*, H=(g∘f)_* and a_Z:H(Z)≅G(F(Z)) for scalar-extension
+association. For R-modules M,X, the tensor comparisons satisfy
+a_{M⊗X}.hom≫G(χ_f.hom)≫χ_g.hom=χ_{g∘f}.hom≫(a_M.hom⊗a_X.hom). The tensor on the right is over T. -/
 theorem scalarExtensionTensorIso_hom_trans
     (f : R₀ →+* S₀) (g : S₀ →+* T₀) (M X : ModuleCat.{u₀} R₀) :
     letI : MonoidalCategoryStruct (ModuleCat.{u₀} R₀) := tensorStructure.{u₀, 0}
@@ -457,7 +486,10 @@ section FlatScalarTower
 universe u₀
 variable (R₀ S₀ T₀ : Type u₀) [CommRing R₀] [CommRing S₀] [CommRing T₀]
 
-/-- Scalar-extension association gives the actual lift between direct and iterated extended resolutions. -/
+/-- Let R,S,T be commutative rings and coefficient modules in a common universe U. Let f:R→S and
+g:S→T be flat ring maps and P a projective resolution of an R-module X. The associator
+a_Z:(g∘f)_*Z≅g_*f_*Z gives a chain map θ from the directly extended resolution W to the iterated
+resolution V. Their degree-zero augmentations satisfy θ_0≫π_{V,0}=π_{W,0}≫a_X.hom. -/
 theorem flatScalarExtensionProjectiveResolution_assoc_augmentation
     (f : R₀ →+* S₀) (g : S₀ →+* T₀) (hf : f.Flat) (hg : g.Flat)
     {X : ModuleCat.{u₀} R₀} (P : ProjectiveResolution X) :
@@ -521,7 +553,11 @@ theorem flatScalarExtensionProjectiveResolution_assoc_augmentation
   exact (congrArg (fun m => a.hom.app (P.complex.X 0) ≫ m) hleft).trans
     (hnat.trans (congrArg (fun m => m ≫ a.hom.app X) hright).symm)
 
-/-- The actual flat native Tor comparison agrees with two successive scalar extensions. -/
+/-- Let R,S,T be commutative rings and coefficient modules in a common universe U. Let f:R→S and
+g:S→T be flat, M,X R-modules and q∈ℕ. Write F=f_*,G=g_*,H=(g∘f)_*, A=Tor_q^R(M,X) and
+a_Z:H(Z)≅G(F(Z)). The base-change maps satisfy
+a_A.hom≫G(β_f.hom)≫β_g.hom=β_{g∘f}.hom≫Tor_q^T(a_M.hom,a_X.hom). The left-hand β_g uses
+coefficients FM,FX. -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_trans
     (f : R₀ →+* S₀) (g : S₀ →+* T₀) (hf : f.Flat) (hg : g.Flat)
     (M X : ModuleCat.{u₀} R₀) (q : ℕ) :
@@ -714,7 +750,10 @@ theorem flatScalarExtensionTorBaseChangeIso_hom_trans
   change t ≫ G.map β₁.hom ≫ β₂.hom = β₃.hom ≫ τ
   exact hLeft.trans hRight.symm
 
-/-- Equal actual flat ring maps give the same native Tor comparison under canonical scalar transport. -/
+/-- Let R,S be commutative rings and all coefficients lie in a common universe U. Let f,f′:R→S be
+flat ring maps with h:f=f′, M,X R-modules and q∈ℕ. Write e_Z:f_*Z→f′_*Z for the canonical
+equality transport and A=Tor_q^R(M,X). Then β_f.hom≫Tor_q^S(e_M,e_X)=e_A≫β_{f′}.hom, as maps
+f_*A→Tor_q^S(f′_*M,f′_*X). -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_congr
     (f f' : R₀ →+* S₀) (hf : f.Flat) (hf' : f'.Flat) (h : f = f')
     (M X : ModuleCat.{u₀} R₀) (q : ℕ) :
@@ -757,7 +796,10 @@ theorem flatScalarExtensionTorBaseChangeIso_hom_congr
     ((Tor (ModuleCat.{u₀} S₀) q).obj (F.obj M)).map (𝟙 (F.obj X)) = 𝟙 (F.obj A) ≫ b
   simp only [CategoryTheory.Functor.map_id, NatTrans.id_app, Category.id_comp, Category.comp_id]
 
-/-- Canonical scalar transport retains the actual maps in both Tor coefficients. -/
+/-- Let R,S and all modules lie in a common universe U, with R,S commutative. For flat f,f′:R→S,
+h:f=f′, R-modules M,X, S-modules N,Y and maps α:f′_*M→N, ξ:f′_*X→Y, let e_Z:f_*Z→f′_*Z be the
+equality transport and A=Tor_q^R(M,X), q∈ℕ. Then
+β_f.hom≫Tor_q^S(e_M≫α,e_X≫ξ)=e_A≫β_{f′}.hom≫Tor_q^S(α,ξ). -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_congr_coefficients
     (f f' : R₀ →+* S₀) (hf : f.Flat) (hf' : f'.Flat) (h : f = f')
     (M X : ModuleCat.{u₀} R₀) (N Y : ModuleCat.{u₀} S₀)
@@ -805,7 +847,11 @@ theorem flatScalarExtensionTorBaseChangeIso_hom_congr_coefficients
       ((Tor (ModuleCat.{u₀} S₀) q).obj N).map ξ
   simp only [Category.id_comp]
 
-/-- The scalar cocycle retains arbitrary actual maps in both original Tor coefficients. -/
+/-- Let R,S,T be commutative rings and coefficient modules in a common universe U. Let f:R→S,g:S→T
+be flat; M,X R-modules; N,Y S-modules; P,Z T-modules; and α:f_*M→N, ξ:f_*X→Y, β:g_*N→P,
+ζ:g_*Y→Z. For q∈ℕ and a:(g∘f)_*≅g_*f_*, put α̂=a_M.hom≫g_*(α)≫β and ξ̂=a_X.hom≫g_*(ξ)≫ζ. Then
+a_A.hom≫g_*(β_f.hom≫Tor_q^S(α,ξ))≫β_g.hom≫Tor_q^T(β,ζ)=β_{g∘f}.hom≫Tor_q^T(α̂,ξ̂), where
+A=Tor_q^R(M,X). -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_trans_coefficients
     (f : R₀ →+* S₀) (g : S₀ →+* T₀) (hf : f.Flat) (hg : g.Flat)
     (M X : ModuleCat.{u₀} R₀) (N Y : ModuleCat.{u₀} S₀) (P Z : ModuleCat.{u₀} T₀)
@@ -937,7 +983,10 @@ section ScalarIdentity
 universe u₀
 variable (R₀ : Type u₀) [CommRing R₀]
 
-/-- The original scalar tensor comparison along the ring identity has its actual identity value. -/
+/-- Let R be commutative and R-modules M,X lie in the same universe U. Write F=(id_R)_* and
+e_Z:F(Z)≅Z for the canonical scalar-extension unit comparison. Then
+χ_{id_R}.hom≫(e_M.hom⊗e_X.hom)=e_{M⊗X}.hom. Thus the tensor comparison for the identity ring map
+is the identity after the scalar unit identifications. -/
 theorem scalarExtensionTensorIso_hom_id (M X : ModuleCat.{u₀} R₀) :
     letI : MonoidalCategoryStruct (ModuleCat.{u₀} R₀) := tensorStructure.{u₀, 0}
     letI : MonoidalCategory (ModuleCat.{u₀} R₀) := monoidalCategory.{u₀, 0}
@@ -992,7 +1041,10 @@ theorem scalarExtensionTensorIso_hom_id (M X : ModuleCat.{u₀} R₀) :
             rw [one_smul, TensorProduct.smul_tmul']
           exact hvalues.trans (hscalar.trans (hid (M ⊗ X) (m ⊗ₜ[R₀] x) r).symm)
 
-/-- The actual identity scalar comparison lifts the original resolution augmentation. -/
+/-- Let R be a commutative ring in a common universe U and P a projective resolution of an R-module
+X in U. Write Q=(id_R)_*P and e_Z:(id_R)_*Z≅Z. The induced chain isomorphism θ:Q→P satisfies
+θ_0≫π_{P,0}=π_{Q,0}≫e_X.hom. This is the degree-zero augmentation square for identity scalar
+extension. -/
 theorem flatScalarExtensionProjectiveResolution_id_augmentation
     {X : ModuleCat.{u₀} R₀} (P : ProjectiveResolution X) :
     letI : Algebra R₀ R₀ := (RingHom.id R₀).toAlgebra
@@ -1020,7 +1072,10 @@ theorem flatScalarExtensionProjectiveResolution_id_augmentation
   have h := congrArg (fun k : F.obj X ⟶ F.obj X => (F.map p₀ ≫ k) ≫ e.hom.app X) hF
   exact hnat.trans (h.trans (congrArg (fun k => k ≫ e.hom.app X) (Category.comp_id (F.map p₀)))).symm
 
-/-- Flat native Tor base change along the identity is the actual identity scalar comparison. -/
+/-- Let R and R-modules M,X lie in a common universe U, with R commutative, and q∈ℕ. For F=(id_R)_*
+and e_Z:F(Z)≅Z, the identity base-change comparison satisfies
+β_{id_R}.hom≫Tor_q^R(e_M.hom,e_X.hom)=e_{Tor_q^R(M,X)}.hom. The equation identifies its map
+after the scalar unit transports in both coefficients. -/
 theorem flatScalarExtensionTorBaseChangeIso_hom_id (M X : ModuleCat.{u₀} R₀) (q : ℕ) :
     letI : MonoidalCategoryStruct (ModuleCat.{u₀} R₀) := tensorStructure.{u₀, 0}
     letI : MonoidalCategory (ModuleCat.{u₀} R₀) := monoidalCategory.{u₀, 0}

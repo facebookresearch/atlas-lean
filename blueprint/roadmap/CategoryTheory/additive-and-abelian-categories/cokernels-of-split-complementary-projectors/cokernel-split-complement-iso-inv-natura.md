@@ -1,3 +1,6 @@
-# Cokernel Split Complement Iso inv naturality
+# Naturality of the inverse retract–cokernel comparison
 
-The same constructed comparison gives inverse naturality without a supplied iso square.
+In a preadditive category `C`, let two split pairs have complements
+`q`, `q′` and existing cokernels. For maps commuting with the
+complements and retractions, the inverse comparisons satisfy
+`g ≫ e′.inv = e.inv ≫ cokernel.map(q,q′,f,f)`.

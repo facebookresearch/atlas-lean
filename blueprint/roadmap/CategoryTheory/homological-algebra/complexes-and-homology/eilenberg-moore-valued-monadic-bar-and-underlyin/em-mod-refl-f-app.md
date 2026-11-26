@@ -1,4 +1,5 @@
-# Em Mod Refl f app
+# A reflexive left-module map has identity underlying components
 
-Reflexive module-morphism components on the regular side are identities.
-Normalizes `barMap` of the reflexive left-module isomorphism.
+Let T be a monad on C, L a left T-module indexed by Discrete PUnit, and a a discrete point.
+The underlying component at a of the reflexive module isomorphism of L is the identity of
+L(a).

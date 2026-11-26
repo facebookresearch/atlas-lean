@@ -1,4 +1,6 @@
-# Right Coaction Pow delta cast Succ
+# Interchange of right coaction and an interior comultiplication
 
-Iterated right coaction commutes with interior comultiplication up to the
-`castSucc` shift. Dual of `Monad.rightActionPow_mu_castSucc`.
+Interchange of right coaction and an interior comultiplication.
+
+The right coaction followed by comultiplication at a surviving insertion position equals that
+comultiplication followed by the next iterated right coaction.

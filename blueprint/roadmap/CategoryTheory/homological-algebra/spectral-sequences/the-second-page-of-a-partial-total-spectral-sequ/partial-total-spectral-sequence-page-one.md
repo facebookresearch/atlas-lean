@@ -1,4 +1,7 @@
-# Partial Total Spectral Sequence Page One Homology Coordinate Iso
+# First-page homology as the second-page interval coordinate
 
-Page-one homology in bidegree `(p, q)` identifies with the same explicit
-coordinate used for page two.
+First-page homology as the second-page interval coordinate.
+
+The homology of the first page at `(p, q)` is isomorphic to the same four-cut spectral object
+that defines `B.partialTotalSpectralSequencePageTwoCoordinate p q`. The isomorphism comes from
+homology data for the transition from page one to page two.

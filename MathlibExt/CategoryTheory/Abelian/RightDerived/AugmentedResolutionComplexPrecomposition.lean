@@ -14,7 +14,13 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.AugmentedResolution
 public import MathlibExt.AlgebraicTopology.SimplicialObject.CofacePrecomposition
 
 /-!
-# complex precomposition followed by an augmentation-preserving comparison
+# Augmented cohomology comparison after complex precomposition
+
+For abelian `C,D,A`, an additive injective- and homology-preserving
+`J : C → D`, additive `P : C → A`, `B : D → A`, and `P ≅ J ⋙ B`,
+an isomorphism between `J(I)` and a coaugmented complex `K` gives a
+comparison square from `Hⁿ(P(I))` to `R^nB(J(X))`. Preserving the
+coaugmentation proves this square commutes.
 -/
 
 @[expose] public section
@@ -29,7 +35,12 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolution
 variable (J : C ⥤ D) [J.Additive] [J.PreservesInjectiveObjects] [J.PreservesHomology]
   (B : D ⥤ A) [B.Additive] {P : C ⥤ A} [P.Additive]
 
-/-- The literal derived-map equation for the given coefficient-complex comparison. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. For quasi-isomorphisms `ι : X[0] → I`, `κ : J(X)[0] → K`
+and `e : J(I) ≅ K`, the complex-precomposition property says that
+transport to `Hⁿ(B(K))` followed by its augmented comparison equals
+the augmented comparison for `I` followed by derived precomposition. -/
 def augmentedComplexPrecompositionProperty (α : P ≅ J ⋙ B) {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) (hι : QuasiIso ι)
     (K : CochainComplex D ℕ) (κ : (CochainComplex.single₀ D).obj (J.obj X) ⟶ K) (hκ : QuasiIso κ)
@@ -43,10 +54,12 @@ def augmentedComplexPrecompositionProperty (α : P ≅ J ⋙ B) {X : C}
     P.augmentedResolutionToRightDerivedHom I ι n ≫
       (rightDerivedPrecompIsoOfIso J B α n).hom.app X
 
-/--
-Augmentation-preserving complex precomposition computes the SAME original derived map in every
-degree.
--/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`J : C → D` additive and preserving injectives and homology,
+`B : D → A`, `P : C → A` additive, and `α : P ≅ J ⋙ B`. For coaugmentation quasi-isomorphisms `ι : X[0] → I`,
+`κ : J(X)[0] → K`, if `e : J(I) ≅ K` carries the mapped `ι` to `κ`,
+then the augmented complex-precomposition property holds in every
+degree `n`. -/
 theorem augmentedComplexPrecompositionProperty_of_augmentation (α : P ≅ J ⋙ B) {X : C}
     (I : CochainComplex C ℕ) (ι : (CochainComplex.single₀ C).obj X ⟶ I) (hι : QuasiIso ι)
     (K : CochainComplex D ℕ) (κ : (CochainComplex.single₀ D).obj (J.obj X) ⟶ K) (hκ : QuasiIso κ)

@@ -1,3 +1,6 @@
-# Cyclic First Two Column Cell
+# A cell inclusion in the first-two-column cyclic total
 
-Canonical coordinate of either retained raw column, including the odd column.
+A cell inclusion in the first-two-column cyclic total.
+
+For `p : Fin 2` and `p+q=n`, this includes the coefficient tensor cell in bidegree `(p,q)`
+into degree `n` of `CC^{(2)}(A)`.

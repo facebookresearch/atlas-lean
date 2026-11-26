@@ -1,7 +1,6 @@
-# Hom
+# Augmented morphisms of finite resolutions
 
-A morphism of finite resolutions over `f : X₁ ⟶ X₂`.
-
-The augmentation equation is oriented as mapped source chain map followed by
-the target augmentation, equal to the source augmentation followed by the
-degree-zero single-complex map of `f`.
+Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+in A, by nonnegative complexes in P, and f : X₁ → X₂. A comparison over f is a chain map φ :
+R₁.complex → R₂.complex whose image under i commutes with the augmentations: ε₂ ∘ i(φ)=f[0] ∘
+ε₁.

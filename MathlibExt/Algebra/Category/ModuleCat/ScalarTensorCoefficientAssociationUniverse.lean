@@ -12,12 +12,18 @@ public import MathlibExt.Algebra.Category.ModuleCat.NativeTorLongExactUniverse
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 public import MathlibExt.Algebra.Category.ModuleCat.ChangeOfRings
 /-!
-# Scalar tensor association for restricted coefficients
+# Scalar tensor association with a restricted first coefficient
 
-The coefficient order is N first. The scalar triangle R to S to Q gives
-S-linear tensor cancellation and its naturality. The module tensor
-associator commutes with both bicomplex differentials.
-Flatness and finite length are not required.
+Let R→S→Q be maps of commutative rings in universe u whose composite is the specified map R→Q,
+and let module carriers lie in W=max(u,v). For R-modules N,M, with N first, scalar cancellation
+and association give the S-linear isomorphism U_g(Q⊗_R N)⊗_S(S⊗_R M)≅U_g(Q⊗_R(N⊗_R M)). It is
+natural in M and sends (q⊗n)⊗(s⊗m) to qg(s)⊗(n⊗m).
+
+The inverse comparison applies termwise to nonnegative chain complexes. Tensoring two such
+complexes gives the commuting bicomplex with entry A_p⊗B_q, horizontal map d_A⊗id and vertical
+map id⊗d_B. Tensoring by a fixed coefficient N on the left commutes with forming this bicomplex
+through the module associator (N⊗A_p)⊗B_q≅N⊗(A_p⊗B_q). No flatness or finite-length condition
+enters these tensor isomorphisms.
 -/
 @[expose] public section
 noncomputable section
@@ -26,8 +32,11 @@ open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory
 open scoped TensorProduct ModuleCat.UniverseTensor
 universe u v
 namespace ModuleCat.UniverseTensor
-/-- The original S-linear cancellation keeps N first and uses the actual R to S to Q scalar
-triangle. -/
+/-- Let R,S,Q be commutative rings in universe u, with modules in W=max(u,v) for an independent
+height v. Let a:R→S, f:R→Q and g:S→Q satisfy g∘a=f, and write H=U_g∘(Q⊗_R-). For R-modules N,M
+in W, this is the S-linear isomorphism H(N)⊗_S(S⊗_R M)≅H(N⊗_R M). Its forward map sends
+(q⊗n)⊗(s⊗m) to qg(s)⊗(n⊗m), and its inverse sends q⊗(n⊗m) to (q⊗n)⊗(1⊗m). The coefficient order
+remains N before M. -/
 def extendRestrictTensorComponentIso
     (R S Q : Type u) [CommRing R] [CommRing S] [CommRing Q]
     (a : R →+* S) (f : R →+* Q) (g : S →+* Q) (h : g.comp a = f)
@@ -43,7 +52,10 @@ def extendRestrictTensorComponentIso
   exact (TensorProduct.AlgebraTensorModule.cancelBaseChange R S S (Q ⊗[R] N) M ≪≫ₗ
     TensorProduct.AlgebraTensorModule.assoc R R S Q N M).toModuleIso
 
-/-- Scalar tensor cancellation is natural in the original second R-module, with its actual maps. -/
+/-- Let R,S,Q be commutative rings in universe u, with modules in W=max(u,v) for an independent
+height v. Let a:R→S, f:R→Q and g:S→Q satisfy g∘a=f, and write H=U_g∘(Q⊗_R-). For a fixed
+R-module N, the isomorphisms H(N)⊗_S(S⊗_R M)≅H(N⊗_R M) form a natural isomorphism of functors on
+R-modules in W. If k:M→M′, then (id_{H(N)}⊗(S⊗k))≫c_{M′}.hom=c_M.hom≫H(id_N⊗k). -/
 def extendRestrictTensorNatIso
     (R S Q : Type u) [CommRing R] [CommRing S] [CommRing Q]
     (a : R →+* S) (f : R →+* Q) (g : S →+* Q) (h : g.comp a = f)
@@ -83,7 +95,11 @@ def extendRestrictTensorNatIso
         simp only [map_add, LinearMap.add_apply]
         rw [h₁, h₂])
 
-/-- The scalar natural isomorphism compares the literal original coefficient complexes. -/
+/-- Let R,S,Q be commutative rings in universe u, with modules in W=max(u,v) for an independent
+height v. Let a:R→S, f:R→Q and g:S→Q satisfy g∘a=f, and write H=U_g∘(Q⊗_R-). For an R-module N
+and a chain complex C of shape down ℕ in W, the inverse component comparisons give a chain
+isomorphism H(N⊗_R C)≅H(N)⊗_S(S⊗_R C). In degree n it is the inverse of H(N)⊗_S(S⊗_R C_n)≅H(N⊗_R
+C_n), and naturality makes it commute with all chain differentials. -/
 def extendRestrictTensorComplexIso
     (R S Q : Type u) [CommRing R] [CommRing S] [CommRing Q]
     (a : R →+* S) (f : R →+* Q) (g : S →+* Q) (h : g.comp a = f)
@@ -100,7 +116,9 @@ def extendRestrictTensorComplexIso
   let e := extendRestrictTensorNatIso R S Q a f g h N
   exact ((NatIso.mapHomologicalComplex e (ComplexShape.down ℕ)).app C).symm
 
-/-- The original module tensor bifunctor applied to both original nonnegative chain complexes. -/
+/-- Let R be commutative in universe u and A,B chain complexes of shape down ℕ with R-module terms
+in W=max(u,v). This bicomplex has entry A_p⊗_R B_q at (p,q), horizontal differential d_A⊗id and
+vertical differential id⊗d_B. The two differentials commute, giving shape (down ℕ,down ℕ). -/
 def tensorBicomplex (R : Type u) [CommRing R]
     (A B : ChainComplex (ModuleCat.{max u v} R) ℕ) :
     HomologicalComplex₂ (ModuleCat.{max u v} R) (ComplexShape.down ℕ) (ComplexShape.down ℕ) := by
@@ -109,8 +127,9 @@ def tensorBicomplex (R : Type u) [CommRing R]
   let : ∀ N : ModuleCat.{max u v} R, (F.obj N).Additive := fun N => CategoryTheory.tensorLeft_additive N
   exact ((F.mapBifunctorHomologicalComplex (ComplexShape.down ℕ) (ComplexShape.down ℕ)).obj A).obj B
 
-/-- Tensor the original coefficient on the left in every term and both differentials of this
-bicomplex. -/
+/-- Let R be commutative in universe u, N an R-module and B a bicomplex of shape (down ℕ,down ℕ),
+all in W=max(u,v). This bicomplex has entry N⊗_R B_{p,q}; its horizontal and vertical maps are
+id_N tensored with the corresponding maps of B. Additivity preserves both chain structures. -/
 def tensorLeftBicomplex (R : Type u) [CommRing R] (N : ModuleCat.{max u v} R)
     (B : HomologicalComplex₂ (ModuleCat.{max u v} R) (ComplexShape.down ℕ) (ComplexShape.down ℕ)) :
     HomologicalComplex₂ (ModuleCat.{max u v} R) (ComplexShape.down ℕ) (ComplexShape.down ℕ) := by
@@ -119,7 +138,11 @@ def tensorLeftBicomplex (R : Type u) [CommRing R] (N : ModuleCat.{max u v} R)
   exact ((T.mapHomologicalComplex (ComplexShape.down ℕ)).mapHomologicalComplex
     (ComplexShape.down ℕ)).obj B
 
-/-- The actual module associator commutes with both original bicomplex differentials. -/
+/-- Let R be commutative in universe u, N an R-module and A,B chain complexes of shape down ℕ, all
+in W=max(u,v). The component associators (N⊗_R A_p)⊗_R B_q≅N⊗_R(A_p⊗_R B_q) define an
+isomorphism from the tensor bicomplex of N⊗A with B to N tensored on the left of the tensor
+bicomplex of A,B. Naturality of the associator preserves both horizontal and vertical
+differentials. -/
 def tensorLeftBicomplexAssociator (R : Type u) [CommRing R]
     (N : ModuleCat.{max u v} R) (A B : ChainComplex (ModuleCat.{max u v} R) ℕ) :
     tensorBicomplex R ((((tensoringLeft (ModuleCat.{max u v} R)).obj N).mapHomologicalComplex

@@ -15,11 +15,14 @@ public import Mathlib.RingTheory.Flat.Localization
 public import Mathlib.RingTheory.RingHom.Flat
 
 /-!
-# Local isomorphisms of flat quotient maps
+# Canonical local isomorphisms of flat surjections
 
-The local ring map induced by a flat surjective ring map at a target prime
-is surjective. Local flatness makes it faithfully flat and hence injective.
-This gives the local diagonal comparison for étale graph resolutions.
+Let f:R→S be a flat surjective homomorphism of commutative rings in independent universes. For a
+prime p of S and q=f⁻¹(p), the canonical local homomorphism R_q→S_p is surjective. It is a flat
+local map and therefore faithfully flat, giving injectivity as well.
+
+Thus the canonical target-prime local map is bijective. No global locality or Noetherian
+condition on R,S is imposed.
 -/
 
 @[expose] public section
@@ -34,8 +37,10 @@ universe u v
 
 variable {R : Type u} {S : Type v} [CommRing R] [CommRing S]
 
-/-- The actual canonical local ring map of a flat quotient is bijective,
-with its original target prime and inverse-image prime retained. -/
+/-- Let R,S be commutative rings in independent universes u,v, f:R→S a flat surjective ring
+homomorphism and p⊂S a prime ideal. Put q=f⁻¹(p). The canonical local homomorphism R_q→S_p
+induced by f is bijective. Surjectivity localizes, and flatness together with the
+local-homomorphism property gives faithful flatness and hence injectivity. -/
 theorem localRingHom_bijective_of_flat_of_surjective
     (f : R →+* S) (hf : Function.Surjective f) (hflat : f.Flat)
     (p : Ideal S) [p.IsPrime] :

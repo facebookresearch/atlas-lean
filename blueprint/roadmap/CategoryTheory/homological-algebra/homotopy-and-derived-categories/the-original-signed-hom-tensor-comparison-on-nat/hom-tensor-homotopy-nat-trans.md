@@ -1,4 +1,6 @@
-# Hom Tensor Homotopy Nat Trans
+# Signed Hom–tensor map as a homotopy natural transformation
 
-The natural transformation on all native homotopy classes is exactly
-the quotient of the original signed comparison.
+Signed Hom–tensor map as a homotopy natural transformation.
+
+The quotient classes of the signed cochain comparison form a natural transformation from the
+Hom-then-tensor functor to the tensor-then-Hom functor on homotopy triples.

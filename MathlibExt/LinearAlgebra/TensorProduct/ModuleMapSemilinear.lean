@@ -12,12 +12,16 @@ public import MathlibExt.LinearAlgebra.TensorProduct.ModuleMap
 public import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
-# Semilinear maps for tensor-product module actions
+# Semilinear maps for changing commuting coefficient actions
 
-The endpoint algebras may change independently and may be noncommutative.
-Equivariance for their commuting actions is equivalent to semilinearity
-for the tensor ring map. Source and target carriers have independent
-universes and retain their ground module structures.
+Let k be a commutative semiring and φ:A→A′, ψ:B→B′ maps of semiring k-algebras, whose endpoints
+may be noncommutative. For compatible commuting endpoint actions on M,N, a k-linear f satisfying
+f(a•x)=φ(a)•f(x) and f(b•x)=ψ(b)•f(x) is semilinear for τ=φ⊗ψ:A⊗_kB→A′⊗_kB′.
+
+Tensor semilinearity conversely gives both endpoint semilinearities and ground k-linearity. The
+constructions form a bijection between tensor-semilinear maps and k-linear maps satisfying the
+two equivariance equations. They retain the functions and preserve composition of underlying
+additive maps, in independent endpoint and carrier universes.
 -/
 
 @[expose] public section
@@ -41,7 +45,11 @@ variable {k : Type u} [CommSemiring k]
   [IsScalarTower k A' N] [IsScalarTower k B' N]
   [SMulCommClass A B M] [SMulCommClass A' B' N]
 
-/-- An equivariant ground map is semilinear for the actual native tensor ring map. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. For k-linear f with f(a•x)=φ(a)•f(x) and
+f(b•x)=ψ(b)•f(x), this is the τ-semilinear map on the derived tensor module actions. Its
+function is f and f(t•x)=τ(t)•f(x) for all t∈A⊗_kB. -/
 def ofSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B') (f : M →ₗ[k] N)
     (hA : ∀ (a : A) (x : M), f (a • x) = φ a • f x)
     (hB : ∀ (b : B) (x : M), f (b • x) = ψ b • f x) :
@@ -57,12 +65,18 @@ def ofSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B') (f : M →ₗ[k]
   | tmul a b => rw [smul_def, Algebra.TensorProduct.map_tmul, smul_def, hA, hB]
   | add z w hz hw => rw [add_smul, f.map_add, hz, hw, map_add, add_smul]
 
-/-- The semilinear tensor-module map keeps the supplied original function. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. For k-linear f with both equivariance equations,
+the constructed τ-semilinear map sends x to f(x) for every x∈M. -/
 theorem ofSemilinearMap_apply (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (f : M →ₗ[k] N) (hA hB) (x : M) :
     ofSemilinearMap φ ψ f hA hB x = f x := rfl
 
-/-- Native tensor semilinearity implies semilinearity under the first original action. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. A τ-semilinear f:M→N gives the φ-semilinear map
+on the same function, satisfying f(a•x)=φ(a)•f(x). -/
 def toLeftSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (f : letI : Module (A ⊗[k] B) M := TensorProduct.Algebra.module
       letI : Module (A' ⊗[k] B') N := TensorProduct.Algebra.module
@@ -78,7 +92,10 @@ def toLeftSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
   change f (a • x) = φ a • f x
   simpa only [Algebra.TensorProduct.map_tmul, map_one, smul_def, one_smul] using h
 
-/-- Native tensor semilinearity likewise preserves the second original action. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. A τ-semilinear f:M→N gives the ψ-semilinear map
+on the same function, with f(b•x)=ψ(b)•f(x). -/
 def toRightSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (f : letI : Module (A ⊗[k] B) M := TensorProduct.Algebra.module
       letI : Module (A' ⊗[k] B') N := TensorProduct.Algebra.module
@@ -94,7 +111,10 @@ def toRightSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
   change f (b • x) = ψ b • f x
   simpa only [Algebra.TensorProduct.map_tmul, map_one, smul_def, one_smul] using h
 
-/-- The endpoint algebra maps retain the original ground-linear function. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. A τ-semilinear f gives this k-linear map with the
+same function. The algebra-map identities and scalar towers yield f(c•x)=c•f(x) for every c∈k. -/
 def toGroundLinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (f : letI : Module (A ⊗[k] B) M := TensorProduct.Algebra.module
       letI : Module (A' ⊗[k] B') N := TensorProduct.Algebra.module
@@ -106,7 +126,11 @@ def toGroundLinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
   change h ((algebraMap k A c) • x) = φ (algebraMap k A c) • h x at hx
   simpa only [φ.commutes, IsScalarTower.algebraMap_smul, RingHom.id_apply] using hx
 
-/-- The two endpoint equations characterize a native semilinear bimodule map. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. This is the bijection between τ-semilinear maps
+M→N and k-linear maps f with both equations f(a•x)=φ(a)•f(x) and f(b•x)=ψ(b)•f(x). Restriction
+is the forward map, and tensor-semilinear construction is the inverse. -/
 def semilinearMapEquiv (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B') :
     (letI : Module (A ⊗[k] B) M := TensorProduct.Algebra.module
      letI : Module (A' ⊗[k] B') N := TensorProduct.Algebra.module
@@ -134,17 +158,26 @@ def semilinearMapEquiv (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B') :
     intro x
     rfl
 
-/-- Reading the first action after constructing the tensor map changes no values. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. For k-linear equivariant f and x∈M, restricting
+its constructed tensor-semilinear map to φ-semilinearity has value f(x). -/
 theorem toLeftSemilinearMap_ofSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (f : M →ₗ[k] N) (hA hB) (x : M) :
     toLeftSemilinearMap φ ψ (ofSemilinearMap φ ψ f hA hB) x = f x := rfl
 
-/-- Reading the second action has the same identity on original values. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. For k-linear equivariant f and x∈M, restricting
+its constructed map to ψ-semilinearity sends x to f(x). -/
 theorem toRightSemilinearMap_ofSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (f : M →ₗ[k] N) (hA hB) (x : M) :
     toRightSemilinearMap φ ψ (ofSemilinearMap φ ψ f hA hB) x = f x := rfl
 
-/-- The same supplied ground-module dictionary is recovered exactly. -/
+/-- Let k be a commutative semiring and A,B,A′,B′ semiring k-algebras. Let M,N be k-semimodules with
+compatible commuting A,B-actions on M and A′,B′-actions on N, in independent universes. Let
+φ:A→A′ and ψ:B→B′ be k-algebra maps and τ=φ⊗ψ. For k-linear f satisfying both equations, the
+ground-linear map of its constructed τ-semilinear map equals f as a k-linear map. -/
 theorem toGroundLinearMap_ofSemilinearMap (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (f : M →ₗ[k] N) (hA hB) :
     toGroundLinearMap φ ψ (ofSemilinearMap φ ψ f hA hB) = f := by
@@ -159,8 +192,15 @@ variable {A'' : Type a''} {B'' : Type b''} [Semiring A''] [Semiring B'']
   [AddCommMonoid P] [Module k P] [Module A'' P] [Module B'' P]
   [IsScalarTower k A'' P] [IsScalarTower k B'' P] [SMulCommClass A'' B'' P]
 
-/-- The earned tensor-semilinear maps compose on their original additive functions.
-The scalar identification is the native `Algebra.TensorProduct.map_comp` law. -/
+/-- Let k be a commutative semiring and A,B,A′,B′,A″,B″ semiring k-algebras in independent
+universes. Let M,N,P be k-semimodules with compatible commuting A,B-actions on M, A′,B′-actions
+on N and A″,B″-actions on P. Take algebra maps φ:A→A′, ψ:B→B′, φ′:A′→A″ and ψ′:B′→B″.
+
+Let f:M→N and g:N→P be k-linear and satisfy f(a•x)=φ(a)•f(x), f(b•x)=ψ(b)•f(x),
+g(a′•y)=φ′(a′)•g(y) and g(b′•y)=ψ′(b′)•g(y). The additive map underlying the composite of their
+constructed tensor-semilinear maps equals the map constructed from g∘f with endpoints φ′∘φ and
+ψ′∘ψ. The equality is at the additive-map level, with tensor scalar maps identified by their
+composition law. -/
 theorem ofSemilinearMap_comp (φ : A →ₐ[k] A') (ψ : B →ₐ[k] B')
     (φ' : A' →ₐ[k] A'') (ψ' : B' →ₐ[k] B'')
     (f : M →ₗ[k] N) (g : N →ₗ[k] P)

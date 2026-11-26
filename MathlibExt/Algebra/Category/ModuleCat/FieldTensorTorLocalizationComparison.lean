@@ -15,14 +15,28 @@ public import MathlibExt.Algebra.Category.ModuleCat.LocalizationUnderSurjection
 public import MathlibExt.Algebra.Category.ModuleCat.FlatScalarExtensionTorBaseChangeUniverse
 
 /-!
-# Native field-tensor Tor localization, support, and length
+# Graph ambient Tor, support primes and localized module lengths
 
-The original coefficient actions identify the actual native ambient actions
-with restriction along the standard and intrinsic support maps. Genuine Tor
-localization then compares native Tor over both ambient local rings with the
-actual T-prime localization of ordered middle Tor. The standard comparison
-requires surjective support maps. Lengths include infinity, and the finite
-Euler statement retains explicit finite-length and eventual-zero hypotheses.
+Let K be a commutative ring and B,V,W commutative K-algebras with maps
+a:B→V,b:B→W. Put T=V⊗[B]W and G=(V⊗[K]W)⊗[K]B.
+The intrinsic support map is
+σ_G((x⊗y)⊗c)=(x a(c))⊗_B y; it is always surjective.
+
+For commutative K-algebras A,C and maps
+i_V:A⊗[K]B→V, i_W:B⊗[K]C→W, use their induced B-actions
+and S=(A⊗[K]B)⊗[K]C. The standard support map is
+σ_S((x⊗y)⊗z)=i_V(x⊗y)⊗_B i_W(1⊗z).
+It is surjective when both i_V and i_W are surjective.
+
+Flat adjoining factors identify ambient Tor with ordered Tor_B(V,W)
+over T. Localizing at a support prime p gives equality of the
+ambient-local and T_p-local module lengths. The intrinsic comparison
+requires V,W flat over K; the standard one requires A,C flat over K
+and surjectivity for its support and length results.
+Lengths may be infinite. Over a field, the finite Euler comparison
+separately assumes finite standard lengths below a cutoff and zero
+standard local Tor at and above it, then transfers both properties
+and the finite alternating integer sum.
 -/
 
 @[expose] public section
@@ -40,7 +54,9 @@ variable (K : Type k) (B : Type r) (V : Type v) (W : Type w)
   [Algebra K B] [Algebra K V] [Algebra K W]
   (a : B →ₐ[K] V) (b : B →ₐ[K] W)
 
-/-- The stock scalar-balancing quotient from the original K tensor to the B tensor. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+the support quotient V⊗[K]W→V⊗[B]W sends x⊗y to x⊗_B y.
+It imposes the balancing relation from the two B-actions. -/
 def balancedSupportMap :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -53,7 +69,10 @@ def balancedSupportMap :
   letI : IsScalarTower K B W := IsScalarTower.of_algHom b
   exact Algebra.TensorProduct.mapOfCompatibleSMul B K K V W
 
-/-- The actual intrinsic graph ambient maps to its original tensor support quotient. -/
+/-- For G=(V⊗[K]W)⊗[K]B and T=V⊗[B]W through a,b,
+the intrinsic support map σ_G:G→T is induced by the
+K-tensor balancing quotient and the middle B-action.
+All rings are commutative K-algebras. -/
 def intrinsicSupportMap :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -69,7 +88,9 @@ def intrinsicSupportMap :
     ((q.comp (Algebra.TensorProduct.includeLeft (R := K) (A := V) (B := W))).comp a)
     (fun _ _ => Commute.all _ _)
 
-/-- The canonical intrinsic support map keeps both original factors and the middle scalar. -/
+/-- For x∈V,y∈W,c∈B, the intrinsic support map satisfies
+σ_G((x⊗y)⊗c)=(x*a(c))⊗_B y.
+The B-action on V is induced by a and that on W by b. -/
 theorem intrinsicSupportMap_tmul (x : V) (y : W) (c : B) :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -84,7 +105,9 @@ theorem intrinsicSupportMap_tmul (x : V) (y : W) (c : B) :
   change (x ⊗ₜ[B] y) * (a c ⊗ₜ[B] (1 : W)) = (x * a c) ⊗ₜ[B] y
   rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
 
-/-- Every actual balanced support tensor has an intrinsic ambient preimage. -/
+/-- For K-algebra maps a:B→V,b:B→W between commutative rings,
+σ_G:(V⊗[K]W)⊗[K]B→V⊗[B]W is surjective.
+A pure support class x⊗_B y has preimage (x⊗_K y)⊗1_B. -/
 theorem intrinsicSupportMap_surjective :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -112,7 +135,9 @@ universe sa sc
 variable (A : Type sa) (C : Type sc) [CommRing A] [CommRing C] [Algebra K A] [Algebra K C]
   (iV : A ⊗[K] B →ₐ[K] V) (iW : B ⊗[K] C →ₐ[K] W)
 
-/-- The actual standard triple tensor ambient maps to the original balanced support tensor. -/
+/-- For i_V:A⊗[K]B→V and i_W:B⊗[K]C→W, the standard
+support map σ_S:S→T uses S=(A⊗[K]B)⊗[K]C and T=V⊗[B]W.
+The B-actions are i_V(1⊗−) and i_W(−⊗1). -/
 def standardSupportMap :
     letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
     letI : Algebra B W := (originalMiddleRightMap K B C W iW).toRingHom.toAlgebra
@@ -128,7 +153,10 @@ def standardSupportMap :
   exact q.comp (Algebra.TensorProduct.map iV
     (iW.comp (Algebra.TensorProduct.includeRight (R := K) (A := B) (B := C))))
 
-/-- The original standard support map has its literal three-factor value. -/
+/-- For x∈A,y∈B,z∈C, the standard support map satisfies
+σ_S((x⊗y)⊗z)=i_V(x⊗y)⊗_B i_W(1_B⊗z).
+The displayed coefficient order agrees with the induced
+B-actions on V and W. -/
 theorem standardSupportMap_tmul (x : A) (y : B) (z : C) :
     letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
     letI : Algebra B W := (originalMiddleRightMap K B C W iW).toRingHom.toAlgebra
@@ -142,8 +170,10 @@ theorem standardSupportMap_tmul (x : A) (y : B) (z : C) :
   let : IsScalarTower K B W := IsScalarTower.of_algHom (originalMiddleRightMap K B C W iW)
   rfl
 
-/-- Genuine quotient support maps give a surjective map from the original
-standard tensor ambient, without coefficient flatness or finiteness. -/
+/-- For commutative K-algebra maps i_V:A⊗K B→V and
+i_W:B⊗K C→W, if both maps are surjective, then
+σ_S:(A⊗K B)⊗K C→V⊗B W is surjective.
+No coefficient flatness is needed for this quotient property. -/
 theorem standardSupportMap_surjective
     (hV : Function.Surjective iV) (hW : Function.Surjective iW) :
     letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
@@ -194,7 +224,10 @@ variable (A : Type au) (C : Type cu) [CommRing A] [CommRing C]
   [Algebra K A] [Algebra K C]
   (iV : A ⊗[K] B →ₐ[K] V) (iW : B ⊗[K] C →ₐ[K] W)
 
-/-- The original standard Tor before restriction of its ambient scalars. -/
+/-- For S=(A⊗K B)⊗K C, the ambient Tor is Tor_q^S
+of the right coefficient A⊗K W first and the left coefficient
+V⊗K C second, using their ambient evaluation maps.
+Its carrier height is max(k,au,r,cu,v,w,mu). -/
 abbrev standardAmbientNativeTor (q : ℕ) :
     ModuleCat.{max k au r cu v w mu} ((A ⊗[K] B) ⊗[K] C) := by
   letI : MonoidalCategoryStruct
@@ -212,8 +245,10 @@ abbrev standardAmbientNativeTor (q : ℕ) :
         (originalRingCoefficient.{max au r cu, max v cu, max k au r cu v w mu} _ _
           (originalAmbientLeftMap K A B C V iV).toRingHom)
 
-/-- Resolved coefficient multiplication by `iV x` is multiplication by
-the actual ambient scalar `x ⊗ 1` on the original native Tor. -/
+/-- For x∈A⊗K B, the V-support operator given by i_V(x)
+on standard ambient Tor equals multiplication by x⊗1_C
+in the ambient ring S. This identifies the coefficient
+multiplication with the existing S-module action. -/
 theorem standardAmbientLeftOperator_scalar (q : ℕ) (x : A ⊗[K] B)
     (z : standardAmbientNativeTor.{k, r, v, w, au, cu, mu} K B V W A C iV iW q) :
     originalStandardAmbientLeftOperator.{k, au, r, cu, v, w, mu}
@@ -238,8 +273,9 @@ theorem standardAmbientLeftOperator_scalar (q : ℕ) (x : A ⊗[K] B)
     ((nativeTorSecondEndAlgHom.{max au r cu, max k au r cu v w mu}
       ((A ⊗[K] B) ⊗[K] C) NS LS q).commutes (x ⊗ₜ[K] (1 : C)))
 
-/-- First coefficient multiplication by `iW (1 ⊗ c)` is multiplication
-by the actual ambient scalar `1 ⊗ c` on the original native Tor. -/
+/-- For c∈C, the W-support operator given by i_W(1_B⊗c)
+on standard ambient Tor equals multiplication by
+1_(A⊗B)⊗c in S=(A⊗K B)⊗K C. -/
 theorem standardAmbientRightOperator_scalar (q : ℕ) (c : C)
     (z : standardAmbientNativeTor.{k, r, v, w, au, cu, mu} K B V W A C iV iW q) :
     originalStandardAmbientRightOperator.{k, au, r, cu, v, w, mu}
@@ -265,8 +301,10 @@ theorem standardAmbientRightOperator_scalar (q : ℕ) (c : C)
     ((nativeTorFirstEndAlgHom.{max au r cu, max k au r cu v w mu}
       ((A ⊗[K] B) ⊗[K] C) NS LS q).commutes ((1 : A ⊗[K] B) ⊗ₜ[K] c))
 
-/-- The native ambient action is the restriction of the earned balanced
-support action. This identity is derived from the actual coefficient maps. -/
+/-- If A,C are flat over K, the standard ambient Tor
+carries its canonical T=V⊗B W action.
+For s∈S and z in that Tor module, the ambient scalar
+action satisfies s•z=σ_S(s)•_T z. -/
 theorem standardAmbientNativeTor_smul [Module.Flat K A] [Module.Flat K C]
     (q : ℕ) (s : (A ⊗[K] B) ⊗[K] C)
     (z : standardAmbientNativeTor.{k, r, v, w, au, cu, mu} K B V W A C iV iW q) :
@@ -309,8 +347,10 @@ theorem standardAmbientNativeTor_smul [Module.Flat K A] [Module.Flat K C]
           (hl.symm.trans ht.symm))
   | add s₁ s₂ h₁ h₂ => simp only [_root_.map_add, add_smul, h₁, h₂]
 
-/-- The identity on the original native carrier identifies its actual
-ambient module with restriction of the earned support module. -/
+/-- If A,C are flat over K, the identity on the standard
+ambient Tor carrier gives an S-linear isomorphism to
+its T-support module restricted along σ_S:S→T.
+The two scalar actions agree. -/
 def standardAmbientSupportRestrictionIso [Module.Flat K A] [Module.Flat K C] (q : ℕ) :
     letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
     letI : Algebra B W := (originalMiddleRightMap K B C W iW).toRingHom.toAlgebra
@@ -347,7 +387,11 @@ section IntrinsicNative
 
 universe im
 
-/-- The original intrinsic graph Tor before restriction of ambient scalars. -/
+/-- For G=(V⊗K W)⊗K B and maps a:B→V,b:B→W,
+intrinsic ambient Tor is Tor_q^G of the right graph
+coefficient followed by the left graph coefficient.
+Both carriers are V⊗K W with their respective G-actions,
+at height max(k,r,v,w,im). -/
 abbrev intrinsicAmbientNativeTor (q : ℕ) :
     ModuleCat.{max k r v w im} ((V ⊗[K] W) ⊗[K] B) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max k r v w im} ((V ⊗[K] W) ⊗[K] B)) :=
@@ -362,8 +406,10 @@ abbrev intrinsicAmbientNativeTor (q : ℕ) :
         (originalRingCoefficient.{max v w r, max v w, max k r v w im} _ _
           (intrinsicGraphLeftEvaluation K B V W a).toRingHom)
 
-/-- The actual V multiplication operator is native multiplication by its
-ambient tensor inclusion. -/
+/-- For x∈V, the intrinsic V-multiplication operator
+on ambient Tor equals multiplication by
+(x⊗1_W)⊗1_B in G=(V⊗K W)⊗K B.
+This is an equality before any flatness comparison. -/
 theorem intrinsicAmbientLeftOperator_scalar (q : ℕ) (x : V)
     (z : intrinsicAmbientNativeTor.{k, r, v, w, im} K B V W a b q) :
     originalIntrinsicAmbientLeftOperator.{k, r, v, w, im} K B V W a b q x z =
@@ -394,8 +440,9 @@ theorem intrinsicAmbientLeftOperator_scalar (q : ℕ) (x : V)
   rw [he] at hc
   exact congrArg (fun e => e z) hc
 
-/-- The actual W multiplication operator is native multiplication by its
-ambient tensor inclusion. -/
+/-- For y∈W, the intrinsic W-multiplication operator
+on ambient Tor equals multiplication by
+(1_V⊗y)⊗1_B in the intrinsic ambient ring G. -/
 theorem intrinsicAmbientRightOperator_scalar (q : ℕ) (y : W)
     (z : intrinsicAmbientNativeTor.{k, r, v, w, im} K B V W a b q) :
     originalIntrinsicAmbientRightOperator.{k, r, v, w, im} K B V W a b q y z =
@@ -426,8 +473,9 @@ theorem intrinsicAmbientRightOperator_scalar (q : ℕ) (y : W)
   rw [he] at hc
   exact congrArg (fun e => e z) hc
 
-/-- The native middle scalar agrees with its actual V image on Tor,
-by the original resolved graph coefficient's scalar map. -/
+/-- For c∈B, the intrinsic ambient Tor scalar action satisfies
+(1_(V⊗W)⊗c)•z=((a(c)⊗1_W)⊗1_B)•z.
+The equality uses the graph coefficient action induced by a. -/
 theorem intrinsicAmbientMiddle_scalar (q : ℕ) (c : B)
     (z : intrinsicAmbientNativeTor.{k, r, v, w, im} K B V W a b q) :
     ((1 : V ⊗[K] W) ⊗ₜ[K] c) • z =
@@ -461,8 +509,10 @@ theorem intrinsicAmbientMiddle_scalar (q : ℕ) (c : B)
   exact hs.symm.trans
     (intrinsicAmbientLeftOperator_scalar.{k, r, v, w, im} K B V W a b q (a c) z)
 
-/-- The genuine native graph ambient action is restriction of the earned
-balanced support action, including the original middle-ring scalar. -/
+/-- If V,W are flat over K, the intrinsic ambient Tor
+carries its canonical T=V⊗B W action, and
+g•z=σ_G(g)•_T z for g∈G.
+The maps a,b specify the B-actions on the two coefficients. -/
 theorem intrinsicAmbientNativeTor_smul [Module.Flat K V] [Module.Flat K W]
     (q : ℕ) (g : (V ⊗[K] W) ⊗[K] B)
     (z : intrinsicAmbientNativeTor.{k, r, v, w, im} K B V W a b q) :
@@ -516,8 +566,10 @@ theorem intrinsicAmbientNativeTor_smul [Module.Flat K V] [Module.Flat K W]
       simp only [TensorProduct.add_tmul, _root_.map_add, add_smul, h₁, h₂]
   | add g₁ g₂ h₁ h₂ => simp only [_root_.map_add, add_smul, h₁, h₂]
 
-/-- The actual native G action and the earned T action form a scalar
-tower along the canonical graph support map. -/
+/-- If V,W are flat over K, the G-action on intrinsic
+ambient Tor and the canonical T-action are compatible
+through σ_G:G→T. They give the scalar tower G→T acting
+on the same Tor carrier. -/
 theorem intrinsicAmbientNativeTor_scalarTower [Module.Flat K V] [Module.Flat K W] (q : ℕ) :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -549,8 +601,11 @@ variable (A : Type pa) (C : Type pc) [CommRing A] [CommRing C]
   [Algebra K A] [Algebra K C]
   (iV : A ⊗[K] B →ₐ[K] V) (iW : B ⊗[K] C →ₐ[K] W)
 
-/-- The actual standard native Tor over the inverse-image local ring,
-with both original ambient coefficients localized. -/
+/-- For p∈Spec(T) and S=(A⊗K B)⊗K C, put q_S=σ_S⁻¹(p).
+The local standard ambient Tor is Tor_q^(S_(q_S)) of
+the two original ambient coefficients localized at q_S,
+in the same order. Its carrier height includes every
+ring, coefficient and chosen additional world. -/
 abbrev standardAmbientTorAtPrime (p :
     letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
     letI : Algebra B W := (originalMiddleRightMap K B C W iW).toRingHom.toAlgebra
@@ -570,7 +625,10 @@ abbrev standardAmbientTorAtPrime (p :
     (originalRingCoefficient.{max pa r pc, max v pc, max k pa r pc v w pm} _ _
       (originalAmbientLeftMap K A B C V iV).toRingHom) q
 
-/-- The actual standard native scalar tower along its support map. -/
+/-- If A,C are flat over K, the standard ambient Tor
+has compatible actions of S and T through σ_S:S→T.
+This is the scalar tower of its ambient module action
+and its canonical balanced support action. -/
 theorem standardAmbientNativeTor_scalarTower [Module.Flat K A] [Module.Flat K C] (q : ℕ) :
     letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
     letI : Algebra B W := (originalMiddleRightMap K B C W iW).toRingHom.toAlgebra
@@ -593,9 +651,12 @@ theorem standardAmbientNativeTor_scalarTower [Module.Flat K A] [Module.Flat K C]
   exact (standardAmbientNativeTor_smul.{k, r, v, w, pa, pc, pm}
     K B V W A C iV iW q s z).symm
 
-/-- At every actual support prime, the standard local native Tor has the
-literal length of the corresponding T-localized ordered middle Tor.
-Surjectivity of both support maps is required. Infinite length is allowed. -/
+/-- Assume A,C flat over K and i_V,i_W surjective.
+For p∈Spec(T) and q≥0,
+length_(S_(σ_S⁻¹p))(Tor_std,p,q)=
+length_(T_p)((Tor_q^B(V,W))_p).
+The coefficient maps determine the B-actions, and both
+finite and infinite module lengths are allowed. -/
 theorem standardAmbientTorAtPrime_length [Module.Flat K A] [Module.Flat K C]
     (hV : Function.Surjective iV) (hW : Function.Surjective iW) (p :
       letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
@@ -644,8 +705,11 @@ theorem standardAmbientTorAtPrime_length [Module.Flat K A] [Module.Flat K C]
       (LocalizedModule.mkLinearMap p.asIdeal.primeCompl XB) (Localization.AtPrime p.asIdeal) E
   exact e₀.toLinearEquiv.length_eq.symm.trans (hloc.trans e.length_eq)
 
-/-- The actual native standard support is the inverse-image-prime image
-of the support of ordered middle Tor, for genuine support quotients. -/
+/-- Assume A,C flat over K and i_V,i_W surjective.
+For every q≥0, the support of standard ambient Tor in Spec(S)
+is the image of Supp_T(Tor_q^B(V,W)) under
+Spec(T)→Spec(S), p↦σ_S⁻¹(p).
+This is an image under the prime pullback map. -/
 theorem standardAmbientNativeTor_support [Module.Flat K A] [Module.Flat K C]
     (hV : Function.Surjective iV) (hW : Function.Surjective iW) (q : ℕ) :
     letI : Algebra B V := (originalMiddleLeftMap K A B V iV).toRingHom.toAlgebra
@@ -681,8 +745,10 @@ section IntrinsicPrimeLocal
 
 universe ip
 
-/-- Native local Tor of the two actual graph coefficients over the
-inverse-image local ring of the intrinsic ambient. -/
+/-- For p∈Spec(T), T=V⊗B W, put q_G=σ_G⁻¹(p).
+The intrinsic local object is Tor_q^(G_(q_G)) of the
+localized right and left graph coefficients in that order.
+Here G=(V⊗K W)⊗K B and the B-actions come from a,b. -/
 abbrev intrinsicAmbientTorAtPrime (p :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -700,8 +766,11 @@ abbrev intrinsicAmbientTorAtPrime (p :
     (originalRingCoefficient.{max v w r, max v w, max k r v w ip} _ _
       (intrinsicGraphLeftEvaluation K B V W a).toRingHom) q
 
-/-- The intrinsic local native Tor has the literal T-local middle-Tor
-length. The graph support quotient is always surjective. -/
+/-- If V,W are flat over K, then for p∈Spec(T) and q≥0,
+length_(G_(σ_G⁻¹p))(Tor_intrinsic,p,q)=
+length_(T_p)((Tor_q^B(V,W))_p).
+The intrinsic support map is always surjective,
+and infinite lengths are included. -/
 theorem intrinsicAmbientTorAtPrime_length [Module.Flat K V] [Module.Flat K W] (p :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -746,8 +815,10 @@ theorem intrinsicAmbientTorAtPrime_length [Module.Flat K V] [Module.Flat K W] (p
       (LocalizedModule.mkLinearMap p.asIdeal.primeCompl XB) (Localization.AtPrime p.asIdeal) E
   exact e₀.toLinearEquiv.length_eq.symm.trans (hloc.trans e.length_eq)
 
-/-- The native intrinsic graph support is the prime image of the actual
-support of ordered middle Tor, without additional quotient hypotheses. -/
+/-- If V,W are flat over K, the support of intrinsic
+ambient Tor in Spec(G) is the image of
+Supp_T(Tor_q^B(V,W)) under p↦σ_G⁻¹(p).
+No extra surjectivity hypothesis is needed for σ_G. -/
 theorem intrinsicAmbientNativeTor_support [Module.Flat K V] [Module.Flat K W] (q : ℕ) :
     letI : Algebra B V := a.toRingHom.toAlgebra
     letI : Algebra B W := b.toRingHom.toAlgebra
@@ -794,9 +865,12 @@ variable (KF : Type fk) (AF : Type fa) (BF : Type fb) (CF : Type fc)
 
 include hV hW
 
-/-- Over the original field, native Tor over both actual ambient local
-rings has the same literal composition length. Genuine quotient support
-maps are needed on the standard side. All degrees and universes are retained. -/
+/-- For a field K, surjective coefficient maps
+i_V:A⊗K B→V and i_W:B⊗K C→W, and p∈Spec(T),
+the standard and intrinsic local ambient Tor have equal
+module length in every degree q≥0.
+The two local rings are S_(σ_S⁻¹p) and G_(σ_G⁻¹p),
+and the common carrier height is max(k,a,b,c,v,w,m). -/
 theorem fieldTensorTorAtPrime_length_eq (q : ℕ) :
     letI : Algebra BF VF := (originalMiddleLeftMap KF AF BF VF iV).toRingHom.toAlgebra
     letI : Algebra BF WF := (originalMiddleRightMap KF BF CF WF iW).toRingHom.toAlgebra
@@ -824,9 +898,13 @@ theorem fieldTensorTorAtPrime_length_eq (q : ℕ) :
       (originalMiddleRightMap KF BF CF WF iW) p q
   exact hs.trans hg.symm
 
-/-- Honest finite-length and eventual-zero data for the standard native
-local Tor transport to the intrinsic native local Tor. Their finite
-alternating integer sums agree at the supplied cutoff. -/
+/-- In the field case with i_V,i_W surjective and p∈Spec(T),
+assume standard local Tor has finite length for every j<cutoff
+and is zero for every j≥cutoff.
+Then intrinsic local Tor has the same two properties, and
+the integer sums ∑_(j<cutoff)(−1)^j length(Tor_std,j)
+and ∑_(j<cutoff)(−1)^j length(Tor_intrinsic,j) agree.
+The finite-length and cutoff hypotheses are explicit premises. -/
 theorem fieldTensorTorAtPrime_finiteEuler (cutoff : ℕ)
     (hfinite :
       let : Algebra BF VF := (originalMiddleLeftMap KF AF BF VF iV).toRingHom.toAlgebra

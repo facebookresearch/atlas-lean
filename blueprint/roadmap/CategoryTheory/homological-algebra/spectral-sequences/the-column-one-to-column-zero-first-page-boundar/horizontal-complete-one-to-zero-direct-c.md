@@ -1,5 +1,6 @@
-# Horizontal Complete One To Zero Direct Column Section d
+# The horizontal boundary of the column-one complete section
 
-On vertical cycles, the cochain differential of the column-one section
-is the horizontal bicomplex differential followed by the column-zero section
-and the next complete filtration map.
+The horizontal boundary of the column-one complete section.
+
+On vertical cycles, the section differential from degree `-1-q` to `-q` is `K.d(1,0)`,
+followed by the zero-column section and next complete filtration map.

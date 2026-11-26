@@ -1,4 +1,4 @@
 # Change Iso
 
-- [Precompose Change Iso](precompose-change-iso.md)
-- [Iso connecting eq components](iso-connecting-eq-components.md)
+- [Comparison under an isomorphism of exact input functors](precompose-change-iso.md)
+- [Connecting square of degree comparison isomorphisms](iso-connecting-eq-components.md)

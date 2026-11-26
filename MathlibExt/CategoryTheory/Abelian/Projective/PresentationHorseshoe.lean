@@ -15,7 +15,14 @@ public import MathlibExt.CategoryTheory.Abelian.Projective.Horseshoe
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 /-!
-## An horseshoe diagram for a projective short exact presentation
+# Projective horseshoe of a short exact presentation
+
+Let `A → B → X` be short exact in an abelian category, with `A,B`
+projective. Resolve `A` by its degree-zero single resolution and `X`
+by the two-term presentation `A → B`. The middle resolution of `B`
+is `A → A ⊞ B` with differential `[-id,f]` and augmentation `[f,id]`.
+Left inclusion and right projection give a degreewise split horseshoe,
+whose right map in degree one is the identity of `A`.
 -/
 @[expose] public section
 noncomputable section
@@ -28,21 +35,32 @@ namespace CategoryTheory.ProjectiveResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (S : ShortComplex C) (hS : S.ShortExact) [Projective S.X₁] [Projective S.X₂]
 
-/-- The left endpoint resolves the projective kernel by itself. -/
+/-- In an abelian category `C`, let `S` be a short complex with
+projective left object `A`. The single chain complex concentrated
+in degree zero at `A`, augmented by its identity, resolves `A`. -/
 abbrev presentationLeftResolution : ProjectiveResolution S.X₁ := ProjectiveResolution.self S.X₁
 
-/-- The middle resolution uses the split augmentation row. -/
+/-- In an abelian category `C`, let `S : A → B → X` be a short
+complex with `A,B` projective. The two-term complex
+`A → A ⊞ B`, with differential `[-id,S.f]` and augmentation
+`[S.f,id]`, is a projective resolution of `B`. -/
 abbrev presentationMiddleResolution : ProjectiveResolution S.X₂ :=
   @ofPresentation C _ _ (presentationMiddleRow S) (presentationMiddleRow_shortExact S)
     (show Projective S.X₁ from inferInstance)
     (show Projective (S.X₁ ⊞ S.X₂) from inferInstance)
 
-/-- The original left inclusion gives the map of projective-resolution complexes. -/
+/-- In an abelian category `C`, let `S : A → B → X` be a short
+complex with `A,B` projective. The left inclusion gives a chain map
+from the single resolution of `A` to the split middle resolution
+`A → A ⊞ B`. -/
 def presentationHorseshoeInclusion :
     (presentationLeftResolution S).complex ⟶ (presentationMiddleResolution S).complex :=
   (ChainComplex.fromSingle₀Equiv (presentationMiddleResolution S).complex S.X₁).symm biprod.inl
 
-/-- The original right projection and identity in degree one give the quotient map. -/
+/-- Let `C` be abelian and `S : A → B → X` short exact, with
+`A,B` projective. The chain map from the split middle resolution to the
+presentation resolution of `X` is the second projection
+`A ⊞ B → B` in degree zero and the identity on `A` in degree one. -/
 def presentationHorseshoeProjection :
     (presentationMiddleResolution S).complex ⟶ (ofPresentation S hS).complex :=
   ChainComplex.ofHom
@@ -80,27 +98,41 @@ def presentationHorseshoeProjection :
                 | 1 => 𝟙 S.X₁
                 | _ + 2 => 0)) hM).trans zero_comp)
 
-/-- Degree zero of the inclusion is the original biproduct inclusion. -/
+/-- In an abelian category `C`, let `S : A → B → X` be a short
+complex with `A,B` projective. In degree zero, the inclusion from
+the single resolution of `A` is `A → A ⊞ B`, the left biproduct
+inclusion. -/
 theorem presentationHorseshoeInclusion_f_zero :
     (presentationHorseshoeInclusion S).f 0 =
       (biprod.inl : S.X₁ ⟶ S.X₁ ⊞ S.X₂) :=
   ChainComplex.fromSingle₀Equiv_symm_apply_f_zero _
 
-/-- The source single resolution has zero inclusion in every positive degree. -/
+/-- In an abelian category `C`, let `S : A → B → X` be a short
+complex with `A,B` projective. The inclusion from the single
+resolution of `A` is zero in every positive degree because its
+source term is zero. -/
 theorem presentationHorseshoeInclusion_f_succ (n : ℕ) :
     (presentationHorseshoeInclusion S).f (n + 1) = 0 :=
   ChainComplex.fromSingle₀Equiv_symm_apply_f_succ _ n
 
-/-- Degree zero of the quotient map is the original second projection. -/
+/-- Let `C` be abelian and `S : A → B → X` short exact, with
+`A,B` projective. The degree-zero projection from the split middle resolution
+to the quotient presentation is the right biproduct projection
+`A ⊞ B → B`. -/
 theorem presentationHorseshoeProjection_f_zero :
     (presentationHorseshoeProjection S hS).f 0 =
       (biprod.snd : S.X₁ ⊞ S.X₂ ⟶ S.X₂) := rfl
 
-/-- Degree one of the quotient map retains the identity on the original kernel. -/
+/-- Let `C` be abelian and `S : A → B → X` short exact, with
+`A,B` projective. The degree-one projection from the split middle resolution
+to the quotient presentation is `𝟙 A`. -/
 theorem presentationHorseshoeProjection_f_one :
     (presentationHorseshoeProjection S hS).f 1 = 𝟙 S.X₁ := rfl
 
-/-- The inclusion followed by quotient map vanishes. -/
+/-- Let `C` be abelian and `S : A → B → X` short exact, with
+`A,B` projective. The chain inclusion from the single resolution of `A`,
+followed by the projection to the presentation resolution of `X`,
+has zero composite. -/
 theorem presentationHorseshoe_zero :
     presentationHorseshoeInclusion S ≫ presentationHorseshoeProjection S hS = 0 := by
   apply HomologicalComplex.Hom.ext
@@ -114,12 +146,18 @@ theorem presentationHorseshoe_zero :
       rw [HomologicalComplex.comp_f, presentationHorseshoeInclusion_f_succ, zero_comp]
       rfl
 
-/-- The original horseshoe diagram of resolution complexes. -/
+/-- Let `C` be abelian and `S : A → B → X` short exact, with
+`A,B` projective. The single resolution of `A`, split middle resolution of `B`,
+and presentation resolution of `X`, with their inclusion and
+projection, form a short complex of nonnegative chain complexes. -/
 def presentationHorseshoeDiagram : ShortComplex (ChainComplex C ℕ) :=
   ShortComplex.mk (presentationHorseshoeInclusion S) (presentationHorseshoeProjection S hS)
     (presentationHorseshoe_zero S hS)
 
-/-- The diagram splits in every original degree. -/
+/-- Let `C` be abelian and `S : A → B → X` short exact, with
+`A,B` projective. The row of presentation-horseshoe resolution terms has a
+chosen splitting in every degree `n`: the biproduct row in degree
+zero, the row with identity on `A` in degree one, and zero rows thereafter. -/
 def presentationHorseshoeSplitting (n : ℕ) :
     (ShortComplex.mk ((presentationHorseshoeInclusion S).f n)
       ((presentationHorseshoeProjection S hS).f n)
@@ -144,7 +182,10 @@ def presentationHorseshoeSplitting (n : ℕ) :
           · change IsZero (0 : C)
             exact isZero_zero C
 
-/-- The horseshoe data have the prescribed exact original presentation endpoints. -/
+/-- Let `C` be abelian and `S : A → B → X` short exact, with
+`A,B` projective. The split middle resolution, inclusion and projection give
+horseshoe data for `S` with the single resolution of `A` on the left
+and the presentation resolution of `X` on the right. -/
 def presentationHorseshoe : HorseshoeData hS (presentationLeftResolution S)
     (ofPresentation S hS) where
   middle := presentationMiddleResolution S

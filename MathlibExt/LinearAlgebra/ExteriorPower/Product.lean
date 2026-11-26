@@ -15,11 +15,16 @@ public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 public import Mathlib.LinearAlgebra.DirectSum.TensorProduct
 
 /-!
-# Exterior powers of arbitrary product modules
+# Exterior powers of a product of modules
 
-The actual degree-n exterior power splits into the original mixed tensor
-degrees. The proof restricts the earned exterior-algebra product equivalence
-using its actual homogeneous pieces. No freeness or flatness assumption is used.
+For modules `M,N` over a commutative ring `R`, `Λ^n_R(M×N)` is the direct sum of `Λ^p_R M ⊗[R]
+Λ^q_R N` over `p+q=n`.
+
+The inverse comparison assembles a mixed tensor by mapping its `M`-factor through the first
+inclusion, mapping its `N`-factor through the second inclusion, and multiplying in that order
+in the exterior algebra of `M×N`.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -40,7 +45,9 @@ local notation "β" => (fun p : ℕ × ℕ =>
     (ExteriorAlgebra.exteriorPower R (Prod.snd p) N))
 local notation "Fiber" n => {p : ℕ × ℕ // Prod.fst p + Prod.snd p = n}
 
-/-- The original tensors of complementary exterior degrees, with the total degree recorded. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. For `n : ℕ`, `productPieces R M N n`
+is `⨁ (p,q) with p+q=n, Λ^p_R M ⊗[R] Λ^q_R N`, with the `M`-factor first and the `N`-factor
+second. -/
 abbrev productPieces (n : ℕ) :=
   ⨁ p : {p : ℕ × ℕ // p.1 + p.2 = n}, (⋀[R]^p.val.1 M) ⊗[R] (⋀[R]^p.val.2 N)
 
@@ -149,12 +156,15 @@ private theorem productAssembly_bijective (n : ℕ) : Function.Bijective (produc
   have h := congrArg (fun t : ⨁ n : ℕ, ⋀[R]^n (M × N) => t n) hz
   simpa only [G, DirectSum.lmap_apply, DirectSum.lof_eq_of, DirectSum.of_eq_same] using h
 
-/-- The actual exterior power of a product is the direct sum of its original mixed tensor degrees. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. For `n : ℕ`, `productEquiv R M N n` is
+the `R`-linear equivalence `Λ^n_R(M×N) ≃ₗ[R] ⨁_(p+q=n) Λ^p_R M ⊗[R] Λ^q_R N`. -/
 @[no_expose]
 def productEquiv (n : ℕ) : (⋀[R]^n (M × N)) ≃ₗ[R] productPieces R M N n :=
   (LinearEquiv.ofBijective (productAssembly R M N n) (productAssembly_bijective R M N n)).symm
 
-/-- The inverse assembles the original R-first exterior product of every actual mixed tensor. -/
+/-- Let `R` be a commutative ring and `M,N` be `R`-modules. Let `p+q=n`, `x ∈ Λ^p_R M`, and `y ∈
+Λ^q_R N`. The inverse of `productEquiv R M N n` sends the inclusion of `x ⊗ y` to `Λ(inl)(x) *
+Λ(inr)(y)` in `ExteriorAlgebra R (M×N)`. -/
 theorem productEquiv_symm_mixed (n : ℕ)
     (p : {p : ℕ × ℕ // p.1 + p.2 = n}) (x : ⋀[R]^p.val.1 M) (y : ⋀[R]^p.val.2 N) :
     ((productEquiv R M N n).symm (DirectSum.of _ p (x ⊗ₜ[R] y)) : ExteriorAlgebra R (M × N)) =

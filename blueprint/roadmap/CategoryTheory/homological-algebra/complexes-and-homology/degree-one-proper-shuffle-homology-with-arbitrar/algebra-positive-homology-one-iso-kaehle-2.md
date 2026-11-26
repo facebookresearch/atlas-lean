@@ -1,3 +1,6 @@
-# Algebra Positive Homology One Iso Kaehler hom up
+# The forward lifted H₁ comparison agrees with its unlifted equivalence
 
-The categorical comparison lifts precisely the original-world value.
+The forward lifted H₁ comparison agrees with its unlifted equivalence.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the
+isomorphism sends x to ULift.up(algebraPositiveHomologyOneEquivKaehler(x)).

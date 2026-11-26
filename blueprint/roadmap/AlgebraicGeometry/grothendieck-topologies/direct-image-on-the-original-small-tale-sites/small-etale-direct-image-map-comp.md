@@ -1,4 +1,6 @@
-# Small Etale Direct Image map comp
+# Direct image preserves composition of sheaf maps
 
-The stock induced sheaf functor preserves every actual sheaf-morphism
-composition.
+Direct image preserves composition of sheaf maps.
+
+Direct image of a composite sheaf morphism equals the composite of the two direct-image
+morphisms.

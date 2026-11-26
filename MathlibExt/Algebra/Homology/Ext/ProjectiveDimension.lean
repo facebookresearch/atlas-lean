@@ -14,16 +14,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Ext.Finite
 public import Mathlib.Algebra.Category.ModuleCat.ProjectiveDimension
 
 /-!
-# Projective-dimension bounds from bounded Ext vanishing
+# A projective-dimension criterion from bounded Ext vanishing
 
-A finite module admits successive finite free covers over a Noetherian ring.
-If finite free middle terms have a fixed bounded-Ext range, and finite modules
-at the top of that range are projective, iterating the kernel direction of the
-Ext depth lemma gives a projective-dimension bound.
+Let `R` be a commutative Noetherian ring that is small in module-carrier universe `v`, and fix
+a probe module `A`. For natural `e` and `n`, suppose all finite free modules have vanishing
+`Ext(A,-)` below `e + n`, and every finite module with that same vanishing range is
+projective.
 
-## Main declaration
-
-* `ModuleCat.hasProjectiveDimensionLE_of_vanishesBelow_add`
+A finite module `M` with `Ext(A,M)` vanishing below `e` then has projective dimension at most
+`n`. Successive finite free covers and the kernel direction of the Ext depth lemma raise the
+vanishing bound until the projectivity criterion applies.
 -/
 
 @[expose] public section
@@ -38,10 +38,12 @@ universe u v
 
 namespace ModuleCat
 
-/-- Iterating finite free covers converts bounded Ext vanishing below `e`
-into a projective-dimension bound `n`, provided finite free middle terms
-vanish below the fixed top bound `e + n` and finite modules attaining that
-top bound are projective. -/
+/-- Finite module projective dimension from a fixed-probe Ext criterion.
+
+Assume `R` is commutative Noetherian and `Small.{v} R`. Fix `A : ModuleCat.{v} R`. If every
+finite free module has `Ext(A,-)` vanishing below `e+n`, and every finite module with that
+vanishing is categorically projective, then a finite `M` with `Ext(A,M)` vanishing below `e`
+has projective dimension at most `n`. -/
 theorem hasProjectiveDimensionLE_of_vanishesBelow_add
     {R : Type u} [CommRing R] [IsNoetherianRing R] [Small.{v} R]
     (A : ModuleCat.{v} R)

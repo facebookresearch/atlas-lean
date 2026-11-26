@@ -1,3 +1,5 @@
-# Connes Representative
+# The class of a coefficient-first tensor
 
-The projected original regular tensor representative.
+For a k-algebra A, the k-linear representative map
+C_n(A) = A ⊗[k] A^⊗n → Cλ_n(A) sends a tensor x to its class [x]
+in the signed cyclic quotient, where [x−t_n x] = 0.

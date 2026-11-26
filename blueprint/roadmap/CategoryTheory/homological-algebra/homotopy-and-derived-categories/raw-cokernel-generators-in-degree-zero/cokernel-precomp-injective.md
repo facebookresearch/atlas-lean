@@ -1,5 +1,5 @@
-# Cokernel precomp injective
+# Cokernel precomposition is injective on homogeneous cochains
 
-Precomposition by the cokernel projection is injective on raw cochains of any integer degree.
-Evaluation of the cokernel cofork supplies its universal uniqueness; no component epimorphism is
-assumed.
+Let `D` be preadditive with cokernels, `η : U → C` an integer
+cochain map, `Q=coker(η)`, `π : C → Q`, and `d ∈ ℤ`. Precomposition by `π` is injective on all degree-`d`
+homogeneous cochains from `Q` to any integer cochain complex `A`.

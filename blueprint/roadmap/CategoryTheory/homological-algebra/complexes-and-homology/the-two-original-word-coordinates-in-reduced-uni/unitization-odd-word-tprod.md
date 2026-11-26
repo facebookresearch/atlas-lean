@@ -1,3 +1,6 @@
-# Unitization Odd Word tprod
+# The tensor formula for an external-unit-leading normalized word
 
-The odd coordinate keeps the unit and original word, including its old coefficient.
+The tensor formula for an external-unit-leading normalized word.
+
+The odd word sends `m ⊗ ⊗ᵢ aᵢ` to `1 ⊗ ([inr(m)] ⊗ ⊗ᵢ [inr(aᵢ)])`, placing the former
+coefficient at the start of the quotient tail.

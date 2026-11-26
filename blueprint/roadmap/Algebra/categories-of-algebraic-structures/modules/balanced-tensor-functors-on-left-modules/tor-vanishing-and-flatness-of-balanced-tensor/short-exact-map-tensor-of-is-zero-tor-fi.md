@@ -1,4 +1,7 @@
-# Short Exact map tensor of is Zero tor First one
+# Tensor preserves a short exact sequence when quotient Tor one vanishes
 
-Tensoring an original right-module short exact sequence with a fixed
-left coefficient stays short exact when that single quotient Tor₁ value vanishes.
+Tensor preserves a short exact sequence when quotient Tor one vanishes.
+
+Let `0 ⟶ S.X₁ ⟶ S.X₂ ⟶ S.X₃ ⟶ 0` be a short exact sequence of right modules. If `Tor¹_R(S.X₃,
+B)` is zero for a fixed left module `B`, tensoring the sequence with `B` gives a short exact
+sequence of additive groups.

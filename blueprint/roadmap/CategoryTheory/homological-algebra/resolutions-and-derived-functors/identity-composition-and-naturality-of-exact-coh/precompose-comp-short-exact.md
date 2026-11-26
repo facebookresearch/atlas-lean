@@ -1,3 +1,6 @@
-# Precompose Comp Short Exact
+# Exactness of a composite coefficient functor
 
-Exactness of a composite uses the two exactness providers.
+For additive `R : A → B`, `R′ : B → C` preserving short exact
+sequences between preadditive categories, the composite `R ⋙ R′`
+also preserves short exact sequences: `R′(R(S))` is short exact
+whenever `S` is.

@@ -1,3 +1,4 @@
-# Finite Power Combination
+# A finite vector-valued rational power sum
 
-The actual finite rational power combination in an arbitrary original rational module.
+For a `ℚ`-vector space `V`, `N : ℕ`, vectors `a : Fin N → V`, and `x : ℚ`,
+`finitePowerCombination N a x = ∑ i : Fin N, x^i.val • a i`.

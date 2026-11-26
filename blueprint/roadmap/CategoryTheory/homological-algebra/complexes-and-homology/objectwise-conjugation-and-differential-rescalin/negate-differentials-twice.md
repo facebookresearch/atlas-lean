@@ -1,3 +1,5 @@
-# Negate Differentials twice
+# Differential negation is involutive
 
-Negating the same original differentials twice returns the original complex.
+Let `C` be preadditive and `K` a homological complex of any
+shape `c`. Negating all differentials twice returns the original
+complex `K`.

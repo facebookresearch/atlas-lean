@@ -13,11 +13,15 @@ module
 public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 
 /-!
-# The actual exterior-power kernel of a surjective module map
+# Kernel-slot relations for a surjective exterior map
 
-The kernel is earned from the original exterior universal property:
-an exterior word is killed when one slot belongs to the original module kernel.
-The argument includes degree zero and uses no splitting hypothesis.
+For an `R`-linear map `f : M → N` over a commutative ring, let `S_f^n` be the span in `Λ^n_R
+M` of words containing a vector in `ker f` in at least one slot.
+
+If `f` is surjective, `ker(Λ^n f)=S_f^n`. The quotient word depends only on the images of its
+slots, so it descends to an alternating map on `N`. The statement includes degree zero.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 public section
@@ -32,18 +36,23 @@ variable {R : Type u} [CommRing R]
 variable {M : Type v} [AddCommGroup M] [Module R M]
 variable {N : Type w} [AddCommGroup N] [Module R N]
 
-/-- The span of actual exterior words containing a slot in the original linear-map kernel. -/
+/-- Let `R` be a commutative ring, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. For `n : ℕ`,
+`kernelSlotWords f n` is the span in `Λ^n_R M` of words `ιMulti_R(v)` with `f(v i)=0` for some
+slot `i : Fin n`. -/
 def kernelSlotWords (f : M →ₗ[R] N) (n : ℕ) : Submodule R (⋀[R]^n M) :=
   Submodule.span R {x | ∃ (v : Fin n → M) (i : Fin n), f (v i) = 0 ∧ x = exteriorPower.ιMulti R n v}
 
-/-- The defining generators of the actual kernel-slot submodule. -/
+/-- Let `R` be a commutative ring, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. For `n : ℕ`,
+`kernelSlotWords f n = span_R {ιMulti_R(v) | ∃ i : Fin n, f(v i)=0}`. -/
 theorem kernelSlotWords_eq_span (f : M →ₗ[R] N) (n : ℕ) :
     kernelSlotWords f n = Submodule.span R
       {x | ∃ (v : Fin n → M) (i : Fin n), f (v i) = 0 ∧ x = exteriorPower.ιMulti R n v} := by
   unfold kernelSlotWords
   rfl
 
-/-- The original exterior word in the quotient by actual kernel-slot words. -/
+/-- Let `R` be a commutative ring, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. For `n : ℕ`, this is
+the alternating `R`-multilinear map on `Fin n → M` with value `v ↦ [ιMulti_R(v)]` in `Λ^n_R M
+/ kernelSlotWords f n`. -/
 def quotientKernelWord (f : M →ₗ[R] N) (n : ℕ) :
     M [⋀^Fin n]→ₗ[R] ((⋀[R]^n M) ⧸ kernelSlotWords f n) :=
   (kernelSlotWords f n).mkQ.compAlternatingMap (exteriorPower.ιMulti R n)
@@ -83,7 +92,9 @@ private theorem quotientKernelWord_update_eq (f : M →ₗ[R] N) (n : ℕ)
   rw [AlternatingMap.map_update_sub] at hz
   exact sub_eq_zero.mp hz
 
-/-- Quotient exterior words depend only on the actual images of their coordinates. -/
+/-- Let `R` be a commutative ring, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. Let `n : ℕ` and `v,w
+: Fin n → M` satisfy `f(v i)=f(w i)` for every `i`. Then `quotientKernelWord f n v =
+quotientKernelWord f n w` in `Λ^n_R M / kernelSlotWords f n`. -/
 theorem quotientKernelWord_invariant (f : M →ₗ[R] N) (n : ℕ)
     (v w : Fin n → M) (h : ∀ i, f (v i) = f (w i)) :
     quotientKernelWord f n v = quotientKernelWord f n w := by
@@ -117,7 +128,10 @@ theorem quotientKernelWord_invariant (f : M →ₗ[R] N) (n : ℕ)
               exact hw j
   exact all Finset.univ v w (by simp) h
 
-/-- The alternating exterior word descends through the actual surjective module map. -/
+/-- Let `R` be a commutative ring, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. If `f` is
+surjective, the alternating `R`-multilinear map `descendedKernelWord f hf n` on `Fin n → N`
+sends a tuple to the exterior quotient class of any slotwise lift in `M`. Equality of image
+tuples makes this class independent of the lift. -/
 def descendedKernelWord (f : M →ₗ[R] N) (hf : Surjective f) (n : ℕ) :
     N [⋀^Fin n]→ₗ[R] ((⋀[R]^n M) ⧸ kernelSlotWords f n) where
   toFun v := quotientKernelWord f n (surjInv hf ∘ v)
@@ -144,7 +158,9 @@ def descendedKernelWord (f : M →ₗ[R] N) (hf : Surjective f) (n : ℕ) :
   map_eq_zero_of_eq' v i j h hij := by
     exact (quotientKernelWord f n).map_eq_zero_of_eq _ (congrArg (surjInv hf) h) hij
 
-/-- The descended word retains the original quotient class on original module tuples. -/
+/-- Let `R` be a commutative ring, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. Assume `f` is
+surjective. For `n : ℕ` and `v : Fin n → M`, `descendedKernelWord f hf n (f ∘ v) =
+[ιMulti_R(v)]` in `Λ^n_R M / kernelSlotWords f n`. -/
 theorem descendedKernelWord_comp (f : M →ₗ[R] N) (hf : Surjective f) (n : ℕ)
     (v : Fin n → M) :
     descendedKernelWord f hf n (f ∘ v) =
@@ -156,7 +172,9 @@ theorem descendedKernelWord_comp (f : M →ₗ[R] N) (hf : Surjective f) (n : �
   intro i
   exact surjInv_eq hf _
 
-/-- The actual surjective exterior-power map has exactly the original kernel-slot relations. -/
+/-- Let `R` be a commutative ring, `M,N` be `R`-modules, and `f : M →ₗ[R] N`. If `f` is
+surjective, then for every `n : ℕ`, `ker(exteriorPower.map n f) = kernelSlotWords f n`, the
+span of exterior words having a slot in `ker f`. -/
 theorem ker_exteriorPower_map (f : M →ₗ[R] N) (hf : Surjective f) (n : ℕ) :
     LinearMap.ker (exteriorPower.map n f) = kernelSlotWords f n := by
   let g := exteriorPower.alternatingMapLinearEquiv (descendedKernelWord f hf n)

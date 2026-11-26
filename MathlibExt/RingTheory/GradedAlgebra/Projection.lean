@@ -15,27 +15,15 @@ public import Mathlib.RingTheory.GradedAlgebra.Basic
 public import Mathlib.Data.Finset.NatAntidiagonal
 
 /-!
-# Projections in internally graded algebras
+# Homogeneous projections in an internally graded semiring algebra
 
-This file develops a reusable API for homogeneous projections in an internally
-graded algebra `A = ⨁ i, 𝒜 i`. It provides general lemmas for homogeneous
-projections governing membership, identity, vanishing, finite reconstruction, and
-multiplicative behavior, intended for reuse in arbitrary graded-algebra settings
-including tensor algebras and related graded constructions.
+Let R be a commutative semiring, A a semiring R-algebra and A=⨁_{i∈ι}𝒜_i an internal grading by
+an additive monoid with decidable equality. The projection π_i:A→A lands in 𝒜_i, fixes elements
+of that grade and is zero on an element of a different grade. Every element is the finite sum of
+its projections over its decomposition support.
 
-Main results:
-
-* `GradedAlgebra.proj_mem`: the `i`-th projection lands in `𝒜 i`.
-* `GradedAlgebra.proj_eq_self`: projection fixes elements already in its grade.
-* `GradedAlgebra.proj_eq_zero_of_ne`: projection vanishes on a distinct grade.
-* `GradedAlgebra.sum_support_proj_eq`: every element is the finite sum of its
-  homogeneous projections over its decomposition support.
-* `GradedAlgebra.exists_finset_sum_proj_eq`: existential finite reconstruction.
-* `GradedAlgebra.proj_mul_eq_sum_antidiagonal`: for `ℕ`-graded algebras, the
-  projection of a product is the antidiagonal sum of projected factors.
-
-These are direct consequences of the `DirectSum.Decomposition` and
-`GradedAlgebra` APIs.
+For a natural-number grading, π_n(ab)=∑_{p+q=n}π_p(a)π_q(b). The antidiagonal is finite, and the
+order of the two factors is retained; A need not be commutative or have additive inverses.
 -/
 
 @[expose] public section
@@ -47,25 +35,33 @@ namespace GradedAlgebra
 variable {ι : Type*} {R A : Type*} [DecidableEq ι] [AddMonoid ι] [CommSemiring R]
   [Semiring A] [Algebra R A] {𝒜 : ι → Submodule R A} [GradedAlgebra 𝒜]
 
-/-- The homogeneous projection lands in its grade. -/
+/-- Let R be a commutative semiring, A a semiring R-algebra and A=⨁_{i∈ι}𝒜_i an internal grading by
+an additive monoid ι with decidable equality. For i∈ι and x∈A, π_i(x)∈𝒜_i. The projection is the
+grade-i component of the internal direct-sum decomposition. -/
 theorem proj_mem (i : ι) (x : A) : proj 𝒜 i x ∈ 𝒜 i := by
   rw [proj_apply (𝒜 := 𝒜)]
   exact (decompose 𝒜 x i).2
 
-/-- Projection is the identity on elements already in that grade. -/
+/-- Let R be a commutative semiring, A a semiring R-algebra and A=⨁_{i∈ι}𝒜_i an internal grading by
+an additive monoid ι with decidable equality. If x∈𝒜_i, then π_i(x)=x. The internal
+decomposition has x as its grade-i component. -/
 theorem proj_eq_self {i : ι} {x : A} (hx : x ∈ 𝒜 i) : proj 𝒜 i x = x := by
   rw [proj_apply (𝒜 := 𝒜)]
   exact decompose_of_mem_same 𝒜 hx
 
-/-- Projection is zero on an element lying in a different homogeneous degree. -/
+/-- Let R be a commutative semiring, A a semiring R-algebra and A=⨁_{i∈ι}𝒜_i an internal grading by
+an additive monoid ι with decidable equality. For x∈𝒜_i and i≠j, π_j(x)=0. The homogeneous
+decomposition of x is supported at its own grade. -/
 theorem proj_eq_zero_of_ne {i j : ι} {x : A} (hx : x ∈ 𝒜 i) (hij : i ≠ j) :
     proj 𝒜 j x = 0 := by
   rw [proj_apply (𝒜 := 𝒜)]
   exact decompose_of_mem_ne 𝒜 hx hij
 
 open Classical in
-/-- Every element is the finite sum of its homogeneous projections over its
-decomposition support. -/
+/-- Let R be a commutative semiring, A a semiring R-algebra and A=⨁_{i∈ι}𝒜_i an internal grading by
+an additive monoid ι with decidable equality. For x∈A, let supp(x) be the finite support of its
+direct-sum decomposition. Then ∑_{i∈supp(x)}π_i(x)=x. No finiteness condition on the whole
+grading monoid is required. -/
 theorem sum_support_proj_eq (x : A) :
     (∑ i ∈ (decompose 𝒜 x).support, proj 𝒜 i x) = x := by
   classical
@@ -76,7 +72,9 @@ theorem sum_support_proj_eq (x : A) :
   exact sum_support_decompose 𝒜 x
 
 open Classical in
-/-- Every element equals a finite sum of its homogeneous projections. -/
+/-- Let R be a commutative semiring, A a semiring R-algebra and A=⨁_{i∈ι}𝒜_i an internal grading by
+an additive monoid ι with decidable equality. For x∈A there is a finite set s⊂ι such that
+∑_{i∈s}π_i(x)=x. The decomposition support provides such a set. -/
 theorem exists_finset_sum_proj_eq (x : A) :
     ∃ s : Finset ι, (∑ i ∈ s, proj 𝒜 i x) = x := by
   classical
@@ -84,8 +82,9 @@ theorem exists_finset_sum_proj_eq (x : A) :
 
 variable {𝒜 : ℕ → Submodule R A} [GradedAlgebra 𝒜]
 
-/-- For an `ℕ`-graded algebra, projection of a product is the antidiagonal sum
-of projected factors. -/
+/-- Let R be a commutative semiring and A a semiring R-algebra with an internal ℕ-grading 𝒜. For
+a,b∈A and n∈ℕ, π_n(ab)=∑_{p+q=n}π_p(a)π_q(b). The finite antidiagonal sum retains the order of a
+and b, and neither commutativity of A nor additive inverses are assumed. -/
 theorem proj_mul_eq_sum_antidiagonal (a b : A) (n : ℕ) :
     proj 𝒜 n (a * b) =
       ∑ ij ∈ antidiagonal n, proj 𝒜 ij.1 a * proj 𝒜 ij.2 b := by

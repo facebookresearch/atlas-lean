@@ -30,7 +30,12 @@ variable {K₁ K₂ K₃ : ChainComplex (ModuleCat.{u} R) ℕ}
 variable [HasTensor K₁ K₂]
 variable {M N P : ModuleCat.{u} R}
 
-/-- Homotopic chain diagonals induce the same pairing on linear Hom-cohomology. -/
+/-- Let R be a commutative ring, K₁, K₂, K₃ nonnegative chain complexes of
+R-modules with K₁ ⊗ K₂ defined, and μ : M ⊗[R] N → P an R-linear
+coefficient pairing. If the chain maps Δ, Γ : K₃ → K₁ ⊗ K₂ are homotopic,
+then their induced pairings
+Hᵖ(Hom_R(K₁; M)) ⊗[R] Hᑫ(Hom_R(K₂; N)) → Hᵖ⁺ᑫ(Hom_R(K₃; P))
+are equal for every p, q ∈ ℕ. -/
 theorem linearHomCochainGradedPairing_pairHomology_eq_of_homotopy
     (Δ Γ : K₃ ⟶ tensorObj K₁ K₂) (h : Homotopy Δ Γ)
     (μ : M ⊗ N ⟶ P) (p q : ℕ) :

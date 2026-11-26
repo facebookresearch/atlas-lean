@@ -18,13 +18,23 @@ public import MathlibExt.Algebra.Homology.TotalComplexSymmetryDownNat
 public import Mathlib.CategoryTheory.GradedObject.Braiding
 
 /-!
-# Native Koszul interchange on canonical graded homology
+# Koszul interchange and the graded homology tensorator
 
-This owner adds the actual coefficient-category symmetry to the structural
-Monoidal owner. The native graded interchange inserts the literal integer
-sign (-1)^(p*q), is natural and involutive, and agrees with the native signed
-chain braiding on the actual descended cycle pairings. No braiding equation
-or desired comparison is supplied by a caller.
+Let V be a preadditive symmetric monoidal category with a zero object,
+chosen homology and finite colimits preserved by additive tensoring on
+either side. The category object and morphism worlds are independent.
+
+On graded objects, the Koszul interchange sends the (p,q) tensor
+summand through the symmetry of V with coefficient (−1)^(pq), then
+includes it as the (q,p) summand. It is natural and involutive.
+
+The signed chain tensor interchange descends to the canonical
+homology pairings with the same coefficient:
+H_(p+q)(β_Ch) ∘ pair_(K,L) =
+(−1)^(pq) e ∘ pair_(L,K) ∘ β_(H_pK,H_qL),
+where e transports degree q+p to p+q.
+Equivalently, H(β_Ch) ∘ μ_(K,L) = μ_(L,K) ∘ β_Koszul
+for the graded cycle tensorator.
 -/
 
 @[expose] public section
@@ -56,7 +66,9 @@ private theorem signed_comp {A B C : V} (r : ℤ) (f : A ⟶ B) (g : B ⟶ C) :
     (r • f) ≫ g = r • (f ≫ g) := by
   simp only [Preadditive.zsmul_comp]
 
-/-- The actual Koszul sign in bidegree `(p,q)`. -/
+/-- For nonnegative degrees p,q, the Koszul sign is the
+integer (−1)^(pq). It is symmetric in p,q, its square is 1,
+and it is multiplicative under addition in either degree. -/
 abbrev sign (p q : ℕ) : ℤ := (-1 : ℤ) ^ (p * q)
 
 theorem sign_symm (p q : ℕ) : sign q p = sign p q := by
@@ -73,7 +85,11 @@ theorem sign_add_left (p q r : ℕ) : sign (p + q) r = sign p r * sign q r := by
 theorem sign_add_right (p q r : ℕ) : sign p (q + r) = sign p q * sign p r := by
   simp only [sign, Nat.mul_add, pow_add]
 
-/-- The actual signed interchange on native graded tensor summands. -/
+/-- For graded objects X,Y in a preadditive symmetric monoidal
+category with finite colimits preserved by tensoring, the
+Koszul interchange X⊗Y→Y⊗X restricts on the summand X_p⊗Y_q
+to (−1)^(pq) times the symmetry, followed by inclusion of the
+(q,p) summand in total degree p+q. -/
 def koszulSwapHom (X Y : Gr) : X ⊗ Y ⟶ Y ⊗ X :=
   fun n => GradedObject.Monoidal.tensorObjDesc fun p q h =>
     sign p q • ((β_ (X p) (Y q)).hom ≫
@@ -120,8 +136,11 @@ theorem koszulSwapHom_involutive (X Y : Gr) :
     one_smul, SymmetricCategory.symmetry_assoc, Category.comp_id]
   exact (Category.comp_id (GradedObject.Monoidal.ιTensorObj X Y p q n h)).symm
 
-/-- The canonical signed interchange is an actual isomorphism, with the
-reverse signed interchange as inverse. -/
+/-- For graded objects X,Y in a preadditive symmetric monoidal
+category with finite colimits preserved by tensoring on both sides, the signed
+interchange X⊗Y≅Y⊗X has reverse interchange as its inverse.
+The two applications give sign (−1)^(pq+qp)=1 and the
+involutive symmetry of the component objects. -/
 def koszulSwap (X Y : Gr) : X ⊗ Y ≅ Y ⊗ X where
   hom := koszulSwapHom X Y
   inv := koszulSwapHom Y X
@@ -142,8 +161,13 @@ theorem chainPair_braiding (K L : Ch) (p q : ℕ) :
   rw [Units.smul_def]
   simp only [Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one]
 
-/-- The native Koszul chain interchange descends to the actual bidegree
-homology pairings with the same sign. -/
+/-- For nonnegative chain complexes K,L in a preadditive
+symmetric monoidal category with chosen homology, a zero object
+and finite colimits preserved by additive tensoring, the
+canonical pairings satisfy
+H_(p+q)(β_Ch) ∘ pair_(K,L) =
+(−1)^(pq) e ∘ pair_(L,K) ∘ β_(H_pK,H_qL).
+The map e identifies homology degrees q+p and p+q. -/
 theorem pair_braiding (K L : Ch) (p q : ℕ) :
     pair K L p q ≫ homologyMap (koszulTensorBraidingIso K L).hom (p + q) =
       sign p q • ((β_ (K.homology p) (L.homology q)).hom ≫
@@ -153,7 +177,11 @@ theorem pair_braiding (K L : Ch) (p q : ℕ) :
     (𝟙 (tensorObj L K)) (ChainGradedPairing.homologyDescentData (𝟙 (tensorObj L K)))
     (koszulTensorBraidingIso K L).hom (sign p q) p q (chainPair_braiding K L p q)
 
-/-- Koszul braiding coherence of the canonical graded Künneth tensorator. -/
+/-- For nonnegative chain complexes K,L in a preadditive
+symmetric monoidal category with chosen homology and finite colimits preserved by tensoring on both sides, the graded tensorator satisfies
+H(β_Ch) ∘ μ_(K,L) = μ_(L,K) ∘ β_Koszul.
+The graded interchange has coefficient (−1)^(pq) on its
+(p,q) tensor summand. -/
 @[reassoc]
 theorem tensorator_braiding (K L : Ch) :
     tensorator K L ≫ homologyFunctor.map (koszulTensorBraidingIso K L).hom =

@@ -1,3 +1,6 @@
-# Small Etale Godement Skyscrapers Map component surjective
+# Epimorphic families give surjective skyscraper section maps
 
-Every actual Godement skyscraper-product component map is surjective for a family epi.
+Epimorphic families give surjective skyscraper section maps.
+
+For an epimorphism of coefficient families, the induced skyscraper-product sheaf map is
+surjective on sections of each étale object.

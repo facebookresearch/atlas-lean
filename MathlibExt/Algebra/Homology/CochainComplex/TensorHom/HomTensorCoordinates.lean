@@ -15,13 +15,16 @@ public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.Curry
 public import MathlibExt.Algebra.Category.ModuleCat.TensorHomFinite
 
 /-!
-# Original coordinates of the Hom–tensor comparison
+# Signed coordinates of the Hom–tensor comparison
 
-The degree component is the native sum desc into the original full product Hom.
-On a pure summand `(f : Hom(P,J)^a) ⊗ (u : U^b)`, its original P-degree p
-component is `(-1)^(p*b) f_p(-) ⊗ u` in the actual tensor total degree.
-This owner records the constructed components, independently of the separate
-differential law and finite-support inverse.
+For integer cochain complexes `P`, `J`, and `U` over a commutative ring, the comparison from
+the tensor total `Hom_R(P,J) ⊗_R U` to the full-product Hom complex `Hom_R(P,J ⊗_R U)` is
+defined by its summand maps.
+
+For a degree-`a` cochain `f`, an element `u ∈ U^b`, and source degree `p`, the pure-summand
+coordinate is `(-1)^(p*b) • (f_p(x) ⊗ u)` in the target tensor cell `(p + a, b)`. The total
+comparison degree is `n = a + b`; the coefficient and product constructions use the given
+scalar and module-carrier universes independently.
 -/
 
 @[expose] public section
@@ -44,8 +47,10 @@ local instance (K L : CochainComplex (ModuleCat.{v} R) ℤ) :
   intro n
   infer_instance
 
-/-- The original signed summand map, assembled from native evaluation, tensor Hom
-and the original tensor coprojection, without a comparison input. -/
+/-- Linear signed comparison on one Hom–tensor summand.
+
+For `a + b = n`, this linear map takes `Hom_R(P,J)^a ⊗_R U^b` to `Hom_R(P,J ⊗ U)^n`. It is
+defined by the tensor-cell inclusions and the sign depending on the Hom source degree. -/
 def homTensorPairLinear (n a b : ℤ) (hab : a + b = n) :
     Cochain P J a ⊗[R] U.X b →ₗ[R] Cochain P (complexAt R J U) n :=
   LinearMap.pi (fun T : Triplet n => by
@@ -72,14 +77,20 @@ def homTensorPairLinear (n a b : ℤ) (hab : a + b = n) :
       (M := P.X T.p) (N := (complexAt R J U).X T.q)).symm.toLinearMap.comp
         ((T.p * b).negOnePow • (post.comp t)))
 
-/-- Actual pure values characterize every signed original coordinate. -/
+/-- Pure-tensor coordinate of a signed summand comparison.
+
+For `p + n = q`, the comparison of `f ⊗ u` evaluated at `x : P^p` is `(p*b).negOnePow` times
+the total inclusion of `f_(p,p+a)(x) ⊗ u` in the cell `(p + a, b)` of degree `q`. -/
 theorem homTensorPairLinear_v (n a b : ℤ) (hab : a + b = n)
     (f : Cochain P J a) (u : U.X b) (p q : ℤ) (hpq : p + n = q) (x : P.X p) :
     (((homTensorPairLinear R P J U n a b hab) (f ⊗ₜ[R] u)).v p q hpq).hom x =
       (p * b).negOnePow • mkAt R J U (p + a) b q (by omega)
         ((f.v p (p + a) rfl).hom x) u := rfl
 
-/-- The actual degree component of `Hom(P,J) ⊗ U → Hom(P,J ⊗ U)`. -/
+/-- Degree map of the signed full-product Hom–tensor comparison.
+
+Descend the signed summand maps from the direct-sum tensor total to a morphism from its
+degree-`n` object to the full-product degree-`n` Hom object. -/
 def homTensorDegree (n : ℤ) :
     (complexAt R (linearComplex R P J) U).X n ⟶
       (linearComplex R P (complexAt R J U)).X n :=
@@ -88,7 +99,10 @@ def homTensorDegree (n : ℤ) :
     (F := ModuleCat.tensorBifunctorAt R) (c := .up ℤ)
       (fun a b hab => ModuleCat.ofHom (homTensorPairLinear R P J U n a b hab))
 
-/-- The native total desc retains each original Hom cochain/tensor value and sign. -/
+/-- Full degree comparison on a pure Hom–tensor cell.
+
+For a source cell `(a, b)` with `a + b = n`, the degree-`p` value of its pure generator `f ⊗
+u` under the comparison is `(-1)^(p*b)` times the target tensor generator `f_p(x) ⊗ u`. -/
 theorem homTensorDegree_mk_v (n a b : ℤ) (hab : a + b = n)
     (f : Cochain P J a) (u : U.X b) (p q : ℤ) (hpq : p + n = q) (x : P.X p) :
     ((((homTensorDegree R P J U n).hom
@@ -107,7 +121,10 @@ theorem homTensorDegree_mk_v (n a b : ℤ) (hab : a + b = n)
     (((homTensorPairLinear R P J U n a b hab (f ⊗ₜ[R] u)).v p q hpq).hom x) at hv
   exact hv.trans (homTensorPairLinear_v R P J U n a b hab f u p q hpq x)
 
-/-- A supported original J coordinate can be substituted before evaluating the row. -/
+/-- Pure Hom–tensor comparison with an explicit target cell degree.
+
+If `p + a = j` and `p + n = q`, the comparison value is `(-1)^(p*b)` times the tensor-cell
+inclusion in `(j, b)` of `f_(p,j)(x) ⊗ u`. -/
 theorem homTensorDegree_mk_v' (n a b : ℤ) (hab : a + b = n)
     (f : Cochain P J a) (u : U.X b) (p j q : ℤ)
     (hpj : p + a = j) (hpq : p + n = q) (x : P.X p) :

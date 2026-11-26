@@ -1,3 +1,6 @@
-# Restrict represent lie
+# Recovery of the Lie action after representation and restriction
 
-The represented-to-restricted round trip keeps the original Lie action.
+Recovery of the Lie action after representation and restriction.
+
+Extending a Lie module to `U_R(L)` and restricting back to `L` gives the same bracket action
+on its coefficient carrier.

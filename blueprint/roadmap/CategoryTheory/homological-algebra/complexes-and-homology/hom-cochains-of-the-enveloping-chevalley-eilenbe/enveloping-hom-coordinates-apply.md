@@ -1,4 +1,5 @@
-# Enveloping Hom Coordinates apply
+# Evaluation at the regular unit in enveloping Hom coordinates
 
-The coordinates evaluate an UEA-linear map at the original regular
-coefficient unit.
+Evaluation at the regular unit in enveloping Hom coordinates.
+
+The exterior coordinate of an enveloping cochain `f` at `w ∈ ⋀ⁿ L` is `f(w ⊗ 1)`.

@@ -17,14 +17,18 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.SquareCoherence
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Isomorphism
 
 /-!
-# Balanced enveloping tensors under universe lifting
+# Raising coefficient and input heights in balanced tensor functors
 
-Fix a Lie coefficient module over a commutative ground ring and its right enveloping
-representation. Balanced tensoring with left enveloping modules commutes with the coefficient,
-input, and output universe lifts.
+Keep the ground ring and enveloping ring fixed. Raising H to H' lifts the right coefficient
+representation and the left input module. The two coefficient representations are
+right-equivariantly equivalent, and down on the balanced factors followed by output up gives
+F_H'(I_U X) ≅ V_R(F_H X).
 
-Projective-preserving input lifts and exact output lifts give the corresponding isomorphisms
-for left derived functors. The enveloping and ground rings remain fixed.
+These coordinates are natural in X. The source lift preserves projective objects, and the
+output lift preserves homology, so the underived tensor square gives (F_H.leftDerived n) ⋙ V_R
+≅ I_U ⋙ (F_H'.leftDerived n). Evaluating at the lifted trivial module and flattening its
+repeated input lift gives the Tor height comparison. Its inverse is the independently derived
+tensor square after the trivial-input insertion.
 -/
 
 @[expose] public section
@@ -44,11 +48,14 @@ variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The input lift from a sufficient carrier universe to a larger one. -/
+/-- Let R be commutative and L an R-Lie algebra, with U its enveloping ring. For H = max u v v' w
+w' z and H' = max H t, rawTensorHeightSourceLift is ModuleCat.{H} U ⥤ ModuleCat.{H'} U given
+by the module ULift functor. -/
 abbrev rawTensorHeightSourceLift : ModuleCat.{max u v v' w w' z} U ⥤ ModuleCat.{max u v v' w w' z t} U :=
   ModuleCat.uliftFunctor.{max u v v' w w' z t, max u v v' w w' z} U
 
-/-- The output lift, requiring only its exactness. -/
+/-- For a commutative R, H = max u v v' w w' z and H' = max H t, rawTensorHeightOutputLift is the
+module ULift functor ModuleCat.{H} R ⥤ ModuleCat.{H'} R, which preserves homology. -/
 abbrev rawTensorHeightOutputLift : ModuleCat.{max u v v' w w' z} R ⥤ ModuleCat.{max u v v' w w' z t} R :=
   ModuleCat.uliftFunctor.{max u v v' w w' z t, max u v v' w w' z} R
 
@@ -65,7 +72,11 @@ local instance rawTensorHeight_low_additive {A : Type a} [Ring A] [Algebra R A]
     (N : ModuleCat.{b} Aᵐᵒᵖ) : (ModuleCat.BalancedTensor.functor.{u, a, b, c} R A N).Additive :=
   ModuleCat.BalancedTensor.additive R A N
 
-/-- The coefficient universe-lift equivalence is linear for the right enveloping action. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. rawRightCoefficientHeightEquiv : N_H' ≃ₗ[Uᵐᵒᵖ] N_H
+is the larger coefficient lift down to M followed by the smaller coefficient lift up. -/
 def rawRightCoefficientHeightEquiv :
   (LieModuleCat.RightUniversalEnveloping.representObj R L
   (rawLieCoefficientLiftAt.{u, v, v', w, w', max z t} R L M)) ≃ₗ[Uᵐᵒᵖ]
@@ -77,8 +88,12 @@ def rawRightCoefficientHeightEquiv :
 theorem rawRightCoefficientHeightEquiv_up (m : M) :
     rawRightCoefficientHeightEquiv.{u, v, v', w, w', z, t} R L M (ULift.up m) = ULift.up m := rfl
 
-/-- The same right-equivariant equivalence in the exact ground restriction dictionaries used by
-the balanced tensor functor. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. Restricting rawRightCoefficientHeightEquiv to R
+gives an R-linear equivalence between the two ground-restricted coefficient carriers used by
+F_H' and F_H. -/
 def rawRightCoefficientHeightGroundEquiv :
     (ModuleCat.restrictScalars (algebraMap R Uᵐᵒᵖ)).obj
       (LieModuleCat.RightUniversalEnveloping.representObj R L
@@ -88,7 +103,12 @@ def rawRightCoefficientHeightGroundEquiv :
         (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M)) :=
   (rawRightCoefficientHeightEquiv.{u, v, v', w, w', z, t} R L M).restrictScalars R
 
-/-- Down on both balanced factors, followed by output up. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. For X : ModuleCat.{H} U, rawTensorHeightEquiv
+identifies F_H'(I_U X) with V_R(F_H X). It sends a balanced class [m',x'] to
+ULift.up[θ(m'),x'.down], where θ : N_H' ≃ₗ[Uᵐᵒᵖ] N_H is the coefficient height equivalence. -/
 def rawTensorHeightEquiv (X : ModuleCat.{max u v v' w w' z} U) :
     (ModuleCat.BalancedTensor.functor R U
       (LieModuleCat.RightUniversalEnveloping.representObj R L
@@ -162,7 +182,11 @@ theorem rawTensorHeightEquiv_symm_mk_up (X : ModuleCat.{max u v v' w w' z} U) (m
   exact (e.apply_symm_apply _).trans
     (rawTensorHeightEquiv_mk_up.{u, v, v', w, w', z, t} R L M X m x).symm
 
-/-- Input maps commute with the balanced height coordinates. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. The objectwise coordinates give
+rawTensorHeightNatIso : I_U ⋙ F_H' ≅ F_H ⋙ V_R. -/
 def rawTensorHeightNatIso : (rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R L) ⋙
   (ModuleCat.BalancedTensor.functor R U
   (LieModuleCat.RightUniversalEnveloping.representObj R L
@@ -225,8 +249,12 @@ def rawTensorHeightNatIso : (rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R
               exact hLeft.trans (hRight.trans
                 (congrArg (fun p : TensorProduct.Balanced R U N₀ Y => ULift.up p) hLow)).symm)
 
-/-- Tor height comparison with the sufficient input universe. Only the input lift receives
-projective preservation. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. For n : ℕ, rawCoefficientTorHeightFunctorIso is
+(F_H.leftDerived n) ⋙ V_R ≅ I_U ⋙ (F_H'.leftDerived n). It uses projective preservation for
+I_U and homology preservation for V_R. -/
 def rawCoefficientTorHeightFunctorIso (n : ℕ) :
     (ModuleCat.BalancedTensor.functor R U
       (LieModuleCat.RightUniversalEnveloping.representObj R L (rawLieCoefficientLiftAt.{u, v, v', w, w', z} R L M))
@@ -248,8 +276,11 @@ def rawCoefficientTorHeightFunctorIso (n : ℕ) :
         (rawLieCoefficientLiftAt.{u, v, v', w, w', max z t} R L M)) : ModuleCat.{max u v v' w w' z t} U ⥤
         ModuleCat.{max u v v' w w' z t} R) n
 
-/-- The inverse height map is the canonical derived square of the tensor height map, independently
-of CE homology. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. For n : ℕ, rawCoefficientTorHeightFunctorIso.inv
+equals Functor.leftDerivedSquareHom for I_U, V_R and rawTensorHeightNatIso.hom. -/
 theorem rawCoefficientTorHeightFunctorIso_inv_square (n : ℕ) :
     (rawCoefficientTorHeightFunctorIso.{u, v, v', w, w', z, t} R L M n).inv =
       Functor.leftDerivedSquareHom (rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R L)
@@ -267,14 +298,24 @@ theorem rawCoefficientTorHeightFunctorIso_inv_square (n : ℕ) :
   unfold rawCoefficientTorHeightFunctorIso
   simp only [Iso.trans_inv, NatIso.leftDerived_inv, Iso.symm_inv, Category.assoc]
 
-/-- The trivial module input is flattened after derivation. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. rawEnvelopingTrivialHeightIso identifies I_U(T_H)
+with T_H', the trivial enveloping module at the larger height, by
+ModuleCat.uliftFunctorCompIso. -/
 def rawEnvelopingTrivialHeightIso :
     (rawTensorHeightSourceLift.{u, v, v', w, w', z, t} R L).obj
       (liftedEnvelopingTrivial.{u, v, max u v v' w w' z} R L) ≅
       liftedEnvelopingTrivial.{u, v, max u v v' w w' z t} R L :=
   (ModuleCat.uliftFunctorCompIso.{max u v v' w w' z, max u v v' w w' z t, max u v} U).app (envelopingTrivialObject R L)
 
-/-- Tor of the raw coefficient at the two sufficient heights. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. For n : ℕ, rawLieCoefficientTorHeightIsoAt
+identifies V_R(Tor_H(M,n)) with Tor_H'(M,n), using the derived height functor isomorphism at
+T_H followed by the map of the trivial-input flattening. -/
 def rawLieCoefficientTorHeightIsoAt (n : ℕ) :
     (rawTensorHeightOutputLift.{u, v, v', w, w', z, t} R).obj (rawLieCoefficientTorAt.{u, v, v', w, w', z} R L M n) ≅
       rawLieCoefficientTorAt.{u, v, v', w, w', max z t} R L M n :=
@@ -286,8 +327,12 @@ def rawLieCoefficientTorHeightIsoAt (n : ℕ) :
         ModuleCat.{max u v v' w w' z t} R).leftDerived n).mapIso
         (rawEnvelopingTrivialHeightIso.{u, v, v', w, w', z, t} R L)
 
-/-- The facade inverse first inserts the nested input, then uses the independent canonical derived
-height square. -/
+/-- Let R : Type u be commutative, L : Type v an R-Lie algebra and M : LieModuleCat.{w} R L. Put H
+= max u v v' w w' z and H' = max H t. Let I_U and V_R be the source and output ULift functors
+from H to H', N_H,N_H' the right representations of the two coefficient lifts, and F_H,F_H'
+their fixed-right balanced tensor functors. The inverse is (F_H'.leftDerived
+n).map(rawEnvelopingTrivialHeightIso.inv) followed by the component at T_H of
+leftDerivedSquareHom(I_U,V_R,rawTensorHeightNatIso.hom). -/
 theorem rawLieCoefficientTorHeightIsoAt_inv (n : ℕ) :
     (rawLieCoefficientTorHeightIsoAt.{u, v, v', w, w', z, t} R L M n).inv =
       ((ModuleCat.BalancedTensor.functor R U

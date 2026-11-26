@@ -1,3 +1,5 @@
-# Polynomial Connes Pair Input cycle
+# The normalized polynomial input is a Hochschild cycle
 
-The original input is a cycle, proved through the signed polynomial chain comparison.
+Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, the degree-one Hochschild differential vanishes on
+polynomialConnesPairInput k σ s t = Xₛ ⊗ q(Xₜ).

@@ -1,3 +1,5 @@
-# Right Module
+# The right endpoint module of an enveloping-ring module
 
-The native endpoint restriction along the second tensor inclusion.
+For B∈ModuleCat(E_(R,S)), restriction along
+t↦1⊗t gives its Sᵒᵖ-module structure, hence its right
+S-action on the same carrier.

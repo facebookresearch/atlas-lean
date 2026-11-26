@@ -1,3 +1,6 @@
-# Group Uncurry mk
+# Right-variable uncurrying on pure balanced classes
 
-The actual uncurrying map has the original function evaluation on each pure tensor.
+Right-variable uncurrying on pure balanced classes.
+
+For `m : M` and `n : N`, the uncurried map of `g` satisfies `groupUncurry g [m ⊗ n] = (g
+m)(n)`.

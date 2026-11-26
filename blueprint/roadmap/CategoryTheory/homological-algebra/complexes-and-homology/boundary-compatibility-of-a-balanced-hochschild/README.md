@@ -1,9 +1,9 @@
 # Boundary compatibility of A-balanced Hochschild deconcatenation
 
-- [Algebra Deconcat Cut At](algebra-deconcat-cut-at.md)
-- [Algebra Deconcat Cut At refl](algebra-deconcat-cut-at-refl.md)
-- [Algebra Deconcat Cut At tprod](algebra-deconcat-cut-at-tprod.md)
-- [Algebra Boundary tprod endpoints](algebra-boundary-tprod-endpoints.md)
-- [Algebra Middle Head signed cancel](algebra-middle-head-signed-cancel.md)
-- [Algebra Deconcat Cut At boundary pivot](algebra-deconcat-cut-at-boundary-pivot.md)
-- [Algebra Deconcat Cut At boundary](algebra-deconcat-cut-at-boundary.md)
+- [Deconcatenation with an explicit target-degree equality](algebra-deconcat-cut-at.md)
+- [Explicit-degree deconcatenation at the sum p+q](algebra-deconcat-cut-at-refl.md)
+- [Deconcatenation of a degree-cast appended tensor word](algebra-deconcat-cut-at-tprod.md)
+- [The full signed symmetric Hochschild boundary on a tensor word](algebra-boundary-tprod-endpoints.md)
+- [Opposite middle-head signs cancel after A-balancing](algebra-middle-head-signed-cancel.md)
+- [The deconcatenation boundary formula at an explicit middle vector](algebra-deconcat-cut-at-boundary-pivot.md)
+- [The A-balanced deconcatenation chain identity](algebra-deconcat-cut-at-boundary.md)

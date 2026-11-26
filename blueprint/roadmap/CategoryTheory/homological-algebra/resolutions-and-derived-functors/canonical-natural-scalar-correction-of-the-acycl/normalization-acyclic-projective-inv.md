@@ -1,4 +1,7 @@
-# Normalization Acyclic Projective inv
+# Sign of the inverse acyclic-projective comparison
 
-The inverse of the SAME retained projective acyclic comparison has the SAME proved triangular
-sign.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and
+`P` resolving `X` with every term `F`-acyclic. In degree `n`,
+the inverse acyclic comparison is `σ_n` times the inverse
+canonical projective comparison.

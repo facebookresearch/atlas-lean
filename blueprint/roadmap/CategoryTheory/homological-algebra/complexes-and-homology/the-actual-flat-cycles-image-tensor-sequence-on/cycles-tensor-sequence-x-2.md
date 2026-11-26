@@ -1,3 +1,5 @@
-# Cycles Tensor Sequence X₂
+# Middle term of the cycles tensor sequence
 
-The middle term is the actual original tensor complex, with both differentials.
+Middle term of the cycles tensor sequence.
+
+The middle complex is `complex R P Q`, retaining both tensor differential contributions.

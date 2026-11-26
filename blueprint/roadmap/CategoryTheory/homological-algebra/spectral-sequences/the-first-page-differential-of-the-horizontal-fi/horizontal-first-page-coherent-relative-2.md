@@ -1,4 +1,6 @@
-# Horizontal First Page Coherent Relative Homology Direct Column Iso
+# The direct-column homology of a coherent filtration window
 
-Coherent relative homology is canonically the homology of the direct
-column complex.
+The direct-column homology of a coherent filtration window.
+
+Its relative homology at degree `-p-q` is canonically isomorphic to direct-column homology in
+that degree.

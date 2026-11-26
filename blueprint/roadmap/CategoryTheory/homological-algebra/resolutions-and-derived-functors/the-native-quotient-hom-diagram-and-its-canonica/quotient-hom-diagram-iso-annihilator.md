@@ -1,3 +1,7 @@
-# Quotient Hom Diagram Iso Annihilator
+# Evaluation identifies quotient Hom with the power-annihilator diagram
 
-Native categorical Hom is classified by the actual ideal-power annihilator.
+Evaluation identifies quotient Hom with the power-annihilator diagram.
+
+Evaluation at the quotient class of one gives a natural isomorphism from `quotientHomDiagram I
+M` to the diagram of submodules annihilated by `I^n`. It turns quotient precomposition into
+the annihilator inclusions.

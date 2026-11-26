@@ -18,12 +18,22 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationFiniteC
 public import MathlibExt.Algebra.Homology.Embedding.ExtendHomotopy
 
 /-!
-# Vertical homotopies on the complete horizontal filtration
+# Vertical homotopies of complete horizontal filtrations
 
-A homotopy of flipped first-quadrant bicomplex maps totalizes with sign
-`(-1)^p` in horizontal degree `p`. Its components preserve that degree and
-therefore restrict to each finite and complete horizontal-filtration stage.
-The restrictions use the actual stage maps and commute with all transitions.
+Let C be preadditive with a zero object and finite coproducts, and f,g:K→L maps of
+first-quadrant bicomplexes. A homotopy h:flip f≃flip g gives a homotopy H:Tot f≃Tot g whose
+component K_{p,q}→L_{p,q+1} is (-1)^p times the vertical component of h. Since horizontal degree
+p is unchanged, H restricts to every finite horizontal cutoff and every complete cut i∈ℤ∪{⊥,⊤}.
+These restrictions commute termwise with inclusions into the total complex and transitions
+between filtration stages.
+
+Extend chain degree r to cochain degree -r. The stage homotopies then lower cochain degree by
+one and remain strictly compatible with all filtration arrows. For an interval i→j, they induce
+a homotopy on the relative cone. Under Cone(F_i→F_j)^n≅F_i^{n+1}⊕F_j^n, its component to degree
+m is diag(-h_i^{n+1,m+1},h_j^{n,m}). The lower coordinate therefore has a negative shift sign,
+while the upper coordinate is unshifted. The generic cone-map construction assumes exactly the
+two commuting map squares and the componentwise homotopy square. Category universes are
+arbitrary.
 -/
 
 @[expose] public section
@@ -51,14 +61,21 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 local notation "c" => ComplexShape.down ℕ
 
-/-- The actual signed total homotopy induced by a vertical bicomplex homotopy. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. This is the chain homotopy H:Tot
+f≃Tot g. In total degree n=p+q, its component on K_{p,q} is (-1)^p times
+h_{q,q+1,p}:K_{p,q}→L_{p,q+1}, followed by inclusion into total degree n+1. It satisfies (Tot
+f)_n−(Tot g)_n=d^K_{n,n-1}≫H_{n-1,n}+H_{n,n+1}≫d^L_{n+1,n}. -/
 def verticalTotalHomotopy :
     _root_.Homotopy (total.map f c) (total.map g c) :=
   totalMapHomotopy₂ c h
 
 omit [HasZeroObject C] in
-/-- On a total summand the homotopy keeps the horizontal degree and has
-exactly the canonical `(-1)^p` vertical totalization sign. -/
+/-- Let C be preadditive with finite coproducts, K,L bicomplexes of shape (down ℕ,down ℕ), f,g:K→L
+and h a homotopy from flip f to flip g. For p,q,n∈ℕ with p+q=n, let ι^K_{p,q}:K_{p,q}→(Tot K)_n
+and ι^L_{p,q+1}:L_{p,q+1}→(Tot L)_{n+1} be total-summand inclusions. The signed total homotopy H
+obeys ι^K_{p,q}≫H_{n,n+1}=(-1)^p•(h_{q,q+1,p}≫ι^L_{p,q+1}). Thus it preserves horizontal degree
+p while raising the vertical and total degrees by one. -/
 @[reassoc]
 theorem ιTotal_verticalTotalHomotopy_hom (p q n : ℕ) (hn : p + q = n) :
     K.ιTotal c p q n hn ≫ (verticalTotalHomotopy h).hom n (n + 1) =
@@ -82,7 +99,9 @@ theorem ιTotal_verticalTotalHomotopy_hom (p q n : ℕ) (hn : p + q = n) :
   rw [HomologicalComplex.ComplexShape.σ_down_ℕ, HomologicalComplex.ComplexShape.σ_down_ℕ,
     he, one_mul, Nat.mul_add, Nat.mul_one, pow_add, ← mul_assoc, Int.units_mul_self, one_mul]
 
-/-- Raising the inner degree retains the allowed horizontal coordinate. -/
+/-- For k,n∈ℕ and a pair (p,q) with p+q=n and p≤k, this map sends the index to (p,q+1). The new pair
+satisfies p+(q+1)=n+1 and retains p≤k, so it lies in the same horizontal filtration stage in the
+next total degree. -/
 def horizontalFilteredTotalHomotopyIndex {k n : ℕ}
     (pq : DownNatHorizontalFilteredFiber n k) : DownNatHorizontalFilteredFiber (n + 1) k :=
   ⟨⟨(pq.val.val.1, pq.val.val.2 + 1), by
@@ -91,15 +110,22 @@ def horizontalFilteredTotalHomotopyIndex {k n : ℕ}
     change pq.val.val.1 + (pq.val.val.2 + 1) = n + 1
     omega⟩, pq.property⟩
 
-/-- The total vertical homotopy restricted to a finite horizontal stage. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For k,n,m∈ℕ, write G^fin_k for the
+finite horizontal stage, ι^K_{k,n} for its inclusion into (Tot K)_n and r^L_{k,m} for the
+projection onto the retained horizontal summands. This morphism (G^fin_k(K))_n→(G^fin_k(L))_m is
+H^k_{n,m}=ι^K_{k,n}≫H_{n,m}≫r^L_{k,m}, where H is the signed vertical total homotopy. -/
 def horizontalFilteredTotalHomotopyHom (k n m : ℕ) :
     horizontalFilteredTotalObj K k n ⟶ horizontalFilteredTotalObj L k m :=
   horizontalFilteredTotalToTotal K k n ≫ (verticalTotalHomotopy h).hom n m ≫
     totalToHorizontalFilteredTotal L k m
 
 omit [HasZeroObject C] in
-/-- The finite-stage prism keeps the horizontal coordinate, including at
-the filtration boundary, and has the same totalization sign. -/
+/-- Let C be preadditive with finite coproducts, K,L bicomplexes of shape (down ℕ,down ℕ), f,g:K→L
+and h a homotopy from flip f to flip g. For k,n∈ℕ and (p,q) with p+q=n and p≤k, let ι^K_{k,p,q}
+and ι^L_{k,p,q+1} be finite-stage summand inclusions. The restricted component H^k_{n,n+1}
+satisfies ι^K_{k,p,q}≫H^k_{n,n+1}=(-1)^p•(h_{q,q+1,p}≫ι^L_{k,p,q+1}). The target summand remains
+in stage k, including when p=k. -/
 @[reassoc]
 theorem horizontalFilteredTotalHomotopyHom_ι (k n : ℕ)
     (pq : DownNatHorizontalFilteredFiber n k) :
@@ -115,7 +141,10 @@ theorem horizontalFilteredTotalHomotopyHom_ι (k n : ℕ)
   rfl
 
 omit [HasZeroObject C] in
-/-- Finite-stage homotopy components vanish outside degree plus one. -/
+/-- Let C be preadditive with finite coproducts, K,L bicomplexes of shape (down ℕ,down ℕ), f,g:K→L
+and h a homotopy from flip f to flip g. For k,n,m∈ℕ with m≠n+1, the restricted signed homotopy
+component H^k_{n,m}:(G^fin_k(K))_n→(G^fin_k(L))_m is zero. This is the vanishing condition for a
+homotopy of chain complexes of shape down ℕ. -/
 theorem horizontalFilteredTotalHomotopyHom_zero (k n m : ℕ)
     (hrel : ¬ComplexShape.Rel c m n) : horizontalFilteredTotalHomotopyHom h k n m = 0 := by
   unfold horizontalFilteredTotalHomotopyHom
@@ -123,8 +152,11 @@ theorem horizontalFilteredTotalHomotopyHom_zero (k n m : ℕ)
   simp
 
 omit [HasZeroObject C] in
-/-- The finite-stage homotopy factors the actual total homotopy through
-the same horizontal stage in every pair of degrees. -/
+/-- Let C be preadditive with finite coproducts, K,L bicomplexes of shape (down ℕ,down ℕ), f,g:K→L
+and h a homotopy from flip f to flip g. For k,n,m∈ℕ, let H^k be the restricted finite-stage
+components, H the signed total homotopy, and ι^K_k,ι^L_k the finite-stage inclusions into Tot K
+and Tot L. Then H^k_{n,m}≫(ι^L_k)_m=(ι^K_k)_n≫H_{n,m}. This equality holds for every pair of
+degrees, with zero components when m≠n+1. -/
 @[reassoc]
 theorem horizontalFilteredTotalHomotopyHom_toTotal (k n m : ℕ) :
     horizontalFilteredTotalHomotopyHom h k n m ≫ horizontalFilteredTotalToTotal L k m =
@@ -151,8 +183,12 @@ theorem horizontalFilteredTotalHomotopyHom_toTotal (k n m : ℕ) :
       (verticalTotalHomotopy h).zero n m hnm]
     simp
 
-/-- A vertical bicomplex homotopy induces a chain homotopy between the
-existing maps on each finite horizontal-filtration stage. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For k∈ℕ, this is a chain homotopy
+H^k:G^fin_k(f)≃G^fin_k(g) between the induced maps on the finite horizontal stages. Its
+components are the restrictions of the signed total homotopy, it is zero unless the target
+degree is the source degree plus one, and its homotopy equation is
+G^fin_k(f)−G^fin_k(g)=dH^k+H^kd. -/
 def horizontalFilteredTotalHomotopy (k : ℕ) :
     _root_.Homotopy (horizontalFilteredTotalComplexMapOfBicomplex f k)
       (horizontalFilteredTotalComplexMapOfBicomplex g k) where
@@ -195,7 +231,10 @@ def horizontalFilteredTotalHomotopy (k : ℕ) :
     simpa only [iL, horizontalFilteredTotalComplexToTotal] using hComm
 
 omit [HasZeroObject C] in
-/-- The finite-stage homotopy commutes with its canonical inclusion into the total. -/
+/-- Let C be preadditive with finite coproducts, K,L bicomplexes of shape (down ℕ,down ℕ), f,g:K→L
+and h a homotopy from flip f to flip g. For k,n,m∈ℕ, let H^k:G^fin_k(f)≃G^fin_k(g), H:Tot f≃Tot
+g and ι^K_k,ι^L_k be the finite-stage inclusions. Then (H^k)_{n,m}≫(ι^L_k)_m=(ι^K_k)_n≫H_{n,m}.
+The equality compares the homotopy components after inclusion in the same total complexes. -/
 @[reassoc]
 theorem horizontalFilteredTotalHomotopy_toTotal (k n m : ℕ) :
     (horizontalFilteredTotalHomotopy h k).hom n m ≫
@@ -204,8 +243,10 @@ theorem horizontalFilteredTotalHomotopy_toTotal (k n m : ℕ) :
   horizontalFilteredTotalHomotopyHom_toTotal h k n m
 
 omit [HasZeroObject C] in
-/-- The actual homotopies commute with every transition of finite
-horizontal-filtration stages, on every homotopy component. -/
+/-- Let C be preadditive with finite coproducts, K,L bicomplexes of shape (down ℕ,down ℕ), f,g:K→L
+and h a homotopy from flip f to flip g. For k≤l and n,m∈ℕ, write t^K_{k,l}:G^fin_k(K)→G^fin_l(K)
+and t^L_{k,l} for the stage transitions, and H^k,H^l for the restricted homotopies. Their
+components satisfy (t^K_{k,l})_n≫(H^l)_{n,m}=(H^k)_{n,m}≫(t^L_{k,l})_m. -/
 theorem horizontalFilteredTotalHomotopy_naturality {k l : ℕ} (hkl : k ≤ l) (n m : ℕ) :
     (horizontalFilteredTotalComplexMap K hkl).f n ≫
         (horizontalFilteredTotalHomotopy h l).hom n m =
@@ -221,8 +262,10 @@ theorem horizontalFilteredTotalHomotopy_naturality {k l : ℕ} (hkl : k ≤ l) (
       horizontalFilteredTotalHomotopyHom_toTotal]
   simpa only [horizontalFilteredTotalComplexMap, horizontalFilteredTotalHomotopy] using hNat
 
-/-- Conjugating a finite-stage map by the canonical carrier isomorphisms
-recovers exactly its complete-stage map. -/
+/-- Let C be preadditive with a zero object and finite coproducts, φ:K→L a morphism of
+first-quadrant bicomplexes and a∈ℤ with a≥0. If e_K:G_a(K)≅G^fin_a(K) and e_L are the
+complete-to-finite comparisons, then e_K.hom≫G^fin_a(φ)≫e_L.inv=G_a(φ). Thus the complete-stage
+map is the finite-stage map transported at both endpoints. -/
 theorem horizontalCompleteFilteredTotalComplexFiniteIso_conjugate_map
     (φ : K ⟶ L) (a : ℤ) (ha : 0 ≤ a) :
     (horizontalCompleteFilteredTotalComplexFiniteIso K a ha).hom ≫
@@ -232,8 +275,12 @@ theorem horizontalCompleteFilteredTotalComplexFiniteIso_conjugate_map
   rw [← Category.assoc, horizontalCompleteFilteredTotalComplexFiniteIso_naturality,
     Category.assoc, Iso.hom_inv_id, Category.comp_id]
 
-/-- The finite-stage homotopy transported through the canonical complete-to-finite
-isomorphisms, with the actual complete-stage maps as endpoints. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For a∈ℤ with a≥0, let
+e_K:G_a(K)≅G^fin_a(K) and e_L be the complete-to-finite stage isomorphisms. This is the homotopy
+G_a(f)≃G_a(g) obtained from H^a:G^fin_a(f)≃G^fin_a(g) by precomposition with e_K.hom and
+postcomposition with e_L.inv. The stage-map conjugation identities identify its endpoints with
+the complete-stage maps. -/
 def horizontalCompleteFilteredTotalHomotopyOfNonneg (a : ℤ) (ha : 0 ≤ a) :
     _root_.Homotopy (horizontalCompleteFilteredTotalComplexMapOfBicomplex f (a : EInt))
       (horizontalCompleteFilteredTotalComplexMapOfBicomplex g (a : EInt)) := by
@@ -252,8 +299,11 @@ def horizontalCompleteFilteredTotalHomotopyOfNonneg (a : ℤ) (ha : 0 ≤ a) :
     exact horizontalCompleteFilteredTotalComplexFiniteIso_conjugate_map g a ha
   exact (Homotopy.ofEq hf.symm).trans (H.trans (Homotopy.ofEq hg))
 
-/-- Nonnegative complete-stage components use the prescribed finite-stage
-homotopy and the canonical carrier identifications. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For a∈ℤ with a≥0 and n,m∈ℕ, let
+e_K:G_a(K)≅G^fin_a(K), e_L and H^a:G^fin_a(f)≃G^fin_a(g). The transported complete-stage
+homotopy has component (e_K.hom)_n≫(H^a)_{n,m}≫(e_L.inv)_m. This formula specifies its component
+in the complete-stage source and target terms. -/
 theorem horizontalCompleteFilteredTotalHomotopyOfNonneg_hom (a : ℤ) (ha : 0 ≤ a)
     (n m : ℕ) :
     (horizontalCompleteFilteredTotalHomotopyOfNonneg h a ha).hom n m =
@@ -264,9 +314,11 @@ theorem horizontalCompleteFilteredTotalHomotopyOfNonneg_hom (a : ℤ) (ha : 0 �
     Homotopy.ofEq_hom, Homotopy.compLeft_hom, Homotopy.compRight_hom,
     Pi.zero_apply, zero_add, add_zero]
 
-/-- A vertical bicomplex homotopy induces the actual homotopy at every
-complete horizontal-filtration stage: zero below zero, finite in the middle,
-and the signed total homotopy at top. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For i∈ℤ∪{⊥,⊤}, this is a chain
+homotopy G_i(f)≃G_i(g). It is zero at bottom and every negative finite cut, the transported
+finite-stage homotopy at each nonnegative integer cut, and the signed homotopy Tot f≃Tot g at
+top. -/
 def horizontalCompleteFilteredTotalHomotopy (i : EInt) :
     _root_.Homotopy (horizontalCompleteFilteredTotalComplexMapOfBicomplex f i)
       (horizontalCompleteFilteredTotalComplexMapOfBicomplex g i) := by
@@ -286,24 +338,36 @@ def horizontalCompleteFilteredTotalHomotopy (i : EInt) :
     change _root_.Homotopy (total.map f c) (total.map g c)
     exact verticalTotalHomotopy h
 
-/-- The top stage is the actual signed total homotopy. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For n,m∈ℕ, the component of the
+complete-stage homotopy at i=⊤ equals H_{n,m} of the signed total homotopy Tot f≃Tot g. The top
+filtered stages are Tot K and Tot L. -/
 @[simp]
 theorem horizontalCompleteFilteredTotalHomotopy_hom_top (n m : ℕ) :
     (horizontalCompleteFilteredTotalHomotopy h ⊤).hom n m =
       (verticalTotalHomotopy h).hom n m := rfl
 
-/-- The bottom stage has zero homotopy components. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For every n,m∈ℕ, the component of
+G_⊥(f)≃G_⊥(g) is zero. Both bottom stages are the zero chain complex. -/
 @[simp]
 theorem horizontalCompleteFilteredTotalHomotopy_hom_bot (n m : ℕ) :
     (horizontalCompleteFilteredTotalHomotopy h ⊥).hom n m = 0 := rfl
 
-/-- Every negative stage has zero homotopy components. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For an integer a<0 and n,m∈ℕ, the
+complete-stage homotopy component at cut a is zero. The complete horizontal filtration assigns
+the zero chain complex to each such negative finite cut. -/
 theorem horizontalCompleteFilteredTotalHomotopy_hom_coe_of_neg (a : ℤ) (ha : a < 0)
     (n m : ℕ) : (horizontalCompleteFilteredTotalHomotopy h (a : EInt)).hom n m = 0 := by
   simp only [horizontalCompleteFilteredTotalHomotopy, WithBotTop.rec_coe,
     dite_eq_right (not_le.mpr ha), Homotopy.ofEq_hom, Pi.zero_apply]
 
-/-- A nonnegative complete-stage homotopy is its canonical finite-stage transport. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For a∈ℤ with a≥0 and n,m∈ℕ, the
+component of the complete-stage homotopy at cut a equals the component obtained by transporting
+H^a:G^fin_a(f)≃G^fin_a(g) through the complete-to-finite stage isomorphisms. The equality
+compares these two specified homotopies between G_a(f) and G_a(g). -/
 theorem horizontalCompleteFilteredTotalHomotopy_hom_coe_of_nonneg
     (a : ℤ) (ha : 0 ≤ a) (n m : ℕ) :
     (horizontalCompleteFilteredTotalHomotopy h (a : EInt)).hom n m =
@@ -342,8 +406,10 @@ private theorem completeOfNonneg_toTotal (a : ℤ) (ha : 0 ≤ a) (n m : ℕ) :
       rw [horizontalFilteredTotalHomotopy_toTotal]
     _ = _ := by rw [← Category.assoc, hKf]
 
-/-- At every complete filtration index the actual homotopy commutes with
-inclusion into the total complex, on each pair of degrees. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For i∈ℤ∪{⊥,⊤} and n,m∈ℕ, let
+H^i:G_i(f)≃G_i(g), H:Tot f≃Tot g, and ι_i^K:G_i(K)→Tot K, ι_i^L:G_i(L)→Tot L be the inclusions.
+Then (H^i)_{n,m}≫(ι_i^L)_m=(ι_i^K)_n≫H_{n,m}. -/
 @[reassoc]
 theorem horizontalCompleteFilteredTotalHomotopy_toTotal (i : EInt) (n m : ℕ) :
     (horizontalCompleteFilteredTotalHomotopy h i).hom n m ≫
@@ -369,7 +435,10 @@ theorem horizontalCompleteFilteredTotalHomotopy_toTotal (i : EInt) (n m : ℕ) :
     change (verticalTotalHomotopy h).hom n m ≫ 𝟙 _ = 𝟙 _ ≫ (verticalTotalHomotopy h).hom n m
     simp
 
-/-- Every complete-stage inclusion is monic on each chain degree. -/
+/-- Let C be preadditive with a zero object and finite coproducts and K a bicomplex of shape (down
+ℕ,down ℕ). For every complete cut i∈ℤ∪{⊥,⊤} and n∈ℕ, the term map (G_i(K))_n→(Tot K)_n is monic.
+At nonnegative finite cuts it is the inclusion of the retained horizontal summands, at top it is
+the identity, and at bottom or negative cuts its source is zero. -/
 instance horizontalCompleteFilteredTotalToTotal_f_mono (i : EInt) (n : ℕ) :
     Mono ((horizontalCompleteFilteredTotalToTotal K i).f n) := by
   induction i using WithBotTop.rec with
@@ -395,8 +464,11 @@ instance horizontalCompleteFilteredTotalToTotal_f_mono (i : EInt) (n : ℕ) :
     change Mono (𝟙 ((K.total c).X n))
     infer_instance
 
-/-- The canonical homotopies commute with every inequality transition in
-the complete horizontal filtration, on every homotopy component. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For i≤j in ℤ∪{⊥,⊤} and n,m∈ℕ, write
+t^K_{i,j}:G_i(K)→G_j(K) and t^L_{i,j} for the complete-stage transitions, and H^i,H^j for the
+stage homotopies. Then (t^K_{i,j})_n≫(H^j)_{n,m}=(H^i)_{n,m}≫(t^L_{i,j})_m. The equality
+includes bottom, negative finite and top cuts. -/
 theorem horizontalCompleteFilteredTotalHomotopy_naturality
     {i j : EInt} (hij : i ≤ j) (n m : ℕ) :
     (horizontalCompleteFilteredTotalMap K hij).f n ≫
@@ -415,7 +487,9 @@ theorem horizontalCompleteFilteredTotalHomotopy_naturality
     ← Category.assoc, hK, Category.assoc, hL, horizontalCompleteFilteredTotalHomotopy_toTotal]
 
 omit [HasZeroObject C] in
-/-- The existing finite-stage map sends the identity bicomplex map to the identity. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with finite coproducts and k∈ℕ, the
+induced map of the finite horizontal stage under id_K is id_{G^fin_k(K)}. Thus
+G^fin_k(id_K)=id_{G^fin_k(K)} as chain maps of shape down ℕ. -/
 @[simp]
 theorem horizontalFilteredTotalComplexMapOfBicomplex_id (k : ℕ) :
     horizontalFilteredTotalComplexMapOfBicomplex (𝟙 K) k =
@@ -427,7 +501,9 @@ theorem horizontalFilteredTotalComplexMapOfBicomplex_id (k : ℕ) :
   exact hk
 
 omit [HasZeroObject C] in
-/-- The existing finite-stage maps preserve composition of bicomplex maps. -/
+/-- Let C be preadditive with finite coproducts, φ:K→L and ψ:L→M morphisms of bicomplexes of shape
+(down ℕ,down ℕ), and k∈ℕ. The induced finite-stage maps satisfy
+G^fin_k(φ≫ψ)=G^fin_k(φ)≫G^fin_k(ψ). -/
 @[simp]
 theorem horizontalFilteredTotalComplexMapOfBicomplex_comp
     {M : HomologicalComplex₂ C c c} (φ : K ⟶ L) (ψ : L ⟶ M) (k : ℕ) :
@@ -442,7 +518,9 @@ theorem horizontalFilteredTotalComplexMapOfBicomplex_comp
       horizontalFilteredTotalComplexMapOfBicomplex ψ k at hk
   exact hk
 
-/-- The existing complete-stage map sends the identity bicomplex map to the identity. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts and i∈ℤ∪{⊥,⊤}, the complete-stage map induced by id_K is id_{G_i(K)}. The formula
+includes the zero bottom and negative stages and the full total complex at top. -/
 @[simp]
 theorem horizontalCompleteFilteredTotalComplexMapOfBicomplex_id (i : EInt) :
     horizontalCompleteFilteredTotalComplexMapOfBicomplex (𝟙 K) i =
@@ -453,7 +531,9 @@ theorem horizontalCompleteFilteredTotalComplexMapOfBicomplex_id (i : EInt) :
   change horizontalCompleteFilteredTotalComplexMapOfBicomplex (𝟙 K) i = 𝟙 _ at hi
   exact hi
 
-/-- The existing complete-stage maps preserve composition of bicomplex maps. -/
+/-- Let C be preadditive with a zero object and finite coproducts, φ:K→L and ψ:L→M morphisms of
+bicomplexes of shape (down ℕ,down ℕ), and i∈ℤ∪{⊥,⊤}. The complete-stage maps satisfy
+G_i(φ≫ψ)=G_i(φ)≫G_i(ψ) at every complete cut. -/
 @[simp]
 theorem horizontalCompleteFilteredTotalComplexMapOfBicomplex_comp
     {M : HomologicalComplex₂ C c c} (φ : K ⟶ L) (ψ : L ⟶ M) (i : EInt) :
@@ -478,29 +558,45 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [HasBinaryBiproducts C]
   {f₀ g₀ : K₀ ⟶ L₀} {f₁ g₁ : K₁ ⟶ L₁}
   (h₀ : _root_.Homotopy f₀ g₀) (h₁ : _root_.Homotopy f₁ g₁)
 
-/-- The componentwise cone homotopy uses the negative shifted lower
-homotopy and the unshifted upper homotopy. -/
+/-- Let C be preadditive with binary biproducts, u_K:K₀→K₁ and u_L:L₀→L₁ maps of integer-indexed
+cochain complexes, h₀ a homotopy f₀≃g₀ from K₀ to L₀ and h₁ a homotopy f₁≃g₁ from K₁ to L₁. For
+n,m∈ℤ, identify Cone(u_K)^n with K₀^{n+1}⊕K₁^n and Cone(u_L)^m with L₀^{m+1}⊕L₁^m. This
+component is the diagonal map diag(-h₀_{n+1,m+1},h₁_{n,m}) between those biproducts, transported
+through the canonical cone-coordinate isomorphisms. No compatibility square is required to
+define this component. -/
 def mapCompatibleHomotopyHom (n m : ℤ) :
     (CochainComplex.mappingCone uK).X n ⟶ (CochainComplex.mappingCone uL).X m :=
   (HomologicalComplex.homotopyCofiber.XIsoBiprod uK n (n + 1) rfl).hom ≫
     biprod.map (-(h₀.hom (n + 1) (m + 1))) (h₁.hom n m) ≫
       (HomologicalComplex.homotopyCofiber.XIsoBiprod uL m (m + 1) rfl).inv
 
-/-- The lower cone coordinate retains its canonical inclusion and shift sign. -/
+/-- Let C be preadditive with binary biproducts, u_K:K₀→K₁ and u_L:L₀→L₁ maps of integer-indexed
+cochain complexes, h₀ a homotopy f₀≃g₀ from K₀ to L₀ and h₁ a homotopy f₁≃g₁ from K₁ to L₁. Let
+H_{n,m}:Cone(u_K)^n→Cone(u_L)^m be the diagonal component diag(-h₀_{n+1,m+1},h₁_{n,m}). If
+j_K:K₀^{n+1}→Cone(u_K)^n and j_L:L₀^{m+1}→Cone(u_L)^m are lower-coordinate inclusions, then
+j_K≫H_{n,m}=(-h₀_{n+1,m+1})≫j_L. -/
 @[reassoc]
 theorem mapCompatibleHomotopyHom_inl (n m : ℤ) :
     (inl uK).v (n + 1) n (by omega) ≫ mapCompatibleHomotopyHom uK uL h₀ h₁ n m =
       -(h₀.hom (n + 1) (m + 1)) ≫ (inl uL).v (m + 1) m (by omega) := by
   simp [mapCompatibleHomotopyHom, inl]
 
-/-- The upper cone coordinate is the actual upper-stage homotopy component. -/
+/-- Let C be preadditive with binary biproducts, u_K:K₀→K₁ and u_L:L₀→L₁ maps of integer-indexed
+cochain complexes, h₀ a homotopy f₀≃g₀ from K₀ to L₀ and h₁ a homotopy f₁≃g₁ from K₁ to L₁. For
+n,m∈ℤ, let H_{n,m}:Cone(u_K)^n→Cone(u_L)^m be diag(-h₀_{n+1,m+1},h₁_{n,m}). If
+j_K:K₁^n→Cone(u_K)^n and j_L:L₁^m→Cone(u_L)^m are upper-coordinate inclusions, then
+j_K≫H_{n,m}=h₁_{n,m}≫j_L. -/
 @[reassoc]
 theorem mapCompatibleHomotopyHom_inr (n m : ℤ) :
     (inr uK).f n ≫ mapCompatibleHomotopyHom uK uL h₀ h₁ n m =
       h₁.hom n m ≫ (inr uL).f m := by
   simp [mapCompatibleHomotopyHom, inr]
 
-/-- Cone homotopy components vanish outside the cochain homotopy degree. -/
+/-- Let C be preadditive with binary biproducts, u_K:K₀→K₁ and u_L:L₀→L₁ maps of integer-indexed
+cochain complexes, h₀ a homotopy f₀≃g₀ from K₀ to L₀ and h₁ a homotopy f₁≃g₁ from K₁ to L₁. For
+n,m∈ℤ with m+1≠n, the diagonal cone component H_{n,m}=diag(-h₀_{n+1,m+1},h₁_{n,m}) is zero. Both
+component homotopies lower cochain degree by one, so the same vanishing condition holds after
+shifting the lower coordinate. -/
 theorem mapCompatibleHomotopyHom_zero (n m : ℤ)
     (hrel : ¬(ComplexShape.up ℤ).Rel m n) :
     mapCompatibleHomotopyHom uK uL h₀ h₁ n m = 0 := by
@@ -535,8 +631,12 @@ private theorem inl_hom_with_indices (n m i j : ℤ) (hi : n + 1 = i) (hj : m + 
   subst j
   exact mapCompatibleHomotopyHom_inl uK uL h₀ h₁ n m
 
-/-- Two compatible chain homotopies induce a genuine homotopy of their
-canonical cone maps. The strict component square cancels the off-diagonal term. -/
+/-- Let C be preadditive with binary biproducts, u_K:K₀→K₁ and u_L:L₀→L₁ maps of integer-indexed
+cochain complexes, h₀ a homotopy f₀≃g₀ from K₀ to L₀ and h₁ a homotopy f₁≃g₁ from K₁ to L₁.
+Assume u_K≫f₁=f₀≫u_L and u_K≫g₁=g₀≫u_L. Also assume the componentwise compatibility
+u_K^n≫h₁_{n,m}=h₀_{n,m}≫u_L^m for every n,m∈ℤ. The induced cone maps Cone(f₀,f₁) and Cone(g₀,g₁)
+are homotopic, with components diag(-h₀_{n+1,m+1},h₁_{n,m}) under the cone biproduct
+coordinates. The strict compatibility makes the off-diagonal homotopy term vanish. -/
 def mapHomotopyOfCompatible
     (hf : uK ≫ f₁ = f₀ ≫ uL) (hg : uK ≫ g₁ = g₀ ≫ uL)
     (hn : ∀ n m, uK.f n ≫ h₁.hom n m = h₀.hom n m ≫ uL.f m) :
@@ -589,14 +689,20 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   {f g : K ⟶ L}
   (h : _root_.Homotopy (flipMap f) (flipMap g))
 
-/-- The actual complete-stage homotopy under the existing chain-to-cochain
-embedding used by the spectral object. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. Let F_i(K) be G_i(K) reindexed by
+chain degree r↦cochain degree -r and extended by zero. At each i∈ℤ∪{⊥,⊤}, the complete-stage
+chain homotopy extends to a cochain homotopy F_i(f)≃F_i(g). Its nonzero components lower cochain
+degree by one. -/
 def horizontalCompleteFiltrationCochainHomotopy (i : EInt) :
     _root_.Homotopy ((horizontalCompleteFiltrationCochainDiagramNatTrans f).app i)
       ((horizontalCompleteFiltrationCochainDiagramNatTrans g).app i) :=
   (horizontalCompleteFilteredTotalHomotopy h i).extend ComplexShape.embeddingDownNat
 
-/-- The cochain-stage homotopies commute with every actual filtration arrow. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. Let F_i(K) denote the integer cochain
+extension of G_i(K), and H^i:F_i(f)≃F_i(g) its extended homotopy. For an index arrow a:i→j and
+n,m∈ℤ, the cochain transition maps satisfy (F(K)(a))^n≫(H^j)_{n,m}=(H^i)_{n,m}≫(F(L)(a))^m. -/
 theorem horizontalCompleteFiltrationCochainHomotopy_naturality
     {i j : EInt} (a : i ⟶ j) (n m : ℤ) :
     ((horizontalCompleteFiltrationCochainDiagram K).map a).f n ≫
@@ -621,8 +727,12 @@ theorem horizontalCompleteFiltrationCochainHomotopy_naturality
     (horizontalCompleteFilteredTotalHomotopy_naturality h (leOfHom a))
     ComplexShape.embeddingDownNat n m
 
-/-- The complete filtered homotopy induces a genuine homotopy on every
-actual interval cone in the chosen spectral-object construction. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For an interval I=(i→j) of ℤ∪{⊥,⊤},
+write F_i,F_j for the integer cochain filtration stages. The maps induced by f and g from
+Cone(F_i(K)→F_j(K)) to Cone(F_i(L)→F_j(L)) are homotopic. The cone homotopy uses the negative
+shifted homotopy of the lower stage i and the unshifted homotopy of the upper stage j; their
+strict compatibility follows from naturality of the stage homotopies. -/
 def horizontalCompleteFiltrationMappingConeHomotopy (I : ComposableArrows EInt 1) :
     _root_.Homotopy ((horizontalCompleteFiltrationMappingConeNatTrans f).app I)
       ((horizontalCompleteFiltrationMappingConeNatTrans g).app I) :=
@@ -635,8 +745,11 @@ def horizontalCompleteFiltrationMappingConeHomotopy (I : ComposableArrows EInt 1
     ((horizontalCompleteFiltrationCochainDiagramNatTrans g).naturality (I.map' 0 1))
     (horizontalCompleteFiltrationCochainHomotopy_naturality h (I.map' 0 1))
 
-/-- The lower interval-cone coordinate is the negative shifted homotopy of
-the actual lower filtration stage. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For an interval I=(i→j) and n,m∈ℤ,
+let H^I be the induced relative-cone homotopy and H^i the extended cochain homotopy of the lower
+stage. For the lower inclusions J_K:F_i(K)^{n+1}→Cone_I(K)^n and J_L:F_i(L)^{m+1}→Cone_I(L)^m,
+J_K≫(H^I)_{n,m}=(-(H^i)_{n+1,m+1})≫J_L. -/
 @[reassoc]
 theorem horizontalCompleteFiltrationMappingConeHomotopy_inl
     (I : ComposableArrows EInt 1) (n m : ℤ) :
@@ -650,7 +763,11 @@ theorem horizontalCompleteFiltrationMappingConeHomotopy_inl
             (m + 1) m (by omega) :=
   CochainComplex.mappingCone.mapCompatibleHomotopyHom_inl _ _ _ _ n m
 
-/-- The upper interval-cone coordinate is the actual upper-stage homotopy. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K,L bicomplexes of shape (down
+ℕ,down ℕ), f,g:K→L and h a homotopy from flip f to flip g. For an interval I=(i→j) and n,m∈ℤ,
+let H^I be the relative-cone homotopy and H^j the extended cochain homotopy of the upper stage.
+With upper inclusions J_K:F_j(K)^n→Cone_I(K)^n and J_L:F_j(L)^m→Cone_I(L)^m,
+J_K≫(H^I)_{n,m}=(H^j)_{n,m}≫J_L. -/
 @[reassoc]
 theorem horizontalCompleteFiltrationMappingConeHomotopy_inr
     (I : ComposableArrows EInt 1) (n m : ℤ) :
@@ -662,7 +779,10 @@ theorem horizontalCompleteFiltrationMappingConeHomotopy_inr
           ((horizontalCompleteFiltrationCochainDiagram L).map (I.map' 0 1))).f m :=
   CochainComplex.mappingCone.mapCompatibleHomotopyHom_inr _ _ _ _ n m
 
-/-- The actual interval-cone map of the identity bicomplex map is the identity. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts and an interval I=(i→j) in ℤ∪{⊥,⊤}, the map on Cone(F_i(K)→F_j(K)) induced by id_K is
+the identity. Here F is the complete horizontal chain filtration extended to cochain degrees by
+r↦-r. -/
 theorem horizontalCompleteFiltrationMappingConeNatTrans_id
     (I : ComposableArrows EInt 1) :
     (horizontalCompleteFiltrationMappingConeNatTrans (𝟙 K)).app I =
@@ -672,7 +792,10 @@ theorem horizontalCompleteFiltrationMappingConeNatTrans_id
     horizontalCompleteFilteredTotalComplexMapOfBicomplex_id, HomologicalComplex.extendMap_id]
   exact CochainComplex.mappingCone.map_id _
 
-/-- The actual interval-cone maps preserve composition of bicomplex maps. -/
+/-- Let C be preadditive with a zero object and finite coproducts, φ:K→L and ψ:L→M morphisms of
+first-quadrant bicomplexes and I=(i→j) an extended-integer interval. For the cochain filtration
+F, let c_I(φ) be the induced map Cone(F_i(K)→F_j(K))→Cone(F_i(L)→F_j(L)). Then
+c_I(φ≫ψ)=c_I(φ)≫c_I(ψ). -/
 theorem horizontalCompleteFiltrationMappingConeNatTrans_comp
     {M : HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ)}
     (φ : K ⟶ L) (ψ : L ⟶ M) (I : ComposableArrows EInt 1) :

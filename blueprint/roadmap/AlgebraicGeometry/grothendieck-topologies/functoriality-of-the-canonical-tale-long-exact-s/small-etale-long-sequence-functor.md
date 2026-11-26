@@ -1,3 +1,6 @@
-# Small Etale Long Sequence Functor
+# Cohomology window functor of short exact sheaf sequences
 
-The canonical sequence functor in each adjacent pair of degrees.
+Cohomology window functor of short exact sheaf sequences.
+
+For fixed natural degree `n`, the small étale six-term cohomology windows define a functor on
+short exact sheaf sequences.

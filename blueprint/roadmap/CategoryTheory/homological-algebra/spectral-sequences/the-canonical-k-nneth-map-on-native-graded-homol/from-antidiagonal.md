@@ -1,3 +1,5 @@
-# From Antidiagonal
+# The biproduct-to-coproduct comparison of a graded homology tensor
 
-The reverse comparison, using the native graded tensor injections.
+The biproduct-to-coproduct comparison of a graded homology tensor.
+
+Send each finite antidiagonal tensor summand to its graded tensor inclusion.

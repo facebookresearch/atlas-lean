@@ -12,13 +12,17 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.WordFiltration
 
 /-!
-# Hochschild faces on ideal-count stages
+# Ideal-entry counts under all Hochschild faces
 
-Regular nonunital faces preserve the ideal-count
-stages in first-factor tensor coordinates. The
-last face uses the last-to-first rotation and
-its ordered product. Quotient-kernel pullback
-retains the original Hochschild boundary.
+For a two-sided ideal I in a nonunital k-algebra A, permuting an algebra word preserves its
+ideal-entry count. Every adjacent multiplication face loses at most one ideal entry. The
+cyclic last face first moves the last entry to the front and then multiplies last times first;
+it has the same count bound.
+
+In whole-word coordinates the Hochschild boundary is the sum of all these faces with signs
+(−1)^i. It maps the span requiring r ideal entries to the span requiring r−1. Pulling back
+along the relative quotient-kernel word inclusion therefore makes every increasing filtration
+stage F_p stable under the b differential.
 -/
 
 @[expose] public section
@@ -38,7 +42,9 @@ variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Reindexing the original entries does not change how many lie in the ideal. -/
+/-- Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. For e : Perm(Fin n) and a : Fin n → A, idealEntryCount(a ∘ e) = idealEntryCount
+a. -/
 theorem idealEntryCount_reindex {n : ℕ} (e : Equiv.Perm (Fin n)) (a : Fin n → A) :
     idealEntryCount k A I (fun i => a (e i)) = idealEntryCount k A I a := by
   classical
@@ -55,7 +61,10 @@ theorem idealEntryCount_reindex {n : ℕ} (e : Equiv.Perm (Fin n)) (a : Fin n �
     simpa only [e.apply_symm_apply] using (Finset.mem_filter.mp hj).2
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- The original last-to-first face loses at most one original ideal entry. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For a : Fin (n + 2) → A, the ideal count minus one is
+bounded by that of the word obtained by rotating the last entry first and multiplying the
+first adjacent pair. The ordered product is a_(n+1)*a₀. -/
 theorem idealEntryCount_mulCyclicLast {n : ℕ} (a : Fin (n + 2) → A) :
     idealEntryCount k A I a - 1 ≤
       idealEntryCount k A I
@@ -64,14 +73,19 @@ theorem idealEntryCount_mulCyclicLast {n : ℕ} (a : Fin (n + 2) → A) :
   rw [← idealEntryCount_reindex k A I (finRotate (n + 2)).symm a]
   exact idealEntryCount_mulAdjacent k A I 0 _
 
-/-- The regular face in the original full tensor-word coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For n : ℕ and i : Fin (n + 2), regularWordFace n i :
+A^⊗(n+2) →ₗ[k] A^⊗(n+1) is regularFace transported by the TensorPower.consEquiv maps. -/
 def regularWordFace (n : ℕ) (i : Fin (n + 2)) :
     TensorPower k (n + 2) A →ₗ[k] TensorPower k (n + 1) A :=
   (TensorPower.consEquiv k A n).toLinearMap.comp
     ((regularFace k A n i).hom.comp
       (TensorPower.consEquiv k A (n + 1)).symm.toLinearMap)
 
-/-- Every non-wrapping face is the original adjacent product, including the coefficient face. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For i : Fin (n + 1) and a : Fin (n + 2) → A, regularWordFace
+n i.castSucc (tprod a) = tprod(hochschildMulAdjacent i a). The product is a_i*a_(i+1), with
+other entries in order. -/
 theorem regularWordFace_castSucc_tprod (n : ℕ) (i : Fin (n + 1))
     (a : Fin (n + 2) → A) :
     regularWordFace k A n i.castSucc (PiTensorProduct.tprod k a) =
@@ -83,7 +97,10 @@ theorem regularWordFace_castSucc_tprod (n : ℕ) (i : Fin (n + 1))
   simpa only [Fin.cons_self_tail] using
     regularFace_cons_tprod k A n i (a 0) (Fin.tail a)
 
-/-- The wrapping face rotates the original last entry first and multiplies it on the left. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For a : Fin (n + 2) → A, regularWordFace n (Fin.last (n +
+1))(tprod a) is tprod of hochschildMulAdjacent 0 (a ∘ (finRotate(n+2)).symm). It has first
+entry a_(n+1)*a₀ followed by a₁,…,a_n. -/
 theorem regularWordFace_last_tprod (n : ℕ) (a : Fin (n + 2) → A) :
     regularWordFace k A n (Fin.last (n + 1)) (PiTensorProduct.tprod k a) =
       PiTensorProduct.tprod k
@@ -102,7 +119,9 @@ theorem regularWordFace_last_tprod (n : ℕ) (a : Fin (n + 2) → A) :
   funext j
   cases j using Fin.cases <;> rfl
 
-/-- Every regular face sends an ideal-word stage to the stage with one fewer required entry. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For r,n : ℕ and i : Fin (n + 2), the direct image of
+idealWordSpan (n + 2) r under regularWordFace n i lies in idealWordSpan (n + 1) (r−1). -/
 theorem idealWordSpan_regularWordFace (n required : ℕ) (i : Fin (n + 2)) :
     (idealWordSpan k A I (n + 2) required).map (regularWordFace k A n i) ≤
       idealWordSpan k A I (n + 1) (required - 1) := by
@@ -123,14 +142,18 @@ theorem idealWordSpan_regularWordFace (n required : ℕ) (i : Fin (n + 2)) :
     have hcount := idealEntryCount_mulAdjacent k A I j a
     omega
 
-/-- The original full boundary through the original tensor coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. regularWordBoundary n : A^⊗(n+2) →ₗ[k] A^⊗(n+1) is (bComplex
+k A).d (n + 1) n transported through the first-factor tensor equivalences. -/
 def regularWordBoundary (n : ℕ) :
     TensorPower k (n + 2) A →ₗ[k] TensorPower k (n + 1) A :=
   (TensorPower.consEquiv k A n).toLinearMap.comp
     (((bComplex k A).d (n + 1) n).hom.comp
       (TensorPower.consEquiv k A (n + 1)).symm.toLinearMap)
 
-/-- The full original boundary retains all faces and their integer signs. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For n : ℕ, regularWordBoundary n = ∑ i : Fin (n + 2), (−1 :
+ℤ)^i.val • regularWordFace n i, including the cyclic last face. -/
 theorem regularWordBoundary_eq_sum (n : ℕ) :
     regularWordBoundary k A n =
       ∑ i : Fin (n + 2), (-1 : ℤ) ^ i.val • regularWordFace k A n i := by
@@ -150,7 +173,9 @@ theorem regularWordBoundary_eq_sum (n : ℕ) :
       ((regularFace k A n i).hom.comp
         (TensorPower.consEquiv k A (n + 1)).symm.toLinearMap))).symm
 
-/-- The signed boundary preserves the original ideal-count thresholds. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For n,r : ℕ, idealWordSpan (n + 2) r mapped under
+regularWordBoundary n is contained in idealWordSpan (n + 1) (r−1). -/
 theorem idealWordSpan_regularWordBoundary (n required : ℕ) :
     (idealWordSpan k A I (n + 2) required).map (regularWordBoundary k A n) ≤
       idealWordSpan k A I (n + 1) (required - 1) := by
@@ -172,7 +197,10 @@ theorem idealWordSpan_regularWordBoundary (n required : ℕ) :
     ((Submodule.map_le_iff_le_comap.mp
       (idealWordSpan_regularWordFace k A I n required i)) hx) ((-1 : ℤ) ^ i.val)
 
-/-- The original kernel-word map commutes with the full Hochschild boundary. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the kernel of bComplex(A) → bComplex(A/I) and W_n
+its word inclusion in degree n. For x : K_b.X (n + 1), W_n(d_K x) = regularWordBoundary n
+(W_(n+1)(x)). -/
 theorem relativeNaiveWordMap_d (n : ℕ) (x : (relativeNaiveComplex k A I).X (n + 1)) :
     relativeNaiveWordMap k A I n (((relativeNaiveComplex k A I).d (n + 1) n).hom x) =
       regularWordBoundary k A n (relativeNaiveWordMap k A I (n + 1) x) := by
@@ -191,7 +219,10 @@ theorem relativeNaiveWordMap_d (n : ℕ) (x : (relativeNaiveComplex k A I).X (n 
   rw [LinearEquiv.symm_apply_apply]
   exact congrArg (TensorPower.consEquiv k A n) hvalue.symm
 
-/-- Every original ideal-count stage of the relative naive complex is closed under its boundary. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. For p,n : ℕ, the direct image of naiveWordFiltration p (n +
+1) under the relative b differential is contained in naiveWordFiltration p n. The requirement
+n + 2 − p drops to n + 1 − p after one face. -/
 theorem naiveWordFiltration_d (p n : ℕ) :
     (naiveWordFiltration k A I p (n + 1)).map
         ((relativeNaiveComplex k A I).d (n + 1) n).hom ≤

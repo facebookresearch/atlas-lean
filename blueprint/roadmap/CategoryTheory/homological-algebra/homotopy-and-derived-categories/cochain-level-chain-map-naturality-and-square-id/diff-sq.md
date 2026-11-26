@@ -1,4 +1,4 @@
-# Diff sq
+# The differential endomorphism cochain has square zero
 
-Cochain-level internal square-zero: the differential cochain of any
-cochain complex composes with itself to zero.
+Let C be preadditive and K an integer cochain complex. Its degree-one differential cochain
+composes with itself to the zero degree-two cochain: d_K²=0.

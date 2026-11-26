@@ -1,3 +1,6 @@
-# Homology Zero Iso naturality
+# Naturality of the lifted scalar coordinate in CE degree zero
 
-Every model morphism induces the identity in coefficient coordinates on degree-zero homology.
+Naturality of the lifted scalar coordinate in CE degree zero.
+
+A model homology map followed by the target scalar isomorphism equals the source scalar
+isomorphism.

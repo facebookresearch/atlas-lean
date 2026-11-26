@@ -1,5 +1,5 @@
 # Original étale cohomology computed by the actual Godement complex
 
-- [Small Etale Godement Sections Complex](small-etale-godement-sections-complex.md)
-- [Small Etale Godement Derived Sections Iso](small-etale-godement-derived-sections-is.md)
-- [Small Etale Godement Cohomology Add Equiv](small-etale-godement-cohomology-add-equi.md)
+- [Global section complex of the Godement coresolution](small-etale-godement-sections-complex.md)
+- [Godement section cohomology computes derived global sections](small-etale-godement-derived-sections-is.md)
+- [Godement section cohomology computes small étale cohomology](small-etale-godement-cohomology-add-equi.md)

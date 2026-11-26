@@ -1,3 +1,6 @@
-# Derive the same actual coefficient transformation in the...
+# A bimodule map acts on common-height derived tensor functors
 
-Derive the same actual coefficient transformation in the sufficient source category.
+For an (R,S)-bimodule map f:B→B′ and n≥0, deriving the
+common-height tensor transformation gives
+L_n(−⊗_R ULift^Γ_z B)→L_n(−⊗_R ULift^Γ_z B′)
+in the sufficient right R-module source category.

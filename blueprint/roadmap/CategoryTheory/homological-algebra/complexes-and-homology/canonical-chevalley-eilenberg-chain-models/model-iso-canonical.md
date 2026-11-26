@@ -1,4 +1,6 @@
-# Model Iso Canonical
+# Identifying a presented model with its canonical model
 
-The canonical comparison of any bracket-presented model with the
-model constructed from its underlying Lie algebra.
+Let R be commutative and X a model with an R-Lie carrier and
+square-zero exterior differential presented by the canonical bracket
+formula. X is isomorphic to the canonical model of its carrier,
+with both model maps induced by the identity Lie homomorphism.

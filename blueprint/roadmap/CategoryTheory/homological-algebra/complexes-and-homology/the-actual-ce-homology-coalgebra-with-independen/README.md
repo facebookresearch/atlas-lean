@@ -1,9 +1,9 @@
 # The actual CE homology coalgebra with independent original scalar/carrier worlds
 
-- [Homology Comon Obj](homology-comon-obj.md)
-- [Homology Coaug](homology-coaug.md)
-- [Homology Pointed Comon](homology-pointed-comon.md)
-- [Homology Map Is Comon Hom](homology-map-is-comon-hom.md)
-- [Primitive Equation eq native](primitive-equation-eq-native.md)
-- [Primitive Homology Comparison](primitive-homology-comparison.md)
-- [Primitive Homology One Iso](primitive-homology-one-iso.md)
+- [The Künneth functor transports the CE comonoid to graded homology](homology-comon-obj.md)
+- [The CE coaugmentation induces the graded homology coaugmentation](homology-coaug.md)
+- [The graded homology coalgebra forms a coaugmented comonoid object](homology-pointed-comon.md)
+- [Lie maps preserve the graded CE homology comonoids](homology-map-is-comon-hom.md)
+- [The Künneth chain primitive equation is the CE primitive map](primitive-equation-eq-native.md)
+- [Homology of the primitive kernel maps to primitives in CE homology](primitive-homology-comparison.md)
+- [Primitive-complex degree-one homology is the lifted Lie module](primitive-homology-one-iso.md)

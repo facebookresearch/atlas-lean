@@ -1,3 +1,5 @@
-# Diagonal Multiplication surjective
+# Surjectivity of diagonal multiplication
 
-The actual multiplication is surjective by its original unit section.
+Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. The map `diagonalMultiplication k σ : E → A` is surjective. Every `a : A` is the image
+of `a ⊗ op(1)`.

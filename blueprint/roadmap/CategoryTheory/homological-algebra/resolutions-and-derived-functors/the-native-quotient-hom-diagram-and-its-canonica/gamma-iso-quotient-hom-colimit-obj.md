@@ -1,3 +1,5 @@
-# Gamma Iso Quotient Hom Colimit Obj
+# Power-torsion module as the quotient Hom colimit object
 
-The canonical cocone-point comparison, with its actual universal property.
+Power-torsion module as the quotient Hom colimit object.
+
+The evaluation colimit gives an isomorphism `Γ_I(M) ≅ colimit (quotientHomDiagram I M)`.

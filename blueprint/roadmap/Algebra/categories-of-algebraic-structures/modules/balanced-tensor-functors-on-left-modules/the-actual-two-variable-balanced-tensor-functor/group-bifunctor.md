@@ -1,3 +1,6 @@
-# Group Bifunctor
+# Balanced tensor as a bifunctor to additive groups
 
-Forgetting the original ground module gives the actual abelian-group tensor bifunctor.
+Balanced tensor as a bifunctor to additive groups.
+
+Forget the integer-module structure of the balanced tensor bifunctor to obtain `ModuleCat Rᵐᵒᵖ
+⥤ ModuleCat R ⥤ AddCommGrpCat`.

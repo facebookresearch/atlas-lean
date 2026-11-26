@@ -1,3 +1,6 @@
-# Coefficient Decomposable Shuffle Complex
+# The chain complex of the decomposable coefficient quotient
 
-The decomposable quotient complex reuses the original proper quotient engine.
+The chain complex of the decomposable coefficient quotient.
+
+This is the proper both-positive shuffle quotient complex, with its coefficient tensor terms
+and induced Hochschild differential.

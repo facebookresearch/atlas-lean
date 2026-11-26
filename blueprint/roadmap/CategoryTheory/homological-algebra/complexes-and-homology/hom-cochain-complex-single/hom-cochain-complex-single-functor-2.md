@@ -1,3 +1,6 @@
-# Hom Cochain Complex Single Functor
+# Coefficient Hom cochain functor of an object in degree j
 
-Functor `G ↦ Hom(single_j R, G)` as cochain complexes.
+Coefficient Hom cochain functor of an object in degree j.
+
+For fixed `A` and natural `j`, take `G` to the Hom cochain complex of the chain single object
+`A[j]` into `G`.

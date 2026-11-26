@@ -15,17 +15,20 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRingsExact
 public import Mathlib.Algebra.Homology.QuasiIso
 
 /-!
-# Projective Lie modules and the enveloping augmentation
+# Enveloping augmentation for projective Lie modules
 
-Under `Module.Projective R L`, a Lie algebra with free underlying module
-covers `L` by a split Lie algebra map. Enveloping maps and exterior coefficient
-maps give a retract of the two Chevalley–Eilenberg augmentations after scalar
-restriction to the ground ring. Quasi-isomorphism stability under retracts
-and reflection by scalar restriction prove that the augmentation for `L`
-is a quasi-isomorphism.
+Let `R` be a commutative ring and `L` an `R`-Lie algebra. Restriction along `R → U_R(L)` gives
+a ground-module chain complex and augmentation. A Lie homomorphism acts on each ground term by
+its exterior-power map and its induced enveloping-algebra map, with independent Lie-carrier
+universes.
 
-Linear Lie-map formulas allow independent carrier universes. The free-cover
-maps are bundled as chain maps in the common `max u v` module category.
+If the underlying `R`-module of `L` is projective, a Lie algebra `F` with free underlying
+module has Lie maps `i : L → F` and `p : F → L` satisfying `p ∘ i = id`. Their chain maps and
+the lifted-scalar trivial-module comparisons give an arrow retract of augmentations. The free-
+cover augmentation is a quasi-isomorphism; retract stability and faithful exact scalar
+restriction imply that the augmentation for `L` is also a quasi-isomorphism.
+
+Reference: Weibel, *An Introduction to Homological Algebra*, Chapter 7.
 -/
 
 @[expose] public section
@@ -47,22 +50,32 @@ variable (R : Type u) [CommRing R]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- Exact native restriction from the original enveloping modules to the
-original ground ring. Its carrier universe is the original CE universe. -/
+/-- Ground-scalar restriction of enveloping modules.
+
+Restricting along `R → U_R(L)` sends enveloping modules in carrier universe `max u v` to
+`R`-modules in the same universe. -/
 abbrev envelopingGroundRestriction : ModuleCat.{max u v} U ⥤ ModuleCat.{max u v} R :=
   ModuleCat.restrictScalars (algebraMap R U)
 
-/-- The original enveloping CE complex with only its scalar ring restricted. -/
+/-- The enveloping chain complex over the ground ring.
+
+This is the Chevalley–Eilenberg enveloping complex with its scalar action restricted along `R
+→ U_R(L)` in each degree. -/
 abbrev envelopingGroundComplex : ChainComplex (ModuleCat.{max u v} R) ℕ :=
   ((envelopingGroundRestriction R L).mapHomologicalComplex (ComplexShape.down ℕ)).obj
     (envelopingComplex R L)
 
-/-- The original trivial enveloping module after the same exact restriction. -/
+/-- The ground module of trivial enveloping coefficients.
+
+The trivial enveloping module is restricted to an `R`-module through the scalar inclusion. -/
 abbrev envelopingGroundTrivialObject : ModuleCat.{max u v} R :=
   (envelopingGroundRestriction R L).obj (envelopingTrivialObject R L)
 
-/-- The mapped augmentation, including the native comparison with
-the single-object complex. -/
+/-- The ground-scalar enveloping augmentation.
+
+Applying scalar restriction to the enveloping augmentation, with the comparison to a single-
+object complex, gives a chain map to the restricted trivial module concentrated in degree
+zero. -/
 def envelopingGroundAugmentation :
     envelopingGroundComplex R L ⟶
       (ChainComplex.single₀ (ModuleCat.{max u v} R)).obj
@@ -70,6 +83,9 @@ def envelopingGroundAugmentation :
   Functor.mapChainAugmentation (envelopingGroundRestriction R L)
     (envelopingAugmentation R L)
 
+/-- The degree-zero map of the ground enveloping augmentation.
+
+The degree-zero component is scalar restriction of the degree-zero enveloping augmentation. -/
 @[simp]
 theorem envelopingGroundAugmentation_f_zero :
     (envelopingGroundAugmentation R L).f 0 =
@@ -82,10 +98,10 @@ section LieMaps
 variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
   (f : L →ₗ⁅R⁆ L')
 
-/-- The existing semilinear CE map becomes ground linear using
-the original scalar-map law of the native UEA map. Its source and target
-carrier universes are independent; this is a linear map, without an
-assumption that its two bundled complexes belong to one category. -/
+/-- The ground-linear chain-term map of a Lie homomorphism.
+
+For `f : L → L'`, the enveloping semilinear term map restricts to an `R`-linear map between
+the ground chain terms. The carrier universes of `L` and `L'` may differ. -/
 def envelopingGroundLieTermMap (n : ℕ) :
     (envelopingGroundComplex R L).X n →ₗ[R] (envelopingGroundComplex R L').X n where
   toFun := envelopingLieTermMap R L f n
@@ -106,13 +122,20 @@ def envelopingGroundLieTermMap (n : ℕ) :
             ((UniversalEnvelopingAlgebra.map R f).commutes r))
 
 
+/-- The tensor formula for a ground Lie-induced term map.
+
+For `f : L → L'`, the degree-`n` map sends `a ⊗ b` to `⋀ⁿ(f)(a) ⊗ U(f)(b)`, retaining
+exterior-first tensor order. -/
 theorem envelopingGroundLieTermMap_tmul (n : ℕ) (a : ⋀[R]^n L)
     (b : regularCoefficients R L) :
     envelopingGroundLieTermMap R L f n (a ⊗ₜ[R] b) =
       exteriorPower.map n f.toLinearMap a ⊗ₜ[R] UniversalEnvelopingAlgebra.map R f b :=
   envelopingLieTermMap_tmul R L f n a b
 
-/-- Ground restriction keeps the original differential compatibility. -/
+/-- Differential compatibility of a ground Lie-induced term map.
+
+The degreewise map induced by `f : L → L'` commutes with the successor enveloping chain
+differentials after ground-scalar restriction. -/
 theorem envelopingGroundLieTermMap_d_apply (n : ℕ)
     (z : (envelopingGroundComplex R L).X (n + 1)) :
     envelopingGroundLieTermMap R L f n
@@ -121,8 +144,10 @@ theorem envelopingGroundLieTermMap_d_apply (n : ℕ)
         (envelopingGroundLieTermMap R L f (n + 1) z) :=
   envelopingLieTermMap_d_apply R L f n z
 
-/-- The ground CE degree maps preserve composition across
-independently sized Lie carriers. -/
+/-- Composition of ground Lie-induced term maps.
+
+For `L → L' → L''`, composing the ground term maps equals the term map of the composite Lie
+homomorphism, even when the three carrier universes differ. -/
 theorem envelopingGroundLieTermMap_comp_apply
     {L'' : Type v''} [LieRing L''] [LieAlgebra R L'']
     (g : L' →ₗ⁅R⁆ L'') (n : ℕ) (z : (envelopingGroundComplex R L).X n) :
@@ -143,8 +168,9 @@ theorem envelopingGroundLieTermMap_comp_apply
 
 end LieMaps
 
-/-- The original ground CE degree map sends an identity Lie map to
-the identity on every tensor. -/
+/-- The ground term map of an identity Lie homomorphism.
+
+The identity of `L` induces the identity on every ground enveloping chain term. -/
 theorem envelopingGroundLieTermMap_id_apply (n : ℕ)
     (z : (envelopingGroundComplex R L).X n) :
     envelopingGroundLieTermMap R L (LieHom.id : L →ₗ⁅R⁆ L) n z = z := by
@@ -157,8 +183,11 @@ theorem envelopingGroundLieTermMap_id_apply (n : ℕ)
       change exteriorPower.map n (LinearMap.id : L →ₗ[R] L) a ⊗ₜ[R] b = a ⊗ₜ[R] b
       rw [exteriorPower.map_id, LinearMap.id_apply]
 
-/-- Ground restriction of the trivial enveloping action has its original scalar carrier and
-ordinary scalar multiplication. -/
+/-- The scalar coordinates of restricted trivial enveloping coefficients.
+
+The ground restriction of the trivial enveloping module is isomorphic to the lifted regular
+module `ULift.{max u v} R`. The isomorphism and its inverse retain the down value of a lifted
+scalar. -/
 def envelopingGroundTrivialScalarIso :
     envelopingGroundTrivialObject R L ≅ ModuleCat.of R (ULift.{max u v} R) :=
   (show envelopingGroundTrivialObject R L ≃ₗ[R] ULift.{max u v} R from
@@ -174,11 +203,19 @@ def envelopingGroundTrivialScalarIso :
         rw [(UniversalEnvelopingAlgebra.augmentation R L).commutes]
         rfl }).toModuleIso
 
+/-- The forward scalar formula for restricted trivial coefficients.
+
+The ground trivial-module comparison sends a lifted scalar `z` to `ULift.up z.down` in the
+regular ground module. -/
 @[simp]
 theorem envelopingGroundTrivialScalarIso_hom_apply
     (z : envelopingGroundTrivialObject R L) :
     (envelopingGroundTrivialScalarIso R L).hom z = ULift.up z.down := rfl
 
+/-- The inverse scalar formula for restricted trivial coefficients.
+
+The inverse comparison sends a lifted ground scalar `z` to the trivial-module element
+`ULift.up z.down`. -/
 @[simp]
 theorem envelopingGroundTrivialScalarIso_inv_apply (z : ULift.{max u v} R) :
     (envelopingGroundTrivialScalarIso R L).inv z = ULift.up z.down := rfl
@@ -190,9 +227,10 @@ variable [Module.Projective R L]
 local notation "F" => LieAlgebra.ProjectiveFreeCover R L
 local notation "p" => LieAlgebra.projectiveCoverProjection R L
 
-/-- The CE chain map of the Lie inclusion into the free cover.
-Both complexes lie in the original `max u v` ground-module category: the
-free cover has universe `max u v`, so its CE world normalizes to that same world. -/
+/-- The chain inclusion into a projective Lie free cover.
+
+If `Module.Projective R L`, the Lie inclusion `L → F` into the free-module cover induces a
+chain map of ground enveloping complexes in the common universe `max u v`. -/
 def envelopingGroundCoverInclusion :
     envelopingGroundComplex R L ⟶ envelopingGroundComplex R F where
   f n := ModuleCat.ofHom
@@ -210,7 +248,10 @@ def envelopingGroundCoverInclusion :
         (((envelopingGroundComplex R L).d (b + 1) b).hom z)
     exact (envelopingGroundLieTermMap_d_apply R L (LieAlgebra.projectiveCoverInclusion R L) b z).symm
 
-/-- The CE chain map of the Lie projection from the free cover. -/
+/-- The chain projection from a projective Lie free cover.
+
+For a projective underlying Lie module, the Lie projection `F → L` from the free-module cover
+induces a chain map of ground enveloping complexes. -/
 def envelopingGroundCoverProjection :
     envelopingGroundComplex R F ⟶ envelopingGroundComplex R L where
   f n := ModuleCat.ofHom
@@ -228,17 +269,26 @@ def envelopingGroundCoverProjection :
         (((envelopingGroundComplex R F).d (b + 1) b).hom z)
     exact (envelopingGroundLieTermMap_d_apply R F p b z).symm
 
+/-- The component formula for the free-cover chain inclusion.
+
+The degree-`n` component is the ground term map of the Lie inclusion `L → F`. -/
 theorem envelopingGroundCoverInclusion_f_apply (n : ℕ)
     (z : (envelopingGroundComplex R L).X n) :
     ((envelopingGroundCoverInclusion R L).f n).hom z =
       envelopingGroundLieTermMap R L (LieAlgebra.projectiveCoverInclusion R L) n z := rfl
 
+/-- The component formula for the free-cover chain projection.
+
+The degree-`n` component is the ground term map of the Lie projection `F → L`. -/
 theorem envelopingGroundCoverProjection_f_apply (n : ℕ)
     (z : (envelopingGroundComplex R F).X n) :
     ((envelopingGroundCoverProjection R L).f n).hom z =
       envelopingGroundLieTermMap R F p n z := rfl
 
-/-- The original CE chain maps retain the original strict Lie retraction. -/
+/-- The chain retraction equation for a projective Lie free cover.
+
+The chain inclusion of `L` into `F` followed by the chain projection back to `L` is the
+identity on the ground enveloping complex. -/
 @[simp]
 theorem envelopingGroundCoverInclusion_projection :
     envelopingGroundCoverInclusion R L ≫ envelopingGroundCoverProjection R L =
@@ -253,33 +303,45 @@ theorem envelopingGroundCoverInclusion_projection :
     LieAlgebra.projectiveCoverProjection_comp_inclusion,
     envelopingGroundLieTermMap_id_apply]
 
-/-- The original ground CE complex is a strict native retract
-of the free-cover CE complex. -/
+/-- The ground enveloping complex as a free-cover retract.
+
+For `Module.Projective R L`, the Lie inclusion and projection exhibit the ground enveloping
+complex of `L` as a retract of that of its free-module cover `F`. -/
 def envelopingGroundComplexRetract :
     Retract (envelopingGroundComplex R L) (envelopingGroundComplex R F) where
   i := envelopingGroundCoverInclusion R L
   r := envelopingGroundCoverProjection R L
   retract := envelopingGroundCoverInclusion_projection R L
 
-/-- Both trivial objects have the same original lifted scalar carrier;
-their ground linear identity is a native isomorphism. -/
+/-- The trivial-coefficient comparison for a projective Lie free cover.
+
+The ground trivial modules of `L` and its free cover `F` are isomorphic through their common
+lifted regular scalar module. -/
 def envelopingGroundTrivialCoverIso :
     envelopingGroundTrivialObject R L ≅ envelopingGroundTrivialObject R F :=
   (envelopingGroundTrivialScalarIso R L).trans
     (envelopingGroundTrivialScalarIso R F).symm
 
+/-- The forward scalar value in the free-cover trivial comparison.
+
+The trivial-coefficient comparison from `L` to its free cover sends `z` to `ULift.up z.down`. -/
 @[simp]
 theorem envelopingGroundTrivialCoverIso_hom_apply
     (z : envelopingGroundTrivialObject R L) :
     (envelopingGroundTrivialCoverIso R L).hom z = ULift.up z.down := rfl
 
+/-- The inverse scalar value in the free-cover trivial comparison.
+
+The inverse trivial-coefficient comparison sends `z` to `ULift.up z.down`. -/
 @[simp]
 theorem envelopingGroundTrivialCoverIso_inv_apply
     (z : envelopingGroundTrivialObject R F) :
     (envelopingGroundTrivialCoverIso R L).inv z = ULift.up z.down := rfl
 
-/-- The Lie inclusion preserves the original CE augmentation,
-using the native exterior degree-zero map and UEA augmentation naturality. -/
+/-- Augmentation compatibility of the free-cover inclusion.
+
+The chain inclusion into the free cover followed by its augmentation equals the augmentation
+for `L` followed by the trivial-coefficient comparison in degree zero. -/
 theorem envelopingGroundCoverInclusion_augmentation :
     envelopingGroundCoverInclusion R L ≫ envelopingGroundAugmentation R F =
       envelopingGroundAugmentation R L ≫
@@ -321,7 +383,10 @@ theorem envelopingGroundCoverInclusion_augmentation :
           UniversalEnvelopingAlgebra.augmentation R L b at h
       simp only [map_smul, h]
 
-/-- The Lie projection preserves the original CE augmentation. -/
+/-- Augmentation compatibility of the free-cover projection.
+
+The chain projection from the free cover followed by the augmentation for `L` equals the free-
+cover augmentation followed by the inverse trivial-coefficient comparison. -/
 theorem envelopingGroundCoverProjection_augmentation :
     envelopingGroundCoverProjection R L ≫ envelopingGroundAugmentation R L =
       envelopingGroundAugmentation R F ≫
@@ -363,9 +428,11 @@ theorem envelopingGroundCoverProjection_augmentation :
           UniversalEnvelopingAlgebra.augmentation R F b at h
       simp only [map_smul, h]
 
-/-- The original mapped augmentation is a native arrow retract
-of the free-cover augmentation. Every map is the previously constructed
-Lie/UEA/CE map, and the scalar maps are the original lifted identities. -/
+/-- The enveloping augmentation as a free-cover arrow retract.
+
+For a projective underlying Lie module, the chain inclusion, chain projection, and trivial-
+coefficient comparison exhibit the ground augmentation for `L` as an arrow retract of the
+free-cover augmentation. -/
 def envelopingGroundAugmentationRetract :
     RetractArrow (envelopingGroundAugmentation R L) (envelopingGroundAugmentation R F) where
   i := Arrow.homMk (envelopingGroundCoverInclusion R L)
@@ -386,8 +453,10 @@ def envelopingGroundAugmentationRetract :
       rw [← Functor.map_comp, Iso.hom_inv_id]
       exact (ChainComplex.single₀ (ModuleCat.{max u v} R)).map_id _
 
-/-- Exact ground restriction of the constructed free-cover augmentation
-is a quasi-isomorphism. No free instance on the original Lie module is used. -/
+/-- The quasi-isomorphism of the ground free-cover augmentation.
+
+For the free-module Lie cover of a projective `R`-module `L`, the ground-restricted enveloping
+augmentation is a quasi-isomorphism. -/
 theorem envelopingGroundFreeCoverAugmentation_quasiIso :
     QuasiIso (envelopingGroundAugmentation R F) := by
   letI : QuasiIso (envelopingAugmentation R F) :=
@@ -395,17 +464,20 @@ theorem envelopingGroundFreeCoverAugmentation_quasiIso :
   exact Functor.mapChainAugmentation_quasiIso (envelopingGroundRestriction R F)
     (envelopingAugmentation R F)
 
-/-- Native stability under arrow retracts earns the original projective
-Lie algebra's ground augmentation quasi-isomorphism. -/
+/-- The ground augmentation quasi-isomorphism for a projective Lie module.
+
+If `Module.Projective R L`, the ground enveloping augmentation for `L` is a quasi-isomorphism,
+as follows from its arrow retract of the free-cover augmentation. -/
 theorem envelopingGroundAugmentation_quasiIso_of_projective :
     QuasiIso (envelopingGroundAugmentation R L) := by
   letI : QuasiIso (envelopingGroundAugmentation R F) :=
     envelopingGroundFreeCoverAugmentation_quasiIso R L
   exact quasiIso_of_retractArrow (envelopingGroundAugmentationRetract R L)
 
-/-- Faithful exact restriction reflects the quasi-isomorphism
-into the original enveloping module category. The conclusion concerns
-the original CE augmentation. -/
+/-- The enveloping augmentation quasi-isomorphism for a projective Lie module.
+
+If the underlying `R`-module of `L` is projective, the Chevalley–Eilenberg augmentation to the
+trivial `U_R(L)`-module is a quasi-isomorphism in the enveloping-module category. -/
 theorem envelopingAugmentation_quasiIso_of_projective :
     QuasiIso (envelopingAugmentation R L) := by
   letI : QuasiIso (envelopingGroundAugmentation R L) :=

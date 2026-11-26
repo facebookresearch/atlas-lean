@@ -1,3 +1,7 @@
-# Original family agreement
+# Lifted coefficient comparisons agree with the canonical family
 
-A parent family with the original q0 and full positive laws is the restriction of this E.
+Lifted coefficient comparisons agree with the canonical family.
+
+A comparison family on coefficient-lifted sheaves agrees in every degree with the canonical
+family if it has the degree-zero section normalization and its positive part agrees with a
+normalized common-universe resolution presentation.

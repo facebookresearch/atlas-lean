@@ -1,4 +1,5 @@
-# Horizontal First Page Coherent Successor Map eq next
+# The successor upper-stage map as the next filtration map
 
-The coherent successor map agrees with the previously constructed
-next-stage filtration map.
+The successor upper-stage map as the next filtration map.
+
+The coherent upper-stage successor is the next-stage complete filtration map.

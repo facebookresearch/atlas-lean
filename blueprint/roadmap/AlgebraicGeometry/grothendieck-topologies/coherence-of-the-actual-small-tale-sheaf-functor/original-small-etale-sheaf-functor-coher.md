@@ -1,5 +1,7 @@
-# Original small etale sheaf functor coherence
+# Small étale sheaf image comparisons satisfy all coherence conditions
 
-One globally fixed actual functor family has the full original identity,
-composition, naturality, unit/counit, and identity/associativity coherence data,
-for every original scheme and morphism and the independent coefficient universe.
+Small étale sheaf image comparisons satisfy all coherence conditions.
+
+Identity, pairwise composition, left and right units, and triple associativity satisfy the
+stated naturality and adjunction coherence conditions for every scheme and every composable
+set of scheme maps.

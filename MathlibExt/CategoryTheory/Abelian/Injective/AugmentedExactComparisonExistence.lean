@@ -13,10 +13,12 @@ module
 public import MathlibExt.CategoryTheory.Abelian.Injective.AugmentedExactComparison
 
 /-!
-# comparison maps from exact augmented complexes
+# Comparison maps from exact augmented cochain complexes
 
-An exact augmented source with monic coaugmentation admits comparison maps to any coaugmented
-complex of injective terms. Only target terms are injective.
+In an abelian category `C`, an augmented cochain complex with monic
+coaugmentation and exact augmentation and positive rows admits a map
+into every cochain complex with injective terms, extending a prescribed
+map between the augmented objects.
 -/
 
 @[expose] public section
@@ -29,7 +31,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Extend an original coefficient morphism to an map into injective terms. -/
+/-- In an abelian category `C`, let `ι : X[0] → P` be monic in
+degree zero, with exact augmentation and positive rows, and let
+`κ : Y[0] → Q` have injective target terms. For every `f : X → Y`
+there exists `a : P → Q` with `ι ≫ a = single₀(f) ≫ κ`. -/
 theorem exists_augmentedExactComparison
     {C : Type u} [Category.{v} C] [Abelian C]
     {X Y : C} {P Q : CochainComplex C ℕ}

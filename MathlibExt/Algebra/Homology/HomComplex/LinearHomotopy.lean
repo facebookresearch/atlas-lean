@@ -14,12 +14,17 @@ module
 public import MathlibExt.Algebra.Homology.HomComplex.LinearFunctor
 
 /-!
-# Original linear Hom maps preserve homotopies
+# Homotopies of linear product Hom-complex maps
 
-Native cochain composition and its Leibniz law construct the actual
-homotopies. Postcomposition uses the original degree -1 target cochain.
-Precomposition uses the native `n.negOnePow` coefficient. Both equations
-are on the original linear Hom complex, in every integer degree.
+Let R be a ring and C a preadditive R-linear category, with independent scalar, object and
+morphism universes. For integer cochain complexes, precomposition and postcomposition are
+composition of homogeneous cochains with the degree-zero cochain of the given complex map.
+
+A target homotopy h:g₀≃g₁ gives the degree-minus-one operator H_n(z)=z≫h on the product Hom
+complex. A source homotopy h:f₀≃f₁ gives H_n(z)=(-1)^n h≫z. The Hom differential of each
+operator is the difference of the induced degree-zero maps. Thus homotopies in either complex
+variable induce homotopies of the linear Hom-complex maps, on the full integer-indexed product
+model.
 -/
 
 @[expose] public section
@@ -37,7 +42,10 @@ universe uR uC vC
 variable (R : Type uR) [Ring R]
   {C : Type uC} [Category.{vC} C] [Preadditive C] [Linear R C]
 
-/-- Original target composition, expressed by native cochain composition. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For integer cochain complexes P,L,L′, g:L→L′ and a
+degree-n cochain z:P→L, the map induced by id_P,g equals z composed with the degree-zero cochain
+of g. Its component is z_i≫g_{i+n}, and no extra degree sign is inserted. -/
 theorem mapLinearOver_post {P L L' : CochainComplex C ℤ} (g : L ⟶ L')
     (n : ℤ) (z : Cochain P L n) :
     mapLinearOver R (𝟙 P) g n z = z.comp (Cochain.ofHom g) (add_zero n) := by
@@ -46,7 +54,10 @@ theorem mapLinearOver_post {P L L' : CochainComplex C ℤ} (g : L ⟶ L')
   simp only [mapLinearOver_v, Cochain.comp_zero_cochain_v, Cochain.ofHom_v,
     HomologicalComplex.id_f, Category.id_comp]
 
-/-- Original source composition, expressed by native cochain composition. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For integer cochain complexes P,P′,L, f:P′→P and a
+degree-n cochain z:P→L, the map induced by f,id_L is the degree-zero cochain of f composed with
+z. Its component is f_i≫z_i. -/
 theorem mapLinearOver_pre {P P' L : CochainComplex C ℤ} (f : P' ⟶ P)
     (n : ℤ) (z : Cochain P L n) :
     mapLinearOver R f (𝟙 L) n z = (Cochain.ofHom f).comp z (zero_add n) := by
@@ -55,7 +66,11 @@ theorem mapLinearOver_pre {P P' L : CochainComplex C ℤ} (f : P' ⟶ P)
   simp only [mapLinearOver_v, Cochain.zero_cochain_comp_v, Cochain.ofHom_v,
     HomologicalComplex.id_f, Category.comp_id]
 
-/-- The original postcomposition homotopy cochain; there is no extra sign. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For a target homotopy h:g₀≃g₁ between maps L→L′ and fixed
+integer cochain complex P, this degree-minus-one cochain from Hom(P,L) to Hom(P,L′) sends z of
+degree n to z composed with the degree-minus-one cochain of h. It sends degree n to n−1 and has
+component z_i≫h_{i+n}. -/
 def linearPostHomotopyCochain (P : CochainComplex C ℤ)
     {L L' : CochainComplex C ℤ} {g₀ g₁ : L ⟶ L'} (h : Homotopy g₀ g₁) :
     Cochain (linearComplex R P L) (linearComplex R P L') (-1) :=
@@ -64,6 +79,10 @@ def linearPostHomotopyCochain (P : CochainComplex C ℤ)
       map_add' z z' := Cochain.add_comp z z' (Cochain.ofHomotopy h) hnm
       map_smul' r z := Cochain.smul_comp r z (Cochain.ofHomotopy h) hnm }
 
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For h:g₀≃g₁ from L to L′, fixed P, n,m∈ℤ with m=n−1 and
+z∈Hom(P,L)^n, the (n,m) component of the postcomposition homotopy is z≫h. In source degree i
+this is z_i≫h_{i+n}:P_i→L′_{i+n−1}. -/
 @[simp]
 theorem linearPostHomotopyCochain_v (P : CochainComplex C ℤ)
     {L L' : CochainComplex C ℤ} {g₀ g₁ : L ⟶ L'} (h : Homotopy g₀ g₁)
@@ -71,7 +90,11 @@ theorem linearPostHomotopyCochain_v (P : CochainComplex C ℤ)
     (linearPostHomotopyCochain R P h).v n m hnm z =
       z.comp (Cochain.ofHomotopy h) hnm := rfl
 
-/-- Native delta gives exactly the difference of the original target maps. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For h:g₀≃g₁ between integer cochain maps L→L′ and fixed P,
+let H(z)=z≫h be the induced degree-minus-one Hom-complex cochain. Then δH=H(id_P,g₀)−H(id_P,g₁)
+as degree-zero cochains between Hom(P,L) and Hom(P,L′). The signed Hom Leibniz identity gives
+this exact difference. -/
 theorem linearPostHomotopyCochain_delta (P : CochainComplex C ℤ)
     {L L' : CochainComplex C ℤ} {g₀ g₁ : L ⟶ L'} (h : Homotopy g₀ g₁) :
     δ (-1) 0 (linearPostHomotopyCochain R P h) =
@@ -93,7 +116,10 @@ theorem linearPostHomotopyCochain_delta (P : CochainComplex C ℤ)
   rw [δ_ofHomotopy, Cochain.comp_sub, mapLinearOver_post, mapLinearOver_post]
   abel
 
-/-- An actual homotopy between the original postcomposition maps. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For h:g₀≃g₁ between maps L→L′ and fixed integer cochain
+complex P, the induced R-linear maps H(id_P,g₀),H(id_P,g₁):Hom(P,L)→Hom(P,L′) are homotopic. The
+homotopy's degree-n component is the operator z↦z≫h into degree n−1. -/
 def linearComplexMapPostHomotopy (P : CochainComplex C ℤ)
     {L L' : CochainComplex C ℤ} {g₀ g₁ : L ⟶ L'} (h : Homotopy g₀ g₁) :
     Homotopy (linearComplexMap R (𝟙 P) g₀) (linearComplexMap R (𝟙 P) g₁) :=
@@ -101,7 +127,11 @@ def linearComplexMapPostHomotopy (P : CochainComplex C ℤ)
     ⟨linearPostHomotopyCochain R P h, by
       rw [linearPostHomotopyCochain_delta, sub_add_cancel]⟩
 
-/-- The original precomposition homotopy cochain, with its native degree sign. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For a source homotopy h:f₀≃f₁ between maps P′→P and fixed
+integer cochain complex L, this degree-minus-one Hom-complex cochain sends z∈Hom(P,L)^n to
+(-1)^n times h composed with z. Its component in source degree i is (-1)^n•(h_i≫z_{i-1}), valued
+in L_{i+n−1}. -/
 def linearPreHomotopyCochain {P P' : CochainComplex C ℤ}
     {f₀ f₁ : P' ⟶ P} (h : Homotopy f₀ f₁) (L : CochainComplex C ℤ) :
     Cochain (linearComplex R P L) (linearComplex R P' L) (-1) :=
@@ -112,6 +142,10 @@ def linearPreHomotopyCochain {P P' : CochainComplex C ℤ}
       map_smul' r z := by
         simp only [Cochain.comp_smul, smul_comm n.negOnePow r, RingHom.id_apply] }
 
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For h:f₀≃f₁ from P′ to P, fixed L and n,m∈ℤ with m=n−1,
+the component on z∈Hom(P,L)^n is (-1)^n•(h≫z). In source degree i it is
+(-1)^n•(h_i≫z_{i-1}):P′_i→L_{i+n−1}. -/
 @[simp]
 theorem linearPreHomotopyCochain_v {P P' : CochainComplex C ℤ}
     {f₀ f₁ : P' ⟶ P} (h : Homotopy f₀ f₁) (L : CochainComplex C ℤ)
@@ -119,8 +153,11 @@ theorem linearPreHomotopyCochain_v {P P' : CochainComplex C ℤ}
     (linearPreHomotopyCochain R h L).v n m hnm z =
       n.negOnePow • (Cochain.ofHomotopy h).comp z (by omega) := rfl
 
-/-- Native delta and the successive degree signs give exactly the
-difference of the original source maps. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For h:f₀≃f₁ between maps P′→P and fixed integer cochain
+complex L, let H_n(z)=(-1)^n•(h≫z). Then δH=H(f₀,id_L)−H(f₁,id_L) as degree-zero cochains
+Hom(P,L)→Hom(P′,L). The successive signs (-1)^n and (-1)^{n+1} cancel the mixed differential
+terms. -/
 theorem linearPreHomotopyCochain_delta {P P' : CochainComplex C ℤ}
     {f₀ f₁ : P' ⟶ P} (h : Homotopy f₀ f₁) (L : CochainComplex C ℤ) :
     δ (-1) 0 (linearPreHomotopyCochain R h L) =
@@ -145,7 +182,10 @@ theorem linearPreHomotopyCochain_delta {P P' : CochainComplex C ℤ}
     mapLinearOver_pre, mapLinearOver_pre]
   abel
 
-/-- An actual homotopy between the original precomposition maps. -/
+/-- Let R be a ring in universe uR and C a preadditive R-linear category with independent object
+universe uC and morphism universe vC. For h:f₀≃f₁ between maps P′→P and fixed integer cochain
+complex L, the maps H(f₀,id_L),H(f₁,id_L):Hom(P,L)→Hom(P′,L) are homotopic. The homotopy sends a
+degree-n cochain z to (-1)^n•(h≫z) in degree n−1. -/
 def linearComplexMapPreHomotopy {P P' : CochainComplex C ℤ}
     {f₀ f₁ : P' ⟶ P} (h : Homotopy f₀ f₁) (L : CochainComplex C ℤ) :
     Homotopy (linearComplexMap R f₀ (𝟙 L)) (linearComplexMap R f₁ (𝟙 L)) :=

@@ -1,3 +1,4 @@
-# Map Cochain Complex Bounded hom app f
+# Forward bounded isomorphism components retain the natural isomorphism
 
-The whole original bounded isomorphism component is the canonical degreewise component.
+For zero-preserving functors F,G : C → D, e : F ≅ G, K ∈ Bounded C, and j ∈ ℤ, the jth forward
+component of the bounded comparison is e.hom_{K^j}.

@@ -2,19 +2,19 @@
 
 ## Perm
 
-- [Eulerian Coefficient](eulerian-coefficient.md)
-- [Eulerian Element](eulerian-element.md)
-- [Eulerian Lambda](eulerian-lambda.md)
-- [Eulerian Lambda eq sum](eulerian-lambda-eq-sum.md)
-- [Eulerian Coefficient top](eulerian-coefficient-top.md)
-- [Eulerian Element top](eulerian-element-top.md)
-- [Eulerian Coefficient outside](eulerian-coefficient-outside.md)
-- [Eulerian Coefficient degree zero](eulerian-coefficient-degree-zero.md)
-- [Eulerian Coefficient zero weight](eulerian-coefficient-zero-weight.md)
-- [Eulerian Lambda one](eulerian-lambda-one.md)
-- [Sum eulerian Element](sum-eulerian-element.md)
+- [A signed Eulerian polynomial coefficient](eulerian-coefficient.md)
+- [The Eulerian coefficient element](eulerian-element.md)
+- [The evaluated Eulerian convolution family](eulerian-lambda.md)
+- [The finite Eulerian coefficient expansion](eulerian-lambda-eq-sum.md)
+- [The top coefficient is sign divided by factorial](eulerian-coefficient-top.md)
+- [The top Eulerian element is the antisymmetrizer](eulerian-element-top.md)
+- [Eulerian coefficients vanish beyond the degree](eulerian-coefficient-outside.md)
+- [The degree-zero Eulerian coefficient](eulerian-coefficient-degree-zero.md)
+- [Positive degrees have zero constant weight](eulerian-coefficient-zero-weight.md)
+- [The convolution value at one is the unit](eulerian-lambda-one.md)
+- [The Eulerian elements sum to the unit](sum-eulerian-element.md)
 
 ## Tensor Power
 
-- [Coefficient Eulerian Lambda two eq shuffle Cuts](coefficient-eulerian-lambda-two-eq-shuff.md)
-- [Coefficient Eulerian Lambda two eq proper Cuts](coefficient-eulerian-lambda-two-eq-prope.md)
+- [The second convolution is the shuffle-cut sum](coefficient-eulerian-lambda-two-eq-shuff.md)
+- [The second convolution has two unit cuts](coefficient-eulerian-lambda-two-eq-prope.md)

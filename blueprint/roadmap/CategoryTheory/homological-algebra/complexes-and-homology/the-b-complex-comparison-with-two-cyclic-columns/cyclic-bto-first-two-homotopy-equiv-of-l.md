@@ -1,3 +1,6 @@
-# Cyclic BTo First Two Homotopy Equiv Of Left Unit
+# The Hochschild-to-two-column homotopy equivalence from a left unit
 
-A left unit earns a homotopy equivalence whose forward arrow is the original inclusion.
+The Hochschild-to-two-column homotopy equivalence from a left unit.
+
+A left unit `e ∈ A` contracts the odd-column quotient and gives a chain homotopy equivalence
+from the `b`-complex to `CC^{(2)}(A)`.

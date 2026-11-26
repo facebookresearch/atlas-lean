@@ -2,9 +2,9 @@
 
 ## Homological Complex
 
-- [Linear Hom Cochain Complex Homology Functor](linear-hom-cochain-complex-homology-func.md)
+- [Linear Hom-cohomology is a functor of the coefficient object](linear-hom-cochain-complex-homology-func.md)
 
 ## Homotopy
 
-- [Map Linear Hom Cochain Complex](map-linear-hom-cochain-complex.md)
-- [Linear Hom Cochain Complex homology Map eq](linear-hom-cochain-complex-homology-map.md)
+- [Linear Hom-cochains carry a chain homotopy to a contravariant cochain homotopy](map-linear-hom-cochain-complex.md)
+- [Chain-homotopic maps induce equal maps on linear Hom-cohomology](linear-hom-cochain-complex-homology-map.md)

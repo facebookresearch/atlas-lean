@@ -13,13 +13,18 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.EilenbergZilber.Shuf
 public import MathlibExt.Data.Fin.Tuple.StableSort
 
 /-!
-# Actual native shuffle and block-permutation factorization
+# Shuffle factorization by ordered value blocks
 
-Sorting each original block of permutation values constructs an actual
-native shuffle. Its two original block rank permutations give the genuine
-factorization, and native stable-sort uniqueness proves this factorization
-is unique. Empty blocks are retained. No factorization certificate is an
-input.
+For `p,q : ℕ`, a block permutation acts independently on the first `p` and last `q` positions
+of `Fin(p+q)`. Its sign is the product of the two block signs.
+
+Given `γ ∈ S_(p+q)`, let `α` and `β` be the inverses of the stable sorting permutations of its
+left and right value blocks. Then `s = γ * blockPermutation(α⁻¹,β⁻¹)` is a `(p,q)`-shuffle,
+and `γ = s.perm * blockPermutation(α,β)`. This decomposition is unique, including empty
+blocks.
+
+References: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1; Loday, *Cyclic
+Homology*, Section 4.2.
 -/
 
 @[expose] public section
@@ -27,23 +32,35 @@ noncomputable section
 
 namespace Equiv.Perm
 
-/-- The actual block permutation on the original concatenated finite index. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `α ∈ S_p` and `β ∈ S_q`, `blockPermutation p q α β` sends `L(i)` to
+`L(α i)` and `R(j)` to `R(β j)`. -/
 def blockPermutation (p q : ℕ) (α : Perm (Fin p)) (β : Perm (Fin q)) : Perm (Fin (p + q)) :=
   (finSumFinEquiv : Fin p ⊕ Fin q ≃ Fin (p + q)).permCongr (Equiv.sumCongr α β)
 
-/-- The actual block permutation keeps the original first block and its original rank action. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `α ∈ S_p`, `β ∈ S_q`, and `i : Fin p`, `blockPermutation p q α β (L
+i) = L(α i)`. -/
 @[simp]
 theorem blockPermutation_castAdd (p q : ℕ) (α : Perm (Fin p)) (β : Perm (Fin q)) (i : Fin p) :
     blockPermutation p q α β (Fin.castAdd q i) = Fin.castAdd q (α i) := by
   simp [blockPermutation, Equiv.permCongr_apply]
 
-/-- The actual block permutation keeps the original second block and its original rank action. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `α ∈ S_p`, `β ∈ S_q`, and `j : Fin q`, `blockPermutation p q α β (R
+j) = R(β j)`. -/
 @[simp]
 theorem blockPermutation_natAdd (p q : ℕ) (α : Perm (Fin p)) (β : Perm (Fin q)) (i : Fin q) :
     blockPermutation p q α β (Fin.natAdd p i) = Fin.natAdd p (β i) := by
   simp [blockPermutation, Equiv.permCongr_apply]
 
-/-- Original block permutation composition is actual componentwise permutation composition. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `α,α' ∈ S_p` and `β,β' ∈ S_q`, `blockPermutation(α*α',β*β') =
+blockPermutation(α,β) * blockPermutation(α',β')`. -/
 theorem blockPermutation_mul (p q : ℕ) (α α' : Perm (Fin p)) (β β' : Perm (Fin q)) :
     blockPermutation p q (α * α') (β * β') = blockPermutation p q α β * blockPermutation p q α' β' := by
   apply Equiv.ext
@@ -62,7 +79,10 @@ theorem blockPermutation_mul (p q : ℕ) (α α' : Perm (Fin p)) (β β' : Perm 
     rw [blockPermutation_natAdd, blockPermutation_natAdd, blockPermutation_natAdd]
     rfl
 
-/-- The actual block construction is a native monoid homomorphism. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. The assignment `(α,β) ↦ blockPermutation p q α β` is the monoid
+homomorphism `S_p × S_q →* S_N`. -/
 def blockPermutationHom (p q : ℕ) : Perm (Fin p) × Perm (Fin q) →* Perm (Fin (p + q)) where
   toFun z := blockPermutation p q z.1 z.2
   map_one' := by
@@ -71,38 +91,60 @@ def blockPermutationHom (p q : ℕ) : Perm (Fin p) × Perm (Fin q) →* Perm (Fi
     cases j <;> simp
   map_mul' z z' := blockPermutation_mul p q z.1 z'.1 z.2 z'.2
 
-/-- The actual first-block permutation inclusion is a native monoid map. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. `blockLeftHom p q : S_p →* S_N` sends `α` to `blockPermutation p q α 1`,
+acting on the left block and fixing the right block. -/
 def blockLeftHom (p q : ℕ) : Perm (Fin p) →* Perm (Fin (p + q)) where
   toFun α := blockPermutation p q α 1
   map_one' := (blockPermutationHom p q).map_one
   map_mul' α β := by simpa only [one_mul] using blockPermutation_mul p q α β 1 1
 
-/-- The actual second-block permutation inclusion is a native monoid map. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. `blockRightHom p q : S_q →* S_N` sends `β` to `blockPermutation p q 1
+β`, fixing the left block and acting on the right block. -/
 def blockRightHom (p q : ℕ) : Perm (Fin q) →* Perm (Fin (p + q)) where
   toFun β := blockPermutation p q 1 β
   map_one' := (blockPermutationHom p q).map_one
   map_mul' α β := by simpa only [one_mul] using blockPermutation_mul p q 1 1 α β
 
-/-- The original two block inclusions multiply to the actual combined original block permutation. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `α ∈ S_p` and `β ∈ S_q`, `blockLeftHom p q α * blockRightHom p q β =
+blockPermutation p q α β`. -/
 theorem blockLeftHom_mul_blockRightHom (p q : ℕ) (α : Perm (Fin p)) (β : Perm (Fin q)) :
     blockLeftHom p q α * blockRightHom p q β = blockPermutation p q α β := by
   change blockPermutation p q α 1 * blockPermutation p q 1 β = _
   rw [← blockPermutation_mul, mul_one, one_mul]
 
-/-- The original block sign is the actual product of the original two signs. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `α ∈ S_p` and `β ∈ S_q`, `(blockPermutation p q α β).sign = α.sign *
+β.sign` in `ℤˣ`. -/
 theorem sign_blockPermutation (p q : ℕ) (α : Perm (Fin p)) (β : Perm (Fin q)) :
     (blockPermutation p q α β).sign = α.sign * β.sign := by
   rw [blockPermutation, sign_permCongr, sign_sumCongr]
 
-/-- The original first block rank permutation. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `γ ∈ S_N`, `blockRankLeft p q γ = (Tuple.sort (fun i : Fin p ↦ γ(L
+i)))⁻¹ ∈ S_p`. It records the rank of each left-block value in its ascending order. -/
 def blockRankLeft (p q : ℕ) (γ : Perm (Fin (p + q))) : Perm (Fin p) :=
   (Tuple.sort (fun i => γ (Fin.castAdd q i))).symm
 
-/-- The original second block rank permutation. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `γ ∈ S_N`, `blockRankRight p q γ = (Tuple.sort (fun j : Fin q ↦ γ(R
+j)))⁻¹ ∈ S_q`. It records the rank of each right-block value in its ascending order. -/
 def blockRankRight (p q : ℕ) (γ : Perm (Fin (p + q))) : Perm (Fin q) :=
   (Tuple.sort (fun i => γ (Fin.natAdd p i))).symm
 
-/-- Sorting the two original value blocks constructs an actual native shuffle. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `γ ∈ S_N`, put `α = blockRankLeft p q γ` and `β = blockRankRight p q
+γ`. The permutation `γ * blockPermutation p q α⁻¹ β⁻¹` is increasing on each block and defines
+`sortedBlockShuffle p q γ : Shuffle p q`. -/
 def sortedBlockShuffle (p q : ℕ) (γ : Perm (Fin (p + q))) :
     AlgebraicTopology.EilenbergZilber.Shuffle p q where
   perm := γ * blockPermutation p q (blockRankLeft p q γ).symm (blockRankRight p q γ).symm
@@ -122,7 +164,10 @@ def sortedBlockShuffle (p q : ℕ) (γ : Perm (Fin (p + q))) :
         apply Fin.ext
         exact Nat.add_left_cancel (congrArg Fin.val hij)) |>.comp (Tuple.sort _).injective
 
-/-- The actual sorted-block shuffle and original two rank permutations give the original permutation. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. For `γ ∈ S_N`, with `α = blockRankLeft p q γ` and `β = blockRankRight p
+q γ`, `(sortedBlockShuffle p q γ).perm * blockPermutation p q α β = γ`. -/
 theorem sortedBlockShuffle_factorization (p q : ℕ) (γ : Perm (Fin (p + q))) :
     (sortedBlockShuffle p q γ).perm * blockPermutation p q (blockRankLeft p q γ) (blockRankRight p q γ) = γ := by
   change (γ * blockPermutationHom p q ((blockRankLeft p q γ).symm, (blockRankRight p q γ).symm)) *
@@ -133,7 +178,11 @@ theorem sortedBlockShuffle_factorization (p q : ℕ) (γ : Perm (Fin (p + q))) :
       (blockRankLeft p q γ, blockRankRight p q γ)) = γ
   rw [inv_mul_cancel, map_one, mul_one]
 
-/-- The native increasing-block condition proves the original factorization is unique. -/
+/-- Let `p,q : ℕ`, `N = p+q`, and `S_r = Equiv.Perm (Fin r)`. Write `L(i) = Fin.castAdd q i` and
+`R(j) = Fin.natAdd p j` for the two ordered blocks of `Fin N`; permutation multiplication is
+`(u*v)(i) = u(v(i))`. Let `s : Shuffle p q`, `α ∈ S_p`, `β ∈ S_q`, and `γ ∈ S_N` satisfy
+`s.perm * blockPermutation p q α β = γ`. Then `α = blockRankLeft p q γ`, `β = blockRankRight p
+q γ`, and `s = sortedBlockShuffle p q γ`. -/
 theorem sortedBlockShuffle_factorization_unique (p q : ℕ)
     (s : AlgebraicTopology.EilenbergZilber.Shuffle p q) (α : Perm (Fin p)) (β : Perm (Fin q))
     (γ : Perm (Fin (p + q))) (hγ : s.perm * blockPermutation p q α β = γ) :
@@ -178,7 +227,8 @@ namespace Prod.Lex
 
 variable {α β γ : Type*} [LinearOrder α] [LinearOrder β] [LinearOrder γ]
 
-/-- An actual strictly increasing second-coordinate map preserves and reflects the original lexicographic order. -/
+/-- Let `α,β,γ` be linearly ordered types and `f : α → β` strictly increasing. The map `γ ×ₗ α → γ
+×ₗ β`, `(x,y) ↦ (x,f y)`, is strictly increasing in lexicographic order. -/
 theorem strictMono_map_right (f : α → β) (hf : StrictMono f) :
     StrictMono (fun z : γ ×ₗ α => toLex ((ofLex z).1, f (ofLex z).2)) := by
   rintro ⟨a, x⟩ ⟨b, y⟩ h

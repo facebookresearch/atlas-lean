@@ -13,13 +13,25 @@ public import MathlibExt.Algebra.Homology.KoszulComplex.Polynomial.Homogeneous
 public import Mathlib.LinearAlgebra.Finsupp.Pi
 
 /-!
-# Original polynomial Koszul chains in exterior-basis coefficient coordinates
+# Signed polynomial Koszul boundaries in exterior coefficient coordinates
 
-The native polynomial-linear differential is transported through its actual
-exterior basis, then restricted to the original coefficient ring. These
-coordinates are finitely supported polynomial coefficient families. Their
-homogeneous projection and total-degree filtration expose the already
-constructed homogeneous Koszul boundaries without changing the complex.
+Let R be a commutative ring, I a linearly ordered variable type and
+P = MvPolynomial I R. The exterior basis of
+K_n = ⋀_P^n(I →₀ P) is indexed by n-element subsets s of I, listed
+in increasing order. It identifies K_n with the finitely supported
+coefficient families F_n = (Set.powersetCard I n) →₀ P.
+
+In these coordinates the differential is
+∂(p δ_s) = ∑_(i=0)^n (−1)^i p X_(s_i) δ_(s ∖ {s_i})
+for |s| = n+1. This is P-linear, and restricting scalars gives the
+same function as an R-linear map. Coefficientwise homogeneous projection
+π_d satisfies π_(d+1)∂ = ∂π_d and π_0∂ = 0.
+
+The total-degree filtration in exterior degree n is zero for p < n;
+for p ≥ n it consists of families whose polynomial coefficients have
+degree at most p−n. A cycle of coefficient degree d+1 in positive
+exterior degree has a boundary of coefficient degree d. The variable
+type I is arbitrary, and the worlds of R and I are independent.
 -/
 
 @[expose] public section
@@ -36,13 +48,20 @@ local notation "P" => MvPolynomial I R
 local notation:max "K" n:max => (⋀[P]^n (I →₀ P))
 local notation:max "F" n:max => (Set.powersetCard I n →₀ P)
 
-/-- The original polynomial Koszul differential in its actual exterior-basis coordinates. -/
+/-- For a commutative ring R and linearly ordered I, let
+P = MvPolynomial I R and F_n = (Set.powersetCard I n) →₀ P.
+The coordinate differential F_(n+1) →ₗ[P] F_n is obtained by
+converting coefficients to the exterior basis, taking the Koszul
+differential x(e_i) = X_i, and converting back. -/
 def polynomialCoefficientDifferentialP (n : ℕ) : F (n + 1) →ₗ[P] F n :=
   (polynomialExteriorBasis R n).repr.toLinearMap.comp
     ((differential P (I →₀ P) (finsuppFunctional P MvPolynomial.X) n).comp
       (polynomialExteriorBasis R (n + 1)).repr.symm.toLinearMap)
 
-/-- Restrict only the scalar ring of the original coordinate differential. -/
+/-- For a commutative ring R and linearly ordered I, the map
+F_(n+1) →ₗ[R] F_n is the restriction of the polynomial-linear
+Koszul coordinate differential along R → P = MvPolynomial I R.
+Its values and deletion signs are unchanged by this scalar restriction. -/
 def polynomialCoefficientDifferential (n : ℕ) : F (n + 1) →ₗ[R] F n :=
   (polynomialCoefficientDifferentialP R n).restrictScalars R
 
@@ -57,7 +76,10 @@ theorem polynomialCoefficientDifferential_repr (n : ℕ) (z : K (n + 1)) :
         (differential P (I →₀ P) (finsuppFunctional P MvPolynomial.X) n z) := by
   rw [polynomialCoefficientDifferential_apply, LinearEquiv.symm_apply_apply]
 
-/-- Coefficientwise homogeneous projection over the original ground ring. -/
+/-- For a commutative ring R and arbitrary I, the R-linear map
+π_d on F_n = (Set.powersetCard I n) →₀ MvPolynomial I R
+takes the degree-d homogeneous component of every coefficient
+polynomial. It preserves the finitely supported family structure. -/
 def polynomialCoefficientHomogeneousPart (n d : ℕ) : F n →ₗ[R] F n :=
   Finsupp.mapRange.linearMap (MvPolynomial.homogeneousComponent d)
 
@@ -73,7 +95,11 @@ theorem polynomialCoefficientHomogeneousPart_repr (n d : ℕ) (z : K n) :
   ext s
   rw [polynomialCoefficientHomogeneousPart_apply, polynomialHomogeneousPart_repr]
 
-/-- The actual coordinate differential raises coefficient degree by one. -/
+/-- For a commutative ring R and linearly ordered I, the
+homogeneous coefficient projections π_d and the Koszul coordinate
+differential satisfy π_(d+1)∂_n(c) = ∂_n(π_d(c)) for
+c ∈ F_(n+1), n,d ≥ 0. Exterior degree drops by one while
+polynomial coefficient degree increases by one. -/
 theorem polynomialCoefficientHomogeneousPart_differential (n d : ℕ) (c : F (n + 1)) :
     polynomialCoefficientHomogeneousPart R n (d + 1) (polynomialCoefficientDifferential R n c) =
       polynomialCoefficientDifferential R n
@@ -84,7 +110,10 @@ theorem polynomialCoefficientHomogeneousPart_differential (n d : ℕ) (c : F (n 
   simpa only [← polynomialCoefficientHomogeneousPart_repr,
     ← polynomialCoefficientDifferential_repr, z, LinearEquiv.apply_symm_apply] using h
 
-/-- Polynomial coefficients do not acquire a constant term under the original differential. -/
+/-- For a commutative ring R and linearly ordered I, the
+degree-zero homogeneous coefficient projection of ∂_n(c) is zero
+for every c ∈ F_(n+1). Each deletion term multiplies its coefficient
+by one variable X_i. -/
 theorem polynomialCoefficientHomogeneousPart_zero_differential (n : ℕ) (c : F (n + 1)) :
     polynomialCoefficientHomogeneousPart R n 0 (polynomialCoefficientDifferential R n c) = 0 := by
   let z := (polynomialExteriorBasis R (n + 1)).repr.symm c
@@ -93,13 +122,19 @@ theorem polynomialCoefficientHomogeneousPart_zero_differential (n : ℕ) (c : F 
   simpa only [← polynomialCoefficientHomogeneousPart_repr,
     ← polynomialCoefficientDifferential_repr, z, LinearEquiv.apply_symm_apply, map_zero] using h
 
-/-- Canonical ordered deletion index in an exterior-coordinate family. -/
+/-- For a linearly ordered type I, an (n+1)-element subset s
+and i ∈ Fin(n+1), the deletion index is the n-element subset
+s ∖ {s_i}, where s_i is the ith member in increasing order.
+The remaining elements retain their increasing order. -/
 def polynomialEraseIndex (n : ℕ) (s : Set.powersetCard I (n + 1))
     (i : Fin (n + 1)) : Set.powersetCard I n :=
   Set.powersetCard.ofFinEmbEquiv
     ((Fin.succAboveOrderEmb i).trans (Set.powersetCard.ofFinEmbEquiv.symm s))
 
-/-- The native variable exterior basis at the canonical deletion index. -/
+/-- For a commutative ring R and linearly ordered I, the
+degree-n exterior basis vector indexed by s ∖ {s_i} is the ordered
+wedge of e_(s_j) for j ≠ i, with P = MvPolynomial I R and
+e_a = Finsupp.single a 1 in I →₀ P. -/
 theorem polynomialExteriorBasis_erased (n : ℕ)
     (s : Set.powersetCard I (n + 1)) (i : Fin (n + 1)) :
     polynomialExteriorBasis R n (polynomialEraseIndex n s i) =
@@ -114,7 +149,10 @@ theorem polynomialExteriorBasis_erased (n : ℕ)
   rfl
 
 omit [LinearOrder I] in
-/-- Integral signs agree under the original polynomial scalar restriction. -/
+/-- For a commutative ring R, arbitrary I and a coefficient
+family c ∈ F_n, multiplication by (−1)^i in
+P = MvPolynomial I R agrees with multiplication by (−1)^i in R
+after restriction of scalars, for every i ≥ 0. -/
 theorem polynomialSign_smul_eq (n i : ℕ) (c : F n) :
     ((-1 : P) ^ i) • c = ((-1 : R) ^ i) • c := by
   induction i generalizing c with
@@ -123,7 +161,12 @@ theorem polynomialSign_smul_eq (n i : ℕ) (c : F n) :
       simp only [pow_succ, mul_smul, neg_one_smul]
       rw [ih]
 
-/-- Actual signed variable deletion in original coefficient coordinates. -/
+/-- For a commutative ring R, linearly ordered I, an
+(n+1)-element subset s with increasing enumeration s₀,…,sₙ and
+p ∈ P = MvPolynomial I R, the R-linear coordinate differential
+satisfies ∂_n(p δ_s) =
+∑_(i=0)^n (−1)^i δ_(s ∖ {s_i})(p X_(s_i)).
+The remaining exterior indices keep their order. -/
 theorem polynomialCoefficientDifferential_single (n : ℕ)
     (s : Set.powersetCard I (n + 1)) (p : P) :
     polynomialCoefficientDifferential R n (Finsupp.single s p) =
@@ -151,8 +194,11 @@ theorem polynomialCoefficientDifferential_single (n : ℕ)
   rw [hcoeff]
   exact polynomialSign_smul_eq R n i.val _
 
-/-- Total coefficient degree plus the actual exterior degree. Stages below
-exterior degree are zero, rather than using truncated subtraction there. -/
+/-- For a commutative ring R and arbitrary I, the stage p of the
+coefficient filtration on F_n is zero if p < n. For p ≥ n it is
+the R-submodule of families c such that every c_s has polynomial
+degree at most p−n. Thus p bounds coefficient degree plus the
+exterior degree n. -/
 def polynomialCoefficientFiltration (n p : ℕ) : Submodule R (F n) :=
   if n ≤ p then
     Finsupp.submodule (fun _ : Set.powersetCard I n =>
@@ -304,8 +350,11 @@ theorem polynomialCoefficient_sub_highest_mem_lower (n d : ℕ) {c : F n}
   rw [map_sub, MvPolynomial.homogeneousComponent_eq_self
     (MvPolynomial.homogeneousComponent_isHomogeneous (d + 1) (c s)), sub_self]
 
-/-- Homogeneous coefficient families inherit the actual arbitrary-variable
-Koszul boundary construction through the original exterior basis. -/
+/-- For a commutative ring R and linearly ordered I, suppose
+c ∈ F_(k+1) is a coordinate Koszul cycle and every coefficient of c
+is homogeneous of degree d+1. Then there exists w ∈ F_(k+2)
+whose coefficients are homogeneous of degree d and satisfy
+∂_(k+1)(w) = c. Here k,d ≥ 0 and I is arbitrary. -/
 theorem polynomialCoefficient_homogeneous_exact_cycles (k d : ℕ) (c : F (k + 1))
     (hc : polynomialCoefficientDifferential R k c = 0)
     (hhom : ∀ s, (c s).IsHomogeneous (d + 1)) :

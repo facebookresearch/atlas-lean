@@ -1,4 +1,6 @@
-# Partial Total Zero Column Page Two Left Iso
+# The zero-column second-page coordinate isomorphism
 
-The stable-side source is canonically isomorphic to the package-owned
-page-two coordinate.
+The zero-column second-page coordinate isomorphism.
+
+The framed stable-source presentation is isomorphic to the chosen page-two coordinate at
+`(0,q)`.

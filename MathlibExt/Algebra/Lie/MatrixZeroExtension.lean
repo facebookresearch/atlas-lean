@@ -16,16 +16,19 @@ public import Mathlib.Algebra.Lie.Classical
 public import Mathlib.Data.Matrix.Basic
 
 /-!
-# Actual finite-matrix zero-corner Lie maps
+# Finite-matrix zero extensions as commutator Lie maps
 
-The existing native zero extension is ground-linear and multiplicative.
-Its commutator compatibility supplies the actual Lie embedding, including
-size zero. Coefficient algebra maps act entrywise and commute with these
-embeddings. The scalar trace-zero Lie algebra and its actual scalar inclusion
-provide the finite-stage special-linear maps used by CE coinvariants.
+Let k be a commutative ring and A a possibly noncommutative k-algebra. For m≤n, upper-left zero
+extension sends an m×m matrix to an n×n matrix with the same entries in the initial block and
+zero elsewhere. It is k-linear, multiplicative and injective, hence preserves the commutator
+bracket [X,Y]=XY−YX. These Lie maps preserve equal-size identities and compose along m≤n≤p,
+including size zero.
 
-The ring and coefficient-algebra worlds are independent. No unitality of
-zero extension, matrix-stability result or desired Lie-map certificate is assumed.
+An algebra morphism A→B acts entrywise on matrix Lie algebras and commutes with every zero
+extension. Over k itself, trace preservation restricts zero extension to sl_m(k)→sl_n(k), where
+sl_m(k) is the Lie algebra of trace-zero m×m matrices. Entrywise application of k→A gives
+sl_m(k)→Mat_m(A), compatible with size extension and coefficient morphisms. The scalar map is
+the specified algebra map on entries. Ring and coefficient-algebra universes are independent.
 -/
 
 @[expose] public section
@@ -41,7 +44,11 @@ namespace Matrix
 variable (k : Type u) [CommRing k]
 variable (A : Type v) [Ring A] [Algebra k A]
 
-/-- The actual upper-left zero extension as a ground-linear commutator Lie map. -/
+/-- Let k be a commutative ring in universe u and A a possibly noncommutative ring and k-algebra in
+an independent universe v. For m,n∈ℕ with m≤n, this k-linear Lie map Mat_m(A)→Mat_n(A) is
+upper-left zero extension. Its (i,j) entry is the input entry when i,j<m and zero otherwise. It
+preserves [X,Y]=XY−YX by multiplicativity and additivity, is injective, and is defined also for
+m=0. -/
 def zeroExtendLieHom {m n : ℕ} (h : m ≤ n) :
     Matrix (Fin m) (Fin m) A →ₗ⁅k⁆ Matrix (Fin n) (Fin n) A where
   toLinearMap := zeroExtendLinear (k := k) (A := A) h
@@ -80,7 +87,11 @@ theorem zeroExtendLieHom_comp {m n p : ℕ} (h : m ≤ n) (h' : n ≤ p) :
 
 variable {B : Type w} [Ring B] [Algebra k B]
 
-/-- Entrywise coefficient functoriality is an actual Lie map. -/
+/-- Let k be a commutative ring in universe u and A a possibly noncommutative ring and k-algebra in
+an independent universe v. Let B be another ring and k-algebra in an independent universe w. For
+a k-algebra morphism f:A→B and m∈ℕ, this k-linear Lie map Mat_m(A)→Mat_m(B) sends each entry
+X_{ij} to f(X_{ij}). It preserves matrix products and therefore the commutator bracket, with the
+same finite matrix index on both sides. -/
 def coefficientLieHom (f : A →ₐ[k] B) (m : ℕ) :
     Matrix (Fin m) (Fin m) A →ₗ⁅k⁆ Matrix (Fin m) (Fin m) B :=
   (f.mapMatrix (m := Fin m)).toLieHom
@@ -90,7 +101,11 @@ theorem coefficientLieHom_apply_entry (f : A →ₐ[k] B) (m : ℕ)
     (C : Matrix (Fin m) (Fin m) A) (i j : Fin m) :
     coefficientLieHom k A f m C i j = f (C i j) := rfl
 
-/-- The actual entrywise coefficient map commutes with every finite zero corner. -/
+/-- Let k be a commutative ring in universe u and A a possibly noncommutative ring and k-algebra in
+an independent universe v. Let B be another ring and k-algebra in an independent universe w. For
+f:A→B a k-algebra morphism, m≤n and X∈Mat_m(A), the entrywise matrix map f_n satisfies
+f_n(Z_{m,n}X)=Z_{m,n}(f_mX), where Z_{m,n} is upper-left zero extension. The equality includes
+all entries outside the initial block, which are zero on both sides. -/
 theorem coefficientLieHom_zeroExtend (f : A →ₐ[k] B) {m n : ℕ} (h : m ≤ n)
     (C : Matrix (Fin m) (Fin m) A) :
     coefficientLieHom k A f n (zeroExtend h C) =
@@ -99,7 +114,11 @@ theorem coefficientLieHom_zeroExtend (f : A →ₐ[k] B) {m n : ℕ} (h : m ≤ 
   by_cases hi : i.val < m <;> by_cases hj : j.val < m <;>
     simp only [coefficientLieHom_apply_entry, zeroExtend_apply, hi, hj, ↓reduceDIte, map_zero]
 
-/-- Simultaneous finite-size and coefficient naturality as an actual Lie-map equality. -/
+/-- Let k be a commutative ring in universe u and A a possibly noncommutative ring and k-algebra in
+an independent universe v. Let B be another ring and k-algebra in an independent universe w. For
+a k-algebra morphism f:A→B and m≤n, let f_m,f_n be its entrywise matrix Lie maps and Z_A,Z_B the
+zero-extension Lie maps over A and B. The Lie-map equality is f_n∘Z_A=Z_B∘f_m from Mat_m(A) to
+Mat_n(B). -/
 theorem coefficientLieHom_zeroExtend_comp (f : A →ₐ[k] B) {m n : ℕ} (h : m ≤ n) :
     (coefficientLieHom k A f n).comp (zeroExtendLieHom k A h) =
       (zeroExtendLieHom k B h).comp (coefficientLieHom k A f m) := by
@@ -107,10 +126,16 @@ theorem coefficientLieHom_zeroExtend_comp (f : A →ₐ[k] B) {m n : ℕ} (h : m
   intro C
   exact coefficientLieHom_zeroExtend k A f h C
 
-/-- The scalar special-linear carrier is the native trace-zero matrix Lie subalgebra. -/
+/-- Let k be a commutative ring and m∈ℕ. The scalar special-linear Lie algebra sl_m(k) is the
+submodule of m×m matrices over k with trace zero, equipped with the commutator bracket
+[X,Y]=XY−YX. Its carrier is the trace-zero matrix Lie subalgebra, with no field or
+characteristic restriction. -/
 abbrev ScalarSpecialLinear (m : ℕ) := ↥(LieAlgebra.SpecialLinear.sl (Fin m) k)
 
-/-- The actual scalar inclusion of trace-zero matrices into matrices over the coefficient algebra. -/
+/-- Let k be a commutative ring in universe u and A a possibly noncommutative ring and k-algebra in
+an independent universe v. For m∈ℕ, this k-linear Lie map sl_m(k)→Mat_m(A) first includes a
+trace-zero scalar matrix into Mat_m(k), then applies the algebra map k→A entrywise. Its (i,j)
+entry on s∈sl_m(k) is algebraMap(k,A)(s_{ij}). The target is the full matrix Lie algebra over A. -/
 def scalarLieHom (m : ℕ) : ScalarSpecialLinear k m →ₗ⁅k⁆ Matrix (Fin m) (Fin m) A :=
   (coefficientLieHom k k (Algebra.ofId k A) m).comp
     (LieAlgebra.SpecialLinear.sl (Fin m) k).incl
@@ -119,7 +144,10 @@ def scalarLieHom (m : ℕ) : ScalarSpecialLinear k m →ₗ⁅k⁆ Matrix (Fin m
 theorem scalarLieHom_apply_entry (m : ℕ) (s : ScalarSpecialLinear k m) (i j : Fin m) :
     scalarLieHom k A m s i j = algebraMap k A (s.val i j) := rfl
 
-/-- Trace preservation makes actual zero extension a map of scalar special-linear Lie algebras. -/
+/-- Let k be a commutative ring and m,n∈ℕ with m≤n. Upper-left zero extension defines this k-linear
+Lie map sl_m(k)→sl_n(k). It sends a trace-zero matrix s to its zero extension and preserves
+trace because the additional diagonal entries are zero. The commutator bracket is preserved by
+the matrix zero-extension Lie map. -/
 def scalarZeroExtendLieHom {m n : ℕ} (h : m ≤ n) :
     ScalarSpecialLinear k m →ₗ⁅k⁆ ScalarSpecialLinear k n where
   toFun s := ⟨zeroExtend h s.val, by
@@ -141,7 +169,10 @@ def scalarZeroExtendLieHom {m n : ℕ} (h : m ≤ n) :
 theorem scalarZeroExtendLieHom_coe {m n : ℕ} (h : m ≤ n) (s : ScalarSpecialLinear k m) :
     (scalarZeroExtendLieHom k h s).val = zeroExtend h s.val := rfl
 
-/-- The actual scalar Lie inclusion commutes with the actual finite zero corners. -/
+/-- Let k be a commutative ring in universe u and A a possibly noncommutative ring and k-algebra in
+an independent universe v. For m≤n, let s_m:sl_m(k)→Mat_m(A) and s_n be the entrywise scalar
+maps, Z_A:Mat_m(A)→Mat_n(A) the matrix zero extension and Z_k:sl_m(k)→sl_n(k) its trace-zero
+restriction. Then Z_A∘s_m=s_n∘Z_k as k-linear Lie maps from sl_m(k) to Mat_n(A). -/
 theorem scalarLieHom_zeroExtend {m n : ℕ} (h : m ≤ n) :
     (zeroExtendLieHom k A h).comp (scalarLieHom k A m) =
       (scalarLieHom k A n).comp (scalarZeroExtendLieHom k h) := by
@@ -152,7 +183,11 @@ theorem scalarLieHom_zeroExtend {m n : ℕ} (h : m ≤ n) :
     simp only [LieHom.comp_apply, zeroExtendLieHom_apply, scalarLieHom_apply_entry,
       scalarZeroExtendLieHom_coe, zeroExtend_apply, hi, hj, ↓reduceDIte, map_zero]
 
-/-- The actual scalar Lie inclusion is natural in the coefficient algebra. -/
+/-- Let k be a commutative ring in universe u and A a possibly noncommutative ring and k-algebra in
+an independent universe v. Let B be another ring and k-algebra in an independent universe w. For
+a k-algebra morphism f:A→B and m∈ℕ, let f_m:Mat_m(A)→Mat_m(B) be its entrywise Lie map and
+s_A,s_B the scalar maps from sl_m(k). Then f_m∘s_A=s_B, because f carries the algebra map k→A to
+the algebra map k→B. -/
 theorem scalarLieHom_coefficient (f : A →ₐ[k] B) (m : ℕ) :
     (coefficientLieHom k A f m).comp (scalarLieHom k A m) = scalarLieHom k B m := by
   apply LieHom.ext

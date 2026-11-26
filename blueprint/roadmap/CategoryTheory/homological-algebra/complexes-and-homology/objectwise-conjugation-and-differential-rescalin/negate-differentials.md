@@ -1,3 +1,5 @@
-# Negate Differentials
+# Negation of all differentials of a homological complex
 
-Differential negation on the same objects of an arbitrary complex shape.
+Let `C` be preadditive and `K` a homological complex of any
+shape `c`. Negating every differential gives a homological complex
+with the same degree objects and differential `-d_K(i,j)`.

@@ -1,3 +1,6 @@
-# Local Cohomology Functor linear
+# Local cohomology functors are linear over the scalar ring
 
-Native right derivation retains the earned scalar linearity.
+Local cohomology functors are linear over the scalar ring.
+
+Under the injective-resolution hypothesis, each degree-`q` local cohomology functor preserves
+`R`-scalar multiplication of morphisms.

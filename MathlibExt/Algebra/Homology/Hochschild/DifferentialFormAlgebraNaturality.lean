@@ -14,12 +14,23 @@ public import MathlibExt.Algebra.Homology.Hochschild.Maps
 public import MathlibExt.LinearAlgebra.ExteriorPower.Semilinear
 
 /-!
-# Algebra naturality of the differential-form projection
+# Algebra naturality of coefficient differential forms
 
-An algebra map and a compatible ground-linear coefficient map induce
-semilinear maps on coefficient forms. These maps preserve universal
-differentials and exterior powers and commute with the unscaled
-Hochschild form projection.
+Let k be a commutative ring, g : A → B a unital homomorphism of
+commutative k-algebras, and f : M → N a k-linear coefficient map with
+f(am) = g(a)f(m). The g-semilinear map of universal differentials sends
+da to d(g(a)). Together with f it defines
+G_n : M ⊗_A ∧_A^n Ω_{A/k} → N ⊗_B ∧_B^n Ω_{B/k},
+m ⊗ (da_1 ∧ ⋯ ∧ da_n) ↦ f(m) ⊗ (d(g(a_1)) ∧ ⋯ ∧ d(g(a_n))).
+The map is g-semilinear and is k-linear because g fixes ground scalars.
+
+The underlying tensor maps allow independent ground, algebra and
+coefficient universes. For the chain maps, A,B occupy one algebra
+universe and M,N one coefficient universe. In their common k-module
+category, the lifted G_n define a map of zero-differential form complexes
+and satisfy η_B C(g,f) = G η_A for the Hochschild form projections.
+
+Reference: J.-L. Loday, Cyclic Homology, §3.2.
 -/
 
 @[expose] public section
@@ -41,8 +52,10 @@ variable {k : Type uk} [CommRing k]
   [SMulCommClass k A M] [SMulCommClass k B N]
   [IsScalarTower k A M] [IsScalarTower k B N]
 
-/-- The native universal differential map along the specified algebra
-homomorphism, retaining its target scalar action. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+The map Ω(g) : Ω_{A/k} → Ω_{B/k} is g-semilinear and
+sends da to d(g(a)). Its scalar law is Ω(g)(aω) = g(a)Ω(g)(ω). -/
 def kaehlerAlgebraMap (g : A →ₐ[k] B) :
     KaehlerDifferential k A →ₛₗ[g.toRingHom] KaehlerDifferential k B := by
   letI : Algebra A B := g.toRingHom.toAlgebra
@@ -53,7 +66,10 @@ def kaehlerAlgebraMap (g : A →ₐ[k] B) :
       map_add' := F.map_add
       map_smul' := F.map_smul }
 
-/-- Actual algebra images are differentiated by the native map. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+For every a ∈ A, the map of Kähler differentials satisfies
+Ω(g)(d_A a) = d_B(g(a)). -/
 theorem kaehlerAlgebraMap_D (g : A →ₐ[k] B) (a : A) :
     kaehlerAlgebraMap g (KaehlerDifferential.D k A a) =
       KaehlerDifferential.D k B (g a) := by
@@ -61,14 +77,25 @@ theorem kaehlerAlgebraMap_D (g : A →ₐ[k] B) (a : A) :
   let _ : IsScalarTower k A B := inferInstance
   exact KaehlerDifferential.map_D k k A B a
 
-/-- The original coefficient map with its semilinear algebra action. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+The same function f is g-semilinear as a map of the A-module M
+to the B-module N: its scalar law is precisely f(am) = g(a)f(m). -/
 def algebraCoefficientSemilinearMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) : M →ₛₗ[g.toRingHom] N where
   toFun := f
   map_add' := f.map_add
   map_smul' := hf
 
-/-- The scalar-changing tensor map on coefficient differential forms. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+Writing Ω_A^n = ∧_A^n Ω_{A/k} and Ω_B^n similarly, the map
+G_n : M ⊗_A Ω_A^n → N ⊗_B Ω_B^n is g-semilinear.
+It sends m ⊗ ω to f(m) ⊗ (∧^n Ω(g))(ω). -/
 def coefficientFormAlgebraSemilinearMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) :
     M ⊗[A] (⋀[A]^n (KaehlerDifferential k A)) →ₛₗ[g.toRingHom]
@@ -76,7 +103,13 @@ def coefficientFormAlgebraSemilinearMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
   TensorProduct.map (algebraCoefficientSemilinearMap g f hf)
     (exteriorPower.mapSemilinear g.toRingHom (kaehlerAlgebraMap g) n)
 
-/-- The same map is ground-linear, by the original algebra scalar law. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+The g-semilinear form map G_n is also k-linear, with the same
+values m ⊗ ω ↦ f(m) ⊗ (∧^n Ω(g))(ω).
+Indeed g carries each ground scalar in A to that same scalar in B. -/
 def coefficientFormAlgebraLinearMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) :
     M ⊗[A] (⋀[A]^n (KaehlerDifferential k A)) →ₗ[k]
@@ -90,7 +123,13 @@ def coefficientFormAlgebraLinearMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     rfl
 
 omit [SMulCommClass k A M] [SMulCommClass k B N] in
-/-- The coefficient head and every differential image are retained. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+For m ∈ M and a : Fin n → A, the coefficient form map sends
+m ⊗_A (da_0 ∧ ⋯ ∧ da_{n-1}) to
+f(m) ⊗_B (d(g(a_0)) ∧ ⋯ ∧ d(g(a_{n-1}))). -/
 theorem coefficientFormAlgebraLinearMap_differentialWord
     (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) (m : M) (a : Fin n → A) :
@@ -114,7 +153,15 @@ variable (k : Type uk) [CommRing k]
   [SMulCommClass k A M] [SMulCommClass k B N]
   [IsScalarTower k A M] [IsScalarTower k B N]
 
-/-- The coefficient/algebra map on the zero-differential form complexes. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+For the categorical chain maps, A,B share universe u_A and M,N
+share universe u_M; all objects lie in ModuleCat over k at
+max{u_k,u_A,u_M}.
+The maps up ∘ G_n ∘ down define a chain map between the
+zero-differential coefficient form complexes for (A,M) and (B,N). -/
 def coefficientFormAlgebraComplexMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
     coefficientDifferentialFormComplex k A M ⟶ coefficientDifferentialFormComplex k B N where
@@ -129,7 +176,16 @@ def coefficientFormAlgebraComplexMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
       coefficientDifferentialFormComplex_d_eq_zero]
     exact CategoryTheory.Limits.comp_zero.trans CategoryTheory.Limits.zero_comp.symm
 
-/-- The native raw Hochschild map retains the original coefficient carrier. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+For the categorical chain maps, A,B share universe u_A and M,N
+share universe u_M; all objects lie in ModuleCat over k at
+max{u_k,u_A,u_M}.
+The coefficient-first tensor maps
+m ⊗ a_1 ⊗ ⋯ ⊗ a_n ↦ f(m) ⊗ g(a_1) ⊗ ⋯ ⊗ g(a_n)
+define a Hochschild chain map C_*(A,M) → C_*(B,N). -/
 def originalAlgebraCoefficientChainMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) : chainComplex k A M ⟶ chainComplex k B N := by
   letI := opModule A M
@@ -143,7 +199,15 @@ def originalAlgebraCoefficientChainMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
   exact ModuleCat.Algebra.Hochschild.mapInSameUniverse g.toNonUnitalAlgHom f hf
     (by intro a m; exact hf a m)
 
-/-- The chain-map constructor stores the original coefficient tensor map in every degree. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+For the categorical chain maps, A,B share universe u_A and M,N
+share universe u_M; all objects lie in ModuleCat over k at
+max{u_k,u_A,u_M}.
+In degree n, the Hochschild map is the k-linear tensor operator
+f ⊗_k g^{⊗n} on M ⊗[k] A^{⊗n}. -/
 theorem originalAlgebraCoefficientChainMap_f
     (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) :
@@ -166,7 +230,15 @@ theorem originalAlgebraCoefficientChainMap_f
   change ((ModuleCat.Algebra.Hochschild.mapInSameUniverse g.toNonUnitalAlgHom f hleft hright).f n).hom = _
   exact ModuleCat.Algebra.Hochschild.mapInSameUniverse_f g.toNonUnitalAlgHom f hleft hright n
 
-/-- Every component is the original coefficient-first tensor map. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+For the categorical chain maps, A,B share universe u_A and M,N
+share universe u_M; all objects lie in ModuleCat over k at
+max{u_k,u_A,u_M}.
+On an elementary Hochschild tensor, the chain map has value
+m ⊗ tprod(a) ↦ f(m) ⊗ tprod(j ↦ g(a_j)). -/
 theorem originalAlgebraCoefficientChainMap_tprod
     (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) (m : M) (a : Fin n → A) :
@@ -177,7 +249,16 @@ theorem originalAlgebraCoefficientChainMap_tprod
   exact (LinearMap.congr_fun h (m ⊗ₜ[k] PiTensorProduct.tprod k a)).trans
     (ModuleCat.Algebra.Hochschild.linearMap_tprod g.toNonUnitalAlgHom f n m a)
 
-/-- The form map preserves the lifted original differential word. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+For the categorical chain maps, A,B share universe u_A and M,N
+share universe u_M; all objects lie in ModuleCat over k at
+max{u_k,u_A,u_M}.
+The degree-n form-complex map sends
+ULift(m ⊗_A (da_0 ∧ ⋯ ∧ da_{n-1})) to
+ULift(f(m) ⊗_B (d(g(a_0)) ∧ ⋯ ∧ d(g(a_{n-1})))). -/
 theorem coefficientFormAlgebraComplexMap_word
     (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) (m : M) (a : Fin n → A) :
@@ -188,8 +269,17 @@ theorem coefficientFormAlgebraComplexMap_word
         (fun j => KaehlerDifferential.D k B (g (a j)))) :=
   congrArg ULift.up (coefficientFormAlgebraLinearMap_differentialWord g f hf n m a)
 
-/-- Algebra and coefficient naturality of the unscaled original projection,
-proved on the tensor representatives. -/
+/-- Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+Let M,N be compatible modules over A,B and f : M → N k-linear
+with f(am) = g(a)f(m) for all a ∈ A and m ∈ M.
+For the categorical chain maps, A,B share universe u_A and M,N
+share universe u_M; all objects lie in ModuleCat over k at
+max{u_k,u_A,u_M}.
+Let η_A,η_B be the Hochschild projections to the lifted
+zero-differential form complexes. The algebra/coefficient square is
+η_B C(g,f) = G η_A. Its degree maps use the unscaled exterior
+word of universal differentials. -/
 @[reassoc]
 theorem coefficientDifferentialFormChainMap_algebra
     (g : A →ₐ[k] B) (f : M →ₗ[k] N)

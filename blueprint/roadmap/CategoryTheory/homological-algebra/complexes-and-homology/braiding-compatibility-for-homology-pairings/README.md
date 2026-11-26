@@ -1,4 +1,4 @@
 # Braiding compatibility for homology pairings
 
-- [Pair Cycles braiding](pair-cycles-braiding.md)
-- [Pair Homology braiding](pair-homology-braiding.md)
+- [The braiding square descends to cycle pairings](pair-cycles-braiding.md)
+- [The braiding square descends to homology pairings](pair-homology-braiding.md)

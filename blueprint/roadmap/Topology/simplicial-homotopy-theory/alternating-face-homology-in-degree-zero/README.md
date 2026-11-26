@@ -1,21 +1,21 @@
 # Alternating-face homology in degree zero
 
-- [Degree One Differential eq sub](degree-one-differential-eq-sub.md)
+- [The degree-one boundary is the difference of the two faces](degree-one-differential-eq-sub.md)
 
 ## Homology
 
-- [Homology Zero Class](homology-zero-class.md)
-- [Homology Zero Class balance](homology-zero-class-balance.md)
-- [Homology Zero Cofork](homology-zero-cofork.md)
-- [Homology Zero Cofork Is Colimit](homology-zero-cofork-is-colimit.md)
-- [Homology Zero Iso Coequalizer](homology-zero-iso-coequalizer.md)
+- [The degree-zero homology class map](homology-zero-class.md)
+- [The degree-zero class map identifies the two faces](homology-zero-class-balance.md)
+- [The homology class map defines a face cofork](homology-zero-cofork.md)
+- [The homology face cofork is a coequalizer](homology-zero-cofork-is-colimit.md)
+- [Degree-zero homology is the coequalizer of the two faces](homology-zero-iso-coequalizer.md)
 
 ## Naturality
 
-- [Homology Zero Class naturality](homology-zero-class-naturality.md)
-- [Homology Zero Iso Coequalizer naturality of π](homology-zero-iso-coequalizer-naturality.md)
+- [Simplicial maps commute with degree-zero class maps](homology-zero-class-naturality.md)
+- [A map of face coequalizers commutes with the homology comparison](homology-zero-iso-coequalizer-naturality.md)
 
 ## Coequalizer Maps
 
-- [Degree Zero Coequalizer Map](degree-zero-coequalizer-map.md)
-- [Homology Zero Iso Coequalizer naturality](homology-zero-iso-coequalizer-naturality-2.md)
+- [A simplicial map induces a map of face coequalizers](degree-zero-coequalizer-map.md)
+- [The homology-to-coequalizer isomorphism is natural](homology-zero-iso-coequalizer-naturality-2.md)

@@ -1,3 +1,6 @@
-# Left Derived Delta Functor inv app
+# Inverse degree maps of a derived delta-functor isomorphism
 
-The inverse degree map is the canonical derived inverse map.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, and `e : F ≅ G`. The inverse degree-`n`
+component of the δ-functor isomorphism is the inverse natural
+transformation of `L_ne : L_nF ≅ L_nG`.

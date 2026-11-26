@@ -13,11 +13,16 @@ public import MathlibExt.Algebra.Homology.OfFunctorHomology
 public import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Basic
 
 /-!
-# Homology commutes with exact limits, canonically.
+# Homology and homology-preserving limits
 
-We construct the canonical comparison `homologyLimitIso` for a diagram
-`K : J ⥤ HomologicalComplex C c` and prove the generator formulas for its
-`hom` and `inv`, and that the forward map equals `limit.post`.
+Let `C` be an abelian category with limits of shape `J`, and suppose the limit functor `lim :
+(J ⥤ C) ⥤ C` preserves homology. For a diagram `K` of complexes of any fixed shape `c` and an
+index `i`, there is a canonical comparison `H_i(lim K) ≅ lim_j H_i(K_j)`.
+
+The forward comparison followed by the projection at `j` equals the homology map of `lim K →
+K_j`. The inverse satisfies the reverse projection equation. Thus the forward map is the limit
+comparison map, and the degree-`i` homology functor preserves limits of shape `J`. The
+diagram, category, morphism, and complex-index universes are independent.
 -/
 
 open CategoryTheory Limits
@@ -40,7 +45,10 @@ private lemma limitIsoLimOfFunctor_π (K : J ⥤ HomologicalComplex C c) (j : J)
 
 variable [(lim (J := J) (C := C)).PreservesHomology]
 
-/-- Canonical iso comparing homology of a limit with the limit of homologies. -/
+/-- The canonical comparison of homology with a homology-preserving limit.
+
+In an abelian category `C` with `J`-limits, if the limit functor preserves homology, then for
+`K : J ⥤ HomologicalComplex C c` one has `H_i(lim K) ≅ lim_j H_i(K_j)`. -/
 public noncomputable def homologyLimitIso (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (limit K).homology i ≅ limit (K ⋙ homologyFunctor C c i) :=
   (homologyFunctor C c i).mapIso (limitIsoLimOfFunctor K) ≪≫
@@ -48,7 +56,10 @@ public noncomputable def homologyLimitIso (K : J ⥤ HomologicalComplex C c) (i 
     (lim (J := J) (C := C)).mapIso (ofFunctorHomologyIso K i)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The forward comparison followed by a limit projection is the homology map of the projection. -/
+/-- The projection formula for the homology-limit comparison.
+
+Under the homology-preservation hypothesis on `lim`, the forward comparison followed by the
+limit projection at `j` equals the homology map of the complex projection `lim K → K_j`. -/
 public theorem homologyLimitIso_hom_comp_π (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     (homologyLimitIso K i).hom ≫ limit.π (K ⋙ homologyFunctor C c i) j =
       (homologyFunctor C c i).map (limit.π K j) := by
@@ -112,7 +123,10 @@ public theorem homologyLimitIso_hom_comp_π (K : J ⥤ HomologicalComplex C c) (
     _ = (homologyFunctor C c i).map (limit.π K j) := rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The inverse comparison followed by the homology map of a projection is the target projection. -/
+/-- The inverse projection formula for the homology-limit comparison.
+
+The inverse comparison followed by the homology map of `lim K → K_j` equals the projection
+from the limit of the homology diagram at `j`. -/
 public theorem homologyLimitIso_inv_comp_map_π (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     (homologyLimitIso K i).inv ≫ (homologyFunctor C c i).map (limit.π K j) =
       limit.π (K ⋙ homologyFunctor C c i) j := by
@@ -127,7 +141,10 @@ public theorem homologyLimitIso_inv_comp_map_π (K : J ⥤ HomologicalComplex C 
     _ = _ := by rw [Iso.inv_hom_id, Category.id_comp]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The forward comparison equals the limit comparison map. -/
+/-- The homology-limit comparison as the limit comparison map.
+
+The forward map `H_i(lim K) → lim_j H_i(K_j)` is `limit.post K (homologyFunctor C c i)`,
+assuming the limit functor preserves homology. -/
 public theorem homologyLimitIso_hom_eq_limit_post (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (homologyLimitIso K i).hom = limit.post K (homologyFunctor C c i) := by
   apply limit.hom_ext
@@ -139,6 +156,10 @@ public theorem homologyLimitIso_hom_eq_limit_post (K : J ⥤ HomologicalComplex 
     simp [limit.post]
   rw [h1, h2]
 
+/-- Preservation of diagram limits by a homology functor.
+
+If an abelian category has limits of shape `J` and its `J`-limit functor preserves homology,
+then the homology functor in every index `i` preserves limits of shape `J`. -/
 public noncomputable instance homologyFunctor_preservesLimitsOfShape (i : ι) :
     PreservesLimitsOfShape J (homologyFunctor C c i) where
   preservesLimit {K} := by

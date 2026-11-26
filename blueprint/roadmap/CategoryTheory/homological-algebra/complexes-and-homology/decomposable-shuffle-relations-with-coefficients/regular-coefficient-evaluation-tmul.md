@@ -1,3 +1,6 @@
-# Regular Coefficient Evaluation tmul
+# The tensor formula for regular coefficient evaluation
 
-The regular word has the same original tail after coefficient evaluation.
+The tensor formula for regular coefficient evaluation.
+
+The evaluation with parameter `m` sends `up(a) ⊗ t` to `(a • m) ⊗ t`, retaining the full
+tensor tail `t`.

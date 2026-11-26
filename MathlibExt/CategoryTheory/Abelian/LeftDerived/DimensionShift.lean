@@ -13,12 +13,13 @@ public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.DimensionShift
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.DeltaFunctor
 
 /-!
-# The degree-one left-derived boundary as an kernel
+# First left derivation as the kernel of a mapped monomorphism
 
-For a short exact sequence with middle object having zero first derived value, the boundary embeds
-the first derived value of the last object as a kernel. Finite-colimit preservation transports
-that kernel through the degree-zero comparison to the kernel of the image of the original first
-map.
+Let `C,D` be abelian, with projective resolutions in `C`, and
+`F : C → D` additive and preserving finite colimits. For short exact
+`X₁ → X₂ → X₃` with `L₁F(X₂)=0`, the boundary identifies
+`L₁F(X₃)` with `ker(F(X₁) → F(X₂))`. Its inclusion is the boundary
+followed by the degree-zero comparison `L₀F(X₁) ≅ F(X₁)`.
 -/
 
 @[expose] public section
@@ -32,10 +33,10 @@ namespace CategoryTheory.Functor
 variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasProjectiveResolutions C]
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
-/--
-The first left-derived boundary identifies the last object's derived value with the kernel of the
-image of the first map.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Suppose `F` preserves finite colimits. For short exact `S : X₁ → X₂ → X₃` with `L₁F(X₂)=0`,
+the degree-one boundary gives an isomorphism
+`L₁F(X₃) ≅ ker(F(S.f))`. -/
 noncomputable def leftDerivedOneIsoKernel (F : C ⥤ D) [F.Additive]
     [PreservesFiniteColimits F] (S : ShortComplex.ShortExactSequences C)
     (h : IsZero ((F.leftDerived 1).obj S.obj.X₂)) :
@@ -52,10 +53,10 @@ noncomputable def leftDerivedOneIsoKernel (F : C ⥤ D) [F.Additive]
   exact g ≪≫ kernel.mapIso f₀ (F.map S.obj.f)
     (e.app S.obj.X₁) (e.app S.obj.X₂) (e.hom.naturality S.obj.f)
 
-/--
-Under the kernel inclusion, the forward map is the left-derived boundary followed by the
-degree-zero comparison.
--/
+/-- Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Suppose `F` preserves finite colimits. For short exact `S : X₁ → X₂ → X₃` with `L₁F(X₂)=0`,
+the kernel isomorphism followed by `ker(F(S.f)) → F(X₁)` equals
+`δ₀ : L₁F(X₃) → L₀F(X₁)` followed by `L₀F(X₁) ≅ F(X₁)`. -/
 @[reassoc]
 lemma leftDerivedOneIsoKernel_hom_ι (F : C ⥤ D) [F.Additive]
     [PreservesFiniteColimits F] (S : ShortComplex.ShortExactSequences C)

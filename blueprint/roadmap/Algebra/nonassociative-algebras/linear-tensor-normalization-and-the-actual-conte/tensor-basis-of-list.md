@@ -1,4 +1,6 @@
-# Tensor Basis of List
+# The tensor basis element indexed by a list
 
-The native tensor basis evaluates its free-monoid index as the actual
-product of the original basis vectors.
+The tensor basis element indexed by a list.
+
+The tensor-algebra basis element at the free-monoid word of `xs` equals the tensor product of
+its basis generators.

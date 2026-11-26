@@ -1,4 +1,4 @@
-# Boundary squared
+# Applying the exterior CE boundary twice gives zero
 
-The canonical boundary squares to zero by Jacobi and the exterior
-quadratic relation.
+Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For every a
+: E, boundary R L (boundary R L a) = 0.

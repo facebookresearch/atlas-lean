@@ -13,13 +13,16 @@ public import MathlibExt.LinearAlgebra.ExteriorAlgebra.Coalgebra
 public import MathlibExt.LinearAlgebra.ExteriorPower.Projection
 
 /-!
-# Total-degree homogeneity of the actual exterior coproduct
+# Total-degree homogeneity of the exterior coproduct
 
-The actual coproduct preserves total exterior degree. Homogeneous tensors
-are spanned by pure tensors of complementary degrees. Their bidegree
-projections vanish outside the antidiagonal, and the finite antidiagonal
-reconstruction recovers the original tensor. No tensor-flatness hypothesis
-or basis is needed.
+For `E=ExteriorAlgebra R M`, let `D_n ⊆ E ⊗[R] E` be spanned by homogeneous pure tensors of
+bidegrees `(p,q)` with `p+q=n`. The exterior coproduct maps `Λ^n_R M` into `D_n`.
+
+Projection to a bidegree off this antidiagonal is zero. Summing the included bidegree
+projections over `p=0,...,n` recovers every tensor in `D_n`, and hence every coproduct of a
+homogeneous degree-`n` element.
+
+References: Bourbaki, *Algebra*, Chapter III; Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -39,7 +42,10 @@ local notation "E" => ExteriorAlgebra R M
 local notation "γ" => (CliffordAlgebra.involute : E →ₐ[R] E)
 local notation "π" => exteriorPower.projection R M
 
-/-- The native grade involution preserves every full exterior degree. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For `n : ℕ` and `a ∈ Λ^n_R M`, the grade involution satisfies `γ(a) ∈
+Λ^n_R M`. -/
 theorem involute_mem_exteriorPower (n : ℕ) (a : E) (ha : a ∈ ⋀[R]^n M) :
     γ a ∈ ⋀[R]^n M := by
   rw [← ιMulti_span_fixedDegree R n] at ha
@@ -63,8 +69,10 @@ private theorem one_mem_degree_zero : (1 : E) ∈ ⋀[R]^0 M := by
   rw [pow_zero]
   exact Submodule.mem_one.mpr ⟨(1 : R), by simp only [map_one]⟩
 
-/-- The total-degree-`n` tensors are spanned by homogeneous pure tensors
-whose factor degrees add to `n`. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. For `n : ℕ`, `coproductDegree R M n` is the submodule spanned by `a⊗b`
+with `a ∈ Λ^p_R M`, `b ∈ Λ^q_R M`, and `p+q=n`. -/
 def coproductDegree (n : ℕ) : Submodule R (E ⊗[R] E) :=
   Submodule.span R {t | ∃ (p q : ℕ) (a b : E),
     p + q = n ∧ a ∈ ⋀[R]^p M ∧ b ∈ ⋀[R]^q M ∧ a ⊗ₜ[R] b = t}
@@ -74,7 +82,11 @@ theorem tmul_mem_coproductDegree (n p q : ℕ) (hpq : p + q = n)
     a ⊗ₜ[R] b ∈ coproductDegree R M n :=
   Submodule.subset_span ⟨p, q, a, b, hpq, ha, hb, rfl⟩
 
-/-- Signed insertion raises the actual total tensor degree by one. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Write `E_r = Λ^r_R M`, `π_r : E → E_r` for degree projection, and `j_r :
+E_r → E` for inclusion. Let `D_n` be the span of `a_p ⊗ b_q` with `p+q=n`. For `x : M`, `n :
+ℕ`, and `t ∈ D_n`, `signedInsertion R M x t ∈ D_(n+1)`. -/
 theorem signedInsertion_mem_coproductDegree (x : M) (n : ℕ) (t : E ⊗[R] E)
     (ht : t ∈ coproductDegree R M n) :
     signedInsertion R M x t ∈ coproductDegree R M (n + 1) := by
@@ -106,7 +118,11 @@ theorem coproduct_ιMulti_mem_degree (n : ℕ) (v : Fin n → M) :
       rw [ιMulti_succ_apply, coproduct_ι_mul]
       exact signedInsertion_mem_coproductDegree R M (v 0) n _ (ih (Matrix.vecTail v))
 
-/-- The exterior coproduct is homogeneous for the total degree. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Write `E_r = Λ^r_R M`, `π_r : E → E_r` for degree projection, and `j_r :
+E_r → E` for inclusion. Let `D_n` be the span of `a_p ⊗ b_q` with `p+q=n`. For `n : ℕ` and `a
+∈ E_n`, `Δ a ∈ D_n`. -/
 theorem coproduct_mem_degree (n : ℕ) (a : E) (ha : a ∈ ⋀[R]^n M) :
     coproduct R M a ∈ coproductDegree R M n := by
   rw [← ιMulti_span_fixedDegree R n] at ha
@@ -118,7 +134,11 @@ theorem coproduct_mem_degree (n : ℕ) (a : E) (ha : a ∈ ⋀[R]^n M) :
   | add a b ha hb iha ihb => rw [map_add]; exact Submodule.add_mem _ iha ihb
   | smul r a ha ih => rw [map_smul]; exact Submodule.smul_mem _ r ih
 
-/-- Bidegree projections outside the actual antidiagonal vanish. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Write `E_r = Λ^r_R M`, `π_r : E → E_r` for degree projection, and `j_r :
+E_r → E` for inclusion. Let `D_n` be the span of `a_p ⊗ b_q` with `p+q=n`. For `n,p,q : ℕ`,
+`p+q≠n`, and `t ∈ D_n`, `(π_p ⊗ π_q)(t)=0` in `E_p ⊗[R] E_q`. -/
 theorem projection_tensor_eq_zero_of_mem_degree (n p q : ℕ) (hpq : p + q ≠ n)
     (t : E ⊗[R] E) (ht : t ∈ coproductDegree R M n) :
     TensorProduct.map (π p) (π q) t = 0 := by
@@ -140,14 +160,22 @@ private theorem subtype_projection_of_mem (n : ℕ) (a : E) (ha : a ∈ ⋀[R]^n
     (π n a : E) = a :=
   congrArg Subtype.val (exteriorPower.projection_subtype_apply R M n ⟨a, ha⟩)
 
-/-- The finite antidiagonal reconstruction as an actual linear map. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Write `E_r = Λ^r_R M`, `π_r : E → E_r` for degree projection, and `j_r :
+E_r → E` for inclusion. Let `D_n` be the span of `a_p ⊗ b_q` with `p+q=n`. For `n : ℕ`, the
+reconstruction endomorphism of `E⊗E` is `R_n=∑ p : Fin(n+1), (j_p ⊗ j_(n-p)) ∘ (π_p ⊗
+π_(n-p))`. -/
 def degreeTensorReconstruction (n : ℕ) : Module.End R (E ⊗[R] E) :=
   ∑ p : Fin (n + 1),
     (TensorProduct.map (⋀[R]^p.val M).subtype (⋀[R]^(n - p.val) M).subtype).comp
       (TensorProduct.map (π p.val) (π (n - p.val)))
 
-/-- Every homogeneous total-degree tensor is recovered from its finitely
-many bidegree components. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Write `E_r = Λ^r_R M`, `π_r : E → E_r` for degree projection, and `j_r :
+E_r → E` for inclusion. Let `D_n` be the span of `a_p ⊗ b_q` with `p+q=n`. For `n : ℕ` and `t
+∈ D_n`, `degreeTensorReconstruction R M n t=t`. -/
 theorem degreeTensorReconstruction_of_mem (n : ℕ) (t : E ⊗[R] E)
     (ht : t ∈ coproductDegree R M n) : degreeTensorReconstruction R M n t = t := by
   induction ht using Submodule.span_induction with
@@ -176,7 +204,11 @@ theorem degreeTensorReconstruction_of_mem (n : ℕ) (t : E ⊗[R] E)
   | add t s ht hs iht ihs => rw [map_add, iht, ihs]
   | smul r t ht ih => rw [map_smul, ih]
 
-/-- In every exterior degree, the actual coproduct is the finite antidiagonal sum. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Write `E_r = Λ^r_R M`, `π_r : E → E_r` for degree projection, and `j_r :
+E_r → E` for inclusion. Let `D_n` be the span of `a_p ⊗ b_q` with `p+q=n`. For `n : ℕ` and `a
+: E_n`, `degreeTensorReconstruction R M n (Δ(a : E))=Δ(a : E)`. -/
 theorem coproduct_degreeTensorReconstruction (n : ℕ) (a : ⋀[R]^n M) :
     degreeTensorReconstruction R M n (coproduct R M (a : E)) = coproduct R M (a : E) :=
   degreeTensorReconstruction_of_mem R M n _ (coproduct_mem_degree R M n a a.property)

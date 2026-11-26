@@ -1,3 +1,4 @@
-# Is Split op iff
+# Splitness is equivalent under opposite duality
 
-The raw split predicate is equivalent for the complex and its native opposite.
+For a c-complex K in a category C with zero morphisms, IsSplit(K.op) is equivalent to
+IsSplit(K), using opposite and unop on the generalized-inverse data.

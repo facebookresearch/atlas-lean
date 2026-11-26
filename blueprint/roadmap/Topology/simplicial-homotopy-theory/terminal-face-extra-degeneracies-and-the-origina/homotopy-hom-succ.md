@@ -1,3 +1,5 @@
-# Homotopy hom succ
+# The successor component of the terminal extra-degeneracy homotopy
 
-The actual homotopy's nonzero component retains the terminal-face sign.
+The successor component of the terminal extra-degeneracy homotopy.
+
+The homotopy map from degree `n` to degree `n+1` is `(-1)^n` times the right extra degeneracy.

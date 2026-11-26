@@ -15,11 +15,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.ProjectiveExa
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.BifunctorBalance
 
 /-!
-# Opposite-variable Tor balance
+# Balanced Tor in the two module variables
 
-Projectivity of resolution terms supplies both exactness hypotheses of the
-augmentation comparison. The modules are arbitrary; flatness, finite
-generation and a choice of frame are not required.
+Let `R` be an associative ring, and assume the right and left module categories in carrier
+universe `v` have projective resolutions. Deriving the balanced tensor bifunctor in the left
+module gives `torSecond`, while deriving it in the right module gives `torFirst`; both retain
+the variable order `(right module, left module)`.
+
+Projective modules make tensoring exact in the opposite variable. This gives a natural
+isomorphism between the two derived bifunctors in every natural degree, for arbitrary input
+modules. The balance coordinate commutes with maps in each module variable, and the ring
+universe remains independent of `v`.
 -/
 
 @[expose] public section
@@ -36,18 +42,28 @@ variable (R : Type u) [Ring R]
   [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)]
   [HasProjectiveResolutions (ModuleCat.{v} R)]
 
-/-- The actual two-variable Tor presentation obtained by deriving the left
-module variable of the existing balanced tensor bifunctor. -/
+/-- Tor obtained by deriving the left-module variable.
+
+In natural degree `n`, derive the second variable of the group-valued balanced tensor
+bifunctor. The resulting bifunctor takes a right module `A` and a left module `B` to the Tor
+group computed from a projective resolution of `B`. -/
 abbrev torSecond (n : ℕ) : ModuleCat.{v} Rᵐᵒᵖ ⥤ ModuleCat.{v} R ⥤ AddCommGrpCat.{v} :=
   Functor.LeftDerivedBalance.deriveSecond (groupBifunctor R) n
 
-/-- The actual two-variable Tor presentation obtained by deriving the right
-module variable, retaining the same original variable order. -/
+/-- Tor obtained by deriving the right-module variable.
+
+In natural degree `n`, derive the first variable of the group-valued balanced tensor bifunctor
+and retain the right-then-left variable order. The computation uses a projective resolution of
+the right module. -/
 abbrev torFirst (n : ℕ) : ModuleCat.{v} Rᵐᵒᵖ ⥤ ModuleCat.{v} R ⥤ AddCommGrpCat.{v} :=
   Functor.LeftDerivedBalance.deriveFirst (groupBifunctor R) n
 
-/-- Opposite-variable balance is earned from the two genuine projective
-resolution augmentations and is natural in both original modules. -/
+/-- Natural balance isomorphism between the two Tor derivations.
+
+Assuming projective resolutions in both module categories, the second-variable and first-
+variable derived tensor bifunctors are naturally isomorphic in every natural degree `n`.
+Tensoring with projective resolution terms supplies the required exactness in the other
+variable. -/
 def torBalanceIso (n : ℕ) : torSecond R n ≅ torFirst R n :=
   Functor.LeftDerivedBalance.balanceIso (groupBifunctor R)
     (fun P hP => by
@@ -57,19 +73,28 @@ def torBalanceIso (n : ℕ) : torSecond R n ≅ torFirst R n :=
       let : Projective Q := hQ
       exact groupBifunctor_flip_obj_preservesHomology_of_projective R Q) n
 
-/-- The canonical balance component retains both original homology objects. -/
+/-- Tor balance isomorphism at a pair of modules.
+
+For a right module `A`, left module `B`, and natural `n`, evaluate the balance natural
+isomorphism to obtain `torSecond R n A B ≅ torFirst R n A B`. -/
 def torBalanceObjIso (A : ModuleCat.{v} Rᵐᵒᵖ) (B : ModuleCat.{v} R) (n : ℕ) :
     ((torSecond R n).obj A).obj B ≅ ((torFirst R n).obj A).obj B :=
   ((torBalanceIso R n).app A).app B
 
-/-- The comparison commutes with every genuine map of the original left coefficient. -/
+/-- Tor balance coordinate is natural in the left module.
+
+For `g : B ⟶ B'`, the second-variable Tor map followed by the balance coordinate at `(A, B')`
+equals the coordinate at `(A, B)` followed by the first-variable Tor map. -/
 theorem torBalance_hom_naturality_coefficient (A : ModuleCat.{v} Rᵐᵒᵖ)
     {B B' : ModuleCat.{v} R} (g : B ⟶ B') (n : ℕ) :
     ((torSecond R n).obj A).map g ≫ (torBalanceObjIso R A B' n).hom =
       (torBalanceObjIso R A B n).hom ≫ ((torFirst R n).obj A).map g :=
   ((torBalanceIso R n).app A).hom.naturality g
 
-/-- The same canonical comparison commutes with every original right-module map. -/
+/-- Tor balance coordinate is natural in the right module.
+
+For `f : A ⟶ A'`, the second-variable Tor map followed by the balance coordinate at `(A', B)`
+equals the coordinate at `(A, B)` followed by the first-variable Tor map. -/
 theorem torBalance_hom_naturality_right
     {A A' : ModuleCat.{v} Rᵐᵒᵖ} (f : A ⟶ A') (B : ModuleCat.{v} R) (n : ℕ) :
     ((torSecond R n).map f).app B ≫ (torBalanceObjIso R A' B n).hom =

@@ -13,17 +13,13 @@ public import MathlibExt.CategoryTheory.ExactCategory.Basic
 import MathlibExt.CategoryTheory.ExactCategory.MorphismProperty
 
 /-!
-# Exact pushout flag completion
+# Completing an exact pushout flag
 
-Given admissible exact sequences `K ⟶ A ⟶ X` and `A ⟶ Y ⟶ Q`, together
-with a pushout square from `p : A ⟶ X` and `r : A ⟶ Y`, this file constructs
-the induced map from the pushout to `Q` and proves admissible exactness of the
-two remaining rows `K ⟶ Y ⟶ P` and `X ⟶ P ⟶ Q`.
-
-The pushout orientation is `p ≫ x = r ≫ y`.  The construction uses only the
-given exact sequences and square.  It introduces no choice-bearing Quillen
-span data, Stage or Q/S assembly, realization, equivalence, additivity, or
-K-theory comparison claim.
+Let `C` be an additive exact category. Given admissible exact sequences
+`K → A → X` and `A → Y → Q`, a pushout of `p : A → X` and
+`r : A → Y` completes the flag to admissible exact sequences
+`K → Y → P` and `X → P → Q`. The quotient map from `P` to `Q`
+is characterized by zero on `X → P` and by the original quotient on `Y → P`.
 -/
 
 @[expose] public section
@@ -36,16 +32,19 @@ namespace CategoryTheory.ExactCategory
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- The map from a pushout to the quotient of its right input, induced by the
-zero map from the left input and the given quotient map from the right input.
-The square is oriented by `p ≫ x = r ≫ y`. -/
+/-- In an additive exact category `C`, let `P` be a pushout of
+`p : A → X` and `r : A → Y`, with legs `x : X → P`, `y : Y → P`.
+For `q : Y → Q` satisfying `r ≫ q = 0`, the induced map `P → Q`
+is uniquely characterized by `x ≫ map = 0` and `y ≫ map = q`. -/
 noncomputable def pushoutQuotientMap
     {A X Y P Q : C} (p : A ⟶ X) (r : A ⟶ Y) (q : Y ⟶ Q)
     (x : X ⟶ P) (y : Y ⟶ P) (wr : r ≫ q = 0)
     (sq : IsPushout p r x y) : P ⟶ Q :=
   sq.desc (0 : X ⟶ Q) q (by simp [wr])
 
-/-- The induced pushout quotient map vanishes on the left pushout leg. -/
+/-- For the pushout of `p : A → X`, `r : A → Y` in an additive exact
+category `C` and a map `q : Y → Q` with `r ≫ q = 0`, the induced
+quotient map `P → Q` has zero composite with the pushout leg `x : X → P`. -/
 @[reassoc (attr := simp)]
 theorem pushoutQuotientMap_x
     {A X Y P Q : C} (p : A ⟶ X) (r : A ⟶ Y) (q : Y ⟶ Q)
@@ -55,8 +54,9 @@ theorem pushoutQuotientMap_x
   unfold pushoutQuotientMap
   exact sq.inl_desc _ _ _
 
-/-- The induced pushout quotient map restricts to the original quotient map
-on the right pushout leg. -/
+/-- For the pushout of `p : A → X`, `r : A → Y` in an additive exact
+category `C` and `q : Y → Q` with `r ≫ q = 0`, the induced
+quotient map restricts on `y : Y → P` to `q`: `y ≫ map = q`. -/
 @[reassoc (attr := simp)]
 theorem pushoutQuotientMap_y
     {A X Y P Q : C} (p : A ⟶ X) (r : A ⟶ Y) (q : Y ⟶ Q)
@@ -68,9 +68,10 @@ theorem pushoutQuotientMap_y
 
 variable [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-/-- Completing the lower-left row of an exact pushout flag: if
-`K ⟶ A ⟶ X` and `A ⟶ Y ⟶ Q` are admissible exact and
-`p ≫ x = r ≫ y` is a pushout, then `K ⟶ Y ⟶ P` is admissible exact. -/
+/-- In an additive exact category `C`, suppose `K → A → X` and
+`A → Y → Q` are admissible exact and `P` is a pushout with
+`p ≫ x = r ≫ y`. Then the composite `K → A → Y` followed by
+`y : Y → P` gives an admissible exact sequence `K → Y → P`. -/
 theorem isAdmissibleExact_comp_pushout
     {K A X Y P Q : C} (i : K ⟶ A) (p : A ⟶ X) (r : A ⟶ Y)
     (q : Y ⟶ Q) (x : X ⟶ P) (y : Y ⟶ P)
@@ -117,9 +118,10 @@ theorem isAdmissibleExact_comp_pushout
           rw [sq.inl_desc]
     · exact hm.trans (sq.inr_desc _ _ _).symm
 
-/-- Completing the lower-right row of an exact pushout flag: if
-`A ⟶ Y ⟶ Q` is admissible exact and `p ≫ x = r ≫ y` is a pushout, then
-`X ⟶ P ⟶ Q`, using `pushoutQuotientMap`, is admissible exact. -/
+/-- In an additive exact category `C`, suppose `A → Y → Q` is
+admissible exact and `P` is the pushout of `A → X` and `A → Y`.
+The leg `X → P` followed by the induced quotient `P → Q` gives
+an admissible exact sequence `X → P → Q`. -/
 theorem isAdmissibleExact_pushoutQuotientMap
     {A X Y P Q : C} (p : A ⟶ X) (r : A ⟶ Y) (q : Y ⟶ Q)
     (x : X ⟶ P) (y : Y ⟶ P) (wr : r ≫ q = 0)

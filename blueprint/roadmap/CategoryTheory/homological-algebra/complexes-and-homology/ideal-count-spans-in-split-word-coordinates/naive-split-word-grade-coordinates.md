@@ -1,3 +1,5 @@
-# Naive Split Word Grade Coordinates
+# The naive grade coordinate family contains every exact-count word
 
-The internal finite family of every source-count naive colour coordinate.
+Let k be commutative, I a nonunital k-subalgebra of A and W_c the tensor word with I at false
+positions and A/I at true positions. For p,n : ℕ, naiveSplitWordGradeCoordinates is Π c :
+splitWordGradeColours p (n + 1), W_c.

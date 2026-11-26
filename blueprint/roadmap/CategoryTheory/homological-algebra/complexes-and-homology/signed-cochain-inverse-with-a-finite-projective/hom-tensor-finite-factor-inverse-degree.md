@@ -1,3 +1,6 @@
-# Hom Tensor Finite Factor Inverse Degree
+# Finite sum of factor-degree inverse pieces
 
-The original finite interval of U-degrees supplies the degree inverse.
+Finite sum of factor-degree inverse pieces.
+
+For integer bounds `L` and `N`, sum the inverse pieces in factor degrees `b ∈ Finset.Icc L N`
+to define a linear map from target degree-`n` Hom cochains to the source Hom–tensor total.

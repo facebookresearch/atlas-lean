@@ -1,3 +1,4 @@
-# Translation Alg Equiv C
+# Translation fixes coefficients
 
-The forward map retains every original coefficient.
+Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. For `r : R`, `translationAlgEquiv
+R t (C r) = C r`.

@@ -13,19 +13,22 @@ public import Mathlib.Algebra.Category.ModuleCat.Basic
 public import MathlibExt.LinearAlgebra.TensorProduct.TwoDirectedSystems
 
 /-!
-# Positive tensor powers of directed module systems
+# Positive tensor powers and directed limits
 
-For a directed system `G i`, this file equips every positive left-associated
-tensor power of `G i` with its induced directed system.  Its direct limit is
-canonically equivalent to the corresponding tensor power of `lim G`.
-Consequently, an element of any positive tensor power that vanishes after
-mapping to the direct limit already vanishes at one finite stage.
+Let R be a commutative ring. For an R-module M, the positive tensor power
+indexed by n has n + 1 copies of M with a leading tensor unit:
+T₀(M) = R ⊗[R] M and T_(n+1)(M) = T_n(M) ⊗[R] M.
+Its carrier lies in max(u, w), where u is the ring universe and w the
+module universe. A linear map acts on every copy of M and as id_R
+on the leading unit, respecting identity and composition.
 
-The positive power indexed by `n` has `n + 1` factors.  This convention
-matches the positive tensor powers used by the arbitrary-weight Kummer cup
-construction. The successor comparison uses the generalized simultaneous
-tensor/direct-limit equivalence directly, keeping this same positive-power
-carrier and its canonical stage maps.
+For a directed system G_i of R-modules with additive commutative group
+structures over a directed preorder with decidable equality, these powers
+form directed systems. Their direct limits satisfy
+lim_i T_n(G_i) ≅ T_n(lim_i G_i).
+The forward comparison is T_n(of_i) on each stage. An element becoming
+zero under this stage map vanishes after a single later transition.
+Ring, index and module carrier universes are independent.
 -/
 
 @[expose] public section
@@ -43,9 +46,12 @@ universe u v w x y
 variable {R : Type u} {ι : Type v} [CommRing R] [DecidableEq ι]
 variable [Preorder ι] [IsDirectedOrder ι]
 
-/-- The left-associated tensor power with `n + 1` factors, bundled as an
-`R`-module.  Bundling the recursion keeps the induced additive and module
-structures canonical in every universe. -/
+/-- Let R be a commutative ring and M an R-module with additive
+commutative group structure. Define T₀(M) = R ⊗[R] M and
+T_(n+1)(M) = T_n(M) ⊗[R] M.
+This is the corresponding R-module object in ModuleCat max(u, w),
+where R has universe u and M has universe w.
+It has n + 1 copies of M in left-associated order with leading unit R. -/
 noncomputable def positiveTensorPowerModuleObj
     (M : Type w) [AddCommGroup M] [Module R M] :
     ℕ → ModuleCat.{max u w} R
@@ -55,20 +61,31 @@ noncomputable def positiveTensorPowerModuleObj
 
 attribute [reducible] positiveTensorPowerModuleObj
 
-/-- The carrier of the positive tensor-power module object. -/
+/-- Let R be a commutative ring and M an R-module with additive
+commutative group structure. Define T₀(M) = R ⊗[R] M and
+T_(n+1)(M) = T_n(M) ⊗[R] M.
+The carrier of T_n(M) is positiveTensorPower M n, in universe max(u, w).
+It retains the R-module structure of the iterated tensor product. -/
 abbrev positiveTensorPower (M : Type w) [AddCommGroup M] [Module R M]
     (n : ℕ) : Type (max u w) :=
   positiveTensorPowerModuleObj (R := R) M n
 
-/-- The zero-indexed positive power is the tensor unit tensored with the
-base module. -/
+/-- Let R be a commutative ring and M an R-module with additive
+commutative group structure. Define T₀(M) = R ⊗[R] M and
+T_(n+1)(M) = T_n(M) ⊗[R] M.
+The index-zero splitting identifies T₀(M) with R ⊗[R] M
+as an R-module. The initial tensor unit remains explicit. -/
 noncomputable def positiveTensorPowerZeroEquiv
     (M : Type w) [AddCommGroup M] [Module R M] :
     positiveTensorPower (R := R) M 0 ≃ₗ[R] R ⊗[R] M := by
   with_reducible
     exact LinearEquiv.refl R _
 
-/-- Splitting off the final factor of a positive tensor power. -/
+/-- Let R be a commutative ring and M an R-module with additive
+commutative group structure. Define T₀(M) = R ⊗[R] M and
+T_(n+1)(M) = T_n(M) ⊗[R] M.
+For every n ∈ ℕ, this is the R-linear final-factor splitting
+T_(n+1)(M) ≅ T_n(M) ⊗[R] M, retaining the left-associated factor order. -/
 noncomputable def positiveTensorPowerSuccEquiv
     (M : Type w) [AddCommGroup M] [Module R M] (n : ℕ) :
     positiveTensorPower (R := R) M (n + 1) ≃ₗ[R]
@@ -104,7 +121,11 @@ theorem positiveTensorPowerSuccEquiv_symm_apply
     (positiveTensorPowerSuccEquiv M n).symm x = x :=
   rfl
 
-/-- The map on a positive tensor power induced by a linear map. -/
+/-- For a commutative ring R and an R-linear map f : M → N between
+R-modules with additive commutative group structures, this is
+T_n(f) : T_n(M) → T_n(N).
+It is id_R ⊗ f when n = 0 and T_n(f) ⊗ f at the next index.
+The source and target module universes may be independent. -/
 noncomputable def positiveTensorPowerMap
     {M : Type w} {N : Type x} [AddCommGroup M] [Module R M]
     [AddCommGroup N] [Module R N]
@@ -133,7 +154,10 @@ theorem positiveTensorPowerMap_succ
       TensorProduct.map (positiveTensorPowerMap f n) f :=
   rfl
 
-/-- Positive tensor powers preserve identity linear maps. -/
+/-- Let R be a commutative ring and M an R-module with additive
+commutative group structure. Define T₀(M) = R ⊗[R] M and
+T_(n+1)(M) = T_n(M) ⊗[R] M.
+For every n ∈ ℕ, T_n(id_M) = id_(T_n(M)). -/
 @[simp]
 theorem positiveTensorPowerMap_id
     (M : Type w) [AddCommGroup M] [Module R M] (n : ℕ) :
@@ -144,7 +168,10 @@ theorem positiveTensorPowerMap_id
   | succ n ih =>
       rw [positiveTensorPowerMap_succ, ih, TensorProduct.map_id]
 
-/-- Positive tensor powers preserve composition of linear maps. -/
+/-- For a commutative ring R, R-linear f : M → N and g : N → P,
+and n ∈ ℕ, the induced tensor-power maps satisfy
+T_n(g ∘ f) = T_n(g) ∘ T_n(f).
+All three module carrier universes may be independent. -/
 theorem positiveTensorPowerMap_comp
     {M : Type w} {N : Type x} {P : Type y}
     [AddCommGroup M] [Module R M]
@@ -160,8 +187,10 @@ theorem positiveTensorPowerMap_comp
       rw [positiveTensorPowerMap_succ, positiveTensorPowerMap_succ,
         positiveTensorPowerMap_succ, ih, TensorProduct.map_comp]
 
-/-- A linear equivalence induces a linear equivalence on every positive
-tensor power. -/
+/-- For a commutative ring R, an R-linear equivalence e : M ≅ N
+between R-modules with additive commutative group structures induces
+T_n(M) ≅ₗ[R] T_n(N) for every n ∈ ℕ.
+Its forward map is T_n(e) and its inverse is T_n(e⁻¹). -/
 noncomputable def positiveTensorPowerCongr
     {M : Type w} {N : Type x}
     [AddCommGroup M] [Module R M]
@@ -206,7 +235,10 @@ theorem positiveTensorPowerCongr_apply
       positiveTensorPowerMap e.toLinearMap n x :=
   rfl
 
-/-- Naturality of the zero-indexed positive-power splitting. -/
+/-- For a commutative ring R and an R-linear map g : M → N,
+the initial splittings ζ_M : T₀(M) ≅ R ⊗[R] M and
+ζ_N : T₀(N) ≅ R ⊗[R] N satisfy
+ζ_N ∘ T₀(g) = (id_R ⊗ g) ∘ ζ_M. -/
 theorem positiveTensorPowerZeroEquiv_naturality
     {M : Type w} {N : Type x} [AddCommGroup M] [Module R M]
     [AddCommGroup N] [Module R N] (g : M →ₗ[R] N) :
@@ -218,7 +250,10 @@ theorem positiveTensorPowerZeroEquiv_naturality
   intro z
   rfl
 
-/-- Naturality of splitting off the final positive tensor-power factor. -/
+/-- For a commutative ring R and an R-linear map g : M → N,
+the final-factor splittings ξ_M : T_(n+1)(M) ≅ T_n(M) ⊗[R] M
+and ξ_N for N satisfy
+ξ_N ∘ T_(n+1)(g) = (T_n(g) ⊗ g) ∘ ξ_M. -/
 theorem positiveTensorPowerSuccEquiv_naturality
     {M : Type w} {N : Type x} [AddCommGroup M] [Module R M]
     [AddCommGroup N] [Module R N] (g : M →ₗ[R] N) (n : ℕ) :
@@ -235,7 +270,13 @@ variable [∀ i, AddCommGroup (G i)] [∀ i, Module R (G i)]
 variable (f : ∀ i j, i ≤ j → G i →ₗ[R] G j)
 variable [DirectedSystem G (f · · ·)]
 
-/-- The transition map on a positive tensor power of a directed system. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+For n ∈ ℕ and i ≤ j, the positive-power transition
+T_n(G_i) → T_n(G_j) is T_n(f_ij), applying the given transition
+to each module factor and id_R to the leading unit. -/
 noncomputable def positiveTensorPowerTransition
     (n : ℕ) (i j : ι) (hij : i ≤ j) :
     positiveTensorPower (R := R) (G i) n →ₗ[R]
@@ -246,8 +287,15 @@ attribute [reducible] positiveTensorPowerTransition
 
 omit [DecidableEq ι] [IsDirectedOrder ι]
   [DirectedSystem G (f · · ·)] in
-/-- Successor splitting is natural for the stagewise transition, stated
-with the canonical diagonal transition on the target system. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+For i ≤ j, splitting off the last factor commutes with the
+positive-power transition:
+ξ_j ∘ T_(n+1)(f_ij) = (T_n(f_ij) ⊗ f_ij) ∘ ξ_i.
+The target transition is the simultaneous tensor transition on
+the systems T_n(G_i) and G_i. -/
 theorem positiveTensorPowerSuccEquiv_transition_naturality
     (n : ℕ) (i j : ι) (hij : i ≤ j) :
     (positiveTensorPowerSuccEquiv (R := R) (G j) n).toLinearMap.comp
@@ -258,8 +306,12 @@ theorem positiveTensorPowerSuccEquiv_transition_naturality
   simpa only [positiveTensorPowerTransition, diagonalTransition] using
     positiveTensorPowerSuccEquiv_naturality (f i j hij) n
 
-/-- Every positive tensor power of a directed module system is again a
-directed system. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+For every n ∈ ℕ, the modules T_n(G_i) and transitions T_n(f_ij)
+satisfy the directed-system identity and composition laws. -/
 instance positiveTensorPowerDirectedSystem (n : ℕ) :
     DirectedSystem
       (fun i => positiveTensorPower (R := R) (G i) n)
@@ -282,8 +334,14 @@ instance positiveTensorPowerDirectedSystem (n : ℕ) :
       positiveTensorPowerMap (f i k (hij.trans hjk)) n x
     rw [← LinearMap.comp_apply, ← positiveTensorPowerMap_comp, hcomp]
 
-/-- The direct limit of the positive tensor-power system is the same tensor
-power of the original direct limit. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+For every n ∈ ℕ, this is the R-linear direct-limit equivalence
+lim_i T_n(G_i) ≅ T_n(lim_i G_i).
+On a stage class represented by x ∈ T_n(G_i), its forward map is
+T_n(of_i)(x), with of_i : G_i → lim G the canonical inclusion. -/
 noncomputable def positiveTensorPowerDirectLimitEquiv : ∀ n : ℕ,
     Module.DirectLimit
         (fun i => positiveTensorPower (R := R) (G i) n)
@@ -312,8 +370,13 @@ noncomputable def positiveTensorPowerDirectLimitEquiv : ∀ n : ℕ,
 
 attribute [reducible] positiveTensorPowerDirectLimitEquiv
 
-/-- The tensor-power direct-limit equivalence sends a stage representative
-to the positive tensor power of the canonical stage map. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+The direct-limit comparison in positive index n has the stage value
+comparison(of_i(x)) = T_n(of_i)(x) for every x ∈ T_n(G_i).
+The stage map on the left is into lim_i T_n(G_i). -/
 @[simp]
 theorem positiveTensorPowerDirectLimitEquiv_apply_of :
     ∀ (n : ℕ) (i : ι)
@@ -425,8 +488,13 @@ theorem positiveTensorPowerDirectLimitEquiv_apply_of :
                 exact positiveTensorPowerDirectLimitEquiv_apply_of n i y
               rw [hleft, LinearEquiv.refl_toLinearMap, LinearMap.id_comp]
 
-/-- Eventual-zero detection for every positive tensor power of a directed
-module system. -/
+/-- Let R be a commutative ring and G_i a directed system of R-modules
+with additive commutative group structures, indexed by a directed preorder
+with decidable equality. Its transitions f_ij are R-linear and satisfy
+the identity and composition laws.
+If x ∈ T_n(G_i) maps to zero under T_n(of_i) in T_n(lim G),
+there is j ≥ i such that the transition T_n(f_ij) sends x to zero.
+This holds for every n ∈ ℕ, using T₀(G_i) = R ⊗[R] G_i. -/
 theorem exists_eq_zero_of_positiveTensorPowerMap_to_directLimit_eq_zero
     {i : ι} (n : ℕ)
     (x : positiveTensorPower (R := R) (G i) n)

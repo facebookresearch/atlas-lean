@@ -13,11 +13,20 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoalgebraWorkingHei
 public import MathlibExt.Algebra.Homology.HomologicalComplex.UliftPreorderColimit
 
 /-!
-# Stable matrix Chevalley–Eilenberg colimits under universe lifting
+# The finite-to-stable CE colimit isomorphism at a chosen universe height
 
-For a unital algebra over a commutative ring, universe lifting preserves the finite-matrix
-Chevalley–Eilenberg colimit. The lifted finite-stage cocone is colimiting, and its comparison
-with the lifted complex of the stable matrix Lie algebra is an isomorphism.
+Let k be a commutative ring, A an associative unital k-algebra and
+H = max(u,v,z), where u,v are the ring and algebra worlds and z is
+an arbitrary additional height. Lift each term of the finite matrix
+CE complexes and of C_*(Mat_∞(A)) to H.
+
+The diagram of lifted finite complexes is naturally isomorphic to the
+termwise lift of the finite CE diagram. Its cocone of lifted finite
+Lie inclusions is colimiting, so
+colim_m C_*^H(Mat_m(A)) ≅ C_*^H(Mat_∞(A)).
+The forward map restricts to the lifted CE inclusion at every finite
+stage. The construction preserves the whole directed diagram and all
+CE degrees.
 -/
 
 @[expose] public section
@@ -34,7 +43,11 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- The finite-matrix diagram is the module-lift image. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), termwise lifting of m ↦ C_*(Mat_m(A))
+is naturally isomorphic to m ↦ C_*^H(Mat_m(A)).
+The transition maps on both sides are the lifted exterior powers
+of top-left zero extension. -/
 def matrixComplexFunctorULiftIso :
     matrixComplexFunctor k A ⋙
         (ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex (ComplexShape.down ℕ) ≅
@@ -48,7 +61,11 @@ def matrixComplexFunctorULiftIso :
     exact (nativeLiftedComplexMapAtHeight_eq_uliftMap.{u,v,max u v z} k
       (Matrix (Fin m) (Fin m) A) (Matrix.zeroExtendLieHom k A (leOfHom h))).symm)
 
-/-- Finite inclusions form the canonical stable CE cocone at the chosen height. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), the lifted finite Lie inclusions give a cocone
+C_*^H(Mat_m(A)) → C_*^H(Mat_∞(A)).
+Its degree-n component applies the nth exterior inclusion and then
+the chosen carrier lift. -/
 def canonicalStableMatrixCECoconeAtHeight :
     Cocone (matrixComplexFunctorAtHeight.{u,v,max u v z} k A) where
   pt := canonicalStableMatrixCEComplexAtHeight.{u,v,max u v z} k A
@@ -66,17 +83,27 @@ def canonicalStableMatrixCECoconeAtHeight :
               (Matrix (Fin m) (Fin m) A))
               (canonicalStableMatrixLieInclusion_zeroCorner k A (leOfHom h))) }
 
-/-- The finite-matrix colimit at the chosen common height. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), the chosen-height stable CE colimit is
+colim_(m∈ℕ) C_*^H(Mat_m(A)) in ChainComplex(ModuleCat^H(k),ℕ).
+All finite-stage transitions are lifted zero-extension CE maps. -/
 abbrev stableMatrixCEComplexAtHeight : ChainComplex (ModuleCat.{max u v z} k) ℕ :=
   colimit (matrixComplexFunctorAtHeight.{u,v,max u v z} k A)
 
-/-- Canonical inclusions construct the comparison at this working height. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), the cocone of lifted finite Lie inclusions
+defines colim_m C_*^H(Mat_m(A)) → C_*^H(Mat_∞(A)).
+It is characterized by its composites with the finite colimit legs. -/
 def colimitToCanonicalStableMatrixCEAtHeight :
     stableMatrixCEComplexAtHeight.{u,v,z} k A ⟶
       canonicalStableMatrixCEComplexAtHeight.{u,v,max u v z} k A :=
   colimit.desc _ (canonicalStableMatrixCECoconeAtHeight.{u,v,z} k A)
 
-/-- The working-height comparison retains every finite Lie inclusion. -/
+/-- For a commutative ring k, an associative unital k-algebra A,
+H = max(u,v,z) and m ≥ 0, the chosen-height comparison T^H satisfies
+T^H ∘ ι_m^H = C_*^H(i_m).
+Here ι_m^H is the finite colimit leg and i_m is the finite stable
+matrix Lie inclusion. -/
 @[reassoc]
 theorem colimitToCanonicalStableMatrixCEAtHeight_ι (m : ℕ) :
     colimit.ι (matrixComplexFunctorAtHeight.{u,v,max u v z} k A) m ≫
@@ -84,7 +111,10 @@ theorem colimitToCanonicalStableMatrixCEAtHeight_ι (m : ℕ) :
       canonicalStableMatrixCEInclusionAtHeight.{u,v,max u v z} k A m :=
   colimit.ι_desc (canonicalStableMatrixCECoconeAtHeight.{u,v,z} k A) m
 
-/-- The universe-lifted canonical Chevalley–Eilenberg cocone is colimiting. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), the cocone of lifted finite CE inclusions
+with point C_*^H(Mat_∞(A)) is a colimit cocone.
+Termwise universe lifting preserves this directed complex colimit. -/
 def canonicalStableMatrixCEAtHeightIsColimit :
     IsColimit (canonicalStableMatrixCECoconeAtHeight.{u,v,z} k A) := by
   let E := (ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex (ComplexShape.down ℕ)
@@ -103,19 +133,29 @@ def canonicalStableMatrixCEAtHeightIsColimit :
         (Matrix (Fin m) (Fin m) A) (canonicalStableMatrixLieInclusion k A m)).symm)
   exact IsColimit.ofIsoColimit hp w
 
-/-- The common-height finite-matrix colimit is CE of the canonical stable Lie carrier. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), there is a chain isomorphism
+colim_m C_*^H(Mat_m(A)) ≅ C_*^H(Mat_∞(A)).
+Its forward map is the finite-stage inclusion comparison, with
+independent ring, algebra and extra-height worlds. -/
 def canonicalStableMatrixCEIsoAtHeight :
     stableMatrixCEComplexAtHeight.{u,v,z} k A ≅
       canonicalStableMatrixCEComplexAtHeight.{u,v,max u v z} k A :=
   (colimit.isColimit (matrixComplexFunctorAtHeight.{u,v,max u v z} k A)).coconePointUniqueUpToIso
     (canonicalStableMatrixCEAtHeightIsColimit.{u,v,z} k A)
 
-/-- The isomorphism retains exactly the canonical finite-inclusion comparison. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), the forward map of the chosen-height
+finite-to-stable CE isomorphism is precisely the comparison
+induced by the lifted finite-inclusion cocone. -/
 theorem canonicalStableMatrixCEIsoAtHeight_hom :
     (canonicalStableMatrixCEIsoAtHeight.{u,v,z} k A).hom =
       colimitToCanonicalStableMatrixCEAtHeight.{u,v,z} k A := rfl
 
-/-- Invertibility of the common-height comparison follows from the colimit property. -/
+/-- For a commutative ring k, an associative unital k-algebra A
+and H = max(u,v,z), the comparison from the lifted finite CE
+colimit to C_*^H(Mat_∞(A)) is an isomorphism of chain complexes.
+It has the lifted finite CE inclusions as its restrictions. -/
 instance colimitToCanonicalStableMatrixCEAtHeight_isIso :
     IsIso (colimitToCanonicalStableMatrixCEAtHeight.{u,v,z} k A) := by
   rw [← canonicalStableMatrixCEIsoAtHeight_hom]

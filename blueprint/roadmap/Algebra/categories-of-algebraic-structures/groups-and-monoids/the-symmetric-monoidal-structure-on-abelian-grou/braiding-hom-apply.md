@@ -1,3 +1,5 @@
-# Braiding hom apply
+# Exchange of pure integer tensors
 
-The braiding of additive groups swaps the factors of a pure tensor.
+For abelian groups `M₁`, `M₂` in the fixed universe, the forward
+braiding `M₁ ⊗ M₂ → M₂ ⊗ M₁` sends the pure tensor `x ⊗ y`
+to `y ⊗ x`.

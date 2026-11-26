@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Comp Iso unit app
+# Successive inverse image units agree with the composite unit
 
-The genuine composed adjunction unit has the literal original two-stage section coordinate.
+Successive inverse image units agree with the composite unit.
+
+For `f : X → Y` and `g : Y → Z`, the successive units and base-change restriction equal the
+composite unit followed by the inverse of the inverse-image composition comparison.

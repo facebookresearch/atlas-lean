@@ -1,3 +1,6 @@
-# Normalized Eulerian Chain Map sum
+# The degreewise completeness of normalized Eulerian chain maps
 
-Native normalized finite completeness gives exactly the original degree identity.
+The degreewise completeness of normalized Eulerian chain maps.
+
+The sum of their degree-`n` components over `0 ≤ i ≤ n` is the identity on the normalized
+chain term.

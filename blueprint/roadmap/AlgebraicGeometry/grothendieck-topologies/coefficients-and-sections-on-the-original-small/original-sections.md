@@ -1,3 +1,7 @@
-# Original Sections
+# Sections of a coefficient-lifted étale sheaf
 
-Global sections of the actual coefficient lift retain the original section group.
+For a scheme X in universe u and an abelian sheaf F on its
+small étale site with coefficients in universe w, the global-section
+group of its coefficient lift to c = max(u, w) is isomorphic to
+ULift F(T), with lift height u, where T = (X → X) is the terminal
+étale object.

@@ -1,3 +1,5 @@
-# Restricted Quotient Iso Of Surjective inv map
+# Representative formula for the inverse restricted quotient comparison
 
-The inverse restricted quotient comparison takes every actual scalar image to its original class.
+For commutative rings in a scalar triangle j=b∘g,
+with b surjective and ker(b)=J, the inverse restricted
+quotient comparison sends b(q) to [q]∈Q/J.

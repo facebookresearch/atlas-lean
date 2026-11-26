@@ -1,6 +1,6 @@
 # Full permutation sums from native head uncurrying
 
-- [Alternatize Tail](alternatize-tail.md)
-- [Alternatize Tail Linear Map](alternatize-tail-linear-map.md)
-- [Alternatization uncurry Left](alternatization-uncurry-left.md)
-- [Alternatization uncurry Left twice](alternatization-uncurry-left-twice.md)
+- [Alternatize the tail of a head-linear map](alternatize-tail.md)
+- [Tail alternatization is linear in the whole head-linear map](alternatize-tail-linear-map.md)
+- [Full alternatization equals alternating head uncurrying](alternatization-uncurry-left.md)
+- [Two head uncurries give the full permutation alternatization](alternatization-uncurry-left-twice.md)

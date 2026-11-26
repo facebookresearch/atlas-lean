@@ -1,5 +1,5 @@
-# List prod mem degree
+# A list of degree-one elements has degree equal to its length
 
-A list whose entries all lie in degree one has product in the degree indexed by
-its length. This is the reusable list version of the graded multiplication for the
-tensor algebra.
+For a commutative semiring R and R-module M, let l be a list of tensor-algebra elements all
+lying in degree one. Then l.prod lies in degree_{length(l)}. The product retains the list
+order, and the empty list gives the unit in degree zero.

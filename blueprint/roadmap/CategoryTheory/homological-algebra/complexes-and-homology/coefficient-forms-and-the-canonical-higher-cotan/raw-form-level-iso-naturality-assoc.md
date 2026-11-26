@@ -1,3 +1,6 @@
-# Raw Form Level Iso naturality assoc
+# Postcomposition of lifted-form comparison naturality
 
-Postcomposition of the original raw-form naturality square.
+Postcomposition of lifted-form comparison naturality.
+
+The naturality square of the lifted-form comparison remains commutative after any ground-
+linear map from the target higher cotangent module.

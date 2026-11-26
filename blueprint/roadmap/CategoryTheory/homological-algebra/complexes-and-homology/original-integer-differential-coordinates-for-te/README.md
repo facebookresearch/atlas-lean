@@ -1,4 +1,4 @@
 # Original integer differential coordinates for tensor–Hom currying
 
-- [Tensor Hom d mk](tensor-hom-d-mk.md)
-- [Nested Hom d v](nested-hom-d-v.md)
+- [Three-term differential formula on a tensor Hom generator](tensor-hom-d-mk.md)
+- [Three-term differential formula in nested Hom coordinates](nested-hom-d-v.md)

@@ -16,15 +16,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor
 public import Mathlib.LinearAlgebra.Span.Basic
 
 /-!
-# Right tensor of the enveloping Chevalley–Eilenberg resolution
+# Balanced right tensor and enveloping Lie chains
 
-Applying a fixed-right balanced tensor functor to the enveloping complex and
-cancelling its regular factor identifies the terms and differentials with
-the right-coefficient Chevalley–Eilenberg complex.
+Let `R` be a commutative ring, `L` an `R`-Lie algebra, and `N` a right module over `U =
+U_R(L)`. Apply the fixed-right balanced tensor functor `N ⊗[U] -` to the enveloping
+Chevalley–Eilenberg complex.
 
-Under `Module.Free R L`, this comparison identifies its homology with the
-left-derived balanced tensor functor: the right coefficient module is fixed,
-and the left trivial enveloping module is resolved.
+Cancelling its regular enveloping factor gives the right-coefficient Lie chain complex. In
+degree `n`, the comparison sends the balanced class of `m ⊗ (w ⊗ a)` to `w ⊗ (op(a) • m)`, and
+the inverse inserts `1 ∈ U`. These maps commute with the full signed differential. If
+`Module.Free R L`, the coefficient homology computes the left-derived balanced tensor functor
+at the trivial left `U`-module, with `N` fixed. The coefficient universe is independent.
 -/
 
 @[expose] public section
@@ -45,22 +47,34 @@ local notation "U" => UniversalEnvelopingAlgebra R L
 
 variable (N : ModuleCat.{w} (UniversalEnvelopingAlgebra R L)ᵐᵒᵖ)
 
+/-- Commutation of ground scalars with the fixed right tensor action.
+
+For a right `U_R(L)`-module `N`, the restricted `R`-action commutes with the opposite-
+enveloping action used to form balanced tensors. -/
 local instance rightTensor_smulComm : SMulCommClass R Uᵐᵒᵖ N :=
   rightCoefficients_smulComm R L N
 
+/-- Additivity of the fixed-right enveloping tensor functor.
+
+For a fixed right `U_R(L)`-module `N`, the functor `N ⊗[U_R(L)] -` preserves addition of left
+enveloping-module morphisms. -/
 local instance rightTensor_additive :
     (ModuleCat.BalancedTensor.functor R U N :
       ModuleCat.{max u v} U ⥤ ModuleCat.{max u v w} R).Additive :=
   ModuleCat.BalancedTensor.additive R U N
 
-/-- Apply the original balanced right tensor functor to the original native
-enveloping CE complex. -/
+/-- The balanced tensor complex of enveloping chains.
+
+Apply `N ⊗[U_R(L)] -` degreewise to the enveloping Chevalley–Eilenberg chain complex, with `N`
+a fixed right module. -/
 def rightTensorEnvelopingComplex : ChainComplex (ModuleCat.{max u v w} R) ℕ :=
   ((ModuleCat.BalancedTensor.functor R U N).mapHomologicalComplex (ComplexShape.down ℕ)).obj
     (envelopingComplex R L)
 
-/-- balanced quotient coordinates, using the existing cancellation
-of the original regular UEA factor and the original CE coordinates. -/
+/-- The cancellation coordinates for right-tensored enveloping chains.
+
+In degree `n`, cancelling the regular `U_R(L)` factor gives an `R`-linear equivalence from the
+balanced tensor term to `⋀ⁿ[R] L ⊗[R] N`. -/
 def rightTensorCoordinates (n : ℕ) :
     (rightTensorEnvelopingComplex R L N).X n ≃ₗ[R]
       (rightEnvelopingCoefficientComplex R L N).X n :=
@@ -69,8 +83,10 @@ def rightTensorCoordinates (n : ℕ) :
     ((TensorProduct.Balanced.cancelEquiv R U N (⋀[R]^n L)).trans
       (TensorProduct.comm R N (⋀[R]^n L)))
 
-/-- The comparison uses the right action on a pure original balanced
-representative. -/
+/-- The balanced representative formula for right tensor coordinates.
+
+The class represented by `m ⊗ (w ⊗ a)` maps to `w ⊗ (op(a) • m)`, where `w ∈ ⋀ⁿ L` and `a ∈
+U_R(L)`. -/
 theorem rightTensorCoordinates_mk_tmul (n : ℕ) (m : N) (w : ⋀[R]^n L)
     (a : regularCoefficients R L) :
     rightTensorCoordinates R L N n
@@ -94,7 +110,9 @@ theorem rightTensorCoordinates_mk_tmul (n : ℕ) (m : N) (w : ⋀[R]^n L)
     ((congrArg t (TensorProduct.Balanced.cancelEquiv_mk_tmul R U N (⋀[R]^n L) m a w)).trans
       (TensorProduct.comm_tmul R N (⋀[R]^n L) (MulOpposite.op a • m) w))
 
-/-- The inverse inserts the original unit in the regular UEA factor. -/
+/-- The inverse right tensor coordinates on a pure coefficient tensor.
+
+The inverse sends `w ⊗ m` to the balanced class represented by `m ⊗ (w ⊗ 1)`. -/
 theorem rightTensorCoordinates_symm_tmul (n : ℕ) (m : N) (w : ⋀[R]^n L) :
     (rightTensorCoordinates R L N n).symm (w ⊗ₜ[R] m) =
       TensorProduct.Balanced.mk R U N (envelopingGroundObject R L n) m
@@ -105,8 +123,10 @@ theorem rightTensorCoordinates_symm_tmul (n : ℕ) (m : N) (w : ⋀[R]^n L) :
   exact ((rightTensorCoordinates R L N n).apply_symm_apply (w ⊗ₜ[R] m)).trans
     (h.trans (congrArg (fun y : rightCoefficients R L N => w ⊗ₜ[R] y) hOne)).symm
 
-/-- The mapped differential is the balanced quotient map of the
-original differential. -/
+/-- The differential on a balanced enveloping tensor class.
+
+The mapped differential sends the class of `m ⊗ z` to the class of `m ⊗ d(z)`, with the
+ground-restricted enveloping differential acting on the left module term. -/
 theorem rightTensorEnvelopingComplex_d_mk (n : ℕ) (m : N)
     (z : envelopingGroundObject R L (n + 1)) :
     ((rightTensorEnvelopingComplex R L N).d (n + 1) n).hom
@@ -126,8 +146,10 @@ theorem rightTensorEnvelopingComplex_d_mk (n : ℕ) (m : N)
     (congrArg (fun y : Y => TensorProduct.Balanced.mk R U N Y m y)
       (envelopingGroundDifferential_apply R L n z).symm)
 
-/-- All-degree differential compatibility is from the two original
-generator formulas and the original right UEA action. -/
+/-- Differential compatibility of right tensor cancellation.
+
+For every `n`, the degreewise cancellation equivalences intertwine the balanced tensor
+differential and the full right-coefficient Chevalley–Eilenberg differential. -/
 theorem rightTensorCoordinates_d (n : ℕ) :
     (rightTensorCoordinates R L N n).toLinearMap.comp
       ((rightTensorEnvelopingComplex R L N).d (n + 1) n).hom =
@@ -222,8 +244,10 @@ theorem rightTensorCoordinates_d (n : ℕ) :
               exteriorPower.ιMulti R n (v ∘ i.succAbove) ⊗ₜ[R] y) hAct))
       exact LinearMap.congr_fun hFG w
 
-/-- The original balanced tensor complex is the original CE coefficient
-complex, with its all-degree differential. -/
+/-- The chain isomorphism from balanced tensor to right Lie coefficients.
+
+Cancellation of the regular enveloping factor gives an isomorphism from `N ⊗[U_R(L)] C_•` to
+the Chevalley–Eilenberg complex of the right enveloping coefficient module. -/
 def rightTensorCoefficientIso :
     rightTensorEnvelopingComplex R L N ≅ rightEnvelopingCoefficientComplex R L N :=
   HomologicalComplex.Hom.isoOfComponents
@@ -235,13 +259,18 @@ def rightTensorCoefficientIso :
       rw [coefficientComplex_d_succ]
       exact (rightTensorCoordinates_d R L N j).symm)
 
-/-- The noncommutative right tensor Tor term, resolving the original
-left trivial UEA module and holding the original right coefficient module fixed. -/
+/-- The fixed-right balanced Tor value for a trivial left module.
+
+For `n ∈ ℕ`, this is the `n`th left-derived value of `N ⊗[U_R(L)] -` on the trivial left
+enveloping module, retaining the fixed right coefficient module `N`. -/
 abbrev rightEnvelopingTor (n : ℕ) : ModuleCat.{max u v w} R :=
   ((ModuleCat.BalancedTensor.functor R U N).leftDerived n).obj (envelopingTrivialObject R L)
 
-/-- Right-coefficient Lie homology computes balanced Tor through the
-constructed original free-base UEA CE projective resolution. -/
+/-- The Tor comparison for right-coefficient Lie homology.
+
+If `Module.Free R L`, degree-`n` homology of the right-coefficient Chevalley–Eilenberg complex
+is isomorphic to the `n`th left-derived balanced tensor value at the trivial left
+`U_R(L)`-module. -/
 def rightCoefficientHomologyIsoTor [Module.Free R L] (n : ℕ) :
     (rightEnvelopingCoefficientComplex R L N).homology n ≅ rightEnvelopingTor R L N n :=
   (HomologicalComplex.homologyFunctor (ModuleCat.{max u v w} R) (ComplexShape.down ℕ) n).mapIso

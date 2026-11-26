@@ -1,3 +1,6 @@
-# Horizontal Filtered Top Inclusion projection
+# The section identity of a finite top-column inclusion
 
-The top-column inclusion is a section of the top-column projection.
+The section identity of a finite top-column inclusion.
+
+The inclusion of `(p,q)` into finite stage `p` followed by its top-column projection is the
+identity.

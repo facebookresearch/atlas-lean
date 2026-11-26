@@ -1,3 +1,6 @@
-# Cotangent Higher Map tensor
+# The coordinate formula on higher differential forms
 
-Every positive-weight operator is the original algebra operator on differential words.
+The coordinate formula on higher differential forms.
+
+For a map `f : P → Q` over `A`, the induced weight-`n+1` map sends `a ⊗ (dp₀ ∧ ⋯ ∧ dpₙ)` to `a
+⊗ (d(f(p₀)) ∧ ⋯ ∧ d(f(pₙ)))`.

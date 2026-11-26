@@ -14,12 +14,13 @@ module
 public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.Coordinates
 
 /-!
-# Support of the native tensor total
+# Upper support bounds for tensor cochain totals
 
-A zero module factor makes its actual tensor object zero. Native
-degreewise coproduct uniqueness then removes a total term when every
-factor pair in that degree has a zero factor. This gives the actual
-sum of upper support bounds without changing the tensor totalization.
+Let `P` and `Q` be cochain complexes over a commutative ring, with independent carrier
+universes. Their degree-`n` tensor total is the direct sum of `P^i ⊗ Q^j` over `i + j = n`.
+
+If every such pair has a zero factor, the total degree is zero. In particular, upper vanishing
+bounds `a` for `P` and `b` for `Q` give upper vanishing bound `a + b` for their tensor total.
 -/
 
 @[expose] public section
@@ -36,7 +37,10 @@ namespace CochainComplex.ModuleTensor
 variable (R : Type u) [CommRing R]
   (P : CochainComplex (ModuleCat.{v} R) ℤ) (Q : CochainComplex (ModuleCat.{w} R) ℤ)
 
-/-- A native total term is zero when every original degree pair has a zero factor. -/
+/-- A tensor-total degree is zero when every cell has a zero factor.
+
+If for every pair `i + j = n` either `P^i` or `Q^j` is a zero object, then degree `n` of
+`complexAt R P Q` is zero. -/
 theorem complexAt_isZero_X_of_factor_terms (n : ℤ)
     (h : ∀ i j : ℤ, i + j = n → IsZero (P.X i) ∨ IsZero (Q.X j)) :
     IsZero ((complexAt R P Q).X n) := by
@@ -57,7 +61,10 @@ theorem complexAt_isZero_X_of_factor_terms (n : ℤ)
       (K₁ := P) (K₂ := Q) (F := F) (c := .up ℤ) hcomponents
   exact (CategoryTheory.Limits.IsZero.iff_id_eq_zero Y).mpr hid
 
-/-- The original native tensor total vanishes above the sum of its factor support bounds. -/
+/-- Tensor-total upper bound is the sum of the factor bounds.
+
+If `P^i` is zero for `a < i` and `Q^j` is zero for `b < j`, then the tensor total is zero in
+every integer degree `n > a + b`. -/
 theorem complexAt_isZero_X_above (a b n : ℤ)
     (hP : ∀ i, a < i → IsZero (P.X i))
     (hQ : ∀ j, b < j → IsZero (Q.X j)) (hn : a + b < n) :

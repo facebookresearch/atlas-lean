@@ -1,5 +1,6 @@
-# Is Admissible Exact comp pushout
+# Exactness of the lower-left pushout row
 
-Completing the lower-left row of an exact pushout flag: if
-`K ⟶ A ⟶ X` and `A ⟶ Y ⟶ Q` are admissible exact and
-`p ≫ x = r ≫ y` is a pushout, then `K ⟶ Y ⟶ P` is admissible exact.
+In an additive exact category `C`, suppose `K → A → X` and
+`A → Y → Q` are admissible exact and `P` is a pushout with
+`p ≫ x = r ≫ y`. Then the composite `K → A → Y` followed by
+`y : Y → P` gives an admissible exact sequence `K → Y → P`.

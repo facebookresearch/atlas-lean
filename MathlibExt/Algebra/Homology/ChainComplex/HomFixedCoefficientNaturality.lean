@@ -15,10 +15,15 @@ public import MathlibExt.Algebra.Homology.ShortComplex.MorphismExt
 /-!
 # Naturality of the fixed-coefficient universal coefficient sequence
 
-The map transports the original full-product UCT map through the actual
-fixed-coefficient coordinates. Its middle component is the original Hom
-cohomology map, and its last component has the original Hom precomposition
-and coefficient postcomposition. No chosen splitting enters the map.
+Let C be abelian, f : P′ → P an integer chain map and b : M → M′. Assume all terms and
+differential images of P and P′ are projective. The fixed-coefficient UCT short exact sequences
+0 → Ext¹_C(Hₙ₋₁(P),M) → Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M) → 0 then form a commutative diagram with
+the corresponding sequence for (P′,M′).
+
+The left vertical map is Ext pullback along Hₙ₋₁(f) followed by pushforward along b. The middle
+map is Hⁿ Hom(f,b), and the right map sends t to b ∘ t ∘ Hₙ(f). The Ext injections use positive
+Yoneda normalization. The diagram is independent of any chosen UCT splitting, and satisfies the
+identity and composition laws in both variables.
 -/
 
 @[expose] public section
@@ -34,7 +39,13 @@ universe u v w
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{w} C]
   {P P' : ChainComplex C ℤ} {M M' : C}
 
-/-- Transport the actual simultaneous UCT map into fixed-coefficient coordinates. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext groups in universe w. Let f
+: P′ → P be an integer chain map, b : M → M′ a coefficient map and n ∈ ℤ. Assume every term and
+every differential image of P and P′ is projective. The fixed-coefficient UCT terms are
+Ext¹_C(Hₙ₋₁(P),M), Hⁿ Hom(P,M), and Hom_C(Hₙ(P),M), with canonical lifts to universe max(v,w),
+and similarly for (P′,M′). The induced map of short exact sequences is Ext pullback/pushforward
+on the left, Hⁿ Hom(f,b) in the middle, and t ↦ b ∘ t ∘ Hₙ(f) on the right; no chosen splitting
+enters it. -/
 def homFixedCoefficientUniversalCoefficientSequenceMap
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -50,7 +61,13 @@ def homFixedCoefficientUniversalCoefficientSequenceMap
     (homUniversalCoefficientSequenceEngineMap f g n hP hI hP' hI')
     c.1 c.2.1 c.2.2 c'.1 c'.2.1 c'.2.2
 
-/-- The original UCT comparison is natural for the transported sequence map. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext groups in universe w. Let f
+: P′ → P be an integer chain map, b : M → M′ a coefficient map and n ∈ ℤ. Assume every term and
+every differential image of P and P′ is projective. The fixed-coefficient UCT terms are
+Ext¹_C(Hₙ₋₁(P),M), Hⁿ Hom(P,M), and Hom_C(Hₙ(P),M), with canonical lifts to universe max(v,w),
+and similarly for (P′,M′). The concentrated-target isomorphisms from the full-product UCT for
+(P,M[0]) to the fixed-coefficient UCT commute with the full Hom/Ext sequence map induced by
+(f,b[0]) and the fixed-coefficient sequence map induced by (f,b). -/
 @[reassoc]
 lemma homFixedCoefficientUniversalCoefficientSequenceIso_hom_naturality
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
@@ -148,8 +165,13 @@ private lemma homFixedCoefficientUCTCoordinates_left_naturality
   change (m ≫ c'.hom).hom x = (c.hom ≫ V.map t).hom x
   exact hLeft.trans hRight.symm
 
-/-- The first component is the native Ext pullback followed by coefficient pushforward.
-The earned degree unit cancels on the same two actual endpoint coordinates. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext groups in universe w. Let f
+: P′ → P be an integer chain map, b : M → M′ a coefficient map and n ∈ ℤ. Assume every term and
+every differential image of P and P′ is projective. The fixed-coefficient UCT terms are
+Ext¹_C(Hₙ₋₁(P),M), Hⁿ Hom(P,M), and Hom_C(Hₙ(P),M), with canonical lifts to universe max(v,w),
+and similarly for (P′,M′). The left vertical map Ext¹_C(Hₙ₋₁(P),M) → Ext¹_C(Hₙ₋₁(P′),M′) is
+pullback along Hₙ₋₁(f) followed by pushforward along b. The endpoint degree units cancel, so no
+extra sign occurs. -/
 lemma homFixedCoefficientUniversalCoefficientSequenceMap_τ₁
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -175,7 +197,12 @@ lemma homFixedCoefficientUniversalCoefficientSequenceMap_τ₁
   change c.inv ≫ (m.τ₁ ≫ c'.hom) = V.map t
   exact (congrArg (fun a => c.inv ≫ a) hC).trans (c.inv_hom_id_assoc (V.map t))
 
-/-- The middle component retains the original fixed-coefficient Hom cohomology map. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext groups in universe w. Let f
+: P′ → P be an integer chain map, b : M → M′ a coefficient map and n ∈ ℤ. Assume every term and
+every differential image of P and P′ is projective. The fixed-coefficient UCT terms are
+Ext¹_C(Hₙ₋₁(P),M), Hⁿ Hom(P,M), and Hom_C(Hₙ(P),M), with canonical lifts to universe max(v,w),
+and similarly for (P′,M′). The middle vertical map is precisely the common-universe lift of Hⁿ
+Hom(f,b), where Hom(f,b) has components k ↦ b ∘ k ∘ fₚ. -/
 lemma homFixedCoefficientUniversalCoefficientSequenceMap_τ₂
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -212,7 +239,12 @@ lemma homFixedCoefficientUniversalCoefficientSequenceMap_τ₂
   exact (congrArg (fun z => t.inv ≫ (z ≫ t'.hom)) hm).trans
     ((congrArg (fun z => t.inv ≫ z) hU).trans (t.inv_hom_id_assoc r))
 
-/-- The last component is native Hom pullback followed by coefficient pushforward. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext groups in universe w. Let f
+: P′ → P be an integer chain map, b : M → M′ a coefficient map and n ∈ ℤ. Assume every term and
+every differential image of P and P′ is projective. The fixed-coefficient UCT terms are
+Ext¹_C(Hₙ₋₁(P),M), Hⁿ Hom(P,M), and Hom_C(Hₙ(P),M), with canonical lifts to universe max(v,w),
+and similarly for (P′,M′). The right vertical map sends t : Hₙ(P) → M to b ∘ t ∘ Hₙ(f) : Hₙ(P′)
+→ M′, with the canonical lift. -/
 lemma homFixedCoefficientUniversalCoefficientSequenceMap_τ₃
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -253,7 +285,13 @@ lemma homFixedCoefficientUniversalCoefficientSequenceMap_τ₃
   change S.g ≫ m.τ₃ = S.g ≫ U.map t
   exact hComm.trans (hStep.trans hFinal)
 
-/-- The actual Ext injection commutes with source pullback and coefficient pushforward. -/
+/-- Let C be abelian with object universe u, morphism universe v and Ext groups in universe w. Let f
+: P′ → P be an integer chain map, b : M → M′ a coefficient map and n ∈ ℤ. Assume every term and
+every differential image of P and P′ is projective. The fixed-coefficient UCT terms are
+Ext¹_C(Hₙ₋₁(P),M), Hⁿ Hom(P,M), and Hom_C(Hₙ(P),M), with canonical lifts to universe max(v,w),
+and similarly for (P′,M′). The square formed by the positive left Ext injections commutes: the
+injection for (P′,M′) after Ext pullback/pushforward equals Hⁿ Hom(f,b) after the injection for
+(P,M). -/
 @[reassoc]
 lemma homFixedCoefficientUniversalCoefficientSequence_f_naturality
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ)
@@ -277,7 +315,9 @@ lemma homFixedCoefficientUniversalCoefficientSequence_f_naturality
   exact (congrArg (fun a => a ≫ T.f) h₁.symm).trans
     (m.comm₁₂.trans (congrArg (fun a => S.f ≫ a) h₂))
 
-/-- The identity chain and coefficient maps give the identity entire UCT sequence map. -/
+/-- Let C be abelian with Ext groups available, P an integer chain complex, M an object and n ∈ ℤ.
+Assume every term and differential image of P is projective. The identity maps of P and M induce
+the identity on the entire short exact sequence Ext¹(Hₙ₋₁(P),M) → Hⁿ Hom(P,M) → Hom(Hₙ(P),M). -/
 lemma homFixedCoefficientUniversalCoefficientSequenceMap_id
     (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
@@ -299,7 +339,10 @@ lemma homFixedCoefficientUniversalCoefficientSequenceMap_id
       ((congrArg U.map (CategoryTheory.Functor.map_id H (homFixedCoefficient P M))).trans
         (CategoryTheory.Functor.map_id U (H.obj (homFixedCoefficient P M)))))
 
-/-- Composition preserves both original variable directions on the entire UCT sequence. -/
+/-- Let C be abelian with Ext groups available. Let f : P′ → P, f′ : P″ → P′, b : M → M′ and b′ : M′
+→ M″, and assume all terms and differential images of P,P′,P″ are projective. For every integer
+n, the UCT map for (f ∘ f′,b′ ∘ b) is the composite of the map for (f,b) followed by that for
+(f′,b′), on Ext¹, Hom cohomology and homology Hom. -/
 lemma homFixedCoefficientUniversalCoefficientSequenceMap_comp
     {P'' : ChainComplex C ℤ} {M'' : C}
     (f : P' ⟶ P) (f' : P'' ⟶ P') (b : M ⟶ M') (b' : M' ⟶ M'') (n : ℤ)

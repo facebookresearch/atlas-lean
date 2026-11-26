@@ -1,4 +1,7 @@
-# Induction on the native universal enveloping algebra
+# Scalar and Lie-generator induction on the enveloping algebra
 
-Induction on the actual quotient algebra, using its scalar and Lie
-generators. No injectivity, basis or PBW input is needed.
+For a commutative ring R, an R-Lie algebra L and a predicate
+C on U_R(L), assume C(algebraMap(r)) for every r ∈ R,
+C(ι(x)) for every x ∈ L, and that C(a),C(b) imply both C(ab)
+and C(a+b). Then C(a) holds for every a ∈ U_R(L).
+The ring and Lie-carrier worlds are independent.

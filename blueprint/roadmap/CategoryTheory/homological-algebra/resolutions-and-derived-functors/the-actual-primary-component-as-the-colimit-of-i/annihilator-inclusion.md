@@ -1,3 +1,5 @@
-# Annihilator Inclusion
+# Inclusion of one power annihilator into power torsion
 
-Stage inclusion into the actual primary component, with no comparison certificate.
+Inclusion of one power annihilator into power torsion.
+
+The degree-`n` cocone map includes the submodule `Ann_M(I^n)` into `Γ_I(M)`.

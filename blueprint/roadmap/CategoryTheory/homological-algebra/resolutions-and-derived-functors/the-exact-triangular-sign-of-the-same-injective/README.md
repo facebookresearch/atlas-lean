@@ -2,10 +2,10 @@
 
 ## Category Theory
 
-- [Normalization Iso Pair zsmul cancel](normalization-iso-pair-zsmul-cancel.md)
+- [Two isomorphisms cancel around an integer scalar](normalization-iso-pair-zsmul-cancel.md)
 
 ## Injective Resolution
 
-- [Normalization Injective Terms acyclic](normalization-injective-terms-acyclic.md)
-- [Normalization Acyclic Injective hom](normalization-acyclic-injective-hom.md)
-- [Normalization Acyclic Injective hom closed](normalization-acyclic-injective-hom-clos.md)
+- [Injective-resolution terms are acyclic for an additive functor](normalization-injective-terms-acyclic.md)
+- [Acyclic comparison on an injective resolution has the triangular sign](normalization-acyclic-injective-hom.md)
+- [Closed triangular-sign formula for the injective comparison](normalization-acyclic-injective-hom-clos.md)

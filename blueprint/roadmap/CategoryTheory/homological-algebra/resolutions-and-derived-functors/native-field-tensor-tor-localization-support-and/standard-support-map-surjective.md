@@ -1,4 +1,6 @@
-# Standard Support Map surjective
+# Surjective coefficient maps give a surjective standard support map
 
-Genuine quotient support maps give a surjective map from the original
-standard tensor ambient, without coefficient flatness or finiteness.
+For commutative K-algebra maps i_V:A⊗K B→V and
+i_W:B⊗K C→W, if both maps are surjective, then
+σ_S:(A⊗K B)⊗K C→V⊗B W is surjective.
+No coefficient flatness is needed for this quotient property.

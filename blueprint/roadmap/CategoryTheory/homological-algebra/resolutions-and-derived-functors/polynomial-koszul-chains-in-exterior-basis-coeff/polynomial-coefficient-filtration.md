@@ -1,4 +1,7 @@
-# Polynomial Coefficient Filtration
+# The filtration by polynomial degree plus exterior degree
 
-Total coefficient degree plus the actual exterior degree. Stages below
-exterior degree are zero, rather than using truncated subtraction there.
+For a commutative ring R and arbitrary I, the stage p of the
+coefficient filtration on F_n is zero if p < n. For p ≥ n it is
+the R-submodule of families c such that every c_s has polynomial
+degree at most p−n. Thus p bounds coefficient degree plus the
+exterior degree n.

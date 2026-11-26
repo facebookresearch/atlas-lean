@@ -1,4 +1,6 @@
-# Partial Total Homology Filtration To Stable comp stable Graded Iso hom
+# The filtration projection under stable-to-graded comparison
 
-The stable/graded isomorphism identifies the stable quotient with the
-canonical adjacent graded quotient.
+The filtration projection under stable-to-graded comparison.
+
+The filtration-to-stable map followed by the graded isomorphism equals the homology-filtration
+graded projection.

@@ -1,3 +1,7 @@
-# Bimodule Tensor forget short Exact of tor First one
+# Finite bimodule tensor preserves ambient short exactness
 
-The actual finite-module tensor preserves every given ambient short exact row.
+Finite bimodule tensor preserves ambient short exactness.
+
+Suppose the right `R`-module `E` has zero `Tor¹` against every left module. A short complex of
+finite `R`-modules that is short exact after forgetting to `ModuleCat R` remains short exact
+in `ModuleCat S` after applying finite bimodule tensor and forgetting.

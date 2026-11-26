@@ -1,3 +1,4 @@
-# Quotient Hom Equiv val
+# The quotient-Hom coordinate is the value at the unit class
 
-The forward equivalence retains the original evaluation value.
+For a commutative ring R, ideal I, R-module M, and φ : R/I →ₗ[R] M, the underlying value of
+quotientHomEquiv(I,M)(φ) equals φ([1]).

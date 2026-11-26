@@ -1,5 +1,8 @@
-# Augmented Resolution To Right Derived Nat Trans connecting
+# Functorial augmented comparisons preserve connecting maps
 
-Every augmented functorial complex preserves the derived connector when its mapped coefficient
-diagram is genuinely short exact. The needed strict map is constructed from the true augmentation
-and exactness internally.
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. Let `R : C → CochainComplex C ℕ` preserve
+zero morphisms and have natural coaugmentation quasi-isomorphisms
+`X[0] → R(X)`. If `S` is short exact and `F(R(S))` is short exact,
+its connecting map commutes with the degree-`n` and degree-`n+1`
+components of the augmented cohomology-to-derived natural transformation.

@@ -1,3 +1,5 @@
-# Horizontal First Page Coherent Adjacent Short Complex Iso inv τ₃
+# The inverse right endpoint of a coherent adjacent-column comparison
 
-Inverse form of the coherent right-endpoint comparison.
+The inverse right endpoint of a coherent adjacent-column comparison.
+
+The inverse right component is the inverse coherent cokernel comparison for column `p+1`.

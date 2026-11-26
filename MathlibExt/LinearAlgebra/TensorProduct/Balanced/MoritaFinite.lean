@@ -17,12 +17,21 @@ public import Mathlib.Algebra.Module.Projective
 public import Mathlib.LinearAlgebra.StdBasis
 
 /-!
-# Finite dual frames from invertible bimodule contractions
+# Finite dual frames from invertible bimodule pairs
 
-The contractions u and v determine the normalization u′. Finite expressions
-for u′⁻¹(1) and v⁻¹(1) give four dual-frame expansions. These projective
-frames give finite generation and projectivity in all four variances,
-without asserting freeness.
+Let R and S be rings, P an R–S bimodule and Q an S–R bimodule with
+commuting actions, in independent carrier universes. Bimodule equivalences
+u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S determine a normalized
+R-valued contraction U. Finite pure expressions for U⁻¹(1) and w⁻¹(1)
+provide dual frames on both sides of P and Q.
+
+Writing these supports as (p_j, q_j) and (q_k, p_k), the four expansions are
+p = ∑_k U([p ⊗ q_k]) p_k = ∑_j p_j w([q_j ⊗ p]),
+q = ∑_j w([q ⊗ p_j]) q_j = ∑_k q_k U([p_k ⊗ q]).
+They split the corresponding finite free coordinate maps.
+Consequently P is finite and projective as a left R-module and right
+S-module, and Q is finite and projective as a left S-module and right
+R-module. Freeness is not asserted.
 -/
 
 @[expose] public section
@@ -48,24 +57,40 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
     ∀ (r : R) (b : TensorProduct.Balanced ℤ S P Q), u (r • b) = r * u b)
 
 include u in
-/-- Select a native finite pure expression for the actual inverse image of 1. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+This finite set of pairs (p, q) gives a pure expression for u⁻¹(1)
+in the integer-ground balanced quotient P ⊗_S Q. -/
 def unitSupport : Finset (P × Q) :=
   Classical.choose (exists_finset ℤ S P Q (u.symm 1))
 
 set_option linter.unusedSectionVars false in
-/-- The selected ordered sum is the actual inverse image of the scalar unit. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+The selected finite support satisfies
+u⁻¹(1) = ∑_(p,q)∈unitSupport [p ⊗ q]. -/
 @[nolint unusedArguments] -- omitting them cascades via `unitSupport_sum` into the frame lemmas
 theorem unitSupport_eq :
     u.symm 1 = ∑ a ∈ unitSupport R S P Q u, mk ℤ S P Q a.1 a.2 :=
   Classical.choose_spec (exists_finset ℤ S P Q (u.symm 1))
 
-/-- The selected actual pure expression maps to the scalar unit. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+Applying u to the selected inverse-unit expansion gives
+u(∑_(p,q)∈unitSupport [p ⊗ q]) = 1_R. -/
 theorem unitSupport_sum :
     u (∑ a ∈ unitSupport R S P Q u, mk ℤ S P Q a.1 a.2) = 1 := by
   rw [← unitSupport_eq R S P Q u]
   exact u.apply_symm_apply 1
 
-/-- The same unit equation indexed by the actual finite support type. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+With the finite support regarded as an index type, the unit equation is
+∑_i u([p_i ⊗ q_i]) = 1_R. -/
 theorem unitSupport_sum_fintype :
     (∑ a : unitSupport R S P Q u, u (mk ℤ S P Q a.val.1 a.val.2)) = 1 := by
   let := rightModule ℤ S R P Q
@@ -78,7 +103,11 @@ theorem unitSupport_sum_fintype :
     _ = 1 := unitSupport_sum R S P Q u
 
 include u hu in
-/-- The first-factor coefficient is linear for the original left R action. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+If u is also left R-equivariant, fixing q ∈ Q gives the left
+R-linear coefficient P → R, p ↦ u([p ⊗ q]). -/
 def leftCoefficient (q : Q) : P →ₗ[R] R := by
   letI := leftModule ℤ S R P Q
   letI := rightModule ℤ S R P Q
@@ -97,7 +126,10 @@ theorem leftCoefficient_apply (q : Q) (p : P) :
     leftCoefficient R S P Q u hu q p = u (mk ℤ S P Q p q) := rfl
 
 include u in
-/-- The second-factor coefficient is linear over Rop, with its actual reversed order. -/
+/-- Let R and S be rings, P a right S-module, and Q a left
+S-module and right R-module with commuting actions.
+For a right R-linear equivalence u : P ⊗_S Q ≅ R and fixed p ∈ P,
+the map Q → Rᵐᵒᵖ, q ↦ op(u([p ⊗ q])) is right R-linear. -/
 def rightCoefficient (p : P) : Q →ₗ[Rᵐᵒᵖ] Rᵐᵒᵖ := by
   letI := leftModule ℤ S R P Q
   letI := rightModule ℤ S R P Q
@@ -128,7 +160,14 @@ variable
     ∀ (s : S) (b : TensorProduct.Balanced ℤ R Q P), w (s • b) = s * w b)
 
 include u hu w hw in
-/-- The selected v-unit expression gives a finite left R dual frame on the original P. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The finite left R-dual frame on P has expansion
+p = ∑_k U([p ⊗ q_k]) • p_k for every p ∈ P. -/
 theorem p_left_frame (p : P) :
     ∑ i : unitSupport S R Q P w,
       leftCoefficient R S P Q (normalizedContraction R S P Q u w hw)
@@ -152,7 +191,14 @@ theorem p_left_frame (p : P) :
     _ = p := by rw [unitSupport_sum S R Q P w, op_one, one_smul]
 
 include u hu w hw in
-/-- The selected u′-unit expression gives a finite right S dual frame on the original P. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The finite right S-dual frame on P has expansion
+p = ∑_j p_j w([q_j ⊗ p]) for every p ∈ P. -/
 theorem p_right_frame (p : P) :
     ∑ i : unitSupport R S P Q (normalizedContraction R S P Q u w hw),
       rightCoefficient S R Q P w i.1.2 p • i.1.1 = p := by
@@ -179,7 +225,14 @@ theorem p_right_frame (p : P) :
       rw [unitSupport_sum R S P Q (normalizedContraction R S P Q u w hw), one_smul]
 
 include u hu w hw in
-/-- The same u′-unit expression gives a finite left S dual frame on the original Q. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The finite left S-dual frame on Q has expansion
+q = ∑_j w([q ⊗ p_j]) • q_j for every q ∈ Q. -/
 theorem q_left_frame (q : Q) :
     ∑ i : unitSupport R S P Q (normalizedContraction R S P Q u w hw),
       leftCoefficient S R Q P w hw i.1.1 q • i.1.2 = q := by
@@ -206,7 +259,14 @@ theorem q_left_frame (q : Q) :
       rw [unitSupport_sum R S P Q (normalizedContraction R S P Q u w hw), op_one, one_smul]
 
 include u hu w hw in
-/-- The same v-unit expression gives a finite right R dual frame on the original Q. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The finite right R-dual frame on Q has expansion
+q = ∑_k q_k U([p_k ⊗ q]) for every q ∈ Q. -/
 theorem q_right_frame (q : Q) :
     ∑ i : unitSupport S R Q P w,
       rightCoefficient R S P Q (normalizedContraction R S P Q u w hw) i.1.2 q • i.1.1 = q := by
@@ -228,7 +288,15 @@ theorem q_right_frame (q : Q) :
     _ = q := by rw [unitSupport_sum S R Q P w, one_smul]
 
 include u hu w hw in
-/-- Native finite-free reconstruction splits the actual P left-coordinate map. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The R-linear coordinate map P → R^K, p ↦ (U([p ⊗ q_k]))_k,
+is a section of the reconstruction R^K → P,
+(a_k)_k ↦ ∑_k a_k • p_k. Reconstruction after coordinates is id_P. -/
 theorem p_left_split :
     (Fintype.linearCombination R (fun i : unitSupport S R Q P w => i.1.2)).comp
       (LinearMap.pi (fun i : unitSupport S R Q P w =>
@@ -239,7 +307,15 @@ theorem p_left_split :
   exact p_left_frame R S P Q u hu w hw p
 
 include u hu w hw in
-/-- Native finite-free reconstruction splits the actual P right-coordinate map. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The right S-linear coordinate map P → (Sᵐᵒᵖ)^J,
+p ↦ (op(w([q_j ⊗ p])))_j, is a section of reconstruction
+(t_j)_j ↦ ∑_j t_j • p_j. Reconstruction after coordinates is id_P. -/
 theorem p_right_split :
     (Fintype.linearCombination Sᵐᵒᵖ
       (fun i : unitSupport R S P Q (normalizedContraction R S P Q u w hw) => i.1.1)).comp
@@ -251,7 +327,15 @@ theorem p_right_split :
   exact p_right_frame R S P Q u hu w hw p
 
 include u hu w hw in
-/-- The same selected coordinates split the native finite-free reconstruction onto Q on the left. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The S-linear coordinate map Q → S^J, q ↦ (w([q ⊗ p_j]))_j,
+is a section of reconstruction (a_j)_j ↦ ∑_j a_j • q_j.
+Reconstruction after coordinates is id_Q. -/
 theorem q_left_split :
     (Fintype.linearCombination S
       (fun i : unitSupport R S P Q (normalizedContraction R S P Q u w hw) => i.1.2)).comp
@@ -263,7 +347,15 @@ theorem q_left_split :
   exact q_left_frame R S P Q u hu w hw q
 
 include u hu w hw in
-/-- The v-unit coordinates split finite-free reconstruction onto Q on the right. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+Let J consist of pairs (p_j, q_j) whose pure sum is U⁻¹(1), and K of
+pairs (q_k, p_k) whose pure sum is w⁻¹(1). These are finite support types.
+The right R-linear coordinate map Q → (Rᵐᵒᵖ)^K,
+q ↦ (op(U([p_k ⊗ q])))_k, is a section of reconstruction
+(t_k)_k ↦ ∑_k t_k • q_k. Reconstruction after coordinates is id_Q. -/
 theorem q_right_split :
     (Fintype.linearCombination Rᵐᵒᵖ (fun i : unitSupport S R Q P w => i.1.1)).comp
       (LinearMap.pi (fun i : unitSupport S R Q P w =>
@@ -284,22 +376,42 @@ private theorem finite_projective_of_split {T : Type r} [Semiring T]
   exact ⟨Module.Finite.of_surjective s hs, Module.Projective.of_split i s h⟩
 
 include u hu w hw in
-/-- P is finite and projective for its original left R module, without a supplied frame. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+The left R-module P is finite and projective. The finite inverse-unit
+supports and normalized contractions give its split finite free coordinates. -/
 theorem p_left_finite_projective : Module.Finite R P ∧ Module.Projective R P := by
   exact finite_projective_of_split _ _ (p_left_split R S P Q u hu w hw)
 
 include u hu w hw in
-/-- P is finite and projective for its original right S module. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+The right S-module P is finite and projective. Its split finite
+free coordinates are indexed by the inverse-unit support of U. -/
 theorem p_right_finite_projective : Module.Finite Sᵐᵒᵖ P ∧ Module.Projective Sᵐᵒᵖ P := by
   exact finite_projective_of_split _ _ (p_right_split R S P Q u hu w hw)
 
 include u hu w hw in
-/-- Q is finite and projective for its original left S module. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+The left S-module Q is finite and projective. Its split finite
+free coordinates are indexed by the inverse-unit support of U. -/
 theorem q_left_finite_projective : Module.Finite S Q ∧ Module.Projective S Q := by
   exact finite_projective_of_split _ _ (q_left_split R S P Q u hu w hw)
 
 include u hu w hw in
-/-- Q is finite and projective for its original right R module. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with commuting actions on additive commutative groups.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Write U for the normalized R-valued contraction obtained from u and w.
+The right R-module Q is finite and projective. Its split finite
+free coordinates are indexed by the inverse-unit support of w. -/
 theorem q_right_finite_projective : Module.Finite Rᵐᵒᵖ Q ∧ Module.Projective Rᵐᵒᵖ Q := by
   exact finite_projective_of_split _ _ (q_right_split R S P Q u hu w hw)
 

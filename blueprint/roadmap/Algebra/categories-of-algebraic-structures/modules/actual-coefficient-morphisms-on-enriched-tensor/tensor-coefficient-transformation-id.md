@@ -1,3 +1,6 @@
-# Tensor Coefficient Transformation id
+# Identity bimodule coefficient gives the identity tensor transformation
 
-The identity coefficient morphism gives the actual tensor identity.
+Identity bimodule coefficient gives the identity tensor transformation.
+
+The coefficient transformation induced by the identity map on `B` is the identity of
+`tensorFunctor R S B`.

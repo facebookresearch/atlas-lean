@@ -1,6 +1,6 @@
 # Actual graded tensor fibres and finite antidiagonal biproducts
 
-- [Index](index-2.md)
-- [To Biproduct](to-biproduct.md)
-- [From Biproduct](from-biproduct.md)
-- [Iso](iso.md)
+- [The finite antidiagonal of nonnegative degrees](index-2.md)
+- [The graded tensor map to its antidiagonal biproduct](to-biproduct.md)
+- [The antidiagonal biproduct map to the graded tensor](from-biproduct.md)
+- [A graded tensor term is its finite antidiagonal biproduct](iso.md)

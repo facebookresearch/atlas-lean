@@ -1,4 +1,6 @@
-# Exterior Power Base Change Nat Iso
+# The natural isomorphism of exterior powers and scalar extension
 
-Actual extension of scalars commutes with every native exterior degree.
-The common category height includes both rings and the original module height.
+The natural isomorphism of exterior powers and scalar extension.
+
+For every `n ∈ ℕ`, taking the `n`th exterior power over `R` and then extending to `S` is
+naturally isomorphic to extending first and taking the exterior power over `S`.

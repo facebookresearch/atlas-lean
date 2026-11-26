@@ -1,4 +1,5 @@
-# Enveloping Ground Lie Term Map id apply
+# The ground term map of an identity Lie homomorphism
 
-The original ground CE degree map sends an identity Lie map to
-the identity on every tensor.
+The ground term map of an identity Lie homomorphism.
+
+The identity of `L` induces the identity on every ground enveloping chain term.

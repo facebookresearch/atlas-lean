@@ -1,3 +1,6 @@
-# Shuffle Degree Cut Shuffle Equiv
+# Shuffles of a fixed cut as compatible permutations
 
-An actual cut shuffle is a permutation in the original total degree with its original compatible cut.
+Shuffles of a fixed cut as compatible permutations.
+
+For a weak cut (p,q) of n, identifying Fin(p+q) with Fin n gives an equivalence from
+(p,q)-shuffles to permutations σ ∈ Sₙ with descentBoundaries(σ) ⊆ {p}.

@@ -14,11 +14,15 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerivedBifunctor
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Isomorphism
 
 /-!
-# Balanced left derivation of the additive bifunctor
+# Balance between the two left-derived variables
 
-Both comparisons use the same total of projective resolutions. The augmentation quasi-isomorphisms
-are proved from exactness on their projective terms. No acyclic resolution or comparison is
-supplied.
+Let `C₁,C₂,D` be abelian, with projective resolutions in `C₁,C₂`,
+and `F : C₁ → C₂ → D` additive in both variables. Suppose
+`F(X,-)` preserves homology for every projective `X`, and `F(-,Y)`
+preserves homology for every projective `Y`. The total complex of
+projective resolutions has quasi-isomorphisms to both one-sided
+computations, giving a natural bifunctor isomorphism between
+left derivation in the second variable and left derivation in the first.
 -/
 
 @[expose] public section
@@ -41,15 +45,22 @@ local notation "c" => ComplexShape.down ℕ
 
 attribute [local instance] flippedAdditive flippedObjAdditive
 
-/-- Left derivation in the second variable, using functors and maps. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Suppose `C₁,C₂` have projective resolutions. Left derivation in the second variable gives the bifunctor
+`(A,B) ↦ L_n(F(A,-))(B)`, with maps induced by the coefficient
+transformation in `A` and derived maps in `B`. -/
 def deriveSecond (n : ℕ) : C₁ ⥤ C₂ ⥤ D :=
   (F.flip.leftDerivedBifunctor n).flip
 
-/-- Left derivation in the first variable, with the original variable order. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Suppose `C₁,C₂` have projective resolutions. Left derivation in the first variable gives the bifunctor
+`(A,B) ↦ L_n(F(-,B))(A)`, preserving the original order of variables. -/
 def deriveFirst (n : ℕ) : C₁ ⥤ C₂ ⥤ D :=
   F.leftDerivedBifunctor n
 
-/-- The map between the second-variable resolution computations. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For `a : A → A′` and a chain map `g : Q → Q′` in `C₂`,
+the two bifunctor maps give `F(A,Q) → F(A′,Q′)`. -/
 def secondComputationMap {A A' : C₁} (a : A ⟶ A')
     {Q Q' : ChainComplex C₂ ℕ} (g : Q ⟶ Q') :
     ((F.obj A).mapHomologicalComplex c).obj Q ⟶
@@ -57,7 +68,9 @@ def secondComputationMap {A A' : C₁} (a : A ⟶ A')
   ((F.obj A).mapHomologicalComplex c).map g ≫
     ((NatTrans.mapHomologicalComplex (F.map a) c).app Q')
 
-/-- The map between the first-variable resolution computations. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain map `f : P → P′` in `C₁` and `b : B → B′`,
+the two bifunctor maps give `F(P,B) → F(P′,B′)`. -/
 def firstComputationMap {P P' : ChainComplex C₁ ℕ} (f : P ⟶ P')
     {B B' : C₂} (b : B ⟶ B') :
     ((F.flip.obj B).mapHomologicalComplex c).obj P ⟶
@@ -65,7 +78,11 @@ def firstComputationMap {P P' : ChainComplex C₁ ℕ} (f : P ⟶ P')
   secondComputationMap F.flip b f
 
 omit [HasProjectiveResolutions C₁] [F.Additive] [Abelian C₁] in
-/-- Simultaneous derived maps computed in second-variable resolutions. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Suppose `C₁,C₂` have projective resolutions. For `a : A → A′`, `b : B → B′` and a lift `g : Q → Q′`
+between projective resolutions over `b`, the simultaneous second-
+variable derived map is the homology map of `F(a,g)` conjugated by
+the resolution comparisons. -/
 theorem deriveSecond_map_computation (n : ℕ) {A A' : C₁} (a : A ⟶ A')
     {B B' : C₂} (b : B ⟶ B')
     (Q : ProjectiveResolution B) (Q' : ProjectiveResolution B')
@@ -110,7 +127,11 @@ theorem deriveSecond_map_computation (n : ℕ) {A A' : C₁} (a : A ⟶ A')
       congrArg (fun f => e₀.hom ≫ f ≫ e₂.inv) (H.map_comp u v).symm
 
 omit [HasProjectiveResolutions C₂] [∀ X : C₁, (F.obj X).Additive] [Abelian C₂] in
-/-- The same simultaneous computation in the original first variable. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Suppose `C₁,C₂` have projective resolutions. For `a : A → A′`, `b : B → B′` and a lift `f : P → P′`
+between projective resolutions over `a`, the simultaneous first-
+variable derived map is the homology map of `F(f,b)` conjugated by
+the resolution comparisons. -/
 theorem deriveFirst_map_computation (n : ℕ) {A A' : C₁} (a : A ⟶ A')
     {B B' : C₂} (b : B ⟶ B')
     (P : ProjectiveResolution A) (P' : ProjectiveResolution A')
@@ -136,7 +157,11 @@ theorem deriveFirst_map_computation (n : ℕ) {A A' : C₁} (a : A ⟶ A')
   change (NatTrans.leftDerived α n).app A ≫ (G'.leftDerived n).map a = _
   exact hNaturality.trans hComputation
 
-/-- Both resolution augmentations give the objectwise balance map. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Suppose `C₁,C₂` have projective resolutions. Assume `F(X,-)` preserves homology for every projective `X`
+and `F(-,Y)` preserves homology for every projective `Y`. Projective resolutions `P,Q` of `A,B` give the comparison
+`L_n(F(A,-))(B) ≅ L_n(F(-,B))(A)` through their common total
+complex and its two augmentation quasi-isomorphisms. -/
 def resolutionBalanceIso
     (h₁ : ∀ X : C₁, Projective X → (F.obj X).PreservesHomology)
     (h₂ : ∀ Y : C₂, Projective Y → (F.flip.obj Y).PreservesHomology)
@@ -176,10 +201,12 @@ private theorem augmentationComparison_naturality
     _ = a ≫ ((asIso a).inv ≫ b ≫ v) := by
       simp only [asIso_inv, IsIso.hom_inv_id_assoc]
 
-/--
-Naturality of balance is constructed from both augmentation squares, not from an arbitrary choice
-of objectwise comparison isomorphisms.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Suppose `C₁,C₂` have projective resolutions. Assume `F(X,-)` preserves homology for every projective `X`
+and `F(-,Y)` preserves homology for every projective `Y`. For maps `a : A → A′`, `b : B → B′` and augmentation-
+compatible lifts between the supplied projective resolutions, the
+balance isomorphisms commute with the simultaneous derived maps
+in both variables. -/
 theorem resolutionBalanceIso_hom_naturality
     (h₁ : ∀ X : C₁, Projective X → (F.obj X).PreservesHomology)
     (h₂ : ∀ Y : C₂, Projective Y → (F.flip.obj Y).PreservesHomology)
@@ -262,10 +289,11 @@ theorem resolutionBalanceIso_hom_naturality
   exact (congrArg (fun q => q ≫ e') hSecond).trans
     (hComparisons.trans (congrArg (fun q => e ≫ q) hFirst.symm))
 
-/--
-The bifunctor balance isomorphism, natural in both original objects, using the chosen projective
-resolutions.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Suppose `C₁,C₂` have projective resolutions. Assume `F(X,-)` preserves homology for every projective `X`
+and `F(-,Y)` preserves homology for every projective `Y`. The comparisons from the chosen resolutions form a natural
+bifunctor isomorphism from second-variable left derivation to
+first-variable left derivation in degree `n`. -/
 def balanceIso
     (h₁ : ∀ X : C₁, Projective X → (F.obj X).PreservesHomology)
     (h₂ : ∀ Y : C₂, Projective Y → (F.flip.obj Y).PreservesHomology)

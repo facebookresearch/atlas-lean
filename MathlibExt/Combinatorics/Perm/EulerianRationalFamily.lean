@@ -14,16 +14,19 @@ public import MathlibExt.Combinatorics.Perm.EulerianShuffleMultiplication
 public import MathlibExt.Algebra.Polynomial.NatInterpolation
 
 /-!
-# Rational convolution of Eulerian elements
+# Rational Eulerian convolution and block actions
 
-The family `eulerianLambda n a = ∑ i, a^i eₙⁱ` satisfies parameter
-multiplication under composition and respects signed shuffle products.
-Orthogonal Eulerian projectors give composition, while finite shuffle
-fibers and polynomial interpolation give shuffle multiplicativity.
+The family `Λ_n(a) = ∑_(i=0)^n a^i ε_(n,i)` in `ℚ[S_n]` satisfies `Λ_n(a)Λ_n(b)=Λ_n(ab)`. For
+`a≠0`, its inverse is `Λ_n(a⁻¹)`. On the supported Eulerian element `ε_(n,i)`, multiplication
+by `Λ_n(a)` has eigenvalue `a^i`.
 
-For a positive integer `m`, the signed lambda operation is
-`(-1)^(m - 1)` times this convolution family. This parameter sign is not
-extended to rational parameters.
+Embedding the two block permutation groups gives `Λ_(p+q)(a) Sh_(p,q) = Sh_(p,q) (Λ_p(a)^L
+Λ_q(a)^R)`, where `Sh_(p,q)` is the sum of shuffle permutations weighted by their signs.
+
+For positive integer `m`, the parameter-signed lambda element is `(-1)^(m-1)` times the
+convolution value. The rational family is defined by its polynomial coefficients.
+
+Reference: Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -33,7 +36,10 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- Actual rational convolution parameters multiply under group-ring composition. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. For `a,b : ℚ`, `Λ_n(a) * Λ_n(b) = Λ_n(a*b)`. -/
 theorem eulerianLambda_mul (n : ℕ) (a b : ℚ) :
     eulerianLambda n a * eulerianLambda n b = eulerianLambda n (a * b) := by
   classical
@@ -48,7 +54,10 @@ theorem eulerianLambda_mul (n : ℕ) (a b : ℚ) :
     rw [if_neg (Ne.symm hji), smul_zero]
   · simp
 
-/-- Every actual rational convolution parameter has the original Eulerian eigenvalue on each supported piece. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. For `i : ℕ` with `i≤n` and `a : ℚ`, `Λ_n(a) * ε_(n,i) = a^i • ε_(n,i)`. -/
 theorem eulerianLambda_mul_eulerianElement (n i : ℕ) (hi : i ≤ n) (a : ℚ) :
     eulerianLambda n a * eulerianElement n i = a ^ i • eulerianElement n i := by
   classical
@@ -63,8 +72,11 @@ theorem eulerianLambda_mul_eulerianElement (n i : ℕ) (hi : i ≤ n) (a : ℚ) 
     simp [hji]
   · simp
 
-/-- Every nonzero actual rational convolution parameter gives an actual group-ring unit with its reciprocal
-  operation. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. For `a : ℚ` with `a≠0`, `eulerianLambdaUnit n a ha` is the unit of `ℚ[S_n]` whose
+value is `Λ_n(a)` and inverse value is `Λ_n(a⁻¹)`. -/
 def eulerianLambdaUnit (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
     (MonoidAlgebra ℚ (Perm (Fin n)))ˣ where
   val := eulerianLambda n a
@@ -72,30 +84,41 @@ def eulerianLambdaUnit (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
   val_inv := by rw [eulerianLambda_mul, mul_inv_cancel₀ ha, eulerianLambda_one]
   inv_val := by rw [eulerianLambda_mul, inv_mul_cancel₀ ha, eulerianLambda_one]
 
-/-- The actual unit retains the original parameter operation as its forward value. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. For `a : ℚ` with `a≠0`, `(eulerianLambdaUnit n a ha).val = Λ_n(a)`. -/
 theorem eulerianLambdaUnit_val (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
     (eulerianLambdaUnit n a ha).val = eulerianLambda n a := rfl
 
-/-- The actual unit retains the reciprocal parameter operation as its inverse value. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)` and `d(σ) = descentNumber σ`. Put `P_(n,d)(X) =
+(1/n!) ∏_(j=0)^(n-1)(X+j-d)` in `ℚ[X]`, with empty product `1`. Write `ε_(n,i) = ∑ σ ∈ S_n,
+coeff_i(P_(n,d(σ))) * sign(σ) [σ]` and `Λ_n(t) = ∑ σ ∈ S_n, P_(n,d(σ))(t) * sign(σ) [σ]` in
+`ℚ[S_n]`. For `a : ℚ` with `a≠0`, `(eulerianLambdaUnit n a ha).inv = Λ_n(a⁻¹)`. -/
 theorem eulerianLambdaUnit_inv (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
     (eulerianLambdaUnit n a ha).inv = eulerianLambda n a⁻¹ := rfl
 
-/-- The actual first-block group action used by the rational convolution family. -/
+/-- For `p,q : ℕ`, `eulerianBlockLeftAction p q : ℚ[S_p] →ₐ[ℚ] ℚ[S_(p+q)]` sends `[α]` to
+`[blockPermutation p q α 1]`, acting in the left block and fixing the right block. -/
 def eulerianBlockLeftAction (p q : ℕ) :
     MonoidAlgebra ℚ (Perm (Fin p)) →ₐ[ℚ] MonoidAlgebra ℚ (Perm (Fin (p + q))) :=
   MonoidAlgebra.mapDomainAlgHom ℚ ℚ (blockLeftHom p q)
 
-/-- The actual second-block group action used by the rational convolution family. -/
+/-- For `p,q : ℕ`, `eulerianBlockRightAction p q : ℚ[S_q] →ₐ[ℚ] ℚ[S_(p+q)]` sends `[β]` to
+`[blockPermutation p q 1 β]`, fixing the left block and acting in the right block. -/
 def eulerianBlockRightAction (p q : ℕ) :
     MonoidAlgebra ℚ (Perm (Fin q)) →ₐ[ℚ] MonoidAlgebra ℚ (Perm (Fin (p + q))) :=
   MonoidAlgebra.mapDomainAlgHom ℚ ℚ (blockRightHom p q)
 
-/-- The original two-block evaluated element is the product of its original block actions. -/
+/-- For `p,q : ℕ` and `a : ℚ`, `splitEulerianLambda p q a = B_L(Λ_p(a)) * B_R(Λ_q(a))` in
+`ℚ[S_(p+q)]`, where `B_L,B_R` are the left and right block group-ring inclusions. -/
 theorem splitEulerianLambda_eq_blockActions (p q : ℕ) (a : ℚ) :
     splitEulerianLambda p q a = eulerianBlockLeftAction p q (eulerianLambda p a) *
       eulerianBlockRightAction p q (eulerianLambda q a) := rfl
 
-/-- The actual two-block family has its original finite polynomial coefficient expansion. -/
+/-- For `p,q : ℕ` and `a : ℚ`, let `B_L,B_R` be the block group-ring inclusions and `ε_(r,i)` the
+Eulerian coefficient elements. Then `splitEulerianLambda p q a = ∑ i : Fin(p+1), ∑ j :
+Fin(q+1), a^(i.val+j.val) • (B_L ε_(p,i.val) * B_R ε_(q,j.val))`. -/
 theorem splitEulerianLambda_eq_eulerian_sum (p q : ℕ) (a : ℚ) :
     splitEulerianLambda p q a =
       ∑ z : Fin (p + 1) × Fin (q + 1), a ^ (z.1.val + z.2.val) •
@@ -108,7 +131,8 @@ theorem splitEulerianLambda_eq_eulerian_sum (p q : ℕ) (a : ℚ) :
     smul_smul, ← pow_add]
   rw [Fintype.sum_prod_type]
 
-/-- The actual rational-parameter convolution family respects the original signed shuffle element. -/
+/-- For `p,q : ℕ` and `a : ℚ`, put `Sh_(p,q) = ∑ s : Shuffle p q, sign(s.perm) [s.perm]`. Then
+`Λ_(p+q)(a) * Sh_(p,q) = Sh_(p,q) * splitEulerianLambda p q a` in `ℚ[S_(p+q)]`. -/
 theorem eulerianLambda_mul_signedShuffle_rat (p q : ℕ) (a : ℚ) :
     eulerianLambda (p + q) a * signedShuffleElement p q =
       signedShuffleElement p q * splitEulerianLambda p q a := by

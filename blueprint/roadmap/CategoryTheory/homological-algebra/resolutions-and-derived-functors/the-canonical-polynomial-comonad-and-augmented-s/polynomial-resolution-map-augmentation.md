@@ -1,3 +1,6 @@
-# Polynomial Resolution Map augmentation
+# Naturality of polynomial resolution augmentation in the algebra
 
-Augmented functoriality retains the actual coefficient algebra map at every level.
+Naturality of polynomial resolution augmentation in the algebra.
+
+For `f : A → B`, the degree-`n` resolution map followed by augmentation to `B` equals
+augmentation to `A` followed by `f`.

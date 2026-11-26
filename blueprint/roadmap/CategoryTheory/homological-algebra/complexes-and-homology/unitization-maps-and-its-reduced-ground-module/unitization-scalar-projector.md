@@ -1,3 +1,6 @@
-# Unitization Scalar Projector
+# The scalar projector of a unitization
 
-The scalar projector is augmentation followed by its original scalar section.
+The scalar projector of a unitization.
+
+Augmentation followed by its scalar section is the algebra endomorphism `(r,a) ↦ (r,0)` of
+`A⁺`.

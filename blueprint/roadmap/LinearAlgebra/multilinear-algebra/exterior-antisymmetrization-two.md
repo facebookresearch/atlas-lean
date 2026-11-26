@@ -1,3 +1,6 @@
-# The full antisymmetrization of two vectors
+# The degree-two antisymmetrization formula
 
-The actual full exterior antisymmetrization is the original ordered tensor minus its reversed tensor.
+The degree-two antisymmetrization formula.
+
+For a commutative ring k, a k-module V and x,y ∈ V, A₂(x ∧ y) = x ⊗ y - y ⊗ x in V⊗2. The
+coefficient of the transposed word is -1.

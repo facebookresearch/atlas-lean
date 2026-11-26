@@ -17,13 +17,17 @@ public import Mathlib.LinearAlgebra.TensorProduct.Tower
 public import MathlibExt.Algebra.Category.ModuleCat.Monoidal.UniverseCompatibility
 
 /-!
-# Scalar tensor cancellation for Tor
+# Tensor cancellation and flat scalar extension for Tor
 
-The coefficient may be an arbitrary module over the extended ring.
-Scalar tensor cancellation identifies the tensor complexes. A flat map
-sends a projective resolution to a projective resolution, and exact scalar
-restriction identifies homology. This gives flat base change for graph
-intersections.
+Let R,S be commutative rings in independent universes u,v, with coefficient modules in
+W=max(u,v,w). For a ring homomorphism f:R→S, an S-module N and an R-module X, scalar tensor
+cancellation gives the R-linear isomorphism U(N⊗_S(S⊗_R X))≅U(N)⊗_R X. It sends n⊗(s⊗x) to
+(s•n)⊗x and is natural in X.
+
+If S is flat over R, scalar extension sends a projective resolution of X to a projective
+resolution of S⊗_R X. The tensor cancellation isomorphism and exact scalar restriction then give
+U(Tor_q^S(N,S⊗_R X))≅Tor_q^R(U(N),X) for every q∈ℕ. The coefficient N is an arbitrary S-module;
+the flatness hypothesis is on S over R. The ring universes and lift height w are independent.
 -/
 
 @[expose] public section
@@ -42,8 +46,10 @@ namespace ModuleCat.UniverseTensor
 
 variable (R : Type u) (S : Type v) [CommRing R] [CommRing S]
 
-/-- Canonical scalar tensor cancellation for a coefficient module defined
-only over the extended ring. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). For a ring homomorphism f:R→S, N an S-module and X an R-module with carriers
+in W, this is the R-linear isomorphism U(N⊗_S(S⊗_R X))≅U(N)⊗_R X. Its forward map sends n⊗(s⊗x)
+to (s•n)⊗x, and its inverse sends n⊗x to n⊗(1⊗x). The R-actions are induced by f. -/
 def scalarTensorCancellationIso (f : R →+* S)
     (N : ModuleCat.{max u v w} S) (X : ModuleCat.{max u v w} R) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v w} R) :=
@@ -69,8 +75,10 @@ def scalarTensorCancellationIso (f : R →+* S)
   letI : IsScalarTower R S N := IsScalarTower.of_algebraMap_smul (fun _ _ => rfl)
   exact ((TensorProduct.AlgebraTensorModule.cancelBaseChange R S S N X).restrictScalars R).toModuleIso
 
-/-- The actual coefficient cancellation is natural in the original
-module, hence commutes with every original resolution differential. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). For f:R→S and an S-module N in W, the isomorphisms U(N⊗_S(S⊗_R X))≅U(N)⊗_R X
+form a natural isomorphism of functors on R-modules in W. For h:X→Y, the cancellation maps
+c_X,c_Y satisfy U(id_N⊗(id_S⊗h))≫c_Y.hom=c_X.hom≫(id_{U(N)}⊗h). -/
 def scalarTensorCancellationNatIso (f : R →+* S) (N : ModuleCat.{max u v w} S) :
     letI : MonoidalCategory (ModuleCat.{max u v w} R) :=
       ModuleCat.UniverseTensor.monoidalCategory.{u,max v w} (R := R)
@@ -96,8 +104,12 @@ def scalarTensorCancellationNatIso (f : R →+* S) (N : ModuleCat.{max u v w} S)
     exact congrArg (fun k : (N ⊗[S] (S ⊗[R] X)) →ₗ[S] (N ⊗[R] Y) => k z) h.symm)
 
 
-/-- Flat base change for original Tor with arbitrary coefficients over
-S, expressed in the original base-ring module category. -/
+/-- Let R,S be commutative rings in independent universes u,v, w an independent common lift height,
+and W=max(u,v,w). Assume S is an R-algebra and flat as an R-module. Write F(X)=S⊗_R X for scalar
+extension and U for restriction to R. For an arbitrary S-module N and R-module X in W and q∈ℕ,
+this is the canonical R-module isomorphism c_{N,X,q}:U(Tor_q^S(N,F(X)))≅Tor_q^R(U(N),X). It is
+obtained by extending a projective resolution of X, applying scalar tensor cancellation
+termwise, and comparing homology through exact restriction of scalars. -/
 def flatScalarExtensionTorCancellationIso [Algebra R S] [Module.Flat R S]
     (N : ModuleCat.{max u v w} S) (X : ModuleCat.{max u v w} R) (q : ℕ) :
     letI : MonoidalCategory (ModuleCat.{max u v w} R) :=

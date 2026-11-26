@@ -1,4 +1,6 @@
-# Horizontal Stable Lower Relative Homology Is Zero
+# The intervening lower relative group vanishes at the stability bound
 
-The relative homology between the page lower stage and the fixed lower
-abutment stage is zero under the lower stable bound.
+For a nonnegative homological bicomplex K in an abelian
+category, n=p+q and r≥p+1, the relative group of
+F_(p−r) → F_(−1) is zero in cochain degree −n+1.
+Both endpoint filtration complexes are zero.

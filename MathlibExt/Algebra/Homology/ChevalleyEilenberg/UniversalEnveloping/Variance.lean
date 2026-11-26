@@ -15,16 +15,18 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.LieNaturality
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.ExactPrecomposition
 
 /-!
-# Lie and coefficient variance of enveloping Chevalley–Eilenberg chains
+# Lie and coefficient maps of enveloping chains
 
-An enveloping-algebra map and a compatible semilinear right coefficient map
-induce Lie coefficient maps and homogeneous Chevalley–Eilenberg maps. The
-regular-coefficient maps are enveloping-semilinear and commute with the
-differentials.
+Let `f : L → L'` be a Lie homomorphism over a commutative ring `R`, and let `U(f) : U_R(L) →
+U_R(L')` be its induced enveloping map. A right coefficient map semilinear over `U(f)ᵐᵒᵖ` is
+ground-linear and intertwines the negative generator Lie actions. It induces the coefficient
+chain map `w ⊗ m ↦ ⋀ⁿ(f)(w) ⊗ g(m)`.
 
-Universe lifts bundle the maps into scalar restriction of the target complex.
-The augmentation square uses the enveloping augmentation law and degree-zero
-exterior coordinates.
+For regular coefficients the degree map is semilinear over `U(f)` and commutes with the
+differential. If the underlying modules of `L` and `L'` are free, universe lifts bundle these
+maps from the source resolution to scalar restriction of the target resolution. The induced
+trivial-module map and augmentation square retain the scalar augmentation values. The two Lie-
+carrier universes are independent.
 -/
 
 @[expose] public section
@@ -53,8 +55,10 @@ variable {N : ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L)ᵐᵒᵖ
   {N' : ModuleCat.{max u v v' w} (UniversalEnvelopingAlgebra R L')ᵐᵒᵖ}
     (g : N →ₛₗ[((UniversalEnvelopingAlgebra.map R f).toRingHom).op] N')
 
-/-- semilinearity for the UEA map implies ground linearity, by its
-original scalar algebra-map law. -/
+/-- Ground-linearity of a semilinear right coefficient map.
+
+If `g : N → N'` is semilinear over the opposite of `U(f)`, the scalar equation
+`U(f)(algebraMap(R,U)(r)) = algebraMap(R,U')(r)` makes `g` an `R`-linear coefficient map. -/
 def rightCoefficientGroundMap : N →ₗ[R] N' where
   toFun := g
   map_add' := g.map_add
@@ -64,8 +68,10 @@ def rightCoefficientGroundMap : N →ₗ[R] N' where
     change op (UniversalEnvelopingAlgebra.map R f (algebraMap R U r)) • g m = _
     rw [(UniversalEnvelopingAlgebra.map R f).commutes]
 
-/-- The original negative-left Lie coefficient action is compatible with the
-Lie map and original semilinear right UEA coefficient map. -/
+/-- Lie compatibility of a semilinear right coefficient map.
+
+For `f : L → L'`, a coefficient map semilinear over `U(f)ᵐᵒᵖ` intertwines the negative right-
+generator action of `L` with the action of `L'` restricted along `f`. -/
 def rightCoefficientLieMap :
     rightCoefficients R L N →ₗ⁅R,L⁆ LieModuleCat.restrictObj f (rightCoefficients R L' N') where
   toLinearMap := rightCoefficientGroundMap R L f g
@@ -77,7 +83,10 @@ def rightCoefficientLieMap :
     change -(op (UniversalEnvelopingAlgebra.map R f (UniversalEnvelopingAlgebra.ι R x)) • g m) = _
     rw [UniversalEnvelopingAlgebra.map_ι]
 
-/-- The joint Lie and coefficient CE map, bundled in a common carrier universe. -/
+/-- The joint Lie-and-right-coefficient chain map.
+
+A Lie map `f` and a right coefficient map semilinear over `U(f)ᵐᵒᵖ` induce a chain map between
+their Chevalley–Eilenberg coefficient complexes in the common coefficient universe. -/
 def rightEnvelopingCoefficientLieComplexMap :
     rightEnvelopingCoefficientComplex R L N ⟶ rightEnvelopingCoefficientComplex R L' N' :=
   ChainComplex.ofHom
@@ -89,13 +98,19 @@ def rightEnvelopingCoefficientLieComplexMap :
         (coefficientLieDifferential_naturality R L f (rightCoefficients R L N)
           (rightCoefficients R L' N') (rightCoefficientLieMap R L f g) n).symm)
 
+/-- The tensor formula for a jointly varying right coefficient map.
+
+In degree `n`, the induced chain map sends `a ⊗ m` to `⋀ⁿ(f)(a) ⊗ g(m)`. -/
 theorem rightEnvelopingCoefficientLieComplexMap_f_tmul (n : ℕ) (a : ⋀[R]^n L) (m : N) :
     ((rightEnvelopingCoefficientLieComplexMap R L f g).f n).hom (a ⊗ₜ[R] (show rightCoefficients R L N from m)) =
       exteriorPower.map n f.toLinearMap a ⊗ₜ[R] (show rightCoefficients R L' N' from g m) :=
   coefficientLieDegreeMap_tmul R L f (rightCoefficients R L N) (rightCoefficients R L' N')
     (rightCoefficientLieMap R L f g) n a m
 
-/-- The original regular UEA coefficient map, compatible with the Lie map. -/
+/-- The regular coefficient Lie map induced by a Lie homomorphism.
+
+For `f : L → L'`, the enveloping algebra map `U(f)` intertwines the regular coefficient
+actions `[x,a] = -aι(x)` along `f`. -/
 def envelopingRegularLieMap :
     regularCoefficients R L →ₗ⁅R,L⁆ LieModuleCat.restrictObj f (regularCoefficients R L') where
   toLinearMap := (UniversalEnvelopingAlgebra.map R f).toLinearMap
@@ -105,7 +120,10 @@ def envelopingRegularLieMap :
       -(UniversalEnvelopingAlgebra.map R f a * UniversalEnvelopingAlgebra.ι R (f x))
     rw [map_neg, map_mul, UniversalEnvelopingAlgebra.map_ι]
 
-/-- The original UEA coefficient action on a pure native CE tensor. -/
+/-- The left enveloping action on an exterior-first chain tensor.
+
+For `a, b ∈ U_R(L)` and `x ∈ ⋀ⁿ L`, the enveloping scalar action satisfies `a • (x ⊗ b) = x ⊗
+(a*b)`. -/
 theorem enveloping_smul_tmul (n : ℕ) (a : U) (b : regularCoefficients R L) (x : ⋀[R]^n L) :
     @SMul.smul U ((envelopingComplex R L).X n)
       ((envelopingComplex R L).X n).isModule.toDistribMulAction.toMulAction.toSMul
@@ -115,7 +133,10 @@ theorem enveloping_smul_tmul (n : ℕ) (a : U) (b : regularCoefficients R L) (x 
   rw [coefficientDegreeRingAction_apply, coefficientComplexRingAction_f_tmul]
   rfl
 
-/-- The existing original joint CE degree map has UEA semilinearity. -/
+/-- The semilinear enveloping chain-term map of a Lie homomorphism.
+
+For `f : L → L'`, the degree-`n` map combines `⋀ⁿ(f)` with `U(f)` and is semilinear over the
+ring homomorphism `U(f)`. -/
 def envelopingLieTermMap (n : ℕ) :
     (envelopingComplex R L).X n →ₛₗ[((UniversalEnvelopingAlgebra.map R f).toRingHom)] (envelopingComplex R L').X n where
   toFun := coefficientLieDegreeMap R L f (regularCoefficients R L) (regularCoefficients R L')
@@ -149,14 +170,19 @@ def envelopingLieTermMap (n : ℕ) :
                 UniversalEnvelopingAlgebra.map R f a • y) hWord.symm))))
 
 
+/-- The exterior-and-enveloping tensor formula for a Lie term map.
+
+The map induced by `f` sends `a ⊗ u` to `⋀ⁿ(f)(a) ⊗ U(f)(u)`. -/
 theorem envelopingLieTermMap_tmul (n : ℕ) (a : ⋀[R]^n L) (u : regularCoefficients R L) :
     envelopingLieTermMap R L f n (a ⊗ₜ[R] u) =
       exteriorPower.map n f.toLinearMap a ⊗ₜ[R] UniversalEnvelopingAlgebra.map R f u :=
   coefficientLieDegreeMap_tmul R L f (regularCoefficients R L) (regularCoefficients R L')
     (envelopingRegularLieMap R L f) n a u
 
-/-- differential compatibility comes from the original all-degree
-coefficient/Lie differential naturality, on the original native UEA complex. -/
+/-- Differential compatibility of semilinear enveloping Lie maps.
+
+The degree maps induced by a Lie homomorphism commute with the enveloping Chevalley–Eilenberg
+successor differentials. -/
 theorem envelopingLieTermMap_d_apply (n : ℕ) (z : (envelopingComplex R L).X (n + 1)) :
     envelopingLieTermMap R L f n (((envelopingComplex R L).d (n + 1) n).hom z) =
       ((envelopingComplex R L').d (n + 1) n).hom (envelopingLieTermMap R L f (n + 1) z) := by
@@ -173,7 +199,10 @@ section LiftedResolution
 variable [Module.Free R L] [Module.Free R L']
 
 
-/-- Native universe lift of the original semilinear CE term map. -/
+/-- The lifted semilinear map between enveloping resolution terms.
+
+For free underlying modules of `L` and `L'`, lifting the semilinear Lie term map gives a map
+between their resolution terms in the joint carrier universe. -/
 def liftedEnvelopingLieTermMap (n : ℕ) :
     (liftedEnvelopingProjectiveResolution.{u, v, max u v v' w} R L).complex.X n
       →ₛₗ[((UniversalEnvelopingAlgebra.map R f).toRingHom)]
@@ -184,11 +213,17 @@ def liftedEnvelopingLieTermMap (n : ℕ) :
         (ULift.moduleEquiv : ULift.{max u v v' w} ((envelopingComplex R L).X n) ≃ₗ[U]
           (envelopingComplex R L).X n).toLinearMap)
 
+/-- The coefficient formula for a lifted enveloping Lie map.
+
+The lifted degree map sends `ULift.up z` to `ULift.up` of the enveloping Lie term map applied
+to `z`. -/
 theorem liftedEnvelopingLieTermMap_up (n : ℕ) (z : (envelopingComplex R L).X n) :
     liftedEnvelopingLieTermMap R L f n (ULift.up z) = ULift.up (envelopingLieTermMap R L f n z) := rfl
 
-/-- The original CE map enters the exact restricted target resolution;
-projectivity of the target after restriction is not an assumption. -/
+/-- The Lie-induced map into a scalar-restricted target resolution.
+
+For free underlying modules of `L` and `L'`, the lifted degree maps form a chain map from the
+source enveloping resolution to the target resolution restricted along `U(f)`. -/
 def liftedEnvelopingLieComplexMap :
     (liftedEnvelopingProjectiveResolution.{u, v, max u v v' w} R L).complex ⟶
       ((ModuleCat.restrictScalars ((UniversalEnvelopingAlgebra.map R f).toRingHom)).mapHomologicalComplex
@@ -209,7 +244,11 @@ def liftedEnvelopingLieComplexMap :
           (((envelopingComplex R L).d (j + 1) j).hom z.down))
     exact (congrArg ULift.up (envelopingLieTermMap_d_apply R L f j z.down)).symm
 
-/-- The original lifted trivial module map, with the UEA augmentation law. -/
+/-- The scalar-preserving map of lifted trivial enveloping modules.
+
+For a Lie map `f`, the lifted trivial-module map takes values in restriction of the target
+along `U(f)` and retains the twice-lifted scalar value. Its linearity follows from
+augmentation naturality. -/
 def liftedEnvelopingTrivialLieMap :
     liftedEnvelopingTrivial.{u, v, max u v v' w} R L ⟶
       (ModuleCat.restrictScalars ((UniversalEnvelopingAlgebra.map R f).toRingHom)).obj
@@ -233,13 +272,19 @@ def liftedEnvelopingTrivialLieMap :
         rw [h] }
 
 omit [Module.Free R L] [Module.Free R L'] in
-/-- Native degree-zero exterior coordinates preserve the Lie map. -/
+/-- The scalar coordinate of a Lie-induced exterior-degree-zero map.
+
+For `f : L → L'`, the exterior-degree-zero map preserves the regular-ring coordinate under
+`⋀⁰[R] L ≃ₗ[R] R` and `⋀⁰[R] L' ≃ₗ[R] R`. -/
 theorem exteriorZeroCoordinates_map (x : ⋀[R]^0 L) :
     exteriorPower.zeroEquiv R L' (exteriorPower.map 0 f.toLinearMap x) =
       exteriorPower.zeroEquiv R L x := by
   exact LinearMap.congr_fun (exteriorPower.zeroEquiv_naturality f.toLinearMap) x
 
-/-- Native universe lift retains the original CE augmentation value. -/
+/-- The tensor formula for a lifted enveloping augmentation.
+
+In degree zero, the lifted augmentation sends `up(x ⊗ u)` to the twice-lifted scalar
+`(exteriorPower.zeroEquiv x) • ε(u)`, where `ε : U_R(L) → R` is the enveloping augmentation. -/
 theorem liftedEnvelopingAugmentation_tmul (x : ⋀[R]^0 L) (u : regularCoefficients R L) :
     ((liftedEnvelopingProjectiveResolution.{u, v, max u v v' w} R L).π.f 0).hom (ULift.up (x ⊗ₜ[R] u)) =
       ULift.up (ULift.up ((exteriorPower.zeroEquiv R L x) •
@@ -258,8 +303,11 @@ theorem liftedEnvelopingAugmentation_tmul (x : ⋀[R]^0 L) (u : regularCoefficie
         ((UniversalEnvelopingAlgebra.augmentation R L).toLinearMap.map_smul _ _)))
   exact congrArg ULift.up hValue
 
-/-- The original jointly varying CE map preserves the original augmentation
-into exact target restriction, proved on the scalar and regular coefficients. -/
+/-- The augmentation square for lifted enveloping Lie maps.
+
+For a Lie map between free underlying modules, the lifted resolution map followed by the
+restricted target augmentation equals the source augmentation followed by the lifted trivial-
+module map. -/
 theorem liftedEnvelopingLieComplexMap_augmentation :
     liftedEnvelopingLieComplexMap R L f ≫ Functor.mapChainAugmentation
       (ModuleCat.restrictScalars ((UniversalEnvelopingAlgebra.map R f).toRingHom))

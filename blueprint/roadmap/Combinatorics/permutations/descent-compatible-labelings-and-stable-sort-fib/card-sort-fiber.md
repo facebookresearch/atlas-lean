@@ -1,3 +1,4 @@
-# Card sort Fiber
+# The stable-sort fiber cardinality
 
-The actual native stable-sort fiber has the original descent-binomial cardinality.
+For `n,m : ℕ` and `σ ∈ S_(n+1)`, `Fintype.card {f : Fin(n+1) → Fin m // Tuple.sort f = σ} =
+Nat.choose (n+m-descentNumber σ) (n+1)`.

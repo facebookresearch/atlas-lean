@@ -1,3 +1,6 @@
-# Matrix Cyclic Degree Map natural
+# Coefficient naturality of the finite matrix cyclic degree map
 
-Coefficient naturality of the finite matrix exterior trace component.
+Coefficient naturality of the finite matrix cyclic degree map.
+
+An entry-algebra homomorphism commutes with the exterior matrix coefficient map, generalized
+trace, and induced cyclic quotient map.

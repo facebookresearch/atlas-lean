@@ -1,3 +1,6 @@
-# Matrix Positive Tail Homology Iso naturality
+# Naturality of the positive-tail matrix homology comparison
 
-The shifted homology maps are natural under the matrix zero corners.
+Naturality of the positive-tail matrix homology comparison.
+
+The tail homology map of zero extension commutes with the comparison to full homology in the
+next degree.

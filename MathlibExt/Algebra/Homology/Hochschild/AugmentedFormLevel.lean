@@ -16,16 +16,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.CompatibleScalarRestriction
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRingsExact
 
 /-!
-# coefficient forms and the canonical higher cotangent levels
+# Coefficient differential forms and higher cotangent modules
 
-The original Hochschild form target is the same coefficient form module as
-the higher cotangent level. Positive weights remove only the native
-carrier lift and restrict the original coefficient scalar action. Weight
-zero uses the original regular tensor unitor, preserving `Ω⁰(P/k)=P`.
+Let `k` be a commutative ring and `P → B` an augmentation to a commutative `k`-algebra. The
+coefficient differential-form module in weight `q` is `B ⊗[P] ⋀^q[P] Ω[P/k]`. Its lifted
+Hochschild presentation is naturally isomorphic, over `k`, to the higher cotangent module over
+`B` with scalars restricted to `k`.
 
-The comparison is natural for the algebra maps over the coefficient
-algebra. Surjectivity of the chain-level form projection permits the proof
-on the original Hochschild tensor words, without a smoothness hypothesis.
+The integral form projection sends `b ⊗ (a₀ ⊗ ⋯ ⊗ a_q)` to `b ⊗ (da₀ ∧ ⋯ ∧ da_q)` in positive
+weight. Weight zero is identified through the regular tensor unitor `B ⊗[P] P ≅ B`. The
+projection and the form-module comparison are natural in maps over `B`; their formulas retain
+the coefficient value and use no factorial normalization.
 -/
 
 @[expose] public section
@@ -116,8 +117,10 @@ private theorem module_word_square {R : Type r} [Ring R]
     ((follow_value c.hom t.hom x y b hc ht).trans
       ((follow_value p.hom h.hom x a b hp hh).symm.trans (module_comp_value p h x).symm))
 
-/-- The canonical higher-form functor, with the original ground
-scalars obtained by native exact restriction. -/
+/-- The higher cotangent functor restricted to ground scalars.
+
+In weight `q`, this sends `P → B` to the `k`-module underlying the `B`-module `B ⊗[P] ⋀^q[P]
+Ω[P/k]`, and maps over `B` to their higher differential maps. -/
 def higherGroundFunctor (q : ℕ) : Over B ⥤ ModuleCat.{max u v} k where
   obj P := (ModuleCat.restrictScalars (algebraMap k B)).obj
     (CommAlgCat.cotangentHigherLevel.{u, v} k B q P)
@@ -132,39 +135,56 @@ def higherGroundFunctor (q : ℕ) : Over B ⥤ ModuleCat.{max u v} k where
       (CommAlgCat.cotangentHigherMap_comp.{u, v} k B q f g)).trans
         ((ModuleCat.restrictScalars (algebraMap k B)).map_comp _ _)
 
-/-- The explicit native fields are the original composed higher-form functor. -/
+/-- The scalar-restriction description of the higher ground functor.
+
+The weight-`q` higher ground functor is the higher cotangent functor over `B` followed by
+restriction of scalars along `k → B`. -/
 theorem higherGroundFunctor_eq (q : ℕ) : higherGroundFunctor.{u, v} k B q =
     CommAlgCat.cotangentHigherFunctor.{u, v} k B q ⋙
       ModuleCat.restrictScalars (algebraMap k B) := rfl
 
-/-- The ground-level object is native scalar restriction of the same cotangent point. -/
+/-- The object formula for higher ground cotangent modules.
+
+At `P → B`, the weight-`q` object is scalar restriction of the higher cotangent module `B ⊗[P]
+⋀^q[P] Ω[P/k]`. -/
 theorem higherGroundFunctor_obj (q : ℕ) (P : Over B) :
     (higherGroundFunctor.{u, v} k B q).obj P =
       (ModuleCat.restrictScalars (algebraMap k B)).obj
         (CommAlgCat.cotangentHigherLevel.{u, v} k B q P) := rfl
 
-/-- The ground-level operator is native restriction of the same cotangent morphism. -/
+/-- The morphism formula for higher ground cotangent modules.
+
+For `f : P → Q` over `B`, the weight-`q` map is restriction of the higher cotangent map
+induced by `f`. -/
 theorem higherGroundFunctor_map {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
     (higherGroundFunctor.{u, v} k B q).map f =
       (ModuleCat.restrictScalars (algebraMap k B)).map
         (CommAlgCat.cotangentHigherMap.{u, v} k B q f) := rfl
 
-/-- The zero-differential Hochschild form degree for an original
-algebra over the fixed coefficient algebra. -/
+/-- The lifted coefficient differential-form module.
+
+For `P → B` and `q ∈ ℕ`, this is the `k`-module on the lifted carrier `ULift.{u}(B ⊗[P] ⋀^q[P]
+Ω[P/k])`. -/
 def rawFormLevel (q : ℕ) (P : Over B) : ModuleCat.{max u v} k := by
   letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
   letI : IsScalarTower k P.left B := CommAlgCat.cotangentScalarTower k B P
   exact ModuleCat.of k
     (ULift.{u} (B ⊗[P.left] (⋀[P.left]^q (KaehlerDifferential k P.left))))
 
-/-- The explicit raw native object is the original coefficient-form complex component. -/
+/-- The coefficient-form complex component in lifted coordinates.
+
+The lifted coefficient differential-form module in weight `q` is the degree-`q` component of
+the coefficient differential-form complex. -/
 theorem rawFormLevel_eq (q : ℕ) (P : Over B) :
     letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
     letI : IsScalarTower k P.left B := CommAlgCat.cotangentScalarTower k B P
     rawFormLevel.{u, v} k B q P = (Symmetric.coefficientDifferentialFormComplex k P.left B).X q := rfl
 
-/-- Original raw form coordinates agree with the higher cotangent
-level, including its separately constructed regular weight zero. -/
+/-- The comparison from lifted forms to higher cotangent modules.
+
+For every weight `q`, the lifted coefficient-form module is `k`-linearly isomorphic to the
+ground restriction of the higher cotangent module. In positive weights the map removes the
+carrier lift; weight zero uses the regular tensor unitor. -/
 def rawFormLevelIso (q : ℕ) (P : Over B) :
     rawFormLevel.{u, v} k B q P ≅ (higherGroundFunctor.{u, v} k B q).obj P := by
   letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
@@ -203,7 +223,10 @@ def rawFormLevelIso (q : ℕ) (P : Over B) :
       let c : Y ≅ Z := (ModuleCat.compatibleRestrictScalarsEquiv k B T).toModuleIso
       exact l ≪≫ c.symm
 
-/-- The original coefficient-form component, with the explicit native raw objects. -/
+/-- The lifted coefficient-form map of an augmented algebra map.
+
+For `f : P → Q` over `B`, this is the degree-`q` differential-form map induced by `f`,
+retaining the coefficient action through the augmentations. -/
 def rawFormMap {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
     letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
     letI : Algebra Q.left B := CommAlgCat.cotangentAlgebra k B Q
@@ -217,7 +240,10 @@ def rawFormMap {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
   exact (Symmetric.coefficientFormAlgebraComplexMap k f.left.hom
     (LinearMap.id : B →ₗ[k] B) (coefficientCompatibility k B f)).f q
 
-/-- The component constructor stores the same original form morphism. -/
+/-- The degreewise description of a lifted coefficient-form map.
+
+The lifted weight-`q` map is the degree-`q` component of the coefficient differential-form
+complex map with algebra map `f` and identity coefficient map on `B`. -/
 theorem rawFormMap_eq {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
     letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
     letI : Algebra Q.left B := CommAlgCat.cotangentAlgebra k B Q
@@ -232,8 +258,10 @@ theorem rawFormMap_eq {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
   dsimp only
   rfl
 
-/-- The original coefficient form projection into the higher
-cotangent level, as an degree map. -/
+/-- The Hochschild projection to a higher cotangent module.
+
+In degree `q`, compose the coefficient differential-form chain projection with the comparison
+from lifted forms to the ground higher cotangent module of `P → B`. -/
 def higherProjection (q : ℕ) (P : Over B) :
     (complex k B P).X q ⟶ (higherGroundFunctor.{u, v} k B q).obj P := by
   letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
@@ -314,8 +342,10 @@ private theorem rawFormLevelIso_zero_hom_apply (P : Over B) :
     (hForward _).trans (module_iso_hom_inv_value W (e.hom.hom z))
   exact module_iso_hom_cancel c (hValue.trans hInverse.symm)
 
-/-- The computed projection is the original form map followed by
-its native form-level comparison. -/
+/-- The value of the higher cotangent projection.
+
+For a degree-`q` Hochschild chain `z`, the higher projection is the lifted coefficient-form
+projection of `z` followed by the form-module comparison. -/
 theorem higherProjection_apply (q : ℕ) (P : Over B) (z : (complex k B P).X q) :
     letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
     letI : IsScalarTower k P.left B := CommAlgCat.cotangentScalarTower k B P
@@ -340,8 +370,10 @@ private theorem higherGroundFunctor_map_apply {P Q : Over B} (f : P ⟶ Q)
       (CommAlgCat.cotangentHigherMap.{u, v} k B q f).hom z :=
   restricted_map_value (algebraMap k B) (CommAlgCat.cotangentHigherMap.{u, v} k B q f) z
 
-/-- Positive-degree words retain their coefficient and all original
-universal differentials in the canonical higher-form model. -/
+/-- The differential-wedge formula for a higher cotangent projection.
+
+In degree `q+1`, the projection sends `b ⊗ (a₀ ⊗ ⋯ ⊗ a_q)` to `b ⊗ (da₀ ∧ ⋯ ∧ da_q)` in `B
+⊗[P] ⋀^(q+1)[P] Ω[P/k]`. -/
 theorem higherProjection_tprod (q : ℕ) (P : Over B) (b : B) (a : Fin (q + 1) → P.left) :
     let X : ModuleCat.{max u v} k := (complex k B P).X (q + 1)
     let Y : ModuleCat.{max u v} k := (higherGroundFunctor.{u, v} k B (q + 1)).obj P
@@ -364,8 +396,10 @@ theorem higherProjection_tprod (q : ℕ) (P : Over B) (b : B) (a : Fin (q + 1) �
     (follow_value (fun x => x) (rawFormLevelIso.{u, v} k B (q + 1) P).hom.hom
       _ (ULift.up w) _ hπ hLift)
 
-/-- At weight zero the independently specified coefficient is preserved by
-the regular-module comparison. -/
+/-- The regular-module formula for the weight-zero projection.
+
+The degree-zero tensor with coefficient `b ∈ B` maps to the inverse regular-unitor image of
+`b` in the weight-zero cotangent module `B ⊗[P] P`. -/
 theorem higherProjection_zero (P : Over B) (b : B) (a : Fin 0 → P.left) :
     (higherProjection.{u, v} k B 0 P).hom (b ⊗ₜ[k] PiTensorProduct.tprod k a) =
       (CommAlgCat.cotangentWeightZeroLevelIso k B P).inv.hom b := by
@@ -397,7 +431,11 @@ theorem higherProjection_zero (P : Over B) (b : B) (a : Fin 0 → P.left) :
     (follow_value (fun x => x) (rawFormLevelIso.{u, v} k B 0 P).hom.hom
       _ (ULift.up w) _ hπ hLift)
 
-/-- Every original algebra map preserves the higher form projection. -/
+/-- Naturality of the higher cotangent projection.
+
+For `f : P → Q` over `B`, applying the Hochschild map and then projecting to higher cotangent
+forms equals projecting first and applying the weight-`q` higher cotangent map restricted to
+`k`. -/
 theorem higherProjection_naturality {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
     let X : ModuleCat.{max u v} k := (complex k B P).X q
     let Y : ModuleCat.{max u v} k := (complex k B Q).X q
@@ -467,7 +505,10 @@ theorem higherProjection_naturality {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
       dsimp only at hp ht
       exact module_word_square c p t h x y (show ZP from wP) (show ZQ from wQ) hc hp ht hMap
 
-/-- Postcomposition of the original higher-projection naturality square. -/
+/-- Postcomposition of higher cotangent projection naturality.
+
+The naturality square for the weight-`q` projection remains commutative after composing both
+routes with any ground-linear map from the target higher cotangent module. -/
 theorem higherProjection_naturality_assoc {P Q : Over B} (f : P ⟶ Q) (q : ℕ)
     {M : ModuleCat.{max u v} k}
     (g : (higherGroundFunctor.{u, v} k B q).obj Q ⟶ M) :
@@ -485,8 +526,10 @@ theorem higherProjection_naturality_assoc {P Q : Over B} (f : P ⟶ Q) (q : ℕ)
   have hn : c ≫ t = p ≫ h := higherProjection_naturality k B f q
   exact module_reassoc c t p h hn g
 
-/-- The raw original form map has the same operator as the canonical
-higher cotangent functor after restriction of ground scalars. -/
+/-- Naturality of the lifted-form cotangent comparison.
+
+The weight-`q` comparison from lifted coefficient forms to ground higher cotangent modules
+commutes with the form map and the higher cotangent map induced by `f : P → Q` over `B`. -/
 theorem rawFormLevelIso_naturality {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
     letI : Algebra P.left B := CommAlgCat.cotangentAlgebra k B P
     letI : Algebra Q.left B := CommAlgCat.cotangentAlgebra k B Q
@@ -548,7 +591,10 @@ theorem rawFormLevelIso_naturality {P Q : Over B} (f : P ⟶ Q) (q : ℕ) :
   obtain ⟨z, rfl⟩ := Symmetric.coefficientDifferentialFormChainMap_surjective k P.left B q x
   exact (congrArg eQ.hom (hSquare z)).symm.trans (hHigher z)
 
-/-- Postcomposition of the original raw-form naturality square. -/
+/-- Postcomposition of lifted-form comparison naturality.
+
+The naturality square of the lifted-form comparison remains commutative after any ground-
+linear map from the target higher cotangent module. -/
 theorem rawFormLevelIso_naturality_assoc {P Q : Over B} (f : P ⟶ Q) (q : ℕ)
     {M : ModuleCat.{max u v} k}
     (t : (higherGroundFunctor.{u, v} k B q).obj Q ⟶ M) :

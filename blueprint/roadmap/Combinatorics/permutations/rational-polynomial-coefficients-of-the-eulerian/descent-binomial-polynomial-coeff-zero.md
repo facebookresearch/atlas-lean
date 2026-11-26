@@ -1,3 +1,5 @@
-# Descent Binomial Polynomial coeff zero
+# The positive-degree constant coefficient vanishes
 
-The original polynomial has zero constant coefficient in every positive homogeneous degree.
+For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. If `0<n` and `d<n`, the constant coefficient satisfies
+`(descentBinomialPolynomial n d).coeff 0 = 0`.

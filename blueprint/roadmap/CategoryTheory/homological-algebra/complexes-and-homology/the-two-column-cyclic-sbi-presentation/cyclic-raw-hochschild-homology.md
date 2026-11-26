@@ -1,4 +1,6 @@
-# Cyclic Raw Hochschild Homology
+# The homology of the two-column cyclic presentation
 
-The homology of the first two raw columns, the `CC(A){2}` HH
-presentation specified in Loday 2.2.1 (printed p. 61 / PDF page 76).
+The homology of the two-column cyclic presentation.
+
+In degree `n`, this is `H_n(CC^{(2)}(A))`, where `CC^{(2)}(A)` is the total of cyclic columns
+zero and one. This is the ordinary homology term of the two-column SBI presentation.

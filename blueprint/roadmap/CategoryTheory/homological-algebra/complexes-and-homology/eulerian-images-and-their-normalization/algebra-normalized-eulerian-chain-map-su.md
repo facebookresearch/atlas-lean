@@ -1,3 +1,5 @@
-# Algebra Normalized Eulerian Chain Map support
+# Normalized Eulerian components vanish above their degree
 
-The original normalized Eulerian chain-map component has the same degree support.
+For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, the degree-n component of the normalized
+Eulerian chain map e_N^(i) is zero whenever n < i.

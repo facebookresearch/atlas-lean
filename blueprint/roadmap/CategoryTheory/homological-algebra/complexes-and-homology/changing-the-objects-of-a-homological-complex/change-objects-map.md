@@ -1,3 +1,5 @@
-# Change Objects Map
+# Complex maps in changed coordinates
 
-An original complex morphism acts on both families of actual object coordinates.
+Let K,L be c-complexes in a category C with zero morphisms, let φ:K→L, and choose eᵢ:Kᵢ≅Xᵢ and
+fᵢ:Lᵢ≅Yᵢ. The induced map between the changed-coordinate complexes is the conjugate e^{-1} ≫ φ
+≫ f. In degree i it is eᵢ.inv ≫ φ.f i ≫ fᵢ.hom.

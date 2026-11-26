@@ -1,3 +1,5 @@
-# Small Etale Point Tensor Sheaf Stalk Iso section tmul
+# A sheafified local tensor germ retains the two coefficient germs
 
-Original pure section tensors have the tensor of the actual original germ values.
+For a point p of X's small étale topology, sheaves F,G, a neighborhood U with x∈p(U), and
+local sections a,b, map a⊗b into the tensor sheaf using its section map. The germ of that
+section under the tensor-sheaf stalk isomorphism is [a]_\{U,x\}⊗[b]_\{U,x\}.

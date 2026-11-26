@@ -1,3 +1,4 @@
-# Id
+# The identity exterior-model morphism
 
-Identity morphism of a CE model.
+For a CE model X over a commutative ring R, the identity model
+morphism has identity Lie map and identity exterior components.

@@ -1,3 +1,6 @@
-# Small Etale Direct Image Congr
+# Equal scheme maps have equal direct image coordinates
 
-Equality of original morphisms transports the same literal direct-image functor.
+Equal scheme maps have equal direct image coordinates.
+
+An equality of scheme morphisms gives the natural equality isomorphism between their direct-
+image functors.

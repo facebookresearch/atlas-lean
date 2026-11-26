@@ -1,3 +1,6 @@
-# Functor additive
+# Power-torsion functor preserves addition of morphisms
 
-Additivity of actual restricted maps, without a new global instance.
+Power-torsion functor preserves addition of morphisms.
+
+For an ideal `I`, the restricted power-torsion maps preserve sums of `R`-linear module
+morphisms.

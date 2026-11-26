@@ -1,3 +1,6 @@
-# Antidiagonal Iso
+# The graded-tensor antidiagonal isomorphism
 
-The earned comparison between the two actual tensor sources.
+The graded-tensor antidiagonal isomorphism.
+
+The degree-`n` graded homology tensor is canonically isomorphic to the finite biproduct
+indexed by `p+q=n`.

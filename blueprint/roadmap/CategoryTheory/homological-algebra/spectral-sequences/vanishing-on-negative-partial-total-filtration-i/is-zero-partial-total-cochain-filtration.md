@@ -1,4 +1,6 @@
-# Is Zero partial Total Cochain Filtration obj of neg
+# Negative finite partial-total cochain stage is zero
 
-A negative finite stage of the cochain partial-total filtration is a zero
-object.
+Negative finite partial-total cochain stage is zero.
+
+For an integer `z < 0`, the filtration object `B.partialTotalCochainFiltration.obj z` is a
+zero object.

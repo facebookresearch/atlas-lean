@@ -14,13 +14,20 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.HomOfComponents
 public import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 
 /-!
-# Naturality of symmetric shuffle pairings
+# Naturality of symmetric bar maps and shuffle pairings
 
-Unit-preserving algebra maps and compatible coefficient
-maps induce simplicial maps of coefficient bars.
-Their shuffle pairings and normalization maps are natural.
-Source and target algebra universes are independent;
-coefficients use an explicit common lifted category.
+Let k be a commutative ring, A,B commutative k-algebras, and M,N compatible symmetric
+coefficients. A unital k-algebra map g : A → B and a k-linear coefficient map f : M → N
+satisfying f(a·m) = g(a)·f(m) induce a simplicial map of coefficient bars. The face identities
+use the action compatibility; the degeneracy identities use g(1)=1. The coefficient modules and
+lifted regular modules are placed in a common universe containing the separate source and target
+algebra universes.
+
+The bar map gives a Hochschild chain map with components f ⊗ g^{⊗n}. It commutes with raw bar
+coordinates and with normalization. Naturality of the degreewise tensor diagonal and the
+Eilenberg–Zilber shuffle map gives naturality of the symmetric shuffle pairing on tensor product
+chain complexes. Postcomposing the pairing with target normalization gives the corresponding
+normalized-target square.
 -/
 
 @[expose] public section
@@ -43,7 +50,11 @@ variable {k : Type u} [CommRing k]
   [Module k M] [Module k N] [Module A M] [Module B N]
   [IsScalarTower k A M] [IsScalarTower k B N]
 
-/-- The coefficient/algebra map in native coefficient-bar coordinates. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. In simplicial degree n
+: ℕ, use the bar tensor coordinate isomorphisms to define a k-module map whose tensor formula is
+m ⊗ a₁ ⊗ … ⊗ aₙ ↦ f(m) ⊗ g(a₁) ⊗ … ⊗ g(aₙ). -/
 def coefficientBarMapComponent (g : A →ₐ[k] B) (f : M →ₗ[k] N) (n : ℕ) :
     (coefficientBar.{u, v, max u v v' z} k A M).obj (op ⦋n⦌) ⟶
       (coefficientBar.{u, v', max u v v' z} k B N).obj (op ⦋n⦌) :=
@@ -51,7 +62,12 @@ def coefficientBarMapComponent (g : A →ₐ[k] B) (f : M →ₗ[k] N) (n : ℕ)
     ModuleCat.ofHom (ModuleCat.Algebra.Hochschild.linearMap g.toNonUnitalAlgHom f n) ≫
       (coefficientBarObjIso.{u, v', max u v v' z} k B N n).inv
 
-/-- Every face square is from the original action square. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). For n : ℕ and i ∈ Fin(n+2), the degree components cₙ satisfy cₙ₊₁ ≫ δᵢ^B = δᵢ^A ≫ cₙ.
+Here δᵢ are the coefficient-bar faces, including both endpoint actions and the internal adjacent
+multiplications. -/
 theorem coefficientBarMapComponent_face (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) (i : Fin (n + 2)) :
     coefficientBarMapComponent.{u, v, v', z} g f (n + 1) ≫ (coefficientBar.{u, v', max u v v' z} k B N).δ i =
@@ -114,7 +130,12 @@ private theorem linearMap_degeneracy_comm (g : A →ₐ[k] B) (f : M →ₗ[k] N
   · simp only [Fin.insertNth_apply_same, map_one]
   · simp only [Fin.insertNth_apply_succAbove]
 
-/-- Unit preservation gives every coefficient-bar degeneracy square. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. For n : ℕ and i ∈
+Fin(n+1), the degree components satisfy cₙ ≫ sᵢ^B = sᵢ^A ≫ cₙ₊₁. The degeneracies insert 1 into
+the algebra tail, so unitality g(1)=1 proves this square without a coefficient action-law
+premise. -/
 theorem coefficientBarMapComponent_degeneracy (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (n : ℕ) (i : Fin (n + 1)) :
     coefficientBarMapComponent.{u, v, v', z} g f n ≫ (coefficientBar.{u, v', max u v v' z} k B N).σ i =
@@ -139,8 +160,12 @@ theorem coefficientBarMapComponent_degeneracy (g : A →ₐ[k] B) (f : M →ₗ[
     Category.assoc, Iso.inv_hom_id_assoc, Iso.hom_inv_id_assoc, Iso.inv_hom_id,
     Category.comp_id, coefficientBar, coefficientBarObjIso] using h
 
-/-- The simplicial map of coefficient bars, constructed from
-the proved face and degeneracy squares. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). The components applying f to the coefficient and g to each algebra factor, together
+with their face and degeneracy identities, give a morphism of simplicial k-module coefficient
+bars. -/
 def coefficientBarMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
     coefficientBar.{u, v, max u v v' z} k A M ⟶ coefficientBar.{u, v', max u v v' z} k B N :=
@@ -148,7 +173,12 @@ def coefficientBarMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (fun {n} i => coefficientBarMapComponent_face.{u, v, v', z} g f hf n i)
     (fun {n} i => coefficientBarMapComponent_degeneracy.{u, v, v', z} g f n i)
 
-/-- The new simplicial map preserves its original coefficient-first degree formula. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). The component of coefficientBarMap g f hf at the simplex [n] equals
+coefficientBarMapComponent g f n, the map m ⊗ a₁ ⊗ … ⊗ aₙ ↦ f(m) ⊗ g(a₁) ⊗ … ⊗ g(aₙ) in bar
+coordinates. -/
 @[simp]
 theorem coefficientBarMap_app_mk (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) :
@@ -157,8 +187,12 @@ theorem coefficientBarMap_app_mk (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (fun {n} i => coefficientBarMapComponent_face.{u, v, v', z} g f hf n i)
     (fun {n} i => coefficientBarMapComponent_degeneracy.{u, v, v', z} g f n i) n
 
-/-- The general raw chain-map provider specialized to symmetric coefficients.
-The right-action square is from the original left-action square. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). Applying f to the coefficient and g to every algebra tail gives a chain map C(A,M) →
+C(B,N) of ℕ-indexed Hochschild chain complexes. Symmetry supplies the right-action compatibility
+from the stated left-action law. -/
 def coefficientChainMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) : chainComplex k A M ⟶ chainComplex k B N := by
   let := opModule A M
@@ -172,7 +206,11 @@ def coefficientChainMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
   exact ModuleCat.Algebra.Hochschild.map.{u, v, v', z} g.toNonUnitalAlgHom f hf
     (rightAction_compatibility g.toNonUnitalAlgHom f hf)
 
-/-- The chain map has the native tensor-map components. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). For n : ℕ, the nth component of coefficientChainMap is the k-linear tensor map f ⊗
+g^{⊗n} : M ⊗_k A^{⊗n} → N ⊗_k B^{⊗n}. -/
 @[simp]
 theorem coefficientChainMap_f (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) (n : ℕ) :
@@ -180,7 +218,12 @@ theorem coefficientChainMap_f (g : A →ₐ[k] B) (f : M →ₗ[k] N)
       ModuleCat.ofHom (ModuleCat.Algebra.Hochschild.linearMap g.toNonUnitalAlgHom f n) := by
   rfl
 
-/-- The raw/bar dictionaries commute with the parameter map. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). Let c_A,c_B identify raw Hochschild chains with the alternating-face complexes of
+their coefficient bars, let b be coefficientBarMap and AF the alternating-face complex functor.
+Then coefficientChainMap ≫ c_B.hom = c_A.hom ≫ AF(b). -/
 @[reassoc]
 theorem coefficientChainMap_comp_chainComplexIso (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
@@ -202,8 +245,12 @@ theorem coefficientChainMap_comp_chainComplexIso (g : A →ₐ[k] B) (f : M →�
     (ModuleCat.ofHom (ModuleCat.Algebra.Hochschild.linearMap g.toNonUnitalAlgHom f n) ≫
       (coefficientBarObjIso.{u, v', max u v v' z} k B N n).inv)).symm
 
-/-- The normalized parameter map, using the original native
-normalization quotient and its coordinate isomorphisms. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). The simplicial coefficient bar map induces a map on the quotients by degeneracies.
+Transporting through the normalized tensor coordinate isomorphisms defines
+normalizedCoefficientMap : C̄(A,M) → C̄(B,N). -/
 def normalizedCoefficientMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
     normalizedChainComplex k A M ⟶ normalizedChainComplex k B N := by
@@ -219,7 +266,11 @@ def normalizedCoefficientMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     AlgebraicTopology.NormalizedQuotient.map (coefficientBarMap.{u, v, v', z} g f hf) ≫
       (ModuleCat.Algebra.Hochschild.normalizationIso k B N).hom
 
-/-- Original normalization projections commute with the parameter maps. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). If π_A,π_B are the normalization projections, F = coefficientChainMap and F̄ =
+normalizedCoefficientMap, then π_A ≫ F̄ = F ≫ π_B as chain maps. -/
 @[reassoc]
 theorem normalizationProjection_coefficientMap (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
@@ -268,9 +319,13 @@ theorem normalizationProjection_coefficientMap (g : A →ₐ[k] B) (f : M →ₗ
     _ = coefficientChainMap.{u, v, v', z} g f hf ≫ ((cB.hom ≫ pB) ≫ eB.hom) := by
       simp only [Category.assoc]
 
-/-- The diagonal chain maps commute with the coefficient and
-algebra simplicial maps. The square is proved from the original tensor
-representatives, not supplied as a hypothesis. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). Let b_R be the coefficient bar map for the lifted regular coefficient g and b_M the
+map for f. With AF the alternating-face complex functor and Δ_A,Δ_B the diagonal maps from the
+degreewise tensor of these bars to Hochschild chains, AF(b_R ⊗ b_M) ≫ Δ_B = Δ_A ≫
+coefficientChainMap. -/
 @[reassoc]
 theorem diagonalChainMap_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
@@ -359,8 +414,12 @@ theorem diagonalChainMap_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (ModuleCat.ofHom (diagonalRaw.{u, v', max u v v' z} k B N n))
     (ModuleCat.ofHom (ModuleCat.Algebra.Hochschild.linearMap g.toNonUnitalAlgHom f n)) h
 
-/-- The raw symmetric shuffle is natural in the original coefficient
-and algebra maps. Only the module-action compatibility premise is used. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). Let F_R be the chain map of lifted regular coefficients induced by g and F_M =
+coefficientChainMap g f hf. For the symmetric shuffle pairings P_A and P_B from the tensor
+product chain complexes, (F_R ⊗ F_M) ≫ P_B = P_A ≫ F_M. -/
 @[reassoc]
 theorem pairing_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :
@@ -462,8 +521,13 @@ theorem pairing_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
             (F.map (bR ⊗ₘ bM) ≫ diagonalChainMap.{u, v', max u v v' z} k B N) := by simp only [Category.assoc]
     _ = _ := by rw [hDiagonal]; simp only [Category.assoc]
 
-/-- The target-normalized shuffle retains the original coefficient/algebra
-naturality square. No separately normalized tail multiplication occurs. -/
+/-- Let k be a commutative ring, A,B commutative k-algebras and M,N compatible coefficient modules
+with symmetric right actions. Place the coefficients in a common universe T = max(u,v,v′,z),
+where k,A,B lie in u,v,v′. Let g : A →ₐ[k] B be unital and f : M →ₗ[k] N. Assume f(a·m) =
+g(a)·f(m). Let F_R and F_M be the regular and coefficient chain maps, P_A,P_B the shuffle
+pairings and π_A,π_B normalization. Then (F_R ⊗ F_M) ≫ (P_B ≫ π_B) = (P_A ≫ π_A) ≫
+normalizedCoefficientMap. The inputs remain raw chain complexes and the pairing is normalized in
+its target. -/
 @[reassoc]
 theorem pairing_normalizationProjection_naturality (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf : ∀ a m, f (a • m) = g a • f m) :

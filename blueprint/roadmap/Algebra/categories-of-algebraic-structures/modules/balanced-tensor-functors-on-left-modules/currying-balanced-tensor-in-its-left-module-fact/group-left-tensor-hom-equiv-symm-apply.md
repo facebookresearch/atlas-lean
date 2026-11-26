@@ -1,3 +1,6 @@
-# Group Left Tensor Hom Equiv symm apply
+# Inverse left-variable tensor–Hom equivalence on pure classes
 
-The inverse native hom-set equivalence retains the original two-variable evaluation.
+Inverse left-variable tensor–Hom equivalence on pure classes.
+
+The additive tensor map corresponding to a left-module morphism `g : B ⟶ Hom_ℤ(A, I)` sends
+`[a ⊗ b]` to `(g b)(a)`.

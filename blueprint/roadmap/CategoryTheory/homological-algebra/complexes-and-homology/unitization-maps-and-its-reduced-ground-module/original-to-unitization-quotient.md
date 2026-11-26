@@ -1,3 +1,5 @@
-# Original To Unitization Quotient
+# The inclusion into the reduced unitization ground module
 
-The inverse uses the original nonunital inclusion followed by the quotient projection.
+The inclusion into the reduced unitization ground module.
+
+The ground-linear map `A → A⁺ / k·1` sends `a` to the class of `Unitization.inr a`.

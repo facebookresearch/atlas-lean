@@ -1,3 +1,7 @@
-# Bimodule Tensor Morita Derived Equivalence unit Iso
+# Unit of the localized Morita equivalence is adjointified
 
-The chosen unit is the canonical refinement of the two original localized return families.
+Unit of the localized Morita equivalence is adjointified.
+
+The unit is the adjointification of the localized inverse `R`-return comparison with the
+localized `S`-return counit. Both return comparisons are lifted from the bounded tensor
+equivalence through localization.

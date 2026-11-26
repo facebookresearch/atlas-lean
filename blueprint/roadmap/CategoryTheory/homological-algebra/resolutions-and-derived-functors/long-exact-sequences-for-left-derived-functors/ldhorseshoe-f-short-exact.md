@@ -1,3 +1,5 @@
-# LDhorseshoe F short Exact
+# Short exactness of the canonical mapped horseshoe
 
-The canonical mapped horseshoe is short exact for every additive functor.
+Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. Let `S : X₁ → X₂ → X₃` be short exact. The canonical mapped horseshoe is short exact, because
+its endpoint coordinate splittings are preserved by `F`.

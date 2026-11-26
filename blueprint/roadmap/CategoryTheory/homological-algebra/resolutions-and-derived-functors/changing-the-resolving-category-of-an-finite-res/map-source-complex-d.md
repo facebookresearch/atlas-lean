@@ -1,3 +1,6 @@
-# Map Source complex d
+# Differentials after changing the resolving category
 
-Every differential is the original source-functor image of the original differential.
+Let P and Q be preadditive categories, A abelian, i : P → A and j : Q → A additive, F : P → Q
+additive, and e : jF ≅ i a natural isomorphism. For a finite resolution R of X relative to i,
+the differential from degree n to degree m of mapSource R F e is F(d_R,n,m), for every pair of
+natural numbers n and m.

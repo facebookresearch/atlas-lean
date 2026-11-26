@@ -1,4 +1,4 @@
 # Derived Hom and enveloping Chevalley–Eilenberg cohomology
 
-- [Left Coefficient Homology Iso Derived Ext](left-coefficient-homology-iso-derived-ex.md)
-- [Left Coefficient Homology Iso Right Derived](left-coefficient-homology-iso-right-deri.md)
+- [The derived-category Ext comparison for exterior cochains](left-coefficient-homology-iso-derived-ex.md)
+- [The right-derived Hom comparison for exterior cochains](left-coefficient-homology-iso-right-deri.md)

@@ -17,12 +17,22 @@ public import Mathlib.RingTheory.Finiteness.Projective
 public import MathlibExt.LinearAlgebra.LinearMap.RetractComparison
 
 /-!
-# Semilinear Hom–tensor comparison with a finite projective tensor factor
+# Semilinear Hom and a finite projective tensor factor
 
-For a homomorphism `σ : R →+* S`, the source of the semilinear maps is an
-arbitrary `R`-module. Finite product coordinates identify the comparison for
-a finite free `S`-module tensor factor. A finite free retraction of a finite
-projective `S`-module then proves bijectivity of the same comparison.
+Let R and S be commutative semirings and σ : R →+* S.
+For an arbitrary R-module P and S-modules N, U, all with additive
+commutative monoid structures, the S-linear comparison is
+H_σ(P, N) ⊗[S] U → H_σ(P, N ⊗[S] U),
+where H_σ denotes σ-semilinear maps. It sends φ ⊗ u to
+p ↦ φ(p) ⊗ u.
+
+If U is finite and projective over S, this comparison is bijective.
+The source P needs only its R-module structure. The comparison and
+its inverse are contravariantly natural in P and covariantly natural
+in N and U. Interchanging the two tensor factors gives the corresponding
+left comparison U ⊗[S] H_σ(P, N) → H_σ(P, U ⊗[S] N).
+All scalar and carrier universes remain independent. The ordinary linear
+comparisons over a commutative ring are the specializations σ = id.
 -/
 
 @[expose] public section
@@ -44,7 +54,13 @@ variable {R : Type uR} {S : Type uS} [CommSemiring R] [CommSemiring S]
   (σ : R →+* S) (P : Type uP) [AddCommMonoid P] [Module R P]
   (N : Type uN) [AddCommMonoid N] [Module S N]
 
-/-- The semilinear comparison commutes with a map of tensor factors. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+For S-modules U, V and an S-linear map g : U → V, the right Hom–tensor
+comparisons C_U, C_V satisfy
+C_V ∘ (id_H ⊗ g) = postcompose(id_N ⊗ g) ∘ C_U.
+Here C_U(φ ⊗ u)(p) = φ(p) ⊗ u; no finiteness hypothesis is needed. -/
 theorem rTensorHomToHomRTensor_naturality
     {U : Type uU} {V : Type uV}
     [AddCommMonoid U] [Module S U] [AddCommMonoid V] [Module S V]
@@ -58,7 +74,12 @@ theorem rTensorHomToHomRTensor_naturality
   intro p
   rfl
 
-/-- The semilinear comparison is contravariantly natural in its source. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+For an R-linear k : P′ → P and an S-module U, source precomposition
+satisfies C_(P′,U) ∘ (precompose(k) ⊗ id_U) =
+precompose(k) ∘ C_(P,U). The Hom source therefore varies contravariantly. -/
 theorem rTensorHomToHomRTensor_precomp
     {P' : Type uP'} [AddCommMonoid P'] [Module R P']
     {U : Type uU} [AddCommMonoid U] [Module S U] (k : P' →ₗ[R] P) :
@@ -72,7 +93,12 @@ theorem rTensorHomToHomRTensor_precomp
   intro p
   rfl
 
-/-- The semilinear comparison is covariantly natural in its coefficient module. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+For an S-linear f : N → N′ and an S-module U, coefficient
+postcomposition satisfies C_(N′,U) ∘ (postcompose(f) ⊗ id_U) =
+postcompose(f ⊗ id_U) ∘ C_(N,U). -/
 theorem rTensorHomToHomRTensor_postcomp
     {N' : Type uN'} [AddCommMonoid N'] [Module S N']
     {U : Type uU} [AddCommMonoid U] [Module S U] (f : N →ₗ[S] N') :
@@ -86,8 +112,14 @@ theorem rTensorHomToHomRTensor_postcomp
   intro p
   rfl
 
-/-- Source precomposition, coefficient postcomposition and a tensor-factor map
-commute simultaneously with the native semilinear comparison. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+For R-linear k : P′ → P, S-linear f : N → N′, and S-linear
+g : U → V, the simultaneous naturality equation is
+C′ ∘ (Hom(k, f) ⊗ g) = Hom(k, f ⊗ g) ∘ C,
+where Hom(k, f)(φ) = f ∘ φ ∘ k.
+The equation holds without finite-projectivity assumptions. -/
 theorem rTensorHomToHomRTensor_map_precomp
     {P' : Type uP'} [AddCommMonoid P'] [Module R P']
     {N' : Type uN'} [AddCommMonoid N'] [Module S N']
@@ -106,8 +138,13 @@ theorem rTensorHomToHomRTensor_map_precomp
   intro p
   rfl
 
-/-- Coordinate evaluation identifies a semilinear map into a product with
-a product of semilinear maps. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+For any index type I, coordinate evaluation gives the S-linear
+equivalence H_σ(P, I → N) ≅ (I → H_σ(P, N)),
+sending φ to i ↦ (p ↦ φ(p)(i)).
+The inverse assembles the coordinate maps pointwise. -/
 private def homTensorSemilinearPi (ι : Type*) :
     (P →ₛₗ[σ] (ι → N)) ≃ₗ[S] (ι → (P →ₛₗ[σ] N)) where
   toFun f i := (LinearMap.proj i).comp f
@@ -169,9 +206,14 @@ private theorem homTensorFiniteFree_semilinear_bijective (n : ℕ) :
     obtain ⟨x, hx⟩ := hb.surjective (t y)
     exact ⟨x, t.injective hx⟩
 
-/-- A finite projective tensor factor over `S` makes the native semilinear
-Hom–tensor comparison bijective. No `S`-module structure or finiteness
-hypothesis is required on the `R`-module `P`. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+If the S-module U is finite and projective, the S-linear map
+C : H_σ(P, N) ⊗[S] U → H_σ(P, N ⊗[S] U),
+φ ⊗ u ↦ (p ↦ φ(p) ⊗ u), is bijective.
+Only U carries the finite-projectivity hypotheses; P is an arbitrary
+R-module. -/
 theorem rTensorHomToHomRTensor_bijective_of_finite_projective
     (U : Type uU) [AddCommMonoid U] [Module S U]
     [Module.Finite S U] [Module.Projective S U] :
@@ -199,9 +241,14 @@ theorem rTensorHomToHomRTensor_bijective_of_finite_projective
     (rTensorHomToHomRTensor σ P N (Fin n → S))
     dG dF cG cF hd hc hNatG hNatF hFree
 
-/-- The inverse of the finite projective comparison commutes with the same
-source, coefficient and tensor-factor maps. Both inverses are constructed
-from the finite projective tensor factors. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+Let U and V be finite projective S-modules and let R-linear
+k : P′ → P, S-linear f : N → N′, and S-linear g : U → V be given.
+For the finite-projective comparison equivalences C and C′,
+C′⁻¹ ∘ Hom(k, f ⊗ g) = (Hom(k, f) ⊗ g) ∘ C⁻¹,
+where Hom(k, f)(φ) = f ∘ φ ∘ k. -/
 theorem rTensorHomToHomRTensor_symm_map_precomp
     {P' : Type uP'} [AddCommMonoid P'] [Module R P']
     {N' : Type uN'} [AddCommMonoid N'] [Module S N']
@@ -241,8 +288,14 @@ theorem rTensorHomToHomRTensor_symm_map_precomp
     b y = b (e (e.symm y)) := by rw [e.apply_symm_apply]
     _ = e' (a (e.symm y)) := (LinearMap.congr_fun hn (e.symm y)).symm
 
-/-- Swapping the domain tensor factors and the codomain tensor factors
-identifies the native left and right semilinear comparisons. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+For an S-module U, the left comparison
+L : U ⊗[S] H_σ(P, N) → H_σ(P, U ⊗[S] N)
+is obtained from the right comparison C by interchanging its input factors
+and postcomposing by the coefficient tensor interchange N ⊗ U ≅ U ⊗ N.
+Both give L(u ⊗ φ)(p) = u ⊗ φ(p). -/
 theorem lTensorHomToHomLTensor_eq_comm_rTensorHom
     (U : Type uU) [AddCommMonoid U] [Module S U] :
     lTensorHomToHomLTensor σ P U N =
@@ -255,8 +308,12 @@ theorem lTensorHomToHomLTensor_eq_comm_rTensorHom
   intro p
   rfl
 
-/-- A finite projective left tensor factor over `S` makes the native left
-semilinear Hom–tensor comparison bijective for an arbitrary `R`-module source. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+If the left S-module factor U is finite and projective, the S-linear
+comparison U ⊗[S] H_σ(P, N) → H_σ(P, U ⊗[S] N),
+u ⊗ φ ↦ (p ↦ u ⊗ φ(p)), is bijective. -/
 theorem lTensorHomToHomLTensor_bijective_of_finite_projective
     (U : Type uU) [AddCommMonoid U] [Module S U]
     [Module.Finite S U] [Module.Projective S U] :
@@ -272,8 +329,13 @@ theorem lTensorHomToHomLTensor_bijective_of_finite_projective
   exact c.bijective.comp
     ((rTensorHomToHomRTensor_bijective_of_finite_projective σ P N U).comp d.bijective)
 
-/-- The equivalence whose forward map is the native left semilinear comparison,
-with finite projectivity required only on its left tensor factor. -/
+/-- Let R and S be commutative semirings, σ : R →+* S,
+P an R-module and N an S-module, with additive commutative monoid structures.
+Write H_σ(P, N) for the S-module of σ-semilinear maps P → N.
+For a finite projective S-module U, this is the S-linear equivalence
+U ⊗[S] H_σ(P, N) ≅ H_σ(P, U ⊗[S] N).
+Its forward map sends u ⊗ φ to p ↦ u ⊗ φ(p), with no S-action
+required on P. -/
 def lTensorHomToHomLTensorEquiv
     (U : Type uU) [AddCommMonoid U] [Module S U]
     [Module.Finite S U] [Module.Projective S U] :
@@ -301,7 +363,12 @@ variable (R : Type uR) [CommRing R]
   (P : Type uP) [AddCommGroup P] [Module R P]
   (N : Type uN) [AddCommGroup N] [Module R N]
 
-/-- Naturality of the linear comparison in its tensor factor. -/
+/-- Let R be a commutative ring and P, N R-modules with additive
+commutative group structures.
+For R-modules U, V and R-linear g : U → V, the right comparison
+Hom_R(P, N) ⊗[R] U → Hom_R(P, N ⊗[R] U)
+commutes with id_Hom ⊗ g on its source and postcomposition by
+id_N ⊗ g on its target. -/
 theorem homTensorCoefficient_naturality
     {U : Type uU} {V : Type uV}
     [AddCommGroup U] [Module R U] [AddCommGroup V] [Module R V]
@@ -310,20 +377,31 @@ theorem homTensorCoefficient_naturality
       ((g.lTensor N).compRight R).comp (rTensorHomToHomRTensor (.id R) P N U) :=
   rTensorHomToHomRTensor_naturality (.id R) P N g
 
-/-- The linear comparison is bijective for a finite free tensor factor. -/
+/-- Let R be a commutative ring and P, N R-modules with additive
+commutative group structures.
+For every n ∈ ℕ, the comparison
+Hom_R(P, N) ⊗[R] (Fin n → R) → Hom_R(P, N ⊗[R] (Fin n → R))
+is bijective. The finite free factor has rank n, including n = 0. -/
 theorem homTensorFiniteFree_bijective (n : ℕ) :
     Function.Bijective (rTensorHomToHomRTensor (.id R) P N (Fin n → R)) :=
   homTensorFiniteFree_semilinear_bijective (.id R) P N n
 
-/-- The linear comparison is bijective for a finite projective tensor factor,
-with arbitrary Hom source. -/
+/-- Let R be a commutative ring and P, N R-modules with additive
+commutative group structures.
+For a finite projective R-module U, the comparison
+Hom_R(P, N) ⊗[R] U → Hom_R(P, N ⊗[R] U),
+φ ⊗ u ↦ (p ↦ φ(p) ⊗ u), is bijective. P remains arbitrary. -/
 theorem homTensorFiniteFactor_bijective
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :
     Function.Bijective (rTensorHomToHomRTensor (.id R) P N U) :=
   rTensorHomToHomRTensor_bijective_of_finite_projective (.id R) P N U
 
-/-- The linear equivalence whose forward map is the canonical comparison. -/
+/-- Let R be a commutative ring and P, N R-modules with additive
+commutative group structures.
+For a finite projective R-module U, this is the R-linear equivalence
+Hom_R(P, N) ⊗[R] U ≅ Hom_R(P, N ⊗[R] U).
+Its forward map is the pure-tensor comparison φ ⊗ u ↦ (p ↦ φ(p) ⊗ u). -/
 def homTensorFiniteFactorEquiv
     (U : Type uU) [AddCommGroup U] [Module R U]
     [Module.Finite R U] [Module.Projective R U] :

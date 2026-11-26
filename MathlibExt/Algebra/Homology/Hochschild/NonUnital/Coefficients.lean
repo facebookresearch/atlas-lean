@@ -18,12 +18,24 @@ public import Mathlib.Algebra.Module.RingHom
 public import Mathlib.LinearAlgebra.BilinearMap
 
 /-!
-# Nonunital Hochschild coefficient actions
+# Nonunital coefficient representations and unitization
 
-Left and right actions are nonunital algebra homomorphisms
-from A and Aᵐᵒᵖ to ground-module endomorphisms. Commuting
-representations define a bimodule. Unitization extends the
-actions, while the tensor terms retain their factors in A.
+Let k be a commutative ring, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Nonunital k-algebra maps
+l : A → End_k(M), r : Aᵐᵒᵖ → End_k(M) give left and right actions.
+The left law is l(ab)m = l(a)(l(b)m); the right law is
+r(op(ab))m = r(op b)(r(op a)m).
+
+If the two representations commute, they define a nonunital bimodule.
+On U(A) = k ⊕ A the extended left action is
+(λ,a)m = λm + l(a)m, and the extended right action is
+m(λ,a) = λm + r(op a)m. The extended actions commute as well.
+Regular right multiplication is r(op a)(b) = ba.
+
+The ground, algebra and coefficient carrier universes are independent.
+
+Reference: J.-L. Loday, Cyclic Homology, §1.1, for bimodule coefficient
+actions in Hochschild chains.
 -/
 
 @[expose] public section
@@ -43,11 +55,21 @@ variable {k : Type u} [CommRing k]
 
 section TensorActions
 
-/-- The left coefficient action descends through the native tensor product. -/
+/-- Let k be a commutative ring, A a nonunital associative ring with
+a k-module structure, and M a k-module. A left representation
+l : A → End_k(M) or right representation r : Aᵐᵒᵖ → End_k(M)
+is multiplicative and k-linear.
+The left representation induces the k-linear tensor action
+A ⊗[k] M → M, a ⊗ m ↦ l(a)m. -/
 def leftTensor (l : A →ₙₐ[k] Module.End k M) : A ⊗[k] M →ₗ[k] M :=
   TensorProduct.lift (l : A →ₗ[k] Module.End k M)
 
-/-- The right coefficient action descends through the native tensor product. -/
+/-- Let k be a commutative ring, A a nonunital associative ring with
+a k-module structure, and M a k-module. A left representation
+l : A → End_k(M) or right representation r : Aᵐᵒᵖ → End_k(M)
+is multiplicative and k-linear.
+The right representation induces the k-linear tensor action
+M ⊗[k] A → M, m ⊗ a ↦ r(op a)m. -/
 def rightTensor (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M) : M ⊗[k] A →ₗ[k] M :=
   TensorProduct.lift
     (((r : Aᵐᵒᵖ →ₗ[k] Module.End k M).comp (MulOpposite.opLinearEquiv k).toLinearMap).flip)
@@ -63,20 +85,37 @@ theorem rightTensor_tmul (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M) (m : M) (a
     rightTensor r (m ⊗ₜ[k] a) = r (MulOpposite.op a) m := rfl
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- Associativity is supplied by the multiplication law of the representation. -/
+/-- Let k be a commutative ring, A a nonunital associative ring with
+a k-module structure, and M a k-module. A left representation
+l : A → End_k(M) or right representation r : Aᵐᵒᵖ → End_k(M)
+is multiplicative and k-linear.
+For a left representation l, multiplication in A acts by composition:
+l(ab)m = l(a)(l(b)m) for all a,b ∈ A and m ∈ M. -/
 theorem left_mul_apply (l : A →ₙₐ[k] Module.End k M) (a b : A) (m : M) :
     l (a * b) m = l a (l b m) := by
   rw [map_mul]
   rfl
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- The opposite multiplication gives the correct order for successive right actions. -/
+/-- Let k be a commutative ring, A a nonunital associative ring with
+a k-module structure, and M a k-module. A left representation
+l : A → End_k(M) or right representation r : Aᵐᵒᵖ → End_k(M)
+is multiplicative and k-linear.
+For a right representation r, opposite multiplication gives
+r(op(ab))m = r(op b)(r(op a)m).
+Thus applying the right a-action and then the right b-action gives
+the right ab-action. -/
 theorem right_mul_apply (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M) (a b : A) (m : M) :
     r (MulOpposite.op (a * b)) m = r (MulOpposite.op b) (r (MulOpposite.op a) m) := by
   rw [MulOpposite.op_mul, map_mul]
   rfl
 
-/-- Regular right multiplication is a native nonunital representation. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+For the regular coefficient A, right multiplication is the
+nonunital k-algebra representation Aᵐᵒᵖ → End_k(A)
+with r(op a)(b) = ba. -/
 def regularRight : Aᵐᵒᵖ →ₙₐ[k] Module.End k A :=
   (((MulOpposite.opLinearEquiv k).symm.conjAlgEquiv k).toAlgHom.toNonUnitalAlgHom).comp
     (NonUnitalAlgHom.lmul k Aᵐᵒᵖ)
@@ -85,7 +124,11 @@ def regularRight : Aᵐᵒᵖ →ₙₐ[k] Module.End k A :=
 theorem regularRight_apply (a b : A) : regularRight (k := k) (MulOpposite.op a) b = b * a :=
   rfl
 
-/-- Native left multiplication and right multiplication commute without a unit. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+On the regular coefficient A, the left and right multiplication
+operators commute: a(xb) = (ax)b for every a,b,x ∈ A. -/
 theorem regular_commute (a b x : A) :
     NonUnitalAlgHom.lmul k A a (regularRight (k := k) (MulOpposite.op b) x) =
       regularRight (k := k) (MulOpposite.op b) (NonUnitalAlgHom.lmul k A a x) := by
@@ -96,7 +139,12 @@ end TensorActions
 
 section Unitization
 
-/-- Extend the nonunital left representation by the native unitization property. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+A nonunital left representation l : A → End_k(M) extends to
+a unital k-algebra representation U(A) → End_k(M), with
+(λ,a) acting as m ↦ λm + l(a)m. -/
 def unitizationLeft (l : A →ₙₐ[k] Module.End k M) :
     Unitization k A →ₐ[k] Module.End k M :=
   Unitization.lift l
@@ -110,8 +158,11 @@ theorem unitizationLeft_inr (l : A →ₙₐ[k] Module.End k M) (a : A) (m : M) 
     unitizationLeft l (Unitization.inr a) m = l a m := by
   rw [unitizationLeft_apply, Unitization.fst_inr, Unitization.snd_inr, zero_smul, zero_add]
 
-/-- The native algebra map from the opposite unitization to the unitization of the opposite
-algebra. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+The k-algebra map U(A)ᵐᵒᵖ → U(Aᵐᵒᵖ) sends
+op(λ,a) to (λ,op a), keeping the ground-scalar coordinate fixed. -/
 def oppositeUnitization :
     (Unitization k A)ᵐᵒᵖ →ₐ[k] Unitization k Aᵐᵒᵖ where
   toFun a := Unitization.mk (a.unop.fst, MulOpposite.op a.unop.snd)
@@ -127,7 +178,12 @@ def oppositeUnitization :
         (add_comm _ _)
   commutes' c := rfl
 
-/-- The right representation extends to the opposite of the same native unitization. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+A nonunital right representation r : Aᵐᵒᵖ → End_k(M)
+extends to a unital representation U(A)ᵐᵒᵖ → End_k(M),
+with op(λ,a) acting as m ↦ λm + r(op a)m. -/
 def unitizationRight (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M) :
     (Unitization k A)ᵐᵒᵖ →ₐ[k] Module.End k M :=
   (Unitization.lift r).comp oppositeUnitization
@@ -143,7 +199,13 @@ theorem unitizationRight_inr (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M) (a : A
   rw [unitizationRight_apply, MulOpposite.unop_op, Unitization.fst_inr,
     Unitization.snd_inr, zero_smul, zero_add]
 
-/-- Commuting nonunital actions extend to commuting actions of the unitization. -/
+/-- Let k be commutative, A a nonunital associative ring with
+k-bilinear multiplication, and M a k-module. Write U(A) = k ⊕ A
+for its unitization.
+Suppose l : A → End_k(M) and r : Aᵐᵒᵖ → End_k(M)
+satisfy l(a)(r(b)m) = r(b)(l(a)m) for all a,b,m.
+Then their unitized representations commute on every element of
+U(A) and U(A)ᵐᵒᵖ. -/
 theorem unitization_commute (l : A →ₙₐ[k] Module.End k M)
     (r : Aᵐᵒᵖ →ₙₐ[k] Module.End k M)
     (h : ∀ a b m, l a (r b m) = r b (l a m))

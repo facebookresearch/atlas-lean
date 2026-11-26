@@ -1,4 +1,6 @@
-# Partial Total First Page Row Restriction Homology Iso
+# Homology of a fixed first-page row in bidegree coordinates
 
-Restricting the first-page complex to a fixed vertical degree preserves
-homology in horizontal degree `p`.
+Homology of a fixed first-page row in bidegree coordinates.
+
+Restrict the first page along `p ↦ (p, q)`. Its homology in horizontal degree `p` is
+isomorphic to the homology of the full first-page complex at `(p, q)`.

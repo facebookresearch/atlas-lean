@@ -1,4 +1,6 @@
-# Small Etale Base Change Comp inv app left fst
+# Inverse base change composition preserves the iterated first projection
 
-The single fiber-product projection is the iterated projection under the
-same canonical base-change comparison.
+Inverse base change composition preserves the iterated first projection.
+
+The inverse base-change composition map followed by the first projection of the composite
+pullback equals the composite of the two first projections of the iterated pullback.

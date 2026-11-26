@@ -1,3 +1,6 @@
-# Normalized Hodge Complex Iso hom
+# The image-inclusion map of the normalized Hodge decomposition
 
-The original normalized image inclusions are retained as the forward decomposition map.
+The image-inclusion map of the normalized Hodge decomposition.
+
+The forward chain isomorphism is induced from the coproduct by the image inclusion of each
+normalized Eulerian chain projector.

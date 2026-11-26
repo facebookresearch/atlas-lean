@@ -1,4 +1,6 @@
-# Tensor Augmentation associator
+# Tensor-total associator intertwines the triple augmentations
 
-The stock ordered tensor-total associator carries the literal iterated
-chain augmentations by the original coefficient tensor associator.
+Tensor-total associator intertwines the triple augmentations.
+
+The complex associator followed by the right-parenthesized augmentation equals the left-
+parenthesized augmentation followed by the degree-zero module associator.

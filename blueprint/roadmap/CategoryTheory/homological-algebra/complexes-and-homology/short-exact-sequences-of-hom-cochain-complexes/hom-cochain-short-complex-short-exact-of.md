@@ -1,4 +1,6 @@
-# Hom Cochain Short Complex short Exact of degreewise split Mono
+# Degreewise split first arrow gives reversed Hom short exactness
 
-Applying `Hom(-, G)` to a short exact sequence of chain complexes remains
-short exact when the first map is split mono in every degree.
+Degreewise split first arrow gives reversed Hom short exactness.
+
+If a chain-complex short sequence is short exact and its first arrow is split monic in every
+natural degree, its reversed Hom cochain sequence into any `G` is short exact.

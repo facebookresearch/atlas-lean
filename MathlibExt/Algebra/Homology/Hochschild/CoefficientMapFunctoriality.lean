@@ -13,13 +13,25 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricPositiveNaturality
 public import Mathlib.Algebra.Category.ModuleCat.EpiMono
 
 /-!
-# Functoriality of coefficient and algebra maps
+# Functorial algebra and coefficient maps on Hochschild complexes
 
-Coefficient tensor maps preserve identities and composition and
-induce maps of normalized and quotient complexes. Nonunital algebra
-maps act on raw chains; simplicial maps require unit preservation.
-Algebra universes are independent, and categorical coefficients use
-an explicit common carrier category.
+Let k be a commutative ring. A multiplicative k-linear map g : A → B
+and a k-linear coefficient map f : M → N preserving both bimodule
+actions induce the coefficient-first tensor maps
+m ⊗ a_1 ⊗ ⋯ ⊗ a_n ↦ f(m) ⊗ g(a_1) ⊗ ⋯ ⊗ g(a_n).
+The constructed maps depend on g and f, and satisfy identity and
+composition laws.
+
+For commutative algebras and symmetric coefficients, the compatibility
+f(am) = g(a)f(m) suffices. A unital algebra map also induces maps of
+the coefficient simplicial bars and their normalized complexes.
+The same identity and composition laws hold for Q(A,M), the quotient by
+the images of the shuffle products with both factor degrees positive.
+
+Algebra carrier universes are independent. Categorical coefficients
+are placed in the common universe containing the ground ring and all
+algebras in a map or composition; lifted regular coefficients may
+use independent lift heights.
 -/
 
 @[expose] public section
@@ -45,7 +57,12 @@ variable {k : Type u} [CommRing k]
   [SMulCommClass k B N] [SMulCommClass k Bᵐᵒᵖ N]
   [IsScalarTower k B N] [IsScalarTower k Bᵐᵒᵖ N]
 
-/-- Action-law witnesses do not change the common-carrier chain map. -/
+/-- Let k be commutative, A,B associative unital k-algebras, and M,N
+compatible bimodules in the common carrier universe max{u,v_A,v_B,z}.
+Let g : A → B be multiplicative and k-linear, and f : M → N k-linear
+with f(am) = g(a)f(m) and f(ma) = f(m)g(a).
+The coefficient-first Hochschild chain maps constructed from any two
+witnesses of these same action equations are equal. -/
 theorem map_witness_independent (g : A →ₙₐ[k] B) (f : M →ₗ[k] N)
     (hl hl' : ∀ a m, f (a • m) = g a • f m)
     (hr hr' : ∀ a m, f (MulOpposite.op a • m) = MulOpposite.op (g a) • f m) :
@@ -66,7 +83,9 @@ variable {k : Type u} [CommRing k]
   {B : Type v₂} [Ring B] [Algebra k B]
   {C : Type v₃} [Ring C] [Algebra k C]
 
-/-- The lifted regular identity is the original coefficient identity. -/
+/-- For a commutative ring k and an associative unital k-algebra A,
+lifting the regular coefficient map of id_A gives the identity
+k-linear map on ULift A at every chosen lift height. -/
 theorem regularCoefficientMap_id :
     (regularCoefficientMap (NonUnitalAlgHom.id k A) :
       ULift.{w₁} A →ₗ[k] ULift.{w₁} A) = LinearMap.id := by
@@ -75,7 +94,10 @@ theorem regularCoefficientMap_id :
   apply ULift.ext
   rfl
 
-/-- Regular maps compose across independent algebra and coefficient-lift worlds. -/
+/-- Let k be commutative, A,B,C associative unital k-algebras, and
+g : A → B, h : B → C multiplicative k-linear maps. At arbitrary
+independent coefficient lift heights, the lifted regular map of h
+after that of g is the lifted map of h ∘ g. -/
 theorem regularCoefficientMap_comp (g : A →ₙₐ[k] B) (h : B →ₙₐ[k] C) :
     (regularCoefficientMap h : ULift.{w₂} B →ₗ[k] ULift.{w₃} C).comp
         (regularCoefficientMap g : ULift.{w₁} A →ₗ[k] ULift.{w₂} B) =
@@ -98,7 +120,12 @@ variable {k : Type u} [CommRing k]
 attribute [local instance] opModule actionsComm kOpComm kOpTower
 attribute [local instance] ModuleCat.Algebra.Hochschild.uliftSMulCommClass
 
-/-- The bar degree identity is obtained by cancelling the original coordinates. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M an A-module whose action is compatible with its k-module
+structure, regarded as a symmetric bimodule.
+In every simplicial degree n, the coefficient bar component induced
+by id_A and id_M is the identity of B_n(A,M), whose tensor coordinates
+are M ⊗[k] A^{⊗n}. -/
 theorem coefficientBarMapComponent_id (n : ℕ) :
     coefficientBarMapComponent.{u, v₁, v₁, max u v₁ z}
       (AlgHom.id k A) (LinearMap.id : M →ₗ[k] M) n =
@@ -115,7 +142,11 @@ theorem coefficientBarMapComponent_id (n : ℕ) :
     (coefficientBarObjIso k A M n).inv = _
   simp only [Category.id_comp, Iso.hom_inv_id]
 
-/-- The native bar morphism has the identity degree maps. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M an A-module whose action is compatible with its k-module
+structure, regarded as a symmetric bimodule.
+The simplicial coefficient bar map induced by id_A and id_M is
+the identity morphism of B_•(A,M). -/
 theorem coefficientBarMap_id :
     coefficientBarMap.{u, v₁, v₁, max u v₁ z}
       (AlgHom.id k A) (LinearMap.id : M →ₗ[k] M) (by intro a m; simp only [LinearMap.id_apply, AlgHom.id_apply]) =
@@ -128,7 +159,12 @@ theorem coefficientBarMap_id :
     simp only [coefficientBarMap, SimplicialObject.homOfComponents_app_mk]
     exact coefficientBarMapComponent_id n
 
-/-- The symmetric raw identity follows from the tensor identity law. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M an A-module whose action is compatible with its k-module
+structure, regarded as a symmetric bimodule.
+The Hochschild chain map induced by id_A and id_M is the identity
+of C_*(A,M). Its degree-n tensor map is the identity on
+M ⊗[k] A^{⊗n}. -/
 theorem coefficientChainMap_id :
     coefficientChainMap.{u, v₁, v₁, max u v₁ z}
       (AlgHom.id k A) (LinearMap.id : M →ₗ[k] M) (by intro a m; simp only [LinearMap.id_apply, AlgHom.id_apply]) =
@@ -138,7 +174,12 @@ theorem coefficientChainMap_id :
   apply ModuleCat.hom_ext
   exact linearMap_id n
 
-/-- The native normalization functor sends the bar identity to the normalized identity. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M an A-module whose action is compatible with its k-module
+structure, regarded as a symmetric bimodule.
+The map of the normalized Hochschild complex induced by id_A and
+id_M is the identity of N_*(A,M), the quotient of the coefficient
+simplicial bar by its degenerate simplices. -/
 theorem normalizedCoefficientMap_id :
     normalizedCoefficientMap.{u, v₁, v₁, max u v₁ z}
       (AlgHom.id k A) (LinearMap.id : M →ₗ[k] M) (by intro a m; simp only [LinearMap.id_apply, AlgHom.id_apply]) =
@@ -173,7 +214,12 @@ variable {k : Type u} [CommRing k]
 attribute [local instance] opModule actionsComm kOpComm kOpTower
 attribute [local instance] ModuleCat.Algebra.Hochschild.uliftSMulCommClass
 
-/-- Bar maps do not depend on the chosen proof of coefficient compatibility. -/
+/-- Let k be a commutative ring, A,B commutative unital k-algebras,
+and M,N compatible modules over A,B in a common carrier category.
+Let g : A → B be a unital k-algebra homomorphism and f : M → N
+k-linear with f(am) = g(a)f(m) for every a ∈ A and m ∈ M.
+The two coefficient simplicial bar maps obtained from any two
+witnesses of the same equation f(am) = g(a)f(m) are equal. -/
 theorem coefficientBarMap_witness_independent (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf hg : ∀ a m, f (a • m) = g a • f m) :
     coefficientBarMap.{u, v₁, v₂, max u v₁ v₂ z} g f hf =
@@ -181,7 +227,12 @@ theorem coefficientBarMap_witness_independent (g : A →ₐ[k] B) (f : M →ₗ[
   cases Subsingleton.elim hf hg
   rfl
 
-/-- The raw chain map ignores the proof witness, not its input action law. -/
+/-- Let k be a commutative ring, A,B commutative unital k-algebras,
+and M,N compatible modules over A,B in a common carrier category.
+Let g : A → B be a unital k-algebra homomorphism and f : M → N
+k-linear with f(am) = g(a)f(m) for every a ∈ A and m ∈ M.
+The two Hochschild chain maps obtained from any two witnesses of
+the same coefficient-action equation are equal. -/
 theorem coefficientChainMap_witness_independent (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf hg : ∀ a m, f (a • m) = g a • f m) :
     coefficientChainMap.{u, v₁, v₂, max u v₁ v₂ z} g f hf =
@@ -189,7 +240,12 @@ theorem coefficientChainMap_witness_independent (g : A →ₐ[k] B) (f : M →�
   cases Subsingleton.elim hf hg
   rfl
 
-/-- Normalized maps ignore the compatibility proof witness. -/
+/-- Let k be a commutative ring, A,B commutative unital k-algebras,
+and M,N compatible modules over A,B in a common carrier category.
+Let g : A → B be a unital k-algebra homomorphism and f : M → N
+k-linear with f(am) = g(a)f(m) for every a ∈ A and m ∈ M.
+The induced normalized Hochschild chain map is unchanged by the
+choice of witness for f(am) = g(a)f(m). -/
 theorem normalizedCoefficientMap_witness_independent (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf hg : ∀ a m, f (a • m) = g a • f m) :
     normalizedCoefficientMap.{u, v₁, v₂, max u v₁ v₂ z} g f hf =
@@ -216,7 +272,13 @@ variable {k : Type u} [CommRing k]
 attribute [local instance] opModule actionsComm kOpComm kOpTower
 attribute [local instance] ModuleCat.Algebra.Hochschild.uliftSMulCommClass
 
-/-- Composition retains the coefficient-bar coordinates in every degree. -/
+/-- Let k be commutative, A,B,C commutative unital k-algebras, and M,N,P
+compatible modules in the common carrier universe. For unital
+k-algebra maps g : A → B, h : B → C and arbitrary k-linear maps
+f : M → N, f′ : N → P, the degree-n tensor bar components satisfy
+Φ_{h,f′,n} Φ_{g,f,n} = Φ_{h∘g,f′∘f,n}.
+This component equality imposes no coefficient-action compatibility
+condition on f or f′. -/
 theorem coefficientBarMapComponent_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
     (f : M →ₗ[k] N) (f' : N →ₗ[k] P) (n : ℕ) :
     coefficientBarMapComponent.{u, v₁, v₂, max u v₁ v₂ v₃ z} g f n ≫
@@ -229,7 +291,14 @@ theorem coefficientBarMapComponent_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
   apply ModuleCat.hom_ext
   exact linearMap_comp g.toNonUnitalAlgHom h.toNonUnitalAlgHom f f' n
 
-/-- The simplicial constructor's component law gives parameter composition. -/
+/-- Let k be a commutative ring, A,B,C commutative unital k-algebras,
+and M,N,P compatible modules over A,B,C in a common carrier category.
+Let g : A → B and h : B → C be unital k-algebra maps, and let
+f : M → N and f′ : N → P be k-linear with
+f(am) = g(a)f(m) and f′(bn) = h(b)f′(n).
+The simplicial coefficient bar maps compose as
+B(h,f′) B(g,f) = B(h ∘ g, f′ ∘ f). The composite coefficient
+compatibility is f′(f(am)) = h(g(a)) f′(f(m)). -/
 theorem coefficientBarMap_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
     (f : M →ₗ[k] N) (f' : N →ₗ[k] P)
     (hf : ∀ a m, f (a • m) = g a • f m)
@@ -247,7 +316,14 @@ theorem coefficientBarMap_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
       SimplicialObject.homOfComponents_app_mk]
     exact coefficientBarMapComponent_comp g h f f' n
 
-/-- The original coefficient tensor composition gives symmetric chain composition. -/
+/-- Let k be a commutative ring, A,B,C commutative unital k-algebras,
+and M,N,P compatible modules over A,B,C in a common carrier category.
+Let g : A → B and h : B → C be unital k-algebra maps, and let
+f : M → N and f′ : N → P be k-linear with
+f(am) = g(a)f(m) and f′(bn) = h(b)f′(n).
+The coefficient Hochschild chain maps compose as
+C(h,f′) C(g,f) = C(h ∘ g, f′ ∘ f), retaining the ordered
+coefficient-first tensor formula in every degree. -/
 theorem coefficientChainMap_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
     (f : M →ₗ[k] N) (f' : N →ₗ[k] P)
     (hf : ∀ a m, f (a • m) = g a • f m)
@@ -261,7 +337,13 @@ theorem coefficientChainMap_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
   apply ModuleCat.hom_ext
   exact linearMap_comp g.toNonUnitalAlgHom h.toNonUnitalAlgHom f f' n
 
-/-- Native normalization functoriality and coordinate cancellation give composition. -/
+/-- Let k be a commutative ring, A,B,C commutative unital k-algebras,
+and M,N,P compatible modules over A,B,C in a common carrier category.
+Let g : A → B and h : B → C be unital k-algebra maps, and let
+f : M → N and f′ : N → P be k-linear with
+f(am) = g(a)f(m) and f′(bn) = h(b)f′(n).
+On the normalized coefficient complexes, the maps satisfy
+N(h,f′) N(g,f) = N(h ∘ g, f′ ∘ f). -/
 theorem normalizedCoefficientMap_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
     (f : M →ₗ[k] N) (f' : N →ₗ[k] P)
     (hf : ∀ a m, f (a • m) = g a • f m)
@@ -321,7 +403,14 @@ variable {k : Type u} [CommRing k]
 attribute [local instance] opModule actionsComm kOpComm kOpTower
 attribute [local instance] ModuleCat.Algebra.Hochschild.uliftSMulCommClass
 
-/-- The quotient projection law and raw chain identity give the quotient identity. -/
+/-- Let k be a commutative ring, A a commutative unital k-algebra,
+and M an A-module whose action is compatible with its k-module
+structure, regarded as a symmetric bimodule.
+Write Q(A,M) for the quotient of C_*(A,M) by the images of the
+shuffle products C_p(A,A) ⊗ C_q(A,M) with p,q > 0.
+The map of Q(A,M) induced by id_A and id_M is the identity.
+The quotient and its tensor products are taken in the common module
+universe max{u,v_A,z}. -/
 theorem positiveQuotientMap_id :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v₁ z} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max u v₁ z} (R := k)
@@ -366,7 +455,15 @@ variable {k : Type u} [CommRing k]
 attribute [local instance] opModule actionsComm kOpComm kOpTower
 attribute [local instance] ModuleCat.Algebra.Hochschild.uliftSMulCommClass
 
-/-- Actual quotient maps ignore only the proof witness of the coefficient action law. -/
+/-- Let k be a commutative ring, A,B commutative unital k-algebras,
+and M,N compatible modules over A,B in a common carrier category.
+Let g : A → B be a unital k-algebra homomorphism and f : M → N
+k-linear with f(am) = g(a)f(m) for every a ∈ A and m ∈ M.
+Write Q(A,M) for the quotient of C_*(A,M) by the images of the
+shuffle products C_p(A,A) ⊗ C_q(A,M) with p,q > 0.
+The induced map Q(A,M) → Q(B,N) is independent of the witness
+for f(am) = g(a)f(m). Both quotients use the common carrier
+universe max{u,v_A,v_B,z}. -/
 theorem positiveQuotientMap_witness_independent (g : A →ₐ[k] B) (f : M →ₗ[k] N)
     (hf hg : ∀ a m, f (a • m) = g a • f m) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v₁ v₂ z} k) :=
@@ -409,7 +506,16 @@ variable {k : Type u} [CommRing k]
 attribute [local instance] opModule actionsComm kOpComm kOpTower
 attribute [local instance] ModuleCat.Algebra.Hochschild.uliftSMulCommClass
 
-/-- The proved coefficient-map composition descends through the original quotient. -/
+/-- Let k be a commutative ring, A,B,C commutative unital k-algebras,
+and M,N,P compatible modules over A,B,C in a common carrier category.
+Let g : A → B and h : B → C be unital k-algebra maps, and let
+f : M → N and f′ : N → P be k-linear with
+f(am) = g(a)f(m) and f′(bn) = h(b)f′(n).
+Write Q(A,M) for the quotient of C_*(A,M) by the images of the
+shuffle products C_p(A,A) ⊗ C_q(A,M) with p,q > 0.
+The induced quotient chain maps satisfy
+Q(h,f′) Q(g,f) = Q(h ∘ g, f′ ∘ f), in the common module
+universe max{u,v_A,v_B,v_C,z}. -/
 theorem positiveQuotientMap_comp (g : A →ₐ[k] B) (h : B →ₐ[k] C)
     (f : M →ₗ[k] N) (f' : N →ₗ[k] P)
     (hf : ∀ a m, f (a • m) = g a • f m)

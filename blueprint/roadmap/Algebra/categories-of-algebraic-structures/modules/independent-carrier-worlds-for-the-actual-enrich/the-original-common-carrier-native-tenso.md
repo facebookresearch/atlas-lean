@@ -1,3 +1,7 @@
-# The original common-carrier native tensor functor is...
+# The common-carrier tensor functor is recovered by output lifting
 
-The original common-carrier native tensor functor is recovered through the whole-output lift.
+For rings R,S and an (R,S)-bimodule C whose source and
+coefficient carriers both have world v, the chosen-height
+tensor functor is naturally the original common-world tensor
+functor followed by lifting its output to max(r,v,z).
+This comparison is underived and uses no source projectivity hypothesis.

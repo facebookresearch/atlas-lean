@@ -1,3 +1,6 @@
-# Unit inner v
+# Inner Hom evaluation respects the double-negative domain unit
 
-The original left-module unit cancels the inner source-index transport after forgetting.
+Inner Hom evaluation respects the double-negative domain unit.
+
+For an inner degree-`b` cochain and `c + b = d`, evaluation at `-(-c)` after the chain-to-
+cochain equivalence unit on `Q.X (-c)` equals evaluation at coordinate `(c, d)`.

@@ -1,4 +1,8 @@
-# Horizontal First Quadrant Abutment Term
+# The fixed finite four-stage abutment term
 
-Fixed finite spectral-object term to which sufficiently late pages at
-`(p,q)` stabilize.
+For a nonnegative homological bicomplex K in an abelian
+category and n=p+q, A_(p,q) is the complete spectral object's
+four-stage E-term on −1→p−1→p→n+1.
+Its connecting-map short complex uses relative cochain
+homology degrees −n−1, −n and −n+1, with middle interval
+F_(p−1) → F_p.

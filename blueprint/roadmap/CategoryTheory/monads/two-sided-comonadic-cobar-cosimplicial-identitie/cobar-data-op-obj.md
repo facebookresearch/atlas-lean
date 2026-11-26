@@ -1,3 +1,5 @@
-# Cobar Data Op obj
+# The degree-object family of opposite cobar data
 
-Objects of the opposite data are `op` of the cobar functors.
+The degree-object family of opposite cobar data.
+
+The object family sends `n` to the opposite of the degree-`n` cobar functor.

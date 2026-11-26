@@ -1,5 +1,5 @@
 # Positive exactness of the free enveloping Chevalley–Eilenberg complex
 
-- [Enveloping cycle correction](enveloping-cycle-correction.md)
-- [Enveloping exact cycles](enveloping-exact-cycles.md)
-- [Enveloping exact cycles of free](enveloping-exact-cycles-of-free.md)
+- [A filtered cycle has a boundary correction in the same stage](enveloping-cycle-correction.md)
+- [Every positive-degree cycle has a boundary with an ordered Lie-module basis](enveloping-exact-cycles.md)
+- [Freeness of the Lie module makes every positive CE cycle a boundary](enveloping-exact-cycles-of-free.md)

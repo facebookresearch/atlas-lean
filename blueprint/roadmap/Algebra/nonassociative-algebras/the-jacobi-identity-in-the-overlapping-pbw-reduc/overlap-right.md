@@ -1,3 +1,5 @@
-# Overlap Right
+# The right-first expansion of a three-letter enveloping reduction
 
-The expansion after first swapping the right adjacent pair of a triple.
+The right-first expansion of a three-letter enveloping reduction.
+
+The expansion is `τ(z)τ(y)τ(x) + τ(z)τ([x,y]) + τ([x,z])τ(y) + τ(x)τ([y,z])`.

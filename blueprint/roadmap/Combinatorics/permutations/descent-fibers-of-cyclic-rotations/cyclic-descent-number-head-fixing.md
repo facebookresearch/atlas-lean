@@ -1,3 +1,4 @@
-# Cyclic Descent Number head Fixing
+# A nonempty fixed-head tail adds one cyclic descent
 
-With a nonempty tail, head fixing adds the one actual closing descent to the ordinary count.
+For `n : ℕ` with `0<n` and `π ∈ S_n`, `cyclicDescentNumber(headFixingHom n π)=descentNumber
+π+1`. The fixed head is zero and the nonempty tail contributes the closing descent.

@@ -1,3 +1,6 @@
-# Chain Homotopy
+# The chain homotopy from Hochschild conjugation to the identity
 
-The homotopy from conjugation to identity on the canonical complex.
+The chain homotopy from Hochschild conjugation to the identity.
+
+The coefficient-bar insertion homotopy gives a homotopy of the corresponding Hochschild chain
+maps, retaining the coefficient-first tensor presentation.

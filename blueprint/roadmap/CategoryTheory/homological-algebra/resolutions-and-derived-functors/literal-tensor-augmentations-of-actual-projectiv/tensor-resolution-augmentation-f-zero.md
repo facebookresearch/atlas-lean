@@ -1,4 +1,6 @@
-# Tensor Resolution Augmentation f zero
+# Tensor-resolution augmentation factors through zeroth homology
 
-The canonical H0 quotient followed by the native tensor comparison is
-exactly the degree-zero component of the literal tensor augmentation.
+Tensor-resolution augmentation factors through zeroth homology.
+
+The degree-zero tensor-resolution augmentation is the zeroth homology class map followed by
+`tensorResolutionHomologyZeroIso R P Q` on forward maps.

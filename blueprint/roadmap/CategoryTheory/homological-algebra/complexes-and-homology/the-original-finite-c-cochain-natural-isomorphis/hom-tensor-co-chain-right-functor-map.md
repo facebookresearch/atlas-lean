@@ -1,3 +1,6 @@
-# Hom Tensor Co Chain Right Functor map
+# Map formula for the tensor-then-Hom functor
 
-Every target functor map is the actual original pre/postcomposition map.
+Map formula for the tensor-then-Hom functor.
+
+A triple morphism acts by precomposition in the first input and by the tensor map of the
+second and third components in the Hom target.

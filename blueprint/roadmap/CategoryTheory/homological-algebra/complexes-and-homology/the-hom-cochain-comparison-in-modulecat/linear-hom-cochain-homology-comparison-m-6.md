@@ -1,5 +1,6 @@
-# Linear Hom Cochain Homology Comparison Module Cat is Iso of projective terms and homology
+# Invertibility of the comparison for projective terms and homology
 
-If a chain complex of `R`-modules and all its homology objects are
-projective, the instance-stable canonical comparison from linear
-Hom-cochain cohomology to the linear dual of homology is an isomorphism.
+Let R be a commutative ring and K a nonnegative chain complex of
+R-modules. If K_i and H_i(K) are projective over R for every i ∈ ℕ, then,
+for every R-module M and every n ∈ ℕ, the comparison
+Hⁿ(Hom_R(K; M)) → Hom_R(H_n(K), M) is an isomorphism.

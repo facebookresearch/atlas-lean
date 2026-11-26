@@ -1,3 +1,6 @@
-# Unitization Original Zero Equiv
+# The coefficient coordinate of a degree-zero nonunital tensor level
 
-The degree-zero original regular tensor level is its coefficient module.
+The coefficient coordinate of a degree-zero nonunital tensor level.
+
+The empty-tail tensor term `A ⊗[k] TensorPower k 0 A` is linearly equivalent to `A` through
+the empty tensor and regular tensor unitors.

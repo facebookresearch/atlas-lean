@@ -1,10 +1,10 @@
 # Coalgebra structure on adjoint Chevalley–Eilenberg coinvariants
 
-- [Adjoint Coinvariant Comul](adjoint-coinvariant-comul.md)
-- [Adjoint Coinvariant Counit](adjoint-coinvariant-counit.md)
-- [Adjoint Coinvariant Comon Obj](adjoint-coinvariant-comon-obj.md)
-- [Adjoint Coinvariant Coaug](adjoint-coinvariant-coaug.md)
-- [Adjoint Coinvariant Projection Is Comon Hom](adjoint-coinvariant-projection-is-comon.md)
-- [Adjoint Coinvariant Coaug Is Comon Hom](adjoint-coinvariant-coaug-is-comon-hom.md)
-- [Adjoint Coinvariant Coalgebra](adjoint-coinvariant-coalgebra.md)
-- [Adjoint Coinvariant Coalgebra Projection](adjoint-coinvariant-coalgebra-projection.md)
+- [The coproduct descended to adjoint coinvariants](adjoint-coinvariant-comul.md)
+- [The counit descended to adjoint coinvariants](adjoint-coinvariant-counit.md)
+- [The comonoid laws on adjoint coinvariants](adjoint-coinvariant-comon-obj.md)
+- [The coaugmentation of adjoint coinvariants](adjoint-coinvariant-coaug.md)
+- [The coinvariant projection preserves the coalgebra maps](adjoint-coinvariant-projection-is-comon.md)
+- [The coaugmentation preserves the comonoid structure](adjoint-coinvariant-coaug-is-comon-hom.md)
+- [The bundled adjoint coinvariant coalgebra](adjoint-coinvariant-coalgebra.md)
+- [The bundled coinvariant coalgebra projection](adjoint-coinvariant-coalgebra-projection.md)

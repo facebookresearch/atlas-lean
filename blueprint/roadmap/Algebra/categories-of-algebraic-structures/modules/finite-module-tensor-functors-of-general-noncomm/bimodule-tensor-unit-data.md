@@ -1,3 +1,6 @@
-# Bimodule Tensor Unit Data
+# Regular coefficient unitor with its scalar-action formula
 
-The original regular-factor unitor and its pure value, with actual integer coordinates.
+Regular coefficient unitor with its scalar-action formula.
+
+For a finite left `R`-module `M`, this data constructs an isomorphism `R ⊗_R M ≅ M` in the
+finite-module category and records its forward formula `[r ⊗ m] ↦ r • m`.

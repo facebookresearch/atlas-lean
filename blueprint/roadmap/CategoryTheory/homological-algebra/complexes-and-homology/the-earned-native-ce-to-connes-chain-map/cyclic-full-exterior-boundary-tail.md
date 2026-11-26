@@ -1,4 +1,6 @@
-# Cyclic Full Exterior boundary tail
+# The integral cyclic boundary of full exterior alternation
 
-The integral full-permutation cyclic boundary is the source input count times the bracket-tail
-sum.
+The integral cyclic boundary of full exterior alternation.
+
+On a wedge of `n+2` inputs, the cyclic quotient boundary of full alternation equals `n+2`
+times the alternating tail-product sum. This equality holds over the commutative ground ring.

@@ -1,4 +1,6 @@
-# Small Etale Base Change Common Point Fiber Iso id
+# Lifted base change fiber comparisons respect identity
 
-The actual identity base-change fiber comparison agrees with the canonical
-original image-point identity and the preceding BaseId comparison.
+Lifted base change fiber comparisons respect identity.
+
+The identity base-change fiber comparison followed by the identity-image fiber coordinate
+equals the base-change identity isomorphism whiskered with the point fiber and its unitor.

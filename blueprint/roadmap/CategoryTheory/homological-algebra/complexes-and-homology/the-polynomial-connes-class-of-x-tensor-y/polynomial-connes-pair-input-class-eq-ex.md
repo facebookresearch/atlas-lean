@@ -1,3 +1,5 @@
-# Polynomial Connes Pair Input Class eq exterior
+# The Connes input class is the normalized exterior one-form class
 
-The original input class has the independently specified degree-one exterior word.
+Let k be a commutative ring, σ a variable set and A = k[σ]. Put V = ⊕ᵢ∈σ k·eᵢ and q : A →
+A/(k·1). For s,t ∈ σ, polynomialConnesPairInputClass equals normalizedPolynomialExteriorClass
+applied in degree one to Xₛ ⊗ eₜ.

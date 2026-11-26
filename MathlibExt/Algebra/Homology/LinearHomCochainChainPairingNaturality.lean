@@ -13,6 +13,18 @@ module
 
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairing
 
+/-!
+# Right-factor, diagonal-input and output naturality of Hom cap pairings
+
+Let R be commutative and all modules lie in universe u. Fix K₁ and the cochain coefficient A.
+Maps f₂:K₂→K₂′, f₃:K₃→K₃′ and f_L:L→L′ compare diagonals and actions when f₃≫Δ′=Δ≫(id_{K₁}⊗f₂)
+and ρ_q≫f_L,q=(id_A⊗f₂,q)≫ρ′_q.
+
+The pairing followed by f_L,q equals the primed pairing after pushing the degree-p+q chain input
+forward by f₃. The cochain φ:K₁,p→A is unchanged. Thus both compatibility diagrams are reflected
+in the full pairing map into degree q of L′.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -27,8 +39,11 @@ variable (R : Type u) [CommRing R]
 variable (K₁ : ChainComplex (ModuleCat.{u} R) ℕ)
 variable (A : ModuleCat.{u} R)
 
-/-- Compatible naturality of the pairing in the right chain factor,
-    diagonal input, and output complexes. -/
+/-- Let R be commutative in universe u, with all modules and nonnegative chain-complex terms in u.
+Fix K₁,A, diagonals Δ:K₃→K₁⊗K₂ and Δ′:K₃′→K₁⊗K₂′, and maps f₂:K₂→K₂′, f₃:K₃→K₃′, f_L:L→L′.
+Assume f₃≫Δ′=Δ≫(id_{K₁}⊗f₂) and ρ_q≫f_L,q=(id_A⊗f₂,q)≫ρ′_q for every q. Then
+κ_{Δ,ρ}^{p,q}≫f_L,q=(id_{Hom_R(K₁,p,A)}⊗f₃,p+q)≫κ_{Δ′,ρ′}^{p,q}. The equality retains both
+diagrams and all degree-p+q chain inputs. -/
 @[reassoc]
 public theorem linearHomCochainChainPair_naturality_right
     {K₂ K₂' K₃ K₃' L L' : ChainComplex (ModuleCat.{u} R) ℕ}

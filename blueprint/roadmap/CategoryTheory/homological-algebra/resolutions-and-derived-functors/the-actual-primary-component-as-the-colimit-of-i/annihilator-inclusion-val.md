@@ -1,3 +1,5 @@
-# Annihilator Inclusion val
+# Power-annihilator inclusion preserves the underlying element
 
-Its value remains the original coefficient.
+Power-annihilator inclusion preserves the underlying element.
+
+For `x : Ann_M(I^n)`, the underlying element of its image in `Γ_I(M)` is `x.val`.

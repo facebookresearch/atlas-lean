@@ -1,3 +1,6 @@
-# Right Coefficient
+# The coefficient map given by right multiplication by a unit
 
-The original right action by the unit, as a native ground-linear map.
+The coefficient map given by right multiplication by a unit.
+
+For a bimodule coefficient `m`, this ground-linear map has value `op(c.val) • m`, representing
+`m • c`.

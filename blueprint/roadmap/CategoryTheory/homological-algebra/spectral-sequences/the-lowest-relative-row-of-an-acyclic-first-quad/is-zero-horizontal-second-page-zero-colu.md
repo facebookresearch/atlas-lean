@@ -1,3 +1,7 @@
-# Is Zero horizontal Second Page zero Column of total acyclic of lower rows
+# Acyclic total homology kills the lowest zero-column term
 
-Acyclicity of the actual total kills the next relative zero-column term.
+Let C be an abelian category and K a bicomplex of shape (down ℕ,down ℕ). Suppose Tot(K) is
+acyclic, and for q ∈ ℕ suppose E²_{a,b}=0 for every a ∈ ℕ and b<q in its horizontal
+first-quadrant spectral sequence. Then E²_{0,q} is a zero object. The lower-row hypothesis
+makes this term persist to later pages, while bounded convergence identifies a late term with
+Gr_0H_q(Tot(K)), which vanishes by acyclicity.

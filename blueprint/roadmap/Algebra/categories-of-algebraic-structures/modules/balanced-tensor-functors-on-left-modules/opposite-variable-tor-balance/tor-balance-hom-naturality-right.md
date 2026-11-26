@@ -1,3 +1,6 @@
-# Tor Balance hom naturality right
+# Tor balance coordinate is natural in the right module
 
-The same canonical comparison commutes with every original right-module map.
+Tor balance coordinate is natural in the right module.
+
+For `f : A ⟶ A'`, the second-variable Tor map followed by the balance coordinate at `(A', B)`
+equals the coordinate at `(A, B)` followed by the first-variable Tor map.

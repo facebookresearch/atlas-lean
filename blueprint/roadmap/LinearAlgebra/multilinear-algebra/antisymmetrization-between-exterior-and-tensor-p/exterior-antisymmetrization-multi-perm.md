@@ -1,3 +1,6 @@
-# Exterior Antisymmetrization ιMulti perm
+# The permutation sign of an antisymmetrized exterior word
 
-Permuting an original exterior input retains its actual integer permutation sign.
+The permutation sign of an antisymmetrized exterior word.
+
+For a commutative ring k, a k-module V, a : Fin n → V and σ ∈ Sₙ, Aₙ(ιₙ(a ∘ σ)) = sign(σ) ·
+Aₙ(ιₙ(a)). The sign is an integer scalar.

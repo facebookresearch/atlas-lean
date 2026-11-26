@@ -1,9 +1,9 @@
 # Canonical Chevalley–Eilenberg chain models
 
-- [Adjoint Action ιMulti](adjoint-action-multi.md)
-- [Boundary ιMulti](boundary-multi.md)
-- [Differential apply ιMulti](differential-apply-multi.md)
-- [Canonical Presented Data](canonical-presented-data.md)
-- [Canonical Model](canonical-model.md)
-- [Model Iso Canonical](model-iso-canonical.md)
-- [Canonical Map](canonical-map.md)
+- [The adjoint derivation on a decomposable exterior word](adjoint-action-multi.md)
+- [The exterior boundary has the canonical wedge formula](boundary-multi.md)
+- [The canonical differential on a decomposable wedge](differential-apply-multi.md)
+- [Canonical data with the bracket presentation](canonical-presented-data.md)
+- [The canonical Chevalley–Eilenberg model of a Lie algebra](canonical-model.md)
+- [Identifying a presented model with its canonical model](model-iso-canonical.md)
+- [The canonical model morphism of a Lie homomorphism](canonical-map.md)

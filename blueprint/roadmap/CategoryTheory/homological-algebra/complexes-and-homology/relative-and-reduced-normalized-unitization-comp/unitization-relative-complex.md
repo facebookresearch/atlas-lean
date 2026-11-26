@@ -1,3 +1,6 @@
-# Unitization Relative Complex
+# The relative kernel of unitization Hochschild chains
 
-The original relative Hochschild complex is the augmentation-projector kernel.
+The relative kernel of unitization Hochschild chains.
+
+This chain complex is the kernel of the scalar projector on the regular Hochschild complex of
+`A⁺`.

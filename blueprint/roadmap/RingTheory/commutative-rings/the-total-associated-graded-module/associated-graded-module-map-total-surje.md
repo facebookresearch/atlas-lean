@@ -1,4 +1,4 @@
-# Associated Graded Module Map Total surjective
+# Surjectivity of the total associated graded map
 
-A surjective linear map induces a surjective map of total
-associated-graded modules.
+Let `R` be a commutative ring, `I` an ideal, `M,N` be `R`-modules, and `f : M →ₗ[R] N` a
+surjective map. Then `I.associatedGradedModuleMapTotal f : gr_I M → gr_I N` is surjective.

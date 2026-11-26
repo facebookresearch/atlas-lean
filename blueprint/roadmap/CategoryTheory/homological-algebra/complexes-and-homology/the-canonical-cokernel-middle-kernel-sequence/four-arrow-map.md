@@ -1,3 +1,4 @@
-# Four Arrow Map
+# The adjacent maps of a four-arrow sequence
 
-The original adjacent arrow, with finite indices computed in a public definition.
+Let C be a category and S a sequence A₀ → A₁ → A₂ → A₃ → A₄ of four composable arrows. For
+i∈{0,1,2,3}, fourArrowMap(S,i) is the original arrow Aᵢ → Aᵢ₊₁.

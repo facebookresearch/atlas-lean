@@ -1,3 +1,5 @@
-# Cyclic Exterior Weibel Chain Map f
+# The degree sign of the canonical-tail cyclic chain map
 
-Its component has exactly the source's `(-1)^n` multiplying the tail map.
+The degree sign of the canonical-tail cyclic chain map.
+
+Its degree-`n` component is the tail-alternating exterior map multiplied by `(-1)^n`.

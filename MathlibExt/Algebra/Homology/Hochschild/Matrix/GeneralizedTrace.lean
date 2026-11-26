@@ -21,16 +21,22 @@ public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.Logic.Equiv.Fin.Rotate
 
 /-!
-# Finite generalized matrix trace
+# Generalized trace on coefficient tensor words
 
-The trace is a finite sum over ordered closed matrix
-index cycles in the coefficient tensor coordinates.
-The last entry returns to the first index; in degree
-zero the coefficient indices coincide. Tensor maps
-and the corner retraction preserve the order of
-products for noncommutative algebras.
+Let k be a commutative ring, A,M k-modules and ι a finite index type.
+The k-linear generalized trace
+Tr_n:Mat_ι(M)⊗[k]Mat_ι(A)^{⊗n}→M⊗[k]A^{⊗n}
+sums over closed index cycles:
+Tr_n(X⊗B_1⊗⋯⊗B_n)=
+∑_{i_0,…,i_n} X_{i_0,i_1}⊗(B_1)_{i_1,i_2}⊗⋯⊗(B_n)_{i_n,i_0}.
+Successor indices are modulo n+1, so degree zero is additive diagonal trace.
 
-Reference: Loday, Cyclic Homology, §§1.2.0–1.2.2.
+The single-corner inclusion at b∈ι is a section of Tr_n.
+Entrywise k-linear maps of coefficient and algebra modules preserve
+the formula. For ground scalar matrices U_0,…,U_n, the trace of
+their coefficient-scaled word is tr(U_0⋯U_n) times the underlying tensor.
+
+Reference: J.-L. Loday, Cyclic Homology, §§1.2.0–1.2.2.
 -/
 
 @[expose] public section
@@ -47,7 +53,9 @@ variable (k : Type u) [CommRing k] (ι : Type z)
 variable {A : Type v} [AddCommGroup A] [Module k A]
 variable {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- The nonunital corner `m ↦ E_bb(m)`, built from the native single maps. -/
+/-- Let k be commutative, M a k-module, ι any index type and b∈ι.
+The corner linear map sends m to the matrix having entry m at
+(b,b) and zero elsewhere. -/
 def cornerLinear (b : ι) : M →ₗ[k] Matrix ι ι M := by
   classical
   exact Matrix.singleLinearMap k b b
@@ -63,8 +71,9 @@ theorem cornerLinear_apply (b : ι) (m : M) (i j : ι) :
 
 variable [Fintype ι]
 
-/-- The finite matrix-module identification used in Loday 1.2.1.
-It is assembled from native finite-product tensor equivalences. -/
+/-- For k commutative, M a k-module and finite ι, the k-linear
+equivalence Mat_ι(k)⊗[k]M≃Mat_ι(M) sends U⊗m to the
+entrywise scalar matrix (U_{ij}•m). -/
 def matrixTensorEquiv : Matrix ι ι k ⊗[k] M ≃ₗ[k] Matrix ι ι M := by
   classical
   exact (TensorProduct.comm k (Matrix ι ι k) M).trans
@@ -73,7 +82,8 @@ def matrixTensorEquiv : Matrix ι ι k ⊗[k] M ≃ₗ[k] Matrix ι ι M := by
         ((LinearEquiv.piCongrRight fun _ : ι =>
           TensorProduct.piScalarRight k k M ι).trans (Matrix.ofLinearEquiv k))))
 
-/-- The matrix identification sends `U ⊗ m` to the entrywise matrix `U m`. -/
+/-- For k commutative, M a k-module and finite ι, the finite
+matrix tensor equivalence satisfies (U⊗m)_{ij}↦U_{ij}•m. -/
 @[simp]
 theorem matrixTensorEquiv_tmul (U : Matrix ι ι k) (m : M) (i j : ι) :
     matrixTensorEquiv k ι (U ⊗ₜ[k] m) i j = U i j • m := by
@@ -85,7 +95,11 @@ theorem matrixTensorEquiv_tmul (U : Matrix ι ι k) (m : M) (i j : ι) :
     TensorProduct.piScalarRight_apply, TensorProduct.piScalarRightHom_tmul]
   rfl
 
-/-- Loday 1.2.1: the full indexed trace, with the coefficient factor first. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+The generalized trace is the k-linear sum over closed cycles of
+n+1 indices, with the coefficient entry first and the last algebra
+entry returning to the first vertex. -/
 def generalizedTrace (n : ℕ) :
     Matrix ι ι M ⊗[k] TensorPower k n (Matrix ι ι A) →ₗ[k]
       M ⊗[k] TensorPower k n A := by
@@ -95,7 +109,11 @@ def generalizedTrace (n : ℕ) :
       (PiTensorProduct.map fun j : Fin n =>
         Matrix.entryLinearMap k A (γ j.succ) (γ (j.succ + 1)))
 
-/-- The exact representative formula; `+1` is taken in `Fin (n+1)`. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+For X∈Mat_ι(M) and B_j∈Mat_ι(A), the trace is
+∑_{i_0,…,i_n}X_{i_0,i_1}⊗(B_1)_{i_1,i_2}⊗⋯⊗(B_n)_{i_n,i_0},
+with successor indices modulo n+1. -/
 theorem generalizedTrace_tmul_tprod (n : ℕ) (m : Matrix ι ι M)
     (a : Fin n → Matrix ι ι A) :
     generalizedTrace k ι n (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
@@ -105,7 +123,9 @@ theorem generalizedTrace_tmul_tprod (n : ℕ) (m : Matrix ι ι M)
   simp only [generalizedTrace, LinearMap.sum_apply, TensorProduct.map_tmul,
     PiTensorProduct.map_tprod, Matrix.entryLinearMap_apply]
 
-/-- The literal corner inclusion in the native coefficient tensor coordinates. -/
+/-- Let k be commutative, A,M k-modules, ι an index type and b∈ι.
+The corner tensor map applies the single-entry (b,b) inclusion to
+the coefficient and to all n tail factors. -/
 def cornerTensor (b : ι) (n : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[k]
       Matrix ι ι M ⊗[k] TensorPower k n (Matrix ι ι A) :=
@@ -120,7 +140,9 @@ theorem cornerTensor_tmul_tprod (b : ι) (n : ℕ) (m : M) (a : Fin n → A) :
         PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j)) := by
   simp only [cornerTensor, TensorProduct.map_tmul, PiTensorProduct.map_tprod]
 omit [Fintype ι] in
-/-- In the corner trace, every nonconstant index cycle has a zero entry. -/
+/-- Let k be commutative, A,M k-modules and b an index. In a
+corner-inserted tensor, each nonconstant closed index cycle has a
+zero entry, so its generalized-trace summand is zero. -/
 private theorem corner_summand_eq_zero (b : ι) (n : ℕ) (m : M) (a : Fin n → A)
     (γ : Fin (n + 1) → ι) (hγ : γ ≠ fun _ => b) :
     cornerLinear k ι b m (γ 0) (γ 1) ⊗ₜ[k]
@@ -140,7 +162,10 @@ private theorem corner_summand_eq_zero (b : ι) (n : ℕ) (m : M) (a : Fin n →
       simp only [cornerLinear_apply, hj, ite_false]
     rw [(PiTensorProduct.tprod k).map_coord_zero j hz, TensorProduct.tmul_zero]
 
-/-- The source corner inclusion is a degreewise section of the trace. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+For b∈ι, generalized trace of the corner-inserted tensor
+E_{bb}(m)⊗E_{bb}(a_1)⊗⋯⊗E_{bb}(a_n) is m⊗a_1⊗⋯⊗a_n. -/
 theorem generalizedTrace_corner_tprod (b : ι) (n : ℕ) (m : M) (a : Fin n → A) :
     generalizedTrace k ι n
       (cornerLinear k ι b m ⊗ₜ[k]
@@ -158,7 +183,10 @@ theorem generalizedTrace_corner_tprod (b : ι) (n : ℕ) (m : M) (a : Fin n → 
     _ = m ⊗ₜ[k] PiTensorProduct.tprod k a := by
       simp only [cornerLinear_apply, ite_true]
 
-/-- The full linear-map retraction, from the native tensor generators. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+For b∈ι, the full k-linear composite of corner tensor inclusion
+followed by generalized trace is id_{C_n(A,M)}. -/
 theorem generalizedTrace_comp_cornerTensor (b : ι) (n : ℕ) :
     (generalizedTrace k ι n).comp (cornerTensor k ι b n) =
       (LinearMap.id : M ⊗[k] TensorPower k n A →ₗ[k] M ⊗[k] TensorPower k n A) := by
@@ -174,7 +202,10 @@ theorem generalizedTrace_comp_cornerTensor (b : ι) (n : ℕ) :
   rw [cornerTensor_tmul_tprod]
   exact generalizedTrace_corner_tprod k ι b n m a
 
-/-- In degree zero the generalized trace is the ordinary matrix trace. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+In degree zero, Tr_0(X⊗empty)=tr(X)⊗empty,
+where tr(X)=∑_{i∈ι}X_{ii} is the additive matrix trace. -/
 theorem generalizedTrace_zero (m : Matrix ι ι M) :
     generalizedTrace k ι 0
       (m ⊗ₜ[k] PiTensorProduct.tprod k
@@ -197,8 +228,9 @@ theorem generalizedTrace_zero (m : Matrix ι ι M) :
       (TensorProduct.sum_tmul Finset.univ _ _).symm
     _ = _ := rfl
 
-/-- Empty matrices still have the zero trace; the Morita isomorphism
-claim will require a positive matrix size. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+If ι is empty, the generalized trace is zero in every degree. -/
 theorem generalizedTrace_of_isEmpty [IsEmpty ι] (n : ℕ) :
     (generalizedTrace k ι n : Matrix ι ι M ⊗[k] TensorPower k n (Matrix ι ι A) →ₗ[k]
       M ⊗[k] TensorPower k n A) = 0 := by
@@ -211,9 +243,9 @@ section Naturality
 variable {B : Type v'} [AddCommGroup B] [Module k B]
 variable {N : Type w'} [AddCommGroup N] [Module k N]
 
-/-- The degree trace commutes with entrywise ground-linear maps.
-For a coefficient bimodule map and an algebra map this is the source's
-coefficient/algebra naturality in the native tensor coordinates. -/
+/-- Let k be commutative, A,M,B,N k-modules in independent
+carrier universes and ι finite. For k-linear f:M→N and g:A→B,
+(f⊗g^{⊗n})Tr_{M,A}=Tr_{N,B}(f^{Mat}⊗(g^{Mat})^{⊗n}). -/
 theorem generalizedTrace_naturality (n : ℕ) (f : M →ₗ[k] N) (g : A →ₗ[k] B) :
     (TensorProduct.map f (PiTensorProduct.map fun _ : Fin n => g)).comp
         (generalizedTrace k ι n) =
@@ -237,14 +269,20 @@ theorem generalizedTrace_naturality (n : ℕ) (f : M →ₗ[k] N) (g : A →ₗ[
 
 end Naturality
 
-/-- The scalar closed-cycle coefficient appearing in the proof of 1.2.2. -/
+/-- For k commutative, finite ι and ground matrices U_0,…,U_n,
+the closed-cycle weight is
+∑_{i_0,…,i_n}(U_0)_{i_0,i_1}(U_1)_{i_1,i_2}⋯(U_n)_{i_n,i_0},
+with cyclic successor indices. -/
 def traceWeight (n : ℕ) (U₀ : Matrix ι ι k) (U : Fin n → Matrix ι ι k) : k := by
   classical
   exact ∑ γ : Fin (n + 1) → ι,
     U₀ (γ 0) (γ 1) * ∏ j : Fin n, U j (γ j.succ) (γ (j.succ + 1))
 
-/-- Collect the ground-ring scalars on the generalized trace.
-This proof uses only native multilinearity and tensor scalar compatibility. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+For U_0,…,U_n∈Mat_ι(k), scaling m and the tail a_j
+entrywise gives trace equal to the closed-cycle weight times
+m⊗a_1⊗⋯⊗a_n. -/
 theorem generalizedTrace_scaled_weight (n : ℕ) (U₀ : Matrix ι ι k)
     (U : Fin n → Matrix ι ι k) (m : M) (a : Fin n → A) :
     generalizedTrace k ι n
@@ -264,8 +302,9 @@ theorem generalizedTrace_scaled_weight (n : ℕ) (U₀ : Matrix ι ι k)
   rw [← Finset.sum_smul]
   rfl
 
-/-- Expanding an ordered word of n+1 matrices gives a finite sum over n
-internal vertices, with both endpoints retained. -/
+/-- For k commutative and finite ι with decidable equality,
+(W_0⋯W_n)_{st}=∑_{i_1,…,i_n}(W_0)_{s,i_1}⋯(W_n)_{i_n,t}.
+The empty internal path for n=0 gives (W_0)_{st}. -/
 theorem matrix_word_entry [DecidableEq ι] :
     ∀ (n : ℕ) (W : Fin (n + 1) → Matrix ι ι k) (s t : ι),
       (List.ofFn W).prod s t =
@@ -333,7 +372,8 @@ theorem matrix_word_entry [DecidableEq ι] :
           simp only [Fin.castSucc_zero, Fin.cons_zero, Fin.cons_succ,
             ← Fin.succ_castSucc, T]
 omit [Fintype ι] in
-/-- Appending the first vertex closes the last successor back to zero. -/
+/-- For γ:Fin(n+1)→ι, append γ_0 to close the vertex family.
+Its successor entry at j is γ_{j+1 mod(n+1)}. -/
 private theorem closed_snoc_succ {n : ℕ} (γ : Fin (n + 1) → ι)
     (j : Fin (n + 1)) :
     Fin.snoc (α := fun _ => ι) γ (γ 0) j.succ = γ (j + 1) := by
@@ -343,7 +383,9 @@ private theorem closed_snoc_succ {n : ℕ} (γ : Fin (n + 1) → ι)
   · rw [Fin.succ_castSucc, Fin.snoc_castSucc]
     exact congrArg γ (finRotate_of_lt i.isLt).symm
 
-/-- The ordered matrix trace identity used in Loday's proof of 1.2.2. -/
+/-- For k commutative and finite ι with decidable equality,
+the closed-cycle weight of U_0,…,U_n is tr(U_0(U_1⋯U_n)),
+with the matrix word kept in its given order. -/
 theorem traceWeight_eq_trace_product [DecidableEq ι] (n : ℕ)
     (U₀ : Matrix ι ι k) (U : Fin n → Matrix ι ι k) :
     traceWeight k ι n U₀ U = Matrix.trace (U₀ * (List.ofFn U).prod) := by
@@ -395,8 +437,11 @@ theorem traceWeight_eq_trace_product [DecidableEq ι] (n : ℕ)
     _ = Matrix.trace (U₀ * (List.ofFn U).prod) := by
       simp only [W, List.ofFn_cons, List.prod_cons, Matrix.trace, Matrix.diag_apply]
 
-/-- Loday 1.2.2.1 with independent coefficient/algebra modules and the
-ordered matrix trace expansion. -/
+/-- Let k be a commutative ring, A and M k-modules, and ι a finite
+index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
+For ι with decidable equality, entrywise ground-matrix scaling gives
+Tr_n((U_0•m)⊗(U_1•a_1)⊗⋯⊗(U_n•a_n))
+=tr(U_0⋯U_n)•(m⊗a_1⊗⋯⊗a_n). -/
 theorem generalizedTrace_scaled [DecidableEq ι] (n : ℕ) (U₀ : Matrix ι ι k)
     (U : Fin n → Matrix ι ι k) (m : M) (a : Fin n → A) :
     generalizedTrace k ι n

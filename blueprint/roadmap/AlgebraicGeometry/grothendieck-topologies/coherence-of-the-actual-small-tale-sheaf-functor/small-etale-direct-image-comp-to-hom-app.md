@@ -1,3 +1,6 @@
-# Small Etale Direct Image Comp To hom app hom app
+# Identified direct image comparison acts by base change restriction
 
-The composition comparison has the literal restriction-map component.
+Identified direct image comparison acts by base change restriction.
+
+Its section component is restriction along the forward identified-composite base-change
+isomorphism.

@@ -13,13 +13,16 @@ public import Mathlib.GroupTheory.Perm.Fin
 public import Mathlib.LinearAlgebra.Alternating.Uncurry.Fin
 
 /-!
-# Full permutation sums from native head uncurrying
+# Full alternatization from head uncurrying
 
-Applying native alternating uncurrying to a head-linear, tail-multilinear
-map gives its full alternatization after the tail is alternatized. The
-ordered first-coordinate decomposition proves the exact formula without
-integer division. Repeating it supplies the two-head product formula used
-by the cyclic exterior boundary.
+Let k be a commutative ring and M,N be k-modules. For a head-linear, n-tail-multilinear map f,
+alternatize the tail by its full signed permutation sum. Alternating head uncurrying then yields
+the full alternatization in n+1 arguments: the term with head aᵢ has coefficient (-1)^i and the
+remaining arguments are taken in their inherited order.
+
+Applying this identity twice gives the full n+2 argument alternatization of a two-head-linear
+map. In the second deletion, its position is counted after the first argument is removed. These
+formulas use integer signs and require no factorial inverses or characteristic restriction.
 -/
 
 @[expose] public section
@@ -35,7 +38,9 @@ universe u v w
 variable {k : Type u} [CommRing k] {M : Type v} [AddCommGroup M] [Module k M]
   {N : Type w} [AddCommGroup N] [Module k N]
 
-/-- Tail alternatization is linear in the original singled-out head input. -/
+/-- Let k be a commutative ring and M,N be k-modules with additive inverses, in arbitrary module
+universes. For f : M →ₗ[k] MultilinearMap(Fin n,M,N), alternatizeTail f is the head-linear map x
+↦ Altₙ(f(x)). On a tail a it has value ∑σ sign(σ)·f(x)(a∘σ), summed over permutations of Fin n. -/
 def alternatizeTail {n : ℕ}
     (f : M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) :
     M →ₗ[k] M [⋀^Fin n]→ₗ[k] N where
@@ -51,7 +56,9 @@ def alternatizeTail {n : ℕ}
     intro σ _
     exact smul_comm _ c _
 
-/-- Tail alternatization as a linear map on the original head-linear maps. -/
+/-- Let k be a commutative ring and M,N be k-modules with additive inverses, in arbitrary module
+universes. For each n : ℕ, f ↦ alternatizeTail f is a k-linear map from head-linear
+n-tail-multilinear maps to head-linear n-tail-alternating maps. -/
 def alternatizeTailLinearMap (n : ℕ) :
     (M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) →ₗ[k]
       (M →ₗ[k] M [⋀^Fin n]→ₗ[k] N) where
@@ -66,7 +73,10 @@ def alternatizeTailLinearMap (n : ℕ) :
     intro σ _
     exact smul_comm _ c _
 
-/-- The original full permutation sum is the native alternating head-uncurry of its tail sum. -/
+/-- Let k be a commutative ring and M,N be k-modules with additive inverses, in arbitrary module
+universes. For a head-linear n-tail-multilinear map f, Altₙ₊₁(uncurryLeft f) equals alternating
+head uncurrying of alternatizeTail f. At a : Fin(n+1) → M, the value is
+∑ᵢ(-1)^i·Altₙ(f(aᵢ))(removeᵢ(a)), with the inherited order on each deleted tail. -/
 theorem alternatization_uncurryLeft {n : ℕ}
     (f : M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) :
     f.uncurryLeft.alternatization = AlternatingMap.alternatizeUncurryFin (alternatizeTail f) := by
@@ -107,7 +117,11 @@ theorem alternatization_uncurryLeft {n : ℕ}
     rw [← Finset.smul_sum, MultilinearMap.alternatization_apply]
     rfl
 
-/-- Alternating two original head inputs is the full native permutation sum with an alternating tail. -/
+/-- Let k be a commutative ring and M,N be k-modules with additive inverses, in arbitrary module
+universes. For f linear in two head inputs and multilinear in n tail inputs, fully alternatizing
+the doubly uncurried map equals alternating head uncurrying twice after tail alternatization.
+The first head deletion has sign (-1)^i; the second has sign (-1)^j, where j is counted in the
+list after the first deletion. -/
 theorem alternatization_uncurryLeft_twice {n : ℕ}
     (f : M →ₗ[k] M →ₗ[k] MultilinearMap (RingHom.id k) (fun _ : Fin n => M) N) :
     (LinearMap.uncurryLeft

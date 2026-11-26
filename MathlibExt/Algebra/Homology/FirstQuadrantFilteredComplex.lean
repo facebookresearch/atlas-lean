@@ -13,12 +13,22 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantFiltration
 
 /-!
-# Filtered complexes of first-quadrant totals
+# The horizontal filtration as subcomplexes of a signed total
 
-The degreewise horizontal filtration of a first-quadrant total is preserved
-by the total differential. The restricted differentials make every stage a
-chain complex. The stage inclusions commute with the differentials and are
-split monomorphisms in each degree.
+Let C be preadditive with a zero object and finite coproducts, and let K
+be a bicomplex with both differentials lowering nonnegative degrees.
+In total degree n, stage k is
+F_k T_n = ⨁_(p+q=n, p≤k) K_(p,q).
+Its inclusion i_(k,n) into T_n = Tot(K)_n has the coordinate
+retraction r_(k,n) that retains p ≤ k and annihilates p > k.
+
+The total differential d_h+(−1)^p d_v preserves these coordinates:
+the horizontal differential lowers p and the vertical differential
+fixes p. Thus d^k_(n,m) = r_(k,m) d_(n,m) i_(k,n) makes F_k T
+a chain complex, and i_k is a chain map.
+The inclusions split degreewise by r_(k,n); the coordinate retractions
+are not used as chain maps. The category object and morphism worlds
+are independent.
 -/
 
 @[expose] public section
@@ -138,9 +148,12 @@ theorem ιTotal_d_succ_horizontalProjection
     d₂_horizontalProjection K k m p q htotal hp]
   rw [K.ι_D₁, K.ι_D₂]
 
-/-- Differential on the horizontal filtration: include into the total,
-apply the total differential, then project back to the allowed horizontal
-coordinates. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, the stage-k
+differential is
+d^k_(n,m) = r_(k,m) ∘ d_(n,m)^Tot ∘ i_(k,n).
+Here i includes the finite coordinates p+q=n, p≤k into the total,
+and r projects back to those allowed horizontal coordinates. -/
 noncomputable def horizontalFilteredTotalD (k n m : ℕ) :
     horizontalFilteredTotalObj K k n ⟶
       horizontalFilteredTotalObj K k m :=
@@ -194,7 +207,12 @@ noncomputable instance horizontalFilteredTotalToTotal_isSplitMono
     (k n : ℕ) : IsSplitMono (horizontalFilteredTotalToTotal K k n) :=
   IsSplitMono.mk ⟨horizontalFilteredTotalToTotalSplitMono K k n⟩
 
-/-- The horizontal filtration in stage `k`, packaged as a chain complex. -/
+/-- For a nonnegative homological bicomplex K in a preadditive
+category with a zero object and finite coproducts, stage k is the
+chain complex with F_k T_n = ⨁_(p+q=n, p≤k) K_(p,q) and the
+restricted total differential r d i.
+The inclusion into Tot(K) commutes with the differential and
+is a split monomorphism in every degree. -/
 noncomputable def horizontalFilteredTotalComplex (k : ℕ) :
     ChainComplex C ℕ where
   X := horizontalFilteredTotalObj K k

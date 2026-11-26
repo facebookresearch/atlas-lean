@@ -1,3 +1,5 @@
-# Small Etale Godement Unit Stalk Retraction identity
+# Canonical stalk retraction is a left inverse to the unit
 
-The original point triangle proves the actual stalk unit and retraction compose to identity.
+Canonical stalk retraction is a left inverse to the unit.
+
+The stalk map of the Godement unit followed by its point retraction is the identity.

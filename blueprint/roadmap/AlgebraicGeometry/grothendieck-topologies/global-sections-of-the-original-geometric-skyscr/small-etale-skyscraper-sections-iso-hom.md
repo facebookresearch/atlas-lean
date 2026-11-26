@@ -1,3 +1,6 @@
-# Small Etale Skyscraper Sections Iso hom
+# The skyscraper sections comparison is terminal-fiber projection
 
-The comparison is terminal-section evaluation at any point of the actual singleton fiber.
+For x : Spec(Ω) → X with Ω separably closed, M ∈ AddCommGrpCat.{max(u,w)}, and any z in the
+geometric fiber over id_X, the forward map Γ(x_*M) → M is the terminal-section isomorphism
+Γ(x_*M) → ∏_{Fiber_x(id_X)}M followed by projection π_z. The terminal fiber is a singleton, so
+the formula is independent of z.

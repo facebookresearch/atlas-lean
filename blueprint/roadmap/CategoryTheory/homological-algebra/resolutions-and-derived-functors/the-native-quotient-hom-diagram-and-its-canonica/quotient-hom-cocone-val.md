@@ -1,3 +1,5 @@
-# Quotient Hom Cocone val
+# Underlying value of a quotient Hom cocone map
 
-The cocone leg is evaluation at the original quotient one.
+Underlying value of a quotient Hom cocone map.
+
+For `φ : R / I^n ⟶ M`, the degree-`n` cocone map has underlying value `φ(1 mod I^n)`.

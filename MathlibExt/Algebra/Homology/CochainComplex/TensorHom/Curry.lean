@@ -15,11 +15,14 @@ public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.Basic
 public import MathlibExt.Algebra.Homology.HomComplex.LinearFunctor
 
 /-!
-# Actual R-linear currying from the sum tensor into full native Hom products
+# R-linear currying from a tensor coproduct into full Hom products
 
-The cochains and scalar structures are the existing native linear Hom complexes.
-Each component is the native tensor curry of the original summand and original
-cochain component. No new product, differential or comparison model is used.
+Let R be a commutative ring and P,Q,I integer R-module cochain complexes in a common carrier
+universe. A degree-n cochain f : P⊗Q → I gives a degree-n cochain P → Hom(Q,I) by currying
+each tensor summand and assembling all inner Hom coordinates as a product.
+
+Its value on x∈P^p and y∈Q^q is f_{p+q,d}([x,y]), where p+n=b and q+b=d. The construction is
+R-linear and uses full products, without support bounds or finiteness assumptions.
 -/
 
 @[expose] public section
@@ -40,7 +43,10 @@ local instance : HomologicalComplex.HasMapBifunctor P Q
   intro n
   infer_instance
 
-/-- Evaluation on the original full Hom product is R-linear. -/
+/-- Let R be a commutative ring and P,Q integer R-module cochain complexes in universe v. For
+n,p,q ∈ ℤ with p+n=q, evaluation at the (p,q) coordinate gives an R-linear map C^n(P,Q) →
+Hom_R(P^p,Q^q). The cochain object C^n(P,Q) is the full product of all degree-n Hom
+coordinates. -/
 def productEval (n p q : ℤ) (hpq : p + n = q) :
     Cochain P Q n →ₗ[R] (P.X p ⟶ Q.X q) where
   toFun z := z.v p q hpq
@@ -51,7 +57,10 @@ def productEval (n p q : ℤ) (hpq : p + n = q) :
 theorem productEval_apply (n p q : ℤ) (hpq : p + n = q) (z : Cochain P Q n) :
     productEval R P Q n p q hpq z = z.v p q hpq := rfl
 
-/-- The actual degree-n curry map, retaining both original factor values. -/
+/-- For a commutative ring R and integer R-module cochain complexes P,Q,I in universe v, a
+degree-n cochain f : P⊗Q → I determines a degree-n cochain P → Hom(Q,I). Its component P^p →
+Hom(Q,I)^b, where p+n=b, has inner coordinate at q+b=d given by tensor currying of the summand
+map P^p⊗Q^q → I^d. All inner coordinates are assembled by the full product. -/
 def curryCochain (n : ℤ) (f : Cochain (complexAt R P Q) I n) :
     Cochain P (linearComplex R Q I) n :=
   Cochain.mk (fun p b hpb => by
@@ -65,14 +74,20 @@ def curryCochain (n : ℤ) (f : Cochain (complexAt R P Q) I n) :
                 f.v (p + T.p) T.q (by have := T.hpq; omega)).hom))
     exact ModuleCat.ofHom (LinearMap.pi component))
 
-/-- Every product component has the original pure tensor value, in every integer degree. -/
+/-- Let R be a commutative ring, P,Q,I integer cochain complexes in ModuleCat.{v} R, and f a
+degree-n cochain P⊗Q → I. For p+n=b and q+b=d, the curried cochain satisfies
+(curry(f)_{p,b}(x))_{q,d}(y)=f_{p+q,d}([x,y]), where [x,y] is the canonical tensor-total
+summand representative. No extra sign occurs in this cochain evaluation formula. -/
 theorem curryCochain_v (n : ℤ) (f : Cochain (complexAt R P Q) I n)
     (p b : ℤ) (hpb : p + n = b) (q d : ℤ) (hqd : q + b = d)
     (x : P.X p) (y : Q.X q) :
     ((((curryCochain R P Q I n f).v p b hpb).hom x).v q d hqd).hom y =
       (f.v (p + q) d (by omega)).hom (mkAt R P Q p q (p + q) rfl x y) := rfl
 
-/-- The actual sum-to-product curry is bundled with its earned R-linearity. -/
+/-- For a commutative ring R and integer R-module cochain complexes P,Q,I in a common universe v,
+the operation curryCochain defines an R-linear map C^n(P⊗Q,I) → C^n(P,Hom(Q,I)) for every n ∈
+ℤ. Its value is the summandwise tensor currying into the full Hom product, with no boundedness
+condition. -/
 def curryLinear (n : ℤ) :
     Cochain (complexAt R P Q) I n →ₗ[R] Cochain P (linearComplex R Q I) n where
   toFun := curryCochain R P Q I n

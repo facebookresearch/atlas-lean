@@ -1,3 +1,5 @@
-# Algebra Positive Eulerian Section Level mk Q
+# Raw Eulerian section on a quotient class
 
-The raw quotient section applies exactly the original full first projector to a representative.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M an A-module with compatible
+k-action. For n : ℕ and x ∈ M ⊗[k] A^{⊗n}, the section of the raw proper quotient sends the
+class of x modulo algebraPositiveRelations to algebraFirstEulerianOperator k A M n x.

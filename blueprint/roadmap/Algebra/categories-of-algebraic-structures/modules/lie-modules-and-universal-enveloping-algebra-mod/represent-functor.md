@@ -1,3 +1,6 @@
-# Represent Functor
+# The representation functor to enveloping modules
 
-Canonical associative representations are functorial in native Lie-module maps.
+The representation functor to enveloping modules.
+
+This sends a left Lie module to its extended `U_R(L)`-action and a Lie-module morphism to the
+corresponding enveloping-linear map.

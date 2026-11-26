@@ -1,4 +1,8 @@
-# Original Standard Ambient Tor Iso left mul
+# The standard ambient comparison preserves V multiplication
 
-Both actual standard adjoining cancellations preserve original V
-multiplication, including the genuine change of native Tor orientation.
+For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For v∈V, the comparison satisfies
+φ_std(L_std,v(z))=L_middle,v(φ_std(z)).
+The middle operator acts on the first Tor coefficient V.

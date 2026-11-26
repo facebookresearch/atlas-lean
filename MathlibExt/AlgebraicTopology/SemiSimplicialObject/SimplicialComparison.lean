@@ -22,11 +22,17 @@ public import Mathlib.AlgebraicTopology.SimplicialObject.ChainHomotopy
 public import Mathlib.CategoryTheory.Whiskering
 
 /-!
-# Full-simplicial forgetful and alternating-complex comparisons
+# Restricting simplicial homotopies to semisimplicial objects
 
-Precompose with the semi-simplex inclusion. The h_i data and native
-chain component signs are retained. Identity degree maps compare the two
-alternating complexes and are natural in full simplicial morphisms.
+Precomposition with the inclusion of order-preserving injections into the simplex category
+restricts a simplicial object to a semisimplicial object and preserves all its faces. A
+simplicial homotopy therefore restricts to the same degree-raising maps and endpoint and face
+equations.
+
+In a preadditive category, the alternating-face complex of the restriction is isomorphic to
+the simplicial alternating-face complex by identity maps in every degree. These comparisons
+are natural in simplicial morphisms. The restricted and simplicial homotopies have the same
+adjacent chain-homotopy components, namely the negative alternating sums of their h_i.
 -/
 
 @[expose] public section
@@ -60,7 +66,10 @@ namespace CategoryTheory.SimplicialObject.Homotopy
 variable {C : Type u} [Category.{v} C]
   {X Y : SimplicialObject C} {f g : X ⟶ Y}
 
-/-- Forget the two degeneracy conditions by the semi-simplex inclusion. -/
+/-- Let H be a simplicial homotopy between f, g : X ⟶ Y in a category C. Precomposing X, Y, f and
+g with SemiSimplexCategory.toSimplexCategory.op gives semisimplicial objects and maps. The
+same maps H.h i : X_n ⟶ Y_(n+1) satisfy the semisimplicial endpoint and face conditions,
+defining a homotopy between the restricted f and g. -/
 def toSemiSimplicial (H : Homotopy f g) :
     SemiSimplicialObject.Homotopy
       (Functor.whiskerLeft SemiSimplexCategory.toSimplexCategory.op f)
@@ -88,7 +97,10 @@ theorem toSemiSimplicial_h (H : Homotopy f g) {n : ℕ} (i : Fin (n + 1)) :
 
 variable [Preadditive C]
 
-/-- Forgetting preserves the native negative adjacent chain-homotopy component. -/
+/-- Let H be a simplicial homotopy between f, g : X ⟶ Y in a preadditive category C. For every n :
+ℕ, the component (n, n + 1) of the chain homotopy induced by its semisimplicial restriction
+equals H.toChainHomotopy.hom n (n + 1). Both are the morphism −∑ i : Fin (n + 1), (−1)^i • H.h
+i : X_n ⟶ Y_(n+1). -/
 theorem toSemiSimplicial_toChainHomotopy_hom (H : Homotopy f g) (n : ℕ) :
     H.toSemiSimplicial.toChainHomotopy.hom n (n + 1) =
       H.toChainHomotopy.hom n (n + 1) := by
@@ -102,7 +114,10 @@ namespace AlgebraicTopology.SemiSimplicialAlternatingFaceMapComplex
 
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
-/-- The two alternating complexes compare by identity degree maps. -/
+/-- For a simplicial object X in a preadditive category C, the alternating-face complex of
+SemiSimplexCategory.toSimplexCategory.op ⋙ X is isomorphic to the simplicial alternating-face
+complex of X. Both complexes are indexed by down ℕ; the forward and inverse isomorphism
+components in degree n are 𝟙 X_n, since their faces and alternating differentials agree. -/
 def ofSimplicialIso (X : SimplicialObject C) :
     (semiSimplicialAlternatingFaceMapComplex C).obj
         (SemiSimplexCategory.toSimplexCategory.op ⋙ X) ≅
@@ -140,7 +155,11 @@ theorem ofSimplicialIso_inv_f (X : SimplicialObject C) (n : ℕ) :
     (fun n => Iso.refl (X _⦋n⦌)) _).inv.f n = _
   rfl
 
-/-- The chosen comparison commutes with every full simplicial map. -/
+/-- For a simplicial map f : X ⟶ Y in a preadditive category C, let e_X and e_Y be the
+identity-component comparisons from the alternating-face complexes of the semisimplicial
+restrictions to the simplicial complexes. Then map(restrict f) ≫ e_Y.hom = e_X.hom ≫ map f,
+where the left map is semisimplicial alternating faces and the right map is simplicial
+alternating faces. -/
 theorem ofSimplicialIso_naturality {X Y : SimplicialObject C} (f : X ⟶ Y) :
     (semiSimplicialAlternatingFaceMapComplex C).map
         (Functor.whiskerLeft SemiSimplexCategory.toSimplexCategory.op f) ≫

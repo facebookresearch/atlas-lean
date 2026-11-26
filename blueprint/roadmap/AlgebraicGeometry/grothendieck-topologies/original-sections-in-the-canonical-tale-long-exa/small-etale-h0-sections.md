@@ -1,3 +1,6 @@
-# Small Etale H0 Sections
+# Degree zero cohomology as terminal sections
 
-The actual canonical degree-zero evaluation at the original identity object.
+Degree zero cohomology as terminal sections.
+
+The group `H⁰(X,Q)` is additively equivalent to sections of `Q` over the identity étale
+object.

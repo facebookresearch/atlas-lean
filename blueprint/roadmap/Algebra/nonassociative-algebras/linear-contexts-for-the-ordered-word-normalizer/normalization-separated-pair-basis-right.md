@@ -1,3 +1,6 @@
-# Normalization Separated Pair basis right
+# The right basis coordinate of a separated normalization pair
 
-Fixing the right basis vector gives the original one-vector context.
+The right basis coordinate of a separated normalization pair.
+
+Fixing the second vector to `b_j` leaves the one-vector insertion map with prefix `p` and
+suffix `m ++ j :: s`.

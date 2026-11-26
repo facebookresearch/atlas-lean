@@ -14,12 +14,15 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantHomologyGradedPositiveStep
 
 /-!
-# The positive total-homology filtration square
+# The positive-column homology-filtration square
 
-A bicomplex map induces, at every positive column, a commutative square
-between the corresponding consecutive complete total-homology filtration
-steps.  The vertical maps are transported from the finite filtered-object
-functor.
+Let C be an abelian category, f : K → L a first-quadrant bicomplex map, and n=p+q. The current
+complete image-stage map at p is the finite image-stage map conjugated by the
+complete-to-finite comparisons. For p>0 the same construction at the natural predecessor p−1
+gives the preceding complete-stage map.
+
+These two maps commute with the consecutive complete-filtration inclusion F_{p−1}H_n(Tot) →
+F_pH_n(Tot). The current map itself is defined for all p ∈ ℕ.
 -/
 
 @[expose] public section
@@ -36,8 +39,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The map on the preceding complete homology-filtration stages in a
-positive column, transported from natural index `p - 1`. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), p,q ∈ ℕ, and
+hp : 0 < p. Put n=p+q, and let e_K and e_L identify the complete image stages at (p:ℤ)−1 with
+the finite stages at p−1. If b(f) is the finite predecessor-stage map induced by f, define the
+complete predecessor map to be e_K.hom ≫ b(f) ≫ e_L.inv. Its source and target are
+F_{(p:ℤ)−1}H_n(Tot(K)) and F_{(p:ℤ)−1}H_n(Tot(L)). -/
 noncomputable def horizontalPositivePrevTotalHomologyFiltrationMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) (hp : 0 < p) :
     (horizontalTotalHomologyFiltration K (p + q)).obj
@@ -51,8 +57,11 @@ noncomputable def horizontalPositivePrevTotalHomologyFiltrationMapOfBicomplex
     (horizontalPositivePrevCompleteFiniteHomologyFiltrationIso
       L (p + q) p hp).inv
 
-/-- The map on the current complete homology-filtration stages in a positive
-column, transported from natural index `p`. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), and p,q ∈ ℕ.
+Put n=p+q, and let e_K,p and e_L,p be the complete-to-finite image comparisons at column p.
+The current complete-stage map F_pH_n(Tot(K)) → F_pH_n(Tot(L)) is e_K,p.hom ≫ b_p(f) ≫
+e_L,p.inv, where b_p(f) is the finite filtered-homology map at p. This definition requires no
+inequality p>0. -/
 noncomputable def horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     (horizontalTotalHomologyFiltration K (p + q)).obj
@@ -89,8 +98,11 @@ theorem horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq
           (p + q)).inv.app p :=
   rfl
 
-/-- For a positive column, a bicomplex map commutes with the consecutive
-complete total-homology filtration step. -/
+/-- Let C be an abelian category, f : K → L a bicomplex map of shape (down ℕ,down ℕ), p,q ∈ ℕ, and
+hp : 0 < p. In total degree n=p+q, let s_K and s_L be the complete-stage inclusions F_{p−1} →
+F_p. Let a(f) and c(f) be the predecessor and current maps obtained from the finite image
+filtration through the complete-to-finite comparisons. Then s_K ≫ c(f) = a(f) ≫ s_L. The
+predecessor comparison uses hp to identify its integer and natural indices. -/
 theorem horizontalTotalHomologyFiltrationStepMap_naturality_of_pos
     (f : K ⟶ L) (p q : ℕ) (hp : 0 < p) :
     horizontalTotalHomologyFiltrationStepMap K p q ≫

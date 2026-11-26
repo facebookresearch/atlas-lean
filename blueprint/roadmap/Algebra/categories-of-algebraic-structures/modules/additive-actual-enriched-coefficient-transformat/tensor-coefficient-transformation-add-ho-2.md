@@ -1,3 +1,6 @@
-# Tensor Coefficient Transformation Add Hom apply
+# Value of the additive tensor-transformation assignment
 
-The additive package retains the existing coefficient natural transformation.
+Value of the additive tensor-transformation assignment.
+
+For a compatible coefficient map `f`, the additive assignment returns
+`tensorCoefficientTransformation R S B B' f.val f.property`.

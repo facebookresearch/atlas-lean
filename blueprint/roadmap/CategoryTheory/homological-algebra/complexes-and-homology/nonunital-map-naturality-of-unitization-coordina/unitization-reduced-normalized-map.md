@@ -1,3 +1,5 @@
-# Unitization Reduced Normalized Map
+# The reduced normalized unitization map of a nonunital homomorphism
 
-The same original map restricts to the reduced normalized kernels.
+The reduced normalized unitization map of a nonunital homomorphism.
+
+The normalized unitization map restricts to the kernels of the normalized scalar projectors.

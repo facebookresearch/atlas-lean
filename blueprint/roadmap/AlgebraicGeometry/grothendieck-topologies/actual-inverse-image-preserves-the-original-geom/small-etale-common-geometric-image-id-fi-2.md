@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Image Id Fiber Iso hom app down left
+# Lifted geometric identity coordinate preserves the underlying map
 
-Identity image transport retains the original geometric neighborhood map.
+Lifted geometric identity coordinate preserves the underlying map.
+
+The forward identity-image fiber coordinate preserves the scheme map of the lowered geometric
+element.

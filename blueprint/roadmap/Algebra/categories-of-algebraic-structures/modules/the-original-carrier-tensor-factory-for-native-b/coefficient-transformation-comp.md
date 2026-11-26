@@ -1,3 +1,5 @@
-# Coefficient Transformation comp
+# Coefficient tensor transformations preserve composition
 
-Composition acts by the original composed native coefficient map.
+For bimodule morphisms f:B→B′ and g:B′→B″,
+the coefficient transformation of g∘f equals the
+transformation of f followed by that of g.

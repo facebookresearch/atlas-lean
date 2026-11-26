@@ -13,13 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FirstQuadrantCompleteFiltrationFunctor
 
 /-!
-# Comparing complete and finite horizontal-filtration stages
+# Comparing complete horizontal filtration stages with finite stages
 
-At a nonnegative integer index, the complete `EInt`-indexed horizontal
-filtration is canonically isomorphic to the original natural-number stage.
-This file packages the carrier equality as an isomorphism and proves that it
-intertwines inclusions into the total complex, bicomplex maps, and increasing
-the filtration index.
+Let C be preadditive with a zero object and finite coproducts, and K a bicomplex of shape (down
+ℕ,down ℕ). For an integer a≥0, the complete stage G_a is canonically isomorphic to the ath
+finite horizontal stage G^fin_a. The isomorphism preserves their monic inclusions into Tot K.
+
+These comparisons commute with a bicomplex morphism f:K→L at each nonnegative integer cut and
+with the transitions induced by a≤b. Thus restriction of the complete filtration to nonnegative
+integer cuts agrees with the finite horizontal filtration as a diagram of subcomplexes. No
+abelian or bounded-support hypothesis is needed, and category universes are arbitrary.
 -/
 
 @[expose] public section
@@ -37,8 +40,10 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- A nonnegative complete-filtration stage, canonically identified with its
-finite natural-number stage. -/
+/-- Let C be preadditive with a zero object and finite coproducts, K a bicomplex of shape (down
+ℕ,down ℕ), and a∈ℤ with a≥0. This is the canonical chain-complex isomorphism
+e_{K,a}:G_a(K)≅G^fin_a(K) from the complete horizontal stage at integer cut a to the finite
+horizontal stage indexed by the same nonnegative integer. -/
 noncomputable def horizontalCompleteFilteredTotalComplexFiniteIso
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (a : ℤ) (ha : 0 ≤ a) :
@@ -46,8 +51,10 @@ noncomputable def horizontalCompleteFilteredTotalComplexFiniteIso
       horizontalFilteredTotalComplex K a.toNat :=
   eqToIso (horizontalCompleteFilteredTotalComplex_coe_of_nonneg K a ha)
 
-/-- The complete-to-finite stage isomorphism preserves the inclusion into
-the total complex. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts and an integer a≥0, let e_{K,a}:G_a(K)≅G^fin_a(K) be the complete-to-finite stage
+comparison. If ι^fin_a:G^fin_a(K)→Tot K and ι_a:G_a(K)→Tot K are the canonical inclusions, then
+e_{K,a}.hom≫ι^fin_a=ι_a. -/
 @[reassoc (attr := simp)]
 theorem horizontalCompleteFilteredTotalComplexFiniteIso_hom_toTotal
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
@@ -75,8 +82,9 @@ theorem horizontalCompleteFilteredTotalComplexFiniteIso_hom_toTotal
     eqToHom_comp_heq_iff]
   exact hincl.symm
 
-/-- The complete-to-finite stage isomorphisms are natural in the
-bicomplex. -/
+/-- Let C be preadditive with a zero object and finite coproducts, f:K→L a morphism of bicomplexes
+of shape (down ℕ,down ℕ), and a∈ℤ with a≥0. For e_{K,a}:G_a(K)≅G^fin_a(K) and e_{L,a}, the
+induced complete and finite stage maps satisfy e_{K,a}.hom≫G^fin_a(f)=G_a(f)≫e_{L,a}.hom. -/
 theorem horizontalCompleteFilteredTotalComplexFiniteIso_naturality
     (f : K ⟶ L) (a : ℤ) (ha : 0 ≤ a) :
     (horizontalCompleteFilteredTotalComplexFiniteIso K a ha).hom ≫
@@ -116,8 +124,10 @@ theorem horizontalCompleteFilteredTotalComplexFiniteIso_naturality
         horizontalFilteredTotalComplexToTotal L a.toNat :=
       (Category.assoc _ _ _).symm
 
-/-- The complete-to-finite stage isomorphisms intertwine transitions between
-nonnegative finite indices. -/
+/-- For a first-quadrant bicomplex K in a preadditive category with a zero object and finite
+coproducts, let a,b∈ℤ satisfy 0≤a≤b. The stage comparisons e_a:G_a(K)≅G^fin_a(K) and
+e_b:G_b(K)≅G^fin_b(K) intertwine the complete transition t_{a,b} and the finite horizontal
+transition t^fin_{a,b}: e_a.hom≫t^fin_{a,b}=t_{a,b}≫e_b.hom. -/
 theorem horizontalCompleteFilteredTotalComplexFiniteIso_transition
     (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
       (ComplexShape.down ℕ)) (a b : ℤ) (ha : 0 ≤ a) (hab : a ≤ b) :

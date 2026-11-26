@@ -1,3 +1,6 @@
-# Matrix Complex d one zero
+# The zero degree-one differential of finite matrix CE chains
 
-The degree-one boundary vanishes, including the size-zero matrix stage.
+The zero degree-one differential of finite matrix CE chains.
+
+The boundary from exterior degree one to zero is zero for every matrix size, including size
+zero.

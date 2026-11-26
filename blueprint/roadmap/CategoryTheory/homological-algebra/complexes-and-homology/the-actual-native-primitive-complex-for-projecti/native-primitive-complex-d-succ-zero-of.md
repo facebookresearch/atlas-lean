@@ -1,3 +1,5 @@
-# Native Primitive Complex d succ zero of projective
+# Adjacent projective primitive chain differentials are zero
 
-The primitive differential vanishes on every adjacent pair of degrees.
+Let R : Type u be a commutative ring and L : Type v an R-Lie algebra. Let P be its primitive
+CE kernel complex, whose homogeneous submodules solve Δ(a) = 1⊗a + a⊗1 in the exterior
+coalgebra. Assume Module.Projective R L. For n : ℕ, P.d (n + 1) n = 0.

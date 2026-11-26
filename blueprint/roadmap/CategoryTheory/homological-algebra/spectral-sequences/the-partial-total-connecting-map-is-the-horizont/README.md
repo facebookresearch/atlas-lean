@@ -1,4 +1,4 @@
 # The partial-total connecting map is the horizontal row map
 
-- [Partial Total E₁Connecting Differential eq horizontal Row Homology](partial-total-e-connecting-differential.md)
-- [Partial Total E₁Connecting eq horizontal Row At](partial-total-e-connecting-eq-horizontal.md)
+- [The equality of partial-total connecting and horizontal-row homology maps](partial-total-e-connecting-differential.md)
+- [The adjacent-row comparison with explicit total-degree coordinates](partial-total-e-connecting-eq-horizontal.md)

@@ -13,26 +13,15 @@ public import MathlibExt.CategoryTheory.ExactCategory.FiniteResolving
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 
 /-!
-# Comparison maps for finite resolutions
+# Augmented comparisons of finite resolutions
 
-This file packages morphisms between finite resolutions together with their
-augmentation square.  When the image of every resolving object is projective,
-Mathlib's projective-resolution comparison maps produce such morphisms.  For
-two resolutions of the same object, fullness and faithfulness lift the
-ambient comparison homotopy equivalence back to the source category.
+Let P be preadditive, A abelian and i : P → A additive. A morphism between finite resolutions
+over f : X₁ → X₂ is a chain map of resolving complexes whose image under i commutes with the
+augmentations. These morphisms have identity and composition operations.
 
-The projectivity, fullness, and faithfulness assumptions are explicit.  No
-generic comparison for a nonprojective resolving image, Euler independence,
-additivity, or inverse on `K₀` is asserted.
-
-## Main declarations
-
-* `CategoryTheory.Abelian.FiniteResolution.Hom`
-* `CategoryTheory.Abelian.FiniteResolution.Hom.id`
-* `CategoryTheory.Abelian.FiniteResolution.Hom.comp`
-* `CategoryTheory.Abelian.FiniteResolution.toProjectiveResolution`
-* `CategoryTheory.Abelian.FiniteResolution.comparisonHom`
-* `CategoryTheory.Abelian.FiniteResolution.comparisonHomotopyEquiv`
+If i is full faithful and every i(P₀) is projective, projective-resolution comparison maps in A
+return augmented comparisons in P. Two finite resolutions of the same object then have
+homotopy-equivalent resolving complexes.
 -/
 
 @[expose] public section
@@ -51,17 +40,20 @@ variable {P : Type uP} [Category.{vP} P] [Preadditive P]
 variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable {i : P ⥤ A} [i.Additive]
 
-/-- A morphism of finite resolutions over `f : X₁ ⟶ X₂`.
-
-The augmentation equation is oriented as mapped source chain map followed by
-the target augmentation, equal to the source augmentation followed by the
-degree-zero single-complex map of `f`. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+in A, by nonnegative complexes in P, and f : X₁ → X₂. A comparison over f is a chain map φ :
+R₁.complex → R₂.complex whose image under i commutes with the augmentations: ε₂ ∘ i(φ)=f[0] ∘
+ε₁. -/
 structure Hom {X₁ X₂ : A}
     (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂)
     (f : X₁ ⟶ X₂) where
-  /-- The source chain map. -/
+  /-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+in A, by nonnegative complexes in P, and f : X₁ → X₂. The chain-map component of a comparison
+over f is a morphism R₁.complex → R₂.complex in the resolving category P. -/
   map : R₁.complex ⟶ R₂.complex
-  /-- Compatibility with the two augmentations. -/
+  /-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+in A, by nonnegative complexes in P, and f : X₁ → X₂. The comparison φ satisfies ε₂ ∘ i(φ)=f[0]
+∘ ε₁, as maps from i(R₁.complex) to the nonnegative complex concentrated on X₂. -/
   augmentation_comm :
     (i.mapHomologicalComplex (ComplexShape.down ℕ)).map map ≫
         R₂.augmentation =
@@ -74,12 +66,16 @@ variable {R₁ : FiniteResolution i X₁} {R₂ : FiniteResolution i X₂}
 variable {R₃ : FiniteResolution i X₃}
 variable {f : X₁ ⟶ X₂} {g : X₂ ⟶ X₃}
 
-/-- The identity morphism of a finite resolution. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. For a finite resolution R of X, the
+identity comparison over id_X has chain map id_{R.complex} and the identity augmentation square. -/
 def id (R : FiniteResolution i X₁) : Hom R R (𝟙 X₁) where
   map := 𝟙 R.complex
   augmentation_comm := by simp
 
-/-- Composition of morphisms of finite resolutions. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+in A, by nonnegative complexes in P, and f : X₁ → X₂. For a third resolution R₃ of X₃ and g : X₂
+→ X₃, comparisons φ : R₁ → R₂ over f and ψ : R₂ → R₃ over g compose to a comparison over g ∘ f,
+with chain map ψ ∘ φ. -/
 def comp (φ : Hom R₁ R₂ f) (ψ : Hom R₂ R₃ g) :
     Hom R₁ R₃ (f ≫ g) where
   map := φ.map ≫ ψ.map
@@ -91,8 +87,9 @@ def comp (φ : Hom R₁ R₂ f) (ψ : Hom R₂ R₃ g) :
 
 end Hom
 
-/-- Regard a finite resolution whose mapped terms are projective as a
-projective resolution in the target abelian category. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R be a finite resolution of X and
+assume i(P₀) is projective for every resolving object P₀ of P. Then i(R.complex), with its
+original augmentation, is a projective resolution of X in A. -/
 noncomputable def toProjectiveResolution {X : A}
     (R : FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
@@ -102,10 +99,10 @@ noncomputable def toProjectiveResolution {X : A}
   π := R.augmentation
   quasiIso := R.quasiIso
 
-/--
-A morphism of target objects induces a comparison morphism between finite resolutions when their
-mapped terms are projective and `i` is fully faithful.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+in A, by nonnegative complexes in P, and f : X₁ → X₂. Assume i is full faithful and every i(P₀)
+is projective. A projective-resolution lift in A lifts back to an augmented comparison R₁ → R₂
+over f in P. -/
 noncomputable def comparisonHom [i.Full] [i.Faithful]
     {X₁ X₂ : A} (R₁ : FiniteResolution i X₁)
     (R₂ : FiniteResolution i X₂) (f : X₁ ⟶ X₂)
@@ -122,8 +119,9 @@ noncomputable def comparisonHom [i.Full] [i.Faithful]
   rw [hφ]
   exact ProjectiveResolution.lift_commutes f Q₁ Q₂
 
-/-- Two finite resolutions of the same object are homotopy equivalent in the
-source when their mapped terms are projective and `i` is fully faithful. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful, with every i(P₀)
+projective. Two finite resolutions R₁,R₂ of the same object X have homotopy-equivalent resolving
+complexes in P. -/
 noncomputable def comparisonHomotopyEquiv [i.Full] [i.Faithful]
     {X : A} (R₁ R₂ : FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :

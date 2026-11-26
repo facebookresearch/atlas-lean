@@ -14,12 +14,16 @@ public import Mathlib.Algebra.Homology.HomologicalComplexLimits
 public import Mathlib.Algebra.Category.ModuleCat.Kernels
 
 /-!
-# Reduced normalized unitization coordinates
+# Coordinates of reduced normalized unitization chains
 
-The positive degrees decompose using k ⊕ A, tensor distribution
-over products and the quotient-tail equivalence. The bottom
-degree is the kernel of scalar projection, identified with
-the second coordinate.
+Let `k` be a commutative ring and `A` a nonunital ground algebra. The quotient `A⁺ / k·1` is
+linearly equivalent to `A`. In positive degree `n+1`, tensor distribution over the coefficient
+decomposition `A⁺ = k ⊕ A` therefore gives normalized coordinates `C_(n+1)(A) × C_n(A)`.
+
+The ideal-leading word has coordinates `(x,0)`, and the external-unit-leading word has
+coordinates `(0,x)`. The normalized scalar projector is zero in positive degrees, so the
+reduced kernel inclusion is an isomorphism there. In degree zero, the projector is scalar
+projection on `A⁺`, and its kernel is the nonunital coefficient `A`, equivalently `C_0(A)`.
 -/
 
 @[expose] public section
@@ -36,7 +40,10 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The degree-zero original regular tensor level is its coefficient module. -/
+/-- The coefficient coordinate of a degree-zero nonunital tensor level.
+
+The empty-tail tensor term `A ⊗[k] TensorPower k 0 A` is linearly equivalent to `A` through
+the empty tensor and regular tensor unitors. -/
 def unitizationOriginalZeroEquiv : chainLevel k A A 0 ≃ₗ[k] A :=
   TensorProduct.congr (LinearEquiv.refl k A) (TensorPower.zeroEquiv k A) ≪≫ₗ
     TensorProduct.rid k A
@@ -50,7 +57,10 @@ private theorem unitizationOriginalZeroEquiv_tprod (m : A) (a : Fin 0 → A) :
   rw [TensorProduct.congr_tmul, LinearEquiv.refl_apply,
     PiTensorProduct.isEmptyEquiv_apply_tprod, TensorProduct.rid_tmul, one_smul]
 
-/-- The normalized bottom level has the same original unitization coefficient. -/
+/-- The coefficient coordinate of normalized unitization degree zero.
+
+The degree-zero normalized unitization term is linearly equivalent to its coefficient module
+`A⁺`, since its quotient tail is empty. -/
 def unitizationNormalizedZeroEquiv :
     (normalizedBComplex k (Unitization k A)).X 0 ≃ₗ[k] Unitization k A :=
   TensorProduct.congr (LinearEquiv.refl k (Unitization k A))
@@ -67,7 +77,10 @@ private theorem unitizationNormalizedZeroEquiv_tprod (m : Unitization k A)
   rw [TensorProduct.congr_tmul, LinearEquiv.refl_apply,
     PiTensorProduct.isEmptyEquiv_apply_tprod, TensorProduct.rid_tmul, one_smul]
 
-/-- The bottom normalized projector is precisely scalar projection in the original coefficient. -/
+/-- Scalar projection in normalized degree-zero coordinates.
+
+Under the coefficient equivalence to `A⁺`, the degree-zero normalized scalar projector is the
+algebra projector `(r,a) ↦ (r,0)`. -/
 theorem unitizationNormalizedZeroEquiv_projector
     (x : (normalizedBComplex k (Unitization k A)).X 0) :
     unitizationNormalizedZeroEquiv k A ((unitizationNormalizedScalarProjector k A).f 0 x) =
@@ -93,7 +106,10 @@ theorem unitizationNormalizedZeroEquiv_projector
     rfl
   exact DFunLike.congr_fun h x
 
-/-- The degree-zero reduced kernel is the original nonunital coefficient tensor level. -/
+/-- The reduced degree-zero kernel in nonunital tensor coordinates.
+
+The linear kernel of the degree-zero normalized scalar projector is equivalent to `C_0(A)`, by
+taking the coefficient's nonunital coordinate and the inverse empty-tail equivalence. -/
 def unitizationReducedZeroLinearEquiv :
     LinearMap.ker ((unitizationNormalizedScalarProjector k A).f 0).hom ≃ₗ[k]
       chainLevel k A A 0 where
@@ -129,7 +145,10 @@ def unitizationReducedZeroLinearEquiv :
           (Unitization.inr (unitizationOriginalZeroEquiv k A x)))).snd) = x
     rw [LinearEquiv.apply_symm_apply, Unitization.snd_inr, LinearEquiv.symm_apply_apply]
 
-/-- Native preservation of this kernel by evaluation computes its original degree module. -/
+/-- The degreewise linear kernel of a reduced normalized complex.
+
+Evaluation in degree `n` identifies the reduced normalized complex term with the linear kernel
+of that degree's normalized scalar-projector component. -/
 def unitizationReducedKernelLevelIso (n : ℕ) :
     (unitizationReducedNormalizedComplex k A).X n ≅
       ModuleCat.of k (LinearMap.ker ((unitizationNormalizedScalarProjector k A).f n).hom) :=
@@ -137,7 +156,10 @@ def unitizationReducedKernelLevelIso (n : ℕ) :
       (unitizationNormalizedScalarProjector k A) ≪≫
     ModuleCat.kernelIsoKer ((unitizationNormalizedScalarProjector k A).f n)
 
-/-- The computed degree-kernel comparison retains the original inclusion. -/
+/-- The inclusion formula for the degreewise reduced kernel.
+
+The degreewise kernel comparison followed by the linear subtype inclusion equals the component
+of the chain-kernel inclusion. -/
 @[reassoc]
 theorem unitizationReducedKernelLevelIso_hom_subtype (n : ℕ) :
     (unitizationReducedKernelLevelIso k A n).hom ≫
@@ -147,13 +169,19 @@ theorem unitizationReducedKernelLevelIso_hom_subtype (n : ℕ) :
     ModuleCat.kernelIsoKer_hom_ker_subtype, PreservesKernel.iso_hom]
   exact kernelComparison_comp_ι _ _
 
-/-- The original reduced bottom coefficient is from its kernel. -/
+/-- The reduced normalized unitization term in degree zero.
+
+The degree-zero reduced term is isomorphic to `C_0(A)` through its linear kernel and the
+nonunital coefficient coordinate. -/
 def unitizationReducedZeroIso :
     (unitizationReducedNormalizedComplex k A).X 0 ≅ chainLevel k A A 0 :=
   unitizationReducedKernelLevelIso k A 0 ≪≫
     (unitizationReducedZeroLinearEquiv k A).toModuleIso
 
-/-- In positive degrees the reduced inclusion is an isomorphism, since this projector is zero. -/
+/-- The reduced normalized inclusion in positive degree.
+
+In degree `n+1`, the normalized scalar projector is zero, so inclusion of its kernel is an
+isomorphism. -/
 instance unitizationReducedInclusion_succ_isIso (n : ℕ) :
     IsIso ((kernel.ι (unitizationNormalizedScalarProjector k A)).f (n + 1)) := by
   let E := HomologicalComplex.eval (ModuleCat.{max u v} k) (ComplexShape.down ℕ) (n + 1)
@@ -163,13 +191,19 @@ instance unitizationReducedInclusion_succ_isIso (n : ℕ) :
   rw [← kernelComparison_comp_ι]
   infer_instance
 
-/-- The positive reduced comparison is exactly its original kernel inclusion. -/
+/-- The positive-degree comparison of reduced and full normalized unitization.
+
+In every positive degree, the kernel inclusion identifies the reduced normalized term with the
+full normalized unitization term. -/
 def unitizationReducedPositiveIso (n : ℕ) :
     (unitizationReducedNormalizedComplex k A).X (n + 1) ≅
       (normalizedBComplex k (Unitization k A)).X (n + 1) :=
   asIso ((kernel.ι (unitizationNormalizedScalarProjector k A)).f (n + 1))
 
-/-- The bottom inverse really is the original even word, without a scalar summand. -/
+/-- The ideal-leading word as the reduced degree-zero inclusion.
+
+The inverse degree-zero comparison followed by the kernel inclusion is the even word with
+coefficient in `A` and empty tail. -/
 @[reassoc]
 theorem unitizationReducedZeroIso_inv_inclusion :
     (unitizationReducedZeroIso k A).inv ≫
@@ -194,7 +228,10 @@ theorem unitizationReducedZeroIso_inv_inclusion :
   rw [LinearEquiv.apply_symm_apply, unitizationOriginalZeroEquiv_tprod,
     unitizationNormalizedZeroEquiv_tprod]
 
-/-- The literal positive normalized tensor level has its original even and odd word coordinates. -/
+/-- The two coordinate summands of a positive normalized unitization term.
+
+In degree `n+1`, splitting the coefficient `k ⊕ A` and identifying each quotient tail with `A`
+gives a linear equivalence to `C_(n+1)(A) × C_n(A)`. -/
 def unitizationNormalizedPositiveEquiv (n : ℕ) :
     (normalizedBComplex k (Unitization k A)).X (n + 1) ≃ₗ[k]
       chainLevel k A A (n + 1) × chainLevel k A A n :=
@@ -228,7 +265,9 @@ private theorem unitizationNormalizedPositiveEquiv_tprod (n : ℕ) (m : Unitizat
   rw [TensorProduct.prodLeft_tmul]
   rfl
 
-/-- The even coordinate gives precisely the original word in the first product factor. -/
+/-- The first product coordinate of an ideal-leading unitization word.
+
+The even word associated to `x ∈ C_(n+1)(A)` has positive normalized coordinates `(x,0)`. -/
 theorem unitizationNormalizedPositiveEquiv_even (n : ℕ) (x : chainLevel k A A (n + 1)) :
     unitizationNormalizedPositiveEquiv k A n ((unitizationEvenWord k A (n + 1)).hom x) = (x, 0) := by
   let L := (unitizationNormalizedPositiveEquiv k A n).toLinearMap.comp
@@ -244,7 +283,9 @@ theorem unitizationNormalizedPositiveEquiv_even (n : ℕ) (x : chainLevel k A A 
     simp only [Unitization.snd_inr, Unitization.fst_inr, zero_smul, map_zero]
   exact DFunLike.congr_fun h x
 
-/-- The odd coordinate gives precisely the same original word in the second product factor. -/
+/-- The second product coordinate of a unit-leading unitization word.
+
+The odd word associated to `x ∈ C_n(A)` has positive normalized coordinates `(0,x)`. -/
 theorem unitizationNormalizedPositiveEquiv_odd (n : ℕ) (x : chainLevel k A A n) :
     unitizationNormalizedPositiveEquiv k A n ((unitizationOddWord k A n).hom x) = (0, x) := by
   let L := (unitizationNormalizedPositiveEquiv k A n).toLinearMap.comp

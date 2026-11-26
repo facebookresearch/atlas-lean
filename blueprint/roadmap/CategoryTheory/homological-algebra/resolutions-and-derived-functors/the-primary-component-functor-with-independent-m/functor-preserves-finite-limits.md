@@ -1,3 +1,6 @@
-# Functor preserves Finite Limits
+# Power-torsion functor is left exact
 
-Primary components preserve finite limits in every coefficient universe.
+Power-torsion functor is left exact.
+
+The power-torsion functor preserves finite limits in `ModuleCat.{v} R`, including kernels and
+finite products.

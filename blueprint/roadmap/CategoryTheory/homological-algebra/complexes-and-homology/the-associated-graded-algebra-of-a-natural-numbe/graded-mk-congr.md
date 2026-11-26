@@ -1,4 +1,6 @@
-# Graded Mk congr
+# Equal degree and representative give equal graded elements
 
-Equal degrees and equal original representatives give equal native
-graded quotient constructors, with the actual degree cast eliminated.
+Equal degree and representative give equal graded elements.
+
+If `n = m` and representatives `u : F n` and `v : F m` have equal underlying elements in `A`,
+their quotient classes define the same element of `GradedMonoid (Grade F)`.

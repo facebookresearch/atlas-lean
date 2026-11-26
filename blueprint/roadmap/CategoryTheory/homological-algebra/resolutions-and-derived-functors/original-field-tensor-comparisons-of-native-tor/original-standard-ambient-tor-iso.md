@@ -1,5 +1,8 @@
-# Original Standard Ambient Tor Iso
+# Flat adjoining reductions identify standard ambient Tor with middle Tor
 
-Both genuine standard field adjoining cancellations, retaining the
-actual standard triple ambient and original support maps, reduce its native
-Tor to the original ordered middle-ring Tor in every degree.
+For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+There is a B-module isomorphism
+φ_std:M_std,q≅Tor_q^B(V,W), using the B-actions induced by i_V,i_W.
+The coefficient order V,W is retained in the target.

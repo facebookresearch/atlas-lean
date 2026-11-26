@@ -1,10 +1,10 @@
 # Linear Hom Cochain Chain Pairing
 
-- [Linear Hom Cochain Chain Pair Desc](linear-hom-cochain-chain-pair-desc.md)
-- [ΙTensor Obj comp linear Hom Cochain Chain Pair Desc](tensor-obj-comp-linear-hom-cochain-chain.md)
-- [Linear Hom Cochain Chain Pair](linear-hom-cochain-chain-pair.md)
-- [Linear Hom Cochain Chain Pair tmul](linear-hom-cochain-chain-pair-tmul.md)
-- [Chain Graded Pairing Degree Zero Action](chain-graded-pairing-degree-zero-action.md)
-- [Chain Graded Pairing Degree Zero Action normalization](chain-graded-pairing-degree-zero-action-2.md)
-- [Linear Hom Cochain Chain Graded Pairing](linear-hom-cochain-chain-graded-pairing.md)
-- [Linear Hom Cochain Chain Graded Pairing pair](linear-hom-cochain-chain-graded-pairing-2.md)
+- [A Hom cochain descends the specified tensor summand through a coefficient action](linear-hom-cochain-chain-pair-desc.md)
+- [The cochain–chain descriptor is supported exactly in its chosen bidegree](tensor-obj-comp-linear-hom-cochain-chain.md)
+- [A chain diagonal and coefficient action pair Hom cochains with chains](linear-hom-cochain-chain-pair.md)
+- [The Hom cochain–chain pairing evaluates through the diagonal and descriptor on pure tensors](linear-hom-cochain-chain-pair-tmul.md)
+- [A chain pairing with a degree-zero single complex gives its coefficient action](chain-graded-pairing-degree-zero-action.md)
+- [The degree-zero coefficient action equals the normalized homogeneous chain pairing](chain-graded-pairing-degree-zero-action-2.md)
+- [A chain diagonal and degree-zero chain action give the signed mixed graded pairing](linear-hom-cochain-chain-graded-pairing.md)
+- [The mixed graded pairing has the specified linear Hom cochain–chain component](linear-hom-cochain-chain-graded-pairing-2.md)

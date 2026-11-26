@@ -15,10 +15,15 @@ public import Mathlib.Algebra.Category.Grp.Basic
 public import Mathlib.Algebra.Category.Grp.Abelian
 
 /-!
-## The canonical zero normalization, outgoing extension, uniqueness and connector laws for the
-right-derived precomposition comparison. The zero slots use the existing stock
-rightDerivedZeroIsoSelf and its whiskering; their characteristic laws reuse the universal delta
-API
+# Degree-zero normalization of right-derived precomposition
+
+For exact injective-preserving `T : C → D` between abelian categories
+with injective resolutions and additive left-exact `P : C → A`,
+`B : D → A` with `P ≅ T ⋙ B`, the derived precomposition comparison
+is the unique cohomological delta-functor morphism whose degree-zero
+map becomes the given coefficient isomorphism under `R⁰P ≅ P` and
+`T ⋙ R⁰B ≅ T ⋙ B`. Its connecting squares also have elementwise forms
+for additive-group-valued functors.
 -/
 
 @[expose] public section
@@ -37,15 +42,26 @@ variable (T : C ⥤ D) [T.Additive] [T.PreservesInjectiveObjects] [T.PreservesHo
 variable (B : D ⥤ A) [B.Additive] [PreservesFiniteLimits B]
 variable {P : C ⥤ A} [P.Additive] [PreservesFiniteLimits P] (α : P ≅ T ⋙ B)
 
-/-- The zero-degree identification of the source derived delta functor. -/
+/-- Let `C,A` be abelian, with injective resolutions in `C`, and
+`P : C → A` additive and preserving finite limits. The degree-zero
+part of its right-derived delta-functor is canonically isomorphic to `P`. -/
 def precompSourceZeroIso : P.rightDerivedDeltaFunctor.T 0 ≅ P := P.rightDerivedZeroIsoSelf
 
-/-- The zero-degree identification of the precomposed target delta functor. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `D`,
+`T : C → D` additive and preserving finite limits and finite colimits,
+and `B : D → A` additive and preserving finite limits. The degree-zero
+part of the right-derived delta-functor of `B` precomposed with `T`
+is canonically isomorphic to `T ⋙ B`. -/
 def precompTargetZeroIso :
     (CohomologicalDeltaFunctor.precompose T (precompShortExact T) B.rightDerivedDeltaFunctor).T 0 ≅ T ⋙ B :=
   Functor.isoWhiskerLeft T B.rightDerivedZeroIsoSelf
 
-/-- The precomposition delta map has the original normalized source and target zero maps. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`T : C → D` additive and preserving injectives, homology, finite limits
+and finite colimits, `B : D → A` additive and preserving finite limits,
+and `P : C → A` additive and preserving finite limits. Fix
+`α : P ≅ T ⋙ B`. The degree-zero map of the precomposition delta-functor
+isomorphism satisfies `e_derived,0 ≫ e_target,0 = e_source,0 ≫ α`. -/
 theorem precompDeltaIsoOfIso_zero_normalization :
     CohomologicalDeltaFunctor.Hom.app (precompDeltaIsoOfIso T B α).hom 0 ≫
         (precompTargetZeroIso T B).hom = (precompSourceZeroIso (P := P)).hom ≫ α.hom := by
@@ -55,7 +71,13 @@ theorem precompDeltaIsoOfIso_zero_normalization :
       B.rightDerivedZeroIsoSelf.hom.app (T.obj X) = P.rightDerivedZeroIsoSelf.hom.app X ≫ α.hom.app X
   exact Functor.rightDerivedPrecompIsoOfIso_zeroIsoSelf T B α X
 
-/-- The precomposition delta map is the outgoing extension of its fixed zero map. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`T : C → D` additive and preserving injectives, homology, finite limits
+and finite colimits, `B : D → A` additive and preserving finite limits,
+and `P : C → A` additive and preserving finite limits. Fix
+`α : P ≅ T ⋙ B`. The forward precomposition delta-functor morphism is the
+outgoing universal extension of `α`, after the canonical source
+and target degree-zero identifications. -/
 theorem precompDeltaIsoOfIso_normalizedExtension :
     (precompDeltaIsoOfIso T B α).hom =
       CohomologicalDeltaFunctor.normalizedExtension P.rightDerivedDeltaFunctor
@@ -68,7 +90,12 @@ theorem precompDeltaIsoOfIso_normalizedExtension :
     (CohomologicalDeltaFunctor.normalizedExtension_normalization _ _ P.isUniversal_rightDerivedDeltaFunctor
       (precompSourceZeroIso (P := P)) (precompTargetZeroIso T B) α.hom).symm
 
-/-- The same zero normalization uniquely determines the full precomposition delta map. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`T : C → D` additive and preserving injectives, homology, finite limits
+and finite colimits, `B : D → A` additive and preserving finite limits,
+and `P : C → A` additive and preserving finite limits. Fix
+`α : P ≅ T ⋙ B`. Any cohomological delta-functor morphism with the same normalized
+degree-zero map `α` equals the forward precomposition comparison. -/
 theorem precompDeltaIsoOfIso_unique
     (f : P.rightDerivedDeltaFunctor ⟶
       CohomologicalDeltaFunctor.precompose T (precompShortExact T) B.rightDerivedDeltaFunctor)
@@ -80,7 +107,12 @@ theorem precompDeltaIsoOfIso_unique
   exact h₀.trans (precompDeltaIsoOfIso_zero_normalization T B α).symm
 
 omit [PreservesFiniteLimits P] [PreservesFiniteLimits B] in
-/-- The fixed comparison intertwines the original and mapped connectors. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`T : C → D` additive and preserving injectives, homology, finite limits
+and finite colimits, `B : D → A` additive and preserving finite limits,
+and `P : C → A` additive with `α : P ≅ T ⋙ B`. For short exact `S`,
+the comparisons in degrees `n,n+1` commute with the connecting maps
+of `P` on `S` and of `B` on `T(S)`. -/
 theorem canonicalConnecting_precompOfIso (n : ℕ) (S : ShortComplex.ShortExactSequences C) :
     (Functor.rightDerivedConnecting P n).app S ≫
       (Functor.rightDerivedPrecompIsoOfIso T B α (n + 1)).hom.app S.obj.X₁ =
@@ -88,7 +120,12 @@ theorem canonicalConnecting_precompOfIso (n : ℕ) (S : ShortComplex.ShortExactS
       (Functor.rightDerivedConnecting B n).app ⟨S.obj.map T, precompShortExact T S.obj S.property⟩ :=
   DeltaFunctor.System.comm (precompDeltaHomOfIso T B α).hom n S
 
-/-- Evaluate the original and mapped canonical connector equation without changing its endpoints. -/
+/-- Let `C,D` be abelian with injective resolutions, `T′ : C → D`
+additive and preserving injectives, homology, finite limits and finite
+colimits, and `B′ : D → Ab`, `P′ : C → Ab` additive with
+`α′ : P′ ≅ T′ ⋙ B′`. For short exact `S` and
+`y ∈ R^nP′(S.X₃)`, comparison in degree `n+1` of its boundary equals
+the boundary of its degree-`n` comparison in `R^nB′(T′(S.X₃))`. -/
 theorem canonicalConnecting_precompOfIso_value
     (T' : C ⥤ D) [T'.Additive] [T'.PreservesInjectiveObjects] [T'.PreservesHomology]
     [PreservesFiniteLimits T'] [PreservesFiniteColimits T']
@@ -108,7 +145,10 @@ theorem canonicalConnecting_precompOfIso_value
   exact (ConcreteCategory.comp_apply a b y).symm.trans
     (h.trans (ConcreteCategory.comp_apply c d y))
 
-/-- Paste an original connector square with its fixed comparison square on a class. -/
+/-- Let `e₃ : H₃ → G₃`, `e₁ : H₁ → G₁`, `c₃ : G₃ → B₃`,
+`c₁ : G₁ → B₁` be functions, with boundary functions `δ_H,δ_G,δ_B`.
+If `δ_G(e₃x)=e₁(δ_Hx)` and `c₁(δ_Gy)=δ_B(c₃y)` for all `x,y`,
+then `δ_B(c₃(e₃x))=c₁(e₁(δ_Hx))` for every `x`. -/
 theorem pastedConnector_apply {H₃ H₁ G₃ G₁ B₃ B₁ : Type*}
     (e₃ : H₃ → G₃) (e₁ : H₁ → G₁) {c₃ : G₃ → B₃} {c₁ : G₁ → B₁}
     (δH : H₃ → H₁) {δG : G₃ → G₁} {δB : B₃ → B₁}

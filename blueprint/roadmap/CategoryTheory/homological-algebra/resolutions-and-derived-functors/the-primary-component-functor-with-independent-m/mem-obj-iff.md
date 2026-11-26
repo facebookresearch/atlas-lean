@@ -1,3 +1,6 @@
-# Mem obj iff
+# Power-torsion membership is annihilation by a whole ideal power
 
-Membership is annihilation by every scalar in one power of the ideal.
+Power-torsion membership is annihilation by a whole ideal power.
+
+An element `a : M` belongs to `Γ_I(M)` exactly when some natural `n` satisfies `r • a = 0` for
+every `r ∈ I^n`.

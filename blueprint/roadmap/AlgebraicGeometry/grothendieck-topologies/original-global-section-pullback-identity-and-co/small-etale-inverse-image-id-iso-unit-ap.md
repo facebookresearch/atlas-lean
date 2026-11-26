@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Id Iso unit app
+# Identity inverse image unit agrees with base change restriction
 
-The actual identity unit has the literal original terminal restriction coordinate.
+Identity inverse image unit agrees with base change restriction.
+
+The identity adjunction unit followed by the inverse-image identity comparison has section
+component the restriction along the base-change identity isomorphism.

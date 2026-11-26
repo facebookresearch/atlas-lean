@@ -2,26 +2,26 @@
 
 ## Category Theory
 
-- [Admissible Monos Of](admissible-monos-of.md)
-- [Admissible Epis Of](admissible-epis-of.md)
-- [Exact Category](exact-category.md)
+- [First maps of a chosen class of exact pairs](admissible-monos-of.md)
+- [Second maps of a chosen class of exact pairs](admissible-epis-of.md)
+- [Quillen exact structures on additive categories](exact-category.md)
 
 ## Exact Category
 
-- [Is Admissible Mono](is-admissible-mono.md)
-- [Is Admissible Epi](is-admissible-epi.md)
-- [Is Admissible Mono f](is-admissible-mono-f.md)
-- [Is Admissible Epi g](is-admissible-epi-g.md)
-- [Is Limit kernel Fork of is Admissible Exact](is-limit-kernel-fork-of-is-admissible-ex.md)
-- [Is Colimit cokernel Cofork of is Admissible Exact](is-colimit-cokernel-cofork-of-is-admissi.md)
-- [Is Admissible Exact of is Admissible Mono is Colimit](is-admissible-exact-of-is-admissible-mon.md)
-- [Mono](mono.md)
-- [Epi](epi.md)
-- [Is Admissible Mono id](is-admissible-mono-id.md)
-- [Is Admissible Mono of is Iso](is-admissible-mono-of-is-iso.md)
+- [Admissible monomorphisms](is-admissible-mono.md)
+- [Admissible epimorphisms](is-admissible-epi.md)
+- [Admissibility of the first exact-sequence map](is-admissible-mono-f.md)
+- [Admissibility of the second exact-sequence map](is-admissible-epi-g.md)
+- [Kernel universal property of an admissible pair](is-limit-kernel-fork-of-is-admissible-ex.md)
+- [Cokernel universal property of an admissible pair](is-colimit-cokernel-cofork-of-is-admissi.md)
+- [Recognizing exact pairs from an admissible kernel map](is-admissible-exact-of-is-admissible-mon.md)
+- [Admissible kernel maps are monomorphisms](mono.md)
+- [Admissible quotient maps are epimorphisms](epi.md)
+- [Identity maps are admissible monomorphisms](is-admissible-mono-id.md)
+- [Isomorphisms are admissible monomorphisms](is-admissible-mono-of-is-iso.md)
 
 ## Is Admissible Mono
 
-- [Id](id.md)
-- [Of is Iso](of-is-iso.md)
-- [From Zero](from-zero.md)
+- [Identity admissible kernel maps](id.md)
+- [Isomorphisms as admissible kernel maps](of-is-iso.md)
+- [Maps from zero are admissible monomorphisms](from-zero.md)

@@ -11,7 +11,16 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtalePositiveNaturality
 
 /-!
-# Derived sections of small étale sheaves
+# Derived sections of coefficient lifted small étale sheaves
+
+Let `X : Scheme.{u}` and let `F` be an abelian sheaf with coefficient universe `w`. Lift its
+values objectwise to universe `max u w`. The lift preserves restriction maps and sheaf-
+morphism components on lifted elements.
+
+Small étale cohomology of the lifted sheaf is additively equivalent to its right-derived
+global sections in every natural degree. The equivalences are natural in sheaf maps, agree
+with terminal-section evaluation in degree zero, and in positive degrees agree with the
+normalized resolution-cycle comparison.
 -/
 @[expose] public section
 noncomputable section
@@ -86,7 +95,12 @@ private theorem zeroDerivedEquiv_naturality
     _ = _ := congrArg (S.hom.app Q') hd.symm
 
 
-/-- Actual Ext cohomology is naturally the right-derived global sections of every original sheaf. -/
+/-- Natural comparison for derived sections of lifted coefficients.
+
+There exists a family `H^q(X,L F) ≃+ R^qΓ(L F)` for all coefficient sheaves `F` in universe `w` and
+natural `q`, natural in their maps and normalized by terminal sections in degree zero and
+resolution representatives in positive degrees. The coefficient lift sends restrictions and
+morphism components of lifted elements to the lifts of their given values. -/
 theorem original_small_etale_derived_sections :
     let J := X.smallEtaleTopology
     let Γ := Sheaf.Γ J AddCommGrpCat.{max u w}

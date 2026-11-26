@@ -1,3 +1,4 @@
-# Principal Ideal Multiplier
+# Multiplication by an equation maps coefficients into its principal ideal
 
-The original equation multiplier as a map into its actual ideal.
+For a commutative ring B and g : B, define principalIdealMultiplier B g : B →ₗ[B] Ideal.span
+{g} by b ↦ b * g, with the product viewed as an element of the principal ideal.

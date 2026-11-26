@@ -1,3 +1,5 @@
-# Algebra Positive Normalization Homology Iso hom
+# Forward A-linear homology comparison is induced by normalization
 
-The homology comparison retains the original proper normalization as its forward homology map.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M an A-module with compatible
+k-action. In degree n : ℕ, the forward map of algebraPositiveNormalizationHomologyIso k A M n
+equals the homology map induced by algebraPositiveNormalization k A M.

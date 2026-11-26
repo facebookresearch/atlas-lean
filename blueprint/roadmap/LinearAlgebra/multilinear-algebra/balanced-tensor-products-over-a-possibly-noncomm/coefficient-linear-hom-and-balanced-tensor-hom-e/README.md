@@ -1,32 +1,32 @@
 # Coefficient-linear Hom and balanced tensor–Hom equivalences
 
-- [Hom](hom.md)
-- [Hom Module](hom-module.md)
-- [Map](map.md)
+- [Group of coefficient-linear maps between right modules](hom.md)
+- [Right scalar action by coefficient precomposition](hom-module.md)
+- [Right-linear postcomposition of coefficient Hom maps](map.md)
 
 ## Tensor Hom
 
-- [Curry](curry.md)
-- [Pairing](pairing.md)
-- [Pairing balanced](pairing-balanced.md)
-- [Uncurry](uncurry.md)
-- [Tensor Hom Equiv](tensor-hom-equiv.md)
+- [Currying a coefficient-linear balanced tensor map](curry.md)
+- [Evaluation pairing of a Hom-valued module map](pairing.md)
+- [Balance equation for a Hom-valued module map](pairing-balanced.md)
+- [Uncurrying a Hom-valued right module map](uncurry.md)
+- [Additive balanced tensor and Hom correspondence](tensor-hom-equiv.md)
 
 ## Tensor Maps
 
-- [Tensor Map](tensor-map.md)
+- [Balanced tensor map in the right module factor](tensor-map.md)
 
 ## Naturality
 
-- [Tensor Hom Equiv naturality left symm](tensor-hom-equiv-naturality-left-symm.md)
-- [Tensor Hom Equiv naturality right](tensor-hom-equiv-naturality-right.md)
+- [Source naturality of balanced tensor uncurrying](tensor-hom-equiv-naturality-left-symm.md)
+- [Target naturality of the balanced tensor and Hom correspondence](tensor-hom-equiv-naturality-right.md)
 
 ## Coefficient Maps
 
-- [Coefficient Tensor Map](coefficient-tensor-map.md)
-- [Precomp](precomp.md)
-- [Tensor Hom Equiv naturality coefficient](tensor-hom-equiv-naturality-coefficient.md)
-- [Coefficient Tensor Map id](coefficient-tensor-map-id.md)
-- [Coefficient Tensor Map comp](coefficient-tensor-map-comp.md)
-- [Precomp id](precomp-id.md)
-- [Precomp comp](precomp-comp.md)
+- [Balanced tensor map of a coefficient bimodule](coefficient-tensor-map.md)
+- [Right-linear precomposition by a bimodule map](precomp.md)
+- [Coefficient naturality of the balanced tensor and Hom correspondence](tensor-hom-equiv-naturality-coefficient.md)
+- [Identity coefficient map on balanced tensors](coefficient-tensor-map-id.md)
+- [Composition of coefficient maps on balanced tensors](coefficient-tensor-map-comp.md)
+- [Identity coefficient precomposition on Hom](precomp-id.md)
+- [Composition reversed by coefficient precomposition](precomp-comp.md)

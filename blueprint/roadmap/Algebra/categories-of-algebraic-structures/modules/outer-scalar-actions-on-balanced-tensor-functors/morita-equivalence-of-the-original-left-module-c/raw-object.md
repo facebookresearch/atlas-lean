@@ -1,3 +1,6 @@
-# Raw Object
+# Left-module return object with the composite coefficient
 
-Bundle the original right-parenthesized tensor with its computed R action.
+Left-module return object with the composite coefficient.
+
+For a left `R`-module `X`, the object `rawObject` is `(P ⊗_S Q) ⊗_R X`, bundled with its
+induced left `R`-action.

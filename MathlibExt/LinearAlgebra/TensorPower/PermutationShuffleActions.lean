@@ -14,13 +14,15 @@ public import MathlibExt.LinearAlgebra.TensorPower.ShuffleCuts
 public import MathlibExt.Combinatorics.Perm.EulerianShuffleMultiplication
 
 /-!
-# Actual permutation-algebra actions and Eulerian shuffle products
+# Permutation actions and signed shuffle products
 
-The native inverse-place representation acts on the original tail.
-The original two-block action is actual tensor concatenation of the two
-original representations. Mapping the proved finite group-ring shuffle
-identity through this representation gives the original tensor
-shuffle multiplicativity, with no desired operator law supplied.
+Let k be a commutative ring and V a k-module. The place-permutation representation extends to a
+k[Sₙ]-action on V⊗n. In the commutative ℚ-algebra setup, concatenation identifies a block
+permutation with the tensor product of its two block actions. The Eulerian element Λₙ(a)
+acts by its signed descent-polynomial coefficients, and at natural parameters these actions
+preserve the signed shuffle product.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., §4.5, for Eulerian operations and shuffle relations.
 -/
 
 @[expose] public section
@@ -36,7 +38,10 @@ variable {k : Type u} [CommRing k]
   {V : Type v} [AddCommGroup V] [Module k V]
   {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- Native lifting of the actual tail permutation representation. -/
+/-- The group-algebra action on a tensor power.
+
+For a commutative ring k and a k-module V, this k-algebra homomorphism k[Sₙ] → End_k(V⊗n) is
+the linear extension of σ ↦ ρₙ(σ), with ρₙ(σ)tprod(a) = tprod(a ∘ σ⁻¹). -/
 def permutationGroupAlgebraAction (n : ℕ) :
     MonoidAlgebra k (Equiv.Perm (Fin n)) →ₐ[k] Module.End k (TensorPower k n V) :=
   MonoidAlgebra.lift k (Module.End k (TensorPower k n V)) (Equiv.Perm (Fin n))
@@ -44,13 +49,20 @@ def permutationGroupAlgebraAction (n : ℕ) :
 
 variable [Algebra ℚ k]
 
-/-- The actual rational tail permutation action through the original ground algebra. -/
+/-- The rational permutation action on a tensor power.
+
+For a commutative ℚ-algebra k and a k-module V, this ring homomorphism ℚ[Sₙ] → End_k(V⊗n)
+extends rational coefficients along ℚ → k and applies the inverse-word permutation
+representation. -/
 def rationalPermutationAction (n : ℕ) :
     MonoidAlgebra ℚ (Equiv.Perm (Fin n)) →+* Module.End k (TensorPower k n V) :=
   (permutationGroupAlgebraAction (k := k) (V := V) n).toRingHom.comp
     (MonoidAlgebra.mapRingHom (Equiv.Perm (Fin n)) (algebraMap ℚ k))
 
-/-- Each actual rational generator has its original inverse-place action. -/
+/-- The action of a rational monomial on tensor factors.
+
+For a commutative ℚ-algebra k, a k-module V, c ∈ ℚ and σ ∈ Sₙ, the action of c[σ] on V⊗n is
+algebraMap(c) · ρₙ(σ). -/
 theorem rationalPermutationAction_single (n : ℕ) (σ : Equiv.Perm (Fin n)) (c : ℚ) :
     rationalPermutationAction (k := k) (V := V) n (MonoidAlgebra.single σ c) =
       algebraMap ℚ k c • permutationRepresentation (k := k) (V := V) n σ := by
@@ -59,7 +71,10 @@ theorem rationalPermutationAction_single (n : ℕ) (σ : Equiv.Perm (Fin n)) (c 
       (permutationRepresentation (k := k) (V := V) n) (MonoidAlgebra.single σ (algebraMap ℚ k c)) = _
   exact MonoidAlgebra.lift_single (permutationRepresentation (k := k) (V := V) n) σ (algebraMap ℚ k c)
 
-/-- The original coefficient representation is the actual native tensor extension of the tail action. -/
+/-- The rational coefficient action is the tensor extension of the tail action.
+
+For a commutative ℚ-algebra k, k-modules M,V and x ∈ ℚ[Sₙ], its action on M ⊗ V⊗n is id_M ⊗
+ρₙ(x), where ρₙ(x) is the rational action on V⊗n. -/
 theorem coefficientRationalPermutationAction_eq_map (n : ℕ)
     (x : MonoidAlgebra ℚ (Equiv.Perm (Fin n))) :
     coefficientRationalPermutationAction (k := k) (M := M) (V := V) n x =
@@ -76,7 +91,11 @@ theorem coefficientRationalPermutationAction_eq_map (n : ℕ)
       rationalPermutationAction_single, TensorProduct.map_smul_right]
     rfl
 
-/-- The actual rational evaluated Eulerian element has its literal finite tail action. -/
+/-- The signed descent-polynomial formula for Eulerian convolution.
+
+For a commutative ℚ-algebra k, a k-module V and a ∈ ℚ, the action of Λₙ(a) on V⊗n is ∑σ
+algebraMap(Bₙ,d(σ)(a) · sign(σ))ρₙ(σ). Here d(σ) is the descent number and Bₙ,d(X) =
+(1/n!)∏ⱼ₌₀ⁿ⁻¹(X+j-d). -/
 theorem rationalPermutationAction_eulerianLambda (n : ℕ) (a : ℚ) :
     rationalPermutationAction (k := k) (V := V) n (Equiv.Perm.eulerianLambda n a) =
       ∑ σ : Equiv.Perm (Fin n), algebraMap ℚ k
@@ -86,7 +105,10 @@ theorem rationalPermutationAction_eulerianLambda (n : ℕ) (a : ℚ) :
   rw [Equiv.Perm.eulerianLambda, map_sum]
   simp_rw [rationalPermutationAction_single]
 
-/-- The actual rational signed shuffle element acts by the original native signed shuffle. -/
+/-- The signed shuffle element acts as the shuffle endomorphism.
+
+For a commutative ℚ-algebra k, a k-module V and p,q ≥ 0, the action of the signed
+(p,q)-shuffle element ∑σ sign(σ)[σ] on V⊗(p+q) equals signedShuffleEnd. -/
 theorem rationalPermutationAction_signedShuffle (p q : ℕ) :
     rationalPermutationAction (k := k) (V := V) (p + q) (Equiv.Perm.signedShuffleElement p q) =
       signedShuffleEnd (k := k) (V := V) p q := by
@@ -103,7 +125,10 @@ theorem rationalPermutationAction_signedShuffle (p q : ℕ) :
   exact Int.cast_smul_eq_zsmul k (s.perm.sign : ℤ)
     (PiTensorProduct.reindex k (fun _ : Fin (p + q) => V) s.perm).toLinearMap
 
-/-- The original block permutation action is actual tensor concatenation of its two original factor actions. -/
+/-- Block permutations commute with tensor concatenation.
+
+For a commutative ℚ-algebra k, a k-module V, α ∈ Sₚ and β ∈ Sᵩ, let μ : V⊗p ⊗ V⊗q ≃ V⊗(p+q)
+be concatenation. Then ρₚ₊ᵩ(block(α,β)) ∘ μ = μ ∘ (ρₚ(α) ⊗ ρᵩ(β)). -/
 theorem permutationRepresentation_block_mulEquiv (p q : ℕ)
     (α : Equiv.Perm (Fin p)) (β : Equiv.Perm (Fin q)) :
     (permutationRepresentation (k := k) (V := V) (p + q) (Equiv.Perm.blockPermutation p q α β)).comp
@@ -150,7 +175,11 @@ theorem permutationRepresentation_block_mulEquiv (p q : ℕ)
   obtain ⟨j, rfl⟩ := (finSumFinEquiv : Fin p ⊕ Fin q ≃ Fin (p + q)).surjective i
   cases j <;> simp
 
-/-- The actual two-block Eulerian action is tensor concatenation of the original two evaluated factor actions. -/
+/-- The two-block Eulerian action in concatenation coordinates.
+
+For a commutative ℚ-algebra k, a k-module V and a ∈ ℚ, the action of
+splitEulerianLambda(p,q,a) on V⊗(p+q), conjugated by concatenation, is Aₚ(a) ⊗ Aᵩ(a), where
+Aⱼ(a) is the action of Λⱼ(a). -/
 theorem rationalPermutationAction_splitEulerianLambda (p q : ℕ) (a : ℚ) :
     (rationalPermutationAction (k := k) (V := V) (p + q) (Equiv.Perm.splitEulerianLambda p q a)).comp
         (TensorPower.mulEquiv (R := k) (M := V) (n := p) (m := q)).toLinearMap =
@@ -207,7 +236,11 @@ theorem rationalPermutationAction_splitEulerianLambda (p q : ℕ) (a : ℚ) :
   exact (congrArg (fun v => (cα * cβ) • v) hblock).trans
     (congrArg (fun c : k => c • v) (mul_comm cα cβ))
 
-/-- The actual evaluated Eulerian operation respects the original signed tensor shuffle product. -/
+/-- Shuffle multiplicativity at natural Eulerian parameters.
+
+For a commutative ℚ-algebra k, a k-module V and p,q,m ≥ 0, the Eulerian actions satisfy
+Aₚ₊ᵩ(m) ∘ shₚ,ᵩ = shₚ,ᵩ ∘ (Aₚ(m) ⊗ Aᵩ(m)). Here shₚ,ᵩ is the tensor shuffle product with
+permutation signs. -/
 theorem rationalEulerianLambda_signedShuffleProduct (p q m : ℕ) :
     (rationalPermutationAction (k := k) (V := V) (p + q) (Equiv.Perm.eulerianLambda (p + q) (m : ℚ))).comp
         (signedShuffleProduct (k := k) (V := V) p q) =

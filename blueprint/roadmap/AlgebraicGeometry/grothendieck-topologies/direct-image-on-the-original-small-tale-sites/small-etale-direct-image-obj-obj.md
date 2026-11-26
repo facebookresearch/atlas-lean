@@ -1,4 +1,6 @@
-# Small Etale Direct Image obj obj
+# Direct image sections are sections on the base change
 
-Sections of the actual direct image are sections on the literal fiber
-product object over the original source scheme.
+Direct image sections are sections on the base change.
+
+For an étale object `U → Y`, the direct-image value is `F(U ×_Y X)`, represented by the
+pullback projection to `X`.

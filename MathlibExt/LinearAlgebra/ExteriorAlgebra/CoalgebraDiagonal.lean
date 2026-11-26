@@ -13,13 +13,17 @@ public import Mathlib.LinearAlgebra.ExteriorAlgebra.Product
 public import MathlibExt.LinearAlgebra.ExteriorAlgebra.CoalgebraGrading
 
 /-!
-# The actual exterior coproduct is the native exterior diagonal
+# The graded algebra diagonal and Koszul symmetry
 
-Mathlib identifies the exterior algebra of a product with the graded tensor
-product of exterior algebras. The diagonal linear map, followed by that native
-equivalence, is an algebra map into the Koszul tensor algebra. Its underlying
-linear map agrees with the actual fold-built coproduct. The native graded
-tensor interchange therefore fixes the actual coproduct.
+For `E=ExteriorAlgebra R M`, the diagonal linear map `M → M×M`, `x ↦ (x,x)`, induces an
+algebra map into the graded tensor product of the exterior degree families. Its multiplication
+has sign `(-1)^(q*r)` when a right factor of degree `q` crosses a left factor of degree `r`.
+
+The underlying linear map to `E ⊗[R] E` is the exterior coproduct. The graded interchange
+fixes this diagonal. On homogeneous tensors the induced interchange is `a_p⊗b_q ↦
+(-1)^(p*q)(b_q⊗a_p)`, and it fixes the coproduct.
+
+References: Bourbaki, *Algebra*, Chapter III; Loday, *Cyclic Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -40,7 +44,13 @@ local notation "ℰ" => fun n : ℕ => ⋀[R]^n M
 local notation "G" => ℰ ᵍ⊗[R] ℰ
 local notation "γ" => (CliffordAlgebra.involute : E →ₐ[R] E)
 
-/-- The actual exterior diagonal, with the native graded tensor algebra as target. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. The `R`-algebra map `diagonalGraded R M : E
+→ₐ[R] G` is induced by `x ↦ (x,x)` followed by the exterior-algebra product equivalence. It
+sends a generator to `ι(x)⊗1+1⊗ι(x)` in `G`. -/
 def diagonalGraded : E →ₐ[R] G :=
   (prodEquivTensor R M M).toAlgHom.comp
     (map ((LinearMap.id : M →ₗ[R] M).prod (LinearMap.id : M →ₗ[R] M)))
@@ -53,7 +63,12 @@ theorem diagonalGraded_ι (x : M) :
   change prodEquivTensorForward R M M (ι R (x, x)) = _
   exact prodEquivTensorForward_ι_apply R M M (x, x)
 
-/-- The underlying linear diagonal uses the native equivalence to the ordinary tensor module. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. The `R`-linear map `diagonalLinear R M : E →
+E⊗E` is `τ⁻¹ ∘ diagonalGraded R M`. -/
 def diagonalLinear : E →ₗ[R] E ⊗[R] E :=
   (GradedTensorProduct.of R ℰ ℰ).symm.toLinearMap.comp (diagonalGraded R M).toLinearMap
 
@@ -99,7 +114,12 @@ private theorem diagonalGraded_mul_insertion (x : M) (t : E ⊗[R] E) :
           GradedTensorProduct.of_symm_of, TensorProduct.smul_tmul']
   exact LinearMap.congr_fun h t
 
-/-- The native exterior diagonal obeys the actual signed insertion recursion. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. For `x : M` and `a : E`, `diagonalLinear R M
+(ι(x)*a)=signedInsertion R M x (diagonalLinear R M a)`. -/
 theorem diagonalLinear_ι_mul (x : M) (a : E) :
     diagonalLinear R M (ι R x * a) = signedInsertion R M x (diagonalLinear R M a) := by
   change (GradedTensorProduct.of R ℰ ℰ).symm (diagonalGraded R M (ι R x * a)) =
@@ -108,7 +128,12 @@ theorem diagonalLinear_ι_mul (x : M) (a : E) :
   simpa only [LinearEquiv.apply_symm_apply] using
     diagonalGraded_mul_insertion R M x ((GradedTensorProduct.of R ℰ ℰ).symm (diagonalGraded R M a))
 
-/-- The fold-built coproduct is exactly the native exterior diagonal. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. The maps satisfy `coproduct R M =
+diagonalLinear R M : E →ₗ[R] E⊗E`. -/
 theorem coproduct_eq_diagonalLinear : coproduct R M = diagonalLinear R M := by
   apply LinearMap.ext
   intro a
@@ -122,7 +147,12 @@ private theorem one_mem_exteriorPower_zero : (1 : E) ∈ ⋀[R]^0 M := by
   rw [pow_zero]
   exact Submodule.mem_one.mpr ⟨(1 : R), by simp only [map_one]⟩
 
-/-- Native graded tensor interchange fixes the native exterior diagonal. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. The graded tensor interchange `κ_G : G → G`
+satisfies `κ_G ∘ diagonalGraded R M = diagonalGraded R M` as `R`-algebra maps. -/
 theorem diagonalGraded_comm :
     (GradedTensorProduct.comm ℰ ℰ).toAlgHom.comp (diagonalGraded R M) = diagonalGraded R M := by
   apply ExteriorAlgebra.hom_ext
@@ -140,19 +170,33 @@ theorem diagonalGraded_comm :
     pow_zero, one_smul]
   exact add_comm _ _
 
-/-- The actual Koszul interchange on the ordinary underlying tensor module. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. The `R`-linear equivalence `koszulSwap R M :
+E⊗E ≃ₗ[R] E⊗E` is `τ⁻¹ ∘ κ_G ∘ τ`, where `κ_G` is graded tensor interchange. -/
 def koszulSwap : (E ⊗[R] E) ≃ₗ[R] (E ⊗[R] E) :=
   (GradedTensorProduct.of R ℰ ℰ).trans
     ((GradedTensorProduct.comm ℰ ℰ).toLinearEquiv.trans (GradedTensorProduct.of R ℰ ℰ).symm)
 
-/-- The native exterior diagonal proves graded cocommutativity of the actual coproduct. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. For every `a : E`, `koszulSwap R M (Δ a)=Δ a`. -/
 theorem koszulSwap_coproduct (a : E) : koszulSwap R M (coproduct R M a) = coproduct R M a := by
   rw [coproduct_eq_diagonalLinear]
   change (GradedTensorProduct.of R ℰ ℰ).symm (GradedTensorProduct.comm ℰ ℰ (diagonalGraded R M a)) =
     (GradedTensorProduct.of R ℰ ℰ).symm (diagonalGraded R M a)
   exact congrArg (GradedTensorProduct.of R ℰ ℰ).symm (AlgHom.congr_fun (diagonalGraded_comm R M) a)
 
-/-- The Koszul interchange has the usual homogeneous sign over the original ring. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `E = ExteriorAlgebra R M`. Write `ι : M
+→ E` for the generators, `γ` for the grade involution, and `Δ : E →ₗ[R] E ⊗[R] E` for the
+exterior coproduct. Let `G` be the graded tensor algebra of the exterior degree families and
+`τ : E ⊗[R] E ≃ₗ[R] G` its linear identification. Its homogeneous product is
+`(a_p⊗b_q)(c_r⊗d_s)=(-1)^(q*r)(a_pc_r⊗b_qd_s)`. For `p,q : ℕ`, `a : Λ^p_R M`, and `b : Λ^q_R
+M`, `koszulSwap R M ((a:E)⊗(b:E))=(-1:R)^(p*q) • ((b:E)⊗(a:E))`. -/
 theorem koszulSwap_tmul (p q : ℕ) (a : ⋀[R]^p M) (b : ⋀[R]^q M) :
     koszulSwap R M ((a : E) ⊗ₜ[R] (b : E)) =
       (-1 : R) ^ (p * q) • ((b : E) ⊗ₜ[R] (a : E)) := by

@@ -1,3 +1,5 @@
-# Matrix Positive Tail Homology Iso
+# The homology comparison for positive matrix CE tails
 
-The positive-tail homology is the degree-`p+1` homology.
+The homology comparison for positive matrix CE tails.
+
+The tail homology in degree `p` is isomorphic to full matrix CE homology in degree `p+1`.

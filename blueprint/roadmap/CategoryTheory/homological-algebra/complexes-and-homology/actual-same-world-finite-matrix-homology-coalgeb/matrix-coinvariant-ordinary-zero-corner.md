@@ -1,3 +1,5 @@
-# Matrix Coinvariant Ordinary Zero Corner Map
+# The compared chain coalgebra size map of matrix coinvariants
 
-The converted zero-corner morphism of coinvariant chain coalgebras.
+The compared chain coalgebra size map of matrix coinvariants.
+
+Transport the coinvariant zero-extension comonoid morphism through the scalar-unit comparison.

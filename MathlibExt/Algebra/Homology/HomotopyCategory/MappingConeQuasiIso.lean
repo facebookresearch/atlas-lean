@@ -13,16 +13,18 @@ module
 public import Mathlib.Algebra.Homology.DerivedCategory.Basic
 public import MathlibExt.Algebra.Homology.HomotopyCofiberQuasiIso
 
+/- The quasi-isomorphism proof uses the cone triangles and the triangle five lemma in the derived category. -/
+
 /-!
-# Quasi-isomorphisms of the original mapping cones
+# Cone maps from homotopy-commuting squares
 
-The stock map of cones for a square that commutes up to an homotopy retains the original vertex
-maps and the original homotopy component. When the two vertex maps are quasi-isomorphisms, the map
-of cones is a quasi-isomorphism. The proof uses the stock distinguished cone triangles, the
-standard derived category, and the triangle five lemma.
-
-This is gluing machinery for finite-support induction. Its inputs are the two original vertex
-quasi-isomorphisms and the square homotopy.
+For integer cochain maps `φ₁ : K₁ → L₁`, `φ₂ : K₂ → L₂`, maps
+`a : K₁ → K₂`, `b : L₁ → L₂`, and a homotopy from `φ₁ ≫ b`
+to `a ≫ φ₂`, there is a map `Cone(φ₁) → Cone(φ₂)`.
+In biproduct coordinates it uses `a` on the shifted first factor,
+`b` on the second factor, and the stated homotopy as the cross
+component. In an abelian category, quasi-isomorphisms of both vertex
+maps make this cone map a quasi-isomorphism.
 -/
 
 @[expose] public section
@@ -41,10 +43,13 @@ variable {C : Type u} [Category.{v} C] [Preadditive C] [HasBinaryBiproducts C]
 variable {K₁ L₁ K₂ L₂ : CochainComplex C ℤ}
 variable {φ₁ : K₁ ⟶ L₁} {φ₂ : K₂ ⟶ L₂} {a : K₁ ⟶ K₂} {b : L₁ ⟶ L₂}
 
-/--
-The complete component formula for the stock cone map retains the original two summand maps and
-the square homotopy with its stock sign.
--/
+/-- Let `C` be preadditive with binary biproducts, and let
+`φ₁ : K₁ → L₁`, `φ₂ : K₂ → L₂` be integer cochain maps.
+For `a : K₁ → K₂`, `b : L₁ → L₂` and a homotopy
+`H : φ₁ ≫ b ≃ a ≫ φ₂`, the cone map in degree `j` has first
+component `a_(j+1)`, second component `b_j`, cross component
+`+H_(j+1,j)` from the shifted first source to the second target,
+and zero in the other off-diagonal position. -/
 theorem mapOfHomotopy_f (H : Homotopy (φ₁ ≫ b) (a ≫ φ₂)) (j : ℤ) :
     (mapOfHomotopy H).f j =
       (fst φ₁).1.v j (j + 1) rfl ≫
@@ -66,10 +71,10 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K₁ L₁ K₂ L₂ : CochainComplex C ℤ}
 variable {φ₁ : K₁ ⟶ L₁} {φ₂ : K₂ ⟶ L₂} {a : K₁ ⟶ K₂} {b : L₁ ⟶ L₂}
 
-/--
-The map of stock cones induced by an square homotopy is a quasi-isomorphism when its two original
-vertex maps are quasi-isomorphisms.
--/
+/-- In an abelian category `C`, let `φ₁,φ₂` be integer cochain
+maps and `a,b` their two vertex maps, with homotopy
+`φ₁ ≫ b ≃ a ≫ φ₂`. If `a,b` are quasi-isomorphisms, the induced
+map `Cone(φ₁) → Cone(φ₂)` is a quasi-isomorphism. -/
 theorem quasiIso_mapOfHomotopy (H : Homotopy (φ₁ ≫ b) (a ≫ φ₂))
     (ha : QuasiIso a) (hb : QuasiIso b) : QuasiIso (mapOfHomotopy H) := by
   let _ := HasDerivedCategory.standard C

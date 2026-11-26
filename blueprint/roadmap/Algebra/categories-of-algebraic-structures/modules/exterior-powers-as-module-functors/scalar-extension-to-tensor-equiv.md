@@ -1,4 +1,6 @@
-# Scalar Extension To Tensor Equiv
+# The tensor description of extension of scalars
 
-The native scalar extension has the original tensor carrier and scalar action.
-The transport uses actual identity maps on its two factors.
+The tensor description of extension of scalars.
+
+For a commutative `R`-algebra `S` and an `R`-module `M`, extension along `algebraMap R S` is
+`S`-linearly equivalent to `S ⊗[R] M`, with both tensor-factor values retained.

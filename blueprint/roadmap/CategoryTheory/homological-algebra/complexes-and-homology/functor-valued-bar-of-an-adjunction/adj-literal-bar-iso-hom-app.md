@@ -1,5 +1,5 @@
-# Adj Literal Bar Iso hom app
+# The full forgotten-bar comparison acts by the degree-object equality
 
-The full simplicial comparison has identity components at each simplex
-length, stated with `eqToHom` over the public object identification for the
-same opacity reason as the bridge law.
+Let T be a monad on C, alg a T-algebra, and n ∈ ℕ. The forward degree-n component of
+adjLiteralBarIso(alg) is eqToHom of adjLiteralBar_obj_eq at the opposite simplex [n]. Thus the
+simplicial comparison uses the specified equality between the two degree objects.

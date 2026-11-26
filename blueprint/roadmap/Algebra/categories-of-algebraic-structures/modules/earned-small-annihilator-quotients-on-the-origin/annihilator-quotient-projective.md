@@ -1,4 +1,6 @@
-# Annihilator Quotient projective
+# Categorical projectivity descends to annihilator quotient scalars
 
-Original categorical projectivity transfers to the actual quotient action through
-earned full/faithful restriction, original epis and the actual identity-component Iso.
+Categorical projectivity descends to annihilator quotient scalars.
+
+Let `M : ModuleCat R` be categorically projective and let `I ≤ ann(M)`. With the descended
+action, `ModuleCat.of (R ⧸ I) M` is categorically projective.

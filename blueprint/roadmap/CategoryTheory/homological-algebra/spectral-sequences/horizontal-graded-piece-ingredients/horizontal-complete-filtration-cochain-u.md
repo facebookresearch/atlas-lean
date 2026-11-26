@@ -1,5 +1,6 @@
-# Horizontal Complete Filtration Cochain Upper Iso
+# The finite filtered-complex presentation of a complete upper stage
 
-The nonnegative complete-filtration stage `p`, after cochain reindexing,
-is the cochain extension of the original finite stage.  The factorization
-through the natural filtration subobject makes stage coherence explicit.
+The finite filtered-complex presentation of a complete upper stage.
+
+The complete upper stage for column `p` is isomorphic to the cochain extension of finite
+filtered stage `p`.

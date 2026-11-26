@@ -1,3 +1,6 @@
-# Fg Module Derived Ambient
+# Functor from bounded finite-module localization to the ambient derived category
 
-Factor the original bounded cochains into the standard ambient derived category.
+Functor from bounded finite-module localization to the ambient derived category.
+
+The ambient cochain inclusion followed by the derived quotient descends to a functor
+`FGModuleDerived R ⥤ DerivedCategory (ModuleCat R)`.

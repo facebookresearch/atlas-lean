@@ -1,7 +1,7 @@
 # Eulerian weights of coefficient shuffle products
 
-- [Lambda Two coefficient Shuffle Pairing Map](lambda-two-coefficient-shuffle-pairing-m.md)
-- [Coefficient Shuffle projected eigenvalue](coefficient-shuffle-projected-eigenvalue.md)
-- [Coefficient Shuffle projected cross zero](coefficient-shuffle-projected-cross-zero.md)
-- [Coefficient Shuffle projected weight](coefficient-shuffle-projected-weight.md)
-- [Coefficient Shuffle mem weight](coefficient-shuffle-mem-weight.md)
+- [Convolution compatibility of the coefficient shuffle](lambda-two-coefficient-shuffle-pairing-m.md)
+- [The eigenvalue of a projected coefficient shuffle product](coefficient-shuffle-projected-eigenvalue.md)
+- [Off-sum-weight projections kill a shuffle product](coefficient-shuffle-projected-cross-zero.md)
+- [The sum-weight projection fixes the shuffle product](coefficient-shuffle-projected-weight.md)
+- [Shuffle products belong to the sum of their weights](coefficient-shuffle-mem-weight.md)

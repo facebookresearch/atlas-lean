@@ -1,3 +1,6 @@
-# Equivalence unit Iso
+# Unit of the right-module Morita equivalence is adjointified
 
-The chosen unit is the actual native refinement of the input contraction.
+Unit of the right-module Morita equivalence is adjointified.
+
+The unit is `Equivalence.adjointifyη` of the inverse `R`-return contraction and the specified
+`S`-return counit. The tensor functors and counit are retained.

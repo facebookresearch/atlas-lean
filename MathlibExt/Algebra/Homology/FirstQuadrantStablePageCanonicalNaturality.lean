@@ -16,16 +16,21 @@ public import
 public import MathlibExt.Algebra.Homology.SpectralObjectMapNaturality
 
 /-!
-# Naturality from stable pages to the canonical abutment
+# Naturality of the bounded stable-page comparison with the canonical abutment
 
-A bicomplex map induces a map on the fixed stable page and on the canonical
-bottom-indexed abutment term.  The stable-page/canonical-abutment comparison
-commutes with these maps.  The proof uses the naturality of the raw page
-presentation, then three `EMap` squares for the lower, upper, and bottom
-index replacements.
+Let f : K → L be a map of nonnegative homological bicomplexes in an
+abelian category C, and put n=p+q. The complete-filtration spectral
+map induces a morphism on the fixed stable page
+r₀=max(p+1,q+2).
 
-This file does not compare the canonical abutment with the associated graded
-and uses no successor-page API.
+The canonical abutment term B_(p,q) uses the four-stage interval
+−∞→p−1→p→n+1, with relative degrees −n−1,−n,−n+1.
+It also receives the map induced by f. For any valid page r meeting
+r≥p+1 and r≥q+2, the stable-to-canonical comparisons χ_K,χ_L satisfy
+χ_L ∘ m_r(f) = B_(p,q)(f) ∘ χ_K.
+Here m_r(f) is the map of the page's four-stage spectral term,
+transported through its page-object identifications.
+The category object and morphism worlds are independent.
 -/
 
 @[expose] public section
@@ -45,8 +50,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {K L : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- Map on the first stable page at bidegree `(p,q)` induced by a bicomplex
-morphism. -/
+/-- For a map f : K → L of nonnegative homological bicomplexes
+in an abelian category and p,q∈ℕ, the stable-page map is
+E^(r₀)_K(p,q) → E^(r₀)_L(p,q), r₀=max(p+1,q+2).
+It is the induced map on the page's four-stage spectral E-term
+conjugated by the canonical page-object identifications. -/
 noncomputable def horizontalStablePageMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     ((horizontalFirstQuadrantSpectralSequence K).page
@@ -83,8 +91,11 @@ noncomputable def horizontalStablePageMapOfBicomplex
     (homOfLE (data.le₂₃ r (p, q))) n₀ n₁ n₂
   exact eK.hom ≫ m ≫ eL.inv
 
-/-- Map on the bottom-indexed canonical abutment term induced by a bicomplex
-morphism. -/
+/-- For a map f : K → L of nonnegative homological bicomplexes
+in an abelian category and n=p+q, the induced canonical abutment
+map acts on the spectral E-term at stages
+−∞, p−1, p, n+1 and degrees −n−1,−n,−n+1.
+It is the map of those relative connecting-map short complexes. -/
 noncomputable def horizontalCanonicalAbutmentMapOfBicomplex
     (f : K ⟶ L) (p q : ℕ) :
     horizontalFirstQuadrantCanonicalAbutmentTerm K p q ⟶
@@ -110,8 +121,12 @@ theorem horizontalCanonicalAbutmentMapOfBicomplex_eq
         (-((p + q : ℕ) : ℤ) + 1) :=
   rfl
 
-/-- The stable-page comparison with the canonical finite abutment is natural
-in the first-quadrant bicomplex. -/
+/-- For a bicomplex map f : K → L in an abelian category,
+p,q∈ℕ and r∈ℤ with r≥1, r≥p+1 and r≥q+2, the comparisons
+χ_K : E^r_K(p,q) ≅ B_K(p,q) and χ_L satisfy
+χ_L ∘ m_r(f) = B_(p,q)(f) ∘ χ_K.
+The page map m_r(f) is transported through the four-stage
+page presentation, and B uses bottom −∞ and upper stage p+q+1. -/
 theorem horizontalStablePageCanonicalAbutmentIso_naturality
     (f : K ⟶ L) (r : ℤ) (hr : 1 ≤ r) (p q : ℕ)
     (hlower : (p : ℤ) + 1 ≤ r) (hupper : (q : ℤ) + 2 ≤ r) :

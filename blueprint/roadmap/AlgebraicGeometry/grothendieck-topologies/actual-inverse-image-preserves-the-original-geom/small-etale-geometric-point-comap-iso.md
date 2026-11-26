@@ -1,3 +1,5 @@
-# Small Etale Geometric Point Comap Iso
+# Geometric point comap is the image point
 
-This actual comap point is the original geometric point `x ≫ f`.
+Geometric point comap is the image point.
+
+The comap point on `Y` is isomorphic to the geometric point defined by the composite `x ≫ f`.

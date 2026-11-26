@@ -1,3 +1,9 @@
-# Ulift Right Equiv symm mk
+# Inverse whole-output lift comparison on pure factors
 
-The inverse whole-output comparison inserts the actual two native input lifts.
+Let k be a commutative ring and R, S semirings. Let M be a right
+R-module and N a left R-module and right S-module, both additive commutative
+groups with k-module structures. The right S-action on N commutes with
+its k-action and left R-action.
+At a common lift height z, the inverse comparison from the lifted
+output sends ULift.up([m ⊗ n]) to
+[ULift.up(m) ⊗ ULift.up(n)].

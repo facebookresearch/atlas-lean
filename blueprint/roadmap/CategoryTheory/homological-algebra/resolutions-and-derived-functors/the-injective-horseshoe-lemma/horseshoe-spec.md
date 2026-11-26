@@ -1,5 +1,7 @@
-# Horseshoe Spec
+# Canonical triangular horseshoe specification
 
-The injective horseshoe satisfies the coordinate specification (dual of
-the projective coordinate lemmas; proofs transport the op-side equations
-through `unop` (see `horseshoe_i_f`/`horseshoe_p_f`); `middle_d` is then formal.
+For a short exact sequence `S` in an abelian category `C` and endpoint
+injective resolutions `I₁`, `I₃`, the constructed injective horseshoe has
+its canonical degreewise biproduct specification. Its differential has
+matrix `[[d₁, κ], [0, d₃]]` and its resolution maps are the corresponding
+biproduct inclusion and projection.

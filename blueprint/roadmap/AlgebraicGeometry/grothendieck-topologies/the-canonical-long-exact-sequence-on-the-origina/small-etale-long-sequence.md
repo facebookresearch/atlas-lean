@@ -1,3 +1,6 @@
-# Small Etale Long Sequence
+# Six term small étale cohomology window
 
-The same canonical five arrows in every pair of adjacent degrees.
+Six term small étale cohomology window.
+
+For a short exact sheaf sequence, form its three cohomology objects in degree `n`, the
+connecting map, and its three objects in degree `n + 1`.

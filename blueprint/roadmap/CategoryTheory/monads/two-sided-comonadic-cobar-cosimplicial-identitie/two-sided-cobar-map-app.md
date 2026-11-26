@@ -1,3 +1,5 @@
-# Two Sided Cobar map δ app
+# The pointwise coface formula for two-sided cobar
 
-Coface components are the public coface components.
+The pointwise coface formula for two-sided cobar.
+
+At a carrier object `a`, the coface component is the corresponding cobar coface component.

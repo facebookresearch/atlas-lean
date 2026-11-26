@@ -1,4 +1,4 @@
 # Normalized regular Connes formulas
 
-- [Normalized Connes Formula](normalized-connes-formula.md)
-- [Normalized Connes Boundary eq formula](normalized-connes-boundary-eq-formula.md)
+- [The signed-norm formula for normalized regular Connes boundary](normalized-connes-formula.md)
+- [The normalized Connes boundary as coefficient projection and cyclic norm](normalized-connes-boundary-eq-formula.md)

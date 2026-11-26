@@ -1,3 +1,6 @@
-# Bimodule Tensor Derived
+# Localized tensor functor on bounded finite-module cochains
 
-Descend that same actual bounded tensor through the canonical localization.
+Localized tensor functor on bounded finite-module cochains.
+
+The exact left-finite coefficient tensor functor descends to `FGModuleDerived R ⥤
+FGModuleDerived S` through the two localization functors.

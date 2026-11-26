@@ -1,4 +1,5 @@
-# Tensor Adjoin flat
+# A flat adjoining factor makes the include-right map flat
 
-The actual include-right adjoining map is flat when its original
-adjoining factor is flat over K. Over a field this is derived automatically.
+For commutative K-algebras A,B, if A is flat over K,
+then the ring inclusion B→A⊗K B is flat.
+Over a field K this adjoining-factor flatness is automatic.

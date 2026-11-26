@@ -1,4 +1,6 @@
-# First Quadrant Has Total
+# Finite coproducts suffice to totalize a first-quadrant bicomplex
 
-A first-quadrant chain bicomplex has a direct-sum total complex using
-only finite coproducts.
+For a nonnegative homological bicomplex K in a preadditive
+category with finite coproducts, its direct-sum total exists.
+Each degree n uses only the finite antidiagonal p+q=n,
+so no infinite coproduct assumption is required.

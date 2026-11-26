@@ -1,3 +1,5 @@
-# Matrix Cyclic Weibel Chain Map f
+# The canonical-convention component of a matrix cyclic chain map
 
-The component in degree n is `(-1)^n` times the normalized tail trace.
+The canonical-convention component of a matrix cyclic chain map.
+
+The degree-`n` component is `(-1)^n` times the tail-alternating closed-cycle trace degree map.

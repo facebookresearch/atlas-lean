@@ -1,3 +1,5 @@
-# Tensor Adjoin Base Equiv tmul
+# The adjoined coefficient equivalence moves b onto X
 
-The original forward coefficient map retains both actual tensor factors.
+For commutative K-algebras A,B and a compatible B-module X,
+the cancellation sends (a⊗b)⊗x to a⊗(b•x).
+The coefficient B-action is retained in its original order.

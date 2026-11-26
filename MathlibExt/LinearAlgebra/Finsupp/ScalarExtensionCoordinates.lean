@@ -13,12 +13,17 @@ module
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
-# Canonical free coordinates after scalar extension
+# Free coordinates under scalar extension
 
-The native scalar extension of the standard finitely supported basis has
-the same original index. Its representation gives an acting-algebra-linear
-equivalence `R ⊗_k (I →₀ k) ≃ I →₀ R`, with independent universes and no
-finite index or chosen ordering. The standard basis is used directly.
+For commutative rings k and R with R a k-algebra, scalar extension identifies R ⊗[k] (I →₀ k)
+with the free R-module I →₀ R for any index type I. The R-linear equivalence sends a pure
+tensor r ⊗ v to the function whose i-th value is algebraMap k R (v i) * r.
+
+Its inverse sends single i r to r ⊗ single i 1. In particular, the extended unit-coordinate
+basis maps to the unit-coordinate basis over R. The rings and index type may have different
+carrier universes.
+
+See Bourbaki, *Algebra*, Chapter III, for extension of scalars.
 -/
 
 @[expose] public section
@@ -33,18 +38,23 @@ namespace Finsupp
 variable (k : Type u) [CommRing k] (R : Type v) [CommRing R] [Algebra k R]
   (I : Type w)
 
-/-- Original standard free coordinates commute with scalar extension. -/
+/-- Let k and R be commutative rings with R a k-algebra, and let I be any index type. There is an
+R-linear equivalence scalarExtensionCoordinates k R I : R ⊗[k] (I →₀ k) ≃ₗ[R] (I →₀ R). It
+sends r ⊗ v to the finitely supported function i ↦ algebraMap k R (v i) * r. -/
 def scalarExtensionCoordinates : R ⊗[k] (I →₀ k) ≃ₗ[R] (I →₀ R) :=
-  ((Finsupp.basisSingleOne (R := k) (ι := I)).baseChange R).repr
+  TensorProduct.finsuppScalarRight k R R I
 
-/-- Every original coordinate is extended by the original algebra map. -/
+/-- Let k and R be commutative rings with R a k-algebra, and let I be any index type. For r : R, v
+: I →₀ k and i : I, scalarExtensionCoordinates k R I (r ⊗ₜ[k] v) i = algebraMap k R (v i) * r. -/
 theorem scalarExtensionCoordinates_tmul_apply (r : R) (v : I →₀ k) (i : I) :
     scalarExtensionCoordinates k R I (r ⊗ₜ[k] v) i = algebraMap k R (v i) * r := by
-  rw [scalarExtensionCoordinates, Module.Basis.baseChange_repr_tmul]
-  change (v i) • r = algebraMap k R (v i) * r
+  change TensorProduct.finsuppScalarRight k R R I (r ⊗ₜ[k] v) i = _
+  rw [TensorProduct.finsuppScalarRight_apply_tmul_apply]
   exact Algebra.smul_def _ _
 
-/-- A standard pure coordinate keeps its original index and extended coefficient. -/
+/-- Let k and R be commutative rings with R a k-algebra, and let I be any index type. For r : R, i
+: I and c : k, scalarExtensionCoordinates k R I (r ⊗ₜ[k] single i c) = single i (algebraMap k
+R c * r). -/
 theorem scalarExtensionCoordinates_tmul_single (r : R) (i : I) (c : k) :
     scalarExtensionCoordinates k R I (r ⊗ₜ[k] single i c) =
       single i (algebraMap k R c * r) := by
@@ -57,16 +67,16 @@ theorem scalarExtensionCoordinates_tmul_single (r : R) (i : I) (c : k) :
   · have hji : j ≠ i := Ne.symm h
     rw [Finsupp.single_eq_of_ne hji, Finsupp.single_eq_of_ne hji, map_zero, zero_mul]
 
-/-- The inverse standard coordinate inserts the actual scalar unit in its original free generator. -/
+/-- Let k and R be commutative rings with R a k-algebra, and let I be any index type. For i : I
+and r : R, the inverse equivalence sends single i r to r ⊗ₜ[k] single i (1 : k). -/
 theorem scalarExtensionCoordinates_symm_single (i : I) (r : R) :
     (scalarExtensionCoordinates k R I).symm (single i r) =
       r ⊗ₜ[k] single i (1 : k) := by
-  apply (scalarExtensionCoordinates k R I).injective
-  rw [LinearEquiv.apply_symm_apply, scalarExtensionCoordinates_tmul_single,
-    map_one, one_mul]
+  change (TensorProduct.finsuppScalarRight k R R I).symm (single i r) = _
+  exact TensorProduct.finsuppScalarRight_symm_apply_single (R := k) (S := R) (M := R) i r
 
-/-- The original scalar-extension coordinate sends the original extended standard basis
-element to its actual standard coordinate. -/
+/-- Let k and R be commutative rings with R a k-algebra, and let I be any index type. For every i
+: I, scalarExtensionCoordinates k R I ((1 : R) ⊗ₜ[k] single i (1 : k)) = single i (1 : R). -/
 theorem scalarExtensionCoordinates_basis (i : I) :
     scalarExtensionCoordinates k R I
       ((1 : R) ⊗ₜ[k] single i (1 : k)) = single i (1 : R) := by

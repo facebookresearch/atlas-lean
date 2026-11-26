@@ -12,10 +12,14 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.TorBalancedUniverse
 
 /-!
-# Naturality of Tor symmetry
+# Naturality of the symmetry of Tor
 
-Both-variable module-map squares are components of the balance and
-derived-braiding bifunctor isomorphism.
+For a commutative ring `R : Type u`, the balanced tensor symmetry gives `Tor_q^R(M, N) ≅
+Tor_q^R(N, M)` for modules with carriers in universe `max u v`.
+
+For morphisms `f : M₁ ⟶ M₂` and `g : N₁ ⟶ N₂`, the forward symmetry intertwines `Tor_q(f, g)`
+with `Tor_q(g, f)`. The inverse symmetry satisfies the corresponding reversed square. Both
+statements retain the chosen tensor and derived-functor coordinates.
 -/
 
 @[expose] public section
@@ -32,8 +36,10 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- The existing original native Tor symmetry preserves both actual
-module maps in every original degree and carrier universe. -/
+/-- Forward Tor symmetry is natural in both module variables.
+
+For module maps `f : M₁ ⟶ M₂` and `g : N₁ ⟶ N₂`, the map `Tor_q(f, g)` followed by the forward
+symmetry at `(M₂, N₂)` equals the forward symmetry at `(M₁, N₁)` followed by `Tor_q(g, f)`. -/
 theorem nativeTorSymmetry_hom_naturality
     {M₁ M₂ N₁ N₂ : ModuleCat.{max u v} R} (f : M₁ ⟶ M₂) (g : N₁ ⟶ N₂) (q : ℕ) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) :=
@@ -73,8 +79,10 @@ theorem nativeTorSymmetry_hom_naturality
       simpa only [Category.assoc] using congrArg
         (fun t => ((E.app M₁).app N₁).hom ≫ t) ((T.map g).naturality f)
 
-/-- The actual inverse original native symmetry keeps the same two
-module maps in every original degree. -/
+/-- Inverse Tor symmetry is natural in both module variables.
+
+For the same module maps, `Tor_q(g, f)` followed by the inverse symmetry at `(M₂, N₂)` equals
+the inverse symmetry at `(M₁, N₁)` followed by `Tor_q(f, g)`. -/
 theorem nativeTorSymmetry_inv_naturality
     {M₁ M₂ N₁ N₂ : ModuleCat.{max u v} R} (f : M₁ ⟶ M₂) (g : N₁ ⟶ N₂) (q : ℕ) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) :=

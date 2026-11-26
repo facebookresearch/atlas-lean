@@ -1,3 +1,6 @@
-# To Module of Finite
+# Ring-to-module comparison on finite matrices
 
-The forward comparison preserves each finite-stage inclusion.
+Ring-to-module comparison on finite matrices.
+
+The map `Matrix.Stable.toModule k A` sends the ring class of an `n × n` matrix `B` to
+`Matrix.StableModule.ofFinite k A n B`.

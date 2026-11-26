@@ -1,3 +1,7 @@
-# Hom Cochain Complex Exact Sequence Bifunctor
+# Six-term Hom cohomology windows from coefficient exactness
 
-Generic exact-sequence bifunctor from the family Hom-cochain construction.
+Six-term Hom cohomology windows from coefficient exactness.
+
+Given a chain-complex family whose coefficient Hom cochain functors send short exact sequences
+to short exact sequences, form the functor of six-term cohomology exact windows in degrees `n`
+and `n + 1`, contravariant in the family index.

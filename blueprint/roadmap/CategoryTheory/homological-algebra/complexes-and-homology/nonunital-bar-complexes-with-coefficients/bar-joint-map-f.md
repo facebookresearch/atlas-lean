@@ -1,3 +1,6 @@
-# Bar Joint Map f
+# The tensor components of a joint bar map
 
-Every original joint degree map is the native tensor map on f and the original algebra factors of g.
+For a k-linear coefficient map f : V → W, a nonunital
+k-algebra map g : A → B and n ≥ 0, the degree-n joint coefficient-bar
+map is f ⊗ (g ⊗ g^⊗n) from
+V ⊗[k] (A ⊗[k] A^⊗n) to W ⊗[k] (B ⊗[k] B^⊗n).

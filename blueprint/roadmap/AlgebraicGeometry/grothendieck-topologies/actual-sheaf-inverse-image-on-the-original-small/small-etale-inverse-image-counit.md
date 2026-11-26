@@ -1,3 +1,5 @@
-# Small Etale Inverse Image Counit
+# Counit of small étale inverse image and direct image
 
-The actual natural counit on all original common-universe sheaves.
+Counit of small étale inverse image and direct image.
+
+The adjunction gives the natural map `f^*f_*R → R` on sheaves over `X`.

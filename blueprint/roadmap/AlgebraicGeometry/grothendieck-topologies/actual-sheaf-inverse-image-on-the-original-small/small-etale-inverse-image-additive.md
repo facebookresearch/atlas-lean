@@ -1,3 +1,5 @@
-# Small Etale Inverse Image additive
+# Small étale inverse image is additive
 
-Additivity follows from the proved additivity of the same right adjoint.
+Small étale inverse image is additive.
+
+Inverse image preserves sums of abelian-sheaf morphisms.

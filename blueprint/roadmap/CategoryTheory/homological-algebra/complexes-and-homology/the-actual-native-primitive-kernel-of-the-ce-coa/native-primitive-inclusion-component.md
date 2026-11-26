@@ -1,3 +1,6 @@
-# Native Primitive Inclusion component
+# The degreewise primitive equation of the chain inclusion
 
-Every component of the primitive inclusion satisfies the primitive equation.
+The degreewise primitive equation of the chain inclusion.
+
+In each degree, the component of the primitive inclusion followed by the corresponding
+primitive-equation component is zero.

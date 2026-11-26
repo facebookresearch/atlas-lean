@@ -13,15 +13,20 @@ public import MathlibExt.Algebra.Category.LieModuleCat.Restriction
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientFunctor
 
 /-!
-# Chevalley–Eilenberg chains under Lie algebra maps
+# CE chains under Lie algebra and coefficient maps
 
-For `f : L →ₗ⁅R⁆ L'`, an `L'`-module `N`, and a compatible map
-`g : M →ₗ⁅R,L⁆ f* N`, the induced chain map is the exterior map of `f`
-tensored with `g`. Exterior-word induction proves boundary compatibility.
+Fix a commutative ring R. A Lie homomorphism f : L → L' and a coefficient map g : M → f* N
+intertwining the L-action with the restricted L'-action define an ambient tensor map
+ExteriorAlgebra.map f ⊗ g. It commutes with the diagonal actions, exterior insertion and the
+coefficient boundaries. In degree n the map is ⋀^n f ⊗ g, and it commutes with the homogeneous
+CE differentials.
 
-The linear formulas allow independent Lie and coefficient universes.
-Bundled chain maps use one module-category universe. Restriction maps are
-natural in the target representation and respect composition of Lie maps.
+The linear operator statements allow separate source and target Lie-algebra and coefficient
+universes. Bundled chain maps use common Lie and coefficient carrier universes. For an
+L'-module N, taking g to be the identity gives CE(L,f* N) → CE(L',N); these restriction maps
+are natural in N and compose with Lie homomorphisms.
+
+See Weibel, *An Introduction to Homological Algebra*, Chapter 7.
 -/
 
 @[expose] public section
@@ -44,7 +49,10 @@ variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
 variable (f : L →ₗ⁅R⁆ L')
 variable (M : LieModuleCat.{w} R L) (N : LieModuleCat.{w'} R L')
 
-/-- The ambient exterior and coefficient tensor map. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. Define
+coefficientLieAmbientMap : ExteriorAlgebra R L ⊗[R] M →ₗ[R] ExteriorAlgebra R L' ⊗[R] N as
+ExteriorAlgebra.map f tensored with g. It sends a ⊗ m to ExteriorAlgebra.map f(a) ⊗ g(m). -/
 def coefficientLieAmbientMap (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) :
     (ExteriorAlgebra R L ⊗[R] M) →ₗ[R] (ExteriorAlgebra R L' ⊗[R] N) :=
   TensorProduct.map (ExteriorAlgebra.map f.toLinearMap).toLinearMap g.toLinearMap
@@ -58,7 +66,11 @@ theorem coefficientLieAmbientMap_tmul
   simp only [coefficientLieAmbientMap, TensorProduct.map_tmul,
     AlgHom.toLinearMap_apply, LieModuleHom.coe_toLinearMap]
 
-/-- The native source coefficient map intertwines the two diagonal actions. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. Let F be the ambient
+exterior tensor map. For x : L, F ∘ coefficientDiagonalAction_(L,M)(x) =
+coefficientDiagonalAction_(L',N)(f(x)) ∘ F. The diagonal actions combine the exterior adjoint
+and coefficient actions. -/
 theorem coefficientLieDiagonalAction_naturality
     (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) (x : L) :
     (coefficientLieAmbientMap R L f M N g).comp
@@ -84,7 +96,10 @@ theorem coefficientLieDiagonalAction_naturality_apply
         (coefficientLieAmbientMap R L f M N g p) :=
   LinearMap.congr_fun (coefficientLieDiagonalAction_naturality R L f M N g x) p
 
-/-- Exterior insertion commutes with the concrete tensor map. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. For x : L, the ambient map F
+satisfies F ∘ coefficientInsertion_(L,M)(x) = coefficientInsertion_(L',N)(f(x)) ∘ F, where
+insertion multiplies the exterior factor on the left by its generator. -/
 theorem coefficientLieInsertion_naturality
     (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) (x : L) :
     (coefficientLieAmbientMap R L f M N g).comp (coefficientInsertion R L M x) =
@@ -103,7 +118,10 @@ theorem coefficientLieInsertion_naturality_apply
       coefficientInsertion R L' N (f x) (coefficientLieAmbientMap R L f M N g p) :=
   LinearMap.congr_fun (coefficientLieInsertion_naturality R L f M N g x) p
 
-/-- Lie and coefficient maps jointly intertwine the ambient CE boundary. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. The ambient map F =
+ExteriorAlgebra.map f ⊗ g satisfies F ∘ coefficientBoundary R L M = coefficientBoundary R L' N
+∘ F. -/
 theorem coefficientLieBoundary_naturality
     (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) :
     (coefficientLieAmbientMap R L f M N g).comp (coefficientBoundary R L M) =
@@ -136,7 +154,10 @@ theorem coefficientLieBoundary_naturality_apply
       coefficientBoundary R L' N (coefficientLieAmbientMap R L f M N g p) :=
   LinearMap.congr_fun (coefficientLieBoundary_naturality R L f M N g) p
 
-/-- Degree `n` is the exterior map tensored with the native restricted coefficient map. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. For n : ℕ,
+coefficientLieDegreeMap is ⋀[R]^n L ⊗[R] M →ₗ[R] ⋀[R]^n L' ⊗[R] N given by TensorProduct.map
+(exteriorPower.map n f.toLinearMap) g.toLinearMap. Its value on a ⊗ m is ⋀^n f(a) ⊗ g(m). -/
 def coefficientLieDegreeMap
     (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) (n : ℕ) :
     ((⋀[R]^n L) ⊗[R] M) →ₗ[R] ((⋀[R]^n L') ⊗[R] N) :=
@@ -151,7 +172,10 @@ theorem coefficientLieDegreeMap_tmul
   simp only [coefficientLieDegreeMap, TensorProduct.map_tmul,
     LieModuleHom.coe_toLinearMap]
 
-/-- The homogeneous map is the restriction of the concrete ambient tensor map. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. Let F_n =
+coefficientLieDegreeMap n, F the ambient map, and J_n, J'_n the homogeneous tensor inclusions.
+For every n : ℕ, J'_n ∘ F_n = F ∘ J_n. -/
 theorem coefficientLieDegreeMap_inclusion
     (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) (n : ℕ) :
     ((⋀[R]^n L').subtype.rTensor N).comp (coefficientLieDegreeMap R L f M N g n) =
@@ -162,8 +186,11 @@ theorem coefficientLieDegreeMap_inclusion
     LinearMap.rTensor_tmul, Submodule.subtype_apply, exteriorPower.coe_map,
     coefficientLieAmbientMap_tmul]
 
-/-- Every positive-degree homogeneous differential is natural, with independent
-Lie algebra and coefficient universes and no flatness hypothesis. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. For n : ℕ, the homogeneous
+degree maps F_n satisfy F_n ∘ coefficientDifferential_(L,M)(n) =
+coefficientDifferential_(L',N)(n) ∘ F_(n+1). The source and target Lie and coefficient
+carriers may have different universes. -/
 theorem coefficientLieDifferential_naturality
     (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) (n : ℕ) :
     (coefficientLieDegreeMap R L f M N g n).comp (coefficientDifferential R L M n) =
@@ -193,7 +220,12 @@ variable [LieRing L'] [LieAlgebra R L'] [LieRing L''] [LieAlgebra R L'']
 variable (f : L →ₗ⁅R⁆ L')
 variable (M : LieModuleCat.{w} R L) (N : LieModuleCat.{w} R L')
 
-/-- The native CE chain map from joint differential naturality. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism, M a left L-module and N a left
+L'-module. Let g : M →ₗ⁅R,L⁆ f* N satisfy g(⁅x,m⁆) = ⁅f(x),g(m)⁆. For the bundled complexes, L
+and L' have the same carrier universe v and M and N the same carrier universe w, with chain
+terms in ModuleCat.{max u v w} R. The maps F_n = ⋀^n f ⊗ g assemble into
+coefficientLieComplexMap : coefficientComplex R L M ⟶ coefficientComplex R L' N. Its degree-n
+component sends a ⊗ m to ⋀^n f(a) ⊗ g(m). -/
 def coefficientLieComplexMap (g : M →ₗ⁅R,L⁆ LieModuleCat.restrictObj f N) :
     coefficientComplex R L M ⟶ coefficientComplex R L' N :=
   ChainComplex.ofHom
@@ -216,8 +248,10 @@ theorem coefficientLieComplexMap_f_tmul
       exteriorPower.map n f.toLinearMap a ⊗ₜ[R] g m :=
   coefficientLieDegreeMap_tmul R L f M N g n a m
 
-/-- An `L'`-representation gives the canonical restriction map
-`CE(L,f* N) → CE(L',N)`. The coefficient factor is the identity. -/
+/-- Let R : Type u be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism between carrier-universe-v
+algebras, and N an L'-module with carrier universe w. The map coefficientRestrictionMap goes
+from coefficientComplex R L (f* N) to coefficientComplex R L' N. In degree n it is ⋀^n f ⊗
+id_N. -/
 def coefficientRestrictionMap :
     coefficientComplex R L (LieModuleCat.restrictObj f N) ⟶ coefficientComplex R L' N :=
   coefficientLieComplexMap R L f (LieModuleCat.restrictObj f N) N LieModuleHom.id
@@ -227,7 +261,10 @@ theorem coefficientRestrictionMap_f_tmul (n : ℕ) (a : ⋀[R]^n L) (m : N) :
       exteriorPower.map n f.toLinearMap a ⊗ₜ[R] m := by
   rw [coefficientRestrictionMap, coefficientLieComplexMap_f_tmul, LieModuleHom.id_apply]
 
-/-- Restriction is natural in the target coefficient representation. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' a Lie homomorphism in a common Lie carrier universe, and
+g : N ⟶ P a morphism of L'-modules in a common coefficient universe. Then restriction_N
+followed by coefficientComplexMap g equals coefficientComplexMap (restrictMap f g) followed by
+restriction_P, as maps CE(L,f* N) → CE(L',P). -/
 theorem coefficientRestrictionMap_naturality
     {P : LieModuleCat.{w} R L'} (g : N ⟶ P) :
     coefficientRestrictionMap R L f N ≫ coefficientComplexMap R L' N g =
@@ -247,15 +284,20 @@ theorem coefficientRestrictionMap_naturality
     coefficientComplexMap_f_tmul, coefficientRestrictionMap_f_tmul]
   rfl
 
-/-- The canonical maps form a natural transformation from restricted
-coefficient chains to the target Lie algebra's coefficient chains. -/
+/-- Let R : Type u be commutative and f : L →ₗ⁅R⁆ L' a Lie homomorphism with both Lie carriers in
+universe v. For coefficient universe w, the maps CE(L,f* N) → CE(L',N) form a natural
+transformation LieModuleCat.restrict f ⋙ coefficientComplexFunctor R L ⟶
+coefficientComplexFunctor R L', with degree-n component ⋀^n f ⊗ id_N. -/
 def coefficientRestrictionNatTrans :
     LieModuleCat.restrict f ⋙ coefficientComplexFunctor R L ⟶
       coefficientComplexFunctor R L' where
   app N := coefficientRestrictionMap R L f N
   naturality N P g := (coefficientRestrictionMap_naturality R L f N g).symm
 
-/-- Composition of Lie algebra maps gives the composite canonical restriction map. -/
+/-- Let R be commutative, f : L →ₗ⁅R⁆ L' and h : L' →ₗ⁅R⁆ L'' Lie homomorphisms in the same Lie
+carrier universe, and P an L''-module. The restriction map CE(L,f*(h*P)) → CE(L',h*P) followed
+by CE(L',h*P) → CE(L'',P) equals coefficientRestrictionMap for h.comp f. In every degree the
+exterior maps compose and the coefficient factor remains the identity. -/
 theorem coefficientRestrictionMap_comp (h : L' →ₗ⁅R⁆ L'')
     (P : LieModuleCat.{w} R L'') :
     coefficientRestrictionMap R L f (LieModuleCat.restrictObj h P) ≫

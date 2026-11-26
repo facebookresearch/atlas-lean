@@ -15,12 +15,15 @@ public import Mathlib.CategoryTheory.Sites.LocallySurjective
 public import Mathlib.CategoryTheory.Sites.Point.Skyscraper
 
 /-!
-# Geometric stalks and local exactness on small étale sites
+# Stalk and local section criteria for small étale exactness
 
-Categorical exactness uses a common coefficient universe, while local
-section predicates refer to the site and its maps. The geometric family
-and cover detector are constructed from scheme points and give the local
-exactness criterion.
+For abelian sheaves with coefficient universe `max u w`, a morphism is an epimorphism
+precisely when its sections are locally surjective for the small étale topology.
+
+A short complex is short exact precisely when its first map is injective on each étale object,
+its sectionwise image equals the kernel of the second map, and every section of the last sheaf
+lifts after restriction along a covering sieve. Equivalently, its image under every geometric
+stalk functor over a separably closed field in universe `u` is short exact.
 -/
 
 @[expose] public section
@@ -81,8 +84,10 @@ private theorem locallySurjective_of_common_stalks (b : F ⟶ G)
       rw [Functor.map_comp, ConcreteCategory.comp_apply, hq]
       exact hp
 
-/-- An actual common-universe epimorphism has original section lifts on an
-actual cover. Stalk surjectivity comes from the stock stalk left adjoint. -/
+/-- Epimorphisms of abelian sheaves are locally surjective.
+
+An epimorphism of common-universe small étale abelian sheaves is locally surjective on
+sections. -/
 theorem smallEtaleCommon_epi_locallySurjective (b : F ⟶ G) [Epi b] :
     Presheaf.IsLocallySurjective X.smallEtaleTopology b.hom := by
   apply locallySurjective_of_common_stalks b
@@ -94,8 +99,10 @@ theorem smallEtaleCommon_epi_locallySurjective (b : F ⟶ G) [Epi b] :
     (Φ.obj.sheafFiber (A := AddCommGrpCat.{max u w})).map_epi b
   exact (AddCommGrpCat.epi_iff_surjective _).mp hmap
 
-/-- The last-map epimorphism is equivalent to the original local lift
-condition, without any common-universe W-equals-local-bijective premise. -/
+/-- Local surjectivity characterizes sheaf epimorphisms.
+
+A morphism of common-universe small étale abelian sheaves is epi if and only if its presheaf
+section maps are locally surjective. -/
 theorem smallEtaleCommon_epi_iff_locallySurjective (b : F ⟶ G) :
     Epi b ↔ Presheaf.IsLocallySurjective X.smallEtaleTopology b.hom := by
   constructor
@@ -106,8 +113,11 @@ theorem smallEtaleCommon_epi_iff_locallySurjective (b : F ⟶ G) :
     let := hb
     exact Sheaf.epi_of_isLocallySurjective b
 
-/-- The full categorical criterion is exactly literal component injectivity,
-range=zero-kernel and actual local lifts of every original section. -/
+/-- Local section criterion for a short exact sheaf sequence.
+
+Short exactness is equivalent to sectionwise injectivity of the first map, equality of its
+range with the second map's kernel on each étale object, and local lifting of every last-sheaf
+section along a covering sieve. -/
 theorem smallEtaleCommon_shortExact_iff_local
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})) :
     S.ShortExact ↔
@@ -139,20 +149,28 @@ theorem smallEtaleCommon_shortExact_iff_local
 
 variable {Ω : Type u} [Field Ω] [IsSepClosed Ω]
 
-/-- The actual stock filtered colimit over the original geometric
-neighborhoods, retaining the original scheme and coefficient universes. -/
+/-- Geometric stalk functor for common universe coefficients.
+
+For `Spec Ω → X` with `Ω` separably closed in universe `u`, take the sheaf-fiber functor of
+its common-universe geometric point. -/
 abbrev smallEtaleCommonGeometricStalk (x : Spec (.of Ω) ⟶ X) :
     Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w} ⥤ AddCommGrpCat.{max u w} :=
   (smallEtaleGeometricPointCommon.{u, w} x).sheafFiber
 
-/-- Its object is literally the colimit of the original neighborhood sections. -/
+/-- Geometric stalk as a filtered neighborhood colimit.
+
+The stalk of a sheaf is the colimit of its sections over the opposite elements category of the
+lifted geometric fiber. -/
 theorem smallEtaleCommonGeometricStalk_obj (x : Spec (.of Ω) ⟶ X)
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleCommonGeometricStalk.{u, w} x).obj Q =
       colimit ((Functor.Elements.π (smallEtaleGeometricPointCommon.{u, w} x).fiber).op ⋙ Q.obj) :=
   rfl
 
-/-- Its morphism is the actual induced colimit map of the original components. -/
+/-- Geometric stalk morphism is the map on neighborhood colimits.
+
+A sheaf morphism acts on geometric stalks by the colimit map of its section components over
+geometric neighborhoods. -/
 theorem smallEtaleCommonGeometricStalk_map (x : Spec (.of Ω) ⟶ X)
     {Q Q' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}} (a : Q ⟶ Q') :
     (smallEtaleCommonGeometricStalk.{u, w} x).map a =
@@ -160,8 +178,10 @@ theorem smallEtaleCommonGeometricStalk_map (x : Spec (.of Ω) ⟶ X)
         ((Functor.Elements.π (smallEtaleGeometricPointCommon.{u, w} x).fiber).op)).map a.hom) :=
   rfl
 
-/-- Actual common geometric stalks preserve exactness, and their original
-canonical family detects it by the stock conservative-exact-functor theorem. -/
+/-- Geometric stalks detect short exactness.
+
+A common-universe sheaf short complex is short exact if and only if its image at every
+geometric point over a separably closed field in universe `u` is short exact. -/
 theorem smallEtaleCommon_shortExact_iff_geometricStalks
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})) :
     S.ShortExact ↔
@@ -182,8 +202,10 @@ theorem smallEtaleCommon_shortExact_iff_geometricStalks
     subst Φ
     exact hS _ (smallEtaleCanonicalGeometricMorphism X x)
 
-/-- Both complete exactness criteria use the same original maps and the
-actual common-universe geometric stalk construction. -/
+/-- Stalk and local section exactness criteria agree.
+
+For a sheaf short complex, short exactness is equivalent both to exactness at every geometric
+stalk and to the sectionwise kernel and local-surjectivity conditions. -/
 theorem original_small_etale_geometric_stalk_exactness
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})) :
     (S.ShortExact ↔

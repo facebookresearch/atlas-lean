@@ -1,3 +1,6 @@
-# Regular Coefficient Map comp
+# Composition of lifted regular coefficient maps
 
-Regular maps compose across independent algebra and coefficient-lift worlds.
+Let k be commutative, A,B,C associative unital k-algebras, and
+g : A → B, h : B → C multiplicative k-linear maps. At arbitrary
+independent coefficient lift heights, the lifted regular map of h
+after that of g is the lifted map of h ∘ g.

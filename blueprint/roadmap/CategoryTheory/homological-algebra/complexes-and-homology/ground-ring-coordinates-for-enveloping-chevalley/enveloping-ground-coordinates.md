@@ -1,3 +1,6 @@
-# Enveloping Ground Coordinates
+# The ground-linear coordinates of an enveloping chain term
 
-Native scalar restriction of the existing U-linear tensor coordinates.
+The ground-linear coordinates of an enveloping chain term.
+
+The degree-`n` restricted term is `R`-linearly equivalent to `U_R(L) ⊗[R] ⋀ⁿ[R] L`, with
+coordinate map `w ⊗ a ↦ a ⊗ w`.

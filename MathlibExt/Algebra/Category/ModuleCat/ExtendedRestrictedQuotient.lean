@@ -17,6 +17,17 @@ public import Mathlib.RingTheory.Noetherian.Basic
 
 /-!
 # Scalar extension and restriction of ideal quotient modules
+
+Let R,S,Q be commutative rings in a common world, with maps
+f:R→Q and g:S→Q. For an ideal I⊆R, extending R/I to Q
+and then restricting to S gives the S-module isomorphism
+Res_g(Q⊗[R,f](R/I))≅Res_g(Q/f(I)Q).
+It sends q⊗[r] to [f(r)q].
+
+A surjective ring map b:Q→P identifies Q/ker(b) with P as
+a Q-module. If j:S→P equals b∘g and J=ker(b), restricting
+this quotient presentation gives Res_g(Q/J)≅Res_j(P),
+with forward value [q]↦b(q) and inverse b(q)↦[q].
 -/
 
 public section
@@ -26,7 +37,10 @@ universe u
 open CategoryTheory CategoryTheory.Limits
 open scoped TensorProduct ChangeOfRings
 
-/-- The actual extended quotient, with the original restricted scalar action. -/
+/-- For commutative rings R,S,Q, maps f:R→Q,g:S→Q and
+I⊆R an ideal, there is an S-module isomorphism
+Res_g(Q⊗[R,f](R/I))≅Res_g(Q/I.map(f)).
+All ring and module carriers here have world u. -/
 def extendedRestrictedQuotientIso
     (R S Q : Type u) [CommRing R] [CommRing S] [CommRing Q]
     (f : R →+* Q) (g : S →+* Q) (I : Ideal R) :
@@ -86,7 +100,10 @@ theorem extendedRestrictedScalarModule_finite
     exact mul_smul _ _ _⟩
   exact Module.Finite.trans (R := S) Q (E.obj M)
 
-/-- The inherited quotient comparison retains the literal tensor and scalar values. -/
+/-- For f:R→Q,g:S→Q between commutative rings and an
+ideal I⊆R, the restricted extension-quotient isomorphism
+has pure-tensor value q⊗[r]↦[f(r)q].
+The target quotient is Q/I.map(f), with S-action through g. -/
 theorem extendedRestrictedQuotientIso_hom_tmul
     (R S Q : Type u) [CommRing R] [CommRing S] [CommRing Q]
     (f : R →+* Q) (g : S →+* Q) (I : Ideal R) (q : Q) (r : R) :
@@ -98,7 +115,9 @@ theorem extendedRestrictedQuotientIso_hom_tmul
   exact Algebra.TensorProduct.quotIdealMapEquivTensorQuot_symm_tmul Q I q r
 
 
-/-- A surjective scalar map presents the actual target as its source-kernel quotient module. -/
+/-- For commutative rings R,P and a surjective map f:R→P,
+the quotient R/ker(f) is isomorphic as an R-module to P
+with its scalar action restricted along f. -/
 def surjectiveQuotientModuleIso
     (R P : Type u) [CommRing R] [CommRing P]
     (f : R →+* P) (hf : Function.Surjective f) :
@@ -108,7 +127,9 @@ def surjectiveQuotientModuleIso
   let fa : R →ₐ[R] P := { toRingHom := f, commutes' := fun _ => rfl }
   exact (Ideal.quotientKerAlgEquivOfSurjective (f := fa) hf).toLinearEquiv.toModuleIso
 
-/-- The quotient presentation sends the original class of `r` to the actual scalar-map value. -/
+/-- For a surjective commutative-ring map f:R→P,
+the forward module presentation R/ker(f)→Res_f(P)
+sends [r] to f(r). -/
 theorem surjectiveQuotientModuleIso_hom_mk
     (R P : Type u) [CommRing R] [CommRing P]
     (f : R →+* P) (hf : Function.Surjective f) (r : R) :
@@ -118,7 +139,9 @@ theorem surjectiveQuotientModuleIso_hom_mk
   change Ideal.quotientKerAlgEquivOfSurjective (f := fa) hf (Ideal.Quotient.mk _ r) = f r
   exact Ideal.quotientKerAlgEquivOfSurjective_mk hf r
 
-/-- The inverse quotient presentation sends an actual scalar image back to its original class. -/
+/-- For a surjective commutative-ring map f:R→P,
+the inverse Res_f(P)→R/ker(f) sends f(r) to [r].
+The value is independent of the representative modulo ker(f). -/
 theorem surjectiveQuotientModuleIso_inv_map
     (R P : Type u) [CommRing R] [CommRing P]
     (f : R →+* P) (hf : Function.Surjective f) (r : R) :
@@ -128,7 +151,10 @@ theorem surjectiveQuotientModuleIso_inv_map
   change (Ideal.quotientKerAlgEquivOfSurjective (f := fa) hf).symm (fa r) = Ideal.Quotient.mk _ r
   exact Ideal.quotientKerAlgEquivOfSurjective_symm_apply hf r
 
-/-- Restriction along an actual scalar triangle preserves the quotient presentation of its target. -/
+/-- For commutative-ring maps g:S→Q,b:Q→P,j:S→P,
+assume b surjective, ker(b)=J and j=b∘g.
+Then Res_g(Q/J)≅Res_j(P) as S-modules.
+The isomorphism preserves the two scalar actions of the triangle. -/
 def restrictedQuotientIsoOfSurjective
     (S Q P : CommRingCat.{u})
     (g : S ⟶ Q) (b : Q ⟶ P) (j : S ⟶ P) (J : Ideal Q)
@@ -142,7 +168,9 @@ def restrictedQuotientIsoOfSurjective
   exact (ModuleCat.restrictScalars g.hom).mapIso (eK ≪≫ eP) ≪≫
     (ModuleCat.restrictScalarsComp'App g.hom b.hom j.hom h (ModuleCat.of P P)).symm
 
-/-- The restricted quotient comparison retains the original target scalar value on every representative. -/
+/-- For a commuting scalar triangle j=b∘g with b:Q→P
+surjective and ker(b)=J, the S-module quotient comparison
+Res_g(Q/J)→Res_j(P) sends [q] to b(q). -/
 theorem restrictedQuotientIsoOfSurjective_hom_mk
     (S Q P : CommRingCat.{u})
     (g : S ⟶ Q) (b : Q ⟶ P) (j : S ⟶ P) (J : Ideal Q)
@@ -157,7 +185,9 @@ theorem restrictedQuotientIsoOfSurjective_hom_mk
   exact ModuleCat.restrictScalarsComp'App_inv_apply g.hom b.hom j.hom
     (congrArg CommRingCat.Hom.hom hj) (ModuleCat.of P P) (b q)
 
-/-- The inverse restricted quotient comparison takes every actual scalar image to its original class. -/
+/-- For commutative rings in a scalar triangle j=b∘g,
+with b surjective and ker(b)=J, the inverse restricted
+quotient comparison sends b(q) to [q]∈Q/J. -/
 theorem restrictedQuotientIsoOfSurjective_inv_map
     (S Q P : CommRingCat.{u})
     (g : S ⟶ Q) (b : Q ⟶ P) (j : S ⟶ P) (J : Ideal Q)

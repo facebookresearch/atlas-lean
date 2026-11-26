@@ -13,12 +13,15 @@ public import Mathlib.CategoryTheory.Linear.LinearFunctor
 public import Mathlib.Algebra.Algebra.Hom
 
 /-!
-# Functorial endomorphism rings and scalar algebras
+# Endomorphism rings under additive and linear functors
 
-The native functor map on endomorphism monoids is a ring morphism for an
-additive functor and a scalar algebra morphism for a linear functor. The
-construction retains the native function on morphisms and independent
-category, morphism and scalar universes.
+An additive functor `F : C ⥤ D` between preadditive categories induces a ring homomorphism
+`End(X) → End(F(X))`, with underlying map `a ↦ F.map(a)`. Identity and composite functors
+induce the identity and composite ring homomorphisms.
+
+If the categories are linear over a commutative semiring `R` and `F` is `R`-linear, this map
+is an `R`-algebra homomorphism. The category-object, morphism, and scalar universes are
+independent.
 -/
 
 @[expose] public section
@@ -33,7 +36,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   {D : Type u₂} [Category.{v₂} D] [Preadditive D]
   {E : Type u₃} [Category.{v₃} E] [Preadditive E]
 
-/-- Additive functors send the native endomorphism ring to the native endomorphism ring. -/
+/-- The endomorphism-ring homomorphism of an additive functor.
+
+For an object `X`, an additive functor sends each endomorphism to its functorial image,
+preserving ring addition, multiplication, zero, and identity. -/
 def mapEndRingHom (F : C ⥤ D) [F.Additive] (X : C) : End X →+* End (F.obj X) :=
   { F.mapEnd (X := X) with
     map_zero' := by
@@ -46,12 +52,18 @@ def mapEndRingHom (F : C ⥤ D) [F.Additive] (X : C) : End X →+* End (F.obj X)
       change F.map (a.asHom + b.asHom) = F.map a.asHom + F.map b.asHom
       exact F.map_add }
 
-/-- The endomorphism ring morphism uses precisely the original native functor map. -/
+/-- The carrier morphism of an additive endomorphism-ring map.
+
+The endomorphism-ring homomorphism induced by `F` has underlying morphism `F.map(a.asHom)` at
+`a ∈ End(X)`. -/
 @[simp]
 theorem mapEndRingHom_asHom (F : C ⥤ D) [F.Additive] (X : C) (a : End X) :
     (F.mapEndRingHom X a).asHom = F.map a.asHom := rfl
 
-/-- Endomorphism-ring transport respects functor composition. -/
+/-- Composition of additive endomorphism-ring maps.
+
+The ring homomorphism induced by `F ⋙ G` is the map induced by `F` followed by that induced by
+`G` at `F(X)`. -/
 theorem mapEndRingHom_comp (F : C ⥤ D) [F.Additive] (G : D ⥤ E) [G.Additive] (X : C) :
     (F ⋙ G).mapEndRingHom X = (G.mapEndRingHom (F.obj X)).comp (F.mapEndRingHom X) := by
   apply RingHom.ext
@@ -59,7 +71,9 @@ theorem mapEndRingHom_comp (F : C ⥤ D) [F.Additive] (G : D ⥤ E) [G.Additive]
   apply End.ext
   rfl
 
-/-- The identity functor induces the identity endomorphism-ring morphism. -/
+/-- The identity endomorphism-ring homomorphism of the identity functor.
+
+The identity functor induces the identity ring homomorphism on each endomorphism ring. -/
 @[simp]
 theorem mapEndRingHom_id (X : C) : (𝟭 C).mapEndRingHom X = RingHom.id (End X) := by
   apply RingHom.ext
@@ -71,7 +85,10 @@ variable (R : Type w) [CommSemiring R]
   [CategoryTheory.Linear R C] [CategoryTheory.Linear R D]
   [CategoryTheory.Linear R E]
 
-/-- Linear functors preserve the native scalar algebra on each endomorphism ring. -/
+/-- The endomorphism-algebra homomorphism of a linear functor.
+
+For categories linear over a commutative semiring `R`, an additive `R`-linear functor induces
+an `R`-algebra homomorphism `End(X) → End(F(X))`. -/
 def mapEndAlgHom (F : C ⥤ D) [F.Additive] [F.Linear R] (X : C) :
     End X →ₐ[R] End (F.obj X) :=
   { F.mapEndRingHom X with
@@ -82,11 +99,17 @@ def mapEndAlgHom (F : C ⥤ D) [F.Additive] [F.Linear R] (X : C) :
       change F.map (r • 𝟙 X) = r • 𝟙 (F.obj X)
       rw [F.map_smul, F.map_id] }
 
+/-- The carrier morphism of a linear endomorphism-algebra map.
+
+The scalar-algebra homomorphism induced by `F` has underlying morphism `F.map(a.asHom)`. -/
 @[simp]
 theorem mapEndAlgHom_asHom (F : C ⥤ D) [F.Additive] [F.Linear R] (X : C) (a : End X) :
     (F.mapEndAlgHom R X a).asHom = F.map a.asHom := rfl
 
-/-- Scalar-algebra transport respects functor composition. -/
+/-- Composition of linear endomorphism-algebra maps.
+
+The algebra homomorphism induced by `F ⋙ G` is the composite of the algebra homomorphisms
+induced by `F` and `G`. -/
 theorem mapEndAlgHom_comp (F : C ⥤ D) [F.Additive] [F.Linear R]
     (G : D ⥤ E) [G.Additive] [G.Linear R] (X : C) :
     (F ⋙ G).mapEndAlgHom R X =

@@ -1,4 +1,6 @@
-# Partial Total Spectral Sequence Page One Two Iso zero hom comp page Two Iso hom
+# Zero-column page transition respects the common interval coordinate
 
-In the zero column, the page-one-to-page-two map followed by the shared
-page-two coordinate is the page-one homology coordinate.
+Zero-column page transition respects the common interval coordinate.
+
+At `(0, q)`, the first-page-to-second-page isomorphism followed by the second-page interval
+coordinate equals the first-page homology coordinate into that same interval object.

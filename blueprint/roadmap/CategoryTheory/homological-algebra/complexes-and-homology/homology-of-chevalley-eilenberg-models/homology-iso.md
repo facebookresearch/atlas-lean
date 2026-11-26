@@ -1,3 +1,6 @@
-# Homology Iso
+# The homology isomorphism induced by a CE model isomorphism
 
-A model isomorphism induces an isomorphism on fixed-degree CE homology.
+The homology isomorphism induced by a CE model isomorphism.
+
+Applying the degree-`n` homology functor to a model isomorphism gives an isomorphism of the
+corresponding homology modules.

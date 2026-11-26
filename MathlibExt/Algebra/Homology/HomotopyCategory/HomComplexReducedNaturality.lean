@@ -12,12 +12,16 @@ module
 public import MathlibExt.Algebra.Homology.HomotopyCategory.HomComplexReducedComplex
 
 /-!
-# Naturality of raw quotient/kernel Hom-complex normal forms
+# Naturality of quotient-kernel Hom normal forms
 
-source and target complex maps induce maps on the raw Hom complex and, under two commuting outer
-squares, on its two-sided annihilator subcomplex. The quotient/kernel reconstruction is natural as
-an entire complex map and in every integer cohomology degree. Homogeneous cochains need not be
-closed.
+Let D be preadditive, η : U → C and ε : A → V maps of integer cochain complexes. Source and
+target complex maps compatible with two outer squares send a homogeneous cochain θ to b ∘ θ ∘ c
+and induce a map of the two-sided annihilator subcomplexes. These maps satisfy identity,
+composition, witness-independence and source–target interchange laws.
+
+If D has kernels and cokernels, the induced maps on coker η and ker ε commute with
+quotient–cochain–inclusion reconstruction. Hence the normal-form isomorphisms are natural both
+as cochain-complex maps and on Hⁿ for every n.
 -/
 
 noncomputable section
@@ -33,10 +37,9 @@ variable {C A C' A' C'' A'' : CochainComplex D ℤ}
 
 open Cochain
 
-/--
-Simultaneous contravariant source and covariant target whiskering of the raw Hom complex by
-complex maps.
--/
+/-- Let D be preadditive and C,A,C′,A′ integer cochain complexes. Let c : C′ → C and b : A → A′ be
+complex maps. Precomposition by c and postcomposition by b give a cochain map Hom(C,A) →
+Hom(C′,A′), with degree-n component θ ↦ b ∘ θ ∘ c. -/
 @[expose]
 public def mapOfHom (c : C' ⟶ C) (b : A ⟶ A') :
     CochainComplex.HomComplex C A ⟶ CochainComplex.HomComplex C' A' where
@@ -53,14 +56,17 @@ public def mapOfHom (c : C' ⟶ C) (b : A ⟶ A') :
       ((Cochain.ofHom c).comp (δ n m τ) (zero_add m)).comp (Cochain.ofHom b) (add_zero m)
     rw [δ_comp_ofHom, δ_ofHom_comp]
 
-/-- Every component is the literal raw pre/post composition. -/
+/-- Let D be preadditive and C,A,C′,A′ integer cochain complexes. Let c : C′ → C and b : A → A′ be
+complex maps. For a degree-n homogeneous cochain θ : C → A, the component of the induced Hom
+complex map is b ∘ θ ∘ c. -/
 public theorem mapOfHom_f_apply (c : C' ⟶ C) (b : A ⟶ A') (n : ℤ)
     (τ : Cochain C A n) :
     ((mapOfHom c b).f n) τ =
       ((Cochain.ofHom c).comp τ (zero_add n)).comp (Cochain.ofHom b) (add_zero n) :=
   rfl
 
-/-- Identity whiskering is the identity of the entire Hom complex. -/
+/-- In a preadditive category D, the identity source and target maps induce the identity on the Hom
+complex of any two integer cochain complexes C,A. -/
 public theorem mapOfHom_id :
     mapOfHom (𝟙 C) (𝟙 A) = 𝟙 (CochainComplex.HomComplex C A) := by
   apply HomologicalComplex.hom_ext
@@ -71,8 +77,9 @@ public theorem mapOfHom_id :
       (Cochain.ofHom (𝟙 A)) (add_zero n) = τ
   simp only [Cochain.id_comp, Cochain.comp_id]
 
-/-- Source whiskering composes contravariantly, target whiskering covariantly,
-as an equality of whole complex maps. -/
+/-- Let D be preadditive and C,A,C′,A′ integer cochain complexes. Let c : C′ → C and b : A → A′ be
+complex maps. For c′ : C″ → C′ and b′ : A′ → A″, the Hom map for (c ∘ c′,b′ ∘ b) is the map for
+(c,b) followed by that for (c′,b′). -/
 public theorem mapOfHom_comp
     (c : C' ⟶ C) (c' : C'' ⟶ C') (b : A ⟶ A') (b' : A' ⟶ A'') :
     mapOfHom c b ≫ mapOfHom c' b' = mapOfHom (c' ≫ c) (b ≫ b') := by
@@ -98,10 +105,10 @@ universe u v
 variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable {U C A V U' C' A' V' U'' C'' A'' V'' : CochainComplex D ℤ}
 
-/--
-The additive map on the two-sided annihilator induced by the contravariant source square and
-covariant target square.
--/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. For each integer n, θ ↦ b ∘ θ ∘ c gives an additive map Annⁿ(η,ε) →
+Annⁿ(η′,ε′). The two squares ensure the transported cochain is killed by η′ and ε′. -/
 @[expose]
 public def annihilatorMap
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
@@ -152,7 +159,10 @@ public def annihilatorMap
     apply Subtype.ext
     simp only [Cochain.comp_add, Cochain.add_comp, AddSubgroup.coe_add]
 
-/-- The underlying homogeneous cochain is the prescribed literal composite. -/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. The induced annihilator map has underlying degree-n cochain b ∘ θ ∘ c for
+every θ ∈ Annⁿ(η,ε). -/
 public theorem annihilatorMap_apply
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -162,7 +172,10 @@ public theorem annihilatorMap_apply
       ((ofHom c).comp τ.val (zero_add n)).comp (ofHom b) (add_zero n) :=
   rfl
 
-/-- Identity squares induce the identity additive map, in every integer degree. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. The four identity maps in the outer squares induce the identity
+additive map of Annⁿ(η,ε), for every integer n. -/
 public theorem annihilatorMap_id (η : U ⟶ C) (ε : A ⟶ V) (n : ℤ) :
     annihilatorMap η ε η ε (𝟙 U) (𝟙 C) (𝟙 A) (𝟙 V) (by simp) (by simp) n =
       AddMonoidHom.id (annihilator η ε n) := by
@@ -173,10 +186,11 @@ public theorem annihilatorMap_id (η : U ⟶ C) (ε : A ⟶ V) (n : ℤ) :
     τ.val
   simp only [Cochain.id_comp, Cochain.comp_id]
 
-/--
-Compatible squares compose on the additive maps. The two composite square proofs are derived here
-from the original squares, not extra inputs.
--/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. A second compatible pair of squares composes with this one. The resulting
+annihilator map is the composite of the two maps, with source maps composed contravariantly and
+target maps covariantly, in every degree n. -/
 public theorem annihilatorMap_comp
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (η'' : U'' ⟶ C'') (ε'' : A'' ⟶ V'')
@@ -215,10 +229,10 @@ public theorem annihilatorMap_comp
   simp only [comp_zero_cochain_v, zero_cochain_comp_v, ofHom_v,
     HomologicalComplex.comp_f, Category.assoc]
 
-/--
-With the four complex maps fixed, changing only proofs of the same two commuting squares does not
-change the additive map.
--/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. The additive map Annⁿ(η,ε) → Annⁿ(η′,ε′) depends only on a,c,b,v. Any two
+witnesses of the same commutative squares produce this same map. -/
 public theorem annihilatorMap_proof_irrel
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -231,10 +245,10 @@ public theorem annihilatorMap_proof_irrel
   cases hv
   rfl
 
-/--
-The annihilator complex map, with the preceding additive maps as its components. Differential
-compatibility uses complex maps only.
--/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. The degreewise maps θ ↦ b ∘ θ ∘ c form a cochain map Ann(η,ε) → Ann(η′,ε′),
+since c and b commute with the original differentials. -/
 @[expose]
 public def annihilatorComplexMap
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
@@ -251,7 +265,10 @@ public def annihilatorComplexMap
       ((ofHom c).comp (δ n m τ.val) (zero_add m)).comp (ofHom b) (add_zero m)
     rw [δ_comp_ofHom, δ_ofHom_comp]
 
-/-- The degree component is exactly the additive annihilator map. -/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. The degree-n component of the annihilator cochain-complex map is the
+additive annihilator map θ ↦ b ∘ θ ∘ c. -/
 public theorem annihilatorComplexMap_f
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -260,8 +277,10 @@ public theorem annihilatorComplexMap_f
       AddCommGrpCat.ofHom (annihilatorMap η ε η' ε' a c b vmap hpre hpost n) :=
   rfl
 
-/-- The target subgroup is fixed explicitly before exposing its underlying
-raw homogeneous cochain. -/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. For θ ∈ Annⁿ(η,ε), the degree-n component has underlying homogeneous cochain
+b ∘ θ ∘ c in Annⁿ(η′,ε′). -/
 public theorem annihilatorComplexMap_f_apply
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -272,7 +291,10 @@ public theorem annihilatorComplexMap_f_apply
       ((ofHom c).comp τ.val (zero_add n)).comp (ofHom b) (add_zero n) :=
   rfl
 
-/-- Identity squares give the identity of the entire annihilator complex. -/
+/-- Let D be preadditive and let U,C,A,V be integer cochain complexes, with complex maps η : U → C
+and ε : A → V. For n ∈ ℤ, Annⁿ(η,ε) consists of homogeneous cochains θ : C → A of degree n
+satisfying θ ∘ η=0 and ε ∘ θ=0. The identity squares induce the identity cochain map of
+Ann(η,ε). -/
 public theorem annihilatorComplexMap_id (η : U ⟶ C) (ε : A ⟶ V) :
     annihilatorComplexMap η ε η ε (𝟙 U) (𝟙 C) (𝟙 A) (𝟙 V) (by simp) (by simp) =
       𝟙 (annihilatorComplex η ε) := by
@@ -285,8 +307,10 @@ public theorem annihilatorComplexMap_id (η : U ⟶ C) (ε : A ⟶ V) :
   exact congrArg (fun f : annihilator η ε n →+ annihilator η ε n => f τ)
     (annihilatorMap_id η ε n)
 
-/-- Compatible squares compose as entire complex maps. Composite square
-proofs are derived from the two original source/target squares. -/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. Two compatible pairs of outer squares compose as whole annihilator
+cochain-complex maps, in the same source-contravariant and target-covariant order as Hom. -/
 public theorem annihilatorComplexMap_comp
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (η'' : U'' ⟶ C'') (ε'' : A'' ⟶ V'')
@@ -322,7 +346,10 @@ public theorem annihilatorComplexMap_comp
   dsimp only at h
   exact congrArg (fun f : annihilator η ε n →+ annihilator η'' ε'' n => f τ) h
 
-/-- The whole complex map is independent of proofs of the fixed squares. -/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. The entire cochain map of annihilator complexes depends only on the four
+complex maps and not on the witnesses of their two commutative squares. -/
 public theorem annihilatorComplexMap_proof_irrel
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -337,7 +364,10 @@ public theorem annihilatorComplexMap_proof_irrel
     AddCommGrpCat.ofHom f)
     (annihilatorMap_proof_irrel η ε η' ε' a c b vmap hpre hpre' hpost hpost' n)
 
-/-- Source-variable and target-variable square transports commute. -/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. Applying the source-square transport and then the target-square transport
+gives the same annihilator complex map as applying them in the opposite order. -/
 public theorem annihilatorComplexMap_source_target_commute
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -364,10 +394,11 @@ open CategoryTheory.Limits
 
 variable [HasKernels D] [HasCokernels D]
 
-/--
-The whole quotient/kernel normal-form isomorphism is natural under the cokernel and kernel maps
-induced by the two commuting squares.
--/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. Assume D has kernels and cokernels. The squares induce coker η′ → coker η
+and ker ε → ker ε′. The corresponding Hom complex map commutes with the forward reconstruction
+isomorphisms Hom(coker η,ker ε) ≅ Ann(η,ε). -/
 public theorem cokernelKernelHomComplexIso_hom_naturality
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -450,10 +481,11 @@ public theorem cokernelKernelHomComplexIso_hom_naturality
       _ = _ := by simp only [Category.assoc]
   exact hLeft.trans (hRaw.trans hRight.symm)
 
-/--
-The inverse normal-form square follows from the complex isomorphisms; the induced q/i maps need
-not be invertible.
--/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. Assume D has kernels and cokernels. The induced cokernel and kernel maps
+commute with the inverse reconstruction isomorphisms from annihilator complexes to
+quotient-kernel Hom complexes. -/
 public theorem cokernelKernelHomComplexIso_inv_naturality
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
@@ -488,10 +520,11 @@ public theorem cokernelKernelHomComplexIso_inv_naturality
     _ = (F ≫ e'.inv) ≫ e'.hom := by
       rw [Category.assoc, e'.inv_hom_id, Category.comp_id]
 
-/--
-Applying the abelian-group homology functor gives naturality of the existing normal-form
-cohomology isomorphism in every integer degree.
--/
+/-- Let D be preadditive, η : U → C, ε : A → V, η′ : U′ → C′ and ε′ : A′ → V′ maps of integer
+cochain complexes. Suppose a : U′ → U, c : C′ → C, b : A → A′ and v : V → V′ satisfy c ∘ η′=η ∘
+a and v ∘ ε=ε′ ∘ b. Assume D has kernels and cokernels. For every integer n, the induced Hom and
+annihilator cochain maps commute with Hⁿ Hom(coker η,ker ε) ≅ Hⁿ Ann(η,ε), by the same
+reconstruction isomorphisms. -/
 public theorem cokernelKernelCohomologyIso_hom_naturality
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')

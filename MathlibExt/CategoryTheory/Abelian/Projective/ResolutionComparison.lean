@@ -11,7 +11,7 @@ module
 
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 
-/-!
+/- Proof implementation note.
 # Bundled comparison maps of projective resolutions
 
 This file packages Mathlib's existing lift of a morphism between projective
@@ -21,6 +21,15 @@ extensionality and coherence laws, need only the zero-object and
 zero-morphism structure already required by Mathlib's
 `ProjectiveResolution`; the noncanonical `liftHom` is the only
 construction here that uses that the category is abelian.
+-/
+
+/-!
+# Comparison morphisms of projective resolutions
+
+In a category `C` with a zero object and zero morphisms, augmentation-compatible
+chain maps between projective resolutions form identity and composite
+resolution morphisms. In an abelian category, every map between resolved
+objects lifts to a comparison morphism between their chosen resolutions.
 -/
 
 @[expose] public section
@@ -43,9 +52,9 @@ variable {C : Type u} [Category.{v} C] [Limits.HasZeroObject C]
 
 namespace Hom
 
-/-- Two morphisms of projective resolutions over the same morphism of
-resolved objects are equal once their underlying chain maps are equal;
-the remaining field is a proof. -/
+/-- In a category `C` with a zero object and zero morphisms, two
+projective-resolution morphisms `φ,ψ : P → P′` over the same
+map `f : X → Y` are equal if their underlying chain maps are equal. -/
 @[ext]
 theorem ext {Z Z' : C} {P : ProjectiveResolution Z}
     {P' : ProjectiveResolution Z'} {f : Z ⟶ Z'} {φ ψ : Hom P P' f}
@@ -55,8 +64,9 @@ theorem ext {Z Z' : C} {P : ProjectiveResolution Z}
   cases h
   rfl
 
-/-- The identity morphism of a projective resolution, over the identity
-of the resolved object. -/
+/-- For a projective resolution `P` of `Z` in a category `C` with
+a zero object and zero morphisms, the identity chain map is an
+augmentation-compatible resolution morphism over `𝟙 Z`. -/
 def id {Z : C} (P : ProjectiveResolution Z) : Hom P P (𝟙 Z) where
   hom := 𝟙 P.complex
   hom_f_zero_comp_π_f_zero := by
@@ -68,8 +78,10 @@ theorem id_hom {Z : C} (P : ProjectiveResolution Z) :
     (Hom.id P).hom = 𝟙 P.complex :=
   rfl
 
-/-- The composition of morphisms of projective resolutions, over the
-composition of the resolved morphisms. -/
+/-- In a category `C` with a zero object and zero morphisms,
+projective-resolution maps `φ : P → P′` over `f : Z → Z′`
+and `ψ : P′ → P″` over `g : Z′ → Z″` compose to a
+resolution map over `f ≫ g` with the composite chain map. -/
 def comp {Z Z' Z'' : C} {P : ProjectiveResolution Z}
     {P' : ProjectiveResolution Z'} {P'' : ProjectiveResolution Z''}
     {f : Z ⟶ Z'} {g : Z' ⟶ Z''}
@@ -89,8 +101,10 @@ theorem comp_hom {Z Z' Z'' : C} {P : ProjectiveResolution Z}
     (φ.comp ψ).hom = φ.hom ≫ ψ.hom :=
   rfl
 
-/-- Transport a morphism of projective resolutions along an equality of
-the resolved morphisms. The underlying chain map is unchanged. -/
+/-- For projective resolutions `P`, `P′` in a category `C` with
+a zero object and zero morphisms, identifying equal resolved maps
+`f=f′ : Z → Z′` transports a resolution map over `f` to one over
+`f′`, without changing its underlying chain map. -/
 def cast {Z Z' : C} {P : ProjectiveResolution Z}
     {P' : ProjectiveResolution Z'} {f f' : Z ⟶ Z'}
     (φ : Hom P P' f) (h : f = f') : Hom P P' f' where
@@ -120,26 +134,34 @@ theorem cast_cast {Z Z' : C} {P : ProjectiveResolution Z}
   ext
   simp
 
-/-- Left unit law for morphisms of projective resolutions: composing the
-identity morphism with a morphism, transported along `Category.id_comp`,
-is the morphism itself. -/
+/-- For projective-resolution maps in a category `C` with a zero
+object and zero morphisms, composing the identity of the source
+resolution with a map `φ` gives `φ`, after identifying the
+resolved map `𝟙 ≫ f` with `f`. -/
 theorem id_comp {Z Z' : C} {P : ProjectiveResolution Z}
     {P' : ProjectiveResolution Z'} {f : Z ⟶ Z'} (φ : Hom P P' f) :
     ((Hom.id P).comp φ).cast (Category.id_comp f) = φ := by
   ext
   simp
 
-/-- Right unit law for morphisms of projective resolutions: composing a
-morphism with the identity morphism, transported along
-`Category.comp_id`, is the morphism itself. -/
+/-- For projective-resolution maps in a category `C` with a zero
+object and zero morphisms, composing a map `φ` with the identity
+of its target resolution gives `φ`, after identifying `f ≫ 𝟙` with `f`. -/
 theorem comp_id {Z Z' : C} {P : ProjectiveResolution Z}
     {P' : ProjectiveResolution Z'} {f : Z ⟶ Z'} (φ : Hom P P' f) :
     (φ.comp (Hom.id P')).cast (Category.comp_id f) = φ := by
   ext
   simp
 
-/-- Associativity for morphisms of projective resolutions, transported
-along `Category.assoc` of the resolved morphisms. -/
+/- Proof implementation note.
+Associativity for morphisms of projective resolutions, transported
+along `Category.assoc` of the resolved morphisms.
+-/
+
+/-- In a category `C` with a zero object and zero morphisms,
+composition of three projective-resolution morphisms is associative
+after the canonical identification of `(f ≫ g) ≫ h` with
+`f ≫ (g ≫ h)` on resolved objects. -/
 theorem assoc {Z Z' Z'' Z''' : C} {P : ProjectiveResolution Z}
     {P' : ProjectiveResolution Z'} {P'' : ProjectiveResolution Z''}
     {P''' : ProjectiveResolution Z'''} {f : Z ⟶ Z'} {g : Z' ⟶ Z''}
@@ -159,8 +181,9 @@ section LiftHom
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The standard lift of a morphism, bundled as an augmentation-compatible
-morphism of projective resolutions. -/
+/-- In an abelian category `C`, a map `f : X → Y` lifts to an
+augmentation-compatible chain comparison between any chosen
+projective resolution of `X` and projective resolution of `Y`. -/
 noncomputable def liftHom
     {X Y : C} (f : X ⟶ Y)
     (P : ProjectiveResolution X) (Q : ProjectiveResolution Y) :
@@ -191,7 +214,10 @@ variable {D : Type u'} [Category.{v'} D] [HasZeroObject D] [Preadditive D]
   [CategoryWithHomology D]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Map an explicitly bundled morphism of projective resolutions. -/
+/-- For preadditive `C`, `D` with zero objects and homology in `D`,
+let additive `F : C → D` preserve projective objects and homology.
+A projective-resolution map `φ : P → Q` over `f : X → Y`
+maps to a resolution morphism `F(P) → F(Q)` over `F(f)`. -/
 noncomputable def mapProjectiveResolutionHom (F : C ⥤ D) [F.Additive]
     [F.PreservesProjectiveObjects] [F.PreservesHomology]
     {X Y : C} {P : ProjectiveResolution X} {Q : ProjectiveResolution Y}

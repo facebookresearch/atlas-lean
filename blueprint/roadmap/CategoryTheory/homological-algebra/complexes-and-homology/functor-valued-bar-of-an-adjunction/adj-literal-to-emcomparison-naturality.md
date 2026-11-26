@@ -1,5 +1,6 @@
-# Adj Literal To EMComparison naturality
+# The forgotten-adjunction-to-Eilenberg–Moore comparison is natural
 
-Naturality of the literal-to-EM comparison: literal maps correspond to
-EM maps. Follows from literal-iso naturality and the accepted surrogate
-naturality, without touching the 210-line proof.
+For a monad T on C and an algebra morphism φ : alg → alg′, let δ be adjLiteralToEMComparison.
+Then adjLiteralHom(φ) ≫ δ_alg′ = δ_alg ≫ emUnderlyingHom(φ). This is the naturality equation
+of the augmented map from the evaluated-and-forgotten adjunction bar to the underlying
+Eilenberg–Moore bar.

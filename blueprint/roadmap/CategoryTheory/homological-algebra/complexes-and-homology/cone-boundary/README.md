@@ -2,11 +2,11 @@
 
 ## Mapping Cone
 
-- [Native boundary of short Exact](native-boundary-of-short-exact.md)
-- [Degreewise Split map short Exact](degreewise-split-map-short-exact.md)
-- [Mapped native boundary](mapped-native-boundary.md)
+- [Cone boundary agrees with the short-exact connecting map](native-boundary-of-short-exact.md)
+- [Additive functors preserve degreewise split short exact sequences](degreewise-split-map-short-exact.md)
+- [Functor-mapped cone boundary computes the mapped connector](mapped-native-boundary.md)
 
 ## Homological Complex
 
-- [Extend Diagram Eval Iso](extend-diagram-eval-iso.md)
-- [Extend Diagram Splitting](extend-diagram-splitting.md)
+- [Evaluation of an extended short complex](extend-diagram-eval-iso.md)
+- [Degreewise splitting survives extension by zero](extend-diagram-splitting.md)

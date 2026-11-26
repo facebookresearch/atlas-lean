@@ -12,21 +12,15 @@ module
 public import Mathlib.Algebra.Homology.DerivedCategory.Ext.ExactSequences
 
 /-!
-# Bounded Ext vanishing
+# Low-degree Ext vanishing and the kernel depth lemma
 
-This file packages the statement that low-degree Ext groups vanish below a
-natural-number bound.  It also proves the kernel direction of the depth lemma
-for a short exact sequence, directly from the covariant Ext long exact
-sequence.
+In an abelian category with Ext groups in a chosen universe, `Ext.VanishesBelow X Y n` means
+`Ext^i(X,Y) = 0` for every natural `i < n`. The condition includes degree zero and weakens
+when the bound decreases.
 
-No numerical depth or ring-theoretic assumptions are introduced here.
-
-## Main declarations
-
-* `CategoryTheory.Abelian.Ext.VanishesBelow`
-* `CategoryTheory.Abelian.Ext.VanishesBelow.mono`
-* `CategoryTheory.Abelian.Ext.vanishesBelow_zero`
-* `CategoryTheory.Abelian.Ext.VanishesBelow.of_shortExact_X₁`
+For a short exact sequence `0 → S₁ → S₂ → S₃ → 0`, vanishing of `Ext(A,S₂)` below `n + 1` and
+`Ext(A,S₃)` below `n` implies vanishing of `Ext(A,S₁)` below `n + 1`. This is the kernel
+direction of the covariant Ext depth lemma.
 -/
 
 @[expose] public section
@@ -42,14 +36,18 @@ universe u v t
 
 namespace CategoryTheory.Abelian.Ext
 
-/-- The Ext groups from `X` to `Y` vanish in every natural degree strictly
-below `n`. -/
+/-- Ext vanishing below a natural-degree bound.
+
+For objects `X`, `Y` in an abelian category with `HasExt.{t}`, require `Subsingleton (Ext.{t}
+X Y i)` for every natural `i < n`. Thus every such Ext group is zero. -/
 def VanishesBelow
     {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{t} C]
     (X Y : C) (n : ℕ) : Prop :=
   ∀ i : ℕ, i < n → Subsingleton (Ext.{t} X Y i)
 
-/-- Vanishing below a bound implies vanishing below every smaller bound. -/
+/-- Ext vanishing persists when the bound decreases.
+
+If `Ext(X,Y)` vanishes below `n` and `m ≤ n`, then it vanishes below `m`. -/
 theorem VanishesBelow.mono
     {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{t} C]
     {X Y : C} {m n : ℕ}
@@ -57,7 +55,10 @@ theorem VanishesBelow.mono
     VanishesBelow X Y m :=
   fun i hi ↦ h i (hi.trans_le hmn)
 
-/-- Ext vanishing below degree zero is vacuous. -/
+/-- Ext vanishing below zero is vacuous.
+
+Every pair of objects satisfies `VanishesBelow X Y 0`, since no natural degree is less than
+zero. -/
 @[simp]
 theorem vanishesBelow_zero
     {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{t} C]
@@ -66,12 +67,10 @@ theorem vanishesBelow_zero
   intro i hi
   exact (Nat.not_lt_zero i hi).elim
 
-/-- The kernel direction of the depth lemma, expressed as bounded Ext
-vanishing.
+/-- Kernel Ext vanishing from adjacent bounds in a short exact sequence.
 
-For a short exact sequence `0 ⟶ X₁ ⟶ X₂ ⟶ X₃ ⟶ 0`, vanishing of
-`Ext A X₂` below `n + 1` and of `Ext A X₃` below `n` implies vanishing of
-`Ext A X₁` below `n + 1`. -/
+For a short exact sequence and fixed probe `A`, if `Ext(A,S.X₂)` vanishes below `n + 1` and
+`Ext(A,S.X₃)` below `n`, then `Ext(A,S.X₁)` vanishes below `n + 1`. -/
 theorem VanishesBelow.of_shortExact_X₁
     {C : Type u} [Category.{v} C] [Abelian C] [HasExt.{t} C]
     {S : ShortComplex C} (hS : S.ShortExact)

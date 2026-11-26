@@ -1,3 +1,6 @@
-# Unitization Relative Map
+# The relative unitization chain map of a nonunital homomorphism
 
-The original map restricts to the relative augmentation kernels.
+The relative unitization chain map of a nonunital homomorphism.
+
+The regular unitization map restricts to the kernels of the scalar chain projectors, giving a
+map between the relative complexes.

@@ -12,13 +12,22 @@ public import MathlibExt.Algebra.Category.ModuleCat.Bimodule.TorScalarChange
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.SquareCoherence
 
 /-!
-# Composition of canonical Tor ring-change maps
+# Composition coherence of bimodule Tor ring-change maps
 
-Projective-source comparisons compose into the exact restricted target
-resolution. The input, coefficient and output restriction comparisons
-preserve elements. The tensor chain map has the ordered composite values,
-and the mapped-homology composition law identifies its homology with the
-composite Tor map.
+Let R→R′→R″ and S→S′→S″ be ring maps, with compatible bimodule
+maps f,f′ and right-module maps g,g′. Composing their restricted
+coefficient and input maps uses the canonical scalar-restriction
+composition comparisons, which retain the underlying values.
+
+The corresponding tensor maps between resolution complexes compose
+in the same order. If the three common-world source categories have
+projective resolutions, the canonical Tor ring-change maps therefore
+compose to the map for the composite endpoint maps and coefficient/input
+maps.
+
+For independent source and coefficient worlds, the same law holds at
+Γ=max(r,r′,r″,a,a′,a″,b,b′,b″,z). The outer ring worlds s,s′,s″
+remain independent of Γ. Every Tor degree n≥0 is covered.
 -/
 
 @[expose] public section
@@ -39,7 +48,10 @@ variable (R : Type rGlobal) (S : Type sGlobal) [Ring R] [Ring S]
   {R'' : Type rGlobal''} {S'' : Type sGlobal''} [Ring R''] [Ring S'']
   (φ : R →+* R') (ψ : S →+* S') (φ' : R' →+* R'') (ψ' : S' →+* S'')
 
-/-- The actual composite native coefficient map uses the earned enveloping restriction comparison. -/
+/-- For B→Res_(φ,ψ)(B′) and B′→Res_(φ′,ψ′)(B″),
+the composite coefficient map is B→Res_(φ′φ,ψ′ψ)(B″).
+It applies the two maps in order and uses the canonical
+restriction-composition isomorphism on the target. -/
 def compositeCoefficientRingChange
     {B : coefficientCategory.{rGlobal, sGlobal, v} R S}
     {B' : coefficientCategory.{rGlobal', sGlobal', v} R' S'}
@@ -50,8 +62,10 @@ def compositeCoefficientRingChange
   f ≫ (RingChange.restrictFunctor φ ψ).map f' ≫
     (RingChange.restrictComp φ ψ φ' ψ').inv.app B''
 
-/-- The actual composite input map keeps the native comparison
-of the two ring restrictions. -/
+/-- For A→Res_(φᵒᵖ)(A′) and A′→Res_(φ′ᵒᵖ)(A″),
+the composite input is A→Res_((φ′φ)ᵒᵖ)(A″).
+Its underlying value is g′(g(x)), with the canonical
+comparison of the two restrictions. -/
 def compositeInputRingChange
     {A : ModuleCat.{v} Rᵐᵒᵖ} {A' : ModuleCat.{v} R'ᵐᵒᵖ}
     {A'' : ModuleCat.{v} R''ᵐᵒᵖ}
@@ -62,7 +76,11 @@ def compositeInputRingChange
     (ModuleCat.restrictScalarsComp' φ.op φ'.op (φ'.comp φ).op
       (by ext rGlobal; rfl)).inv.app A''
 
-/-- The original tensor comparison chain maps compose before passing to homology. -/
+/-- For projective resolutions P,Q,T and chain comparisons
+P→Res_φ(Q), Q→Res_(φ′)(T), the two tensor ring-change
+chain maps compose to the tensor map for the composed
+comparison. Coefficients f,f′ compose in the same order,
+and source/output restrictions use their canonical comparisons. -/
 theorem tensorRingChangeResolutionMap_comp
     {B : coefficientCategory.{rGlobal, sGlobal, v} R S}
     {B' : coefficientCategory.{rGlobal', sGlobal', v} R' S'}
@@ -108,8 +126,12 @@ variable [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)]
   [HasProjectiveResolutions (ModuleCat.{v} R'ᵐᵒᵖ)]
   [HasProjectiveResolutions (ModuleCat.{v} R''ᵐᵒᵖ)]
 
-/-- Two actual canonical Tor ring changes equal the single composite change in every degree.
-No projectivity or flatness of either ring restriction is required. -/
+/-- For the three endpoint ring pairs and their compatible
+coefficient/input maps, assume projective resolutions in
+each common-world right-module source category.
+The Tor change R→R′ followed by restricted Tor change R′→R″,
+and the output restriction-composition comparison, equals
+Tor change for φ′φ,ψ′ψ and the composed maps. -/
 theorem torRingChangeMap_comp
     {B : coefficientCategory.{rGlobal, sGlobal, v} R S}
     {B' : coefficientCategory.{rGlobal', sGlobal', v} R' S'}
@@ -164,7 +186,10 @@ end Derived
 
 section RawComposition
 
-/-- Independent original coefficient carrier worlds compose along the earned enveloping ring map. -/
+/-- For coefficient maps f:B→B′ and f′:B′→B″ semilinear
+over the two enveloping ring maps, f′∘f is semilinear
+over the enveloping map of φ′φ and ψ′ψ.
+All three coefficient carrier worlds may be independent. -/
 def composeCoefficientSemilinear
     (B : coefficientCategory.{rGlobal, sGlobal, bGlobal} R S)
     (B' : coefficientCategory.{rGlobal', sGlobal', bGlobal'} R' S')
@@ -178,15 +203,21 @@ def composeCoefficientSemilinear
     ⟨RingChange.envelopingRingHom_comp φ ψ φ' ψ'⟩
   exact f'.comp f
 
-/-- Independent original input carriers compose along the actual opposite ring homomorphisms. -/
+/-- For g:A→A′ semilinear over φᵒᵖ and g′:A′→A″
+semilinear over φ′ᵒᵖ, their composite is semilinear over
+(φ′φ)ᵒᵖ. The three source carrier worlds are independent. -/
 def composeInputSemilinear
     (A : ModuleCat.{aGlobal} Rᵐᵒᵖ) (A' : ModuleCat.{aGlobal'} R'ᵐᵒᵖ) (A'' : ModuleCat.{aGlobal''} R''ᵐᵒᵖ)
     (g : A →ₛₗ[φ.op] A') (g' : A' →ₛₗ[φ'.op] A'') : A →ₛₗ[(φ'.comp φ).op] A'' := by
   letI : RingHomCompTriple φ.op φ'.op (φ'.comp φ).op := ⟨by ext rGlobal; rfl⟩
   exact g'.comp g
 
-/-- Tor ring changes compose in a common working universe containing all three
-acting rings and carrier universes, without an outer-ring size hypothesis. -/
+/-- For three endpoint ring pairs, compatible semilinear
+coefficient maps f,f′ and source maps g,g′, all Tor changes
+are compared in Γ=max(r,r′,r″,a,a′,a″,b,b′,b″,z).
+The first change followed by the restricted second change
+and the canonical output-restriction comparison equals
+the change for their composites, in every degree n≥0. -/
 theorem torRingChangeMapAt_comp.{z, r, r', r'', s, s', s'', a, a', a'', b, b', b''} (R : Type r) (S : Type s)
   [Ring R] [Ring S]
     {R' : Type r'} {R'' : Type r''} {S' : Type s'} {S'' : Type s''}

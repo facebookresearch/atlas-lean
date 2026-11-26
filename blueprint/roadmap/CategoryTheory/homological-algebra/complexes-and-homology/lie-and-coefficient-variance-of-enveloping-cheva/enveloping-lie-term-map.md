@@ -1,3 +1,6 @@
-# Enveloping Lie Term Map
+# The semilinear enveloping chain-term map of a Lie homomorphism
 
-The existing original joint CE degree map has UEA semilinearity.
+The semilinear enveloping chain-term map of a Lie homomorphism.
+
+For `f : L → L'`, the degree-`n` map combines `⋀ⁿ(f)` with `U(f)` and is semilinear over the
+ring homomorphism `U(f)`.

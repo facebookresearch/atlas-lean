@@ -1,3 +1,5 @@
-# Ulift Functor Within Iso hom up
+# The forward formula for an in-universe module lift
 
-The actual in-universe comparison has the original value.
+The forward formula for an in-universe module lift.
+
+The forward component of the lift comparison sends `ULift.up x` to `x`.

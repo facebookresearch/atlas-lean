@@ -12,12 +12,19 @@ module
 public import MathlibExt.LinearAlgebra.ExteriorPower.ProductFiltration.Triangular
 
 /-!
-# Graded maps of triangular exterior operators
+# Associated-graded maps of first-summand-preserving exterior operators
 
-A linear map preserving the first summand preserves the mixed-weight
-filtration of exterior powers. On successive quotients, its induced map is
-the tensor of the exterior first-summand map and the relative map. The
-off-diagonal component lies in the next stage and vanishes in the quotient.
+Let f : M × N →ₗ[R] M' × N' be a linear map over a commutative ring, with a map a : M →ₗ[R] M'
+satisfying f ∘ inl = inl' ∘ a. Put b = snd' ∘ f ∘ inr : N →ₗ[R] N'. The exterior map ⋀^m f
+preserves every mixed-weight stage F_m^q and therefore induces a map of its adjacent-stage
+quotient.
+
+For q ≤ m, the quotient coordinate of this map is TensorProduct.map (⋀^q a) (⋀^(m−q) b). The
+component of f from N into M' contributes only in higher first weight and vanishes modulo
+F_m^(q+1). This description holds for arbitrary modules and is compatible with identities and
+composition.
+
+See Bourbaki, *Algebra*, Chapter III, for exterior powers of direct sums.
 -/
 
 @[expose] public section
@@ -30,14 +37,15 @@ universe u v w v' w' v'' w''
 
 namespace exteriorPower.ProductFiltration
 
--- Reuse the exact stage group encoded by the original quotient and grade-section APIs.
-attribute [local instance] filtration_addCommGroup
-
 variable (R : Type u) [CommRing R]
   (M : Type v) [AddCommGroup M] [Module R M]
   (N : Type w) [AddCommGroup N] [Module R N]
 
-/-- The actual native quotient class supplied by the original mixed stage section. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. For q ≤ m, mixedClass R M N
+m q hq is the R-linear map from ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N to F_m^q/nextStage obtained by
+applying gradeSection and then the quotient projection. Its composite with
+associatedGradedEquiv is the identity on the mixed tensor piece. -/
 def mixedClass (m q : ℕ) (hq : q ≤ m) :
     Piece R M N m (index m q hq) →ₗ[R] associatedGraded R M N m q :=
   by
@@ -67,8 +75,6 @@ end exteriorPower.ProductFiltration
 
 namespace exteriorPower.ProductFiltration.FirstSummandMap
 
-attribute [local instance] exteriorPower.ProductFiltration.filtration_addCommGroup
-
 variable {R : Type u} [CommRing R]
   {M : Type v} [AddCommGroup M] [Module R M]
   {N : Type w} [AddCommGroup N] [Module R N]
@@ -76,20 +82,30 @@ variable {R : Type u} [CommRing R]
   {N' : Type w'} [AddCommGroup N'] [Module R N']
   (f : FirstSummandMap (R := R) (M := M) (N := N) (M' := M') (N' := N'))
 
-/-- Restrict the actual exterior map using its earned filtration-preservation law. -/
+/-- Let R be a commutative ring and M, N, M', N' R-modules. Let f.map : M × N →ₗ[R] M' × N' and
+f.first : M →ₗ[R] M' satisfy f.map ∘ inl = inl' ∘ f.first. Put f.relative = snd' ∘ f.map ∘
+inr. For m, q : ℕ, stageMap restricts ⋀^m f.map to a linear map F_m^q(M, N) → F_m^q(M', N'),
+where the stages are defined by vanishing of mixed coordinates of first weight below q. -/
 def stageMap (m q : ℕ) :
     filtration R M N m q →ₗ[R] filtration R M' N' m q :=
   ((exteriorPower.map m f.map).domRestrict (filtration R M N m q)).codRestrict
     (filtration R M' N' m q) (fun z => f.map_mem_filtration m q z.val z.property)
 
-/-- The actual stage map preserves the actual next stage as a conclusion. -/
+/-- Let R be a commutative ring and M, N, M', N' R-modules. Let f.map : M × N →ₗ[R] M' × N' and
+f.first : M →ₗ[R] M' satisfy f.map ∘ inl = inl' ∘ f.first. Put f.relative = snd' ∘ f.map ∘
+inr. For every m, q : ℕ, nextStage R M N m q ≤ (nextStage R M' N' m q).comap (f.stageMap m q).
+Thus the restricted exterior map sends the next stage inside the source stage to the
+corresponding next target stage. -/
 theorem stageMap_next (m q : ℕ) :
     nextStage R M N m q ≤
       (nextStage R M' N' m q).comap (f.stageMap m q) := by
   intro z hz
   exact f.map_mem_filtration m (q + 1) z.val hz
 
-/-- The native quotient map of the original stages. -/
+/-- Let R be a commutative ring and M, N, M', N' R-modules. Let f.map : M × N →ₗ[R] M' × N' and
+f.first : M →ₗ[R] M' satisfy f.map ∘ inl = inl' ∘ f.first. Put f.relative = snd' ∘ f.map ∘
+inr. For m, q : ℕ, f.gradeMap m q is the R-linear map F_m^q(M, N)/F_m^(q+1)(M, N) → F_m^q(M',
+N')/F_m^(q+1)(M', N') induced by f.stageMap and its preservation of the next-stage submodules. -/
 def gradeMap (m q : ℕ) :
     associatedGraded R M N m q →ₗ[R] associatedGraded R M' N' m q :=
   by
@@ -101,7 +117,11 @@ theorem gradeMap_mk (m q : ℕ) (z : filtration R M N m q) :
     f.gradeMap m q (Submodule.Quotient.mk z) = Submodule.Quotient.mk (f.stageMap m q z) := by
   rw [gradeMap, Submodule.mapQ_apply]
 
-/-- The off-diagonal part disappears through the original next-stage quotient. -/
+/-- Let R be a commutative ring and M, N, M', N' R-modules. Let f.map : M × N →ₗ[R] M' × N' and
+f.first : M →ₗ[R] M' satisfy f.map ∘ inl = inl' ∘ f.first. Put f.relative = snd' ∘ f.map ∘
+inr. For q ≤ m, x : ⋀[R]^q M and y : ⋀[R]^(m−q) N, f.gradeMap sends mixedClass(x ⊗ y) to
+mixedClass'(⋀^q f.first(x) ⊗ ⋀^(m−q) f.relative(y)). Terms from the N-to-M' component of f lie
+in stage q + 1 and are zero in this quotient. -/
 theorem gradeMap_mixed_tmul (m q : ℕ) (hq : q ≤ m)
     (x : ⋀[R]^q M) (y : ⋀[R]^(m - q) N) :
     f.gradeMap m q (mixedClass R M N m q hq (x ⊗ₜ[R] y)) =
@@ -142,7 +162,11 @@ theorem gradeMap_mixed_tmul (m q : ℕ) (hq : q ≤ m)
     associatedGradedEquiv_mk R M' N' m q hq z'
   exact e.injective (hleft.trans (hcoordinate.trans hright.symm))
 
-/-- The actual quotient-grade coordinate is precisely the diagonal exterior tensor map. -/
+/-- Let R be a commutative ring and M, N, M', N' R-modules. Let f.map : M × N →ₗ[R] M' × N' and
+f.first : M →ₗ[R] M' satisfy f.map ∘ inl = inl' ∘ f.first. Put f.relative = snd' ∘ f.map ∘
+inr. For q ≤ m and a source associated-grade class z, let E_q and E'_q be the complementary
+mixed-tensor coordinate equivalences. Then E'_q(f.gradeMap m q z) = TensorProduct.map
+(exteriorPower.map q f.first) (exteriorPower.map (m − q) f.relative) (E_q(z)). -/
 theorem associatedGradedEquiv_gradeMap (m q : ℕ) (hq : q ≤ m)
     (z : associatedGraded R M N m q) :
     associatedGradedEquiv R M' N' m q hq (f.gradeMap m q z) =

@@ -1,3 +1,7 @@
-# Has Exact Filtered Colimits Of Shape
+# Filtered module colimits are exact under both shape-world bounds
 
-Filtered colimits are exact when both shape universes fit the carrier world.
+For a ring R and a filtered category J, suppose both
+the object and morphism universes of J are bounded by
+the module carrier world v, and additive-group colimits
+of shape J exist in world v.
+Then ModuleCat^v(R) has exact colimits of shape J.

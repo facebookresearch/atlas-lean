@@ -1,4 +1,4 @@
 # Support of the native tensor total
 
-- [Complex At is Zero X of factor terms](complex-at-is-zero-x-of-factor-terms.md)
-- [Complex At is Zero X above](complex-at-is-zero-x-above.md)
+- [A tensor-total degree is zero when every cell has a zero factor](complex-at-is-zero-x-of-factor-terms.md)
+- [Tensor-total upper bound is the sum of the factor bounds](complex-at-is-zero-x-above.md)

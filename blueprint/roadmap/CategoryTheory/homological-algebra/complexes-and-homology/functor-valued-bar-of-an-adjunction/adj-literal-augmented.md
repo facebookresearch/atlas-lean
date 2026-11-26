@@ -1,5 +1,6 @@
-# Adj Literal Augmented
+# The free-forgetful adjunction bar evaluated and forgotten
 
-The literal forgetful image in `C`: `adjAugmented T.adj` evaluated at `alg`
-then whiskered with `T.forget`. This is the honest evaluated/forgotten object;
-`adjEvaluatedAugmented` above is the reusable surrogate model.
+Let T be a monad on C and alg=(A,a) a T-algebra. Evaluate the augmented adjunction bar of
+T.free ⊣ T.forget at alg and then apply T.forget. The result is an augmented simplicial object
+of C with target A. If S is the induced adjunction monad, its degree-n term is T(S^n(A)), and
+its zero-degree augmentation is the algebra action a.

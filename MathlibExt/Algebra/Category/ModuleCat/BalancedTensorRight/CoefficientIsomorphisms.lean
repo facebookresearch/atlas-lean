@@ -15,12 +15,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensorRight.Coeffici
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Isomorphism
 
 /-!
-# Actual enriched tensor and Tor isomorphisms of original coefficients
+# Bimodule coefficient isomorphisms on tensor and Tor
 
-An original R-linear coefficient equivalence commuting with the outer
-right action induces an isomorphism on the existing tensor and native Tor
-models. Outer linearity of its inverse is earned from the original forward
-linearity. The scalar rings have independent universes.
+Let `B` and `B'` be `R`-left, `S`-right bimodules. An `R`-linear equivalence `e : B ≃ₗ[R] B'`
+preserving the right `S`-action induces a natural isomorphism between the right-module-valued
+tensor functors, with `[a ⊗ b] ↦ [a ⊗ e b]`.
+
+The inverse equivalence also preserves the outer action. Assuming the right `R`-module
+category has projective resolutions, left derivation gives the corresponding natural
+isomorphism on Tor in every degree. The tensor and Tor isomorphisms preserve identity
+equivalences and composition. The two ring universes are independent of the common
+coefficient-carrier universe.
 -/
 
 @[expose] public section
@@ -33,8 +38,11 @@ universe r s v
 
 namespace ModuleCat.BalancedTensorRight
 
-/-- The inverse of an equivariant equivalence retains its original scalar action.
-Only the two scalar actions and forward equivariance are needed. -/
+/-- Inverse of an equivariant equivalence is equivariant.
+
+For types with actions of a type `T`, let `e : X ≃ Y` satisfy `e (t • x) = t • e x`. Then
+`e.symm (t • y) = t • e.symm y` for all `t` and `y`, with independent action and carrier
+universes. -/
 theorem coefficientEquiv_symm_outer.{s₁, v₁, w₁}
     {T : Type s₁} {X : Type v₁} {Y : Type w₁} [SMul T X] [SMul T Y]
     (e : X ≃ Y) (hT : ∀ (t : T) (x : X), e (t • x) = t • e x)
@@ -49,7 +57,11 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
   (e : B ≃ₗ[R] B')
   (hS : ∀ (s : Sᵐᵒᵖ) (x : B), e (s • x) = s • e x)
 
-/-- The original coefficient equivalence gives the actual enriched tensor isomorphism. -/
+/-- Bimodule equivalence gives a right-module tensor natural isomorphism.
+
+An `R`-linear equivalence of coefficients preserving the right `S`-action induces
+`tensorFunctor R S B ≅ tensorFunctor R S B'`. The inverse transformation is induced by the
+inverse coefficient equivalence. -/
 def tensorCoefficientIso : tensorFunctor R S B ≅ tensorFunctor R S B' where
   hom := tensorCoefficientTransformation R S B B' e.toLinearMap hS
   inv := tensorCoefficientTransformation R S B' B e.symm.toLinearMap
@@ -85,14 +97,19 @@ def tensorCoefficientIso : tensorFunctor R S B ≅ tensorFunctor R S B' where
     rw [tensorCoefficientMap_mk, tensorCoefficientMap_mk]
     exact congrArg (TensorProduct.Balanced.mk ℤ R A B' a) (e.apply_symm_apply b)
 
-/-- The tensor comparison retains the actual original coefficient representative. -/
+/-- Tensor coefficient isomorphism on pure classes.
+
+At a right `R`-module `A`, the forward coefficient isomorphism sends `[x ⊗ y]` to `[x ⊗ e y]`. -/
 theorem tensorCoefficientIso_hom_mk (A : ModuleCat.{v} Rᵐᵒᵖ) (x : A) (y : B) :
     ((tensorCoefficientIso R S B B' e hS).hom.app A).hom
         (TensorProduct.Balanced.mk ℤ R A B x y) =
       TensorProduct.Balanced.mk ℤ R A B' x (e y) :=
   tensorCoefficientMap_mk R S B B' e.toLinearMap hS A x y
 
-/-- Identity coefficient equivalences retain the same enriched tensor functor. -/
+/-- Identity coefficient equivalence gives the identity tensor isomorphism.
+
+The tensor natural isomorphism induced by `LinearEquiv.refl R B` is the identity isomorphism
+of `tensorFunctor R S B`. -/
 @[simp]
 theorem tensorCoefficientIso_refl :
     tensorCoefficientIso R S B B (LinearEquiv.refl R B) (fun _ _ => rfl) =
@@ -106,7 +123,10 @@ variable (B'' : Type v) [AddCommGroup B''] [Module R B''] [Module Sᵐᵒᵖ B''
   [SMulCommClass R Sᵐᵒᵖ B''] (e' : B' ≃ₗ[R] B'')
   (hS' : ∀ (s : Sᵐᵒᵖ) (x : B'), e' (s • x) = s • e' x)
 
-/-- The actual tensor coefficient isomorphism preserves original equivalence composition. -/
+/-- Tensor coefficient isomorphisms preserve equivalence composition.
+
+The tensor isomorphism for `e`, followed by that for `e'`, equals the tensor isomorphism
+induced by `e.trans e'`, with its composite right-action compatibility. -/
 theorem tensorCoefficientIso_trans :
     tensorCoefficientIso R S B B' e hS ≪≫ tensorCoefficientIso R S B' B'' e' hS' =
       tensorCoefficientIso R S B B'' (e.trans e')
@@ -119,24 +139,36 @@ end Composition
 
 variable [HasProjectiveResolutions (ModuleCat.{v} Rᵐᵒᵖ)]
 
-/-- Native left derivation retains the actual original coefficient isomorphism. -/
+/-- Bimodule equivalence gives a right-module Tor natural isomorphism.
+
+Assuming projective resolutions for right `R`-modules, left derive the tensor coefficient
+isomorphism to obtain `torFunctor R S B n ≅ torFunctor R S B' n` for every natural `n`. -/
 def torCoefficientIso (n : ℕ) : torFunctor R S B n ≅ torFunctor R S B' n :=
   NatIso.leftDerived (tensorCoefficientIso R S B B' e hS) n
 
-/-- Its forward map is the existing native coefficient Tor transformation. -/
+/-- Forward coefficient Tor isomorphism is the derived coefficient map.
+
+The forward map of the degree-`n` Tor coefficient isomorphism is
+`torCoefficientTransformation` induced by `e.toLinearMap` and its outer-action compatibility. -/
 @[simp]
 theorem torCoefficientIso_hom (n : ℕ) :
     (torCoefficientIso R S B B' e hS n).hom =
       torCoefficientTransformation R S B B' e.toLinearMap hS n := rfl
 
-/-- Its inverse is the existing native inverse-coefficient Tor transformation. -/
+/-- Inverse coefficient Tor isomorphism is induced by the inverse coefficient.
+
+The inverse degree-`n` Tor map is the coefficient transformation induced by
+`e.symm.toLinearMap`, using equivariance of the inverse. -/
 @[simp]
 theorem torCoefficientIso_inv (n : ℕ) :
     (torCoefficientIso R S B B' e hS n).inv =
       torCoefficientTransformation R S B' B e.symm.toLinearMap
         (coefficientEquiv_symm_outer e.toEquiv hS) n := rfl
 
-/-- Identity coefficient equivalences retain the same native Tor functor. -/
+/-- Identity coefficient equivalence gives the identity Tor isomorphism.
+
+The degree-`n` Tor coefficient isomorphism for the reflexive coefficient equivalence is the
+identity of `torFunctor R S B n`. -/
 @[simp]
 theorem torCoefficientIso_refl (n : ℕ) :
     torCoefficientIso R S B B (LinearEquiv.refl R B) (fun _ _ => rfl) n =
@@ -152,7 +184,10 @@ variable (B'' : Type v) [AddCommGroup B''] [Module R B''] [Module Sᵐᵒᵖ B''
   [SMulCommClass R Sᵐᵒᵖ B''] (e' : B' ≃ₗ[R] B'')
   (hS' : ∀ (s : Sᵐᵒᵖ) (x : B'), e' (s • x) = s • e' x)
 
-/-- Actual original coefficient equivalence composition is preserved on native Tor. -/
+/-- Tor coefficient isomorphisms preserve equivalence composition.
+
+The degree-`n` Tor isomorphism for `e`, followed by that for `e'`, equals the Tor isomorphism
+for the composite coefficient equivalence `e.trans e'`. -/
 theorem torCoefficientIso_trans (n : ℕ) :
     torCoefficientIso R S B B' e hS n ≪≫ torCoefficientIso R S B' B'' e' hS' n =
       torCoefficientIso R S B B'' (e.trans e')

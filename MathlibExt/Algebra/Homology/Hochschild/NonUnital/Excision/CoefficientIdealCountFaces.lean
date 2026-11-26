@@ -12,12 +12,11 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.IdealCountFaces
 
 /-!
-# Coefficient words under ideal-count bar faces
+# Passive coefficients under ideal-count multiplication faces
 
-Non-wrapping regular faces act on algebra tensor
-words and leave arbitrary coefficients fixed.
-Their word-coordinate formulas determine the
-corresponding span maps for the truncated boundary.
+For a non-wrapping regular face of an algebra word, tensoring with identity on a ground module
+V leaves the coefficient unchanged. If the input span requires r entries in a two-sided ideal,
+the image requires at least r−1 ideal entries. The statement holds for arbitrary V.
 -/
 
 @[expose] public section
@@ -36,7 +35,10 @@ variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
   (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The identity-coefficient adjacent face loses at most one required ideal word entry. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let V be any k-module. For n,r : ℕ and i : Fin (n + 1), the
+image of coefficientIdealWordSpan V (n + 2) r under id_V ⊗ regularWordFace n i.castSucc lies
+in coefficientIdealWordSpan V (n + 1) (r−1). Only adjacent non-wrapping faces occur. -/
 theorem coefficientIdealWordSpan_regularWordFace (n required : ℕ) (i : Fin (n + 1)) :
     (coefficientIdealWordSpan k A I V (n + 2) required).map
         (TensorProduct.map (LinearMap.id : V →ₗ[k] V)

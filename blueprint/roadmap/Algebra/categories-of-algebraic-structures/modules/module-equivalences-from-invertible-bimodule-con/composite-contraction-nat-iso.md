@@ -1,3 +1,6 @@
-# Composite Contraction Nat Iso
+# Right-module composite contraction is natural
 
-The actual bimodule contraction is natural in the right-module variable.
+Right-module composite contraction is natural.
+
+The contraction maps give a natural isomorphism from `tensorFunctor R S P ⋙ tensorFunctor S R
+Q` to the identity on right `R`-modules.
