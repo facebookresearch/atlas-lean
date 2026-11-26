@@ -46,6 +46,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquares
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily34
 
 set_option autoImplicit false
 
@@ -58,36 +59,11 @@ when $z = x^2 + y^2$ for some nonzero integers $x$ and $y$. -/
 def IsSumTwoNonzeroSquaresℤ (z : ℤ) : Prop :=
   ∃ x y : ℤ, x ≠ 0 ∧ y ≠ 0 ∧ z = x ^ 2 + y ^ 2
 
-/-- **Pairwise products preserve square symmetric functions.** If $a$, $b$, $c$ are integers
-such that each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer, then the
-same holds for the triple $ab$, $bc$, $ca$.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
-theorem_wanted hasSquareElementarySymmetricFunctions_pairwise_products
-    {a b c : ℤ}
-    (h : HasSquareElementarySymmetricFunctions a b c) :
-    HasSquareElementarySymmetricFunctions (a * b) (b * c) (c * a)
-
 private abbrev firstShiftedSextic (s t : ℤ) : ℤ :=
   s ^ 6 - s ^ 4 * t ^ 2 - 5 * s ^ 2 * t ^ 4 + t ^ 6
 
 private abbrev secondShiftedSextic (s t : ℤ) : ℤ :=
   3 * s ^ 6 + s ^ 4 * t ^ 2 + s ^ 2 * t ^ 4 - t ^ 6
-
-/-- **Choudhry's family (3.4) of integer triples with square symmetric functions.** For all
-integers $s$ and $t$, put $a = 4 s^4 t^2 (s^2 + t^2)$, $b = 4 s^2 t^4 (s^2 + t^2)$ and
-$c = (s^4 - t^4)^2$. Then each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an
-integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.4). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family34
-    (s t : ℤ) :
-    HasSquareElementarySymmetricFunctions
-      (4 * s ^ 4 * t ^ 2 * (s ^ 2 + t ^ 2))
-      (4 * s ^ 2 * t ^ 4 * (s ^ 2 + t ^ 2))
-      ((s ^ 4 - t ^ 4) ^ 2)
 
 /-- **Choudhry's family (3.5) of integer triples with square symmetric functions.** For all
 integers $s$ and $t$, let $f = s^6 - s^4 t^2 - 5 s^2 t^4 + t^6$ and
