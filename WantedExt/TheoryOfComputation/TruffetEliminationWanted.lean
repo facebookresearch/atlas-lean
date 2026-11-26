@@ -12,6 +12,13 @@ The state model and concrete instance are adapted from OpenAI's
 `3344da59991ed94f9ba711217b29c1d760badfa6` (Apache License, Version 2.0).
 See https://www.apache.org/licenses/LICENSE-2.0. The model uses Atlas imports and namespace;
 no proof of the counterexample from the source is included in this module.
+
+Source repository: https://github.com/openai/math
+Authors: OpenAI (project attribution in lean/formalization.yaml).
+The wanted proposition follows `lean/ComparatorChallenges/TruffetCounterexample.lean`
+at the same revision. Neither source file supplies a copyright or author notice.
+The source's `lean/LICENSE` names no copyright holder or authors:
+https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/LICENSE
 -/
 
 module

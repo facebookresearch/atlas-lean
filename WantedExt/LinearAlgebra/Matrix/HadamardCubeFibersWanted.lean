@@ -6,9 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 /-
-Portions adapted from OpenAI's openai/math repository under the Apache License, Version 2.0.
+Portions of this file are adapted from:
+`lean/ComparatorChallenges/HadamardCubeFiber.lean` in OpenAI's `openai/math` repository,
+revision `3344da59991ed94f9ba711217b29c1d760badfa6`.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The pinned source file records no separate copyright notice or author list.
+Authors: OpenAI (project attribution in `lean/formalization.yaml`).
+
 The comparator's helper definitions are inlined, and its result is recorded as a wanted statement.
-See https://www.apache.org/licenses/LICENSE-2.0.
 -/
 module
 

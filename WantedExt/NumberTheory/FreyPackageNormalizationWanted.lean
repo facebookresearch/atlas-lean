@@ -7,8 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
+Portions of this file are adapted from:
+
+`Theorems/Thm_FreyPackage_of_counterexample.lean` (statement only;
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/Theorems/Thm_FreyPackage_of_counterexample.lean):
 Copyright (c) 2026 Anthropic, PBC (adapted statement).
-Released under the Apache License, Version 2.0, as described in the LICENSE file.
+Released under the Apache License, Version 2.0; see the upstream LICENSE:
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/LICENSE
+Authors: Anthropic (project attribution in `formalization.yaml`; no per-file author list).
 -/
 
 module

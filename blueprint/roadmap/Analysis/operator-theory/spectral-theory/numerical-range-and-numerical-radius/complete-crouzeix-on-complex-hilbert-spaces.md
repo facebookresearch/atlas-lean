@@ -1,6 +1,6 @@
 # Complete Crouzeix bounds for bounded operators on complex Hilbert spaces
 
-For a bounded operator $A$ on an arbitrary complex Hilbert space $H$, write $W=\{\langle x,Ax\rangle:\|x\|=1\}$ and $K=\overline W$. Use $\sup_S^+\|F\|=\sup(\{0\}\cup\{\|F(z)\|:z\in S\})$. Matrix values use the Euclidean operator norm. The amplification space of size $m$ is the completion of the Hilbert tensor product with $\mathbb C^m$, and matrix-valued evaluation is the sum of scalar evaluations tensored with the matrix units.
+For a bounded operator $A$ on an arbitrary complex Hilbert space $H$, write $W=\{\langle x,Ax\rangle:\|x\|=1\}$, with the inner product linear in its second argument, and $K=\overline W$. Use $\sup_S^+\|F\|=\sup(\{0\}\cup\{\|F(z)\|:z\in S\})$. Matrix values use the Euclidean operator norm. The amplification space of size $m$ is the completion of the Hilbert tensor product with $\mathbb C^m$, and matrix-valued evaluation is the sum of scalar evaluations tensored with the matrix units.
 
 If $H\ne0$, $K$ is compact and real-convex and contains $\sigma(A)$. For each $m>0$ and polynomial $F(z)=\sum_{k=0}^d z^k B_k$ of any finite degree, the amplification $F[A]=\sum_k A^k\otimes B_k$ has norm at most $2\sup_W^+\|F\|$. The supremum equals the one on $K$ and is attained there.
 

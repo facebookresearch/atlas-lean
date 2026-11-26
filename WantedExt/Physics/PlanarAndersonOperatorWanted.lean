@@ -7,10 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The operator formula is adapted from OpenAI's comparator
-`lean/ComparatorChallenges/PlanarAndersonSpectrum.lean`.
-The source provides the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The citation below identifies the exact revision. No proof code was copied.
+The disorder law and operator formula are adapted from the `openai/math` comparator
+`lean/ComparatorChallenges/PlanarAndersonSpectrum.lean` at revision
+`3344da59991ed94f9ba711217b29c1d760badfa6`.
+The companion bounded realization at the same revision is in
+`lean/OAI/MathematicalPhysics/PlanarAnderson/Spectrum.lean`; no proof code was copied.
+
+The source's `lean/LICENSE` at that revision provides the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: OpenAI (project attribution in lean/formalization.yaml).
+Neither cited Lean file nor the applicable license names a copyright holder or
+individual authors for these portions.
 -/
 
 module

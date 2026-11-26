@@ -6,6 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Parts of the statement formulations are adapted from OpenAI's `openai/math`
+repository (https://github.com/openai/math), revision
+`3344da59991ed94f9ba711217b29c1d760badfa6`:
+
+* `lean/ComparatorChallenges/EgyptianFractions.lean`: prescribed denominator
+  occurrence and the pointwise denominator bound.
+* `lean/ComparatorChallenges/ShortEgyptianFractions.lean`: existence of an
+  expansion of a proper positive rational.
+
+The source's `lean/LICENSE` is the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0). The cited Lean files do not name
+individual authors or carry a copyright notice. No source proofs are included.
+Authors: OpenAI (project attribution in lean/formalization.yaml).
+-/
+
 module
 
 import Batteries.Util.ProofWanted
