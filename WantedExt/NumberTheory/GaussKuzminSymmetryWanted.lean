@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import MathlibExt.NumberTheory.GaussKuzminSymmetry
 public import MathlibExt.NumberTheory.GaussKuzminFundamentalIntervals
 public import MathlibExt.NumberTheory.GaussKuzminCharacterization
+public import MathlibExt.NumberTheory.GaussKuzminMassReversal
 
 namespace MetaMathlibExt
 
@@ -38,16 +39,6 @@ public theorem_wanted gaussKuzmin_string_frequency :
           (((Finset.range N).filter (fun i => ∀ j (hj : j < a.length),
               (GenContFract.of x).partDens.get? (i + j) = some (a[j] : ℝ))).card : ℝ) / N)
         atTop (𝓝 (gaussKuzminMass a))
-
-/-- **Reversal symmetry of the Gauss–Kuzmin mass.** For every string $a$ of positive integers,
-$P_{GK}(\overleftarrow{a}) = P_{GK}(a)$, where $P_{GK}$ is the Gauss–Kuzmin mass and
-$\overleftarrow{a}$ is the reverse of $a$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Proposition 1.3 (`integers-2025-A89-prop-1-3`), equations (1.8) and (1.9). -/
-public theorem_wanted gaussKuzminMass_reverse (a : List ℕ) (ha : (∀ x ∈ a, 0 < x)) :
-    gaussKuzminMass a.reverse = gaussKuzminMass a
 
 /-- **Symmetry up to a fixed length does not force the Gauss–Kuzmin density.** Write $I(a)$ for
 the fundamental interval of a string $a$ and $\overleftarrow{a}$ for the reverse of $a$. For every
