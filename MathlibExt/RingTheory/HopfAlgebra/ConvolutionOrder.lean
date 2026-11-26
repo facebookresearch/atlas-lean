@@ -257,9 +257,11 @@ end DeligneOrderKills
 
 namespace HopfAlgebra
 
-/-- **Points of a finite free cocommutative Hopf algebra are killed by its rank.** For a finite
-free cocommutative Hopf algebra `H` of rank `n` over a commutative ring `R`, every `R`-algebra
-point of `H`, viewed in the convolution algebra, satisfies `f ^ n = 1`. -/
+/-- **Points of a finite free commutative and cocommutative Hopf algebra are killed by its rank.**
+Let `R` be a commutative ring, `H` a commutative and cocommutative Hopf algebra over `R` that is
+finite and free of rank `n` as an `R`-module, and `T` a commutative `R`-algebra. Every
+`R`-algebra homomorphism `f : H →ₐ[R] T`, viewed in the convolution monoid, satisfies
+`f ^ n = 1`, where `1` is the convolution unit: the counit of `H` followed by `algebraMap R T`. -/
 public theorem convPow_finrank_eq_one_of_isCocomm
     (R : Type u) [CommRing R]
     (H : Type v) [CommRing H] [HopfAlgebra R H] [Coalgebra.IsCocomm R H]
