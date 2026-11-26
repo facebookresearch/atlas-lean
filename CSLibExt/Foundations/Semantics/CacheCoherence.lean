@@ -17,6 +17,8 @@ For one location, `Epoch.SWMR` restricts who can access it, while `Epoch.DataVal
 its logical start value comes from the most recent completed read–write epoch. An explicit initial
 value is used until there has been such an epoch. `Epoch.MatchesStart` separately checks the
 values available to readers, so agreement is not built into the representation.
+`Epoch.CoherentHistory` applies all three checks at every position in a finite history,
+using only the epochs strictly before that position for the start-value check.
 
 `TokenAllocation.swmr_of_validBudget` proves the permission invariant for one allocation and
 its budget, including unassigned tokens. The budget is positive and at least the number of
@@ -91,6 +93,23 @@ theorem read_eq_carriedValue {e : Epoch n Value} {initial : Value} {past : List 
     (hData : e.DataValue initial past) (hMatches : e.MatchesStart)
     {c : Fin n} {v : Value} (hRead : e.readValue c = some v) : v = carriedValue initial past :=
   (hMatches hRead).trans hData
+
+/-- A finite history of snapshots for one location is coherent when every epoch satisfies
+`SWMR`, starts with the value carried from exactly the epochs strictly before it, and has every
+readable copy match that start value. The list is ordered earliest first: at index `i` the
+preceding history is `history.take i`, excluding the current epoch and all later epochs.
+Before any write this uses `initial`, even when no copy is readable. -/
+def CoherentHistory (initial : Value) (history : List (Epoch n Value)) : Prop :=
+  ∀ i : Fin history.length,
+    let e := history[i]
+    e.SWMR ∧ e.DataValue initial (history.take i.val) ∧ e.MatchesStart
+
+/-- In a coherent history, a readable copy at any epoch contains the value carried from the
+strictly preceding prefix. -/
+theorem CoherentHistory.read_eq_carriedValue {initial : Value} {history : List (Epoch n Value)}
+    (h : CoherentHistory initial history) (i : Fin history.length) {c : Fin n} {v : Value}
+    (hRead : history[i].readValue c = some v) : v = carriedValue initial (history.take i.val) :=
+  Epoch.read_eq_carriedValue (h i).2.1 (h i).2.2 hRead
 
 end Epoch
 
