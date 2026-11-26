@@ -35122,6 +35122,7 @@
 "LinearMap.convMul_eq_comp_tensorComponent": "19a84bd07c6121d6",
 "LinearMap.convPow_apply_mem_pow": "eaf989c4450fdd5b",
 "LinearMap.exact_and_surjective_iff_forall_lcomp": "0d1337e797c328af",
+"LinearMap.exact_dualMap_of_exact": "b893641b32ee8c98",
 "LinearMap.exists_fin_sum_mul_apply_of_continuous": "e9c5253265e334ab",
 "LinearMap.finrank_ker_dualMap_eq_finrank_ker": "cbee376cca126c38",
 "LinearMap.fromChoiMatrix": "aa056d3aeaffc836",
