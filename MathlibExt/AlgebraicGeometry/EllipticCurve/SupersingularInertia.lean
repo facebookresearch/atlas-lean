@@ -1188,11 +1188,14 @@ namespace WeierstrassCurve
 open SSInertia
 open scoped WeierstrassCurve.Affine
 
-/-- For an integral Weierstrass curve with good supersingular reduction at an odd prime `p`, any
-matrix form `ρ` of the residual representation at `p` after extension of scalars to a finite field
-`k` has, after a suitable embedding of `k` into the residue field of a valuation subring `P` over
-`p`, a nonzero vector on which inertia at `P` acts through the tame character attached to a root
-`π` of `π ^ (p ^ 2 - 1) = p`. -/
+/-- Let `W` be an integral Weierstrass curve with good supersingular reduction at an odd prime `p`
+(the inner coefficients of the `p`-division polynomial are divisible by `p`). Assume that the
+`p`-torsion of `W` over `AlgebraicClosure ℚ` has `p ^ 2` points and that the Galois action on it
+is trivial on the automorphisms fixing some finite extension of `ℚ`; these two hypotheses define
+the residual representation of `W` at `p`. Then any matrix form `ρ` of this representation after
+extension of scalars to a finite field `k` has, after a suitable embedding of `k` into the residue
+field of a valuation subring `P` over `p`, a nonzero vector on which inertia at `P` acts through
+the tame character attached to a root `π` of `π ^ (p ^ 2 - 1) = p`. -/
 theorem exists_inertia_mulVec_eq_tameCharacter_smul_of_supersingular
     (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) {k : Type*} [Field k] [Finite k]
     (ι : ZMod p →+* k) (hgood : W.IsGoodPrimeFor p)
@@ -1249,11 +1252,14 @@ theorem exists_inertia_mulVec_eq_tameCharacter_smul_of_supersingular
   refine ⟨ψk, C *ᵥ vec, hC0, fun σ hσ => ?_⟩
   rw [hC σ, hψι, (heig σ hσ).2, Matrix.mulVec_smul]
 
-/-- For an integral Weierstrass curve with good supersingular reduction at an odd prime `p`, any
-matrix form `ρ` of the residual representation at `p` after extension of scalars to a finite field
-`k` has, after a suitable embedding of `k` into the residue field of a valuation subring `P` over
-`p`, a nonzero vector on which inertia at `P` acts through the tame character attached to a root
-`π` of `π ^ (p ^ 2 - 1) = p`, or through its `p`-th power. -/
+/-- Let `W` be an integral Weierstrass curve with good supersingular reduction at an odd prime `p`
+(the inner coefficients of the `p`-division polynomial are divisible by `p`). Assume that the
+`p`-torsion of `W` over `AlgebraicClosure ℚ` has `p ^ 2` points and that the Galois action on it
+is trivial on the automorphisms fixing some finite extension of `ℚ`; these two hypotheses define
+the residual representation of `W` at `p`. Then any matrix form `ρ` of this representation after
+extension of scalars to a finite field `k` has, after a suitable embedding of `k` into the residue
+field of a valuation subring `P` over `p`, a nonzero vector on which inertia at `P` acts through
+the tame character attached to a root `π` of `π ^ (p ^ 2 - 1) = p`, or through its `p`-th power. -/
 theorem exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersingular
     (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) {k : Type*} [Field k] [Finite k]
     (ι : ZMod p →+* k) (hgood : W.IsGoodPrimeFor p)
