@@ -1,4 +1,6 @@
-# Kaehler Algebra Map
+# Universal differentials under an algebra map
 
-The native universal differential map along the specified algebra
-homomorphism, retaining its target scalar action.
+Let k be commutative, A,B commutative unital k-algebras,
+and g : A → B a unital k-algebra homomorphism.
+The map Ω(g) : Ω_{A/k} → Ω_{B/k} is g-semilinear and
+sends da to d(g(a)). Its scalar law is Ω(g)(aω) = g(a)Ω(g)(ω).

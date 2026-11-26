@@ -15,22 +15,18 @@ public import MathlibExt.RingTheory.Ideal.AssociatedGraded.ModuleSelf
 public import Mathlib.RingTheory.Finiteness.Basic
 
 /-!
-# Finite and regular total associated-graded modules
+# Generators and the regular associated graded module
 
-Degree-zero initial forms of any spanning set of an `R`-module `M` generate
-the total associated-graded module over the total associated-graded ring.
-Consequently, finiteness of `M` over `R` implies finiteness of the total
-associated-graded module over the total associated-graded ring.
+Let `R` be a commutative ring, `I` an ideal, and `M` an `R`-module. If `s ⊆ M` spans `M` over
+`R`, the degree-zero initial forms of elements of `s` span `gr_I M` over `gr_I R`. Hence
+finite generation of `M` over `R` gives finite generation of the total graded module over the
+total graded ring.
 
-For the regular module `R`, the fixed-degree equivalences between module and
-ring pieces assemble into an equivalence of total modules over the total
-associated-graded ring.
+For the regular module `R`, the equality `I^n R = I^n` in every degree induces a `gr_I
+R`-linear equivalence `gr_I(R as a module) ≃ gr_I R`. It preserves homogeneous inclusions and
+initial forms of representatives.
 
-## Main declarations
-
-* `Ideal.associatedGradedModule_span_degreeZero_generators_eq_top`
-* `Ideal.associatedGradedModule_finite`
-* `Ideal.associatedGradedModuleSelfEquivTotal`
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 
 @[expose] public section
@@ -69,8 +65,10 @@ private theorem associatedGradedModuleDegreeZeroMap_apply
         (I.initialFormModule M 0 ⟨m, by simp⟩) :=
   rfl
 
-/-- Degree-zero initial forms of an `R`-spanning set of `M` generate the total
-associated-graded module over the total associated-graded ring. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `M` an `R`-module, and `s : Set M` with
+`Submodule.span R s = ⊤`. The degree-zero images `j_0([m]_0)` for `m ∈ s` span
+`I.AssociatedGradedModule M` over `I.AssociatedGraded`. Here `[m]_0` is the class in `M/IM`
+and `j_0` its direct-sum inclusion. -/
 theorem associatedGradedModule_span_degreeZero_generators_eq_top
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M]
     (s : Set M) (hs : Submodule.span R s = ⊤) :
@@ -136,8 +134,10 @@ theorem associatedGradedModule_span_degreeZero_generators_eq_top
         rw [heq, map_add, map_add]
         exact P.add_mem hxP hyP
 
-/-- A finite `R`-module has a finite total associated-graded module over the
-total associated-graded ring. -/
+/-- For an ideal `I` in a commutative ring `R` and a finitely generated `R`-module `M`, the total
+associated graded module `gr_I M` is finitely generated over `gr_I R`: `Module.Finite
+I.AssociatedGraded (I.AssociatedGradedModule M)`. Degree-zero initial forms of a finite
+generating set of `M` generate this module. -/
 noncomputable instance associatedGradedModule_finite
     (I : Ideal R) (M : Type v) [AddCommGroup M] [Module R M]
     [Module.Finite R M] :
@@ -237,8 +237,10 @@ private def associatedGradedModuleSelfMapTotal (I : Ideal R) :
       a * associatedGradedModuleSelfEquivTotal0 I x
     exact associatedGradedModuleSelfEquivTotal0_smul I a x
 
-/-- The total associated-graded module of the regular module is canonically
-the total associated-graded ring as a module over itself. -/
+/-- For an ideal `I` in a commutative ring `R`, the associated graded module of the regular module
+`R` is `gr_I R` as a module over itself. This is the `gr_I R`-linear equivalence
+`I.AssociatedGradedModule R ≃ₗ[I.AssociatedGraded] I.AssociatedGraded`, preserving
+representatives in every ideal-power degree. -/
 @[no_expose]
 noncomputable def associatedGradedModuleSelfEquivTotal (I : Ideal R) :
     I.AssociatedGradedModule R ≃ₗ[I.AssociatedGraded]
@@ -246,8 +248,10 @@ noncomputable def associatedGradedModuleSelfEquivTotal (I : Ideal R) :
   LinearEquiv.ofBijective (associatedGradedModuleSelfMapTotal I)
     (associatedGradedModuleSelfEquivTotal0 I).bijective
 
-/-- The total regular-module equivalence acts componentwise by the existing
-fixed-degree equivalences. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `n : ℕ`, and `x ∈ I.AssociatedGradedModulePiece R
+n`. If `E` is the total regular-module equivalence and `E_n` the fixed-degree equivalence,
+then `E(j_n(x)) = j_n(E_n x)`, where the two `j_n` maps include the module and ring degree-`n`
+pieces into their direct sums. -/
 @[simp]
 theorem associatedGradedModuleSelfEquivTotal_of
     (I : Ideal R) (n : ℕ) (x : I.AssociatedGradedModulePiece R n) :
@@ -259,7 +263,9 @@ theorem associatedGradedModuleSelfEquivTotal_of
       (DirectSum.of (I.AssociatedGradedModulePiece R) n x) = _
   exact associatedGradedModuleSelfEquivTotal0_of I n x
 
-/-- The total regular-module equivalence preserves included initial forms. -/
+/-- Let `R` be a commutative ring, `I` an ideal, `n : ℕ`, and `x ∈ I^n`. The total regular-module
+equivalence sends the included module initial form of `x` to the included ring initial form of
+the same representative: `E(j_n([x]_module)) = j_n([x]_ring)`. -/
 theorem associatedGradedModuleSelfEquivTotal_initialFormModule
     (I : Ideal R) (n : ℕ) (x : (I ^ n : Ideal R)) :
     I.associatedGradedModuleSelfEquivTotal

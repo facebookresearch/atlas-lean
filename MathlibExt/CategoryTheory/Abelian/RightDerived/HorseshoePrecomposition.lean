@@ -25,11 +25,11 @@ variable {D : Type u'} [Category.{v'} D] [Abelian D] [HasInjectiveResolutions D]
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-Only the fixed injective-preserving exact functor maps the horseshoe data. This will be used for
-the accepted sheaf/module equivalence, never for arbitrary field inverse image or group
-restriction.
--/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Let `D` be abelian and `E : C → D` additive and preserving
+injectives and homology. If `E(S)` is short exact, mapping the three
+resolutions, cochain lifts and row splittings gives compatible
+horseshoe data for `E(S)`. -/
 def HorseshoeData.mapExact {S : ShortComplex C} {hS : S.ShortExact}
     (H : HorseshoeData S hS) (E : C ⥤ D) [E.Additive]
     [E.PreservesInjectiveObjects] [E.PreservesHomology]
@@ -83,8 +83,11 @@ variable {A : Type u''} [Category.{v''} A] [Abelian A]
 variable (E : C ⥤ D) [E.Additive] [E.PreservesInjectiveObjects] [E.PreservesHomology]
 variable (B : D ⥤ A) [B.Additive]
 
-/-- The mapped split horseshoe is the literal composite-functor diagram,
-through the existing canonical complex-composition isomorphism. -/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Let `D,A` be abelian, `E : C → D` additive and preserving
+injectives and homology, and `B : D → A` additive, with `E(S)` short
+exact. The complex-composition isomorphism identifies the horseshoe
+mapped by `E ⋙ B` with the mapped horseshoe for `E(S)` followed by `B`. -/
 def HorseshoeData.precompMappedIso {S : ShortComplex C} {hS : S.ShortExact}
     (H : HorseshoeData S hS) (hES : (S.map E).ShortExact) :
     H.mapped (E ⋙ B) ≅ (H.mapExact E hES).mapped B :=
@@ -92,10 +95,12 @@ def HorseshoeData.precompMappedIso {S : ShortComplex C} {hS : S.ShortExact}
     (Functor.mapHomologicalComplexCompIso (Iso.refl (E ⋙ B)) (ComplexShape.up ℕ)).symm
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The existing precomposition comparison preserves the connector on the same mapped endpoint
-diagram.
--/
+/-- In an abelian category `C`, let `H` be compatible injective
+horseshoe data for short exact `S : X₁ → X₂ → X₃`. Let `C,D` admit injective resolutions, `D,A` be abelian,
+`E : C → D` additive and preserving injectives and homology,
+`B : D → A` additive, and `E(S)` short exact. The right-derived
+precomposition comparisons commute with the boundaries of `H` and
+its mapped data in degrees `n,n+1`. -/
 theorem HorseshoeData.delta_precomp {S : ShortComplex C} {hS : S.ShortExact}
     (H : HorseshoeData S hS) (hES : (S.map E).ShortExact) (n : ℕ) :
     H.delta (E ⋙ B) n (n + 1) rfl ≫

@@ -1,3 +1,4 @@
-# Integral Convolution Element degree zero
+# The empty word has unit convolution
 
-The original degree-zero empty word has the actual unit convolution for every alphabet.
+For a commutative ring `R` and every `m : ℕ`, `integralConvolutionElement R 0 m = 1` in
+`R[S_0]`, since there is one empty labeling.

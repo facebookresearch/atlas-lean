@@ -1,4 +1,6 @@
-# Coaugmentation comp eq of f zero
+# Degree-zero compatibility determines a full coaugmentation square
 
-A cochain map's degree-zero augmentation equation determines the whole coaugmentation equation
-from the original single object.
+In an abelian category `C`, let `ι : X[0] → I`, `κ : X[0] → J`
+be coaugmentations of nonnegative cochain complexes and `a : I → J`
+a cochain map. If `ι⁰ ≫ a⁰ = κ⁰`, then `ι ≫ a = κ` as full
+cochain maps.

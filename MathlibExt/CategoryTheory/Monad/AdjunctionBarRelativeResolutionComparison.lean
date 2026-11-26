@@ -14,12 +14,15 @@ public import MathlibExt.CategoryTheory.Monad.AdjunctionBarRelativeResolution
 public import Mathlib.CategoryTheory.Adjunction.Limits
 
 /-!
-# Comparison maps from the adjunction Bar
+# Relative comparisons from an adjunction bar complex
 
-The restricted Bar contraction gives augmentation-splitting data for the free Bar complex. Its
-terms are relatively projective, and right-adjoint kernel preservation supplies the comparison
-hypotheses. Every coefficient morphism lifts to a comparison into a split relative resolution, and
-any two comparisons over that morphism are chain homotopic.
+Let `C,D` be preadditive with zero objects, `D` have kernels, and
+`F : C → D` be left adjoint to additive `U : D → C`.
+The alternating-face bar chain complex of `F ∘ U` is augmented by
+the counit and becomes contractingly split after `U`. Its terms are
+`U`-relative-projective, and the right adjoint preserves the displayed
+kernels. Any map `M → Y` therefore lifts from the bar of `M` into a
+`U`-split augmented complex over `Y`; all such lifts are chain homotopic.
 -/
 
 @[expose] public section
@@ -32,30 +35,43 @@ variable {C : Type uC} [Category.{vC} C] [Preadditive C] [HasZeroObject C]
   {D : Type uD} [Category.{vD} D] [Preadditive D] [HasZeroObject D] [HasKernels D]
   {F : C ⥤ D} {U : D ⥤ C} [U.Additive]
 
-/-- The original D-valued alternating Bar complex. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. The free bar is the nonnegative alternating-face chain
+complex in `D` of the adjunction comonad, with degree-`n` object
+`(F ∘ U)^(n+1)(M)`. -/
 abbrev freeBarResolutionChain (adj : F ⊣ U) (M : D) : ChainComplex D ℕ :=
   (alternatingFaceMapComplex D).obj (adj.freeBar M)
 
-/-- The D-valued augmentation, with the original counit at degree zero. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. The counit gives the chain augmentation
+`Bar(M) → M[0]` of the free bar complex. -/
 def freeBarResolutionAugmentation (adj : F ⊣ U) (M : D) :
     freeBarResolutionChain adj M ⟶ (ChainComplex.single₀ D).obj M :=
   AlternatingFaceMapComplex.ε.app (adj.freeBarAugmented M)
 
 omit [Preadditive C] [HasZeroObject C] [HasKernels D] [U.Additive] in
-/-- Degree zero of this original augmentation is precisely the original counit. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. The degree-zero component of `Bar(M) → M[0]` is the
+counit `F(U(M)) → M`. -/
 theorem freeBarResolutionAugmentation_zero (adj : F ⊣ U) (M : D) :
     (adj.freeBarResolutionAugmentation M).f 0 = adj.counit.app M := by
   rw [freeBarResolutionAugmentation, AlternatingFaceMapComplex.ε_app_f_zero,
     freeBarAugmented_hom_zero]
 
-/-- The already-constructed positive extra operator on the mapped original chain terms. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. The restricted extra-degeneracy gives operators
+`U(Bar_n(M)) → U(Bar_(n+1)(M))` for the contracting splitting
+of the augmented restricted bar complex. -/
 abbrev freeBarResolutionSplitOperator (adj : F ⊣ U) (M : D) (n : ℕ) :
     U.obj ((freeBarResolutionChain adj M).X n) ⟶
       U.obj ((freeBarResolutionChain adj M).X (n + 1)) :=
   adj.restrictedFreeBarSplitOperator M n
 
 omit [HasZeroObject C] [HasZeroObject D] [HasKernels D] in
-/-- Additive whiskering's identity components preserve the original differential exactly. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. Applying `U` to the degree-`n+1` to degree-`n` differential
+of the `D`-valued bar gives exactly the differential of its
+restricted alternating-face chain complex in `C`. -/
 theorem freeBarResolution_mapped_d (adj : F ⊣ U) (M : D) (n : ℕ) :
     U.map ((freeBarResolutionChain adj M).d (n + 1) n) =
       (restrictedFreeBarChain adj M).d (n + 1) n := by
@@ -65,7 +81,9 @@ theorem freeBarResolution_mapped_d (adj : F ⊣ U) (M : D) (n : ℕ) :
     U.map ((freeBarResolutionChain adj M).d (n + 1) n) ≫ 𝟙 _ at h
   simpa only [Category.id_comp, Category.comp_id] using h.symm
 
-/-- The restricted Bar contraction gives original-chain augmentation split data. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. The adjunction unit and restricted extra-degeneracy operators
+give a contracting splitting of the augmentation `U(Bar(M)) → U(M)[0]`. -/
 def freeBarResolutionSplit (adj : F ⊣ U) (M : D) :
     Functor.AugmentationSplit U (freeBarResolutionChain adj M) M
       (freeBarResolutionAugmentation adj M) where
@@ -82,19 +100,27 @@ def freeBarResolutionSplit (adj : F ⊣ U) (M : D) :
     exact adj.restrictedFreeBar_split_succ M n
 
 omit [Preadditive C] [HasZeroObject C] [HasZeroObject D] [HasKernels D] [U.Additive] in
-/-- Every original Bar chain term has the canonical relative projective property. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. Every chain term of `Bar(M)` is `U`-relative-projective,
+since each is in the image of the left adjoint `F`. -/
 theorem freeBarResolution_term_relativeProjective (adj : F ⊣ U) (M : D) (n : ℕ) :
     U.IsRelativeProjective ((freeBarResolutionChain adj M).X n) :=
   adj.freeBar_isRelativeProjective M n
 
 omit [Preadditive C] [HasZeroObject C] [HasZeroObject D] [HasKernels D] [U.Additive] in
-/-- Right-adjoint structure preserves the displayed original kernel, with no input universal property. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. The right adjoint `U` preserves the kernel of every map
+`g : A → B` in `D`, equivalently the limit of the parallel pair
+`g,0`. -/
 theorem freeBarResolution_preservesKernel (adj : F ⊣ U) {A B : D} (g : A ⟶ B) :
     PreservesLimit (parallelPair g 0) U := by
   let : U.IsRightAdjoint := adj.isRightAdjoint
   infer_instance
 
-/-- The Bar lifts an original endpoint map into any target split augmentation. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. For an augmentation `P → Y[0]` contractingly split after
+`U` and `f : M → Y`, there is a comparison chain map `Bar(M) → P`
+lifting `f`. -/
 def freeBarResolutionComparison (adj : F ⊣ U) (M Y : D) (P : ChainComplex D ℕ)
     (β : P ⟶ (ChainComplex.single₀ D).obj Y) (σ : Functor.AugmentationSplit U P Y β)
     (f : M ⟶ Y) : freeBarResolutionChain adj M ⟶ P := by
@@ -104,7 +130,10 @@ def freeBarResolutionComparison (adj : F ⊣ U) (M Y : D) (P : ChainComplex D �
     (fun n => adj.freeBarResolution_preservesKernel (P.d (n + 1) n)) f
 
 omit [HasZeroObject C] in
-/-- The Bar comparison retains both original augmentations and the original endpoint map. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. For a `U`-split augmentation `β : P → Y[0]` and `f : M → Y`,
+the comparison satisfies `comparison_f ≫ β = ε_M ≫ f[0]`
+for the full bar counit augmentation `ε_M`. -/
 @[reassoc]
 theorem freeBarResolutionComparison_augmentation (adj : F ⊣ U) (M Y : D) (P : ChainComplex D ℕ)
     (β : P ⟶ (ChainComplex.single₀ D).obj Y) (σ : Functor.AugmentationSplit U P Y β)
@@ -116,7 +145,9 @@ theorem freeBarResolutionComparison_augmentation (adj : F ⊣ U) (M Y : D) (P : 
     (freeBarResolutionAugmentation adj M) β σ (freeBarResolution_term_relativeProjective adj M)
     (fun n => adj.freeBarResolution_preservesKernel (P.d (n + 1) n)) f
 
-/-- Every two original Bar comparisons over the same endpoint map have a constructed homotopy. -/
+/-- Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. For a `U`-split augmentation `P → Y[0]`, any two chain maps
+`Bar(M) → P` over the same `f : M → Y` are chain homotopic. -/
 def freeBarResolutionComparisonHomotopy (adj : F ⊣ U) (M Y : D) (P : ChainComplex D ℕ)
     (β : P ⟶ (ChainComplex.single₀ D).obj Y) (σ : Functor.AugmentationSplit U P Y β)
     (f : M ⟶ Y) (g h : freeBarResolutionChain adj M ⟶ P)

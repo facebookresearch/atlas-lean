@@ -1,3 +1,4 @@
-# Shuffle Degree Cut
+# Weak degree cut into two tensor blocks
 
-An actual weak cut with its original total degree.
+For `n ∈ ℕ`, a weak shuffle degree cut is a pair of natural
+block lengths `(p,q)` with the specified equality `p+q=n`.

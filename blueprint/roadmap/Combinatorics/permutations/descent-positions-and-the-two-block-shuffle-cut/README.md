@@ -1,9 +1,9 @@
 # Descent positions and the two-block shuffle cut criterion
 
-- [Descent Positions](descent-positions.md)
-- [Descent Number](descent-number.md)
-- [Is Shuffle iff descents at cut](is-shuffle-iff-descents-at-cut.md)
-- [Descent Positions eq empty iff](descent-positions-eq-empty-iff.md)
-- [Descent Number eq zero iff](descent-number-eq-zero-iff.md)
-- [Descent Number lt](descent-number-lt.md)
-- [Descent Number le one of shuffle](descent-number-le-one-of-shuffle.md)
+- [The adjacent descent positions](descent-positions.md)
+- [The ordinary descent number](descent-number.md)
+- [A shuffle has descents only at its cut](is-shuffle-iff-descents-at-cut.md)
+- [No descents characterize the identity](descent-positions-eq-empty-iff.md)
+- [Zero descent number characterizes the identity](descent-number-eq-zero-iff.md)
+- [Descent count is below positive length](descent-number-lt.md)
+- [A two-block shuffle has at most one descent](descent-number-le-one-of-shuffle.md)

@@ -16,11 +16,13 @@ public import MathlibExt.LinearAlgebra.TensorPower.PermutationRepresentation
 /-!
 # Integral convolution on coefficient tensor words
 
-The finite signed labeling sum acts by place permutations on the tensor
-factors while fixing the coefficient. The stable-sort product identity gives
-composition over every commutative ground ring. The signed integer operation
-includes the additional scalar `(-1)^(m - 1)` at positive parameter `m`.
-No rational coefficients are required.
+Let k be a commutative ring and M,V k-modules. For n,m ≥ 0, define Bₙ(m) on M ⊗ V⊗n by summing
+over labelings f : Fin n → Fin m. Each summand is sign(sort(f)) times the place permutation
+sort(f), and it fixes the coefficient in M. Stable sorting gives Bₙ(l)Bₙ(m) = Bₙ(lm).
+
+For m > 0 the signed integer operation is Lₙ(m) = (-1)^(m-1)Bₙ(m). Its composition retains the
+scalar (-1)^((l-1)(m-1)). These operators are defined over every commutative ring. For Eulerian
+convolution and its integer parameters, see J.-L. Loday, Cyclic Homology, 2nd ed., §4.5.
 -/
 
 @[expose] public section
@@ -36,13 +38,19 @@ variable {k : Type u} [CommRing k]
   {V : Type v} [AddCommGroup V] [Module k V]
   {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- The original signed finite-alphabet convolution on actual coefficient words. -/
+/-- The signed stable-sort convolution operator.
+
+For a commutative ring k, k-modules M,V and n,m ≥ 0, Bₙ(m) is the endomorphism of M ⊗ V⊗n
+given by ∑f:Fin n→Fin m sign(sort(f)) · ρₙ,M(sort(f)). The coefficient in M is fixed. -/
 def coefficientIntegralConvolutionOperator (n m : ℕ) :
     Module.End k (M ⊗[k] TensorPower k n V) :=
   coefficientPermutationGroupAlgebraAction (k := k) (M := M) (V := V) n
     (Equiv.Perm.integralConvolutionElement k n m)
 
-/-- Every labeling acts by its scalar sign and its original place permutation. -/
+/-- The labeling sum for integral convolution.
+
+For a commutative ring k and k-modules M,V, Bₙ(m) equals ∑f:Fin n→Fin m sign(sort(f)) ·
+ρₙ,M(sort(f)) on M ⊗ V⊗n. The stable-sort sign is mapped from ℤ to k. -/
 theorem coefficientIntegralConvolutionOperator_eq_sum (n m : ℕ) :
     coefficientIntegralConvolutionOperator (k := k) (M := M) (V := V) n m =
       ∑ f : Fin n → Fin m, (((Tuple.sort f).sign : ℤ) : k) •
@@ -51,7 +59,10 @@ theorem coefficientIntegralConvolutionOperator_eq_sum (n m : ℕ) :
   rw [coefficientIntegralConvolutionOperator, Equiv.Perm.integralConvolutionElement, map_sum]
   simp only [coefficientPermutationGroupAlgebraAction_single]
 
-/-- Actual coefficient convolution composes by the product of its integral parameters. -/
+/-- Composition of integral convolution operators.
+
+For a commutative ring k, k-modules M,V and natural parameters l,m, Bₙ(l) ∘ Bₙ(m) = Bₙ(lm)
+on M ⊗ V⊗n. -/
 theorem coefficientIntegralConvolutionOperator_comp (n l m : ℕ) :
     (coefficientIntegralConvolutionOperator (k := k) (M := M) (V := V) n l).comp
       (coefficientIntegralConvolutionOperator (k := k) (M := M) (V := V) n m) =
@@ -63,33 +74,47 @@ theorem coefficientIntegralConvolutionOperator_comp (n l m : ℕ) :
   rw [← map_mul, Equiv.Perm.integralConvolutionElement_mul]
   rfl
 
-/-- The empty original word retains the actual unit convolution. -/
+/-- Integral convolution on the empty tensor word.
+
+For a commutative ring k, k-modules M,V and every m ≥ 0, B₀(m) is the identity on M ⊗ V⊗0,
+including when the labeling alphabet is empty. -/
 theorem coefficientIntegralConvolutionOperator_degree_zero (m : ℕ) :
     coefficientIntegralConvolutionOperator (k := k) (M := M) (V := V) 0 m = LinearMap.id := by
   rw [coefficientIntegralConvolutionOperator, Equiv.Perm.integralConvolutionElement_degree_zero,
     map_one]
   rfl
 
-/-- The empty alphabet has zero actual action on positive-degree words. -/
+/-- The empty-alphabet operator in positive degree.
+
+For a commutative ring k, k-modules M,V and n > 0, Bₙ(0) = 0 on M ⊗ V⊗n, since no labeling
+Fin n → Fin 0 exists. -/
 theorem coefficientIntegralConvolutionOperator_zero_parameter (n : ℕ) (hn : 0 < n) :
     coefficientIntegralConvolutionOperator (k := k) (M := M) (V := V) n 0 = 0 := by
   rw [coefficientIntegralConvolutionOperator,
     Equiv.Perm.integralConvolutionElement_zero_parameter k n hn, map_zero]
 
-/-- The true integer operation on actual coefficient words, with the original parameter sign. -/
+/-- The signed integer lambda operator.
+
+For a commutative ring k, k-modules M,V and m > 0, Lₙ(m) is the endomorphism (-1)^(m-1)Bₙ(m)
+of M ⊗ V⊗n, where Bₙ(m) is signed stable-sort convolution. -/
 def coefficientTrueIntegerLambdaOperator (n m : ℕ) (hm : 0 < m) :
     Module.End k (M ⊗[k] TensorPower k n V) :=
   coefficientPermutationGroupAlgebraAction (k := k) (M := M) (V := V) n
     (Equiv.Perm.trueLambdaElement k n m hm)
 
-/-- The true lambda operation is the actual signed convolution, not a differently named projector. -/
+/-- The parameter sign in integer lambda.
+
+For a commutative ring k, k-modules M,V and m > 0, Lₙ(m) = (-1)^(m-1) · Bₙ(m) on M ⊗ V⊗n. -/
 theorem coefficientTrueIntegerLambdaOperator_eq_signed (n m : ℕ) (hm : 0 < m) :
     coefficientTrueIntegerLambdaOperator (k := k) (M := M) (V := V) n m hm =
       (-1 : k) ^ (m - 1) • coefficientIntegralConvolutionOperator (k := k) (M := M) (V := V) n m := by
   rw [coefficientTrueIntegerLambdaOperator, Equiv.Perm.trueLambdaElement, map_smul]
   rfl
 
-/-- The real integral true-lambda composition retains its exact positive-parameter parity scalar. -/
+/-- The parity scalar in integer lambda composition.
+
+For a commutative ring k, k-modules M,V and l,m > 0, Lₙ(l) ∘ Lₙ(m) = (-1)^((l-1)(m-1)) ·
+Lₙ(lm) on M ⊗ V⊗n. -/
 theorem coefficientTrueIntegerLambdaOperator_comp (n l m : ℕ) (hl : 0 < l) (hm : 0 < m) :
     (coefficientTrueIntegerLambdaOperator (k := k) (M := M) (V := V) n l hl).comp
       (coefficientTrueIntegerLambdaOperator (k := k) (M := M) (V := V) n m hm) =

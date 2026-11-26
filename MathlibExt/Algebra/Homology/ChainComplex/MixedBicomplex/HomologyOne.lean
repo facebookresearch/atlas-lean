@@ -19,20 +19,28 @@ public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 public meta import Lean.Elab.Tactic.Omega
 
 /-!
-# Degree one of the actual (b,B) total complex
+# Degree-one homology of a mixed-complex total
 
-The native mixed bicomplex has one supported summand in degrees zero and one,
-and two supported summands in degree two. Its degree-one short complex is
-therefore K₂ ⊞ K₀ → K₁ → K₀, with first arrow [b₂,B₀] and second arrow b₁.
-The object comparisons below are constructed from the actual coprojections
-and their universal property. No comparison or isomorphism is a caller input.
+Let K be a nonnegative chain complex in a preadditive category with a zero object. A homotopy
+H between its zero endomorphisms gives degree-raising maps B_n : K_n → K_(n+1) satisfying the
+mixed relation with the boundary b. If B² = 0 and the mixed bicomplex has a total T, its first
+three total objects are canonically K₀, K₁ and K₂ ⊞ K₀, with the last comparison requiring
+that biproduct.
+
+Under these comparisons, the degree-one short complex is K₂ ⊞ K₀ → K₁ → K₀, with arrows [b₂,
+B₀] and b₁. Both summand coefficients in the first arrow are positive. The first-column chain
+map K → T corresponds to the short-complex map with components biprod.inl, identity and
+identity.
+
+When the category is abelian, these maps identify H₁(T) with the homology of that short
+complex. In module terms this is ker b₁/(im b₂ + im B₀); when b₁ = 0, the first-column
+homology map sends a class modulo im b₂ to its class modulo im b₂ + im B₀.
+
+See Weibel, *An Introduction to Homological Algebra*, Chapter 9, for mixed complexes.
 -/
 
 @[expose] public section
 
-set_option backward.defeqAttrib.useBackward true
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
 
 noncomputable section
 
@@ -42,7 +50,10 @@ namespace ChainComplex
 
 universe u v
 
-/-- Native Abelian homology applies to every designated zero-morphism view. -/
+/-- Let C be an abelian category and z a zero-morphism structure on C. Then C has homology for
+every short complex formed with z, expressed by CategoryWithHomology C. The conclusion is
+independent of the chosen zero-morphism structure, since such structures on a fixed category
+are unique. -/
 private theorem mixedHomologyOneCategoryWithHomology
     {C₀ : Type u} [hCategory : Category.{v} C₀] [hAbelian : Abelian C₀]
     (z : HasZeroMorphisms C₀) : @CategoryWithHomology C₀ hCategory z := by
@@ -65,7 +76,11 @@ local notation "T" => HomologicalComplex₂.total
 variable [hTotal : HomologicalComplex₂.HasTotal
   (mixedBicomplex K H hSquare) (ComplexShape.down ℕ)]
 
-/-- The actual degree-zero total object is its sole supported original term. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. The unique supported cell in
+total degree zero gives an isomorphism mixedTotalZeroIso : T.X 0 ≅ K.X 0. Its inverse is the
+supported-cell comparison followed by the total coprojection from bidegree (0, 0). -/
 def mixedTotalZeroIso : (T).X 0 ≅ K.X 0 where
   hom := (B).totalDesc (fun p q hpq => by
     have hp : p = 0 := by change p + q = 0 at hpq; omega
@@ -94,7 +109,11 @@ def mixedTotalZeroIso : (T).X 0 ≅ K.X 0 where
     change e.inv ≫ e.hom = 𝟙 _
     exact e.inv_hom_id
 
-/-- The actual degree-zero coprojection is retained by the object comparison. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. The coprojection from cell (0,
+0), followed by mixedTotalZeroIso.hom, equals (mixedColumnIso K 0 0 0 rfl).hom :
+(mixedBicomplex.X 0).X 0 ⟶ K.X 0. -/
 @[reassoc]
 lemma mixedTotalZeroIso_ι :
     (B).ιTotal (ComplexShape.down ℕ) 0 0 0 rfl ≫ (mixedTotalZeroIso K H hSquare).hom =
@@ -102,7 +121,11 @@ lemma mixedTotalZeroIso_ι :
   dsimp only [mixedTotalZeroIso]
   rw [HomologicalComplex₂.ι_totalDesc]
 
-/-- The actual degree-one total object has only the supported original degree-one term. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. The only supported cell in
+total degree one is (0, 1). It gives an isomorphism mixedTotalOneIso : T.X 1 ≅ K.X 1, with
+inverse the cell comparison followed by its total coprojection. -/
 def mixedTotalOneIso : (T).X 1 ≅ K.X 1 where
   hom := (B).totalDesc (fun p q hpq => if hp : p = 0 then by
     subst p
@@ -133,7 +156,11 @@ def mixedTotalOneIso : (T).X 1 ≅ K.X 1 where
     change e.inv ≫ e.hom = 𝟙 _
     exact e.inv_hom_id
 
-/-- The actual first-column degree-one coprojection is retained by the comparison. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. The total coprojection from
+cell (0, 1), followed by mixedTotalOneIso.hom, equals (mixedColumnIso K 0 1 1 rfl).hom, the
+supported-cell comparison to K.X 1. -/
 @[reassoc]
 lemma mixedTotalOneIso_ι :
     (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl ≫ (mixedTotalOneIso K H hSquare).hom =
@@ -144,7 +171,12 @@ lemma mixedTotalOneIso_ι :
 
 variable [HasBinaryBiproduct (K.X 2) (K.X 0)]
 
-/-- Degree two is the biproduct of the original b₂ and B₀ source terms. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
+exists. The supported cells (0, 2) and (1, 1) give an isomorphism mixedTotalTwoIso : T.X 2 ≅
+K.X 2 ⊞ K.X 0. The first cell maps through its comparison to biprod.inl, and the second
+through its comparison to biprod.inr. -/
 def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
   hom := (B).totalDesc (fun p q hpq => if hp : p = 0 then by
     subst p
@@ -220,7 +252,11 @@ def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
         congrArg (fun m : K.X 0 ⟶ K.X 0 => m ≫
           (biprod.inr : K.X 0 ⟶ K.X 2 ⊞ K.X 0)) e.inv_hom_id
 
-/-- The actual vertical boundary source becomes the first biproduct inclusion. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
+exists. The total coprojection from (0, 2), followed by mixedTotalTwoIso.hom, is
+(mixedColumnIso K 0 2 2 rfl).hom ≫ biprod.inl. Thus this supported cell is the K₂ summand. -/
 @[reassoc]
 lemma mixedTotalTwoIso_ι_b :
     (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl ≫ (mixedTotalTwoIso K H hSquare).hom =
@@ -229,7 +265,11 @@ lemma mixedTotalTwoIso_ι_b :
   rw [HomologicalComplex₂.ι_totalDesc]
   rfl
 
-/-- The actual horizontal boundary source becomes the second biproduct inclusion. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
+exists. The total coprojection from (1, 1), followed by mixedTotalTwoIso.hom, is
+(mixedColumnIso K 1 0 1 rfl).hom ≫ biprod.inr. Thus this supported cell is the K₀ summand. -/
 @[reassoc]
 lemma mixedTotalTwoIso_ι_B :
     (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl ≫ (mixedTotalTwoIso K H hSquare).hom =
@@ -239,7 +279,11 @@ lemma mixedTotalTwoIso_ι_B :
   rfl
 
 omit hTotal in
-/-- The actual b₂/B₀ presentation is a short complex by d²=0 and the bottom mixed identity. -/
+/-- In a preadditive category C, let K be an ℕ-indexed chain complex and H a homotopy between its
+zero endomorphisms. Write b₂ = K.d 2 1, b₁ = K.d 1 0 and B₀ = H.hom 0 1, and assume K₂ ⊞ K₀
+exists. The morphisms biprod.desc b₂ B₀ : K₂ ⊞ K₀ ⟶ K₁ and b₁ : K₁ ⟶ K₀ form a short complex.
+The relation b₂ ≫ b₁ = 0 comes from the chain-complex law, and B₀ ≫ b₁ = 0 from the bottom
+homotopy equation. -/
 def mixedHomologyOneShortComplex : ShortComplex C :=
   ShortComplex.mk (biprod.desc (K.d 2 1) (H.hom 0 1)) (K.d 1 0) (by
     apply biprod.hom_ext'
@@ -268,25 +312,41 @@ private lemma firstColumn_d (n : ℕ) :
   simpa only [Category.assoc] using hNative
 
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
-/-- The actual first column gives a chain map from the original b-complex to its mixed total. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. Define
+mixedColumnZeroInclusion : K ⟶ T as the inverse first-column isomorphism K ≅ mixedBicomplex.X
+0 followed by the first-column total inclusion. -/
 def mixedColumnZeroInclusion : K ⟶ T :=
   (mixedColumnZeroIso K).inv ≫ HomologicalComplex₂.firstColumnTotalInclusion B
 
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
-/-- The chain map retains the original first-column coprojection in every degree. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. For every n : ℕ,
+mixedColumnZeroInclusion.f n = (mixedColumnIso K 0 n n rfl).inv ≫ ιTotal (0, n). This maps K_n
+into the first-column cell of total degree n. -/
 lemma mixedColumnZeroInclusion_f (n : ℕ) :
     (mixedColumnZeroInclusion K H hSquare).f n =
       (mixedColumnIso K 0 n n rfl).inv ≫
         (B).ιTotal (ComplexShape.down ℕ) 0 n n (Nat.zero_add n) := rfl
 
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
-/-- The original mixed inclusion is its native zero-column transport followed by the total map. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. The chain map
+mixedColumnZeroInclusion equals (mixedColumnZeroIso K).inv ≫ firstColumnTotalInclusion
+(mixedBicomplex K H hSquare). The first factor identifies K with column zero; the second is
+assembled from its total coprojections. -/
 lemma mixedColumnZeroInclusion_eq_firstColumn :
     mixedColumnZeroInclusion K H hSquare =
       (mixedColumnZeroIso K).inv ≫ HomologicalComplex₂.firstColumnTotalInclusion B := rfl
 
 omit hTotal in
-/-- The original short complex maps to the actual mixed presentation by the first b-source. -/
+/-- In a preadditive category C, let K be an ℕ-indexed chain complex and H a homotopy between its
+zero endomorphisms. Write b₂ = K.d 2 1, b₁ = K.d 1 0 and B₀ = H.hom 0 1, and assume K₂ ⊞ K₀
+exists. The short complex K₂ ⟶ K₁ ⟶ K₀ maps to K₂ ⊞ K₀ ⟶ K₁ ⟶ K₀ by the three components
+biprod.inl, 𝟙 K₁ and 𝟙 K₀. The target incoming arrow is [b₂, B₀] and its outgoing arrow is b₁. -/
 def mixedColumnZeroShortComplexMap : K.sc' 2 1 0 ⟶ mixedHomologyOneShortComplex K H :=
   ShortComplex.homMk (biprod.inl : K.X 2 ⟶ K.X 2 ⊞ K.X 0)
     (𝟙 (K.X 1)) (𝟙 (K.X 0)) (by
@@ -321,7 +381,10 @@ private lemma horizontalBottom_d :
   simp only [Category.assoc]
 
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
-/-- The actual degree-one total differential is the original b₁ under the canonical objects. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. For e₁ = mixedTotalOneIso : T₁
+≅ K₁ and e₀ = mixedTotalZeroIso : T₀ ≅ K₀, one has e₁.inv ≫ T.d 1 0 ≫ e₀.hom = K.d 1 0. -/
 lemma mixedTotalOneIso_inv_d :
     (mixedTotalOneIso K H hSquare).inv ≫ (T).d 1 0 ≫
       (mixedTotalZeroIso K H hSquare).hom = K.d 1 0 := by
@@ -334,7 +397,11 @@ lemma mixedTotalOneIso_inv_d :
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
   rw [mixedTotalZeroIso_ι, Iso.inv_hom_id, Category.comp_id]
 
-/-- The actual total boundary is [b₂,B₀], with the native vertical sign already canceled. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
+exists. For e₂ = mixedTotalTwoIso and e₁ = mixedTotalOneIso, one has e₂.inv ≫ T.d 2 1 ≫ e₁.hom
+= biprod.desc (K.d 2 1) B₀. The K₂ and K₀ summands contribute b₂ and B₀ with positive signs. -/
 lemma mixedTotalTwoIso_inv_d :
     (mixedTotalTwoIso K H hSquare).inv ≫ (T).d 2 1 ≫
       (mixedTotalOneIso K H hSquare).hom =
@@ -365,7 +432,12 @@ lemma mixedTotalTwoIso_inv_d :
     simp only [Category.assoc, Iso.inv_hom_id_assoc]
     rw [mixedTotalOneIso_ι, Iso.inv_hom_id, Category.comp_id]
 
-/-- The actual total short complex is canonically the original b₂/B₀ presentation. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
+exists. The comparisons e₂ : T₂ ≅ K₂ ⊞ K₀, e₁ : T₁ ≅ K₁ and e₀ : T₀ ≅ K₀ give an isomorphism
+T.sc' 2 1 0 ≅ mixedHomologyOneShortComplex K H. The target arrows are [K.d 2 1, B₀] and K.d 1
+0. -/
 def mixedHomologyOneShortComplexIso :
     (T).sc' 2 1 0 ≅ mixedHomologyOneShortComplex K H :=
   ShortComplex.isoMk (mixedTotalTwoIso K H hSquare) (mixedTotalOneIso K H hSquare)
@@ -386,7 +458,12 @@ def mixedHomologyOneShortComplexIso :
       rw [Iso.inv_hom_id_assoc]
       exact (mixedTotalOneIso_inv_d K H hSquare).symm)
 
-/-- The computed low-degree comparison keeps the actual first-column chain map. -/
+/-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
+between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
+every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
+exists. Applying the degree-(2,1,0) short-complex functor to mixedColumnZeroInclusion and then
+the mixed short-complex comparison equals mixedColumnZeroShortComplexMap K H. Its three
+components are biprod.inl, 𝟙 K₁ and 𝟙 K₀. -/
 lemma mixedColumnZeroShortComplexMap_eq :
     (shortComplexFunctor' C (ComplexShape.down ℕ) 2 1 0).map
         (mixedColumnZeroInclusion K H hSquare) ≫
@@ -410,18 +487,29 @@ section Abelian
 
 variable [Abelian C]
 
-/-- The goal selects its original zero dictionary as the ordinary indexed argument. -/
+/-- For an abelian category C and any zero-morphism structure z on C, CategoryWithHomology C holds
+with that structure. Thus every short complex formed using z has a homology object; uniqueness
+of zero morphisms identifies it with the abelian-category construction. -/
 local instance mixedHomologyOneOriginalHomology (z : HasZeroMorphisms C) :
     @CategoryWithHomology C _ z := mixedHomologyOneCategoryWithHomology z
 
-/-- Degree-one homology of the mixed total is the actual b₂/B₀ presentation homology. -/
+/-- In an abelian category C, let K be an ℕ-indexed chain complex and H a homotopy between its
+zero endomorphisms. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0, and assume the
+mixed bicomplex has total T. The total-object comparisons induce an isomorphism H₁(T) ≅ H(K₂ ⊞
+K₀ → K₁ → K₀), where the arrows are [K.d 2 1, B₀] and K.d 1 0. Equivalently, it identifies
+total homology with the cycles of b₁ modulo the images of both incoming maps. -/
 def mixedHomologyOneIso : (T).homology 1 ≅ (mixedHomologyOneShortComplex K H).homology :=
   (T).homologyIsoSc' 2 1 0
     ((ComplexShape.down ℕ).prev_eq' (by show (ComplexShape.down ℕ).Rel 2 1; rfl))
     ((ComplexShape.down ℕ).next_eq' (by show (ComplexShape.down ℕ).Rel 1 0; rfl)) ≪≫
       ShortComplex.homologyMapIso (mixedHomologyOneShortComplexIso K H hSquare)
 
-/-- The degree-one comparison identifies the actual inclusion-induced homology map. -/
+/-- In an abelian category C, let K be an ℕ-indexed chain complex and H a homotopy between its
+zero endomorphisms. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0, and assume the
+mixed bicomplex has total T. Let m : K ⟶ T be the first-column inclusion, E_T the mixed
+degree-one homology comparison, E_K : H₁(K) ≅ H(K.sc' 2 1 0) the canonical short-complex
+comparison, and u the map with components biprod.inl, identity and identity into the mixed
+presentation. Then H₁(m) ≫ E_T.hom = E_K.hom ≫ H(u). -/
 lemma mixedColumnZeroInclusion_homology :
     homologyMap (mixedColumnZeroInclusion K H hSquare) 1 ≫
       (mixedHomologyOneIso K H hSquare).hom =
@@ -464,7 +552,12 @@ lemma mixedColumnZeroInclusion_homology :
         (ShortComplex.homologyMap ψ)).trans (congrArg (fun f => eK.hom ≫ f) hPH)))
 
 omit hTotal [HasZeroObject C] in
-/-- When b₁ is zero, the original quotient class maps to the actual mixed quotient class. -/
+/-- In an abelian category C, let K be an ℕ-indexed chain complex and H a homotopy between its
+zero endomorphisms, and assume K.d 1 0 = 0. Write P = K.sc' 2 1 0 and S =
+mixedHomologyOneShortComplex K H, and let u : P ⟶ S have components biprod.inl, identity and
+identity. Their class maps c_P = P.pOpcycles ≫ (P.asIsoHomologyι h0).inv and c_S = S.pOpcycles
+≫ (S.asIsoHomologyι h0).inv satisfy c_P ≫ H(u) = c_S. Thus the class of a degree-one element
+modulo im b₂ maps to its class modulo im b₂ + im B₀. -/
 lemma mixedColumnZeroShortComplexMap_quotient (h0 : K.d 1 0 = 0) :
     (K.sc' 2 1 0).pOpcycles ≫ ((K.sc' 2 1 0).asIsoHomologyι h0).inv ≫
       ShortComplex.homologyMap (mixedColumnZeroShortComplexMap K H) =

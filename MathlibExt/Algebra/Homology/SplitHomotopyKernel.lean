@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Algebra.Homology.Contractible
+public import MathlibExt.Algebra.Homology.HomologicalComplex.SplitExact
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
 
@@ -76,7 +76,7 @@ def splitHomotopyKernelContraction (h : Homotopy (f ≫ g) (𝟙 K)) :
 omit [DecidableRel c.Rel] in
 /-- The constructed kernel contraction makes that kernel contractible. -/
 theorem splitHomotopyKernel_contractible (hg : g ≫ f = 𝟙 L)
-    (h : Homotopy (f ≫ g) (𝟙 K)) : (kernel f).Contractible := by
+    (h : Homotopy (f ≫ g) (𝟙 K)) : Nonempty (Homotopy (𝟙 (kernel f)) 0) := by
   classical
   exact ⟨splitHomotopyKernelContraction f g hg h⟩
 
@@ -85,6 +85,6 @@ omit [DecidableRel c.Rel] in
 theorem splitHomotopyKernel_acyclic (hg : g ≫ f = 𝟙 L)
     (h : Homotopy (f ≫ g) (𝟙 K)) : (kernel f).Acyclic := by
   classical
-  exact (splitHomotopyKernel_contractible f g hg h).acyclic
+  exact acyclic_of_homotopy_id_zero (splitHomotopyKernel_contractible f g hg h).some
 
 end HomologicalComplex

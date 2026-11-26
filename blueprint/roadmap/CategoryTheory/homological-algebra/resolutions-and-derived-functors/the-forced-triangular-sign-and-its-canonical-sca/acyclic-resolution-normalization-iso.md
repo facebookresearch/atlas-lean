@@ -1,3 +1,6 @@
-# Acyclic Resolution Normalization Iso
+# Normalization automorphism of an object
 
-The canonical original scalar correction on any object in a preadditive category.
+For an object `X` of a preadditive category `C` and `n ∈ ℕ`,
+the normalization sign `σ_n=(-1)^(n(n+1)/2)` defines an
+automorphism of `X`. Both its forward and inverse morphisms
+are `σ_n • 𝟙 X`.

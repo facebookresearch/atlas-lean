@@ -1,3 +1,5 @@
-# Acyclic Resolution Normalization Iso hom app
+# Components of the natural normalization automorphism
 
-Every component is the exact original triangular scalar on the original functor object.
+For a functor `G : C → D` with `D` preadditive, the
+component at `X` of its degree-`n` normalization automorphism
+is `σ_n • 𝟙 G(X)`, where `σ_n=(-1)^(n(n+1)/2)`.

@@ -14,20 +14,16 @@ public import MathlibExt.CategoryTheory.ExactCategory.MorphismProperty
 public import Mathlib.Algebra.Homology.CommSq
 
 /-!
-# Bicartesian squares from admissible exact sequences
+# Bicartesian squares in exact categories
 
-A morphism of admissible exact short complexes that is invertible on the
-left induces a pullback square on the final two terms. Dually, invertibility
-on the right induces a pushout square on the first two terms. The proofs use
-the exact-category bicartesian argument: normalize the invertible endpoint,
-apply the selected pushout or pullback axiom, identify the resulting object
-with a biproduct, and use the kernel or cokernel model of a commutative square.
+Let `C` be an additive category with a chosen Quillen exact structure.
+A morphism between admissible exact short complexes that is invertible on
+the left gives a pullback square on the last two objects; invertibility
+on the right gives a pushout square on the first two objects. The associated
+biproduct kernel–cokernel sequences characterize these squares.
 
-Mathematical source: Theo Bühler, *Exact Categories*, Proposition 2.12,
+References: Theo Bühler, *Exact Categories*, Proposition 2.12,
 Proposition 3.1, and Corollary 3.2.
-
-No balanced or abelian hypothesis, new axiom, stage structure, realization,
-or additivity result is introduced.
 -/
 
 @[expose] public section
@@ -41,8 +37,9 @@ namespace CategoryTheory.ExactCategory
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasBinaryBiproducts C] [ExactCategory C]
 
-/-- Admissible exactness of the biproduct short complex associated to a
-commutative square implies that the square is a pushout. -/
+/-- In an additive exact category `C`, let `sq` be a commutative square
+`X₁ → X₂`, `X₁ → X₃`, with target `X₄`. If its associated biproduct
+short complex is admissible exact, the original square is a pushout. -/
 theorem isPushout_of_isAdmissibleExact_shortComplex
     {X₁ X₂ X₃ X₄ : C}
     {f : X₁ ⟶ X₂} {g : X₁ ⟶ X₃}
@@ -55,8 +52,10 @@ theorem isPushout_of_isAdmissibleExact_shortComplex
   exact IsPushout.of_isColimit' sq
     (sq.isColimitEquivIsColimitCokernelCofork.symm hc)
 
-/-- Admissible exactness of the biproduct short complex associated to a
-commutative square implies that the square is a pullback. -/
+/-- In an additive exact category `C`, let `sq` be a commutative square
+with initial object `X₁` and final object `X₄`. If the associated
+biproduct short complex with map into `X₂ ⊞ X₃` is admissible exact,
+the original square is a pullback. -/
 theorem isPullback_of_isAdmissibleExact_shortComplex'
     {X₁ X₂ X₃ X₄ : C}
     {fst : X₁ ⟶ X₂} {snd : X₁ ⟶ X₃}
@@ -198,8 +197,9 @@ private theorem isPullback_g_of_common_left
     isAdmissibleExact_of_iso rowIso hP
   exact isPullback_of_isAdmissibleExact_shortComplex' rightSq hK
 
-/-- A morphism of admissible exact short complexes that is invertible on its
-left object induces a pullback square on the final two objects. -/
+/-- In an additive exact category `C`, let `φ : S → T` be a morphism of
+admissible exact short complexes. If its left component `φ₁` is an
+isomorphism, the square formed by `S.g`, `T.g`, `φ₂`, and `φ₃` is a pullback. -/
 theorem isPullback_g_of_isAdmissibleExact_of_isIso_left
     {S T : ShortComplex C} (φ : S ⟶ T)
     (hS : IsAdmissibleExact S) (hT : IsAdmissibleExact T)
@@ -224,8 +224,10 @@ theorem isPullback_g_of_isAdmissibleExact_of_isIso_left
     (inv φ.τ₁ ≫ S.f) S.g T.f T.g φ.τ₂ φ.τ₃
     wSbar T.zero hSbar hT hLeft φ.comm₂₃.symm
 
-/-- In the same situation, an admissible-mono right component makes the
-middle component an admissible mono. -/
+/-- In an additive exact category `C`, let `φ : S → T` be a morphism of
+admissible exact short complexes. If `φ₁` is an isomorphism and `φ₃`
+is an admissible monomorphism, the middle component `φ₂` is an admissible
+monomorphism. -/
 theorem isAdmissibleMono_middle_of_isIso_left
     {S T : ShortComplex C} (φ : S ⟶ T)
     (hS : IsAdmissibleExact S) (hT : IsAdmissibleExact T)
@@ -395,8 +397,9 @@ private theorem isPushout_f_of_common_right
     isAdmissibleExact_of_iso rowIso.symm hP
   exact isPushout_of_isAdmissibleExact_shortComplex leftSq hK
 
-/-- A morphism of admissible exact short complexes that is invertible on its
-right object induces a pushout square on the first two objects. -/
+/-- In an additive exact category `C`, let `φ : S → T` be a morphism of
+admissible exact short complexes. If its right component `φ₃` is an
+isomorphism, the square formed by `S.f`, `T.f`, `φ₁`, and `φ₂` is a pushout. -/
 theorem isPushout_f_of_isAdmissibleExact_of_isIso_right
     {S T : ShortComplex C} (φ : S ⟶ T)
     (hS : IsAdmissibleExact S) (hT : IsAdmissibleExact T)

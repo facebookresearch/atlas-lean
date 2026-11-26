@@ -1,3 +1,5 @@
-# First Positive Degree
+# First-positive bidegrees of a fixed total degree
 
-The exact degree pairs in the full positive-ideal action.
+Bidegrees contributing to total degree `n` in a first-positive pairing:
+pairs `(p, q)` of natural numbers with `p > 0` and `p + q = n`.
+The second degree `q` is allowed to be zero.

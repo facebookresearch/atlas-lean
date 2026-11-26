@@ -1,3 +1,6 @@
-# Algebra Positive Relation Differential comp
+# The restricted proper-shuffle differential squares to zero
 
-The restricted relation boundary squares to zero by its original ambient differential.
+The restricted proper-shuffle differential squares to zero.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, successive
+restricted relation differentials compose to zero.

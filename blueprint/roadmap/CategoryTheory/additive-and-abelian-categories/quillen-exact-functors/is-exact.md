@@ -1,4 +1,5 @@
-# Is Exact
+# Exact functors between Quillen exact categories
 
-An exact functor between exact categories is an additive functor preserving     the class of exact
-sequences.
+For additive categories `C`, `D` with Quillen exact structures, an
+additive functor `F : C → D` is exact when the image of each admissible
+exact short complex of `C` is admissible exact in `D`.

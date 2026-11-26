@@ -1,9 +1,7 @@
-# Cartan Eilenberg Resolutions
+# The Cartan–Eilenberg resolution functor to the homotopy category
 
-Chosen Cartan--Eilenberg resolutions, as a functor from nonnegative
-chain complexes to the homotopy category of chain complexes of chain
-complexes.  An object is sent to the homotopy class of the bicomplex of
-its chosen Cartan--Eilenberg resolution, in the resolution direction,
-and a chain map to the homotopy class of any supplied comparison.  This
-is the Cartan--Eilenberg analogue of Mathlib's `projectiveResolutions`
-functor.
+Let C be abelian and assume every object has a projective resolution. Choosing Cartan–Eilenberg
+resolutions defines a functor from nonnegative chain complexes in C to the homotopy category of
+nonnegative chain complexes of nonnegative chain complexes. It sends L to its resolution
+bicomplex, indexed first by resolution degree, and g to the homotopy class of any comparison
+over g.

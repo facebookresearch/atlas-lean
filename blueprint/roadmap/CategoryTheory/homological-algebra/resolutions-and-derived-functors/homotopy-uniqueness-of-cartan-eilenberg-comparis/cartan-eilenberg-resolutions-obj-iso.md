@@ -1,5 +1,5 @@
-# Cartan Eilenberg Resolutions obj iso
+# Any chosen resolution represents the Cartan–Eilenberg functor object
 
-The chosen value of the Cartan--Eilenberg resolution functor is
-isomorphic in the homotopy category to the homotopy class of the
-bicomplex of any supplied resolution.
+Let C be abelian and assume every object has a projective resolution. For every L and every
+Cartan–Eilenberg resolution P of L, the chosen value of the resolution functor is canonically
+isomorphic in the homotopy category to [P.bicomplex].

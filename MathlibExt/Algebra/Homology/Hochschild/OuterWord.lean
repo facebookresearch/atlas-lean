@@ -12,18 +12,27 @@ module
 
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Cyclic
 
-/-! # Associative endpoint multiplication and the original adjacent merge -/
+/-!
+# Endpoint multiplication and adjacent word multiplication
+
+For a type A with multiplication, outerWord multiplies the first entry of a word on the left and
+the last entry on the right, leaving every internal entry unchanged. If multiplication is
+associative, this operation commutes with each adjacent multiplication in the bar differential.
+-/
 @[expose] public section
 
 namespace ModuleCat.Algebra.Hochschild
 universe v
 variable {A : Type v}
 
-/-- Multiply the first and last entries, retaining every internal position. -/
+/-- For a type A with multiplication, n : ℕ, l,r ∈ A and a word a = (a₀,…,aₙ₊₁), outerWord n l r a
+is (l·a₀,a₁,…,aₙ,aₙ₊₁·r). Its length remains n+2 and its n internal entries are unchanged. -/
 def outerWord [Mul A] (n : ℕ) (l r : A) (a : Fin (n + 2) → A) : Fin (n + 2) → A :=
   Fin.cons (l * a 0) (Fin.snoc (Fin.init (Fin.tail a)) (a (Fin.last (n + 1)) * r))
 
-/-- On explicitly separated endpoints, the internal tuple is unchanged. -/
+/-- For any multiplication on A, n : ℕ, endpoints a₀,aLast and an internal word a of length n,
+outerWord n l r (a₀,a,aLast) = (l·a₀,a,aLast·r). No associativity hypothesis is needed for this
+formula. -/
 theorem outerWord_cons_snoc [Mul A] (n : ℕ) (l r a₀ aLast : A) (a : Fin n → A) :
     outerWord n l r (Fin.cons a₀ (Fin.snoc a aLast)) =
       Fin.cons (l * a₀) (Fin.snoc a (aLast * r)) := by
@@ -74,7 +83,9 @@ private theorem merge_outerWord_cons_snoc [Semigroup A] (n : ℕ) (i : Fin (n + 
       · rw [hochschildMulAdjacent_castSucc_snoc, hochschildMulAdjacent_castSucc_snoc]
         simp only [Fin.init_snoc, Fin.snoc_last, outerWord_cons_snoc]
 
-/-- Every adjacent multiplication commutes with endpoint multiplication by associativity. -/
+/-- Let A be a semigroup. For n : ℕ, an adjacent position i ∈ Fin(n+2), l,r ∈ A and a word a of
+length n+3, multiplying entries i and i+1 after outerWord (n+1) l r gives the same word as
+applying outerWord n l r after that adjacent multiplication. -/
 theorem mulAdjacent_outerWord [Semigroup A] (n : ℕ) (i : Fin (n + 2)) (l r : A)
     (a : Fin (n + 3) → A) :
     hochschildMulAdjacent i (outerWord (n + 1) l r a) =

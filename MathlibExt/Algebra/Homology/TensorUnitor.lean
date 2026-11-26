@@ -12,10 +12,14 @@ module
 public import Mathlib.Algebra.Homology.Monoidal
 
 /-!
-# Generator formulas for tensor products and unitors of homological complexes
+# Summand formulas for tensor maps and unitors of complexes
 
-This file records the generic formulas for tensor maps and the two tensor
-unitors on homogeneous generators. It is independent of simplicial objects.
+Let C be preadditive and monoidal with a zero object and bilinear tensor product, and let c be a
+complex shape with tensor signs on an additive commutative monoid. A tensor map restricts on the
+bidegree-(i,j) summand to the tensor of its degree-i and degree-j components. The tensor unit
+complex is concentrated in degree zero. If the corresponding tensor functors preserve the zero
+object, the left or right unitor of a complex restricts on the (0,i) or (i,0) summand to the
+respective unitor of C after the degree-zero single-complex identification.
 -/
 
 @[expose] public section

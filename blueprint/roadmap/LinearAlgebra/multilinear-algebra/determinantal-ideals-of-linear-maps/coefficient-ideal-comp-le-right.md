@@ -1,3 +1,4 @@
-# Coefficient Ideal comp le right
+# Precomposition decreases the coefficient ideal
 
-Precomposition can only decrease the coefficient ideal.
+Let `R` be a commutative ring, `M,N,P` be `R`-modules, and `f : M →ₗ[R] N`, `g : N →ₗ[R] P`.
+Then `c(g ∘ f) ≤ c(g)`, where `c(h)` is the coefficient ideal of `h`.

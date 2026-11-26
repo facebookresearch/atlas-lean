@@ -12,12 +12,19 @@ module
 public import MathlibExt.LinearAlgebra.ExteriorPower.ProductFiltration.AssociatedGradedMap
 
 /-!
-# Transporting exterior filtrations through module coordinates
+# Transported exterior filtrations and triangular operators
 
-A module equivalence with a product transports the mixed-weight filtration
-and its successive quotient coordinates. A triangular linear map respects
-these transported stages, and its quotient map is the tensor of the two
-diagonal exterior maps. The carrier universes remain independent.
+Fix a commutative ring R, R-modules M and N, a degree m and linear coordinates e : X ≃ₗ[R]
+⋀[R]^m(M × N). The filtration on X is the inverse image of the mixed-weight filtration: in
+stage q, every coordinate with fewer than q factors from M is zero. The stage equivalence
+induced by e identifies adjacent-stage quotients with the corresponding exterior-product
+grades. For q ≤ m, this quotient is ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N.
+
+Clipping coordinates of first weight below q gives a linear retraction X → F_X^q. For a
+first-summand-preserving linear map f : M × N → M' × N' and target coordinates e', the
+operator e'⁻¹ ∘ ⋀^m f ∘ e preserves the stages. Its map on the q-th grade is ⋀^q f.first ⊗
+⋀^(m−q) f.relative, where f.relative is the induced map from N to N'. The modules and
+coordinate carriers may have different universes.
 -/
 
 @[expose] public section
@@ -29,9 +36,6 @@ open scoped TensorProduct
 universe u v w x v' w' x'
 
 namespace exteriorPower.ProductFiltration.CoordinateTransport
-
--- Reuse the stage group selected by the original native quotient-coordinate API.
-attribute [local instance] exteriorPower.ProductFiltration.filtration_addCommGroup
 
 variable (R : Type u) [CommRing R]
   (M : Type v) [AddCommGroup M] [Module R M]
@@ -82,7 +86,12 @@ theorem quotientEquiv_mk (q : ℕ) (z : filtration R M N m e q) :
     quotientEquiv R M N m e q (Submodule.Quotient.mk z) =
       Submodule.Quotient.mk (stageEquiv R M N m e q z) := rfl
 
-/-- The actual transported stage inclusion has a native coordinate-clipping retraction. -/
+/-- Let R be a commutative ring, M and N R-modules, m : ℕ, and e : X ≃ₗ[R] ⋀[R]^m (M × N) a linear
+equivalence from an R-module X. For q : ℕ, let F_X^q be the inverse image under e of the
+exterior-product filtration F_m^q, defined by vanishing coordinates with first weight below q.
+The map retraction q : X →ₗ[R] F_X^q first applies e, discards those lower-weight coordinates,
+and transports the resulting stage element back along the inverse stage equivalence. On the
+inclusion F_X^q → X it is the identity. -/
 def retraction (q : ℕ) : X →ₗ[R] filtration R M N m e q :=
   (stageEquiv R M N m e q).symm.toLinearMap.comp
     ((ProductFiltration.projectionToFiltration R M N m q).comp e.toLinearMap)
@@ -147,7 +156,13 @@ theorem gradeMap_mk (q : ℕ) (z : filtration R M N m e q) :
       Submodule.Quotient.mk (stageMap e e' f q z) := by
   rw [gradeMap, Submodule.mapQ_apply]
 
-/-- The ACTUAL quotient map retains the diagonal exterior tensor coordinate. -/
+/-- Let R be a commutative ring, M and N R-modules, m : ℕ, and e : X ≃ₗ[R] ⋀[R]^m (M × N) a linear
+equivalence from an R-module X. Let M', N' and X' be R-modules with coordinates e' : X' ≃ₗ[R]
+⋀[R]^m (M' × N'). Let f : M × N →ₗ[R] M' × N' and f.first : M →ₗ[R] M' satisfy f ∘ inl = inl'
+∘ f.first, and put f.relative = snd' ∘ f ∘ inr. For q ≤ m, the induced quotient map G_q of
+e'⁻¹ ∘ ⋀^m f ∘ e satisfies E'_q(G_q(z)) = TensorProduct.map (⋀^q f.first) (⋀^(m−q) f.relative)
+(E_q(z)) for every source grade class z. Here E_q and E'_q are the mixed-tensor coordinate
+equivalences of the transported adjacent-stage quotients. -/
 theorem coordinateEquiv_gradeMap (q : ℕ) (hq : q ≤ m)
     (z : associatedGraded R M N m e q) :
     coordinateEquiv R M' N' m e' q hq (gradeMap e e' f q z) =

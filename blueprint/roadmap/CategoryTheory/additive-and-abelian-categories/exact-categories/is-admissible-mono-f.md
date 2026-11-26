@@ -1,3 +1,5 @@
-# Is Admissible Mono f
+# Admissibility of the first exact-sequence map
 
-The first map of an admissible exact short complex is an admissible mono.
+In an additive category `C` with a chosen Quillen exact structure, the
+first map `S.f` of an admissible exact short complex `S` is an
+admissible monomorphism.

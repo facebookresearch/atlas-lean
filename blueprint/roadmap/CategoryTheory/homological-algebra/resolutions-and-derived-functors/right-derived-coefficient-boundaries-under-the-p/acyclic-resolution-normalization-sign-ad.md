@@ -1,3 +1,5 @@
-# Acyclic Resolution Normalization Sign adjacent product
+# Adjacent triangular signs give the connecting cross sign
 
-Adjacent normalization scalars multiply to the original kernel-tail cross sign.
+For `n ∈ ℕ`, the normalization signs satisfy
+`σ_n σ_(n+1)=normalizationCrossSign(n)=(-1)^(n+1)`, where
+`σ_n=(-1)^(n(n+1)/2)`.

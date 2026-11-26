@@ -1,4 +1,5 @@
-# Flipped Additive
+# Second-variable additivity gives additivity of the flipped bifunctor
 
-The flipped bifunctor is additive by the original second-variable additivity, checked at every
-natural-transformation component.
+Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. The flipped bifunctor `C₂ → C₁ → D` is additive in its
+outer variable, by the second-variable additivity of `F`.

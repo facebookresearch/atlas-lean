@@ -1,4 +1,5 @@
-# First Order Mul Equiv
+# The flat first-order multiplication equivalence
 
-For a flat module, the canonical multiplication map is a linear
-equivalence from the tensor product to the first-order layer.
+Let `R` be a commutative ring, `I : Ideal R`, and `M` a flat `R`-module. The multiplication
+map is the `R/I`-linear equivalence `(M/IM) ⊗[R/I] (I/I²) ≃ₗ[R/I] IM/I²M`, with `[m] ⊗ [i] ↦
+[i • m]`.

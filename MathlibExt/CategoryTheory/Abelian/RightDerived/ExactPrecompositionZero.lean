@@ -13,11 +13,15 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.ExactPrecomposition
 public import MathlibExt.CategoryTheory.Abelian.CoaugmentationCycles
 
 /-!
-# Original coaugmentation classes under directional right precomposition
+# Coaugmentation classes and degree-zero source comparisons
 
-The class comes from the original coaugmentation and cycles. The augmentation comparison sends it
-to the degree-zero derived map. Consequently the directional source comparison retains the same
-map without an injectivity premise on the source functor or exactness of the output functor.
+For an additive functor between abelian categories and a coaugmentation
+quasi-isomorphism `X[0] → K`, its degree-zero cycle class maps to the
+canonical map from the original functor to its zeroth right-derived
+functor. Consequently, for an additive homology-preserving source change
+`U : C → D` and additive `L : D → A`, the directional comparison in
+degree zero carries the original `L(U(X))` coaugmentation class to the
+same class in `R⁰L(U(X))`.
 -/
 
 @[expose] public section
@@ -36,7 +40,11 @@ section AugmentedClass
 
 variable [HasInjectiveResolutions C]
 
-/-- The augmented comparison recovers the original degree-zero map. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For a coaugmentation quasi-isomorphism
+`ι : X[0] → K`, its mapped cycle `F(X) → Z⁰(F(K))`, followed by the
+homology quotient and `H⁰(F(K)) → R⁰F(X)`, equals the canonical
+map `F(X) → R⁰F(X)`. -/
 theorem augmentedResolutionToRightDerivedHom_coaugmentation
     (F : C ⥤ D) [F.Additive] {X : C} (K : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ K) [QuasiIso ι] :
@@ -78,7 +86,10 @@ theorem augmentedResolutionToRightDerivedHom_coaugmentation
 
 end AugmentedClass
 
-/-- The composition dictionary retains the cycle of the mapped coaugmentation. -/
+/-- Let `C,D,A` be abelian, `U : C → D`, `L : D → A` additive,
+and `I` an injective resolution of `X`. The cycle of the coaugmentation
+in `(U ⋙ L)(I)` becomes the cycle of the coaugmentation of `U(I)`
+under the natural identification with `L(U(I))`. -/
 theorem mapCochainCoaugmentation_cycles_composition
     (U : C ⥤ D) [U.Additive] (L : D ⥤ A) [L.Additive]
     {X : C} (I : InjectiveResolution X) :
@@ -108,7 +119,10 @@ variable [HasInjectiveResolutions C] [HasInjectiveResolutions D]
   (U : C ⥤ D) [U.Additive] [U.PreservesHomology]
   (L : D ⥤ A) [L.Additive]
 
-/-- Directional source precomposition preserves the original coaugmentation at degree zero. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+The canonical map `U ⋙ L → R⁰(U ⋙ L)` followed by the directional
+comparison equals the canonical map `U ⋙ L → U ⋙ R⁰L`. -/
 @[reassoc]
 theorem rightDerivedPrecompHomOfPreservesHomology_toRightDerivedZero :
     (U ⋙ L).toRightDerivedZero ≫ rightDerivedPrecompHomOfPreservesHomology U L 0 =

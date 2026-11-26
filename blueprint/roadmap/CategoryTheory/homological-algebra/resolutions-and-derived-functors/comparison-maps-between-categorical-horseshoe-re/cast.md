@@ -1,8 +1,7 @@
-# Cast
+# Identifying equal horseshoe endpoint data
 
-Transport a horseshoe comparison along an equality of the underlying
-maps of short complexes, where the endpoint resolution morphisms are
-transported correspondingly by `ProjectiveResolution.Hom.cast`.  The
-middle chain map is unchanged.  The endpoint transports are stated as
-equalities, as the target endpoint morphisms are often themselves given
-as casts along component equalities.
+In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. Identifying equal
+sequence maps `φ=φ′` and the corresponding endpoint resolution
+maps transports a horseshoe comparison without changing its middle chain map.

@@ -1,3 +1,4 @@
-# Descent Number lt label Alphabet
+# Descent labelings need a larger alphabet
 
-A nonempty actual descent labeling requires a strictly larger alphabet than the actual descent count.
+For `n,m : ℕ`, `σ ∈ S_(n+1)`, and any `g : DescentLabeling σ m`, `descentNumber σ < m`. The
+positive word length forces room for every required strict rise.

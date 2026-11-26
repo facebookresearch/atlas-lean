@@ -1,3 +1,6 @@
-# Projector Cokernel Iso Kernel
+# Cokernel–kernel comparison for an idempotent
 
-The existing split-complement cokernel comparison supplies the canonical comparison.
+In a preadditive category `C`, let `p : X → X` be idempotent
+and suppose its kernel exists. If its cokernel
+also exists, the split pair gives a canonical isomorphism
+`cokernel p ≅ kernel p`.

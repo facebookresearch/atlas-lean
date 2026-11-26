@@ -12,7 +12,13 @@ module
 public import MathlibExt.CategoryTheory.Abelian.Projective.Horseshoe
 
 /-!
-## Degree splittings give horseshoe coordinates
+# Horseshoe endpoint coordinates from degreewise splittings
+
+For projective horseshoe data in an abelian category, a chosen
+splitting of each resolution row gives biproduct coordinates for the
+middle terms. The chain-map equations identify the differential
+diagonals with the endpoint differentials and make the left-source
+to right-target component zero.
 -/
 @[expose] public section
 noncomputable section
@@ -27,10 +33,12 @@ variable {P₁ : ProjectiveResolution S.X₁} {P₃ : ProjectiveResolution S.X�
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-A degree splitting gives the original biproduct coordinates and all lower-triangular differential
-equations.
--/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact,
+`P₁,P₃` endpoint projective resolutions, and `H` horseshoe data.
+A splitting of every row `P₁,n → P₂,n → P₃,n` gives an endpoint
+coordinate specification: `P₂,n ≅ P₁,n ⊞ P₃,n`, left inclusion,
+right projection, endpoint differential diagonals, and zero
+`P₁,n+1 → P₃,n` differential component. -/
 def specOfSplittings (H : HorseshoeData hS P₁ P₃)
     (s : ∀ n : ℕ, (ShortComplex.mk (H.i.f n) (H.p.f n)
       (HomologicalComplex.congr_hom H.zero n)).Splitting) : H.Spec where

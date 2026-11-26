@@ -1,3 +1,6 @@
-# Cyclic Bicomplex Hom comp
+# Composition of original cyclic bicomplex morphisms
 
-The original bicomplex map preserves composition in the given order.
+Let k be commutative and A,B,D nonunital associative k-bilinear rings
+in one algebra universe. For multiplicative k-linear maps
+f : A → B and g : B → D, the bicomplex maps satisfy
+K(g ∘ f) = K(g) K(f).

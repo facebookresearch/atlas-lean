@@ -14,13 +14,21 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricCoefficients
 public import MathlibExt.Algebra.Homology.ZeroDifferentialHomology
 
 /-!
-# Polynomial diagonal coefficient differentials
+# Polynomial diagonal coefficient differentials and symmetric homology
 
-For an arbitrary bimodule, the diagonal variable differential
-is its right action minus its left action, matching the
-Hochschild endpoint convention. For symmetric coefficients
-the enveloping action factors through multiplication, and
-all diagonal differentials vanish after coefficient tensoring.
+Let k be a commutative ring, A = k[σ] and E = A ⊗[k] Aᵐᵒᵖ. Tensoring the diagonal Koszul complex
+with a compatible A-bimodule M gives a complex with terms M ⊗_E ∧ⁿ_E(⊕ᵢE·eᵢ). Its differential
+is the alternating deletion sum with coefficient operators m ↦ m·Xᵢ − Xᵢ·m.
+
+For symmetric coefficients, the right E-action factors through multiplication E → A. Every
+diagonal difference acts trivially, and all coefficient diagonal differentials vanish. The
+projective-resolution comparison then identifies HHₙ(A,M) with the degree-n diagonal term. In
+degree zero this term is M; the class, forward coordinate and inverse coordinate formulas are
+given both as linear maps and as categorical maps to a canonically lifted coefficient module.
+
+The diagonal resolution is the polynomial Koszul description of Hochschild homology; its
+differential-form interpretation is the polynomial case of the Hochschild–Kostant–Rosenberg
+theorem.
 -/
 
 @[expose] public section
@@ -51,7 +59,10 @@ variable (M : Type w) [AddCommGroup M] [Module k M]
   [IsScalarTower k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k)ᵐᵒᵖ M]
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- The polynomial coefficient model is the canonical balanced tensor of the original Koszul complex. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-bimodule with commuting left and right actions
+compatible with its k-module structure. With the induced right E-action on M, coefficientComplex
+k σ M equals the balanced coefficient Koszul complex M ⊗_E K(E,V,δ). -/
 theorem coefficientComplex_eq_balanced :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     coefficientComplex k σ M = KoszulComplex.balancedCoefficientComplex k E V M x := by
@@ -59,7 +70,10 @@ theorem coefficientComplex_eq_balanced :
   rfl
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- Each coefficient degree is the same canonical balanced degree. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-bimodule with commuting left and right actions
+compatible with its k-module structure. In every n : ℕ, the degree-n term of coefficientComplex
+k σ M equals the degree-n balanced Koszul term M ⊗_E ∧ⁿ_EV. -/
 theorem coefficientComplex_X_eq_balanced (n : ℕ) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     (coefficientComplex k σ M).X n =
@@ -68,7 +82,10 @@ theorem coefficientComplex_X_eq_balanced (n : ℕ) :
   rfl
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- Each differential is the balanced original Koszul differential. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-bimodule with commuting left and right actions
+compatible with its k-module structure. For all i,j : ℕ, the differential of coefficientComplex
+k σ M equals the corresponding differential of the balanced coefficient complex M ⊗_E K(E,V,δ). -/
 theorem coefficientComplex_d_eq_balanced (i j : ℕ) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     (coefficientComplex k σ M).d i j =
@@ -77,7 +94,10 @@ theorem coefficientComplex_d_eq_balanced (i j : ℕ) :
   rfl
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- The original diagonal difference acts on a coefficient by original right-minus-left multiplication. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-bimodule with commuting left and right actions
+compatible with its k-module structure. For i ∈ σ and m ∈ M, the right E-action of δᵢ on m is
+m·Xᵢ − Xᵢ·m; equivalently (δᵢ)ᵐᵒᵖ·m = (Xᵢ)ᵐᵒᵖ·m − Xᵢ·m. -/
 theorem rightDiagonalDifference_action (i : σ) (m : M) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     op (δ i) • m = op (MvPolynomial.X i : A) • m - (MvPolynomial.X i : A) • m := by
@@ -89,7 +109,11 @@ theorem rightDiagonalDifference_action (i : σ) (m : M) :
   simp only [op_one, one_smul]
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- Signed deletion in the coefficient model keeps every original coefficient operator. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-bimodule with commuting left and right actions
+compatible with its k-module structure. For m ∈ M and f : Fin(n+1) → σ, the differential of m
+⊗_E(e_{f(0)}∧…∧e_{f(n)}) is ∑ⱼ (m·((-1)ʲδ_{f(j)})) ⊗_E(e_{f(0)}∧…∧ê_{f(j)}∧…∧e_{f(n)}).
+Positions j are counted from zero; the diagonal action is right minus left multiplication. -/
 theorem coefficientComplex_d_mk_basis (n : ℕ) (m : M) (f : Fin (n + 1) → σ) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     letI : Module k (⋀[E]^(n + 1) V) := Module.compHom _ (algebraMap k E)
@@ -121,7 +145,11 @@ section Symmetric
 variable (M : Type w) [AddCommGroup M] [Module k M] [Module (MvPolynomial σ k) M]
   [SMulCommClass k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k) M]
 
-/-- The original symmetric right action is added canonically, leaving the coefficient carrier unchanged. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. Tensor the diagonal Koszul complex K(E,V,δ) with the right E-module M
+induced by the symmetric right A-action. This defines symmetricCoefficientComplex, an ℕ-indexed
+chain complex of k-modules with terms M ⊗_E ∧ⁿ_EV. -/
 def symmetricCoefficientComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ := by
   letI := Symmetric.opModule A M
   letI := Symmetric.actionsComm A M
@@ -130,7 +158,11 @@ def symmetricCoefficientComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ := 
   exact coefficientComplex k σ M
 
 omit [SMulCommClass k (MvPolynomial σ k) M] in
-/-- The symmetric right enveloping action factors through original multiplication. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For z ∈ E and m ∈ M, the right enveloping action satisfies m·z = μ(z)·m,
+where μ : E → A is multiplication. In the displayed opposite-module notation this is
+rightEnvelopingAction(zᵐᵒᵖ,m) = μ(z)·m. -/
 theorem symmetricRightEnvelopingAction_multiplication (z : E) (m : M) :
     letI := Symmetric.opModule A M
     letI := Symmetric.actionsComm A M
@@ -153,7 +185,11 @@ theorem symmetricRightEnvelopingAction_multiplication (z : E) (m : M) :
       simp only [MulOpposite.op_add, map_add, LinearMap.add_apply, add_smul, hz, hz']
 
 omit [SMulCommClass k (MvPolynomial σ k) M] in
-/-- Functional values are killed by the original symmetric coefficient, by the multiplication kernel. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. Let δ : V → E be the diagonal-difference functional. For every a ∈ V and m
+∈ M, m·δ(a) = 0. Its value lies in ker μ, and the symmetric right E-action factors through μ : E
+→ A. -/
 theorem symmetricFunctional_action_eq_zero (a : V) (m : M) :
     letI := Symmetric.opModule A M
     letI := Symmetric.actionsComm A M
@@ -174,7 +210,11 @@ theorem symmetricFunctional_action_eq_zero (a : V) (m : M) :
   rw [hmem, zero_smul]
 
 omit [SMulCommClass k (MvPolynomial σ k) M] in
-/-- Every original symmetric coefficient diagonal differential vanishes. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For each n : ℕ, the differential from degree n+1 to degree n of
+symmetricCoefficientComplex k σ M is zero, because every diagonal functional value acts
+trivially on M. -/
 theorem symmetricCoefficientComplex_d_succ (n : ℕ) :
     (symmetricCoefficientComplex k σ M).d (n + 1) n = 0 := by
   letI := Symmetric.opModule A M
@@ -197,7 +237,10 @@ theorem symmetricCoefficientComplex_d_succ (n : ℕ) :
     hz
 
 omit [SMulCommClass k (MvPolynomial σ k) M] in
-/-- The entire original symmetric coefficient complex has zero differentials, including shape-zero components. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For every i,j : ℕ, the differential (symmetricCoefficientComplex k σ M).d
+i j is zero, including the maps outside the consecutive-degree chain shape. -/
 theorem symmetricCoefficientComplex_d_eq_zero (i j : ℕ) :
     (symmetricCoefficientComplex k σ M).d i j = 0 := by
   by_cases h : (ComplexShape.down ℕ).Rel i j
@@ -206,7 +249,11 @@ theorem symmetricCoefficientComplex_d_eq_zero (i j : ℕ) :
     exact symmetricCoefficientComplex_d_succ k σ M j
   · exact (symmetricCoefficientComplex k σ M).shape i j h
 
-/-- The original symmetric Hochschild complex is computed by this zero-differential coefficient model. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. The Hochschild chain complex Cₙ(A,M) = M ⊗[k] A^{⊗n} is homotopy
+equivalent to symmetricCoefficientComplex k σ M. The comparison is induced by the
+augmentation-preserving enveloping bar and diagonal projective resolutions. -/
 def symmetricCoefficientComparison :
     HomotopyEquiv (Symmetric.chainComplex k A M) (symmetricCoefficientComplex k σ M) := by
   letI := Symmetric.opModule A M
@@ -215,29 +262,44 @@ def symmetricCoefficientComparison :
   letI := Symmetric.kOpTower k A M
   exact coefficientComparison k σ M
 
-/-- All original symmetric polynomial Hochschild homology is the degree object of the zero-differential
-  diagonal model. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For n : ℕ, the resolution comparison and the zero diagonal differential
+give an isomorphism HHₙ(A,M) ≅ (symmetricCoefficientComplex k σ M).X n = M ⊗_E ∧ⁿ_EV. -/
 def symmetricCoefficientHomologyIsoDegree (n : ℕ) :
     (Symmetric.chainComplex k A M).homology n ≅ (symmetricCoefficientComplex k σ M).X n :=
   (symmetricCoefficientComparison k σ M).toHomologyIso n ≪≫
     HomologicalComplex.zeroDifferentialHomologyIso (symmetricCoefficientComplex k σ M) n
       (symmetricCoefficientComplex_d_eq_zero k σ M)
 
-/-- The first part of the comparison is homology of the constructed original resolution lift. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. In degree n : ℕ, the forward map of symmetricCoefficientHomologyIsoDegree
+is the homology map of symmetricCoefficientComparison.hom followed by the zero-differential
+homology isomorphism from the diagonal homology to its degree-n term. -/
 theorem symmetricCoefficientHomologyIsoDegree_hom (n : ℕ) :
     (symmetricCoefficientHomologyIsoDegree k σ M n).hom =
       HomologicalComplex.homologyMap (symmetricCoefficientComparison k σ M).hom n ≫
         (HomologicalComplex.zeroDifferentialHomologyIso (symmetricCoefficientComplex k σ M) n
           (symmetricCoefficientComplex_d_eq_zero k σ M)).hom := rfl
 
-/-- The original diagonal class transported by the inverse chain comparison. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. In degree n : ℕ, take a diagonal term z ∈ M ⊗_E ∧ⁿ_EV to its homology
+class in the zero-differential diagonal complex, then apply the homology map of
+symmetricCoefficientComparison.inv. This defines symmetricHochschildClassFromDiagonal : M ⊗_E
+∧ⁿ_EV → HHₙ(A,M). -/
 def symmetricHochschildClassFromDiagonal (n : ℕ) :
     (symmetricCoefficientComplex k σ M).X n ⟶ (Symmetric.chainComplex k A M).homology n :=
   HomologicalComplex.zeroDifferentialClassMap (symmetricCoefficientComplex k σ M) n
       (symmetricCoefficientComplex_d_eq_zero k σ M) ≫
     HomologicalComplex.homologyMap (symmetricCoefficientComparison k σ M).inv n
 
-/-- The transported native class has exactly the original degree-object coordinates. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For n : ℕ, symmetricHochschildClassFromDiagonal followed by the forward
+map of symmetricCoefficientHomologyIsoDegree is the identity on the degree-n diagonal
+coefficient term. -/
 @[reassoc]
 theorem symmetricHochschildClassFromDiagonal_coordinates (n : ℕ) :
     symmetricHochschildClassFromDiagonal k σ M n ≫
@@ -252,7 +314,10 @@ theorem symmetricHochschildClassFromDiagonal_coordinates (n : ℕ) :
   exact HomologicalComplex.zeroDifferentialClassMap_homologyIso (symmetricCoefficientComplex k σ M) n
     (symmetricCoefficientComplex_d_eq_zero k σ M)
 
-/-- Native zero-exterior coordinates recover the original coefficient module at degree zero. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. The degree-zero diagonal coefficient term is k-linearly equivalent to M,
+by ∧⁰_EV ≅ E and the balanced tensor unit isomorphism M ⊗_E E ≅ M. -/
 def symmetricCoefficientDegreeZeroEquiv :
     (symmetricCoefficientComplex k σ M).X 0 ≃ₗ[k] M := by
   letI := Symmetric.opModule A M
@@ -270,20 +335,30 @@ def symmetricCoefficientDegreeZeroEquiv :
       inferInstance V inferInstance inferInstance M inferInstance inferInstance nativeRight nativeTower x
   exact e.toLinearEquiv.trans f
 
-/-- Actual original symmetric polynomial HH0 has the original coefficient as a raw linear equivalence across
-  independent worlds. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. Composing the diagonal homology comparison in degree zero with M ⊗_E ∧⁰_EV
+≅ M gives a k-linear equivalence HH₀(A,M) ≅ M. -/
 def symmetricHochschildHomologyZeroEquivCoefficient :
     (Symmetric.chainComplex k A M).homology 0 ≃ₗ[k] M :=
   (symmetricCoefficientHomologyIsoDegree k σ M 0).toLinearEquiv.trans
     (symmetricCoefficientDegreeZeroEquiv k σ M)
 
-/-- The categorical HH0 comparison uses only the canonical coefficient lift in the joint world. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. If k, σ and M lie in universes u,v,w, the k-linear equivalence HH₀(A,M) ≅
+M gives an isomorphism of k-modules to the canonical lift of M to the common universe
+max(u,v,w). -/
 def symmetricHochschildHomologyZeroIsoCoefficient :
     (Symmetric.chainComplex k A M).homology 0 ≅ ModuleCat.of k (ULift.{max u v w, w} M) :=
   ((symmetricHochschildHomologyZeroEquivCoefficient k σ M).trans
     (ULift.moduleEquiv : ULift.{max u v w, w} M ≃ₗ[k] M).symm).toModuleIso
 
-/-- The original coefficient balanced with the native degree-zero unit gives its HH0 class. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For m ∈ M, form the balanced degree-zero tensor m ⊗_E 1, where 1 is the
+empty exterior wedge, and transport its diagonal cycle class through the inverse resolution
+comparison. The resulting element of HH₀(A,M) is symmetricHochschildZeroClass k σ M m. -/
 def symmetricHochschildZeroClass (m : M) : (Symmetric.chainComplex k A M).homology 0 := by
   letI := Symmetric.opModule A M
   letI := Symmetric.actionsComm A M
@@ -295,7 +370,10 @@ def symmetricHochschildZeroClass (m : M) : (Symmetric.chainComplex k A M).homolo
     (TensorProduct.Balanced.mk k E M (⋀[E]^0 V) m
       (exteriorPower.ιMulti E 0 (fun i : Fin 0 => Fin.elim0 i)))
 
-/-- The raw across-world comparison returns the same original coefficient of the independent native class. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For m ∈ M, symmetricHochschildHomologyZeroEquivCoefficient sends
+symmetricHochschildZeroClass k σ M m to m. -/
 theorem symmetricHochschildZeroClass_equiv_value (m : M) :
     symmetricHochschildHomologyZeroEquivCoefficient k σ M
         (symmetricHochschildZeroClass k σ M m) = m := by
@@ -334,7 +412,11 @@ theorem symmetricHochschildZeroClass_equiv_value (m : M) :
   exact he.trans ((congrArg (symmetricCoefficientDegreeZeroEquiv k σ M) hc).trans
     (hf.trans ((congrArg f ht).trans hu)))
 
-/-- The categorical comparison sends the independent original class to its canonical coefficient lift. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For m ∈ M, the forward map of
+symmetricHochschildHomologyZeroIsoCoefficient sends symmetricHochschildZeroClass k σ M m to the
+canonical lift of m in the lifted coefficient module. -/
 theorem symmetricHochschildZeroClass_value (m : M) :
     (symmetricHochschildHomologyZeroIsoCoefficient k σ M).hom.hom
         (symmetricHochschildZeroClass k σ M m) = ULift.up m := by
@@ -342,13 +424,20 @@ theorem symmetricHochschildZeroClass_value (m : M) :
     (symmetricHochschildZeroClass k σ M m)) = ULift.up m
   rw [symmetricHochschildZeroClass_equiv_value]
 
-/-- Canonical down recovers the original coefficient from the joint-world categorical value. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For m ∈ M, apply the categorical degree-zero homology comparison to
+symmetricHochschildZeroClass k σ M m and then the projection from the lifted coefficient module
+to M. The result is m. -/
 theorem symmetricHochschildZeroClass_value_down (m : M) :
     ((symmetricHochschildHomologyZeroIsoCoefficient k σ M).hom.hom
       (symmetricHochschildZeroClass k σ M m)).down = m := by
   exact congrArg ULift.down (symmetricHochschildZeroClass_value k σ M m)
 
-/-- The inverse categorical comparison returns the independently specified class of an original coefficient. -/
+/-- Let k be a commutative ring, σ any variable set and A = k[σ]. Put E = A ⊗[k] Aᵐᵒᵖ, V = ⊕ᵢ∈σ E·eᵢ
+and δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Let M be an A-module with compatible k-action, regarded as a
+symmetric A-bimodule. For m ∈ M, the inverse of symmetricHochschildHomologyZeroIsoCoefficient
+sends the canonical lift of m to symmetricHochschildZeroClass k σ M m. -/
 theorem symmetricHochschildZeroClass_inv_up (m : M) :
     (symmetricHochschildHomologyZeroIsoCoefficient k σ M).inv.hom (ULift.up m) =
       symmetricHochschildZeroClass k σ M m := by

@@ -1,3 +1,5 @@
-# Is Relative Projective iff of nat Iso
+# Natural functor isomorphism preserves relative projectivity
 
-Natural isomorphism identifies the full lifting predicates by section conjugation.
+For categories `D,C`, naturally isomorphic `U,U′ : D → C`,
+and `P : D`, the relative-projectivity properties for `U` and
+`U′` are equivalent.

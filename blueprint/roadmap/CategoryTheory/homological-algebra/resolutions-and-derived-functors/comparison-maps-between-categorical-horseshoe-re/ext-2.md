@@ -1,5 +1,7 @@
-# Ext
+# Uniqueness of a horseshoe coordinate specification
 
-The coordinate specification of a horseshoe comparison is a
-property: any two specifications of the same comparison, in the same
-endpoint coordinates, are equal.
+In an abelian category `C`, take short exact sequences `S,S′`,
+projective endpoint resolutions `P₁,P₃` and `P₁′,P₃′`, and
+horseshoe resolutions `H,H′`. For fixed middle
+comparison `F` and fixed endpoint coordinates, any two coordinate
+specifications of `F` are equal.

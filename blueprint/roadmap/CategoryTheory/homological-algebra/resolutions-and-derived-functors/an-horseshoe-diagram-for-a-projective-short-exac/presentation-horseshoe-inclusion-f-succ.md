@@ -1,3 +1,6 @@
-# Presentation Horseshoe Inclusion f succ
+# Positive-degree components of the single-resolution inclusion vanish
 
-The source single resolution has zero inclusion in every positive degree.
+In an abelian category `C`, let `S : A → B → X` be a short
+complex with `A,B` projective. The inclusion from the single
+resolution of `A` is zero in every positive degree because its
+source term is zero.

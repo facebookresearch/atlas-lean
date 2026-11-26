@@ -1,3 +1,6 @@
-# Delta precompose map app
+# Degree map of a precomposed delta-functor morphism
 
-Evaluate the existing exact-input precomposition functor on its map.
+For additive short-exact-sequence-preserving `R : A → B` between
+preadditive categories and a morphism `f : S → T` of cohomological
+δ-functors `B → D`, the degree-`q` component after precomposition
+is the whiskered natural transformation `R ⋙ f_q`.

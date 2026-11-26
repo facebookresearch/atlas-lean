@@ -1,3 +1,5 @@
-# Map Cochain Coaugmentation quasi Iso
+# Homology preservation carries coaugmentations to quasi-isomorphisms
 
-Homology preservation earns the mapped coaugmentation's quasi-isomorphism.
+For abelian `C`, `D` and additive homology-preserving `U : C → D`,
+a quasi-isomorphism `ι : X[0] → K` induces a quasi-isomorphism
+`U(X)[0] → U(K)`.

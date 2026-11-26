@@ -1,5 +1,5 @@
-# Cocycle Is Kernel
+# Resolution cocycles form the kernel of the outgoing differential
 
-The cocycles are the kernel of the outgoing differential. As above, the
-index equality is rewritten in a pure-`C` intermediary, not in a hypothesis
-whose type mentions the mapped complex.
+Let `C` be abelian with hom-set universe `v`, `X : C`, and
+`I` an injective resolution of `Y`. The degree-`n` cocycle inclusion is a kernel of the outgoing
+postcomposition differential `Hom_C(X,I^n) → Hom_C(X,I^(n+1))`.

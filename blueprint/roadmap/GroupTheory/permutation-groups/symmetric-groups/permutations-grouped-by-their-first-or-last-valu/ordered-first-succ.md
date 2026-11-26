@@ -1,3 +1,5 @@
-# Ordered First succ
+# The remaining values use ordered deletion
 
-Every remaining position is the original ordered deletion embedding.
+Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. For `j : Fin n`, `orderedFirst i π j.succ = ν_i(π
+j)`.

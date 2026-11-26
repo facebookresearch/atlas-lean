@@ -16,14 +16,16 @@ import MathlibExt.Algebra.Homology.ProjectiveResolutionAugment
 import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 
 /-!
-# The horseshoe construction for projective resolutions
+# Projective horseshoe with prescribed endpoint resolutions
 
-Given a short exact sequence and projective resolutions of its two endpoints,
-this file constructs the degreewise split projective resolution of the middle
-object, lower triangular in Mathlib's `Biprod.ofComponents` convention: the
-`P₁`-to-`P₃` component of its differential vanishes and the `P₃`-to-`P₁` cross
-component is free. No functorial comparison map or uniqueness claim is made
-here.
+In an abelian category, a short exact sequence `X₁ → X₂ → X₃`
+and projective resolutions `P₁,P₃` give a projective resolution `P₂`
+of `X₂` with a degreewise split row `P₁ → P₂ → P₃` preserving both
+augmentations. In degree `n`, `P₂,n ≅ P₁,n ⊞ P₃,n`.
+The middle differential has the two endpoint differentials on the
+diagonal, zero component from `P₁,n+1` to `P₃,n`, and a cross
+component from `P₃,n+1` to `P₁,n`. Only the supplied endpoint
+resolutions are needed for this construction.
 -/
 
 @[expose] public section
@@ -440,40 +442,68 @@ private noncomputable def horseshoeMiddleResolution :
   π := horseshoeMiddleπ hS P₁ P₃
   quasiIso := horseshoeMiddleπ_quasiIso hS P₁ P₃
 
-/-- Data of the degreewise split horseshoe resolution associated to a short exact sequence. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. Horseshoe data consists of a middle projective resolution `P₂`
+of `X₂` and chain maps `P₁ → P₂ → P₃` with zero composite, a short
+exact row of resolution complexes, and compatibility with the two
+augmentations and the maps of `S`. -/
 structure HorseshoeData (hS : S.ShortExact)
     (P₁ : ProjectiveResolution S.X₁) (P₃ : ProjectiveResolution S.X₃) where
-  /-- The projective resolution of the middle object. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The middle object of the horseshoe data is a projective
+nonnegative chain resolution `P₂` of `X₂`. -/
   middle : ProjectiveResolution S.X₂
-  /-- Inclusion of the left endpoint resolution. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the left map is a chain inclusion `i : P₁ → P₂` lifting
+`S.f : X₁ → X₂`. -/
   i : P₁.complex ⟶ middle.complex
-  /-- Projection to the right endpoint resolution. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the right map is a chain projection `p : P₂ → P₃` lifting
+`S.g : X₂ → X₃`. -/
   p : middle.complex ⟶ P₃.complex
-  /-- The inclusion followed by the projection vanishes. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the chosen chain maps satisfy `i ≫ p=0`, forming a short
+complex of projective resolutions. -/
   zero : i ≫ p = 0
-  /-- The sequence of resolution complexes is short exact. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the row of chain complexes `P₁ → P₂ → P₃` is short exact.
+Its degree rows are split because the right terms are projective. -/
   shortExact : (ShortComplex.mk i p zero).ShortExact
-  /-- The inclusion is compatible with the left augmentation. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the left map satisfies `i ≫ π₂ = π₁ ≫ S.f[0]`, so it
+preserves the augmentation over `X₁ → X₂`. -/
   i_augmentation :
     i ≫ middle.π = P₁.π ≫ (ChainComplex.single₀ C).map S.f
-  /-- The projection is compatible with the right augmentation. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the right map satisfies `p ≫ π₃ = π₂ ≫ S.g[0]`, so it
+preserves the augmentation over `X₂ → X₃`. -/
   p_augmentation :
     p ≫ P₃.π = middle.π ≫ (ChainComplex.single₀ C).map S.g
 
 namespace HorseshoeData
 
-/-- Coordinate specification for the chosen degreewise split horseshoe construction. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, an endpoint coordinate specification identifies each
+`P₂,n` with `P₁,n ⊞ P₃,n`, identifies `i,p` with the left inclusion
+and right projection, and gives the endpoint block differential. -/
 structure Spec (H : HorseshoeData hS P₁ P₃) where
-  /-- The middle object is the endpoint biproduct in every degree. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the middle degree-`n` term has a chosen isomorphism
+`P₂,n ≅ P₁,n ⊞ P₃,n` in the endpoint coordinate specification. -/
   middleXIso (n : ℕ) : H.middle.complex.X n ≅
     P₁.complex.X n ⊞ P₃.complex.X n
-  /-- The inclusion is the left biproduct inclusion in these coordinates. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the endpoint coordinate specification makes the degree-`n`
+map `i_n : P₁,n → P₂,n` the left biproduct inclusion. -/
   i_f (n : ℕ) : H.i.f n ≫ (middleXIso n).hom = biprod.inl
-  /-- The projection is the right biproduct projection in these coordinates. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the endpoint coordinate specification makes the degree-`n`
+map `p_n : P₂,n → P₃,n` the right biproduct projection. -/
   p_f (n : ℕ) : (middleXIso n).inv ≫ H.p.f n = biprod.snd
-  /-- The differential is lower triangular in Mathlib's
-  `Biprod.ofComponents` convention (vanishing `P₁`-to-`P₃` component, free
-  `P₃`-to-`P₁` cross component) in these coordinates. -/
+  /-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. For horseshoe data `H` with middle resolution `P₂`, the endpoint coordinate specification gives differential
+diagonals `d_P₁,d_P₃`, zero component `P₁,n+1 → P₃,n`, and the
+cross component `P₃,n+1 → P₁,n` extracted from the middle differential. -/
   middle_d (n : ℕ) :
     (middleXIso (n + 1)).inv ≫ H.middle.complex.d (n + 1) n ≫
         (middleXIso n).hom =
@@ -485,7 +515,10 @@ structure Spec (H : HorseshoeData hS P₁ P₃) where
 
 end HorseshoeData
 
-/-- A degreewise split horseshoe construction with its endpoint coordinates exists. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. There exists horseshoe data together with endpoint biproduct
+coordinates identifying its inclusion, projection and differential
+with the stated block form in every degree. -/
 theorem horseshoe_spec_nonempty :
     Nonempty (Σ H : HorseshoeData hS P₁ P₃, H.Spec) := by
   let H : HorseshoeData hS P₁ P₃ :=
@@ -512,37 +545,52 @@ theorem horseshoe_spec_nonempty :
     simp [H, horseshoeMiddleResolution, horseshoeMiddleComplex,
       horseshoeMiddleDifferential]
 
-/-- The degreewise split horseshoe resolution from explicit endpoint resolutions. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The projective horseshoe construction chooses compatible
+middle-resolution data for `S` from the two supplied endpoint
+resolutions. -/
 noncomputable def horseshoe : HorseshoeData hS P₁ P₃ :=
   (horseshoe_spec_nonempty hS P₁ P₃).some.1
 
-/-- The chosen horseshoe resolution satisfies the endpoint coordinate specification. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The constructed horseshoe admits endpoint biproduct
+coordinates with left inclusion, right projection, endpoint
+differentials on the diagonal, and zero left-to-right differential
+component. -/
 noncomputable def horseshoe_spec : (horseshoe hS P₁ P₃).Spec :=
   (horseshoe_spec_nonempty hS P₁ P₃).some.2
 
-/-- The middle object in degree `n` is the biproduct of the endpoint objects. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The degree-`n` term of the constructed middle resolution
+is canonically isomorphic to `P₁,n ⊞ P₃,n`. -/
 noncomputable def horseshoe_middle_X_iso (n : ℕ) :
     (horseshoe hS P₁ P₃).middle.complex.X n ≅
       P₁.complex.X n ⊞ P₃.complex.X n :=
   (horseshoe_spec hS P₁ P₃).middleXIso n
 
-/-- The horseshoe inclusion is the left biproduct inclusion in every degree. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. Under the endpoint coordinates, the degree-`n` left chain
+map of the constructed horseshoe is the left biproduct inclusion. -/
 @[simp]
 theorem horseshoe_i_f (n : ℕ) :
     (horseshoe hS P₁ P₃).i.f n ≫
       (horseshoe_middle_X_iso hS P₁ P₃ n).hom = biprod.inl :=
   (horseshoe_spec hS P₁ P₃).i_f n
 
-/-- The horseshoe projection is the right biproduct projection in every degree. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. Under the endpoint coordinates, the degree-`n` right chain
+map of the constructed horseshoe is the right biproduct projection. -/
 @[simp]
 theorem horseshoe_p_f (n : ℕ) :
     (horseshoe_middle_X_iso hS P₁ P₃ n).inv ≫
       (horseshoe hS P₁ P₃).p.f n = biprod.snd :=
   (horseshoe_spec hS P₁ P₃).p_f n
 
-/-- The horseshoe differential is lower triangular in Mathlib's
-`Biprod.ofComponents` convention (vanishing `P₁`-to-`P₃` component, free
-`P₃`-to-`P₁` cross component) in the endpoint coordinates. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. In the constructed endpoint coordinates, the middle
+differential has diagonals `d_P₁,d_P₃`, zero component from
+`P₁,n+1` to `P₃,n`, and its extracted cross component from
+`P₃,n+1` to `P₁,n`. -/
 theorem horseshoe_middle_d (n : ℕ) :
     (horseshoe_middle_X_iso hS P₁ P₃ (n + 1)).inv ≫
         (horseshoe hS P₁ P₃).middle.complex.d (n + 1) n ≫
@@ -555,20 +603,26 @@ theorem horseshoe_middle_d (n : ℕ) :
         (P₃.complex.d (n + 1) n) :=
   (horseshoe_spec hS P₁ P₃).middle_d n
 
-/-- The horseshoe inclusion commutes with the augmentation. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The constructed left chain map followed by the middle
+augmentation equals the left augmentation followed by `S.f[0]`. -/
 theorem horseshoe_i_augmentation :
     (horseshoe hS P₁ P₃).i ≫ (horseshoe hS P₁ P₃).middle.π =
       P₁.π ≫ (ChainComplex.single₀ C).map S.f :=
   (horseshoe hS P₁ P₃).i_augmentation
 
-/-- The horseshoe projection commutes with the augmentation. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The constructed right chain map followed by the right
+augmentation equals the middle augmentation followed by `S.g[0]`. -/
 theorem horseshoe_p_augmentation :
     (horseshoe hS P₁ P₃).p ≫ P₃.π =
       (horseshoe hS P₁ P₃).middle.π ≫
         (ChainComplex.single₀ C).map S.g :=
   (horseshoe hS P₁ P₃).p_augmentation
 
-/-- The sequence of horseshoe resolution complexes is short exact. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The inclusion and projection of the constructed resolution
+complexes form a short exact sequence `P₁ → P₂ → P₃`. -/
 theorem horseshoe_shortExact :
     (ShortComplex.mk
       (horseshoe hS P₁ P₃).i
@@ -576,12 +630,17 @@ theorem horseshoe_shortExact :
       (horseshoe hS P₁ P₃).zero).ShortExact :=
   (horseshoe hS P₁ P₃).shortExact
 
-/-- Every object of the middle horseshoe complex is projective. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. Every degree-`n` object of the constructed middle resolution
+is projective, as it is isomorphic to the biproduct of the two
+projective endpoint terms. -/
 theorem horseshoe_middle_projective (n : ℕ) :
     Projective ((horseshoe hS P₁ P₃).middle.complex.X n) :=
   inferInstance
 
-/-- The horseshoe middle augmentation is a quasi-isomorphism. -/
+/-- Let `C` be abelian, `S : X₁ → X₂ → X₃` short exact, and
+`P₁,P₃` projective resolutions of its endpoints. The augmentation of the constructed middle complex to
+`X₂[0]` is a quasi-isomorphism. -/
 theorem horseshoe_middle_quasiIso :
     QuasiIso (horseshoe hS P₁ P₃).middle.π :=
   inferInstance

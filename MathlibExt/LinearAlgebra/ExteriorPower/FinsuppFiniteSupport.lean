@@ -14,14 +14,16 @@ public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.LinearAlgebra.Finsupp.Pi
 
 /-!
-# Finite support of exterior powers of a free coefficient module
+# Finite-coordinate support in an exterior power
 
-The finite coordinate inclusion is the existing finite linear-combination
-map. Its coordinate restriction is a retraction, so the native exterior-power
-map is injective. Every exterior element comes from some finite coordinate
-module: write it as a finite sum of decomposable wedges and unite the finite
-supports of their vectors. No ordered or finite basis of the ambient module
-is assumed.
+For a commutative ring `R` and any index type `I`, extension by zero includes `(s → R)` in `I
+→₀ R` for each finite subset `s`. Coordinate restriction is a retraction, so the induced map
+on each exterior power is injective.
+
+Every `z ∈ Λ^n_R(I →₀ R)` is the image of an exterior element on some finite coordinate module
+`(s → R)`.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -34,12 +36,14 @@ namespace Finsupp
 
 variable (R : Type u) [CommRing R] {I : Type v}
 
-/-- The original finite coordinate inclusion as a native linear combination. -/
+/-- For a commutative ring `R`, an index type `I`, and `s : Finset I`, `finsetInclude R s : (s →
+R) →ₗ[R] (I →₀ R)` extends a finite coordinate function by zero outside `s`. -/
 def finsetInclude (s : Finset I) : (s → R) →ₗ[R] (I →₀ R) := by
   classical
   exact Fintype.linearCombination R (fun i : s => Finsupp.single i.val 1)
 
-/-- Restrict the original finitely supported vector to the finite coordinates. -/
+/-- For a commutative ring `R`, an index type `I`, and `s : Finset I`, `finsetRestrict R s : (I →₀
+R) →ₗ[R] (s → R)` is coordinate evaluation on the indices in `s`. -/
 def finsetRestrict (s : Finset I) : (I →₀ R) →ₗ[R] (s → R) :=
   LinearMap.pi (fun i : s => Finsupp.lapply i.val)
 
@@ -53,7 +57,8 @@ theorem finsetInclude_apply (s : Finset I) (m : s → R) :
 theorem finsetRestrict_apply (s : Finset I) (m : I →₀ R) (i : s) :
     finsetRestrict R s m i = m i.val := rfl
 
-/-- The actual coordinate restriction retracts the actual inclusion. -/
+/-- For a commutative ring `R`, an index type `I`, and `s : Finset I`, `(finsetRestrict R s).comp
+(finsetInclude R s)=LinearMap.id` on `(s → R)`. -/
 theorem finsetRestrict_comp_include (s : Finset I) :
     (finsetRestrict R s).comp (finsetInclude R s) = LinearMap.id := by
   classical
@@ -71,8 +76,8 @@ theorem finsetRestrict_comp_include (s : Finset I) :
     simp only [Finsupp.lapply_apply, Finsupp.single_eq_of_ne hval.symm]
   · simp only [Finset.mem_univ, not_true_eq_false, false_implies]
 
-/-- Restriction followed by inclusion recovers a vector whose support is
-contained in the original finite coordinate set. -/
+/-- For a commutative ring `R`, an index type `I`, `s : Finset I`, and `m : I →₀ R` with
+`m.support⊆s`, `finsetInclude R s (finsetRestrict R s m)=m`. -/
 theorem finsetInclude_restrict_of_support_subset (s : Finset I) (m : I →₀ R)
     (hm : m.support ⊆ s) : finsetInclude R s (finsetRestrict R s m) = m := by
   classical
@@ -104,14 +109,15 @@ namespace exteriorPower
 
 variable (R : Type u) [CommRing R] {I : Type v}
 
-/-- The native exterior map of the original finite coordinate inclusion is
-injective because the original coordinate restriction is a retraction. -/
+/-- For a commutative ring `R`, an index type `I`, `s : Finset I`, and `n : ℕ`, `exteriorPower.map
+n (Finsupp.finsetInclude R s)` is injective from `Λ^n_R(s → R)` to `Λ^n_R(I →₀ R)`. -/
 theorem map_finsetInclude_injective (s : Finset I) (n : ℕ) :
     Function.Injective (map n (Finsupp.finsetInclude R s)) :=
   map_injective (Finsupp.finsetRestrict R s) (Finsupp.finsetRestrict_comp_include R s)
 
-/-- Every exterior element of the arbitrary free coordinate module has an
-actual preimage in the exterior power of a finite coordinate module. -/
+/-- For a commutative ring `R`, an index type `I`, `n : ℕ`, and `z : Λ^n_R(I →₀ R)`, there exist a
+finite set `s : Finset I` and `z_s : Λ^n_R(s → R)` with `exteriorPower.map n
+(Finsupp.finsetInclude R s) z_s=z`. -/
 theorem exists_preimage_finset (n : ℕ) (z : ⋀[R]^n (I →₀ R)) :
     ∃ s : Finset I, ∃ zS : ⋀[R]^n (s → R),
       map n (Finsupp.finsetInclude R s) zS = z := by

@@ -1,8 +1,8 @@
 # Exactness of exterior multiplication by a nonzero vector
 
-- [Wedge kernel eq wedge contraction](wedge-kernel-eq-wedge-contraction.md)
-- [Ker wedge Left eq range of ne zero](ker-wedge-left-eq-range-of-ne-zero.md)
-- [Wedge Left exact of ne zero](wedge-left-exact-of-ne-zero.md)
-- [Wedge Left zero injective of ne zero](wedge-left-zero-injective-of-ne-zero.md)
-- [Wedge Left eq zero iff mem range](wedge-left-eq-zero-iff-mem-range.md)
-- [Map eq zero of wedge Left eq zero](map-eq-zero-of-wedge-left-eq-zero.md)
+- [A normalized contraction recovers a wedge-kernel form](wedge-kernel-eq-wedge-contraction.md)
+- [The positive wedge kernel is the previous image](ker-wedge-left-eq-range-of-ne-zero.md)
+- [The wedge sequence is exact in positive degree](wedge-left-exact-of-ne-zero.md)
+- [Wedge multiplication is injective in degree zero](wedge-left-zero-injective-of-ne-zero.md)
+- [Vanishing of the next wedge is a previous wedge image](wedge-left-eq-zero-iff-mem-range.md)
+- [A map killing w kills forms in its wedge kernel](map-eq-zero-of-wedge-left-eq-zero.md)

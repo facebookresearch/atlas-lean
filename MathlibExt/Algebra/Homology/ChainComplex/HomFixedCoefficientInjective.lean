@@ -18,16 +18,16 @@ public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 public import Mathlib.Algebra.Homology.QuasiIso
 
 /-!
-# Canonical fixed-coefficient restriction for injective coefficients
+# Canonical Hom cohomology restriction for an injective coefficient
 
-The actual positive-precomposition Hom complex of an arbitrary integer chain
-complex has cohomology Hom of its homology when the coefficient object is
-injective. The comparison is the existing canonical cycle restriction.
+Let C be abelian, P an arbitrary integer chain complex and M an injective object. The canonical
+cycle restriction is an isomorphism Hⁿ Hom(P,M) ≅ Hom_C(Hₙ(P),M), for every integer n, using the
+positive precomposition differential of fixed-coefficient Hom.
 
-Native representable limits and injectivity's epimorphism preservation provide
-Hom exactness. The mapped opposite of the original right homology data gives
-the comparison; its projection characteristics identify the actual restriction.
-No resolution, projectivity, grading bound, or Ext universe is required.
+These isomorphisms and their inverses commute with source precomposition and coefficient
+postcomposition. A quasi-isomorphism of source complexes therefore induces a quasi-isomorphism
+on Hom with injective coefficient M. No term or image projectivity, boundedness, resolution or
+Ext group is needed.
 -/
 
 @[expose] public section
@@ -50,8 +50,9 @@ private lemma homFixedCoefficient_injective_preservesHomology (M : C) [Injective
   change F.PreservesHomology
   exact Functor.preservesHomology_of_preservesEpis_and_kernels F
 
-/-- Injective coefficients make the original cycle restriction an isomorphism
-for arbitrary integer chain complexes. -/
+/-- Let C be an abelian category. Let P be an arbitrary integer chain complex, M an injective object
+and n ∈ ℤ. Canonical cycle restriction ρₙ : Hⁿ Hom(P,M) → Hom_C(Hₙ(P),M) is an isomorphism. The
+Hom differential is positive precomposition; no projectivity or boundedness of P is assumed. -/
 instance homFixedCoefficientRestrictionIsIso
     (P : ChainComplex C ℤ) (M : C) [Injective M] (n : ℤ) :
     IsIso (homFixedCoefficientRestriction P M n) := by
@@ -144,8 +145,9 @@ instance homFixedCoefficientRestrictionIsIso
   rw [← heΓ]
   infer_instance
 
-/-- The inverse of the canonical restriction respects the actual source
-precomposition and coefficient postcomposition maps simultaneously. -/
+/-- Let C be an abelian category. For integer chain complexes P,P′, injective objects M,M′, f : P′ →
+P and b : M → M′, the inverse restrictions commute with Hⁿ Hom(f,b) and the homology-Hom action
+t ↦ b ∘ t ∘ Hₙ(f), for every integer n. -/
 lemma homFixedCoefficientRestriction_inv_naturality
     {P P' : ChainComplex C ℤ} {M M' : C} [Injective M] [Injective M']
     (f : P' ⟶ P) (b : M ⟶ M') (n : ℤ) :
@@ -171,8 +173,9 @@ lemma homFixedCoefficientRestriction_inv_naturality
   simpa only [Category.assoc, Iso.hom_inv_id, Category.comp_id,
     Iso.inv_hom_id_assoc] using h'
 
-/-- An arbitrary source quasi-isomorphism induces a fixed-Hom
-quasi-isomorphism for injective coefficients. -/
+/-- Let C be an abelian category. Let f : P′ → P be a quasi-isomorphism of arbitrary integer chain
+complexes and M an injective object. The contravariant cochain map Hom(f,id_M) : Hom(P,M) →
+Hom(P′,M) is a quasi-isomorphism. -/
 lemma homFixedCoefficientMap_quasiIso
     {P P' : ChainComplex C ℤ} (f : P' ⟶ P) [QuasiIso f]
     (M : C) [Injective M] :

@@ -1,3 +1,4 @@
-# Left Derived Delta Functor Family obj
+# Object of the left-derived delta-functor family
 
-The family object is the left-derived factory of the underlying functor.
+Let `C,D` be abelian, with projective resolutions in `C`. The image of an additive functor `F : C → D` under this
+assignment is its left-derived homological delta-functor.

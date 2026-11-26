@@ -12,11 +12,11 @@ module
 public import MathlibExt.Algebra.Homology.ZeroDifferentialHomology
 
 /-!
-# Naturality of actual classes in zero-differential complexes
+# Naturality of classes in zero-differential complexes
 
-The original cycle-class map is the inverse of the earned native homology
-coordinate isomorphism. Its naturality follows from the actual middle-map
-naturality of those homology coordinates.
+When all differentials vanish, each degree object maps canonically to its
+homology and is canonically isomorphic to it. These class morphisms are
+natural under maps between zero-differential complexes.
 -/
 
 @[expose] public section
@@ -31,16 +31,22 @@ namespace HomologicalComplex
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
   {ι : Type w} {c : ComplexShape ι}
 
-/-- The actual cycle-class map is the inverse of the computed zero-map
-homology isomorphism. -/
+/--
+Let K be a c-complex in a category C with zero morphisms. Assume homology exists at i and
+every differential of K is zero. The canonical class morphism Kᵢ→Hᵢ(K) is the inverse of the
+zero-differential homology isomorphism Hᵢ(K)≅Kᵢ.
+-/
 theorem zeroDifferentialClassMap_eq_inv (K : HomologicalComplex C c) (i : ι)
     [K.HasHomology i] (hK : ∀ j k, K.d j k = 0) :
     zeroDifferentialClassMap K i hK = (zeroDifferentialHomologyIso K i hK).inv := by
   apply (cancel_mono (zeroDifferentialHomologyIso K i hK).hom).1
   rw [zeroDifferentialClassMap_homologyIso, Iso.inv_hom_id]
 
-/-- Actual middle elements and actual homology classes have the native
-naturality square for a map of zero-differential complexes. -/
+/--
+Let f:K→L be a map of c-complexes in a category C with zero morphisms, assume both have zero
+differentials and homology at i. For their class morphisms κ_K:Kᵢ→Hᵢ(K), κ_L:Lᵢ→Hᵢ(L),
+κ_K≫Hᵢ(f)=fᵢ≫κ_L.
+-/
 @[reassoc]
 theorem zeroDifferentialClassMap_naturality {K L : HomologicalComplex C c}
     (f : K ⟶ L) (i : ι) [K.HasHomology i] [L.HasHomology i]

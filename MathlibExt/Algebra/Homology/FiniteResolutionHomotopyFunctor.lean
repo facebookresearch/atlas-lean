@@ -13,17 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.FiniteResolutionComparisonHomotopy
 
 /-!
-# The homotopy functor of an original finite-resolution family
+# Homotopy functors of finite-resolution families
 
-A given family of finite resolutions defines a functor to Mathlib's original
-homotopy category. Its objects are the original resolving complexes and its
-maps are the quotient images of the existing chosen comparison maps.
-Constructed comparison homotopies prove the functor laws.
+Let P be preadditive, A abelian and i : P → A additive full faithful, with every resolving image
+i(P₀) projective. A chosen family R(X) of finite resolutions defines a functor X ↦
+[R(X).complex] to the homotopy category of nonnegative complexes in P. Chosen comparison maps
+give its morphisms, with identity and composition following from comparison homotopies.
 
-Identity comparisons give a natural isomorphism between two such families.
-Its forward and inverse maps are the original chosen identity comparisons.
-Each family's original object-dependent support bound remains visible on
-the complex represented by its homotopy-category object.
+Two families are naturally isomorphic by the identity comparisons in both directions. These
+comparisons are reflexive and transitive. Each represented object retains its chosen complex,
+terms, differentials and original object-dependent support bound.
 -/
 
 @[expose] public section
@@ -40,8 +39,10 @@ variable {P : Type uP} [Category.{vP} P] [Preadditive P]
 variable {A : Type uA} [Category.{vA} A] [Abelian A]
 variable {i : P ⥤ A} [i.Additive] [i.Full] [i.Faithful]
 
-/-- The original chosen comparison lifts make a given finite-resolution
-family functorial in the stock homotopy category. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. Sending X to
+[R(X).complex] and a morphism f to the homotopy class of its chosen augmented comparison defines
+a functor A → HomotopyCategory(P,down ℕ). -/
 def finiteResolutionHomotopyFunctor (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     A ⥤ HomotopyCategory P (ComplexShape.down ℕ) where
@@ -51,41 +52,53 @@ def finiteResolutionHomotopyFunctor (R : ∀ X : A, FiniteResolution i X)
   map_id X := comparisonHom_quotient_id (R X) hproj
   map_comp {X Y Z} f g := comparisonHom_quotient_comp (R X) (R Y) (R Z) f g hproj
 
-/-- The functor object is the stock quotient image of the original complex. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. The functor's
+value at X is the homotopy-category object represented by R(X).complex. -/
 theorem finiteResolutionHomotopyFunctor_obj (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (X : A) :
     (finiteResolutionHomotopyFunctor R hproj).obj X =
       (HomotopyCategory.quotient P (ComplexShape.down ℕ)).obj (R X).complex :=
   rfl
 
-/-- The represented complex is exactly the given original resolving complex. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. The complex
+represented by the functor's object at X is exactly the chosen resolving complex R(X).complex. -/
 theorem finiteResolutionHomotopyFunctor_obj_as (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (X : A) :
     ((finiteResolutionHomotopyFunctor R hproj).obj X).as = (R X).complex :=
   rfl
 
-/-- Every represented term is the original resolving term of the given family. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For each n ∈ ℕ,
+the degree-n term of the represented functor object at X is R(X)ₙ. -/
 theorem finiteResolutionHomotopyFunctor_obj_X (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (X : A) (n : ℕ) :
     ((finiteResolutionHomotopyFunctor R hproj).obj X).as.X n = (R X).complex.X n :=
   rfl
 
-/-- Every represented differential is the original differential. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For n,m ∈ ℕ, the
+differential of the represented functor object at X is the original differential R(X).d(n,m). -/
 theorem finiteResolutionHomotopyFunctor_obj_d (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (X : A) (n m : ℕ) :
     ((finiteResolutionHomotopyFunctor R hproj).obj X).as.d n m = (R X).complex.d n m :=
   rfl
 
-/-- The represented complex retains the exact original object-dependent
-inclusive support bound. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For n>R(X).bound,
+the represented degree-n term is a zero object. Thus the original object-dependent support bound
+is retained. -/
 theorem finiteResolutionHomotopyFunctor_obj_isZero_above
     (R : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀))
     (X : A) (n : ℕ) (hn : (R X).bound < n) :
     IsZero (((finiteResolutionHomotopyFunctor R hproj).obj X).as.X n) :=
   (R X).isZero_above n hn
 
-/-- The literal functor map is the stock quotient image of the same original
-chosen augmented comparison map. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For f : X → Y, the
+functor's morphism is the homotopy class of the chosen augmented comparison R(X).complex →
+R(Y).complex covering f. -/
 theorem finiteResolutionHomotopyFunctor_map (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) {X Y : A} (f : X ⟶ Y) :
     (finiteResolutionHomotopyFunctor R hproj).map f =
@@ -93,8 +106,10 @@ theorem finiteResolutionHomotopyFunctor_map (R : ∀ X : A, FiniteResolution i X
         (comparisonHom (R X) (R Y) f hproj).map :=
   rfl
 
-/-- The chosen representative of a quotient map is homotopic to the original
-comparison map, using the stock quotient representative homotopy. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. A chosen chain-map
+representative of the functor's morphism f : X → Y is homotopic to the original chosen augmented
+comparison between R(X) and R(Y). -/
 def finiteResolutionHomotopyFunctorMapOutHomotopy
     (R : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀))
     {X Y : A} (f : X ⟶ Y) :
@@ -102,8 +117,9 @@ def finiteResolutionHomotopyFunctorMapOutHomotopy
       (comparisonHom (R X) (R Y) f hproj).map :=
   HomotopyCategory.homotopyOutMap (comparisonHom (R X) (R Y) f hproj).map
 
-/-- Original chosen identity comparisons give an isomorphism between the
-stock quotient images of two original finite resolutions of the same object. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful, with all i(P₀) projective.
+For finite resolutions R,S of the same X, the chosen comparisons over id_X in both directions
+give [R.complex] ≅ [S.complex] in the homotopy category. -/
 def finiteResolutionComparisonIso {X : A} (R S : FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     (HomotopyCategory.quotient P (ComplexShape.down ℕ)).obj R.complex ≅
@@ -139,10 +155,10 @@ def finiteResolutionComparisonIso {X : A} (R S : FiniteResolution i X)
           ((Homotopy.ofEq hindex).trans (comparisonHomotopyId S hproj))
       _ = 𝟙 (Q.obj S.complex) := Q.map_id S.complex
 
-/--
-Identity comparison maps are natural in the original target objects, giving a natural isomorphism
-between two resolution families.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For another
+resolution family S(X), the identity comparisons R(X) → S(X) define a natural isomorphism of
+their finite-resolution homotopy functors. -/
 def finiteResolutionHomotopyFunctorComparison
     (R S : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     finiteResolutionHomotopyFunctor R hproj ≅ finiteResolutionHomotopyFunctor S hproj :=
@@ -172,8 +188,10 @@ def finiteResolutionHomotopyFunctorComparison
         (comparisonHomotopyComp (R X) (S X) (S Y) (𝟙 X) f hproj)
     exact hleft.trans hright)
 
-/-- The forward family-comparison component is the original chosen
-identity comparison in the stock quotient. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For another family
+S, the forward comparison component at X is the homotopy class of the chosen augmented map R(X)
+→ S(X) covering id_X. -/
 theorem finiteResolutionHomotopyFunctorComparison_hom_app
     (R S : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀))
     (X : A) : (finiteResolutionHomotopyFunctorComparison R S hproj).hom.app X =
@@ -181,7 +199,10 @@ theorem finiteResolutionHomotopyFunctorComparison_hom_app
         (comparisonHom (R X) (S X) (𝟙 X) hproj).map :=
   rfl
 
-/-- The inverse component is the original reverse chosen identity comparison. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For another family
+S, the inverse comparison component at X is the homotopy class of the chosen reverse map S(X) →
+R(X) covering id_X. -/
 theorem finiteResolutionHomotopyFunctorComparison_inv_app
     (R S : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀))
     (X : A) : (finiteResolutionHomotopyFunctorComparison R S hproj).inv.app X =
@@ -189,7 +210,10 @@ theorem finiteResolutionHomotopyFunctorComparison_inv_app
         (comparisonHom (S X) (R X) (𝟙 X) hproj).map :=
   rfl
 
-/-- Comparing a family with itself gives the identity natural isomorphism. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. Comparing the
+family R with itself gives the identity natural isomorphism of its finite-resolution homotopy
+functor. -/
 theorem finiteResolutionHomotopyFunctorComparison_refl
     (R : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     finiteResolutionHomotopyFunctorComparison R R hproj =
@@ -199,10 +223,10 @@ theorem finiteResolutionHomotopyFunctorComparison_refl
   funext X
   exact comparisonHom_quotient_id (R X) hproj
 
-/--
-Family comparison preserves composition of the original identity comparisons in the stock
-quotient.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Assume i(P₀) is projective
+for every object P₀ of P. Let R(X) be a chosen finite resolution of each X∈A. For families
+R,S,T, the natural comparison R → S followed by S → T equals the direct natural comparison R →
+T. -/
 theorem finiteResolutionHomotopyFunctorComparison_trans
     (R S T : ∀ X : A, FiniteResolution i X) (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     finiteResolutionHomotopyFunctorComparison R S hproj ≪≫

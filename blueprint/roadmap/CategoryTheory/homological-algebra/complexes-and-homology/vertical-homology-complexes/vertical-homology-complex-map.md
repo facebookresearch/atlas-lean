@@ -1,3 +1,5 @@
-# Vertical Homology Complex Map
+# Map of first-quadrant vertical-homology chain complexes
 
-The map between vertical-homology complexes induced by a bicomplex map.
+In an abelian category `C`, a map `f : K → L` of first-quadrant
+chain bicomplexes induces, for each vertical degree `q`, a map
+between their horizontal vertical-homology chain complexes.

@@ -15,12 +15,17 @@ public import MathlibExt.AlgebraicTopology.DoldKan.HomotopyNaturality
 public import MathlibExt.Algebra.Homology.Hochschild.Simplicial
 
 /-!
-# Algebra scalars and Hochschild normalization
+# Algebra scalars and the Hochschild normalization projector
 
-Algebra scalars act as simplicial coefficient endomorphisms.
-The Dold–Kan projector and homotopy are natural under
-these endomorphisms, giving their A-linearity after
-transport to the coefficient tensor coordinates.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible symmetric coefficient
+module. Multiplication by an algebra scalar on the coefficient slot commutes with every face and
+degeneracy of the coefficient bar, so it defines a simplicial endomorphism.
+
+The Dold–Kan normalization projector P∞ and its homotopy to the identity are natural under these
+simplicial scalar maps. Transporting them to the raw tensor terms Cₙ = M ⊗_k A^{⊗n} therefore
+gives an A-linear projector and A-linear homotopy components. The projector is a chain
+endomorphism, and its transported homotopy compares it with the identity in all degree pairs n,m
+: ℕ.
 -/
 
 @[expose] public section
@@ -37,11 +42,17 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The coefficient scalar on the original raw tensor level. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For a ∈ A and n : ℕ, scalarTensorMap is the k-linear
+endomorphism (m ⊗ w) ↦ (a·m) ⊗ w of Cₙ. -/
 def scalarTensorMap (a : A) (n : ℕ) : Module.End k (M ⊗[k] TensorPower k n A) :=
   TensorProduct.map (Algebra.lsmul k k M a) LinearMap.id
 
-/-- The original tensor scalar map is exactly the original algebra action on every raw chain. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For a ∈ A, n : ℕ and x ∈ Cₙ, scalarTensorMap k A M a n x
+equals a·x. -/
 theorem scalarTensorMap_apply (a : A) (n : ℕ) (x : M ⊗[k] TensorPower k n A) :
     scalarTensorMap k A M a n x = a • x := by
   induction x using TensorProduct.induction_on with
@@ -58,14 +69,21 @@ private theorem scalarTensorMap_eq_linearMap (a : A) (n : ℕ) :
       (PiTensorProduct.map (fun _ : Fin n => (LinearMap.id : A →ₗ[k] A)))
   rw [PiTensorProduct.map_id]
 
-/-- The original coefficient scalar in coefficient-bar coordinates. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For a ∈ A and n : ℕ, transport scalarTensorMap through the
+degree-n bar coordinate isomorphism. This gives scalarBarMapComponent, an endomorphism of the
+simplicial degree Xₙ. -/
 def scalarBarMapComponent (a : A) (n : ℕ) :
     (coefficientBar k A M).obj (Opposite.op ⦋n⦌) ⟶
       (coefficientBar k A M).obj (Opposite.op ⦋n⦌) :=
   (coefficientBarObjIso k A M n).hom ≫ ModuleCat.ofHom (scalarTensorMap k A M a n) ≫
     (coefficientBarObjIso k A M n).inv
 
-/-- The coefficient scalar commutes with each original bar face. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For a ∈ A, n : ℕ and i ∈ Fin(n+2), the scalar bar components
+Sₙ satisfy Sₙ₊₁ ≫ δᵢ = δᵢ ≫ Sₙ, including the endpoint actions and internal adjacent products. -/
 theorem scalarBarMapComponent_face (a : A) (n : ℕ) (i : Fin (n + 2)) :
     scalarBarMapComponent k A M a (n + 1) ≫ (coefficientBar k A M).δ i =
       (coefficientBar k A M).δ i ≫ scalarBarMapComponent k A M a n := by
@@ -89,7 +107,11 @@ theorem scalarBarMapComponent_face (a : A) (n : ℕ) (i : Fin (n + 2)) :
     ModuleCat.Algebra.Hochschild.face, Category.assoc, Iso.inv_hom_id_assoc,
     Iso.hom_inv_id_assoc, Iso.inv_hom_id, Category.comp_id] using h
 
-/-- The coefficient scalar commutes with each original bar degeneracy. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For a ∈ A, n : ℕ and i ∈ Fin(n+1), the scalar bar components
+satisfy Sₙ ≫ sᵢ = sᵢ ≫ Sₙ₊₁. Degeneracies insert a unit in the algebra tail and leave the
+coefficient scalar action unchanged. -/
 theorem scalarBarMapComponent_degeneracy (a : A) (n : ℕ) (i : Fin (n + 1)) :
     scalarBarMapComponent k A M a n ≫ (coefficientBar k A M).σ i =
       (coefficientBar k A M).σ i ≫ scalarBarMapComponent k A M a (n + 1) := by
@@ -128,33 +150,52 @@ theorem scalarBarMapComponent_degeneracy (a : A) (n : ℕ) (i : Fin (n + 1)) :
     ModuleCat.Algebra.Hochschild.degeneracy, Category.assoc, Iso.inv_hom_id_assoc,
     Iso.hom_inv_id_assoc, Iso.inv_hom_id, Category.comp_id] using h
 
-/-- The original algebra scalar is a simplicial coefficient endomorphism. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. The degreewise coefficient scalar components and their face
+and degeneracy identities define scalarBarMap k A M a : X → X for each a ∈ A. -/
 def scalarBarMap (a : A) : coefficientBar k A M ⟶ coefficientBar k A M :=
   SimplicialObject.homOfComponents (scalarBarMapComponent k A M a)
     (fun {n} i => scalarBarMapComponent_face k A M a n i)
     (fun {n} i => scalarBarMapComponent_degeneracy k A M a n i)
 
-/-- Its original bar component is the coefficient-first algebra action. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For a ∈ A and n : ℕ, the component of scalarBarMap k A M a at
+[n] equals scalarBarMapComponent k A M a n, the coefficient-first scalar action in bar
+coordinates. -/
 theorem scalarBarMap_app (a : A) (n : ℕ) :
     (scalarBarMap k A M a).app (Opposite.op ⦋n⦌) = scalarBarMapComponent k A M a n :=
   SimplicialObject.homOfComponents_app_mk (scalarBarMapComponent k A M a)
     (fun {n} i => scalarBarMapComponent_face k A M a n i)
     (fun {n} i => scalarBarMapComponent_degeneracy k A M a n i) n
 
-/-- The native Dold--Kan projector in the original raw tensor coordinates. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. In degree n : ℕ, transport the component of the Dold–Kan
+projector P∞ on the alternating-face complex of X through the bar coordinate isomorphism. The
+resulting k-linear endomorphism of Cₙ is rawNativeNormalizationProjector k A M n. -/
 def rawNativeNormalizationProjector (n : ℕ) : Module.End k (M ⊗[k] TensorPower k n A) :=
   (coefficientBarObjIso k A M n).hom.hom.comp
     (((AlgebraicTopology.DoldKan.PInfty (X := coefficientBar k A M)).f n).hom.comp
       (coefficientBarObjIso k A M n).inv.hom)
 
-/-- The original normalization homotopy component in original raw tensor coordinates. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For n,m : ℕ, transport the (n,m)-component of the Dold–Kan
+homotopy P∞ ∼ id through the source and target bar coordinates. This gives
+rawNativeNormalizationHomotopyComponent : Cₙ →ₗ[k] Cₘ. -/
 def rawNativeNormalizationHomotopyComponent (n m : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[k] M ⊗[k] TensorPower k m A :=
   (coefficientBarObjIso k A M m).hom.hom.comp
     (((AlgebraicTopology.DoldKan.homotopyPInftyToId (coefficientBar k A M)).hom n m).hom.comp
       (coefficientBarObjIso k A M n).inv.hom)
 
-/-- Native projector naturality proves the original projector is actually A-linear. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For n : ℕ, a ∈ A and x ∈ Cₙ, the tensor-coordinate
+normalization projector Pₙ satisfies Pₙ(a·x) = a·Pₙ(x). Naturality of P∞ under the simplicial
+scalar endomorphism supplies this A-linearity law. -/
 theorem rawNativeNormalizationProjector_smul (n : ℕ) (a : A)
     (x : M ⊗[k] TensorPower k n A) :
     rawNativeNormalizationProjector k A M n (a • x) = a • rawNativeNormalizationProjector k A M n x := by
@@ -169,7 +210,11 @@ theorem rawNativeNormalizationProjector_smul (n : ℕ) (a : A)
     scalarTensorMap k A M a n (rawNativeNormalizationProjector k A M n x) at hx
   simpa only [scalarTensorMap_apply] using hx
 
-/-- Native homotopy naturality proves every original homotopy component is actually A-linear. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For n,m : ℕ, a ∈ A and x ∈ Cₙ, the tensor-coordinate homotopy
+component hₙₘ satisfies hₙₘ(a·x) = a·hₙₘ(x). This follows from naturality of the Dold–Kan
+homotopy under the simplicial coefficient scalar map. -/
 theorem rawNativeNormalizationHomotopyComponent_smul (n m : ℕ) (a : A)
     (x : M ⊗[k] TensorPower k n A) :
     rawNativeNormalizationHomotopyComponent k A M n m (a • x) =
@@ -185,18 +230,29 @@ theorem rawNativeNormalizationHomotopyComponent_smul (n m : ℕ) (a : A)
     rawNativeNormalizationHomotopyComponent k A M n m (scalarTensorMap k A M a n x) at hx
   simpa only [scalarTensorMap_apply] using hx.symm
 
-/-- The normalization projector transported as an original raw chain endomorphism. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. Conjugating P∞ by the raw-to-alternating-bar chain
+isomorphism gives rawNativeNormalizationProjectorComplex : C(A,M) → C(A,M), a k-linear chain
+endomorphism. -/
 def rawNativeNormalizationProjectorComplex : chainComplex k A M ⟶ chainComplex k A M :=
   (chainComplexIso k A M).hom ≫ AlgebraicTopology.DoldKan.PInfty
     (X := coefficientBar k A M) ≫ (chainComplexIso k A M).inv
 
 omit [SMulCommClass k A M] in
-/-- The native raw chain projector has the original tensor-level projector. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For n : ℕ, the underlying linear map of the nth component of
+rawNativeNormalizationProjectorComplex equals rawNativeNormalizationProjector k A M n. -/
 theorem rawNativeNormalizationProjectorComplex_f (n : ℕ) :
     ((rawNativeNormalizationProjectorComplex k A M).f n).hom =
       rawNativeNormalizationProjector k A M n := rfl
 
-/-- The native Dold--Kan homotopy transported through the raw/bar coordinates. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. Transporting the Dold–Kan homotopy P∞ ∼ id through the
+raw/bar chain isomorphism gives a homotopy from rawNativeNormalizationProjectorComplex k A M to
+the identity of C(A,M). -/
 def rawNativeNormalizationHomotopy :
     Homotopy (rawNativeNormalizationProjectorComplex k A M) (𝟙 (chainComplex k A M)) := by
   let c := chainComplexIso k A M
@@ -204,7 +260,11 @@ def rawNativeNormalizationHomotopy :
   exact h.trans (Homotopy.ofEq c.hom_inv_id)
 
 omit [SMulCommClass k A M] in
-/-- The transported native homotopy has the original tensor-level homotopy component. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. Put Cₙ = M ⊗_k A^{⊗n}, with A acting only on the coefficient, and let X
+be the simplicial coefficient bar. For all n,m : ℕ, the underlying linear map of the
+(n,m)-component of rawNativeNormalizationHomotopy equals rawNativeNormalizationHomotopyComponent
+k A M n m. -/
 theorem rawNativeNormalizationHomotopy_hom (n m : ℕ) :
     ((rawNativeNormalizationHomotopy k A M).hom n m).hom =
       rawNativeNormalizationHomotopyComponent k A M n m := by

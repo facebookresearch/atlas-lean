@@ -1,6 +1,6 @@
-# Op Horseshoe
+# Projective horseshoe of the opposite sequence
 
-The projective horseshoe in `Cᵒᵖ` applied to the op'd SES and the op'd
-endpoint injective resolutions. Since `op` reverses arrows, the left op
-endpoint (over `op S.X₃`) gets `I₃` and the right one (over `op S.X₁`) gets
-`I₁`.
+For a short exact sequence `S` in an abelian category `C` with endpoint
+injective resolutions `I₁`, `I₃`, apply the projective horseshoe lemma in
+`Cᵒᵖ` to the reversed sequence `op X₃ → op X₂ → op X₁`. The opposite of
+`I₃` supplies its left projective endpoint and the opposite of `I₁` its right endpoint.

@@ -16,9 +16,10 @@ public import MathlibExt.CategoryTheory.Abelian.Injective.ResolutionComparison
 /-!
 # Mapping injective resolutions
 
-An additive functor preserving homology and injective objects maps injective resolutions to
-injective resolutions. The construction is dual to `Functor.mapProjectiveResolution` and
-satisfies the corresponding map and composition laws.
+Let `C`, `D` be preadditive categories with zero objects, and suppose `D`
+has homology. An additive functor `F : C → D` preserving homology and
+injective objects carries an injective resolution of `Z` to one of `F(Z)`.
+It also carries augmentation-compatible resolution morphisms to such morphisms.
 -/
 
 /-
@@ -42,8 +43,10 @@ variable {C : Type u} [Category.{v} C] [HasZeroObject C] [Preadditive C]
 variable {D : Type u'} [Category.{v'} D] [HasZeroObject D] [Preadditive D]
   [CategoryWithHomology D]
 
-/-- An additive homology-preserving functor which preserves injective objects
-maps an injective resolution of `Z` to one of `F.obj Z`. -/
+/-- Let `C`, `D` be preadditive categories with zero objects and with
+homology in `D`. If additive `F : C → D` preserves homology and
+injective objects, an injective resolution `I` of `Z ∈ C` maps to
+an injective resolution of `F(Z)` in `D`. -/
 @[simps cocomplex ι]
 noncomputable def mapInjectiveResolution (F : C ⥤ D) [F.Additive]
     [F.PreservesInjectiveObjects] [F.PreservesHomology]
@@ -56,7 +59,10 @@ noncomputable def mapInjectiveResolution (F : C ⥤ D) [F.Additive]
   quasiIso := inferInstance
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Map an explicitly bundled morphism of injective resolutions. -/
+/-- For preadditive `C`, `D` with zero objects and homology in `D`, let
+additive `F : C → D` preserve homology and injectives. A resolution
+map `φ : I → J` over `f : X → Y` then gives an injective-resolution
+map `F(I) → F(J)` over `F(f)`, with the mapped cochain map and augmentation. -/
 noncomputable def mapInjectiveResolutionHom (F : C ⥤ D) [F.Additive]
     [F.PreservesInjectiveObjects] [F.PreservesHomology]
     {X Y : C} {I : InjectiveResolution X} {J : InjectiveResolution Y}

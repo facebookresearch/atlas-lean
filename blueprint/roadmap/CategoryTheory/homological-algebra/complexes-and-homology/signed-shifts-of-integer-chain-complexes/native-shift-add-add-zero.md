@@ -1,3 +1,5 @@
-# Native Shift Add' add zero
+# Right unit law for signed-shift addition
 
-Native addition coheres with the transported zero isomorphism on the right.
+Let C be a preadditive category, and a ∈ ℤ. The comparison α_{a,0} : S_a ≅ S₀ ∘ S_a agrees with
+the inverse right unitor followed by the inverse zero-shift isomorphism whiskered on the left by
+S_a. Thus inserting a zero shift after S_a gives the canonical unit comparison.

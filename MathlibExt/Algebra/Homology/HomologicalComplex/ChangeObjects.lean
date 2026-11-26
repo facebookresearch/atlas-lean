@@ -12,12 +12,12 @@ module
 public import Mathlib.Algebra.Homology.HomologicalComplex
 
 /-!
-# Changing the objects of a homological complex
+# Changing degreewise coordinates of a complex
 
-A family of object isomorphisms transports every original differential to
-its specified coordinates. The native component constructor assembles the
-resulting complex isomorphism. The construction uses only zero morphisms
-and applies to arbitrary complex shapes and independent index universes.
+For chosen isomorphisms e_i:K_i≅X_i, put the complex in the objects X_i
+by conjugating its differentials as e_i^{-1} d_{ij} e_j. Complex maps
+and complex-valued functors admit the same coordinate change, with
+canonical natural isomorphisms to their original presentations.
 -/
 
 @[expose] public section
@@ -32,7 +32,11 @@ variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
   {ι : Type w} {c : ComplexShape ι}
   (K : HomologicalComplex C c) {X : ι → C}
 
-/-- Replace every object by its specified coordinates and conjugate the original differential. -/
+/--
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. The complex in the new coordinates has term Xᵢ and differential eᵢ.inv
+≫ K.d i j ≫ eⱼ.hom. The shape and square-zero laws are transported through the isomorphisms.
+-/
 def changeObjects (e : ∀ i, K.X i ≅ X i) : HomologicalComplex C c where
   X := X
   d i j := (e i).inv ≫ K.d i j ≫ (e j).hom
@@ -43,48 +47,77 @@ def changeObjects (e : ∀ i, K.X i ≅ X i) : HomologicalComplex C c where
     rw [← Category.assoc (K.d i j) (K.d j k) (e k).hom, K.d_comp_d,
       zero_comp, comp_zero]
 
-/-- Each transported degree has the specified original target object. -/
+/--
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. The transported complex has degree-i object exactly Xᵢ:
+(K.changeObjects e).X i = X i.
+-/
 @[simp]
 lemma changeObjects_X (e : ∀ i, K.X i ≅ X i) (i : ι) :
     (K.changeObjects e).X i = X i := rfl
 
-/-- The transported differential is the actual conjugate of the original differential. -/
+/--
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. For all i,j, the transported differential is (K.changeObjects e).d i j
+= eᵢ.inv ≫ K.d i j ≫ eⱼ.hom : Xᵢ→Xⱼ.
+-/
 @[simp]
 lemma changeObjects_d (e : ∀ i, K.X i ≅ X i) (i j : ι) :
     (K.changeObjects e).d i j = (e i).inv ≫ K.d i j ≫ (e j).hom := rfl
 
-/-- The native component constructor identifies the complex with its specified coordinates. -/
+/--
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. The component isomorphisms eᵢ assemble into an isomorphism of complexes
+K≅K.changeObjects e.
+-/
 def changeObjectsIso (e : ∀ i, K.X i ≅ X i) : K ≅ K.changeObjects e :=
   Hom.isoOfComponents e (by
     intro i j _
     change (e i).hom ≫ (e i).inv ≫ K.d i j ≫ (e j).hom = K.d i j ≫ (e j).hom
     exact (e i).hom_inv_id_assoc (K.d i j ≫ (e j).hom))
 
-/-- The forward comparison has exactly the specified degreewise coordinate map. -/
+/--
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. The forward degree-i component of K≅K.changeObjects e is eᵢ.hom:Kᵢ→Xᵢ.
+-/
 @[simp]
 lemma changeObjectsIso_hom_f (e : ∀ i, K.X i ≅ X i) (i : ι) :
     (K.changeObjectsIso e).hom.f i = (e i).hom := rfl
 
-/-- The inverse comparison restores the original object coordinates in each degree. -/
+/--
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. The inverse degree-i component of K≅K.changeObjects e is eᵢ.inv:Xᵢ→Kᵢ.
+-/
 @[simp]
 lemma changeObjectsIso_inv_f (e : ∀ i, K.X i ≅ X i) (i : ι) :
     (K.changeObjectsIso e).inv.f i = (e i).inv := rfl
 
 variable {K} {L M : HomologicalComplex C c} {Y Z : ι → C}
 
-/-- An original complex morphism acts on both families of actual object coordinates. -/
+/--
+Let K,L be c-complexes in a category C with zero morphisms, let φ:K→L, and choose eᵢ:Kᵢ≅Xᵢ and
+fᵢ:Lᵢ≅Yᵢ. The induced map between the changed-coordinate complexes is the conjugate e^{-1} ≫ φ
+≫ f. In degree i it is eᵢ.inv ≫ φ.f i ≫ fᵢ.hom.
+-/
 def changeObjectsMap (φ : K ⟶ L)
     (e : ∀ i, K.X i ≅ X i) (f : ∀ i, L.X i ≅ Y i) :
     K.changeObjects e ⟶ L.changeObjects f :=
   (K.changeObjectsIso e).inv ≫ φ ≫ (L.changeObjectsIso f).hom
 
-/-- Each map component is the original component conjugated by its two object maps. -/
+/--
+Let K,L be c-complexes in a category C with zero morphisms, let φ:K→L, and choose eᵢ:Kᵢ≅Xᵢ and
+fᵢ:Lᵢ≅Yᵢ. Its degree-i component from Xᵢ to Yᵢ is eᵢ.inv ≫ φ.f i ≫ fᵢ.hom.
+-/
 @[simp]
 lemma changeObjectsMap_f (φ : K ⟶ L)
     (e : ∀ i, K.X i ≅ X i) (f : ∀ i, L.X i ≅ Y i) (i : ι) :
     (changeObjectsMap φ e f).f i = (e i).inv ≫ φ.f i ≫ (f i).hom := rfl
 
-/-- The forward object comparison is natural for every original complex morphism. -/
+/--
+Let K,L be c-complexes in a category C with zero morphisms, let φ:K→L, and choose eᵢ:Kᵢ≅Xᵢ and
+fᵢ:Lᵢ≅Yᵢ. The coordinate isomorphisms commute with φ: φ ≫ changeObjectsIso(L,f).hom =
+changeObjectsIso(K,e).hom ≫ changeObjectsMap(φ,e,f).
+-/
 @[reassoc]
 lemma changeObjectsIso_hom_naturality (φ : K ⟶ L)
     (e : ∀ i, K.X i ≅ X i) (f : ∀ i, L.X i ≅ Y i) :
@@ -92,13 +125,21 @@ lemma changeObjectsIso_hom_naturality (φ : K ⟶ L)
       (K.changeObjectsIso e).hom ≫ changeObjectsMap φ e f := by
   simp only [changeObjectsMap, Iso.hom_inv_id_assoc]
 
-/-- Identity acts identically after the specified coordinate change. -/
+/--
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. The identity map of K becomes the identity of the changed-coordinate
+complex: changeObjectsMap(1_K,e,e)=1_{K.changeObjects e}.
+-/
 @[simp]
 lemma changeObjectsMap_id (e : ∀ i, K.X i ≅ X i) :
     changeObjectsMap (𝟙 K) e e = 𝟙 (K.changeObjects e) := by
   simp only [changeObjectsMap, Category.id_comp, Iso.inv_hom_id]
 
-/-- Coordinate changes preserve composition of the original complex morphisms. -/
+/--
+Let φ:K→L and ψ:L→M be maps of c-complexes in a category C with zero morphisms, with chosen
+coordinate isomorphisms eᵢ:Kᵢ≅Xᵢ, fᵢ:Lᵢ≅Yᵢ and gᵢ:Mᵢ≅Zᵢ. Changing coordinates preserves
+composition: changeObjectsMap(φ≫ψ,e,g) = changeObjectsMap(φ,e,f) ≫ changeObjectsMap(ψ,f,g).
+-/
 lemma changeObjectsMap_comp (φ : K ⟶ L) (ψ : L ⟶ M)
     (e : ∀ i, K.X i ≅ X i) (f : ∀ i, L.X i ≅ Y i) (g : ∀ i, M.X i ≅ Z i) :
     changeObjectsMap (φ ≫ ψ) e g = changeObjectsMap φ e f ≫ changeObjectsMap ψ f g := by
@@ -112,7 +153,12 @@ variable {D : Type u'} [Category.{v'} D]
   (F : D ⥤ HomologicalComplex C c) (Y' : D → ι → C)
   (e : ∀ A i, (F.obj A).X i ≅ Y' A i)
 
-/-- Present the values of a complex-valued functor in specified object coordinates. -/
+/--
+Let C have zero morphisms, let D be a category, and let F:D⥤Complexes(C,c). Choose objects
+Y(A,i) and isomorphisms e(A,i):(F(A))ᵢ≅Y(A,i) for each A∈D and i∈ι. Changing the degree
+objects of every F(A) to Y(A,i), and conjugating every map F(f) by e, defines a new
+complex-valued functor on D.
+-/
 def changeObjectsFunctor : D ⥤ HomologicalComplex C c where
   obj A := (F.obj A).changeObjects (e A)
   map f := changeObjectsMap (F.map f) (e _) (e _)
@@ -122,7 +168,12 @@ def changeObjectsFunctor : D ⥤ HomologicalComplex C c where
     rw [F.map_comp]
     exact changeObjectsMap_comp (F.map f) (F.map g) (e _) (e _) (e _)
 
-/-- The original functor and its object-coordinate presentation are naturally isomorphic. -/
+/--
+Let C have zero morphisms, let D be a category, and let F:D⥤Complexes(C,c). Choose objects
+Y(A,i) and isomorphisms e(A,i):(F(A))ᵢ≅Y(A,i) for each A∈D and i∈ι. The coordinate
+isomorphisms e(A,i) give a natural isomorphism from F to the functor with degree objects
+Y(A,i) and conjugated maps.
+-/
 def changeObjectsFunctorIso : F ≅ changeObjectsFunctor F Y' e :=
   NatIso.ofComponents (fun A => (F.obj A).changeObjectsIso (e A))
     (fun f => changeObjectsIso_hom_naturality (F.map f) (e _) (e _))

@@ -1,3 +1,5 @@
-# Flipped
+# Flipping an additive-functor diagram into a diagram-valued functor
 
-The original diagram is flipped using the forgetful and flipping functors.
+For abelian `C,E`, a category `J`, and a diagram `Φ` of additive
+functors `C → E`, the flipped functor sends `X` to the diagram
+`j ↦ Φ_j(X)` and sends each source map to its evaluated diagram map.

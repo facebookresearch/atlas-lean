@@ -1,3 +1,6 @@
-# Rational Permutation Action smul
+# Scalar compatibility of the rational permutation action
 
-The actual rational coefficient image of the native tail representation.
+Scalar compatibility of the rational permutation action.
+
+For a commutative ℚ-algebra k, a k-module V, c ∈ ℚ and x ∈ ℚ[Sₙ], the action satisfies ρₙ(c
+x) = algebraMap(c) · ρₙ(x) on V⊗n.

@@ -1,5 +1,5 @@
-# Bicomplex Homotopy Equiv
+# Homotopy equivalence of two Cartan–Eilenberg bicomplexes
 
-The bicomplexes of any two supplied Cartan--Eilenberg resolutions
-of the same chain complex are homotopy equivalent, by comparisons over
-the identity in both directions.
+Let C be abelian, L a nonnegative complex and P,Q two Cartan–Eilenberg resolutions of L. Their
+bicomplexes are homotopy equivalent in resolution degree, by comparisons over id_L in both
+directions.

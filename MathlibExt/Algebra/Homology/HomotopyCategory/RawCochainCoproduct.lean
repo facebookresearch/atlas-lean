@@ -14,15 +14,16 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Basic
 public import Mathlib.CategoryTheory.Limits.Shapes.Products
 
 /-!
-# Raw cochains out of a complex coproduct
+# Homogeneous cochains from a coproduct of complexes
 
-Evaluation preserves the coproduct of complexes. Descending each homogeneous component therefore
-constructs a raw cochain, without assuming that the component families are closed. Its
-differential and compositions are detected on the literal coproduct inclusions.
-
-Restriction to the summands and componentwise descent give inverse additive maps. Source
-naturality uses the `Sigma.map`; degree-zero complex-map families agree with the `Sigma.desc`. All
-degrees remain arbitrary integers, including in the internal Hom differential formula.
+Let `D` be preadditive with `J`-indexed coproducts, and `F_j` integer
+cochain complexes. Degreewise coproduct descent gives a homogeneous
+cochain `⊕_j F_j → A` from any family of degree-`d` cochains on the
+summands; no differential compatibility is required. Restriction to
+summands and descent are inverse additive maps. Descent commutes with
+the internal-Hom differential in arbitrary integer degrees, composition
+of homogeneous cochains, and maps of coproduct families. Degree-zero
+complex-map families descend to the ordinary coproduct map.
 -/
 
 @[expose] public section
@@ -42,10 +43,11 @@ variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable {J : Type w} [HasColimitsOfShape (Discrete J) D]
 variable (F : J → CochainComplex D ℤ)
 
-/--
-Descend a homogeneous family from the coproduct of complexes. No differential compatibility of the
-family is a premise.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. Any family `ψ_j : F_j → A` of degree `d` descends to a
+unique degree-`d` cochain from `⊕_j F_j` to `A`. -/
 noncomputable def coproductDesc {A : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) : Cochain (∐ F) A d :=
   Cochain.mk fun p q hpq =>
@@ -55,10 +57,12 @@ noncomputable def coproductDesc {A : CochainComplex D ℤ} (d : ℤ)
       { pt := A.X q
         ι := Discrete.natTrans (fun j => (ψ j.as).v p q hpq) }
 
-/--
-The degreewise inclusion law uses the component of the complex-coproduct inclusion. Both component
-degrees may be negative.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. For `p+d=q`, the degree-`p` injection of `F_j` followed by
+the `(p,q)` component of the descended cochain equals the
+corresponding component of `ψ_j`, including negative degrees. -/
 theorem coproductDesc_ι_v {A : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) (j : J)
     (p q : ℤ) (hpq : p + d = q) :
@@ -72,7 +76,11 @@ theorem coproductDesc_ι_v {A : CochainComplex D ℤ} (d : ℤ)
         ι := Discrete.natTrans (fun i => (ψ i.as).v p q hpq) }
       (Discrete.mk j)
 
-/-- Each complex-coproduct inclusion recovers its specified raw cochain, in every integer degree. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. Precomposing the descended degree-`d` cochain with the
+complex injection of `F_j` recovers `ψ_j`. -/
 theorem coproductDesc_ι {A : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) (j : J) :
     (ofHom (Sigma.ι F j)).comp (coproductDesc F d ψ) (zero_add d) = ψ j := by
@@ -81,17 +89,23 @@ theorem coproductDesc_ι {A : CochainComplex D ℤ} (d : ℤ)
   simpa only [zero_cochain_comp_v, ofHom_v] using
     coproductDesc_ι_v F d ψ j p q hpq
 
-/--
-Precomposing any map into one summand gives its prescribed raw value. This also handles generators
-with an unitor prefix.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. For a complex map `g : X → F_j`, restriction of the
+descended cochain along `g` followed by the coproduct injection
+equals precomposition of `ψ_j` by `g`. -/
 theorem coproductDesc_ι_comp {A X : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) (j : J) (g : X ⟶ F j) :
     (ofHom (g ≫ Sigma.ι F j)).comp (coproductDesc F d ψ) (zero_add d) =
       (ofHom g).comp (ψ j) (zero_add d) := by
   rw [ofHom_comp, comp_assoc_of_first_is_zero_cochain, coproductDesc_ι]
 
-/-- The component equations characterize the entire descended cochain. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. A degree-`d` cochain on `⊕_j F_j` whose restriction to every
+summand equals `ψ_j` is the coproduct descent of that family. -/
 theorem coproductDesc_unique {A : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) (α : Cochain (∐ F) A d)
     (h : ∀ j : J, (ofHom (Sigma.ι F j)).comp α (zero_add d) = ψ j) :
@@ -100,8 +114,11 @@ theorem coproductDesc_unique {A : CochainComplex D ℤ} (d : ℤ)
   intro j
   exact (h j).trans (coproductDesc_ι F d ψ j).symm
 
-/-- Descending the restrictions of an arbitrary raw cochain reconstructs
-that entire cochain, without requiring differential commutation. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. Descending the restrictions of any degree-`d` cochain
+`α : ⊕_j F_j → A` reconstructs `α`. -/
 theorem coproductDesc_precomp {A : CochainComplex D ℤ} (d : ℤ)
     (α : Cochain (∐ F) A d) :
     coproductDesc F d
@@ -109,14 +126,22 @@ theorem coproductDesc_precomp {A : CochainComplex D ℤ} (d : ℤ)
   exact (coproductDesc_unique F d
     (fun j => (ofHom (Sigma.ι F j)).comp α (zero_add d)) α (fun _ => rfl)).symm
 
-/-- The zero family descends to the zero raw cochain. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. The family of zero degree-`d` cochains descends to the
+zero cochain on the coproduct. -/
 theorem coproductDesc_zero {A : CochainComplex D ℤ} (d : ℤ) :
     coproductDesc F d (fun j => (0 : Cochain (F j) A d)) = 0 := by
   apply ext_of_precomp_sigma_ι _ _
   intro j
   rw [coproductDesc_ι, Cochain.comp_zero]
 
-/-- Descent is additive on the cochain families. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. Descent is additive: `desc(ψ+χ)=desc(ψ)+desc(χ)` for
+families of the same homogeneous degree. -/
 theorem coproductDesc_add {A : CochainComplex D ℤ} (d : ℤ)
     (ψ χ : ∀ j : J, Cochain (F j) A d) :
     coproductDesc F d (fun j => ψ j + χ j) =
@@ -125,7 +150,11 @@ theorem coproductDesc_add {A : CochainComplex D ℤ} (d : ℤ)
   intro j
   rw [Cochain.comp_add, coproductDesc_ι, coproductDesc_ι, coproductDesc_ι]
 
-/-- Descent respects negation, with no nontriviality assumption. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. Descent preserves negatives:
+`desc(-ψ)=-desc(ψ)`. -/
 theorem coproductDesc_neg {A : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) :
     coproductDesc F d (fun j => -(ψ j)) = -(coproductDesc F d ψ) := by
@@ -133,14 +162,22 @@ theorem coproductDesc_neg {A : CochainComplex D ℤ} (d : ℤ)
   intro j
   rw [Cochain.comp_neg, coproductDesc_ι, coproductDesc_ι]
 
-/-- Differences of raw families descend to the difference of the descended cochains. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. Descent preserves differences:
+`desc(ψ-χ)=desc(ψ)-desc(χ)` for families of the same degree. -/
 theorem coproductDesc_sub {A : CochainComplex D ℤ} (d : ℤ)
     (ψ χ : ∀ j : J, Cochain (F j) A d) :
     coproductDesc F d (fun j => ψ j - χ j) =
       coproductDesc F d ψ - coproductDesc F d χ := by
   simp only [sub_eq_add_neg, coproductDesc_add, coproductDesc_neg]
 
-/-- Vanishing is detected on every summand of the coproduct. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. The descended cochain is zero if and only if every
+summand cochain `ψ_j` is zero. -/
 theorem coproductDesc_eq_zero_iff {A : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) :
     coproductDesc F d ψ = 0 ↔ ∀ j : J, ψ j = 0 := by
@@ -153,10 +190,12 @@ theorem coproductDesc_eq_zero_iff {A : CochainComplex D ℤ} (d : ℤ)
     have hψ : ψ = fun _ => 0 := funext h
     rw [hψ, coproductDesc_zero]
 
-/--
-Descent commutes with the Hom differential for arbitrary integer source and target degrees,
-including off-shape zero differentials.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. For arbitrary integers `d,m`, the internal-Hom differential
+satisfies `δ_(d,m)(desc(ψ)) = desc(δ_(d,m)(ψ_j))`, including
+nonconsecutive degrees where the differential is zero. -/
 theorem coproductDesc_δ {A : CochainComplex D ℤ} (d m : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) :
     HomComplex.δ d m (coproductDesc F d ψ) =
@@ -165,17 +204,24 @@ theorem coproductDesc_δ {A : CochainComplex D ℤ} (d m : ℤ)
   intro j
   rw [← HomComplex.δ_ofHom_comp, coproductDesc_ι, coproductDesc_ι]
 
-/-- A differential vanishes on the descended cochain exactly when it
-vanishes on every input summand. This is a conclusion, not a restriction
-on which raw families may be descended. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. For any integers `d,m`, the differential of the descended
+cochain vanishes if and only if the differential of every `ψ_j`
+vanishes in that degree pair. -/
 theorem coproductDesc_δ_eq_zero_iff {A : CochainComplex D ℤ} (d m : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) :
     HomComplex.δ d m (coproductDesc F d ψ) = 0 ↔
       ∀ j : J, HomComplex.δ d m (ψ j) = 0 := by
   rw [coproductDesc_δ, coproductDesc_eq_zero_iff]
 
-/-- Postcomposition may itself be a raw cochain: closedness is not needed
-for the coproduct universal property. -/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. For a homogeneous cochain `κ : A → B` of degree `e`,
+composition satisfies `desc(ψ_j ≫ κ)=desc(ψ) ≫ κ` in degree
+`d+e`, without requiring either cochain to be closed. -/
 theorem coproductDesc_comp {A B : CochainComplex D ℤ} (d e : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) (κ : Cochain A B e) :
     coproductDesc F (d + e) (fun j => (ψ j).comp κ rfl) =
@@ -184,10 +230,12 @@ theorem coproductDesc_comp {A B : CochainComplex D ℤ} (d e : ℤ)
   intro j
   rw [coproductDesc_ι, ← comp_assoc_of_first_is_zero_cochain, coproductDesc_ι]
 
-/--
-Source naturality descends the maps of summands through the map of coproducts. No
-commutative-square witness is extra data.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. For another family `G_j`, complex maps `a_j : F_j → G_j`,
+and degree-`d` cochains `ψ_j : G_j → A`, precomposing `desc_G(ψ)`
+by the coproduct map `⊕ a_j` gives `desc_F(a_j ≫ ψ_j)`. -/
 theorem coproductDesc_map {G : J → CochainComplex D ℤ}
     {A : CochainComplex D ℤ} (a : ∀ j : J, F j ⟶ G j) (d : ℤ)
     (ψ : ∀ j : J, Cochain (G j) A d) :
@@ -199,10 +247,12 @@ theorem coproductDesc_map {G : J → CochainComplex D ℤ}
   rw [← comp_assoc_of_first_is_zero_cochain, ← ofHom_comp, Sigma.ι_map,
     coproductDesc_ι_comp, coproductDesc_ι]
 
-/--
-For an family of complex morphisms, raw descent agrees with the coproduct morphism. Arbitrary raw
-input is still allowed in `coproductDesc`; this identifies its complex-map corner.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. For complex maps `a_j : F_j → A`, the descent of their
+degree-zero homogeneous cochains is the homogeneous cochain of
+the ordinary coproduct map `⊕_j F_j → A`. -/
 theorem coproductDesc_ofHom {A : CochainComplex D ℤ}
     (a : ∀ j : J, F j ⟶ A) :
     coproductDesc F 0 (fun j => ofHom (a j)) = ofHom (Sigma.desc a) := by
@@ -210,10 +260,12 @@ theorem coproductDesc_ofHom {A : CochainComplex D ℤ}
   intro j
   rw [coproductDesc_ι, ← ofHom_comp, Sigma.ι_comp_desc]
 
-/--
-Raw cochains out of the coproduct are additively equivalent to arbitrary families on its summands.
-Both inverse identities are proved from the degreewise universal property.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. Restriction gives an additive equivalence between
+ degree-`d` cochains `⊕_j F_j → A` and arbitrary families of
+degree-`d` cochains `F_j → A`, with inverse degreewise descent. -/
 noncomputable def coproductCochainEquiv (A : CochainComplex D ℤ) (d : ℤ) :
     Cochain (∐ F) A d ≃+ (∀ j : J, Cochain (F j) A d) where
   toFun α j := (ofHom (Sigma.ι F j)).comp α (zero_add d)
@@ -223,20 +275,23 @@ noncomputable def coproductCochainEquiv (A : CochainComplex D ℤ) (d : ℤ) :
   map_add' α β := funext
     (fun j => Cochain.comp_add (ofHom (Sigma.ι F j)) α β (zero_add d))
 
-/--
-The forward additive equivalence is literal restriction by the degree-zero cochain of a coproduct
-inclusion.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. The forward additive equivalence takes a cochain `α` to
+its family of restrictions `ι_j ≫ α` along the degree-zero
+complex injections. -/
 @[simp]
 theorem coproductCochainEquiv_apply {A : CochainComplex D ℤ} (d : ℤ)
     (α : Cochain (∐ F) A d) (j : J) :
     coproductCochainEquiv F A d α j =
       (ofHom (Sigma.ι F j)).comp α (zero_add d) := rfl
 
-/--
-The inverse additive equivalence is the componentwise raw descent, rather than a supplied
-universal-map field.
--/
+/-- Let `D` be preadditive with coproducts indexed by a type `J`,
+`F_j` a family of integer cochain complexes, and `A` another such
+complex. A degree-`d` cochain is a homogeneous family of maps
+`F_j^p → A^(p+d)`, without a differential-commutation condition. The inverse additive equivalence takes the family `ψ_j`
+to its degreewise coproduct descent. -/
 @[simp]
 theorem coproductCochainEquiv_symm_apply {A : CochainComplex D ℤ} (d : ℤ)
     (ψ : ∀ j : J, Cochain (F j) A d) :

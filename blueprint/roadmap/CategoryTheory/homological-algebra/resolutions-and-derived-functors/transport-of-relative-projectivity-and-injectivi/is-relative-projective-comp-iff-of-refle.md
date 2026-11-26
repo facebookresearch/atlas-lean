@@ -1,3 +1,6 @@
-# Is Relative Projective comp iff of reflects
+# Relative-projectivity equivalence under split-image reflection
 
-The weakest arrow-class reflection assumption gives equality of the two full predicates.
+Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. If `V(U(g))` split epi implies `U(g)` split epi for every
+arrow `g` in `D`, then relative projectivity of `P` for `U ⋙ V`
+is equivalent to relative projectivity for `U`.

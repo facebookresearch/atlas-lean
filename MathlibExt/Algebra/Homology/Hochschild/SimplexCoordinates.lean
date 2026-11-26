@@ -14,13 +14,16 @@ public import MathlibExt.AlgebraicTopology.SimplexCategory.EdgePullback
 public import Mathlib.AlgebraicTopology.SimplexCategory.MorphismProperty
 
 /-!
-# Hochschild tensor coordinates of ordinal surjections
+# Ordinal-surjection coordinates on Hochschild chains
 
-Every ordinal surjection acts on a Hochschild tensor word by
-preserving the coefficient and inserting units along constant
-edges. The formula uses the simplicial degeneracies and simplex
-epi induction. The algebra may be noncommutative, and ground,
-algebra and coefficient universes are independent.
+Let k be a commutative ring, A a possibly noncommutative k-algebra, and M an A-bimodule with
+compatible k-action. A simplex morphism f : [p] → [q] acts contravariantly from M ⊗ A⊗q to M ⊗
+A⊗p. When f is surjective, it keeps the coefficient m and pulls back each edge label; a
+constant edge receives the unit of A. This is the tensor formula for compositions of
+simplicial degeneracies.
+
+For the coefficient Hochschild simplicial module, see J.-L. Loday, Cyclic Homology, 2nd ed.,
+Chapter 1.
 -/
 
 @[expose] public section
@@ -41,31 +44,47 @@ variable (k : Type u) (A : Type v) (M : Type w)
   [SMulCommClass A Aᵐᵒᵖ M] [SMulCommClass k A M]
   [SMulCommClass k Aᵐᵒᵖ M] [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- Actual contravariant coefficient-bar action in its original tensor carrier. -/
+/-- The contravariant simplex map on coefficient Hochschild tensors.
+
+For a commutative ring k, an associative k-algebra A and a compatible A-bimodule M, f : X → Y
+in Δ induces M ⊗ A⊗Y.len → M ⊗ A⊗X.len through the coefficient bar coordinates. -/
 def simplexMap {X Y : SimplexCategory} (f : X ⟶ Y) :
     chainLevel k A M Y.len ⟶ chainLevel k A M X.len :=
   (coefficientBarObjIso k A M Y.len).inv ≫
     (coefficientBar k A M).map f.op ≫ (coefficientBarObjIso k A M X.len).hom
 
-/-- Identity maps act by the original identity tensor map. -/
+/-- The identity simplex acts identically on Hochschild tensors.
+
+For a commutative ring k, an associative k-algebra A and a compatible A-bimodule M,
+simplexMap(id_X) is the identity on M ⊗ A⊗X.len. -/
 @[simp]
 theorem simplexMap_id (X : SimplexCategory) :
     simplexMap k A M (𝟙 X) = 𝟙 _ := by
   rw [simplexMap, op_id, (coefficientBar k A M).map_id (Opposite.op X)]
   simp only [Category.id_comp, Iso.inv_hom_id]
 
-/-- The tensor-coordinate maps compose in contravariant order. -/
+/-- Composition reverses in the Hochschild simplex action.
+
+For a commutative ring k, an associative k-algebra A, a compatible A-bimodule M and composable
+simplex maps f,g, simplexMap(f ≫ g) = simplexMap(g) ≫ simplexMap(f). -/
 @[reassoc]
 theorem simplexMap_comp {X Y Z : SimplexCategory} (f : X ⟶ Y) (g : Y ⟶ Z) :
     simplexMap k A M (f ≫ g) = simplexMap k A M g ≫ simplexMap k A M f := by
   simp only [simplexMap, op_comp, Functor.map_comp,
     Category.assoc, Iso.hom_inv_id_assoc]
 
-/-- The coordinate degeneracy is this same simplex map. -/
+/-- An elementary simplex surjection is a Hochschild degeneracy.
+
+For a commutative ring k, an associative k-algebra A and a compatible A-bimodule M, the
+simplex map σᵢ acts as degeneracy(n,i), inserting an algebra unit into the tensor word. -/
 theorem simplexMap_σ (n : ℕ) (i : Fin (n + 1)) :
     simplexMap k A M (SimplexCategory.σ i) = degeneracy k A M n i := rfl
 
-/-- Every epi inserts units on constant edges and selects labels on increasing edges. -/
+/-- The tensor-word action of an epimorphic simplex map.
+
+For a commutative ring k, an associative k-algebra A, a compatible A-bimodule M and an
+epimorphism f : X → Y, simplexMap(f)(m ⊗ tprod(a)) = m ⊗ tprod(pullbackEdges(f,a)). Constant
+edges of f contribute 1_A. -/
 theorem simplexMap_of_epi_tprod {X Y : SimplexCategory} (f : X ⟶ Y) [Epi f]
     (m : M) (a : Fin Y.len → A) :
     (simplexMap k A M f).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
@@ -87,7 +106,11 @@ theorem simplexMap_of_epi_tprod {X Y : SimplexCategory} (f : X ⟶ Y) [Epi f]
       rfl) f
   exact hP m a
 
-/-- Explicit surjectivity earns the epi premise of the original-coordinate dictionary. -/
+/-- The tensor-word action of a surjective ordinal map.
+
+For a commutative ring k, an associative k-algebra A, a compatible A-bimodule M and a simplex
+map whose order map is surjective, the coefficient stays m and the edge word becomes
+pullbackEdges(f,a). -/
 theorem simplexMap_of_surjective_tprod {X Y : SimplexCategory} (f : X ⟶ Y)
     (hf : Function.Surjective f.toOrderHom) (m : M) (a : Fin Y.len → A) :
     (simplexMap k A M f).hom (m ⊗ₜ[k] PiTensorProduct.tprod k a) =

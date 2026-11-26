@@ -13,11 +13,14 @@ module
 public import Mathlib.Algebra.MvPolynomial.Equiv
 
 /-!
-# Translation of arbitrary multivariate polynomial coordinates
+# Translation automorphisms of a polynomial algebra
 
-The original coefficient ring is fixed. Every variable is translated by an
-actual element of that ring, and translating by its negative is the proved
-inverse. The variable type and the commutative coefficient ring are arbitrary.
+For a commutative ring `R`, a type `σ`, and `t : σ → R`, substitution `X_i ↦ X_i + C(t_i)`
+fixes the coefficients and defines an `R`-algebra automorphism of `MvPolynomial σ R`.
+
+Its inverse substitutes `X_i ↦ X_i - C(t_i)` and also fixes coefficients.
+
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 1.
 -/
 
 @[expose] public section
@@ -29,12 +32,16 @@ namespace MvPolynomial
 
 variable (R : Type u) [CommRing R] {σ : Type v}
 
-/-- Substitute the actual translated variables, fixing every coefficient. -/
+/-- Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. The `R`-algebra homomorphism
+`translationAlgHom R t : MvPolynomial σ R →ₐ[R] MvPolynomial σ R` substitutes `X_i ↦ X_i + C(t
+i)` and fixes every coefficient `C r`. -/
 def translationAlgHom (t : σ → R) :
     MvPolynomial σ R →ₐ[R] MvPolynomial σ R :=
   aeval (fun i => X i + C (t i))
 
-/-- Translation has the actual inverse substitution by the negative constants. -/
+/-- Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. Substitution `X_i ↦ X_i + C(t i)`
+is the `R`-algebra equivalence `translationAlgEquiv R t`. Its inverse substitutes `X_i ↦ X_i -
+C(t i)`, with both maps fixing coefficients. -/
 def translationAlgEquiv (t : σ → R) :
     MvPolynomial σ R ≃ₐ[R] MvPolynomial σ R :=
   AlgEquiv.ofAlgHom (translationAlgHom R t)
@@ -42,28 +49,32 @@ def translationAlgEquiv (t : σ → R) :
     (by ext i; simp [translationAlgHom, aeval_C, add_assoc])
     (by ext i; simp [translationAlgHom, aeval_C, add_assoc])
 
-/-- The forward map changes only the original variable coordinate. -/
+/-- Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. For `i : σ`, `translationAlgEquiv
+R t (X i) = X i + C(t i)`. -/
 @[simp]
 theorem translationAlgEquiv_X (t : σ → R) (i : σ) :
     translationAlgEquiv R t (X i) = X i + C (t i) := by
   change translationAlgHom R t (X i) = _
   exact aeval_X (fun j : σ => (X j : MvPolynomial σ R) + C (t j)) i
 
-/-- The forward map retains every original coefficient. -/
+/-- Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. For `r : R`, `translationAlgEquiv
+R t (C r) = C r`. -/
 @[simp]
 theorem translationAlgEquiv_C (t : σ → R) (r : R) :
     translationAlgEquiv R t (C r) = C r := by
   change translationAlgHom R t (C r) = C r
   simp only [translationAlgHom, aeval_C, algebraMap_eq]
 
-/-- The inverse removes the same original translation constant. -/
+/-- Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. For `i : σ`, `(translationAlgEquiv
+R t).symm (X i) = X i - C(t i)`. -/
 @[simp]
 theorem translationAlgEquiv_symm_X (t : σ → R) (i : σ) :
     (translationAlgEquiv R t).symm (X i) = X i - C (t i) := by
   change translationAlgHom R (fun j => -t j) (X i) = _
   simp only [translationAlgHom, aeval_X, map_neg, sub_eq_add_neg]
 
-/-- The inverse also retains every original coefficient. -/
+/-- Let `R` be a commutative ring, `σ` a type, and `t : σ → R`. For `r : R`, `(translationAlgEquiv
+R t).symm (C r) = C r`. -/
 @[simp]
 theorem translationAlgEquiv_symm_C (t : σ → R) (r : R) :
     (translationAlgEquiv R t).symm (C r) = C r := by

@@ -13,7 +13,13 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.CofaceComparison
 public import Mathlib.Algebra.Homology.Additive
 
 /-!
-# alternating-complex precomposition of coface isomorphisms
+# Alternating complexes and additive functor transport
+
+An additive functor F between preadditive categories commutes with the alternating coface
+differential ∑_i(−1)^iδ_i. The identity degree components therefore identify Alt(F(A)) with
+F(Alt(A)). Coface-compatible coefficient isomorphisms and natural isomorphisms between additive
+functors transport through these comparisons; the two resulting isomorphisms from P(Alt(A)) to
+Q(Alt(B)) agree.
 -/
 
 @[expose] public section
@@ -43,7 +49,9 @@ private theorem alternatingFunctorDifferential (F : C ⥤ D) [F.Additive]
   exact F.map_zsmul
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The literal identity components commute with the alternating differentials. -/
+/-- Let C,D be preadditive, F : C → D additive and A a cosimplicial C-object. For i,j ∈ ℕ with
+j=i+1, the identity maps on F(A^i) and F(A^j) commute with the differentials of Alt(F(A)) and
+F(Alt(A)). Equivalently F(∑_r(−1)^rδ_r^A) = ∑_r(−1)^rF(δ_r^A) in each degree. -/
 theorem alternatingFunctorComm (F : C ⥤ D) [F.Additive]
     (A : CosimplicialObject C) (i j : ℕ) (hij : (ComplexShape.up ℕ).Rel i j) :
     (Iso.refl ((AlternatingCofaceMapComplex.obj (A ⋙ F)).X i)).hom ≫
@@ -55,7 +63,9 @@ theorem alternatingFunctorComm (F : C ⥤ D) [F.Additive]
   rw [CochainComplex.of_d, CochainComplex.of_d, Category.id_comp, Category.comp_id]
   exact alternatingFunctorDifferential F A i
 
-/-- The additive alternating-complex comparison has literal identity components. -/
+/-- Let C,D be preadditive, F : C → D additive, and A a cosimplicial C-object. The identity degree
+components define the canonical isomorphism β_F,A : Alt(F(A)) ≅ F(Alt(A)) of nonnegative cochain
+complexes. -/
 def alternatingFunctorIso (F : C ⥤ D) [F.Additive] (A : CosimplicialObject C) :
     AlternatingCofaceMapComplex.obj (A ⋙ F) ≅
       ((F.mapHomologicalComplex (ComplexShape.up ℕ)).obj (AlternatingCofaceMapComplex.obj A)) := by
@@ -63,7 +73,9 @@ def alternatingFunctorIso (F : C ⥤ D) [F.Additive] (A : CosimplicialObject C) 
   intro i j hij
   exact alternatingFunctorComm F A i j hij
 
-/-- A functor isomorphism gives its original complex precomposition isomorphism. -/
+/-- Let C,D,E be preadditive, J : C → D, P : C → E and Q : D → E additive functors, and α : P ≅ QJ a
+natural isomorphism. For a nonnegative cochain complex K in C, complexPrecompositionIso gives
+P(K) ≅ Q(J(K)), with degree-n component α_{K^n}. -/
 def complexPrecompositionIso (J : C ⥤ D) [J.Additive] (P : C ⥤ E) [P.Additive]
     (Q : D ⥤ E) [Q.Additive] (α : P ≅ J ⋙ Q) (K : CochainComplex C ℕ) :
     ((P.mapHomologicalComplex (ComplexShape.up ℕ)).obj K) ≅
@@ -72,7 +84,9 @@ def complexPrecompositionIso (J : C ⥤ D) [J.Additive] (P : C ⥤ E) [P.Additiv
   (NatIso.mapHomologicalComplex α (ComplexShape.up ℕ)).app K ≪≫
     ((Functor.mapHomologicalComplexCompIso (Iso.refl (J ⋙ Q)) (ComplexShape.up ℕ)).app K).symm
 
-/-- The mapped coefficient coface comparison in the original coefficient complexes. -/
+/-- Let C,D be preadditive, J : C → D additive, A and B cosimplicial objects in C and D, and e :
+J(A) ≅ B a coface-compatible degreewise isomorphism. The canonical isomorphism J(Alt(A)) ≅
+Alt(B) is β_J,A⁻¹ followed by the alternating-complex isomorphism induced by e. -/
 def mappedCofaceComplexIso (A : CosimplicialObject C) (B : CosimplicialObject D)
     (J : C ⥤ D) [J.Additive] (e : CofaceIso (A ⋙ J) B) :
     ((J.mapHomologicalComplex (ComplexShape.up ℕ)).obj (AlternatingCofaceMapComplex.obj A)) ≅
@@ -80,7 +94,11 @@ def mappedCofaceComplexIso (A : CosimplicialObject C) (B : CosimplicialObject D)
   (alternatingFunctorIso J A).symm ≪≫ e.alternatingIso
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original coface-precomposition complex map equals the coefficient-complex precomposition map. -/
+/-- Let C,D,E be preadditive, A and B cosimplicial objects in C,D, J : C → D, P : C → E, Q : D → E
+additive, α : P ≅ QJ natural, and e : J(A) ≅ B coface compatible. Write β_F,A : Alt(F(A)) ≅
+F(Alt(A)), a : P(A) ≅ Q(B) for the coface isomorphism induced by α and e, and φ : P(Alt(A)) ≅
+Q(J(Alt(A))) for complexPrecompositionIso. Then β_P,A⁻¹ ≪≫ Alt(a) ≪≫ β_Q,B = φ ≪≫ Q(β_J,A⁻¹ ≪≫
+Alt(e)), as isomorphisms P(Alt(A)) ≅ Q(Alt(B)). -/
 theorem coface_precomposition_complexIso (A : CosimplicialObject C) (B : CosimplicialObject D)
     (J : C ⥤ D) [J.Additive] (P : C ⥤ E) [P.Additive]
     (Q : D ⥤ E) [Q.Additive] (α : P ≅ J ⋙ Q) (e : CofaceIso (A ⋙ J) B) :

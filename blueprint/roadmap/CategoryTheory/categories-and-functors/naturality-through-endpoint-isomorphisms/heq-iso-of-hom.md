@@ -1,4 +1,5 @@
-# Heq iso of hom
+# Isomorphisms determined by forward maps
 
-From an `HEq` of their `hom`s, an `HEq` of the isomorphisms themselves.
-Generic hom-`HEq` to `Iso`-`HEq` constructor.
+In a category `C`, suppose `X = X′` and `Y = Y′`. If the
+forward maps of `I : X ≅ Y` and `J : X′ ≅ Y′` agree under
+these identifications, the isomorphisms themselves agree under them.

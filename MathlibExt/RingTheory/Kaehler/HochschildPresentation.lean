@@ -15,16 +15,17 @@ public import Mathlib.Algebra.Category.ModuleCat.Kernels
 public import Mathlib.Algebra.Homology.ShortComplex.Exact
 
 /-!
-# The Hochschild degree-two presentation of Kähler differentials
+# The Hochschild presentation of Kähler differentials
 
-The actual tensor differential sends a ⊗ b ⊗ c to
-ab ⊗ c - a ⊗ bc + ca ⊗ b. Its cokernel is the native module of Kähler
-differentials, with representative a ⊗ b mapped to a db.
+Let `k,A` be commutative rings with a `k`-algebra structure on `A`. The degree-two Hochschild
+boundary is the `A`-linear map `b₂ : A ⊗[k] (A ⊗[k] A) → A ⊗[k] A` given by `a ⊗ (b ⊗ c) ↦ ab
+⊗ c - a ⊗ bc + ca ⊗ b`.
 
-The inverse is the native universal derivation into the actual boundary-range
-quotient. No flatness, finite generation, smoothness or characteristic
-assumption is made. These are A-linear Hochschild coordinates; subsequent
-cyclic quotients by exact differentials are only k-linear.
+Its cokernel is `Ω¹(A/k)`. The comparison sends `[a ⊗ b]` to `a db`, and the inverse sends
+`db` to `[1 ⊗ b]`. The sequence `A ⊗[k] (A ⊗[k] A) → A ⊗[k] A → Ω¹(A/k) → 0` is exact, with
+the last map `a ⊗ b ↦ a db`.
+
+Reference: Loday, *Cyclic Homology*, Section 1.1.
 -/
 
 @[expose] public section
@@ -39,14 +40,16 @@ universe u v
 
 variable (k : Type u) (A : Type v) [CommRing k] [CommRing A] [Algebra k A]
 
-/-- The original degree-two relation, with both endpoint tensors present. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. This is the `k`-linear
+endomorphism of `A ⊗[k] A` defined by `a ⊗ b ↦ a ⊗ b - 1 ⊗ (a*b) + b ⊗ a`. -/
 def relationMap : (A ⊗[k] A) →ₗ[k] A ⊗[k] A :=
   LinearMap.id -
     (Algebra.TensorProduct.includeRight : A →ₐ[k] A ⊗[k] A).toLinearMap.comp
       (Algebra.TensorProduct.lmul' k : A ⊗[k] A →ₐ[k] A).toLinearMap +
     (TensorProduct.comm k A A).toLinearMap
 
-/-- The relation map retains the actual ordered three-term expression. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. For `a,b : A`,
+`relationMap k A (a ⊗ b) = a ⊗ b - 1 ⊗ (a*b) + b ⊗ a` in `A ⊗[k] A`. -/
 lemma relationMap_tmul (a b : A) :
     relationMap k A (a ⊗ₜ[k] b) =
       a ⊗ₜ[k] b - 1 ⊗ₜ[k] (a * b) + b ⊗ₜ[k] a := by
@@ -57,12 +60,16 @@ lemma relationMap_tmul (a b : A) :
   rw [Algebra.TensorProduct.lmul'_apply_tmul, Algebra.TensorProduct.includeRight_apply,
     TensorProduct.comm_tmul]
 
-/-- The A-linear Hochschild b₂ on the original triple tensor. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. The `A`-linear map
+`boundaryTwo k A : A ⊗[k] (A ⊗[k] A) → A ⊗[k] A` is `a ⊗ (b ⊗ c) ↦ (a*b) ⊗ c - a ⊗ (b*c) +
+(c*a) ⊗ b`. The `A`-action on both tensor modules is in the first factor. -/
 def boundaryTwo : (A ⊗[k] (A ⊗[k] A)) →ₗ[A] A ⊗[k] A :=
   TensorProduct.AlgebraTensorModule.lift
     ((LinearMap.lsmul A ((A ⊗[k] A) →ₗ[k] A ⊗[k] A)).flip (relationMap k A))
 
-/-- The pure-tensor formula has the printed positive final endpoint. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. For `a,b,c : A`,
+`boundaryTwo k A (a ⊗ (b ⊗ c)) = (a*b) ⊗ c - a ⊗ (b*c) + (c*a) ⊗ b`. The endpoint terms both
+have positive sign. -/
 lemma boundaryTwo_tmul (a b c : A) :
     boundaryTwo k A (a ⊗ₜ[k] (b ⊗ₜ[k] c)) =
       (a * b) ⊗ₜ[k] c - a ⊗ₜ[k] (b * c) + (c * a) ⊗ₜ[k] b := by
@@ -71,32 +78,47 @@ lemma boundaryTwo_tmul (a b c : A) :
   rw [relationMap_tmul, smul_add, smul_sub]
   simp only [TensorProduct.smul_tmul', smul_eq_mul, mul_one, mul_comm a c]
 
-/-- The original tensor space modulo the actual range of b₂. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. The `A`-module
+`BoundaryQuotient k A` is `(A ⊗[k] A)/im b₂`, where `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗
+b`. Thus the denominator is the `A`-span of these degree-two boundary expressions. -/
 abbrev BoundaryQuotient : Type v :=
   (A ⊗[k] A) ⧸ LinearMap.range (boundaryTwo k A)
 
-/-- The actual projection onto the Hochschild boundary quotient. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. `quotientMap k A` is the `A`-linear projection `A ⊗[k] A →
+Q`, sending each tensor to its boundary-quotient class. -/
 def quotientMap : (A ⊗[k] A) →ₗ[A] BoundaryQuotient k A :=
   (LinearMap.range (boundaryTwo k A)).mkQ
 
-/-- Every actual degree-two boundary vanishes under the quotient. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. For every `x : T₂`, the quotient projection `q : T₁ → T₁/im b₂` satisfies `q (b₂
+x) = 0`. -/
 lemma quotientMap_boundaryTwo (x : A ⊗[k] (A ⊗[k] A)) :
     quotientMap k A (boundaryTwo k A x) = 0 := by
   rw [quotientMap, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
   exact ⟨x, rfl⟩
 
-/-- The degenerate tensor a ⊗ 1 is itself an actual boundary. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. For every `a : A`, `q(a ⊗ 1) = 0` in `Q`. -/
 lemma quotientMap_tmul_one (a : A) : quotientMap k A (a ⊗ₜ[k] (1 : A)) = 0 := by
   have h := quotientMap_boundaryTwo k A (a ⊗ₜ[k] ((1 : A) ⊗ₜ[k] (1 : A)))
   simpa only [boundaryTwo_tmul, mul_one, one_mul, sub_self, zero_add] using h
 
-/-- Multiplying the first tensor coordinate is the native A-module action. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. For `a,b : A`, `q(a ⊗ b) = a • q(1 ⊗ b)`, where `A` acts on
+the first tensor factor and hence on the quotient. -/
 lemma quotientMap_tmul_eq_smul (a b : A) :
     quotientMap k A (a ⊗ₜ[k] b) = a • quotientMap k A (1 ⊗ₜ[k] b) := by
   simpa only [TensorProduct.smul_tmul', smul_eq_mul, mul_one] using
     (quotientMap k A).map_smul a (1 ⊗ₜ[k] b)
 
-/-- The actual b₂ boundary gives the Leibniz relation in its quotient. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. For `a,b : A`, `q(1 ⊗ (a*b)) = q(a ⊗ b) + q(b ⊗ a)`. -/
 lemma quotientMap_leibniz (a b : A) :
     quotientMap k A (1 ⊗ₜ[k] (a * b)) =
       quotientMap k A (a ⊗ₜ[k] b) + quotientMap k A (b ⊗ₜ[k] a) := by
@@ -107,7 +129,10 @@ lemma quotientMap_leibniz (a b : A) :
     simpa only [sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using h
   exact (sub_eq_zero.mp h').symm
 
-/-- The actual class of 1 ⊗ a defines a native k-derivation. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. The function `d_Q(a) = q(1 ⊗ a)` is a `k`-derivation `A → Q`:
+it is `k`-linear, sends `1` to zero, and satisfies `d_Q(ab) = a • d_Q(b) + b • d_Q(a)`. -/
 def quotientDerivation : Derivation k A (BoundaryQuotient k A) where
   toLinearMap := ((quotientMap k A).restrictScalars k).comp
     (Algebra.TensorProduct.includeRight : A →ₐ[k] A ⊗[k] A).toLinearMap
@@ -121,11 +146,16 @@ def quotientDerivation : Derivation k A (BoundaryQuotient k A) where
       (congrArg₂ (fun x y => x + y)
         (quotientMap_tmul_eq_smul k A a b) (quotientMap_tmul_eq_smul k A b a))
 
-/-- The derivation is the original tensor representative. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. For every `a : A`, `quotientDerivation k A a = q(1 ⊗ a)`. -/
 lemma quotientDerivation_apply (a : A) :
     quotientDerivation k A a = quotientMap k A (1 ⊗ₜ[k] a) := rfl
 
-/-- The native tensor-to-differentials map kills the actual Hochschild b₂. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. The composite `η ∘ b₂ : T₂ → Ω¹(A/k)` is zero, equivalently `(D k
+A).tensorProductTo.comp (boundaryTwo k A) = 0`. -/
 lemma boundaryTwo_comp_tensorProductTo :
     (KaehlerDifferential.D k A).tensorProductTo.comp (boundaryTwo k A) = 0 := by
   apply LinearMap.ext
@@ -150,7 +180,11 @@ lemma boundaryTwo_comp_tensorProductTo :
   · intro x y hx hy
     simp only [map_add, hx, hy, zero_add]
 
-/-- Descend the actual a ⊗ b ↦ a db map through the actual boundary range. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. The `A`-linear map `toKaehler k A : Q → Ω¹(A/k)` is defined
+by `[a ⊗ b] ↦ a • D k A b`. The degree-two boundary expressions map to zero by the Leibniz
+rule. -/
 def toKaehler : BoundaryQuotient k A →ₗ[A] KaehlerDifferential k A :=
   (LinearMap.range (boundaryTwo k A)).liftQ (KaehlerDifferential.D k A).tensorProductTo (by
     intro x hx
@@ -159,21 +193,33 @@ def toKaehler : BoundaryQuotient k A →ₗ[A] KaehlerDifferential k A :=
     exact congrArg (fun f : (A ⊗[k] (A ⊗[k] A)) →ₗ[A] KaehlerDifferential k A => f y)
       (boundaryTwo_comp_tensorProductTo k A))
 
-/-- The descended map retains the original native tensor-to-differentials map. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. For `x : A ⊗[k] A`, `toKaehler k A (q x) = (D k
+A).tensorProductTo x`. On pure tensors the latter map is `a ⊗ b ↦ a db`. -/
 lemma toKaehler_quotientMap (x : A ⊗[k] A) :
     toKaehler k A (quotientMap k A x) = (KaehlerDifferential.D k A).tensorProductTo x := rfl
 
-/-- The canonical pure representative is a db. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. For `a,b : A`, `toKaehler k A (q(a ⊗ b)) = a • D k A b` in
+`Ω¹(A/k)`. -/
 lemma toKaehler_tmul (a b : A) :
     toKaehler k A (quotientMap k A (a ⊗ₜ[k] b)) = a • KaehlerDifferential.D k A b :=
   (toKaehler_quotientMap k A (a ⊗ₜ[k] b)).trans
     (Derivation.tensorProductTo_tmul (KaehlerDifferential.D k A) a b)
 
-/-- The inverse is supplied by the native universal derivation, not comparison data. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. The universal property of `Ω¹(A/k)` gives the `A`-linear map
+`fromKaehler k A : Ω¹(A/k) → Q` with `db ↦ q(1 ⊗ b)`. More generally, it sends `a db` to `q(a
+⊗ b)`. -/
 def fromKaehler : KaehlerDifferential k A →ₗ[A] BoundaryQuotient k A :=
   (quotientDerivation k A).liftKaehlerDifferential
 
-/-- Native universal lifting sends da to the actual class of 1 ⊗ a. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. For every `a : A`, `fromKaehler k A (D k A a) = q(1 ⊗ a)`. -/
 lemma fromKaehler_D (a : A) :
     fromKaehler k A (KaehlerDifferential.D k A a) = quotientMap k A (1 ⊗ₜ[k] a) :=
   (Derivation.liftKaehlerDifferential_comp_D (quotientDerivation k A) a).trans
@@ -205,14 +251,20 @@ lemma toKaehler_fromKaehler (x : KaehlerDifferential k A) :
     rw [fromKaehler_D, toKaehler_tmul, one_smul]
   exact congrArg (fun f : KaehlerDifferential k A →ₗ[A] KaehlerDifferential k A => f x) h
 
-/-- The actual Hochschild boundary-range quotient is the native Kähler module. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Let `Q` be `A ⊗[k] A`
+modulo the `A`-span of the elements `ab ⊗ c - a ⊗ bc + ca ⊗ b` for `a,b,c : A`, and let `q : A
+⊗[k] A → Q` be the quotient map. There is an `A`-linear equivalence `Q ≃ₗ[A] Ω¹(A/k)` whose
+forward map is `[a ⊗ b] ↦ a db` and whose inverse sends `db` to `[1 ⊗ b]`. -/
 def quotientLinearEquiv : BoundaryQuotient k A ≃ₗ[A] KaehlerDifferential k A :=
   { toKaehler k A with
     invFun := fromKaehler k A
     left_inv := fromKaehler_toKaehler k A
     right_inv := toKaehler_fromKaehler k A }
 
-/-- Exactness of the actual tensor differential and the actual universal differential map. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. These maps satisfy `Function.Exact b₂ η`. For `x : T₁`, `η(x) = 0` if and only
+if `x` belongs to the range of `b₂`. -/
 lemma boundaryTwo_exact : Function.Exact (boundaryTwo k A)
     (KaehlerDifferential.D k A).tensorProductTo := by
   intro x
@@ -227,7 +279,10 @@ lemma boundaryTwo_exact : Function.Exact (boundaryTwo k A)
     exact congrArg (fun f : (A ⊗[k] (A ⊗[k] A)) →ₗ[A] KaehlerDifferential k A => f y)
       (boundaryTwo_comp_tensorProductTo k A)
 
-/-- The original Hochschild b₂ followed by a ⊗ b ↦ a db is a short complex. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. The maps form the short complex `T₂ —b₂→ T₁ —η→ Ω¹(A/k)` in `ModuleCat A`; its
+zero-composite relation is `η ∘ b₂ = 0`. -/
 def presentation : ShortComplex (ModuleCat.{v} A) :=
   ShortComplex.mk (ModuleCat.ofHom (boundaryTwo k A))
     (ModuleCat.ofHom (KaehlerDifferential.D k A).tensorProductTo) (by
@@ -235,7 +290,10 @@ def presentation : ShortComplex (ModuleCat.{v} A) :=
       change (KaehlerDifferential.D k A).tensorProductTo.comp (boundaryTwo k A) = 0
       exact boundaryTwo_comp_tensorProductTo k A)
 
-/-- The native module cokernel property is earned from the constructed exact tensor sequence. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. The map `η : T₁ → Ω¹(A/k)` is a cokernel of `b₂` in `ModuleCat A`. Every
+`A`-linear map from `T₁` that kills `b₂` factors uniquely through `η`. -/
 def presentationIsCokernel :
     IsColimit (CokernelCofork.ofπ (presentation k A).g (presentation k A).zero) :=
   ModuleCat.isColimitCokernelCofork
@@ -243,17 +301,28 @@ def presentationIsCokernel :
     (ModuleCat.ofHom (KaehlerDifferential.D k A).tensorProductTo)
     (boundaryTwo_exact k A) (KaehlerDifferential.tensorProductTo_surjective k A)
 
-/-- The tensor presentation is exact over A with no flatness premise. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. The short complex `T₂ —b₂→ T₁ —η→ Ω¹(A/k)` is exact at `T₁`: its boundary image
+`im b₂` equals `ker η`. -/
 lemma presentation_exact : (presentation k A).Exact :=
   ShortComplex.exact_of_g_is_cokernel (presentation k A) (presentationIsCokernel k A)
 
-/-- The canonical cokernel isomorphism uses the actual boundary quotient. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. This is the isomorphism `cokernel b₂ ≅ ModuleCat.of A (Ω¹(A/k))` obtained from
+the quotient equivalence `(T₁/im b₂) ≃ₗ[A] Ω¹(A/k)`. It sends the cokernel class of `a ⊗ b` to
+`a db`. -/
 def presentationCokernelIso : cokernel (presentation k A).f ≅
     ModuleCat.of A (KaehlerDifferential k A) :=
   ModuleCat.cokernelIsoRangeQuotient (presentation k A).f ≪≫
     (quotientLinearEquiv k A).toModuleIso
 
-/-- The categorical cokernel map is the original a ⊗ b ↦ a db map. -/
+/-- Let `k,A` be commutative rings with a `k`-algebra structure on `A`. Write `T₁ = A ⊗[k] A`, `T₂
+= A ⊗[k] (A ⊗[k] A)`, `b₂(a ⊗ (b ⊗ c)) = ab ⊗ c - a ⊗ bc + ca ⊗ b`, and `η(a ⊗ b) = a • D k A
+b : Ω¹(A/k)`. Let `π : T₁ → cokernel b₂` be the cokernel projection and `E : cokernel b₂ ≅
+Ω¹(A/k)` the presentation isomorphism. Then `E.hom ∘ π = η`, or categorically `cokernel.π
+(presentation k A).f ≫ (presentationCokernelIso k A).hom = (presentation k A).g`. -/
 @[reassoc]
 lemma presentationCokernelIso_π :
     cokernel.π (presentation k A).f ≫ (presentationCokernelIso k A).hom =

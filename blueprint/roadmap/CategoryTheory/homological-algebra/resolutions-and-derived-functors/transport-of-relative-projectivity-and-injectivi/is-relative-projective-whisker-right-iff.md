@@ -1,3 +1,5 @@
-# Is Relative Projective whisker Right iff
+# Target-whiskered natural isomorphism preserves relative projectivity
 
-Target whiskering uses the mapped endpoint isomorphisms.
+For categories `D,C,B`, naturally isomorphic `U,U′ : D → C`,
+functor `V : C → B`, and `P : D`, relative projectivity for
+`U ⋙ V` is equivalent to that for `U′ ⋙ V`.

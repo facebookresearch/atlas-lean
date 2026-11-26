@@ -13,18 +13,16 @@ module
 public import MathlibExt.RingTheory.Ideal.AssociatedGraded.Module
 
 /-!
-# The regular module and associated-graded ring pieces
+# Associated graded pieces of the regular module
 
-For the regular module `R`, the degree-`n` associated-graded module piece is
-canonically linearly equivalent over `R ⧸ I` to the degree-`n` piece of the
-associated-graded ring.  The equivalence preserves initial forms of
-representatives.
+For an ideal `I` in a commutative ring `R`, the regular module satisfies `I^n R = I^n`. The
+resulting quotient identification gives an `R/I`-linear equivalence between its degree-`n`
+associated graded module piece and `I^n/I^(n+1)`.
 
+This equivalence sends the module initial form of a representative `x ∈ I^n` to the ring
+initial form of the same `x`.
 
-## Main declarations
-
-* `Ideal.associatedGradedModulePieceSelfEquiv`
-* `Ideal.associatedGradedModulePieceSelfEquiv_initialForm`
+Reference: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapter 10.
 -/
 
 @[expose] public section
@@ -39,8 +37,10 @@ universe u
 
 variable {R : Type u} [CommRing R]
 
-/-- The degree-`n` associated-graded piece of the regular module is the
-corresponding degree-`n` piece of the associated-graded ring. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, and `n : ℕ`. The equality `I^n • R = I^n`
+identifies `I.AssociatedGradedModulePiece R n = I^n R/I^(n+1) R` with `I.AssociatedGradedPiece
+n = I^n/I^(n+1)`. This is an `R/I`-linear equivalence, acting as the identity on
+representatives in `I^n`. -/
 noncomputable def associatedGradedModulePieceSelfEquiv
     (I : Ideal R) (n : ℕ) :
     I.AssociatedGradedModulePiece R n ≃ₗ[R ⧸ I]
@@ -60,8 +60,10 @@ noncomputable def associatedGradedModulePieceSelfEquiv
     Submodule.Quotient.equiv _ _ e he
   exact eQ.extendScalarsOfSurjective Ideal.Quotient.mk_surjective
 
-/-- The regular-module equivalence sends a module initial form to the ring
-initial form of the same representative. -/
+/-- Let `R` be a commutative ring, `I : Ideal R`, `n : ℕ`, and `x : (I^n : Ideal R)`. The
+regular-module equivalence satisfies `I.associatedGradedModulePieceSelfEquiv n
+(I.initialFormModule R n x) = I.initialForm n x`, where `x` on the module side is regarded as
+an element of `I^n • R`. Both classes therefore have the same representative. -/
 theorem associatedGradedModulePieceSelfEquiv_initialForm
     (I : Ideal R) (n : ℕ) (x : (I ^ n : Ideal R)) :
     I.associatedGradedModulePieceSelfEquiv n

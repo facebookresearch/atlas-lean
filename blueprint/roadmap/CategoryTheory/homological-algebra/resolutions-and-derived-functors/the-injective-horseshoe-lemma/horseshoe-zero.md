@@ -1,6 +1,5 @@
-# Horseshoe zero
+# Zero composite after opposite transport
 
-The unop'd horseshoe maps compose to zero (unop of the op-side `zero`).
-The `rfl`-equations unfold `horseshoeI`/`horseshoeP` (rather than `simp only`,
-whose equation-lemma unfolding breaks `rw`-matching on these op-transported
-terms).
+For the short exact sequence `S` and injective endpoints `I₁`, `I₃` in
+an abelian category `C`, the transported horseshoe inclusion followed by its
+projection is zero: `horseshoeI ≫ horseshoeP = 0` as cochain maps on `ℕ`.

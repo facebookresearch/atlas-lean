@@ -2,23 +2,23 @@
 
 ## Semi Simplex Category
 
-- [Hom induction](hom-induction.md)
+- [Face injections and identities generate semisimplex morphisms](hom-induction.md)
 
 ## Semi Simplicial Object
 
-- [Hom Mk](hom-mk.md)
-- [Homotopy](homotopy.md)
+- [Face-compatible maps define a semisimplicial morphism](hom-mk.md)
+- [A semisimplicial homotopy is endpoint and face data](homotopy.md)
 
 ## Homotopy
 
-- [Postcomp](postcomp.md)
+- [Postcomposition sends a semisimplicial homotopy to a homotopy](postcomp.md)
 
 ## To Chain Homotopy
 
-- [Hom](hom.md)
+- [The chain-homotopy components are negative alternating sums](hom.md)
 
 ## Homotopy
 
-- [To Chain Homotopy](to-chain-homotopy.md)
-- [To Chain Homotopy hom](to-chain-homotopy-hom.md)
-- [Homology Map eq](homology-map-eq.md)
+- [A semisimplicial homotopy induces an alternating-face chain homotopy](to-chain-homotopy.md)
+- [The adjacent chain-homotopy component has the negative alternating sign](to-chain-homotopy-hom.md)
+- [Semisimplicially homotopic maps induce equal homology maps](homology-map-eq.md)

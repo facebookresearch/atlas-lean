@@ -1,3 +1,6 @@
-# Coefficient Shuffle Pairing Map tmul
+# The pure-word coefficient shuffle pairing formula
 
-The regrouping map has its value on the original four tensor factors.
+The pure-word coefficient shuffle pairing formula.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, (a₀ ⊗ x) ⊗ (m
+⊗ y) maps to (a₀.down • m) ⊗ signedShuffleProduct(p,q)(x ⊗ y).

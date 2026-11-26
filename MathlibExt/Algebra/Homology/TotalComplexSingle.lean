@@ -15,16 +15,12 @@ public import MathlibExt.Algebra.Homology.TotalComplexSingleRowUpNat
 public import MathlibExt.Algebra.Homology.TotalComplexUpNat
 
 /-!
-# Total complexes of componentwise single complexes
+# Totals of componentwise single complexes
 
-This file provides the nonnegative cochain analogue of the degree-zero
-single-complex total comparison. The chain-complex API is re-exported from
-`TotalComplexSingleDownNat`.
-
-Applying the degree-zero single-cochain-complex functor componentwise to a
-nonnegative cochain complex gives a bicomplex supported in inner degree zero.
-Its direct-sum total complex is canonically isomorphic to the original cochain
-complex.
+Let C be preadditive with a zero object and finite coproducts. Placing each term of a
+nonnegative chain or cochain complex L in inner degree zero gives a bicomplex whose diagonal
+direct-sum total is naturally isomorphic to L. The comparison sends the summand in bidegree
+(n,0) to L_n through its single-complex identification, and all other summands are zero.
 -/
 
 @[expose] public section
@@ -43,24 +39,28 @@ namespace HomologicalComplex₂
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasFiniteCoproducts C]
 
-/-- Applying the degree-zero single-complex functor componentwise to a
-nonnegative cochain complex. -/
+/-- Let C be preadditive with a zero object. The functor singleMapBicomplexFunctorUpNat sends a
+nonnegative cochain complex L to the bicomplex B with outer degree-p row the cochain complex
+concentrated on L_p in inner degree zero. Its maps and outer differentials are obtained from
+those of L. -/
 noncomputable abbrev singleMapBicomplexFunctorUpNat :
     CochainComplex C ℕ ⥤
       HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ) :=
   (HomologicalComplex.single C (ComplexShape.up ℕ) 0).mapHomologicalComplex
     (ComplexShape.up ℕ)
 
-/-- Applying the degree-zero single-complex functor componentwise to a
-nonnegative chain complex. -/
+/-- Let C be preadditive with a zero object. The functor singleMapBicomplexFunctorDownNat sends a
+nonnegative chain complex L to the bicomplex B with outer degree-p row the chain complex
+concentrated on L_p in inner degree zero. Its maps and outer differentials come from L. -/
 noncomputable abbrev singleMapBicomplexFunctorDownNat :
     ChainComplex C ℕ ⥤
       HomologicalComplex₂ C (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   (ChainComplex.single₀ C).mapHomologicalComplex (ComplexShape.down ℕ)
 
-/-- The total complex of the bicomplex obtained by applying the degree-zero
-single-complex functor componentwise is canonically isomorphic to the original
-nonnegative cochain complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a nonnegative cochain complex
+L, the total complex of its componentwise degree-zero bicomplex B is canonically isomorphic to
+L. In degree n the forward map identifies B_{n,0} with L_n and the inverse includes that
+summand. -/
 noncomputable def singleMapTotalIsoUpNat (L : CochainComplex C ℕ) :
     HomologicalComplex₂.total
       (((HomologicalComplex.single C (ComplexShape.up ℕ) 0).mapHomologicalComplex
@@ -162,8 +162,9 @@ noncomputable def singleMapTotalIsoUpNat (L : CochainComplex C ℕ) :
           (ComplexShape.up ℕ) 0 (L.X j) (a + 1)
             (Nat.succ_ne_zero a)).eq_of_src _ _)
 
-/-- The canonical inner-degree-zero summand inclusion followed by the total
-comparison is the identity. -/
+/-- Let C be preadditive with a zero object and finite coproducts. Let L be a nonnegative cochain
+complex, B its componentwise degree-zero bicomplex and e : Tot(B) ≅ L the canonical comparison.
+For j ∈ ℕ, one has ι_{j,0} ≫ e.hom_j = id_{L_j}. -/
 @[reassoc]
 theorem ιTotal_comp_singleMapTotalIsoUpNat_hom
     (L : CochainComplex C ℕ) (j : ℕ) :
@@ -179,9 +180,10 @@ theorem ιTotal_comp_singleMapTotalIsoUpNat_hom
   rw [HomologicalComplex₂.ι_totalDesc]
   rfl
 
-/-- Type-stable form of
-` ιTotal_comp_singleMapTotalIsoUpNat_hom`, retaining the canonical
-single-complex identification instead of reducing it to an identity. -/
+/-- Let C be preadditive with a zero object and finite coproducts. Let L be a nonnegative cochain
+complex, B its componentwise degree-zero bicomplex and e : Tot(B) ≅ L. For j ∈ ℕ, ι_{j,0} ≫
+e.hom_j is the canonical identification from the degree-zero term of the single complex on L_j
+to L_j. -/
 @[reassoc]
 theorem ιTotal_comp_singleMapTotalIsoUpNat_hom_single
     (L : CochainComplex C ℕ) (j : ℕ) :
@@ -196,9 +198,10 @@ theorem ιTotal_comp_singleMapTotalIsoUpNat_hom_single
   rw [HomologicalComplex₂.ι_totalDesc]
   rfl
 
-/-- Type-stable form of
-`ιTotal_comp_single₀MapTotalIso_hom`, retaining the canonical
-single-complex identification instead of reducing it to an identity. -/
+/-- Let C be preadditive with a zero object and finite coproducts. Let L be a nonnegative chain
+complex, B its componentwise degree-zero bicomplex and e : Tot(B) ≅ L. For j ∈ ℕ, ι_{j,0} ≫
+e.hom_j is the canonical identification from the degree-zero term of the single complex on L_j
+to L_j. -/
 @[reassoc]
 theorem ιTotal_comp_singleMapTotalIsoDownNat_hom_single
     (L : ChainComplex C ℕ) (j : ℕ) :
@@ -214,7 +217,9 @@ theorem ιTotal_comp_singleMapTotalIsoDownNat_hom_single
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The cochain single-complex total comparison is natural. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a map f : L → L′ of
+nonnegative cochain complexes, let B(f) be its componentwise degree-zero bicomplex map and
+e_L,e_L′ the total comparisons. Then Tot(B(f)) ≫ e_L′.hom = e_L.hom ≫ f. -/
 theorem singleMapTotalIsoUpNat_hom_naturality
     {L L' : CochainComplex C ℕ} (f : L ⟶ L') :
     HomologicalComplex₂.total.map
@@ -249,8 +254,9 @@ theorem singleMapTotalIsoUpNat_hom_naturality
         (ComplexShape.up ℕ) 0 (L.X j) (a + 1)
           (Nat.succ_ne_zero a)).eq_of_src _ _
 
-/-- Functor-level cochain comparison between componentwise single complexes
-after totalization and the original complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts. The composite functor sending a
+nonnegative cochain complex to its componentwise degree-zero bicomplex and then taking the total
+is naturally isomorphic to the identity functor. Its component at L is singleMapTotalIsoUpNat L. -/
 noncomputable def singleMapTotalNatIsoUpNat :
     singleMapBicomplexFunctorUpNat (C := C) ⋙
         HomologicalComplex₂.totalFunctor C (ComplexShape.up ℕ)
@@ -260,7 +266,9 @@ noncomputable def singleMapTotalNatIsoUpNat :
     singleMapTotalIsoUpNat_hom_naturality
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The chain single-complex total comparison is natural. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a map f : L → L′ of
+nonnegative chain complexes, let B(f) be the induced componentwise degree-zero bicomplex map and
+e_L,e_L′ the total comparisons. Then Tot(B(f)) ≫ e_L′.hom = e_L.hom ≫ f. -/
 theorem singleMapTotalIsoDownNat_hom_naturality
     {L L' : ChainComplex C ℕ} (f : L ⟶ L') :
     HomologicalComplex₂.total.map
@@ -296,8 +304,10 @@ theorem singleMapTotalIsoDownNat_hom_naturality
         (ComplexShape.down ℕ) 0 (L.X j) (a + 1)
           (Nat.succ_ne_zero a)).eq_of_src _ _
 
-/-- Functor-level chain comparison between componentwise single complexes
-after totalization and the original complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts. The composite functor taking a
+nonnegative chain complex to its componentwise degree-zero bicomplex and then totalizing is
+naturally isomorphic to the identity. Its component at L is the canonical isomorphism
+single₀MapTotalIso L. -/
 noncomputable def singleMapTotalNatIsoDownNat :
     singleMapBicomplexFunctorDownNat (C := C) ⋙
         HomologicalComplex₂.totalFunctor C (ComplexShape.down ℕ)

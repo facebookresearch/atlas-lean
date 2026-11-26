@@ -13,11 +13,12 @@ public import Mathlib.CategoryTheory.Abelian.Exact
 public import MathlibExt.CategoryTheory.ExactCategory.Basic
 
 /-!
-# Abelian categories are exact categories
+# Abelian categories as exact categories
 
-Every abelian category is canonically an exact category by taking the admissible exact
-sequences to be all short exact sequences.
-
+For an abelian category `C`, the admissible exact sequences are precisely
+its short exact sequences. Every monomorphism is the first map of its
+cokernel sequence, and every epimorphism is the second map of its kernel
+sequence. These pairs give the canonical Quillen exact structure on `C`.
 -/
 
 @[expose] public section
@@ -30,14 +31,18 @@ namespace CategoryTheory
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- Any monomorphism is admissible via its cokernel -/
+/-- In an abelian category `C`, a monomorphism `i : X → Y` belongs to the
+admissible-monomorphism class determined by short exact sequences. Its
+cokernel completes it to the sequence `X → Y → cokernel i`. -/
 lemma admissibleMono_of_mono {X Y : C} (i : X ⟶ Y) [Mono i] :
     admissibleMonosOf C (fun S => S.ShortExact) i :=
   ⟨cokernel i, cokernel.π i, by simp,
     ShortComplex.ShortExact.mk' (ShortComplex.exact_cokernel i) inferInstance inferInstance
   ⟩
 
-/-- Any epimorphism is admissible via its kernel -/
+/-- In an abelian category `C`, an epimorphism `p : Y → Z` belongs to the
+admissible-epimorphism class determined by short exact sequences. Its
+kernel completes it to the sequence `kernel p → Y → Z`. -/
 lemma admissibleEpi_of_epi {Y Z : C} (p : Y ⟶ Z) [Epi p] :
     admissibleEpisOf C (fun S => S.ShortExact) p :=
   ⟨kernel p, kernel.ι p, by simp,
@@ -66,8 +71,9 @@ lemma admissibleEpisOf_shortExact_eq :
     have : Epi p := hp
     exact admissibleEpi_of_epi p
 
-/-- Every abelian category is an exact category where the admissible exact sequences
-are all short exact sequences. -/
+/-- Every abelian category `C` has its canonical Quillen exact structure:
+`S` is admissible exact if and only if `S` is a short exact short complex
+in `C`. This uses the zero object and biproducts supplied by the abelian structure. -/
 instance (priority := 100) Abelian.instExactCategory : ExactCategory C where
   IsAdmissibleExact S := S.ShortExact
   shortExact_of_isAdmissibleExact _ h := h

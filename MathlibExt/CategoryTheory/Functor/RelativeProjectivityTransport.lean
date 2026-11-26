@@ -13,11 +13,17 @@ public import MathlibExt.CategoryTheory.Adjunction.RelativeInjectivity
 public import Mathlib.CategoryTheory.Whiskering
 
 /-!
-# Transport of relative projectivity and injectivity
+# Transport of relative lifting and extension properties
 
-Natural isomorphisms of functors transport their relative projective and injective objects.
-Equivalences of source categories and the displayed natural identifications give the corresponding
-transport laws for the lifting properties.
+For a functor `U : D → C` between categories, an object `P` is
+`U`-relative-projective if maps from `P` lift through every arrow whose
+`U`-image is split epi. It is `U`-relative-injective if maps to `P`
+extend across every arrow whose `U`-image is split mono.
+Natural isomorphisms preserve these properties by conjugating sections
+and retractions. Postcomposition gives one implication in general;
+reflection of the relevant split-image arrows gives the converse,
+in particular for full faithful functors and equivalences. All category
+object and morphism universes are independent.
 -/
 
 @[expose] public section
@@ -36,7 +42,9 @@ variable {C : Type uC} [Category.{vC} C]
 
 namespace SplitEpi
 
-/-- Conjugate a section by the endpoint components of a natural isomorphism. -/
+/-- Let `D,C` be categories, `U,U′ : D → C`, and `e : U ≅ U′`.
+For `g : Y → Z` in `D` and a section `s : U(Z) → U(Y)` of `U(g)`, conjugation gives the section `e_Z⁻¹ ≫ s ≫ e_Y` of
+`U′(g)`. -/
 def ofNatIso {U U' : D ⥤ C} (e : U ≅ U') {Y Z : D} (g : Y ⟶ Z)
     (s : SplitEpi (U.map g)) : SplitEpi (U'.map g) where
   section_ := e.inv.app Z ≫ s.section_ ≫ e.hom.app Y
@@ -52,34 +60,44 @@ def ofNatIso {U U' : D ⥤ C} (e : U ≅ U') {Y Z : D} (g : Y ⟶ Z)
       _ = 𝟙 (U'.obj Z) := by
         rw [s.id, Category.id_comp, e.inv_hom_id_app Z]
 
-/-- The transported data uses the original section and isomorphism components. -/
+/-- Let `D,C` be categories, `U,U′ : D → C`, and `e : U ≅ U′`.
+For `g : Y → Z` in `D` and a section `s : U(Z) → U(Y)` of `U(g)`, the transported section is exactly `e_Z⁻¹ ≫ s ≫ e_Y`,
+with domain `U′(Z)` and codomain `U′(Y)`. -/
 @[simp]
 theorem ofNatIso_section {U U' : D ⥤ C} (e : U ≅ U') {Y Z : D} (g : Y ⟶ Z)
     (s : SplitEpi (U.map g)) :
     (ofNatIso e g s).section_ = e.inv.app Z ≫ s.section_ ≫ e.hom.app Y := rfl
 
-/-- Transport along the identity retains the original section data. -/
+/-- For categories `D,C`, `U : D → C`, and a section of the image
+of `g : Y → Z`, transport along the identity natural isomorphism
+of `U` leaves the section unchanged. -/
 @[simp]
 theorem ofNatIso_refl {U : D ⥤ C} {Y Z : D} (g : Y ⟶ Z)
     (s : SplitEpi (U.map g)) : ofNatIso (Iso.refl U) g s = s := by
   apply SplitEpi.ext
   simp [ofNatIso]
 
-/-- Two successive endpoint conjugations equal the single composite conjugation. -/
+/-- For categories `D,C`, functors `U,U′,U″ : D → C` and
+isomorphisms `e : U ≅ U′`, `e′ : U′ ≅ U″`, transporting a section
+of `U(g)` first by `e` then by `e′` equals transport by `e ≪≫ e′`. -/
 theorem ofNatIso_trans {U U' U'' : D ⥤ C} (e : U ≅ U') (e' : U' ≅ U'')
     {Y Z : D} (g : Y ⟶ Z) (s : SplitEpi (U.map g)) :
     ofNatIso (e ≪≫ e') g s = ofNatIso e' g (ofNatIso e g s) := by
   apply SplitEpi.ext
   simp [ofNatIso, Category.assoc]
 
-/-- Transport by the inverse natural isomorphism recovers every original section. -/
+/-- Let `D,C` be categories, `U,U′ : D → C`, and `e : U ≅ U′`.
+For `g : Y → Z` in `D` and a section `s : U(Z) → U(Y)` of `U(g)`, transport first by `e` and then by `e⁻¹` recovers the
+original section of `U(g)`. -/
 @[simp]
 theorem ofNatIso_symm {U U' : D ⥤ C} (e : U ≅ U') {Y Z : D} (g : Y ⟶ Z)
     (s : SplitEpi (U.map g)) : ofNatIso e.symm g (ofNatIso e g s) = s := by
   apply SplitEpi.ext
   simp [ofNatIso, Category.assoc]
 
-/-- The complete section data on the original arrow is equivalent under natural isomorphism. -/
+/-- For categories `D,C`, functors `U,U′ : D → C`, `e : U ≅ U′`,
+and `g : Y → Z`, conjugation by the endpoint components gives a
+bijection between sections of `U(g)` and sections of `U′(g)`. -/
 def natIsoEquiv {U U' : D ⥤ C} (e : U ≅ U') {Y Z : D} (g : Y ⟶ Z) :
     SplitEpi (U.map g) ≃ SplitEpi (U'.map g) where
   toFun := ofNatIso e g
@@ -87,14 +105,20 @@ def natIsoEquiv {U U' : D ⥤ C} (e : U ≅ U') {Y Z : D} (g : Y ⟶ Z) :
   left_inv := ofNatIso_symm e g
   right_inv := ofNatIso_symm e.symm g
 
-/-- Source whiskering evaluates the same conjugation at the original image arrow. -/
+/-- Let `E,D,C` be categories, `K : E → D`, `U,U′ : D → C`,
+and `e : U ≅ U′`. Transport of a section over `g : Y → Z` in `E`
+by the source-whiskered isomorphism equals transport by `e` over
+`K(g)`. -/
 theorem ofNatIso_whiskerLeft {U U' : D ⥤ C} (e : U ≅ U') (K : E ⥤ D)
     {Y Z : E} (g : Y ⟶ Z) (s : SplitEpi ((K ⋙ U).map g)) :
     ofNatIso (Functor.isoWhiskerLeft K e) g s = ofNatIso e (K.map g) s := by
   apply SplitEpi.ext
   rfl
 
-/-- Target whiskering transports all section components through the functor map. -/
+/-- Let `D,C` be categories, `U,U′ : D → C`, and `e : U ≅ U′`.
+For `g : Y → Z` in `D` and a section `s : U(Z) → U(Y)` of `U(g)`, for any functor `V : C → B`, transporting its image
+section by the target-whiskered isomorphism equals applying `V`
+to the section transported by `e`. -/
 theorem ofNatIso_whiskerRight {U U' : D ⥤ C} (e : U ≅ U') (V : C ⥤ B)
     {Y Z : D} (g : Y ⟶ Z) (s : SplitEpi (U.map g)) :
     ofNatIso (Functor.isoWhiskerRight e V) g (s.map V) = (ofNatIso e g s).map V := by
@@ -103,7 +127,9 @@ theorem ofNatIso_whiskerRight {U U' : D ⥤ C} (e : U ≅ U') (V : C ⥤ B)
     V.map (e.inv.app Z ≫ s.section_ ≫ e.hom.app Y)
   rw [Functor.map_comp, Functor.map_comp]
 
-/-- A full faithful functor lowers a section through its Hom preimage. -/
+/-- Let `C,B` be categories and `V : C → B` full and faithful.
+For `g : X → Y`, any section of `V(g)` lifts through fullness to a
+section of `g`, with its section equation reflected by faithfulness. -/
 noncomputable def ofMap (V : C ⥤ B) [V.Full] [V.Faithful]
     {X Y : C} (g : X ⟶ Y) (s : SplitEpi (V.map g)) : SplitEpi g where
   section_ := V.preimage s.section_
@@ -111,7 +137,9 @@ noncomputable def ofMap (V : C ⥤ B) [V.Full] [V.Faithful]
     apply V.map_injective
     rw [Functor.map_comp, V.map_preimage, s.id, Functor.map_id]
 
-/-- The image of the lowered section is the original given section. -/
+/-- Let `C,B` be categories and `V : C → B` full and faithful.
+The image under `V` of the section lifted from a section of `V(g)`
+is exactly that specified image section. -/
 @[simp]
 theorem map_ofMap_section (V : C ⥤ B) [V.Full] [V.Faithful]
     {X Y : C} (g : X ⟶ Y) (s : SplitEpi (V.map g)) :
@@ -121,7 +149,9 @@ end SplitEpi
 
 namespace Functor
 
-/-- Natural isomorphism preserves the split-image arrow class without changing its original arrow. -/
+/-- For categories `D,C`, naturally isomorphic `U,U′ : D → C`,
+and `g : Y → Z`, the image `U(g)` is split epi if and only if
+`U′(g)` is split epi. -/
 theorem isSplitEpi_map_iff_of_natIso {U U' : D ⥤ C} (e : U ≅ U')
     {Y Z : D} (g : Y ⟶ Z) : IsSplitEpi (U.map g) ↔ IsSplitEpi (U'.map g) := by
   constructor
@@ -132,7 +162,8 @@ theorem isSplitEpi_map_iff_of_natIso {U U' : D ⥤ C} (e : U ≅ U')
     obtain ⟨s⟩ := h.exists_splitEpi
     exact IsSplitEpi.mk' (SplitEpi.ofNatIso e.symm g s)
 
-/-- Full faithfulness reflects splitting by lifting the section and its equation. -/
+/-- Let `C,B` be categories and `V : C → B` full and faithful.
+For `g : X → Y`, `V(g)` is split epi if and only if `g` is split epi. -/
 theorem isSplitEpi_map_iff_of_full_faithful (V : C ⥤ B) [V.Full] [V.Faithful]
     {X Y : C} (g : X ⟶ Y) : IsSplitEpi (V.map g) ↔ IsSplitEpi g := by
   constructor
@@ -143,7 +174,10 @@ theorem isSplitEpi_map_iff_of_full_faithful (V : C ⥤ B) [V.Full] [V.Faithful]
     obtain ⟨s⟩ := h.exists_splitEpi
     exact IsSplitEpi.mk' (s.map V)
 
-/-- Relative projectivity is contravariant in inclusion of the split-image arrow classes. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `U′ : D → B`,
+and `P : D`. If every arrow with split-epi `U`-image also has
+split-epi `U′`-image, relative projectivity of `P` for `U′` implies
+relative projectivity for `U`. -/
 theorem IsRelativeProjective.of_split_class {U : D ⥤ C} {U' : D ⥤ B}
     {P : D} (hP : U'.IsRelativeProjective P)
     (h : ∀ {Y Z : D} (g : Y ⟶ Z), IsSplitEpi (U.map g) → IsSplitEpi (U'.map g)) :
@@ -152,13 +186,18 @@ theorem IsRelativeProjective.of_split_class {U : D ⥤ C} {U' : D ⥤ B}
   obtain ⟨s'⟩ := (h g (IsSplitEpi.mk' s)).exists_splitEpi
   exact hP g s' f
 
-/-- Every original U-section remains split after V, so the composite property implies the U-property. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. Relative projectivity of `P` for `U ⋙ V` implies relative
+projectivity for `U`, since functors preserve split epimorphisms. -/
 theorem IsRelativeProjective.of_comp {U : D ⥤ C} (V : C ⥤ B) {P : D}
     (hP : (U ⋙ V).IsRelativeProjective P) : U.IsRelativeProjective P := by
   intro Y Z g s f
   exact hP g (s.map V) f
 
-/-- Reflection is needed only on the original U-image arrows for the reverse composite implication. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. Suppose `P` is `U`-relative-projective and every `g` in `D`
+with split-epi `V(U(g))` also has split-epi `U(g)`. Then `P` is
+relative-projective for `U ⋙ V`. -/
 theorem IsRelativeProjective.comp_of_reflects {U : D ⥤ C} (V : C ⥤ B) {P : D}
     (hP : U.IsRelativeProjective P)
     (hV : ∀ {Y Z : D} (g : Y ⟶ Z),
@@ -168,7 +207,10 @@ theorem IsRelativeProjective.comp_of_reflects {U : D ⥤ C} (V : C ⥤ B) {P : D
   obtain ⟨t⟩ := (hV g (IsSplitEpi.mk' s)).exists_splitEpi
   exact hP g t f
 
-/-- The weakest arrow-class reflection assumption gives equality of the two full predicates. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. If `V(U(g))` split epi implies `U(g)` split epi for every
+arrow `g` in `D`, then relative projectivity of `P` for `U ⋙ V`
+is equivalent to relative projectivity for `U`. -/
 theorem isRelativeProjective_comp_iff_of_reflects (U : D ⥤ C) (V : C ⥤ B) (P : D)
     (hV : ∀ {Y Z : D} (g : Y ⟶ Z),
       IsSplitEpi (V.map (U.map g)) → IsSplitEpi (U.map g)) :
@@ -176,19 +218,25 @@ theorem isRelativeProjective_comp_iff_of_reflects (U : D ⥤ C) (V : C ⥤ B) (P
   ⟨fun h => Functor.IsRelativeProjective.of_comp V h,
     fun h => Functor.IsRelativeProjective.comp_of_reflects V h hV⟩
 
-/-- Full faithful postcomposition leaves the complete relative lifting predicate unchanged. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. If `V` is full and faithful, `P` is relative-projective for
+`U ⋙ V` if and only if it is relative-projective for `U`. -/
 theorem isRelativeProjective_comp_iff_of_full_faithful (U : D ⥤ C) (V : C ⥤ B)
     [V.Full] [V.Faithful] (P : D) :
     (U ⋙ V).IsRelativeProjective P ↔ U.IsRelativeProjective P :=
   isRelativeProjective_comp_iff_of_reflects U V P
     (fun g h => (isSplitEpi_map_iff_of_full_faithful V (U.map g)).mp h)
 
-/-- Equivalence of target categories is a particular full faithful transport. -/
+/-- For categories `D,C,B`, functor `U : D → C`, equivalence
+`e : C ≌ B`, and `P : D`, relative projectivity for `U ⋙ e` is
+equivalent to relative projectivity for `U`. -/
 theorem isRelativeProjective_comp_equivalence_iff (U : D ⥤ C) (e : C ≌ B) (P : D) :
     (U ⋙ e.functor).IsRelativeProjective P ↔ U.IsRelativeProjective P :=
   isRelativeProjective_comp_iff_of_full_faithful U e.functor P
 
-/-- Natural isomorphism identifies the full lifting predicates by section conjugation. -/
+/-- For categories `D,C`, naturally isomorphic `U,U′ : D → C`,
+and `P : D`, the relative-projectivity properties for `U` and
+`U′` are equivalent. -/
 theorem isRelativeProjective_iff_of_natIso {U U' : D ⥤ C} (e : U ≅ U') (P : D) :
     U.IsRelativeProjective P ↔ U'.IsRelativeProjective P :=
   ⟨fun h => Functor.IsRelativeProjective.of_split_class h
@@ -196,31 +244,41 @@ theorem isRelativeProjective_iff_of_natIso {U U' : D ⥤ C} (e : U ≅ U') (P : 
     fun h => Functor.IsRelativeProjective.of_split_class h
       (fun g hs => (isSplitEpi_map_iff_of_natIso e g).mp hs)⟩
 
-/-- Restriction of a comparison to an arbitrary source functor keeps the same original lifts. -/
+/-- For categories `E,D,C`, functor `K : E → D`, naturally
+isomorphic `U,U′ : D → C`, and `P : E`, relative projectivity for
+`K ⋙ U` is equivalent to that for `K ⋙ U′`. -/
 theorem isRelativeProjective_whiskerLeft_iff (K : E ⥤ D) {U U' : D ⥤ C}
     (e : U ≅ U') (P : E) :
     (K ⋙ U).IsRelativeProjective P ↔ (K ⋙ U').IsRelativeProjective P :=
   isRelativeProjective_iff_of_natIso (isoWhiskerLeft K e) P
 
-/-- Target whiskering uses the mapped endpoint isomorphisms. -/
+/-- For categories `D,C,B`, naturally isomorphic `U,U′ : D → C`,
+functor `V : C → B`, and `P : D`, relative projectivity for
+`U ⋙ V` is equivalent to that for `U′ ⋙ V`. -/
 theorem isRelativeProjective_whiskerRight_iff {U U' : D ⥤ C} (e : U ≅ U')
     (V : C ⥤ B) (P : D) :
     (U ⋙ V).IsRelativeProjective P ↔ (U' ⋙ V).IsRelativeProjective P :=
   isRelativeProjective_iff_of_natIso (isoWhiskerRight e V) P
 
-/-- An existing comparison with a composite functor gives the original intermediate relative property. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. For `W : D → B` with `U ⋙ V ≅ W`, relative projectivity
+of `P` for `W` implies relative projectivity for `U`. -/
 theorem IsRelativeProjective.of_comp_natIso {U : D ⥤ C} (V : C ⥤ B)
     {W : D ⥤ B} (e : U ⋙ V ≅ W) {P : D} (hP : W.IsRelativeProjective P) :
     U.IsRelativeProjective P :=
   Functor.IsRelativeProjective.of_comp V
     ((isRelativeProjective_iff_of_natIso e P).mpr hP)
 
-/-- Parenthesizing a true composite is immaterial by the associator. -/
+/-- For categories `D,C,B,A`, functors `U : D → C`, `V : C → B`,
+`W : B → A`, and `P : D`, relative projectivity for `(U ⋙ V) ⋙ W`
+is equivalent to that for `U ⋙ (V ⋙ W)`. -/
 theorem isRelativeProjective_assoc_iff (U : D ⥤ C) (V : C ⥤ B) (W : B ⥤ A) (P : D) :
     ((U ⋙ V) ⋙ W).IsRelativeProjective P ↔ (U ⋙ (V ⋙ W)).IsRelativeProjective P :=
   isRelativeProjective_iff_of_natIso (Functor.associator U V W) P
 
-/-- The dual split-image class comparison follows from opposite section transport. -/
+/-- For categories `D,C`, naturally isomorphic `U,U′ : D → C`,
+and `g : X → Y`, `U(g)` is split mono if and only if `U′(g)` is
+split mono, by transport of retractions. -/
 theorem isSplitMono_map_iff_of_natIso {U U' : D ⥤ C} (e : U ≅ U')
     {X Y : D} (g : X ⟶ Y) : IsSplitMono (U.map g) ↔ IsSplitMono (U'.map g) := by
   constructor
@@ -237,7 +295,9 @@ theorem isSplitMono_map_iff_of_natIso {U U' : D ⥤ C} (e : U ≅ U')
       { retraction := t.section_.unop
         id := Quiver.Hom.op_inj (by simp) }
 
-/-- Opposite projectivity supplies the composite implication for relative injectivity. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. Relative injectivity of `P` for `U ⋙ V` implies relative
+injectivity for `U`, since functors preserve split monomorphisms. -/
 theorem IsRelativeInjective.of_comp {U : D ⥤ C} (V : C ⥤ B) {P : D}
     (hP : (U ⋙ V).IsRelativeInjective P) : U.IsRelativeInjective P := by
   apply (isRelativeInjective_iff_op_isRelativeProjective U P).mpr
@@ -248,7 +308,10 @@ theorem IsRelativeInjective.of_comp {U : D ⥤ C} (V : C ⥤ B) {P : D}
   intro Y Z g s f
   exact Functor.IsRelativeProjective.of_comp V.op h' g s f
 
-/-- Split-mono reflection on the original image arrows earns the reverse extension implication. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. Suppose `P` is `U`-relative-injective and every `g` in `D`
+with split-mono `V(U(g))` also has split-mono `U(g)`. Then `P` is
+relative-injective for `U ⋙ V`. -/
 theorem IsRelativeInjective.comp_of_reflects {U : D ⥤ C} (V : C ⥤ B) {P : D}
     (hP : U.IsRelativeInjective P)
     (hV : ∀ {X Y : D} (g : X ⟶ Y),
@@ -266,7 +329,10 @@ theorem IsRelativeInjective.comp_of_reflects {U : D ⥤ C} (V : C ⥤ B) {P : D}
   obtain ⟨t⟩ := (hV g.unop hm).exists_splitMono
   exact IsSplitEpi.mk' (by simpa using t.op)
 
-/-- The exact split-mono reflection hypothesis identifies the complete relative extension predicates. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. If `V(U(g))` split mono implies `U(g)` split mono for every
+arrow `g` in `D`, relative injectivity of `P` for `U ⋙ V` is
+equivalent to relative injectivity for `U`. -/
 theorem isRelativeInjective_comp_iff_of_reflects (U : D ⥤ C) (V : C ⥤ B) (P : D)
     (hV : ∀ {X Y : D} (g : X ⟶ Y),
       IsSplitMono (V.map (U.map g)) → IsSplitMono (U.map g)) :
@@ -274,7 +340,9 @@ theorem isRelativeInjective_comp_iff_of_reflects (U : D ⥤ C) (V : C ⥤ B) (P 
   ⟨fun h => Functor.IsRelativeInjective.of_comp V h,
     fun h => Functor.IsRelativeInjective.comp_of_reflects V h hV⟩
 
-/-- The dual full faithful law reuses projectivity of the opposite functor. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. If `V` is full and faithful, `P` is relative-injective for
+`U ⋙ V` if and only if it is relative-injective for `U`. -/
 theorem isRelativeInjective_comp_iff_of_full_faithful (U : D ⥤ C) (V : C ⥤ B)
     [V.Full] [V.Faithful] (P : D) :
     (U ⋙ V).IsRelativeInjective P ↔ U.IsRelativeInjective P := by
@@ -283,26 +351,34 @@ theorem isRelativeInjective_comp_iff_of_full_faithful (U : D ⥤ C) (V : C ⥤ B
   exact (isRelativeProjective_iff_of_natIso (Functor.opComp U V) (Opposite.op P)).trans
     (isRelativeProjective_comp_iff_of_full_faithful U.op V.op (Opposite.op P))
 
-/-- An equivalence of target categories also preserves the full relative extension property. -/
+/-- For categories `D,C,B`, functor `U : D → C`, equivalence
+`e : C ≌ B`, and `P : D`, relative injectivity for `U ⋙ e` is
+equivalent to relative injectivity for `U`. -/
 theorem isRelativeInjective_comp_equivalence_iff (U : D ⥤ C) (e : C ≌ B) (P : D) :
     (U ⋙ e.functor).IsRelativeInjective P ↔ U.IsRelativeInjective P :=
   isRelativeInjective_comp_iff_of_full_faithful U e.functor P
 
-/-- Natural isomorphism transports relative injectivity through the existing opposite criterion. -/
+/-- For categories `D,C`, naturally isomorphic `U,U′ : D → C`,
+and `P : D`, relative injectivity for `U` is equivalent to that
+for `U′`. -/
 theorem isRelativeInjective_iff_of_natIso {U U' : D ⥤ C} (e : U ≅ U') (P : D) :
     U.IsRelativeInjective P ↔ U'.IsRelativeInjective P := by
   rw [isRelativeInjective_iff_op_isRelativeProjective,
     isRelativeInjective_iff_op_isRelativeProjective]
   exact (isRelativeProjective_iff_of_natIso (NatIso.op e) (Opposite.op P)).symm
 
-/-- An composite comparison yields the intermediate relative extension property. -/
+/-- Let `D,C,B` be categories, `U : D → C`, `V : C → B` functors,
+and `P : D`. For `W : D → B` with `U ⋙ V ≅ W`, relative injectivity of
+`P` for `W` implies relative injectivity for `U`. -/
 theorem IsRelativeInjective.of_comp_natIso {U : D ⥤ C} (V : C ⥤ B)
     {W : D ⥤ B} (e : U ⋙ V ≅ W) {P : D} (hP : W.IsRelativeInjective P) :
     U.IsRelativeInjective P :=
   Functor.IsRelativeInjective.of_comp V
     ((isRelativeInjective_iff_of_natIso e P).mpr hP)
 
-/-- Relative extension is coherent with the functor associator. -/
+/-- For categories `D,C,B,A`, functors `U : D → C`, `V : C → B`,
+`W : B → A`, and `P : D`, relative injectivity for `(U ⋙ V) ⋙ W`
+is equivalent to that for `U ⋙ (V ⋙ W)`. -/
 theorem isRelativeInjective_assoc_iff (U : D ⥤ C) (V : C ⥤ B) (W : B ⥤ A) (P : D) :
     ((U ⋙ V) ⋙ W).IsRelativeInjective P ↔ (U ⋙ (V ⋙ W)).IsRelativeInjective P :=
   isRelativeInjective_iff_of_natIso (Functor.associator U V W) P

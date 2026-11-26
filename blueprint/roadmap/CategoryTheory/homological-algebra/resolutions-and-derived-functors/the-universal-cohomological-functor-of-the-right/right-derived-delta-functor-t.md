@@ -1,3 +1,5 @@
-# Right Derived Delta Functor T
+# Degrees of the right-derived delta-functor
 
-Every degree of the bundle is the right-derived functor.
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. The degree-`n` functor of its cohomological
+delta-functor is exactly `R^nF`.

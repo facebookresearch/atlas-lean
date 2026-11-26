@@ -1,4 +1,5 @@
-# Enveloping Cotangent Linear
+# The signed enveloping differential map
 
-The negative of the native tensor derivation has the left-minus-right
-sign convention of the original polynomial Koszul functional.
+Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. This is the `k`-linear map `θ : E → Ω¹(A/k)` defined by `θ(a ⊗ op(b)) = -a db`. The
+negative sign makes `θ(p ⊗ op(1) - 1 ⊗ op(p)) = dp`.

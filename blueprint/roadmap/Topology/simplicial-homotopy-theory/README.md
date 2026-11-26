@@ -34,7 +34,7 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Totals of alternating-face diagrams of single-zero complexes](totals-of-alternating-face-diagrams-of-single-ze/README.md)
 - [Unit insertion along ordinal maps](unit-insertion-along-ordinal-maps/README.md)
 - [Data-level left extra degeneracy](extra-degeneracy.md)
-- [The shuffle map as a chain pairing](alternating-pairing.md)
+- [Signed shuffles pair the two alternating-face complexes](alternating-pairing.md)
 - [Augmented Whiskering](augmented-whiskering/README.md)
 - [Coface comparisons, alternating complexes and conditional AW pairing transport](coface-comparisons-alternating-complexes-and-con/README.md)
 

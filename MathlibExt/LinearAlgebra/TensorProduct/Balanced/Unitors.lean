@@ -14,12 +14,16 @@ public import Mathlib.Algebra.Algebra.Tower
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced
 
 /-!
-# Actual unitors for the noncommutative balanced quotient
+# Unit factors in a noncommutative balanced tensor product
 
-The regular factor is contracted by the given module action. The maps use
-the existing balanced quotient, its lift/balance, and free-action cancellation.
-The acting ring need not be commutative. Ground compatibility refers to the
-original module actions; no unitor, comparison or flatness is supplied as data.
+Let k be a commutative ring and R a k-algebra whose ring need not be commutative. For a left
+R-module N whose k-action forms the scalar tower k → R → N, the balanced tensor with the
+regular coefficient R satisfies B k R R N ≃ₗ[k] N, sending [r, n] to r • n and n back to [1,
+n].
+
+For a right R-module Q whose k-action forms the tower k → Rᵐᵒᵖ → Q, the regular factor on the
+right gives B k R Q R ≃ₗ[k] Q, sending [q, r] to op r • q and q back to [q, 1]. Both
+equivalences use the specified module actions and the balancing relation.
 -/
 
 @[expose] public section
@@ -40,7 +44,10 @@ section Left
 variable (N : Type w) [AddCommGroup N] [Module k N] [Module R N]
   [IsScalarTower k R N]
 
-/-- Contract the original regular left factor through the actual balanced relation. -/
+/-- Let k be a commutative ring, R a ring with a k-algebra structure, and N an additive
+commutative group with k- and left R-module structures forming the scalar tower k → R → N. The
+balanced quotient B k R R N is k-linearly equivalent to N by [r, n] ↦ r • n, using the regular
+right action on R. The inverse sends n to [1, n]. -/
 def leftUnitor : Balanced k R R N ≃ₗ[k] N := by
   refine LinearEquiv.ofLinearMap
     (lift (Algebra.lsmul k k N : R →ₐ[k] Module.End k N).toLinearMap
@@ -81,7 +88,10 @@ section Right
 variable (Q : Type w) [AddCommGroup Q] [Module k Q] [Module Rᵐᵒᵖ Q]
   [IsScalarTower k Rᵐᵒᵖ Q]
 
-/-- Contract the regular right factor using the existing free-action cancellation. -/
+/-- Let k be a commutative ring, R a ring with a k-algebra structure, and Q an additive
+commutative group with k- and Rᵐᵒᵖ-module structures forming the tower k → Rᵐᵒᵖ → Q. The
+balanced quotient B k R Q R is k-linearly equivalent to Q by [q, r] ↦ op r • q, with the
+regular left R-action on the target factor. The inverse sends q to [q, 1]. -/
 def rightUnitor : Balanced k R Q R ≃ₗ[k] Q := by
   refine (congr (LinearEquiv.refl k Q) (TensorProduct.rid k R).symm
     (fun _ _ => rfl) ?_).trans

@@ -13,29 +13,12 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.Algebra.Homology.Monoidal
 
 /-!
-# Functoriality of `tensorHom`
+# Functoriality and additivity of tensor maps of complexes
 
-This module records the composition, identity, and zero laws for `tensorHom`
-on homological complexes, together with distributivity of `tensorHom` over
-finite sums in each tensor variable.
-
-## Declaration inventory
-
-* `tensorHom_comp_tensorHom`: composition of tensor product maps factors
-  through componentwise composition.
-* `tensorHom_id_id`: the tensor product of identity maps is the identity.
-* `tensorHom_zero` / `zero_tensorHom`: a zero tensor factor gives the zero map.
-* `tensorHom_sum`: a fixed first tensor morphism distributes over a finite sum
-  in the second variable.
-* `sum_tensorHom`: a finite sum in the first tensor variable distributes
-  against a fixed second morphism.
-
-## Import justification
-
-`Mathlib.Algebra.Homology.Monoidal` supplies `tensorHom` and the underlying
-tensor product of complexes; the direct `Mathlib.Algebra.Homology.Additive`
-import supplies the preadditive Hom structure and additive Hom maps used by the
-degreewise finite-sum proofs. Both direct imports are used below.
+Let C be preadditive and monoidal with tensor product additive in both variables, and let c be a
+complex shape on an additive monoid with tensor signs. When the relevant tensor complexes exist,
+tensoring complex maps preserves identities and componentwise composition, vanishes if either
+factor is zero, and distributes over finite sums in either factor.
 -/
 
 @[expose] public section
@@ -83,7 +66,10 @@ theorem tensorHom_id_id (K L : HomologicalComplex C c) [HasTensor K L] :
   intro p q h
   simp
 
-/-- `tensorHom` with a zero morphism in the second variable is zero. -/
+/-- Let C be a preadditive monoidal category with tensor product additive in each variable, I an
+additive monoid with decidable equality, and c a complex shape on I equipped with tensor signs.
+For c-shaped complexes K₁,L₁,K₂,L₂ with K₁ ⊗ K₂ and L₁ ⊗ L₂ defined, and f : K₁ → L₁, the
+induced map tensorHom(f,0) : K₁ ⊗ K₂ → L₁ ⊗ L₂ is zero. -/
 @[simp]
 theorem tensorHom_zero
     {K₁ L₁ K₂ L₂ : HomologicalComplex C c}
@@ -99,7 +85,10 @@ theorem tensorHom_zero
   change _ ≫ (tensorLeft (L₁.X p)).map (0 : K₂.X q ⟶ L₂.X q) ≫ _ = 0
   rw [Functor.map_zero, zero_comp, comp_zero]
 
-/-- `tensorHom` with a zero morphism in the first variable is zero. -/
+/-- Let C be a preadditive monoidal category with tensor product additive in each variable, I an
+additive monoid with decidable equality, and c a complex shape on I equipped with tensor signs.
+For c-shaped complexes K₁,L₁,K₂,L₂ with the source and target tensor complexes defined, and g :
+K₂ → L₂, tensorHom(0,g) : K₁ ⊗ K₂ → L₁ ⊗ L₂ is zero. -/
 @[simp]
 theorem zero_tensorHom
     {K₁ L₁ K₂ L₂ : HomologicalComplex C c}
@@ -115,8 +104,11 @@ theorem zero_tensorHom
   change (tensorRight (K₂.X q)).map (0 : K₁.X p ⟶ L₁.X p) ≫ _ ≫ _ = 0
   rw [Functor.map_zero, zero_comp]
 
-/-- `tensorHom` distributes a fixed first tensor morphism over a finite sum in
-the second variable. -/
+/-- Let C be a preadditive monoidal category with tensor product additive in each variable, I an
+additive monoid with decidable equality, and c a complex shape on I equipped with tensor signs.
+Let f : K₁ → L₁ and g_j : K₂ → L₂ be complex maps, with source and target tensor complexes
+defined, and let s be a finite subset of an arbitrary index type J. Then tensorHom(f,∑_{j∈s}g_j)
+= ∑_{j∈s}tensorHom(f,g_j). -/
 theorem tensorHom_sum
     {K₁ L₁ K₂ L₂ : HomologicalComplex C c}
     [HasTensor K₁ K₂] [HasTensor L₁ L₂]
@@ -143,8 +135,11 @@ theorem tensorHom_sum
   intro j _
   rw [ι_mapBifunctorMap]
 
-/-- `tensorHom` distributes a finite sum in the first tensor variable against a
-fixed second morphism. -/
+/-- Let C be a preadditive monoidal category with tensor product additive in each variable, I an
+additive monoid with decidable equality, and c a complex shape on I equipped with tensor signs.
+Let f_j : K₁ → L₁ and g : K₂ → L₂ be complex maps, with source and target tensor complexes
+defined, and s a finite subset of an arbitrary index type J. Then tensorHom(∑_{j∈s}f_j,g) =
+∑_{j∈s}tensorHom(f_j,g). -/
 theorem sum_tensorHom
     {K₁ L₁ K₂ L₂ : HomologicalComplex C c}
     [HasTensor K₁ K₂] [HasTensor L₁ L₂]

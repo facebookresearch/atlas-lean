@@ -1,3 +1,7 @@
-# Comparison Hom quotient zero
+# Chosen zero comparisons vanish in the homotopy category
 
-The original chosen zero lift maps to zero in the stock quotient.
+Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. The
+homotopy class of the chosen comparison over zero is the zero morphism between the two
+resolution complexes.

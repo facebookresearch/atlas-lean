@@ -1,5 +1,5 @@
 # Homology pairings induced by chain pairings
 
-- [Homology Descent Data](homology-descent-data.md)
-- [Pair Cycles](pair-cycles.md)
-- [Pair Homology](pair-homology.md)
+- [Cycle and boundary laws for descent of a chain pairing](homology-descent-data.md)
+- [Pairing on cycles of nonnegative chain complexes](pair-cycles.md)
+- [Homology pairing descended from a nonnegative chain pairing](pair-homology.md)

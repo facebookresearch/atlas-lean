@@ -1,7 +1,7 @@
 # The regular normalized Connes map on homology
 
-- [Regular Normalized Boundary Homotopy](regular-normalized-boundary-homotopy.md)
-- [Regular Normalized Boundary Homotopy hom](regular-normalized-boundary-homotopy-hom.md)
-- [Regular Normalized Connes Homology](regular-normalized-connes-homology.md)
-- [Regular Normalized Connes Homology cycle](regular-normalized-connes-homology-cycle.md)
-- [Regular Normalized Connes Homology square](regular-normalized-connes-homology-squar.md)
+- [The normalized Connes operator defines a zero-to-zero homotopy](regular-normalized-boundary-homotopy.md)
+- [Adjacent homotopy components are the normalized Connes maps](regular-normalized-boundary-homotopy-hom.md)
+- [Connes' operator on normalized regular Hochschild homology](regular-normalized-connes-homology.md)
+- [The Connes homology map sends a cycle class to its Connes image class](regular-normalized-connes-homology-cycle.md)
+- [Consecutive normalized Connes homology maps compose to zero](regular-normalized-connes-homology-squar.md)

@@ -14,15 +14,18 @@ public import MathlibExt.Combinatorics.Perm.EulerianPolynomialCoefficients
 public import Mathlib.Logic.Equiv.Basic
 
 /-!
-# The actual two-cut shuffle count and its rational polynomial value
+# Shuffle cuts and descent multiplicities
 
-The source of the finite sum is the actual dependent pair of a weak degree
-cut and an original native shuffle. Casting its permutation to the original
-total degree and remembering the original cut is a bijection onto
-permutations with a compatible cut. A compatible cut is the original
-singleton cut multiset containing every descent boundary. Native stars and
-bars and the actual descent polynomial then identify the shuffle sum with
-the polynomial value at two. No Eulerian or cut formula is a premise.
+A weak cut of n is a pair (p,q) with p,q≥0 and p+q=n. A permutation is a (p,q)-shuffle precisely
+when every descent boundary lies at position p. Thus cut-indexed shuffles correspond to
+permutations together with a compatible cut. For σ ∈ Sₙ with d descents, the number of
+compatible cuts is binom(n+1-d,n).
+
+For a commutative ring k and a k-module V, the sum of all signed cut-shuffle operators on V⊗n is
+therefore ∑σ binom(n+1-d(σ),n) · sign(σ)ρₙ(σ). For a commutative ℚ-algebra k and n>0, the
+multiplicity is also Bₙ,d(σ)(2), where Bₙ,d(X) = (1/n!)∏ⱼ₌₀ⁿ⁻¹(X+j-d).
+
+For these Eulerian descent coefficients, see J.-L. Loday, Cyclic Homology, 2nd ed., §4.5.
 -/
 
 @[expose] public section
@@ -34,7 +37,10 @@ universe u v
 
 namespace TensorPower
 
-/-- Every actual weak cut is determined by its original first block length. -/
+/-- The position coordinate of a weak degree cut.
+
+For n ≥ 0, weak cuts (p,q) with p,q≥0 and p+q=n are equivalent to Fin(n+1) by (p,q) ↦ p. The
+inverse sends i to (i,n-i), including both empty-block endpoints. -/
 def shuffleDegreeCutPosition (n : ℕ) : ShuffleDegreeCut n ≃ Fin (n + 1) where
   toFun z := ⟨z.1.1, by have h := z.2; omega⟩
   invFun i := ⟨(i.val, n - i.val), by have hi := i.isLt; omega⟩
@@ -47,11 +53,17 @@ def shuffleDegreeCutPosition (n : ℕ) : ShuffleDegreeCut n ≃ Fin (n + 1) wher
       omega
   right_inv i := by apply Fin.ext; rfl
 
-/-- The original cut positions compatible with the original permutation. -/
+/-- A cut containing every descent boundary.
+
+For σ ∈ Sₙ, CompatibleTwoCuts consists of c ∈ Fin(n+1) with descentBoundaries(σ) ⊆ {c}. A
+descent σ(j)>σ(j+1) contributes boundary j+1, so σ must be increasing on both sides of c. -/
 abbrev CompatibleTwoCuts {n : ℕ} (σ : Equiv.Perm (Fin n)) :=
   {c : Fin (n + 1) // Equiv.Perm.descentBoundaries σ ⊆ {c}}
 
-/-- The original native shuffle criterion is the singleton-boundary condition. -/
+/-- The descent-boundary criterion for a two-block shuffle.
+
+For p,q≥0 and σ ∈ Sₚ₊ᵩ, σ is increasing separately on the first p and last q input positions
+exactly when descentBoundaries(σ) ⊆ {p}. This includes the two cases of an empty block. -/
 theorem isShuffle_iff_descentBoundaries_subset (p q : ℕ) (σ : Equiv.Perm (Fin (p + q))) :
     AlgebraicTopology.EilenbergZilber.IsShuffle σ ↔
       Equiv.Perm.descentBoundaries σ ⊆ {⟨p, by omega⟩} := by
@@ -69,7 +81,10 @@ theorem isShuffle_iff_descentBoundaries_subset (p q : ℕ) (σ : Equiv.Perm (Fin
       Finset.mem_map.mpr ⟨j, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ⟨hj, hd⟩⟩, rfl⟩
     exact congrArg Fin.val (Finset.mem_singleton.mp (h hmem))
 
-/-- A compatible singleton cut is exactly a compatible original cut multiset. -/
+/-- Compatible cuts as singleton Eulerian cut multisets.
+
+For σ ∈ Sₙ, sending c to the singleton multiset {c} identifies CompatibleTwoCuts(σ) with the
+one-element Eulerian cut multisets that contain every descent boundary of σ. -/
 def compatibleTwoCutsEquiv {n : ℕ} (σ : Equiv.Perm (Fin n)) :
     CompatibleTwoCuts σ ≃ Equiv.Perm.CompatibleEulerianCuts σ 1 where
   toFun c := ⟨Sym.oneEquiv c.val, by
@@ -83,12 +98,18 @@ def compatibleTwoCutsEquiv {n : ℕ} (σ : Equiv.Perm (Fin n)) :
   left_inv c := by apply Subtype.ext; exact Sym.oneEquiv.symm_apply_apply c.val
   right_inv c := by apply Subtype.ext; exact Sym.oneEquiv.apply_symm_apply c.val
 
-/-- The actual number of compatible original two-cuts is the descent-binomial value. -/
+/-- The number of compatible cuts of a permutation.
+
+For σ ∈ Sₙ with descent number d, the cardinality of CompatibleTwoCuts(σ) is binom(n+1-d,n).
+In positive degree this is n+1 when d=0, one when d=1, and zero when d≥2. -/
 theorem card_compatibleTwoCuts {n : ℕ} (σ : Equiv.Perm (Fin n)) :
     Fintype.card (CompatibleTwoCuts σ) = (n + 1 - Equiv.Perm.descentNumber σ).choose n := by
   rw [Fintype.card_congr (compatibleTwoCutsEquiv σ), Equiv.Perm.card_compatibleEulerianCuts]
 
-/-- An actual cut shuffle is a permutation in the original total degree with its original compatible cut. -/
+/-- Shuffles of a fixed cut as compatible permutations.
+
+For a weak cut (p,q) of n, identifying Fin(p+q) with Fin n gives an equivalence from
+(p,q)-shuffles to permutations σ ∈ Sₙ with descentBoundaries(σ) ⊆ {p}. -/
 def shuffleDegreeCutShuffleEquiv {n : ℕ} (z : ShuffleDegreeCut n) :
     AlgebraicTopology.EilenbergZilber.Shuffle z.1.1 z.1.2 ≃
       {σ : Equiv.Perm (Fin n) //
@@ -101,7 +122,10 @@ def shuffleDegreeCutShuffleEquiv {n : ℕ} (z : ShuffleDegreeCut n) :
       left_inv := fun s => by cases s; rfl
       right_inv := fun s => by cases s; rfl }
 
-/-- The permutation in the cut bijection is the original degree-cast permutation. -/
+/-- The permutation coordinate of the fixed-cut equivalence.
+
+For a weak cut z=(p,q) with p+q=n and a (p,q)-shuffle s, the underlying permutation of its
+image is s.perm transported from Fin(p+q) to Fin n along the degree equality. -/
 theorem shuffleDegreeCutShuffleEquiv_perm {n : ℕ} (z : ShuffleDegreeCut n)
     (s : AlgebraicTopology.EilenbergZilber.Shuffle z.1.1 z.1.2) :
     (shuffleDegreeCutShuffleEquiv z s).val = (finCongr z.2).permCongr s.perm := by
@@ -109,7 +133,10 @@ theorem shuffleDegreeCutShuffleEquiv_perm {n : ℕ} (z : ShuffleDegreeCut n)
   subst n
   simp [shuffleDegreeCutShuffleEquiv, ← Equiv.Perm.one_def]
 
-/-- The same native cut/permutation pair with the two dependent indices interchanged. -/
+/-- Interchanging the cut and permutation indices.
+
+For n ≥ 0, pairs (c,σ) with c ∈ Fin(n+1) and descentBoundaries(σ) ⊆ {c} are equivalent to
+pairs (σ,c) with c ∈ CompatibleTwoCuts(σ). The equivalence retains both entries. -/
 def swapCutPermutation (n : ℕ) :
     (Σ c : Fin (n + 1), {σ : Equiv.Perm (Fin n) // Equiv.Perm.descentBoundaries σ ⊆ {c}}) ≃
       Σ σ : Equiv.Perm (Fin n), CompatibleTwoCuts σ where
@@ -118,7 +145,10 @@ def swapCutPermutation (n : ℕ) :
   left_inv _z := rfl
   right_inv _z := rfl
 
-/-- The full finite index is genuinely the permutation together with its compatible original cut. -/
+/-- All cut-indexed shuffles as permutations with compatible cuts.
+
+For n ≥ 0, the disjoint union of (p,q)-shuffles over weak cuts p+q=n is equivalent to pairs
+(σ,c) with σ ∈ Sₙ and c ∈ CompatibleTwoCuts(σ). -/
 def shuffleCutPermutationEquiv (n : ℕ) :
     (Σ z : ShuffleDegreeCut n, AlgebraicTopology.EilenbergZilber.Shuffle z.1.1 z.1.2) ≃
       Σ σ : Equiv.Perm (Fin n), CompatibleTwoCuts σ := by
@@ -129,7 +159,10 @@ def shuffleCutPermutationEquiv (n : ℕ) :
     fun z => shuffleDegreeCutShuffleEquiv z
   exact (Equiv.sigmaCongr (β₂ := F) (shuffleDegreeCutPosition n) fiber).trans (swapCutPermutation n)
 
-/-- The actual sigma bijection retains its original degree-cast shuffle permutation. -/
+/-- The total-degree permutation in the cut-shuffle equivalence.
+
+For a weak cut p+q=n and a (p,q)-shuffle s, the permutation component of
+shuffleCutPermutationEquiv is s.perm transported along Fin(p+q) ≃ Fin n. -/
 theorem shuffleCutPermutationEquiv_perm {n : ℕ}
     (z : Σ c : ShuffleDegreeCut n, AlgebraicTopology.EilenbergZilber.Shuffle c.1.1 c.1.2) :
     (shuffleCutPermutationEquiv n z).1 = (finCongr z.1.2).permCongr z.2.perm := by
@@ -138,7 +171,11 @@ theorem shuffleCutPermutationEquiv_perm {n : ℕ}
 
 variable {k : Type u} [CommRing k] {V : Type v} [AddCommGroup V] [Module k V]
 
-/-- The actual cast cut is the literal signed sum of its original degree-cast permutations. -/
+/-- The signed permutation sum for a fixed shuffle cut.
+
+For a commutative ring k, a k-module V and a weak cut p+q=n, shuffleCutEnd is ∑s
+sign(σₛ)ρₙ(σₛ) on V⊗n, where s ranges over (p,q)-shuffles and σₛ is its permutation
+transported to Fin n. -/
 theorem shuffleCutEnd_eq_sum_cast {n : ℕ} (z : ShuffleDegreeCut n) :
     shuffleCutEnd (V := V) z =
       ∑ s : AlgebraicTopology.EilenbergZilber.Shuffle z.1.1 z.1.2,
@@ -155,7 +192,11 @@ theorem shuffleCutEnd_eq_sum_cast {n : ℕ} (z : ShuffleDegreeCut n) :
   simp [AlgebraicTopology.EilenbergZilber.shuffleSignZ,
     AlgebraicTopology.EilenbergZilber.shuffleSign, ← Equiv.Perm.one_def]
 
-/-- The actual full shuffle-cut operation is the literal signed permutation sum with cut multiplicities. -/
+/-- The integral descent multiplicities of two-cut convolution.
+
+For a commutative ring k and a k-module V, shuffleConvolutionTwo on V⊗n equals ∑σ∈Sₙ
+binom(n+1-d(σ),n) · sign(σ)ρₙ(σ). The binomial coefficient acts by repeated addition and the
+sign by an integer scalar. -/
 theorem shuffleConvolutionTwo_eq_descent_sum (n : ℕ) :
     shuffleConvolutionTwo (V := V) n =
       ∑ σ : Equiv.Perm (Fin n),
@@ -191,7 +232,10 @@ theorem shuffleConvolutionTwo_eq_descent_sum (n : ℕ) :
     ((σ.sign : ℤ) • (PiTensorProduct.reindex k (fun _ : Fin n => V) σ).toLinearMap)) = _
   rw [Finset.sum_const, Finset.card_univ, card_compatibleTwoCuts]
 
-/-- The two-cut multiplicity is the actual Eulerian polynomial evaluated at two. -/
+/-- The rational polynomial expression of two-cut convolution.
+
+For a commutative ℚ-algebra k, a k-module V and n>0, shuffleConvolutionTwo on V⊗n equals ∑σ
+algebraMap(Bₙ,d(σ)(2)) · sign(σ)ρₙ(σ), with Bₙ,d(X) = (1/n!)∏ⱼ₌₀ⁿ⁻¹(X+j-d). -/
 theorem shuffleConvolutionTwo_eq_polynomial [Algebra ℚ k] (n : ℕ) (hn : 0 < n) :
     shuffleConvolutionTwo (V := V) n =
       ∑ σ : Equiv.Perm (Fin n),

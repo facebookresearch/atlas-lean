@@ -1,3 +1,6 @@
-# Tensor Homotopy Bifunctor Factors
+# First-variable quotient factorization of the homotopy tensor bifunctor
 
-The first-variable factorization is also the quotient-lift Iso.
+For a commutative ring `R`, precomposing the homotopy tensor
+bifunctor in its first variable with the quotient of actual complexes
+is naturally isomorphic to the first-variable family of
+fixed-factor homotopy tensor functors.

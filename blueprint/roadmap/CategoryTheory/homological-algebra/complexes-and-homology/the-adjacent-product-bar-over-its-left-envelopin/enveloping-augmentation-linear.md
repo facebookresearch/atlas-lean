@@ -1,3 +1,7 @@
-# Enveloping Augmentation Linear
+# Multiplication as an enveloping-linear augmentation
 
-Multiplication itself as an enveloping-linear map, retaining the original A carrier.
+For a commutative ring k and an associative unital k-algebra A,
+put E = A ⊗[k] Aᵐᵒᵖ.
+Multiplication ε(a ⊗ b) = ab defines an E-linear map
+A ⊗[k] A → A, with the outer E-action on the domain and
+the regular E-action on the codomain.

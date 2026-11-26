@@ -1,7 +1,7 @@
 # Exact ordered-cut counts for Eulerian permutations
 
-- [Descent Boundaries](descent-boundaries.md)
-- [Card descent Boundaries](card-descent-boundaries.md)
-- [Descent Boundaries card le](descent-boundaries-card-le.md)
-- [Compatible Eulerian Cuts](compatible-eulerian-cuts.md)
-- [Card compatible Eulerian Cuts](card-compatible-eulerian-cuts.md)
+- [Descent successor boundaries](descent-boundaries.md)
+- [The boundary count is the descent count](card-descent-boundaries.md)
+- [Descent boundaries fit within the word](descent-boundaries-card-le.md)
+- [Cut multisets containing every descent boundary](compatible-eulerian-cuts.md)
+- [Counting descent-compatible cuts](card-compatible-eulerian-cuts.md)

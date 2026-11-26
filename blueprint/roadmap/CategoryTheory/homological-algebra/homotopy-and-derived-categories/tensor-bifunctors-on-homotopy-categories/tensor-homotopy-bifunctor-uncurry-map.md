@@ -1,4 +1,7 @@
-# Tensor Homotopy Bifunctor uncurry map
+# Simultaneous map of the homotopy tensor bifunctor
 
-At the original carrier universe, the simultaneous map is precisely
-the quotient class of the accepted original tensor map.
+For a commutative ring `R` and integer cochain maps
+`f : P → P′`, `g : Q → Q′` all in module world `v`, the uncurried
+homotopy tensor bifunctor sends the pair of quotient classes
+`([f],[g])` to the quotient class of the simultaneous total tensor
+map `mapAt(R,f,g)`.

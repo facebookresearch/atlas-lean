@@ -15,12 +15,13 @@ public import MathlibExt.LinearAlgebra.TensorPower.Cons
 public import MathlibExt.LinearAlgebra.TensorPower.PermutationRepresentation
 
 /-!
-# The original neutral tensor action of the head-fixing permutation
+# Place permutations that fix the first tensor factor
 
-The actual head-fixing monoid embedding fixes the original first factor
-and has its original tail representation through the native cons tensor
-coordinates. This sign-independent original word law holds over every
-commutative ground ring and does not import the rational Eulerian engine.
+For a commutative ring k and a k-module V, the embedding h : Sₙ → Sₙ₊₁ fixes position zero and
+permutes the following n positions. Under consEquiv : V ⊗ V⊗n ≃ V⊗(n+1), the inverse-word action
+of h(σ) is id_V ⊗ ρₙ(σ).
+
+For tensor powers and their permutation functoriality, see N. Bourbaki, Algebra I, Chapter III.
 -/
 
 @[expose] public section
@@ -35,7 +36,10 @@ namespace TensorPower
 variable {k : Type u} [CommRing k]
   {V : Type v} [AddCommGroup V] [Module k V]
 
-/-- The actual head-fixing place representation retains the original head and original tail coordinates. -/
+/-- The first-factor coordinate formula for a head-fixed permutation.
+
+For a commutative ring k, a k-module V and σ ∈ Sₙ, ρₙ₊₁(h(σ)) ∘ consEquiv = consEquiv ∘
+(id_V ⊗ ρₙ(σ)). Here h fixes position zero and ρ uses a ∘ σ⁻¹ on tensor words. -/
 theorem permutationRepresentation_headFixing_cons (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     (permutationRepresentation (V := V) (n + 1) (Equiv.Perm.headFixingHom n σ)).comp
         (consEquiv k V n).toLinearMap =

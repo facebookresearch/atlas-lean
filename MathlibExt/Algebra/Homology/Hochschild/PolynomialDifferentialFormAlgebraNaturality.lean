@@ -13,12 +13,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.PolynomialCoefficientAlgebr
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialDiagonalFormCoordinates
 
 /-!
-# Algebra naturality of the polynomial form comparison
+# Algebra naturality of polynomial coefficient-form homology
 
-The polynomial Koszul map acts on cotangent coordinates by the
-Jacobian. Its coefficient tensor map and the signed bar comparison
-commute up to the projective augmentation homotopy, giving
-naturality of the polynomial homology comparison in every degree.
+Let k be a commutative ring, A = k[σ], B = k[τ], and let M and N be compatible symmetric
+coefficient modules. A k-algebra map g : A → B and a k-linear map f : M → N satisfying f(a·m) =
+g(a)·f(m) induce both a Hochschild word map and a coefficient-form map.
+
+The diagonal Koszul map acts in cotangent coordinates by dXᵢ ↦ d(gXᵢ), the Jacobian action on
+polynomial differentials. Its balanced coefficient map commutes with the diagonal-to-form chain
+isomorphisms. The homotopy naturality of antisymmetrization then gives the forward and inverse
+naturality squares for the polynomial differential-form homology isomorphisms in every degree n
+: ℕ.
 -/
 
 @[expose] public section
@@ -52,49 +57,72 @@ local notation "DT" => symmetricCoefficientComplex k τ N
 local notation "FS" => Symmetric.coefficientDifferentialFormComplex k AS M
 local notation "FT" => Symmetric.coefficientDifferentialFormComplex k AT N
 
-/-- The source coefficient has its canonical symmetric opposite action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. M becomes a symmetric A-bimodule by letting aᵐᵒᵖ act on m as a·m.
+This defines its module structure over Aᵐᵒᵖ. -/
 local instance polynomialFormNaturalitySourceOpModule :
     Module ASᵐᵒᵖ M :=
   Symmetric.opModule AS M
-/-- The original source left and opposite actions commute. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. With the symmetric right action aᵐᵒᵖ·m = a·m, the A- and
+Aᵐᵒᵖ-actions on M commute: a·(bᵐᵒᵖ·m) = bᵐᵒᵖ·(a·m). -/
 local instance polynomialFormNaturalitySourceActionsComm :
     SMulCommClass AS ASᵐᵒᵖ M :=
   Symmetric.actionsComm AS M
-/-- The source opposite action commutes with the original ground action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The k-action on M commutes with its symmetric Aᵐᵒᵖ-action:
+r·(aᵐᵒᵖ·m) = aᵐᵒᵖ·(r·m). -/
 local instance polynomialFormNaturalitySourceGroundOpComm :
     SMulCommClass k ASᵐᵒᵖ M :=
   Symmetric.kOpComm k AS M
-/-- The source opposite action retains the original ground scalar tower. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The symmetric Aᵐᵒᵖ-action on M is compatible with k → Aᵐᵒᵖ:
+(r·aᵐᵒᵖ)·m = r·(aᵐᵒᵖ·m). -/
 local instance polynomialFormNaturalitySourceGroundOpTower :
     IsScalarTower k ASᵐᵒᵖ M :=
   Symmetric.kOpTower k AS M
-/-- The target coefficient has its canonical symmetric opposite action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. N becomes a symmetric B-bimodule by letting bᵐᵒᵖ act on n as b·n.
+This defines its module structure over Bᵐᵒᵖ. -/
 local instance polynomialFormNaturalityTargetOpModule :
     Module ATᵐᵒᵖ N :=
   Symmetric.opModule AT N
-/-- The original target left and opposite actions commute. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The B- and symmetric Bᵐᵒᵖ-actions on N commute: b·(cᵐᵒᵖ·n) =
+cᵐᵒᵖ·(b·n). -/
 local instance polynomialFormNaturalityTargetActionsComm :
     SMulCommClass AT ATᵐᵒᵖ N :=
   Symmetric.actionsComm AT N
-/-- The target opposite action commutes with the original ground action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The k-action on N commutes with its symmetric Bᵐᵒᵖ-action:
+r·(bᵐᵒᵖ·n) = bᵐᵒᵖ·(r·n). -/
 local instance polynomialFormNaturalityTargetGroundOpComm :
     SMulCommClass k ATᵐᵒᵖ N :=
   Symmetric.kOpComm k AT N
-/-- The target opposite action retains the original ground scalar tower. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. The symmetric Bᵐᵒᵖ-action on N is compatible with k → Bᵐᵒᵖ:
+(r·bᵐᵒᵖ)·n = r·(bᵐᵒᵖ·n). -/
 local instance polynomialFormNaturalityTargetGroundOpTower :
     IsScalarTower k ATᵐᵒᵖ N :=
   Symmetric.kOpTower k AT N
-/-- The source coefficient carries the right enveloping action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. M has the right module structure over E_A = A ⊗[k] Aᵐᵒᵖ defined by
+m·(a ⊗ bᵐᵒᵖ) = b·(a·m). Symmetry identifies this action with multiplication by ab on M. -/
 local instance polynomialFormNaturalitySourceEnvelopingModule :
     Module ESᵐᵒᵖ M :=
   EnvelopingCoefficient.rightEnvelopingModule k AS M
-/-- The target coefficient carries the right enveloping action. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M be an A-module and N a B-module, with
+their compatible k-actions. N has the right module structure over E_B = B ⊗[k] Bᵐᵒᵖ defined by
+n·(b ⊗ cᵐᵒᵖ) = c·(b·n). Symmetry identifies this action with multiplication by bc on N. -/
 local instance polynomialFormNaturalityTargetEnvelopingModule :
     Module ETᵐᵒᵖ N :=
   EnvelopingCoefficient.rightEnvelopingModule k AT N
 
-/-- Actual polynomial diagonal tensoring becomes the original coefficient
-form map through the cotangent coordinate isomorphisms. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M and N be compatible A- and B-modules
+with symmetric right actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m).
+Let D_{g,f} be the coefficient diagonal chain map, S_A and S_B the diagonal-to-form chain
+isomorphisms and F_{g,f} the coefficient-form map. Then D_{g,f} ≫ S_B.hom = S_A.hom ≫ F_{g,f}.
+On form words, F_{g,f} sends m ⊗ (da₁∧…∧daₙ) to f(m) ⊗ (d(g a₁)∧…∧d(g aₙ)). -/
 @[reassoc]
 theorem polynomialCoefficientDiagonalAlgebraMap_forms :
     polynomialCoefficientDiagonalAlgebraMap k g f hf ≫
@@ -186,8 +214,11 @@ theorem polynomialCoefficientDiagonalAlgebraMap_forms :
   apply (cancel_epi E.hom).1
   exact ModuleCat.hom_ext hLR
 
-/-- The inverse diagonal/form coordinates preserve the same original
-polynomial coefficient map. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M and N be compatible A- and B-modules
+with symmetric right actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m).
+With D_{g,f} the coefficient diagonal map, S_A and S_B the diagonal-to-form isomorphisms and
+F_{g,f} the coefficient-form map, the inverse-coordinate square is S_A.inv ≫ D_{g,f} = F_{g,f} ≫
+S_B.inv. -/
 @[reassoc]
 theorem polynomialCoefficientDiagonalAlgebraMap_forms_inv :
     (symmetricCoefficientFormChainIso k σ M).inv ≫ polynomialCoefficientDiagonalAlgebraMap k g f hf =
@@ -209,8 +240,11 @@ theorem polynomialCoefficientDiagonalAlgebraMap_forms_inv :
       ((congrArg (fun t : FT ⟶ FT => F ≫ t) eT.inv_hom_id).trans (Category.comp_id F))
   exact hLeft.trans hRight.symm
 
-/-- Naturality of the signed polynomial form-to-Hochschild
-homology comparison under arbitrary polynomial algebra maps. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M and N be compatible A- and B-modules
+with symmetric right actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m).
+For n : ℕ, let H_A,H_B be the polynomial Hochschild-to-form homology isomorphisms, C_{g,f} the
+Hochschild word map and F_{g,f,n} the coefficient-form map in degree n. Then F_{g,f,n} ≫ H_B.inv
+= H_A.inv ≫ Hₙ(C_{g,f}). -/
 @[reassoc]
 theorem polynomialDifferentialFormHomologyIso_inv_algebra (n : ℕ) :
     (Symmetric.coefficientFormAlgebraComplexMap k g f hf).f n ≫
@@ -279,8 +313,11 @@ theorem polynomialDifferentialFormHomologyIso_inv_algebra (n : ℕ) :
               factorS.symm)))
   exact h1.trans (h2.trans (h3.trans (h4.trans h5)))
 
-/-- All-degree polynomial Hochschild-to-differential-forms naturality for
-the ground-linear coefficient map and arbitrary polynomial algebra map. -/
+/-- Let k be a commutative ring, A = k[σ] and B = k[τ]. Let M and N be compatible A- and B-modules
+with symmetric right actions. Let g : A →ₐ[k] B and f : M →ₗ[k] N satisfy f(a·m) = g(a)·f(m).
+For n : ℕ, let H_A,H_B be the polynomial differential-form homology isomorphisms, C_{g,f} the
+Hochschild word map and F_{g,f,n} the degree-n coefficient-form map. Then Hₙ(C_{g,f}) ≫ H_B.hom
+= H_A.hom ≫ F_{g,f,n}. -/
 @[reassoc]
 theorem polynomialDifferentialFormHomologyIso_algebra (n : ℕ) :
     HomologicalComplex.homologyMap (Symmetric.originalAlgebraCoefficientChainMap k g f hf) n ≫

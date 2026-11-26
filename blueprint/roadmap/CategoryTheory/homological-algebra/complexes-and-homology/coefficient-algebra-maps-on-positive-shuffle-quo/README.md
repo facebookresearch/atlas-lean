@@ -1,5 +1,5 @@
 # Coefficient/algebra maps on positive shuffle quotients
 
-- [Positive Images coefficient Map](positive-images-coefficient-map.md)
-- [Positive Quotient Map](positive-quotient-map.md)
-- [Positive Quotient Map projection](positive-quotient-map-projection.md)
+- [Compatible coefficient maps preserve both-positive shuffle images](positive-images-coefficient-map.md)
+- [Chain map between both-positive shuffle quotients](positive-quotient-map.md)
+- [Projection square for a compatible shuffle quotient map](positive-quotient-map-projection.md)

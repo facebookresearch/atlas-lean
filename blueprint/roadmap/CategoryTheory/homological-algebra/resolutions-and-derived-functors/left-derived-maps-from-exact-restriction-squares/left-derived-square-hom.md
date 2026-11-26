@@ -1,4 +1,7 @@
-# Left Derived Square Hom
+# Canonical left-derived map of an underlying comparison square
 
-The canonical derived square uses directional exact source precomposition, ordinary derivation of
-α, and inverse exact output postcomposition.
+Let `C,D,E,E′` be abelian, with projective resolutions in `C,D`,
+`U : D → C`, `V : E′ → E` additive and preserving homology,
+`F : C → E`, `G : D → E′` additive, and `α : U ⋙ F → G ⋙ V`. Directional source comparison, derivation of `α`, and
+inverse target postcomposition give the natural map
+`U ⋙ L_nF → L_nG ⋙ V`.

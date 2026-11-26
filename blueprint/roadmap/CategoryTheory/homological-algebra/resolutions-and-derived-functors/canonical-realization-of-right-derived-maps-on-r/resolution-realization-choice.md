@@ -1,3 +1,6 @@
-# Resolution realization choice
+# Canonical presentation changes commute with transported maps
 
-Canonical source and target changes of resolution commute with the same realized map.
+In a category `C`, let `a : X → Y` and choose presentations
+`X ≅ I`, `X ≅ I′`, `Y ≅ J`, `Y ≅ J′`. The maps obtained by
+transporting `a` to `I → J` and `I′ → J′` commute with the canonical
+changes between these presentations.

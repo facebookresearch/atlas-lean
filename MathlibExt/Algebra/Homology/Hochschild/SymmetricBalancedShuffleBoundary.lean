@@ -13,12 +13,15 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricBalancedCuts
 public import MathlibExt.Algebra.Homology.ChainGradedPairingHomologyAdapter
 
 /-!
-# Balanced signed shuffle Leibniz laws
+# The signed Leibniz law for balanced Hochschild shuffles
 
-The ground-tensor shuffle identity descends through
-the surjective comparison to the A-balanced tensor
-product. Algebra-linear boundaries commute with
-this comparison, giving the signed Leibniz formula.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. Signed
+shuffle multiplication descends from the ground tensor product to the A-balanced coefficient
+product. For positive input degrees r+1 and s+1, its Hochschild boundary is the shuffle of the
+first boundary plus (-1)ʳ⁺¹ times the shuffle of the second boundary. The regular first
+coefficient is ULift A; the second coefficient is M.
+
+For signed shuffle chain maps, see J.-L. Loday, Cyclic Homology, 2nd ed., §4.5.
 -/
 
 @[expose] public section
@@ -37,14 +40,21 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The balanced signed shuffle with its original exact target degree transport. -/
+/-- Balanced signed shuffle at an explicitly equal total degree.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, p+q=n gives an A-linear map from the A-balanced regular p-word/M-coefficient q-word
+pair to M ⊗[k] A⊗n, using all (p,q)-shuffle signs. -/
 def algebraShufflePairCutAt (p q n : ℕ) (h : p + q = n) :
     (ULift.{w} A ⊗[k] TensorPower k p A) ⊗[A] (M ⊗[k] TensorPower k q A) →ₗ[A]
       M ⊗[k] TensorPower k n A :=
   (TensorProduct.AlgebraTensorModule.lTensor A M (TensorPower.cast k A h).toLinearMap).comp
     (algebraShufflePairCut k A M p q)
 
-/-- The original degree-sum balanced shuffle is retained without changing its tensor levels. -/
+/-- The explicit-degree shuffle at its reflexive sum degree.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, taking n=p+q and h=rfl recovers algebraShufflePairCut(p,q). -/
 @[simp]
 theorem algebraShufflePairCutAt_refl (p q : ℕ) :
     algebraShufflePairCutAt k A M p q (p + q) rfl = algebraShufflePairCut k A M p q := by
@@ -52,7 +62,11 @@ theorem algebraShufflePairCutAt_refl (p q : ℕ) :
   simp only [algebraShufflePairCutAt, TensorPower.cast_refl, LinearEquiv.refl_toLinearMap,
     TensorProduct.AlgebraTensorModule.lTensor_id, LinearMap.id_comp]
 
-/-- Original target-degree casts agree with the native k-shuffle pairing components. -/
+/-- The explicit-degree balanced shuffle agrees with pairAt.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, restricting the balanced map to k and composing with algebraTensorComparison gives
+pairAt(pairing,p,q,n,h) for the same equality p+q=n. -/
 theorem algebraShufflePairCutAt_comparison (p q n : ℕ) (h : p + q = n) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -126,7 +140,11 @@ private theorem nativePairAt_boundary_successors (r s : ℕ) :
   have htransport := congrArg₂ (· + ·) (congrArg leftTerm hleftIndex) (congrArg rightTerm hrightIndex)
   simpa only [leftTerm, rightTerm, Category.assoc, Preadditive.zsmul_comp] using htransport
 
-/-- The A-balanced shuffle has the original signed Leibniz law on both-positive successor inputs. -/
+/-- The Leibniz boundary formula for two positive balanced shuffle inputs.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, bʀ⁺ˢ⁺¹ ∘ shʀ⁺¹,ˢ⁺¹ = shʀ,ˢ⁺¹ ∘ (bʀ,ULift A ⊗ id) + (-1)ʀ⁺¹ shʀ⁺¹,ˢ ∘ (id ⊗ bˢ,M).
+Every map retains the displayed source and total degrees. -/
 theorem algebraShufflePairCutAt_boundary_successors (r s : ℕ) :
     (algebraBoundary k A M (r + s + 1)).comp
       (algebraShufflePairCutAt k A M (r + 1) (s + 1) (r + s + 2) (by omega)) =

@@ -1,5 +1,7 @@
-# Homology Data Ext
+# Resolution Hom-complex homology data with Ext as quotient
 
-Left homology data exhibiting `Ext` as the homology of the mapped complex
-at degree `n`. An `abbrev` so that projections such as `.K` unfold reducibly
-and rewrite motives over short-complex morphisms stay type-correct.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. The cocycle kernel and its quotient to `Ext^n(X,Y)` give
+left-homology data for the degree-`n` short complex of `Hom_C(X,I)`:
+its homology object is the Ext group.

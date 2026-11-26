@@ -1,4 +1,5 @@
-# Lift Hom
+# Projective-resolution comparison over an object map
 
-The standard lift of a morphism, bundled as an augmentation-compatible
-morphism of projective resolutions.
+In an abelian category `C`, a map `f : X → Y` lifts to an
+augmentation-compatible chain comparison between any chosen
+projective resolution of `X` and projective resolution of `Y`.

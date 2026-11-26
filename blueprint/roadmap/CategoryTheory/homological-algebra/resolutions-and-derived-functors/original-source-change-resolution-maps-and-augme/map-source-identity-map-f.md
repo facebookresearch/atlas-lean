@@ -1,3 +1,4 @@
-# Map Source Identity Map f
+# Identity components of the identity source comparison
 
-Every component of the identity-source comparison is the original identity.
+Let P be preadditive, A abelian, i : P → A additive, and R a finite resolution of X. For every
+natural number n, the degree-n component of mapSourceIdentityMap R is the identity of Rₙ.

@@ -17,11 +17,17 @@ public import MathlibExt.Algebra.Homology.TotalComplexSymmetryDownNat
 public import Mathlib.CategoryTheory.Abelian.LeftDerived
 
 /-!
-# resolution augmentations of an additive bifunctor
+# Resolution augmentations of a biadditive bifunctor
 
-bifunctor tensor totals, the single-complex comparison and rowwise total quasi-isomorphisms supply
-the augmentation toward a one-sided resolution computation. All maps are built from the
-augmentation of the resolution. No comparison or acyclic resolution is supplied.
+Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive in both
+variables. For nonnegative chain complexes, the bicomplex has term
+`F(P_p,Q_q)` and total degree `n` given by the antidiagonal `p+q=n`.
+A resolution augmentation `Q → B[0]` gives a total map to `F(P,B)`;
+a resolution augmentation `P → A[0]` gives one to `F(A,Q)` using
+the signed flip. The surviving degree-zero summands have the original
+augmentation maps, and all positive augmented-factor summands vanish.
+Homology preservation of the partial functors on projective factors
+makes the corresponding total augmentation a quasi-isomorphism.
 -/
 
 @[expose] public section
@@ -42,10 +48,9 @@ variable {C₁ : Type u₁} [Category.{v₁} C₁] [Abelian C₁]
 local notation "c" => ComplexShape.down ℕ
 
 omit [F.Additive] [Abelian C₁] in
-/--
-The flipped bifunctor is additive by the original second-variable additivity, checked at every
-natural-transformation component.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. The flipped bifunctor `C₂ → C₁ → D` is additive in its
+outer variable, by the second-variable additivity of `F`. -/
 theorem flippedAdditive : F.flip.Additive where
   map_add := by
     intro Y Y' f g
@@ -54,8 +59,9 @@ theorem flippedAdditive : F.flip.Additive where
     exact (F.obj X).map_add
 
 omit [∀ X : C₁, (F.obj X).Additive] [Abelian C₂] in
-/-- A fixed second object gives an additive flipped partial functor by the
-original first-variable additivity. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For every `Y : C₂`, the flipped partial functor
+`F(-,Y) : C₁ → D` is additive. -/
 theorem flippedObjAdditive (Y : C₂) : (F.flip.obj Y).Additive where
   map_add := by
     intro X X' f g
@@ -63,10 +69,10 @@ theorem flippedObjAdditive (Y : C₂) : (F.flip.obj Y).Additive where
 
 attribute [local instance] flippedAdditive flippedObjAdditive
 
-/--
-The bifunctor bicomplex with its second input concentrated in degree zero is the componentwise
-single of the one-sided complex.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain complex `P` in `C₁` and `B : C₂`, the bicomplex
+`F(P,B[0])` is naturally identified with the one-sided chain complex
+`F(P,B)` concentrated at inner degree zero. -/
 def singleRightBicomplexIso (P : ChainComplex C₁ ℕ) (B : C₂) :
     (((F.mapBifunctorHomologicalComplex c c).obj P).obj ((ChainComplex.single₀ C₂).obj B)) ≅
       ((ChainComplex.single₀ D).mapHomologicalComplex c).obj
@@ -96,17 +102,20 @@ def singleRightBicomplexIso (P : ChainComplex C₁ ℕ) (B : C₂) :
         simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
   exact hc.symm
 
-/--
-The total of the same single-input bicomplex is the original one-sided complex, through the
-existing single-total identification.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain complex `P` in `C₁` and `B : C₂`, totalizing
+`F(P,B[0])` gives the natural complex isomorphism
+`Tot(F(P,B[0])) ≅ F(P,B)`. -/
 def singleRightTotalIso (P : ChainComplex C₁ ℕ) (B : C₂) :
     HomologicalComplex.mapBifunctor P ((ChainComplex.single₀ C₂).obj B) F c ≅
       ((F.flip.obj B).mapHomologicalComplex c).obj P :=
   (HomologicalComplex₂.totalFunctor D c c c).mapIso (singleRightBicomplexIso F P B) ≪≫
     HomologicalComplex₂.single₀MapTotalIso (((F.flip.obj B).mapHomologicalComplex c).obj P)
 
-/-- The degree-zero summand projection of the single-input total. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For `P : ChainComplex C₁ ℕ` and `B : C₂`, the `(p,0)`
+summand of `Tot(F(P,B[0]))` maps to `F(P_p,B)` by the canonical
+single-complex coordinate identification in degree `p`. -/
 theorem ι_singleRightTotalIso_hom (P : ChainComplex C₁ ℕ) (B : C₂) (p : ℕ) :
     HomologicalComplex.ιMapBifunctor P ((ChainComplex.single₀ C₂).obj B) F c p 0 p
         (Nat.add_zero p) ≫ (singleRightTotalIso F P B).hom.f p =
@@ -151,10 +160,9 @@ theorem ι_singleRightTotalIso_hom (P : ChainComplex C₁ ℕ) (B : C₂) (p : �
   change ι ≫ T.hom.f p = e₀ ≫ j
   exact hResult.trans hRight.symm
 
-/--
-Naturality of the single-total identification on its literal complexes, proved on summands rather
-than through opaque total carriers.
--/
+/-- In an abelian category `D`, a map `f : L → L′` of nonnegative
+chain complexes commutes with the canonical identifications of the
+totals of their inner-degree-zero bicomplexes with `L` and `L′`. -/
 theorem single₀MapTotalIso_hom_naturality
     {L L' : ChainComplex D ℕ} (f : L ⟶ L') :
     HomologicalComplex₂.total.map
@@ -206,7 +214,10 @@ theorem single₀MapTotalIso_hom_naturality
     exact (HomologicalComplex.isZero_single_obj_X c 0 (L.X p) (q + 1)
       (Nat.succ_ne_zero q)).eq_of_src _ _
 
-/-- Naturality of the single-input comparison in the first complex. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain map `f : P → P′` and `B : C₂`, the bicomplex
+identifications `F(P,B[0]) ≅ F(P,B)[0]` commute with the mapped
+first-variable complex map. -/
 theorem singleRightBicomplexIso_hom_naturality_left
     {P P' : ChainComplex C₁ ℕ} (f : P ⟶ P') (B : C₂) :
     ((F.mapBifunctorHomologicalComplex c c).map f).app
@@ -234,7 +245,10 @@ theorem singleRightBicomplexIso_hom_naturality_left
   change a ≫ E'.hom = E.hom ≫ b
   exact (congrArg (fun m => m ≫ E'.hom) hMap).trans hCancel
 
-/-- Naturality of the same comparison in its degree-zero object. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain complex `P` and `g : B → B′`, the bicomplex
+identifications for `F(P,B[0])` and `F(P,B′[0])` commute with the
+coefficient transformation `F(P,g)`. -/
 theorem singleRightBicomplexIso_hom_naturality_right
     (P : ChainComplex C₁ ℕ) {B B' : C₂} (g : B ⟶ B') :
     ((F.mapBifunctorHomologicalComplex c c).obj P).map ((ChainComplex.single₀ C₂).map g) ≫
@@ -250,7 +264,9 @@ theorem singleRightBicomplexIso_hom_naturality_right
       (ChainComplex.single₀ D).map ((F.obj (P.X p)).map g)
   exact ((HomologicalComplex.singleMapHomologicalComplex (F.obj (P.X p)) c 0).hom.naturality g)
 
-/-- The total single-input comparison commutes with maps in the first complex. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain map `f : P → P′` and `B : C₂`, the total
+comparisons `Tot(F(P,B[0])) ≅ F(P,B)` commute with `F(f,B)`. -/
 theorem singleRightTotalIso_hom_naturality_left
     {P P' : ChainComplex C₁ ℕ} (f : P ⟶ P') (B : C₂) :
     HomologicalComplex₂.total.map
@@ -299,7 +315,9 @@ theorem singleRightTotalIso_hom_naturality_left
     _ = (m ≫ J.hom) ≫ ℓ := (Category.assoc _ _ _).symm
     _ = T.hom ≫ ℓ := congrArg (fun a => a ≫ ℓ) hT.symm
 
-/-- The total single-input comparison commutes with its degree-zero coefficient. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain complex `P` and `g : B → B′`, the total
+comparisons `Tot(F(P,B[0])) ≅ F(P,B)` commute with `F(P,g)`. -/
 theorem singleRightTotalIso_hom_naturality_right
     (P : ChainComplex C₁ ℕ) {B B' : C₂} (g : B ⟶ B') :
     HomologicalComplex₂.total.map
@@ -348,7 +366,10 @@ theorem singleRightTotalIso_hom_naturality_right
     _ = (m ≫ J.hom) ≫ ℓ := (Category.assoc _ _ _).symm
     _ = T.hom ≫ ℓ := congrArg (fun a => a ≫ ℓ) hT.symm
 
-/-- The right augmentation of the tensor-resolution bicomplex. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain complex `P` in `C₁` and projective resolution
+`Q` of `B : C₂`, the augmentation of `Q` gives a chain map
+`Tot(F(P,Q)) → F(P,B)`. -/
 def rightAugmentation (P : ChainComplex C₁ ℕ) {B : C₂} (Q : ProjectiveResolution B) :
     HomologicalComplex.mapBifunctor P Q.complex F c ⟶
       ((F.flip.obj B).mapHomologicalComplex c).obj P :=
@@ -356,18 +377,19 @@ def rightAugmentation (P : ChainComplex C₁ ℕ) {B : C₂} (Q : ProjectiveReso
     (((F.mapBifunctorHomologicalComplex c c).obj P).map Q.π) c ≫
       (singleRightTotalIso F P B).hom
 
-/--
-The `Q` augmentation is the second-factor map on each stored row.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For `P : ChainComplex C₁ ℕ`, a projective resolution `Q` of
+`B`, and first degree `p`, the row map induced by `Q → B[0]` is
+that augmentation mapped by the partial functor `F(P_p,-)`. -/
 theorem rightAugmentation_row (P : ChainComplex C₁ ℕ) {B : C₂}
     (Q : ProjectiveResolution B) (p : ℕ) :
     (((F.mapBifunctorHomologicalComplex c c).obj P).map Q.π).f p =
       ((F.obj (P.X p)).mapHomologicalComplex c).map Q.π := rfl
 
-/--
-The right augmentation on the surviving inner-degree-zero summand is precisely the second-factor
-augmentation map.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain complex `P` and a projective resolution `Q` of
+`B`, the `(p,0)` summand of the right total augmentation has map
+`F(P_p,Q₀) → F(P_p,B)` induced by `π_Q,₀`. -/
 theorem ι_rightAugmentation (P : ChainComplex C₁ ℕ) {B : C₂}
     (Q : ProjectiveResolution B) (p : ℕ) :
     HomologicalComplex.ιMapBifunctor P Q.complex F c p 0 p (Nat.add_zero p) ≫
@@ -418,7 +440,10 @@ theorem ι_rightAugmentation (P : ChainComplex C₁ ℕ) {B : C₂}
       ((Category.assoc d j' (e.hom.f p)).trans
         ((congrArg (fun q : (K'.X p).X 0 ⟶ H.obj B => d ≫ q) hCollapse).trans hFinal)))
 
-/-- Positive inner-degree summands vanish under the right augmentation. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain complex `P` and projective resolution `Q` of `B`,
+the right total augmentation vanishes on every summand `F(P_p,Q_q)`
+with `q>0` and total degree `p+q`. -/
 theorem ι_rightAugmentation_succ (P : ChainComplex C₁ ℕ) {B : C₂}
     (Q : ProjectiveResolution B) (p q n : ℕ) (h : p + (q + 1) = n) :
     HomologicalComplex.ιMapBifunctor P Q.complex F c p (q + 1) n h ≫
@@ -449,17 +474,20 @@ theorem ι_rightAugmentation_succ (P : ChainComplex C₁ ℕ) {B : C₂}
         (k ≫ j') ≫ e.hom.f n) hZero
     _ = 0 := by simp only [CategoryTheory.Limits.zero_comp]
 
-/-- The total map in both resolution variables, factored through the existing bifunctor maps. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. Chain maps `f : P → P′`, `g : Q → Q′` induce the total
+chain map `Tot(F(P,Q)) → Tot(F(P′,Q′))`, whose antidiagonal
+summands use the two bifunctor maps `F(f_p,g_q)`. -/
 def totalMap {P P' : ChainComplex C₁ ℕ} {Q Q' : ChainComplex C₂ ℕ}
     (f : P ⟶ P') (g : Q ⟶ Q') :
     HomologicalComplex.mapBifunctor P Q F c ⟶
       HomologicalComplex.mapBifunctor P' Q' F c :=
   HomologicalComplex.mapBifunctorMap f g F c
 
-/--
-The right augmentation square for two resolution maps. The only compatibility input is the
-augmentation square of the second map.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a chain map `f : P → P′` and a resolution map
+`g : Q → Q′` over `b : B → B′`, the right total augmentations
+commute with the induced total map and the one-sided map `F(f,b)`. -/
 theorem rightAugmentation_naturality
     {P P' : ChainComplex C₁ ℕ} {B B' : C₂}
     (Q : ProjectiveResolution B) (Q' : ProjectiveResolution B')
@@ -542,11 +570,10 @@ theorem rightAugmentation_naturality
           congrArg (fun k : T₁ ⟶ L₂ => u ≫ k ≫ r) hLeft
         _ = _ := by simp only [Category.assoc]
 
-/--
-Exactness on projective first factors earns the total augmentation quasi-isomorphism for two
-projective resolutions. The generic condition is a functor property; the module application earns
-it from the constructed projective terms, without assuming flatness of either module.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. If `F(X,-)` preserves homology for every projective `X`,
+then for projective resolutions `P,Q` of arbitrary `A,B`, the right
+augmentation `Tot(F(P,Q)) → F(P,B)` is a quasi-isomorphism. -/
 theorem rightAugmentation_quasiIso
     (hF : ∀ (X : C₁), Projective X → (F.obj X).PreservesHomology)
     {A : C₁} {B : C₂} (P : ProjectiveResolution A) (Q : ProjectiveResolution B) :
@@ -563,20 +590,20 @@ theorem rightAugmentation_quasiIso
     (singleRightTotalIso F P.complex B).hom)
   infer_instance
 
-/--
-The left augmentation uses the existing signed flip isomorphism, then the same right augmentation
-for the flipped bifunctor.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a projective resolution `P` of `A` and chain complex
+`Q` in `C₂`, the signed flip followed by the corresponding right
+augmentation for `F.flip` gives `Tot(F(P,Q)) → F(A,Q)`. -/
 def leftAugmentation {A : C₁} (P : ProjectiveResolution A) (Q : ChainComplex C₂ ℕ) :
     HomologicalComplex.mapBifunctor P.complex Q F c ⟶
       ((F.obj A).mapHomologicalComplex c).obj Q :=
   (HomologicalComplex.mapBifunctorFlipIso P.complex Q F c).inv ≫
     rightAugmentation F.flip Q P
 
-/--
-The flip has sign one on the surviving first-degree-zero summand, so the left augmentation is
-literally the first-factor map.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a projective resolution `P` of `A` and chain complex `Q`,
+the left augmentation on the `(0,q)` summand is the map
+`F(P₀,Q_q) → F(A,Q_q)` induced by `π_P,₀`; its flip sign is one. -/
 theorem ι_leftAugmentation {A : C₁} (P : ProjectiveResolution A)
     (Q : ChainComplex C₂ ℕ) (q : ℕ) :
     HomologicalComplex.ιMapBifunctor P.complex Q F c 0 q q (Nat.zero_add q) ≫
@@ -589,7 +616,10 @@ theorem ι_leftAugmentation {A : C₁} (P : ProjectiveResolution A)
     ι_rightAugmentation]
   rfl
 
-/-- Positive first-degree summands vanish under the same left augmentation. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a projective resolution `P` of `A` and chain complex `Q`,
+the left augmentation vanishes on every summand `F(P_p,Q_q)` with
+`p>0` and total degree `p+q`. -/
 theorem ι_leftAugmentation_succ {A : C₁} (P : ProjectiveResolution A)
     (Q : ChainComplex C₂ ℕ) (p q n : ℕ) (h : (p + 1) + q = n) :
     HomologicalComplex.ιMapBifunctor P.complex Q F c (p + 1) q n h ≫
@@ -599,7 +629,10 @@ theorem ι_leftAugmentation_succ {A : C₁} (P : ProjectiveResolution A)
     Linear.units_smul_comp, ι_rightAugmentation_succ]
   exact smul_zero _
 
-/-- The signed flip commutes with simultaneous maps. -/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. The total map induced by `f : P → P′`, `g : Q → Q′`
+commutes with the signed flip to the total for `F.flip`, exchanging
+the order of the two chain maps. -/
 theorem totalMap_comp_flip_inv
     {P P' : ChainComplex C₁ ℕ} {Q Q' : ChainComplex C₂ ℕ}
     (f : P ⟶ P') (g : Q ⟶ Q') :
@@ -612,10 +645,10 @@ theorem totalMap_comp_flip_inv
   rw [HomologicalComplex.mapBifunctorFlipIso_hom_naturality,
     ← Category.assoc, Iso.inv_hom_id, Category.id_comp]
 
-/--
-The left augmentation square is transported through the flip; its first-variable compatibility is
-an resolution augmentation square.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. For a resolution map `f : P → P′` over `a : A → A′`
+and a chain map `g : Q → Q′`, the left total augmentations commute
+with the induced total map and the one-sided map `F(a,g)`. -/
 theorem leftAugmentation_naturality
     {A A' : C₁} (P : ProjectiveResolution A) (P' : ProjectiveResolution A')
     {Q Q' : ChainComplex C₂ ℕ} (f : P.complex ⟶ P'.complex) (g : Q ⟶ Q')
@@ -630,10 +663,10 @@ theorem leftAugmentation_naturality
     rightAugmentation_naturality F.flip P P' g f a hf, ← Category.assoc]
   simp only [CategoryTheory.Functor.flip_flip]
 
-/--
-Exactness on projective second factors earns the left total augmentation quasi-isomorphism, with
-the Koszul sign in the intervening flip.
--/
+/-- Let `C₁,C₂,D` be abelian and `F : C₁ → C₂ → D` additive
+in both variables. If `F(-,Y)` preserves homology for every projective `Y`,
+then for projective resolutions `P,Q` of arbitrary `A,B`, the left
+augmentation `Tot(F(P,Q)) → F(A,Q)` is a quasi-isomorphism. -/
 theorem leftAugmentation_quasiIso
     (hF : ∀ (Y : C₂), Projective Y → (F.flip.obj Y).PreservesHomology)
     {A : C₁} {B : C₂} (P : ProjectiveResolution A) (Q : ProjectiveResolution B) :

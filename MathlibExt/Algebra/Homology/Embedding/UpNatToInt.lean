@@ -11,14 +11,25 @@ module
 
 public import MathlibExt.Algebra.Homology.Embedding.ExtendHomologyFunctor
 
+/-!
+# Natural cochains extended to integer degrees
+
+Extension along n↦(n:ℤ) retains a natural cochain complex in nonnegative
+degrees and inserts zero objects in negative degrees. Cycles, opcycles and
+homology at a selected natural degree are identified naturally with those
+of the original complex.
+-/
+
 @[expose] public section
 
 open CategoryTheory Category Limits
 
 namespace ComplexShape
 
-/-- An integer index is outside the image of `embeddingUpNat`
-exactly when it is negative. -/
+/--
+For the cochain embedding e:ℕ→ℤ given by e(n)=n, an integer z is outside the image exactly
+when z<0: (∀n∈ℕ, e(n)≠z) ↔ z<0.
+-/
 lemma notMem_range_embeddingUpNat_iff (z : ℤ) :
     (∀ n : ℕ, embeddingUpNat.f n ≠ z) ↔ z < 0 := by
   constructor
@@ -35,7 +46,12 @@ end ComplexShape
 
 section Homology
 
-/-- Cycles functor isomorphism for the `up ℕ → up ℤ` embedding. -/
+/--
+Let C have zero morphisms, a zero object and homology for short complexes. Extend a natural
+cochain complex K to integer degrees along n↦(n:ℤ), with zero terms at negative degrees. At
+n∈ℕ, the cycles of the extension in integer degree n are canonically isomorphic to Zⁿ(K).
+These comparisons are natural in K.
+-/
 noncomputable def HomologicalComplex.cyclesFunctorExtendUpNatIso
     {C : Type*} [Category C] [HasZeroMorphisms C] [HasZeroObject C]
     [CategoryWithHomology C] (n : ℕ) :
@@ -45,7 +61,12 @@ noncomputable def HomologicalComplex.cyclesFunctorExtendUpNatIso
   HomologicalComplex.extendCyclesFunctorIso
     ComplexShape.embeddingUpNat n (n : ℤ) rfl
 
-/-- Opcycles functor isomorphism for the `up ℕ → up ℤ` embedding. -/
+/--
+Let C have zero morphisms, a zero object and homology for short complexes. Extend a natural
+cochain complex K to integer degrees along n↦(n:ℤ), with zero terms at negative degrees. At
+n∈ℕ, opcycles of the extension in integer degree n are canonically isomorphic to the original
+quotient of Kⁿ by incoming boundaries. The comparisons are natural in K.
+-/
 noncomputable def HomologicalComplex.opcyclesFunctorExtendUpNatIso
     {C : Type*} [Category C] [HasZeroMorphisms C] [HasZeroObject C]
     [CategoryWithHomology C] (n : ℕ) :
@@ -55,7 +76,12 @@ noncomputable def HomologicalComplex.opcyclesFunctorExtendUpNatIso
   HomologicalComplex.extendOpcyclesFunctorIso
     ComplexShape.embeddingUpNat n (n : ℤ) rfl
 
-/-- Homology functor isomorphism for the `up ℕ → up ℤ` embedding. -/
+/--
+Let C have zero morphisms, a zero object and homology for short complexes. Extend a natural
+cochain complex K to integer degrees along n↦(n:ℤ), with zero terms at negative degrees. At
+n∈ℕ, the extension has homology canonically isomorphic to Hⁿ(K). This is a natural isomorphism
+of the extension–homology composite with natural-degree homology.
+-/
 noncomputable def HomologicalComplex.homologyFunctorExtendUpNatIso
     {C : Type*} [Category C] [HasZeroMorphisms C] [HasZeroObject C]
     [CategoryWithHomology C] (n : ℕ) :
@@ -65,7 +91,10 @@ noncomputable def HomologicalComplex.homologyFunctorExtendUpNatIso
   HomologicalComplex.extendHomologyFunctorIso
     ComplexShape.embeddingUpNat n (n : ℤ) rfl
 
-/-- The extended cochain complex has zero homology in negative degrees. -/
+/--
+Let C be an abelian category and K a natural cochain complex extended by zero to integer
+degrees. For z<0, assuming the extension has homology at z, its homology object Hᶻ is zero.
+-/
 lemma HomologicalComplex.isZero_homology_extendUpNat_neg
     {C : Type*} [Category C] [Abelian C]
     (K : CochainComplex C ℕ) (z : ℤ) (hz : z < 0)

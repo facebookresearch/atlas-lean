@@ -1,3 +1,6 @@
-# Middle Kernel Cokernel Sequence Map τ₂
+# The middle component of a clipped-sequence map
 
-The middle component is exactly the given map of the original middle objects.
+Let C have zero morphisms, let φ : S → T be a componentwise commuting map of four-arrow
+sequences with all adjacent composites zero, and assume their first-arrow cokernels and
+last-arrow kernels exist. The middle component of the clipped-sequence map is precisely φ₂ : S₂
+→ T₂.

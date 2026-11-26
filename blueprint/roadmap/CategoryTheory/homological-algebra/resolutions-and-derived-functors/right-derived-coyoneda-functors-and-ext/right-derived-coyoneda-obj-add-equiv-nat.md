@@ -1,4 +1,7 @@
-# Right Derived Coyoneda Obj Add Equiv naturality
+# Derived Coyoneda-to-Ext equivalence is natural in coefficients
 
-The comparison is natural in `Y`: pushing a class forward along
-`g : Y ⟶ Y'` corresponds to postcomposition with `Ext.mk₀ g`.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. For a resolution lift over `g : Y → Y′`, the additive
+comparisons intertwine the derived coefficient map with
+`a ↦ a.comp(Ext.mk₀(g))` on `Ext^n(X,Y)`.

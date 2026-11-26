@@ -15,13 +15,16 @@ public import Mathlib.RingTheory.Ideal.Quotient.Defs
 public import Mathlib.RingTheory.TwoSidedIdeal.Operations
 
 /-!
-# Comparing ideal and two-sided-ideal quotients
+# Quotient presentations for a two-sided ideal
 
-An ideal in a noncommutative ring gives an ordinary ideal quotient once it is
-known to be two-sided.  It can also be bundled as a `TwoSidedIdeal`, whose
-quotient is presented using its ring congruence.  This file gives the canonical
-ring equivalence between those two presentations and records its action on
-quotient classes.
+For an associative ring `R` and an ideal `I` satisfying `I.IsTwoSided`, the bundled two-sided
+ideal defines a ring-congruence quotient `I.toTwoSided.ringCon.Quotient`. It is canonically
+ring-isomorphic to the ideal quotient `R/I`.
+
+The isomorphism sends the congruence class of a representative `r : R` to `Ideal.Quotient.mk I
+r`, and its inverse preserves the same representative.
+
+Reference: Dummit and Foote, *Abstract Algebra*, third edition, Section 7.3.
 -/
 
 @[expose] public section
@@ -47,8 +50,10 @@ private theorem toTwoSided_ringCon_eq_quotientRingCon
   change (x - y ∈ I) ↔ I.quotientRel x y
   exact I.quotientRel_def.symm
 
-/-- The ring-congruence quotient by the two-sided ideal associated to `I` is
-canonically equivalent to the ordinary ideal quotient by `I`. -/
+/-- Let `R` be an associative ring and `I : Ideal R` satisfy `I.IsTwoSided`. This is the ring
+equivalence `I.toTwoSided.ringCon.Quotient ≃+* R/I`, identifying the ring-congruence and
+ideal-quotient presentations. It sends the congruence class of `r : R` to its ideal quotient
+class `r mod I`. -/
 noncomputable def toTwoSidedQuotientEquiv
     (I : Ideal R) [I.IsTwoSided] :
     I.toTwoSided.ringCon.Quotient ≃+* R ⧸ I :=
@@ -59,8 +64,8 @@ noncomputable def toTwoSidedQuotientEquiv
       rw [toTwoSided_ringCon_eq_quotientRingCon]
       rfl)
 
-/-- `toTwoSidedQuotientEquiv` sends a ring-congruence quotient class to the
-ordinary ideal quotient class of the same representative. -/
+/-- For an associative ring `R`, a two-sided ideal `I`, and `r : R`, `toTwoSidedQuotientEquiv I`
+sends the class of `r` in `I.toTwoSided.ringCon.Quotient` to `Ideal.Quotient.mk I r` in `R/I`. -/
 @[simp]
 theorem toTwoSidedQuotientEquiv_mk
     (I : Ideal R) [I.IsTwoSided] (r : R) :

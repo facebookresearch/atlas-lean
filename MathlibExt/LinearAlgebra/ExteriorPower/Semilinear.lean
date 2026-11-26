@@ -15,9 +15,14 @@ public import Mathlib.LinearAlgebra.ExteriorPower.Basic
 /-!
 # Exterior powers of semilinear maps
 
-The universal alternating map constructs the exterior-power map along a
-ring homomorphism. Its value on a wedge is the wedge of the actual images.
-The rings and module carriers have independent universes.
+For a ring homomorphism `φ : R →+* S` between commutative rings and a `φ`-semilinear map `f :
+M → N`, exterior powers give `Λ^n_R M →ₛₗ[φ] Λ^n_S N`, with `v_0 ∧ ⋯ ∧ v_(n-1) ↦ f(v_0) ∧ ⋯ ∧
+f(v_(n-1))`.
+
+The identity scalar homomorphism gives the linear exterior map, and composition uses the
+composite scalar homomorphism. The empty wedge in degree zero is the unit.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -31,8 +36,9 @@ variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S]
   {M : Type uM} {N : Type uN} [AddCommGroup M] [AddCommGroup N]
   [Module R M] [Module S N]
 
-/-- The exterior-power map of an actual semilinear map, obtained from the
-universal alternating map after restriction along its scalar homomorphism. -/
+/-- Let `R,S` be commutative rings, `M` an `R`-module, `N` an `S`-module, `φ : R →+* S`, and `f :
+M →ₛₗ[φ] N`. For every `n : ℕ`, `mapSemilinear φ f n : Λ^n_R M →ₛₗ[φ] Λ^n_S N` sends
+`ιMulti_R(v)` to `ιMulti_S(f ∘ v)`. -/
 def mapSemilinear (φ : R →+* S) (f : M →ₛₗ[φ] N) (n : ℕ) :
     (⋀[R]^n M) →ₛₗ[φ] (⋀[S]^n N) := by
   letI : Module R N := Module.compHom N φ
@@ -54,7 +60,9 @@ def mapSemilinear (φ : R →+* S) (f : M →ₛₗ[φ] N) (n : ℕ) :
       map_add' := F.map_add
       map_smul' := F.map_smul }
 
-/-- The map preserves each original decomposable wedge. -/
+/-- Let `R,S` be commutative rings, `M` an `R`-module, `N` an `S`-module, `φ : R →+* S`, and `f :
+M →ₛₗ[φ] N`. For `n : ℕ` and `a : Fin n → M`, `mapSemilinear φ f n (ιMulti_R(a)) =
+ιMulti_S(fun j ↦ f(a j))`, including the unit word in degree zero. -/
 theorem mapSemilinear_ιMulti
     (φ : R →+* S) (f : M →ₛₗ[φ] N) (n : ℕ) (a : Fin n → M) :
     mapSemilinear φ f n (exteriorPower.ιMulti R n a) =
@@ -76,8 +84,8 @@ theorem mapSemilinear_ιMulti
   rw [exteriorPower.alternatingMapLinearEquiv_apply_ιMulti]
   rfl
 
-/-- The semilinear exterior map agrees with the native exterior map when
-its scalar homomorphism is the identity. -/
+/-- For a commutative ring `R`, an `R`-module `M`, an endomorphism `f : M →ₗ[R] M`, and `n : ℕ`,
+`mapSemilinear (RingHom.id R) f n = exteriorPower.map n f`. -/
 theorem mapSemilinear_id_scalar (f : M →ₗ[R] M) (n : ℕ) :
     mapSemilinear (RingHom.id R) f n = exteriorPower.map n f := by
   apply exteriorPower.linearMap_ext
@@ -86,8 +94,10 @@ theorem mapSemilinear_id_scalar (f : M →ₗ[R] M) (n : ℕ) :
   simp only [LinearMap.compAlternatingMap_apply, mapSemilinear_ιMulti,
     exteriorPower.map_apply_ιMulti, Function.comp_def]
 
-/-- Semilinear exterior maps commute with composition on the original
-wedges, including degree zero. -/
+/-- Let `R,S,T` be commutative rings, `M,N,P` respectively modules over them, `φ : R →+* S`, `ψ :
+S →+* T`, `f : M →ₛₗ[φ] N`, and `g : N →ₛₗ[ψ] P`. With composite scalar map `ψ.comp φ` and its
+`RingHomCompTriple` compatibility, `(mapSemilinear ψ g n).comp (mapSemilinear φ f n) =
+mapSemilinear (ψ.comp φ) (g.comp f) n` for every `n : ℕ`. -/
 theorem mapSemilinear_comp
     {T : Type*} [CommRing T] {P : Type*} [AddCommGroup P] [Module T P]
     (φ : R →+* S) (ψ : S →+* T)

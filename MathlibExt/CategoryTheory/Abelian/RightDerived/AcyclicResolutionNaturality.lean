@@ -14,12 +14,16 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolutionNat
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AcyclicResolution
 
 
-/-!
-# Naturality of right-derived acyclic-resolution comparisons
+/- The left-derived naturality API remains publicly imported for existing users of this module. -/
 
-The opposite augmentation and op-duality transfer the left-derived comparison square to augmented
-cocomplexes. The left-derived naturality API is publicly imported for compatibility with existing
-users of this module.
+/-!
+# Naturality of acyclic right-derived comparisons
+
+For an additive left-exact functor between abelian categories with
+injective resolutions in the source, maps between exact coaugmented
+termwise acyclic complexes give comparison squares with the derived
+maps of their resolved objects. Opposite duality identifies these
+squares with the corresponding left-derived augmented-chain squares.
 -/
 
 @[expose] public section
@@ -31,7 +35,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The existing `single₀` opposite isomorphism is natural in its coefficient object. -/
+/-- For an abelian category `C`, the identification of the opposite
+of a nonnegative cochain complex concentrated at degree zero with the
+chain complex concentrated at degree zero in `Cᵒᵖ` is natural in
+every map `f : X → Y`. -/
 theorem single₀OpIso_hom_naturality
     {C : Type u₁} [Category.{v₁} C] [Abelian C]
     {X Y : C} (f : X ⟶ Y) :
@@ -53,7 +60,11 @@ theorem single₀OpIso_hom_naturality
         (Opposite.op X) (n + 1) (by omega)).eq_of_tgt _ _
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- A map of augmented cocomplexes gives the canonical opposite augmentation square. -/
+/-- In an abelian category `C`, let `ι : X[0] → I`, `κ : Y[0] → J`
+be coaugmentations and `a : I → J` lie over `f : X → Y`, so
+`ι ≫ a = f[0] ≫ κ`. Taking opposites gives the commutative
+augmentation square for `aᵒᵖ : Jᵒᵖ → Iᵒᵖ` and `fᵒᵖ : Yᵒᵖ → Xᵒᵖ`,
+using the degree-zero opposite-complex identifications. -/
 theorem oppositeAcyclicAugmentationMap_comm
     {C : Type u₁} [Category.{v₁} C] [Abelian C]
     {X Y : C} {I J : CochainComplex C ℕ}
@@ -82,7 +93,10 @@ theorem oppositeAcyclicAugmentationMap_comm
         (ChainComplex.single₀ Cᵒᵖ).map f.op := (Category.assoc _ _ _).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Reversing an opposite comparison square preserves its homology map. -/
+/-- In a category `Dᵒᵖ`, let `l : L₁ → L₀`, `b : H₁ → H₀`,
+`e₀ : L₀ ≅ H₀`, `e₁ : L₁ ≅ H₁`, with `l ≫ e₀ = e₁ ≫ b`.
+The inverse comparison maps in `D` satisfy
+`l.unop ≫ e₁⁻¹.unop = e₀⁻¹.unop ≫ b.unop`. -/
 theorem inverseUnopComparison_naturality
     {D : Type u₂} [Category.{v₂} D]
     {L₀ L₁ H₀ H₁ : Dᵒᵖ}
@@ -100,7 +114,14 @@ end CategoryTheory
 namespace CategoryTheory.Functor
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The exact right comparison is natural whenever the opposite left comparison is natural. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Suppose
+`ι : X[0] → I`, `κ : Y[0] → J` are quasi-isomorphisms with termwise
+vanishing positive right-derived values, and `a : I → J` lies over
+`f : X → Y`, so `ι ≫ a = f[0] ≫ κ`. If the corresponding left-derived acyclic comparisons for
+`Fᵒᵖ` are natural for every choice of projective-resolution supply in
+`Cᵒᵖ` and finite-colimit-preservation structure on `Fᵒᵖ`, then
+`R^nF(f) ≫ comparison_J = comparison_I ≫ Hⁿ(F(a))`. -/
 theorem rightDerivedAcyclicComparison_naturality_of_left
     {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolutions C]
     {D : Type u₂} [Category.{v₂} D] [Abelian D]
@@ -240,7 +261,12 @@ end CategoryTheory.Functor
 namespace CategoryTheory.Functor
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original right-derived comparison is natural in every degree. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Suppose
+`ι : X[0] → I`, `κ : Y[0] → J` are quasi-isomorphisms with termwise
+vanishing positive right-derived values, and `a : I → J` lies over
+`f : X → Y`, so `ι ≫ a = f[0] ≫ κ`. The acyclic comparisons satisfy
+`R^nF(f) ≫ comparison_J = comparison_I ≫ Hⁿ(F(a))` in every degree `n`. -/
 theorem rightDerivedObjIsoHomologyOfAcyclicResolution_naturality
     {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolutions C]
     {D : Type u₂} [Category.{v₂} D] [Abelian D]

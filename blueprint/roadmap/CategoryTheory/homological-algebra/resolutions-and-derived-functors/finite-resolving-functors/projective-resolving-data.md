@@ -1,7 +1,5 @@
-# Projective Resolving Data
+# Projective resolving additive functors
 
-Epi-kernel closure together with projectivity of every object after
-mapping to the abelian target.
-
-The projectivity field is structural input for resolution comparison; it is
-not an Euler, inverse, or bijectivity hypothesis.
+For additive `i : P → A`, with `P` preadditive and `A` abelian,
+projective-resolving data require represented kernels of mapped
+epimorphisms and projectivity of every mapped object `i(P₀)`.

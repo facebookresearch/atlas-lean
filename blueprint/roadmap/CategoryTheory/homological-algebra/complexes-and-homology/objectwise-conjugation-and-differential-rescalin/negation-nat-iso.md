@@ -1,3 +1,5 @@
-# Negation Nat Iso
+# Natural isomorphism from identity to chain differential negation
 
-The constructed signs give the canonical natural isomorphism to the differential-negation functor.
+In a preadditive category `C`, the alternating-degree sign
+isomorphisms form a natural isomorphism from identity on nonnegative
+chain complexes to the differential-negation functor.

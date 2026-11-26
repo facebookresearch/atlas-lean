@@ -1,4 +1,4 @@
-# Finset Include restrict of support subset
+# Supported vectors are recovered after restriction
 
-Restriction followed by inclusion recovers a vector whose support is
-contained in the original finite coordinate set.
+For a commutative ring `R`, an index type `I`, `s : Finset I`, and `m : I →₀ R` with
+`m.support⊆s`, `finsetInclude R s (finsetRestrict R s m)=m`.

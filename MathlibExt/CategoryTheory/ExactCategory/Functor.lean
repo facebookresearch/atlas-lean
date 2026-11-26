@@ -16,25 +16,13 @@ import MathlibExt.CategoryTheory.ExactCategory.Bicartesian
 import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-# Quillen exact functors
+# Exact functors between Quillen exact categories
 
-We define exact functors between exact categories, which are additive functors preserving
-the class of exact sequences.
-
-Mathlib's `CategoryTheory.ExactFunctor` is the bundled category of functors preserving
-finite limits and finite colimits.
-For functors between abelian categories equipped with their maximal exact structures,
-this is equivalent to `Functor.IsExact`.
-
-## Main definitions
-* `CategoryTheory.Functor.IsExact`
-* `CategoryTheory.Functor.ReflectsAdmissibleExact`
-* `CategoryTheory.Functor.map_isPullback_of_isAdmissibleMono_of_isAdmissibleEpi`
-* `CategoryTheory.Functor.map_isPushout_of_isAdmissibleEpi_of_isAdmissibleMono`
-* `CategoryTheory.Functor.map_isPushout_of_isAdmissibleMono`
-
-The comparison with Mathlib's `CategoryTheory.ExactFunctor` for abelian categories is in
-`MathlibExt.CategoryTheory.ExactCategory.ExactFunctor`.
+Let `C`, `D` be additive categories endowed with chosen exact structures.
+An additive functor `F : C → D` is exact when it preserves every
+admissible kernel–cokernel sequence. Reflection of admissible exactness
+is the converse condition on mapped short complexes. Exact functors
+preserve the stated admissible pullback and pushout squares.
 -/
 
 @[expose] public section
@@ -52,10 +40,9 @@ variable {D : Type u₂} [Category.{v₂} D] [Preadditive D]
 variable {E : Type u₃} [Category.{v₃} E] [Preadditive E]
   [HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
 
-/--
-An exact functor between exact categories is an additive functor preserving     the class of exact
-sequences.
--/
+/-- For additive categories `C`, `D` with Quillen exact structures, an
+additive functor `F : C → D` is exact when the image of each admissible
+exact short complex of `C` is admissible exact in `D`. -/
 class Functor.IsExact (F : C ⥤ D) [F.Additive] : Prop where
   map_admissibleExact (S : ShortComplex C) :
     IsAdmissibleExact S → IsAdmissibleExact (S.map F)
@@ -64,8 +51,10 @@ lemma Functor.map_admissibleExact (F : C ⥤ D) [F.Additive] [F.IsExact] (S : Sh
     (hS : IsAdmissibleExact S) : IsAdmissibleExact (S.map F) :=
   Functor.IsExact.map_admissibleExact S hS
 
-/-- An exact functor preserves a pullback whose two target legs are respectively
-an admissible mono and an admissible epi. -/
+/-- Let `F : C → D` be an additive exact functor between additive exact
+categories. If a pullback in `C` has target legs an admissible mono
+`i : X → Z` and an admissible epi `p : Y → Z`, the square obtained
+by applying `F` is a pullback in `D`. -/
 lemma Functor.map_isPullback_of_isAdmissibleMono_of_isAdmissibleEpi
     (F : C ⥤ D) [F.Additive] [F.IsExact]
     {P X Y Z : C} {fst : P ⟶ X} {snd : P ⟶ Y}
@@ -194,8 +183,10 @@ lemma Functor.map_isPullback_of_isAdmissibleMono_of_isAdmissibleEpi
       exact (cancel_mono (F.map i)).mp h_eq
     exact ⟨l, hl_fst, hl_snd⟩
 
-/-- An exact functor preserves a pushout whose two source legs are respectively
-an admissible epi and an admissible mono. -/
+/-- Let `F : C → D` be an additive exact functor between additive exact
+categories. If a pushout in `C` has source legs an admissible epi
+`p : X → Y` and an admissible mono `i : X → Z`, the square obtained
+by applying `F` is a pushout in `D`. -/
 lemma Functor.map_isPushout_of_isAdmissibleEpi_of_isAdmissibleMono
     (F : C ⥤ D) [F.Additive] [F.IsExact]
     {X Y Z P : C} {p : X ⟶ Y} {i : X ⟶ Z}
@@ -263,10 +254,10 @@ lemma Functor.map_isPushout_of_isAdmissibleEpi_of_isAdmissibleMono
         _ = F.map p ≫ a := hcone.symm
     exact ⟨l, hl_inl, hl_inr⟩
 
-/-- An exact functor preserves a pushout along an admissible monomorphism.
-
-The other source leg is arbitrary. This is the exact-category cobase-change
-square needed by the standard Waldhausen structure. -/
+/-- Let `F : C → D` be an additive exact functor between additive exact
+categories. Every pushout along an admissible monomorphism
+`i : X → Y`, with arbitrary other source leg `X → X′`, is carried
+to a pushout in `D`. -/
 lemma Functor.map_isPushout_of_isAdmissibleMono
     (F : C ⥤ D) [F.Additive] [F.IsExact]
     {X Y X' P : C} {i : X ⟶ Y} {f : X ⟶ X'}
@@ -303,10 +294,10 @@ lemma Functor.map_isPushout_of_isAdmissibleMono
   change IsPushout (F.map i) (F.map f) (F.map inr) (F.map inl) at hMapped
   exact hMapped.flip
 
-/-- A functor reflects admissible exactness when admissibility of the mapped
-    short complex implies admissibility of the source. This is independent of
-    fullness, faithfulness, and exactness (preservation): none of those
-    hypotheses is assumed, and none is derived here. -/
+/-- For additive categories `C`, `D` with chosen exact structures and an
+additive functor `F : C → D`, reflection of admissible exactness means:
+if the mapped short complex `F(S)` is admissible exact in `D`, then
+`S` is admissible exact in `C`. -/
 class Functor.ReflectsAdmissibleExact (F : C ⥤ D) [F.Additive] : Prop where
   reflects_admissibleExact (S : ShortComplex C) :
     IsAdmissibleExact (S.map F) → IsAdmissibleExact S

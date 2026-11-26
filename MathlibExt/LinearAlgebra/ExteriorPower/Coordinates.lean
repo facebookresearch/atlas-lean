@@ -14,11 +14,15 @@ public import Mathlib.LinearAlgebra.ExteriorPower.Basis
 public import MathlibExt.LinearAlgebra.ExteriorPower.ContractionWedge
 
 /-!
-# Actual exterior coordinates of a principal differential relation
+# Coordinates of left wedge by a basis vector
 
-When the fixed vector is absent from an exterior basis word, left wedge
-by that vector has zero coefficient at that word. This follows from the
-stock determinant pairing, including arbitrary coefficient rings.
+Let `b : Basis I R M` over a commutative ring, with `I` linearly ordered. The degree-`n+1`
+exterior basis is indexed by subsets of `I` of cardinality `n+1`.
+
+If a coordinate subset `s` omits `i`, the `s`-coordinate of `b_i ∧ x` is zero for every `x ∈
+Λ^n_R M`. The coefficient determinant has a zero first row at these columns.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 public section
@@ -33,7 +37,9 @@ variable {R : Type u} [CommRing R]
 variable {M : Type v} [AddCommGroup M] [Module R M]
 variable {I : Type w} [LinearOrder I] (b : Module.Basis I R M)
 
-/-- An absent fixed vector gives zero coefficient in every original pure exterior word. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` a basis indexed by a
+linearly ordered type `I`. Let `n : ℕ`, `s : Set.powersetCard I (n+1)`, `i ∉ s`, and `v : Fin
+n → M`. The `s`-coordinate of `b_i ∧ ιMulti_R(v)` in the basis `b.exteriorPower(n+1)` is zero. -/
 theorem exteriorBasis_coord_wedge_word_of_not_mem (i : I) (n : ℕ)
     (s : Set.powersetCard I (n + 1)) (hi : i ∉ (s : Set I)) (v : Fin n → M) :
     (b.exteriorPower (n + 1)).repr
@@ -50,7 +56,9 @@ theorem exteriorBasis_coord_wedge_word_of_not_mem (i : I) (n : ℕ)
   rw [← he]
   exact (Set.powersetCard.mem_range_ofFinEmbEquiv_symm_iff_mem s _).mp ⟨j, rfl⟩
 
-/-- Every actual left wedge by an absent fixed vector has zero original exterior coefficient. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` a basis indexed by a
+linearly ordered type `I`. Let `n : ℕ`, `s : Set.powersetCard I (n+1)`, `i ∉ s`, and `x :
+Λ^n_R M`. Then `(b.exteriorPower(n+1)).repr (wedgeLeft R M (b i) n x) s = 0`. -/
 theorem exteriorBasis_coord_wedge_of_not_mem (i : I) (n : ℕ)
     (s : Set.powersetCard I (n + 1)) (hi : i ∉ (s : Set I)) (x : ⋀[R]^n M) :
     (b.exteriorPower (n + 1)).repr (exteriorPower.wedgeLeft R M (b i) n x) s = 0 := by

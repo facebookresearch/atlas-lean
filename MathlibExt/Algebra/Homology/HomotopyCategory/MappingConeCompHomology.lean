@@ -12,11 +12,14 @@ module
 public import MathlibExt.Algebra.Homology.HomotopyCategory.MappingConeCompShortComplex
 
 /-!
-# Homology of a mapping-cone composition triangle
+# Homology boundary of a mapping-cone composition triangle
 
-The connecting morphism in homology of a mapping-cone composition triangle,
-followed by the canonical cone-to-quotient map, is the ordinary cone
-connecting morphism followed by the quotient map of the short complex.
+In an abelian category, let `S : K → L → M` be a short complex
+of integer cochains and `g : L → X`. The boundary of the cone
+composition triangle, followed by the homology map of `Cone(S.f) → M`,
+equals the ordinary cone boundary for `g` followed by the map
+induced by `S.g`, under the canonical homotopy-category homology
+comparisons.
 -/
 
 @[expose] public section
@@ -36,8 +39,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-/-- Homology-level compatibility between the mapping-cone composition
-connecting morphism and a short-complex quotient. -/
+/-- Let `C` be abelian, `S : K → L → M` a short complex of
+integer cochains, and `g : L → X`. For `n+1=n′`, the homology
+boundary of the cone composition triangle followed by
+`H^n′(Cone(S.f) → M)` equals the ordinary boundary of `Cone(g)`
+followed by `H^n′(S.g)`, using the canonical comparisons between
+complex and homotopy-category homology. -/
 theorem homologySequenceδ_mappingConeCompTriangleh_comp_descShortComplex
     (S : ShortComplex (CochainComplex C ℤ))
     {X : CochainComplex C ℤ} (g : S.X₂ ⟶ X)

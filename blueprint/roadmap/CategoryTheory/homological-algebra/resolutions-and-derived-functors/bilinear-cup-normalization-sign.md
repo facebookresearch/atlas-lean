@@ -1,4 +1,6 @@
-# The forced degree sign in the bilinear cup comparison
+# Triangular normalization of integral bilinear products
 
-A bilinear pairing transports the two triangular normalization signs with precisely the original
-cross-degree sign.
+Let `A,B,C` be abelian groups with their integer module actions
+and `cup : A →ₗ[ℤ] B →ₗ[ℤ] C`. For `p,q ∈ ℕ`, if
+`σ_(p+q) • z = cup(σ_p • x, σ_q • y)`, where
+`σ_n = (-1)^(n(n+1)/2)`, then `z = (-1)^(pq) • cup(x,y)`.

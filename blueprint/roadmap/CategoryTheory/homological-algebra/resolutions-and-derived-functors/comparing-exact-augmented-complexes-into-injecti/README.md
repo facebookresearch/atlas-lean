@@ -1,5 +1,5 @@
 # Comparing exact augmented complexes into injective terms
 
-- [Augmented Exact Null Homotopy](augmented-exact-null-homotopy.md)
-- [Augmented Exact Comparison Homotopy](augmented-exact-comparison-homotopy.md)
-- [Augmented Exact Comparison homology Map eq](augmented-exact-comparison-homology-map.md)
+- [Null homotopy into injective cochain terms](augmented-exact-null-homotopy.md)
+- [Homotopy uniqueness of injective-target comparisons](augmented-exact-comparison-homotopy.md)
+- [Equality on homology after an additive functor](augmented-exact-comparison-homology-map.md)

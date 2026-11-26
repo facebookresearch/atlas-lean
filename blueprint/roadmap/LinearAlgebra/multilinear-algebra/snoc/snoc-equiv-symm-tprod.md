@@ -1,3 +1,6 @@
-# Snoc Equiv symm tprod
+# Separating the last factor of a tensor word
 
-Splitting a pure word recovers its unchanged initial word and its actual last coordinate.
+Separating the last factor of a tensor word.
+
+For a commutative semiring k, an additive commutative k-module M and a : Fin(n+1) → M,
+snocEquiv⁻¹(tprod(a)) = tprod(Fin.init a) ⊗ a(Fin.last n).

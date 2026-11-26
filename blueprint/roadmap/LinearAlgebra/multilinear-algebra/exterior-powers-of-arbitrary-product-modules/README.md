@@ -1,5 +1,5 @@
 # Exterior powers of arbitrary product modules
 
-- [Product Pieces](product-pieces.md)
-- [Product Equiv](product-equiv.md)
-- [Product Equiv symm mixed](product-equiv-symm-mixed.md)
+- [Complementary exterior tensor degrees](product-pieces.md)
+- [The mixed-degree exterior product equivalence](product-equiv.md)
+- [Mixed tensors assemble in first-then-second order](product-equiv-symm-mixed.md)

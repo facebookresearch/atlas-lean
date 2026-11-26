@@ -11,6 +11,14 @@ module
 
 public import Mathlib.Algebra.Homology.Embedding.Restriction
 
+/-!
+# Functorial maps commute with restriction
+
+For a shape embedding reflecting differential relations, a functor that
+preserves zero morphisms commutes with restriction of complexes. The
+comparison is the identity on the shared terms F(K_{e(i)}).
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -26,7 +34,12 @@ variable {C : Type uC} [Category.{vC} C] [HasZeroMorphisms C]
   {ι₁ : Type w₁} {ι₂ : Type w₂} {c₁ : ComplexShape ι₁} {c₂ : ComplexShape ι₂}
   (e : c₁.Embedding c₂) [e.IsRelIff] (F : C ⥤ D) [F.PreservesZeroMorphisms]
 
-/-- Native restriction commutes with a mapped complex using its original coefficients. -/
+/--
+Let C,D have zero morphisms, let e:c₁→c₂ be a shape embedding preserving and reflecting
+relations, and let F:C⥤D preserve zero morphisms. For a c₂-complex K, applying F to its
+restriction along e is naturally isomorphic to restricting F(K) along e. Both have degree-i
+object F(K_{e(i)}) and the same differentials.
+-/
 def restrictionFunctorCompMapIso :
     e.restrictionFunctor C ⋙ F.mapHomologicalComplex c₁ ≅
       F.mapHomologicalComplex c₂ ⋙ e.restrictionFunctor D :=
@@ -48,7 +61,11 @@ def restrictionFunctorCompMapIso :
         (𝟙 (F.obj (K.X (e.f i)))) ≫ F.map (f.f (e.f i))
       rw [Category.comp_id, Category.id_comp])
 
-/-- The restriction comparison keeps the original coefficient maps in every degree. -/
+/--
+Let C,D have zero morphisms, let e:c₁→c₂ be a shape embedding preserving and reflecting
+relations, and let F:C⥤D preserve zero morphisms. For a c₂-complex K and i in the source
+shape, the degree-i forward component of the restriction comparison is 1_{F(K_{e(i)})}.
+-/
 @[simp]
 theorem restrictionFunctorCompMapIso_hom_app_f (K : HomologicalComplex C c₂) (i : ι₁) :
     ((restrictionFunctorCompMapIso e F).hom.app K).f i = 𝟙 _ := rfl

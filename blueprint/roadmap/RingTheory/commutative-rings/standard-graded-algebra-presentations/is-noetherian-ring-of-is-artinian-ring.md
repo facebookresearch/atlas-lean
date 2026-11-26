@@ -1,4 +1,6 @@
-# Is Noetherian Ring of is Artinian Ring
+# An Artinian coefficient ring gives a Noetherian presented algebra
 
-A standard graded algebra over an Artinian coefficient ring is
-Noetherian.
+Let A and S be commutative rings, S an A-algebra, and Sgrade : ℕ → Submodule A S an internal
+graded-algebra decomposition. Let hstd be a standard presentation with r degree-one
+generators. If A is Artinian, then S is a Noetherian ring. The presentation gives finite type
+over A, and an Artinian commutative coefficient ring is Noetherian.

@@ -12,12 +12,14 @@ module
 public import Mathlib.Algebra.Module.Opposite
 
 /-!
-# Opposite scalar actions for modules with commuting left actions
+# Opposite actions from commuting scalar operators
 
-For an A-module whose original scalar operators commute, the same operators
-through unop define a lawful A-opposite module. A itself may be noncommutative.
-The only commutation premise is the existing SMulCommClass on the original
-left action; no right action or target module certificate is supplied.
+For a semiring `A` and an `A`-semimodule `M`, assume the operators `a • -` commute with one
+another. Then `a_op • m=unop(a_op) • m` defines an action of the opposite semiring `Aᵐᵒᵖ` on
+`M`.
+
+An additional action commuting with the `A`-action also commutes with this opposite action. In
+particular, the two `A` and `Aᵐᵒᵖ` actions commute.
 -/
 
 @[expose] public section
@@ -30,7 +32,9 @@ namespace Module
 variable (A : Type u) [Semiring A] (M : Type v) [AddCommMonoid M]
   [Module A M] [SMulCommClass A A M]
 
-/-- The original commuting scalar action defines a module over the opposite semiring. -/
+/-- Let `A` be a semiring and `M` an `A`-semimodule whose scalar operators commute: `a • (b • m)=b
+• (a • m)` for all `a,b,m`. The module structure `oppositeOfCommutingAction A M : Module Aᵐᵒᵖ
+M` uses `a_op • m=MulOpposite.unop a_op • m`. -/
 @[instance_reducible]
 def oppositeOfCommutingAction : Module Aᵐᵒᵖ M where
   smul a m := MulOpposite.unop a • m
@@ -57,12 +61,16 @@ def oppositeOfCommutingAction : Module Aᵐᵒᵖ M where
     change (0 : A) • m = 0
     exact zero_smul A m
 
-/-- The canonical opposite scalar acts by its original unop scalar. -/
+/-- Let `A` be a semiring and `M` an `A`-semimodule whose scalar operators commute: `a • (b • m)=b
+• (a • m)` for all `a,b,m`. For `a_op : Aᵐᵒᵖ` and `m : M`, the constructed action satisfies
+`a_op • m=MulOpposite.unop a_op • m`. -/
 @[simp] theorem oppositeOfCommutingAction_smul (a : Aᵐᵒᵖ) (m : M) :
     (letI := oppositeOfCommutingAction A M; a • m) = MulOpposite.unop a • m :=
   rfl
 
-/-- Every original commuting scalar action also commutes with the canonical opposite action. -/
+/-- Let `A` be a semiring and `M` an `A`-semimodule whose scalar operators commute: `a • (b • m)=b
+• (a • m)` for all `a,b,m`. Let a type `R` act on `M` with `SMulCommClass R A M`. Under the
+constructed opposite action, `SMulCommClass R Aᵐᵒᵖ M` holds: `r • (a_op • m)=a_op • (r • m)`. -/
 theorem oppositeOfCommutingAction_smulComm {R : Type z}
     [SMul R M] [SMulCommClass R A M] :
     letI := oppositeOfCommutingAction A M
@@ -73,7 +81,8 @@ theorem oppositeOfCommutingAction_smulComm {R : Type z}
   change r • (MulOpposite.unop a • m) = MulOpposite.unop a • (r • m)
   exact smul_comm r (MulOpposite.unop a) m
 
-/-- The original and canonical opposite actions commute by the source scalar-commutation law. -/
+/-- Let `A` be a semiring and `M` an `A`-semimodule whose scalar operators commute: `a • (b • m)=b
+• (a • m)` for all `a,b,m`. For the constructed `Aᵐᵒᵖ`-action, `SMulCommClass A Aᵐᵒᵖ M` holds. -/
 theorem oppositeOfCommutingAction_actionsComm :
     letI := oppositeOfCommutingAction A M
     SMulCommClass A Aᵐᵒᵖ M :=

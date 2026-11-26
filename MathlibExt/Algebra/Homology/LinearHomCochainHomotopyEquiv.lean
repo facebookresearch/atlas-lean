@@ -11,6 +11,18 @@ module
 
 public import MathlibExt.Algebra.Homology.LinearHomCochainComplex
 
+/-!
+# Contravariant Hom-cochains of a chain homotopy equivalence
+
+Let R be a ring and C a preadditive R-linear category. A chain homotopy equivalence e : K ≃ L
+between complexes indexed by ℕ induces a cochain homotopy equivalence Hom_C(L, G) ≃ Hom_C(K,
+G) for every G. Its forward and inverse maps are precomposition with e.hom and e.inv.
+
+In every degree n these maps induce an isomorphism on Hom-cohomology, natural in the
+coefficient object G. The construction keeps the contravariant direction in the complex
+argument and the covariant direction in coefficients.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -27,8 +39,11 @@ variable (R : Type w) [Ring R]
 variable {C : Type u} [Category.{v} C] [Preadditive C] [Linear R C]
 variable {K L : ChainComplex C ℕ}
 
-/-- Linear `Hom(-, G)` carries a chain-homotopy equivalence to a cochain
-homotopy equivalence. -/
+/-- Let R be a ring and C a preadditive R-linear category. Let e : HomotopyEquiv K L be a chain
+homotopy equivalence between ℕ-indexed chain complexes and let G : C. It induces a cochain
+homotopy equivalence Hom_C(L, G) ≃ Hom_C(K, G). The forward map is precomposition with e.hom :
+K ⟶ L and the inverse is precomposition with e.inv : L ⟶ K; the two inverse homotopies come
+from those of e. -/
 noncomputable def mapLinearHomCochainComplex
     (e : HomotopyEquiv K L) (G : C) :
     HomotopyEquiv
@@ -43,8 +58,10 @@ noncomputable def mapLinearHomCochainComplex
     have h := e.homotopyHomInvId.mapLinearHomCochainComplex R G
     simpa [Functor.map_comp, Functor.map_id] using h
 
-/-- A chain-homotopy equivalence induces an isomorphism on linear
-Hom-cohomology, natural in the coefficient object. -/
+/-- Let R be a ring and C a preadditive R-linear category. For a chain homotopy equivalence e : K
+≃ L and n : ℕ, precomposition with e.hom gives a natural isomorphism G ↦ H^n(Hom_C(L, G)) ≅ G
+↦ H^n(Hom_C(K, G)). For a coefficient map a : G ⟶ G', its components E_G satisfy H^n(Hom_C(L,
+a)) ≫ E_G'.hom = E_G.hom ≫ H^n(Hom_C(K, a)). -/
 noncomputable def linearHomCochainComplexHomologyNatIso
     (e : HomotopyEquiv K L) (n : ℕ) :
     HomologicalComplex.linearHomCochainComplexHomologyFunctor R C L n ≅

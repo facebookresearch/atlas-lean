@@ -2,14 +2,14 @@
 
 ## Left
 
-- [Left Derived Delta Functor Map](left-derived-delta-functor-map.md)
-- [Left Derived Delta Functor Map app](left-derived-delta-functor-map-app.md)
-- [Left Derived Delta Functor Family](left-derived-delta-functor-family.md)
-- [Left Derived Delta Functor Family obj](left-derived-delta-functor-family-obj.md)
-- [Left Derived Delta Functor Family map app](left-derived-delta-functor-family-map-ap.md)
+- [Left-derived coefficient transformations give delta-functor morphisms](left-derived-delta-functor-map.md)
+- [Degrees of a left-derived coefficient delta-functor morphism](left-derived-delta-functor-map-app.md)
+- [Left derivation as a functor to homological delta-functors](left-derived-delta-functor-family.md)
+- [Object of the left-derived delta-functor family](left-derived-delta-functor-family-obj.md)
+- [Maps of the left-derived family are derived transformations](left-derived-delta-functor-family-map-ap.md)
 
 ## Right
 
-- [Right Derived Delta Functor Family](right-derived-delta-functor-family.md)
-- [Right Derived Delta Functor Family obj](right-derived-delta-functor-family-obj.md)
-- [Right Derived Delta Functor Family map app](right-derived-delta-functor-family-map-a.md)
+- [Right derivation as a functor to cohomological delta-functors](right-derived-delta-functor-family.md)
+- [Object of the right-derived delta-functor family](right-derived-delta-functor-family-obj.md)
+- [Maps of the right-derived family are derived transformations](right-derived-delta-functor-family-map-a.md)

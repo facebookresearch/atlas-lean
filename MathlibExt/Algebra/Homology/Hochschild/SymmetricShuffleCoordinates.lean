@@ -17,11 +17,19 @@ public import MathlibExt.Algebra.Homology.Hochschild.SimplexCoordinates
 /-!
 # Signed coefficient shuffle coordinates
 
-The Eilenberg–Zilber shuffle and coefficient diagonal
-give a signed sum indexed by ordered block shuffles.
-Ordinal surjections and complementary edge ranks
-identify its tensor representatives in every degree
-and describe their target normalization.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible symmetric coefficient
+module. A (p,q)-shuffle gives a coefficient simplex map on each input, followed by the symmetric
+diagonal. On tensor words its unsigned value is (a₀·m) ⊗ ⊗ᵢappend(a,b)(s.perm⁻¹i). Summing with
+the integer shuffle signs gives the bidegree component of the symmetric Hochschild chain
+pairing.
+
+The formulas include arbitrary p,q : ℕ, with the unique (0,0)-shuffle giving the degree-zero
+diagonal. Postcomposing with normalization projects every target tail to A/(k·1). For the
+degreewise diagonal, pointwise products are formed in A first and then projected to their
+quotient classes. The quotient tails are used as k-modules.
+
+For shuffle products and Hochschild chain coordinates, see J.-L. Loday, Cyclic Homology, second
+edition, §4.2.
 -/
 
 @[expose] public section
@@ -42,7 +50,11 @@ variable (k : Type u) (A : Type v) (M : Type w) [CommRing k] [CommRing A]
 
 attribute [local instance] opModule actionsComm kOpComm kOpTower
 
-/-- One unsigned native shuffle term, before applying the original permutation sign. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For a (p,q)-shuffle s, apply its left and right simplex maps to the degree-p
+regular and degree-q coefficient tensors, then apply the degree-p+q symmetric diagonal. The
+resulting k-linear map is rawShuffleTerm k A M s. -/
 def rawShuffleTerm {p q : ℕ} (s : AlgebraicTopology.EilenbergZilber.Shuffle p q) :
     (ULift.{w} A ⊗[k] TensorPower k p A) ⊗[k]
       (M ⊗[k] TensorPower k q A) →ₗ[k] M ⊗[k] TensorPower k (p + q) A :=
@@ -51,7 +63,11 @@ def rawShuffleTerm {p q : ℕ} (s : AlgebraicTopology.EilenbergZilber.Shuffle p 
       (ModuleCat.Algebra.Hochschild.simplexMap k A M s.rightHom).hom)
 
 
-/-- An unsigned shuffle term is the original coefficient times the σ⁻¹ tensor word. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For a lifted a₀, m ∈ M and tail words a,b of lengths p,q, rawShuffleTerm(s)
+sends (a₀ ⊗ ⊗a) ⊗ (m ⊗ ⊗b) to (a₀·m) ⊗ ⊗ᵢappend(a,b)(s.perm⁻¹i). The coefficient action uses the
+underlying A-element of a₀. -/
 theorem rawShuffleTerm_tprod {p q : ℕ}
     (s : AlgebraicTopology.EilenbergZilber.Shuffle p q)
     (a0 : ULift.{w} A) (m : M) (a : Fin p → A) (b : Fin q → A) :
@@ -67,7 +83,11 @@ theorem rawShuffleTerm_tprod {p q : ℕ}
     (a0.down • m) ⊗ₜ[k] PiTensorProduct.tprod k c)
       (AlgebraicTopology.EilenbergZilber.Shuffle.pullbackEdges_mul s a b)
 
-/-- The native signed shuffle sum in the original coefficient-first tensor carriers. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For p,q : ℕ, signedRawShuffle is the k-linear map ∑s
+shuffleSignZ(s)·rawShuffleTerm(s), over all ordered (p,q)-block shuffles, from the tensor of the
+degree-p regular and degree-q coefficient terms to degree p+q. -/
 def signedRawShuffle (p q : ℕ) :
     (ULift.{w} A ⊗[k] TensorPower k p A) ⊗[k]
       (M ⊗[k] TensorPower k q A) →ₗ[k] M ⊗[k] TensorPower k (p + q) A := by
@@ -76,7 +96,11 @@ def signedRawShuffle (p q : ℕ) :
     AlgebraicTopology.EilenbergZilber.shuffleSignZ s • rawShuffleTerm k A M s
 
 
-/-- The signed shuffle acts on every original tensor word by the full σ⁻¹ sum. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For tail words a,b and coefficients a₀,m, signedRawShuffle sends (a₀ ⊗ ⊗a) ⊗
+(m ⊗ ⊗b) to ∑s sign(s)·((a₀·m) ⊗ ⊗ᵢappend(a,b)(s.perm⁻¹i)). The sum includes every (p,q)-shuffle
+with its integer permutation sign. -/
 theorem signedRawShuffle_tprod (p q : ℕ) (a0 : ULift.{w} A) (m : M)
     (a : Fin p → A) (b : Fin q → A) :
     signedRawShuffle k A M p q
@@ -90,7 +114,11 @@ theorem signedRawShuffle_tprod (p q : ℕ) (a0 : ULift.{w} A) (m : M)
   simp only [signedRawShuffle, LinearMap.sum_apply, LinearMap.smul_apply,
     rawShuffleTerm_tprod]
 
-/-- Evaluating the native signed map retains every coefficient simplex action. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For degree-p and degree-q tensors x,y, signedRawShuffle(x ⊗ y) = ∑s
+sign(s)·Δₚ₊q(s_Lx ⊗ s_Ry), where s_L,s_R are the coefficient simplex maps of the shuffle's
+ordinal surjections and Δ is the raw symmetric diagonal. -/
 theorem signedRawShuffle_apply (p q : ℕ)
     (x : ULift.{w} A ⊗[k] TensorPower k p A)
     (y : M ⊗[k] TensorPower k q A) :
@@ -104,7 +132,10 @@ theorem signedRawShuffle_apply (p q : ℕ)
   simp only [signedRawShuffle, LinearMap.sum_apply, LinearMap.smul_apply,
     rawShuffleTerm, LinearMap.comp_apply, TensorProduct.map_tmul]
 
-/-- The chain pairing is exactly the signed native map in raw tensor coordinates. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For every p,q : ℕ, the underlying linear map of the (p,q)-component of pairing
+k A M equals signedRawShuffle k A M p q. -/
 theorem pairing_pair_signedRawShuffle (p q : ℕ) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -169,7 +200,11 @@ theorem pairing_pair_signedRawShuffle (p q : ℕ) :
   simp only [Preadditive.comp_sum, Preadditive.sum_comp, ModuleCat.hom_sum]
   exact Finset.sum_congr rfl (fun t _ => hterm t)
 
-/-- Every bidegree of the original chain pairing has the full signed tensor-word formula. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For p,q : ℕ, lifted a₀, m ∈ M and words a,b, the chain pairing component sends
+(a₀ ⊗ ⊗a) ⊗ (m ⊗ ⊗b) to ∑s sign(s)·((a₀·m) ⊗ ⊗ᵢappend(a,b)(s.perm⁻¹i)). Both zero and positive
+block degrees are included. -/
 theorem pairing_pair_tprod (p q : ℕ) (a0 : ULift.{w} A) (m : M)
     (a : Fin p → A) (b : Fin q → A) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
@@ -200,7 +235,10 @@ theorem pairing_pair_tprod (p q : ℕ) (a0 : ULift.{w} A) (m : M)
   rw [pairing_pair_signedRawShuffle]
   exact signedRawShuffle_tprod k A M p q a0 m a b
 
-/-- Both empty blocks give the original diagonal, without normalization of either input. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For p=q=0 there is a unique shuffle with sign +1. Consequently
+signedRawShuffle k A M 0 0 equals diagonalRaw k A M 0, the degree-zero coefficient diagonal. -/
 theorem signedRawShuffle_zero_zero :
     signedRawShuffle k A M 0 0 = diagonalRaw.{u, v, w} k A M 0 := by
   classical
@@ -222,7 +260,11 @@ theorem signedRawShuffle_zero_zero :
     ModuleCat.hom_id, TensorProduct.map_id, LinearMap.comp_id]
 
 
-/-- Target-only normalization retains the same raw signed shuffle, then the original quotient. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. In bidegree (p,q), the pairing postcomposed with Hochschild normalization has
+underlying linear map Nₚ₊q ∘ signedRawShuffle k A M p q, where N applies A → A/(k·1) to every
+tail factor. -/
 theorem pairing_pair_target_normalization (p q : ℕ) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -258,7 +300,11 @@ theorem pairing_pair_target_normalization (p q : ℕ) :
   rw [ModuleCat.Algebra.Hochschild.normalizationProjection_f]
   rfl
 
-/-- The diagonal's coefficient and pointwise-tail products survive target normalization as classes. -/
+/-- Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module with
+symmetric right action. The regular coefficient is a chosen universe lift of A, and the target
+coefficient is M. For words a,b of length n and coefficients a₀,m, normalization of Δₙ((a₀ ⊗ ⊗a)
+⊗ (m ⊗ ⊗b)) equals (a₀·m) ⊗ ⊗ᵢ[aᵢbᵢ] in M ⊗_k(A/(k·1))^{⊗n}. Each product aᵢbᵢ is formed in A
+before taking its k-module quotient class. -/
 theorem diagonalRaw_target_normalization_tprod (n : ℕ) (a0 : ULift.{w} A) (m : M)
     (a b : Fin n → A) :
     ((normalizationProjection k A M).f n).hom

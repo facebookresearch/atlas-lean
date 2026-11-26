@@ -1,5 +1,5 @@
-# Desc Hom
+# Injective-resolution comparison over an object map
 
-Mathlib's chosen comparison map, bundled with its augmentation equation.
-
-This choice is not asserted to preserve identities or composition strictly.
+In an abelian category `C`, a map `f : X → Y` lifts to an
+augmentation-compatible cochain comparison between any chosen
+injective resolution of `X` and injective resolution of `Y`.

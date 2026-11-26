@@ -13,7 +13,14 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.DeltaFunctor
 public import MathlibExt.CategoryTheory.Abelian.Injective.HorseshoeComparison
 
 /-!
-## Endpoint-choice transport for the same right-derived connector
+# Endpoint choices in right-derived connecting maps
+
+For a short exact sequence in an abelian category, endpoint injective
+resolutions give compatible horseshoe data. Maps of short exact
+sequences lift to maps between these data for any endpoint choices.
+For an additive functor into an abelian category, the resulting
+right-derived boundaries commute with the sequence maps and equal
+the canonical connecting transformation for every endpoint choice.
 -/
 @[expose] public section
 noncomputable section
@@ -25,7 +32,10 @@ open CategoryTheory CategoryTheory.Limits
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- The MAIN horseshoe comparison uses chosen endpoint descHom maps. -/
+/-- Let `C` be abelian, `S,T` short exact sequences and `α : S → T`.
+Choose injective resolutions of the left and right endpoints of each.
+The endpoint comparison lifts `α` to a morphism of the two compatible
+injective horseshoes. -/
 def HorseshoeData.endpointComparison
     {S T : ShortComplex C} (hS : S.ShortExact) (hT : T.ShortExact)
     (I₁ : InjectiveResolution S.X₁) (I₃ : InjectiveResolution S.X₃)
@@ -36,7 +46,10 @@ def HorseshoeData.endpointComparison
     (InjectiveResolution.descHom α.τ₁ I₁ J₁)
     (InjectiveResolution.descHom α.τ₃ I₃ J₃)).some.val
 
-/-- Naturality uses the same RDdelta at every endpoint choice. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For `α : S → T` between short exact sequences
+and any endpoint injective resolutions, their boundaries satisfy
+`δ_S,n ≫ R^(n+1)F(α₁) = R^nF(α₃) ≫ δ_T,n`. -/
 theorem endpointDelta_naturality (F : C ⥤ D) [F.Additive]
     (n : ℕ) {S T : ShortComplex C} (hS : S.ShortExact) (hT : T.ShortExact)
     (I₁ : InjectiveResolution S.X₁) (I₃ : InjectiveResolution S.X₃)
@@ -55,7 +68,10 @@ theorem endpointDelta_eq (F : C ⥤ D) [F.Additive]
     (F.rightDerived n).map (𝟙 S.X₃) ≫ RightDerivedDelta.RDdelta F n S hS J₁ J₃ at h
   simpa only [Functor.map_id, Category.comp_id, Category.id_comp] using h
 
-/-- The MAIN connecting family is the same boundary for every endpoint. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The canonical connecting transformation on `S` equals the
+horseshoe boundary computed from `I₁,I₃` in every degree `n`. -/
 theorem rightDerivedConnecting_eq_endpoints (F : C ⥤ D) [F.Additive]
     (n : ℕ) (S : ShortComplex C) (hS : S.ShortExact)
     (I₁ : InjectiveResolution S.X₁) (I₃ : InjectiveResolution S.X₃) :

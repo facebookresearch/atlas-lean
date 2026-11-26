@@ -12,11 +12,16 @@ module
 public import MathlibExt.CategoryTheory.HomologicalComplex.FunctorRelativeResolutionComparison
 
 /-!
-# Coherence of relative comparison maps
+# Homotopy coherence of split relative-resolution comparisons
 
-Identity and composition comparison maps are compatible up to chain homotopy. The identity
-comparison maps in both directions give a homotopy equivalence of split relative resolutions. No
-strictly functorial choice of chain lifts is needed.
+Let `D` be preadditive with a zero object and kernels, `C`
+preadditive, and `U : D → C` additive. Relative comparisons into
+contractingly `U`-split augmented complexes, with the displayed
+kernels preserved by `U`, are unique up to chain homotopy.
+Identity comparisons are homotopic to identity, and comparison over
+a composite endpoint map is homotopic to the composite comparisons.
+Two termwise relative-projective split augmented complexes give a
+chain-homotopy equivalence preserving their augmentations.
 -/
 
 @[expose] public section
@@ -29,7 +34,11 @@ variable {D : Type uD} [Category.{vD} D] [Preadditive D] [HasZeroObject D] [HasK
   {C : Type uC} [Category.{vC} C] [Preadditive C]
   (U : D ⥤ C) [U.Additive]
 
-/-- The comparison lifting the identity is homotopic to the original identity map. -/
+/-- Let `D` be preadditive with a zero object and kernels, `C`
+preadditive, and `U : D → C` additive. For a contractingly `U`-split augmentation `Q → X[0]`
+with relative-projective terms and augmentation and differential
+kernels preserved by `U`, the comparison over `𝟙 X` is chain
+homotopic to `𝟙 Q`. -/
 def comparisonIdHomotopy (Q : ChainComplex D ℕ) (X : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (σ : AugmentationSplit U Q X α)
     (hQ : ∀ n, U.IsRelativeProjective (Q.X n))
@@ -41,7 +50,13 @@ def comparisonIdHomotopy (Q : ChainComplex D ℕ) (X : D)
     (comparison_augmentation U Q Q X X α α σ hQ hker (𝟙 X))
     (by rw [Category.id_comp, Functor.map_id, Category.comp_id])
 
-/-- The composite preserves the original complete augmentation square. -/
+/-- Let `D` be preadditive with a zero object and kernels, `C`
+preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain augmentations,
+with the augmentations of `P,R` contractingly split after `U`,
+all terms of `Q,P` `U`-relative-projective, and `U` preserving the
+augmentation and differential kernels of `P,R`. For `f : X → Y`, `g : Y → Z`, the two successive
+comparison chain maps have augmentation
+`α ≫ (f ≫ g)[0]` after composition with `R → Z[0]`. -/
 theorem comparison_composite_augmentation (Q P R : ChainComplex D ℕ) (X Y Z : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X)
     (β : P ⟶ (ChainComplex.single₀ D).obj Y)
@@ -57,7 +72,12 @@ theorem comparison_composite_augmentation (Q P R : ChainComplex D ℕ) (X Y Z : 
   rw [Category.assoc, comparison_augmentation, ← Category.assoc, comparison_augmentation,
     Category.assoc, ← Functor.map_comp]
 
-/-- The constructed comparison of a composition is homotopic to the two original comparison maps. -/
+/-- Let `D` be preadditive with a zero object and kernels, `C`
+preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain augmentations,
+with the augmentations of `P,R` contractingly split after `U`,
+all terms of `Q,P` `U`-relative-projective, and `U` preserving the
+augmentation and differential kernels of `P,R`. The comparison over `f ≫ g` is chain homotopic to the
+comparison over `f` followed by the comparison over `g`. -/
 def comparisonCompHomotopy (Q P R : ChainComplex D ℕ) (X Y Z : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X)
     (β : P ⟶ (ChainComplex.single₀ D).obj Y)
@@ -74,7 +94,11 @@ def comparisonCompHomotopy (Q P R : ChainComplex D ℕ) (X Y Z : D)
     (comparison_augmentation U Q R X Z α γ σR hQ kR (f ≫ g))
     (comparison_composite_augmentation U Q P R X Y Z α β γ σP σR hQ hP kP kR f g)
 
-/-- Inverse original identity comparisons give an homotopy equivalence. -/
+/-- Let `D` be preadditive with a zero object and kernels, `C`
+preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → X[0]` have contracting splittings
+after `U`, with all terms `U`-relative-projective and `U` preserving
+the augmentation and differential kernels of both complexes. The two comparison maps over `𝟙 X` form a chain-homotopy
+equivalence `Q ≃ P`. -/
 def comparisonHomotopyEquiv (Q P : ChainComplex D ℕ) (X : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj X)
     (σQ : AugmentationSplit U Q X α) (σP : AugmentationSplit U P X β)
@@ -93,7 +117,11 @@ def comparisonHomotopyEquiv (Q P : ChainComplex D ℕ) (X : D)
       ((Homotopy.ofEq (congrArg (comparison U P P X X β β σP hP kP) (Category.id_comp (𝟙 X)))).trans
         (comparisonIdHomotopy U P X β σP hP kP))
 
-/-- The equivalence's forward comparison retains the original augmentation. -/
+/-- Let `D` be preadditive with a zero object and kernels, `C`
+preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → X[0]` have contracting splittings
+after `U`, with all terms `U`-relative-projective and `U` preserving
+the augmentation and differential kernels of both complexes. The forward map of the comparison homotopy equivalence
+satisfies `comparison ≫ β = α` as full chain-augmentation maps. -/
 theorem comparisonHomotopyEquiv_hom_augmentation (Q P : ChainComplex D ℕ) (X : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj X)
     (σQ : AugmentationSplit U Q X α) (σP : AugmentationSplit U P X β)

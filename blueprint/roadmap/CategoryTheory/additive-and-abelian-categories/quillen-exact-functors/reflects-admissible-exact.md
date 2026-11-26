@@ -1,6 +1,6 @@
-# Reflects Admissible Exact
+# Reflection of admissible exact sequences
 
-A functor reflects admissible exactness when admissibility of the mapped
-   short complex implies admissibility of the source. This is independent of
-   fullness, faithfulness, and exactness (preservation): none of those
-   hypotheses is assumed, and none is derived here.
+For additive categories `C`, `D` with chosen exact structures and an
+additive functor `F : C → D`, reflection of admissible exactness means:
+if the mapped short complex `F(S)` is admissible exact in `D`, then
+`S` is admissible exact in `C`.

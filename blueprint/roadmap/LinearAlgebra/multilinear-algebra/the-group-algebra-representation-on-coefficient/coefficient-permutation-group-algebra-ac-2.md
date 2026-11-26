@@ -1,3 +1,6 @@
-# Coefficient Permutation Group Algebra Action single
+# The action of a group-algebra monomial
 
-A group-algebra generator acts by its scalar and original coefficient-fixed permutation.
+The action of a group-algebra monomial.
+
+For a commutative ring k, k-modules M,V, c ∈ k and σ ∈ Sₙ, the action of c[σ] on M ⊗ V⊗n is
+c · ρₙ,M(σ), where ρₙ,M fixes M.

@@ -2,18 +2,18 @@
 
 ## Hom
 
-- [Ext](ext.md)
-- [Id](id.md)
-- [Comp](comp.md)
-- [Cast](cast.md)
-- [Id comp](id-comp.md)
-- [Comp id](comp-id.md)
-- [Assoc](assoc.md)
+- [Uniqueness of projective-resolution morphisms](ext.md)
+- [Identity projective-resolution morphism](id.md)
+- [Composition of projective-resolution morphisms](comp.md)
+- [Identifying equal resolved-object maps](cast.md)
+- [Left identity law for projective-resolution maps](id-comp.md)
+- [Right identity law for projective-resolution maps](comp-id.md)
+- [Associativity of projective-resolution maps](assoc.md)
 
 ## Projective Resolution
 
-- [Lift Hom](lift-hom.md)
+- [Projective-resolution comparison over an object map](lift-hom.md)
 
 ## Functor
 
-- [Map Projective Resolution Hom](map-projective-resolution-hom.md)
+- [Mapping a projective-resolution comparison](map-projective-resolution-hom.md)

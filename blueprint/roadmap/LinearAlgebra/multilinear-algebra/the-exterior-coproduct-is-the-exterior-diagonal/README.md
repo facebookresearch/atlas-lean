@@ -1,10 +1,10 @@
 # The exterior coproduct is the exterior diagonal
 
-- [Diagonal Graded](diagonal-graded.md)
-- [Diagonal Linear](diagonal-linear.md)
-- [Diagonal Linear ι mul](diagonal-linear-mul.md)
-- [Coproduct eq diagonal Linear](coproduct-eq-diagonal-linear.md)
-- [Diagonal Graded comm](diagonal-graded-comm.md)
-- [Koszul Swap](koszul-swap.md)
-- [Koszul Swap coproduct](koszul-swap-coproduct.md)
-- [Koszul Swap tmul](koszul-swap-tmul.md)
+- [The exterior diagonal into the graded tensor algebra](diagonal-graded.md)
+- [The diagonal on the underlying tensor module](diagonal-linear.md)
+- [The linear diagonal has signed insertion recursion](diagonal-linear-mul.md)
+- [The linear diagonal equals the exterior coproduct](coproduct-eq-diagonal-linear.md)
+- [Graded interchange fixes the algebra diagonal](diagonal-graded-comm.md)
+- [Koszul interchange on the underlying tensor module](koszul-swap.md)
+- [The exterior coproduct is graded cocommutative](koszul-swap-coproduct.md)
+- [Homogeneous interchange has the Koszul sign](koszul-swap-tmul.md)

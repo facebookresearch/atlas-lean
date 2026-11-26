@@ -13,13 +13,12 @@ public import MathlibExt.Algebra.Homology.Embedding.PositiveNat
 public import MathlibExt.Algebra.Homology.Embedding.StupidTruncInclusion
 
 /-!
-# Direct inclusion of the whole positive part
+# Inclusion of positive chain coordinates
 
-Only a category with zero morphisms and a zero object is needed. The
-components are the existing native stupid-truncation coordinate maps.
-The boundary from original degree one to zero is the only extra chain-map
-condition; original degree zero is unrestricted. No homology or abelian
-structure, tensor structure, or caller-supplied comparison isomorphism is used.
+For a nonnegative chain complex with d_1 : K_1→K_0 equal to zero,
+stupid truncation to positive degrees has a canonical monic inclusion
+into K. It uses the original coordinates in every positive degree and
+the zero map at degree zero.
 -/
 
 @[expose] public section
@@ -37,7 +36,13 @@ local notation "e₊" => ComplexShape.positiveNatEmbedding
 
 variable (K : ChainComplex C ℕ)
 
-/-- Include the original positive coordinates directly, using the actual zero boundary. -/
+/--
+Let C have zero morphisms and a zero object, and let K be a nonnegative chain complex with K.d
+1 0 = 0. Let e(n)=n+1 and K₊=K.stupidTrunc e, which retains the positive degrees and is zero
+at degree zero. The original positive coordinate inclusions and the zero map at degree zero
+assemble into a complex morphism ι₊:K₊→K. The vanishing of d₁ ensures compatibility at the
+endpoint.
+-/
 def positiveStupidTruncInclusion (hK : K.d 1 0 = 0) : K.stupidTrunc e₊ ⟶ K :=
   ChainComplex.ofHom (fun i => stupidTruncι.f K e₊ i) (by
     intro n
@@ -55,20 +60,36 @@ def positiveStupidTruncInclusion (hK : K.d 1 0 = 0) : K.stupidTrunc e₊ ⟶ K :
             (i' := n + 1 + 1) (j' := n + 1) rfl rfl]
         simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id])
 
-/-- Every retained component is the whole original positive-degree coordinate map. -/
+/--
+Let C have zero morphisms and a zero object, and let K be a nonnegative chain complex with K.d
+1 0 = 0. Let e(n)=n+1 and K₊=K.stupidTrunc e, which retains the positive degrees and is zero
+at degree zero. If i'=i+1, the component ι₊.f i' equals the forward coordinate isomorphism
+K₊_{i'}≅K_{i'} supplied by stupidTruncXIso.
+-/
 @[reassoc]
 theorem positiveStupidTruncInclusion_f
     (hK : K.d 1 0 = 0) {i i' : ℕ} (hi : i + 1 = i') :
     (K.positiveStupidTruncInclusion hK).f i' = (K.stupidTruncXIso e₊ hi).hom :=
   stupidTruncι.f_eq K e₊ hi
 
-/-- The strict source is zero in degree zero; the original target object is unrestricted. -/
+/--
+Let C have zero morphisms and a zero object, and let K be a nonnegative chain complex with K.d
+1 0 = 0. Let e(n)=n+1 and K₊=K.stupidTrunc e, which retains the positive degrees and is zero
+at degree zero. The degree-zero component of ι₊:K₊→K is the zero morphism from the zero source
+term to K₀. The target object K₀ is not required to be zero.
+-/
 @[simp]
 theorem positiveStupidTruncInclusion_f_zero (hK : K.d 1 0 = 0) :
     (K.positiveStupidTruncInclusion hK).f 0 = 0 :=
   stupidTruncι.f_eq_zero K e₊ 0 (by intro i; change i + 1 ≠ 0; omega)
 
-/-- The actual inclusion is monic without any abelian or homology hypothesis. -/
+/--
+Let C have zero morphisms and a zero object, and let K be a nonnegative chain complex with K.d
+1 0 = 0. Let e(n)=n+1 and K₊=K.stupidTrunc e, which retains the positive degrees and is zero
+at degree zero. The canonical inclusion ι₊:K₊→K is a monomorphism: its positive components are
+isomorphisms and its degree-zero source is a zero object. No abelian-category or homology
+hypothesis is needed.
+-/
 theorem mono_positiveStupidTruncInclusion (hK : K.d 1 0 = 0) :
     Mono (K.positiveStupidTruncInclusion hK) := by
   apply HomologicalComplex.mono_of_mono_f
@@ -82,7 +103,11 @@ theorem mono_positiveStupidTruncInclusion (hK : K.d 1 0 = 0) :
 
 variable {K} {L : ChainComplex C ℕ}
 
-/-- Original chain maps commute with the direct strict inclusions under the two boundary laws. -/
+/--
+Let C have zero morphisms and a zero object, let φ:K→L be a morphism of nonnegative chain
+complexes, and assume K.d 1 0 = L.d 1 0 = 0. For the positive embedding e(n)=n+1,
+stupidTruncMap(φ,e) ≫ ι₊(L) = ι₊(K) ≫ φ.
+-/
 @[reassoc]
 theorem positiveStupidTruncInclusion_naturality
     (φ : K ⟶ L) (hK : K.d 1 0 = 0) (hL : L.d 1 0 = 0) :

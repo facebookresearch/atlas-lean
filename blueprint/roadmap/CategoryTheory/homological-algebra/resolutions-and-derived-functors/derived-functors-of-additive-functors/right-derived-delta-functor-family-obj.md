@@ -1,3 +1,4 @@
-# Right Derived Delta Functor Family obj
+# Object of the right-derived delta-functor family
 
-The family object is the right-derived factory of the underlying functor.
+Let `C,D` be abelian, with injective resolutions in `C`. The image of an additive functor `F : C → D` under this
+assignment is its right-derived cohomological delta-functor.

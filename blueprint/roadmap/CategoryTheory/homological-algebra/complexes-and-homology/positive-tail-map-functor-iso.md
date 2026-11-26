@@ -1,3 +1,5 @@
-# Positive tails commute with functors on complexes
+# Natural isomorphism between a mapped tail and the tail of a mapped complex
 
-The actual positive tail of the mapped complex is the mapped original positive tail.
+Let C and D be categories with zero morphisms and F : C → D a functor preserving zero morphisms.
+There is a canonical natural isomorphism T_D ∘ F_* ≅ F_* ∘ T_C on nonnegative chain complexes,
+where F_* applies F termwise. Its component at K in degree n is the identity of F(K_{n+1}).

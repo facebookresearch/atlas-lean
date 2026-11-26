@@ -1,3 +1,6 @@
-# Homology object presentation
+# Homology-functor evaluation is the chosen homology object
 
-The homology functor's object is the homology object with its fixed category choice.
+Let `C` be a category with zero morphisms and chosen homology
+objects, `K` a nonnegative cochain complex, and `q ∈ ℕ`.
+Evaluating the degree-`q` homology functor at `K` gives the chosen
+homology object `H^q(K)`.

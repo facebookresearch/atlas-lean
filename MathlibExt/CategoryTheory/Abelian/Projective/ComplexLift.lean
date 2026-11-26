@@ -13,22 +13,12 @@ module
 public import Mathlib.CategoryTheory.Abelian.Projective.Resolution
 
 /-!
-# Lifting projective complexes to projective resolutions
+# Lifting augmented projective chain complexes
 
-An augmented nonnegative chain complex whose terms are projective admits a
-comparison map to any projective resolution of its augmentation target. The
-source complex need not be exact or bounded.
-
-The construction follows the usual comparison theorem for projective
-resolutions: factor the degree-zero map through the target augmentation,
-then lift inductively through the exact short complexes in the target
-resolution.
-
-## Main declarations
-
-* `CategoryTheory.ProjectiveResolution.liftFromComplex`
-* `CategoryTheory.ProjectiveResolution.liftFromComplex_f_zero_comp`
-* `CategoryTheory.ProjectiveResolution.liftFromComplex_commutes`
+In an abelian category `C`, a natural-index chain complex `K` with
+projective terms and augmentation `ε : K → Y[0]` admits a chain
+map into any projective resolution of `Z`, extending any `f : Y → Z`.
+No exactness of the source augmentation is required.
 -/
 
 @[expose] public section
@@ -106,9 +96,10 @@ private def liftFromComplexFSucc
     (K.d (n + 2) (n + 1) ≫ g') (by simp [w]),
       (Q.exact_succ n).liftFromProjective_comp _ _⟩
 
-/-- A morphism from the augmentation target of a projective complex to the
-object resolved by `Q` lifts to a chain map into `Q`. Source exactness and
-boundedness are not required. -/
+/-- In an abelian category `C`, let `K` be a chain complex on `ℕ`
+with projective terms, augmented to `Y` by `ε`, and let `Q`
+resolve `Z`. Every `f : Y → Z` lifts to a chain map
+`K → Q.complex` commuting with these augmentations. -/
 @[no_expose]
 def liftFromComplex
     (f : Y ⟶ Z) (K : ChainComplex C ℕ)
@@ -122,8 +113,10 @@ def liftFromComplex
     (liftFromComplexFOne_zero_comm f K ε Q hK)
     (fun n p ↦ liftFromComplexFSucc K Q hK n p.1 p.2.1 p.2.2)
 
-/-- The degree-zero component of `liftFromComplex` factors the source
-augmentation followed by the chosen map. -/
+/-- For an augmented chain complex `K` with projective terms in an
+abelian category `C`, map `f : Y → Z`, and projective resolution
+`Q` of `Z`, the lifted degree-zero map satisfies
+`lift₀ ≫ Q.π₀ = ε₀ ≫ f`. -/
 @[reassoc (attr := simp)]
 theorem liftFromComplex_f_zero_comp
     (f : Y ⟶ Z) (K : ChainComplex C ℕ)
@@ -134,7 +127,9 @@ theorem liftFromComplex_f_zero_comp
   rw [liftFromComplex, ChainComplex.mkHom_f_0]
   exact liftFromComplexFZero_comp f K ε Q hK
 
-/-- The lifted chain map commutes with the source and target augmentations. -/
+/-- For an abelian category `C`, augmented projective-term complex
+`K → Y[0]`, projective resolution `Q` of `Z`, and map `f : Y → Z`,
+the lifted chain map satisfies `lift ≫ Q.π = ε ≫ single₀(f)`. -/
 @[reassoc (attr := simp)]
 theorem liftFromComplex_commutes
     (f : Y ⟶ Z) (K : ChainComplex C ℕ)

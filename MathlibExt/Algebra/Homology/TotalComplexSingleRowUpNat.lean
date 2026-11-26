@@ -13,10 +13,12 @@ public import MathlibExt.Algebra.Homology.TotalComplexUpNat
 public import Mathlib.Algebra.Homology.Single
 
 /-!
-# Totals of nonnegative cochain bicomplexes supported in one row
+# Totals of cochain bicomplexes concentrated in outer degree zero
 
-A nonnegative cochain bicomplex supported in row zero has total complex isomorphic to that row.
-The comparison is natural in the coefficient category.
+Let C be preadditive with a zero object and finite coproducts. Put a nonnegative cochain complex
+A in outer degree zero of a bicomplex B, with every other outer row zero. The inclusion of the
+(0,n) summand and the projection onto it are inverse cochain maps A ≅ Tot(B). These maps and the
+resulting total isomorphism are natural in A.
 -/
 
 /-
@@ -37,15 +39,17 @@ universe v u
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   [HasZeroObject C] [HasFiniteCoproducts C]
 
-/-- The bicomplex obtained from a nonnegative cochain complex by placing it
-in outer degree zero. -/
+/-- Let C be preadditive with a zero object and A a nonnegative cochain complex. The bicomplex
+singleRowUpNat A has row A in outer degree zero, zero rows in positive outer degrees, and zero
+outer differentials. -/
 noncomputable abbrev singleRowUpNat
     (A : HomologicalComplex C (ComplexShape.up ℕ)) :
     HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ) :=
   ((HomologicalComplex.single _ _ 0).obj A)
 
-/-- Inclusion `A → total (singleRowUpNat A)`: at degree `n`, go through `(singleRowUpNat A).X 0`
-via `singleObjXSelf` then include with `ιTotal` at outer degree `0`. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a nonnegative cochain complex
+A, let B = singleRowUpNat A. The cochain map A → Tot(B) has degree-n component the canonical
+identification A_n → B_{0,n} followed by the summand inclusion ι_{0,n}. -/
 noncomputable def fromSingleRowUpNat
     (A : HomologicalComplex C (ComplexShape.up ℕ)) :
     A ⟶ (singleRowUpNat A).total (ComplexShape.up ℕ) where
@@ -152,8 +156,10 @@ noncomputable def fromSingleRowUpNat
         (Eq.trans hB (Category.assoc _ _ _))
     rw [hFin]
 
-/-- Projection `total (singleRowUpNat A) → A`: at degree `n`, use `totalDesc`, picking the
-`(0, n)` summand through `singleObjXSelf` and sending all other summands to zero. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a nonnegative cochain complex
+A, let B = singleRowUpNat A. The cochain map Tot(B) → A restricts on bidegree (0,n) to the
+canonical identification B_{0,n} → A_n and sends all summands with positive outer degree to
+zero. -/
 noncomputable def toSingleRowUpNat
     (A : HomologicalComplex C (ComplexShape.up ℕ)) :
     (singleRowUpNat A).total (ComplexShape.up ℕ) ⟶ A where
@@ -327,8 +333,10 @@ noncomputable def toSingleRowUpNat
           (HomologicalComplex.isZero_single_obj_X _ _ _ _ hp)
       exact IsZero.eq_of_src hZ _ _
 
-/-- The projection from the total of a row-zero bicomplex restricts on its
-only nonzero row to the canonical single-complex identification. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a nonnegative cochain complex
+A and q ∈ ℕ, the inclusion ι_{0,q} into Tot(singleRowUpNat A) followed by the degree-q
+projection to A is the degree-q component of the canonical isomorphism from the row-zero single
+complex to A. -/
 @[reassoc]
 theorem ιTotal_comp_toSingleRowUpNat
     (A : HomologicalComplex C (ComplexShape.up ℕ)) (q : ℕ) :
@@ -568,8 +576,9 @@ theorem toSingleRowUpNat_fromSingleRowUpNat
         (HomologicalComplex.isZero_single_obj_X _ _ _ _ hp)
     exact Limits.IsZero.eq_of_src hZ _ _
 
-/-- The canonical isomorphism from the total of a row-zero bicomplex to the
-original nonnegative cochain complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a nonnegative cochain complex
+A, Tot(singleRowUpNat A) ≅ A. Its forward map is toSingleRowUpNat A and its inverse is
+fromSingleRowUpNat A. -/
 noncomputable def singleRowUpNatTotalIso
     (A : HomologicalComplex C (ComplexShape.up ℕ)) :
     (singleRowUpNat A).total (ComplexShape.up ℕ) ≅ A where
@@ -578,8 +587,9 @@ noncomputable def singleRowUpNatTotalIso
   hom_inv_id := toSingleRowUpNat_fromSingleRowUpNat A
   inv_hom_id := fromSingleRowUpNat_toSingleRowUpNat A
 
-/-- Functor sending a nonnegative cochain complex to the bicomplex supported
-in outer degree zero. -/
+/-- Let C be preadditive with a zero object. The functor singleRowFunctorUpNat places a nonnegative
+cochain complex A in outer degree zero of a bicomplex, with all other rows zero, and sends a
+cochain map to its degree-zero outer component. -/
 noncomputable abbrev singleRowFunctorUpNat :
     HomologicalComplex C (ComplexShape.up ℕ) ⥤
       HomologicalComplex₂ C (ComplexShape.up ℕ) (ComplexShape.up ℕ) :=
@@ -587,7 +597,9 @@ noncomputable abbrev singleRowFunctorUpNat :
     (HomologicalComplex C (ComplexShape.up ℕ)) (ComplexShape.up ℕ) 0
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The row-zero total comparison is natural in the cochain complex. -/
+/-- Let C be preadditive with a zero object and finite coproducts. For a map f : A → B of
+nonnegative cochain complexes, let e_A and e_B be the row-zero total isomorphisms. Then
+Tot(singleRowFunctorUpNat(f)) ≫ e_B.hom = e_A.hom ≫ f. -/
 theorem singleRowUpNatTotalIso_hom_naturality
     {A B : HomologicalComplex C (ComplexShape.up ℕ)} (f : A ⟶ B) :
     HomologicalComplex₂.total.map (singleRowFunctorUpNat.map f)
@@ -643,8 +655,9 @@ theorem singleRowUpNatTotalIso_hom_naturality
             (Nat.succ_ne_zero p))
       exact hZ.eq_of_src _ _
 
-/-- Functor-level row-zero total comparison for nonnegative cochain
-complexes. -/
+/-- Let C be preadditive with a zero object and finite coproducts. The composite functor placing a
+nonnegative cochain complex in outer degree zero and then totalizing is naturally isomorphic to
+the identity. Its component at A is singleRowUpNatTotalIso A. -/
 noncomputable def singleRowTotalNatIsoUpNat :
     singleRowFunctorUpNat (C := C) ⋙
         HomologicalComplex₂.totalFunctor C (ComplexShape.up ℕ)

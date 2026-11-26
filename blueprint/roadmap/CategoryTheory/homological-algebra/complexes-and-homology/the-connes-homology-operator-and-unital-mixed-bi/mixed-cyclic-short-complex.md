@@ -1,3 +1,8 @@
-# Mixed Cyclic Short Complex
+# Short complex of mixed cyclic and odd totals
 
-The printed inclusion and computed odd quotient form the native short complex.
+Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Let `T` be its Connes mixed total,
+`Z` its cyclic total, and `O` the contractible translated odd-column
+sum. The mixed-to-cyclic map `i : T → Z` uses the positive `sN`
+correction, and the odd projection uses `(-sN,id)` on even/odd coordinates. The maps `i,π`, with zero composite, define the short
+complex `T → Z → O` of nonnegative chain complexes.

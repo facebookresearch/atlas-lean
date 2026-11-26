@@ -1,4 +1,6 @@
-# Degreewise Split map short Exact
+# Additive functors preserve degreewise split short exact sequences
 
-Actual degreewise splittings give a short exact mapped complex for every
-additive functor, without requiring that functor to preserve all exact sequences.
+Let C,D be abelian categories and F:C⥤D an additive functor. Let S=(A→B→E) be a short complex
+of integer cochain complexes, with a splitting of its evaluation at every integer degree.
+Applying F termwise gives a short exact sequence of cochain complexes in D. Degreewise
+splitting is sufficient; preservation of arbitrary exact sequences by F is not assumed.

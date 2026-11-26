@@ -14,16 +14,22 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.BaseChange
 public import Mathlib.LinearAlgebra.Isomorphisms
 
 /-!
-# The mixed-degree filtration of exterior powers of a product
+# Mixed-weight filtration of an exterior power of a product
 
-For modules over a commutative ring, the exterior-product decomposition
-gives complementary tensor degrees. Its component projections define a
-descending filtration by the number of factors from the first summand.
-Each successive quotient is the tensor product of the complementary
-exterior powers.
+For R-modules M and N over a commutative ring, the exterior product decomposition identifies
+⋀[R]^m(M × N) with the direct sum of ⋀[R]^i M ⊗[R] ⋀[R]^j N over i + j = m. The mixed
+injection places the M factors before the N factors.
 
-The construction includes degree zero and both extreme weights, without
-freeness or flatness assumptions.
+The descending stage F_m^q is defined by vanishing of all coordinates with first degree i < q.
+It begins at F_m^0 = ⊤ and is zero for q > m. For q ≤ m, projection to the coordinate (q, m −
+q) is surjective with a mixed-injection section, and its kernel is the next stage F_m^(q+1)
+viewed inside F_m^q. Thus the successive quotient is ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N.
+
+A module decomposition e : W ≃ₗ[R] M × N transports these stages, projections, kernels and
+quotient coordinates through ⋀^m e. The construction includes degree zero and both extreme
+weights for arbitrary modules and separate carrier universes.
+
+See Bourbaki, *Algebra*, Chapter III, for exterior powers of direct sums.
 -/
 
 @[expose] public section
@@ -40,24 +46,24 @@ variable (R : Type u) [CommRing R]
   (M : Type v) [AddCommGroup M] [Module R M]
   (N : Type w) [AddCommGroup N] [Module R N]
 
-/-- Native tensor module groups keep their existing tensor monoid parent.
-This supplies the group required by the native quotient-kernel equivalence. -/
-local instance tensor_addCommGroup {A B : Type*} [AddCommMonoid A] [AddCommMonoid B]
-    [Module R A] [Module R B] : AddCommGroup (A ⊗[R] B) :=
-  Module.addCommMonoidToAddCommGroup R
-
-/-- The literal finite complementary-weight index, including both zero weights. -/
+/-- For m : ℕ, Index m is the subtype of pairs (i, j) : ℕ × ℕ satisfying i + j = m. It indexes
+every complementary mixed weight in degree m, including (0, m) and (m, 0). -/
 abbrev Index (m : ℕ) := {p : ℕ × ℕ // p.1 + p.2 = m}
 
 abbrev Piece (m : ℕ) (p : Index m) := (⋀[R]^p.val.1 M) ⊗[R] (⋀[R]^p.val.2 N)
 
-/-- The actual component of the existing exterior-product equivalence. -/
+/-- Let R be a commutative ring and M and N R-modules. For m : ℕ and p = (i, j) with i + j = m,
+coordinate R M N m p : ⋀[R]^m (M × N) →ₗ[R] (⋀[R]^i M ⊗[R] ⋀[R]^j N) is the p-th direct-sum
+projection after the exterior-product equivalence. -/
 def coordinate (m : ℕ) (p : Index m) :
     (⋀[R]^m (M × N)) →ₗ[R] Piece R M N m p :=
   (DirectSum.component R (Index m) (Piece R M N m) p).comp
     (exteriorPower.productEquiv R M N m).toLinearMap
 
-/-- The actual mixed-tensor injection, using the inverse original exterior-product map. -/
+/-- Let R be a commutative ring and M and N R-modules. For p = (i, j) with i + j = m, injection R
+M N m p maps ⋀[R]^i M ⊗[R] ⋀[R]^j N into ⋀[R]^m (M × N) using the inverse exterior-product
+equivalence and the p-th summand inclusion. A pure tensor x ⊗ y maps to the exterior image of
+x under inl multiplied by the exterior image of y under inr, in that order. -/
 def injection (m : ℕ) (p : Index m) :
     Piece R M N m p →ₗ[R] (⋀[R]^m (M × N)) :=
   (exteriorPower.productEquiv R M N m).symm.toLinearMap.comp
@@ -75,7 +81,9 @@ theorem coordinate_injection_ne (m : ℕ) (p p' : Index m) (h : p ≠ p')
     LinearEquiv.apply_symm_apply, DirectSum.component.of,
     dif_neg (Ne.symm h)]
 
-/-- At stage q, actual mixed coordinates of first degree smaller than q vanish. -/
+/-- Let R be a commutative ring and M and N R-modules. For m, q : ℕ, filtration R M N m q is the
+submodule of ⋀[R]^m (M × N) consisting of z with coordinate R M N m (i, j) z = 0 whenever i +
+j = m and i < q. Thus only first weights at least q are retained. -/
 def filtration (m q : ℕ) : Submodule R (⋀[R]^m (M × N)) where
   carrier := {z | ∀ p : Index m, p.val.1 < q → coordinate R M N m p z = 0}
   zero_mem' := by intro p _; exact map_zero _
@@ -85,11 +93,6 @@ def filtration (m q : ℕ) : Submodule R (⋀[R]^m (M × N)) where
   smul_mem' := by
     intro r z hz p hp
     rw [map_smul, hz p hp, smul_zero]
-
-/-- Use the native group construction from the unchanged stage monoid and R-action.
-Its parent monoid is exactly the one used by the native submodule maps. -/
-local instance filtration_addCommGroup (m q : ℕ) :
-    AddCommGroup (filtration R M N m q) := Module.addCommMonoidToAddCommGroup R
 
 theorem filtration_antitone (m : ℕ) {q q' : ℕ} (h : q ≤ q') :
     filtration R M N m q' ≤ filtration R M N m q := by
@@ -101,7 +104,9 @@ theorem filtration_zero (m : ℕ) : filtration R M N m 0 = ⊤ := by
   change (∀ p : Index m, p.val.1 < 0 → coordinate R M N m p z = 0) ↔ True
   simp only [Nat.not_lt_zero, false_implies, implies_true]
 
-/-- This is a finite filtration in the actual total exterior degree. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. If m < q, then filtration R
+M N m q = ⊥, since every complementary first weight is at most m. -/
 theorem filtration_eq_bot (m q : ℕ) (h : m < q) :
     filtration R M N m q = ⊥ := by
   apply eq_bot_iff.mpr
@@ -114,15 +119,23 @@ theorem filtration_eq_bot (m q : ℕ) (h : m < q) :
   change coordinate R M N m p z = 0
   exact hz p (by have hp := p.property; omega)
 
-/-- The actual mixed component in the qth successive grade. -/
+/-- For m, q : ℕ with q ≤ m, index m q hq is the pair (q, m − q) in Index m. Its degree sum is q +
+(m − q) = m. -/
 def index (m q : ℕ) (hq : q ≤ m) : Index m := ⟨(q, m - q), by omega⟩
 
-/-- Projection from the actual filtration stage onto its new mixed tensor component. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. For q ≤ m, gradeProjection
+R M N m q hq : F_m^q →ₗ[R] ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N is the restriction of the coordinate
+projection for (q, m − q) to F_m^q. -/
 def gradeProjection (m q : ℕ) (hq : q ≤ m) :
     filtration R M N m q →ₗ[R] Piece R M N m (index m q hq) :=
   (coordinate R M N m (index m q hq)).comp (filtration R M N m q).subtype
 
-/-- The original mixed injection lands in the actual filtration stage. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. For q ≤ m, gradeSection R M
+N m q hq maps the mixed tensor piece ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N into F_m^q by the (q, m − q)
+injection. Its other first-weight coordinates below q are zero, and projection to the q-th
+grade returns the given tensor. -/
 def gradeSection (m q : ℕ) (hq : q ≤ m) :
     Piece R M N m (index m q hq) →ₗ[R] filtration R M N m q :=
   (injection R M N m (index m q hq)).codRestrict (filtration R M N m q) (by
@@ -142,11 +155,17 @@ theorem gradeProjection_surjective (m q : ℕ) (hq : q ≤ m) :
     Function.Surjective (gradeProjection R M N m q hq) :=
   fun z => ⟨gradeSection R M N m q hq z, gradeProjection_section R M N m q hq z⟩
 
-/-- The next stage viewed as a submodule of the current stage. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. Define nextStage R M N m q
+as the inverse image of F_m^(q+1) under the inclusion F_m^q → ⋀[R]^m (M × N). It is F_m^(q+1)
+viewed as a submodule of F_m^q. -/
 def nextStage (m q : ℕ) : Submodule R (filtration R M N m q) :=
   (filtration R M N m (q + 1)).comap (filtration R M N m q).subtype
 
-/-- The component projection has precisely the original next-stage kernel. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. For q ≤ m, the kernel of
+gradeProjection R M N m q hq equals nextStage R M N m q. A stage element lies in the next
+stage precisely when its remaining coordinate of first weight q vanishes. -/
 theorem gradeProjection_ker (m q : ℕ) (hq : q ≤ m) :
     (gradeProjection R M N m q hq).ker = nextStage R M N m q := by
   ext z
@@ -164,11 +183,17 @@ theorem gradeProjection_ker (m q : ℕ) (hq : q ≤ m) :
   · intro hz
     exact hz (index m q hq) (by dsimp [index]; omega)
 
-/-- The actual associated graded module is the quotient of adjacent original stages. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. For m, q : ℕ,
+associatedGraded R M N m q is F_m^q ⧸ nextStage R M N m q, the quotient of the current stage
+by the next stage viewed inside it. -/
 abbrev associatedGraded (m q : ℕ) :=
   filtration R M N m q ⧸ nextStage R M N m q
 
-/-- Every actual filtration quotient is the original complementary exterior tensor. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. For q ≤ m, the coordinate
+projection induces an R-linear equivalence associatedGraded R M N m q ≃ₗ[R] ⋀[R]^q M ⊗[R]
+⋀[R]^(m−q) N. Its inverse takes a mixed tensor to the class of its grade section. -/
 def associatedGradedEquiv (m q : ℕ) (hq : q ≤ m) :
     associatedGraded R M N m q ≃ₗ[R]
       (⋀[R]^q M) ⊗[R] (⋀[R]^(m - q) N) :=
@@ -186,7 +211,10 @@ def associatedGradedEquiv (m q : ℕ) (hq : q ≤ m) :
         map_add' := fun x y => e.map_add x y
         map_smul' := fun r x => e.map_smul r x }
 
-/-- On an original stage representative, the grade map is the actual component. -/
+/-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
+elements whose mixed coordinates of first degree below q are zero. For q ≤ m and z : F_m^q,
+associatedGradedEquiv R M N m q hq [z] = coordinate R M N m (q, m − q) z.val. The class [z] is
+in the quotient by nextStage. -/
 theorem associatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
     (z : filtration R M N m q) :
     associatedGradedEquiv R M N m q hq (Submodule.Quotient.mk z) =
@@ -210,13 +238,12 @@ universe z
 
 variable {W : Type z} [AddCommGroup W] [Module R W] (e : W ≃ₗ[R] M × N)
 
-/-- Transport the actual product filtration through a module decomposition. -/
+/-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
+a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For m, q : ℕ,
+transportedFiltration R M N e m q is the inverse image θ_m⁻¹(F_m^q) in ⋀[R]^m W, where F_m^q
+is the product filtration defined by zero coordinates of first weight below q. -/
 def transportedFiltration (m q : ℕ) : Submodule R (⋀[R]^m W) :=
   (filtration R M N m q).comap (exteriorPower.mapEquiv R W m e).toLinearMap
-
-/-- The transported stage uses the same native monoid-to-group construction. -/
-local instance transportedFiltration_addCommGroup (m q : ℕ) :
-    AddCommGroup (transportedFiltration R M N e m q) := Module.addCommMonoidToAddCommGroup R
 
 theorem transportedFiltration_zero (m : ℕ) : transportedFiltration R M N e m 0 = ⊤ := by
   rw [transportedFiltration, filtration_zero, Submodule.comap_top]
@@ -226,7 +253,11 @@ theorem transportedFiltration_eq_bot (m q : ℕ) (h : m < q) :
   rw [transportedFiltration, filtration_eq_bot R M N m q h, Submodule.comap_bot]
   exact LinearMap.ker_eq_bot.mpr (exteriorPower.mapEquiv R W m e).injective
 
-/-- The native submodule preimage equivalence, preserving the original carrier. -/
+/-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
+a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For m, q : ℕ,
+restricting θ_m gives an R-linear equivalence transportedFiltration R M N e m q ≃ₗ[R]
+filtration R M N m q. Its forward map is θ_m on the underlying stage element, and its inverse
+is θ_m⁻¹. -/
 def transportedStageEquiv (m q : ℕ) :
     transportedFiltration R M N e m q ≃ₗ[R] filtration R M N m q :=
   (exteriorPower.mapEquiv R W m e).ofSubmodule' (filtration R M N m q)
@@ -235,7 +266,10 @@ def transportedNextStage (m q : ℕ) : Submodule R (transportedFiltration R M N 
   (transportedFiltration R M N e m (q + 1)).comap
     (transportedFiltration R M N e m q).subtype
 
-/-- The actual mixed projection after the original module decomposition. -/
+/-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
+a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For q ≤ m,
+transportedGradeProjection R M N e m q hq sends a transported stage element z to the (q, m −
+q) coordinate of θ_m(z.val). Its target is ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N. -/
 def transportedGradeProjection (m q : ℕ) (hq : q ≤ m) :
     transportedFiltration R M N e m q →ₗ[R] Piece R M N m (index m q hq) :=
   (gradeProjection R M N m q hq).comp (transportedStageEquiv R M N e m q).toLinearMap
@@ -245,7 +279,10 @@ theorem transportedGradeProjection_surjective (m q : ℕ) (hq : q ≤ m) :
   (gradeProjection_surjective R M N m q hq).comp
     (transportedStageEquiv R M N e m q).surjective
 
-/-- Transport preserves the actual adjacent-stage kernel, not just a named grade object. -/
+/-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
+a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For q ≤ m, the
+kernel of transportedGradeProjection R M N e m q hq equals transportedNextStage R M N e m q,
+the inverse image of the transported stage q + 1 inside stage q. -/
 theorem transportedGradeProjection_ker (m q : ℕ) (hq : q ≤ m) :
     (transportedGradeProjection R M N e m q hq).ker =
       transportedNextStage R M N e m q := by
@@ -259,7 +296,10 @@ theorem transportedGradeProjection_ker (m q : ℕ) (hq : q ≤ m) :
 abbrev transportedAssociatedGraded (m q : ℕ) :=
   transportedFiltration R M N e m q ⧸ transportedNextStage R M N e m q
 
-/-- The quotient of the original transported stages has the actual mixed tensor coordinate. -/
+/-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
+a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For q ≤ m, the
+transported adjacent-stage quotient is R-linearly equivalent to ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N. It
+sends a class [z] to the (q, m − q) coordinate of θ_m(z.val). -/
 def transportedAssociatedGradedEquiv (m q : ℕ) (hq : q ≤ m) :
     transportedAssociatedGraded R M N e m q ≃ₗ[R]
       (⋀[R]^q M) ⊗[R] (⋀[R]^(m - q) N) :=
@@ -278,7 +318,12 @@ def transportedAssociatedGradedEquiv (m q : ℕ) (hq : q ≤ m) :
         map_add' := fun x y => eG.map_add x y
         map_smul' := fun r x => eG.map_smul r x }
 
-/-- The original grade class of a mixed tensor, through the native stage section. -/
+/-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
+a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For q ≤ m and z
+: ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N, transportedMixedClass assigns the class of
+θ_m⁻¹(injection_(q,m−q)(z)) in the quotient of transported stage q by transported stage q + 1.
+This representative is supplied by the inverse stage equivalence applied to the product grade
+section. -/
 def transportedMixedClass (m q : ℕ) (hq : q ≤ m)
     (z : Piece R M N m (index m q hq)) : transportedAssociatedGraded R M N e m q :=
   Submodule.Quotient.mk
@@ -303,7 +348,10 @@ theorem transportedAssociatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
   change eP (eQ (Submodule.Quotient.mk z)) = transportedGradeProjection R M N e m q hq z
   exact (congrArg eP hQ).trans hP
 
-/-- The actual quotient grade coordinate recovers that original mixed tensor exactly. -/
+/-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
+a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For q ≤ m and
+any tensor z in ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N, transportedAssociatedGradedEquiv applied to
+transportedMixedClass z equals z. -/
 theorem transportedMixedClass_equiv (m q : ℕ) (hq : q ≤ m)
     (z : Piece R M N m (index m q hq)) :
     transportedAssociatedGradedEquiv R M N e m q hq

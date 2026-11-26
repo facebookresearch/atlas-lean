@@ -1,4 +1,5 @@
-# Pushout Quotient Map y
+# Quotient value on the right pushout leg
 
-The induced pushout quotient map restricts to the original quotient map
-on the right pushout leg.
+For the pushout of `p : A → X`, `r : A → Y` in an additive exact
+category `C` and `q : Y → Q` with `r ≫ q = 0`, the induced
+quotient map restricts on `y : Y → P` to `q`: `y ≫ map = q`.

@@ -1,3 +1,4 @@
-# Cyclic Operator natural
+# Naturality of the signed cyclic endomorphism
 
-Applying an arbitrary linear map to every factor intertwines the signed operators.
+Let `k` be a commutative ring, `f : M →ₗ[k] M′` a linear map of
+modules, and `F_n(f)` its map on all `n+1` tensor factors. For the signed operators, `F_n(f) ∘ t_n^M = t_n^M′ ∘ F_n(f)`.

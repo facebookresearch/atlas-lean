@@ -1,3 +1,5 @@
-# Underlying Bar Augmentation Linear
+# Multiplication as the bar augmentation
 
-Multiplication augmentation as a linear map to the original carrier A.
+For a commutative ring k and a nonunital associative k-bilinear ring A,
+the bar augmentation is the k-linear multiplication map
+ε : P_0 = A ⊗[k] A → A, with ε(a ⊗ b) = ab.
