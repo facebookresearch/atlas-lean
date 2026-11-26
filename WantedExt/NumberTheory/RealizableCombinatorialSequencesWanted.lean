@@ -20,24 +20,11 @@ public import MathlibExt.NumberTheory.HelouTerjanianLargePrime
 public import MathlibExt.NumberTheory.HelouTerjanianTwo
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import MathlibExt.NumberTheory.RealizableCombinatorialSequencesNotIsAlmostRealizableSeqCatalanMotzkinSchroder
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Almost realizable sequences.** A sequence $a$ of natural numbers $a(0), a(1), \dots$ is
-almost realizable when there is an integer $m \ge 1$ such that the integer sequence
-$(m\, a(n))_{n \ge 0}$ is Dold realizable: for every $n \ge 1$, the sum
-$\sum_{d \mid n} \mu(d)\, m\, a(n/d)$ over the positive divisors $d$ of $n$, where $\mu$ is the
-Möbius function, is non-negative and divisible by $n$.
-
-This is Miska and Ward's notion that some positive integer multiple of $a$ is realizable. The
-value $a(0)$ is not used.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Definition 3. -/
-def IsAlmostRealizableSeq (a : ℕ → ℕ) : Prop :=
-  ∃ m : ℕ, 0 < m ∧ doldRealizable fun n => ((m * a n : ℕ) : ℤ)
 
 /-- **The zero sequence is almost realizable.** The constant sequence $a(n) = 0$ is almost
 realizable.
@@ -71,17 +58,6 @@ Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal
 Sequences 27 (2024), Article 24.3.3, Theorem 15 (`jis-2024-24.3.3-thm-15`). -/
 public theorem_wanted doldRealizable_dombTypeSum (r s t : ℕ) (hr : 1 ≤ r) :
     doldRealizable fun n => ((dombTypeSum n r s t : ℕ) : ℤ)
-
-/-- **The Catalan, Motzkin and large Schröder numbers are not almost realizable.** None of the
-following three sequences of non-negative integers is almost realizable: the Catalan numbers
-$C_n = \frac{1}{n+1}\binom{2n}{n}$, the Motzkin numbers $M(n)$, and the large Schröder numbers
-$S(n)$ (OEIS A006318), given by $S(0) = 1$ and $S(n+1) = S(n) + \sum_{i=0}^{n} S(i) S(n-i)$.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Theorem 21 (`jis-2024-24.3.3-thm-21`). -/
-public theorem_wanted not_isAlmostRealizableSeq_catalan_motzkin_schroder :
-    ¬ IsAlmostRealizableSeq catalan ∧ ¬ IsAlmostRealizableSeq motzkinNumber ∧
-      ¬ IsAlmostRealizableSeq Nat.largeSchroder
 
 /-- **Helou–Terjanian congruence for $p = 3$.** Let $m$ and $n$ be integers with $0 < m < n$.
 Then $\binom{3n}{3m} \equiv \binom{n}{m} \pmod{3^e}$, where
