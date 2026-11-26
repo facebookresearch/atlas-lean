@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Order.Field.Rat
 public meta import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Fin.VecNotation
 public meta import Mathlib.Data.Fin.VecNotation
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 
 /-!
 # Greedy policies of approximate values: tests
@@ -88,6 +89,55 @@ example (M : MDP St Ac ℝ) (γ : ℝ) (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (h�
       2 * γ * 1 / (1 - γ) :=
   (optimalValue_sub_policyValue_greedy_le hM hγ0 hγ1 hV s).2
 
+-- Each action jumps to its own state, but immediate rewards do not depend on the action.
+private def tiedActions : MDP Ac Ac ℝ where
+  reward s _ := if s = 0 then 1 else 0
+  prob _ a t := if t = a then 1 else 0
+
+private theorem tiedActions_stochastic : tiedActions.Stochastic := by
+  refine ⟨fun s a t => ?_, fun s a => ?_⟩
+  · simp only [tiedActions]
+    split <;> norm_num
+  · simp [tiedActions]
+
+private theorem tiedActions_greedy (γ : ℝ) (π : Ac → Ac) :
+    policyBellman tiedActions γ π 0 = bellman tiedActions γ 0 := by
+  funext s
+  have hq : qValue tiedActions γ (0 : Ac → ℝ) s = fun _ => tiedActions.reward s 0 := by
+    funext a
+    simp [qValue, tiedActions]
+  change qValue tiedActions γ 0 s (π s) =
+    Finset.univ.sup' Finset.univ_nonempty (qValue tiedActions γ 0 s)
+  rw [hq, Finset.sup'_const]
+
+-- The theorem applies even to a tie-breaking policy that disagrees with the fixed selector.
+example (γ : ℝ) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1) :
+    ∃ π : Ac → Ac, π ≠ greedy tiedActions γ 0 ∧
+      dist (optimalValue tiedActions γ tiedActions_stochastic hγ0 hγ1)
+          (policyValue tiedActions γ tiedActions_stochastic hγ0 hγ1 π) ≤
+        2 * γ / (1 - γ) * dist (optimalValue tiedActions γ tiedActions_stochastic hγ0 hγ1) 0 := by
+  let π : Ac → Ac := fun s => if greedy tiedActions γ 0 s = 0 then 1 else 0
+  refine ⟨π, ?_, dist_optimalValue_policyValue_le_of_greedy tiedActions_stochastic hγ0 hγ1
+    0 π (tiedActions_greedy γ π)⟩
+  intro heq
+  have h := congrFun heq 0
+  change (if greedy tiedActions γ 0 0 = 0 then 1 else 0) = greedy tiedActions γ 0 0 at h
+  by_cases hg : greedy tiedActions γ 0 0 = 0
+  · have h10 : (1 : Ac) ≠ 0 := by decide
+    rw [ite_eq_left hg, hg] at h
+    exact h10 h
+  · rw [ite_eq_right hg] at h
+    exact hg h.symm
+
+-- At zero discount every tied policy has exactly the optimal value.
+example (π : Ac → Ac) :
+    optimalValue tiedActions 0 tiedActions_stochastic (by norm_num) (by norm_num) =
+      policyValue tiedActions 0 tiedActions_stochastic (by norm_num) (by norm_num) π := by
+  have h := dist_optimalValue_policyValue_le_of_greedy tiedActions_stochastic (by norm_num)
+    (by norm_num) 0 π (tiedActions_greedy 0 π)
+  exact dist_le_zero.mp (by simpa only [mul_zero, zero_div, zero_mul] using h)
+
+#print axioms dist_optimalValue_policyValue_le_of_greedy
 #print axioms optimalValue_sub_policyValue_greedy_le
 #print axioms optimalValue_sub_policyValue_greedy_valueIteration_le
 
