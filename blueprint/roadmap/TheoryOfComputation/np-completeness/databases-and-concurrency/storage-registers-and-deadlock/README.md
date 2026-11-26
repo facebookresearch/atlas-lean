@@ -1,14 +1,14 @@
 # Storage, registers and deadlock
 
-- [Well-formed instances of DEADLOCK RECOVERY with a single resource type](deadlock-recovery-one-resource-well-formed.md)
-- [DEADLOCK RECOVERY with a single resource type as a decision problem](deadlock-recovery-one-resource-dec.md)
-- [DEADLOCK RECOVERY with a single resource type is NP-complete](deadlock-recovery-one-resource-np-complete.md)
 - [Instances of DEADLOCK RECOVERY](deadlock-recovery-instance.md)
 - [Well-formed instances of DEADLOCK RECOVERY](deadlock-recovery-well-formed.md)
 - [Free resources after aborting processes](deadlock-recovery-free.md)
 - [Feasible instances of DEADLOCK RECOVERY](deadlock-recovery-feasible.md)
 - [DEADLOCK RECOVERY as a decision problem](deadlock-recovery-dec.md)
 - [DEADLOCK RECOVERY is NP-complete](deadlock-recovery-np-complete.md)
+- [Well-formed instances of DEADLOCK RECOVERY with a single resource type](deadlock-recovery-one-resource-well-formed.md)
+- [DEADLOCK RECOVERY with a single resource type as a decision problem](deadlock-recovery-one-resource-dec.md)
+- [DEADLOCK RECOVERY with a single resource type is NP-complete](deadlock-recovery-one-resource-np-complete.md)
 - [Well-formed instances of FEASIBLE REGISTER ASSIGNMENT for out-degree at most 2](feasible-register-assignment-out-degree-at-most-two-well-formed.md)
 - [FEASIBLE REGISTER ASSIGNMENT for out-degree at most 2 as a decision problem](feasible-register-assignment-out-degree-at-most-two-dec.md)
 - [FEASIBLE REGISTER ASSIGNMENT is NP-complete for out-degree at most 2](feasible-register-assignment-out-degree-at-most-two-np-compl.md)
