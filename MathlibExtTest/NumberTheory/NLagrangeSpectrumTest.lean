@@ -95,3 +95,14 @@ example :
         push_cast
         ring
       _ = (3 * x + 5) / 6 := by dsimp [y]; ring
+
+-- The limsup clause specializes to the complete-quotient cuts for √2.
+example :
+    let x := Real.sqrt 2
+    let cq := fun k : ℕ => (fun z : ℝ => (Int.fract z)⁻¹)^[k] x
+    let digit := fun k => ⌊cq k⌋
+    let rev := fun k : ℕ => ((List.range (k - 1)).reverse.map (fun i => digit (i + 1))).foldr
+      (fun b acc => 1 / ((b : ℝ) + acc)) 0
+    MetaMathlibExt.nLagrangeApproximability 1 x =
+      Filter.limsup (fun k => ((digit k + rev k + Int.fract (cq k) : ℝ) : EReal)) Filter.atTop :=
+  (MetaMathlibExt.convergent_quality_and_lagrange_limsup _ irrational_sqrt_two).2
