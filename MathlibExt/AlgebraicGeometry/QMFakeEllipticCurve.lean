@@ -30,6 +30,7 @@ module
 
 public import Mathlib.Algebra.DualNumber
 public import Mathlib.Algebra.Quaternion
+public import Mathlib.AlgebraicGeometry.Geometrically.Connected
 public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import Mathlib.AlgebraicGeometry.Morphisms.Finite
 public import Mathlib.AlgebraicGeometry.Morphisms.FinitePresentation
@@ -39,19 +40,29 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.Topology.KrullDimension
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLaw
+public import MathlibExt.AlgebraicGeometry.RelativeGroupLawEndDegree
 public import MathlibExt.AlgebraicGeometry.SchemeHomOver
 
 /-!
 # Quaternion-multiplication fake elliptic curves
 
 A fake elliptic curve over a commutative ring `S` is a scheme over
-`Spec S` with a commutative relative group law, an action of an order
-`Λ` in a quaternion algebra over `ℚ` by group endomorphisms satisfying
-the trace identity on tangent spaces, and a level structure given by a
-closed immersion whose points are the `N`-torsion points of rank `N²`.
-Points over a test scheme, pushforward of points, multiples of points
-and tangent vectors over dual numbers are defined first, in terms of
-morphisms in the over category.
+`Spec S` with a commutative relative group law, an action of a subring
+`Λ` of a quaternion algebra over `ℚ` by group endomorphisms satisfying
+the trace identity on tangent spaces, and a level structure: a closed
+subscheme of `N`-torsion points, finite and flat of rank `N²` over the
+base. Pushforward and reindexing of points, level points and tangent
+vectors over dual numbers are defined first, in terms of morphisms in
+the over category; commutativity and multiples of points are
+`RelativeGroupLaw.IsCommutative` and `RelativeGroupLaw.nsmul`.
+
+Unlike the source, where `Λ` is a `ℤ`-submodule, `Λ` is a subring, so it
+acts unitally and multiplicatively without membership side conditions;
+no order, lattice or division-algebra condition is imposed. Hecke
+neighbours are taken at a prime `ℓ`. The fibres are required to be
+geometrically connected; the source's property bundle asks for connected
+fibres, which is equivalent here because the identity section gives
+every fibre a rational point.
 -/
 
 @[expose] public noncomputable section
@@ -100,7 +111,9 @@ theorem compPt_left {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
     (P : SchemeHomOver t f) : (compPt ψ hψ P).left = ψ ≫ P.left := by
   simp [compPt]
 
-/-- A point factors through a level morphism `lev : C ⟶ A`. -/
+/-- A point `P` factors through a morphism `lev : C ⟶ A`, such as the
+level morphism of a fake elliptic curve, if `P.left = P₀ ≫ lev` for some
+morphism `P₀ : T ⟶ C`. -/
 def FactorsThrough {A C : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
     (lev : C ⟶ A) {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of R)}
     (P : SchemeHomOver t f) : Prop :=
@@ -111,52 +124,23 @@ theorem factorsThrough_iff {A C : Scheme.{u}}
     {t : T ⟶ Spec (CommRingCat.of R)} (P : SchemeHomOver t f) :
     FactorsThrough lev P ↔ ∃ P₀ : T ⟶ C, P₀ ≫ lev = P.left := Iff.rfl
 
-/-- The `n`-fold sum of a point for a relative group law. -/
-def nsmulPt {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    (L : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) :
-    ℕ → SchemeHomOver t f → SchemeHomOver t f
-  | 0, _ => L.one t
-  | n + 1, P => L.mul t (nsmulPt L t n P) P
-
-@[simp]
-theorem nsmulPt_zero {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    (L : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (P : SchemeHomOver t f) :
-    nsmulPt L t 0 P = L.one t := rfl
-
-@[simp]
-theorem nsmulPt_succ {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    (L : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) (P : SchemeHomOver t f) :
-    nsmulPt L t (n + 1) P = L.mul t (nsmulPt L t n P) P := rfl
-
-/-- Commutativity of a relative group law. -/
-def IsCommutativeLaw {A : Scheme.{u}}
-    {f : A ⟶ Spec (CommRingCat.of R)} (L : RelativeGroupLaw R f) : Prop :=
-  ∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R))
-    (P Q : SchemeHomOver t f), L.mul t P Q = L.mul t Q P
-
-theorem IsCommutativeLaw.mul_comm {A : Scheme.{u}}
-    {f : A ⟶ Spec (CommRingCat.of R)} {L : RelativeGroupLaw R f}
-    (h : IsCommutativeLaw L) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (P Q : SchemeHomOver t f) :
-    L.mul t P Q = L.mul t Q P :=
-  h t P Q
-
 variable {S : Type u} [CommRing S]
 
-/-- The geometric point of `Spec S` at a map to a field. -/
+/-- The point `Spec k ⟶ Spec S` given by a ring map `sk : S →+* k` to a
+field `k`; it is a geometric point when `k` is algebraically closed. -/
 def geomPoint (k : Type u) [Field k] (sk : S →+* k) :
     Spec (CommRingCat.of k) ⟶ Spec (CommRingCat.of S) :=
   Spec.map (CommRingCat.ofHom sk)
 
-/-- The dual-number thickening of a geometric point. -/
+/-- The dual-number thickening `Spec k[ε] ⟶ Spec S` of `geomPoint k sk`:
+the map given by `sk` followed by the inclusion of `k` in `k[ε]`. -/
 def tangentBase (k : Type u) [Field k] (sk : S →+* k) :
     Spec (CommRingCat.of (DualNumber k)) ⟶ Spec (CommRingCat.of S) :=
   Spec.map (CommRingCat.ofHom ((algebraMap k (DualNumber k)).comp sk))
 
-/-- The zero section of the dual-number thickening. -/
+/-- The morphism `Spec k ⟶ Spec k[ε]` given by the ring map `k[ε] → k`
+that sends `ε` to `0`; composing with it reduces a point over `k[ε]`
+modulo `ε`. -/
 def tangentZero (k : Type u) [Field k] :
     Spec (CommRingCat.of k) ⟶ Spec (CommRingCat.of (DualNumber k)) :=
   Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom k k k).toRingHom)
@@ -184,12 +168,19 @@ theorem isTangentVector_iff {A : Scheme.{u}}
 
 variable {a b : ℚ}
 
-/-- A fake elliptic curve over `S`: a two-dimensional abelian-scheme-like
-object with quaternion multiplication by the order `Λ` and level-`N`
-structure. The fields are the data and axioms of the notion; the
-characterization lemmas below restate isomorphisms, pullbacks and
-neighbours in terms of an explicit mediating isomorphism or morphism. -/
-structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
+/-- A fake elliptic curve over `S` with multiplication by `Λ` and level-`N`
+structure: a smooth proper scheme over `Spec S` with geometrically
+connected fibres of dimension two and a commutative relative group law;
+a unital, multiplicative and additive action of the subring `Λ` of
+`ℍ[ℚ, a, b]` by endomorphisms over the base that respect the group law,
+under which an element whose reduced trace is an integer `n` acts with
+trace `n` on the tangent space at the identity of each geometric fibre;
+and a closed subscheme of level points, a subgroup of `N`-torsion points
+stable under `Λ`, finite, flat and of finite presentation of rank `N²`
+over the base, whose points over an algebraically closed field in which
+`N` is nonzero form a group isomorphic to `ZMod N × ZMod N`. No order,
+lattice or division-algebra condition is imposed on `Λ`. -/
+structure FakeEllipticCurve (Λ : Subring ℍ[ℚ, a, b]) (N : ℕ)
     (S : Type u) [CommRing S] : Type (u + 1) where
   /-- The underlying scheme. -/
   A : Scheme.{u}
@@ -198,15 +189,17 @@ structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
   /-- The relative group law. -/
   L : RelativeGroupLaw S f
   /-- The group law is commutative. -/
-  comm : IsCommutativeLaw L
+  comm : L.IsCommutative
   /-- The structure morphism is smooth. -/
   smooth : Smooth f
   /-- The structure morphism is proper. -/
   proper : IsProper f
+  /-- The fibres are geometrically connected. -/
+  connected : GeometricallyConnected f
   /-- Every fibre has Krull dimension two. -/
   dim_fibre : ∀ s : ↥(Spec (CommRingCat.of S)),
     topologicalKrullDim ↥(f.base ⁻¹' {s}) = 2
-  /-- The action of the order `Λ`. -/
+  /-- The action of `Λ`. -/
   act : ↥Λ → (A ⟶ A)
   /-- The action is over the base. -/
   act_over : ∀ x : ↥Λ, act x ≫ f = f
@@ -215,17 +208,19 @@ structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
     (P Q : SchemeHomOver t f),
     pushPt (act x) (act_over x) (L.mul t P Q) =
       L.mul t (pushPt (act x) (act_over x) P) (pushPt (act x) (act_over x) Q)
-  /-- The element `1` of the order acts as the identity. -/
-  act_one : ∀ h : (1 : ℍ[ℚ, a, b]) ∈ Λ, act ⟨1, h⟩ = 𝟙 A
-  /-- The action is multiplicative in the order. -/
-  act_mul : ∀ (x y : ↥Λ) (h : (x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]) ∈ Λ),
-    act ⟨(x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]), h⟩ = act y ≫ act x
-  /-- The action is additive on points. -/
+  /-- The element `1` of `Λ` acts as the identity. -/
+  act_one : act 1 = 𝟙 A
+  /-- The action is multiplicative in `Λ`. -/
+  act_mul : ∀ x y : ↥Λ, act (x * y) = act y ≫ act x
+  /-- The action is additive in `Λ`: `x + y` sends a point to the sum of its
+  images under `x` and `y`. -/
   act_add : ∀ (x y : ↥Λ) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of S)) (P : SchemeHomOver t f),
     pushPt (act (x + y)) (act_over (x + y)) P =
       L.mul t (pushPt (act x) (act_over x) P) (pushPt (act y) (act_over y) P)
-  /-- The trace of the action on tangent spaces is the quaternion trace. -/
+  /-- On the tangent space at the identity of each geometric fibre, an
+  element of `Λ` whose reduced trace is an integer `n` acts with trace
+  `n`. -/
   act_trace : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k)
     (V : Type u) [AddCommGroup V] [Module k V] [Module.Finite k V]
     (τ : V → SchemeHomOver (tangentBase k sk) f),
@@ -255,8 +250,8 @@ structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
   /-- Level points are `N`-torsion. -/
   lev_torsion : ∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
     (P : SchemeHomOver t f), FactorsThrough lev P →
-    nsmulPt L t N P = L.one t
-  /-- Level points are stable under the order action. -/
+    L.nsmul t N P = L.one t
+  /-- Level points are stable under the action of `Λ`. -/
   lev_stable : ∀ (x : ↥Λ) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of S)) (P : SchemeHomOver t f),
     FactorsThrough lev P → FactorsThrough lev (pushPt (act x) (act_over x) P)
@@ -268,7 +263,8 @@ structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
   lev_finitePresentation : LocallyOfFinitePresentation (lev ≫ f)
   /-- The level morphism has rank `N ^ 2`. -/
   lev_rank : ∀ s : ↥(Spec (CommRingCat.of S)), (lev ≫ f).finrank s = N ^ 2
-  /-- Geometric level points are `ZMod N × ZMod N` as a group. -/
+  /-- Over an algebraically closed field in which `N` is nonzero, the level
+  points form a group isomorphic to `ZMod N × ZMod N`. -/
   lev_fibre : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
     (N : k) ≠ 0 →
     ∃ e : ZMod N × ZMod N ≃
@@ -279,9 +275,10 @@ structure FakeEllipticCurve (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
 
 namespace FakeEllipticCurve
 
-variable {Λ : Submodule ℤ ℍ[ℚ, a, b]} {N : ℕ}
+variable {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ}
 
-/-- The pushforward of a point along the action of `x`. -/
+/-- The action of `x` preserves the group law on points: pushing a product
+forward along `E.act x` gives the product of the pushforwards. -/
 theorem act_hom_apply {S : Type u} [CommRing S]
     (E : FakeEllipticCurve Λ N S) (x : ↥Λ) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of S)) (P Q : SchemeHomOver t E.f) :
@@ -290,7 +287,10 @@ theorem act_hom_apply {S : Type u} [CommRing S]
         (pushPt (E.act x) (E.act_over x) Q) :=
   E.act_hom x t P Q
 
-/-- An isomorphism of fake elliptic curves, as a predicate. -/
+/-- Two fake elliptic curves over `S` are isomorphic if some isomorphism
+`E.A ≅ E'.A` over `Spec S` preserves the group law on points, commutes
+with the action of `Λ`, and matches the level points of `E` with those of
+`E'`. -/
 def Iso {S : Type u} [CommRing S] (E E' : FakeEllipticCurve Λ N S) :
     Prop :=
   ∃ (e : E.A ≅ E'.A) (he : e.hom ≫ E'.f = E.f),
@@ -303,7 +303,10 @@ def Iso {S : Type u} [CommRing S] (E E' : FakeEllipticCurve Λ N S) :
       (P : SchemeHomOver t E.f),
       FactorsThrough E.lev P ↔ FactorsThrough E'.lev (mapPt e.hom he P))
 
-/-- The same isomorphism condition, for a named mediating isomorphism. -/
+/-- An isomorphism `e : E.A ≅ E'.A` over `Spec S` is an isomorphism of
+fake elliptic curves if it preserves the group law on points, commutes
+with the action of `Λ`, and matches the level points of `E` with those of
+`E'`. -/
 def IsoVia {S : Type u} [CommRing S] (E E' : FakeEllipticCurve Λ N S)
     (e : E.A ≅ E'.A) (he : e.hom ≫ E'.f = E.f) : Prop :=
   (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
@@ -368,7 +371,11 @@ def comapPt {S S' : Type u} [CommRing S] [CommRing S']
       rw [hg.w, ← Category.assoc, hwP]
     exact hw)
 
-/-- Pullback of fake elliptic curves along a ring map, for a named map. -/
+/-- `E'` over `S'` is the pullback of `E` along `φ : S →+* S'` via
+`g : E'.A ⟶ E.A` if `g`, the structure morphisms and `Spec φ` form a
+pullback square of schemes, `g` carries the group law of `E'` to that of
+`E` and commutes with the action of `Λ`, and `g` maps level points of `E'`
+to level points of `E`. -/
 def IsPullbackVia {S S' : Type u} [CommRing S] [CommRing S']
     (φ : S →+* S') (E : FakeEllipticCurve Λ N S)
     (E' : FakeEllipticCurve Λ N S') (g : E'.A ⟶ E.A) : Prop :=
@@ -383,7 +390,9 @@ def IsPullbackVia {S S' : Type u} [CommRing S] [CommRing S']
       (P : SchemeHomOver t' E'.f), FactorsThrough E'.lev P →
       ∃ P₀ : T ⟶ E.C, P₀ ≫ E.lev = P.left ≫ g)
 
-/-- Pullback of fake elliptic curves along a ring map. -/
+/-- `E'` over `S'` is the pullback of `E` along `φ : S →+* S'` if it is
+one via some morphism `g : E'.A ⟶ E.A`, in the sense of
+`IsPullbackVia`. -/
 def IsPullback {S S' : Type u} [CommRing S] [CommRing S']
     (φ : S →+* S') (E : FakeEllipticCurve Λ N S)
     (E' : FakeEllipticCurve Λ N S') : Prop :=
@@ -395,11 +404,14 @@ theorem isPullback_iff_exists_via {S S' : Type u} [CommRing S]
     IsPullback φ E E' ↔ ∃ g : E'.A ⟶ E.A, IsPullbackVia φ E E' g :=
   Iff.rfl
 
-/-- Hecke neighbours: an isogeny-like pair with both level structures
-preserved and composite given by the prime element, neither map an
-isomorphism. -/
+/-- `E` and `E'` are Hecke neighbours at `ℓ` if `ℓ` is prime and there are
+morphisms `φ : E.A ⟶ E'.A` and `ψ : E'.A ⟶ E.A` over the base, neither an
+isomorphism, that preserve the group law, commute with the action of `Λ`
+and map level points to level points, with `φ ≫ ψ` and `ψ ≫ φ` the
+actions of `ℓ`. -/
 def HeckeNeighbour {S : Type u} [CommRing S] (ℓ : ℕ)
     (E E' : FakeEllipticCurve Λ N S) : Prop :=
+  ℓ.Prime ∧
   ∃ (φ : E.A ⟶ E'.A) (hφ : φ ≫ E'.f = E.f) (ψ : E'.A ⟶ E.A)
     (hψ : ψ ≫ E.f = E'.f),
     (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
@@ -416,17 +428,14 @@ def HeckeNeighbour {S : Type u} [CommRing S] (ℓ : ℕ)
     (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
       (P : SchemeHomOver t E'.f), FactorsThrough E'.lev P →
       FactorsThrough E.lev (mapPt ψ hψ P)) ∧
-    (∀ hℓ : ((ℓ : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-      φ ≫ ψ = E.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩ ∧
-        ψ ≫ φ = E'.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩) ∧
+    (φ ≫ ψ = E.act (ℓ : ↥Λ) ∧ ψ ≫ φ = E'.act (ℓ : ↥Λ)) ∧
     ¬ IsIso φ ∧ ¬ IsIso ψ
 
 theorem heckeNeighbour_symm {S : Type u} [CommRing S] {ℓ : ℕ}
     {E E' : FakeEllipticCurve Λ N S} (h : HeckeNeighbour ℓ E E') :
     HeckeNeighbour ℓ E' E := by
-  obtain ⟨φ, hφ, ψ, hψ, hm, hm', ha, ha', hl, hl', hc, hni, hnj⟩ := h
-  exact ⟨ψ, hψ, φ, hφ, hm', hm, ha', ha, hl', hl,
-    fun hℓ => (hc hℓ).symm, hnj, hni⟩
+  obtain ⟨hℓ, φ, hφ, ψ, hψ, hm, hm', ha, ha', hl, hl', hc, hni, hnj⟩ := h
+  exact ⟨hℓ, ψ, hψ, φ, hφ, hm', hm, ha', ha, hl', hl, hc.symm, hnj, hni⟩
 
 end FakeEllipticCurve
 

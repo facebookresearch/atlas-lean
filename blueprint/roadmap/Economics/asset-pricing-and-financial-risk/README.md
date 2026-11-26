@@ -1,0 +1,43 @@
+# Asset pricing and financial risk
+
+Asset pricing by absence of arbitrage and the measurement of financial risk: static replication, parity relations and no-arbitrage bounds (option payoffs and put–call parity, properties of call prices, forwards and futures, covered interest parity), pricing by replication in one-period and multi-period binomial models and the early exercise of American calls, the Black–Scholes formula and its sensitivities, state prices and the fundamental theorem of asset pricing in state-price form, the law of one price, stochastic discount factors and linear factor pricing, asset and portfolio returns, mean–variance portfolios, the tangency portfolio and the capital asset pricing model, value at risk and expected shortfall, credit risk (expected loss, defaultable bonds), and optimal execution: liquidation schedules trading off quadratic impact costs against inventory risk. The fundamental theorem of asset pricing for martingale measures, in gain form, and finite-horizon optimal stopping and the Snell envelope are under Martingales and optional stopping in Probability; present values of deterministic cash flows, annuities and bonds are under Interest theory and fixed income, and the valuation of firms and their securities under Corporate finance.
+
+## [Part 1 of 2](part-01/README.md)
+
+- [Asset and portfolio returns](part-01/asset-and-portfolio-returns/README.md)
+- [Black–Scholes delta and vega](part-01/black-scholes-delta-and-vega/README.md)
+- [Black–Scholes formula](part-01/black-scholes-formula/README.md)
+- [Black–Scholes put price, parity and bounds](part-01/black-scholes-put-price-parity-and-bounds/README.md)
+- [Butterfly spreads](part-01/butterfly-spreads/README.md)
+- [Capital asset pricing model](part-01/capital-asset-pricing-model/README.md)
+- [Consumption-based stochastic discount factor](part-01/consumption-based-stochastic-discount-factor/README.md)
+- [Covered interest parity](part-01/covered-interest-parity/README.md)
+- [Defaultable zero-coupon bonds](part-01/defaultable-zero-coupon-bonds/README.md)
+- [Expected credit loss decomposition](part-01/expected-credit-loss-decomposition/README.md)
+- [Expected shortfall](part-01/expected-shortfall/README.md)
+- [Forward price bounds under trading frictions](part-01/forward-price-bounds-under-trading-frictions/README.md)
+- [Forward prices and the cost of carry](part-01/forward-prices-and-the-cost-of-carry/README.md)
+- [Fundamental theorem of asset pricing and state prices](part-01/fundamental-theorem-of-asset-pricing-and-state-p/README.md)
+- [Futures margin accounts](part-01/futures-margin-accounts/README.md)
+- [Law of one price](part-01/law-of-one-price/README.md)
+- [Linear factor pricing](part-01/linear-factor-pricing/README.md)
+- [Long-only minimum-variance portfolios](part-01/long-only-minimum-variance-portfolios/README.md)
+- [Mean–variance frontier](part-01/mean-variance-frontier/README.md)
+- [Monotonicity and convexity of call prices in the strike](part-01/monotonicity-and-convexity-of-call-prices-in-the/README.md)
+
+## [Part 2 of 2](part-02/README.md)
+
+- [No early exercise of American calls](part-02/no-early-exercise-of-american-calls/README.md)
+- [No-arbitrage condition in the binomial model](part-02/no-arbitrage-condition-in-the-binomial-model/README.md)
+- [One-period binomial pricing by replication](part-02/one-period-binomial-pricing-by-replication/README.md)
+- [Optimal execution](part-02/optimal-execution/README.md)
+- [Option payoffs and put–call parity](part-02/option-payoffs-and-put-call-parity/README.md)
+- [Portfolio beta](part-02/portfolio-beta/README.md)
+- [Replication in the multi-period binomial model](part-02/replication-in-the-multi-period-binomial-model/README.md)
+- [Single-index variance decomposition](part-02/single-index-variance-decomposition/README.md)
+- [State prices and the stochastic discount factor](part-02/state-prices-and-the-stochastic-discount-factor/README.md)
+- [Tangency portfolio and the Sharpe ratio](part-02/tangency-portfolio-and-the-sharpe-ratio/README.md)
+- [Two-asset minimum-variance portfolio](part-02/two-asset-minimum-variance-portfolio/README.md)
+- [Value at risk](part-02/value-at-risk/README.md)
+- [As σ → 0⁺ the Black–Scholes call price tends to max(S0 − K e⁻ʳᵀ, 0)](part-02/tendsto-black-scholes-call-zero-vol.md)
+- [Hansen–Jagannathan bound on the Sharpe ratio](part-02/hansen-jagannathan-bound.md)

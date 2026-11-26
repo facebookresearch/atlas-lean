@@ -14,4 +14,5 @@ Erdős–Ko–Rado and its variants, Chvátal's conjecture, forbidden and single
 - [Sunflower lemma](sunflower-lemma/README.md)
 - [Union-closed families](union-closed-families/README.md)
 - [Union-free families](union-free-families/README.md)
+- [Exists strict Mono eq sum choose](exists-strict-mono-eq-sum-choose.md)
 - [Macaulay's theorem for monomials](macaulay-multiset-shadow-minimal.md)

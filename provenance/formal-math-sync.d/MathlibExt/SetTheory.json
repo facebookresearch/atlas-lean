@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "MathlibExt/SetTheory/Cardinal/SimpleGraph.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "23b082369b7e3fe1d4f29cbcb1193ba751ba65a88621f9898e371ee02b4f0a33", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "87ccc6e14047bb7e079d681f3307e34b6456c786992031a63636a5632b2f3f37"}
+  ]
+}

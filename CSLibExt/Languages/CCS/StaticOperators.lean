@@ -46,12 +46,14 @@ namespace VisibleLabel
 
 variable {Name : Type*}
 
-/-- Reverse the polarity of a visible label. -/
+/-- **Complement of a visible label.** The complement of the input label on a channel $a$ is the
+output label on $a$, and the complement of the output label on $a$ is the input label on $a$. -/
 def complement : VisibleLabel Name → VisibleLabel Name
   | .input name => .output name
   | .output name => .input name
 
-/-- Include a visible label into the full CCS label type. -/
+/-- **Visible labels as CCS labels.** The inclusion of visible labels into CCS labels sends the
+input on a channel $a$ to the input on $a$, and the output on $a$ to the output on $a$. -/
 def toLabel : VisibleLabel Name → Label Name
   | .input name => .input name
   | .output name => .output name
@@ -66,9 +68,11 @@ theorem toLabel_complementary (label : VisibleLabel Name) :
 
 end VisibleLabel
 
-/-- A finite CCS relabelling. Each table entry gives the signed image of an
-input name; the image of the corresponding output is its complement. The
-first matching entry wins and names absent from the table map identically. -/
+/-- **Relabelling.** A finite CCS relabelling over channel names is a finite list of entries
+$(a, \ell)$, each pairing a channel name $a$ with a visible label $\ell$, that is, an input or an
+output on some channel. The entry $(a, \ell)$ gives $\ell$ as the image of the input on $a$; the
+image of the output on $a$ is then the complement of $\ell$. The first entry with name $a$ is
+used, and a name occurring in no entry is mapped to itself. -/
 structure Relabelling (Name : Type*) where
   entries : List (Name × VisibleLabel Name)
   deriving DecidableEq
@@ -82,7 +86,10 @@ def applyEntries : List (Name × VisibleLabel Name) → Name → VisibleLabel Na
   | (source, target) :: rest, name =>
       if name = source then target else applyEntries rest name
 
-/-- Apply a finite relabelling, using the identity outside its table. -/
+/-- **Applying a relabelling to a channel name.** Let $f$ be a finite relabelling whose table lists
+the entries $(a_1, \ell_1), \dots, (a_k, \ell_k)$, where each $a_i$ is a channel name and each
+$\ell_i$ a visible label. The image of a channel name $a$ under $f$ is $\ell_i$ for the first index
+$i$ with $a_i = a$, and the input label on $a$ when no entry has name $a$. -/
 def apply (rename : Relabelling Name) (name : Name) : VisibleLabel Name :=
   applyEntries rename.entries name
 
@@ -103,10 +110,14 @@ theorem apply_cons_of_ne {source name : Name} {target : VisibleLabel Name}
 
 end Relabelling
 
-/-- Finite CCS processes with syntax-level restriction and relabelling.
+/-- **Static CCS processes.** Finite CCS processes with the static operators, over a type of
+channel names, are built from the inactive process $0$ by the prefix $\alpha.P$ of a CCS action
+$\alpha$ (silent, an input or an output) and a process $P$, the choice $P + Q$, the parallel
+composition $P \mid Q$, the restriction $P \setminus L$ of $P$ by a finite list $L$ of names, and
+the relabelling $P[f]$ of $P$ by a finite relabelling $f$.
 
 Unlike function-valued operators, finite lists and tables preserve decidable
-equality of processes and cannot express relabellings that alter `tau` or fail
+equality of processes and cannot express relabellings that alter the silent action $\tau$ or fail
 to preserve complementary visible actions. -/
 inductive StaticProcess (Name : Type*) where
   | nil
@@ -121,16 +132,20 @@ namespace StaticProcess
 
 variable {Name : Type*} [DecidableEq Name]
 
-/-- Embed the previously developed finite CCS fragment into the language with
-static operators. -/
+/-- **Embedding finite CCS into CCS with static operators.** Each finite CCS process over CCS
+labels is sent to the process with static operators of the same shape: the inactive process goes
+to the inactive process, the prefix of an action $\alpha$ to a process $P$ goes to the prefix of
+$\alpha$ to the image of $P$, and a choice or a parallel composition of $P$ and $Q$ goes to the
+choice or the parallel composition of the images of $P$ and $Q$. -/
 def ofProcess : Process (Label Name) → StaticProcess Name
   | .nil => .nil
   | .prefix action continuation => .prefix action (ofProcess continuation)
   | .choice left right => .choice (ofProcess left) (ofProcess right)
   | .parallel left right => .parallel (ofProcess left) (ofProcess right)
 
-/-- Relabel a CCS action.  Silent actions stay silent, and both polarities of
-a visible channel use the same channel table. -/
+/-- **Relabelling an action.** For a relabelling $f$, the silent action $\tau$ is relabelled to
+$\tau$, an input on a channel $a$ is relabelled to the image of $a$ under $f$, and an output on
+$a$ is relabelled to the complement of the image of $a$ under $f$, each viewed as a CCS label. -/
 def relabelAction (rename : Relabelling Name) : Label Name → Label Name
   | .tau => .tau
   | .input name => (rename.apply name).toLabel
@@ -145,8 +160,9 @@ def relabelAction (rename : Relabelling Name) : Label Name → Label Name
 @[simp] theorem relabelAction_output (rename : Relabelling Name) (name : Name) :
     relabelAction rename (.output name) = (rename.apply name).complement.toLabel := rfl
 
-/-- Relabelling preserves the complementary-action invariant used by CCS
-synchronization. -/
+/-- **Relabelling preserves complementary actions.** For every relabelling $f$ and all CCS labels
+$\alpha$ and $\beta$, if $\alpha$ and $\beta$ are complementary, then the actions obtained by
+relabelling $\alpha$ and $\beta$ with $f$ are complementary. -/
 theorem relabelAction_complementary {left right : Label Name}
     (h : left.Complementary right) (rename : Relabelling Name) :
     (relabelAction rename left).Complementary (relabelAction rename right) := by
@@ -170,8 +186,9 @@ theorem relabelAction_complementary {left right : Label Name}
             (VisibleLabel.toLabel_complementary (rename.apply leftName))
       | output rightName => exact False.elim h
 
-/-- A restriction always permits `tau` and permits a visible action exactly
-when its channel is absent from the finite blocked-name list. -/
+/-- **Actions permitted by a restriction.** Given a finite list $L$ of blocked channel names, the
+silent action $\tau$ is always permitted, and an input or an output on a channel $a$ is permitted
+exactly when $a \notin L$. -/
 def Allowed (blocked : List Name) : Label Name → Prop
   | .tau => True
   | .input name => name ∉ blocked
@@ -194,7 +211,21 @@ omit [DecidableEq Name] in
 @[simp] theorem allowed_output (blocked : List Name) (name : Name) :
     Allowed blocked (.output name) ↔ name ∉ blocked := Iff.rfl
 
-/-- Structural operational semantics for finite CCS with static operators. -/
+/-- **Transitions of static CCS.** The labelled transition relation $P \xrightarrow{\alpha} P'$ on
+static CCS processes, with actions $\alpha$ the CCS labels (silent $\tau$, inputs and outputs), is
+the least relation closed under the following rules, where $\alpha.P$ is the prefix, $P + Q$ the
+choice, $P \mid Q$ the parallel composition, $P \setminus L$ the restriction of $P$ by a finite
+list $L$ of channel names, and $P[f]$ the relabelling of $P$ by a finite relabelling $f$. The
+prefix has the transition $\alpha.P \xrightarrow{\alpha} P$. If $P \xrightarrow{\alpha} P'$, then
+$P + Q \xrightarrow{\alpha} P'$, $Q + P \xrightarrow{\alpha} P'$,
+$P \mid Q \xrightarrow{\alpha} P' \mid Q$ and $Q \mid P \xrightarrow{\alpha} Q \mid P'$. If
+$P \xrightarrow{\alpha} P'$ and $Q \xrightarrow{\beta} Q'$ where $\alpha$ and $\beta$ are
+complementary (an input and an output on the same channel), then
+$P \mid Q \xrightarrow{\tau} P' \mid Q'$. If $P \xrightarrow{\alpha} P'$ and $\alpha$ is $\tau$ or
+its channel is not in $L$, then $P \setminus L \xrightarrow{\alpha} P' \setminus L$. If
+$P \xrightarrow{\alpha} P'$, then $P[f] \xrightarrow{f(\alpha)} P'[f]$, where $f(\tau) = \tau$, an
+input on a channel $a$ is sent to the visible label $f(a)$ that $f$ assigns to $a$, and an output
+on $a$ is sent to the complement of $f(a)$. -/
 inductive Step : StaticProcess Name → Label Name → StaticProcess Name → Prop
   | prefix (action) (continuation) : Step (.prefix action continuation) action continuation
   | choiceLeft {left right next action} (step : Step left action next) :
@@ -216,7 +247,10 @@ inductive Step : StaticProcess Name → Label Name → StaticProcess Name → Pr
       Step (.relabelling rename process) (relabelAction rename action)
         (.relabelling rename next)
 
-/-- The labelled transition system of finite CCS with static operators. -/
+/-- **Transition system of CCS with restriction and relabelling.** The labelled transition system
+of finite CCS with static operators has the finite CCS processes with restriction and relabelling
+as states and the CCS labels as labels, and its transitions are the steps of the structural
+operational semantics of these processes. -/
 def lts : Cslib.LTS (StaticProcess Name) (Label Name) := ⟨Step⟩
 
 open Cslib.LTS
@@ -272,7 +306,10 @@ theorem relabelling_step_iff {rename : Relabelling Name}
   · rintro ⟨sourceAction, process', step, rfl, rfl⟩
     exact .relabel step
 
-/-- Lift a relation through one fixed restriction context. -/
+/-- **Lifting a relation through a restriction.** Given a finite list $L$ of channel names and a
+relation $R$ on static CCS processes, the lifted relation relates $P$ to $Q$ exactly when either
+$R$ relates $P$ to $Q$, or $P = P' \setminus L$ and $Q = Q' \setminus L$ for some processes $P'$
+and $Q'$ that $R$ relates. -/
 inductive RestrictionLift (blocked : List Name)
     (relation : StaticProcess Name → StaticProcess Name → Prop) :
     StaticProcess Name → StaticProcess Name → Prop
@@ -325,7 +362,10 @@ theorem restrictionLift_isBisimulation {blocked : List Name}
         obtain ⟨source', hsource', hrel'⟩ := (hbisim hrel _).2 _ htarget'
         exact ⟨.restriction blocked source', .restrict hsource' allowed, .restriction hrel'⟩
 
-/-- Restriction preserves strong bisimilarity. -/
+/-- **Restriction preserves strong bisimilarity.** For every finite list $L$ of channel names and
+all static CCS processes $P$ and $Q$, if $P$ and $Q$ are strongly bisimilar in the labelled
+transition system of finite CCS with static operators, then so are the restricted processes
+$P \setminus L$ and $Q \setminus L$. -/
 theorem restriction_congr (blocked : List Name) {left right : StaticProcess Name}
     (h : lts.HomBisimilarity left right) :
     lts.HomBisimilarity (.restriction blocked left) (.restriction blocked right) := by
@@ -333,7 +373,10 @@ theorem restriction_congr (blocked : List Name) {left right : StaticProcess Name
   exact ⟨RestrictionLift blocked relation, .restriction hrel,
     restrictionLift_isBisimulation hbisim⟩
 
-/-- Lift a relation through one fixed relabelling context. -/
+/-- **Closure of a relation under one relabelling.** Given a relabelling $f$ and a relation $R$
+on finite CCS processes with static operators, the lifted relation is the least relation that
+relates $P$ to $Q$ and relates the relabelling of $P$ by $f$ to the relabelling of $Q$ by $f$
+whenever $R$ relates $P$ to $Q$. -/
 inductive RelabellingLift (rename : Relabelling Name)
     (relation : StaticProcess Name → StaticProcess Name → Prop) :
     StaticProcess Name → StaticProcess Name → Prop
@@ -386,7 +429,10 @@ theorem relabellingLift_isBisimulation {rename : Relabelling Name}
         obtain ⟨source', hsource', hrel'⟩ := (hbisim hrel _).2 _ htarget'
         exact ⟨.relabelling rename source', .relabel hsource', .relabelling hrel'⟩
 
-/-- Relabelling preserves strong bisimilarity. -/
+/-- **Relabelling preserves strong bisimilarity.** For every relabelling $f$ and all finite CCS
+processes $P$ and $Q$ with static operators, if $P$ and $Q$ are strongly bisimilar in the
+labelled transition system of finite CCS with static operators, then the relabellings of $P$
+and of $Q$ by $f$ are strongly bisimilar there. -/
 theorem relabelling_congr (rename : Relabelling Name) {left right : StaticProcess Name}
     (h : lts.HomBisimilarity left right) :
     lts.HomBisimilarity (.relabelling rename left) (.relabelling rename right) := by

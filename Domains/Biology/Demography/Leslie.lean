@@ -270,9 +270,9 @@ theorem leslie_projection {n : ℕ} (f s : Fin n → ℝ) (x : ℕ → Fin n →
   | zero => rw [pow_zero, Matrix.one_mulVec]
   | succ t ih => rw [hstep t, ih, pow_succ', Matrix.mulVec_mulVec]
 
-/-- Strong Ergodic Theorem, growth-rate form, with supplied positive
-right and left eigenvectors. Primitivity is essential; no diagonalizability
-is assumed. -/
+/-- Strong Ergodic Theorem, growth-rate form, with supplied positive right and left eigenvectors,
+for every initial vector (no sign condition). Primitivity is essential; no diagonalizability is
+assumed. -/
 theorem tendsto_leslieMatrix_pow_mulVec_div_pow {n : ℕ} {f s : Fin n → ℝ}
     (hprim : (leslieMatrix f s).IsPrimitive) {r : ℝ} (hr : 0 < r)
     {v w : Fin n → ℝ}
@@ -309,9 +309,9 @@ theorem tendsto_leslieMatrix_pow_mulVec_div_pow {n : ℕ} {f s : Fin n → ℝ}
   rw [hlimval] at hsum
   exact hsum
 
-/-- Strong Ergodic Theorem, age-distribution form, with supplied positive
-right and left eigenvectors. Primitivity is essential; no diagonalizability
-is assumed. -/
+/-- Strong Ergodic Theorem, age-distribution form, with supplied positive right and left
+eigenvectors, for every nonzero nonnegative initial population. Primitivity is essential; no
+diagonalizability is assumed. -/
 theorem tendsto_leslie_age_distribution {n : ℕ} {f s : Fin n → ℝ}
     (hprim : (leslieMatrix f s).IsPrimitive) {r : ℝ} (hr : 0 < r)
     {v w : Fin n → ℝ}
@@ -366,9 +366,9 @@ theorem tendsto_leslie_age_distribution {n : ℕ} {f s : Fin n → ℝ}
   rw [hlimval] at h
   exact h
 
-/-- Strong Ergodic Theorem with eigen-data obtained from Perron-Frobenius:
-the stable age distribution exists, sums to one, and attracts every nonzero
-nonnegative initial population. -/
+/-- Strong Ergodic Theorem with eigen-data obtained from Perron-Frobenius: for `n ≥ 1` age classes
+and a primitive Leslie matrix, a stable age distribution (a positive eigenvector, for a positive
+eigenvalue) exists, sums to one, and attracts every nonzero nonnegative initial population. -/
 theorem exists_stable_age_distribution {n : ℕ} [NeZero n] {f s : Fin n → ℝ}
     (hprim : (leslieMatrix f s).IsPrimitive) :
     ∃ (r : ℝ) (v : Fin n → ℝ), 0 < r ∧ (∀ i, 0 < v i) ∧ ∑ i, v i = 1 ∧

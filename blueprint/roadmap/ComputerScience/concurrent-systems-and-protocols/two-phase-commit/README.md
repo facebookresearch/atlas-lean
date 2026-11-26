@@ -24,3 +24,4 @@
 ## Related topics
 
 - [FLP impossibility](../flp-impossibility/README.md): by the theorem of Fischer, Lynch and Paterson, every asynchronous commit protocol has a "window of vulnerability" in which the delay or crash of a single process can make it wait forever.
+- [Atomic commitment and blocking of two-phase commit](atomic-commitment-and-blocking-of-two-phase.md)

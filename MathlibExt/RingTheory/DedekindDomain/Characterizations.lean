@@ -41,8 +41,11 @@ open scoped nonZeroDivisors
 
 variable {A : Type*} [CommRing A] [IsDomain A]
 
-/-- A domain is a Dedekind domain if and only if it is noetherian and
-"to contain is to divide" holds for ideals. -/
+/-- **Dedekind domains as the Noetherian domains where to contain is to divide.** An integral
+domain $A$ is a Dedekind domain if and only if $A$ is Noetherian and, for all ideals $I$ and
+$J$ of $A$, $I$ divides $J$ if and only if $J \subseteq I$.
+
+Source: ATLAS NumberTheoryI Theorem 3.23, conditions (1) and (5). -/
 theorem isDedekindDomain_iff_contain_isDivide :
     IsDedekindDomain A ↔
       IsNoetherianRing A ∧ ∀ I J : Ideal A, I ∣ J ↔ J ≤ I := by
@@ -88,9 +91,12 @@ theorem isDedekindDomain_iff_contain_isDivide :
     rw [hI_eq]
     exact IsUnit.mul hspan_unit hJ_unit
 
-/-- The corrected nonvacuous form of Theorem 3.23(6): a domain is Dedekind
-if and only if every nonzero ideal has a principal nonzero product with a
-suitable ideal. The recorded target omits both nonzero qualifiers. -/
+/-- **Dedekind domains via principal products.** An integral domain $A$ is a Dedekind domain if
+and only if for every nonzero ideal $I$ of $A$ there is an ideal $J$ of $A$ such that $IJ$ is a
+nonzero principal ideal.
+
+Source: ATLAS NumberTheoryI Theorem 3.23(6), corrected: the recorded condition omits both
+nonzero qualifiers, which makes it vacuous (take $J = 0$). -/
 theorem isDedekindDomain_iff_principalProduct :
     IsDedekindDomain A ↔
       ∀ I : Ideal A, I ≠ ⊥ →
@@ -149,8 +155,14 @@ theorem isDedekindDomain_iff_principalProduct :
     rw [hI_eq]
     exact IsUnit.mul hspan_unit haI_unit
 
-/-- Theorem 3.23, conditions (1), (5), and the corrected nonvacuous form
-of (6): the three Dedekind-domain characterizations are equivalent. -/
+/-- **Equivalent characterizations of Dedekind domains.** For an integral domain $A$, the
+following are equivalent: (1) $A$ is a Dedekind domain; (2) $A$ is Noetherian and, for all
+ideals $I$ and $J$ of $A$, $I$ divides $J$ if and only if $J \subseteq I$; (3) for every
+nonzero ideal $I$ of $A$ there is an ideal $J$ of $A$ such that $IJ$ is a nonzero principal
+ideal.
+
+Source: ATLAS NumberTheoryI Theorem 3.23, conditions (1), (5) and (6), with (6) corrected by
+the two nonzero qualifiers. -/
 theorem isDedekindDomain_tfae_contain_isDivide_principalProduct :
     List.TFAE
       [IsDedekindDomain A,
