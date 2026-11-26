@@ -1,0 +1,136 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInfty.BoundedMultiplierHom
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInfty.MultiplierRecovery
+public import Mathlib.Analysis.CStarAlgebra.Spectrum
+
+/-!
+# Actual bounded scalar functions and C0 multipliers
+
+The checked pointwise multiplier homomorphism and actual recovered bounded
+function are inverse maps. Their precise actions give a star algebra
+equivalence on the existing carriers, with the existing norms.
+No Source equivalence, chosen model or supplied bijectivity is used.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open scoped ZeroAtInfty MultiplierAlgebra BoundedContinuousFunction
+
+namespace BoundedContinuousFunction
+
+universe u
+
+variable {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
+
+/-- Point-cutoff evaluation recovers every actual bounded scalar function. -/
+theorem toBoundedContinuousFunction_toZeroAtInftyMultiplierHom (g : X →ᵇ ℂ) :
+    DoubleCentralizer.toBoundedContinuousFunction (toZeroAtInftyMultiplierHom g) = g := by
+  apply BoundedContinuousFunction.ext
+  intro x
+  simp only [DoubleCentralizer.toBoundedContinuousFunction_apply,
+    toZeroAtInftyMultiplierHom_fst_apply, ZeroAtInftyContinuousMap.pointCutoff_apply,
+    mul_one]
+
+/-- The two recovered scalar actions reconstruct the actual original double centralizer. -/
+theorem toZeroAtInftyMultiplierHom_toBoundedContinuousFunction
+    (T : 𝓜(ℂ, C₀(X, ℂ))) :
+    toZeroAtInftyMultiplierHom (DoubleCentralizer.toBoundedContinuousFunction T) = T := by
+  apply DoubleCentralizer.ext ℂ (C₀(X, ℂ))
+  apply Prod.ext
+  · apply ContinuousLinearMap.ext
+    intro f
+    apply ZeroAtInftyContinuousMap.ext
+    intro x
+    rw [toZeroAtInftyMultiplierHom_fst_apply]
+    exact (DoubleCentralizer.fst_apply_toBoundedContinuousFunction T f x).symm
+  · apply ContinuousLinearMap.ext
+    intro f
+    apply ZeroAtInftyContinuousMap.ext
+    intro x
+    rw [toZeroAtInftyMultiplierHom_snd_apply]
+    calc
+      DoubleCentralizer.toBoundedContinuousFunction T x * f x =
+          f x * DoubleCentralizer.toBoundedContinuousFunction T x := mul_comm _ _
+      _ = T.snd f x :=
+        (DoubleCentralizer.snd_apply_toBoundedContinuousFunction T f x).symm
+
+/-- Recovery cancels the actual pointwise multiplier constructor in simp normal form. -/
+@[simp]
+theorem toBoundedContinuousFunction_toZeroAtInftyMultiplier (g : X →ᵇ ℂ) :
+    DoubleCentralizer.toBoundedContinuousFunction (toZeroAtInftyMultiplier g) = g :=
+  toBoundedContinuousFunction_toZeroAtInftyMultiplierHom g
+
+/-- The normalized pointwise constructor cancels recovery of an actual multiplier. -/
+@[simp]
+theorem toZeroAtInftyMultiplier_toBoundedContinuousFunction
+    (T : 𝓜(ℂ, C₀(X, ℂ))) :
+    toZeroAtInftyMultiplier (DoubleCentralizer.toBoundedContinuousFunction T) = T :=
+  toZeroAtInftyMultiplierHom_toBoundedContinuousFunction T
+
+/-- The pointwise multiplier homomorphism is genuinely bijective. -/
+theorem toZeroAtInftyMultiplierHom_bijective :
+    Function.Bijective (toZeroAtInftyMultiplierHom (X := X)) := by
+  constructor
+  · intro g h hgh
+    calc
+      g = DoubleCentralizer.toBoundedContinuousFunction (toZeroAtInftyMultiplierHom g) :=
+        (toBoundedContinuousFunction_toZeroAtInftyMultiplierHom g).symm
+      _ = DoubleCentralizer.toBoundedContinuousFunction (toZeroAtInftyMultiplierHom h) :=
+        congrArg DoubleCentralizer.toBoundedContinuousFunction hgh
+      _ = h := toBoundedContinuousFunction_toZeroAtInftyMultiplierHom h
+  · intro T
+    exact ⟨DoubleCentralizer.toBoundedContinuousFunction T,
+      toZeroAtInftyMultiplierHom_toBoundedContinuousFunction T⟩
+
+/-- The exact pointwise and recovery maps form a scalar star algebra equivalence. -/
+noncomputable def toZeroAtInftyMultiplierEquiv :
+    (X →ᵇ ℂ) ≃⋆ₐ[ℂ] 𝓜(ℂ, C₀(X, ℂ)) where
+  toFun := toZeroAtInftyMultiplierHom
+  invFun := DoubleCentralizer.toBoundedContinuousFunction
+  left_inv := toBoundedContinuousFunction_toZeroAtInftyMultiplierHom
+  right_inv := toZeroAtInftyMultiplierHom_toBoundedContinuousFunction
+  map_mul' := map_mul toZeroAtInftyMultiplierHom
+  map_add' := map_add toZeroAtInftyMultiplierHom
+  map_star' := map_star toZeroAtInftyMultiplierHom
+  map_smul' := map_smul toZeroAtInftyMultiplierHom
+
+/-- The forward value remains the checked pointwise multiplier homomorphism. -/
+@[simp]
+theorem toZeroAtInftyMultiplierEquiv_apply (g : X →ᵇ ℂ) :
+    toZeroAtInftyMultiplierEquiv g = toZeroAtInftyMultiplierHom g := rfl
+
+/-- The inverse value remains the checked recovered bounded scalar function. -/
+@[simp]
+theorem toZeroAtInftyMultiplierEquiv_symm_apply (T : 𝓜(ℂ, C₀(X, ℂ))) :
+    toZeroAtInftyMultiplierEquiv.symm T = DoubleCentralizer.toBoundedContinuousFunction T := rfl
+
+/-- The equivalence's actual left action is literal pointwise scalar multiplication. -/
+theorem toZeroAtInftyMultiplierEquiv_fst_apply
+    (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :
+    (toZeroAtInftyMultiplierEquiv g).fst f x = g x * f x := rfl
+
+/-- The equivalence's actual right action is the same pointwise scalar operation. -/
+theorem toZeroAtInftyMultiplierEquiv_snd_apply
+    (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :
+    (toZeroAtInftyMultiplierEquiv g).snd f x = g x * f x := rfl
+
+/-- Existing complex C-star equivalence theory preserves these exact existing norms. -/
+theorem norm_toZeroAtInftyMultiplierEquiv (g : X →ᵇ ℂ) :
+    ‖toZeroAtInftyMultiplierEquiv g‖ = ‖g‖ :=
+  StarAlgEquiv.norm_map (toZeroAtInftyMultiplierEquiv (X := X)) g
+
+/-- The actual scalar-function/multiplier equivalence is an isometry for the existing metrics. -/
+theorem isometry_toZeroAtInftyMultiplierEquiv :
+    Isometry (toZeroAtInftyMultiplierEquiv (X := X) :
+      (X →ᵇ ℂ) → 𝓜(ℂ, C₀(X, ℂ))) :=
+  StarAlgEquiv.isometry (toZeroAtInftyMultiplierEquiv (X := X))
+
+
+end BoundedContinuousFunction
