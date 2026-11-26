@@ -1,10 +1,11 @@
 # Proper $L^*$-blocks
 
-Let $L$ be a list of natural numbers, index coefficient functions
-from $1$, and let $\bar\beta^s$ be the maximal $L^*$-block starting at index $s$. For $s \ge 1$,
-a function $\zeta : \mathbb N \to \mathbb N$ is a proper $L^*$-block with support interval
-$[s, k]$ when $s \le k$, $\zeta_i = \bar\beta^s_i$ for all $i < k$, $\zeta_k < \bar\beta^s_k$,
-and $\zeta_i = 0$ for all $i > k$. Since $\bar\beta^s$ vanishes below $s$, so does $\zeta$.
+Let $L$ be a list of natural numbers. Lean's zero-based interval
+$[s, k]$ corresponds to Chang's $[s+1, k+1]$. Let $B$ be the maximal block starting at Lean index
+$s$, so $B_i$ is the entry of Chang's $\bar\beta^{s+1}$ at index $i+1$.
+A function $\zeta : \mathbb N \to \mathbb N$ is a proper $L^*$-block with support interval $[s, k]$
+when $s \le k$, $\zeta_i = B_i$ for all $i < k$, $\zeta_k < B_k$, and $\zeta_i = 0$ for all
+$i > k$. Since $B$ vanishes below $s$, so does $\zeta$.
 
 ## Sources
 

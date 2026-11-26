@@ -21,11 +21,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Proper $L^*$-blocks.** Let $L$ be a list of natural numbers, index coefficient functions
-from $1$, and let $\bar\beta^s$ be the maximal $L^*$-block starting at index $s$. For $s \ge 1$,
-a function $\zeta : \mathbb N \to \mathbb N$ is a proper $L^*$-block with support interval
-$[s, k]$ when $s \le k$, $\zeta_i = \bar\beta^s_i$ for all $i < k$, $\zeta_k < \bar\beta^s_k$,
-and $\zeta_i = 0$ for all $i > k$. Since $\bar\beta^s$ vanishes below $s$, so does $\zeta$.
+/-- **Proper $L^*$-blocks.** Let $L$ be a list of natural numbers. Lean's zero-based interval
+$[s, k]$ corresponds to Chang's $[s+1, k+1]$. Let $B$ be the maximal block starting at Lean index
+$s$, so $B_i$ is the entry of Chang's $\bar\beta^{s+1}$ at index $i+1$.
+A function $\zeta : \mathbb N \to \mathbb N$ is a proper $L^*$-block with support interval $[s, k]$
+when $s \le k$, $\zeta_i = B_i$ for all $i < k$, $\zeta_k < B_k$, and $\zeta_i = 0$ for all
+$i > k$. Since $B$ vanishes below $s$, so does $\zeta$.
 
 Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
 Section 2 (arXiv:2308.12872v1, Section 2.3). -/
@@ -39,7 +40,7 @@ set_option linter.unusedVariables false in
 $L = (e_1, \dots, e_N)$ be a list of natural numbers with $N \ge 2$ and $e_1 \ne 0$, let $s \le k$
 be natural numbers, and let $j$ be the integer with $1 \le j \le N$ and
 $k - s + 1 \equiv j \pmod N$. Then there are exactly $e_j$ proper $L^*$-blocks with support
-interval $[s, k]$.
+interval $[s, k]$ in Lean's zero-based indexing, corresponding to $[s+1, k+1]$ in Chang's indexing.
 
 Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
 Lemma 15 (`integers-2025-A25-lem-15`; arXiv:2308.12872v1, Section 4.1). -/
