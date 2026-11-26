@@ -31,3 +31,12 @@ example : ¬ IsMVanishingFamily 1 (sumAddMulProdFamily (1 : ZMod 11)) :=
 
 example : ¬ IsMVanishingFamily 1 (sumAddMulProdFamily (1 : ZMod 24)) :=
   (sumAddMulProd_one_classification (hn := by decide)).1 (by decide) 1 (by decide)
+
+-- The obstruction for the negative sign already occurs at the two-block threshold.
+example : ¬ IsMVanishingFamily 2 (sumAddMulProdFamily (-1 : ZMod 6)) :=
+  (not_isMVanishingFamily_sumAddMulProd_six (m := 2) (by decide)).1
+
+-- Both signs are ruled out for a larger number of blocks as well.
+example : ¬ IsMVanishingFamily 3 (sumAddMulProdFamily (-1 : ZMod 6)) ∧
+    ¬ IsMVanishingFamily 3 (sumAddMulProdFamily (1 : ZMod 6)) :=
+  not_isMVanishingFamily_sumAddMulProd_six (by decide)
