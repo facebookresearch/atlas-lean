@@ -339,15 +339,12 @@ private theorem length_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht
     rw [length_mergeBlocks _ _ _ hb, ih ht']
     omega
 
-private theorem listGetD_eq {α : Type} (l : List α) (c : ℕ) (d : α) (hc : c < l.length) :
-    l.getD c d = l[c] := by
-  simp [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hc]
-
 private theorem mergeBlocks_eq {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) :
     mergeBlocks bs a b = (bs.set a (bs[a] ∪ bs[b])).eraseIdx b := by
   unfold mergeBlocks
-  rw [listGetD_eq _ _ _ ha, listGetD_eq _ _ _ hb]
+  simp only [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem ha,
+    List.getElem?_eq_getElem hb, Option.getD_some]
 
 private theorem mem_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
@@ -527,23 +524,6 @@ private theorem partitionsOf_toFinset_eq {n : ℕ} (h1 h2 : RankedHistory n)
     Option.map_some] at hcongr
   exact Option.some_inj.mp hcongr
 
-private theorem mem_lineagePair_iff {k : ℕ} (p : LineagePair k) (j : Fin k) :
-    j ∈ p.1 ↔ (j.val : ℕ) ∈ p.1.map Fin.valEmbedding := by
-  constructor
-  · intro h
-    exact Finset.mem_map.mpr ⟨j, h, rfl⟩
-  · intro h
-    obtain ⟨j', hj', heq⟩ := Finset.mem_map.mp h
-    have hval : j'.val = j.val := heq
-    have hjeq : j' = j := Fin.ext hval
-    rwa [hjeq] at hj'
-
-private theorem lineagePair_eq_of_map_eq {k : ℕ} (p1 p2 : LineagePair k)
-    (hmap : p1.1.map Fin.valEmbedding = p2.1.map Fin.valEmbedding) : p1 = p2 := by
-  apply Subtype.ext
-  ext j
-  rw [mem_lineagePair_iff, mem_lineagePair_iff, hmap]
-
 private theorem sdiff_toFinset_merge {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
     (hnonempty : ∀ x ∈ bs, x.Nonempty)
@@ -630,11 +610,6 @@ private theorem indexPair_eq_of_blockPair_eq {n : ℕ} (bs : List (Finset (Fin n
       · exact Or.inl rfl
       · exact Or.inr rfl
 
-private theorem getElem_of_eq {α : Type} (l1 l2 : List α) (c : ℕ) (h1 : c < l1.length)
-    (h2 : c < l2.length) (heq : l1 = l2) : l1[c]'h1 = l2[c]'h2 := by
-  subst heq
-  rfl
-
 private theorem stepRecover {n : ℕ} (h1 h2 : RankedHistory n) (t : ℕ) (hlt : t < n - 1)
     (hbs : blocksAfter h1 t = blocksAfter h2 t)
     (hpart : (blocksAfter h1 (t + 1)).toFinset = (blocksAfter h2 (t + 1)).toFinset) :
@@ -712,10 +687,10 @@ private theorem stepRecover {n : ℕ} (h1 h2 : RankedHistory n) (t : ℕ) (hlt :
     have hcon := h1'.symm.trans hsd2
     have ea : (blocksAfter h2 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0] =
         (blocksAfter h1 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0] :=
-      getElem_of_eq _ _ _ _ _ hbs.symm
+      List.getElem_of_eq hbs.symm _
     have eb : (blocksAfter h2 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0] =
         (blocksAfter h1 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0] :=
-      getElem_of_eq _ _ _ _ _ hbs.symm
+      List.getElem_of_eq hbs.symm _
     rw [ea, eb] at hcon
     exact hcon
   have hidx : ({((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0,
@@ -727,7 +702,7 @@ private theorem stepRecover {n : ℕ} (h1 h2 : RankedHistory n) (t : ℕ) (hlt :
   have hs2 := pair_eq_min_max _ hcard2
   have hmap : (h1 ⟨t, hlt⟩).1.map Fin.valEmbedding = (h2 ⟨t, hlt⟩).1.map Fin.valEmbedding := by
     rw [hs1, hs2, hidx]
-  exact lineagePair_eq_of_map_eq _ _ hmap
+  exact Subtype.ext (Finset.map_injective _ hmap)
 
 private theorem blocksAfter_eq_of_partitions {n : ℕ} (h1 h2 : RankedHistory n)
     (heq : partitionsOf h1 = partitionsOf h2) (t : ℕ) (ht : t ≤ n - 1) :
@@ -759,6 +734,11 @@ private theorem blocksAfter_eq_of_partitions {n : ℕ} (h1 h2 : RankedHistory n)
         rw [hjfin]
         exact hstep
 
+/-- **The ancestral partitions determine the ranked labeled history.** For every sample size
+`n`, `partitionsOf` is injective: two ranked labeled histories with the same sequence of
+ancestral partitions are equal. At each step the blocks of a partition that are missing from
+the next one are exactly the two blocks that merged, so equal partition sequences give equal
+merged pairs at every step. -/
 theorem partitionsOf_injective {n : ℕ} :
     Function.Injective (partitionsOf : RankedHistory n → List (Finset (Finset (Fin n)))) := by
   intro h1 h2 heq
