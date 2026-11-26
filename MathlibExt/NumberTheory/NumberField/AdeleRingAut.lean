@@ -10,9 +10,10 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Definitions/Def_NumberField_PlaceTransport.lean`,
-`Theorems/Thm_M4aHerbrand_subsingleton_ideleGaloisDescent.lean`
-and
+`Theorems/Thm_M4aHerbrand_subsingleton_ideleGaloisDescent.lean`,
 `P2M/Sol/S_M4aHerbrand_subsingleton_ideleGaloisDescent.lean`
+and
+`P2M/Sol/S_AutomorphicForm_adelicHeight_sigmaAdelicAct.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -39,7 +40,7 @@ import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 import Mathlib.Topology.Algebra.Valued.WithZeroMulInt
 
 /-!
-# Continuous ring automorphisms of the adele ring
+# Bicontinuous ring automorphisms of the adele ring
 
 Let `L` be a number field and `φ` a ring automorphism of the adele ring of `L` such that `φ`
 and `φ⁻¹` are continuous and `φ` restricts to a field automorphism `τ` on the diagonal copy
@@ -134,30 +135,10 @@ private theorem finiteAdele_zero_apply (w : HeightOneSpectrum R) :
     (0 : FiniteAdeleRing R F) w = 0 := rfl
 
 open Classical in
-private def finiteIndicator (w : HeightOneSpectrum R) : FiniteAdeleRing R F :=
-  ⟨Pi.single w 1, Filter.Eventually.of_forall fun v => by
-    by_cases h : v = w
-    · subst h; rw [Pi.single_eq_same]; exact one_mem _
-    · rw [Pi.single_eq_of_ne h]; exact zero_mem _⟩
-
-open Classical in
-private theorem finiteIndicator_apply (w v : HeightOneSpectrum R) :
-    finiteIndicator R F w v = Pi.single (M := fun u => u.adicCompletion F) w 1 v := rfl
-
-open Classical in
-private theorem finiteIndicator_apply_same (w : HeightOneSpectrum R) :
-    finiteIndicator R F w w = 1 := by
-  rw [finiteIndicator_apply, Pi.single_eq_same]
-
-open Classical in
-private theorem finiteIndicator_apply_ne {w v : HeightOneSpectrum R} (h : v ≠ w) :
-    finiteIndicator R F w v = 0 := by
-  rw [finiteIndicator_apply, Pi.single_eq_of_ne h]
-
-open Classical in
 private def indicator : PlaceIndex R F → AdeleRing R F
   | Sum.inl v => (Pi.single v 1, 0)
-  | Sum.inr w => (0, finiteIndicator R F w)
+  | Sum.inr w =>
+    (0, RestrictedProduct.single (fun u : HeightOneSpectrum R => u.adicCompletionIntegers F) w 1)
 
 open Classical in
 private theorem indicator_inl_fst (v : InfinitePlace F) :
@@ -169,8 +150,15 @@ private theorem indicator_inl_snd (v : InfinitePlace F) : (indicator R F (Sum.in
 private theorem indicator_inr_fst (w : HeightOneSpectrum R) :
     (indicator R F (Sum.inr w)).1 = 0 := rfl
 
-private theorem indicator_inr_snd (w : HeightOneSpectrum R) :
-    (indicator R F (Sum.inr w)).2 = finiteIndicator R F w := rfl
+open Classical in
+private theorem indicator_inr_snd_same (w : HeightOneSpectrum R) :
+    (indicator R F (Sum.inr w)).2 w = 1 :=
+  RestrictedProduct.single_eq_same _ w 1
+
+open Classical in
+private theorem indicator_inr_snd_ne {w u : HeightOneSpectrum R} (h : u ≠ w) :
+    (indicator R F (Sum.inr w)).2 u = 0 :=
+  RestrictedProduct.single_eq_of_ne _ 1 h
 
 open Classical in
 private theorem indicator_inl_fst_same (v : InfinitePlace F) :
@@ -193,10 +181,10 @@ private theorem isIdempotentElem_indicator (P : PlaceIndex R F) :
     · rw [snd_mul_apply, indicator_inl_snd, finiteAdele_zero_apply, mul_zero]
   · refine adele_ext R F (fun u => ?_) (fun u => ?_)
     · rw [fst_mul_apply, indicator_inr_fst, Pi.zero_apply, mul_zero]
-    · rw [snd_mul_apply, indicator_inr_snd]
+    · rw [snd_mul_apply]
       by_cases h : u = w
-      · subst h; rw [finiteIndicator_apply_same, mul_one]
-      · rw [finiteIndicator_apply_ne R F h, mul_zero]
+      · subst h; rw [indicator_inr_snd_same, mul_one]
+      · rw [indicator_inr_snd_ne R F h, mul_zero]
 
 private theorem indicator_ne_zero (P : PlaceIndex R F) : indicator R F P ≠ 0 := by
   rcases P with v | w
@@ -206,7 +194,7 @@ private theorem indicator_ne_zero (P : PlaceIndex R F) : indicator R F P ≠ 0 :
     exact one_ne_zero h1
   · intro h
     have h1 := congrArg (fun x : AdeleRing R F => x.2 w) h
-    simp only [indicator_inr_snd, finiteIndicator_apply_same, snd_zero_apply] at h1
+    simp only [indicator_inr_snd_same, snd_zero_apply] at h1
     exact one_ne_zero h1
 
 private theorem faithful_indicator (a : AdeleRing R F) (h : ∀ P, a * indicator R F P = 0) :
@@ -216,8 +204,7 @@ private theorem faithful_indicator (a : AdeleRing R F) (h : ∀ P, a * indicator
     simp only [fst_mul_apply, indicator_inl_fst_same, mul_one, fst_zero_apply] at h1
     rw [h1, fst_zero_apply]
   · have h1 := congrArg (fun x : AdeleRing R F => x.2 w) (h (Sum.inr w))
-    simp only [snd_mul_apply, indicator_inr_snd, finiteIndicator_apply_same, mul_one,
-      snd_zero_apply] at h1
+    simp only [snd_mul_apply, indicator_inr_snd_same, mul_one, snd_zero_apply] at h1
     rw [h1, snd_zero_apply]
 
 private theorem corner_indicator (e : AdeleRing R F) (he : IsIdempotentElem e)
@@ -248,17 +235,17 @@ private theorem corner_indicator (e : AdeleRing R F) (he : IsIdempotentElem e)
     · left
       refine adele_ext R F (fun u => ?_) (fun u => ?_)
       · rw [fst_mul_apply, indicator_inr_fst, Pi.zero_apply, mul_zero, fst_zero_apply]
-      · rw [snd_mul_apply, indicator_inr_snd, snd_zero_apply]
+      · rw [snd_mul_apply, snd_zero_apply]
         by_cases hu : u = w
         · subst hu; rw [h0, zero_mul]
-        · rw [finiteIndicator_apply_ne R F hu, mul_zero]
+        · rw [indicator_inr_snd_ne R F hu, mul_zero]
     · right
       refine adele_ext R F (fun u => ?_) (fun u => ?_)
       · rw [fst_mul_apply, indicator_inr_fst, Pi.zero_apply, mul_zero]
-      · rw [snd_mul_apply, indicator_inr_snd]
+      · rw [snd_mul_apply]
         by_cases hu : u = w
         · subst hu; rw [h1, one_mul]
-        · rw [finiteIndicator_apply_ne R F hu, mul_zero]
+        · rw [indicator_inr_snd_ne R F hu, mul_zero]
 
 private theorem exists_map_indicator_eq (φ : AdeleRing R F ≃+* AdeleRing R F)
     (P : PlaceIndex R F) : ∃ Q, φ (indicator R F P) = indicator R F Q := by
@@ -297,20 +284,8 @@ private theorem cofinite_le_principal_compl (w : HeightOneSpectrum R) :
   Filter.le_principal_iff.mpr (Set.finite_singleton w).compl_mem_cofinite
 
 open Classical in
-private def singleFinStratum (w : HeightOneSpectrum R) (t : w.adicCompletion F) :
-    RestrictedProduct (fun u : HeightOneSpectrum R => u.adicCompletion F)
-      (fun u => (u.adicCompletionIntegers F : Set (u.adicCompletion F)))
-      (Filter.principal ({w}ᶜ)) :=
-  ⟨Pi.single w t, by
-    rw [Filter.eventually_principal]
-    intro u hu
-    rw [Pi.single_eq_of_ne (by simpa using hu)]
-    exact zero_mem _⟩
-
-open Classical in
 private def singleFin (w : HeightOneSpectrum R) (t : w.adicCompletion F) : AdeleRing R F :=
-  (0, RestrictedProduct.inclusion _ _ (cofinite_le_principal_compl R w)
-    (singleFinStratum R F w t))
+  (0, RestrictedProduct.single (fun u : HeightOneSpectrum R => u.adicCompletionIntegers F) w t)
 
 open Classical in
 private theorem singleInf_fst (v : InfinitePlace F) (t : v.Completion) :
@@ -318,13 +293,6 @@ private theorem singleInf_fst (v : InfinitePlace F) (t : v.Completion) :
 
 private theorem singleInf_snd (v : InfinitePlace F) (t : v.Completion) :
     (singleInf R F v t).2 = 0 := rfl
-
-private theorem singleFin_fst (w : HeightOneSpectrum R) (t : w.adicCompletion F) :
-    (singleFin R F w t).1 = 0 := rfl
-
-open Classical in
-private theorem singleFin_snd_apply (w u : HeightOneSpectrum R) (t : w.adicCompletion F) :
-    (singleFin R F w t).2 u = Pi.single (M := fun u => u.adicCompletion F) w t u := rfl
 
 open Classical in
 private theorem continuous_singleInf (v : InfinitePlace F) :
@@ -334,7 +302,18 @@ private theorem continuous_singleInf (v : InfinitePlace F) :
 open Classical in
 private theorem continuous_singleFin (w : HeightOneSpectrum R) :
     Continuous (singleFin R F w) := by
-  have h0 : Continuous (singleFinStratum R F w) := by
+  -- `RestrictedProduct.single` at `w` factors through the restricted product over the
+  -- principal filter of `{w}ᶜ`, where its continuity is that of `Pi.single`.
+  let stratum (t : w.adicCompletion F) :
+      RestrictedProduct (fun u : HeightOneSpectrum R => u.adicCompletion F)
+        (fun u => (u.adicCompletionIntegers F : Set (u.adicCompletion F)))
+        (Filter.principal ({w}ᶜ)) :=
+    ⟨Pi.single w t, by
+      rw [Filter.eventually_principal]
+      intro u hu
+      rw [Pi.single_eq_of_ne (by simpa using hu)]
+      exact zero_mem _⟩
+  have h0 : Continuous stratum := by
     rw [RestrictedProduct.continuous_rng_of_principal]
     exact continuous_single w
   exact continuous_const.prodMk
@@ -354,13 +333,11 @@ private theorem mul_indicator_inl (a : AdeleRing R F) (v : InfinitePlace F) :
 open Classical in
 private theorem mul_indicator_inr (a : AdeleRing R F) (w : HeightOneSpectrum R) :
     a * indicator R F (Sum.inr w) = singleFin R F w (a.2 w) := by
-  refine adele_ext R F (fun u => ?_) (fun u => ?_)
-  · rw [fst_mul_apply, indicator_inr_fst, Pi.zero_apply, mul_zero, singleFin_fst,
-      Pi.zero_apply]
-  · rw [snd_mul_apply, indicator_inr_snd, singleFin_snd_apply]
-    by_cases hu : u = w
-    · subst hu; rw [finiteIndicator_apply_same, mul_one, Pi.single_eq_same]
-    · rw [finiteIndicator_apply_ne R F hu, mul_zero, Pi.single_eq_of_ne hu]
+  refine Prod.ext (mul_zero a.1) ?_
+  have h :=
+    RestrictedProduct.mul_single (fun u : HeightOneSpectrum R => u.adicCompletionIntegers F) w 1 a.2
+  rw [mul_one] at h
+  exact h.symm
 
 open Classical in
 private theorem singleInf_fst_same (v : InfinitePlace F) (t : v.Completion) :
@@ -369,8 +346,8 @@ private theorem singleInf_fst_same (v : InfinitePlace F) (t : v.Completion) :
 
 open Classical in
 private theorem singleFin_snd_same (w : HeightOneSpectrum R) (t : w.adicCompletion F) :
-    (singleFin R F w t).2 w = t := by
-  rw [singleFin_snd_apply, Pi.single_eq_same]
+    (singleFin R F w t).2 w = t :=
+  RestrictedProduct.single_eq_same _ w t
 
 private theorem singleInf_zero (v : InfinitePlace F) : singleInf R F v 0 = 0 := by
   have h := mul_indicator_inl R F 0 v
@@ -483,14 +460,6 @@ private theorem infinitePlace_two_inv_lt_one (v : InfinitePlace F) : v (2⁻¹ :
     simpa using this
   rw [map_inv₀, h2]
   norm_num
-
-private theorem two_ne_zero_of_infinitePlace (v : InfinitePlace F) : (2 : F) ≠ 0 := by
-  intro h
-  have h2 : v (2 : F) = 2 := by
-    have := NumberField.InfinitePlace.map_natCast v 2
-    simpa using this
-  rw [h, map_zero] at h2
-  norm_num at h2
 
 private theorem not_valuation_two_inv_lt_one (w : HeightOneSpectrum R) (h2 : (2 : F) ≠ 0) :
     ¬ w.valuation F (2⁻¹ : F) < 1 := by
@@ -631,8 +600,9 @@ private theorem map_indicator (P : PlaceIndex (𝓞 L) L) :
         (this.mpr ((HeightOneSpectrum.valuation_lt_one_iff_mem w' r).mpr hr))
 
 include hφ hφ' hτ in
-/-- A continuous ring automorphism of the adele ring that restricts to `τ` on `L` preserves
-the norm of the component at an infinite place `v`, read off at the place `v ∘ τ⁻¹`. -/
+/-- A bicontinuous ring automorphism `φ` of the adeles of a number field `L` (both `φ` and `φ⁻¹`
+continuous) that restricts to `τ` on `L` preserves the norm of the component at an infinite
+place `v`, read off at the place `v ∘ τ⁻¹`. -/
 theorem norm_fst_map_comap (v : InfinitePlace L) (a : AdeleRing (𝓞 L) L) :
     ‖(φ a).1 (v.comap (τ.symm : L →+* L))‖ = ‖a.1 v‖ := by
   set v' := v.comap (τ.symm : L →+* L)
@@ -664,8 +634,9 @@ theorem norm_fst_map_comap (v : InfinitePlace L) (a : AdeleRing (𝓞 L) L) :
   exact congrFun heq (a.1 v)
 
 include hφ hφ' hτ in
-/-- A continuous ring automorphism of the adele ring that restricts to `τ` on `L` preserves
-the norm of the component at a finite place `w`, read off at the transported place. -/
+/-- A bicontinuous ring automorphism `φ` of the adeles of a number field `L` (both `φ` and `φ⁻¹`
+continuous) that restricts to `τ` on `L` preserves the norm of the component at a finite place
+`w`, read off at the transported place. -/
 theorem norm_snd_map_equivOfRingEquiv (w : HeightOneSpectrum (𝓞 L)) (a : AdeleRing (𝓞 L) L) :
     ‖(φ a).2 (HeightOneSpectrum.equivOfRingEquiv (RingOfIntegers.mapRingEquiv τ) w)‖
       = ‖a.2 w‖ := by

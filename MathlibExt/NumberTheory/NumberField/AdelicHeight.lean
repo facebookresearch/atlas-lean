@@ -196,7 +196,7 @@ private theorem norm_le_one_of_mem_adicCompletionIntegers {v : HeightOneSpectrum
 
 /-- At all but finitely many finite places `v`, the local height of `g` at `v` is `1`: outside
 finitely many places, the entries of `g` and of `g⁻¹` are integral. -/
-theorem finLocalHeight_finComponent_eventually_eq_one
+private theorem finLocalHeight_finComponent_eventually_eq_one
     (g : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F)) :
     ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite,
       finLocalHeight (finComponent (𝓞 F) F v g) = 1 := by

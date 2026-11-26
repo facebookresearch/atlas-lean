@@ -32,6 +32,71 @@ example (c : ℚ) (hc : c ≠ 0) :
   simp [finLocalHeight, rowMaxNorm, Matrix.det_fin_two, Matrix.diagonal]
   field_simp
 
+section Archimedean
+
+/-- The real matrix with rows `(1, 0)` and `(1, 1)`, of determinant `1`. -/
+private noncomputable def lowerOne : GL (Fin 2) ℝ :=
+  Matrix.GeneralLinearGroup.mkOfDetNeZero !![1, 0; 1, 1] (by simp [Matrix.det_fin_two])
+
+/-- Its archimedean local height is `1 / 2`: the determinant `1` over the sum of squares `1 + 1`
+of the bottom row. -/
+example : archLocalHeight lowerOne = 1 / 2 := by
+  simp [archLocalHeight, rowNormSq, lowerOne, Matrix.det_fin_two]
+  norm_num
+
+/-- Its finite local height, with the maximum `1` of the bottom row in place of the sum of
+squares, is `1`. -/
+example : finLocalHeight lowerOne = 1 := by
+  simp [finLocalHeight, rowMaxNorm, lowerOne, Matrix.det_fin_two]
+
+/-- With bottom row `(2, 1)` the sum of squares is `5`, so the archimedean local height is
+`1 / 5`, against `1 / 3` for the sum of the norms and `1 / 4` for the maximum squared. -/
+example : archLocalHeight (Matrix.GeneralLinearGroup.mkOfDetNeZero !![(1 : ℝ), 0; 2, 1]
+    (by simp [Matrix.det_fin_two])) = 1 / 5 := by
+  simp [archLocalHeight, rowNormSq, Matrix.det_fin_two]
+  norm_num
+
+/-- The same matrix over `ℚ`. -/
+private noncomputable def lowerOneRat : GL (Fin 2) ℚ :=
+  Matrix.GeneralLinearGroup.mkOfDetNeZero !![1, 0; 1, 1] (by simp [Matrix.det_fin_two])
+
+/-- Over `ℚ`, whose only infinite place is real (multiplicity `1`), the archimedean height of
+that matrix in `GL₂` of the infinite adeles is `1 / 2`. -/
+private theorem archHeight_lowerOneRat :
+    archHeight ℚ (Matrix.GeneralLinearGroup.map (algebraMap ℚ (InfiniteAdeleRing ℚ))
+      lowerOneRat) = 1 / 2 := by
+  have hm : (default : InfinitePlace ℚ).mult = 1 :=
+    InfinitePlace.mult_isReal ⟨_, Rat.isReal_infinitePlace⟩
+  rw [archHeight, Fintype.prod_unique, hm, pow_one]
+  simp [archLocalHeight, rowNormSq, lowerOneRat, Matrix.det_fin_two, archComponent_apply,
+    Matrix.GeneralLinearGroup.map_apply]
+  norm_num
+
+/-- The adelic height sees the archimedean part: the adele with archimedean part that matrix and
+finite part `1` has adelic height `1 / 2`. -/
+example : adelicHeight ℚ ((Matrix.GeneralLinearGroup.prodEquiv (Fin 2) (InfiniteAdeleRing ℚ)
+    (FiniteAdeleRing (𝓞 ℚ) ℚ)).symm
+      (Matrix.GeneralLinearGroup.map (algebraMap ℚ (InfiniteAdeleRing ℚ)) lowerOneRat, 1)) =
+    1 / 2 := by
+  have e := (Matrix.GeneralLinearGroup.prodEquiv (Fin 2) (InfiniteAdeleRing ℚ)
+    (FiniteAdeleRing (𝓞 ℚ) ℚ)).apply_symm_apply
+      (Matrix.GeneralLinearGroup.map (algebraMap ℚ (InfiniteAdeleRing ℚ)) lowerOneRat, 1)
+  have harch : glArch (𝓞 ℚ) ℚ ((Matrix.GeneralLinearGroup.prodEquiv (Fin 2)
+      (InfiniteAdeleRing ℚ) (FiniteAdeleRing (𝓞 ℚ) ℚ)).symm
+        (Matrix.GeneralLinearGroup.map (algebraMap ℚ (InfiniteAdeleRing ℚ)) lowerOneRat, 1)) =
+      Matrix.GeneralLinearGroup.map (algebraMap ℚ (InfiniteAdeleRing ℚ)) lowerOneRat :=
+    congrArg Prod.fst e
+  have hfin : glFin (𝓞 ℚ) ℚ ((Matrix.GeneralLinearGroup.prodEquiv (Fin 2)
+      (InfiniteAdeleRing ℚ) (FiniteAdeleRing (𝓞 ℚ) ℚ)).symm
+        (Matrix.GeneralLinearGroup.map (algebraMap ℚ (InfiniteAdeleRing ℚ)) lowerOneRat, 1)) =
+      1 :=
+    congrArg Prod.snd e
+  have h1 : finHeight ℚ 1 = 1 := by simp [finHeight, finLocalHeight_one]
+  rw [adelicHeight, harch, hfin, h1, mul_one]
+  exact archHeight_lowerOneRat
+
+end Archimedean
+
 section FinitePlace
 
 variable {F : Type*} [Field F] [NumberField F]
