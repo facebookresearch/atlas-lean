@@ -475,6 +475,8 @@ is the Hall-Senior group 32/40 (a GAP computation); by a theorem of van der Waal
 group is not isomorphic to the Frattini subgroup of any finite 2-group. The authors state that
 their solutions were found with the assistance of large language models and checked by them.
 
+See the module description for the construction using a two-generator permutation group.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.11 (Ya. G. Berkovich); resolution: V.
 Ionin and A. Semidetnov, On some more problems from the Kourovka Notebook, preprint,

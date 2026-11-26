@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Topology.Algebra.OpenSubgroup
 import MathlibExt.GroupTheory.ProfiniteCNGroupNotProsolubleKourovka20Problem90
 
 open MathlibExt.GroupTheory.ProfiniteCNGroupNotProsolubleKourovka20Problem90Wanted
@@ -29,3 +30,18 @@ example (G : Type) [Group G] [TopologicalSpace G] [DiscreteTopology G] :
     exact (Group.isNilpotent_congr QuotientGroup.quotientBot).mp hbot
   · intro h N _ _
     infer_instance
+
+-- Extract an infinite profinite CN-group with a finite nonsoluble quotient.
+example : ∃ (G : Type) (_ : Group G) (_ : TopologicalSpace G) (_ : IsTopologicalGroup G)
+    (_ : CompactSpace G) (_ : T2Space G) (_ : TotallyDisconnectedSpace G), Infinite G ∧
+    (∀ g : G, g ≠ 1 → IsPronilpotent (Subgroup.centralizer {g})) ∧
+    ∃ (N : Subgroup G) (_ : N.Normal), IsOpen (N : Set G) ∧
+      Finite (G ⧸ N) ∧ ¬ Group.IsSolvable (G ⧸ N) := by
+  obtain ⟨G, grp, top, tg, cpt, t2, td, hinf, _, hcn, hns⟩ :=
+    existsFGInfiniteProfiniteCNGroupNotProsoluble_holds
+  refine ⟨G, grp, top, tg, cpt, t2, td, hinf, hcn, ?_⟩
+  by_contra h
+  apply hns
+  intro N _ hopen
+  by_contra hsol
+  exact h ⟨N, ‹N.Normal›, hopen, Subgroup.quotient_finite_of_isOpen N hopen, hsol⟩

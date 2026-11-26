@@ -8,16 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Frattini
-public import Mathlib.GroupTheory.Nilpotent
-public import Mathlib.GroupTheory.PGroup
-public import Mathlib.GroupTheory.IndexNormal
-public import Mathlib.GroupTheory.QuotientGroup.Basic
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.Matrix.Basic
-public import Mathlib.LinearAlgebra.Matrix.Notation
+import Mathlib.Data.ZMod.Basic
+import Mathlib.GroupTheory.IndexNormal
+import Mathlib.GroupTheory.QuotientGroup.Basic
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Data.Matrix.Basic
+import Mathlib.LinearAlgebra.Matrix.Notation
 
 /-!
 # Vanishing `H¹(G/Φ(G), Z(Φ(G)))` for a non-abelian `p`-group (Kourovka Notebook Problem 17.2)
@@ -34,12 +32,10 @@ recorded by its inflation to `G`: a map `δ : G → Z(Φ(G))` with `δ(gh) = δ(
 trivial on `Φ(G)`; these maps are exactly the inflated cocycles, since `Φ(G)` centralizes `Z(Φ(G))`.
 `H¹ = 0` says each such map is a coboundary `δ(g) = g a g⁻¹ a⁻¹`, `a ∈ Z(Φ(G))`.
 
-The main result is `nonabelianPGroupFrattiniCenterH1Trivial_holds`, proved for the group of
-unitriangular `5 × 5` matrices over `ZMod 2` whose superdiagonal lies in the subspace
-`a₁₂ = a₂₃`, `a₃₄ = a₄₅`, following A. Abdollahi, J. Algebra 342 (2011), 154-160.
+A. Abdollahi (J. Algebra 342 (2011), 154–160) gives examples of order 2^8.
+Here `nonabelianPGroupFrattiniCenterH1Trivial_holds` is proved using the order-2^8 subgroup
+of unitriangular `5 × 5` matrices over `ZMod 2` defined by `a₁₂ = a₂₃` and `a₃₄ = a₄₅`.
 -/
-
-@[expose] public section
 
 open Matrix
 
@@ -52,7 +48,7 @@ two-dimensional subspace `a₁₂ = a₂₃`, `a₃₄ = a₄₅`. -/
 def UT5Pred (M : Matrix (Fin 5) (Fin 5) (ZMod 2)) : Prop :=
   (∀ i, M i i = 1) ∧ (∀ i j, M i j = 0 ∨ i ≤ j) ∧ M 0 1 = M 1 2 ∧ M 2 3 = M 3 4
 
-instance : DecidablePred UT5Pred := fun M =>
+instance decidableUT5Pred : DecidablePred UT5Pred := fun M =>
   @instDecidableAnd _ _
     (@Fintype.decidableForallFintype _ _ (fun _ => inferInstance) inferInstance)
     (@instDecidableAnd _ _
@@ -192,9 +188,9 @@ theorem inv_pred (a : G5) : UT5Pred (invMat a.1) := by
   · simp [invMat, hra]
   · simp [invMat, hrb]
 
-instance : Mul G5 := ⟨fun a b => ⟨a.1 * b.1, mul_pred a b⟩⟩
+instance instMulG5 : Mul G5 := ⟨fun a b => ⟨a.1 * b.1, mul_pred a b⟩⟩
 
-instance : One G5 := ⟨⟨1, by
+instance instOneG5 : One G5 := ⟨⟨1, by
   refine ⟨fun i => by simp, fun i j => ?_, ?_, ?_⟩
   · by_cases h : j < i
     · exact Or.inl (Matrix.one_apply_ne (Ne.symm (ne_of_lt h)))
@@ -202,9 +198,9 @@ instance : One G5 := ⟨⟨1, by
   · simp
   · simp⟩⟩
 
-instance : Inv G5 := ⟨fun a => ⟨invMat a.1, inv_pred a⟩⟩
+instance instInvG5 : Inv G5 := ⟨fun a => ⟨invMat a.1, inv_pred a⟩⟩
 
-instance : Group G5 where
+instance instGroupG5 : Group G5 where
   mul_assoc a b c := Subtype.ext (Matrix.mul_assoc _ _ _)
   one_mul a := Subtype.ext (Matrix.one_mul _)
   mul_one a := Subtype.ext (Matrix.mul_one _)
@@ -1127,7 +1123,7 @@ end UT5
 /-- **Centre of the Frattini subgroup.** An element $x$ of a group $G$ lies in the centre
 $Z(\Phi(G))$ of the Frattini subgroup $\Phi(G)$ when $x \in \Phi(G)$ and $xy = yx$ for every
 $y \in \Phi(G)$. -/
-def InFrattiniCenter {G : Type*} [Group G] (x : G) : Prop :=
+@[expose] public def InFrattiniCenter {G : Type*} [Group G] (x : G) : Prop :=
   x ∈ frattini G ∧ ∀ y ∈ frattini G, x * y = y * x
 
 /-- **Vanishing first cohomology of $G/\Phi(G)$ in $Z(\Phi(G))$.** Let $G$ be a group, let
@@ -1140,7 +1136,7 @@ for all $g \in G$.
 Such maps $\delta$ are exactly the inflations to $G$ of the 1-cocycles of $G/\Phi(G)$ with values
 in $Z(\Phi(G))$ for the conjugation action, so the property says
 $H^1(G/\Phi(G), Z(\Phi(G))) = 0$. -/
-def FrattiniCenterH1Trivial (G : Type*) [Group G] : Prop :=
+@[expose] public def FrattiniCenterH1Trivial (G : Type*) [Group G] : Prop :=
   ∀ δ : G → G, (∀ g, InFrattiniCenter (δ g)) → (∀ g h, δ (g * h) = δ g * (g * δ h * g⁻¹)) →
     (∀ g ∈ frattini G, δ g = 1) → ∃ a : G, InFrattiniCenter a ∧ ∀ g, δ g = g * a * g⁻¹ * a⁻¹
 
@@ -1149,7 +1145,7 @@ question of P. Schmid recorded by A. Abdollahi, that there exist a prime $p$ and
 non-abelian $p$-group $G$ such that, writing $\Phi(G)$ for the Frattini subgroup of $G$ and
 $Z(\Phi(G))$ for its centre, the first cohomology group $H^1(G/\Phi(G), Z(\Phi(G)))$ for the
 conjugation action of $G/\Phi(G)$ on $Z(\Phi(G))$ is trivial. -/
-def nonabelianPGroupFrattiniCenterH1Trivial : Prop :=
+@[expose] public def nonabelianPGroupFrattiniCenterH1Trivial : Prop :=
   ∃ (p : ℕ) (G : Type) (_ : Group G) (_ : Finite G), p.Prime ∧ IsPGroup p G ∧
     (∃ a b : G, a * b ≠ b * a) ∧ FrattiniCenterH1Trivial G
 
@@ -1725,7 +1721,7 @@ Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st i
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.2 (A. Abdollahi); resolution: A.
 Abdollahi, J. Algebra 342 (2011), 154-160, Kourovka Archive, Problem 17.2 (Yes, it does).
 -/
-theorem nonabelianPGroupFrattiniCenterH1Trivial_holds :
+public theorem nonabelianPGroupFrattiniCenterH1Trivial_holds :
     nonabelianPGroupFrattiniCenterH1Trivial := by
   refine ⟨2, UT5.G5, inferInstance, inferInstance, Nat.prime_two, UT5.Lemmas.isPGroup,
     ⟨UT5.Lemmas.x, UT5.Lemmas.y, UT5.Lemmas.xy_ne⟩, H1Proof.h1_trivial⟩

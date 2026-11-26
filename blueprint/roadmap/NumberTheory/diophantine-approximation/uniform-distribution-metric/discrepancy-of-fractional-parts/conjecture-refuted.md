@@ -13,6 +13,9 @@ $\limsup_N \lvert \sum_{k \le N} \cos(2\pi n_k \alpha) \rvert / \sqrt{N \log N} 
 every $\alpha$; by Koksma's inequality, $D(N)$ is then not $O(\sqrt{N} (\log N)^{\varepsilon})$ for
 $\varepsilon < 1/2$.
 
+Concatenating arithmetic progressions gives another counterexample. For almost every multiplier,
+infinitely many entire blocks land in the lower half of the unit interval.
+
 ## Sources
 
 - C. Aistleitner, I. Berkes, R. Tichy, Lacunary sequences in analysis, probability and number theory, arXiv preprint (2023), arXiv:2301.05561 (reporting I. Berkes, W. Philipp, J. London Math. Soc. (2) 50 (1994), 454-464), https://arxiv.org/abs/2301.05561.

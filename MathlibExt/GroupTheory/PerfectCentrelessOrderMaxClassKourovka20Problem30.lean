@@ -319,6 +319,9 @@ whose largest conjugacy class has size $30 \cdot 5^{32}$, so $|G| / n^2 = 250/3 
 issue of the Kourovka Notebook marks 20.30 solved ("No, not always"). The preprint acknowledges
 assistance from ChatGPT.
 
+See the module description for the counterexample using block upper triangular matrices
+over $\mathbb F_5$.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.30 (P. M. Neumann
 and M. R. Vaughan-Lee; I. B. Gorshkov); resolution: K. Muliarchyk, Perfect centreless groups with
