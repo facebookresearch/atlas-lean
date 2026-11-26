@@ -11907,6 +11907,7 @@
   "MathlibExt/GameTheory/SlowANim": {"to": "GameTheory/combinatorial-games", "title": "Slow Nim"},
   "MathlibExt/GameTheory/SlowANimGeneralReduction": {"to": "GameTheory/combinatorial-games", "title": "Slow Nim"},
   "MathlibExt/GameTheory/SlowANimParity": {"to": "GameTheory/combinatorial-games", "title": "Slow Nim"},
+  "MathlibExt/GameTheory/SlowANimThreeStacks": {"to": "GameTheory/combinatorial-games", "title": "Slow Nim"},
   "MathlibExt/GameTheory/SmithRemoteness": {"to": "GameTheory/combinatorial-games", "title": "Smith's remoteness function"},
   "MathlibExt/GameTheory/SocialChoice/Arrow": {"to": "GameTheory/social-choice", "title": "Arrow's impossibility theorem"},
   "MathlibExt/GameTheory/SocialChoice/ArrowImpossibility": {"to": "GameTheory/social-choice", "title": "Arrow's impossibility theorem"},
