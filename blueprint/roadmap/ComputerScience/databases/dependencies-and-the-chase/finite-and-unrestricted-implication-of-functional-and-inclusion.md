@@ -20,6 +20,7 @@ Undecidability uses a different argument. A uniform reduction sends a finite lis
 - [Satisfaction of a schema dependency](holds-in-2.md)
 - [Finite implication of dependencies](finitely-implies.md)
 - [Unrestricted implication of dependencies](implies.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

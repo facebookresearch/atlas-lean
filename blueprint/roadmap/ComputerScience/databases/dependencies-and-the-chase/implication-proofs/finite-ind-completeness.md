@@ -8,9 +8,6 @@ To see why finite instances suffice, start with one source row for $\sigma$: giv
 
 - [Syntax of an inclusion dependency](../ind.md)
 - [Finite implication of dependencies](../finitely-implies.md)
-- [Reflexivity of projection inclusion](../holds-in-refl.md)
-- [Projection and permutation of an inclusion dependency](projection-and-permutation.md)
-- [Transitivity of projection inclusion](../holds-in-trans.md)
 
 ## Proof depends on
 
