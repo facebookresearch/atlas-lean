@@ -13,9 +13,9 @@ public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotients
 /-!
 # Frobenius and continued fractions of Laurent series
 
-Over a finite field with `q` elements, the `q`-th power map on Laurent series raises every
-partial quotient and every numerator and denominator of a convergent to the `q`-th power
-(`laurentPartialQuotient_pow_card`).
+Over a finite field with `q` elements, the `q`-th power map commutes with the partial quotient,
+numerator and denominator recurrences for Laurent series at every index, including after a finite
+continued fraction terminates (`laurentPartialQuotient_pow_card`).
 -/
 
 namespace MetaMathlibExt
@@ -131,13 +131,15 @@ end laurentPartialQuotient_pow_card
 
 open laurentPartialQuotient_pow_card in
 /-- **Frobenius acts on continued fractions of Laurent series.** Let $K$ be a finite field with
-$q$ elements and let $\alpha \in K((x^{-1}))$, with partial quotients $b_0, b_1, \dots$ and
-convergent numerators $P_n$ and denominators $Q_n$. For every $n \ge 0$, the $n$-th partial
-quotient of $\alpha^q$ is $b_n^q$, and its $n$-th convergent has numerator $P_n^q$ and
-denominator $Q_n^q$.
+$q$ elements and let $\alpha \in K((x^{-1}))$. Write $b_n(\alpha)$, $P_n(\alpha)$ and
+$Q_n(\alpha)$ for the terms of the partial quotient, numerator and denominator sequences.
+The convention $0^{-1}=0$ extends these sequences past the end of a finite expansion.
+For every $n \ge 0$, they satisfy $b_n(\alpha^q)=b_n(\alpha)^q$,
+$P_n(\alpha^q)=P_n(\alpha)^q$ and $Q_n(\alpha^q)=Q_n(\alpha)^q$.
 
-The convergent recurrences use the fixed initial values $P_{-1} = 1$ and $Q_{-1} = 0$.
-The numerator and denominator sequences store these at index $0$ and $P_n, Q_n$ at index $n+1$.
+The numerator and denominator sequences store the initial values $P_{-1}=1$ and $Q_{-1}=0$ at
+index $0$, and $P_n(\alpha)$ and $Q_n(\alpha)$ at index $n+1$. These latter terms give the
+numerator and denominator of the ordinary $n$-th convergent whenever the expansion has one.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
