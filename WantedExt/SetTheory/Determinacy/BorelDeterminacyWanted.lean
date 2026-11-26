@@ -11,7 +11,6 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.SetTheory.Determinacy.AnalyticDeterminacy
 public import MathlibExt.SetTheory.Determinacy.GaleStewart
-public import MathlibExt.SetTheory.Cardinal.LargeCardinal.Measurable
 public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
@@ -37,8 +36,6 @@ open MeasureTheory
 namespace MathlibExt.SetTheory.DeterminacyWanted
 
 open MathlibExt.SetTheory.Determinacy
-
-universe u
 
 /-- **Martin's Borel determinacy theorem.** For every non-empty set of moves `A`, every Borel
 payoff set `S ⊆ A^ℕ` (for the product of the discrete topologies) is determined

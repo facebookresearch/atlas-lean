@@ -24,7 +24,9 @@ License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF 
 either express or implied. See the License for the specific language governing permissions
 and limitations under the License. lean-eval ships no `NOTICE` file.
 
-The adapted portion is the statement of `lidskii_inequality`. ATLAS placed it in the
+The adapted portions are the statement of `lidskii_inequality` and the module documentation
+introducing Knill's §99 on spectral perturbation and stating the eigenvalue bound, including
+the displayed inequality. ATLAS placed the theorem in the
 `MathlibExt.LinearAlgebra.LidskiiInequalityWanted` namespace as a wanted declaration
 and subsequently moved it here with a proof.
 -/

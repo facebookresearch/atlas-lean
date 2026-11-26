@@ -17,7 +17,9 @@ archived): the definitions `ProjSpace`, `vanishingSet`, `chartIndex`, `affineCon
 `maxIdealAt`, `localRingAt` and `intersectionMultiplicity`, the lemmas `chartIndex_rep_ne_zero`
 and `evalAt_surjective`, the instances `maxIdealAt_isMaximal` and `maxIdealAt_isPrime`, and the
 statement of `bezout_multiplicity`, with the docstrings and comments they had in the former wanted
-module `WantedExt/AlgebraicGeometry/BezoutWanted.lean`.
+module `WantedExt/AlgebraicGeometry/BezoutWanted.lean`. The opening two paragraphs of the module
+documentation, stating Bézout's theorem and describing intersection multiplicity via the affine
+cone, are also adapted from lean-eval.
 Copyright 2026 Lean FRO, LLC.
 Authors: Kim Morrison
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use these portions
@@ -44,8 +46,8 @@ the proof needs. The proof inside the definition of `chartIndex` (that some coor
 representative is nonzero) and the proof of `chartIndex_rep_ne_zero` now cite
 `Projectivization.rep_ne_zero` instead of its deprecated alias `Projectivization.rep_nonzero`.
 
-The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
-`bezout_multiplicity`, the private lemmas it uses and the module documentation.
+ATLAS contributed the proof of `bezout_multiplicity`, its private lemmas, and the “Main results”
+and “Proof outline” sections of the module documentation.
 
 Source: É. Bézout, *Théorie générale des équations algébriques*, Paris, 1779. Modern projective
 formulation: see Eisenbud, *Commutative Algebra*, Chapter 12, or Hartshorne, *Algebraic Geometry*,
