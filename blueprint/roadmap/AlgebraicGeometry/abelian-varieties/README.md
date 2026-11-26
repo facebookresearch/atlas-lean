@@ -17,7 +17,7 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Zarhin's trick](zarhin-trick.md)
 - [Zarhin's trick for abelian schemes](zarhin-trick-for-abelian-schemes.md)
 - [Néron model of an abelian variety](neron-model.md)
-- [Semistable reduction theorem for abelian varieties](semistable-reduction-theorem.md)
+- [Semistable reduction](semistable-reduction/README.md)
 - [Homomorphisms and Lie algebras of semi-abelian schemes](homomorphisms-and-lie-algebras-of-semi-abelian-schemes.md)
 - [Potential good reduction of abelian varieties with complex multiplication](good-reduction-of-cm-abelian-varieties.md)
 - [Deformations and p-divisible groups](deformations-and-p-divisible-groups/README.md)

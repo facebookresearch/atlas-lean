@@ -26,7 +26,7 @@ A good expansion follows Bosch, Lütkebohmert and Raynaud and has pages for:
   of $K$ (BLR, chapter "Properties of Néron Models", pp. 172–198; Conrad, §4, discussion before and
   after Theorem 4.4 and Corollary 4.5);
 - the ingredients of the proof of the
-  [semistable reduction theorem](semistable-reduction-theorem.md): the invariance of semistable
+  [semistable reduction theorem](semistable-reduction/semistable-reduction-theorem.md): the invariance of semistable
   reduction under isogenies (Conrad, Proposition 4.1) and products; the reduction to Jacobians of
   smooth proper geometrically connected curves, by writing an abelian variety as a quotient of a
   Jacobian and using Poincaré's reducibility theorem (Conrad, Proposition 4.3); the semistable

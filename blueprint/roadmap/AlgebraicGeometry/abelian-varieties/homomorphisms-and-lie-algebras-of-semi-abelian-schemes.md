@@ -4,7 +4,7 @@ This node is still to be broken down. A semi-abelian scheme over a scheme $S$ is
 commutative group scheme of finite type over $S$ whose fibres are connected and are extensions of an
 abelian variety by a torus, such as the semi-abelian schemes of
 [Mumford's construction](moduli-and-compactifications/mumford-construction-of-degenerating-abelian-varieties.md) and of the
-[semistable reduction theorem](semistable-reduction-theorem.md). The targets are:
+[semistable reduction theorem](semistable-reduction/semistable-reduction-theorem.md). The targets are:
 
 1. (Extension of homomorphisms.) Let $S$ be a noetherian normal scheme, $U \subset S$ a dense open
    subscheme and $G$, $H$ semi-abelian schemes over $S$. Every homomorphism $G|_U \to H|_U$ extends
