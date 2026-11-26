@@ -1,0 +1,10 @@
+{
+  "groups": [
+    {
+      "directory": "provenance/functional-analysis/residual-analysis",
+      "source_revision": "f386092a56f2b7b2f57a83548b841f93c6addd31",
+      "file_count": 8,
+      "source_content_binding": "The original56-file MathlibExt snapshot manifest and four chunks remain byte-exact historical source data. This installed Gaussian/Mellin/parabolic-cylinder slice has eight source/export bindings with original SHA, snapshot-file and snapshot-line references retained."
+    }
+  ]
+}
