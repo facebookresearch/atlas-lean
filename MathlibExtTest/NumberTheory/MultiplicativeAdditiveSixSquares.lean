@@ -8,9 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresMultiplicativeAdditiveSixSquaresEqId
+import MathlibExt.NumberTheory.MultiplicativeAdditiveSixSquares
 
-namespace MathlibExtTest.NumberTheory.MultiplicativeAdditivePairedSquaresMultiplicativeAdditiveSixSquaresEqId
+namespace MathlibExtTest.NumberTheory.MultiplicativeAdditiveSixSquares
 
 open ArithmeticFunction MetaMathlibExt
 
@@ -30,4 +30,4 @@ example (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
   have hn' := multiplicative_additive_six_squares_eq_id f hf hadd h2 n hn
   exact Nat.cast_injective (hm'.symm.trans (h.trans hn'))
 
-end MathlibExtTest.NumberTheory.MultiplicativeAdditivePairedSquaresMultiplicativeAdditiveSixSquaresEqId
+end MathlibExtTest.NumberTheory.MultiplicativeAdditiveSixSquares
