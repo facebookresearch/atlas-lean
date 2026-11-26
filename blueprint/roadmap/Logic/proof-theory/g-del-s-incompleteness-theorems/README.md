@@ -9,3 +9,5 @@
   provability predicate. Its arithmetical soundness uses exactly the Hilbert–Bernays–Löb
   derivability conditions assumed here, together with diagonal fixed points, and Löb's theorem is
   proved there in the same abstract setting.
+
+- [Tarski's undefinability theorem](tarski-s-undefinability-theorem.md)
