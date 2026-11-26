@@ -12,16 +12,19 @@ and the Johnstone centring and scaling
 $$\mu(m, n) = \bigl(\sqrt{n - 1} + \sqrt{m}\bigr)^2, \qquad \sigma(m, n) = \bigl(\sqrt{n - 1} + \sqrt{m}\bigr)\left(\frac{1}{\sqrt{n - 1}} + \frac{1}{\sqrt{m}}\right)^{1/3}.$$
 
 Then $(L' - \mu)/\sigma$ converges in distribution to the Tracy–Widom law $F_1$ of
-[Johnstone's Tracy–Widom limit](../../../Probability/high-dimensional-probability/johnstone-largest-eigenvalue-tracy-widom.md),
-as does $(L - \mu)/\sigma$.
+[Johnstone's Tracy–Widom limit](../../../Probability/high-dimensional-probability/johnstone-largest-eigenvalue-tracy-widom.md).
 
-The limit for $L$ is Johnstone's theorem applied to the $n \times m$ matrix $M^\top$, whose Gram matrix
-$(M^\top)^\top M^\top$ is $X$. Patterson, Price and Reich state the limit for $L'$ with $\gamma > 1$; the
+The corresponding limit for $L$ is Johnstone's theorem applied to the $n \times m$ matrix $M^\top$, whose Gram
+matrix $(M^\top)^\top M^\top$ is $X$; it is the input of the proof below, not a conclusion of this page. Patterson, Price and Reich state the limit for $L'$ with $\gamma > 1$; the
 argument below covers $\gamma = 1$ as well.
 
 ## Depends on
 
 - [Johnstone's Tracy–Widom limit](../../../Probability/high-dimensional-probability/johnstone-largest-eigenvalue-tracy-widom.md)
+
+## Proof depends on
+
+- [The square of a standard normal variable is chi-square with one degree of freedom](../../../Probability/distributions/continuous/chi-square-distribution/gaussian-real-map-sq.md)
 
 ## Expansion
 

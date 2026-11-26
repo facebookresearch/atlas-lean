@@ -34,15 +34,30 @@ and the neutral fixation probability of $A$ from $\xi$ is
 
 $$\rho_A^\circ(\xi) = \hat\xi.$$
 
+## Depends on
+
+- [Martingales, submartingales and supermartingales](../../../../Probability/martingales/martingales-submartingales-and-supermartingales/martingale.md)
+
+## Proof depends on
+
+- [General optional stopping for uniformly integrable martingales](../../../../Probability/martingales/optional-stopping-theorem/integral-stopped-value-at-top-eq-of-unif.md)
+
 ## Expansion
 
-1. Under neutral drift the ancestral-set chain $I \mapsto \tilde\alpha(I)$ on subsets of sites, driven by
-   $p^\circ$, has by the Fixation Axiom a single closed class, made of singletons; $\pi_i$ is the stationary
-   mass of $\{i\}$, and stationarity restricted to singletons is the displayed linear system, whose solution is
-   unique because the closed class is.
+1. Under neutral drift consider the ancestral-set chain $I \mapsto \tilde\alpha(I)$ on **nonempty** subsets
+   of sites, driven by $p^\circ$ (the empty set is fixed by every parentage map, so it is excluded). The image of a
+   singleton is a singleton, so the singletons form a closed set. By the Fixation Axiom the site $i$ of the axiom
+   gives a state $\{i\}$ reachable from every nonempty set, so every closed communicating class contains
+   $\{i\}$; hence there is exactly one, and it is contained in the singletons. It need not contain every
+   singleton (if one site is always copied into every site, the others are never reached), so some sites can
+   have reproductive value $0$. The chain therefore has a unique stationary law, supported on that class;
+   $\pi_i$ is its mass at $\{i\}$. Stationarity of the singleton chain $\{i\} \mapsto \{\tilde\alpha(i)\}$ is
+   the displayed linear system, and every closed class of the singleton chain is a closed class of the
+   nonempty-set chain, so the singleton chain also has exactly one and the normalized solution is unique.
 2. The system says $\mathbb{E}[\hat x' - \hat x \mid x] = \sum_i \pi_i \sum_j e_{ji}^\circ (x_j - x_i) = 0$,
-   so $\hat x(t)$ is a bounded martingale. It is absorbed at $\hat{\mathbf{A}} = 1$ or $\hat{\mathbf{B}} = 0$
-   almost surely, and optional stopping gives $\rho_A^\circ(\xi) = \hat\xi$.
+   so $\hat x(t)$ is a martingale, with values in $[0, 1]$. It is absorbed at $\hat{\mathbf{A}} = 1$ or
+   $\hat{\mathbf{B}} = 0$ almost surely. A bounded martingale is uniformly integrable, so optional stopping at the
+   absorption time (which need not be bounded) gives $\rho_A^\circ(\xi) = \mathbb{E}[\hat x(\tau)] = \hat\xi$.
 
 ## Sources
 

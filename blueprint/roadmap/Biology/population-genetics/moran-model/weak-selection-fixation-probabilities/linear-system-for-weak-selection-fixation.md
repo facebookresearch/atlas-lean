@@ -34,7 +34,7 @@ in terms of the neutral sojourn-time operator.
    vanishing at $\mathbf{A}$ and $\mathbf{B}$; the first-order expansion then gives the formula with
    $\eta_I^\xi = \langle \hat x - x_I \rangle_\xi^\circ$.
 2. For $\phi$ vanishing at $\mathbf{A}$ and $\mathbf{B}$, $\langle \phi \rangle_\xi^\circ = \phi(\xi) + \sum_{(R,\alpha)} p^\circ(R,\alpha) \langle \phi \circ \tilde\alpha \rangle_\xi^\circ$, where $(\phi \circ \tilde\alpha)(x) = \phi(x_{\tilde\alpha})$. Since $\hat x$ is a neutral martingale and $(x_{\tilde\alpha})_I = x_{\tilde\alpha(I)}$, this gives the recurrence; the normalization holds because $\sum_i \pi_i (\hat x - x_i) = 0$.
-3. Uniqueness: the recurrence is $(I - C)\eta = b$, with $C$ the transition matrix of the neutral ancestral-set chain $I \mapsto \tilde\alpha(I)$ on nonempty sets of size at most $D + 1$. By the Fixation Axiom this chain has a single closed class, the singletons, with stationary law $\pi$ on them, so $\ker(I - C)$ is spanned by the constant vector, which the normalization excludes.
+3. Uniqueness: the recurrence is $(I - C)\eta = b$, with $C$ the transition matrix of the neutral ancestral-set chain $I \mapsto \tilde\alpha(I)$ on nonempty sets of size at most $D + 1$. Singletons map to singletons, and by the Fixation Axiom the singleton $\{i\}$ of the axiom is reachable from every nonempty set, so this chain has a unique closed communicating class, contained in the singletons (not necessarily all of them), with stationary law $\pi$ on it. A vector $h$ with $Ch = h$ is constant on that class, and since every state reaches it, $h$ equals that constant everywhere; so $\ker(I - C)$ is spanned by the constant vector, which the normalization $\sum_i \pi_i = 1$ excludes.
 
 ## Sources
 

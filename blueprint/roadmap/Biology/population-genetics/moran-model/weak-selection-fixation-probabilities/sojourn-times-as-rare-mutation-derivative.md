@@ -27,14 +27,24 @@ $\langle \cdot \rangle_\xi^\circ$ denotes this operator for the neutral chain.
 
 - [Reproductive values and neutral fixation probability](reproductive-value-and-neutral-fixation.md)
 
+## Proof depends on
+
+- [Absorption probabilities and mean times of a finite Markov chain](../../../../Probability/markov-chains/finite-markov-chains/absorption-probabilities-and-mean-absorption-tim.md)
+
 ## Expansion
 
 Every state reaches $\{\mathbf{A}, \mathbf{B}\}$, from which the amended chain moves to $\xi$, so every closed
-class contains $\xi$ and there is only one. Cut the stationary amended chain into cycles at its entrances to
-$\xi$. A cycle spends on average $t_\xi(x)$ steps at each transient $x$, $T = \sum_{y \in \mathbb{B}_T^N} t_\xi(y)$
-steps in all among transient states, and a geometric number of steps with mean $1/u$ in $\{\mathbf{A}, \mathbf{B}\}$.
-By the renewal-reward theorem $\pi_{(\xi)}^{u}(x) = t_\xi(x) / (T + 1/u) = u\, t_\xi(x) / (1 + uT)$, which
-gives both limits. Multiplying by $\phi(x)$ and summing over the finitely many transient states gives the
+class contains $\xi$ and there is only one. Cut the amended chain started at $\xi$ into cycles **only at its
+transitions from a monoallelic state to $\xi$** (a reset), not at every entrance to $\xi$: the original chain
+can return to $\xi$ before absorption. A cycle is then one run of the original chain from $\xi$ until
+absorption, followed by the holding time in $\{\mathbf{A}, \mathbf{B}\}$ until the next reset. In the first
+part it spends on average $t_\xi(x)$ steps at each transient $x$, and
+$T = \sum_{y \in \mathbb{B}_T^N} t_\xi(y) = \mathbb{E}_\xi[\text{absorption time}] < \infty$ steps in all,
+finite because the absorption time of the finite original chain has finite mean; the second part is
+geometric with mean $1/u$. The resets are regeneration times, so by the renewal-reward theorem the long-run
+fraction of time at $x$ is $t_\xi(x) / (T + 1/u)$, and this long-run fraction is the unique stationary law
+whether or not the chain is aperiodic, in particular at $u = 1$. Hence
+$\pi_{(\xi)}^{u}(x) = u\, t_\xi(x) / (1 + uT)$, which gives both limits. Multiplying by $\phi(x)$ and summing over the finitely many transient states gives the
 operator identity, and $\sum_x \phi(x) t_\xi(x) = \sum_t \mathbb{E}[\phi(x_t) \mid x_0 = \xi]$ by Fubini, since
 $\sum_t \mathbb{P}(x_t \in \mathbb{B}_T^N) = T < \infty$.
 

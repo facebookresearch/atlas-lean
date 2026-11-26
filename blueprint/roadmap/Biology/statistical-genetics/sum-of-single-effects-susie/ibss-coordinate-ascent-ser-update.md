@@ -2,7 +2,8 @@
 
 For $r \in \mathbb{R}^n$, let $\operatorname{SER}(X, r; \sigma^2, \sigma_{0}^2)$ denote the posterior law of $b$ in
 the single-effect regression $r = X b + e$, $e \sim \mathcal{N}_n(0, \sigma^2 I_n)$, with $b$ drawn from the SER
-prior of the [SuSiE model](sum-of-single-effects-model.md) with variance $\sigma_0^2$. When every column $x_j$
+prior of the [SuSiE model](sum-of-single-effects-model.md) with variance $\sigma_0^2$ (selector and effect size
+independent) and $e$ independent of $b$. When every column $x_j$
 of $X$ is nonzero, this law puts mass $\alpha_j$ on the $j$-th coordinate axis, where $\alpha$ is given by the
 [posterior inclusion probabilities of the single-effect regression](../bayesian-fine-mapping-and-colocalization/ser-posterior-eq-pip.md),
 and given that axis the effect $b_j$ has the normal law of the

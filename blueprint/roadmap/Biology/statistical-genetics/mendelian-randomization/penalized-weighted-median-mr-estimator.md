@@ -7,7 +7,9 @@ IVW estimate,
 
 $$Q_j = w'_j \bigl(\hat\beta_j - \hat\beta_{\mathrm{IVW}}\bigr)^2,$$
 
-and let $q_j = \mathbb{P}(\chi_1^2 \ge Q_j) \in (0, 1]$ be its upper-tail $\chi_1^2$ probability.
+and let $q_j = \mathbb{P}(\chi_1^2 \ge Q_j) \in (0, 1]$ be its upper-tail probability under the
+[chi-square law](../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
+with one degree of freedom.
 The **penalized weights** are
 
 $$w_j^{\mathrm{pen}} = \frac{w'_j \min(1, 20\,q_j)}{\sum_{k=1}^J w'_k \min(1, 20\,q_k)},$$
@@ -23,6 +25,7 @@ heterogeneous outliers are downweighted continuously toward zero.
 - [Inverse-variance weight of a ratio estimate](ivw-weight.md)
 - [Inverse-variance-weighted estimator](ivw.md)
 - [Weighted median Mendelian randomization estimator](weighted-median-mr-estimator.md)
+- [Chi-square distribution](../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md)
 
 ## Sources
 

@@ -20,7 +20,9 @@ throughout: a B-quartet on an induced network on a subset of the taxa is a B-qua
 cut edge separating $a, b$ from $c, d$, then $\{a, b, c, \alpha\}$ is a B-quartet on the network induced on
 $X \setminus \{d\}$ (Lemma 3). Let $n \ge 5$ and let $\{a, b, c, d\}$ be a B-quartet, determining a blob $B$.
 
-1. Keep one taxon from each component left by deleting $B$, including $a, b, c, d$. If this drops a taxon,
+1. Keep one taxon from each component left by deleting $B$ that contains a taxon (a component may contain
+   none, such as the one above the lowest stable ancestor), choosing $a, b, c, d$ as the representatives of
+   their components. If this drops a taxon,
    $\{a, b, c, d\}$ is still a B-quartet on the smaller induced network, the inductive hypothesis identifies it
    there, and Corollary 2 lifts it to $\mathcal{N}^+$.
 2. Otherwise, if deleting some taxon other than $a, b, c, d$ leaves $\{a, b, c, d\}$ a B-quartet on the induced

@@ -9,12 +9,17 @@ The **Sum of Single Effects (SuSiE)** regression model specifies
 
 $$y = X b + e, \qquad e \sim \mathcal{N}_n(0, \sigma^2 I_n), \qquad b = \sum_{l=1}^L b_l,$$
 
-where the components $(b_1, \dots, b_L)$ are independent with
+where
 
-$$b_l = \gamma_l \beta_l, \qquad \gamma_l \sim \operatorname{Multinomial}(1, \pi), \qquad \beta_l \sim \mathcal{N}(0, \sigma_{0l}^2).$$
+$$b_l = \gamma_l \beta_l, \qquad \gamma_l \sim \operatorname{Multinomial}(1, \pi), \qquad \beta_l \sim \mathcal{N}(0, \sigma_{0l}^2),$$
 
-Each $b_l$ has at most one nonzero coordinate; its law $g_l$ is the single-effect regression (SER) prior
-with variance $\sigma_{0l}^2$.
+and the $2L + 1$ random elements $\gamma_1, \beta_1, \dots, \gamma_L, \beta_L, e$ are mutually independent: within each
+component the selector $\gamma_l$ is drawn independently of the effect size $\beta_l$, the pairs
+$(\gamma_l, \beta_l)$ are independent across $l$, and the noise $e$ is independent of all of them. Equivalently,
+given $b_1, \dots, b_L$, the response has law $y \mid b_1, \dots, b_L \sim \mathcal{N}_n\bigl(X \sum_{l} b_l, \sigma^2 I_n\bigr)$.
+
+Each $b_l$ has at most one nonzero coordinate; its law $g_l$, the law of $\gamma_l \beta_l$ with $\gamma_l$ and
+$\beta_l$ independent as above, is the single-effect regression (SER) prior with variance $\sigma_{0l}^2$.
 
 The **SuSiE variational family** consists of distributions on $(b_1, \dots, b_L)$ that factor across
 effects,
