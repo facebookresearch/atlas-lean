@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
 
 /-! # Prime reciprocal sums of odd perfect and primitive non-deficient numbers
 
@@ -207,18 +208,6 @@ public theorem_wanted odd_primitiveNondeficient_primeReciprocalSum_ge
             (1 + 2 * Real.log (Real.log n.minFac) / Real.log n.minFac) +
         ((abundancySup n : ℝ) - 2) / 2 - ((abundancySup n : ℝ) - 2) ^ 2 / 4 ≤
       ∑ p ∈ n.primeFactors, (1 : ℝ) / p
-
-/-- **Bound on $H(n)$ for primitive non-deficient numbers by the least prime factor.** For a
-positive integer $n$ write $H(n) = \prod_{p \mid n} p/(p-1)$, the product over the prime
-divisors of $n$. There is a real constant $C$ such that every primitive non-deficient number
-$n$ with least prime factor $p_1$ satisfies $H(n) \le 2 + C/p_1$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 8 (`integers-2025-A59-prop-8`). -/
-public theorem_wanted exists_abundancySup_le_two_add_div_minFac :
-    ∃ C : ℝ, ∀ n : ℕ, IsPrimitiveNondeficient n →
-      (abundancySup n : ℝ) ≤ 2 + C / n.minFac
 
 /-- **Primes congruent to $-1$ modulo $165$ are not Euler primes.** For all natural numbers
 $q$ and $N$ with $q \equiv -1 \pmod{165}$, $q$ is not an Euler prime of $N$. In particular, no
