@@ -1195,3 +1195,4 @@ Topics added since this subject's fields were last revised.
 - [Cup](cup/README.md)
 - [Iter Cech](iter-cech/README.md)
 - [Drinfeld Basis Torsion](drinfeld-basis-torsion/README.md)
+- [Canonical Polarization Data](canonical-polarization-data/README.md)
