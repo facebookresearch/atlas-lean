@@ -16,13 +16,16 @@ Because $\omega$ forgets how a place grows, the coverability tree does not decid
 - [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
 - [Place/transition Petri nets](place-transition-petri-nets.md)
 
+## Proof depends on
+
+- [Kőnig's lemma for inverse systems](../../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md)
+
 ## Expansion
 
 This page becomes ready once the proof of termination is linked. It needs:
 
 - Dickson's lemma: every infinite sequence of vectors in $\mathbb{N}^k$ has two terms $A_m \le A_n$ with $m < n$ (proof prerequisite of termination)
-- König's lemma: an infinite tree in which every node has finitely many children has an infinite path (proof prerequisite of termination; each node of the coverability tree has at most one child per transition)
-- the step combining them: along an infinite path no label repeats an earlier one, so Dickson's lemma, applied to the places that are not yet $\omega$, gives a strictly larger later label and with it a new $\omega$, which can happen at most once per place (proof of termination)
+- the step combining Kőnig's lemma, applied to the levels of the tree with the ancestor maps, and Dickson's lemma: along an infinite path no label repeats an earlier one, so Dickson's lemma, applied to the places that are not yet $\omega$, gives a strictly larger later label and with it a new $\omega$, which can happen at most once per place (proof of termination)
 - the soundness and completeness arguments for properties 1–4, relating firing sequences of the net to paths of the tree (proof of the properties)
 
 ## Sources

@@ -11,6 +11,7 @@ A pure [Petri net](place-transition-petri-nets.md) $N$ with $m$ places is *struc
 ## Proof depends on
 
 - [Farkas certificates for linear rational arithmetic](../../../TheoryOfComputation/decision-procedures/satisfiability-modulo-theories/farkas-certificates-for-linear-rational.md)
+- [Linear programming is in P (Khachiyan)](../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
 
 ## Sources
 

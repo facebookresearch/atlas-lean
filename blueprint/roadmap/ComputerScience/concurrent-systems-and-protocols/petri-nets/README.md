@@ -14,6 +14,7 @@ Place/transition Petri nets and vector addition systems: reachability, boundedne
 - [Rackoff's exponential-space bound for covering and boundedness](rackoff-s-exponential-space-bound.md)
 - [Lipton's exponential-space lower bound](lipton-s-exponential-space-lower-bound.md)
 - [Reachability in Petri nets is decidable](reachability-is-decidable.md)
+- [Problems recursively equivalent to Petri-net reachability](problems-equivalent-to-reachability.md)
 - [The state equation of a Petri net](state-equation.md)
 - [S-invariants of a Petri net](s-invariants.md)
 - [Structural boundedness of Petri nets](structural-boundedness.md)
