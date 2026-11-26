@@ -32,7 +32,7 @@ priorities broken by vertex index: vertices are compared by the key
   of `G`.
 
 Randomness, the removal of selected vertices and their neighbors, maximality of the final
-set, and the expected number of rounds are not covered.
+set, and the number of rounds are treated in `CSLibExt.Computability.Distributed.LubyMISRounds`.
 
 ## References
 
