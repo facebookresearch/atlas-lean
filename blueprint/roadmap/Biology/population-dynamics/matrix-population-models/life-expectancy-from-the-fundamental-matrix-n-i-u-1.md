@@ -16,4 +16,3 @@ is the fundamental matrix (Caswell, eq. (5.6)). The longevity $\eta_j = \sum_i \
 ## Sources
 
 - H. Caswell, *Sensitivity Analysis: Matrix Methods in Demography and Ecology*, Springer, 2019, Secs. 5.2.1–5.2.2 and 5.3.2, eqs. (5.3), (5.6), (5.22)–(5.24). <https://doi.org/10.1007/978-3-030-10534-1>
-- Absorbing Markov chain, Wikipedia, section Fundamental matrix. <https://en.wikipedia.org/wiki/Absorbing_Markov_chain>

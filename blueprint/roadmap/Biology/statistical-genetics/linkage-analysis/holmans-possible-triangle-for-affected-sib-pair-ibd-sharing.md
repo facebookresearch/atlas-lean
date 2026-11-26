@@ -4,7 +4,7 @@ For a pair of affected sibs, let $(z_0, z_1, z_2)$ be the probabilities that the
 
 $$z_1 \le \tfrac12, \qquad 2 z_0 \le z_1$$
 
-(Suarez et al.; Holmans 1993; as stated by Dudoit and Speed 1998). The region they cut out of the simplex is the possible triangle with vertices $(1/4, 1/2, 1/4)$, $(0, 1/2, 1/2)$ and $(0, 0, 1)$. Holmans (1993) showed that restricting maximization of the affected-sib-pair likelihood to the possible triangle improves the power of Risch's likelihood-ratio test, and derived the asymptotic distributions of the resulting statistics.
+(Suarez et al.; Holmans 1993; as stated by Dudoit and Speed 1999). The region they cut out of the simplex is the possible triangle with vertices $(1/4, 1/2, 1/4)$, $(0, 1/2, 1/2)$ and $(0, 0, 1)$. Holmans (1993) showed that restricting maximization of the affected-sib-pair likelihood to the possible triangle improves the power of Risch's likelihood-ratio test, and derived the asymptotic distributions of the resulting statistics.
 
 ## Expansion
 
@@ -16,5 +16,5 @@ $$z_1 \le \tfrac12, \qquad 2 z_0 \le z_1$$
 
 ## Sources
 
-- S. Dudoit and T. P. Speed, Triangle constraints for sib-pair identity by descent probabilities under a general multilocus model for disease susceptibility, Technical Report 527, Department of Statistics, University of California, Berkeley, 1998, Introduction.
+- S. Dudoit and T. P. Speed, Triangle constraints for sib-pair identity by descent probabilities under a general multilocus model for disease susceptibility, in M. E. Halloran and S. Geisser (eds.), *Statistics in Genetics*, IMA Vol. Math. Appl. 112, Springer, New York (1999), Introduction.
 - P. Holmans, Asymptotic properties of affected-sib-pair linkage analysis, Am. J. Hum. Genet. 52 (1993), 362–374, abstract.

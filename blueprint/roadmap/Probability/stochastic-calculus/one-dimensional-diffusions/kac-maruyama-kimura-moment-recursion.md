@@ -1,6 +1,6 @@
 # Moment recursion for additive path functionals
 
-Let $X$ be a regular diffusion on $[0, 1]$ with infinitesimal mean $\mu$ and variance $\sigma^2$, let $T^*$ be its exit time from $(0, 1)$ and $G(p, \xi)$ its Green's function, so that $E_p[\int_0^{T^*}g(X_s)\,ds] = \int_0^1G(p, \xi)g(\xi)\,d\xi$ for continuous $g$ (Etheridge, lecture notes, Theorem 4.4); write $(Gg)(p)$ for the right side. For continuous $g \ge 0$ let $A = \int_0^{T^*}g(X_s)\,ds$ and $M_n(p) = E_p[A^n]$. Then $M_0 = 1$ and
+Let $X$ be a regular diffusion on $[0, 1]$ with infinitesimal mean $\mu$ and variance $\sigma^2$, let $T^*$ be its exit time from $(0, 1)$ and $G(p, \xi)$ its Green's function, so that $E_p[\int_0^{T^*}g(X_s)\,ds] = \int_0^1G(p, \xi)g(\xi)\,d\xi$ for continuous $g$ (Karlin and Taylor 1981, Chapter 15); write $(Gg)(p)$ for the right side. For continuous $g \ge 0$ let $A = \int_0^{T^*}g(X_s)\,ds$ and $M_n(p) = E_p[A^n]$. Then $M_0 = 1$ and
 
 $$M_n = n\,G(g\,M_{n-1}), \qquad n \ge 1.$$
 
@@ -21,6 +21,6 @@ Derivation: $A^n = n\int_0^{T^*}g(X_t)\bigl(\int_t^{T^*}g(X_s)\,ds\bigr)^{n-1}dt
 
 ## Sources
 
-- A. Etheridge, Diffusion process models in mathematical genetics, lecture notes, University of Oxford, Theorem 4.4 and Definition 4.5.
+- S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York (1981), Chapter 15 (the Green's function and the occupation formula).
 - T. Nagylaki, The moments of stochastic integrals and the distribution of sojourn times, Proc. Natl. Acad. Sci. USA 71 (1974), 746–749, abstract. <https://doi.org/10.1073/pnas.71.3.746>
 - T. Maruyama and M. Kimura, Moments for sum of an arbitrary function of gene frequency along a stochastic path of gene frequency change, Proc. Natl. Acad. Sci. USA 72 (1975), 1602–1604, abstract. <https://doi.org/10.1073/pnas.72.4.1602>

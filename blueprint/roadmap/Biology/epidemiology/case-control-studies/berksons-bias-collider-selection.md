@@ -21,5 +21,4 @@ so among admitted persons the diseases are negatively associated: $P(A \mid B, H
 ## Sources
 
 - J. D. Snoep, A. Morabia, S. Hernández-Díaz, M. A. Hernán and J. P. Vandenbroucke, Commentary: A structural approach to Berkson's fallacy and a guide to a history of opinions about it, Int. J. Epidemiol. 43 (2014), 515–521. <https://doi.org/10.1093/ije/dyu026>
-- Berkson's paradox, Wikipedia. <https://en.wikipedia.org/wiki/Berkson%27s_paradox>
 - Original result: J. Berkson, Limitations of the application of fourfold table analysis to hospital data, Biometrics Bull. 2 (1946), 47–53. <https://doi.org/10.2307/3002000> The spurious association of independent diseases in hospital data follows Snoep et al. (2014).

@@ -1,6 +1,6 @@
 # Strong-migration reductions and spatial limits
 
-When migration is strong compared with drift, a structured population drifts like a single panmictic population. Felsenstein (Section VII.5) shows for the $n$-island model that the population drifts as one panmictic population of size near $Nn$ when $Nm$ is large and that structure impedes the spread of alleles when $Nm$ is small, with the transition near $4Nm = (n - 1)/n$, and reports that Nagylaki (1977) proved that any connected geographic structure behaves as if panmictic when all the $Nm_{ij}$ are large. With genic selection in Wright's island model, Cherry and Wakeley (2003, abstract) relate the subdivided population to a panmictic Wright–Fisher population with a larger effective size and a smaller effective selection coefficient whose product is unchanged.
+When migration is strong compared with drift, a structured population drifts like a single panmictic population. Nagylaki (1980, abstract) proved, for a fixed ergodic but otherwise arbitrary migration pattern with mutation rates and selection coefficients proportional to $1/N_T$, that as the total population number $N_T \to \infty$ the deme frequencies converge to their average with respect to the stationary distribution of the backward migration matrix, and that this average follows the panmictic mutation–selection diffusion with the selection intensities averaged in the same way and an effective population number $N_e \le N_T$, with $N_e = N_T$ exactly when migration does not alter the deme sizes. With genic selection in Wright's island model, Cherry and Wakeley (2003, abstract) relate the subdivided population to a panmictic Wright–Fisher population with a larger effective size and a smaller effective selection coefficient whose product is unchanged.
 
 In the structured diffusion with migration rates multiplied by a large factor $\lambda$, the deme frequencies are pulled towards their weighted average, and the candidate one-dimensional limit for $\bar x = \sum_iw_ix_i$, with $w$ the stationary law of the backward migration chain, has drift $\sum_iw_i\beta_i(\bar x)$ and diffusion coefficient $\sum_iw_i^2\bar x(1 - \bar x)/\kappa_i$, obtained by evaluating the drift and the quadratic-variation rate of $\bar x$ at the equal-frequency configuration.
 
@@ -15,6 +15,6 @@ For populations in a spatial continuum the limits are stochastic partial differe
 
 ## Sources
 
-- J. Felsenstein, *Theoretical Evolutionary Genetics*, course text, University of Washington, Section VII.5 (the island model; discussion around equations (VII-49)–(VII-51)).
+- T. Nagylaki, The strong-migration limit in geographically structured populations, J. Math. Biol. 9 (1980), 101–114, abstract. <https://doi.org/10.1007/BF00275916>
 - J. L. Cherry and J. Wakeley, A diffusion approximation for selection and drift in a subdivided population, Genetics 163 (2003), 421–428, abstract. <https://doi.org/10.1093/genetics/163.1.421>
 - N. Biswas, A. M. Etheridge and A. Klimek, The spatial Lambda-Fleming-Viot process with fluctuating selection, arXiv:1802.08188, Section 1 and Theorem 4.6. <https://arxiv.org/abs/1802.08188>

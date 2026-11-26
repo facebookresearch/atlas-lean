@@ -8,7 +8,7 @@ Since $f \mapsto e^{\bar\sigma/2}f$ is unitary from $L^2(\pi)$ onto $L^2(\pi_0)$
 
 $$|\Lambda_n(\sigma) - \lambda_n| \le \sup_{0 \le x \le 1}|Q(x)|,$$
 
-a bound of order $|\sigma|$ as $\sigma \to 0$. Second, the $\lambda_n$ are simple, since $\lambda_{n+1} - \lambda_n = n + (\alpha + \beta)/2 > 0$, so each $\Lambda_n(\sigma)$ is analytic near $\sigma = 0$ and, by the first-order eigenvalue perturbation formula for symmetric operators (Wikipedia, *Eigenvalue perturbation*), $\Lambda_n(\sigma) = \lambda_n + \sigma\langle R_n, Q_1R_n\rangle_{\pi_0}/\langle R_n, R_n\rangle_{\pi_0} + O(\sigma^2)$, where $Q_1$ is the coefficient of $\sigma$ in $Q$. Song and Steinrücken (2012, section on genic selection) note that Kimura (1955) used an equation of this kind to obtain perturbation expansions in powers of $\sigma$, whereas their method is not perturbative.
+a bound of order $|\sigma|$ as $\sigma \to 0$. Second, the $\lambda_n$ are simple, since $\lambda_{n+1} - \lambda_n = n + (\alpha + \beta)/2 > 0$, so each $\Lambda_n(\sigma)$ is analytic near $\sigma = 0$ and, by the first-order eigenvalue perturbation formula for symmetric operators (Kato 1976, Chapter VII), $\Lambda_n(\sigma) = \lambda_n + \sigma\langle R_n, Q_1R_n\rangle_{\pi_0}/\langle R_n, R_n\rangle_{\pi_0} + O(\sigma^2)$, where $Q_1$ is the coefficient of $\sigma$ in $Q$. Song and Steinrücken (2012, section on genic selection) note that Kimura (1955) used an equation of this kind to obtain perturbation expansions in powers of $\sigma$, whereas their method is not perturbative.
 
 ## Depends on
 
@@ -24,4 +24,4 @@ a bound of order $|\sigma|$ as $\sigma \to 0$. Second, the $\lambda_n$ are simpl
 ## Sources
 
 - Y. S. Song and M. Steinrücken, A simple method for finding explicit analytic transition densities of diffusion processes with general diploid selection, Genetics 190 (2012), 1117–1129, equations (26)–(33) and the section on genic selection. <https://doi.org/10.1534/genetics.111.136929>
-- Wikipedia, Eigenvalue perturbation, first-order expansion. <https://en.wikipedia.org/wiki/Eigenvalue_perturbation>
+- T. Kato, *Perturbation Theory for Linear Operators*, 2nd ed., Grundlehren der mathematischen Wissenschaften 132, Springer, 1976, Chapter VII (analytic perturbation theory, selfadjoint holomorphic families).

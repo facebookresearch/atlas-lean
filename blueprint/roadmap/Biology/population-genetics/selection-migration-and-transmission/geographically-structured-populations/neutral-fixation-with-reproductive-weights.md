@@ -22,5 +22,4 @@ Proof. Applying $L$ to $f(x) = \sum_iw_ix_i$ gives $\sum_iw_i\sum_jQ_{ij}x_j = (
 
 ## Sources
 
-- A. Etheridge, *Some mathematical models from population genetics II: adding space*, RIMS lecture slides, University of Oxford, slides on the structured Wright–Fisher model.
 - M. C. Whitlock, Fixation probability and time in subdivided populations, Genetics 164 (2003), 767–779, abstract. <https://doi.org/10.1093/genetics/164.2.767>

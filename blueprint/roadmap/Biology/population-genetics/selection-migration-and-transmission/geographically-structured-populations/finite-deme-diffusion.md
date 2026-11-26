@@ -1,6 +1,6 @@
 # Diffusion approximation for a population of finitely many demes
 
-Etheridge (RIMS lectures II, structured Wright–Fisher model) considers demes $i$ of sizes $N_i$, each reproducing by neutral Wright–Fisher sampling in discrete generations, with a proportion $m_{ij}$ of the individuals of deme $i$ migrating to deme $j$, and the scaling $N_i = O(N)$, $m_{ij} = O(1/N)$ with time measured in units of $N$ generations. The forward-in-time diffusion for the allele frequencies follows from the one-generation moments. Let deme $i$ hold $M_i = \kappa_iM$ gene copies, and let $p_{ij}$ be the backward migration matrix: the fraction of the genes of deme $i$ after migration that came from deme $j$, with $\sum_jp_{ij} = 1$ and $p_{ij} = q_{ij}/M$ for $j \ne i$. If migration precedes sampling, the new frequency is $x_i' = Y_i/M_i$ with $Y_i \sim \mathrm{Binomial}(M_i, y_i)$, $y_i = \sum_jp_{ij}x_j$, independently over demes, so
+Consider demes $i$ of sizes $N_i$, each reproducing by neutral Wright–Fisher sampling in discrete generations, with a proportion $m_{ij}$ of the individuals of deme $i$ migrating to deme $j$, and the scaling $N_i = O(N)$, $m_{ij} = O(1/N)$ with time measured in units of $N$ generations; Notohara (1990, abstract) proves that the diffusion of the stepping-stone model with migration among colonies, a model of this kind, is dual to the structured coalescent. The forward-in-time diffusion for the allele frequencies follows from the one-generation moments. Let deme $i$ hold $M_i = \kappa_iM$ gene copies, and let $p_{ij}$ be the backward migration matrix: the fraction of the genes of deme $i$ after migration that came from deme $j$, with $\sum_jp_{ij} = 1$ and $p_{ij} = q_{ij}/M$ for $j \ne i$. If migration precedes sampling, the new frequency is $x_i' = Y_i/M_i$ with $Y_i \sim \mathrm{Binomial}(M_i, y_i)$, $y_i = \sum_jp_{ij}x_j$, independently over demes, so
 
 $$E[x_i' - x_i \mid x] = \sum_{j \ne i}\frac{q_{ij}}{M}(x_j - x_i), \qquad \mathrm{Cov}(x_i', x_j' \mid x) = \delta_{ij}\frac{y_i(1 - y_i)}{\kappa_iM}.$$
 
@@ -19,5 +19,5 @@ with no cross second-order terms, because the demes resample independently. If s
 
 ## Sources
 
-- A. Etheridge, *Some mathematical models from population genetics II: adding space*, RIMS lecture slides, University of Oxford, slides on the structured Wright–Fisher model and its scaling limit.
+- M. Notohara, The coalescent and the genealogical process in geographically structured population, J. Math. Biol. 29 (1990), 59–75, abstract. <https://doi.org/10.1007/BF00173909>
 - J. L. Cherry and J. Wakeley, A diffusion approximation for selection and drift in a subdivided population, Genetics 163 (2003), 421–428, abstract. <https://doi.org/10.1093/genetics/163.1.421>

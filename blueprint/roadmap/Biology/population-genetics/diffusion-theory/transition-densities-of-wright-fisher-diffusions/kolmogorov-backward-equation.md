@@ -1,6 +1,6 @@
 # The Kolmogorov backward equation for Wright–Fisher diffusions
 
-For a one-dimensional diffusion with drift $\mu$ and infinitesimal variance $\sigma^2$ and a bounded test function $f$, Etheridge (lecture notes, Section 3, equations (4) and (5) and Lemma 3.6) derives from the Chapman–Kolmogorov equation that $u(t, x) = E_x[f(X_t)]$ satisfies the backward equation $\partial_tu = \mu u' + \frac12\sigma^2u''$ with $u(0, \cdot) = f$, and that the transition density satisfies the same equation in its initial point, with a point mass at $x$ as initial condition; in contrast with the forward equation, the backward equation places no differentiability requirement on $\mu$ and $\sigma^2$. For the Wright–Fisher diffusion with selection and mutation this reads
+For a one-dimensional diffusion with drift $\mu$ and infinitesimal variance $\sigma^2$ and a bounded test function $f$, the Chapman–Kolmogorov equation gives that $u(t, x) = E_x[f(X_t)]$ satisfies the backward equation $\partial_tu = \mu u' + \frac12\sigma^2u''$ with $u(0, \cdot) = f$, and that the transition density satisfies the same equation in its initial point, with a point mass at $x$ as initial condition (Karlin and Taylor 1981, Chapter 15). For the Wright–Fisher diffusion with selection and mutation this reads
 
 $$\partial_tu(t, x) = \tfrac12x(1 - x)\,\partial_x^2u(t, x) + \bigl(\sigma x(1 - x) + \tfrac12(\theta_1(1 - x) - \theta_2x)\bigr)\partial_xu(t, x).$$
 
@@ -13,12 +13,12 @@ In the neutral case without mutation the identity holds in the strong semigroup 
 
 ## Expansion
 
-1. The backward equation from the Chapman–Kolmogorov equation and the generator, as in Etheridge's derivation.
+1. The backward equation from the Chapman–Kolmogorov equation and the generator, as in Karlin and Taylor (1981, Chapter 15).
 2. The sup-norm identity $\frac{d}{dt}T_tf = LT_tf = T_tLf$ for $f$ in the domain of the generator, extending the polynomial case.
 3. The classical interior equation for $u$ with continuous initial data, from interior smoothness of the transition density.
 4. The weak backward equation of the Dirichlet heat kernel for generalized Kimura operators, and the behaviour of $u$ at the boundary.
 
 ## Sources
 
-- A. Etheridge, *Diffusion process models in mathematical genetics*, lecture notes, University of Oxford, Section 3 (equations (4), (5), Lemma 3.6).
+- S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, 1981, Chapter 15.
 - C. L. Epstein and C. A. Pop, Transition probabilities for degenerate diffusions arising in population genetics, arXiv:1608.02119 (2017), Theorems 1.3 and 1.7 and Section 3. <https://arxiv.org/abs/1608.02119>

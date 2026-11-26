@@ -4,7 +4,7 @@ For the replicator equation $\dot x_i = x_i((Ax)_i - x\cdot Ax)$ on $S_n$, if th
 
 $$\frac1T\int_0^T x_i(t)\, dt \to z_i \qquad (T \to \infty,\ i = 1, \dots, n)$$
 
-(Hofbauer and Sigmund 2003, Theorem 4, eq. (11)); if an interior orbit has $\omega$-limit points on the boundary, its time average need not converge. For the Lotka–Volterra system $\dot x_i = x_i(r_i + (Ax)_i)$ with invertible $A$ and interior equilibrium $x^* = -A^{-1}r$, integrating $\frac{d}{dt}\log x_i = r_i + (Ax)_i$ over a period of a periodic orbit of period $T$ gives $\frac1T\int_0^T x(t)\, dt = x^*$ (Allesina, Theoretical Community Ecology, Lecture 3), and the same argument applied to an orbit that stays in a compact subset of the open orthant shows that its long-time averages converge to $x^*$. For the predator–prey system $\dot x = x(\alpha - \beta y)$, $\dot y = y(\delta x - \gamma)$ this gives Volterra's averages over a period: $\frac1T\int_0^T x = \gamma/\delta$ and $\frac1T\int_0^T y = \alpha/\beta$.
+(Hofbauer and Sigmund 2003, Theorem 4, eq. (11)); if an interior orbit has $\omega$-limit points on the boundary, its time average need not converge. For the Lotka–Volterra system $\dot x_i = x_i(r_i + (Ax)_i)$ with invertible $A$ and interior equilibrium $x^* = -A^{-1}r$, integrating $\frac{d}{dt}\log x_i = r_i + (Ax)_i$ over a period of a periodic orbit of period $T$ gives $\frac1T\int_0^T x(t)\, dt = x^*$, and the same argument applied to an orbit that stays in a compact subset of the open orthant shows that its long-time averages converge to $x^*$ (Hofbauer and Sigmund 1998, Sec. 5.2). For the predator–prey system $\dot x = x(\alpha - \beta y)$, $\dot y = y(\delta x - \gamma)$ this gives Volterra's averages over a period: $\frac1T\int_0^T x = \gamma/\delta$ and $\frac1T\int_0^T y = \alpha/\beta$ (Hofbauer and Sigmund 1998, Sec. 2.3).
 
 ## Depends on
 
@@ -21,4 +21,4 @@ $$\frac1T\int_0^T x_i(t)\, dt \to z_i \qquad (T \to \infty,\ i = 1, \dots, n)$$
 ## Sources
 
 - J. Hofbauer and K. Sigmund, Evolutionary game dynamics, Bull. Amer. Math. Soc. 40 (2003), 479–519, Theorem 4 and the remark after it. <https://doi.org/10.1090/S0273-0979-03-00988-1>
-- S. Allesina, *Theoretical Community Ecology*, lecture notes, University of Chicago, Lecture 3 (average densities in the Lotka–Volterra model).
+- J. Hofbauer and K. Sigmund, *Evolutionary Games and Population Dynamics*, Cambridge University Press, 1998, Secs. 2.3 and 5.2. <https://doi.org/10.1017/CBO9781139173179>

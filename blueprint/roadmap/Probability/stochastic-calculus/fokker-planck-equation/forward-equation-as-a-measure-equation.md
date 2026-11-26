@@ -1,6 +1,6 @@
 # The forward equation as an equation for measures
 
-For a diffusion on $[0, 1]$ with drift $\mu$ and infinitesimal variance $\sigma^2$, the law $\mu_t$ of $X_t$ satisfies the forward equation in the weak sense: by the martingale property of $f(X_t) - \int_0^tLf(X_s)\,ds$, $\frac{d}{dt}\int f\,d\mu_t = \int Lf\,d\mu_t$ for every $f$ in a core of the generator. Etheridge (lecture notes, Section 3, Lemma 3.7) derives the density form $\partial_tp = -\partial_y(\mu p) + \frac12\partial_y^2(\sigma^2p)$ by integrating the backward equation by parts against the transition density; the derivation discards boundary terms and requires $\mu$ and $\sigma^2$ to be differentiable. When the endpoints are absorbing those boundary terms carry mass: Zhao, Lascoux, Overall and Waxman (2013, Appendix A) use the complete distribution of the Wright–Fisher frequency, which integrates to $1$ over $[0, 1]$ and contains Dirac masses at $0$ and $1$ for loss and fixation, so that
+For a diffusion on $[0, 1]$ with drift $\mu$ and infinitesimal variance $\sigma^2$, the law $\mu_t$ of $X_t$ satisfies the forward equation in the weak sense: by the martingale property of $f(X_t) - \int_0^tLf(X_s)\,ds$, $\frac{d}{dt}\int f\,d\mu_t = \int Lf\,d\mu_t$ for every $f$ in a core of the generator. The density form $\partial_tp = -\partial_y(\mu p) + \frac12\partial_y^2(\sigma^2p)$ is derived by integrating the backward equation by parts against the transition density (Karlin and Taylor 1981, Chapter 15); the derivation discards boundary terms and requires $\mu$ and $\sigma^2$ to be differentiable. When the endpoints are absorbing those boundary terms carry mass: Zhao, Lascoux, Overall and Waxman (2013, Appendix A) use the complete distribution of the Wright–Fisher frequency, which integrates to $1$ over $[0, 1]$ and contains Dirac masses at $0$ and $1$ for loss and fixation, so that
 
 $$\mu_t(dy) = P_x(X_t = 0)\,\delta_0(dy) + p(t, x, y)\,dy + P_x(X_t = 1)\,\delta_1(dy),$$
 
@@ -19,6 +19,6 @@ with an interior density of total mass $P_x(\tau > t)$, where $\tau$ is the abso
 
 ## Sources
 
-- A. Etheridge, *Diffusion process models in mathematical genetics*, lecture notes, University of Oxford, Section 3 (Lemma 3.7 and the discussion of boundary terms).
+- S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York (1981), Chapter 15 (the forward equation).
 - S. Zhao, M. Lascoux, A. D. J. Overall and D. Waxman, The characteristic trajectory of a fixing allele: a consequence of fictitious selection that arises from conditioning, Genetics 195 (2013), 993–1006, Appendix A. <https://doi.org/10.1534/genetics.113.156059>
 - C. L. Epstein and C. A. Pop, Transition probabilities for degenerate diffusions arising in population genetics, arXiv:1608.02119 (2017), Theorem 1.7 and Section 3. <https://arxiv.org/abs/1608.02119>

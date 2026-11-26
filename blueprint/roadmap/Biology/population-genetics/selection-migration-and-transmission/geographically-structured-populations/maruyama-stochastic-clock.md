@@ -21,4 +21,4 @@ with $\tau$ the absorption time, and $Y_v = \bar x(A^{-1}(v))$ for its right-con
 ## Sources
 
 - C. L. Epstein and C. A. Pop, Transition probabilities for degenerate diffusions arising in population genetics, arXiv:1608.02119 (2017), Theorem 1.3. <https://arxiv.org/abs/1608.02119>
-- J. Felsenstein, *Theoretical Evolutionary Genetics*, course text, University of Washington, Section VII.9, discussion of further diffusion results (Maruyama's invariance in geographically structured two-allele models).
+- Original result: T. Maruyama, A Markov process of gene frequency change in a geographically structured population, Genetics 76 (1974), 367–377, abstract (the stochastic clock and the structure-independence of the fixation probability).

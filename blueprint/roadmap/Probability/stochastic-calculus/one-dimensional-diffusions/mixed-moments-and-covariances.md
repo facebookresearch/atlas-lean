@@ -4,7 +4,7 @@ With $X$, $T^*$ and $G$ as in the moment recursion for additive path functionals
 
 $$E_p[A_gA_h] = G\bigl(g\,Gh + h\,Gg\bigr)(p),$$
 
-so $\mathrm{Cov}_p(A_g, A_h) = G(g\,Gh + h\,Gg)(p) - (Gg)(p)\,(Gh)(p)$. Derivation: $A_gA_h = \int_0^{T^*}g(X_s)\int_s^{T^*}h(X_t)\,dt\,ds + \int_0^{T^*}h(X_s)\int_s^{T^*}g(X_t)\,dt\,ds$; the Markov property at the earlier time $s$ replaces the inner integrals by $(Gh)(X_s)$ and $(Gg)(X_s)$, and the occupation formula of Etheridge's lecture notes (Theorem 4.4) integrates the result. For $g = h$ this is $E_p[A_g^2] = 2G(g\,Gg)$, the case $n = 2$ of the moment recursion. Nagylaki (1974, abstract) expresses moments of such path integrals through sojourn times.
+so $\mathrm{Cov}_p(A_g, A_h) = G(g\,Gh + h\,Gg)(p) - (Gg)(p)\,(Gh)(p)$. Derivation: $A_gA_h = \int_0^{T^*}g(X_s)\int_s^{T^*}h(X_t)\,dt\,ds + \int_0^{T^*}h(X_s)\int_s^{T^*}g(X_t)\,dt\,ds$; the Markov property at the earlier time $s$ replaces the inner integrals by $(Gh)(X_s)$ and $(Gg)(X_s)$, and the occupation formula (Karlin and Taylor 1981, Chapter 15) integrates the result. For $g = h$ this is $E_p[A_g^2] = 2G(g\,Gg)$, the case $n = 2$ of the moment recursion. Nagylaki (1974, abstract) expresses moments of such path integrals through sojourn times.
 
 ## Depends on
 
@@ -20,5 +20,5 @@ so $\mathrm{Cov}_p(A_g, A_h) = G(g\,Gh + h\,Gg)(p) - (Gg)(p)\,(Gh)(p)$. Derivati
 
 ## Sources
 
-- A. Etheridge, Diffusion process models in mathematical genetics, lecture notes, University of Oxford, Theorem 4.4.
+- S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press, New York (1981), Chapter 15 (the Green's function and the occupation formula).
 - T. Nagylaki, The moments of stochastic integrals and the distribution of sojourn times, Proc. Natl. Acad. Sci. USA 71 (1974), 746–749, abstract. <https://doi.org/10.1073/pnas.71.3.746>

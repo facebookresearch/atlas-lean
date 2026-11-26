@@ -16,13 +16,12 @@ In the modified Moran model of Eldon and Wakeley (2006, Equation 7), at each ste
 ## Expansion
 
 1. The Galton–Watson sampling model as an exchangeable Cannings model, and the asymptotics of $c_N$ in the three regimes $\alpha \ge 2$, $1 < \alpha < 2$ and $\alpha = 1$.
-2. The rate of large families: the probability of a family of fraction at least $x$ of the next generation, compared with the rate $x^{-\alpha}(1 - x)^{\alpha}/(\alpha\Gamma(\alpha)\Gamma(2 - \alpha))$ of such mergers in the Beta-coalescent, as in Schweinsberg's sketch of the proof.
+2. The rate of large families: the probability of a family of fraction at least $x$ of the next generation, compared with the rate $x^{-\alpha}(1 - x)^{\alpha}/(\alpha\Gamma(\alpha)\Gamma(2 - \alpha))$ of such mergers in the Beta-coalescent, as in the proof of Schweinsberg (2003).
 3. Verification of the limit conditions for the Galton–Watson model and identification of $\Lambda$.
 4. The Eldon–Wakeley model: the pair and $x$-merger probabilities, the time scale $1/c_N$ (and the factor $\psi^2$ in every limiting measure under the alternative clock $\psi^2/c_N$), and the three limits according to $\gamma$.
 
 ## Sources
 
 - N. Berestycki, *Recent Progress in Coalescent Theory*, Ensaios Matemáticos 16, Sociedade Brasileira de Matemática, 2009, Section 3.2.1 (assumption (75), equation (77), Theorem 3.8) and Example 3. <https://arxiv.org/abs/0909.3985>
-- J. Schweinsberg, Modeling the genealogy of populations using coalescents with multiple mergers, lecture slides, University of California at San Diego.
 - Original result: J. Schweinsberg, Coalescent processes obtained from supercritical Galton–Watson processes, Stochastic Process. Appl. 106 (2003), 107–139. <https://doi.org/10.1016/s0304-4149(03)00028-0> The limit theorem follows Berestycki (2009, Theorem 3.8).
 - B. Eldon and J. Wakeley, Coalescent processes when the distribution of offspring number among individuals is highly skewed, Genetics 172 (2006), 2621–2633, Model (Equation 7) and Table 1. <https://doi.org/10.1534/genetics.105.052175>

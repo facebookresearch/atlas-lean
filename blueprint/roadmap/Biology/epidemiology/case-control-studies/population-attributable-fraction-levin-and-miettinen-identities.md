@@ -17,6 +17,5 @@ the first form being Levin's formula and the second Miettinen's, with $p_c = P(E
 ## Sources
 
 - A. Khosravi, M. Nazemipour, T. Shinozaki and M. A. Mansournia, Population attributable fraction in textbooks: time to revise, Glob. Epidemiol. 3 (2021), 100062. <https://doi.org/10.1016/j.gloepi.2021.100062>
-- Attributable fraction for the population, Wikipedia. <https://en.wikipedia.org/wiki/Population_attributable_fraction>
 - Original result: M. L. Levin, The occurrence of lung cancer in man, Acta Unio Int. Contra Cancrum 9 (1953), 531–541. The formula and its use for lung cancer and smoking follow Khosravi et al. (2021).
 - Original result: O. S. Miettinen, Proportion of disease caused or prevented by a given exposure, trait or intervention, Am. J. Epidemiol. 99 (1974), 325–332. <https://doi.org/10.1093/oxfordjournals.aje.a121617> The case-prevalence formula and its use with adjusted relative risks follow Khosravi et al. (2021).
