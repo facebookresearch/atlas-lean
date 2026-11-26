@@ -48,9 +48,6 @@ public theorem native_component_module_assembly_isIso {n : ℕ} {M : Type}
     [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
     [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
     [HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M]
-    [CotangentSectionCalculus (n := n) (M := M)] [CotangentSheafCondition (n := n) (M := M)]
-    [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
-    [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
     (P : FiniteComponentPartition (M := M))
     (E : HolomorphicModules (n := n) (M := M)) : IsIso (componentAssemblyUnit (n := n) P E) := by
   rw [← isIso_iff_of_reflects_iso _ (SheafOfModules.toSheaf _)]
