@@ -42,8 +42,8 @@ are arbitrary functions, so message size and local computation are unrestricted.
 * `Cslib.Distributed.LocalModel.LocalAlgorithm.stateAfter`,
   `Cslib.Distributed.LocalModel.LocalAlgorithm.output`.
 
-The parts of the model carry comments instead of docstrings (`nolint docBlame`): the docstring
-of `LocalAlgorithm.output` states the whole model.
+`IdAssignment` and `LocalAlgorithm.stateAfter` carry comments instead of docstrings
+(`nolint docBlame`): the docstring of `LocalAlgorithm.output` states the whole model.
 
 ## Main results
 
@@ -98,12 +98,14 @@ theorem coe_mem_Icc (ids : IdAssignment V c) (v : V) :
 
 end IdAssignment
 
-/- An algorithm in the LOCAL model, with inputs in `I`, states in `S`, messages in `M` and outputs
-in `O`, the same at every node. A node with identifier `i` and input `x` starts in state
-`init i x`; in each round a node in state `s` sends the message `send s j` to its neighbour with
-identifier `j`, and then moves to the state `update s m`, where `m` is the multiset of messages
-its neighbours sent it; a node in state `s` outputs `out s`. -/
-@[nolint docBlame]
+/-- **Algorithm in the LOCAL model.** An algorithm with inputs in `I`, states in `S`, messages in
+`M` and outputs in `O`, the same at every node. A node with identifier `i` and input `x` starts in
+state `init i x`; in each round a node in state `s` sends the message `send s j` to its neighbour
+with identifier `j`, and then moves to the state `update s m`, where `m` is the multiset of
+messages its neighbours sent it; a node in state `s` outputs `out s`.
+
+Source: N. Linial, *Locality in distributed graph algorithms*, SIAM Journal on Computing
+21(1), 1992, 193–201, §1. -/
 structure LocalAlgorithm (I S M O : Type*) where
   /-- `init i x` is the initial state of a node with identifier `i` and input `x`. -/
   init : ℕ → I → S
