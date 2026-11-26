@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Condensed.GlobalSolidCoefficientLimits
 public import MathlibExt.Condensed.PerfectoidIntegralVSites
+public import MathlibExt.AlgebraicGeometry.SolidGlobalCoefficientsCompactTestContinuity
 
 /-!
 # Actual local and global solid coefficient construction requests
@@ -55,16 +56,6 @@ public theorem_wanted integralSectionsDescent (p : ℕ) [Fact p.Prime]
     (F : VSheaf p) (D : MathlibExt.Condensed.PerfectoidIntegralVSites.UntiltingDiagram p F) :
     Presheaf.IsSheaf (MathlibExt.Condensed.PerfectoidIntegralVSites.coefficientTopology F)
       (MathlibExt.Condensed.PerfectoidIntegralVSites.integralPresheaf D)
-
-/-- For a prime $p$, a v-sheaf $F$ on affine perfectoid spaces (`VSheaf`) and an affine test $T$
-of $F$: the functor $S ↦ (T, S)$ from compact Hausdorff spaces to pairs of an affine test and a
-compact Hausdorff space (`compactTests`) is continuous from the coherent topology to the
-coefficient topology (`coefficientTopology`). -/
-public theorem_wanted compactTestContinuity (p : ℕ) [Fact p.Prime]
-    (F : VSheaf p) (T : AffineTest p F) :
-    (MathlibExt.Condensed.PerfectoidIntegralVSites.compactTests T).IsContinuous
-      (coherentTopology CompHaus.{0})
-      (MathlibExt.Condensed.PerfectoidIntegralVSites.coefficientTopology F)
 
 /-- For a prime $p$ and an affine perfectoid space $P$ with its tilt model (`AffineUntilting`):
 local solid coefficients on $P$ (`LocalModel`), the modified solid almost data built from the
