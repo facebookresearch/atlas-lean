@@ -56,15 +56,6 @@ Journal of Integer Sequences 28 (2025), Article 25.4.5, Theorem 1 (`jis-2025-25.
 public theorem_wanted sigmaBiunitary_eq_three_mul_iff_of_twentySeven_dvd (N : ℕ) (hN : 0 < N)
     (h27 : 27 ∣ N) : sigmaBiunitary N = 3 * N ↔ N = 2160
 
-/-- **Powers of two dividing the biunitary divisor sum of an odd number.** For every odd natural
-number $n$, $2^{\omega(n)}$ divides $\sigma^{**}(n)$, where $\omega(n)$ is the number of distinct
-prime factors of $n$ and $\sigma^{**}$ is the biunitary divisor sum.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.5-lem-2`). -/
-public theorem_wanted two_pow_card_primeFactors_dvd_sigmaBiunitary_of_odd (n : ℕ)
-    (hn : Odd n) : 2 ^ n.primeFactors.card ∣ sigmaBiunitary n
-
 /-- **Divisibility of the biunitary divisor sum of an even number by a power of two.** For every
 positive even natural number $n$, writing $\omega(n)$ for the number of distinct prime factors of
 $n$, the power $2^{\omega(n) - 1}$ divides the biunitary divisor sum $\sigma^{**}(n)$.
