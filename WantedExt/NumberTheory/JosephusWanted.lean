@@ -53,26 +53,13 @@ public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.JosephusFixedSuccCases
 public import MathlibExt.NumberTheory.JosephusHighExtremal
+public import MathlibExt.NumberTheory.JosephusWrapAround
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.JosephusWanted
-
-/-- **Josephus recurrence by number of wrap-arounds.** Let $k \ge 2$ and $n \ge 1$ be natural
-numbers, let $J_k$ be the Josephus function and write $p = J_k(n)$. If $\ell$ is a natural
-number with $\ell(n+1) + 1 \le p + k \le (\ell+1)(n+1)$, then $J_k(n+1) = p + k - \ell(n+1)$.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Theorem 2. -/
-theorem_wanted josephus_succ_eq_sub (k n ℓ : ℕ) (hk : 2 ≤ k)
-    (hn : 1 ≤ n)
-    (h : ℓ * (n + 1) + 1 ≤ MetaMathlibExt.josephus k n + k ∧
-      MetaMathlibExt.josephus k n + k ≤ (ℓ + 1) * (n + 1)) :
-    MetaMathlibExt.josephus k (n + 1) =
-      MetaMathlibExt.josephus k n + k - ℓ * (n + 1)
 
 /-- **Josephus fixed points detected by the next value.** Let $k \ge 2$ and $n_p$ be natural
 numbers with $n_p \ge k - 1$, and let $J_k$ be the Josephus function. Then $J_k(n_p) = n_p$ if
