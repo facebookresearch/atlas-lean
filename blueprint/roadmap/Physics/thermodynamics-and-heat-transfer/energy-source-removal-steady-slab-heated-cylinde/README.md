@@ -43,7 +43,7 @@
 
 ## Clad-temperature envelope
 
-- [The coolant stays below its outlet temperature](le-outlet.md)
+- [The coolant stays at or below its outlet temperature](le-outlet.md)
 - [Heated-slab temperature profile](slab-temperature.md)
 - [Outward heat removal from a heated slab](outward-flux-sum.md)
 - [Midplane maximum of a heated slab](slab-temperature-le-midplane.md)

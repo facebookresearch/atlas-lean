@@ -23,7 +23,7 @@
 ## Gray net power: conservation and the black limit
 
 - [Net radiative power of a gray surface](gray-net-power.md)
-- [Net power of a gray surface as radiosity minus irradiation](gray-net-power-eq-radiosity-sub-irradiat.md)
+- [Net power of a gray surface as area times radiosity minus irradiation](gray-net-power-eq-radiosity-sub-irradiat.md)
 - [Net power of a gray surface as emission minus absorption](gray-net-power-eq-emitted-sub-absorbed.md)
 - [Radiosities in the black limit](is-radiosity-iff-of-emissivity-eq-one.md)
 - [Gray net power at blackbody radiosities](gray-net-power-blackbody.md)

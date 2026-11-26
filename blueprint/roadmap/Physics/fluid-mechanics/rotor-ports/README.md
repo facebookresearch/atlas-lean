@@ -50,8 +50,8 @@
 - [Axial induction factor](induction-factor.md)
 - [Power coefficient of an actuator disk](power-coefficient.md)
 - [Power coefficient in terms of the induction factor](power-coefficient-eq.md)
-- [Actuator disk with a given induction factor](of-induction.md)
-- [Every induction factor is realized](of-induction-spec.md)
+- [Actuator disk built from a construction parameter](of-induction.md)
+- [Disk states built from a construction parameter satisfy the port laws](of-induction-spec.md)
 - [Betz bound](betz-bound.md)
 - [Betz limit of the ideal wind turbine](power-coefficient-le-betz.md)
 
