@@ -25,10 +25,14 @@ $$I(\vartheta)=\frac14\,\mathbb E^{(\vartheta)}\begin{pmatrix}\xi(1-\xi)&1-\xi&-
 
 The restriction to mutation parameters at least $1$ matters. If some $\theta_i<1$, the corresponding boundary is reached in finite time, and the laws for different $\theta_i$ are mutually singular, so no likelihood ratio exists.
 
+## Depends on
+
+- [Martingale problem for the Wright-Fisher diffusion with selection and two-way mutation](../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
+
 ## Expansion
 
 Uniform ergodicity follows from a general criterion for scalar diffusions on a bounded interval with regular or entrance boundaries: the two scale–speed integrals $\kappa^l_\vartheta(a,b)$ and $\kappa^r_\vartheta(a,b)$ must stay bounded away from $0$ on compacts, and for the Wright–Fisher drift they have explicit lower bounds. When $\theta_1,\theta_2\ge1$ both boundaries are entrance, and the same argument extends to the unbounded functions $(1-x)/x$ and $x/(1-x)$. These are exactly the diagonal entries of the information matrix that come from the mutation parameters. By Girsanov's formula the log-likelihood ratio is a stochastic integral minus half its quadratic variation. The martingale part gives $\Delta_T$, and uniform ergodicity applied to $\langle u,\dot\mu\rangle^2/\sigma^2$ makes the remainder vanish uniformly.
 
 ## Sources
 
-- Jaromir Sant, Paul A. Jenkins, Jere Koskela, Dario Spanò, "Convergence of Likelihood Ratios and Estimators for Selection in non-neutral Wright-Fisher Diffusions", arXiv:2001.03527 (2020), Definition 2.1, Theorems 2.2 and 2.3, Corollaries 2.5 and 2.6, Definition 2.7 and Theorem 2.8, <https://doi.org/10.48550/arXiv.2001.03527>.
+- Jaromir Sant, Paul A. Jenkins, Jere Koskela, Dario Spanò, "Convergence of likelihood ratios and estimators for selection in nonneutral Wright–Fisher diffusions", *Scandinavian Journal of Statistics* 49 (2022), 1728–1760, <https://doi.org/10.1111/sjos.12572>; preprint arXiv:2001.03527 (2020), Definition 2.1, Theorems 2.2 and 2.3, Corollaries 2.5 and 2.6, Definition 2.7 and Theorem 2.8, <https://doi.org/10.48550/arXiv.2001.03527>.

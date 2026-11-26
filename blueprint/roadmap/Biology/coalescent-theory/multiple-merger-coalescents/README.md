@@ -12,3 +12,9 @@ frequency spectrum under multiple mergers.
 - [Site frequency spectrum under Λ-coalescents](site-frequency-spectrum-under-coalescents/README.md)
 - [Speed of coming down from infinity](speed-of-coming-down-from-infinity/README.md)
 - [Λ-coalescent limits of Cannings models](coalescent-limits-of-cannings-models/README.md)
+
+## Diploid sweepstakes and Ξ-coalescents
+
+- [Diploid sweepstakes coalescents](diploid-sweepstakes-coalescents/README.md)
+- [Ξ-ancestral recombination graph](xi-ancestral-recombination-graph/README.md)
+- [Subsample and clade statistics of Ξ-coalescents](subsample-and-clade-statistics-of-xi-coalescents/README.md)

@@ -21,3 +21,7 @@
 - [Generating function in the marked Kingman model](pgf-seg-sites-kingman-mutation-measure.md)
 - [Tavaré's formula is nonnegative](seg-sites-prob-nonneg.md)
 - [Tavaré's probabilities sum to one for samples of size at least two](has-sum-seg-sites-prob.md)
+
+## Sampling the infinite-sites posterior
+
+- [Zig-zag sampling of coalescent trees](zig-zag-sampling-of-coalescent-trees/README.md)

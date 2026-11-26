@@ -28,7 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [Fitness trajectory of the long-term evolution experiment](fitness-trajectory-of-the-long-term-evolution-experiment/README.md)
-- [Recombination equation and the partitioning process](recombination-equation-and-partitioning-process/README.md)
-- [Seed bank diffusion with mutation](seed-bank-diffusion-with-mutation/README.md)
-- [Selection–recombination equation](selection-recombination-equation/README.md)

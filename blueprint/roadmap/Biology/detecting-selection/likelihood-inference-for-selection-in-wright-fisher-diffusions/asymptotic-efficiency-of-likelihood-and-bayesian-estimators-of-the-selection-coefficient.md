@@ -28,6 +28,7 @@ So the continuously observed path attains the Hájek–Le Cam minimax bound for 
 ## Depends on
 
 - [Uniform local asymptotic normality of the Wright–Fisher diffusion with selection and mutation](uniform-local-asymptotic-normality-of-the-wright-fisher-diffusion-with-selection-and-mutation.md)
+- [Martingale problem for the Wright-Fisher diffusion with selection and two-way mutation](../../population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/two-way-mutation-and-selection-wright-fisher-mar.md)
 
 ## Expansion
 
@@ -35,4 +36,4 @@ The proof checks the Ibragimov–Has'minskii conditions for the normalized likel
 
 ## Sources
 
-- Jaromir Sant, Paul A. Jenkins, Jere Koskela, Dario Spanò, "Convergence of Likelihood Ratios and Estimators for Selection in non-neutral Wright-Fisher Diffusions", arXiv:2001.03527 (2020), Section 3, Theorem 3.2 (main result) with Theorem 3.3, Corollary 3.4 and Propositions 3.5–3.7, <https://doi.org/10.48550/arXiv.2001.03527>.
+- Jaromir Sant, Paul A. Jenkins, Jere Koskela, Dario Spanò, "Convergence of likelihood ratios and estimators for selection in nonneutral Wright–Fisher diffusions", *Scandinavian Journal of Statistics* 49 (2022), 1728–1760, <https://doi.org/10.1111/sjos.12572>; preprint arXiv:2001.03527 (2020), Section 3, Theorem 3.2 (main result) with Theorem 3.3, Corollary 3.4 and Propositions 3.5–3.7, <https://doi.org/10.48550/arXiv.2001.03527>.
