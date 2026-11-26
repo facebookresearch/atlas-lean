@@ -11,8 +11,10 @@ name: Blueprint Pages
 # disagrees with its title. The `changes` job decides, and every other PR, such
 # as one that changes only Lean library files, scripts/taxonomy.json or
 # scripts/wiki-sync.json, skips the build and runs the build's unit tests
-# alone, in a few minutes (`tests`). main's daily build checks the whole wiki,
-# its site and its cards as they stand; a failure there is fixed on main.
+# alone, in a few minutes (`tests`). A PR that changes only Lean library files
+# those tests do not read, provenance and documentation runs neither (`scope`,
+# scripts/ci_scope.py). main's daily build checks the whole wiki, its site and
+# its cards as they stand; a failure there is fixed on main.
 # Anyone with write access can build and check a branch on demand with
 # `gh workflow run blueprint-pages.yml --ref <branch>`.
 # Merge groups do not run it: it is not a required check, so it could not stop
@@ -97,6 +99,7 @@ jobs:
             scripts/test_generate_wiki_navigation.py
             scripts/test_generate_wiki_docstrings.py
             scripts/test_sync_wiki.py
+            scripts/test_graph_batch.py
             scripts/test_import_mathgraph.py
             scripts/test_extract_v2_lean_dependencies.py
             scripts/test_extract_mathlib_graph.py
@@ -220,16 +223,46 @@ jobs:
                                 "skipped.\n")
           PY
 
+  # On a PR, whether it needs the build's unit tests when it skips the build
+  # (scripts/ci_scope.py): one that changes only Lean library files they do not
+  # read, provenance and documentation does not. Other runs never ask.
+  scope:
+    name: decide whether to test the site scripts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      site_tests: ${{ steps.decide.outputs.site_tests }}
+    steps:
+      - name: Check out the merge commit and its base
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          sparse-checkout: /scripts/ci_scope.py
+          sparse-checkout-cone-mode: false
+
+      - name: Decide
+        id: decide
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          # `--` ends the revisions: a file named HEAD must not make them ambiguous.
+          git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          python3 -I scripts/ci_scope.py "$RUNNER_TEMP/changed-paths" >> "$GITHUB_OUTPUT"
+
   # On a PR that skips the build, the build's unit tests still run, on the wiki
   # job's checkout and in a few minutes: some read files the list above leaves
   # out, as tests in scripts/test_blueprint_taxonomy.py,
   # scripts/test_extract_mathlib_graph.py and scripts/test_build_mathlib_pages.py
   # check the committed scripts/taxonomy.json with the build's own readers. A PR
-  # that builds runs them in the build's own jobs.
+  # that builds runs them in the build's own jobs, and one that `scope` says
+  # does not need them, or that `changes` could not decide, skips them; one
+  # that `scope` could not decide runs them.
   tests:
     name: test the site scripts
-    needs: changes
-    if: needs.changes.outputs.build == 'false'
+    needs: [changes, scope]
+    if: ${{ !cancelled() && needs.changes.outputs.build == 'false' && needs.scope.outputs.site_tests != 'false' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
@@ -269,6 +302,7 @@ jobs:
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
           scripts.test_sync_wiki
+          scripts.test_graph_batch
           scripts.test_import_mathgraph
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
@@ -345,6 +379,7 @@ jobs:
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
           scripts.test_sync_wiki
+          scripts.test_graph_batch
           scripts.test_import_mathgraph
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
