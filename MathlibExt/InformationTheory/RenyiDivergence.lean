@@ -31,15 +31,17 @@ the value carries no divergence meaning; for instance `renyiDiv 0 ν α = ⊥` f
 
 * `renyiMoment_withDensity`: for densities `f`, `g` against a σ-finite base `ρ`, with `g`
   positive and finite and `f` finite almost everywhere, the moment is
-  `∫⁻ x, f x ^ α * g x ^ (1 - α) ∂ρ`.
+  `∫⁻ x, f x ^ α * g x ^ (1 - α) ∂ρ` above order `1`.
 * `renyiDiv_self`, `renyiDiv_nonneg`: the divergence of a probability measure from itself is
-  `0`, and between probability measures it is nonnegative (Mironov, Proposition 8).
+  `0` above order `1`, and between probability measures it is nonnegative (Mironov,
+  Proposition 8).
 * `renyiMoment_gaussianReal`, `renyiDiv_gaussianReal`: for real Gaussians with a common nonzero
-  variance `v` (a variance, not a standard deviation), the moment is
+  variance `v` (a variance, not a standard deviation) and `1 < α`, the moment is
   `exp (α (α - 1) (m - n)² / (2 v))` and the divergence is `α (m - n)² / (2 v)` (Mironov,
   Proposition 7, with `v = σ²`).
-* `renyiDiv_gaussianReal_le`: when `|m - n| ≤ Δ` the divergence is at most `α Δ² / (2 v)`, the
-  privacy curve of the Gaussian mechanism (Mironov, Corollary 3, there for `Δ = 1`).
+* `renyiDiv_gaussianReal_le`: when `|m - n| ≤ Δ` and `1 < α`, the divergence is at most
+  `α Δ² / (2 v)`, the privacy curve of the Gaussian mechanism (Mironov, Corollary 3, there for
+  `Δ = 1`).
 -/
 
 @[expose] public section
@@ -103,14 +105,16 @@ theorem renyiDiv_of_not_ac {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω
     exact EReal.coe_mul_top_of_pos (inv_pos.mpr (sub_pos.mpr hα))
   · exact renyiDiv_of_le_one (le_of_not_gt hα)
 
-/-- A finite positive moment `ENNReal.ofReal r` gives the real divergence `log r / (α - 1)`. -/
+/-- **Real divergence from a finite moment.** Above order `1`, a finite positive moment
+`ENNReal.ofReal r` gives the real divergence `log r / (α - 1)`. -/
 theorem renyiDiv_eq_of_renyiMoment_eq_ofReal {Ω : Type*} [MeasurableSpace Ω]
     {μ ν : Measure Ω} {α r : ℝ} (hα : 1 < α) (hr : 0 < r)
     (h : renyiMoment μ ν α = ENNReal.ofReal r) :
     renyiDiv μ ν α = ((Real.log r / (α - 1) : ℝ) : EReal) := by
   rw [renyiDiv_of_one_lt hα, h, ENNReal.log_ofReal_of_pos hr, ← EReal.coe_mul, inv_mul_eq_div]
 
-/-- The moment of a σ-finite measure with respect to itself is its total mass. -/
+/-- **Moment of a measure with respect to itself.** The moment of a σ-finite measure with
+respect to itself is its total mass, above order `1`. -/
 theorem renyiMoment_self {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [SigmaFinite μ]
     {α : ℝ} (hα : 1 < α) : renyiMoment μ μ α = μ Set.univ := by
   rw [renyiMoment_of_ac Measure.AbsolutelyContinuous.rfl hα,
@@ -123,8 +127,9 @@ theorem renyiDiv_self {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsPro
     {α : ℝ} (hα : 1 < α) : renyiDiv μ μ α = 0 := by
   rw [renyiDiv_of_one_lt hα, renyiMoment_self μ hα, measure_univ, ENNReal.log_one, mul_zero]
 
-/-- Between probability measures the moment is at least `1`, by Hölder's inequality with
-exponents `α` and `α / (α - 1)` applied to `∂μ/∂ν` and `1`. -/
+/-- **The moment is at least one.** Above order `1`, the moment between probability measures is
+at least `1`, by Hölder's inequality with exponents `α` and `α / (α - 1)` applied to `∂μ/∂ν`
+and `1`. -/
 theorem one_le_renyiMoment {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω)
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] {α : ℝ} (hα : 1 < α) :
     1 ≤ renyiMoment μ ν α := by
@@ -157,8 +162,8 @@ theorem renyiDiv_nonneg {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω)
   · rw [renyiDiv_of_le_one (le_of_not_gt hα)]
     exact le_top
 
-/-- **Density form of the moment.** For a σ-finite base `ρ` and measurable densities `f`, `g`
-with `f` finite and `g` positive and finite `ρ`-almost everywhere, the moment of
+/-- **Density form of the moment.** For a σ-finite base `ρ`, measurable densities `f`, `g`
+with `f` finite and `g` positive and finite `ρ`-almost everywhere, and `1 < α`, the moment of
 `ρ.withDensity f` with respect to `ρ.withDensity g` is `∫⁻ x, f x ^ α * g x ^ (1 - α) ∂ρ`. -/
 theorem renyiMoment_withDensity {Ω : Type*} [MeasurableSpace Ω] (ρ : Measure Ω) [SigmaFinite ρ]
     {f g : Ω → ℝ≥0∞} (hf : Measurable f) (hg : Measurable g) (hf_top : ∀ᵐ x ∂ρ, f x ≠ ∞)

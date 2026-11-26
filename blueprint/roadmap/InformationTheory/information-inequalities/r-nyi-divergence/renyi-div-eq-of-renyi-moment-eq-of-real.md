@@ -1,3 +1,4 @@
-# Renyi Div eq of renyi Moment eq of Real
+# Real divergence from a finite moment
 
-A finite positive moment `ENNReal.ofReal r` gives the real divergence `log r / (α - 1)`.
+Above order `1`, a finite positive moment
+`ENNReal.ofReal r` gives the real divergence `log r / (α - 1)`.

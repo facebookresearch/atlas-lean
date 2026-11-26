@@ -34,6 +34,27 @@ example : renyiDiv (Measure.dirac (0 : ℝ)) (Measure.dirac 1) 2 = ⊤ := by
   have h1 := h (show Measure.dirac (1 : ℝ) {0} = 0 by simp)
   simp at h1
 
+/-- Density form on two points: `P = (3/4, 1/4)` against `Q = (1/2, 1/2)`, as densities with
+respect to counting measure on `Bool`, has order-`2` moment `((3/4)² + (1/4)²) · 2 = 5/4`. -/
+example :
+    renyiMoment ((Measure.count : Measure Bool).withDensity fun b => if b then 3 / 4 else 1 / 4)
+      ((Measure.count : Measure Bool).withDensity fun _ => 1 / 2) 2 = 5 / 4 := by
+  rw [renyiMoment_withDensity Measure.count (measurable_of_finite _) measurable_const
+    (ae_of_all _ fun b => by cases b <;> simp [ENNReal.div_eq_top])
+    (ae_of_all _ fun _ => by simp) (ae_of_all _ fun _ => by simp) (by norm_num),
+    lintegral_count, tsum_fintype, Fintype.sum_bool]
+  simp only [↓reduceIte, Bool.false_eq_true]
+  rw [show (1 : ℝ) - 2 = -1 by norm_num, ENNReal.rpow_neg_one, ENNReal.rpow_two,
+    ENNReal.rpow_two,
+    show (3 / 4 : ℝ≥0∞) = ENNReal.ofReal (3 / 4) by norm_num [ENNReal.ofReal_div_of_pos],
+    show (1 / 4 : ℝ≥0∞) = ENNReal.ofReal (1 / 4) by norm_num [ENNReal.ofReal_div_of_pos],
+    show (1 / 2 : ℝ≥0∞)⁻¹ = ENNReal.ofReal 2 by simp,
+    show (5 / 4 : ℝ≥0∞) = ENNReal.ofReal (5 / 4) by norm_num [ENNReal.ofReal_div_of_pos],
+    ← ENNReal.ofReal_pow (by norm_num), ← ENNReal.ofReal_pow (by norm_num),
+    ← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_mul (by norm_num),
+    ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+  norm_num
+
 /-- Equal laws give `0`, through `renyiDiv_self` and through the closed form. -/
 example : renyiDiv (gaussianReal 3 2) (gaussianReal 3 2) 2 = 0 :=
   renyiDiv_self _ (by norm_num)
@@ -96,5 +117,51 @@ example : renyiDiv (0 : Measure ℝ) (gaussianReal 0 1) 2 = ⊥ := by
       (by filter_upwards [Measure.rnDeriv_zero (gaussianReal 0 1)] with x hx; simp [hx])]
   simp only [lintegral_zero, ENNReal.log_zero]
   exact EReal.coe_mul_bot_of_pos (by norm_num)
+
+/--
+info: 'MathlibExt.InformationTheory.RenyiDivergence.renyiMoment_withDensity' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+-/
+#guard_msgs in
+#print axioms renyiMoment_withDensity
+
+/--
+info: 'MathlibExt.InformationTheory.RenyiDivergence.renyiDiv_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms renyiDiv_self
+
+/--
+info: 'MathlibExt.InformationTheory.RenyiDivergence.renyiDiv_nonneg' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+-/
+#guard_msgs in
+#print axioms renyiDiv_nonneg
+
+/--
+info: 'MathlibExt.InformationTheory.RenyiDivergence.renyiMoment_gaussianReal' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+-/
+#guard_msgs in
+#print axioms renyiMoment_gaussianReal
+
+/--
+info: 'MathlibExt.InformationTheory.RenyiDivergence.renyiDiv_gaussianReal' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+-/
+#guard_msgs in
+#print axioms renyiDiv_gaussianReal
+
+/--
+info: 'MathlibExt.InformationTheory.RenyiDivergence.renyiDiv_gaussianReal_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+-/
+#guard_msgs in
+#print axioms renyiDiv_gaussianReal_le
 
 end MathlibExtTest.InformationTheory.RenyiDivergence
