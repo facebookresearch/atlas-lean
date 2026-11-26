@@ -8,6 +8,7 @@
 - [Temperature difference in parallel flow](parallel-hot-temp-sub-parallel-cold-temp.md)
 - [Existence of the parallel-flow solution](is-parallel-flow-solution-closed-form.md)
 - [Uniqueness of the parallel-flow solution](eq-closed-form.md)
+- [Parallel-flow exchanger solution](is-parallel-flow-solution.md)
 
 ## Outlets, heat duty and the logarithmic mean
 
@@ -16,6 +17,7 @@
 - [Heat duty and the logarithmic mean temperature difference in parallel flow](heat-eq-ua-mul-log-mean.md)
 - [Temperature bounds in parallel flow](bounds.md)
 - [Order of the outlet temperatures in parallel flow](outlet-order.md)
+- [Equal and opposite heat](heat-balance.md)
 
 ## The counterflow solution
 
@@ -28,6 +30,7 @@
 - [Hot-inlet temperature difference for unequal capacity rates](counterflow-inlet-diff-eq-of-ne.md)
 - [Existence of the counterflow solution](is-counterflow-solution-closed-form.md)
 - [Uniqueness of the counterflow solution](eq-closed-form-2.md)
+- [Is Counterflow Solution](is-counterflow-solution.md)
 
 ## Counterflow bounds, heat balance and equal capacity rates
 
@@ -49,18 +52,15 @@
 
 ## Effectiveness from the two solutions
 
+- [Heat duty of a parallel-flow exchanger](heat-eq-effectiveness.md)
+- [Counterflow effectiveness](heat-eq-effectiveness-2.md)
 
 ## Bounds and the flow-arrangement comparison
 
+- [Parallel-flow effectiveness lies in the unit interval](parallel-effectiveness-bounds.md)
+- [Counterflow effectiveness lies in [0, 1]](counterflow-effectiveness-bounds.md)
+- [Counterflow is at least as effective as parallel flow](parallel-effectiveness-le-counterflow-ef.md)
 
 ## The equal-capacity boundary
 
 - [Counterflow effectiveness at equal capacity rates](counterflow-effectiveness-one-substituti.md)
-- [Parallel-flow exchanger solution](is-parallel-flow-solution.md)
-- [Equal and opposite heat](heat-balance.md)
-- [Is Counterflow Solution](is-counterflow-solution.md)
-- [Heat duty of a parallel-flow exchanger](heat-eq-effectiveness.md)
-- [Counterflow effectiveness](heat-eq-effectiveness-2.md)
-- [Parallel-flow effectiveness lies in the unit interval](parallel-effectiveness-bounds.md)
-- [Counterflow effectiveness lies in [0, 1]](counterflow-effectiveness-bounds.md)
-- [Counterflow is at least as effective as parallel flow](parallel-effectiveness-le-counterflow-ef.md)

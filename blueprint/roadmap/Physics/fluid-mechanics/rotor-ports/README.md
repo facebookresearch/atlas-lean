@@ -15,6 +15,10 @@
 - [Lumped mass flow in cylindrical components](lumped-mass-flow-eq.md)
 - [Axial angular-momentum flux equals mass flow times radius times swirl](axial-moment-flux-eq.md)
 
+## The Euler torque on the fluid
+
+- [Euler torque on the fluid](torque-on-fluid-eq.md)
+
 ## Power on the fluid and shaft power out
 
 - [Axial torque of forces about the shaft](axial-torque.md)
@@ -23,9 +27,15 @@
 - [Euler turbomachine equation, compressor sign](compressor-iff.md)
 - [Euler turbomachine equation, turbine sign](turbine-iff.md)
 - [Relative swirl velocity at a rotor port](relative-swirl-eq.md)
+- [Euler torque and power on the fluid](power-on-fluid-eq.md)
+- [Shaft power out is the negative of the power on the fluid](shaft-power-out-eq.md)
+- [Equal specific angular momentum gives zero rotor torque](torque-on-fluid-eq-zero-of-specific-angu.md)
 
 ## The actuator disk and its port laws
 
+- [Actuator disk state](actuator-disk.md)
+- [Actuator disk port laws](port-laws.md)
+- [Freestream kinetic power](power-normalization.md)
 
 ## Disk speed and pressure jump
 
@@ -33,6 +43,7 @@
 - [Speed at an actuator disk](u-disk-eq.md)
 - [Power extracted by an actuator disk](extracted-power.md)
 - [Extracted power as loss of kinetic power](extracted-power-eq.md)
+- [Total pressure drops across an extracting actuator disk](total-pressure-drop.md)
 
 ## Power coefficient and the Betz limit
 
@@ -41,22 +52,14 @@
 - [Power coefficient in terms of the induction factor](power-coefficient-eq.md)
 - [Actuator disk with a given induction factor](of-induction.md)
 - [Every induction factor is realized](of-induction-spec.md)
+- [Betz bound](betz-bound.md)
+- [Betz limit of the ideal wind turbine](power-coefficient-le-betz.md)
 
 ## The hovering rotor
 
 - [Induced power of an actuator disk](induced-power.md)
 - [Energy balance of an actuator disk](induced-power-eq.md)
 - [Wake speed of a hovering rotor](hover-u-wake-eq.md)
-- [Euler torque on the fluid](torque-on-fluid-eq.md)
-- [Euler torque and power on the fluid](power-on-fluid-eq.md)
-- [Shaft power out is the negative of the power on the fluid](shaft-power-out-eq.md)
-- [Equal specific angular momentum gives zero rotor torque](torque-on-fluid-eq-zero-of-specific-angu.md)
-- [Actuator disk state](actuator-disk.md)
-- [Actuator disk port laws](port-laws.md)
-- [Freestream kinetic power](power-normalization.md)
-- [Total pressure drops across an extracting actuator disk](total-pressure-drop.md)
-- [Betz bound](betz-bound.md)
-- [Betz limit of the ideal wind turbine](power-coefficient-le-betz.md)
 - [Hover thrust](hover-thrust-eq.md)
 - [Induced velocity of a hovering rotor](hover-induced-velocity-eq.md)
 - [Hover power](hover-power-eq.md)

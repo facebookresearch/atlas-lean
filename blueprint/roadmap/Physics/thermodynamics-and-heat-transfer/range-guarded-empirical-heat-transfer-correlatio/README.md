@@ -20,6 +20,11 @@
 - [Positivity of the Prandtl number](prandtl-number-pos.md)
 - [Positivity of a power-law Nusselt number](power-law-nusselt-pos.md)
 
+## The application context and the guarded correlation record
+
+- [Nusselt correlation record](nusselt-correlation.md)
+- [Applicability of a Nusselt correlation](applies.md)
+
 ## Heat transfer coefficient and heat rate
 
 - [Heat transfer coefficient from a Nusselt number](heat-transfer-coefficient.md)
@@ -30,5 +35,3 @@
 - [Sign of the convective heat rate](sign-convective-heat-rate.md)
 - [Sign of the heat rate from a power-law Nusselt number](power-law-heat-rate-sign.md)
 - [Sign of the heat rate where a power-law correlation applies](power-law-correlation-heat-rate-sign.md)
-- [Nusselt correlation record](nusselt-correlation.md)
-- [Applicability of a Nusselt correlation](applies.md)

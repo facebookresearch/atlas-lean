@@ -19,6 +19,10 @@
 - [Derivative of the cylinder temperature](has-deriv-at-cylinder-temperature.md)
 - [Cylindrical Laplacian of the cylinder profile](cylinder-radial-equation-algebraic.md)
 - [Radial heat equation in a heated cylinder](cylinder-radial-equation.md)
+- [Heated-cylinder temperature profile](cylinder-temperature.md)
+- [Center-to-surface temperature rise in a heated cylinder](cylinder-center-sub-surface.md)
+- [Surface-power identity for a heated cylinder, algebraic form](cylinder-outward-power.md)
+- [Outward power of a heated cylinder](cylinder-outward-power-of-pos.md)
 
 ## Power shape and the steady coolant profile
 
@@ -29,10 +33,13 @@
 - [Integral of the chopped-cosine linear power](integral-cosine-linear-power.md)
 - [The integrated coolant temperature is a steady profile](is-steady-coolant-profile-coolant-temper.md)
 - [Uniqueness of the steady coolant temperature](eq-coolant-temperature.md)
+- [Coolant outlet temperature](coolant-outlet-temp.md)
 
 ## Outlet temperature and enthalpy rise
 
 - [Outlet temperature of a steady coolant profile](outlet.md)
+- [Coolant enthalpy rise equals the integrated linear power](enthalpy-rise.md)
+- [Outlet temperature bound from a mass-flow floor](coolant-outlet-temp-le-of-le-mdot.md)
 
 ## Clad-temperature envelope
 
@@ -40,11 +47,4 @@
 - [Heated-slab temperature profile](slab-temperature.md)
 - [Outward heat removal from a heated slab](outward-flux-sum.md)
 - [Midplane maximum of a heated slab](slab-temperature-le-midplane.md)
-- [Heated-cylinder temperature profile](cylinder-temperature.md)
-- [Center-to-surface temperature rise in a heated cylinder](cylinder-center-sub-surface.md)
-- [Surface-power identity for a heated cylinder, algebraic form](cylinder-outward-power.md)
-- [Outward power of a heated cylinder](cylinder-outward-power-of-pos.md)
-- [Coolant outlet temperature](coolant-outlet-temp.md)
-- [Coolant enthalpy rise equals the integrated linear power](enthalpy-rise.md)
-- [Outlet temperature bound from a mass-flow floor](coolant-outlet-temp-le-of-le-mdot.md)
 - [Clad-temperature envelope for a cosine-heated coolant channel](clad-le.md)

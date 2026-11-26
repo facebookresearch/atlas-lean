@@ -8,6 +8,8 @@
 ## Conservation and sign results
 
 - [A hottest surface has nonnegative net outflow](net-power-nonneg-of-hottest.md)
+- [Net powers of a black enclosure sum to zero](sum-net-power-eq-zero.md)
+- [Isothermal surroundings exchange no net power](net-power-eq-zero-of-temp-eq.md)
 
 ## Gray enclosures: radiosity
 
@@ -16,6 +18,7 @@
 - [Matrix form of the radiosity equations](radiosity-matrix-mul-vec-eq-iff.md)
 - [The radiosity matrix is invertible](radiosity-matrix-det-ne-zero.md)
 - [Existence and uniqueness of gray radiosities](exists-unique-is-radiosity.md)
+- [Radiosity matrix is strictly diagonally dominant](radiosity-matrix-sum-row-lt-diag.md)
 
 ## Gray net power: conservation and the black limit
 
@@ -26,6 +29,7 @@
 - [Gray net power at blackbody radiosities](gray-net-power-blackbody.md)
 - [Constant radiosities of a reflector-only enclosure](is-radiosity-const-of-emissivity-eq-zero.md)
 - [Radiosities of a reflector-only enclosure are not unique](not-exists-unique-is-radiosity-of-emissi.md)
+- [Gray net powers of an enclosure sum to zero](sum-gray-net-power-eq-zero.md)
 
 ## Equal-area parallel gray plates: the infinite-plane idealization
 
@@ -39,10 +43,6 @@
 - [Plates at different temperatures exchange power](parallel-plate-power-ne-zero.md)
 - [Net radiative flux between parallel gray plates](parallel-plate-power-div-area.md)
 - [Net radiative power is emission minus absorption](net-power-eq-emitted-sub-absorbed.md)
-- [Net powers of a black enclosure sum to zero](sum-net-power-eq-zero.md)
-- [Isothermal surroundings exchange no net power](net-power-eq-zero-of-temp-eq.md)
-- [Radiosity matrix is strictly diagonally dominant](radiosity-matrix-sum-row-lt-diag.md)
-- [Gray net powers of an enclosure sum to zero](sum-gray-net-power-eq-zero.md)
 - [Net power between two gray parallel plates (formula)](parallel-plate-power.md)
 - [Equal-area parallel plates form an enclosure](is-black-enclosure-parallel-plates.md)
 - [Net power between two gray parallel plates](gray-net-power-parallel-plates.md)

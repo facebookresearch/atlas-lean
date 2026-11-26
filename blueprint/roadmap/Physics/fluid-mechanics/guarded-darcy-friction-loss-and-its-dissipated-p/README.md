@@ -23,6 +23,8 @@
 - [Positivity of the Darcy–Weisbach loss coefficient](darcy-coefficient-pos.md)
 - [Sign of the friction pressure drop](sign-friction-pressure-drop.md)
 - [Friction dissipates power in both flow directions](dissipated-power-pos.md)
+- [Flow reversal in the friction pressure drop](friction-pressure-drop-neg.md)
+- [Nonnegative dissipated power](dissipated-power-nonneg.md)
 
 ## Dissipated power through the energy ports
 
@@ -32,13 +34,11 @@
 
 ## Friction loss from a certified correlation
 
+- [Guarded Darcy–Weisbach friction loss](darcy-factor-friction-pressure-drop.md)
 
 ## The Darcy factor of a pressure drop
 
 - [Positivity of the Darcy factor of a pressure drop](darcy-factor-of-drop-pos.md)
 - [Recovering the Darcy factor from its pressure drop](darcy-factor-of-drop-friction-pressure-d.md)
-- [Flow reversal in the friction pressure drop](friction-pressure-drop-neg.md)
-- [Nonnegative dissipated power](dissipated-power-nonneg.md)
-- [Guarded Darcy–Weisbach friction loss](darcy-factor-friction-pressure-drop.md)
 - [Darcy friction factor of a pressure drop](darcy-factor-of-drop.md)
 - [Friction pressure drop points along the mean velocity](friction-pressure-drop-mul-velocity-pos.md)
