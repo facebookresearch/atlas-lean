@@ -1,4 +1,3 @@
-# Moralization criterion, forward
+# Moralization criterion, forward direction
 
-**Moralization criterion, forward** (Evans Thm 5.1, =>): d-separation
-implies separation in the moral graph of the ancestral closure.
+Let $b$ be a Bayesian network on $n$ nodes and $X$, $Y$, $Z$ pairwise disjoint sets of nodes. If $Z$ d-separates $X$ from $Y$ in the graph of $b$, then $Z$ separates $X$ from $Y$ in the moral graph of the ancestral set $\operatorname{an}(X \cup Y \cup Z)$.

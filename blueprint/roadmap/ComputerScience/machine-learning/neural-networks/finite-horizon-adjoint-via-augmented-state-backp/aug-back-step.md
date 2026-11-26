@@ -1,4 +1,4 @@
-# Aug Back Step
+# One backward step through an augmented layer
 
 One backward step through an augmented layer at activation `x`:
 the cotangent `(δ, c)` to the output `(M x, a + ell x)` pulls back to

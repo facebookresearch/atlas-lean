@@ -20,7 +20,7 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Katsuno–Mendelzon belief revision: postulates and representation](katsuno-mendelzon-belief-revision-postulates-and/README.md)
 - [Katsuno–Mendelzon update](katsuno-mendelzon-update/README.md)
 - [Standard translation of modal logic](standard-translation-of-modal-logic/README.md)
-- [Weak Hennessy--Milner logic](weak-hennessy-milner-logic/README.md)
+- [Weak Hennessy–Milner logic](weak-hennessy-milner-logic/README.md)
 
 - [Intuitionistic modal logics CK and IK](intuitionistic-modal-logics-ck-and-ik.md)
 - [ALC as multimodal K_m](alc-as-multimodal-k-m.md)

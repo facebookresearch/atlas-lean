@@ -1,4 +1,4 @@
-# Is Bayes Estimator binomial beta posterior Mean
+# The Beta posterior mean is Bayes optimal for binomial counts
 
 Bayes optimality of the posterior mean in the Beta-binomial count experiment. The
 observation is the success count drawn from `binomialKernel n`; for a `Beta(a, b)` prior, the

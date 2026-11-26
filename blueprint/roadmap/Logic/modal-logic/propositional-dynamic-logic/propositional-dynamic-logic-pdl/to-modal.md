@@ -1,4 +1,3 @@
-# To Modal
+# Translation of PDL formulas into multimodal logic
 
-Translate a PDL formula into an upstream modal proposition, with each box
-`[α]` becoming the upstream modality indexed by the entire program `α`.
+The translation of PDL formulas into multimodal formulas whose modalities are indexed by programs: atoms, falsity and implication are kept, and each box $[\alpha]\varphi$ becomes the box indexed by the whole program $\alpha$ applied to the translation of $\varphi$.

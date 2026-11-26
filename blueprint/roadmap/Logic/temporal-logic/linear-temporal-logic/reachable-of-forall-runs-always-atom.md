@@ -1,4 +1,4 @@
-# Reachable of forall Runs always atom
+# Reachability from safety on infinite runs
 
 Converse of `forallRuns_always_atom_of_reachable` under the extra
 hypothesis that every reachable state lies on an infinite run from `s`.

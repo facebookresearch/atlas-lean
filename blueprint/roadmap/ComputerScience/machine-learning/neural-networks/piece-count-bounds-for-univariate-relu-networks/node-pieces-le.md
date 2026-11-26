@@ -1,4 +1,4 @@
-# Node pieces LE
+# Piece-count bound for a node of a ReLU network
 
 Per-node bound for positive widths: the output of node `j` after `i`
 layers has at most `2 ^ i` times the product of widths over layers `1` to

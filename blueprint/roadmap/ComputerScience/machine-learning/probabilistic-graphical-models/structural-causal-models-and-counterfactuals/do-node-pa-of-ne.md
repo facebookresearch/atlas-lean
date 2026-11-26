@@ -1,3 +1,3 @@
-# Do Node pa of ne
+# Parents away from the intervened node
 
-Helper: away from the surgery node, `doNode` keeps the parents.
+Away from the surgery node, the surgery $do(X_k = a)$ keeps the parents of every node.

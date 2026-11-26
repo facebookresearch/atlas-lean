@@ -2,33 +2,33 @@
 
 ## CNF
 
-- [Tree Derivation](tree-derivation.md)
+- [Tree-like resolution derivations](tree-derivation.md)
 
 ## Tree Derivation
 
-- [Size](size.md)
-- [Width](width.md)
-- [To Derivable](to-derivable.md)
-- [Of Derivable](of-derivable.md)
+- [Size of a tree derivation](size.md)
+- [Width of a tree derivation](width.md)
+- [Every tree derivation proves derivability](to-derivable.md)
+- [Every derivable clause has a tree derivation](of-derivable.md)
 
 ## CNF
 
-- [Ex Two Var](ex-two-var.md)
-- [Ex Two Var Derivation](ex-two-var-derivation.md)
-- [Ex Two Var size](ex-two-var-size.md)
-- [Ex Two Var width](ex-two-var-width.md)
-- [DAGDerivation](dagderivation.md)
+- [Unsatisfiable two-variable formula](ex-two-var.md)
+- [Tree refutation of the two-variable formula](ex-two-var-derivation.md)
+- [Size of the refutation of the two-variable formula](ex-two-var-size.md)
+- [Width of the refutation of the two-variable formula](ex-two-var-width.md)
+- [DAG-like resolution derivations](dagderivation.md)
 
 ## DAGDerivation
 
-- [Exists tree](exists-tree.md)
+- [Every clause of a DAG derivation has a tree derivation](exists-tree.md)
 
 ## CNF
 
-- [Ex Dag Formula](ex-dag-formula.md)
-- [Ex Dag List](ex-dag-list.md)
-- [Ex Dag valid](ex-dag-valid.md)
-- [Ex Dag size](ex-dag-size.md)
-- [Ex Tree Derivation](ex-tree-derivation.md)
-- [Ex Tree size](ex-tree-size.md)
-- [Exists dag](exists-dag.md)
+- [Formula with a shared resolvent](ex-dag-formula.md)
+- [DAG refutation of the shared-resolvent formula](ex-dag-list.md)
+- [Validity of the DAG refutation of the shared-resolvent formula](ex-dag-valid.md)
+- [Size of the DAG refutation of the shared-resolvent formula](ex-dag-size.md)
+- [Tree refutation of the shared-resolvent formula](ex-tree-derivation.md)
+- [Size of the tree refutation of the shared-resolvent formula](ex-tree-size.md)
+- [Every tree derivation yields a DAG derivation no larger](exists-dag.md)

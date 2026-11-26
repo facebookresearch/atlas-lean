@@ -2,9 +2,9 @@
 
 ## Sat At
 
-- [Congr](congr.md)
+- [Relativized satisfaction respects equivalent predicates](congr.md)
 
 ## Epistemic
 
-- [Sat At true](sat-at-true.md)
-- [Sat announce common](sat-announce-common.md)
+- [Satisfaction relative to all worlds](sat-at-true.md)
+- [Common knowledge after an announcement](sat-announce-common.md)

@@ -1,4 +1,4 @@
-# Confounded Net
+# Confounded network on three Boolean nodes
 
 The confounded network `Z → X`, `Z → Y`, `X → Y` on `Bool` (nodes `Z = 0`, `X = 1`,
 `Y = 2`, each node's parents are all earlier nodes): `Z` is a fair coin; `X` is `true` with

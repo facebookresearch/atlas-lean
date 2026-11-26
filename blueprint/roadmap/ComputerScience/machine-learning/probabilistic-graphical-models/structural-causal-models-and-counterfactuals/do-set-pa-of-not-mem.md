@@ -1,3 +1,3 @@
-# Do Set pa of not mem
+# Parents away from the intervened set
 
-Helper: away from the surgery set, `doSet` keeps the parents.
+Away from the surgery set, the surgery on a set of nodes keeps the parents of every node.

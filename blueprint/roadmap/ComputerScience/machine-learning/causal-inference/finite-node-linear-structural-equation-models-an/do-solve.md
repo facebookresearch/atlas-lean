@@ -1,4 +1,4 @@
-# Surgery `do(X_k = a)`
+# Surgery $\operatorname{do}(X_k = a)$
 
 **Surgery `do(X_k = a)`** on a linear SEM: the `k`-th structural equation is replaced by
 `X_k = a`, i.e. row `k` of `B` is replaced by zero and the `k`-th noise term by the constant

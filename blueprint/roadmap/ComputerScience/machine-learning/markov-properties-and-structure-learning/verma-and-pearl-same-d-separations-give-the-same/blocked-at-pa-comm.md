@@ -1,3 +1,3 @@
-# Blocked At Pa comm
+# Blocking ignores the direction of traversal
 
 toward Verma-Pearl Lemma 1 (arXiv:1304.1108): blocking at `u, m, w` ignores direction.

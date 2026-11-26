@@ -1,3 +1,3 @@
-# Class Count
+# Class count
 
 The number of examples of class `c`.

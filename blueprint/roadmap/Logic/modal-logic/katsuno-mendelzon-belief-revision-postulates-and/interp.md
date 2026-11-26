@@ -1,4 +1,4 @@
-# Interp
+# Interpretations of a finite propositional signature
 
 Interpretations of a finite propositional signature `σ`: assignments of
 truth values to the atoms. Throughout, a propositional formula is represented

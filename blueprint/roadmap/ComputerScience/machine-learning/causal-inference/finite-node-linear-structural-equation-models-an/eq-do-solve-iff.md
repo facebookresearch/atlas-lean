@@ -1,4 +1,4 @@
-# `do(X_k = a)` replaces the `k`-th structural equation by `X_k = a`
+# Surgery replaces the $k$-th structural equation by $X_k = a$
 
 For a recursive
 `B`, `doSolve B k a e` is the unique vector that equals `a` at `k` and satisfies the original

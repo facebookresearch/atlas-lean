@@ -1,4 +1,4 @@
-# Sat At
+# Satisfaction relative to a set of worlds
 
 Satisfaction relativized to a world predicate `P`: satisfaction in
 the submodel of `P`-worlds. Knowledge steps and common-knowledge paths

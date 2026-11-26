@@ -1,3 +1,3 @@
-# Do Node f of ne
+# The structural map away from the intervened node
 
-Helper: away from the surgery node, the structural map is the original one transported.
+Away from the surgery node, the structural map is the original one transported.

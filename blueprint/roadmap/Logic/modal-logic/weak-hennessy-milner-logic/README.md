@@ -1,31 +1,31 @@
-# Weak Hennessy--Milner logic
+# Weak Hennessy–Milner logic
 
 ## LTS
 
-- [Observation Formula](observation-formula.md)
+- [Observation formulas](observation-formula.md)
 
 ## Observation Formula
 
-- [Bottom](bottom.md)
-- [Disj](disj.md)
-- [Box](box.md)
-- [Conjunction](conjunction.md)
-- [Disjunction](disjunction.md)
-- [Modal Depth](modal-depth.md)
+- [Falsity](bottom.md)
+- [Disjunction](disj.md)
+- [Box modality](box.md)
+- [Conjunction of a list of formulas](conjunction.md)
+- [Disjunction of a list of formulas](disjunction.md)
+- [Modal depth](modal-depth.md)
 
 ## LTS
 
-- [Satisfies](satisfies.md)
-- [Logically Equivalent](logically-equivalent.md)
-- [Satisfies iff](satisfies-iff.md)
-- [Logically Equivalent](logically-equivalent-2.md)
-- [Weak Approximation](weak-approximation.md)
-- [Mono](mono.md)
-- [Weak Approximation](weak-approximation-2.md)
-- [Satisfies iff](satisfies-iff-2.md)
-- [Tr](tr.md)
-- [Sat Model](sat-model.md)
-- [To Weak HMLModel](to-weak-hmlmodel.md)
-- [Tr diamond eq dyn Diamond](tr-diamond-eq-dyn-diamond.md)
-- [Satisfies iff to Weak HMLModel](satisfies-iff-to-weak-hmlmodel.md)
-- [Satisfies iff](satisfies-iff-3.md)
+- [Weak satisfaction of observation formulas](satisfies.md)
+- [Logical equivalence of states](logically-equivalent.md)
+- [Weak bisimilarity preserves observation formulas](satisfies-iff.md)
+- [Weakly bisimilar states are logically equivalent](logically-equivalent-2.md)
+- [Finite-depth weak approximants](weak-approximation.md)
+- [Weak approximants are monotone in the depth](mono.md)
+- [Weak bisimilarity implies every finite approximation](weak-approximation-2.md)
+- [Depth-bounded approximation preserves formulas of bounded depth](satisfies-iff-2.md)
+- [Translation of observation formulas into Hennessy–Milner logic](tr.md)
+- [Model of the saturated transition system](sat-model.md)
+- [Model of weak transitions](to-weak-hmlmodel.md)
+- [Translation of a diamond formula](tr-diamond-eq-dyn-diamond.md)
+- [Weak satisfaction is satisfaction in the weak-transition model](satisfies-iff-to-weak-hmlmodel.md)
+- [Weak satisfaction is satisfaction in the saturated model](satisfies-iff-3.md)

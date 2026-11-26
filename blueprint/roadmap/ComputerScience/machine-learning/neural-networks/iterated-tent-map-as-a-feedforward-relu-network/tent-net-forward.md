@@ -1,4 +1,4 @@
-# Tent Net forward
+# The tent network computes the iterated tent map
 
 Construction half of Theorem 5.1: the network computes the `k`-fold
 tent iterate. The forward pass through `2 * k` layers uses `3 * k` ReLU

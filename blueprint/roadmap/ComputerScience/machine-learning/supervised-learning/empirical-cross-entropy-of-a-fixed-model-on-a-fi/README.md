@@ -1,7 +1,7 @@
 # Empirical cross-entropy of a fixed model on a finite sample
 
-- [Empirical PMF](empirical-pmf.md)
-- [Empirical PMF apply](empirical-pmf-apply.md)
-- [Empirical Cross Entropy eq avg surprisal](empirical-cross-entropy-eq-avg-surprisal.md)
-- [Empirical Cross Entropy eq top iff](empirical-cross-entropy-eq-top-iff.md)
-- [Empirical Cross Entropy eq shannon Entropy add kl Div](empirical-cross-entropy-eq-shannon-entro.md)
+- [Empirical law of a sample](empirical-pmf.md)
+- [Empirical law of a value is its sample frequency](empirical-pmf-apply.md)
+- [Empirical cross-entropy as average surprisal](empirical-cross-entropy-eq-avg-surprisal.md)
+- [When the empirical cross-entropy is infinite](empirical-cross-entropy-eq-top-iff.md)
+- [Empirical cross-entropy is entropy plus Kullback–Leibler divergence](empirical-cross-entropy-eq-shannon-entro.md)

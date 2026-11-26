@@ -1,3 +1,3 @@
-# Do Set f of mem
+# The structural map on the intervened set is constant
 
-Helper: on the surgery set, the structural map is constant.
+On the surgery set, the structural map is constant.

@@ -2,19 +2,19 @@
 
 ## Tableau
 
-- [Formula Size](formula-size.md)
-- [Card state](card-state.md)
-- [Obligation Count le formula Size](obligation-count-le-formula-size.md)
-- [Card tableau state le](card-tableau-state-le.md)
+- [Size of an LTL formula](formula-size.md)
+- [Number of tableau states](card-state.md)
+- [Until-obligations are bounded by the formula size](obligation-count-le-formula-size.md)
+- [State bound for the degeneralized tableau](card-tableau-state-le.md)
 
 ## LTL
 
 - [Vardi-Wolper bound](vardi-wolper.md)
-- [Safety Ext](safety-ext.md)
+- [General safety fragment of LTL](safety-ext.md)
 
 ## Safety Ext
 
-- [To LTL](to-ltl.md)
+- [Safety formulas as LTL formulas](to-ltl.md)
 
 ## LTL
 

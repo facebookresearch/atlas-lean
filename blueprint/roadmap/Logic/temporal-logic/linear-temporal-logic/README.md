@@ -43,12 +43,12 @@
 
 - [Satisfaction of LTL formulas on runs](satisfies-2.md)
 - [Satisfaction at a position of a run](satisfies-at-2.md)
-- [Atom At iff](atom-at-iff.md)
+- [An atom at a position is the valuation at that state](atom-at-iff.md)
 - [Expansion law for until on runs](until-expansion-2.md)
-- [Forall Runs](forall-runs.md)
-- [Exists Run](exists-run.md)
-- [Forall Runs always atom of reachable](forall-runs-always-atom-of-reachable.md)
-- [Reachable of forall Runs always atom](reachable-of-forall-runs-always-atom.md)
+- [Universal path quantifier over runs](forall-runs.md)
+- [Existential path quantifier over runs](exists-run.md)
+- [Safety from reachability](forall-runs-always-atom-of-reachable.md)
+- [Reachability from safety on infinite runs](reachable-of-forall-runs-always-atom.md)
 
 ## Related topics
 

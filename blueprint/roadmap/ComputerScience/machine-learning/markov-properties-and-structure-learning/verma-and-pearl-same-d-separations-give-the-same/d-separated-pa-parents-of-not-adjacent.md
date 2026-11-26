@@ -1,3 +1,3 @@
-# D Separated Pa parents of not adjacent
+# Nonadjacent nodes are separated by parents
 
-Verma-Pearl Lemma 1 (2) ⇒ (1) (arXiv:1304.1108) with `Pa w` in place of the combined parent set.
+Let $V$ be a set of variables and $\mathrm{Pa}$ a parent-set structure on $V$ (each $v$ has a finite set $\mathrm{Pa}(v)$ of parents) that is acyclic: no variable is its own proper ancestor. Let $u, w \in V$ be nonadjacent, with $u$ not a descendant of $w$. Then $\mathrm{Pa}(w)$ d-separates $\{u\}$ from $\{w\}$ (Verma and Pearl, Lemma 1, with the parents of $w$ as the separator).

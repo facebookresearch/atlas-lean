@@ -1,10 +1,10 @@
 # Restricted Boltzmann machine conditionals
 
-- [Bit](bit.md)
-- [Score](score.md)
-- [Hidden Logit](hidden-logit.md)
-- [Visible Logit](visible-logit.md)
-- [Cond Hidden](cond-hidden.md)
-- [Cond Visible](cond-visible.md)
-- [Cond Hidden eq prod sigmoid](cond-hidden-eq-prod-sigmoid.md)
-- [Cond Visible eq prod sigmoid](cond-visible-eq-prod-sigmoid.md)
+- [Real value of a bit](bit.md)
+- [Score of a restricted Boltzmann machine](score.md)
+- [Logit of a hidden unit](hidden-logit.md)
+- [Logit of a visible unit](visible-logit.md)
+- [Conditional law of the hidden units](cond-hidden.md)
+- [Conditional law of the visible units](cond-visible.md)
+- [The hidden conditional factorizes into sigmoids](cond-hidden-eq-prod-sigmoid.md)
+- [The visible conditional factorizes into sigmoids](cond-visible-eq-prod-sigmoid.md)

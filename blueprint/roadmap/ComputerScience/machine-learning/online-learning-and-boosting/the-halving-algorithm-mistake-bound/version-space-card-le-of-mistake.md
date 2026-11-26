@@ -1,4 +1,4 @@
-# Version Space card le of mistake
+# A halving mistake at least halves the version space
 
 If the halving prediction on the next example is wrong,
 the version space at most halves: the concepts consistent

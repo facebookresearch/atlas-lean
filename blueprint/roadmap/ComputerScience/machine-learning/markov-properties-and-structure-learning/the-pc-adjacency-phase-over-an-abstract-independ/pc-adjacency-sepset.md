@@ -1,5 +1,3 @@
-# Separating-set interface
+# Separating sets recorded by the PC adjacency phase
 
-**Separating-set interface** (consumed by v-structure orientation): for every pair `i < j`
-missing from the output, the recorded set separates the actual query `(i, j)` and excludes
-both endpoints. No hypothesis on the oracle is needed.
+For every conditional-independence oracle on $n$ variables and every pair $i < j$ that is not adjacent in the skeleton returned by the adjacency phase of the PC algorithm, the recorded separating set $S_{ij}$ satisfies: the oracle declares $X_i$ independent of $X_j$ given $S_{ij}$, and $S_{ij}$ contains neither $i$ nor $j$. No hypothesis on the oracle is needed.

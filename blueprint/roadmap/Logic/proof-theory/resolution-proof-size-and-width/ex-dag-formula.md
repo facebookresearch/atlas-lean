@@ -1,4 +1,4 @@
-# Ex Dag Formula
+# Formula with a shared resolvent
 
 The sharing example: the clause `[(0, true), (0, true)]` is derived once
 and then used in two different branches. The claim compares the two

@@ -1,3 +1,3 @@
-# Noise Weight nonneg
+# Product noise weights are nonnegative
 
 The product noise weights are nonnegative.

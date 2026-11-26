@@ -1,7 +1,7 @@
 # Kleinberg's impossibility theorem for clustering
 
-- [Scale](scale.md)
-- [Scale apply](scale-apply.md)
+- [Positive scaling of a dissimilarity](scale.md)
+- [Value of a scaled dissimilarity](scale-apply.md)
 - [Dissimilarity](dissimilarity.md)
 - [Γ-transformation of a dissimilarity](is-gamma-transform.md)
 - [Scale invariance of a clustering function](scale-invariant.md)

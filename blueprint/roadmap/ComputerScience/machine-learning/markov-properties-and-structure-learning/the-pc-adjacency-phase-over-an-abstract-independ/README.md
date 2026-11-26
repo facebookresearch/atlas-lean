@@ -2,61 +2,61 @@
 
 ## Oracles
 
-- [CIOracle](cioracle.md)
-- [Symmetric](symmetric.md)
-- [Law Oracle](law-oracle.md)
-- [Skeleton](skeleton.md)
-- [Dsep Oracle](dsep-oracle.md)
+- [Conditional-independence oracles](cioracle.md)
+- [Symmetric conditional-independence oracles](symmetric.md)
+- [Population conditional-independence oracle](law-oracle.md)
+- [Skeleton of a network](skeleton.md)
+- [d-separation oracle](dsep-oracle.md)
 
 ## The deterministic population PC adjacency phase
 
-- [PCResult](pcresult.md)
-- [Complete](complete.md)
-- [Skeleton](skeleton-2.md)
-- [Side Candidates](side-candidates.md)
-- [Candidates](candidates.md)
-- [Pc First Sep](pc-first-sep.md)
-- [Pc Step](pc-step.md)
-- [Pc Pairs](pc-pairs.md)
-- [Pc Round](pc-round.md)
+- [State of the PC adjacency phase](pcresult.md)
+- [Starting state of the PC adjacency phase](complete.md)
+- [Skeleton estimated by the PC algorithm](skeleton-2.md)
+- [Candidate conditioning sets from one side](side-candidates.md)
+- [Candidate conditioning sets for a pair](candidates.md)
+- [First separating candidate](pc-first-sep.md)
+- [One step of the PC adjacency phase](pc-step.md)
+- [Ordered pairs of nodes](pc-pairs.md)
+- [One round of the PC adjacency phase](pc-round.md)
 
 ## Targets: graph lemmas and faithfulness
 
-- [Skeleton adj](skeleton-adj.md)
-- [Not d Separated of adj](not-d-separated-of-adj.md)
-- [Markov Oracle](markov-oracle-2.md)
-- [Adjacency Faithful](adjacency-faithful-2.md)
+- [Adjacency in the skeleton of a network](skeleton-adj.md)
+- [Adjacent nodes are never d-separated](not-d-separated-of-adj.md)
+- [Faithful laws give Markov oracles](markov-oracle-2.md)
+- [Faithful laws give adjacency-faithful oracles](adjacency-faithful-2.md)
 
-## Targets: skeleton recovery and the separating-set interface
+## Skeleton recovery and separating sets
 
-- [Separating-set interface](pc-adjacency-sepset.md)
-- [Pc Adjacency sepset symm](pc-adjacency-sepset-symm.md)
-- [Pc Adjacency sepset of symmetric](pc-adjacency-sepset-of-symmetric.md)
-- [Pc Adjacency congr](pc-adjacency-congr.md)
+- [Separating sets recorded by the PC adjacency phase](pc-adjacency-sepset.md)
+- [Separating sets are stored symmetrically](pc-adjacency-sepset-symm.md)
+- [For a symmetric oracle recorded sets separate both orders](pc-adjacency-sepset-of-symmetric.md)
+- [The PC adjacency phase reads only ordered queries](pc-adjacency-congr.md)
 
 ## Targets: the d-separation and law instances
 
-- [Markov Oracle dsep Oracle](markov-oracle-dsep-oracle.md)
-- [Adjacency Faithful dsep Oracle](adjacency-faithful-dsep-oracle.md)
-- [Symmetric dsep Oracle](symmetric-dsep-oracle.md)
-- [Symmetric law Oracle](symmetric-law-oracle.md)
-- [Pc Adjacency dsep Oracle](pc-adjacency-dsep-oracle.md)
-- [Markov Oracle law Oracle joint](markov-oracle-law-oracle-joint.md)
+- [The d-separation oracle is a Markov oracle](markov-oracle-dsep-oracle.md)
+- [The d-separation oracle is adjacency-faithful](adjacency-faithful-dsep-oracle.md)
+- [The d-separation oracle is symmetric](symmetric-dsep-oracle.md)
+- [The population independence oracle is symmetric](symmetric-law-oracle.md)
+- [With the d-separation oracle the PC adjacency phase returns the skeleton](pc-adjacency-dsep-oracle.md)
+- [The independence oracle of a network's joint law is Markov](markov-oracle-law-oracle-joint.md)
 - [Skeleton theorem under faithfulness](pc-adjacency-law-oracle-of-faithful.md)
 
 ## The unfaithful XOR collider
 
-- [Xor Net](xor-net.md)
-- [Xor Table](xor-table.md)
-- [Xor Net adj zero two](xor-net-adj-zero-two.md)
-- [Pc Adjacency xor Table skeleton adj](pc-adjacency-xor-table-skeleton-adj.md)
-- [Pc Adjacency xor Table sepset](pc-adjacency-xor-table-sepset.md)
-- [Xor Net joint apply](xor-net-joint-apply.md)
-- [Xor Net cond Indep zero two](xor-net-cond-indep-zero-two.md)
-- [Law Oracle xor Net iff](law-oracle-xor-net-iff.md)
-- [Xor Net markov Oracle](xor-net-markov-oracle.md)
-- [Xor Net not adjacency Faithful](xor-net-not-adjacency-faithful.md)
-- [Xor Net not faithful](xor-net-not-faithful.md)
+- [XOR collider network](xor-net.md)
+- [Answer table of the XOR law](xor-table.md)
+- [The XOR collider has the edge from the first root to the child](xor-net-adj-zero-two.md)
+- [The PC adjacency phase deletes every edge on the XOR table](pc-adjacency-xor-table-skeleton-adj.md)
+- [Separating sets on the XOR answer table are empty](pc-adjacency-xor-table-sepset.md)
+- [Joint law of the XOR collider](xor-net-joint-apply.md)
+- [Under the XOR law a root is independent of the child](xor-net-cond-indep-zero-two.md)
+- [Answers of the XOR law](law-oracle-xor-net-iff.md)
+- [The XOR law is a Markov oracle](xor-net-markov-oracle.md)
+- [The XOR law is not adjacency-faithful](xor-net-not-adjacency-faithful.md)
+- [The XOR law is not faithful](xor-net-not-faithful.md)
 - [Unfaithful-law counterexample](pc-adjacency-xor-net-misses-edge.md)
 - [Markov oracle](markov-oracle.md)
 - [Adjacency-faithfulness](adjacency-faithful.md)

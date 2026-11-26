@@ -1,4 +1,3 @@
-# Moment matching
+# Moment matching maximizes the likelihood
 
-If `m • mean η★ = ∑ k, T (x k)` (for `m > 0`: the model mean of the
-statistic equals its sample mean), then `η★` maximizes the likelihood.
+Let $X$ be a finite set, $\iota$ a finite index set, $h : X \to \mathbb{R}$ base weights with $h(x) \ge 0$ for every $x$ and $\sum_{x} h(x) > 0$, and $T : X \to \mathbb{R}^\iota$ a sufficient statistic. Write $A(\eta) = \log \sum_{x} h(x) e^{\eta \cdot T(x)}$ for the log-partition function, $p_\eta(x) = h(x) e^{\eta \cdot T(x) - A(\eta)}$ for the density and $\mu(\eta) = \sum_x p_\eta(x) T(x)$ for the mean of the statistic, at $\eta \in \mathbb{R}^\iota$. Let $x_1, \dots, x_m \in X$ be observations with likelihood $L(\eta) = \prod_{k=1}^m p_\eta(x_k)$. If $\eta_0$ satisfies $m\, \mu(\eta_0) = \sum_{k=1}^m T(x_k)$, then $L(\eta) \le L(\eta_0)$ for every $\eta \in \mathbb{R}^\iota$.

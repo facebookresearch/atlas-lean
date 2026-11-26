@@ -1,9 +1,9 @@
 # Non-identifiability of causal effects under latent confounding
 
-- [On Confounded Triangle](on-confounded-triangle.md)
-- [Observed Law](observed-law.md)
-- [Do Prob](do-prob.md)
-- [Fair Coin](fair-coin.md)
-- [B₁](b.md)
-- [B₂](b-2.md)
+- [Networks on the confounded triangle](on-confounded-triangle.md)
+- [Observed law of treatment and outcome](observed-law.md)
+- [Interventional probability of the outcome](do-prob.md)
+- [Fair coin on the Booleans](fair-coin.md)
+- [First confounded network: the outcome copies the treatment](b.md)
+- [Second confounded network: the outcome copies the confounder](b-2.md)
 - [Non-identifiability under latent confounding](exists-same-observed-law-ne-do-prob.md)

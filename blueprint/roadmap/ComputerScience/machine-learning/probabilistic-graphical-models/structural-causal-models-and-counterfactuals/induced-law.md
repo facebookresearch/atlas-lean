@@ -1,4 +1,4 @@
-# Induced Law
+# Observational law of a structural causal model
 
 The observational law induced by the model under independent noises with laws `μ k`: the
 probability that the solution is `x`, that is, the push-forward of the product noise law under

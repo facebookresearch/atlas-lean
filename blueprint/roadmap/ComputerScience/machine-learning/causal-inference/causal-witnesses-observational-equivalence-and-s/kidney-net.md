@@ -1,4 +1,4 @@
-# Kidney Net
+# Kidney-stone Simpson network
 
 The kidney-stone Simpson network on `Bool`: node `0` is a large stone,
 node `1` is treatment B, percutaneous nephrolithotomy (with `false`

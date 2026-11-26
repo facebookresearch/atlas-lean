@@ -1,4 +1,4 @@
-# Exists dag
+# Every tree derivation yields a DAG derivation no larger
 
 Every tree derivation yields a DAG derivation of the same clause
 with no greater size:

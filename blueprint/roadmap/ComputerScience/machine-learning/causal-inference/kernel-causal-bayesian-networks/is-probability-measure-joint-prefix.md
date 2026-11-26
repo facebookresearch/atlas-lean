@@ -1,3 +1,3 @@
-# Is Probability Measure joint Prefix
+# Prefix joints are probability measures
 
 Every prefix joint is a probability measure.

@@ -1,3 +1,3 @@
-# Do Set f of not mem
+# The structural map away from the intervened set
 
-Helper: away from the surgery set, the structural map is the original one transported.
+Away from the surgery set, the structural map is the original one transported.

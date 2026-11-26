@@ -2,15 +2,15 @@
 
 ## Graphical Models
 
-- [Identified On](identified-on.md)
-- [Of eq comp](of-eq-comp.md)
-- [Exists eq comp](exists-eq-comp.md)
+- [Identified functionals on a class of models](identified-on.md)
+- [A functional of the observations is identified](of-eq-comp.md)
+- [An identified functional factors through the observations](exists-eq-comp.md)
 
 ## Bayes Net
 
-- [Backdoor Criterion](backdoor-criterion.md)
-- [Backdoor Class](backdoor-class.md)
-- [Frontdoor Criterion](frontdoor-criterion.md)
-- [Frontdoor Class](frontdoor-class.md)
+- [Back-door criterion](backdoor-criterion.md)
+- [Class of models satisfying the back-door criterion](backdoor-class.md)
+- [Front-door criterion](frontdoor-criterion.md)
+- [Class of models satisfying the front-door criterion](frontdoor-class.md)
 - [Back-door identification](identified-on-backdoor-class.md)
 - [Front-door identification](identified-on-frontdoor-class.md)

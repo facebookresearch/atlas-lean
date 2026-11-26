@@ -27,4 +27,4 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Basic properties of stable models](basic-properties-of-stable-models.md)
 
 - [Proof certificates](proof-certificates/README.md)
-- [Sat solving](sat-solving/README.md)
+- [SAT solving](sat-solving/README.md)

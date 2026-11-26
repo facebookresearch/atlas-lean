@@ -1,3 +1,3 @@
-# Complete
+# Relative completeness of Hoare logic for typed diagrams
 
-Every valid diagram triple has a derivation, relative to semantic basic-block axioms.
+Let $\mathcal{C}$ be a symmetric monoidal category with a symmetric trace $\operatorname{Tr}$, let block diagrams be built from typed basic blocks by sequential composition, tensor and feedback and denote morphisms of $\mathcal{C}$ through composition, tensor and $\operatorname{Tr}$, and let $F$ be a monoidal functor from $\mathcal{C}$ to the category of monoids and relations, so that assertions on an object $X$ are elements of $F(X)$ and a triple $\{P\}\,f\,\{Q\}$ holds when $(P, Q)$ lies in the relation $F(f)$. Suppose $F$ preserves the trace, sending $\operatorname{Tr}$ to the symmetric trace of monoids and relations. Then for every diagram $d$ and assertions $P$ and $Q$, if the triple $\{P\}\, d\, \{Q\}$ holds for the denotation of $d$, it is derivable in the Hoare logic whose axioms are the valid triples of the basic blocks and whose rules are consequence, sequencing, tensor and feedback with an invariant.

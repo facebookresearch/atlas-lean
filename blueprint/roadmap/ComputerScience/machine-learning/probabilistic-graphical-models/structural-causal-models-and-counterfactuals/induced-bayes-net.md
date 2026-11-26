@@ -1,4 +1,4 @@
-# Induced Bayes Net
+# Bayesian network induced by a structural causal model
 
 The Bayesian network of the model under independent noises with laws `μ k`: it has the
 model's parents, and the table of node `k` at parent values `z` is the law of

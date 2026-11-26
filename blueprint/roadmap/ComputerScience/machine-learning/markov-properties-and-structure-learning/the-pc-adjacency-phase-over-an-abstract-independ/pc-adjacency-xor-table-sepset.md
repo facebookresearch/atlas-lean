@@ -1,3 +1,3 @@
-# Pc Adjacency xor Table sepset
+# Separating sets on the XOR answer table are empty
 
-Kernel-checked: every recorded separating set on the XOR answer table is empty.
+Every recorded separating set on the XOR answer table is empty.

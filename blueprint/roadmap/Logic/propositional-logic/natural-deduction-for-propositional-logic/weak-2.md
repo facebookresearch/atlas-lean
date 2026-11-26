@@ -1,3 +1,3 @@
-# Weak
+# Weakening for derivability
 
 Proof irrelevant weakening.

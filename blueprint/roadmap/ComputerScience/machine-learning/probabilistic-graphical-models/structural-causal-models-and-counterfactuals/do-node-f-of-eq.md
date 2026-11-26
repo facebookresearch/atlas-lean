@@ -1,3 +1,3 @@
-# Do Node f of eq
+# The structural map at the intervened node is constant
 
-Helper: at the surgery node, the structural map is constant.
+At the surgery node, the structural map is constant.

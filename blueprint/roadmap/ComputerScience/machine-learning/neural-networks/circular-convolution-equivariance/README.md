@@ -1,8 +1,8 @@
 # Circular convolution equivariance
 
-- [Shift](shift.md)
-- [Circ Conv](circ-conv.md)
-- [Conv Layer](conv-layer.md)
-- [Circ Conv shift](circ-conv-shift.md)
-- [Conv Layer shift](conv-layer-shift.md)
-- [Conv Layer comp shift](conv-layer-comp-shift.md)
+- [Cyclic shift of a signal](shift.md)
+- [Circular convolution](circ-conv.md)
+- [Circular-convolution layer](conv-layer.md)
+- [Circular convolution commutes with cyclic shifts](circ-conv-shift.md)
+- [A convolution layer is shift-equivariant](conv-layer-shift.md)
+- [Composed convolution layers are shift-equivariant](conv-layer-comp-shift.md)

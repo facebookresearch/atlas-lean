@@ -1,3 +1,3 @@
-# Observation Formula
+# Observation formulas
 
-Finitary Hennessy--Milner formulas.
+Finitary Hennessy–Milner formulas.
