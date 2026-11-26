@@ -18,7 +18,6 @@ public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.NumberTheory.Real.Irrational
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
-public import MathlibExt.NumberTheory.AlternatingSeriesContinuedFractionTwoStepPatternAlternatingSeriesContFract
 
 namespace MetaMathlibExt
 

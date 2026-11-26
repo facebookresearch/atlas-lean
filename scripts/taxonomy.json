@@ -12614,7 +12614,6 @@
   "MathlibExt/NumberTheory/AlternatingReciprocalIntegral": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/AlternatingSeriesContinuedFraction": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of alternating series"},
   "MathlibExt/NumberTheory/AlternatingSeriesContinuedFractionTwoStepPattern": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of alternating series"},
-  "MathlibExt/NumberTheory/AlternatingSeriesContinuedFractionTwoStepPatternAlternatingSeriesContFract": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of alternating series"},
   "MathlibExt/NumberTheory/AlternatingSumFloorDiv": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/Amicable": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Average and divisibility of the divisor sum"},
   "MathlibExt/NumberTheory/ApostolBernoulliNumber": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Apostol–Bernoulli numbers"},
