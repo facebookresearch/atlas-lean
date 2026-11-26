@@ -1,3 +1,0 @@
-# Instances of MULTI-PURPOSE PARALLEL MACHINES WITH PRECEDENCE AND UNIT TIMES, TOTAL COMPLETION TIME
-
-An instance of MULTI-PURPOSE PARALLEL MACHINES WITH PRECEDENCE AND UNIT TIMES, TOTAL COMPLETION TIME is a pair of a multi-purpose machine job-shop instance $(m, J, K)$, with $m$ the number of machines, $J$ the list of jobs, each a list of operations given as pairs $(p, \mu)$ of a processing time and a list of eligible machines, and $K$ the bound on the total completion time, and a list $A$ of precedence arcs $(i, k)$. Job $i$ precedes job $k$ when $k$ is reachable from $i$ along the arcs.

@@ -1,5 +1,7 @@
 # Unit-time shop scheduling with precedence
 
+See also [Precedence relation of a list of job pairs](../multi-purpose-machine-shops-with-precedence/prec.md), shared with this topic.
+
 - [Feasible instances of THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, TOTAL TARDINESS](f3-unit-chains-total-tardiness-feasible.md)
 - [THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, TOTAL TARDINESS as a decision problem](f3-unit-chains-total-tardiness-dec.md)
 - [THREE-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, TOTAL TARDINESS is NP-complete](f3-unit-chains-total-tardiness-np-comple.md)
@@ -33,7 +35,6 @@
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME is NP-complete](unit-flow-shop-chains-weighted-completio-3.md)
 - [Instances of unit-time shops with precedence](unit-flow-shop-precedence-makespan-insta.md)
 - [Unit-time jobs](unit-jobs.md)
-- [Precedence relation of a list of arcs on jobs](prec.md)
 - [Well-formed acyclic precedence arcs](prec-well-formed.md)
 - [Unit-time flow-shop schedules with precedence](is-schedule.md)
 - [Well-formed unit-time shop instances with precedence](well-formed-4.md)

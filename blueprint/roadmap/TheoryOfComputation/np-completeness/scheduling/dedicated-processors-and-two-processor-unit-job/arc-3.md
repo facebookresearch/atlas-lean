@@ -1,3 +1,0 @@
-# Chain arcs of an instance of TWO-PROCESSOR UNIT-TIME NO-WAIT JOB-SHOP TOTAL COMPLETION TIME WITH CHAINS
-
-An instance of TWO-PROCESSOR UNIT-TIME NO-WAIT JOB-SHOP TOTAL COMPLETION TIME WITH CHAINS is a pair of a JOB-SHOP SCHEDULING instance $(m, J, K)$, whose jobs are the positions of $J$ and whose last component is read as the bound $K$ on the total completion time, and a list $A$ of pairs of natural numbers. Job $j$ is the immediate predecessor of job $j^\prime$ when the pair $(j, j^\prime)$ occurs in $A$. That arcs name jobs, that no two arcs share a tail or a head, and that the arcs have no cycle are conditions of a well-formed instance, not of this definition.

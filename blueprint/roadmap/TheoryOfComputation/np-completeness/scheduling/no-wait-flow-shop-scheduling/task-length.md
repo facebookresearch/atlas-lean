@@ -1,3 +1,0 @@
-# Task lengths in NO-WAIT FLOW-SHOP SCHEDULING
-
-An instance of NO-WAIT FLOW-SHOP SCHEDULING is a triple $(m, J, D)$ of a number $m$ of processors, a list $J$ of jobs, job $j$ being the list $[l(t_1[j]), \dots, l(t_m[j])]$ of its task lengths, and an overall deadline $D$. For a processor $p \in \{0, \dots, m-1\}$ and a job $j$, a position of $J$, the length $l(t_p[j])$ of the task of job $j$ executed by processor $p$ is the entry at position $p$ of the list of job $j$, and $0$ when that list has no entry at position $p$. That every job has exactly $m$ task lengths is a condition of a well-formed instance, not of this definition.

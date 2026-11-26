@@ -35,7 +35,6 @@
 - [THREE-MACHINE UNIT-TIME ROBOT FLOW SHOP, TOTAL TARDINESS as a decision problem](robot-flow-shop-three-machines-total-tar.md)
 - [THREE-MACHINE UNIT-TIME ROBOT FLOW SHOP, TOTAL TARDINESS is NP-complete](robot-flow-shop-three-machines-total-tar-2.md)
 - [Release date of a job in THREE-MACHINE UNIT-TIME ROBOT FLOW SHOP WITH RELEASE DATES, TOTAL COMPLETION TIME](release-date-2.md)
-- [Well-formed instances of THREE-MACHINE UNIT-TIME ROBOT FLOW SHOP WITH RELEASE DATES, TOTAL COMPLETION TIME](well-formed-6.md)
 - [Feasible instances of THREE-MACHINE UNIT-TIME ROBOT FLOW SHOP WITH RELEASE DATES, TOTAL COMPLETION TIME](robot-flow-shop-three-machines-unit-rele.md)
 - [THREE-MACHINE UNIT-TIME ROBOT FLOW SHOP WITH RELEASE DATES, TOTAL COMPLETION TIME as a decision problem](robot-flow-shop-three-machines-unit-rele-2.md)
 - [THREE-MACHINE UNIT-TIME ROBOT FLOW SHOP WITH RELEASE DATES, TOTAL COMPLETION TIME is NP-complete](robot-flow-shop-three-machines-unit-rele-3.md)

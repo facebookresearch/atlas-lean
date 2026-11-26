@@ -1,6 +1,5 @@
 # Multi-purpose machine scheduling
 
-- [Well-formed instances of MULTIPROCESSOR TASK FLOW SHOP WITH THREE JOBS, MAKESPAN](well-formed.md)
 - [Feasible instances of MULTIPROCESSOR TASK FLOW SHOP WITH THREE JOBS, MAKESPAN](multiprocessor-task-flow-shop-three-jobs.md)
 - [MULTIPROCESSOR TASK FLOW SHOP WITH THREE JOBS, MAKESPAN as a decision problem](multiprocessor-task-flow-shop-three-jobs-2.md)
 - [MULTIPROCESSOR TASK FLOW SHOP WITH THREE JOBS, MAKESPAN is NP-complete](multiprocessor-task-flow-shop-three-jobs-3.md)
@@ -8,7 +7,6 @@
 - [Feasible instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, LATE JOBS](multiprocessor-task-open-shop-chains-lat.md)
 - [TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, LATE JOBS as a decision problem](multiprocessor-task-open-shop-chains-lat-2.md)
 - [TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, LATE JOBS is NP-complete](multiprocessor-task-open-shop-chains-lat-3.md)
-- [Well-formed instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](well-formed-3.md)
 - [Weight of a job in TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](weight.md)
 - [Feasible instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](multiprocessor-task-open-shop-chains-wei.md)
 - [TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem](multiprocessor-task-open-shop-chains-wei-2.md)

@@ -1,3 +1,0 @@
-# Chain arcs of a two-processor unit job shop with chains
-
-An instance of a two-processor unit job shop with chains, as in TWO-PROCESSOR UNIT-TIME NO-WAIT JOB-SHOP SCHEDULING WITH CHAINS and TWO-PROCESSOR UNIT-TIME JOB SHOP WITH CHAINS, is a pair of a JOB-SHOP SCHEDULING instance $(m, J, D)$, whose jobs are the positions of $J$, and a list $A$ of pairs of natural numbers. Job $j$ is the immediate predecessor of job $j^\prime$ when the pair $(j, j^\prime)$ occurs in $A$. That arcs name jobs, that no two arcs share a tail or a head, and that the arcs have no cycle are conditions of a well-formed instance, not of this definition.

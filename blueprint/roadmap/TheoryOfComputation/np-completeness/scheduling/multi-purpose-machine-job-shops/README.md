@@ -1,5 +1,7 @@
 # Multi-purpose machine job shops
 
+See also [Instances of multi-purpose parallel machines with precedence](../multi-purpose-parallel-machine-scheduling/multipurpose-parallel-precedence-makespa.md), shared with this topic.
+
 - [Feasible instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE MACHINE FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME](mpmflow-shop-two-machines-unit-chains-we.md)
 - [TWO-MACHINE UNIT-TIME MULTI-PURPOSE MACHINE FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME as a decision problem](mpm-flow-shop-two-machines-unit-chains-w.md)
 - [TWO-MACHINE UNIT-TIME MULTI-PURPOSE MACHINE FLOW SHOP WITH CHAINS, WEIGHTED COMPLETION TIME is NP-complete](mpm-flow-shop-two-machines-unit-chains-w-2.md)
@@ -25,7 +27,6 @@
 - [Feasible instances of MULTI-PURPOSE MACHINE JOB SHOP WITH THREE JOBS](multi-purpose-job-shop-three-jobs-feasib.md)
 - [MULTI-PURPOSE MACHINE JOB SHOP WITH THREE JOBS as a decision problem](multi-purpose-job-shop-three-jobs-dec.md)
 - [MULTI-PURPOSE MACHINE JOB SHOP WITH THREE JOBS is NP-complete](multi-purpose-job-shop-three-jobs-np-com.md)
-- [Instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH CHAINS, TOTAL COMPLETION TIME](multi-purpose-unit-job-shop-chains-compl.md)
 - [Chain arcs of an instance of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH CHAINS, TOTAL COMPLETION TIME](arc.md)
 - [Well-formed instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH CHAINS, TOTAL COMPLETION TIME](well-formed-4.md)
 - [Feasible instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH CHAINS, TOTAL COMPLETION TIME](multi-purpose-unit-job-shop-chains-compl-2.md)
@@ -37,7 +38,6 @@
 - [TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH RELEASE DATES, WEIGHTED COMPLETION TIME as a decision problem](multi-purpose-unit-job-shop-release-weig-3.md)
 - [TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH RELEASE DATES, WEIGHTED COMPLETION TIME is NP-complete](multi-purpose-unit-job-shop-release-weig-4.md)
 - [Instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS](multi-purpose-unit-job-shop-weighted-tar.md)
-- [Well-formed instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS](well-formed-6.md)
 - [Feasible instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS](multi-purpose-unit-job-shop-weighted-tar-2.md)
 - [TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS as a decision problem](multi-purpose-unit-job-shop-weighted-tar-3.md)
 - [TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP, WEIGHTED TARDINESS is NP-complete](multi-purpose-unit-job-shop-weighted-tar-4.md)
