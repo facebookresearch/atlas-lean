@@ -37,7 +37,7 @@ example : IsPracticalNumber (6 * 5) :=
   isPracticalNumber_mul_of_le_sigma_add_one 6 5 isPracticalNumber_six (by decide)
     (by simp [sigma_one_six])
 
--- Every multiple of 6 by a factor up to σ(6) + 1 = 13 is practical.
+-- Every multiple of 6 by a factor from 1 to σ(6) + 1 = 13 is practical.
 example (n : ℕ) (hn : 0 < n) (hnm : n ≤ 13) : IsPracticalNumber (6 * n) :=
   isPracticalNumber_mul_of_le_sigma_add_one 6 n isPracticalNumber_six hn (by
     rw [sigma_one_six]

@@ -15,12 +15,14 @@ import Mathlib.Data.Nat.Prime.Basic
 /-!
 # Products of a practical number with small factors
 
-The product `m * n` of a practical number `m` with a factor `n ≤ σ(m) + 1` is practical.
+The product `m * n` of a practical number `m` with a factor `1 ≤ n ≤ σ(m) + 1` is practical.
 
 Statements from Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and
 Polygonal Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1
 (arXiv:2403.13533). In the paper "natural number" means positive integer; practical numbers
-are `MetaMathlibExt.IsPracticalNumber`.
+are `MetaMathlibExt.IsPracticalNumber`. The paper proves the result by citing M. Margenstern,
+*Les nombres pratiques: théorie, observations et conjectures*, J. Number Theory 37 (1991), 1-36,
+Corollary 1.
 -/
 
 namespace MetaMathlibExt
