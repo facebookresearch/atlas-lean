@@ -37,4 +37,21 @@ example : ∃ c : ℤ, ∀ k : ℤ, k ≠ 0 → sumOfSquaresRepCount k 1 = 0 →
   obtain ⟨P, -, hP⟩ := sumOfSquaresRepCount_integer_root 1
   exact ⟨P.coeff 1, fun k hk h0 => (hP k hk h0).1⟩
 
+-- `3` is not a sum of two squares, so `r_2(3) = 0` and the nonzero root `k = 2` divides
+-- `c_1` and satisfies the strict bound for some `i < 3` (here `3! r_z(3) = 8z(z-1)(z-2)`).
+example : ∃ P : Polynomial ℤ, (2 : ℤ) ∣ P.coeff 1 ∧
+    ∃ i < 3, (2 : ℝ) < 2 * (|P.coeff i| : ℝ) ^ ((1 : ℝ) / ((3 : ℝ) - i)) := by
+  obtain ⟨P, -, hP⟩ := sumOfSquaresRepCount_integer_root 3
+  have hr : sumOfSquaresRepCount 2 3 = 0 := by
+    have hsq : ((isUnit_squareThetaSeries.unit ^ (2 : ℤ) : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
+        = squareThetaSeries * squareThetaSeries := by
+      rw [zpow_ofNat, Units.val_pow_eq_pow_val, IsUnit.unit_spec, sq]
+    rw [sumOfSquaresRepCount, hsq, PowerSeries.coeff_mul,
+      Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+    simp only [Finset.sum_range_succ, Finset.sum_range_zero, squareThetaSeries,
+      PowerSeries.coeff_mk]
+    decide
+  obtain ⟨hdvd, i, hi, hlt⟩ := hP 2 (by norm_num) hr
+  exact ⟨P, hdvd, i, hi, by simpa using hlt⟩
+
 end MathlibExtTest.NumberTheory.SquaresTriangularRepresentationsSumOfSquaresRepCountIntegerRoot

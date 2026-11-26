@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.TriangularRepresentationWindow
 
 import Mathlib.Algebra.Polynomial.BigOperators
 import Mathlib.Algebra.Polynomial.Eval.Degree
+import Mathlib.RingTheory.Polynomial.Pochhammer
 
 /-!
 # Integer zeros of the sums-of-squares counting polynomial
@@ -61,57 +62,14 @@ private theorem coeff_ssF_pow_eq_zero (j m : ℕ) (hm : m < j) :
     PowerSeries.coeff m (ssF ^ j) = 0 :=
   PowerSeries.X_pow_dvd_iff.mp (pow_dvd_pow_of_dvd X_dvd_ssF j) m hm
 
--- Falling factorial polynomial and its values.
-private noncomputable def fallPoly (j : ℕ) : Polynomial ℤ :=
-  ∏ t ∈ Finset.range j, (Polynomial.X - Polynomial.C (t : ℤ))
-
-private def fall (z : ℤ) (j : ℕ) : ℤ := ∏ t ∈ Finset.range j, (z - (t : ℤ))
-
-private theorem eval_fallPoly (z : ℤ) (j : ℕ) : (fallPoly j).eval z = fall z j := by
-  simp only [fallPoly, fall, Polynomial.eval_prod, Polynomial.eval_sub, Polynomial.eval_X,
-    Polynomial.eval_C]
-
-private theorem fall_zero (z : ℤ) : fall z 0 = 1 := by simp [fall]
-
-private theorem fall_succ (z : ℤ) (i : ℕ) :
-    fall (z + 1) (i + 1) = fall z (i + 1) + ((i : ℤ) + 1) * fall z i := by
-  have h1 : fall (z + 1) (i + 1) = fall z i * (z + 1) := by
-    rw [fall, Finset.prod_range_succ']
-    congr 1
-    · apply Finset.prod_congr rfl
-      intro t _
-      push_cast
-      ring
-    · push_cast
-      ring
-  have h2 : fall z (i + 1) = fall z i * (z - (i : ℤ)) := by
-    simp only [fall, Finset.prod_range_succ]
-  rw [h1, h2]
+-- Evaluations of Mathlib's falling factorial polynomial `descPochhammer ℤ j`.
+private theorem descPochhammer_eval_succ_add_one (z : ℤ) (i : ℕ) :
+    (descPochhammer ℤ (i + 1)).eval (z + 1)
+      = (descPochhammer ℤ (i + 1)).eval z + ((i : ℤ) + 1) * (descPochhammer ℤ i).eval z := by
+  have h1 : (descPochhammer ℤ (i + 1)).eval (z + 1) = (z + 1) * (descPochhammer ℤ i).eval z := by
+    simp [descPochhammer_succ_left]
+  rw [h1, descPochhammer_succ_eval]
   ring
-
-private theorem fall_eq_zero_of_lt (m j : ℕ) (h : m < j) : fall (m : ℤ) j = 0 := by
-  apply Finset.prod_eq_zero (Finset.mem_range.mpr h)
-  simp
-
-private theorem fall_mul_factorial (m j : ℕ) (h : j ≤ m) :
-    fall (m : ℤ) j * (((m - j).factorial : ℕ) : ℤ) = ((m.factorial : ℕ) : ℤ) := by
-  induction j generalizing m with
-  | zero => simp [fall]
-  | succ i ih =>
-    have hle : i + 1 ≤ m := h
-    have hmi : m - i = (m - (i + 1)) + 1 := by omega
-    have hfall : fall (m : ℤ) (i + 1) = fall (m : ℤ) i * ((m : ℤ) - (i : ℤ)) := by
-      simp only [fall, Finset.prod_range_succ]
-    rw [hfall]
-    have hfac : ((((m - i).factorial : ℕ)) : ℤ)
-        = ((m : ℤ) - (i : ℤ)) * ((((m - (i + 1)).factorial : ℕ)) : ℤ) := by
-      rw [hmi, Nat.factorial_succ]
-      push_cast [Nat.cast_sub hle]
-      ring
-    calc fall (m : ℤ) i * (↑m - ↑i) * ↑((m - (i + 1)).factorial)
-        = fall (m : ℤ) i * ((↑m - ↑i) * ↑((m - (i + 1)).factorial)) := by ring
-      _ = fall (m : ℤ) i * ↑((m - i).factorial) := by rw [← hfac]
-      _ = ↑(m.factorial) := ih m (Nat.le_of_succ_le hle)
 
 -- The cofactor `n! / j!`.
 private def cof (n j : ℕ) : ℤ := ((Nat.factorial n / Nat.factorial j : ℕ) : ℤ)
@@ -149,7 +107,7 @@ private theorem cof_succ_mul (n i : ℕ) (h : i + 1 ≤ n) :
 
 -- The truncated binomial expansion and its difference from the unit power.
 private noncomputable def truncSum (n : ℕ) (z : ℤ) : PowerSeries ℤ :=
-  ∑ j ∈ Finset.range (n + 1), PowerSeries.C (cof n j * fall z j) * ssF ^ j
+  ∑ j ∈ Finset.range (n + 1), PowerSeries.C (cof n j * (descPochhammer ℤ j).eval z) * ssF ^ j
 
 private noncomputable def truncDiff (n : ℕ) (z : ℤ) : PowerSeries ℤ :=
   PowerSeries.C ((n.factorial : ℕ) : ℤ) * ((ssU ^ z : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
@@ -165,12 +123,16 @@ private theorem unit_pow_succ (z : ℤ) :
   rw [zpow_add_one, Units.val_mul, ssU_val, ← one_add_ssF]
 
 private theorem natCoeff_identity (n m j : ℕ) (hjm : j ≤ m) (hjn : j ≤ n) :
-    ((n.factorial : ℕ) : ℤ) * ((m.choose j : ℕ) : ℤ) = cof n j * fall (m : ℤ) j := by
+    ((n.factorial : ℕ) : ℤ) * ((m.choose j : ℕ) : ℤ)
+      = cof n j * (descPochhammer ℤ j).eval (m : ℤ) := by
   have hchoose : ((m.choose j : ℕ) : ℤ) * (((j.factorial : ℕ)) : ℤ)
       * ((((m - j).factorial : ℕ)) : ℤ) = (((m.factorial : ℕ)) : ℤ) := by
     have h := Nat.choose_mul_factorial_mul_factorial hjm
     exact_mod_cast h
-  have hfall := fall_mul_factorial m j hjm
+  have hfall : (descPochhammer ℤ j).eval (m : ℤ) * ((((m - j).factorial : ℕ)) : ℤ)
+      = (((m.factorial : ℕ)) : ℤ) := by
+    rw [descPochhammer_eval_eq_descFactorial, mul_comm]
+    exact_mod_cast Nat.factorial_mul_descFactorial hjm
   have hcof := cof_mul_factorial n j hjn
   have hpos : ((((j.factorial : ℕ))) : ℤ) * ((((m - j).factorial : ℕ)) : ℤ) ≠ 0 := by
     apply mul_ne_zero
@@ -182,9 +144,11 @@ private theorem natCoeff_identity (n m j : ℕ) (hjm : j ≤ m) (hjn : j ≤ n) 
         = ((n.factorial : ℕ) : ℤ)
           * (((m.choose j : ℕ) : ℤ) * ↑(j.factorial) * ↑((m - j).factorial)) := by ring
     _ = ((n.factorial : ℕ) : ℤ) * (((m.factorial : ℕ)) : ℤ) := by rw [hchoose]
-    _ = (cof n j * ↑(j.factorial)) * (fall (m : ℤ) j * ↑((m - j).factorial)) := by
+    _ = (cof n j * ↑(j.factorial))
+          * ((descPochhammer ℤ j).eval (m : ℤ) * ↑((m - j).factorial)) := by
         rw [hcof, hfall]
-    _ = (cof n j * fall (m : ℤ) j) * (↑(j.factorial) * ↑((m - j).factorial)) := by ring
+    _ = (cof n j * (descPochhammer ℤ j).eval (m : ℤ))
+          * (↑(j.factorial) * ↑((m - j).factorial)) := by ring
 
 private theorem binom_expansion (m : ℕ) :
     (1 + ssF) ^ m
@@ -206,20 +170,22 @@ private theorem dvd_truncDiff_nat (n m : ℕ) :
     rw [← mul_assoc, ← map_mul]
   simp only [truncDiff, truncSum, unit_pow_natCast, binom_expansion, hexpand]
   rcases le_total m n with hmn | hnm
-  · have hsub : ∑ j ∈ Finset.range (n + 1), PowerSeries.C (cof n j * fall (m : ℤ) j) * ssF ^ j
-        = ∑ j ∈ Finset.range (m + 1), PowerSeries.C (cof n j * fall (m : ℤ) j) * ssF ^ j := by
+  · have hsub : ∑ j ∈ Finset.range (n + 1),
+          PowerSeries.C (cof n j * (descPochhammer ℤ j).eval (m : ℤ)) * ssF ^ j
+        = ∑ j ∈ Finset.range (m + 1),
+          PowerSeries.C (cof n j * (descPochhammer ℤ j).eval (m : ℤ)) * ssF ^ j := by
       rw [← Finset.sum_range_add_sum_Ico _ (Nat.succ_le_succ hmn)]
       have hzero : ∑ j ∈ Finset.Ico (m + 1) (n + 1),
-          PowerSeries.C (cof n j * fall (m : ℤ) j) * ssF ^ j = 0 := by
+          PowerSeries.C (cof n j * (descPochhammer ℤ j).eval (m : ℤ)) * ssF ^ j = 0 := by
         apply Finset.sum_eq_zero
         intro j hj
         rw [Finset.mem_Ico] at hj
-        rw [fall_eq_zero_of_lt m j (by omega : m < j), mul_zero, map_zero, zero_mul]
+        rw [descPochhammer_eval_natCast_of_lt (by omega : m < j), mul_zero, map_zero, zero_mul]
       rw [hzero, add_zero]
     rw [hsub]
     have hterms : ∀ j ∈ Finset.range (m + 1),
         PowerSeries.C (((n.factorial : ℕ) : ℤ) * ((m.choose j : ℕ) : ℤ)) * ssF ^ j
-          = PowerSeries.C (cof n j * fall (m : ℤ) j) * ssF ^ j := by
+          = PowerSeries.C (cof n j * (descPochhammer ℤ j).eval (m : ℤ)) * ssF ^ j := by
       intro j hj
       rw [Finset.mem_range] at hj
       congr 1
@@ -237,7 +203,7 @@ private theorem dvd_truncDiff_nat (n m : ℕ) :
     rw [hsplit]
     have hterms : ∀ j ∈ Finset.range (n + 1),
         PowerSeries.C (((n.factorial : ℕ) : ℤ) * ((m.choose j : ℕ) : ℤ)) * ssF ^ j
-          = PowerSeries.C (cof n j * fall (m : ℤ) j) * ssF ^ j := by
+          = PowerSeries.C (cof n j * (descPochhammer ℤ j).eval (m : ℤ)) * ssF ^ j := by
       intro j hj
       rw [Finset.mem_range] at hj
       congr 1
@@ -264,23 +230,27 @@ private theorem shift_sum (n : ℕ) (F G : ℕ → PowerSeries ℤ) (hG0 : G 0 =
     exact (hG j hj).symm
   rw [hEq]
 
-private theorem cof_fall_succ (n i : ℕ) (z : ℤ) (h : i + 1 ≤ n) :
-    cof n (i + 1) * fall (z + 1) (i + 1)
-      = cof n (i + 1) * fall z (i + 1) + cof n i * fall z i := by
-  have hfall := fall_succ z i
+private theorem cof_descPochhammer_succ (n i : ℕ) (z : ℤ) (h : i + 1 ≤ n) :
+    cof n (i + 1) * (descPochhammer ℤ (i + 1)).eval (z + 1)
+      = cof n (i + 1) * (descPochhammer ℤ (i + 1)).eval z
+        + cof n i * (descPochhammer ℤ i).eval z := by
+  have hfall := descPochhammer_eval_succ_add_one z i
   have hcof := cof_succ_mul n i h
-  have hmul : cof n (i + 1) * (((i : ℤ) + 1) * fall z i) = cof n i * fall z i := by
+  have hmul : cof n (i + 1) * (((i : ℤ) + 1) * (descPochhammer ℤ i).eval z)
+      = cof n i * (descPochhammer ℤ i).eval z := by
     rw [← mul_assoc, hcof]
   rw [hfall, mul_add, hmul]
 
 private theorem truncSum_step (n : ℕ) (z : ℤ) :
     truncSum n (z + 1) = truncSum n z * (1 + ssF)
-      - PowerSeries.C (cof n n * fall z n) * ssF ^ (n + 1) := by
+      - PowerSeries.C (cof n n * (descPochhammer ℤ n).eval z) * ssF ^ (n + 1) := by
   set F : ℕ → PowerSeries ℤ :=
-    fun j => PowerSeries.C (cof n j * fall z j) * ssF ^ (j + 1) with hF
+    fun j => PowerSeries.C (cof n j * (descPochhammer ℤ j).eval z) * ssF ^ (j + 1) with hF
   set G : ℕ → PowerSeries ℤ := fun j =>
-    if j = 0 then 0 else PowerSeries.C (cof n (j - 1) * fall z (j - 1)) * ssF ^ j with hG
-  set B : PowerSeries ℤ := PowerSeries.C (cof n n * fall z n) * ssF ^ (n + 1) with hB
+    if j = 0 then 0
+    else PowerSeries.C (cof n (j - 1) * (descPochhammer ℤ (j - 1)).eval z) * ssF ^ j with hG
+  set B : PowerSeries ℤ :=
+    PowerSeries.C (cof n n * (descPochhammer ℤ n).eval z) * ssF ^ (n + 1) with hB
   have hAF : truncSum n z * ssF = ∑ j ∈ Finset.range (n + 1), F j := by
     simp only [truncSum]
     rw [Finset.sum_mul]
@@ -299,18 +269,18 @@ private theorem truncSum_step (n : ℕ) (z : ℤ) :
   have hGB : ∑ j ∈ Finset.range (n + 1), F j
       = ∑ j ∈ Finset.range (n + 1), G j + B := shift_sum n F G hG0 hGs B hBn
   have hterm : ∀ j ∈ Finset.range (n + 1),
-      PowerSeries.C (cof n j * fall (z + 1) j) * ssF ^ j
-        = PowerSeries.C (cof n j * fall z j) * ssF ^ j + G j := by
+      PowerSeries.C (cof n j * (descPochhammer ℤ j).eval (z + 1)) * ssF ^ j
+        = PowerSeries.C (cof n j * (descPochhammer ℤ j).eval z) * ssF ^ j + G j := by
     intro j hj
     match j with
-    | 0 => simp [hG, fall_zero]
+    | 0 => simp [hG]
     | i + 1 =>
       have hne : i + 1 ≠ 0 := by omega
       simp only [hG, hne, ↓reduceIte, Nat.add_sub_cancel]
       have hmem : i + 1 ≤ n := by
         rw [Finset.mem_range] at hj
         omega
-      have hpas := cof_fall_succ n i z hmem
+      have hpas := cof_descPochhammer_succ n i z hmem
       rw [← add_mul, ← map_add, ← hpas]
   have hAS : truncSum n z + ∑ j ∈ Finset.range (n + 1), G j = truncSum n (z + 1) := by
     simp only [truncSum]
@@ -325,7 +295,7 @@ private theorem truncSum_step (n : ℕ) (z : ℤ) :
 
 private theorem truncDiff_step (n : ℕ) (z : ℤ) :
     truncDiff n (z + 1) = truncDiff n z * (1 + ssF)
-      + PowerSeries.C (cof n n * fall z n) * ssF ^ (n + 1) := by
+      + PowerSeries.C (cof n n * (descPochhammer ℤ n).eval z) * ssF ^ (n + 1) := by
   simp only [truncDiff, unit_pow_succ, truncSum_step]
   ring
 
@@ -333,12 +303,12 @@ private theorem dvd_truncDiff_succ (n : ℕ) (z : ℤ)
     (h : PowerSeries.X ^ (n + 1) ∣ truncDiff n (z + 1)) :
     PowerSeries.X ^ (n + 1) ∣ truncDiff n z := by
   have hB : PowerSeries.X ^ (n + 1)
-      ∣ PowerSeries.C (cof n n * fall z n) * ssF ^ (n + 1) :=
+      ∣ PowerSeries.C (cof n n * (descPochhammer ℤ n).eval z) * ssF ^ (n + 1) :=
     dvd_trans (pow_dvd_pow_of_dvd X_dvd_ssF _) (dvd_mul_left _ _)
   have hmul : PowerSeries.X ^ (n + 1) ∣ truncDiff n z * (1 + ssF) := by
     have hstep := truncDiff_step n z
     have heq : truncDiff n z * (1 + ssF) = truncDiff n (z + 1)
-        - PowerSeries.C (cof n n * fall z n) * ssF ^ (n + 1) := by
+        - PowerSeries.C (cof n n * (descPochhammer ℤ n).eval z) * ssF ^ (n + 1) := by
       rw [hstep]
       abel
     rw [heq]
@@ -378,7 +348,7 @@ private theorem dvd_truncDiff (n : ℕ) (z : ℤ) :
 -- The counting polynomial.
 private noncomputable def ssPoly (n : ℕ) : Polynomial ℤ :=
   ∑ j ∈ Finset.range (n + 1),
-    Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * fallPoly j
+    Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * descPochhammer ℤ j
 
 private theorem eval_sum_poly (s : Finset ℕ) (f : ℕ → Polynomial ℤ) (z : ℤ) :
     (∑ j ∈ s, f j).eval z = ∑ j ∈ s, (f j).eval z := by
@@ -391,18 +361,18 @@ private theorem ssPoly_eval (n : ℕ) (z : ℤ) :
   simp only [truncDiff, truncSum, map_sub, PowerSeries.coeff_C_mul, map_sum] at hcoeff
   have heval : (ssPoly n).eval z
       = ∑ j ∈ Finset.range (n + 1),
-        (PowerSeries.coeff n (ssF ^ j) * cof n j) * fall z j := by
-    simp only [ssPoly, eval_sum_poly, Polynomial.eval_mul, Polynomial.eval_C, eval_fallPoly]
+        (PowerSeries.coeff n (ssF ^ j) * cof n j) * (descPochhammer ℤ j).eval z := by
+    simp only [ssPoly, eval_sum_poly, Polynomial.eval_mul, Polynomial.eval_C]
   have hmain : ((n.factorial : ℕ) : ℤ)
         * PowerSeries.coeff n ((ssU ^ z : (PowerSeries ℤ)ˣ) : PowerSeries ℤ)
       = ∑ j ∈ Finset.range (n + 1),
-        (cof n j * fall z j) * PowerSeries.coeff n (ssF ^ j) :=
+        (cof n j * (descPochhammer ℤ j).eval z) * PowerSeries.coeff n (ssF ^ j) :=
     sub_eq_zero.mp hcoeff
   calc (ssPoly n).eval z
       = ∑ j ∈ Finset.range (n + 1),
-        (PowerSeries.coeff n (ssF ^ j) * cof n j) * fall z j := heval
+        (PowerSeries.coeff n (ssF ^ j) * cof n j) * (descPochhammer ℤ j).eval z := heval
     _ = ∑ j ∈ Finset.range (n + 1),
-        (cof n j * fall z j) * PowerSeries.coeff n (ssF ^ j) := by
+        (cof n j * (descPochhammer ℤ j).eval z) * PowerSeries.coeff n (ssF ^ j) := by
         apply Finset.sum_congr rfl
         intro j _
         ring
@@ -462,19 +432,13 @@ private theorem ssF_eq : ssF = PowerSeries.X * ssG := by
     rw [PowerSeries.coeff_succ_X_mul]
     simp only [ssG, PowerSeries.coeff_mk]
 
-private theorem coeff_X_pow_mul_zero (t : ℕ) (h : PowerSeries ℤ) :
-    PowerSeries.coeff t (PowerSeries.X ^ t * h) = PowerSeries.coeff 0 h := by
-  induction t generalizing h with
-  | zero => simp
-  | succ t ih =>
-    rw [pow_succ', mul_assoc, PowerSeries.coeff_succ_X_mul]
-    exact ih h
-
 private theorem coeff_ssF_pow (t : ℕ) :
     PowerSeries.coeff t (ssF ^ t) = 2 ^ t := by
   have hpow : ssF ^ t = PowerSeries.X ^ t * ssG ^ t := by
     rw [ssF_eq, mul_pow]
-  rw [hpow, coeff_X_pow_mul_zero]
+  have hshift := PowerSeries.coeff_X_pow_mul (ssG ^ t) t 0
+  rw [zero_add] at hshift
+  rw [hpow, hshift]
   have h0 : PowerSeries.coeff 0 (ssG ^ t) = (PowerSeries.coeff 0 ssG) ^ t := by
     simp only [PowerSeries.coeff_zero_eq_constantCoeff_apply, map_pow]
   rw [h0, coeff_zero_ssG]
@@ -483,46 +447,14 @@ private theorem coeff_ssF_pow_ne_zero (t : ℕ) : PowerSeries.coeff t (ssF ^ t) 
   rw [coeff_ssF_pow]
   exact pow_ne_zero t (by norm_num)
 
-private theorem monic_fallPoly (j : ℕ) : (fallPoly j).Monic := by
-  simp only [fallPoly]
-  apply Polynomial.monic_prod_of_monic
-  intro t _
-  exact Polynomial.monic_X_sub_C _
-
-private theorem natDegree_fallPoly_le (j : ℕ) : (fallPoly j).natDegree ≤ j := by
-  calc (fallPoly j).natDegree
-      ≤ ∑ t ∈ Finset.range j, (Polynomial.X - Polynomial.C (t : ℤ)).natDegree := by
-        simp only [fallPoly]
-        exact Polynomial.natDegree_prod_le _ _
-    _ ≤ ∑ t ∈ Finset.range j, 1 := by
-        apply Finset.sum_le_sum
-        intro t _
-        exact le_of_eq (Polynomial.natDegree_X_sub_C _)
-    _ = j := by simp
-
-private theorem natDegree_fallPoly (j : ℕ) : (fallPoly j).natDegree = j := by
-  have hprod := Polynomial.natDegree_prod_of_monic (Finset.range j)
-    (fun t => Polynomial.X - Polynomial.C (t : ℤ))
-    (fun t _ => Polynomial.monic_X_sub_C _)
-  simp only [fallPoly]
-  rw [hprod]
-  simp only [Polynomial.natDegree_X_sub_C]
-  simp
-
-private theorem coeff_fallPoly_self (j : ℕ) : (fallPoly j).coeff j = 1 := by
-  have hmonic := monic_fallPoly j
-  have hdeg := natDegree_fallPoly j
-  have h := Polynomial.Monic.coeff_natDegree hmonic
-  rw [hdeg] at h
-  exact h
-
 private theorem natDegree_term_le' (n j : ℕ) :
-    (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * fallPoly j).natDegree ≤ j := by
-  calc (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * fallPoly j).natDegree
+    (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * descPochhammer ℤ j).natDegree
+      ≤ j := by
+  calc (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * descPochhammer ℤ j).natDegree
       ≤ (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j)).natDegree
-        + (fallPoly j).natDegree := Polynomial.natDegree_mul_le
-    _ = 0 + (fallPoly j).natDegree := by rw [Polynomial.natDegree_C]
-    _ ≤ 0 + j := add_le_add le_rfl (natDegree_fallPoly_le j)
+        + (descPochhammer ℤ j).natDegree := Polynomial.natDegree_mul_le
+    _ = 0 + (descPochhammer ℤ j).natDegree := by rw [Polynomial.natDegree_C]
+    _ ≤ 0 + j := add_le_add le_rfl (descPochhammer_natDegree ℤ j).le
     _ = j := zero_add j
 
 private theorem natDegree_ssPoly_le (n : ℕ) : (ssPoly n).natDegree ≤ n := by
@@ -543,19 +475,22 @@ private theorem coeff_finset_sum (s : Finset ℕ) (f : ℕ → Polynomial ℤ) (
 private theorem coeff_ssPoly_self (n : ℕ) : (ssPoly n).coeff n ≠ 0 := by
   have hsum : (ssPoly n).coeff n
       = ∑ j ∈ Finset.range (n + 1),
-        (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * fallPoly j).coeff n := by
+        (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * descPochhammer ℤ j).coeff n := by
     simp only [ssPoly, coeff_finset_sum]
   rw [hsum, Finset.sum_range_succ]
   have hzero : ∑ j ∈ Finset.range n,
-      (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * fallPoly j).coeff n = 0 := by
+      (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * descPochhammer ℤ j).coeff n
+        = 0 := by
     apply Finset.sum_eq_zero
     intro j hj
     rw [Finset.mem_range] at hj
     apply Polynomial.coeff_eq_zero_of_natDegree_lt
-    calc (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * fallPoly j).natDegree
+    calc (Polynomial.C (PowerSeries.coeff n (ssF ^ j) * cof n j) * descPochhammer ℤ j).natDegree
         ≤ j := natDegree_term_le' n j
       _ < n := hj
-  rw [hzero, zero_add, Polynomial.coeff_C_mul, coeff_fallPoly_self, cof_self, mul_one, mul_one]
+  have hlead : (descPochhammer ℤ n).coeff n = 1 := by
+    simpa using (monic_descPochhammer ℤ n).coeff_natDegree
+  rw [hzero, zero_add, Polynomial.coeff_C_mul, hlead, cof_self, mul_one, mul_one]
   exact coeff_ssF_pow_ne_zero n
 
 private theorem geom_half_sum (n : ℕ) :
