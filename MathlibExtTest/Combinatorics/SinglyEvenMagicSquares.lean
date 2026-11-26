@@ -36,4 +36,29 @@ example : IsReducedMagicSquare !![34, 0, 5, 25, 20, 21;
   convert h using 1
   decide
 
+private def refSymmetricSquare : Matrix (Fin 6) (Fin 6) ℕ :=
+  !![34, 0, 5, 23, 18, 25;
+     2, 31, 6, 24, 22, 20;
+     28, 8, 3, 21, 26, 19;
+     7, 27, 32, 14, 9, 16;
+     33, 4, 29, 11, 13, 15;
+     1, 35, 30, 12, 17, 10]
+
+/-- In order six the two flips differ on the middle row of Lo Shu. Check every entry
+of the resulting square and its horizontal reflection identity. -/
+example : IsReducedMagicSquare refSymmetricSquare ∧
+    ∀ i j, refSymmetricSquare i j + refSymmetricSquare i.rev j = 35 := by
+  have h := isReducedMagicSquare_refSymmetric_strachey 1 outerDigits (fun _ _ => 1) loShu
+    (by intro i j; fin_cases i <;> fin_cases j <;> decide)
+    (by decide) (by decide) (by decide) (fun _ _ => Or.inl rfl) (by decide) (by decide) (by decide)
+    (by intro i j; fin_cases i <;> fin_cases j <;> decide)
+    (by decide) (by decide) (by decide) isReducedMagicSquare_loShu
+    (by intro i j; fin_cases i <;> fin_cases j <;> decide)
+  let P (T : Matrix (Fin 6) (Fin 6) ℕ) := IsReducedMagicSquare T ∧ ∀ i j, T i j + T i.rev j = 35
+  have transfer {T : Matrix (Fin 6) (Fin 6) ℕ} (hT : P T) (heq : T = refSymmetricSquare) :
+      P refSymmetricSquare := heq ▸ hT
+  exact transfer h (by decide)
+
+example : (∑ j, refSymmetricSquare 0 j) = 105 := by decide
+
 end MathlibExtTest.SinglyEvenMagicSquares
