@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.CyclotomicTraceMetric
 public import MathlibExt.NumberTheory.SymmetricPowerSums
+public import MathlibExt.NumberTheory.CyclotomicTraceMetricEventuallyAdjoinAddNsmulEq
 
 /-!
 # A trace metric on the `p`-th cyclotomic field
@@ -57,18 +58,6 @@ public theorem_wanted adjoin_le_adjoin_of_cyclotomicTraceDist_lt (hp : p.Prime)
     (h : ∀ σ : K ≃ₐ[ℚ] K, σ α ≠ α →
       cyclotomicTraceDist p α β < cyclotomicTraceDist p α (σ α) / 2) :
     IntermediateField.adjoin ℚ {α} ≤ IntermediateField.adjoin ℚ {β}
-
-/-- **Primitive elements α + nβ in a prime cyclotomic field.** Let $p$ be a prime and let $K$
-be a $p$-th cyclotomic extension of $\mathbb{Q}$. For all $\alpha, \beta \in K$ there is a
-natural number $n_0$ such that, for every natural number $n \ge n_0$, the subfields
-$\mathbb{Q}(\alpha + n\beta)$ and $\mathbb{Q}(\alpha, \beta)$ of $K$ are equal.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Corollary 1 (`integers-2025-A10-cor-1`). -/
-public theorem_wanted eventually_adjoin_add_nsmul_eq (hp : p.Prime) (α β : K) :
-    ∃ n₀ : ℕ, ∀ n ≥ n₀,
-      IntermediateField.adjoin ℚ {α + (n : K) * β} =
-        IntermediateField.adjoin ℚ {α, β}
 
 /-- **Diameter of the cyclotomic box.** Let $p$ be an odd prime, let $N$ be a natural number, and
 let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with fixed
