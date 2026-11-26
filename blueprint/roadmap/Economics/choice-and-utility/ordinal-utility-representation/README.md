@@ -7,6 +7,7 @@
 - [Choice from a represented preference maximizes utility](choice-eq-utility-choice.md)
 - [Rational preferences on finite sets have utility representations](exists-represents.md)
 - [Two utility representations differ by a strictly increasing map](utility-representations-differ-by-increasing-maps.md)
+- [Natural-number utilities for finite preferences by lower-contour counts](natural-number-utilities-of-finite-preferences.md)
 
 ## Sources
 

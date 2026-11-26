@@ -70,7 +70,8 @@ def smoothParameter : Over (Spec (.of ℂ)) := Over.mk ((smoothLocus V).ι ≫ V
 
 def smoothInclusion : smoothParameter V ⟶ V.scheme := Over.homMk (smoothLocus V).ι rfl
 
-/-- Rank is supplied as a proof on the actual pulled-back Ω, not as a substitute bundle. -/
+/-- The condition that the smooth locus of $V$ (the union of the opens that are smooth over $ℂ$) is
+smooth over $ℂ$ and that the restriction of $Ω_V$ to it is locally free of rank $d$. -/
 structure SmoothDifferentials (d : ℕ) : Prop where
   smooth : Smooth ((smoothLocus V).ι ≫ V.scheme.hom)
   bundle : IsBundle ((Scheme.Modules.pullback (smoothLocus V).ι).obj (differentials V)) d

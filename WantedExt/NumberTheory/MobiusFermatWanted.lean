@@ -10,6 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.MobiusFermatReduction
+public import MathlibExt.NumberTheory.MobiusFermatThreeSeven
+public import MathlibExt.NumberTheory.VonMangoldtFermatMultinomial
 
 /-!
 # The Möbius and von Mangoldt-type functions of the Fermat zeta function
@@ -60,51 +62,6 @@ public theorem_wanted mobiusFermat_eq_multinomial (μ : ArithmeticFunction ℤ)
     (μ (f.prod fun n m => (2 ^ n - 1) ^ m) : ℚ) =
       (-1) ^ (f.sum fun _ m => m) * ((f.sum fun _ m => m).factorial : ℚ) /
         (f.prod fun _ m => (m.factorial : ℚ))
-
-/-- **Multinomial formula for the von Mangoldt–Fermat function.** Let $u_M$ be the Fermat unit
-function, and let $\mu$ be an integer-valued arithmetic function with $\mu * u_M = \varepsilon$,
-where $*$ is Dirichlet convolution and $\varepsilon$ is its identity (so $\mu$ is the
-Möbius–Fermat function $\mu_M$). Let $\Lambda_M = \mu * u'_M$, computed with real values, where
-$u'_M(l) = u_M(l) \log l$. Let $f : \mathbb{N} \to \mathbb{N}$ be finitely supported, with
-$n \ge 2$ and $n \ne 6$ for every $n$ such that $f(n) \ne 0$, and with $f(2) \le 1$ or $f(3) = 0$.
-Put $l = \prod_n (2^n - 1)^{f(n)}$ and $r = \sum_n f(n)$. Then
-$$\Lambda_M(l) = (-1)^{r - 1} \frac{(r - 1)!}{\prod_n f(n)!} \log l,$$
-where $r - 1$ is read as $0$ when $r = 0$.
-
-Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
-Function*, INTEGERS 26 (2026), Article A106, Proposition 5. -/
-public theorem_wanted vonMangoldtFermat_eq_multinomial (μ : ArithmeticFunction ℤ)
-    (hμ : μ * fermatUnitFunction = 1) (f : ℕ →₀ ℕ) (hf : ∀ n ∈ f.support, 2 ≤ n ∧ n ≠ 6)
-    (h37 : f 2 ≤ 1 ∨ f 3 = 0) :
-    ((μ : ArithmeticFunction ℝ) * (fermatUnitFunction : ArithmeticFunction ℝ).pmul log)
-        (f.prod fun n m => (2 ^ n - 1) ^ m) =
-      (-1) ^ ((f.sum fun _ m => m) - 1) * (((f.sum fun _ m => m) - 1).factorial : ℝ) /
-        (f.prod fun _ m => (m.factorial : ℝ)) *
-        Real.log (f.prod fun n m => (2 ^ n - 1) ^ m : ℕ)
-
-/-- **The Möbius–Fermat function at $3^m 7^n$.** Let $u_M$ be the Fermat unit function
-and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
-$*$ is Dirichlet convolution and $\varepsilon$ is its identity, with $\varepsilon(1) = 1$ and
-$\varepsilon(l) = 0$ for $l \ne 1$; thus $\mu_M$ is the Dirichlet inverse of $u_M$, the
-Möbius–Fermat function.
-Then for all integers $m, n \ge 0$,
-$$\mu_M(3^m 7^n) = (-1)^{m+n} \sum_{j=0}^{\min(\lfloor m/2 \rfloor, n)}
-\binom{n}{j} \binom{m + n - 2j}{m - 2j},$$
-and, as rational numbers,
-$$\mu_M(3^m 7^n) = (-1)^{m+n} \sum_{j=0}^{\min(\lfloor m/2 \rfloor, n)}
-\frac{(m + n - 2j)!}{(m - 2j)! \, (n - j)! \, j!}.$$
-
-Source: J. L. Varona, *The Möbius and the von Mangoldt-type Functions of the Fermat Zeta
-Function*, INTEGERS 26 (2026), Article A106, Proposition 7. -/
-public theorem_wanted mobiusFermat_three_pow_mul_seven_pow (μ : ArithmeticFunction ℤ)
-    (hμ : μ * fermatUnitFunction = 1) (m n : ℕ) :
-    μ (3 ^ m * 7 ^ n) = (-1) ^ (m + n) *
-        ∑ j ∈ Finset.range (min (m / 2) n + 1),
-          ((n.choose j * (m + n - 2 * j).choose (m - 2 * j) : ℕ) : ℤ) ∧
-      (μ (3 ^ m * 7 ^ n) : ℚ) = (-1) ^ (m + n) *
-        ∑ j ∈ Finset.range (min (m / 2) n + 1),
-          ((m + n - 2 * j).factorial : ℚ) /
-            ((m - 2 * j).factorial * (n - j).factorial * j.factorial)
 
 /-- **The Möbius–Fermat function at $3^m 7^n q^k$.** Let $u_M$ be the Fermat unit function
 and let $\mu_M$ be an integer-valued arithmetic function with $\mu_M * u_M = \varepsilon$, where
