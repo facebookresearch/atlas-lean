@@ -17,7 +17,6 @@ public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresLocalMass
 public import MathlibExt.NumberTheory.Digits.OrdinaryMomentRecurrence
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIrwinSumZeroLowerBounds
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresComplementaryMomentRecurrenceProperties
-public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIrwinMeasureHalfOpenLocalMass
 
 namespace MetaMathlibExt
 
