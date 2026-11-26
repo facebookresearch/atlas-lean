@@ -39,6 +39,7 @@ public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
 public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.LeonardoPTilings
 public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
+public import MathlibExt.NumberTheory.LucasLeonardoPStrideSum
 public import WantedExt.NumberTheory.LeonardoPWanted
 
 namespace MetaMathlibExt
@@ -136,16 +137,6 @@ Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 15. -/
 public theorem_wanted sum_lucasLeonardoP (p n : ℕ) (hp : 1 ≤ p) :
     ∑ i ∈ Finset.range (n + 1), lucasLeonardoP p i =
       lucasLeonardoP p (n + p + 1) - p * ((n : ℤ) + 1) - 1
-
-/-- **Sum of the Lucas-Leonardo p-numbers at multiples of $p + 1$.** For every natural number
-$p \ge 1$ and every natural number $n$, the Lucas-Leonardo $p$-numbers $R_{p,m}$ satisfy
-$\sum_{i=0}^{n} R_{p,(p+1)i} = R_{p,(p+1)n+1} - p(n - p - 1)$, an identity of integers.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 16. -/
-public theorem_wanted sum_lucasLeonardoP_stride (p n : ℕ) (hp : 1 ≤ p) :
-    ∑ i ∈ Finset.range (n + 1), lucasLeonardoP p ((p + 1) * i) =
-      lucasLeonardoP p ((p + 1) * n + 1) - p * ((n : ℤ) - p - 1)
 
 /-- **Recurrence for incomplete Lucas-Leonardo p-numbers.** For natural numbers $p \ge 1$,
 $n > p + 1$ and $k \le \lfloor n/(p+1) \rfloor$, the incomplete Lucas-Leonardo $p$-numbers
