@@ -12250,6 +12250,7 @@
   "MathlibExt/LinearAlgebra/Matrix/PermanentCounting": {"to": "TheoryOfComputation/counting-complexity", "title": "Complexity of the permanent"},
   "MathlibExt/LinearAlgebra/Matrix/PerronFrobenius": {"to": "LinearAlgebra/special-matrices", "title": "Perron–Frobenius theorem"},
   "MathlibExt/LinearAlgebra/Matrix/PlanarNetworkTotalPositivity": {"to": "LinearAlgebra/special-matrices", "title": "Total positivity"},
+  "MathlibExt/LinearAlgebra/Matrix/PlanarRotation": {"to": "LinearAlgebra/special-matrices", "title": "Rotation matrices"},
   "MathlibExt/LinearAlgebra/Matrix/PolarDecompositionGL": {"to": "LinearAlgebra/matrix-decompositions", "title": "Polar decomposition"},
   "MathlibExt/LinearAlgebra/Matrix/PosSemidefDeterminant": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Hadamard's inequality and determinant bounds for positive semidefinite matrices"},
   "MathlibExt/LinearAlgebra/Matrix/PositiveMinors": {"to": "LinearAlgebra/special-matrices", "title": "Total positivity"},

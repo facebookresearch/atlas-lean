@@ -86062,6 +86062,7 @@
 "MetaMathlibExt.Matrix.det_toeplitzHessenberg_eq_sum_compositions": "7679398b96ee8f3e",
 "MetaMathlibExt.Matrix.det_toeplitzHessenberg_eq_sum_compositions_general": "9fc37ba5ac85ebb7",
 "MetaMathlibExt.Matrix.hasNonnegativeMinors_iff_isTotallyNonneg": "94f989c5cfdeadd4",
+"MetaMathlibExt.Matrix.planarRotation": "9ebdba7211e2bbd5",
 "MetaMathlibExt.McKayConjecture.Irr'": "a5621bf2b12f3f58",
 "MetaMathlibExt.McKayConjecture.theorem_1_1": "e7e501ce1af0f8f6",
 "MetaMathlibExt.MeinardusHypotheses": "ae85faf9e02ff94e",
