@@ -13278,6 +13278,7 @@
   "MathlibExt/NumberTheory/HurwitzQuaternionWaring": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Waring's problem for Hurwitz quaternions"},
   "MathlibExt/NumberTheory/HybridPrimeDivisorBoundsHybridBoundPrimeDivisors": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
   "MathlibExt/NumberTheory/HyperLeonardo": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
+  "MathlibExt/NumberTheory/HyperLeonardoHyperLeonardoConvex": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
   "MathlibExt/NumberTheory/HyperLeonardoLogConvex": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
   "MathlibExt/NumberTheory/HyperLeonardoPRec": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/HyperfactorialPartition": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Hyperfactorial partitions"},
