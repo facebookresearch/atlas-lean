@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+The examples restate the theorem type from
+`Theorems/Thm_Algebra_exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehlerDifferential.lean`
+in https://github.com/anthropics/fermats-last-theorem at commit
+6e837e75355538c7f80bab5b956861e86c4eacc2, without its `Algebra.FiniteType` hypothesis.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+-/
+
 module
 
 public import MathlibExt.RingTheory.Smooth.ComplexCoordinates
