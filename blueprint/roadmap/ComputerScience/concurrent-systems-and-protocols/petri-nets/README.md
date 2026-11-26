@@ -8,7 +8,6 @@ Place/transition Petri nets and vector addition systems: reachability, boundedne
 - [Liveness and deadlock-freedom of Petri nets](liveness-and-deadlock-freedom.md)
 - [Vector addition systems](vector-addition-systems.md)
 - [Unbounded vector addition systems have self-covering paths](unbounded-vector-addition-systems-have-self-covering-paths.md)
-- [Characterization of unbounded Petri nets](characterization-of-unbounded-petri-nets.md)
 - [Boundedness of Petri nets is decidable](boundedness-is-decidable.md)
 - [Rackoff's exponential-space bound for covering and boundedness](rackoff-s-exponential-space-bound.md)
 - [Lipton's exponential-space lower bound](lipton-s-exponential-space-lower-bound.md)

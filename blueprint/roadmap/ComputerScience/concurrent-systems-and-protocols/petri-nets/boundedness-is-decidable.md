@@ -10,7 +10,6 @@ There is an algorithm that decides, given a [Petri net](place-transition-petri-n
 ## Proof depends on
 
 - [Properties of the coverability tree](decision-procedures/properties-of-the-coverability-tree.md)
-- [Characterization of unbounded Petri nets](characterization-of-unbounded-petri-nets.md)
 
 ## Sources
 
