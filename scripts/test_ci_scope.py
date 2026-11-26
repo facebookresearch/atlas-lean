@@ -177,6 +177,14 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("          fetch-depth: 2\n          sparse-checkout: /scripts/ci_scope.py\n", job)
         self.assertEqual(job.count("        if: github.event_name == 'pull_request'\n"), 2)
 
+    def test_build_needs_changes_which_only_pull_requests_run(self):
+        text = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        build = text.split("\n  build:\n", 1)[1].split("\n    steps:\n", 1)[0] + "\n"
+        changes = text.split("\n  changes:\n", 1)[1].split("\n    steps:\n", 1)[0] + "\n"
+        self.assertIn("    needs: changes\n    if: ${{ !cancelled() && (github.event_name != 'pull_request' || "
+                      "needs.changes.outputs.build != 'false') }}\n", build)
+        self.assertIn("    if: github.event_name == 'pull_request'\n", changes)
+
     def test_repository_integrity_skips_the_tool_tests_on_pull_requests_only(self):
         job = "\n".join(job_lines("preflight")) + "\n"
         self.assertIn("          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}\n", job)

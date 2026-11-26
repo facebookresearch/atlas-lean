@@ -111,9 +111,11 @@ jobs:
           autoform check blueprint --lean-root .
 
   # On a pull request, whether it needs `build` (scripts/ci_scope.py): one that
-  # changes only graph data and documentation does not. Other runs never ask.
+  # changes only graph data and documentation does not. Other runs skip this
+  # job, so that `build` starts without waiting for a runner to run it.
   changes:
     name: decide which checks to run
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     outputs:
@@ -139,7 +141,8 @@ jobs:
 
   # A skipped required check counts as passed, so only a pull request can skip
   # `build`, and only when `changes` succeeds and says it needs none. Merge
-  # groups, pushes and manual runs always build.
+  # groups, pushes and manual runs always build: `!cancelled()` runs `build`
+  # when `changes` is skipped.
   build:
     needs: changes
     if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.build != 'false') }}
