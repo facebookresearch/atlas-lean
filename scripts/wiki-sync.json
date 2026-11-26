@@ -110508,6 +110508,7 @@
 "gradientDescentTrajectory": "f5a52ad8f566c101",
 "gradientDescentTrajectory_zeroSchedule": "c876baa956321c96",
 "gradientDescentUniformRate_one": "a8ff4a5a477355a8",
+"groupCohomology.exists_div_mem_of_isMulCocycle₁_of_presentation": "ed51fcce76dc8fdf",
 "groupCohomology.nonempty_linearEquiv_of_iso_res_mulEquiv": "efa47731ac6dd9a0",
 "groupHomology.biprodIso": "820a75c27f80aba8",
 "groupHomology.biprodIso_hom": "d4ba93553057d83a",
