@@ -213,7 +213,7 @@ private theorem sigmaBiunitary_mul_of_coprime {m n : ℕ} (hmn : m.Coprime n) :
     have hb : b ∣ n := dvd_of_mem_biunitaryDivisors hab.2
     have hbm : b.Coprime m := hmn.symm.coprime_dvd_left hb
     have han : a.Coprime n := hmn.coprime_dvd_left ha
-    show ((a * b).gcd m, (a * b).gcd n) = (a, b)
+    change ((a * b).gcd m, (a * b).gcd n) = (a, b)
     simp only [Prod.mk.injEq]
     exact ⟨by rw [Nat.Coprime.gcd_mul_right_cancel a hbm, Nat.gcd_eq_left ha],
       by rw [mul_comm a b, Nat.Coprime.gcd_mul_right_cancel b han, Nat.gcd_eq_left hb]⟩
@@ -237,12 +237,12 @@ public theorem two_pow_card_primeFactors_dvd_sigmaBiunitary_of_odd (n : ℕ)
   have hfact : sigmaBiunitary n = n.factorization.prod fun p k => sigmaBiunitary (p ^ k) :=
     Nat.multiplicative_factorization sigmaBiunitary hmul sigmaBiunitary_one hn0
   rw [hfact]
-  show 2 ^ n.primeFactors.card ∣ ∏ p ∈ n.primeFactors, sigmaBiunitary (p ^ n.factorization p)
+  change 2 ^ n.primeFactors.card ∣ ∏ p ∈ n.primeFactors, sigmaBiunitary (p ^ n.factorization p)
   have h2 : (2 : ℕ) ^ n.primeFactors.card = ∏ _p ∈ n.primeFactors, 2 :=
     (Finset.prod_const 2).symm
   rw [h2]
   refine Finset.prod_dvd_prod_of_dvd _ _ fun p hp => ?_
-  show 2 ∣ sigmaBiunitary (p ^ n.factorization p)
+  change 2 ∣ sigmaBiunitary (p ^ n.factorization p)
   obtain ⟨hpprime, hpdvd, -⟩ := Nat.mem_primeFactors.mp hp
   have hodd_p : Odd p := by
     obtain ⟨a, rfl⟩ := hpdvd
