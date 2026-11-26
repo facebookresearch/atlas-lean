@@ -191,22 +191,6 @@ public theorem_wanted existsUnique_gobelASequence
     (p l : ℕ) (hp : p.Prime) (hmod : p % 4 = 1) (hleven : Even l) (hl : l ≤ p - 3) :
     ∃! a : ℕ → ℤ, IsGobelASequence p l a
 
-/-- **Complementary sequences $b_{l,s}$ and $b_{l,l-s}$.** Let $l \ge 2$ be an even natural
-number and $s \le l$ a natural number such that $2s + 1$ and $l + 1$ are coprime. Let
-$b_1, b_2 : \mathbb{Z} \to \mathbb{Z}$ satisfy the defining conditions of $b_{l,s}$ and of
-$b_{l,l-s}$ respectively. Then for every integer $n$, $b_1(n) = b_2(n)$ if $l + 1$ does not divide
-$n$, and $b_1(n) = -b_2(n)$ if $l + 1$ divides $n$.
-
-Source: Yuh Kobayashi and Shin-ichiro Seki, *A Note on Non-Integrality of the (k, l)-Göbel
-Sequences*, Journal of Integer Sequences 29 (2026), Article 26.3.8, Lemma 22. -/
-public theorem_wanted gobelBSequence_complement
-    (l s : ℕ) (hleven : Even l) (hs : s ≤ l) (hl2 : 2 ≤ l)
-    (hcoprime : Nat.Coprime (2 * s + 1) (l + 1))
-    (b₁ b₂ : ℤ → ℤ) (hb₁ : IsGobelBSequence l s b₁)
-    (hb₂ : IsGobelBSequence l (l - s) b₂) :
-    ∀ n, (Int.emod n (l + 1 : ℤ) ≠ 0 → b₁ n = b₂ n) ∧
-      (Int.emod n (l + 1 : ℤ) = 0 → b₁ n = -b₂ n)
-
 /-- **Translation and reflection identities for $b_{l,s}$.** Let $l \ge 2$ be an even natural
 number and $s \le l$ a natural number such that $2s + 1$ and $l + 1$ are coprime, let
 $b : \mathbb{Z} \to \mathbb{Z}$ satisfy the defining conditions of $b_{l,s}$, and write
