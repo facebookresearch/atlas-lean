@@ -10,9 +10,33 @@ module
 
 import MathlibExt.NumberTheory.Recurrences.LucasAlternatingSquaredBinomialSum
 
-/-! # Tests for the alternating squared-binomial sum with Lucas sequences -/
+/-! # Tests for squared-binomial sums with Lucas sequences -/
 
 open MetaMathlibExt
+
+-- For `p = 2`, `n = 2`, the unsigned convolution is `2 · 2 + 4 · 1 · 2 = 12`.
+example :
+    ∑ k ∈ Finset.range (2 + 1),
+        ((2 : ℕ).choose k : ℤ) ^ 2 * lucasU ⟨2, -1, by decide⟩ (2 - k) *
+          lucasV ⟨2, -1, by decide⟩ k = 12 := by
+  rw [lucasU_lucasV_sum_choose_sq (p := 2) (n := 2)]
+  decide
+
+-- The sign of `p` is unrestricted; here `U₂ = -3`.
+example :
+    ∑ k ∈ Finset.range (2 + 1),
+        ((2 : ℕ).choose k : ℤ) ^ 2 * lucasU ⟨-3, -1, by decide⟩ (2 - k) *
+          lucasV ⟨-3, -1, by decide⟩ k = -18 := by
+  rw [lucasU_lucasV_sum_choose_sq (p := -3) (n := 2)]
+  decide
+
+-- At `n = 0` both sides vanish for every `p`.
+example (p : ℤ) :
+    ∑ k ∈ Finset.range (0 + 1),
+        ((0 : ℕ).choose k : ℤ) ^ 2 * lucasU ⟨p, -1, by decide⟩ (0 - k) *
+          lucasV ⟨p, -1, by decide⟩ k = 0 := by
+  rw [lucasU_lucasV_sum_choose_sq (p := p) (n := 0)]
+  rfl
 
 -- Pell case `p = 2`, `n = 2`, computed directly: the Pell numbers `U = 0, 1, 2, 5, 12` and the
 -- Pell–Lucas numbers `V = 2, 2, 6, 14, 34` give `24 - 160 + 432 - 224 + 0 = 72`.
