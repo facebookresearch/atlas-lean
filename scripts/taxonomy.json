@@ -14077,6 +14077,7 @@
   "MathlibExt/NumberTheory/TruncatedLogResultantPrimePower": {"to": "NumberTheory/algebraic-number-theory/discriminants-ramification", "title": "Discriminants of truncated logarithmic polynomials"},
   "MathlibExt/NumberTheory/TverbergSumPeriodic": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/TwoAddSevenPowEqSqIff": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
+  "MathlibExt/NumberTheory/TwoComplexityComplexityLDecomp": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/TwoGeneratedNumericalSemigroup": {"to": "NumberTheory/numerical-semigroups", "title": "Symmetry of two-generated numerical semigroups"},
   "MathlibExt/NumberTheory/TwoNearPerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/TwoNearPerfectEquationDivisibility": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
