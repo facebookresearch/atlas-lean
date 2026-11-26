@@ -14,6 +14,7 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import Mathlib.RingTheory.Perfectoid.BDeRham
 public import Mathlib.RingTheory.WittVector.Compare
 public import MathlibExt.AlgebraicGeometry.HodgeTateComparison
+public import MathlibExt.RingTheory.AdicCompletion.Localization
 
 /-!
 # de Rham comparison for the first cohomology of an abelian variety over a p-adic field
@@ -130,16 +131,6 @@ theorem preDeRhamGalois_comp_padicToPreDeRham (σ : Galois p) :
   exact congrArg (fun f : ZMod p →+* PreTilt 𝓞_ℂ_[p] p => f _)
     (RingHom.ext_zmod ((tiltGalois p σ).comp (ZMod.castHom dvd_rfl _)) (ZMod.castHom dvd_rfl _))
 
-theorem factorPow_evalₐ {R : Type*} [CommRing R] (I : Ideal R) {m n : ℕ} (hle : m ≤ n)
-    (x : AdicCompletion I R) :
-    Ideal.Quotient.factorPow I hle (AdicCompletion.evalₐ I n x) = AdicCompletion.evalₐ I m x := by
-  obtain ⟨a, rfl⟩ := AdicCompletion.mk_surjective I R x
-  simp only [AdicCompletion.evalₐ_mk, Ideal.Quotient.factorPow, Ideal.Quotient.factor_mk]
-  refine (Ideal.Quotient.mk_eq_mk_iff_sub_mem _ _).2 ?_
-  have h := SModEq.sub_mem.mp (a.prop hle)
-  rw [smul_eq_mul, Ideal.mul_top] at h
-  simpa using (I ^ m).neg_mem h
-
 /- The ring of integers `𝓞_ℂ_p = {x : ‖x‖ ≤ 1}` of `ℂ_p` is `p`-adically separated and complete,
 since `p ^ n 𝓞_ℂ_p = {x : ‖x‖ ≤ p ^ (-n)}` and `ℂ_p` is complete. This is the case `C = ℂ_p` of
 `WantedExt.AlgebraicGeometry.PDivisibleHodgeTateRealization.integers_adic_complete`, stated for
@@ -188,7 +179,7 @@ def bdRPlusGalois (σ : Galois p) (h : thetaKer p ≤ (thetaKer p).comap (preDeR
       obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (evalBdR p n x)
       have hm : evalBdR p m x = Ideal.Quotient.mk _ y := by
         change AdicCompletion.evalₐ (thetaKer p) m x = _
-        rw [← factorPow_evalₐ (thetaKer p) hle x]
+        rw [← AdicCompletion.factorPow_evalₐ (thetaKer p) hle x]
         change Ideal.Quotient.factorPow _ hle (evalBdR p n x) = _
         rw [← hy]
         simp only [Ideal.Quotient.factorPow, Ideal.Quotient.factor_mk]
