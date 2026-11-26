@@ -37,7 +37,17 @@
 
 ## Trapdoor functions
 
+- [Index](index-2.md)
+- [Data of a key-indexed trapdoor family](family.md)
+- [Generated](generated.md)
+- [Trapdoor correctness at matching keys](correct-at.md)
+- [Finite-domain inverse laws](bij-on-and-right-inv-on.md)
+- [Efficient key-indexed trapdoor function scheme, exact bounded-coin convention](is-function-scheme.md)
+- [Domain nonempty](domain-nonempty.md)
+- [A restriction of exact bounded-coin sampling](card-domain-dvd.md)
 - [Trapdoor permutations](trapdoor-permutations.md)
+- [The one-way experiment](one-way-game.md)
+- [Computational one-wayness of a trapdoor function scheme](is-one-way.md)
 - [Learning with errors](learning-with-errors.md)
 - [Black-box constructions and oracle separations](black-box-constructions-and-oracle-separations.md)
 - [Regev's public-key encryption from learning with errors](regev-s-public-key-encryption-from-learning.md)
