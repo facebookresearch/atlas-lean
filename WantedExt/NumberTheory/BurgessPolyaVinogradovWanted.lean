@@ -13,7 +13,8 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.SpecialFunctions.DickmanDeBruijn
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.PrimeZetaTailBound
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 
 /-!
 # Explicit prime-sum and mean-value estimates from Bordignon--Francis
@@ -141,15 +142,6 @@ public theorem_wanted norm_LSeries_le_exp_nu₂_mul_exp_re_sum_primes
       ∀ s : ℂ, 1 < s.re →
         ‖LSeries (⇑g) s‖ ≤ exp (∑' p : Nat.Primes, (-log (1 - 1 / (p : ℝ)) - 1 / (p : ℝ))) *
           exp (∑' p : Nat.Primes, g p / (p : ℂ) ^ s).re
-
-/-- **Uniform tail bound for the prime zeta series.** For every real $\alpha$ with
-$0 < \alpha \le 1$, $\sum_{p > e^{1/\alpha}} p^{-(1 + \alpha)} \le 0.9235$, where the sum runs
-over the primes $p > e^{1/\alpha}$.
-
-Source: Matteo Bordignon and Forrest J. Francis, *Explicit Improvements to the Burgess Bound via
-Pólya--Vinogradov*, INTEGERS 24 (2024), Article A66, Lemma 10 (`integers-2024-A66-lem-10`). -/
-public theorem_wanted tsum_rpow_neg_primes_gt_exp_inv_le {α : ℝ} (hα₀ : 0 < α) (hα₁ : α ≤ 1) :
-    ∑' p : {p : ℕ // p.Prime ∧ exp (1 / α) < p}, ((p : ℕ) : ℝ) ^ (-(1 + α)) ≤ 0.9235
 
 end
 
