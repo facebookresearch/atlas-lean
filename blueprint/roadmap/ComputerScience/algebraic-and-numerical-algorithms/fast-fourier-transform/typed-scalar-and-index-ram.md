@@ -1,0 +1,25 @@
+# Typed scalar and index RAM for exact Fourier algorithms
+
+The model has two modes, linear and bilinear. Its types are natural words, complex registers with one of four tags (scalar, left, right, combined), pairs, and finite random-access arrays of any of these types. An array contains a natural length and a value at each index strictly below its length. The blanks are zero for natural and complex registers, the pair of blanks for a pair, and the empty array for an array. A read outside the array returns the appropriate blank. All array writes are into fresh storage and writes outside its allocated length are ignored.
+
+## Bills and primitives
+
+Every evaluation returns a value and a bill $(w,p,v)$: natural work $w$, natural peak $p$, and a validity proposition $v$. Executing a second computation on the first value sums the two work entries, takes the maximum of their peaks, and conjoins validity. An extra charge $(a,b)$ adds $a$ to work and takes the maximum with $b$ for peak, without changing the value or validity.
+
+Every primitive costs exactly one. A natural literal, an integer arithmetic result, and an array-length result record the resulting natural as their peak. Natural operations are addition, truncated subtraction, multiplication, quotient (zero on division by zero), remainder (the dividend when the divisor is zero), and less-than returning $1$ for true and $0$ for false. All other primitives record peak zero, including identity, projections, and array reads at any index, even reads that return the blank or return a natural. Complex operations are tagged zeros, scalar one, same-tag addition and subtraction, multiplication of a register by a scalar with tag unchanged, and scalar inversion. Scalar inversion has validity exactly when the operand is nonzero; every other primitive is valid. Only the bilinear mode also has the primitive multiplying a left-tagged by a right-tagged register and returning a combined-tagged register. There is no arbitrary complex literal or other product of two nonscalar registers.
+
+## Code and interpreter
+
+Code is finite and first-order. A closed program has no callable port. Internal code may have a single port giving the input and output types of a handler. Composition, pairing, and a zero test each add one unit after billed subcomputations: composition feeds the first result to the second, pairing evaluates both on the original input, and the zero test evaluates its natural test then only the chosen branch on the original input. Executing imported closed code runs it without a handler and adds one unit; calling the port runs its handler and adds one unit.
+
+A loop evaluates its natural length and initial accumulator on the original input, then runs its body for indices $i=0,\ldots,l-1$ with the original input, index and current accumulator. The iteration starts with one unit and peak zero to return the initial accumulator; each iteration bills the body and adds one unit with new peak candidate $i+1$. The loop itself adds one unit. Fresh array construction first evaluates its allocation length and number of writes on the original input. It uses that same iteration protocol starting from a freshly allocated array of the specified length, filled with the element type’s blank value. For each $i$, it runs a body on the original input and $i$ to get an address and value, then charges one unit, peak zero, for the write. Writes never change the array length. The builder adds work $1+\text{length}$ and peak candidate $\text{length}$; the code constructor adds one more unit. Tabulation evaluates the length only; the builder uses that length for both allocation and iteration count and forms each address–value pair at address $i$ with an additional unit and peak zero, before the charged write. No address peak is added just for the write or read.
+
+The `descend` constructor takes explicit natural depth and initial argument. At depth zero it runs the closed base code and adds one unit. At depth $j+1$ it runs the body with a handler that runs this recursion at depth $j$ on whatever argument it is called with, then adds one unit and peak candidate $j+1$. The constructor itself additionally adds one unit and records its input depth as a peak candidate. This is not an unrestricted recursive call justified by a termination claim. Unless a peak candidate is specified above, a control charge contributes zero to peak. Initial inputs and total arena allocation are not measured by peak; the result statements constrain arena size through a separate work-plus-input bound.
+
+## Expansion
+
+Implement the indexed types, bills and handler interpretation together. Validate the distinctions between reads and word-producing primitives, out-of-range writes and paid ignored writes, and the base-case and recursive charges. Keep the exact interpreter bill separate from any later simulation by a conventional machine.
+
+## Sources
+
+- OpenAI, [array, tagged types, bills, and interpreter](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/ComparatorChallenges/UniformFourier.lean#L50-L254).

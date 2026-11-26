@@ -119,3 +119,4 @@
 - [Polynomial many-one reductions also reduce complements](compl.md)
 - [Unitarity, norm preservation and probabilities in encoded circuit semantics](remaining-clauses-of-circuit-semantics-unitarity-norm-preser.md)
 - [P is contained in P/poly](p-is-contained-in-p-poly.md)
+- [Deterministic, one-sided and two-sided logarithmic space in a transition-table model](exact-logarithmic-space-derandomization.md)

@@ -30,3 +30,7 @@
 - [The square circuit exponent is at least two](two-le-square-matrix-multiplication-circ.md)
 - [Upper bounds on the square matrix multiplication circuit exponent](square-matrix-multiplication-circuit-exp-3.md)
 - [The square matrix multiplication circuit exponent is attained](square-matrix-multiplication-circuit-exp-4.md)
+- [Exact three-weight rectangular exponent for formal matrix multiplication](formal-three-weight-rectangular-exponent.md)
+- [Formal square matrix multiplication exponent equals nine fourths](formal-square-exponent-nine-fourths.md)
+- [Formal dual matrix multiplication exponent equals one half](formal-dual-exponent-one-half.md)
+- [Strict square matrix multiplication bound over every field, in the pointwise model](all-fields-square-exponent-strict-source-bound.md)

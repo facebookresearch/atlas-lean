@@ -22,3 +22,4 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Potential good reduction of abelian varieties with complex multiplication](good-reduction-of-cm-abelian-varieties.md)
 - [Deformations and p-divisible groups](deformations-and-p-divisible-groups/README.md)
 - [Moduli of abelian varieties and their compactifications](moduli-and-compactifications/README.md)
+- [Algebraicity of rational Hodge classes on CM abelian varieties](rational-hodge-classes-cm-abelian-varieties.md)

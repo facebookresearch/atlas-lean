@@ -4,3 +4,4 @@
 - [Logarithmic bound for $\zeta'/\zeta$ in the classical zero-free region](zeta-log-derivative-bound-in-zero-free-region.md)
 - [Kadiri's zero-free region for the Riemann zeta function](kadiri-zero-free-region.md)
 - [Kadiri's refined zero-free region for the Riemann zeta function](kadiri-zero-free-region-refined.md)
+- [The Riemann zeta zero-free half-plane at 7/8](riemann-zeta-zero-free-seven-eighths.md)

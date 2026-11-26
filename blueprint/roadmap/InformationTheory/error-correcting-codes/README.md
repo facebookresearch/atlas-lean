@@ -18,3 +18,5 @@ Codes that detect or correct transmission errors, including linear codes, Hammin
 - [Local decoding of the Hadamard code](hadamard-code-local-decoding.md)
 
 - [Bit-serial CRC and framing](bit-serial-crc-and-framing/README.md)
+
+- [Asymptotic bounds for binary codes](asymptotic-binary-code-rate/README.md)

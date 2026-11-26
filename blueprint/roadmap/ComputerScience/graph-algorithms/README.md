@@ -7,3 +7,4 @@ Algorithms computing properties of explicit graphs (traversal, connectivity, sho
 - [Spanning trees, flows and matchings](spanning-trees-flows-matchings/README.md)
 - [Graph algorithm bounds](graph-algorithm-bounds/README.md)
 - [Linear programming and flows](linear-programming-and-flows/README.md)
+- [Parity lifts characterize finite choices by Weisfeiler–Leman equivalence](weisfeiler-leman-parity-lift-choice-reduction.md)

@@ -6,3 +6,5 @@ The forcing method and the axioms that assert the existence of generic filters, 
 - [Open coloring axiom](open-coloring-axiom/README.md)
 - [P-ideal dichotomy](p-ideal-dichotomy/README.md)
 - [Proper forcing and the proper forcing axiom](proper-forcing-and-the-proper-forcing-axiom/README.md)
+- [Relative consistency of the Partition Principle without Choice](partition-principle-relative-consistency.md)
+- [A transitive model of the Partition Principle without Choice](transitive-partition-principle-model.md)

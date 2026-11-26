@@ -9,3 +9,5 @@
 - [Periodic continuous tiling set](is-periodic-continuous-tiling-set.md)
 - [Aperiodic continuous tiling equation](is-aperiodic-continuous-tiling-equation.md)
 - [Aperiodic continuous tiling equations in high-dimensional Euclidean space](corollary-1-7.md)
+
+- [An aperiodic translational tile in dimension three and lattice minimality](aperiodic-translational-tile-dimension-three.md)

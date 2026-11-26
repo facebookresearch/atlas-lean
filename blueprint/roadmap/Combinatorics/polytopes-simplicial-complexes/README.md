@@ -17,3 +17,4 @@ Face numbers and h-vectors of simplicial spheres and polytopes (Dehn–Sommervil
 - [Weighted projective space simplices](weighted-projective-space-simplices/README.md)
 - [Ehrhart polynomials with roots on the canonical line](ehrhart-polynomials-with-roots-on-the-canonical/README.md)
 - [Unimodality of h*-vectors](unimodality-of-h-vectors/README.md)
+- [Bounded-degree coboundary expanders over F₂ in dimensions at least three](bounded-degree-coboundary-expanders.md)

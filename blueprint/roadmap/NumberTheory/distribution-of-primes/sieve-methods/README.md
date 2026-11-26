@@ -10,3 +10,4 @@ Selberg, Brun and large sieves, almost primes, parity problem, counting integers
 - [GPY–Maynard sieve](gpy-maynard-sieve/README.md)
 - [Selberg sieve](selberg-sieve/README.md)
 - [Sieving shifted primes and the parity problem](sieving-shifted-primes-and-the-parity-problem/README.md)
+- [Bounds for Jacobsthal’s function](jacobsthal-bounds/README.md)

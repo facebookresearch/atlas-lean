@@ -8,3 +8,5 @@ Quantum models of atoms and molecules and their spectra: angular momentum, the r
 - [Variational method, perturbation theory and Hückel theory](variational-method-perturbation-theory-and-h-cke/README.md)
 
 - [Optimal Lieb–Oxford constant](optimal-lieb-oxford-constant.md)
+
+- [Continuum Coulomb energy](continuum-coulomb-energy/README.md)

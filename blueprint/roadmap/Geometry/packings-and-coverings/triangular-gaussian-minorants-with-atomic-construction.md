@@ -1,0 +1,23 @@
+# Sharp Gaussian minorants for the triangular lattice with atomic interpolation
+
+Let $b=\sqrt3/2$, $A=b^{-1/2}\{(j+k/2,bk):j,k\in\mathbb Z\}$, and $A^*=\{w:a\cdot w\in\mathbb Z\text{ for every }a\in A\}$. Use the Fourier transform with kernel $e^{-2\pi i x\cdot w}$. For every real $\alpha>0$, there exists a real radial Schwartz function $f$ such that $f(x)\leq e^{-\pi\alpha|x|^2}$ everywhere, $\widehat f$ is real and nonnegative everywhere, $f(a)=e^{-\pi\alpha|a|^2}$ for $a\in A\setminus\{0\}$, and $\widehat f(w)=0$ for $w\in A^*\setminus\{0\}$. No equality at the origin is asserted.
+
+For $\alpha\geq1$ the *same* $f$ must have the following specified atomic realization. In the variable $s=b|x|^2$, set $h=17/50$, $H=27/50$, $\eta=1/5$, $\kappa=\pi/36$, and use residues $0,1,3,4,7,9,12,13,16,19,21,25,27,28,31$ modulo $36$. Let $P(s)$ be the product over those residues $r$ of $(2\sin(\kappa(s-r)))^2$. For each positive node $n$ with an allowed residue, the tail functions are $d_n=P/(s-n)$ and $c_n=d_n/(s-n)$ with their derivative-extended values at $n$. The finite functions at each of the first eleven residues consist of $C_r=4\kappa^2\prod_{q\ne r}(2\sin(\kappa(s-q)))^2$ and $D_r=2\kappa(2\sin(\kappa(s-r)))\cos(\kappa(s-r))\prod_{q\ne r}(2\sin(\kappa(s-q)))^2$. The ten positive finite nodes are $1,3,4,7,9,12,13,16,19,21$; all other positive nodes are tail nodes.
+
+Write $Q_n=P''(n)/2$, $D_n=P'''(n)/(6Q_n)$, and $z=(\pi(\alpha/b-h))^{-1}$. For two inputs $G_0,G_1$, the atomic formula is $f=(G_0+\widehat G_1)/(Q_1 z e^{1/z})$. Each $G_j$ is $e^{-\pi h s}$ times a combination of $P,c_n,d_n$ plus $e^{-\pi H s}$ times the finite $C_r,D_r$ combination. The $P$ coefficients are $-3/500,+3/500$, respectively; the two columns at residue zero have coefficients $11/25,0$. On each side the tail coefficients are absolutely summable with sum of absolute values less than $3/10^9$. The other twenty finite coefficients are the corresponding side of $(U_+\pm U_-)/2$ evaluated at $(z,1,ze^{-2/z},e^{-2/z},ze^{-3/z},e^{-3/z},ze^{-6/z},e^{-6/z})$, plus a correction of sum of absolute values less than $10^{-5}$.
+
+The finite linear systems are $(I-R)U_+=Y+R_0(\Gamma_1+\Gamma_0)$ and $(I+R)U_-=Y+R_0(\Gamma_1-\Gamma_0)$, with both $I-R$ and $I+R$ invertible. Here $[R_0,R]$ means the signed jet columns of the Fourier transforms of the two residue-zero functions, the $P$ function and the twenty other finite functions respectively: use scale $k=h$ for $P$ and $k=H$ for the other columns. For a wave $e^{i\pi ts}$ multiply its coefficient by the transformed wave $(k+it)e^{i\pi\zeta s}/[b(k^2+t^2)]$, with $X=(4/3)/(k^2+t^2)$ and $\zeta=-tX+i(kX-H)$. At node $n$ take minus the real value divided by $Q_n$ and then the real value of $(D_n-i\pi\zeta)$ times that wave divided by $Q_n$. Expand the trigonometric columns in frequencies $(j-15)/18$, $0\leq j\leq30$, before applying these operations. The $3\times8$ matrix $\Gamma_j$ has only its second column nonzero, equal to $(11/25,0,(-1)^{j+1}3/500)$. For the first four nodes $n$, the two target rows of $Y$ map each consecutive pair $(a,c)$ of input coefficients to $Q_1 e^{\pi\eta n}(a,(\pi\eta-D_n)a-c)/Q_n$; the other target rows are zero.
+
+## Depends on
+The covolume-one lattice and its integer dual, the stated radial variable and normalized transform, and the explicitly fixed finite and tail interpolation functions. The formulas refer to values and derivatives, not an unspecified certificate predicate.
+
+## Proof depends on
+The finite jet invertibility and residual bounds, convergence of the corrected tail in the Schwartz class, global signs between the interpolation nodes, and a separate Gaussian-parameter reduction below the atomic range.
+
+## Expansion
+First check the Fourier-wave transform and exact finite matrices. Then isolate the tail contraction with its coefficient budget, the sign estimates on both sides of the Fourier transform, and the interpolation at all nonzero lattice and dual nodes. Keep the condition $\alpha\geq1$ on the witness formula rather than weakening the conclusion to an unspecified minorant or imposing the formula for all $\alpha>0$.
+
+## Sources
+
+- OpenAI, [comparator statement](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/ComparatorChallenges/AtomicGaussian.lean#L239-L247) and [formalization scope](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/docs/090.md).
+- OpenAI, [parity-indexed form of the same construction](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/ComparatorChallenges/TriangularGaussian.lean#L220-L270).

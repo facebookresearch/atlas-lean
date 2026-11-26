@@ -1,5 +1,7 @@
 # Matrix multiplication exponent
 
+- [Matrix multiplication tensor rank is at most twice the multiplication-and-division count](matrix-product-rank-bounded-by-product-and-quotient-gates.md)
+- [Division preserves the formal square matrix multiplication exponent](division-does-not-change-square-multiplication-exponent.md)
 - [Rank-one trilinear term](rank-one-trilinear-term.md)
 - [Value of a rank-one trilinear term](eval.md)
 - [Trilinear rank at most $r$](has-trilinear-rank-at-most.md)

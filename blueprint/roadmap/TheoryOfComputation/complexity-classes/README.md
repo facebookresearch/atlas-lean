@@ -23,3 +23,7 @@ Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, 
 - [Search problems and TFNP](total-search-problems/README.md)
 - [Space and time complexity](space-and-time-complexity/README.md)
 - [Parameterized vertex cover](parameterized-vertex-cover/README.md)
+- [EXPTIME-completeness of unrestricted variable-dimension WL equivalence](variable-dimension-wl-equivalence-exptime-complete.md)
+- [EXPTIME-completeness of Weisfeiler–Leman identification dimension](wl-graph-identification-exptime-complete.md)
+- [EXPTIME-completeness of variable-dimension WL equivalence on connected subcubic graphs](subcubic-wl-equivalence-exptime-complete.md)
+- [Finite multitape computations with full-tape binary output](finite-multitape-word-computations.md)

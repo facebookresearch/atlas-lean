@@ -15,3 +15,5 @@ Density versions: Szemerédi's and Roth's theorems and Roth-number bounds, Gower
 - [Three-term progressions in unit-step walks](three-term-progressions-in-unit-step-walks/README.md)
 - [Unions of progression-free sets](unions-of-progression-free-sets/README.md)
 - [Szemerédi's theorem](szemeredi.md)
+- [Power saving for square-difference-free sets](power-saving-for-square-difference-free-sets.md)
+- [Arithmetic progressions from divergent reciprocals](divergent-reciprocals-force-arithmetic-progressions.md)

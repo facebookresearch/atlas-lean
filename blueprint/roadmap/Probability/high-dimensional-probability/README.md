@@ -23,3 +23,9 @@ Probability in high dimension and on geometric objects: log-concave and uniform 
 - [Free probability](free-probability/README.md)
 - [Gaussian measures restricted to convex sets](gaussian-measures-restricted-to-convex-sets/README.md)
 - [Gaussian surface area of ellipsoids](gaussian-surface-area-of-ellipsoids/README.md)
+
+- [The Gaussian propeller partition bound and attainment](gaussian-propeller.md)
+- [Value-and-gradient query complexity of well-conditioned log-concave sampling](value-gradient-query-complexity-log-concave-sampling.md)
+
+- [Adaptive value-and-gradient sampling of a normalized Gibbs law](first-order-sampling-model.md)
+- [First moments of Gaussian partitions](gaussian-partition-moment.md)

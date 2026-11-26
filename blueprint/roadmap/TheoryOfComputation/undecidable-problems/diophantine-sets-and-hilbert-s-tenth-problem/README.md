@@ -5,3 +5,4 @@
 - [The whole space is Diophantine](is-diophantine-univ.md)
 - [The empty set is Diophantine](is-diophantine-empty.md)
 - [Davis–Putnam–Robinson–Matiyasevich theorem](dprm-theorem.md)
+- [Single-fold Diophantine representations](single-fold-diophantine-representation.md)

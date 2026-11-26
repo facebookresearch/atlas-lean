@@ -1,0 +1,28 @@
+# Noiseless Gaussian regression
+
+- [Actual-row density bounds with conditional row information](actual-row-conditional-information-bounds.md)
+- [Smoothed and exact Gaussian density bounds with actual rows](actual-row-smoothed-and-exact-bounds.md)
+- [Inverse Gram-volume moments from all-scale ball control](all-scale-inverse-gram-volume.md)
+- [Ambient Gram and ellipsoid estimates for finite-memory Gaussian regression](ambient-gram-ellipsoid-and-memory-precision.md)
+- [Conditional row information under deterministic message refinement](conditional-row-information-refinement.md)
+- [Gaussian row replacement at the critical block width](critical-row-replacement.md)
+- [Posterior replica identities and Gaussian streaming information bounds](equal-label-replicas-and-memory-bound.md)
+- [Fiber information drift across a Gaussian block](fiber-block-information-drift.md)
+- [Finite-entropy dyadic regularization with expected depth and attempts](finite-entropy-dyadic-regularization.md)
+- [A finite-state sample lower bound for noiseless Gaussian angular regression](finite-state-angular-sample-lower-bound.md)
+- [Averaged fresh information across a finite-memory Gaussian block](hybrid-averaged-block-information.md)
+- [Mixed Gaussian moments of smoothed and exact projection densities](mixed-projection-density-moments.md)
+- [Spherical kernel-potential drift for actual Gaussian rows](one-block-spherical-kernel-drift.md)
+- [One-level replacement with an explicit message-entropy penalty](one-level-row-replacement.md)
+- [Gaussian and Haar projection moments, cap domination, and streaming costs](projection-moments-and-streaming-costs.md)
+- [Repeated dyadic localization for exact Gaussian observations](repeated-dyadic-localization.md)
+- [The exact two-point law on Gaussian observation fibers](spherical-fiber-two-point-measure.md)
+- [Coercivity and convexity of a spherical kernel potential](spherical-kernel-potential-coercivity.md)
+- [Subsphere estimates and Gaussian streaming precision lower bounds](subsphere-moments-and-memory-precision.md)
+- [The two-label Gaussian replacement estimate](two-label-row-replacement.md)
+
+- [Conditional information from marginal kernels](conditional-information-from-marginal-kernels.md)
+- [Noiseless Gaussian row and label density models](gaussian-projection-density-model.md)
+- [Seeded finite-state noiseless Gaussian learner](seeded-noiseless-gaussian-learner.md)
+
+- [Models for noiseless Gaussian regression](models/README.md)

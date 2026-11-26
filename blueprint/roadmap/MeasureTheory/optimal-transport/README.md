@@ -30,3 +30,6 @@ Couplings of probability measures, transport costs, existence of optimal couplin
   inequality links entropy, $W_2$ and Fisher information.
 - [Fokker–Planck equation](../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
   the gradient flow of the free energy for $W_2$, through the JKO scheme.
+- [Equal infima without a Monge optimizer for the three-marginal Coulomb cost](three-marginal-coulomb-nonattainment.md)
+
+- [Weak Ma–Trudinger–Wang curvature](weak-ma-trudinger-wang-curvature/README.md)

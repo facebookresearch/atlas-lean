@@ -18,3 +18,9 @@ Manifolds with smoothly varying inner products or norms on tangent spaces: conne
 - [Sphere theorem](sphere-theorem/README.md)
 - [Existence of Riemannian metrics](riemannian-metric-existence.md)
 - [Manifolds admitting a metric of positive scalar curvature](admits-positive-scalar-curvature-metric.md)
+
+- [Hyperboloidal end replacement](hyperboloidal-end-replacement/README.md)
+
+- [Nodal measure of Laplace eigenfunctions](nodal-measure/README.md)
+
+- [Isoperimetric minimizers of the unit cubic three-torus](cubic-three-torus-isoperimetric-profile.md)

@@ -8,3 +8,7 @@
 - [Composition of immersions](immersion-comp.md)
 - [Injective differential with complemented range gives an immersion](of-injective-mfderiv-of-closed-complemen.md)
 - [Injective differential gives an immersion](immersion-at-of-injective-mfderiv.md)
+
+- [Smooth isometric immersion of a closed surface into Euclidean four-space](closed-surface-isometric-immersion-in-four-space.md)
+
+- [A smooth metric on a square with no local isometric immersion in three-space](smooth-local-metric-no-immersion-in-three-space.md)

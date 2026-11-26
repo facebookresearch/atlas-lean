@@ -34,3 +34,8 @@
 - [First and second moment methods](../../../Combinatorics/probabilistic-combinatorics/first-and-second-moment-methods/README.md): the probabilistic existence arguments behind lower bounds for Ramsey numbers.
 - [Kim–Vu polynomial concentration](../../../Probability/concentration-inequalities/kim-vu-polynomial-concentration/README.md): concentration of the kind used in the semi-random construction behind $R(3,t) = \Theta(t^2/\log t)$.
 - [Ramsey graphs for the triangle](../ramsey-graphs-for-the-triangle/README.md): graphs that arrow the triangle.
+- [Sharp logarithmic bounds for R(5,t)](sharp-logarithmic-exponent-ramsey-five.md)
+- [Sharp logarithmic bounds for fixed off-diagonal Ramsey numbers](sharp-logarithmic-exponents-off-diagonal-ramsey.md)
+- [Exact cycle–clique Ramsey formula outside (3,3)](cycle-clique-ramsey-exact-formula.md)
+- [Logarithmic exponent limit for R(5,t)](ramsey-five-logarithmic-exponent-limit.md)
+- [Logarithmic exponent limit for fixed R(s,t)](off-diagonal-ramsey-logarithmic-exponent-limit.md)

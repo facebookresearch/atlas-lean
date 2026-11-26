@@ -7,6 +7,7 @@ are all its powers, while Bernoulli shifts, the dynamical form of sequences of i
 mixing examples.
 
 - [Strong mixing](is-mixing.md)
+- [Ordinary mixing and mixing of every finite order](mixing-of-every-finite-order.md)
 - [Mixing implies ergodicity](ergodic.md)
 - [Powers of a mixing map are mixing](iterate.md)
 - [Mixing maps are totally ergodic](ergodic-iterate.md)

@@ -12,6 +12,10 @@ Smooth dynamics studies differentiable maps and flows: hyperbolicity, stable man
 - [Stability of equilibria](stability-of-equilibria/README.md)
 - [Stable manifold theorem](stable-manifold-theorem/README.md)
 
+- [Standard sine map](standard-sine-map/README.md)
+
+- [Ergodicity of the specular billiard flow in an irrational triangle](ergodicity-of-irrational-triangle-billiards.md)
+
 ## Polynomial networks and deficiency
 
 - [Chemical reaction network](reaction-network.md)

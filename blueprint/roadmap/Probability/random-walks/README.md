@@ -14,3 +14,8 @@ Sums of i.i.d. steps as processes: the drift/oscillation dichotomy, limsup and l
 - [Random walks on finite groups](random-walks-on-finite-groups/README.md)
 - [Random walks on Ramanujan graphs](random-walks-on-ramanujan-graphs/README.md)
 - [Bertrand's ballot theorem](bertrand-ballot.md)
+
+- [A universal factor of IID for the free uniform spanning forest](free-spanning-forest-factor.md)
+- [Random walks in independent random environments](iid-random-environments/README.md)
+
+- [Graph-coded free spanning-forest cylinder law](free-spanning-forest-cylinder-law.md)

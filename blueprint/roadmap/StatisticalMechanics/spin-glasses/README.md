@@ -9,3 +9,10 @@ nevertheless converges, and Parisi's prediction for the limit, a variational for
 established the upper bound by Gaussian interpolation.
 
 - [Sherrington–Kirkpatrick model](sherrington-kirkpatrick-model/README.md)
+
+- [The hierarchical cavity formula for diluted Ising pressure](diluted-ising-cavity-formula.md)
+- [Orthogonally invariant Ising spin glasses](orthogonally-invariant-ising/README.md)
+- [Variational formulas for random perceptrons](random-perceptrons/README.md)
+
+- [Poisson-diluted Ising energy and conditional cavity weights](poisson-diluted-ising-law.md)
+- [Zero-temperature SK Brownian control value](zero-temperature-sk-control-model.md)

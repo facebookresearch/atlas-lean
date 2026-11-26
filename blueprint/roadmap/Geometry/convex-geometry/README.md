@@ -22,3 +22,10 @@ Convex sets and convex bodies in Euclidean space: Helly-type and Radon-type theo
 - [Tverberg's theorem](tverberg.md)
 - [Ulam's flat-sections problem in dimension three](ulam-flat-sections-convex.md)
 - [Knaster–Kuratowski–Mazurkiewicz lemma](kkm-lemma.md)
+
+- [Euclidean Steinitz–Bergström bound with one constant](euclidean-signed-and-reordered-prefix-bound.md)
+- [General Mahler volume-product bound and simplex equality](general-mahler-volume-product.md)
+- [An explicit hyperbolicity cone that is not spectrahedral](nonspectrahedral-explicit-hyperbolicity-cone.md)
+- [Sharp symmetric Mahler volume-product bound](symmetric-mahler-sharp-bound.md)
+- [Projection-body volume](projection-body-volume/README.md)
+- [The Ehrhart volume inequality](ehrhart-volume-inequality/README.md)

@@ -40,3 +40,4 @@
 - [Turing degree of a predicate](turing-degree-of.md)
 - [Turing reducibility is reflexive](turing-reducible-pred-refl.md)
 - [Turing reducibility is transitive](turing-reducible-pred-trans.md)
+- [Rigidity of the full Turing-degree order](rigidity-of-the-turing-degrees.md)

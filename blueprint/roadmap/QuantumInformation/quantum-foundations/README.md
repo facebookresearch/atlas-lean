@@ -19,3 +19,5 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Classical and entangled values of the CHSH game](classical-and-entangled-values-of-the-chsh-game.md)
 
 - [Exact universality of CNOT and single-qubit gates](exact-universality-of-cnot-and-single-qubit-gates.md)
+
+- [At most five mutually unbiased bases in dimension six](mutually-unbiased-bases-dimension-six-upper-five.md)

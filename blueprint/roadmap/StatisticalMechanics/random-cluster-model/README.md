@@ -11,3 +11,7 @@ The random-cluster (Fortuin–Kasteleyn) model and its Edwards–Sokal coupling 
 - [Convexity of the free energy and edge densities](convexity-of-the-free-energy-and-edge-densities/README.md)
 - [Free energy of the random-cluster model](free-energy-of-the-random-cluster-model/README.md)
 - [Per-box agreement of free and wired random-cluster measures](per-box-agreement-of-free-and-wired-random-clust/README.md)
+
+- [Brownian continuum-tree limit of finite Fortuin–Kasteleyn maps](finite-fk-map-brownian-tree-limit.md)
+
+- [Rooted-map FK weight and vertex metric law](fk-rooted-map-metric-law.md)

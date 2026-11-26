@@ -19,3 +19,6 @@ L^p and Sobolev spaces of functions: embeddings (Morrey, Rellich, radial, trace)
 - [Lieb–Thirring kinetic energy inequality](lieb-thirring-kinetic.md)
 
 - [Sharp Lieb–Thirring kinetic constant in three dimensions](sharp-lieb-thirring-constant-in-three-dimensions.md)
+
+- [Endpoint weak gradient of the centered disk maximal function](centered-disk-maximal-sobolev-endpoint.md)
+- [Signed finite-band centered disk maximal gradient bound](signed-finite-band-centered-disk-gradient.md)

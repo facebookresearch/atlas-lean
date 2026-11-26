@@ -9,3 +9,5 @@ Poisson processes on the line and Poisson point processes on general spaces (arr
 - [Stationary random functions](stationary-random-functions/README.md)
 
 - [Cluster spacing in Hegselmann–Krause dynamics](cluster-spacing-in-hegselmann-krause-dynamics.md)
+
+- [Determinantal and strongly Rayleigh laws](determinantal-and-rayleigh-laws/README.md)

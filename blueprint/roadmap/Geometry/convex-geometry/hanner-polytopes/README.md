@@ -18,3 +18,5 @@
 - [Hanner polytopes contain the origin](zero-mem.md)
 - [Hanner polytopes are compact](is-compact.md)
 - [Hanner polytopes contain the origin in their interior](zero-mem-interior.md)
+
+- [Hanner equality characterization for the symmetric Mahler product](symmetric-mahler-hanner-equality.md)

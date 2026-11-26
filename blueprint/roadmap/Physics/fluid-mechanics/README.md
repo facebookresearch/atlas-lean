@@ -17,3 +17,5 @@ Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, B
 - [Thin-airfoil theory](thin-airfoil-theory/README.md)
 - [Thin-film lubrication](thin-film-lubrication/README.md)
 - [Two-phase flow in porous media](two-phase-flow-in-porous-media/README.md)
+
+- [Effective incompressible transport](effective-incompressible-transport/README.md)
