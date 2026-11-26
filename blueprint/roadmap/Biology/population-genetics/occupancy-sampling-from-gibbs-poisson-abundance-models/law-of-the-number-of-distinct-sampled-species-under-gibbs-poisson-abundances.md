@@ -3,8 +3,10 @@
 **Model.** Fix nonnegative weights $\phi_m$ ($m\ge1$, $\phi_1>0$), $\phi(x)=\sum_{m\ge1}\phi_mx^m/m!$ with radius of convergence $x_0>0$, and $\theta>0$. The partition function $Z_\theta(x)=e^{\theta\phi(x)}=1+\sum_{k\ge1}\sigma_k(\theta)x^k/k!$ defines the Bell polynomials $\sigma_k(\theta)=\sum_{l=1}^kB_{k,l}(\phi_\bullet)\theta^l$. A **Gibbs–Poisson** (compound Poisson) abundance $\xi$ has $\mathbb{P}(\xi=k)\propto\sigma_k(\theta)x^k/k!$ for some $x\in(0,x_0)$. A population has $n$ species with i.i.d. abundances $\xi_1,\dots,\xi_n$, and a $k$-sample is the occupancy vector $(\xi_1,\dots,\xi_n)$ conditioned on $\sum_i\xi_i=k$ (Kolchin's generalized allocation scheme). Let $P_{n,k}$ be the number of distinct species in the sample. The negative binomial abundance, $\sigma_k(\theta)=\theta(\theta+1)\cdots(\theta+k-1)$, gives the Ewens–Dirichlet model.
 
 **Proposition.** The law of the sample does not depend on the tilt $x$, and the conditional (microcanonical) law of the occupancies given $P_{n,k}$ does not depend on $n$, so $P_{n,k}$ is a sufficient statistic for $n$ when $\theta$ is known. Moreover
+
 $$\mathbb{E}\big[u^{P_{n,k}}\big]=\sum_{p=0}^{n-1}\binom{n}{p}u^{n-p}(1-u)^p\,\frac{\sigma_k\big((n-p)\theta\big)}{\sigma_k(n\theta)},\qquad
 \mathbb{P}(P_{n,k}=p)=\binom{n}{p}\sum_{q=1}^{p}(-1)^{p-q}\binom{p}{q}\frac{\sigma_k(q\theta)}{\sigma_k(n\theta)},$$
+
 for $p\in\{1,\dots,n\wedge k\}$. In particular
 
 $$\mathbb{E}[P_{n,k}]=n\Big(1-\frac{\sigma_k((n-1)\theta)}{\sigma_k(n\theta)}\Big),\qquad \mathrm{Var}(P_{n,k})=n\Big(\frac{\sigma_k((n-1)\theta)}{\sigma_k(n\theta)}+(n-1)\frac{\sigma_k((n-2)\theta)}{\sigma_k(n\theta)}-n\Big(\frac{\sigma_k((n-1)\theta)}{\sigma_k(n\theta)}\Big)^2\Big).$$
