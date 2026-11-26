@@ -18,8 +18,18 @@ import Mathlib.RingTheory.ZMod.UnitsCyclic
 /-!
 # Counting Fermat pseudoprime bases
 
-The Chinese remainder theorem reduces the Fermat congruence to power equations in the unit
-groups modulo the prime powers dividing `n`.
+As in Baillie–Wagstaff's proof, the Chinese remainder theorem reduces the Fermat congruence to
+congruences modulo the prime powers dividing `n`. Instead of lifting roots from the prime
+moduli, this proof counts roots directly in the prime-power unit groups.
+
+## References
+
+* Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
+  Article A23, Theorem 2. This statement cites the proofs by Baillie–Wagstaff and Monier.
+* Robert Baillie and Samuel S. Wagstaff, Jr., *Lucas pseudoprimes*, Mathematics of
+  Computation 35 (1980), 1391–1417, Theorem 1.
+* Louis Monier, *Evaluation and comparison of two efficient probabilistic primality testing
+  algorithms*, Theoretical Computer Science 12 (1980), 97–108.
 -/
 
 namespace MetaMathlibExt
