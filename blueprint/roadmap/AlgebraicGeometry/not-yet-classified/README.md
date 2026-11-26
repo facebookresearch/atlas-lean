@@ -1199,6 +1199,7 @@ Topics added since this subject's fields were last revised.
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
+- [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
 - [Centred place gate](is-centred.md)
 - [Kernel Ideal](kernel-ideal-set.md)
 - [Genus One Pic0](genus-one-pic0/README.md)
