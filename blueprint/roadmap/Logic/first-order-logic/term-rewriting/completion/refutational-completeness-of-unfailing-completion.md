@@ -13,4 +13,4 @@ Let $E$ be a set of equations. For terms $s, t$ let $\hat s, \hat t$ be obtained
 
 ## Sources
 
-- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.7, Theorem 4.39, whose phrase "smaller than all other terms" is read for ground terms,, p. 129.
+- U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.7, Theorem 4.39, whose phrase "smaller than all other terms" is read for ground terms, p. 129.
