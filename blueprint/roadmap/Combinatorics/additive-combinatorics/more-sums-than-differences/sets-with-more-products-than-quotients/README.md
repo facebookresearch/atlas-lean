@@ -15,3 +15,4 @@
 - [Adjoining negatives preserves the MPTQ property](is-mptqset-union-neg-iff.md)
 - [No MPTQ set has five elements](not-is-mptqset-of-card-eq-five.md)
 - [Adjoining multiples by a coprime prime preserves the MPTQ property](is-mptqset-union-prime-mul-iff.md)
+- [No MPTQ set has at most four elements](not-is-mptqset-of-card-le-four.md)
