@@ -79,6 +79,10 @@ example : set_tree (rbtInter t1 t2) = set_tree t1 ∩ set_tree t2 :=
   rbtInter_set t1 t2 bst_t1 bst_t2
 example : set_tree (rbtDiff t1 t2) = set_tree t1 \ set_tree t2 :=
   rbtDiff_set t1 t2 bst_t1 bst_t2
+-- `diff1 t Leaf = t` on the tree itself: rebuilding it with `rbtJoin` would
+-- turn this red singleton black.
+example : diff1 rbtJoinData (RNode (Tree.Leaf : Tree Nat Color) 1 Tree.Leaf) Tree.Leaf =
+    RNode Tree.Leaf 1 Tree.Leaf := rfl
 example : set_tree (rbtInsert 2 t1) = set_tree t1 ∪ {2} :=
   rbtInsert_set 2 t1 bst_t1
 example : set_tree (rbtDelete 1 t1) = set_tree t1 \ {1} :=

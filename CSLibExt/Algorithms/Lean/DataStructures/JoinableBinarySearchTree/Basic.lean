@@ -85,7 +85,7 @@ public theorem bst_node {l r : Tree α β} {kv : α × β} :
 /-- The book's Figure 10.2 specification of `join` and `inv`, packaged as a
 structure. The fields are *hypotheses* of the structure, not axioms:
 instantiating `JoinData` requires proving them (see the red–black
-instantiation at the end of this file). -/
+instance `rbtJoinData` in `RedBlackJoin`). -/
 public structure JoinData (α : Type u) (β : Type v) [LinearOrder α] [Inhabited β] where
   join : Tree α β → α → Tree α β → Tree α β
   inv : Tree α β → Prop
@@ -123,10 +123,13 @@ public def join2 (l r : Tree α β) : Tree α β :=
   | none => l
   | some (m, r') => J.join l m r'
 
-/-- `split x t = (l, b, r)`: `l` holds the elements `< x`, `r` the elements
-`> x`, and `b` says whether `x` was present (book §10.2). The recursive
-result is bound once with `let`, so the work is linear in the height
-(calling it separately for each projection would be exponential). -/
+/-- `split x t = (l, b, r)`: for a search tree `t` (the `bst t` premise of
+`split_set`), `l` holds the elements `< x`, `r` the elements `> x`, and `b`
+says whether `x` was present (book §10.2). The recursive result is bound
+once with `let`, so each visited level makes one recursive call and at most
+one `join` (calling it separately for each projection would be
+exponential). `JoinData` bounds no cost of `join`, so this counts calls; it
+is not a bound on the total work. -/
 public def split (x : α) : Tree α β → Tree α β × Bool × Tree α β
   | .Leaf => (Tree.Leaf, false, Tree.Leaf)
   | .Node l (a, _) r =>
@@ -174,12 +177,15 @@ public def inter : Tree α β → Tree α β → Tree α β
       join2 J (inter l₁ s.1) (inter r₁ s.2.2)
 
 /-- `diff` (book Fig. 10.3): divide and conquer on the *second* tree,
-splitting the first at each pivot. Defined by recursion on the second
-argument, so `diff t₁ Leaf = t₁` holds definitionally. The `split`
-result is shared with `let`. -/
-public def diff (t₁ : Tree α β) : Tree α β → Tree α β
-  | .Leaf => t₁
-  | .Node l₂ (a, _) r₂ =>
+splitting the first at each pivot. Both base cases of Fig. 10.3 are
+equations, in the book's order: `diff Leaf t₂ = Leaf` comes first, so the
+recursion stops as soon as a split leaves the first tree empty, and then
+`diff t₁ Leaf = t₁`. Structural recursion on the second argument; the
+`split` result is shared with `let`. -/
+public def diff : Tree α β → Tree α β → Tree α β
+  | .Leaf, _ => Tree.Leaf
+  | t₁, .Leaf => t₁
+  | t₁, .Node l₂ (a, _) r₂ =>
     let s := split J a t₁
     join2 J (diff s.1 l₂) (diff s.2.2 r₂)
 
@@ -687,17 +693,27 @@ public theorem union_right_leaf (t : Tree α β) : union J t Tree.Leaf = t := by
   | Leaf => rfl
   | Node l kv r => rfl
 
-/-- Book Fig. 10.3, first base case for `diff`: it is a theorem in Lean
-rather than a definitional equation, because `diff` recurses on its
-second argument. -/
+/-- Book Fig. 10.3, first base case for `diff` (the first equation of its
+definition). -/
 public theorem diff_leaf (t₂ : Tree α β) : diff J Tree.Leaf t₂ = Tree.Leaf := by
-  induction t₂ with
-  | Leaf => rfl
-  | Node l₂ kv r₂ ihl ihr =>
-    obtain ⟨a, b⟩ := kv
-    show join2 J (diff J Tree.Leaf l₂) (diff J Tree.Leaf r₂) = Tree.Leaf
-    rw [ihl, ihr]
+  cases t₂ <;> rfl
+
+/-- Book Fig. 10.3, second base case for `diff`. -/
+private theorem diff_right_leaf (t₁ : Tree α β) : diff J t₁ Tree.Leaf = t₁ := by
+  cases t₁ <;> rfl
+
+/-- The recursive equation of `diff` holds for every first tree: when it is
+empty, both sides are empty. -/
+private theorem diff_node (t₁ l₂ r₂ : Tree α β) (a : α) (b : β) :
+    diff J t₁ (Tree.Node l₂ (a, b) r₂) =
+      join2 J (diff J (split J a t₁).1 l₂) (diff J (split J a t₁).2.2 r₂) := by
+  cases t₁ with
+  | Leaf =>
+    rw [diff_leaf]
+    change Tree.Leaf = join2 J (diff J Tree.Leaf l₂) (diff J Tree.Leaf r₂)
+    rw [diff_leaf, diff_leaf]
     rfl
+  | Node l₁ kv₁ r₁ => rfl
 
 /-- `inter` set property (book §10.2.1). -/
 public theorem inter_set (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ : bst t₂) :
@@ -802,14 +818,15 @@ public theorem inter_inv (t₁ t₂ : Tree α β) (hinv₁ : J.inv t₁) (hinv�
 public theorem diff_set (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ : bst t₂) :
     set_tree (diff J t₁ t₂) = set_tree t₁ \ set_tree t₂ := by
   induction t₂ generalizing t₁ with
-  | Leaf => simp [diff]
+  | Leaf => simp [diff_right_leaf, set_tree]
   | Node l₂ kv r₂ ihl ihr =>
     obtain ⟨a, b⟩ := kv
     have hbst₂' : bst l₂ ∧ bst r₂ ∧ (∀ x ∈ set_tree l₂, x < a) ∧ (∀ y ∈ set_tree r₂, a < y) := hbst₂
     have hsp := split_set J t₁ a hbst₁
     have hspb := split_bst J t₁ a hbst₁
     have hdiff : diff J t₁ (Tree.Node l₂ (a, b) r₂) =
-        join2 J (diff J (split J a t₁).1 l₂) (diff J (split J a t₁).2.2 r₂) := rfl
+        join2 J (diff J (split J a t₁).1 l₂) (diff J (split J a t₁).2.2 r₂) :=
+      diff_node J t₁ l₂ r₂ a b
     rw [hdiff, join2_set, ihl (split J a t₁).1 hspb.1 hbst₂'.1, ihr (split J a t₁).2.2 hspb.2 hbst₂'.2.1,
       hsp.1, hsp.2.1, set_tree_node]
     ext y
@@ -829,14 +846,15 @@ public theorem diff_set (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ :
 public theorem diff_bst (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ : bst t₂) :
     bst (diff J t₁ t₂) := by
   induction t₂ generalizing t₁ with
-  | Leaf => exact hbst₁
+  | Leaf => rw [diff_right_leaf]; exact hbst₁
   | Node l₂ kv r₂ ihl ihr =>
     obtain ⟨a, b⟩ := kv
     have hbst₂' : bst l₂ ∧ bst r₂ ∧ (∀ x ∈ set_tree l₂, x < a) ∧ (∀ y ∈ set_tree r₂, a < y) := hbst₂
     have hsp := split_set J t₁ a hbst₁
     have hspb := split_bst J t₁ a hbst₁
     have hdiff : diff J t₁ (Tree.Node l₂ (a, b) r₂) =
-        join2 J (diff J (split J a t₁).1 l₂) (diff J (split J a t₁).2.2 r₂) := rfl
+        join2 J (diff J (split J a t₁).1 l₂) (diff J (split J a t₁).2.2 r₂) :=
+      diff_node J t₁ l₂ r₂ a b
     rw [hdiff]
     exact join2_bst J (ihl (split J a t₁).1 hspb.1 hbst₂'.1) (ihr (split J a t₁).2.2 hspb.2 hbst₂'.2.1) (by
       intro x hx y hy
@@ -861,13 +879,14 @@ public theorem diff_bst (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ :
 public theorem diff_inv (t₁ t₂ : Tree α β) (hinv₁ : J.inv t₁) (hinv₂ : J.inv t₂) :
     J.inv (diff J t₁ t₂) := by
   induction t₂ generalizing t₁ with
-  | Leaf => exact hinv₁
+  | Leaf => rw [diff_right_leaf]; exact hinv₁
   | Node l₂ kv r₂ ihl ihr =>
     obtain ⟨a, b⟩ := kv
     have hinv₂' : J.inv l₂ ∧ J.inv r₂ := J.inv_node l₂ (a, b) r₂ hinv₂
     have hspi := split_inv J t₁ a hinv₁
     have hdiff : diff J t₁ (Tree.Node l₂ (a, b) r₂) =
-        join2 J (diff J (split J a t₁).1 l₂) (diff J (split J a t₁).2.2 r₂) := rfl
+        join2 J (diff J (split J a t₁).1 l₂) (diff J (split J a t₁).2.2 r₂) :=
+      diff_node J t₁ l₂ r₂ a b
     rw [hdiff]
     exact join2_inv J (ihl (split J a t₁).1 hspi.1 hinv₂'.1) (ihr (split J a t₁).2.2 hspi.2 hinv₂'.2)
 
@@ -985,9 +1004,14 @@ public theorem delete'_inv (x : α) (t : Tree α β) (hinv : J.inv t) :
 `diff` (whose pivot comes from `t₂`, so it is always present), the pivot
 `a` here comes from `t₁` and may or may not be in `t₂`: include it via
 `join` when it is absent (`b = false`), exclude it via `join2` when
-present (`b = true`). -/
+present (`b = true`). The exercise changes only the recursive equation of
+Fig. 10.3, so both base cases stay: `diff1 Leaf t₂ = Leaf` and
+`diff1 t₁ Leaf = t₁` (without the second, `diff1 t Leaf` would rebuild `t`
+with `join`, which need not return `t`: red–black `join` repaints a red
+root). -/
 public def diff1 : Tree α β → Tree α β → Tree α β
   | .Leaf, _ => Tree.Leaf
+  | t₁, .Leaf => t₁
   | .Node l₁ (a, _) r₁, t₂ =>
     let s := split J a t₂
     if s.2.1 then
@@ -995,18 +1019,37 @@ public def diff1 : Tree α β → Tree α β → Tree α β
     else
       J.join (diff1 l₁ s.1) a (diff1 r₁ s.2.2)
 
+/-- Fig. 10.3's second base case, kept by Exercise 10.2's `diff1`. -/
+private theorem diff1_right_leaf (t₁ : Tree α β) : diff1 J t₁ Tree.Leaf = t₁ := by
+  cases t₁ <;> rfl
+
+/-- The recursive equation of `diff1`, for a nonempty second tree. -/
+private theorem diff1_node (l₁ r₁ t₂ : Tree α β) (a : α) (b : β) (h₂ : t₂ ≠ Tree.Leaf) :
+    diff1 J (Tree.Node l₁ (a, b) r₁) t₂ =
+      if (split J a t₂).2.1 then
+        join2 J (diff1 J l₁ (split J a t₂).1) (diff1 J r₁ (split J a t₂).2.2)
+      else J.join (diff1 J l₁ (split J a t₂).1) a (diff1 J r₁ (split J a t₂).2.2) := by
+  cases t₂ with
+  | Leaf => exact absurd rfl h₂
+  | Node l₂ kv₂ r₂ => rfl
+
 public theorem diff1_set (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ : bst t₂) :
     set_tree (diff1 J t₁ t₂) = set_tree t₁ \ set_tree t₂ := by
   induction t₁ generalizing t₂ with
   | Leaf => simp [diff1]
   | Node l₁ kv r₁ ihl ihr =>
     obtain ⟨a, b⟩ := kv
+    by_cases h₂ : t₂ = Tree.Leaf
+    · subst h₂
+      rw [diff1_right_leaf]
+      simp [set_tree]
     have hbst₁' : bst l₁ ∧ bst r₁ ∧ (∀ x ∈ set_tree l₁, x < a) ∧ (∀ y ∈ set_tree r₁, a < y) := hbst₁
     have hsp := split_set J t₂ a hbst₂
     have hspb := split_bst J t₂ a hbst₂
     by_cases hb : (split J a t₂).2.1 = true
     · have ha : a ∈ set_tree t₂ := hsp.2.2.mp hb
-      simp only [diff1, ite_eq_left hb, join2_set, ihl (split J a t₂).1 hbst₁'.1 hspb.1,
+      rw [diff1_node J l₁ r₁ t₂ a b h₂]
+      simp only [ite_eq_left hb, join2_set, ihl (split J a t₂).1 hbst₁'.1 hspb.1,
         ihr (split J a t₂).2.2 hbst₁'.2.1 hspb.2, hsp.1, hsp.2.1, set_tree_node]
       ext y
       rcases lt_trichotomy y a with hlt | heq | hgt
@@ -1026,7 +1069,8 @@ public theorem diff1_set (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ 
     · have hna2 : a ∉ set_tree t₂ := by
         intro ha
         exact hb (hsp.2.2.mpr ha)
-      simp only [diff1, ite_eq_right hb, J.set_join, ihl (split J a t₂).1 hbst₁'.1 hspb.1,
+      rw [diff1_node J l₁ r₁ t₂ a b h₂]
+      simp only [ite_eq_right hb, J.set_join, ihl (split J a t₂).1 hbst₁'.1 hspb.1,
         ihr (split J a t₂).2.2 hbst₁'.2.1 hspb.2, hsp.1, hsp.2.1, set_tree_node]
       ext y
       rcases lt_trichotomy y a with hlt | heq | hgt
@@ -1050,10 +1094,15 @@ public theorem diff1_bst (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ 
   | Leaf => exact trivial
   | Node l₁ kv r₁ ihl ihr =>
     obtain ⟨a, b⟩ := kv
+    by_cases h₂ : t₂ = Tree.Leaf
+    · subst h₂
+      rw [diff1_right_leaf]
+      exact hbst₁
     have hbst₁' : bst l₁ ∧ bst r₁ ∧ (∀ x ∈ set_tree l₁, x < a) ∧ (∀ y ∈ set_tree r₁, a < y) := hbst₁
     have hspb := split_bst J t₂ a hbst₂
     by_cases hb : (split J a t₂).2.1 = true
-    · simp only [diff1, ite_eq_left hb]
+    · rw [diff1_node J l₁ r₁ t₂ a b h₂]
+      simp only [ite_eq_left hb]
       exact join2_bst J (ihl (split J a t₂).1 hbst₁'.1 hspb.1) (ihr (split J a t₂).2.2 hbst₁'.2.1 hspb.2) (by
         intro x hx y hy
         have hs₁ := diff1_set J l₁ (split J a t₂).1 hbst₁'.1 hspb.1
@@ -1062,7 +1111,8 @@ public theorem diff1_bst (t₁ t₂ : Tree α β) (hbst₁ : bst t₁) (hbst₂ 
         rw [hs₂] at hy
         simp only [Set.mem_sdiff] at hx hy
         exact lt_trans (hbst₁'.2.2.1 x hx.1) (hbst₁'.2.2.2 y hy.1))
-    · simp only [diff1, ite_eq_right hb]
+    · rw [diff1_node J l₁ r₁ t₂ a b h₂]
+      simp only [ite_eq_right hb]
       exact J.bst_join (diff1 J l₁ (split J a t₂).1) a b (diff1 J r₁ (split J a t₂).2.2)
         ⟨ihl (split J a t₂).1 hbst₁'.1 hspb.1, ihr (split J a t₂).2.2 hbst₁'.2.1 hspb.2, by
           intro x hx
@@ -1083,13 +1133,19 @@ public theorem diff1_inv (t₁ t₂ : Tree α β) (hinv₁ : J.inv t₁) (hinv�
   | Leaf => exact J.inv_leaf
   | Node l₁ kv r₁ ihl ihr =>
     obtain ⟨a, b⟩ := kv
+    by_cases h₂ : t₂ = Tree.Leaf
+    · subst h₂
+      rw [diff1_right_leaf]
+      exact hinv₁
     have hinv₁' : J.inv l₁ ∧ J.inv r₁ := J.inv_node l₁ (a, b) r₁ hinv₁
     have hspi := split_inv J t₂ a hinv₂
     by_cases hb : (split J a t₂).2.1 = true
-    · simp only [diff1, ite_eq_left hb]
+    · rw [diff1_node J l₁ r₁ t₂ a b h₂]
+      simp only [ite_eq_left hb]
       exact join2_inv J (ihl (split J a t₂).1 hinv₁'.1 hspi.1)
         (ihr (split J a t₂).2.2 hinv₁'.2 hspi.2)
-    · simp only [diff1, ite_eq_right hb]
+    · rw [diff1_node J l₁ r₁ t₂ a b h₂]
+      simp only [ite_eq_right hb]
       exact J.inv_join _ _ _ (ihl (split J a t₂).1 hinv₁'.1 hspi.1)
         (ihr (split J a t₂).2.2 hinv₁'.2 hspi.2)
 

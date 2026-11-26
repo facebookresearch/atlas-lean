@@ -472,7 +472,7 @@ public theorem sinvc2_of_sinvc (t : Tree α (Color × ℕ)) (h : sinvc t) : sinv
   | Node l kv r => exact ⟨h.2.1, h.2.2⟩
 
 /-- `joinL` for stored black heights (`StronglyJoinableRBT.joinL`): descend
-the right spine of `r` while `sbh r > sbh l`, rebalancing with `sbaliL`
+the left spine of `r` while `sbh r > sbh l`, rebalancing with `sbaliL`
 at black nodes and `sR` at red nodes. -/
 public def sjoinL : Tree α (Color × ℕ) → α → Tree α (Color × ℕ) → Tree α (Color × ℕ)
   | l, x, r =>

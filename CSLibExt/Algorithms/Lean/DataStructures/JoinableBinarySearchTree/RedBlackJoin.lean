@@ -27,9 +27,9 @@ proved.
 
 ## Provenance
 
-`Set2_Join_RBT.thy` (the `Set2_Join` interpretation for red–black trees,
-copied there from Isabelle/HOL's bundled `HOL-Data_Structures` library),
-with `baliL` / `baliR` from book Chapter 8. The equal-height case
+`Set2_Join_RBT.thy` in Isabelle/HOL's bundled `HOL-Data_Structures`
+library (the `Set2_Join` interpretation for red–black trees), with
+`baliL` / `baliR` from book Chapter 8. The equal-height case
 repaints the root black (`paint Black`); this is the book's Figure 10.4
 version, not the stored-black-height variant in
 `StronglyJoinableRBT.thy` (see `StronglyJoinableRBT`).
@@ -49,9 +49,8 @@ variable {α : Type u} [LinearOrder α]
 /-! ### §10.3 — Joining red–black trees
 
 Red–black trees are `Tree α Color` (`β = Color`). The `join` here is
-the book's Fig. 10.4 version as in `Set2_Join_RBT.thy` (see
-`../isabelle/thys/Verified_SAT_Based_AI_Planning/Set2_Join_RBT.thy`):
-it recomputes `bheight` on every step. The invariant used for Fig. 10.2
+the book's Fig. 10.4 version as in `Set2_Join_RBT.thy` (Isabelle/HOL,
+`HOL-Data_Structures`): it recomputes `bheight` on every step. The invariant used for Fig. 10.2
 is `inv t = invc t ∧ invh t`; `rbt` itself does *not* satisfy (10.4),
 which is why the weaker invariant is used (book §10.3.1). -/
 
@@ -1647,7 +1646,7 @@ public theorem bheight_joinR (l : Tree α Color) (x : α) (r : Tree α Color)
     (hinvh_l : invh l) (hinvh_r : invh r) (hbh : bheight r ≤ bheight l) :
     bheight (joinR l x r) = bheight l := (invh_bheight_joinR l x r hinvh_l hinvh_r hbh).2
 
-/-- Root color of `joinL` (Isabelle `col_joinL`, stored-height variant). -/
+/-- Root color of `joinL` (Isabelle `col_joinL`). -/
 public theorem col_joinL (l : Tree α Color) (x : α) (r : Tree α Color)
     (hlt : bheight l < bheight r) (hcol : col r = .Red) :
     col (joinL l x r) = .Red := by
@@ -1666,7 +1665,7 @@ public theorem col_joinL (l : Tree α Color) (x : α) (r : Tree α Color)
         simp only [reduceCtorEq, ite_false]
         exact col_RNode _ _ _
 
-/-- Root color of `joinR` (Isabelle `col_joinR`, stored-height variant). -/
+/-- Root color of `joinR` (Isabelle `col_joinR`). -/
 public theorem col_joinR (l : Tree α Color) (x : α) (r : Tree α Color)
     (hlt : bheight r < bheight l) (hcol : col l = .Red) :
     col (joinR l x r) = .Red := by

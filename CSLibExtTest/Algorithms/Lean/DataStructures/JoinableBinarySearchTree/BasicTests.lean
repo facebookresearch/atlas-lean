@@ -72,6 +72,15 @@ example : keys (insert' naiveJoinData 0 t1) = [0, 1, 3] := by decide
 example : keys (delete' naiveJoinData 3 t1) = [1] := by decide
 example : keys (join2 naiveJoinData Tree.Leaf t1) = [1, 3] := by decide
 
+-- Fig. 10.3's base cases are equations of `diff` and `diff1`, checked on the
+-- trees themselves: an empty first tree stops `diff` at once, and an empty
+-- second tree leaves the first unchanged.
+example : diff naiveJoinData Tree.Leaf (Tree.Node Tree.Leaf (0, ()) Tree.Leaf) =
+    Tree.Leaf := rfl
+example : diff naiveJoinData Tree.Leaf t2 = Tree.Leaf := rfl
+example : diff naiveJoinData t1 Tree.Leaf = t1 := rfl
+example : diff1 naiveJoinData t1 Tree.Leaf = t1 := rfl
+
 -- The `set` theorems hold on concrete trees.
 example : set_tree (union naiveJoinData t1 t2) = set_tree t1 ∪ set_tree t2 :=
   union_set naiveJoinData t1 t2 bst_t2
