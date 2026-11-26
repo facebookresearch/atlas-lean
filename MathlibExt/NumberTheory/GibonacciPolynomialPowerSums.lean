@@ -12,9 +12,13 @@ public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Tactic.LinearCombination
+import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 
 /-!
-# Telescoping inverse powers of gibonacci polynomials
+# Identities and inverse power sums for gibonacci polynomials
+
+The Fibonacci and Lucas polynomials satisfy Catalan-type identities.
 
 For the Fibonacci and Lucas polynomials at a positive real argument, the series of differences
 of reciprocal powers sums to its initial block for odd indices with an odd shift and for even
@@ -27,6 +31,60 @@ open Polynomial
 
 local notation "𝔣" => generalizedFibonacciPolynomial 0 1 X 1
 local notation "𝔩" => generalizedFibonacciPolynomial 2 X X 1
+
+-- Apply Horadam's identity first at the initial pair and then at the lower index n - k.
+private theorem gibonacciPoly_catalan (a b : ℤ[X]) {n k : ℕ} (hk : k ≤ n) :
+    generalizedFibonacciPolynomial a b X 1 (n + k) *
+        generalizedFibonacciPolynomial a b X 1 (n - k) -
+        generalizedFibonacciPolynomial a b X 1 n ^ 2 =
+      (-1) ^ (n + k) * (a ^ 2 + X * a * b - b ^ 2) * 𝔣 k ^ 2 := by
+  let g := generalizedFibonacciPolynomial a b X 1
+  change g (n + k) * g (n - k) - g n ^ 2 = _
+  have hrec : ∀ j, g (j + 2) = X * g (j + 1) + 1 * g j :=
+    generalizedFibonacciPolynomial_add_two a b X 1
+  have catalan := horadam_generalized_catalan_identity X 1 g g 𝔣 hrec hrec
+    (generalizedFibonacciPolynomial_add_two 0 1 X 1)
+    (generalizedFibonacciPolynomial_zero 0 1 X 1) (generalizedFibonacciPolynomial_one 0 1 X 1)
+  have hbase : g 1 * g k - g 0 * g (k + 1) = -(a ^ 2 + X * a * b - b ^ 2) * 𝔣 k := by
+    have h := catalan 0 k 1
+    simp only [Nat.zero_add, pow_zero, one_mul] at h
+    rw [mul_comm (g 1) (g k), h]
+    change (b * b - a * g 2) * 𝔣 k = _
+    rw [hrec 0]
+    change (b * b - a * (X * b + 1 * a)) * 𝔣 k = _
+    ring
+  have h := catalan (n - k) k k
+  rw [Nat.sub_add_cancel hk, hbase] at h
+  have hsign : (-1 : ℤ[X]) ^ (n + k) = (-1 : ℤ[X]) ^ (n - k) := by
+    have hindex : n + k = (n - k) + 2 * k := by omega
+    rw [hindex, pow_add, pow_mul, neg_one_sq, one_pow, mul_one]
+  rw [hsign]
+  linear_combination -h
+
+/-- **Catalan-type identities for Fibonacci and Lucas polynomials.** Let $f_i$ and $\ell_i$ be
+the Fibonacci and Lucas polynomials in $\mathbb{Z}[x]$, defined by $f_0 = 0$, $f_1 = 1$,
+$\ell_0 = 2$, $\ell_1 = x$ and $g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For all natural
+numbers $k \le n$,
+$$
+f_{n+k} f_{n-k} - f_n^2 = (-1)^{n+k+1} f_k^2
+\quad\text{and}\quad
+\ell_{n+k} \ell_{n-k} - \ell_n^2 = (-1)^{n+k} (x^2 + 4) f_k^2
+$$
+in $\mathbb{Z}[x]$.
+
+The source quotes this lemma from Koshy.
+
+Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
+The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
+Lemma 2.1 (`fq-2024-linzhou02172024-lem-2.1`). -/
+public theorem gibonacciPoly_mul_sub_sq {n k : ℕ} (hk : k ≤ n) :
+    𝔣 (n + k) * 𝔣 (n - k) - 𝔣 n ^ 2 = (-1) ^ (n + k + 1) * 𝔣 k ^ 2 ∧
+      𝔩 (n + k) * 𝔩 (n - k) - 𝔩 n ^ 2 = (-1) ^ (n + k) * (X ^ 2 + 4) * 𝔣 k ^ 2 := by
+  constructor
+  · rw [gibonacciPoly_catalan 0 1 hk, pow_succ (-1 : ℤ[X]) (n + k)]
+    ring
+  · rw [gibonacciPoly_catalan 2 X hk]
+    ring
 
 namespace tsum_inv_pow_gibonacciPoly_sub_odd
 
