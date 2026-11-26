@@ -6,13 +6,17 @@ $$\frac{A^k v_0}{\lambda_1^k} \to P_1 v_0 \quad (k \to \infty), \qquad \text{hen
 
 The convergence is linear, with the ratio $|\lambda_2|/|\lambda_1|$ of the second largest to the largest eigenvalue modulus governing the rate. For a real symmetric matrix, with an orthonormal eigenbasis, the rate is [Power iteration converges linearly (unnormalized form)](../../../LinearAlgebra/eigenvalues-and-canonical-forms/power-iteration-and-the-rayleigh-quotient/norm-smul-pow-apply-sub-le.md), and the normalized iterates converge up to sign by [Power iteration converges to the dominant eigenvector up to sign](../../../LinearAlgebra/eigenvalues-and-canonical-forms/power-iteration-and-the-rayleigh-quotient/exists-sign-norm-normalize-sub-le.md).
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds pages for:
+- [Spectral projectors of a square matrix](spectral-projectors.md)
 
-- Statement prerequisite: the spectral projectors $P_i$ of a square matrix onto its generalized eigenspaces, with $\sum_i P_i = I$ and $A P_i = P_i(\lambda_i P_i + D_i)$, $D_i$ nilpotent.
-- The convergence of the normalized iterates $v_k = A v_{k-1}/\alpha_k$ of the cited Algorithm 4.1, where $\alpha_k$ is a component of $A v_{k-1}$ of largest modulus. The cited theorem asserts that $v_k$ converges to an eigenvector and $\alpha_k \to \lambda_1$; that form needs a rule for choosing among components of equal modulus, since for a limit direction such as $(1, -1)$ the choice can alternate between the two components and $v_k$ then alternates in sign. The expansion should state that form with an explicit tie-breaking hypothesis.
-- The rate in the non-normal case: $\|A^k v_0/\lambda_1^k - P_1 v_0\| = O(k^{m} (|\lambda_2|/|\lambda_1|)^k)$, where $m$ is one less than the largest size of a Jordan block of an eigenvalue of modulus $|\lambda_2|$; the symmetric case is already stated in the power iteration pages linked above.
+## Proof depends on
+
+- [Rate of convergence of the power iterates](power-iterates-converge-at-the-rate-of-the-subdominant-eigenvalues.md)
+
+## Related topics
+
+- [Convergence of the power method with max-component normalization](normalized-power-method-converges.md): the normalized iteration of the cited algorithm.
 
 ## Sources
 

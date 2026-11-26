@@ -11,7 +11,12 @@ A linear $k$-step method $\sum_{j=0}^{k} \alpha_j y_{n+j} = h \sum_{j=0}^{k} \be
 - [Order of accuracy and error constants of a linear multistep method](order-of-accuracy-and-error-constants.md)
 - [Order conditions for linear multistep methods](order-conditions.md)
 - [Consistency conditions for linear multistep methods](consistency-conditions.md)
+- [Order of a linear multistep method from the function ρ(z)/log z − σ(z)](order-via-the-logarithmic-function.md)
 - [Maximal order for a given first characteristic polynomial](maximal-order-for-a-given-first-characteristic-polynomial.md)
+
+## Adams methods
+
+- [Adams methods](adams-methods/README.md)
 
 ## Zero-stability and convergence
 
@@ -27,9 +32,10 @@ A linear $k$-step method $\sum_{j=0}^{k} \alpha_j y_{n+j} = h \sum_{j=0}^{k} \be
 - [Dahlquist equivalence theorem](dahlquist-equivalence-theorem.md)
 - [First Dahlquist barrier](first-dahlquist-barrier.md)
 
-## Absolute stability and A-stability
+## Stability for stiff and nonlinear problems
 
 - [Absolute stability and A-stability](absolute-stability-and-a-stability/README.md)
+- [Nonlinear stability of multistep methods](nonlinear-stability/README.md)
 
 ## Related topics
 

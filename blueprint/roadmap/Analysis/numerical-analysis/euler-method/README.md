@@ -5,6 +5,8 @@
 - [Local truncation error of the explicit Euler method](explicit-euler-local-truncation-error.md)
 - [Global error of a one-step method from its local defect](global-error-of-a-one-step-method-from-its-local-defect.md)
 - [Explicit Euler steps can destabilize a stable linear equation](explicit-euler-steps-can-destabilize-a-stable-linear-equation.md)
+- [The θ-method](theta-method.md)
+- [Global error bound for the θ-method](global-error-bound-for-the-theta-method.md)
 
 ## Related topics
 

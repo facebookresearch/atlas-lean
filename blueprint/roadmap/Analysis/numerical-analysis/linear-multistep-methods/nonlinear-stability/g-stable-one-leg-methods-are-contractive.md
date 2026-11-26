@@ -1,0 +1,16 @@
+# G-stable one-leg methods are contractive for dissipative systems
+
+Let the autonomous system $y' = f(y)$ be [dissipative](dissipative-system.md), and let the one-leg method $\rho(E) y_n = h f(\sigma(E) y_n)$ be [G-stable](g-stability.md) with matrix $G$. If $(u_n)$ and $(v_n)$ are two solutions of the method, with blocks $U_n = (u_{n+k-1}^T, \dots, u_n^T)^T$ and $V_n$ likewise, then
+
+$$\|U_{n+1} - V_{n+1}\|_G \le \|U_n - V_n\|_G \qquad \text{for all } n \ge 0,$$
+
+the discrete counterpart of [contractivity of the exact solutions](dissipative-systems-have-contractive-solutions.md). The proof applies the G-stability inequality to $z_n = u_n - v_n$ and uses $\rho(E)(u_n - v_n) = h f(\sigma(E) u_n) - h f(\sigma(E) v_n)$ with dissipativity.
+
+## Depends on
+
+- [G-stability](g-stability.md)
+- [Dissipative system](dissipative-system.md)
+
+## Sources
+
+- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 5, the computation after Definition 17 ending in $\|U_{n+1} - V_{n+1}\|_G^2 \le \|U_n - V_n\|_G^2$. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

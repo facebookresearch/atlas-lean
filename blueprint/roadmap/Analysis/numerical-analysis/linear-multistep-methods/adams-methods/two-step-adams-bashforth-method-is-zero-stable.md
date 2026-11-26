@@ -1,0 +1,16 @@
+# The two-step Adams–Bashforth method is zero-stable
+
+The first characteristic polynomial $\rho(z) = z^2 - z = z(z - 1)$ of the two-step [Adams–Bashforth method](adams-methods.md) has the simple roots $1$ and $0$, so it satisfies the [root condition](../root-condition.md) and the method is [zero-stable](../zero-stability.md). Being also consistent, it is convergent by the [Dahlquist equivalence theorem](../dahlquist-equivalence-theorem.md).
+
+## Depends on
+
+- [Adams methods](adams-methods.md)
+- [Zero-stability](../zero-stability.md)
+
+## Proof depends on
+
+- [Zero-stability and the root condition](../zero-stability-iff-root-condition.md)
+
+## Sources
+
+- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.2, Theorem 6 (zero-stability and the root condition) and Example 4(b) (Adams methods are zero-stable because their first characteristic polynomial has roots $1$ and $0$). <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

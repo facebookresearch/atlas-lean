@@ -4,7 +4,8 @@ This node collects the enclosure property of natural interval extensions and its
 
 ## Expansion
 
-A sound expansion has separate pages for:
+Items 1–3 below are pages in [Interval arithmetic](interval-arithmetic/README.md): [enclosure](interval-arithmetic/interval-evaluation-encloses-the-range.md), [single occurrences](interval-arithmetic/interval-evaluation-is-exact-for-single-occurrences.md) and the [dependency effect](interval-arithmetic/dependency-effect-of-interval-evaluation.md). A good expansion adds a page for item 4, the width laws, with a source that states them.
+
 
 1. **Enclosure.** Intervals are nonempty, closed and bounded, $[a,b]$ with real $a \le b$. For an
    arithmetic expression $e$ in variables $x_1, \dots, x_n$, each of which may occur several times, built
