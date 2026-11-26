@@ -1,0 +1,15 @@
+# The pre-Tomita involution on the finite star GNS domain
+
+- [GNS map of the finite star algebra](finite-star-square-gnsmap.md)
+- [GNS value of a finite star element](finite-star-square-gnsmap-apply.md)
+- [Faithful GNS map on the finite star algebra](finite-star-square-gnsmap-injective.md)
+- [GNS image of the finite star algebra](tomita-core.md)
+- [Membership in the pre-Tomita domain](mem-tomita-core.md)
+- [Linear identification of the finite star GNS image](tomita-core-equiv.md)
+- [Hilbert value of the finite star image equivalence](tomita-core-equiv-apply.md)
+- [Conjugate-linear involution of the GNS core](pre-tomita-core.md)
+- [Pre-Tomita involution on a finite star vector](pre-tomita-core-apply.md)
+- [Square of the pre-Tomita involution](pre-tomita-core-involutive.md)
+- [Semilinear pre-Tomita operator into the Hilbert space](pre-tomita-operator.md)
+- [Pre-Tomita operator on a finite star element](pre-tomita-operator-apply.md)
+- [Injectivity of the pre-Tomita operator](pre-tomita-operator-injective.md)

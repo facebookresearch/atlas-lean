@@ -1,4 +1,4 @@
-# Adjointable
+# Adjoint pairs on right scalar modules
 
 ## CStar Module
 
@@ -34,3 +34,8 @@
 - [Norm adjoint comp self](norm-adjoint-comp-self.md)
 - [Map right smul](map-right-smul.md)
 - [End](end.md)
+
+## Adjoint pairs on complex inner-product spaces
+
+- [Transport of a bounded complex-linear map](continuous-linear-map.md)
+- [Adjointable operator from an adjoint pair](of-ordinary-adjoint-pair.md)

@@ -1,0 +1,17 @@
+# Tail restriction ideals and their quotient algebras
+
+- [Closed tail of the asymptotic time ray](tail-time.md)
+- [Continuous inclusion of a closed time tail](tail-inclusion.md)
+- [Continuous clamping to a closed time tail](tail-clamp.md)
+- [Clamping is the identity on the tail](tail-clamp-inclusion.md)
+- [Restriction homomorphism to the time tail](tail-restriction.md)
+- [Clamp extension of a bounded tail function](tail-extension.md)
+- [Tail restriction after clamp extension](tail-restriction-extension.md)
+- [Ideal of functions vanishing on a time tail](tail-ideal.md)
+- [Membership in the tail-vanishing ideal](mem-tail-ideal-iff.md)
+- [Monotonicity of tail-vanishing ideals](tail-ideal-monotone.md)
+- [Tail-vanishing functions vanish at infinity](tail-ideal-le-vanishing-ideal.md)
+- [Tail restriction quotient is the tail function algebra](tail-quotient-equiv.md)
+- [Tail quotient equivalence on a function class](tail-quotient-equiv-quotient-map.md)
+- [Map from a tail quotient to the asymptotic algebra](tail-to-asymptotic.md)
+- [Transition between tail quotient algebras](tail-transition.md)

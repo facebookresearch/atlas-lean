@@ -1,4 +1,4 @@
-# Right
+# Commuting factors on internal tensor presentations
 
 - [Right Inner](right-inner.md)
 - [Right Inner right smul](right-inner-right-smul.md)
@@ -22,3 +22,8 @@
 ## The coefficient algebra as a right module over itself
 
 - [Self Module](self-module.md)
+
+## Commuting right-factor operators on internal tensor products
+
+- [Right factor on a complete tensor presentation](map-right-operator.md)
+- [Right factor on pure presentation vectors](map-right-operator-pure.md)

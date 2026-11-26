@@ -1,0 +1,15 @@
+# Finite coordinate submodules of standard modules
+
+- [Adjointable finite coordinate inclusion](finite-inclusion.md)
+- [Forward map of finite coordinate inclusion](finite-inclusion-to-continuous-linear-ma.md)
+- [Adjoint of finite coordinate inclusion](finite-inclusion-adjoint.md)
+- [Vector formula for finite coordinate inclusion](finite-inclusion-apply.md)
+- [Coordinates of the finite inclusion adjoint](finite-inclusion-adjoint-apply.md)
+- [Recovery of an included coefficient](coord-finite-inclusion.md)
+- [Restriction after finite inclusion](finite-inclusion-adjoint-comp-self.md)
+- [Projection onto the finite coordinate image](finite-inclusion-comp-adjoint-to-continu.md)
+- [Inner product under finite coordinate inclusion](right-inner-finite-inclusion.md)
+- [Norm preservation of finite inclusion](norm-finite-inclusion-apply.md)
+- [Isometric finite coordinate inclusion](finite-inclusion-isometry.md)
+- [Operator norm bound for finite inclusion](norm-finite-inclusion-le.md)
+- [Operator norm bound for finite restriction](norm-finite-inclusion-adjoint-operator-l.md)

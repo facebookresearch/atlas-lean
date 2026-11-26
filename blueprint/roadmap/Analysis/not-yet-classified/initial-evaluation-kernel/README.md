@@ -1,0 +1,57 @@
+# Initial-evaluation kernel of a full-time pullback
+
+## Time coordinates of asymptotic paths
+
+- [Translation of asymptotic time to the nonnegative half-line](time-homeomorph-nnreal.md)
+- [Real value of the translated time coordinate](time-homeomorph-nnreal-apply.md)
+- [Real value of the inverse time translation](time-homeomorph-nnreal-symm-apply.md)
+- [The initial time translates to zero](time-homeomorph-nnreal-one.md)
+- [Zero translates back to the initial time](time-homeomorph-nnreal-symm-zero.md)
+- [Positivity of the translated interior time](time-homeomorph-nnreal-pos.md)
+- [Reciprocal homeomorphism of positive coordinates](positive-nnreal-reciprocal-homeomorph.md)
+- [Value of the positive reciprocal coordinate](positive-nnreal-reciprocal-homeomorph-ap.md)
+- [Value of the inverse reciprocal coordinate](positive-nnreal-reciprocal-homeomorph-sy.md)
+- [Reciprocal coordinate of an interior asymptotic time](positive-nnreal-reciprocal-homeomorph-ti.md)
+
+## Cones and suspensions of C-star algebras
+
+- [Cone transported to the asymptotic time ray](cone-time-equiv.md)
+- [Value of the translated cone function](cone-time-equiv-apply.md)
+- [Inverse cone transport value](cone-time-equiv-symm-apply.md)
+- [Endpoint preserved by cone translation](cone-time-equiv-one.md)
+- [Equivalence of the cone endpoint and initial-time kernels](cone-point-kernel-equiv.md)
+- [Value of a translated cone-kernel function](cone-point-kernel-equiv-apply.md)
+- [Inverse value of a translated cone-kernel function](cone-point-kernel-equiv-symm-apply.md)
+- [Open-interval suspension as the initial-time vanishing ideal](open-interval-kernel-equiv.md)
+- [Reciprocal suspension function vanishes at the initial time](open-interval-kernel-equiv-one.md)
+- [Interior value of the reciprocal suspension function](open-interval-kernel-equiv-apply-of-one.md)
+- [Inverse value of the reciprocal suspension function](open-interval-kernel-equiv-symm-apply.md)
+
+## The closed ideal of paths vanishing at the initial time
+
+- [Closed initial-evaluation ideal](initial-evaluation-ideal.md)
+- [Membership in the initial-evaluation ideal](mem-initial-evaluation-ideal.md)
+- [Carrier of the initial-evaluation kernel](initial-evaluation-kernel.md)
+- [Coefficient projection restricted to the initial kernel](initial-projection.md)
+- [Value of the restricted coefficient projection](initial-projection-apply.md)
+- [Initial-time-zero set section of the coefficient projection](initial-set-section.md)
+- [Ambient value of the initial-time-zero section](initial-set-section-val.md)
+- [Initial evaluation of the corrected section](evaluation-initial-set-section.md)
+- [Coefficient of the corrected initial section](initial-projection-initial-set-section.md)
+- [Surjectivity of the initial-kernel coefficient projection](initial-projection-surjective.md)
+- [Inclusion of initial-time-zero vanishing functions](actual-kernel-inclusion.md)
+- [Ambient value of the initial-time-zero kernel inclusion](actual-kernel-inclusion-val.md)
+- [Coefficient projection kills the initial-time-zero kernel](initial-projection-actual-kernel-inclusi.md)
+- [Injectivity of the initial-time-zero kernel inclusion](actual-kernel-inclusion-injective.md)
+- [Exact initial-kernel sequence with the vanishing ideal](actual-kernel-inclusion-exact.md)
+- [Suspension inclusion into the initial-evaluation kernel](initial-suspension-inclusion.md)
+- [Ambient value of the reciprocal suspension inclusion](initial-suspension-inclusion-val.md)
+- [Initial evaluation of the suspension inclusion](initial-suspension-inclusion-one.md)
+- [Interior evaluation of the suspension inclusion](initial-suspension-inclusion-apply-of-on.md)
+- [Injectivity of the reciprocal suspension inclusion](initial-suspension-inclusion-injective.md)
+- [Coefficient projection kills the suspension inclusion](initial-projection-initial-suspension-in.md)
+- [Exact sequence with the reciprocal suspension kernel](initial-suspension-inclusion-exact.md)
+- [C-star extension defined by initial evaluation](initial-evaluation-extension.md)
+- [Middle algebra of the initial-evaluation extension](initial-evaluation-extension-middle.md)
+- [Inclusion map of the initial-evaluation extension](initial-evaluation-extension-inclusion-a.md)
+- [Quotient map of the initial-evaluation extension](initial-evaluation-extension-quotient-ap.md)

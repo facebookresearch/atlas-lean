@@ -1,0 +1,18 @@
+# Busby invariants and pullback extensions
+
+- [Multiplier action of an extension algebra](multiplier-map.md)
+- [Multiplier action on the included ideal](multiplier-map-inclusion.md)
+- [Multiplier action on an ideal representative](multiplier-map-ideal-equiv-coe.md)
+- [Vanishing on the extension ideal](outer-quotient-multiplier-map-eq-zero.md)
+- [Busby invariant of a C-star extension](busby.md)
+- [Busby formula on quotient representatives](busby-quotient.md)
+- [Busby formula through the quotient identification](busby-quotient-equiv-mk.md)
+- [Characteristic equation of a Busby invariant](is-busby-invariant.md)
+- [Characteristic equation for the extension Busby map](busby-is-busby-invariant.md)
+- [Uniqueness of the Busby invariant](busby-unique.md)
+- [Pullback algebra of a Busby map](busby-pullback.md)
+- [Coefficient inclusion into a Busby pullback](pullback-inclusion.md)
+- [Quotient of the Busby pullback](pullback-quotient.md)
+- [Extension determined by a Busby map](of-busby.md)
+- [Ideal identification in the pullback extension](of-busby-ideal-equiv-coe.md)
+- [Busby invariant of a pullback extension](of-busby-busby.md)

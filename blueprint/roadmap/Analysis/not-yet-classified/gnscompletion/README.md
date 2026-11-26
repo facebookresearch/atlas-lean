@@ -1,0 +1,15 @@
+# Hilbert completion of the weight square domain
+
+- [GNS Hilbert completion of a positive weight](gns.md)
+- [Isometric map from the weight seminormed domain](to-gns.md)
+- [Completion value of a pre-GNS vector](to-gns-apply.md)
+- [Preservation of the pre-GNS seminorm](to-gns-norm.md)
+- [Preservation of the pre-GNS pairing](to-gns-inner.md)
+- [Density of the pre-GNS inclusion](to-gns-dense-range.md)
+- [Faithful weight gives an injective completion inclusion](to-gns-injective.md)
+- [GNS map of finite square elements](gns-map.md)
+- [GNS map through the seminormed type copy](gns-map-apply.md)
+- [Weight square as a GNS norm square](gns-map-norm-sq.md)
+- [Polarized weight pairing on GNS vectors](gns-map-inner.md)
+- [Density of finite square GNS vectors](gns-map-dense-range.md)
+- [Injectivity of the GNS map for a faithful weight](gns-map-injective.md)

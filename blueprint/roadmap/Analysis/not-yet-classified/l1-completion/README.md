@@ -1,0 +1,18 @@
+# The L¹ completion of Haar twisted convolution
+
+- [L¹ seminormed ring of compact coefficients](source-l1-seminormed-ring.md)
+- [Complex normed structure for the L¹ core seminorm](source-l1-normed-space.md)
+- [Isometric modular star for the L¹ core](source-l1-normed-star-group.md)
+- [The completed L¹ twisted convolution algebra](l1-completion.md)
+- [Nonunital normed ring of L¹ completed coefficients](l1-completion-non-unital-normed-ring.md)
+- [Complex normed space of L¹ completed coefficients](l1-completion-normed-space.md)
+- [Star ring structure on the L¹ completion](l1-completion-star-ring.md)
+- [Isometric star on the L¹ completion](l1-completion-normed-star-group.md)
+- [Complex star module of the L¹ completion](l1-completion-star-module.md)
+- [Left scalar compatibility for completed convolution](l1-completion-is-scalar-tower.md)
+- [Right scalar compatibility for completed convolution](l1-completion-smul-comm-class.md)
+- [Completeness of the L¹ convolution norm](l1-completion-complete-space.md)
+- [Dense star homomorphism into the L¹ completion](to-l1-completion.md)
+- [Coefficient class in the L¹ completion](to-l1-completion-apply.md)
+- [Norm of a dense L¹ coefficient class](norm-to-l1-completion.md)
+- [Dense range of the L¹ coefficient map](dense-range-to-l1-completion.md)

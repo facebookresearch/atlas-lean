@@ -1,4 +1,4 @@
-# Functoriality
+# Functoriality of homotopy and tensor-product maps
 
 - [Completed Left Operator one](completed-left-operator-one.md)
 - [Completed Left Operator add](completed-left-operator-add.md)
@@ -8,3 +8,17 @@
 - [Completed Left Star Alg Hom](completed-left-star-alg-hom.md)
 - [Completed Left Star Alg Hom apply](completed-left-star-alg-hom-apply.md)
 - [Completed Left Star Alg Hom pure](completed-left-star-alg-hom-pure.md)
+- [Setoid of point-norm homomorphism homotopy](homotopy-setoid.md)
+- [Ordinary star-homomorphism homotopy classes](homotopy-classes.md)
+- [Homotopy class of a star homomorphism](mk-homotopy-class.md)
+- [Precomposition on ordinary homomorphism classes](precomp-class.md)
+- [Postcomposition on ordinary homomorphism classes](postcomp-class.md)
+- [Fixed-homomorphism precomposition of an asymptotic family](precomp.md)
+- [Precomposition of a whole asymptotic homotopy](precomp-2.md)
+- [Postcomposition of a whole asymptotic homotopy](postcomp.md)
+- [A point-norm homotopy gives a constant-time asymptotic homotopy](homotopic-of-hom.md)
+- [Precomposition on asymptotic homotopy classes](precomp-class-2.md)
+- [Postcomposition on asymptotic homotopy classes](postcomp-class-2.md)
+- [Map from ordinary to asymptotic homotopy classes](of-hom-class.md)
+- [Identity coefficient-changing tensor equivalence](completed-semilinear-equiv-refl.md)
+- [Composition of compatible tensor equivalences](completed-semilinear-equiv-trans.md)

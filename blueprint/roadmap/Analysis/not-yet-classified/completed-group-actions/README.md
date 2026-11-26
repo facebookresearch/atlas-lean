@@ -1,0 +1,15 @@
+# Group translations on a C-star seminorm completion
+
+- [Completed left group translation](group-left-completion.md)
+- [Completed modular right group translation](group-right-completion.md)
+- [Left group translation on a dense coefficient class](group-left-completion-apply.md)
+- [Right group translation on a dense coefficient class](group-right-completion-apply.md)
+- [Isometry of the completed left translation](norm-group-left-completion-apply.md)
+- [Isometry of the completed right translation](norm-group-right-completion-apply.md)
+- [Identity in the completed left group action](group-left-completion-one.md)
+- [Identity in the completed right group action](group-right-completion-one.md)
+- [Composition of completed left translations](group-left-completion-mul.md)
+- [Reversed composition of completed right translations](group-right-completion-mul.md)
+- [Star exchanges left translation with inverse right translation](star-group-left-completion.md)
+- [Star exchanges right translation with inverse left translation](star-group-right-completion.md)
+- [Centralizer compatibility of completed group translations](group-completion-central.md)

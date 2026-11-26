@@ -1,0 +1,15 @@
+# Haar regular covariant representation from a coefficient representation
+
+- [Inverse-action coefficient operator field](regular-coefficient-field.md)
+- [Joint vector continuity of the regular coefficient field](continuous-regular-coefficient-field-act.md)
+- [Uniform norm bound for the regular coefficient field](norm-regular-coefficient-field-le.md)
+- [Pointwise regular coefficient operator on L²](regular-coefficient-operator.md)
+- [Almost-everywhere formula for the regular coefficient operator](regular-coefficient-operator-ae-eq.md)
+- [L² norm bound for regular coefficient multiplication](norm-regular-coefficient-operator-apply.md)
+- [Additivity of regular coefficient operators](regular-coefficient-operator-add.md)
+- [Complex scaling of regular coefficient operators](regular-coefficient-operator-smul.md)
+- [Multiplication of regular coefficient operators](regular-coefficient-operator-mul.md)
+- [Adjoint of a regular coefficient operator](regular-coefficient-operator-star.md)
+- [Regular coefficient star homomorphism](regular-coefficient-hom.md)
+- [Covariance of Haar regular coefficient and group operators](regular-coefficient-operator-covariance.md)
+- [Haar regular covariant pair](regular-covariant-representation.md)

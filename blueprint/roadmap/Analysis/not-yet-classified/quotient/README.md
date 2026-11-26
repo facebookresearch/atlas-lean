@@ -1,4 +1,4 @@
-# Quotient
+# Multipliers on a closed-ideal quotient
 
 - [Quotient of a C*-ideal pair](quotient-object.md)
 - [Induced homomorphism of pair quotients](quotient-map.md)
@@ -10,3 +10,21 @@
 - [Continuous linear projection to a nonunital quotient](mk-cl.md)
 - [Norm bound for a nonunital quotient class](norm-mk-le.md)
 - [Submultiplicative nonunital quotient seminorm](norm-mul-le.md)
+- [Quotient Object](quotient-object.md)
+- [Quotient Map](quotient-map.md)
+- [Quotient Functor](quotient-functor.md)
+- [Quotient Nat](quotient-nat.md)
+- [Quotient Image](quotient-image.md)
+- [Quotient Image Map](quotient-image-map.md)
+- [Ideals Orthogonal](ideals-orthogonal.md)
+- [Mk CL](mk-cl.md)
+- [Norm mk le](norm-mk-le.md)
+- [Norm mul le](norm-mul-le.md)
+- [Left centralizer on the quotient](quotient-fst.md)
+- [Right centralizer on the quotient](quotient-snd.md)
+- [Left quotient action on a representative](quotient-fst-mk.md)
+- [Right quotient action on a representative](quotient-snd-mk.md)
+- [Multiplier induced on a coefficient quotient](quotient-multiplier.md)
+- [Left component of a quotient multiplier](quotient-multiplier-fst-quotient-map.md)
+- [Right component of a quotient multiplier](quotient-multiplier-snd-quotient-map.md)
+- [Star homomorphism of quotient multipliers](quotient-multiplier-hom.md)

@@ -1,0 +1,15 @@
+# Algebra structure on the finite star GNS image
+
+- [Product of finite star GNS vectors](tomita-core-product.md)
+- [Algebra preimage of the GNS core product](tomita-core-product-inverse.md)
+- [GNS image of a finite star algebra product](tomita-core-product-original.md)
+- [Nonunital ring on the finite star GNS image](tomita-core-non-unital-ring.md)
+- [Hilbert addition retained by the GNS core ring](tomita-core-non-unital-ring-add-group.md)
+- [Star operation on the finite GNS core](tomita-core-star.md)
+- [Algebra preimage of the pre-Tomita involution](pre-tomita-core-inverse.md)
+- [Star ring laws on the finite GNS core](tomita-core-star-ring.md)
+- [Conjugate scalar compatibility on the GNS core](tomita-core-star-module.md)
+- [Complex scalar in the first core product factor](tomita-core-product-smul-left.md)
+- [Complex scalar in the second core product factor](tomita-core-product-smul-right.md)
+- [Star algebra map onto the finite GNS image](to-tomita-core-star-alg-hom.md)
+- [Inverse star algebra map from the finite GNS image](from-tomita-core-star-alg-hom.md)

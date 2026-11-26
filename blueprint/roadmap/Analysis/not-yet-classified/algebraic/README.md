@@ -1,4 +1,4 @@
-# Algebraic
+# Finite-support direct sums of right modules
 
 - [Algebraic Tensor](algebraic-tensor.md)
 - [Balance Relation](balance-relation.md)
@@ -42,3 +42,21 @@
 - [Radical Model Isometry](radical-model-isometry.md)
 - [Radical Model Isometry apply](radical-model-isometry-apply.md)
 - [Murray-von Neumann equivalence from opposite factorizations](murray-von-neumann-equivalent-of-mul-eq.md)
+- [Algebraic](murray-von-neumann-equivalent-of-mul-eq.md)
+- [Finite-support dependent direct-sum carrier](algebraic.md)
+- [Coordinate representation of the algebraic sum](to-dfinsupp.md)
+- [One-coordinate dependent vector](raw-single.md)
+- [Support of an algebraic direct-sum vector](support.md)
+- [Linear inclusion of one component](single-linear.md)
+- [Induction by adjoining nonzero coordinates](induction.md)
+- [Linear second variable of the direct-sum inner product](algebraic-inner-sl.md)
+- [Finite-sum coefficient inner product](algebraic-inner.md)
+- [Inner product over the second support](algebraic-inner-eq-sum.md)
+- [Conjugate symmetry of the direct-sum inner product](star-algebraic-inner.md)
+- [Componentwise right coefficient map](algebraic-right-smul.md)
+- [Coefficient linearity of the finite-sum inner product](algebraic-inner-right-smul.md)
+- [Inner-product norm on the algebraic sum](algebraic-norm.md)
+- [Pre-Hilbert module structure on the finite-support sum](algebraic-cstar-module.md)
+- [Normed-space laws of the algebraic direct sum](algebraic-normed-space-core.md)
+- [Isometric coordinate inclusion](single.md)
+- [Coordinate ranges span the algebraic sum](span-range-single-eq-top.md)

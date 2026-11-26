@@ -1,0 +1,5 @@
+# Pure tensors from canonical images
+
+For nonunital C-star algebras `B,C` with
+star-compatible opposite orders, a complete right `B`-module `E`, and a complex nonunital star
+homomorphism `f : B → C`, `canonicalMap f x <• c = pure f x c` for all `x : E`, `c : C`.

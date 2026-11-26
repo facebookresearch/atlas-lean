@@ -1,0 +1,7 @@
+# Homotopy through interval-valued asymptotic morphisms
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. For asymptotic star morphisms φ0,φ1:A→B, a homotopy between φ0,φ1 is an
+asymptotic star morphism F:A→C([0,1],B) satisfying F_t(a)(0)=φ0_t(a) and F_t(a)(1)=φ1_t(a);
+its time continuity and defect limits use the supremum norm on C([0,1],B). These families
+constitute Homotopy φ0 φ1.

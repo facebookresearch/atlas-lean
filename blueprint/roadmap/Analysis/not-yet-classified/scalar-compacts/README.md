@@ -1,0 +1,16 @@
+# Compact operators on the scalar sequence Hilbert space
+
+- [Scalar sequence Hilbert space](hilbert.md)
+- [Compact algebra on scalar sequence space](algebra.md)
+- [One-dimensional compact star projection](one-dimensional-projection.md)
+- [Scalar compact rank-one operator](rank-one.md)
+- [Action of the scalar rank-one operator](rank-one-apply.md)
+- [Adjoint of the scalar rank-one operator](star-rank-one.md)
+- [Projection from a unit vector](rank-one-mul-self.md)
+- [Norm of a scalar rank-one operator](norm-rank-one.md)
+- [One-dimensional projection of a unit vector](rank-one-projection.md)
+- [Value of the unit-vector projection](rank-one-projection-value.md)
+- [Coordinate vector of scalar sequence space](basis-vector.md)
+- [Norm of a scalar coordinate vector](norm-basis-vector.md)
+- [Compact coordinate projection](coordinate-projection.md)
+- [Action of a scalar coordinate projection](coordinate-projection-apply.md)

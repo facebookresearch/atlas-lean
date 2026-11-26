@@ -1,0 +1,633 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.AsymptoticAlgebraFunctor
+
+public import Mathlib.CategoryTheory.EqToHom
+
+/-!
+# Finite iterates of the asymptotic quotient algebra
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Each star homomorphism φ:A→B induces αⁿφ:αⁿA→αⁿB.
+Constant classes give stage inclusions i_n:αⁿA→αⁿ⁺¹A, and n iterations after m iterations
+identify with stage n+m. The direct maps allow independent coefficient universes.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open CategoryTheory
+open scoped BoundedContinuousFunction
+
+noncomputable section
+
+universe u uA uB uC
+
+attribute [local instance] AsymptoticAlgebra.cStarAlgebra
+
+namespace NonUnitalCStarAlgCat
+
+/-- **Finite asymptotic quotient as a category object.**
+
+Let 𝒞_u be the category of nonunital complex C-star algebras in Type u and nonunital complex
+star homomorphisms. For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X)
+with its quotient C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). The object
+iteratedAsymptoticAlgebraObject n A is αⁿA, for n∈ℕ and A∈𝒞_u.
+-/
+abbrev iteratedAsymptoticAlgebraObject
+    (n : ℕ) (A : NonUnitalCStarAlgCat.{u}) :
+    NonUnitalCStarAlgCat.{u} :=
+  Nat.rec A (fun _ B => asymptoticAlgebraObject B) n
+
+theorem iteratedAsymptoticAlgebraObject_zero
+    (A : NonUnitalCStarAlgCat.{u}) :
+    iteratedAsymptoticAlgebraObject 0 A = A := by
+  rfl
+
+theorem iteratedAsymptoticAlgebraObject_succ
+    (n : ℕ) (A : NonUnitalCStarAlgCat.{u}) :
+    iteratedAsymptoticAlgebraObject (n + 1) A =
+      asymptoticAlgebraObject (iteratedAsymptoticAlgebraObject n A) := by
+  rfl
+
+/-- **Addition law for finite asymptotic iteration.**
+
+Let 𝒞_u be the category of nonunital complex C-star algebras in Type u and nonunital complex
+star homomorphisms. For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X)
+with its quotient C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For C∈𝒞_u and n,m∈ℕ,
+iteratedAsymptoticAlgebraObject n (iteratedAsymptoticAlgebraObject m
+C)=iteratedAsymptoticAlgebraObject(n+m) C.
+-/
+theorem iteratedAsymptoticAlgebraObject_add (n m : ℕ)
+    (C : NonUnitalCStarAlgCat.{u}) :
+    iteratedAsymptoticAlgebraObject n
+        (iteratedAsymptoticAlgebraObject m C) =
+      iteratedAsymptoticAlgebraObject (n + m) C := by
+  induction n with
+  | zero =>
+      exact
+        (iteratedAsymptoticAlgebraObject_zero
+          (iteratedAsymptoticAlgebraObject m C)).trans
+        (congrArg (fun k => iteratedAsymptoticAlgebraObject k C)
+          (Nat.zero_add m).symm)
+  | succ n ih =>
+      change
+        asymptoticAlgebraObject
+            (iteratedAsymptoticAlgebraObject n
+              (iteratedAsymptoticAlgebraObject m C)) =
+          iteratedAsymptoticAlgebraObject (Nat.succ n + m) C
+      rw [ih, Nat.succ_add]
+
+end NonUnitalCStarAlgCat
+
+/-- **Carrier of a finite asymptotic quotient iterate.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For A:Type u and n∈ℕ, IteratedAsymptoticAlgebra n
+A is the C-star algebra αⁿA, also in Type u, with its iterated quotient norm.
+-/
+abbrev IteratedAsymptoticAlgebra
+    (n : ℕ) (A : Type u) [NonUnitalCStarAlgebra A] : Type u :=
+  (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject n
+    (NonUnitalCStarAlgCat.of A)).carrier
+
+theorem iteratedAsymptoticAlgebra_zero
+    (A : Type u) [NonUnitalCStarAlgebra A] :
+    IteratedAsymptoticAlgebra 0 A = A := by
+  rfl
+
+theorem iteratedAsymptoticAlgebra_succ
+    (n : ℕ) (A : Type u) [NonUnitalCStarAlgebra A] :
+    IteratedAsymptoticAlgebra (n + 1) A =
+      AsymptoticAlgebra (IteratedAsymptoticAlgebra n A) := by
+  rfl
+
+namespace NonUnitalCStarAlgCat
+
+/-- **Category object of an iterated quotient carrier.**
+
+Let 𝒞_u be the category of nonunital complex C-star algebras in Type u and nonunital complex
+star homomorphisms. For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X)
+with its quotient C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For a nonunital complex C-star
+algebra C and n∈ℕ, regarding αⁿC as an object of 𝒞_u gives iteratedAsymptoticAlgebraObject n
+(of C).
+-/
+theorem of_iteratedAsymptoticAlgebra (n : ℕ)
+    (C : Type u) [NonUnitalCStarAlgebra C] :
+    of (IteratedAsymptoticAlgebra n C) =
+      iteratedAsymptoticAlgebraObject n (of C) := by
+  rfl
+
+end NonUnitalCStarAlgCat
+
+namespace IteratedAsymptoticAlgebra
+
+/-!
+## Identification of nested and summed iterations
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Iterating α n times after m times gives the
+canonical identification θ_(n,m):αⁿ(αᵐC)→αⁿ⁺ᵐC.
+-/
+
+/-- **Canonical homomorphism from nested to summed iteration.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For a nonunital complex C-star algebra C and
+n,m∈ℕ, iteratedAddHom n m C is the nonunital complex star homomorphism θ_(n,m):αⁿ(αᵐC)→αⁿ⁺ᵐC
+from the canonical equality of finite iterates.
+-/
+@[no_expose]
+def iteratedAddHom (n m : ℕ)
+    (C : Type uC) [NonUnitalCStarAlgebra C] :
+    IteratedAsymptoticAlgebra n (IteratedAsymptoticAlgebra m C) →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra (n + m) C := by
+  change
+    (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject n
+        (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject m
+          (NonUnitalCStarAlgCat.of C))) ⟶
+      NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject (n + m)
+        (NonUnitalCStarAlgCat.of C)
+  exact eqToHom
+    (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject_add n m
+      (NonUnitalCStarAlgCat.of C))
+
+private theorem iteratedAddHom_eq_eqToHom (n m : ℕ)
+    (C : Type uC) [NonUnitalCStarAlgebra C] :
+    (iteratedAddHom n m C :
+      (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject n
+        (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject m
+          (NonUnitalCStarAlgCat.of C))) ⟶
+      NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject (n + m)
+        (NonUnitalCStarAlgCat.of C)) =
+      eqToHom
+        (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject_add n m
+          (NonUnitalCStarAlgCat.of C)) := by
+  rfl
+
+theorem iteratedAddHom_zero_left (m : ℕ)
+    (C : Type uC) [NonUnitalCStarAlgebra C] :
+    eqToHom
+        (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject_zero
+          (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject m
+            (NonUnitalCStarAlgCat.of C))).symm ≫
+      (iteratedAddHom 0 m C :
+        (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject 0
+          (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject m
+            (NonUnitalCStarAlgCat.of C))) ⟶
+        NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject (0 + m)
+          (NonUnitalCStarAlgCat.of C)) =
+      eqToHom
+        (congrArg
+          (fun k => NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject k
+            (NonUnitalCStarAlgCat.of C))
+          (Nat.zero_add m)).symm := by
+  simp only [iteratedAddHom_eq_eqToHom, eqToHom_trans]
+
+theorem iteratedAddHom_zero_right (n : ℕ)
+    (C : Type uC) [NonUnitalCStarAlgebra C] :
+    iteratedAddHom n 0 C =
+      NonUnitalStarAlgHom.id ℂ (IteratedAsymptoticAlgebra n C) := by
+  change
+    (eqToHom
+      (NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject_add n 0
+        (NonUnitalCStarAlgCat.of C)) :
+      NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject n
+          (NonUnitalCStarAlgCat.of C) ⟶
+        NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraObject n
+          (NonUnitalCStarAlgCat.of C)) = 𝟙 _
+  exact eqToHom_refl _ _
+
+/-- **Star homomorphism induced on finite iterates.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For a nonunital complex star homomorphism φ:A→B, map n φ is
+αⁿφ:αⁿA→αⁿB, obtained by n iterations of [F]↦[φ∘F].
+-/
+@[no_expose]
+def map (n : ℕ)
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : A →⋆ₙₐ[ℂ] B) :
+    IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra n B :=
+  Nat.rec (motive := fun k =>
+      IteratedAsymptoticAlgebra k A →⋆ₙₐ[ℂ]
+        IteratedAsymptoticAlgebra k B)
+    φ (fun _ ψ => AsymptoticAlgebra.map ψ) n
+
+@[simp]
+theorem map_zero_stage
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : A →⋆ₙₐ[ℂ] B) : map 0 φ = φ := by
+  rfl
+
+@[simp]
+theorem map_succ
+    (n : ℕ) {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : A →⋆ₙₐ[ℂ] B) :
+    map (n + 1) φ = AsymptoticAlgebra.map (map n φ) := by
+  rfl
+
+@[simp]
+theorem map_id (n : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    map n (NonUnitalStarAlgHom.id ℂ A) =
+      NonUnitalStarAlgHom.id ℂ (IteratedAsymptoticAlgebra n A) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      rw [map_succ, ih, AsymptoticAlgebra.map_id]
+
+@[simp]
+theorem map_zero (n : ℕ)
+    (A : Type uA) (B : Type uB)
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
+    map n (0 : A →⋆ₙₐ[ℂ] B) = 0 := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      rw [map_succ, ih, AsymptoticAlgebra.map_zero]
+
+/-- **Finite asymptotic iteration respects composition.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For nonunital complex C-star algebras A,B,C in
+independent universes and star homomorphisms φ:A→B, ψ:B→C, map n(ψ∘φ)=(map n ψ)∘(map n φ).
+-/
+theorem map_comp (n : ℕ)
+    {A : Type uA} {B : Type uB} {C : Type uC}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    [NonUnitalCStarAlgebra C]
+    (φ : A →⋆ₙₐ[ℂ] B) (ψ : B →⋆ₙₐ[ℂ] C) :
+    map n (ψ.comp φ) = (map n ψ).comp (map n φ) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      rw [map_succ, map_succ, map_succ, ih, AsymptoticAlgebra.map_comp]
+
+/-- **Constant-class inclusion into the next finite stage.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For n∈ℕ and A a nonunital complex C-star algebra,
+stageHom n A:αⁿA→αⁿ⁺¹A sends x to the class [t↦x] in α(αⁿA).
+-/
+@[no_expose]
+def stageHom (n : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra (n + 1) A :=
+  AsymptoticAlgebra.constantHom (IteratedAsymptoticAlgebra n A)
+
+/-- **Successor stage map equals the constant-class homomorphism.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For n∈ℕ and a nonunital complex C-star algebra A,
+stageHom n A=AsymptoticAlgebra.constantHom(αⁿA), the map x↦[t↦x].
+-/
+theorem stageHom_eq_constantHom (n : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    stageHom n A =
+      AsymptoticAlgebra.constantHom (IteratedAsymptoticAlgebra n A) := by
+  rfl
+
+theorem stageHom_apply (n : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A]
+    (x : IteratedAsymptoticAlgebra n A) :
+    stageHom n A x =
+      AsymptoticAlgebra.quotientMap (IteratedAsymptoticAlgebra n A)
+        (BoundedContinuousFunction.const AsymptoticTime x) := by
+  rw [stageHom_eq_constantHom, AsymptoticAlgebra.constantHom_apply]
+
+theorem stageHom_injective (n : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    Function.Injective (stageHom n A) := by
+  rw [stageHom_eq_constantHom]
+  exact AsymptoticAlgebra.constantHom_injective
+    (IteratedAsymptoticAlgebra n A)
+
+/-- **Naturality of successor stage inclusions.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For a star homomorphism φ:A→B and i_n(X)=stageHom n X,
+αⁿ⁺¹φ∘i_n(A)=i_n(B)∘αⁿφ.
+-/
+theorem stageHom_naturality (n : ℕ)
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : A →⋆ₙₐ[ℂ] B) :
+    (map (n + 1) φ).comp (stageHom n A) =
+      (stageHom n B).comp (map n φ) := by
+  rw [map_succ, stageHom_eq_constantHom, stageHom_eq_constantHom]
+  exact AsymptoticAlgebra.map_comp_constantHom (map n φ)
+
+/-- **Inclusion across a finite stage offset.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For a nonunital complex C-star algebra A and
+n,k∈ℕ, stageMapFrom n k A:αⁿA→αⁿ⁺ᵏA is the composite of k successive constant-class stage
+inclusions, with identity when k=0.
+-/
+@[no_expose]
+def stageMapFrom (n k : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra (n + k) A :=
+  Nat.rec (motive := fun j =>
+      IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+        IteratedAsymptoticAlgebra (n + j) A)
+    (NonUnitalStarAlgHom.id ℂ (IteratedAsymptoticAlgebra n A))
+    (fun j h => (stageHom (n + j) A).comp h) k
+
+@[simp]
+theorem stageMapFrom_zero (n : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    stageMapFrom n 0 A =
+      NonUnitalStarAlgHom.id ℂ (IteratedAsymptoticAlgebra n A) := by
+  rfl
+
+@[simp]
+theorem stageMapFrom_succ (n k : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    stageMapFrom n (k + 1) A =
+      (stageHom (n + k) A).comp (stageMapFrom n k A) := by
+  rfl
+
+theorem stageMapFrom_one (n : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    stageMapFrom n 1 A = stageHom n A := by
+  apply NonUnitalStarAlgHom.ext
+  intro x
+  rfl
+
+theorem stageMapFrom_injective (n k : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    Function.Injective (stageMapFrom n k A) := by
+  induction k with
+  | zero => exact Function.injective_id
+  | succ k ih =>
+      rw [stageMapFrom_succ]
+      exact (stageHom_injective (n + k) A).comp ih
+
+/-- **Naturality of finite-offset stage maps.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For a star homomorphism φ:A→B and k∈ℕ, αⁿ⁺ᵏφ∘stageMapFrom n k
+A=stageMapFrom n k B∘αⁿφ.
+-/
+theorem stageMapFrom_naturality (n k : ℕ)
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : A →⋆ₙₐ[ℂ] B) :
+    (map (n + k) φ).comp (stageMapFrom n k A) =
+      (stageMapFrom n k B).comp (map n φ) := by
+  induction k with
+  | zero =>
+      apply NonUnitalStarAlgHom.ext
+      intro x
+      rfl
+  | succ k ih =>
+      apply NonUnitalStarAlgHom.ext
+      intro x
+      rw [stageMapFrom_succ, stageMapFrom_succ,
+        NonUnitalStarAlgHom.comp_apply, NonUnitalStarAlgHom.comp_apply,
+        NonUnitalStarAlgHom.comp_apply, NonUnitalStarAlgHom.comp_apply]
+      calc
+        map (n + (k + 1)) φ
+            (stageHom (n + k) A (stageMapFrom n k A x)) =
+          stageHom (n + k) B
+            (map (n + k) φ (stageMapFrom n k A x)) :=
+          DFunLike.congr_fun (stageHom_naturality (n + k) φ)
+            (stageMapFrom n k A x)
+        _ = stageHom (n + k) B
+            (stageMapFrom n k B (map n φ x)) :=
+          congrArg (stageHom (n + k) B) (DFunLike.congr_fun ih x)
+
+private def castTarget (n : ℕ) {m m' : ℕ}
+    (A : Type uA) [NonUnitalCStarAlgebra A]
+    (h : m = m')
+    (F : IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra m' A) :
+    IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra m A := by
+  cases h
+  exact F
+
+private theorem castTarget_eq_cast (n : ℕ) {m m' : ℕ}
+    (A : Type uA) [NonUnitalCStarAlgebra A] (h : m = m')
+    (F : IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra m' A) :
+    castTarget n A h F =
+      cast
+        (congrArg
+          (fun k => IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+            IteratedAsymptoticAlgebra k A) h.symm) F := by
+  cases h
+  rfl
+
+private theorem castTarget_stageHom (n : ℕ) {m m' : ℕ}
+    (A : Type uA) [NonUnitalCStarAlgebra A]
+    (h : m = m')
+    (F : IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra m' A) :
+    castTarget n A (congrArg Nat.succ h)
+        ((stageHom m' A).comp F) =
+      (stageHom m A).comp (castTarget n A h F) := by
+  cases h
+  rfl
+
+/-- **Reassociated target of a finite-offset stage map.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For A a nonunital complex C-star algebra and
+n,k,l∈ℕ, stageMapFromReassoc n k l A is stageMapFrom n(k+l) A viewed as a map αⁿA→α^( (n+k)+l
+)A through the equality n+(k+l)=(n+k)+l.
+-/
+@[no_expose]
+def stageMapFromReassoc (n k l : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+      IteratedAsymptoticAlgebra ((n + k) + l) A :=
+  castTarget n A (Nat.add_assoc n k l) (stageMapFrom n (k + l) A)
+
+/-- **Identification of a reassociated finite stage map.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For A a nonunital complex C-star algebra and
+n,k,l∈ℕ, stageMapFromReassoc n k l A is the direct map stageMapFrom n(k+l) A transported from
+target stage n+(k+l) to (n+k)+l by associativity of natural-number addition.
+-/
+theorem stageMapFromReassoc_eq_cast (n k l : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    stageMapFromReassoc n k l A =
+      cast
+        (congrArg
+          (fun m =>
+            IteratedAsymptoticAlgebra n A →⋆ₙₐ[ℂ]
+              IteratedAsymptoticAlgebra m A)
+          (Nat.add_assoc n k l).symm)
+        (stageMapFrom n (k + l) A) := by
+  exact castTarget_eq_cast n A (Nat.add_assoc n k l)
+    (stageMapFrom n (k + l) A)
+
+private theorem stageMapFromReassoc_succ (n k l : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    stageMapFromReassoc n k (l + 1) A =
+      (stageHom ((n + k) + l) A).comp
+        (stageMapFromReassoc n k l A) := by
+  unfold stageMapFromReassoc
+  have hstep :
+      stageMapFrom n (k + (l + 1)) A =
+        (stageHom (n + (k + l)) A).comp (stageMapFrom n (k + l) A) :=
+    stageMapFrom_succ n (k + l) A
+  calc
+    castTarget n A (Nat.add_assoc n k (l + 1))
+        (stageMapFrom n (k + (l + 1)) A) =
+      castTarget n A (Nat.add_assoc n k (l + 1))
+        ((stageHom (n + (k + l)) A).comp (stageMapFrom n (k + l) A)) :=
+      congrArg (castTarget n A (Nat.add_assoc n k (l + 1))) hstep
+    _ = (stageHom ((n + k) + l) A).comp
+        (castTarget n A (Nat.add_assoc n k l) (stageMapFrom n (k + l) A)) :=
+      castTarget_stageHom n A (Nat.add_assoc n k l)
+        (stageMapFrom n (k + l) A)
+
+/-- **Composition law for finite stage offsets.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For A a nonunital complex C-star algebra and
+n,k,l∈ℕ, stageMapFromReassoc n k l A=stageMapFrom(n+k) l A∘stageMapFrom n k A, as maps
+αⁿA→α^((n+k)+l)A.
+-/
+theorem stageMapFrom_add (n k l : ℕ)
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    stageMapFromReassoc n k l A =
+      (stageMapFrom (n + k) l A).comp (stageMapFrom n k A) := by
+  induction l with
+  | zero =>
+      apply NonUnitalStarAlgHom.ext
+      intro x
+      rfl
+  | succ l ih =>
+      rw [stageMapFromReassoc_succ, stageMapFrom_succ, ih,
+        NonUnitalStarAlgHom.comp_assoc]
+
+end IteratedAsymptoticAlgebra
+
+namespace NonUnitalCStarAlgCat
+
+/-- **Endofunctor of finite asymptotic iteration.**
+
+Let 𝒞_u be the category of nonunital complex C-star algebras in Type u and nonunital complex
+star homomorphisms. For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X)
+with its quotient C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). The functor
+iteratedAsymptoticAlgebraFunctor n has object map A↦αⁿA and morphism map φ↦αⁿφ.
+-/
+def iteratedAsymptoticAlgebraFunctor (n : ℕ) :
+    NonUnitalCStarAlgCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
+  obj := iteratedAsymptoticAlgebraObject n
+  map φ := IteratedAsymptoticAlgebra.map n φ
+  map_id A := IteratedAsymptoticAlgebra.map_id n A
+  map_comp φ ψ := IteratedAsymptoticAlgebra.map_comp n φ ψ
+
+/-- **Morphism map of the finite-iteration functor.**
+
+Let 𝒞_u be the category of nonunital complex C-star algebras in Type u and nonunital complex
+star homomorphisms. For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X)
+with its quotient C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For φ:A→B in 𝒞_u,
+(iteratedAsymptoticAlgebraFunctor n).map φ=IteratedAsymptoticAlgebra.map n φ=αⁿφ.
+-/
+theorem iteratedAsymptoticAlgebraFunctor_map (n : ℕ)
+    {A B : NonUnitalCStarAlgCat.{u}} (φ : A ⟶ B) :
+    (iteratedAsymptoticAlgebraFunctor n).map φ =
+      IteratedAsymptoticAlgebra.map n φ := by
+  rfl
+
+/-- **Natural transformation of successor inclusions.**
+
+Let 𝒞_u be the category of nonunital complex C-star algebras in Type u and nonunital complex
+star homomorphisms. For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X)
+with its quotient C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). The natural transformation
+stageNatTrans n:αⁿ⇒αⁿ⁺¹ has component i_n(A):αⁿA→αⁿ⁺¹A, x↦[t↦x].
+-/
+@[no_expose]
+def stageNatTrans (n : ℕ) :
+    NatTrans (iteratedAsymptoticAlgebraFunctor n)
+      (iteratedAsymptoticAlgebraFunctor (n + 1)) where
+  app A := IteratedAsymptoticAlgebra.stageHom n A
+  naturality {_A _B} φ :=
+    (IteratedAsymptoticAlgebra.stageHom_naturality n φ).symm
+
+theorem stageNatTrans_app (n : ℕ)
+    (A : NonUnitalCStarAlgCat.{u}) :
+    (stageNatTrans n).app A = IteratedAsymptoticAlgebra.stageHom n A := by
+  rfl
+
+end NonUnitalCStarAlgCat
+
+namespace IteratedAsymptoticAlgebra
+
+/-- **Finite-stage homomorphism representatives.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+-/
+abbrev HomN (n : ℕ)
+    (A : Type uA) (B : Type uB)
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :=
+  A →⋆ₙₐ[ℂ] IteratedAsymptoticAlgebra n B
+
+/-- **Asymptotic quotient of a finite-stage representative.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ∈HomN n A B, alphaRepresentative n φ:αA→α(αⁿB) is the induced quotient homomorphism
+[F]↦[φ∘F], with this target the successor quotient of αⁿB.
+-/
+@[no_expose]
+def alphaRepresentative (n : ℕ)
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : HomN n A B) :
+    AsymptoticAlgebra A →⋆ₙₐ[ℂ]
+      AsymptoticAlgebra (IteratedAsymptoticAlgebra n B) :=
+  AsymptoticAlgebra.map φ
+
+theorem alphaRepresentative_eq (n : ℕ)
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : HomN n A B) :
+    alphaRepresentative n φ = AsymptoticAlgebra.map φ := by
+  rfl
+
+@[simp]
+theorem alphaRepresentative_quotientMap (n : ℕ)
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (φ : HomN n A B) (f : AsymptoticTime →ᵇ A) :
+    alphaRepresentative n φ (AsymptoticAlgebra.quotientMap A f) =
+      AsymptoticAlgebra.quotientMap (IteratedAsymptoticAlgebra n B)
+        (BoundedContinuousFunction.compNonUnitalStarAlgHom φ f) := by
+  exact AsymptoticAlgebra.map_quotientMap φ f
+
+
+end IteratedAsymptoticAlgebra

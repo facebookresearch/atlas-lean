@@ -1,4 +1,4 @@
-# Grading
+# Coordinate gradings on completed Hilbert-module sums
 
 - [Grading of a nonunital C*-algebra](cstar-grading.md)
 - [Homomorphism of graded C*-algebras](hom.md)
@@ -47,3 +47,9 @@
 - [Completed Grading generator pure](completed-grading-generator-pure.md)
 - [Model Grading](model-grading.md)
 - [Model Grading generator pure](model-grading-generator-pure.md)
+- [Coordinate grading on the algebraic sum](algebraic-generator.md)
+- [Algebraic grading on a one-coordinate vector](algebraic-generator-single-linear.md)
+- [Grading generator on the completed sum](completed-generator.md)
+- [Completed grading on an algebraic coordinate image](completed-generator-single-linear.md)
+- [Module grading on the completed direct sum](grading.md)
+- [Direct-sum grading on embedded coordinate vectors](grading-generator-single-linear.md)

@@ -1,4 +1,4 @@
-# Multiplier
+# Adjointable operators as multipliers of module compacts
 
 - [Grading of a multiplier algebra](multiplier.md)
 - [Degree automorphism of a multiplier grading](multiplier-aut-eq-congr.md)
@@ -6,3 +6,14 @@
 - [Grading of the outer multiplier algebra](outer-multiplier.md)
 - [Equivariance of the outer quotient projection](outer-multiplier-outer-quotient-map.md)
 - [Graded outer multiplier projection](outer-quotient-hom.md)
+- [Multiplier](multiplier.md)
+- [Multiplier aut eq congr](multiplier-aut-eq-congr.md)
+- [Multiplier strict Continuous](multiplier-strict-continuous.md)
+- [Outer Multiplier](outer-multiplier.md)
+- [Outer Multiplier outer Quotient Map](outer-multiplier-outer-quotient-map.md)
+- [Outer Quotient Hom](outer-quotient-hom.md)
+- [Multiplier action of adjointable module operators](compact-multiplier-hom.md)
+- [Left multiplier action on module compacts](compact-multiplier-hom-fst.md)
+- [Right multiplier action on module compacts](compact-multiplier-hom-snd.md)
+- [Left multiplier on a module rank-one operator](compact-multiplier-hom-fst-rank-one.md)
+- [Right multiplier on a module rank-one operator](compact-multiplier-hom-snd-rank-one.md)

@@ -1,4 +1,4 @@
-# Bounded
+# Bounds for diagonal and tensor-product operators
 
 - [Bounded linear map associated with a CP map](to-continuous-linear-map.md)
 - [Evaluation of the bounded CP map](to-continuous-linear-map-apply.md)
@@ -9,3 +9,9 @@
 - [Radical Left CLM](radical-left-clm.md)
 - [Radical Left CLM apply](radical-left-clm-apply.md)
 - [Radical Left CLM norm le](radical-left-clm-norm-le.md)
+- [Coefficient Gram bound for an algebraic diagonal](algebraic-diagonal-inner-self-le.md)
+- [Norm bound for an algebraic diagonal](algebraic-diagonal-norm-le.md)
+- [Norm bound on the radical tensor quotient](radical-right-factor-map-norm-le.md)
+- [Continuous right factor on the radical quotient](radical-right-factor-clm.md)
+- [Value of the continuous radical factor map](radical-right-factor-clm-apply.md)
+- [Operator norm of the radical factor map](radical-right-factor-clm-norm-le.md)

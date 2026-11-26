@@ -1,0 +1,41 @@
+# Coordinate cuts on completed Hilbert-module sums
+
+## Projections onto selected coordinate sets
+
+- [Determination by completed coordinates](adjointable-ext-completed-single.md)
+- [Projection onto a selected coordinate set](cut-projection.md)
+- [Coordinate action of a cut projection](cut-projection-apply-completed-single.md)
+- [Self-adjoint coordinate cut](star-cut-projection.md)
+- [Cut on the empty set](cut-projection-empty.md)
+- [Cut on every coordinate](cut-projection-univ.md)
+- [Composition of coordinate cuts](cut-projection-mul.md)
+- [Idempotence of a coordinate cut](cut-projection-mul-self.md)
+- [Star projection of a coordinate set](is-star-projection-cut-projection.md)
+- [Norm bound for coordinate cuts](norm-cut-projection-le.md)
+- [Commutation of coordinate cuts](cut-projection-comm.md)
+- [Disjoint coordinate cuts](cut-projection-mul-of-disjoint.md)
+- [Complementary coordinate projection](cut-projection-compl.md)
+- [Union of coordinate projections](cut-projection-union.md)
+- [Span of selected coordinate ranges](coordinate-span.md)
+- [Identity on the closed selected-coordinate span](cut-projection-eq-self-of-mem-closure-co.md)
+- [Cut values in the selected-coordinate closure](cut-projection-mem-closure-coordinate-sp.md)
+- [Range of a coordinate cut](range-cut-projection.md)
+- [Closed range of a coordinate cut](is-closed-range-cut-projection.md)
+- [Orthogonality of disjoint cuts](right-inner-cut-projection-of-disjoint.md)
+- [Reflection of a coordinate cut](cut-involution.md)
+- [Coordinate signs of a cut reflection](cut-involution-apply-completed-single.md)
+- [Self-adjoint cut reflection](star-cut-involution.md)
+- [Square of a cut reflection](cut-involution-mul-self.md)
+
+## Integer-indexed projection cuts
+
+- [Projection onto nonnegative degrees](nonnegative-projection.md)
+- [Coordinate action of the nonnegative cut](nonnegative-projection-apply-completed-s.md)
+- [Self-adjoint nonnegative cut](star-nonnegative-projection.md)
+- [Idempotence of the nonnegative cut](nonnegative-projection-mul-self.md)
+- [Norm bound for the nonnegative cut](norm-nonnegative-projection-le.md)
+- [Range of the nonnegative-degree projection](range-nonnegative-projection.md)
+- [Nonnegative-degree reflection](nonnegative-involution.md)
+- [Coordinate signs of the nonnegative reflection](nonnegative-involution-apply-completed-s.md)
+- [Self-adjoint nonnegative reflection](star-nonnegative-involution.md)
+- [Square of the nonnegative reflection](nonnegative-involution-mul-self.md)

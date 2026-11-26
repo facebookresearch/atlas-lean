@@ -1,0 +1,16 @@
+# Adjoint domains of densely defined right-module operators
+
+- [Adjoint pairing witness](is-adjoint-witness.md)
+- [Full adjoint domain](adjoint-domain.md)
+- [Membership in the adjoint domain](mem-adjoint-domain-iff.md)
+- [Right invariance of the adjoint domain](adjoint-domain-right-smul.md)
+- [Uniqueness of adjoint witnesses](adjoint-witness-unique.md)
+- [Unique witness on the adjoint domain](exists-unique-adjoint-witness.md)
+- [Value of the partial adjoint](adjoint-value.md)
+- [Pairing characterization of the adjoint value](adjoint-value-spec.md)
+- [Right linearity of the adjoint value](adjoint-value-right-smul.md)
+- [Complex-linear partial adjoint](adjoint.md)
+- [Pairing identity for the partial adjoint](adjoint-pairing.md)
+- [Right linearity of the partial adjoint](adjoint-right-smul.md)
+- [Graph of the partial adjoint](adjoint-graph-eq.md)
+- [Closed graph of the partial adjoint](is-closed-adjoint-graph.md)
