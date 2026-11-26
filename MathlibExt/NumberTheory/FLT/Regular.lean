@@ -1,9 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+Copyright (c) the flt-regular authors, as recorded in that repository.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Alex J. Best, Christopher Birkbeck, Riccardo Brasca, Eric Rodriguez Boidi,
+Ruben Van de Velde, Andrew Yang
 -/
 
 /-
@@ -15,13 +21,6 @@ and
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
@@ -31,12 +30,11 @@ removed and the names restated in Mathlib style.
 (https://github.com/leanprover-community/flt-regular), the formalization of
 Fermat's Last Theorem for regular primes that `P2M/Sol/S_flt_regular.lean`
 ports with proofs:
-Copyright (c) the flt-regular authors, as recorded in that repository.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-Authors: Alex J. Best, Christopher Birkbeck, Riccardo Brasca, Eric Rodriguez Boidi,
-Ruben Van de Velde, Andrew Yang
 The source's NOTICE (item 2) and ATTRIBUTION.md (§3) record this credit and
 name the upstream files; that project's per-file headers are not reproduced there.
+
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -91,7 +89,7 @@ import MathlibExt.RingTheory.DedekindDomain.UnramifiedMinpoly
 
 A prime `p` is regular when `p` does not divide the class number of the
 `p`-th cyclotomic field. This file proves that Fermat's Last Theorem holds
-for every regular prime exponent.
+for every odd regular prime exponent.
 
 The proof follows Kummer's classical argument in the ring of integers of
 the `p`-th cyclotomic field: the first case, where `p` divides none of
@@ -3049,12 +3047,6 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
   simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
 
-theorem eq_one_mod_one_sub_IS {A : Type*} [CommRing A] {t : A} :
-    algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 := by
-  rw [← map_one <| algebraMap A <| A ⧸ Ideal.span ({t - 1} : Set A), ← sub_eq_zero, ← map_sub,
-    Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem]
-  exact Ideal.subset_span (Set.mem_singleton _)
-
 namespace CaseII
 
 open scoped nonZeroDivisors NumberField
@@ -3130,7 +3122,7 @@ lemma one_sub_zeta_dvd_zeta_pow_sub : π ∣ x + y * η := by
     obtain ⟨i, -, hi⟩ := hζ.toInteger_isPrimitiveRoot.eq_pow_of_pow_eq_one
       ((Polynomial.mem_nthRootsFinset (NeZero.pos p) 1).1 hξ)
     rw [← hi, map_pow]
-    rw [← Ideal.Quotient.algebraMap_eq, eq_one_mod_one_sub_IS, one_pow]
+    rw [← Ideal.Quotient.algebraMap_eq, eq_one_mod_one_sub, one_pow]
   replace h :
       ∏ _η ∈ nthRootsFinset p (1 : 𝓞 K),
         Ideal.Quotient.mk 𝔭 (x + y * η : 𝓞 K) = 0 := by
@@ -3819,11 +3811,6 @@ theorem flt_regular_port {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hod
 end Port_FLT_Deep_CaseSplit_lean
 open scoped FltRegularPort.Internal.FltRegular.CyclotomicIntegers FltRegularPort.Internal.FltRegular FltRegularPort.Internal.FltRegular.KummersLemma FltRegularPort.Internal.FltRegular.CaseII
 
-theorem solution {p : ℕ} [Fact p.Prime]
-    (hreg : p.Coprime (Fintype.card (ClassGroup (NumberField.RingOfIntegers (CyclotomicField p ℚ)))))
-    (hodd : p ≠ 2) : FermatLastTheoremFor p :=
-  flt_regular_port hreg hodd
-
 end Internal
 
 end FltRegularPort
@@ -3836,7 +3823,7 @@ coprime to the class number of the canonical `p`-th cyclotomic field
 public theorem flt_regular {p : ℕ} [Fact p.Prime]
     (hreg : p.Coprime (Fintype.card (ClassGroup (𝓞 (CyclotomicField p ℚ)))))
     (hodd : p ≠ 2) : FermatLastTheoremFor p :=
-  FltRegularPort.Internal.solution hreg hodd
+  FltRegularPort.Internal.flt_regular_port hreg hodd
 
 
 
