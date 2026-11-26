@@ -27,7 +27,6 @@
 - [Occurrences of a word in a binary sequence](occurrences.md)
 - [Poisson generic binary sequences](is-poisson-generic.md)
 - [Prefixes of a binary sequence](is-prefix.md)
-- [Fair-coin measure on binary sequences](coin-measure.md)
 - [Martin-Löf tests](is-martin-lof-test.md)
 - [Martin-Löf random binary sequences](is-martin-lof-random.md)
 - [Becher's question on computable Poisson generic sequences](computable-poisson-generic-exists.md)
