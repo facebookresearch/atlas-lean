@@ -16,6 +16,7 @@ public import Mathlib.Algebra.Field.ZMod
 public import MathlibExt.Algebra.RationalFunctionFareyPathPolyContFractExtendFareyPath
 public import MathlibExt.Algebra.RationalFunctionFareyPathPolyContFractOfFareyPathDetNegOnePowPred
 public import MathlibExt.Algebra.RationalFunctionFareyPathPolyContFractOfFareyPathDetNegOne
+public import MathlibExt.Algebra.RationalFunctionFareyPathArePolyFareyNeighborsIff
 
 namespace MetaMathlibExt
 
@@ -86,30 +87,6 @@ public theorem_wanted polyContFract_of_farey_path (u v : ℕ → F[X]) (c : ℕ 
         (polyContFract a n).convs i =
           algebraMap F[X] (RatFunc F) (u i) / algebraMap F[X] (RatFunc F) (v i)
 
-/-- **Farey series over a field.** Let $F$ be a field and $n$ a natural number. The Farey series
-$\mathcal{F}_n$ of order $n$ over $F$ is the set of pairs $(u, v)$ of polynomials in $F[x]$, read
-as the fraction $u / v$, such that $\deg u < \deg v \le n$, $u$ and $v$ are coprime, and $v$ is
-monic. Here $\deg 0 = -\infty$, so $u = 0$ is allowed.
-
-Each fraction is thus represented by exactly one such pair.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 1 (quoted from [6], there over
-`𝔽_{p^r}`). -/
-public def polyFareySeries (n : ℕ) : Set (F[X] × F[X]) :=
-  {w | w.1.degree < w.2.degree ∧ w.2.natDegree ≤ n ∧ IsCoprime w.1 w.2 ∧ w.2.Monic}
-
-/-- **The fraction of a pair of polynomials.** Let $F$ be a field. The value of a pair $(u, v)$ of
-polynomials in $F[x]$ is the rational function $u / v$ in the field $F(x)$ of rational functions
-over $F$ (it is $0$ when $v = 0$).
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 1. -/
-public noncomputable def polyFrac (w : F[X] × F[X]) : RatFunc F :=
-  algebraMap F[X] (RatFunc F) w.1 / algebraMap F[X] (RatFunc F) w.2
-
 /-- **The fraction $0/1$ lies in every Farey series.** For every field $F$ and every natural number
 $n$, the pair $(0, 1)$, that is the fraction $0 / 1$, belongs to the Farey series $\mathcal{F}_n$
 of order $n$ over $F$.
@@ -132,28 +109,6 @@ public theorem one_X_mem_polyFareySeries {n : ℕ} (hn : 1 ≤ n) :
     ((1 : F[X]), (X : F[X])) ∈ polyFareySeries n := by
   refine ⟨?_, ?_, isCoprime_one_left, monic_X⟩ <;> simp [hn]
 
-/-- **Degree neighbours in the polynomial Farey series.** Let $F$ be a field, let $n \in \mathbb N$,
-and let $\mathcal F_n$ be the Farey series of order $n$ over $F$. For pairs $(u, v)$ and $(h, k)$
-of polynomials over $F$, read as the fractions $u/v$ and $h/k$, the fraction $h/k$ is a
-$(\deg k)$-neighbour of $u/v$ in $\mathcal F_n$ when both fractions lie in $\mathcal F_n$,
-$h/k \ne u/v$ as rational functions, and $|u/v - h/k| \le |u/v - h'/k'|$ for every
-$h'/k' \in \mathcal F_n$ with $\deg k' = \deg k$ and $h'/k' \ne u/v$. Here $|\cdot|$ is the
-valuation of $F(X)$ at infinity, which orders nonzero rational functions $f/g$ by
-$\deg f - \deg g$ and puts $0$ below every nonzero value.
-
-The fraction $u/v$ itself is excluded from the comparison, as the paper's counts (Theorem 3 with
-$t = 0$, Figure 1) require.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 2 (quoted from [6]). -/
-public def IsPolyFareyDegNeighbor [DecidableEq (RatFunc F)] (n : ℕ) (w z : F[X] × F[X]) :
-    Prop :=
-  w ∈ polyFareySeries n ∧ z ∈ polyFareySeries n ∧ polyFrac z ≠ polyFrac w ∧
-    ∀ z' ∈ polyFareySeries n, z'.2.natDegree = z.2.natDegree → polyFrac z' ≠ polyFrac w →
-    RatFunc.inftyValuation F (polyFrac w - polyFrac z) ≤
-      RatFunc.inftyValuation F (polyFrac w - polyFrac z')
-
 /-- **No fraction is its own degree neighbour.** Let $F$ be a field and let $n \in \mathbb N$. For
 every pair $(u, v)$ of polynomials over $F$, the fraction $u/v$ is not a $(\deg v)$-neighbour of
 itself in the Farey series $\mathcal F_n$ of order $n$ over $F$.
@@ -164,34 +119,6 @@ Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 2. -/
 public theorem not_isPolyFareyDegNeighbor_self [DecidableEq (RatFunc F)] (n : ℕ)
     (w : F[X] × F[X]) : ¬ IsPolyFareyDegNeighbor n w w :=
   fun h => h.2.2.1 rfl
-
-/-- **Neighbouring fractions in the polynomial Farey series.** Let $F$ be a field and let
-$n \in \mathbb N$. Two pairs $(u, v)$ and $(h, k)$ of polynomials over $F$, read as the fractions
-$u/v$ and $h/k$, are neighbours in the Farey series $\mathcal F_n$ of order $n$ over $F$ when
-$u/v$ is a $(\deg v)$-neighbour of $h/k$ in $\mathcal F_n$ and $h/k$ is a $(\deg k)$-neighbour of
-$u/v$ in $\mathcal F_n$. In particular, both fractions then lie in $\mathcal F_n$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 3 (quoted from [6]). -/
-public def ArePolyFareyNeighbors [DecidableEq (RatFunc F)] (n : ℕ) (w z : F[X] × F[X]) :
-    Prop :=
-  IsPolyFareyDegNeighbor n z w ∧ IsPolyFareyDegNeighbor n w z
-
-/-- **Neighbour criterion for the polynomial Farey series.** Let $F$ be a field, let
-$n \in \mathbb N$, and let $(u, v)$ and $(h, k)$ be elements of the Farey series $\mathcal F_n$ of
-order $n$ over $F$, read as the fractions $u/v$ and $h/k$. Then $u/v$ and $h/k$ are neighbours in
-$\mathcal F_n$ if and only if the polynomial $uk - hv$ has degree $0$, that is, $uk - hv$ is a
-nonzero constant.
-
-The paper, quoting [6], works over $\mathbb F_{p^r}$; here the field $F$ is arbitrary.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Theorem 2 (`integers-2026-A3-thm-2`). -/
-public theorem_wanted arePolyFareyNeighbors_iff [DecidableEq (RatFunc F)] (n : ℕ)
-    {w z : F[X] × F[X]} (hw : w ∈ polyFareySeries n) (hz : z ∈ polyFareySeries n) :
-    ArePolyFareyNeighbors n w z ↔ (w.1 * z.2 - z.1 * w.2).degree = 0
 
 /-- **Number of neighbours of a polynomial Farey fraction.** Let $p$ be a prime, let
 $n \in \mathbb{N}$, and let $u / v$ be a fraction of the Farey series $\mathcal{F}_n$ over

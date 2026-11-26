@@ -18,6 +18,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.Analysis.SpecialFunctions.LambertWFunction
 public import MathlibExt.NumberTheory.GoldenFactorialExponent
 public import MathlibExt.NumberTheory.GoldenRatioLambertSequence
+public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds
 
 /-!
 # The golden ratio, factorials, and the Lambert `W` function
@@ -25,6 +26,9 @@ public import MathlibExt.NumberTheory.GoldenRatioLambertSequence
 Wanted statements from Petojević, Gorjanac Ranitović, Rastovac and Mandić on the golden
 sequence `α n` (OEIS A214048), the counting sequence `d m` (OEIS A181716), and bounds for
 the left factorial `!n = ∑_{k<n} k!` (OEIS A003422) by Kurepa's partial integral.
+The statement `kurepaPartialIntegral_goldenFactorialExponent_bounds` is proved, and
+`kurepaPartialIntegral` is defined, in
+`MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds`.
 
 The paper's real sequence `a n = -(n - 1) W₋₁(-(1/(n-1)) (4/7)^(1/(n-1)))` uses the
 lower real branch `W₋₁` of the Lambert `W` function. That branch is not defined in the
@@ -78,20 +82,6 @@ public theorem alternatingSignFibonacci_small_values :
       alternatingSignFibonacci 2 = 2 ∧ alternatingSignFibonacci 3 = 2 ∧
       alternatingSignFibonacci 4 = 5 := by
   refine ⟨rfl, rfl, ?_, ?_, ?_⟩ <;> norm_num [alternatingSignFibonacci]
-
-/-- **Kurepa's partial integral.** For a natural number $n$ and a real number $x$, Kurepa's partial
-integral is
-$$K_n(x) = \int_0^x e^{-t} \sum_{k=0}^{n-1} t^k \, dt,$$
-an oriented integral, so for $x < 0$ it is minus the integral over $[x, 0]$.
-
-The paper writes it as $!n(x) = \int_0^x e^{-t} \frac{t^n - 1}{t - 1} \, dt$; the geometric sum
-agrees with $\frac{t^n - 1}{t - 1}$ for $t \ne 1$, and the singularity at $t = 1$ is removable.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Section 1 (the function `!z(x)`) and Sections 3.1-3.3. -/
-public noncomputable def kurepaPartialIntegral (n : ℕ) (x : ℝ) : ℝ :=
-  ∫ t in (0 : ℝ)..x, Real.exp (-t) * ∑ k ∈ Finset.range n, t ^ k
 
 /-- **Kurepa's partial integral vanishes at zero.** For every natural number $n$, Kurepa's partial
 integral $K_n(x) = \int_0^x e^{-t} \sum_{k=0}^{n-1} t^k \, dt$ satisfies $K_n(0) = 0$.
@@ -211,22 +201,6 @@ public theorem_wanted kurepaPartialIntegral_lambertSequence_bounds (n : ℕ) (hn
       -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
     kurepaPartialIntegral n a < ∑ k ∈ Finset.range n, (k.factorial : ℝ) ∧
       ∑ k ∈ Finset.range n, (k.factorial : ℝ) < kurepaPartialIntegral n a + 1
-
-/-- **Left factorial bounds at the golden factorial exponent.** For every integer $n \ge 1$, let
-$!n = \sum_{k=0}^{n-1} k!$ be the left factorial, let
-$K_n(x) = \int_0^x e^{-t} \sum_{k=0}^{n-1} t^k \, dt$ be Kurepa's partial integral, and let
-$\alpha(n)$ be the least positive integer $m$ with $n! \le \varphi^m$, where $\varphi$ is the
-golden ratio. Then $\beta(n) = K_n(\alpha(n))$ satisfies $\beta(n) < {!n} < \beta(n) + 1$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Theorem 12 (`jis-2024-24.5.7-thm-12`). -/
-public theorem_wanted kurepaPartialIntegral_goldenFactorialExponent_bounds (n : ℕ)
-    (hn : 1 ≤ n) :
-    kurepaPartialIntegral n (goldenFactorialExponent n) <
-        ∑ k ∈ Finset.range n, (k.factorial : ℝ) ∧
-      ∑ k ∈ Finset.range n, (k.factorial : ℝ) <
-        kurepaPartialIntegral n (goldenFactorialExponent n) + 1
 
 /-- **Two-parameter Lambert bounds for the left factorial.** Let $n \ge 5$ and $m \ge 1$ be
 integers, let $!n = \sum_{k=0}^{n-1} k!$ be the left factorial, let
