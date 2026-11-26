@@ -23,7 +23,7 @@ This file sets up the objects in the sampling guarantee for denoising diffusion 
 models (DDPM) of S. Chen, S. Chewi, J. Li, Y. Li, A. Salim and A. R. Zhang, *Sampling is as easy
 as learning the score: theory for diffusion models with minimal data assumptions*,
 arXiv:2209.11215v3, Sections 2.1 and 3.1, on a finite-dimensional real inner product space `E`.
-All objects are laws; no stochastic differential equation is formalized.
+All objects are laws, given by the source's closed forms.
 
 * `ouMarginal q t`: the law at time `t` of the Ornstein–Uhlenbeck process `dX = -X dt + √2 dB`
   started from `q`, given by the source's closed form: the law of `e^{-t} X₀ + √(1 - e^{-2t}) Z`
@@ -48,7 +48,7 @@ All objects are laws; no stochastic differential equation is formalized.
 
 ## Non-claims
 
-The sampling guarantee itself (Theorem 2 of the source) is stated, not proved, in
+Theorem 2 of the source is `tvDist_ddpmOutput_le` in
 `WantedExt.ComputerScience.MachineLearning.ScoreDiffusionSamplingWanted`. This file does not
 claim: the identification of `ouMarginal` or `ddpmStep` with solutions of the stochastic
 differential equations (2.1) and (2.8) of the source; existence or the law of the time reversal
@@ -65,47 +65,50 @@ open MeasureTheory ProbabilityTheory
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [MeasurableSpace E]
 
-/-- Law at time `t` of the Ornstein–Uhlenbeck process `dX = -X dt + √2 dB` started from `q`: the
-law of `e^{-t} X₀ + √(1 - e^{-2t}) Z` with `X₀ ∼ q` and `Z` an independent standard Gaussian
-vector (Chen et al., arXiv:2209.11215v3, Section 2.1). Only times `t ≥ 0` are meaningful: for
-`t < 0`, `1 - e^{-2t}` is negative and its `Real.sqrt` is `0`. -/
+/-- **Forward Ornstein–Uhlenbeck marginal.** The law at time `t` of the Ornstein–Uhlenbeck process
+`dX = -X dt + √2 dB` started from `q`: the law of `e^{-t} X₀ + √(1 - e^{-2t}) Z` with `X₀ ∼ q` and
+`Z` an independent standard Gaussian vector (Chen et al., arXiv:2209.11215v3, Section 2.1). Only
+times `t ≥ 0` are meaningful: for `t < 0`, `1 - e^{-2t}` is negative and its `Real.sqrt` is `0`. -/
 noncomputable def ouMarginal (q : Measure E) (t : ℝ) : Measure E :=
   (q.prod (stdGaussian E)).map
     fun p => Real.exp (-t) • p.1 + Real.sqrt (1 - Real.exp (-2 * t)) • p.2
 
-/-- The score `∇ log ρ` of a density `ρ`, through Mathlib's `gradient` (`0` at points where
-`log ∘ ρ` is not differentiable). The gradient is taken in the space variable, as in score
-matching; `MathlibExt.Probability.Statistics.VectorInference.score` is instead the gradient
-`∇_θ log p θ x` in the parameter of a statistical model. -/
+/-- **Score of a density.** The score `∇ log ρ` of a density `ρ`, through Mathlib's `gradient`
+(`0` at points where `log ∘ ρ` is not differentiable). The gradient is taken in the space variable,
+as in score matching; `MathlibExt.Probability.Statistics.VectorInference.score` is instead the
+gradient `∇_θ log p θ x` in the parameter of a statistical model. -/
 noncomputable def logDensityScore (ρ : E → ℝ) : E → E :=
   gradient fun x => Real.log (ρ x)
 
-/-- One step of the DDPM sampler with the score value frozen at the start of the step: the law
-of `e^h x + 2 (e^h - 1) σ x + √(e^{2h} - 1) ξ` for `x ∼ μ` and an independent standard Gaussian
-`ξ`, the closed-form solution of equation (2.8) of Chen et al. (arXiv:2209.11215v3) over one
-step. If the update map is not a.e.-measurable, `Measure.map` falls back to a Dirac mass. Only
-steps `h ≥ 0` are meaningful: for `h < 0`, `e^{2h} - 1` is negative and its `Real.sqrt` is `0`. -/
+/-- **DDPM sampler step.** One step of the DDPM sampler with the score value frozen at the start
+of the step: the law of `e^h x + 2 (e^h - 1) σ x + √(e^{2h} - 1) ξ` for `x ∼ μ` and an independent
+standard Gaussian `ξ`, the closed-form solution of equation (2.8) of Chen et al.
+(arXiv:2209.11215v3) over one step. If the update map is not a.e.-measurable, `Measure.map` falls
+back to a Dirac mass. Only steps `h ≥ 0` are meaningful: for `h < 0`, `e^{2h} - 1` is negative and
+its `Real.sqrt` is `0`. -/
 noncomputable def ddpmStep (h : ℝ) (σ : E → E) (μ : Measure E) : Measure E :=
   (μ.prod (stdGaussian E)).map fun p =>
     Real.exp h • p.1 + (2 * (Real.exp h - 1)) • σ p.1 + Real.sqrt (Real.exp (2 * h) - 1) • p.2
 
-/-- Laws of the DDPM sampler with step `h` and `N` steps, started at the standard Gaussian; `s k`
-estimates the score at time `k h`, and step `j + 1` uses `s (N - j)`. Only `j ≤ N` is meaningful:
-with natural subtraction, the steps after the `N`-th use `s 0`. -/
+/-- **DDPM sampler laws.** The laws of the DDPM sampler with step `h` and `N` steps, started at
+the standard Gaussian; `s k` estimates the score at time `k h`, and step `j + 1` uses `s (N - j)`.
+Only `j ≤ N` is meaningful: with natural subtraction, the steps after the `N`-th use `s 0`. -/
 noncomputable def ddpmLaw (h : ℝ) (s : ℕ → E → E) (N : ℕ) : ℕ → Measure E
   | 0 => stdGaussian E
   | j + 1 => ddpmStep h (s (N - j)) (ddpmLaw h s N j)
 
-/-- The output law `p_T` of the DDPM sampler with step `h` and `N` steps, `T = N h`. -/
+/-- **DDPM output law.** The output law `p_T` of the DDPM sampler with step `h` and `N` steps,
+`T = N h`. -/
 noncomputable def ddpmOutput (h : ℝ) (s : ℕ → E → E) (N : ℕ) : Measure E :=
   ddpmLaw h s N N
 
-/-- The forward process starts at the data law. -/
+/-- **Forward process at time zero.** The forward process starts at the data law. -/
 @[simp]
 theorem ouMarginal_zero (q : Measure E) : ouMarginal q 0 = q := by
   simp [ouMarginal]
 
-/-- The standard Gaussian is stationary for the forward Ornstein–Uhlenbeck process. -/
+/-- **Stationarity of the standard Gaussian.** The standard Gaussian is stationary for the forward
+Ornstein–Uhlenbeck process. -/
 theorem ouMarginal_stdGaussian [BorelSpace E] {t : ℝ} (ht : 0 ≤ t) :
     ouMarginal (stdGaussian E) t = stdGaussian E := by
   set a := Real.exp (-t)
@@ -143,13 +146,14 @@ theorem ddpmLaw_succ (h : ℝ) (s : ℕ → E → E) (N j : ℕ) :
     ddpmLaw h s N (j + 1) = ddpmStep h (s (N - j)) (ddpmLaw h s N j) :=
   rfl
 
-/-- A one-step run is one step from the standard Gaussian with the estimate at time `h`. -/
+/-- **One-step DDPM run.** A one-step run is one step from the standard Gaussian with the estimate
+at time `h`. -/
 theorem ddpmOutput_one (h : ℝ) (s : ℕ → E → E) :
     ddpmOutput h s 1 = ddpmStep h (s 1) (stdGaussian E) :=
   rfl
 
-/-- The output of an `N`-step run depends only on the estimates `s 1, …, s N`; in particular it
-does not use `s 0`. -/
+/-- **Estimates the DDPM output depends on.** The output of an `N`-step run depends only on the
+estimates `s 1, …, s N`; in particular it does not use `s 0`. -/
 theorem ddpmOutput_congr (h : ℝ) {s s' : ℕ → E → E} {N : ℕ}
     (hs : ∀ k ∈ Finset.Icc 1 N, s k = s' k) : ddpmOutput h s N = ddpmOutput h s' N := by
   suffices key : ∀ j ≤ N, ddpmLaw h s N j = ddpmLaw h s' N j from key N le_rfl
