@@ -1,13 +1,10 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 -/
 
 /-
-Portions of this file are adapted from:
+Adapted from:
 
 `Definitions/Def_AlgebraicGeometry_CoherentBaseChange.lean`,
 `Definitions/Def_AlgebraicGeometry_CoherentBaseChangeFamily.lean`
@@ -16,16 +13,22 @@ and
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+No individual authors are identified for these source files in the upstream
+ATTRIBUTION.md.
 The upstream NOTICE also credits:
 Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
-framework; the statements and proofs are reused here with that machinery
-removed and the names restated in Mathlib style.
+framework. This module merges the three source files and adds docstrings. It
+keeps their declaration names, statements and proofs, except that it does not
+export the membership lemmas `mem_K0_iff`, which are `LinearMap.mem_ker` with
+`LinearMap.coprod_apply`, or the negation maps `ι1`: the squares `comm` are
+stated with `-g` and `-lift d`. The examples of the source's `Gates` section are
+in the test module.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -141,28 +144,20 @@ variable (d : C0 →ₗ[R] C1) (g : P →ₗ[R] C1)
 degree-zero term in a two-chart construction. -/
 abbrev K0 : Submodule R (C0 × P) := LinearMap.ker (d.coprod g)
 
-theorem mem_K0_iff (z : C0 × P) : z ∈ K0 d g ↔ d z.1 + g z.2 = 0 := by
-  rw [LinearMap.mem_ker, LinearMap.coprod_apply]
-
 /-- The projection from `K0` to the second factor `P`. -/
 def dK : K0 d g →ₗ[R] P := (LinearMap.snd R C0 P) ∘ₗ (K0 d g).subtype
 
 /-- The projection from `K0` to the first factor `C0`. -/
 def ι0 : K0 d g →ₗ[R] C0 := (LinearMap.fst R C0 P) ∘ₗ (K0 d g).subtype
 
-/-- The map `P → C1` given by `-g`. -/
-def ι1 : P →ₗ[R] C1 := -g
-
 @[simp] theorem dK_apply (z : K0 d g) : dK d g z = (z : C0 × P).2 := rfl
 @[simp] theorem ι0_apply (z : K0 d g) : ι0 d g z = (z : C0 × P).1 := rfl
-@[simp] theorem ι1_apply (p : P) : ι1 g p = -g p := rfl
-theorem ι1_eq : ι1 g = -g := rfl
 
-theorem comm : d ∘ₗ ι0 d g = ι1 g ∘ₗ dK d g := by
+theorem comm : d ∘ₗ ι0 d g = (-g) ∘ₗ dK d g := by
   ext z
   have hz : d (z : C0 × P).1 + g (z : C0 × P).2 = 0 :=
-    (mem_K0_iff d g _).mp z.2
-  simp only [LinearMap.comp_apply, ι0_apply, dK_apply, ι1_apply,
+    (LinearMap.coprod_apply d g _).symm.trans (LinearMap.mem_ker.mp z.2)
+  simp only [LinearMap.comp_apply, ι0_apply, dK_apply, LinearMap.neg_apply,
     eq_neg_iff_add_eq_zero]
   exact hz
 
@@ -213,27 +208,18 @@ theorem surjective_coprod : Function.Surjective (d.coprod (lift d)) := by
 /-- Mumford's truncated degree-zero term: the kernel of `d ⊕ lift`. -/
 abbrev K0 : Submodule R (C0 × (Fin (rank d) → R)) := KerCoprod.K0 d (lift d)
 
-theorem mem_K0_iff (z : C0 × (Fin (rank d) → R)) :
-    z ∈ K0 d ↔ d z.1 + lift d z.2 = 0 :=
-  KerCoprod.mem_K0_iff d (lift d) z
-
 /-- The projection from Mumford's `K0` to the free module. -/
 abbrev dK : K0 d →ₗ[R] (Fin (rank d) → R) := KerCoprod.dK d (lift d)
 
 /-- The projection from Mumford's `K0` to `C0`. -/
 abbrev ι0 : K0 d →ₗ[R] C0 := KerCoprod.ι0 d (lift d)
 
-/-- The map from the free module to `C1` given by `-lift`. -/
-abbrev ι1 : (Fin (rank d) → R) →ₗ[R] C1 := KerCoprod.ι1 (lift d)
-
 @[simp] theorem dK_apply (z : K0 d) :
     dK d z = (z : C0 × (Fin (rank d) → R)).2 := rfl
 @[simp] theorem ι0_apply (z : K0 d) :
     ι0 d z = (z : C0 × (Fin (rank d) → R)).1 := rfl
-@[simp] theorem ι1_apply (v : Fin (rank d) → R) : ι1 d v = -lift d v := rfl
-theorem ι1_eq : ι1 d = -lift d := rfl
 
-theorem comm : d ∘ₗ ι0 d = ι1 d ∘ₗ dK d := KerCoprod.comm d (lift d)
+theorem comm : d ∘ₗ ι0 d = (-lift d) ∘ₗ dK d := KerCoprod.comm d (lift d)
 
 theorem ι0_prod_dK : (ι0 d).prod (dK d) = (K0 d).subtype :=
   KerCoprod.ι0_prod_dK d (lift d)

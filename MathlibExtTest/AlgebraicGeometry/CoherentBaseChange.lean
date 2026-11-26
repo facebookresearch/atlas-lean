@@ -6,6 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from
+https://github.com/anthropics/fermats-last-theorem at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`:
+
+`Definitions/Def_AlgebraicGeometry_MumfordTruncation.lean`: the four examples of
+its `Gates` section (lines 105–119), and the statements of `Mumford.surjective_coprod`
+and `Mumford.mem_K0_iff` (lines 73 and 83), restated by consumers below;
+`Definitions/Def_AlgebraicGeometry_CoherentBaseChange.lean`: the statement of
+`kerBaseChangeHom_apply_coe` (lines 67–69), restated by a consumer below;
+`Definitions/Def_AlgebraicGeometry_CoherentBaseChangeFamily.lean`: the gluing
+condition `hglue` (lines 20–21), restated by a consumer below.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+No individual authors are identified for these files in the upstream ATTRIBUTION.md.
+-/
+
 module
 
 public import MathlibExt.AlgebraicGeometry.CoherentBaseChange
@@ -35,18 +52,20 @@ example {R : Type u} [CommRing R] (G : TwoTermComplex.{u, v} R)
       (LinearMap.ker G.d).subtype.baseChange A x :=
   G.kerBaseChangeHom_apply_coe A x
 
--- Higher-universe consumer for Mumford's truncation.
+-- Higher-universe consumer for Mumford's truncation: membership is
+-- `LinearMap.mem_ker` with `LinearMap.coprod_apply`.
 example {R : Type u} [CommRing R] {C0 : Type v} {C1 : Type w}
     [AddCommGroup C0] [Module R C0] [AddCommGroup C1] [Module R C1]
     (d : C0 →ₗ[R] C1) [Module.Finite R (C1 ⧸ LinearMap.range d)]
     (z : C0 × (Fin (Mumford.rank d) → R)) :
-    (z ∈ Mumford.K0 d ↔ d z.1 + Mumford.lift d z.2 = 0) :=
-  Mumford.mem_K0_iff d z
+    (z ∈ Mumford.K0 d ↔ d z.1 + Mumford.lift d z.2 = 0) := by
+  rw [LinearMap.mem_ker, LinearMap.coprod_apply]
 
+-- The examples of the source's `Gates` section (see the header).
 -- Mumford's square commutes, with the original `Type` binder.
 example (R : Type) [CommRing R] :
     (0 : R →ₗ[R] R) ∘ₗ Mumford.ι0 (0 : R →ₗ[R] R) =
-      Mumford.ι1 (0 : R →ₗ[R] R) ∘ₗ Mumford.dK (0 : R →ₗ[R] R) :=
+      (-Mumford.lift (0 : R →ₗ[R] R)) ∘ₗ Mumford.dK (0 : R →ₗ[R] R) :=
   Mumford.comm 0
 
 -- The two-chart kernel at the zero map: membership is a condition only
@@ -54,17 +73,17 @@ example (R : Type) [CommRing R] :
 example (x : ℤ) (v : Fin (Mumford.rank (0 : ℤ →ₗ[ℤ] ℤ)) → ℤ) :
     (x, v) ∈ Mumford.K0 (0 : ℤ →ₗ[ℤ] ℤ) ↔
       Mumford.lift (0 : ℤ →ₗ[ℤ] ℤ) v = 0 := by
-  rw [Mumford.mem_K0_iff, LinearMap.zero_apply, zero_add]
+  rw [LinearMap.mem_ker, LinearMap.coprod_apply, LinearMap.zero_apply, zero_add]
 
 example (v : Fin (Mumford.rank (LinearMap.id : ℤ →ₗ[ℤ] ℤ)) → ℤ) :
     (-(Mumford.lift (LinearMap.id : ℤ →ₗ[ℤ] ℤ) v), v) ∈
       Mumford.K0 (LinearMap.id : ℤ →ₗ[ℤ] ℤ) := by
-  rw [Mumford.mem_K0_iff, LinearMap.id_apply, neg_add_cancel]
+  rw [LinearMap.mem_ker, LinearMap.coprod_apply, LinearMap.id_apply, neg_add_cancel]
 
 -- The generic two-chart kernel with a zero second map.
 example {R : Type u} [CommRing R] (d : R →ₗ[R] R) (x : R) (p : PUnit) :
     (x, p) ∈ KerCoprod.K0 d (0 : PUnit →ₗ[R] R) ↔ d x = 0 := by
-  rw [KerCoprod.mem_K0_iff, LinearMap.zero_apply, add_zero]
+  rw [LinearMap.mem_ker, LinearMap.coprod_apply, LinearMap.zero_apply, add_zero]
 
 -- Surjectivity of the coproduct built from Mumford's lift.
 example {R : Type u} [CommRing R] {C0 : Type v} {C1 : Type w}
