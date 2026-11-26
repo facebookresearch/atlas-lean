@@ -1,6 +1,6 @@
 # Decidability of ALC concept satisfiability
 
-It is decidable whether an ALC concept is satisfiable with respect to the empty TBox, in the sense of [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md); by the reduction of subsumption to unsatisfiability, subsumption between ALC concepts without a TBox is decidable as well. The same rules decide consistency of ALC ABoxes without a TBox.
+It is decidable whether an ALC concept is satisfiable with respect to the empty TBox, in the sense of [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md); by the reduction of subsumption to unsatisfiability, subsumption between ALC concepts without a TBox is decidable as well.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Candidate interpretation for superposition
 
-Let $N$ be a set of clauses not containing the empty clause, and let $\succ$ and $\succ_C$ be the orderings of the [superposition calculus](superposition-calculus.md). For a set $R$ of ground rewrite rules, a ground equation $s \approx t$ is *true in $R$* if it holds in $T_\Sigma(\emptyset)/R$, which for convergent $R$ means that $s$ and $t$ are joinable by $\to_R$; a ground clause is true in $R$ if one of its literals is. By induction on $\succ_C$, define for every $C \in G_\Sigma(N)$ sets $E_C$ and $R_C = \bigcup_{D \prec_C C} E_D$ of ground rewrite rules: $E_C = \{s \to t\}$ if
+Let $N$ be a set of clauses not containing the empty clause, and let $\succ$ and $\succ_C$ be the orderings of the [superposition calculus](superposition-calculus.md). For a set $R$ of ground rewrite rules, a ground equation $s \approx t$ is *true in $R$* if it holds in the [quotient](../equational-logic/term-algebra-modulo-an-equational-theory.md) $T_\Sigma(\emptyset)/R$ of the nonempty ground term algebra of the calculus's signature $\Sigma$, which has at least one constant symbol, which for convergent $R$ means that $s$ and $t$ are joinable by $\to_R$; a ground clause is true in $R$ if one of its literals is. By induction on $\succ_C$, define for every $C \in G_\Sigma(N)$ sets $E_C$ and $R_C = \bigcup_{D \prec_C C} E_D$ of ground rewrite rules: $E_C = \{s \to t\}$ if
 
 1. $C = C' \vee s \approx t$,
 2. $s \approx t$ is strictly maximal in $C$,
@@ -15,6 +15,7 @@ in this case $C$ is *productive*. Otherwise $E_C = \emptyset$. Finally $R_\infty
 
 - [Superposition calculus](superposition-calculus.md)
 - [Term rewriting systems](../automated-deduction/term-rewriting-systems.md)
+- [The term algebra modulo E is an E-algebra](../equational-logic/term-algebra-modulo-an-equational-theory.md)
 
 ## Sources
 

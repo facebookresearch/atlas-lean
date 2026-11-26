@@ -3,6 +3,7 @@
 Knuth–Bendix completion of a set of equations into a convergent rewrite system, its correctness by proof orderings, and unfailing completion.
 
 - [Knuth–Bendix completion](knuth-bendix-completion.md)
+- [The proof ordering of completion is well-founded](the-proof-ordering-of-completion-is-well-founded.md)
 - [The encompassment ordering is well-founded](encompassment-ordering-is-well-founded.md)
 - [Completion steps preserve the equational theory](completion-steps-preserve-the-equational-theory.md)
 - [Completion steps preserve orientation](completion-steps-preserve-orientation.md)

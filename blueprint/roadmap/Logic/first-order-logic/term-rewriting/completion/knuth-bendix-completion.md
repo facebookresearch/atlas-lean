@@ -1,6 +1,6 @@
 # Knuth–Bendix completion
 
-Fix a [reduction ordering](../reduction-ordering.md) $\succ$. Completion works on pairs $(E, R)$ of a finite set $E$ of equations and a finite set $R$ of rewrite rules; $s \doteq t$ stands for $s \approx t$ or $t \approx s$, and $\mathrm{CP}(R)$ is the set of [critical pairs](../../automated-deduction/critical-pairs-of-a-term-rewriting-system.md) of $R$. The *encompassment* quasi-ordering is $s \sqsupseteq l$ if $s|_p = l\sigma$ for some position $p$ and substitution $\sigma$, with strict part $\sqsupset$. The inference rules $E, R \vdash E', R'$ are:
+Fix a [reduction ordering](../reduction-ordering.md) $\succ$. Completion works on pairs $(E, R)$ of a set $E$ of equations and a set $R$ of rewrite rules, which need not be finite (an implementation started on finite input keeps them finite); $s \doteq t$ stands for $s \approx t$ or $t \approx s$, and $\mathrm{CP}(R)$ is the set of [critical pairs](../../automated-deduction/critical-pairs-of-a-term-rewriting-system.md) of $R$. The *encompassment* quasi-ordering is $s \sqsupseteq l$ if $s|_p = l\sigma$ for some position $p$ and substitution $\sigma$, with strict part $\sqsupset$. The inference rules $E, R \vdash E', R'$ are:
 
 - **Orient:** $E \cup \{s \doteq t\}, R \vdash E, R \cup \{s \to t\}$ if $s \succ t$;
 - **Delete:** $E \cup \{s \approx s\}, R \vdash E, R$;

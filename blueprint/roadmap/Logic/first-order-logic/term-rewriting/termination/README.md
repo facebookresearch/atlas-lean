@@ -4,7 +4,7 @@ Methods for proving termination of term rewriting systems: the multiset extensio
 
 - [Multiset extension of an ordering](multiset-extension-of-an-ordering.md)
 - [The multiset extension of a strict order is a strict order](the-multiset-extension-of-a-strict-order-is-a-strict-order.md)
-- [The multiset extension preserves well-foundedness](the-multiset-extension-preserves-well-foundedness.md)
+- [The Dershowitz–Manna multiset ordering is well-founded](the-multiset-extension-preserves-well-foundedness.md)
 - [Characterizations of the multiset extension](characterizations-of-the-multiset-extension.md)
 - [Interpretation orderings are stable under substitutions](interpretation-orderings-are-stable-under-substitutions.md)
 - [Monotone interpretation orderings are compatible with operations](monotone-interpretation-orderings-are-compatible-with-operations.md)

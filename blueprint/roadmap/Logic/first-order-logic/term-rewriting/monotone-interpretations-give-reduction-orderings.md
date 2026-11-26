@@ -6,7 +6,7 @@ If $f_{\mathcal A}$ is monotone for every function symbol $f$, then $\succ_{\mat
 
 **Proof.** $\succ_{\mathcal A}$ is [stable under substitutions](termination/interpretation-orderings-are-stable-under-substitutions.md) and, by monotonicity, [compatible with operations](termination/monotone-interpretation-orderings-are-compatible-with-operations.md). It is irreflexive, transitive and well-founded because $\succ$ is: an infinite descending chain $s_1 \succ_{\mathcal A} s_2 \succ_{\mathcal A} \cdots$ would give one in $U_{\mathcal A}$ under any fixed assignment.
 
-Polynomial orderings, which interpret symbols over $\{n \in \mathbb N \mid n \ge 1\}$ by polynomials with natural coefficients in which every argument occurs, are an instance.
+Polynomial orderings, which interpret symbols over $\{n \in \mathbb N \mid n \ge 1\}$ by polynomials with natural coefficients in which a nullary symbol is interpreted by a natural number at least $1$ and every argument of an $n$-ary symbol, $n \ge 1$, occurs with a nonzero coefficient in some monomial, are an instance.
 
 ## Depends on
 

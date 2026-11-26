@@ -1,6 +1,6 @@
 # Ordered resolution with selection
 
-Let $\succ$ be a well-founded ordering on atoms that is total on ground atoms and *stable under substitutions* ($A \succ B$ implies $A\sigma \succ B\sigma$). It is extended to ground literals by $[\neg]A \succ [\neg]B$ if $A \succ B$, and $\neg A \succ A$, and to ground clauses, viewed as multisets of literals, by the multiset extension; $\succeq$ is the reflexive closure. A *selection function* $\mathrm{sel}$ maps each clause to a set of occurrences of negative literals in it.
+Let $\succ$ be a well-founded ordering on atoms that is total on ground atoms and *stable under substitutions* ($A \succ B$ implies $A\sigma \succ B\sigma$). It is extended to literals, ground or not, by $[\neg]A \succ [\neg]B$ if $A \succ B$, and $\neg A \succ A$, and to clauses, viewed as multisets of literals, by the multiset extension; $\succeq$ is the reflexive closure. These extensions are total on ground literals and ground clauses, but in general not on non-ground ones, which is why the non-ground conditions below are stated with $\not\preceq$ and $\not\prec$. A *selection function* $\mathrm{sel}$ maps each clause to a set of occurrences of negative literals in it.
 
 The calculus $\mathrm{Res}^\succ_{\mathrm{sel}}$ consists of the following inferences on clauses, whose variables are implicitly universally quantified.
 
@@ -11,7 +11,8 @@ On ground clauses these conditions read: $A \succ L$ for all $L$ in $D$ and, if 
 
 ## Depends on
 
-- [Unification returns a most general unifier](../first-order-unification/is-mgu-unify.md)
+- [Most general unifier](../first-order-unification/is-mgu.md)
+- [Unification of ranked terms through the curried encoding](../first-order-unification/unification-of-ranked-terms-through-the-curried-encoding.md)
 
 ## Sources
 

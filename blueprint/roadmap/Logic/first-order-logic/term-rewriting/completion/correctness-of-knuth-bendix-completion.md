@@ -6,7 +6,7 @@ Let $E_0, R_0 \vdash E_1, R_1 \vdash \cdots$ be a fair run of [Knuth–Bendix co
 2. $R_*$ is equivalent to $E_0$: $\approx_{R_*}\ =\ \approx_{E_0}$;
 3. $R_*$ is convergent.
 
-**Proof.** Proof steps are given costs, compared by the lexicographic combination of the multiset extension of $\succ$, the encompassment ordering and $\succ$; proofs are compared by the multiset extension of this ordering, which is well-founded. Every proof that is not a rewrite proof in $R_*$ has an equivalent smaller proof: a step using an equation of $E_\infty$ or a rule of $R_\infty \setminus R_*$ is replaced according to the inference that removed it, and a peak between rules of $R_*$ is replaced by a valley or, for a critical overlap, by a step with the equation that Deduce added, which fairness provides. Well-founded induction gives 1, which together with the preservation of the equational theory gives 2. Since $\to_{R_*}\ \subseteq\ \succ$, $R_*$ terminates, and by 1 it is Church–Rosser, hence confluent.
+**Proof.** Compare proofs by the [proof ordering](the-proof-ordering-of-completion-is-well-founded.md) $\succ_C$, which is well-founded. Every proof that is not a rewrite proof in $R_*$ has an equivalent smaller proof: a step using an equation of $E_\infty$ or a rule of $R_\infty \setminus R_*$ is replaced according to the inference that removed it, and a peak between rules of $R_*$ is replaced by a valley or, for a critical overlap, by a step with the equation that Deduce added, which fairness provides. Well-founded induction gives 1, which together with the preservation of the equational theory gives 2. Since $\to_{R_*}\ \subseteq\ \succ$, $R_*$ terminates, and by 1 it is Church–Rosser, hence confluent.
 
 ## Depends on
 
@@ -17,7 +17,7 @@ Let $E_0, R_0 \vdash E_1, R_1 \vdash \cdots$ be a fair run of [Knuth–Bendix co
 
 - [Completion steps preserve the equational theory](completion-steps-preserve-the-equational-theory.md)
 - [Completion steps preserve orientation](completion-steps-preserve-orientation.md)
-- [The encompassment ordering is well-founded](encompassment-ordering-is-well-founded.md)
+- [The proof ordering of completion is well-founded](the-proof-ordering-of-completion-is-well-founded.md)
 - [Reduction orderings characterize termination](../reduction-orderings-characterize-termination.md)
 - [The Church–Rosser property is equivalent to confluence](../church-rosser-property-and-confluence.md)
 

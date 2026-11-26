@@ -8,6 +8,7 @@ The *homeomorphic embedding* relations are defined from the [term rewriting syst
 
 - [Reduction ordering](reduction-ordering.md)
 - [Abstract reduction system](abstract-reduction-system.md)
+- [Term rewriting systems](../automated-deduction/term-rewriting-systems.md)
 
 ## Sources
 

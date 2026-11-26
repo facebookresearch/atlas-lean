@@ -6,6 +6,7 @@ Let $(A, \to)$ be an [abstract reduction system](abstract-reduction-system.md). 
 
 ## Depends on
 
+- [Abstract reduction system](abstract-reduction-system.md)
 - [Confluence of a relation](confluence-of-a-relation.md)
 
 ## Proof depends on
@@ -16,3 +17,4 @@ Let $(A, \to)$ be an [abstract reduction system](abstract-reduction-system.md). 
 ## Sources
 
 - U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.3, Theorem 4.11 ("Newman's Lemma") with its proof by well-founded induction over $\to^+$, p. 111.
+- CSLib, `Relation.LocallyConfluent.terminating_toConfluent` in `Cslib/Foundations/Relation/Confluence.lean`, a formal statement and proof for an arbitrary relation on an arbitrary type.

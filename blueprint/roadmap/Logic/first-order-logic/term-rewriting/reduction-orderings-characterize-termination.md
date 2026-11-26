@@ -8,6 +8,7 @@ A [term rewriting system](../automated-deduction/term-rewriting-systems.md) $R$ 
 
 - [Reduction ordering](reduction-ordering.md)
 - [Abstract reduction system](abstract-reduction-system.md)
+- [Term rewriting systems](../automated-deduction/term-rewriting-systems.md)
 
 ## Proof depends on
 

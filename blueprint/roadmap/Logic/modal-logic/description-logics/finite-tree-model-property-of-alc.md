@@ -1,6 +1,6 @@
 # Finite tree model property of ALC
 
-Every ALC concept $C_0$ that is satisfiable with respect to the empty TBox, in the sense of [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md), is satisfiable in a finite interpretation that has the shape of a tree whose root belongs to $C_0^{\mathcal I}$: the domain and the union of the role relations form a finite tree, whose depth is bounded linearly by the size of $C_0$ and whose branching is bounded by the number of distinct existential restrictions in $C_0$.
+Every ALC concept $C_0$ that is satisfiable with respect to the empty TBox, in the sense of [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md), is satisfiable in a finite interpretation that has the shape of a tree whose root belongs to $C_0^{\mathcal I}$: the domain and the union of the role relations form a finite tree, whose depth is bounded linearly by the size of $C_0$ and whose branching is bounded by the number of distinct existential restrictions in the negation normal form of $C_0$. (Counting in $C_0$ itself is not enough: $\neg\forall r.P$ has no existential restriction but needs an $r$-successor.)
 
 ## Depends on
 

@@ -5,7 +5,7 @@ Consider finite [term rewriting systems](../automated-deduction/term-rewriting-s
 1. given a finite term rewriting system $R$ and a term $t$, whether every $\to_R$-reduction starting from $t$ is finite;
 2. given a finite term rewriting system $R$, whether $\to_R$ is terminating.
 
-**Proof idea.** Encode Turing machines as rewrite rules, so that the computation of a machine corresponds to a reduction sequence, and reduce the halting problem for Turing machines to problem 1 and the uniform halting problem to problem 2.
+**Proof idea.** Encode Turing machines as rewrite rules, so that the computation of a machine corresponds to a reduction sequence, and reduce the halting problem for Turing machines to problem 1 and the uniform halting problem, whether a machine halts on every input, a form of the totality problem, to problem 2.
 
 ## Depends on
 
@@ -15,6 +15,7 @@ Consider finite [term rewriting systems](../automated-deduction/term-rewriting-s
 ## Proof depends on
 
 - [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [Totality is undecidable](../../../TheoryOfComputation/computability/totality-problem-for-programs/not-tm2-decidable-total.md)
 
 ## Sources
 

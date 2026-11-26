@@ -6,8 +6,10 @@ A relation $\to$ of an [abstract reduction system](abstract-reduction-system.md)
 
 ## Depends on
 
+- [Abstract reduction system](abstract-reduction-system.md)
 - [Confluence of a relation](confluence-of-a-relation.md)
 
 ## Sources
 
 - U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.3, Theorem 4.7 with its proof (induction on the number of peaks), p. 110.
+- CSLib, `Relation.confluent_iff_churchRosser` in `Cslib/Foundations/Relation/Confluence.lean`, a formal statement and proof for an arbitrary relation on an arbitrary type.

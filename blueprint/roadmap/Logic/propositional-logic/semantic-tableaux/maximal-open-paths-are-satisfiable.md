@@ -1,6 +1,6 @@
 # Maximal open tableau paths are satisfiable
 
-Let $\pi$ be a maximal open path in a [propositional tableau](propositional-semantic-tableau.md). Then the set of formulas on $\pi$ is satisfiable. The same holds for a maximal open path of the limit tree of an infinite tableau expansion.
+Let $\pi$ be a maximal open path in a [propositional tableau](propositional-semantic-tableau.md). Then the set of formulas on $\pi$ is satisfiable. The same holds for a maximal open branch, finite or infinite, of the limit of an infinite tableau expansion.
 
 **Proof.** The formulas on $\pi$ form a Hintikka set: conditions 3–5 follow from maximality, and conditions 1 and 2 from openness together with maximality for the rule $\neg\top \Rightarrow \bot$.
 

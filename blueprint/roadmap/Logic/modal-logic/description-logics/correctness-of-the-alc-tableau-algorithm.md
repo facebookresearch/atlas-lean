@@ -5,7 +5,7 @@ Let $C_0$ be an ALC concept in negation normal form, and consider the rules of t
 1. There is no infinite sequence of rule applications $\{\{C_0(x_0)\}\} \to S_1 \to S_2 \to \cdots$.
 2. If $S'$ is obtained from a finite set $S$ of ABoxes by a rule application, then $S$ is consistent if and only if $S'$ is.
 3. Every closed ABox is inconsistent.
-4. Every complete and open ABox $\mathcal A$ is consistent: its *canonical interpretation*, with domain the individual names of $\mathcal A$, $P^{\mathcal I} = \{x \mid P(x) \in \mathcal A\}$ and $r^{\mathcal I} = \{(x, y) \mid r(x, y) \in \mathcal A\}$, is a model of $\mathcal A$.
+4. Every complete and open ABox $\mathcal A$ that belongs to a set reachable from $\{\{C_0(x_0)\}\}$ by rule applications is consistent; such an ABox contains $C_0(x_0)$ and only concept assertions $C(x)$ with $C$ a subconcept of $C_0$, so it is nonempty and in negation normal form. Its *canonical interpretation*, with domain the individual names of $\mathcal A$, $P^{\mathcal I} = \{x \mid P(x) \in \mathcal A\}$ and $r^{\mathcal I} = \{(x, y) \mid r(x, y) \in \mathcal A\}$, is a model of $\mathcal A$. The restriction matters: the ABox $\{\neg(P \sqcup \neg P)(a)\}$, not in negation normal form, is complete, open and inconsistent.
 
 Hence the algorithm answers "satisfiable" exactly when $C_0$ is satisfiable (with respect to the empty TBox).
 
