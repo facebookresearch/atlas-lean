@@ -476,8 +476,7 @@ end
 Wirsing constant is at most $0.30366327$.
 
 Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue upper
-bound `0.30366327`. Known literature result; its proof is not
-supplied here. -/
+bound `0.30366327`. -/
 public theorem mayerRoepstorffUpperBound_wanted :
     wirsingConstant ≤ (30366327 / 100000000 : ℝ) := by
   apply Real.sSup_le _ (by norm_num)
