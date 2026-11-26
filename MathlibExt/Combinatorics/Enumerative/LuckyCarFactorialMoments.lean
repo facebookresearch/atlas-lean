@@ -17,8 +17,20 @@ import all MathlibExt.Combinatorics.Enumerative.PollakPartialParkingFunctions
 /-!
 # Factorial moments of lucky cars in parking functions
 
-The falling-factorial moments of the lucky-car count are the derivatives of the lucky-car
-generating polynomial at one, divided by the number of parking functions.
+The lucky-car generating polynomial counts parking functions by their number of lucky cars.
+Its derivatives at one, divided by the number of parking functions, give the falling-factorial
+moments of that count.
+
+## References
+
+* Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and Marshall Moats,
+  *Lucky Cars and Lucky Spots in Parking Functions*, Journal of Integer Sequences 29 (2026),
+  Article 26.1.1, pp. 1–18, Theorem 4, Corollary 5, and Proposition 6.
+* Ira M. Gessel and Seunghyun Seo, *A Refinement of Cayley's Formula for Trees*,
+  Electronic Journal of Combinatorics 11(2) (2006), Article R27, pp. 1–23, Theorem 10.1,
+  gives the earlier lucky-car generating polynomial.
+* The circular parking argument is due to Pollak, as communicated in J. Riordan,
+  *Ballots and trees*, Journal of Combinatorial Theory 6(4) (1969), pp. 408–411.
 -/
 
 set_option autoImplicit false
@@ -239,5 +251,28 @@ theorem expected_descFactorial_luckyCount (n ℓ : ℕ)
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [iterate_derivative_X_pow_eq_C_mul]
   simp
+
+/-- **Generating polynomial of lucky cars.** For $n \in \mathbb{N}$ and $0 \le k \le n$, let $c_k$
+be the number of parking functions of length $n$ with exactly $k$ lucky cars. Then in
+$\mathbb{Q}[x]$,
+$$\frac{1}{n+1} \prod_{i=0}^{n-1} \bigl((n+1-i)x + i\bigr) = \sum_{k=0}^{n} c_k x^k.$$
+
+Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
+Parking Functions", Corollary 5. -/
+theorem luckyGenPoly_eq_sum (n : ℕ) :
+    luckyGenPoly n =
+      ∑ k ∈ Finset.range (n + 1),
+        C ((Nat.card { f : Fin n → Fin n //
+          IsParkingFunction n f ∧ luckyCount f = k } : ℕ) : ℚ) *
+          X ^ k := by
+  have hcount (f : Fin n → Fin n) : luckyCount f ∈ Finset.range (n + 1) := by
+    refine Finset.mem_range.mpr (Nat.lt_succ_of_le ?_)
+    simpa only [luckyCount, Finset.card_univ, Fintype.card_fin] using
+      Finset.card_filter_le (Finset.univ : Finset (Fin n))
+        (fun i => decide (parkSpots f i = f i))
+  rw [luckyGenPoly_eq_sum_powers,
+    ← Finset.sum_fiberwise_of_maps_to' (fun f _ => hcount f) (fun k => (X : Polynomial ℚ) ^ k)]
+  simp only [Finset.filter_filter, Finset.sum_const, nsmul_eq_mul, Nat.card_eq_fintype_card,
+    Fintype.card_subtype, map_natCast]
 
 end MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted

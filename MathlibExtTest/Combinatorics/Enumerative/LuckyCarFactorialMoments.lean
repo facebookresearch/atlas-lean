@@ -11,7 +11,7 @@ module
 import Mathlib.Tactic.NormNum
 import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 
-/-! # Tests for the factorial moments of lucky cars -/
+/-! # Tests for the factorial moments and generating polynomial of lucky cars -/
 
 namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted.expected_descFactorial_luckyCount
 
@@ -44,3 +44,25 @@ example : (derivative^[3] (luckyGenPoly 2)).eval 1 / ((↑(2 : ℕ) : ℚ) + 1) 
   norm_num
 
 end MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted.expected_descFactorial_luckyCount
+
+namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
+
+open MetaMathlibExt Polynomial
+
+-- The empty parking function contributes the constant term at n = 0.
+example : luckyGenPoly 0 = 1 := by
+  have h : Fintype.card {f : Fin 0 → Fin 0 // IsParkingFunction 0 f ∧ luckyCount f = 0} = 1 :=
+    by decide
+  simp [luckyGenPoly_eq_sum, h]
+
+-- Enumerating the three two-car parking functions gives zero, one and two in the three fibers.
+example : luckyGenPoly 2 = X + 2 * X ^ 2 := by
+  have h0 : Fintype.card {f : Fin 2 → Fin 2 // IsParkingFunction 2 f ∧ luckyCount f = 0} = 0 :=
+    by decide
+  have h1 : Fintype.card {f : Fin 2 → Fin 2 // IsParkingFunction 2 f ∧ luckyCount f = 1} = 1 :=
+    by decide
+  have h2 : Fintype.card {f : Fin 2 → Fin 2 // IsParkingFunction 2 f ∧ luckyCount f = 2} = 2 :=
+    by decide
+  norm_num [luckyGenPoly_eq_sum, Finset.sum_range_succ, h0, h1, h2]
+
+end MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
