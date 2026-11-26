@@ -9562,6 +9562,7 @@
 "CerednikDrinfeld.QM.FakeEllipticCurve.IsLevelRestrict": "232e0c92fc387e91",
 "CerednikDrinfeld.QM.FakeEllipticCurve.IsPullback": "78c5dd0d64fdbbee",
 "CerednikDrinfeld.QM.FakeEllipticCurve.IsPullbackVia": "2de01ebf37ae4759",
+"CerednikDrinfeld.QM.FakeEllipticCurve.IsPullbackVia.comp": "66034618daaf14de",
 "CerednikDrinfeld.QM.FakeEllipticCurve.Iso": "864f2a9e2c4de5ba",
 "CerednikDrinfeld.QM.FakeEllipticCurve.IsoVia": "60995c075c6fd014",
 "CerednikDrinfeld.QM.FakeEllipticCurve.WithExtraLevel": "84d29e0ec9480170",
