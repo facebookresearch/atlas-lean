@@ -21,3 +21,4 @@ reduction as follows.
 ## Sources
 
 - X. Leroy and H. Grall, "Coinductive big-step operational semantics", arXiv:0808.0586v1, 2008, <https://arxiv.org/abs/0808.0586v1>: Section 7, Lemmas 32, 34, 35 and 36, with the examples $\omega\,(0\,0)$ and $(\lambda x.\, 0)\, \omega$ in the text between them.
+- X. Leroy and H. Grall, "Coinductive big-step operational semantics", *Information and Computation* 207(2):284–304, 2009, <https://doi.org/10.1016/j.ic.2007.12.004>: the published version, with the same numbering: Section 7, Lemmas 32, 34, 35 and 36, with the examples $\omega\,(0\,0)$ and $(\lambda x.\, 0)\, \omega$ in the text between them.

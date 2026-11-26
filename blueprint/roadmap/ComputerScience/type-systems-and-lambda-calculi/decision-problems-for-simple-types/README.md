@@ -6,5 +6,3 @@ Simple type assignment to pure λ-terms à la Curry and its decision problems: t
 - [Type reconstruction for simple types is P-complete](type-reconstruction-for-simple-types-is-p.md)
 - [Inhabitation for simple types is PSPACE-complete](inhabitation-for-simple-types-is-pspace.md)
 - [Statman's theorem on equality of typed terms](statman-s-theorem-on-typed-equality.md)
-- [Extended polynomials](extended-polynomials.md)
-- [Schwichtenberg's theorem](schwichtenberg-s-theorem.md)

@@ -7,12 +7,13 @@ $$t(x) = \lambda k.\, x\, k, \quad t(\lambda x.\, M) = \lambda k.\, k\, (\lambda
 
 $$t(\Delta x.\, M) = \lambda k.\, (\lambda x.\, t(M))\, (\lambda h.\, h\, (\lambda j.\, \lambda i.\, i\, (j\, k)))\, (\lambda z.\, z).$$
 
-If $\Gamma \vdash M : \varphi$ in the simply typed λΔ-calculus, then $k(\Gamma) \vdash t(M) : k(\varphi)$ in the simply typed λ-calculus. Hence classical implicational logic embeds
-in intuitionistic implicational logic, and is consistent: a closed $M : \bot$ would give the closed term $t(M)\, (\lambda z.\, z) : \bot$.
+If $\Gamma \vdash M : \varphi$ in the simply typed λΔ-calculus, then $k(\Gamma) \vdash t(M) : k(\varphi)$ in the simply typed λ-calculus. Hence no closed term of the simply typed λΔ-calculus has
+type $\bot$: a closed $M : \bot$ would give the closed simply typed term $t(M)\, (\lambda z.\, z) : \bot$.
 
 ## Depends on
 
 - [The λΔ-calculus](the-lambda-delta-calculus.md)
+- [Simple type assignment à la Curry](../../decision-problems-for-simple-types/simple-type-assignment-a-la-curry.md)
 
 ## Sources
 

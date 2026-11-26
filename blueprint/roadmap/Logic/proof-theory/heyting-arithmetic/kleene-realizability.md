@@ -13,6 +13,12 @@ with Gödel number $e$ and $2^a 3^b$ for the coded pair:
 A closed formula is *realizable* if some number realizes it, and a formula with free variables $x_1, \dots, x_k$ is realizable if a total recursive $f$ gives a
 realizer $f(n_1, \dots, n_k)$ of each instance. No number realizes $\bot$.
 
+## Expansion
+
+This page becomes ready once:
+
+- An acceptable numbering $e \mapsto \{e\}$ of the partial recursive functions, with a primitive recursive pairing (statement prerequisite; not yet stated)
+
 ## Sources
 
 - M. H. B. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, University of Copenhagen, May 1998: Section 11.5, Definition 11.5.1 and the remarks after it.

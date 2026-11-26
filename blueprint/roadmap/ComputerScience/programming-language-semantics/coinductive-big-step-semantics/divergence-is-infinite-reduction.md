@@ -19,3 +19,4 @@ These proofs use the law of excluded middle.
 ## Sources
 
 - X. Leroy and H. Grall, "Coinductive big-step operational semantics", arXiv:0808.0586v1, 2008, <https://arxiv.org/abs/0808.0586v1>: Section 4, Lemma 8, Lemma 10 and Theorem 11, each marked there as using classical logic.
+- X. Leroy and H. Grall, "Coinductive big-step operational semantics", *Information and Computation* 207(2):284–304, 2009, <https://doi.org/10.1016/j.ic.2007.12.004>: the published version, with the same numbering: Section 4, Lemma 8, Lemma 10 and Theorem 11, each marked there as using classical logic.
