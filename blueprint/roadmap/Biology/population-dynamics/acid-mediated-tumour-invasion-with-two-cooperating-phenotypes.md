@@ -1,6 +1,7 @@
 # Acid-mediated tumour invasion with two cooperating phenotypes
 
 The **two-phenotype Gatenby–Gawlinski model** describes, on a one-dimensional tissue slice $x \in [0, 1]$ with zero-flux boundaries, the nondimensional densities of stroma $S$, acid-producing tumour cells $T_A$, matrix-degrading tumour cells $T_M$, lactic acid $L$ and extracellular matrix $M$:
+
 $$\begin{aligned}
 \partial_t S &= S(1 - S) - \delta S L, \\
 \partial_t T_A &= \rho_T T_A (1 - c_S S - T_A - c_{M,A} T_M) + \Delta_T\, \partial_x\big[(1 - M)\, \partial_x T_A\big], \\
@@ -8,6 +9,7 @@ $$\begin{aligned}
 \partial_t L &= \rho_L (T_A - L) + \partial_x^2 L, \\
 \partial_t M &= -\kappa\, T_M M,
 \end{aligned}$$
+
 with positive parameters $\delta$ (acid toxicity to stroma), $\rho_T, \rho_L, \Delta_T, \kappa$, and competition coefficients $c_S > 1$ (stroma on tumour), $c_{M,A}, c_{A,M} \ge 0$ (between the phenotypes). Stroma is a biological barrier (it suppresses tumour growth and is removed only by acid, produced only by $T_A$). Matrix is a physical barrier (it blocks motility through the factor $1 - M$ and is removed only by $T_M$).
 
 **Homogeneous steady states.** Besides healthy tissue $\mathrm{SS0} = (1, 0, 0, 0, M^*)$ with arbitrary $M^*$, the relevant tumour states are
