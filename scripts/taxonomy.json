@@ -1426,6 +1426,7 @@
   "CSLibExt/Computability/Complexity/PathMachine": {"to": "TheoryOfComputation/polynomial-time-problems", "title": "Graph reachability"},
   "CSLibExt/Computability/Complexity/PolynomialEncoding": {"to": "TheoryOfComputation/np-completeness/cook-levin", "title": "Conversions between bit-string encodings"},
   "CSLibExt/Computability/Complexity/Preimage": {"to": "TheoryOfComputation/complexity-classes", "title": "Time and space complexity classes"},
+  "CSLibExt/Computability/Complexity/RazborovMonotoneClique": {"to": "TheoryOfComputation/circuit-complexity", "title": "Monotone circuit lower bound for clique"},
   "CSLibExt/Computability/Complexity/RPSubsetBPP": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Bounded-error probabilistic classes RP and BPP"},
   "CSLibExt/Computability/Complexity/RPSubsetNP": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Bounded-error probabilistic classes RP and BPP"},
   "CSLibExt/Computability/Complexity/SSVerifierArithmetic": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Subset sum"},
