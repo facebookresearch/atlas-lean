@@ -16,7 +16,6 @@ public import MathlibExt.NumberTheory.GaussKuzminFundamentalIntervals
 public import MathlibExt.NumberTheory.GaussKuzminCharacterization
 public import MathlibExt.NumberTheory.GaussKuzminSymmetryNontrivialSymmetryLengthThreeAndInfinite
 public import MathlibExt.NumberTheory.GaussKuzminSymmetryStablePlusNontrivialSymmetry
-public import MathlibExt.NumberTheory.GaussKuzminSymmetryGaussKuzminMassEqAbsLogb
 
 namespace MetaMathlibExt
 
