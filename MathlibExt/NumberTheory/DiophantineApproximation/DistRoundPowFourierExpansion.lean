@@ -9,14 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Order.Round
-public import Mathlib.Analysis.Fourier.AddCircle
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Topology.UniformSpace.UniformConvergence
+import Mathlib.Analysis.Fourier.AddCircle
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Topology.Instances.AddCircle.Defs
 import Mathlib.Tactic
 
@@ -69,7 +69,7 @@ private lemma gFun_zero (k : ℕ) (hk : 1 ≤ k) : gFun k 0 = 0 := by
 private lemma gFun_one (k : ℕ) (hk : 1 ≤ k) : gFun k 1 = 0 := by
   simp [gFun, zero_pow (by omega : k ≠ 0)]
 
-private lemma gFun_eq_pow_Ioc {k : ℕ} {x : ℝ} (hx : x ∈ Set.uIcc (0 : ℝ) (1 / 2)) :
+private lemma gFun_eq_pow_uIcc {k : ℕ} {x : ℝ} (hx : x ∈ Set.uIcc (0 : ℝ) (1 / 2)) :
     gFun k x = x ^ k := by
   rw [Set.uIcc, Set.mem_Icc] at hx
   simp only [min_eq_left (by norm_num : (0 : ℝ) ≤ 1 / 2),
@@ -84,7 +84,7 @@ private lemma gFun_eq_pow_Ioc {k : ℕ} {x : ℝ} (hx : x ∈ Set.uIcc (0 : ℝ)
     have h2 : |(1 / 2 : ℝ) - ((1 : ℤ) : ℝ)| = 1 / 2 := by norm_num
     simp only [gFun, hr12, h2]
 
-private lemma gFun_eq_one_sub_pow_Ioc {k : ℕ} {x : ℝ} (hx : x ∈ Set.uIcc (1 / 2 : ℝ) 1) :
+private lemma gFun_eq_one_sub_pow_uIcc {k : ℕ} {x : ℝ} (hx : x ∈ Set.uIcc (1 / 2 : ℝ) 1) :
     gFun k x = (1 - x) ^ k := by
   rw [Set.uIcc, Set.mem_Icc] at hx
   simp only [min_eq_left (by norm_num : (1 / 2 : ℝ) ≤ 1),
@@ -127,15 +127,6 @@ private lemma ibp_once {a b : ℝ} {c : ℂ} (hc : c ≠ 0) {u u' : ℝ → ℝ}
   have h := intervalIntegral.integral_mul_deriv_eq_deriv_mul_of_hasDerivAt hcontU hcontE
     (fun x _ => hU x) (fun x _ => hE x) hu' hEint
   exact h
-
-private lemma hasDerivAt_u1 (k : ℕ) (x : ℝ) :
-    HasDerivAt (fun x : ℝ => x ^ k) ((k : ℝ) * x ^ (k - 1)) x :=
-  hasDerivAt_pow k x
-
-private lemma hasDerivAt_u1' (k : ℕ) (x : ℝ) :
-    HasDerivAt (fun x : ℝ => (k : ℝ) * x ^ (k - 1))
-      ((k : ℝ) * (((k - 1 : ℕ) : ℝ) * x ^ (k - 1 - 1))) x :=
-  (hasDerivAt_pow (k - 1) x).const_mul (k : ℝ)
 
 private lemma hasDerivAt_u2 (k : ℕ) (x : ℝ) :
     HasDerivAt (fun x : ℝ => (1 - x) ^ k) (-((k : ℝ) * (1 - x) ^ (k - 1))) x := by
@@ -258,8 +249,8 @@ private lemma cFun_zero (k : ℕ) (hk : 1 ≤ k) :
       = (∫ u in (0 : ℝ)..(1 / 2), u ^ k) + (∫ u in (1 / 2 : ℝ)..1, (1 - u) ^ k) := by
     rw [← intervalIntegral.integral_add_adjacent_intervals hint1 hint2]
     congr 1
-    · exact intervalIntegral.integral_congr (fun x hx => gFun_eq_pow_Ioc hx)
-    · exact intervalIntegral.integral_congr (fun x hx => gFun_eq_one_sub_pow_Ioc hx)
+    · exact intervalIntegral.integral_congr (fun x hx => gFun_eq_pow_uIcc hx)
+    · exact intervalIntegral.integral_congr (fun x hx => gFun_eq_one_sub_pow_uIcc hx)
   have h1 : (∫ u in (0 : ℝ)..(1 / 2), u ^ k) = (1 / 2 : ℝ) ^ (k + 1) / ((k : ℝ) + 1) := by
     rw [integral_pow]
     simp [zero_pow (by omega : k + 1 ≠ 0)]
@@ -302,11 +293,11 @@ private lemma coeff_bound {k : ℕ} (hk : 1 ≤ k) {m : ℤ} (hm : m ≠ 0) :
     rw [cFun, ← intervalIntegral.integral_add_adjacent_intervals hint1 hint2]
     refine congrArg₂ (· + ·) ?_ ?_ <;>
       apply intervalIntegral.integral_congr <;> intro x hx <;> dsimp only
-    · rw [gFun_eq_pow_Ioc hx]
+    · rw [gFun_eq_pow_uIcc hx]
       congr 1
       rw [hcdef]
       ring_nf
-    · rw [gFun_eq_one_sub_pow_Ioc hx]
+    · rw [gFun_eq_one_sub_pow_uIcc hx]
       congr 1
       rw [hcdef]
       ring_nf
@@ -365,7 +356,8 @@ private lemma coeff_bound {k : ℕ} (hk : 1 ≤ k) {m : ℤ} (hm : m ≠ 0) :
           exact mul_le_mul hcast hp (pow_nonneg hx0 _) (Nat.cast_nonneg _)
       _ = (k : ℝ) ^ 2 := by ring
   have hb1 := norm_sub_boundary_le (a := (0 : ℝ)) (b := 1 / 2) (by norm_num) hc hexp
-    (hasDerivAt_u1 k) (hasDerivAt_u1' k) hcont1' hcont1'' hbound1' hbound1''
+    (hasDerivAt_pow k) (fun x => (hasDerivAt_pow (k - 1) x).const_mul (k : ℝ)) hcont1' hcont1''
+    hbound1' hbound1''
   have hb2 := norm_sub_boundary_le (a := (1 / 2 : ℝ)) (b := 1) (by norm_num) hc hexp
     (hasDerivAt_u2 k) (hasDerivAt_u2' k) hcont2' hcont2'' hbound2' hbound2''
   have hB : (↑((1 / 2 : ℝ) ^ k) * (Complex.exp (c * ((1 / 2 : ℝ) : ℂ)) / c)
