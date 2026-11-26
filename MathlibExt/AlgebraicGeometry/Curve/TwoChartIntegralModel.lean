@@ -222,7 +222,9 @@ instance isOpenImmersion_fInf : IsOpenImmersion (fInf R F j) := by
   have := isLocalization_away_inclInf R F j
   exact IsOpenImmersion.of_isLocalization (jInvChartInf R F j)
 
-/-- The scheme obtained by gluing the two affine charts along their overlap. -/
+/-- The two-chart integral model of `F` at `j ≠ 0`: the scheme obtained by gluing `Spec` of the
+integral closures of `R[j]` and `R[j⁻¹]` in `F` along `Spec` of the integral closure of
+`R[j, j⁻¹]`, which is an open subscheme of both. -/
 public def _root_.AlgebraicCurve.TwoChartIntegralModel : Scheme.{u} :=
   pushout (fFin R F j) (fInf R F j)
 
@@ -366,11 +368,12 @@ public theorem chartAlg_le_restrictScalars (S : Set F) :
     chartAlg R F S ≤ (chartAlg R' F S).restrictScalars R :=
   fun _ hx => chartAlg_le_chartAlg R F R' S hx
 
-/-- The inclusion of chart rings `chartAlg R F S → chartAlg R' F S` inside `F` induced by
-extending the coefficient ring along `R → R'`. It is not the scalar extension
-`R' ⊗[R] chartAlg R F S` in general: for `R = ℤ`, `R' = ℤ[T]` acting on `ℚ` by `T ↦ 0` and
-`S = {2}`, both chart rings are `ℤ`, while the scalar extension is `ℤ[T]`. The base change of the
-glued model along `Spec R' → Spec R` is the pullback `baseChange`. -/
+/-- For a scalar tower `R → R' → F`, the inclusion of chart rings
+`chartAlg R F S → chartAlg R' F S` inside `F` induced by extending the coefficient ring from `R`
+to `R'`. It is not the scalar extension `R' ⊗[R] chartAlg R F S` in general: for `R = ℤ`,
+`R' = ℤ[T]` acting on `ℚ` by `T ↦ 0` and `S = {2}`, both chart rings are `ℤ`, while the scalar
+extension is `ℤ[T]`. The base change of the glued model along `Spec R' → Spec R` is the pullback
+`baseChange`. -/
 public def chartCoeffIncl (S : Set F) : chartAlg R F S →+* chartAlg R' F S :=
   (Subalgebra.inclusion (chartAlg_le_restrictScalars R F R' S)).toRingHom
 
