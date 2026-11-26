@@ -15,7 +15,6 @@ Portions of this file are adapted from:
 `Definitions/Def_FrobeniusDensity_PrimeSums.lean`,
 `Theorems/Thm_FrobeniusDensity_degOneAsymptotic.lean`,
 `Theorems/Thm_FrobeniusDensity_primeSum_toReal_add_log_isBigO.lean`,
-`Theorems/Thm_FrobeniusDensity_card_setOf_isConj_mul_card_centralizer.lean`
 and the corresponding `P2M/Sol/S_FrobeniusDensity_*.lean` proof files
 in https://github.com/anthropics/fermats-last-theorem
 at commit 6e837e75355538c7f80bab5b956861e86c4eacc2:
@@ -47,12 +46,16 @@ import Mathlib.Algebra.BigOperators.Ring.Nat
 import Mathlib.RingTheory.Ideal.Int
 
 /-!
-# Degree-one primes carry the pole of the Dedekind zeta function
+# Degree-one primes and the pole of the Dedekind zeta function
 
 For a number field `K`, the sum `∑ 𝔭, N(𝔭) ^ (-s)` over the nonzero prime ideals `𝔭` of `𝓞 K`
-is `-log (s - 1) + O(1)` as `s → 1⁺` (`FrobeniusDensity.primeSum_toReal_add_log_isBigO`). Through
-the Euler product, this is `log ζ_K(s) = -log (s - 1) + O(1)`, the logarithm of the simple pole of
-the Dedekind zeta function `ζ_K` at `s = 1`.
+is `-log (s - 1) + O(1)` as `s → 1⁺` (`FrobeniusDensity.primeSum_toReal_add_log_isBigO`). The
+proof compares this sum with `log ζ_K(s)`, where `ζ_K` is the Dedekind zeta function. The two are
+not equal: by the Euler product, `log ζ_K(s)` also contains the terms of the prime powers `𝔭 ^ k`
+with `k ≥ 2`. These terms are bounded: for real `s > 1`,
+`∑ 𝔭, N(𝔭) ^ (-s) ≤ log ζ_K(s) ≤ ∑ 𝔭, N(𝔭) ^ (-s) + 2 ζ_K(2)`. So the prime sum and `log ζ_K(s)`
+differ by `O(1)` as `s → 1⁺`, and they have the same leading term: since `ζ_K` has a simple pole at
+`s = 1`, `log ζ_K(s) = -log (s - 1) + O(1)`.
 
 The primes of residue degree at least two contribute `O(1)`, and so does any finite set of primes.
 Hence, for every finite set `S₀` of natural numbers, the sum over the primes of `𝓞 K` of residue
@@ -975,8 +978,10 @@ end FrobeniusDensity
 
 /-- **Logarithmic singularity of the prime ideal sum.** For every number field `K`,
 `∑ 𝔭, N(𝔭) ^ (-s) = -log (s - 1) + O(1)` as `s → 1⁺`, where `𝔭` runs over the nonzero prime ideals
-of `𝓞 K`. Through the Euler product this is `log ζ_K(s) = -log (s - 1) + O(1)`, the logarithm of
-the simple pole of the Dedekind zeta function `ζ_K` at `s = 1`. -/
+of `𝓞 K`. The sum is not `log ζ_K(s)`, the logarithm of the Dedekind zeta function, which by the
+Euler product also contains the terms of the prime powers `𝔭 ^ k` with `k ≥ 2`; but the two differ
+by `O(1)` as `s → 1⁺`, and `log ζ_K(s) = -log (s - 1) + O(1)` because `ζ_K` has a simple pole at
+`s = 1`. So both have the leading term `-log (s - 1)`. -/
 public theorem FrobeniusDensity.primeSum_toReal_add_log_isBigO (K : Type*)
     [Field K] [NumberField K] :
     (fun s : ℝ => (FrobeniusDensity.primeSum K s).toReal + Real.log (s - 1))
