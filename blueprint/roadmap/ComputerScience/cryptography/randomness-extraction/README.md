@@ -4,3 +4,6 @@
 - [Guessing probability, min-entropy and collision probability](guessing-probability-min-entropy-and-collision.md)
 - [Leftover hash lemma](leftover-hash-lemma.md)
 - [Leftover hash lemma with side information](leftover-hash-lemma-with-side-information.md)
+- [Point-mass threshold for min-entropy](le-min-entropy-iff.md)
+- [Collision probability](collision-probability.md)
+- [Collision probability as a sum of squares](collision-probability-eq-sum-sq.md)
