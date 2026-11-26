@@ -1,7 +1,9 @@
 # Expected dissimilarity between pairs of multi-copy draws from two allele-frequency vectors
 
 **Setting.** Let $I \ge 2$ objects (e.g. alleles) have probability vectors $\mathbf{p}, \mathbf{q}$ on $\{1,\dots,I\}$. Draw $K \ge 2$ items with replacement according to $\mathbf{p}$, and independently $K$ items according to $\mathbf{q}$, recording each draw as an unordered multiset, i.e. a count vector $\mathbf{g} \in \mathbb{Z}_{\ge 0}^I$ with $\sum_i g^{(i)} = K$ (a $K$-ploid genotype at a locus with $I$ alleles). The dissimilarity of two draws is
+
 $$\mathcal{D}(\mathbf{g}_1, \mathbf{g}_2) = 1 - \frac{1}{K^2}\sum_{1 \le i,j \le K}\mathbb{1}\{G_1^{(i)} = G_2^{(j)}\} = 1 - \frac{1}{K^2}\langle \mathbf{g}_1, \mathbf{g}_2\rangle,$$
+
 the probability that one copy picked at random from each draw differs; it takes values in $[0,1]$ and reduces for $K = 2$ to the diploid genotype dissimilarity $D_2$. It is not a metric: $\mathcal{D}(\mathbf{g},\mathbf{g}) > 0$ unless $\mathbf{g}$ is homozygous.
 
 **Identity states.** Unordered pairs of draws, modulo relabelling of the objects, are called identity states; they are orbits of permutation-group actions on pairs of count vectors, can be enumerated for each $(K, I)$, and each has an explicit probability, a symmetrised sum over injective labellings $i_1,\dots,i_N$ of $\prod_j p_{i_j}^{g_1^{(j)}} q_{i_j}^{g_2^{(j)}}$ weighted by multinomial coefficients and the stabiliser size.

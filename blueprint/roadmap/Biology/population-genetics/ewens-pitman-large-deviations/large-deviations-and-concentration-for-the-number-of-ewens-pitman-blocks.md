@@ -3,13 +3,19 @@
 **Model.** The Ewens–Pitman (two-parameter Chinese restaurant) model with $\alpha \in [0,1)$ and $\theta > -\alpha$ is the exchangeable random partition of $\{1,\dots,n\}$ built sequentially: given $k$ blocks of sizes $n_1,\dots,n_k$ among the first $m$ elements, element $m+1$ starts a new block with probability $\frac{\theta + k\alpha}{\theta + m}$ and joins block $j$ with probability $\frac{n_j - \alpha}{\theta + m}$. For $\alpha = 0$ it is the Ewens sampling formula of neutral population genetics (blocks are allelic types in a sample of $n$ genes, $\theta$ the scaled mutation rate). Let $K_n$ be the number of blocks; for $\alpha \in (0,1)$, $K_n/n^\alpha$ converges almost surely to a Mittag-Leffler type limit, so $K_n/n \to 0$.
 
 **Theorem (Feng–Hoppe large deviation principle).** For $\alpha \in (0,1)$ and $\theta > -\alpha$, $(K_n/n)_{n \ge 1}$ satisfies a large deviation principle with good rate function
+
 $$I_\alpha(x) = \sup_{t \in \mathbb{R}}\{xt - L_\alpha(t)\}, \qquad L_\alpha(t) = \begin{cases} -\log\big(1 - (1 - e^{-t})^{1/\alpha}\big) & t > 0,\\ 0 & t \le 0,\end{cases}$$
+
 independent of $\theta$.
 
 **Theorem (concentration inequality).** For $\alpha \in (0,1)$, $\theta > -\alpha$, every $x \in (0,1)$ and every $n \ge 1$,
+
 $$\mathbb{P}\Big(\frac{K_n}{n} \ge x\Big) \le \frac{P_n(\alpha,\theta)\,c_n(\alpha,\theta)}{\alpha}\,e^{-nI_\alpha(x)},$$
+
 where $P_n(\alpha,\theta) = (\lfloor\theta/\alpha\rfloor + n)^{\theta/\alpha}$ if $\theta > 0$ and $P_n = 1$ if $\theta \le 0$, and
+
 $$c_n(\alpha,\theta) = \frac{\Gamma(n)\,\Gamma(\theta + 1)}{\Gamma(\theta/\alpha + 1)\,\Gamma(n + \theta)};$$
+
 for $\theta = 0$ the prefactor $P_n c_n/\alpha$ reduces to $1/\alpha$. The prefactor grows at most polynomially in $n$, so the bound has the exact LDP exponent.
 
 ## Expansion

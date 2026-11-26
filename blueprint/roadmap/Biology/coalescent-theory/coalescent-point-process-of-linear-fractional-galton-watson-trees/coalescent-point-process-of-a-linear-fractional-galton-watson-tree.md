@@ -1,21 +1,31 @@
 # Coalescent point process of a linear-fractional Galton-Watson tree
 
 **Setting.** Let $(Z_n)_{n \ge 0}$ be a Bienaymé-Galton-Watson process with $Z_0 = 1$ and $(p, r)$-*linear fractional* offspring law
+
 $$\mathbb P(\xi = 0) = 1 - r, \qquad \mathbb P(\xi = k) = r p (1-p)^{k-1}, \quad k \ge 1,$$
+
 with $0 < p < 1$, $0 \le r \le 1$, $p \ne r$, and mean $m = r/p$. Embed an infinitely old population in the plane in the usual monotone way and, for consecutive tips $i-1, i$ of the present generation, let $H_i$ be the number of generations back to their most recent common ancestor. The sequence $(H_i)_{i \ge 1}$ is the *coalescent point process* (CPP). For a fixed depth $T \in \mathbb N$, let $N_T = \min\{i \ge 1 : H_i > T\}$, set $H_0 = T$, and let $\mathbf T^{p,r}$ be the ultrametric oriented tree with node depths $H_1, \dots, H_{N_T - 1}$ (the genealogy of the tips descending from one ancestor $T$ generations back).
 
 **Proposition (i.i.d. branch lengths).** The $H_i$ are i.i.d. with
+
 $$\mathbb P(H_i > n) = \frac{r - p}{(1-p)\, m^n - (1 - r)}, \qquad n \ge 0.$$
+
 Hence $N_T$ is geometric with failure probability $\mathbb P(H \le T)$, and for an ultrametric oriented tree $\tau$ with $n$ tips and node depths $x_1, \dots, x_{n-1} \in \{1, \dots, T\}$,
+
 $$\mathbb P(\mathbf T^{p,r} = \tau) = \mathbb P(H > T) \prod_{i=1}^{n-1} \mathbb P(H = x_i), \qquad \mathbb P(\mathbf T^{p,r} = \tau \mid N_T = n) = \prod_{i=1}^{n-1} \frac{\mathbb P(H = x_i)}{\mathbb P(H \le T)}.$$
 
 **Lemma (Bernoulli sampling).** Keep each tip independently with probability $y \in (0, 1)$ and let $H_{y,i}$ be the coalescence depth between consecutive kept tips. Then $(H_{y,i})_{i\ge 1}$ is again the CPP of a linear-fractional Galton-Watson process, with parameters
+
 $$p_y = 1 - y(1-p), \qquad r_y = 1 - y(1-p) + r - p,$$
+
 so the same mean $m$, and
+
 $$\mathbb P(H_{y,i} > n) = \frac{r - p}{y(1-p)\, m^n - [\,y(1-p) - (r-p)\,]}, \qquad n \ge 0.$$
+
 The likelihood of a Bernoulli$(y)$-sampled tree is the formula above with $H$ replaced by $H_y$.
 
 **Embedding.** A $(p,r)$-linear-fractional process is the integer-time skeleton of a linear birth-death process started from one individual, with birth and death rates
+
 $$\lambda = (1 - p)\,\frac{\log p - \log r}{p - r}, \qquad \mu = (1 - r)\,\frac{\log p - \log r}{p - r}.$$
 
 ## Expansion

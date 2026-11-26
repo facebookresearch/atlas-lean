@@ -3,18 +3,25 @@
 **Setting.** Let $\mathbf X \in \{0,1\}^{N\times P}$ be an individual-by-feature array (for example $N$ genomes at $P$ biallelic sites), rows $\mathbf x_1,\dots,\mathbf x_N$, with column sums $\mathbf c = (c_1,\dots,c_P)$. Population structure (stratification, admixture, cryptic relatedness) makes the rows non-exchangeable.
 
 **ES&IF null hypothesis.** The rows are exchangeable and the features are independent. Equivalently, for independent permutations $\pi_1,\dots,\pi_P$ of $[N]$,
+
 $$(\mathbf x_1,\dots,\mathbf x_N) \overset{d}{=} (\mathbf x_1^{\pi},\dots,\mathbf x_N^{\pi}), \qquad \mathbf x_i^{\pi} = (x_{\pi_1(i)1},\dots,x_{\pi_P(i)P}).$$
+
 Conditionally on $\mathbf c$, the null law is uniform on $\mathcal Y_{\mathbf c} = \{\mathbf X' \in \{0,1\}^{N\times P}: \sum_i \mathbf x'_i = \mathbf c\}$, a set of size $\prod_{p=1}^P \binom{N}{c_p}$.
 
 **Test statistic.** With Hamming distance $d_H(\mathbf x_i,\mathbf x_j) = \sum_{p=1}^P \mathbf 1(x_{ip} \ne x_{jp})$,
+
 $$V^{(N,P)}(\mathbf X) = \frac{1}{P\binom N2}\sum_{i<j}\big(d_H(\mathbf x_i,\mathbf x_j) - \mu\big)^2, \qquad \mu = \frac{1}{\binom N2}\sum_{i<j} d_H(\mathbf x_i,\mathbf x_j).$$
+
 This is the empirical variance of the pairwise distances. Large values reject ES&IF, and the p-value comes from resampling arrays by permuting each column independently.
 
 **Theorem (large-$P$ limit).** Let $V^{(N,P)\ast}$ have the law of $V^{(N,P)}$ under the ES&IF null, conditional on the column sums. Then, as $P \to \infty$ with $N$ fixed,
+
 $$V^{(N,P)\ast} \xrightarrow{d} V^{(N,\infty)} = \frac{a_1^N\,\chi^2_{N-1} + a_2^N\,\chi^2_{\binom{N-1}{2}-1}}{\binom N2},$$
+
 where $\chi^2_{N-1}$ and $\chi^2_{\binom{N-1}2 - 1}$ are independent, and $a_1^N, a_2^N \ge 0$ are the large-$P$ limits of explicit functions of the column frequencies $c_p/N$.
 
 **Theorem (rate).** For fixed $N$ there is a constant $C$, depending only on $N$, $a_1^N$ and $a_2^N$, such that
+
 $$\sup_{t \ge 0}\Big|P\big(V^{(N,P)\ast} \le t\big) - P\big(V^{(N,\infty)} \le t\big)\Big| \le \frac{C}{\sqrt P}.$$
 
 **Block-dependent features.** If the features split into $B$ mutually independent blocks with arbitrary dependence inside each block (for example linkage disequilibrium blocks), the null permutes whole blocks of columns. The same two-chi-square limit holds as $B, P \to \infty$, and the statistic needs only the per-block pairwise distances. Rejecting this null for a proposed LD partition means either the cohort is stratified or the blocks are not independent.

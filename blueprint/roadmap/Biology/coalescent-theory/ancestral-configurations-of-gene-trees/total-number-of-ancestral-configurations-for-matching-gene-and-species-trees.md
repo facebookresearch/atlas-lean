@@ -1,16 +1,22 @@
 # Total number of ancestral configurations for matching gene and species trees
 
 **Setting.** Let a gene-tree labeled topology $G$ and a species tree $S$ have the same labeled topology $t$ with $n$ leaves. An *ancestral configuration* at an internal node $k$ of $S$ is a set of gene lineages that can be present at the top of the edge above $k$ in some realization of $G$ in $S$. These configurations index the terms in recursive formulas for the gene-tree probability under the multispecies coalescent. For matching trees, the number $R(t)$ of root configurations satisfies $R(\bullet)=0$ for a leaf and
+
 $$R(t)=\big(R(t_L)+1\big)\big(R(t_R)+1\big)$$
+
 for $t$ with root subtrees $t_L,t_R$. The *total number* is $T(t)=\sum_{k}R(t^k)$, summed over internal nodes $k$. Let $T_n$ be the total for a random labeled topology of size $n$.
 
 **Theorem.**
 
 1. *(Uniform model.)* For a uniformly random labeled topology,
+
 $$\mathbb E[T_n]\sim\sqrt6\,(4/3)^n\sim2\,\mathbb E[R_n],\qquad \mathbb V[T_n]\sim\frac{2}{17}(15+11\sqrt2)\sqrt{\frac{7(11-\sqrt2)}{34}}\Big[\frac{4}{7(8\sqrt2-11)}\Big]^n,$$
+
 and $\mathbb V[T_n]\sim\mathbb E[T_n^2]$.
 2. *(Yule model.)* For a Yule–Harding random labeled topology,
+
 $$\mathbb E[T_n]\sim\mathbb E[R_n]\sim\Big(\frac1{1-e^{-2\pi\sqrt3/9}}\Big)^n,\qquad \mathbb V[T_n]\sim\mathbb V[R_n]\sim(2.0449954971\ldots)^n,$$
+
 the correlation of $T_n$ and $R_n$ tends to $1$, and $\log T_n$ satisfies a central limit theorem with $\mathbb E[\log T_n]\sim\mu n$ and $\mathbb V[\log T_n]\sim\sigma^2n$, where $(\mu,\sigma^2)\approx(0.351,0.008)$.
 
 ## Expansion

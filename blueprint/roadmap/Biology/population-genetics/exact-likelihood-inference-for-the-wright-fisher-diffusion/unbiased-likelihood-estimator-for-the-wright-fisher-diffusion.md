@@ -1,25 +1,32 @@
 # Unbiased likelihood estimator for the Wright–Fisher diffusion
 
 **Setting.** Allele frequencies follow the Wright–Fisher diffusion
+
 $$
 dX_t = \gamma(X_t, \vartheta)\,dt + \sqrt{X_t(1 - X_t)}\,dB_t, \qquad X_0 = x_0 \in [0,1],
 $$
+
 with drift $\gamma(\cdot,\vartheta)$ encoding mutation and selection with unknown parameter $\vartheta \in \Theta$, observed at discrete times. Let $X^\alpha$ be a reference neutral Wright–Fisher diffusion with mutation, with transition density $p(x, y, t)$, and let $A(\cdot;\vartheta)$ and $\phi(\cdot;\vartheta)$ be the potential and the rate function given by Girsanov's theorem for the change of drift from $X^\alpha$ to $X$, with $\phi^-(\vartheta)$ a lower bound of $\phi$.
 
 **Results.**
 1. *(Bridge representation.)* The transition density of $X$ is
+
 $$
 p_\vartheta(x, y; t) = p(x, y, t)\,\exp\{A(y;\vartheta) - A(x;\vartheta) - t\phi^-(\vartheta)\}\; a(x, y; \vartheta),
 $$
+
 $$
 a(x, y;\vartheta) = \mathbb{E}_{\mathbb{WF}^{t,x,y}}\Bigl[\exp\Bigl\{-\int_0^t \bigl(\phi(\omega_s;\vartheta) - \phi^-(\vartheta)\bigr)\,ds\Bigr\}\Bigr],
 $$
+
 where the expectation is over bridges $\omega$ of the reference process from $x$ to $y$ in time $t$.
 2. *(Unbiased estimator.)* There is a random element $\Lambda$, independent of $\vartheta$ (a random truncation level for the series of $p$, a Poisson point set for the exponential of the integral, and bridge skeleton points), and a likelihood contribution $L(\Lambda, \vartheta) = \exp\{A(y;\vartheta) - A(x;\vartheta) - t\phi^-(\vartheta)\}\,\Pi(\Lambda, x, y; \vartheta)$, a.s. continuous in $\vartheta$, with $\mathbb{E}[L(\Lambda,\vartheta)] = p_\vartheta(x,y;t)$; the full likelihood is the product over observation intervals.
 3. *(Uniform consistency.)* For i.i.d. copies $\Lambda^1, \Lambda^2, \dots$,
+
 $$
 \lim_{N\to\infty}\sup_{\vartheta \in \Theta}\Bigl|\frac1N\sum_{j=1}^{N} L(\Lambda^j, \vartheta) - L(\vartheta)\Bigr| = 0 \quad\text{a.s.},
 $$
+
 and any sequence of maximizers of the Monte Carlo likelihood converges to the maximum likelihood estimator whenever the latter is unique.
 
 ## Depends on

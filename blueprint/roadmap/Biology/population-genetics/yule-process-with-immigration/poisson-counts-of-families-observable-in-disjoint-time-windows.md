@@ -4,12 +4,18 @@
 
 **Theorem.**
 1. For $0 \le a < b$, $S(a,b)$ is Poisson with mean
+
 $$\mathbb{E}\,S(a,b) = \theta\log\big(e^b - e^a + 1\big).$$
+
 2. For $0 \le a < b \le c < d$, write $I_1 = (a,b)$, $I_2 = (c,d)$, let $K(I_1,I_2)$ count families observable in both windows and $T(I_1 \setminus I_2)$, $T(I_2 \setminus I_1)$ those observable in only one. These three counts are independent Poisson variables with means
+
 $$\mathbb{E}K = \theta\log\frac{(e^b - e^a + 1)(e^d - e^c + 1)}{e^d - e^c + e^b - e^a + 1}, \quad \mathbb{E}T(I_1\setminus I_2) = \theta\log\frac{e^d - e^c + e^b - e^a + 1}{e^d - e^c + 1},$$
+
 and symmetrically for $T(I_2 \setminus I_1)$. Hence $\mathrm{Cov}\big(S(a,b), S(c,d)\big) = \mathbb{E}K(I_1,I_2) > 0$.
 3. (*Fisher's sampling problem.*) Take sample sizes $n_1, \dots, n_p$, cumulative totals $l_i = n_1 + \dots + n_i$, and times $t_i = \log(\theta + l_i) - \log\theta$ at which the expected population $\theta(e^{t_i}-1)$ equals $l_i$. Then $\widetilde S_i = S(t_{i-1}, t_i)$ is Poisson with mean $\theta\log\frac{\theta + n_i}{\theta}$, $\mathrm{Cov}(\widetilde S_i, \widetilde S_j) = \theta\log\frac{(\theta + n_i)(\theta + n_j)}{\theta(\theta + n_i + n_j)}$ for $i \neq j$, and for equal sample sizes $n_i = n$ the expected sample variance $\widetilde V_p = \frac{1}{p(p-1)}\sum_{i<j}(\widetilde S_i - \widetilde S_j)^2$ is
+
 $$\mathbb{E}\,\widetilde V_p = \theta\log\frac{2n + \theta}{n + \theta} \ \longrightarrow\ \theta\log 2 \quad (n \to \infty),$$
+
 as Fisher surmised.
 
 ## Expansion

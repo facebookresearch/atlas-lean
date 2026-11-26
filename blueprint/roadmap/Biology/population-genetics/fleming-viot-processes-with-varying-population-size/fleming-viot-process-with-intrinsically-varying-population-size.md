@@ -1,9 +1,13 @@
 # Fleming–Viot process with intrinsically varying population size
 
 **Model.** Let $\mathbb{K}$ be a compact Polish type space. An *event* is $\bm z = (z_d, z_b) \in \mathcal{Z} = ([0,1]\times[0,\infty)) \setminus \{(0,0),(1,0)\}$: a fraction $z_d$ of the current population is killed and a mass $z_b$ of offspring of one parent is added. A *characteristic* $(\bm\gamma, \Pi)$ consists of a drift $\bm\gamma = (\gamma_d, \gamma_b) \ge \bm 0$ and a $\sigma$-finite measure $\Pi$ on $\mathcal{Z}$ satisfying the subordinator condition $\int_{\mathcal{Z}} \bm z\, d\Pi(\bm z) < \infty$ and the balance condition
+
 $$\gamma_d + \int z_d\, d\Pi = \gamma_b + \int z_b\, d\Pi.$$
+
 The $(\bm\gamma,\Pi)$-Fleming–Viot process is the $\mathcal{M}_F(\mathbb{K})$-valued solution $\sigma = N\rho$ ($N$ = population size, $\rho$ = type distribution) of the martingale problem for
+
 $$\mathcal{L}F(N,\rho) = (\gamma_b - \gamma_d N)\,\partial_N F + \int_{\mathbb{K}}\int_{\mathcal{Z}} \Big[F\big((1-z_d)N + z_b,\, (1-\bar z)\rho + \bar z\,\delta_\kappa\big) - F(N,\rho)\Big]\, d\Pi(\bm z)\, d\rho(\kappa),$$
+
 where $\bar z = z_b/((1-z_d)N + z_b)$ is the effective impact of the event at size $N$. The size process alone is Markov with generator $(\gamma_b - \gamma_d N)f'(N) + \int [f((1-z_d)N + z_b) - f(N)]\,d\Pi$.
 
 **Theorem.**

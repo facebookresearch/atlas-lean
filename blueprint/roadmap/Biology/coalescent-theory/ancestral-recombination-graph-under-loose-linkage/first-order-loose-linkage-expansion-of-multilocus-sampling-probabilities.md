@@ -3,15 +3,19 @@
 **Setting.** Sites $S$ evolve under independent mutation chains with stationary laws $\pi_i$, Kingman coalescence and recombination: for every partition $\mathcal{A}$ of $S$, recombination splitting a line according to $\mathcal{A}$ happens at rate $\varrho\, r_{\mathcal{A}}$, with $\sum_{\mathcal{A}} r_{\mathcal{A}} = 1$ and every pair of sites separable. Let $q(\nu)$ be the stationary probability of an ordered sample with type counts $\nu$ (types may be partially specified: a type $x$ is observed on the sites $D(x) \subseteq S$), and let $\sigma(\nu)$ be the linear fragmentation map that splits every sampled sequence into its single-site marginals.
 
 **Theorem.** As $\varrho \to \infty$,
+
 $$
 q(\nu) = q_\infty(\nu) + \varrho^{-1} q_1(\nu) + O(\varrho^{-2}),
 $$
+
 where:
 1. the zeroth-order term is the product of single-site sampling probabilities, $q_\infty(\nu) = \prod_{i \in S} q(\nu^{\{i\}})$, i.e. the sample behaves as if each site had its own independent Kingman coalescent;
 2. the first-order term is
+
 $$
 q_1(\nu) = \sum_{x} q_\infty\bigl(\sigma(\nu) - \sigma(\delta_x)\bigr) \sum_{\substack{D(x) \subseteq A \subseteq S\\ |A| \ge 2}} \frac{(-1)^{|A \setminus D(x)|}}{\bar r_A}\binom{\nu^{\supseteq A, D(x)}(x)}{2},
 $$
+
 the outer sum running over all (partial) types $x$, including the empty type; here $\bar r_A = \sum_{\mathcal{B} : \mathcal{B}|_A \ne \{A\}} r_{\mathcal{B}}$ is the total rate at which a line carrying the sites $A$ is fragmented, $\nu^{\supseteq A, D(x)}(x)$ counts the sampled sequences observed at all sites of $A$ that agree with $x$ on $D(x)$, and $q_\infty$ vanishes on signed measures with a negative entry.
 
 For two sites this recovers the classical loose-linkage result of Bhaskar and Song.

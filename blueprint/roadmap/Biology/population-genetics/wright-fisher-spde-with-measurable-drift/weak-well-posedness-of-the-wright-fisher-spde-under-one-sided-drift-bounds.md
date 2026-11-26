@@ -1,13 +1,17 @@
 # Weak well-posedness of the Wright–Fisher SPDE under one-sided drift bounds
 
 Consider the stochastic heat equation with Wright–Fisher noise
+
 $$
 \partial_tu=\tfrac12\Delta u+b(u)+\sqrt{\nu\,u(1-u)}\,\dot W,
 $$
+
 for the local frequency $u(t,x)\in[0,1]$ of an allele in a continuous one-dimensional population. Here $\dot W$ is space–time white noise, $\nu>0$, and the spatial domain is one of: (i) $E=\mathbb R$; (ii) the circle $\mathbb R/\mathbb Z$; (iii) $[0,1]$ with Dirichlet boundary conditions $u(0)=u(1)=0$; (iv) $[0,1]$ with Neumann boundary conditions. The drift $b:[0,1]\to\mathbb R$ models selection, mutation or migration and is only assumed Borel measurable with
+
 $$
 -Cu\le b(u)\le C(1-u)\qquad(u\in[0,1])\ \text{for some }C<\infty,
 $$
+
 which forces $b(0)\ge0\ge b(1)$. This is essentially the necessary condition for $[0,1]$-valued solutions.
 
 **Theorem.** For every, possibly random, Borel-measurable initial condition $u_0:E\to[0,1]$ there is a weak (Walsh mild) solution, and it is unique in law. Moreover, the law is continuous in the drift. If the drifts $b^n$ satisfy the bound with a common $C$ and $b^n\to b$ pointwise, then the corresponding solutions converge to the solution with drift $b$, locally uniformly in distribution.

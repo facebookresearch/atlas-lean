@@ -9,15 +9,22 @@ dX_t ={}& \sqrt{\Lambda(\{0\})X_t(1-X_t)}\,dW_t + \int z\big(\mathbf{1}_{\{u \le
 with: neutral $\Lambda$-reproduction ($W$ a Brownian motion, $\tilde N$ compensated Poisson with intensity $dt\,z^{-2}\Lambda(dz)\,du$, $\Lambda$ a finite measure on $[0,1]$); frequency-dependent selection $d_{\mathbf{s}}(x) = \sum_{\ell=2}^{\kappa}\beta_\ell\sum_{i=0}^{\ell}\binom{\ell}{i}x^i(1-x)^{\ell-i}\big(p_i^{(\ell)} - \frac{i}{\ell}\big)$, $\beta_\ell \ge 0$, $p_i^{(\ell)} \in [0,1]$, $p_0^{(\ell)} = 0$, $p_\ell^{(\ell)} = 1$ (any drift $x(1-x)\sigma(x)$ with polynomial $\sigma$ has this form); coordinated selection by an environment $S$ with intensity $dt\,|z|^{-1}\mu(dz)$ on $(-1,1)$, which may favour either type (bidirectional selection); individual mutation rates $\theta_a, \theta_A \ge 0$; and coordinated mutation $M$ with intensity $dt\,|z|^{-1}\nu(dz)$.
 
 **Bernstein duality.** Write $H(x, v) = \sum_{i=0}^{n} v_i\binom{n}{i}x^i(1-x)^{n-i}$ for $v \in \mathbb{R}^{n+1}$. There is a Markov process $V$ of Bernstein coefficient vectors of varying length $L_t + 1$, driven by coalescence, branching (selection), mutation and environment operators, such that for all $x \in [0,1]$, $v$ and $t \ge 0$,
+
 $$\mathbb{E}_x\big[H(X_t, v)\big] = \mathbb{E}_v\big[H(x, V_t)\big].$$
 
 **Theorem.** Assume
+
 $$\sum_{\ell=2}^{\kappa}\beta_\ell(\ell - 1) + \mu(-1,1) < \int_{[0,1]}|\log(1 - z)|\,\frac{\Lambda(dz)}{z^2} + \nu(-1,1) + \theta_a + \theta_A.$$
+
 1. *No mutation* ($\theta = 0$, $\nu = 0$): for $X_0 = x \in (0,1)$, $X_t$ converges almost surely to $X_\infty \in \{0,1\}$ and
+
 $$\mathbb{P}_x(X_\infty = 1) = \mathbb{E}\big[H(x, V_\infty^{0,1})\big] \in (0,1),$$
+
 where $V_\infty^{0,1}$ has the unique invariant law of $V$ on coefficient vectors with first entry $0$ and last entry $1$.
 2. *Bidirectional mutation* ($\theta_a + \nu(0,1) > 0$ and $\theta_A + \nu(-1,0) > 0$): $V$ is absorbed in finite time at a scalar $U_\infty$; $X$ never fixes, has a unique stationary distribution $\mathcal{L}$, the law of $X_t$ converges weakly to $\mathcal{L}$ from any start, and
+
 $$\int_{[0,1]} x^n\,\mathcal{L}(dx) = \mathbb{E}_{e_n}[U_\infty], \qquad n \ge 0,$$
+
 with $e_n$ the $(n+1)$-th unit vector of $\mathbb{R}^{n+1}$; these moments satisfy explicit linear recursions.
 
 ## Expansion

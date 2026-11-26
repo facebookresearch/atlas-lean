@@ -3,7 +3,9 @@
 Let $Q = X^\top A X$ with $X\sim\mathcal{N}(0,\Sigma)$ and $A$ positive semidefinite, and let $\lambda_1,\dots,\lambda_n\ge0$ be the eigenvalues of $\Sigma^{1/2}A\Sigma^{1/2}$, so $Q\overset{d}{=}\sum_i\lambda_iZ_i^2$ with cumulants $c_k = 2^{k-1}(k-1)!\,S_k$, $S_k = \sum_i\lambda_i^k$.
 
 **Littlewood's inequality.** For $\lambda_i\ge0$ and $0<a<b<c$,
+
 $$S_b^{\,c-a} \le S_a^{\,c-b}\,S_c^{\,b-a},$$
+
 with equality if and only if all nonzero $\lambda_i$ are equal.
 
 **Consequence.** The Liu–Tang–Zhang approximation of $Q$ by a shifted and scaled non-central $\chi^2_d(\delta)$ that matches mean, variance, skewness and kurtosis has a solution $(d,\delta)$ if and only if $s_1^2 > s_2$, where, in that method's trace notation, $s_1 = t_3/t_2^{3/2}$ and $s_2 = t_4/t_2^2$ with $t_k = \operatorname{tr}((A\Sigma)^k) + k\,\mu^\top(A\Sigma)^{k-1}A\mu$. For a centered quadratic form $t_k = S_k$, so the condition reads $S_3^2 > S_2S_4$, which Littlewood's inequality with $(a,b,c) = (2,3,4)$ forbids: $S_3^2\le S_2S_4$ always, with equality only when all nonzero weights coincide (the central $\chi^2$ case, e.g. $\Sigma = I$, $A$ a projection). So for any centered Gaussian quadratic form with unequal weights, no non-central chi-square matches skewness and kurtosis simultaneously, and the method silently falls back to skewness-only matching (the Hall–Buckley–Eagleson approximation). This motivates the [moment-ratio gamma approximation](moment-ratio-gamma-approximation-to-gaussian-quadratic-form-tails.md), which keeps information from both moments and always has a solution.

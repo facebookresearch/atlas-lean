@@ -1,11 +1,15 @@
 # Feller diffusion and Poisson limit for diploid copy numbers of genetic elements
 
 **Model.** A population of $N$ diploid individuals is tracked by the type of each individual, $k\in\mathbb N_0$, the number of copies of a genetic element (for example a transposable element) in its genome. At rate $N^2/2$ per reproduction event, a uniformly chosen individual dies and a uniformly chosen pair of parents with types $k,l$ produces one offspring of type $\mathrm{Bin}(k+l,\tfrac12)$, since each parental copy is inherited independently with probability $\tfrac12$. If $x=(x_k)$ is the type-frequency vector, the process jumps from $x$ to $x+(e_m-e_n)/N$ at rate
+
 $$\frac{N^2}{2}\,x_n\sum_{k,l}x_kx_l\binom{k+l}{m}2^{-(k+l)} .$$
+
 Let $X^N_t\in\mathcal P(\mathbb N_0)$ be the type distribution and $Z^N_t=\sum_k kX^N_t(k)$ the mean copy number.
 
 **Theorem.** Suppose $Z^N_0\to z>0$ in probability and $\sup_N\mathbb E\big[\sum_k k^3X^N_0(k)\big]<\infty$. Then $(Z^N,X^N)\Rightarrow(Z,X)$, where $Z$ is the standard Feller branching diffusion
+
 $$dZ_t=\sqrt{Z_t}\,dW_t,\qquad Z_0=z,$$
+
 and $X_t=\mathrm{Poi}(Z_t)$ for every $t>0$. The convergence of $Z^N$ is in the Skorokhod topology. The convergence of $X^N$ is in the sense of weighted occupation measures $\int_0^\infty e^{-s}\delta_{X^N_s}\,ds$, since the Poisson shape is reached instantaneously and $X^N$ itself does not converge at $t=0$.
 
 ## Expansion

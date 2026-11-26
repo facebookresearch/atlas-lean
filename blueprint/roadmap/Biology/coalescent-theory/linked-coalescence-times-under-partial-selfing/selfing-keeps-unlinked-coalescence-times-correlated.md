@@ -1,13 +1,19 @@
 # Selfing keeps unlinked coalescence times correlated
 
 In the diploid Wright–Fisher model with constant selfing probability $s_N = s \in (0,1)$ and recombination, sample both chromosomes of a single individual at two loci (configuration $q_{12}$). Then the large-$N$ [correlation of the two pairwise coalescence times](correlation-of-two-locus-coalescence-times-under-selfing-and-recombination.md) does not vanish for unlinked loci. At free recombination ($r_N = 1/2$, so $R = 1/2$),
+
 $$\lim_{N\to\infty}\operatorname{Corr}_{q_{12}}[T_i,T_j] = \frac{s}{4-s} > 0,$$
+
 and at the largest recombination rates
+
 $$\lim_{N\to\infty}\operatorname{Corr}_{q_{12}}[T_i,T_j] \longrightarrow \frac{s}{2}$$
+
 both as $\tilde\rho\to\infty$ when $r_N = \tilde\rho/N$, and as $r\to1$ when $r_N = r$ (where $R = (1-r)^2+r^2 \to 1$ in $\frac{(2-s)^2}{2(2-sR)}+s-1$). In contrast, without selfing ($s=0$) or with $s_N = O(1/N)$ the correlation is $O(1/N)$ once $r_N$ is of order one.
 
 **Consequence for estimating $\theta$.** Let $\hat\theta_{(n)} = n^{-1}\sum_{k=1}^n\hat\theta_k$ be Tajima's estimator of $\theta = 4N\mu$ averaged over $n$ loci, each $\hat\theta_k$ the pairwise difference count at locus $k$ under the infinite-sites model with per-locus mutation rate $\mu$. For fixed $N$ and exchangeable loci,
+
 $$\lim_{n\to\infty}\operatorname{Var}_q[\hat\theta_{(n)}] = 4\mu^2\operatorname{Cov}_q[T_i,T_j].$$
+
 Since $\operatorname{Cov}_{q_{12}}[T_i,T_j]$ is of order $N^2$ under constant selfing (in scenario (iv), $\operatorname{Cov}_{q_{12}}\sim\bigl(\frac{2(1-s)(2-s)^2}{2-sR} - 4(1-s)^2\bigr)N^2$) and $\mu = \theta/(4N)$, the variance of Tajima's estimator stays bounded away from zero in the joint limit $n\to\infty$, $N\to\infty$, maximal recombination: adding unlinked loci cannot average away the genealogical noise shared through the individual's selfing history.
 
 ## Depends on

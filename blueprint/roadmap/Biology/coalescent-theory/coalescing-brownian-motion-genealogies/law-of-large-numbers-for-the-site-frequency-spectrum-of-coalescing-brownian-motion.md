@@ -5,6 +5,7 @@
 **Proposition (typical branch).** In the linear case, for $2 \le i \le n-m$, the expected length of the branch supporting the $m$ consecutive leaves starting at leaf $i$ is exactly $1/n^2$.
 
 **Theorem (weak law of large numbers).** In both the linear and circular cases, for every fixed $m \ge 1$,
+
 $$nL_{n,m} \longrightarrow 1 \quad\text{in probability as } n \to \infty.$$
 
 Thus the spatial site frequency spectrum is asymptotically **flat**: each frequency class $m$ receives about $\theta/n$ mutations, in contrast to the $\theta/m$ decay under Kingman's coalescent.

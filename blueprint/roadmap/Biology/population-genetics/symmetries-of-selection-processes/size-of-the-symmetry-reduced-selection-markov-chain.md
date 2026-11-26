@@ -1,10 +1,13 @@
 # Size of the symmetry-reduced selection Markov chain
 
 **Setting.** Let $(G, p)$ be a selection process on $n = |G|$ sites with symmetry group $\mathrm{Sym}(G,p)$ of order $S$, acting on states by $\mathbf x \mapsto \mathbf x_\sigma$. Its orbits $[\mathbf x] = \{\mathbf x_\sigma : \sigma \in \mathrm{Sym}(G,p)\}$ are the states of the *reduced chain* $\mathcal R(G,p)$, with transition probabilities
+
 $$P_{[\mathbf x] \to [\mathbf y]} = \sum_{\mathbf z \in [\mathbf y]} P_{\mathbf x \to \mathbf z},$$
+
 which do not depend on the representative $\mathbf x$ because symmetries preserve transition probabilities. Equivalent states carry the same number of $1$ alleles.
 
 **Theorem.** The number $R$ of states of $\mathcal R(G,p)$ satisfies
+
 $$\max\Big(n + 1,\ 2 + \frac{2^n - 2}{S}\Big) \ \le\ R\ \le\ 2 + \frac{1}{S}\sum_{k=1}^{n-1}\binom{n}{k}\gcd\big(S,\ k!\,(n-k)!\big).$$
 
 For a well-mixed haploid population ($S = n!$) the lower bound $n+1$ is attained: the reduced chain is the usual chain on the number of mutants. The bounds quantify how much a structured population (small $S$) resists reduction from the $2^n$ raw states.

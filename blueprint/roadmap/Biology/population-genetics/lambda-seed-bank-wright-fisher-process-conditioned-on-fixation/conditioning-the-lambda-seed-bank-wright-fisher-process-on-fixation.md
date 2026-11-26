@@ -1,7 +1,9 @@
 # Conditioning the Λ-seed-bank Wright–Fisher process on fixation
 
 **Model.** Let $\Lambda = a\,\delta_0 + \Lambda_0$ be a finite measure on $[0,1]$ with $\Lambda_0(\{0\}) = 0$ and $\int_0^1 y^{-2}\Lambda(dy) < \infty$, encoding Kingman-type resampling (weight $a$) and multiple-merger reproduction events of size $r$ (rate $r^{-2}\Lambda_0(dr)$). Let $\alpha, \sigma \ge 0$ be the deactivation and activation rates of a seed bank. The **Λ-seed-bank Wright–Fisher process** $\mathbf{Z} = (Z_1, Z_2, Z_3)$ on
+
 $$D = \{\mathbf{z} \in [0,1]^3 : z_1 \le z_3,\ z_2 \le 1 - z_3\}$$
+
 records the active mass of a focal type $\heartsuit$ ($Z_1$), its dormant mass ($Z_2$) and the total active mass ($Z_3$). It is the unique strong solution of
 $$\begin{aligned}
 dZ_1 &= (\sigma Z_2 - \alpha Z_1)\,dt + \sqrt{a Z_1 (Z_3 - Z_1)}\,dB_t \\
@@ -13,6 +15,7 @@ with $\widetilde N$ a compensated Poisson random measure of intensity $dt \otime
 A **$(\Lambda, \xi, \mathrm{M})$-seed-bank Wright–Fisher process** adds to the $Z_1$ equation coordinated mutations toward $\heartsuit$ that act only while a switching environment $\xi_t \in \{0,1\}$ equals $1$: a drift $b\,\xi_t (Z_3 - Z_1)\,dt$ and jumps converting a fraction $r$ of the non-$\heartsuit$ active mass, $r\,\xi_{t-}(Z_3 - Z_1)$, driven by a mutation measure $\mathrm{M} = b\,\delta_0 + \mathrm{M}_0$.
 
 **Theorem.** Let $\widetilde{\mathbf{Z}}$ be the Λ-seed-bank Wright–Fisher process conditioned on fixation of $\heartsuit$. Then there is a continuous-time Markov chain $\xi$ on $\{0,1\}$ with rates $q_{01} = \alpha$, $q_{10} = \sigma$ such that $\widetilde{\mathbf{Z}}$ has the law of the $(\Lambda, \xi, \mathrm{M})$-seed-bank Wright–Fisher process with
+
 $$\mathrm{M}(\{0\}) = a, \qquad \mathrm{M}_0(dy) = y^{-1}\Lambda_0(dy).$$
 
 ## Expansion

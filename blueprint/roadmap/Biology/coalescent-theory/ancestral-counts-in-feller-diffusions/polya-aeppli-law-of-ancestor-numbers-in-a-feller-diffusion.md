@@ -1,9 +1,13 @@
 # Pólya–Aeppli law of ancestor numbers in a Feller diffusion
 
 **Model.** The Feller diffusion with parameter $\alpha \in \mathbb{R}$ is the continuous-state branching process on $[0,\infty)$ with generator
+
 $$\mathcal{L} = \tfrac12 x \frac{\partial^2}{\partial x^2} + \alpha x \frac{\partial}{\partial x},$$
+
 started from $X(0) = x_0 > 0$; it is subcritical, critical or supercritical as $\alpha <0$, $=0$, $>0$, and arises as the scaling limit of birth–death and Bienaymé–Galton–Watson processes. Put
+
 $$\mu(t;\alpha) = \frac{2\alpha e^{\alpha t}}{e^{\alpha t}-1}, \qquad \mu(t;0) = 2/t .$$
+
 For $0 < s \le t$ let $A_\infty(s;t)$ be the (a.s. finite) number of ancestors, at time $t-s$, of the whole population alive at time $t$, and let $A_n(s;t)$ be the number of ancestors at time $t-s$ of a sample of $n$ individuals taken from the population at time $t$.
 
 A random variable $Q = \sum_{i=0}^{N} M_i$ ($M_0 := 0$) with $N \sim \mathrm{Poisson}(\nu)$ independent of i.i.d. shifted geometric $M_i$, $\mathbb{P}(M = m) = (1-p)p^{m-1}$ for $m \ge 1$, is called **Pólya–Aeppli** (geometric compound Poisson) with parameters $(\nu, p)$.
@@ -11,12 +15,17 @@ A random variable $Q = \sum_{i=0}^{N} M_i$ ($M_0 := 0$) with $N \sim \mathrm{Poi
 **Theorem.** For every $\alpha$ and $x_0 > 0$:
 
 1. $A_\infty(s;t)$ is Pólya–Aeppli with parameters
+
 $$\nu = x_0\,\mu(t;\alpha) = \frac{2\alpha x_0 e^{\alpha t}}{e^{\alpha t}-1}, \qquad p = p(s,t;\alpha) = \frac{e^{\alpha s} - e^{\alpha t}}{1 - e^{\alpha t}}.$$
+
 In particular ($s = t$, $p = 0$) the number of founders at time $0$ of the time-$t$ population is $\mathrm{Poisson}(x_0\mu(t;\alpha))$.
 2. Conditional on $A_\infty(s;t) = k > 0$, the sample ancestor count has the law
+
 $$\mathbb{P}\big(A_n(s;t) = j \,\big|\, A_\infty(s;t) = k\big) = \binom{k}{j}\frac{n!}{k_{(n)}}\binom{n-1}{j-1}, \qquad 1 \le j \le k,$$
+
 with rising factorial $k_{(n)} = k(k+1)\cdots(k+n-1)$; it does not depend on the population size at time $t$.
 3. Consequently, for $j = 1,\dots,n$,
+
 $$\mathbb{P}(A_n(s;t) = j) = n!\binom{n-1}{j-1}\sum_{k \ge j}\binom{k}{j}\frac{1}{k_{(n)}}\,\mathbb{P}\big(A_\infty(s;t) = k \,\big|\, A_\infty(s;t) > 0\big).$$
 
 ## Expansion

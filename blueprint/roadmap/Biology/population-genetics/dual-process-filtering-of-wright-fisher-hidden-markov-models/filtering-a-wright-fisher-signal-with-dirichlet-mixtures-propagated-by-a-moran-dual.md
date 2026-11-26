@@ -1,15 +1,19 @@
 # Filtering a Wright–Fisher signal with Dirichlet mixtures propagated by a Moran dual
 
 Let $X_t$ be the $K$-type Wright–Fisher diffusion on the simplex $\Delta_K$ with parent-independent mutation, generator
+
 $$
 \mathcal A=\frac12\sum_{i,j=1}^Kx_i(\delta_{ij}-x_j)\partial_{x_i}\partial_{x_j}+\frac12\sum_{i=1}^K(\alpha_i-\theta x_i)\partial_{x_i},\qquad \theta=\sum_i\alpha_i,
 $$
+
 and stationary law $\mathrm{Dir}(\boldsymbol\alpha)$. A process $D_t$ is dual to $X_t$ with duality function $h$ if $\mathbb E[h(X_t,d)\mid X_0=x]=\mathbb E[h(x,D_t)\mid D_0=d]$.
 
 **Moran duality.** Let $N_t\in\mathbb Z_+^K$ be the Moran-type chain that jumps from $\mathbf n$ to $\mathbf n-\mathbf e_i+\mathbf e_j$ at rate $n_i(\alpha_j+n_j)/2$, and let
+
 $$
 h(\mathbf x,\mathbf n)=\frac{\Gamma(\theta+|\mathbf n|)}{\Gamma(\theta)}\prod_{i=1}^K\frac{\Gamma(\alpha_i)}{\Gamma(\alpha_i+n_i)}x_i^{n_i},
 $$
+
 so that $h(\cdot,\mathbf n)\pi_{\boldsymbol\alpha}=\pi_{\boldsymbol\alpha+\mathbf n}$. Then the duality identity holds with $D_t=N_t$. The chain conserves $|\mathbf n|$.
 
 **Filtering recursion.** Suppose the signal is observed at times spaced $\Delta$ apart through categorical (multinomial) samples. If the current filter is a finite mixture of Dirichlet laws $\sum_{\mathbf m}w_{\mathbf m}\pi_{\boldsymbol\alpha+\mathbf m}$, then:

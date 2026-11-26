@@ -3,7 +3,9 @@
 **Setting.** The Ewens–Pitman model with parameters $\alpha\in[0,1)$ and $\theta>-\alpha$ is the law of the random partition of $\{1,\dots,n\}$ built sequentially (the Chinese restaurant process). Given $j$ blocks of sizes $n_1,\dots,n_j$ after $h$ elements, element $h+1$ starts a new block with probability $\frac{\theta+j\alpha}{\theta+h}$ and joins block $i$ with probability $\frac{n_i-\alpha}{\theta+h}$. The case $\alpha=0$ is the Ewens sampling formula of the infinitely-many-alleles model with $\theta=4N\mu$. Consider the regime $\theta=\lambda n$ with $\lambda>0$ fixed, a high-mutation regime. Let $K_n$ be the number of blocks and $K_{r,n}$ the number of blocks of size $r$, and set $\mathbf K_{d,n}=(K_n,K_{1,n},\dots,K_{d,n})$.
 
 **Theorem.** Fix $d\ge1$. Define
+
 $$\mathfrak m_0=\begin{cases}\dfrac{\lambda}{\alpha}\Big[\Big(\dfrac{\lambda+1}{\lambda}\Big)^{\alpha}-1\Big],&\alpha\in(0,1),\\[2mm] \lambda\log\dfrac{\lambda+1}{\lambda},&\alpha=0,\end{cases}\qquad \mathfrak m_r=\frac{(1-\alpha)_{\uparrow r-1}}{r!}\,\lambda^{1-\alpha}(1+\lambda)^{\alpha-r}\quad(r\ge1),$$
+
 where $(a)_{\uparrow k}=a(a+1)\cdots(a+k-1)$, and let $\mathfrak M_d=(\mathfrak m_0,\mathfrak m_1,\dots,\mathfrak m_d)$. As $n\to\infty$:
 
 1. $\mathbb E[\mathbf K_{d,n}]=n\,\mathfrak M_d+O(1)$;

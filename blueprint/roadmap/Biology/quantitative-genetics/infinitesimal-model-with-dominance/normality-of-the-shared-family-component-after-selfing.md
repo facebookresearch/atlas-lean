@@ -3,9 +3,11 @@
 In the setting of the infinitesimal model with dominance ($M$ unlinked loci with bounded additive and dominance effects of size $1/\sqrt M$, unrelated founders sampled from an ancestral population in linkage and Hardy–Weinberg equilibrium, bounded scaled inbreeding depression $\iota$), consider a first-generation family whose two parents are the same individual, so $i[1]=i[2]$ (selfing). Let $W=\mathcal A+\mathcal D+E$ be the component of the trait shared by the family: the additive and dominance contributions shared by all offspring plus environmental noise.
 
 Then for every absolutely continuous test function $h$ with $\|h'\|_\infty<\infty$,
+
 $$
 \Big|\,\mathbb E\big[h(W)\,\big|\,i[1]=i[2],\ \widetilde Z^{i[1]}\big]-\mathcal N_{\mu_W,\sigma_W^2}(h)\Big|\le\frac{C\,\|h'\|_\infty}{\sqrt M},
 $$
+
 where $\mathcal N_{\mu,\sigma^2}(h)$ is the expectation of $h$ under a normal law with that mean and variance, $\mu_W$ is the conditional mean of the shared component given the parent's observed trait, and $\sigma_W^2$ is the environmental variance plus the conditional variance of the shared genetic part. Thus, even after selfing, when additive and dominance effects are correlated through the parent's homozygosity, the shared part is asymptotically Gaussian with mean and variance determined by ancestral quantities and the parent's trait.
 
 ## Depends on

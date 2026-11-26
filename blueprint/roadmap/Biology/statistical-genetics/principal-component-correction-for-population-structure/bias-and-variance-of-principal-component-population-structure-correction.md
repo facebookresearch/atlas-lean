@@ -8,9 +8,11 @@
 Write the background signal as $X_{(-1)}\beta_{(-1)} = U\gamma$, i.e. $\gamma = \Sigma V^{\top}\beta_{(-1)}$, and similarly $\bar\gamma$ for the full decomposition.
 
 **Theorem (CPC).** The CPC estimator satisfies
+
 $$\mathrm{bias}(\hat\alpha) = \frac{X_{\cdot 1}^{\top}U_{(k+1):r}\,\gamma_{(k+1):r}}{X_{\cdot 1}^{\top}X_{\cdot 1} - \|X_{\cdot 1}^{\top}U_{1:k}\|^2}, \qquad \mathrm{Var}(\hat\alpha) = \frac{\sigma^2}{X_{\cdot 1}^{\top}X_{\cdot 1} - \|X_{\cdot 1}^{\top}U_{1:k}\|^2} .$$
 
 **Theorem (PSC).** The PSC estimator satisfies
+
 $$\mathrm{bias}(\hat{\bar\alpha}) = \frac{X_{\cdot 1}^{\top}\big(\bar U_{(k+1):\bar r}\,\bar\gamma_{(k+1):\bar r} - X_{\cdot 1}\beta_1\big) - \beta_1\|X_{\cdot 1}^{\top}\bar U_{1:k}\|^2}{X_{\cdot 1}^{\top}X_{\cdot 1} - \|X_{\cdot 1}^{\top}\bar U_{1:k}\|^2}, \qquad \mathrm{Var}(\hat{\bar\alpha}) = \frac{\sigma^2}{X_{\cdot 1}^{\top}X_{\cdot 1} - \|X_{\cdot 1}^{\top}\bar U_{1:k}\|^2}.$$
 
 **Theorem (variance comparison).** $\mathrm{Var}(\hat\alpha) \le \mathrm{Var}(\hat{\bar\alpha})$: removing the tested variant before computing principal components never increases the variance.

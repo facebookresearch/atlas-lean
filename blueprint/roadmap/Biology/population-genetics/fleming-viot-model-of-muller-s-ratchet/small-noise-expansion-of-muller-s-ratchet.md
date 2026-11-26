@@ -1,22 +1,28 @@
 # Small-noise expansion of Muller's ratchet
 
 **Model.** Let $X_k(t)$ be the frequency of individuals carrying $k = 0, 1, 2, \dots$ deleterious mutations, $\sum_k X_k = 1$, $X_{-1} := 0$. With selection coefficient $\alpha \ge 0$, unidirectional mutation rate $\lambda \ge 0$ and effective population size $\nu > 0$, the Fleming–Viot model of Muller's ratchet is
+
 $$
 dX_k = \Bigl(\alpha\Bigl(\sum_{j \ge 0} (j - k) X_j\Bigr) X_k + \lambda (X_{k-1} - X_k)\Bigr)dt + \sum_{\ell \ne k} \sqrt{\tfrac{1}{\nu} X_k X_\ell}\, dW_{k\ell},
 $$
+
 with independent Brownian motions $(W_{k\ell})_{k > \ell}$ and $W_{k\ell} = -W_{\ell k}$. Write $\theta = \lambda/\alpha$, $m_1(x) = \sum_k k x_k$ for the mean number of mutations, $g_\xi(x) = \sum_k x_k e^{-\xi k}$ for the generating function, and $\mathrm{Poi}(\theta)$ for the Poisson profile $x_k = e^{-\theta}\theta^k / k!$.
 
 **Results.**
 1. *(Well-posedness.)* For $x$ with $\sum_k x_k e^{\chi k} < \infty$ for some $\chi > 0$, the martingale problem is well posed; its solution has continuous paths and is the unique weak solution of the SDE started at $x$.
 2. *(Deterministic limit, $\nu = \infty$.)* Started in $x$, the noiseless system has the explicit solution
+
 $$
 x_k(t) = \frac{e^{-\theta(1 - e^{-\alpha t})}}{g_{\alpha t}(x)} \sum_{i=0}^{k} x_i\, e^{-\alpha i t}\, \frac{\bigl(\theta(1 - e^{-\alpha t})\bigr)^{k-i}}{(k-i)!}.
 $$
+
 A Poisson profile stays Poisson: $\mathrm{Poi}(\varphi) \mapsto \mathrm{Poi}(\theta + (\varphi - \theta)e^{-\alpha t})$, so $\mathrm{Poi}(\theta)$ is the mutation–selection equilibrium.
 3. *(First-order noise correction.)* If $X(0) = \mathrm{Poi}(\theta)$ and $\alpha, \lambda > 0$, $t \ge 0$ are fixed, then as $\nu \to \infty$
+
 $$
 \mathbb{E}\bigl[m_1(X(t))\bigr] = \theta + \frac{1}{2\nu\alpha}\Bigl(\exp\bigl(\theta(1 - e^{-\alpha t})^2\bigr) - 1\Bigr) + \mathcal{O}(\nu^{-2}),
 $$
+
 and an explicit $1/\nu$ expansion also holds for $\mathbb{E}[g_\xi(X(t)) g_\eta(X(t))]$ and for each $\mathbb{E}[X_k(t)]$.
 
 ## Depends on

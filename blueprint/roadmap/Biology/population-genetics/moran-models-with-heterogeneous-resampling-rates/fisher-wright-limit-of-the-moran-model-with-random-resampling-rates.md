@@ -3,8 +3,11 @@
 **Model.** A population of $N$ individuals carries two types, $1$ and $0$. Individual $i$ is assigned a resampling rate $R_i$, drawn i.i.d. from a discrete law $\mathbb P=\sum_k\mu_k\delta_{r_k}$ on $(0,\infty)$; the rates are frozen (a quenched environment). At rate $R_i$, individual $i$ adopts the type of an individual chosen uniformly at random from the population. Let $Y^N(t)$ be the empirical measure on $\mathbb R_+$ of the rates of the type-$1$ individuals, normalized by $N$, so $Y^N(t)(\mathbb R_+)$ is the frequency of type $1$. Assume $\mathbb P$ satisfies tail and moment conditions on the rates near $0$ and $\infty$, with $\int r^{-1}\,\mathbb P(dr)<\infty$.
 
 **Theorem.** If $Y^N(0)\to\nu$, then for $\mathbb P^{\otimes\mathbb N}$-almost every realization of the rates,
+
 $$\mathcal L[Y^N]\to\mathcal L[Y]\qquad\text{in the Meyer–Zheng topology},$$
+
 where $Y(t)=S(t)\,\mathbb P$ and $S$ is the Fisher–Wright diffusion
+
 $$dS(t)=\sqrt{D\,S(t)(1-S(t))}\,dW(t),\qquad S(0)=\nu(\mathbb R_+),\qquad \frac1D=\int_{\mathbb R_+}\frac1r\,\mathbb P(dr).$$
 
 ## Expansion

@@ -8,10 +8,13 @@
 This defines a Markov chain on $N$-rational histograms with one-step conditional mean $f(H) = \mathbb E[H_{t+1} \mid H_t = H]$; the **mean trajectory** is $\bar H_{t+1} = f(\bar H_t)$.
 
 **One-step cost.** For interior histograms $H, G$ there is a smooth one-step cost $C(H,G) \ge 0$ with $\Pr(H_{t+1} \approx G \mid H_t = H) \approx e^{-NC(H,G)}$, vanishing only at $G = f(H)$, and for small $m$
+
 $$C(H,G) = \mathrm{KL}\big(G \,\|\, \Phi(H)\big) + m\sum_{j,k}F_jH(j)q_{jk}\Big[1 - \frac{U_k}{U_j}\Big] + O(m^2), \qquad U_j = \exp\Big(\frac{G_j}{F_jH(j)}\Big).$$
 
 **Theorem (large deviations on tubes of paths).** For paths $\mathbf h = (H_1,\dots,H_T)$ set $\lambda(\mathbf h) = \sum_{t=1}^{T-1}C(H_t, H_{t+1})$ and $\Lambda(A) = \inf_{\mathbf h \in A}\lambda(\mathbf h)$. For every interior path $\mathbf h$ and interior tube $\mathcal T(\mathbf h,\epsilon)$ of paths within sup-distance $\epsilon$, the random histogram path started at $H_1$ satisfies
+
 $$\frac1N\log P_N(\hat{\mathbf h} \in \mathcal T) \to -\Lambda(\mathcal T) \quad (N \to \infty),$$
+
 and thin tubes $\mathcal T(\mathbf h, 1/N)$ have probability log-equivalent to $e^{-N\lambda(\mathbf h)}$. Consequently the mean trajectory is the unique zero-cost path, and the **most likely path** from $H$ to a rare target $G$ (e.g. emergence of a non-dominant genotype) in $T$ days minimizes $\lambda$ over paths with these endpoints.
 
 ## Expansion

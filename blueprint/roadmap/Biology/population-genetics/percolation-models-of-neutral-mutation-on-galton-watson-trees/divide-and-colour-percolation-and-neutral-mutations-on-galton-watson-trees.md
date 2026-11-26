@@ -8,11 +8,15 @@
 **Divide-and-colour (DaC) percolation as finitely-many-alleles mutation.** Given a tree, perform Bernoulli bond percolation with parameter $p$, then colour each open cluster independently with one of $d$ colours, the cluster of the root receiving its colour and every other cluster choosing colour $c$ with probability $a_c$. With $d$ colours this models neutral mutation to one of finitely many alleles: a closed edge is a mutation event whose new allele may coincide with the parent's. Let $a_\emptyset$ be the probability that a cluster receives the same colour as the root's cluster.
 
 **Proposition.** The connected component of the root's colour containing the root has the law of the Bernoulli root cluster with parameter
+
 $$\widetilde p = 1 - (1-p)(1 - a_\emptyset) = p + (1-p)a_\emptyset,$$
+
 so it is infinite with positive probability iff the Bernoulli root cluster with parameter $\widetilde p$ is (Häggström's criterion, for $d = 2$ colours).
 
 **Theorem.** Let $\mathcal{T}$ be a BGW tree with offspring mean $m > 1$ and $a_\emptyset < 1/m$. Conditionally on non-extinction, the critical parameter for the DaC model to have an infinite monochromatic component of the root's colour is, almost surely,
+
 $$\widetilde p_c^{\mathcal{T}} = \frac{1 - m a_\emptyset}{m(1 - a_\emptyset)} .$$
+
 In the mutation interpretation, an infinite clan sharing the ancestral allele forms exactly when the probability of a child keeping its mother's allele, $p + (1-p)a_\emptyset$, exceeds $1/m$.
 
 ## Expansion
