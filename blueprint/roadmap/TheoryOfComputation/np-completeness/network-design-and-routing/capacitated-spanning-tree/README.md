@@ -1,0 +1,18 @@
+# Capacitated spanning tree
+
+- [Instances of CAPACITATED SPANNING TREE](capacitated-spanning-tree-instance.md)
+- [Endpoint pairs of a CAPACITATED SPANNING TREE edge list](endpoints.md)
+- [Graph of a CAPACITATED SPANNING TREE instance](graph.md)
+- [Edge-list entry of an edge](entry.md)
+- [Edge capacities](capacity.md)
+- [Edge lengths in CAPACITATED SPANNING TREE](edge-length.md)
+- [Well-formed CAPACITATED SPANNING TREE instances](well-formed.md)
+- [Feasible CAPACITATED SPANNING TREE instances](capacitated-spanning-tree-feasible.md)
+- [CAPACITATED SPANNING TREE as a decision problem](capacitated-spanning-tree-dec.md)
+- [CAPACITATED SPANNING TREE is NP-complete](capacitated-spanning-tree-np-complete.md)
+- [Well-formed CAPACITATED SPANNING TREE instances with capacities 2](well-formed-2.md)
+- [CAPACITATED SPANNING TREE with capacities 2 and 0-1 requirements and lengths as a decision problem](capacitated-spanning-tree-capacity-two-d.md)
+- [CAPACITATED SPANNING TREE with capacities 2 and 0-1 requirements and lengths is NP-complete](capacitated-spanning-tree-capacity-two-n.md)
+- [Well-formed CAPACITATED SPANNING TREE instances with unit requirements and capacities 3](well-formed-3.md)
+- [CAPACITATED SPANNING TREE with unit requirements and capacities 3 as a decision problem](capacitated-spanning-tree-unit-requireme.md)
+- [CAPACITATED SPANNING TREE with all requirements 1 and all capacities 3 is NP-complete](capacitated-spanning-tree-unit-requireme-2.md)
