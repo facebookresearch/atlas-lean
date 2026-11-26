@@ -381,10 +381,9 @@ private theorem tendsto_card_bad {x : ℕ → ℝ} {μ σ : ℝ} (hσ : 0 < σ)
 -- does not need it, since `IdentDistrib` already carries almost-everywhere measurability.
 set_option linter.unusedVariables false in
 /-- **Consistency of the bootstrap standard deviation** (P. J. Bickel and D. A. Freedman,
-*Ann. Statist.* 9 (1981), Theorem 2.1(b)). Let the observations be independent, identically
-distributed, square-integrable real random variables with positive variance `σ²`.
-Along almost every sample sequence the bootstrap standard deviation
-`s*_m = ((1/m) ∑_j (X*_j - μ*_m)²)^{1/2}` converges to `σ` in conditional probability:
+*Ann. Statist.* 9 (1981), Theorem 2.1(b)). Under the hypotheses of
+`bootstrap_mean_tendsto_gaussianReal`, along almost every sample sequence the bootstrap standard
+deviation `s*_m = ((1/m) ∑_j (X*_j - μ*_m)²)^{1/2}` converges to `σ` in conditional probability:
 for every `ε > 0` the proportion of resampling maps `I : Fin m → Fin (n + 1)` with
 `|s*_m - σ| > ε` tends to `0` as `n, m → ∞`. -/
 theorem bootstrap_sd_tendsto {Ω : Type*} [MeasurableSpace Ω]
