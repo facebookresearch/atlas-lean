@@ -13,6 +13,7 @@ Theorems about triangles, their centers, cevians, inscribed and circumscribed ci
 - [Van Schooten's theorem](van-schooten-s-theorem/README.md)
 - [Viviani's theorem](viviani-s-theorem/README.md)
 - [Conway circle theorem](conway-circle-theorem.md)
+- [Ellipsoidal Body](is-ellipsoidal-body.md)
 - [Euler's theorem on the circumcenter–incenter distance](euler-oi.md)
 - [Feuerbach's theorem](feuerbach-theorem.md)
 - [Intercept theorem](intercept-theorem.md)
