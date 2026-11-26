@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import MathlibExt.NumberTheory.WatsonAlternatingBounds
+public import MathlibExt.NumberTheory.WatsonCoshIntegral
 public import MathlibExt.NumberTheory.WatsonCotangentDerivatives
+public import MathlibExt.NumberTheory.DowkerHalfSumWatsonCosSumSixthLimits
 
 namespace MetaMathlibExt
 
@@ -20,44 +20,6 @@ namespace MetaMathlibExt
 
 open Filter MeasureTheory Set
 open scoped BigOperators Topology
-
-/--
-**Digamma evaluation of a hyperbolic Laplace integral.** Let $b > 0$ be a real number and let
-$\alpha, \beta$ be complex numbers with $\operatorname{Re}(\alpha + b - \beta) > 0$ and
-$\operatorname{Re}(\alpha + b + \beta) > 0$. Then the function
-$x \mapsto e^{-\alpha x} \cosh(\beta x) / \cosh(bx)$ is integrable on $(0, \infty)$, and, writing
-$\psi$ for the digamma function,
-$$
-\int_0^\infty \frac{e^{-\alpha x} \cosh(\beta x)}{\cosh(bx)} \, dx =
-\frac{1}{4b} \Bigl[ \psi\bigl(\tfrac34 + \tfrac{\alpha+\beta}{4b}\bigr) -
-\psi\bigl(\tfrac14 + \tfrac{\alpha-\beta}{4b}\bigr) +
-\psi\bigl(\tfrac34 + \tfrac{\alpha-\beta}{4b}\bigr) -
-\psi\bigl(\tfrac14 + \tfrac{\alpha+\beta}{4b}\bigr) \Bigr].
-$$
-
-The source prints only the condition $\operatorname{Re}(\alpha + b - \beta) > 0$; the condition
-$\operatorname{Re}(\alpha + b + \beta) > 0$ is also needed, since the integrand is even in $\beta$.
-
-Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
-of Order One Half)*, INTEGERS 25 (2025), Article A30, Lemma 1.
--/
-public theorem_wanted watson_cosh_integral_digamma
-    (b : ℝ) (α β : ℂ) (hb : 0 < b)
-    (hminus : 0 < (α + (b : ℂ) - β).re)
-    (hplus : 0 < (α + (b : ℂ) + β).re) :
-    IntegrableOn
-        (fun x : ℝ =>
-          Complex.exp (-α * (x : ℂ)) * Complex.cosh (β * (x : ℂ)) /
-            Complex.cosh ((b : ℂ) * (x : ℂ)))
-        (Set.Ioi 0) ∧
-      (∫ (x : ℝ) in Set.Ioi 0,
-          Complex.exp (-α * (x : ℂ)) * Complex.cosh (β * (x : ℂ)) /
-            Complex.cosh ((b : ℂ) * (x : ℂ))) =
-        (1 / (4 * (b : ℂ))) *
-          (Complex.digamma ((3 / 4 : ℂ) + (α + β) / (4 * (b : ℂ))) -
-            Complex.digamma ((1 / 4 : ℂ) + (α - β) / (4 * (b : ℂ))) +
-            Complex.digamma ((3 / 4 : ℂ) + (α - β) / (4 * (b : ℂ))) -
-            Complex.digamma ((1 / 4 : ℂ) + (α + β) / (4 * (b : ℂ))))
 
 /--
 **Almost-asymptotic expansion of Watson's cosine sum.** Let $n \ge 2$, $N \ge 2$ and $\nu$ be
@@ -133,18 +95,6 @@ public theorem_wanted watson_alternating_sharp_bounds
         watsonAlternatingCosecantSum n ∧
       watsonAlternatingCosecantSum n <
         2 * (n : ℝ) * Real.log 2 / Real.pi + Real.pi / (12 * (n : ℝ))
-
-/--
-**Vanishing limits of Watson's cosine sum at one sixth and five sixths.** For natural numbers
-$n$ and $\nu$ let $C_n(\nu) = \sum_{l=1}^{n-1} \cos(2 \pi \nu l / n) / \sin(\pi l / n)$. As
-$m \to \infty$ through the natural numbers, $C_{6m}(m) \to 0$ and $C_{6m}(5m) \to 0$.
-
-Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
-of Order One Half)*, INTEGERS 25 (2025), Article A30, Corollary 4.
--/
-public theorem_wanted watson_cos_sum_sixth_limits :
-    Tendsto (fun m : ℕ => watsonCosSum (6 * m) m) atTop (𝓝 0) ∧
-      Tendsto (fun m : ℕ => watsonCosSum (6 * m) (5 * m)) atTop (𝓝 0)
 
 end
 
