@@ -2,6 +2,10 @@
 
 - [Delimited release](delimited-release.md)
 - [Security levels, policies and low equivalence](security-levels-policies-and-low-equivalence.md)
+- [Low equivalence is an equivalence relation](low-equiv-equivalence.md)
+- [Low equivalence is antitone in the observer level](antitone-low-equiv.md)
+- [Copying $x$ into $y$ keeps low equivalence exactly when $\Gamma(x) \sqsubseteq \Gamma(y)$](forall-low-equiv-update-iff-le.md)
+- [Joins give the level of combined information](forall-low-equiv-eq-on-iff-sup-le.md)
 - [Machine with security domains](domain-machine.md)
 - [Purge of an action sequence](purge.md)
 - [Security for a policy](secure.md)
