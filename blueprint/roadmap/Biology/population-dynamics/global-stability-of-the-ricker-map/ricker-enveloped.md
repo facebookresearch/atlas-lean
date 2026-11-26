@@ -6,4 +6,4 @@ every `x` with `0 < x < 1`, and `2 - x < f(x)` for every `x` with `1 < x < 2`.
 
 ## Sources
 
-- Cull (1981); Luís and Rodrigues (2016), Theorem 1.4.
+- Cull (1981); Luís and Rodrigues (2016), §4.1.
