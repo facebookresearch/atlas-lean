@@ -4,7 +4,7 @@ Spielman and Ewens (1998) introduce the sib transmission/disequilibrium test (S-
 
 $$E[Y] = a \bar c, \qquad \operatorname{Var}(Y) = \frac{a u}{t (t - 1)} \sum_{j=1}^t (c_j - \bar c)^2, \qquad \bar c = \frac1t \sum_j c_j .$$
 
-Summing $Y - E[Y]$ and the variances over independent sibships gives a standardized statistic whose conditional null law does not depend on the population allele frequencies, because each sibship is compared only with itself.
+These moment identities hold for every sibship. A sibship whose sibs all carry the same number of copies has $\operatorname{Var}(Y) = 0$ and contributes nothing. Summing $Y - E[Y]$ and the variances over independent sibships gives a standardized statistic, defined when the total conditional variance is positive, whose conditional null law does not depend on the population allele frequencies, because each sibship is compared only with itself. Its normal limit needs a condition that ensures a central limit theorem, for example bounded sibship sizes together with a total conditional variance tending to infinity: adding any number of zero-variance sibships to one informative sibship leaves the statistic's discrete law unchanged.
 
 ## Depends on
 
@@ -14,7 +14,7 @@ Summing $Y - E[Y]$ and the variances over independent sibships gives a standardi
 
 1. The model: sibships, marker genotypes, affection status, and the null hypothesis as within-sibship exchangeability of genotypes with respect to affection.
 2. The conditional mean and variance of $Y$ from the moments of sampling without replacement.
-3. The standardized statistic and its asymptotic normality as the number of independent sibships grows.
+3. The standardized statistic, for positive total conditional variance, and its asymptotic normality under bounded sibship sizes and diverging total conditional variance.
 4. Robustness to population stratification, and the combination with the parental transmission/disequilibrium test (whose [one-sided exact test is valid](../../../Biology/statistical-genetics/transmission-disequilibrium-test/is-valid-pvalue-tdt-pvalue.md)), as separate statements.
 
 ## Sources

@@ -1,6 +1,6 @@
 # Moments of path functionals on the event of fixation
 
-With $X$, $T^*$, $G$ and $A = \int_0^{T^*}g(X_s)\,ds$ as in the moment recursion for additive path functionals, let $u(p) = P_p(X_{T^*} = 1) = (S(p) - S(0))/(S(1) - S(0))$, with $S$ the scale function, and $H_n(p) = E_p[A^n;\ X_{T^*} = 1]$. Then $H_0 = u$ and
+With $X$, $T^*$, $G$ and $A = \int_0^{T^*}g(X_s)\,ds$ as in the moment recursion for additive path functionals, assume that the scale function $S$ is finite at $0$ and at $1$ and that both endpoints are accessible, so that $T^* < \infty$ almost surely (an inaccessible endpoint with infinite scale value makes the ratio below undefined, and needs a separate limit statement); let $u(p) = P_p(X_{T^*} = 1) = (S(p) - S(0))/(S(1) - S(0))$ and $H_n(p) = E_p[A^n;\ X_{T^*} = 1]$. Then $H_0 = u$ and
 
 $$H_n = n\,G(g\,H_{n-1}), \qquad n \ge 1,$$
 

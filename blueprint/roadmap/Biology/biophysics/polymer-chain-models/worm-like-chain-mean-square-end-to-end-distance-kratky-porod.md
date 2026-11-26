@@ -6,6 +6,10 @@ $$E[R^2] = \int_0^{L_c}\!\!\int_0^{L_c} e^{-|s - s'|/L_p}\, ds\, ds' = 2 L_p L_c
 
 so $E[R^2]/L_c^2 \to 1$ as $L_c/L_p \to 0$ (rigid rod) and $E[R^2]/(2 L_p L_c) \to 1$ as $L_c/L_p \to \infty$ (flexible coil); see Tokmakoff, Eq. (9.3.8).
 
+## Proof depends on
+
+- [Fubini's theorem for iterated integrals](../../../MeasureTheory/integration/iterated-integrals/integral-integral-swap.md)
+
 ## Expansion
 
 1. The model: a random curve with a jointly measurable unit tangent field and the stated tangent correlation; boundedness of $u$ gives the domination needed for Fubini's theorem.

@@ -1,6 +1,6 @@
 # Weir–Cockerham estimator of F_ST as a ratio of unbiased estimators
 
-Sample $n_i \ge 1$ alleles from each of $r \ge 2$ populations, with $n_i \ge 2$ for at least one $i$,, let $\tilde p_{iu}$ be the sample frequency of allele $A_u$ in population $i$ and $\bar p_u$ the sample-size-weighted average, and suppose that within populations the sample frequencies have multinomial moments, and among populations the frequencies $p_{iu}$ have mean $p_u$ and variance $p_u(1 - p_u)\theta$ with no coancestry between populations. With the mean squares
+Sample $n_i \ge 1$ alleles from each of $r \ge 2$ populations, with $n_i \ge 2$ for at least one $i$, let $\tilde p_{iu}$ be the sample frequency of allele $A_u$ in population $i$ and $\bar p_u$ the sample-size-weighted average, and suppose that within populations the sample frequencies have multinomial moments, and among populations the frequencies $p_{iu}$ have mean $p_u$ and variance $p_u(1 - p_u)\theta$ with no coancestry between populations. With the mean squares
 
 $$\mathrm{MSP}_u = \frac{1}{r - 1}\sum_{i=1}^r n_i (\tilde p_{iu} - \bar p_u)^2, \qquad \mathrm{MSG}_u = \frac{1}{\sum_i (n_i - 1)} \sum_{i=1}^r n_i\, \tilde p_{iu}(1 - \tilde p_{iu}),$$
 
@@ -8,14 +8,14 @@ one has $E(\mathrm{MSP}_u) = \pi_u[(1 - \theta) + n_c\theta]$ and $E(\mathrm{MSG
 
 $$\hat\theta = \frac{\sum_u (\mathrm{MSP}_u - \mathrm{MSG}_u)}{\sum_u [\mathrm{MSP}_u + (n_c - 1)\mathrm{MSG}_u]},$$
 
-with numerator and denominator summed over alleles (and over loci when $\theta$ is common to them), is a ratio of unbiased estimators of $\theta$ times a common factor and of that factor. It is unbiased only to the extent that the expectation of the ratio equals the ratio of the expectations.
+with numerator and denominator summed over alleles (and over loci when $\theta$ is common to them), is a ratio of unbiased estimators of $\theta$ times a common factor and of that factor. It is defined only on samples whose observed denominator is positive: if every population sample is monomorphic for the same allele, then $\tilde p_{iu} = \bar p_u \in \{0, 1\}$ for all $i$ and $u$, every mean square vanishes, and $\hat\theta = 0/0$; the identities for the expectations of the numerator and denominator need no such restriction. Where it is defined, it is unbiased only to the extent that the expectation of the ratio equals the ratio of the expectations.
 
 
 ## Expansion
 
 1. The model: multinomial sampling within populations and the among-population moments that introduce $\theta$.
 2. The expectations of $\mathrm{MSP}_u$ and $\mathrm{MSG}_u$ under the general model with population-specific $\theta_i$ and between-population $\theta_{ii'}$, and their specialization to equal $\theta$ and zero $\theta_{ii'}$.
-3. Unbiasedness of the numerator and denominator, and the combination over alleles and loci.
+3. Unbiasedness of the numerator and denominator, the combination over alleles and loci, and the event of a positive observed denominator on which the ratio is defined.
 4. The diploid version with variance components $a$, $b$, $c$ for populations, individuals and gametes, and $\theta = a/(a + b + c)$, as in the original paper.
 5. Consistency of the ratio estimator as the number of loci grows, its bias, and its relation to the [nonnegativity of the fixation index](../../../Biology/population-structure/patterson-s-f-statistics/fst-nonneg.md), as separate statements.
 

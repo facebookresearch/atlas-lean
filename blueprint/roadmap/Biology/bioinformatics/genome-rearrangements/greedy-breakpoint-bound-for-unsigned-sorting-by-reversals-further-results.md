@@ -6,6 +6,10 @@ Kececioglu and Sankoff (1995) prove, besides the [breakpoint bound for the greed
 
 - [Greedy breakpoint algorithm for sorting by reversals](greedy-breakpoint-bound-for-unsigned-sorting-by-reversals.md)
 
+## Proof depends on
+
+- [Unsigned breakpoints are at most twice the unsigned reversal distance](../../../Combinatorics/permutations/permutation-statistics/sorting-by-reversals/ub-le-two-mul-udist.md)
+
 ## Expansion
 
 1. The lower bound $\mathrm{OPT}(\pi) \ge \phi(\pi)/2$ in the framed convention of the candidate page, and Corollary 1.

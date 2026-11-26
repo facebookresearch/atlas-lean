@@ -1,10 +1,15 @@
 # The duplication-optimal reconciliations form an interval above the LCA reconciliation
 
-Let $G$ be a rooted binary gene tree and $S$ a rooted binary species tree, with each leaf of $G$ labelled by a leaf of $S$. A reconciliation is a map $f : V(G) \to V(S)$ that is leaf-preserving and order-preserving, and reconciliations are partially ordered by $f' \preceq f$ if $f'(v) \le f(v)$ for every vertex $v$; the LCA reconciliation $M$ is the least element. By [the optimality of the LCA reconciliation](../../not-yet-classified/lcareconciliation/lca-optimal.md) (Wu and Zhang 2011, Corollary 4), $M$ has the minimum gene duplication cost, but duplication-optimal reconciliations need not be unique. Wu and Zhang (2011, Theorem 5) prove that there is a reconciliation $M^*$ such that a reconciliation $f$ has the minimum gene duplication cost if and only if $M \preceq f \preceq M^*$.
+Let $G$ be a rooted binary gene tree and $S$ a rooted binary species tree, with each leaf of $G$ labelled by a leaf of $S$. A [reconciliation](../../not-yet-classified/lcareconciliation/is-reconciliation.md) is a map $f : V(G) \to V(S)$ that is leaf-preserving and order-preserving, and reconciliations are partially ordered by $f' \preceq f$ if $f'(v) \le f(v)$ for every vertex $v$; the LCA reconciliation $M$ is the least element. By [the optimality of the LCA reconciliation](../../not-yet-classified/lcareconciliation/lca-optimal.md) (Wu and Zhang 2011, Corollary 4), $M$ has the minimum [gene duplication cost](../../not-yet-classified/lcareconciliation/gd.md) $\mathrm{gd}$, but duplication-optimal reconciliations need not be unique. Wu and Zhang (2011, Theorem 5) prove that there is a reconciliation $M^*$ such that a reconciliation $f$ has the minimum gene duplication cost if and only if $M \preceq f \preceq M^*$.
 
 ## Depends on
 
+- [Is Reconciliation](../../not-yet-classified/lcareconciliation/is-reconciliation.md)
+- [Gd](../../not-yet-classified/lcareconciliation/gd.md)
 - [Optimality of the LCA reconciliation](../../not-yet-classified/lcareconciliation/lca-optimal.md)
+
+## Proof depends on
+
 - [Monotonicity of the costs](../../not-yet-classified/lcareconciliation/costs-lt-of-le.md)
 
 ## Expansion

@@ -4,9 +4,12 @@ Consider the FitzHugh–Nagumo equation
 
 $$\partial_t w_1 = \partial_x^2 w_1 + f(w_1) - w_2, \qquad \partial_t w_2 = \epsilon(w_1 - \gamma w_2), \qquad f(r) = r(r - a)(1 - r),\ 0 < a < \tfrac12,\ \epsilon, \gamma > 0$$
 
-(Arioli and Koch 2015, Eqs. (1.1)–(1.2)). A travelling wave $w_j(x, t) = \phi_j(x - ct)$ satisfies a system of ordinary differential equations, and a travelling pulse is a solution of this system homoclinic to the rest state.
+(Arioli and Koch 2015, Eqs. (1.1)–(1.2)). A travelling wave $w_j(x, t) = \phi_j(x - ct)$ satisfies the profile equations $\phi_1'' + c\phi_1' = -f(\phi_1) + \phi_2$, $c\phi_2' = -\epsilon(\phi_1 - \gamma\phi_2)$ (Eq. (1.4)). The two domains give two different kinds of pulse, and a nonconstant periodic profile cannot tend to the rest state at infinity, so they are stated separately. Fix the parameter values $\epsilon = 1/100$, $\gamma = 5$ and $a = 1/10$.
 
-For the parameter values $\epsilon = 1/100$, $\gamma = 5$ and $a = 1/10$, Arioli and Koch prove, with computer-assisted estimates, that the equation has a real-analytic travelling pulse on a circular axon of length $128$ (Theorem 1.1) and on the line (Theorem 1.2). This page states the existence result for these parameter values only.
+1. Periodic pulse (Theorem 1.1). On the circular axon $\mathbb{R}/128\mathbb{Z}$, the equation has a travelling wave whose profile $\phi = (\phi_1, \phi_2)$ is a nonconstant, real-analytic, $128$-periodic solution of Eq. (1.4), with speed $c = 0.470336308\ldots$; equivalently, the first-order system (1.5) has a periodic orbit of period $128$. Arioli and Koch call it a traveling pulse because it has a single localized peak per period; it is not homoclinic.
+2. Pulse on the line (Theorem 1.2). On $\mathbb{R}$, the equation has a travelling pulse with speed $c = 0.470336270\ldots$: a nonconstant real-analytic solution of Eq. (1.4) with $\phi_j(\pm\infty) = 0$, that is, an orbit of (1.5) homoclinic to the rest state, and $\phi$ decreases exponentially at infinity.
+
+Both proofs use computer-assisted estimates. This page states the existence results for these parameter values only.
 
 The perturbative existence results for small $\epsilon > 0$, for the fast pulse by Hastings (1976) and Carpenter (1977) and for the slow pulse by Flores, which Arioli and Koch recall in Section 1 without their hypotheses on $a$ and $\gamma$, are not part of this statement; they are separate targets in the Expansion.
 
