@@ -42,7 +42,7 @@ QUESTION: is there a dominating set of size `K` or less for `G`, i.e., a subset 
 `|V'| ≤ K` such that for all `u ∈ V - V'` there is a `v ∈ V'` for which `{u, v} ∈ E`?
 
 The instance, its graph, the simple-edge-list well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]). The instance class is that of
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]). The instance class is that of
 `WantedExt.Complexity.NPComplete.DominatingSetPlanarMaxDegreeThreeWanted` (`0 < K ≤ |V|`,
 planarity as the repository's `SimpleGraph.IsPlanar`, every degree at most `3`), reused
 unchanged, plus Mathlib's `SimpleGraph.IsRegularOfDegree 3`: every vertex has degree exactly
