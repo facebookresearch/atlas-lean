@@ -46,23 +46,6 @@ universe u v
 
 namespace S17Hens
 
-private theorem isArtinianRing_quotient_map_maximalIdeal
-    {R : Type u} [CommRing R] [IsLocalRing R]
-    {S : Type v} [CommRing S] [Algebra R S] [Module.Finite R S] :
-    IsArtinianRing (S ⧸ (IsLocalRing.maximalIdeal R).map (algebraMap R S)) := by
-  set J : Ideal S := (IsLocalRing.maximalIdeal R).map (algebraMap R S) with hJ
-  let k := R ⧸ IsLocalRing.maximalIdeal R
-  letI : Field k := Ideal.Quotient.field _
-  have hJR : ∀ r ∈ IsLocalRing.maximalIdeal R, algebraMap R (S ⧸ J) r = 0 := by
-    intro r hr
-    rw [IsScalarTower.algebraMap_apply R S (S ⧸ J), Ideal.Quotient.algebraMap_eq,
-      Ideal.Quotient.eq_zero_iff_mem]
-    exact Ideal.mem_map_of_mem _ hr
-  letI : Algebra k (S ⧸ J) := (Ideal.Quotient.lift _ (algebraMap R (S ⧸ J)) hJR).toAlgebra
-  haveI : IsScalarTower R k (S ⧸ J) := IsScalarTower.of_algebraMap_eq (fun r => rfl)
-  haveI : Module.Finite k (S ⧸ J) := Module.Finite.of_restrictScalars_finite R k (S ⧸ J)
-  exact IsArtinianRing.of_finite k (S ⧸ J)
-
 private theorem isLocalRing_of_isDomain_of_moduleFinite
     {R : Type u} [CommRing R] [HenselianLocalRing R]
     {S : Type v} [CommRing S] [IsDomain S] [Algebra R S] [Module.Finite R S] : IsLocalRing S := by
@@ -96,7 +79,11 @@ private theorem isLocalRing_of_isDomain_of_moduleFinite
       Ideal.isMaximal_under_of_isIntegral_of_isMaximal (R := R) m
     rw [IsLocalRing.eq_maximalIdeal hmax]
 
-  haveI : IsArtinianRing (S ⧸ J) := isArtinianRing_quotient_map_maximalIdeal
+  have : IsArtinianRing (S ⧸ J) := by
+    let := Ideal.Quotient.field (IsLocalRing.maximalIdeal R)
+    have : Module.Finite (R ⧸ IsLocalRing.maximalIdeal R) (S ⧸ J) :=
+      .of_restrictScalars_finite R _ _
+    exact .of_finite (R ⧸ IsLocalRing.maximalIdeal R) _
   have hsurj : Function.Surjective (Ideal.Quotient.mk J) := Ideal.Quotient.mk_surjective
   have hmaxq : ∀ m : Ideal S, m.IsMaximal → (m.map (Ideal.Quotient.mk J)).IsMaximal := by
     intro m hm

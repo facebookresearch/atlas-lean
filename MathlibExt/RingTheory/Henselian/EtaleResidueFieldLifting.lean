@@ -71,26 +71,13 @@ private theorem hensSplit_map_maximalIdeal_le {R : Type u} [CommRing R] [IsLocal
       (fun x => Algebra.IsIntegral.isIntegral x) m
   rw [IsLocalRing.eq_maximalIdeal hmax]
 
-private theorem hensSplit_isArtinianRing_fibre {R : Type u} [CommRing R] [IsLocalRing R]
-    {S : Type v} [CommRing S] [Algebra R S] [Module.Finite R S] :
-    IsArtinianRing (S ⧸ (maximalIdeal R).map (algebraMap R S)) := by
-  set J : Ideal S := (maximalIdeal R).map (algebraMap R S) with hJ
-  let k := R ⧸ maximalIdeal R
-  letI : Field k := Ideal.Quotient.field _
-  have hJR : ∀ r ∈ maximalIdeal R, algebraMap R (S ⧸ J) r = 0 := by
-    intro r hr
-    rw [IsScalarTower.algebraMap_apply R S (S ⧸ J), Ideal.Quotient.algebraMap_eq,
-      Ideal.Quotient.eq_zero_iff_mem]
-    exact Ideal.mem_map_of_mem _ hr
-  letI : Algebra k (S ⧸ J) := (Ideal.Quotient.lift _ (algebraMap R (S ⧸ J)) hJR).toAlgebra
-  haveI : IsScalarTower R k (S ⧸ J) := IsScalarTower.of_algebraMap_eq (fun r => rfl)
-  haveI : Module.Finite k (S ⧸ J) := Module.Finite.of_restrictScalars_finite R k (S ⧸ J)
-  exact IsArtinianRing.of_finite k (S ⧸ J)
-
 private theorem hensSplit_finite_maximalSpectrum {R : Type u} [CommRing R] [IsLocalRing R]
     {S : Type v} [CommRing S] [Algebra R S] [Module.Finite R S] : Finite (MaximalSpectrum S) := by
   set J : Ideal S := (maximalIdeal R).map (algebraMap R S) with hJ
-  haveI : IsArtinianRing (S ⧸ J) := hensSplit_isArtinianRing_fibre
+  have : IsArtinianRing (S ⧸ J) := by
+    let := Ideal.Quotient.field (maximalIdeal R)
+    have : Module.Finite (R ⧸ maximalIdeal R) (S ⧸ J) := .of_restrictScalars_finite R _ _
+    exact .of_finite (R ⧸ maximalIdeal R) _
   let F : MaximalSpectrum S → MaximalSpectrum (S ⧸ J) := fun m =>
     have := m.isMaximal
     ⟨m.asIdeal.map (Ideal.Quotient.mk J),
@@ -158,7 +145,11 @@ private theorem HenselianLocalRing.exists_completeOrthogonalIdempotents_quotient
   haveI : Finite (MaximalSpectrum S) := hensSplit_finite_maximalSpectrum (R := R)
   letI : Fintype (MaximalSpectrum S) := Fintype.ofFinite _
   set J : Ideal S := (IsLocalRing.maximalIdeal R).map (algebraMap R S) with hJ
-  haveI : IsArtinianRing (S ⧸ J) := hensSplit_isArtinianRing_fibre
+  have : IsArtinianRing (S ⧸ J) := by
+    let := Ideal.Quotient.field (IsLocalRing.maximalIdeal R)
+    have : Module.Finite (R ⧸ IsLocalRing.maximalIdeal R) (S ⧸ J) :=
+      .of_restrictScalars_finite R _ _
+    exact .of_finite (R ⧸ IsLocalRing.maximalIdeal R) _
   have hJle : ∀ m : MaximalSpectrum S, J ≤ m.asIdeal := fun m =>
     hensSplit_map_maximalIdeal_le (R := R) m.asIdeal m.isMaximal
 
