@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 public import MathlibExt.Analysis.Ramanujan.Part1Ch7DirichletBeta
+public import MathlibExt.NumberTheory.OddZetaDirichletBetaEulerDirichletBetaTwoMulAddOne
 
 namespace MetaMathlibExt
 
@@ -35,26 +36,6 @@ Numbers*, INTEGERS 25 (2025), Article A50, Proposition 2, Equation (11)
 (`integers-2025-A50-prop-2`), citing its reference [20]. -/
 public theorem_wanted hasSum_one_div_odd_pow (k : ℕ) (hk : 2 ≤ k) :
     HasSum (fun n : ℕ => 1 / (2 * (n : ℂ) + 1) ^ k) ((1 - 1 / 2 ^ k) * riemannZeta k)
-
-/-- **Dirichlet beta at odd positive integers.** Let $\beta$ be the Dirichlet $L$-function of the
-nontrivial character modulo $4$, which for $\operatorname{Re} s > 1$ is the series
-$\beta(s) = \sum_{n \ge 1} (-1)^{n-1}/(2n-1)^s$, and let $E_0 = 1, E_2 = -1, E_4 = 5,
-E_6 = -61, \dots$ be the even-index Euler numbers. Then for every natural number $m$,
-$$\beta(2m+1) = \frac{\pi^{2m+1} \, |E_{2m}|}{2^{2m+2} \, (2m)!}.$$
-
-For example $\beta(1) = \pi/4$, $\beta(3) = \pi^3/32$, $\beta(5) = 5\pi^5/1536$ and
-$\beta(7) = 61\pi^7/184320$. With $k = 2m+2$ this is the source's Equation (12),
-$\beta(k-1) = (\pi/2)^{k-1} |E_{k-2}| / (2 (k-2)!)$ for even $k \ge 2$. At $s = 1$ the series
-converges only conditionally, and its sum is the value of the $L$-function there.
-
-Source: Jan W. H. Swanepoel, *A Short Simple Probabilistic Proof of a Well Known Identity
-and the Derivation of Related New Identities Involving the Bernoulli Numbers and the Euler
-Numbers*, INTEGERS 25 (2025), Article A50, Proposition 3, Equation (12)
-(`integers-2025-A50-prop-3`), citing its references [3], [6]. -/
-public theorem_wanted dirichletBeta_two_mul_add_one (m : ℕ) :
-    chapter7DirichletBeta (2 * m + 1) =
-      (Real.pi : ℂ) ^ (2 * m + 1) * ((|chapter5EulerEven m| : ℤ) : ℂ) /
-        (2 ^ (2 * m + 2) * ((2 * m).factorial : ℂ))
 
 /-- **Integrals of powers of $\sin x / x$.** For every natural number $k \ge 1$, the improper
 integral $\lim_{R \to \infty} \int_0^R (\sin x / x)^k \, dx$ exists and
