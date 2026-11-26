@@ -14,8 +14,9 @@ https://github.com/leanprover/lean-eval), problem `strong_mason_conjecture`, at 
 38361be884302c7edce1908c4aef8296eb2cb27e (manifest
 `manifests/problems/strong_mason_conjecture.toml`, rev 1, submitter Kim Morrison, status
 archived): the definition `independentSetCount` and the statement of `strong_mason_conjecture`,
-with the docstrings and comments they had in the former wanted module
-`WantedExt/Combinatorics/StrongMasonWanted.lean`.
+with the docstrings they had in the former wanted module
+`WantedExt/Combinatorics/StrongMasonWanted.lean`, and the title and first two paragraphs of the
+module documentation, as they were in that module.
 Copyright 2026 Lean FRO, LLC.
 Authors: Kim Morrison
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use these portions
@@ -36,12 +37,13 @@ Modification notice (Apache License 2.0, Section 4). Changes made: converted eac
 Later changes (ATLAS, 2026): the docstrings were restated to match the Lean statements; then the
 `theorem_wanted` was proved and the declarations moved from
 `WantedExt/Combinatorics/StrongMasonWanted.lean` to this `MathlibExt` module with unchanged
-names, statements and docstrings, and the imports of `Batteries.Util.ProofWanted` and of all of
-Mathlib were replaced by narrower Mathlib imports.
+names, statements and docstrings, the imports of `Batteries.Util.ProofWanted` and of all of
+Mathlib were replaced by narrower Mathlib imports, and the plain comment that repeated the
+docstring of `strong_mason_conjecture` was dropped.
 
 The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
-`strong_mason_conjecture`, the private definitions and lemmas it uses, the module documentation
-and the linter options.
+`strong_mason_conjecture`, the private definitions and lemmas it uses, the rest of the module
+documentation and the linter options.
 -/
 module
 
@@ -1439,13 +1441,6 @@ private lemma independentSetCount_eq {α : Type*} (M : Matroid α) [M.Finite] [F
   unfold independentSetCount
   rw [hset, Set.ncard_image_of_injective _ (Finset.map_injective _), Set.ncard_coe_finset]
 
-/- **The strong Mason conjecture** (Branden-Huh; independently
-Anari-Liu-Oveis Gharan-Vinzant). If `I k` counts the independent sets of
-size `k` in a finite matroid on `n` elements, then
-
-`I k ^ 2 * k * (n - k) >= I (k - 1) * I (k + 1) * (k + 1) * (n - k + 1)`.
-
-Equivalently, `I k / n.choose k` is a log-concave sequence. -/
 set_option linter.dupNamespace false in
 /-- **The strong Mason conjecture.** Let $M$ be a finite matroid whose ground set has $n$
 elements, and for each $j$ let $I_j$ be the number of independent sets of $M$ with $j$ elements.
