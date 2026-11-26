@@ -1,3 +1,4 @@
-# Step Rigidity
+# Two-valued step rigidity
 
-A positive two-valued rigidity `EA₁` on `x < a`, `EA₂` on `x ≥ a`.
+The step rigidity takes the value `EA₁` for `x < a` and `EA₂` for `x ≥ a`, for any real `EA₁`,
+`EA₂`; it is positive when both values are positive.

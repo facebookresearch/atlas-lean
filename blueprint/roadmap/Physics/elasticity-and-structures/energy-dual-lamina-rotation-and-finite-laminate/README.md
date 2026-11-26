@@ -19,6 +19,7 @@
 
 - [Work duality of the stress and strain rotation maps](stress-map-transpose-mul-strain-map.md)
 - [Stress Map eq transpose inv](stress-map-eq-transpose-inv.md)
+- [Work invariance under lamina rotation](stress-map-mul-vec-dot-product-strain-ma.md)
 
 ## D. Stiffness congruence
 
@@ -26,10 +27,13 @@
 - [Global Stiffness](global-stiffness.md)
 - [Dot Product global Stiffness mul Vec](dot-product-global-stiffness-mul-vec.md)
 - [Global Stiffness pos Def](global-stiffness-pos-def.md)
+- [Uniqueness of the transformed lamina stiffness](stress-map-mul-vec-eq-iff-eq-global-stif.md)
 
 ## E. The opposite MATERIAL-to-GLOBAL convention
 
 - [Global Stiffness eq inv congr](global-stiffness-eq-inv-congr.md)
+- [Inverse of the engineering-strain transformation](strain-map-inv.md)
+- [Inverse congruence with the global-to-material strain map](inv-congr-strain-map.md)
 
 ## F. Ply geometry and the laminate stiffnesses
 
@@ -39,6 +43,7 @@
 - [Coupling stiffness of a laminate](coupling-stiffness.md)
 - [Bending stiffness of a laminate](bending-stiffness.md)
 - [Abd Matrix](abd-matrix.md)
+- [Reflected laminate stack](is-reflected-stack.md)
 
 ## G. Through-thickness integration: the resultants
 
@@ -51,6 +56,8 @@
 ## H. Block energy and positive definiteness
 
 - [Positive energy of a laminate](abd-matrix-energy-pos.md)
+- [Ply decomposition of the laminate energy](abd-matrix-energy-eq.md)
+- [Laminate stiffness matrix is positive definite](abd-matrix-pos-def.md)
 
 ## I. Reflected stacks
 

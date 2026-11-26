@@ -14,6 +14,10 @@
 - [Displacement of a uniformly loaded fixed-fixed bar](eq-on-axial-displacement.md)
 - [Twist of a uniformly loaded fixed-fixed shaft](eq-on-twist-angle.md)
 - [Scaled bar displacement solves the unit Dirichlet problem](is-classical-solution-axial-displacement.md)
+- [Uniform-load displacement solves the fixed-fixed bar problem](is-fixed-fixed-solution-axial-displaceme.md)
+- [Uniform-torque twist angle solves the fixed-fixed shaft problem](is-fixed-fixed-solution-twist-angle.md)
+- [Dimension of the axial displacement formula](axial-displacement-dimension.md)
+- [Dimension of the twist angle formula](twist-angle-dimension.md)
 
 ## C. Boundary example
 
@@ -29,6 +33,7 @@
 - [Zero bending moment at the free end of a cantilever](cantilever-deflection-moment-right.md)
 - [The free-end shear balances the tip force](cantilever-deflection-shear-right.md)
 - [Existence for the cantilever deflection problem](is-cantilever-solution-cantilever-deflec.md)
+- [Cantilever polynomial satisfies the beam equation](cantilever-deflection-iterated-deriv-fou.md)
 
 ## E. Clamped-free cantilever: uniqueness
 
@@ -37,6 +42,7 @@
 ## F. Clamped-free cantilever: tip-force term and boundary example
 
 - [A clamped-clamped profile is not a cantilever solution](cosine-profile-fails-moment.md)
+- [Cantilever deflection with no distributed load](cantilever-deflection-load-zero.md)
 
 ## G. Fixed-traction bar and shaft: load path, existence and uniqueness
 
@@ -48,10 +54,16 @@
 - [Existence for the fixed-traction bar problem](is-fixed-traction-solution-fixed-tractio.md)
 - [The fixed-traction solution is the constructed displacement](eq-on-fixed-traction-displacement.md)
 - [Uniqueness for the fixed-traction bar problem](eq-on-3.md)
+- [Internal axial force of a fixed-traction bar](axial-force-eq.md)
+- [Twist and internal torque of a fixed-traction shaft](twist.md)
+
+## H. Fixed-traction bar: uniform load
+
+- [Fixed-traction displacement under a uniform load](fixed-traction-displacement-const.md)
 
 ## I. Boundary example: two free ends
 
-- [Is Free Free Solution](is-free-free-solution.md)
+- [Free-free bar problem](is-free-free-solution.md)
 - [Add const](add-const.md)
 - [A free-free bar carries zero net load](net-load.md)
 
@@ -68,6 +80,10 @@
 - [Wall Shear Stress](wall-shear-stress.md)
 - [Shear stress](wall-shear-stress-eq.md)
 - [The torsion constant is Bredt's](closed-cell-torsion-constant-eq.md)
+- [Closed-cell compatibility law](is-closed-cell-compatible.md)
+- [Torsion constant of a thin closed rectangular cell](closed-cell-torsion-constant.md)
+- [Twist rate under the closed-cell compatibility law](is-closed-cell-compatible-iff.md)
+- [Closed-cell torque is rigidity times twist rate](torque-eq-rigidity-mul-twist-rate.md)
 
 ## L. Simply supported beam: existence and uniqueness
 

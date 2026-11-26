@@ -1,3 +1,4 @@
-# Is Symmetric Stress
+# Symmetric stress
 
-Cauchy stress symmetry as a model assumption (no body couples).
+A stress matrix `σ` is symmetric when `σᵀ = σ`; Cauchy stress symmetry is the model assumption
+that there are no body couples.

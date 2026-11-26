@@ -1,4 +1,4 @@
-# Clamped Clamped Mode midspan
+# Midspan value of the clamped-clamped buckling mode
 
-Nonzero midspan displacement: the clamped-clamped mode takes the
-value `2` at `x = L / 2`.
+If `L ≠ 0`, the clamped-clamped buckling mode `w(x) = 1 - cos (2πx / L)` takes the value `2` at
+`x = L / 2`.

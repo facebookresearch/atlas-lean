@@ -4,7 +4,7 @@
 
 - [Deviatoric Stresses](deviatoric-stresses.md)
 - [Plastic Strain Increment](plastic-strain-increment.md)
-- [Frobenius inner eq sum mul](frobenius-inner-eq-sum-mul.md)
+- [Frobenius inner product as a double contraction](frobenius-inner-eq-sum-mul.md)
 
 ## B. Return map
 

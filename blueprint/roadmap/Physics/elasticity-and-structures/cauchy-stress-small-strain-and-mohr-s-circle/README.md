@@ -2,11 +2,11 @@
 
 ## A. Symmetric stress and traction
 
-- [Is Symmetric Stress](is-symmetric-stress.md)
+- [Symmetric stress](is-symmetric-stress.md)
 - [Cauchy traction vector](traction.md)
 - [Traction on the opposite face](traction-neg.md)
 - [Traction linear](traction-linear.md)
-- [Traction smul one](traction-smul-one.md)
+- [Traction of a hydrostatic stress](traction-smul-one.md)
 - [Compression Positive Stress](compression-positive-stress.md)
 - [Traction for a compression-positive stress](compression-positive-traction.md)
 - [Compression Positive Stress involutive](compression-positive-stress-involutive.md)
@@ -74,7 +74,7 @@
 - [Simple Shear strain](simple-shear-strain.md)
 - [Engineering shear of a simple shear](simple-shear-engineering.md)
 - [Logarithmic strain function](log-strain.md)
-- [True Strain](true-strain.md)
+- [True strain](true-strain.md)
 - [True strain is the logarithm of the stretch](true-strain-eq.md)
 - [Logarithmic strain at zero](log-strain-zero.md)
 - [The stretch is positive](true-strain-pos-arg.md)

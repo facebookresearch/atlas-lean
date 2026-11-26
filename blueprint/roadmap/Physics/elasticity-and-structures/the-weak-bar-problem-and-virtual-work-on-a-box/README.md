@@ -31,12 +31,13 @@
 - [Is Weak Bar Solution](is-weak-bar-solution.md)
 - [A weak solution of the unit problem gives a weak bar solution](is-weak-bar-solution-of-unit.md)
 - [Pulling a weak bar solution back to the unit interval](to-unit-2.md)
+- [Weak solution of a variable-rigidity bar exists and is unique](weak-bar-exists-unique.md)
 
 ## D. Validation examples
 
 - [Eq On axial Displacement](eq-on-axial-displacement.md)
-- [Step Rigidity](step-rigidity.md)
-- [Step Rigidity admissible](step-rigidity-admissible.md)
+- [Two-valued step rigidity](step-rigidity.md)
+- [A positive step rigidity is admissible](step-rigidity-admissible.md)
 - [Zero rigidity admits no weak bar solution](not-is-weak-bar-solution-zero-rigidity.md)
 - [Not ae lower Bound of nonpos](not-ae-lower-bound-of-nonpos.md)
 - [The fixed-free displacement is not an H¹₀ field](not-exists-weak-h10-on-eq-on-fixed-free.md)
@@ -50,6 +51,10 @@
 - [Boundary traction work on a box as an outward flux](box-traction-work-eq-box-outward-flux.md)
 - [Divergence transpose mul Vec](divergence-transpose-mul-vec.md)
 - [Double Dot eq double Dot small Strain](double-dot-eq-double-dot-small-strain.md)
+
+## F. The virtual work identity
+
+- [Virtual work identity on a box](virtual-work-box.md)
 
 ## G. Clamped faces and rigid virtual displacements
 

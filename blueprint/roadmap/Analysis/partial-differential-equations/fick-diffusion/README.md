@@ -42,7 +42,7 @@
 - [Constant-surface-concentration diffusion profile](erfc-profile.md)
 - [Erfc Profile xderiv value](erfc-profile-xderiv-value.md)
 - [Erfc Profile xxderiv value](erfc-profile-xxderiv-value.md)
-- [Erfc Profile tderiv value](erfc-profile-tderiv-value.md)
+- [Time derivative of the erfc profile](erfc-profile-tderiv-value.md)
 - [The error-function profile solves the diffusion equation](erfc-profile-pde.md)
 
 ## C.3. Surface, far-field and initial values
@@ -86,3 +86,5 @@
 - [Fourier Term](fourier-term.md)
 - [Fourier Term bound](fourier-term-bound.md)
 - [Summable bounds for the slab sine series](fourier-dominator-summable.md)
+- [Sine coefficients of a uniform profile](fourier-coeff-formula.md)
+- [Uniform convergence of the slab series](fourier-uniform-convergent.md)

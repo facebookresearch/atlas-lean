@@ -1,6 +1,6 @@
 # Uniqueness for the Dirichlet problem
 
-**Uniqueness for the Dirichlet problem** (energy method). Let `w` equal `c₁ - c₂` on the
+**Uniqueness for the Dirichlet problem** (energy method). Let `a < b`, and let `w` equal `c₁ - c₂` on the
 closed rectangle `[a, b] × [0, T]` and be continuous there; let `wx`, `wxx`, `wt` be continuous
 on `[a, b] × (0, T)` and be the derivatives `∂ₓw`, `∂ₓₓw`, `∂ₜw` at the points of
 `(a, b) × (0, T)`, where `∂ₜw = D ∂ₓₓw` with `D > 0`. If `w` vanishes at `x = a` and `x = b` for

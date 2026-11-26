@@ -12,11 +12,11 @@
 
 ## C. Bond modulus estimate
 
-- [Bond Modulus Estimate](bond-modulus-estimate.md)
+- [Bond-model estimate of an elastic modulus](bond-modulus-estimate.md)
 - [Bond-model modulus estimate for the Lennard-Jones potential](bond-modulus-estimate-lennard-jones.md)
 
 ## D. Born-Lande lattice energy
 
-- [Born Lande Energy](born-lande-energy.md)
+- [Born–Landé lattice energy](born-lande-energy.md)
 - [Born Lande Energy neg of pos](born-lande-energy-neg-of-pos.md)
 - [The Born–Landé factor lies in (0, 1)](born-lande-energy-factor-mem.md)

@@ -1,5 +1,4 @@
-# True Strain
+# True strain
 
-True (logarithmic) strain `ε_true = ln(1 + e)`, defined only on the physical domain
-`e > -1` (the proof argument). It is `logStrain e` there, so `logStrain_le`, `logStrain_lt`
-and `logStrain_lower` bound it.
+For an engineering strain `e > -1`, the true (logarithmic) strain is `ε_true = ln(1 + e)`; it is
+defined only on the physical domain `e > -1`.

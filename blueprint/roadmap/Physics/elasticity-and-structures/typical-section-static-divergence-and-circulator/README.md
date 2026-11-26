@@ -16,6 +16,10 @@
 
 - [No nonzero twist below the divergence pressure](eq-zero-of-restoring-moment-eq-zero.md)
 - [Every twist balances at the divergence pressure](restoring-moment-divergence-pressure.md)
+- [Divergence pressure is positive](divergence-pressure-pos.md)
+- [Effective stiffness vanishes exactly at the divergence pressure](effective-stiffness-eq-zero-iff.md)
+- [Effective stiffness is positive exactly below the divergence pressure](effective-stiffness-pos-iff.md)
+- [Neutral displacement at the divergence pressure](exists-neutral-displacement.md)
 
 ## D. Nonpositive and zero aerodynamic factor
 
@@ -26,6 +30,9 @@
 
 - [Circulatory Force](circulatory-force.md)
 - [Circulatory Residual](circulatory-residual.md)
+- [Circulatory load operator](circulatory-j.md)
+- [Circulatory residual as a modal force balance](circulatory-residual-eq-ports.md)
+- [Energy balance of the circulatory model](has-deriv-at-energy.md)
 
 ## F. The nonsymmetric circulatory load
 
@@ -58,3 +65,7 @@
 
 - [Unloaded response eq](unloaded-response-eq.md)
 - [Without aerodynamic load every solution decays](unloaded-tendsto-zero.md)
+
+## J. The three witnesses
+
+- [Stable, neutral and unstable circulatory witnesses](circulatory-witnesses.md)
