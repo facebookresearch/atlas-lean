@@ -67,5 +67,33 @@ example {A : Type} [CommRing A] [IsLocalRing A] {ρ₁ ρ₂ : GaloisRepAdic.{0,
 
 /-- Boundary: with no `U_q` excluded, the hypothesis on `S` is what rules out the operators
 `U_q` for `q ∣ N`; at level one it holds vacuously. -/
-example (S : Set ℕ) : ∀ q : ℕ, q.Prime → q ∣ 1 → q ∈ S :=
+private theorem prime_dvd_one_mem (S : Set ℕ) : ∀ q : ℕ, q.Prime → q ∣ 1 → q ∈ S :=
   fun _ hq h1 => absurd (Nat.dvd_one.mp h1) hq.ne_one
+
+/-- Level one: the surjectivity theorem applies for every `S`, the hypothesis on `S` being
+discharged by `prime_dvd_one_mem`. -/
+example {𝒪 : Type} [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪]
+    [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] {S : Set ℕ}
+    {θ : CuspForm.heckeAlgebra 1 2 S →+* IsLocalRing.ResidueField 𝒪} {T : Type} [CommRing T]
+    [IsLocalRing T] [IsNoetherianRing T] [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
+    [Algebra 𝒪 T] [IsLocalHom (algebraMap 𝒪 T)] [Module.Finite 𝒪 T] [Module.Free 𝒪 T]
+    (H : CuspForm.HeckeGaloisRepDatum 1 S 𝒪 θ T) {R : Type} [CommRing R] [IsLocalRing R]
+    [Algebra 𝒪 R] (ρR : GaloisRepAdic.{0, 0} R) (φ : R →ₐ[𝒪] T) (hφ : IsLocalHom (φ : R →+* T))
+    (he : (ρR.baseChangeAlong (φ : R →+* T) hφ).IsEquiv H.ρ) : Function.Surjective φ :=
+  H.surjective_of_isEquiv_baseChangeAlong (prime_dvd_one_mem S) ρR φ hφ he
+
+/-- Level one: the universal map from the deformation ring is surjective for every `S`. -/
+example {𝒪 : Type} [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪]
+    [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
+    {ρbar : ResidualGaloisRep (IsLocalRing.ResidueField 𝒪)}
+    {𝒟 : ∀ ⦃A : Type⦄ [CommRing A] [IsLocalRing A] [Algebra 𝒪 A], GaloisRepAdic A → Prop}
+    (D : GaloisRep.DeformationRingData 𝒪 ρbar 𝒟) {S : Set ℕ}
+    {θ : CuspForm.heckeAlgebra 1 2 S →+* IsLocalRing.ResidueField 𝒪} {T : Type} [CommRing T]
+    [IsLocalRing T] [IsNoetherianRing T] [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
+    [Algebra 𝒪 T] [IsLocalHom (algebraMap 𝒪 T)] [Module.Finite 𝒪 T] [Module.Free 𝒪 T]
+    (H : CuspForm.HeckeGaloisRepDatum 1 S 𝒪 θ T) (h𝒟 : 𝒟 H.ρ)
+    (hres : H.ρ.residual.IsEquiv
+      (ρbar.baseChangeAlong (IsLocalRing.ResidueField.map (algebraMap 𝒪 T)))) :
+    ∃ φ : D.R →ₐ[𝒪] T, Function.Surjective φ ∧ ∃ hφ : IsLocalHom (φ : D.R →+* T),
+      (D.ρ.baseChangeAlong (φ : D.R →+* T) hφ).IsEquiv H.ρ :=
+  D.exists_surjective_algHom_of_heckeGaloisRepDatum H (prime_dvd_one_mem S) h𝒟 hres
