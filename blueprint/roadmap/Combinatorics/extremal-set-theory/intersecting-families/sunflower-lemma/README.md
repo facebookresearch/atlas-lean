@@ -8,6 +8,7 @@
 - [Bounded-size set systems](is-system.md)
 - [Sunflower lower bound](lower-bound.md)
 - [Sunflower constant](c.md)
+- [Strict comparison of sunflower thresholds](uniform-threshold-lt-lower-bound.md)
 - [Alweiss–Lovett–Wu–Zhang sunflower bound](theorem-1-4.md)
 - [Δ-system (sunflower)](is-delta-system.md)
 - [Erdős–Rado sunflower lemma](exists-is-delta-system.md)
