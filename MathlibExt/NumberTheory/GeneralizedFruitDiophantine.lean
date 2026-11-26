@@ -159,7 +159,7 @@ $a_1 = -\alpha$, $a_2 = a_3 = a_4 = 0$ and $a_6 = -(\alpha^2 + 5)$, that is, the
 $y^2 - \alpha x y = x^3 - (\alpha^2 + 5)$.
 
 Source: Satyabrat Sahoo and Shanta Laishram, *Generalized Fruit Diophantine Equation over
-Number Fields*, INTEGERS 26 (2026), Article A21, Theorem 4, Equation (4.1). -/
+Number Fields*, INTEGERS 26 (2026), Article A21, Theorem 4, Equation (6). -/
 public def fruitWeierstrassCurve {R : Type*} [CommRing R] (α : R) : WeierstrassCurve R :=
   ⟨-α, 0, 0, 0, -(α ^ 2 + 5)⟩
 
