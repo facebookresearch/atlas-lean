@@ -32,6 +32,17 @@ private theorem terminal_not_reduced : ¬ SlowANimReduced sizes remainder := by
   · have hterminal : slowANimMoves sizes remainder = ∅ := by decide
     simp [hterminal] at hq
 
+-- The reducedness bound is attained when the largest stack equals half the total.
+example : SlowANimReduced sizes start := by
+  apply (slowANimReduced_iff_nirb 3 sizes (by decide) (by decide) start).2
+  decide
+
+-- A single remaining token is not enough for a move of minimum size two.
+example : ¬ SlowANimReduced sizes remainder := by
+  intro hp
+  have h := (slowANimReduced_iff_nirb 3 sizes (by decide) (by decide) remainder).1 hp
+  exact (of_decide_eq_false rfl) h
+
 -- Playing on all three stacks hits the unique tallest stack. The surplus is zero.
 example : (∑ i, start i) < 2 * Finset.univ.sup start + (3 - 2) := by
   have hstep : (![1, 0, 1] : Fin 3 → ℕ) ∈ slowANimMoves sizes start := by decide
