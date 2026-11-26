@@ -13325,6 +13325,7 @@
   "MathlibExt/NumberTheory/LexMinimalExtensionMonoid": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/LeonardoP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/LeonardoPFibonacciSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
+  "MathlibExt/NumberTheory/LexMinimalExtensionMonoidBinomidAverageLe": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/Lindemann": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Hermite–Lindemann theorem"},
   "MathlibExt/NumberTheory/LindemannWeierstrass": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Lindemann–Weierstrass theorem"},
   "MathlibExt/NumberTheory/LocalGlobalApollonianCirclePackings": {"to": "NumberTheory/arithmetic-geometry", "title": "Local-global conjecture for Apollonian circle packings"},
