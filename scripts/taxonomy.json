@@ -11940,6 +11940,7 @@
   "MathlibExt/Dynamics/TopologicalEntropy/Compact": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Topological entropy"},
   "MathlibExt/FieldTheory/ComplexPartialFractions": {"to": "Algebra/polynomials", "title": "Partial fraction decomposition"},
   "MathlibExt/FieldTheory/EssentialDimensionSymmetric": {"to": "FieldTheory/galois-theory", "title": "Essential dimension of symmetric groups"},
+  "MathlibExt/FieldTheory/EssentialDimensionSymmetricFour": {"to": "FieldTheory/galois-theory", "title": "Essential dimension of symmetric groups"},
   "MathlibExt/FieldTheory/EssentialDimensionSymmetricLowerBound": {"to": "FieldTheory/galois-theory", "title": "Essential dimension of symmetric groups"},
   "MathlibExt/FieldTheory/Finite/BinaryModulusSearch": {"to": "FieldTheory/finite-fields", "title": "Searching for irreducible polynomials over GF(2)"},
   "MathlibExt/FieldTheory/Finite/FiniteFieldSquare": {"to": "FieldTheory/finite-fields", "title": "Squares in finite fields"},
