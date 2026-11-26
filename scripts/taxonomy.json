@@ -10265,6 +10265,7 @@
   "Domains/Biology/PopulationGenetics/AdmixtureLD": {"to": "Biology/population-structure", "title": "Admixture linkage disequilibrium"},
   "Domains/Biology/PopulationGenetics/ChineseRestaurant": {"to": "Biology/population-genetics", "title": "Ewens sampling formula and the Chinese restaurant process"},
   "Domains/Biology/PopulationGenetics/Classical/Dioecy": {"to": "Biology/population-genetics", "title": "Unequal allele frequencies in the sexes and X linkage"},
+  "Domains/Biology/PopulationGenetics/Classical/EffectivePopulationSizeSeparateSexes": {"to": "Biology/population-genetics", "title": "Effective population size"},
   "Domains/Biology/PopulationGenetics/Classical/FisherGeometric": {"to": "Biology/population-genetics", "title": "Fisher's geometric model of adaptation"},
   "Domains/Biology/PopulationGenetics/Classical/HaploidSelection": {"to": "Biology/population-genetics", "title": "Haploid selection and multiplicative fitnesses"},
   "Domains/Biology/PopulationGenetics/Classical/InfinitesimalLimit": {"to": "Biology/quantitative-genetics", "title": "Mendelian segregation and the infinitesimal model"},
