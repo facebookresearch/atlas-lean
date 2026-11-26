@@ -11,7 +11,10 @@ module
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Multiset.Sort
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 import Mathlib.Data.List.GetD
+import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Tactic.Ring
 
 /-!
 # Partitions under a staircase
@@ -322,6 +325,183 @@ public theorem triangularQBinomial_recursion :
     triangularQBinomial_outside⟩
   rw [triangularQBinomial_step 1 1 (by decide)]
   simp [Finset.sum_range_succ, triangularQBinomial_zero_right, h11]
+
+private noncomputable abbrev rectangleSeries (r s : ℕ) : ℤ⟦X⟧ :=
+  MathlibExt.gaussBinom X (r + s) s
+
+private noncomputable abbrev staircaseSeries (r s : ℕ) : ℤ⟦X⟧ :=
+  ∑ j ∈ Finset.range (s + 1), triangularQBinomial r j
+
+private theorem rectangleSeries_step (r s : ℕ) :
+    rectangleSeries (r + 1) (s + 1) =
+      rectangleSeries (r + 1) s + X ^ (s + 1) * rectangleSeries r (s + 1) := by
+  unfold rectangleSeries
+  rw [show r + 1 + (s + 1) = (r + 1 + s) + 1 by omega, MathlibExt.gaussBinom_succ_succ,
+    show r + (s + 1) = r + 1 + s by omega]
+
+private theorem staircaseSeries_saturates (r s : ℕ) (h : r ≤ s) :
+    staircaseSeries r s = staircaseSeries r r := by
+  symm
+  exact Finset.sum_subset (Finset.range_mono (by omega)) fun j _ hj =>
+    triangularQBinomial_outside r j (by simpa using hj)
+
+-- The `i`th column is the first to exceed the staircase. It has height `r + 2 - i`
+-- (the preceding column fits). Above the common base of height `r + 1 - i` is a
+-- full-width staircase of height `i - 1`; the first violation adds one more cell.
+-- To its right is a rectangle with at most `s - i` parts.
+private noncomputable def firstViolation (r s i : ℕ) : ℤ⟦X⟧ :=
+  if i ≤ s then
+    triangularQBinomial (i - 1) (i - 1) * X ^ (1 + i * (r + 1 - i)) *
+      rectangleSeries (r + 2 - i) (s - i)
+  else 0
+
+private noncomputable abbrev violationSeries (r s : ℕ) : ℤ⟦X⟧ :=
+  ∑ i ∈ Finset.Icc 2 (r + 1), firstViolation r s i
+
+-- Pascal's rule for the remaining rectangle propagates each existing first violation.
+private theorem firstViolation_step (r s i : ℕ) (hi : i ≤ r + 1) :
+    firstViolation (r + 1) (s + 1) i =
+      firstViolation (r + 1) s i + X ^ (s + 1) * firstViolation r (s + 1) i := by
+  by_cases h : i ≤ s + 1
+  · have hw : r + 1 + 2 - i = (r + 2 - i) + 1 := by omega
+    have hp : (X : ℤ⟦X⟧) ^ (1 + i * (r + 1 + 1 - i)) =
+        X ^ (1 + i * (r + 1 - i)) * X ^ i := by
+      rw [← pow_add, show r + 1 + 1 - i = (r + 1 - i) + 1 by omega, Nat.mul_succ, Nat.add_assoc]
+    by_cases hs : i ≤ s
+    · have hn : s + 1 - i = (s - i) + 1 := by omega
+      have hx : (X : ℤ⟦X⟧) ^ i * X ^ (s + 1 - i) = X ^ (s + 1) := by
+        rw [← pow_add, show i + (s + 1 - i) = s + 1 by omega]
+      simp only [firstViolation, ite_eq_left h, ite_eq_left hs, hw, hp]
+      rw [hn, rectangleSeries_step, ← hn]
+      calc
+        _ = triangularQBinomial (i - 1) (i - 1) * X ^ (1 + i * (r + 1 - i)) * X ^ i *
+              rectangleSeries ((r + 2 - i) + 1) (s - i) +
+            triangularQBinomial (i - 1) (i - 1) * X ^ (1 + i * (r + 1 - i)) *
+              (X ^ i * X ^ (s + 1 - i)) * rectangleSeries (r + 2 - i) (s + 1 - i) := by ring
+        _ = _ := by rw [hx]; ring
+    · simp only [firstViolation, ite_eq_left h, ite_eq_right hs, hp,
+        show s + 1 - i = 0 by omega, rectangleSeries, MathlibExt.gaussBinom_zero_right, mul_one,
+        zero_add]
+      rw [show i = s + 1 by omega]
+      ring
+  · have hs : ¬ i ≤ s := by omega
+    simp [firstViolation, h, hs]
+
+-- At the new possible exit `i = r + 2`, the tail rectangle has height one.
+-- Its increment consists of a row of ones, and the fitting prefix is saturated.
+private theorem firstViolation_boundary (r s : ℕ) :
+    firstViolation (r + 1) (s + 1) (r + 2) = firstViolation (r + 1) s (r + 2) +
+      if r < s then X ^ (s + 1) * staircaseSeries r (s + 1) else 0 := by
+  by_cases h : r < s
+  · have hdiag : triangularQBinomial (r + 1) (r + 1) = X ^ (r + 1) * staircaseSeries r r := by
+      calc
+        _ = X ^ (r + 1) * staircaseSeries r (r + 1) := triangularQBinomial_step r (r + 1) le_rfl
+        _ = _ := by rw [staircaseSeries_saturates r (r + 1) (by omega)]
+    have hx : (X : ℤ⟦X⟧) ^ (r + 1) * X * X ^ (s + 1 - (r + 2)) = X ^ (s + 1) := by
+      rw [← pow_succ, ← pow_add, show r + 1 + 1 + (s + 1 - (r + 2)) = s + 1 by omega]
+    simp only [firstViolation, ite_eq_left (show r + 2 ≤ s + 1 by omega), ite_eq_left h,
+      show r + 1 + 1 - (r + 2) = 0 by omega, Nat.mul_zero, Nat.add_zero, pow_one,
+      show r + 2 - 1 = r + 1 by omega, show r + 1 + 2 - (r + 2) = 1 by omega, hdiag]
+    rw [staircaseSeries_saturates r (s + 1) (by omega)]
+    by_cases hs : r + 2 ≤ s
+    · have hn : s + 1 - (r + 2) = (s - (r + 2)) + 1 := by omega
+      have hstep (j : ℕ) : rectangleSeries 1 (j + 1) = rectangleSeries 1 j + X ^ (j + 1) := by
+        simpa [rectangleSeries] using rectangleSeries_step 0 j
+      rw [ite_eq_left hs, hn, hstep, ← hn]
+      calc
+        _ = X ^ (r + 1) * staircaseSeries r r * X * rectangleSeries 1 (s - (r + 2)) +
+            (X ^ (r + 1) * X * X ^ (s + 1 - (r + 2))) * staircaseSeries r r := by ring
+        _ = _ := by rw [hx]
+    · have hz : s + 1 - (r + 2) = 0 := by omega
+      rw [ite_eq_right hs, zero_add, hz, show rectangleSeries 1 0 = 1 by simp [rectangleSeries],
+        mul_one]
+      rw [hz, pow_zero, mul_one] at hx
+      rw [← hx]
+      ring
+  · simp [firstViolation, h, show ¬ r + 2 ≤ s + 1 by omega, show ¬ r + 2 ≤ s by omega]
+
+-- Work with at most `s` positive parts (the mandatory bottom row is restored
+-- at the end). Allow `s > r` here: when the staircase saturates, the new
+-- boundary term accounts for the whole increment from that row count.
+private theorem rectangleSeries_eq_staircase_add_violation (r s : ℕ) :
+    rectangleSeries r s = staircaseSeries r s + violationSeries r s := by
+  induction r generalizing s with
+  | zero =>
+    rw [staircaseSeries_saturates 0 s (Nat.zero_le _)]
+    simp [rectangleSeries, staircaseSeries, triangularQBinomial_zero_right, violationSeries]
+  | succ r ihr =>
+    induction s with
+    | zero => simp [rectangleSeries, staircaseSeries, triangularQBinomial_zero_right,
+        violationSeries, firstViolation]
+    | succ s ihs =>
+      have hsplit : Finset.Icc 2 (r + 1 + 1) = insert (r + 2) (Finset.Icc 2 (r + 1)) := by
+        ext i
+        simp only [Finset.mem_Icc, Finset.mem_insert]
+        omega
+      have hnot : r + 2 ∉ Finset.Icc 2 (r + 1) := by simp
+      have hsum : ∑ i ∈ Finset.Icc 2 (r + 1), firstViolation (r + 1) (s + 1) i =
+          (∑ i ∈ Finset.Icc 2 (r + 1), firstViolation (r + 1) s i) +
+            X ^ (s + 1) * violationSeries r (s + 1) := by
+        rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+        exact Finset.sum_congr rfl fun i hi => firstViolation_step r s i (Finset.mem_Icc.mp hi).2
+      have hv : violationSeries (r + 1) (s + 1) = violationSeries (r + 1) s +
+          X ^ (s + 1) * violationSeries r (s + 1) +
+            (if r < s then X ^ (s + 1) * staircaseSeries r (s + 1) else 0) := by
+        simp only [violationSeries, hsplit, Finset.sum_insert hnot, hsum, firstViolation_boundary]
+        ring
+      rw [rectangleSeries_step, ihs, ihr (s + 1), hv,
+        show staircaseSeries (r + 1) (s + 1) =
+          staircaseSeries (r + 1) s + triangularQBinomial (r + 1) (s + 1) from
+            Finset.sum_range_succ _ _]
+      by_cases h : r < s
+      · rw [triangularQBinomial_outside _ _ (by omega), ite_eq_left h]
+        ring
+      · rw [triangularQBinomial_step r (s + 1) (by omega), ite_eq_right h]
+        ring
+
+/-- **Triangular $q$-binomial coefficients via Gaussian binomials.** For natural numbers $r$ and
+$s$ with $1 \le r$ and $s \le r$, the triangular $q$-binomial coefficient $t[r, s]$ satisfies
+$$
+t[r, s] = q^s \binom{r + s - 1}{s}_q - q^{s+1} \sum_{i=2}^{s} t[i - 1, i - 1] \,
+q^{i(r - i)} \binom{r + 1 + s - 2i}{s - i}_q
+$$
+in $\mathbb{Z}[[q]]$, where $\binom{M}{k}_q$ denotes the Gaussian binomial coefficient.
+
+In the range $s \le r$ every exponent and binomial index above is a natural number; for $s > r$
+one has $t[r, s] = 0$.
+
+Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
+Partitions*, INTEGERS 24 (2024), Article A56, Proposition 4, eq. (12)
+(`integers-2024-A56-prop-4`). -/
+public theorem triangularQBinomial_eq_gaussBinom_sub {r s : ℕ} (hr : 1 ≤ r)
+    (hs : s ≤ r) :
+    triangularQBinomial r s =
+      X ^ s * MathlibExt.gaussBinom X (r + s - 1) s -
+        X ^ (s + 1) * ∑ i ∈ Finset.Icc 2 s, triangularQBinomial (i - 1) (i - 1) *
+          X ^ (i * (r - i)) * MathlibExt.gaussBinom X (r + 1 + s - 2 * i) (s - i) := by
+  cases r with
+  | zero => omega
+  | succ r =>
+    have hcut : violationSeries r s = ∑ i ∈ Finset.Icc 2 s, firstViolation r s i := by
+      symm
+      apply Finset.sum_subset
+      · intro i hi
+        exact Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hi).1, (Finset.mem_Icc.mp hi).2.trans hs⟩
+      · intro i hi his
+        have h : ¬ i ≤ s := fun h => his (Finset.mem_Icc.mpr ⟨(Finset.mem_Icc.mp hi).1, h⟩)
+        simp [firstViolation, h]
+    have hcorr : (X : ℤ⟦X⟧) ^ s * violationSeries r s =
+        X ^ (s + 1) * ∑ i ∈ Finset.Icc 2 s, triangularQBinomial (i - 1) (i - 1) *
+          X ^ (i * (r + 1 - i)) * MathlibExt.gaussBinom X (r + 1 + 1 + s - 2 * i) (s - i) := by
+      rw [hcut, Finset.mul_sum, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun i hi => ?_
+      have his := (Finset.mem_Icc.mp hi).2
+      have htop : (r + 2 - i) + (s - i) = r + 1 + 1 + s - 2 * i := by omega
+      rw [firstViolation, ite_eq_left his, rectangleSeries, htop, pow_add, pow_one, pow_succ]
+      ring
+    rw [triangularQBinomial_step r s hs, show r + 1 + s - 1 = r + s by omega]
+    change X ^ s * staircaseSeries r s = X ^ s * rectangleSeries r s - _
+    rw [rectangleSeries_eq_staircase_add_violation, mul_add, ← hcorr, add_sub_cancel_right]
 
 end
 
