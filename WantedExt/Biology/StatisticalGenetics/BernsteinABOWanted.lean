@@ -17,8 +17,9 @@ to `1` exactly under the model. The rival model of von Dungern and Hirszfeld put
 antigens at two independent loci; with Hardy–Weinberg and linkage equilibrium it forces
 `(A + AB)(B + AB) = AB`, the relation Bernstein used to reject it (Crow 1993, p. 4).
 
-Recorded here: the square-root identities of the triple-allele model (derived from Crow's Table
-1; they are not printed there), the two-locus constraint, and the fact (derived) that the
+The square-root identities of the triple-allele model (derived from Crow's Table 1; they are not
+printed in that table) are proved in `Domains.Biology.StatisticalGenetics.BernsteinABOSqrtEstimates`.
+Recorded here: the two-locus constraint, and the fact (derived) that the
 triple-allele model never satisfies the two-locus constraint when both `A` and `B` alleles are
 present, so the two models are distinguishable from phenotype frequencies alone. Hardy–Weinberg
 proportions are inputs. The numerical rejection on Bernstein's data and any likelihood
@@ -32,24 +33,11 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
+public import Domains.Biology.StatisticalGenetics.BernsteinABOSqrtEstimates
 
 @[expose] public section
 
 namespace WantedExt.Biology.StatisticalGenetics.BernsteinABOWanted
-
-/-- Frequency of blood group `O` under the triple-allele model with allele frequencies
-`p` (allele `A`), `q` (allele `B`), `r` (allele `O`) in Hardy–Weinberg proportions:
-genotype `OO`. -/
-noncomputable def freqO (_p _q r : ℝ) : ℝ := r ^ 2
-
-/-- Frequency of blood group `A` under the triple-allele model: genotypes `AA` and `AO`. -/
-noncomputable def freqA (p _q r : ℝ) : ℝ := p ^ 2 + 2 * p * r
-
-/-- Frequency of blood group `B` under the triple-allele model: genotypes `BB` and `BO`. -/
-noncomputable def freqB (_p q r : ℝ) : ℝ := q ^ 2 + 2 * q * r
-
-/-- Frequency of blood group `AB` under the triple-allele model: genotype `AB`. -/
-noncomputable def freqAB (p q _r : ℝ) : ℝ := 2 * p * q
 
 /-- Probability that an individual carries antigen `X` when the antigen is dominant at its own
 locus with allele frequency `a`, in Hardy–Weinberg proportions: `1 - (1 - a)²`. -/
@@ -64,21 +52,6 @@ noncomputable def twoLocusA (a b : ℝ) : ℝ := carrierProb a * (1 - carrierPro
 
 /-- Frequency of blood group `B` under the two-locus model. -/
 noncomputable def twoLocusB (a b : ℝ) : ℝ := (1 - carrierProb a) * carrierProb b
-
-/-- **Bernstein's square-root estimates** (triple-allele model; derived from Crow 1993,
-Table 1): for allele frequencies `p, q, r ≥ 0` with `p + q + r = 1`, the four phenotype
-frequencies sum to `1`, `√O = r`, `1 - √(O + B) = p`, `1 - √(O + A) = q`, and the three
-estimates `√O`, `1 - √(O + B)`, `1 - √(O + A)` sum to exactly `1`.
-
-Sources: Bernstein (1924, 1925); Crow (1993), Table 1. -/
-public theorem_wanted sqrt_estimates (p q r : ℝ) (hp : 0 ≤ p) (hq : 0 ≤ q) (hr : 0 ≤ r)
-    (hsum : p + q + r = 1) :
-    freqO p q r + freqA p q r + freqB p q r + freqAB p q r = 1 ∧
-      Real.sqrt (freqO p q r) = r ∧
-      1 - Real.sqrt (freqO p q r + freqB p q r) = p ∧
-      1 - Real.sqrt (freqO p q r + freqA p q r) = q ∧
-      Real.sqrt (freqO p q r) + (1 - Real.sqrt (freqO p q r + freqB p q r)) +
-        (1 - Real.sqrt (freqO p q r + freqA p q r)) = 1
 
 /-- **The two-locus constraint** (von Dungern–Hirszfeld model, as used by Bernstein; Crow 1993,
 p. 4): if the `A` and `B` antigens are dominant at two independent loci with allele frequencies

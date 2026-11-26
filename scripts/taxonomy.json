@@ -10320,6 +10320,7 @@
   "Domains/Biology/PopulationGenetics/WrightFisherChainConstruction": {"to": "Biology/population-genetics", "title": "Wright–Fisher Markov chain"},
   "Domains/Biology/StatisticalGenetics/BOLTLMM": {"to": "Biology/statistical-genetics", "title": "BOLT-LMM mixed-model association"},
   "Domains/Biology/StatisticalGenetics/BOLTLMMVariational": {"to": "Biology/statistical-genetics", "title": "BOLT-LMM mixed-model association"},
+  "Domains/Biology/StatisticalGenetics/BernsteinABOSqrtEstimates": {"to": "Biology/statistical-genetics", "title": "Bernstein's triple-allele law for the ABO blood groups"},
   "Domains/Biology/StatisticalGenetics/Breeder": {"to": "Biology/quantitative-genetics", "title": "Breeder's equation"},
   "Domains/Biology/StatisticalGenetics/CovarianceRelatives": {"to": "Biology/quantitative-genetics", "title": "Covariance between relatives"},
   "Domains/Biology/StatisticalGenetics/DominanceLD": {"to": "Biology/quantitative-genetics", "title": "Dominance linkage disequilibrium"},
