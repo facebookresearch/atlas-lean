@@ -67,6 +67,35 @@ example (a b : ℤ) : IsGibonacciGood a b (-2) := by
   norm_num at hb
   exact hb
 
+-- Goodness at 1/3 gives both congruences modulo 5.
+example : ∃ u v : ℤ, 2 * u ≡ 1 [ZMOD 5] ∧ v ≡ 1 [ZMOD 5] ∧
+    1 ≡ -3 * u [ZMOD 5] ∧ 1 ≡ -9 * v [ZMOD 5] := by
+  have h : IsGibonacciGood 1 3 (1 / 3) :=
+    ⟨by norm_num, 3, by norm_num [gibonacciGeneratingValue]⟩
+  simpa using (isGibonacciGood_iff 1 3 1 3 (by decide) (by decide) (by decide)).mp h
+
+-- For 2/1 the quadratic denominator is -5, but the congruences use modulus 5.
+example : IsGibonacciGood 1 3 2 := by
+  have h := (isGibonacciGood_iff 1 3 2 1 (by decide) (by decide) (by decide)).mpr
+    ⟨-1, 3, by decide, by decide, by decide, by decide⟩
+  simpa using h
+
+-- A different seed fails the residue test at 1/3.
+example : ¬ IsGibonacciGood 1 1 (1 / 3) := by
+  intro h
+  obtain ⟨_, v, _, hv, _, ha⟩ :=
+    (isGibonacciGood_iff 1 1 1 3 (by decide) (by decide) (by decide)).mp h
+  have hv' : v ≡ 1 [ZMOD 5] := by simpa using hv
+  have ha' : (1 : ℤ) ≡ -3 * v [ZMOD 5] := by simpa using ha
+  exact (by decide : ¬ (1 : ℤ) ≡ -3 [ZMOD 5])
+    (ha'.trans (by simpa using hv'.mul_left (-3)))
+
+-- For p = 0 the modulus is 1, so p still has a witness in the congruence formulation.
+example : IsGibonacciGood 2 3 0 := by
+  have h := (isGibonacciGood_iff 2 3 0 (-1) (by decide) (by decide) (by decide)).mpr
+    ⟨0, 0, by decide, by decide, by decide, by decide⟩
+  simpa using h
+
 -- Consecutive indices give opposite signs for the denominator.
 example : gibonacciGeneratingValue (-2) 5 (1 / 2) = 6 := by
   norm_num [gibonacciGeneratingValue]
