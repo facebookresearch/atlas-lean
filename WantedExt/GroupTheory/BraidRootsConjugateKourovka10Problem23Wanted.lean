@@ -16,7 +16,7 @@ extraction of roots in braid groups is unique up to conjugation?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.BraidGroupShared
+public import MathlibExt.GroupTheory.BraidGroupShared
 
 @[expose] public section
 
@@ -34,15 +34,20 @@ that `α` and `β` are conjugate; `k = 0` is excluded since `α ^ 0 = β ^ 0` al
 
 open MathlibExt.GroupTheory.BraidGroupShared (BraidGroup)
 
-/-- Kourovka 10.23 (G. S. Makanin): extraction of roots in braid groups is unique up to
-conjugation: if `α ^ k = β ^ k` in `Bₙ` for some `k ≥ 1`, then `α` and `β` are conjugate. -/
+/-- **Makanin's root-uniqueness question for braid groups.** The statement that for every natural
+number $n$ and every integer $k \ge 1$, any two elements $\alpha, \beta$ of the braid group $B_n$ on
+$n$ strands with $\alpha^k = \beta^k$ are conjugate in $B_n$. This is Kourovka Problem 10.23
+(G. S. Makanin). -/
 def braidRootsUniqueUpToConjugacy : Prop :=
   ∀ (n k : ℕ), 0 < k → ∀ α β : BraidGroup n, α ^ k = β ^ k → IsConj α β
 
 /--
-Resolved true: González-Meneses proved Makanin's conjecture that if `α ^ k = β ^ k` in `Bₙ` for some
-nonzero integer `k`, then `α` and `β` are conjugate; the Kourovka Archive answers 10.23 "Yes, it is
-true". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Roots in braid groups are unique up to conjugacy (González-Meneses).** For every natural number
+$n$ and every integer $k \ge 1$, if two elements $\alpha, \beta$ of the braid group $B_n$ on $n$
+strands satisfy $\alpha^k = \beta^k$, then $\alpha$ and $\beta$ are conjugate in $B_n$. This answers
+Kourovka Problem 10.23 (G. S. Makanin) affirmatively.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 10.23
 (G. S. Makanin); resolution: J. González-Meneses, The nth root of a braid is unique up to conjugacy,
 Algebr. Geom. Topol. 3 (2003), 1103-1118, main theorem; Kourovka Archive, Problem 10.23 ("Yes, it is

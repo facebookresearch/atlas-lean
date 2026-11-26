@@ -109,6 +109,17 @@ example {K : Matrix (Fin 2) (Fin 2) ℝ} (hK : K.PosSemidef) :
       measurable_snd.aemeasurable).2 (by simp))
     (by simp) (by simp)
 
+/-- The output law needs only positive semidefinite noise: with singular noise `R = 0` and
+`H = 1`, the output of `N(0, K)` is `N(0, K)`. -/
+example {K : Matrix (Fin 2) (Fin 2) ℝ} (hK : K.PosSemidef) :
+    (multivariateGaussian 0 K ⊗ₘ
+        MetaMathlibExt.noiseKernel (toEuclideanLin (1 : Matrix (Fin 2) (Fin 2) ℝ))
+          (MetaMathlibExt.continuous_toEuclideanLin _).measurable
+          (multivariateGaussian 0 (0 : Matrix (Fin 2) (Fin 2) ℝ))).map Prod.snd =
+      multivariateGaussian 0 K := by
+  rw [map_snd_gaussianInput_compProd_noiseKernel _ hK PosSemidef.zero]
+  simp
+
 /-- Positive definite noise is needed: the noiseless channel has infinite mutual information. -/
 example :
     measureMutualInformation

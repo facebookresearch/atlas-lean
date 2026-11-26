@@ -74,4 +74,34 @@ example : volumetricRate 1 1 (1 / (1 / 2 : ℝ)) 3 1 = 5 := by
   rw [volumetricRate_volatility_form hHpc hH]
   norm_num
 
+open Engineering.Process.MassTransfer
+
+-- H = 2, kG = 4, kL = 1 gives KL = 2 / 3 and KG = 4 / 3.
+example : overallKL 2 4 1 = 2 / 3 ∧ overallKG 2 4 1 = 4 / 3 := by
+  constructor
+  · unfold overallKL
+    norm_num
+  · unfold overallKG
+    norm_num
+
+-- Positive rational fixture through both eliminations: with pb = 5,
+-- cb = 1, pi = 7 / 2, ci = 7 and N = 6, interfacial equilibrium and both
+-- film laws hold, and the overall forms reproduce N = 6.
+example : (6 : ℝ) = overallKL 2 4 1 * (2 * 5 - 1) ∧
+    (6 : ℝ) = overallKG 2 4 1 * (5 - 1 / 2) := by
+  constructor
+  · unfold overallKL
+    norm_num
+  · unfold overallKG
+    norm_num
+
+-- Counterexample without interfacial equilibrium: pi = 1, ci = 3 (not
+-- H * pi = 2), pb = 2, cb = -1 and N = 4 satisfy both separate film laws
+-- at H = 2, kG = 4, kL = 1, but the overall-coefficient formula gives
+-- 10 / 3, not 4. Interfacial equilibrium cannot be dropped.
+example : (4 : ℝ) = 4 * (2 - 1) ∧ (4 : ℝ) = 1 * (3 - (-1)) ∧
+    (3 : ℝ) ≠ 2 * 1 ∧ (4 : ℝ) ≠ overallKL 2 4 1 * (2 * 2 - (-1)) := by
+  refine ⟨by norm_num, by norm_num, by norm_num, ?_⟩
+  unfold overallKL
+  norm_num
 end Engineering.Process.MassTransfer.Tests

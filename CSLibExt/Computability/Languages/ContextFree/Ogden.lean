@@ -56,7 +56,10 @@ attribute [local instance] Classical.propDecidable
 
 variable {T : Type*}
 
-/-- The number of marked letters of a marked word. -/
+/-- **Number of marked letters.** A marked word over an alphabet $T$ is a word whose letters are
+pairs $(a, b)$ with $a \in T$ and $b$ a Boolean; the letter $(a, b)$ is marked when $b$ is true.
+The number of marked letters of a marked word $w$ is the number of letters of $w$ that are
+marked, counted with multiplicity. -/
 def marks (w : List (T × Bool)) : ℕ :=
   w.countP (·.2)
 
@@ -297,9 +300,17 @@ private theorem exists_output_length_bound (g : ContextFreeGrammar T) :
   ⟨max 2 (g.rules.sup fun r => r.output.length), le_max_left _ _,
     fun _ hr => (Finset.le_sup (f := fun r => r.output.length) hr).trans (le_max_right _ _)⟩
 
-/-- **Ogden's lemma for a grammar, with an explicit bound**: any `n ≥ R ^ (K + 1)` works, where
-`R ≥ 2` bounds the lengths of the productions and `K` the length of a list containing every
-nonterminal with a production. -/
+/-- **Ogden's lemma for a grammar, with an explicit bound.** Let $g$ be a context-free grammar
+over an alphabet $T$ and let $R$, $K$, $n$ be natural numbers with $R \ge 2$ such that the
+right-hand side of every production of $g$ has length at most $R$, some list of at most $K$
+nonterminals contains the left-hand side of every production of $g$, and $R^{K+1} \le n$. A
+marked word is a word whose letters are pairs $(a, b)$ with $a \in T$ and $b$ a Boolean, the
+letter being marked when $b$ is true; its underlying word is the word of first components. Then
+every marked word $w$ whose underlying word lies in the language of $g$ and which has at least
+$n$ marked letters can be written as $w = uvxyz$ with marked words $u, v, x, y, z$ such that $vy$
+has at least one marked letter, $vxy$ has at most $n$ marked letters, and for every natural
+number $i$ the underlying word of $u v^i x y^i z$ lies in the language of $g$, where $v^i$ is the
+concatenation of $i$ copies of $v$. -/
 theorem ogden_of_bound (g : ContextFreeGrammar T) {R K n : ℕ} (hR2 : 2 ≤ R)
     (hR : ∀ r ∈ g.rules, r.output.length ≤ R)
     (hK : ∃ l : List g.NT, l.length ≤ K ∧ ∀ r ∈ g.rules, r.input ∈ l) (hn : R ^ (K + 1) ≤ n) :
@@ -327,8 +338,16 @@ theorem ogden_of_bound (g : ContextFreeGrammar T) {R K n : ℕ} (hR2 : 2 ≤ R)
   exact ⟨u, v, x, y', z, hsplit, hpos, hvxy.trans hn₀,
     fun i => mem_language_iff_yields.2 (hpump i)⟩
 
-/-- **The pumping lemma for a grammar, with an explicit bound**, from Ogden's lemma with every
-letter marked. -/
+/-- **The pumping lemma for a grammar, with an explicit bound.** Let $g$ be a context-free grammar
+over an alphabet $T$ and let $R$, $K$, $n$ be natural numbers with $R \ge 2$ such that the
+right-hand side of every production of $g$ has length at most $R$, some list of at most $K$
+nonterminals contains the left-hand side of every production of $g$, and $R^{K+1} \le n$. Then
+every word $w$ in the language of $g$ of length at least $n$ can be written as $w = uvxyz$ with
+words $u, v, x, y, z$ over $T$ such that $vy$ is nonempty, $vxy$ has length at most $n$, and
+$u v^i x y^i z$ lies in the language of $g$ for every natural number $i$, where $v^i$ is the
+concatenation of $i$ copies of $v$.
+
+It follows from Ogden's lemma with every letter marked. -/
 theorem pumping_of_bound (g : ContextFreeGrammar T) {R K n : ℕ} (hR2 : 2 ≤ R)
     (hR : ∀ r ∈ g.rules, r.output.length ≤ R)
     (hK : ∃ l : List g.NT, l.length ≤ K ∧ ∀ r ∈ g.rules, r.input ∈ l) (hn : R ^ (K + 1) ≤ n) :
@@ -362,10 +381,14 @@ theorem pumping_of_bound (g : ContextFreeGrammar T) {R K n : ℕ} (hR2 : 2 ≤ R
   · rw [← List.map_append, ← List.map_append, List.length_map, ← hlen']
     exact hle
 
-/-- **Ogden's lemma.** For a context-free language `L` there is a bound `n > 0` such that every
-marked word whose letters form a word of `L` and which has at least `n` marked letters splits as
-`u ++ v ++ x ++ y ++ z`, where `v ++ y` has a marked letter, `v ++ x ++ y` has at most `n`
-marked letters, and every pumped word `u ++ v^[i] ++ x ++ y^[i] ++ z` has its letters in `L`. -/
+/-- **Ogden's lemma.** Let $L$ be a context-free language over an alphabet $T$. A marked word is a
+word whose letters are pairs $(a, b)$ with $a \in T$ and $b$ a Boolean, the letter being marked
+when $b$ is true; its underlying word is the word of first components. Then there is a natural
+number $n > 0$ such that every marked word $w$ whose underlying word lies in $L$ and which has at
+least $n$ marked letters can be written as $w = uvxyz$ with marked words $u, v, x, y, z$ such that
+$vy$ has at least one marked letter, $vxy$ has at most $n$ marked letters, and for every natural
+number $i$ the underlying word of $u v^i x y^i z$ lies in $L$, where $v^i$ is the concatenation
+of $i$ copies of $v$. -/
 theorem IsContextFree.ogden {L : Language T} (hL : L.IsContextFree) :
     ∃ n : ℕ, 0 < n ∧ ∀ w : List (T × Bool), w.map Prod.fst ∈ L → n ≤ marks w →
       ∃ u v x y z : List (T × Bool), w = u ++ v ++ x ++ y ++ z ∧ 0 < marks (v ++ y) ∧

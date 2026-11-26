@@ -23,11 +23,11 @@ Yu (1996), Yu et al. (2004)).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -61,7 +61,7 @@ job is listed twice as a first component and none twice as a second component, a
 says that the transitive closure (Mathlib's `Relation.TransGen`) of the pair relation is
 irreflexive. A schedule is a one-processor schedule `σ` of start times in the sense of Garey and
 Johnson's
-[SS1] (`IsOneProcessorSchedule`, reused from `SequencingToMinimizeWeightedTardinessWanted`);
+[SS1] (`IsOneProcessorSchedule`, reused from `SequencingToMinimizeWeightedTardinessDefs`);
 job `i` completes at `Cᵢ = σ(i) + pᵢ = σ(i) + 1`. Binary encoding of all numbers.
 
 Encoding: the instance is decoded from a bitstring with the repository's

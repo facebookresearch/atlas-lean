@@ -1,0 +1,209 @@
+name: Graph sync
+
+# Every pull request and merge group, Lean-only ones included, against the
+# graph: a declaration its Lean renames or removes leaves no link or held
+# marker behind, and, in a graph pull request, the documented declarations its
+# Lean adds get their pages and a docstring it edits gets its digest; a Lean
+# pull request leaves those to the next graph-sync batch (docs/BLUEPRINT.md,
+# Maintaining articles). The check reads the Lean sources only, with no Lean build, and
+# writes nothing. It only reports for now (#4273, step 4): its step cannot
+# fail the job, and it is not a required check.
+on:
+  pull_request:
+  merge_group:
+    types: [checks_requested]
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "The full commit SHA the branch's changes start from"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  AUTOFORM_SOURCE: "https://github.com/facebookresearch/autoform-bot.git"
+
+jobs:
+  check:
+    name: graph sync
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      # A pull request runs on its merge commit, whose first parent is the
+      # base it merges into.
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+
+      - name: Read the reviewed Autoform pin
+        run: |
+          set -euo pipefail
+          ref="$(cat .github/autoform-ref)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid Autoform pin" >&2; exit 1; }
+          echo "AUTOFORM_REF=$ref" >> "$GITHUB_ENV"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+
+      - name: Find the base commit
+        env:
+          EVENT: ${{ github.event_name }}
+          MERGE_GROUP_BASE: ${{ github.event.merge_group.base_sha }}
+          DISPATCH_BASE: ${{ inputs.base }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          MERGE_GROUP_REF: ${{ github.event.merge_group.base_ref }}
+        run: |
+          set -euo pipefail
+          case "$EVENT" in
+            pull_request) base="$(git rev-parse HEAD^1)" ref="${PR_BASE_REF:-}" ;;
+            merge_group) base="$MERGE_GROUP_BASE" ref="${MERGE_GROUP_REF#refs/heads/}" ;;
+            *) base="$DISPATCH_BASE" ref="" ;;
+          esac
+          [[ "$base" =~ ^[0-9a-f]{40}$ ]] || { echo "No base commit for this $EVENT run" >&2; exit 1; }
+          git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base"
+          # What the fix command fetches to find where the branch starts: the branch the change targets, named
+          # plainly, or else its commit. A run dispatched with a base has none: the command names that base.
+          if [[ "$EVENT" == pull_request || "$EVENT" == merge_group ]]; then
+            if [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]]; then fetch="refs/heads/$ref"; else fetch="$base"; fi
+          else
+            fetch=""
+          fi
+          echo "BASE=$base" >> "$GITHUB_ENV"
+          echo "FIX_FETCH=$fetch" >> "$GITHUB_ENV"
+
+      # The verdicts come first: whether the pull request is in step, with the
+      # command that fixes it, and whether its wiki changes are only what that
+      # command writes. They go to the job summary and the graph-sync artifact.
+      # A Lean pull request, which changes Lean and no graph file but links files, and a
+      # merge group are held only to the check's errors: their missing pages are
+      # the next graph-sync batch's (docs/BLUEPRINT.md, Maintaining articles).
+      - name: Check that the graph is in step with the Lean
+        continue-on-error: true
+        env:
+          PYTHONUNBUFFERED: "1"
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          status=0
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            --with PyYAML==6.0.3 \
+            --with mkdocs==1.6.1 \
+            --with mkdocs-material==9.8.0 \
+            --with mkdocs-literate-nav==0.6.2 \
+            --with pymdown-extensions==11.0.1 \
+            --with markdown==3.10.3 \
+            python scripts/sync_wiki.py declarations --base "$BASE" --check \
+            --report build/graph-sync.json > build/graph-sync.txt 2>&1 || status=$?
+          # The output names the pull request's files: replayed with workflow commands stopped, and shown in the
+          # summary as an indented code block, it can neither issue a command nor end the block.
+          token="graph-sync-$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+          echo "::stop-commands::$token"
+          cat build/graph-sync.txt
+          printf '\n::%s::\n' "$token"
+          # Not in step only when the report says so: any other failure means the check could not run. Out of
+          # step with errors (links or markers the Lean leaves behind, rows Autoform cannot read), or with pages,
+          # digests or part lists only.
+          verdict="$(jq -r 'if .in_step == false then (if (.errors // []) == [] then "pages" else "out" end)
+                            else "other" end' build/graph-sync.json 2>/dev/null || true)"
+          if [[ "$status" -ne 0 && "$verdict" != out && "$verdict" != pages ]]; then
+            failed=yes
+          else
+            failed=no
+          fi
+          # A Lean pull request changes Lean, and among the graph files at most links files; any other change,
+          # links files alone included, and one git cannot read, is held to the sync, as a graph pull request.
+          graph=yes
+          if [[ "${EVENT:-}" == merge_group ]]; then
+            graph=no
+          elif changed="$(git diff --name-only --no-renames "$BASE" HEAD -- blueprint scripts/taxonomy.json \
+                            scripts/wiki-sync.json scripts/card-moves.jsonl scripts/mathgraph-map.jsonl)" \
+               && lean="$(git diff --name-only --no-renames "$BASE" HEAD -- '*.lean')"; then
+            if [[ -n "$lean" ]] \
+               && { [[ -z "$changed" ]] || ! grep -qvE '^blueprint/links/[^/]+[.]jsonl$' <<< "$changed"; }; then
+              graph=no
+            fi
+          fi
+          deferred=no
+          if [[ "$failed" == no && "$graph" == no && "$verdict" == pages ]]; then
+            deferred=yes
+            status=0
+          fi
+          # Values from the report name the pull request's files and declarations: shown as indented code too.
+          shown() { head -c "$1" | sed -e 's/\r$//' -e 's/\r/\n/g' | sed 's/^/    /'; }
+          {
+            echo "### Graph sync"
+            echo
+            if [[ "$deferred" == yes ]]; then
+              echo "Nothing to do here: this change's Lean leaves no link or marker behind, and the next graph-sync"
+              echo "batch writes its new declarations' pages (docs/BLUEPRINT.md, Graph-sync batches). A Lean pull"
+              echo "request runs no sync. The log has the check's full report."
+            elif [[ "$failed" == no && "$status" -ne 0 && "$graph" == no ]]; then
+              echo "This change's Lean leaves links or markers behind. A Lean pull request runs no sync: fix in it"
+              echo "only what these errors name, by relinking or updating rows; a page whose own declaration goes with"
+              echo "no successor is a graph pull request's (CONTRIBUTING.md, Say how a pull request touches the"
+              echo "graph). The next graph-sync batch writes its pages."
+              echo
+              { jq -r '.errors // [] | .[]' build/graph-sync.json || true; } | shown 60000
+            else
+              shown 60000 < build/graph-sync.txt
+              echo
+            fi
+            if [[ "$failed" == no && "$graph" == no ]]; then
+              pages="$(jq -r '.changed // [] | .[]' build/graph-sync.json 2>/dev/null || true)"
+              if [[ -n "$pages" ]]; then
+                echo
+                echo "Pages whose declaration's docstring changed, for the reviewer to check that each still says what"
+                echo "its declaration states:"
+                echo
+                shown 20000 <<< "$pages"
+              fi
+            fi
+            if [[ "$failed" == yes ]]; then
+              echo
+              echo "The check could not run (exit $status): the log above says why."
+            elif [[ "$status" -ne 0 && "$graph" == yes ]]; then
+              # From where the branch starts on the one the change targets, or, with none, the commit the check
+              # compared with.
+              if [[ -n "${FIX_FETCH:-}" ]]; then
+                fetch="git fetch https://github.com/facebookresearch/atlas-lean.git $FIX_FETCH"
+                # shellcheck disable=SC2016 # The command is shown, not run.
+                sync='python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"'
+              else
+                fetch="git fetch https://github.com/facebookresearch/atlas-lean.git $BASE"
+                sync="python3 scripts/sync_wiki.py declarations --base $BASE"
+              fi
+              # shellcheck disable=SC2016 # The backquotes are Markdown's.
+              printf '\nThe check ran on the change merged into its base. On its branch, run the sync as:\n\n```sh\n%s\n%s\n```\n' \
+                "$fetch" "$sync"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$failed" == yes ]]; then
+            echo "::warning title=Graph sync::The check could not run; the job summary says why."
+          elif [[ "$status" -ne 0 && "$graph" == no ]]; then
+            echo "::warning title=Graph sync::This change's Lean leaves links or markers behind; the job summary names them."
+          elif [[ "$status" -ne 0 ]]; then
+            echo "::warning title=Graph sync::The graph is not in step with this change's Lean; the job summary says how to fix it."
+          fi
+          exit "$status"
+
+      - name: Keep the report
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: graph-sync
+          path: |
+            build/graph-sync.json
+            build/graph-sync.txt
+          if-no-files-found: warn
+          retention-days: 14

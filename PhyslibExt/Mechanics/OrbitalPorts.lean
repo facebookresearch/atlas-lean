@@ -28,7 +28,7 @@ import Mathlib.Tactic.Ring
 import MathlibExt.LinearAlgebra.CrossProduct
 
 /-!
-# Orbital ports: vis-viva, one tangential impulse, circular orbits and the eccentricity vector
+# Orbital ports: vis-viva, impulses, circular orbits and the eccentricity vector
 
 ## i. Overview
 
@@ -116,6 +116,12 @@ normalization stays explicit. The specific angular momentum `X ⨯₃ V` is the 
 momentum times `Q e₃`, so its component along the oriented normal is the planar value; an
 orthogonal map of determinant `-1` reverses that component.
 
+Section M gives the cost of one equal-speed plane change at a node: two velocities `v₁` and `v₂`
+tangent at the node `x` (`x ⬝ᵥ vₖ = 0`), with the same speed `v > 0` and specific angular
+momenta `x ⨯₃ vₖ` at the angle `i ∈ [0, π]`, differ by a single impulse of magnitude
+`|v₂ - v₁| = 2 v sin(i / 2)`. This is the magnitude of that one specified impulse, not of an
+optimized transfer.
+
 Each result assumes only the hypotheses its proof uses.
 
 ## ii. Key results
@@ -152,6 +158,8 @@ Each result assumes only the hypotheses its proof uses.
   component.
 - `OrbitalPorts.IsPlanarKeplerArc.hasDerivAt_spatialVelocity`: the inverse-square law for the
   embedded arc.
+- `OrbitalPorts.impulseMagnitude_planeChange`: one equal-speed plane change by the angle `i`
+  costs `2 v sin(i / 2)`.
 
 ## iii. Table of contents
 
@@ -167,17 +175,18 @@ Each result assumes only the hypotheses its proof uses.
 - J. The planar Kepler arc premises
 - K. Energy and angular momentum in the spatial plane
 - L. The spatial Kepler arc
+- M. One equal-speed plane change
 
 ## iv. References
 
 - H. D. Curtis, *Orbital Mechanics for Engineering Students*, ch. 2: specific energy,
   `a = -μ / (2 ε)`, the vis-viva equation and circular orbits (`v = √(μ / r)`,
   `T = 2 π r ^ (3 / 2) / √μ`), and the eccentricity vector with `e² = 1 + 2 ε h² / μ²`; ch. 4:
-  the node line `N = K × h`.
+  the node line `N = K × h`; ch. 6: the simple plane change `Δv = 2 v sin(δ / 2)`.
 - R. R. Bate, D. D. Mueller and J. E. White, *Fundamentals of Astrodynamics*, ch. 1-2.
 - D. A. Vallado, *Fundamentals of Astrodynamics and Applications*, ch. 1-2: the two-body
   equation `r'' = -μ r / r ^ 3`, the orbital plane, and the special cases of the classical
-  elements (circular and equatorial orbits).
+  elements (circular and equatorial orbits); ch. 6: inclination-only changes.
 - Physlib, `PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Dynamics.Circular`: the
   circular orbits whose conclusions are the premises of section C.
 - Physlib, `PhyslibAlpha.ClassicalMechanics.OrbitalMechanics.Hohmann.Optimality.KeplerConservation`:
@@ -201,12 +210,14 @@ def speedSq (v : Fin 3 → ℝ) : ℝ := v ⬝ᵥ v
 noncomputable def radius (x : Fin 3 → ℝ) : ℝ := Real.sqrt (x ⬝ᵥ x)
 
 /-- Specific energy `E = |v|² / 2 - μ / r` of the state `(x, v)`. At the collision point `x = 0`
-Lean's convention `μ / 0 = 0` gives a meaningless value. -/
+the convention `μ / 0 = 0` gives `E = |v|² / 2`; the intended domain is `x ≠ 0`. -/
 noncomputable def specificEnergy (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   speedSq v / 2 - μ / radius x
 
-/-- Energy-defined semi-major axis `a = -μ / (2 E)`. It is a length only for `E < 0`; at `E = 0`
-(parabolic) Lean's convention `x / 0 = 0` gives the meaningless value `0`. -/
+/-- Energy-defined semi-major axis `a = -μ / (2 E)`. It is a positive length for `μ > 0` and
+`E < 0`, negative for `μ > 0` and `E > 0`, and `0` for `μ = 0`; at `E = 0` (for example a parabolic
+state, `μ > 0`, `x ≠ 0`) the convention `c / 0 = 0` gives the meaningless value `0`. At `x = 0` the
+energy `E` is its conventional value `|v|² / 2`. -/
 noncomputable def semiMajorAxis (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   -μ / (2 * specificEnergy μ x v)
 
@@ -231,8 +242,9 @@ lemma visViva {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x
   field_simp
   ring
 
-/-- A parabolic state (`E = 0`) has no finite semi-major axis: `-μ / (2 E)` is the junk value
-`0`, so `a > 0` fails and `E < 0` cannot be weakened to `E ≤ 0`. -/
+/-- A state with `E = 0` (for example a parabolic state, with `μ > 0` and `x ≠ 0`) has no finite
+semi-major axis: `-μ / (2 E)` is the junk value `0`, so `a > 0` fails and `E < 0` cannot be
+weakened to `E ≤ 0`. -/
 lemma semiMajorAxis_of_specificEnergy_eq_zero {μ : ℝ} {x v : Fin 3 → ℝ}
     (hE : specificEnergy μ x v = 0) :
     semiMajorAxis μ x v = 0 ∧ ¬ 0 < semiMajorAxis μ x v := by
@@ -315,6 +327,7 @@ lemma speedSq_tangentialImpulse {v : Fin 3 → ℝ} (hv : v ≠ 0) (Δv : ℝ) :
   linear_combination (-(Real.sqrt (v ⬝ᵥ v) + Δv) ^ 2) * hsq
 
 /-- A tangential impulse multiplies the specific angular momentum `x ⨯₃ v` by `1 + Δv / |v|`.
+At `v = 0` the convention `Δv / 0 = 0` makes the factor `1`, and both sides are `0`.
 The identity holds for all `x`, `v` and `Δv` and by itself gives no orbital plane: there is none
 when `x ⨯₃ v = 0` (a radial state, or `v = 0`) or when the factor vanishes (`Δv = -|v|` brings
 the body to rest). When both are nonzero, the new specific angular momentum is a nonzero
@@ -326,9 +339,9 @@ lemma cross_tangentialImpulse (x v : Fin 3 → ℝ) (Δv : ℝ) :
   nth_rewrite 1 [← one_smul ℝ (x ⨯₃ v)]
   rw [← add_smul]
 
-/-- Vis-viva after one tangential impulse at the fixed state: if the post-impulse energy is
-negative, `(|v| + Δv)² = μ (2 / r - 1 / a')` for the post-impulse semi-major axis `a'`, that is
-`1 / a' = 2 / r - (|v| + Δv)² / μ`. -/
+/-- Vis-viva after one tangential impulse at the fixed state: for `μ > 0`, `r > 0` and `v ≠ 0`,
+if the post-impulse energy is negative, `(|v| + Δv)² = μ (2 / r - 1 / a')` for the post-impulse
+semi-major axis `a'`, that is `1 / a' = 2 / r - (|v| + Δv)² / μ`. -/
 lemma visViva_tangentialImpulse {μ Δv : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x)
     (hv : v ≠ 0) (hE : specificEnergy μ x (tangentialImpulse v Δv) < 0) :
     (Real.sqrt (speedSq v) + Δv) ^ 2
@@ -345,9 +358,9 @@ lemma visViva_tangentialImpulse {μ Δv : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < 
   field_simp at hvv ⊢
   linear_combination hvv
 
-/-- At circular speed, `|v|² = μ / r`, a tangential impulse with negative post-impulse energy
-keeps `a' = r` only if it keeps the speed (`Δv = 0`) or reverses the velocity
-(`Δv = -2 |v|`). Only the speed enters: the statement holds for a circular state
+/-- At circular speed, `|v|² = μ / r` with `μ > 0` and `r > 0`, a tangential impulse with
+negative post-impulse energy gives `a' = r` if and only if it keeps the velocity (`Δv = 0`) or
+reverses it (`Δv = -2 |v|`). Only the speed enters: the statement holds for a circular state
 (`semiMajorAxis_of_circular`) and for a radial state at circular speed alike. No transfer
 cost or optimality is claimed. -/
 lemma semiMajorAxis_tangentialImpulse_eq_radius_iff {μ Δv : ℝ} {x v : Fin 3 → ℝ}
@@ -524,8 +537,9 @@ to hours `s = 1 / 3600`), a coordinate of dimension `L^a T^b` is multiplied by `
 lengths by `l`, times by `s`, speeds by `l / s`, the gravitational parameter (`L³ T⁻²`) by
 `l ^ 3 / s ^ 2`. In the new units the state at the new time `τ` is the old state at `τ / s`. -/
 
-/-- The premises are preserved by a change of units with the gravitational parameter scaled by
-`l ^ 3 / s ^ 2` and the radius by `l`. -/
+/-- For `l, s > 0` new length and time units per old unit, the premises are preserved by the
+change of units `τ ↦ l • r (τ / s)`, `τ ↦ (l / s) • v (τ / s)`, with the gravitational parameter
+scaled by `l ^ 3 / s ^ 2` and the radius by `l`. -/
 lemma IsCircularOrbit.unitChange {μ R l s : ℝ} {r v : ℝ → ℂ} (h : IsCircularOrbit μ R r v)
     (hl : 0 < l) (hs : 0 < s) :
     IsCircularOrbit (l ^ 3 / s ^ 2 * μ) (l * R) (fun τ => l • r (τ / s))
@@ -570,8 +584,8 @@ lemma IsCircularOrbit.unitChange {μ R l s : ℝ} {r v : ℝ → ℂ} (h : IsCir
     rw [hscalv] at hsmulv
     exact hsmulv
 
-/-- Wrong time units are rejected: a change of time unit (`s ≠ 1`) that leaves out the factor
-`s⁻²` of the gravitational parameter gives no circular orbit. -/
+/-- Wrong time units are rejected: for `l, s > 0`, a change of time unit (`s ≠ 1`) that leaves out
+the factor `s⁻²` of the gravitational parameter gives no circular orbit. -/
 lemma IsCircularOrbit.not_wrong_time_unit {μ R l s : ℝ} {r v : ℝ → ℂ}
     (h : IsCircularOrbit μ R r v) (hl : 0 < l) (hs : 0 < s) (hs1 : s ≠ 1) :
     ¬ IsCircularOrbit (l ^ 3 * μ) (l * R) (fun τ => l • r (τ / s))
@@ -604,8 +618,8 @@ lemma IsCircularOrbit.not_wrong_time_unit {μ R l s : ℝ} {r v : ℝ → ℂ}
     · linarith
   exact hs1 hs1eq
 
-/-- Consistent speed and period units: under the change of units the circular speed `√(μ / R)`
-scales by `l / s` and the period `2 π R / √(μ / R)` by `s`. -/
+/-- Consistent speed and period units: for `μ, R, l, s > 0`, under the change of units the
+circular speed `√(μ / R)` scales by `l / s` and the period `2 π R / √(μ / R)` by `s`. -/
 lemma speed_period_unitChange {μ R l s : ℝ} (hμ : 0 < μ) (hR : 0 < R) (hl : 0 < l)
     (hs : 0 < s) :
     Real.sqrt (l ^ 3 / s ^ 2 * μ / (l * R)) = l / s * Real.sqrt (μ / R) ∧
@@ -654,7 +668,8 @@ lemma spatialState_dotProduct_normal (Q : Matrix.specialOrthogonalGroup (Fin 3) 
   simp only [spatialState, bodyToInertialVec_dotProduct, planarToBody]
   simp
 
-/-- The planar-to-spatial map commutes with time derivatives. -/
+/-- The planar-to-spatial map commutes with time derivatives: if `z` has derivative `w` at `t`,
+then `spatialState Q z` has derivative `Q (Re w, Im w, 0)` at `t`. -/
 lemma hasDerivAt_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) {z : ℝ → ℂ}
     {w : ℂ} {t : ℝ} (hz : HasDerivAt z w t) :
     HasDerivAt (spatialState Q z) (bodyToInertialVec Q (planarToBody w)) t := by
@@ -728,12 +743,13 @@ lemma IsCircularOrbit.hasDerivAt_spatialVelocity {μ R : ℝ} {r v : ℝ → ℂ
 /-! ## G. The eccentricity vector and the energy identity -/
 
 /-- Eccentricity vector `e = (v ⨯₃ h) / μ - x / r` of the state `(x, v)`, with `h = x ⨯₃ v` the
-specific angular momentum and `r = |x|`. Declared for `μ > 0` and `r > 0`; at `x = 0` or `μ = 0`
-Lean's convention `1 / 0 = 0` gives a meaningless value. -/
+specific angular momentum and `r = |x|`. Declared for `μ > 0` and `r > 0`; with the convention
+`1 / 0 = 0` it is `-x / r` when `μ = 0` and `r > 0`, and `0` at `x = 0`. -/
 noncomputable def eccentricityVector (μ : ℝ) (x v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   (1 / μ) • (v ⨯₃ (x ⨯₃ v)) - (1 / radius x) • x
 
-/-- Eccentricity `|e| = √(e ⬝ᵥ e)`, the Euclidean length of the eccentricity vector. -/
+/-- Eccentricity `|e| = √(e ⬝ᵥ e)`, the Euclidean length of the eccentricity vector. By the
+conventions of `eccentricityVector` it is `1` when `μ = 0` and `r > 0`, and `0` at `x = 0`. -/
 noncomputable def eccentricity (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   Real.sqrt (eccentricityVector μ x v ⬝ᵥ eccentricityVector μ x v)
 
@@ -1033,7 +1049,8 @@ lemma radius_spatialState_planarPath (Q : Matrix.specialOrthogonalGroup (Fin 3) 
   ring
 
 /-- **Energy in the upstream normalization.** The planar energy `vx² + vy² - 2 μ / √(x² + y²)` is
-twice the specific energy `|V|² / 2 - μ / |X|` of the spatial state: the factor two is kept. -/
+twice the specific energy `|V|² / 2 - μ / |X|` of the spatial state: the factor two is kept. At a
+time where `x = y = 0` the convention `c / 0 = 0` makes both sides `vx² + vy²`. -/
 lemma two_mul_specificEnergy_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (μ : ℝ)
     (x y vx vy : ℝ → ℝ) (t : ℝ) :
     2 * specificEnergy μ (spatialState Q (planarPath x y) t)
@@ -1049,7 +1066,7 @@ lemma two_mul_specificEnergy_spatialState (Q : Matrix.specialOrthogonalGroup (Fi
 
 /-- **Energy transport.** Equal planar energies at `t₀` and `t₁`, in the upstream normalization
 (the conclusion of the upstream energy conservation lemma), give equal specific energies of the
-spatial states. -/
+spatial states. At a time where `x = y = 0` both energies use the convention `c / 0 = 0`. -/
 lemma specificEnergy_spatialState_eq_of_energy_eq (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
     (μ : ℝ) {x y vx vy : ℝ → ℝ} {t₀ t₁ : ℝ}
     (hE : vx t₀ ^ 2 + vy t₀ ^ 2 - 2 * μ / Real.sqrt (x t₀ ^ 2 + y t₀ ^ 2) =
@@ -1175,5 +1192,88 @@ lemma IsPlanarKeplerArc.hasDerivAt_spatialVelocity {μ t₀ t₁ : ℝ} {x y vx 
   have hbase := hasDerivAt_spatialState Q (hasDerivAt_planarPath (h.dvx t ht) (h.dvy t ht))
   rw [radius_spatialState_planarPath, hval]
   exact hbase
+
+/-! ## M. One equal-speed plane change -/
+
+/-- Magnitude `|v₂ - v₁|` of the single impulse that changes the velocity from `v₁` to `v₂` at a
+fixed position. -/
+noncomputable def impulseMagnitude (v₁ v₂ : Fin 3 → ℝ) : ℝ := Real.sqrt (speedSq (v₂ - v₁))
+
+/-- Equal-speed chord: if `|u|² = |w|² = s²` and `u ⬝ᵥ w = s² cos i`, then
+`|w - u|² = 2 s² (1 - cos i)`. -/
+lemma speedSq_sub_of_speedSq_eq {u w : Fin 3 → ℝ} {s i : ℝ} (hu : speedSq u = s ^ 2)
+    (hw : speedSq w = s ^ 2) (huw : u ⬝ᵥ w = s ^ 2 * Real.cos i) :
+    speedSq (w - u) = 2 * s ^ 2 * (1 - Real.cos i) := by
+  unfold speedSq at hu hw ⊢
+  rw [sub_dotProduct, dotProduct_sub, dotProduct_sub, hu, hw, huw,
+    dotProduct_comm w u, huw]
+  ring
+
+/-- Nonnegative half-angle root: for `s ≥ 0` and `i ∈ [0, π]`,
+`√(2 s² (1 - cos i)) = 2 s sin(i / 2)`. -/
+lemma sqrt_two_mul_sq_mul_one_sub_cos {s i : ℝ} (hs : 0 ≤ s) (hi₀ : 0 ≤ i)
+    (hiπ : i ≤ Real.pi) :
+    Real.sqrt (2 * s ^ 2 * (1 - Real.cos i)) = 2 * s * Real.sin (i / 2) := by
+  have hcos : Real.cos i ≤ 1 := Real.cos_le_one i
+  have hsin : 0 ≤ Real.sin (i / 2) :=
+    Real.sin_nonneg_of_nonneg_of_le_pi (by linarith) (by linarith [Real.pi_nonneg])
+  have hhalf : Real.sin (i / 2) = Real.sqrt ((1 - Real.cos i) / 2) :=
+    Real.sin_half_eq_sqrt hi₀ (by linarith [Real.pi_nonneg])
+  have hsq : Real.sin (i / 2) ^ 2 = (1 - Real.cos i) / 2 := by
+    rw [hhalf, Real.sq_sqrt (by linarith)]
+  have hLHS : 0 ≤ 2 * s ^ 2 * (1 - Real.cos i) := by
+    have h1 : 0 ≤ 1 - Real.cos i := by linarith
+    positivity
+  have hRHS : 0 ≤ 2 * s * Real.sin (i / 2) := by positivity
+  rw [Real.sqrt_eq_iff_eq_sq hLHS hRHS, mul_pow, hsq]
+  ring
+
+/-- One equal-speed plane change: at a node `x` off the attracting center, two velocities tangent
+there (`x ⬝ᵥ v₁ = x ⬝ᵥ v₂ = 0`) with the same speed `v > 0`, whose specific angular momenta
+`x ⨯₃ v₁` and `x ⨯₃ v₂` make the angle `i ∈ [0, π]`, differ by a single impulse of magnitude
+`|v₂ - v₁| = 2 v sin(i / 2)`. This is the cost of this one specified impulse, not of an optimized
+transfer. -/
+lemma impulseMagnitude_planeChange {x v₁ v₂ : Fin 3 → ℝ} {v i : ℝ} (hr : 0 < radius x)
+    (h₁ : x ⬝ᵥ v₁ = 0) (h₂ : x ⬝ᵥ v₂ = 0) (hv : 0 < v) (hv₁ : speedSq v₁ = v ^ 2)
+    (hv₂ : speedSq v₂ = v ^ 2) (hi₀ : 0 ≤ i) (hiπ : i ≤ Real.pi)
+    (hi : (x ⨯₃ v₁) ⬝ᵥ (x ⨯₃ v₂) =
+      Real.cos i * (Real.sqrt ((x ⨯₃ v₁) ⬝ᵥ (x ⨯₃ v₁)) * Real.sqrt ((x ⨯₃ v₂) ⬝ᵥ (x ⨯₃ v₂)))) :
+    impulseMagnitude v₁ v₂ = 2 * v * Real.sin (i / 2) := by
+  have hv₁' : v₁ ⬝ᵥ v₁ = v ^ 2 := hv₁
+  have hv₂' : v₂ ⬝ᵥ v₂ = v ^ 2 := hv₂
+  have hc1 : v₁ ⬝ᵥ x = 0 := by rw [dotProduct_comm v₁ x, h₁]
+  have hc2 : v₂ ⬝ᵥ x = 0 := by rw [dotProduct_comm v₂ x, h₂]
+  have hXpos : 0 < x ⬝ᵥ x := by
+    have hr' : 0 < Real.sqrt (x ⬝ᵥ x) := hr
+    exact Real.sqrt_pos.mp hr'
+  have hcross : (x ⨯₃ v₁) ⬝ᵥ (x ⨯₃ v₂) = (x ⬝ᵥ x) * (v₁ ⬝ᵥ v₂) := by
+    rw [cross_dot_cross, h₂, hc1]
+    ring
+  have hn1 : (x ⨯₃ v₁) ⬝ᵥ (x ⨯₃ v₁) = (x ⬝ᵥ x) * v ^ 2 := by
+    rw [cross_dot_cross, h₁, hc1, hv₁']
+    ring
+  have hn2 : (x ⨯₃ v₂) ⬝ᵥ (x ⨯₃ v₂) = (x ⬝ᵥ x) * v ^ 2 := by
+    rw [cross_dot_cross, h₂, hc2, hv₂']
+    ring
+  have hsq1 : Real.sqrt ((x ⨯₃ v₁) ⬝ᵥ (x ⨯₃ v₁)) = radius x * v := by
+    unfold radius
+    rw [hn1, Real.sqrt_mul hXpos.le, Real.sqrt_sq hv.le]
+  have hsq2 : Real.sqrt ((x ⨯₃ v₂) ⬝ᵥ (x ⨯₃ v₂)) = radius x * v := by
+    unfold radius
+    rw [hn2, Real.sqrt_mul hXpos.le, Real.sqrt_sq hv.le]
+  have hr2 : radius x ^ 2 = x ⬝ᵥ x := Real.sq_sqrt hXpos.le
+  have hdot : v₁ ⬝ᵥ v₂ = v ^ 2 * Real.cos i := by
+    have hX2 : (radius x * v) * (radius x * v) = (x ⬝ᵥ x) * v ^ 2 := by
+      calc (radius x * v) * (radius x * v) = radius x ^ 2 * v ^ 2 := by ring
+        _ = (x ⬝ᵥ x) * v ^ 2 := by rw [hr2]
+    rw [hcross, hsq1, hsq2, hX2] at hi
+    have hi2 : (x ⬝ᵥ x) * (v₁ ⬝ᵥ v₂) = (x ⬝ᵥ x) * (v ^ 2 * Real.cos i) := by
+      calc (x ⬝ᵥ x) * (v₁ ⬝ᵥ v₂) = Real.cos i * ((x ⬝ᵥ x) * v ^ 2) := hi
+        _ = (x ⬝ᵥ x) * (v ^ 2 * Real.cos i) := by ring
+    exact mul_left_cancel₀ (ne_of_gt hXpos) hi2
+  have hsub := speedSq_sub_of_speedSq_eq hv₁ hv₂ hdot
+  unfold impulseMagnitude
+  rw [hsub]
+  exact sqrt_two_mul_sq_mul_one_sub_cos hv.le hi₀ hiπ
 
 end OrbitalPorts

@@ -11,8 +11,10 @@ Portions of this file are adapted from:
 
 `Theorems/Thm_ModularForm_S2_Gamma0_2_eq_zero.lean`,
 `Theorems/Thm_ModularForm_S2_Gamma0_one_eq_zero.lean`,
-`P2M/Sol/S_ModularForm_S2_Gamma0_2_eq_zero.lean` and
-`P2M/Sol/S_ModularForm_S2_Gamma0_one_eq_zero.lean`
+`Theorems/Thm_CuspForm_levelTwo_weight_four_eq_zero.lean`,
+`P2M/Sol/S_ModularForm_S2_Gamma0_2_eq_zero.lean`,
+`P2M/Sol/S_ModularForm_S2_Gamma0_one_eq_zero.lean` and
+`P2M/Sol/S_CuspForm_levelTwo_weight_four_eq_zero.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -38,17 +40,24 @@ public import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
 public import Mathlib.GroupTheory.Index
 public import Mathlib.Data.ZMod.Basic
 
-/-!
-# Vanishing of weight-two cusp forms on `Γ₀(1)` and `Γ₀(2)`
+import Mathlib.NumberTheory.ModularForms.Discriminant
+import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
+import Mathlib.NumberTheory.ModularForms.QExpansion
 
-The space of weight-two cusp forms on `Γ₀(2)` is zero. This is the final
-step of the classical proof of Fermat's Last Theorem via the Frey curve:
-a Frey curve is modular, Ribet's level lowering puts its mod-`p`
-representation in `S₂(Γ₀(2))`, and that space being zero gives the
-contradiction. Along the way we record the two reusable ingredients, the
-product norm of a cusp form over a finite-index subgroup and the index
-`[SL(2, ℤ) : Γ₀(2)] = 3`, which let the weight-two case be reduced to the
-weight-six level-one dimension formula.
+/-!
+# Vanishing of cusp forms of weights two and four on `Γ₀(1)` and `Γ₀(2)`
+
+The spaces of cusp forms of weights two and four on `Γ₀(2)` are zero.
+The weight-two case is the final step of the classical proof of Fermat's
+Last Theorem via the Frey curve: a Frey curve is modular, Ribet's level
+lowering puts its mod-`p` representation in `S₂(Γ₀(2))`, and that space
+being zero gives the contradiction. Along the way we record the two
+reusable ingredients, the product norm of a cusp form over a finite-index
+subgroup and the index `[SL(2, ℤ) : Γ₀(2)] = 3`, which let the weight-two
+case be reduced to the weight-six level-one dimension formula. For weight
+four, the product of a form with its `S`- and `ST`-translates is a
+weight-twelve level-one cusp form whose first `q`-expansion coefficient
+vanishes, so the product, and hence the form itself, is zero.
 
 ## Mathematical references
 
@@ -308,5 +317,273 @@ theorem S2_Gamma0_2_eq_zero (f : CuspForm (CongruenceSubgroup.Gamma0 2) 2) :
       (S6_levelOne_eq_zero' hweight
         (CuspForm.norm (↑(CongruenceSubgroup.Gamma 1) : Subgroup (GL (Fin 2) ℝ)) f))
   exact DFunLike.coe_injective (by simpa using hf0)
+
+end ModularForm
+
+noncomputable section WeightFour
+
+open ModularGroup
+open scoped Topology Manifold ModularForm
+
+namespace CuspForm.LevelTwoWeightFour
+
+local notation "Γ₀(" N ")" => (CongruenceSubgroup.Gamma0 N : Subgroup (GL (Fin 2) ℝ))
+
+private def γ₁ : SL(2, ℤ) := ⟨!![1, 0; -2, 1], by norm_num [Matrix.det_fin_two_of]⟩
+
+private def γ₂ : SL(2, ℤ) := ⟨!![-1, -1; 2, 1], by norm_num [Matrix.det_fin_two_of]⟩
+
+private theorem S_mul_T_mul_T : S * T * T = γ₁ * S := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> decide
+
+private theorem S_mul_T_mul_S : S * T * S = γ₂ * (S * T) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> decide
+
+private theorem S_mul_S : S * S = -1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> decide
+
+private theorem T_mem : T ∈ CongruenceSubgroup.Gamma0 2 := by
+  simp [CongruenceSubgroup.Gamma0_mem, coe_T]
+
+private theorem neg_one_mem : (-1 : SL(2, ℤ)) ∈ CongruenceSubgroup.Gamma0 2 := by
+  simp [CongruenceSubgroup.Gamma0_mem]
+
+private theorem γ₁_mem : γ₁ ∈ CongruenceSubgroup.Gamma0 2 := by
+  show ((γ₁ 1 0 : ZMod 2) = 0)
+  decide
+
+private theorem γ₂_mem : γ₂ ∈ CongruenceSubgroup.Gamma0 2 := by
+  show ((γ₂ 1 0 : ZMod 2) = 0)
+  decide
+
+variable (f : CuspForm Γ₀(2) 4)
+
+private theorem slash_mem {γ : SL(2, ℤ)} (hγ : γ ∈ CongruenceSubgroup.Gamma0 2) :
+    (⇑f) ∣[(4 : ℤ)] γ = ⇑f := by
+  rw [ModularForm.SL_slash]
+  exact SlashInvariantFormClass.slash_action_eq f _ (Subgroup.mem_map_of_mem _ hγ)
+
+private def f₁ : ℍ → ℂ := (⇑f) ∣[(4 : ℤ)] S
+
+private def f₂ : ℍ → ℂ := (⇑f) ∣[(4 : ℤ)] (S * T)
+
+private theorem f_slash_T : (⇑f) ∣[(4 : ℤ)] T = ⇑f := slash_mem f T_mem
+
+private theorem f₁_slash_T : (f₁ f) ∣[(4 : ℤ)] T = f₂ f := by
+  rw [f₁, f₂, ← SlashAction.slash_mul]
+
+private theorem f₂_slash_T : (f₂ f) ∣[(4 : ℤ)] T = f₁ f := by
+  rw [f₂, f₁, ← SlashAction.slash_mul, S_mul_T_mul_T, SlashAction.slash_mul,
+    slash_mem f γ₁_mem]
+
+private theorem f_slash_S : (⇑f) ∣[(4 : ℤ)] S = f₁ f := rfl
+
+private theorem f₁_slash_S : (f₁ f) ∣[(4 : ℤ)] S = ⇑f := by
+  rw [f₁, ← SlashAction.slash_mul, S_mul_S, slash_mem f neg_one_mem]
+
+private theorem f₂_slash_S : (f₂ f) ∣[(4 : ℤ)] S = f₂ f := by
+  rw [f₂, ← SlashAction.slash_mul, S_mul_T_mul_S, SlashAction.slash_mul,
+    slash_mem f γ₂_mem]
+
+private def g : ℍ → ℂ := f₁ f * f₂ f
+
+private def F : ℍ → ℂ := ⇑f * g f
+
+private theorem g_slash_T : (g f) ∣[(8 : ℤ)] T = g f := by
+  rw [g, show (8 : ℤ) = 4 + 4 by norm_num, ModularForm.mul_slash_SL2, f₁_slash_T,
+    f₂_slash_T, mul_comm]
+
+private theorem g_slash_S : (g f) ∣[(8 : ℤ)] S = ⇑f * f₂ f := by
+  rw [g, show (8 : ℤ) = 4 + 4 by norm_num, ModularForm.mul_slash_SL2, f₁_slash_S,
+    f₂_slash_S]
+
+private theorem F_slash_T : (F f) ∣[(12 : ℤ)] T = F f := by
+  rw [F, show (12 : ℤ) = 4 + 8 by norm_num, ModularForm.mul_slash_SL2, f_slash_T,
+    g_slash_T]
+
+private theorem F_slash_S : (F f) ∣[(12 : ℤ)] S = F f := by
+  rw [F, show (12 : ℤ) = 4 + 8 by norm_num, ModularForm.mul_slash_SL2, f_slash_S,
+    g_slash_S, g, f₁]
+  ring
+
+private theorem F_slash (γ : SL(2, ℤ)) : (F f) ∣[(12 : ℤ)] γ = F f :=
+  SlashInvariantForm.slash_action_generators_SL2Z (F_slash_S f) (F_slash_T f) γ
+
+private theorem mdifferentiable_f₁ : MDiff (f₁ f) := (CuspFormClass.holo f).slash _ _
+private theorem mdifferentiable_f₂ : MDiff (f₂ f) := (CuspFormClass.holo f).slash _ _
+private theorem mdifferentiable_g : MDiff (g f) :=
+  (mdifferentiable_f₁ f).mul (mdifferentiable_f₂ f)
+private theorem mdifferentiable_F : MDiff (F f) :=
+  (CuspFormClass.holo f).mul (mdifferentiable_g f)
+
+private theorem isZeroAtImInfty_f : IsZeroAtImInfty (⇑f) :=
+  CuspFormClass.zero_at_infty f
+private theorem isZeroAtImInfty_f₁ : IsZeroAtImInfty (f₁ f) :=
+  CuspFormClass.zero_at_infty_slash f S
+private theorem isZeroAtImInfty_f₂ : IsZeroAtImInfty (f₂ f) :=
+  CuspFormClass.zero_at_infty_slash f (S * T)
+
+private theorem isZeroAtImInfty_mul {u v : ℍ → ℂ} (hu : IsZeroAtImInfty u)
+    (hv : IsZeroAtImInfty v) : IsZeroAtImInfty (u * v) := by
+  have h := hu.mul hv
+  simp at h
+  exact h
+
+private theorem isZeroAtImInfty_g : IsZeroAtImInfty (g f) :=
+  isZeroAtImInfty_mul (isZeroAtImInfty_f₁ f) (isZeroAtImInfty_f₂ f)
+
+private theorem isZeroAtImInfty_F : IsZeroAtImInfty (F f) :=
+  isZeroAtImInfty_mul (isZeroAtImInfty_f f) (isZeroAtImInfty_g f)
+
+private def Fc : CuspForm 𝒮ℒ 12 where
+  toFun := F f
+  slash_action_eq' γ hγ := by
+    obtain ⟨γ, rfl⟩ := hγ
+    exact F_slash f γ
+  holo' := mdifferentiable_F f
+  zero_at_cusps' {c} hc := by
+    obtain ⟨γ, rfl⟩ := isCusp_SL2Z_iff'.mp hc
+    rw [OnePoint.isZeroAt_iff rfl]
+    change IsZeroAtImInfty ((F f) ∣[(12 : ℤ)] γ)
+    rw [F_slash]
+    exact isZeroAtImInfty_F f
+
+@[simp]
+private theorem coe_Fc : ⇑(Fc f) = F f := rfl
+
+private theorem vAdd_apply_of_slash_T {u : ℍ → ℂ} {k : ℤ}
+    (hT : u ∣[k] T = u) (τ : ℍ) : u ((1 : ℝ) +ᵥ τ) = u τ := by
+  have h := congrFun hT τ
+  rw [ModularForm.SL_slash_apply, UpperHalfPlane.modular_T_smul] at h
+  have hd : denom (T : GL (Fin 2) ℝ) τ = 1 := by
+    simp [ModularGroup.denom_apply, coe_T]
+  simpa [hd] using h
+
+private theorem periodic_comp_ofComplex_of_slash_T {u : ℍ → ℂ} {k : ℤ}
+    (hT : u ∣[k] T = u) : Function.Periodic (u ∘ ofComplex) 1 := by
+  intro w
+  by_cases hw : 0 < Complex.im w
+  · have hw' : 0 < Complex.im (w + 1) := by simpa using hw
+    simp only [Function.comp_apply, ofComplex_apply_of_im_pos hw',
+      ofComplex_apply_of_im_pos hw]
+    convert vAdd_apply_of_slash_T hT ⟨w, hw⟩ using 2
+    ext
+    simp [add_comm]
+  · have hw0 : Complex.im w ≤ 0 := not_lt.mp hw
+    have hw1 : Complex.im (w + (1 : ℝ)) ≤ 0 := by simpa using hw0
+    simp only [Function.comp_apply]
+    rw [show w + 1 = w + (1 : ℝ) by simp, ofComplex_apply_of_im_nonpos hw1,
+      ofComplex_apply_of_im_nonpos hw0]
+
+private theorem periodic_g : Function.Periodic (g f ∘ ofComplex) 1 :=
+  periodic_comp_ofComplex_of_slash_T (g_slash_T f)
+
+private theorem analyticAt_cuspFunction_g : AnalyticAt ℂ (cuspFunction 1 (g f)) 0 :=
+  analyticAt_cuspFunction_zero one_pos (periodic_g f) (mdifferentiable_g f)
+    (isZeroAtImInfty_g f).isBoundedAtImInfty
+
+private theorem qExpansion_g_coeff_zero : (qExpansion 1 (g f)).coeff 0 = 0 := by
+  rw [qExpansion_coeff_zero one_pos (analyticAt_cuspFunction_g f) (periodic_g f)]
+  exact (isZeroAtImInfty_g f).valueAtInfty_eq_zero
+
+private theorem qExpansion_f_coeff_zero : (qExpansion 1 (⇑f)).coeff 0 = 0 :=
+  CuspFormClass.qExpansion_coeff_zero f one_pos (by simp)
+
+private theorem qExpansion_F :
+    qExpansion 1 (F f) = qExpansion 1 (⇑f) * qExpansion 1 (g f) :=
+  qExpansion_mul (ModularFormClass.analyticAt_cuspFunction_zero f one_pos (by simp))
+    (analyticAt_cuspFunction_g f)
+
+private theorem qExpansion_F_coeff_one : (qExpansion 1 (F f)).coeff 1 = 0 := by
+  rw [qExpansion_F, PowerSeries.coeff_mul, Finset.Nat.antidiagonal_succ,
+    Finset.sum_cons, Finset.Nat.antidiagonal_zero, Finset.map_singleton,
+    Finset.sum_singleton]
+  simp [qExpansion_g_coeff_zero, qExpansion_f_coeff_zero]
+
+private theorem Fc_eq_zero : Fc f = 0 := by
+  obtain ⟨c, hc⟩ := CuspForm.exists_smul_discriminant_of_weight_eq_twelve (Fc f)
+  have h1 : (qExpansion 1 (⇑(Fc f))).coeff 1 = c := by
+    rw [← hc, FunLike.coe_smul,
+      ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL, map_smul,
+      CuspForm.coe_discriminant, ModularForm.discriminant_qExpansion_coeff_one,
+      smul_eq_mul, mul_one]
+  rw [coe_Fc, qExpansion_F_coeff_one] at h1
+  rw [← hc, ← h1, zero_smul]
+
+private theorem F_eq_zero : F f = 0 := by
+  have := congrArg (fun h : CuspForm 𝒮ℒ 12 => ⇑h) (Fc_eq_zero f)
+  simpa using this
+
+private theorem eq_zero_or_eq_zero_of_mul_eq_zero {u v : ℍ → ℂ} (hu : MDiff u)
+    (hv : MDiff v) (huv : u * v = 0) : u = 0 ∨ v = 0 := by
+  classical
+  by_contra h
+  rw [not_or] at h
+  obtain ⟨hu0, hv0⟩ := h
+  obtain ⟨τ₀, hτ₀⟩ : ∃ τ₀ : ℍ, u τ₀ ≠ 0 := by
+    by_contra h'
+    push Not at h'
+    exact hu0 (funext h')
+  set U : Set ℂ := {z : ℂ | 0 < z.im} with hUdef
+  have hUopen : IsOpen U := isOpen_upperHalfPlaneSet
+  have hUconn : IsPreconnected U := (convex_halfSpace_im_gt 0).isPreconnected
+  have hu' : DifferentiableOn ℂ (u ∘ ofComplex) U :=
+    UpperHalfPlane.mdifferentiable_iff.mp hu
+  have hv' : DifferentiableOn ℂ (v ∘ ofComplex) U :=
+    UpperHalfPlane.mdifferentiable_iff.mp hv
+  have hva : AnalyticOnNhd ℂ (v ∘ ofComplex) U := hv'.analyticOnNhd hUopen
+  have hz₀ : ((τ₀ : ℂ)) ∈ U := τ₀.im_pos
+  have hcont : ContinuousAt (u ∘ ofComplex) (τ₀ : ℂ) :=
+    (hu'.continuousOn.continuousAt (hUopen.mem_nhds hz₀))
+  have hne : ∀ᶠ z in nhds (τ₀ : ℂ), (u ∘ ofComplex) z ≠ 0 :=
+    hcont.eventually_ne (by simpa using hτ₀)
+  have hev : (v ∘ ofComplex) =ᶠ[nhds (τ₀ : ℂ)] 0 := by
+    filter_upwards [hne, hUopen.mem_nhds hz₀] with z hz hzU
+    have := congrFun huv (ofComplex z)
+    simp only [Pi.mul_apply, Pi.zero_apply, mul_eq_zero] at this
+    exact this.resolve_left hz
+  have hvU : Set.EqOn (v ∘ ofComplex) 0 U :=
+    hva.eqOn_zero_of_preconnected_of_eventuallyEq_zero hUconn hz₀ hev
+  apply hv0
+  funext τ
+  have := hvU τ.im_pos
+  simpa using this
+
+private theorem f_eq_zero_of_slash_eq_zero {γ : SL(2, ℤ)}
+    (h : (⇑f) ∣[(4 : ℤ)] γ = 0) : f = 0 := by
+  have h' : (⇑f) = 0 := by
+    have := congrArg (fun u : ℍ → ℂ => u ∣[(4 : ℤ)] γ⁻¹) h
+    simpa [← SlashAction.slash_mul] using this
+  exact DFunLike.coe_injective (h'.trans FunLike.coe_zero.symm)
+
+private theorem eq_zero : f = 0 := by
+  have hF := F_eq_zero f
+  rw [F] at hF
+  rcases eq_zero_or_eq_zero_of_mul_eq_zero (CuspFormClass.holo f)
+      (mdifferentiable_g f) hF with h0 | hg
+  · exact DFunLike.coe_injective (h0.trans FunLike.coe_zero.symm)
+  · rw [g] at hg
+    rcases eq_zero_or_eq_zero_of_mul_eq_zero (mdifferentiable_f₁ f)
+        (mdifferentiable_f₂ f) hg with h1 | h2
+    · exact f_eq_zero_of_slash_eq_zero f (γ := S) h1
+    · exact f_eq_zero_of_slash_eq_zero f (γ := S * T) h2
+
+end CuspForm.LevelTwoWeightFour
+
+end WeightFour
+
+namespace ModularForm
+
+/-- Every weight-four cusp form on `Γ₀(2)` is zero. Multiply `f` by its
+`S`- and `ST`-translates to get a weight-twelve level-one cusp form; its
+first `q`-expansion coefficient vanishes, so it is zero, and a product of
+holomorphic functions on the upper half plane vanishes only if a factor
+does. -/
+theorem S4_Gamma0_2_eq_zero (f : CuspForm (CongruenceSubgroup.Gamma0 2) 4) :
+    f = 0 :=
+  CuspForm.LevelTwoWeightFour.eq_zero f
 
 end ModularForm

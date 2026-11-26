@@ -1,0 +1,71 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.ContinuousMap.ConstantOperators
+public import MathlibExt.Analysis.CStarAlgebra.Grading.ContinuousMap
+public import MathlibExt.Analysis.CStarAlgebra.Grading.Module.Self
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.GradedLeft
+
+/-!
+# Graded constant End homomorphisms on continuous sections
+
+The actual pointwise module grading and actual constant unital End map use
+the original coefficient orders and the original supremum norm. Their
+literal pure-generator formula instantiates the shared graded left constructor.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped CStarAlgebra CStarModule.Right RightActions
+
+namespace CStarModuleGrading
+
+universe uX uB uE
+
+variable (X : Type uX) [TopologicalSpace X] [CompactSpace X]
+variable {B : Type uB} [NonUnitalCStarAlgebra B]
+  [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+  [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
+variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
+  [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+variable {γ : CStarGrading B}
+
+attribute [local instance] CStarModule.ContinuousMap.rightAction
+  CStarModule.ContinuousMap.cstarModule
+
+/-- Every homogeneous original operator remains homogeneous under constant extension. -/
+theorem constantEndomorphismMap_isHomogeneous (δ : CStarModuleGrading γ E)
+    (n : ZMod 2) (T : CStarModule.AdjointableOperator.End B E)
+    (hT : IsHomogeneousOperator δ δ n T) :
+    IsHomogeneousOperator (continuousMap X δ) (continuousMap X δ) n
+      (CStarModule.ContinuousMap.constantEndomorphismMap (B := B) X T) := by
+  intro f
+  apply _root_.ContinuousMap.ext
+  intro t
+  simpa only [continuousMap_generator_apply,
+    CStarModule.ContinuousMap.constantEndomorphismMap_apply, _root_.ContinuousMap.smul_apply]
+    using hT (f t)
+
+/-- The actual constant unital End hom is graded for the actual pointwise module grading. -/
+def constantGradedEndomorphismMap (δ : CStarModuleGrading γ E) :
+    CStarGrading.Hom δ.operatorGrading (continuousMap X δ).operatorGrading := by
+  letI : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
+  refine CStarModule.InternalTensorProduct.IsModel.gradedLeftHom
+    (CStarModule.InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X)
+    δ (self (PointNormCStarAction.continuousMap X γ)) (continuousMap X δ) ?_
+  intro x b
+  apply _root_.ContinuousMap.ext
+  intro t
+  simp only [continuousMap_generator_apply,
+    CStarModule.InternalTensorProduct.continuousMapPure_apply, self_generator_apply,
+    δ.generator_right_smul, CStarGrading.generatorAut_apply,
+    PointNormCStarAction.continuousMap_apply]
+
+end CStarModuleGrading

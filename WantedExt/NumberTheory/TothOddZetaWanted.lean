@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.NumberTheory.LSeries.RiemannZeta
-public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
-public import WantedExt.Combinatorics.ReducedComplexitiesWanted
+public import MathlibExt.Combinatorics.ReducedComplexities
+public import MathlibExt.NumberTheory.TothOddZeta
 
 namespace MetaMathlibExt
 
@@ -20,31 +19,23 @@ namespace MetaMathlibExt
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry
 open MathlibExt.Combinatorics.ReducedComplexitiesWanted (paperfoldingSeq)
 
-/-- Hurwitz zeta at `3/4` and odd arguments: for `k ≥ 1`,
-`ζ(2k+1, 3/4) = -2^{2k-1} π^{2k+1} |E_{2k}| / (2k)! + 2^{2k} (2^{2k+1} - 1) ζ(2k+1)`,
-where `E_{2k}` is the even Euler number.
+/-- **Tóth's paperfolding and Thue–Morse series for $\zeta(2k+1)$.** Let $(f_n)_{n \ge 0}$ be the
+regular paperfolding sequence and $(t_n)_{n \ge 0}$ the Thue–Morse sequence, both indexed from
+$0$, and let $E_{2k}$ be the even-index Euler number. For every integer $k \ge 1$,
+$$
+\zeta(2k+1) - \frac{2^{2k-1} |E_{2k}| \pi^{2k+1}}{(2k)!} =
+\sum_{n \ge 0} \frac{N_k(n)}{(n+1)^{2k+1}},
+$$
+where
+$$
+N_k(n) = (2^{4k+1} - 2^{2k})(2 f_n - 1) +
+2^{-(2k+1)} \bigl((2^{2k+1} + 1) t_n + (2^{2k+1} - 1) t_{n+1}\bigr).
+$$
 
-`E_{2k}` is `chapter5EulerEven k`, defined by the binomial recurrence equivalent to the source's
-generating function `1 / cosh t = ∑ E_n tⁿ / n!` (the identity `cosh t · sech t = 1`). The
-source writes `k ∈ ℕ`; `k = 0` is excluded since `s = 1` is the pole of both zeta functions.
-
-Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Lemma 3
-(`jis-2025-25.4.4-lem-3`). -/
-public theorem_wanted hurwitzZeta_three_quarters_two_mul_add_one (k : ℕ) (hk : 1 ≤ k) :
-    HurwitzZeta.hurwitzZeta ((3 / 4 : ℝ) : UnitAddCircle) (2 * k + 1) =
-      -((2 : ℂ) ^ (2 * k - 1) / (2 * k).factorial) * (Real.pi : ℂ) ^ (2 * k + 1) *
-          ((|chapter5EulerEven k| : ℤ) : ℂ) +
-        2 ^ (2 * k) * (2 ^ (2 * k + 1) - 1) * riemannZeta (2 * k + 1)
-
-
-/-- For `k ≥ 1`,
-`ζ(2k+1) - 2^{2k-1} |E_{2k}| π^{2k+1} / (2k)! = ∑_{n ≥ 1} N(n;k) / n^{2k+1}` with
-`N(n;k) = (2^{4k+1} - 2^{2k})(2bₙ - 1) + 2^{-(2k+1)}((2^{2k+1} + 1) t_{n-1} + (2^{2k+1} - 1) tₙ)`,
-where `(bₙ)_{n ≥ 1}` is the regular paperfolding sequence (`b_{2n} = bₙ`, `b_{4n+1} = 0`,
-`b_{4n+3} = 1`; `bₙ = paperfoldingSeq (n - 1)`), `(tₙ)_{n ≥ 0}` is the Thue-Morse sequence
-(`thueMorse`), and `E_{2k}` is the even Euler number (`chapter5EulerEven k`). The sum is
-indexed by `n + 1`.
+In the source's indexing $b_n = f_{n-1}$ for $n \ge 1$ (so $b_{2n} = b_n$, $b_{4n+1} = 0$ and
+$b_{4n+3} = 1$), the right side is $\sum_{n \ge 1} N(n;k)/n^{2k+1}$ with
+$N(n;k) = (2^{4k+1} - 2^{2k})(2b_n - 1) +
+2^{-(2k+1)}((2^{2k+1} + 1) t_{n-1} + (2^{2k+1} - 1) t_n)$.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
 Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Theorem 2
@@ -59,10 +50,16 @@ public theorem_wanted riemannZeta_two_mul_add_one_sub_eq_tsum_paperfolding_thueM
             ((2 : ℝ) ^ (2 * k + 1) - 1) * ((thueMorse (n + 1)).toNat : ℝ))) /
           ((n + 1 : ℕ) : ℝ) ^ (2 * k + 1) : ℝ) : ℂ)
 
-/-- For `k ≥ 1`,
-`(2^{4k+1} - 2^{2k}) ∑_{n ≥ 1} (2bₙ - 1)/n^{2k+1} = -2^{2k-1} π^{2k+1} |E_{2k}| / (2k)!`,
-with `(bₙ)` the regular paperfolding sequence (`bₙ = paperfoldingSeq (n - 1)`; the sum is indexed
-by `n + 1`) and `E_{2k}` the even Euler number.
+/-- **A paperfolding Dirichlet series at odd integers.** Let $(f_n)_{n \ge 0}$ be the regular
+paperfolding sequence, indexed from $0$, and let $E_{2k}$ be the even-index Euler number. For
+every integer $k \ge 1$,
+$$
+(2^{4k+1} - 2^{2k}) \sum_{n \ge 0} \frac{2 f_n - 1}{(n+1)^{2k+1}}
+= -\frac{2^{2k-1} \pi^{2k+1} |E_{2k}|}{(2k)!}.
+$$
+
+In the source's indexing $b_n = f_{n-1}$ for $n \ge 1$, the sum is
+$\sum_{n \ge 1} (2 b_n - 1)/n^{2k+1}$.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
 Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Lemma 5 (`jis-2025-25.4.4-lem-5`);
@@ -73,11 +70,18 @@ public theorem_wanted tsum_paperfolding_two_mul_add_one (k : ℕ) (hk : 1 ≤ k)
       -((2 : ℝ) ^ (2 * k - 1) / (2 * k).factorial) * Real.pi ^ (2 * k + 1) *
         ((|chapter5EulerEven k| : ℤ) : ℝ)
 
-/-- For `k ≥ 1`, with `βₙ = (-1)^{bₙ}` for the regular paperfolding sequence,
-`∑ βₙ / n^{2k+1} = π^{2k+1} |E_{2k}| / ((2^{2k+2} - 2)(2k)!)`, summed over `n ≥ 1`. The
-printed sum `∑_{n ≥ 0} βₙ/(n+1)^{2k+1}` uses `b₀`, which the recurrence `b_{2n} = bₙ` leaves
-undetermined; the paper's proof (from Lemma 5) gives the sum over `n ≥ 1` of `βₙ/n^{2k+1}`,
-i.e. the printed sum with the paperfolding sequence indexed from `0` (`paperfoldingSeq`).
+/-- **The $\pm 1$ paperfolding Dirichlet series at odd integers.** Let $(f_n)_{n \ge 0}$ be the
+regular paperfolding sequence, indexed from $0$, and let $E_{2k}$ be the even-index Euler number.
+For every integer $k \ge 1$,
+$$
+\sum_{n \ge 0} \frac{(-1)^{f_n}}{(n+1)^{2k+1}} =
+\frac{\pi^{2k+1} |E_{2k}|}{(2^{2k+2} - 2)(2k)!}.
+$$
+
+In the source's indexing $b_n = f_{n-1}$ for $n \ge 1$, this is the sum over $n \ge 1$ of
+$(-1)^{b_n}/n^{2k+1}$. The source prints the sum as $\sum_{n \ge 0} (-1)^{b_n}/(n+1)^{2k+1}$,
+which uses $b_0$, left undetermined by the recurrence $b_{2n} = b_n$; its proof (from Lemma 5)
+gives the sum over $n \ge 1$ stated here.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
 Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Corollary 7

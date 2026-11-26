@@ -9,6 +9,7 @@ Convex sets and convex bodies in Euclidean space: Helly-type and Radon-type theo
 - [Hadwiger's theorem on valuations](hadwiger-s-theorem-on-valuations/README.md)
 - [Hanner polytopes](hanner-polytopes/README.md)
 - [Hyperplane slicing problem](hyperplane-slicing-problem/README.md)
+- [Integer programming](integer-programming/README.md)
 - [Linear programming](linear-programming/README.md)
 - [Robust linear programming](robust-linear-programming/README.md)
 - [Straszewicz's theorem](straszewicz-s-theorem/README.md)
@@ -21,3 +22,4 @@ Convex sets and convex bodies in Euclidean space: Helly-type and Radon-type theo
 - [Tverberg's theorem](tverberg.md)
 - [Ulam's flat-sections problem in dimension three](ulam-flat-sections-convex.md)
 - [Knaster–Kuratowski–Mazurkiewicz lemma](kkm-lemma.md)
+- [Convex set](convex-set.md)

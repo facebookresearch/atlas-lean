@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.BusyBeaver
+public import CSLibExt.Computability.BusyBeaverStepsThree
+public import CSLibExt.Computability.BusyBeaverStepsFour
 
 @[expose] public section
 
@@ -58,28 +59,29 @@ treated differently:
   consistent theory sound for that machine's halting sentence.
 -/
 
-/-- Source: Lin--Radó (1965), determination of `S(3) = 21`. -/
-theorem_wanted busyBeaverSteps_three_wanted :
-    busyBeaverSteps 3 = 21
+/-- **Four-state Busy Beaver score value.** Rado's score function $\Sigma$ satisfies
+$\Sigma(4) = 13$: among the two-symbol Busy Beaver machines with $4$ working states that halt when
+started on the blank tape, the largest number of ones left on the tape at the halting time is $13$.
 
-/-- Source: Lin--Radó (1965), determination of `Σ(3) = 6`. -/
-theorem_wanted busyBeaverOnes_three_wanted :
-    busyBeaverOnes 3 = 6
-
-/-- Source: Brady (1983), determination of `S(4) = 107`. -/
-theorem_wanted busyBeaverSteps_four_wanted :
-    busyBeaverSteps 4 = 107
-
-/-- Source: Brady (1983), determination of `Σ(4) = 13`. -/
+Source: Brady (1983), determination of `Σ(4) = 13`. -/
 theorem_wanted busyBeaverOnes_four_wanted :
     busyBeaverOnes 4 = 13
 
-/-- Source: Busy Beaver Challenge (2025), determination of
+/-- **Five-state Busy Beaver shift value.** Rado's shift function $S$ satisfies
+$S(5) = 47176870$: among the two-symbol Busy Beaver machines with $5$ working states that halt
+when started on the blank tape, the largest halting time is $47176870$.
+
+Source: Busy Beaver Challenge (2025), determination of
 `S(5) = 47176870`. -/
 theorem_wanted busyBeaverSteps_five_wanted :
     busyBeaverSteps 5 = 47176870
 
-/-- Source: Busy Beaver Challenge (2025), determination of
+/-- **Five-state Busy Beaver score value.** Rado's score function $\Sigma$ satisfies
+$\Sigma(5) = 4098$: among the two-symbol Busy Beaver machines with $5$ working states that halt
+when started on the blank tape, the largest number of ones left on the tape at the halting time
+is $4098$.
+
+Source: Busy Beaver Challenge (2025), determination of
 `Σ(5) = 4098`. -/
 theorem_wanted busyBeaverOnes_five_wanted :
     busyBeaverOnes 5 = 4098

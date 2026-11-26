@@ -29,13 +29,14 @@ distributed under the Apache License, Version 2.0. lean-eval ships no
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.NonIsotopicKnotsWanted` namespace. The shared knot-theory prelude is imported from `WantedExt.Topology.ConwayKnotShared` instead of being copied here. Mathematical
-statements are unchanged. Source: Classical; see https://en.wikipedia.org/wiki/Knot_invariant.
+and placed the declarations in the `MathlibExt.Topology.NonIsotopicKnotsWanted` namespace.
+The shared knot-theory prelude is imported from `MathlibExt.Topology.ConwayKnotShared`.
+Mathematical statements are unchanged. Source: Classical; see https://en.wikipedia.org/wiki/Knot_invariant.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -49,7 +50,7 @@ open MathlibExt.Topology.ConwayKnotShared.KnotTheory
 
 /-! The knot-theory model (`R3`, `Knot`, `TwoLink`, `AmbientIsotopy`,
 `CircleReparam`, isotopy, `reflectZ`, chirality) is shared with the other
-knot entries via `WantedExt.Topology.ConwayKnotShared` and is not copied
+knot entries via `MathlibExt.Topology.ConwayKnotShared` and is not copied
 here, so all knot entries speak about the same `Knot` type. -/
 
 /-!
@@ -86,7 +87,11 @@ elementary ingredients:
   (3 of them); the trefoil admits 9.
 
 See <https://en.wikipedia.org/wiki/Knot_invariant> for a survey. -/
-/-- Source: Classical; see https://en.wikipedia.org/wiki/Knot_invariant. Via leanprover/lean-eval@38361be, problem `exists_nonisotopic_knots`. -/
+/-- **Existence of non-isotopic knots.** There are two oriented smooth knots $K_1$ and $K_2$ in
+$\mathbb{R}^3$ that are not ambient-isotopic.
+
+Source: Classical; see https://en.wikipedia.org/wiki/Knot_invariant. Via
+leanprover/lean-eval@38361be, problem `exists_nonisotopic_knots`. -/
 public theorem_wanted exists_nonisotopic_knots : ∃ K₁ K₂ : Knot, ¬ K₁.Isotopic K₂
 
 end KnotTheory

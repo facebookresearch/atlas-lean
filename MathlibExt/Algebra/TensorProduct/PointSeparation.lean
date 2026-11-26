@@ -24,6 +24,7 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 public import Mathlib.Algebra.Algebra.Pi
 import Mathlib.RingTheory.Flat.Basic
 import Mathlib.LinearAlgebra.Basis.VectorSpace
+import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
 # Separation of tensors by pairs of algebraic points
@@ -42,7 +43,13 @@ namespace Algebra.TensorProduct
 variable {K L A P : Type*} [Field K] [Field L] [Algebra K L]
   [CommRing A] [Algebra K A] (pt : P → A →ₐ[K] L)
 
-private theorem eq_zero_of_forall_point_eq_zero
+/-- **A separating family of points detects zero.** Let `K` be a field, `L` a field extension
+of `K`, `A` a commutative `K`-algebra, and `pt : P → (A →ₐ[K] L)` any family of `K`-algebra
+maps into `L`, not necessarily all of them. If the scalar-extended evaluation map
+`L ⊗[K] A → (P → L)` is injective, an element of `A` at which every map of the family vanishes
+is zero. The index `P` and the algebra may be infinite, and the evaluation map need not be
+surjective. -/
+theorem eq_zero_of_forall_point_eq_zero
     (hinj : Function.Injective
       (lift (Algebra.ofId L (P → L)) (AlgHom.pi pt)
         (fun _ _ => Commute.all _ _) : L ⊗[K] A →ₐ[L] (P → L)))
@@ -51,6 +58,22 @@ private theorem eq_zero_of_forall_point_eq_zero
   apply hinj
   ext p
   simpa using ha p
+
+/-- **A separating family of points detects algebra maps.** Let `K` be a field, `L` a field
+extension of `K`, `A` a commutative `K`-algebra, and `pt : P → (A →ₐ[K] L)` any family of
+`K`-algebra maps into `L`, not necessarily all of them. If the scalar-extended evaluation map
+`L ⊗[K] A → (P → L)` is injective, two `K`-algebra maps from a `K`-algebra `B` into `A` that
+agree after composition with every map of the family are equal. -/
+theorem algHom_eq_of_forall_point_comp_eq {B : Type*} [Semiring B] [Algebra K B]
+    (hinj : Function.Injective
+      (lift (Algebra.ofId L (P → L)) (AlgHom.pi pt)
+        (fun _ _ => Commute.all _ _) : L ⊗[K] A →ₐ[L] (P → L)))
+    {u u' : B →ₐ[K] A} (h : ∀ p, (pt p).comp u = (pt p).comp u') : u = u' := by
+  ext b
+  rw [← sub_eq_zero]
+  refine eq_zero_of_forall_point_eq_zero pt hinj _ fun p => ?_
+  rw [map_sub, sub_eq_zero]
+  exact DFunLike.congr_fun (h p) b
 
 /-- If the scalar-extended evaluation map is injective, a tensor vanishing at
 all pairs of selected algebraic points is zero. The algebra and the point

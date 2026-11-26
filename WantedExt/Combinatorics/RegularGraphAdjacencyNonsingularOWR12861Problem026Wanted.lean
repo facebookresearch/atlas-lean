@@ -41,25 +41,43 @@ symmetric `±1` matrix) are not formalized.
 open Filter Topology
 
 open Classical in
-/-- The proportion, among the `d`-regular simple graphs on the vertex set `Fin n`, of those whose
-adjacency matrix is nonsingular (over `ℚ`, equivalently over `ℝ`). This is the probability that the
-adjacency matrix of the uniformly random `d`-regular graph `G(n, d)` is nonsingular. -/
+/-- **Proportion of regular graphs with nonsingular adjacency matrix.** For natural numbers $d$
+and $n$, this is the real number obtained by dividing the number of $d$-regular simple graphs on
+the vertex set $\{0, 1, \ldots, n-1\}$ whose adjacency matrix has nonzero determinant over
+$\mathbb{Q}$ by the number of all $d$-regular simple graphs on that vertex set; it is $0$ when
+there is no $d$-regular simple graph on that vertex set. It is the probability that the adjacency
+matrix of the uniformly random $d$-regular graph $G(n, d)$ is nonsingular.
+
+Nonsingularity over $\mathbb{Q}$ is the same as nonsingularity over $\mathbb{R}$. -/
 noncomputable def nonsingularFraction (d n : ℕ) : ℝ :=
   (Nat.card {G : SimpleGraph (Fin n) // G.IsRegularOfDegree d ∧ (G.adjMatrix ℚ).det ≠ 0} : ℝ) /
     Nat.card {G : SimpleGraph (Fin n) // G.IsRegularOfDegree d}
 
-/-- Vu's problem (Oberwolfach Report 01/2014): for every fixed `d > 2`, the adjacency matrix of the
-uniformly random `d`-regular graph on `n` vertices is nonsingular with probability tending to `1`
-as `n → ∞` (along the `n` with `n d` even, for which `d`-regular graphs on `n` vertices exist). -/
+/-- **Vu's problem on nonsingular adjacency matrices of random regular graphs.** This is the
+statement that for every natural number $d \ge 3$, the probability that the adjacency matrix of
+the uniformly random $d$-regular simple graph on $n$ labeled vertices is nonsingular tends to $1$
+as $n \to \infty$, where $n$ runs over the natural numbers with $nd$ even. Here the probability is
+the proportion of the $d$-regular simple graphs on $\{0, 1, \ldots, n-1\}$ whose adjacency matrix
+has nonzero determinant over $\mathbb{Q}$.
+
+The restriction to $nd$ even is natural: $d$-regular graphs on $n$ vertices exist only for such
+$n$. -/
 def regularGraphAdjacencyNonsingular : Prop :=
   ∀ d : ℕ, 3 ≤ d →
     Tendsto (fun n => nonsingularFraction d n) (atTop ⊓ 𝓟 {n | Even (n * d)}) (𝓝 1)
 
 /--
-Resolved true: Huang proved that for every fixed `d ≥ 3` the adjacency matrix of a random
-`d`-regular directed or undirected graph on `n` vertices is singular with probability at most
-`n^(-c)` for some `c > 0` and all large `n`, in the configuration model and, by contiguity, in the
-uniform model. Source: V. Vu, problem (1) of the problem session, in Combinatorics, Oberwolfach
+**Nonsingularity of adjacency matrices of random regular graphs.** For every natural number
+$d \ge 3$, the probability that the adjacency matrix of the uniformly random $d$-regular simple
+graph on $n$ labeled vertices has nonzero determinant (over $\mathbb{Q}$, equivalently over
+$\mathbb{R}$) tends to $1$ as $n \to \infty$ along the natural numbers $n$ with $nd$ even.
+
+Huang proved more: for every fixed $d \ge 3$ there is $c > 0$ such that the adjacency matrix of a
+random $d$-regular directed or undirected graph on $n$ vertices is singular with probability at
+most $n^{-c}$ for all large $n$, in the configuration model and, by contiguity, in the uniform
+model.
+
+Source: V. Vu, problem (1) of the problem session, in Combinatorics, Oberwolfach
 Reports 11 (2014), Report 01/2014, pp. 84-85, DOI 10.4171/OWR/2014/01; resolution: J. Huang,
 Invertibility of adjacency matrices for random d-regular graphs, Duke Math. J. 170 (2021), no. 18,
 3977-4032, DOI 10.1215/00127094-2021-0006, arXiv:1807.06465, Theorem 1.3: for fixed d ≥ 3, P(A is

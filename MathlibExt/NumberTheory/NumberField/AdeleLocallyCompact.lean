@@ -6,13 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Definitions/Def_NumberField_Completion_Finite.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source file at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+The source is machine-generated proof code built around a proof-extraction
+framework; the statements and proofs are reused here with that machinery
+removed and the names restated in Mathlib style.
+-/
+
 module
 
 public import Mathlib.NumberTheory.NumberField.AdeleRing
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 public import Mathlib.Topology.Algebra.Valued.LocallyCompact
+import MathlibExt.RingTheory.DedekindDomain.AdicCompletionIntegers
 import MathlibExt.RingTheory.DedekindDomain.AdicCompletionResidueField
-import Mathlib.Topology.Algebra.Module.Compact
 
 /-!
 # Local compactness of number-field adeles
@@ -36,14 +55,11 @@ The repaired
 integral-closure route requires the base completion integer ring to be complete
 for its maximal-ideal adic topology.
 
-`isAdicComplete_adicCompletionIntegers` proves exactly that prerequisite from
-the compactness established immediately above. Given a compatible sequence
-`f n` modulo powers of the maximal ideal, it forms the cosets
-`S n = f n + (maximalIdeal)^n`. Compatibility makes these nonempty closed
-cosets nested. Compactness gives a point in their intersection, and membership
-in every `S n` says precisely that this point is congruent to `f n` modulo
-`(maximalIdeal)^n`. This is `IsAdicComplete.prec'`; no separate metric
-normalization or unstated completeness assumption is used.
+`isAdicComplete_adicCompletionIntegers` registers that prerequisite as an
+instance. It is the case `A = 𝓞 K` of
+`IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers_isAdicComplete`,
+which holds for the completion of any Dedekind domain at any height-one prime
+and uses neither compactness nor finiteness of the residue field.
 -/
 
 @[expose] public section
@@ -51,19 +67,32 @@ normalization or unstated completeness assumption is used.
 noncomputable section
 
 open IsDedekindDomain NumberField Valued.integer
-open scoped Valued Pointwise
+open scoped Valued
 
 namespace IsDedekindDomain.HeightOneSpectrum
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- The residue field of the adic completion integers is finite. -/
+/-- **Finite residue field of a completed number ring.** Let $K$ be a number field and $v$ a
+nonzero prime ideal of its ring of integers $\mathcal{O}_K$. The residue field of the ring of
+integers $\mathcal{O}_v$ of the $v$-adic completion $K_v$ of $K$ is finite. -/
 theorem finite_residueField (v : HeightOneSpectrum (𝓞 K)) :
     Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)) := by
   have : v.asIdeal.IsMaximal := v.isPrime.isMaximal v.ne_bot
   have hfin : Finite (𝓞 K ⧸ v.asIdeal) := inferInstance
   exact Finite.of_equiv (𝓞 K ⧸ v.asIdeal)
     (v.completionResidueFieldEquiv (K := K)).symm.toEquiv
+
+/-- Finiteness of the residue field, registered as an instance so that
+compactness and properness criteria for valued fields can use it. -/
+instance finite_residueField_instance (v : HeightOneSpectrum (𝓞 K)) :
+    Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)) :=
+  finite_residueField K v
+
+/-- Finiteness of the residue field in valued-field notation. -/
+instance finite_residueField_valued (v : HeightOneSpectrum (𝓞 K)) :
+    Finite 𝓀[v.adicCompletion K] :=
+  inferInstanceAs (Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)))
 
 /-- The adic completion integers form a compact space. -/
 noncomputable instance compactSpace (v : HeightOneSpectrum (𝓞 K)) :
@@ -77,31 +106,17 @@ noncomputable instance compactSpace (v : HeightOneSpectrum (𝓞 K)) :
 noncomputable instance isAdicComplete_adicCompletionIntegers
     (v : HeightOneSpectrum (𝓞 K)) :
     IsAdicComplete (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K))
-      (v.adicCompletionIntegers K) where
-  prec' f hf := by
-    let _ : CompactSpace (v.adicCompletionIntegers K) := compactSpace K v
-    let S n : Set (v.adicCompletionIntegers K) :=
-      f n +ᵥ ((IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n :
-        Ideal (v.adicCompletionIntegers K)) : Set (v.adicCompletionIntegers K))
-    have hS n : S (n + 1) ⊆ S n := by
-      apply (Set.vadd_set_subset_vadd_set_iff.mpr
-        (Ideal.pow_le_pow_right n.le_succ)).trans
-      simpa [S] using (hf n.le_succ).symm
-    have h n : IsClosed (S n) :=
-      (IsNoetherianRing.isClosed_ideal
-        (IsLocalRing.maximalIdeal (v.adicCompletionIntegers K) ^ n)).vadd (f n)
-    obtain ⟨L, hL⟩ := (h 0).isCompact.nonempty_iInter_of_sequence_nonempty_isCompact_isClosed
-      S hS (by simp [S]) h
-    refine ⟨L, fun n ↦ ?_⟩
-    obtain ⟨y, hy, rfl⟩ := Set.mem_iInter.mp hL n
-    simpa [SModEq.sub_mem] using hy
+      (v.adicCompletionIntegers K) :=
+  v.adicCompletionIntegers_isAdicComplete
 
 /-- Each finite local completion of a number field is a proper space. -/
 noncomputable instance properSpace (v : HeightOneSpectrum (𝓞 K)) :
     ProperSpace (v.adicCompletion K) := by
   exact Valued.integer.properSpace_iff_compactSpace_integer.mpr (compactSpace K v)
 
-/-- The adic completion integers are compact as a subset of the completion. -/
+/-- **Compactness of the completed ring of integers.** Let $K$ be a number field and $v$ a
+nonzero prime ideal of its ring of integers $\mathcal{O}_K$. The ring of integers $\mathcal{O}_v$
+of the $v$-adic completion $K_v$ of $K$ is a compact subset of $K_v$. -/
 theorem isCompact_adicCompletionIntegers (v : HeightOneSpectrum (𝓞 K)) :
     IsCompact (↑(v.adicCompletionIntegers K) : Set (v.adicCompletion K)) := by
   change IsCompact (Valued.integer (v.adicCompletion K) : Set (v.adicCompletion K))

@@ -59,36 +59,52 @@ open Manifold Real MeasureTheory
 
 open scoped ContDiff
 
-/-- Rectangle with sides parallel to the axes, given by opposite corners `a` and `b`. -/
+/-- **Axis-aligned rectangle.** For points $a = (a_1, a_2)$ and $b = (b_1, b_2)$ of $\mathbb{R}^2$,
+the axis-aligned (possibly degenerate) rectangle with opposite corners $a$ and $b$ is the list of
+its four vertices $(a_1, a_2)$, $(b_1, a_2)$, $(b_1, b_2)$, $(a_1, b_2)$, in this order. -/
 noncomputable def axisAlignedRectangleCorners (a b : ℝ × ℝ) : Fin 4 → ℝ × ℝ :=
   ![(a.1, a.2), (b.1, a.2), (b.1, b.2), (a.1, b.2)]
 
-/-- A rectangle in the Euclidean plane with opposite vertices `a` and `b` rotated by an angle `θ`.
+/-- **Rotated rectangle.** For points $a, b \in \mathbb{R}^2$ and an angle $\theta \in \mathbb{R}$,
+the rotated rectangle given by $a$, $b$ and $\theta$ is the list of four points obtained by applying
+the rotation $(x, y) \mapsto (x \cos\theta + y \sin\theta, -x \sin\theta + y \cos\theta)$ about the
+origin to each vertex, in order, of the axis-aligned rectangle with opposite corners $a$ and $b$.
 -/
 noncomputable def rectangleCorners (a b : ℝ × ℝ) (θ : ℝ) : Fin 4 → ℝ × ℝ :=
   ContinuousLinearMap.rotation θ ∘ axisAlignedRectangleCorners a b
 
-/-- A rectangle is inscribed in a Jordan curve `γ` if all its vertices are distinct and lie on `γ`.
-Note: We don't need the smooth hypothesis on the Jordan curve to define this. -/
+/-- **Inscribed rectangle.** Let $\gamma$ be a map from the unit circle to $\mathbb{R}^2$. For
+points $a, b \in \mathbb{R}^2$ and an angle $\theta \in \mathbb{R}$, the rotated rectangle given by
+$a$, $b$ and $\theta$ is inscribed in $\gamma$ when its four vertices are pairwise distinct and
+each lies in the image of $\gamma$.
+
+The map $\gamma$ need not be smooth, or even a Jordan curve, for this definition. -/
 def IsInscribedRectangle (a b : ℝ × ℝ) (θ : ℝ) (γ : Circle → ℝ × ℝ) : Prop :=
   Function.Injective (rectangleCorners a b θ) ∧ ∀ i : Fin 4, rectangleCorners a b θ i ∈ Set.range γ
 
-/-- The aspect ratio of a rectangle is the ratio of the length of its sides. -/
+/-- **Aspect ratio.** For points $a = (a_1, a_2)$ and $b = (b_1, b_2)$ of $\mathbb{R}^2$, the
+aspect ratio of the axis-aligned rectangle with opposite corners $a$ and $b$ is
+$|a_1 - b_1| / |a_2 - b_2|$, the ratio of its horizontal side length to its vertical side
+length; it is $0$ when $a_2 = b_2$. -/
 noncomputable def aspectRatio (a b : ℝ × ℝ) : ℝ :=
   |a.1 - b.1| / |a.2 - b.2|
 
-/-- The set `X` from Theorem 1. More precisely, let `X` be the set of all `r ∈ [0,1]` so that there
-is an inscribed rectangle in `γ` of aspect ratio `tan(r·π/4)`. -/
+/-- **Aspect-ratio parameters of inscribed rectangles.** For a map $\gamma$ from the unit circle
+to $\mathbb{R}^2$, let $X(\gamma)$ be the set of all $r \in [0, 1]$ for which there are points
+$a, b \in \mathbb{R}^2$ and an angle $\theta \in \mathbb{R}$ such that the rotated rectangle given
+by $a$, $b$ and $\theta$ is inscribed in $\gamma$ and the axis-aligned rectangle with opposite
+corners $a$ and $b$ has aspect ratio $\tan(r\pi/4)$. -/
 noncomputable def X (γ : Circle → ℝ × ℝ) : Set ℝ :=
   {r : ℝ | r ∈ Set.Icc 0 1 ∧ ∃ a b : ℝ × ℝ, ∃ θ : ℝ,
     aspectRatio a b = tan (r * π / 4) ∧ IsInscribedRectangle a b θ γ}
 
 /--
-Statement of Theorem 1:
+**Hugelmeyer's theorem on aspect ratios of inscribed rectangles.** Let $\gamma$ be a smooth Jordan
+curve, that is, a map from the unit circle to $\mathbb{R}^2$ that is a $C^\infty$ immersion and a
+topological embedding, and let $X$ be the set of all $r \in [0, 1]$ such that some rectangle
+inscribed in $\gamma$ has aspect ratio $\tan(r\pi/4)$. Then the Lebesgue measure of $X$ is at
+least $1/3$.
 
-Let `γ` be a smooth Jordan curve, and let `X` be the set of all `r ∈ [0,1]` so that there is an
-inscribed rectangle in `γ` of aspect ratio `tan(r·π/4)`.
-Then the Lebesgue measure of `X` is at least `1/3`.
 Source: C. Hugelmeyer, `Inscribed rectangles in a smooth Jordan curve attain at least one third of all aspect ratios`, Annals of Math, 194 (2) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-2-InscribedRectangles.lean Via leanprover/lean-eval@38361be, problem `annals_inscribed_rectangles`.
 -/
 public theorem_wanted theorem_1 (γ : Circle → ℝ × ℝ) (hγ : IsSmoothEmbedding (𝓡 1) 𝓘(ℝ, ℝ × ℝ) ∞ γ) :

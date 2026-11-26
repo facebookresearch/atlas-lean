@@ -1,8 +1,9 @@
 # Sequentially semiseparable matrices are semiseparable
 
-Let $N, T \in \mathbb{N}$, let $B_0, \dots, B_{T-1}, C_0, \dots, C_{T-1} \in \mathbb{R}^N$ and
-$A_0, \dots, A_{T-1} \in \mathbb{R}^{N \times N}$, and let $M$ be the lower-triangular
-$T \times T$ matrix with entries $M_{ji} = C_j^{\mathsf{T}} A_j A_{j-1} \cdots A_{i+1} B_i$ for
+Let $K$ be a field and let $N, T \in \mathbb{N}$. Take vectors
+$B_0, \dots, B_{T-1}, C_0, \dots, C_{T-1} \in K^N$ and matrices
+$A_0, \dots, A_{T-1} \in K^{N \times N}$. Let $M$ be the lower-triangular
+$T \times T$ matrix over $K$ with entries $M_{ji} = C_j^{\mathsf{T}} A_j A_{j-1} \cdots A_{i+1} B_i$ for
 $j \ge i$ (the product of the $A$'s is the identity when $j = i$) and $M_{ji} = 0$ for $j < i$. Then $M$ is [$N$-semiseparable](is-semiseparable.md).
 
 Proof: fix $s$ and take the block of rows $j \ge s$ and columns $i \le s$. Each of its entries
@@ -22,7 +23,7 @@ covered here.
 
 ## Informally uses
 
-- [Rank of a product of matrices](../../linear-maps-and-duality/rank-of-a-product.md):
+- [Rank of a product of matrices](../../linear-maps-and-duality/rank-of-a-matrix-product/rank-of-a-product.md):
   mathematical prerequisite, the rank bound for each block.
 
 ## Sources
