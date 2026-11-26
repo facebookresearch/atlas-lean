@@ -6,33 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# Bridge between the trusted Conway knot stack and the Euclidean link API
-
-`WantedExt.Topology.ConwayKnotShared` is a trusted, verbatim copy of
-lean-eval knot-theory helpers (Apache License, Version 2.0), kept
-unchanged apart from its namespace so that the wanted statements
-depending on it retain their original meaning. The canonical working
-API for parametrized smooth knots and links in this repository is
-`MathlibExt.Topology.Knot.EuclideanLink`; MathlibExt cannot import
-WantedExt (the layering runs the other way), so the two APIs
-deliberately duplicate three structures field-for-field
-(`Knot`/`ParametrizedKnot`, `AmbientIsotopy`, and `CircleReparam`).
-
-This module is the interoperation point. It does not modify either
-definition: it provides the fieldwise identity conversions in both
-directions, packages them as equivalences, and proves that ambient
-isotopy transfers across the conversions. A future deduplication can
-therefore replace either side by the other mechanically, but only as
-a deliberate change to the trusted file's provenance.
--/
 module
 
 public import Mathlib.Data.Fin.VecNotation
 public import MathlibExt.Topology.Knot.EuclideanLink
-public import WantedExt.Topology.ConwayKnotShared
+public import MathlibExt.Topology.ConwayKnotShared
 
 import Mathlib.Tactic.FinCases
+
+/-!
+# The Conway knot definitions and the Euclidean link API
+
+`knotEquiv` identifies the lean-eval knot type in `MathlibExt.Topology.ConwayKnotShared`
+with the parametrized knots of `MathlibExt.Topology.Knot.EuclideanLink`.
+`knot_isotopic_iff` and `twoLink_isotopic_iff` transfer ambient isotopy in both directions,
+preserving the component labels of two-component links.
+-/
 
 @[expose] public section
 
