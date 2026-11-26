@@ -93,8 +93,8 @@ theorem BooleanFormula.eval_subst {n m : ℕ} (wiring : Fin n → BooleanFormula
   | or g h ihg ihh => simp [BooleanFormula.subst, BooleanFormula.eval, ihg, ihh]
   | not g ih => simp [BooleanFormula.subst, BooleanFormula.eval, ih]
 
-/-- Depth of a substitution is at most the depth of the outer formula plus the maximal depth `D`
-of the substituted formulas: substitution adds depth, it does not multiply it. -/
+/-- Depth of a substitution is at most the depth of the outer formula plus any common bound `D`
+on the depths of the substituted formulas: substitution adds depth, it does not multiply it. -/
 theorem BooleanFormula.depth_subst_le {n m : ℕ} (wiring : Fin n → BooleanFormula m)
     (g : BooleanFormula n) (D : ℕ) (hD : ∀ i, (wiring i).depth ≤ D) :
     (g.subst wiring).depth ≤ g.depth + D := by

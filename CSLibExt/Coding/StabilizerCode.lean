@@ -27,7 +27,8 @@ namespace Cslib.CodingTheory.StabilizerCode
 
 set_option autoImplicit false
 
-/-- The `j`-th signed Pauli generator. -/
+/-- The `j`-th generator `c j • X^(a j) Z^(b j)`, a Pauli operator scaled by an arbitrary complex
+number. -/
 noncomputable def generator {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : Fin r → ℂ) (j : Fin r) :
     Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   c j • pauli (a j) (b j)
@@ -37,7 +38,8 @@ noncomputable def groupElem {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : 
     (T : Finset (Fin r)) : Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ :=
   (List.ofFn fun j => if j ∈ T then generator a b c j else 1).prod
 
-/-- The stabilizer group as a finset of subset products. -/
+/-- The finite set of distinct index-ordered subset products of the generators; it is the group
+they generate (the stabilizer group) when the generators are commuting involutions. -/
 noncomputable def stabilizerGroup {n r : ℕ} (a b : Fin r → Fin n → ZMod 2) (c : Fin r → ℂ) :
     Finset (Matrix (Fin n → ZMod 2) (Fin n → ZMod 2) ℂ) := by
   classical

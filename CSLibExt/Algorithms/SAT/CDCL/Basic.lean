@@ -123,8 +123,9 @@ structure State where
 /-- The initial state: an empty trail, no learned clauses, and no conflict. -/
 def State.initial : State := ⟨[], [], none⟩
 
-/-- Resolve a reason clause containing `literal` with a conflict clause containing the
-complement of `literal`, on the variable of `literal`. -/
+/-- Resolve `reason` with `conflict` on the variable of `literal`: drop the pivot from the reason
+and its complement from the conflict, keeping order and multiplicity; the reason comes first for a
+positive pivot and the conflict first for a negative one. Total: no occurrence is required. -/
 def resolveOn : Nat × Bool → CNFClause → CNFClause → CNFClause
   | (x, true), reason, conflict => CNFClause.resolvent x reason conflict
   | (x, false), reason, conflict => CNFClause.resolvent x conflict reason
@@ -365,7 +366,7 @@ theorem not_cnfSat_of_reachable_conflict_nil {F : CNF} {s : State}
   CNF.not_cnfSat_of_resolutionDerivable_nil ((invariant_of_reachable h).conflict [] hs).1
 
 /-- **Soundness of CDCL**: a reachable state in conflict whose trail has no decision refutes
-the input formula. CDCL reports unsatisfiability on such a conflict. -/
+the input formula. It is therefore sound to report unsatisfiability in this state. -/
 theorem not_cnfSat_of_reachable_conflict {F : CNF} {s : State} {C : CNFClause}
     (h : Relation.ReflTransGen (Step F) State.initial s) (hs : s.conflict = some C)
     (hdec : ∀ literal, TrailEntry.decided literal ∉ s.trail) : ¬CNFSat F := by
