@@ -1199,5 +1199,6 @@ Topics added since this subject's fields were last revised.
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
+- [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
 - [Division Polynomial ZSMul](division-polynomial-zsmul/README.md)
 - [Function Field Pullback](function-field-pullback/README.md)
