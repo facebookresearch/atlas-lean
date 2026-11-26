@@ -11,4 +11,7 @@
 - [Ben-Or's randomized consensus](ben-or-s-randomized-consensus.md)
 - [Consensus under partial synchrony needs a majority](consensus-under-partial-synchrony-needs-a.md)
 - [k-set agreement](k-set-agreement.md)
+- [Synchronous protocol over lossy links](lossy-protocol.md)
+- [Execution with message loss](state-after.md)
+- [Solving coordinated attack in `T` rounds](solves-coordinated-attack.md)
 - [Impossibility of coordinated attack](impossibility-of-coordinated-attack.md)
