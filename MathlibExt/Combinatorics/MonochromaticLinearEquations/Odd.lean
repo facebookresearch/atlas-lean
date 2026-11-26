@@ -31,6 +31,15 @@ receive any residue fibre into any other. Polynomial upper and lower bounds give
 large boxes for which this enlargement changes the total count by an arbitrarily small
 proportion. We round the transferred weights independently, budgeting repeated entries
 separately.
+
+## References
+
+* K. P. Costello and G. Elvin, *Avoiding monochromatic solutions to 3-term equations*,
+  J. Comb. 14(3) (2023), 281–304, Lemma 2.1. We adapt their transference from cyclic
+  groups to integer intervals to fractional colourings and a prime modulus.
+* L. P. Wijaya, *On Monochromatic Solutions of Linear Equations Using at Least Three Colors*,
+  INTEGERS 25 (2025), Article A88, Section 3, states the transference result as Lemma 1,
+  credits Costello and Elvin, and uses it to deduce Corollary 1 from Theorem 1.
 -/
 
 namespace MetaMathlibExt
