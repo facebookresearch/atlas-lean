@@ -13617,6 +13617,7 @@
   "MathlibExt/NumberTheory/SumSquaredDivisorsProduct": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SuperFibocatalan": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "FiboCatalan numbers"},
   "MathlibExt/NumberTheory/SuperMZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
+  "MathlibExt/NumberTheory/SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SylvesterCoinDistinctOddPrimes": {"to": "NumberTheory/numerical-semigroups", "title": "Sylvester's coin theorem"},
   "MathlibExt/NumberTheory/SylvesterCoinTheorem": {"to": "NumberTheory/numerical-semigroups", "title": "Sylvester's coin theorem"},
   "MathlibExt/NumberTheory/SylvesterSchur": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Sylvester–Schur theorem"},
