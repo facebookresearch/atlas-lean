@@ -18,7 +18,9 @@ import Mathlib.Tactic.NormNum
 The uniform `2 × 2` table is the product of its margins, so its kappa is `0`; and on any
 independent table the observed agreement equals the chance agreement. The table with rows
 `(3/8, 3/8)` and `(1/8, 1/8)` has `κ = 0` and `κ_max = 1/2`; every table with its margins has
-`κ ≤ 1/2`, and some table attains it. A table with uniform margins attains `κ = 1`.
+`κ ≤ 1/2`, and some table attains it. A table with uniform margins attains `κ = 1`. The table
+with rows `(1, 0)` and `(0, 0)` has `p_e = 1`, where `kappaMax` is `0` by the convention
+`x / 0 = 0`.
 -/
 
 @[expose] public section
