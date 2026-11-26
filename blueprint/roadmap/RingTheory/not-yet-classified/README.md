@@ -23,6 +23,7 @@ Topics added since this subject's fields were last revised.
 - [Cyclic Row Exactness](cyclic-row-exactness/README.md)
 - [Cyclic SBI](cyclic-sbi/README.md)
 - [De Rham](de-rham/README.md)
+- [Dedekind Fibre](dedekind-fibre/README.md)
 - [Delta Ring](delta-ring/README.md)
 - [Derived Adic Completeness](derived-adic-completeness/README.md)
 - [Derived Module Scalar Operations](derived-module-scalar-operations/README.md)
@@ -58,4 +59,5 @@ Topics added since this subject's fields were last revised.
 - [Left integrals on a finite free Hopf algebra](exists-left-integral-sum-apply-mul-eq-co.md)
 - [Nested Hopf orders with the same kernel and image agree](eq-of-le-of-comap-hopf-ker-eq-of-map-eq.md)
 - [Trdeg Quotient Bound](exists-not-mem-under-forall-trdeg-quotie.md)
+- [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
 - [Complex Coordinates](exists-bij-on-eval-differentiable-on-pi.md)
