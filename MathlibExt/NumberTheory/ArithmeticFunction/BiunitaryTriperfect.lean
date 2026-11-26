@@ -306,7 +306,7 @@ private theorem sigmaBiunitary_mul {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0)
   have h2 : (∑ p ∈ (biunitaryDivisors m) ×ˢ (biunitaryDivisors n), p.1 * p.2) =
       (∑ d₁ ∈ biunitaryDivisors m, d₁) * (∑ d₂ ∈ biunitaryDivisors n, d₂) := by
     rw [Finset.sum_product]
-    show (∑ x ∈ biunitaryDivisors m, ∑ y ∈ biunitaryDivisors n, x * y) = _
+    change (∑ x ∈ biunitaryDivisors m, ∑ y ∈ biunitaryDivisors n, x * y) = _
     exact (Finset.sum_mul_sum _ _ _ _).symm
   rw [sigmaBiunitary, sigmaBiunitary, sigmaBiunitary, ← hbij, h2]
 
