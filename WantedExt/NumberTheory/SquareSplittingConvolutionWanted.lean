@@ -17,6 +17,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitDivisorCountLSeries
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
 
 namespace MetaMathlibExt
 
@@ -65,32 +66,6 @@ public theorem_wanted squareSplitConv_bivariate_iso :
           f (u₁ * v₁ ^ 2) * g ((u / u₁) * (v / v₁) ^ 2)) ∧
     ∀ F : ℕ → ℕ → ℂ, ∃! f : ArithmeticFunction ℂ,
       ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v
-
-/-- **Möbius function of the square-splitting convolution.** Let $\star$ be the square-splitting
-convolution, $\mathbf{1}$ the constant function $1$ on the positive integers, $\varepsilon$ the
-identity element ($\varepsilon(1) = 1$ and $\varepsilon(n) = 0$ for $n \ne 1$), and let $\mu_\star$
-be any complex-valued arithmetic function with $\mathbf{1} \star \mu_\star = \varepsilon$. Then
-$\mu_\star(n) = \mu(u(n))\,\mu(v(n))$ for every $n \ge 1$, where $\mu$ is the Möbius function,
-$u(n)$ is the product of the primes dividing $n$ to an odd power and $v(n)$ is the positive
-integer with $n = u(n)\,v(n)^2$. For every prime $p$, $\mu_\star(p) = \mu_\star(p^2) = -1$,
-$\mu_\star(p^3) = 1$ and $\mu_\star(p^k) = 0$ for every $k \ge 4$. For every complex $s$ with
-$\operatorname{Re} s > 1$,
-$$\sum_{n \ge 1} \frac{\mu_\star(n)}{n^s} = \prod_p \left(1 - p^{-s} - p^{-2s} + p^{-3s}\right)
-= \frac{1}{\zeta(s)\,\zeta(2s)}.$$
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 3
-(`integers-2026-A56-thm-3`). -/
-public theorem_wanted squareSplitMoebius_formula (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1) :
-    (∀ n ≠ 0, m n = (ArithmeticFunction.moebius (squareSplitU n) : ℂ) *
-      ArithmeticFunction.moebius (squareSplitV n)) ∧
-    (∀ p : ℕ, p.Prime → m p = -1 ∧ m (p ^ 2) = -1 ∧ m (p ^ 3) = 1 ∧
-      ∀ k, 4 ≤ k → m (p ^ k) = 0) ∧
-    ∀ s : ℂ, 1 < s.re →
-      LSeries (fun n => m n) s = ∏' p : Nat.Primes,
-        (1 - ((p : ℕ) : ℂ) ^ (-s) - ((p : ℕ) : ℂ) ^ (-(2 * s)) + ((p : ℕ) : ℂ) ^ (-(3 * s))) ∧
-      LSeries (fun n => m n) s = 1 / (riemannZeta s * riemannZeta (2 * s))
 
 /-- **Inverse of a multiplicative function under the square-splitting convolution.** Let $f$ be a
 multiplicative complex arithmetic function (an arithmetic function $h$ is multiplicative when
