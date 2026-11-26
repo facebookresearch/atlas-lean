@@ -22,6 +22,15 @@ import Mathlib.Tactic.LinearCombination
 For a prime `p`, each cleared congruence modulo `p * (2 * p + 1)` is equivalent to the
 Fermat congruence modulo `2 * p + 1`. The Carmichael function rules out a composite
 `2 * p + 1` satisfying this congruence at every coprime base.
+
+## References
+
+* Takashi Agoh, *A Note on Fermat's Congruence*, INTEGERS 25 (2025), Article A31,
+  pp. 1–10, Theorem 3.3. The reduction of each congruence to the Fermat property follows Agoh.
+* Adel Alahmadi and Florian Luca, *There are no Carmichael numbers of the form $2^n p + 1$
+  with $p$ prime*, C. R. Mathématique 360 (2022), pp. 1177–1181, Theorem 3. Agoh invokes their
+  theorem to exclude Carmichael numbers of the form $2p + 1$. This proof establishes the needed
+  $2p + 1$ case directly using the exponent of the group of units.
 -/
 
 namespace MetaMathlibExt
