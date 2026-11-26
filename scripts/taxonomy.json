@@ -15290,7 +15290,7 @@
   "WantedExt/Analysis/WangZahlKakeyaWanted": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Kakeya sets"},
   "WantedExt/Analysis/Wavelet/ScatteringWanted": {"to": "Analysis/harmonic-analysis/wavelets", "title": "Wavelet scattering transform"},
   "WantedExt/Analysis/WienerLevyWanted": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Absolutely convergent Fourier series"},
-  "WantedExt/Analysis/WienerOneOverFWanted": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Absolutely convergent Fourier series"},
+  "MathlibExt/Analysis/Fourier/AddCircle/WienerOneOverF": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Absolutely convergent Fourier series"},
   "WantedExt/Analysis/WignerSemicircleWanted": {"to": "Probability/high-dimensional-probability", "title": "Wigner's semicircle law"},
   "WantedExt/Analysis/WirsingConstantWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin–Wirsing operator"},
   "WantedExt/Biology/StatisticalGenetics/BernsteinABOWanted": {"to": "Biology/statistical-genetics", "title": "Bernstein's triple-allele law for the ABO blood groups"},
