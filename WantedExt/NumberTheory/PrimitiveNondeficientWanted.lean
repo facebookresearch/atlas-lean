@@ -32,7 +32,10 @@ both in `ℚ`.
 The paper's Theorem (label `maintheoremboundwithkR`: some
 `p_i^{a_i+1} < 2kR`) is already proved in MathlibExt as
 `MetaMathlibExt.primitive_nondeficient_prime_power_bound` and is
-not restated; this module states the paper's remaining numbered
+not restated. The statement
+`MathlibExt.NumberTheory.PrimitiveNondeficientWanted.max_primeFactor_lt_sqrt_radical_or_exists_pow_lt`
+is proved in `MathlibExt.NumberTheory.PrimitiveNondeficient` and is
+not restated either; this module states the paper's remaining numbered
 lemmas and propositions.
 -/
 module
