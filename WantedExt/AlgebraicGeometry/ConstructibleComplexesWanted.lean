@@ -12,6 +12,7 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemCokernel
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemKernel
+public import MathlibExt.AlgebraicGeometry.ConstructibleComplexesConstructibleScalarExtension
 
 /-!
 # Closure, preservation and coefficients for constructible complexes
@@ -23,6 +24,8 @@ and derived functors; the cokernel statement for local systems
 and the kernel statement for local systems (`localSystem_kernel`) is proved in
 `MathlibExt.AlgebraicGeometry.ConstructibleComplexesLocalSystemKernel`.
 The perverse t-structure is not requested here.
+The theorem `constructible_scalarExtension` is proved in
+`MathlibExt.AlgebraicGeometry.ConstructibleComplexesConstructibleScalarExtension`.
 Sources: Dimca, *Sheaves in Topology*, Chapters 2–4; de Cataldo–Migliorini,
 https://arxiv.org/abs/0712.0349, §1.5.
 -/
@@ -78,13 +81,5 @@ public theorem_wanted constructible_proper_pushforward (k : Type) [Field k]
     (hK : ConstructibleComplexes.boundedConstructible k X
       (DerivedCategory.Plus.ι.obj K)) :
     ConstructibleComplexes.boundedConstructible k Y ((derivedPushforwardPlus k f).obj K)
-
-/-- Derived field extension preserves the same algebraic stratification property. -/
-public theorem_wanted constructible_scalarExtension (k l : Type) [Field k] [Field l]
-    [Algebra k l] (X : ComplexScheme) [IsComplexVariety X]
-    (K : CoefficientDerived k (space X))
-    (hK : ConstructibleComplexes.boundedConstructible k X K) :
-    ConstructibleComplexes.boundedConstructible l X
-      ((derivedScalarExtension k l (space X)).obj K)
 
 end WantedExt.AlgebraicGeometry.ConstructibleComplexesWanted
