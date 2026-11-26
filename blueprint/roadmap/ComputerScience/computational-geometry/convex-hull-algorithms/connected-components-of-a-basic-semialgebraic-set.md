@@ -2,7 +2,7 @@
 
 Let $V \subseteq \mathbb{R}^n$ be the set of solutions of a system
 $$q_1(x) = \dots = q_m(x) = 0, \quad p_1(x) > 0, \dots, p_s(x) > 0, \quad p_{s+1}(x) \ge 0, \dots, p_h(x) \ge 0$$
-of real polynomials in $n$ variables, and let $d = \max\{2, \deg q_i, \deg p_j\}$. The number of equations $m$ is arbitrary. Then $V$ has at most $d(2d - 1)^{n + h - 1}$ connected components. Ben-Or derives this from the bound of Milnor and Thom for real algebraic varieties, introducing a new variable $y_j$ with $p_j = y_j^2$ for each non-strict inequality and shrinking the strict inequalities to $p_j \ge \varepsilon$.
+of real polynomials in $n$ variables, and let $d = \max\{2, \deg q_i, \deg p_j\}$. The number of equations $m$ is arbitrary. Then $V$ has at most $d(2d - 1)^{n + h - 1}$ connected components. Ben-Or derives this from the bound of Milnor and Thom for real algebraic varieties: he shrinks each strict inequality $p_j > 0$ to $p_j \ge \varepsilon$ for a small $\varepsilon > 0$ that keeps a point of every component, and then replaces each of the $h$ inequalities by an equation $p_j - c_j = y_j^2$ in a new variable $y_j$, which gives a variety in $\mathbb{R}^{n+h}$.
 
 ## Sources
 

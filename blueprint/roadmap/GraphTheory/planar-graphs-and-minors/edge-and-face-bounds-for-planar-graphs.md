@@ -2,7 +2,7 @@
 
 Let $G$ be a simple graph with $n \ge 3$ vertices and $e$ edges that has a straight-line plane drawing. Then $e \le 3n - 6$, and if $G$ is connected its drawing has at most $2n - 4$ faces. A plane triangulation, a drawing in which every face, the unbounded one included, is bounded by exactly three edges, has exactly $3n - 6$ edges and $2n - 4$ faces.
 
-The proof adds edges until every face is a triangle, counts edge–face incidences as $2e = 3f$, and substitutes into Euler's formula $n - e + f = 2$.
+For connected $G$ with a cycle, every face is bounded by a closed walk of length at least $3$, so counting edge–face incidences gives $2e \ge 3f$, and Euler's formula $n - e + f = 2$ gives $e \le 3n - 6$ and $f \le 2n - 4$; a forest has at most $n - 1 \le 3n - 6$ edges; and for a graph with $c \ge 2$ components, summing $e_i \le 3n_i - 3$ (valid for every component, small ones included) gives $e \le 3n - 3c \le 3n - 6$.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Computing halfplane discrepancy in quadratic time
 
-The halfplane discrepancy of $n$ points in $[0,1]^2$ can be computed in $O(n^2)$ time. The $O(n)$ lines of the first type are checked directly in $O(n)$ time each. For a line of the second type, through two points $p_i, p_j$, the number of points on or below it equals the number of dual lines on or above the vertex $p_i^* \cap p_j^*$ of the dual arrangement, which is read off in constant time per vertex from the position of $p_i^*, p_j^*$ in the sweep-line status while sweeping the arrangement.
+The halfplane discrepancy of $n$ points in $[0,1]^2$, no two on a vertical line and none with a coordinate equal to $1/2$, can be computed in $O(n^2)$ time. Under this assumption a point $p$ is the midpoint of $\ell \cap U$ only for chords joining the two sides of $U$ that meet at the corner of $p$'s quadrant, and at most one line through $p$ has this property, so the $O(n)$ lines of the first type are checked directly in $O(n)$ time each. (A point on a midline of $U$ is the midpoint of the chord for a whole interval of directions, on which $\mu(h)$ is constant, so finitely many directions still suffice there.) For a line of the second type, through two points $p_i, p_j$, the number of points on or below it equals the number of dual lines on or above the vertex $p_i^* \cap p_j^*$ of the dual arrangement, which is read off in constant time per vertex from the position of $p_i^*, p_j^*$ in the sweep-line status while sweeping the arrangement.
 
 ## Depends on
 
@@ -14,4 +14,4 @@ The halfplane discrepancy of $n$ points in $[0,1]^2$ can be computed in $O(n^2)$
 
 ## Sources
 
-- D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 15, "Type-1" and "Type-2" lines and the $O(n^2)$ computation by sweeping the dual arrangement
+- D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 15, "Type-1" lines (where the notes count "at most two" such lines per point, hedged) and "Type-2" lines, and the $O(n^2)$ computation by sweeping the dual arrangement

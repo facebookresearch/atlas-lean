@@ -1,6 +1,6 @@
 # Trapezoidal map of possibly crossing segments
 
-Let $S$ be a finite set of segments in the open unit square $(0,1)^2$ in general position: no segment is vertical, no two endpoints or crossing points have the same $x$-coordinate, and no three segments pass through a common point. The *trapezoidal map* of $S$ is the subdivision of $[0,1]^2$ obtained by drawing, from every segment endpoint and every crossing point of two segments, the two vertical extensions up and down to the next feature, a segment of $S$ or an edge of the bounding square. Its faces are *trapezoids* (possibly triangles), each bounded by at most two non-vertical sides, which are pieces of segments or of the square, and at most two vertical sides.
+Let $S$ be a finite set of segments in the open unit square $(0,1)^2$ in general position: no segment is vertical, two segments meet in at most one point, no two endpoints or crossing points have the same $x$-coordinate, and no three segments pass through a common point. The *trapezoidal map* of $S$ is the subdivision of $[0,1]^2$ obtained by drawing, from every segment endpoint and every crossing point of two segments, the two vertical extensions up and down to the next feature, a segment of $S$ or an edge of the bounding square. Its faces are *trapezoids* (possibly triangles), each bounded by at most two non-vertical sides, which are pieces of segments or of the square, and at most two vertical sides.
 
 ## Depends on
 

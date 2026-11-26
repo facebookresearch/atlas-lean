@@ -8,7 +8,7 @@ Let $S$ be a set of $n$ non-crossing segments in general position, inserted in u
 
 ## Proof depends on
 
-- [Size of a trapezoidal map](size-of-a-trapezoidal-map.md)
+- [Every trapezoid is determined by at most four segments](every-trapezoid-is-determined-by-at-most-four-segments.md)
 
 ## Sources
 
