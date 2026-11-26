@@ -6,11 +6,15 @@ dx &= x\Big(\beta - \gamma - \frac{x}{a} - \frac{y}{b}\Big)dt + \sqrt{\frac{x}{M
 dy &= y\Big(\beta - \gamma - \frac{x}{c} - \frac{y}{d}\Big)dt + \sqrt{\frac{y}{M}\Big(\beta + \gamma + \frac{x}{c} + \frac{y}{d}\Big)}\, dW_2,
 \end{aligned}$$
 with independent Brownian motions $W_1, W_2$. $X$ *fixes* if $y(t) = 0$ while $x(t) > 0$ at some time $t$. In the coordinates $p = x/(x+y)$ (mutant frequency) and $z = x + y$ (population size), the deterministic interior equilibrium has frequency
+
 $$p^* = \frac{b - d}{(b-d) + \frac{bd}{ac}(c - a)}, \qquad \text{i.e.}\quad \frac{1}{p^*} = 1 + \frac{bd}{ac}\cdot\frac{c-a}{b-d}.$$
+
 The fixation probability $\varphi(p, z)$ solves $\tilde G\varphi = 0$ for the generator $\tilde G$ of $(p, z)$ with $\varphi(0, z) = 0$ and $\varphi(1, z) = 1$. In the neutral case $a = b = c = d$, $\varphi_{\mathrm{neu}}(p, z) = p$.
 
 **Theorem (weak selection).** Suppose the competition matrix is a small perturbation of a neutral one, in the sense that $(1 - d/b)^2$, $(1 - d/b)(2 - d/c - d/b)$, $(1 - d/b)(1 + d/a - 2d/b)$ and $(1 - d/b)(1/p^* - 2)$ are all negligible. Then
+
 $$\varphi(p, z) = p + p(1-p)\Big(1 - \frac{p}{p^*}\Big)\Big(1 - \frac{d}{b}\Big)\psi(z) + O\Big(\big(1 - \tfrac{d}{b}\big)^2\Big),$$
+
 where $\psi$ does not depend on $p$, solves a linear second-order ODE in $z$, and does not change sign. Consequences:
 
 - $\varphi(p^*, z) = p^*$: starting exactly at the coexistence frequency, fixation is neutral to first order.

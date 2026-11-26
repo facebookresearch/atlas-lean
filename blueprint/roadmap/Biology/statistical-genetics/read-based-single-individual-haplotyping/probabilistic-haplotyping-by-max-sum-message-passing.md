@@ -3,17 +3,23 @@
 **Data.** Let $m$ heterozygous sites and $n$ reads be given by a phasing matrix $M \in \{0, 1, -\}^{n \times m}$ ($M_{ij}$ is the allele read $i$ shows at site $j$, or $-$ if it does not cover $j$) and an error matrix $Q \in [0, 1)^{n \times m}$ of per-base error probabilities. Let $\mathrm{Po}(i) = \{j : M_{ij} \ne -\}$, and let $R_j = \{i : \min \mathrm{Po}(i) \le j \le \max \mathrm{Po}(i)\}$ be the reads spanning site $j$.
 
 **Model.** The hidden variables are a haplotype $h \in \{0, 1\}^m$ (the other haplotype is its complement $\bar h$) and read origins $r \in \{0, 1\}^n$; write $h_j(r_i) = h_j$ if $r_i = 0$ and $\bar h_j$ if $r_i = 1$. The joint law is
+
 $$P(r, h, o) = \prod_{i=1}^{n} \prod_{j \in \mathrm{Po}(i)} P(o_{ij} \mid r_i, h_j) \prod_i P(r_i) \prod_j P(h_j), \qquad P(o_{ij} \mid r_i, h_j) = \begin{cases} 1 - Q_{ij} & o_{ij} = h_j(r_i),\\ Q_{ij} & o_{ij} \ne h_j(r_i),\end{cases}$$
+
 with uniform priors except $P(h_1 = 0) = 1$, which removes the $h \leftrightarrow \bar h$ symmetry.
 
 **Junction tree.** The clusters $C_j = \{h_j\} \cup \{r_i, o_{ij} : i \in R_j\}$, $j = 1, \dots, m$, joined in a path in order of $j$, form a valid junction tree: every factor lies in one cluster, and since a read's span is an interval, $r_l \in C_x \cap C_y$ with $x \le z \le y$ implies $r_l \in C_z$ (running intersection).
 
 **Recursion.** With $R_{j \cap j+1} = R_j \cap R_{j+1}$, $R_{j \setminus j+1} = R_j \setminus R_{j+1}$, and $M_0 \equiv 0$, the max-sum messages are
+
 $$M_j(r_{R_{j \cap j+1}}) = \max_{h_j}\, \max_{r_{R_{j \setminus j+1}}} \Bigl( \sum_{i \in R_j} \log P(o_{ij} \mid r_i, h_j) + M_{j-1}(r_{R_{j-1 \cap j}}) \Bigr),$$
+
 and the maximum of the likelihood is the same expression at $j = m$ maximized over all of $R_m$; storing argmaxes recovers $(h^\ast, r^\ast)$. With coverage $\kappa = \max_j |R_j|$ the algorithm is exact and runs in $O(m\, \kappa\, 2^{\kappa + 1})$ time: linear in the number of sites, exponential only in coverage.
 
 **Minimum error correction as a special case.** If $Q_{ij} \equiv q \in (0, \tfrac12)$, then
+
 $$\log P(o = M \mid r, h) = \mathrm{const} - \log\frac{1 - q}{q} \cdot \#\{(i, j) : j \in \mathrm{Po}(i),\ M_{ij} \ne h_j(r_i)\},$$
+
 so the maximum likelihood $(h, r)$ is exactly a minimum error correction (MEC) solution: the bipartition of reads and haplotype pair that requires the fewest allele flips.
 
 ## Expansion

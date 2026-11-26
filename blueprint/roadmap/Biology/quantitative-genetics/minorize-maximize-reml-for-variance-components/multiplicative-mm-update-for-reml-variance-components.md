@@ -1,20 +1,29 @@
 # Multiplicative MM update for REML variance components
 
 **Model.** Let $y \in \mathbb{R}^n$ satisfy $y \sim \mathcal{N}(X\beta, \Sigma_\gamma)$ with $X \in \mathbb{R}^{n \times p}$ of full column rank, $\gamma = (\sigma_1^2, \dots, \sigma_K^2) \in (0, \infty)^K$, and
+
 $$\Sigma_\gamma = \sum_{k=1}^{K} \sigma_k^2 V_k,$$
+
 where $V_1, \dots, V_K$ are known positive semidefinite $n \times n$ matrices whose combination is positive definite (for example a genomic relationship matrix, an environment design matrix, and $V_K = I_n$ for the residual). With
+
 $$P_\gamma = \Sigma_\gamma^{-1} - \Sigma_\gamma^{-1} X (X^\top \Sigma_\gamma^{-1} X)^{-1} X^\top \Sigma_\gamma^{-1},$$
+
 the restricted log-likelihood is, up to a constant,
+
 $$L_R(\gamma) = -\tfrac12 \Bigl[ \log|\Sigma_\gamma| + \log|X^\top \Sigma_\gamma^{-1} X| + y^\top P_\gamma y \Bigr].$$
 
 **MM principle.** If $g^{(t+1)}(\gamma) \ge -L_R(\gamma)$ for all $\gamma$ with equality at the current iterate $\gamma^{(t)}$, then $\gamma^{(t+1)} = \arg\min g^{(t+1)}$ satisfies $L_R(\gamma^{(t+1)}) \ge L_R(\gamma^{(t)})$.
 
 **Proposition (surrogate).** The function
+
 $$g^{(t+1)}(\gamma) = \tfrac12 \sum_{k=1}^{K} \Bigl[ \sigma_k^2\, \mathrm{tr}\bigl(P_{\gamma^{(t)}} V_k\bigr) + \frac{\sigma_k^{4\,(t)}}{\sigma_k^2}\, y^\top P_{\gamma^{(t)}} V_k P_{\gamma^{(t)}} y \Bigr] + c^{(t)},$$
+
 with $c^{(t)}$ independent of $\gamma$, majorizes $-L_R$ and touches it at $\gamma^{(t)}$.
 
 **Update.** The surrogate separates across components; setting $\partial g / \partial \sigma_k^2 = 0$ gives
+
 $$\sigma_k^{2\,(t+1)} = \sigma_k^{2\,(t)} \sqrt{\frac{y^\top P_{\gamma^{(t)}} V_k P_{\gamma^{(t)}} y}{\mathrm{tr}\bigl(P_{\gamma^{(t)}} V_k\bigr)}}, \qquad k = 1, \dots, K .$$
+
 Positive starting values stay positive, $L_R$ is non-decreasing along the iterates, and a fixed point with all $\sigma_k^2 > 0$ satisfies the REML score equations $y^\top P V_k P y = \mathrm{tr}(P V_k)$.
 
 ## Expansion
