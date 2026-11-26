@@ -12,3 +12,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
+- [Phenotypic segregation across invasion fronts](phenotypic-segregation-across-invasion-fronts/README.md)
+- [Savanna–forest pattern formation](savanna-forest-pattern-formation/README.md)
+- [Self-propelled particles among tethered obstacles](self-propelled-particles-among-tethered-obstacles/README.md)
+- [Turing patterns in bilayer domains](turing-patterns-in-bilayer-domains/README.md)

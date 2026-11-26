@@ -42,3 +42,4 @@
 - [Standard data, τ > 0: product rate tends to the Michaelis–Menten rate](tendsto-rate-of-family.md)
 - [The Michaelis–Menten QSSA contract](the-michaelis-menten-qssa-contract-small-paramet/README.md)
 - [Global positive trajectories of the Michaelis–Menten system](global-positive-trajectories-of-the-michaelis-me/README.md)
+- [Open Michaelis–Menten mechanism with substrate inflow](open-michaelis-menten-mechanism-with-substrate-inflow.md)
