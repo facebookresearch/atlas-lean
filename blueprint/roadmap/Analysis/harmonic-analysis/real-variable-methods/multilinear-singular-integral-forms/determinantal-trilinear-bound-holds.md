@@ -3,8 +3,8 @@
 This settles [Lᵖ bounds for the determinantal trilinear form](determinantal-trilinear-bound.md) in the affirmative: its statement holds.
 
 Gressman, He, Kovač, Street, Thiele and Yung proved that the principal value of their
-determinantal form exists for Schwartz functions (Section 2.1) and is bounded by `C ‖f‖_p ‖g‖_q
-‖h‖_r` exactly in the range `2 < p, q, r < ∞`, `1/p + 1/q + 1/r = 1` (Theorem 1, which also shows
+determinantal form exists for Schwartz functions (Section 2.1) and is bounded by $C \|f\|_p \|g\|_q \|h\|_r$,
+with $C$ depending only on $p, q, r$, exactly in the range $2 < p, q, r < \infty$, $1/p + 1/q + 1/r = 1$ (Theorem 1, which also shows
 failure outside it); the AIM list cites their paper as the answer.
 
 ## Sources

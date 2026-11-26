@@ -2,9 +2,7 @@
 
 This settles [Erdős Problem 227 on the ratio of maximum term and maximum modulus](maximum-term-ratio-limit-is-zero.md) in the negative: its statement is false.
 
-Clunie and Hayman showed that the limit of `μ(r) / M(r)` can take any value in `[0,
-1/2]` (Clunie had proved the answer yes when all `a_n ≥ 0`); erdosproblems.com/227 lists the problem
-as disproved.
+Clunie and Hayman showed that for transcendental entire functions $f(z) = \sum a_n z^n$ the limit of $\mu(r) / M(r)$ as $r \to \infty$ can take any value in $[0, 1/2]$. Any such $f$ with a nonzero limit, for instance $1/2$, is a counterexample: its series converges everywhere and has infinitely many nonzero coefficients. erdosproblems.com/227 lists the problem as disproved.
 
 ## Sources
 

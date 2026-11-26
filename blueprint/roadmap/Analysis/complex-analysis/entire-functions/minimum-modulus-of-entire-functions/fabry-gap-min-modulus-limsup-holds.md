@@ -2,8 +2,7 @@
 
 This settles [Erdős Problem 516 on the minimum modulus of Fabry gap series](fabry-gap-min-modulus-limsup.md) in the affirmative: its statement holds.
 
-Fuchs proved that for every `ε > 0`, `log m(r) > (1 - ε) log M(r)` holds
-outside a set of `r` of logarithmic density `0`, so at arbitrarily large `r`.
+Fuchs proved (Theorem 1) that if $f(z) = \sum_k a_k z^{n_k}$ is entire of finite order and its increasing exponents satisfy $n_k / k \to \infty$, then for every $\varepsilon > 0$ the inequality $\log m(r) > (1 - \varepsilon) \log M(r)$ holds outside a set of $r$ of logarithmic density $0$, where $m(r)$ and $M(r)$ are the minimum and maximum of $|f|$ on $|z| = r$. Such a set cannot contain all large $r$, so for every $0 < \varepsilon < 1$ there are arbitrarily large $r$ with $M(r)^{1 - \varepsilon} \le m(r)$, which is the unfolded form of the linked statement.
 
 ## Sources
 

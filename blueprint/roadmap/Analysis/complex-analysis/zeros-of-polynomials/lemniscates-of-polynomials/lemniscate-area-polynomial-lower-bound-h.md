@@ -6,4 +6,4 @@ A result of Pommerenke gives a lower bound of order $n^{-4}$: there is $c > 0$ s
 
 ## Sources
 
-- T. F. Bloom, Erdős Problems, Problem #116, https://www.erdosproblems.com/116 (status PROVED (LEAN)); resolution: C. Pommerenke, On metric properties of complex polynomials, Michigan Math. J. 8 (1961), 97-115; M. Krishnapur, E. Lundberg and K. Ramachandran, On the area of polynomial lemniscates, arXiv:2503.18270 (2025), Theorem 1, https://arxiv.org/abs/2503.18270.
+- T. F. Bloom, Erdős Problems, Problem #116, https://www.erdosproblems.com/116 (status PROVED (LEAN)); resolution: C. Pommerenke, On metric properties of complex polynomials, Michigan Math. J. 8 (1961), 97-115.

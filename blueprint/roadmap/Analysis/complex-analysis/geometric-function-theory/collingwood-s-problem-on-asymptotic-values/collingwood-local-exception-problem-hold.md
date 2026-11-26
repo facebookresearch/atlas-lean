@@ -2,10 +2,7 @@
 
 This settles [Collingwood's problem on locally exceptional values](collingwood-local-exception-problem.md) in the affirmative: its statement holds.
 
-Hayman and Lingham
-(arXiv:1809.07200v2, Update 5.19) report that Eremenko gave a strongly positive answer
-(unpublished) by slightly modifying an example of Barth and Schneider, producing such a function
-whose zeros and poles accumulate only at z = 1.
+Hayman and Lingham (arXiv:1809.07200v2, Update 5.19) report that Eremenko gave a strongly positive answer by slightly modifying an example of Barth and Schneider, producing such a function whose zeros and poles accumulate only at $z = 1$. The update describes Eremenko's construction as unpublished: the resolution rests on this report in the published problem book, not on a published proof.
 
 ## Sources
 

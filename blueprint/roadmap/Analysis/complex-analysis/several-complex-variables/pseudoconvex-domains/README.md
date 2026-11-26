@@ -4,4 +4,4 @@
 - [Gompf's pseudoconvex domains homotopy equivalent to the 2-sphere](pseudoconvex-domain-homotopy-sphere-exis-2.md)
 - [Fatou–Bieberbach domains](is-fatou-bieberbach-domain.md)
 - [Pseudoconvex domains](is-pseudoconvex-domain.md)
-- [Fatou set of a self-map of ℂ²](fatou-set.md)
+- [Bounded-iterate Fatou set of a self-map of ℂ²](fatou-set.md)

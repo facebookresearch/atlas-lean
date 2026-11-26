@@ -2,9 +2,7 @@
 
 This settles [F. Nevanlinna's conjecture on maximal deficiency sum](deficiency-sum-two-conjecture.md) in the affirmative: its statement holds.
 
-Drasin proved F. Nevanlinna's conjecture: a meromorphic function of finite order `ρ`
-with deficiency sum `2` has `2ρ` an integer `≥ 2`, and each of its deficiencies is a positive
-integer multiple of `1/ρ` or `0`, hence rational (Hayman–Lingham Update 1.3).
+Drasin proved F. Nevanlinna's conjecture. Let $f$ be meromorphic in the plane and nonconstant (not equal to a constant outside a set without accumulation points in $\mathbb{C}$), of finite order $\rho = \limsup_{r\to\infty} \log T(r, f)/\log r$, with deficiency sum $\sum_a \delta(a, f) = 2$ over all $a$ in the Riemann sphere $\mathbb{C} \cup \{\infty\}$. Then $2\rho$ is an integer $\ge 2$, and every deficient value $a$ has $\delta(a, f) = p(a)/\rho$ for a positive integer $p(a)$, while all other deficiencies are $0$. Hence $\rho = n/2$ with $n = 2\rho \ge 2$, and every deficiency is rational (Hayman–Lingham Update 1.3).
 
 ## Sources
 

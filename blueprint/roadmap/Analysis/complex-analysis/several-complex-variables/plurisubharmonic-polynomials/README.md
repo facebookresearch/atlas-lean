@@ -5,5 +5,5 @@
 - [Newton diagram of a polynomial](newton-diagram.md)
 - [Extreme edges of a Newton diagram](is-extreme-edge.md)
 - [Truncation of a polynomial to part of its Newton diagram](truncation.md)
-- [Truncations to neighboring extreme edges are plurisubharmonic](neighboring-edges-truncation-psh.md)
+- [Are truncations to neighboring extreme edges plurisubharmonic near the origin?](neighboring-edges-truncation-psh.md)
 - [Simon–Stensønes counterexample on truncations of plurisubharmonic polynomials](neighboring-edges-truncation-psh-refuted.md)

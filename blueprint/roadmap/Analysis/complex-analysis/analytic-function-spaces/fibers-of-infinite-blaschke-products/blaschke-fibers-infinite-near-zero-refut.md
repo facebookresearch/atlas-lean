@@ -2,9 +2,11 @@
 
 This settles [Stephenson's question on fibers of infinite Blaschke products](blaschke-fibers-infinite-near-zero.md) in the negative: its statement is false.
 
-Stephenson's inner function `f` has finite fibers `f⁻¹(w)` for a dense set of `|w| < 1`,
-and its Frostman shifts `f_α = (f - α)/(1 - ᾱ f)` are Blaschke products for almost all `α`; such an
-`f_α` is an infinite Blaschke product with finite fibers over a dense set of `w`.
+Hayman and Lingham's Update 5.66 reports that Stephenson constructed an inner function $f$ such that the fiber $f^{-1}(w)$ is finite for a dense set of $w$ with $|w| < 1$, and that its Frostman shifts $f_\alpha = (f - \alpha)/(1 - \bar\alpha f)$ are Blaschke products for almost all $\alpha$. A fiber of $f_\alpha$ is a fiber of $f$ over a Möbius image of the point, so $f_\alpha$ also has finite fibers over a dense set, and in particular over points of every disc $|w| < \delta$.
+
+For $f_\alpha$ to refute the linked statement it must also be an infinite Blaschke product, that is, have infinitely many zeros. Finite fibers on a dense set do not show this: $f(z) = z$ has all fibers finite and is a finite Blaschke product. What is needed is that Stephenson's $f$ is not a finite Blaschke product; the update does not say so explicitly, but it is implicit in its calling the question answered. Since Möbius maps of the disc take finite Blaschke products to finite Blaschke products, $f_\alpha$ is then not a finite Blaschke product either, so it has infinitely many zeros.
+
+The update describes Stephenson's construction as unpublished: the resolution rests on this report in the published problem book, not on a published proof.
 
 ## Sources
 

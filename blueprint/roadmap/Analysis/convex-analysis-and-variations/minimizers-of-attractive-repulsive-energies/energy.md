@@ -1,4 +1,7 @@
 # Attractive–repulsive interaction energy
 
-The energy `E_α[ρ] = ½ ∬ ρ(x) (|x - y|⁻¹ + |x - y|^α) ρ(y) dx dy ∈ [0, ∞]` of a density `ρ ≥ 0`
-on `ℝ³`, as a lower Lebesgue integral (the diagonal `x = y` is a null set).
+For a density $\rho \ge 0$ on $\mathbb{R}^3$, the energy is the familiar
+$E_\alpha[\rho] = \frac12 \iint \rho(x) \left(|x - y|^{-1} + |x - y|^\alpha\right) \rho(y) \, dx \, dy \in [0, \infty]$,
+taken as a lower Lebesgue integral (the diagonal $x = y$ is a null set). The definition accepts any real
+function $\rho$: it integrates the nonnegative part of the whole integrand
+$\rho(x) (|x - y|^{-1} + |x - y|^\alpha) \rho(y)$, so for a signed $\rho$ it is not the classical energy.

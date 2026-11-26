@@ -2,9 +2,9 @@
 
 This settles [ℓ² boundedness of the discrete quadratic Carleson operator](discrete-quadratic-carleson.md) in the affirmative: its statement holds.
 
-Krause and Roos proved `ℓ²(ℤⁿ)` bounds for `sup_λ |∑_\{y ≠ 0\} f(x - y) e(λ|y|^\{2d\})
-K(y)|`; the case `n = d = 1`, `K(y) = 1/y` (`Ω = sign`, mean zero on `S⁰`) is this question, which
-they credit to Lillian Pierce at the 2015 AIM workshop.
+Krause and Roos proved $\ell^2(\mathbb{Z}^n)$ bounds for $\sup_\lambda \bigl|\sum_{y \ne 0} f(x - y)\, e(\lambda |y|^{2d})\, K(y)\bigr|$;
+the case $n = d = 1$, $K(y) = 1/y$ ($\Omega = \operatorname{sign}$, mean zero on $S^0$) is this question. The AIM list
+records it as Question 8 of T. Anderson and L. Pierce; Krause and Roos credit the one-dimensional case to Lillian Pierce at the 2015 AIM workshop.
 
 ## Sources
 

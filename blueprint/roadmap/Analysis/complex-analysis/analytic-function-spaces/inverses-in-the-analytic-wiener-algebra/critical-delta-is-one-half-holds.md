@@ -2,10 +2,7 @@
 
 This settles [Shapiro's question on inverses in the analytic Wiener algebra](critical-delta-is-one-half.md) in the affirmative: its statement holds.
 
-Nikolski proved that for the analytic Wiener algebra `W₊` of absolutely convergent
-Taylor series the critical constant is `δ₁(W₊, 𝔻) = 1/2`: if `‖f‖_{W₊} ≤ 1` and `|f| ≥ δ` on the
-disc, then `‖f⁻¹‖_{W₊} ≤ 1/(2δ - 1)` for `δ > 1/2`, while no bound exists for `δ ≤ 1/2`, confirming
-Shapiro's guess (Katznelson had the unbounded range `δ < 1/2`).
+Nikolski proved that for the analytic Wiener algebra $W_+$ of absolutely convergent Taylor series the critical constant is $\delta_1(W_+, \mathbb{D}) = 1/2$. For $1/2 < \delta \le 1$, every $f$ with $\|f\|_{W_+} \le 1$ and $|f| \ge \delta$ on the disc has $\|f^{-1}\|_{W_+} \le 1/(2\delta - 1)$, one bound for the whole family; for $\delta \le 1/2$ no bound uniform over that family exists. This confirms Shapiro's guess (Katznelson had the unbounded range $\delta < 1/2$).
 
 ## Sources
 

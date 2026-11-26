@@ -2,9 +2,7 @@
 
 This settles [Brannan's conjecture for odd coefficients](brannan-odd-coefficient-bound.md) in the affirmative: its statement holds.
 
-Brannan's conjecture for `β = 1` holds for every odd index (Barnard and Richards,
-after the aggregate proof of Jayatilake, Szász and Deniz–Çağlar–Szász), so `|A_\{2n+1\}(x)| ≤
-|A_\{2n+1\}(1)|` for `0 < α < 1`, `|x| = 1` and all `n ≥ 1`.
+Brannan's conjecture for $\beta = 1$ holds for every odd index (Barnard and Richards, after the aggregate proof of Jayatilake, Szász and Deniz–Çağlar–Szász), so $|A_{2n+1}(x)| \le |A_{2n+1}(1)|$ for $0 < \alpha < 1$, $|x| = 1$ and all $n \ge 1$. This covers both Brannan's question for $n \ge 2$ and the previously known case $n = 1$.
 
 ## Sources
 

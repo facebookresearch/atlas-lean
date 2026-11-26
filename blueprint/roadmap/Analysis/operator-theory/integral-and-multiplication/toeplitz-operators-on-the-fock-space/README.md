@@ -5,4 +5,3 @@
 - [Bounded Toeplitz forms on coherent states](toeplitz-bounded.md)
 - [Heat transform at time 1/4](heat-transform.md)
 - [Berger–Coburn conjecture](conjecture.md)
-- [Looi's refutation of the Berger–Coburn conjecture](conjecture-refuted.md)

@@ -9,5 +9,5 @@ Let $N \ge 1$ be an integer and $p > 1$ a real number. A positive classical solu
 
 ## Sources
 
-- P. Quittner, in Topological and Variational Methods for Differential Equations, Oberwolfach Reports 2 (2005), no. 29, pp. 1649-1650, Conjecture 1, DOI 10.4171/OWR/2005/29.
+- P. Quittner, in Topological and Variational Methods for Differential Equations, Oberwolfach Reports 2 (2005), no. 3 (Report 29/2005), pp. 1649-1650, Conjecture 1, DOI 10.4171/OWR/2005/29.
 - P. Quittner, Optimal Liouville theorems for superlinear parabolic problems, Duke Math. J. 170 (2021), arXiv:2003.13223, Theorem 1, https://arxiv.org/abs/2003.13223.

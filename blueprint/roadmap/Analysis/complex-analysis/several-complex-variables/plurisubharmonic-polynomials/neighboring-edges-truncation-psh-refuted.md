@@ -1,9 +1,9 @@
 # Simon–Stensønes counterexample on truncations of plurisubharmonic polynomials
 
-This settles [Truncations to neighboring extreme edges are plurisubharmonic](neighboring-edges-truncation-psh.md) in the negative: its statement is false.
+This settles [Are truncations to neighboring extreme edges plurisubharmonic near the origin?](neighboring-edges-truncation-psh.md) in the negative: its statement is false.
 
-The problem's remark fails. Simon and Stensønes' polynomial (two extreme edges `E₁ ≠
-E₂` meeting at a vertex) has `P_\{E₁ ∪ E₂\}` plurisubharmonic in no neighborhood of the origin, the
+The problem's remark fails. Simon and Stensønes' polynomial (two extreme edges $E_1 \ne E_2$
+meeting at a vertex) has $P_{E_1 \cup E_2}$ plurisubharmonic in no neighborhood of the origin, the
 negative answer to the first item of their Question 3.6.
 
 ## Sources

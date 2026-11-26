@@ -72,9 +72,9 @@ public theorem_wanted christol_criterion (α β : Multiset ℚ)
         ∀ x : ℝ, 0 ≤ christolXi α β a x
 
 /-- **Least rescaling, general form** (Delaygue–Rivoal–Roques,
-Theorem 4, first part).  If the series is `N`-integral, then for
-some positive integer `K`, the product `K * baseConstant α β` is
-the least positive good scaling: it makes every coefficient
+Theorem 4, first part).  If the parameters `α` and `β` are admissible
+and the series is `N`-integral, then for some positive integer `K`,
+the product `K * baseConstant α β` is the least positive good scaling: it makes every coefficient
 integral, and no smaller positive rational does.  In general `K`
 is not specified further; see `least_scaling_eq_baseConstant` for
 the case `K = 1`.
@@ -88,8 +88,9 @@ public theorem_wanted least_scaling_nat_mul_baseConstant (α β : Multiset ℚ)
       ∀ C : ℚ, 0 < C → GoodScaling α β C → (K : ℚ) * baseConstant α β ≤ C
 
 /-- **Least rescaling, exact form** (Delaygue–Rivoal–Roques,
-Theorem 4, second part).  If `α` and `β` have the same cardinality
-and every parameter lies in `(0, 1]`, then `baseConstant α β`
+Theorem 4, second part).  If the admissible parameters `α` and `β`
+give an `N`-integral series, have the same cardinality and every
+parameter lies in `(0, 1]`, then `baseConstant α β`
 itself is the least positive good scaling.  For example, with
 `α = {1/2, 1/2}` and `β = {1, 1}` the base constant is `16`, and
 the rescaled coefficients are the squared central binomial

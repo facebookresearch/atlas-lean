@@ -9,5 +9,5 @@
 - [Unit ball of ℂ²](unit-ball.md)
 - [Product of the disc and the plane](disc-times-plane.md)
 - [Complex surfaces exhausted by balls](compacts-in-balls.md)
-- [Complex surfaces exhausted by balls are the ball, Δ × ℂ or ℂ²](union-of-balls-trichotomy.md)
+- [Is every complex surface exhausted by balls biholomorphic to the ball, Δ × ℂ or ℂ²?](union-of-balls-trichotomy.md)
 - [Fornæss's short ℂ² refutes the trichotomy](union-of-balls-trichotomy-refuted.md)

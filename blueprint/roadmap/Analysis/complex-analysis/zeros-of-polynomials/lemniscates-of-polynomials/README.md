@@ -8,7 +8,6 @@
 - [Erdős Problem 116: polynomial lower bound for lemniscate area](lemniscate-area-polynomial-lower-bound.md)
 - [Erdős Problem 116: logarithmic lower bound for lemniscate area](lemniscate-area-log-lower-bound.md)
 - [Polynomial lower bound for the area of lemniscates with zeros in the closed unit disc](lemniscate-area-polynomial-lower-bound-h.md)
-- [Krishnapur–Lundberg–Ramachandran lower bound for the area of lemniscates with zeros in the closed unit disc](lemniscate-area-log-lower-bound-holds.md)
 - [Closed lemniscate of a polynomial](closed-lemniscate.md)
 - [Erdős Problem 511 on large components of lemniscates](bounded-large-lemniscate-components.md)
 - [Lemniscates with many large components](bounded-large-lemniscate-components-refu.md)
