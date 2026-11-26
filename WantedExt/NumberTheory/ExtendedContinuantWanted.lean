@@ -13,6 +13,7 @@ public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Algebra.Ring.NegOnePow
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ExtendedContinuant
+public import MathlibExt.NumberTheory.ExtendedContinuantOneSilentTerms
 
 /-!
 # Extended continuants and bi-infinite periodic continued fractions
@@ -34,6 +35,7 @@ Strict equivalence of raw rationals is equality of numerators and of denominator
 statements below keep only the strict-equivalence hypotheses on the convergents; the
 periodicity and limit conditions of a BpCF (Definition 5) are not used by the paper's proofs
 and are dropped, so each statement applies to every bi-infinite integer sequence.
+The statement `oneSilent_terms` is in `MathlibExt.NumberTheory.ExtendedContinuantOneSilentTerms`.
 -/
 
 namespace MetaMathlibExt
@@ -89,27 +91,6 @@ public theorem_wanted extendedContinuant_euler (x : ℤ → ℤ) (h k ℓ m : �
         extendedContinuant x (m - 1) (ℓ + h + 1) * extendedContinuant x (k + ℓ) h =
       (k.negOnePow : ℤ) * extendedContinuant x (m - k - 2) (k + ℓ + h + 2) *
         extendedContinuant x (ℓ - 1) h
-
-/-- **Terms of a $1$-silent sequence.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
-integer sequences and write $K_a(x)_b$ for the extended continuant of order $a$ with start index
-$b$. Suppose that for every natural number $i$, $K_i(x)_0 = K_i(y)_0$,
-$K_{i-1}(x)_1 = K_{i-1}(y)_1$, $K_{-i-2}(x)_0 = K_i(z)_0$ and $K_{-i-3}(x)_1 = K_{i-1}(z)_1$.
-Then $x_n = y_n$ for every $n \ge 0$, $x_{-n} = -z_n$ for every $n \ge 1$, and $z_0 = 0$.
-
-In the paper's terms the hypotheses say that the raw convergents $k_i = K_i(x)_0 / K_{i-1}(x)_1$
-of $x$ are strictly equivalent (equal numerators and equal denominators) to the raw convergents
-$c_i$ of $y$, and $k_{-i-2}$ to the raw convergents $d_i$ of $z$, for all $i \ge 0$. The
-conclusion $z_0 = 0$ matches the paper's $0 < \bar\alpha < 1$ for the EA-generated SCF of the
-irrational $\bar\alpha$.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 5. -/
-public theorem_wanted oneSilent_terms (x y z : ℤ → ℤ)
-    (heast : ∀ i : ℕ, extendedContinuant x i 0 = extendedContinuant y i 0 ∧
-      extendedContinuant x ((i : ℤ) - 1) 1 = extendedContinuant y ((i : ℤ) - 1) 1)
-    (hwest : ∀ i : ℕ, extendedContinuant x (-(i : ℤ) - 2) 0 = extendedContinuant z i 0 ∧
-      extendedContinuant x (-(i : ℤ) - 3) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
-    (∀ n : ℕ, x n = y n) ∧ (∀ n : ℕ, 1 ≤ n → x (-(n : ℤ)) = -z n) ∧ z 0 = 0
 
 /-- **Terms of a $\sigma$-silent sequence for odd $\sigma \ge 5$.** Let $\sigma \ge 5$ be an odd
 integer, let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite integer sequences, and write
