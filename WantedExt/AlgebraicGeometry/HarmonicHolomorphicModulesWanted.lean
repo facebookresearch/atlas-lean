@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition
 
 /-!
@@ -18,9 +19,10 @@ public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphic
 All ordinary support requests concern the fixed public section formulas.
 The holomorphic coefficient sheaf condition
 `holomorphic_coefficient_sheaf_condition` is proved in
-`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition`.
-The holomorphic cotangent sheaf condition
-`holomorphic_cotangent_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition`,
+`holomorphic_bar_multiplication` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`,
+and `holomorphic_cotangent_sheaf_condition` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
@@ -40,12 +42,6 @@ open scoped Manifold ContDiff
 
 variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
   {r : ℕ}
-
-/-- Holomorphic multiplication satisfies the actual full bar-derivative Leibniz rule. -/
-theorem_wanted holomorphic_bar_multiplication
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    (B : SmoothComplexBundle n M r)
-    (h : HermitianMetric B) (A : SmoothConnection B) : BarMultiplicationCalculus B h A
 
 /-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
 theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
