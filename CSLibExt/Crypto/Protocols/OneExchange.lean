@@ -48,7 +48,8 @@ namespace Cslib.Crypto.OneExchange
 open Cslib.Crypto.Framework
 open scoped Cslib.Probability.PMF
 
-/-- A uniform finite-register program. A primitive table has fixed finite domain and codomain;
+/-- **Uniform finite-register programs.**
+A uniform finite-register program. A primitive table has fixed finite domain and codomain;
 `coin` samples a fresh fair bit. Programs compose sequentially, can retain the input and can
 iterate a body a fixed polynomial number of times in the unary security parameter. Only an open
 program can scan the auxiliary tape; a closed subprogram can be embedded in an open one. -/
@@ -61,7 +62,8 @@ inductive Program : Bool → Type → Type → Type 1 where
   | scan {α} [Fintype α] (count : Polynomial ℕ) (step : α → Option Bool → α) : Program true α α
   | embed {α β} (body : Program false α β) : Program true α β
 
-/-- The charged gate count of a program is a polynomial in the unary parameter. Tables and fresh
+/-- **Polynomial gate clock.**
+The charged gate count of a program is a polynomial in the unary parameter. Tables and fresh
 coins cost one, sequential costs add and iteration multiplies by the loop count. A scan spends
 one lookup per cell including padding. Wire copies and embedding closed code are free. -/
 noncomputable def Program.clock {v α β} : Program v α β → Polynomial ℕ
@@ -71,13 +73,15 @@ noncomputable def Program.clock {v α β} : Program v α β → Polynomial ℕ
   | .loop p f => p * f.clock
   | @Program.scan _ _ p _ => p
 
-/-- A read-only scan makes exactly the specified number of updates, supplying the next bit or
+/-- **Bounded scan of the auxiliary tape.**
+A read-only scan makes exactly the specified number of updates, supplying the next bit or
 an end marker if there is none. In particular, a zero budget does not inspect the string. -/
 def scanPrefix {α : Type} (step : α → Option Bool → α) : ℕ → List Bool → α → α
   | 0, _, a => a
   | k + 1, z, a => scanPrefix step k z.tail (step a z.head?)
 
-/-- The output law of a finite-register program on parameter $k$, auxiliary bit string $z$ and
+/-- **Output law of a finite-register program.**
+The output law of a finite-register program on parameter $k$, auxiliary bit string $z$ and
 register input $a$. Sequential subprograms and successive iterations sample fresh coins. Closed
 programs cannot scan $z$; embedding one supplies the empty tape. -/
 noncomputable def Program.eval {v α β} (k : ℕ) (z : List Bool) : Program v α β → α → PMF β
@@ -90,7 +94,8 @@ noncomputable def Program.eval {v α β} (k : ℕ) (z : List Bool) : Program v �
   | .embed f, a => f.eval k [] a
 termination_by structural c => c
 
-/-- A first activation of the environment supplies one API input bit, one command bit for the
+/-- **Environment inputs and output table.**
+A first activation of the environment supplies one API input bit, one command bit for the
 intermediary, and a private output table taking the API reply and the intermediary's report. -/
 structure Plan where
   input : Bool
@@ -119,13 +124,15 @@ noncomputable def exec (π : Protocol) (E : Environment) (A : Intermediary) (k :
   (E.eval k z ()).bind fun e => (A.eval k [] e.command).bind fun a =>
     (π.eval k [] (e.input, a.1)).map fun r => e.observe r.1 (a.2 r.2)
 
-/-- Two bit ensembles are close if the supremum over *all* finite auxiliary strings of their
+/-- **Closeness of final-bit ensembles.**
+Two bit ensembles are close if the supremum over *all* finite auxiliary strings of their
 absolute difference in probabilities of true is negligible as a function of the parameter.
 This compares only the output, not the entire view or the messages. -/
 def Close (X Y : ℕ → List Bool → PMF Bool) : Prop :=
   NegligibleAdv (fun k => ⨆ z, advantage (X k z) (Y k z))
 
-/-- For bit laws $X(k,z)$ and $Y(k,z)$ let $a(k,z)$ be the absolute difference in their
+/-- **Uniform threshold criterion for bit ensembles.**
+For bit laws $X(k,z)$ and $Y(k,z)$ let $a(k,z)$ be the absolute difference in their
 probabilities of true. The function $k\mapsto\sup_{z\in\{0,1\}^*}a(k,z)$ is negligible if and
 only if for each exponent $c\in\mathbb N$ there exists a threshold $K\in\mathbb N$ such that
 $a(k,z)\le 1/k^c$ for every $k\ge K$ and every finite bit string $z$.
@@ -195,7 +202,8 @@ UC/EasyUC Summer School (2025), slides 25–26. -/
 def idealProtocol (box : Program false (Bool × Bool) (Bool × Bool)) : Protocol :=
   ((Program.table id).seq box).seq (.table id)
 
-/-- Fix a box $B$ in the one-exchange model. For every environment $E$, intermediary $S$,
+/-- **Identity relays preserve the execution law.**
+Fix a box $B$ in the one-exchange model. For every environment $E$, intermediary $S$,
 parameter $k$ and auxiliary string $z$, the final-bit law with $B$ between the two identity
 relay tables of its ideal protocol equals the law with the same box run bare:
 $X_{I_B,E,S}(k,z)=X_{B,E,S}(k,z)$. This is a wiring identity, not a claim that an arbitrary
@@ -204,16 +212,20 @@ theorem exec_idealProtocol (box : Protocol) (E : Environment) (S : Intermediary)
     (z : List Bool) : exec (idealProtocol box) E S k z = exec box E S k z := by
   simp [exec, idealProtocol, Program.eval, PMF.bind_pure]
 
-/-- **One-exchange realization.** A protocol realizes a central bit functionality when it
-qualitatively emulates the ideal protocol with the forwarding party, not an environment given
-access to the functionality's internal state.
+/-- **One-exchange realization.** A protocol $\pi$ realizes a central bit functionality $B$
+if and only if $\pi$ qualitatively emulates $I_B$, the ideal protocol for $B$. In $I_B$ the
+main party forwards the environment's API input bit to $B$ and returns the box's API reply bit
+to the environment. The simulator supplies the box's backdoor input bit and receives its
+backdoor reply bit directly. On the input and output pairs these wires are identity tables,
+one on each side of $B$.
 
 Source: one-exchange specialization of R. Canetti, *Universally Composable Security: A Tutorial*,
 UC/EasyUC Summer School (2025), slides 26–27. -/
 def Realizes (π : Protocol) (box : Program false (Bool × Bool) (Bool × Bool)) : Prop :=
   Emulates π (idealProtocol box)
 
-/-- On the one-party wiring, the dummy sends the command bit to the sole backdoor and returns
+/-- **Two-way forwarding intermediary.**
+On the one-party wiring, the dummy sends the command bit to the sole backdoor and returns
 the backdoor reply unchanged. Both peer identities are implicit in these fixed wires. -/
 def dummy : Intermediary := .table fun m => (m, id)
 
@@ -235,11 +247,17 @@ private theorem exec_absorb_dummy (π : Protocol) (E : Environment) (A : Interme
     (k : ℕ) (z : List Bool) : exec π (absorb E A) dummy k z = exec π E A k z := by
   simp [exec, absorb, dummy, Program.eval, PMF.bind_bind, PMF.bind_map]
 
-/-- **Dummy sufficiency for one exchange.** Testing the two-way forwarding intermediary against
-every environment is equivalent to testing all intermediaries. The enlarged environment runs the
-real intermediary internally; the new simulator composes that intermediary with the dummy's
-simulator. Both are programs of the same uniform polynomial-clock language. This equivalence is
-qualitative; the extra gates need not preserve numerical overhead or slack.
+/-- **Dummy sufficiency for one exchange.** A protocol $\pi$ emulates $\phi$ if and only if
+there is one intermediary program $D$ such that, for every environment $E$, the final-bit
+ensembles `exec π E dummy` and `exec φ E D` are close. The real execution uses the two-way
+forwarder; the comparison execution uses its simulator $D$, chosen before $E$ and independently
+of the parameter $k$ and auxiliary input $z$. Closeness is negligible bit advantage as $k$ grows,
+uniformly over $z$ for each fixed $E$.
+
+To simulate any other intermediary $A$, the enlarged environment runs $A$ internally and the
+simulator for $A$ composes it with $D$. Both are programs of the same uniform polynomial-clock
+language. This equivalence is qualitative; the extra gates need not preserve numerical overhead
+or slack.
 
 Source: fixed-schedule instance of the reduction in R. Canetti, *Universally Composable Security:
 A Tutorial*, UC/EasyUC Summer School (2025), slides 50–53. -/

@@ -1,4 +1,4 @@
-# Program
+# Uniform finite-register programs
 
 A uniform finite-register program. A primitive table has fixed finite domain and codomain;
 `coin` samples a fresh fair bit. Programs compose sequentially, can retain the input and can

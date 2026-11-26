@@ -1,4 +1,4 @@
-# Close
+# Closeness of final-bit ensembles
 
 Two bit ensembles are close if the supremum over *all* finite auxiliary strings of their
 absolute difference in probabilities of true is negligible as a function of the parameter.

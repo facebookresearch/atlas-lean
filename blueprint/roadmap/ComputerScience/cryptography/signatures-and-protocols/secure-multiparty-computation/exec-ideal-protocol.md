@@ -1,4 +1,4 @@
-# Exec ideal Protocol
+# Identity relays preserve the execution law
 
 Fix a box $B$ in the one-exchange model. For every environment $E$, intermediary $S$,
 parameter $k$ and auxiliary string $z$, the final-bit law with $B$ between the two identity

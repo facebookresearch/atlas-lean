@@ -1,4 +1,4 @@
-# Clock
+# Polynomial gate clock
 
 The charged gate count of a program is a polynomial in the unary parameter. Tables and fresh
 coins cost one, sequential costs add and iteration multiplies by the loop count. A scan spends

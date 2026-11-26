@@ -1,10 +1,15 @@
 # Dummy sufficiency for one exchange
 
-Testing the two-way forwarding intermediary against
-every environment is equivalent to testing all intermediaries. The enlarged environment runs the
-real intermediary internally; the new simulator composes that intermediary with the dummy's
-simulator. Both are programs of the same uniform polynomial-clock language. This equivalence is
-qualitative; the extra gates need not preserve numerical overhead or slack.
+A protocol $\pi$ emulates $\phi$ if and only if there is one intermediary program $D$ such that,
+for every environment $E$, the final-bit ensembles `exec π E dummy` and `exec φ E D` are close.
+The real execution uses the two-way forwarder; the comparison execution uses its simulator $D$,
+chosen before $E$ and independently of the parameter $k$ and auxiliary input $z$. Closeness is
+negligible bit advantage as $k$ grows, uniformly over $z$ for each fixed $E$.
+
+To simulate any other intermediary $A$, the enlarged environment runs $A$ internally and the
+simulator for $A$ composes it with $D$. Both are programs of the same uniform polynomial-clock
+language. This equivalence is qualitative; the extra gates need not preserve numerical overhead
+or slack.
 
 ## Sources
 

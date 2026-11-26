@@ -1,8 +1,10 @@
 # One-exchange realization
 
-A protocol realizes a central bit functionality when it
-qualitatively emulates the ideal protocol with the forwarding party, not an environment given
-access to the functionality's internal state.
+A protocol $\pi$ realizes a central bit functionality $B$ if and only if $\pi$ qualitatively
+emulates $I_B$, the ideal protocol for $B$. In $I_B$ the main party forwards the environment's
+API input bit to $B$ and returns the box's API reply bit to the environment. The simulator
+supplies the box's backdoor input bit and receives its backdoor reply bit directly. On the
+input and output pairs these wires are identity tables, one on each side of $B$.
 
 ## Sources
 

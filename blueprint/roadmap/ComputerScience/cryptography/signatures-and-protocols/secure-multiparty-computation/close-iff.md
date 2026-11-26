@@ -1,4 +1,4 @@
-# Close iff
+# Uniform threshold criterion for bit ensembles
 
 For bit laws $X(k,z)$ and $Y(k,z)$ let $a(k,z)$ be the absolute difference in their probabilities
 of true. The function $k\mapsto\sup_{z\in\{0,1\}^*}a(k,z)$ is negligible **if and only if**
