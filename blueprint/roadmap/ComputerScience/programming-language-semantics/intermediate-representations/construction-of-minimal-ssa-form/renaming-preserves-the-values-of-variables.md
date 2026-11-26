@@ -7,6 +7,7 @@ Translate a program by placing $\varphi$-functions at the [iterated dominance fr
 ## Depends on
 
 - [Translation to static single assignment form](translation-to-static-single-assignment-form.md)
+- [Dominance frontiers](../dominance-frontiers.md)
 
 ## Proof depends on
 

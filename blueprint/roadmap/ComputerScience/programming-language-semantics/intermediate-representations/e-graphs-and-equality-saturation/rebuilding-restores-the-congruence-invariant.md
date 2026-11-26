@@ -7,6 +7,7 @@ Let an [e-graph](e-graphs.md) satisfy the congruence and hashcons invariants, an
 ## Depends on
 
 - [Congruence and hashcons invariants of e-graphs](congruence-and-hashcons-invariants-of-e-graphs.md)
+- [E-graphs](e-graphs.md)
 
 ## Sources
 

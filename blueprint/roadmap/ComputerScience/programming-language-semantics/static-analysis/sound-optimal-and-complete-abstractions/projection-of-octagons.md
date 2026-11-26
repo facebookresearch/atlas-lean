@@ -11,6 +11,7 @@ where a bound is included exactly when it is finite.
 ## Depends on
 
 - [Strong closure is a normal form for octagons](strong-closure-is-a-normal-form-for-octagons.md)
+- [Difference-bound matrices and octagons](difference-bound-matrices-and-octagons.md)
 
 ## Sources
 

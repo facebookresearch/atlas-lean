@@ -14,6 +14,7 @@ So the final values of the variables in $X$ depend only on the initial values of
 
 - [Big-step semantics of IMP](../operational-semantics-of-imp/big-step.md)
 - [Live variables of an IMP command](live-variables-of-an-imp-command.md)
+- [IMP program states](../operational-semantics-of-imp/state.md)
 
 ## Proof depends on
 

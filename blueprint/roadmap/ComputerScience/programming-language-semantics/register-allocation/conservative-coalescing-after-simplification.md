@@ -7,6 +7,7 @@ Let $G$ be a finite undirected graph and $k \ge 1$. Suppose that the [simplifica
 ## Depends on
 
 - [Briggs's conservative coalescing](briggs-s-conservative-coalescing.md)
+- [Removing a low-degree node preserves colorability](removing-a-low-degree-node-preserves-colorability.md)
 
 ## Sources
 

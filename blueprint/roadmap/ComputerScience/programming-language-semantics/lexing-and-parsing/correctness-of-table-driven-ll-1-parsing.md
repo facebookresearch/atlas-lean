@@ -12,10 +12,10 @@ and on every input it terminates, either with a value or by rejecting, never wit
 
 - [LL(1) lookahead and correct parse tables](ll-1-lookahead-and-correct-parse-tables.md)
 - [Parsers and recognizers](parsers-and-recognizers.md)
+- [Soundness of LL(1) parsing](soundness-of-ll-1-parsing.md)
 
 ## Proof depends on
 
-- [Soundness of LL(1) parsing](soundness-of-ll-1-parsing.md)
 - [Completeness of LL(1) parsing](completeness-of-ll-1-parsing.md)
 - [Error-free termination of LL(1) parsing](error-free-termination-of-ll-1-parsing.md)
 

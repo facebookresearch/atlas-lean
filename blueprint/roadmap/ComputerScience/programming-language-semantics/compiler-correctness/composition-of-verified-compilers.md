@@ -7,6 +7,7 @@ Let $\approx$ be a notion of [semantic preservation](notions-of-semantic-preserv
 ## Depends on
 
 - [Verified compilers and verified validators](verified-compilers-and-verified-validators.md)
+- [Notions of semantic preservation](notions-of-semantic-preservation.md)
 
 ## Sources
 

@@ -7,6 +7,7 @@ For the table-driven parser of [soundness of LL(1) parsing](soundness-of-ll-1-pa
 ## Depends on
 
 - [Soundness of LL(1) parsing](soundness-of-ll-1-parsing.md)
+- [LL(1) lookahead and correct parse tables](ll-1-lookahead-and-correct-parse-tables.md)
 
 ## Proof depends on
 

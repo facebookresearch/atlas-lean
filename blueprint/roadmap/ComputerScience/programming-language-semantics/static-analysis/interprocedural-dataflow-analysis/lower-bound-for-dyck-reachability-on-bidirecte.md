@@ -7,6 +7,7 @@ In the class of separable pointer algorithms for which R. E. Tarjan proved the u
 ## Depends on
 
 - [Dyck reachability](dyck-reachability.md)
+- [Dyck reachability on bidirected graphs in almost-linear time](dyck-reachability-on-bidirected-graphs-in-almo.md)
 
 ## Expansion
 

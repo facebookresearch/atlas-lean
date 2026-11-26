@@ -12,6 +12,8 @@ Let $s_1$ and $s_2$ be [IMP states](../operational-semantics-of-imp/state.md).
 - [IMP program states](../operational-semantics-of-imp/state.md)
 - [Evaluation of IMP arithmetic expressions](../operational-semantics-of-imp/eval.md)
 - [Evaluation of IMP Boolean expressions](../operational-semantics-of-imp/eval-2.md)
+- [Arithmetic expressions of IMP](../operational-semantics-of-imp/aexp.md)
+- [Boolean expressions of IMP](../operational-semantics-of-imp/bexp.md)
 
 ## Sources
 

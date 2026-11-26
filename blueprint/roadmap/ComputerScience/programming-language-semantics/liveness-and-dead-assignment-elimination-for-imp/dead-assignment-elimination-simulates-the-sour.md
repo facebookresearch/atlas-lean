@@ -8,6 +8,7 @@ Let $L$ be [liveness](live-variables-of-an-imp-command.md) and $\mathrm{bury}$ [
 
 - [Dead-assignment elimination for IMP](dead-assignment-elimination-for-imp.md)
 - [Big-step semantics of IMP](../operational-semantics-of-imp/big-step.md)
+- [Live variables of an IMP command](live-variables-of-an-imp-command.md)
 
 ## Proof depends on
 
