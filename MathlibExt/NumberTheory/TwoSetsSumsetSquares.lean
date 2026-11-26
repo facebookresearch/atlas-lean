@@ -86,6 +86,37 @@ theorem exists_int_pairwiseSumsSquares_scale_translate
   rw [ha' i, hb' j]
   linear_combination k ^ 2 * hr
 
+/-- **Four-parameter triples with square pairwise sums, family (3.2).** For all integers
+$p, q, r, s$, put $a_1 = -(p+q+r+s)(p+q-r-s)(p-q+r-s)(p-q-r+s)$,
+$a_2 = -(p-q+r+s)(p-q-r-s)(p+q+r-s)(p+q-r+s)$, $a_3 = 0$ and
+$b_1 = (p^2 - q^2 + r^2 - s^2)^2$, $b_2 = (p^2 - q^2 - r^2 + s^2)^2$,
+$b_3 = (p^2 + q^2 - r^2 - s^2)^2$. Then $a_i + b_j$ is a perfect square for all
+$i, j \in \{1, 2, 3\}$.
+
+Source: Ajai Choudhry, "Two Sets of Integers Such That All
+Elements of the Sumset of the Two Sets Are Perfect Squares",
+Theorem 1. -/
+theorem pairwiseSumsSquares_triple_family32
+    (p q r s : ℤ) :
+    PairwiseSumsSquares
+      ![-(p + q + r + s) * (p + q - r - s) * (p - q + r - s) *
+          (p - q - r + s),
+        -(p - q + r + s) * (p - q - r - s) * (p + q + r - s) *
+          (p + q - r + s), 0]
+      ![(p ^ 2 - q ^ 2 + r ^ 2 - s ^ 2) ^ 2,
+        (p ^ 2 - q ^ 2 - r ^ 2 + s ^ 2) ^ 2,
+        (p ^ 2 + q ^ 2 - r ^ 2 - s ^ 2) ^ 2] := by
+  -- The same table of roots as for family (3.3): its squares form a semi-magic square.
+  let roots : Fin 3 → Fin 3 → ℤ :=
+    ![![2 * (p * r - q * s), 2 * (p * s - q * r), 2 * (p * q - r * s)],
+      ![2 * (p * r + q * s), 2 * (p * s + q * r), 2 * (p * q + r * s)],
+      ![p ^ 2 - q ^ 2 + r ^ 2 - s ^ 2, p ^ 2 - q ^ 2 - r ^ 2 + s ^ 2,
+        p ^ 2 + q ^ 2 - r ^ 2 - s ^ 2]]
+  intro i j
+  refine ⟨roots i j, ?_⟩
+  fin_cases i <;> dsimp [roots, Matrix.cons_val] <;>
+    fin_cases j <;> dsimp [Matrix.cons_val] <;> ring1
+
 /-- **Four-parameter triples with square pairwise sums, family (3.3).** For all integers
 $p, q, r, s$, put $a_1 = 4(ps - qr)^2$, $a_2 = 4(ps + qr)^2$, $a_3 = (p^2 - q^2 - r^2 + s^2)^2$
 and $b_1 = 4(p^2 - q^2)(r^2 - s^2)$, $b_2 = 0$, $b_3 = 4(p^2 - r^2)(q^2 - s^2)$. Then $a_i + b_j$
