@@ -86,7 +86,7 @@ lemma tmul_mem_range_tensorSqHom {x y : A} (hx : x ∈ S) (hy : y ∈ S) :
 an `R`-algebra structure, `A` a commutative `K`-algebra with a compatible `R`-algebra structure,
 and `S` an `R`-subalgebra of `A`. This is the `K`-algebra map `K ⊗[R] S → A` sending `k ⊗ s` to
 `k • s`. -/
-noncomputable def baseChangeHom : (K ⊗[R] ↥S) →ₐ[K] A :=
+private noncomputable def baseChangeHom : (K ⊗[R] ↥S) →ₐ[K] A :=
   AlgHom.liftEquiv R K (↥S) A S.val
 
 private lemma baseChangeHom_tmul (k : K) (t : ↥S) : baseChangeHom S (k ⊗ₜ[R] t) = k • (t : A) := rfl
@@ -98,7 +98,7 @@ private lemma baseChangeHom_one_tmul (t : ↥S) : baseChangeHom S ((1 : K) ⊗�
 with an `R`-algebra structure, `A` a commutative `K`-algebra with a compatible `R`-algebra
 structure, and `S` an `R`-subalgebra of `A`. This is the `K`-linear map
 `K ⊗[R] (S ⊗[R] S) → A ⊗[K] A` sending `k ⊗ (s ⊗ t)` to `k • (s ⊗ t)`. -/
-noncomputable def doubleEval : (K ⊗[R] (↥S ⊗[R] ↥S)) →ₗ[K] (A ⊗[K] A) :=
+private noncomputable def doubleEval : (K ⊗[R] (↥S ⊗[R] ↥S)) →ₗ[K] (A ⊗[K] A) :=
   (TensorProduct.map (baseChangeHom S).toLinearMap (baseChangeHom S).toLinearMap).comp
     (TensorProduct.AlgebraTensorModule.distribBaseChange R K ↥S ↥S).toLinearMap
 
@@ -106,7 +106,7 @@ noncomputable def doubleEval : (K ⊗[R] (↥S ⊗[R] ↥S)) →ₗ[K] (A ⊗[K]
 an `R`-algebra structure, `A` a commutative `K`-algebra with a compatible `R`-algebra structure,
 and `S` an `R`-subalgebra of `A`. This is the map `S ⊗[R] S → A ⊗[K] A` sending `z` to the image
 of `1 ⊗ z` under `HopfOrder.doubleEval S`; it sends `s ⊗ t` to `s ⊗ t`. -/
-noncomputable def doubleCmp (z : ↥S ⊗[R] ↥S) : A ⊗[K] A :=
+private noncomputable def doubleCmp (z : ↥S ⊗[R] ↥S) : A ⊗[K] A :=
   doubleEval S ((1 : K) ⊗ₜ[R] z)
 
 private lemma doubleCmp_tmul (t t' : ↥S) :
@@ -122,13 +122,6 @@ private lemma doubleCmp_add (z w : ↥S ⊗[R] ↥S) :
     = doubleEval S ((1 : K) ⊗ₜ[R] z) + doubleEval S ((1 : K) ⊗ₜ[R] w)
   rw [TensorProduct.tmul_add, map_add]
 
-private lemma doubleCmp_smul (r : R) (z : ↥S ⊗[R] ↥S) :
-    doubleCmp (K := K) S (r • z) = (algebraMap R K r) • doubleCmp (K := K) S z := by
-  change doubleEval S ((1 : K) ⊗ₜ[R] (r • z))
-    = (algebraMap R K r) • doubleEval S ((1 : K) ⊗ₜ[R] z)
-  rw [TensorProduct.tmul_smul,
-    ← algebraMap_smul K r ((1 : K) ⊗ₜ[R] z : K ⊗[R] (↥S ⊗[R] ↥S)), map_smul]
-
 private theorem doubleCmp_eq_tensorSqHom (z : ↥S ⊗[R] ↥S) :
     doubleCmp (K := K) S z = tensorSqHom (K := K) S z := by
   induction z with
@@ -140,7 +133,7 @@ a field with an `R`-algebra structure, `A` a commutative `K`-algebra with a comp
 `R`-algebra structure, and `S` an `R`-subalgebra of `A`. This is the `K`-linear map
 `K ⊗[R] (S ⊗[R] (S ⊗[R] S)) → A ⊗[K] (A ⊗[K] A)` sending `k ⊗ (s ⊗ (t ⊗ u))` to
 `k • (s ⊗ (t ⊗ u))`. -/
-noncomputable def tripleEval :
+private noncomputable def tripleEval :
     (K ⊗[R] (↥S ⊗[R] (↥S ⊗[R] ↥S))) →ₗ[K] (A ⊗[K] (A ⊗[K] A)) :=
   (TensorProduct.map (baseChangeHom S).toLinearMap (doubleEval S)).comp
     (TensorProduct.AlgebraTensorModule.distribBaseChange R K ↥S (↥S ⊗[R] ↥S)).toLinearMap
@@ -149,7 +142,7 @@ noncomputable def tripleEval :
 ring, `K` a field with an `R`-algebra structure, `A` a commutative `K`-algebra with a compatible
 `R`-algebra structure, and `S` an `R`-subalgebra of `A`. This is the map sending `w` to the image
 of `1 ⊗ w` under `HopfOrder.tripleEval S`; it sends `s ⊗ (t ⊗ u)` to `s ⊗ (t ⊗ u)`. -/
-noncomputable def tripleCmpR (w : ↥S ⊗[R] (↥S ⊗[R] ↥S)) : A ⊗[K] (A ⊗[K] A) :=
+private noncomputable def tripleCmpR (w : ↥S ⊗[R] (↥S ⊗[R] ↥S)) : A ⊗[K] (A ⊗[K] A) :=
   tripleEval S ((1 : K) ⊗ₜ[R] w)
 
 private lemma tripleCmpR_add (w w' : ↥S ⊗[R] (↥S ⊗[R] ↥S)) :
@@ -170,7 +163,7 @@ a field with an `R`-algebra structure, `A` a commutative `K`-algebra with a comp
 `R`-algebra structure, and `S` an `R`-subalgebra of `A`. This is the `K`-linear map
 `K ⊗[R] ((S ⊗[R] S) ⊗[R] S) → (A ⊗[K] A) ⊗[K] A` sending `k ⊗ ((s ⊗ t) ⊗ u)` to
 `k • ((s ⊗ t) ⊗ u)`. -/
-noncomputable def tripleEvalL :
+private noncomputable def tripleEvalL :
     (K ⊗[R] ((↥S ⊗[R] ↥S) ⊗[R] ↥S)) →ₗ[K] ((A ⊗[K] A) ⊗[K] A) :=
   (TensorProduct.map (doubleEval S) (baseChangeHom S).toLinearMap).comp
     (TensorProduct.AlgebraTensorModule.distribBaseChange R K (↥S ⊗[R] ↥S) ↥S).toLinearMap
@@ -179,7 +172,7 @@ noncomputable def tripleEvalL :
 ring, `K` a field with an `R`-algebra structure, `A` a commutative `K`-algebra with a compatible
 `R`-algebra structure, and `S` an `R`-subalgebra of `A`. This is the map sending `w` to the image
 of `1 ⊗ w` under `HopfOrder.tripleEvalL S`; it sends `(s ⊗ t) ⊗ u` to `(s ⊗ t) ⊗ u`. -/
-noncomputable def tripleCmpL (w : (↥S ⊗[R] ↥S) ⊗[R] ↥S) : (A ⊗[K] A) ⊗[K] A :=
+private noncomputable def tripleCmpL (w : (↥S ⊗[R] ↥S) ⊗[R] ↥S) : (A ⊗[K] A) ⊗[K] A :=
   tripleEvalL S ((1 : K) ⊗ₜ[R] w)
 
 private lemma tripleCmpL_add (w w' : (↥S ⊗[R] ↥S) ⊗[R] ↥S) :
@@ -359,17 +352,16 @@ private theorem coe_antipodeS (hantipode : ∀ x ∈ S, HopfAlgebra.antipode K x
 `K` a field with an `R`-algebra structure, `A` a commutative Hopf algebra over `K` with a
 compatible `R`-algebra structure, and `S` an `R`-subalgebra of `A` whose comultiplication lands in
 the image of `S ⊗[R] S` in `A ⊗[K] A`. For every `t : S` there is `z : S ⊗[R] S` whose image
-`HopfOrder.doubleCmp S z` is the comultiplication of `t` in `A ⊗[K] A`. -/
-lemma exists_doubleCmp_eq_comul
+`HopfOrder.tensorSqHom S z` is the comultiplication of `t` in `A ⊗[K] A`. -/
+lemma exists_tensorSqHom_eq_comul
     (hcomul : ∀ x ∈ S, Coalgebra.comul (R := K) x ∈
       (Algebra.TensorProduct.productMap
           (((Algebra.TensorProduct.includeLeft : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp S.val)
           (((Algebra.TensorProduct.includeRight : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp
               S.val)).range)
     (t : ↥S) :
-    ∃ z : ↥S ⊗[R] ↥S, doubleCmp S z = Coalgebra.comul (R := K) (t : A) := by
-  obtain ⟨z, hz⟩ := (tensorSqHom S).mem_range.mp (hcomul (t : A) t.2)
-  exact ⟨z, by rw [doubleCmp_eq_tensorSqHom]; exact hz⟩
+    ∃ z : ↥S ⊗[R] ↥S, tensorSqHom S z = Coalgebra.comul (R := K) (t : A) :=
+  (tensorSqHom S).mem_range.mp (hcomul (t : A) t.2)
 
 omit [IsScalarTower R K A] in
 /-- **The counit of an order comes from `R`.** Let `R` be a commutative ring, `K` a field with an
@@ -413,8 +405,9 @@ variable [IsDomain R] [Module.Flat R ↥S]
 /-- **Restricted comultiplication.** Let `R` be a domain with fraction field `K`, `A` a commutative
 Hopf algebra over `K` with a compatible `R`-algebra structure, and `S` an `R`-subalgebra of `A`
 that is flat over `R` and whose comultiplication lands in the image of `S ⊗[R] S` in
-`A ⊗[K] A`. This is the `R`-linear map `S → S ⊗[R] S` lifting the comultiplication of `A`; by
-flatness the map `S ⊗[R] S → A ⊗[K] A` is injective, so the lift is unique. -/
+`A ⊗[K] A`. This is the `R`-linear map `S → S ⊗[R] S` lifting the comultiplication of `A` along
+`HopfOrder.tensorSqHom S`; by flatness `HopfOrder.tensorSqHom S` is injective, so the lift is
+unique. -/
 noncomputable def comulS
     (hcomul : ∀ x ∈ S, Coalgebra.comul (R := K) x ∈
       (Algebra.TensorProduct.productMap
@@ -422,29 +415,19 @@ noncomputable def comulS
           (((Algebra.TensorProduct.includeRight : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp
               S.val)).range) :
     ↥S →ₗ[R] ↥S ⊗[R] ↥S where
-  toFun t := (exists_doubleCmp_eq_comul hcomul t).choose
+  toFun t := (exists_tensorSqHom_eq_comul hcomul t).choose
   map_add' t t' := by
-    apply doubleCmp_injective (K := K) S
-    rw [doubleCmp_add, (exists_doubleCmp_eq_comul hcomul (t + t')).choose_spec,
-      (exists_doubleCmp_eq_comul hcomul t).choose_spec,
-      (exists_doubleCmp_eq_comul hcomul t').choose_spec]
+    apply tensorSqHom_injective (K := K) S
+    rw [map_add, (exists_tensorSqHom_eq_comul hcomul (t + t')).choose_spec,
+      (exists_tensorSqHom_eq_comul hcomul t).choose_spec,
+      (exists_tensorSqHom_eq_comul hcomul t').choose_spec]
     rw [Subalgebra.coe_add, map_add]
   map_smul' r t := by
-    apply doubleCmp_injective (K := K) S
-    rw [RingHom.id_apply, doubleCmp_smul,
-      (exists_doubleCmp_eq_comul hcomul (r • t)).choose_spec,
-      (exists_doubleCmp_eq_comul hcomul t).choose_spec]
-    rw [Subalgebra.coe_smul, ← algebraMap_smul K r (t : A), map_smul]
-
-private lemma doubleCmp_comulS
-    (hcomul : ∀ x ∈ S, Coalgebra.comul (R := K) x ∈
-      (Algebra.TensorProduct.productMap
-          (((Algebra.TensorProduct.includeLeft : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp S.val)
-          (((Algebra.TensorProduct.includeRight : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp
-              S.val)).range)
-    (t : ↥S) :
-    doubleCmp S (comulS hcomul t) = Coalgebra.comul (R := K) (t : A) :=
-  (exists_doubleCmp_eq_comul hcomul t).choose_spec
+    apply tensorSqHom_injective (K := K) S
+    rw [RingHom.id_apply, map_smul,
+      (exists_tensorSqHom_eq_comul hcomul (r • t)).choose_spec,
+      (exists_tensorSqHom_eq_comul hcomul t).choose_spec]
+    rw [Subalgebra.coe_smul, ← algebraMap_smul K r (t : A), map_smul, algebraMap_smul]
 
 private theorem tensorSqHom_comulS
     (hcomul : ∀ x ∈ S, Coalgebra.comul (R := K) x ∈
@@ -453,8 +436,18 @@ private theorem tensorSqHom_comulS
           (((Algebra.TensorProduct.includeRight : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp
               S.val)).range)
     (t : ↥S) :
-    tensorSqHom S (comulS hcomul t) = Coalgebra.comul (R := K) (t : A) := by
-  rw [← doubleCmp_eq_tensorSqHom, doubleCmp_comulS]
+    tensorSqHom S (comulS hcomul t) = Coalgebra.comul (R := K) (t : A) :=
+  (exists_tensorSqHom_eq_comul hcomul t).choose_spec
+
+private lemma doubleCmp_comulS
+    (hcomul : ∀ x ∈ S, Coalgebra.comul (R := K) x ∈
+      (Algebra.TensorProduct.productMap
+          (((Algebra.TensorProduct.includeLeft : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp S.val)
+          (((Algebra.TensorProduct.includeRight : A →ₐ[K] A ⊗[K] A).restrictScalars R).comp
+              S.val)).range)
+    (t : ↥S) :
+    doubleCmp S (comulS hcomul t) = Coalgebra.comul (R := K) (t : A) := by
+  rw [doubleCmp_eq_tensorSqHom, tensorSqHom_comulS]
 
 omit [IsDomain R] [Module.Flat R ↥S] in
 private lemma val_lid_rTensor_counitS

@@ -188,13 +188,6 @@ private theorem T_mem_hopfKer (φ : Module.Dual R B)
     rfl
   rw [lhs, key, Finset.sum_congr rfl rhs, T_repr π φ 𝓡, TensorProduct.sum_tmul]
 
-private theorem sum_counit_right_smul {a : A} {ι : Type*} (𝓡 : Coalgebra.Repr R a ι) :
-    ∑ i ∈ 𝓡.index, Coalgebra.counit (R := R) (𝓡.right i) • 𝓡.left i = a := by
-  have := congr(TensorProduct.lift ((LinearMap.lsmul R A).flip) $(sum_tmul_counit_eq (R := R) 𝓡))
-  simpa only [map_sum, TensorProduct.lift.tmul, LinearMap.flip_apply, LinearMap.lsmul_apply,
-      one_smul]
-    using this
-
 section DualBasis
 
 variable [Module.Finite R B] [Module.Free R B] (hπ : Function.Surjective π)
@@ -252,7 +245,8 @@ private theorem dualBasis (a : A) : ∑ j, ∑ p ∈ sw π hπ j, p.1 * T π (Λ
   simp_rw [h1]
   rw [Finset.sum_comm]
   simp_rw [← Finset.sum_smul, Λ_frob, CoalgHomClass.counit_comp_apply]
-  exact sum_counit_right_smul 𝓡
+  simpa only [map_sum, TensorProduct.rid_tmul, one_smul] using
+    congr(TensorProduct.rid R A $(sum_tmul_counit_eq (R := R) 𝓡))
 
 end DualBasis
 

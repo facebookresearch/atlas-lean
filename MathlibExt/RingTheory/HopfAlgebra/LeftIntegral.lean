@@ -491,15 +491,6 @@ private theorem dualCoaction_coassoc :
 
 omit [Module.Finite R B] in
 omit [Module.Free R B] in
-private theorem sum_counit_right_smul {b : B} {ι𝓡 : Type*} (𝓡 : Coalgebra.Repr R b ι𝓡) :
-    ∑ i ∈ 𝓡.index, Coalgebra.counit (R := R) (𝓡.right i) • 𝓡.left i = b := by
-  have := congr(TensorProduct.lift ((LinearMap.lsmul R B).flip) $(sum_tmul_counit_eq (R := R) 𝓡))
-  simpa only [map_sum, TensorProduct.lift.tmul, LinearMap.flip_apply, LinearMap.lsmul_apply,
-      one_smul]
-    using this
-
-omit [Module.Finite R B] in
-omit [Module.Free R B] in
 private theorem compat_core (f m : Module.Dual R B) (b c d : B) {ι𝓡 : Type*}
     (𝓡 : Coalgebra.Repr R b ι𝓡)
     {κ𝓡₁ : ι𝓡 → Type*} (𝓡₁ : (i : ι𝓡) → Coalgebra.Repr R (𝓡.left i) (κ𝓡₁ i)) :
@@ -541,7 +532,10 @@ private theorem compat_core (f m : Module.Dual R B) (b c d : B) {ι𝓡 : Type*}
     rw [map_sum, Finset.mul_sum, map_sum, Finset.sum_mul]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [map_smul, mul_smul_comm, map_smul, smul_eq_mul]; ring
-  rw [← h3, sum_counit_right_smul, mul_comm]
+  have h4 : ∑ i ∈ 𝓡.index, Coalgebra.counit (R := R) (𝓡.right i) • 𝓡.left i = b := by
+    simpa only [map_sum, TensorProduct.rid_tmul, one_smul] using
+      congr(TensorProduct.rid R B $(sum_tmul_counit_eq (R := R) 𝓡))
+  rw [← h3, h4, mul_comm]
 
 omit [Module.Finite R B] in
 omit [Module.Free R B] in
