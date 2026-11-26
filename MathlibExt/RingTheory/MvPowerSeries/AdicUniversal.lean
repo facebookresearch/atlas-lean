@@ -36,9 +36,9 @@ import MathlibExt.RingTheory.MvPowerSeries.SpecialFibreCoordinates
 /-!
 # Algebra maps from multivariate power series into adically complete rings
 
-Let `σ` be a finite index type and `A` an `𝒪`-algebra that is adically complete for an ideal
-`I`. For any elements `a i ∈ I` there exists an `𝒪`-algebra map
-`MvPowerSeries σ 𝒪 →ₐ[𝒪] A` sending each variable `X i` to `a i`
+Let `σ` be a finite index type, `𝒪` a commutative ring, and `A` a commutative `𝒪`-algebra that
+is adically complete for an ideal `I` of `A`. For any elements `a i ∈ I` there exists an
+`𝒪`-algebra map `MvPowerSeries σ 𝒪 →ₐ[𝒪] A` sending each variable `X i` to `a i`
 (`MvPowerSeries.exists_algHom_apply_X_eq`). Only existence is stated: no uniqueness or
 extensionality result for such maps is proved here. The proof takes the `I`-adic evaluation
 `MvPowerSeries.adicEvalAlgHom`, which is Mathlib's `MvPowerSeries.aeval` for the `I`-adic
@@ -50,10 +50,10 @@ universe u v w
 namespace MvPowerSeries
 
 /-- **Existence of algebra maps from multivariate power series into adically complete rings.**
-If `σ` is finite and `A` is an `I`-adically complete `𝒪`-algebra, then for any elements
-`a i ∈ I` there exists an `𝒪`-algebra map `MvPowerSeries σ 𝒪 →ₐ[𝒪] A` sending each variable
-`X i` to `a i`. This states existence only, not uniqueness; one such map is
-`MvPowerSeries.adicEvalAlgHom`. -/
+Let `σ` be finite, `𝒪` a commutative ring, and `A` a commutative `𝒪`-algebra that is adically
+complete for an ideal `I` of `A`. Then for any elements `a i ∈ I` there exists an `𝒪`-algebra
+map `MvPowerSeries σ 𝒪 →ₐ[𝒪] A` sending each variable `X i` to `a i`. This states existence
+only, not uniqueness; one such map is `MvPowerSeries.adicEvalAlgHom`. -/
 public theorem exists_algHom_apply_X_eq {σ : Type u} {𝒪 : Type v} {A : Type w}
     [Finite σ] [CommRing 𝒪] [CommRing A] [Algebra 𝒪 A] (I : Ideal A) [IsAdicComplete I A]
     (a : σ → A) (ha : ∀ i, a i ∈ I) :
