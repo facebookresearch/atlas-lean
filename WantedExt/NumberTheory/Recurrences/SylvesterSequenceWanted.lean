@@ -40,17 +40,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
 
-/-- **Divisibility of differences of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
-sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$, $m$ and $n$
-with $k \ge 1$, $m \ge k$ and $n \ge k$, the integer $(S_k - 1)^2$ divides $S_n - S_m$.
-
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility
-(4). -/
-theorem_wanted sylvester_sub_dvd
-    (k m n : ℕ) (hk : 1 ≤ k) (hm : k ≤ m) (hn : k ≤ n) :
-    ((sylvesterNumber k : ℤ) - 1) ^ 2 ∣
-      (sylvesterNumber n : ℤ) - (sylvesterNumber m : ℤ)
-
 /-- **Sylvester numbers modulo 4.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
 $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n \equiv 3 \pmod 4$.
 
