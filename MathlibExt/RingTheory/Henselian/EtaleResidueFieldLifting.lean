@@ -189,7 +189,8 @@ private theorem HenselianLocalRing.exists_completeOrthogonalIdempotents_quotient
       have hNc : (N.comap (Ideal.Quotient.mk J)).IsMaximal :=
         Ideal.comap_isMaximal_of_surjective (Ideal.Quotient.mk J) Ideal.Quotient.mk_surjective
       exact hs ⟨_, hNc⟩
-    obtain ⟨n, hn⟩ := IsArtinianRing.isNilpotent_jacobson_bot (R := S ⧸ J)
+    rw [Ideal.jacobson_bot] at hmem
+    obtain ⟨n, hn⟩ := IsArtinianRing.isNilpotent_jacobson (S ⧸ J)
     refine ⟨n, ?_⟩
     have := Ideal.pow_mem_pow hmem n
     rw [hn] at this
@@ -276,8 +277,7 @@ private theorem Algebra.Etale.algHom_ext_of_forall_sub_mem_map_maximalIdeal_of_h
 
   have hΦμ : ∀ t : E ⊗[R] E, Φ t - φ (Algebra.TensorProduct.lmul' R t) ∈ I := by
     intro t
-    induction t using TensorProduct.induction_on with
-    | zero => simp
+    induction t using TensorProduct.inductionOn with
     | tmul a b =>
         rw [hΦ, Algebra.TensorProduct.productMap_apply_tmul,
           Algebra.TensorProduct.lmul'_apply_tmul, map_mul,
@@ -292,7 +292,8 @@ private theorem Algebra.Etale.algHom_ext_of_forall_sub_mem_map_maximalIdeal_of_h
   have hΦe : Φ e - 1 ∈ Ideal.jacobson (⊥ : Ideal B) := by
     apply hIJ
     simpa [he2] using hΦμ e
-  have hunit : IsUnit (Φ e) := Ideal.isUnit_of_sub_one_mem_jacobson_bot _ hΦe
+  have hunit : IsUnit (Φ e) :=
+    Ideal.isUnit_of_sub_one_mem_jacobson _ (by rwa [← Ideal.jacobson_bot])
 
   refine AlgHom.ext fun x => ?_
   have hdx : Φ (x ⊗ₜ[R] 1 - 1 ⊗ₜ[R] x) = φ x - ψ x := by
@@ -320,26 +321,9 @@ variable {A : Type u} {B : Type v} [CommRing A] [CommRing B] [Algebra A B]
 
 private theorem isLocalHom_algebraMap_of_moduleFinite [IsLocalRing A] [IsLocalRing B]
   [Module.Finite A B] :
-    IsLocalHom (algebraMap A B) := by
-  refine ((local_hom_TFAE (algebraMap A B)).out 1 4 rfl rfl).mpr ?_
-  intro x hx
-  rw [Ideal.mem_comap]
-  by_contra hxB
-  have hu : IsUnit (algebraMap A B x) := by
-    simpa [mem_maximalIdeal, mem_nonunits_iff] using hxB
-
-  have htop : (⊤ : Submodule A B) ≤ Ideal.span {x} • (⊤ : Submodule A B) := by
-    intro b _
-    obtain ⟨u, hu'⟩ := hu
-    have : b = x • (↑u⁻¹ * b) := by
-      rw [Algebra.smul_def, ← mul_assoc, ← hu', Units.mul_inv, one_mul]
-    rw [this]
-    exact Submodule.smul_mem_smul (Ideal.mem_span_singleton_self x) Submodule.mem_top
-  have hjac : Ideal.span {x} ≤ (⊥ : Ideal A).jacobson :=
-    (Ideal.span_singleton_le_iff_mem _).mpr (maximalIdeal_le_jacobson ⊥ hx)
-  have hbot := Submodule.eq_bot_of_le_smul_of_le_jacobson_bot (Ideal.span {x}) ⊤
-    Module.Finite.fg_top htop hjac
-  exact one_ne_zero ((Submodule.eq_bot_iff _).mp hbot 1 Submodule.mem_top)
+    IsLocalHom (algebraMap A B) :=
+  ((local_hom_tfae (algebraMap A B)).out 1 3).mpr
+    (hensSplit_map_maximalIdeal_le (maximalIdeal B) (maximalIdeal.isMaximal B))
 
 private theorem restrictScalars_maximalIdeal_le_smul_top [IsLocalRing A] [IsLocalRing B]
     (h : (maximalIdeal A).map (algebraMap A B) = maximalIdeal B) :
@@ -489,8 +473,8 @@ private theorem exists_algHom_of_isLocalRing [IsLocalRing C]
         maximalIdeal C • (⊤ : Submodule C ((C ⊗[R] O) ⧸ I)) :=
       restrictScalars_maximalIdeal_le_smul_top (A := C) (B := (C ⊗[R] O) ⧸ I) hmL
     have hle : (⊤ : Submodule C ((C ⊗[R] O) ⧸ I)) ≤ LinearMap.range ιₐ.toLinearMap :=
-      Submodule.le_of_le_smul_of_le_jacobson_bot Module.Finite.fg_top (maximalIdeal_le_jacobson ⊥)
-        (key.trans (sup_le_sup_left hsmul _))
+      Submodule.le_of_le_smul_of_le_jacobson Module.Finite.fg_top
+        (ringJacobson_eq_maximalIdeal C).ge (key.trans (sup_le_sup_left hsmul _))
     intro ℓ
     obtain ⟨c, hc⟩ := hle (Submodule.mem_top : ℓ ∈ ⊤)
     exact ⟨c, hc⟩
@@ -535,8 +519,8 @@ private theorem exists_algHom_of_isLocalRing [IsLocalRing C]
     exact ⟨1 ⊗ₜ c, by rw [hθ, map_one, one_mul]⟩
   have hnil : IsNilpotent (RingHom.ker (θ : ResidueField R ⊗[R] C →+* ResidueField C)) := by
     rw [ker_eq_maximalIdeal (θ : ResidueField R ⊗[R] C →+* ResidueField C) hθsurj,
-      ← jacobson_eq_maximalIdeal ⊥ bot_ne_top]
-    exact IsArtinianRing.isNilpotent_jacobson_bot
+      ← ringJacobson_eq_maximalIdeal]
+    exact IsArtinianRing.isNilpotent_jacobson _
   apply Algebra.FormallyUnramified.ext' (θ : ResidueField R ⊗[R] C →+* ResidueField C) hnil
   intro z
   suffices hcomp : θ.comp ((Algebra.TensorProduct.map (AlgHom.id (ResidueField R) (ResidueField R))
@@ -621,18 +605,18 @@ private theorem exists_algHom
     exact exists_algHom_of_isLocalRing _
   choose ψm hψm using hψm
 
-  let Φ : C →ₐ[R] ((m : MaximalSpectrum C) → Cq m) := Pi.algHom R Cq π
+  let Φ : C →ₐ[R] ((m : MaximalSpectrum C) → Cq m) := AlgHom.pi π
   have hΦ : Function.Bijective Φ := by
     have := CompleteOrthogonalIdempotents.bijective_pi hce
     exact this
   let EΦ : C ≃ₐ[R] ((m : MaximalSpectrum C) → Cq m) := AlgEquiv.ofBijective Φ hΦ
-  let ψ : O →ₐ[R] C := (EΦ.symm : ((m : MaximalSpectrum C) → Cq m) →ₐ[R] C).comp (Pi.algHom R Cq ψm)
+  let ψ : O →ₐ[R] C := (EΦ.symm : ((m : MaximalSpectrum C) → Cq m) →ₐ[R] C).comp (AlgHom.pi ψm)
   have hπψ : ∀ m, (π m).comp ψ = ψm m := by
     intro m
     apply AlgHom.ext
     intro o
-    show (Φ (EΦ.symm (Pi.algHom R Cq ψm o))) m = ψm m o
-    rw [show Φ (EΦ.symm (Pi.algHom R Cq ψm o)) = Pi.algHom R Cq ψm o from EΦ.apply_symm_apply _]
+    show (Φ (EΦ.symm (AlgHom.pi ψm o))) m = ψm m o
+    rw [show Φ (EΦ.symm (AlgHom.pi ψm o)) = AlgHom.pi ψm o from EΦ.apply_symm_apply _]
     rfl
   refine ⟨ψ, ?_⟩
   apply AlgHom.ext
