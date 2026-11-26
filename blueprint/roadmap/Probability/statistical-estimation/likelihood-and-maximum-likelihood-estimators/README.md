@@ -14,6 +14,7 @@
 - [Maximum likelihood estimator](is-maximum-likelihood-estimator.md)
 - [Characterization of maximum likelihood estimators](is-maximum-likelihood-estimator-iff.md)
 - [Induced likelihood](induced-likelihood.md)
+- [Normal location family with fixed variance](gaussian-mean-family.md)
 - [The sample mean maximizes the normal likelihood with known variance](sample-mean-is-the-normal-mean-mle.md)
 - [Score, information and the most informative item in the two-parameter logistic model](ability-estimation-in-the-two-parameter-logistic-model.md)
 - [Invariance of a finite-mixture two-parameter logistic model under a change of ability scale](scale-invariance-of-a-finite-mixture-two-parameter-logistic-model.md)
