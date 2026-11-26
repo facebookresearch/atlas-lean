@@ -14,6 +14,17 @@ public import MathlibExt.Combinatorics.Additive.SidonIdealNotSidonBlockSubsetIUn
 
 namespace MathlibExtTest.Combinatorics.Additive.SidonIdealNotSidonBlockSubsetIUnionIsSidon
 
+-- The block uses powers of `M`: `5 ^ 2 + 1 * 2 ^ 0 = 26` lies in it.
+example : 26 ∈ MetaMathlibExt.sidonBlock 2 1 5 2 :=
+  ⟨0, by norm_num, 2, by norm_num, le_rfl, by norm_num⟩
+
+-- Multiples of `M` are not in the block: `11 = 2 * 5 + 1` is absent.
+example : 11 ∉ MetaMathlibExt.sidonBlock 2 1 5 2 := by
+  rintro ⟨k, hk, l, hl1, hl2, h⟩
+  obtain rfl | rfl : k = 0 ∨ k = 1 := (by omega)
+  all_goals obtain rfl | rfl : l = 1 ∨ l = 2 := (by omega)
+  all_goals norm_num at h
+
 -- With `n = 1`, the block is a singleton, not covered by `Fin 0` sets.
 example : ¬ ∃ S : Fin (1 - 1) → Set ℕ, (∀ j, (S j).IsSidon) ∧
     MetaMathlibExt.sidonBlock 1 1 (1 * 2 ^ 1 + 1) ((1 - 1) * Nat.choose 1 2 + 1) ⊆
