@@ -56,4 +56,25 @@ example : Nat.card {c : Composition 5 //
   rw [he] at hcount
   contradiction
 
+-- With no allowed small values, the terms for a positive mark count cancel (k = 1).
+example : compositionOddMinusEven 3 (fun c =>
+    (c.blocks.filter fun a => a < 1).length = 1 ∧ IsHuangSmallPartPlacement 1 c.blocks) = 0 := by
+  rw [show 3 = 3 + 1 - 1 by decide,
+    compositionOddMinusEven_huang_eq_sum 1 1 3 (by decide) (by decide)]
+  decide
+
+-- No marks: the generalized binomial convention gives one empty coloring.
+example : compositionOddMinusEven 1 (fun c =>
+    (c.blocks.filter fun a => a < 1).length = 0 ∧ IsHuangSmallPartPlacement 1 c.blocks) = 1 := by
+  rw [show 1 = 1 + 1 - 1 by decide,
+    compositionOddMinusEven_huang_eq_sum 1 0 1 (by decide) (by decide)]
+  decide
+
+-- This instance includes both an odd shift count and a nonzero exclusion term.
+example : compositionOddMinusEven 10 (fun c =>
+    (c.blocks.filter fun a => a < 3).length = 1 ∧ IsHuangSmallPartPlacement 3 c.blocks) = 6 := by
+  rw [show 10 = 8 + 3 - 1 by decide,
+    compositionOddMinusEven_huang_eq_sum 3 1 8 (by decide) (by decide)]
+  decide
+
 end MetaMathlibExt
