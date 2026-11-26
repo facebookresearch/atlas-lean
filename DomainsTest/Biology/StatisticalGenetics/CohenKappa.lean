@@ -118,6 +118,20 @@ lemma equal_margins_attainment :
   · rw [hk]
     norm_num [kappaMax, chance, rowMargin, colMargin, P, Fin.sum_univ_two]
 
+-- At the boundary `p_e = 1` the denominator of `κ_max` vanishes: the table with rows `(1, 0)` and
+-- `(0, 0)` is a joint probability table with `chance = 1`, and `kappaMax` gives `0` by `x / 0 = 0`.
+private noncomputable def chanceOne : Fin 2 → Fin 2 → ℝ := ![![1, 0], ![0, 0]]
+
+example : IsTable chanceOne ∧ chance chanceOne = 1 ∧ kappaMax chanceOne = 0 := by
+  refine ⟨⟨fun i j => ?_, ?_⟩, ?_, ?_⟩
+  · fin_cases i <;> fin_cases j <;> norm_num [chanceOne]
+  · simp only [Fin.sum_univ_two]
+    norm_num [chanceOne]
+  · simp only [chance, rowMargin, colMargin, Fin.sum_univ_two]
+    norm_num [chanceOne]
+  · simp only [kappaMax, chance, rowMargin, colMargin, Fin.sum_univ_two]
+    norm_num [chanceOne]
+
 #check @WantedExt.Biology.StatisticalGenetics.CohenKappaWanted.kappa_le_kappaMax
 #print axioms WantedExt.Biology.StatisticalGenetics.CohenKappaWanted.kappa_le_kappaMax
 #print axioms unequal_margins_attainment
