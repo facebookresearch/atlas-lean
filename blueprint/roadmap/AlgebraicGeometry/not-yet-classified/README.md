@@ -1191,3 +1191,4 @@ Topics added since this subject's fields were last revised.
 - [Frame of a sheaf of modules](is-frame-on.md)
 - [Invertible Tensor Sections](invertible-tensor-sections/README.md)
 - [Monoidal](monoidal/README.md)
+- [Trivialization by a local frame](nonempty-pullback-iso-unit.md)
