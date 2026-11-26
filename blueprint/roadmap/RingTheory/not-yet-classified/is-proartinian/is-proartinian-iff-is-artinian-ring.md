@@ -1,3 +1,4 @@
-# Is Proartinian iff is Artinian Ring
+# Discrete proartinian rings
 
-A discrete ring is proartinian if and only if it is artinian.
+A discrete ring is proartinian if and only if it is
+artinian.

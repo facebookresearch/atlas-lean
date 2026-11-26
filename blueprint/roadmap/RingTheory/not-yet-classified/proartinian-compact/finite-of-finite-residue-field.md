@@ -1,3 +1,4 @@
-# Finite of finite residue Field
+# Finiteness of artinian local rings
 
-An artinian local ring with finite residue field is finite.
+An artinian local ring with finite residue field is
+finite.

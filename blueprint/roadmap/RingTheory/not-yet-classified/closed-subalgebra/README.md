@@ -2,10 +2,10 @@
 
 ## Closed Subalgebra Obj
 
-- [Closed Subalgebra Obj](closed-subalgebra-obj.md)
-- [Closed Subalgebraι](closed-subalgebra.md)
+- [Closed subalgebras as local proartinian algebras](closed-subalgebra-obj.md)
+- [Inclusion of a closed subalgebra](closed-subalgebra.md)
 
 ## Universal
 
-- [Obj](obj.md)
-- [Ι](untitled.md)
+- [Trace algebra](obj.md)
+- [Inclusion of the trace algebra](untitled.md)

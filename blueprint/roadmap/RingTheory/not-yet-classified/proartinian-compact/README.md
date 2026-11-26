@@ -1,5 +1,5 @@
 # Proartinian Compact
 
-- [Finite of finite residue Field](finite-of-finite-residue-field.md)
-- [Finite quotient of is Open](finite-quotient-of-is-open.md)
-- [Compact Space of finite residue Field](compact-space-of-finite-residue-field.md)
+- [Finiteness of artinian local rings](finite-of-finite-residue-field.md)
+- [Open ideals have finite index](finite-quotient-of-is-open.md)
+- [Compactness of proartinian local rings](compact-space-of-finite-residue-field.md)

@@ -1,6 +1,6 @@
 # Is Residue Algebra
 
-- [Is Residue Algebra](is-residue-algebra.md)
-- [Algebra Map bijective](algebra-map-bijective.md)
-- [Alg Equiv](alg-equiv.md)
-- [Preimage](preimage.md)
+- [Residue algebras](is-residue-algebra.md)
+- [Residue fields of a residue algebra](algebra-map-bijective.md)
+- [Residue field isomorphism](alg-equiv.md)
+- [Chosen residue preimage](preimage.md)

@@ -1,3 +1,4 @@
-# Is Local Hom of is Continuous of is Proartinian
+# Continuous maps are local
 
-A continuous ring map between proartinian local rings is local.
+A continuous ring map between proartinian local rings is
+local.

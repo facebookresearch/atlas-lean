@@ -1,19 +1,19 @@
 # Proartinian Cat
 
-- [Continuous iff is Open ker](continuous-iff-is-open-ker.md)
-- [Continuous iff is Open ker](continuous-iff-is-open-ker-2.md)
+- [Continuity of homomorphisms to a discrete target](continuous-iff-is-open-ker.md)
+- [Continuity of ring homomorphisms to a discrete target](continuous-iff-is-open-ker-2.md)
 
 ## Deformation
 
-- [Is Local Proartinian Algebra](is-local-proartinian-algebra.md)
-- [Proartinian Cat](proartinian-cat.md)
+- [Local proartinian algebras](is-local-proartinian-algebra.md)
+- [The category of local proartinian algebras](proartinian-cat.md)
 
 ## Proartinian Cat
 
-- [Of](of.md)
-- [Hom](hom.md)
-- [Of Hom](of-hom.md)
-- [Residue Field](residue-field.md)
-- [To Residue Field](to-residue-field.md)
-- [Hom apply eq residue preimage](hom-apply-eq-residue-preimage.md)
-- [Is Terminal Residue Field](is-terminal-residue-field.md)
+- [Local proartinian algebras as objects](of.md)
+- [Morphisms of local proartinian algebras](hom.md)
+- [Continuous algebra maps as morphisms](of-hom.md)
+- [The residue field as a local proartinian algebra](residue-field.md)
+- [Reduction to the residue field](to-residue-field.md)
+- [Morphisms to the residue field](hom-apply-eq-residue-preimage.md)
+- [The residue field is terminal](is-terminal-residue-field.md)

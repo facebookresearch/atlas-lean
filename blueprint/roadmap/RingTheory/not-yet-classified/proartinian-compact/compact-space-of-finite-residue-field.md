@@ -1,3 +1,4 @@
-# Compact Space of finite residue Field
+# Compactness of proartinian local rings
 
-A proartinian local ring with finite residue field is compact.
+A proartinian local ring with finite residue field
+is compact.

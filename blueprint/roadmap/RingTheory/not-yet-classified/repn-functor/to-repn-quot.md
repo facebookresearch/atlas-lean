@@ -1,3 +1,4 @@
-# To Repn Quot
+# Strict equivalence classes
 
-The quotient map from representations to strict equivalence classes.
+The quotient map from representations to strict equivalence
+classes.

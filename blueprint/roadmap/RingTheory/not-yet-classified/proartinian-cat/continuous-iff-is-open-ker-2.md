@@ -1,3 +1,5 @@
-# Continuous iff is Open ker
+# Continuity of ring homomorphisms to a discrete target
 
-A ring homomorphism to a discrete ring is continuous iff its kernel is open.
+A ring homomorphism from a ring
+whose additive group is a topological group to a discrete semiring is continuous if and only if
+its kernel is open.

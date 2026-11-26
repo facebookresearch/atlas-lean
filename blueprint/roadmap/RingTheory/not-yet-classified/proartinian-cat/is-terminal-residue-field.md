@@ -1,3 +1,4 @@
-# Is Terminal Residue Field
+# The residue field is terminal
 
-The residue field of `𝓞` is a terminal object of `ProartinianCat 𝓞`.
+For a local ring `𝓞`, the residue field of `𝓞` is a
+terminal object of `ProartinianCat 𝓞`.

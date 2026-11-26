@@ -1,3 +1,4 @@
-# Continuous iff is Open ker
+# Continuity of homomorphisms to a discrete target
 
-A homomorphism of groups to a discrete group is continuous iff its kernel is open.
+A monoid homomorphism from a topological
+group to a discrete target is continuous if and only if its kernel is open.

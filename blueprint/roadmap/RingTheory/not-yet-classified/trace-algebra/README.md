@@ -1,13 +1,13 @@
 # Trace Algebra
 
-- [Conj Ker](conj-ker.md)
-- [Map Repn](map-repn.md)
+- [Matrices reducing to the identity](conj-ker.md)
+- [Change of coefficients](map-repn.md)
 
 ## Trace Algebra
 
-- [Trace Set](trace-set.md)
-- [Trace Subalgebra](trace-subalgebra.md)
+- [Traces of a representation](trace-set.md)
+- [Trace subalgebra](trace-subalgebra.md)
 
 ## Universal
 
-- [Descends](descends.md)
+- [Descent to the trace subalgebra](descends.md)

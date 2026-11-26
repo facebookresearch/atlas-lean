@@ -1,3 +1,4 @@
-# Exists ideal is Maximal and is Open
+# Open maximal ideals of linearly topologized rings
 
-A nontrivial `T₀` ring with a linear topology has an open maximal ideal.
+A nontrivial commutative topological
+ring that is `T₀` and linearly topologized has an open maximal ideal.
