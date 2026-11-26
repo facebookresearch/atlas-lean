@@ -7,6 +7,10 @@ over $U$ is an expression $X \twoheadrightarrow Y$ with $X, Y \subseteq U$; a re
 satisfies the binary join dependency $\bowtie[XY, X(U \setminus Y)]$. Thus the binary join dependencies are exactly the
 multivalued dependencies.
 
+## Depends on
+
+- [Relational algebra queries](../../relational-algebra/expr.md)
+
 ## Sources
 
 - S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Definitions 8.3.1 and 8.3.2 (p. 170).

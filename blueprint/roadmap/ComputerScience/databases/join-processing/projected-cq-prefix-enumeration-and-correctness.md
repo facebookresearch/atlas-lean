@@ -11,17 +11,10 @@ lists every answer exactly once; for $h = 0$ the output is the empty tuple exact
 an original derivation from the acyclic Boolean evaluation result, not a theorem quoted from the cited
 source.
 
-## Expansion
-
-This node states a precise result.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases.
-
 ## Depends on
 
 - [Characterizations of acyclic database schemas](characterizations-of-acyclic-database-schemas.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Proof depends on
 

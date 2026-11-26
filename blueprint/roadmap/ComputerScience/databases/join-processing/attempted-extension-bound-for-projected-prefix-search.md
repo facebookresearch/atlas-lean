@@ -7,17 +7,10 @@ attempted extensions of each retained prefix at each of the $h$ depths, failed e
 term $1$ cannot be dropped: it accounts for the initial test, which is the only test when $R = 0$ or
 $h = 0$.
 
-## Expansion
-
-This node states a precise result, an elementary count; it is not a theorem quoted from the cited source.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Algorithm cost model.
-
 ## Depends on
 
 - [Projected CQ prefix enumeration and correctness](projected-cq-prefix-enumeration-and-correctness.md)
+- [The word-RAM model](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md)
 
 ## Proof depends on
 

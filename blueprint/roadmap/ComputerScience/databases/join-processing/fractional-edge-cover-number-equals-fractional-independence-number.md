@@ -6,17 +6,14 @@ maximizes the weight of a [fractional independent set](fractional-independent-se
 each other. Consequently a minimal fractional edge cover and a maximal fractional independent set of $H_q$ have the same
 weight, so $\rho^*(H_q)$ equals the fractional independence number of $H_q$.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each pending prerequisite below and links it under
-the dependency sections.
-
-- Proof prerequisite: the strong duality theorem for finite linear programs.
-
 ## Depends on
 
 - [Natural join queries, their hypergraphs and fractional edge covers](natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
 - [Fractional independent sets of a hypergraph](fractional-independent-sets-of-a-hypergraph.md)
+
+## Proof depends on
+
+- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md)
 
 ## Sources
 
