@@ -14179,6 +14179,7 @@
   "MathlibExt/Probability/Distributions/ChiSquare": {"to": "Probability/distributions/continuous", "title": "Chi-square distribution"},
   "MathlibExt/Probability/Distributions/CochranIndependence": {"to": "Probability/linear-models-multivariate", "title": "Cochran's theorem"},
   "MathlibExt/Probability/Distributions/CochranTheorem": {"to": "Probability/linear-models-multivariate", "title": "Cochran's theorem"},
+  "MathlibExt/Probability/Distributions/CompetingExponentialClocks": {"to": "Probability/distributions/continuous", "title": "Exponential distribution"},
   "MathlibExt/Probability/Distributions/Dirichlet": {"to": "Probability/distributions/continuous", "title": "Dirichlet distribution"},
   "MathlibExt/Probability/Distributions/DirichletWeightedSum": {"to": "Probability/distributions/continuous", "title": "Dirichlet distribution"},
   "MathlibExt/Probability/Distributions/ExponentialMoments": {"to": "Probability/distributions/continuous", "title": "Exponential distribution"},
