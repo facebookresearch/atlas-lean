@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.GaussKuzminSymmetry
 public import MathlibExt.NumberTheory.GaussKuzminFundamentalIntervals
 public import MathlibExt.NumberTheory.GaussKuzminCharacterization
 public import MathlibExt.NumberTheory.GaussKuzminSymmetryNontrivialSymmetryLengthThreeAndInfinite
+public import MathlibExt.NumberTheory.GaussKuzminSymmetryStablePlusNontrivialSymmetry
 public import MathlibExt.NumberTheory.GaussKuzminMassReversal
 
 namespace MetaMathlibExt
@@ -135,22 +136,6 @@ public theorem_wanted isStableString_families :
         IsStableString (t :: a.reverse ++ [2 * t])) ∧
       ∀ n : ℕ, 2 ≤ n →
         {a : List ℕ | a.length = n ∧ (∀ x ∈ a, 0 < x) ∧ IsStableString a}.Infinite
-
-/-- **Nontrivial symmetries from stable strings.** Let $n \ge 1$ and let $a = (a_1, \dots, a_n)$ be
-a stable string of positive integers. Put $a^+ = (2, 1, a_1, \dots, a_{n-1}, a_n + 1)$ and
-$\sigma(a^+) = (2, a_n + 1, a_{n-1}, \dots, a_1, 1)$. Then $\sigma(a^+)$ is a rearrangement of
-$a^+$, it differs both from $a^+$ and from the reverse of $a^+$, and
-$P_{GK}(\sigma(a^+)) = P_{GK}(a^+)$, where $P_{GK}$ denotes the Gauss–Kuzmin measure of a string.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 5.7 (`integers-2025-A89-lem-5-7`), equations (5.12) and (5.13). -/
-public theorem_wanted stable_plus_nontrivial_symmetry (a : List ℕ) (ha : (∀ x ∈ a, 0 < x)) (h : a ≠
-    [])
-    (hst : IsStableString a) :
-    let ap := 2 :: 1 :: (a.dropLast ++ [a.getLast h + 1])
-    let sg := 2 :: (a.getLast h + 1) :: (a.dropLast.reverse ++ [1])
-    sg.Perm ap ∧ sg ≠ ap ∧ sg ≠ ap.reverse ∧ gaussKuzminMass sg = gaussKuzminMass ap
 
 end
 
