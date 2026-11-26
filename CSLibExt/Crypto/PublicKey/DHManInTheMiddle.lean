@@ -19,7 +19,7 @@ In Diffie–Hellman key agreement (`DHSecurity.transcript`, `DHSecurity.aliceKey
 its own transcript `transcript g a' b'` instead: Bob receives `g ^ a'` and Alice receives `g ^ b'`
 (Boneh and Shoup, Section 10.7 and Fig. 10.4).
 
-* `aliceKey_bobKey_manInTheMiddle`: the key Alice then outputs is the key Bob would output with
+* `aliceKey_bobKey_man_in_the_middle`: the key Alice then outputs is the key Bob would output with
   secret `b'` on Alice's message, and the key Bob outputs is the key Alice would output with
   secret `a'` on Bob's message; the adversary computes both from its exponents and the two
   messages it intercepted. Alice's exchange is thus an honest exchange with secrets `a` and `b'`,
@@ -50,7 +50,7 @@ both messages and replaces them with those of its own transcript, so that Bob re
 and Alice receives $g^{b'}$. Then the key $(g^{b'})^a$ that Alice derives equals $(g^a)^{b'}$,
 which the adversary computes from $b'$ and Alice's message, and the key $(g^{a'})^b$ that Bob
 derives equals $(g^b)^{a'}$, which it computes from $a'$ and Bob's message. -/
-theorem aliceKey_bobKey_manInTheMiddle (a b a' b' : ZMod q) :
+theorem aliceKey_bobKey_man_in_the_middle (a b a' b' : ZMod q) :
     aliceKey a (transcript g a' b').2 = bobKey b' (transcript g a b).1 ∧
       bobKey b (transcript g a' b').1 = aliceKey a' (transcript g a b).2 :=
   ⟨aliceKey_eq_bobKey g a b', (aliceKey_eq_bobKey g a' b).symm⟩

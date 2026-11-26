@@ -66,10 +66,10 @@ example : (bobKey (3 : ZMod 22) forged.1).val = 14 ∧
     (aliceKey (7 : ZMod 22) honest.2).val = 14 := by
   decide
 
-/-- The same equalities from `aliceKey_bobKey_manInTheMiddle`, with no computation. -/
+/-- The same equalities from `aliceKey_bobKey_man_in_the_middle`, with no computation. -/
 example : aliceKey (4 : ZMod 22) forged.2 = bobKey (2 : ZMod 22) honest.1 ∧
     bobKey (3 : ZMod 22) forged.1 = aliceKey (7 : ZMod 22) honest.2 :=
-  aliceKey_bobKey_manInTheMiddle five 4 3 7 2
+  aliceKey_bobKey_man_in_the_middle five 4 3 7 2
 
 /-- Under the attack, Alice's and Bob's keys differ (`16 ≠ 14`). -/
 example : aliceKey (4 : ZMod 22) forged.2 ≠ bobKey (3 : ZMod 22) forged.1 := by decide
@@ -102,7 +102,7 @@ example (hg : g ^ q = 1) (a b a' b' : ZMod q) :
 /-- Without interference (`a' = a`, `b' = b`), the statement is the correctness of the honest
 exchange. -/
 example (a b : ZMod q) : aliceKey a (transcript g a b).2 = bobKey b (transcript g a b).1 :=
-  (aliceKey_bobKey_manInTheMiddle g a b a b).1
+  (aliceKey_bobKey_man_in_the_middle g a b a b).1
 
 end General
 
