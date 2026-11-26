@@ -60908,6 +60908,8 @@
 "MathlibExt.Geometry.Polytope.FaceLattice": "1f28ee9d90367ce2",
 "MathlibExt.Geometry.Polytope.FaceLattice.coe_bot": "80f27473c5ab88b7",
 "MathlibExt.Geometry.Polytope.FaceLattice.coe_top": "5ea5424306ab3757",
+"MathlibExt.Geometry.Polytope.FaceNumbersWanted.boundaryComplex": "a17abcda5597f7a1",
+"MathlibExt.Geometry.Polytope.FaceNumbersWanted.boundary_space": "ef54a8feffca1b51",
 "MathlibExt.Geometry.Polytope.FaceNumbersWanted.euler_poincare": "856276b00fca28a4",
 "MathlibExt.Geometry.Polytope.FaceNumbersWanted.exists_simplicialSphere_faceCount_eq": "5dfae79c72fcace1",
 "MathlibExt.Geometry.Polytope.FaceNumbersWanted.steinitz_lemma": "ee596f490e36a6ab",

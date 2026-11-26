@@ -17,6 +17,14 @@ open MathlibExt.Combinatorics.SimplicialSphereShared
 
 namespace MathlibExtTest.Geometry.Polytope.BoundaryComplex
 
+-- An interior point belongs to none of the simplices of the boundary complex.
+example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    {s : Finset E} (hsimp : IsSimplicial s) {x : E}
+    (hx : x ∈ interior (convexHull ℝ (s : Set E))) :
+    x ∉ (boundaryComplex (Set.nonempty_of_mem hx) hsimp).space := by
+  rw [boundary_space]
+  exact fun h => h.2 hx
+
 -- A singleton in the zero-dimensional ambient space is full-dimensional.
 example : Nonempty (FiniteSimplicialSphere 0) := by
   let s : Finset (EuclideanSpace ℝ (Fin 0)) := {0}
