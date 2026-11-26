@@ -24,32 +24,30 @@ Value and cost results for Karatsuba multiplication, the radix-two FFT and Stras
 accumulator, each in its provider's charged model. Every cost here is a total charge, summed over
 all recursive calls.
 
-Karatsuba's results are cited from the imported `Karatsuba` module, not restated:
-`karatsuba_ret` gives the value `x * y`, and `karatsuba_time_le_rpow` bounds the declared total
-charge by `9 * n ^ logb 2 3` for `n ≥ 1`. That charge, `karatsubaCost n`, adds `1` for each call
-with `n ≤ 1` and `n` for each call with `n ≥ 2`; it is an accounting convention, not a count of
-digit operations.
+The Karatsuba and FFT results are cited from the imported modules, not restated:
+
+* `karatsuba_ret` gives Karatsuba's value `x * y`, and `karatsuba_time_le_rpow` bounds its
+  declared total charge by `9 * n ^ logb 2 3` for `n ≥ 1`. That charge, `karatsubaCost n`, adds
+  `1` for each call with `n ≤ 1` and `n` for each call with `n ≥ 2`; it is an accounting
+  convention, not a count of digit operations.
+* `fft_time_add_one` gives the FFT's exact total charge,
+  `(fft d omega xs).time + 1 = (7 * d + 1) * 2 ^ d`; the charge counts scalar ring operations and
+  array element reads and writes.
+
+This module adds the Strassen results for the dimension `n = 2 ^ k`: the multiplication count is
+exactly `n ^ logb 2 7`, all scalar multiplications, additions and subtractions together number at
+most `(28 / 3) * n ^ logb 2 7`, and from a zero accumulator the value is the Mathlib matrix
+product.
 
 Not supplied here: a bound on Karatsuba's digit operations, and an FFT count of ring operations
-alone (the FFT charge also counts array reads and writes).
+alone.
 -/
 
 universe u
 
 namespace Cslib.Algorithms.Lean.AlgebraicCostAudit
 
-open Cslib.Algorithms.Lean.TimeM Cslib.Algorithms.Lean.Matrix
-
-/-- **Charge bound for the radix-two FFT.** Let $R$ be a commutative ring. For every natural
-number $d$, every $\omega \in R$ and every vector $x \in R^{2^d}$, the total charge of the
-radix-two FFT of $x$ with root $\omega$, summed over all its recursive calls, is at most
-$(7d + 1) \cdot 2^d$.
-
-The charge counts scalar ring operations and array element reads and writes. -/
-theorem fft_charge_le {R : Type*} [CommRing R] (d : ℕ) (ω : R)
-    (xs : Vector R (2 ^ d)) :
-    (fft d ω xs).time ≤ (7 * d + 1) * 2 ^ d := by
-  have h := fft_time_add_one d ω xs; rw [← h]; exact Nat.le_succ _
+open Cslib.Algorithms.Lean.Matrix
 
 /-- **Multiplication count of Strassen's accumulator.** Let $R$ be a type with a zero, an
 addition, a subtraction and a multiplication. For every $k \ge 0$ and all $n \times n$ matrices

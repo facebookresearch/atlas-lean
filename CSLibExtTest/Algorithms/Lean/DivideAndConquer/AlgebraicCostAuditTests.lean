@@ -18,12 +18,8 @@ universe u
 
 namespace Cslib.Algorithms.Lean.AlgebraicCostAuditTests
 
-open Cslib.Algorithms.Lean.TimeM Cslib.Algorithms.Lean.Matrix
+open Cslib.Algorithms.Lean.Matrix
 open Cslib.Algorithms.Lean.AlgebraicCostAudit
-
-theorem karatsuba_concrete_value :
-    (karatsuba 10 2 12 34).ret = 408 := by
-  rw [karatsuba_ret]
 
 def matA2 : Vector (Vector Int (2 ^ 1)) (2 ^ 1) :=
   Vector.ofFn fun i => Vector.ofFn fun j => 2 * (i.val : Int) + (j.val : Int) + 1
