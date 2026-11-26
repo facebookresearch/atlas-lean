@@ -1,3 +1,3 @@
 # Command Rel
 
-The existing terminating execution relation, viewed as a categorical morphism.
+The terminating execution relation, viewed as a categorical morphism.

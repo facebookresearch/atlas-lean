@@ -1,3 +1,3 @@
-# Table Ok
+# Class tables all of whose classes are ok
 
-All classes ok (CLASS-OK); table validity is ValidTable.
+A class table is ok when every class in it is ok (rule CLASS-OK). A valid class table is one that is both well formed and ok.

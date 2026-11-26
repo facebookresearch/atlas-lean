@@ -1,6 +1,6 @@
 # Verified MiniImp binary search
 
-- [Guard](guard.md)
+- [Loop guard of the binary search](guard.md)
 - [Loop body of binary search](body.md)
 - [Invariant](invariant.md)
 - [Loop](loop.md)
@@ -13,7 +13,7 @@
 - [Specification of binary search on sorted arrays](big-step-spec.md)
 - [The binary-search loop terminates](loop-exec-success.md)
 - [Binary search terminates within a linear budget](program-exec-success.md)
-- [Run](run.md)
+- [Running the binary-search program](run.md)
 - [Running binary search gives the reference result](run-eq-lower-bound.md)
 - [Total correctness of binary search](total-correct.md)
 - [The binary-search loop body preserves the invariant](body-preserves.md)

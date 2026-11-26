@@ -4,7 +4,7 @@
 
 - [Except F](except-f.md)
 - [Free Except](free-except.md)
-- [Nondet F](nondet-f.md)
+- [Signature of explicit nondeterminism](nondet-f.md)
 - [Free Nondet](free-nondet.md)
 
 ## Free Except
@@ -33,3 +33,7 @@
 
 - [Fail](fail.md)
 - [Choice](choice.md)
+
+## Sources
+
+- G. Plotkin and M. Pretnar, *Handlers of Algebraic Effects*, Programming Languages and Systems (ESOP 2009): Section 2 (exceptions) and Section 6.4 (explicit nondeterminism, `fail : 0` and `pick : 2`). In the later journal version, explicit nondeterminism is Section 3.1.

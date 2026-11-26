@@ -1,3 +1,3 @@
 # Denote compile
 
-Compiling preserves exactly the existing terminating execution relation.
+Compiling preserves exactly the terminating execution relation.

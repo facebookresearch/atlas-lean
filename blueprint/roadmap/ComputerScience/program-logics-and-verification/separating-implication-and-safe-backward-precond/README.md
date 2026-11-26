@@ -20,5 +20,5 @@
 - [Hand](hand.md)
 - [Skip](skip.md)
 - [True iff](true-iff.md)
-- [Frame](frame.md)
-- [Frame wand](frame-wand.md)
+- [Frame property of safe preconditions](frame.md)
+- [Frame property of safe preconditions with separating implication](frame-wand.md)

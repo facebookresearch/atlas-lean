@@ -1,13 +1,13 @@
 # Operational semantics over labelled transition systems
 
-## Operational Semantics
+## Operational semantics
 
-- [Op Sem](op-sem.md)
+- [Operational semantics over a labelled transition system](op-sem.md)
 
-## Op Sem
+## Steps, safety and divergence
 
 - [Step](step.md)
-- [Steps](steps.md)
+- [Finite reachability in an operational semantics](steps.md)
 - [Stuck](stuck.md)
 - [Stuck iff](stuck-iff.md)
 - [Safe](safe.md)
@@ -18,13 +18,13 @@
 - [Unique normal form of a deterministic semantics](eq-of-steps-of-terminal.md)
 - [Unique final configuration](eq-of-steps-of-final.md)
 
-## Operational Semantics
+## Instances: IMP and the simply typed λ-calculus
 
 - [Operational semantics of IMP](imp.md)
 - [Imp step iff](imp-step-iff.md)
 - [Imp steps iff](imp-steps-iff.md)
 - [Imp deterministic](imp-deterministic.md)
 - [Imp safe](imp-safe.md)
-- [Stlc](stlc.md)
+- [Operational semantics of the simply typed λ-calculus](stlc.md)
 - [Stlc step iff](stlc-step-iff.md)
 - [Stlc deterministic](stlc-deterministic.md)
