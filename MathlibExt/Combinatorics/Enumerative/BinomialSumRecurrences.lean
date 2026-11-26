@@ -9,9 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.MonoidAlgebra.Basic
 import Mathlib.Algebra.Ring.GeomSum
+import Mathlib.Data.Nat.Choose.Sum
+import Mathlib.Data.ZMod.Basic
+import Mathlib.LinearAlgebra.Charpoly.Basic
+import Mathlib.LinearAlgebra.Dimension.Free
 import Mathlib.RingTheory.PowerSeries.Order
 
 /-!
@@ -64,6 +70,102 @@ public theorem linearRecurrence_of_finite_window {R : Type*} [CommRing R]
         intro j hj
         have hjs := (Finset.mem_Icc.mp hj).2
         rw [← Finset.mul_sum, ← hA (n - j) (by omega)]
+
+private theorem linearRecurrence_of_powers {R A : Type*} [CommRing R] [CommRing A] [Algebra R A]
+    [StrongRankCondition R] [Module.Finite R A] [Module.Free R A] (t : A) (f : A →ₗ[R] R) :
+    ∃ a : ℕ → R, ∀ n, Module.finrank R A ≤ n →
+      f (t ^ n) = ∑ i ∈ Finset.Icc 1 (Module.finrank R A), a i * f (t ^ (n - i)) := by
+  let T := Algebra.lmul R A t
+  let P := T.charpoly
+  let k := Module.finrank R A
+  have hdeg : P.natDegree = k := T.charpoly_natDegree
+  have hlead : P.coeff k = 1 := hdeg ▸ T.charpoly_monic.coeff_natDegree
+  refine ⟨fun i ↦ -P.coeff (k - i), fun n hn ↦ ?_⟩
+  have hP : ∑ j ∈ Finset.range (k + 1), P.coeff j • t ^ j = 0 := by
+    have h : Polynomial.aeval t P = 0 := Algebra.aeval_self_charpoly_lmul t
+    rwa [Polynomial.aeval_eq_sum_range, hdeg] at h
+  -- Shift to time `n`, then reverse the polynomial indices to count lags.
+  have hzero := congrArg (fun z : A ↦ f (t ^ (n - k) * z)) hP
+  simp only [Finset.mul_sum, Algebra.mul_smul_comm, ← pow_add, map_sum, map_smul,
+    smul_eq_mul, mul_zero, map_zero] at hzero
+  rw [← Finset.sum_range_reflect (fun j ↦ P.coeff j * f (t ^ (n - k + j))),
+    Nat.add_sub_cancel, Finset.sum_range_eq_add_Ico _ (Nat.succ_pos k),
+    Nat.succ_eq_add_one, Finset.Ico_add_one_right_eq_Icc, Nat.sub_zero, hlead, one_mul,
+    Nat.sub_add_cancel hn] at hzero
+  have hsum : (∑ i ∈ Finset.Icc 1 k, P.coeff (k - i) * f (t ^ (n - k + (k - i)))) =
+      ∑ i ∈ Finset.Icc 1 k, P.coeff (k - i) * f (t ^ (n - i)) := by
+    refine Finset.sum_congr rfl fun i hi ↦ ?_
+    have := (Finset.mem_Icc.mp hi).2
+    rw [show n - k + (k - i) = n - i by omega]
+  rw [hsum] at hzero
+  simpa only [neg_mul, Finset.sum_neg_distrib] using eq_neg_of_add_eq_zero_left hzero
+
+section BinomialStepSums
+
+variable (k : ℕ)
+
+local notation "A" => AddMonoidAlgebra ℤ (ZMod k)
+
+/-- Multiplication by this element advances `α` rows of Pascal's triangle and shifts the
+residue indices by `-γ`. The group algebra collects coefficients at congruent indices. -/
+private noncomputable def binomialStepElement (α γ : ℕ) : A :=
+  AddMonoidAlgebra.single (-(γ : ZMod k)) 1 * (AddMonoidAlgebra.single 1 1 + 1) ^ α
+
+private noncomputable def binomialResidue (p : ZMod k) : A →ₗ[ℤ] ℤ :=
+  (Finsupp.lapply p).comp (AddMonoidAlgebra.coeffLinearEquiv ℤ).toLinearMap
+
+private theorem binomialStepElement_pow_coeff (α γ p n : ℕ) :
+    binomialResidue k (p : ZMod k) (binomialStepElement k α γ ^ n) =
+      ∑ m ∈ (Finset.range (α * n + 1)).filter (fun m => m % k = (γ * n + p) % k),
+        ((α * n).choose m : ℤ) := by
+  have hshift : n • -(γ : ZMod k) = -((γ * n : ℕ) : ZMod k) := by
+    simp [nsmul_eq_mul, mul_comm]
+  rw [binomialStepElement, mul_pow, AddMonoidAlgebra.single_pow, hshift, one_pow, ← pow_mul,
+    add_pow, Finset.mul_sum, map_sum, Finset.sum_filter]
+  refine Finset.sum_congr rfl fun m _ ↦ ?_
+  rw [one_pow, mul_one, AddMonoidAlgebra.single_pow, nsmul_one, one_pow, ← mul_assoc,
+    AddMonoidAlgebra.single_mul_single, mul_one, ← nsmul_eq_mul', map_nsmul]
+  change (α * n).choose m • (AddMonoidAlgebra.single (-(↑(γ * n) : ZMod k) + ↑m) (1 : ℤ)).coeff
+    (p : ZMod k) = _
+  simp only [AddMonoidAlgebra.coeff_single, Finsupp.single_apply, neg_add_eq_iff_eq_add,
+    ← Nat.cast_add, ZMod.natCast_eq_natCast_iff']
+  split <;> simp
+
+end BinomialStepSums
+
+-- The residue-vector proof only needs `k ≠ 0`; retain the hypotheses and named arguments.
+set_option linter.unusedVariables false in
+/-- **Window criterion for step sums of binomial coefficients.** Let $\alpha, k, \gamma, p, s$
+be natural numbers with $\alpha > 1$, $k > 1$, $\gamma \ge 1$ and $p < k$, and let
+$\delta_1, \delta_2, \ldots$ be integers. For $n \in \mathbb{N}$ let $c(n)$ be the sum of
+$\binom{\alpha n}{m}$ over all $m$ with $0 \le m \le \alpha n$ and
+$m \equiv \gamma n + p \pmod{k}$, that is, $c(n) = \sum_{j \in \mathbb{Z}}
+\binom{\alpha n}{\gamma n + p + kj}$. If $c(n) = \sum_{i=1}^{s} \delta_i c(n - i)$ for all $n$
+with $s \le n \le k^2 + s - 1$, then $c(n) = \sum_{i=1}^{s} \delta_i c(n - i)$ for all $n \ge s$.
+
+The coefficients $\delta_i$ need only work for this one residue $p$; the source's hypothesis,
+with one family $\delta_i$ for every $p$, is a special case.
+
+Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
+Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Proposition 8. -/
+public theorem binomialStepSum_recurrence_of_window (α k γ p s : ℕ) (hα : 1 < α)
+    (hk : 1 < k) (hγ : 1 ≤ γ) (hp : p < k) (δ : ℕ → ℤ) :
+    let c : ℕ → ℤ := fun n =>
+      ∑ m ∈ (Finset.range (α * n + 1)).filter (fun m => m % k = (γ * n + p) % k),
+        ((α * n).choose m : ℤ)
+    (∀ n, s ≤ n → n ≤ k ^ 2 + s - 1 → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i)) →
+      ∀ n, s ≤ n → c n = ∑ i ∈ Finset.Icc 1 s, δ i * c (n - i) := by
+  intro c hc
+  let : NeZero k := ⟨by omega⟩
+  let b := AddMonoidAlgebra.basis (ZMod k) ℤ
+  let := Module.Free.of_basis b
+  let := Module.Finite.of_basis b
+  have hdim : Module.finrank ℤ (AddMonoidAlgebra ℤ (ZMod k)) = k :=
+    (Module.finrank_eq_card_basis b).trans (ZMod.card k)
+  obtain ⟨a, ha⟩ := linearRecurrence_of_powers (binomialStepElement k α γ) (binomialResidue k p)
+  simp only [hdim, binomialStepElement_pow_coeff] at ha
+  exact linearRecurrence_of_finite_window c a δ k s (k ^ 2 + s - 1) ha
+    (by have : k ≤ k ^ 2 := Nat.le_pow (by decide); omega) hc
 
 /-- The step-sum formula of `riordan_stepSum_coeff` for every step `k ≥ 1`; the rational case
 below also needs the step `k = 1`. -/

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.RingTheory.Coprime.Basic
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.ExtendedContinuant
 
@@ -40,6 +42,20 @@ example (x : ℤ → ℤ) (h : ℤ) :
 -- Reflecting order -7 gives the forward continuant on the terms 3, 4, 5, 6.
 example : extendedContinuant id (-7) 8 = 421 :=
   (extendedContinuant_neg_order id 8 7).trans (by decide)
+
+-- At order -4 every factor lies on the backward branch, and the sign is (-1)^(-3) = -1.
+example (x : ℤ → ℤ) :
+    extendedContinuant x (-4) 0 * extendedContinuant x (-6) 1 -
+      extendedContinuant x (-5) 1 * extendedContinuant x (-5) 0 = -1 := by
+  simpa [Int.negOnePow_odd 3 ⟨1, rfl⟩] using extendedContinuant_det x (-4)
+
+-- Every raw convergent K_n(x)_0 / K_{n-1}(x)_1 is in lowest terms, also for negative orders.
+example (x : ℤ → ℤ) (n : ℤ) :
+    IsCoprime (extendedContinuant x n 0) (extendedContinuant x (n - 1) 1) :=
+  ⟨((n + 1).negOnePow : ℤ) * extendedContinuant x (n - 2) 1,
+    -((n + 1).negOnePow : ℤ) * extendedContinuant x (n - 1) 0, by
+      linear_combination ((n + 1).negOnePow : ℤ) * extendedContinuant_det x n +
+        Int.units_coe_mul_self (n + 1).negOnePow⟩
 
 -- At shift two, the first pair can agree: for x = id and z₀ = 1 it is (1, 1).
 -- The theorem then forces a mismatch at a positive index.
@@ -82,3 +98,22 @@ example :
       -1 := by decide
 
 end MetaMathlibExt.silentTerms_table_five_mod_six
+
+namespace MetaMathlibExt.threeSilent_terms
+
+private def quadratic (i : ℤ) : ℤ := (i + 1) * (i + 2)
+
+-- The first westbound numerator vanishes. The next term is recovered from the denominator.
+example (y z : ℤ → ℤ)
+    (heast : ∀ i : ℕ, extendedContinuant quadratic i 0 = extendedContinuant y i 0 ∧
+      extendedContinuant quadratic ((i : ℤ) - 1) 1 = extendedContinuant y ((i : ℤ) - 1) 1)
+    (hwest : ∀ i : ℕ, extendedContinuant quadratic (-(i : ℤ) - 4) 0 = extendedContinuant z i 0 ∧
+      extendedContinuant quadratic (-(i : ℤ) - 5) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
+    y 0 = 2 ∧ z 0 = 0 ∧ z 1 = -2 := by
+  obtain ⟨he, hw⟩ := threeSilent_terms quadratic y z heast hwest (by decide)
+  have h₂ := hw 2 (by decide)
+  have h₃ := hw 3 (by decide)
+  norm_num [quadratic] at h₂ h₃
+  exact ⟨(he 0).symm, by omega, by omega⟩
+
+end MetaMathlibExt.threeSilent_terms

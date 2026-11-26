@@ -13,6 +13,7 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Combinatorics.Enumerative.ColoredCompositionPartialBell
 public import MathlibExt.Combinatorics.Enumerative.ColoredCompositionsDyckPolygons
 public import MathlibExt.Combinatorics.Enumerative.ColoredDyckPathPartialBell
+public import MathlibExt.Combinatorics.Enumerative.ColoredPolygonDissectionComposition
 public import MathlibExt.Combinatorics.Enumerative.PartialBellPolynomial
 
 /-!
@@ -70,20 +71,6 @@ Paths, and Polygon Partitions*, Journal of Integer Sequences 27 (2024), Article
 public theorem_wanted choose_mul_coloredCompositionCount_eq (γ : ℕ → ℕ) {n k : ℕ}
     (hk : 1 ≤ k) (hkn : k ≤ n) :
     n.choose (k - 1) * coloredCompositionCount γ n k = k * coloredDyckPathCount γ n k
-
-/-- **Polygon partitions and colored compositions.** For every coloring sequence
-$\gamma : \mathbb{N} \to \mathbb{N}$ and all natural numbers $n$ and $k$ with $1 \le k \le n$, the
-colored polygon dissection count $p_{n,k}(\gamma)$ and the colored composition count
-$c_{n,k}(\gamma)$ satisfy
-$$(n+1)\, p_{n,k}(\gamma) = \binom{n+k}{k}\, c_{n,k}(\gamma).$$
-
-Source: Gil, Hoover, and Shearer, *Bijections Between Colored Compositions, Dyck
-Paths, and Polygon Partitions*, Journal of Integer Sequences 27 (2024), Article
-24.5.2, Theorem 8 (`jis-2024-24.5.2-thm-8`). -/
-public theorem_wanted succ_mul_coloredPolygonDissectionCount_eq (γ : ℕ → ℕ) {n k : ℕ}
-    (hk : 1 ≤ k) (hkn : k ≤ n) :
-    (n + 1) * coloredPolygonDissectionCount γ n k =
-      (n + k).choose k * coloredCompositionCount γ n k
 
 end
 

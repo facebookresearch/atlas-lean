@@ -1,0 +1,15 @@
+# Adelic Picard Vectors
+
+- [Line Object](line-object.md)
+- [Generator](generator.md)
+- [Isometry](isometry.md)
+- [Tensor Comparison](tensor-comparison.md)
+- [Of Fixed Boundary](of-fixed-boundary.md)
+- [Isometry Relations](isometry-relations.md)
+- [Tensor Relations](tensor-relations.md)
+- [Relations](relations.md)
+- [Picard Vector](picard-vector.md)
+- [Line Class](line-class.md)
+- [Underlying Line](underlying-line.md)
+- [Line Class isometric](line-class-isometric.md)
+- [Line Class tensor](line-class-tensor.md)

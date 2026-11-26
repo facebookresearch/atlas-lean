@@ -12,6 +12,8 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.NumberTheory.IteratedRemainderSet
+public import MathlibExt.NumberTheory.PrimeSquareTail
+public import MathlibExt.NumberTheory.RemainderSet
 
 /-!
 # Bounds for sets of remainders (statements)
@@ -22,34 +24,19 @@ Remainders*, Journal of Integer Sequences 29 (2026), Article 26.1.4.
 `S(n) = {n mod k : 1 ≤ k ≤ ⌊n/2⌋}` and `s(n) = |S(n)|` (OEIS A283190). The paper's
 structural lemmas, its `O(log log n)` drop bound, and its iterated-set bounds are proved in
 `FormalizedPapers/NumberTheory/BaraskarVukusic2026` (there `S 1 n` is this `remainderSet n`);
-`WantedExt` may not import `FormalizedPapers`, so the set is restated here. This file states
-the results that are not proved there: the asymptotic `s(n) = cn + O(n/(log n log log n))`,
-unbounded drops, and the three auxiliary analytic lemmas. The iterated remainder sets `S_j(n)`
-are defined, and Lemma 19 (`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is
-proved, in `MathlibExt.NumberTheory.IteratedRemainderSet`.
+`WantedExt` and `MathlibExt` may not import `FormalizedPapers`, so the set is restated in
+`MathlibExt.NumberTheory.RemainderSet`, which also proves the unbounded drops. This file states
+the remaining results that `FormalizedPapers` does not prove: the asymptotic
+`s(n) = cn + O(n/(log n log log n))`, the theorem on consecutive differences, and two
+auxiliary analytic lemmas. The inverse-prime-square tail bound is proved in
+`MathlibExt.NumberTheory.PrimeSquareTail`. The iterated remainder sets `S_j(n)` are defined, and
+Lemma 19 (`S_j(n)` versus the Pierce length `P(n)`, in corrected form) is proved, in
+`MathlibExt.NumberTheory.IteratedRemainderSet`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Remainder set.** For a natural number $n$, the remainder set is
-$S(n) = \{\, n \bmod k : 1 \le k \le \lfloor n/2 \rfloor \,\}$, the set of remainders of $n$
-modulo the integers from $1$ to $\lfloor n/2 \rfloor$.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Section 1 (definition of `S(n)`). -/
-public def remainderSet (n : ℕ) : Finset ℕ :=
-  (Finset.Icc 1 (n / 2)).image (n % ·)
-
-/-- **Remainder count.** For a natural number $n$, $s(n)$ is the number of elements of the
-remainder set $S(n)$, that is, the number of distinct values of $n \bmod k$ for
-$1 \le k \le \lfloor n/2 \rfloor$ (OEIS A283190).
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Section 1 (definition of `s(n)`). -/
-public def remainderCount (n : ℕ) : ℕ :=
-  (remainderSet n).card
 
 /-- **The remainder count of 11.** The number $s(11)$ of distinct remainders $11 \bmod k$ for
 $1 \le k \le 5$ equals $4$.
@@ -95,16 +82,6 @@ public theorem_wanted remainderCount_asymptotic :
       Filter.Tendsto (fun n : ℕ => (remainderCount n : ℝ) / n) Filter.atTop
         (nhds remainderConstant)
 
-/-- **Unbounded drops in the number of remainders.** Let $s(n)$ be the number of distinct
-remainders $n \bmod k$ with $1 \le k \le \lfloor n/2 \rfloor$. For every natural number $M$
-there are infinitely many $n$ with $s(n+1) + M \le s(n)$; equivalently,
-$\liminf_{n \to \infty} (s(n+1) - s(n)) = -\infty$.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Proposition 17 (`prop:diffs_unbounded`). -/
-public theorem_wanted remainderCount_drops_unbounded (M : ℕ) :
-    ∃ᶠ n in Filter.atTop, remainderCount (n + 1) + M ≤ remainderCount n
-
 /-- **Consecutive differences of the number of remainders.** Let $s(n)$ be the number of
 distinct remainders $n \bmod k$ with $1 \le k \le \lfloor n/2 \rfloor$. Then
 $s(n+1) \le s(n) + 1$ for every $n \ge 1$; there is a real constant $C$ with
@@ -146,16 +123,6 @@ Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Jour
 Integer Sequences 29 (2026), Article 26.1.4, Lemma 7 (`lem:primecounting_ub`). -/
 public theorem_wanted primeCounting_le_thirteen_tenths {n : ℕ} (hn : 2 ≤ n) :
     (Nat.primeCounting n : ℝ) ≤ 13 / 10 * n / Real.log n
-
-/-- **Tail of the sum of inverse prime squares.** As the natural number $n$ tends to infinity,
-the sum $\sum_{p > n,\ p \text{ prime}} 1/p^2$ of the inverse squares of the primes greater
-than $n$ is $O(1/(n \log n))$.
-
-Source: Omkar Baraskar and Ingrid Vukusic, *Bounds for Sets of Remainders*, Journal of
-Integer Sequences 29 (2026), Article 26.1.4, Lemma 8 (`lem:psquared_sum_est`). -/
-public theorem_wanted tsum_inv_sq_primes_gt_isBigO :
-    (fun n : ℕ => ∑' p : {p : ℕ // p.Prime ∧ n < p}, (1 : ℝ) / ((p : ℕ) : ℝ) ^ 2)
-      =O[Filter.atTop] (fun n : ℕ => 1 / ((n : ℝ) * Real.log n))
 
 /-- **The first iterated remainder set is the remainder set.** For every natural number $n$, the
 iterated remainder set $S_1(n)$ equals the remainder set
