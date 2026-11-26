@@ -117,7 +117,7 @@ private theorem sum_factorial_pair_eq_two_mul (n : ℕ) (hn : 1 ≤ n) :
     ∑ k ∈ Finset.range (2 * n), ((Nat.factorial k * Nat.factorial (2 * n - 1 - k) : ℕ) : ℚ) =
       2 * ∑ k ∈ Finset.range n, ((Nat.factorial k * Nat.factorial (2 * n - 1 - k) : ℕ) : ℚ) := by
   let f : ℕ → ℚ := fun k => ((Nat.factorial k * Nat.factorial (2 * n - 1 - k) : ℕ) : ℚ)
-  show ∑ k ∈ Finset.range (2 * n), f k = 2 * ∑ k ∈ Finset.range n, f k
+  change ∑ k ∈ Finset.range (2 * n), f k = 2 * ∑ k ∈ Finset.range n, f k
   rw [two_mul, Finset.sum_range_add]
   have hmirror : ∀ k ∈ Finset.range n, f (n + k) = f (n - 1 - k) := by
     intro k hk
@@ -145,7 +145,8 @@ private theorem wilsonQuotientZPlus_two_mul_eq_div (n : ℕ) (hn : 1 ≤ n) :
       Nat.factorial (2 * n - k - 1) = Nat.factorial (2 * n - 1 - k) := by
     intro k _
     rw [Nat.sub_right_comm]
-  have hS : ∑ k ∈ Finset.range (2 * n), ((Nat.factorial k * Nat.factorial (2 * n - k - 1) : ℕ) : ℚ) =
+  have hS : ∑ k ∈ Finset.range (2 * n),
+        ((Nat.factorial k * Nat.factorial (2 * n - k - 1) : ℕ) : ℚ) =
       ∑ k ∈ Finset.range (2 * n), ((Nat.factorial k * Nat.factorial (2 * n - 1 - k) : ℕ) : ℚ) := by
     apply Finset.sum_congr rfl
     intro k hk
@@ -196,8 +197,11 @@ private theorem quotient_eq_factorial_mul (n k : ℕ) (hn : 0 < n) (hk : k < n) 
       Nat.factorial k * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1)) := by
   have hadd : 2 * n - 1 - k = n + (n - 1 - k) := by omega
   rw [hadd, factorial_add_eq_mul_shifted_prod n (n - 1 - k) hn]
-  have hcomm : Nat.factorial k * (n * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1))) =
-      n * (Nat.factorial k * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1))) := by
+  have hcomm :
+      Nat.factorial k *
+          (n * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1))) =
+        n * (Nat.factorial k * Nat.factorial (n - 1) *
+          ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1))) := by
     ac_rfl
   rw [hcomm, Nat.mul_div_cancel_left _ hn]
 
@@ -271,8 +275,10 @@ private theorem two_mul_dvd_quotient_of_composite (n k : ℕ) (hn : 1 ≤ n)
       ring
     rw [h2n] at *
     obtain ⟨t, ht⟩ := hdvd
-    have hq : Nat.factorial k * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1)) =
-        (a * (2 * a)) * (Nat.factorial k * t * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1))) := by
+    have hq :
+        Nat.factorial k * Nat.factorial (n - 1) * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1)) =
+          (a * (2 * a)) *
+            (Nat.factorial k * t * ∏ i ∈ Finset.range (n - 1 - k), (n + (i + 1))) := by
       rw [ht]
       ac_rfl
     rw [hq]
@@ -332,7 +338,8 @@ private theorem two_dvd_quotient_of_odd_prime (p k : ℕ) (hp : p.Prime) (hp2 : 
   exact Nat.dvd_mul_right 2 t
 
 private theorem quotient_modEq_pow_of_odd_prime (p k : ℕ) (hp : p.Prime) (hk : k < p) :
-    ((Nat.factorial k * Nat.factorial (2 * p - 1 - k) / p : ℕ) : ℤ) ≡ (-1 : ℤ) ^ k [ZMOD (p : ℤ)] := by
+    ((Nat.factorial k * Nat.factorial (2 * p - 1 - k) / p : ℕ) : ℤ) ≡
+      (-1 : ℤ) ^ k [ZMOD (p : ℤ)] := by
   have hppos : 0 < p := hp.pos
   have hn1 : 1 ≤ p := by omega
   have hYeq : Nat.factorial k * Nat.factorial (2 * p - 1 - k) / p =
@@ -341,18 +348,21 @@ private theorem quotient_modEq_pow_of_odd_prime (p k : ℕ) (hp : p.Prime) (hk :
   have hR : ((∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) =
       ((Nat.factorial (p - 1 - k) : ℕ) : ZMod p) := by
     rw [Nat.cast_prod]
-    have hfac : ∀ i ∈ Finset.range (p - 1 - k), ((p + (i + 1) : ℕ) : ZMod p) = ((i + 1 : ℕ) : ZMod p) := by
+    have hfac : ∀ i ∈ Finset.range (p - 1 - k),
+        ((p + (i + 1) : ℕ) : ZMod p) = ((i + 1 : ℕ) : ZMod p) := by
       intro i _
       simp only [Nat.cast_add, ZMod.natCast_self, zero_add]
     rw [Finset.prod_congr rfl hfac, ← Nat.cast_prod, Finset.prod_range_add_one_eq_factorial]
   have hFact : Fact p.Prime := ⟨hp⟩
   have hWilson : ((Nat.factorial (p - 1) : ℕ) : ZMod p) = -1 := @ZMod.wilsons_lemma p hFact
   have hIff := neg_one_pow_mul_factorial_mul_factorial_modEq_neg_one_iff p k hn1 hk
-  have hMod : (-1 : ℤ) ^ k * (Nat.factorial k * Nat.factorial (p - k - 1) : ℤ) ≡ -1 [ZMOD (p : ℤ)] :=
+  have hMod :
+      (-1 : ℤ) ^ k * (Nat.factorial k * Nat.factorial (p - k - 1) : ℤ) ≡ -1 [ZMOD (p : ℤ)] :=
     hIff.mpr (Or.inr hp)
   have hsub : p - k - 1 = p - 1 - k := Nat.sub_right_comm p k 1
   rw [hsub] at hMod
-  have hZMod : (-1 : ZMod p) ^ k * (((Nat.factorial k : ℕ) : ZMod p) * ((Nat.factorial (p - 1 - k) : ℕ) : ZMod p)) = -1 := by
+  have hZMod : (-1 : ZMod p) ^ k *
+      (((Nat.factorial k : ℕ) : ZMod p) * ((Nat.factorial (p - 1 - k) : ℕ) : ZMod p)) = -1 := by
     have hcast := (ZMod.intCast_eq_intCast_iff _ _ p).mpr hMod
     simpa using hcast
   have he2 : (-1 : ZMod p) ^ k * (-1 : ZMod p) ^ k = 1 := by
@@ -363,11 +373,15 @@ private theorem quotient_modEq_pow_of_odd_prime (p k : ℕ) (hp : p.Prime) (hk :
       -((-1 : ZMod p) ^ k) := by
     have h1 := congrArg (fun x : ZMod p => (-1 : ZMod p) ^ k * x) hZMod
     simpa [← mul_assoc, he2, one_mul] using h1
-  have hY : ((Nat.factorial k * Nat.factorial (p - 1) * ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) =
-      (-1 : ZMod p) ^ k := by
-    have hcast : ((Nat.factorial k * Nat.factorial (p - 1) * ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) =
-        ((Nat.factorial k : ℕ) : ZMod p) * ((Nat.factorial (p - 1) : ℕ) : ZMod p) *
-          ((∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) := by
+  have hY :
+      ((Nat.factorial k * Nat.factorial (p - 1) *
+          ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) =
+        (-1 : ZMod p) ^ k := by
+    have hcast :
+        ((Nat.factorial k * Nat.factorial (p - 1) *
+            ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) =
+          ((Nat.factorial k : ℕ) : ZMod p) * ((Nat.factorial (p - 1) : ℕ) : ZMod p) *
+            ((∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) := by
       push_cast
       ring
     rw [hcast, hWilson, hR]
@@ -378,8 +392,11 @@ private theorem quotient_modEq_pow_of_odd_prime (p k : ℕ) (hp : p.Prime) (hk :
   have hYcast0 : (((Nat.factorial k * Nat.factorial (2 * p - 1 - k) / p : ℕ) : ℤ) : ZMod p) =
       (-1 : ZMod p) ^ k := by
     rw [hYeq]
-    have hNat : (((Nat.factorial k * Nat.factorial (p - 1) * ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ℤ) : ZMod p) =
-        ((Nat.factorial k * Nat.factorial (p - 1) * ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) := by
+    have hNat :
+        (((Nat.factorial k * Nat.factorial (p - 1) *
+            ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ℤ) : ZMod p) =
+          ((Nat.factorial k * Nat.factorial (p - 1) *
+            ∏ i ∈ Finset.range (p - 1 - k), (p + (i + 1)) : ℕ) : ZMod p) := by
       simp
     rw [hNat, hY]
   apply (ZMod.intCast_eq_intCast_iff _ _ p).mp
@@ -463,8 +480,9 @@ private theorem sum_quotient_modEq_add_one_of_odd_prime (p : ℕ) (hp : p.Prime)
       (p : ℤ) + 1 [ZMOD 2 * (p : ℤ)] := by
   have hpMod : p % 2 = 1 := hp.eq_two_or_odd.resolve_left hp2
   have hpOdd : Odd p := Nat.odd_iff.mpr hpMod
-  have hsum : ∑ k ∈ Finset.range p, (((Nat.factorial k * Nat.factorial (2 * p - 1 - k) / p : ℕ) : ℤ)) ≡
-      ∑ k ∈ Finset.range p, ((p : ℤ) + (-1 : ℤ) ^ k) [ZMOD 2 * (p : ℤ)] := by
+  have hsum :
+      ∑ k ∈ Finset.range p, (((Nat.factorial k * Nat.factorial (2 * p - 1 - k) / p : ℕ) : ℤ)) ≡
+        ∑ k ∈ Finset.range p, ((p : ℤ) + (-1 : ℤ) ^ k) [ZMOD 2 * (p : ℤ)] := by
     apply Int.ModEq.sum
     intro k hk
     have hklt : k < p := Finset.mem_range.mp hk
@@ -488,7 +506,8 @@ theorem exists_int_eq_wilsonQuotientZPlus_two_mul_and_modEq
     ∃ z : ℤ, (z : ℚ) = wilsonQuotientZPlus (2 * n) ∧
       (((n = 2 ∨ ¬(n = 1 ∨ n.Prime)) → z ≡ 0 [ZMOD (2 * n : ℤ)]) ∧
         (((n.Prime ∧ n ≠ 2) → z ≡ (n : ℤ) + 1 [ZMOD (2 * n : ℤ)]))) := by
-  refine ⟨((∑ k ∈ Finset.range n, (Nat.factorial k * Nat.factorial (2 * n - 1 - k) / n) : ℕ) : ℤ), ?_, ?_, ?_⟩
+  refine ⟨((∑ k ∈ Finset.range n, (Nat.factorial k * Nat.factorial (2 * n - 1 - k) / n) : ℕ) : ℤ),
+    ?_, ?_, ?_⟩
   · have hcast := wilsonQuotientZPlus_two_mul_eq_cast n hn
     rw [hcast]
     exact Int.cast_natCast _
@@ -506,3 +525,5 @@ theorem exists_int_eq_wilsonQuotientZPlus_two_mul_and_modEq
     have hsum := sum_quotient_modEq_add_one_of_odd_prime n hp hp2
     rw [Nat.cast_sum]
     exact hsum
+
+end MathlibExt.NumberTheory.WilsonQuotientsWanted
