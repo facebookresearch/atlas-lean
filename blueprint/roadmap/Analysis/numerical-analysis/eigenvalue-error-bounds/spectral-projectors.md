@@ -12,7 +12,7 @@ and any family of projectors with these three properties is this one. If $A = XJ
 
 ## Depends on
 
-- [Jordan normal form](../../../LinearAlgebra/eigenvalues-and-canonical-forms/jordan-normal-form/README.md)
+- [Jordan normal form](../../../LinearAlgebra/eigenvalues-and-canonical-forms/jordan-normal-form/exists-jordan-normal-form-of-splits.md)
 
 ## Sources
 
