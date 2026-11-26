@@ -62,3 +62,30 @@ example (θ : ℝ) :
   fin_cases i <;> fin_cases j <;>
     simp [planarRotation, Circle.coe_exp, Complex.exp_ofReal_mul_I_re,
       Complex.exp_ofReal_mul_I_im]
+
+open scoped InnerProductSpace
+
+-- The public inverse and Euclidean norm statements apply at arbitrary real angles.
+example (θ : ℝ) (x : EuclideanSpace ℝ (Fin 2)) :
+    (planarRotation θ)ᵀ = (planarRotation θ)⁻¹ ∧ ‖(planarRotation θ).toEuclideanLin x‖ = ‖x‖ := by
+  obtain ⟨_, htranspose, hinverse, _, _, hnorm, _, _, _⟩ := planarRotation_identities 0 0 θ
+  exact ⟨htranspose.trans hinverse, hnorm x⟩
+
+-- The relative product at these angles is a negative quarter turn, not a positive one.
+example : ((planarRotation (π / 2))ᵀ * planarRotation 0) 0 1 = 1 := by
+  obtain ⟨_, _, _, _, _, _, hrelative, _, _⟩ := planarRotation_identities (π / 2) 0 0
+  rw [hrelative]
+  simp [planarRotation]
+
+-- A positive quarter turn acts on 2 + 3i by multiplication by i, giving −3 + 2i.
+example : Complex.orthonormalBasisOneI.repr.symm
+    ((planarRotation (π / 2)).toEuclideanLin (WithLp.toLp 2 ![2, 3])) = ⟨-3, 2⟩ := by
+  obtain ⟨_, _, _, _, _, _, _, haction, _⟩ := planarRotation_identities 0 0 (π / 2)
+  rw [haction, Complex.exp_ofReal_mul_I, Complex.orthonormalBasisOneI_repr_symm_apply]
+  apply Complex.ext <;> norm_num [Complex.mul_re, Complex.mul_im]
+
+-- Conjugation makes the imaginary-coordinate contribution positive: 1 * 3 + 2 * 4 = 11.
+example : ⟪(WithLp.toLp 2 ![1, 2] : EuclideanSpace ℝ (Fin 2)), WithLp.toLp 2 ![3, 4]⟫_ℝ = 11 := by
+  obtain ⟨_, _, _, _, _, _, _, _, hinner⟩ := planarRotation_identities 0 0 0
+  rw [hinner]
+  norm_num [Complex.orthonormalBasisOneI_repr_symm_apply, Complex.mul_re, Complex.mul_im]
