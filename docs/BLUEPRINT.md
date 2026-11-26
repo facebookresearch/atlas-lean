@@ -671,10 +671,11 @@ its name (its folder's, for a name such as `Basic`), as its topic's title,
 unless it takes declarations from a module placed in the same field, whose
 topic it then joins. A line counts only for a module that its pull request's
 merge changed and that nothing places yet. `make` reads the lines after the
-merge, as untrusted text: only lines of their own, indented by at most three
-spaces, outside fenced code blocks and HTML comments, and none of a
+merge, as untrusted text: only those that GitHub's rendering of the
+description shows as lines of plain text in a top-level paragraph, not in a
+code block, a list, a quotation, a table or a `<details>`, and none of a
 description edited after its pull request merged, which no review of the merge
-saw.
+saw. A line it leaves out gets a note.
 
 A batch's description has `Graph: batch` and names no issue
 ([Graph PRs](../CONTRIBUTING.md#graph-prs)). `--body FILE` writes it: the

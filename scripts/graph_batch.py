@@ -27,10 +27,11 @@ description it recomputes, which the batch's reviewer reads instead of the pull 
 base prints the last batch on REV (`HEAD` by default) and the commit the next batch starts from.
 
 make and verify read the descriptions of the pull requests merged since the base with `gh`, unless --bodies gives
-them as JSON (see read_bodies). A description is untrusted text: only its `Place:` lines are read (see place_lines,
-parse_place), none of a description edited after the merge, and each counts only for a module that the pull
-request's own merge changed, that no placement covers and that has no page outside that topic yet, under a field or
-subfield the taxonomy has.
+them as JSON (see read_bodies). A description is untrusted text: only its `Place:` lines are read, as GitHub's
+rendering shows them as lines of plain text (visible_lines; from the Markdown when the rendering is not known, see
+place_lines), none of a description edited after the merge (see parse_place); each counts only for a module that the
+pull request's own merge changed, that no placement covers and that has no page outside that topic yet, under a field
+or subfield the taxonomy has.
 
 Run it with a Python that has Autoform installed, as sync_wiki.py.
 """
@@ -39,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import functools
+import html.parser
 import json
 import os
 import re
@@ -207,14 +209,16 @@ def merged_pull_requests(base: str, head: str) -> list[tuple[int, str]]:
 
 
 class Body(str):
-    """A merged pull request's description, and whether it was edited after the merge (*edited*): its `Place:` lines
-    are then left out, as no review of the merge saw them."""
+    """A merged pull request's description; whether it was edited after the merge (*edited*), when its `Place:` lines
+    are left out, as no review of the merge saw them; and GitHub's rendering of it (*html*), when known, of which only
+    the lines it shows as plain text count (visible_lines)."""
     edited: bool = False
+    html: str | None = None
 
 
-def body(text: str, edited: bool = False) -> Body:
+def body(text: str, edited: bool = False, rendered: str | None = None) -> Body:
     value = Body(text)
-    value.edited = edited
+    value.edited, value.html = edited, rendered
     return value
 
 
@@ -225,7 +229,7 @@ def fetch_bodies(merged: list[tuple[int, str]]) -> dict[int, Body]:
     owner, name = REPOSITORY.split("/")
     for start in range(0, len(merged), 40):
         chunk = merged[start:start + 40]
-        fields = " ".join(f"p{number}: pullRequest(number: {number}) {{ number body mergedAt lastEditedAt "
+        fields = " ".join(f"p{number}: pullRequest(number: {number}) {{ number body bodyHTML mergedAt lastEditedAt "
                           "mergeCommit { oid } }" for number, _ in chunk)
         query = f'query {{ repository(owner: "{owner}", name: "{name}") {{ {fields} }} }}'
         try:
@@ -240,18 +244,21 @@ def fetch_bodies(merged: list[tuple[int, str]]) -> dict[int, Body]:
             pull = found.get(f"p{number}") or {}
             if (pull.get("mergeCommit") or {}).get("oid") == commit and isinstance(pull.get("body"), str):
                 edited, merged_at = pull.get("lastEditedAt"), pull.get("mergedAt")
-                bodies[number] = body(pull["body"], bool(edited and merged_at and edited > merged_at))
+                rendered = pull.get("bodyHTML") if isinstance(pull.get("bodyHTML"), str) else ""
+                bodies[number] = body(pull["body"], bool(edited and merged_at and edited > merged_at), rendered)
     return bodies
 
 
 def read_bodies(path: Path) -> dict[int, Body]:
     """Descriptions given as JSON: {"<number>": "<description>"}, or {"<number>": {"body": "<description>", "edited":
-    true}} for one edited after the merge."""
+    true, "html": "<GitHub's rendering>"}}, "edited" for one edited after the merge and "html" when its rendering is
+    known."""
     data = json.loads(path.read_text(encoding="utf-8"))
     bodies = {}
     for number, value in (data.items() if isinstance(data, dict) else []):
         if isinstance(value, dict) and isinstance(value.get("body"), str):
-            bodies[int(number)] = body(value["body"], value.get("edited") is True)
+            rendered = value.get("html") if isinstance(value.get("html"), str) else None
+            bodies[int(number)] = body(value["body"], value.get("edited") is True, rendered)
         elif isinstance(value, str):
             bodies[int(number)] = body(value)
         else:
@@ -262,9 +269,10 @@ def read_bodies(path: Path) -> dict[int, Body]:
 
 
 def place_lines(text: str) -> list[str]:
-    """The values of a description's `Place:` lines, as written: lines of their own, as Markdown ends lines (at a line
-    feed or a carriage return only), indented by less than four columns, outside fenced code blocks and HTML comments,
-    which the rendered description does not show as text. A fence closes only on a line of at most three spaces, a run
+    """The values of a description's `Place:` lines, read from its Markdown, when GitHub's rendering is not known
+    (visible_lines reads that, and is what counts): lines of their own, as Markdown ends lines (at a line feed or a
+    carriage return only), indented by less than four columns, outside fenced code blocks and HTML comments, which the
+    rendered description does not show as text. A fence closes only on a line of at most three spaces, a run
     of its own character at least as long, and nothing after it but spaces and tabs; a line holding `<!--` anywhere
     opens a comment that runs to the next `-->`."""
     found, fence, comment = [], None, False
@@ -287,6 +295,67 @@ def place_lines(text: str) -> list[str]:
         if match := PLACE.fullmatch(line.strip(" \t")):
             found.append(match.group(1))
     return found
+
+
+# Elements that hold no content and have no end tag.
+VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+
+
+class VisibleLines(html.parser.HTMLParser):
+    """The lines of plain text of a rendered description's top-level paragraphs, split at `<br>`: what GitHub shows as
+    lines of their own. A line that holds any element (a link, code, emphasis, an image), or that an element spans,
+    is left out, as is everything in another element: a list, a quotation, a table, a code block, a `<details>`."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.lines: list[str] = []
+        self.depth, self.inner, self.paragraph, self.tainted, self.current = 0, 0, False, False, []
+
+    def flush(self) -> None:
+        text = "".join(self.current).strip(" \t\n")
+        if text and not self.tainted:
+            self.lines.append(text)
+        self.current, self.tainted = [], self.inner > 0
+
+    def handle_starttag(self, tag: str, attrs) -> None:
+        if self.paragraph:
+            if tag == "br":
+                self.flush()
+                return
+            self.tainted = True
+            self.inner += tag not in VOID
+        elif tag == "p" and self.depth == 0:
+            self.paragraph, self.inner, self.tainted, self.current = True, 0, False, []
+        elif tag not in VOID:
+            self.depth += 1
+
+    def handle_startendtag(self, tag: str, attrs) -> None:
+        self.handle_starttag(tag, attrs)
+        if tag not in VOID:
+            self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if self.paragraph:
+            if tag == "p" and self.inner == 0:
+                self.flush()
+                self.paragraph = False
+            elif tag not in VOID and self.inner:
+                self.inner -= 1
+        elif tag not in VOID and self.depth:
+            self.depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self.paragraph:
+            self.current.append(data)
+
+
+def visible_lines(rendered: str) -> list[str]:
+    """The values of the `Place:` lines that GitHub's rendering of a description shows as lines of plain text in a
+    top-level paragraph (VisibleLines)."""
+    parser = VisibleLines()
+    parser.feed(rendered)
+    parser.close()
+    return [match.group(1) for line in parser.lines if (match := PLACE.fullmatch(line))]
 
 
 def parse_place(value: str) -> tuple[str, str, str | None]:
@@ -438,7 +507,8 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
     that moves its pages too; a proof's module, whose moved statement's page is already in that topic, is placed. A
     changed module that gets no pages, in a folder that is no subject, is listed (PlacementPlan.subjectless), and such
     a module older than the base is never placed: the scoped sync would give pages only to its new declarations. A
-    `Place:` line of a description edited after the merge is left out, with a note (Body). A module that no
+    `Place:` line of a description edited after the merge, or one GitHub does not show as a line of plain text, is left
+    out, with a note (Body, visible_lines). A module that no
     longer exists at *head*, neither as a file nor as a folder, loses its own placement. Mathlib's entries
     (`Mathlib/...`) are not the project's modules and stay. *indexes* gives the Lean indexes of *base* and *head* (see
     lean_index), read otherwise."""
@@ -494,12 +564,18 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
     for number, commit in merged_pull_requests(base, head):
         if number not in bodies:
             continue
-        lines = place_lines(bodies[number])
-        if not lines:
+        # GitHub's rendering, when known, says which lines it shows as plain text; the Markdown, a reading of it.
+        rendered = getattr(bodies[number], "html", None)
+        written = place_lines(bodies[number])
+        lines = visible_lines(rendered) if rendered is not None else written
+        if not lines and not written:
             continue
         if getattr(bodies[number], "edited", False):
             plan.notes.append(f"#{number}: its `Place:` lines are left out: its description was edited after the merge")
             continue
+        if hidden := [value for value in written if value not in lines]:
+            plan.notes.append(f"#{number}: {len(hidden)} `Place:` line(s) left out: GitHub does not show them as "
+                              "lines of plain text")
         own = {module for path in changed_between(f"{commit}^1", commit) if (module := library_module(path))}
         for value in lines:
             try:
