@@ -8,6 +8,7 @@
 - [Symmetrized matrix game of a role game](symmetrize.md)
 - [Role marginals of a vector on pairs of strategies](marginals.md)
 - [Product strategy on pairs of role strategies](prod-strategy.md)
+- [Evolutionary Stability in Symmetric Games](evolutionary-stability-symmetric/README.md)
 
 ## Mixed strategies and point masses
 
