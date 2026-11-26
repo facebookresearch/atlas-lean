@@ -62161,6 +62161,7 @@
 "MathlibExt.GroupTheory.FormationSubformationsFiniteKourovka16Problem31Wanted.finitelyManySubformations": "eb1755f02ec9317b",
 "MathlibExt.GroupTheory.FormationSubformationsFiniteKourovka16Problem31Wanted.finitelyManySubformations_refuted": "0ce149eac9982252",
 "MathlibExt.GroupTheory.FormationSubformationsFiniteKourovka16Problem31Wanted.formationGeneratedBy": "2cd5aac8a546834e",
+"MathlibExt.GroupTheory.FormationSubformationsFiniteKourovka16Problem31Wanted.isFormation_iff_isFormation": "9387f9f6b6b946d2",
 "MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted.GroupClass": "809155516410eeaf",
 "MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted.IsFormation": "b62f1069f08e4d5d",
 "MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted.SatisfiesLaws": "9203e821e0e1742e",

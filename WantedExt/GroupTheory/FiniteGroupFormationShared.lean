@@ -9,12 +9,12 @@ LICENSE file in the root directory of this source tree.
 /-
 # Shared notions for formations of finite groups
 
-Inclusion of classes, local (saturated) formations and residuals, on top of `FiniteGroupClass` and
-`IsFormation` from the MathlibExt module on Kourovka Notebook Problem 13.51. Shared by WantedExt
-entries for Kourovka Notebook Problems 9.58, 9.59, 9.60 and 9.73 so that they speak about the same
-notions. The residual and saturation predicates of the 12.97 and 11.91 entries are stated for other
-carriers (the `GroupClass` structure of 12.97, and isomorphism-closed classes of finite soluble
-groups in 11.91), so they do not apply to `FiniteGroupClass`.
+Local (saturated) formations and residuals, on top of `FiniteGroupClass`, `IsFormation` and the
+inclusion of classes `ClassLE` from the MathlibExt module on Kourovka Notebook Problem 13.51. Shared
+by WantedExt entries for Kourovka Notebook Problems 9.58, 9.60 and 9.73 so that they speak about the
+same notions. The residual and saturation predicates of the 12.97 and 11.91 entries are stated for
+other carriers (the `GroupClass` structure of 12.97, and isomorphism-closed classes of finite
+soluble groups in 11.91), so they do not apply to `FiniteGroupClass`.
 -/
 
 module
@@ -29,12 +29,6 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 namespace MathlibExt.GroupTheory.FiniteGroupFormationShared
 
 open MathlibExt.GroupTheory.FiniteModularLatticeFormationsKourovka13Problem51Wanted
-
-/-- **Inclusion of classes of finite groups.** For classes $\mathfrak{F}$ and $\mathfrak{G}$ of
-finite groups, $\mathfrak{F} \subseteq \mathfrak{G}$ means that every finite group in
-$\mathfrak{F}$ belongs to $\mathfrak{G}$. -/
-def ClassLE (𝔉 𝔊 : FiniteGroupClass) : Prop :=
-  ∀ (G : Type) [Group G] [Finite G], 𝔉 G → 𝔊 G
 
 /-- **Local formation of finite groups.** A class $\mathfrak{F}$ of finite groups is a local
 formation when it is a formation, contains the trivial group, and is saturated: a finite group $G$

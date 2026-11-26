@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.GroupTheory.Index
+public import MathlibExt.GroupTheory.FiniteModularLatticeFormationsKourovka13Problem51
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.GroupTheory.FreeGroup.Basic
 import Mathlib.GroupTheory.IsPerfect
@@ -43,6 +44,9 @@ finitely many epimorphisms onto $T$. The prescribed sign is the product of the s
 $n$ marked words. The sum of a product of $n$ affine functions on an $m$-dimensional cube vanishes
 when $m > n$. On the $n$-dimensional cube, the product of the coordinate functions has sum one.
 This gives a formation containing $H_m$ and excluding $H_n$.
+
+The formation predicate `IsFormation` has the same body as the one used for the lattice of
+formations (Kourovka Problem 13.51); `isFormation_iff_isFormation` records this.
 -/
 
 @[expose] public section
@@ -82,6 +86,16 @@ def finitelyManySubformations : Prop :=
   ∀ (G : Type) [Group G] [Finite G],
     {F : FiniteGroupClass | IsFormation F ∧
       ∀ (H : Type) [Group H] [Finite H], F H → formationGeneratedBy G H}.Finite
+
+/-- **Two definitions of formations agree.** A class $\mathfrak{F}$ of finite groups is a
+formation in the sense used for Kourovka Problem 16.31 if and only if it is a formation in the
+sense used for the lattice of formations in Kourovka Problem 13.51: both definitions ask for
+closure under homomorphic images and under finite subdirect products, with the same clauses.
+
+Source: unfolding the two definitions, which have the same body. -/
+theorem isFormation_iff_isFormation (F : FiniteGroupClass) :
+    IsFormation F ↔ FiniteModularLatticeFormationsKourovka13Problem51Wanted.IsFormation F :=
+  Iff.rfl
 
 open Function
 open scoped BigOperators MatrixGroups
