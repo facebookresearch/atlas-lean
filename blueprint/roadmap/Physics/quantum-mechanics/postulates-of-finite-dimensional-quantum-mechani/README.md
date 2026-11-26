@@ -22,6 +22,7 @@
 
 ## Finite-dimensional quantum states and operators with domains
 
+- [Finite-dimensional quantum states](finite-state/README.md)
 - [The zero vector is not a state](not-is-normalized-zero.md)
 - [A normalized vector is nonzero](ne-zero.md)
 - [Phases preserve normalization](smul.md)

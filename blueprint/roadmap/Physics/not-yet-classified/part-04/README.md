@@ -2,7 +2,6 @@
 
 - [Exit Time](exit-time/README.md)
 - [Finite Gain Feedback](finite-gain-feedback/README.md)
-- [Finite State](finite-state/README.md)
 - [Flowsheets](flowsheets/README.md)
 - [Fundamental Diagram](fundamental-diagram/README.md)
 - [Gaussian Matched Decision](gaussian-matched-decision/README.md)

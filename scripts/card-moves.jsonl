@@ -898,3 +898,6 @@
 {"page": "Physics/not-yet-classified/part-06/physical-galerkin-error/phys-midpoint-load", "to": "Physics/elasticity-and-structures/galerkin-error-of-a-two-cell-bar/phys-midpoint-load", "article_id": "af_baee2b06991a5dd00552eb40"}
 {"page": "Physics/not-yet-classified/part-06/physical-galerkin-error/sqrt-energy-quad-error-le", "to": "Physics/elasticity-and-structures/galerkin-error-of-a-two-cell-bar/sqrt-energy-quad-error-le", "article_id": "af_95824e62cb800fdeef9b8ff5"}
 {"folder": "Physics/not-yet-classified/part-06/physical-galerkin-error", "to": "Physics/elasticity-and-structures/galerkin-error-of-a-two-cell-bar", "article_id": "af_924b828bc2266b5f3f170759"}
+{"folder": "Physics/not-yet-classified/part-04/finite-state", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state", "article_id": "af_789b392f10ac935b940278f9"}
+{"page": "Physics/not-yet-classified/part-04/finite-state/is-normalized", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/is-normalized", "article_id": "af_c272e06a88b2426f1b036486"}
+{"page": "Physics/not-yet-classified/part-04/finite-state/born-prob", "to": "Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/finite-state/born-prob", "article_id": "af_b8b6732cadf23683422121a1"}

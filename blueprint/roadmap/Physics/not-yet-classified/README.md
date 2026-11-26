@@ -55,7 +55,6 @@ Topics added since this subject's fields were last revised.
 
 - [Exit Time](part-04/exit-time/README.md)
 - [Finite Gain Feedback](part-04/finite-gain-feedback/README.md)
-- [Finite State](part-04/finite-state/README.md)
 - [Flowsheets](part-04/flowsheets/README.md)
 - [Fundamental Diagram](part-04/fundamental-diagram/README.md)
 - [Gaussian Matched Decision](part-04/gaussian-matched-decision/README.md)
