@@ -7,6 +7,11 @@ For a graph $G$, the distance $d_G$ with $d_G(u,v) = 1$ for adjacent $u \ne v$, 
 - [The k-center objective](k-center-objective.md)
 - [Dominating set](../../../GraphTheory/independence-and-domination/dominating-sets/is-dominating.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [The complexity class NP](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
+
+## Proof depends on
+
+- [DOMINATING SET is NP-complete](../../../TheoryOfComputation/np-completeness/graph-covering-and-domination/dominating-set/dominating-set-np-complete.md)
 
 ## Sources
 

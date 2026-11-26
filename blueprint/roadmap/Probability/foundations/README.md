@@ -26,3 +26,4 @@ Probability measures and laws of random variables, expected value and the change
 - [Product Spaces, Conditional Expectations and the Product Estimator](product-spaces-and-conditional-expectations/README.md)
 - [Random Embeddings, Random Orders and Samplers](random-embeddings-orders-and-samplers/README.md)
 - [Statistical Distance and Couplings](statistical-distance-and-couplings/README.md)
+- [Collision Statistics of IID Samples](collision-statistics-of-iid-samples/README.md)

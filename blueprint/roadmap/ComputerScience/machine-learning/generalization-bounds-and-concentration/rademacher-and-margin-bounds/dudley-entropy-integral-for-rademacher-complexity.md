@@ -21,7 +21,7 @@ Chain through nets at dyadic scales $R2^{-j}$ down to $\alpha$: the increments b
 ## Proof depends on
 
 - [Massart's finite-class lemma](../rademacher-complexity/rademacher-complexity-le-of-finite.md)
-- [Dudley's packing bound for classes of bounded VC dimension](../../pac-learning/packing-and-one-inclusion-graphs/dudley-packing-bound-for-vc-classes.md)
+- [Dudley's packing bound for classes of bounded VC dimension](../../pac-learning/sample-complexity-and-combinatorial-dimensions/packing-and-one-inclusion-graphs/dudley-packing-bound-for-vc-classes.md)
 - [Rademacher generalization bound for bounded function classes](rademacher-generalization-bound.md)
 - [Dudley's chaining bound for Rademacher sums](../../../randomized-algorithms/random-strings-and-fingerprints/chaining-bound-for-rademacher-sums.md)
 

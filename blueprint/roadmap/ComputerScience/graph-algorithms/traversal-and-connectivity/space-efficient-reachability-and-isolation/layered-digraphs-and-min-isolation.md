@@ -4,7 +4,6 @@ A **layered digraph** on the vertex set $\{0, \dots, n\} \times \{0, \dots, w-1\
 
 ## Depends on
 
-- [Isolation lemma](../../../../Combinatorics/probabilistic-combinatorics/isolation-lemma.md)
 - [The complexity class NL](../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nl.md)
 
 ## Sources

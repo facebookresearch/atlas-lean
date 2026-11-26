@@ -5,7 +5,9 @@ Let $(K_t)_{t<n}$ be a step kernel on a set $\alpha$ with adaptive process $P_n$
 $$
 \mathbb{E}_{h \sim P_n}\big[e^{s (X_n(h) - X_0)}\big] \le \exp\Big(\frac{s^2 C}{8}\Big),
 $$
+
 and for every $\varepsilon \ge 0$,
+
 $$
 \Pr_{h \sim P_n}\big[X_n(h) \ge X_0 + \varepsilon\big] \le \exp\Big(-\frac{2 \varepsilon^2}{C}\Big),
 $$

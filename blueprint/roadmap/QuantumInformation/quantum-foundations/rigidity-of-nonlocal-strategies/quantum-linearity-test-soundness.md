@@ -5,7 +5,9 @@ Let $\varphi$ be a state on $M_{\iota\times\kappa}(\mathbb{C})$. Let $A(c)$, $c\
 $$
 \mathbb{E}_{a,b}\operatorname{Re}\varphi\big((I\otimes N_1(a,b))(I\otimes N_2(a,b))(A(a+b)\otimes I)\big)\ge1-\varepsilon,
 $$
+
 $\mathbb{E}_{a,b}\|A(a)\otimes I-I\otimes N_1(a,b)\|_\varphi^2\le\eta_1$ and $\mathbb{E}_{a,b}\|A(b)\otimes I-I\otimes N_2(a,b)\|_\varphi^2\le\eta_2$. Then there is a projective measurement $P$ on $\mathbb{C}^\iota$ with unitary, exactly linear character observables and
+
 $$
 \mathbb{E}_a\|(A(a)-\chi_P(a))\otimes I\|_\varphi^2\le40\big(\varepsilon+\sqrt{\eta_1}+\sqrt{\eta_2}\big).
 $$

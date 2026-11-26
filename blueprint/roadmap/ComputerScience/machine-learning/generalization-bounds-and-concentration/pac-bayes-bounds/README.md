@@ -12,6 +12,7 @@ Generalization bounds for randomized predictors: for a prior $\pi$ fixed before 
 - [The risk inherits the bounds of the loss](risk-mem-icc.md)
 - [PAC-Bayes bound (McAllester form)](pac-bayes-bound.md)
 - [PAC-Bayes bound for finite classes](pac-bayes-bound-for-finite-classes.md)
+- [PAC-Bayes-kl, Catoni and Gibbs Posterior Bounds](pac-bayes-kl-and-catoni-bounds/README.md)
 
 ## Related topics
 

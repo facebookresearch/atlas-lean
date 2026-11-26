@@ -16,7 +16,7 @@ Item 1 is the realizable VC upper bound applied to the distribution $q$ on the e
 
 ## Proof depends on
 
-- [Blumer-Ehrenfeucht-Haussler-Warmuth upper bound for consistent learners](../vc-sample-complexity-and-epsilon-nets/realizable-vc-upper-bound-for-consistent-learners.md)
+- [Blumer-Ehrenfeucht-Haussler-Warmuth upper bound for consistent learners](../sample-complexity-and-combinatorial-dimensions/vc-sample-complexity-and-epsilon-nets/realizable-vc-upper-bound-for-consistent-learners.md)
 
 ## Sources
 

@@ -5,7 +5,9 @@ Let $X$ be a countable set, $p, q$ probability distributions on $X$ and $\alpha 
 $$
 M_\alpha(p \,\|\, q) = \sum_{x \in X} p(x) \Big(\frac{p(x)}{q(x)}\Big)^{\alpha - 1} \in [0, \infty],
 $$
+
 where a term with $p(x) > 0 = q(x)$ equals $+\infty$ and a term with $p(x) = 0$ equals $0$. The *Renyi divergence* of order $\alpha$, in nats, is
+
 $$
 D_\alpha(p \,\|\, q) = \frac{1}{\alpha - 1} \ln M_\alpha(p \,\|\, q) \in [0, \infty],
 $$

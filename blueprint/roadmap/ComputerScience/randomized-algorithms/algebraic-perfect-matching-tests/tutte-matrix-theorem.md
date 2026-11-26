@@ -9,7 +9,6 @@ Permutations with an odd cycle cancel in pairs by reversing the cycle; the remai
 ## Depends on
 
 - [The Tutte matrix of a graph](tutte-matrix.md)
-- [Deterministic polynomial identity testing](../../../TheoryOfComputation/randomized-and-quantum-complexity/deterministic-polynomial-identity-testing.md)
 
 ## Sources
 

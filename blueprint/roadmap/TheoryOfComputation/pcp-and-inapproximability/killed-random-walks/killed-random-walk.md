@@ -5,7 +5,6 @@ Let $G$ be a $D$-regular multigraph on $V$ given by a rotation map, $T \ge 1$ an
 ## Depends on
 
 - [Rotation map of a regular multigraph](../../../GraphTheory/graph-families-and-operations/zig-zag-product-and-explicit-expanders/rotation-map.md)
-- [Dinur's amplification lemma for graph powering](../dinur-s-gap-amplification/dinur-s-amplification-lemma-for-graph-powering.md)
 
 ## Sources
 

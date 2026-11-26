@@ -5,7 +5,9 @@ For every $b > 0$ and every real $u \le b$,
 $$
 e^{u} - 1 - u \le \frac{u^2}{b^2}\big(e^{b} - 1 - b\big),
 $$
+
 because $u \mapsto (e^u - 1 - u)/u^2$ is nondecreasing on $\mathbb{R}$. Consequently, if $X$ is a real random variable on a probability space with $\mathbb{E}[X] \le 0$, $X \le b$ almost surely for some $b > 0$, and $\mathbb{E}[X^2] \le v$, then for every $t \ge 0$
+
 $$
 \mathbb{E}\big[e^{tX}\big] \le \exp\Big(\frac{v}{b^2}\big(e^{tb} - 1 - tb\big)\Big).
 $$

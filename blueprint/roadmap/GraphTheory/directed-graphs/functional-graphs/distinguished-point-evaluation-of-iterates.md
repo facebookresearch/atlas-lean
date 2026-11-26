@@ -17,4 +17,3 @@ If $c = f^d(x)$ is distinguished then $f^{K-d}(f^{T-K}(f^d(x))) = f^T(x)$ by com
 ## Sources
 
 - P. C. van Oorschot, M. J. Wiener, "Parallel Collision Search with Cryptanalytic Applications", Journal of Cryptology, 1999.
-- S. Schlesinger, "Square-root circuit bounds for iterated functions", 2026.

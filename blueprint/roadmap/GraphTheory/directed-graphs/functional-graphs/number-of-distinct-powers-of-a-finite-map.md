@@ -13,4 +13,3 @@ Pointwise, $f^a(x) = f^b(x)$ iff $a \ge \mu(x)$ and $\lambda(x) \mid b - a$; req
 ## Sources
 
 - D. E. Knuth, "The Art of Computer Programming, Volume 2: Seminumerical Algorithms", Addison-Wesley, 1997.
-- S. Schlesinger, "Square-root circuit bounds for iterated functions", 2026.

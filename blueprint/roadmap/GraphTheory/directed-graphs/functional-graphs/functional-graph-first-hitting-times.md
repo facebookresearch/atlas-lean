@@ -13,4 +13,3 @@ Past the transient, states correspond to phases modulo the cycle length, and ite
 ## Sources
 
 - D. E. Knuth, "The Art of Computer Programming, Volume 2: Seminumerical Algorithms", Addison-Wesley, 1997.
-- S. Schlesinger, "Square-root circuit bounds for iterated functions", 2026.

@@ -5,7 +5,9 @@ Let $\Phi$ be the maximally entangled state on two $n$-qubit registers. Then
 $$
 \mathbb{E}_{a,b\in\{0,1\}^n}\,X^aZ^b\otimes X^aZ^b = |\Phi\rangle\langle\Phi| ,
 $$
+
 and for every state $\varphi$ on $M_{2^n}(\mathbb{C})\otimes M_{2^n}(\mathbb{C})$ the weight outside the EPR projection is controlled by agreement of the two ideal Pauli families:
+
 $$
 \big\||\Phi\rangle\langle\Phi|-I\big\|_\varphi^2\le\tfrac12\Big(\mathbb{E}_a\|X^a\otimes I-I\otimes X^a\|_\varphi^2+\mathbb{E}_b\|Z^b\otimes I-I\otimes Z^b\|_\varphi^2\Big).
 $$

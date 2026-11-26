@@ -22,5 +22,5 @@ A finite set $B$ of vectors over $\mathbb{F}_2$ none of whose zero-sum subsets h
 
 ## Sources
 
-- M. Saglam, "Linear Codes Exceeding the Gilbert-Varshamov Bound", preprint, 2026.
+- M. Saglam, "Linear Codes Exceeding the Gilbert–Varshamov Bound", STOC 2027 submission 1516, 2026, <https://github.com/sigact-stoc/stoc2027/releases/download/papers-2/1516.pdf>.
 - N. Kirshner, A. Samorodnitsky, "A Moment Ratio Bound for Polynomials and Some Extremal Properties of Krawtchouk Polynomials and Hamming Spheres", IEEE Transactions on Information Theory, 2021.

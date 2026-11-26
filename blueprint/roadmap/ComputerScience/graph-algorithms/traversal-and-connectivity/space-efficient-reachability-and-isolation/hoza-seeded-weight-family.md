@@ -1,12 +1,12 @@
 # Hoza's seeded weight family
 
-Fix a binary code assigning a codeword $\gamma(c) \in \{0,1\}^\ell$ to each column $c$ (for example a Justesen-type code over a finite field with polynomial alphabet). For a **seed** $z \in \{0,1\}^\ell$, define the weight of vertex $(i, c)$ with $i \ge 1$ by
+Fix a binary code assigning a codeword $\gamma(c) \in \{0,1\}^\ell$ to each column $c \in \{0, \dots, w-1\}$ (for example a Justesen-type code over a finite field with polynomial alphabet). For a **seed** $z \in \{0,1\}^\ell$, define the weight of vertex $(i, c)$ by $\mathrm{wt}_z(0, c) = 0$ and, for $1 \le i \le n$,
 
 $$
-\mathrm{wt}_z(i, c) = 6^{\,e(i)} \sum_{b=1}^{\ell} 6^{\,\ell - b}\, z_b\, \gamma(c)_b ,
+\mathrm{wt}_z(i, c) = \sum_{b=1}^{\ell} 6^{\,\nu_2(i) + \ell - b}\, z_b\, \gamma(c)_b ,
 $$
 
-where $e(i)$ is determined by the $2$-adic valuation of the layer index $i$ (scaled so that within any interval of layers the unique layer of maximal $2$-adic valuation dominates). The masked base-six place values give priority to earlier codeword bits, and the layer factor gives priority to the dominant internal layer of every path interval.
+where $\nu_2(i) = \max\{r : 2^r \mid i\}$ is the $2$-adic valuation of $i$ (Hoza, Eq. (1)). Within any interval of layers the unique layer of maximal $2$-adic valuation dominates. The masked base-six place values give priority to earlier codeword bits, and the layer factor gives priority to the dominant internal layer of every path interval.
 
 ## Depends on
 

@@ -48,5 +48,4 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Generalization of trained finite-width neural networks with feature learning](generalization-of-trained-finite-width-networks.md)
 - [Sharp guarantees for out-of-distribution generalization](out-of-distribution-generalization-guarantees.md)
 - [Occam and Description-Length Bounds](occam-and-description-length-bounds/README.md)
-- [PAC-Bayes-kl, Catoni and Gibbs Posterior Bounds](pac-bayes-kl-and-catoni-bounds/README.md)
 - [Rademacher Generalization and Margin Bounds](rademacher-and-margin-bounds/README.md)

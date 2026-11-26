@@ -9,7 +9,6 @@ In the Leibniz expansion, each permutation $\sigma$ contributes the monomial $\p
 ## Depends on
 
 - [The Edmonds matrix of a bipartite graph](edmonds-matrix.md)
-- [Deterministic polynomial identity testing](../../../TheoryOfComputation/randomized-and-quantum-complexity/deterministic-polynomial-identity-testing.md)
 
 ## Sources
 

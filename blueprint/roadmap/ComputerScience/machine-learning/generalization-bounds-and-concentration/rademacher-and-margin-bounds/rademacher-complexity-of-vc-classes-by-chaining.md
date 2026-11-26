@@ -20,7 +20,7 @@ On a sample, sign patterns of two labelings at Hamming distance $t$ are at Eucli
 
 ## Proof depends on
 
-- [Dudley's packing bound for classes of bounded VC dimension](../../pac-learning/packing-and-one-inclusion-graphs/dudley-packing-bound-for-vc-classes.md)
+- [Dudley's packing bound for classes of bounded VC dimension](../../pac-learning/sample-complexity-and-combinatorial-dimensions/packing-and-one-inclusion-graphs/dudley-packing-bound-for-vc-classes.md)
 - [Rademacher and VC bounds for binary classification](rademacher-bounds-for-binary-classification.md)
 
 ## Sources

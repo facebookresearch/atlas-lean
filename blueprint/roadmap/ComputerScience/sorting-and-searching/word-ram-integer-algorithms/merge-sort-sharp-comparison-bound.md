@@ -6,10 +6,6 @@ Merging two sorted lists of lengths $p, q \ge 1$ with any comparison oracle uses
 
 The last remaining element of a merge is placed without a comparison. The closed form follows by induction on $n$, using $\lceil \log_2 \lceil n/2 \rceil \rceil = \lceil \log_2 n \rceil - 1$ for $n \ge 2$.
 
-## Depends on
-
-- [A binary tree with n! leaves has height at least log n!](../lower-bound-for-comparison-sorting/factorial-le-two-pow-height.md)
-
 ## Sources
 
 - D. E. Knuth, "The Art of Computer Programming, Volume 3: Sorting and Searching", 2nd ed., Addison-Wesley, 1998.

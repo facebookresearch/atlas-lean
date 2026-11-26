@@ -25,3 +25,4 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Data assimilation](data-assimilation/README.md)
 - [Item response models](item-response-models/README.md)
 - [Fano and Two-Point Minimax Rates](fano-and-two-point-minimax-rates/README.md)
+- [Robust Hypothesis Selection](robust-hypothesis-selection/README.md)

@@ -8,7 +8,7 @@ For a seed inside $S$, the common neighbourhood keeps all of $S$ minus the seed 
 
 ## Depends on
 
-- [The planted clique model and recovery](planted-clique-model.md)
+- [Planted clique model, search and detection problems](../../../GraphTheory/random-graphs/planted-clique/planted-clique-model.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 
 ## Proof depends on

@@ -8,13 +8,14 @@ Power growth: a column whose power grows fast enough has a large component along
 
 ## Depends on
 
-- [The planted clique model and recovery](planted-clique-model.md)
+- [Planted clique model, search and detection problems](../../../GraphTheory/random-graphs/planted-clique/planted-clique-model.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 
 ## Proof depends on
 
 - [Deterministic recovery from an approximate signal](planted-clique-deterministic-recovery.md)
-- [Operator-norm bound for the planted noise](planted-clique-noise-bound.md)
+- [Spectral norm of planted-clique noise is O(sqrt n)](../../../GraphTheory/random-graphs/planted-clique/planted-clique-noise-spectral-norm.md)
+- [Outside vertices have at most 5|S|/8 neighbors in the planted clique](../../../GraphTheory/random-graphs/planted-clique/planted-clique-outside-degrees.md)
 
 ## Sources
 

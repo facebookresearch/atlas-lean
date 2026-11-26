@@ -17,13 +17,12 @@ By the subsample lemma at accuracy $1/3$ and confidence $1/2$ there is a distrib
 - [Labelled sample compression scheme](labelled-sample-compression-scheme.md)
 - [The VC dimension is at most the size of the ground set](../../../../Combinatorics/extremal-set-theory/vc-dim-le-card.md)
 - [Fundamental theorem of statistical learning (binary, 0-1 loss)](../../generalization-bounds-and-concentration/vc-and-natarajan-classes/fundamental-theorem-of-statistical-learning.md)
-- [Sample compression conjecture](../sample-compression-conjecture.md)
 
 ## Proof depends on
 
 - [Moran-Yehudayoff weak learning on subsamples via the minimax theorem](weak-learning-on-subsamples.md)
-- [Existence of epsilon-approximations for classes of finite VC dimension](../vc-sample-complexity-and-epsilon-nets/epsilon-approximations-of-vc-classes.md)
-- [Assouad's dual VC dimension bound](../vc-sample-complexity-and-epsilon-nets/assouad-dual-vc-dimension-bound.md)
+- [Existence of epsilon-approximations for classes of finite VC dimension](../sample-complexity-and-combinatorial-dimensions/vc-sample-complexity-and-epsilon-nets/epsilon-approximations-of-vc-classes.md)
+- [Assouad's dual VC dimension bound](../sample-complexity-and-combinatorial-dimensions/vc-sample-complexity-and-epsilon-nets/assouad-dual-vc-dimension-bound.md)
 - [Sample compression schemes bound the VC dimension](compression-schemes-bound-vc-dimension.md)
 
 ## Sources

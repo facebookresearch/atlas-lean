@@ -5,7 +5,9 @@ Let $p_i, q_i$ ($i \in I$, $I$ finite) be distributions on finite sets $X_i$ and
 $$
 1 + \chi^2\Big(\bigotimes_i p_i \,\Big\|\, \bigotimes_i q_i\Big) = \prod_{i}\big(1 + \chi^2(p_i \,\|\, q_i)\big),
 $$
+
 so $1 + \chi^2(p^{\otimes n}\|q^{\otimes n}) = (1 + \chi^2(p\|q))^n$. Moreover (Ingster-Le Cam), for a prior $\mu$ on a finite parameter set $T$, a family $(K_t)_{t \in T}$ of distributions on a finite set $X$ and a reference $q$ with $\mathrm{supp}\,K_t \subseteq \mathrm{supp}\,q$ for every $t \in \mathrm{supp}\,\mu$, the mixture $\bar K = \sum_t \mu(t) K_t$ satisfies
+
 $$
 1 + \chi^2(\bar K \,\|\, q) = \sum_{t, t' \in T} \mu(t)\mu(t') \sum_{x \in X}\frac{K_t(x) K_{t'}(x)}{q(x)},
 $$
