@@ -1,4 +1,4 @@
-# The identification bridge: `IdentifiedOn` versus `IsIdentifiedBy`
+# Identification on a class of models and by a functional
 
 ## Graphical Models
 
