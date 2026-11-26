@@ -11139,6 +11139,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/MacMahonMultiplicityOneFree": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "MacMahon's partition theorem"},
   "MathlibExt/Combinatorics/Enumerative/Partition/MercaDistinctPartsSum": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Merca's identities for sums of different parts"},
   "MathlibExt/Combinatorics/Enumerative/Partition/MercaSignedTriangularSum": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Merca's identities for sums of different parts"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/MercaTwiceSquareSum": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Merca's identities for sums of different parts"},
   "MathlibExt/Combinatorics/Enumerative/Partition/MexPartitionCongruenceLift": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Mex-related partition functions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/MultisetReconstructionPairwiseProducts": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Reconstructing partitions from pairwise products"},
   "MathlibExt/Combinatorics/Enumerative/Partition/OddBoundedMultiplicity": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Andrews–Lewis identity"},
