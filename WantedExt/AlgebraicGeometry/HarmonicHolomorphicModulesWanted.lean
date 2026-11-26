@@ -9,11 +9,14 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
 
 All ordinary support requests concern the fixed public section formulas.
+The theorem `holomorphic_cotangent_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCotangentSheafCondition`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
 Polystability, Chern vanishing and the full correspondence are separate
@@ -46,10 +49,6 @@ theorem_wanted holomorphic_coefficient_sheaf_condition [IsManifold 𝓘(ℂ, Coo
 /-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
 theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
   CotangentSectionCalculus (n := n) (M := M)
-
-/-- The same actual cotangent-form presheaves satisfy the ordinary gluing condition. -/
-theorem_wanted holomorphic_cotangent_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [CotangentSectionCalculus (n := n) (M := M)] : CotangentSheafCondition (n := n) (M := M)
 
 /-- The kernel of this same local PDE glues, without an integrability assumption. -/
 theorem_wanted harmonic_holomorphic_kernel_sheaf_condition
