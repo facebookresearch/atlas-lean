@@ -8,9 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.NumberTheory.Digits.PermutiplePermutipleGraphEdgesUnionCycles
+import MathlibExt.NumberTheory.Digits.HoeySloaneCycles
 
-/-! # Tests for `MathlibExt.NumberTheory.Digits.PermutiplePermutipleGraphEdgesUnionCycles` -/
+/-!
+# Tests for `permutipleGraphEdges_union_cycles`
+
+The theorem is proved in `MathlibExt.NumberTheory.Digits.HoeySloaneCycles`.
+-/
 
 namespace MathlibExtTest.NumberTheory.Digits.PermutiplePermutipleGraphEdgesUnionCycles
 
