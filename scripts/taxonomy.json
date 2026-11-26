@@ -15299,7 +15299,6 @@
   "WantedExt/Combinatorics/SimpleGraph/RamseyThreeTWanted": {"to": "GraphTheory/graph-ramsey-theory", "title": "Graph Ramsey numbers"},
   "WantedExt/Combinatorics/SimpleGraph/RandomGraphConnectivityWanted": {"to": "GraphTheory/random-graphs", "title": "Connectivity threshold of random graphs"},
   "WantedExt/Combinatorics/SimpleGraph/SmallRamseyNumbersWanted": {"to": "GraphTheory/graph-ramsey-theory", "title": "Small Ramsey numbers"},
-  "WantedExt/Combinatorics/SimplicialSphereShared": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Face numbers of simplicial spheres"},
   "WantedExt/Combinatorics/SimultaneousCoreContainmentOWR1265Problem006Wanted": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Simultaneous core partitions"},
   "WantedExt/Combinatorics/SingleSetSumDifferenceExponentWanted": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Sum-difference exponent of a single set"},
   "WantedExt/Combinatorics/SinglyEvenMagicSquaresWanted": {"to": "Combinatorics/designs-latin-squares", "title": "Magic squares"},
