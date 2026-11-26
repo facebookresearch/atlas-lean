@@ -98692,6 +98692,7 @@
 "MvPowerSeries.eq_rescale_map_of_weight_iff": "595cef4feeaff78d",
 "MvPowerSeries.existsUnique_apply_eq_nilpotentEval_of_natural_of_isNilpotent": "29f7a36ecdba5571",
 "MvPowerSeries.existsUnique_eq_sum_subst_mul_of_basis_residueField_tensor_quotient": "b68c49da9493f348",
+"MvPowerSeries.exists_algHom_apply_X_eq": "ea7db1b9ffedd1ef",
 "MvPowerSeries.exists_basis_subst_of_finite_quotient_of_isLocalRing": "340a559783aa0667",
 "MvPowerSeries.expOfConstantCoeffZero": "0d921dcddf363302",
 "MvPowerSeries.expOfConstantCoeffZero_X": "d74fe3ff878fc2fa",
