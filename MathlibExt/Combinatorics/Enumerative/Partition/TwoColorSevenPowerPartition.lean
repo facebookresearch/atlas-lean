@@ -365,6 +365,42 @@ Theorem 2. -/
 public theorem garvanYOdd_one (k j : ℕ) : garvanYOdd k 1 j = garvanX (2 * k - 1) j := by
   rw [garvanYOdd]
 
+/-- **7-adic bounds for the vectors $y^{(2k-1)}_\beta$.** Let $y^{(2k-1)}_\beta$ be the
+coefficient vectors for odd powers of $7$, built from Garvan's vectors and matrix. For all
+$k, j \ge 1$ and $\beta \ge 0$, $7^{k + \lfloor (7j-7)/4 \rfloor}$ divides $y^{(2k-1)}_{\beta+1,j}$.
+
+Source: D. S. Gireesh, C. Shivashankar, and B. Hemanthkumar, *On 2-Color Partitions in Which
+the Parts of One Color Are Restricted to Multiples of 7^k*, INTEGERS 26 (2026), Article A94,
+Lemma 6 (`integers-2026-A94-lem-6`). -/
+public theorem seven_pow_dvd_garvanYOdd (k β j : ℕ) (hk : 1 ≤ k) (hj : 1 ≤ j) :
+    7 ^ (k + (7 * j - 7) / 4) ∣ garvanYOdd k (β + 1) j := by
+  induction β generalizing j with
+  | zero =>
+    rw [garvanYOdd_one]
+    rcases eq_or_lt_of_le hk with rfl | hk'
+    · change 7 ^ (1 + (7 * j - 7) / 4) ∣ garvanX 1 j
+      rcases eq_or_ne j 1 with rfl | hj₁
+      · rw [garvanX_one.1]
+        decide
+      rcases eq_or_ne j 2 with rfl | hj₂
+      · rw [garvanX_one.2.1]
+        decide
+      simp [garvanX, hj₁, hj₂]
+    · rw [show 2 * k - 1 = 2 * (k - 1) + 1 by omega]
+      exact dvd_trans (pow_dvd_pow 7 (by omega))
+        (seven_pow_dvd_garvanX (k - 1) j (by omega) hj).2.2.1
+  | succ β ih =>
+    rw [garvanYOdd]
+    apply Finset.dvd_sum
+    intro i hi
+    have hi₁ := (Finset.mem_Icc.mp hi).1
+    -- The powers from column i and matrix row 4i + 1 together suffice for column j.
+    have hexp : k + (7 * j - 7) / 4 ≤ k + (7 * i - 7) / 4 + (7 * j - i - 3) / 4 := by
+      rcases eq_or_lt_of_le hi₁ with rfl | hi₂ <;> omega
+    apply dvd_trans (pow_dvd_pow 7 hexp)
+    rw [pow_add]
+    exact mul_dvd_mul (ih i hi₁) (seven_pow_dvd_garvanM i j hi₁ hj).2.2.1
+
 /-- **Coefficient vectors for even powers of 7.** Let $(m_{i,j})$ be Garvan's matrix and
 $x_k$ Garvan's coefficient vectors, and fix $k \ge 1$. The coefficient vectors
 $y^{(2k)}_\beta = (y^{(2k)}_{\beta,1}, y^{(2k)}_{\beta,2}, \dots)$ of Theorem 3, $\beta \ge 1$,

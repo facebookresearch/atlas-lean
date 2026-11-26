@@ -43,3 +43,18 @@ example :
     padicValNat 7 (garvanX 1 1) = 1 ∧ padicValNat 7 (garvanX 1 2) = 2 ∧
       7 ^ 7 ∣ garvanX 5 3 ∧ 7 ^ 6 ∣ garvanX 4 3 :=
   seven_pow_dvd_garvanX (k := 2) (j := 3) (hk := by decide) (hj := by decide)
+
+-- The second entry of the first odd vector attains the bound; the third is zero.
+example : 7 ^ 2 ∣ garvanYOdd 1 1 2 ∧ ¬ 7 ^ 3 ∣ garvanYOdd 1 1 2 :=
+  ⟨seven_pow_dvd_garvanYOdd 1 0 2 (by decide) (by decide), by decide⟩
+
+example : garvanYOdd 1 1 3 = 0 := by decide
+
+-- With k > 1 the initial bound comes from a later odd Garvan x vector.
+example : 7 ^ 5 ∣ garvanYOdd 2 1 3 :=
+  seven_pow_dvd_garvanYOdd 2 0 3 (by decide) (by decide)
+
+-- After one recurrence step the first column is still sharp, and column two gains a factor.
+example : 7 ∣ garvanYOdd 1 2 1 ∧ ¬ 7 ^ 2 ∣ garvanYOdd 1 2 1 ∧ 7 ^ 2 ∣ garvanYOdd 1 2 2 :=
+  ⟨seven_pow_dvd_garvanYOdd 1 1 1 (by decide) (by decide), by decide,
+    seven_pow_dvd_garvanYOdd 1 1 2 (by decide) (by decide)⟩
