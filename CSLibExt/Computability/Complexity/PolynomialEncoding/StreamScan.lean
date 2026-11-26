@@ -35,8 +35,9 @@ and the final output specified by `finish`. -/
   | [] => finish q
   | b :: x => (step q b).2 ++ scan step finish (step q b).1 x
 
-/-- A finite-state scan stores output in reverse order and reverses it once at the end.
-Each transition emits a bounded number of bits because the state and input alphabets are finite. -/
+/-- If the state type `Q` is finite, `scan step finish q₀` is polynomial-time in the input length.
+The machine stores output in reverse order and reverses it once at the end. Each transition emits
+a bounded number of bits because the state and input alphabets are finite. -/
 theorem polyScan {Q : Type} [Finite Q]
     (step : Q → Bool → Q × List Bool) (finish : Q → List Bool) (q₀ : Q) :
     IsPolyTime (scan step finish q₀) := by
@@ -175,37 +176,6 @@ theorem polyDelimit : IsPolyTime delimit := by
     | cons b x ih => simp [scan, step, delimit, ih]
   exact h ▸ polyScan step (fun _ => [false]) ()
 
-private def unframeBits := scan
-  (fun (payload b : Bool) => if payload then (false, [b]) else (b, [])) (fun _ => []) false
-
-private theorem unframeBits_encode (x : List Bool) : unframeBits (bitEncode x) = x := by
-  rw [DenseSAT.Converter.bitEncode_list]
-  induction x with
-  | nil => rfl
-  | cons b x ih => simpa [unframeBits, DenseSAT.Converter.encSnd, scan] using ih
-
-/-- The conjunction of two polynomial-time tests on the same pair of bit strings takes
-polynomial time in the canonical pair encoding. -/
-theorem polyCombinePair {f g : List Bool × List Bool → Bool} (hf : IsPolyTime f)
-    (hg : IsPolyTime g) : IsPolyTime (fun q => f q && g q) := by
-  let unpack (s : List Bool) := (unframeBits (field true false s), unframeBits (field false true s))
-  have hu : IsPolyTime unframeBits := polyScan _ _ _
-  have hp : IsPolyTime unpack :=
-    polyPair ((polyField _ _).comp hu) ((polyField _ _).comp hu)
-  have hid (q : List Bool × List Bool) : unpack (bitEncode q) = q := by
-    rcases q with ⟨x, y⟩
-    change (unframeBits (field _ _ (delimit (bitEncode x) ++ bitEncode y)),
-      unframeBits (field _ _ (delimit (bitEncode x) ++ bitEncode y))) = _
-    simp [field_delimit, unframeBits_encode]
-  have hr := IsPolyTime.combine Bool.and (hp.comp hf) (hp.comp hg)
-  obtain ⟨m⟩ := hr
-  obtain ⟨mach⟩ := tm2ComputableInPolyTime_comp (f := id)
-    (g := fun s => f (unpack s) && g (unpack s)) DenseSAT.EncodeBits.computable m
-  refine ⟨{ mach with outputsFun := fun q => ?_ }⟩
-  have h := mach.outputsFun (bitEncode q)
-  simp only [comp_apply, id_eq, hid] at h
-  exact h
-
 /-! ### Streaming over delimited frames -/
 
 -- The first state component is true when a payload bit is due. The second is the last payload
@@ -284,6 +254,43 @@ theorem marks_frames (ps : List (List Bool)) (mark : List Bool) :
     unfold marks at ih ⊢
     rw [blocks_frame, he]
     simpa using congrArg (mark ++ ·) ih
+
+/-! ### Conjoining tests on canonical pairs -/
+
+private def unframeBits : List Bool → List Bool :=
+  blocks [] (fun b => [b]) (fun _ => [])
+
+private theorem unframeBits_encode (x : List Bool) : unframeBits (bitEncode x) = x := by
+  rw [DenseSAT.Converter.bitEncode_list]
+  induction x with
+  | nil => rfl
+  | cons b x ih =>
+    change unframeBits (delimit [b] ++ DenseSAT.Converter.encSnd x) = b :: x
+    unfold unframeBits at ih ⊢
+    rw [blocks_frame, ih]
+    rfl
+
+/-- The conjunction of two polynomial-time tests on the same pair of bit strings takes
+polynomial time in the canonical pair encoding. -/
+theorem polyCombinePair {f g : List Bool × List Bool → Bool} (hf : IsPolyTime f)
+    (hg : IsPolyTime g) : IsPolyTime (fun q => f q && g q) := by
+  let unpack (s : List Bool) := (unframeBits (field true false s), unframeBits (field false true s))
+  have hu : IsPolyTime unframeBits := polyBlocks _ _ _
+  have hp : IsPolyTime unpack :=
+    polyPair ((polyField _ _).comp hu) ((polyField _ _).comp hu)
+  have hid (q : List Bool × List Bool) : unpack (bitEncode q) = q := by
+    rcases q with ⟨x, y⟩
+    change (unframeBits (field _ _ (delimit (bitEncode x) ++ bitEncode y)),
+      unframeBits (field _ _ (delimit (bitEncode x) ++ bitEncode y))) = _
+    simp [field_delimit, unframeBits_encode]
+  have hr := IsPolyTime.combine Bool.and (hp.comp hf) (hp.comp hg)
+  obtain ⟨m⟩ := hr
+  obtain ⟨mach⟩ := tm2ComputableInPolyTime_comp (f := id)
+    (g := fun s => f (unpack s) && g (unpack s)) DenseSAT.EncodeBits.computable m
+  refine ⟨{ mach with outputsFun := fun q => ?_ }⟩
+  have h := mach.outputsFun (bitEncode q)
+  simp only [comp_apply, id_eq, hid] at h
+  exact h
 
 /-! ### Checking raw framing -/
 
