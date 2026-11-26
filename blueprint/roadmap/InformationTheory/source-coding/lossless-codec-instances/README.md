@@ -10,3 +10,5 @@
 ## Run Length
 
 - [Run-length codec](encoding-2.md)
+
+Every count the run-length codec emits fits in eight bits: see [run lengths fit in 8 bits](../run-length-encoding/compress-le.md).
