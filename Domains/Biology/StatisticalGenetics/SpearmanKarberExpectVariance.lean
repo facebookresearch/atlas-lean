@@ -35,6 +35,9 @@ and the estimator `estimator` computed from the counts. It proves `expect_varian
 the estimator is unbiased for the mean of the interpolated tolerance distribution,
 with exact variance `d² ∑ᵢ Pᵢ (1 - Pᵢ) / n` for independent counts.
 
+The proofs of `choose_add_two_mul` and `binomProb_fact2_range` are adapted from
+`MathlibExt/Probability/Distributions/BinomialMoments.lean`.
+
 ## References
 
 * J. O. Irwin and E. A. Cheeseman, "On an approximate method of determining the median
@@ -606,6 +609,8 @@ public theorem expect_variance (x₀ d : ℝ) (hd : 0 < d) (k n : ℕ) (hn : 1 �
       expect n P (fun r => (estimator x₀ d n r - spearmanKarber x₀ d P) ^ 2) =
         d ^ 2 * (∑ i, P i * (1 - P i)) / n
     := by
+  -- The proof does not need `hd`, `hP` or `hmono`; they stay in the statement, which is kept
+  -- token for token, and these lines keep the unused-variable linter quiet.
   have _ := hd
   have _ := hP
   have _ := hmono
