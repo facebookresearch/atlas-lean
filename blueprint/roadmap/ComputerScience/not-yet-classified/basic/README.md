@@ -6,10 +6,6 @@
 
 ## [Args Step to Task](part-06/README.md)
 
-- [Softmax](../../machine-learning/attention-and-low-rank-adaptation/softmax-attention-basics/softmax.md)
-- [Attention Weights](../../machine-learning/attention-and-low-rank-adaptation/softmax-attention-basics/attention-weights.md)
-- [Attn](../../machine-learning/attention-and-low-rank-adaptation/softmax-attention-basics/attn.md)
-- [Attn perm](../../machine-learning/attention-and-low-rank-adaptation/softmax-attention-basics/attn-perm.md)
 - [Operator](part-06/operator.md)
 - [Task](part-06/task.md)
 
