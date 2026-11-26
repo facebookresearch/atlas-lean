@@ -1,9 +1,3 @@
 # A function with nonpositive orbital derivative decreases along a path
 
-Finite-interval monotonicity along one path. Let `γ`
-be a path into a normed space `E`, with `V ∘ γ` continuous
-on `[a, b]`, and suppose that at every interior point `t`
-the path has derivative `f t (γ t)`, `V` is differentiable
-at `γ t`, and the orbital derivative satisfies
-`fderiv ℝ V (γ t) (f t (γ t)) ≤ 0`. Then `V ∘ γ` is
-antitone on `[a, b]`: `V` does not increase along the path. No global extension of the path is used.
+Let $E$ be a real normed space, $V : E \to \mathbb{R}$, $\gamma : \mathbb{R} \to E$, $f : \mathbb{R} \times E \to E$ and $a, b \in \mathbb{R}$. Suppose $V \circ \gamma$ is continuous on $[a, b]$ and, for every $t \in (a, b)$, $\gamma$ is differentiable at $t$ with $\gamma'(t) = f(t, \gamma(t))$, $V$ is differentiable at $\gamma(t)$, and $DV(\gamma(t))\,f(t, \gamma(t)) \le 0$. Then $V \circ \gamma$ is antitone on $[a, b]$. No extension of the path beyond $[a, b]$ is used.

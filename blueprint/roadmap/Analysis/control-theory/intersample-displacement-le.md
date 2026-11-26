@@ -1,10 +1,3 @@
 # Intersample displacement enclosure
 
-Intersample displacement enclosure. If an actual curve
-`γ` satisfies the displacement bound
-`‖γ t - γ ts‖ ≤ vbar * (t - ts)` on the sample interval
-`[ts, ts + h]`, and a sampled approximation `xhat` starts
-within `ε` of `γ ts`, then `‖γ t - xhat‖ ≤ ε + vbar * h`
-throughout the interval. The motion bound is an explicit
-premise about the actual trajectory, not a consequence of
-sample agreement.
+Let $E$ be a normed group, $\gamma : \mathbb{R} \to E$, $\hat x \in E$ and $t_s, h, \bar v, \varepsilon \in \mathbb{R}$ with $\bar v \ge 0$. Suppose $\|\gamma(t) - \gamma(t_s)\| \le \bar v\,(t - t_s)$ for every $t \in [t_s, t_s + h]$ and $\|\gamma(t_s) - \hat x\| \le \varepsilon$. Then $\|\gamma(t) - \hat x\| \le \varepsilon + \bar v\,h$ for every $t \in [t_s, t_s + h]$. The motion bound is a hypothesis on the trajectory $\gamma$, not a consequence of agreement at the sample time.

@@ -1,4 +1,3 @@
 # Nonnegativity of the constant-input relaxation solution
 
-Let $k, R \in \mathbb{R}$ and consider the equation $A' = R - kA$. For `k ≥ 0`, `R ≥ 0` and `A₀ ≥ 0` the amount stays nonnegative for
-`t ≥ 0`.
+Let $k \ge 0$, $R \ge 0$ and $A_0 \ge 0$, and let $A$ be the solution of $A' = R - kA$ with $A(0) = A_0$. Then $A(t) \ge 0$ for every $t \ge 0$.

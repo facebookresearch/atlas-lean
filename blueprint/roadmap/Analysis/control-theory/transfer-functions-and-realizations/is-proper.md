@@ -1,5 +1,3 @@
 # Proper rational matrices
 
-A rational matrix is proper when every entry has numerator degree at
-most denominator degree (`RatFunc.intDegree ≤ 0`; the zero entry counts as
-proper, with `intDegree 0 = 0`).
+Over a field $\mathbb{k}$, a matrix $G$ of rational functions is proper when every entry has numerator degree at most its denominator degree, that is, integer degree at most $0$. The zero entry counts as proper.

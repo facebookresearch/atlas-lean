@@ -29,7 +29,7 @@ identity.
 namespace ControlTheory
 
 /-- Derivative of the scalar model-reference adaptive control
-energy. With tracking error `e = x - xm`, parameter error
+energy, for input gain `b ≠ 0` and `gamma > 0`. With tracking error `e = x - xm`, parameter error
 `a - ahat`, adaptation gain `gamma`, and energy
 `V = (e ^ 2 + (a - ahat) ^ 2 / gamma) / 2`, the plant law
 `x' = a * x + b * u` with feedback

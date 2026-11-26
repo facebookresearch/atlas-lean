@@ -1,5 +1,3 @@
 # Inward-pointing coordinate boxes are forward invariant
 
-If the field is locally Lipschitz on the whole state space, every solution
-starting in an inward-pointing box stays in it on its forward interval. Local Lipschitz continuity supplies uniqueness, unlike the box-only hypothesis
-of `exists_forward_solution_in_Icc`.
+Let $\iota$ be a finite index set, $\ell \le u$ in $\mathbb{R}^\iota$, and $F : \mathbb{R}^\iota \to \mathbb{R}^\iota$ locally Lipschitz, pointing into the box $[\ell, u]$ on its faces: for every $y \in [\ell, u]$ and every $i$, $F(y)_i \ge 0$ if $y_i = \ell_i$ and $F(y)_i \le 0$ if $y_i = u_i$. If $x$ is an integral curve of $F$ on $[a, b]$ (that is, $x'(t) = F(x(t))$ for $t \in [a, b]$) with $x(a) \in [\ell, u]$, then $x(t) \in [\ell, u]$ for every $t \in [a, b]$. The local Lipschitz condition gives uniqueness of solutions, which the [box-only existence result](exists-forward-solution-in-icc.md) does not need.

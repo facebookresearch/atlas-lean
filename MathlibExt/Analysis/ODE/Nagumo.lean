@@ -305,8 +305,8 @@ theorem mem_posTangentConeAt_of_curve {s : Set E} {u : ℝ → E} {v : E} {T : �
     (hs : MapsTo u (Icc 0 T) s) : v ∈ posTangentConeAt s (u 0) :=
   contingentCondition_iff_mem_posTangentConeAt.mp (isContingent_of_curve hT hu hs)
 
-/-- Mathlib positive-tangent-cone membership preserves a closed set along an
-existing solution. -/
+/-- On a finite-dimensional space with a locally Lipschitz field, Mathlib
+positive-tangent-cone membership preserves a closed set along an existing solution. -/
 theorem mapsTo_of_mem_posTangentConeAt [FiniteDimensional ℝ E]
     {f : E → E} (hf : LocallyLipschitz f) {s : Set E} (hs : IsClosed s)
     (htan : ∀ x ∈ s, f x ∈ posTangentConeAt s x) {a b : ℝ} {u : ℝ → E}
@@ -315,8 +315,9 @@ theorem mapsTo_of_mem_posTangentConeAt [FiniteDimensional ℝ E]
   mapsTo_of_contingent hf hs
     (fun x hx => (contingentCondition_iff_mem_posTangentConeAt).mpr (htan x hx)) hu hu₀
 
-/-- Necessity is separate from the closed-set criterion: invariance alone
-forces tangency, even when the invariant set is not closed. -/
+/-- Necessity is separate from the closed-set criterion: on a finite-dimensional space with
+a locally Lipschitz field, invariance alone forces tangency, even when the invariant set is
+not closed. -/
 theorem mem_posTangentConeAt_of_invariant [FiniteDimensional ℝ E]
     {f : E → E} (hf : LocallyLipschitz f) {s : Set E}
     (hinv : ∀ (T : ℝ), 0 < T → ∀ u : ℝ → E,

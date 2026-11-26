@@ -1,4 +1,5 @@
 # One-sided decay estimate for a linear differential inequality
 
-One-sided decay estimate: if `w' = -a w + g` with `a ≥ λ > 0` and `g ≤ G`, then
-`w(t) ≤ |w(0)| e^{-λ t} + G/λ`.
+Let $w, a, g : \mathbb{R} \to \mathbb{R}$, $\lambda > 0$ and $G \ge 0$. Suppose that for every $t \ge 0$, $w$ is differentiable at $t$ with $w'(t) = -a(t)\,w(t) + g(t)$, $a(t) \ge \lambda$ and $g(t) \le G$. Then for every $t \ge 0$,
+
+$$w(t) \le |w(0)|\,e^{-\lambda t} + \frac{G}{\lambda}.$$

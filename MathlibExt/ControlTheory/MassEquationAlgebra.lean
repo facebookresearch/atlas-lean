@@ -33,13 +33,13 @@ namespace ControlTheory
 
 /-- The first-order right-hand side of the mass equation at
 velocity `v` under net force `F`: the pair `(v, M⁻¹ *ᵥ F)` of
-velocity and acceleration. -/
+velocity and acceleration, where `M⁻¹ = 0` for a singular `M`. -/
 noncomputable def firstOrderRhs {n : Type*} [Fintype n] [DecidableEq n]
     (M : Matrix n n ℝ) (F v : n → ℝ) : (n → ℝ) × (n → ℝ) :=
   (v, M⁻¹ *ᵥ F)
 
-/-- A derivative pair `(x, y)` is the first-order right-hand side
-if and only if the position derivative is the velocity and the
+/-- For a mass matrix `M` with invertible determinant, a derivative pair `(x, y)` is the
+first-order right-hand side if and only if the position derivative is the velocity and the
 velocity derivative solves the mass equation. -/
 theorem eq_firstOrderRhs_iff {n : Type*} [Fintype n] [DecidableEq n]
     (M : Matrix n n ℝ) (hM : IsUnit M.det) (F v x y : n → ℝ) :

@@ -5,4 +5,3 @@
 - [Two-sided decay estimate for a linear differential inequality](abs-le-of-decay.md)
 - [One-sided drift estimate](le-of-drift.md)
 - [Two-sided drift estimate](abs-le-of-drift.md)
-- [Gronwall's inequality in integral form](le-mul-exp-of-le-add-integral.md)

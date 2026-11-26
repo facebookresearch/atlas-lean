@@ -1,8 +1,7 @@
 # Prefix-causal operators
 
-A bounded operator `G` is **prefix causal** with respect to a
-filtration `P` of bounded projections when every prefix of the output
-of `G` depends only on the same prefix of the input: `P t ∘ G` never
-reads past `P t`, i.e. `P t ∘L G = P t ∘L G ∘L P t` for all `t`. This
-is a prefix law, not a commutation law: the unit delay is prefix
-causal but does not commute with the `P t`.
+Let $\mathbb{k}$ be a nontrivially normed field, $X$ a normed space over $\mathbb{k}$ and $(P_t)_{t \in I}$ a family of bounded linear maps $X \to X$. A bounded linear operator $G : X \to X$ is prefix causal with respect to $(P_t)$ when
+
+$$P_t \circ G = P_t \circ G \circ P_t \qquad \text{for every } t \in I,$$
+
+so that each prefix $P_t(Gx)$ of the output depends only on the prefix $P_t x$ of the input. This is a prefix law, not a commutation law: the unit delay is prefix causal but does not commute with the $P_t$.

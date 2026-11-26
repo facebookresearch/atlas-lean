@@ -1,3 +1,3 @@
 # Equilibrium of the constant-input relaxation equation
 
-Let $k, R \in \mathbb{R}$ and consider the equation $A' = R - kA$. Equilibrium `R / k` of the constant-input equation when `k ≠ 0`.
+For $k, R \in \mathbb{R}$, the steady state of $A' = R - kA$ is $R/k$, with the convention $R/0 = 0$; for $k \ne 0$ it is the equilibrium of the equation.

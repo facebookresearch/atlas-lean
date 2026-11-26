@@ -1,11 +1,7 @@
 # Energy derivative for scalar model-reference adaptive control
 
-Derivative of the scalar model-reference adaptive control
-energy. With tracking error `e = x - xm`, parameter error
-`a - ahat`, adaptation gain `gamma`, and energy
-`V = (e ^ 2 + (a - ahat) ^ 2 / gamma) / 2`, the plant law
-`x' = a * x + b * u` with feedback
-`u = (-ahat * x - lam * x + r) / b`, the reference law
-`xm' = -lam * xm + r`, and the adaptation law
-`ahat' = gamma * (x - xm) * x` give `V' = -lam * e ^ 2` at
-the point `t`.
+Let $a, b, \lambda, \gamma, r \in \mathbb{R}$ with $b \ne 0$ and $\gamma > 0$, and let $x, x_m, \hat a : \mathbb{R} \to \mathbb{R}$ and $t \in \mathbb{R}$. Suppose that at $t$ the plant $x' = ax + bu$ runs under the feedback $u = (-\hat a x - \lambda x + r)/b$, the reference model is $x_m' = -\lambda x_m + r$, and the adaptation law is $\hat a' = \gamma\,(x - x_m)\,x$, each as a derivative at $t$. Then the energy
+
+$$V = \tfrac12\Big((x - x_m)^2 + \frac{(a - \hat a)^2}{\gamma}\Big)$$
+
+has derivative $V'(t) = -\lambda\,(x(t) - x_m(t))^2$ at $t$.

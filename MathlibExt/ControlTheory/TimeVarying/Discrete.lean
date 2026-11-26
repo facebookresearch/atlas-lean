@@ -30,7 +30,7 @@ open Matrix Finset
 namespace ControlTheory
 
 /-- Ordered product of a time-varying matrix family: `orderedProd A k j`
-is `A (k-1) * ... * A j` for `j ≤ k`, and `1` when `j = k`. It is defined
+is `A (k-1) * ... * A j` for `j < k`, and `1` when `j ≥ k`. It is defined
 by recursion on the upper index. -/
 def orderedProd {n : Type*} [Fintype n] [DecidableEq n] {R : Type*} [Semiring R]
     (A : ℕ → Matrix n n R) : ℕ → ℕ → Matrix n n R

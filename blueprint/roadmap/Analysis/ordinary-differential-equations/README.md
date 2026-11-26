@@ -36,6 +36,7 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Traveling front of the Fisher–KPP equation](is-front.md)
 
 - [Gronwall inequality](gronwall-inequality/README.md)
-## Whittaker Rpow Bound
+
+## Asymptotics of linear second-order equations
 
 - [Power bound near zero for solutions of a Whittaker-type equation](exists-rpow-bound-near-zero-of-whittaker.md)

@@ -1,4 +1,3 @@
 # One-sided drift estimate
 
-One-sided drift estimate: if `d' ≤ h` wherever `d ≥ 0`, and `H' = h`, `H(0) = 0`,
-`H ≥ 0`, then `d(t) ≤ |d(0)| + H(t)`.
+Let $d, H, h : \mathbb{R} \to \mathbb{R}$, with $d$ differentiable at every $t \ge 0$ with derivative $d'(t)$, and $H$ differentiable at every $t \ge 0$ with $H'(t) = h(t)$, $H(0) = 0$ and $H(t) \ge 0$ for $t \ge 0$. If $d'(t) \le h(t)$ whenever $t \ge 0$ and $d(t) \ge 0$, then $d(t) \le |d(0)| + H(t)$ for every $t \ge 0$.

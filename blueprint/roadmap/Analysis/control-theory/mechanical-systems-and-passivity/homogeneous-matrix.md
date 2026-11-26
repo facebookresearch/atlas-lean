@@ -1,6 +1,5 @@
 # Homogeneous block matrix of an affine map
 
-The homogeneous block matrix of a linear map `R` and a
-translation `p`, acting on extended coordinates indexed by
-`m ⊕ Unit`: the linear block `R`, the translation column
-`p`, a zero row, and the scalar `1`.
+For a finite index set $m$, a real $m \times m$ matrix $R$ and a translation $p \in \mathbb{R}^m$, the homogeneous matrix is the block matrix on coordinates indexed by $m$ plus one extra coordinate
+
+$$\begin{pmatrix} R & p \\ 0 & 1 \end{pmatrix}.$$

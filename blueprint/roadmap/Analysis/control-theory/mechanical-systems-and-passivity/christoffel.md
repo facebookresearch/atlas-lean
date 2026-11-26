@@ -1,6 +1,5 @@
 # First-kind Christoffel symbols of a mass matrix
 
-The first-kind Christoffel symbol built from a derivative
-tensor `D`, where `D i j k` represents the derivative of the
-`(i, j)` mass-matrix entry along coordinate `k`:
-`Γ i j k = (D i j k + D i k j - D j k i) / 2`.
+For a finite index set $\iota$ and a derivative tensor $D : \iota^3 \to \mathbb{R}$, where $D_{ijk}$ stands for the derivative of the mass-matrix entry $M_{ij}$ along coordinate $k$, the Christoffel symbol of the first kind is
+
+$$\Gamma_{ijk} = \tfrac12\big(D_{ijk} + D_{ikj} - D_{jki}\big).$$

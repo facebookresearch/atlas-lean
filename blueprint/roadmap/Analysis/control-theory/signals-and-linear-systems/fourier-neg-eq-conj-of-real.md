@@ -1,4 +1,3 @@
 # Conjugate symmetry of the Fourier transform of a real signal
 
-Conjugate symmetry in the hertz convention: for a real-valued integrable
-`f` (viewed in `ℂ`), `𝓕 f (-ξ) = conj (𝓕 f ξ)`.
+For a real-valued $f : \mathbb{R} \to \mathbb{R}$ that is integrable as a complex function, its Fourier transform $\hat f(\xi) = \int e^{-2\pi i t\xi} f(t)\,dt$ satisfies $\hat f(-\xi) = \overline{\hat f(\xi)}$ for every $\xi \in \mathbb{R}$.

@@ -37,7 +37,8 @@ open MathlibExt.Analysis MathlibExt.Analysis.PDE.HeatWholeLine
 
 namespace MathlibExt.Analysis.PDE.HeatKernel
 
-/-- The Gaussian solution has spatial exponential growth uniformly on any finite strip. -/
+/-- For continuous initial data of exponential growth and `ν ≥ 0`, the Gaussian solution has
+spatial exponential growth uniformly on any finite strip. -/
 theorem heatSolution_hasExpGrowthOnStrip {f : ℝ → ℝ} (hf : Continuous f)
     (hg : HasExpGrowth f) {ν : ℝ} (hν : 0 ≤ ν) (T : ℝ) :
     HasExpGrowthOnStrip (fun t x => heatSolution f (ν * t) x) T := by
@@ -81,8 +82,10 @@ theorem heatSolution_hasExpGrowthOnStrip {f : ℝ → ℝ} (hf : Continuous f)
         _ = _ := by ring
     _ = _ := by rw [integral_const_mul]; dsimp [J]; ring
 
-/-- Every classical heat solution with the same initial data and uniform exponential
-strip growth equals the actual Gaussian convolution, including both time endpoints. -/
+/-- For `ν > 0` and continuous initial data `f` of exponential growth, every heat solution on
+`[0, T]` (jointly continuous, `C²` in space and with a left time derivative at positive times)
+with the same initial data and uniform exponential strip growth equals the actual Gaussian
+convolution, including both time endpoints. -/
 theorem eq_heatSolution_of_exp_growth {u ut : ℝ → ℝ → ℝ} {f : ℝ → ℝ} {ν T : ℝ}
     (hν : 0 < ν) (hf : Continuous f) (hfg : HasExpGrowth f)
     (hc : ContinuousOn (Function.uncurry u) (Icc 0 T ×ˢ univ))

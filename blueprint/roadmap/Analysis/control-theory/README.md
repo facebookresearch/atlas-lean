@@ -20,6 +20,16 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Human-in-the-loop controller model](human-in-the-loop-controller-model.md)
 - [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
 - [Optimal, robust and adaptive control](optimal-robust-and-adaptive-control/README.md)
+- [Intersample displacement enclosure](intersample-displacement-le.md)
+- [Energy derivative for scalar model-reference adaptive control](scalar-mracenergy-has-deriv-at.md)
+- [Band-limited signals and sampling](band-limited-signals-and-sampling/README.md)
+- [Causal input–output operators](causal-input-output-operators/README.md)
+- [Linear-quadratic regulation](linear-quadratic-regulation/README.md)
+- [Mechanical systems and passivity](mechanical-systems-and-passivity/README.md)
+- [Signals and linear systems](signals-and-linear-systems/README.md)
+- [State-space systems](state-space-systems/README.md)
+- [Time-varying linear systems](time-varying-linear-systems/README.md)
+- [Transfer functions and realizations](transfer-functions-and-realizations/README.md)
 
 ## Single-input single-output linear systems
 
@@ -32,24 +42,3 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Linear quadratic regulator](../../ComputerScience/machine-learning/reinforcement-learning/linear-quadratic-regulator/README.md): optimal state feedback for linear systems with quadratic cost, by dynamic programming (Recht).
 - [Optimality of stationary policies](../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/README.md) and [Stochastic shortest path problems](../../ComputerScience/heuristic-search-and-planning/stochastic-shortest-path-problems/README.md): Bertsekas's dynamic programming for Markov decision processes, the discrete-state counterpart of feedback design by optimisation.
 - [Viscosity solutions of Hamilton–Jacobi equations](../partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/README.md): value functions of continuous-time optimal control problems solve Hamilton–Jacobi–Bellman equations in the viscosity sense.
-
-- [Intersample displacement enclosure](intersample-displacement-le.md)
-
-- [Energy derivative for scalar model-reference adaptive control](scalar-mracenergy-has-deriv-at.md)
-
-- [Band-limited signals and sampling](band-limited-signals-and-sampling/README.md)
-
-- [Causal input–output operators](causal-input-output-operators/README.md)
-
-- [Linear-quadratic regulation](linear-quadratic-regulation/README.md)
-
-- [Mechanical systems and passivity](mechanical-systems-and-passivity/README.md)
-
-- [Signals and linear systems](signals-and-linear-systems/README.md)
-
-
-- [State-space systems](state-space-systems/README.md)
-
-- [Time-varying linear systems](time-varying-linear-systems/README.md)
-
-- [Transfer functions and realizations](transfer-functions-and-realizations/README.md)

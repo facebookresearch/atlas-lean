@@ -1,4 +1,3 @@
 # Time shift of a signal
 
-Time shift of a raw pointwise signal, as a linear map: `shiftₗ 𝕜 E a`
-sends `x` to the signal `t ↦ x (t - a)` (delay by `a` when `a` is positive). It is `LinearMap.funLeft` along `t ↦ t - a`.
+For a time set $T$ with subtraction and $a \in T$, the time shift by $a$ is the linear map on signals $x : T \to E$ given by $(\sigma_a x)(t) = x(t - a)$; for $a > 0$ it delays the signal by $a$.

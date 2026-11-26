@@ -4,8 +4,6 @@
 - [Causal linear systems](is-causal.md)
 - [Time-invariant linear systems](is-time-invariant.md)
 - [Composition of time shifts](shift-comp.md)
-- [Causal discrete convolution](causal-conv.md)
-- [Fourier transform in angular frequency](fourier-angular.md)
 - [Angular and hertz Fourier transforms agree](fourier-angular-eq.md)
 - [Conjugate symmetry of the Fourier transform of a real signal](fourier-neg-eq-conj-of-real.md)
 - [Time-shift rule for the Fourier transform](fourier-shift.md)
