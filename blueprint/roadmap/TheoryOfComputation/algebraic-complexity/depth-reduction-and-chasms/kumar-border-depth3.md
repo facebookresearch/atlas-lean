@@ -8,8 +8,7 @@ If $P = \sum_{i=1}^{r} \ell_i^d$ is a sum of powers of linear forms, then $\prod
 
 ## Depends on
 
-- [Gupta–Kamath–Kayal–Saptharishi: the chasm at depth three](gkks-depth-three-chasm.md)
-- [Fischer's identity: products of variables as sums of powers of linear forms](fischer-identity.md)
+- [Arithmetic circuit](../arithmetic-circuits/arithmetic-circuit.md)
 
 ## Proof depends on
 

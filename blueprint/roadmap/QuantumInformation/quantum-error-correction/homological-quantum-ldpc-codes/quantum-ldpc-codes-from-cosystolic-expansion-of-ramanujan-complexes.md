@@ -10,11 +10,7 @@ Bounded-degree Ramanujan complexes of dimension at least $3$ are cosystolic expa
 
 - [Cosystolic expansion of a cochain complex](cosystolic-expansion-of-cochain-complexes.md)
 - [The CSS code of a chain complex](css-code-of-a-chain-complex.md)
-
-## Proof depends on
-
-- [Cosystolic expansion of a cochain complex](cosystolic-expansion-of-cochain-complexes.md)
-- [The CSS code of a chain complex](css-code-of-a-chain-complex.md)
+- [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
 
 ## Sources
 

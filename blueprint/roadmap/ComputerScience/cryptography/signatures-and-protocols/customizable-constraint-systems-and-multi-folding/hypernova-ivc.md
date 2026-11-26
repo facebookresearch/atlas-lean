@@ -8,13 +8,14 @@ Mirror the Nova construction with LCCCS as the running relation and CCCS as the 
 
 ## Depends on
 
-- [HyperNova multi-folding scheme for CCS](hypernova-multifolding.md)
-- [Nova: IVC with constant recursion overhead from folding](../relaxed-r1cs-folding-schemes/nova-ivc.md)
 - [Incrementally verifiable computation scheme for an iterated function](../incrementally-verifiable-computation-and-pcd/ivc-scheme.md)
+- [Customizable constraint systems](customizable-constraint-system.md)
+- [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
 
 ## Proof depends on
 
 - [HyperNova multi-folding scheme for CCS](hypernova-multifolding.md)
+- [Nova: IVC with constant recursion overhead from folding](../relaxed-r1cs-folding-schemes/nova-ivc.md)
 - [Non-interactive folding via Fiat–Shamir in the random oracle model](../relaxed-r1cs-folding-schemes/nova-nifs.md)
 
 ## Sources

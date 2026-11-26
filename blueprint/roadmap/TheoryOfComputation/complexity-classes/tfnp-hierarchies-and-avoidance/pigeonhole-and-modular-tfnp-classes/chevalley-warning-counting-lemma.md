@@ -15,11 +15,11 @@ By Fermat, $\mathrm{CW}_{\mathbf f}(x)=1$ if $x\in\mathcal V_{\mathbf f}$ and $0
 ## Depends on
 
 - [CHEVALLEY_p, GENERAL-CHEVALLEY_p and CHEVALLEY-WITH-SYMMETRY_p: explicit search problems from the Chevalley–Warning theorem](chevalley-search-problems.md)
-- [Chevalley–Warning theorem, existence form](../../../../Combinatorics/additive-combinatorics/combinatorial-nullstellensatz/exists-ne-common-zero.md)
+- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
 
 ## Proof depends on
 
-- [CHEVALLEY_p, GENERAL-CHEVALLEY_p and CHEVALLEY-WITH-SYMMETRY_p: explicit search problems from the Chevalley–Warning theorem](chevalley-search-problems.md)
+- [Chevalley–Warning theorem, existence form](../../../../Combinatorics/additive-combinatorics/combinatorial-nullstellensatz/exists-ne-common-zero.md)
 
 ## Sources
 

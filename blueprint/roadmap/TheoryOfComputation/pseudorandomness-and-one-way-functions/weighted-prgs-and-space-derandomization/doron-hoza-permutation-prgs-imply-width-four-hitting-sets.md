@@ -14,11 +14,10 @@ The main theorem is the composition of the two parts: part 1 converts the hypoth
 ## Depends on
 
 - [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
-- [Pyne–Vadhan: weighted PRGs for unbounded-width permutation ROBPs with seed Õ(log^{3/2} n), impossible for PRGs](pyne-vadhan-pseudodistributions-beat-prgs.md)
 
 ## Proof depends on
 
-- [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
+- [Pyne–Vadhan: weighted PRGs for unbounded-width permutation ROBPs with seed Õ(log^{3/2} n), impossible for PRGs](pyne-vadhan-pseudodistributions-beat-prgs.md)
 
 ## Sources
 

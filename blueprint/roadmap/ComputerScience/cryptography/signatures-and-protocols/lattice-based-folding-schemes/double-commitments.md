@@ -8,8 +8,7 @@ Two distinct openings either give distinct decompositions $G^{-1}(C)\ne G^{-1}(C
 
 ## Depends on
 
-- [Relaxed binding of Ajtai commitments with challenge-difference openings](ajtai-relaxed-binding.md)
-- [Base-b decomposition commutes with Ajtai commitments](gadget-decomposition-commitments.md)
+- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
 
 ## Proof depends on
 

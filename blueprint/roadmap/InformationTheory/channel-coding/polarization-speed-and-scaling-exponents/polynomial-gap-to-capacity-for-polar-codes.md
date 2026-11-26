@@ -8,13 +8,13 @@ Quantify the martingale convergence: for the potential $T_j = \sqrt{Z_j(1 - Z_j)
 
 ## Depends on
 
-- [Polar codes achieve the capacity of BMS channels](polar-codes-achieve-symmetric-capacity.md)
 - [Scaling exponent of polar codes](scaling-exponent-of-a-code-family.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
+- [Polar codes and successive cancellation decoding](polar-codes-and-successive-cancellation-decoding.md)
 
 ## Proof depends on
 
 - [Polar codes achieve the capacity of BMS channels](polar-codes-achieve-symmetric-capacity.md)
-- [Scaling exponent of polar codes](scaling-exponent-of-a-code-family.md)
 
 ## Sources
 

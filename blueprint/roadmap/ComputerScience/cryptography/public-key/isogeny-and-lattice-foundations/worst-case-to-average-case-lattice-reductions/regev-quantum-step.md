@@ -10,11 +10,10 @@ Prepare a superposition $\sum_{x\in\Lambda^{*}}\sum_{z}\rho_{d'}(z)|x+z\rangle|z
 
 - [Bounded distance decoding](bounded-distance-decoding.md)
 - [Discrete Gaussian sampling problem](discrete-gaussian-sampling-problem.md)
-- [Classical step of Regev's reduction: BDD on the dual from an LWE oracle](regev-classical-step.md)
 
 ## Proof depends on
 
-- [Bounded distance decoding](bounded-distance-decoding.md)
+- [Classical step of Regev's reduction: BDD on the dual from an LWE oracle](regev-classical-step.md)
 
 ## Sources
 

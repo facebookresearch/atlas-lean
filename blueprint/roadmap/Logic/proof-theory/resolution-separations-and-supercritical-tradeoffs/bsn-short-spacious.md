@@ -8,7 +8,8 @@ Use XOR-substituted pebbling formulas of DAGs with black-white pebbling price $\
 
 ## Depends on
 
-- [Pebbling formulas have linear-size resolution refutations](pebbling-upper-bound.md)
+- [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Width of a derivation](../../propositional-logic/resolution-size-and-width/derivation-width.md)
 
 ## Proof depends on
 

@@ -9,11 +9,9 @@ Statistical binding of the original is a statement about the fidelity between $\
 ## Depends on
 
 - [Quantum bit commitments in canonical form](quantum-bit-commitments.md)
-- [Monotonicity of fidelity under channels](../../../QuantumInformation/quantum-operations/monotonicity-of-fidelity-under-channels.md)
 
 ## Proof depends on
 
-- [Quantum bit commitments in canonical form](quantum-bit-commitments.md)
 - [Monotonicity of fidelity under channels](../../../QuantumInformation/quantum-operations/monotonicity-of-fidelity-under-channels.md)
 
 ## Sources

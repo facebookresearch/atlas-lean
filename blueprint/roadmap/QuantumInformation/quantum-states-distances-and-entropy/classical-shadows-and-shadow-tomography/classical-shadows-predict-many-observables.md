@@ -14,8 +14,8 @@ Split the $N$ snapshots into $K = O(\log(M/\delta))$ batches, average within eac
 
 ## Depends on
 
-- [Variance bound for single-snapshot estimators](variance-of-classical-shadow-estimators.md)
-- [Median amplification](../../../Probability/concentration-inequalities/median-of-means-amplification/measure-real-sample-median-not-mem-icc-l.md)
+- [Classical shadows from randomized measurements](randomized-measurement-classical-shadow.md)
+- [The shadow norm of an observable](shadow-norm-of-an-observable.md)
 
 ## Proof depends on
 

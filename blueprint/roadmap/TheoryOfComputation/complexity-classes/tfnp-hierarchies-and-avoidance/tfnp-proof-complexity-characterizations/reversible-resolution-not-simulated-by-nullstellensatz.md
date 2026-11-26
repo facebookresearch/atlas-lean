@@ -8,12 +8,11 @@ Take a sparse constant-width variant of $\mathrm{SoPL}_n$ (replacing long pointe
 
 ## Depends on
 
-- [Approximate Nullstellensatz lower bound for the sink-of-potential-line formulas via approximate degree of OR](approximate-nullstellensatz-sink-of-potential-line.md)
+- [Reversible Resolution: a MaxSAT-style fragment of Resolution with consumed premises](reversible-resolution.md)
 
 ## Proof depends on
 
 - [Approximate Nullstellensatz lower bound for the sink-of-potential-line formulas via approximate degree of OR](approximate-nullstellensatz-sink-of-potential-line.md)
-- [Reversible Resolution: a MaxSAT-style fragment of Resolution with consumed premises](reversible-resolution.md)
 
 ## Sources
 

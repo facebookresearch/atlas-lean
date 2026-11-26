@@ -11,10 +11,6 @@ A pseudodeterministic CAPP algorithm gives each circuit a canonical estimate, wh
 - [Pseudodeterministic algorithms for search problems (Gat–Goldwasser)](pseudodeterministic-algorithm-for-search-problem.md)
 - [BPP](../../../complexity-classes/time-and-space-complexity-classes/bpp.md)
 
-## Proof depends on
-
-- [Pseudodeterministic algorithms for search problems (Gat–Goldwasser)](pseudodeterministic-algorithm-for-search-problem.md)
-
 ## Sources
 
 - Zhenjian Lu, Igor C. Oliveira and Rahul Santhanam, "Pseudodeterministic Algorithms and the Structure of Probabilistic Time", STOC (2021), ECCC TR21-039.

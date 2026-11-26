@@ -1,6 +1,6 @@
 # Bell-Chueluecha-Warnke: sunflower bound O(r log l)^l
 
-There is an absolute constant $C$ such that every family of more than $(C r \log \ell)^{\ell}$ sets of size $\ell \ge 2$ contains an $r$-sunflower. This is the best known general bound; the Erdős-Rado conjecture asks for $C_r^{\ell}$.
+There is an absolute constant $C$ such that every family of more than $(C r \log \ell)^{\ell}$ sets of size $\ell \ge 2$ contains an $r$-sunflower. The Erdős-Rado conjecture asks for a bound of the form $C_r^{\ell}$.
 
 ## Proof sketch
 
@@ -8,7 +8,7 @@ Refine the encoding argument of the spread lemma so that the failure probability
 
 ## Depends on
 
-- [Rao: sunflower bound via the converse of Shannon's source coding theorem](rao-sunflower-bound-via-coding.md)
+- [Sunflower](../intersecting-families/sunflower-lemma/is-sunflower.md)
 
 ## Proof depends on
 

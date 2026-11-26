@@ -8,8 +8,7 @@ Run the alternating-projection procedure for $N = O(r q^2)$ rounds and accept if
 
 ## Depends on
 
-- [Alternating projections estimate the acceptance probability of a fixed witness](alternating-projection-acceptance-estimator.md)
-- [QMA error reduction by parallel repetition](../../qma-error-reduction-by-parallel-repetition.md)
+- [QMA for promise problems](../../local-hamiltonian-problem/qmapromise.md)
 
 ## Proof depends on
 

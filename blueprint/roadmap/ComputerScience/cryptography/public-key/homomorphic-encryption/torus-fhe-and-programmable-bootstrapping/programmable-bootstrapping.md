@@ -12,12 +12,8 @@ Compose the blind-rotation, sample-extraction and key-switching lemmas; the nois
 - [Noiseless sample extraction from TRLWE to TLWE](sample-extraction.md)
 - [TLWE key switching with additive noise](tlwe-key-switching.md)
 - [Programmable bootstrapping evaluates only negacyclic functions](negacyclic-restriction.md)
-
-## Proof depends on
-
-- [Blind rotation of a test polynomial by an encrypted phase](blind-rotation.md)
-- [Noiseless sample extraction from TRLWE to TLWE](sample-extraction.md)
-- [TLWE key switching with additive noise](tlwe-key-switching.md)
+- [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
+- [TRGSW samples and the gadget decomposition](trgsw-samples.md)
 
 ## Sources
 

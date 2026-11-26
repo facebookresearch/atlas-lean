@@ -11,10 +11,6 @@ A $\varphi_F$-compliant path transcript from the source labeled $z_0$ to the sin
 - [Proof-carrying data for a compliance predicate](pcd-scheme.md)
 - [Incrementally verifiable computation scheme for an iterated function](ivc-scheme.md)
 
-## Proof depends on
-
-- [Proof-carrying data for a compliance predicate](pcd-scheme.md)
-
 ## Sources
 
 - Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer, "Recursive Composition and Bootstrapping for SNARKs and Proof-Carrying Data", STOC (2013).

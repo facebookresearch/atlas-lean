@@ -10,10 +10,6 @@ Suppose $g=\mathrm{Quot}(f,S,\mathrm{Ans})$ is within distance $\delta$ of a cod
 
 - [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
 
-## Proof depends on
-
-- [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
-
 ## Sources
 
 - Gal Arnon, Alessandro Chiesa, Giacomo Fenzi, Eylon Yogev, "STIR: Reed–Solomon Proximity Testing with Fewer Queries", CRYPTO (2024), IACR ePrint 2024/390.

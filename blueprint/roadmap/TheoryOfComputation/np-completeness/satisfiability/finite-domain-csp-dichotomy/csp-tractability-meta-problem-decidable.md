@@ -8,8 +8,8 @@ $\mathbb{A}$ and its core $\mathbb{C}$ are homomorphically equivalent, so compos
 
 ## Depends on
 
-- [Bulatov and Zhuk: the CSP dichotomy theorem for finite templates](bulatov-zhuk-csp-dichotomy-theorem.md)
-- [Siggers: a finite algebra is Taylor iff it has a 6-ary Siggers term](siggers-six-ary-taylor-term.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
+- [Finite relational templates and the homomorphism problem CSP(A)](finite-templates-and-csp-of-a.md)
 
 ## Proof depends on
 

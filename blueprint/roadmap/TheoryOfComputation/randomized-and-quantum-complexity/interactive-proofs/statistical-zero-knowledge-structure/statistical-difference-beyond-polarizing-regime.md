@@ -18,9 +18,7 @@ Triangular discrimination and Jensen–Shannon divergence are tied to statistica
 
 ## Proof depends on
 
-- [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
 - [One-way function families](../../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
-- [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
 ## Sources
 

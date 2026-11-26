@@ -16,12 +16,9 @@ Use a Koszul flattening: map the tensor to a linear map $\Lambda^{p}\mathbb{C}^{
 
 - [Matrix multiplication tensor](../matrix-multiplication-exponent/matrix-multiplication-tensor.md)
 - [Tensor rank](../matrix-multiplication-exponent/tensor-rank.md)
-- [Efremenko–Garg–Oliveira–Wigderson: barriers for rank methods](../shifted-partial-derivative-lower-bounds/egow-rank-barrier.md)
 
 ## Proof depends on
 
-- [Matrix multiplication tensor](../matrix-multiplication-exponent/matrix-multiplication-tensor.md)
-- [Tensor rank](../matrix-multiplication-exponent/tensor-rank.md)
 - [Efremenko–Garg–Oliveira–Wigderson: barriers for rank methods](../shifted-partial-derivative-lower-bounds/egow-rank-barrier.md)
 
 ## Sources

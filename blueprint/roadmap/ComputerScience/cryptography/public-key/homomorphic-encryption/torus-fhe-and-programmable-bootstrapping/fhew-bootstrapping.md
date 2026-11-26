@@ -8,12 +8,12 @@ Use GSW-style ciphertexts whose multiplication grows noise asymmetrically: multi
 
 ## Depends on
 
-- [Noise of the TRGSW–TRLWE external product](external-product-noise.md)
-- [Gentry's bootstrapping theorem](../gentry-s-bootstrapping-theorem.md)
+- [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 
 ## Proof depends on
 
 - [Noise of the TRGSW–TRLWE external product](external-product-noise.md)
+- [Gentry's bootstrapping theorem](../gentry-s-bootstrapping-theorem.md)
 
 ## Sources
 

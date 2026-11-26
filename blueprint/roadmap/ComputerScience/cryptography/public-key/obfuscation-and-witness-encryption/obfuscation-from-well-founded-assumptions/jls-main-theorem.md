@@ -8,12 +8,11 @@ Combine the structured-seed PRG from LPN and the local PRG, the partially hiding
 
 ## Depends on
 
-- [Structured-seed PRGs from LPN over F_p and local PRGs](sprg-from-lpn-and-local-prg.md)
-- [Sublinear functional encryption from partially hiding FE and structured-seed PRGs](../compact-functional-encryption-to-obfuscation/sublinear-fe-from-phfe.md)
-- [Indistinguishability obfuscation from sub-exponentially secure compact functional encryption](../compact-functional-encryption-to-obfuscation/fe-to-io-bootstrapping.md)
 - [The symmetric external Diffie–Hellman assumption](sxdh-assumption.md)
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 - [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [Pseudorandom generators in NC0 with polynomial stretch](local-prg.md)
+- [Learning parity with noise over large prime fields with sparse errors](lpn-over-large-fields.md)
 
 ## Proof depends on
 

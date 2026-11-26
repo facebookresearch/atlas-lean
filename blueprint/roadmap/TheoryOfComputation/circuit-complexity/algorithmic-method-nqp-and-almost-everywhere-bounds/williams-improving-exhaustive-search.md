@@ -8,15 +8,13 @@ Assume $\mathrm{NEXP} \subseteq \mathrm{P}/\mathrm{poly}$; by the easy witness l
 
 ## Depends on
 
-- [Impagliazzo–Kabanets–Wigderson easy witness lemma for NEXP](easy-witness-ikw.md)
-- [Short PCPs with projection queries for nondeterministic time](short-pcp-projection.md)
 - [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [Non-trivial satisfiability and derandomization algorithms for a circuit class](nontrivial-circuit-analysis.md)
 
 ## Proof depends on
 
 - [Impagliazzo–Kabanets–Wigderson easy witness lemma for NEXP](easy-witness-ikw.md)
 - [Short PCPs with projection queries for nondeterministic time](short-pcp-projection.md)
-- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Sources
 

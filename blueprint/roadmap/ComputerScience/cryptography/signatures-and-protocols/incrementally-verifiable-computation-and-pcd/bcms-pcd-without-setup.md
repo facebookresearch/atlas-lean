@@ -8,10 +8,11 @@ Accumulation follows from the deferred check: each accumulator is a polynomial-e
 
 ## Depends on
 
-- [Deferring the linear-time check of inner-product arguments](halo-deferred-ipa-check.md)
-- [Proof-carrying data from NARKs with split accumulation](pcd-from-accumulation.md)
 - [Discrete-logarithm experiment](../../public-key/hardness-assumptions/dlog-game.md)
 - [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
+- [Accumulation scheme for a predicate](accumulation-scheme.md)
+- [Proof-carrying data for a compliance predicate](pcd-scheme.md)
+- [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
 
 ## Proof depends on
 

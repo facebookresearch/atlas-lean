@@ -10,10 +10,6 @@ Given $x$ with small syndrome, a greedy decoding argument using expansion shows 
 
 - [CSS code Hamiltonians of quantum LDPC codes](css-code-hamiltonians.md)
 
-## Proof depends on
-
-- [CSS code Hamiltonians of quantum LDPC codes](css-code-hamiltonians.md)
-
 ## Sources
 
 - Anurag Anshu, Nikolas P. Breuckmann, Chinmay Nirkhe, "NLTS Hamiltonians from good quantum codes", STOC (2023); arXiv:2206.13228.

@@ -8,7 +8,7 @@ Take pebbling formulas of suitable pyramid graphs combined with a stone-type ext
 
 ## Depends on
 
-- [Pebbling formulas have linear-size resolution refutations](pebbling-upper-bound.md)
+- [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Proof depends on
 

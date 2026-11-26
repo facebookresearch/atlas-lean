@@ -8,8 +8,7 @@ Apply the oracle reduction with $\mathcal{B}=\mathrm{N}$: a $\mathsf{CNL}$ langu
 
 ## Depends on
 
-- [Koucký–Mertz–Pyne–Sami: catalytic space with extra resources reduces to plain space with one oracle query](kmps-catalytic-resource-oracle-reduction.md)
-- [Buhrman–Cleve–Koucký–Loff–Speelman: logspace-uniform TC^1 is contained in catalytic logspace](bcklss-tc1-in-catalytic-logspace.md)
+- [Nondeterministic, bounded-error, unbounded-error and zero-error catalytic space classes](catalytic-resource-classes.md)
 
 ## Proof depends on
 

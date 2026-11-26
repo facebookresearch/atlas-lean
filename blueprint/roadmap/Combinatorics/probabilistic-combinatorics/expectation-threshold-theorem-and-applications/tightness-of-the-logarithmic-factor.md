@@ -9,11 +9,10 @@ Every member contains an edge at a fixed vertex $v$, so the $n - 1$ singleton ed
 ## Depends on
 
 - [Park-Pham theorem: thresholds are within a logarithmic factor of expectation thresholds](park-pham-theorem.md)
-- [The expectation threshold is a lower bound on the threshold](expectation-threshold-lower-bounds-the-threshold.md)
+- [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
 
 ## Proof depends on
 
-- [Park-Pham theorem: thresholds are within a logarithmic factor of expectation thresholds](park-pham-theorem.md)
 - [The expectation threshold is a lower bound on the threshold](expectation-threshold-lower-bounds-the-threshold.md)
 
 ## Sources

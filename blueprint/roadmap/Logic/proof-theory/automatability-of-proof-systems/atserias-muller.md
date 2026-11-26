@@ -8,7 +8,7 @@ Run a hypothetical automating algorithm on $\mathrm{Ref}(F)$ for a polynomial ti
 
 ## Depends on
 
-- [The Atserias–Müller reduction from SAT to resolution proof size](am-reduction-formula.md)
+- [Automatable proof systems](automatable-proof-system.md)
 
 ## Proof depends on
 

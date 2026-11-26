@@ -14,7 +14,9 @@ Instead of iterating correction steps through all dimensions, one uses a single 
 
 ## Depends on
 
-- [Evra–Kaufman: bounded-degree cosystolic expanders of every dimension](evra-kaufman-every-dimension.md)
+- [Coboundary expansion of a simplicial complex](coboundary-expansion.md)
+- [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
+- [Non-abelian 1-cochains and unique-games coboundary expansion](nonabelian-cochain.md)
 
 ## Proof depends on
 

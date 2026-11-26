@@ -13,9 +13,7 @@ Given $f$, take $D_n$ to output $(x,f(x))$ for uniform $x$ and $L=\{(x,y):f(x)=y
 
 ## Proof depends on
 
-- [Average-case symmetry of information, conditional coding and language compression over samplable pairs](average-case-kolmogorov-principles-over-samplable-pairs.md)
 - [The universal time-bounded sampler hits every x with probability about 2^{−pK^t(x|y)}](universal-time-bounded-sampler-and-pkt.md)
-- [One-way function families](../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Sources
 

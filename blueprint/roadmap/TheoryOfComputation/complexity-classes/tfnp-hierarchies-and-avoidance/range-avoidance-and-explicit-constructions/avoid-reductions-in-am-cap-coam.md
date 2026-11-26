@@ -10,9 +10,9 @@ The search protocol: Arthur picks random $y$; Merlin may claim a preimage, which
 
 ## Depends on
 
-- [Ghentiyala–Li–Stephens-Davidowitz: an AM protocol upper-bounding the image size of a circuit](am-protocol-upper-bound-image-size.md)
 - [The class $\mathsf{AM}$ (Arthur–Merlin)](../../time-and-space-complexity-classes/am.md)
-- [Collapse of the polynomial hierarchy to a level](../../polynomial-hierarchy/collapse-of-the-polynomial-hierarchy-to-a-level.md)
+- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
+- [The polynomial hierarchy](../../time-and-space-complexity-classes/ph.md)
 
 ## Proof depends on
 

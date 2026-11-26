@@ -14,14 +14,11 @@ Find a Boolean function $f$ with deterministic query complexity $\widetilde{\Ome
 
 ## Depends on
 
-- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
 - [Partition number and unambiguous certificate complexity](partition-number.md)
-- [Certificate complexity, degree and decision-tree depth](../query-and-communication-measures/certificate-complexity-degree-and-decision-tree.md)
 
 ## Proof depends on
 
 - [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
-- [Partition number and unambiguous certificate complexity](partition-number.md)
 - [Certificate complexity, degree and decision-tree depth](../query-and-communication-measures/certificate-complexity-degree-and-decision-tree.md)
 
 ## Sources

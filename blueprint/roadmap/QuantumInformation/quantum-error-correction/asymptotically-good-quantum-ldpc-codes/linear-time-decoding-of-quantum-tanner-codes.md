@@ -9,10 +9,7 @@ The decoder is a local-improvement (small-set-flip) procedure: at each vertex, i
 ## Depends on
 
 - [Leverrier-Zemor: quantum Tanner codes are asymptotically good](quantum-tanner-codes-have-linear-distance.md)
-
-## Proof depends on
-
-- [Leverrier-Zemor: quantum Tanner codes are asymptotically good](quantum-tanner-codes-have-linear-distance.md)
+- [Quantum Tanner codes](quantum-tanner-codes.md)
 
 ## Sources
 

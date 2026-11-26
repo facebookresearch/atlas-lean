@@ -10,10 +10,6 @@ The congruence condition makes $X^{d}+1$ split into $\kappa$ factors $X^{d/\kapp
 
 - [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
 
-## Proof depends on
-
-- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
-
 ## Sources
 
 - Vadim Lyubashevsky, Gregor Seiler, "Short, Invertible Elements in Partially Splitting Cyclotomic Rings and Applications to Lattice-Based Zero-Knowledge Proofs", EUROCRYPT (2018).

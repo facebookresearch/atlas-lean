@@ -8,7 +8,8 @@ By Lindsey's lemma, every $S \times T$ submatrix of the $N \times N$ Hadamard ma
 
 ## Depends on
 
-- [Two-source extractors and dispersers give Ramsey graphs](two-source-extractors-give-ramsey-graphs.md)
+- [K-Ramsey graphs and bipartite K-Ramsey graphs](ramsey-graphs-and-bipartite-ramsey-graphs.md)
+- [Guessing probability, min-entropy and collision probability](../../../ComputerScience/cryptography/randomness-extraction/guessing-probability-min-entropy-and-collision.md)
 
 ## Proof depends on
 

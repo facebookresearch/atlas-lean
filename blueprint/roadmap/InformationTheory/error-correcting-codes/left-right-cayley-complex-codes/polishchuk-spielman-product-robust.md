@@ -17,11 +17,6 @@ Decode each row and column to the nearest Reed-Solomon codeword; the decoded row
 - [Agreement testability and robustness of tensor codes](agreement-testability-tensor.md)
 - [Reed-Solomon code](../reed-solomon-codes/code.md)
 
-## Proof depends on
-
-- [Agreement testability and robustness of tensor codes](agreement-testability-tensor.md)
-- [Reed-Solomon code](../reed-solomon-codes/code.md)
-
 ## Sources
 
 - A. Polishchuk, D. A. Spielman, "Nearly-linear size holographic proofs", STOC (1994).

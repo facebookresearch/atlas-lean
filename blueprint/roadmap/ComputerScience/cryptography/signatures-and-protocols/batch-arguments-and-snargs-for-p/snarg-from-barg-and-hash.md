@@ -10,12 +10,10 @@ By induction on $t$, using indistinguishability of extraction positions, the ext
 
 - [Non-interactive batch arguments for NP](batch-argument.md)
 - [Somewhere extractable (somewhere statistically binding) hash functions](somewhere-extractable-hash.md)
-- [Somewhere statistical soundness of arguments](somewhere-statistical-soundness.md)
 
 ## Proof depends on
 
-- [Somewhere extractable (somewhere statistically binding) hash functions](somewhere-extractable-hash.md)
-- [Non-interactive batch arguments for NP](batch-argument.md)
+- [Somewhere statistical soundness of arguments](somewhere-statistical-soundness.md)
 
 ## Sources
 

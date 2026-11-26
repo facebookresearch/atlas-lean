@@ -17,11 +17,6 @@ The duality is an instance of Strassen's Positivstellensatz for preordered commu
 - [Strassen's asymptotic spectrum of tensors and asymptotic rank](asymptotic-spectrum.md)
 - [Matrix multiplication exponent](../matrix-multiplication-exponent/matrix-multiplication-exponent.md)
 
-## Proof depends on
-
-- [Strassen's asymptotic spectrum of tensors and asymptotic rank](asymptotic-spectrum.md)
-- [Matrix multiplication exponent](../matrix-multiplication-exponent/matrix-multiplication-exponent.md)
-
 ## Sources
 
 - V. Strassen, "The asymptotic spectrum of tensors", Journal für die reine und angewandte Mathematik 384 (1988) 102-152.

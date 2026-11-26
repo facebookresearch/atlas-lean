@@ -10,10 +10,6 @@ Derive the unit clauses $x_v$ in a topological order of $G$: sources are axioms,
 
 - [Pebbling formulas of directed acyclic graphs](pebbling-formula.md)
 
-## Proof depends on
-
-- [Pebbling formulas of directed acyclic graphs](pebbling-formula.md)
-
 ## Sources
 
 - E. Ben-Sasson, R. Impagliazzo, A. Wigderson, "Near optimal separation of tree-like and general resolution", Combinatorica 24 (2004) 585-603.

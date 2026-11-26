@@ -9,11 +9,10 @@ Use a dictatorship test that samples $R$ independent copies of $\mu$ with small 
 ## Depends on
 
 - [Approximation-resistant predicates and balanced pairwise independence](approximation-resistance.md)
-- [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
+- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 
 ## Proof depends on
 
-- [Approximation-resistant predicates and balanced pairwise independence](approximation-resistance.md)
 - [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
 
 ## Sources

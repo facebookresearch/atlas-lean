@@ -16,10 +16,6 @@ Multiply both sides by $\prod_i(X-f_i)\prod_j(X-t_j)$: the identity becomes equa
 
 - [Logarithmic-derivative characterization of set inclusion](logup-lemma.md)
 
-## Proof depends on
-
-- [Logarithmic-derivative characterization of set inclusion](logup-lemma.md)
-
 ## Sources
 
 - Ulrich Haböck, "Multivariate Lookups Based on Logarithmic Derivatives", IACR ePrint 2022/1530 (2022).

@@ -9,13 +9,10 @@ The optimal acceptance probability of a two-message protocol is the value of a m
 ## Depends on
 
 - [Message-bounded quantum interactive proof classes QIP(m)](message-bounded-quantum-interactive-proof-classes.md)
-- [Regret bound for the matrix multiplicative weights update](matrix-multiplicative-weights-regret-bound.md)
-- [Matrix exponentials of exponential-dimension matrices in polynomial depth](matrix-exponentials-in-polynomial-depth.md)
-- [Borodin: NC(poly) = PSPACE](borodin-polynomial-depth-equals-polynomial-space.md)
+- [Polynomial space for decision problems](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 
 ## Proof depends on
 
-- [Message-bounded quantum interactive proof classes QIP(m)](message-bounded-quantum-interactive-proof-classes.md)
 - [Regret bound for the matrix multiplicative weights update](matrix-multiplicative-weights-regret-bound.md)
 - [Matrix exponentials of exponential-dimension matrices in polynomial depth](matrix-exponentials-in-polynomial-depth.md)
 - [Borodin: NC(poly) = PSPACE](borodin-polynomial-depth-equals-polynomial-space.md)

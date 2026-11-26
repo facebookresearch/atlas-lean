@@ -8,13 +8,12 @@ Apply the infinitely-often single-valued algorithm for Avoid to the truth-table 
 
 ## Depends on
 
-- [Chen–Hirahara–Ren: an infinitely-often single-valued FZPP^NP/1 algorithm for Avoid](chr-infinitely-often-pseudodeterministic-avoid.md)
-- [Miltersen–Vinodchandran–Watanabe: E^Σ2P contains a language of circuit complexity at least 2^n/n](delta3e-near-maximum-circuit-lower-bound.md)
-- [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
+- [Symmetric alternation: the classes S2TIME[T], S2P and S2E](symmetric-alternation-s2p-s2e.md)
 
 ## Proof depends on
 
 - [Chen–Hirahara–Ren: an infinitely-often single-valued FZPP^NP/1 algorithm for Avoid](chr-infinitely-often-pseudodeterministic-avoid.md)
+- [Miltersen–Vinodchandran–Watanabe: E^Σ2P contains a language of circuit complexity at least 2^n/n](delta3e-near-maximum-circuit-lower-bound.md)
 - [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 - [Cai: S2P is contained in ZPP^NP](cai-s2p-subset-zpp-np.md)
 

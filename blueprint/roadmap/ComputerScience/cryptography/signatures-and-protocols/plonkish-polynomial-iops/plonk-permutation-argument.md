@@ -15,7 +15,6 @@ Multiset equality of pairs is equivalent to equality of the bivariate polynomial
 ## Depends on
 
 - [PLONK gate equations with copy constraints](plonk-constraint-system.md)
-- [Vanishing on a multiplicative subgroup and the quotient test](subgroup-vanishing-quotient.md)
 
 ## Proof depends on
 

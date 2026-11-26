@@ -12,10 +12,7 @@ Answers are interpreted as evaluations of low individual degree polynomials over
 ## Depends on
 
 - [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
-
-## Proof depends on
-
-- [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
+- [Synchronous two-prover games](synchronous-two-prover-games.md)
 
 ## Sources
 

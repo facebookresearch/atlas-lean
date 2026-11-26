@@ -10,12 +10,9 @@ If every hard instance had a constant-depth state of relative energy $\varepsilo
 
 - [The NLTS property and the Freedman-Hastings conjecture](no-low-energy-trivial-states-property.md)
 - [Quantum PCP conjecture](../quantum-pcp-conjecture.md)
-- [The 2-local Hamiltonian problem is QMA-complete](../local-hamiltonian-qma-complete.md)
 
 ## Proof depends on
 
-- [The NLTS property and the Freedman-Hastings conjecture](no-low-energy-trivial-states-property.md)
-- [Quantum PCP conjecture](../quantum-pcp-conjecture.md)
 - [The 2-local Hamiltonian problem is QMA-complete](../local-hamiltonian-qma-complete.md)
 
 ## Sources

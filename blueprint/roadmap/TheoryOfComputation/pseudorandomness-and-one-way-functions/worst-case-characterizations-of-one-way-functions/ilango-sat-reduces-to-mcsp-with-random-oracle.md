@@ -19,7 +19,6 @@ The reduction uses parameter $\lambda=\Theta(\log n)$ and oracles $O_n:[n]\times
 
 ## Proof depends on
 
-- [The random oracle model](../../../ComputerScience/cryptography/public-key/random-oracle-constructions/the-random-oracle-model.md)
 - [Polynomial-time symmetry of information hypothesis for K^t and pK^t](../../kolmogorov-complexity/probabilistic-kolmogorov-and-symmetry-of-information/polynomial-time-symmetry-of-information-hypothesis.md)
 
 ## Sources

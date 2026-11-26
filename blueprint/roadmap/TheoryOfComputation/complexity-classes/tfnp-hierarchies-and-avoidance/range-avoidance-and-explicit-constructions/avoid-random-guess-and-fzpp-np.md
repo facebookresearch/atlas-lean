@@ -12,10 +12,6 @@ The bound on the image is a counting argument, and the oracle query is an $\math
 - [ZPP](../../time-and-space-complexity-classes/zpp.md)
 - [Polynomial time with an oracle](../../time-and-space-complexity-classes/pwith-oracle.md)
 
-## Proof depends on
-
-- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
-
 ## Sources
 
 - Robert Kleinberg, Oliver Korten, Daniel Mitropolsky and Christos Papadimitriou, "Total Functions in the Polynomial Hierarchy", ITCS (2021), LIPIcs 185.

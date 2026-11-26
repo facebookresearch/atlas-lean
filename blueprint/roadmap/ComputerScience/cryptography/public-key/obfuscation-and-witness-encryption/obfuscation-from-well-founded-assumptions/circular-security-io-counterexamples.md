@@ -12,10 +12,6 @@ Construct a scheme in which encryptions of the secret key combined with the perm
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 - [Circular security from fully composable homomorphic encryption](../../circular-security-from-composable-homomorphic-encryption.md)
 
-## Proof depends on
-
-- [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
-
 ## Sources
 
 - Sam Hopkins, Aayush Jain, Huijia Lin, "Counterexamples to New Circular Security Assumptions Underlying iO", CRYPTO (2021), IACR ePrint 2021/889.

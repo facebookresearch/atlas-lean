@@ -9,12 +9,7 @@ In post-order, when a vertex $u$ is processed both its subtrees are complete, so
 ## Depends on
 
 - [Korten's reduction: from a non-image of the GGM tree, an NP oracle finds a non-image of C](korten-reduction-ggm-tree.md)
-- [GGM-tree evaluation: every vertex value of GGM_T[C](x) is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
-
-## Proof depends on
-
-- [Korten's reduction: from a non-image of the GGM tree, an NP oracle finds a non-image of C](korten-reduction-ggm-tree.md)
-- [GGM-tree evaluation: every vertex value of GGM_T[C](x) is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
+- [GGM-tree evaluation: every vertex value of the GGM tree GGM_T of C on input x is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
 
 ## Sources
 

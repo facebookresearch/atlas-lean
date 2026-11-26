@@ -16,10 +16,6 @@ Both matchings have the same minimum weight, so $W(M_1)=W(M_2)=W(M_2\setminus\{e
 
 - [Agarwala–Mertz: isolating weights on the catalytic tape let CLP extend a maximum matching one edge at a time](isolating-weights-extend-matching-in-clp.md)
 
-## Proof depends on
-
-- [Agarwala–Mertz: isolating weights on the catalytic tape let CLP extend a maximum matching one edge at a time](isolating-weights-extend-matching-in-clp.md)
-
 ## Sources
 
 - Aryan Agarwala and Ian Mertz, "Bipartite Matching is in Catalytic Logspace", arXiv:2504.09991 (2025), ECCC TR25-048.

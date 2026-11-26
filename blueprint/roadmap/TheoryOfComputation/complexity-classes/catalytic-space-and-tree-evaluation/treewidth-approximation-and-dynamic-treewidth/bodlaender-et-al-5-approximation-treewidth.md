@@ -9,12 +9,11 @@ The algorithm combines a recursive balanced-separator construction (find a small
 ## Depends on
 
 - [FPT-approximation algorithms for treewidth](fpt-approximation-algorithms-for-treewidth.md)
-- [Balanced separators of size k+1 in graphs of treewidth at most k](balanced-separators-treewidth-k.md)
+- [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
 
 ## Proof depends on
 
 - [Balanced separators of size k+1 in graphs of treewidth at most k](balanced-separators-treewidth-k.md)
-- [FPT-approximation algorithms for treewidth](fpt-approximation-algorithms-for-treewidth.md)
 
 ## Sources
 

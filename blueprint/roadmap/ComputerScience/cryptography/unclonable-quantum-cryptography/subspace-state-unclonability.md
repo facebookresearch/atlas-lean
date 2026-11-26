@@ -6,15 +6,11 @@ Let $A\subseteq\mathbb{F}_2^{n}$ be a uniformly random subspace of dimension $n/
 
 The projector onto $|A\rangle$ equals $\Pi_A\cdot H^{\otimes n}\Pi_{A^{\perp}}H^{\otimes n}$, so the oracles suffice for verification. The lower bound uses an inner-product (hybrid/adversary) argument showing that, with few queries, the algorithm's output is nearly independent of which subspace among a large family containing $A$ was chosen, while cloning would require distinguishing them; a complementary-slackness style argument relates success to the adversary weight.
 
-## Depends on
+## Proof depends on
 
 - [Public-key quantum money and quantum lightning](public-key-quantum-money.md)
 - [Polynomial method for quantum query complexity](../../quantum-algorithms/quantum-query-lower-bounds/polynomial-method-for-quantum-query-complexity.md)
 - [No-cloning theorem (linear form)](../../../QuantumInformation/quantum-operations/no-cloning-linear.md)
-
-## Proof depends on
-
-- [Polynomial method for quantum query complexity](../../quantum-algorithms/quantum-query-lower-bounds/polynomial-method-for-quantum-query-complexity.md)
 
 ## Sources
 

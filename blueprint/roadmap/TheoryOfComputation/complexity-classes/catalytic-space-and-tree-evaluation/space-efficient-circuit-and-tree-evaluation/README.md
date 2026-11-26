@@ -8,5 +8,5 @@
 - [Shalunov: a block quotient of a circuit unfolds into a Tree Evaluation instance](circuit-quotient-unfolds-to-tree-evaluation.md)
 - [Shalunov: circuits of size s are evaluated in space O(sqrt(s log s))](shalunov-circuit-evaluation-square-root-space.md)
 - [Cook–Mertz 2020: catalytic branching programs beating the pebbling algorithm for Tree Evaluation](cook-mertz-catalytic-branching-programs-treeeval.md)
-- [Cook–Mertz: Tree Evaluation in space O(h log k / log h), i.e. O(log^2 n / log log n)](cook-mertz-treeeval-space-log-squared-over-loglog.md)
+- [Cook–Mertz: Tree Evaluation in space O(h log k / log h + h), i.e. O(log^2 n / log log n)](cook-mertz-treeeval-space-log-squared-over-loglog.md)
 - [Cook–Mertz: the KRW conjecture implies L ⊄ NC^1](cook-mertz-krw-implies-l-not-in-nc1.md)

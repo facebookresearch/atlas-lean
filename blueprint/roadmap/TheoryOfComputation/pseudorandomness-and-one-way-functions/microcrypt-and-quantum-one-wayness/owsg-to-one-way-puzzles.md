@@ -11,10 +11,6 @@ Classical shadows estimate $\langle\phi_{k'}|\rho|\phi_{k'}\rangle$ for all $k'$
 - [One-way puzzles](one-way-puzzles.md)
 - [One-way state generators](one-way-state-generators.md)
 
-## Proof depends on
-
-- [One-way state generators](one-way-state-generators.md)
-
 ## Sources
 
 - Dakshita Khurana, Kabir Tomer, "Commitments from Quantum One-Wayness", STOC (2024), arXiv:2310.11526.

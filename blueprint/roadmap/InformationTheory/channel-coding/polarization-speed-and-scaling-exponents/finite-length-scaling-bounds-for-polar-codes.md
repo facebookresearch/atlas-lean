@@ -9,11 +9,11 @@ Track the number of subchannels whose Bhattacharyya parameter lies in a fixed in
 ## Depends on
 
 - [Scaling exponent of polar codes](scaling-exponent-of-a-code-family.md)
-- [Bhattacharyya recursion under one polarization step](bhattacharyya-recursion-under-the-polar-transform.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
+- [Polar codes and successive cancellation decoding](polar-codes-and-successive-cancellation-decoding.md)
 
 ## Proof depends on
 
-- [Scaling exponent of polar codes](scaling-exponent-of-a-code-family.md)
 - [Bhattacharyya recursion under one polarization step](bhattacharyya-recursion-under-the-polar-transform.md)
 
 ## Sources

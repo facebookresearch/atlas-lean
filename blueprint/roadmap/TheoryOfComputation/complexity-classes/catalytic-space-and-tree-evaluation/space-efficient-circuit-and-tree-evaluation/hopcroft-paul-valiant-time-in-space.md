@@ -14,14 +14,13 @@ Make the machine block-respecting with blocks of $b=\Theta(\log t)$ steps, durin
 
 ## Depends on
 
-- [Hopcroft–Paul–Valiant pebbling bound: bounded in-degree DAGs on N vertices need only O(N/log N) pebbles](hopcroft-paul-valiant-pebbling-bound.md)
 - [Deterministic time classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dtime.md)
 - [Deterministic space classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dspace.md)
-- [Time classes are contained in space classes](../../time-and-space-classes-on-multi-tape-machines/dtime-subset-dspace.md)
 
 ## Proof depends on
 
 - [Hopcroft–Paul–Valiant pebbling bound: bounded in-degree DAGs on N vertices need only O(N/log N) pebbles](hopcroft-paul-valiant-pebbling-bound.md)
+- [Time classes are contained in space classes](../../time-and-space-classes-on-multi-tape-machines/dtime-subset-dspace.md)
 
 ## Sources
 

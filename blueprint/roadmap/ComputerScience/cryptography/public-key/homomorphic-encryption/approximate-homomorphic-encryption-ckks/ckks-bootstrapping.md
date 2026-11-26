@@ -8,16 +8,15 @@ Correctness composes the ModRaise lemma, the linear-transform correctness of Coe
 
 ## Depends on
 
-- [ModRaise introduces a small integer multiple of the base modulus](ckks-modraise.md)
-- [Approximating modular reduction by a scaled sine](sine-mod-approximation.md)
-- [Approximate correctness of CKKS homomorphic evaluation](ckks-approximate-correctness.md)
-- [Gentry's bootstrapping theorem](../gentry-s-bootstrapping-theorem.md)
+- [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
+- [CKKS encoding via the canonical embedding](canonical-embedding-encoding.md)
 
 ## Proof depends on
 
 - [ModRaise introduces a small integer multiple of the base modulus](ckks-modraise.md)
 - [Approximating modular reduction by a scaled sine](sine-mod-approximation.md)
 - [Approximate correctness of CKKS homomorphic evaluation](ckks-approximate-correctness.md)
+- [Gentry's bootstrapping theorem](../gentry-s-bootstrapping-theorem.md)
 
 ## Sources
 

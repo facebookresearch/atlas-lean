@@ -8,16 +8,14 @@ By the characterizations, $S(F)\in\mathsf{PLS}^{dt}$ means short narrow Resoluti
 
 ## Depends on
 
-- [Resolution is not simulated by unary Sherali–Adams: low-degree simulations need exponentially large coefficients](resolution-not-simulated-by-unary-sherali-adams.md)
-- [Reversible Resolution is not simulated by Nullstellensatz over any field](reversible-resolution-not-simulated-by-nullstellensatz.md)
-- [Göös–Kamath–Robere–Sokolov: PPA^dt is characterized by Nullstellensatz degree over F2](ppa-dt-characterized-by-f2-nullstellensatz.md)
+- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
 
 ## Proof depends on
 
 - [Resolution is not simulated by unary Sherali–Adams: low-degree simulations need exponentially large coefficients](resolution-not-simulated-by-unary-sherali-adams.md)
 - [Reversible Resolution is not simulated by Nullstellensatz over any field](reversible-resolution-not-simulated-by-nullstellensatz.md)
-- [Göös et al.: PPAD^dt, PPADS^dt, SOPL^dt and EOPL^dt are characterized by uNS, uSA, RevRes and RevResT](ppad-ppads-sopl-eopl-proof-system-characterizations.md)
 - [Göös–Kamath–Robere–Sokolov: PPA^dt is characterized by Nullstellensatz degree over F2](ppa-dt-characterized-by-f2-nullstellensatz.md)
+- [Göös et al.: PPAD^dt, PPADS^dt, SOPL^dt and EOPL^dt are characterized by uNS, uSA, RevRes and RevResT](ppad-ppads-sopl-eopl-proof-system-characterizations.md)
 - [PLS^dt is characterized by Resolution: PLS^dt(S(F)) = Θ(Res(F))](pls-dt-characterized-by-resolution.md)
 
 ## Sources

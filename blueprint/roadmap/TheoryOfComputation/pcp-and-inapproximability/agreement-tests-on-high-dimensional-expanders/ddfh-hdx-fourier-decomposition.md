@@ -15,12 +15,10 @@ Construct $h_i$ by inverting the up operators on the orthogonal complements of l
 ## Depends on
 
 - [Up-down and down-up random walks on a weighted complex](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/up-down-walks.md)
-- [Spectral gap of high-order walks on local spectral expanders](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/kaufman-oppenheim-walk-gap.md)
-- [Friedgut's Junta Theorem](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/friedgut-junta-theorem.md)
+- [Local spectral expanders (one-sided and two-sided)](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/local-spectral-expander.md)
 
 ## Proof depends on
 
-- [Up-down and down-up random walks on a weighted complex](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/up-down-walks.md)
 - [Spectral gap of high-order walks on local spectral expanders](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/kaufman-oppenheim-walk-gap.md)
 - [Friedgut's Junta Theorem](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/friedgut-junta-theorem.md)
 

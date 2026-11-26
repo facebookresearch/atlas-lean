@@ -14,7 +14,7 @@ If $\Lambda$ is left adjoint to $\Gamma$, then $\Lambda$ maps instances of $\mat
 
 ## Depends on
 
-- [Barto–Bulín–Krokhin–Opršal: it is NP-hard to (2k−1)-colour a k-colourable graph, in particular to 5-colour a 3-colourable graph](bbko-np-hard-2k-minus-1-colour-k-colourable.md)
+- [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
 
 ## Proof depends on
 

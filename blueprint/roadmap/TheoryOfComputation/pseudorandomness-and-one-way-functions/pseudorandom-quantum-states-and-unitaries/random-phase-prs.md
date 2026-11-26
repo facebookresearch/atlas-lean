@@ -10,11 +10,7 @@ Replace $F_k$ by a random function using PRF security; a polynomial-time prepara
 
 - [Pseudorandom quantum state generators](pseudorandom-quantum-states.md)
 - [Asymptotic PRF security relative to a class of distinguishers](../../../ComputerScience/cryptography/symmetric-key/pseudorandom-functions/prfsecure.md)
-
-## Proof depends on
-
 - [Haar-random states and t-copy indistinguishability](haar-random-states.md)
-- [Asymptotic PRF security relative to a class of distinguishers](../../../ComputerScience/cryptography/symmetric-key/pseudorandom-functions/prfsecure.md)
 
 ## Sources
 

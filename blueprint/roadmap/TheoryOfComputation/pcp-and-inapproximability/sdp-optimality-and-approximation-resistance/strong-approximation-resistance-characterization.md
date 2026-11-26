@@ -9,11 +9,9 @@ The ``if'' direction constructs a dictatorship test from a measure on moment vec
 ## Depends on
 
 - [Approximation-resistant predicates and balanced pairwise independence](approximation-resistance.md)
-- [Raghavendra's theorem: the basic SDP is UGC-optimal for every CSP](raghavendra-optimality.md)
 
 ## Proof depends on
 
-- [Approximation-resistant predicates and balanced pairwise independence](approximation-resistance.md)
 - [Raghavendra's theorem: the basic SDP is UGC-optimal for every CSP](raghavendra-optimality.md)
 
 ## Sources

@@ -10,12 +10,11 @@ The test picks a random constraint $(P, v)$ of $\Im$, samples $R$ independent co
 
 - [Dictatorship tests and their completeness and soundness](dictatorship-test.md)
 - [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
-- [Majority Is Stablest](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/majority-is-stablest.md)
+- [The basic SDP relaxation of a generalized CSP](basic-sdp-relaxation.md)
+- [Generalized constraint satisfaction problems with payoff functions](generalized-csp.md)
 
 ## Proof depends on
 
-- [Dictatorship tests and their completeness and soundness](dictatorship-test.md)
-- [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
 - [Majority Is Stablest](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/majority-is-stablest.md)
 
 ## Sources

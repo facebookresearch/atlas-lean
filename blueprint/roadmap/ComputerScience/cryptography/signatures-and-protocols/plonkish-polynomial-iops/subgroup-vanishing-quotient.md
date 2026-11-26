@@ -9,10 +9,7 @@ $H$ is the set of roots of $X^{n}-1$, which has $n$ distinct roots, so vanishing
 ## Depends on
 
 - [PLONK gate equations with copy constraints](plonk-constraint-system.md)
-
-## Proof depends on
-
-- [PLONK gate equations with copy constraints](plonk-constraint-system.md)
+- [Polynomial interactive oracle proofs](polynomial-iop.md)
 
 ## Sources
 

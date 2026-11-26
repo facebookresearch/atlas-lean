@@ -14,7 +14,7 @@ Håstad's switching lemma shows that a random restriction with survival probabil
 
 ## Depends on
 
-- [Håstad's switching lemma](../../circuit-complexity/lower-bounds-for-ac0-circuits/hastad-s-switching-lemma.md)
+- [The class $\mathsf{AC}^0$](../../complexity-classes/time-and-space-complexity-classes/ac0.md)
 
 ## Proof depends on
 

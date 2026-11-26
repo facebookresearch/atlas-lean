@@ -15,11 +15,10 @@ Unbiasedness follows from $\mathbb{E}\hat\rho = \rho$; shifting $O$ by a multipl
 ## Depends on
 
 - [The shadow norm of an observable](shadow-norm-of-an-observable.md)
-- [Inverse measurement channels for Clifford and Pauli shadows](inverse-measurement-channels-for-clifford-and-pauli-shadows.md)
+- [Classical shadows from randomized measurements](randomized-measurement-classical-shadow.md)
 
 ## Proof depends on
 
-- [The shadow norm of an observable](shadow-norm-of-an-observable.md)
 - [Inverse measurement channels for Clifford and Pauli shadows](inverse-measurement-channels-for-clifford-and-pauli-shadows.md)
 
 ## Sources

@@ -12,10 +12,6 @@ Given a BDD target $x=y+e$ with $y\in\Lambda^{*}$, map each Gaussian sample $v\i
 - [Discrete Gaussian sampling problem](discrete-gaussian-sampling-problem.md)
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 
-## Proof depends on
-
-- [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
-
 ## Sources
 
 - Oded Regev, "On Lattices, Learning with Errors, Random Linear Codes, and Cryptography", JACM (2009); STOC (2005).

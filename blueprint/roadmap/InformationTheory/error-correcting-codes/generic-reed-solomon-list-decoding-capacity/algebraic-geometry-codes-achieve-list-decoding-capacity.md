@@ -8,8 +8,7 @@ Generalize the GM-MDS machinery from polynomials to Riemann-Roch spaces of divis
 
 ## Depends on
 
-- [Alrabiah-Guruswami-Li: randomly punctured RS codes achieve capacity over linear-size fields](random-reed-solomon-codes-list-decodable-over-linear-fields.md)
-- [Generic Reed-Solomon codes are MDS(l) for every l](generic-reed-solomon-codes-are-higher-order-mds.md)
+- [List-decodable code](../list-decoding/is-list-decodable.md)
 
 ## Proof depends on
 

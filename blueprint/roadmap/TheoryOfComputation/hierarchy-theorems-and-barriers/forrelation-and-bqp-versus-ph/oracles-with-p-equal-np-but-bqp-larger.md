@@ -8,8 +8,7 @@ Combine the Raz-Tal distribution with a PSPACE-complete component that collapses
 
 ## Depends on
 
-- [Raz-Tal: an oracle relative to which BQP is not contained in PH](oracle-separation-of-bqp-and-ph.md)
-- [The polynomial hierarchy is contained in PSPACE](../../complexity-classes/polynomial-hierarchy/ph-subset-pspace.md)
+- [The polynomial hierarchy](../../complexity-classes/time-and-space-complexity-classes/ph.md)
 
 ## Proof depends on
 

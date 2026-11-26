@@ -9,7 +9,6 @@ This is the Johnson bound for codes of relative distance $1-\rho+1/|L|$: a secon
 ## Depends on
 
 - [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
-- [Reed-Solomon codes are MDS](../../../../InformationTheory/error-correcting-codes/reed-solomon-codes/min-dist-code.md)
 
 ## Proof depends on
 

@@ -13,14 +13,13 @@ For NP-completeness, the auxiliary input $z$ is used to obfuscate a hard instanc
 
 ## Depends on
 
-- [Polynomial-time symmetry of information hypothesis for K^t and pK^t](polynomial-time-symmetry-of-information-hypothesis.md)
 - [One-way functions exist](../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
 
 ## Proof depends on
 
+- [Polynomial-time symmetry of information hypothesis for K^t and pK^t](polynomial-time-symmetry-of-information-hypothesis.md)
 - [Pseudorandom generators exist if and only if one-way functions exist](../../../ComputerScience/cryptography/symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
 - [One-way function families](../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
-- [One-way functions exist](../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
 
 ## Sources
 

@@ -17,11 +17,6 @@ Write the Gaussian vector as a sum of $T$ independent small Gaussian steps of va
 - [The Raz-Tal rounded Gaussian forrelation distribution](raz-tal-gaussian-forrelation-distribution.md)
 - [Tal's bound on level-l Fourier mass of constant-depth circuits](tal-level-l-fourier-bound-for-constant-depth-circuits.md)
 
-## Proof depends on
-
-- [The Raz-Tal rounded Gaussian forrelation distribution](raz-tal-gaussian-forrelation-distribution.md)
-- [Tal's bound on level-l Fourier mass of constant-depth circuits](tal-level-l-fourier-bound-for-constant-depth-circuits.md)
-
 ## Sources
 
 - Ran Raz, Avishay Tal, "Oracle separation of BQP and PH", Journal of the ACM 69(4) (2022), STOC (2019); ECCC TR18-107.

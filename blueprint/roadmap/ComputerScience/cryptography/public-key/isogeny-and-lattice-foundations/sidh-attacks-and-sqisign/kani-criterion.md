@@ -16,10 +16,6 @@ Compute $\hat{F}=\begin{pmatrix}\hat{f} & -\hat{g}\\ g' & f'\end{pmatrix}$ and m
 
 - [Supersingular elliptic curves and isogenies](../supersingular-isogenies-and-quaternion-orders/supersingular-curves.md)
 
-## Proof depends on
-
-- [Supersingular elliptic curves and isogenies](../supersingular-isogenies-and-quaternion-orders/supersingular-curves.md)
-
 ## Sources
 
 - Ernst Kani, "The Number of Curves of Genus Two with Elliptic Differentials", Journal für die reine und angewandte Mathematik 485 (1997).

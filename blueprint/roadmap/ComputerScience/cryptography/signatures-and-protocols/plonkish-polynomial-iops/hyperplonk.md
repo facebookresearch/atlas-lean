@@ -8,14 +8,14 @@ Each check is a sum-check over $\mu$ variables whose prover can be implemented i
 
 ## Depends on
 
-- [Product check over the Boolean hypercube with an auxiliary multilinear tree](hypercube-product-check.md)
-- [Zero-check reduction to sum-check via the equality polynomial](zerocheck-reduction.md)
-- [Compiling polynomial IOPs with polynomial commitments into succinct arguments](piop-compilation.md)
 - [PLONK gate equations with copy constraints](plonk-constraint-system.md)
+- [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
+- [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
 
 ## Proof depends on
 
 - [Product check over the Boolean hypercube with an auxiliary multilinear tree](hypercube-product-check.md)
+- [Zero-check reduction to sum-check via the equality polynomial](zerocheck-reduction.md)
 - [Compiling polynomial IOPs with polynomial commitments into succinct arguments](piop-compilation.md)
 
 ## Sources

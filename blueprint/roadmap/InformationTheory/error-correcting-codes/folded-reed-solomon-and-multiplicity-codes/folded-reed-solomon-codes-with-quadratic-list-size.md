@@ -8,8 +8,7 @@ Analyse intersections of Hamming balls with affine subspaces combinatorially: co
 
 ## Depends on
 
-- [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
-- [Folded Wronskian criterion for linear independence](folded-wronskian-criterion-for-linear-independence.md)
+- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
 
 ## Proof depends on
 

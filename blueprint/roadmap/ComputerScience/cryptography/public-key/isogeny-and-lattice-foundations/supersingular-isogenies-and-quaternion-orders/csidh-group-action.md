@@ -10,10 +10,6 @@ This is the theory of complex multiplication restricted to the $\mathbb{F}_p$-ra
 
 - [Supersingular elliptic curves and isogenies](supersingular-curves.md)
 
-## Proof depends on
-
-- [Supersingular elliptic curves and isogenies](supersingular-curves.md)
-
 ## Sources
 
 - Wouter Castryck, Tanja Lange, Chloe Martindale, Lorenz Panny, Joost Renes, "CSIDH: An Efficient Post-Quantum Commutative Group Action", ASIACRYPT (2018), IACR ePrint 2018/383.

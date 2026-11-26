@@ -9,12 +9,13 @@ By Taylor's theorem, an idempotent locally finite variety without a Taylor term 
 ## Depends on
 
 - [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
-- [Every finite structure has a unique core, and constants can be added to a core without changing CSP complexity](core-uniqueness-and-adding-constants.md)
 - [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
+- [Cores of finite relational structures](cores-of-finite-relational-structures.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
+- [Minions, minion homomorphisms and pp-constructions](minions-minion-homomorphisms-pp-constructions.md)
 
 ## Proof depends on
 
-- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
 - [Every finite structure has a unique core, and constants can be added to a core without changing CSP complexity](core-uniqueness-and-adding-constants.md)
 - [Pol–Inv Galois connection over finite domains: CSP complexity depends only on the polymorphism clone](pol-inv-galois-connection-finite-domains.md)
 

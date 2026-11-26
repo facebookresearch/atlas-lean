@@ -8,14 +8,11 @@ The main ingredient is an essentially optimal robustness property for the tensor
 
 ## Depends on
 
-- [Random pairs of codes and their duals are product-expanding](random-pairs-of-codes-are-product-expanding.md)
 - [Left-right Cayley complexes](../../../InformationTheory/error-correcting-codes/left-right-cayley-complex-codes/left-right-cayley-complex.md)
-- [Leverrier-Zemor: quantum Tanner codes are asymptotically good](quantum-tanner-codes-have-linear-distance.md)
 
 ## Proof depends on
 
 - [Random pairs of codes and their duals are product-expanding](random-pairs-of-codes-are-product-expanding.md)
-- [Left-right Cayley complexes](../../../InformationTheory/error-correcting-codes/left-right-cayley-complex-codes/left-right-cayley-complex.md)
 - [Leverrier-Zemor: quantum Tanner codes are asymptotically good](quantum-tanner-codes-have-linear-distance.md)
 
 ## Sources

@@ -8,8 +8,7 @@ A cutting planes refutation induces, for any partition of the variables, a recta
 
 ## Depends on
 
-- [Garg–Göös–Kamath–Sokolov: dag-like lifting from resolution width](../../../TheoryOfComputation/communication-complexity/randomized-and-dag-like-lifting/ggks-dag-lifting.md)
-- [The stabbing planes proof system](stabbing-planes-system.md)
+- [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Proof depends on
 

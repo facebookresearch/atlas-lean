@@ -10,13 +10,13 @@ Membership: congestion games are potential games, and the expected Rosenthal pot
 
 ## Depends on
 
-- [KKT, GD-LOCAL-SEARCH, GD-FIXPOINT and GENERAL-CONTINUOUS-LOCALOPT are PPAD ∩ PLS-complete on the unit square](gradient-descent-problems-ppad-pls-complete.md)
-- [Nash's theorem](../../../../GameTheory/noncooperative-games/nash-s-theorem/exists-is-mixed-nash.md)
-- [Congestion games have pure Nash equilibria](../../../../GameTheory/noncooperative-games/potential-games/congestion-game-exists-is-pure-nash.md)
+- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](continuous-localopt-and-cls.md)
+- [The KKT search problem for smooth objectives on bounded polytopes with Taylor-violation witnesses](kkt-search-problem.md)
 
 ## Proof depends on
 
 - [KKT, GD-LOCAL-SEARCH, GD-FIXPOINT and GENERAL-CONTINUOUS-LOCALOPT are PPAD ∩ PLS-complete on the unit square](gradient-descent-problems-ppad-pls-complete.md)
+- [Nash's theorem](../../../../GameTheory/noncooperative-games/nash-s-theorem/exists-is-mixed-nash.md)
 - [Congestion games have pure Nash equilibria](../../../../GameTheory/noncooperative-games/potential-games/congestion-game-exists-is-pure-nash.md)
 
 ## Sources

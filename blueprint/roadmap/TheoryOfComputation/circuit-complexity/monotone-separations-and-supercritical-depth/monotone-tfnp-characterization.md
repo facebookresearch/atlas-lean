@@ -8,13 +8,13 @@ Each monotone model has a dual description as a cover of the $1$-inputs versus $
 
 ## Depends on
 
-- [Monotone circuits are rectangle-DAGs for monotone Karchmer–Wigderson games](../../communication-complexity/randomized-and-dag-like-lifting/monotone-circuit-rectangle-dag.md)
 - [Search problems: FNP, FP and TFNP](../../complexity-classes/total-search-problems/search-problems-fnp-fp-and-tfnp.md)
+- [Rectangle-DAGs (dag-like communication protocols)](../../communication-complexity/randomized-and-dag-like-lifting/rectangle-dag.md)
+- [Deterministic communication complexity](../../communication-complexity/deterministic-communication-protocols/comm-complexity.md)
 
 ## Proof depends on
 
 - [Monotone circuits are rectangle-DAGs for monotone Karchmer–Wigderson games](../../communication-complexity/randomized-and-dag-like-lifting/monotone-circuit-rectangle-dag.md)
-- [Search problems: FNP, FP and TFNP](../../complexity-classes/total-search-problems/search-problems-fnp-fp-and-tfnp.md)
 
 ## Sources
 

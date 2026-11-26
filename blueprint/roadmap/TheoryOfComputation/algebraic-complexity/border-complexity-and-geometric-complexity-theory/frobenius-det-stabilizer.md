@@ -10,10 +10,6 @@ A determinant-preserving linear map sends the hypersurface of singular matrices 
 
 - [Determinantal complexity and the padded permanent orbit closure problem](det-vs-perm-gct.md)
 
-## Proof depends on
-
-- [Determinantal complexity and the padded permanent orbit closure problem](det-vs-perm-gct.md)
-
 ## Sources
 
 - G. Frobenius, "Über die Darstellung der endlichen Gruppen durch lineare Substitutionen", Sitzungsberichte der Königlich Preussischen Akademie der Wissenschaften zu Berlin (1897) 994-1015.

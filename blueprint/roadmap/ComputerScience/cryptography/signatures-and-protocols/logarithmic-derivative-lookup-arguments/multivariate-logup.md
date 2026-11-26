@@ -8,9 +8,7 @@ Correctness of the helper columns is a zero-check; the sum equals the logarithmi
 
 ## Depends on
 
-- [Soundness of checking the logarithmic-derivative identity at a random point](logup-random-evaluation.md)
-- [Zero-check reduction to sum-check via the equality polynomial](../plonkish-polynomial-iops/zerocheck-reduction.md)
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [Lookup relations with multiplicities](lookup-relation.md)
 
 ## Proof depends on
 

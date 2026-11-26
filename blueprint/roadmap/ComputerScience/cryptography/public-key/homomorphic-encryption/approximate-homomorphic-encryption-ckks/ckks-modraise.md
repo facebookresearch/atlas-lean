@@ -10,10 +10,6 @@ Over the integers, $b+as$ has coefficients bounded by $(q_0/2)(1+h)$, since each
 
 - [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
 
-## Proof depends on
-
-- [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
-
 ## Sources
 
 - Jung Hee Cheon, Kyoohyung Han, Andrey Kim, Miran Kim, Yongsoo Song, "Bootstrapping for Approximate Homomorphic Encryption", EUROCRYPT (2018).

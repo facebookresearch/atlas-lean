@@ -9,11 +9,9 @@ Given $z$, enumerate all dimensions $d$ and all strategies with algebraic (or ra
 ## Depends on
 
 - [The class MIP* of languages with entangled two-prover proofs](the-class-mip-star.md)
-- [The halting problem is recognizable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/tm2-recognizable-halting.md)
 
 ## Proof depends on
 
-- [The class MIP* of languages with entangled two-prover proofs](the-class-mip-star.md)
 - [The halting problem is recognizable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/tm2-recognizable-halting.md)
 
 ## Sources

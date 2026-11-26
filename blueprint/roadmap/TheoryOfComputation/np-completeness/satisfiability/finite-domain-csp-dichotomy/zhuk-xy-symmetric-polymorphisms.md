@@ -8,8 +8,9 @@ The globally defined strong subuniverses (binary absorbing, central, PC-type and
 
 ## Depends on
 
-- [Bulatov and Zhuk: the CSP dichotomy theorem for finite templates](bulatov-zhuk-csp-dichotomy-theorem.md)
-- [Barto–Kozik: finite idempotent Taylor algebras have cyclic terms of every prime arity above the domain size](barto-kozik-cyclic-terms-prime-arity.md)
+- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
+- [Finite relational templates and the homomorphism problem CSP(A)](finite-templates-and-csp-of-a.md)
 
 ## Proof depends on
 

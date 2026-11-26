@@ -14,17 +14,14 @@ Use the $\rho$-correlated noise dictatorship test: on input $F : \{-1,1\}^R \to 
 
 ## Depends on
 
-- [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
-- [Majority Is Stablest](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/majority-is-stablest.md)
 - [The Goemans–Williamson constant](../../../ComputerScience/approximation-algorithms/goemans-williamson-max-cut-algorithm/gw-constant.md)
 - [MAX-CUT as an optimization problem](../inapproximability-of-max-cut/max-cut.md)
+- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 
 ## Proof depends on
 
 - [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
 - [Majority Is Stablest](../../../Combinatorics/boolean-functions/structure-theorems-for-boolean-functions/majority-is-stablest.md)
-- [The Goemans–Williamson constant](../../../ComputerScience/approximation-algorithms/goemans-williamson-max-cut-algorithm/gw-constant.md)
-- [MAX-CUT as an optimization problem](../inapproximability-of-max-cut/max-cut.md)
 
 ## Sources
 

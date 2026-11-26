@@ -8,8 +8,8 @@ The tree automaton $\mathcal{A}_\varphi$ is run bottom-up on the maintained deco
 
 ## Depends on
 
-- [Korhonen–Majewski–Nadara–Pilipczuk–Sokołowski: dynamic treewidth with width 6k+5 and subpolynomial amortized update time](kmnps-dynamic-treewidth.md)
 - [Monadic second-order logic over words](../../../omega-automata-and-games/logic-and-tree-automata/monadic-second-order-logic-over-words.md)
+- [Dynamic treewidth data structures under a treewidth promise](dynamic-treewidth-data-structures.md)
 
 ## Proof depends on
 

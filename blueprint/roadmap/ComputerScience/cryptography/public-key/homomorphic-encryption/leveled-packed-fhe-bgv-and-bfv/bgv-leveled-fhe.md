@@ -8,15 +8,14 @@ Use the modulus-chain lemma inductively: each multiplicative level is followed b
 
 ## Depends on
 
-- [Noise management along a BGV modulus chain](bgv-modulus-chain.md)
-- [CRT packing of plaintext slots](crt-plaintext-slots.md)
 - [Hardness of Ring-LWE from worst-case problems on ideal lattices](../../isogeny-and-lattice-foundations/worst-case-to-average-case-lattice-reductions/ring-lwe-hardness.md)
 - [Homomorphic encryption: correctness and compactness](../homomorphic-encryption-correctness-and.md)
+- [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 
 ## Proof depends on
 
 - [Noise management along a BGV modulus chain](bgv-modulus-chain.md)
-- [Hardness of Ring-LWE from worst-case problems on ideal lattices](../../isogeny-and-lattice-foundations/worst-case-to-average-case-lattice-reductions/ring-lwe-hardness.md)
+- [CRT packing of plaintext slots](crt-plaintext-slots.md)
 
 ## Sources
 

@@ -11,10 +11,6 @@ Construct a simulatable adversary that outputs false statements with accepting-l
 - [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
 - [One-way functions exist](../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
 
-## Proof depends on
-
-- [One-way functions exist](../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
-
 ## Sources
 
 - Craig Gentry, Daniel Wichs, "Separating Succinct Non-Interactive Arguments from All Falsifiable Assumptions", STOC (2011).

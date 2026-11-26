@@ -8,14 +8,12 @@ Use projected shifted partials with respect to a set of derivatives along carefu
 
 ## Depends on
 
-- [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
 - [Agrawal–Vinay–Koiran–Tavenas reduction to depth four](../depth-reduction-and-chasms/agrawal-vinay-tavenas.md)
-- [The depth-four chasm: strong depth-four bounds separate VP from VNP](../depth-reduction-and-chasms/depth-four-chasm-corollary.md)
+- [Homogeneous depth-four circuits with bounded bottom fan-in](../depth-reduction-and-chasms/homogeneous-depth-four.md)
 
 ## Proof depends on
 
 - [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
-- [Agrawal–Vinay–Koiran–Tavenas reduction to depth four](../depth-reduction-and-chasms/agrawal-vinay-tavenas.md)
 - [The depth-four chasm: strong depth-four bounds separate VP from VNP](../depth-reduction-and-chasms/depth-four-chasm-corollary.md)
 
 ## Sources

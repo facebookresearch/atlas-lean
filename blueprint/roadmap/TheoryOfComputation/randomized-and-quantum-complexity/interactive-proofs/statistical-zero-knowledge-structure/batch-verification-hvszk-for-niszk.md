@@ -14,8 +14,8 @@ Reduce each $x_i$ to an instance $C_i$ of $\mathrm{AI}_\delta$. For permutations
 
 ## Depends on
 
-- [Kaslasi et al.: Approximate Injectivity is NISZK-complete](approximate-injectivity-niszk-complete.md)
 - [Non-interactive statistical zero knowledge NISZK in the common random string model](niszk-common-random-string.md)
+- [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
 
 ## Proof depends on
 

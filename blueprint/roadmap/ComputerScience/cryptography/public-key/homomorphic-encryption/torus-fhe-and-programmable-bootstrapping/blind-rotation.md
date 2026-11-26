@@ -10,10 +10,7 @@ By induction, $\mathrm{ACC}_i$ encrypts $X^{-\bar{b}+\sum_{j\le i}\bar{a}_js_j}v
 
 - [The homomorphic multiplexer CMux](cmux-gate.md)
 - [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
-
-## Proof depends on
-
-- [The homomorphic multiplexer CMux](cmux-gate.md)
+- [TRGSW samples and the gadget decomposition](trgsw-samples.md)
 
 ## Sources
 

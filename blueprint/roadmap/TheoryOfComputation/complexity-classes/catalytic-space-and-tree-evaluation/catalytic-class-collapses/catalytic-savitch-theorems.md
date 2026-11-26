@@ -14,9 +14,8 @@ By the oracle reduction the problem becomes one query of length $N=2^{O(s)}$ to 
 
 ## Depends on
 
-- [Koucký–Mertz–Pyne–Sami: catalytic space with extra resources reduces to plain space with one oracle query](kmps-catalytic-resource-oracle-reduction.md)
-- [Savitch's theorem: NPSPACE = PSPACE](../../savitch.md)
 - [Deterministic space classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dspace.md)
+- [Nondeterministic, bounded-error, unbounded-error and zero-error catalytic space classes](catalytic-resource-classes.md)
 
 ## Proof depends on
 

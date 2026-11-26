@@ -8,12 +8,11 @@ Call $R$ **glueable** if every low-depth partial assignment can be completed by 
 
 ## Depends on
 
-- [Black-box separations PLS^dt ⊄ PPADS^dt and SOPL^dt ⊄ PPA^dt](pls-not-in-ppads-and-sopl-not-in-ppa-black-box.md)
+- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
 
 ## Proof depends on
 
 - [Black-box separations PLS^dt ⊄ PPADS^dt and SOPL^dt ⊄ PPA^dt](pls-not-in-ppads-and-sopl-not-in-ppa-black-box.md)
-- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
 
 ## Sources
 

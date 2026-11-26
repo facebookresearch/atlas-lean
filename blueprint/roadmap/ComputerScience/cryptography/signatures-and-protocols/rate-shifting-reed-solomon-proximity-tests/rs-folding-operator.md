@@ -10,10 +10,6 @@ The decomposition groups monomials by exponent modulo $k$. On a fiber the values
 
 - [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
 
-## Proof depends on
-
-- [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
-
 ## Sources
 
 - Eli Ben-Sasson, Iddo Bentov, Yinon Horesh, Michael Riabzev, "Fast Reed-Solomon Interactive Oracle Proofs of Proximity", ICALP (2018).

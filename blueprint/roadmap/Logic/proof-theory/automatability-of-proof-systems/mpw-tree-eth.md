@@ -9,10 +9,7 @@ Reduce a $k$-clique-type problem with gap via a lifted formula whose tree-like r
 ## Depends on
 
 - [Tree-like resolution is quasi-polynomially automatable](tree-resolution-quasi-automatable.md)
-
-## Proof depends on
-
-- [Tree-like resolution is quasi-polynomially automatable](tree-resolution-quasi-automatable.md)
+- [Automatable proof systems](automatable-proof-system.md)
 
 ## Sources
 

@@ -9,11 +9,10 @@ Define $f_0(g)=g\star E$ and $f_1(g)=g\star E'$; then $f_1(g)=f_0(g[\mathfrak{a}
 ## Depends on
 
 - [The CSIDH class group action on F_p-rational supersingular curves](csidh-group-action.md)
-- [BQP](../../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/bqp.md)
 
 ## Proof depends on
 
-- [The CSIDH class group action on F_p-rational supersingular curves](csidh-group-action.md)
+- [BQP](../../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/bqp.md)
 
 ## Sources
 

@@ -8,9 +8,7 @@ Use a polar-like recursive construction with multiple carefully chosen large loc
 
 ## Depends on
 
-- [Fazeli-Hassani-Mondelli-Vardy: large kernels achieve the optimal scaling exponent on the erasure channel](polar-codes-with-large-kernels-achieve-optimal-scaling.md)
-- [Guruswami-Xia: polar codes have polynomial gap to capacity](polynomial-gap-to-capacity-for-polar-codes.md)
-- [Strong converse for discrete memoryless channels](../shannon-s-channel-coding-theorem/channel-coding-strong-converse.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
 
 ## Proof depends on
 

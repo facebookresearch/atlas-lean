@@ -9,11 +9,9 @@ Evaluate $\Phi$ at $D + 1$ distinct field elements $\alpha_0, \dots, \alpha_D$ i
 ## Depends on
 
 - [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
-- [Ben-Or: depth-three formulas for elementary symmetric polynomials](benor-elementary-symmetric.md)
 
 ## Proof depends on
 
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
 - [Ben-Or: depth-three formulas for elementary symmetric polynomials](benor-elementary-symmetric.md)
 
 ## Sources

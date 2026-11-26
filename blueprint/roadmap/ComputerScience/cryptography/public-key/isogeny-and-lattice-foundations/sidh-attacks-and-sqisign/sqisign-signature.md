@@ -9,12 +9,10 @@ Completeness follows from the correctness of the ideal-to-isogeny translation. F
 ## Depends on
 
 - [The SQIsign identification protocol](sqisign-identification.md)
-- [Security of the Fiat–Shamir transform](../../../signatures-and-protocols/zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
 - [The random oracle model](../../random-oracle-constructions/the-random-oracle-model.md)
 
 ## Proof depends on
 
-- [The SQIsign identification protocol](sqisign-identification.md)
 - [Security of the Fiat–Shamir transform](../../../signatures-and-protocols/zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
 
 ## Sources

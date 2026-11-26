@@ -11,10 +11,6 @@ Suppose $\mathcal{A}$ succeeds with probability $\epsilon$. Distinguish $|\phi_k
 - [Pseudorandom quantum state generators](../pseudorandom-quantum-states-and-unitaries/pseudorandom-quantum-states.md)
 - [One-way state generators](one-way-state-generators.md)
 
-## Proof depends on
-
-- [Pseudorandom quantum state generators](../pseudorandom-quantum-states-and-unitaries/pseudorandom-quantum-states.md)
-
 ## Sources
 
 - Tomoyuki Morimae, Takashi Yamakawa, "One-Wayness in Quantum Cryptography", TQC (2024), arXiv:2210.03394.

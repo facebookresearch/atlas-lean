@@ -8,14 +8,11 @@ If some verifier had infinitely many instances without succinct witnesses, then 
 
 ## Depends on
 
-- [Non-trivial satisfiability and derandomization algorithms for a circuit class](nontrivial-circuit-analysis.md)
 - [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
-- [Pseudorandom generators against circuits](../../pseudorandomness-and-one-way-functions/derandomization/pseudorandom-generators-against-circuits.md)
 
 ## Proof depends on
 
 - [Non-trivial satisfiability and derandomization algorithms for a circuit class](nontrivial-circuit-analysis.md)
-- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 - [Pseudorandom generators against circuits](../../pseudorandomness-and-one-way-functions/derandomization/pseudorandom-generators-against-circuits.md)
 
 ## Sources

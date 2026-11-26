@@ -9,11 +9,9 @@ Extend Razborov's method of approximations to monotone real gates: the key obser
 ## Depends on
 
 - [Monotone real circuits](monotone-real-circuit.md)
-- [Alon–Boppana: monotone circuits for clique need exponential size](../../../TheoryOfComputation/circuit-complexity/monotone-circuit-lower-bound-for-clique/alon-boppana-monotone-clique.md)
 
 ## Proof depends on
 
-- [Monotone real circuits](monotone-real-circuit.md)
 - [Alon–Boppana: monotone circuits for clique need exponential size](../../../TheoryOfComputation/circuit-complexity/monotone-circuit-lower-bound-for-clique/alon-boppana-monotone-clique.md)
 
 ## Sources

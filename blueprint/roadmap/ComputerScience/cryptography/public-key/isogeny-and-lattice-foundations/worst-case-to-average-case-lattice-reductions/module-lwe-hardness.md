@@ -8,7 +8,7 @@ Generalize the Ring-LWE reduction by working with $R$-modules of rank $d$ in pla
 
 ## Depends on
 
-- [Hardness of Ring-LWE from worst-case problems on ideal lattices](ring-lwe-hardness.md)
+- [Approximate lattice problems GapSVP and SIVP](gapsvp-and-sivp.md)
 
 ## Proof depends on
 

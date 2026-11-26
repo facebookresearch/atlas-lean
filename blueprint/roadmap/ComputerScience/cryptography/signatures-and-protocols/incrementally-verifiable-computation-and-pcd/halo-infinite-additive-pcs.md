@@ -10,10 +10,7 @@ Given claims $(C_i,z_i,v_i)$, the prover commits to $q_i(X)=(f_i(X)-v_i)/(X-z_i)
 
 - [Accumulation scheme for a predicate](accumulation-scheme.md)
 - [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
-
-## Proof depends on
-
-- [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
+- [Proof-carrying data for a compliance predicate](pcd-scheme.md)
 
 ## Sources
 

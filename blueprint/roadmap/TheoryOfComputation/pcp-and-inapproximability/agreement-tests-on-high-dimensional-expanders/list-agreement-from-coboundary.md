@@ -11,11 +11,6 @@ The local bijections between lists on adjacent faces define an $S_\ell$-valued $
 - [Non-abelian 1-cochains and unique-games coboundary expansion](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/nonabelian-cochain.md)
 - [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
 
-## Proof depends on
-
-- [Non-abelian 1-cochains and unique-games coboundary expansion](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/nonabelian-cochain.md)
-- [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
-
 ## Sources
 
 - R. Gotlib, T. Kaufman, "List agreement expansion from coboundary expansion", ITCS (2023), arXiv:2210.15714.

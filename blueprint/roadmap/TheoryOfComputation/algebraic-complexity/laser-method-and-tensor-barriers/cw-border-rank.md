@@ -16,10 +16,6 @@ The lower bound holds because border rank of a concise tensor is at least the di
 
 - [The Coppersmith–Winograd tensor](cw-tensor.md)
 
-## Proof depends on
-
-- [The Coppersmith–Winograd tensor](cw-tensor.md)
-
 ## Sources
 
 - D. Coppersmith, S. Winograd, "Matrix multiplication via arithmetic progressions", Journal of Symbolic Computation 9 (1990) 251-280.

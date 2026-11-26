@@ -12,7 +12,7 @@ Real-rootedness and interlacing of consecutive Krawtchouk polynomials follow fro
 
 ## Depends on
 
-- [Orthogonality of Krawtchouk polynomials](orthogonality-of-krawtchouk-polynomials.md)
+- [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
 
 ## Proof depends on
 

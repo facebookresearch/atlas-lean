@@ -18,13 +18,13 @@ For item 1 implies items 2 and 3, a one-way function gives secure computational 
 - [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
 - [Heuristica](../impagliazzo-s-five-worlds/heuristica.md)
 - [Pessiland](../impagliazzo-s-five-worlds/pessiland.md)
+- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Proof depends on
 
 - [Hitting set generators and algorithms that avoid them](hitting-set-generators-and-avoidance.md)
 - [Auxiliary-input one-way functions](auxiliary-input-one-way-functions.md)
 - [Hirahara: errorless average-case easiness of MINKT yields worst-case additive Õ(√k) approximation of K^t](../../kolmogorov-complexity/probabilistic-kolmogorov-and-symmetry-of-information/hirahara-non-black-box-worst-to-average-minkt.md)
-- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Sources
 

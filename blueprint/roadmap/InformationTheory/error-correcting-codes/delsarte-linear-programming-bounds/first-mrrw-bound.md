@@ -6,7 +6,7 @@ $$
 R(\delta) \le H_2\!\left(\tfrac12 - \sqrt{\delta(1 - \delta)}\right),
 $$
 
-where $H_2$ is the binary entropy function. This improves the Elias-Bassalygo bound for all $0 < \delta < 1/2$ and is the best known upper bound for $\delta$ above about $0.273$.
+where $H_2$ is the binary entropy function. It improves the Elias–Bassalygo bound for $\delta$ above about $0.15$; for smaller $\delta$ the Elias–Bassalygo bound is stronger.
 
 ## Proof sketch
 
@@ -14,18 +14,13 @@ Apply the dual LP bound to $f(x) = \frac{1}{a - x}\big(K_{t+1}(x)K_t(a) - K_t(x)
 
 ## Depends on
 
-- [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)
-- [Christoffel-Darboux formula for Krawtchouk polynomials](christoffel-darboux-formula-for-krawtchouk-polynomials.md)
-- [Asymptotics of the smallest root of Krawtchouk polynomials](asymptotics-of-the-smallest-krawtchouk-root.md)
 - [Elias–Bassalygo bound (alphabet-free form)](../bounds-on-code-size/elias-bassalygo-bound.md)
-- [Volume of a Hamming ball, entropy upper bound](../bounds-on-code-size/sum-choose-mul-pow-le-exp.md)
 
 ## Proof depends on
 
 - [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)
 - [Christoffel-Darboux formula for Krawtchouk polynomials](christoffel-darboux-formula-for-krawtchouk-polynomials.md)
 - [Asymptotics of the smallest root of Krawtchouk polynomials](asymptotics-of-the-smallest-krawtchouk-root.md)
-- [Elias–Bassalygo bound (alphabet-free form)](../bounds-on-code-size/elias-bassalygo-bound.md)
 - [Volume of a Hamming ball, entropy upper bound](../bounds-on-code-size/sum-choose-mul-pow-le-exp.md)
 
 ## Sources

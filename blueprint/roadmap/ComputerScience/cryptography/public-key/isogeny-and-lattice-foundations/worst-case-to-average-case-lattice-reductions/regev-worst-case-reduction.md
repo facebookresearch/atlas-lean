@@ -8,8 +8,6 @@ Start with samples from $D_{\Lambda,r}$ for very large $r$, which are easy to ge
 
 ## Depends on
 
-- [Classical step of Regev's reduction: BDD on the dual from an LWE oracle](regev-classical-step.md)
-- [Quantum step of Regev's reduction: narrower Gaussian samples from a BDD solver](regev-quantum-step.md)
 - [Approximate lattice problems GapSVP and SIVP](gapsvp-and-sivp.md)
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 

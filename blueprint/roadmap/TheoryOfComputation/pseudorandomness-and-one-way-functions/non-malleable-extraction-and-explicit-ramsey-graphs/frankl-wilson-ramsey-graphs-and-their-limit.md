@@ -10,10 +10,6 @@ An independent set, respectively a clique, is a family of sets with intersection
 
 - [K-Ramsey graphs and bipartite K-Ramsey graphs](ramsey-graphs-and-bipartite-ramsey-graphs.md)
 
-## Proof depends on
-
-- [K-Ramsey graphs and bipartite K-Ramsey graphs](ramsey-graphs-and-bipartite-ramsey-graphs.md)
-
 ## Sources
 
 - Peter Frankl, Richard M. Wilson, "Intersection theorems with geometric consequences", Combinatorica 1(4) (1981).

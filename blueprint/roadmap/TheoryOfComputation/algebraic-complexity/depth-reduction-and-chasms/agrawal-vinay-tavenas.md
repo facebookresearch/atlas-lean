@@ -8,13 +8,12 @@ Apply depth reduction to obtain a circuit of depth $O(\log d)$ in which each mul
 
 ## Depends on
 
-- [Valiant–Skyum–Berkowitz–Rackoff depth reduction](vsbr-depth-reduction.md)
 - [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)
+- [Arithmetic circuit](../arithmetic-circuits/arithmetic-circuit.md)
 
 ## Proof depends on
 
 - [Valiant–Skyum–Berkowitz–Rackoff depth reduction](vsbr-depth-reduction.md)
-- [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)
 
 ## Sources
 

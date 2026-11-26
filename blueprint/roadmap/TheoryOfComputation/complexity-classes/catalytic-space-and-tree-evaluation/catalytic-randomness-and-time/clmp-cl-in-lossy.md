@@ -9,13 +9,11 @@ For a $\mathsf{CL}$ machine $M$ and input $x$, the compress-or-compute map $(\ta
 ## Depends on
 
 - [The lossy coding problem LossyCode and the classes LOSSY[C]](lossy-code-problem-and-classes.md)
-- [Cook–Li–Mertz–Pyne compress-or-compute: a long-running catalytic computation compresses its own tape](clmp-runtime-compress-or-compute.md)
-- [CL ⊆ P iff CL = CLP, and ZPP = P implies CL = CLP](cl-in-p-iff-cl-equals-clp.md)
+- [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 
 ## Proof depends on
 
 - [Cook–Li–Mertz–Pyne compress-or-compute: a long-running catalytic computation compresses its own tape](clmp-runtime-compress-or-compute.md)
-- [The lossy coding problem LossyCode and the classes LOSSY[C]](lossy-code-problem-and-classes.md)
 - [CL ⊆ P iff CL = CLP, and ZPP = P implies CL = CLP](cl-in-p-iff-cl-equals-clp.md)
 
 ## Sources

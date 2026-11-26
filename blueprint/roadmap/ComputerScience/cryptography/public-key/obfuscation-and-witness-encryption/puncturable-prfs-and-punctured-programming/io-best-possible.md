@@ -10,10 +10,6 @@ Given $\mathcal{O}(C)$, the simulator computes $\mathcal{O}(\mathcal{O}'(C))$-li
 
 - [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
-## Proof depends on
-
-- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
-
 ## Sources
 
 - Shafi Goldwasser, Guy N. Rothblum, "On Best-Possible Obfuscation", TCC (2007).

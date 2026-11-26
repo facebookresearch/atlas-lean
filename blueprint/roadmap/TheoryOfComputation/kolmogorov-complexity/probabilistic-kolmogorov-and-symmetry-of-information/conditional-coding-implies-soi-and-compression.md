@@ -9,10 +9,10 @@ For SoI, apply coding to the pair distribution and to its marginal $D'_n$ on $y$
 ## Depends on
 
 - [Average-case symmetry of information, conditional coding and language compression over samplable pairs](average-case-kolmogorov-principles-over-samplable-pairs.md)
+- [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 
 ## Proof depends on
 
-- [Average-case symmetry of information, conditional coding and language compression over samplable pairs](average-case-kolmogorov-principles-over-samplable-pairs.md)
 - [Sandwich bounds: K(x) − O(log t) ≤ pK^t(x) ≤ rK^t(x), K^t(x) up to constants and time overhead](pkt-sandwich-between-kolmogorov-and-time-bounded.md)
 - [Few strings have small complexity](../incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
 

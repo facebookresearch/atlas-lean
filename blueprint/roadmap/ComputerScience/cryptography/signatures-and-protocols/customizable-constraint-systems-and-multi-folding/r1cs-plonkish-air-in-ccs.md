@@ -11,10 +11,6 @@ For R1CS, $c_1(M_1z\circ M_2z)+c_2M_3z=Az\circ Bz-Cz$. For a Plonkish gate $g=\s
 - [Customizable constraint systems](customizable-constraint-system.md)
 - [PLONK gate equations with copy constraints](../plonkish-polynomial-iops/plonk-constraint-system.md)
 
-## Proof depends on
-
-- [Customizable constraint systems](customizable-constraint-system.md)
-
 ## Sources
 
 - Srinath Setty, Justin Thaler, Riad Wahby, "Customizable Constraint Systems for Succinct Arguments", IACR ePrint 2023/552 (2023).

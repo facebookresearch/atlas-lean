@@ -9,13 +9,12 @@ Every instance of UNIQUE-EOPL is an END-OF-POTENTIAL-LINE instance whose (R1) an
 ## Depends on
 
 - [UNIQUE-EOPL, the class UEOPL and PromiseUEOPL: one potential line certified by violation solutions](unique-eopl-and-ueopl.md)
-- [CLS = PPAD ∩ PLS, with 2D-CLS, promise-CLS and Linear-CLS equal to CLS and Banach-type contraction problems complete](../continuous-local-search-and-gradient-descent/cls-equals-ppad-cap-pls.md)
+- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](../continuous-local-search-and-gradient-descent/continuous-localopt-and-cls.md)
 
 ## Proof depends on
 
-- [UNIQUE-EOPL, the class UEOPL and PromiseUEOPL: one potential line certified by violation solutions](unique-eopl-and-ueopl.md)
-- [END-OF-METERED-LINE and END-OF-POTENTIAL-LINE are polynomial-time equivalent, so EOPL is contained in CLS](end-of-metered-line-equivalent-to-eopl.md)
 - [CLS = PPAD ∩ PLS, with 2D-CLS, promise-CLS and Linear-CLS equal to CLS and Banach-type contraction problems complete](../continuous-local-search-and-gradient-descent/cls-equals-ppad-cap-pls.md)
+- [END-OF-METERED-LINE and END-OF-POTENTIAL-LINE are polynomial-time equivalent, so EOPL is contained in CLS](end-of-metered-line-equivalent-to-eopl.md)
 
 ## Sources
 

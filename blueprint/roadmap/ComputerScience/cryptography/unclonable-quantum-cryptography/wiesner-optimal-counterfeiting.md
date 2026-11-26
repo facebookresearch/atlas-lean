@@ -9,11 +9,10 @@ Write the success probability as $\langle Q,\Phi\rangle$ for the Choi operator $
 ## Depends on
 
 - [Wiesner's private-key quantum money](wiesner-quantum-money.md)
-- [No-cloning theorem for two states](../../../QuantumInformation/quantum-operations/no-cloning-two-state.md)
 
 ## Proof depends on
 
-- [Wiesner's private-key quantum money](wiesner-quantum-money.md)
+- [No-cloning theorem for two states](../../../QuantumInformation/quantum-operations/no-cloning-two-state.md)
 
 ## Sources
 

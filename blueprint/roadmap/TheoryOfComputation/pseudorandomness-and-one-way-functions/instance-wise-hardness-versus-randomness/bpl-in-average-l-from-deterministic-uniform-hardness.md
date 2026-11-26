@@ -14,7 +14,6 @@ The proof opens up the distinguisher: a BPL machine reads its random bits once, 
 ## Depends on
 
 - [Deterministic logarithmic space](../../complexity-classes/time-and-space-complexity-classes/log-space.md)
-- [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
 
 ## Proof depends on
 

@@ -11,13 +11,12 @@ For injective $f$ and uniformly random $x\in\{0,1\}^n$: $x$ determines $f(x)$ ef
 - [Polynomial-time symmetry of information hypothesis for K^t and pK^t](polynomial-time-symmetry-of-information-hypothesis.md)
 - [One-way function families](../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 - [One-way functions exist](../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
+- [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 
 ## Proof depends on
 
-- [Polynomial-time symmetry of information hypothesis for K^t and pK^t](polynomial-time-symmetry-of-information-hypothesis.md)
 - [Few strings have small complexity](../incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
-- [One-way function families](../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Sources
 

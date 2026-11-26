@@ -9,11 +9,9 @@ A regular formula of small size can be depth-reduced into a homogeneous $\Sigma\
 ## Depends on
 
 - [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
-- [Shifted partials of a product of low-degree polynomials](spd-product-upper-bound.md)
 
 ## Proof depends on
 
-- [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
 - [Shifted partials of a product of low-degree polynomials](spd-product-upper-bound.md)
 
 ## Sources

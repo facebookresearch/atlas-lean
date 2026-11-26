@@ -8,15 +8,13 @@ Errors on few qubits keep the measurement distributions within small Hamming dis
 
 ## Depends on
 
-- [Output distributions of shallow circuits do not concentrate on two distant sets](shallow-circuits-produce-well-spread-distributions.md)
-- [Uncertainty relation for complementary logical measurements](uncertainty-relation-for-logical-cluster-labels.md)
 - [CSS code Hamiltonians of quantum LDPC codes](css-code-hamiltonians.md)
+- [Circuit depth of a quantum state and trivial states](trivial-states-of-bounded-circuit-depth.md)
 
 ## Proof depends on
 
 - [Output distributions of shallow circuits do not concentrate on two distant sets](shallow-circuits-produce-well-spread-distributions.md)
 - [Uncertainty relation for complementary logical measurements](uncertainty-relation-for-logical-cluster-labels.md)
-- [CSS code Hamiltonians of quantum LDPC codes](css-code-hamiltonians.md)
 
 ## Sources
 

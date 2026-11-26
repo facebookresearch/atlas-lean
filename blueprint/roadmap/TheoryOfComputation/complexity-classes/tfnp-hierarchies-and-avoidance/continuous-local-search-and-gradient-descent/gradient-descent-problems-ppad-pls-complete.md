@@ -8,14 +8,14 @@ Domain- and promise-preserving reductions connect the three gradient problems in
 
 ## Depends on
 
-- [Fearnley–Goldberg–Hollender–Savani: KKT on the unit square is PPAD ∩ PLS-hard, already for promise instances](kkt-unit-square-ppad-pls-hard.md)
 - [GD-LOCAL-SEARCH and GD-FIXPOINT: termination points of projected gradient descent with fixed step size](gd-local-search-and-gd-fixpoint.md)
-- [GENERAL-CONTINUOUS-LOCALOPT lies in PPAD ∩ PLS](general-continuous-localopt-in-ppad-and-pls.md)
+- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](continuous-localopt-and-cls.md)
+- [The KKT search problem for smooth objectives on bounded polytopes with Taylor-violation witnesses](kkt-search-problem.md)
+- [The class PLS of polynomial local search problems](../../total-search-problems/the-class-pls-of-polynomial-local-search.md)
 
 ## Proof depends on
 
 - [Fearnley–Goldberg–Hollender–Savani: KKT on the unit square is PPAD ∩ PLS-hard, already for promise instances](kkt-unit-square-ppad-pls-hard.md)
-- [GD-LOCAL-SEARCH and GD-FIXPOINT: termination points of projected gradient descent with fixed step size](gd-local-search-and-gd-fixpoint.md)
 - [GENERAL-CONTINUOUS-LOCALOPT lies in PPAD ∩ PLS](general-continuous-localopt-in-ppad-and-pls.md)
 
 ## Sources

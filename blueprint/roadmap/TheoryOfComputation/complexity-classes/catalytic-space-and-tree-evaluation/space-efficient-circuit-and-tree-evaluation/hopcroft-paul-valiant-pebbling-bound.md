@@ -12,7 +12,7 @@ pebbles simultaneously.
 
 The argument is a divide and conquer on the DAG measured by its number of edges, which is $O(N)$ for bounded in-degree. One splits the graph into a lower and an upper part; if few edges cross the cut, the crossing tails are pebbled recursively and kept while the upper part is handled, and otherwise the upper part is small enough to be pebbled naively. Solving the resulting recurrence for the maximal number of simultaneous pebbles gives $O(N/\log N)$.
 
-## Depends on
+## Proof depends on
 
 - [Deterministic time classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dtime.md)
 

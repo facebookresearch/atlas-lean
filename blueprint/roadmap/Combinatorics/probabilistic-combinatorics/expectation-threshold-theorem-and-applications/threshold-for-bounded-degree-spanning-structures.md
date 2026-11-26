@@ -8,8 +8,7 @@ Construct a $\kappa$-spread distribution on embeddings of $T$ into $K_n$ with $\
 
 ## Depends on
 
-- [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
-- [Spread families and spread measures](../../extremal-set-theory/spread-families-and-robust-sunflowers/kappa-spread-families-and-measures.md)
+- [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
 
 ## Proof depends on
 

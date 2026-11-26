@@ -12,12 +12,13 @@ The compute-or-compress reduction only manipulates the configuration graph and i
 
 ## Depends on
 
-- [Koucký–Mertz–Pyne–Sami: catalytic space with extra resources reduces to plain space with one oracle query](kmps-catalytic-resource-oracle-reduction.md)
-- [Koucký–Mertz–Pyne–Sami: unbounded-error randomness collapses into catalytic logspace (CL = CPrL)](kmps-cl-equals-cprl.md)
+- [Nondeterministic, bounded-error, unbounded-error and zero-error catalytic space classes](catalytic-resource-classes.md)
+- [Valid catalytic machines with nondeterministic or random choices](valid-catalytic-machines-with-choices.md)
 
 ## Proof depends on
 
 - [Koucký–Mertz–Pyne–Sami: catalytic space with extra resources reduces to plain space with one oracle query](kmps-catalytic-resource-oracle-reduction.md)
+- [Koucký–Mertz–Pyne–Sami: unbounded-error randomness collapses into catalytic logspace (CL = CPrL)](kmps-cl-equals-cprl.md)
 - [Buhrman–Cleve–Koucký–Loff–Speelman: logspace-uniform TC^1 is contained in catalytic logspace](bcklss-tc1-in-catalytic-logspace.md)
 
 ## Sources

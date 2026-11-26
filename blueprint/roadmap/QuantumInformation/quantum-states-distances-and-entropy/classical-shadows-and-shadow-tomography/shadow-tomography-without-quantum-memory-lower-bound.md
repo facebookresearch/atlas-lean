@@ -9,11 +9,9 @@ Model a memoryless adaptive protocol as a tree of single-copy POVMs and compare 
 ## Depends on
 
 - [The shadow tomography problem](shadow-tomography-problem.md)
-- [Bădescu-O'Donnell: shadow tomography with log-squared dependence on the number of observables](improved-shadow-tomography-sample-complexity.md)
 
 ## Proof depends on
 
-- [The shadow tomography problem](shadow-tomography-problem.md)
 - [Bădescu-O'Donnell: shadow tomography with log-squared dependence on the number of observables](improved-shadow-tomography-sample-complexity.md)
 
 ## Sources

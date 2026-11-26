@@ -8,15 +8,12 @@ The containment $\subseteq$ is the enumeration argument. For $\supseteq$, the ha
 
 ## Depends on
 
-- [MIP* is contained in RE](mip-star-is-contained-in-re.md)
-- [The halting problem reduces to the entangled value gap problem](halting-problem-reduces-to-entangled-value-gap.md)
 - [The class MIP* of languages with entangled two-prover proofs](the-class-mip-star.md)
 
 ## Proof depends on
 
 - [MIP* is contained in RE](mip-star-is-contained-in-re.md)
 - [The halting problem reduces to the entangled value gap problem](halting-problem-reduces-to-entangled-value-gap.md)
-- [The class MIP* of languages with entangled two-prover proofs](the-class-mip-star.md)
 
 ## Sources
 

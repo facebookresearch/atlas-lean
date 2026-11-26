@@ -9,11 +9,11 @@ Hash only the $X$-blocks injectively into a progression-free set, so that each s
 ## Depends on
 
 - [Coppersmith–Winograd hashing with progression-free sets](salem-spencer-hashing.md)
-- [The laser method bound on omega from tensor values](laser-method-bound.md)
+- [The Coppersmith–Winograd tensor](cw-tensor.md)
+- [The value of a tensor in the laser method](tensor-value.md)
 
 ## Proof depends on
 
-- [Coppersmith–Winograd hashing with progression-free sets](salem-spencer-hashing.md)
 - [The laser method bound on omega from tensor values](laser-method-bound.md)
 
 ## Sources

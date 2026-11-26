@@ -12,10 +12,6 @@ Consequently, a product of $d$ linear forms is a linear combination of $2^{d-1}$
 
 Expand each power by the multinomial theorem. A monomial $\prod_i x_i^{e_i}$ with $\sum e_i = d$ receives coefficient proportional to $\sum_\varepsilon \prod_{i \ge 2} \varepsilon_i^{1 + e_i}$, which vanishes unless every $e_i$ with $i \ge 2$ is odd; with total degree $d$ and $d$ variables this forces $e_i = 1$ for all $i$. The surviving coefficient is $2^{d-1} d!$.
 
-## Depends on
-
-- [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)
-
 ## Proof depends on
 
 - [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)

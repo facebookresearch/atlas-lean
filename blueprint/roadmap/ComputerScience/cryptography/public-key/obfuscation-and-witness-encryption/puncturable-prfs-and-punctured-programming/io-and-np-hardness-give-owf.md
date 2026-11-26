@@ -10,11 +10,10 @@ Consider the function mapping randomness to an obfuscation of the constant-zero 
 
 - [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 - [One-way functions exist](../../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
-- [One-way functions imply P ≠ NP](../../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/owf-implies-p-ne-np.md)
 
 ## Proof depends on
 
-- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [One-way functions imply P ≠ NP](../../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/owf-implies-p-ne-np.md)
 
 ## Sources
 

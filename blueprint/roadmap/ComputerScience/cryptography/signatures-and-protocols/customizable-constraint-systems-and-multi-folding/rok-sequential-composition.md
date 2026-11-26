@@ -9,10 +9,7 @@ Given a composed prover, the extractor of $\Pi_2$ yields an expected polynomial-
 ## Depends on
 
 - [Reductions of knowledge between relations](reductions-of-knowledge.md)
-
-## Proof depends on
-
-- [Reductions of knowledge between relations](reductions-of-knowledge.md)
+- [Linearized committed CCS instances](linearized-committed-ccs.md)
 
 ## Sources
 

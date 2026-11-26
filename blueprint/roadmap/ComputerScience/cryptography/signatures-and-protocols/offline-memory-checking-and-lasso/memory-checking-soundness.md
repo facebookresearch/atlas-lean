@@ -10,10 +10,6 @@ For a fixed address, order its triples by timestamp. Each read consumes one trip
 
 - [Offline memory checking with timestamps](offline-memory-checking.md)
 
-## Proof depends on
-
-- [Offline memory checking with timestamps](offline-memory-checking.md)
-
 ## Sources
 
 - Manuel Blum, Will Evans, Peter Gemmell, Sampath Kannan, Moni Naor, "Checking the Correctness of Memories", Algorithmica (1994).

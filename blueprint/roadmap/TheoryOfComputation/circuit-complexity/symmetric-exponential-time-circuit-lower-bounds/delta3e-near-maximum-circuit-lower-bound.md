@@ -8,13 +8,12 @@ By Shannon's counting argument, for large $n$ some truth table of length $2^n$ h
 
 ## Depends on
 
-- [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 - [The universal levels of the polynomial hierarchy](../../complexity-classes/time-and-space-complexity-classes/pi-k.md)
+- [Polynomial time with an oracle](../../complexity-classes/time-and-space-complexity-classes/pwith-oracle.md)
 
 ## Proof depends on
 
 - [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
-- [Polynomial time with an oracle](../../complexity-classes/time-and-space-complexity-classes/pwith-oracle.md)
 
 ## Sources
 

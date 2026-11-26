@@ -8,7 +8,8 @@ Each linear threshold gate on $n$ inputs is equivalent, over a domain partitione
 
 ## Depends on
 
-- [The algorithmic method template: non-trivial algorithms imply lower bounds](algorithmic-method-template.md)
+- [The complexity class NEXP](../../complexity-classes/time-and-space-complexity-classes/nexp.md)
+- [The class $\mathsf{ACC}^0$](../../complexity-classes/time-and-space-complexity-classes/acc0.md)
 
 ## Proof depends on
 

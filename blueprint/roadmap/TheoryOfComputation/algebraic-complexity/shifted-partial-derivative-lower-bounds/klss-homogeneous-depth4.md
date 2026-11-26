@@ -9,11 +9,10 @@ Handle large bottom fan-in by random restriction: setting each variable to zero 
 ## Depends on
 
 - [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
-- [Shifted partials of a product of low-degree polynomials](spd-product-upper-bound.md)
+- [Homogeneous depth-four circuits with bounded bottom fan-in](../depth-reduction-and-chasms/homogeneous-depth-four.md)
 
 ## Proof depends on
 
-- [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
 - [Shifted partials of a product of low-degree polynomials](spd-product-upper-bound.md)
 
 ## Sources

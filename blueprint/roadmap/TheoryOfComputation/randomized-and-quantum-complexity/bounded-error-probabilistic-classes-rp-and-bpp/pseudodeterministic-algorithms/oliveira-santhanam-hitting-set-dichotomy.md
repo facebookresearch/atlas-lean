@@ -15,7 +15,6 @@ The argument is a win-win over the Trevisan–Vadhan language $L_{\mathrm{TV}}$,
 
 ## Proof depends on
 
-- [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
 - [Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP](../../../pseudorandomness-and-one-way-functions/nisan-wigderson.md)
 
 ## Sources

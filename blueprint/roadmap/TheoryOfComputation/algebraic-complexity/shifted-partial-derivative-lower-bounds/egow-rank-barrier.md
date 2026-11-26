@@ -11,11 +11,6 @@ A rank method is a tensor-valued linear map; the rank of $\Phi(T)$ is lower-semi
 - [The dimension of shifted partial derivatives](shifted-partials-measure.md)
 - [Tensor rank](../matrix-multiplication-exponent/tensor-rank.md)
 
-## Proof depends on
-
-- [The dimension of shifted partial derivatives](shifted-partials-measure.md)
-- [Tensor rank](../matrix-multiplication-exponent/tensor-rank.md)
-
 ## Sources
 
 - K. Efremenko, A. Garg, R. Oliveira, A. Wigderson, "Barriers for rank methods in arithmetic complexity", ITCS (2018), arXiv:1710.09502.

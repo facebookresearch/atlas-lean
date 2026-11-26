@@ -6,10 +6,6 @@ Suppose a primitive is secure with advantage at most $2^{-\lambda^{c}}$ for all 
 
 Sum the per-hybrid advantages by the triangle inequality; the reductions run in polynomial time, below the size bound $2^{\lambda^{c}}$. The chosen $\lambda$ is polynomial in $n+\kappa$ since $c$ is a constant.
 
-## Depends on
-
-- [Single-key weakly compact public-key functional encryption](weakly-compact-fe.md)
-
 ## Proof depends on
 
 - [Single-key weakly compact public-key functional encryption](weakly-compact-fe.md)

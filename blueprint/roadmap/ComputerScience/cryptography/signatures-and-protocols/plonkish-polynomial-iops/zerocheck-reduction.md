@@ -9,12 +9,11 @@ By the defining property of $\widetilde{\mathrm{eq}}$, $q$ agrees with $g$ on th
 ## Depends on
 
 - [The multilinear equality polynomial on the Boolean hypercube](eq-polynomial.md)
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [Multilinear extension of a Boolean function](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/algebrization-barrier/multilinear-ext.md)
 
 ## Proof depends on
 
-- [The multilinear equality polynomial on the Boolean hypercube](eq-polynomial.md)
-- [Multilinear extension of a Boolean function](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/algebrization-barrier/multilinear-ext.md)
+- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
 
 ## Sources
 

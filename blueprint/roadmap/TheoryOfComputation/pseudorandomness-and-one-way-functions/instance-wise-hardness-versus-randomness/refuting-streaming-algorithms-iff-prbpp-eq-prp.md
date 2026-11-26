@@ -15,7 +15,6 @@ Many polynomial-time $f$ unconditionally cannot be computed by streaming algorit
 ## Depends on
 
 - [Refuters for a function against a class of probabilistic algorithms](refuter-for-a-function.md)
-- [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](instance-wise-reconstruction-targeted-hsg.md)
 
 ## Proof depends on
 

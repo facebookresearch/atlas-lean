@@ -11,10 +11,11 @@ The sum $\sum_b\bar{f}(b)\widetilde{\mathrm{eq}}(z,b)$ equals $\bar{f}(z)$ by th
 - [Constrained Reed–Solomon codes with sum-check constraints](constrained-rs-code.md)
 - [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
 - [Merkle root](../../hash-functions/merkle-trees/root.md)
+- [The multilinear equality polynomial on the Boolean hypercube](../plonkish-polynomial-iops/eq-polynomial.md)
+- [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
 
 ## Proof depends on
 
-- [The multilinear equality polynomial on the Boolean hypercube](../plonkish-polynomial-iops/eq-polynomial.md)
 - [Existential soundness of Merkle inclusion proofs](../../hash-functions/merkle-trees/verify-sound.md)
 
 ## Sources

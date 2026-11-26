@@ -15,12 +15,9 @@ In the approximation method, every intermediate function is approximated by a DN
 ## Depends on
 
 - [Robust sunflowers](../../../Combinatorics/extremal-set-theory/spread-families-and-robust-sunflowers/robust-sunflowers-and-satisfying-systems.md)
-- [Alweiss–Lovett–Wu–Zhang sunflower bound](../../../Combinatorics/extremal-set-theory/intersecting-families/sunflower-lemma/theorem-1-4.md)
-- [Razborov: monotone circuits for clique need superpolynomial size](../monotone-circuit-lower-bound-for-clique/razborov-monotone-clique.md)
 
 ## Proof depends on
 
-- [Robust sunflowers](../../../Combinatorics/extremal-set-theory/spread-families-and-robust-sunflowers/robust-sunflowers-and-satisfying-systems.md)
 - [Alweiss–Lovett–Wu–Zhang sunflower bound](../../../Combinatorics/extremal-set-theory/intersecting-families/sunflower-lemma/theorem-1-4.md)
 - [Razborov: monotone circuits for clique need superpolynomial size](../monotone-circuit-lower-bound-for-clique/razborov-monotone-clique.md)
 

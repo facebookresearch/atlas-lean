@@ -11,11 +11,9 @@ Membership: the map sending a description of a circuit of size $s$ to its truth 
 ## Depends on
 
 - [The total function class TFΣ2P and the explicit-construction class APEPP](tfsigma2p-and-apepp.md)
-- [Shannon: most Boolean functions need exponential circuits](../../../circuit-complexity/shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Proof depends on
 
-- [The total function class TFΣ2P and the explicit-construction class APEPP](tfsigma2p-and-apepp.md)
 - [Shannon: most Boolean functions need exponential circuits](../../../circuit-complexity/shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Sources

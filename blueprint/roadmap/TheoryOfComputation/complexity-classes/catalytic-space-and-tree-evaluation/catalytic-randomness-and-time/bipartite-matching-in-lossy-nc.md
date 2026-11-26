@@ -8,15 +8,15 @@ The compressor maps a weight assignment that fails to isolate to the shorter des
 
 ## Depends on
 
-- [Agarwala–Mertz: bipartite maximum matching is in polynomial-time catalytic logspace (MATCH ∈ CLP)](agarwala-mertz-bipartite-matching-in-clp.md)
 - [The lossy coding problem LossyCode and the classes LOSSY[C]](lossy-code-problem-and-classes.md)
 - [Isolation lemma](../../../../Combinatorics/probabilistic-combinatorics/isolation-lemma.md)
+- [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
+- [The class NC](../../time-and-space-complexity-classes/nc.md)
 
 ## Proof depends on
 
+- [Agarwala–Mertz: bipartite maximum matching is in polynomial-time catalytic logspace (MATCH ∈ CLP)](agarwala-mertz-bipartite-matching-in-clp.md)
 - [Agarwala–Mertz: a non-isolated weight is redundant and can be erased from the catalytic tape](non-isolated-weight-is-redundant.md)
-- [The lossy coding problem LossyCode and the classes LOSSY[C]](lossy-code-problem-and-classes.md)
-- [Isolation lemma](../../../../Combinatorics/probabilistic-combinatorics/isolation-lemma.md)
 
 ## Sources
 

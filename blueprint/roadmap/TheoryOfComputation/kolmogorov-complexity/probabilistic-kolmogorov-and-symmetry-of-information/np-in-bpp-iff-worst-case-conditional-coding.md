@@ -15,10 +15,11 @@ If $\mathsf{NP}\subseteq\mathsf{BPP}$, approximate counting and uniform sampling
 ## Depends on
 
 - [Average-case symmetry of information, conditional coding and language compression over samplable pairs](average-case-kolmogorov-principles-over-samplable-pairs.md)
-- [One-way functions imply P ≠ NP](../../pseudorandomness-and-one-way-functions/owf-implies-p-ne-np.md)
+- [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 
 ## Proof depends on
 
+- [One-way functions imply P ≠ NP](../../pseudorandomness-and-one-way-functions/owf-implies-p-ne-np.md)
 - [The universal time-bounded sampler hits every x with probability about 2^{−pK^t(x|y)}](universal-time-bounded-sampler-and-pkt.md)
 - [Stockmeyer: approximate counting of #P functions in BPP^NP](../../counting-complexity/stockmeyer-approximate-counting.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)

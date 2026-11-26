@@ -8,8 +8,7 @@ Follow the Atserias-Müller template, proving the required lower bound in the un
 
 ## Depends on
 
-- [Atserias–Müller: automating resolution is NP-hard](atserias-muller.md)
-- [Garg–Göös–Kamath–Sokolov: dag-like lifting from resolution width](../../../TheoryOfComputation/communication-complexity/randomized-and-dag-like-lifting/ggks-dag-lifting.md)
+- [Automatable proof systems](automatable-proof-system.md)
 
 ## Proof depends on
 

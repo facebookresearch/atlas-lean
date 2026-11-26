@@ -16,7 +16,7 @@ The proof follows the same template as the $\mathrm{pK}$ duality, but the encode
 ## Depends on
 
 - [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
-- [Hirahara–Ilango–Lu–Nanashima–Oliveira: one-way functions exist iff probabilistic time-bounded SoI fails on average](hilno-owf-iff-average-case-soi-fails.md)
+- [One-way functions exist](../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
 
 ## Proof depends on
 

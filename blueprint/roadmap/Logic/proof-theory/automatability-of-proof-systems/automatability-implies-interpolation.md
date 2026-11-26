@@ -9,11 +9,9 @@ Run the automating algorithm on $A(a, y)$ for $t(c \cdot s)$ steps, where the re
 ## Depends on
 
 - [Automatable proof systems](automatable-proof-system.md)
-- [Craig interpolation for first-order logic](../craig-interpolation-for-first-order-logic.md)
 
 ## Proof depends on
 
-- [Automatable proof systems](automatable-proof-system.md)
 - [Craig interpolation for first-order logic](../craig-interpolation-for-first-order-logic.md)
 
 ## Sources

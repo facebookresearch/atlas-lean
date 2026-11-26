@@ -13,7 +13,6 @@ Two different promise-preserving reductions are given, one for each variant. The
 
 ## Proof depends on
 
-- [Unique Sink Orientations of cubes lie in UEOPL](unique-sink-orientation-in-ueopl.md)
 - [OPDC lies in UEOPL under promise-preserving reductions via a surface-walking line with a lexicographic potential](opdc-in-ueopl.md)
 
 ## Sources

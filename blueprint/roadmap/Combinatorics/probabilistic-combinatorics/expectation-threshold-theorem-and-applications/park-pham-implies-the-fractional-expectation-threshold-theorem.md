@@ -13,13 +13,6 @@ A $p$-small cover $\mathcal{G}$ with $\sum_G p^{|G|} \le 1/2$ is in particular a
 - [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
 - [Weakly $p$-small families](../thresholds-and-expectation-thresholds/is-weakly-small.md)
 
-## Proof depends on
-
-- [Park-Pham theorem: thresholds are within a logarithmic factor of expectation thresholds](park-pham-theorem.md)
-- [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
-- [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
-- [Weakly $p$-small families](../thresholds-and-expectation-thresholds/is-weakly-small.md)
-
 ## Sources
 
 - Jinyoung Park, Huy Tuan Pham, "A proof of the Kahn-Kalai conjecture", Journal of the AMS 37(1) (2024); arXiv:2203.17207.

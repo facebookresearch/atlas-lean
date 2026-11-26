@@ -10,11 +10,7 @@ Representations occurring in the padded permanent orbit closure must have a long
 
 - [Representation-theoretic occurrence and multiplicity obstructions](occurrence-obstruction.md)
 - [Kronecker coefficients of the symmetric group](kronecker-coefficients.md)
-
-## Proof depends on
-
-- [Representation-theoretic occurrence and multiplicity obstructions](occurrence-obstruction.md)
-- [Kronecker coefficients of the symmetric group](kronecker-coefficients.md)
+- [Determinantal complexity and the padded permanent orbit closure problem](det-vs-perm-gct.md)
 
 ## Sources
 

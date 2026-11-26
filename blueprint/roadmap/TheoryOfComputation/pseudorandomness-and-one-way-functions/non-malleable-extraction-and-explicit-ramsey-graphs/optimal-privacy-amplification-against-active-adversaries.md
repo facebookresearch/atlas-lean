@@ -8,8 +8,7 @@ Alice sends a uniform seed $Y$; Bob replies with $\mathrm{nmExt}(X, Y')$ for the
 
 ## Depends on
 
-- [Li: seeded non-malleable extractors with asymptotically optimal seed length](seeded-non-malleable-extractors-with-optimal-seed-length.md)
-- [Leftover hash lemma](../../../ComputerScience/cryptography/randomness-extraction/leftover-hash-lemma.md)
+- [Guessing probability, min-entropy and collision probability](../../../ComputerScience/cryptography/randomness-extraction/guessing-probability-min-entropy-and-collision.md)
 
 ## Proof depends on
 

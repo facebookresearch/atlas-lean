@@ -10,10 +10,6 @@ With logarithmically many qubits, polynomially many copies suffice for full tomo
 
 - [Pseudorandom quantum state generators](pseudorandom-quantum-states.md)
 
-## Proof depends on
-
-- [Pseudorandom quantum state generators](pseudorandom-quantum-states.md)
-
 ## Sources
 
 - Prabhanjan Ananth, Yao-Ting Lin, Henry Yuen, "Pseudorandom Strings from Pseudorandom Quantum States", ITCS (2024), IACR ePrint 2023/904.

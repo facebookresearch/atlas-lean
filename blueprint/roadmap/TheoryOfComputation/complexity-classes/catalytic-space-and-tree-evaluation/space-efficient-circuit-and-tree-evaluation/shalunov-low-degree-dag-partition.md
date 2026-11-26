@@ -12,7 +12,7 @@ Here $G'/P$ has one vertex per part and an edge from part $A$ to part $B$ whenev
 
 First cut a topological ordering of $G$ into consecutive intervals of size at most $b/d$, producing a quotient DAG with about $d\cdot s/b$ parts, so its depth is bounded by its size regardless of the structure of $G$. The in-degree of a part can be as large as the number of wires entering it; subdividing those wires and routing them through binary merging trees placed inside parts of size at most $b$ reduces every in-degree to $2$ without lengthening any quotient path.
 
-## Depends on
+## Proof depends on
 
 - [The Circuit Value Problem](../../../completeness-other-classes/circuit-value-problem/cvp-dec.md)
 

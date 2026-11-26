@@ -9,11 +9,10 @@ If input errors are below $1/16$ in absolute value, the linear combination's pha
 ## Depends on
 
 - [Programmable bootstrapping in TFHE](programmable-bootstrapping.md)
-- [Gentry's bootstrapping theorem](../gentry-s-bootstrapping-theorem.md)
+- [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
 
 ## Proof depends on
 
-- [Programmable bootstrapping in TFHE](programmable-bootstrapping.md)
 - [Gentry's bootstrapping theorem](../gentry-s-bootstrapping-theorem.md)
 
 ## Sources

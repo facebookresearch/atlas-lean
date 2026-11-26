@@ -14,10 +14,6 @@ These are the first deterministic upper bounds for Tree Evaluation better than t
 
 The programs evaluate the tree by register programs in the style of Buhrman–Cleve–Koucký–Loff–Speelman: the value of a node is added into registers that already hold arbitrary content, using clean (transparent) computations of the children twice with opposite signs, so the registers used for a subtree are reused for its sibling and parent instead of being stacked. The three programs differ in how node values are encoded (bitwise indicator encodings versus field encodings), trading layer count against width.
 
-## Depends on
-
-- [Transparent register programs (Buhrman–Cleve–Koucký–Loff–Speelman)](../catalytic-class-collapses/transparent-register-programs.md)
-
 ## Proof depends on
 
 - [Transparent register programs (Buhrman–Cleve–Koucký–Loff–Speelman)](../catalytic-class-collapses/transparent-register-programs.md)

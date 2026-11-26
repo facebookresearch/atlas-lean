@@ -8,7 +8,7 @@ Combine the Murray-Williams worst-case lower bound with hardness amplification t
 
 ## Depends on
 
-- [Murray–Williams: NQP is not contained in ACC0](murray-williams-nqp-acc.md)
+- [Nondeterministic quasi-polynomial time](nqp-class.md)
 
 ## Proof depends on
 

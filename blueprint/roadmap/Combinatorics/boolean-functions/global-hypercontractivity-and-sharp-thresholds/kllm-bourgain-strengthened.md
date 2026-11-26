@@ -14,9 +14,7 @@ If no small set boosts $\mathcal{A}$, its indicator is global; the level-$1$ glo
 
 ## Depends on
 
-- [Level-d inequality for global sets of small measure](kllm-level-d-global.md)
-- [Sharp threshold from influences](../../../Probability/percolation/phase-transition/sharp-thresholds-from-influences/sth-sharp-threshold.md)
-- [KKL inequality for $p$-biased measures](../kahn-kalai-linial-inequality/kkl-pbiased.md)
+- [Global functions on the p-biased cube](pbiased-global-function.md)
 
 ## Proof depends on
 

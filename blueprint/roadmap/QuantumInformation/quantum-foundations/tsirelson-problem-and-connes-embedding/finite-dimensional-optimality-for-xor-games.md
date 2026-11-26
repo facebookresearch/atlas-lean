@@ -9,12 +9,10 @@ The bias of an XOR game strategy depends only on the correlation matrix $\langle
 ## Depends on
 
 - [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
-- [Classical and entangled values of the CHSH game](../classical-and-entangled-values-of-the-chsh-game.md)
-- [Tsirelson's bound is attained](../tsirelson-bound-tight.md)
+- [Two-player nonlocal games: classical and entangled values](../two-player-nonlocal-games-classical-and-entangled-values.md)
 
 ## Proof depends on
 
-- [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
 - [Classical and entangled values of the CHSH game](../classical-and-entangled-values-of-the-chsh-game.md)
 - [Tsirelson's bound is attained](../tsirelson-bound-tight.md)
 

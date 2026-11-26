@@ -9,11 +9,11 @@ Define $G(v)$ by majority over $f_s(v)$ for $s \ni v$. The test's local view at 
 ## Depends on
 
 - [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
-- [Spectral gap of high-order walks on local spectral expanders](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/kaufman-oppenheim-walk-gap.md)
+- [Agreement tests for ensembles of local functions](agreement-test.md)
+- [Local spectral expanders (one-sided and two-sided)](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/local-spectral-expander.md)
 
 ## Proof depends on
 
-- [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
 - [Spectral gap of high-order walks on local spectral expanders](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/kaufman-oppenheim-walk-gap.md)
 
 ## Sources

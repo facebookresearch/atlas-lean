@@ -11,11 +11,6 @@ $H_X H_Z^{T} = H_1 \otimes H_2^{T} + H_1 \otimes H_2^{T} = 0$ over $\mathbb{F}_2
 - [Hypergraph product of two classical codes (Tillich-Zemor)](hypergraph-product-of-classical-codes.md)
 - [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
 
-## Proof depends on
-
-- [Hypergraph product of two classical codes (Tillich-Zemor)](hypergraph-product-of-classical-codes.md)
-- [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
-
 ## Sources
 
 - Jean-Pierre Tillich, Gilles Zemor, "Quantum LDPC codes with positive rate and minimum distance proportional to the square root of the blocklength", IEEE Transactions on Information Theory 60(2) (2014); arXiv:0903.0566.

@@ -8,7 +8,7 @@ One shows that $\mathrm{Pol}(\mathbb{K}_3,\mathbb{K}_5)$ admits a minion homomor
 
 ## Depends on
 
-- [BBKO hardness criterion: minion homomorphisms to minions of bounded essential arity imply NP-hardness](bbko-bounded-essential-arity-np-hardness.md)
+- [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
 
 ## Proof depends on
 

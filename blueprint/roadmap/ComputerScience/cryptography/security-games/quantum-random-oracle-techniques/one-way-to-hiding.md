@@ -16,10 +16,6 @@ Hybrid over queries: the difference between running with $H$ and with $G$ is a s
 
 - [The quantum random oracle model](quantum-random-oracle-model.md)
 
-## Proof depends on
-
-- [The quantum random oracle model](quantum-random-oracle-model.md)
-
 ## Sources
 
 - Andris Ambainis, Mike Hamburg, Dominique Unruh, "Quantum Security Proofs Using Semi-classical Oracles", CRYPTO (2019).

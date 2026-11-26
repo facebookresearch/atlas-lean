@@ -15,11 +15,9 @@ Partition the lattice into correctable regions (sets of diameter smaller than $d
 ## Depends on
 
 - [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
-- [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md)
 
 ## Proof depends on
 
-- [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
 - [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md)
 
 ## Sources

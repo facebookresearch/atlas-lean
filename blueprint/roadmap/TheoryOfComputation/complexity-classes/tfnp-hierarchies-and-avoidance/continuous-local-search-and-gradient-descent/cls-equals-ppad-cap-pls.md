@@ -8,8 +8,9 @@ GENERAL-CONTINUOUS-LOCALOPT on $[0,1]^2$ is $\mathsf{PPAD}\cap\mathsf{PLS}$-hard
 
 ## Depends on
 
-- [KKT, GD-LOCAL-SEARCH, GD-FIXPOINT and GENERAL-CONTINUOUS-LOCALOPT are PPAD ∩ PLS-complete on the unit square](gradient-descent-problems-ppad-pls-complete.md)
 - [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](continuous-localopt-and-cls.md)
+- [Well-behaved arithmetic circuits and Lipschitz violation witnesses for continuous total search problems](well-behaved-arithmetic-circuits.md)
+- [The class PLS of polynomial local search problems](../../total-search-problems/the-class-pls-of-polynomial-local-search.md)
 
 ## Proof depends on
 

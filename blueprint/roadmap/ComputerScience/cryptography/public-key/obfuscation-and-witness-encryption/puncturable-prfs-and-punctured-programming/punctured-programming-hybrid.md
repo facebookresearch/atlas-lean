@@ -11,11 +11,6 @@ The two programs compute the same function whenever $x^{*}$ is outside the set o
 - [Puncturable pseudorandom functions](puncturable-prf.md)
 - [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
-## Proof depends on
-
-- [Puncturable pseudorandom functions](puncturable-prf.md)
-- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
-
 ## Sources
 
 - Amit Sahai, Brent Waters, "How to Use Indistinguishability Obfuscation: Deniable Encryption, and More", STOC (2014), IACR ePrint 2013/454.

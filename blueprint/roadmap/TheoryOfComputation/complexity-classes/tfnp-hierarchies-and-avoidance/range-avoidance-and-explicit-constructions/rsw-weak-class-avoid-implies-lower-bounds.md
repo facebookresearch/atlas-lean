@@ -15,10 +15,6 @@ A non-image of a suitable map from small $\mathrm{NC}^1$ circuits (or branching 
 
 - [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 
-## Proof depends on
-
-- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
-
 ## Sources
 
 - Hanlin Ren, Rahul Santhanam and Zhikun Wang, "On the Range Avoidance Problem for Circuits", FOCS (2022), ECCC TR22-048.

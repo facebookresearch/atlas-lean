@@ -9,10 +9,7 @@ Near-perfect consistency on diagonal questions forces $\langle \psi | A^x_a \oti
 ## Depends on
 
 - [Synchronous two-prover games](synchronous-two-prover-games.md)
-
-## Proof depends on
-
-- [Synchronous two-prover games](synchronous-two-prover-games.md)
+- [Uniformly generated families of two-prover one-round games](uniformly-generated-game-families.md)
 
 ## Sources
 

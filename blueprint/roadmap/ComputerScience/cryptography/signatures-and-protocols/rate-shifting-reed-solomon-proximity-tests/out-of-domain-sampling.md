@@ -8,7 +8,7 @@ Two distinct polynomials of degree $< d$ agree on at most $d-1$ points; take a u
 
 ## Depends on
 
-- [Johnson-bound list size for Reed–Solomon codes](johnson-list-size.md)
+- [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
 
 ## Proof depends on
 

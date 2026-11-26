@@ -8,7 +8,7 @@ Replace each gate $g$ by $d + 1$ gates computing its homogeneous components $g^{
 
 ## Depends on
 
-- [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)
+- [Arithmetic circuit](../arithmetic-circuits/arithmetic-circuit.md)
 
 ## Proof depends on
 

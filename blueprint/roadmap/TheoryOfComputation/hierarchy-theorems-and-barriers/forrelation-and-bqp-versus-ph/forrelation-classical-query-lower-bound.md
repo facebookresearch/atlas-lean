@@ -9,11 +9,9 @@ For the lower bound, consider $f$ uniform versus $f$ Gaussian-rounded with $g = 
 ## Depends on
 
 - [Forrelation of two Boolean functions](forrelation-of-two-boolean-functions.md)
-- [A one-query quantum algorithm estimating forrelation](one-query-quantum-algorithm-for-forrelation.md)
 
 ## Proof depends on
 
-- [Forrelation of two Boolean functions](forrelation-of-two-boolean-functions.md)
 - [A one-query quantum algorithm estimating forrelation](one-query-quantum-algorithm-for-forrelation.md)
 
 ## Sources

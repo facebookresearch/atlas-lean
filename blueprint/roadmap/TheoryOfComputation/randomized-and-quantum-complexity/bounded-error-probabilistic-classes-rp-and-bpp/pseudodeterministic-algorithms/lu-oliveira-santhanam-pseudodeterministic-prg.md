@@ -13,7 +13,6 @@ The construction builds on the techniques behind the Fortnow–Santhanam hierarc
 
 ## Proof depends on
 
-- [Pseudodeterministic algorithms for search problems (Gat–Goldwasser)](pseudodeterministic-algorithm-for-search-problem.md)
 - [Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP](../../../pseudorandomness-and-one-way-functions/nisan-wigderson.md)
 
 ## Sources

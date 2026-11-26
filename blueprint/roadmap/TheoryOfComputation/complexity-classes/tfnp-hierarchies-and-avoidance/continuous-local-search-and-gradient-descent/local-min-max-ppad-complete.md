@@ -10,10 +10,6 @@ Membership: projected gradient descent-ascent is a Lipschitz self-map of the pol
 
 - [Approximate local min-max equilibria of constrained smooth objectives and the trivial, local and global regimes](approximate-local-min-max-equilibrium.md)
 
-## Proof depends on
-
-- [Approximate local min-max equilibria of constrained smooth objectives and the trivial, local and global regimes](approximate-local-min-max-equilibrium.md)
-
 ## Sources
 
 - Constantinos Daskalakis, Stratis Skoulakis and Manolis Zampetakis, "The Complexity of Constrained Min-Max Optimization", STOC (2021), arXiv:2009.09623.

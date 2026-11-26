@@ -8,7 +8,7 @@ This strengthens the Ren–Santhanam–Wang framework: a short, smooth and recta
 
 ## Depends on
 
-- [Ren–Santhanam–Wang: FP^NP algorithms for C-Avoid from circuit-analysis data structures](rsw-avoid-from-circuit-analysis.md)
+- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 
 ## Proof depends on
 

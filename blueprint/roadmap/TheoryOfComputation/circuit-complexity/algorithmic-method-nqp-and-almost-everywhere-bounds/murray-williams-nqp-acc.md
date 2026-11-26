@@ -8,8 +8,8 @@ Williams's $\mathrm{ACC}^0$-SAT algorithm runs in time $2^{n - n^{\delta}}$ for 
 
 ## Depends on
 
-- [The algorithmic method template: non-trivial algorithms imply lower bounds](algorithmic-method-template.md)
-- [Williams: NEXP is not contained in ACC0](../williams-nexp-not-in-acc0.md)
+- [Nondeterministic quasi-polynomial time](nqp-class.md)
+- [The class $\mathsf{ACC}^0$](../../complexity-classes/time-and-space-complexity-classes/acc0.md)
 
 ## Proof depends on
 

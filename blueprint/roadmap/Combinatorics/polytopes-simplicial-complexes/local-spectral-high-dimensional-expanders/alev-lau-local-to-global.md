@@ -20,11 +20,7 @@ Use the decomposition of the up-down walk on $X(k-1)$ as a mixture of the identi
 
 - [Up-down and down-up random walks on a weighted complex](up-down-walks.md)
 - [Link of a face in a weighted complex](link-of-face.md)
-
-## Proof depends on
-
-- [Up-down and down-up random walks on a weighted complex](up-down-walks.md)
-- [Link of a face in a weighted complex](link-of-face.md)
+- [Pure weighted simplicial complexes and their face distributions](pure-weighted-complex.md)
 
 ## Sources
 

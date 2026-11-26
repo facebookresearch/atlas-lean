@@ -8,15 +8,14 @@ Build $f$ on $[0,N]^2$ with the staircase embedding of the END-OF-LINE instance,
 
 ## Depends on
 
-- [EITHER-SOLUTION(END-OF-LINE, ITER) is PPAD ∩ PLS-complete](either-solution-eol-iter-complete.md)
-- [PLS-Labyrinth gadget with bicubic interpolation: unavoidable KKT points at colour changes encode ITER solutions](pls-labyrinth-gadget.md)
 - [The KKT search problem for smooth objectives on bounded polytopes with Taylor-violation witnesses](kkt-search-problem.md)
+- [ITER and the EITHER-SOLUTION combinator for building PPAD ∩ PLS-complete problems](iter-and-either-solution.md)
 
 ## Proof depends on
 
 - [EITHER-SOLUTION(END-OF-LINE, ITER) is PPAD ∩ PLS-complete](either-solution-eol-iter-complete.md)
-- [Staircase embedding of END-OF-LINE into a planar descent landscape with green descending and orange ascending paths](staircase-embedding-green-orange-paths.md)
 - [PLS-Labyrinth gadget with bicubic interpolation: unavoidable KKT points at colour changes encode ITER solutions](pls-labyrinth-gadget.md)
+- [Staircase embedding of END-OF-LINE into a planar descent landscape with green descending and orange ascending paths](staircase-embedding-green-orange-paths.md)
 
 ## Sources
 

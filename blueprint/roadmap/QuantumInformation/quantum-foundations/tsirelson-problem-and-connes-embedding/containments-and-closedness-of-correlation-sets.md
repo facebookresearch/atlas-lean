@@ -10,10 +10,6 @@ Finite-dimensional strategies are special infinite-dimensional ones, and tensor-
 
 - [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
 
-## Proof depends on
-
-- [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
-
 ## Sources
 
 - Marius Junge, Miguel Navascues, Carlos Palazuelos, David Perez-Garcia, Volkher B. Scholz, Reinhard F. Werner, "Connes embedding problem and Tsirelson's problem", Journal of Mathematical Physics 52 (2011); arXiv:1008.1142.

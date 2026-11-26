@@ -8,13 +8,11 @@ The tensor $\sum_{a + b + c = 0} x_a y_b z_c$ over $\mathbb{F}_p[G]$ with $G = \
 
 ## Depends on
 
-- [Strassen's asymptotic spectrum of tensors and asymptotic rank](asymptotic-spectrum.md)
 - [Conjecture that the square exponent is two](../matrix-multiplication-exponent/omega-equals-two-conjecture.md)
 
 ## Proof depends on
 
 - [Strassen's asymptotic spectrum of tensors and asymptotic rank](asymptotic-spectrum.md)
-- [Conjecture that the square exponent is two](../matrix-multiplication-exponent/omega-equals-two-conjecture.md)
 
 ## Sources
 

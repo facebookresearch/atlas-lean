@@ -9,7 +9,7 @@ This is the radix-2 FFT butterfly: even and odd parts of $\hat{m}$ evaluated on 
 ## Depends on
 
 - [Foldable linear codes](foldable-linear-code.md)
-- [k-wise folding of Reed–Solomon codewords reduces degree](../rate-shifting-reed-solomon-proximity-tests/rs-folding-operator.md)
+- [Interactive oracle proofs of proximity for Reed–Solomon codes](../rate-shifting-reed-solomon-proximity-tests/rs-iopp.md)
 
 ## Proof depends on
 

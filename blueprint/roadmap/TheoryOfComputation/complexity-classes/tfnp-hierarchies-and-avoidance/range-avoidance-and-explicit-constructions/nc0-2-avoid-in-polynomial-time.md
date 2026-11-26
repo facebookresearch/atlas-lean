@@ -10,10 +10,6 @@ For a fixed target $y$, the condition $C(x)=y$ is a conjunction of constraints o
 
 - [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 
-## Proof depends on
-
-- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
-
 ## Sources
 
 - Venkatesan Guruswami, Xin Lyu and Xiuhan Wang, "Range Avoidance for Low-Depth Circuits and Connections to Pseudorandomness", APPROX/RANDOM (2022), ECCC TR22-102.

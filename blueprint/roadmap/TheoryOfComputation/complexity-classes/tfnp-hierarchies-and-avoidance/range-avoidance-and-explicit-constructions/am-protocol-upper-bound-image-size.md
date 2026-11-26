@@ -8,12 +8,11 @@ The protocol first approximates $|\mathrm{Im}(C)|$ through the identity $|\mathr
 
 ## Depends on
 
-- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
-- [Goldwasser-Sipser: private coins add no power to interactive proofs](../../../randomized-and-quantum-complexity/goldwasser-sipser-theorem/goldwasser-sipser.md)
 - [The class $\mathsf{AM}$ (Arthur–Merlin)](../../time-and-space-complexity-classes/am.md)
 
 ## Proof depends on
 
+- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 - [Goldwasser-Sipser: private coins add no power to interactive proofs](../../../randomized-and-quantum-complexity/goldwasser-sipser-theorem/goldwasser-sipser.md)
 
 ## Sources

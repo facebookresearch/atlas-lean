@@ -8,7 +8,7 @@ Write $N-d=a_1^{2}+\dots+a_4^{2}$ and let $\alpha$ be the endomorphism of $E^{4}
 
 ## Depends on
 
-- [Kani's lemma: isogeny diamonds give isogenies of abelian surfaces](kani-criterion.md)
+- [Supersingular elliptic curves and isogenies](../supersingular-isogenies-and-quaternion-orders/supersingular-curves.md)
 
 ## Proof depends on
 

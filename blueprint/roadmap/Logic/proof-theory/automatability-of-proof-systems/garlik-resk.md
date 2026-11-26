@@ -8,8 +8,7 @@ Generalize the Atserias-Müller formula to $k$-DNF lines: the satisfiable case s
 
 ## Depends on
 
-- [Atserias–Müller: automating resolution is NP-hard](atserias-muller.md)
-- [Håstad's switching lemma](../../../TheoryOfComputation/circuit-complexity/lower-bounds-for-ac0-circuits/hastad-s-switching-lemma.md)
+- [Automatable proof systems](automatable-proof-system.md)
 
 ## Proof depends on
 

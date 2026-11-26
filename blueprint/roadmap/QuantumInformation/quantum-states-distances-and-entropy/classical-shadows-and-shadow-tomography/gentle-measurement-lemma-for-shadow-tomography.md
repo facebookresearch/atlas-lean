@@ -14,10 +14,6 @@ For a pure state $|\psi\rangle$ the post-measurement state $\sqrt E|\psi\rangle/
 
 - [Trace distance: metric, operational form and contractivity](../remaining-clauses-of-trace-distance-and-contractivity.md)
 
-## Proof depends on
-
-- [Trace distance: metric, operational form and contractivity](../remaining-clauses-of-trace-distance-and-contractivity.md)
-
 ## Sources
 
 - Andreas Winter, "Coding theorem and strong converse for quantum channels", IEEE Transactions on Information Theory 45(7) (1999).

@@ -9,12 +9,10 @@ The receiver measures BB84 qubits sent by the sender, commits to bases and outco
 ## Depends on
 
 - [Quantum bit commitments in canonical form](quantum-bit-commitments.md)
-- [Oblivious transfer from the decisional Diffie–Hellman assumption](../../../ComputerScience/cryptography/signatures-and-protocols/secure-multiparty-computation/oblivious-transfer-from-the-decisional.md)
-- [Leftover hash lemma](../../../ComputerScience/cryptography/randomness-extraction/leftover-hash-lemma.md)
 
 ## Proof depends on
 
-- [Quantum bit commitments in canonical form](quantum-bit-commitments.md)
+- [Oblivious transfer from the decisional Diffie–Hellman assumption](../../../ComputerScience/cryptography/signatures-and-protocols/secure-multiparty-computation/oblivious-transfer-from-the-decisional.md)
 - [Leftover hash lemma](../../../ComputerScience/cryptography/randomness-extraction/leftover-hash-lemma.md)
 
 ## Sources

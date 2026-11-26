@@ -16,12 +16,9 @@ $|C| \sum_i A_i K_k(i) = \sum_{x, x' \in C}\sum_{|y| = k}(-1)^{(x + x')\cdot y} 
 
 - [Distance distribution of a binary code](distance-distribution-of-a-binary-code.md)
 - [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
-- [MacWilliams identity](../macwilliams-identity.md)
 
 ## Proof depends on
 
-- [Distance distribution of a binary code](distance-distribution-of-a-binary-code.md)
-- [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
 - [MacWilliams identity](../macwilliams-identity.md)
 
 ## Sources

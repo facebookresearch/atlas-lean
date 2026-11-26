@@ -9,12 +9,11 @@ For the information-theoretic statement, use the monogamy-of-entanglement framew
 ## Depends on
 
 - [Coset states](coset-states.md)
-- [Monogamy-of-entanglement game for BB84 states](monogamy-bb84.md)
+- [Indistinguishability and virtual black-box obfuscation](../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
 ## Proof depends on
 
 - [Monogamy-of-entanglement game for BB84 states](monogamy-bb84.md)
-- [Indistinguishability and virtual black-box obfuscation](../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
 ## Sources
 

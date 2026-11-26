@@ -8,11 +8,13 @@ The folded witness is $W+rW_{\$}$ with $W_{\$}$ uniform, hence uniform for $r\ne
 
 ## Depends on
 
-- [Nova's folding scheme for committed relaxed R1CS](../relaxed-r1cs-folding-schemes/nova-folding-theorem.md)
 - [Zero-knowledge interactive proofs](../zero-knowledge-and-arguments/zero-knowledge-interactive-proofs.md)
+- [Relaxed R1CS instances with slack vector and scalar](../relaxed-r1cs-folding-schemes/relaxed-r1cs.md)
+- [Folding scheme for an NP relation](../relaxed-r1cs-folding-schemes/folding-scheme.md)
 
 ## Proof depends on
 
+- [Nova's folding scheme for committed relaxed R1CS](../relaxed-r1cs-folding-schemes/nova-folding-theorem.md)
 - [Cross-term identity for folding relaxed R1CS](../relaxed-r1cs-folding-schemes/nova-cross-term.md)
 
 ## Sources

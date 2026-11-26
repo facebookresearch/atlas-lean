@@ -10,11 +10,7 @@ Dimension reduction preserves inner products up to small error, which preserves 
 
 - [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
 - [The basic SDP relaxation of a generalized CSP](basic-sdp-relaxation.md)
-
-## Proof depends on
-
-- [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
-- [The basic SDP relaxation of a generalized CSP](basic-sdp-relaxation.md)
+- [Generalized constraint satisfaction problems with payoff functions](generalized-csp.md)
 
 ## Sources
 

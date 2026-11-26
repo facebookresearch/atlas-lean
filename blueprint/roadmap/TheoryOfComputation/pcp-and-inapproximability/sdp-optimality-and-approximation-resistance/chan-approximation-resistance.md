@@ -9,12 +9,9 @@ The key new ingredient is a soundness-reduction technique inspired by XOR lemmas
 ## Depends on
 
 - [Approximation-resistant predicates and balanced pairwise independence](approximation-resistance.md)
-- [Hastad: optimal inapproximability of MAX-3SAT](../approximability-of-max-3sat/hastad-max3sat-inapproximability.md)
-- [The PCP theorem: NP = PCP(O(log n), O(1))](../pcp-theorem.md)
 
 ## Proof depends on
 
-- [Approximation-resistant predicates and balanced pairwise independence](approximation-resistance.md)
 - [Hastad: optimal inapproximability of MAX-3SAT](../approximability-of-max-3sat/hastad-max3sat-inapproximability.md)
 - [The PCP theorem: NP = PCP(O(log n), O(1))](../pcp-theorem.md)
 

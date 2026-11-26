@@ -1,6 +1,5 @@
 # Global Hypercontractivity and Sharp Thresholds
 
-- [The integral expectation threshold of an increasing family](expectation-threshold.md)
 - [Global functions on the p-biased cube](pbiased-global-function.md)
 - [Ordinary hypercontractivity degrades as p tends to zero](failure-of-hypercontractivity-small-p.md)
 - [Globalness is equivalent to small generalized influences](global-vs-generalized-influence.md)

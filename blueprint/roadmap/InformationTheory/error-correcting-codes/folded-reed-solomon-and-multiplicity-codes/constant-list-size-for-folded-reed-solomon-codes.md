@@ -8,13 +8,13 @@ Starting from the Guruswami-Wang affine subspace of dimension $m - 1$, show that
 
 ## Depends on
 
-- [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
 - [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
+- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
+- [Univariate multiplicity codes](univariate-multiplicity-codes.md)
 
 ## Proof depends on
 
 - [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
-- [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
 
 ## Sources
 

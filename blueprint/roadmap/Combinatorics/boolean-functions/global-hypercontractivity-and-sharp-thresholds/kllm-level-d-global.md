@@ -12,8 +12,7 @@ Apply global hypercontractivity to the low-degree projection $g = 1_{\mathcal{A}
 
 ## Depends on
 
-- [Keevash–Lifshitz–Long–Minzer: hypercontractivity for global functions](kllm-global-hypercontractivity.md)
-- [Level-1 Inequality](../structure-theorems-for-boolean-functions/level-one-inequality.md)
+- [Global functions on the p-biased cube](pbiased-global-function.md)
 
 ## Proof depends on
 

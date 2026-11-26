@@ -13,8 +13,9 @@ Apply introspection to reduce question length exponentially, then answer reducti
 
 ## Depends on
 
-- [Question reduction by introspection](question-reduction-by-introspection.md)
-- [Answer reduction through oracularization and probabilistically checkable proofs](answer-reduction-by-probabilistically-checkable-proofs.md)
+- [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
+- [Synchronous two-prover games](synchronous-two-prover-games.md)
+- [Uniformly generated families of two-prover one-round games](uniformly-generated-game-families.md)
 
 ## Proof depends on
 

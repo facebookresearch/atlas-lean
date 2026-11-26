@@ -8,11 +8,12 @@ Given $x$ with $K^t(x)=k$, encode $x$ by an error-correcting code and feed it to
 
 ## Depends on
 
-- [Sandwich bounds: K(x) − O(log t) ≤ pK^t(x) ≤ rK^t(x), K^t(x) up to constants and time overhead](pkt-sandwich-between-kolmogorov-and-time-bounded.md)
-- [Heuristica](../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/heuristica.md)
+- [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 
 ## Proof depends on
 
+- [Sandwich bounds: K(x) − O(log t) ≤ pK^t(x) ≤ rK^t(x), K^t(x) up to constants and time overhead](pkt-sandwich-between-kolmogorov-and-time-bounded.md)
+- [Heuristica](../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/heuristica.md)
 - [Few strings have small complexity](../incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
 - [Pseudorandom generators against circuits](../../pseudorandomness-and-one-way-functions/derandomization/pseudorandom-generators-against-circuits.md)
 

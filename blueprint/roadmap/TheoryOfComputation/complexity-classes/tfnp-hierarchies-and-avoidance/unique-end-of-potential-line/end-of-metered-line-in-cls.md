@@ -11,11 +11,6 @@ Vertices of the metered line are placed along the diagonal of a grid in a stairc
 - [END-OF-METERED-LINE: an END-OF-LINE instance with an odometer circuit whose miscounts are solutions](end-of-metered-line.md)
 - [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](../continuous-local-search-and-gradient-descent/continuous-localopt-and-cls.md)
 
-## Proof depends on
-
-- [END-OF-METERED-LINE: an END-OF-LINE instance with an odometer circuit whose miscounts are solutions](end-of-metered-line.md)
-- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](../continuous-local-search-and-gradient-descent/continuous-localopt-and-cls.md)
-
 ## Sources
 
 - Pavel Hubáček and Eylon Yogev, "Hardness of Continuous Local Search: Query Complexity and Cryptographic Lower Bounds", SODA (2017) and SIAM Journal on Computing (2020), ECCC TR16-063.

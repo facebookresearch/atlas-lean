@@ -14,11 +14,6 @@ Away from paths $\nabla f=(1,1)$ points away from the boundary constraints excep
 - [ITER and the EITHER-SOLUTION combinator for building PPAD ∩ PLS-complete problems](iter-and-either-solution.md)
 - [The END-OF-THE-LINE graph](../../../completeness-other-classes/ppad-and-the-end-of-the-line-problem/adj.md)
 
-## Proof depends on
-
-- [The KKT search problem for smooth objectives on bounded polytopes with Taylor-violation witnesses](kkt-search-problem.md)
-- [The END-OF-THE-LINE graph](../../../completeness-other-classes/ppad-and-the-end-of-the-line-problem/adj.md)
-
 ## Sources
 
 - John Fearnley, Paul W. Goldberg, Alexandros Hollender and Rahul Savani, "The Complexity of Gradient Descent: CLS = PPAD ∩ PLS", STOC (2021) and Journal of the ACM 70(1) (2023), arXiv:2011.01929.

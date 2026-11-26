@@ -8,12 +8,12 @@ The public key includes an obfuscated program that, on inputs encoding a hidden 
 
 ## Depends on
 
-- [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
-- [Public-key encryption from indistinguishability obfuscation and one-way functions](sw-pke-from-io.md)
+- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
 ## Proof depends on
 
 - [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
+- [Public-key encryption from indistinguishability obfuscation and one-way functions](sw-pke-from-io.md)
 
 ## Sources
 

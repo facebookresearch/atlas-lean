@@ -8,8 +8,8 @@ After in-place amplification to error $2^{-(m+2)}$, the acceptance probability o
 
 ## Depends on
 
-- [Marriott-Watrous in-place amplification of QMA](in-place-qma-amplification.md)
-- [BQP is contained in PP](../bqp-subset-pp.md)
+- [QMA for promise problems](../../local-hamiltonian-problem/qmapromise.md)
+- [Probabilistic polynomial time with unbounded error](../../../complexity-classes/time-and-space-complexity-classes/pp.md)
 
 ## Proof depends on
 

@@ -8,9 +8,7 @@ The lower bound is a first moment count. For the upper bound, show that the unif
 
 ## Depends on
 
-- [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
-- [Spread families and spread measures](../../extremal-set-theory/spread-families-and-robust-sunflowers/kappa-spread-families-and-measures.md)
-- [Park-Pham theorem: thresholds are within a logarithmic factor of expectation thresholds](park-pham-theorem.md)
+- [The threshold $p_c(\mathcal F)$](../thresholds-and-expectation-thresholds/p-c.md)
 
 ## Proof depends on
 

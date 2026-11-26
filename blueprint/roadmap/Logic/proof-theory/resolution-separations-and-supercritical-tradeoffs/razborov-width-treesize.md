@@ -9,11 +9,9 @@ Construct $F_n$ by composing a formula of small width with a hardness condensati
 ## Depends on
 
 - [Supercritical trade-offs in proof complexity](supercritical-tradeoff.md)
-- [Ben-Sasson–Wigderson for tree-like resolution](../../propositional-logic/resolution-size-and-width/tree-refutation-narrow.md)
 
 ## Proof depends on
 
-- [Supercritical trade-offs in proof complexity](supercritical-tradeoff.md)
 - [Ben-Sasson–Wigderson for tree-like resolution](../../propositional-logic/resolution-size-and-width/tree-refutation-narrow.md)
 
 ## Sources

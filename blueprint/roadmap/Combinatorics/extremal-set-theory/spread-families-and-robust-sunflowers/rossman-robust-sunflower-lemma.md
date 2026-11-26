@@ -9,12 +9,9 @@ Rossman's bound follows from Janson's inequality applied inside links of maximal
 ## Depends on
 
 - [Robust sunflowers](robust-sunflowers-and-satisfying-systems.md)
-- [Spread lemma: random sets of moderate density contain members of spread families](spread-lemma-random-sets-contain-members-of-spread-families.md)
-- [Sunflower-free families have spread links](sunflower-free-families-have-spread-restrictions.md)
 
 ## Proof depends on
 
-- [Robust sunflowers](robust-sunflowers-and-satisfying-systems.md)
 - [Spread lemma: random sets of moderate density contain members of spread families](spread-lemma-random-sets-contain-members-of-spread-families.md)
 - [Sunflower-free families have spread links](sunflower-free-families-have-spread-restrictions.md)
 

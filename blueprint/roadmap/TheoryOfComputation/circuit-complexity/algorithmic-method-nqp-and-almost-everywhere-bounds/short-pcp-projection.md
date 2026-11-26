@@ -9,11 +9,9 @@ Start from a quasi-linear-size PCP of proximity for circuit satisfiability based
 ## Depends on
 
 - [Nondeterministic quasi-polynomial time](nqp-class.md)
-- [The PCP theorem: NP = PCP(O(log n), O(1))](../../pcp-and-inapproximability/pcp-theorem.md)
 
 ## Proof depends on
 
-- [Nondeterministic quasi-polynomial time](nqp-class.md)
 - [The PCP theorem: NP = PCP(O(log n), O(1))](../../pcp-and-inapproximability/pcp-theorem.md)
 
 ## Sources

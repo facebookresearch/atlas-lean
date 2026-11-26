@@ -16,10 +16,6 @@ For $p\mid q$, replicating every edge of a BIPARTITE$_p$ instance $q/p$ times mu
 
 - [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
 
-## Proof depends on
-
-- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
-
 ## Sources
 
 - Mika Göös, Pritish Kamath, Katerina Sotiraki and Manolis Zampetakis, "On the Complexity of Modulo-q Arguments and the Chevalley–Warning Theorem", CCC (2020), arXiv:1912.04467.

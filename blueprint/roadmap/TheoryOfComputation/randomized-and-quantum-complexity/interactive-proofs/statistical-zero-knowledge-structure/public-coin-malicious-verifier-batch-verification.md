@@ -16,10 +16,11 @@ The protocol keeps the sequential structure over approximate-injectivity instanc
 
 - [Kaslasi–Rothblum–Rothblum–Sealfon–Vasudevan: HVSZK batch verification for NISZK with communication poly(n) + k·poly(log n, log k)](batch-verification-hvszk-for-niszk.md)
 - [Public-coin interactive proofs](../../goldwasser-sipser-theorem/pub-ip.md)
+- [Non-interactive statistical zero knowledge NISZK in the common random string model](niszk-common-random-string.md)
+- [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
 
 ## Proof depends on
 
-- [Kaslasi–Rothblum–Rothblum–Sealfon–Vasudevan: HVSZK batch verification for NISZK with communication poly(n) + k·poly(log n, log k)](batch-verification-hvszk-for-niszk.md)
 - [Goldreich–Sahai–Vadhan: honest-verifier SZK equals general SZK](honest-verifier-szk-equals-general-szk.md)
 
 ## Sources

@@ -11,13 +11,13 @@ Instead of sending the provers their questions, the verifier commands them to sa
 
 ## Depends on
 
-- [Pauli basis test with polylogarithmic question length](introspectable-pauli-basis-test.md)
 - [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
+- [Synchronous two-prover games](synchronous-two-prover-games.md)
+- [Uniformly generated families of two-prover one-round games](uniformly-generated-game-families.md)
 
 ## Proof depends on
 
 - [Pauli basis test with polylogarithmic question length](introspectable-pauli-basis-test.md)
-- [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
 
 ## Sources
 

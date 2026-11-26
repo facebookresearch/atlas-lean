@@ -8,12 +8,12 @@ The constant coefficient of $X^{-\bar{\varphi}}v$ is $v_{\bar{\varphi}}$ for $0\
 
 ## Depends on
 
-- [Blind rotation of a test polynomial by an encrypted phase](blind-rotation.md)
-- [Noiseless sample extraction from TRLWE to TLWE](sample-extraction.md)
+- [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
 
 ## Proof depends on
 
 - [Blind rotation of a test polynomial by an encrypted phase](blind-rotation.md)
+- [Noiseless sample extraction from TRLWE to TLWE](sample-extraction.md)
 
 ## Sources
 

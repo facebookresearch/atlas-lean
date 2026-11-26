@@ -10,7 +10,6 @@ Amplify the error of a $\mathrm{BPP}$ machine to $2^{-n}$ on $m$ random bits. As
 
 - [Symmetric alternation: the classes S2TIME[T], S2P and S2E](symmetric-alternation-s2p-s2e.md)
 - [BPP](../../complexity-classes/time-and-space-complexity-classes/bpp.md)
-- [Sipser-Gács-Lautemann: BPP is in $\Sigma_2^p$ and $\Pi_2^p$](../../randomized-and-quantum-complexity/sipser-gacs-lautemann.md)
 
 ## Proof depends on
 

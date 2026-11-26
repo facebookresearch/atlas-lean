@@ -13,7 +13,6 @@ Run the bootstrapping recursion from infinitely many, sufficiently spread out in
 
 ## Depends on
 
-- [Bootstrapping win-win: recursive hitting sets over lengths n_{i+1} = n_i^β](bootstrapping-recursive-hitting-sets.md)
 - [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
 
 ## Proof depends on

@@ -8,15 +8,12 @@ The dimension of $G_{A_1} \cap \cdots \cap G_{A_\ell}$ is governed by the rank o
 
 ## Depends on
 
-- [GM-MDS theorem (Lovett; Yildiz-Hassibi)](gm-mds-theorem.md)
 - [Higher order MDS codes MDS(l)](higher-order-mds-codes.md)
 - [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
 
 ## Proof depends on
 
 - [GM-MDS theorem (Lovett; Yildiz-Hassibi)](gm-mds-theorem.md)
-- [Higher order MDS codes MDS(l)](higher-order-mds-codes.md)
-- [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
 
 ## Sources
 

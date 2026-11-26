@@ -8,7 +8,7 @@ Express the GCD through the roots of $f$ shared with $g$: the polynomial $\prod_
 
 ## Depends on
 
-- [Constant-depth formulas for power sums of roots](power-sums-from-coefficients.md)
+- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
 
 ## Proof depends on
 

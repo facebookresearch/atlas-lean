@@ -13,11 +13,6 @@ From an instance of a $\mathrm{coNP}$-complete problem one builds expanding circ
 - [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 - [Indistinguishability and virtual black-box obfuscation](../../../../ComputerScience/cryptography/program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
-## Proof depends on
-
-- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
-- [Indistinguishability and virtual black-box obfuscation](../../../../ComputerScience/cryptography/program-obfuscation/indistinguishability-and-virtual-black-box.md)
-
 ## Sources
 
 - Rahul Ilango, Jiatu Li and Ryan Williams, "Indistinguishability Obfuscation, Range Avoidance, and Bounded Arithmetic", STOC (2023), ECCC TR23-038.

@@ -9,10 +9,8 @@ The original proof uses tame congruence theory to construct weakly symmetric ter
 ## Depends on
 
 - [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
-
-## Proof depends on
-
-- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
+- [Cores of finite relational structures](cores-of-finite-relational-structures.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
 
 ## Sources
 

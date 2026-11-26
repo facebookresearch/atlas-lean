@@ -2,7 +2,7 @@
 
 - [Symmetric alternation: the classes S2TIME[T], S2P and S2E](symmetric-alternation-s2p-s2e.md)
 - [Miltersen–Vinodchandran–Watanabe: E^Σ2P contains a language of circuit complexity at least 2^n/n](delta3e-near-maximum-circuit-lower-bound.md)
-- [GGM-tree evaluation: every vertex value of GGM_T[C](x) is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
+- [GGM-tree evaluation: every vertex value of the GGM tree GGM_T of C on input x is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
 - [Russell–Sundaram and Canetti: BPP is contained in S2P](bpp-subset-s2p.md)
 - [Cai: S2P is contained in ZPP^NP](cai-s2p-subset-zpp-np.md)
 - [Single-valued FΣ2P and FS2P algorithms for search problems](single-valued-fsigma2p-and-fs2p.md)

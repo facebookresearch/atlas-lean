@@ -8,14 +8,11 @@ The uniform measure on perfect matchings of the complete $k$-graph is $\kappa$-s
 
 ## Depends on
 
-- [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
 - [Spread families and spread measures](../../extremal-set-theory/spread-families-and-robust-sunflowers/kappa-spread-families-and-measures.md)
-- [Kahn's theorem: the threshold in Shamir's problem is asymptotic to $n \log n$](../shamir-s-problem/matching-threshold-asymptotic-holds.md)
 
 ## Proof depends on
 
 - [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
-- [Spread families and spread measures](../../extremal-set-theory/spread-families-and-robust-sunflowers/kappa-spread-families-and-measures.md)
 - [Kahn's theorem: the threshold in Shamir's problem is asymptotic to $n \log n$](../shamir-s-problem/matching-threshold-asymptotic-holds.md)
 
 ## Sources

@@ -15,11 +15,9 @@ Represent the set of Alice's inputs consistent with a protocol rectangle as a se
 ## Depends on
 
 - [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
-- [Alweiss–Lovett–Wu–Zhang sunflower bound](../../../Combinatorics/extremal-set-theory/intersecting-families/sunflower-lemma/theorem-1-4.md)
 
 ## Proof depends on
 
-- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
 - [Alweiss–Lovett–Wu–Zhang sunflower bound](../../../Combinatorics/extremal-set-theory/intersecting-families/sunflower-lemma/theorem-1-4.md)
 
 ## Sources

@@ -8,13 +8,11 @@ Apply a random invertible linear change of variables so that $f$ becomes monic i
 
 ## Depends on
 
-- [Andrews–Wigderson: the GCD of two polynomials in arithmetic AC0](aw-gcd-ac0.md)
 - [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
 
 ## Proof depends on
 
 - [Andrews–Wigderson: the GCD of two polynomials in arithmetic AC0](aw-gcd-ac0.md)
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
 
 ## Sources
 

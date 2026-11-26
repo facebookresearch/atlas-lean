@@ -8,8 +8,7 @@ Write $c_0+c_1s=\Delta m+v+qk$ for an integer polynomial $k$ of small norm. The 
 
 ## Depends on
 
-- [Ciphertext multiplication by tensoring](tensor-product-multiplication.md)
-- [Relinearization by gadget key switching](relinearization.md)
+- [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
 
 ## Proof depends on
 

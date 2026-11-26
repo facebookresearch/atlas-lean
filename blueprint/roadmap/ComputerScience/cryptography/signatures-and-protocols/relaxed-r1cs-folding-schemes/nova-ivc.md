@@ -11,10 +11,10 @@ Completeness follows inductively from completeness of folding. For knowledge sou
 - [Non-interactive folding via Fiat–Shamir in the random oracle model](nova-nifs.md)
 - [Incrementally verifiable computation scheme for an iterated function](../incrementally-verifiable-computation-and-pcd/ivc-scheme.md)
 - [Relaxed R1CS instances with slack vector and scalar](relaxed-r1cs.md)
+- [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
 
 ## Proof depends on
 
-- [Non-interactive folding via Fiat–Shamir in the random oracle model](nova-nifs.md)
 - [Nova's folding scheme for committed relaxed R1CS](nova-folding-theorem.md)
 
 ## Sources

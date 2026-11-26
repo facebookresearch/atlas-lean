@@ -10,10 +10,6 @@ The prover prepares $\sum_{b, x}|b\rangle|x\rangle|f_{k,b}(x)\rangle$ and measur
 
 - [Trapdoor claw-free function families](trapdoor-claw-free-function-families.md)
 
-## Proof depends on
-
-- [Trapdoor claw-free function families](trapdoor-claw-free-function-families.md)
-
 ## Sources
 
 - Zvika Brakerski, Paul Christiano, Urmila Mahadev, Umesh Vazirani, Thomas Vidick, "A cryptographic test of quantumness and certifiable randomness from a single quantum device", FOCS (2018), Journal of the ACM 68(5) (2021); arXiv:1804.00640.

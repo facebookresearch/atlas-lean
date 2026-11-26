@@ -9,13 +9,13 @@ For three elements, the algebraic analysis splits on whether the idempotent poly
 ## Depends on
 
 - [The Chen Conjecture on the complexity of QCSP](chen-conjecture-qcsp.md)
-- [Zhuk: every finite algebra has either polynomially or exponentially generated powers](zhuk-pgp-egp-dichotomy.md)
 - [The class coNP](../../../complexity-classes/the-classes-p-np-and-conp/co-np.md)
 - [The polynomial hierarchy](../../../complexity-classes/time-and-space-complexity-classes/ph.md)
+- [Polynomially and exponentially generated powers (PGP and EGP)](polynomially-exponentially-generated-powers.md)
+- [Quantified constraint satisfaction QCSP(Γ) over a finite constraint language](quantified-csp-over-finite-language.md)
 
 ## Proof depends on
 
-- [The Chen Conjecture on the complexity of QCSP](chen-conjecture-qcsp.md)
 - [Zhuk: every finite algebra has either polynomially or exponentially generated powers](zhuk-pgp-egp-dichotomy.md)
 - [Bulatov and Zhuk: the CSP dichotomy theorem for finite templates](../finite-domain-csp-dichotomy/bulatov-zhuk-csp-dichotomy-theorem.md)
 

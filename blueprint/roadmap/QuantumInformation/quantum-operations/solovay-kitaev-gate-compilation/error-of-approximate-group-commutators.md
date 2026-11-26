@@ -10,10 +10,6 @@ $$
 
 Write $V = I + A$, $\tilde V = V + E$ and similarly for $W$. Expanding the commutator, all terms linear in the errors $E$ that are not multiplied by $A$ or $B$ cancel because $[I, \cdot] = 0$; the remaining linear terms carry a factor of size $r$, and the rest are quadratic in the errors.
 
-## Depends on
-
-- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
-
 ## Proof depends on
 
 - [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)

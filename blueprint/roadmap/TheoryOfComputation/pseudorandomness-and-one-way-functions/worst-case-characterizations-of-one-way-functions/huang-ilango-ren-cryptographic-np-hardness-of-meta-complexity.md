@@ -14,7 +14,6 @@ In item 1, a formula $\varphi$ is mapped to $x$ a random string and $y$ a list o
 
 ## Proof depends on
 
-- [Witness encryption for an NP relation](witness-encryption-for-np.md)
 - [Few strings have small complexity](../../kolmogorov-complexity/incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
 
 ## Sources

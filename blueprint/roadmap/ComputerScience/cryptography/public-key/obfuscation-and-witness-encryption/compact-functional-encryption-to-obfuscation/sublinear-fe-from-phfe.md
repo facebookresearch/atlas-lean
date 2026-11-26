@@ -11,12 +11,12 @@ Encrypt $x$ with a lattice-based encryption whose decryption, combined with a ra
 - [Partially hiding functional encryption for degree-two private computations](partially-hiding-fe.md)
 - [Structured-seed pseudorandom generators](../obfuscation-from-well-founded-assumptions/structured-seed-prg.md)
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
-- [Degree-3 decomposable randomized encodings of log-depth computations](nc0-randomized-encoding.md)
+- [Single-key weakly compact public-key functional encryption](weakly-compact-fe.md)
 
 ## Proof depends on
 
+- [Degree-3 decomposable randomized encodings of log-depth computations](nc0-randomized-encoding.md)
 - [Partially hiding FE for degree-two private computations from SXDH](phfe-from-sxdh.md)
-- [Structured-seed pseudorandom generators](../obfuscation-from-well-founded-assumptions/structured-seed-prg.md)
 
 ## Sources
 

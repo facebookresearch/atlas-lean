@@ -9,11 +9,9 @@ By the Margulis-Russo formula, $\frac{d}{dp}\mu_p(\mathcal{F})$ is the total inf
 ## Depends on
 
 - [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
-- [KKL inequality for $p$-biased measures](../../boolean-functions/kahn-kalai-linial-inequality/kkl-pbiased.md)
 
 ## Proof depends on
 
-- [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
 - [KKL inequality for $p$-biased measures](../../boolean-functions/kahn-kalai-linial-inequality/kkl-pbiased.md)
 
 ## Sources

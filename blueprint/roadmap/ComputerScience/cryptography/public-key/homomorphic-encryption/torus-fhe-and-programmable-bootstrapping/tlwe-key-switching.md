@@ -10,10 +10,6 @@ The subtracted combination encrypts $\sum_{i}\tilde{a}'_is'_i$ for the rounded $
 
 - [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
 
-## Proof depends on
-
-- [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
-
 ## Sources
 
 - Ilaria Chillotti, Nicolas Gama, Mariya Georgieva, Malika Izabachène, "TFHE: Fast Fully Homomorphic Encryption over the Torus", Journal of Cryptology (2020), IACR ePrint 2018/421.

@@ -9,10 +9,13 @@ The augmented circuit for $F_j$ checks the program counter, folds the incoming f
 ## Depends on
 
 - [Non-uniform incrementally verifiable computation](non-uniform-ivc.md)
-- [Nova: IVC with constant recursion overhead from folding](../relaxed-r1cs-folding-schemes/nova-ivc.md)
+- [Folding scheme for an NP relation](../relaxed-r1cs-folding-schemes/folding-scheme.md)
+- [Relaxed R1CS instances with slack vector and scalar](../relaxed-r1cs-folding-schemes/relaxed-r1cs.md)
+- [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
 
 ## Proof depends on
 
+- [Nova: IVC with constant recursion overhead from folding](../relaxed-r1cs-folding-schemes/nova-ivc.md)
 - [Non-interactive folding via Fiat–Shamir in the random oracle model](../relaxed-r1cs-folding-schemes/nova-nifs.md)
 - [Nova's folding scheme for committed relaxed R1CS](../relaxed-r1cs-folding-schemes/nova-folding-theorem.md)
 

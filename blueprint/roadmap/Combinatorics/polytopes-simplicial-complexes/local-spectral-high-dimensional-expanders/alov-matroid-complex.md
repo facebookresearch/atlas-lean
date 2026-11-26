@@ -8,13 +8,13 @@ Links of an independence complex are independence complexes of contractions, so 
 
 ## Depends on
 
-- [Alev–Lau local-to-global bound for the down-up walk](alev-lau-local-to-global.md)
 - [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
+- [Up-down and down-up random walks on a weighted complex](up-down-walks.md)
+- [Link of a face in a weighted complex](link-of-face.md)
 
 ## Proof depends on
 
 - [Alev–Lau local-to-global bound for the down-up walk](alev-lau-local-to-global.md)
-- [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
 
 ## Sources
 

@@ -8,8 +8,8 @@ Given $L\in\mathsf{CL}\cap\mathsf{P}$ with $\mathsf{CL}$ machine $M$, apply the 
 
 ## Depends on
 
-- [Cook–Li–Mertz–Pyne compress-or-compute: a long-running catalytic computation compresses its own tape](clmp-runtime-compress-or-compute.md)
 - [Polynomial time on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/p.md)
+- [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 
 ## Proof depends on
 

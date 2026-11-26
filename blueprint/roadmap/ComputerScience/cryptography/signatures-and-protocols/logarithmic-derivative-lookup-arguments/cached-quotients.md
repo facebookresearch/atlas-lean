@@ -14,13 +14,12 @@ Expand $A(X)(T(X)+\beta)-m(X)=\sum_iA_iL_i(X)(T(X)-t_i)+\sum_iL_i(X)\bigl(A_i(t_
 
 ## Depends on
 
-- [Lagrange basis over a multiplicative subgroup](../plonkish-polynomial-iops/lagrange-basis-subgroup.md)
-- [Logarithmic-derivative characterization of set inclusion](logup-lemma.md)
 - [Security of KZG polynomial commitments](../zero-knowledge-and-arguments/security-of-kzg-polynomial-commitments.md)
 
 ## Proof depends on
 
 - [Lagrange basis over a multiplicative subgroup](../plonkish-polynomial-iops/lagrange-basis-subgroup.md)
+- [Logarithmic-derivative characterization of set inclusion](logup-lemma.md)
 - [Vanishing on a multiplicative subgroup and the quotient test](../plonkish-polynomial-iops/subgroup-vanishing-quotient.md)
 
 ## Sources

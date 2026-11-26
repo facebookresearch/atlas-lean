@@ -16,11 +16,13 @@ The $O(\log n)$ leakage can be absorbed by guessing the $k(n)=O(\log n)$ advice 
 
 - [Computational knowledge complexity k(n) of an interactive proof](computational-knowledge-complexity.md)
 - [Auxiliary-input one-way functions](auxiliary-input-one-way-functions.md)
+- [GapMCSP[s,c], GapK[s,c] and weak versus strong average-case hardness on a distribution](gap-meta-complexity-and-weak-strong-average-case-hardness.md)
+- [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
+- [Zero-knowledge interactive proofs](../../../ComputerScience/cryptography/signatures-and-protocols/zero-knowledge-and-arguments/zero-knowledge-interactive-proofs.md)
 
 ## Proof depends on
 
 - [Hirahara–Nanashima: one-way functions exist iff NP ⊆ CZK and NP is worst-case hard (converse of Goldreich–Micali–Wigderson)](hirahara-nanashima-owf-iff-np-in-czk.md)
-- [Auxiliary-input one-way functions](auxiliary-input-one-way-functions.md)
 
 ## Sources
 

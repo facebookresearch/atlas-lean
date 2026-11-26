@@ -9,10 +9,7 @@ For each Chvátal-Gomory cut $a \cdot x \ge \lceil b \rceil$ derived from $a \cd
 ## Depends on
 
 - [The stabbing planes proof system](stabbing-planes-system.md)
-
-## Proof depends on
-
-- [The stabbing planes proof system](stabbing-planes-system.md)
+- [Krajíček's R(CP): resolution over linear inequalities](rcp-system.md)
 
 ## Sources
 

@@ -4,7 +4,6 @@
 - [Sunflower-free families have spread links](sunflower-free-families-have-spread-restrictions.md)
 - [Robust sunflowers](robust-sunflowers-and-satisfying-systems.md)
 - [Spread lemma: random sets of moderate density contain members of spread families](spread-lemma-random-sets-contain-members-of-spread-families.md)
-- [Spread form of the Erdős-Rado sunflower conjecture](erdos-rado-sunflower-conjecture-in-spread-form.md)
 - [Robust sunflowers contain sunflowers](robust-sunflowers-contain-sunflowers.md)
 - [Spread families contain many pairwise disjoint members](spread-families-contain-many-pairwise-disjoint-members.md)
 - [Rossman's robust sunflower lemma and monotone clique lower bounds](rossman-robust-sunflower-lemma.md)

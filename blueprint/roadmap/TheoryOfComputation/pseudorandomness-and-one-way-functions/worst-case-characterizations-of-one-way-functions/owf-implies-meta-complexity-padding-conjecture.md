@@ -14,7 +14,6 @@ Under such a one-way function, approximating $\mathrm{dpK}^{\mathrm{poly}}$ is $
 ## Proof depends on
 
 - [Hirahara: one-way functions exist iff approximating distributional Kolmogorov complexity is NP-hard and NP is worst-case hard](hirahara-owf-iff-np-hardness-of-dk.md)
-- [The Meta-Complexity Padding Conjecture](meta-complexity-padding-conjecture.md)
 
 ## Sources
 

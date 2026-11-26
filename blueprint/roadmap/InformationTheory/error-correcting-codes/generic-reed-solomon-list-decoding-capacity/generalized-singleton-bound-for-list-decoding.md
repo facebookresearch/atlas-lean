@@ -17,11 +17,6 @@ Puncture $C$ on its first $\log_{|\Sigma|}|C| - 1$ coordinates: by pigeonhole $L
 - [List-decodable code](../list-decoding/is-list-decodable.md)
 - [Singleton bound](../bounds-on-code-size/singleton-bound.md)
 
-## Proof depends on
-
-- [List-decodable code](../list-decoding/is-list-decodable.md)
-- [Singleton bound](../bounds-on-code-size/singleton-bound.md)
-
 ## Sources
 
 - Chong Shangguan, Itzhak Tamo, "Combinatorial list-decoding of Reed-Solomon codes beyond the Johnson radius", STOC (2020); arXiv:1911.01502.

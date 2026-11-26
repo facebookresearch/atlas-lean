@@ -15,12 +15,10 @@ The rate bound counts constraints: each of the $|G|$ vertices imposes $\Delta^2 
 ## Depends on
 
 - [Tensor codes on the squares of a left-right Cayley complex](square-complex-tensor-code.md)
-- [Spectral expansion of the two Cayley graphs implies square-complex expansion](lr-complex-spectral.md)
-- [Expander code distance](../expander-code-distance.md)
+- [Left-right Cayley complexes](left-right-cayley-complex.md)
 
 ## Proof depends on
 
-- [Tensor codes on the squares of a left-right Cayley complex](square-complex-tensor-code.md)
 - [Spectral expansion of the two Cayley graphs implies square-complex expansion](lr-complex-spectral.md)
 - [Expander code distance](../expander-code-distance.md)
 

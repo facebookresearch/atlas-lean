@@ -8,12 +8,12 @@ One direction is the $\mathrm{FP}^{\mathrm{NP}}$ framework applied to Avoid for 
 
 ## Depends on
 
-- [Ren–Santhanam–Wang: FP^NP algorithms for C-Avoid from circuit-analysis data structures](rsw-avoid-from-circuit-analysis.md)
-- [Korten: P^NP algorithms for Avoid are equivalent to 2^Ω(n) circuit lower bounds for E^NP](korten-enp-lower-bounds-equivalence.md)
+- [The class E](../../time-and-space-complexity-classes/e.md)
 
 ## Proof depends on
 
 - [Ren–Santhanam–Wang: FP^NP algorithms for C-Avoid from circuit-analysis data structures](rsw-avoid-from-circuit-analysis.md)
+- [Korten: P^NP algorithms for Avoid are equivalent to 2^Ω(n) circuit lower bounds for E^NP](korten-enp-lower-bounds-equivalence.md)
 
 ## Sources
 

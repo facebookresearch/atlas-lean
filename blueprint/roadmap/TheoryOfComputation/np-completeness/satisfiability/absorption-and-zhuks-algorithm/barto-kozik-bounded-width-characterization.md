@@ -8,9 +8,7 @@ Necessity: if the variety admits type 1 or 2, a module over a finite ring, hence
 
 ## Depends on
 
-- [Barto–Kozik Absorption Theorem for linked subdirect products of Taylor algebras](barto-kozik-absorption-theorem.md)
-- [Maróti–McKenzie: finite Taylor algebras have weak near-unanimity terms](../finite-domain-csp-dichotomy/maroti-mckenzie-taylor-implies-wnu.md)
-- [Cycle-consistent, linked and irreducible CSP instances](cycle-consistent-linked-irreducible-instances.md)
+- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](../finite-domain-csp-dichotomy/wnu-taylor-siggers-cyclic-operations.md)
 
 ## Proof depends on
 

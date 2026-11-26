@@ -10,10 +10,6 @@ Take $S$ maximizing $|\mathcal{F}_S|\,\kappa^{|S|}$ (with $S = \emptyset$ allowe
 
 - [Spread families and spread measures](kappa-spread-families-and-measures.md)
 
-## Proof depends on
-
-- [Spread families and spread measures](kappa-spread-families-and-measures.md)
-
 ## Sources
 
 - Ryan Alweiss, Shachar Lovett, Kewen Wu, Jiapeng Zhang, "Improved bounds for the sunflower lemma", Annals of Mathematics 194(3) (2021), STOC (2020); arXiv:1908.08483.

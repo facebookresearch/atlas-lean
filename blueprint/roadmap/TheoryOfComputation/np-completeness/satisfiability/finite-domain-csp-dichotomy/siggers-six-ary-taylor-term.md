@@ -9,10 +9,11 @@ Assuming a Taylor term, the free algebra on two generators has no projection-lik
 ## Depends on
 
 - [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
+- [Cores of finite relational structures](cores-of-finite-relational-structures.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
 
 ## Proof depends on
 
-- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
 - [Bulatov–Jeavons–Krokhin: a core with no Taylor polymorphism has an NP-complete CSP](bulatov-jeavons-krokhin-no-taylor-np-complete.md)
 
 ## Sources

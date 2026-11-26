@@ -8,14 +8,12 @@ By the rate-of-polarization theorem at least $RN$ indices satisfy $Z(W_N^{(i)}) 
 
 ## Depends on
 
-- [Arikan-Telatar: rate of polarization](rate-of-channel-polarization.md)
 - [Polar codes and successive cancellation decoding](polar-codes-and-successive-cancellation-decoding.md)
-- [Shannon's channel coding theorem, achievability](../shannon-s-channel-coding-theorem/channel-coding-achievability.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
 
 ## Proof depends on
 
 - [Arikan-Telatar: rate of polarization](rate-of-channel-polarization.md)
-- [Polar codes and successive cancellation decoding](polar-codes-and-successive-cancellation-decoding.md)
 - [Shannon's channel coding theorem, achievability](../shannon-s-channel-coding-theorem/channel-coding-achievability.md)
 
 ## Sources

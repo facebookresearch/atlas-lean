@@ -16,10 +16,6 @@ View acceptance probabilities through the block matrix $L=I-W$ built from the tr
 
 - [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
 
-## Proof depends on
-
-- [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
-
 ## Sources
 
 - Gil Cohen, Dean Doron, Oren Renard, Ori Sberlo and Amnon Ta-Shma, "Error Reduction for Weighted PRGs Against Read Once Branching Programs", CCC (2021), ECCC TR21-020.

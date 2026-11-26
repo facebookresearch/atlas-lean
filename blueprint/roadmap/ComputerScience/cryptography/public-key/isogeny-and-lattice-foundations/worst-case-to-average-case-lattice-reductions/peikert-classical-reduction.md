@@ -8,7 +8,6 @@ Replace the quantum step by a classical one that works only for the decisional p
 
 ## Depends on
 
-- [Classical step of Regev's reduction: BDD on the dual from an LWE oracle](regev-classical-step.md)
 - [Approximate lattice problems GapSVP and SIVP](gapsvp-and-sivp.md)
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 

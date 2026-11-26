@@ -8,8 +8,8 @@ Replace the uncertainty argument based on many logical qubits by a counting argu
 
 ## Depends on
 
-- [NLTS theorem (Anshu-Breuckmann-Nirkhe)](nlts-hamiltonians-from-good-quantum-codes.md)
-- [Clustering of low-syndrome strings for codes with small-set boundary expansion](clustering-of-low-syndrome-strings.md)
+- [CSS code Hamiltonians of quantum LDPC codes](css-code-hamiltonians.md)
+- [The NLTS property and the Freedman-Hastings conjecture](no-low-energy-trivial-states-property.md)
 
 ## Proof depends on
 

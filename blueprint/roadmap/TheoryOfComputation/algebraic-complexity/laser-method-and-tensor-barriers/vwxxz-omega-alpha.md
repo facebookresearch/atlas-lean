@@ -14,16 +14,12 @@ Extend asymmetric hashing so that each level can choose which of the three sides
 
 ## Depends on
 
-- [Duan–Wu–Zhou: omega < 2.371866, breaking the Coppersmith–Winograd barrier](dwz-omega.md)
-- [Vassilevska Williams–Xu–Xu–Zhou upper bound for matrix multiplication](../matrix-multiplication-exponent/vassilevska-williams-xu-xu-zhou2023-uppe.md)
 - [Dual matrix multiplication exponent](../matrix-multiplication-exponent/dual-matrix-multiplication-exponent.md)
-- [Alman–Duan–Vassilevska Williams–Xu–Xu–Zhou upper bound for matrix multiplication](../matrix-multiplication-exponent/alman-duan-vassilevska-williams-xu-xu-zh.md)
 
 ## Proof depends on
 
 - [Duan–Wu–Zhou: omega < 2.371866, breaking the Coppersmith–Winograd barrier](dwz-omega.md)
 - [Vassilevska Williams–Xu–Xu–Zhou upper bound for matrix multiplication](../matrix-multiplication-exponent/vassilevska-williams-xu-xu-zhou2023-uppe.md)
-- [Dual matrix multiplication exponent](../matrix-multiplication-exponent/dual-matrix-multiplication-exponent.md)
 - [Alman–Duan–Vassilevska Williams–Xu–Xu–Zhou upper bound for matrix multiplication](../matrix-multiplication-exponent/alman-duan-vassilevska-williams-xu-xu-zh.md)
 
 ## Sources

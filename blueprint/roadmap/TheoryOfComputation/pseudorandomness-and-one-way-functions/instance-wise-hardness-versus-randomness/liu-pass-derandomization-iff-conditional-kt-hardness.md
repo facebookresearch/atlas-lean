@@ -14,11 +14,9 @@ This is a full characterization of $\mathrm{prBPP}=\mathrm{prP}$ by the hardness
 ## Depends on
 
 - [Conditional Levin–Kolmogorov complexity Kt(x | z) and the gap problem GapMcKtP](conditional-levin-kt-gap-problem.md)
-- [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
 
 ## Proof depends on
 
-- [Conditional Levin–Kolmogorov complexity Kt(x | z) and the gap problem GapMcKtP](conditional-levin-kt-gap-problem.md)
 - [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
 - [Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP](../nisan-wigderson.md)
 

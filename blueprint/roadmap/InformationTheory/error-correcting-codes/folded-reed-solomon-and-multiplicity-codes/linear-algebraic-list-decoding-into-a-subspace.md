@@ -16,12 +16,9 @@ Interpolate a polynomial that is linear in the $y$-variables, $Q = A_0(x) + A_1(
 
 - [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
 - [Univariate multiplicity codes](univariate-multiplicity-codes.md)
-- [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
 
 ## Proof depends on
 
-- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
-- [Univariate multiplicity codes](univariate-multiplicity-codes.md)
 - [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
 
 ## Sources

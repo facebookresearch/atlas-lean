@@ -16,10 +16,6 @@ The univariate polynomial $\prod_i (1 + t x_i) = \sum_{d=0}^{n} e_d(x) t^d$ has 
 
 - [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
 
-## Proof depends on
-
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
-
 ## Sources
 
 - M. Ben-Or, as presented in A. Shpilka, A. Wigderson, "Depth-3 arithmetic circuits over fields of characteristic zero", Computational Complexity 10 (2001) 1-27.

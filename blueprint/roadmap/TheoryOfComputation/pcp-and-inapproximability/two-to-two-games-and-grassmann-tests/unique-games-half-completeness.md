@@ -8,13 +8,11 @@ Given a $2$-to-$2$ game of value at least $1 - \varepsilon$, replace each $2$-to
 
 ## Depends on
 
-- [The 2-to-2 Games Theorem (imperfect completeness)](two-to-two-theorem.md)
 - [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 
 ## Proof depends on
 
 - [The 2-to-2 Games Theorem (imperfect completeness)](two-to-two-theorem.md)
-- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 
 ## Sources
 

@@ -12,7 +12,7 @@ Multiply the three-term recurrence for $K_k(x)$ by $K_k(y)/\binom{n}{k}$, subtra
 
 ## Depends on
 
-- [Orthogonality of Krawtchouk polynomials](orthogonality-of-krawtchouk-polynomials.md)
+- [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
 
 ## Proof depends on
 

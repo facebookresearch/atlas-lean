@@ -14,9 +14,8 @@ The first statement is the asymptotic sum inequality applied to the direct sums 
 
 ## Depends on
 
-- [Coppersmith–Winograd hashing with progression-free sets](salem-spencer-hashing.md)
-- [The Coppersmith–Winograd tensor has border rank q+2](cw-border-rank.md)
-- [Coppersmith–Winograd 1990 bound on the square exponent](../matrix-multiplication-exponent/coppersmith-winograd1990-upper.md)
+- [The Coppersmith–Winograd tensor](cw-tensor.md)
+- [The value of a tensor in the laser method](tensor-value.md)
 
 ## Proof depends on
 

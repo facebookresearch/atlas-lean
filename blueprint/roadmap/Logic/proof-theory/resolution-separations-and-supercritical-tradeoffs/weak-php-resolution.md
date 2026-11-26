@@ -14,13 +14,11 @@ Raz proved a $2^{n^{\varepsilon}}$ bound by a pigeon-dance restriction argument 
 
 ## Depends on
 
-- [Haken's lower bound for the pigeonhole principle](../../propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
 - [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Proof depends on
 
 - [Haken's lower bound for the pigeonhole principle](../../propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
-- [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Sources
 

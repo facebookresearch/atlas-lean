@@ -8,7 +8,7 @@ Take $k = \varepsilon\sqrt{n}$ and $\ell = n^{3/2}/\varepsilon'$. Every $k$-th o
 
 ## Depends on
 
-- [Shifted partials of a product of low-degree polynomials](spd-product-upper-bound.md)
+- [Homogeneous depth-four circuits with bounded bottom fan-in](../depth-reduction-and-chasms/homogeneous-depth-four.md)
 
 ## Proof depends on
 

@@ -10,10 +10,7 @@ Let $T_j$ be the running time of the depth-$j$ extractor; then $T_0=t$ and $T_j\
 
 - [Proof-carrying data for a compliance predicate](pcd-scheme.md)
 - [Knowledge soundness](../zero-knowledge-and-arguments/knowledge-soundness.md)
-
-## Proof depends on
-
-- [Knowledge soundness](../zero-knowledge-and-arguments/knowledge-soundness.md)
+- [Incrementally verifiable computation scheme for an iterated function](ivc-scheme.md)
 
 ## Sources
 

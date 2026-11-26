@@ -16,10 +16,6 @@ The commutation $H_X H_Z^{\top} = H_1 \otimes H_2^{\top} + H_1 \otimes H_2^{\top
 
 - [Quantum LDPC code families and asymptotically good quantum codes](../../../QuantumInformation/quantum-error-correction/homological-quantum-ldpc-codes/quantum-ldpc-code-families-and-good-codes.md)
 
-## Proof depends on
-
-- [Quantum LDPC code families and asymptotically good quantum codes](../../../QuantumInformation/quantum-error-correction/homological-quantum-ldpc-codes/quantum-ldpc-code-families-and-good-codes.md)
-
 ## Sources
 
 - J.-P. Tillich, G. Zémor, "Quantum LDPC codes with positive rate and minimum distance proportional to the square root of the blocklength", IEEE Transactions on Information Theory 60 (2014) 1193-1202.

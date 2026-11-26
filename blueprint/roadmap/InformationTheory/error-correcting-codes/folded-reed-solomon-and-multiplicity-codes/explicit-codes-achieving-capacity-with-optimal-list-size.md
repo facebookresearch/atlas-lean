@@ -8,9 +8,9 @@ Apply the Chen-Zhang theorem with $L = \lceil 2/\varepsilon \rceil$ and $s = \lc
 
 ## Depends on
 
-- [Chen-Zhang: explicit FRS and multiplicity codes achieve relaxed generalized Singleton bounds](folded-reed-solomon-codes-achieve-relaxed-generalized-singleton-bounds.md)
-- [Generalized Singleton bound for list decoding (Shangguan-Tamo)](../generic-reed-solomon-list-decoding-capacity/generalized-singleton-bound-for-list-decoding.md)
-- [List-decoding capacity, converse](../list-decoding/exists-many-in-ball.md)
+- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
+- [Univariate multiplicity codes](univariate-multiplicity-codes.md)
+- [List-decodable code](../list-decoding/is-list-decodable.md)
 
 ## Proof depends on
 

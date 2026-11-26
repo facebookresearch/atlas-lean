@@ -10,10 +10,6 @@ Ciphertexts are LWE samples with respect to a matrix encoding the recipient set 
 
 - [The evasive LWE assumption](evasive-lwe.md)
 
-## Proof depends on
-
-- [The evasive LWE assumption](evasive-lwe.md)
-
 ## Sources
 
 - Hoeteck Wee, "Optimal Broadcast Encryption and CP-ABE from Evasive Lattice Assumptions", EUROCRYPT (2022).

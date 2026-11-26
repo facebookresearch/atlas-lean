@@ -13,8 +13,6 @@ For the nontrivial direction take a counterexample $(R,\mathbf{A},\mathbf{B})$ w
 
 ## Proof depends on
 
-- [Absorbing and binary absorbing subuniverses of a finite algebra](absorbing-and-binary-absorbing-subuniverses.md)
-- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](../finite-domain-csp-dichotomy/wnu-taylor-siggers-cyclic-operations.md)
 - [Bulatov–Jeavons–Krokhin: a core with no Taylor polymorphism has an NP-complete CSP](../finite-domain-csp-dichotomy/bulatov-jeavons-krokhin-no-taylor-np-complete.md)
 
 ## Sources

@@ -11,11 +11,6 @@ Homogenize the circuit, then for every pair of gates $u, v$ define the partial d
 - [Arithmetic circuit](../arithmetic-circuits/arithmetic-circuit.md)
 - [Valiant's VP versus VNP conjecture](../valiant-s-vp-versus-vnp-conjecture.md)
 
-## Proof depends on
-
-- [Arithmetic circuit](../arithmetic-circuits/arithmetic-circuit.md)
-- [Valiant's VP versus VNP conjecture](../valiant-s-vp-versus-vnp-conjecture.md)
-
 ## Sources
 
 - L. G. Valiant, S. Skyum, S. Berkowitz, C. Rackoff, "Fast parallel computation of polynomials using few processors", SIAM Journal on Computing 12 (1983) 641-644.

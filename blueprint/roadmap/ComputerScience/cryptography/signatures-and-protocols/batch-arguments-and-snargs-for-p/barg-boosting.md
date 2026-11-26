@@ -8,13 +8,12 @@ Recursively batch: split the instances into groups, prove each group with the we
 
 ## Depends on
 
-- [Batch arguments for NP from LWE](cjj-barg-from-lwe.md)
 - [Somewhere extractable (somewhere statistically binding) hash functions](somewhere-extractable-hash.md)
+- [Non-interactive batch arguments for NP](batch-argument.md)
 
 ## Proof depends on
 
 - [Batch arguments for NP from LWE](cjj-barg-from-lwe.md)
-- [Somewhere extractable (somewhere statistically binding) hash functions](somewhere-extractable-hash.md)
 
 ## Sources
 

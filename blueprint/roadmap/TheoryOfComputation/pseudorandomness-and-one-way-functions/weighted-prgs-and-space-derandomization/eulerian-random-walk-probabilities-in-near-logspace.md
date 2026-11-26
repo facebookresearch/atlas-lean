@@ -9,7 +9,6 @@ Powering the random-walk matrix is reduced to inverting Eulerian Laplacians of c
 ## Depends on
 
 - [Probability of an event for a random walk on a regular graph](../../../GraphTheory/graph-families-and-operations/expander-graphs/walk-prob.md)
-- [Spectral approximation of graphs](../../../ComputerScience/graph-algorithms/graph-algorithm-bounds/spectral-approximation-of-graphs.md)
 
 ## Proof depends on
 

@@ -8,7 +8,7 @@ Refine the Solovay-Kitaev recursion using the Lie algebra structure: approximate
 
 ## Depends on
 
-- [Solovay-Kitaev theorem](solovay-kitaev-theorem.md)
+- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
 
 ## Proof depends on
 

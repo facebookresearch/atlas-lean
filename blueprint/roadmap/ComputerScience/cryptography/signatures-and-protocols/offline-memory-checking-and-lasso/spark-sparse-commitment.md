@@ -14,14 +14,14 @@ The identity is the multilinear-extension formula applied to the sparse support.
 
 ## Depends on
 
-- [Multiset equality certifies read-correctness of memory](memory-checking-soundness.md)
-- [Multiset equality via randomized product fingerprints](multiset-fingerprint.md)
 - [The multilinear equality polynomial on the Boolean hypercube](../plonkish-polynomial-iops/eq-polynomial.md)
 - [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
+- [Offline memory checking with timestamps](offline-memory-checking.md)
 
 ## Proof depends on
 
 - [Multiset equality certifies read-correctness of memory](memory-checking-soundness.md)
+- [Multiset equality via randomized product fingerprints](multiset-fingerprint.md)
 - [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
 
 ## Sources

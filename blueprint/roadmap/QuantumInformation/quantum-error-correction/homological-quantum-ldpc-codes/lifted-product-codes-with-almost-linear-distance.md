@@ -11,11 +11,6 @@ Take $A$ to be a random lift (over a cyclic group of order $\ell$) of a constant
 - [Lifted product codes over group algebras](lifted-product-codes-over-group-algebras.md)
 - [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
 
-## Proof depends on
-
-- [Lifted product codes over group algebras](lifted-product-codes-over-group-algebras.md)
-- [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
-
 ## Sources
 
 - Pavel Panteleev, Gleb Kalachev, "Quantum LDPC codes with almost linear minimum distance", IEEE Transactions on Information Theory 68(1) (2022); arXiv:2012.04068.

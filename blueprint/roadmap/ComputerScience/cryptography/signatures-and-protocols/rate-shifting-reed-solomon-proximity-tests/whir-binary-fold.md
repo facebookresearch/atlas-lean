@@ -15,7 +15,6 @@ The coefficient of $X^{2i}$ in $\hat{f}$ is the coefficient of the monomial with
 ## Depends on
 
 - [Constrained Reed–Solomon codes with sum-check constraints](constrained-rs-code.md)
-- [k-wise folding of Reed–Solomon codewords reduces degree](rs-folding-operator.md)
 
 ## Proof depends on
 

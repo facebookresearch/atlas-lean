@@ -15,11 +15,9 @@ Following the completeness paradigm for first-order model checking in P, the for
 ## Depends on
 
 - [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
-- [SETH implies the Orthogonal Vectors hypothesis](../fine-grained-hypotheses/seth-implies-the-orthogonal-vectors-hypothesis.md)
 
 ## Proof depends on
 
-- [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
 - [SETH implies the Orthogonal Vectors hypothesis](../fine-grained-hypotheses/seth-implies-the-orthogonal-vectors-hypothesis.md)
 
 ## Sources

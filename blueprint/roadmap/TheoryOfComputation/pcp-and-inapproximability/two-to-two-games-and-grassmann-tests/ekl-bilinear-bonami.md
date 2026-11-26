@@ -12,11 +12,6 @@ As a consequence, global sets in the bilinear scheme expand near-perfectly, whic
 
 Decompose $f$ by successive conditioning on images of basis vectors and prove a hypercontractive estimate for each derivative using the fact that restrictions of global functions are global; the main step is a level-$d$ inequality obtained by induction on $d$ with a careful accounting of the $q$-analogue of influences. Globalness replaces the missing small-influence hypothesis that fails in non-product spaces.
 
-## Depends on
-
-- [Equivalence of Grassmann, shortcode and bilinear small-set expansion](shortcode-equivalence.md)
-- [Hypercontractivity Theorem (Bonami–Beckner)](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/hypercontractivity-theorem.md)
-
 ## Proof depends on
 
 - [Equivalence of Grassmann, shortcode and bilinear small-set expansion](shortcode-equivalence.md)

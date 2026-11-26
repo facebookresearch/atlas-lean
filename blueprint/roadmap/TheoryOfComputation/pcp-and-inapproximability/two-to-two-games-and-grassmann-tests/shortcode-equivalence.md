@@ -9,11 +9,10 @@ The bilinear scheme is the set of $\ell$-dimensional subspaces of $\mathbb{F}_2^
 ## Depends on
 
 - [Zoom-in and zoom-out subgraphs of the Grassmann graph](grassmann-zoom.md)
-- [Non-expanding sets in the Grassmann graph (Khot–Minzer–Safra)](../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/theorem-1-12.md)
+- [The Grassmann linearity agreement test](grassmann-linearity-test.md)
 
 ## Proof depends on
 
-- [Zoom-in and zoom-out subgraphs of the Grassmann graph](grassmann-zoom.md)
 - [Non-expanding sets in the Grassmann graph (Khot–Minzer–Safra)](../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/theorem-1-12.md)
 
 ## Sources

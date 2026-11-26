@@ -8,7 +8,7 @@ Inverses are replaced by approximate inverses built from words whose product ave
 
 ## Depends on
 
-- [Solovay-Kitaev theorem](solovay-kitaev-theorem.md)
+- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
 
 ## Proof depends on
 

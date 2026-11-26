@@ -15,10 +15,7 @@ Use the cone construction: for each vertex $v$, the cochain $f_v = f + \delta(\i
 ## Depends on
 
 - [Coboundary expansion of a simplicial complex](coboundary-expansion.md)
-
-## Proof depends on
-
-- [Coboundary expansion of a simplicial complex](coboundary-expansion.md)
+- [Cochains and the coboundary operator over F_2](cochains-coboundary.md)
 
 ## Sources
 

@@ -8,10 +8,8 @@ Packing lets one encoding symbol over $\mathcal{T}_\tau$ carry many small-field 
 
 ## Depends on
 
-- [Packing small-field elements into tower-field elements](tower-packing.md)
-- [Additive FFT in the novel polynomial basis](additive-fft.md)
 - [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [Wiedemann towers of binary fields](binary-tower.md)
 
 ## Proof depends on
 

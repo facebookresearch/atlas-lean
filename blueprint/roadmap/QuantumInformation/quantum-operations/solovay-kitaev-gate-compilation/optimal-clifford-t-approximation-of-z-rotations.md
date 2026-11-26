@@ -6,11 +6,6 @@ There is a probabilistic polynomial-time algorithm (under a number-theoretic fac
 
 Unitaries exactly representable over Clifford+T are the matrices over the ring $\mathbb{Z}[1/\sqrt2, i]$; their T-count equals the least denominator exponent. Approximation reduces to enumerating lattice points of $\mathbb{Z}[\omega]$ in a thin slice of the unit disk, found with a two-dimensional grid problem, and solving a norm equation in $\mathbb{Z}[\sqrt 2]$, which is efficient when the relevant integer can be factored.
 
-## Depends on
-
-- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
-- [Volume lower bound: logarithmic word length is necessary](volume-lower-bound-for-gate-approximation.md)
-
 ## Proof depends on
 
 - [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)

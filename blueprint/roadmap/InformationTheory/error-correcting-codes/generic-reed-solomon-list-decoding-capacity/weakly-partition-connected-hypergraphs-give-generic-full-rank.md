@@ -9,11 +9,10 @@ Full rank for generic points reduces, via a matroid-union style argument on the 
 ## Depends on
 
 - [Agreement hypergraphs and reduced intersection matrices](agreement-hypergraphs-and-intersection-matrices.md)
-- [GM-MDS theorem (Lovett; Yildiz-Hassibi)](gm-mds-theorem.md)
+- [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
 
 ## Proof depends on
 
-- [Agreement hypergraphs and reduced intersection matrices](agreement-hypergraphs-and-intersection-matrices.md)
 - [GM-MDS theorem (Lovett; Yildiz-Hassibi)](gm-mds-theorem.md)
 
 ## Sources

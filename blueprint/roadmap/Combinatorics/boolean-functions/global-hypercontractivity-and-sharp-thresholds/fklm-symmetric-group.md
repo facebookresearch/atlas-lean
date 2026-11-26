@@ -12,10 +12,6 @@ Consequently, global subsets of $S_n$ of density $\alpha$ have level-$d$ Fourier
 
 Couple the uniform permutation with a product space of independent random variables through a sequence of random transpositions and prove the estimate first for functions of low degree in the coupled product space; globalness of $f$ transfers to bounds on the generalized influences in the product space, where the KLLM-type hypercontractive inequality applies.
 
-## Depends on
-
-- [Keevash–Lifshitz–Long–Minzer: hypercontractivity for global functions](kllm-global-hypercontractivity.md)
-
 ## Proof depends on
 
 - [Keevash–Lifshitz–Long–Minzer: hypercontractivity for global functions](kllm-global-hypercontractivity.md)

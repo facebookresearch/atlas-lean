@@ -8,15 +8,12 @@ Take the union of $d$ independent uniformly random perfect matchings. The expect
 
 ## Depends on
 
-- [Finite free convolution preserves real-rootedness and obeys a root bound](finite-free-convolution-preserves-real-rootedness.md)
-- [Marcus-Spielman-Srivastava: every graph has a one-sided Ramanujan two-lift](every-bipartite-graph-has-a-ramanujan-two-lift.md)
 - [Ramanujan graphs and bipartite Ramanujan graphs](ramanujan-graphs-and-bipartite-ramanujan-graphs.md)
 
 ## Proof depends on
 
 - [Finite free convolution preserves real-rootedness and obeys a root bound](finite-free-convolution-preserves-real-rootedness.md)
 - [Marcus-Spielman-Srivastava: every graph has a one-sided Ramanujan two-lift](every-bipartite-graph-has-a-ramanujan-two-lift.md)
-- [Ramanujan graphs and bipartite Ramanujan graphs](ramanujan-graphs-and-bipartite-ramanujan-graphs.md)
 
 ## Sources
 

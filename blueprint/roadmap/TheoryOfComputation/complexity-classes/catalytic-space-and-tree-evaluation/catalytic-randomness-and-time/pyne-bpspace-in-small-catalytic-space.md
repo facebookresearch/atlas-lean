@@ -23,10 +23,6 @@ The algorithm avoids the algebraic register-program techniques. Blocks of the ca
 - [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 - [Deterministic space classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dspace.md)
 
-## Proof depends on
-
-- [Deterministic space classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dspace.md)
-
 ## Sources
 
 - Edward Pyne, "Derandomizing Logspace with a Small Shared Hard Drive", CCC (2024), LIPIcs 300, 4:1-4:20.

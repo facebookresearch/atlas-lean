@@ -9,11 +9,11 @@ Covers with few sheets correspond to small-index subgroups of the fundamental gr
 ## Depends on
 
 - [Connected covers of a simplicial complex](covers-of-complexes.md)
-- [Dikstein–Dinur: cosystolic expansion without dependence on dimension or degree](dikstein-dinur-degree-free.md)
+- [The swap complex (faces complex) of a high-dimensional expander](swap-complex.md)
+- [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
 
 ## Proof depends on
 
-- [Connected covers of a simplicial complex](covers-of-complexes.md)
 - [Dikstein–Dinur: cosystolic expansion without dependence on dimension or degree](dikstein-dinur-degree-free.md)
 
 ## Sources

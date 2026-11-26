@@ -14,13 +14,12 @@ Write the $i$-th Laplacian of a harmonic cochain $f$ as an average over $(i-1)$-
 
 ## Depends on
 
-- [Garland's method: localization of the link Laplacian quadratic form](garland-method.md)
 - [Cochains and the coboundary operator over F_2](../coboundary-and-cosystolic-expansion/cochains-coboundary.md)
+- [Link of a face in a weighted complex](link-of-face.md)
 
 ## Proof depends on
 
 - [Garland's method: localization of the link Laplacian quadratic form](garland-method.md)
-- [Cochains and the coboundary operator over F_2](../coboundary-and-cosystolic-expansion/cochains-coboundary.md)
 
 ## Sources
 

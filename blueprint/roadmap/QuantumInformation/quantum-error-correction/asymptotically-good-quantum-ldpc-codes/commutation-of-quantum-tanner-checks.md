@@ -16,10 +16,6 @@ A vertex of $V_0$ and a vertex of $V_1$ share either no square or exactly the $\
 
 - [Quantum Tanner codes](quantum-tanner-codes.md)
 
-## Proof depends on
-
-- [Quantum Tanner codes](quantum-tanner-codes.md)
-
 ## Sources
 
 - Anthony Leverrier, Gilles Zemor, "Quantum Tanner codes", FOCS (2022); arXiv:2202.13641.

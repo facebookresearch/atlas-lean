@@ -10,11 +10,7 @@ Preservation of pp-definable relations is a direct check. Conversely, given $S$ 
 
 - [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
 - [Log-space many-one reductions](../../../complexity-classes/time-and-space-complexity-classes/log-space-red.md)
-
-## Proof depends on
-
-- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
-- [Log-space many-one reductions](../../../complexity-classes/time-and-space-complexity-classes/log-space-red.md)
+- [Finite relational templates and the homomorphism problem CSP(A)](finite-templates-and-csp-of-a.md)
 
 ## Sources
 

@@ -5,7 +5,7 @@ The **Real RAM** stores real numbers in unit-cost registers and supports exact c
 - **Real 3SUM hypothesis**: for every $\varepsilon > 0$ there is no $O(n^{2-\varepsilon})$-time algorithm, on a reasonable Real RAM, that decides whether $n$ given real numbers contain $a,b,c$ with $a+b+c=0$.
 - **Real APSP hypothesis**: for every $\varepsilon > 0$ there is no $O(n^{3-\varepsilon})$-time algorithm, on a reasonable Real RAM, for all-pairs shortest paths in $n$-vertex directed graphs with real edge weights (and no negative cycles).
 
-These are stated as hypotheses. They are weaker assumptions (more believable) than their integer counterparts, since integer inputs are a special case and integer algorithms may use hashing and bit tricks unavailable to real inputs; the best known Real APSP algorithm runs in $n^3/2^{\Omega(\sqrt{\log n})}$ time.
+These are stated as hypotheses. They are weaker assumptions (more believable) than their integer counterparts, since integer inputs are a special case and integer algorithms may use hashing and bit tricks unavailable to real inputs; Real APSP can be solved in $n^3/2^{\Omega(\sqrt{\log n})}$ time.
 
 ## Depends on
 

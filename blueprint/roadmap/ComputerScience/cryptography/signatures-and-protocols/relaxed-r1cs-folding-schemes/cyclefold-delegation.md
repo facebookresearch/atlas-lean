@@ -10,6 +10,9 @@ Each step produces a secondary instance certifying one scalar multiplication; th
 
 - [Two-cycles of elliptic curves for recursive arguments](cycle-of-curves.md)
 - [Nova: IVC with constant recursion overhead from folding](nova-ivc.md)
+- [Folding scheme for an NP relation](folding-scheme.md)
+- [Relaxed R1CS instances with slack vector and scalar](relaxed-r1cs.md)
+- [Incrementally verifiable computation scheme for an iterated function](../incrementally-verifiable-computation-and-pcd/ivc-scheme.md)
 
 ## Proof depends on
 

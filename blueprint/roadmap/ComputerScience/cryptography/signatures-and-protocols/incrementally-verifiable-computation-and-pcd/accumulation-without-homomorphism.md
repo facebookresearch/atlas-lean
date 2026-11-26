@@ -10,11 +10,11 @@ A codeword-based claim is folded by a random linear combination of the two commi
 
 - [Accumulation scheme for a predicate](accumulation-scheme.md)
 - [Merkle root](../../hash-functions/merkle-trees/root.md)
-- [Reed-Solomon code](../../../../InformationTheory/error-correcting-codes/reed-solomon-codes/code.md)
+- [Incrementally verifiable computation scheme for an iterated function](ivc-scheme.md)
 
 ## Proof depends on
 
-- [Accumulation scheme for a predicate](accumulation-scheme.md)
+- [Reed-Solomon code](../../../../InformationTheory/error-correcting-codes/reed-solomon-codes/code.md)
 - [Existential soundness of Merkle inclusion proofs](../../hash-functions/merkle-trees/verify-sound.md)
 
 ## Sources

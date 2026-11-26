@@ -8,14 +8,16 @@ The obstacle is rewinding a quantum prover across many challenges, since measuri
 
 ## Depends on
 
-- [Random oracles and LWE-based hashes are collapsing](collapsing-from-random-oracle-and-lwe.md)
-- [Unruh's quantum rewinding lemma for special-sound protocols](unruh-rewinding.md)
-- [Succinct arguments from probabilistically checkable proofs](../../signatures-and-protocols/zero-knowledge-and-arguments/succinct-arguments-from-probabilistically.md)
+- [Collapsing hash functions and collapse-binding commitments](collapsing-hash.md)
+- [The quantum random oracle model](quantum-random-oracle-model.md)
+- [Succinct arguments and SNARKs](../../signatures-and-protocols/zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
+- [Knowledge soundness](../../signatures-and-protocols/zero-knowledge-and-arguments/knowledge-soundness.md)
 
 ## Proof depends on
 
 - [Random oracles and LWE-based hashes are collapsing](collapsing-from-random-oracle-and-lwe.md)
 - [Unruh's quantum rewinding lemma for special-sound protocols](unruh-rewinding.md)
+- [Succinct arguments from probabilistically checkable proofs](../../signatures-and-protocols/zero-knowledge-and-arguments/succinct-arguments-from-probabilistically.md)
 
 ## Sources
 

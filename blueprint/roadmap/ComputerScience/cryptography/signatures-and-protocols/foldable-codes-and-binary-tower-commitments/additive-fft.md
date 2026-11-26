@@ -6,10 +6,6 @@ Let $U\subseteq\mathbb{F}_{2^{k}}$ be an $\mathbb{F}_2$-linear subspace of dimen
 
 The normalized $\widehat{W}_i=W_i/W_i(\beta_i)$ are linear maps, so the polynomial splits as $P_0(\widehat{W}_{\ell-1})+\widehat{W}_{\ell-1}P_1$-style recursions on a subspace of half dimension; the two cosets of the hyperplane are handled by one butterfly per point, giving $\ell$ layers of $2^{\ell}$ operations.
 
-## Depends on
-
-- [Wiedemann towers of binary fields](binary-tower.md)
-
 ## Proof depends on
 
 - [Wiedemann towers of binary fields](binary-tower.md)

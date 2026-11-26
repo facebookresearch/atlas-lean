@@ -8,13 +8,11 @@ Li constructs advice generators and correlation breakers whose costs no longer c
 
 ## Depends on
 
-- [Correlation breakers with advice](correlation-breakers-with-advice.md)
 - [Seeded non-malleable extractors (Dodis-Wichs)](seeded-non-malleable-extractors.md)
 
 ## Proof depends on
 
 - [Correlation breakers with advice](correlation-breakers-with-advice.md)
-- [Seeded non-malleable extractors (Dodis-Wichs)](seeded-non-malleable-extractors.md)
 
 ## Sources
 

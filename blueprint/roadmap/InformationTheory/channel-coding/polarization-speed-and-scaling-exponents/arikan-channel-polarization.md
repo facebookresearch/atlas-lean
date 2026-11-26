@@ -14,7 +14,8 @@ A uniformly random index $i \le 2^n$ corresponds to a uniformly random path $B_1
 
 ## Depends on
 
-- [The polarization martingale](polarization-martingale.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
+- [Synthesized polar subchannels](synthesized-polar-subchannels.md)
 
 ## Proof depends on
 

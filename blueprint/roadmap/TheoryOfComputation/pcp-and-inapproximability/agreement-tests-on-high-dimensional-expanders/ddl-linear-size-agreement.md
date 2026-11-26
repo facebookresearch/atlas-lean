@@ -14,8 +14,7 @@ Take $\mathcal{F}_n$ to be the top faces of the symplectic-building quotients wi
 
 ## Depends on
 
-- [Dikstein–Dinur–Lubotzky: bounded-degree complexes without small connected covers](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/ddl-symplectic-no-covers.md)
-- [Bafna–Minzer / Dikstein–Dinur characterization of low-soundness direct product testing](bafna-minzer-characterization.md)
+- [Agreement tests for ensembles of local functions](agreement-test.md)
 
 ## Proof depends on
 

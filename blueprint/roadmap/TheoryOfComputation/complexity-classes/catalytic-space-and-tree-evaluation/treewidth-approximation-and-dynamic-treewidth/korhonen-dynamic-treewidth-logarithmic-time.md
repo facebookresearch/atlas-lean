@@ -20,7 +20,6 @@ The key idea is to maintain a decomposition that is "downwards well-linked": eac
 ## Proof depends on
 
 - [Korhonen–Majewski–Nadara–Pilipczuk–Sokołowski: dynamic treewidth with width 6k+5 and subpolynomial amortized update time](kmnps-dynamic-treewidth.md)
-- [Dynamic Courcelle's theorem: maintaining any fixed CMSO2 property on graphs of bounded treewidth](dynamic-courcelle-theorem-cmso2.md)
 
 ## Sources
 

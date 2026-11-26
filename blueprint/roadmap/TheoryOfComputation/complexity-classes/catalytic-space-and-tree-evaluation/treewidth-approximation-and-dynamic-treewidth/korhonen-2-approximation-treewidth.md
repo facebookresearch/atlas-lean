@@ -1,6 +1,6 @@
 # Korhonen: a single-exponential time 2-approximation for treewidth
 
-There is an algorithm that, given an $n$-vertex graph $G$ and an integer $k$, in time $2^{O(k)}\,n$ either outputs a tree decomposition of $G$ of width at most $2k+1$ or determines that $\operatorname{tw}(G) > k$. This improves the approximation ratio of $2^{O(k)}n$-time algorithms from 5 (Bodlaender et al.) to 2, matching the best known ratio of earlier algorithms that ran in time $2^{O(k)}n^{2}$ or worse.
+There is an algorithm that, given an $n$-vertex graph $G$ and an integer $k$, in time $2^{O(k)}\,n$ either outputs a tree decomposition of $G$ of width at most $2k+1$ or determines that $\operatorname{tw}(G) > k$. This improves the approximation ratio of $2^{O(k)}n$-time algorithms from 5 (Bodlaender et al.) to 2.
 
 ## Proof sketch
 
@@ -9,7 +9,7 @@ Instead of building a decomposition top-down from separators, Korhonen improves 
 ## Depends on
 
 - [FPT-approximation algorithms for treewidth](fpt-approximation-algorithms-for-treewidth.md)
-- [Balanced separators of size k+1 in graphs of treewidth at most k](balanced-separators-treewidth-k.md)
+- [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
 
 ## Proof depends on
 

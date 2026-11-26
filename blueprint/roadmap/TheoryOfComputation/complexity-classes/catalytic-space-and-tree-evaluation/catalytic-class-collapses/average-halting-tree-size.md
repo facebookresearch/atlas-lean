@@ -14,7 +14,8 @@ By disjointness of halting trees for distinct catalytic contents, the trees $T(\
 
 ## Depends on
 
-- [Halting 0-trees of different catalytic contents are disjoint and cover all reachable configurations](halting-zero-trees-disjoint-and-covering.md)
+- [Configuration graphs and halting 0-trees of a catalytic machine](configuration-graphs-and-halting-zero-trees.md)
+- [Valid catalytic machines with nondeterministic or random choices](valid-catalytic-machines-with-choices.md)
 
 ## Proof depends on
 

@@ -11,11 +11,6 @@ Given a monotone circuit, label each gate $v$ by the rectangle $\{x : v(x) = 1\}
 - [Rectangle-DAGs (dag-like communication protocols)](rectangle-dag.md)
 - [Deterministic communication complexity](../deterministic-communication-protocols/comm-complexity.md)
 
-## Proof depends on
-
-- [Rectangle-DAGs (dag-like communication protocols)](rectangle-dag.md)
-- [Deterministic communication complexity](../deterministic-communication-protocols/comm-complexity.md)
-
 ## Sources
 
 - A. A. Razborov, "Unprovability of lower bounds on circuit size in certain fragments of bounded arithmetic", Izvestiya Mathematics 59 (1995) 205-227.

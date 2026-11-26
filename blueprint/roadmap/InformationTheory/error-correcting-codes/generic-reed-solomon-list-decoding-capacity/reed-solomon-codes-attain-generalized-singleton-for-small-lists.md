@@ -8,14 +8,12 @@ Write the conditions for $L + 1$ polynomials to agree with a received word on se
 
 ## Depends on
 
-- [Generalized Singleton bound for list decoding (Shangguan-Tamo)](generalized-singleton-bound-for-list-decoding.md)
 - [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
-- [Reed–Solomon codes are list decodable up to the Johnson radius](../list-decoding/card-le-of-agree-ge.md)
+- [List-decodable code](../list-decoding/is-list-decodable.md)
 
 ## Proof depends on
 
 - [Generalized Singleton bound for list decoding (Shangguan-Tamo)](generalized-singleton-bound-for-list-decoding.md)
-- [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
 - [Reed–Solomon codes are list decodable up to the Johnson radius](../list-decoding/card-le-of-agree-ge.md)
 
 ## Sources

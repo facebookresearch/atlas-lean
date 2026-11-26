@@ -8,15 +8,12 @@ The clause-variable incidence hypergraph of a random formula with constant densi
 
 ## Depends on
 
-- [Ben-Sasson–Impagliazzo–Wigderson: near-optimal separation of tree-like and general resolution](biw-tree-vs-dag.md)
-- [Ben-Sasson–Wigderson for general resolution](../../propositional-logic/resolution-size-and-width/refutation-narrow.md)
 - [Width of a clause](../../propositional-logic/resolution-size-and-width/width.md)
 
 ## Proof depends on
 
 - [Ben-Sasson–Impagliazzo–Wigderson: near-optimal separation of tree-like and general resolution](biw-tree-vs-dag.md)
 - [Ben-Sasson–Wigderson for general resolution](../../propositional-logic/resolution-size-and-width/refutation-narrow.md)
-- [Width of a clause](../../propositional-logic/resolution-size-and-width/width.md)
 
 ## Sources
 

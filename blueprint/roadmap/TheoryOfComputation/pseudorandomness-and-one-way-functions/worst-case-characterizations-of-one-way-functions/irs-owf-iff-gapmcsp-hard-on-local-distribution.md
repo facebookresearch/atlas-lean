@@ -16,6 +16,7 @@ Item 1 implies item 3: a pseudorandom function family yields an $N^{\delta}$-loc
 
 - [GapMCSP[s,c], GapK[s,c] and weak versus strong average-case hardness on a distribution](gap-meta-complexity-and-weak-strong-average-case-hardness.md)
 - [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
+- [Locally samplable distributions on truth tables](locally-samplable-distributions.md)
 
 ## Proof depends on
 

@@ -8,13 +8,12 @@ If $f_n$ had circuits of size $s = n^{O(1)}$, the reduction to depth four would 
 
 ## Depends on
 
-- [Agrawal–Vinay–Koiran–Tavenas reduction to depth four](agrawal-vinay-tavenas.md)
 - [Valiant's VP versus VNP conjecture](../valiant-s-vp-versus-vnp-conjecture.md)
+- [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)
 
 ## Proof depends on
 
 - [Agrawal–Vinay–Koiran–Tavenas reduction to depth four](agrawal-vinay-tavenas.md)
-- [Valiant's VP versus VNP conjecture](../valiant-s-vp-versus-vnp-conjecture.md)
 
 ## Sources
 

@@ -9,11 +9,10 @@ First reduce to UNIQUE-FORWARD-EOPL (successor circuit only; solutions are sinks
 ## Depends on
 
 - [One-Permutation Discrete Contraction (OPDC): direction functions on a grid with unique fixpoints on i-slices](one-permutation-discrete-contraction.md)
-- [Hubáček–Yogev: exponential randomized query lower bound and obfuscation-based hardness for continuous local search](continuous-local-search-query-and-crypto-lower-bounds.md)
+- [UNIQUE-EOPL, the class UEOPL and PromiseUEOPL: one potential line certified by violation solutions](unique-eopl-and-ueopl.md)
 
 ## Proof depends on
 
-- [One-Permutation Discrete Contraction (OPDC): direction functions on a grid with unique fixpoints on i-slices](one-permutation-discrete-contraction.md)
 - [Hubáček–Yogev: exponential randomized query lower bound and obfuscation-based hardness for continuous local search](continuous-local-search-query-and-crypto-lower-bounds.md)
 - [END-OF-METERED-LINE and END-OF-POTENTIAL-LINE are polynomial-time equivalent, so EOPL is contained in CLS](end-of-metered-line-equivalent-to-eopl.md)
 

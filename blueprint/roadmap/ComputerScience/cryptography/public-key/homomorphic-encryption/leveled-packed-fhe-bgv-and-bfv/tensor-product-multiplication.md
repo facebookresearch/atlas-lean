@@ -10,10 +10,6 @@ Expand the product of the two decryption equations. The bound uses submultiplica
 
 - [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
 
-## Proof depends on
-
-- [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
-
 ## Sources
 
 - Zvika Brakerski, Craig Gentry, Vinod Vaikuntanathan, "(Leveled) Fully Homomorphic Encryption without Bootstrapping", ITCS (2012), IACR ePrint 2011/277.

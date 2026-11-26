@@ -8,8 +8,7 @@ Using weak partition connectivity, a bad event for a received word implies the e
 
 ## Depends on
 
-- [Weak partition connectivity gives generic full rank of intersection matrices](weakly-partition-connected-hypergraphs-give-generic-full-rank.md)
-- [Guo-Zhang: randomly punctured RS codes achieve capacity over polynomial-size fields](random-reed-solomon-codes-list-decodable-over-polynomial-fields.md)
+- [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
 
 ## Proof depends on
 

@@ -16,10 +16,6 @@ A low-memory pseudodeterministic algorithm for Find-Support-Elem yields a pseudo
 - [Pseudodeterministic algorithms for search problems (Gat–Goldwasser)](pseudodeterministic-algorithm-for-search-problem.md)
 - [Randomized streaming algorithm with $s$ bits of memory](../../../../ComputerScience/randomized-algorithms/frequency-moments-of-data-streams/streaming-algorithm.md)
 
-## Proof depends on
-
-- [Pseudodeterministic algorithms for search problems (Gat–Goldwasser)](pseudodeterministic-algorithm-for-search-problem.md)
-
 ## Sources
 
 - Shafi Goldwasser, Ofer Grossman, Sidhanth Mohanty and David P. Woodruff, "Pseudo-Deterministic Streaming", ITCS (2020), arXiv:1911.11368.

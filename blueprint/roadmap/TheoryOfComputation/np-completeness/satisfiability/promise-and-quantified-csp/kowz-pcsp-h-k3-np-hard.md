@@ -8,7 +8,7 @@ Polymorphisms $C_k^n\to G$ induce $\mathbb{Z}_2$-maps between homomorphism compl
 
 ## Depends on
 
-- [BBKO hardness criterion: minion homomorphisms to minions of bounded essential arity imply NP-hardness](bbko-bounded-essential-arity-np-hardness.md)
+- [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
 
 ## Proof depends on
 

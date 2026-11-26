@@ -8,8 +8,8 @@ Use a $t$-non-malleable extractor with seed length $O(\log n)$ applied to the fi
 
 ## Depends on
 
-- [Seeded non-malleable extractors (Dodis-Wichs)](seeded-non-malleable-extractors.md)
-- [Two-source extractors and dispersers give Ramsey graphs](two-source-extractors-give-ramsey-graphs.md)
+- [K-Ramsey graphs and bipartite K-Ramsey graphs](ramsey-graphs-and-bipartite-ramsey-graphs.md)
+- [Guessing probability, min-entropy and collision probability](../../../ComputerScience/cryptography/randomness-extraction/guessing-probability-min-entropy-and-collision.md)
 
 ## Proof depends on
 

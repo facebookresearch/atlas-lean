@@ -10,10 +10,11 @@ The universal verifier checks, inside an FHE-based private-verification shell ag
 
 - [Non-interactive batch arguments for NP](batch-argument.md)
 - [Homomorphic encryption: correctness and compactness](../../public-key/homomorphic-encryption/homomorphic-encryption-correctness-and.md)
-- [No black-box reduction proves adaptive SNARGs for NP sound from falsifiable assumptions](gentry-wichs-barrier.md)
+- [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
 
 ## Proof depends on
 
+- [No black-box reduction proves adaptive SNARGs for NP sound from falsifiable assumptions](gentry-wichs-barrier.md)
 - [Batch arguments for NP from LWE](cjj-barg-from-lwe.md)
 
 ## Sources

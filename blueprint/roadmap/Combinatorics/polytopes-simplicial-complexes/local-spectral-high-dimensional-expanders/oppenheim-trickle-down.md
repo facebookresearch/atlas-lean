@@ -15,11 +15,11 @@ Take an eigenfunction $f$ of $M$ with eigenvalue $\mu$, orthogonal to constants.
 ## Depends on
 
 - [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
-- [Garland's method: localization of the link Laplacian quadratic form](garland-method.md)
+- [Link of a face in a weighted complex](link-of-face.md)
+- [Pure weighted simplicial complexes and their face distributions](pure-weighted-complex.md)
 
 ## Proof depends on
 
-- [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
 - [Garland's method: localization of the link Laplacian quadratic form](garland-method.md)
 
 ## Sources

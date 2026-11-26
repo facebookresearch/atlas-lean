@@ -8,9 +8,7 @@ The proof is a compress-or-compress-or-random argument. First, runtime compressi
 
 ## Depends on
 
-- [Cook–Li–Mertz–Pyne compress-or-compute: a long-running catalytic computation compresses its own tape](clmp-runtime-compress-or-compute.md)
 - [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
-- [Pseudorandom generators with logarithmic seed derandomize BPP](../../../pseudorandomness-and-one-way-functions/derandomization/pseudorandom-generators-with-logarithmic-seed.md)
 
 ## Proof depends on
 

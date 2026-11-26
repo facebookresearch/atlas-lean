@@ -8,14 +8,14 @@ Induct over the circuit using the multiplication-error lemma and the analogous a
 
 ## Depends on
 
-- [Error propagation of CKKS multiplication with relinearization and rescaling](ckks-multiplication-error.md)
-- [Rounding error of CKKS encoding](ckks-encoding-error.md)
-- [Galois automorphisms rotate plaintext slots](../leveled-packed-fhe-bgv-and-bfv/galois-slot-rotations.md)
+- [CKKS encoding via the canonical embedding](canonical-embedding-encoding.md)
+- [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
 
 ## Proof depends on
 
 - [Error propagation of CKKS multiplication with relinearization and rescaling](ckks-multiplication-error.md)
 - [Rounding error of CKKS encoding](ckks-encoding-error.md)
+- [Galois automorphisms rotate plaintext slots](../leveled-packed-fhe-bgv-and-bfv/galois-slot-rotations.md)
 
 ## Sources
 

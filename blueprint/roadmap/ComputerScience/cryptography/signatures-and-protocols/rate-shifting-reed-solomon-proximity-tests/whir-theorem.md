@@ -9,15 +9,14 @@ Each round runs a few sum-check rounds to reduce the constraint, folds the funct
 ## Depends on
 
 - [Constrained Reed–Solomon codes with sum-check constraints](constrained-rs-code.md)
-- [Binary folding of multilinear-coefficient codewords as partial evaluation](whir-binary-fold.md)
 - [STIR: Reed–Solomon proximity testing with O(log d + λ·log log d) queries](stir-theorem.md)
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
 
 ## Proof depends on
 
 - [Binary folding of multilinear-coefficient codewords as partial evaluation](whir-binary-fold.md)
-- [One STIR iteration: fold, shift to a smaller domain, quotient](stir-iteration.md)
 - [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [One STIR iteration: fold, shift to a smaller domain, quotient](stir-iteration.md)
 
 ## Sources
 

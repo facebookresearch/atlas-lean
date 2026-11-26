@@ -15,11 +15,10 @@ Write the down-up and up-down walks as compositions of the up operator $U_k$ and
 ## Depends on
 
 - [Up-down and down-up random walks on simplicial complexes](up-down-random-walks-on-simplicial-complexes.md)
-- [Oppenheim's trickling-down theorem for spectral gaps](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/oppenheim-trickle-down.md)
+- [Links and local spectral expanders](links-and-local-spectral-expansion.md)
 
 ## Proof depends on
 
-- [Up-down and down-up random walks on simplicial complexes](up-down-random-walks-on-simplicial-complexes.md)
 - [Oppenheim's trickling-down theorem for spectral gaps](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/oppenheim-trickle-down.md)
 
 ## Sources

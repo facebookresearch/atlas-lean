@@ -10,10 +10,6 @@ The counterexample forces, through a chain of quadratic constraints $x_{i+1} = x
 
 - [Automatable proof systems](automatable-proof-system.md)
 
-## Proof depends on
-
-- [Automatable proof systems](automatable-proof-system.md)
-
 ## Sources
 
 - R. O'Donnell, "SOS is not obviously automatizable, even approximately", ITCS (2017).

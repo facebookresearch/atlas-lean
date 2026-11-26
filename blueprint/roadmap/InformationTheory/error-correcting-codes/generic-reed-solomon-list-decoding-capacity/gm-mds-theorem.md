@@ -11,11 +11,6 @@ Row $i$ of an RS generator matrix attaining the pattern is the evaluation vector
 - [Zero patterns and the GM-MDS condition](gm-mds-zero-patterns.md)
 - [Reed-Solomon code](../reed-solomon-codes/code.md)
 
-## Proof depends on
-
-- [Zero patterns and the GM-MDS condition](gm-mds-zero-patterns.md)
-- [Reed-Solomon code](../reed-solomon-codes/code.md)
-
 ## Sources
 
 - Shachar Lovett, "MDS matrices over small fields: a proof of the GM-MDS conjecture", FOCS (2018); arXiv:1803.02523.

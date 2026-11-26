@@ -15,11 +15,10 @@ Write the adversary's final state as a sum over the query index $i$ at which $x_
 ## Depends on
 
 - [The quantum random oracle model](quantum-random-oracle-model.md)
-- [One-way to hiding lemma for reprogramming quantum random oracles](one-way-to-hiding.md)
 
 ## Proof depends on
 
-- [The quantum random oracle model](quantum-random-oracle-model.md)
+- [One-way to hiding lemma for reprogramming quantum random oracles](one-way-to-hiding.md)
 
 ## Sources
 

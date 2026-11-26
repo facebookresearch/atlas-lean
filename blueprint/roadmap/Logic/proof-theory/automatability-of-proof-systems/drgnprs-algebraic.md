@@ -8,7 +8,7 @@ Replace the relativized pigeonhole component of the Atserias-Müller constructio
 
 ## Depends on
 
-- [Atserias–Müller: automating resolution is NP-hard](atserias-muller.md)
+- [Automatable proof systems](automatable-proof-system.md)
 
 ## Proof depends on
 

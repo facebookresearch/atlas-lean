@@ -10,10 +10,6 @@ By Jordan's lemma the two projections $\Delta$ and $\Pi$ decompose the space int
 
 - [QMA for promise problems](../../local-hamiltonian-problem/qmapromise.md)
 
-## Proof depends on
-
-- [QMA for promise problems](../../local-hamiltonian-problem/qmapromise.md)
-
 ## Sources
 
 - Chris Marriott, John Watrous, "Quantum Arthur-Merlin games", Computational Complexity 14 (2005); arXiv:cs/0506068.

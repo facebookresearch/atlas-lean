@@ -8,8 +8,10 @@ From a one-way puzzle construct an EFI-like pair: the distribution of puzzles to
 
 ## Depends on
 
-- [One-way state generators with pure outputs yield one-way puzzles via shadow tomography](owsg-to-one-way-puzzles.md)
-- [EFI pairs are equivalent to quantum commitments, oblivious transfer and secure computation](efi-equivalences.md)
+- [EFI pairs: efficient, statistically far, computationally indistinguishable states](efi-pairs.md)
+- [One-way puzzles](one-way-puzzles.md)
+- [One-way state generators](one-way-state-generators.md)
+- [Quantum bit commitments in canonical form](quantum-bit-commitments.md)
 
 ## Proof depends on
 

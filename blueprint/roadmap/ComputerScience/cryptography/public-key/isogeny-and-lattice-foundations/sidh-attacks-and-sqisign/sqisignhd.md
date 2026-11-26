@@ -8,13 +8,13 @@ The signer samples a random equivalent ideal of suitable (not necessarily smooth
 
 ## Depends on
 
-- [Higher-dimensional representations of isogenies of arbitrary degree](hd-isogeny-representation.md)
 - [SQIsign: compact signatures from the SQIsign identification protocol](sqisign-signature.md)
+- [The random oracle model](../../random-oracle-constructions/the-random-oracle-model.md)
+- [The SQIsign identification protocol](sqisign-identification.md)
 
 ## Proof depends on
 
 - [Higher-dimensional representations of isogenies of arbitrary degree](hd-isogeny-representation.md)
-- [SQIsign: compact signatures from the SQIsign identification protocol](sqisign-signature.md)
 
 ## Sources
 

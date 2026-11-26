@@ -8,8 +8,7 @@ For each bad configuration (an agreement hypergraph of a list of size $L + 1 = O
 
 ## Depends on
 
-- [Agreement hypergraphs and reduced intersection matrices](agreement-hypergraphs-and-intersection-matrices.md)
-- [Brakensiek-Gopi-Makam: generic Reed-Solomon codes achieve list-decoding capacity](generic-reed-solomon-codes-achieve-list-decoding-capacity.md)
+- [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
 
 ## Proof depends on
 

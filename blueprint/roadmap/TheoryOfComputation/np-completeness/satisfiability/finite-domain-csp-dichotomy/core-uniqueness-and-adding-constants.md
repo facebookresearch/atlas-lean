@@ -9,11 +9,8 @@ Let $\mathbb{A}$ be a finite structure. (i) $\mathbb{A}$ has a core $\mathbb{C}$
 ## Depends on
 
 - [Cores of finite relational structures](cores-of-finite-relational-structures.md)
-
-## Proof depends on
-
-- [Cores of finite relational structures](cores-of-finite-relational-structures.md)
 - [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
+- [Finite relational templates and the homomorphism problem CSP(A)](finite-templates-and-csp-of-a.md)
 
 ## Sources
 

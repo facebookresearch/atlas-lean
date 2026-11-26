@@ -11,11 +11,6 @@ Obfuscate $C:\{0,1\}^{n}\to\{0,1\}$ by a binary tree of depth $n$: at level $i$ 
 - [Single-key weakly compact public-key functional encryption](weakly-compact-fe.md)
 - [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
-## Proof depends on
-
-- [Single-key weakly compact public-key functional encryption](weakly-compact-fe.md)
-- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
-
 ## Sources
 
 - Prabhanjan Ananth, Abhishek Jain, "Indistinguishability Obfuscation from Compact Functional Encryption", CRYPTO (2015), IACR ePrint 2015/173.

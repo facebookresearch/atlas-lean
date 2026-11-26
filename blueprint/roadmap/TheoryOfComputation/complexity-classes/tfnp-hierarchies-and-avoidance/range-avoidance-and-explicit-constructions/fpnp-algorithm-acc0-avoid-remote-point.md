@@ -13,9 +13,8 @@ Williams's polynomial method gives slightly non-trivial Satisfying-Pairs algorit
 
 ## Depends on
 
-- [Chen–Huang–Li–Ren: slightly non-trivial Satisfying-Pairs algorithms give FP^NP algorithms for Avoid and Remote Point](satisfying-pairs-to-fpnp-avoid.md)
 - [The class $\mathsf{ACC}^0$](../../time-and-space-complexity-classes/acc0.md)
-- [Williams: NEXP is not contained in ACC0](../../../circuit-complexity/williams-nexp-not-in-acc0.md)
+- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 
 ## Proof depends on
 

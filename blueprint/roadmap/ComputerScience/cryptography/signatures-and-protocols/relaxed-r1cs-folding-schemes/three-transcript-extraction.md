@@ -8,7 +8,7 @@ The Vandermonde determinant $\prod_{j< k}(r_k-r_j)$ is nonzero. For the final cl
 
 ## Depends on
 
-- [Cross-term identity for folding relaxed R1CS](nova-cross-term.md)
+- [Relaxed R1CS instances with slack vector and scalar](relaxed-r1cs.md)
 
 ## Proof depends on
 

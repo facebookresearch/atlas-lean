@@ -8,8 +8,8 @@ The interpolation step is carried out with Alekhnovich's lattice-basis reduction
 
 ## Depends on
 
-- [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
-- [Kopparty-Ron-Zewi-Saraf-Wootters: constant list size up to capacity](constant-list-size-for-folded-reed-solomon-codes.md)
+- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
+- [Univariate multiplicity codes](univariate-multiplicity-codes.md)
 
 ## Proof depends on
 

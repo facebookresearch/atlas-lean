@@ -15,11 +15,6 @@ Expand the determinant as a sum over permutations, each a product of cycles in $
 - [The matching polynomial of a graph](matching-polynomial-of-a-graph.md)
 - [Two-lifts and signings of a graph](two-lifts-and-signings-of-graphs.md)
 
-## Proof depends on
-
-- [The matching polynomial of a graph](matching-polynomial-of-a-graph.md)
-- [Two-lifts and signings of a graph](two-lifts-and-signings-of-graphs.md)
-
 ## Sources
 
 - Chris D. Godsil, Ivan Gutman, "On the matching polynomial of a graph", Algebraic Methods in Graph Theory, Colloquia Mathematica Societatis Janos Bolyai 25 (1981).

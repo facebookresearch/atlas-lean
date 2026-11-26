@@ -10,14 +10,13 @@ For (i), hide a random metered line inside the cube; each query reveals the line
 
 ## Depends on
 
-- [Hubáček–Yogev: END-OF-METERED-LINE lies in CLS via a staircase embedding into continuous local search](end-of-metered-line-in-cls.md)
 - [Indistinguishability and virtual black-box obfuscation](../../../../ComputerScience/cryptography/program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [END-OF-METERED-LINE: an END-OF-LINE instance with an odometer circuit whose miscounts are solutions](end-of-metered-line.md)
+- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](../continuous-local-search-and-gradient-descent/continuous-localopt-and-cls.md)
 
 ## Proof depends on
 
-- [END-OF-METERED-LINE: an END-OF-LINE instance with an odometer circuit whose miscounts are solutions](end-of-metered-line.md)
 - [Hubáček–Yogev: END-OF-METERED-LINE lies in CLS via a staircase embedding into continuous local search](end-of-metered-line-in-cls.md)
-- [Indistinguishability and virtual black-box obfuscation](../../../../ComputerScience/cryptography/program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
 ## Sources
 

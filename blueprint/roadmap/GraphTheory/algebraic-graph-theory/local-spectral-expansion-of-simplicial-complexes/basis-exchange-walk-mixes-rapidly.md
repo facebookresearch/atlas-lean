@@ -8,9 +8,7 @@ The basis generating polynomial is Lorentzian (completely log-concave), and log-
 
 ## Depends on
 
-- [Kaufman-Oppenheim: local spectral expansion controls high-order random walks](kaufman-oppenheim-high-order-walks.md)
-- [Basis generating polynomials of matroids are Lorentzian](../../../Combinatorics/matroid-theory/lorentzian-polynomials/basis-generating-polynomial-mem-l.md)
-- [The set of Lorentzian polynomials](../../../Combinatorics/matroid-theory/lorentzian-polynomials/l.md)
+- [Up-down and down-up random walks on simplicial complexes](up-down-random-walks-on-simplicial-complexes.md)
 
 ## Proof depends on
 

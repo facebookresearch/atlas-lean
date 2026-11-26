@@ -8,9 +8,6 @@ By the Furst-Saxe-Sipser connection, a $\mathrm{PH}$ machine with oracle queries
 
 ## Depends on
 
-- [One quantum query distinguishes the Raz-Tal distribution from uniform](quantum-distinguisher-for-the-raz-tal-distribution.md)
-- [Constant-depth circuits cannot distinguish the Raz-Tal distribution from uniform](constant-depth-circuits-cannot-detect-forrelation.md)
-- [Baker-Gill-Solovay: oracles separate and collapse P vs NP](../relativization-and-oracle-separations/baker-gill-solovay.md)
 - [The polynomial hierarchy](../../complexity-classes/time-and-space-complexity-classes/ph.md)
 
 ## Proof depends on
@@ -18,7 +15,6 @@ By the Furst-Saxe-Sipser connection, a $\mathrm{PH}$ machine with oracle queries
 - [One quantum query distinguishes the Raz-Tal distribution from uniform](quantum-distinguisher-for-the-raz-tal-distribution.md)
 - [Constant-depth circuits cannot distinguish the Raz-Tal distribution from uniform](constant-depth-circuits-cannot-detect-forrelation.md)
 - [Baker-Gill-Solovay: oracles separate and collapse P vs NP](../relativization-and-oracle-separations/baker-gill-solovay.md)
-- [The polynomial hierarchy](../../complexity-classes/time-and-space-complexity-classes/ph.md)
 
 ## Sources
 

@@ -12,11 +12,8 @@ Bicubic interpolation produces on each unit square a polynomial matching values 
 
 - [Staircase embedding of END-OF-LINE into a planar descent landscape with green descending and orange ascending paths](staircase-embedding-green-orange-paths.md)
 - [ITER and the EITHER-SOLUTION combinator for building PPAD ∩ PLS-complete problems](iter-and-either-solution.md)
-
-## Proof depends on
-
-- [Staircase embedding of END-OF-LINE into a planar descent landscape with green descending and orange ascending paths](staircase-embedding-green-orange-paths.md)
 - [Well-behaved arithmetic circuits and Lipschitz violation witnesses for continuous total search problems](well-behaved-arithmetic-circuits.md)
+- [The KKT search problem for smooth objectives on bounded polytopes with Taylor-violation witnesses](kkt-search-problem.md)
 
 ## Sources
 

@@ -11,8 +11,8 @@ Apply the instance-wise reconstruction to $f$ with $M=n^{O(1)}$: for each input 
 ## Depends on
 
 - [Hardness of a multi-output function on almost all inputs for probabilistic time](almost-all-inputs-hardness.md)
-- [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](instance-wise-reconstruction-targeted-hsg.md)
 - [Deterministic logarithmic space](../../complexity-classes/time-and-space-complexity-classes/log-space.md)
+- [Log-space uniform circuit families](../../complexity-classes/time-and-space-complexity-classes/uniform-circuit-family.md)
 
 ## Proof depends on
 

@@ -15,11 +15,10 @@ For each linear function $g$ consider the set $S_g = \{L : F[L] = g|_L\}$. Passi
 ## Depends on
 
 - [The Grassmann linearity agreement test](grassmann-linearity-test.md)
-- [Non-expanding sets in the Grassmann graph (Khot–Minzer–Safra)](../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/theorem-1-12.md)
+- [Zoom-in and zoom-out subgraphs of the Grassmann graph](grassmann-zoom.md)
 
 ## Proof depends on
 
-- [The Grassmann linearity agreement test](grassmann-linearity-test.md)
 - [Non-expanding sets in the Grassmann graph (Khot–Minzer–Safra)](../../../GraphTheory/algebraic-graph-theory/part-01/grassmann-graphs/theorem-1-12.md)
 
 ## Sources

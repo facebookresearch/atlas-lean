@@ -8,8 +8,8 @@ First find an equivalent ideal of prime norm. Then solve norm equations of the f
 
 ## Depends on
 
-- [The Deuring correspondence between supersingular curves and maximal orders](deuring-correspondence.md)
 - [The quaternion algebra ramified at p and infinity and its maximal orders](quaternion-algebra-bp.md)
+- [The supersingular isogeny path and endomorphism ring problems](isogeny-path-and-endring-problems.md)
 
 ## Proof depends on
 

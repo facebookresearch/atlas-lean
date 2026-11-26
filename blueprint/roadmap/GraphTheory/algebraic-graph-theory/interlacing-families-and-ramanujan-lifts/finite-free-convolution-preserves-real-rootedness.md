@@ -15,11 +15,9 @@ Real-rootedness follows from the identity $p \boxplus_d q = \hat q(\partial_x)\,
 ## Depends on
 
 - [Finite free additive convolution of polynomials](finite-free-additive-convolution.md)
-- [Mixed characteristic polynomial](../../../Analysis/operator-algebras/kadison-singer-problem/mixed-characteristic-polynomial.md)
 
 ## Proof depends on
 
-- [Finite free additive convolution of polynomials](finite-free-additive-convolution.md)
 - [Mixed characteristic polynomial](../../../Analysis/operator-algebras/kadison-singer-problem/mixed-characteristic-polynomial.md)
 
 ## Sources

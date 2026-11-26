@@ -9,11 +9,9 @@ Natarajan and Wright perform one round of introspection: the provers sample expo
 ## Depends on
 
 - [The class MIP* of languages with entangled two-prover proofs](the-class-mip-star.md)
-- [Pauli basis test with polylogarithmic question length](introspectable-pauli-basis-test.md)
 
 ## Proof depends on
 
-- [The class MIP* of languages with entangled two-prover proofs](the-class-mip-star.md)
 - [Pauli basis test with polylogarithmic question length](introspectable-pauli-basis-test.md)
 
 ## Sources

@@ -8,8 +8,7 @@ Apply the general theorem for dense easy properties to the primes, which are den
 
 ## Depends on
 
-- [Chen–Lu–Oliveira–Ren–Santhanam: infinitely-often polynomial-time pseudodeterministic constructions for every dense easy property](polynomial-time-pseudodeterministic-construction-dense-properties.md)
-- [The n-bit primes form a dense polynomial-time decidable property](primes-are-dense-and-easy.md)
+- [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
 
 ## Proof depends on
 

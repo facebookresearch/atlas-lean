@@ -8,9 +8,7 @@ By Tal's bound, $L_{1,2}$ of every restriction of the circuit is at most $(c\log
 
 ## Depends on
 
-- [Raz-Tal random walk lemma for multilinear functions on the cube](gaussian-random-walk-bound-for-multilinear-functions.md)
-- [Tal's bound on level-l Fourier mass of constant-depth circuits](tal-level-l-fourier-bound-for-constant-depth-circuits.md)
-- [Parity is not in AC0](../../circuit-complexity/lower-bounds-for-ac0-circuits/parity-not-in-ac0.md)
+- [The Raz-Tal rounded Gaussian forrelation distribution](raz-tal-gaussian-forrelation-distribution.md)
 
 ## Proof depends on
 

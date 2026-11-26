@@ -9,11 +9,9 @@ By PRG security, replace $y$ by a uniform $2\lambda$-bit string; with probabilit
 ## Depends on
 
 - [Witness encryption for NP languages](witness-encryption.md)
-- [Pseudorandom generators exist if and only if one-way functions exist](../../../symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
 
 ## Proof depends on
 
-- [Witness encryption for NP languages](witness-encryption.md)
 - [Pseudorandom generators exist if and only if one-way functions exist](../../../symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
 
 ## Sources

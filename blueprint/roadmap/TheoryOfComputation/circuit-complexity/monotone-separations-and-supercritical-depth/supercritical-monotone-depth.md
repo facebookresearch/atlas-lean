@@ -8,7 +8,7 @@ Start from a supercritical width-depth trade-off for resolution, obtained by ref
 
 ## Depends on
 
-- [Garg–Göös–Kamath–Sokolov: dag-like lifting from resolution width](../../communication-complexity/randomized-and-dag-like-lifting/ggks-dag-lifting.md)
+- [Resolution refutation](../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Proof depends on
 

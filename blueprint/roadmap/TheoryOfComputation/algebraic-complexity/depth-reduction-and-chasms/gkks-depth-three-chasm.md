@@ -8,9 +8,8 @@ Start from the depth-four reduction. Convert each product of $O(\sqrt{d})$ botto
 
 ## Depends on
 
-- [Agrawal–Vinay–Koiran–Tavenas reduction to depth four](agrawal-vinay-tavenas.md)
-- [Fischer's identity: products of variables as sums of powers of linear forms](fischer-identity.md)
-- [Saxena's duality trick for powers of sums of products](saxena-duality.md)
+- [Arithmetic circuit](../arithmetic-circuits/arithmetic-circuit.md)
+- [Valiant's VP versus VNP conjecture](../valiant-s-vp-versus-vnp-conjecture.md)
 
 ## Proof depends on
 

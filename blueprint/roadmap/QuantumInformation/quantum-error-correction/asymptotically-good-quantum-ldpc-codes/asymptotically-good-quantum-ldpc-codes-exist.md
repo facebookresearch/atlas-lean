@@ -9,18 +9,13 @@ The lifted product of two matrices over $\mathbb{F}_2[G]$ corresponds to a squar
 ## Depends on
 
 - [Lifted product codes over group algebras](../homological-quantum-ldpc-codes/lifted-product-codes-over-group-algebras.md)
-- [Random pairs of codes and their duals are product-expanding](random-pairs-of-codes-are-product-expanding.md)
 - [Quantum LDPC code families and asymptotically good quantum codes](../homological-quantum-ldpc-codes/quantum-ldpc-code-families-and-good-codes.md)
-- [Good locally testable codes of every rate below one](../../../InformationTheory/error-correcting-codes/locally-testable-codes/theorem-1-2.md)
 - [Locally testable code](../../../InformationTheory/error-correcting-codes/locally-testable-codes/ltc.md)
 
 ## Proof depends on
 
-- [Lifted product codes over group algebras](../homological-quantum-ldpc-codes/lifted-product-codes-over-group-algebras.md)
 - [Random pairs of codes and their duals are product-expanding](random-pairs-of-codes-are-product-expanding.md)
-- [Quantum LDPC code families and asymptotically good quantum codes](../homological-quantum-ldpc-codes/quantum-ldpc-code-families-and-good-codes.md)
 - [Good locally testable codes of every rate below one](../../../InformationTheory/error-correcting-codes/locally-testable-codes/theorem-1-2.md)
-- [Locally testable code](../../../InformationTheory/error-correcting-codes/locally-testable-codes/ltc.md)
 
 ## Sources
 

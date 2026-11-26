@@ -11,12 +11,11 @@
 - [LONG CHOICE and the class PLC of polynomial long choice for iterated pigeonhole arguments](long-choice-and-plc.md)
 - [Jeřábek: integer factoring randomly reduces to PPA and to WEAK-PIGEON, and modular square roots lie in PPA](factoring-reduces-to-ppa-and-weak-pigeon.md)
 - [Erdős–Rado sunflower lemma](../../../../Combinatorics/extremal-set-theory/intersecting-families/sunflower-lemma/exists-is-delta-system.md)
+- [Search problems: FNP, FP and TFNP](../../total-search-problems/search-problems-fnp-fp-and-tfnp.md)
 
 ## Proof depends on
 
-- [LONG CHOICE and the class PLC of polynomial long choice for iterated pigeonhole arguments](long-choice-and-plc.md)
 - [Finite Ramsey theorem for pairs](../../../../Combinatorics/ramsey-theory/structural-ramsey/ramsey-two-uniform.md)
-- [Erdős–Rado sunflower lemma](../../../../Combinatorics/extremal-set-theory/intersecting-families/sunflower-lemma/exists-is-delta-system.md)
 
 ## Sources
 

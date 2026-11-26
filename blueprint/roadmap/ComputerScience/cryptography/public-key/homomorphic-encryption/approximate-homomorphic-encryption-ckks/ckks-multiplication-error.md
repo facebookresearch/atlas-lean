@@ -14,8 +14,8 @@ $(m_1+e_1)(m_2+e_2)=m_1m_2+m_1e_2+m_2e_1+e_1e_2$; bound each term with submultip
 
 ## Depends on
 
-- [CKKS rescaling divides message and error by the scale](ckks-rescaling.md)
-- [Relinearization by gadget key switching](../leveled-packed-fhe-bgv-and-bfv/relinearization.md)
+- [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
+- [CKKS encoding via the canonical embedding](canonical-embedding-encoding.md)
 
 ## Proof depends on
 

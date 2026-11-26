@@ -8,13 +8,12 @@ Modulus switching maps $c$ to $c'=\lfloor(q_{j-1}/q_j)c\rceil$ adjusted so $c'\e
 
 ## Depends on
 
-- [Relinearization by gadget key switching](relinearization.md)
-- [Ciphertext multiplication by tensoring](tensor-product-multiplication.md)
+- [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
 
 ## Proof depends on
 
-- [Ciphertext multiplication by tensoring](tensor-product-multiplication.md)
 - [Relinearization by gadget key switching](relinearization.md)
+- [Ciphertext multiplication by tensoring](tensor-product-multiplication.md)
 
 ## Sources
 

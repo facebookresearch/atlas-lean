@@ -10,10 +10,6 @@ Let $S$ be the honest-verifier simulator, first amplified so that soundness erro
 
 - [The Entropy Difference problem ED](entropy-difference-problem.md)
 - [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
-
-## Proof depends on
-
-- [The Entropy Difference problem ED](entropy-difference-problem.md)
 - [Shannon entropy](../../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md)
 
 ## Sources

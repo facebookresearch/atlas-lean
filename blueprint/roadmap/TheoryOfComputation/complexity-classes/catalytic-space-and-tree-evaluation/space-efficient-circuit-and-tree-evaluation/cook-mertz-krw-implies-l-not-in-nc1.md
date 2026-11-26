@@ -9,13 +9,12 @@ Recall that Cook–Mertz evaluate $\mathrm{TreeEval}$ in space $O(\log n\cdot\lo
 ## Depends on
 
 - [The Karchmer–Raz–Wigderson composition conjecture for formula depth](karchmer-raz-wigderson-conjecture.md)
-- [Cook–Mertz: Tree Evaluation in space O(h log k / log h), i.e. O(log^2 n / log log n)](cook-mertz-treeeval-space-log-squared-over-loglog.md)
 - [Deterministic logarithmic space](../../time-and-space-complexity-classes/log-space.md)
-- [NC^1 is contained in L](../../../circuit-complexity/parallel-complexity-class-nc/nc1-subset-logspace.md)
 
 ## Proof depends on
 
-- [The Karchmer–Raz–Wigderson composition conjecture for formula depth](karchmer-raz-wigderson-conjecture.md)
+- [Cook–Mertz: Tree Evaluation in space O(h log k / log h + h), i.e. O(log^2 n / log log n)](cook-mertz-treeeval-space-log-squared-over-loglog.md)
+- [NC^1 is contained in L](../../../circuit-complexity/parallel-complexity-class-nc/nc1-subset-logspace.md)
 
 ## Sources
 

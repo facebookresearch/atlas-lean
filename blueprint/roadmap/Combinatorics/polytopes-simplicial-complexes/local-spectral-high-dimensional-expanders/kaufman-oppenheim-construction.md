@@ -9,11 +9,10 @@ All links of faces of codimension at least $2$ are again coset complexes of subg
 ## Depends on
 
 - [Coset complexes of a group with a family of subgroups](coset-complex.md)
-- [Oppenheim's trickling-down theorem for spectral gaps](oppenheim-trickle-down.md)
+- [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
 
 ## Proof depends on
 
-- [Coset complexes of a group with a family of subgroups](coset-complex.md)
 - [Oppenheim's trickling-down theorem for spectral gaps](oppenheim-trickle-down.md)
 
 ## Sources

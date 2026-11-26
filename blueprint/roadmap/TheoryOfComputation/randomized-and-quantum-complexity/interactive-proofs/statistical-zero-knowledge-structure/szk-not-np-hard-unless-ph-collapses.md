@@ -8,14 +8,15 @@ From $\mathsf{SZK}\subseteq\mathsf{coAM}$ one gets $\mathsf{NP}\subseteq\mathsf{
 
 ## Depends on
 
-- [Aiello–Håstad: SZK ⊆ AM, hence SZK ⊆ AM ∩ coAM](aiello-hastad-szk-in-am.md)
-- [Collapse of the polynomial hierarchy to a level](../../../complexity-classes/polynomial-hierarchy/collapse-of-the-polynomial-hierarchy-to-a-level.md)
+- [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
+- [The polynomial hierarchy](../../../complexity-classes/time-and-space-complexity-classes/ph.md)
 
 ## Proof depends on
 
+- [Aiello–Håstad: SZK ⊆ AM, hence SZK ⊆ AM ∩ coAM](aiello-hastad-szk-in-am.md)
+- [Collapse of the polynomial hierarchy to a level](../../../complexity-classes/polynomial-hierarchy/collapse-of-the-polynomial-hierarchy-to-a-level.md)
 - [Fortnow: SZK ⊆ coAM](fortnow-szk-in-coam.md)
 - [AM is contained in $\Pi_2^p$ (Babai)](../../arthur-merlin-and-merlin-arthur-classes/am-subset-pi2.md)
-- [Collapse of the polynomial hierarchy to a level](../../../complexity-classes/polynomial-hierarchy/collapse-of-the-polynomial-hierarchy-to-a-level.md)
 
 ## Sources
 

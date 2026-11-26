@@ -12,11 +12,9 @@ For the direction from coboundary expansion to soundness, a successful ensemble 
 ## Depends on
 
 - [Non-abelian 1-cochains and unique-games coboundary expansion](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/nonabelian-cochain.md)
-- [Connected covers obstruct low-soundness agreement on high-dimensional expanders](covers-obstruct-low-soundness.md)
 
 ## Proof depends on
 
-- [Non-abelian 1-cochains and unique-games coboundary expansion](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/nonabelian-cochain.md)
 - [Connected covers obstruct low-soundness agreement on high-dimensional expanders](covers-obstruct-low-soundness.md)
 
 ## Sources

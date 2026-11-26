@@ -15,11 +15,10 @@ The construction follows Nisan's recursive halving of the program but tracks, in
 ## Depends on
 
 - [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
-- [Braverman–Cohen–Garg: the generator of a weighted PRG is a hitting set generator](weighted-prg-generator-is-hitting-set-generator.md)
+- [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
 
 ## Proof depends on
 
-- [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
 - [Braverman–Cohen–Garg: the generator of a weighted PRG is a hitting set generator](weighted-prg-generator-is-hitting-set-generator.md)
 
 ## Sources

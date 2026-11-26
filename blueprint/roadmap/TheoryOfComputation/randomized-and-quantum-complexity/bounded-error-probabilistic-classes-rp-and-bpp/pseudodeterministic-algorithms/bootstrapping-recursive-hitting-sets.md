@@ -17,10 +17,6 @@ The growth bound is an induction: $T_i\le 2^{\alpha^{i}n_0}$ while $n_i=n_0^{(2\
 - [Chen–Lu–Oliveira–Ren–Santhanam: Chen–Tell hitting sets with a Shaltiel–Umans core are printable in time poly(T)](improved-chen-tell-hsg-shaltiel-umans.md)
 - [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
 
-## Proof depends on
-
-- [Chen–Lu–Oliveira–Ren–Santhanam: Chen–Tell hitting sets with a Shaltiel–Umans core are printable in time poly(T)](improved-chen-tell-hsg-shaltiel-umans.md)
-
 ## Sources
 
 - Lijie Chen, Zhenjian Lu, Igor C. Oliveira, Hanlin Ren and Rahul Santhanam, "Polynomial-Time Pseudodeterministic Construction of Primes", FOCS (2023), arXiv:2305.15140.

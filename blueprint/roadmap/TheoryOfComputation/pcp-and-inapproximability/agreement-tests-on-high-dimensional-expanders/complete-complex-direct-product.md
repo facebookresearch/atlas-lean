@@ -15,10 +15,7 @@ Fix a random $A$ of size $\sqrt{k}$ on which many pairs agree, and define $G$ by
 ## Depends on
 
 - [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
-
-## Proof depends on
-
-- [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
+- [Agreement tests for ensembles of local functions](agreement-test.md)
 
 ## Sources
 

@@ -18,11 +18,7 @@ From a refutation with lines $D_1,\dots,D_s=\bot$ build a SINK-OF-DAG formulatio
 - [Resolution refutation](../../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 - [Width of a derivation](../../../../Logic/propositional-logic/resolution-size-and-width/derivation-width.md)
 - [The class PLS of polynomial local search problems](../../total-search-problems/the-class-pls-of-polynomial-local-search.md)
-
-## Proof depends on
-
-- [The false-clause search problem S(F) of an unsatisfiable CNF and its universality for TFNP^dt](false-clause-search-problem.md)
-- [Resolution refutation](../../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
 
 ## Sources
 

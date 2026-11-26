@@ -9,7 +9,6 @@ The response measurement on an accepting branch is almost non-disturbing because
 ## Depends on
 
 - [Collapsing hash functions and collapse-binding commitments](collapsing-hash.md)
-- [The rewinding lemma](../../signatures-and-protocols/zero-knowledge-and-arguments/the-rewinding-lemma.md)
 - [Knowledge soundness](../../signatures-and-protocols/zero-knowledge-and-arguments/knowledge-soundness.md)
 
 ## Proof depends on

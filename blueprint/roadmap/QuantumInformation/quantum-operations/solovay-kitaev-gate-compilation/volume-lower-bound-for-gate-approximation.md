@@ -10,10 +10,6 @@ $|\mathcal{G}_\ell| \le |\mathcal{G}|^{\ell+1}$, and $\mathrm{SU}(d)$, a manifol
 
 - [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
 
-## Proof depends on
-
-- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
-
 ## Sources
 
 - Aram W. Harrow, Benjamin Recht, Isaac L. Chuang, "Efficient discrete approximations of quantum gates", Journal of Mathematical Physics 43 (2002); arXiv:quant-ph/0111031.

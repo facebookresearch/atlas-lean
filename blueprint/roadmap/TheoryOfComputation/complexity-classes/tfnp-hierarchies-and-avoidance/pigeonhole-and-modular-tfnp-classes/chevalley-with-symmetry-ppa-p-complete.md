@@ -8,14 +8,13 @@ Membership: the Chevalley–Warning lemma shows $|\mathcal V_{\mathbf g}|\equiv0
 
 ## Depends on
 
-- [Chevalley–Warning lemma: the zero count mod p equals ± the number of max-degree monic monomials](chevalley-warning-counting-lemma.md)
-- [PPA_q equals the &-combination of PPA_p over the primes p dividing q, and PPA_p is closed under Turing reductions](ppa-q-equals-and-of-ppa-p.md)
+- [CHEVALLEY_p, GENERAL-CHEVALLEY_p and CHEVALLEY-WITH-SYMMETRY_p: explicit search problems from the Chevalley–Warning theorem](chevalley-search-problems.md)
+- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
 
 ## Proof depends on
 
 - [Chevalley–Warning lemma: the zero count mod p equals ± the number of max-degree monic monomials](chevalley-warning-counting-lemma.md)
-- [CHEVALLEY_p, GENERAL-CHEVALLEY_p and CHEVALLEY-WITH-SYMMETRY_p: explicit search problems from the Chevalley–Warning theorem](chevalley-search-problems.md)
-- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
+- [PPA_q equals the &-combination of PPA_p over the primes p dividing q, and PPA_p is closed under Turing reductions](ppa-q-equals-and-of-ppa-p.md)
 
 ## Sources
 

@@ -16,10 +16,6 @@ $(X^{n}-1)/(X-\omega^{i})=\prod_{j\ne i}(X-\omega^{j})$, whose value at $\omega^
 
 - [PLONK gate equations with copy constraints](plonk-constraint-system.md)
 
-## Proof depends on
-
-- [PLONK gate equations with copy constraints](plonk-constraint-system.md)
-
 ## Sources
 
 - Ariel Gabizon, Zachary J. Williamson, Oana Ciobotaru, "PLONK: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge", IACR ePrint 2019/953 (2019).

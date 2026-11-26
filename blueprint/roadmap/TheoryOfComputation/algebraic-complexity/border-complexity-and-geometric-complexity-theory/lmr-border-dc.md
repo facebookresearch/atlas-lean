@@ -16,10 +16,6 @@ The dual variety of the determinant hypersurface is the set of rank-one matrices
 
 - [Determinantal complexity and the padded permanent orbit closure problem](det-vs-perm-gct.md)
 
-## Proof depends on
-
-- [Determinantal complexity and the padded permanent orbit closure problem](det-vs-perm-gct.md)
-
 ## Sources
 
 - J. M. Landsberg, L. Manivel, N. Ressayre, "Hypersurfaces with degenerate duals and the geometric complexity theory program", Commentarii Mathematici Helvetici 88 (2013) 469-484.

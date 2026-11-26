@@ -8,15 +8,11 @@ Hsieh, Lubotzky, Mohanty, Reiner and Zhang take an appropriate product of a cons
 
 ## Depends on
 
-- [Balanced products of chain complexes over a group](../homological-quantum-ldpc-codes/balanced-product-of-chain-complexes.md)
 - [Quantum LDPC code families and asymptotically good quantum codes](../homological-quantum-ldpc-codes/quantum-ldpc-code-families-and-good-codes.md)
-- [Sipser-Spielman expander codes](../../../InformationTheory/error-correcting-codes/sipser-spielman-expander-codes.md)
-- [Expander code distance](../../../InformationTheory/error-correcting-codes/expander-code-distance.md)
 
 ## Proof depends on
 
 - [Balanced products of chain complexes over a group](../homological-quantum-ldpc-codes/balanced-product-of-chain-complexes.md)
-- [Quantum LDPC code families and asymptotically good quantum codes](../homological-quantum-ldpc-codes/quantum-ldpc-code-families-and-good-codes.md)
 - [Sipser-Spielman expander codes](../../../InformationTheory/error-correcting-codes/sipser-spielman-expander-codes.md)
 - [Expander code distance](../../../InformationTheory/error-correcting-codes/expander-code-distance.md)
 

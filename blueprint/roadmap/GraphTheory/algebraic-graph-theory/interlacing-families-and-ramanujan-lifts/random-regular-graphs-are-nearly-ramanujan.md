@@ -9,11 +9,9 @@ Friedman uses the trace method with a refined count of non-backtracking closed w
 ## Depends on
 
 - [Ramanujan graphs and bipartite Ramanujan graphs](ramanujan-graphs-and-bipartite-ramanujan-graphs.md)
-- [Alon-Boppana bound](../../graph-families-and-operations/expander-graphs/alon-boppana.md)
 
 ## Proof depends on
 
-- [Ramanujan graphs and bipartite Ramanujan graphs](ramanujan-graphs-and-bipartite-ramanujan-graphs.md)
 - [Alon-Boppana bound](../../graph-families-and-operations/expander-graphs/alon-boppana.md)
 
 ## Sources

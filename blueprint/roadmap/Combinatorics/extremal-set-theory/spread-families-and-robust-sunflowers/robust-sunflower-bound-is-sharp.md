@@ -11,11 +11,6 @@ Take the $\ell$-fold product of a family of $m$ disjoint blocks: sets choosing o
 - [Robust sunflowers](robust-sunflowers-and-satisfying-systems.md)
 - [Rossman's robust sunflower lemma and monotone clique lower bounds](rossman-robust-sunflower-lemma.md)
 
-## Proof depends on
-
-- [Robust sunflowers](robust-sunflowers-and-satisfying-systems.md)
-- [Rossman's robust sunflower lemma and monotone clique lower bounds](rossman-robust-sunflower-lemma.md)
-
 ## Sources
 
 - Ryan Alweiss, Shachar Lovett, Kewen Wu, Jiapeng Zhang, "Improved bounds for the sunflower lemma", Annals of Mathematics 194(3) (2021), STOC (2020); arXiv:1908.08483.

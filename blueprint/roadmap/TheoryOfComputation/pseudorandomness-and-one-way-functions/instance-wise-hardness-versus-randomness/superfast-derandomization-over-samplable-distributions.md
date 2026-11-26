@@ -13,14 +13,12 @@ The hard string $f(x)$ is computed from the input and used as the truth table fo
 
 ## Depends on
 
-- [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
 - [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
 
 ## Proof depends on
 
 - [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
 - [Nisan–Wigderson generator](../derandomization/nisanwigderson-generator.md)
-- [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
 
 ## Sources
 

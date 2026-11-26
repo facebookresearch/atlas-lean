@@ -15,11 +15,9 @@ Encode a pair $(W, T)$ with $T$ a large minimum fragment by $W \cup T$ (a set of
 ## Depends on
 
 - [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
-- [Spread lemma: random sets of moderate density contain members of spread families](../../extremal-set-theory/spread-families-and-robust-sunflowers/spread-lemma-random-sets-contain-members-of-spread-families.md)
 
 ## Proof depends on
 
-- [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
 - [Spread lemma: random sets of moderate density contain members of spread families](../../extremal-set-theory/spread-families-and-robust-sunflowers/spread-lemma-random-sets-contain-members-of-spread-families.md)
 
 ## Sources

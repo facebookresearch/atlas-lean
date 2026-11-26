@@ -10,10 +10,6 @@ Prepare $N^{-1/2}\sum_x |x\rangle$, apply the phase oracle for $f$, apply $H^{\o
 
 - [Forrelation of two Boolean functions](forrelation-of-two-boolean-functions.md)
 
-## Proof depends on
-
-- [Forrelation of two Boolean functions](forrelation-of-two-boolean-functions.md)
-
 ## Sources
 
 - Scott Aaronson, Andris Ambainis, "Forrelation: a problem that optimally separates quantum from classical computing", SIAM Journal on Computing 47(3) (2018), STOC (2015); arXiv:1411.5729.

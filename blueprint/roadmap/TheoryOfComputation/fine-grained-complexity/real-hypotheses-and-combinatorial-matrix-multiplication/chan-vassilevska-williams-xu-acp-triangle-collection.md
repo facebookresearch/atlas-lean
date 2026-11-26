@@ -10,14 +10,12 @@ The Real APSP and Real 3SUM parts go through the All-Edges Sparse Triangle lower
 
 - [Triangle Collection and All-Color-Pairs Triangle Collection](triangle-collection-and-all-color-pairs.md)
 - [Real RAM, the Real 3SUM hypothesis and the Real APSP hypothesis](real-ram-real-3sum-real-apsp-hypotheses.md)
-- [Chan–Vassilevska Williams–Xu: All-Edges Sparse Triangle lower bounds from Real APSP, Real Exact Triangle and Real 3SUM](chan-vassilevska-williams-xu-all-edges-sparse-triangle.md)
-- [SETH implies the Orthogonal Vectors hypothesis](../fine-grained-hypotheses/seth-implies-the-orthogonal-vectors-hypothesis.md)
 
 ## Proof depends on
 
 - [Chan–Vassilevska Williams–Xu: All-Edges Sparse Triangle lower bounds from Real APSP, Real Exact Triangle and Real 3SUM](chan-vassilevska-williams-xu-all-edges-sparse-triangle.md)
-- [Abboud–Vassilevska Williams–Yu: Triangle Collection needs cubic time unless 3SUM, APSP and SETH all fail](abboud-vassilevska-williams-yu-triangle-collection.md)
 - [SETH implies the Orthogonal Vectors hypothesis](../fine-grained-hypotheses/seth-implies-the-orthogonal-vectors-hypothesis.md)
+- [Abboud–Vassilevska Williams–Yu: Triangle Collection needs cubic time unless 3SUM, APSP and SETH all fail](abboud-vassilevska-williams-yu-triangle-collection.md)
 
 ## Sources
 

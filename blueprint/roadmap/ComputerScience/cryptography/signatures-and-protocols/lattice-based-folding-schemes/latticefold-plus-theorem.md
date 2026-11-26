@@ -9,14 +9,12 @@ Monomial encoding turns range constraints into multiplicative relations checkabl
 ## Depends on
 
 - [LatticeFold: post-quantum folding for CCS from Module-SIS](latticefold-theorem.md)
-- [Constant-term extraction of exponents in the negacyclic ring](monomial-constant-term-range.md)
-- [Binding of double commitments under Module-SIS](double-commitments.md)
+- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
 
 ## Proof depends on
 
 - [Constant-term extraction of exponents in the negacyclic ring](monomial-constant-term-range.md)
 - [Binding of double commitments under Module-SIS](double-commitments.md)
-- [LatticeFold: post-quantum folding for CCS from Module-SIS](latticefold-theorem.md)
 
 ## Sources
 

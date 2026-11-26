@@ -8,12 +8,8 @@ By Kitaev-Watrous and Marriott-Watrous assume a QMAM protocol with completeness 
 
 ## Depends on
 
-- [Kitaev-Watrous: quantum interactive proofs parallelize to three messages](kitaev-watrous-three-message-parallelization.md)
-- [Marriott-Watrous: QIP equals QMAM](marriott-watrous-qip-equals-qmam.md)
-- [Optimal QMAM acceptance probability as an exponential-size semidefinite program](qmam-acceptance-as-exponential-semidefinite-program.md)
-- [Regret bound for the matrix multiplicative weights update](matrix-multiplicative-weights-regret-bound.md)
-- [Matrix exponentials of exponential-dimension matrices in polynomial depth](matrix-exponentials-in-polynomial-depth.md)
-- [Borodin: NC(poly) = PSPACE](borodin-polynomial-depth-equals-polynomial-space.md)
+- [Quantum Merlin-Arthur-Merlin games (QMAM)](quantum-merlin-arthur-merlin-games.md)
+- [Polynomial space for decision problems](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 
 ## Proof depends on
 

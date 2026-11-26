@@ -16,13 +16,10 @@ Combine the refined laser method with asymmetric hashing at each recursion level
 
 - [Duan–Wu–Zhou asymmetric hashing and the combination loss](dwz-asymmetric-hashing.md)
 - [Ambainis–Filmus–Le Gall: limitations of the Coppersmith–Winograd analysis](aflg-barrier.md)
-- [Alman–Vassilevska Williams: refined laser method and omega < 2.37286](avw-refined-laser.md)
-- [Duan–Wu–Zhou bound on the square exponent](../matrix-multiplication-exponent/duan-wu-zhou2022-upper.md)
+- [The Coppersmith–Winograd tensor](cw-tensor.md)
 
 ## Proof depends on
 
-- [Duan–Wu–Zhou asymmetric hashing and the combination loss](dwz-asymmetric-hashing.md)
-- [Ambainis–Filmus–Le Gall: limitations of the Coppersmith–Winograd analysis](aflg-barrier.md)
 - [Alman–Vassilevska Williams: refined laser method and omega < 2.37286](avw-refined-laser.md)
 - [Duan–Wu–Zhou bound on the square exponent](../matrix-multiplication-exponent/duan-wu-zhou2022-upper.md)
 

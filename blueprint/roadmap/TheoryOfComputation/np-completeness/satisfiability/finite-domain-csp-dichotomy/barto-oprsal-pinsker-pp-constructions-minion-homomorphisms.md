@@ -14,12 +14,11 @@ Pp-powers correspond to finite powers of the polymorphism algebra and pp-definit
 ## Depends on
 
 - [Minions, minion homomorphisms and pp-constructions](minions-minion-homomorphisms-pp-constructions.md)
-- [Pol–Inv Galois connection over finite domains: CSP complexity depends only on the polymorphism clone](pol-inv-galois-connection-finite-domains.md)
 - [Log-space many-one reductions](../../../complexity-classes/time-and-space-complexity-classes/log-space-red.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
 
 ## Proof depends on
 
-- [Minions, minion homomorphisms and pp-constructions](minions-minion-homomorphisms-pp-constructions.md)
 - [Pol–Inv Galois connection over finite domains: CSP complexity depends only on the polymorphism clone](pol-inv-galois-connection-finite-domains.md)
 - [Every finite structure has a unique core, and constants can be added to a core without changing CSP complexity](core-uniqueness-and-adding-constants.md)
 

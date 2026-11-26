@@ -10,11 +10,7 @@ Replace each vertex of a unique game by a long-code table $F_u : [q]^R \to \Delt
 
 - [Dictatorship tests and their completeness and soundness](dictatorship-test.md)
 - [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
-
-## Proof depends on
-
-- [Dictatorship tests and their completeness and soundness](dictatorship-test.md)
-- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
+- [Generalized constraint satisfaction problems with payoff functions](generalized-csp.md)
 
 ## Sources
 

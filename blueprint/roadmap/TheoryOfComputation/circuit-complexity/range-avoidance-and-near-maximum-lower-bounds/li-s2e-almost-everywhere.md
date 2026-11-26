@@ -14,13 +14,11 @@ Simplify the Chen-Hirahara-Ren algorithm by having the provers argue directly ab
 
 ## Depends on
 
-- [Chen–Hirahara–Ren: S2E/1 requires circuit size 2^n/n, hence so do Σ2E, (Σ2E ∩ Π2E)/1 and ZPE^NP/1](../symmetric-exponential-time-circuit-lower-bounds/chr-s2e-advice-near-maximum-lower-bound.md)
 - [Infinitely-often versus almost-everywhere circuit lower bounds](../algorithmic-method-nqp-and-almost-everywhere-bounds/almost-everywhere-lower-bound.md)
 
 ## Proof depends on
 
 - [Chen–Hirahara–Ren: S2E/1 requires circuit size 2^n/n, hence so do Σ2E, (Σ2E ∩ Π2E)/1 and ZPE^NP/1](../symmetric-exponential-time-circuit-lower-bounds/chr-s2e-advice-near-maximum-lower-bound.md)
-- [Infinitely-often versus almost-everywhere circuit lower bounds](../algorithmic-method-nqp-and-almost-everywhere-bounds/almost-everywhere-lower-bound.md)
 
 ## Sources
 

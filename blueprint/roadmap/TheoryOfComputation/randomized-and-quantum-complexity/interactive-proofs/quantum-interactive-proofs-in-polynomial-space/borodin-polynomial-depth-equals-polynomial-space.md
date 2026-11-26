@@ -11,11 +11,6 @@ A depth-$d$ circuit is evaluated by a depth-first recursion of depth $d$ storing
 - [The class NC(poly) of polynomial-depth bounded fan-in circuit families](polynomial-depth-circuit-class-nc-poly.md)
 - [Polynomial space for decision problems](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 
-## Proof depends on
-
-- [The class NC(poly) of polynomial-depth bounded fan-in circuit families](polynomial-depth-circuit-class-nc-poly.md)
-- [Polynomial space for decision problems](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
-
 ## Sources
 
 - Allan Borodin, "On relating time and space to size and depth", SIAM Journal on Computing 6(4) (1977).

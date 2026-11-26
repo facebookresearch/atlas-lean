@@ -13,8 +13,9 @@ A $\mathrm{P}^{\mathrm{NP}}$ construction of hard truth tables on input $1^{2^n}
 
 ## Depends on
 
-- [Korten: constructing a hard truth table is APEPP-complete under P^NP reductions](korten-hard-truth-table-apepp-complete.md)
 - [Polynomial time with an oracle](../../time-and-space-complexity-classes/pwith-oracle.md)
+- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
+- [The total function class TFΣ2P and the explicit-construction class APEPP](tfsigma2p-and-apepp.md)
 
 ## Proof depends on
 

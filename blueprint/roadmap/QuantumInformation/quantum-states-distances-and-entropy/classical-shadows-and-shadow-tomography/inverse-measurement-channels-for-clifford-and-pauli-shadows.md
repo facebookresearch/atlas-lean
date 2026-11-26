@@ -14,10 +14,6 @@ The Clifford group is a unitary $3$-design, in particular a $2$-design, so the t
 
 - [Classical shadows from randomized measurements](randomized-measurement-classical-shadow.md)
 
-## Proof depends on
-
-- [Classical shadows from randomized measurements](randomized-measurement-classical-shadow.md)
-
 ## Sources
 
 - Hsin-Yuan Huang, Richard Kueng, John Preskill, "Predicting many properties of a quantum system from very few measurements", Nature Physics 16 (2020); arXiv:2002.08953.

@@ -10,10 +10,6 @@ The constant coefficient of $a_is_i$ in $\mathbb{T}[X]/(X^{N}+1)$ is $a_{i,0}s_{
 
 - [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
 
-## Proof depends on
-
-- [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
-
 ## Sources
 
 - Ilaria Chillotti, Nicolas Gama, Mariya Georgieva, Malika Izabachène, "TFHE: Fast Fully Homomorphic Encryption over the Torus", Journal of Cryptology (2020), IACR ePrint 2018/421.

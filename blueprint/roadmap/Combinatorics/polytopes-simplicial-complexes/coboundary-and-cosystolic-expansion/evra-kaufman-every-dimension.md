@@ -9,12 +9,10 @@ One proves a local-to-global criterion: a complex whose proper links are $\beta$
 ## Depends on
 
 - [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
-- [Explicit Ramanujan complexes and their local spectral expansion](../local-spectral-high-dimensional-expanders/ramanujan-complex-existence.md)
-- [Spectral gap of high-order walks on local spectral expanders](../local-spectral-high-dimensional-expanders/kaufman-oppenheim-walk-gap.md)
+- [Ramanujan complexes of type A_d](../local-spectral-high-dimensional-expanders/ramanujan-complex.md)
 
 ## Proof depends on
 
-- [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
 - [Explicit Ramanujan complexes and their local spectral expansion](../local-spectral-high-dimensional-expanders/ramanujan-complex-existence.md)
 - [Spectral gap of high-order walks on local spectral expanders](../local-spectral-high-dimensional-expanders/kaufman-oppenheim-walk-gap.md)
 

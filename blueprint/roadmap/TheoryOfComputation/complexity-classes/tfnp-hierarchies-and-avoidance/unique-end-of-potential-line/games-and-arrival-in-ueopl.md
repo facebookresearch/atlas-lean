@@ -8,9 +8,8 @@ Simple stochastic games reduce both to contraction and to P-LCP, giving two proo
 
 ## Depends on
 
-- [Piecewise-linear contraction fixpoints in any ℓp norm lie in UEOPL and are polynomial-time in fixed dimension](pl-contraction-in-ueopl.md)
-- [The P-matrix linear complementarity problem lies in UEOPL, giving an expected 2^(n/2) poly(n)-time algorithm](p-matrix-lcp-in-ueopl.md)
 - [Parity game](../../../omega-automata-and-games/parity-games/parity-game.md)
+- [UNIQUE-EOPL, the class UEOPL and PromiseUEOPL: one potential line certified by violation solutions](unique-eopl-and-ueopl.md)
 
 ## Proof depends on
 

@@ -10,10 +10,6 @@ Membership in PPAD: ignore $I_B$ and reduce $I_A$ to END-OF-LINE; any END-OF-LIN
 
 - [ITER and the EITHER-SOLUTION combinator for building PPAD ∩ PLS-complete problems](iter-and-either-solution.md)
 
-## Proof depends on
-
-- [ITER and the EITHER-SOLUTION combinator for building PPAD ∩ PLS-complete problems](iter-and-either-solution.md)
-
 ## Sources
 
 - John Fearnley, Paul W. Goldberg, Alexandros Hollender and Rahul Savani, "The Complexity of Gradient Descent: CLS = PPAD ∩ PLS", STOC (2021) and Journal of the ACM 70(1) (2023), arXiv:2011.01929.

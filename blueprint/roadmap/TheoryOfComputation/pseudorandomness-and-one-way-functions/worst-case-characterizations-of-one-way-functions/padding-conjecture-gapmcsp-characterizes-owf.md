@@ -23,8 +23,6 @@ Items 1, 5 and 6 are related by standard constructions (a pseudorandom generator
 
 ## Proof depends on
 
-- [The Meta-Complexity Padding Conjecture](meta-complexity-padding-conjecture.md)
-- [Hitting set generators and algorithms that avoid them](hitting-set-generators-and-avoidance.md)
 - [Hirahara: one-way functions exist iff approximating distributional Kolmogorov complexity is NP-hard and NP is worst-case hard](hirahara-owf-iff-np-hardness-of-dk.md)
 - [Pseudorandom generators exist if and only if one-way functions exist](../../../ComputerScience/cryptography/symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
 

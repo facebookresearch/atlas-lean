@@ -13,7 +13,6 @@ Commit to $0$ by sending the mixed state $\mathbb{E}_k|\phi_k\rangle\langle\phi_
 
 ## Proof depends on
 
-- [Pseudorandom quantum state generators](../pseudorandom-quantum-states-and-unitaries/pseudorandom-quantum-states.md)
 - [Monotonicity of fidelity under channels](../../../QuantumInformation/quantum-operations/monotonicity-of-fidelity-under-channels.md)
 
 ## Sources

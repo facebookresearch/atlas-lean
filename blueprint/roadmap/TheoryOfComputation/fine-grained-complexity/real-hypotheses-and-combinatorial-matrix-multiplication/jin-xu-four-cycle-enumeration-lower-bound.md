@@ -8,7 +8,7 @@ Plug the Sidon-set hardness into the Abboud–Bringmann–Khoury–Zamir reducti
 
 ## Depends on
 
-- [Jin–Xu: 3SUM remains n^{2-o(1)}-hard on Sidon sets](jin-xu-3sum-hard-on-sidon-sets.md)
+- [The 3SUM, APSP and Orthogonal Vectors hypotheses](../fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
 
 ## Proof depends on
 

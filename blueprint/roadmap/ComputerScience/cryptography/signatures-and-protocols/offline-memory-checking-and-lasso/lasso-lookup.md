@@ -9,13 +9,13 @@ Write each lookup index into $c$ chunks; the prover commits to chunk indices and
 ## Depends on
 
 - [Decomposable lookup tables](decomposable-table.md)
-- [Spark: committing to sparse multilinear polynomials via memory checking](spark-sparse-commitment.md)
-- [Multiset equality via randomized product fingerprints](multiset-fingerprint.md)
-- [Grand products via a layered binary-tree circuit and GKR](gkr-grand-product.md)
+- [Offline memory checking with timestamps](offline-memory-checking.md)
+- [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
 
 ## Proof depends on
 
 - [Spark: committing to sparse multilinear polynomials via memory checking](spark-sparse-commitment.md)
+- [Multiset equality via randomized product fingerprints](multiset-fingerprint.md)
 - [Grand products via a layered binary-tree circuit and GKR](gkr-grand-product.md)
 
 ## Sources

@@ -10,7 +10,8 @@ The proofs pass through the complete problems: there are Karp reductions from $\
 
 ## Depends on
 
-- [Goldreich–Sahai–Vadhan: Statistical Difference from Uniform and Entropy Approximation are NISZK-complete](sdu-and-ea-niszk-complete.md)
+- [Non-interactive statistical zero knowledge NISZK in the common random string model](niszk-common-random-string.md)
+- [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
 
 ## Proof depends on
 

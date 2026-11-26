@@ -11,12 +11,7 @@ The following are equivalent: (i) the Connes embedding conjecture; (ii) Kirchber
 - [The Connes embedding conjecture](connes-embedding-conjecture.md)
 - [Kirchberg's conjecture on tensor products of free group C*-algebras](kirchbergs-qwep-conjecture.md)
 - [Tsirelson's problem](tsirelsons-problem-closure-version.md)
-
-## Proof depends on
-
-- [The Connes embedding conjecture](connes-embedding-conjecture.md)
-- [Kirchberg's conjecture on tensor products of free group C*-algebras](kirchbergs-qwep-conjecture.md)
-- [Tsirelson's problem](tsirelsons-problem-closure-version.md)
+- [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
 
 ## Sources
 

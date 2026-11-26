@@ -9,13 +9,12 @@ For a random oracle, measuring $X$ versus not measuring it is indistinguishable 
 ## Depends on
 
 - [Collapsing hash functions and collapse-binding commitments](collapsing-hash.md)
-- [Tight quantum query bound for finding collisions in a random function](qrom-collision-bound.md)
 - [Learning with errors](../../public-key/hardness-assumptions/learning-with-errors.md)
+- [The quantum random oracle model](quantum-random-oracle-model.md)
 
 ## Proof depends on
 
 - [Tight quantum query bound for finding collisions in a random function](qrom-collision-bound.md)
-- [Collapsing hash functions and collapse-binding commitments](collapsing-hash.md)
 
 ## Sources
 

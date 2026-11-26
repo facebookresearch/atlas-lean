@@ -8,15 +8,16 @@ In the challenge, replace $t^{*}=\mathrm{PRG}(r^{*})$ by a uniform $2\lambda$-bi
 
 ## Depends on
 
-- [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
-- [The GGM construction is puncturable](ggm-is-puncturable.md)
-- [Pseudorandom generators exist if and only if one-way functions exist](../../../symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
 - [Minicrypt](../../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/minicrypt.md)
+- [Puncturable pseudorandom functions](puncturable-prf.md)
+- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [One-way function families](../../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Proof depends on
 
 - [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
 - [The GGM construction is puncturable](ggm-is-puncturable.md)
+- [Pseudorandom generators exist if and only if one-way functions exist](../../../symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
 
 ## Sources
 

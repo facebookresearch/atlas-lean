@@ -17,11 +17,6 @@ By the product rule every $k$-th order derivative of $T$ is a sum of terms of th
 - [The dimension of shifted partial derivatives](shifted-partials-measure.md)
 - [Homogeneous depth-four circuits with bounded bottom fan-in](../depth-reduction-and-chasms/homogeneous-depth-four.md)
 
-## Proof depends on
-
-- [The dimension of shifted partial derivatives](shifted-partials-measure.md)
-- [Homogeneous depth-four circuits with bounded bottom fan-in](../depth-reduction-and-chasms/homogeneous-depth-four.md)
-
 ## Sources
 
 - A. Gupta, P. Kamath, N. Kayal, R. Saptharishi, "Approaching the chasm at depth four", Journal of the ACM 61 (2014); CCC (2013).

@@ -8,8 +8,9 @@ Take a near-optimal $(c, S_\Lambda(c) + \eta/3)$-integrality gap instance, turn 
 
 ## Depends on
 
-- [From SDP integrality gaps to dictatorship tests](gap-instance-to-dictatorship.md)
-- [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
+- [Generalized constraint satisfaction problems with payoff functions](generalized-csp.md)
+- [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
+- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 
 ## Proof depends on
 

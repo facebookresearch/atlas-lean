@@ -11,11 +11,6 @@ If $f\in\mathcal{F}$ has $f(G(y))=0$ for all seeds $y$, then the weighted estima
 - [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
 - [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
 
-## Proof depends on
-
-- [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
-- [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
-
 ## Sources
 
 - Mark Braverman, Gil Cohen and Sumegha Garg, "Pseudorandom Pseudo-distributions with Near-Optimal Error for Read-Once Branching Programs", STOC (2018); SIAM Journal on Computing 49(5) (2020), ECCC TR17-161.

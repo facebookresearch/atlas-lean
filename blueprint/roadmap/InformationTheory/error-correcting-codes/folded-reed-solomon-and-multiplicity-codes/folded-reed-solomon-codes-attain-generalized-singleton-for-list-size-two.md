@@ -8,15 +8,14 @@ Bound the number of codewords in an affine subspace of dimension $r$ close to th
 
 ## Depends on
 
-- [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
 - [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
 - [Generalized Singleton bound for list decoding (Shangguan-Tamo)](../generic-reed-solomon-list-decoding-capacity/generalized-singleton-bound-for-list-decoding.md)
+- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
+- [Univariate multiplicity codes](univariate-multiplicity-codes.md)
 
 ## Proof depends on
 
 - [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
-- [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
-- [Generalized Singleton bound for list decoding (Shangguan-Tamo)](../generic-reed-solomon-list-decoding-capacity/generalized-singleton-bound-for-list-decoding.md)
 
 ## Sources
 

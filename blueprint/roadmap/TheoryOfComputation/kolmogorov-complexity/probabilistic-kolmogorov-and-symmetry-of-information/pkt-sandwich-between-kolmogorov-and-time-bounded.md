@@ -18,7 +18,6 @@ For the upper bounds, a randomized program can be run deterministically with its
 
 ## Proof depends on
 
-- [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 - [Few strings have small complexity](../incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
 - [Optimality (the invariance theorem)](../exists-k-le-of-partrec.md)
 

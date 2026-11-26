@@ -10,11 +10,11 @@ Every glueable problem in $\mathsf{UEOPL}^{dt}$ lies in $\mathsf{FP}^{dt}$: fixi
 
 - [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
 - [UEOPL ⊆ EOPL ⊆ CLS = PPAD ∩ PLS](../unique-end-of-potential-line/ueopl-subset-eopl-subset-cls.md)
+- [UNIQUE-EOPL, the class UEOPL and PromiseUEOPL: one potential line certified by violation solutions](../unique-end-of-potential-line/unique-eopl-and-ueopl.md)
 
 ## Proof depends on
 
 - [PLS^dt ⊄ PPP^dt via glueability, settling the last oracle question among the 1990s TFNP classes](pls-not-in-ppp-black-box.md)
-- [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](query-tfnp-and-formulations.md)
 
 ## Sources
 

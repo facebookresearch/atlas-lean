@@ -11,11 +11,6 @@ If $g \in H$ then $|gH\rangle = |H\rangle$, so the Hadamard test outputs $0$ wit
 - [Black-box groups, Group Non-Membership and Order Verification](black-box-groups-and-group-problems.md)
 - [QMA for promise problems](../../local-hamiltonian-problem/qmapromise.md)
 
-## Proof depends on
-
-- [Black-box groups, Group Non-Membership and Order Verification](black-box-groups-and-group-problems.md)
-- [QMA for promise problems](../../local-hamiltonian-problem/qmapromise.md)
-
 ## Sources
 
 - John Watrous, "Succinct quantum proofs for properties of finite groups", FOCS (2000); arXiv:cs/0009002.

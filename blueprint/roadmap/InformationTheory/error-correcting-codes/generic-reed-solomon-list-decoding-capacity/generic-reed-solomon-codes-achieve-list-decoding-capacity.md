@@ -8,10 +8,7 @@ Generic RS codes are $\mathrm{MDS}(L+1)$, hence $\mathrm{LD}$-$\mathrm{MDS}(L)$.
 
 ## Depends on
 
-- [Generic Reed-Solomon codes are MDS(l) for every l](generic-reed-solomon-codes-are-higher-order-mds.md)
-- [Higher order MDS codes attain the generalized Singleton bound](higher-order-mds-implies-generalized-singleton-list-decodability.md)
-- [List-decoding capacity, achievability](../list-decoding/exists-encoding-list-decodable.md)
-- [List-decoding capacity, converse](../list-decoding/exists-many-in-ball.md)
+- [Generic and randomly punctured Reed-Solomon codes](generic-reed-solomon-codes.md)
 
 ## Proof depends on
 

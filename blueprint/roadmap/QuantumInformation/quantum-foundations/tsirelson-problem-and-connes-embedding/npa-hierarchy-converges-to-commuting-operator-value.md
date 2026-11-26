@@ -9,11 +9,9 @@ Level $k$ optimizes over moment matrices indexed by words of length at most $k$ 
 ## Depends on
 
 - [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
-- [Containments C_q in C_qs in C_qa in C_qc and closedness of C_qc](containments-and-closedness-of-correlation-sets.md)
 
 ## Proof depends on
 
-- [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
 - [Containments C_q in C_qs in C_qa in C_qc and closedness of C_qc](containments-and-closedness-of-correlation-sets.md)
 
 ## Sources

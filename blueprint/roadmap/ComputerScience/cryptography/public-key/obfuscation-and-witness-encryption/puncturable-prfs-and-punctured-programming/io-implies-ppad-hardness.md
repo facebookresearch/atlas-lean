@@ -8,12 +8,12 @@ Construct an End-of-the-Line instance whose line consists of signed counter valu
 
 ## Depends on
 
-- [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
-- [Complexity leveraging for exponentially many hybrids](../compact-functional-encryption-to-obfuscation/io-complexity-leveraging.md)
+- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
 ## Proof depends on
 
 - [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
+- [Complexity leveraging for exponentially many hybrids](../compact-functional-encryption-to-obfuscation/io-complexity-leveraging.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ If the generating sets are not polynomial, one finds a subalgebra and two subset
 
 - [Polynomially and exponentially generated powers (PGP and EGP)](polynomially-exponentially-generated-powers.md)
 
-## Proof depends on
-
-- [Polynomially and exponentially generated powers (PGP and EGP)](polynomially-exponentially-generated-powers.md)
-
 ## Sources
 
 - Dmitriy Zhuk, "The Size of Generating Sets of Powers", arXiv preprint (2015), arXiv:1504.02121.

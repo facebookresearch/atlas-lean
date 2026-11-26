@@ -8,13 +8,11 @@ The layer identity is the multilinear-extension form of $V_i(x)=V_{i+1}(x,0)V_{i
 
 ## Depends on
 
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
 - [The multilinear equality polynomial on the Boolean hypercube](../plonkish-polynomial-iops/eq-polynomial.md)
 
 ## Proof depends on
 
 - [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
-- [The multilinear equality polynomial on the Boolean hypercube](../plonkish-polynomial-iops/eq-polynomial.md)
 
 ## Sources
 

@@ -10,11 +10,10 @@ Kilian-randomize the branching program matrices, encode them at levels so that o
 
 - [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 - [Homomorphic encryption: correctness and compactness](../../homomorphic-encryption/homomorphic-encryption-correctness-and.md)
-- [Impossibility of virtual black-box obfuscation](../../../program-obfuscation/impossibility-of-virtual-black-box-obfuscation.md)
 
 ## Proof depends on
 
-- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [Impossibility of virtual black-box obfuscation](../../../program-obfuscation/impossibility-of-virtual-black-box-obfuscation.md)
 
 ## Sources
 

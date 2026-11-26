@@ -9,13 +9,13 @@ For conservative algebras EGP manifests on a two-element subset $\{a,b\}$ on whi
 ## Depends on
 
 - [The Chen Conjecture on the complexity of QCSP](chen-conjecture-qcsp.md)
-- [Zhuk: every finite algebra has either polynomially or exponentially generated powers](zhuk-pgp-egp-dichotomy.md)
-- [TQBF is PSPACE-complete](../../../completeness-other-classes/true-quantified-boolean-formulas/tqbf-pspace-complete.md)
+- [Polynomially and exponentially generated powers (PGP and EGP)](polynomially-exponentially-generated-powers.md)
+- [Quantified constraint satisfaction QCSP(Γ) over a finite constraint language](quantified-csp-over-finite-language.md)
 
 ## Proof depends on
 
-- [The Chen Conjecture on the complexity of QCSP](chen-conjecture-qcsp.md)
 - [Zhuk: every finite algebra has either polynomially or exponentially generated powers](zhuk-pgp-egp-dichotomy.md)
+- [TQBF is PSPACE-complete](../../../completeness-other-classes/true-quantified-boolean-formulas/tqbf-pspace-complete.md)
 - [Bulatov and Zhuk: the CSP dichotomy theorem for finite templates](../finite-domain-csp-dichotomy/bulatov-zhuk-csp-dichotomy-theorem.md)
 
 ## Sources

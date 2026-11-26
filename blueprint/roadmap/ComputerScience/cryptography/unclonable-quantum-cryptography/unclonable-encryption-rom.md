@@ -9,7 +9,6 @@ Both parties recovering $m$ in the one-time-pad version means both recovering $x
 ## Depends on
 
 - [Unclonable encryption](unclonable-encryption.md)
-- [Monogamy-of-entanglement game for BB84 states](monogamy-bb84.md)
 - [The quantum random oracle model](../security-games/quantum-random-oracle-techniques/quantum-random-oracle-model.md)
 
 ## Proof depends on

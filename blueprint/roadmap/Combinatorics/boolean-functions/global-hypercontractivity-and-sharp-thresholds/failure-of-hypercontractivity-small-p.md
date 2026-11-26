@@ -9,11 +9,9 @@ A direct computation for the normalized dictator gives fourth moment $\frac{(1-p
 ## Depends on
 
 - [Global functions on the p-biased cube](pbiased-global-function.md)
-- [Hypercontractivity Theorem (Bonami–Beckner)](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/hypercontractivity-theorem.md)
 
 ## Proof depends on
 
-- [Global functions on the p-biased cube](pbiased-global-function.md)
 - [Hypercontractivity Theorem (Bonami–Beckner)](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/hypercontractivity-theorem.md)
 
 ## Sources

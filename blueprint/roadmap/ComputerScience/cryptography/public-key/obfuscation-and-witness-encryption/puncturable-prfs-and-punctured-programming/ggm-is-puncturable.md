@@ -9,8 +9,7 @@ For $x\ne x^{*}$, let $i$ be the first index with $x_i\ne x^{*}_i$; the $i$-th s
 ## Depends on
 
 - [Puncturable pseudorandom functions](puncturable-prf.md)
-- [The GGM construction: pseudorandom generators give pseudorandom functions](../../../symmetric-key/pseudorandom-functions/the-ggm-construction-pseudorandom-generators.md)
-- [Pseudorandom generators exist if and only if one-way functions exist](../../../symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
+- [One-way function families](../../../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
 
 ## Proof depends on
 

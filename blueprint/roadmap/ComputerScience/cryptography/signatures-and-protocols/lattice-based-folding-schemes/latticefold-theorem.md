@@ -8,16 +8,16 @@ Decomposition keeps norms small; the range proof certifies that the decomposed d
 
 ## Depends on
 
+- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
+- [Folding scheme for an NP relation](../relaxed-r1cs-folding-schemes/folding-scheme.md)
+
+## Proof depends on
+
 - [Base-b decomposition commutes with Ajtai commitments](gadget-decomposition-commitments.md)
 - [Sum-check range proof via a vanishing product](sumcheck-range-check.md)
 - [Unbounded norm growth obstructs naive lattice folding](lattice-folding-norm-growth.md)
 - [HyperNova multi-folding scheme for CCS](../customizable-constraint-systems-and-multi-folding/hypernova-multifolding.md)
-
-## Proof depends on
-
-- [Sum-check range proof via a vanishing product](sumcheck-range-check.md)
 - [Relaxed binding of Ajtai commitments with challenge-difference openings](ajtai-relaxed-binding.md)
-- [HyperNova multi-folding scheme for CCS](../customizable-constraint-systems-and-multi-folding/hypernova-multifolding.md)
 
 ## Sources
 

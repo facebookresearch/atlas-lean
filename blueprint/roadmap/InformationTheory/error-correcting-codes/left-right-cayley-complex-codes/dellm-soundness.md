@@ -13,14 +13,13 @@ Given $f$, replace each local view by its nearest tensor codeword; vertices whos
 ## Depends on
 
 - [The local tester of a left-right Cayley complex code](lr-local-tester.md)
-- [Spectral expansion of the two Cayley graphs implies square-complex expansion](lr-complex-spectral.md)
 - [Agreement testability and robustness of tensor codes](agreement-testability-tensor.md)
+- [Left-right Cayley complexes](left-right-cayley-complex.md)
+- [Tensor codes on the squares of a left-right Cayley complex](square-complex-tensor-code.md)
 
 ## Proof depends on
 
-- [The local tester of a left-right Cayley complex code](lr-local-tester.md)
 - [Spectral expansion of the two Cayley graphs implies square-complex expansion](lr-complex-spectral.md)
-- [Agreement testability and robustness of tensor codes](agreement-testability-tensor.md)
 
 ## Sources
 

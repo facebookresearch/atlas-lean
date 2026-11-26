@@ -16,10 +16,6 @@ For $0\le a< d/2$, the product $X^{a}\cdot iX^{-i}$ contributes to the constant 
 
 - [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
 
-## Proof depends on
-
-- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
-
 ## Sources
 
 - Dan Boneh, Binyi Chen, "LatticeFold+: Faster, Simpler, Shorter Lattice-Based Folding for Succinct Proof Systems", CRYPTO (2025), IACR ePrint 2025/247.

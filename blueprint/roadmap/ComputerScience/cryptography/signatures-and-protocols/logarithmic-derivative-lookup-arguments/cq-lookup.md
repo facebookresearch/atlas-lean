@@ -9,14 +9,12 @@ The prover commits to the multiplicities and to $A$ over the table domain using 
 ## Depends on
 
 - [Cached quotients make table commitments reusable](cached-quotients.md)
-- [Soundness of checking the logarithmic-derivative identity at a random point](logup-random-evaluation.md)
 - [Security of KZG polynomial commitments](../zero-knowledge-and-arguments/security-of-kzg-polynomial-commitments.md)
+- [Lookup relations with multiplicities](lookup-relation.md)
 
 ## Proof depends on
 
-- [Cached quotients make table commitments reusable](cached-quotients.md)
 - [Soundness of checking the logarithmic-derivative identity at a random point](logup-random-evaluation.md)
-- [Security of KZG polynomial commitments](../zero-knowledge-and-arguments/security-of-kzg-polynomial-commitments.md)
 
 ## Sources
 

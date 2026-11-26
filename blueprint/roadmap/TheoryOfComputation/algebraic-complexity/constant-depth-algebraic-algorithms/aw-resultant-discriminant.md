@@ -8,7 +8,7 @@ $\operatorname{Res}(f,g) = \prod_i g(r_i)$ is a symmetric function of the roots 
 
 ## Depends on
 
-- [Andrews–Wigderson: the GCD of two polynomials in arithmetic AC0](aw-gcd-ac0.md)
+- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
 
 ## Proof depends on
 

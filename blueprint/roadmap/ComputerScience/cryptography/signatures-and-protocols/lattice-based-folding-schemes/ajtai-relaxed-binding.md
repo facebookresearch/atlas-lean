@@ -10,10 +10,6 @@ Multiply $Aw=cC$ by $c'$ and $Aw'=c'C$ by $c$ and subtract. The norm bound follo
 
 - [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
 
-## Proof depends on
-
-- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
-
 ## Sources
 
 - Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", IACR ePrint 2024/257 (2024).

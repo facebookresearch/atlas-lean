@@ -8,7 +8,7 @@ Adapt Regev's iterative reduction to ideal lattices using the canonical embeddin
 
 ## Depends on
 
-- [Regev's quantum worst-case to average-case reduction for LWE](regev-worst-case-reduction.md)
+- [Approximate lattice problems GapSVP and SIVP](gapsvp-and-sivp.md)
 
 ## Proof depends on
 

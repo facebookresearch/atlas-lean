@@ -10,11 +10,10 @@ Polynomial completeness of the quotient means every operation on $D_i/\sigma$ is
 
 - [Cycle-consistent, linked and irreducible CSP instances](cycle-consistent-linked-irreducible-instances.md)
 - [Zhuk's centers, polynomially complete algebras and linear quotients](zhuk-centers-polynomially-complete-linear-algebras.md)
+- [Absorbing and binary absorbing subuniverses of a finite algebra](absorbing-and-binary-absorbing-subuniverses.md)
 
 ## Proof depends on
 
-- [Cycle-consistent, linked and irreducible CSP instances](cycle-consistent-linked-irreducible-instances.md)
-- [Zhuk's centers, polynomially complete algebras and linear quotients](zhuk-centers-polynomially-complete-linear-algebras.md)
 - [Zhuk's four-types theorem: binary absorption, center, polynomially complete quotient or affine quotient](zhuk-four-types-theorem.md)
 
 ## Sources

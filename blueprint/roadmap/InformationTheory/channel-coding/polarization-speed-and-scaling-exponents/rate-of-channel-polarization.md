@@ -14,7 +14,8 @@ Once $Z_j$ is small, squaring at a constant fraction of the steps (the $+$ steps
 
 ## Depends on
 
-- [The polarization martingale](polarization-martingale.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
+- [Synthesized polar subchannels](synthesized-polar-subchannels.md)
 
 ## Proof depends on
 

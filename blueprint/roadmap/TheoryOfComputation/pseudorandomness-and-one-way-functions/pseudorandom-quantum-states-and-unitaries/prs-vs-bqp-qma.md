@@ -10,11 +10,10 @@ The oracle is a family of Haar-random unitaries (giving PRS) together with a $\m
 
 - [Pseudorandom quantum state generators](pseudorandom-quantum-states.md)
 - [QMA for promise problems](../../randomized-and-quantum-complexity/local-hamiltonian-problem/qmapromise.md)
-- [BQP is contained in PP](../../randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/bqp-subset-pp.md)
+- [Pseudorandom unitaries](pseudorandom-unitaries.md)
 
 ## Proof depends on
 
-- [Pseudorandom quantum state generators](pseudorandom-quantum-states.md)
 - [BQP is contained in PP](../../randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/bqp-subset-pp.md)
 
 ## Sources

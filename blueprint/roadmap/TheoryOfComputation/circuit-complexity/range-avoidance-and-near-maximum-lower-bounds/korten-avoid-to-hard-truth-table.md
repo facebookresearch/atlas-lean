@@ -9,14 +9,12 @@ The number of circuits with $s$ gates is $2^{O(s \log s)} < 2^{2^m}$ for $s = 2^
 ## Depends on
 
 - [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](../../complexity-classes/tfnp-hierarchies-and-avoidance/range-avoidance-and-explicit-constructions/range-avoidance-problem.md)
-- [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Proof depends on
 
-- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](../../complexity-classes/tfnp-hierarchies-and-avoidance/range-avoidance-and-explicit-constructions/range-avoidance-problem.md)
 - [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 
 ## Sources
 
 - O. Korten, "The hardest explicit construction", FOCS (2021), arXiv:2106.00875.
-- R. Kleinberg, O. Korten, D. Mitropolsky, C. Papadimitriou, "Total functions in the polynomial hierarchy", ITCS (2021), arXiv:2007.14049.
+- R. Kleinberg, O. Korten, D. Mitropolsky, C. Papadimitriou, "Total functions in the polynomial hierarchy", ITCS (2021), LIPIcs vol. 185, paper 44.

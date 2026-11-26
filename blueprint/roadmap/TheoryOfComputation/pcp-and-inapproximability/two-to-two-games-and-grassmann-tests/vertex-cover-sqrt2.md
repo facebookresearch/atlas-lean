@@ -8,13 +8,11 @@ Apply the $2$-to-$2$ theorem and the standard reduction from label cover to inde
 
 ## Depends on
 
-- [The 2-to-2 Games Theorem (imperfect completeness)](two-to-two-theorem.md)
 - [Approximation algorithms and approximation ratios](../../../ComputerScience/approximation-algorithms/approximation-algorithms-and-approximation-ratios.md)
 
 ## Proof depends on
 
 - [The 2-to-2 Games Theorem (imperfect completeness)](two-to-two-theorem.md)
-- [Approximation algorithms and approximation ratios](../../../ComputerScience/approximation-algorithms/approximation-algorithms-and-approximation-ratios.md)
 
 ## Sources
 

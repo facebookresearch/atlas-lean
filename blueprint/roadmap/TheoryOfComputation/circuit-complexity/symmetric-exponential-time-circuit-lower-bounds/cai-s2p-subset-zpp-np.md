@@ -12,10 +12,6 @@ The algorithm maintains a small set of candidate proofs for one side and repeate
 - [ZPP](../../complexity-classes/time-and-space-complexity-classes/zpp.md)
 - [Polynomial time with an oracle](../../complexity-classes/time-and-space-complexity-classes/pwith-oracle.md)
 
-## Proof depends on
-
-- [Symmetric alternation: the classes S2TIME[T], S2P and S2E](symmetric-alternation-s2p-s2e.md)
-
 ## Sources
 
 - Jin-Yi Cai, "S_2^p is contained in ZPP^NP", Journal of Computer and System Sciences 73 (2007), ECCC TR01-030.

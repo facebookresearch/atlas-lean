@@ -10,12 +10,9 @@ The classical witness describes a composition series of $H$ by short straight-li
 
 - [The class QCMA of quantum verification with classical witnesses](quantum-classical-merlin-arthur.md)
 - [Black-box groups, Group Non-Membership and Order Verification](black-box-groups-and-group-problems.md)
-- [Watrous: Group Non-Membership is in QMA](group-non-membership-in-qma.md)
 
 ## Proof depends on
 
-- [The class QCMA of quantum verification with classical witnesses](quantum-classical-merlin-arthur.md)
-- [Black-box groups, Group Non-Membership and Order Verification](black-box-groups-and-group-problems.md)
 - [Watrous: Group Non-Membership is in QMA](group-non-membership-in-qma.md)
 
 ## Sources

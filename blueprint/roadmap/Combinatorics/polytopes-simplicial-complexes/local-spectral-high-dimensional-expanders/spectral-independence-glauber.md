@@ -9,11 +9,9 @@ Glauber dynamics on $\mu$ is the down-up walk on the top faces of the literal co
 ## Depends on
 
 - [Spectral independence of a distribution on the hypercube](spectral-independence.md)
-- [Alev–Lau local-to-global bound for the down-up walk](alev-lau-local-to-global.md)
 
 ## Proof depends on
 
-- [Spectral independence of a distribution on the hypercube](spectral-independence.md)
 - [Alev–Lau local-to-global bound for the down-up walk](alev-lau-local-to-global.md)
 
 ## Sources

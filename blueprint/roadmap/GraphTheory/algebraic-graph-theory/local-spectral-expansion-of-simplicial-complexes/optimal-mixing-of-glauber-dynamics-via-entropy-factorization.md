@@ -8,7 +8,7 @@ Upgrade spectral independence to entropic independence: show approximate tensori
 
 ## Depends on
 
-- [Spectral independence implies polynomial mixing of Glauber dynamics](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/spectral-independence-glauber.md)
+- [Spectral independence of a distribution on the hypercube](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/spectral-independence.md)
 
 ## Proof depends on
 

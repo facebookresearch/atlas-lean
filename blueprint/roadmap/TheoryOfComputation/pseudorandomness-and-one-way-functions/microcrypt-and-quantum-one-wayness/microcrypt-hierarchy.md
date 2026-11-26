@@ -8,13 +8,14 @@ Each forward implication is one of the constructions above: PFC-based PRUs from 
 
 ## Depends on
 
-- [Quantum commitments and secure computation from one-way state generators](commitments-from-quantum-one-wayness.md)
-- [Pseudorandom unitaries from the PFC ensemble and one-way functions](../pseudorandom-quantum-states-and-unitaries/pfc-ensemble-pru.md)
-- [Pseudorandom states in Algorithmica: a classical oracle with P = NP](../pseudorandom-quantum-states-and-unitaries/prs-in-algorithmica.md)
-- [Pseudorandom states can exist even if BQP = QMA](../pseudorandom-quantum-states-and-unitaries/prs-vs-bqp-qma.md)
-- [Quantum commitments from pseudorandom states](prs-imply-commitments.md)
-- [Pseudorandom states with long outputs are one-way state generators](prs-imply-owsg.md)
-- [Minicrypt](../impagliazzo-s-five-worlds/minicrypt.md)
+- [EFI pairs: efficient, statistically far, computationally indistinguishable states](efi-pairs.md)
+- [One-way puzzles](one-way-puzzles.md)
+- [One-way state generators](one-way-state-generators.md)
+- [Quantum bit commitments in canonical form](quantum-bit-commitments.md)
+- [Pseudorandom unitaries](../pseudorandom-quantum-states-and-unitaries/pseudorandom-unitaries.md)
+- [Pseudorandom quantum state generators](../pseudorandom-quantum-states-and-unitaries/pseudorandom-quantum-states.md)
+- [Black-box constructions and oracle separations](../../../ComputerScience/cryptography/public-key/hardness-assumptions/black-box-constructions-and-oracle-separations.md)
+- [QMA for promise problems](../../randomized-and-quantum-complexity/local-hamiltonian-problem/qmapromise.md)
 
 ## Proof depends on
 
@@ -22,6 +23,9 @@ Each forward implication is one of the constructions above: PFC-based PRUs from 
 - [Pseudorandom unitaries from the PFC ensemble and one-way functions](../pseudorandom-quantum-states-and-unitaries/pfc-ensemble-pru.md)
 - [Pseudorandom states in Algorithmica: a classical oracle with P = NP](../pseudorandom-quantum-states-and-unitaries/prs-in-algorithmica.md)
 - [Pseudorandom states can exist even if BQP = QMA](../pseudorandom-quantum-states-and-unitaries/prs-vs-bqp-qma.md)
+- [Quantum commitments from pseudorandom states](prs-imply-commitments.md)
+- [Pseudorandom states with long outputs are one-way state generators](prs-imply-owsg.md)
+- [Minicrypt](../impagliazzo-s-five-worlds/minicrypt.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ If $\mathcal{G}$ covers $\mathcal{F}$ with $\sum_G p^{|G|} \le 1/2$, then $\mu_p
 
 - [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
 
-## Proof depends on
-
-- [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
-
 ## Sources
 
 - Jeff Kahn, Gil Kalai, "Thresholds and expectation thresholds", Combinatorics, Probability and Computing 16(3) (2007).

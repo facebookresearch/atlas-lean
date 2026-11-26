@@ -10,10 +10,11 @@ Each vertex runs $\mathsf{AS.P}$ on the incoming NARK instances and accumulators
 
 - [Split accumulation and NARKs with accumulation](split-accumulation.md)
 - [Proof-carrying data for a compliance predicate](pcd-scheme.md)
+- [Incrementally verifiable computation scheme for an iterated function](ivc-scheme.md)
+- [Knowledge soundness](../zero-knowledge-and-arguments/knowledge-soundness.md)
 
 ## Proof depends on
 
-- [Split accumulation and NARKs with accumulation](split-accumulation.md)
 - [Extractor blow-up in recursive proof composition](recursive-extraction-blowup.md)
 
 ## Sources

@@ -8,8 +8,7 @@ Apply the main theorem with the shadow norm bounds: $\mathrm{Tr}(O_0^2) \le 1$ f
 
 ## Depends on
 
-- [Huang-Kueng-Preskill: classical shadows predict many properties from few measurements](classical-shadows-predict-many-observables.md)
-- [Variance bound for single-snapshot estimators](variance-of-classical-shadow-estimators.md)
+- [Classical shadows from randomized measurements](randomized-measurement-classical-shadow.md)
 
 ## Proof depends on
 

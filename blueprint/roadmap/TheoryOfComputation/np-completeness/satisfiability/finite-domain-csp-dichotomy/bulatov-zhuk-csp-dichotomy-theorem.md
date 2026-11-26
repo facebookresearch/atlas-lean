@@ -14,10 +14,11 @@ For the hardness side, the absence of a WNU polymorphism of the core yields no T
 ## Depends on
 
 - [The Feder–Vardi Dichotomy Conjecture and its algebraic form](feder-vardi-dichotomy-conjecture.md)
-- [Bulatov–Jeavons–Krokhin: a core with no Taylor polymorphism has an NP-complete CSP](bulatov-jeavons-krokhin-no-taylor-np-complete.md)
-- [Maróti–McKenzie: finite Taylor algebras have weak near-unanimity terms](maroti-mckenzie-taylor-implies-wnu.md)
-- [Siggers: a finite algebra is Taylor iff it has a 6-ary Siggers term](siggers-six-ary-taylor-term.md)
-- [Every finite structure has a unique core, and constants can be added to a core without changing CSP complexity](core-uniqueness-and-adding-constants.md)
+- [Cores of finite relational structures](cores-of-finite-relational-structures.md)
+- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](wnu-taylor-siggers-cyclic-operations.md)
+- [Polymorphisms of a finite structure and its polymorphism clone Pol(A)](polymorphism-clone-of-a-finite-structure.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
+- [Finite relational templates and the homomorphism problem CSP(A)](finite-templates-and-csp-of-a.md)
 
 ## Proof depends on
 

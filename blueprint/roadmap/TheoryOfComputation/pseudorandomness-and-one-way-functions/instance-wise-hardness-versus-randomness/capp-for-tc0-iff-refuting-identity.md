@@ -14,12 +14,11 @@ The Chen–Tell targeted hitting-set generator is scaled down to $\mathrm{TC}^0$
 ## Depends on
 
 - [Refuters for a function against a class of probabilistic algorithms](refuter-for-a-function.md)
-- [Chen–Tell–Williams: refuting low-space streaming algorithms is equivalent to prBPP = prP](refuting-streaming-algorithms-iff-prbpp-eq-prp.md)
 
 ## Proof depends on
 
-- [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](instance-wise-reconstruction-targeted-hsg.md)
 - [Chen–Tell–Williams: refuting low-space streaming algorithms is equivalent to prBPP = prP](refuting-streaming-algorithms-iff-prbpp-eq-prp.md)
+- [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](instance-wise-reconstruction-targeted-hsg.md)
 
 ## Sources
 

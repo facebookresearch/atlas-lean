@@ -11,11 +11,6 @@ A classical algorithm's knowledge after $T$ queries is a set of queried points p
 - [The Yamakawa-Zhandry codeword search problem](yamakawa-zhandry-codeword-search-problem.md)
 - [List-recoverable codes](list-recoverable-codes-for-oracle-hardness.md)
 
-## Proof depends on
-
-- [The Yamakawa-Zhandry codeword search problem](yamakawa-zhandry-codeword-search-problem.md)
-- [List-recoverable codes](list-recoverable-codes-for-oracle-hardness.md)
-
 ## Sources
 
 - Takashi Yamakawa, Mark Zhandry, "Verifiable quantum advantage without structure", FOCS (2022), Journal of the ACM 71(3) (2024); arXiv:2204.02063.

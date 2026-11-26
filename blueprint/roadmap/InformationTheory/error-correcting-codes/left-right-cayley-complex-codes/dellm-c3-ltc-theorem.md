@@ -8,18 +8,15 @@ Take $A_n, B_n$ such that both Cayley graphs are Ramanujan (Lubotzky-Phillips-Sa
 
 ## Depends on
 
-- [Soundness of the vertex tester for left-right Cayley complex codes](dellm-soundness.md)
-- [Rate and distance of left-right Cayley complex codes](lr-code-rate-distance.md)
-- [Random pairs of codes are two-sided robustly testable](random-codes-robust.md)
 - [c3-locally testable code families](c3-ltc-family.md)
-- [Good locally testable codes of every rate below one](../locally-testable-codes/theorem-1-2.md)
+- [Left-right Cayley complexes](left-right-cayley-complex.md)
+- [Tensor codes on the squares of a left-right Cayley complex](square-complex-tensor-code.md)
 
 ## Proof depends on
 
 - [Soundness of the vertex tester for left-right Cayley complex codes](dellm-soundness.md)
 - [Rate and distance of left-right Cayley complex codes](lr-code-rate-distance.md)
 - [Random pairs of codes are two-sided robustly testable](random-codes-robust.md)
-- [c3-locally testable code families](c3-ltc-family.md)
 - [Good locally testable codes of every rate below one](../locally-testable-codes/theorem-1-2.md)
 
 ## Sources

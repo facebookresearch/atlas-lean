@@ -10,10 +10,6 @@ The winning probability equals $\|\frac{1}{2^{n}}\sum_\theta\sum_x|x\rangle\lang
 
 - [Wiesner's private-key quantum money](wiesner-quantum-money.md)
 
-## Proof depends on
-
-- [Wiesner's private-key quantum money](wiesner-quantum-money.md)
-
 ## Sources
 
 - Marco Tomamichel, Serge Fehr, Jędrzej Kaniewski, Stephanie Wehner, "A Monogamy-of-Entanglement Game with Applications to Device-Independent Quantum Cryptography", New Journal of Physics (2013).

@@ -10,10 +10,6 @@ Reduction modulo $t$ is a ring homomorphism from $\mathbb{Z}$, so the computatio
 
 - [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
 
-## Proof depends on
-
-- [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
-
 ## Sources
 
 - Zvika Brakerski, Craig Gentry, Vinod Vaikuntanathan, "(Leveled) Fully Homomorphic Encryption without Bootstrapping", ITCS (2012), IACR ePrint 2011/277.

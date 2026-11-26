@@ -16,7 +16,6 @@ The computation paths from distinct initial contents are vertex-disjoint in the 
 
 - [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 - [ZPP](../../time-and-space-complexity-classes/zpp.md)
-- [Configuration graph of a space-bounded machine](../../space-and-time-complexity/configuration-graph-of-a-space-bounded-machine.md)
 
 ## Proof depends on
 

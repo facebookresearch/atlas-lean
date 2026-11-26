@@ -17,10 +17,11 @@ Item 1 implies item 3 by the inversion-to-coding lemma, item 3 implies items 2 a
 
 - [Average-case symmetry of information, conditional coding and language compression over samplable pairs](average-case-kolmogorov-principles-over-samplable-pairs.md)
 - [One-way functions exist](../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/owfexists.md)
-- [Longpré–Mocas and Longpré–Watanabe: polynomial-time symmetry of information rules out one-way functions](longpre-watanabe-soi-implies-no-owf.md)
+- [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
 
 ## Proof depends on
 
+- [Longpré–Mocas and Longpré–Watanabe: polynomial-time symmetry of information rules out one-way functions](longpre-watanabe-soi-implies-no-owf.md)
 - [Inverting one-way functions yields average-case conditional coding for pK](inverting-owf-gives-average-case-conditional-coding.md)
 - [Average-case conditional coding implies average-case symmetry of information and language compression](conditional-coding-implies-soi-and-compression.md)
 - [Average-case language compression inverts every polynomial-time function via the universal sampler](language-compression-inverts-functions.md)

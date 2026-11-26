@@ -14,12 +14,9 @@ Take the $N$-th tensor power of the direct sum, which by the multinomial theorem
 
 - [Matrix multiplication exponent](../matrix-multiplication-exponent/matrix-multiplication-exponent.md)
 - [Matrix multiplication tensor](../matrix-multiplication-exponent/matrix-multiplication-tensor.md)
-- [Schönhage's 1981 bound on the matrix multiplication exponent](../matrix-multiplication-exponent/schonhage1981-upper.md)
 
 ## Proof depends on
 
-- [Matrix multiplication exponent](../matrix-multiplication-exponent/matrix-multiplication-exponent.md)
-- [Matrix multiplication tensor](../matrix-multiplication-exponent/matrix-multiplication-tensor.md)
 - [Schönhage's 1981 bound on the matrix multiplication exponent](../matrix-multiplication-exponent/schonhage1981-upper.md)
 
 ## Sources

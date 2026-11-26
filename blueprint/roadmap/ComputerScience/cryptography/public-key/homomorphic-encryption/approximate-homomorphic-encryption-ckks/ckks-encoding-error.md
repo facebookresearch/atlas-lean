@@ -10,10 +10,6 @@ The rounding error $r=\mathrm{Ecd}(\mathbf{z})-\Delta\tau^{-1}(\mathbf{z})$ has 
 
 - [CKKS encoding via the canonical embedding](canonical-embedding-encoding.md)
 
-## Proof depends on
-
-- [CKKS encoding via the canonical embedding](canonical-embedding-encoding.md)
-
 ## Sources
 
 - Jung Hee Cheon, Andrey Kim, Miran Kim, Yongsoo Song, "Homomorphic Encryption for Arithmetic of Approximate Numbers", ASIACRYPT (2017), IACR ePrint 2016/421.

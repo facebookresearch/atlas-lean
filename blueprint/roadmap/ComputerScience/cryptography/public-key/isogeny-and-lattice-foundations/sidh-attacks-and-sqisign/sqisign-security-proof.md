@@ -11,11 +11,7 @@ Cast SQIsign as a Sigma protocol with hints, where the hint is a distribution of
 - [Fiat–Shamir with hints](fiat-shamir-with-hints.md)
 - [SQIsign: compact signatures from the SQIsign identification protocol](sqisign-signature.md)
 - [The supersingular isogeny path and endomorphism ring problems](../supersingular-isogenies-and-quaternion-orders/isogeny-path-and-endring-problems.md)
-
-## Proof depends on
-
-- [Fiat–Shamir with hints](fiat-shamir-with-hints.md)
-- [SQIsign: compact signatures from the SQIsign identification protocol](sqisign-signature.md)
+- [The random oracle model](../../random-oracle-constructions/the-random-oracle-model.md)
 
 ## Sources
 

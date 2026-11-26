@@ -14,8 +14,6 @@ Apply the partition lemma with $d=2$ and $b=\Theta(\sqrt{s\log s})$: the quotien
 
 ## Depends on
 
-- [Shalunov: a block quotient of a circuit unfolds into a Tree Evaluation instance](circuit-quotient-unfolds-to-tree-evaluation.md)
-- [Shalunov's low-degree DAG partition lemma](shalunov-low-degree-dag-partition.md)
 - [The Circuit Value Problem](../../../completeness-other-classes/circuit-value-problem/cvp-dec.md)
 - [Deterministic space classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dspace.md)
 

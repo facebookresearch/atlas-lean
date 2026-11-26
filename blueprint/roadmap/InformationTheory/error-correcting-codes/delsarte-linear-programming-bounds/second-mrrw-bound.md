@@ -15,11 +15,9 @@ Combine the LP bound for constant-weight codes, obtained from the Johnson associ
 ## Depends on
 
 - [First McEliece-Rodemich-Rumsey-Welch bound](first-mrrw-bound.md)
-- [Elias–Bassalygo bound (alphabet-free form)](../bounds-on-code-size/elias-bassalygo-bound.md)
 
 ## Proof depends on
 
-- [First McEliece-Rodemich-Rumsey-Welch bound](first-mrrw-bound.md)
 - [Elias–Bassalygo bound (alphabet-free form)](../bounds-on-code-size/elias-bassalygo-bound.md)
 
 ## Sources

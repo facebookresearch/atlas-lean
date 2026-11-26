@@ -8,8 +8,7 @@ In a fiber bundle the fibre homology over each base cycle is twisted by the holo
 
 ## Depends on
 
-- [Parameters of hypergraph product codes](parameters-of-hypergraph-product-codes.md)
-- [Balanced products of chain complexes over a group](balanced-product-of-chain-complexes.md)
+- [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
 
 ## Proof depends on
 

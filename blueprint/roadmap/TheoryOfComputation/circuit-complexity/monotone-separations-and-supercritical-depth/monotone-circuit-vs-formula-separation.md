@@ -8,8 +8,8 @@ Take an unsatisfiable formula $F$ with a polynomial-size resolution refutation w
 
 ## Depends on
 
-- [Garg–Göös–Kamath–Sokolov: dag-like lifting from resolution width](../../communication-complexity/randomized-and-dag-like-lifting/ggks-dag-lifting.md)
-- [Raz–McKenzie: separation of the monotone NC hierarchy](raz-mckenzie-monotone-nc.md)
+- [Resolution refutation](../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Composed functions, gadgets and lifting theorems](../../communication-complexity/randomized-and-dag-like-lifting/composed-function-lifting.md)
 
 ## Proof depends on
 

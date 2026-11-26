@@ -8,7 +8,7 @@ Slofstra embeds finitely presented groups into solution groups of linear constra
 
 ## Depends on
 
-- [Containments C_q in C_qs in C_qa in C_qc and closedness of C_qc](containments-and-closedness-of-correlation-sets.md)
+- [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
 
 ## Proof depends on
 

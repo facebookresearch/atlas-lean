@@ -10,10 +10,6 @@ Encrypt $\mathbf{y}$ entrywise in $\mathbb{G}_1$ and $\mathbb{G}_2$ with functio
 
 - [Partially hiding functional encryption for degree-two private computations](partially-hiding-fe.md)
 - [The symmetric external Diffie–Hellman assumption](../obfuscation-from-well-founded-assumptions/sxdh-assumption.md)
-
-## Proof depends on
-
-- [The symmetric external Diffie–Hellman assumption](../obfuscation-from-well-founded-assumptions/sxdh-assumption.md)
 - [Bilinear groups](../../advanced-encryption-and-pairings/bilinear-groups.md)
 
 ## Sources

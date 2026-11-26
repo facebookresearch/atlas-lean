@@ -9,11 +9,11 @@ Existence and explicitness come from arithmetic lattices in division algebras ov
 ## Depends on
 
 - [Ramanujan complexes of type A_d](ramanujan-complex.md)
-- [Oppenheim's trickling-down theorem for spectral gaps](oppenheim-trickle-down.md)
+- [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
+- [Link of a face in a weighted complex](link-of-face.md)
 
 ## Proof depends on
 
-- [Ramanujan complexes of type A_d](ramanujan-complex.md)
 - [Oppenheim's trickling-down theorem for spectral gaps](oppenheim-trickle-down.md)
 
 ## Sources

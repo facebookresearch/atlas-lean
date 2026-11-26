@@ -10,10 +10,6 @@ Decompose the norm of the coboundary $\|\delta f\|^2$ and of the codifferential 
 
 - [Links and local spectral expanders](links-and-local-spectral-expansion.md)
 
-## Proof depends on
-
-- [Links and local spectral expanders](links-and-local-spectral-expansion.md)
-
 ## Sources
 
 - Howard Garland, "p-adic curvature and the cohomology of discrete subgroups of p-adic groups", Annals of Mathematics 97(3) (1973).

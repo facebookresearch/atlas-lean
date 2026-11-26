@@ -8,12 +8,12 @@ Apply the everywhere single-valued $\mathrm{FS}_2\mathrm{P}$ algorithm for Avoid
 
 ## Depends on
 
-- [Li: a single-valued FS2P algorithm solves Avoid on every input length](li-single-valued-fs2p-avoid.md)
-- [Chen–Hirahara–Ren: S2E/1 requires circuit size 2^n/n, hence so do Σ2E, (Σ2E ∩ Π2E)/1 and ZPE^NP/1](chr-s2e-advice-near-maximum-lower-bound.md)
+- [Symmetric alternation: the classes S2TIME[T], S2P and S2E](symmetric-alternation-s2p-s2e.md)
 
 ## Proof depends on
 
 - [Li: a single-valued FS2P algorithm solves Avoid on every input length](li-single-valued-fs2p-avoid.md)
+- [Chen–Hirahara–Ren: S2E/1 requires circuit size 2^n/n, hence so do Σ2E, (Σ2E ∩ Π2E)/1 and ZPE^NP/1](chr-s2e-advice-near-maximum-lower-bound.md)
 - [Cai: S2P is contained in ZPP^NP](cai-s2p-subset-zpp-np.md)
 - [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
 

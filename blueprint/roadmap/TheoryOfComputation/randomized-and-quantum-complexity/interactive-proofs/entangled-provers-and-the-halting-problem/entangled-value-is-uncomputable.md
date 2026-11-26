@@ -8,8 +8,8 @@ A decision procedure for the promise problem would decide the halting problem th
 
 ## Depends on
 
-- [The halting problem reduces to the entangled value gap problem](halting-problem-reduces-to-entangled-value-gap.md)
-- [The halting problem is undecidable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
+- [Synchronous two-prover games](synchronous-two-prover-games.md)
+- [Uniformly generated families of two-prover one-round games](uniformly-generated-game-families.md)
 
 ## Proof depends on
 

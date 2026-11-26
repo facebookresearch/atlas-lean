@@ -8,7 +8,7 @@ Assume a verifier has no small-circuit witnesses on infinitely many inputs. Usin
 
 ## Depends on
 
-- [Impagliazzo–Kabanets–Wigderson easy witness lemma for NEXP](easy-witness-ikw.md)
+- [Nondeterministic quasi-polynomial time](nqp-class.md)
 
 ## Proof depends on
 

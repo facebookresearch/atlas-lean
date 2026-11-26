@@ -16,10 +16,6 @@ Using the character formula, $\sum_x K_k(|x|)K_l(|x|) = \sum_{|y| = k, |y'| = l}
 
 - [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
 
-## Proof depends on
-
-- [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
-
 ## Sources
 
 - F. J. MacWilliams, N. J. A. Sloane, "The Theory of Error-Correcting Codes", North-Holland (1977).

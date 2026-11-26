@@ -8,8 +8,7 @@ A prover strategy for $\mathcal{L}^{\mathcal{F}}$ with value above $\delta$ is a
 
 ## Depends on
 
-- [Dikstein–Dinur–Lubotzky: linear-size low-acceptance agreement tests](ddl-linear-size-agreement.md)
-- [The PCP theorem: NP = PCP(O(log n), O(1))](../pcp-theorem.md)
+- [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
 
 ## Proof depends on
 

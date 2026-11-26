@@ -16,10 +16,6 @@ For unit vectors $e, f$ with $|\langle e|f\rangle| = 1/\sqrt D$ the operator $|e
 
 - [CSS codeword](../../../../QuantumInformation/quantum-error-correction/css-codes/codeword.md)
 
-## Proof depends on
-
-- [CSS codeword](../../../../QuantumInformation/quantum-error-correction/css-codes/codeword.md)
-
 ## Sources
 
 - Hans Maassen, J. B. M. Uffink, "Generalized entropic uncertainty relations", Physical Review Letters 60 (1988).

@@ -13,12 +13,6 @@ From integer 3SUM and integer APSP one reduces to the integer Exact Triangle pro
 - [The 3SUM, APSP and Orthogonal Vectors hypotheses](../fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
 - [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
 
-## Proof depends on
-
-- [Triangle Collection and All-Color-Pairs Triangle Collection](triangle-collection-and-all-color-pairs.md)
-- [Exponential Time Hypothesis and Strong Exponential Time Hypothesis](../fine-grained-hypotheses/exponential-time-hypothesis-and-strong.md)
-- [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
-
 ## Sources
 
 - Amir Abboud, Virginia Vassilevska Williams and Huacheng Yu, "Matching Triangles and Basing Hardness on an Extremely Popular Conjecture", STOC (2015).

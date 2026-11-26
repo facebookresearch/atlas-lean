@@ -10,10 +10,6 @@ Assume the overlapping fails. Then one constructs, dimension by dimension, cocha
 
 - [Coboundary expansion of a simplicial complex](coboundary-expansion.md)
 
-## Proof depends on
-
-- [Coboundary expansion of a simplicial complex](coboundary-expansion.md)
-
 ## Sources
 
 - M. Gromov, "Singularities, expanders and topology of maps. Part 2: from combinatorics to topology via algebraic isoperimetry", Geometric and Functional Analysis 20 (2010) 416-526.

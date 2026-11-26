@@ -10,10 +10,6 @@ Using the edge identities, a relation $R\subseteq A^n$ is determined by its "for
 
 - [Few subpowers, Mal'tsev operations and edge terms](few-subpowers-maltsev-edge-terms.md)
 
-## Proof depends on
-
-- [Few subpowers, Mal'tsev operations and edge terms](few-subpowers-maltsev-edge-terms.md)
-
 ## Sources
 
 - Paweł Idziak, Petar Marković, Ralph McKenzie, Matthew Valeriote and Ross Willard, "Tractability and learnability arising from algebras with few subpowers", SIAM Journal on Computing 39(7) (2010).

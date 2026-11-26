@@ -9,11 +9,10 @@ Walk down the refutation tree from the root, at each node using the randomized g
 ## Depends on
 
 - [The stabbing planes proof system](stabbing-planes-system.md)
-- [Göös–Pitassi–Watson: query-to-communication lifting for BPP](../../../TheoryOfComputation/communication-complexity/randomized-and-dag-like-lifting/gpw-bpp-lifting.md)
+- [Public-coin randomized protocol](../../../TheoryOfComputation/communication-complexity/randomized-communication-protocols/public-coin-protocol.md)
 
 ## Proof depends on
 
-- [The stabbing planes proof system](stabbing-planes-system.md)
 - [Göös–Pitassi–Watson: query-to-communication lifting for BPP](../../../TheoryOfComputation/communication-complexity/randomized-and-dag-like-lifting/gpw-bpp-lifting.md)
 
 ## Sources

@@ -9,11 +9,10 @@ Given a graph $G$, build a unique game whose vertices are $R$-tuples of vertices
 ## Depends on
 
 - [The small-set expansion hypothesis](small-set-expansion-hypothesis.md)
-- [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
+- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 
 ## Proof depends on
 
-- [The small-set expansion hypothesis](small-set-expansion-hypothesis.md)
 - [Dictatorship tests compose with Unique Games to give hardness](dictatorship-to-ug-hardness.md)
 
 ## Sources

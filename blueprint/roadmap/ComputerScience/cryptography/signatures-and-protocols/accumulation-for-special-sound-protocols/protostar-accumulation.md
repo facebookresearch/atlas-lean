@@ -8,14 +8,16 @@ The accumulator is a relaxed transcript with committed messages, slack $\mu$ and
 
 ## Depends on
 
-- [Error polynomial when folding relaxed degree-d verifier checks](protostar-error-polynomial.md)
-- [Compressing the relaxed verifier output with powers of a challenge](protostar-compressed-verification.md)
 - [Split accumulation and NARKs with accumulation](../incrementally-verifiable-computation-and-pcd/split-accumulation.md)
-- [Security of the Fiat–Shamir transform](../zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
+- [Special-sound protocols with algebraic degree-d verifiers](special-sound-algebraic-verifier.md)
+- [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
+- [Proof-carrying data for a compliance predicate](../incrementally-verifiable-computation-and-pcd/pcd-scheme.md)
 
 ## Proof depends on
 
 - [Error polynomial when folding relaxed degree-d verifier checks](protostar-error-polynomial.md)
+- [Compressing the relaxed verifier output with powers of a challenge](protostar-compressed-verification.md)
+- [Security of the Fiat–Shamir transform](../zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
 - [Proof-carrying data from NARKs with split accumulation](../incrementally-verifiable-computation-and-pcd/pcd-from-accumulation.md)
 
 ## Sources

@@ -11,11 +11,6 @@ Suppose $L + 1$ distinct codewords $c_j = m_j G$ lie within distance $\frac{L}{L
 - [Codes attaining the generalized Singleton bound (LD-MDS codes)](codes-attaining-the-generalized-singleton-bound.md)
 - [Higher order MDS codes MDS(l)](higher-order-mds-codes.md)
 
-## Proof depends on
-
-- [Codes attaining the generalized Singleton bound (LD-MDS codes)](codes-attaining-the-generalized-singleton-bound.md)
-- [Higher order MDS codes MDS(l)](higher-order-mds-codes.md)
-
 ## Sources
 
 - Joshua Brakensiek, Sivakanth Gopi, Visu Makam, "Generic Reed-Solomon codes achieve list-decoding capacity", STOC (2023), SIAM Journal on Computing (2024); arXiv:2206.05256.

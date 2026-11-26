@@ -8,8 +8,8 @@ Cohen replaces the challenge-response mechanism by correlation breakers with adv
 
 ## Depends on
 
-- [Correlation breakers with advice](correlation-breakers-with-advice.md)
-- [Two-source extractors and dispersers give Ramsey graphs](two-source-extractors-give-ramsey-graphs.md)
+- [K-Ramsey graphs and bipartite K-Ramsey graphs](ramsey-graphs-and-bipartite-ramsey-graphs.md)
+- [Guessing probability, min-entropy and collision probability](../../../ComputerScience/cryptography/randomness-extraction/guessing-probability-min-entropy-and-collision.md)
 
 ## Proof depends on
 

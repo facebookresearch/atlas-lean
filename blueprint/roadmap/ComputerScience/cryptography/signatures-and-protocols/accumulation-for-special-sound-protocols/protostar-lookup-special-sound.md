@@ -9,7 +9,7 @@ All checks are polynomial equations of degree at most $2$ in the transcript. If 
 ## Depends on
 
 - [Special-sound protocols with algebraic degree-d verifiers](special-sound-algebraic-verifier.md)
-- [Logarithmic-derivative characterization of set inclusion](../logarithmic-derivative-lookup-arguments/logup-lemma.md)
+- [Lookup relations with multiplicities](../logarithmic-derivative-lookup-arguments/lookup-relation.md)
 
 ## Proof depends on
 

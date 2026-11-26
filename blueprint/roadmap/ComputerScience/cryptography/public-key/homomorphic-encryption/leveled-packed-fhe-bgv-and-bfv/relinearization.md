@@ -8,7 +8,7 @@ The added terms decrypt to $\sum_id_{2,i}(T^{i}s^{2}+te_i)=d_2s^{2}+t\sum_id_{2,
 
 ## Depends on
 
-- [Ciphertext multiplication by tensoring](tensor-product-multiplication.md)
+- [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
 
 ## Proof depends on
 

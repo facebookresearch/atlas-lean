@@ -11,9 +11,9 @@ By the recursion theorem build a normal form verifier $\mathcal{V}^M$ that on in
 
 ## Depends on
 
-- [Gap-preserving compression of normal form verifiers](gap-preserving-compression-of-normal-form-verifiers.md)
-- [The halting problem is undecidable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
-- [Parametrized s-m-n theorem](../../../computability/exists-computable-code.md)
+- [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
+- [Synchronous two-prover games](synchronous-two-prover-games.md)
+- [Uniformly generated families of two-prover one-round games](uniformly-generated-game-families.md)
 
 ## Proof depends on
 

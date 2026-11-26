@@ -15,11 +15,10 @@ For the impossibility, construct input lists by taking $m$ low-degree polynomial
 ## Depends on
 
 - [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
-- [Chen-Zhang: explicit FRS and multiplicity codes achieve relaxed generalized Singleton bounds](folded-reed-solomon-codes-achieve-relaxed-generalized-singleton-bounds.md)
+- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
 
 ## Proof depends on
 
-- [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
 - [Chen-Zhang: explicit FRS and multiplicity codes achieve relaxed generalized Singleton bounds](folded-reed-solomon-codes-achieve-relaxed-generalized-singleton-bounds.md)
 
 ## Sources

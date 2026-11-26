@@ -8,16 +8,15 @@ Steps (1)-(3) only remove values that lie in no solution. Steps (4)-(6) are just
 
 ## Depends on
 
-- [Zhuk: reducing a domain to a binary absorbing subuniverse or a center preserves solvability](zhuk-reduction-to-absorbing-or-center.md)
-- [Zhuk: reducing to a class of a congruence with polynomially complete quotient preserves solvability](zhuk-reduction-to-pc-congruence-class.md)
-- [Zhuk's four-types theorem: binary absorption, center, polynomially complete quotient or affine quotient](zhuk-four-types-theorem.md)
+- [Cycle-consistent, linked and irreducible CSP instances](cycle-consistent-linked-irreducible-instances.md)
+- [Absorbing and binary absorbing subuniverses of a finite algebra](absorbing-and-binary-absorbing-subuniverses.md)
+- [Zhuk's centers, polynomially complete algebras and linear quotients](zhuk-centers-polynomially-complete-linear-algebras.md)
 
 ## Proof depends on
 
 - [Zhuk: reducing a domain to a binary absorbing subuniverse or a center preserves solvability](zhuk-reduction-to-absorbing-or-center.md)
 - [Zhuk: reducing to a class of a congruence with polynomially complete quotient preserves solvability](zhuk-reduction-to-pc-congruence-class.md)
 - [Zhuk's four-types theorem: binary absorption, center, polynomially complete quotient or affine quotient](zhuk-four-types-theorem.md)
-- [Cycle-consistent, linked and irreducible CSP instances](cycle-consistent-linked-irreducible-instances.md)
 
 ## Sources
 

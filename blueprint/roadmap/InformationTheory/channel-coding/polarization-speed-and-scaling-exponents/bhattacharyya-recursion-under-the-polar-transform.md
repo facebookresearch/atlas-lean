@@ -15,11 +15,10 @@ $W^{+}$ observes two independent copies of $W$ applied to $u_2$ (after removing 
 ## Depends on
 
 - [Synthesized polar subchannels](synthesized-polar-subchannels.md)
-- [Polar transform: channel combining/splitting conservation](../polar-transform-channel-combining-splitting-conservation.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
 
 ## Proof depends on
 
-- [Synthesized polar subchannels](synthesized-polar-subchannels.md)
 - [Polar transform: channel combining/splitting conservation](../polar-transform-channel-combining-splitting-conservation.md)
 
 ## Sources

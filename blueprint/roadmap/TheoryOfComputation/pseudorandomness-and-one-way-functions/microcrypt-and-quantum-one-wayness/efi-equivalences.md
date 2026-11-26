@@ -9,14 +9,14 @@ Commitments to EFI: the two committed states form an EFI pair (statistical bindi
 ## Depends on
 
 - [EFI pairs: efficient, statistically far, computationally indistinguishable states](efi-pairs.md)
-- [Hiding–binding duality for canonical quantum commitments](commitment-flavor-switching.md)
-- [Oblivious transfer from the decisional Diffie–Hellman assumption](../../../ComputerScience/cryptography/signatures-and-protocols/secure-multiparty-computation/oblivious-transfer-from-the-decisional.md)
 - [Security with abort against malicious adversaries](../../../ComputerScience/cryptography/signatures-and-protocols/secure-multiparty-computation/security-with-abort-against-malicious.md)
 - [Quantum interactive proofs (QIP) and IP subset QIP](../../randomized-and-quantum-complexity/quantum-interactive-proofs-and-ip-subset-qip.md)
+- [Quantum bit commitments in canonical form](quantum-bit-commitments.md)
 
 ## Proof depends on
 
 - [Hiding–binding duality for canonical quantum commitments](commitment-flavor-switching.md)
+- [Oblivious transfer from the decisional Diffie–Hellman assumption](../../../ComputerScience/cryptography/signatures-and-protocols/secure-multiparty-computation/oblivious-transfer-from-the-decisional.md)
 - [Oblivious transfer and secure computation from quantum commitments](quantum-ot-from-commitments.md)
 
 ## Sources

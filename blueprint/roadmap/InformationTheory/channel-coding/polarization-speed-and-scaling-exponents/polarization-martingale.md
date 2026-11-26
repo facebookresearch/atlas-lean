@@ -8,8 +8,8 @@ Conservation of mutual information gives the martingale property, and the recurs
 
 ## Depends on
 
-- [Bhattacharyya recursion under one polarization step](bhattacharyya-recursion-under-the-polar-transform.md)
-- [Bhattacharyya parameter versus symmetric capacity](bhattacharyya-parameter-versus-capacity.md)
+- [Binary memoryless symmetric channels, symmetric capacity and the Bhattacharyya parameter](bhattacharyya-parameter-and-symmetric-capacity.md)
+- [Synthesized polar subchannels](synthesized-polar-subchannels.md)
 
 ## Proof depends on
 

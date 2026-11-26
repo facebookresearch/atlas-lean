@@ -9,11 +9,9 @@ Query the sum of the variables on the edges crossing a balanced cut of $H$, spli
 ## Depends on
 
 - [The stabbing planes proof system](stabbing-planes-system.md)
-- [Tseitin CNF](../../propositional-logic/tseitin-transformation/tseitin.md)
 
 ## Proof depends on
 
-- [The stabbing planes proof system](stabbing-planes-system.md)
 - [Tseitin CNF](../../propositional-logic/tseitin-transformation/tseitin.md)
 
 ## Sources

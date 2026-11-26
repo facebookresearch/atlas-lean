@@ -13,7 +13,6 @@ Unfold the oracle Turing machine into a decision tree of polylogarithmic height 
 
 ## Proof depends on
 
-- [The false-clause search problem S(F) of an unsatisfiable CNF and its universality for TFNP^dt](false-clause-search-problem.md)
 - [Göös–Kamath–Robere–Sokolov: PPA^dt is characterized by Nullstellensatz degree over F2](ppa-dt-characterized-by-f2-nullstellensatz.md)
 
 ## Sources

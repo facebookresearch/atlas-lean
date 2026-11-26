@@ -8,7 +8,8 @@ Induct on $k$ using a ``differentiation-and-division'' process: divide by one pr
 
 ## Depends on
 
-- [Kumar: every homogeneous polynomial lies in the border of top-fan-in d+1 depth-three circuits](kumar-border-depth3.md)
+- [Arithmetic circuit](../arithmetic-circuits/arithmetic-circuit.md)
+- [Valiant's VP versus VNP conjecture](../valiant-s-vp-versus-vnp-conjecture.md)
 
 ## Proof depends on
 

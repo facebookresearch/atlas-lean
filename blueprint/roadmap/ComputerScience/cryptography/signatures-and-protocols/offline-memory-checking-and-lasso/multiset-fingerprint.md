@@ -14,7 +14,7 @@ Distinct triples map to distinct $h_\tau$ values except when $\tau$ is a root of
 
 ## Depends on
 
-- [Multiset equality certifies read-correctness of memory](memory-checking-soundness.md)
+- [Offline memory checking with timestamps](offline-memory-checking.md)
 
 ## Proof depends on
 

@@ -6,11 +6,6 @@ Let $\lambda(B)$ denote the largest eigenvalue of the adjacency matrix of the hy
 
 Let $f \ge 0$ be the Perron eigenfunction of $B$. Consider $F = \sum_{c \in C} f(\cdot + c)$, and compare $\langle F, A F\rangle$ (with $A$ the cube adjacency matrix) against $\lambda(B)\|F\|^2$. Distinct translates interact only through Fourier coefficients on high levels, which the minimum distance forces to be small in the averaged sense of the Delsarte inequalities; comparing the resulting upper and lower estimates for $\langle F, AF \rangle$ gives $|C| \le \mathrm{poly}(n)|B|$.
 
-## Depends on
-
-- [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)
-- [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
-
 ## Proof depends on
 
 - [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)

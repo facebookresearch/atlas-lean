@@ -9,11 +9,9 @@ For a linear code $C$, consider the distribution of the $\ell$-tuple weight prof
 ## Depends on
 
 - [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)
-- [MacWilliams identity](../macwilliams-identity.md)
 
 ## Proof depends on
 
-- [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)
 - [MacWilliams identity](../macwilliams-identity.md)
 
 ## Sources

@@ -15,7 +15,6 @@ Pippenger's simulation evaluates a size-$s$ circuit on a multitape Turing machin
 ## Depends on
 
 - [The Circuit Value Problem](../../../completeness-other-classes/circuit-value-problem/cvp-dec.md)
-- [Deterministic time classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dtime.md)
 - [Deterministic space classes on multi-tape machines](../../time-and-space-classes-on-multi-tape-machines/dspace.md)
 
 ## Proof depends on

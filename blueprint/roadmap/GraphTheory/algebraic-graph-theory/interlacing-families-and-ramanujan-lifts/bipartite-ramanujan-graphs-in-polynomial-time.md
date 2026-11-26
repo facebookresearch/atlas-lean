@@ -8,7 +8,7 @@ Make the interlacing family argument constructive: at each step of fixing one ma
 
 ## Depends on
 
-- [Marcus-Spielman-Srivastava: bipartite Ramanujan graphs of every degree and every size](bipartite-ramanujan-graphs-of-all-sizes.md)
+- [Ramanujan graphs and bipartite Ramanujan graphs](ramanujan-graphs-and-bipartite-ramanujan-graphs.md)
 
 ## Proof depends on
 

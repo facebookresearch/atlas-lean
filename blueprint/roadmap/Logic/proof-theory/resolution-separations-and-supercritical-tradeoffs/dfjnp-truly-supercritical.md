@@ -9,12 +9,9 @@ The base result is a supercritical width-depth trade-off for resolution obtained
 ## Depends on
 
 - [Supercritical trade-offs in proof complexity](supercritical-tradeoff.md)
-- [Cutting planes lower bounds for lifted formulas via real dag-like lifting](../stabbing-planes-and-semi-algebraic-branching/lifted-cp-lower-bounds.md)
-- [Truly supercritical depth trade-offs for monotone circuits](../../../TheoryOfComputation/circuit-complexity/monotone-separations-and-supercritical-depth/supercritical-monotone-depth.md)
 
 ## Proof depends on
 
-- [Supercritical trade-offs in proof complexity](supercritical-tradeoff.md)
 - [Cutting planes lower bounds for lifted formulas via real dag-like lifting](../stabbing-planes-and-semi-algebraic-branching/lifted-cp-lower-bounds.md)
 - [Truly supercritical depth trade-offs for monotone circuits](../../../TheoryOfComputation/circuit-complexity/monotone-separations-and-supercritical-depth/supercritical-monotone-depth.md)
 

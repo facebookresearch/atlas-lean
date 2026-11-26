@@ -9,11 +9,10 @@ The structure-versus-randomness argument is applied to the numbers of the 3SUM i
 ## Depends on
 
 - [The 3SUM, APSP and Orthogonal Vectors hypotheses](../fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
-- [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
 
 ## Proof depends on
 
-- [The 3SUM, APSP and Orthogonal Vectors hypotheses](../fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
+- [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
 - [Jin–Xu: 3SUM remains n^{2-o(1)}-hard on Sidon sets](jin-xu-3sum-hard-on-sidon-sets.md)
 
 ## Sources

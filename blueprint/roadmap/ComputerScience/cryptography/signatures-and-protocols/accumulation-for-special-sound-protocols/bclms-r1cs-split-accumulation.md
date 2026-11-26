@@ -12,6 +12,7 @@ Accumulate the bilinear check $Az\circ Bz=Cz$ by random linear combination with 
 - [Relaxed R1CS instances with slack vector and scalar](../relaxed-r1cs-folding-schemes/relaxed-r1cs.md)
 - [Pedersen commitment scheme](../commitment-schemes/pedersen-commitments-perfect-hiding-and-binding/scheme.md)
 - [Discrete-logarithm experiment](../../public-key/hardness-assumptions/dlog-game.md)
+- [Proof-carrying data for a compliance predicate](../incrementally-verifiable-computation-and-pcd/pcd-scheme.md)
 
 ## Proof depends on
 

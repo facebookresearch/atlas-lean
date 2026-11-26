@@ -9,13 +9,12 @@ Compose the Karp reduction from $\Pi$ to $\mathrm{ED}$ with the swap map $(X,Y)\
 ## Depends on
 
 - [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
-- [The Entropy Difference problem ED](entropy-difference-problem.md)
 
 ## Proof depends on
 
+- [The Entropy Difference problem ED](entropy-difference-problem.md)
 - [Goldreich–Vadhan: every HVSZK problem Karp-reduces to Entropy Difference](every-hvszk-problem-reduces-to-ed.md)
 - [Goldreich–Vadhan: Entropy Difference has a public-coin honest-verifier statistical zero-knowledge proof](entropy-difference-has-public-coin-hvszk-proof.md)
-- [The Entropy Difference problem ED](entropy-difference-problem.md)
 
 ## Sources
 

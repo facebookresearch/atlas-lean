@@ -15,13 +15,13 @@ Summing $L_j$ over the hypercube gives the multilinear extension of $M_jz_1$ at 
 ## Depends on
 
 - [Linearized committed CCS instances](linearized-committed-ccs.md)
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
 - [The multilinear equality polynomial on the Boolean hypercube](../plonkish-polynomial-iops/eq-polynomial.md)
+- [Customizable constraint systems](customizable-constraint-system.md)
 
 ## Proof depends on
 
-- [Zero-check reduction to sum-check via the equality polynomial](../plonkish-polynomial-iops/zerocheck-reduction.md)
 - [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [Zero-check reduction to sum-check via the equality polynomial](../plonkish-polynomial-iops/zerocheck-reduction.md)
 
 ## Sources
 

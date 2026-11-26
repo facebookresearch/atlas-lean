@@ -14,8 +14,8 @@ Suppose $\mathrm{NQP} \subseteq \mathcal{C}$. By the easy witness lemma for $\ma
 
 ## Depends on
 
-- [Murray–Williams easy witness lemma for NQP and NP](mw-easy-witness-nqp.md)
-- [Nondeterministic time hierarchy](../../hierarchy-theorems-and-barriers/nondet-time-hierarchy.md)
+- [Non-trivial satisfiability and derandomization algorithms for a circuit class](nontrivial-circuit-analysis.md)
+- [Nondeterministic quasi-polynomial time](nqp-class.md)
 
 ## Proof depends on
 

@@ -10,10 +10,10 @@ Completeness: the sum-check claim equals $\sum_j\gamma^{j}v_j$ by the previous l
 
 - [Sum-check polynomial for folding an LCCCS and a CCCS instance](multifolding-sumcheck.md)
 - [Folding scheme for an NP relation](../relaxed-r1cs-folding-schemes/folding-scheme.md)
+- [Linearized committed CCS instances](linearized-committed-ccs.md)
 
 ## Proof depends on
 
-- [Sum-check polynomial for folding an LCCCS and a CCCS instance](multifolding-sumcheck.md)
 - [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
 
 ## Sources

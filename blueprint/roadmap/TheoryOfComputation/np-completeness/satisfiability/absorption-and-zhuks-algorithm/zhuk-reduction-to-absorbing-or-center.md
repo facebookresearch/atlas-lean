@@ -10,11 +10,11 @@ Assume solutions exist but none lies in $B$; choose a minimal "crucial" subinsta
 
 - [Cycle-consistent, linked and irreducible CSP instances](cycle-consistent-linked-irreducible-instances.md)
 - [Zhuk's centers, polynomially complete algebras and linear quotients](zhuk-centers-polynomially-complete-linear-algebras.md)
+- [Absorbing and binary absorbing subuniverses of a finite algebra](absorbing-and-binary-absorbing-subuniverses.md)
+- [Weak near-unanimity, Taylor, Siggers and cyclic operations on a finite set](../finite-domain-csp-dichotomy/wnu-taylor-siggers-cyclic-operations.md)
 
 ## Proof depends on
 
-- [Cycle-consistent, linked and irreducible CSP instances](cycle-consistent-linked-irreducible-instances.md)
-- [Zhuk's centers, polynomially complete algebras and linear quotients](zhuk-centers-polynomially-complete-linear-algebras.md)
 - [Barto–Kozik Absorption Theorem for linked subdirect products of Taylor algebras](barto-kozik-absorption-theorem.md)
 
 ## Sources

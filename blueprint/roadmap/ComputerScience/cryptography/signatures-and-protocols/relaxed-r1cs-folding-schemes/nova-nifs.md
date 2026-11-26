@@ -9,13 +9,13 @@ Apply the forking lemma to the query defining $r$: run the adversary, then rerun
 ## Depends on
 
 - [Nova's folding scheme for committed relaxed R1CS](nova-folding-theorem.md)
-- [Security of the Fiat–Shamir transform](../zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
 - [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
+- [Folding scheme for an NP relation](folding-scheme.md)
 
 ## Proof depends on
 
-- [Interpolation extractor from three folding transcripts](three-transcript-extraction.md)
 - [Security of the Fiat–Shamir transform](../zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
+- [Interpolation extractor from three folding transcripts](three-transcript-extraction.md)
 
 ## Sources
 

@@ -16,10 +16,6 @@ Bitwise operations act independently on each bit position, so they act chunkwise
 
 - [Decomposable lookup tables](decomposable-table.md)
 
-## Proof depends on
-
-- [Decomposable lookup tables](decomposable-table.md)
-
 ## Sources
 
 - Arasu Arun, Srinath Setty, Justin Thaler, "Jolt: SNARKs for Virtual Machines via Lookups", EUROCRYPT (2024), IACR ePrint 2023/1217.

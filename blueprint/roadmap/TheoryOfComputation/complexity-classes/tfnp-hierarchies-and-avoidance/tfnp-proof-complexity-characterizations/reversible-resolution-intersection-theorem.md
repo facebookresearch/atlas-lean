@@ -14,8 +14,10 @@ Recall the black-box collapses $\mathsf{SOPL}=\mathsf{PLS}\cap\mathsf{PPADS}$ an
 
 ## Depends on
 
-- [Göös et al.: PPAD^dt, PPADS^dt, SOPL^dt and EOPL^dt are characterized by uNS, uSA, RevRes and RevResT](ppad-ppads-sopl-eopl-proof-system-characterizations.md)
-- [PLS^dt is characterized by Resolution: PLS^dt(S(F)) = Θ(Res(F))](pls-dt-characterized-by-resolution.md)
+- [Reversible Resolution: a MaxSAT-style fragment of Resolution with consumed premises](reversible-resolution.md)
+- [Unary Nullstellensatz and unary Sherali–Adams refutations of CNF formulas](unary-nullstellensatz-and-unary-sherali-adams.md)
+- [Resolution refutation](../../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Width of a derivation](../../../../Logic/propositional-logic/resolution-size-and-width/derivation-width.md)
 
 ## Proof depends on
 

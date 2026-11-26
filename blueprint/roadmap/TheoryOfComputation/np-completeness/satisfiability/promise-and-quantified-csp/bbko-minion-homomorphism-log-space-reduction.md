@@ -9,12 +9,12 @@ The reduction from $\mathrm{PCSP}(\mathbb{A}_2,\mathbb{B}_2)$ to the minor condi
 ## Depends on
 
 - [The polymorphism minion Pol(A,B) of a promise template](polymorphism-minion-of-a-promise-template.md)
-- [Barto–Opršal–Pinsker: pp-constructibility is captured by minion homomorphisms of polymorphisms](../finite-domain-csp-dichotomy/barto-oprsal-pinsker-pp-constructions-minion-homomorphisms.md)
 - [Log-space many-one reductions](../../../complexity-classes/time-and-space-complexity-classes/log-space-red.md)
+- [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
+- [Minions, minion homomorphisms and pp-constructions](../finite-domain-csp-dichotomy/minions-minion-homomorphisms-pp-constructions.md)
 
 ## Proof depends on
 
-- [The polymorphism minion Pol(A,B) of a promise template](polymorphism-minion-of-a-promise-template.md)
 - [Barto–Opršal–Pinsker: pp-constructibility is captured by minion homomorphisms of polymorphisms](../finite-domain-csp-dichotomy/barto-oprsal-pinsker-pp-constructions-minion-homomorphisms.md)
 
 ## Sources

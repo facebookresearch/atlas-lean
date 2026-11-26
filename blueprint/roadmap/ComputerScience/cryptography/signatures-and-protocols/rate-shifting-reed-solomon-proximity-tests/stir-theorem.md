@@ -8,7 +8,6 @@ Each iteration improves the rate geometrically while reducing degree by $k$, so 
 
 ## Depends on
 
-- [One STIR iteration: fold, shift to a smaller domain, quotient](stir-iteration.md)
 - [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
 - [Merkle root](../../hash-functions/merkle-trees/root.md)
 

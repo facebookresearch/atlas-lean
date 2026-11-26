@@ -15,11 +15,9 @@ The decomposition is kept "prefix-rebuildable": an update affects a top part of 
 ## Depends on
 
 - [Dynamic treewidth data structures under a treewidth promise](dynamic-treewidth-data-structures.md)
-- [Korhonen: a single-exponential time 2-approximation for treewidth](korhonen-2-approximation-treewidth.md)
 
 ## Proof depends on
 
-- [Dynamic treewidth data structures under a treewidth promise](dynamic-treewidth-data-structures.md)
 - [Korhonen: a single-exponential time 2-approximation for treewidth](korhonen-2-approximation-treewidth.md)
 
 ## Sources

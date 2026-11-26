@@ -9,11 +9,9 @@ The links of vertices in a Bruhat-Tits building of type $\tilde A_d$ are spheric
 ## Depends on
 
 - [Links and local spectral expanders](links-and-local-spectral-expansion.md)
-- [Oppenheim's trickling-down theorem for spectral gaps](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/oppenheim-trickle-down.md)
 
 ## Proof depends on
 
-- [Links and local spectral expanders](links-and-local-spectral-expansion.md)
 - [Oppenheim's trickling-down theorem for spectral gaps](../../../Combinatorics/polytopes-simplicial-complexes/local-spectral-high-dimensional-expanders/oppenheim-trickle-down.md)
 
 ## Sources

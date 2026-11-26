@@ -10,10 +10,6 @@ Design $\mathsf{aux}$ so that it is pseudorandom on its own (making the precondi
 
 - [The evasive LWE assumption](evasive-lwe.md)
 
-## Proof depends on
-
-- [The evasive LWE assumption](evasive-lwe.md)
-
 ## Sources
 
 - Vinod Vaikuntanathan, Hoeteck Wee, Daniel Wichs, "Witness Encryption and Null-IO from Evasive LWE", ASIACRYPT (2022).

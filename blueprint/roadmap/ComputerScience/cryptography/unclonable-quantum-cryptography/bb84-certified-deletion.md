@@ -9,7 +9,6 @@ Accepting certificates require Hadamard-basis outcomes consistent with $x$ on th
 ## Depends on
 
 - [Encryption with certified deletion](certified-deletion.md)
-- [Leftover hash lemma](../randomness-extraction/leftover-hash-lemma.md)
 
 ## Proof depends on
 

@@ -8,10 +8,7 @@ The value of the game is the value of a min-max problem over two compact sets of
 
 ## Depends on
 
-- [Regret bound for the matrix multiplicative weights update](matrix-multiplicative-weights-regret-bound.md)
-- [Matrix exponentials of exponential-dimension matrices in polynomial depth](matrix-exponentials-in-polynomial-depth.md)
-- [Borodin: NC(poly) = PSPACE](borodin-polynomial-depth-equals-polynomial-space.md)
-- [QIP = PSPACE](qip-equals-pspace.md)
+- [Polynomial space for decision problems](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 
 ## Proof depends on
 

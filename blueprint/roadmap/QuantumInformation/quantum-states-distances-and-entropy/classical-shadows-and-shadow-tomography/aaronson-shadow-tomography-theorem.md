@@ -15,12 +15,9 @@ Run an online learning algorithm (matrix multiplicative weights over density mat
 ## Depends on
 
 - [The shadow tomography problem](shadow-tomography-problem.md)
-- [Gentle measurement lemma](gentle-measurement-lemma-for-shadow-tomography.md)
-- [Regret bound for the matrix multiplicative weights update](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/quantum-interactive-proofs-in-polynomial-space/matrix-multiplicative-weights-regret-bound.md)
 
 ## Proof depends on
 
-- [The shadow tomography problem](shadow-tomography-problem.md)
 - [Gentle measurement lemma](gentle-measurement-lemma-for-shadow-tomography.md)
 - [Regret bound for the matrix multiplicative weights update](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/quantum-interactive-proofs-in-polynomial-space/matrix-multiplicative-weights-regret-bound.md)
 

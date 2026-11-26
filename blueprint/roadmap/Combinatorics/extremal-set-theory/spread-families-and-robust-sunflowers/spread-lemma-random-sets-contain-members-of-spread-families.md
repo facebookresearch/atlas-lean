@@ -14,10 +14,6 @@ Rao's encoding argument: if $W$ contains no member, then for each $F$ the "minim
 
 - [Spread families and spread measures](kappa-spread-families-and-measures.md)
 
-## Proof depends on
-
-- [Spread families and spread measures](kappa-spread-families-and-measures.md)
-
 ## Sources
 
 - Anup Rao, "Coding for sunflowers", Discrete Analysis 2020:2 (2020); arXiv:1909.04774.

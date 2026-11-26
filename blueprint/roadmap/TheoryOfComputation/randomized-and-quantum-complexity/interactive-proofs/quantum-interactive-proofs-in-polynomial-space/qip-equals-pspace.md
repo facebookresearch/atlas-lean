@@ -8,16 +8,12 @@ $\mathrm{PSPACE} = \mathrm{IP} \subseteq \mathrm{QIP}$ by Shamir's theorem and t
 
 ## Depends on
 
-- [QIP is contained in PSPACE (Jain-Ji-Upadhyay-Watrous)](qip-is-contained-in-pspace.md)
-- [IP = PSPACE (Shamir)](../../ip-eq-pspace.md)
 - [Quantum interactive proofs (QIP) and IP subset QIP](../../quantum-interactive-proofs-and-ip-subset-qip.md)
-- [Kitaev-Watrous: quantum interactive proofs parallelize to three messages](kitaev-watrous-three-message-parallelization.md)
 
 ## Proof depends on
 
 - [QIP is contained in PSPACE (Jain-Ji-Upadhyay-Watrous)](qip-is-contained-in-pspace.md)
 - [IP = PSPACE (Shamir)](../../ip-eq-pspace.md)
-- [Quantum interactive proofs (QIP) and IP subset QIP](../../quantum-interactive-proofs-and-ip-subset-qip.md)
 - [Kitaev-Watrous: quantum interactive proofs parallelize to three messages](kitaev-watrous-three-message-parallelization.md)
 
 ## Sources

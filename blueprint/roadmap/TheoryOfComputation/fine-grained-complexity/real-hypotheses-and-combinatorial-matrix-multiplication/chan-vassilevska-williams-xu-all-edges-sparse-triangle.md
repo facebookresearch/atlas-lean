@@ -16,10 +16,6 @@ Hashing-based reductions do not work for reals, so the reductions instead use "F
 
 - [Real RAM, the Real 3SUM hypothesis and the Real APSP hypothesis](real-ram-real-3sum-real-apsp-hypotheses.md)
 
-## Proof depends on
-
-- [Real RAM, the Real 3SUM hypothesis and the Real APSP hypothesis](real-ram-real-3sum-real-apsp-hypotheses.md)
-
 ## Sources
 
 - Timothy M. Chan, Virginia Vassilevska Williams and Yinzhan Xu, "Hardness for Triangle Problems under Even More Believable Hypotheses: Reductions from Real APSP, Real 3SUM, and OV", STOC (2022), arXiv:2203.08356.

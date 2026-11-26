@@ -9,10 +9,8 @@ By the external product lemma $\mathbf{C}\boxdot(\mathbf{d}_1-\mathbf{d}_0)$ enc
 ## Depends on
 
 - [Noise of the TRGSW–TRLWE external product](external-product-noise.md)
-
-## Proof depends on
-
-- [Noise of the TRGSW–TRLWE external product](external-product-noise.md)
+- [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
+- [TRGSW samples and the gadget decomposition](trgsw-samples.md)
 
 ## Sources
 

@@ -9,11 +9,9 @@ Encode the candidate non-image as a PCP of proximity for the statement that it i
 ## Depends on
 
 - [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
-- [Williams: NEXP is not contained in ACC0](../../../circuit-complexity/williams-nexp-not-in-acc0.md)
 
 ## Proof depends on
 
-- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 - [Williams: NEXP is not contained in ACC0](../../../circuit-complexity/williams-nexp-not-in-acc0.md)
 
 ## Sources

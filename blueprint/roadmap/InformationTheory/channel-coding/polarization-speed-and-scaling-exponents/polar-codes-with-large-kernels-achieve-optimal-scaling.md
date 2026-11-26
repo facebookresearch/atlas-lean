@@ -9,11 +9,10 @@ For erasure channels the erasure probabilities of synthesized subchannels evolve
 ## Depends on
 
 - [Scaling exponent of polar codes](scaling-exponent-of-a-code-family.md)
-- [Hassani-Alishahi-Urbanke and Mondelli-Hassani-Urbanke: bounds on the polar scaling exponent](finite-length-scaling-bounds-for-polar-codes.md)
+- [Polar codes and successive cancellation decoding](polar-codes-and-successive-cancellation-decoding.md)
 
 ## Proof depends on
 
-- [Scaling exponent of polar codes](scaling-exponent-of-a-code-family.md)
 - [Hassani-Alishahi-Urbanke and Mondelli-Hassani-Urbanke: bounds on the polar scaling exponent](finite-length-scaling-bounds-for-polar-codes.md)
 
 ## Sources

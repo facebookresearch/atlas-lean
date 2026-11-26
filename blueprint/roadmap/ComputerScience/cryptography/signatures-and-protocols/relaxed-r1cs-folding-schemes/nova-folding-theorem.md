@@ -10,14 +10,13 @@ Completeness is the cross-term identity together with homomorphism of commitment
 
 - [Folding scheme for an NP relation](folding-scheme.md)
 - [Cross-term identity for folding relaxed R1CS](nova-cross-term.md)
-- [Pedersen commitment scheme](../commitment-schemes/pedersen-commitments-perfect-hiding-and-binding/scheme.md)
 - [The binding experiment](../commitment-schemes/the-computational-binding-game-for-keyed-commitm/binding-game.md)
+- [Relaxed R1CS instances with slack vector and scalar](relaxed-r1cs.md)
 
 ## Proof depends on
 
-- [Cross-term identity for folding relaxed R1CS](nova-cross-term.md)
+- [Pedersen commitment scheme](../commitment-schemes/pedersen-commitments-perfect-hiding-and-binding/scheme.md)
 - [Interpolation extractor from three folding transcripts](three-transcript-extraction.md)
-- [The binding experiment](../commitment-schemes/the-computational-binding-game-for-keyed-commitm/binding-game.md)
 
 ## Sources
 

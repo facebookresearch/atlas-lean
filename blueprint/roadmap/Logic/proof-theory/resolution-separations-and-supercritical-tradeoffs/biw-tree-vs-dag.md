@@ -14,13 +14,12 @@ Tree-like refutation size is at least $2^{\Omega(\text{black pebbling price})}$ 
 
 ## Depends on
 
-- [Pebbling formulas have linear-size resolution refutations](pebbling-upper-bound.md)
 - [Tree-like resolution derivation](../../propositional-logic/resolution-size-and-width/resolution-tree.md)
+- [Pebbling formulas of directed acyclic graphs](pebbling-formula.md)
 
 ## Proof depends on
 
 - [Pebbling formulas have linear-size resolution refutations](pebbling-upper-bound.md)
-- [Tree-like resolution derivation](../../propositional-logic/resolution-size-and-width/resolution-tree.md)
 
 ## Sources
 

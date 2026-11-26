@@ -8,8 +8,8 @@ The value bounds obtained in the framework are upper bounded by a convex program
 
 ## Depends on
 
-- [The laser method bound on omega from tensor values](laser-method-bound.md)
-- [Le Gall's 2014 bound on the square exponent](../matrix-multiplication-exponent/le-gall2014-upper.md)
+- [The Coppersmith–Winograd tensor](cw-tensor.md)
+- [The value of a tensor in the laser method](tensor-value.md)
 
 ## Proof depends on
 

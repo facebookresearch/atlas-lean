@@ -10,11 +10,7 @@ Choose an independent uniformly random function $g : Y(0) \to \{0,1\}$ and for e
 
 - [Connected covers of a simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/covers-of-complexes.md)
 - [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
-
-## Proof depends on
-
-- [Connected covers of a simplicial complex](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/covers-of-complexes.md)
-- [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
+- [Agreement tests for ensembles of local functions](agreement-test.md)
 
 ## Sources
 

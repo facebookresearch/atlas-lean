@@ -9,13 +9,13 @@ The decomposition lemma covers bitwise instructions; arithmetic and comparison i
 ## Depends on
 
 - [Lasso: lookup arguments into huge decomposable tables](lasso-lookup.md)
-- [Bitwise instruction tables decompose into small chunk tables](bitwise-table-decomposition.md)
-- [Multiset equality certifies read-correctness of memory](memory-checking-soundness.md)
+- [Decomposable lookup tables](decomposable-table.md)
+- [Offline memory checking with timestamps](offline-memory-checking.md)
 
 ## Proof depends on
 
-- [Lasso: lookup arguments into huge decomposable tables](lasso-lookup.md)
 - [Bitwise instruction tables decompose into small chunk tables](bitwise-table-decomposition.md)
+- [Multiset equality certifies read-correctness of memory](memory-checking-soundness.md)
 
 ## Sources
 

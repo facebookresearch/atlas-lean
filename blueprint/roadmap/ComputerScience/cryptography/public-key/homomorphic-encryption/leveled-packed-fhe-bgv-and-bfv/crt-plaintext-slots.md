@@ -10,10 +10,6 @@ The roots of $X^{N}+1$ are the primitive $2N$-th roots of unity, which exist in 
 
 - [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
 
-## Proof depends on
-
-- [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
-
 ## Sources
 
 - Nigel P. Smart, Frederik Vercauteren, "Fully Homomorphic SIMD Operations", Designs, Codes and Cryptography (2014).

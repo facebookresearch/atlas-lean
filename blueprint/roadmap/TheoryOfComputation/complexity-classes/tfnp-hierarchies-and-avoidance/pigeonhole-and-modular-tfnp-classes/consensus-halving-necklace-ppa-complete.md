@@ -9,11 +9,11 @@ Membership in PPA follows from the Simmons–Su existence proof via Tucker's lem
 ## Depends on
 
 - [ε-CONSENSUS-HALVING, NECKLACE-SPLITTING and DISCRETE HAM SANDWICH as explicit total search problems](consensus-halving-necklace-splitting.md)
-- [PPA_q equals the &-combination of PPA_p over the primes p dividing q, and PPA_p is closed under Turing reductions](ppa-q-equals-and-of-ppa-p.md)
+- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
 
 ## Proof depends on
 
-- [ε-CONSENSUS-HALVING, NECKLACE-SPLITTING and DISCRETE HAM SANDWICH as explicit total search problems](consensus-halving-necklace-splitting.md)
+- [PPA_q equals the &-combination of PPA_p over the primes p dividing q, and PPA_p is closed under Turing reductions](ppa-q-equals-and-of-ppa-p.md)
 
 ## Sources
 

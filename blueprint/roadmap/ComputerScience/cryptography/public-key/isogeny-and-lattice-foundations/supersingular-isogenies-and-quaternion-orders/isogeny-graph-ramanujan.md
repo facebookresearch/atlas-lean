@@ -9,11 +9,9 @@ The adjacency operator is identified, via the Deuring correspondence, with the B
 ## Depends on
 
 - [Supersingular l-isogeny graphs](supersingular-isogeny-graph.md)
-- [The Deuring correspondence between supersingular curves and maximal orders](deuring-correspondence.md)
 
 ## Proof depends on
 
-- [Supersingular l-isogeny graphs](supersingular-isogeny-graph.md)
 - [The Deuring correspondence between supersingular curves and maximal orders](deuring-correspondence.md)
 
 ## Sources

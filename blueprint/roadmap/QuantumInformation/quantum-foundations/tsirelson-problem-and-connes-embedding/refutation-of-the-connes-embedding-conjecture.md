@@ -8,8 +8,8 @@ Combine the negative answer to Tsirelson's problem with the equivalence theorem.
 
 ## Depends on
 
-- [Negative answer to Tsirelson's problem: C_qa is not C_qc](negative-answer-to-tsirelsons-problem.md)
-- [Equivalence of the Connes, Kirchberg and Tsirelson problems](connes-kirchberg-tsirelson-equivalences.md)
+- [The Connes embedding conjecture](connes-embedding-conjecture.md)
+- [Kirchberg's conjecture on tensor products of free group C*-algebras](kirchbergs-qwep-conjecture.md)
 
 ## Proof depends on
 

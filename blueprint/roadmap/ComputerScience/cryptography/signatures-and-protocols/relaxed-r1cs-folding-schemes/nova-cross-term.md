@@ -22,10 +22,6 @@ Expand $A(z_1+rz_2)\circ B(z_1+rz_2)$ by bilinearity of the Hadamard product int
 
 - [Relaxed R1CS instances with slack vector and scalar](relaxed-r1cs.md)
 
-## Proof depends on
-
-- [Relaxed R1CS instances with slack vector and scalar](relaxed-r1cs.md)
-
 ## Sources
 
 - Abhiram Kothapalli, Srinath Setty, Ioanna Tzialla, "Nova: Recursive Zero-Knowledge Arguments from Folding Schemes", CRYPTO (2022), IACR ePrint 2021/370.

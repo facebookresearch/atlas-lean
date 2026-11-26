@@ -14,9 +14,8 @@ Let $x$ be a $Z$-type logical of small weight, viewed on the squares. Call a ver
 
 ## Depends on
 
-- [Quantum Tanner checks commute](commutation-of-quantum-tanner-checks.md)
-- [Random pairs of codes and their duals are product-expanding](random-pairs-of-codes-are-product-expanding.md)
-- [Expander mixing lemma](../../../GraphTheory/graph-families-and-operations/expander-graphs/expander-mixing-lemma.md)
+- [Quantum Tanner codes](quantum-tanner-codes.md)
+- [Product-expansion of a pair of codes](product-expansion-of-a-pair-of-codes.md)
 
 ## Proof depends on
 

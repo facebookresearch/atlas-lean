@@ -16,10 +16,6 @@ The compressed and uncompressed purified oracles are related by an isometry comm
 
 - [Zhandry's compressed oracle representation](compressed-oracle.md)
 
-## Proof depends on
-
-- [Zhandry's compressed oracle representation](compressed-oracle.md)
-
 ## Sources
 
 - Mark Zhandry, "How to Record Quantum Queries, and Applications to Quantum Indifferentiability", CRYPTO (2019), IACR ePrint 2018/276.

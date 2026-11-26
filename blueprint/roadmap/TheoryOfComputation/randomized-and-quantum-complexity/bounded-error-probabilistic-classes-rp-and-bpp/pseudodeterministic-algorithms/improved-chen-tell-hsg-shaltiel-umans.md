@@ -8,7 +8,7 @@ Starting from the Chen–Tell layered-polynomial representation of the computati
 
 ## Depends on
 
-- [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](../../../pseudorandomness-and-one-way-functions/instance-wise-hardness-versus-randomness/instance-wise-reconstruction-targeted-hsg.md)
+- [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
 
 ## Proof depends on
 

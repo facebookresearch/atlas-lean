@@ -11,10 +11,6 @@ Correctness: on a witness, $C_{x,1}(w)=1$ and $C_{x,0}(w)=0$. Security: if $x\no
 - [Witness encryption for NP languages](witness-encryption.md)
 - [Null indistinguishability obfuscation](null-io.md)
 
-## Proof depends on
-
-- [Null indistinguishability obfuscation](null-io.md)
-
 ## Sources
 
 - Sanjam Garg, Craig Gentry, Amit Sahai, Brent Waters, "Witness Encryption and its Applications", STOC (2013), IACR ePrint 2013/258.

@@ -8,8 +8,7 @@ The inclusion $\mathsf{CZPLP}\subseteq\mathsf{CZPL}\subseteq\mathsf{CBPL}=\maths
 
 ## Depends on
 
-- [Cook–Li–Mertz–Pyne: randomized catalytic logspace is derandomized unconditionally (CBPL = CL)](clmp-cbpl-equals-cl.md)
-- [Cook–Li–Mertz–Pyne compress-or-compute: a long-running catalytic computation compresses its own tape](clmp-runtime-compress-or-compute.md)
+- [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 
 ## Proof depends on
 

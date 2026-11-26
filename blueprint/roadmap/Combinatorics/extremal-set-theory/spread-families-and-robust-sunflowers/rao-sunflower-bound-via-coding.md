@@ -8,10 +8,7 @@ Pass to a $\kappa$-spread link with $\kappa = C r\log(\ell r)$. By the spread le
 
 ## Depends on
 
-- [Spread lemma: random sets of moderate density contain members of spread families](spread-lemma-random-sets-contain-members-of-spread-families.md)
-- [Sunflower-free families have spread links](sunflower-free-families-have-spread-restrictions.md)
-- [Robust sunflowers contain sunflowers](robust-sunflowers-contain-sunflowers.md)
-- [Alweiss–Lovett–Wu–Zhang sunflower bound](../intersecting-families/sunflower-lemma/theorem-1-4.md)
+- [Sunflower](../intersecting-families/sunflower-lemma/is-sunflower.md)
 
 ## Proof depends on
 

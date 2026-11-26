@@ -16,10 +16,6 @@ The totality of FACROOT is provable in the bounded-arithmetic theory $S^1_2+\mat
 - [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
 - [Search problems: FNP, FP and TFNP](../../total-search-problems/search-problems-fnp-fp-and-tfnp.md)
 
-## Proof depends on
-
-- [The modular classes PPA_q via BIPARTITE_q and the Buss–Johnson operator & combining two classes](ppa-q-and-the-and-operator.md)
-
 ## Sources
 
 - Emil Jeřábek, "Integer Factoring and Modular Square Roots", Journal of Computer and System Sciences (2016), arXiv:1207.5220.

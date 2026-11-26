@@ -10,10 +10,6 @@ Both directions use the logarithmic derivative identity $t f'(t)/f(t) = \sum_k p
 
 - [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
 
-## Proof depends on
-
-- [Constant-depth arithmetic formulas with unbounded fan-in (arithmetic AC0)](constant-depth-arithmetic-formula.md)
-
 ## Sources
 
 - R. Andrews, A. Wigderson, "Constant-depth arithmetic circuits for linear algebra problems", FOCS (2024), arXiv:2404.10839.

@@ -12,10 +12,6 @@ Running $M$ forward with a step counter decides which case applies, and in case 
 ## Depends on
 
 - [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
-
-## Proof depends on
-
-- [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 - [Configuration graph of a space-bounded machine](../../space-and-time-complexity/configuration-graph-of-a-space-bounded-machine.md)
 
 ## Sources

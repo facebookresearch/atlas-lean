@@ -8,8 +8,7 @@ Amplify in place to error $2^{-r}$ with $r = m + 2$ where $m = O(\log n)$ is the
 
 ## Depends on
 
-- [Marriott-Watrous in-place amplification of QMA](in-place-qma-amplification.md)
-- [BQP error reduction](../../bqp-error-reduction.md)
+- [BQP](../../../complexity-classes/time-and-space-complexity-classes/bqp.md)
 
 ## Proof depends on
 

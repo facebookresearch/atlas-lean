@@ -16,10 +16,6 @@ The lifted product is by definition the complex $\mathcal{A} \otimes_R \mathcal{
 
 - [Lifted product codes over group algebras](../../../QuantumInformation/quantum-error-correction/homological-quantum-ldpc-codes/lifted-product-codes-over-group-algebras.md)
 
-## Proof depends on
-
-- [Lifted product codes over group algebras](../../../QuantumInformation/quantum-error-correction/homological-quantum-ldpc-codes/lifted-product-codes-over-group-algebras.md)
-
 ## Sources
 
 - P. Panteleev, G. Kalachev, "Asymptotically good quantum and locally testable classical LDPC codes", STOC (2022), arXiv:2111.03654.

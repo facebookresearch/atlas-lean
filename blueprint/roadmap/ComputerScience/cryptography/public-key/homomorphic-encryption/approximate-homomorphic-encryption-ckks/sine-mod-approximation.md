@@ -12,10 +12,6 @@ Hence $\frac{q}{2\pi}\sin(2\pi t/q)$ computes $t\bmod q$ with relative error $O(
 
 By periodicity $\sin(2\pi t/q)=\sin(2\pi r/q)$. For real $x$, $0\le x-\sin x\le x^{3}/6$ when $x\ge 0$ (and symmetrically for $x<0$). With $x=2\pi r/q$, multiplying by $q/(2\pi)$ gives the error bound $(q/2\pi)(2\pi|r|/q)^{3}/6=(2\pi^{2}/3)|r|^{3}/q^{2}$.
 
-## Depends on
-
-- [ModRaise introduces a small integer multiple of the base modulus](ckks-modraise.md)
-
 ## Proof depends on
 
 - [ModRaise introduces a small integer multiple of the base modulus](ckks-modraise.md)

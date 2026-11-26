@@ -11,11 +11,6 @@ By Godsil's path-tree construction, $\mu_G$ divides the characteristic polynomia
 - [The matching polynomial of a graph](matching-polynomial-of-a-graph.md)
 - [Real-rooted polynomials](../../../Algebra/zeros-of-polynomials/real-rooted-polynomials/is-real-rooted.md)
 
-## Proof depends on
-
-- [The matching polynomial of a graph](matching-polynomial-of-a-graph.md)
-- [Real-rooted polynomials](../../../Algebra/zeros-of-polynomials/real-rooted-polynomials/is-real-rooted.md)
-
 ## Sources
 
 - Ole J. Heilmann, Elliott H. Lieb, "Theory of monomer-dimer systems", Communications in Mathematical Physics 25 (1972).

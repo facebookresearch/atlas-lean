@@ -10,10 +10,6 @@ The acceptance probability is a bounded polynomial of degree $2T$ in the oracle 
 
 - [The Aaronson-Ambainis conjecture on influential variables of bounded polynomials](aaronson-ambainis-influence-conjecture.md)
 
-## Proof depends on
-
-- [The Aaronson-Ambainis conjecture on influential variables of bounded polynomials](aaronson-ambainis-influence-conjecture.md)
-
 ## Sources
 
 - Scott Aaronson, Andris Ambainis, "The need for structure in quantum speedups", Theory of Computing 10 (2014); arXiv:0911.0996.

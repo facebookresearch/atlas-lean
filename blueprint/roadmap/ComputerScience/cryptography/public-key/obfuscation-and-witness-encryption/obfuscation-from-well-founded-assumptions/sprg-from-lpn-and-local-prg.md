@@ -12,11 +12,6 @@ Outputs whose input bits avoid the sparse error support are degree-$2$ (indeed l
 - [Learning parity with noise over large prime fields with sparse errors](lpn-over-large-fields.md)
 - [Pseudorandom generators in NC0 with polynomial stretch](local-prg.md)
 
-## Proof depends on
-
-- [Learning parity with noise over large prime fields with sparse errors](lpn-over-large-fields.md)
-- [Pseudorandom generators in NC0 with polynomial stretch](local-prg.md)
-
 ## Sources
 
 - Aayush Jain, Huijia Lin, Amit Sahai, "Indistinguishability Obfuscation from Well-Founded Assumptions", STOC (2021), IACR ePrint 2020/1003, arXiv:2008.09317.

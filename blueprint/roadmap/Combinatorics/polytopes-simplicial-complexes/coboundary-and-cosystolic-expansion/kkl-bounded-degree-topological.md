@@ -9,14 +9,12 @@ The key is a local-to-global principle: if all vertex links are coboundary expan
 ## Depends on
 
 - [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
-- [Explicit Ramanujan complexes and their local spectral expansion](../local-spectral-high-dimensional-expanders/ramanujan-complex-existence.md)
 - [Gromov: coboundary expansion implies topological overlapping](gromov-topological-overlap.md)
+- [Ramanujan complexes of type A_d](../local-spectral-high-dimensional-expanders/ramanujan-complex.md)
 
 ## Proof depends on
 
-- [Cosystolic expansion and cosystolic distance](cosystolic-expansion.md)
 - [Explicit Ramanujan complexes and their local spectral expansion](../local-spectral-high-dimensional-expanders/ramanujan-complex-existence.md)
-- [Gromov: coboundary expansion implies topological overlapping](gromov-topological-overlap.md)
 
 ## Sources
 

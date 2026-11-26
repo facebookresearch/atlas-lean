@@ -9,10 +9,7 @@ $\sigma_k$ preserves $X^{N}+1$ for odd $k$. The structure of $(\mathbb{Z}/2^{m}\
 ## Depends on
 
 - [CRT packing of plaintext slots](crt-plaintext-slots.md)
-
-## Proof depends on
-
-- [CRT packing of plaintext slots](crt-plaintext-slots.md)
+- [BGV and BFV ring ciphertexts](bgv-bfv-ciphertexts.md)
 
 ## Sources
 

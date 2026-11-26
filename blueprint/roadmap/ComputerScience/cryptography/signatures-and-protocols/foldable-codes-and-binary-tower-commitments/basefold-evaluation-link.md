@@ -11,10 +11,6 @@ Each fold replaces the message $(m_0,m_1)$ by $m_0+rm_1$, which is substituting 
 - [Foldable linear codes](foldable-linear-code.md)
 - [Multilinear extension of a Boolean function](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/algebrization-barrier/multilinear-ext.md)
 
-## Proof depends on
-
-- [Foldable linear codes](foldable-linear-code.md)
-
 ## Sources
 
 - Hadas Zeilberger, Binyi Chen, Ben Fisch, "BaseFold: Efficient Field-Agnostic Polynomial Commitment Schemes from Foldable Codes", CRYPTO (2024), IACR ePrint 2023/1705.

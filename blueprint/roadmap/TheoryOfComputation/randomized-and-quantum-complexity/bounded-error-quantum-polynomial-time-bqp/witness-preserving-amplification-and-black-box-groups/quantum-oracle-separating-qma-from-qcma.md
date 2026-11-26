@@ -10,10 +10,6 @@ A classical witness of $m$ bits partitions the space of candidate states into $2
 
 - [The class QCMA of quantum verification with classical witnesses](quantum-classical-merlin-arthur.md)
 
-## Proof depends on
-
-- [The class QCMA of quantum verification with classical witnesses](quantum-classical-merlin-arthur.md)
-
 ## Sources
 
 - Scott Aaronson, Greg Kuperberg, "Quantum versus classical proofs and advice", Theory of Computing 3 (2007), CCC (2007); arXiv:quant-ph/0604056.

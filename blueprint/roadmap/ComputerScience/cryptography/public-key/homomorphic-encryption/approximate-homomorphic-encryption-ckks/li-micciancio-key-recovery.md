@@ -11,10 +11,6 @@ Approximate decryption returns $\mathrm{Dcd}(m+e)$, from which the adversary rec
 - [IND-CPA-D security for approximate homomorphic encryption](ind-cpa-d-security.md)
 - [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
 
-## Proof depends on
-
-- [IND-CPA-D security for approximate homomorphic encryption](ind-cpa-d-security.md)
-
 ## Sources
 
 - Baiyu Li, Daniele Micciancio, "On the Security of Homomorphic Encryption on Approximate Numbers", EUROCRYPT (2021), IACR ePrint 2020/1533.

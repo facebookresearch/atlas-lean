@@ -14,8 +14,7 @@ The distance distribution of an optimal code is feasible by the Delsarte inequal
 
 ## Depends on
 
-- [Delsarte inequalities for distance distributions](delsarte-inequalities.md)
-- [Orthogonality of Krawtchouk polynomials](orthogonality-of-krawtchouk-polynomials.md)
+- [Binary Krawtchouk polynomials](binary-krawtchouk-polynomials.md)
 
 ## Proof depends on
 

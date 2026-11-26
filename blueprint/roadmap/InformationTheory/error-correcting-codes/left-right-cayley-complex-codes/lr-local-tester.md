@@ -11,11 +11,6 @@ Completeness is the definition of $C$. The locality and the formula for the reje
 - [Tensor codes on the squares of a left-right Cayley complex](square-complex-tensor-code.md)
 - [Locally testable code](../locally-testable-codes/ltc.md)
 
-## Proof depends on
-
-- [Tensor codes on the squares of a left-right Cayley complex](square-complex-tensor-code.md)
-- [Locally testable code](../locally-testable-codes/ltc.md)
-
 ## Sources
 
 - I. Dinur, S. Evra, R. Livne, A. Lubotzky, S. Mozes, "Locally testable codes with constant rate, distance, and locality", STOC (2022), arXiv:2111.04808.

@@ -15,12 +15,9 @@ By density and compactness, $\mathcal{G}_{\ell_0}$ is an $\varepsilon_0$-net for
 ## Depends on
 
 - [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
-- [Balanced group commutator decomposition near the identity](balanced-group-commutator-decomposition.md)
-- [Approximate commutators of near-identity unitaries are quadratically accurate](error-of-approximate-group-commutators.md)
 
 ## Proof depends on
 
-- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
 - [Balanced group commutator decomposition near the identity](balanced-group-commutator-decomposition.md)
 - [Approximate commutators of near-identity unitaries are quadratically accurate](error-of-approximate-group-commutators.md)
 

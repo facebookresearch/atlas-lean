@@ -6,11 +6,6 @@ A single-qubit unitary $U$ is exactly implementable by an ancilla-free circuit o
 
 Necessity is immediate since $H, S, T$ have entries in the ring. For sufficiency, write $U$ with entries $(a, b)/\sqrt{2}^{\,k}$ for minimal $k$; one can show that some $H T^{j}$ with $j \in \{0, 1, 2, 3\}$ applied to $U$ decreases $k$ by one, by analysing the residues of $a, b$ modulo powers of $1 + \omega$ in $\mathbb{Z}[\omega]$, $\omega = e^{i\pi/4}$. Induction on $k$ ends at a Clifford element.
 
-## Depends on
-
-- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
-- [Ross-Selinger: optimal Clifford+T approximation of z-rotations](optimal-clifford-t-approximation-of-z-rotations.md)
-
 ## Proof depends on
 
 - [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)

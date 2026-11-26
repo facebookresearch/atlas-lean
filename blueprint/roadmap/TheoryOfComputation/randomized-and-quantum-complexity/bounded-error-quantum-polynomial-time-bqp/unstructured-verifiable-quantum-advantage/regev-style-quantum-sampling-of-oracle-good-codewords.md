@@ -10,10 +10,6 @@ Prepare $\bigotimes_i \big(\sum_{\sigma : H_i(\sigma) = 1} |\sigma\rangle\big)$ 
 
 - [The Yamakawa-Zhandry codeword search problem](yamakawa-zhandry-codeword-search-problem.md)
 
-## Proof depends on
-
-- [The Yamakawa-Zhandry codeword search problem](yamakawa-zhandry-codeword-search-problem.md)
-
 ## Sources
 
 - Takashi Yamakawa, Mark Zhandry, "Verifiable quantum advantage without structure", FOCS (2022), Journal of the ACM 71(3) (2024); arXiv:2204.02063.

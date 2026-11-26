@@ -13,10 +13,6 @@ Halting configurations have no outgoing edges, and following the unique outgoing
 ## Depends on
 
 - [Configuration graphs and halting 0-trees of a catalytic machine](configuration-graphs-and-halting-zero-trees.md)
-
-## Proof depends on
-
-- [Configuration graphs and halting 0-trees of a catalytic machine](configuration-graphs-and-halting-zero-trees.md)
 - [Valid catalytic machines with nondeterministic or random choices](valid-catalytic-machines-with-choices.md)
 
 ## Sources

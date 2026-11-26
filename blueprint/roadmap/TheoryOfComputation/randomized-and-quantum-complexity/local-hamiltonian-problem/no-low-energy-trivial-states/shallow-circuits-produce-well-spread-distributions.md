@@ -16,10 +16,6 @@ Each output qubit depends on at most $2^d$ input qubits through the light cone o
 
 - [Circuit depth of a quantum state and trivial states](trivial-states-of-bounded-circuit-depth.md)
 
-## Proof depends on
-
-- [Circuit depth of a quantum state and trivial states](trivial-states-of-bounded-circuit-depth.md)
-
 ## Sources
 
 - Anurag Anshu, Chinmay Nirkhe, "Circuit lower bounds for low-energy states of quantum code Hamiltonians", ITCS (2022); arXiv:2011.02044.

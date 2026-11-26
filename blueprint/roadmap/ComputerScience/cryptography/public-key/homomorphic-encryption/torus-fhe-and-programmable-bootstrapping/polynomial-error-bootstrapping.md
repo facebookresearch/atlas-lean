@@ -8,13 +8,13 @@ Represent the decryption's inner product modulo $q$ as a composition of group el
 
 ## Depends on
 
-- [FHEW: bootstrapping LWE ciphertexts with a ring-GSW accumulator](fhew-bootstrapping.md)
 - [Gentry's bootstrapping theorem](../gentry-s-bootstrapping-theorem.md)
-- [Regev's quantum worst-case to average-case reduction for LWE](../../isogeny-and-lattice-foundations/worst-case-to-average-case-lattice-reductions/regev-worst-case-reduction.md)
+- [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
 
 ## Proof depends on
 
 - [FHEW: bootstrapping LWE ciphertexts with a ring-GSW accumulator](fhew-bootstrapping.md)
+- [Regev's quantum worst-case to average-case reduction for LWE](../../isogeny-and-lattice-foundations/worst-case-to-average-case-lattice-reductions/regev-worst-case-reduction.md)
 
 ## Sources
 

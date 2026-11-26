@@ -10,13 +10,11 @@ If $g$ is close to the evaluation of a polynomial inconsistent with $\mathrm{Fol
 
 - [k-wise folding of Reed–Solomon codewords reduces degree](rs-folding-operator.md)
 - [Quotienting by answered evaluation claims preserves distance](quotient-distance-preservation.md)
-- [Out-of-domain sampling pins down a unique list-decoded codeword](out-of-domain-sampling.md)
+- [Interactive oracle proofs of proximity for Reed–Solomon codes](rs-iopp.md)
 
 ## Proof depends on
 
-- [Quotienting by answered evaluation claims preserves distance](quotient-distance-preservation.md)
 - [Out-of-domain sampling pins down a unique list-decoded codeword](out-of-domain-sampling.md)
-- [k-wise folding of Reed–Solomon codewords reduces degree](rs-folding-operator.md)
 
 ## Sources
 

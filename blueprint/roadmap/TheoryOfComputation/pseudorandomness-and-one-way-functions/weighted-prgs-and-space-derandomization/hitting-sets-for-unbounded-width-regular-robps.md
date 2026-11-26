@@ -16,10 +16,6 @@ In a regular program the uniform distribution on each layer is preserved by unif
 
 - [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
 
-## Proof depends on
-
-- [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
-
 ## Sources
 
 - Andrej Bogdanov, William M. Hoza, Gautam Prakriya and Edward Pyne, "Hitting Sets for Regular Branching Programs", CCC (2022), ECCC TR21-143.

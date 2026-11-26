@@ -8,8 +8,8 @@ Apply Tillich-Zemor-type products of classical expander codes and a Hamiltonian 
 
 ## Depends on
 
-- [Output distributions of shallow circuits do not concentrate on two distant sets](shallow-circuits-produce-well-spread-distributions.md)
-- [CSS code Hamiltonians of quantum LDPC codes](css-code-hamiltonians.md)
+- [Bounded-degree local Hamiltonian families and relative energy](normalized-local-hamiltonian-families-and-relative-energy.md)
+- [Circuit depth of a quantum state and trivial states](trivial-states-of-bounded-circuit-depth.md)
 
 ## Proof depends on
 

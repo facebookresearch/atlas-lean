@@ -14,10 +14,6 @@ Induct on $|A|$. If there is no binary absorption, let $M$ be the clone generate
 ## Depends on
 
 - [Zhuk's centers, polynomially complete algebras and linear quotients](zhuk-centers-polynomially-complete-linear-algebras.md)
-
-## Proof depends on
-
-- [Zhuk's centers, polynomially complete algebras and linear quotients](zhuk-centers-polynomially-complete-linear-algebras.md)
 - [Absorbing and binary absorbing subuniverses of a finite algebra](absorbing-and-binary-absorbing-subuniverses.md)
 
 ## Sources

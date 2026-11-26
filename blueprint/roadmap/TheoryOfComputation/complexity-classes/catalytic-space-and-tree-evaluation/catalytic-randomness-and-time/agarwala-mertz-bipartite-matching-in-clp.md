@@ -8,15 +8,14 @@ Split the catalytic tape into a computation area, a weight assignment $W$ with $
 
 ## Depends on
 
-- [Agarwala–Mertz: a non-isolated weight is redundant and can be erased from the catalytic tape](non-isolated-weight-is-redundant.md)
-- [Agarwala–Mertz: isolating weights on the catalytic tape let CLP extend a maximum matching one edge at a time](isolating-weights-extend-matching-in-clp.md)
-- [General matching is in P (Edmonds' blossom algorithm)](../../../polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
 - [The class NC](../../time-and-space-complexity-classes/nc.md)
+- [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 
 ## Proof depends on
 
 - [Agarwala–Mertz: a non-isolated weight is redundant and can be erased from the catalytic tape](non-isolated-weight-is-redundant.md)
 - [Agarwala–Mertz: isolating weights on the catalytic tape let CLP extend a maximum matching one edge at a time](isolating-weights-extend-matching-in-clp.md)
+- [General matching is in P (Edmonds' blossom algorithm)](../../../polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
 
 ## Sources
 

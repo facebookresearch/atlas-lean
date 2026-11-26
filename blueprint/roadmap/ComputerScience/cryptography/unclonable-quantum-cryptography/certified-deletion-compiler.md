@@ -8,8 +8,8 @@ Prove a "certified deletion lemma": for any distribution where $\theta$ is compu
 
 ## Depends on
 
-- [Information-theoretic certified deletion from BB84 states](bb84-certified-deletion.md)
 - [Indistinguishability of encryptions with error $\varepsilon$](../security-games/semantic-security-and-indistinguishability/ind-secure.md)
+- [Encryption with certified deletion](certified-deletion.md)
 
 ## Proof depends on
 

@@ -8,13 +8,11 @@ Instead of enumerating all seeds, sample the seeds by a pseudorandom sampler der
 
 ## Depends on
 
-- [Chattopadhyay-Zuckerman: explicit two-source extractors for polylogarithmic min-entropy](explicit-two-source-extractors-for-polylogarithmic-entropy.md)
 - [Seeded non-malleable extractors (Dodis-Wichs)](seeded-non-malleable-extractors.md)
 
 ## Proof depends on
 
 - [Chattopadhyay-Zuckerman: explicit two-source extractors for polylogarithmic min-entropy](explicit-two-source-extractors-for-polylogarithmic-entropy.md)
-- [Seeded non-malleable extractors (Dodis-Wichs)](seeded-non-malleable-extractors.md)
 
 ## Sources
 

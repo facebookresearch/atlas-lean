@@ -9,11 +9,9 @@ Choose $M$ nearly orthogonal pure states $\psi_1, \dots, \psi_M$ and let the unk
 ## Depends on
 
 - [The shadow tomography problem](shadow-tomography-problem.md)
-- [Holevo's theorem](../../quantum-shannon-theory/holevo-s-theorem.md)
 
 ## Proof depends on
 
-- [The shadow tomography problem](shadow-tomography-problem.md)
 - [Holevo's theorem](../../quantum-shannon-theory/holevo-s-theorem.md)
 
 ## Sources

@@ -11,10 +11,6 @@ Starting from a hard 3SUM instance, one removes additive structure by a structur
 - [The 3SUM, APSP and Orthogonal Vectors hypotheses](../fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
 - [Fine-grained reductions](../fine-grained-hypotheses/fine-grained-reductions.md)
 
-## Proof depends on
-
-- [The 3SUM, APSP and Orthogonal Vectors hypotheses](../fine-grained-hypotheses/the-3sum-apsp-and-orthogonal-vectors-hypotheses.md)
-
 ## Sources
 
 - Ce Jin and Yinzhan Xu, "Removing Additive Structure in 3SUM-Based Reductions", STOC (2023), arXiv:2211.07048.

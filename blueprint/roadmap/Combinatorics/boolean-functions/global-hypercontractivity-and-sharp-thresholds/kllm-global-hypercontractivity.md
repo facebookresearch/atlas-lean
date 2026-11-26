@@ -14,7 +14,7 @@ Replace the $p$-biased cube by the uniform cube on $\{0,1\}^{n \times m}$ throug
 
 ## Depends on
 
-- [Ordinary hypercontractivity degrades as p tends to zero](failure-of-hypercontractivity-small-p.md)
+- [Global functions on the p-biased cube](pbiased-global-function.md)
 
 ## Proof depends on
 

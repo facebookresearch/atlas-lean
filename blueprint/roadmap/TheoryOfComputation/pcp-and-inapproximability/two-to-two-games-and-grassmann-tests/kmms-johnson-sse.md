@@ -8,8 +8,7 @@ Fourier-analyse the indicator of $S$ in the Johnson scheme eigenspaces; small ex
 
 ## Depends on
 
-- [Equivalence of Grassmann, shortcode and bilinear small-set expansion](shortcode-equivalence.md)
-- [Keevash–Lifshitz–Long–Minzer: hypercontractivity for global functions](../../../Combinatorics/boolean-functions/global-hypercontractivity-and-sharp-thresholds/kllm-global-hypercontractivity.md)
+- [Zoom-in and zoom-out subgraphs of the Grassmann graph](grassmann-zoom.md)
 
 ## Proof depends on
 

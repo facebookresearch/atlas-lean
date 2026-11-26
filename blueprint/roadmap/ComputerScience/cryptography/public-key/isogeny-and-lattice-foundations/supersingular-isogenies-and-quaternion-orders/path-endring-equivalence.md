@@ -9,8 +9,7 @@ From an endomorphism ring of both curves, find the connecting ideal and convert 
 ## Depends on
 
 - [The supersingular isogeny path and endomorphism ring problems](isogeny-path-and-endring-problems.md)
-- [KLPT: ideals of powersmooth or prime-power norm in a special maximal order](klpt-algorithm.md)
-- [Supersingular isogeny graphs are Ramanujan and random walks mix rapidly](isogeny-graph-ramanujan.md)
+- [The quaternion algebra ramified at p and infinity and its maximal orders](quaternion-algebra-bp.md)
 
 ## Proof depends on
 

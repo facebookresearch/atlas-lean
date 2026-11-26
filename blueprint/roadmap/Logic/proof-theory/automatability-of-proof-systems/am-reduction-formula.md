@@ -14,12 +14,9 @@ If $F$ has a satisfying assignment $a$, plugging $a$ into the refutation-encodin
 ## Depends on
 
 - [Automatable proof systems](automatable-proof-system.md)
-- [Ben-Sasson–Wigderson for general resolution](../../propositional-logic/resolution-size-and-width/refutation-narrow.md)
-- [Haken's lower bound for the pigeonhole principle](../../propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
 
 ## Proof depends on
 
-- [Automatable proof systems](automatable-proof-system.md)
 - [Ben-Sasson–Wigderson for general resolution](../../propositional-logic/resolution-size-and-width/refutation-narrow.md)
 - [Haken's lower bound for the pigeonhole principle](../../propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
 

@@ -8,13 +8,13 @@ Construct correlation-intractable hash families for the relevant bad-challenge r
 
 ## Depends on
 
-- [Delegation for deterministic computation from BARGs and somewhere extractable commitments](snarg-from-barg-and-hash.md)
-- [Correlation-intractable hash families](correlation-intractability.md)
-- [Discrete-logarithm experiment](../../public-key/hardness-assumptions/dlog-game.md)
+- [Advantage of a DDH distinguisher](../../public-key/elgamal-encryption/ddh-advantage.md)
 
 ## Proof depends on
 
 - [Delegation for deterministic computation from BARGs and somewhere extractable commitments](snarg-from-barg-and-hash.md)
+- [Correlation-intractable hash families](correlation-intractability.md)
+- [Discrete-logarithm experiment](../../public-key/hardness-assumptions/dlog-game.md)
 
 ## Sources
 

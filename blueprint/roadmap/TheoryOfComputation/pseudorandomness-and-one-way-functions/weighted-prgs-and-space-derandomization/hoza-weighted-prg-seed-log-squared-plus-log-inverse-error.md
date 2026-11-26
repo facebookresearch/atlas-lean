@@ -14,7 +14,6 @@ The proof is a variation of the reduction from moderate-error PRGs to low-error 
 
 ## Depends on
 
-- [Cohen–Doron–Renard–Sberlo–Ta-Shma: black-box error reduction from PRGs to weighted PRGs via Richardson iteration](error-reduction-prg-to-weighted-prg.md)
 - [Weighted pseudorandom generators (pseudorandom pseudodistributions)](weighted-pseudorandom-generators.md)
 
 ## Proof depends on

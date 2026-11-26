@@ -10,12 +10,8 @@ Correctness: if every internal vertex received a value, the root value $x$ would
 
 ## Depends on
 
-- [GGM-tree evaluation: every vertex value of GGM_T[C](x) is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
+- [GGM-tree evaluation: every vertex value of the GGM tree GGM_T of C on input x is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
 - [Polynomial time with an oracle](../../complexity-classes/time-and-space-complexity-classes/pwith-oracle.md)
-
-## Proof depends on
-
-- [GGM-tree evaluation: every vertex value of GGM_T[C](x) is computable in time Õ(|C| log T)](ggm-tree-vertex-evaluation.md)
 
 ## Sources
 

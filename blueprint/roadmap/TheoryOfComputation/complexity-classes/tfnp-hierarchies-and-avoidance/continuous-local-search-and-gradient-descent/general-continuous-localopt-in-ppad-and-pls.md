@@ -9,14 +9,11 @@ PPAD: the map $F=\Pi_D\circ g$ is a continuous self-map of the compact convex se
 ## Depends on
 
 - [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](continuous-localopt-and-cls.md)
-- [END-OF-THE-LINE is total](../../../completeness-other-classes/ppad-and-the-end-of-the-line-problem/exists-solution.md)
 - [The class PLS of polynomial local search problems](../../total-search-problems/the-class-pls-of-polynomial-local-search.md)
 
 ## Proof depends on
 
-- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](continuous-localopt-and-cls.md)
 - [END-OF-THE-LINE is total](../../../completeness-other-classes/ppad-and-the-end-of-the-line-problem/exists-solution.md)
-- [The class PLS of polynomial local search problems](../../total-search-problems/the-class-pls-of-polynomial-local-search.md)
 
 ## Sources
 

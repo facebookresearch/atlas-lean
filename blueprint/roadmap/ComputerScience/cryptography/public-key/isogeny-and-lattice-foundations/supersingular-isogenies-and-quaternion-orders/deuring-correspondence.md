@@ -11,11 +11,6 @@ Deuring showed that endomorphism rings of supersingular curves are maximal order
 - [Supersingular elliptic curves and isogenies](supersingular-curves.md)
 - [The quaternion algebra ramified at p and infinity and its maximal orders](quaternion-algebra-bp.md)
 
-## Proof depends on
-
-- [Supersingular elliptic curves and isogenies](supersingular-curves.md)
-- [The quaternion algebra ramified at p and infinity and its maximal orders](quaternion-algebra-bp.md)
-
 ## Sources
 
 - Max Deuring, "Die Typen der Multiplikatorenringe elliptischer Funktionenkörper", Abhandlungen aus dem Mathematischen Seminar der Universität Hamburg 14 (1941).

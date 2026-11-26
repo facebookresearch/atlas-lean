@@ -10,11 +10,7 @@ The dual of a (folded) Reed-Solomon code is a generalized (folded) Reed-Solomon 
 
 - [Quantum algorithm for codeword search via dual decoding](regev-style-quantum-sampling-of-oracle-good-codewords.md)
 - [Classical query lower bound from list recoverability](classical-hardness-from-list-recovery.md)
-
-## Proof depends on
-
-- [Quantum algorithm for codeword search via dual decoding](regev-style-quantum-sampling-of-oracle-good-codewords.md)
-- [Classical query lower bound from list recoverability](classical-hardness-from-list-recovery.md)
+- [List-recoverable codes](list-recoverable-codes-for-oracle-hardness.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ Write $f$ via a branching program whose output is the determinant of a matrix wi
 
 - [Pseudorandom generators exist if and only if one-way functions exist](../../../symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
 
-## Proof depends on
-
-- [Pseudorandom generators exist if and only if one-way functions exist](../../../symmetric-key/pseudorandom-generators/pseudorandom-generators-exist-if-and-only-if.md)
-
 ## Sources
 
 - Benny Applebaum, Yuval Ishai, Eyal Kushilevitz, "Cryptography in NC^0", SIAM Journal on Computing (2006).

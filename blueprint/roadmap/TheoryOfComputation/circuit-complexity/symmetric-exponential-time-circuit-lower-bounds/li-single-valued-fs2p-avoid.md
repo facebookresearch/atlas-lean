@@ -8,9 +8,7 @@ After a stretch-amplification step to stretch $2n$, run the post-order Korten re
 
 ## Depends on
 
-- [Li: with post-order traversal the history of Korten's reduction has a description of size poly(n)](post-order-history-short-description.md)
 - [Single-valued FΣ2P and FS2P algorithms for search problems](single-valued-fsigma2p-and-fs2p.md)
-- [Cai: S2P is contained in ZPP^NP](cai-s2p-subset-zpp-np.md)
 
 ## Proof depends on
 

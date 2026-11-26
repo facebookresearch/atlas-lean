@@ -12,11 +12,6 @@ For membership, the common random string is a candidate output $y$ and the prove
 - [The Entropy Difference problem ED](entropy-difference-problem.md)
 - [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
-## Proof depends on
-
-- [Non-interactive statistical zero knowledge NISZK in the common random string model](niszk-common-random-string.md)
-- [Total variation distance between finite measures](../../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
-
 ## Sources
 
 - Oded Goldreich, Amit Sahai and Salil Vadhan, "Can Statistical Zero Knowledge be made Non-Interactive? or On the Relationship of SZK and NISZK", CRYPTO (1999), ECCC TR99-013.

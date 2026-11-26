@@ -9,13 +9,10 @@ A tree-like refutation of size $s$ has a root-adjacent subtree of size at most $
 ## Depends on
 
 - [Automatable proof systems](automatable-proof-system.md)
-- [Ben-Sasson–Wigderson for general resolution](../../propositional-logic/resolution-size-and-width/refutation-narrow.md)
-- [Ben-Sasson–Wigderson for tree-like resolution](../../propositional-logic/resolution-size-and-width/tree-refutation-narrow.md)
-- [DPLL search trees and tree-like resolution simulate each other](../../propositional-logic/sat-solving/dpll-search-trees-and-tree-like-resolution.md)
+- [Tree-like resolution derivation](../../propositional-logic/resolution-size-and-width/resolution-tree.md)
 
 ## Proof depends on
 
-- [Automatable proof systems](automatable-proof-system.md)
 - [Ben-Sasson–Wigderson for general resolution](../../propositional-logic/resolution-size-and-width/refutation-narrow.md)
 - [Ben-Sasson–Wigderson for tree-like resolution](../../propositional-logic/resolution-size-and-width/tree-refutation-narrow.md)
 - [DPLL search trees and tree-like resolution simulate each other](../../propositional-logic/sat-solving/dpll-search-trees-and-tree-like-resolution.md)

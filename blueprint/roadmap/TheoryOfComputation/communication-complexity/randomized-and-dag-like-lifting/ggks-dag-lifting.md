@@ -14,15 +14,14 @@ Simulate a rectangle-DAG by a resolution refutation of $F$ in which each node's 
 
 ## Depends on
 
-- [Monotone circuits are rectangle-DAGs for monotone Karchmer–Wigderson games](monotone-circuit-rectangle-dag.md)
-- [Ben-Sasson–Wigderson for general resolution](../../../Logic/propositional-logic/resolution-size-and-width/refutation-narrow.md)
 - [Resolution refutation](../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
+- [Rectangle-DAGs (dag-like communication protocols)](rectangle-dag.md)
 
 ## Proof depends on
 
 - [Monotone circuits are rectangle-DAGs for monotone Karchmer–Wigderson games](monotone-circuit-rectangle-dag.md)
 - [Ben-Sasson–Wigderson for general resolution](../../../Logic/propositional-logic/resolution-size-and-width/refutation-narrow.md)
-- [Resolution refutation](../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
 ## Sources
 

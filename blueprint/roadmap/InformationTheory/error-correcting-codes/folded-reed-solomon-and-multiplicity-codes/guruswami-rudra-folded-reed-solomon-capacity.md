@@ -9,12 +9,9 @@ Interpolate a nonzero polynomial $Q(x, y_1, \dots, y_m)$ of low weighted degree 
 ## Depends on
 
 - [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
-- [Guruswami–Sudan list decoding](../list-decoding/exists-interpolant-dvd.md)
-- [List-decoding capacity, achievability](../list-decoding/exists-encoding-list-decodable.md)
 
 ## Proof depends on
 
-- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
 - [Guruswami–Sudan list decoding](../list-decoding/exists-interpolant-dvd.md)
 - [List-decoding capacity, achievability](../list-decoding/exists-encoding-list-decodable.md)
 

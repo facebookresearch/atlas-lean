@@ -8,7 +8,7 @@ Balanced base-$b$ digit expansion of each integer coefficient in $(-b^{k}/2,b^{k
 
 ## Depends on
 
-- [Relaxed binding of Ajtai commitments with challenge-difference openings](ajtai-relaxed-binding.md)
+- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
 
 ## Proof depends on
 

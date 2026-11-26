@@ -8,17 +8,17 @@ Linear combinations of the gate, permutation and boundary constraints with a ran
 
 ## Depends on
 
-- [Compiling polynomial IOPs with polynomial commitments into succinct arguments](piop-compilation.md)
-- [Grand-product permutation argument with random linear combinations](plonk-permutation-argument.md)
-- [Vanishing on a multiplicative subgroup and the quotient test](subgroup-vanishing-quotient.md)
 - [Security of KZG polynomial commitments](../zero-knowledge-and-arguments/security-of-kzg-polynomial-commitments.md)
-- [Lagrange basis over a multiplicative subgroup](lagrange-basis-subgroup.md)
+- [PLONK gate equations with copy constraints](plonk-constraint-system.md)
+- [Polynomial interactive oracle proofs](polynomial-iop.md)
+- [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
 
 ## Proof depends on
 
 - [Compiling polynomial IOPs with polynomial commitments into succinct arguments](piop-compilation.md)
 - [Grand-product permutation argument with random linear combinations](plonk-permutation-argument.md)
-- [Security of KZG polynomial commitments](../zero-knowledge-and-arguments/security-of-kzg-polynomial-commitments.md)
+- [Vanishing on a multiplicative subgroup and the quotient test](subgroup-vanishing-quotient.md)
+- [Lagrange basis over a multiplicative subgroup](lagrange-basis-subgroup.md)
 
 ## Sources
 

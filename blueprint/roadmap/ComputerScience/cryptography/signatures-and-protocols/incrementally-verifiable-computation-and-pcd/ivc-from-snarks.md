@@ -15,7 +15,6 @@ At each vertex the prover proves, with the SNARK, the statement "the local predi
 ## Proof depends on
 
 - [Extractor blow-up in recursive proof composition](recursive-extraction-blowup.md)
-- [Succinct arguments and SNARKs](../zero-knowledge-and-arguments/succinct-arguments-and-snarks.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ ERDŐS–KO–RADO hardness: from a COLLISION circuit $C$ set $F(x)=(0^n,C(x))$;
 
 - [LONG CHOICE and the class PLC of polynomial long choice for iterated pigeonhole arguments](long-choice-and-plc.md)
 
-## Proof depends on
-
-- [LONG CHOICE and the class PLC of polynomial long choice for iterated pigeonhole arguments](long-choice-and-plc.md)
-
 ## Sources
 
 - Amol Pasarkar, Christos Papadimitriou and Mihalis Yannakakis, "Extremal Combinatorics, Iterated Pigeonhole Arguments and Generalizations of PPP", ITCS (2023), arXiv:2209.07625.

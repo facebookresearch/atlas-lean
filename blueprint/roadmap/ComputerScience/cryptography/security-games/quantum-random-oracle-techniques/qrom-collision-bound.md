@@ -8,12 +8,12 @@ With the compressed oracle, bound the norm of the part of the state whose databa
 
 ## Depends on
 
-- [Recording quantum queries: the database explains the adversary's output](compressed-oracle-recording.md)
-- [Lower bound for quantum search (BBBV)](../../../quantum-algorithms/lower-bound-for-quantum-search/mul-card-le-of-forall-success.md)
+- [The quantum random oracle model](quantum-random-oracle-model.md)
 
 ## Proof depends on
 
 - [Recording quantum queries: the database explains the adversary's output](compressed-oracle-recording.md)
+- [Lower bound for quantum search (BBBV)](../../../quantum-algorithms/lower-bound-for-quantum-search/mul-card-le-of-forall-success.md)
 
 ## Sources
 

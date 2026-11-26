@@ -10,10 +10,6 @@ Truncate the power series of $\exp(H/2^r)$ after $O(\log(K/\varepsilon))$ terms 
 
 - [The class NC(poly) of polynomial-depth bounded fan-in circuit families](polynomial-depth-circuit-class-nc-poly.md)
 
-## Proof depends on
-
-- [The class NC(poly) of polynomial-depth bounded fan-in circuit families](polynomial-depth-circuit-class-nc-poly.md)
-
 ## Sources
 
 - Rahul Jain, Zhengfeng Ji, Sarvagya Upadhyay, John Watrous, "QIP = PSPACE", Journal of the ACM 58(6) (2011), STOC (2010); arXiv:0907.4737.

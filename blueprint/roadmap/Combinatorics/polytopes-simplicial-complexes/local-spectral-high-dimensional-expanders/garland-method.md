@@ -15,10 +15,7 @@ Both identities follow by expanding each side as a sum over edges $\{u,w\} \in X
 ## Depends on
 
 - [Link of a face in a weighted complex](link-of-face.md)
-
-## Proof depends on
-
-- [Link of a face in a weighted complex](link-of-face.md)
+- [Pure weighted simplicial complexes and their face distributions](pure-weighted-complex.md)
 
 ## Sources
 

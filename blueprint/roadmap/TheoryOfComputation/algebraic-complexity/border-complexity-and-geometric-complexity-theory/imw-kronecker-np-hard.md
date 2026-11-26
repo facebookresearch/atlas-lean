@@ -10,10 +10,6 @@ Reduce from 3-dimensional matching (or a variant of it) by encoding a matching p
 
 - [Kronecker coefficients of the symmetric group](kronecker-coefficients.md)
 
-## Proof depends on
-
-- [Kronecker coefficients of the symmetric group](kronecker-coefficients.md)
-
 ## Sources
 
 - C. Ikenmeyer, K. D. Mulmuley, M. Walter, "On vanishing of Kronecker coefficients", Computational Complexity 26 (2017) 949-992, arXiv:1507.02955.

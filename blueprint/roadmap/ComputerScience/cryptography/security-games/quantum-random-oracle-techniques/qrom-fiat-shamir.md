@@ -8,14 +8,13 @@ Apply the measure-and-reprogram lemma: a successful non-interactive prover outpu
 
 ## Depends on
 
-- [Measure-and-reprogram for quantum random oracles](measure-and-reprogram.md)
 - [Security of the Fiat–Shamir transform](../../signatures-and-protocols/zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
 - [Zero-knowledge interactive proofs](../../signatures-and-protocols/zero-knowledge-and-arguments/zero-knowledge-interactive-proofs.md)
+- [The quantum random oracle model](quantum-random-oracle-model.md)
 
 ## Proof depends on
 
 - [Measure-and-reprogram for quantum random oracles](measure-and-reprogram.md)
-- [Security of the Fiat–Shamir transform](../../signatures-and-protocols/zero-knowledge-and-arguments/security-of-the-fiatshamir-transform.md)
 
 ## Sources
 

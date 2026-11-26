@@ -10,10 +10,6 @@ Agreement testability of $C_1 \otimes C_2$ fails only if some low-weight pattern
 
 - [Agreement testability and robustness of tensor codes](agreement-testability-tensor.md)
 
-## Proof depends on
-
-- [Agreement testability and robustness of tensor codes](agreement-testability-tensor.md)
-
 ## Sources
 
 - I. Dinur, S. Evra, R. Livne, A. Lubotzky, S. Mozes, "Locally testable codes with constant rate, distance, and locality", STOC (2022), arXiv:2111.04808.

@@ -9,7 +9,6 @@ Write $3^{b}=2^{a}+c$ and find an auxiliary isogeny $\gamma$ of degree $c$ (from
 ## Depends on
 
 - [The SIDH key exchange and its torsion point information](sidh-protocol.md)
-- [Kani's lemma: isogeny diamonds give isogenies of abelian surfaces](kani-criterion.md)
 
 ## Proof depends on
 

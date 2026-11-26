@@ -10,10 +10,6 @@ A failure of product-expansion yields a low-weight matrix in $C_1 \boxplus C_2$ 
 
 - [Product-expansion of a pair of codes](product-expansion-of-a-pair-of-codes.md)
 
-## Proof depends on
-
-- [Product-expansion of a pair of codes](product-expansion-of-a-pair-of-codes.md)
-
 ## Sources
 
 - Gleb Kalachev, Pavel Panteleev, "Two-sided robustly testable codes", arXiv:2206.09973 (2022).

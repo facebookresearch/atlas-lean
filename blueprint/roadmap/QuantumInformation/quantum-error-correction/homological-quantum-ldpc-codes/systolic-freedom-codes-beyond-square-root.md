@@ -11,11 +11,6 @@ Choose a Riemannian $3$-manifold (a fibre bundle over a circle with surface fibr
 - [The toric code as the homological code of the square torus](toric-code-as-homological-code.md)
 - [The CSS code of a chain complex](css-code-of-a-chain-complex.md)
 
-## Proof depends on
-
-- [The toric code as the homological code of the square torus](toric-code-as-homological-code.md)
-- [The CSS code of a chain complex](css-code-of-a-chain-complex.md)
-
 ## Sources
 
 - Michael H. Freedman, David A. Meyer, Feng Luo, "Z2-systolic freedom and quantum codes", in Mathematics of Quantum Computation, Chapman and Hall/CRC (2002).

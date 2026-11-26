@@ -14,7 +14,6 @@ Pad the catalytic tape with $O(c)$ extra bits split into $B$-bit blocks and appl
 
 ## Depends on
 
-- [Koucký–Mertz–Pyne–Sami compute-or-compress lemma for catalytic configuration graphs](kmps-compute-or-compress-lemma.md)
 - [Nondeterministic, bounded-error, unbounded-error and zero-error catalytic space classes](catalytic-resource-classes.md)
 
 ## Proof depends on

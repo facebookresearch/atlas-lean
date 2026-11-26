@@ -13,11 +13,10 @@ Take a balanced product over a group $G$ acting freely on an expander-based Tann
 ## Depends on
 
 - [Balanced products of chain complexes over a group](balanced-product-of-chain-complexes.md)
-- [Parameters of hypergraph product codes](parameters-of-hypergraph-product-codes.md)
+- [Quantum LDPC code families and asymptotically good quantum codes](quantum-ldpc-code-families-and-good-codes.md)
 
 ## Proof depends on
 
-- [Balanced products of chain complexes over a group](balanced-product-of-chain-complexes.md)
 - [Parameters of hypergraph product codes](parameters-of-hypergraph-product-codes.md)
 
 ## Sources

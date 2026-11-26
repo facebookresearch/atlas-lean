@@ -8,13 +8,12 @@ Approximate each gate within $\varepsilon/T$ by Solovay-Kitaev; errors of approx
 
 ## Depends on
 
-- [Solovay-Kitaev theorem](solovay-kitaev-theorem.md)
 - [BQP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/bqp.md)
+- [Dense inverse-closed gate sets and epsilon-nets in SU(d)](dense-gate-sets-and-epsilon-nets.md)
 
 ## Proof depends on
 
 - [Solovay-Kitaev theorem](solovay-kitaev-theorem.md)
-- [BQP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/bqp.md)
 
 ## Sources
 

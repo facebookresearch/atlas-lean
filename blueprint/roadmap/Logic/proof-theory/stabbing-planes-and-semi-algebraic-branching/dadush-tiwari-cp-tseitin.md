@@ -8,8 +8,7 @@ Simulate the stabbing planes recursion for Tseitin inside cutting planes: each b
 
 ## Depends on
 
-- [Stabbing planes refute Tseitin formulas in quasi-polynomial size](sp-tseitin-quasipoly.md)
-- [Stabbing planes simulate cutting planes and equal tree-like R(CP)](sp-simulates-cutting-planes.md)
+- [The stabbing planes proof system](stabbing-planes-system.md)
 
 ## Proof depends on
 

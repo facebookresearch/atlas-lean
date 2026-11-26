@@ -9,10 +9,7 @@ Write $b+as=m+e+q_\ell k$. Dividing by $p$ and rounding, $\lfloor b/p\rceil+\lfl
 ## Depends on
 
 - [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
-
-## Proof depends on
-
-- [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
+- [CKKS encoding via the canonical embedding](canonical-embedding-encoding.md)
 
 ## Sources
 

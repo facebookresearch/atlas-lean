@@ -13,8 +13,8 @@ Call $\mathrm{SIZE}$ on $\mathrm{acc}_\tau$ and $\mathrm{rej}_\tau$, which are c
 
 ## Depends on
 
-- [Reversible Euler-tour exploration of halting 0-trees in catalytic space O(s)](reversible-euler-tour-of-halting-trees.md)
-- [Halting 0-trees of different catalytic contents are disjoint and cover all reachable configurations](halting-zero-trees-disjoint-and-covering.md)
+- [Configuration graphs and halting 0-trees of a catalytic machine](configuration-graphs-and-halting-zero-trees.md)
+- [Valid catalytic machines with nondeterministic or random choices](valid-catalytic-machines-with-choices.md)
 
 ## Proof depends on
 

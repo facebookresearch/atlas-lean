@@ -10,10 +10,6 @@ Replace the distance distribution by the counts of codeword triples according to
 
 - [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)
 
-## Proof depends on
-
-- [Delsarte's linear programming bound](delsarte-linear-programming-bound.md)
-
 ## Sources
 
 - Alexander Schrijver, "New code upper bounds from the Terwilliger algebra and semidefinite programming", IEEE Transactions on Information Theory 51(8) (2005).

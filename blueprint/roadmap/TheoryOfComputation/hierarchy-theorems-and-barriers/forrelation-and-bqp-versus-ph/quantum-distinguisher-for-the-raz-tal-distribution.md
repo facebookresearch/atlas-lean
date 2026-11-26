@@ -9,11 +9,9 @@ Run the forrelation algorithm. Under the uniform distribution $\mathbb{E}[\Phi] 
 ## Depends on
 
 - [The Raz-Tal rounded Gaussian forrelation distribution](raz-tal-gaussian-forrelation-distribution.md)
-- [A one-query quantum algorithm estimating forrelation](one-query-quantum-algorithm-for-forrelation.md)
 
 ## Proof depends on
 
-- [The Raz-Tal rounded Gaussian forrelation distribution](raz-tal-gaussian-forrelation-distribution.md)
 - [A one-query quantum algorithm estimating forrelation](one-query-quantum-algorithm-for-forrelation.md)
 
 ## Sources

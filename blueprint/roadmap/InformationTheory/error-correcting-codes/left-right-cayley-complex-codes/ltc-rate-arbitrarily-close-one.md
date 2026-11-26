@@ -8,8 +8,7 @@ Start from a $c^3$-LTC of some positive rate. Distance amplification along a bip
 
 ## Depends on
 
-- [Dinur–Evra–Livne–Lubotzky–Mozes: explicit c3-LTCs from left-right Cayley complexes](dellm-c3-ltc-theorem.md)
-- [Good locally testable codes of every rate below one](../locally-testable-codes/theorem-1-2.md)
+- [c3-locally testable code families](c3-ltc-family.md)
 
 ## Proof depends on
 

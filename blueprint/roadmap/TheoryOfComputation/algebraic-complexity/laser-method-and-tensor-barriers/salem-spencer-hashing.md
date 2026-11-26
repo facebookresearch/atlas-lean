@@ -9,11 +9,9 @@ If $(I,J,K)$ is a block triple, then $h_X(I) + h_Y(J) = 2h_Z(K)$ by the constrai
 ## Depends on
 
 - [The value of a tensor in the laser method](tensor-value.md)
-- [Behrend's lemma: some sphere contains many lattice points of a cube](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/behrend-large-sphere.md)
 
 ## Proof depends on
 
-- [The value of a tensor in the laser method](tensor-value.md)
 - [Behrend's lemma: some sphere contains many lattice points of a cube](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/behrend-large-sphere.md)
 
 ## Sources

@@ -13,13 +13,12 @@ Under isolation the Mulmuley–Vazirani–Vazirani argument identifies $M^k$ edg
 
 ## Depends on
 
-- [Isolation lemma](../../../../Combinatorics/probabilistic-combinatorics/isolation-lemma.md)
-- [General matching is in P (Edmonds' blossom algorithm)](../../../polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
 - [Polynomial-time catalytic logspace CLP and zero-error polynomial-time catalytic logspace CZPLP](polynomial-time-catalytic-logspace-classes.md)
 
 ## Proof depends on
 
 - [Isolation lemma](../../../../Combinatorics/probabilistic-combinatorics/isolation-lemma.md)
+- [General matching is in P (Edmonds' blossom algorithm)](../../../polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
 
 ## Sources
 

@@ -14,10 +14,6 @@ The derandomization uses the hitting set only through one-sided certificates: au
 
 - [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
 
-## Proof depends on
-
-- [Regular and permutation ROBPs with one accept vertex, and hitting set generators](regular-permutation-robps-and-hitting-set-generators.md)
-
 ## Sources
 
 - Kuan Cheng and William M. Hoza, "Hitting Sets Give Two-Sided Derandomization of Small Space", CCC (2020); Theory of Computing 18(21) (2022), ECCC TR20-016.

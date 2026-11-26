@@ -17,14 +17,9 @@ Suppose $L + 1$ distinct messages are close to a received word and consider thei
 - [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
 - [Univariate multiplicity codes](univariate-multiplicity-codes.md)
 - [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
-- [Folded Wronskian criterion for linear independence](folded-wronskian-criterion-for-linear-independence.md)
-- [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
 
 ## Proof depends on
 
-- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
-- [Univariate multiplicity codes](univariate-multiplicity-codes.md)
-- [List recovery and relaxed generalized Singleton bounds](list-recovery-of-folded-codes.md)
 - [Folded Wronskian criterion for linear independence](folded-wronskian-criterion-for-linear-independence.md)
 - [Guruswami-Wang: the list of folded RS and multiplicity codes lies in a low-dimensional subspace](linear-algebraic-list-decoding-into-a-subspace.md)
 

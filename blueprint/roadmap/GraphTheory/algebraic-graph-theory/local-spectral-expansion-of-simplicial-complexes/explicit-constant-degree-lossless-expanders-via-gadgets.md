@@ -8,13 +8,11 @@ Each left vertex's $D$ edges are distributed according to a gadget on its neighb
 
 ## Depends on
 
-- [Expander mixing lemma](../../graph-families-and-operations/expander-graphs/expander-mixing-lemma.md)
 - [Uniform vertex expander](../../graph-families-and-operations/expander-graphs/is-uniform-vertex-expander.md)
 
 ## Proof depends on
 
 - [Expander mixing lemma](../../graph-families-and-operations/expander-graphs/expander-mixing-lemma.md)
-- [Uniform vertex expander](../../graph-families-and-operations/expander-graphs/is-uniform-vertex-expander.md)
 
 ## Sources
 

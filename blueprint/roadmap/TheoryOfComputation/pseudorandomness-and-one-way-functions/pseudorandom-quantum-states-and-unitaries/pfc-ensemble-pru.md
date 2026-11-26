@@ -9,13 +9,11 @@ First show non-adaptive security: after the Clifford twirl, $t$ parallel copies 
 ## Depends on
 
 - [Pseudorandom unitaries](pseudorandom-unitaries.md)
-- [Pseudorandom states from quantum-secure pseudorandom functions](random-phase-prs.md)
 - [Asymptotic PRF security relative to a class of distinguishers](../../../ComputerScience/cryptography/symmetric-key/pseudorandom-functions/prfsecure.md)
 
 ## Proof depends on
 
 - [Pseudorandom states from quantum-secure pseudorandom functions](random-phase-prs.md)
-- [Asymptotic PRF security relative to a class of distinguishers](../../../ComputerScience/cryptography/symmetric-key/pseudorandom-functions/prfsecure.md)
 
 ## Sources
 

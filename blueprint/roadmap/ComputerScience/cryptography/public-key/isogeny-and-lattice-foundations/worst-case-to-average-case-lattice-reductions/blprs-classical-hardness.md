@@ -8,8 +8,8 @@ Apply Peikert's classical reduction with exponential modulus in dimension $\sqrt
 
 ## Depends on
 
-- [Peikert's classical reduction from GapSVP to LWE with exponential modulus](peikert-classical-reduction.md)
 - [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
+- [Approximate lattice problems GapSVP and SIVP](gapsvp-and-sivp.md)
 
 ## Proof depends on
 

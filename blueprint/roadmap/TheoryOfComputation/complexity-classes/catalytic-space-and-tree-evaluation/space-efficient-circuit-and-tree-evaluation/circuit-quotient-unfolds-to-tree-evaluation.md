@@ -9,11 +9,10 @@ Each block's gate values are determined by the values of its predecessor blocks 
 ## Depends on
 
 - [The Circuit Value Problem](../../../completeness-other-classes/circuit-value-problem/cvp-dec.md)
-- [Shalunov's low-degree DAG partition lemma](shalunov-low-degree-dag-partition.md)
 
 ## Proof depends on
 
-- [The Circuit Value Problem](../../../completeness-other-classes/circuit-value-problem/cvp-dec.md)
+- [Shalunov's low-degree DAG partition lemma](shalunov-low-degree-dag-partition.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ Each extension step is quadratic, so the dimension doubles per level. The defini
 
 - [Wiedemann towers of binary fields](binary-tower.md)
 
-## Proof depends on
-
-- [Wiedemann towers of binary fields](binary-tower.md)
-
 ## Sources
 
 - Doug Wiedemann, "An Iterated Quadratic Extension of GF(2)", Fibonacci Quarterly (1988).

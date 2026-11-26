@@ -8,8 +8,9 @@ Take $F_n$ to encode the SINK-OF-DAG principle, which is stronger than SINK-OF-P
 
 ## Depends on
 
-- [Approximate Nullstellensatz lower bound for the sink-of-potential-line formulas via approximate degree of OR](approximate-nullstellensatz-sink-of-potential-line.md)
 - [Unary Nullstellensatz and unary Sherali–Adams refutations of CNF formulas](unary-nullstellensatz-and-unary-sherali-adams.md)
+- [Resolution refutation](../../../../Logic/propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
+- [Width of a derivation](../../../../Logic/propositional-logic/resolution-size-and-width/derivation-width.md)
 
 ## Proof depends on
 

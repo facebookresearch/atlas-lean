@@ -8,13 +8,11 @@ The construction composes an outer PCP with an inner test based on the Grassmann
 
 ## Depends on
 
-- [The 2-to-2 Games Theorem (imperfect completeness)](two-to-two-theorem.md)
 - [d-to-d games and 2-to-2 constraints](d-to-d-games.md)
 
 ## Proof depends on
 
 - [The 2-to-2 Games Theorem (imperfect completeness)](two-to-two-theorem.md)
-- [d-to-d games and 2-to-2 constraints](d-to-d-games.md)
 
 ## Sources
 

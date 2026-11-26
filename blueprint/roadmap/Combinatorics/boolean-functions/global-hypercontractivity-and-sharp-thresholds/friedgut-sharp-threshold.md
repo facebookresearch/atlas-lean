@@ -8,8 +8,7 @@ By the Margulis-Russo formula, a coarse threshold means bounded total influence 
 
 ## Depends on
 
-- [Bourgain's sharp-threshold theorem with global hypercontractivity](kllm-bourgain-strengthened.md)
-- [Sharp threshold from influences](../../../Probability/percolation/phase-transition/sharp-thresholds-from-influences/sth-sharp-threshold.md)
+- [Global functions on the p-biased cube](pbiased-global-function.md)
 
 ## Proof depends on
 

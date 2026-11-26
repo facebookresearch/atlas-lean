@@ -11,10 +11,7 @@ Start from a label-cover instance with small soundness given by the PCP theorem 
 
 ## Depends on
 
-- [Zoom-local soundness structure of the Grassmann test](grassmann-test-completeness-local.md)
-- [Equivalence of Grassmann, shortcode and bilinear small-set expansion](shortcode-equivalence.md)
-- [Khot's 2-to-1 games conjecture with perfect completeness](two-to-one-conjecture.md)
-- [The PCP theorem: NP = PCP(O(log n), O(1))](../pcp-theorem.md)
+- [d-to-d games and 2-to-2 constraints](d-to-d-games.md)
 
 ## Proof depends on
 

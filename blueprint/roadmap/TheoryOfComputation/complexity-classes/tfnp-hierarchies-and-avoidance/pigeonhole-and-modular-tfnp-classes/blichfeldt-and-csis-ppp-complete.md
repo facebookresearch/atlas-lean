@@ -12,7 +12,6 @@ BLICHFELDT in PPP: reduce each $s\in S$ modulo the fundamental parallelepiped $B
 
 ## Proof depends on
 
-- [BLICHFELDT and constrained SIS: lattice-flavoured pigeonhole search problems](blichfeldt-and-constrained-sis.md)
 - [Minkowski's convex body theorem](../../../../NumberTheory/diophantine-approximation/uniform-distribution-metric/minkowski-convex-body-theorem.md)
 
 ## Sources

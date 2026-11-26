@@ -8,8 +8,8 @@ Compose the XOR function of a sink-finding query problem on tournaments with an 
 
 ## Depends on
 
-- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
-- [Göös–Pitassi–Watson: query-to-communication lifting for BPP](gpw-bpp-lifting.md)
+- [Approximate rank and the log-approximate-rank conjecture](approximate-rank.md)
+- [Public-coin randomized protocol](../randomized-communication-protocols/public-coin-protocol.md)
 
 ## Proof depends on
 

@@ -14,15 +14,14 @@ Let $p = q(\mathcal{F})$ and work with the minimal members $\mathcal{H}$ of $\ma
 
 ## Depends on
 
-- [Park-Pham fragment lemma](park-pham-fragment-lemma.md)
 - [The Kahn-Kalai expectation-threshold conjecture](kahn-kalai-expectation-threshold-conjecture.md)
-- [The expectation threshold is a lower bound on the threshold](expectation-threshold-lower-bounds-the-threshold.md)
-- [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
+- [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
+- [The threshold $p_c(\mathcal F)$](../thresholds-and-expectation-thresholds/p-c.md)
+- [Size of a largest minimal element, $\ell(\mathcal F)$](../thresholds-and-expectation-thresholds/l.md)
 
 ## Proof depends on
 
 - [Park-Pham fragment lemma](park-pham-fragment-lemma.md)
-- [The Kahn-Kalai expectation-threshold conjecture](kahn-kalai-expectation-threshold-conjecture.md)
 - [The expectation threshold is a lower bound on the threshold](expectation-threshold-lower-bounds-the-threshold.md)
 - [Thresholds versus fractional expectation-thresholds](../thresholds-and-expectation-thresholds/theorem-1-1.md)
 

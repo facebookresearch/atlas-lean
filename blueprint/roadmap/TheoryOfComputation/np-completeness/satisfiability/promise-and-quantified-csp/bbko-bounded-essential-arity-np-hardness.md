@@ -8,7 +8,8 @@ By the minion-homomorphism theorem it suffices to show NP-hardness of $\mathrm{P
 
 ## Depends on
 
-- [Barto–Bulín–Krokhin–Opršal: minion homomorphisms between polymorphism minions give log-space PCSP reductions](bbko-minion-homomorphism-log-space-reduction.md)
+- [The polymorphism minion Pol(A,B) of a promise template](polymorphism-minion-of-a-promise-template.md)
+- [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
 
 ## Proof depends on
 

@@ -9,8 +9,6 @@ By the prime number theorem the number of primes in $[2^{n-1},2^n)$ is $(1+o(1))
 ## Depends on
 
 - [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
-- [Prime number theorem](../../../../NumberTheory/distribution-of-primes/prime-number-theorem/prime-number-theorem/prime-number-theorem.md)
-- [PRIMES is in P](../../../polynomial-time-problems/aks-primality-test/primes-in-p.md)
 
 ## Proof depends on
 

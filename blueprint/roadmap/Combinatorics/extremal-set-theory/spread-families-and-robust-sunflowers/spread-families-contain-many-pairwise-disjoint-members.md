@@ -8,7 +8,7 @@ Colour the ground set uniformly with $r$ colours. Each colour class is a random 
 
 ## Depends on
 
-- [Spread lemma: random sets of moderate density contain members of spread families](spread-lemma-random-sets-contain-members-of-spread-families.md)
+- [Spread families and spread measures](kappa-spread-families-and-measures.md)
 
 ## Proof depends on
 

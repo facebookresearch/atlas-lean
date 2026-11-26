@@ -14,7 +14,7 @@ The oracle reduction with $\mathcal{B}=\mathrm{BP}$ produces one promise-$\maths
 
 ## Depends on
 
-- [Koucký–Mertz–Pyne–Sami: catalytic space with extra resources reduces to plain space with one oracle query](kmps-catalytic-resource-oracle-reduction.md)
+- [Nondeterministic, bounded-error, unbounded-error and zero-error catalytic space classes](catalytic-resource-classes.md)
 
 ## Proof depends on
 

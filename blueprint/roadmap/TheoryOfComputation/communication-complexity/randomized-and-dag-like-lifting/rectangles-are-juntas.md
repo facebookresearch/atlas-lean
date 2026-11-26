@@ -11,11 +11,6 @@ Decompose $R$ into a disjoint union of subrectangles in which the conditional di
 - [Conical juntas and their degree](conical-junta.md)
 - [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
 
-## Proof depends on
-
-- [Conical juntas and their degree](conical-junta.md)
-- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
-
 ## Sources
 
 - M. Göös, S. Lovett, R. Meka, T. Watson, D. Zuckerman, "Rectangles are nonnegative juntas", STOC (2015); SIAM Journal on Computing 45 (2016) 1835-1869.

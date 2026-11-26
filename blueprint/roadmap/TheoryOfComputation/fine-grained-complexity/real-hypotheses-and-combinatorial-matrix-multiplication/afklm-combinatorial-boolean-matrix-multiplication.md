@@ -12,14 +12,10 @@ a superpolylogarithmic speed-up over cubic time; previous combinatorial algorith
 
 By the subcubic equivalence of Vassilevska Williams and Williams it suffices to detect triangles. Decompose the bipartite graphs between layers into grid-regular pieces; if two pieces sharing the middle layer are both grid-regular and dense, their product is nearly uniform, so either the third piece is very sparse (handled directly) or a triangle must exist and is found quickly. Sparse pieces are handled by brute force, and the quasipolynomial number of pieces yields the $2^{\Omega((\log n)^{1/7})}$ saving.
 
-## Depends on
-
-- [Abboud–Fischer–Kelley–Lovett–Meka: efficient grid-regularity decomposition with quasipolynomially many parts](afklm-grid-regularity-decomposition.md)
-- [Strassen's 1969 bound on the matrix multiplication exponent](../../algebraic-complexity/matrix-multiplication-exponent/strassen1969-upper.md)
-
 ## Proof depends on
 
 - [Abboud–Fischer–Kelley–Lovett–Meka: efficient grid-regularity decomposition with quasipolynomially many parts](afklm-grid-regularity-decomposition.md)
+- [Strassen's 1969 bound on the matrix multiplication exponent](../../algebraic-complexity/matrix-multiplication-exponent/strassen1969-upper.md)
 - [Grid norms and grid regularity of Boolean matrices (Kelley–Lovett–Meka)](grid-norms-and-grid-regularity.md)
 
 ## Sources

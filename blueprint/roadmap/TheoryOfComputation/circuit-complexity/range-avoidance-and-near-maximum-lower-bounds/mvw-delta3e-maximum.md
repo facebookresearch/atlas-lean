@@ -8,8 +8,7 @@ By counting, some truth table on $n$ bits has circuit complexity above $2^n/n$. 
 
 ## Depends on
 
-- [Symmetric alternation: the classes S2TIME[T], S2P and S2E](../symmetric-exponential-time-circuit-lower-bounds/symmetric-alternation-s2p-s2e.md)
-- [Shannon: most Boolean functions need exponential circuits](../shannon-s-circuit-size-lower-bound/shannon-hard-function.md)
+- [The class E](../../complexity-classes/time-and-space-complexity-classes/e.md)
 
 ## Proof depends on
 

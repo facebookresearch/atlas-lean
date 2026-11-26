@@ -12,11 +12,6 @@ The oracle provides an $\mathsf{NP}$-complete language's solutions (so $\mathsf{
 - [Impagliazzo's five worlds](../impagliazzo-s-five-worlds/impagliazzo-five-worlds.md)
 - [Black-box constructions and oracle separations](../../../ComputerScience/cryptography/public-key/hardness-assumptions/black-box-constructions-and-oracle-separations.md)
 
-## Proof depends on
-
-- [Pseudorandom quantum state generators](pseudorandom-quantum-states.md)
-- [Black-box constructions and oracle separations](../../../ComputerScience/cryptography/public-key/hardness-assumptions/black-box-constructions-and-oracle-separations.md)
-
 ## Sources
 
 - William Kretschmer, Luowen Qian, Makrand Sinha, Avishay Tal, "Quantum Cryptography in Algorithmica", STOC (2023), arXiv:2212.00879.

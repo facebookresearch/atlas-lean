@@ -15,16 +15,15 @@ Items 2, 3, 4 are successively weaker. The core is item 4 implies item 1: by Ost
 
 ## Depends on
 
-- [Computational knowledge complexity k(n) of an interactive proof](computational-knowledge-complexity.md)
-- [Auxiliary-input one-way functions](auxiliary-input-one-way-functions.md)
 - [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
 - [Zero-knowledge interactive proofs](../../../ComputerScience/cryptography/signatures-and-protocols/zero-knowledge-and-arguments/zero-knowledge-interactive-proofs.md)
+- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Proof depends on
 
+- [Computational knowledge complexity k(n) of an interactive proof](computational-knowledge-complexity.md)
 - [Auxiliary-input one-way functions](auxiliary-input-one-way-functions.md)
 - [Ilango–Ren–Santhanam: one-way functions exist iff GapMCSP is average-case hard on some locally samplable distribution](irs-owf-iff-gapmcsp-hard-on-local-distribution.md)
-- [Polynomial time with polynomial advice](../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 
 ## Sources
 

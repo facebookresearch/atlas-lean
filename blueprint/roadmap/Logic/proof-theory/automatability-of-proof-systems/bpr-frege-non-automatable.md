@@ -9,11 +9,10 @@ Encode a one-way permutation-based bit commitment or key-agreement protocol as a
 ## Depends on
 
 - [Automatability implies feasible interpolation for systems closed under restriction](automatability-implies-interpolation.md)
-- [Superpolynomial lower bounds for Frege proofs](../superpolynomial-lower-bounds-for-frege-proofs.md)
+- [Automatable proof systems](automatable-proof-system.md)
 
 ## Proof depends on
 
-- [Automatability implies feasible interpolation for systems closed under restriction](automatability-implies-interpolation.md)
 - [Superpolynomial lower bounds for Frege proofs](../superpolynomial-lower-bounds-for-frege-proofs.md)
 
 ## Sources

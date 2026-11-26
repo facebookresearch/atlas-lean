@@ -10,6 +10,7 @@ Using flattening (taking many independent copies makes each distribution close t
 
 - [The Entropy Difference problem ED](entropy-difference-problem.md)
 - [Public-coin interactive proofs](../../goldwasser-sipser-theorem/pub-ip.md)
+- [Promise-SZK and HVSZK: statistical zero-knowledge proofs for promise problems](promise-szk-and-hvszk.md)
 
 ## Proof depends on
 

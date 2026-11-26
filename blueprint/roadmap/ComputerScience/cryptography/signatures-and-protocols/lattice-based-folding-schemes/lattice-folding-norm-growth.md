@@ -9,11 +9,10 @@ Apply $\|w_1+rw_2\|_\infty\le\|w_1\|_\infty+\|r\|_{\mathrm{op}}\|w_2\|_\infty$ i
 ## Depends on
 
 - [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
-- [Relaxed binding of Ajtai commitments with challenge-difference openings](ajtai-relaxed-binding.md)
 
 ## Proof depends on
 
-- [Strong sampling sets of short challenges in power-of-two cyclotomic rings](short-challenge-sets.md)
+- [Relaxed binding of Ajtai commitments with challenge-difference openings](ajtai-relaxed-binding.md)
 
 ## Sources
 

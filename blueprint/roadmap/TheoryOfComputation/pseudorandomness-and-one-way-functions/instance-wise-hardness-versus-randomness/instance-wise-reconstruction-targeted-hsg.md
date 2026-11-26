@@ -12,11 +12,9 @@ Following the doubly-efficient proof system of Goldwasser, Kalai and Rothblum, t
 
 - [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
 - [Log-space uniform circuit families](../../complexity-classes/time-and-space-complexity-classes/uniform-circuit-family.md)
-- [Nisan–Wigderson generator](../derandomization/nisanwigderson-generator.md)
 
 ## Proof depends on
 
-- [Targeted pseudorandom generators and targeted hitting-set generators](targeted-prg-and-targeted-hsg.md)
 - [Nisan–Wigderson generator](../derandomization/nisanwigderson-generator.md)
 - [Impagliazzo-Wigderson: exponential circuit hardness in E derandomizes BPP](../nisan-wigderson.md)
 

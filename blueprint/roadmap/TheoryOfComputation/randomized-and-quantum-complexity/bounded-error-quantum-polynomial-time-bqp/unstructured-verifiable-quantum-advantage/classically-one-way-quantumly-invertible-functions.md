@@ -8,7 +8,7 @@ Define $f(x) = H'(x)$ restricted to the solution set of the codeword search prob
 
 ## Depends on
 
-- [Yamakawa-Zhandry: unconditional NP search separation relative to a random oracle](np-search-separation-relative-to-a-random-oracle.md)
+- [Search problems relative to a random oracle](search-problems-relative-to-a-random-oracle.md)
 
 ## Proof depends on
 

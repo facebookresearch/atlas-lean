@@ -14,7 +14,6 @@ In the Saks–Zhou framework one repeatedly approximates powers of the transitio
 
 ## Depends on
 
-- [Braverman–Cohen–Garg: weighted PRGs and hitting sets with near-optimal error dependence for ROBPs](braverman-cohen-garg-near-optimal-error.md)
 - [Deterministic space classes on multi-tape machines](../../complexity-classes/time-and-space-classes-on-multi-tape-machines/dspace.md)
 
 ## Proof depends on

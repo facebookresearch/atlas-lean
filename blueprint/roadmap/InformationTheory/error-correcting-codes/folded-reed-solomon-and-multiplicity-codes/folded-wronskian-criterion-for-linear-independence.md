@@ -12,10 +12,6 @@ is a nonzero polynomial. The analogous statement with derivatives $f_j^{(i)}$ (t
 
 A linear dependence among the $f_j$ is a dependence among the columns at every $x$, so the determinant vanishes. Conversely, if $W_\gamma \equiv 0$, the operator $f(x) \mapsto f(\gamma x)$ acting on the span has the property that some nontrivial combination is annihilated by a difference operator of order $< r$; diagonalizing this operator on monomials, whose eigenvalues $\gamma^{e}$ for $e < k$ are distinct by the order assumption, shows that the span has dimension less than $r$.
 
-## Depends on
-
-- [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)
-
 ## Proof depends on
 
 - [Folded Reed-Solomon codes](folded-reed-solomon-codes.md)

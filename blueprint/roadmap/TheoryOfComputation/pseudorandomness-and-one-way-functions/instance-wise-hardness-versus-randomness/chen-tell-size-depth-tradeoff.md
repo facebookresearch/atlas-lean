@@ -15,12 +15,13 @@ The proof is the same reconstruction argument with output length $M$ a fixed pol
 
 ## Depends on
 
-- [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](instance-wise-reconstruction-targeted-hsg.md)
-- [Chen–Tell: prBPP = prP from almost-all-inputs hardness of depth-n² logspace-uniform circuits](prbpp-eq-prp-from-almost-all-inputs-hardness.md)
+- [Hardness of a multi-output function on almost all inputs for probabilistic time](almost-all-inputs-hardness.md)
+- [Log-space uniform circuit families](../../complexity-classes/time-and-space-complexity-classes/uniform-circuit-family.md)
 
 ## Proof depends on
 
 - [Chen–Tell instance-wise reconstruction: a targeted HSG from a shallow logspace-uniform circuit](instance-wise-reconstruction-targeted-hsg.md)
+- [Chen–Tell: prBPP = prP from almost-all-inputs hardness of depth-n² logspace-uniform circuits](prbpp-eq-prp-from-almost-all-inputs-hardness.md)
 
 ## Sources
 

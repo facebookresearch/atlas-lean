@@ -8,8 +8,7 @@ By the monotone Karchmer-Wigderson theorem, monotone depth equals the communicat
 
 ## Depends on
 
-- [Monotone circuits are rectangle-DAGs for monotone Karchmer–Wigderson games](../../communication-complexity/randomized-and-dag-like-lifting/monotone-circuit-rectangle-dag.md)
-- [Composed functions, gadgets and lifting theorems](../../communication-complexity/randomized-and-dag-like-lifting/composed-function-lifting.md)
+- [Monotone circuits](../../complexity-classes/time-and-space-complexity-classes/is-monotone-circuit.md)
 
 ## Proof depends on
 

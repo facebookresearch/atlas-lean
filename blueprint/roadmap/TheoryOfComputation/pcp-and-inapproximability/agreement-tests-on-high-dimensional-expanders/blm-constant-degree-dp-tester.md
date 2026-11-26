@@ -8,8 +8,7 @@ By the characterization theorem it suffices to establish unique-games coboundary
 
 ## Depends on
 
-- [Bafna–Minzer / Dikstein–Dinur characterization of low-soundness direct product testing](bafna-minzer-characterization.md)
-- [Dikstein–Dinur–Lubotzky: bounded-degree complexes without small connected covers](../../../Combinatorics/polytopes-simplicial-complexes/coboundary-and-cosystolic-expansion/ddl-symplectic-no-covers.md)
+- [High-soundness and low-soundness agreement theorems](agreement-soundness-regimes.md)
 
 ## Proof depends on
 

@@ -8,9 +8,8 @@ The two ingredients are Korten's $\mathrm{P}^{\mathrm{NP}}$ reduction from Avoid
 
 ## Depends on
 
-- [Korten's reduction: from a non-image of the GGM tree, an NP oracle finds a non-image of C](korten-reduction-ggm-tree.md)
 - [Single-valued FΣ2P and FS2P algorithms for search problems](single-valued-fsigma2p-and-fs2p.md)
-- [Bootstrapping win-win: recursive hitting sets over lengths n_{i+1} = n_i^β](../../randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/pseudodeterministic-algorithms/bootstrapping-recursive-hitting-sets.md)
+- [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](../../randomized-and-quantum-complexity/bounded-error-probabilistic-classes-rp-and-bpp/pseudodeterministic-algorithms/pseudodeterministic-construction-of-dense-property.md)
 
 ## Proof depends on
 

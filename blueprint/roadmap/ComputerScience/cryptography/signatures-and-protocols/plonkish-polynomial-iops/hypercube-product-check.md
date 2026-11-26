@@ -14,7 +14,6 @@ The values $v(1,x)$ for $x\ne(1,\dots,1)$ encode the internal nodes of a binary 
 
 ## Depends on
 
-- [Zero-check reduction to sum-check via the equality polynomial](zerocheck-reduction.md)
 - [Multilinear extension of a Boolean function](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/algebrization-barrier/multilinear-ext.md)
 
 ## Proof depends on

@@ -15,7 +15,6 @@ The right side's factors encode the multiset of consecutive pairs $(s_i,s_{i+1})
 ## Depends on
 
 - [Lookup relations with multiplicities](lookup-relation.md)
-- [Grand-product permutation argument with random linear combinations](../plonkish-polynomial-iops/plonk-permutation-argument.md)
 
 ## Proof depends on
 

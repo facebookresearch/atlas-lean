@@ -8,8 +8,8 @@ Construct an oracle encoding a function that requires quantum advantage (a Forre
 
 ## Depends on
 
-- [Pseudorandom states in Algorithmica: a classical oracle with P = NP](prs-in-algorithmica.md)
 - [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
+- [Black-box constructions and oracle separations](../../../ComputerScience/cryptography/public-key/hardness-assumptions/black-box-constructions-and-oracle-separations.md)
 
 ## Proof depends on
 

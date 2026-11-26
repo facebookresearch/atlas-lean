@@ -11,11 +11,6 @@ Reduce the parameterized minimum monotone circuit satisfying assignment problem 
 - [Automatable proof systems](automatable-proof-system.md)
 - [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 
-## Proof depends on
-
-- [Automatable proof systems](automatable-proof-system.md)
-- [Resolution refutation](../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
-
 ## Sources
 
 - M. Alekhnovich, A. A. Razborov, "Resolution is not automatizable unless W[P] is tractable", SIAM Journal on Computing 38 (2008) 1347-1363; FOCS (2001).

@@ -15,13 +15,12 @@ The function $q(\tau)=\sum_{X}g(X)$ is the multilinear extension in $\tau$ of th
 ## Depends on
 
 - [Relaxed R1CS instances with slack vector and scalar](relaxed-r1cs.md)
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
 - [The multilinear equality polynomial on the Boolean hypercube](../plonkish-polynomial-iops/eq-polynomial.md)
 
 ## Proof depends on
 
-- [Zero-check reduction to sum-check via the equality polynomial](../plonkish-polynomial-iops/zerocheck-reduction.md)
 - [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [Zero-check reduction to sum-check via the equality polynomial](../plonkish-polynomial-iops/zerocheck-reduction.md)
 
 ## Sources
 

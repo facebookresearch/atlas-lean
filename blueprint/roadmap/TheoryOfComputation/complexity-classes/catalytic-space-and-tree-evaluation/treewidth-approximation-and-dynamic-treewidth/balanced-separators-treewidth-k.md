@@ -11,10 +11,6 @@ Orient each edge $tt'$ of the decomposition tree towards the side containing mor
 - [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
 - [TREEWIDTH as a decision problem](../../../np-completeness/graph-coloring-and-partitioning/treewidth/treewidth-dec.md)
 
-## Proof depends on
-
-- [Tree-decomposition](../../../../GraphTheory/planar-graphs-and-minors/tree-width/tree-decomposition.md)
-
 ## Sources
 
 - Hans L. Bodlaender, Pål Grønås Drange, Markus S. Dregi, Fedor V. Fomin, Daniel Lokshtanov and Michał Pilipczuk, "A c^k n 5-Approximation Algorithm for Treewidth", SIAM Journal on Computing 45(2) (2016), arXiv:1304.6321.

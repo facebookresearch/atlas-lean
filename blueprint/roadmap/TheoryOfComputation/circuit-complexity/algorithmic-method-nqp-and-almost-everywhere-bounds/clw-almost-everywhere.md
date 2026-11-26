@@ -9,11 +9,10 @@ Replace diagonalization against nondeterministic time by a refuter-style argumen
 ## Depends on
 
 - [Infinitely-often versus almost-everywhere circuit lower bounds](almost-everywhere-lower-bound.md)
-- [Murray–Williams: NQP is not contained in ACC0](murray-williams-nqp-acc.md)
+- [Non-trivial satisfiability and derandomization algorithms for a circuit class](nontrivial-circuit-analysis.md)
 
 ## Proof depends on
 
-- [Infinitely-often versus almost-everywhere circuit lower bounds](almost-everywhere-lower-bound.md)
 - [Murray–Williams: NQP is not contained in ACC0](murray-williams-nqp-acc.md)
 
 ## Sources

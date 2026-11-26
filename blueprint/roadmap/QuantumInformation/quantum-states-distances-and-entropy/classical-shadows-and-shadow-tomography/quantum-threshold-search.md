@@ -9,11 +9,9 @@ Bădescu and O'Donnell process the observables sequentially on a block of copies
 ## Depends on
 
 - [The shadow tomography problem](shadow-tomography-problem.md)
-- [Gentle measurement lemma](gentle-measurement-lemma-for-shadow-tomography.md)
 
 ## Proof depends on
 
-- [The shadow tomography problem](shadow-tomography-problem.md)
 - [Gentle measurement lemma](gentle-measurement-lemma-for-shadow-tomography.md)
 
 ## Sources

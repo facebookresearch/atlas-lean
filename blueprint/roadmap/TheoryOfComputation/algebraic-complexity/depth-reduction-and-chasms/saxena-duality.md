@@ -12,10 +12,6 @@ where each $h_{i,j}$ is a univariate polynomial of degree at most $d$. In partic
 
 Write $(\sum_j z_j)^d$ as the coefficient of $y^d$ in $d! \prod_j e^{y z_j}$ truncated at degree $d$, and recover that coefficient by interpolation from $ad + 1$ distinct values of $y$. Each evaluation is a product over $j$ of truncated exponentials of $y z_j$, which are univariate polynomials in $z_j$; substituting $z_j = g_j$ gives the identity.
 
-## Depends on
-
-- [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)
-
 ## Proof depends on
 
 - [Homogeneous depth-four circuits with bounded bottom fan-in](homogeneous-depth-four.md)

@@ -8,13 +8,13 @@ Matrix multiplication tensors have irreversibility $\omega/2$, and irreversibili
 
 ## Depends on
 
-- [Strassen's spectral characterization of asymptotic rank and subrank](strassen-spectral-duality.md)
 - [The Coppersmith–Winograd tensor](cw-tensor.md)
+- [Strassen's asymptotic spectrum of tensors and asymptotic rank](asymptotic-spectrum.md)
+- [Matrix multiplication exponent](../matrix-multiplication-exponent/matrix-multiplication-exponent.md)
 
 ## Proof depends on
 
 - [Strassen's spectral characterization of asymptotic rank and subrank](strassen-spectral-duality.md)
-- [The Coppersmith–Winograd tensor](cw-tensor.md)
 
 ## Sources
 

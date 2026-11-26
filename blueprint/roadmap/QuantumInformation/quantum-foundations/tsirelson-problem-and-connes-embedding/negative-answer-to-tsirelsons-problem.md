@@ -8,16 +8,13 @@ If $C_{qa} = C_{qc}$ for all finite sets, then $\omega^* = \omega^{co}$ for ever
 
 ## Depends on
 
-- [MIP* = RE (Ji, Natarajan, Vidick, Wright, Yuen)](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-provers-and-the-halting-problem/mip-star-equals-re.md)
-- [The NPA semidefinite hierarchy converges to the commuting-operator value](npa-hierarchy-converges-to-commuting-operator-value.md)
 - [Tsirelson's problem](tsirelsons-problem-closure-version.md)
-- [The halting problem is not co-recognizable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-co-recognizable-halting.md)
+- [Quantum correlation sets C_q, C_qs, C_qa and C_qc](quantum-correlation-sets-q-qs-qa-qc.md)
 
 ## Proof depends on
 
 - [MIP* = RE (Ji, Natarajan, Vidick, Wright, Yuen)](../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-provers-and-the-halting-problem/mip-star-equals-re.md)
 - [The NPA semidefinite hierarchy converges to the commuting-operator value](npa-hierarchy-converges-to-commuting-operator-value.md)
-- [Tsirelson's problem](tsirelsons-problem-closure-version.md)
 - [The halting problem is not co-recognizable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-co-recognizable-halting.md)
 
 ## Sources

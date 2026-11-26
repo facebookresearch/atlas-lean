@@ -14,14 +14,11 @@ Set $T_n(G) = 1$ iff $\vartheta(\overline{G}) \ge k$ for a suitable $k$. Since $
 
 ## Depends on
 
-- [Alon–Boppana: monotone circuits for clique need exponential size](../monotone-circuit-lower-bound-for-clique/alon-boppana-monotone-clique.md)
 - [Lovász theta function](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/lovasz-theta.md)
-- [Razborov: monotone circuits for clique need superpolynomial size](../monotone-circuit-lower-bound-for-clique/razborov-monotone-clique.md)
 
 ## Proof depends on
 
 - [Alon–Boppana: monotone circuits for clique need exponential size](../monotone-circuit-lower-bound-for-clique/alon-boppana-monotone-clique.md)
-- [Lovász theta function](../../../GraphTheory/graph-invariants-and-labelings/theta-function-of-a-graph/lovasz-theta.md)
 - [Razborov: monotone circuits for clique need superpolynomial size](../monotone-circuit-lower-bound-for-clique/razborov-monotone-clique.md)
 
 ## Sources

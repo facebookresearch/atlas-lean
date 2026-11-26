@@ -11,10 +11,6 @@ When the success probability is input-independent, the circuit $Q$ restricted to
 - [Zero-knowledge interactive proofs](../../signatures-and-protocols/zero-knowledge-and-arguments/zero-knowledge-interactive-proofs.md)
 - [Trace distance: metric, operational form and contractivity](../../../../QuantumInformation/quantum-states-distances-and-entropy/remaining-clauses-of-trace-distance-and-contractivity.md)
 
-## Proof depends on
-
-- [Trace distance: metric, operational form and contractivity](../../../../QuantumInformation/quantum-states-distances-and-entropy/remaining-clauses-of-trace-distance-and-contractivity.md)
-
 ## Sources
 
 - John Watrous, "Zero-Knowledge against Quantum Attacks", SIAM Journal on Computing (2009); STOC (2006).

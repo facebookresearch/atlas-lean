@@ -8,8 +8,8 @@ Security relative to the oracle follows from the query lower bound for duplicati
 
 ## Depends on
 
-- [Query lower bound for duplicating subspace states](subspace-state-unclonability.md)
 - [Indistinguishability and virtual black-box obfuscation](../program-obfuscation/indistinguishability-and-virtual-black-box.md)
+- [Public-key quantum money and quantum lightning](public-key-quantum-money.md)
 
 ## Proof depends on
 

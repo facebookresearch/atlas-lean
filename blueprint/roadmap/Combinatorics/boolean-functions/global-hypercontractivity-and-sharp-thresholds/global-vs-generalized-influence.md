@@ -10,10 +10,6 @@ The generalized derivative $D_S f$ is a signed combination of the $2^{|S|}$ rest
 
 - [Global functions on the p-biased cube](pbiased-global-function.md)
 
-## Proof depends on
-
-- [Global functions on the p-biased cube](pbiased-global-function.md)
-
 ## Sources
 
 - P. Keevash, N. Lifshitz, E. Long, D. Minzer, "Hypercontractivity for global functions and sharp thresholds", Journal of the American Mathematical Society 37 (2024), arXiv:1906.05568.

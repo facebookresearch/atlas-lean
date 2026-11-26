@@ -9,11 +9,10 @@ Define a generalized matching polynomial attached to random $r$-coverings, show 
 ## Depends on
 
 - [Marcus-Spielman-Srivastava: every graph has a one-sided Ramanujan two-lift](every-bipartite-graph-has-a-ramanujan-two-lift.md)
-- [Heilmann-Lieb theorem: real roots of the matching polynomial](heilmann-lieb-theorem.md)
+- [Ramanujan graphs and bipartite Ramanujan graphs](ramanujan-graphs-and-bipartite-ramanujan-graphs.md)
 
 ## Proof depends on
 
-- [Marcus-Spielman-Srivastava: every graph has a one-sided Ramanujan two-lift](every-bipartite-graph-has-a-ramanujan-two-lift.md)
 - [Heilmann-Lieb theorem: real roots of the matching polynomial](heilmann-lieb-theorem.md)
 
 ## Sources

@@ -8,12 +8,13 @@ Two decryptions differ only by their error terms, of norm at most the error boun
 
 ## Depends on
 
-- [Key recovery against CKKS from decryptions of honest ciphertexts](li-micciancio-key-recovery.md)
 - [IND-CPA-D security for approximate homomorphic encryption](ind-cpa-d-security.md)
+- [CKKS ciphertexts and approximate decryption](ckks-ciphertexts.md)
+- [CKKS encoding via the canonical embedding](canonical-embedding-encoding.md)
 
 ## Proof depends on
 
-- [IND-CPA-D security for approximate homomorphic encryption](ind-cpa-d-security.md)
+- [Key recovery against CKKS from decryptions of honest ciphertexts](li-micciancio-key-recovery.md)
 
 ## Sources
 

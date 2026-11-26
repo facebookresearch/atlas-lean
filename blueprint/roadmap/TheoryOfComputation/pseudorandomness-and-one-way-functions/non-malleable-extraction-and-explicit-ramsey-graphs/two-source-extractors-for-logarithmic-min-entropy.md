@@ -8,9 +8,8 @@ Plug the asymptotically optimal non-malleable extractor (seed length $O(\log n)$
 
 ## Depends on
 
-- [Li: seeded non-malleable extractors with asymptotically optimal seed length](seeded-non-malleable-extractors-with-optimal-seed-length.md)
-- [Ben-Aroya-Doron-Ta-Shma: an efficient reduction from two-source to non-malleable extractors](two-source-extraction-at-near-logarithmic-entropy.md)
-- [Two-source extractors and dispersers give Ramsey graphs](two-source-extractors-give-ramsey-graphs.md)
+- [K-Ramsey graphs and bipartite K-Ramsey graphs](ramsey-graphs-and-bipartite-ramsey-graphs.md)
+- [Guessing probability, min-entropy and collision probability](../../../ComputerScience/cryptography/randomness-extraction/guessing-probability-min-entropy-and-collision.md)
 
 ## Proof depends on
 

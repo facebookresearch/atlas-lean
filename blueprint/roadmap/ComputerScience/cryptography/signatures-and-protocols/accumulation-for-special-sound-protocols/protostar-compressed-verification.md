@@ -10,10 +10,6 @@ If $\mathbf{v}\ne\mathbf{0}$, $p(Y)=\sum_i v_iY^{i-1}$ is a nonzero polynomial o
 
 - [Special-sound protocols with algebraic degree-d verifiers](special-sound-algebraic-verifier.md)
 
-## Proof depends on
-
-- [Special-sound protocols with algebraic degree-d verifiers](special-sound-algebraic-verifier.md)
-
 ## Sources
 
 - Benedikt Bünz, Binyi Chen, "Protostar: Generic Efficient Accumulation/Folding for Special-Sound Protocols", ASIACRYPT (2023), IACR ePrint 2023/620.

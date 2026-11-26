@@ -12,7 +12,6 @@ Enumerate probabilistic machines $M_1,M_2,\dots$ with clock $n^c$. On input $x$ 
 
 ## Proof depends on
 
-- [Hardness of a multi-output function on almost all inputs for probabilistic time](almost-all-inputs-hardness.md)
 - [Deterministic time hierarchy: quadratic versus linear time](../../hierarchy-theorems-and-barriers/time-hierarchy-theorem/time-hierarchy.md)
 
 ## Sources

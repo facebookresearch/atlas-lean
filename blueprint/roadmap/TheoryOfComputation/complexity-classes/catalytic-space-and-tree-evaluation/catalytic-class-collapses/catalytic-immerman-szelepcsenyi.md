@@ -14,8 +14,7 @@ Apply the oracle reduction with $\mathcal{B}=\mathrm{coN}$ to get one $\mathsf{c
 
 ## Depends on
 
-- [Koucký–Mertz–Pyne–Sami: catalytic space with extra resources reduces to plain space with one oracle query](kmps-catalytic-resource-oracle-reduction.md)
-- [Immerman-Szelepcsenyi theorem: NL = coNL](../../immerman-szelepcsenyi.md)
+- [Nondeterministic, bounded-error, unbounded-error and zero-error catalytic space classes](catalytic-resource-classes.md)
 
 ## Proof depends on
 

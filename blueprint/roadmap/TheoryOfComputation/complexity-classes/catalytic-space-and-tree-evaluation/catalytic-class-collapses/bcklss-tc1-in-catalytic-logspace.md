@@ -12,16 +12,15 @@ Gates are simulated by transparent register programs over $\mathbb{Z}_p$: a thre
 
 ## Depends on
 
-- [Transparent register programs (Buhrman–Cleve–Koucký–Loff–Speelman)](transparent-register-programs.md)
-- [The class NC^k](../../time-and-space-complexity-classes/nck.md)
 - [Log-space uniform circuit families](../../time-and-space-complexity-classes/uniform-circuit-family.md)
-- [ST-connectivity is NL-complete](../../../completeness-other-classes/directed-s-t-connectivity/stcon-nl-complete.md)
-- [NC^1 is contained in L](../../../circuit-complexity/parallel-complexity-class-nc/nc1-subset-logspace.md)
+- [Nondeterministic, bounded-error, unbounded-error and zero-error catalytic space classes](catalytic-resource-classes.md)
 
 ## Proof depends on
 
 - [Transparent register programs (Buhrman–Cleve–Koucký–Loff–Speelman)](transparent-register-programs.md)
+- [The class NC^k](../../time-and-space-complexity-classes/nck.md)
 - [ST-connectivity is NL-complete](../../../completeness-other-classes/directed-s-t-connectivity/stcon-nl-complete.md)
+- [NC^1 is contained in L](../../../circuit-complexity/parallel-complexity-class-nc/nc1-subset-logspace.md)
 
 ## Sources
 

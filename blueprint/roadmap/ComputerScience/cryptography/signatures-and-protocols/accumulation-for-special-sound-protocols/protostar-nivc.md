@@ -8,13 +8,13 @@ Express the branch selection as a special-sound protocol where the prover commit
 
 ## Depends on
 
-- [ProtoStar: generic accumulation for special-sound protocols](protostar-accumulation.md)
-- [Logarithmic-derivative lookups as a degree-two special-sound protocol](protostar-lookup-special-sound.md)
 - [Non-uniform incrementally verifiable computation](../customizable-constraint-systems-and-multi-folding/non-uniform-ivc.md)
+- [Split accumulation and NARKs with accumulation](../incrementally-verifiable-computation-and-pcd/split-accumulation.md)
 
 ## Proof depends on
 
 - [ProtoStar: generic accumulation for special-sound protocols](protostar-accumulation.md)
+- [Logarithmic-derivative lookups as a degree-two special-sound protocol](protostar-lookup-special-sound.md)
 
 ## Sources
 

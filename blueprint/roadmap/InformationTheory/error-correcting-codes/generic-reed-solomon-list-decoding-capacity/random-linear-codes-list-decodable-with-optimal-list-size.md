@@ -8,8 +8,7 @@ Replace generic evaluation vectors by uniformly random columns of a generator ma
 
 ## Depends on
 
-- [Weak partition connectivity gives generic full rank of intersection matrices](weakly-partition-connected-hypergraphs-give-generic-full-rank.md)
-- [Alrabiah-Guruswami-Li: randomly punctured RS codes achieve capacity over linear-size fields](random-reed-solomon-codes-list-decodable-over-linear-fields.md)
+- [List-decodable code](../list-decoding/is-list-decodable.md)
 
 ## Proof depends on
 

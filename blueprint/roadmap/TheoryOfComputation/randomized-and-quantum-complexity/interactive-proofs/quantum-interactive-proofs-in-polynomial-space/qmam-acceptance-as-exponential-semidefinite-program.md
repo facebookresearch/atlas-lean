@@ -14,13 +14,12 @@ Merlin's first message fixes the reduced state of $\mathsf{X}$; by Uhlmann's the
 
 ## Depends on
 
-- [Marriott-Watrous: QIP equals QMAM](marriott-watrous-qip-equals-qmam.md)
 - [The class NC(poly) of polynomial-depth bounded fan-in circuit families](polynomial-depth-circuit-class-nc-poly.md)
+- [Quantum Merlin-Arthur-Merlin games (QMAM)](quantum-merlin-arthur-merlin-games.md)
 
 ## Proof depends on
 
 - [Marriott-Watrous: QIP equals QMAM](marriott-watrous-qip-equals-qmam.md)
-- [The class NC(poly) of polynomial-depth bounded fan-in circuit families](polynomial-depth-circuit-class-nc-poly.md)
 
 ## Sources
 

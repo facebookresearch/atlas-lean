@@ -8,11 +8,11 @@ A randomized decision-to-search reduction embeds an instance $z$ of $\mathrm{OR}
 
 ## Depends on
 
-- [Reversible Resolution: a MaxSAT-style fragment of Resolution with consumed premises](reversible-resolution.md)
 - [Unary Nullstellensatz and unary Sherali–Adams refutations of CNF formulas](unary-nullstellensatz-and-unary-sherali-adams.md)
 
 ## Proof depends on
 
+- [Reversible Resolution: a MaxSAT-style fragment of Resolution with consumed premises](reversible-resolution.md)
 - [The false-clause search problem S(F) of an unsatisfiable CNF and its universality for TFNP^dt](false-clause-search-problem.md)
 - [Intersection theorems: Reversible Resolution is the intersection of Resolution and unary Sherali–Adams](reversible-resolution-intersection-theorem.md)
 

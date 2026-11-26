@@ -10,11 +10,10 @@ Prove security by induction along the chain: at each step, the precondition of e
 
 - [The evasive LWE assumption](evasive-lwe.md)
 - [Null indistinguishability obfuscation](null-io.md)
-- [Witness encryption from null indistinguishability obfuscation](we-from-null-io.md)
+- [Witness encryption for NP languages](witness-encryption.md)
 
 ## Proof depends on
 
-- [The evasive LWE assumption](evasive-lwe.md)
 - [Witness encryption from null indistinguishability obfuscation](we-from-null-io.md)
 
 ## Sources

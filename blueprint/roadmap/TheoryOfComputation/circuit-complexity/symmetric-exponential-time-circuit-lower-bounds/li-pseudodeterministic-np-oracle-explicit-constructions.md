@@ -8,8 +8,8 @@ Each listed construction problem reduces to Avoid, so composing the reduction wi
 
 ## Depends on
 
-- [Li: a single-valued FS2P algorithm solves Avoid on every input length](li-single-valued-fs2p-avoid.md)
-- [Probabilistic-method explicit constructions reduce to Avoid](../../complexity-classes/tfnp-hierarchies-and-avoidance/range-avoidance-and-explicit-constructions/explicit-constructions-in-apepp.md)
+- [Single-valued FΣ2P and FS2P algorithms for search problems](single-valued-fsigma2p-and-fs2p.md)
+- [Pseudorandom generators against circuits](../../pseudorandomness-and-one-way-functions/derandomization/pseudorandom-generators-against-circuits.md)
 
 ## Proof depends on
 

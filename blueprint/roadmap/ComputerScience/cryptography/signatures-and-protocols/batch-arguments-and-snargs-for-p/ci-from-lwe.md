@@ -12,11 +12,6 @@ The hash key is an FHE encryption of a circuit computing the searchable relation
 - [Learning with errors](../../public-key/hardness-assumptions/learning-with-errors.md)
 - [Zero-knowledge interactive proofs](../zero-knowledge-and-arguments/zero-knowledge-interactive-proofs.md)
 
-## Proof depends on
-
-- [Correlation-intractable hash families](correlation-intractability.md)
-- [Learning with errors](../../public-key/hardness-assumptions/learning-with-errors.md)
-
 ## Sources
 
 - Chris Peikert, Sina Shiehian, "Noninteractive Zero Knowledge for NP from (Plain) Learning With Errors", CRYPTO (2019).

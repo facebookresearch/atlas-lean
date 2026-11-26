@@ -8,8 +8,6 @@ Instantiate the delegation-from-BARG template with the LWE-based somewhere extra
 
 ## Depends on
 
-- [Delegation for deterministic computation from BARGs and somewhere extractable commitments](snarg-from-barg-and-hash.md)
-- [Batch arguments for NP from LWE](cjj-barg-from-lwe.md)
 - [Learning with errors](../../public-key/hardness-assumptions/learning-with-errors.md)
 
 ## Proof depends on

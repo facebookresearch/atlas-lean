@@ -8,8 +8,8 @@ Oracularization lets one prover receive both questions and return both answers, 
 
 ## Depends on
 
-- [Question reduction by introspection](question-reduction-by-introspection.md)
-- [The PCP theorem: NP = PCP(O(log n), O(1))](../../../pcp-and-inapproximability/pcp-theorem.md)
+- [Conditionally linear question distributions](conditionally-linear-question-distributions.md)
+- [Synchronous two-prover games](synchronous-two-prover-games.md)
 
 ## Proof depends on
 

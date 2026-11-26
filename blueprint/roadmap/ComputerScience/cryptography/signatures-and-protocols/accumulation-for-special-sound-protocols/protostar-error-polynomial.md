@@ -16,10 +16,6 @@ Each $V_j$ is homogeneous of degree $j$, so $(\mu+X)^{d-j}V_j(\pi+X\pi')$ is a p
 
 - [Special-sound protocols with algebraic degree-d verifiers](special-sound-algebraic-verifier.md)
 
-## Proof depends on
-
-- [Special-sound protocols with algebraic degree-d verifiers](special-sound-algebraic-verifier.md)
-
 ## Sources
 
 - Benedikt Bünz, Binyi Chen, "Protostar: Generic Efficient Accumulation/Folding for Special-Sound Protocols", ASIACRYPT (2023), IACR ePrint 2023/620.

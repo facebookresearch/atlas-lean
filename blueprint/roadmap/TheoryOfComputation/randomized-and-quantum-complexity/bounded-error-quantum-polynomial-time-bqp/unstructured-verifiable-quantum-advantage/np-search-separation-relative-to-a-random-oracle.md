@@ -8,13 +8,11 @@ Instantiate the codeword search problem with folded Reed-Solomon codes. The quan
 
 ## Depends on
 
-- [Folded Reed-Solomon codes satisfy the dual-decodability and list-recovery conditions](folded-reed-solomon-codes-meet-both-conditions.md)
 - [Search problems relative to a random oracle](search-problems-relative-to-a-random-oracle.md)
 
 ## Proof depends on
 
 - [Folded Reed-Solomon codes satisfy the dual-decodability and list-recovery conditions](folded-reed-solomon-codes-meet-both-conditions.md)
-- [Search problems relative to a random oracle](search-problems-relative-to-a-random-oracle.md)
 
 ## Sources
 

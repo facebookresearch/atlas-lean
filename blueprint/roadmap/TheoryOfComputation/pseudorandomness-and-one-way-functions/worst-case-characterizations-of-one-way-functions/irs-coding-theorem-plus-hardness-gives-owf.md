@@ -10,10 +10,10 @@ Suppose one-way functions do not exist. Then the probability $D(x)$ of a sample 
 
 - [GapMCSP[s,c], GapK[s,c] and weak versus strong average-case hardness on a distribution](gap-meta-complexity-and-weak-strong-average-case-hardness.md)
 - [One-way function families](../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
+- [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
 
 ## Proof depends on
 
-- [One-way functions exist](../impagliazzo-s-five-worlds/owfexists.md)
 - [Few strings have small complexity](../../kolmogorov-complexity/incompressible-strings-and-kolmogorov-complexity/card-lt-two-pow.md)
 - [Stockmeyer: approximate counting of #P functions in BPP^NP](../../counting-complexity/stockmeyer-approximate-counting.md)
 

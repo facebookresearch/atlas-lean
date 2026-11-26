@@ -15,10 +15,7 @@ Write $\mathbf{u}=\mathrm{Dec}(\mathbf{b})$ with $\mathbf{u}\mathbf{H}=\mathbf{b
 ## Depends on
 
 - [TRGSW samples and the gadget decomposition](trgsw-samples.md)
-
-## Proof depends on
-
-- [TRGSW samples and the gadget decomposition](trgsw-samples.md)
+- [TLWE and TRLWE samples over the real torus](tlwe-samples.md)
 
 ## Sources
 

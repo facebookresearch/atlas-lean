@@ -6,7 +6,7 @@ $$
 N = \tilde O\!\left( \frac{\log^2 M \cdot \log D}{\varepsilon^4} \right)
 $$
 
-copies, simultaneously achieving the best known dependence on each of $M$, $D$ and $\varepsilon$; the same bound holds for quantum hypothesis selection among $M$ states.
+copies; the same bound holds for quantum hypothesis selection among $M$ states.
 
 ## Proof sketch
 
@@ -14,8 +14,7 @@ Replace the search step of Aaronson's algorithm by quantum threshold search with
 
 ## Depends on
 
-- [Aaronson: shadow tomography with polylogarithmically many copies](aaronson-shadow-tomography-theorem.md)
-- [Quantum threshold search](quantum-threshold-search.md)
+- [The shadow tomography problem](shadow-tomography-problem.md)
 
 ## Proof depends on
 

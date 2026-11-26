@@ -8,15 +8,12 @@ For a $d$-regular graph, $dI + A_s = \sum_{e = \{u,v\}} r_e r_e^{T}$ with $r_e =
 
 ## Depends on
 
-- [The expected characteristic polynomial of a random signing is the matching polynomial](expected-characteristic-polynomial-of-a-random-signing.md)
 - [Common upper interlacing point](../../../Algebra/zeros-of-polynomials/interlacing-families-of-polynomials/has-common-upper-interlacing.md)
-- [Mixed characteristic polynomial](../../../Analysis/operator-algebras/kadison-singer-problem/mixed-characteristic-polynomial.md)
-- [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
+- [Two-lifts and signings of a graph](two-lifts-and-signings-of-graphs.md)
 
 ## Proof depends on
 
 - [The expected characteristic polynomial of a random signing is the matching polynomial](expected-characteristic-polynomial-of-a-random-signing.md)
-- [Common upper interlacing point](../../../Algebra/zeros-of-polynomials/interlacing-families-of-polynomials/has-common-upper-interlacing.md)
 - [Mixed characteristic polynomial](../../../Analysis/operator-algebras/kadison-singer-problem/mixed-characteristic-polynomial.md)
 - [Real stable polynomials](../../../Algebra/zeros-of-polynomials/stable-polynomials/is-real-stable.md)
 

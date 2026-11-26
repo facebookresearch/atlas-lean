@@ -12,11 +12,6 @@ and consequently, for such predicates, a dictatorship test with perfect complete
 
 The analytic core is an inverse theorem for the trilinear form under a non-product distribution with no abelian embedding: by a sequence of path tricks and a reduction to a CSP over an abelian group in the presence of embeddings, low-degree correlation is forced; otherwise the form is small. Combined with the standard dictatorship-test-to-PCP composition this gives hardness with perfect completeness.
 
-## Depends on
-
-- [d-to-d games and 2-to-2 constraints](d-to-d-games.md)
-- [The PCP theorem: NP = PCP(O(log n), O(1))](../pcp-theorem.md)
-
 ## Proof depends on
 
 - [d-to-d games and 2-to-2 constraints](d-to-d-games.md)
@@ -24,4 +19,4 @@ The analytic core is an inverse theorem for the trilinear form under a non-produ
 
 ## Sources
 
-- A. Bhangale, S. Khot, D. Minzer, "On approximability of satisfiable k-CSPs: I", STOC (2022), arXiv:2112.04440.
+- A. Bhangale, S. Khot, D. Minzer, "On approximability of satisfiable k-CSPs: I", STOC (2022), ECCC TR22-061.

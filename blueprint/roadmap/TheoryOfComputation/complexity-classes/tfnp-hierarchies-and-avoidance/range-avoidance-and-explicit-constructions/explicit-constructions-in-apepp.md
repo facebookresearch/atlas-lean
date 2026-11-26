@@ -13,10 +13,7 @@ In each case the bad objects admit short descriptions: a non-rigid matrix is a l
 - [The total function class TFΣ2P and the explicit-construction class APEPP](tfsigma2p-and-apepp.md)
 - [Gilbert–Varshamov bound for linear codes](../../../../InformationTheory/error-correcting-codes/bounds-on-code-size/exists-linear-code-finrank-eq.md)
 - [Pseudorandom generators against circuits](../../../pseudorandomness-and-one-way-functions/derandomization/pseudorandom-generators-against-circuits.md)
-
-## Proof depends on
-
-- [The total function class TFΣ2P and the explicit-construction class APEPP](tfsigma2p-and-apepp.md)
+- [The range avoidance problem Avoid and its restriction C-Avoid to a circuit class](range-avoidance-problem.md)
 
 ## Sources
 

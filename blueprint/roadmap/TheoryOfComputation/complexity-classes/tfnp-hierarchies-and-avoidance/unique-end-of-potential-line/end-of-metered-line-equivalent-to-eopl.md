@@ -9,11 +9,10 @@ EOML reduces to EOPL directly: a meter that increases by exactly one is a strict
 ## Depends on
 
 - [END-OF-METERED-LINE: an END-OF-LINE instance with an odometer circuit whose miscounts are solutions](end-of-metered-line.md)
-- [Hubáček–Yogev: END-OF-METERED-LINE lies in CLS via a staircase embedding into continuous local search](end-of-metered-line-in-cls.md)
+- [CONTINUOUS-LOCALOPT, GENERAL-CONTINUOUS-LOCALOPT and the class CLS of Daskalakis–Papadimitriou](../continuous-local-search-and-gradient-descent/continuous-localopt-and-cls.md)
 
 ## Proof depends on
 
-- [END-OF-METERED-LINE: an END-OF-LINE instance with an odometer circuit whose miscounts are solutions](end-of-metered-line.md)
 - [Hubáček–Yogev: END-OF-METERED-LINE lies in CLS via a staircase embedding into continuous local search](end-of-metered-line-in-cls.md)
 
 ## Sources

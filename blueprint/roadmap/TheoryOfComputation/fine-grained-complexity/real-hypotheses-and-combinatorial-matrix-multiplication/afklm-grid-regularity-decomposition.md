@@ -9,11 +9,9 @@ A density-increment argument: if a piece is not grid-regular, then its large gri
 ## Depends on
 
 - [Grid norms and grid regularity of Boolean matrices (Kelley–Lovett–Meka)](grid-norms-and-grid-regularity.md)
-- [Kelley–Meka: Roth numbers are below every power of the logarithm](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/roth-number-log-power-decay-holds.md)
 
 ## Proof depends on
 
-- [Grid norms and grid regularity of Boolean matrices (Kelley–Lovett–Meka)](grid-norms-and-grid-regularity.md)
 - [Kelley–Meka: Roth numbers are below every power of the logarithm](../../../Combinatorics/additive-combinatorics/progressions-dense-sets/bounds-for-roth-numbers/roth-number-log-power-decay-holds.md)
 
 ## Sources

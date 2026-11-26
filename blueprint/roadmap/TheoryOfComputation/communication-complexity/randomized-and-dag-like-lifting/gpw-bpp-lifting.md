@@ -14,13 +14,12 @@ The upper bound simulates the decision tree, spending $O(\log m)$ bits per query
 
 ## Depends on
 
-- [Göös–Lovett–Meka–Watson–Zuckerman: rectangles are nonnegative juntas](rectangles-are-juntas.md)
 - [Public-coin randomized protocol](../randomized-communication-protocols/public-coin-protocol.md)
+- [Composed functions, gadgets and lifting theorems](composed-function-lifting.md)
 
 ## Proof depends on
 
 - [Göös–Lovett–Meka–Watson–Zuckerman: rectangles are nonnegative juntas](rectangles-are-juntas.md)
-- [Public-coin randomized protocol](../randomized-communication-protocols/public-coin-protocol.md)
 
 ## Sources
 

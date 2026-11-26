@@ -8,11 +8,9 @@ In an interlacing family some leaf polynomial has largest root at most the large
 
 ## Depends on
 
-- [Characteristic polynomials of signings form an interlacing family](characteristic-polynomials-of-signings-form-an-interlacing-family.md)
-- [Heilmann-Lieb theorem: real roots of the matching polynomial](heilmann-lieb-theorem.md)
-- [Spectrum of a two-lift: old and new eigenvalues](spectrum-of-a-two-lift.md)
-- [Common upper interlacing bounds some member's largest root by a weighted sum's](../../../Algebra/zeros-of-polynomials/interlacing-families-of-polynomials/exists-max-real-root-le-weighted-sum-of.md)
-- [Bipartite Ramanujan graphs of every degree](../../graph-families-and-operations/expander-graphs/exists-bipartite-ramanujan.md)
+- [The Bilu-Linial conjecture on Ramanujan two-lifts](bilu-linial-conjecture.md)
+- [Ramanujan graphs and bipartite Ramanujan graphs](ramanujan-graphs-and-bipartite-ramanujan-graphs.md)
+- [Two-lifts and signings of a graph](two-lifts-and-signings-of-graphs.md)
 
 ## Proof depends on
 

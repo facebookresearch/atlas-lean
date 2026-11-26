@@ -9,11 +9,10 @@ The direction from border Waring rank to Kumar's model is Kumar's limit construc
 ## Depends on
 
 - [Orbit closures and border complexity of polynomials](orbit-closure-border.md)
-- [Kumar: every homogeneous polynomial lies in the border of top-fan-in d+1 depth-three circuits](../depth-reduction-and-chasms/kumar-border-depth3.md)
+- [Representation-theoretic occurrence and multiplicity obstructions](occurrence-obstruction.md)
 
 ## Proof depends on
 
-- [Orbit closures and border complexity of polynomials](orbit-closure-border.md)
 - [Kumar: every homogeneous polynomial lies in the border of top-fan-in d+1 depth-three circuits](../depth-reduction-and-chasms/kumar-border-depth3.md)
 
 ## Sources

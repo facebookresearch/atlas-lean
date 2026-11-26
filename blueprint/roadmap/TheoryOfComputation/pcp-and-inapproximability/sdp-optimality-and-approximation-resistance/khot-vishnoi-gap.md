@@ -10,12 +10,9 @@ The instance lives on the Boolean cube modulo the Hadamard code: vertices are co
 
 - [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
 - [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
-- [KKL inequality for $p$-biased measures](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/kkl-pbiased.md)
 
 ## Proof depends on
 
-- [The integrality gap curve of the basic SDP](integrality-gap-curve.md)
-- [The Unique Games Conjecture](../pcp-constructions/the-unique-games-conjecture.md)
 - [KKL inequality for $p$-biased measures](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/kkl-pbiased.md)
 
 ## Sources

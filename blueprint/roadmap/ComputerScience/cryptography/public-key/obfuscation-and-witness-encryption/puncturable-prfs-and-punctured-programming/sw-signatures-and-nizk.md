@@ -8,13 +8,13 @@ For signatures, puncture the PRF at the challenge message (selectively chosen) a
 
 ## Depends on
 
-- [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
-- [The GGM construction is puncturable](ggm-is-puncturable.md)
 - [Zero-knowledge interactive proofs](../../../signatures-and-protocols/zero-knowledge-and-arguments/zero-knowledge-interactive-proofs.md)
+- [Indistinguishability and virtual black-box obfuscation](../../../program-obfuscation/indistinguishability-and-virtual-black-box.md)
 
 ## Proof depends on
 
 - [Punctured programming: swapping a program for a functionally equivalent punctured one](punctured-programming-hybrid.md)
+- [The GGM construction is puncturable](ggm-is-puncturable.md)
 
 ## Sources
 

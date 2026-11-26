@@ -9,14 +9,12 @@ Take a low-energy state $\rho$ and measure it in the $Z$ basis: by Markov's ineq
 ## Depends on
 
 - [The NLTS property and the Freedman-Hastings conjecture](no-low-energy-trivial-states-property.md)
-- [Output distributions of shallow circuits do not concentrate on two distant sets](shallow-circuits-produce-well-spread-distributions.md)
-- [Clustering of low-syndrome strings for codes with small-set boundary expansion](clustering-of-low-syndrome-strings.md)
-- [Uncertainty relation for complementary logical measurements](uncertainty-relation-for-logical-cluster-labels.md)
-- [Leverrier-Zemor: quantum Tanner codes are asymptotically good](../../../../QuantumInformation/quantum-error-correction/asymptotically-good-quantum-ldpc-codes/quantum-tanner-codes-have-linear-distance.md)
+- [CSS code Hamiltonians of quantum LDPC codes](css-code-hamiltonians.md)
+- [Bounded-degree local Hamiltonian families and relative energy](normalized-local-hamiltonian-families-and-relative-energy.md)
+- [Circuit depth of a quantum state and trivial states](trivial-states-of-bounded-circuit-depth.md)
 
 ## Proof depends on
 
-- [The NLTS property and the Freedman-Hastings conjecture](no-low-energy-trivial-states-property.md)
 - [Output distributions of shallow circuits do not concentrate on two distant sets](shallow-circuits-produce-well-spread-distributions.md)
 - [Clustering of low-syndrome strings for codes with small-set boundary expansion](clustering-of-low-syndrome-strings.md)
 - [Uncertainty relation for complementary logical measurements](uncertainty-relation-for-logical-cluster-labels.md)

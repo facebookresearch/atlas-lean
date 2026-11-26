@@ -10,10 +10,6 @@ In the basis $\{(v,0) + (v,1)\} \cup \{(v,0) - (v,1)\}$ the adjacency matrix of 
 
 - [Two-lifts and signings of a graph](two-lifts-and-signings-of-graphs.md)
 
-## Proof depends on
-
-- [Two-lifts and signings of a graph](two-lifts-and-signings-of-graphs.md)
-
 ## Sources
 
 - Yonatan Bilu, Nathan Linial, "Lifts, discrepancy and nearly optimal spectral gap", Combinatorica 26(5) (2006).

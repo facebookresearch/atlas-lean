@@ -9,10 +9,7 @@ Distinct degree-$<k$ polynomials $h$ give monomials that pairwise share fewer th
 ## Depends on
 
 - [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
-
-## Proof depends on
-
-- [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
+- [The dimension of shifted partial derivatives](shifted-partials-measure.md)
 
 ## Sources
 

@@ -10,10 +10,6 @@ First achieve perfect completeness by a standard modification. A three-message p
 
 - [Message-bounded quantum interactive proof classes QIP(m)](message-bounded-quantum-interactive-proof-classes.md)
 
-## Proof depends on
-
-- [Message-bounded quantum interactive proof classes QIP(m)](message-bounded-quantum-interactive-proof-classes.md)
-
 ## Sources
 
 - Alexei Kitaev, John Watrous, "Parallelization, amplification, and exponential time simulation of quantum interactive proof systems", STOC (2000).

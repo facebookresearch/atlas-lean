@@ -8,8 +8,7 @@ Apply the hitting-set dichotomy to the dense easy property of primes. In the fir
 
 ## Depends on
 
-- [Oliveira–Santhanam: pseudodeterministic polynomial-time hitting sets or deterministic subexponential ones](oliveira-santhanam-hitting-set-dichotomy.md)
-- [The n-bit primes form a dense polynomial-time decidable property](primes-are-dense-and-easy.md)
+- [Pseudodeterministic constructions for dense properties, everywhere and infinitely often](pseudodeterministic-construction-of-dense-property.md)
 
 ## Proof depends on
 

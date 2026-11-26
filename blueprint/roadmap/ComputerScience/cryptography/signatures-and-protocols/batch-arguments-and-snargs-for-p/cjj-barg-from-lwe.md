@@ -9,13 +9,12 @@ Construct a BARG for an index language via correlation-intractable Fiat–Shamir
 ## Depends on
 
 - [Non-interactive batch arguments for NP](batch-argument.md)
-- [Correlation intractability and NIZK for NP from LWE](ci-from-lwe.md)
 - [Somewhere extractable (somewhere statistically binding) hash functions](somewhere-extractable-hash.md)
+- [Learning with errors](../../public-key/hardness-assumptions/learning-with-errors.md)
 
 ## Proof depends on
 
 - [Correlation intractability and NIZK for NP from LWE](ci-from-lwe.md)
-- [Somewhere extractable (somewhere statistically binding) hash functions](somewhere-extractable-hash.md)
 
 ## Sources
 

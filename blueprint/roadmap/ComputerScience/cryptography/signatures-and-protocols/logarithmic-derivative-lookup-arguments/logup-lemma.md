@@ -16,10 +16,6 @@ If the inclusion holds, group the left side by value. Conversely, the left side 
 
 - [Lookup relations with multiplicities](lookup-relation.md)
 
-## Proof depends on
-
-- [Lookup relations with multiplicities](lookup-relation.md)
-
 ## Sources
 
 - Ulrich Haböck, "Multivariate Lookups Based on Logarithmic Derivatives", IACR ePrint 2022/1530 (2022).

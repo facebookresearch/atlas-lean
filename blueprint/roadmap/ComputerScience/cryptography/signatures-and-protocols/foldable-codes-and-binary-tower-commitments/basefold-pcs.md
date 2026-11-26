@@ -8,14 +8,13 @@ The IOPP folds the committed word $d$ times with verifier challenges and checks 
 
 ## Depends on
 
-- [Folding a foldable encoding computes a multilinear evaluation](basefold-evaluation-link.md)
-- [Reed–Solomon codes on smooth multiplicative domains are foldable](rs-is-foldable.md)
 - [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
-- [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
+- [Foldable linear codes](foldable-linear-code.md)
 
 ## Proof depends on
 
 - [Folding a foldable encoding computes a multilinear evaluation](basefold-evaluation-link.md)
+- [Reed–Solomon codes on smooth multiplicative domains are foldable](rs-is-foldable.md)
 - [The sum-check protocol](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/the-sum-check-protocol.md)
 
 ## Sources

@@ -17,11 +17,6 @@ Write $N_k^{\wedge} - \frac{1}{k+2} I$ as a convex combination of operators that
 - [Up-down and down-up random walks on a weighted complex](up-down-walks.md)
 - [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
 
-## Proof depends on
-
-- [Up-down and down-up random walks on a weighted complex](up-down-walks.md)
-- [Local spectral expanders (one-sided and two-sided)](local-spectral-expander.md)
-
 ## Sources
 
 - T. Kaufman, D. Mass, "High dimensional random walks and colorful expansion", ITCS (2017), arXiv:1604.02947.
