@@ -263,34 +263,10 @@ private lemma cFun_zero (k : ℕ) (hk : 1 ≤ k) :
   have h1 : (∫ u in (0 : ℝ)..(1 / 2), u ^ k) = (1 / 2 : ℝ) ^ (k + 1) / ((k : ℝ) + 1) := by
     rw [integral_pow]
     simp [zero_pow (by omega : k + 1 ≠ 0)]
-  have h2 : (∫ u in (1 / 2 : ℝ)..1, (1 - u) ^ k) = (1 / 2 : ℝ) ^ (k + 1) / ((k : ℝ) + 1) := by
-    have hF : ∀ x ∈ Set.uIcc (1 / 2 : ℝ) 1,
-        HasDerivAt (fun x => -((1 - x) ^ (k + 1)) / ((k : ℝ) + 1)) ((1 - x) ^ k) x := by
-      intro x _
-      have hdiff : HasDerivAt (fun x : ℝ => 1 - x) (-1) x := by
-        simpa using (hasDerivAt_id x).const_sub (1 : ℝ)
-      have h := (((hasDerivAt_pow (k + 1) (1 - x)).comp x hdiff).div_const ((k : ℝ) + 1)).neg
-      have hder : -((((k + 1 : ℕ) : ℝ) * (1 - x) ^ (k + 1 - 1) * (-1)) / ((k : ℝ) + 1))
-          = (1 - x) ^ k := by
-        rw [Nat.add_sub_cancel]
-        push_cast
-        field_simp
-      have hfun : (fun x : ℝ => -((1 - x) ^ (k + 1)) / ((k : ℝ) + 1)) =
-          (fun x : ℝ => -(((1 - x) ^ (k + 1)) / ((k : ℝ) + 1))) := by
-        funext y
-        rw [neg_div]
-      rw [hfun]
-      exact h.congr_deriv hder
-    have hint : IntervalIntegrable (fun x => (1 - x) ^ k) volume (1 / 2 : ℝ) 1 :=
-      (by fun_prop : Continuous fun x : ℝ => (1 - x) ^ k).intervalIntegrable _ _
-    have hsub := intervalIntegral.integral_eq_sub_of_hasDerivAt hF hint
-    rw [hsub]
-    have e0 : ((1 : ℝ) - 1) ^ (k + 1) = 0 := by simp [zero_pow (by omega : k + 1 ≠ 0)]
-    have e2 : ((1 : ℝ) - 1 / 2) ^ (k + 1) = (1 / 2 : ℝ) ^ (k + 1) := by norm_num
-    rw [e0, e2]
-    field_simp
-    ring
-  rw [hsplit, h1, h2]
+  have h2 : (∫ u in (1 / 2 : ℝ)..1, (1 - u) ^ k) = ∫ u in (0 : ℝ)..(1 / 2), u ^ k := by
+    simpa only [sub_self, show (1 : ℝ) - 1 / 2 = 1 / 2 by norm_num] using
+      (intervalIntegral.integral_comp_sub_left (a := (1 / 2 : ℝ)) (b := 1) (fun u => u ^ k) 1)
+  rw [hsplit, h2, h1]
   congr 1
   have hA : (1 / 2 : ℝ) ^ (k + 1) = 1 / 2 ^ (k + 1) := by rw [div_pow, one_pow, one_div]
   rw [hA, pow_succ (2 : ℝ) k]
@@ -610,25 +586,8 @@ private lemma uniform (k : ℕ) (hk : 1 ≤ k) :
 
 private lemma sum_Icc_inv_sq_sub {C : ℝ} (hC : 0 ≤ C) {H N : ℕ} (hH : 1 ≤ H) (hHN : H ≤ N) :
     ∑ n ∈ Finset.Icc (H + 1) N, C / (n : ℝ) ^ 2 ≤ C / (H : ℝ) - C / (N : ℝ) := by
-  induction N, hHN using Nat.le_induction with
-  | base =>
-    rw [Finset.Icc_eq_empty (by omega : ¬(H + 1 ≤ H))]
-    simp
-  | succ N hHN ih =>
-    have hNpos : (0 : ℝ) < (N : ℝ) := by exact_mod_cast (lt_of_lt_of_le hH hHN)
-    have hN1pos : (0 : ℝ) < (N : ℝ) + 1 := by linarith
-    have hN0 : (N : ℝ) ≠ 0 := hNpos.ne'
-    have hN10 : (N : ℝ) + 1 ≠ 0 := hN1pos.ne'
-    rw [Finset.sum_Icc_succ_top (f := fun n => C / (n : ℝ) ^ 2) (by omega : H + 1 ≤ N + 1)]
-    have hN1 : ((N + 1 : ℕ) : ℝ) = (N : ℝ) + 1 := by push_cast; ring
-    rw [hN1]
-    have hstep : C / ((N : ℝ) + 1) ^ 2 ≤ C / (N : ℝ) - C / ((N : ℝ) + 1) := by
-      calc C / ((N : ℝ) + 1) ^ 2 ≤ C / ((N : ℝ) * ((N : ℝ) + 1)) :=
-            div_le_div_of_nonneg_left hC (mul_pos hNpos hN1pos) (by nlinarith)
-        _ = C / (N : ℝ) - C / ((N : ℝ) + 1) := by
-            field_simp
-            ring
-    linarith [ih, hstep]
+  simpa only [Finset.Icc_add_one_left_eq_Ioc, div_eq_mul_inv, Finset.mul_sum, mul_sub] using
+    mul_le_mul_of_nonneg_left (sum_Ioc_inv_sq_le_sub (α := ℝ) (Nat.ne_of_gt hH) hHN) hC
 
 private lemma sum_Icc_inv_sq_le {C : ℝ} (hC : 0 ≤ C) {H N : ℕ} (hH : 1 ≤ H) (hHN : H ≤ N) :
     ∑ n ∈ Finset.Icc (H + 1) N, C / (n : ℝ) ^ 2 ≤ C / (H : ℝ) := by
