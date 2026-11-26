@@ -1,0 +1,3 @@
+# Erdős problem 772: Sidon subsets beyond the square root
+
+A set $A$ of natural numbers is a Sidon set when $a + b = c + d$ with $a, b, c, d \in A$ implies $\{a, b\} = \{c, d\}$. For a finite set $A \subseteq \mathbb{N}$, write $1_A * 1_A(m) = \#\{(a, b) \in A \times A : a + b = m\}$ for the number of ordered representations of $m$. The first question of Erdős problem 772 asks whether, for every integer $k \ge 1$ and every real $C$, for all sufficiently large $n$ every $n$-element set $A \subseteq \mathbb{N}$ with $1_A * 1_A(m) \le k$ for all $m$ contains a Sidon subset of size at least $C\sqrt{n}$.
