@@ -306,12 +306,22 @@ characteristic polynomial of $A$ satisfies $|\mu| \le 2\sqrt{q}$ if and only if,
 root $\mu \ne q + 1$, every complex number $s$ with $1 - \mu q^{-s} + q^{1 - 2s} = 0$ has real
 part $1/2$.
 
-When $A$ is the adjacency matrix of a $(q + 1)$-regular graph $X$, the left side says that $X$ is
-Ramanujan. Writing $\zeta_X$ for the Ihara zeta function of $X$, the numbers $s$ on the right are
-the non-trivial zeros of $Q_X(s) = \zeta_X(q^{-s})^{-1}$, that is, the zeros of
-$P_X(q^{-s}) = \prod_{\mu \ne q + 1} (1 - \mu q^{-s} + q^{1 - 2s})$. The roots $\mu$ are real
-because $A$ is symmetric. The paper also assumes that $X$ is connected and regular and has at
-least two vertices; these assumptions are not needed, since the equivalence holds root by root.
+The source (Section 2.1.3 and Theorem 2) takes $X$ to be a connected $(q + 1)$-regular graph with
+at least two vertices. Then $q + 1$ is an eigenvalue of the adjacency matrix $A$ of $X$ of
+multiplicity one, and $X$ is called Ramanujan when every eigenvalue $\mu \ne q + 1$ of $A$
+satisfies $|\mu| \le 2\sqrt{q}$. This convention excludes only the endpoint $+(q + 1)$: the
+eigenvalue $-(q + 1)$ of a bipartite graph is retained. For example, $K_{3,3}$ ($q = 2$) has the
+eigenvalue $-3$ with $|-3| = 3 > 2\sqrt{2}$, so it is not Ramanujan in the source's sense, and
+its factor $1 + 3q^{-s} + q^{1 - 2s}$ has zeros on $\mathrm{Re}(s) = 0$ and $\mathrm{Re}(s) = 1$;
+it is Ramanujan under the convention that excludes both endpoints $\pm(q + 1)$. Under the source's
+hypotheses and convention, the left side above says that $X$ is Ramanujan, and, writing
+$\zeta_X$ for the Ihara zeta function of $X$, the numbers $s$ on the right are the non-trivial
+zeros of $Q_X(s) = \zeta_X(q^{-s})^{-1}$, that is, the zeros of
+$P_X(q^{-s}) = \prod_{\mu \ne q + 1} (1 - \mu q^{-s} + q^{1 - 2s})$; this recovers Theorem 2.
+
+The theorem itself is a statement about matrices, proved root by root: it needs no graph
+hypotheses, and it treats a root $-(q + 1)$ like every other root $\mu \ne q + 1$. The roots
+$\mu$ are real because $A$ is symmetric.
 
 Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan Graphs on Two
 Vertices*, INTEGERS 24 (2024), Article A8, Theorem 2 (`integers-2024-A8-thm-2`). -/
