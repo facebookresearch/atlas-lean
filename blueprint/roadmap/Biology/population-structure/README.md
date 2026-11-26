@@ -29,3 +29,6 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
+- [Genetic distance in graph-structured metapopulations](genetic-distance-in-graph-structured-metapopulations/README.md)
+- [Maximum likelihood in the admixture model](maximum-likelihood-in-the-admixture-model/README.md)
+- [Split-and-drift random graph](split-and-drift-random-graph/README.md)

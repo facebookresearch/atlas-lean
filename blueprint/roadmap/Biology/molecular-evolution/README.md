@@ -14,3 +14,4 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Wright–Fisher quasispecies on class-dependent landscapes](wright-fisher-quasispecies-on-class-dependent-landscapes/README.md)
