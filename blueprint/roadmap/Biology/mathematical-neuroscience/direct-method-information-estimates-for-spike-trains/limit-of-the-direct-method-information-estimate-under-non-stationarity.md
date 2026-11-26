@@ -25,6 +25,10 @@ Item 1 is algebra: $\hat H-\hat H_t$ averaged over $t$ equals $\frac1n\sum_t\sum
 
 These are the divergence proposition and the main theorem of Section 3, with the dominated-convergence lemma of the appendix, of the source.
 
+## Proof depends on
+
+- [Strong law of large numbers from the ergodic theorem](../../../Dynamics/ergodic-theory/birkhoff-ergodic-theorem/tendsto-average-coordinates-ae.md)
+
 ## Sources
 
 - V. Q. Vu, B. Yu, R. E. Kass, "Information In The Non-Stationary Case", arXiv:0806.3978 (2008). <https://doi.org/10.48550/arXiv.0806.3978>

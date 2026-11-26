@@ -29,6 +29,10 @@ At $\varepsilon=0$ the leaves reduce to one-dimensional curves $b_2=l^0_r(b_1)$ 
 
 In the singular limit the relaxation cycle consists of two slow segments on the outer branches of the cubic, joined by fast jumps at the folds $X=\pm\mu$. The slow flow $\dot X\,g'(X)=X+b_1g(X)+b_2$ gives each phase duration as an explicit integral, $T^0_\pm$, that depends smoothly and monotonically on $b_2$; the implicit function theorem turns the level sets of $T^0_-/T^0_+$ into $C^1$ curves. For $\varepsilon>0$, the trajectories stay $O(\varepsilon^{2/3})$ close to the singular cycle (Fenichel and blow-up estimates near the folds), so the durations are $C^1$ perturbations and the curves extend to surfaces. The leaf index $r$ is the ratio of pulsatile-phase to surge duration, which is how the model's parameters are tuned to the observed ovarian-cycle specifications.
 
+## Proof depends on
+
+- [Implicit function theorem](../../../Analysis/real-functions/multivariable-calculus/implicit-function-theorem.md)
+
 ## Sources
 
 - Frédérique Clément, Alexandre Vidal, "Bifurcation-based parameter tuning in a model of the GnRH pulse and surge generator", arXiv:0809.1722 (2008), Section 3 (Lemma 3.1, Proposition 3.1, Hopf surface and the domain $\mathcal R_1$) and Section 4 (Lemma 4.1, Proposition 4.1, Theorem 4.1), <https://doi.org/10.48550/arXiv.0809.1722>.
