@@ -45,23 +45,6 @@ public theorem_wanted metered_window_count_ge {m n t : ℕ} {f : Fin m → Fin n
       (Finset.univ.filter fun k : Fin m =>
           j ≤ (k : ℕ) + 1 ∧ (k : ℕ) + 1 ≤ j + t ∧ (f k : ℕ) + 1 ≤ i).card + n
 
-/-- **Displacement bound in the metered scheme.** Let $t$, $m$, $n$ be natural numbers, let
-$f : \{0, \dots, m - 1\} \to \{0, \dots, n - 1\}$ be a preference function and let $i < m$ be a
-car. Under the $t$-metered parking scheme on $n$ spots, if car $i$ parks in spot $s$ then
-$s \le f(i) + t$, that is, its displacement is at most $t$; and if car $i$ fails to park then
-$f(i) + t \ge n$.
-
-In the source's one-based numbering, with preference $a_i = f(i) + 1$, a car that fails to park
-has $a_i \ge n - t + 1$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Proposition 5 (`integers-2025-A73-prop-5`). -/
-public theorem_wanted meteredOutcome_displacement_le {m n t : ℕ} (f : Fin m → Fin n) (i : Fin m) :
-    (∀ s, (meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some (some s) →
-        s ≤ (f i : ℕ) + t) ∧
-      ((meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some none →
-        n ≤ (f i : ℕ) + t)
-
 /-- **Lucky cars of 1-metered parking are the lace starts.** Let $0 < m \le n$ and let
 $\alpha = (a_1, \dots, a_m)$, with each $a_i \in \{1, \dots, n\}$, be any sequence of preferred
 spots of $m$ cars on $n$ spots. Under the $1$-metered parking scheme, car $i$ is lucky (it parks
