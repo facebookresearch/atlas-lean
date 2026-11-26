@@ -1,4 +1,6 @@
-# Basis Word adjacent rule
+# The enveloping relation for an adjacent basis pair
 
-The elementary reduction is an equality in the actual native quotient;
-this theorem has no order premise because the quotient relation is universal.
+The enveloping relation for an adjacent basis pair.
+
+In every prefix and suffix, exchanging `i,j` changes the basis-word value by insertion of
+`[b_i,b_j]`. The equality holds for any pair of basis indices.

@@ -1,3 +1,6 @@
-# Normalized Eulerian Chain Map
+# The normalized Eulerian chain projector of a fixed weight
 
-The original normalized coefficient projector is a native chain map.
+The normalized Eulerian chain projector of a fixed weight.
+
+For weight `i`, the degree components `E_n^i` commute with the normalized boundary and define
+a chain endomorphism.

@@ -17,17 +17,19 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.BaseChange
 /-!
 # Polynomial cotangent and exterior coordinates
 
-The polynomial cotangent module is the native free module on its actual
-variable differentials. Scalar extension and the existing exterior-power
-base change equivalence give canonical coordinates in every degree.
-Coefficient cancellation retains the original coefficient first and
-requires no coefficient flatness or projectivity.
+For a commutative ring `k` and a type `σ`, put `A = MvPolynomial σ k` and `V = σ →₀ k`. The
+free generators of `V` give the variable differentials in `Ω = Ω¹(A/k)`: `A ⊗[k] V ≃ₗ[A] Ω`,
+with `a ⊗ e_i ↦ a dX_i`. Exterior powers give `A ⊗[k] Λ^n_k V ≃ₗ[A] Λ^n_A Ω` in every degree.
 
-The coordinate detectors are the native exterior-basis determinant
-pairings. For a differential word their entries are actual polynomial
-partial derivatives. All constructions apply over arbitrary commutative
-ground rings and arbitrary variable types; a linear order is needed only
-to name an oriented basis coordinate.
+For a coefficient module `M` with compatible commuting `k`- and `A`-actions, the comparison is
+`M ⊗[k] Λ^n_k V ≃ₗ[A] M ⊗[A] Λ^n_A Ω`, keeping `M` as the first tensor factor.
+
+When `σ` is linearly ordered, a finite subset `s` of cardinality `n` specifies an ordered
+exterior coordinate. Its value on `df_0 ∧ ⋯ ∧ df_(n-1)` is the determinant of the matrix with
+entry `∂f_i/∂X_(e_s j)`, where `e_s : Fin n ↪o σ` enumerates `s` in order.
+
+References: Loday, *Cyclic Homology*, Section 1.1; Hochschild, Kostant and Rosenberg,
+*Differential forms on regular affine algebras*, Transactions of the AMS 102 (1962), 383–408.
 -/
 
 @[expose] public section
@@ -45,12 +47,15 @@ local notation "A" => MvPolynomial σ k
 local notation "V" => (σ →₀ k)
 local notation "Ω" => KaehlerDifferential k A
 
-/-- The original free generator module extended to the polynomial algebra is its actual
-native cotangent module, with no basis or equivalence certificate supplied. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. This is the `A`-linear equivalence `A ⊗[k] V ≃ₗ[A] Ω` sending `a ⊗
+single i 1` to `a • D k A (X_i)` for `a : A` and `i : σ`. -/
 def mvPolynomialBaseChangeEquiv : A ⊗[k] V ≃ₗ[A] Ω :=
   (Finsupp.scalarExtensionCoordinates k A σ).trans (mvPolynomialEquiv k σ).symm
 
-/-- The original extended coordinate generator is the actual differential of its variable. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. For `a : A` and `i : σ`, `mvPolynomialBaseChangeEquiv k σ (a ⊗
+single i 1) = a • D k A (X_i)`. -/
 theorem mvPolynomialBaseChangeEquiv_tmul_single (i : σ) (a : A) :
     mvPolynomialBaseChangeEquiv k σ (a ⊗ₜ[k] Finsupp.single i (1 : k)) =
       a • D k A (MvPolynomial.X i) := by
@@ -58,26 +63,33 @@ theorem mvPolynomialBaseChangeEquiv_tmul_single (i : σ) (a : A) :
     Finsupp.scalarExtensionCoordinates_tmul_single, map_one, one_mul]
   exact mvPolynomialBasis_repr_symm_single k σ i a
 
-/-- The actual ground-linear polynomial cotangent generator, extended additively from
-the original finitely supported free module. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. This is the `k`-linear map `G : V → Ω` sending `single i 1` to `D
+k A (X_i)`. It is the composite `v ↦ 1 ⊗ v` followed by `mvPolynomialBaseChangeEquiv k σ`. -/
 def mvPolynomialCotangentGenerator : V →ₗ[k] Ω :=
   ((mvPolynomialBaseChangeEquiv k σ).toLinearMap.restrictScalars k).comp
     (TensorProduct.mk k A V 1)
 
-/-- The cotangent generator sends the original unit basis element to `dX`. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. For every `i : σ`, `mvPolynomialCotangentGenerator k σ (single i
+1) = D k A (X_i)`. -/
 theorem mvPolynomialCotangentGenerator_single (i : σ) :
     mvPolynomialCotangentGenerator k σ (Finsupp.single i (1 : k)) =
       D k A (MvPolynomial.X i) := by
   change mvPolynomialBaseChangeEquiv k σ ((1 : A) ⊗ₜ[k] Finsupp.single i (1 : k)) = _
   rw [mvPolynomialBaseChangeEquiv_tmul_single, one_smul]
 
-/-- Original free exterior generator coordinates are the actual polynomial differential forms. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. For every `n : ℕ`, this is the `A`-linear equivalence `A ⊗[k]
+Λ^n_k V ≃ₗ[A] Λ^n_A Ω` induced by the variable-differential map `G(e_i) = dX_i`. -/
 def mvPolynomialExteriorEquiv (n : ℕ) : A ⊗[k] (⋀[k]^n V) ≃ₗ[A] (⋀[A]^n Ω) :=
   (exteriorPower.baseChangeEquiv k A V n).trans
     (exteriorPower.mapEquiv A (A ⊗[k] V) n (mvPolynomialBaseChangeEquiv k σ))
 
-/-- The comparison preserves every original decomposable generator word and its actual
-polynomial coefficient. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. Let `n : ℕ`, `a : A`, and `v : Fin n → V`. Writing `G =
+mvPolynomialCotangentGenerator k σ`, the equivalence satisfies `E_n(a ⊗ ιMulti_k(v)) = a •
+ιMulti_A(fun j ↦ G(v j))`. -/
 theorem mvPolynomialExteriorEquiv_tmul_ιMulti (n : ℕ) (a : A) (v : Fin n → V) :
     mvPolynomialExteriorEquiv k σ n (a ⊗ₜ[k] exteriorPower.ιMulti k n v) =
       a • exteriorPower.ιMulti A n (fun j => mvPolynomialCotangentGenerator k σ (v j)) := by
@@ -86,7 +98,10 @@ theorem mvPolynomialExteriorEquiv_tmul_ιMulti (n : ℕ) (a : A) (v : Fin n → 
     exteriorPower.mapEquiv_apply_ιMulti]
   rfl
 
-/-- Every original variable wedge is the corresponding actual differential wedge. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. For `n : ℕ`, `a : A`, and any `f : Fin n → σ`, the exterior
+equivalence sends `a ⊗ (e_(f 0) ∧ ⋯ ∧ e_(f (n-1)))` to `a • (dX_(f 0) ∧ ⋯ ∧ dX_(f (n-1)))`,
+where `e_i = single i 1`. The empty wedge is `1` when `n = 0`. -/
 theorem mvPolynomialExteriorEquiv_tmul_basis (n : ℕ) (a : A) (f : Fin n → σ) :
     mvPolynomialExteriorEquiv k σ n
       (a ⊗ₜ[k] exteriorPower.ιMulti k n (fun j => Finsupp.single (f j) (1 : k))) =
@@ -99,14 +114,21 @@ section Coefficients
 variable (M : Type w) [AddCommGroup M] [Module k M] [Module (MvPolynomial σ k) M]
   [SMulCommClass k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k) M]
 
-/-- The original coefficient-first free exterior model is the actual coefficient-first
-polynomial differential-form module. No flatness of the coefficient is required. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. Let `M` have `k`- and `A`-module structures with commuting actions
+and scalar tower `k → A → M` (`SMulCommClass k A M` and `IsScalarTower k A M`). For each `n :
+ℕ`, this is the `A`-linear equivalence `M ⊗[k] Λ^n_k V ≃ₗ[A] M ⊗[A] Λ^n_A Ω`. Its pure-word
+formula is `m ⊗ ιMulti_k(v) ↦ m ⊗ ιMulti_A(G ∘ v)`, with `G(e_i) = dX_i`. -/
 def mvPolynomialCoefficientExteriorEquiv (n : ℕ) :
     M ⊗[k] (⋀[k]^n V) ≃ₗ[A] M ⊗[A] (⋀[A]^n Ω) :=
   (TensorProduct.AlgebraTensorModule.cancelBaseChange k A A M (⋀[k]^n V)).symm.trans
     (TensorProduct.congr (LinearEquiv.refl A M) (mvPolynomialExteriorEquiv k σ n))
 
-/-- The original coefficient head remains first, with the original cotangent generator in every tail slot. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. Let `M` have `k`- and `A`-module structures with commuting actions
+and scalar tower `k → A → M` (`SMulCommClass k A M` and `IsScalarTower k A M`). For `n : ℕ`,
+`m : M`, and `v : Fin n → V`, the coefficient comparison satisfies `E^M_n(m ⊗ ιMulti_k(v)) = m
+⊗ ιMulti_A(fun j ↦ G(v j))`, where `G = mvPolynomialCotangentGenerator k σ`. -/
 theorem mvPolynomialCoefficientExteriorEquiv_tmul_ιMulti
     (n : ℕ) (m : M) (v : Fin n → V) :
     mvPolynomialCoefficientExteriorEquiv k σ M n (m ⊗ₜ[k] exteriorPower.ιMulti k n v) =
@@ -117,7 +139,11 @@ theorem mvPolynomialCoefficientExteriorEquiv_tmul_ιMulti
     TensorProduct.congr_tmul, LinearEquiv.refl_apply,
     mvPolynomialExteriorEquiv_tmul_ιMulti, one_smul]
 
-/-- Original variable wedges give original coefficient differential wedges over every ground ring. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. Let `M` have `k`- and `A`-module structures with commuting actions
+and scalar tower `k → A → M` (`SMulCommClass k A M` and `IsScalarTower k A M`). For `n : ℕ`,
+`m : M`, and any `f : Fin n → σ`, the coefficient comparison sends `m ⊗ (e_(f 0) ∧ ⋯ ∧ e_(f
+(n-1)))` to `m ⊗ (dX_(f 0) ∧ ⋯ ∧ dX_(f (n-1)))`. The empty wedge is `1` when `n = 0`. -/
 theorem mvPolynomialCoefficientExteriorEquiv_tmul_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     mvPolynomialCoefficientExteriorEquiv k σ M n
@@ -126,7 +152,12 @@ theorem mvPolynomialCoefficientExteriorEquiv_tmul_basis
   rw [mvPolynomialCoefficientExteriorEquiv_tmul_ιMulti]
   simp only [mvPolynomialCotangentGenerator_single]
 
-/-- The inverse recovers the independently specified original free coefficient word. -/
+/-- Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. Let `M` have `k`- and `A`-module structures with commuting actions
+and scalar tower `k → A → M` (`SMulCommClass k A M` and `IsScalarTower k A M`). For `n : ℕ`,
+`m : M`, and `f : Fin n → σ`, the inverse comparison sends `m ⊗ (dX_(f 0) ∧ ⋯ ∧ dX_(f (n-1)))`
+to `m ⊗ (e_(f 0) ∧ ⋯ ∧ e_(f (n-1)))`, where `e_i = single i 1`. The empty wedge is `1` when `n
+= 0`. -/
 theorem mvPolynomialCoefficientExteriorEquiv_symm_tmul_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     (mvPolynomialCoefficientExteriorEquiv k σ M n).symm
@@ -139,13 +170,21 @@ section Coordinates
 
 variable [LinearOrder σ]
 
-/-- The actual exterior-basis coordinate detector on polynomial differential forms. -/
+/-- Let `k` be a commutative ring, `σ` a linearly ordered type, `A = MvPolynomial σ k`, and `Ω =
+KaehlerDifferential k A`. For `n : ℕ` and `s : Set.powersetCard σ n`, write `e_s : Fin n ↪o σ`
+for `Set.powersetCard.ofFinEmbEquiv.symm s`. For `n : ℕ`, the `A`-linear map `π_s : Λ^n_A Ω →
+A` is the exterior-basis coordinate at the ordered variable word `dX_(e_s 0) ∧ ⋯ ∧ dX_(e_s
+(n-1))`. The empty wedge is `1` when `n = 0`. -/
 def mvPolynomialFormCoordinate (n : ℕ) (s : Set.powersetCard σ n) :
     (⋀[A]^n Ω) →ₗ[A] A :=
   ((mvPolynomialBasis k σ).exteriorPower n).coord s
 
-/-- Actual polynomial partial derivatives give the determinant coordinate of an
-original differential word. This holds over a general commutative ground ring. -/
+/-- Let `k` be a commutative ring, `σ` a linearly ordered type, `A = MvPolynomial σ k`, and `Ω =
+KaehlerDifferential k A`. For `n : ℕ` and `s : Set.powersetCard σ n`, write `e_s : Fin n ↪o σ`
+for `Set.powersetCard.ofFinEmbEquiv.symm s`. For `n : ℕ` and `f : Fin n → A`, the coordinate
+satisfies `π_s(df_0 ∧ ⋯ ∧ df_(n-1)) = det(∂f_i/∂X_(e_s j))`. Rows are indexed by the
+differentials `f_i` and columns by the ordered variables `e_s j`. The empty wedge is `1` when
+`n = 0`. -/
 theorem mvPolynomialFormCoordinate_differentials
     (n : ℕ) (s : Set.powersetCard σ n) (f : Fin n → A) :
     mvPolynomialFormCoordinate k σ n s
@@ -162,7 +201,11 @@ theorem mvPolynomialFormCoordinate_differentials
   rw [Module.Basis.coord_apply]
   exact mvPolynomialBasis_repr_apply k σ _ _
 
-/-- The coefficient form detector uses the original coefficient and native scalar unitor. -/
+/-- Let `k` be a commutative ring, `σ` a linearly ordered type, `A = MvPolynomial σ k`, and `Ω =
+KaehlerDifferential k A`. For `n : ℕ` and `s : Set.powersetCard σ n`, write `e_s : Fin n ↪o σ`
+for `Set.powersetCard.ofFinEmbEquiv.symm s`. Let `M` be an `A`-module. The `A`-linear
+coefficient coordinate `κ_s : M ⊗[A] Λ^n_A Ω → M` sends `m ⊗ ω` to `π_s(ω) • m`, where `π_s`
+is the ordered exterior form coordinate. -/
 def mvPolynomialCoefficientFormCoordinate (n : ℕ) (s : Set.powersetCard σ n) :
     M ⊗[A] (⋀[A]^n Ω) →ₗ[A] M :=
   (TensorProduct.rid A M).toLinearMap.comp
@@ -170,8 +213,10 @@ def mvPolynomialCoefficientFormCoordinate (n : ℕ) (s : Set.powersetCard σ n) 
 
 omit [Module k M] [SMulCommClass k (MvPolynomial σ k) M]
   [IsScalarTower k (MvPolynomial σ k) M] in
-/-- Evaluation of an original pure coefficient form is the actual scalar coordinate acting
-on its original coefficient, without any coefficient basis. -/
+/-- Let `k` be a commutative ring, `σ` a linearly ordered type, `A = MvPolynomial σ k`, and `Ω =
+KaehlerDifferential k A`. For `n : ℕ` and `s : Set.powersetCard σ n`, write `e_s : Fin n ↪o σ`
+for `Set.powersetCard.ofFinEmbEquiv.symm s`. Let `M` be an `A`-module. For `m : M` and `ω :
+Λ^n_A Ω`, `κ_s(m ⊗ ω) = π_s(ω) • m`. The scalar `π_s(ω) : A` acts on the coefficient module. -/
 theorem mvPolynomialCoefficientFormCoordinate_tmul
     (n : ℕ) (s : Set.powersetCard σ n) (m : M) (ω : ⋀[A]^n Ω) :
     mvPolynomialCoefficientFormCoordinate k σ M n s (m ⊗ₜ[A] ω) =
@@ -184,8 +229,12 @@ theorem mvPolynomialCoefficientFormCoordinate_tmul
 
 omit [Module k M] [SMulCommClass k (MvPolynomial σ k) M]
   [IsScalarTower k (MvPolynomial σ k) M] in
-/-- The detector of a coefficient differential word is the actual Jacobian minor
-acting on the original coefficient. -/
+/-- Let `k` be a commutative ring, `σ` a linearly ordered type, `A = MvPolynomial σ k`, and `Ω =
+KaehlerDifferential k A`. For `n : ℕ` and `s : Set.powersetCard σ n`, write `e_s : Fin n ↪o σ`
+for `Set.powersetCard.ofFinEmbEquiv.symm s`. Let `M` be an `A`-module. For `m : M` and `f :
+Fin n → A`, the coefficient coordinate satisfies `κ_s(m ⊗ (df_0 ∧ ⋯ ∧ df_(n-1))) =
+det(∂f_i/∂X_(e_s j)) • m`, with rows indexed by `i` and ordered variable columns by `j`. The
+empty wedge is `1` when `n = 0`. -/
 theorem mvPolynomialCoefficientFormCoordinate_differentials
     (n : ℕ) (s : Set.powersetCard σ n) (m : M) (f : Fin n → A) :
     mvPolynomialCoefficientFormCoordinate k σ M n s
@@ -194,7 +243,10 @@ theorem mvPolynomialCoefficientFormCoordinate_differentials
         MvPolynomial.pderiv (Set.powersetCard.ofFinEmbEquiv.symm s j) (f i)).det • m := by
   rw [mvPolynomialCoefficientFormCoordinate_tmul, mvPolynomialFormCoordinate_differentials]
 
-/-- The original oriented coordinate word has actual coefficient one at its own column. -/
+/-- Let `k` be a commutative ring, `σ` a linearly ordered type, `A = MvPolynomial σ k`, and `Ω =
+KaehlerDifferential k A`. For `n : ℕ` and `s : Set.powersetCard σ n`, write `e_s : Fin n ↪o σ`
+for `Set.powersetCard.ofFinEmbEquiv.symm s`. The ordered variable wedge has unit coordinate:
+`π_s(dX_(e_s 0) ∧ ⋯ ∧ dX_(e_s (n-1))) = 1` in `A`. The empty wedge is `1` when `n = 0`. -/
 theorem mvPolynomialFormCoordinate_basis (n : ℕ) (s : Set.powersetCard σ n) :
     mvPolynomialFormCoordinate k σ n s
       (exteriorPower.ιMulti A n (fun j =>
@@ -207,7 +259,10 @@ theorem mvPolynomialFormCoordinate_basis (n : ℕ) (s : Set.powersetCard σ n) :
 
 omit [Module k M] [SMulCommClass k (MvPolynomial σ k) M]
   [IsScalarTower k (MvPolynomial σ k) M] in
-/-- The oriented actual variable word is detected as its original coefficient. -/
+/-- Let `k` be a commutative ring, `σ` a linearly ordered type, `A = MvPolynomial σ k`, and `Ω =
+KaehlerDifferential k A`. For `n : ℕ` and `s : Set.powersetCard σ n`, write `e_s : Fin n ↪o σ`
+for `Set.powersetCard.ofFinEmbEquiv.symm s`. Let `M` be an `A`-module. For every `m : M`,
+`κ_s(m ⊗ (dX_(e_s 0) ∧ ⋯ ∧ dX_(e_s (n-1)))) = m`. The empty wedge is `1` when `n = 0`. -/
 theorem mvPolynomialCoefficientFormCoordinate_basis
     (n : ℕ) (s : Set.powersetCard σ n) (m : M) :
     mvPolynomialCoefficientFormCoordinate k σ M n s

@@ -1,3 +1,6 @@
-# Unitization Reduced Kernel Level Iso hom subtype
+# The inclusion formula for the degreewise reduced kernel
 
-The computed degree-kernel comparison retains the original inclusion.
+The inclusion formula for the degreewise reduced kernel.
+
+The degreewise kernel comparison followed by the linear subtype inclusion equals the component
+of the chain-kernel inclusion.

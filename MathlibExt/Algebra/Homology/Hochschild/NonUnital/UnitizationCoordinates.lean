@@ -13,13 +13,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.Normalized
 public import Mathlib.Algebra.Algebra.Unitization
 
 /-!
-# unitization maps and its reduced ground module
+# Unitization maps and the reduced ground module
 
-The source unitization k⊕A is native Unitization k A. Its augmentation,
-scalar section, nonunital inclusion and lifted original maps are retained.
-The reduced quotient by the span of 1 is canonically the original A.
-This is a ground-module comparison, not an algebra quotient or a cyclic
-operator on arbitrary normalized coefficient levels.
+Let `k` be a commutative ring and `A` a nonunital ground algebra. Its unitization `A⁺ = k ⊕ A`
+has augmentation `(r,a) ↦ r`, scalar section `r ↦ (r,0)`, and nonunital inclusion `a ↦ (0,a)`.
+The scalar projector is `(r,a) ↦ (r,0)`.
+
+A nonunital map `f : A → B` extends to `(r,a) ↦ (r,f(a))`, with independent algebra-carrier
+universes. The ground-module quotient `A⁺ / k·1` is linearly equivalent to `A` by the second
+coordinate; the inverse takes `a` to the class of its nonunital inclusion. This comparison is
+a quotient of ground modules.
 -/
 
 @[expose] public section
@@ -36,20 +39,33 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The original unitization augmentation is the native first projection. -/
+/-- The scalar augmentation of a unitization.
+
+For `A⁺ = k ⊕ A`, the `k`-algebra homomorphism to `k` is the first projection `(r,a) ↦ r`. -/
 abbrev unitizationAugmentation : Unitization k A →ₐ[k] k := Unitization.fstHom k A
 
-/-- The original scalar section inserts the external unit. -/
+/-- The scalar section of a unitization augmentation.
+
+The `k`-algebra map `k → A⁺` sends `r` to `(r,0)`, the scalar multiple of the external unit. -/
 abbrev unitizationScalarSection : k →ₐ[k] Unitization k A := Algebra.ofId k (Unitization k A)
 
-/-- The scalar projector is augmentation followed by its original scalar section. -/
+/-- The scalar projector of a unitization.
+
+Augmentation followed by its scalar section is the algebra endomorphism `(r,a) ↦ (r,0)` of
+`A⁺`. -/
 def unitizationScalarProjector : Unitization k A →ₐ[k] Unitization k A :=
   (unitizationScalarSection k A).comp (unitizationAugmentation k A)
 
+/-- The coordinate formula for unitization scalar projection.
+
+The scalar projector sends `x ∈ A⁺` to `Unitization.inl x.fst`. -/
 @[simp]
 theorem unitizationScalarProjector_apply (x : Unitization k A) :
     unitizationScalarProjector k A x = Unitization.inl x.fst := rfl
 
+/-- Idempotence of the unitization scalar algebra projector.
+
+Composing the scalar projector with itself gives the same algebra endomorphism. -/
 theorem unitizationScalarProjector_idempotent :
     (unitizationScalarProjector k A).comp (unitizationScalarProjector k A) =
       unitizationScalarProjector k A := by
@@ -57,25 +73,37 @@ theorem unitizationScalarProjector_idempotent :
   intro x
   rfl
 
-/-- The original nonunital algebra map lifts through the unitization property. -/
+/-- The unitization of a nonunital algebra homomorphism.
+
+For `f : A →ₙₐ[k] B`, the universal unitization map is a unital `k`-algebra homomorphism `A⁺ →
+B⁺` sending `(r,a)` to `(r,f(a))`. -/
 def unitizationMap {B : Type w} [NonUnitalRing B] [Module k B]
     [IsScalarTower k B B] [SMulCommClass k B B] (f : A →ₙₐ[k] B) :
     Unitization k A →ₐ[k] Unitization k B :=
   Unitization.lift ((Unitization.inrNonUnitalAlgHom k B).comp f)
 
+/-- The ideal-coordinate formula for a unitization map.
+
+The lifted map of `f` sends the nonunital inclusion of `a` to the inclusion of `f(a)`. -/
 @[simp]
 theorem unitizationMap_inr {B : Type w} [NonUnitalRing B] [Module k B]
     [IsScalarTower k B B] [SMulCommClass k B B] (f : A →ₙₐ[k] B) (a : A) :
     unitizationMap k A f (Unitization.inr a) = Unitization.inr (f a) := by
   simp [unitizationMap, Unitization.lift]
 
+/-- The scalar-coordinate formula for a unitization map.
+
+The lifted map of `f : A → B` retains each scalar element `Unitization.inl r`. -/
 @[simp]
 theorem unitizationMap_inl {B : Type w} [NonUnitalRing B] [Module k B]
     [IsScalarTower k B B] [SMulCommClass k B B] (f : A →ₙₐ[k] B) (r : k) :
     unitizationMap k A f (Unitization.inl r) = Unitization.inl r := by
   simpa only [Unitization.algebraMap_eq_inl] using (unitizationMap k A f).commutes r
 
-/-- Independent original algebra carriers keep both native unitization coordinates. -/
+/-- The full coordinate formula for a unitization homomorphism.
+
+For independently sized `A` and `B`, the extension of `f : A → B` sends `x = (x.fst,x.snd)` to
+`(x.fst,f(x.snd))`. -/
 theorem unitizationMap_apply {B : Type w} [NonUnitalRing B] [Module k B]
     [IsScalarTower k B B] [SMulCommClass k B B] (f : A →ₙₐ[k] B) (x : Unitization k A) :
     unitizationMap k A f x = Unitization.mk (x.fst, f x.snd) := by
@@ -87,7 +115,10 @@ theorem unitizationMap_apply {B : Type w} [NonUnitalRing B] [Module k B]
   · simp only [Unitization.snd_add, Unitization.snd_inl, Unitization.snd_inr, zero_add]
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- The ground unit span is killed by the second projection. -/
+/-- The unit span in the kernel of unitization's second projection.
+
+The ground submodule spanned by the external unit of `A⁺` is contained in the kernel of `(r,a)
+↦ a`. -/
 theorem unitSubmodule_le_ker_unitizationSnd :
     ModuleCat.Algebra.Hochschild.unitSubmodule k (Unitization k A) ≤
       LinearMap.ker (Unitization.sndHom k k A) := by
@@ -97,24 +128,35 @@ theorem unitSubmodule_le_ker_unitizationSnd :
   change (1 : Unitization k A).snd = 0
   rfl
 
-/-- The original second projection descends through precisely the k·1 quotient. -/
+/-- The reduced unitization map to its nonunital summand.
+
+The second projection descends to a ground-linear map `A⁺ / k·1 → A` sending the class of
+`(r,a)` to `a`. -/
 def unitizationQuotientToOriginal :
     ModuleCat.Algebra.Hochschild.quotientCarrier k (Unitization k A) →ₗ[k] A :=
   (ModuleCat.Algebra.Hochschild.unitSubmodule k (Unitization k A)).liftQ
     (Unitization.sndHom k k A) (unitSubmodule_le_ker_unitizationSnd k A)
 
-/-- The inverse uses the original nonunital inclusion followed by the quotient projection. -/
+/-- The inclusion into the reduced unitization ground module.
+
+The ground-linear map `A → A⁺ / k·1` sends `a` to the class of `Unitization.inr a`. -/
 def originalToUnitizationQuotient :
     A →ₗ[k] ModuleCat.Algebra.Hochschild.quotientCarrier k (Unitization k A) :=
   (ModuleCat.Algebra.Hochschild.unitSubmodule k (Unitization k A)).mkQ.comp
     (Unitization.inrHom k k A)
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
+/-- The second-coordinate formula on a reduced unitization class.
+
+The reduced ground-module map sends the class of `x ∈ A⁺` to `x.snd`. -/
 theorem unitizationQuotientToOriginal_mkQ (x : Unitization k A) :
     unitizationQuotientToOriginal k A
       ((ModuleCat.Algebra.Hochschild.unitSubmodule k (Unitization k A)).mkQ x) = x.snd := rfl
 
-/-- The scalar coordinate vanishes in exactly the source's reduced ground quotient. -/
+/-- Removal of the scalar coordinate in the unitization quotient.
+
+The classes of `x ∈ A⁺` and `Unitization.inr x.snd` are equal in the ground-module quotient by
+`k·1`. -/
 theorem unitizationQuotient_mkQ_eq_inr (x : Unitization k A) :
     (ModuleCat.Algebra.Hochschild.unitSubmodule k (Unitization k A)).mkQ x =
       (ModuleCat.Algebra.Hochschild.unitSubmodule k (Unitization k A)).mkQ (Unitization.inr x.snd) := by
@@ -129,7 +171,10 @@ theorem unitizationQuotient_mkQ_eq_inr (x : Unitization k A) :
     rw [← Unitization.inl_fst_add_inr_snd_eq x, map_add, hScalar, map_smul,
       hOne, smul_zero, zero_add]
 
-/-- The source reduced unitization carrier is the original nonunital algebra as a ground module. -/
+/-- The reduced unitization ground-module equivalence.
+
+The quotient `A⁺ / k·1` is `k`-linearly equivalent to `A`, with forward map the second
+coordinate and inverse the class of the nonunital inclusion. -/
 def unitizationQuotientEquiv :
     ModuleCat.Algebra.Hochschild.quotientCarrier k (Unitization k A) ≃ₗ[k] A where
   toLinearMap := unitizationQuotientToOriginal k A

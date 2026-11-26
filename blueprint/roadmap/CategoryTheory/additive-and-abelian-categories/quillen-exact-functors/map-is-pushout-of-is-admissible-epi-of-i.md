@@ -1,4 +1,6 @@
-# Map is Pushout of is Admissible Epi of is Admissible Mono
+# Exact functors preserve admissible pushout squares
 
-An exact functor preserves a pushout whose two source legs are respectively
-an admissible epi and an admissible mono.
+Let `F : C → D` be an additive exact functor between additive exact
+categories. If a pushout in `C` has source legs an admissible epi
+`p : X → Y` and an admissible mono `i : X → Z`, the square obtained
+by applying `F` is a pushout in `D`.

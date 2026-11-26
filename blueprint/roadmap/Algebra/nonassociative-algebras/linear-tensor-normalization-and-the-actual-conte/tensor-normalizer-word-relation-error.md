@@ -1,3 +1,6 @@
-# Tensor Normalizer word relation Error
+# Annihilation of a Lie relation in basis-word tensor contexts
 
-Every actual defining Lie relation in basis-word contexts is annihilated.
+Annihilation of a Lie relation in basis-word tensor contexts.
+
+The tensor normalizer kills a defining Lie relation multiplied on the left and right by tensor
+basis words.

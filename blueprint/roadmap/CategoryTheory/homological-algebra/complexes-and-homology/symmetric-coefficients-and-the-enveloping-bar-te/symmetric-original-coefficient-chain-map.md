@@ -1,3 +1,6 @@
-# Symmetric Original Coefficient Chain Map
+# The ground-linear Hochschild chain map of an A-linear coefficient arrow
 
-The original symmetric coefficient chain map, delegating the neutral native tensor map.
+The ground-linear Hochschild chain map of an A-linear coefficient arrow.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, its
+nth component is f ⊗ id on M ⊗[k] A⊗n.

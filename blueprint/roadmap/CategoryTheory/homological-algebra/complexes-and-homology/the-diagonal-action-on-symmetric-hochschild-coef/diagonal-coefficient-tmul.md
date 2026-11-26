@@ -1,3 +1,6 @@
-# Diagonal Coefficient tmul
+# The pure coefficient value of the Hochschild diagonal
 
-The coefficient action is needed to compute the diagonal map's faces.
+The pure coefficient value of the Hochschild diagonal.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+diagonalCoefficient(a₀ ⊗ m) = a₀.down • m, retaining the lifted regular coefficient.

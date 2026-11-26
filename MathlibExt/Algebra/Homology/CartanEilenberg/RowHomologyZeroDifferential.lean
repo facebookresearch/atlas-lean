@@ -14,13 +14,15 @@ public import MathlibExt.Algebra.Homology.VerticalHomologyComplex
 import MathlibExt.Algebra.Homology.HomologyDegreeTransport
 
 /-!
-# The degree-zero Cartan--Eilenberg row differential
+# The degree-zero vertical-homology differential
 
-This file identifies the horizontal differential on degree-zero row homology
-in the explicit homology/boundary coordinates.  The resulting matrix is lower
-triangular in Mathlib's `Biprod.ofComponents` convention: the
-homology-to-boundary component vanishes and the boundary-to-homology cross
-component may be nonzero.
+Let P be a Cartan–Eilenberg resolution of L in an abelian category. The degree-zero row-homology
+coordinates are PH₀,ₐ ⊕ PB₀,ₐ. The resolution differential preserves the PH₀ coordinate and
+descends to the stored PB₀ differential on the quotient.
+
+Its diagonal blocks are the PH₀ and PB₀ differentials. The block from homology to boundary is
+zero, while the block from boundary to homology may be nonzero. These blocks describe the
+vertical-homology differential in the original degree-zero coordinate.
 -/
 
 @[expose] public section
@@ -39,8 +41,10 @@ namespace HomologicalComplex.CartanEilenbergResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
-/-- The resolution-direction differential descended to the explicit
-degree-zero row-homology coordinates. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. For a ∈ ℕ, the resolution differential
+a+1 → a descends to a map Dₐ : PH₀,ₐ₊₁ ⊕ PB₀,ₐ₊₁ → PH₀,ₐ ⊕ PB₀,ₐ in these coordinates. -/
 noncomputable def rowHomologyZeroCoordinateMap (a : ℕ) :
     ((P.homologyResolution 0).complex.X (a + 1) ⊞
         (P.boundaryResolution 0).complex.X (a + 1)) ⟶
@@ -62,8 +66,11 @@ noncomputable def rowHomologyZeroCoordinateMap (a : ℕ) :
       P.rowHomologyZeroProjection a)
     condition).1
 
-/-- The explicit quotient projections characterize the descended coordinate
-map. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. Let rₐ be the explicit projection from
+the term-resolution component to PH₀,ₐ ⊕ PB₀,ₐ. The descended map Dₐ satisfies Dₐ ∘ rₐ₊₁ = rₐ ∘
+d_PT₀^{a+1,a}. -/
 @[reassoc]
 theorem rowHomologyZeroProjection_comp_coordinateMap (a : ℕ) :
     P.rowHomologyZeroProjection (a + 1) ≫
@@ -130,8 +137,11 @@ private theorem termComponent_d_comp_g (a : ℕ) :
     HomologicalComplex.eval_map] using
       ((P.termHorseshoe 0).p.comm (a + 1) a).symm
 
-/-- The homology-resolution coordinate is preserved by the descended
-differential. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The inclusion of the homology-resolution
+coordinate commutes with Dₐ: Dₐ ∘ inl = inl ∘ d_PH₀^{a+1,a}. Thus PH₀ is preserved as a
+subcomplex. -/
 @[reassoc]
 theorem biprod_inl_comp_rowHomologyZeroCoordinateMap (a : ℕ) :
     biprod.inl ≫ P.rowHomologyZeroCoordinateMap a =
@@ -194,8 +204,10 @@ theorem biprod_inl_comp_rowHomologyZeroCoordinateMap (a : ℕ) :
       rw [(P.cyclesComponentSplitting (a + 1) 0).s_g]
       simp
 
-/-- The boundary-resolution quotient coordinate is preserved by the
-descended differential. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The boundary-resolution quotient
+coordinate commutes with Dₐ: pr₂ ∘ Dₐ = d_PB₀^{a+1,a} ∘ pr₂. -/
 @[reassoc]
 theorem rowHomologyZeroCoordinateMap_comp_biprod_snd (a : ℕ) :
     P.rowHomologyZeroCoordinateMap a ≫ biprod.snd =
@@ -232,17 +244,21 @@ theorem rowHomologyZeroCoordinateMap_comp_biprod_snd (a : ℕ) :
           (P.boundaryResolution 0).complex.d (a + 1) a) :=
       Category.assoc _ _ _
 
-/-- The potentially nonzero boundary-to-homology component of the
-degree-zero row differential. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The map PB₀,ₐ₊₁ → PH₀,ₐ obtained by
+including the boundary coordinate, applying Dₐ, and projecting to the homology coordinate is the
+possible cross component of this differential. -/
 noncomputable def rowHomologyZeroCross (a : ℕ) :
     (P.boundaryResolution 0).complex.X (a + 1) ⟶
       (P.homologyResolution 0).complex.X a :=
   biprod.inr ≫ P.rowHomologyZeroCoordinateMap a ≫ biprod.fst
 
-/-- The degree-zero row differential is lower triangular in Mathlib's
-`Biprod.ofComponents` convention (vanishing homology-to-boundary component,
-free boundary-to-homology cross component) in the explicit
-homology/boundary coordinates. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The map Dₐ has the stored PH₀ and PB₀
+differentials on its diagonal, zero homology-to-boundary component, and the specified
+boundary-to-homology cross component. These four blocks determine the full differential. -/
 theorem rowHomologyZeroCoordinateMap_eq (a : ℕ) :
     P.rowHomologyZeroCoordinateMap a =
       Biprod.ofComponents
@@ -296,8 +312,11 @@ private theorem rowHomologyZeroIso_hom (a : ℕ) :
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- The degree-zero row-homology coordinate is natural in the resolution
-direction. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. The isomorphisms H₀(rowₐ) ≅ PH₀,ₐ ⊕ PB₀,ₐ
+commute with the resolution-direction maps: the homology map of P.bicomplex.d(a+1,a) corresponds
+to Dₐ. -/
 @[reassoc]
 theorem rowHomologyZeroIso_naturality (a : ℕ) :
     HomologicalComplex.homologyMap (P.bicomplex.d (a + 1) a) 0 ≫
@@ -336,8 +355,10 @@ theorem rowHomologyZeroIso_naturality (a : ℕ) :
     φ 1 0 0 (by simp) (by simp)]
   rw [γ.homologyMap_comm, hH]
 
-/-- Conjugating the induced homology map by the component coordinates gives
-the descended coordinate differential. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. Conjugating H₀(P.bicomplex.d(a+1,a)) by
+the two row-homology coordinate isomorphisms gives exactly Dₐ. -/
 theorem rowHomologyZeroIso_conjugation (a : ℕ) :
     (P.rowHomologyZeroIso (a + 1)).inv ≫
         HomologicalComplex.homologyMap (P.bicomplex.d (a + 1) a) 0 ≫
@@ -347,8 +368,11 @@ theorem rowHomologyZeroIso_conjugation (a : ℕ) :
   exact (P.rowHomologyZeroIso (a + 1)).inv_hom_id_assoc _
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The horizontal differential on degree-zero vertical homology in explicit
-homology/boundary coordinates. -/
+/-- Let C be abelian, L a nonnegative chain complex and P a Cartan–Eilenberg resolution of L. In
+original degree zero, the resolution-degree-a row homology has coordinates PH₀,ₐ ⊕ PB₀,ₐ, using
+the stored homology and outgoing-boundary resolutions. In the vertical-homology chain complex at
+original degree zero, the resolution differential has the PH₀ and PB₀ diagonal differentials,
+zero homology-to-boundary block and the boundary-to-homology cross block. -/
 theorem rowHomologyZeroIso_d (a : ℕ) :
     (P.rowHomologyZeroIso (a + 1)).inv ≫
         (P.bicomplex.verticalHomologyComplex 0).d (a + 1) a ≫

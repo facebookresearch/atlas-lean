@@ -1,3 +1,6 @@
-# Full Projection Nat
+# The natural full proper-shuffle quotient projection
 
-The original quotient projection is a natural transformation of the original Over-algebra functors.
+The natural full proper-shuffle quotient projection.
+
+The quotient maps from coefficient Hochschild complexes to their proper-shuffle quotients form
+a natural transformation on `Over B`.

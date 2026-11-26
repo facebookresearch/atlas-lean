@@ -1,4 +1,6 @@
-# Boundary Resolution Zero acyclic
+# The degree-zero outgoing-boundary resolution is acyclic
 
-The chosen resolution of the degree-zero outgoing boundary object is
-acyclic, although its complex need not be literally zero.
+Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. The
+outgoing boundary B₀⁽out⁾ is zero, so the chosen projective resolution PB₀ has zero homology in
+every resolution degree. Its terms are not required to be individually zero.

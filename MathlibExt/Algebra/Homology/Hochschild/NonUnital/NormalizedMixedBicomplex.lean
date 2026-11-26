@@ -14,14 +14,28 @@ public import MathlibExt.Algebra.Homology.Hochschild.Normalized
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.MixedBicomplex
 
 /-!
-# The normalized Connes boundary and mixed bicomplex
+# Normalized Connes boundary and mixed bicomplex
 
-The quotient is the original ground-module tensor quotient. The raw cyclic
-operator and norm are used before unit insertion; they are not asserted to
-descend individually to the normalized coefficient levels.
+For a commutative ring `k` and a unital ring `A` with compatible
+central ground action, let `Ā=A/(k·1)` be the ground-module quotient.
+The normalized regular chain level is `C̄_n=A ⊗[k] Ā^⊗n`, and
+projection `p_n` keeps the coefficient while quotienting each tail
+factor. The composite `p_(n+1)B_n` annihilates unit degeneracies and
+therefore defines `B̄_n : C̄_n → C̄_(n+1)`.
 
-Source: Loday, Cyclic Homology, second edition, 2.1.9–2.1.11.
-The rational third arrow in 2.1.11 is outside these constructions.
+On representatives, `B̄` is computed from unit insertion after the
+full-word norm. Its cyclic sum has sign `(-1)^(nj)` and forward
+cyclic order in the quotient tail. In low degrees,
+`B̄₀(a)=1 ⊗ ā` and
+`B̄₁(a ⊗ b̄)=1 ⊗ [ā,b̄]-1 ⊗ [b̄,ā]`.
+The equations `B̄²=0` and `b̄B̄+B̄b̄=0` give the normalized mixed
+complex and its first-quadrant bicomplex. The canonical homology
+comparison with cyclic homology is natural for nonunital algebra
+maps that explicitly preserve `1`.
+
+## References
+
+* J.-L. Loday, *Cyclic Homology*, second edition, 2.1.9–2.1.11, for normalization and the Connes mixed complex.
 -/
 
 @[expose] public section
@@ -38,7 +52,13 @@ section GroundQuotient
 
 variable (k : Type u) (A : Type v) [CommRing k] [AddCommGroup A] [Module k A] [One A]
 
-/-- Unit insertion puts every original factor into the quotient tail. -/
+/-- Let `k` be a commutative ring and `A` a `k`-module with
+distinguished element `1`. Put `Ā=A/(k·1)`, `q : A → Ā`,
+`C_n=A ⊗[k] A^⊗n`, and `C̄_n=A ⊗[k] Ā^⊗n`.
+Let `p_n=id_A ⊗ q^⊗n`, `s_n` insert `1` as the coefficient
+and move all prior factors to the tail, and `N_n` be the signed
+cyclic norm on the full `n+1` factors. For `x : C_n`, projection after insertion is
+`p_(n+1)(s_n(x))=1 ⊗ q^⊗(n+1)(consEquiv(x))`. -/
 theorem normalizationLevelMap_consInsert (n : ℕ) (x : A ⊗[k] TensorPower k n A) :
     (ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1)).hom
         (TensorPower.consInsert k A 1 n x) =
@@ -68,7 +88,14 @@ theorem normalizationLevelMap_consInsert (n : ℕ) (x : A ⊗[k] TensorPower k n
       TensorPower.consEquiv_tmul, TensorPower.quotientMap_tprod]
   exact DFunLike.congr_fun h x
 
-/-- Naturality of the full tensor norm computes the inserted quotient without a normalized norm. -/
+/-- Let `k` be a commutative ring and `A` a `k`-module with
+distinguished element `1`. Put `Ā=A/(k·1)`, `q : A → Ā`,
+`C_n=A ⊗[k] A^⊗n`, and `C̄_n=A ⊗[k] Ā^⊗n`.
+Let `p_n=id_A ⊗ q^⊗n`, `s_n` insert `1` as the coefficient
+and move all prior factors to the tail, and `N_n` be the signed
+cyclic norm on the full `n+1` factors. For `x : C_n`, the inserted full norm projects to
+`1 ⊗ N_n^Ā(q^⊗(n+1)(consEquiv(x)))`, where `N_n^Ā`
+acts on the complete tensor power `Ā^⊗(n+1)`. -/
 theorem normalizationLevelMap_consInsert_norm (n : ℕ) (x : A ⊗[k] TensorPower k n A) :
     (ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1)).hom
         (TensorPower.consInsert k A 1 n (TensorPower.consNorm k A n x)) =
@@ -80,7 +107,13 @@ theorem normalizationLevelMap_consInsert_norm (n : ℕ) (x : A ⊗[k] TensorPowe
     (TensorPower.norm_natural (ModuleCat.Algebra.Hochschild.unitSubmodule k A).mkQ n
       (TensorPower.consEquiv k A n x))
 
-/-- Rotating an inserted unit places that unit in the first quotient-tail position. -/
+/-- Let `k` be a commutative ring and `A` a `k`-module with
+distinguished element `1`. Put `Ā=A/(k·1)`, `q : A → Ā`,
+`C_n=A ⊗[k] A^⊗n`, and `C̄_n=A ⊗[k] Ā^⊗n`.
+Let `p_n=id_A ⊗ q^⊗n`, `s_n` insert `1` as the coefficient
+and move all prior factors to the tail, and `N_n` be the signed
+cyclic norm on the full `n+1` factors. Rotating an inserted `1` puts it into a quotient-tail
+position, so `p_(n+1)(t_(n+1)(s_n(x)))=0`. -/
 theorem normalizationLevelMap_cyclic_consInsert (n : ℕ)
     (x : A ⊗[k] TensorPower k n A) :
     (ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1)).hom
@@ -107,7 +140,13 @@ theorem normalizationLevelMap_cyclic_consInsert (n : ℕ)
       k A A (n + 1) _ _ 0 hb, smul_zero]
   exact DFunLike.congr_fun h x
 
-/-- An original unit factor is killed after the full norm and unit insertion. -/
+/-- Let `k` be a commutative ring and `A` a `k`-module with
+distinguished element `1`. Put `Ā=A/(k·1)`, `q : A → Ā`,
+`C_n=A ⊗[k] A^⊗n`, and `C̄_n=A ⊗[k] Ā^⊗n`.
+Let `p_n=id_A ⊗ q^⊗n`, `s_n` insert `1` as the coefficient
+and move all prior factors to the tail, and `N_n` be the signed
+cyclic norm on the full `n+1` factors. If a tail factor `a_i` of `m ⊗ tprod(a)` equals `1`,
+then projection of its full norm followed by insertion is zero. -/
 theorem normalizationLevelMap_consInsert_norm_unit_factor (n : ℕ) (m : A)
     (a : Fin n → A) (i : Fin n) (hi : a i = 1) :
     (ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1)).hom
@@ -139,18 +178,34 @@ section UnitalAlgebra
 variable (k : Type u) (A : Type v) [CommRing k] [Ring A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The normalized complex has the literal original A tensor A/(k·1) levels. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The normalized regular Hochschild chain complex has
+levels `C̄_n` and the induced boundary `b̄`. -/
 def normalizedBComplex : ChainComplex (ModuleCat.{max u v} k) ℕ := by
   letI := regularAlgebra k A
   exact ModuleCat.Algebra.Hochschild.normalizedChainComplex k A A
 
-/-- The coefficient and ground quotient carriers remain in every degree. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. Its degree-`n` object is the normalized chain level
+`A ⊗[k] Ā^⊗n`. -/
 @[simp]
 theorem normalizedBComplex_X (n : ℕ) :
     (normalizedBComplex k A).X n =
       ModuleCat.Algebra.Hochschild.normalizedChainLevel k A A n := rfl
 
-/-- The original unital bridge retains identity in every original tensor degree. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The bridge to the unital coefficient Hochschild complex
+has identity component on the regular chain level `C_n` in every
+ degree `n`. -/
 theorem regularUnitalComplexIso_hom_f (n : ℕ) :
     letI := regularAlgebra k A
     (regularUnitalComplexIso k A).hom.f n = 𝟙 (chainLevel k A A n) := by
@@ -158,13 +213,23 @@ theorem regularUnitalComplexIso_hom_f (n : ℕ) :
   change (complexIsoUnital (k := k) (A := A) (M := A)).hom.f n = 𝟙 _
   exact complexIsoUnital_hom_f n
 
-/-- The original full Hochschild complex maps to its normalized tensor quotient. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The factorwise quotient maps form the chain projection
+`p : C_*(A) → C̄_*(A)`. -/
 def normalizedProjection : bComplex k A ⟶ normalizedBComplex k A := by
   letI := regularAlgebra k A
   exact (regularUnitalComplexIso k A).hom ≫
     ModuleCat.Algebra.Hochschild.normalizationProjection k A A
 
-/-- Its degree map is the coefficient-identity/factor-quotient map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The degree-`n` projection is precisely `p_n`, identity
+on the coefficient and quotient on every tail factor. -/
 @[simp]
 theorem normalizedProjection_f (n : ℕ) :
     (normalizedProjection k A).f n =
@@ -183,12 +248,20 @@ theorem normalizedProjection_f (n : ℕ) :
   exact (congrArg (fun f : chainLevel k A A n ⟶ chainLevel k A A n => f ≫ p) he).trans
     ((Category.id_comp p).trans hp)
 
-/-- Each original factorwise quotient is epic, including the retained bottom term. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. Every `p_n` is epi, including degree zero. -/
 instance normalizedProjection_f_epi (n : ℕ) : Epi ((normalizedProjection k A).f n) := by
   erw [normalizedProjection_f]
   exact ModuleCat.Algebra.Hochschild.normalizationLevelMap_epi k A A n
 
-/-- The raw-to-normalized projection is a quasi-isomorphism by native normalization. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The normalized chain projection `p` is a quasi-isomorphism. -/
 instance normalizedProjection_quasiIso : _root_.QuasiIso (normalizedProjection k A) := by
   letI := regularAlgebra k A
   change _root_.QuasiIso ((regularUnitalComplexIso k A).hom ≫
@@ -196,7 +269,13 @@ instance normalizedProjection_quasiIso : _root_.QuasiIso (normalizedProjection k
   infer_instance
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- The rotated insertion term vanishes in the quotient; the original norm stays raw. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. For `x : C_n`, the projected Connes operator satisfies
+`p_(n+1)(B_n(x))=p_(n+1)(s_n(N_n(x)))`, because the rotated
+insertion term vanishes after quotienting. -/
 theorem connesBoundary_normalization (n : ℕ) (x : chainLevel k A A n) :
     (ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1)).hom
         ((connesBoundary k A n).hom x) =
@@ -211,7 +290,12 @@ theorem connesBoundary_normalization (n : ℕ) (x : chainLevel k A A n) :
   rw [normalizationLevelMap_cyclic_consInsert, sub_zero]
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- Every original unit-tail tensor is killed after the Connes boundary and projection. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. If a representative tail factor `a_i` equals `1`,
+then `p_(n+1)(B_n(m ⊗ tprod(a)))=0`. -/
 theorem connesBoundary_normalization_unit_factor (n : ℕ) (m : A) (a : Fin n → A)
     (i : Fin n) (hi : a i = 1) :
     (ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1)).hom
@@ -219,7 +303,13 @@ theorem connesBoundary_normalization_unit_factor (n : ℕ) (m : A) (a : Fin n �
   rw [connesBoundary_normalization]
   exact normalizationLevelMap_consInsert_norm_unit_factor k A n m a i hi
 
-/-- The original unit degeneracies are annihilated by B followed by the quotient. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. Under the coefficient-bar identification with `C_n`,
+`B_n` followed by `p_(n+1)` annihilates all degenerate simplices
+obtained by inserting a unit tail factor. -/
 theorem connesBoundary_normalization_degeneracies (n : ℕ) :
     letI := regularAlgebra k A
     DoldKan.DegeneraciesVanish
@@ -260,7 +350,13 @@ theorem connesBoundary_normalization_degeneracies (n : ℕ) :
         _ = 0 := hf
         _ = _ := Limits.comp_zero.symm
 
-/-- The normalized B is the unique degreewise descent of the original Connes map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The degeneracy-annihilating composite `p_(n+1)B_n`
+descends uniquely to the degree-one map
+`B̄_n : C̄_n → C̄_(n+1)`. -/
 def normalizedBoundary (n : ℕ) :
     (normalizedBComplex k A).X n ⟶ (normalizedBComplex k A).X (n + 1) := by
   letI := regularAlgebra k A
@@ -269,7 +365,12 @@ def normalizedBoundary (n : ℕ) :
       ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1))
     (connesBoundary_normalization_degeneracies k A n)
 
-/-- The normalized degree-one boundary retains its original projection square. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The descent is characterized by the projection square
+`p_n ≫ B̄_n = B_n ≫ p_(n+1)`. -/
 @[reassoc]
 theorem normalizedProjection_boundary (n : ℕ) :
     (normalizedProjection k A).f n ≫ normalizedBoundary k A n =
@@ -281,7 +382,12 @@ theorem normalizedProjection_boundary (n : ℕ) :
       ModuleCat.Algebra.Hochschild.normalizationLevelMap k A A (n + 1))
     (connesBoundary_normalization_degeneracies k A n)
 
-/-- The normalized map evaluates by the original Connes boundary on every pure representative. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. For `m : A` and a word `a : Fin n → A`,
+`B̄_n(m ⊗ tprod(q∘a))=p_(n+1)(B_n(m ⊗ tprod(a)))`. -/
 theorem normalizedBoundary_tmul_tprod (n : ℕ) (m : A) (a : Fin n → A) :
     (normalizedBoundary k A n).hom
         (m ⊗ₜ[k] PiTensorProduct.tprod k
@@ -295,7 +401,13 @@ theorem normalizedBoundary_tmul_tprod (n : ℕ) (m : A) (a : Fin n → A) :
     (connesBoundary_normalization_degeneracies k A n) m a
   exact h
 
-/-- Only the projected insertion/norm composite, rather than a normalized norm, is descended. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The same representative value is
+`p_(n+1)(s_n(N_n(m ⊗ tprod(a))))`, using the norm on full
+unnormalized words before quotienting. -/
 theorem normalizedBoundary_eq_projected_consInsert_norm (n : ℕ) (m : A) (a : Fin n → A) :
     (normalizedBoundary k A n).hom
         (m ⊗ₜ[k] PiTensorProduct.tprod k
@@ -306,7 +418,14 @@ theorem normalizedBoundary_eq_projected_consInsert_norm (n : ℕ) (m : A) (a : F
   (normalizedBoundary_tmul_tprod k A n m a).trans
     (connesBoundary_normalization k A n (m ⊗ₜ[k] PiTensorProduct.tprod k a))
 
-/-- The printed first-family formula uses every forward cyclic order with its original sign. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. For `a : Fin(n+1) → A`, with `ρ=finRotate(n+1)`,
+`B̄_n(a₀ ⊗ [a₁,…,a_n]) =
+∑_(j=0)^n (-1)^(nj) • (1 ⊗ tprod(i ↦ q(a(ρ^j(i)))))`.
+The quotient-tail order is the forward cyclic order. -/
 theorem normalizedBoundary_tprod (n : ℕ) (a : Fin (n + 1) → A) :
     (normalizedBoundary k A n).hom
         (a 0 ⊗ₜ[k] PiTensorProduct.tprod k
@@ -359,7 +478,12 @@ theorem normalizedBoundary_tprod (n : ℕ) (a : Fin (n + 1) → A) :
         (PiTensorProduct.tprod k (fun i => S.mkQ (a i))) = _
   rw [TensorPower.cyclicRepresentation_inverse_natCast_tprod, TensorProduct.tmul_smul]
 
-/-- The normalized B0 is the retained first, positive unit-insertion term. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. On the degree-zero representative `a ⊗ ()`,
+`B̄₀(a ⊗ ())=1 ⊗ q(a)`. -/
 theorem normalizedBoundary_zero_tprod (a : A) :
     (normalizedBoundary k A 0).hom
         (a ⊗ₜ[k] PiTensorProduct.tprod k
@@ -385,7 +509,13 @@ theorem normalizedBoundary_zero_tprod (a : A) :
     rw [connesBoundary_zero_tprod, map_add,
       ModuleCat.Algebra.Hochschild.normalizationLevelMap_tmul_tprod, hUnit, add_zero])
 
-/-- The two surviving normalized B1 terms retain their verified positive/negative signs. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. In degree one,
+`B̄₁(a ⊗ q(b))=1 ⊗ tprod(q(a),q(b))-1 ⊗ tprod(q(b),q(a))`.
+The two terms have positive and negative signs respectively. -/
 theorem normalizedBoundary_one_tprod (a b : A) :
     (normalizedBoundary k A 1).hom
         (a ⊗ₜ[k] PiTensorProduct.tprod k
@@ -415,7 +545,12 @@ theorem normalizedBoundary_one_tprod (a b : A) :
     dsimp only [S]
     rfl)
 
-/-- Square-zero is inherited from the original B through the epic quotient. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The normalized Connes maps satisfy
+`B̄_n ≫ B̄_(n+1)=0`. -/
 theorem normalizedBoundary_square (n : ℕ) :
     normalizedBoundary k A n ≫ normalizedBoundary k A (n + 1) = 0 := by
   let P : ChainComplex (ModuleCat.{max u v} k) ℕ := bComplex k A
@@ -444,7 +579,12 @@ theorem normalizedBoundary_square (n : ℕ) :
       (connesBoundary_square k A n)).trans Limits.zero_comp
     _ = _ := Limits.comp_zero.symm
 
-/-- The original bB+Bb identity descends as an equation of the quotient arrows. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. In degree `n+1`, the mixed relation is
+`B̄_(n+1) ≫ b̄_(n+2,n+1) + b̄_(n+1,n) ≫ B̄_n=0`. -/
 theorem normalizedBoundary_mixed (n : ℕ) :
     normalizedBoundary k A (n + 1) ≫ (normalizedBComplex k A).d (n + 2) (n + 1) +
         (normalizedBComplex k A).d (n + 1) n ≫ normalizedBoundary k A n = 0 := by
@@ -474,7 +614,12 @@ theorem normalizedBoundary_mixed (n : ℕ) :
   rw [Preadditive.comp_add, hA, hB, ← Preadditive.add_comp,
     connesBoundary_mixed, Limits.zero_comp, Limits.comp_zero]
 
-/-- The original bottom B identity is retained on the normalized degree-zero term. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. At the bottom degree,
+`B̄₀ ≫ b̄_(1,0)=0`. -/
 theorem normalizedBoundary_comp_d_zero :
     normalizedBoundary k A 0 ≫ (normalizedBComplex k A).d 1 0 = 0 := by
   let P : ChainComplex (ModuleCat.{max u v} k) ℕ := bComplex k A
@@ -494,7 +639,13 @@ theorem normalizedBoundary_comp_d_zero :
       (connesBoundary_comp_d_zero k A)).trans Limits.zero_comp
     _ = _ := Limits.comp_zero.symm
 
-/-- The descended B components form a native zero-to-zero homotopy on the normalized complex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The degree-one components `B̄_n` give a homotopy from
+zero to zero on the normalized `b̄`-complex, expressing its
+anticommutation with the differential. -/
 def normalizedBoundaryHomotopy :
     Homotopy (0 : normalizedBComplex k A ⟶ normalizedBComplex k A) 0 := by
   let K := normalizedBComplex k A
@@ -534,7 +685,12 @@ def normalizedBoundaryHomotopy :
         exact hf.trans (ht.trans hB)
   exact (Homotopy.ofEq h.symm).trans (Homotopy.nullHomotopy' H)
 
-/-- The native normalized homotopy retains the literal descended B in every adjacent degree. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Put `Ā=A/(k·1)` as a ground-module
+quotient, `C_n=A ⊗[k] A^⊗n`, `C̄_n=A ⊗[k] Ā^⊗n`, and
+`p_n=id_A ⊗ q^⊗n`. The full and normalized boundaries are
+`b,b̄`, and the Connes operator is `B=(1-t)sN`. The component from degree `n` to `n+1` of the normalized
+Connes homotopy is exactly `B̄_n`. -/
 @[simp]
 theorem normalizedBoundaryHomotopy_hom (n : ℕ) :
     (normalizedBoundaryHomotopy k A).hom n (n + 1) = normalizedBoundary k A n := by
@@ -544,31 +700,64 @@ theorem normalizedBoundaryHomotopy_hom (n : ℕ) :
     HomologicalComplex.XIsoOfEq_rfl, Iso.refl_hom, Category.comp_id]
   all_goals first | exact dif_pos rfl | exact if_pos rfl
 
-/-- The original normalized b/B data construct the canonical mixed object. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The normalized `b̄,B̄` data form a mixed complex,
+with `b̄B̄+B̄b̄=0` and `B̄²=0`. -/
 def normalizedMixedComplexModel : MixedComplex (ModuleCat.{max u v} k) :=
   MixedComplex.ofBoundaryHomotopy (normalizedBComplex k A) (normalizedBoundaryHomotopy k A)
     (fun n => by simpa only [normalizedBoundaryHomotopy_hom] using normalizedBoundary_square k A n)
 
-/-- The canonical normalized object retains the original tensor-quotient complex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The underlying chain complex of the normalized mixed
+object is `C̄_*(A)`. -/
 @[simp]
 theorem normalizedMixedComplexModel_underlying :
     (normalizedMixedComplexModel k A).underlying = normalizedBComplex k A := rfl
 
-/-- Its canonical B is the original unique quotient descent of the original Connes operator. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The degree-`n` operator of the normalized mixed object
+is the descended boundary `B̄_n`. -/
 @[simp]
 theorem normalizedMixedComplexModel_B (n : ℕ) :
     (normalizedMixedComplexModel k A).B n = normalizedBoundary k A n := normalizedBoundaryHomotopy_hom k A n
 
-/-- The normalized Connes data are through the one canonical mixed-complex engine. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The normalized Connes double data has supported cells
+`C̄_(q-p)(A)`, zero cells for `q<p`, stored vertical maps
+`(-1)^p b̄`, and horizontal maps `B̄`. -/
 def normalizedMixedConnesDoubleData : MixedComplex.ConnesDoubleData (normalizedMixedComplexModel k A) :=
   MixedComplex.ofBoundaryHomotopyConnesDoubleData (normalizedBComplex k A) (normalizedBoundaryHomotopy k A)
     (fun n => by simpa only [normalizedBoundaryHomotopy_hom] using normalizedBoundary_square k A n)
 
-/-- The original normalized model has generic cyclic data without caller repackaging. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The normalized mixed object has canonical cyclic/SBI
+data consisting of its Connes bicomplex, column-zero comparison,
+and translation by two of its column-zero quotient. -/
 def normalizedMixedGenericCyclicData : MixedComplex.GenericMixedCyclicData (normalizedMixedComplexModel k A) :=
   (normalizedMixedComplexModel k A).connesCyclicData
 
-/-- The original quotient map and original B square give the canonical MixedComplex.Hom. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The chain projection `p`, together with
+`p_n ≫ B̄_n=B_n ≫ p_(n+1)`, is a morphism from the regular
+mixed complex to the normalized mixed complex. -/
 def normalizedMixedComplexProjection : connesMixedComplexModel k A ⟶ normalizedMixedComplexModel k A :=
   MixedComplex.ofBoundaryHomotopyMap (connesBoundaryHomotopy k A)
     (fun n => by simpa only [connesBoundaryHomotopy_hom] using connesBoundary_square k A n)
@@ -578,33 +767,65 @@ def normalizedMixedComplexProjection : connesMixedComplexModel k A ⟶ normalize
       simpa only [connesBoundaryHomotopy_hom, normalizedBoundaryHomotopy_hom] using
         normalizedProjection_boundary k A n)
 
-/-- The canonical mixed map retains the complete original quotient chain map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The underlying chain map of the normalization mixed
+morphism is the full normalized projection `p`. -/
 @[simp]
 theorem normalizedMixedComplexProjection_underlying :
     (normalizedMixedComplexProjection k A).underlying = normalizedProjection k A := rfl
 
-/-- The normalized mixed bicomplex is built from the descended b and B. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The normalized mixed bicomplex has both shapes
+`down ℕ`, cells `C̄_(q-p)(A)` for `p≤q`, and the normalized
+mixed differentials. -/
 def normalizedMixedBicomplex :
     HomologicalComplex₂ (ModuleCat.{max u v} k)
       (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   (normalizedMixedConnesDoubleData k A).K
 
-/-- Canonical normalized Connes packaging retains the whole original normalized bicomplex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The bicomplex of the normalized mixed object agrees
+with that built directly from `C̄_*`, its zero Connes homotopy,
+and the square-zero components `B̄`. -/
 theorem normalizedMixedBicomplex_eq_original :
     normalizedMixedBicomplex k A = ChainComplex.mixedBicomplex (normalizedBComplex k A)
       (normalizedBoundaryHomotopy k A) (fun n => by
         simpa only [normalizedBoundaryHomotopy_hom] using normalizedBoundary_square k A n) := rfl
 
-/-- The normalized generic cyclic-data model is the same normalized bicomplex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The model bicomplex in the normalized generic cyclic
+data is `K̄`. -/
 theorem normalizedMixedGenericCyclicData_model_K :
     (normalizedMixedGenericCyclicData k A).model.K = normalizedMixedBicomplex k A :=
   MixedComplex.ofBoundaryHomotopy_connesBicomplex _ _ _
 
-/-- The full normalized mixed total uses the native first-quadrant total. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The normalized mixed total is `T̄=Tot(K̄)`, with
+finite diagonal sum `T̄_n=⊕_(2p≤n) C̄_(n-2p)(A)`. -/
 def normalizedMixedTotal : ChainComplex (ModuleCat.{max u v} k) ℕ :=
   (HomologicalComplex₂.total (normalizedMixedBicomplex k A) (ComplexShape.down ℕ))
 
-/-- The original quotient and its B square give the raw-to-normalized mixed map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The mixed-complex projection induces the bicomplex
+map `K → K̄` by the translated factorwise quotient maps. -/
 def normalizedMixedProjection : connesMixedBicomplex k A ⟶ normalizedMixedBicomplex k A :=
   let P : ChainComplex (ModuleCat.{max u v} k) ℕ := bComplex k A
   let K : ChainComplex (ModuleCat.{max u v} k) ℕ := normalizedBComplex k A
@@ -623,17 +844,34 @@ def normalizedMixedProjection : connesMixedBicomplex k A ⟶ normalizedMixedBico
       normalizedProjection_boundary k A n
   ChainComplex.mixedBicomplexMap (H := H) (hSquare := hSquare) q H' hSquare' hq
 
-/-- Every mixed projection column is the extension of the original quotient map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Column `p` of the mixed-bicomplex projection is the
+translated column map of `p : C_* → C̄_*`, with the column's
+vertical sign convention. -/
 @[simp]
 theorem normalizedMixedProjection_f (p : ℕ) :
     (normalizedMixedProjection k A).f p =
       ChainComplex.mixedColumnMap (normalizedProjection k A) p := rfl
 
-/-- Native totalization gives the chain map from the raw mixed model to the normalized one. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Totalizing `K → K̄` gives the chain map
+`P : T → T̄`. -/
 def normalizedMixedTotalProjection : connesMixedTotal k A ⟶ normalizedMixedTotal k A :=
   HomologicalComplex₂.total.map (normalizedMixedProjection k A) (ComplexShape.down ℕ)
 
-/-- The first-quadrant theorem applies to the quotient in every original column. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The total projection `P : T → T̄` is a quasi-isomorphism,
+from the normalization quasi-isomorphism in every translated
+column and first-quadrant totalization. -/
 instance normalizedMixedTotalProjection_quasiIso :
     _root_.QuasiIso (normalizedMixedTotalProjection k A) := by
   change _root_.QuasiIso (HomologicalComplex₂.total.map
@@ -659,13 +897,25 @@ instance normalizedMixedTotalProjection_quasiIso :
         normalizedProjection_boundary k A n)
     inferInstance
 
-/-- The canonical first two arrows of the printed zigzag give cyclic homology. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The normalized total computes cyclic homology:
+`H_n(T̄) ≅ HC_n(k,A)`, through the zigzag
+`T̄ ← T → cyclicTotal(k,A)`. -/
 def normalizedMixedCyclicHomologyIso (n : ℕ) :
     (normalizedMixedTotal k A).homology n ≅ cyclicHomology k A n :=
   (asIso (HomologicalComplex.homologyMap (normalizedMixedTotalProjection k A) n)).symm ≪≫
     mixedCyclicHomologyIso k A n
 
-/-- The comparison uses the inverse homology map of the quotient and the original positive I. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. The forward comparison `H_n(T̄) → HC_n(k,A)` is
+`H_n(P)⁻¹` followed by the homology map of the positive
+mixed-to-cyclic inclusion. -/
 theorem normalizedMixedCyclicHomologyIso_hom (n : ℕ) :
     (normalizedMixedCyclicHomologyIso k A n).hom =
       (asIso (HomologicalComplex.homologyMap (normalizedMixedTotalProjection k A) n)).inv ≫
@@ -676,7 +926,13 @@ theorem normalizedMixedCyclicHomologyIso_hom (n : ℕ) :
     (fun f => (asIso (HomologicalComplex.homologyMap (normalizedMixedTotalProjection k A) n)).inv ≫ f)
     (mixedCyclicHomologyIso_hom k A n)
 
-/-- The native additive lift carries the normalized zero homotopy. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. Lifting the normalized zero-to-zero Connes homotopy
+ gives a homotopy on `L_ℓ(C̄_*)`. -/
 def normalizedBoundaryHomotopyLift.{groundNML, algebraNML, liftNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -694,7 +950,13 @@ def normalizedBoundaryHomotopyLift.{groundNML, algebraNML, liftNML}
       ((ModuleCat.uliftFunctor.{liftNML, max groundNML algebraNML} k).mapHomotopy
         (normalizedBoundaryHomotopy k A)).comm n
 
-/-- The lifted homotopy retains precisely the mapped normalized B component. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. The lifted homotopy component from degree `n` to
+`n+1` is `L_ℓ(B̄_n)`. -/
 @[simp]
 theorem normalizedBoundaryHomotopyLift_hom.{groundNML, algebraNML, liftNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
@@ -705,7 +967,13 @@ theorem normalizedBoundaryHomotopyLift_hom.{groundNML, algebraNML, liftNML}
     ((normalizedBoundaryHomotopy k A).hom n (n + 1)) = _
   rw [normalizedBoundaryHomotopy_hom]
 
-/-- The native lift of the original normalized boundary earns square-zero in the shared carrier. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. The consecutive lifted normalized Connes components
+have zero composite. -/
 theorem normalizedBoundaryHomotopyLift_square.{groundNML, algebraNML, liftNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -714,7 +982,13 @@ theorem normalizedBoundaryHomotopyLift_square.{groundNML, algebraNML, liftNML}
   rw [normalizedBoundaryHomotopyLift_hom, normalizedBoundaryHomotopyLift_hom,
     ← Functor.map_comp, normalizedBoundary_square, Functor.map_zero]
 
-/-- The original normalized lifted b/B data form the canonical mixed object. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. The lifted `b̄,B̄` data form a mixed complex in module
+height `max(u,v,ℓ)`. -/
 def normalizedMixedComplexModelLift.{groundNML, algebraNML, liftNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] : MixedComplex (ModuleCat.{max groundNML algebraNML liftNML} k) :=
@@ -724,7 +998,13 @@ def normalizedMixedComplexModelLift.{groundNML, algebraNML, liftNML}
     (normalizedBoundaryHomotopyLift.{groundNML, algebraNML, liftNML} k A)
     (normalizedBoundaryHomotopyLift_square.{groundNML, algebraNML, liftNML} k A)
 
-/-- The canonical normalized lift retains the original lifted quotient complex. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. The underlying chain complex of that lifted normalized
+mixed object is `L_ℓ(C̄_*(A))`. -/
 @[simp]
 theorem normalizedMixedComplexModelLift_underlying.{groundNML, algebraNML, liftNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
@@ -733,7 +1013,12 @@ theorem normalizedMixedComplexModelLift_underlying.{groundNML, algebraNML, liftN
       ((ModuleCat.uliftFunctor.{liftNML, max groundNML algebraNML} k).mapHomologicalComplex
         (ComplexShape.down ℕ)).obj (normalizedBComplex k A) := rfl
 
-/-- The canonical normalized lifted B is the native lift of the original descended operator. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. Its degree-`n` mixed operator is `L_ℓ(B̄_n)`. -/
 @[simp]
 theorem normalizedMixedComplexModelLift_B.{groundNML, algebraNML, liftNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
@@ -742,7 +1027,14 @@ theorem normalizedMixedComplexModelLift_B.{groundNML, algebraNML, liftNML}
       (ModuleCat.uliftFunctor.{liftNML, max groundNML algebraNML} k).map (normalizedBoundary k A n) :=
   normalizedBoundaryHomotopyLift_hom k A n
 
-/-- The original quotient intertwines the lifted degree-one boundaries in every universe. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. The lifted projection satisfies
+`L_ℓ(p_n) ≫ L_ℓ(B̄_n)=L_ℓ(B_n) ≫ L_ℓ(p_(n+1))`
+for every degree `n`. -/
 @[reassoc]
 theorem normalizedProjection_boundaryLift.{groundNML, algebraNML, liftNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
@@ -769,7 +1061,13 @@ theorem normalizedProjection_boundaryLift.{groundNML, algebraNML, liftNML}
   exact (congrArg (fun a => p.f n ≫ a) hH).trans
     (h.trans (congrArg (fun a => a ≫ p.f (n + 1)) hR.symm))
 
-/-- The original quotient gives an bicomplex map after native universe lifting. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. The lifted projection gives a bicomplex map
+`L_ℓ(K) → L_ℓ(K̄)`. -/
 def normalizedMixedProjectionLift.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -783,7 +1081,14 @@ def normalizedMixedProjectionLift.{liftNML, groundNML, algebraNML}
     (ComplexShape.down ℕ)).mapHomologicalComplex (ComplexShape.down ℕ)).map
       (normalizedMixedProjection k A)
 
-/-- Each supported quotient coordinate is the original degreewise projection. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. Write `C_*(A),C̄_*(A)` for regular
+and normalized Hochschild chains, `p : C_* → C̄_*` for factorwise
+quotient projection, and `B,B̄` for their Connes operators.
+Their mixed bicomplexes and totals are `K,K̄` and `T,T̄`. Let `ℓ` be an extra carrier height and `L_ℓ` the module lift
+from `max(u,v)` to `max(u,v,ℓ)`. For a supported cell `r+p=q`, the lifted bicomplex
+projection is `L_ℓ(p_r)` under the source and target translated
+cell identifications. -/
 theorem normalizedMixedProjectionLift_component.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A]
@@ -819,7 +1124,13 @@ theorem normalizedMixedProjectionLift_component.{liftNML, groundNML, algebraNML}
   change U.map ((φ.f p).f q) = _
   exact (congrArg U.map hφ).trans (hOuter.trans hPost)
 
-/-- Native totalization retains the lifted raw-to-normalized quotient. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. Totalizing the lifted bicomplex projection gives
+`P^ℓ : T^ℓ → T̄^ℓ`. -/
 def normalizedMixedTotalProjectionLift.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -832,7 +1143,14 @@ def normalizedMixedTotalProjectionLift.{liftNML, groundNML, algebraNML}
           (normalizedMixedBicomplex k A)) (ComplexShape.down ℕ))) :=
   HomologicalComplex₂.total.map (normalizedMixedProjectionLift.{liftNML} k A) (ComplexShape.down ℕ)
 
-/-- Exact lifting preserves the column quasi-isomorphisms; the total theorem applies. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. The lifted total normalization projection `P^ℓ` is
+a quasi-isomorphism, from exact lifting and the first-quadrant
+column comparisons. -/
 instance normalizedMixedTotalProjectionLift_quasiIso.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -849,7 +1167,13 @@ instance normalizedMixedTotalProjectionLift_quasiIso.{liftNML, groundNML, algebr
     ((normalizedMixedProjection k A).f p))
   infer_instance
 
-/-- Native lifting commutes with the finite-diagonal normalized mixed total. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. The normalized total-lift comparison is
+`L_ℓ(T̄) ≅ Tot(L_ℓ K̄)`. -/
 def normalizedMixedTotalLiftIso.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] :
@@ -869,7 +1193,13 @@ def normalizedMixedTotalLiftIso.{liftNML, groundNML, algebraNML}
     infer_instance
   exact HomologicalComplex₂.functorTotalIso U R
 
-/-- The total comparison sends the mapped quotient to its lifted total map. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. For the raw and normalized total-lift isomorphisms,
+`L_ℓ(P) ≫ E_norm = E_raw ≫ P^ℓ`. -/
 @[reassoc]
 theorem map_normalizedMixedTotalProjection_lift.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
@@ -900,7 +1230,13 @@ theorem map_normalizedMixedTotalProjection_lift.{liftNML, groundNML, algebraNML}
     (connesMixedTotalLiftIso.{liftNML} k A).hom ≫ normalizedMixedTotalProjectionLift.{liftNML} k A at h
   exact h
 
-/-- The lifted quotient and positive inclusion give the canonical homology comparison. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. The lifted projection and positive inclusion give
+`H_n(T̄^ℓ) ≅ H_n(Z^ℓ)` in every degree `n`. -/
 def normalizedMixedCyclicHomologyLiftIso.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -914,7 +1250,13 @@ def normalizedMixedCyclicHomologyLiftIso.{liftNML, groundNML, algebraNML}
   (asIso (HomologicalComplex.homologyMap (normalizedMixedTotalProjectionLift.{liftNML} k A) n)).symm ≪≫
     mixedCyclicHomologyLiftIso.{liftNML} k A n
 
-/-- Its forward map is inverse homology of the quotient followed by homology of positive I. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. The forward lifted comparison is
+`H_n(P^ℓ)⁻¹ ≫ H_n(i^ℓ)`. -/
 theorem normalizedMixedCyclicHomologyLiftIso_hom.{liftNML, groundNML, algebraNML}
     (k : Type groundNML) [CommRing k] (A : Type algebraNML) [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -932,7 +1274,13 @@ section Naturality
 variable {k A} {B : Type w} [Ring B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The factor-quotient square survives the two independent native lifts. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. For every degree `n`, the quotient-level square is
+`L_A(p_A,n) ≫ Φ̄_n = Φ_n ≫ L_B(p_B,n)`, where the two
+carrier lifts put both algebras in the common height. -/
 @[reassoc]
 theorem normalizedProjection_f_mapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     (ModuleCat.uliftFunctor.{w, max u v} k).map ((normalizedProjection k A).f n) ≫
@@ -986,7 +1334,12 @@ theorem normalizedProjection_f_mapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (
   exact (congrArg (fun a => a ≫ s) hA).trans
     (h.trans (congrArg₂ (fun a b => a ≫ b) hr.symm hB.symm))
 
-/-- Original unit-preserving algebra maps descend to normalized chain maps after lifting. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The normalized word maps give a chain map between
+the two lifted normalized `b̄`-complexes. -/
 def normalizedBComplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     ((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
       (ComplexShape.down ℕ)).obj (normalizedBComplex k A) ⟶
@@ -1033,14 +1386,25 @@ def normalizedBComplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
         (congrArg (fun a => a ≫ s n) (pA.comm (n + 1) n).symm)
     _ = pA.f (n + 1) ≫ (KA.d (n + 1) n ≫ s n) := Category.assoc _ _ _
 
-/-- The normalized chain map retains the original lifted quotient-level map in every degree. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The degree-`n` normalized map applies `f` to the
+coefficient and its induced quotient map `Ā → B̄` to every
+tail factor, with the canonical carrier lifts. -/
 @[simp]
 theorem normalizedBComplexMapLift_f (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     (normalizedBComplexMapLift f hOne).f n =
       ModuleCat.Algebra.Hochschild.normalizedLevelMapLift
         (f : A →ₗ[k] B) (f : A →ₗ[k] B) hOne n := rfl
 
-/-- The same original full-boundary map gives the normalized projection square. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The full chain maps satisfy
+`L_A(p_A) ≫ Φ̄ = Φ ≫ L_B(p_B)`. -/
 @[reassoc]
 theorem normalizedProjection_mapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     ((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
@@ -1053,7 +1417,13 @@ theorem normalizedProjection_mapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
   intro n
   exact normalizedProjection_f_mapLift f hOne n
 
-/-- The normalized chain map intertwines the original descended degree-one boundaries. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The lifted normalized maps intertwine the descended
+Connes boundaries:
+`Φ̄_n ≫ B̄_B,n = B̄_A,n ≫ Φ̄_(n+1)`. -/
 theorem normalizedBComplexMapLift_boundary (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     (normalizedBComplexMapLift f hOne).f n ≫
         (normalizedBoundaryHomotopyLift.{u, w, v} k B).hom n (n + 1) =
@@ -1107,7 +1477,13 @@ theorem normalizedBComplexMapLift_boundary (f : A →ₙₐ[k] B) (hOne : f 1 = 
         (congrArg (fun a => a ≫ φ.f (n + 1)) hA.symm)
     _ = _ := Category.assoc _ _ _
 
-/-- Native homology carries the independent-world normalized B square. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The homology maps of `Φ̄` commute with the induced
+degree-one normalized Connes homology operators in degrees
+`n,n+1`. -/
 theorem normalizedBoundaryHomology_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     HomologicalComplex.homologyMap (normalizedBComplexMapLift f hOne) n ≫
         (normalizedBoundaryHomotopyLift.{u, w, v} k B).homologyDegreeMap
@@ -1122,7 +1498,12 @@ theorem normalizedBoundaryHomology_naturality (f : A →ₙₐ[k] B) (hOne : f 1
     (normalizedBComplexMapLift f hOne) (normalizedBComplexMapLift f hOne)
   exact normalizedBComplexMapLift_boundary f hOne n
 
-/-- The original normalized independent-carrier algebra map is an MixedComplex.Hom. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The normalized chain map and its Connes square form
+a morphism of the lifted normalized mixed complexes. -/
 def normalizedMixedComplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     normalizedMixedComplexModelLift.{u, v, w} k A ⟶ normalizedMixedComplexModelLift.{u, w, v} k B :=
   MixedComplex.ofBoundaryHomotopyMap (normalizedBoundaryHomotopyLift.{u, v, w} k A)
@@ -1131,12 +1512,22 @@ def normalizedMixedComplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (normalizedBoundaryHomotopyLift_square.{u, w, v} k B)
     (normalizedBComplexMapLift f hOne) (normalizedBComplexMapLift_boundary f hOne)
 
-/-- The canonical normalized mixed map retains the original unique quotient chain map. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The underlying chain map of the normalized mixed
+morphism is `normalizedBComplexMapLift(f,hOne)`. -/
 @[simp]
 theorem normalizedMixedComplexMapLift_underlying (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (normalizedMixedComplexMapLift f hOne).underlying = normalizedBComplexMapLift f hOne := rfl
 
-/-- The independent-world normalized mixed map transports the column coordinates. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The normalized mixed-complex morphism induces a map
+between the two lifted normalized Connes bicomplexes. -/
 def normalizedMixedBicomplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
         (ComplexShape.down ℕ)).mapHomologicalComplex (ComplexShape.down ℕ)).obj
@@ -1168,7 +1559,13 @@ def normalizedMixedBicomplexMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     (normalizedMixedComplexMapLift f hOne).underlying
     (fun n => (normalizedMixedComplexMapLift f hOne).comm_B n)
 
-/-- Every supported mixed component is the original normalized map in the native coordinates. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. For a supported cell `n+p=q`, the normalized
+bicomplex-map component is `Φ̄_n` under the two lifted
+translated-cell identifications. -/
 theorem normalizedMixedBicomplexMapLift_component (f : A →ₙₐ[k] B) (hOne : f 1 = 1)
     (p n q : ℕ) (h : n + p = q) :
     ((normalizedMixedBicomplexMapLift f hOne).f p).f q =
@@ -1202,7 +1599,13 @@ theorem normalizedMixedBicomplexMapLift_component (f : A →ₙₐ[k] B) (hOne :
   exact ChainComplex.mixedBicomplexFunctorMap_component UA UB K L H₀A H₀B hA hB HA HB hcA hcB
     (normalizedBComplexMapLift f hOne) (normalizedBComplexMapLift_boundary f hOne) p n q h
 
-/-- The quotient and the original independent-world maps form the whole bicomplex square. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The bicomplex normalization projections commute
+with the two algebra maps:
+`P_K,A ≫ f_K̄ = f_K ≫ P_K,B`. -/
 theorem normalizedMixedProjectionLift_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     normalizedMixedProjectionLift.{w} k A ≫ normalizedMixedBicomplexMapLift f hOne =
       connesMixedBicomplexMapLift f hOne ≫ normalizedMixedProjectionLift.{v} k B := by
@@ -1286,7 +1689,12 @@ theorem normalizedMixedProjectionLift_naturality (f : A →ₙₐ[k] B) (hOne : 
             connesBoundary_square k A j) p q (by omega))
     exact hZero.eq_of_src _ _
 
-/-- Native total-map composition carries the quotient square to the total complexes. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. After totalization the normalization square is
+`P_A^lift ≫ Tot(f_K̄) = Tot(f_K) ≫ P_B^lift`. -/
 theorem normalizedMixedTotalProjectionLift_naturality (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     normalizedMixedTotalProjectionLift.{w} k A ≫
         HomologicalComplex₂.total.map (normalizedMixedBicomplexMapLift f hOne)
@@ -1304,7 +1712,13 @@ theorem normalizedMixedTotalProjectionLift_naturality (f : A →ₙₐ[k] B) (hO
           (HomologicalComplex₂.total.map_comp (connesMixedBicomplexMapLift f hOne)
             (normalizedMixedProjectionLift.{v} k B) (ComplexShape.down ℕ)))
 
-/-- The preserved finite-diagonal coproducts transport the normalized mixed total map. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The normalized bicomplex map and total-lift
+comparisons give the chain map between lifted normalized
+mixed totals. -/
 def normalizedMixedTotalMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
     ((ModuleCat.uliftFunctor.{w, max u v} k).mapHomologicalComplex
       (ComplexShape.down ℕ)).obj (normalizedMixedTotal k A) ⟶
@@ -1327,7 +1741,13 @@ def normalizedMixedTotalMapLift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) :
 
 end Naturality
 
-/-- Exact native lifting and the finite-diagonal comparison identify lifted mixed homology. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. The normalized mixed homology lift is the canonical
+isomorphism `L_ℓ(H_n(T̄)) ≅ H_n(Tot(L_ℓ K̄))`. -/
 def normalizedMixedHomologyLiftIso.{lift, ground, algebra}
     (k : Type ground) (A : Type algebra) [CommRing k] [Ring A] [Module k A]
     [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -1348,7 +1768,13 @@ section HomologyNaturality
 variable {k A} {B : Type w} [Ring B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The common-world total map induces the original-carrier normalized homology map. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The common-height total map induces a `k`-linear
+map on the two unlifted normalized homology carriers,
+`H_n(T̄_A) →ₗ[k] H_n(T̄_B)`. -/
 def normalizedMixedHomologyLinearMap (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     (normalizedMixedTotal k A).homology n →ₗ[k] (normalizedMixedTotal k B).homology n := by
   let eA := normalizedMixedHomologyLiftIso.{w} k A n
@@ -1359,7 +1785,13 @@ def normalizedMixedHomologyLinearMap (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n 
   exact ULift.moduleEquiv.toLinearMap.comp
     (m.hom.comp ULift.moduleEquiv.symm.toLinearMap)
 
-/-- The original-carrier homology map has the common-world total characteristic. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. For `x : H_n(T̄_A)`, lifting the induced homology
+value and comparing to total homology equals applying
+`H_n(Tot(f_K̄))` to the compared lift of `x`. -/
 theorem normalizedMixedHomologyLinearMap_lift (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ)
     (z : (normalizedMixedTotal k A).homology n) :
     (normalizedMixedHomologyLiftIso.{v} k B n).hom
@@ -1376,7 +1808,12 @@ theorem normalizedMixedHomologyLinearMap_lift (f : A →ₙₐ[k] B) (hOne : f 1
     HomologicalComplex.homologyMap φ n (eA.hom (ULift.up z))
   exact ModuleCat.hom_inv_apply eB _
 
-/-- The canonical lifted comparison preserves the independent-world algebra maps. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The lifted normalized-to-cyclic comparisons satisfy
+`H_n(Tot(f_K̄)) ≫ E_B^lift = E_A^lift ≫ H_n(Tot(f_cyc))`. -/
 @[reassoc]
 theorem normalizedMixedCyclicHomologyLiftIso_naturality
     (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
@@ -1458,8 +1895,15 @@ theorem normalizedMixedCyclicHomologyLiftIso_naturality
 
 end HomologyNaturality
 
-/-- The lifted comparison is the comparison on the original carriers
-under native homology lifting. -/
+/-- Let `k` be a commutative ring and `A` a unital ring with
+compatible central `k`-action. The regular and normalized mixed
+totals are `T,T̄`, their projection is `P : T → T̄`, and the
+positive mixed-to-cyclic map is `i : T → Z`, where `Z` is the
+cyclic total. For an extra height `ℓ`, let `L_ℓ` lift carriers to
+`max(u,v,ℓ)`; lifted-bicomplex totals are denoted by a superscript `ℓ`. The lift of the unlifted normalized cyclic comparison
+commutes with the normalized and cyclic homology-lift
+isomorphisms: both routes from `L_ℓ(H_n(T̄))` to
+`H_n(Z^ℓ)` are equal. -/
 @[reassoc]
 theorem normalizedMixedCyclicHomologyLiftIso_lift.{lift, ground, algebra}
     (k : Type ground) (A : Type algebra) [CommRing k] [Ring A] [Module k A]
@@ -1570,7 +2014,15 @@ section ComparisonNaturality
 variable {k A} {B : Type w} [Ring B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The canonical comparison is natural on the original carriers in independent algebra worlds. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+`k`-module actions compatible with multiplication on both sides:
+`r • (ab)=(r • a)b=a(r • b)`. For a nonunital `k`-algebra map
+`f : A →ₙₐ[k] B`, assume `hOne : f(1_A)=1_B`. In degree `n ∈ ℕ`,
+let `mN_f` be its map on normalized mixed-total homology and `HC_f`
+its cyclic-homology map. The canonical comparisons
+`E_A : H_n(normalizedMixedTotal(k,A)) ≅ HC_n(k,A)` and `E_B` satisfy
+`E_B(mN_f(x))=HC_f(E_A(x))` for every `x`.
+This is the commuting normalized-to-cyclic comparison square. -/
 theorem normalizedMixedCyclicHomologyIso_naturality
     (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ)
     (x : (normalizedMixedTotal k A).homology n) :
@@ -1664,7 +2116,14 @@ theorem normalizedMixedCyclicHomologyIso_naturality
   change E_B.hom.hom (mN₀ x) = mC₀ (E_A.hom.hom x)
   exact congrArg (fun z : UB.obj CB₀ => z.down) hUp
 
-/-- The same square is an equality of linear maps, without equating the carrier universes. -/
+/-- Let `k` be a commutative ring and `A,B` unital rings with
+compatible central `k`-actions. Let `f : A →ₙₐ[k] B` satisfy
+`hOne : f(1_A)=1_B`. In the common height `max(u,v,w)`, denote
+its full and normalized chain maps by `Φ,Φ̄`, and the normalization
+projections by `p_A,p_B`. The canonical normalized-to-cyclic comparisons
+satisfy the linear-map equality
+`E_B ∘ mN_f = HC_f ∘ E_A` in degree `n`, on the algebra
+homology carriers. -/
 theorem normalizedMixedCyclicHomologyIso_linear_naturality
     (f : A →ₙₐ[k] B) (hOne : f 1 = 1) (n : ℕ) :
     (normalizedMixedCyclicHomologyIso k B n).hom.hom.comp

@@ -2,18 +2,18 @@
 
 ## Splitting
 
-- [Cochain Shift d Next](cochain-shift-d-next.md)
-- [Cochain Shift prev D](cochain-shift-prev-d.md)
-- [Cochain Shift normalize d Next](cochain-shift-normalize-d-next.md)
-- [Cochain Shift normalize prev D](cochain-shift-normalize-prev-d.md)
-- [Normalized Homology Projector cochain Shift](normalized-homology-projector-cochain-sh.md)
-- [Homotopy Id Normalized Homology Projector cochain Shift hom](homotopy-id-normalized-homology-projecto.md)
-- [Chain Shift d Next](chain-shift-d-next.md)
-- [Chain Shift prev D](chain-shift-prev-d.md)
-- [Chain Shift normalize d Next](chain-shift-normalize-d-next.md)
-- [Chain Shift normalize prev D](chain-shift-normalize-prev-d.md)
-- [Normalized Homology Projector chain Shift](normalized-homology-projector-chain-shif.md)
+- [Outgoing splitting projector under cochain shift](cochain-shift-d-next.md)
+- [Incoming splitting projector under cochain shift](cochain-shift-prev-d.md)
+- [Normalized outgoing projector under cochain shift](cochain-shift-normalize-d-next.md)
+- [Normalized incoming projector under cochain shift](cochain-shift-normalize-prev-d.md)
+- [Complementary complex projector under cochain shift](normalized-homology-projector-cochain-sh.md)
+- [Sign of the shifted deformation homotopy](homotopy-id-normalized-homology-projecto.md)
+- [Outgoing splitting projector under chain shift](chain-shift-d-next.md)
+- [Incoming splitting projector under chain shift](chain-shift-prev-d.md)
+- [Normalized outgoing projector under chain shift](chain-shift-normalize-d-next.md)
+- [Normalized incoming projector under chain shift](chain-shift-normalize-prev-d.md)
+- [Complementary complex projector under chain shift](normalized-homology-projector-chain-shif.md)
 
 ## Cochain Complex
 
-- [Splitting Of Degree Minus One Hom shift hom succ](splitting-of-degree-minus-one-hom-shift.md)
+- [Signed adjacent inverse after shifting a cochain family](splitting-of-degree-minus-one-hom-shift.md)

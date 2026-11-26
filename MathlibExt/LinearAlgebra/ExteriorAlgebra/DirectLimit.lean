@@ -13,13 +13,17 @@ public import Mathlib.Algebra.Colimit.DirectLimit
 public import Mathlib.LinearAlgebra.ExteriorAlgebra.Basic
 
 /-!
-# Exterior algebras of native directed module limits
+# Exterior algebras of directed module colimits
 
-The native directed-limit carrier is used for both the modules and their
-exterior algebras. The existing module lift gives the generator map; its
-square-zero property is checked on an actual finite-stage representative.
-The exterior universal property and native algebra lift then give inverse
-maps, proved inverse on generators. No comparison equivalence is an input.
+Let `R` be a commutative ring and `(M_i,f_ij)` a coherent system of `R`-modules over a
+nonempty directed preorder. If `L=colim_i M_i` and `C=colim_i ExteriorAlgebra R M_i`, the
+stage maps induce an `R`-algebra equivalence `C ≃ₐ[R] ExteriorAlgebra R L`.
+
+The forward map sends a stage element `j_i(a)` to `ExteriorAlgebra.map u_i a`. Its inverse
+sends `ι(u_i x)` to `j_i(ι x)`. These formulas also specify the generator map `L → C` and its
+square-zero relation.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -35,11 +39,16 @@ variable (R : Type u) [CommRing R]
   (M : I → Type w) [∀ i, AddCommGroup (M i)] [∀ i, Module R (M i)]
   (f : ∀ i j, i ≤ j → M i →ₗ[R] M j) [DirectedSystem M (f · · ·)]
 
-/-- The actual exterior maps induced by the original directed linear transitions. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. The transition `directLimitTransition R M f i j h` is `ExteriorAlgebra.map
+f_ij : ExteriorAlgebra R M_i →ₐ[R] ExteriorAlgebra R M_j`. -/
 def directLimitTransition (i j : I) (h : i ≤ j) :
     ExteriorAlgebra R (M i) →ₐ[R] ExteriorAlgebra R (M j) := map (f i j h)
 
-/-- Native exterior maps inherit the original directed-system identity and composition. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+The induced maps `ExteriorAlgebra.map f_ij` satisfy the identity and composition laws and form
+a directed system of exterior algebras. -/
 instance directLimitTransition_directedSystem : DirectedSystem
     (fun i => ExteriorAlgebra R (M i)) (directLimitTransition R M f · · ·) where
   map_self := by
@@ -61,11 +70,20 @@ instance directLimitTransition_directedSystem : DirectedSystem
 
 variable [IsDirectedOrder I] [Nonempty I]
 
-/-- The native directed limit of the original exterior algebras. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps.
+`directLimitAlgebra R M f` is the algebra limit `C` with transitions `ExteriorAlgebra.map
+f_ij`. -/
 abbrev directLimitAlgebra :=
   DirectLimit (fun i => ExteriorAlgebra R (M i)) (directLimitTransition R M f)
 
-/-- The actual limit-module generator map into the native limit of the exterior algebras. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps.
+`directLimitGenerator R M f : L →ₗ[R] C` sends `u_i(x)` to `j_i(ι x)`. -/
 def directLimitGenerator : DirectLimit M f →ₗ[R] directLimitAlgebra R M f :=
   DirectLimit.Module.lift R I M f
     (fun i => (DirectLimit.Algebra.of (fun a => ExteriorAlgebra R (M a))
@@ -79,7 +97,11 @@ def directLimitGenerator : DirectLimit M f →ₗ[R] directLimitAlgebra R M f :=
       exact DirectLimit.Algebra.of_f (R := R) (G := fun a => ExteriorAlgebra R (M a))
         (f := directLimitTransition R M f) (i := i) (j := j) h (ι R x))
 
-/-- The generator map keeps the original stage generator and canonical algebra injection. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. For `i : I` and
+`x : M_i`, `directLimitGenerator R M f (u_i x)=j_i(ι x)`. -/
 theorem directLimitGenerator_of (i : I) (x : M i) :
     directLimitGenerator R M f (DirectLimit.Module.of R I M f i x) =
       DirectLimit.Algebra.of (fun a => ExteriorAlgebra R (M a)) (directLimitTransition R M f) i
@@ -87,7 +109,11 @@ theorem directLimitGenerator_of (i : I) (x : M i) :
   rw [directLimitGenerator, DirectLimit.Module.lift_of]
   rfl
 
-/-- Every actual limit-module generator still squares to zero. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. For every `x :
+L`, `directLimitGenerator R M f x * directLimitGenerator R M f x=0` in `C`. -/
 theorem directLimitGenerator_sq_zero (x : DirectLimit M f) :
     directLimitGenerator R M f x * directLimitGenerator R M f x = 0 := by
   obtain ⟨i, y, rfl⟩ := DirectLimit.exists_eq_mk f x
@@ -95,11 +121,20 @@ theorem directLimitGenerator_sq_zero (x : DirectLimit M f) :
       directLimitGenerator R M f (DirectLimit.Module.of R I M f i y) = 0
   rw [directLimitGenerator_of, ← map_mul, ι_sq_zero, map_zero]
 
-/-- The exterior universal property gives the canonical map into the native exterior-algebra limit. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. The `R`-algebra
+map `toDirectLimit : ExteriorAlgebra R L → C` sends `ι(x)` to `directLimitGenerator x` and
+hence `ι(u_i x)` to `j_i(ι x)`. -/
 def toDirectLimit : ExteriorAlgebra R (DirectLimit M f) →ₐ[R] directLimitAlgebra R M f :=
   lift R ⟨directLimitGenerator R M f, directLimitGenerator_sq_zero R M f⟩
 
-/-- Native algebra descent sends each original exterior stage to the actual exterior algebra of the module limit. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. The `R`-algebra
+map `fromDirectLimit : C → ExteriorAlgebra R L` sends `j_i(a)` to `ExteriorAlgebra.map u_i a`. -/
 def fromDirectLimit : directLimitAlgebra R M f →ₐ[R] ExteriorAlgebra R (DirectLimit M f) :=
   DirectLimit.Algebra.lift (fun i => ExteriorAlgebra R (M i)) (directLimitTransition R M f)
     (ExteriorAlgebra R (DirectLimit M f)) (fun i => map (DirectLimit.Module.of R I M f i))
@@ -111,21 +146,33 @@ def fromDirectLimit : directLimitAlgebra R M f →ₐ[R] ExteriorAlgebra R (Dire
       have hc := (map_comp_map (f i j h) (DirectLimit.Module.of R I M f j)).trans (congrArg map hof)
       exact DFunLike.congr_fun hc x)
 
-/-- The map out of the native algebra limit retains the original exterior map of each module injection. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. For `i : I` and
+`a : ExteriorAlgebra R M_i`, `fromDirectLimit(j_i a)=ExteriorAlgebra.map u_i a`. -/
 theorem fromDirectLimit_of (i : I) (x : ExteriorAlgebra R (M i)) :
     fromDirectLimit R M f
         (DirectLimit.Algebra.of (fun a => ExteriorAlgebra R (M a)) (directLimitTransition R M f) i x) =
       map (DirectLimit.Module.of R I M f i) x := by
   rw [fromDirectLimit, DirectLimit.Algebra.lift_of]
 
-/-- The inverse comparison keeps every original finite-stage generator. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. For `i : I` and
+`x : M_i`, `toDirectLimit(ι(u_i x))=j_i(ι x)`. -/
 theorem toDirectLimit_ι_of (i : I) (x : M i) :
     toDirectLimit R M f (ι R (DirectLimit.Module.of R I M f i x)) =
       DirectLimit.Algebra.of (fun a => ExteriorAlgebra R (M a)) (directLimitTransition R M f) i
         (ι R x) := by
   rw [toDirectLimit, lift_ι_apply, directLimitGenerator_of]
 
-/-- The two canonical maps are inverse on the actual exterior algebra of the limit module. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps.
+`fromDirectLimit ∘ toDirectLimit = id` as `R`-algebra maps on `ExteriorAlgebra R L`. -/
 theorem fromDirectLimit_comp_toDirectLimit :
     (fromDirectLimit R M f).comp (toDirectLimit R M f) =
       AlgHom.id R (ExteriorAlgebra R (DirectLimit M f)) := by
@@ -137,7 +184,11 @@ theorem fromDirectLimit_comp_toDirectLimit :
     ι R (DirectLimit.Module.of R I M f i y)
   rw [toDirectLimit_ι_of, fromDirectLimit_of, map_apply_ι]
 
-/-- The same native generators determine the inverse law on the directed exterior-algebra limit. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. `toDirectLimit
+∘ fromDirectLimit = id` as `R`-algebra maps on `C`. -/
 theorem toDirectLimit_comp_fromDirectLimit :
     (toDirectLimit R M f).comp (fromDirectLimit R M f) =
       AlgHom.id R (directLimitAlgebra R M f) := by
@@ -154,7 +205,12 @@ theorem toDirectLimit_comp_fromDirectLimit :
       (ι R x)
   rw [fromDirectLimit_of, map_apply_ι, toDirectLimit_ι_of]
 
-/-- The actual native directed exterior-algebra limit is canonically the exterior algebra of the native module limit. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. The comparison
+is the `R`-algebra equivalence `directLimitEquiv : C ≃ₐ[R] ExteriorAlgebra R L`, with forward
+map `fromDirectLimit` and inverse `toDirectLimit`. -/
 def directLimitEquiv : directLimitAlgebra R M f ≃ₐ[R] ExteriorAlgebra R (DirectLimit M f) :=
   AlgEquiv.ofBijective (fromDirectLimit R M f) (by
     constructor
@@ -167,7 +223,11 @@ def directLimitEquiv : directLimitAlgebra R M f ≃ₐ[R] ExteriorAlgebra R (Dir
       exact ⟨toDirectLimit R M f x,
         DFunLike.congr_fun (fromDirectLimit_comp_toDirectLimit R M f) x⟩)
 
-/-- The canonical comparison retains the complete exterior map at every original stage. -/
+/-- Let `R` be a commutative ring, `I` a preorder, `M_i` be `R`-modules, and `f_ij : M_i →ₗ[R]
+M_j` for `i≤j`. Assume `f_ii=id` and `f_jk ∘ f_ij=f_ik`, so the maps form a `DirectedSystem`.
+Assume `I` is nonempty and directed. Write `L=colim_i M_i`, `u_i : M_i → L` for its stage
+maps, `C=colim_i ExteriorAlgebra R M_i`, and `j_i` for the stage algebra maps. For `i : I` and
+`a : ExteriorAlgebra R M_i`, `directLimitEquiv(j_i a)=ExteriorAlgebra.map u_i a`. -/
 theorem directLimitEquiv_of (i : I) (x : ExteriorAlgebra R (M i)) :
     directLimitEquiv R M f
         (DirectLimit.Algebra.of (fun a => ExteriorAlgebra R (M a)) (directLimitTransition R M f) i x) =

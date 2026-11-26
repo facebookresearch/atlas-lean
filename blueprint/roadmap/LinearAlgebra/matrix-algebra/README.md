@@ -5,4 +5,4 @@ Matrices over rings and their algebra: matrix multiplication, transposes and con
 - [A native block involution from an actual split rectangular pair](a-native-block-involution-from-an-actual-split-r/README.md)
 - [Finite square matrices under top-left zero extension](../not-yet-classified/zero-extension/README.md)
 - [Rank of block matrices and the fixed-rank locus](rank-of-block-matrices-and-the-fixed-rank-locus/README.md)
-- [Trace under zero extension of matrices](zero-extend-trace.md)
+- [Top-left zero extension preserves matrix trace](zero-extend-trace.md)

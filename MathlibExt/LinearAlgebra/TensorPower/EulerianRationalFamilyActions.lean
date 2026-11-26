@@ -13,14 +13,15 @@ public import MathlibExt.Combinatorics.Perm.EulerianRationalFamily
 public import MathlibExt.LinearAlgebra.TensorPower.PermutationShuffleActions
 
 /-!
-# Actual rational convolution Eulerian actions on coefficient tensors
+# Rational Eulerian convolution on coefficient tensors
 
-The rational group-ring representation transports the actual
-rational multiplication and reciprocal identities to the original tensor
-level. The convolution family bar-lambda commutes with independent
-coefficient maps and uniform tail maps. The original signed tensor
-shuffle law holds at every rational parameter. These are level actions;
-this owner does not assume a Hochschild boundary or homology law.
+Let k be a commutative ℚ-algebra and M,V k-modules. The Eulerian family Aₙ(a) on M ⊗ V⊗n is the
+action of Λₙ(a) = ∑ᵢ₌₀ⁿ aⁱeₙ⁽ⁱ⁾, for a ∈ ℚ. It satisfies Aₙ(a)Aₙ(b) = Aₙ(ab), and Aₙ(a) is
+invertible for a ≠ 0 with inverse Aₙ(a⁻¹). Coefficient maps and factorwise linear maps
+intertwine these actions. On tensor powers the family also preserves the signed shuffle product.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., §4.5, for the Eulerian decomposition and its
+convolution family.
 -/
 
 @[expose] public section
@@ -38,7 +39,10 @@ variable {k : Type u} [CommRing k] [Algebra ℚ k]
   {M : Type w} [AddCommGroup M] [Module k M]
   {N : Type w'} [AddCommGroup N] [Module k N]
 
-/-- The actual rational convolution family acts multiplicatively on the original coefficient tensor. -/
+/-- Multiplication of rational Eulerian convolution operators.
+
+For a commutative ℚ-algebra k and k-modules M,V, let Aₙ(a) be the action of Λₙ(a) on M ⊗
+V⊗n. For a,b ∈ ℚ, Aₙ(a) ∘ Aₙ(b) = Aₙ(ab). -/
 theorem coefficientEulerianLambda_mul (n : ℕ) (a b : ℚ) :
     (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianLambda n a)).comp
         (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianLambda n b)) =
@@ -47,7 +51,10 @@ theorem coefficientEulerianLambda_mul (n : ℕ) (a b : ℚ) :
     coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianLambda n b) = _
   rw [← map_mul, Equiv.Perm.eulerianLambda_mul]
 
-/-- Every actual rational parameter acts by its original power on the original coefficient Eulerian piece. -/
+/-- The eigenvalue on an Eulerian summand.
+
+For a commutative ℚ-algebra k, k-modules M,V, i ≤ n and a ∈ ℚ, the action Aₙ(a) composed
+with the projector eₙ⁽ⁱ⁾ equals algebraMap(aⁱ) times that projector on M ⊗ V⊗n. -/
 theorem coefficientEulerianLambda_comp_eulerian (n i : ℕ) (hi : i ≤ n) (a : ℚ) :
     (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianLambda n a)).comp
       (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianElement n i)) =
@@ -58,7 +65,10 @@ theorem coefficientEulerianLambda_comp_eulerian (n i : ℕ) (hi : i ≤ n) (a : 
   rw [← map_mul, Equiv.Perm.eulerianLambda_mul_eulerianElement n i hi a,
     coefficientRationalPermutationAction_smul]
 
-/-- The actual nonzero rational parameter has the original reciprocal-parameter inverse on every coefficient level. -/
+/-- The Eulerian convolution equivalence at a nonzero parameter.
+
+For a commutative ℚ-algebra k, k-modules M,V and a ≠ 0 in ℚ, Aₙ(a) defines a k-linear
+equivalence of M ⊗ V⊗n. Its inverse is Aₙ(a⁻¹). -/
 def coefficientEulerianLambdaEquiv (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
     M ⊗[k] TensorPower k n V ≃ₗ[k] M ⊗[k] TensorPower k n V :=
   LinearEquiv.ofLinearMap
@@ -69,17 +79,27 @@ def coefficientEulerianLambdaEquiv (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
     (by rw [coefficientEulerianLambda_mul (k := k) (M := M) (V := V), inv_mul_cancel₀ ha,
       Equiv.Perm.eulerianLambda_one, map_one]; rfl)
 
-/-- The actual equivalence's forward map is the original convolution family action. -/
+/-- The forward map of the convolution equivalence.
+
+For a commutative ℚ-algebra k, k-modules M,V and a ≠ 0 in ℚ, the linear map underlying
+coefficientEulerianLambdaEquiv is the action of Λₙ(a) on M ⊗ V⊗n. -/
 theorem coefficientEulerianLambdaEquiv_toLinearMap (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
     (coefficientEulerianLambdaEquiv (k := k) (M := M) (V := V) n a ha).toLinearMap =
       coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianLambda n a) := rfl
 
-/-- The actual equivalence's inverse map is the original reciprocal convolution family action. -/
+/-- The inverse map of the convolution equivalence.
+
+For a commutative ℚ-algebra k, k-modules M,V and a ≠ 0 in ℚ, the inverse linear map is the
+action of Λₙ(a⁻¹) on M ⊗ V⊗n. -/
 theorem coefficientEulerianLambdaEquiv_symm_toLinearMap (n : ℕ) (a : ℚ) (ha : a ≠ 0) :
     (coefficientEulerianLambdaEquiv (k := k) (M := M) (V := V) n a ha).symm.toLinearMap =
       coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianLambda n a⁻¹) := rfl
 
-/-- The actual finite rational family commutes with independent coefficient maps and uniform original tail maps. -/
+/-- Naturality of Eulerian convolution in coefficients and tensor factors.
+
+For a commutative ℚ-algebra k and k-linear maps f : M → N and g : V → W, put T = f ⊗ g⊗n.
+Then T ∘ Aₙ,M,V(a) = Aₙ,N,W(a) ∘ T for every a ∈ ℚ. The four modules may have independent
+universes. -/
 theorem coefficientEulerianLambda_naturality (n : ℕ) (a : ℚ) (f : M →ₗ[k] N) (g : V →ₗ[k] W) :
     (TensorProduct.map f (PiTensorProduct.map (fun _ : Fin n => g))).comp
         (coefficientRationalPermutationAction (k := k) (M := M) (V := V) n (Equiv.Perm.eulerianLambda n a)) =
@@ -89,7 +109,11 @@ theorem coefficientEulerianLambda_naturality (n : ℕ) (a : ℚ) (f : M →ₗ[k
     coefficientRationalPermutationAction_sum]
   exact coefficientPermutationOperator_naturality n _ g f
 
-/-- The actual rational convolution operation respects the original signed tensor shuffle product. -/
+/-- Eulerian convolution preserves the signed shuffle product.
+
+For a commutative ℚ-algebra k, a k-module V, p,q ≥ 0 and a ∈ ℚ, let shₚ,ᵩ : V⊗p ⊗ V⊗q →
+V⊗(p+q) be the shuffle product weighted by permutation signs. Then Aₚ₊ᵩ(a) ∘ shₚ,ᵩ = shₚ,ᵩ ∘
+(Aₚ(a) ⊗ Aᵩ(a)). -/
 theorem rationalEulerianLambda_signedShuffleProduct_rat (p q : ℕ) (a : ℚ) :
     (rationalPermutationAction (k := k) (V := V) (p + q) (Equiv.Perm.eulerianLambda (p + q) a)).comp
         (signedShuffleProduct (k := k) (V := V) p q) =

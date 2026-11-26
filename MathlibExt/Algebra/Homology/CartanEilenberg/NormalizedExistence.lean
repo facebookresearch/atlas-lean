@@ -16,10 +16,14 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.Bicomplex
 /-!
 # Zero-normalized Cartan–Eilenberg resolutions
 
-A Cartan–Eilenberg resolution can be chosen so that every zero term of the original complex
-has a zero resolution column. Normalize a projective resolution to `ProjectiveResolution.self`
-when its resolved object is zero, and use the horseshoe constructions with those normalized
-endpoints. Each normalized endpoint resolution is homotopy equivalent to the given resolution.
+Let C be abelian and L a nonnegative chain complex. For specified boundary and homology
+projective resolutions, replace every endpoint resolution P by P.zeroNormalized, using the
+degree-zero resolution when the resolved object is zero. The two horseshoe constructions give
+normalized Cartan–Eilenberg data.
+
+Every endpoint normalization is homotopy equivalent to its original resolution, and the forward
+maps preserve augmentation. Whenever Lⱼ is zero, its entire normalized resolution column is zero
+in every resolution degree, including zero terms inside the support of L.
 
 ## References
 
@@ -45,8 +49,12 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 
 namespace CartanEilenbergResolution
 
-/-- Cartan--Eilenberg resolution data from supplied endpoint resolutions,
-using the trivial resolution whenever a boundary or homology object is zero. -/
+/-- Let C be abelian and L a nonnegative chain complex. Let PBⱼ and PHⱼ be specified projective
+resolutions of its outgoing boundaries and homology objects. Normalize each endpoint by the
+specific operation P.zeroNormalized, replacing it by the degree-zero resolution when its
+resolved object is zero. The two horseshoes on these normalized endpoints define a
+Cartan–Eilenberg resolution of L, reusing the first cycles resolution as the second horseshoe's
+left endpoint. -/
 noncomputable def ofResolutionsNormalized (L : ChainComplex C ℕ)
     (PB : ∀ j : ℕ, ProjectiveResolution (L.boundaryFrom j))
     (PH : ∀ j : ℕ, ProjectiveResolution (L.homology j)) :
@@ -70,8 +78,10 @@ theorem ofResolutionsNormalized_homologyResolution (L : ChainComplex C ℕ)
       (PH j).zeroNormalized :=
   rfl
 
-/-- The chosen Cartan--Eilenberg resolution with zero-normalized endpoint
-resolutions. -/
+/-- Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. The globally chosen boundary and homology resolutions, each replaced by its
+zeroNormalized resolution at zero objects, give the chosen normalized Cartan–Eilenberg
+resolution of L. -/
 noncomputable def ofNormalized [HasProjectiveResolutions C]
     (L : ChainComplex C ℕ) : CartanEilenbergResolution L :=
   ofResolutionsNormalized L
@@ -92,15 +102,20 @@ theorem ofNormalized_homologyResolution [HasProjectiveResolutions C]
       (CategoryTheory.projectiveResolution (L.homology j)).zeroNormalized :=
   rfl
 
-/-- The normalized boundary resolution is homotopy equivalent to the boundary
-resolution used by `CartanEilenbergResolution.of`. -/
+/-- Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. For j ∈ ℕ, let Z be the outgoing boundary of L in degree j and PBⱼ the projective
+resolution of Z used by the ordinary chosen resolution. The normalized boundary resolution is
+PBⱼ.zeroNormalized, and its complex is homotopy equivalent to PBⱼ.complex. -/
 noncomputable def ofNormalizedBoundaryHomotopyEquiv
     [HasProjectiveResolutions C] (L : ChainComplex C ℕ) (j : ℕ) :
     HomotopyEquiv ((ofNormalized L).boundaryResolution j).complex
       ((of L).boundaryResolution j).complex :=
   ProjectiveResolution.homotopyEquiv _ _
 
-/-- The normalized boundary comparison commutes with the augmentations. -/
+/-- Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. For the outgoing boundary object Z in degree j, let PBⱼ resolve Z and let h :
+PBⱼ.zeroNormalized.complex → PBⱼ.complex be the normalization homotopy equivalence's forward
+map. It satisfies h ≫ π_PB=π_normalized, preserving the actual augmentations to Z[0]. -/
 @[reassoc]
 theorem ofNormalizedBoundaryHomotopyEquiv_hom_π
     [HasProjectiveResolutions C] (L : ChainComplex C ℕ) (j : ℕ) :
@@ -109,15 +124,18 @@ theorem ofNormalizedBoundaryHomotopyEquiv_hom_π
       ((ofNormalized L).boundaryResolution j).π :=
   ProjectiveResolution.homotopyEquiv_hom_π _ _
 
-/-- The normalized homology resolution is homotopy equivalent to the homology
-resolution used by `CartanEilenbergResolution.of`. -/
+/-- Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. For j ∈ ℕ, let Z=Hⱼ(L) and let PHⱼ be its chosen projective resolution. The normalized
+homology endpoint is PHⱼ.zeroNormalized, whose complex is homotopy equivalent to PHⱼ.complex. -/
 noncomputable def ofNormalizedHomologyHomotopyEquiv
     [HasProjectiveResolutions C] (L : ChainComplex C ℕ) (j : ℕ) :
     HomotopyEquiv ((ofNormalized L).homologyResolution j).complex
       ((of L).homologyResolution j).complex :=
   ProjectiveResolution.homotopyEquiv _ _
 
-/-- The normalized homology comparison commutes with the augmentations. -/
+/-- Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. For Z=Hⱼ(L), let PHⱼ resolve Z and h : PHⱼ.zeroNormalized.complex → PHⱼ.complex be the
+forward normalization equivalence. Then h ≫ π_PH=π_normalized as augmentations to Z[0]. -/
 @[reassoc]
 theorem ofNormalizedHomologyHomotopyEquiv_hom_π
     [HasProjectiveResolutions C] (L : ChainComplex C ℕ) (j : ℕ) :
@@ -147,9 +165,12 @@ private theorem homology_isZero_of_isZero_X
     IsZero (L.homology j) :=
   IsZero.of_epi (L.homologyπ j) (cycles_isZero_of_isZero_X L j hX)
 
-/-- Every term of the normalized resolution of `L.X j` is zero whenever the
-original term `L.X j` is zero. This applies at internal zero terms as well as
-outside a bounded range. -/
+/-- Let C be abelian and L a nonnegative chain complex. Let PBⱼ and PHⱼ be specified projective
+resolutions of its outgoing boundaries and homology objects. Normalize each endpoint by the
+specific operation P.zeroNormalized, replacing it by the degree-zero resolution when its
+resolved object is zero. If Lⱼ is a zero object, every resolution-degree-a term of the
+normalized term resolution of Lⱼ is a zero object, for all j,a ∈ ℕ. This includes internal zero
+terms of L. -/
 theorem ofResolutionsNormalized_termResolution_X_isZero_of_isZero_X
     (L : ChainComplex C ℕ)
     (PB : ∀ j : ℕ, ProjectiveResolution (L.boundaryFrom j))
@@ -177,7 +198,11 @@ theorem ofResolutionsNormalized_termResolution_X_isZero_of_isZero_X
   rw [biprod_isZero_iff]
   exact ⟨hCycles, hBj⟩
 
-/-- Every bicomplex object over a zero term of the original complex is zero. -/
+/-- Let C be abelian and L a nonnegative chain complex. Let PBⱼ and PHⱼ be specified projective
+resolutions of its outgoing boundaries and homology objects. Normalize each endpoint by the
+specific operation P.zeroNormalized, replacing it by the degree-zero resolution when its
+resolved object is zero. If Lⱼ is zero, the normalized Cartan–Eilenberg bicomplex entry (a,j) is
+zero for every resolution degree a ∈ ℕ. -/
 theorem ofResolutionsNormalized_bicomplex_X_isZero_of_isZero_X
     (L : ChainComplex C ℕ)
     (PB : ∀ j : ℕ, ProjectiveResolution (L.boundaryFrom j))
@@ -188,16 +213,18 @@ theorem ofResolutionsNormalized_bicomplex_X_isZero_of_isZero_X
   exact ofResolutionsNormalized_termResolution_X_isZero_of_isZero_X
     L PB PH j a hX
 
-/-- Every term of the chosen normalized resolution column over a zero term
-of the original complex is zero. -/
+/-- Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. If Lⱼ is a zero object, the term-resolution column of the chosen normalized
+Cartan–Eilenberg resolution is zero in every resolution degree a. -/
 theorem ofNormalized_termResolution_X_isZero_of_isZero_X
     [HasProjectiveResolutions C] (L : ChainComplex C ℕ)
     (j a : ℕ) (hX : IsZero (L.X j)) :
     IsZero (((ofNormalized L).termResolution j).complex.X a) :=
   ofResolutionsNormalized_termResolution_X_isZero_of_isZero_X L _ _ j a hX
 
-/-- The chosen normalized Cartan--Eilenberg bicomplex is zero in every
-resolution degree over each zero term of the original complex. -/
+/-- Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. For all a,j ∈ ℕ with Lⱼ zero, the entry (a,j) of the chosen normalized Cartan–Eilenberg
+bicomplex is a zero object. -/
 theorem ofNormalized_bicomplex_X_isZero_of_isZero_X
     [HasProjectiveResolutions C] (L : ChainComplex C ℕ)
     (a j : ℕ) (hX : IsZero (L.X j)) :

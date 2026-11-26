@@ -1,3 +1,6 @@
-# Algebra Positive Coefficient Map
+# The coefficient chain map of the raw proper-shuffle quotient
 
-The original proper quotient coefficient map uses the original A-linear quotient classes.
+The coefficient chain map of the raw proper-shuffle quotient.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+descend the raw coefficient map through the both-positive relation modules.

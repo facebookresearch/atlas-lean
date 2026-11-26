@@ -1,4 +1,5 @@
-# Map tprod
+# The tensor-coordinate formula for a map over fixed coefficients
 
-Every tail factor is mapped by the algebra map and the original
-coefficient head is unchanged.
+The tensor-coordinate formula for a map over fixed coefficients.
+
+In Hochschild degree `q`, the map induced by `f` sends `b ⊗ ⊗ᵢ aᵢ` to `b ⊗ ⊗ᵢ f(aᵢ)`.

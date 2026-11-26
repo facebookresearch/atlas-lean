@@ -15,7 +15,13 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.OpResolutionNormali
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AcyclicResolution
 
 /-!
-# The exact triangular sign of the SAME retained injective comparison
+# Triangular signs in the injective acyclic comparison
+
+For an additive left-exact functor between abelian categories, the
+acyclic-resolution comparison on an injective resolution differs from
+its canonical right-derived comparison by the sign
+`σ_n=(-1)^(n(n+1)/2)`. Injective terms have the required vanishing of
+positive right-derived values.
 -/
 
 @[expose] public section
@@ -25,7 +31,9 @@ universe u v u' v'
 open CategoryTheory CategoryTheory.Limits CategoryTheory.Preadditive
 
 namespace CategoryTheory
-/-- Two comparison isos cancel around a integer scalar. -/
+/-- In a preadditive category `E`, let `a : X₀ → X₁`,
+`b : X₁ ≅ X₂`, `c : X₂ ≅ X₃`, and `s ∈ ℤ`.
+Then `(a ≫ b ≫ c) ≫ (s • (c⁻¹ ≫ b⁻¹)) = s • a`. -/
 theorem normalizationIsoPair_zsmul_cancel {E : Type u} [Category.{v} E] [Preadditive E]
     {X₀ X₁ X₂ X₃ : E} (a : X₀ ⟶ X₁) (b : X₁ ≅ X₂) (c : X₂ ≅ X₃) (s : ℤ) :
     (a ≫ b.hom ≫ c.hom) ≫ (s • (c.inv ≫ b.inv)) = s • a := by
@@ -37,17 +45,20 @@ namespace CategoryTheory.InjectiveResolution
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/-- Every original injective resolution term has its required positive-derived vanishing. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For every injective resolution `J` of `X`,
+all its terms are `F`-acyclic: `R^(n+1)F(J^q)=0` for every `q,n`. -/
 theorem normalizationInjectiveTerms_acyclic {X : C} (J : InjectiveResolution X)
     (F : C ⥤ D) [F.Additive] :
     ∀ q n : ℕ, IsZero ((F.rightDerived (n + 1)).obj (J.cocomplex.X q)) :=
   fun q n => F.isZero_rightDerived_obj_injective_succ n (J.cocomplex.X q)
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-In every degree the SAME retained acyclic comparison on a injective resolution equals its SAME
-original resolution comparison multiplied by the proved triangular sign.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and preserving finite limits, and `J` an
+injective resolution of `X` with `R^(i+1)F(J^q)=0` for every `q,i`. In degree `n`, the forward acyclic comparison on `J` is
+`σ_n` times the forward canonical injective-resolution comparison,
+where `σ_n` is the triangular normalization sign. -/
 theorem normalizationAcyclicInjective_hom {X : C} (J : InjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteLimits F]
     (hJ : ∀ q i : ℕ, IsZero ((F.rightDerived (i + 1)).obj (J.cocomplex.X q))) (n : ℕ) :
@@ -100,7 +111,11 @@ theorem normalizationAcyclicInjective_hom {X : C} (J : InjectiveResolution X)
     _ = s • a := normalizationIsoPair_zsmul_cancel a b c s
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The exact original retained-to-identity has the proved closed triangular exponent. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive and preserving finite limits, and `J` an
+injective resolution of `X` with `R^(i+1)F(J^q)=0` for every `q,i`. The forward acyclic comparison equals
+`(-1)^(n(n+1)/2)` times the canonical map
+`R^nF(X) → Hⁿ(F(J))`. -/
 theorem normalizationAcyclicInjective_hom_closed {X : C} (J : InjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteLimits F]
     (hJ : ∀ q i : ℕ, IsZero ((F.rightDerived (i + 1)).obj (J.cocomplex.X q))) (n : ℕ) :

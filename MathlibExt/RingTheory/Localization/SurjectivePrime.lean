@@ -14,19 +14,17 @@ public import Mathlib.RingTheory.Localization.Algebra
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
 
 /-!
-# Kernels of maps between prime localizations
+# Kernels under prime localization
 
-A surjective homomorphism of commutative semirings maps the complement of
-the inverse-image prime ideal onto the complement of the target prime.  The
-general localization-kernel theorem therefore identifies the kernel of the
-induced local-ring homomorphism with the extension of the original kernel.
+Let `φ : A →+* B` be a surjective homomorphism of commutative semirings and let `p` be a prime
+ideal of `B`. Its inverse image `q = φ⁻¹(p)` is prime, and `φ` maps the complement of `q` onto
+the complement of `p`.
 
-The source and target semirings may live in independent universes.  This
-file introduces no algebraic-geometry specialization or additional wrapper.
+The induced map `A_q → B_p` has kernel equal to the ideal generated in `A_q` by the image of
+`ker φ` under the localization map `A → A_q`.
 
-## Main declaration
-
-* `Localization.ker_localRingHom_eq_map_ker_of_surjective`
+Reference for ring localizations: Atiyah and Macdonald, *Introduction to Commutative Algebra*,
+Chapter 3.
 -/
 
 @[expose] public section
@@ -37,9 +35,10 @@ namespace Localization
 
 universe u v
 
-/-- The map on prime localizations induced by a surjective homomorphism of
-commutative semirings has kernel equal to the extension of the original
-kernel. -/
+/-- Let `A,B` be commutative semirings, `φ : A →+* B` a surjective homomorphism, and `p : Ideal B`
+a prime ideal. Put `q = p.comap φ`. The induced prime-localization homomorphism `φ_loc :
+Localization.AtPrime q → Localization.AtPrime p` satisfies `RingHom.ker φ_loc = (RingHom.ker
+φ).map (algebraMap A (Localization.AtPrime q))`. -/
 theorem ker_localRingHom_eq_map_ker_of_surjective
     {A : Type u} {B : Type v} [CommSemiring A] [CommSemiring B]
     (φ : A →+* B) (hφ : Function.Surjective φ)

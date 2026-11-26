@@ -1,4 +1,6 @@
-# Unop Obj Iso L
+# Coherent return to the right injective resolution
 
-The `unopFunctor`-image of the op'd left-endpoint complex (mirror of
-`unopObjIsoR`).
+Let `C` be abelian, `S` a short complex in `C`, and `I₃` an injective
+resolution of `S.X₃`. Transporting the chain complex of `opProjLeft I₃` from
+`Cᵒᵖ` back to `C` gives a cochain complex canonically isomorphic to
+`I₃.cocomplex`, with the natural-index cochain shape `n → n + 1`.

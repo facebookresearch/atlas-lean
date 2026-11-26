@@ -1,4 +1,6 @@
-# Quasi Iso alternating augmentation
+# The alternating augmentation quasi-isomorphism from a right extra degeneracy
 
-A constructed right extra degeneracy proves the quasi-isomorphism of
-the actual augmentation into the whole constant simplicial object.
+The alternating augmentation quasi-isomorphism from a right extra degeneracy.
+
+In an abelian category, a right extra degeneracy makes the alternating-face complex map of the
+augmentation to the constant simplicial target a quasi-isomorphism.

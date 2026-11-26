@@ -1,3 +1,4 @@
-# Fixed Slot Words succ eq range wedge Left
+# Fixed-slot relations are left-wedge images
 
-All fixed-slot exterior relations are exactly left wedges by that relation.
+Let `R` be a commutative ring and `M` an `R`-module. For `m : M` and `n : ℕ`, `fixedSlotWords
+m (n+1) = range(wedgeLeft R M m n)`, where `wedgeLeft` sends `x ∈ Λ^n_R M` to `m ∧ x`.

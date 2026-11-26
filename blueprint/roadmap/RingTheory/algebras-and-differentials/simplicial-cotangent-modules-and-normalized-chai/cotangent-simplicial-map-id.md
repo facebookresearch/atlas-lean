@@ -1,3 +1,6 @@
-# Cotangent Simplicial Map id
+# The cotangent simplicial map of an identity
 
-The induced cotangent map is the identity when the augmented algebra map is.
+The cotangent simplicial map of an identity.
+
+The identity of an augmented simplicial algebra induces the identity on its simplicial
+cotangent module.

@@ -1,3 +1,5 @@
-# Projection subtype
+# The split projection on the ideal
 
-The actual ideal projection is identity on the original ideal inclusion.
+The split projection on the ideal.
+
+For `x ∈ I`, applying the projection to its value in `A` returns `x`.

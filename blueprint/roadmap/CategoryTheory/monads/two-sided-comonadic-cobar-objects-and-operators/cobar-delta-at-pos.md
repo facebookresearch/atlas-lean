@@ -1,6 +1,6 @@
-# Cobar Delta At Pos
+# The right-end indexing of an interior cobar coface
 
-Public reversed-position wrapper for interior cobar cofaces: counts from the
-right-comodule end (`δ⁰` = right coaction), i.e.
-`cobarDeltaAtPos n i = deltaAtPos n i.rev`. Raw `deltaAtPos` is preserved
-unchanged and counts from the left-comodule end.
+The right-end indexing of an interior cobar coface.
+
+The interior coface insertion at `i : Fin n` is the comultiplication insertion at the reversed
+position `i.rev`.

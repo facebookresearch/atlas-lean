@@ -1,4 +1,7 @@
-# Exterior Power Base Change Component
+# The module component of exterior base change
 
-The native scalar extension of one exterior degree has the canonical
-exterior base-change component, with its original scalar map and module.
+The module component of exterior base change.
+
+For a commutative `R`-algebra `S`, this is the `S`-module isomorphism from extension of
+scalars of `⋀ⁿ[R] M` to `⋀ⁿ[S]` of the extended module. The common carrier universe includes
+both scalar rings and `M`.

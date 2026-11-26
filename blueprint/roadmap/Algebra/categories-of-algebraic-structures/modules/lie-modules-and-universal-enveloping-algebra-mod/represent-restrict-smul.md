@@ -1,3 +1,6 @@
-# Represent restrict smul
+# Recovery of the enveloping action after Lie restriction
 
-The represented restriction has exactly the original left U-module action.
+Recovery of the enveloping action after Lie restriction.
+
+For a left `U_R(L)`-module `M`, restricting to `L` and representing again retains `a • m` for
+every `a ∈ U_R(L)`.

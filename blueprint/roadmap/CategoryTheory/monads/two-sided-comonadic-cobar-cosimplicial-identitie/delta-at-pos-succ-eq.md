@@ -1,3 +1,5 @@
-# Delta At Pos succ eq
+# The successor-position comultiplication insertion formula
 
-Later raw positions recurse under `G`.
+The successor-position comultiplication insertion formula.
+
+Insertion at position `k+1` is insertion at position `k` one power lower, evaluated at `G(X)`.

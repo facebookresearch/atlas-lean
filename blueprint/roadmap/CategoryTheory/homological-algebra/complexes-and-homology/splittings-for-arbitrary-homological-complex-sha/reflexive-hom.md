@@ -1,3 +1,6 @@
-# Reflexive hom
+# Components of reflexive normalization
 
-The reflexive normalization has the explicit h d h components.
+Let K be a complex of shape c on an index type ι in a category C with zero morphisms. Let s be
+a splitting, with maps hᵢⱼ = s.hom i j : Kᵢ → Kⱼ supported on c.Rel j i and satisfying dᵢⱼ ≫
+hⱼᵢ ≫ dᵢⱼ = dᵢⱼ. The component of the reflexive normalization from Kᵢ to Kⱼ is exactly
+s.reflexive.hom i j = hᵢⱼ ≫ dⱼᵢ ≫ hᵢⱼ.

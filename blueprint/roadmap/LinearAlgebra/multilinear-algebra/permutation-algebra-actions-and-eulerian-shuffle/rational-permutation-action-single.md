@@ -1,3 +1,6 @@
-# Rational Permutation Action single
+# The action of a rational monomial on tensor factors
 
-Each actual rational generator has its original inverse-place action.
+The action of a rational monomial on tensor factors.
+
+For a commutative ℚ-algebra k, a k-module V, c ∈ ℚ and σ ∈ Sₙ, the action of c[σ] on V⊗n is
+algebraMap(c) · ρₙ(σ).

@@ -1,3 +1,5 @@
-# Vertical Homology Complex Map f
+# Components of a first-quadrant vertical-homology chain map
 
-Components of the induced map between vertical-homology complexes.
+In an abelian category `C`, for a first-quadrant bicomplex map
+`f : K → L`, its induced horizontal chain map in vertical degree
+`q` has degree-`p` component `H_q(f_p)`.

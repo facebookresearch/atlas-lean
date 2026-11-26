@@ -1,3 +1,6 @@
-# Coefficient Integral Convolution Operator comp
+# Composition of integral convolution operators
 
-Actual coefficient convolution composes by the product of its integral parameters.
+Composition of integral convolution operators.
+
+For a commutative ring k, k-modules M,V and natural parameters l,m, Bₙ(l) ∘ Bₙ(m) = Bₙ(lm)
+on M ⊗ V⊗n.

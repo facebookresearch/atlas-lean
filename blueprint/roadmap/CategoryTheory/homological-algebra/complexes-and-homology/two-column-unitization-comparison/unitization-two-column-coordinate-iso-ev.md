@@ -1,3 +1,6 @@
-# Unitization Two Column Coordinate Iso even
+# The even word of the two-column unitization comparison
 
-The complete even comparison is the original ideal word in the original normalized quotient.
+The even word of the two-column unitization comparison.
+
+A zero-column cell followed by the degreewise comparison and reduced-kernel inclusion is the
+ideal-leading normalized word.

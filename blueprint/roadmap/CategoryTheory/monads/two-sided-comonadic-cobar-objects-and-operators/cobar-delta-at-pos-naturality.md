@@ -1,3 +1,6 @@
-# Cobar Delta At Pos naturality
+# Naturality of right-indexed cobar comultiplication
 
-Naturality of the public interior-coface insertion.
+Naturality of right-indexed cobar comultiplication.
+
+The reversed-position comultiplication insertion commutes with powers of each morphism in the
+comonad's carrier category.

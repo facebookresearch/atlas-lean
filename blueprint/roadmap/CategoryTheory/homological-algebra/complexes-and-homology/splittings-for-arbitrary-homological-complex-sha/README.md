@@ -2,49 +2,49 @@
 
 ## Homological Complex
 
-- [Splitting](splitting.md)
-- [Is Split](is-split.md)
+- [Generalized-inverse splitting of a complex](splitting.md)
+- [Existence of a splitting](is-split.md)
 
 ## Splitting
 
-- [Ext](ext.md)
-- [Of Zero](of-zero.md)
-- [Of Zero hom](of-zero-hom.md)
-- [D hom idempotent](d-hom-idempotent.md)
-- [Hom d idempotent](hom-d-idempotent.md)
-- [Reflexive](reflexive.md)
-- [Reflexive hom](reflexive-hom.md)
-- [Reflexive h d h](reflexive-h-d-h.md)
-- [D reflexive hom](d-reflexive-hom.md)
-- [Reflexive hom d](reflexive-hom-d.md)
-- [Of Iso](of-iso.md)
-- [Of Iso hom](of-iso-hom.md)
-- [Of Iso refl](of-iso-refl.md)
-- [Of Iso trans](of-iso-trans.md)
-- [Map](map.md)
-- [Map hom](map-hom.md)
+- [Equality of splittings from their components](ext.md)
+- [Zero splitting of a zero-differential complex](of-zero.md)
+- [Components of the zero splitting](of-zero-hom.md)
+- [Idempotence of a differential followed by its inverse](d-hom-idempotent.md)
+- [Idempotence of an inverse followed by its differential](hom-d-idempotent.md)
+- [Reflexive normalization of a splitting](reflexive.md)
+- [Components of reflexive normalization](reflexive-hom.md)
+- [Reflexive generalized-inverse identity](reflexive-h-d-h.md)
+- [Differential projector under reflexive normalization](d-reflexive-hom.md)
+- [Inverse projector under reflexive normalization](reflexive-hom-d.md)
+- [Transport of a splitting along an isomorphism](of-iso.md)
+- [Components of an isomorphism-transported splitting](of-iso-hom.md)
+- [Identity transport of splitting data](of-iso-refl.md)
+- [Composition of splitting transports](of-iso-trans.md)
+- [Splittings preserved by zero-preserving functors](map.md)
+- [Components of a functor-mapped splitting](map-hom.md)
 
 ## Homological Complex
 
-- [Is Split of d eq zero](is-split-of-d-eq-zero.md)
-- [Is Split iff of iso](is-split-iff-of-iso.md)
-- [Map](map-2.md)
+- [Zero differentials imply a split complex](is-split-of-d-eq-zero.md)
+- [Splitness is invariant under complex isomorphisms](is-split-iff-of-iso.md)
+- [Zero-preserving functors preserve splitness](map-2.md)
 
 ## Splitting
 
-- [Normalize](normalize.md)
-- [Normalize hom](normalize-hom.md)
-- [Normalize h d h](normalize-h-d-h.md)
-- [Normalize hom comp hom](normalize-hom-comp-hom.md)
+- [Normalization with square-zero inverse components](normalize.md)
+- [Explicit normalized splitting component](normalize-hom.md)
+- [Reflexive law for normalized splitting components](normalize-h-d-h.md)
+- [Square-zero law for normalized inverse maps](normalize-hom-comp-hom.md)
 
 ## Chain Complex
 
-- [Splitting Of Degree One Hom](splitting-of-degree-one-hom.md)
-- [Splitting Of Degree One Hom hom succ](splitting-of-degree-one-hom-hom-succ.md)
-- [Is Split iff exists degree One Hom](is-split-iff-exists-degree-one-hom.md)
+- [Splitting from a degree-raising family on integer chains](splitting-of-degree-one-hom.md)
+- [Adjacent component of the integer-chain splitting](splitting-of-degree-one-hom-hom-succ.md)
+- [Integer-chain splitness by degree-raising inverses](is-split-iff-exists-degree-one-hom.md)
 
 ## Homological Complex
 
-- [Of Edgewise](of-edgewise.md)
-- [Of Edgewise hom of rel](of-edgewise-hom-of-rel.md)
-- [Is Split iff edgewise](is-split-iff-edgewise.md)
+- [Splitting from generalized inverses on each edge](of-edgewise.md)
+- [Selected inverse on an allowed reverse edge](of-edgewise-hom-of-rel.md)
+- [Splitness by generalized inverses on allowed edges](is-split-iff-edgewise.md)

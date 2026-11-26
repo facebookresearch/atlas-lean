@@ -1,3 +1,6 @@
-# Free Forget Adjunction counit
+# Counit of the polynomial free/forget adjunction
 
-The adjunction's counit is the constructed evaluation.
+Let `k` be a commutative ring in universe `u` and
+`T=max(u,v)`. The polynomial free functor sends types in `T` to
+commutative `k`-algebras with carriers in `T`. The counit of the polynomial free/forget adjunction is
+its natural evaluation map `MvPolynomial A k → A`.

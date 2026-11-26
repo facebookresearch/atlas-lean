@@ -2,8 +2,8 @@
 
 ## Category Theory
 
-- [Exact Braid](exact-braid.md)
+- [Exact braid of overlapping complexes in an abelian category](exact-braid.md)
 
 ## Exact Braid
 
-- [Exact](exact.md)
+- [Exactness of the diagonal sequence in an exact braid](exact.md)

@@ -21,14 +21,23 @@ public import MathlibExt.Algebra.Homology.TotalComplexSymmetryDownNat
 import Lean.Elab.Tactic.Omega
 
 /-!
-# Coalgebra structure on the Chevalley–Eilenberg chain complex
+# The cocommutative exterior chain coalgebra
 
-The homogeneous exterior coproduct defines a chain map from
-`canonicalChainData.complex` to its tensor square. The counit and
-coaugmentation use the tensor-unit grading comparison. Together these maps
-give a cocommutative coaugmented coalgebra for the Koszul chain braiding.
-The ring and Lie algebra may have independent universes; the complex is
-formed in the module category at height `max u v`.
+Let R:Type u be a commutative ring and L:Type v an R-Lie algebra.
+The primitive exterior coproduct gives a chain map
+Γ:C_*(L)→C_*(L)⊗C_*(L). In degree n its target is the finite
+direct sum of Λ_R^pL⊗Λ_R^qL over p+q=n, and its realization in
+E⊗_R E is the exterior coproduct.
+
+The counit has the scalar augmentation in degree zero and vanishes
+in positive degrees. The coaugmentation inserts scalars into degree
+zero. The tensor unit is ULift.{v}R concentrated in degree zero,
+and the chain category is ModuleCat over R at max{u,v}.
+
+These maps satisfy the comonoid and coaugmentation laws.
+Cocommutativity uses the Koszul braiding, which sends a degree-(p,q)
+tensor a⊗b to (−1)^{pq}b⊗a. The scalar and Lie-carrier universes
+are independent.
 -/
 
 @[expose] public section
@@ -53,11 +62,17 @@ open scoped ModuleCat.UniverseTensor
 local instance : HasFiniteBiproducts (ModuleCat.{max u v} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u v} R)
 
-/-- The canonical closed module tensor structure at the original carrier height. -/
+/-- For a commutative ring R:Type u and any universe v, tensoring
+in ModuleCat.{max u v}R has the R-linear Hom module as right
+adjoint. This is the closed module tensor structure. -/
 local instance nativeCoalgebraClosed : MonoidalClosed (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,v} (R := R)
 
-/-- The native tensor square of the existing canonical CE complex. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The tensor-square complex C⊗C has degree-n object
+⊕_{p+q=n} Λ_R^pL⊗Λ_R^qL and the signed tensor differential. -/
 def nativeTensorComplex : ChainComplex (ModuleCat.{max u v} R) ℕ := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -137,7 +152,12 @@ private theorem positiveTensorBoundary_realization (p q : ℕ) :
       (TensorProduct.map (⋀[R]^(p + 1) L).subtype (⋀[R]^(q + 1) L).subtype (a ⊗ₜ[R] b))
   simpa only [TensorProduct.map_tmul, LinearMap.id_apply, Submodule.subtype_apply] using hValue
 
-/-- Realization intertwines the native tensor differential with the ambient tensor boundary. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+Let ρ_n:(C⊗C)_n→E⊗_R E realize the homogeneous tensor
+summands. It intertwines the chain and ambient differentials:
+ρ_n d^{C⊗C}_{n+1}=D ρ_{n+1}. -/
 theorem nativeTensorDifferential_realize (n : ℕ) :
     (nativeTensorComplex R L).d (n + 1) n ≫ ExteriorAlgebra.tensorDegreeRealize R L n =
       ExteriorAlgebra.tensorDegreeRealize R L (n + 1) ≫ ModuleCat.ofHom (tensorBoundary R L) := by
@@ -280,7 +300,12 @@ theorem nativeTensorDifferential_realize (n : ℕ) :
             have hAssoc := congrArg₂ (fun x y => x + ((-1 : ℤ) ^ (p + 1)) • y) hAssoc₁ hAssoc₂
             exact hNorm.trans (hAssoc.trans hAll))
 
-/-- The native coproduct chain map on the unchanged canonical CE complex. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The homogeneous exterior coproduct gives the chain map
+Γ:C→C⊗C, with each component the sum of its degree-(p,q)
+projections for p+q=n. -/
 def nativeComplexComul : ((canonicalChainData R L).complex) ⟶ nativeTensorComplex R L where
   f n := ExteriorAlgebra.gradedCoproduct R L n
   comm' i j h := by
@@ -333,7 +358,11 @@ def nativeComplexComul : ((canonicalChainData R L).complex) ⟶ nativeTensorComp
 theorem nativeComplexComul_f (n : ℕ) :
     (nativeComplexComul R L).f n = ExteriorAlgebra.gradedCoproduct R L n := rfl
 
-/-- The tensor-unit chain complex at the canonical working height. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The chain tensor unit is ULift.{v}R in degree zero and zero
+in every positive degree, in ModuleCat at max{u,v}. -/
 def nativeUnitComplex : ChainComplex (ModuleCat.{max u v} R) ℕ := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -341,7 +370,11 @@ def nativeUnitComplex : ChainComplex (ModuleCat.{max u v} R) ℕ := by
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact HomologicalComplex.tensorUnit (ModuleCat.{max u v} R) (ComplexShape.down ℕ)
 
-/-- The native comparison between the graded unit and the chain unit. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The graded unit, concentrated in degree zero at ULift.{v}R,
+is isomorphic to the underlying graded objects of the chain tensor unit. -/
 def unitGradingIso : (ExteriorAlgebra.gradedUnit.{u,v} R) ≅ (nativeUnitComplex.{u,v} R).X := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -362,7 +395,12 @@ private theorem canonicalComplex_d_one_zero : ((canonicalChainData R L).complex)
   change ModuleCat.ofHom (differential R L 0) = 0
   rw [show differential R L 0 = 0 from h, ModuleCat.ofHom_zero]
 
-/-- The native counit chain map, retaining the original degree-zero scalar coordinate. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The exterior augmentation defines the chain counit ε:C→𝟙.
+It takes the degree-zero scalar coordinate to ULift.{v}R and
+is zero on every positive degree. -/
 def nativeComplexCounit : ((canonicalChainData R L).complex) ⟶ nativeUnitComplex.{u,v} R where
   f n := ExteriorAlgebra.gradedCounit R L n ≫ (unitGradingIso.{u,v} R).hom n
   comm' i j h := by
@@ -377,7 +415,12 @@ def nativeComplexCounit : ((canonicalChainData R L).complex) ⟶ nativeUnitCompl
       exact ((congrArg (fun x => (((canonicalChainData R L).complex).d (j + 1) j) ≫ x) hz).trans
         (comp_zero)).symm
 
-/-- The native coaugmentation chain map from the chain tensor unit. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The scalar inclusion defines the chain coaugmentation u:𝟙→C.
+In degree zero it sends the lifted scalar r to its exterior scalar,
+and it vanishes in positive degrees. -/
 def nativeComplexCoaug : nativeUnitComplex.{u,v} R ⟶ ((canonicalChainData R L).complex) where
   f n := (unitGradingIso.{u,v} R).inv n ≫ ExteriorAlgebra.gradedCoaug R L n
   comm' i j h := by
@@ -398,7 +441,12 @@ theorem nativeComplexCounit_f (n : ℕ) : (nativeComplexCounit R L).f n =
 theorem nativeComplexCoaug_f (n : ℕ) : (nativeComplexCoaug R L).f n =
     (unitGradingIso.{u,v} R).inv n ≫ ExteriorAlgebra.gradedCoaug R L n := rfl
 
-/-- The native CE comonoid, using differential and graded coherence laws. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The chain coproduct Γ and counit ε satisfy coassociativity
+and both counit identities, making C a comonoid in the signed tensor
+category of nonnegative R-module complexes. -/
 def nativeComonObj :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -467,7 +515,10 @@ def nativeComonObj :
         intro n
         exact ExteriorAlgebra.gradedCoproduct_coassoc R L n }
 
-/-- The coaugmentation preserves the native chain counit. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The coaugmentation u:𝟙→C and counit ε satisfy εu=id_𝟙. -/
 theorem nativeComplexCoaug_counit :
     nativeComplexCoaug R L ≫ nativeComplexCounit R L = 𝟙 (nativeUnitComplex.{u,v} R) := by
   apply HomologicalComplex.hom_ext
@@ -537,7 +588,11 @@ private theorem nativeUnit_leftUnitor_inv_zero (r : (nativeUnitComplex.{u,v} R).
   dsimp only [nativeUnitComplex, HomologicalComplex.tensorUnit] at r ⊢
   rfl
 
-/-- The native coaugmentation preserves the native chain coproduct. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The coaugmentation preserves coproducts:
+Γu=(u⊗u)Γ_𝟙, where Γ_𝟙 is the tensor-unit coproduct. -/
 theorem nativeComplexCoaug_comul :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -602,7 +657,11 @@ theorem nativeComplexCoaug_comul :
   · exact (HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0
       (ModuleCat.of R (ULift.{v} R)) n hn).eq_of_src _ _
 
-/-- The coaugmentation is a native chain-comonoid homomorphism. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The coaugmentation u:𝟙→C is a comonoid morphism, preserving
+the tensor-unit coproduct and counit. -/
 def nativeComplexCoaugIsComonHom :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -619,7 +678,11 @@ def nativeComplexCoaugIsComonHom :
   letI : ComonObj (nativeUnitComplex.{u,v} R) := ComonObj.instTensorUnit (ChainComplex (ModuleCat.{max u v} R) ℕ)
   exact ⟨nativeComplexCoaug_counit R L, nativeComplexCoaug_comul R L⟩
 
-/-- Native graded cocommutativity is the native Koszul chain braiding equation. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The chain coproduct is cocommutative for the Koszul braiding:
+τΓ=Γ, where τ(a_p⊗b_q)=(−1)^{pq}b_q⊗a_p. -/
 theorem nativeComplexComul_cocommutative :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -671,7 +734,11 @@ theorem nativeComplexComul_cocommutative :
   rw [hswap]
   exact ExteriorAlgebra.gradedCoproduct_cocommutative R L n
 
-/-- The native CE chain coalgebra, with the canonical complex as carrier. -/
+/-- Let R:Type u be commutative and L:Type v an R-Lie algebra.
+Write C_n=Λ_R^nL for its canonical CE chain complex, E for its
+exterior algebra and D=∂⊗id+γ⊗∂ for the signed tensor boundary.
+The complex C with its coproduct and counit is the bundled
+coalgebra object in ChainComplex(ModuleCat R,ℕ), at height max{u,v}. -/
 def nativeCoalgebra :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)

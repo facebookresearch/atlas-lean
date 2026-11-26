@@ -13,17 +13,17 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianShuffle
 public import MathlibExt.Combinatorics.Perm.EulerianProjectors
 
 /-!
-# Rational coefficient Eulerian operators
+# Rational Eulerian projectors and convolution on coefficient tensors
 
-Over a ground ring containing ℚ, rational permutation
-projectors act on the coefficient-fixed tensor tails.
-The convolution family is bar-lambda,
-eulerianLambda n a = ∑ i, a^i eₙⁱ. For a positive
-integer m, Loday’s lambdaₙᵐ is (-1)^(m - 1) times
-bar-lambda at m. Thus lambdaTwo denotes bar-lambda
-at two, and Loday’s second lambda is its negative.
-Rational parameters interpolate the convolution family;
-degree zero retains its stated unit convention.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M a compatible A-module. The
+projectors eₙ⁽ⁱ⁾ act on M ⊗[k] A⊗n by rational signed place permutations fixing M. Their
+convolution family is Λₙ(a)=∑ᵢaⁱeₙ⁽ⁱ⁾. The operator lambdaTwoOperator is Λₙ(2); for positive
+degree it differs from 2·id by a proper both-positive shuffle image. Loday's integer operation
+at m>0 has the additional scalar (-1)^(m-1), so its second operation is -Λₙ(2). Degree zero
+has e₀⁽⁰⁾=id.
+
+See J.-L. Loday, Cyclic Homology, 2nd ed., §4.5, for Eulerian idempotents and lambda
+operations.
 -/
 
 @[expose] public section
@@ -43,17 +43,28 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The original coefficient-fixed operator of the rational Eulerian group-ring element. -/
+/-- The rational Eulerian projector of a coefficient tensor level.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾
+acts on M ⊗[k] A⊗n through the rational permutation element eulerianElement(n,i), fixing the
+coefficient M. -/
 def coefficientEulerianOperator (n i : ℕ) : Module.End k (M ⊗[k] TensorPower k n A) :=
   TensorPower.coefficientRationalPermutationAction (M := M) (V := A) n
     (Equiv.Perm.eulerianElement n i)
 
-/-- The original coefficient-fixed second operation is the rational evaluation at two. -/
+/-- The coefficient convolution operator at parameter two.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+lambdaTwoOperator(n) is the action of Λₙ(2)=∑ᵢ₌₀ⁿ 2ⁱeₙ⁽ⁱ⁾. It is the convolution family at
+two; the signed integer second lambda operation is its negative. -/
 def lambdaTwoOperator (n : ℕ) : Module.End k (M ⊗[k] TensorPower k n A) :=
   TensorPower.coefficientRationalPermutationAction (M := M) (V := A) n
     (Equiv.Perm.eulerianLambda n 2)
 
-/-- The finite rational projectors act as coefficient-fixed projectors. -/
+/-- The coefficient Eulerian operators are a complete orthogonal projector family.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, the
+weights 0,…,n sum to id, and eₙ⁽ⁱ⁾eₙ⁽ʲ⁾ is eₙ⁽ⁱ⁾ if i=j and zero otherwise. -/
 theorem coefficientEulerian_projector_laws (n : ℕ) :
     (∑ i : Fin (n + 1), coefficientEulerianOperator k A M n i.val) = LinearMap.id ∧
       ∀ i j : ℕ, (coefficientEulerianOperator k A M n i).comp
@@ -70,19 +81,28 @@ theorem coefficientEulerian_projector_laws (n : ℕ) :
     rw [← map_mul, (Equiv.Perm.eulerianElement_projector_laws n).2 i j]
     split_ifs <;> simp
 
-/-- Every coefficient projector beyond its original homogeneous degree is zero. -/
+/-- Coefficient Eulerian weights above their tensor degree vanish.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽ⁱ⁾=0
+when n<i. -/
 theorem coefficientEulerian_outside (n i : ℕ) (hi : n < i) :
     coefficientEulerianOperator k A M n i = 0 := by
   rw [coefficientEulerianOperator, Equiv.Perm.eulerianElement_outside n i hi, map_zero]
 
-/-- The zero-weight coefficient projector vanishes in every positive degree. -/
+/-- The zero Eulerian weight vanishes in positive tensor degree.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, eₙ⁽⁰⁾=0
+for n>0. -/
 theorem coefficientEulerian_zero_weight (n : ℕ) (hn : 0 < n) :
     coefficientEulerianOperator k A M n 0 = 0 := by
   unfold coefficientEulerianOperator Equiv.Perm.eulerianElement
   simp_rw [Equiv.Perm.eulerianCoefficient_zero_weight n _ hn, MonoidAlgebra.single_zero]
   rw [Finset.sum_const_zero, map_zero]
 
-/-- The original zero-degree coefficient is retained by the zero-weight projector. -/
+/-- The degree-zero coefficient Eulerian projector is the identity.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, e₀⁽⁰⁾=id
+on M ⊗[k] A⊗0. -/
 theorem coefficientEulerian_degree_zero : coefficientEulerianOperator k A M 0 0 = LinearMap.id := by
   classical
   have h0 : Equiv.Perm.eulerianElement 0 0 = 1 := by
@@ -94,7 +114,10 @@ theorem coefficientEulerian_degree_zero : coefficientEulerianOperator k A M 0 0 
   rw [coefficientEulerianOperator, h0, map_one]
   rfl
 
-/-- The second operation has the exact original finite Eulerian expansion. -/
+/-- The eigenvalue expansion of coefficient convolution at two.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M,
+Λₙ(2)=∑ᵢ₌₀ⁿ algebraMap(2ⁱ)·eₙ⁽ⁱ⁾ on coefficient tensors. -/
 theorem lambdaTwoOperator_eq_sum (n : ℕ) :
     lambdaTwoOperator k A M n = ∑ i : Fin (n + 1),
       algebraMap ℚ k ((2 : ℚ) ^ i.val) • coefficientEulerianOperator k A M n i.val := by
@@ -103,7 +126,10 @@ theorem lambdaTwoOperator_eq_sum (n : ℕ) :
   simp_rw [TensorPower.coefficientRationalPermutationAction_smul]
   rfl
 
-/-- Every proper cut value lies in the original proper relation family. -/
+/-- Each both-positive coefficient shuffle cut lands in the proper relation module.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, for
+p,q>0 with p+q=n, coefficientShuffleCutEnd(p,q)(x) lies in rawPositiveRelations(n). -/
 theorem properCoefficientShuffleCut_mem (n : ℕ) (z : TensorPower.ProperShuffleDegreeCut n)
     (x : M ⊗[k] TensorPower k n A) :
     coefficientShuffleCutEnd k A M z.val x ∈ rawPositiveRelations k A M n := by
@@ -119,7 +145,10 @@ theorem properCoefficientShuffleCut_mem (n : ℕ) (z : TensorPower.ProperShuffle
     z.val.val.1 z.val.val.2 n z.val.property z.property.1 z.property.2
       (coefficientShuffleCutInput k A M z.val x)
 
-/-- The reduced second lambda value lies in the original proper relation module. -/
+/-- Convolution at two equals twice the identity modulo proper shuffles.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, for n>0,
+Λₙ(2)(x)-2x lies in rawPositiveRelations(n) for every coefficient tensor x. -/
 theorem lambdaTwo_sub_two_mem (n : ℕ) (hn : 0 < n) (x : M ⊗[k] TensorPower k n A) :
     lambdaTwoOperator k A M n x - (2 : k) • x ∈ rawPositiveRelations k A M n := by
   rw [lambdaTwoOperator, coefficientEulerianLambda_two_eq_proper_pairings k A M n hn,
@@ -127,7 +156,11 @@ theorem lambdaTwo_sub_two_mem (n : ℕ) (hn : 0 < n) (x : M ⊗[k] TensorPower k
     totalProperCoefficientShuffleCutEnd, LinearMap.sum_apply]
   exact Submodule.sum_mem _ (fun z _ => properCoefficientShuffleCut_mem k A M n z x)
 
-/-- The second lambda operation respects the original concrete coefficient pairing. -/
+/-- Convolution at two intertwines the coefficient shuffle pairing.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, on a
+(p,q) pairing, applying Λₚ₊ᵩ(2) to the output equals pairing the two inputs after their
+respective convolution-at-two operators. -/
 theorem lambdaTwo_pairing (p q : ℕ) :
   letI : MonoidalCategoryStruct (ModuleCat.{max u v w} k) :=
     ModuleCat.UniverseTensor.tensorStructure.{u, max v w} (R := k)
@@ -142,7 +175,10 @@ theorem lambdaTwo_pairing (p q : ℕ) :
       (TensorProduct.map (lambdaTwoOperator k A (ULift.{w} A) p) (lambdaTwoOperator k A M q)) :=
   coefficientEulerianLambda_pairing k A M p q 2
 
-/-- The second operation has the original Eulerian eigenvalue on each original projector. -/
+/-- The right Eulerian eigenspace identity at parameter two.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, for i≤n,
+Λₙ(2) ∘ eₙ⁽ⁱ⁾=algebraMap(2ⁱ)·eₙ⁽ⁱ⁾. -/
 theorem lambdaTwo_comp_eulerian (n i : ℕ) (hi : i ≤ n) :
     (lambdaTwoOperator k A M n).comp (coefficientEulerianOperator k A M n i) =
       algebraMap ℚ k ((2 : ℚ) ^ i) • coefficientEulerianOperator k A M n i := by
@@ -168,7 +204,10 @@ theorem lambdaTwo_comp_eulerian (n i : ℕ) (hi : i ≤ n) :
     simp [hji]
   · simp
 
-/-- Projecting an second-operation eigenvector retains the original eigenvalue. -/
+/-- The left Eulerian eigenspace identity at parameter two.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, for i≤n,
+eₙ⁽ⁱ⁾ ∘ Λₙ(2)=algebraMap(2ⁱ)·eₙ⁽ⁱ⁾. -/
 theorem eulerian_comp_lambdaTwo (n i : ℕ) (hi : i ≤ n) :
     (coefficientEulerianOperator k A M n i).comp (lambdaTwoOperator k A M n) =
       algebraMap ℚ k ((2 : ℚ) ^ i) • coefficientEulerianOperator k A M n i := by

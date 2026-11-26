@@ -13,17 +13,17 @@ module
 public import MathlibExt.Algebra.Homology.FiniteResolutionHomTransport
 
 /-!
-# Homotopies between original augmented finite-resolution comparisons
+# Homotopy uniqueness and transport of finite-resolution comparisons
 
-Two original augmented comparison maps over the same morphism are homotopic when their resolving
-images are projective and the resolving functor is fully faithful. The homotopy is constructed
-from the augmentation squares by Mathlib's projective-resolution lifting homotopy and pulled back
-to the original resolving complexes.
+Let P be preadditive, A abelian and i : P → A additive full faithful. Two augmented
+finite-resolution maps over the same base morphism are homotopic if the images of their
+resolution terms are projective. Chosen comparison maps therefore preserve identities and
+composition after passing to the homotopy category.
 
-This gives identity and composition homotopies for the existing chosen comparisons and their
-naturality under source and target change. Source change derives projectivity of its image terms
-from the original compatibility isomorphism. All finite complexes, augmentations, and bounds
-remain those of the existing finite-resolution constructors.
+Additive source functors transport the resolving complexes and homotopies. Homology-preserving
+target functors transport the augmentations while retaining the original resolving chain maps.
+Compatibility isomorphisms identify the image terms, and the stated projectivity hypotheses give
+comparison homotopies in the changed setting.
 -/
 
 @[expose] public section
@@ -44,10 +44,10 @@ variable {R₁ : FiniteResolution i X₁} {R₂ : FiniteResolution i X₂}
 variable {R₃ : FiniteResolution i X₃}
 variable {f : X₁ ⟶ X₂} {g : X₂ ⟶ X₃}
 
-/--
-Construct a homotopy from the two original augmentation squares. Projectivity is required only for
-the terms of these resolutions.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. For two comparisons φ,ψ over the same f, assume each i(R₁,ₙ)
+and i(R₂,ₙ) is projective, for all n ∈ ℕ. Then their resolving chain maps are homotopic in P. -/
 def comparisonHomotopyOfProjectiveTerms [i.Full] [i.Faithful]
     (φ ψ : Hom R₁ R₂ f)
     (h₁ : ∀ n : ℕ, Projective (i.obj (R₁.complex.X n)))
@@ -69,26 +69,29 @@ def comparisonHomotopyOfProjectiveTerms [i.Full] [i.Faithful]
     ((i.mapHomologicalComplex (ComplexShape.down ℕ)).map ψ.map)
     φ.augmentation_comm ψ.augmentation_comm
 
-/-- Original comparison uniqueness under the existing projective-image
-hypothesis used by `comparisonHom`. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. Any two
+augmented comparisons R₁ → R₂ over f have homotopic resolving chain maps. -/
 def comparisonHomotopy [i.Full] [i.Faithful] (φ ψ : Hom R₁ R₂ f)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) : Homotopy φ.map ψ.map :=
   comparisonHomotopyOfProjectiveTerms φ ψ
     (fun n => hproj (R₁.complex.X n)) (fun n => hproj (R₂.complex.X n))
 
-/--
-The original chosen comparison of an identity is homotopic to the identity map of the same
-original complex.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. For a
+finite resolution R of X₁, the chosen comparison over id_X₁ is homotopic to id_{R.complex}. -/
 def comparisonHomotopyId [i.Full] [i.Faithful] (R : FiniteResolution i X₁)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     Homotopy (comparisonHom R R (𝟙 X₁) hproj).map (𝟙 R.complex) :=
   comparisonHomotopy (comparisonHom R R (𝟙 X₁) hproj) (Hom.id R) hproj
 
-/--
-The original chosen comparison of a composite is homotopic to the composite of the same original
-chosen comparison maps.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. For a
+third resolution R₃ of X₃ and g : X₂ → X₃, the chosen comparison over g ∘ f is homotopic to the
+chosen comparison over f followed by that over g. -/
 def comparisonHomotopyComp [i.Full] [i.Faithful]
     (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂)
     (R₃ : FiniteResolution i X₃) (f : X₁ ⟶ X₂) (g : X₂ ⟶ X₃)
@@ -98,10 +101,11 @@ def comparisonHomotopyComp [i.Full] [i.Faithful]
   comparisonHomotopy (comparisonHom R₁ R₃ (f ≫ g) hproj)
     ((comparisonHom R₁ R₂ f hproj).comp (comparisonHom R₂ R₃ g hproj)) hproj
 
-/--
-The original chosen identity comparison becomes the identity under the stock homotopy-category
-quotient.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. In the
+homotopy category of nonnegative complexes in P, the chosen comparison of R with itself over
+id_X is the identity of [R.complex]. -/
 theorem comparisonHom_quotient_id [i.Full] [i.Faithful] (R : FiniteResolution i X₁)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) :
     (HomotopyCategory.quotient P (ComplexShape.down ℕ)).map
@@ -110,8 +114,11 @@ theorem comparisonHom_quotient_id [i.Full] [i.Faithful] (R : FiniteResolution i 
   simpa only [CategoryTheory.Functor.map_id] using
     HomotopyCategory.eq_of_homotopy _ _ (comparisonHomotopyId R hproj)
 
-/-- The original chosen comparisons preserve composition in the stock
-homotopy category, with their original literal forward maps. -/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. The
+homotopy class of the chosen comparison over g ∘ f is the composite of the homotopy classes of
+the chosen comparisons over f and g. -/
 theorem comparisonHom_quotient_comp [i.Full] [i.Faithful]
     (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂)
     (R₃ : FiniteResolution i X₃) (f : X₁ ⟶ X₂) (g : X₂ ⟶ X₃)
@@ -131,31 +138,40 @@ variable {Q : Type uQ} [Category.{vQ} Q] [Preadditive Q]
 variable {j : Q ⥤ A} [j.Additive]
 variable (F : P ⥤ Q) [F.Additive] (e : F ⋙ j ≅ i)
 
-/-- Stock additive homotopy transport has the exact original source-changed
-augmented comparison maps as its endpoints. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose image commutes with
+augmentation. Let Q be preadditive, j : Q → A additive, and F : P → Q additive with
+compatibility e : j ∘ F ≅ i. A homotopy between two augmented resolving maps φ,ψ is sent by F to
+a homotopy between their source-changed comparison maps, with the compatibility e supplying
+their augmentations. -/
 def Hom.mapSourceHomotopy (φ ψ : Hom R₁ R₂ f) (h : Homotopy φ.map ψ.map) :
     Homotopy (φ.mapSource F e).map (ψ.mapSource F e).map :=
   F.mapHomotopy h
 
-/-- The source-transported homotopy component is the source image of the original homotopy component. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose image commutes with
+augmentation. Let Q be preadditive, j : Q → A additive, and F : P → Q additive with
+compatibility e : j ∘ F ≅ i. The resolution-degree-(n,m) component of the transported homotopy
+is F applied to the original homotopy component h(n,m). -/
 theorem Hom.mapSourceHomotopy_hom (φ ψ : Hom R₁ R₂ f) (h : Homotopy φ.map ψ.map)
     (n m : ℕ) : (Hom.mapSourceHomotopy F e φ ψ h).hom n m = F.map (h.hom n m) :=
   rfl
 
-/--
-The compatibility isomorphism transports projectivity of each original resolving image to the
-source-changed resolving image term.
--/
+/-- Let P,Q be preadditive, A abelian, i : P → A and j : Q → A additive, and F : P → Q additive with
+jF ≅ i. For a finite resolution R of X and n ∈ ℕ, projectivity of i(Rₙ) implies projectivity of
+j(F(Rₙ)), by the component of the compatibility isomorphism. -/
 theorem mapSource_projective_term (R : FiniteResolution i X₁) (n : ℕ)
     (h : Projective (i.obj (R.complex.X n))) :
     Projective (j.obj ((R.mapSource F e).complex.X n)) :=
   Projective.of_iso (e.app (R.complex.X n)).symm h
 
-/--
-Compare a transported original augmented map with any augmented map over the same base morphism.
-Projectivity of the changed terms is derived from the original compatibility and original term
-projectivity.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose image commutes with
+augmentation. Let Q be preadditive, j : Q → A additive, and F : P → Q additive with
+compatibility e : j ∘ F ≅ i. Assume j is full faithful and the original image terms of R₁,R₂
+under i are projective. The source transport of a comparison φ is homotopic to any augmented
+comparison over f between the source-changed resolutions, because compatibility transports term
+projectivity. -/
 def sourceComparisonHomotopy [j.Full] [j.Faithful]
     (φ : Hom R₁ R₂ f) (ψ : Hom (R₁.mapSource F e) (R₂.mapSource F e) f)
     (h₁ : ∀ n : ℕ, Projective (i.obj (R₁.complex.X n)))
@@ -165,11 +181,13 @@ def sourceComparisonHomotopy [j.Full] [j.Faithful]
     (fun n => mapSource_projective_term F e R₁ n (h₁ n))
     (fun n => mapSource_projective_term F e R₂ n (h₂ n))
 
-/--
-The transported original chosen comparison is homotopic to the existing chosen comparison for the
-source-changed finite resolutions. The global target-image hypothesis belongs to that existing
-chosen-map API.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. Let Q be
+preadditive, j : Q → A additive, and F : P → Q additive with compatibility e : j ∘ F ≅ i. Assume
+j is full faithful and every j(Q₀) is projective. The F-transport of the chosen original
+comparison over f is homotopic to the chosen comparison between the source-changed finite
+resolutions. -/
 def comparisonHomotopySourceChange [i.Full] [i.Faithful] [j.Full] [j.Faithful]
     (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂) (f : X₁ ⟶ X₂)
     (hprojP : ∀ P₀ : P, Projective (i.obj P₀))
@@ -188,23 +206,31 @@ variable {B : Type uB} [Category.{vB} B] [Abelian B]
 variable {j : P ⥤ B} [j.Additive]
 variable (H : A ⥤ B) [H.Additive] [H.PreservesHomology] (e : i ⋙ H ≅ j)
 
-/--
-Target change retains the original homotopy between its unchanged comparison chain maps. Homology
-preservation is used by the changed finite resolutions in the endpoint types.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose image commutes with
+augmentation. Let B be abelian, j : P → B additive, and H : A → B additive and
+homology-preserving, with compatibility e : H ∘ i ≅ j. Target transport leaves the resolving
+complexes and their chain maps in P unchanged. Thus a homotopy h between φ and ψ is also a
+homotopy between their target-changed comparison maps over H(f). -/
 def Hom.mapTargetHomotopy (φ ψ : Hom R₁ R₂ f) (h : Homotopy φ.map ψ.map) :
     Homotopy (φ.mapTarget H e).map (ψ.mapTarget H e).map :=
   h
 
-/-- Every original homotopy component is retained under target change. -/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose image commutes with
+augmentation. Let B be abelian, j : P → B additive, and H : A → B additive and
+homology-preserving, with compatibility e : H ∘ i ≅ j. Every component h(n,m) of the original
+homotopy remains the same morphism in P under target transport. -/
 theorem Hom.mapTargetHomotopy_hom (φ ψ : Hom R₁ R₂ f) (h : Homotopy φ.map ψ.map)
     (n m : ℕ) : (Hom.mapTargetHomotopy H e φ ψ h).hom n m = h.hom n m :=
   rfl
 
-/--
-Compare the target transport with any original augmented map over the mapped base morphism.
-Projectivity of the target resolving images is an explicit termwise requirement.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive. Let R₁,R₂ be finite resolutions of X₁,X₂
+and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose image commutes with
+augmentation. Let B be abelian, j : P → B additive, and H : A → B additive and
+homology-preserving, with compatibility e : H ∘ i ≅ j. Assume j is full faithful and the terms
+of the two resolving complexes have projective j-images. The target transport of φ is homotopic
+to any augmented comparison over H(f) between the target-changed resolutions. -/
 def targetComparisonHomotopy [j.Full] [j.Faithful]
     (φ : Hom R₁ R₂ f)
     (ψ : Hom (R₁.mapTarget H e) (R₂.mapTarget H e) (H.map f))
@@ -213,10 +239,13 @@ def targetComparisonHomotopy [j.Full] [j.Faithful]
     Homotopy (φ.mapTarget H e).map ψ.map :=
   comparisonHomotopyOfProjectiveTerms (φ.mapTarget H e) ψ h₁ h₂
 
-/--
-Naturality of the existing chosen comparisons under target change, with the original
-projective-image hypotheses for both chosen APIs.
--/
+/-- Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. Let B be
+abelian, j : P → B additive, and H : A → B additive and homology-preserving, with compatibility
+e : H ∘ i ≅ j. Assume j is full faithful and every j(P₀) is projective. The target transport of
+the chosen comparison over f is homotopic to the chosen comparison over H(f) between the
+target-changed resolutions. -/
 def comparisonHomotopyTargetChange [i.Full] [i.Faithful] [j.Full] [j.Faithful]
     (R₁ : FiniteResolution i X₁) (R₂ : FiniteResolution i X₂) (f : X₁ ⟶ X₂)
     (hprojA : ∀ P₀ : P, Projective (i.obj P₀))

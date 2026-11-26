@@ -1,4 +1,6 @@
-# Unitization Hochschild Relative Iso
+# The comparison of unitization cokernel homology with relative homology
 
-The source cokernel agrees with homology of the original relative kernel.
-Both comparisons are from the original augmentation and scalar section.
+The comparison of unitization cokernel homology with relative homology.
+
+The scalar augmentation and section identify `coker(HH_n(k) → HH_n(A⁺))` with the homology of
+the complementary kernel of the scalar chain projector.

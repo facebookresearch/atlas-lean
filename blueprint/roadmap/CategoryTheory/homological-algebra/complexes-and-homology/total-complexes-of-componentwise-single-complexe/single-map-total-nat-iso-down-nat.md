@@ -1,4 +1,6 @@
-# Single Map Total Nat Iso Down Nat
+# Natural total isomorphism for componentwise degree-zero chains
 
-Functor-level chain comparison between componentwise single complexes
-after totalization and the original complex.
+Let C be preadditive with a zero object and finite coproducts. The composite functor taking a
+nonnegative chain complex to its componentwise degree-zero bicomplex and then totalizing is
+naturally isomorphic to the identity. Its component at L is the canonical isomorphism
+single₀MapTotalIso L.

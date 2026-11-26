@@ -1,10 +1,10 @@
 # Classes of module cycles in homology
 
-- [Module Cat Cycle Class](module-cat-cycle-class.md)
-- [Module Cat i Cycles cycles Mk](module-cat-i-cycles-cycles-mk.md)
-- [Module Cat cycles Mk lift Cycles](module-cat-cycles-mk-lift-cycles.md)
-- [Module Cat Cycle Class lift Cycles](module-cat-cycle-class-lift-cycles.md)
-- [Module Cat Cycle Class naturality](module-cat-cycle-class-naturality.md)
-- [Zero Differential Class Map eq module Cat Cycle Class](zero-differential-class-map-eq-module-ca.md)
-- [Module Cat Cycle Class zero](module-cat-cycle-class-zero.md)
-- [Module Cat Cycle Class smul](module-cat-cycle-class-smul.md)
+- [Homology class of a concrete module cycle](module-cat-cycle-class.md)
+- [The cycle constructor retains its module element](module-cat-i-cycles-cycles-mk.md)
+- [Concrete cycles agree with the kernel lift](module-cat-cycles-mk-lift-cycles.md)
+- [Class of a lifted module cycle](module-cat-cycle-class-lift-cycles.md)
+- [Naturality of concrete cycle classes](module-cat-cycle-class-naturality.md)
+- [Zero-differential class agrees with the concrete cycle class](zero-differential-class-map-eq-module-ca.md)
+- [Class of the zero module cycle](module-cat-cycle-class-zero.md)
+- [Scalar multiplication of concrete cycle classes](module-cat-cycle-class-smul.md)

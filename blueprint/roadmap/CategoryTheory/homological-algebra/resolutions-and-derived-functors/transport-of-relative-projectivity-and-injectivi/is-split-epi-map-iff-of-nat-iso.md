@@ -1,3 +1,5 @@
-# Is Split Epi map iff of nat Iso
+# Naturally isomorphic functors have the same split-epimorphism image class
 
-Natural isomorphism preserves the split-image arrow class without changing its original arrow.
+For categories `D,C`, naturally isomorphic `U,U′ : D → C`,
+and `g : Y → Z`, the image `U(g)` is split epi if and only if
+`U′(g)` is split epi.

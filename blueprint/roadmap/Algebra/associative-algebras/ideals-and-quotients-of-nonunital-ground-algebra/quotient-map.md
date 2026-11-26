@@ -1,3 +1,6 @@
-# Quotient Map
+# The nonunital algebra quotient map
 
-The actual original quotient map is a nonunital ground-algebra homomorphism.
+The nonunital algebra quotient map.
+
+For a two-sided nonunital `k`-subalgebra `I ⊆ A`, the map `q : A →ₙₐ[k] A/I` preserves
+addition, multiplication, and the `k`-action.

@@ -13,11 +13,16 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.Unshuffle
 public import MathlibExt.AlgebraicTopology.SimplicialObject.EilenbergZilber.ShuffleCoset
 
 /-!
-# General exterior unshuffle in the existing ordered-shuffle index
+# Unshuffle in ordered-shuffle coordinates
 
-The native domCoprod cosets are reindexed by the existing actual ordered
-shuffles. Each shuffle contributes once, with its native permutation sign,
-including either empty block. The formula requires no basis or denominator.
+For `w : Fin(p+q) → M`, unshuffle is the sum over `(p,q)`-shuffles `s` of `sign(s.perm)` times
+the wedge of `w` at the first-block images tensor the wedge at the second-block images. The
+two tensor factors are ordered first block then second block.
+
+Each ordered shuffle contributes once. For an empty block the corresponding wedge is the
+degree-zero unit.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 @[expose] public section
@@ -49,7 +54,10 @@ private theorem unshuffle_summand_shuffle (p q : ℕ) (s : Shuffle p q)
     Function.comp_apply, Shuffle.cosetRepresentative_front, Shuffle.cosetRepresentative_back]
   exact (TensorProduct.smul_tmul' (Equiv.Perm.sign s.perm) _ _).symm
 
-/-- Every general exterior unshuffle is the signed sum over the actual ordered shuffles. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `p,q : ℕ`. Write `L(i)=Fin.castAdd q i`,
+`R_b(j)=Fin.natAdd p j`, and `U_(p,q) : Λ^(p+q)_R M → Λ^p_R M ⊗[R] Λ^q_R M` for unshuffle. For
+`w : Fin(p+q) → M`, the value is `∑ s : Shuffle p q, sign(s.perm) • (ιMulti_R(fun i ↦
+w(s.perm(L i))) ⊗ ιMulti_R(fun j ↦ w(s.perm(R_b j))))`. -/
 theorem unshuffle_apply_ιMulti_shuffles (p q : ℕ) (w : Fin (p + q) → M) :
     unshuffle R M p q (ιMulti R (p + q) w) =
       ∑ s : Shuffle p q, Equiv.Perm.sign s.perm •

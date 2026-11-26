@@ -1,3 +1,5 @@
-# Is Split Mono map iff of nat Iso
+# Naturally isomorphic functors have the same split-monomorphism image class
 
-The dual split-image class comparison follows from opposite section transport.
+For categories `D,C`, naturally isomorphic `U,U′ : D → C`,
+and `g : X → Y`, `U(g)` is split mono if and only if `U′(g)` is
+split mono, by transport of retractions.

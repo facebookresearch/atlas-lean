@@ -14,14 +14,21 @@ public import MathlibExt.Algebra.Homology.Hochschild.EulerianConnesFormula
 public import MathlibExt.LinearAlgebra.TensorPower.IntegralEulerianComparison
 
 /-!
-# The regular Connes weight shift
+# The normalized Connes shift of Eulerian weights
 
-Over a rational ground algebra, projection of the dyadic
-Connes relation annihilates off-weight components by
-the invertible image of 2^j - 2^(i + 1). Finite
-completeness gives the shift i ↦ i + 1. The argument
-also allows the zero ground ring; B remains the
-regular normalized operator.
+Let k be a commutative ℚ-algebra and A a commutative unital k-algebra.
+For normalized Connes B_n:N_n(A)→N_{n+1}(A), the Eulerian components
+satisfy e_{n+1}^{(j)}B_n e_n^{(i)}=0 when j≠i+1.
+Finite projector completeness then gives
+B_n e_n^{(i)}=e_{n+1}^{(i+1)}B_n and e_{n+1}^{(0)}B_n=0.
+
+For every rational parameter a, the bar-lambda convolution obeys
+Λ_{n+1}(a)B_n=a B_nΛ_n(a).
+For positive integer m, Loday's operation
+λ_n^m=(−1)^{m−1}Λ_n(m) obeys the same scalar law with m.
+All statements include degree zero.
+
+Reference: J.-L. Loday, Cyclic Homology, §§2.1 and 4.5.
 -/
 
 @[expose] public section
@@ -52,7 +59,11 @@ private theorem two_mul_scalar (i : ℕ) :
   rw [pow_succ, map_mul, map_ofNat]
   ring
 
-/-- Every regular B off-weight component vanishes by nonzero rational unit-image cancellation. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+For j≠i+1, the off-weight component of normalized Connes
+boundary vanishes: e_{n+1}^{(j)}B_n e_n^{(i)}=0. -/
 theorem normalizedEulerian_connes_cross_zero (n i j : ℕ) (hij : j ≠ i + 1) :
     (normalizedEulerianOperator k A A (n + 1) j).comp
       ((NonUnital.normalizedBoundary k A n).hom.comp (normalizedEulerianOperator k A A n i)) = 0 := by
@@ -91,7 +102,11 @@ theorem normalizedEulerian_connes_cross_zero (n i j : ℕ) (hij : j ≠ i + 1) :
   · rw [normalizedEulerianOperator_outside k A A n i (by omega),
       LinearMap.comp_zero, LinearMap.comp_zero]
 
-/-- The regular normalized B raises each original Eulerian weight by one in every degree. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+Normalized Connes boundary raises Eulerian weight by one:
+B_n e_n^{(i)}=e_{n+1}^{(i+1)}B_n for all n,i≥0. -/
 theorem normalizedEulerian_connes_shift (n i : ℕ) :
     (NonUnital.normalizedBoundary k A n).hom.comp (normalizedEulerianOperator k A A n i) =
       (normalizedEulerianOperator k A A (n + 1) (i + 1)).comp
@@ -157,7 +172,11 @@ theorem normalizedEulerian_connes_shift (n i : ℕ) :
             LinearMap.zero_comp, Finset.sum_const_zero]
   exact hleft.trans hright.symm
 
-/-- The output zero-weight projector annihilates regular B, including the original bottom degree. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+The output weight-zero projection annihilates normalized
+Connes boundary: e_{n+1}^{(0)}B_n=0. -/
 theorem normalizedEulerian_connes_zero_weight (n : ℕ) :
     (normalizedEulerianOperator k A A (n + 1) 0).comp (NonUnital.normalizedBoundary k A n).hom = 0 := by
   rw [normalizedConnesBoundary_eq_formula]
@@ -180,7 +199,11 @@ theorem normalizedEulerian_connes_zero_weight (n : ℕ) :
       rw [normalizedConnesBoundary_eq_formula] at hc
       exact hc
 
-/-- Every rational convolution parameter satisfies the original Connes scalar-parameter law. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+For every a∈ℚ, the coefficient-fixed bar-lambda convolution
+satisfies Λ_{n+1}(a)B_n=algMap_ℚ(a) B_nΛ_n(a). -/
 theorem normalizedConvolution_connesBoundary (n : ℕ) (a : ℚ) :
     (normalizedConvolutionOperator k A A (n + 1) a).comp (NonUnital.normalizedBoundary k A n).hom =
       algebraMap ℚ k a • (NonUnital.normalizedBoundary k A n).hom.comp
@@ -218,7 +241,12 @@ theorem normalizedConvolution_connesBoundary (n : ℕ) (a : ℚ) :
   congr 1
   ring
 
-/-- The positive-integer true lambda, with its original sign, satisfies the original B scalar law. -/
+/-- Let k be a commutative ℚ-algebra and A a commutative unital
+k-algebra. Set Ā=A/span_k{1}, N_n=A⊗[k]Ā^{⊗n}, and
+let e_n^{(i)} be the normalized rational Eulerian projectors.
+For m>0, the positive-integer Loday operation
+λ_n^m=(−1)^{m−1}Λ_n(m) satisfies
+λ_{n+1}^m B_n=m B_n λ_n^m. -/
 theorem normalizedTrueIntegerLambda_connesBoundary (n m : ℕ) (hm : 0 < m) :
     (TensorPower.coefficientTrueIntegerLambdaOperator (k := k) (M := A)
       (V := ModuleCat.Algebra.Hochschild.quotientCarrier k A) (n + 1) m hm).comp

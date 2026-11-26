@@ -1,3 +1,6 @@
-# To Left
+# The left Lie module associated to right coefficients
 
-The native left coefficient object has the original carrier and negative right action.
+The left Lie module associated to right coefficients.
+
+Negating the right action defines the left action `[x,m] = -(m · x)`, retaining the
+coefficient carrier and its `R`-module structure.

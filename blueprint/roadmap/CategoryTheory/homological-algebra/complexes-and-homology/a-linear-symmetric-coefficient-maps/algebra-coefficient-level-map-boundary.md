@@ -1,3 +1,6 @@
-# Algebra Coefficient Level Map boundary
+# The algebra-linear coefficient arrow commutes with the raw boundary
 
-The literal original symmetric boundary commutes with every original A-linear coefficient map.
+The algebra-linear coefficient arrow commutes with the raw boundary.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, bₙ,N
+∘ fₙ₊₁ = fₙ ∘ bₙ,M on the raw coefficient tensor levels.

@@ -1,3 +1,6 @@
-# Polynomial Resolution Obj Iso
+# The degreewise polynomial-algebra comparison
 
-The degree object is the literal polynomial object on the preceding native power's carrier.
+The degreewise polynomial-algebra comparison.
+
+Degree `n` of the polynomial resolution is canonically isomorphic to the polynomial algebra on
+the carrier of `T^n(A)`.

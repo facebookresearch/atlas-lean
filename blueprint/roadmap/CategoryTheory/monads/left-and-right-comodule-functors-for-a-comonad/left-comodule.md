@@ -1,4 +1,6 @@
-# Left Comodule
+# The category of left comodule functors for a comonad
 
-A left `G`-comodule indexed by `A`: a coalgebra for postcomposition with
-`G`, with underlying functor `L : A ⥤ C` and coaction `L ⟶ L ⋙ G`.
+The category of left comodule functors for a comonad.
+
+For `G` on `C`, a left comodule indexed by `A` is a coalgebra for the postcomposition comonad
+on `A ⥤ C`, with coaction `L → L ⋙ G`.

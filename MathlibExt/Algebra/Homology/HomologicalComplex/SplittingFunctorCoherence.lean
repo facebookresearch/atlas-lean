@@ -12,11 +12,12 @@ module
 public import MathlibExt.Algebra.Homology.HomologicalComplex.SplittingFunctorTransport
 
 /-!
-# Isomorphism and functor coherence of actual splitting data
+# Coherence of splitting isomorphisms and functors
 
-The raw transport laws use zero morphisms, arbitrary shapes and independent
-category/index universes. The existing identity/composition functor laws are
-reused. Only compatibility with the square-zero normalization uses preadditivity.
+The reverse-degree components of a splitting respect index equalities,
+complex isomorphisms and natural isomorphisms of zero-preserving functors.
+Reflexive normalization commutes with those isomorphisms, and the
+square-zero normalization does so in a preadditive category.
 -/
 
 @[expose] public section
@@ -30,14 +31,23 @@ universe u v w uD vD uE vE
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
   {ι : Type w} {c : ComplexShape ι} {K L : HomologicalComplex C c}
 
-/-- Actual inverse components retain the native equality maps when their indices are rewritten. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms and let s be a
+generalized-inverse splitting of K. For index equalities i=i' and j=j', let αᵢ:Kᵢ≅Kᵢ' and
+αⱼ:Kⱼ≅Kⱼ' be the induced object isomorphisms. The component satisfies s.hom i j=αᵢ.hom≫s.hom
+i' j'≫αⱼ.inv.
+-/
 lemma hom_XIsoOfEq (s : Splitting K) {i i' j j' : ι} (hi : i = i') (hj : j = j') :
     s.hom i j = (K.XIsoOfEq hi).hom ≫ s.hom i' j' ≫ (K.XIsoOfEq hj).inv := by
   subst i' j'
   simp only [XIsoOfEq_rfl, Iso.refl_hom, Iso.refl_inv,
     Category.id_comp, Category.comp_id]
 
-/-- The existing reflexive inverse construction commutes with actual complex isomorphisms. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms and let s be a
+generalized-inverse splitting of K. For a complex isomorphism e:K≅L, reflexive normalization
+r=h d h commutes with transport: (s.ofIso e).reflexive=s.reflexive.ofIso e.
+-/
 lemma ofIso_reflexive (s : Splitting K) (e : K ≅ L) :
     (s.ofIso e).reflexive = s.reflexive.ofIso e := by
   ext i j
@@ -51,7 +61,12 @@ lemma ofIso_reflexive (s : Splitting K) (e : K ≅ L) :
 
 variable {D : Type uD} [Category.{vD} D] [HasZeroMorphisms D]
 
-/-- Componentwise functor transport commutes with the actual mapped complex isomorphism. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms and let s be a
+generalized-inverse splitting of K. Let D also have zero morphisms and F:C⥤D preserve them.
+For e:K≅L, mapping a transported splitting equals transporting the mapped splitting along
+F(e): (s.ofIso e).map F=(s.map F).ofIso(F(e)).
+-/
 lemma map_ofIso (s : Splitting K) (e : K ≅ L) (F : C ⥤ D)
     [F.PreservesZeroMorphisms] :
     (s.ofIso e).map F =
@@ -61,7 +76,12 @@ lemma map_ofIso (s : Splitting K) (e : K ≅ L) (F : C ⥤ D)
     F.map (e.inv.f i) ≫ F.map (s.hom i j) ≫ F.map (e.hom.f j)
   simp only [Functor.map_comp]
 
-/-- A native natural isomorphism of base functors gives the same actual inverse family. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms and let s be a
+generalized-inverse splitting of K. Let F,G:C⥤D preserve zero morphisms, with zero morphisms
+in D, and let α:F≅G be natural. Transporting s.map F along the induced complex isomorphism
+α_K:F(K)≅G(K) gives s.map G.
+-/
 lemma map_natIso (s : Splitting K) {F G : C ⥤ D}
     [F.PreservesZeroMorphisms] [G.PreservesZeroMorphisms] (e : F ≅ G) :
     (s.map F).ofIso ((NatIso.mapHomologicalComplex e c).app K) = s.map G := by
@@ -73,7 +93,12 @@ lemma map_natIso (s : Splitting K) {F G : C ⥤ D}
 
 variable {E : Type uE} [Category.{vE} E] [HasZeroMorphisms E]
 
-/-- Successive transports agree through the native comparison for an isomorphic composite. -/
+/--
+Let K be a complex of shape c in a category C with zero morphisms and let s be a
+generalized-inverse splitting of K. Let D,E have zero morphisms, let F:C⥤D, G:D⥤E and H:C⥤E
+preserve them, and let α:F⋙G≅H. Mapping s successively by F,G and transporting along α_K gives
+the splitting s.map H.
+-/
 lemma map_comp_iso (s : Splitting K) (F : C ⥤ D) (G : D ⥤ E) (H : C ⥤ E)
     [F.PreservesZeroMorphisms] [G.PreservesZeroMorphisms] [H.PreservesZeroMorphisms]
     (e : F ⋙ G ≅ H) :
@@ -91,7 +116,11 @@ universe u v w
 variable {C : Type u} [Category.{v} C] [Preadditive C]
   {ι : Type w} {c : ComplexShape ι} {K L : HomologicalComplex C c}
 
-/-- The actual square-zero normalization commutes with isomorphism conjugation. -/
+/--
+Let K,L be c-complexes in a preadditive category C, let s be a splitting of K and e:K≅L an
+isomorphism. The square-zero normalization commutes with conjugation: (s.ofIso
+e).normalize=s.normalize.ofIso e.
+-/
 lemma ofIso_normalize (s : Splitting K) (e : K ≅ L) :
     (s.ofIso e).normalize = s.normalize.ofIso e := by
   have hi (i : ι) : e.hom.f i ≫ e.inv.f i = 𝟙 (K.X i) := by

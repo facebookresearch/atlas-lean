@@ -14,10 +14,12 @@ public import Mathlib.Algebra.Algebra.Tower
 public import Mathlib.Algebra.Module.RingHom
 
 /-!
-# Scalar compatibility for a algebra representation
+# Scalar compatibility of an algebra representation
 
-Restrict the native endomorphism evaluation action along an algebra
-homomorphism. The resulting action has the original ground scalars.
+Let `R` be a commutative semiring, `E` an `R`-algebra, `M` an `R`-semimodule, and `ρ : E →ₐ[R]
+End_R(M)`. The action `e • m=ρ(e)(m)` makes `M` an `E`-semimodule.
+
+Its scalar compatibility is `(r • e) • m=r • (e • m)`, giving the tower `R → E → M`.
 -/
 
 @[expose] public section
@@ -31,8 +33,9 @@ variable {R : Type u} {E : Type v} {M : Type w}
   [CommSemiring R] [Semiring E] [Algebra R E]
   [AddCommMonoid M] [Module R M]
 
-/-- An algebra representation earns scalar compatibility for its actual
-pullback of the native endomorphism action. -/
+/-- Let `R` be a commutative semiring, `E` an `R`-algebra, `M` an `R`-semimodule, and `ρ : E →ₐ[R]
+Module.End R M`. For the pulled-back action `e • m=ρ(e)(m)`, `IsScalarTower R E M` holds: `(r
+• e) • m=r • (e • m)`. -/
 theorem moduleEnd_compHom_isScalarTower (ρ : E →ₐ[R] Module.End R M) :
     letI : Module E M := Module.compHom M ρ.toRingHom
     IsScalarTower R E M := by

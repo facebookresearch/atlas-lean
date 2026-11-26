@@ -13,7 +13,13 @@ module
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.OpDuality
 
 /-!
-# The opposite-derived comparison computed with the SAME given injective resolution
+# Computing right-derived opposite duality on a supplied resolution
+
+Let `C,D` be abelian, with injective resolutions in `C` and projective
+resolutions in `Cᵒᵖ`, and let `F : C → D` be additive. The natural
+opposite-derived comparison can be computed from any injective
+resolution of `X`, using its opposite projective resolution, homology
+opposite duality, and the two canonical derived-resolution comparisons.
 -/
 
 @[expose] public section
@@ -27,10 +33,12 @@ variable [HasProjectiveResolutions Cᵒᵖ]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
-The opposite-derived comparison is computed by any given injective resolution, using its original
-opposite projective resolution and homologyOp.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C` and
+projective resolutions in `Cᵒᵖ`, and `F : C → D` additive.
+For any injective resolution `J` of `X`, the degree-`n` opposite-derived
+comparison is the canonical comparison to `Hⁿ(F(J))`, followed by
+homology opposite duality and the unop of the left-derived comparison
+for the opposite projective resolution of `J`. -/
 theorem rightDerivedOpIsoApp_hom_ofInjectiveResolution {X : C} (J : InjectiveResolution X)
     (F : C ⥤ D) [F.Additive] (n : ℕ) :
     ((F.rightDerivedOpIso n).app X).hom =

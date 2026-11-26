@@ -1,3 +1,7 @@
-# Coefficient Rational Permutation Action naturality
+# Naturality of the rational permutation action
 
-Actual rational coefficient action is natural across the original independent coefficient and tail worlds.
+Naturality of the rational permutation action.
+
+For a commutative ℚ-algebra k, k-linear maps f : M → N and g : V → W, and x ∈ ℚ[Sₙ], T = f ⊗
+g⊗n intertwines the two actions of x after scalar extension to k. The modules may lie in
+independent universes.

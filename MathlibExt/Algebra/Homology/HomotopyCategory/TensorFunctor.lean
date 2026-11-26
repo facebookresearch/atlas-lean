@@ -14,10 +14,14 @@ public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.Homotopy
 public import Mathlib.Algebra.Homology.HomotopyCategory
 
 /-!
-# Tensor bifunctors on homotopy categories
+# Tensor bifunctors on module homotopy categories
 
-The tensor bifunctor on integer cochain complexes descends through the homotopy-category
-quotient. Its maps are the classes of the tensor maps in both variables.
+For a commutative ring `R`, the total tensor of integer cochain
+complexes preserves homotopies in either variable. It descends to a
+bifunctor from the two homotopy categories with independent carrier
+universes `v,w` to the homotopy category in `max(v,w)`. Its simultaneous
+maps are the classes of the total tensor maps, with the original
+Koszul differential convention.
 -/
 
 @[expose] public section
@@ -33,7 +37,11 @@ universe u v w
 
 variable (R : Type u) [CommRing R]
 
-/-- The original second-variable tensor maps respect homotopy classes. -/
+/-- Let `R` be a commutative ring, `P` an integer cochain complex
+of `R`-modules in carrier universe `v`, and second-variable complexes
+have carrier universe `w`. Tensor totals have carrier universe `max(v,w)`. If `g,g′ : Q → Q′` are homotopic, tensoring with `P`
+and passing to the target homotopy category gives the same map
+for `g` and `g′`. -/
 theorem tensorHomotopyInput_respects (P : CochainComplex (ModuleCat.{v} R) ℤ)
     (Q Q' : CochainComplex (ModuleCat.{w} R) ℤ) (g g' : Q ⟶ Q')
     (h : homotopic (ModuleCat.{w} R) (.up ℤ) g g') :
@@ -43,7 +51,10 @@ theorem tensorHomotopyInput_respects (P : CochainComplex (ModuleCat.{v} R) ℤ)
         HomotopyCategory.quotient (ModuleCat.{max v w} R) (.up ℤ)).map g' :=
   HomotopyCategory.eq_of_homotopy _ _ (mapAtHomotopySnd R (𝟙 P) h.some)
 
-/-- Quotient lifting of the original fixed-first-factor tensor. -/
+/-- Let `R` be a commutative ring, `P` an integer cochain complex
+of `R`-modules in carrier universe `v`, and second-variable complexes
+have carrier universe `w`. Tensor totals have carrier universe `max(v,w)`. Tensoring with fixed `P` gives a functor from the homotopy
+category of integer cochains in world `w` to the one in `max(v,w)`. -/
 def tensorHomotopyFunctor (P : CochainComplex (ModuleCat.{v} R) ℤ) :
     HomotopyCategory (ModuleCat.{w} R) (.up ℤ) ⥤
       HomotopyCategory (ModuleCat.{max v w} R) (.up ℤ) :=
@@ -52,7 +63,11 @@ def tensorHomotopyFunctor (P : CochainComplex (ModuleCat.{v} R) ℤ) :
       HomotopyCategory.quotient (ModuleCat.{max v w} R) (.up ℤ))
     (tensorHomotopyInput_respects R P)
 
-/-- The factorization is the quotient-lift Iso on the original complexes. -/
+/-- Let `R` be a commutative ring, `P` an integer cochain complex
+of `R`-modules in carrier universe `v`, and second-variable complexes
+have carrier universe `w`. Tensor totals have carrier universe `max(v,w)`. The fixed-factor homotopy functor factors the tensor functor
+on actual complexes through the quotient: quotient then tensor
+is naturally isomorphic to tensor then target quotient. -/
 def tensorHomotopyFunctorFactors (P : CochainComplex (ModuleCat.{v} R) ℤ) :
     HomotopyCategory.quotient (ModuleCat.{w} R) (.up ℤ) ⋙ tensorHomotopyFunctor R P ≅
       ((bifunctorAt R).obj P) ⋙
@@ -74,7 +89,10 @@ theorem tensorHomotopyFunctor_map (P : CochainComplex (ModuleCat.{v} R) ℤ)
       (HomotopyCategory.quotient (ModuleCat.{max v w} R) (.up ℤ)).map
         (mapAt R (𝟙 P) g) := rfl
 
-/-- The original first-variable map, lifted as a natural transformation. -/
+/-- For a commutative ring `R` and integer cochain map
+`f : P → P′` in module world `v`, tensoring `f` with identities
+gives a natural transformation between the two fixed-first-factor
+functors on the second-variable homotopy category in world `w`. -/
 def tensorHomotopyFirstMap {P P' : CochainComplex (ModuleCat.{v} R) ℤ} (f : P ⟶ P') :
     tensorHomotopyFunctor R P ⟶ tensorHomotopyFunctor R P' :=
   CategoryTheory.Quotient.natTransLift (homotopic (ModuleCat.{w} R) (.up ℤ))
@@ -94,7 +112,10 @@ theorem tensorHomotopyFirstMap_app {P P' : CochainComplex (ModuleCat.{v} R) ℤ}
         (mapAt R f (𝟙 Q.as)) ≫ 𝟙 _ = _
   simp only [Category.id_comp, Category.comp_id]
 
-/-- The original first-variable functor, with the second already quotiented. -/
+/-- For a commutative ring `R`, the assignment of fixed-factor
+tensor functors defines a functor from actual integer cochain
+complexes in world `v` to functors from the second-variable
+homotopy category in world `w` to that in `max(v,w)`. -/
 def tensorHomotopySourceFunctor : CochainComplex (ModuleCat.{v} R) ℤ ⥤
     HomotopyCategory (ModuleCat.{w} R) (.up ℤ) ⥤
       HomotopyCategory (ModuleCat.{max v w} R) (.up ℤ) where
@@ -142,7 +163,9 @@ def tensorHomotopySourceFunctor : CochainComplex (ModuleCat.{v} R) ℤ ⥤
       ((HomotopyCategory.quotient (ModuleCat.{max v w} R) (.up ℤ)).map_comp
         ((F.map f).app Q) ((F.map g).app Q))
 
-/-- Homotopic original first-variable maps have the same original quotient classes. -/
+/-- For a commutative ring `R`, homotopic first-variable maps
+`f,f′ : P → P′` induce the same natural transformation between
+the fixed-factor tensor functors on the second homotopy category. -/
 theorem tensorHomotopyFirstMap_eq_of_homotopy
     {P P' : CochainComplex (ModuleCat.{v} R) ℤ} {f f' : P ⟶ P'} (h : Homotopy f f') :
     tensorHomotopyFirstMap R f = tensorHomotopyFirstMap R f' := by
@@ -151,7 +174,9 @@ theorem tensorHomotopyFirstMap_eq_of_homotopy
   simp only [tensorHomotopyFirstMap_app]
   exact HomotopyCategory.eq_of_homotopy _ _ (mapAtHomotopyFst R h (𝟙 Q.as))
 
-/-- The tensor bifunctor on both original homotopy categories. -/
+/-- For a commutative ring `R`, the integer cochain tensor product
+descends in both variables to a bifunctor on module homotopy
+categories of worlds `v,w`, with target world `max(v,w)`. -/
 def tensorHomotopyBifunctor : HomotopyCategory (ModuleCat.{v} R) (.up ℤ) ⥤
     HomotopyCategory (ModuleCat.{w} R) (.up ℤ) ⥤
       HomotopyCategory (ModuleCat.{max v w} R) (.up ℤ) :=
@@ -159,7 +184,10 @@ def tensorHomotopyBifunctor : HomotopyCategory (ModuleCat.{v} R) (.up ℤ) ⥤
     (tensorHomotopySourceFunctor R)
     (fun _ _ _ _ h => tensorHomotopyFirstMap_eq_of_homotopy R h.some)
 
-/-- The first-variable factorization is also the quotient-lift Iso. -/
+/-- For a commutative ring `R`, precomposing the homotopy tensor
+bifunctor in its first variable with the quotient of actual complexes
+is naturally isomorphic to the first-variable family of
+fixed-factor homotopy tensor functors. -/
 def tensorHomotopyBifunctorFactors :
     HomotopyCategory.quotient (ModuleCat.{v} R) (.up ℤ) ⋙ tensorHomotopyBifunctor R ≅
       tensorHomotopySourceFunctor R :=
@@ -193,8 +221,11 @@ theorem tensorHomotopyBifunctor_obj_map
       (HomotopyCategory.quotient (ModuleCat.{max v w} R) (.up ℤ)).map
         (mapAt R (𝟙 P.as) g) := rfl
 
-/-- At the original carrier universe, the simultaneous map is precisely
-the quotient class of the accepted original tensor map. -/
+/-- For a commutative ring `R` and integer cochain maps
+`f : P → P′`, `g : Q → Q′` all in module world `v`, the uncurried
+homotopy tensor bifunctor sends the pair of quotient classes
+`([f],[g])` to the quotient class of the simultaneous total tensor
+map `mapAt(R,f,g)`. -/
 theorem tensorHomotopyBifunctor_uncurry_map
     {P P' Q Q' : CochainComplex (ModuleCat.{v} R) ℤ} (f : P ⟶ P') (g : Q ⟶ Q') :
     (CategoryTheory.Functor.uncurry.obj

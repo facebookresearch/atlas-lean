@@ -13,12 +13,15 @@ public import Mathlib.Algebra.Homology.HomologicalBicomplex
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# Vertical homology complexes
+# Complexes formed by vertical bicomplex homology
 
-This file packages the vertical homology objects of a bicomplex, in one fixed
-vertical degree, as a horizontal homological complex. The shape-generic API is
-provided by declarations ending in `OfShapes`. The original first-quadrant
-API is retained as a thin specialization to `ℕ`-indexed chain bicomplexes.
+For a category with zero morphisms and chosen homology, take a
+bicomplex of shapes `c₁,c₂` on independent index types. Fixing vertical
+degree `q`, its row homology objects form a horizontal `c₁`-shaped
+complex. The differential is the homology map of the horizontal row
+map, and bicomplex maps induce componentwise homology maps.
+In an abelian category, first-quadrant chain bicomplexes specialize
+this construction to a nonnegative horizontal chain complex.
 -/
 
 @[expose] public section
@@ -43,20 +46,27 @@ variable {I₁ : Type u₁} {I₂ : Type u₂}
 
 variable (B : HomologicalComplex₂ C c₁ c₂)
 
-/-- The horizontal homological complex of vertical homology objects in fixed
-vertical degree `q`. -/
+/-- Let `C` be a category with zero morphisms and chosen homology,
+and `B` a bicomplex of independent shapes `c₁,c₂` on index types
+`I₁,I₂`. For fixed vertical `q : I₂`, the row homology objects
+`H_q(B_p)` form a horizontal homological complex of shape `c₁`. -/
 noncomputable def verticalHomologyComplexOfShapes
     (q : I₂) : HomologicalComplex C c₁ :=
   ((HomologicalComplex.homologyFunctor C c₂ q).mapHomologicalComplex c₁).obj B
 
-/-- Objects of the vertical-homology complex are row homology objects. -/
+/-- Let `C` be a category with zero morphisms and chosen homology,
+and `B` a bicomplex of independent shapes `c₁,c₂` on index types
+`I₁,I₂`. The degree-`p` object of the fixed-`q` vertical-homology
+complex is `H_q(B_p)`. -/
 @[simp]
 theorem verticalHomologyComplexOfShapes_X (p : I₁) (q : I₂) :
     (B.verticalHomologyComplexOfShapes q).X p = (B.X p).homology q :=
   rfl
 
-/-- Differentials of the vertical-homology complex are the induced homology
-maps of the horizontal bicomplex maps. -/
+/-- Let `C` be a category with zero morphisms and chosen homology,
+and `B` a bicomplex of independent shapes `c₁,c₂` on index types
+`I₁,I₂`. The horizontal differential from `p` to `p′` in fixed
+vertical degree `q` is `H_q(B.d(p,p′))`. -/
 @[simp]
 theorem verticalHomologyComplexOfShapes_d (p p' : I₁) (q : I₂) :
     (B.verticalHomologyComplexOfShapes q).d p p' =
@@ -65,13 +75,18 @@ theorem verticalHomologyComplexOfShapes_d (p p' : I₁) (q : I₂) :
 
 variable {K L M : HomologicalComplex₂ C c₁ c₂}
 
-/-- The map between vertical-homology complexes induced by a bicomplex map. -/
+/-- Let `C` have zero morphisms and chosen homology, and
+`f : K → L` be a map of bicomplexes of independent shapes `c₁,c₂`.
+For `q : I₂`, row homology gives a map between their horizontal
+vertical-homology complexes. -/
 noncomputable def verticalHomologyComplexMapOfShapes (f : K ⟶ L) (q : I₂) :
     K.verticalHomologyComplexOfShapes q ⟶
       L.verticalHomologyComplexOfShapes q :=
   ((HomologicalComplex.homologyFunctor C c₂ q).mapHomologicalComplex c₁).map f
 
-/-- Components of the induced map between vertical-homology complexes. -/
+/-- Let `C` have zero morphisms and chosen homology and
+`f : K → L` be a bicomplex map of shapes `c₁,c₂`. The degree-`p`
+component in fixed vertical degree `q` is `H_q(f_p)`. -/
 @[simp]
 theorem verticalHomologyComplexMapOfShapes_f
     (f : K ⟶ L) (p : I₁) (q : I₂) :
@@ -98,11 +113,12 @@ theorem verticalHomologyComplexMapOfShapes_comp
 end OfShapes
 
 /-!
-## ## Original first-quadrant API
+## First-quadrant chain bicomplexes
 
-These declarations preserve the two-universe public signatures of the
-original `ℕ × ℕ` API. They forward definitionally to the shape-generic
-implementation above
+In an abelian category, fixing `q ∈ ℕ` in a bicomplex with both
+shapes `down ℕ` gives a nonnegative chain complex in the horizontal
+index. Its degree-`p` term is row homology `H_q(B_p)`, with the
+horizontal row maps inducing the chain differential.
 -/
 
 section FirstQuadrant
@@ -112,19 +128,23 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ))
 
-/-- The horizontal chain complex of vertical homology objects in fixed
-vertical degree `q`. -/
+/-- Let `C` be abelian and `B` a first-quadrant chain bicomplex,
+with both index shapes `down ℕ`. For fixed vertical degree `q`, its row homology objects
+form a nonnegative horizontal chain complex. -/
 noncomputable def verticalHomologyComplex (q : ℕ) : ChainComplex C ℕ :=
   B.verticalHomologyComplexOfShapes q
 
-/-- Objects of the vertical-homology complex are row homology objects. -/
+/-- Let `C` be abelian and `B` a first-quadrant chain bicomplex,
+with both index shapes `down ℕ`. The degree-`p` term of the fixed-`q` vertical-homology
+chain complex is `H_q(B_p)`. -/
 @[simp]
 theorem verticalHomologyComplex_X (p q : ℕ) :
     (B.verticalHomologyComplex q).X p = (B.X p).homology q :=
   rfl
 
-/-- Differentials of the vertical-homology complex are the induced homology
-maps of the horizontal bicomplex maps. -/
+/-- Let `C` be abelian and `B` a first-quadrant chain bicomplex,
+with both index shapes `down ℕ`. The horizontal differential from `p` to `p′` in fixed
+vertical degree `q` is the homology map `H_q(B.d(p,p′))`. -/
 @[simp]
 theorem verticalHomologyComplex_d (p p' q : ℕ) :
     (B.verticalHomologyComplex q).d p p' =
@@ -134,12 +154,16 @@ theorem verticalHomologyComplex_d (p p' q : ℕ) :
 variable {K L M : HomologicalComplex₂ C (ComplexShape.down ℕ)
   (ComplexShape.down ℕ)}
 
-/-- The map between vertical-homology complexes induced by a bicomplex map. -/
+/-- In an abelian category `C`, a map `f : K → L` of first-quadrant
+chain bicomplexes induces, for each vertical degree `q`, a map
+between their horizontal vertical-homology chain complexes. -/
 noncomputable def verticalHomologyComplexMap (f : K ⟶ L) (q : ℕ) :
     K.verticalHomologyComplex q ⟶ L.verticalHomologyComplex q :=
   verticalHomologyComplexMapOfShapes f q
 
-/-- Components of the induced map between vertical-homology complexes. -/
+/-- In an abelian category `C`, for a first-quadrant bicomplex map
+`f : K → L`, its induced horizontal chain map in vertical degree
+`q` has degree-`p` component `H_q(f_p)`. -/
 @[simp]
 theorem verticalHomologyComplexMap_f (f : K ⟶ L) (p q : ℕ) :
     (verticalHomologyComplexMap f q).f p =

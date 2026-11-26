@@ -1,4 +1,7 @@
-# Left Derived hom map LDdelta
+# Coefficient and sequence comparisons paste to one connecting square
 
-The sequence-map and coefficient-isomorphism squares compose to the same boundary square in both
-variables.
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F,G : C → D` additive, and `e : F ≅ G`. For a morphism `S → T`
+of short exact sequences, the derived sequence-map square
+and forward coefficient-isomorphism boundary square paste
+to the same connecting square.

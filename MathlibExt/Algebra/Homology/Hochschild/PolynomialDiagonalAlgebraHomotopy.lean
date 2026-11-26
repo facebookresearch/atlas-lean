@@ -15,15 +15,18 @@ public import MathlibExt.Algebra.Homology.Hochschild.PolynomialAntisymmetrizatio
 public import MathlibExt.Algebra.Homology.ChainComplex.ProjectiveAugmentationHomotopy
 
 /-!
-# Polynomial change-of-algebra homotopy for the signed Bar comparison
+# Polynomial algebra-change homotopy for the diagonal-to-bar comparison
 
-The polynomial diagonal map covers multiplication into the regular target. Both paths from the source Koszul resolution to the
-restricted target Bar resolution cover that same target map. Projectivity
-of the source and the native quasi-isomorphism of the restricted target
-augmentation therefore give a full chain homotopy between the two paths.
+For a commutative ring k and a polynomial algebra map g : k[σ] → k[τ], let φ be its map on
+enveloping algebras. The semilinear diagonal Koszul map commutes with the multiplication
+augmentations. The two paths from the source diagonal resolution to the scalar-restricted target
+bar resolution therefore have the same composite with the target augmentation.
 
-Target projectivity after scalar restriction and coefficient flatness are
-not assumed. No factorial cancellation is used.
+The source Koszul terms are projective, and the restricted target augmentation is a
+quasi-isomorphism. These facts give a chain homotopy between antisymmetrization followed by the
+bar algebra map and the diagonal algebra map followed by the restricted target
+antisymmetrization. Their induced homology maps agree in every natural-number degree.
+Projectivity of the target terms after restriction of scalars is not required.
 -/
 
 @[expose] public section
@@ -45,15 +48,22 @@ local notation "ET" => MvPolynomial.PolynomialEnveloping k τ
 local notation "VS" => σ →₀ ES
 local notation "VT" => τ →₀ ET
 local notation "φ" => MvPolynomial.polynomialEnvelopingMap k τ g
-/-- The native complex functor of the enveloping scalar restriction. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. Restriction of
+scalars along φ defines a functor from ℕ-indexed chain complexes of left E_B-modules to
+ℕ-indexed chain complexes of left E_A-modules. It retains the component groups and differentials
+and changes the scalar action through φ. -/
 abbrev restrictedComplexFunctor :
     ChainComplex (ModuleCat.{max u v} ET) ℕ ⥤
       ChainComplex (ModuleCat.{max u v} ES) ℕ :=
   Functor.mapHomologicalComplex
     (ModuleCat.restrictScalars.{max u v} (AlgHom.toRingHom (φ))) (.down ℕ)
 
-/-- The original scalar of the source empty wedge is mapped through the
-enveloping algebra map and then multiplied in the target algebra. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. For z ∈
+∧⁰_{E_A}(⊕ᵢ∈σ E_Aeᵢ), let r be its scalar under the degree-zero exterior isomorphism. Applying
+the degree-zero diagonal map and then the target augmentation yields g(μ_A(r)), in the regular
+target module B, where μ_A : E_A → A is multiplication. -/
 theorem polynomialDiagonalRestrictedMap_augmentation_apply (z : ⋀[ES]^0 VS) :
     ((KoszulComplex.polynomialDiagonalAugmentation k τ).f 0).hom
       (((polynomialDiagonalRestrictedMap k g).f 0).hom z) =
@@ -77,7 +87,11 @@ theorem polynomialDiagonalRestrictedMap_augmentation_apply (z : ⋀[ES]^0 VS) :
     (congrArg (fun a : AT => (ULift.up a : KoszulComplex.polynomialDiagonalTarget k τ))
       hMultiplication)
 
-/-- The constructed polynomial Koszul map covers the same augmentation-target morphism as the original algebra Bar map. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. Let D_g be
+polynomialDiagonalRestrictedMap, ε_A and ε_B the diagonal augmentations, U_φ restriction of
+scalars and g[0] the induced map of regular targets concentrated in degree zero. Then D_g ≫
+U_φ(ε_B) = ε_A ≫ g[0]. -/
 @[reassoc]
 theorem polynomialDiagonalRestrictedMap_augmentation :
     polynomialDiagonalRestrictedMap k g ≫
@@ -145,8 +159,12 @@ theorem polynomialDiagonalRestrictedMap_augmentation :
     (cancel_mono e.hom).1 (hleft.trans hright.symm)
   exact hsquare
 
-/-- The signed polynomial Koszul-to-Bar map is algebra-natural up
-to a chain homotopy into the restricted target Bar resolution. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. Let F_A and F_B
+be the antisymmetric diagonal-to-bar comparisons and bar_g the enveloping bar map. There is a
+chain homotopy F_A ≫ bar_g ∼ D_g ≫ U_φ(F_B), where D_g is the diagonal map and the common target
+is the scalar-restricted bar resolution of B. Projectivity of the source Koszul terms and the
+quasi-isomorphic restricted target augmentation construct this homotopy. -/
 def polynomialAntisymmetricBarMap_algebraHomotopy :
     Homotopy
       (polynomialAntisymmetricBarMap k σ ≫ AdjacentBar.envelopingBarAlgebraMap k g)
@@ -204,8 +222,11 @@ def polynomialAntisymmetricBarMap_algebraHomotopy :
         ((congrArg (fun h : PT ⟶ TT => d ≫ F.map h) htarget).trans hdiagonal))
   exact ChainComplex.projectiveHomotopyOfCompQuasiIso q hq f f' (hf.trans hg.symm)
 
-/-- The full homotopy, rather than an assumed naturality square, identifies
-the resolution-level homology maps in every degree. -/
+/-- Let k be a commutative ring, A = k[σ], B = k[τ] and g : A →ₐ[k] B. Write E_A and E_B for their
+enveloping algebras and φ : E_A → E_B for the map induced by g on both factors. For every n : ℕ,
+the homology maps induced by F_A ≫ bar_g and D_g ≫ U_φ(F_B) are equal, where F_A,F_B are the
+antisymmetric diagonal-to-bar comparisons, D_g is the diagonal map and U_φ is restriction of
+scalars. -/
 theorem polynomialAntisymmetricBarMap_algebra_homology (n : ℕ) :
     HomologicalComplex.homologyMap
         (polynomialAntisymmetricBarMap k σ ≫ AdjacentBar.envelopingBarAlgebraMap k g) n =

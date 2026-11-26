@@ -1,3 +1,5 @@
-# Product Equiv apply
+# The forward formula for the split ideal equivalence
 
-The earned source coordinates keep the exact original ideal inclusion and section.
+The forward formula for the split ideal equivalence.
+
+The product equivalence sends `(x, y)` to `x.val + s(y)`.

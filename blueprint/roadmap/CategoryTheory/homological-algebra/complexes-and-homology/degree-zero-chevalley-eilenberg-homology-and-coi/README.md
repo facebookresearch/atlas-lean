@@ -2,38 +2,38 @@
 
 ## Coordinates
 
-- [Coefficient Zero Equiv](coefficient-zero-equiv.md)
-- [Coefficient Zero Equiv ι tmul](coefficient-zero-equiv-tmul.md)
+- [The degree-zero exterior tensor is the coefficient module](coefficient-zero-equiv.md)
+- [The empty exterior word has its coefficient as coordinate](coefficient-zero-equiv-tmul.md)
 
 ## Degree One
 
-- [Coefficient Differential zero coordinates](coefficient-differential-zero-coordinate.md)
-- [Coefficient Action Relations eq range](coefficient-action-relations-eq-range.md)
-- [Coefficient Differential zero range](coefficient-differential-zero-range.md)
+- [The first CE differential is negative tensor action in scalar coordinates](coefficient-differential-zero-coordinate.md)
+- [The action relation submodule is the range of tensor Lie action](coefficient-action-relations-eq-range.md)
+- [The degree-zero coordinate map identifies the boundary image with action relations](coefficient-differential-zero-range.md)
 
 ## Coinvariants
 
-- [Coefficient Homology Zero Linear Equiv](coefficient-homology-zero-linear-equiv.md)
-- [Coefficient Homology Zero Linear Equiv class](coefficient-homology-zero-linear-equiv-c.md)
-- [Coefficient Homology Zero Linear Equiv symm mk](coefficient-homology-zero-linear-equiv-s.md)
-- [Coefficient Homology Zero Iso](coefficient-homology-zero-iso.md)
-- [Coefficient Homology Zero Iso class](coefficient-homology-zero-iso-class.md)
+- [Degree-zero CE homology is linearly equivalent to coefficient coinvariants](coefficient-homology-zero-linear-equiv.md)
+- [The empty-word class maps to the coefficient coinvariant class](coefficient-homology-zero-linear-equiv-c.md)
+- [A coinvariant class has an empty-word homology representative](coefficient-homology-zero-linear-equiv-s.md)
+- [The categorical coinvariant comparison lifts the quotient to the chain universe](coefficient-homology-zero-iso.md)
+- [The categorical comparison sends a homology representative to its lifted class](coefficient-homology-zero-iso-class.md)
 
 ## Maps
 
-- [Coefficient Coinvariants Map](coefficient-coinvariants-map.md)
-- [Coefficient Coinvariants Map mk](coefficient-coinvariants-map-mk.md)
+- [A coefficient Lie-module map induces a map of coinvariants](coefficient-coinvariants-map.md)
+- [The induced coinvariant map applies the coefficient morphism to a representative](coefficient-coinvariants-map-mk.md)
 
 ## Naturality
 
-- [Coefficient Homology Map zero class](coefficient-homology-map-zero-class.md)
-- [Coefficient Homology Zero Linear Equiv naturality](coefficient-homology-zero-linear-equiv-n.md)
+- [A coefficient homology map preserves empty-word representatives](coefficient-homology-map-zero-class.md)
+- [Coinvariant coordinates are natural in coefficient morphisms](coefficient-homology-zero-linear-equiv-n.md)
 
 ## Coinvariants
 
-- [Coefficient Homology Zero lie class](coefficient-homology-zero-lie-class.md)
+- [Every Lie-action coefficient represents zero in degree-zero homology](coefficient-homology-zero-lie-class.md)
 
 ## Trivial
 
-- [Coefficient Homology Zero Trivial Linear Equiv](coefficient-homology-zero-trivial-linear.md)
-- [Coefficient Homology Zero Trivial Linear Equiv class](coefficient-homology-zero-trivial-linear-2.md)
+- [A trivial coefficient action identifies degree-zero homology with the module](coefficient-homology-zero-trivial-linear.md)
+- [Under a trivial action the empty-word homology class returns its coefficient](coefficient-homology-zero-trivial-linear-2.md)

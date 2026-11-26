@@ -12,12 +12,16 @@ module
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 
 /-!
-# Ground-linear Hom cancellation of an algebra tensor factor
+# Hom cancellation for an algebra tensor factor
 
-The acting algebra may be noncommutative. The native heterobasic tensor
-universal property, followed by native evaluation at the algebra unit,
-gives the ground-linear Hom equivalence. This is distinct from the
-commutative-acting-ring `LinearMap.liftBaseChangeEquiv`.
+Let R be a commutative semiring, A an arbitrary R-algebra semiring and V an R-semimodule. Let M
+carry commuting R- and A-actions compatible with the scalar tower R→A. Then Hom_A(A⊗_RV,M) is
+R-linearly equivalent to Hom_R(V,M).
+
+The forward map evaluates an A-linear tensor map at 1⊗v. The inverse takes an R-linear map g:V→M
+to a⊗v ↦ a·g(v). This uses the coefficient action on M and the left A-action on the tensor's
+A-factor; no A-action on V or commutativity of A is needed. R,A,V,M may occupy separate
+universes.
 -/
 
 @[expose] public section
@@ -37,8 +41,10 @@ variable (R : Type u) [CommSemiring R] (A : Type v) [Semiring A] [Algebra R A]
 
 local instance : SMulCommClass R A M := SMulCommClass.symm A R M
 
-/-- Actual Hom cancellation, linear over the ground semiring and valid for an
-arbitrary acting algebra. -/
+/-- Let R be a commutative semiring, A an R-algebra semiring, V an R-semimodule and M a semimodule
+with commuting R,A-actions and scalar tower compatibility. There is an R-linear equivalence
+Hom_A(A⊗_RV,M) ≃ Hom_R(V,M), sending f to v ↦ f(1⊗v) and g inversely to a⊗v ↦ a·g(v). The acting
+A may be noncommutative and all four universes are arbitrary. -/
 def algebraTensorHomEquiv : (A ⊗[R] V →ₗ[A] M) ≃ₗ[R] (V →ₗ[R] M) :=
   (AlgebraTensorModule.lift.equiv R A R A V M).symm.trans
     (LinearMap.ringLmapEquivSelf A R (V →ₗ[R] M))

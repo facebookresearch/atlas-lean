@@ -1,4 +1,6 @@
-# Cotangent Higher hom ext succ
+# Extensionality on decomposable higher cotangent tensors
 
-Maps out of an actual higher-form coefficient module are determined on exterior words.
-The target module retains its independently specified original universe.
+Extensionality on decomposable higher cotangent tensors.
+
+For weight `n+1`, two `A`-linear maps to an independently sized `A`-module `M` are equal if
+they agree on every `a ⊗ (ω₀ ∧ ⋯ ∧ ωₙ)`, with `a ∈ A` and `ωᵢ ∈ Ω[P/k]`.

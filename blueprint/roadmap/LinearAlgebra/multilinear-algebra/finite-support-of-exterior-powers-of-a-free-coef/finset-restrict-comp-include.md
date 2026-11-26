@@ -1,3 +1,4 @@
-# Finset Restrict comp include
+# Restriction retracts finite-coordinate inclusion
 
-The actual coordinate restriction retracts the actual inclusion.
+For a commutative ring `R`, an index type `I`, and `s : Finset I`, `(finsetRestrict R s).comp
+(finsetInclude R s)=LinearMap.id` on `(s → R)`.

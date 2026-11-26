@@ -1,3 +1,6 @@
-# Enveloping smul tmul
+# The left enveloping action on an exterior-first chain tensor
 
-The original UEA coefficient action on a pure native CE tensor.
+The left enveloping action on an exterior-first chain tensor.
+
+For `a, b ∈ U_R(L)` and `x ∈ ⋀ⁿ L`, the enveloping scalar action satisfies `a • (x ⊗ b) = x ⊗
+(a*b)`.

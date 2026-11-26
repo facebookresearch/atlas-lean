@@ -1,4 +1,6 @@
-# Cotangent Simplicial
+# The cotangent module of an augmented simplicial algebra
 
-A simplicial algebra with its actual augmentation to `A` gives a
-diagram in `Over A`; linearize that diagram.
+The cotangent module of an augmented simplicial algebra.
+
+For `P_• → A`, this is the simplicial `A`-module with degreewise module `A ⊗[P_n] Ω[P_n/k]`
+and operators induced by the algebra operators over `A`.

@@ -15,14 +15,20 @@ public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Unitors
 
 /-!
-# Ground-balanced coefficients of arbitrary Koszul complexes
+# Balanced coefficients for exterior Koszul complexes
 
-The complex is the original native exterior Koszul complex, carried by the
-existing coefficient-first balanced tensor functor. The acting coefficient
-ring, ground ring, coordinate module and coefficient carrier remain independent.
-Balancing computes its differential and proves that it vanishes when the
-actual functional values annihilate the original right coefficient action.
-No exactness or homology comparison is assumed.
+Let k and R be commutative rings with R a k-algebra, let V be an R-module and x : V →ₗ[R] R a
+functional. Give M a k-module structure and a right R-module structure. Applying the
+coefficient-first balanced tensor functor to the Koszul complex gives degree-n term B k R M
+(⋀[R]^n V) and boundary [m, a] ↦ [m, d_x(a)].
+
+On a decomposable wedge, the boundary is the signed deletion sum, moving the scalar (−1)^j
+x(a_j) onto M through its right action. If every x(v) annihilates M under that action, every
+boundary is zero. With the additional scalar tower k → Rᵐᵒᵖ → M, the degree-zero term is
+k-linearly equivalent to M by the zero-exterior equivalence and the balanced unitor.
+
+The four carrier universes u, v, w and z are separate; the coefficient complex takes values in
+ModuleCat.{max v w z} k.
 -/
 
 @[expose] public section
@@ -42,13 +48,19 @@ variable (k : Type u) [CommRing k] (R : Type v) [CommRing R] [Algebra k R]
 
 attribute [local instance] ModuleCat.BalancedTensor.additive
 
-/-- Apply the original coefficient-first balanced tensor functor to the native Koszul complex. -/
+/-- Let k : Type u and R : Type v be commutative rings with R a k-algebra. Let V : Type w be an
+R-module, and let M : Type z have k- and Rᵐᵒᵖ-module structures. For x : V →ₗ[R] R, define
+balancedCoefficientComplex k R V M x by applying N ↦ B k R M N to the Koszul complex on V and
+x. Its degree-n object is B k R M (⋀[R]^n V), in ModuleCat.{max v w z} k, with shape down ℕ. -/
 def balancedCoefficientComplex (x : V →ₗ[R] R) :
     ChainComplex (ModuleCat.{max v w z} k) ℕ :=
   ((ModuleCat.BalancedTensor.functor k R M).mapHomologicalComplex (ComplexShape.down ℕ)).obj
     (complex R V x)
 
-/-- Every original balanced representative maps by the original differential. -/
+/-- Let k : Type u and R : Type v be commutative rings with R a k-algebra. Let V : Type w be an
+R-module, and let M : Type z have k- and Rᵐᵒᵖ-module structures. For x : V →ₗ[R] R, n : ℕ, m :
+M and a : ⋀[R]^(n+1) V, the balanced coefficient differential sends [m, a] to [m, differential
+R V x n a]. The exterior powers use the k-action restricted along algebraMap k R. -/
 theorem balancedCoefficientComplex_d_mk (x : V →ₗ[R] R) (n : ℕ) (m : M)
     (a : ⋀[R]^(n + 1) V) :
     letI : Module k (⋀[R]^(n + 1) V) := Module.compHom _ (algebraMap k R)
@@ -63,7 +75,11 @@ theorem balancedCoefficientComplex_d_mk (x : V →ₗ[R] R) (n : ℕ) (m : M)
   erw [ModuleCat.BalancedTensor.map_mk, complex_d_succ]
   rfl
 
-/-- Signed deletion retains the original right action of each full Koszul coefficient. -/
+/-- Let k : Type u and R : Type v be commutative rings with R a k-algebra. Let V : Type w be an
+R-module, and let M : Type z have k- and Rᵐᵒᵖ-module structures. For x : V →ₗ[R] R, n : ℕ, m :
+M and a : Fin (n + 1) → V, the boundary of [m, a₀ ∧ … ∧ a_n] is ∑ j : Fin (n + 1), [op(((−1 :
+R)^j) * x(a_j)) • m, ⋀ q : Fin n, a_(j.succAbove q)]. The undeleted vectors retain their
+order, and the full signed coefficient acts on the right-module coefficient through Rᵐᵒᵖ. -/
 theorem balancedCoefficientComplex_d_mk_ιMulti (x : V →ₗ[R] R) (n : ℕ)
     (m : M) (a : Fin (n + 1) → V) :
     letI : Module k (⋀[R]^(n + 1) V) := Module.compHom _ (algebraMap k R)
@@ -82,7 +98,10 @@ theorem balancedCoefficientComplex_d_mk_ιMulti (x : V →ₗ[R] R) (n : ℕ)
   rw [smul_smul, ← TensorProduct.Balanced.balance]
   rfl
 
-/-- Actual annihilation of functional values forces the original coefficient differential to vanish. -/
+/-- Let k : Type u and R : Type v be commutative rings with R a k-algebra. Let V : Type w be an
+R-module, and let M : Type z have k- and Rᵐᵒᵖ-module structures. Let x : V →ₗ[R] R satisfy
+op(x(a)) • m = 0 for every a : V and m : M. Then (balancedCoefficientComplex k R V M x).d (n +
+1) n = 0 for every n : ℕ. -/
 theorem balancedCoefficientComplex_d_eq_zero (x : V →ₗ[R] R)
     (hx : ∀ (a : V) (m : M), op (x a) • m = 0) (n : ℕ) :
     (balancedCoefficientComplex k R V M x).d (n + 1) n = 0 := by
@@ -129,7 +148,11 @@ section DegreeZero
 
 variable [IsScalarTower k Rᵐᵒᵖ M]
 
-/-- Native zero-exterior coordinates and the actual balanced unitor recover the original coefficient in degree zero. -/
+/-- Let k : Type u and R : Type v be commutative rings with R a k-algebra. Let V : Type w be an
+R-module, and let M : Type z have k- and Rᵐᵒᵖ-module structures. Assume also IsScalarTower k
+Rᵐᵒᵖ M. For any x : V →ₗ[R] R, the degree-zero object B k R M (⋀[R]^0 V) is k-linearly
+equivalent to M. The equivalence first identifies ⋀[R]^0 V with R, then contracts the regular
+factor by the right action on M. -/
 def balancedCoefficientDegreeZeroEquiv (x : V →ₗ[R] R) :
     (balancedCoefficientComplex k R V M x).X 0 ≃ₗ[k] M := by
   letI : Module k (⋀[R]^0 V) := Module.compHom _ (algebraMap k R)
@@ -139,7 +162,10 @@ def balancedCoefficientDegreeZeroEquiv (x : V →ₗ[R] R) :
     (fun _ _ => rfl) (fun r a => (exteriorPower.zeroEquiv R V).map_smul r a)).trans
       (TensorProduct.Balanced.rightUnitor k R M)
 
-/-- The original degree-zero balanced representative is evaluated by its actual scalar on the original coefficient. -/
+/-- Let k : Type u and R : Type v be commutative rings with R a k-algebra. Let V : Type w be an
+R-module, and let M : Type z have k- and Rᵐᵒᵖ-module structures. Assume the scalar tower k →
+Rᵐᵒᵖ → M. For x : V →ₗ[R] R, m : M and a : ⋀[R]^0 V, balancedCoefficientDegreeZeroEquiv sends
+[m, a] to op(exteriorPower.zeroEquiv R V a) • m. -/
 theorem balancedCoefficientDegreeZeroEquiv_mk (x : V →ₗ[R] R) (m : M) (a : ⋀[R]^0 V) :
     letI : Module k (⋀[R]^0 V) := Module.compHom _ (algebraMap k R)
     balancedCoefficientDegreeZeroEquiv k R V M x

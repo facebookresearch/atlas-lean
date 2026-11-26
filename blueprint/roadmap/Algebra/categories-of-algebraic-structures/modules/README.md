@@ -16,6 +16,7 @@ Categories of modules and finitely generated modules over a ring: abelian and mo
 - [Identity induction](identity-induction/README.md)
 - [Induction along associative ring homomorphisms](induction-along-associative-ring-homomorphisms/README.md)
 - [Induction and restriction of scalars](induction-and-restriction-of-scalars/README.md)
+- [Inverse unitors for the canonical larger-universe module tensor](inverse-unitors-for-the-canonical-larger-univers/README.md)
 - [Lie modules and universal-enveloping-algebra modules](lie-modules-and-universal-enveloping-algebra-mod/README.md)
 - [Module direct limits as categorical colimits](module-direct-limits-as-categorical-colimits/README.md)
 - [Naturality of balanced tensor maps under change of scalars](naturality-of-balanced-tensor-maps-under-change/README.md)

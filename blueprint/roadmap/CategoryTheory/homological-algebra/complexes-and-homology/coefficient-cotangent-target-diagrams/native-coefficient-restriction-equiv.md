@@ -1,3 +1,6 @@
-# Native Coefficient Restriction Equiv
+# The tensor coordinates of ground-restricted coefficient cotangents
 
-Restriction of the native B-module retains the original ground action on the same raw tensor carrier.
+The tensor coordinates of ground-restricted coefficient cotangents.
+
+The ground-restricted coefficient cotangent object is linearly equivalent to the same tensor
+carrier `M ⊗[B] (B ⊗[P] Ω[P/k])`, with its given compatible ground action.

@@ -1,3 +1,7 @@
-# Bar Lower Word Complex
+# The positive predecessor stages form a chain complex
 
-Its lower family is bottom at p=0 and the original previous stage otherwise.
+Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. barLowerWordComplex p has degree-N module H_p,N and differential
+barLowerStageD p n.

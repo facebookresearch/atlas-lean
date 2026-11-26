@@ -1,7 +1,6 @@
-# Precomp Comonad
+# The comonad on functors given by precomposition
 
-The comonad on `C ⥤ D` given by precomposition with `G`.
+The comonad on functors given by precomposition.
 
-The underlying functor sends `R` to `G ⋙ R`; the counit and comultiplication
-are `G.ε` and `G.δ` whiskered on the right. The laws follow componentwise from
-the comonad laws of `G`.
+For a comonad `G` on `C`, the functor-category comonad on `C ⥤ D` sends `R` to `G ⋙ R`; its
+counit and comultiplication are `R` applied to those of `G`.

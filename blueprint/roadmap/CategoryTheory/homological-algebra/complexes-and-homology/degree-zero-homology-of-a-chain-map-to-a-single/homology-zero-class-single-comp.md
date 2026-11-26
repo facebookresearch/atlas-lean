@@ -1,3 +1,5 @@
-# Homology Zero Class single comp
+# The concentrated degree-zero class map identifies homology with the object
 
-The actual native class of the degree-zero single complex returns the original object.
+In a category C with zero morphisms and a zero object, let S_X be the chain complex of shape
+down ℕ concentrated at X in degree zero. Its class map c_X : X ⟶ H₀(S_X), followed by the
+canonical isomorphism singleObjHomologySelfIso : H₀(S_X) ≅ X, equals 𝟙 X.

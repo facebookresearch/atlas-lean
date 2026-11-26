@@ -14,18 +14,26 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.DataRev
 public import MathlibExt.AlgebraicTopology.SimplicialObject.ToAugmented
 
 /-!
-# Comonad bar resolutions
+# Simplicial bar resolutions of a comonad
 
-For a comonad `G` on a category `C` and an object `A`, this file constructs
-the canonical augmented simplicial object with degree `n` object
-`G^(n+1) A`. Its faces and degeneracies are the source-ordered counit and
-comultiplication insertions, and its augmentation is the counit `G A ⟶ A`.
+Let `G` be a comonad on a category `C`, with counit `ε : G → Id`
+and comultiplication `Δ : G → G²`. Every object `A` has a canonical
+augmented simplicial bar object with degree `n` term `G^(n+1)(A)`.
+For `0≤i≤n+1`, its face from degree `n+1` to `n` is
+`∂_i=G^i(ε_(G^(n+1-i)(A)))`; for `0≤i≤n`, its degeneracy from
+`n` to `n+1` is `σ_i=G^i(Δ_(G^(n-i)(A)))`.
+In particular the degree-one faces are `ε_(GA)` and `G(ε_A)`,
+and the degree-zero augmentation is `ε_A`.
 
-The construction uses the existing comonad insertion calculus and the generic
-conversion from simplicial data. It assumes no comodule structure on `A`.
+The preliminary insertion order is reversed to give these standard
+simplicial indices. The construction is functorial in the arbitrary
+object `A`: a map `f : A → B` acts in degree `n` by `G^(n+1)(f)`
+and at the augmentation point by `f`. No additional structure on
+`A` is part of the construction.
 
-Mathematical source: Charles A. Weibel, *An Introduction to Homological
-Algebra*, §8.6.4.
+## References
+
+* Charles A. Weibel, *An Introduction to Homological Algebra*, §8.6.4.
 -/
 
 @[expose] public section
@@ -43,7 +51,9 @@ namespace CategoryTheory.Comonad
 
 variable {C : Type u} [Category.{v} C]
 
-/-- Iterated comonad powers add on objects. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. For natural numbers `m,n`, the iterated powers satisfy
+`G^(m+n)(A)=G^m(G^n(A))`. -/
 theorem comonadPow_add_obj (G : Comonad C) (m n : ℕ) (A : C) :
     (comonadPow G (m + n)).obj A =
       (comonadPow G m).obj ((comonadPow G n).obj A) := by
@@ -56,8 +66,11 @@ theorem comonadPow_add_obj (G : Comonad C) (m n : ℕ) (A : C) :
           (G.toFunctor.obj ((comonadPow G n).obj A))
       rw [ih (G.toFunctor.obj A), comonadPow_obj_G_comm G n A]
 
-/-- Raw simplicial data on the iterated comonad. Raw insertion positions are
-reversed in `resolutionData` to obtain Weibel's source ordering. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. There is simplicial data with degree-`n` object `G^(n+1)(A)`
+in the preliminary insertion order: its faces are
+`G^(n+1-i)(ε_(G^i(A)))` and degeneracies are
+`G^(n-i)(Δ_(G^i(A)))`, with indices in the respective ranges. -/
 noncomputable def resolutionRawData (G : Comonad C) (A : C) :
     SimplicialObject.Data C where
   obj n := (comonadPow G (n + 1)).obj A
@@ -84,7 +97,10 @@ noncomputable def resolutionRawData (G : Comonad C) (A : C) :
     intro n i j h
     exact (deltaAtPos_face_face G (n + 1) i j h A).symm
 
-/-- Source-ordered simplicial data of the comonad resolution. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. Reversing the finite face and degeneracy indices gives
+simplicial data with faces `G^i(ε_(G^(n+1-i)(A)))` and degeneracies
+`G^i(Δ_(G^(n-i)(A)))` on the objects `G^(n+1)(A)`. -/
 noncomputable def resolutionData (G : Comonad C) (A : C) :
     SimplicialObject.Data C :=
   (resolutionRawData G A).rev
@@ -94,21 +110,30 @@ theorem resolutionData_obj (G : Comonad C) (A : C) (n : ℕ) :
     (resolutionData G A).obj n = (comonadPow G (n + 1)).obj A :=
   rfl
 
-/-- Faces are the source-ordered counit insertions. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. For `i : Fin(n+2)`, the face of the bar data from
+`G^(n+2)(A)` to `G^(n+1)(A)` is
+`∂_i=G^i(ε_(G^(n+1-i)(A)))`, under the iterated-power identifications. -/
 @[simp]
 theorem resolutionData_δ (G : Comonad C) (A : C) {n : ℕ}
     (i : Fin (n + 2)) :
     (resolutionData G A).δ i = cobarEpsilonAtPos G (n + 1) i A :=
   rfl
 
-/-- Degeneracies are the source-ordered comultiplication insertions. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. For `i : Fin(n+1)`, the degeneracy of the bar data from
+`G^(n+1)(A)` to `G^(n+2)(A)` is
+`σ_i=G^i(Δ_(G^(n-i)(A)))`, under the iterated-power identifications. -/
 @[simp]
 theorem resolutionData_σ (G : Comonad C) (A : C) {n : ℕ}
     (i : Fin (n + 1)) :
     (resolutionData G A).σ i = cobarDeltaAtPos G (n + 1) i A :=
   rfl
 
-/-- The simplicial bar resolution associated to a comonad and an object. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The standard bar data define a simplicial object with
+terms `G^(n+1)(A)`, counit-insertion faces, and comultiplication-
+insertion degeneracies in the stated order. -/
 noncomputable def resolutionBar (G : Comonad C) (A : C) :
     SimplicialObject C :=
   (resolutionData G A).toSimplicialObject
@@ -119,8 +144,9 @@ theorem resolutionBar_obj (G : Comonad C) (A : C) (n : ℕ) :
       (comonadPow G (n + 1)).obj A :=
   rfl
 
-/-- Canonical level identification of the bar resolution with the iterated
-comonad power. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. Each degree-`n` term of the simplicial bar has its
+canonical level isomorphism to `G^(n+1)(A)`. -/
 noncomputable def resolutionBarObjIso (G : Comonad C) (A : C) (n : ℕ) :
     (resolutionBar G A).obj (op (SimplexCategory.mk n)) ≅
       (comonadPow G (n + 1)).obj A := by
@@ -128,7 +154,10 @@ noncomputable def resolutionBarObjIso (G : Comonad C) (A : C) (n : ℕ) :
     (comonadPow G (n + 1)).obj A
   exact Iso.refl _
 
-/-- Face maps of the bar resolution use Weibel's ordering. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. For `i : Fin(n+2)`, the simplicial map of the face
+`[n] → [n+1]` is the counit insertion
+`G^i(ε_(G^(n+1-i)(A))) : G^(n+2)(A) → G^(n+1)(A)`. -/
 @[simp]
 theorem resolutionBar_map_δ_op (G : Comonad C) (A : C) {n : ℕ}
     (i : Fin (n + 2)) :
@@ -137,7 +166,10 @@ theorem resolutionBar_map_δ_op (G : Comonad C) (A : C) {n : ℕ}
   exact SimplicialObject.Data.toSimplicialObject_map_δ
     (resolutionData G A) i
 
-/-- Degeneracy maps of the bar resolution use Weibel's ordering. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. For `i : Fin(n+1)`, the simplicial degeneracy from degree
+`n` to `n+1` is
+`G^i(Δ_(G^(n-i)(A))) : G^(n+1)(A) → G^(n+2)(A)`. -/
 @[simp]
 theorem resolutionBar_map_σ_op (G : Comonad C) (A : C) {n : ℕ}
     (i : Fin (n + 1)) :
@@ -146,8 +178,10 @@ theorem resolutionBar_map_σ_op (G : Comonad C) (A : C) {n : ℕ}
   exact SimplicialObject.Data.toSimplicialObject_map_σ
     (resolutionData G A) i
 
-/-- The level identifications intertwine every face with the source-ordered
-counit insertion. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. For every face index `i : Fin(n+2)`, the level
+isomorphisms from bar degrees `n+1,n` to `G^(n+2)(A),G^(n+1)(A)`
+intertwine that simplicial face with its counit insertion. -/
 @[reassoc]
 theorem resolutionBarObjIso_hom_face (G : Comonad C) (A : C)
     (n : ℕ) (i : Fin (n + 2)) :
@@ -158,8 +192,10 @@ theorem resolutionBarObjIso_hom_face (G : Comonad C) (A : C)
   rw [resolutionBar_map_δ_op]
   simp [resolutionBarObjIso]
 
-/-- The level identifications intertwine every degeneracy with the
-source-ordered comultiplication insertion. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. For every degeneracy index `i : Fin(n+1)`, the level
+isomorphisms from bar degrees `n,n+1` intertwine that simplicial
+degeneracy with its comultiplication insertion. -/
 @[reassoc]
 theorem resolutionBarObjIso_hom_degeneracy (G : Comonad C) (A : C)
     (n : ℕ) (i : Fin (n + 1)) :
@@ -170,7 +206,9 @@ theorem resolutionBarObjIso_hom_degeneracy (G : Comonad C) (A : C)
   rw [resolutionBar_map_σ_op]
   simp [resolutionBarObjIso]
 
-/-- In degree one, the zeroth face is `ε_(G A)`. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The zeroth face from bar degree one to zero is
+`ε_(G(A)) : G²(A) → G(A)`. -/
 theorem resolutionBar_face_zero_degree_one (G : Comonad C) (A : C) :
     (resolutionBar G A).map
       (SimplexCategory.δ (0 : Fin 2)).op =
@@ -178,7 +216,9 @@ theorem resolutionBar_face_zero_degree_one (G : Comonad C) (A : C) :
   rw [resolutionBar_map_δ_op]
   rfl
 
-/-- In degree one, the first face is `G(ε_A)`. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The first face from bar degree one to zero is
+`G(ε_A) : G²(A) → G(A)`. -/
 theorem resolutionBar_face_one_degree_one (G : Comonad C) (A : C) :
     (resolutionBar G A).map
       (SimplexCategory.δ (1 : Fin 2)).op =
@@ -186,14 +226,19 @@ theorem resolutionBar_face_one_degree_one (G : Comonad C) (A : C) :
   rw [resolutionBar_map_δ_op]
   rfl
 
-/-- The degree-zero degeneracy is the comultiplication `δ_A`. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The only degeneracy from degree zero to one is the
+comultiplication `Δ_A : G(A) → G²(A)`. -/
 theorem resolutionBar_degeneracy_zero (G : Comonad C) (A : C) :
     (resolutionBar G A).map
       (SimplexCategory.σ (0 : Fin 1)).op = G.δ.app A := by
   rw [resolutionBar_map_σ_op]
   rfl
 
-/-- The counit equalizes the two degree-one faces. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The augmentation `ε_A : G(A) → A` equalizes the two
+ degree-one faces:
+`ε_(GA) ≫ ε_A = G(ε_A) ≫ ε_A`. -/
 theorem resolutionData_counit_isBalanced (G : Comonad C) (A : C) :
     SimplicialObject.Data.IsBalanced
       (X := resolutionData G A) (G.ε.app A) := by
@@ -201,21 +246,28 @@ theorem resolutionData_counit_isBalanced (G : Comonad C) (A : C) :
     G.toFunctor.map (G.ε.app A) ≫ G.ε.app A
   exact (G.ε.naturality (G.ε.app A)).symm
 
-/-- The augmented simplicial data of the comonad resolution. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The bar simplicial data augmented at `A` by
+`ε_A : G(A) → A` form augmented simplicial data. -/
 noncomputable def resolutionAugmentedData (G : Comonad C) (A : C) :
     SimplicialObject.Data.Augmented C :=
   SimplicialObject.Data.Augmented.augment
     (resolutionData G A) A (G.ε.app A)
       (resolutionData_counit_isBalanced G A)
 
-/-- A map of carrier objects induces a morphism of raw resolution data. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `f : A → B` a morphism of objects in `C`. Applying `G^(n+1)` to `f` in each degree gives a map
+between the preliminary bar data, compatible with every counit
+and comultiplication insertion. -/
 noncomputable def resolutionRawHom (G : Comonad C) {A B : C}
     (f : A ⟶ B) : resolutionRawData G A ⟶ resolutionRawData G B where
   app n := (comonadPow G (n + 1)).map f
   w_δ i := epsilonAtPos_naturality G _ i f
   w_σ i := deltaAtPos_naturality G _ i f
 
-/-- A map of carrier objects induces a morphism of source-ordered data. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `f : A → B` a morphism of objects in `C`. The degreewise maps `G^(n+1)(f)` give a morphism of
+standard-indexed bar data, commuting with all faces and degeneracies. -/
 noncomputable def resolutionDataHom (G : Comonad C) {A B : C}
     (f : A ⟶ B) : resolutionData G A ⟶ resolutionData G B :=
   SimplicialObject.Data.revHom (resolutionRawHom G f)
@@ -241,7 +293,10 @@ theorem resolutionDataHom_comp (G : Comonad C) {A B D : C}
   intro n
   simp
 
-/-- A carrier map induces a morphism of augmented resolution data. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `f : A → B` a morphism of objects in `C`. The standard bar-data map extends to augmented data with
+point map `f` and degree-`n` map `G^(n+1)(f)`, commuting with
+`ε_A,ε_B`. -/
 noncomputable def resolutionAugmentedDataHom (G : Comonad C) {A B : C}
     (f : A ⟶ B) :
     resolutionAugmentedData G A ⟶ resolutionAugmentedData G B where
@@ -269,7 +324,9 @@ theorem resolutionAugmentedDataHom_comp (G : Comonad C) {A B D : C}
   · exact resolutionDataHom_comp G f g
   · rfl
 
-/-- The augmented comonad resolution as a functor of the carrier object. -/
+/-- For a comonad `G` on a category `C`, the augmented bar-data
+construction is a functor of the object `A`: objects are augmented
+by `ε_A`, and morphisms act by `G^(n+1)(f)` and the point map `f`. -/
 noncomputable def resolutionAugmentedDataFunctor (G : Comonad C) :
     C ⥤ SimplicialObject.Data.Augmented C where
   obj A := resolutionAugmentedData G A
@@ -277,13 +334,19 @@ noncomputable def resolutionAugmentedDataFunctor (G : Comonad C) :
   map_id A := resolutionAugmentedDataHom_id G A
   map_comp f g := resolutionAugmentedDataHom_comp G f g
 
-/-- The genuine augmented comonad resolution functor. -/
+/-- For a comonad `G` on a category `C`, the bar construction gives
+a functor `C → SimplicialObject.Augmented C`, taking `A` to its
+bar object augmented by the counit and maps to their iterated-power
+simplicial maps. -/
 noncomputable def resolutionAugmentedFunctor (G : Comonad C) :
     C ⥤ SimplicialObject.Augmented C :=
   resolutionAugmentedDataFunctor G ⋙
     SimplicialObject.Data.Augmented.toSimplicialFunctor
 
-/-- The canonical augmented comonad resolution. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The canonical augmented simplicial resolution of `A`
+has underlying bar object `G^(n+1)(A)` and augmentation induced
+by `ε_A`. -/
 noncomputable def resolutionAugmented (G : Comonad C) (A : C) :
     SimplicialObject.Augmented C :=
   (resolutionAugmentedFunctor G).obj A
@@ -302,7 +365,9 @@ theorem resolutionAugmented_left (G : Comonad C) (A : C) :
   exact SimplicialObject.Data.Augmented.toSimplicialFunctor_obj_left
     (resolutionAugmentedData G A)
 
-/-- The degree-zero augmentation component is literally the counit. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The degree-zero component of the augmented bar map
+`Bar_G(A) → const(A)` is the counit `ε_A : G(A) → A`. -/
 @[simp]
 theorem resolutionAugmented_hom_zero (G : Comonad C) (A : C) :
     (resolutionAugmented G A).hom.app
@@ -315,7 +380,10 @@ theorem resolutionAugmented_hom_zero (G : Comonad C) (A : C) :
   exact SimplicialObject.Data.Augmented.toSimplicialAugmented_hom_app_mk
     (resolutionAugmentedData G A) 0
 
-/-- The augmented resolution map induced by a morphism of carrier objects. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `f : A → B` a morphism of objects in `C`. The augmented bar functor sends `f` to the resolution
+map whose degree-`n` component is `G^(n+1)(f)` and whose
+augmentation-point component is `f`. -/
 noncomputable def resolutionHom (G : Comonad C) {A B : C} (f : A ⟶ B) :
     resolutionAugmented G A ⟶ resolutionAugmented G B :=
   (resolutionAugmentedFunctor G).map f
@@ -341,8 +409,9 @@ theorem resolutionHom_comp (G : Comonad C) {A B D : C}
     resolutionHom G f ≫ resolutionHom G g = resolutionHom G (f ≫ g) :=
   ((resolutionAugmentedFunctor G).map_comp f g).symm
 
-/-- The simplicial component of a resolution map is induced degreewise by
-the corresponding comonad power. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `f : A → B` a morphism of objects in `C`. The simplicial component of the augmented resolution map
+in degree `n` is `G^(n+1)(f)`. -/
 @[simp]
 theorem resolutionHom_left_app (G : Comonad C) {A B : C}
     (f : A ⟶ B) (n : ℕ) :
@@ -350,7 +419,9 @@ theorem resolutionHom_left_app (G : Comonad C) {A B : C}
       (comonadPow G (n + 1)).map f :=
   rfl
 
-/-- The target component of an augmented resolution map is the original map. -/
+/-- Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `f : A → B` a morphism of objects in `C`. The component at the augmentation point of the comonad
+bar resolution map is `f : A → B`. -/
 @[simp]
 theorem resolutionHom_right (G : Comonad C) {A B : C} (f : A ⟶ B) :
     (resolutionHom G f).right = f :=

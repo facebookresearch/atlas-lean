@@ -13,7 +13,12 @@ public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import Mathlib.CategoryTheory.Abelian.Basic
 
 /-!
-## The split middle presentation of the degree-one horseshoe sign test
+# Split middle row of a presentation
+
+For any map `f : A → B` in an abelian category, the row
+`A → A ⊞ B → B` with maps `[-id,f]` and `[f,id]` is split exact.
+Its retraction is `-fst` and its section is `inr`. This row supplies
+the signed middle augmentation in a projective presentation horseshoe.
 -/
 @[expose] public section
 noncomputable section
@@ -25,17 +30,18 @@ open scoped ZeroObject
 namespace CategoryTheory.ProjectiveResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/--
-The middle presentation uses the negative left coordinate required by the original augmentation
-equation.
--/
+/-- In an abelian category `C`, a short complex `S : A → B → X`
+gives the middle row `A → A ⊞ B → B` with maps
+`[-𝟙 A,S.f]` and `[S.f,𝟙 B]`; their composite is zero. -/
 def presentationMiddleRow (S : ShortComplex C) : ShortComplex C :=
   ShortComplex.mk (biprod.lift (-𝟙 S.X₁) S.f)
     (biprod.desc S.f (𝟙 S.X₂)) (by simp)
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
-/-- This middle augmentation row splits by the negative first projection and original right inclusion. -/
+/-- In an abelian category `C`, for a short complex `S : A → B → X`,
+the row with maps `[-id,S.f]`, `[S.f,id]` is split by retraction
+`-biprod.fst : A ⊞ B → A` and section `biprod.inr : B → A ⊞ B`. -/
 def presentationMiddleRowSplitting (S : ShortComplex C) : (presentationMiddleRow S).Splitting where
   r := -biprod.fst
   s := biprod.inr
@@ -46,7 +52,9 @@ def presentationMiddleRowSplitting (S : ShortComplex C) : (presentationMiddleRow
         simp [presentationMiddleRow, Category.assoc, Preadditive.comp_add,
       Preadditive.add_comp]
 
-/-- The middle row is genuinely short exact, with its original stored objects/maps. -/
+/-- In an abelian category `C`, for any short complex
+`S : A → B → X`, the row `A → A ⊞ B → B` with maps
+`[-id,S.f]`, `[S.f,id]` is short exact. -/
 theorem presentationMiddleRow_shortExact (S : ShortComplex C) :
     (presentationMiddleRow S).ShortExact := (presentationMiddleRowSplitting S).shortExact
 

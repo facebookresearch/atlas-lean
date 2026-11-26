@@ -13,13 +13,15 @@ public import MathlibExt.Algebra.Homology.ChainComplex.HomologyZero
 public import Mathlib.Algebra.Homology.SingleHomology
 
 /-!
-# Native degree-zero homology of a chain map to a single object
+# Homology maps to a complex concentrated in degree zero
 
-The native class map of the single complex is inverse to its native homology
-self-isomorphism. Naturality therefore identifies the actual degree-zero
-component of any chain map to a single complex with its induced H0 map.
-The category and morphism universes are independent, and only zero morphisms,
-a zero object, and the indicated H0 are needed.
+Let C have zero morphisms and a zero object. The degree-zero homology of the chain complex
+concentrated at X in degree zero is canonically isomorphic to X, and its class map composed
+with this isomorphism is the identity.
+
+If a chain complex K has homology in degree zero, any chain map f : K → single₀(X) satisfies
+c_K ≫ H₀(f) ≫ e_X = f₀, where c_K is the degree-zero class map and e_X is the homology
+isomorphism for the concentrated complex.
 -/
 
 @[expose] public section
@@ -33,7 +35,9 @@ namespace ChainComplex
 
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C] [HasZeroObject C]
 
-/-- The actual native class of the degree-zero single complex returns the original object. -/
+/-- In a category C with zero morphisms and a zero object, let S_X be the chain complex of shape
+down ℕ concentrated at X in degree zero. Its class map c_X : X ⟶ H₀(S_X), followed by the
+canonical isomorphism singleObjHomologySelfIso : H₀(S_X) ≅ X, equals 𝟙 X. -/
 @[reassoc]
 theorem homologyZeroClass_single_comp (X : C) :
     homologyZeroClass ((single₀ C).obj X) ≫
@@ -44,7 +48,9 @@ theorem homologyZeroClass_single_comp (X : C) :
     HomologicalComplex.pOpcycles_singleObjOpcyclesSelfIso_inv, single₀ObjXSelf]
   rfl
 
-/-- An actual chain map to a single complex has precisely its native H0 class square. -/
+/-- In a category C with zero morphisms and a zero object, let K be a chain complex indexed by ℕ
+with homology in degree zero, and let f : K ⟶ single₀(X) be a chain map. Then
+homologyZeroClass K ≫ H₀(f) ≫ singleObjHomologySelfIso.hom = f.f 0 as morphisms K.X 0 ⟶ X. -/
 @[reassoc]
 theorem homologyZeroClass_toSingle {K : ChainComplex C ℕ} [K.HasHomology 0]
     {X : C} (f : K ⟶ (single₀ C).obj X) :

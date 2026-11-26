@@ -1,4 +1,5 @@
-# Of Lie Hom
+# Model morphisms induced by Lie homomorphisms
 
-Every Lie algebra map between canonical CE models induces a model
-morphism.
+Let R be commutative and X,Y models presented by the canonical
+bracket formula. Every R-Lie homomorphism between their carriers
+induces a model morphism, by naturality of that formula.

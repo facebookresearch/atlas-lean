@@ -16,14 +16,15 @@ public import Mathlib.Algebra.Category.ModuleCat.EnoughInjectives
 public import Mathlib.CategoryTheory.Abelian.Injective.Resolution
 
 /-!
-# Derived Hom and enveloping Chevalley–Eilenberg cohomology
+# Derived Hom comparisons for enveloping cochains
 
-Under `Module.Free R L`, the exterior-cochain homology identifies with linear
-Ext through the enveloping resolution. The first-variable Ext comparison
-then identifies it with derived-category Ext and right-derived linear Hom.
-The trivial module and left coefficient module are lifted to a common
-carrier universe; module-category instances supply Ext and injective
-resolutions there.
+Let `R` be a commutative ring, `L` an `R`-Lie algebra with free underlying `R`-module, and `M`
+a left `U_R(L)`-module. The enveloping projective resolution identifies the degree-`n`
+cohomology of the exterior cochain complex with linear Ext from the trivial module to `M`.
+
+The first-variable Ext comparison then identifies this cohomology with derived-category Ext
+and with the degree-`n` right-derived linear Hom functor in the coefficient variable. The
+trivial module and coefficient module are lifted to the joint carrier universe `max u v w`.
 -/
 
 @[expose] public section
@@ -44,8 +45,11 @@ local notation "U" => UniversalEnvelopingAlgebra R L
 
 variable (M : ModuleCat.{w} (UniversalEnvelopingAlgebra R L)) [Module.Free R L]
 
-/-- The exterior cochain homology is the native derived-category Ext
-module, by the existing native first-variable comparison. -/
+/-- The derived-category Ext comparison for exterior cochains.
+
+For `Module.Free R L`, the degree-`n` cohomology of the exterior cochain complex with left
+coefficients `M` is isomorphic, as an `R`-module, to derived-category Ext from the lifted
+trivial enveloping module to the lifted coefficient module. -/
 def leftCoefficientHomologyIsoDerivedExt (n : ℕ) :
     (leftCoefficientCochainComplex R L M).homology n ≅
       ModuleCat.of R (Abelian.Ext (liftedEnvelopingTrivial.{u, v, w} R L)
@@ -54,8 +58,11 @@ def leftCoefficientHomologyIsoDerivedExt (n : ℕ) :
     (Abelian.firstVariableLinearExtIso R (liftedEnvelopingTrivial.{u, v, w} R L) n).app
       (liftedLeftCoefficient R L M)
 
-/-- The exterior cochain homology is the right derived native linear
-Hom functor, with the original left coefficient module as its derived variable. -/
+/-- The right-derived Hom comparison for exterior cochains.
+
+For `Module.Free R L`, degree-`n` exterior cohomology with coefficients `M` is isomorphic to
+the `n`th right-derived linear Hom functor from the lifted trivial module, evaluated on the
+lifted coefficient module. -/
 def leftCoefficientHomologyIsoRightDerived (n : ℕ) :
     (leftCoefficientCochainComplex R L M).homology n ≅
       ((((linearCoyoneda R (ModuleCat.{max u v w} (UniversalEnvelopingAlgebra R L))).obj

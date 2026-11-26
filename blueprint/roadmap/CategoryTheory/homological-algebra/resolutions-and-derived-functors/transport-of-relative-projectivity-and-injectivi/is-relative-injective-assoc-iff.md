@@ -1,3 +1,5 @@
-# Is Relative Injective assoc iff
+# Associativity of composite-relative injectivity
 
-Relative extension is coherent with the functor associator.
+For categories `D,C,B,A`, functors `U : D → C`, `V : C → B`,
+`W : B → A`, and `P : D`, relative injectivity for `(U ⋙ V) ⋙ W`
+is equivalent to that for `U ⋙ (V ⋙ W)`.

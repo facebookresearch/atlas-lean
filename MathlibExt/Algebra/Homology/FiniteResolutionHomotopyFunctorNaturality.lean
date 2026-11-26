@@ -13,16 +13,17 @@ module
 public import MathlibExt.Algebra.Homology.FiniteResolutionHomAdditive
 
 /-!
-# Naturality of original finite-resolution homotopy functors
+# Naturality of finite-resolution homotopy functors
 
-An compatibility isomorphism `i ⋙ H ≅ F ⋙ j` transports the given finite resolutions first along
-the target functor and then along the source functor. The resulting complexes are the original
-`F`-image complexes, with the original support bounds.
+Let i : P → A and j : Q → B be additive full faithful functors from preadditive categories to
+abelian categories, with projective resolving images. An additive source functor F and additive
+homology-preserving target functor H with Hi ≅ jF identify the F-image resolution of X with a
+finite resolution of H(X).
 
-The stock homotopy-category factorization chart and the original chosen identity comparisons give
-a natural isomorphism to a given target resolution family. Naturality follows from the transported
-augmentation squares and constructive comparison uniqueness. The source and target resolving
-images retain their explicit projectivity hypotheses.
+For chosen families R(X) and S(Y), identity comparisons over H(X) give a natural isomorphism
+between the F-image of the R homotopy functor and the S homotopy functor after H. The
+represented source and target complexes retain the support bounds of their respective chosen
+families.
 -/
 
 @[expose] public section
@@ -42,10 +43,9 @@ variable {B : Type uB} [Category.{vB} B] [Abelian B]
 variable {i : P ⥤ A} [i.Additive] [i.Full] [i.Faithful]
 variable {j : Q ⥤ B} [j.Additive] [j.Full] [j.Faithful]
 
-/--
-The represented source complex is the image of the original given-family complex under the source
-functor.
--/
+/-- Let P,Q be preadditive, A abelian and i : P → A additive full faithful with projective resolving
+images. For an additive F : P → Q and a resolution family R, the source homotopy functor at X
+represents the degreewise F-image of R(X).complex. -/
 theorem finiteResolutionHomotopyFunctorNaturality_source_obj_as
     (F : P ⥤ Q) [F.Additive] (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (X : A) :
@@ -54,10 +54,9 @@ theorem finiteResolutionHomotopyFunctorNaturality_source_obj_as
       (F.mapHomologicalComplex (ComplexShape.down ℕ)).obj (R X).complex :=
   rfl
 
-/--
-The represented source image retains the original object's inclusive support bound. The original
-zero terms map to zero terms.
--/
+/-- Let P,Q be preadditive, A abelian and i : P → A additive full faithful with all i(P₀)
+projective. For additive F and a finite-resolution family R, the represented source-image
+complex at X is zero in every degree n>R(X).bound. -/
 theorem finiteResolutionHomotopyFunctorNaturality_source_isZero_above
     (F : P ⥤ Q) [F.Additive] (R : ∀ X : A, FiniteResolution i X)
     (hproj : ∀ P₀ : P, Projective (i.obj P₀)) (X : A) (n : ℕ) (hn : (R X).bound < n) :
@@ -66,7 +65,9 @@ theorem finiteResolutionHomotopyFunctorNaturality_source_isZero_above
   F.map_isZero ((R X).isZero_above n hn)
 
 omit [Abelian A] in
-/-- The represented target complex is the original target-family complex at the image object. -/
+/-- Let A be a category, B abelian, Q preadditive and j : Q → B additive full faithful with
+projective resolving images. For any functor H : A → B and a resolution family S, the target
+homotopy functor at X represents S(H(X)).complex. -/
 theorem finiteResolutionHomotopyFunctorNaturality_target_obj_as
     (H : A ⥤ B) (S : ∀ Y : B, FiniteResolution j Y)
     (hproj : ∀ Q₀ : Q, Projective (j.obj Q₀)) (X : A) :
@@ -75,7 +76,9 @@ theorem finiteResolutionHomotopyFunctorNaturality_target_obj_as
   rfl
 
 omit [Abelian A] in
-/-- The represented target complex retains its original object-dependent target-family support bound. -/
+/-- Let A be a category, B abelian, Q preadditive and j : Q → B additive full faithful with
+projective resolving images. For H : A → B and family S, the represented target complex at X is
+zero for n>S(H(X)).bound. -/
 theorem finiteResolutionHomotopyFunctorNaturality_target_isZero_above
     (H : A ⥤ B) (S : ∀ Y : B, FiniteResolution j Y)
     (hproj : ∀ Q₀ : Q, Projective (j.obj Q₀)) (X : A) (n : ℕ)
@@ -87,11 +90,13 @@ section Naturality
 
 variable (F : P ⥤ Q) [F.Additive] (H : A ⥤ B) [H.Additive] [H.PreservesHomology]
 
-/--
-An mixed source/target compatibility gives naturality of the same original resolution homotopy
-functors. The components use the stock factorization chart and the original chosen identity
-comparison maps.
--/
+/-- Let P,Q be preadditive, A,B abelian, and i : P → A and j : Q → B additive full faithful. Let F :
+P → Q be additive and H : A → B additive and homology-preserving, with compatibility H ∘ i ≅ j ∘
+F. Let R(X) and S(Y) be chosen finite-resolution families for i and j, and assume every i(P₀)
+and j(Q₀) is projective. There is a natural isomorphism from the F-image of the R
+finite-resolution homotopy functor to the S homotopy functor after H. Each component is the
+homotopy class of an identity comparison between the transported R(X) resolution of H(X) and
+S(H(X)). -/
 def finiteResolutionHomotopyFunctorNaturality (e : i ⋙ H ≅ F ⋙ j)
     (R : ∀ X : A, FiniteResolution i X) (S : ∀ Y : B, FiniteResolution j Y)
     (hprojP : ∀ P₀ : P, Projective (i.obj P₀))
@@ -165,10 +170,12 @@ def finiteResolutionHomotopyFunctorNaturality (e : i ⋙ H ≅ F ⋙ j)
       _ = ax ≫ (bx ≫ s) := congrArg (fun t : IX ⟶ SY => ax ≫ t) hquot
       _ = (ax ≫ bx) ≫ s := (Category.assoc ax bx s).symm)
 
-/--
-The forward component is the stock factorization chart followed by the original chosen identity
-comparison for the mixed resolution.
--/
+/-- Let P,Q be preadditive, A,B abelian, and i : P → A and j : Q → B additive full faithful. Let F :
+P → Q be additive and H : A → B additive and homology-preserving, with compatibility H ∘ i ≅ j ∘
+F. Let R(X) and S(Y) be chosen finite-resolution families for i and j, and assume every i(P₀)
+and j(Q₀) is projective. At X, the forward component identifies the homotopy object of
+F(R(X).complex) with the transported resolution of H(X), then uses the chosen comparison over
+id_{H(X)} to S(H(X)). -/
 theorem finiteResolutionHomotopyFunctorNaturality_hom_app (e : i ⋙ H ≅ F ⋙ j)
     (R : ∀ X : A, FiniteResolution i X) (S : ∀ Y : B, FiniteResolution j Y)
     (hprojP : ∀ P₀ : P, Projective (i.obj P₀))
@@ -180,8 +187,12 @@ theorem finiteResolutionHomotopyFunctorNaturality_hom_app (e : i ⋙ H ≅ F ⋙
             (S (H.obj X)) (𝟙 (H.obj X)) hprojQ).map :=
   rfl
 
-/-- The inverse component uses the original reverse identity comparison
-followed by the inverse of the same stock factorization chart. -/
+/-- Let P,Q be preadditive, A,B abelian, and i : P → A and j : Q → B additive full faithful. Let F :
+P → Q be additive and H : A → B additive and homology-preserving, with compatibility H ∘ i ≅ j ∘
+F. Let R(X) and S(Y) be chosen finite-resolution families for i and j, and assume every i(P₀)
+and j(Q₀) is projective. At X, the inverse component uses the chosen reverse identity comparison
+from S(H(X)) to the transported F-image resolution, followed by the canonical homotopy-category
+identification with F(R(X).complex). -/
 theorem finiteResolutionHomotopyFunctorNaturality_inv_app (e : i ⋙ H ≅ F ⋙ j)
     (R : ∀ X : A, FiniteResolution i X) (S : ∀ Y : B, FiniteResolution j Y)
     (hprojP : ∀ P₀ : P, Projective (i.obj P₀))

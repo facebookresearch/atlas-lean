@@ -1,4 +1,5 @@
-# Is Pushout f of is Admissible Exact of is Iso right
+# Pushout of the initial exact-sequence maps
 
-A morphism of admissible exact short complexes that is invertible on its
-right object induces a pushout square on the first two objects.
+In an additive exact category `C`, let `φ : S → T` be a morphism of
+admissible exact short complexes. If its right component `φ₃` is an
+isomorphism, the square formed by `S.f`, `T.f`, `φ₁`, and `φ₂` is a pushout.

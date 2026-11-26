@@ -15,25 +15,19 @@ public import MathlibExt.CategoryTheory.Abelian.Projective.HorseshoeComparison
 public import MathlibExt.CategoryTheory.Abelian.Projective.ResolutionComparison
 
 /-!
-# Comparison maps between Cartan--Eilenberg resolutions
+# Comparisons of Cartan–Eilenberg resolutions
 
-A chain map `g : L ⟶ L'` induces maps on boundaries, cycles, and homology.
-Given supplied Cartan--Eilenberg resolutions `P` of `L` and `Q` of `L'`, a
-comparison packages projective-resolution lifts of the boundary and homology
-maps together with strict horseshoe comparisons of the cycle and term rows.
-The cycle row in degree `j` uses the boundary lift in degree `j + 1`, while
-the term row uses the boundary lift in degree `j` and reuses the cycle
-comparison as its left endpoint.  Existence is asserted only under
-`Nonempty`: the lifts are noncanonical, and no uniqueness is claimed.
-A supplied comparison nevertheless induces strict maps of term complexes
-and of bicomplexes, and supplied identity and composite comparisons
-induce the identity and composite maps strictly.  Supplied comparisons
-are determined by the underlying chain maps of their four constituent
-families, transport along equalities of the underlying chain map, and
-the supplied identity and composition operations satisfy the unit and
-associativity laws after the corresponding transport.  Equality of two
-supplied comparisons up to homotopy, and any spectral or right-edge
-naturality, are not claimed here.
+Let C be abelian, g : L → L′ a map of nonnegative complexes, and P,Q chosen Cartan–Eilenberg
+resolutions. A comparison over g consists of boundary and homology projective-resolution lifts
+and compatible strict comparisons of the cycle and term horseshoes. In original degree j, the
+cycle horseshoe uses the boundary endpoint j+1; the term horseshoe uses boundary endpoint j and
+reuses that same cycle comparison.
+
+Comparisons exist but involve choices. Each comparison induces strict maps of term complexes and
+resolution-degree-first bicomplexes. Identity and composition of chosen comparison data induce
+the corresponding strict maps. The four underlying families determine a comparison, and the
+identity, composition and equality-transport operations satisfy their unit and associativity
+laws.
 -/
 
 @[expose] public section
@@ -56,33 +50,44 @@ variable (g : L ⟶ L')
 
 namespace CartanEilenbergResolution
 
-/-- A supplied comparison of Cartan--Eilenberg resolutions over a chain map.
-
-The four families are the boundary and homology endpoint lifts and the
-strict horseshoe comparisons of the cycle and term rows.  In degree `j`
-the cycle comparison has left endpoint `boundaryHom (j + 1)` and right
-endpoint `homologyHom j`; the term comparison has left endpoint the cycle
-comparison bundled as a morphism of cycle resolutions and right endpoint
-`boundaryHom j`.  Lower-triangular coordinate formulas in Mathlib's
-`Biprod.ofComponents` convention (vanishing left-endpoint-to-right-endpoint'
-component, free right-endpoint-to-left-endpoint' cross component) are not
-stored: they are derived by `Hom.cyclesHom_spec` and `Hom.termHom_spec`. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. A comparison specifies projective-resolution lifts of
+the outgoing-boundary maps and homology maps, and strict comparisons of the two horseshoe rows.
+At original degree j, the cycle comparison has boundary endpoint in degree j+1 and homology
+endpoint in degree j; the term comparison uses that same cycle comparison and boundary endpoint
+j. -/
 structure Hom where
-  /-- Lifts of the maps on outgoing boundary objects. -/
+  /-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. The degree-j boundary
+component is a projective-resolution morphism from P's resolution of Bⱼ⁽out⁾(L) to Q's
+resolution of Bⱼ⁽out⁾(L′), covering the outgoing-image map induced by g. -/
   boundaryHom (j : ℕ) :
     ProjectiveResolution.Hom (P.boundaryResolution j)
       (Q.boundaryResolution j) (boundaryFromMap g j)
-  /-- Lifts of the maps on homology objects. -/
+  /-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. The degree-j homology
+component is a morphism of the chosen projective resolutions of Hⱼ(L) and Hⱼ(L′), covering
+Hⱼ(g). -/
   homologyHom (j : ℕ) :
     ProjectiveResolution.Hom (P.homologyResolution j)
       (Q.homologyResolution j) (homologyMap g j)
-  /-- Strict comparisons of the boundary--cycle--homology horseshoe rows. -/
+  /-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. The degree-j cycle component
+is a strict comparison of the boundary–cycle–homology horseshoes, with endpoints the boundary
+lift in degree j+1 and the homology lift in degree j. -/
   cyclesHom (j : ℕ) :
     ProjectiveResolution.HorseshoeData.Hom
       (H := P.cyclesHorseshoe j) (H' := Q.cyclesHorseshoe j)
       (φ := boundaryCyclesHomologyMap g j)
       (u := boundaryHom (j + 1)) (w := homologyHom j)
-  /-- Strict comparisons of the cycle--term--boundary horseshoe rows. -/
+  /-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. The degree-j term component is
+a strict comparison of the cycles–term–boundary horseshoes. Its left endpoint is F's degree-j
+cycle comparison and its right endpoint is F's degree-j boundary lift. -/
   termHom (j : ℕ) :
     ProjectiveResolution.HorseshoeData.Hom
       (H := P.termHorseshoe j) (H' := Q.termHorseshoe j)
@@ -92,10 +97,10 @@ structure Hom where
 
 namespace Hom
 
-/-- Two supplied comparisons over the same chain map are equal once the
-underlying chain maps of all four constituent families agree in every
-original degree; every remaining field of the constituents is a
-proof. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Two comparisons F,G over g are equal if their boundary,
+homology, cycle and term chain maps agree in every original degree. Thus the four underlying
+families determine the complete comparison. -/
 @[ext]
 theorem ext {F G : Hom P Q g}
     (hb : ∀ j : ℕ, (F.boundaryHom j).hom = (G.boundaryHom j).hom)
@@ -120,30 +125,33 @@ theorem ext {F G : Hom P Q g}
   subst ht'
   rfl
 
-/-- The cycle comparisons have the forced lower-triangular coordinate
-formula (in Mathlib's `Biprod.ofComponents` convention: vanishing
-boundary-resolution-to-homology-resolution' component, free
-homology-resolution-to-boundary-resolution' cross component) in the stored
-cycle horseshoe coordinates. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. In the chosen cycle horseshoe
+coordinates PBⱼ₊₁,ₐ ⊕ PHⱼ,ₐ, the comparison has the prescribed boundary and homology diagonal
+maps. The boundary-to-target-homology component is zero, and the homology-to-target-boundary
+cross component is the remaining possible component. -/
 theorem cyclesHom_spec (F : Hom P Q g) (j : ℕ) :
     (F.cyclesHom j).Spec
       (sH := P.cyclesSpec j) (sH' := Q.cyclesSpec j) :=
   (F.cyclesHom j).spec
     (sH := P.cyclesSpec j) (sH' := Q.cyclesSpec j)
 
-/-- The term comparisons have the forced lower-triangular coordinate
-formula (in Mathlib's `Biprod.ofComponents` convention: vanishing
-cycle-resolution-to-boundary-resolution' component, free
-boundary-resolution-to-cycle-resolution' cross component) in the stored
-term horseshoe coordinates. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. In the chosen term coordinates
+PCⱼ,ₐ ⊕ PBⱼ,ₐ, the comparison has the prescribed cycle and boundary diagonal maps. The
+cycles-to-target-boundary component vanishes; the boundary-to-target-cycles cross component is
+free. -/
 theorem termHom_spec (F : Hom P Q g) (j : ℕ) :
     (F.termHom j).Spec (sH := P.termSpec j) (sH' := Q.termSpec j) :=
   (F.termHom j).spec (sH := P.termSpec j) (sH' := Q.termSpec j)
 
-/-- The term comparisons strictly commute with the lifted original-chain
-differentials.  The proof pastes the three horseshoe squares
-`termHom (j+1)` projection, `cyclesHom j` inclusion, and `termHom j`
-inclusion; no sign occurs. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For every j ∈ ℕ, the term
+comparison maps commute with the lifted original differential Dⱼ: Q.Dⱼ ∘ F.termⱼ₊₁ = F.termⱼ ∘
+P.Dⱼ. No sign occurs in this square. -/
 @[reassoc]
 theorem termDifferential_naturality (F : Hom P Q g) (j : ℕ) :
     (F.termHom (j + 1)).hom ≫ Q.termDifferential j =
@@ -157,9 +165,11 @@ theorem termDifferential_naturality (F : Hom P Q g) (j : ℕ) :
   rw [← reassoc_of% (F.cyclesHom j).comm_i]
   rw [← hterm]
 
-/-- The strict map of original-degree complexes of term resolutions
-induced by a supplied comparison.  Its component in degree `j` is the
-term comparison `F.termHom j`. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. The degree-j term-resolution
+chain maps assemble into a chain map P.termComplex → Q.termComplex in original degree, covering
+the original map g. -/
 noncomputable def termComplexHom (F : Hom P Q g) :
     P.termComplex ⟶ Q.termComplex :=
   ChainComplex.ofHom (fun j => (F.termHom j).hom) (fun j => by
@@ -171,8 +181,11 @@ theorem termComplexHom_f (F : Hom P Q g) (j : ℕ) :
     F.termComplexHom.f j = (F.termHom j).hom :=
   rfl
 
-/-- The strict map of Cartan--Eilenberg bicomplexes induced by a
-supplied comparison, obtained by flipping the term-complex map. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. Flipping the term-complex map
+gives a strict map P.bicomplex → Q.bicomplex. In entry (a,j), it is the resolution-degree-a
+component of the degree-j term comparison. -/
 noncomputable def bicomplexHom (F : Hom P Q g) :
     P.bicomplex ⟶ Q.bicomplex :=
   (HomologicalComplex₂.flipFunctor C (ComplexShape.down ℕ)
@@ -183,13 +196,9 @@ theorem bicomplexHom_f_f (F : Hom P Q g) (a j : ℕ) :
     (F.bicomplexHom.f a).f j = (F.termHom j).hom.f a :=
   rfl
 
-/-- The supplied identity comparison of a Cartan--Eilenberg resolution
-with itself, over the identity chain map.  Its four underlying chain
-maps are identities; the endpoint lifts are transported along
-`boundaryFromMap_id` and `homologyMap_id`, and the horseshoe
-comparisons are the identity horseshoe comparisons transported along
-`boundaryCyclesHomologyMap_id` and `cyclesTermBoundaryMap_id`.  An
-arbitrary comparison over `𝟙 L` is not asserted to equal this one. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution of L. The chosen
+identity comparison P → P over id_L has identity boundary and homology lifts and identity cycle
+and term horseshoe comparisons. -/
 def id (P : CartanEilenbergResolution L) : Hom P P (𝟙 L) where
   boundaryHom j := (ProjectiveResolution.Hom.id
     (P.boundaryResolution j)).cast (boundaryFromMap_id L j).symm
@@ -228,14 +237,12 @@ theorem id_termHom_hom (P : CartanEilenbergResolution L) (j : ℕ) :
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The composite of two supplied comparisons of Cartan--Eilenberg
-resolutions.  Its four underlying chain maps are the composites of the
-constituents; the endpoint lifts are transported along
-`boundaryFromMap_comp` and `homologyMap_comp`, and the horseshoe
-comparisons are the composites of the constituent horseshoe comparisons
-transported along `boundaryCyclesHomologyMap_comp` and
-`cyclesTermBoundaryMap_comp`.  An arbitrary comparison over `g ≫ h` is
-not asserted to equal this composite. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For a third resolution R of L″
+and a comparison G : Q → R over h : L′ → L″, the composite comparison P → R covers h ∘ g. Each
+of its four underlying chain-map families is the composite of the corresponding families of F
+and G. -/
 def comp {L'' : ChainComplex C ℕ} {R : CartanEilenbergResolution L''}
     {h : L' ⟶ L''} (F : Hom P Q g) (G : Hom Q R h) : Hom P R (g ≫ h) where
   boundaryHom j := ((F.boundaryHom j).comp (G.boundaryHom j)).cast
@@ -283,11 +290,10 @@ theorem comp_termHom_hom {L'' : ChainComplex C ℕ}
       (F.termHom j).hom ≫ (G.termHom j).hom :=
   rfl
 
-/-- Transport a supplied comparison along an equality of the underlying
-chain maps.  The underlying chain maps of all four constituent families
-are unchanged, as are the induced term-complex and bicomplex maps.  The
-resolutions and chain maps are implicit, as for
-`ProjectiveResolution.Hom.cast`, so transport is used as `F.cast h`. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. If g=g′, a comparison F over g transports to a
+comparison over g′. This identification leaves the underlying boundary, homology, cycle and term
+chain maps, and hence the induced term-complex and bicomplex maps, unchanged. -/
 def cast {P : CartanEilenbergResolution L}
     {Q : CartanEilenbergResolution L'} {g g' : L ⟶ L'}
     (F : Hom P Q g) (h : g = g') : Hom P Q g' :=
@@ -332,9 +338,11 @@ theorem cast_termHom_hom {g' : L ⟶ L'} (F : Hom P Q g) (h : g = g')
   cases h
   rfl
 
-/-- Transporting a supplied comparison transports its boundary
-endpoint lifts by the corresponding transport of resolution
-morphisms. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For g=g′, the boundary
+endpoint of the transported comparison is the original boundary-resolution morphism identified
+over the equal outgoing-boundary maps of g and g′. -/
 theorem cast_boundaryHom {g' : L ⟶ L'} (F : Hom P Q g) (h : g = g')
     (j : ℕ) : (F.cast h).boundaryHom j =
       (F.boundaryHom j).cast
@@ -342,9 +350,11 @@ theorem cast_boundaryHom {g' : L ⟶ L'} (F : Hom P Q g) (h : g = g')
   ext
   simp
 
-/-- Transporting a supplied comparison transports its homology
-endpoint lifts by the corresponding transport of resolution
-morphisms. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For g=g′, the homology
+endpoint of the transported comparison is the original projective-resolution morphism identified
+over the equal maps Hⱼ(g) and Hⱼ(g′). -/
 theorem cast_homologyHom {g' : L ⟶ L'} (F : Hom P Q g) (h : g = g')
     (j : ℕ) : (F.cast h).homologyHom j =
       (F.homologyHom j).cast
@@ -364,16 +374,18 @@ theorem bicomplexHom_cast {g' : L ⟶ L'} (F : Hom P Q g) (h : g = g') :
   cases h
   rfl
 
-/-- The supplied identity comparison induces the identity map of term
-complexes, strictly. -/
+/-- Let C be abelian, L a nonnegative complex and P a Cartan–Eilenberg resolution. The identity
+comparison over id_L induces the identity map of P.termComplex. -/
 @[simp]
 theorem termComplexHom_id (P : CartanEilenbergResolution L) :
     (Hom.id P).termComplexHom = 𝟙 P.termComplex := by
   ext j
   simp
 
-/-- The composite of supplied comparisons induces the composite map of
-term complexes, strictly. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For a comparison G : Q → R
+over h : L′ → L″, the term-complex map of the composite is G.termComplexHom ∘ F.termComplexHom. -/
 @[simp]
 theorem termComplexHom_comp {L'' : ChainComplex C ℕ}
     {R : CartanEilenbergResolution L''} {h : L' ⟶ L''}
@@ -383,16 +395,18 @@ theorem termComplexHom_comp {L'' : ChainComplex C ℕ}
   ext j
   simp
 
-/-- The supplied identity comparison induces the identity map of
-bicomplexes, strictly. -/
+/-- Let C be abelian and P a Cartan–Eilenberg resolution of a nonnegative complex L. Its identity
+comparison induces the identity map of P.bicomplex. -/
 @[simp]
 theorem bicomplexHom_id (P : CartanEilenbergResolution L) :
     (Hom.id P).bicomplexHom = 𝟙 P.bicomplex := by
   ext a j
   simp
 
-/-- The composite of supplied comparisons induces the composite map of
-bicomplexes, strictly. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For a comparison G : Q → R
+over h : L′ → L″, the bicomplex map of the composite equals G.bicomplexHom ∘ F.bicomplexHom. -/
 @[simp]
 theorem bicomplexHom_comp {L'' : ChainComplex C ℕ}
     {R : CartanEilenbergResolution L''} {h : L' ⟶ L''}
@@ -401,24 +415,27 @@ theorem bicomplexHom_comp {L'' : ChainComplex C ℕ}
   ext a j
   simp
 
-/-- Left unit law for supplied comparisons: composing the supplied
-identity comparison with a supplied comparison, transported along
-`Category.id_comp` of the underlying chain maps, is the supplied
-comparison itself. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. Composing the identity
+comparison of P with F gives F, after identifying id_L followed by g with g. -/
 theorem id_comp (F : Hom P Q g) :
     (Hom.comp P P (𝟙 L) (Hom.id P) F).cast (Category.id_comp g) = F := by
   ext j <;> simp
 
-/-- Right unit law for supplied comparisons: composing a supplied
-comparison with the supplied identity comparison, transported along
-`Category.comp_id` of the underlying chain maps, is the supplied
-comparison itself. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. Composing F with the identity
+comparison of Q gives F, after identifying g followed by id_L′ with g. -/
 theorem comp_id (F : Hom P Q g) :
     (Hom.comp P Q g F (Hom.id Q)).cast (Category.comp_id g) = F := by
   ext j <;> simp
 
-/-- Associativity for supplied comparisons, transported along
-`Category.assoc` of the underlying chain maps. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. Let F be a comparison of P and Q over g, with boundary,
+homology, cycle and term resolution maps in each original degree. For comparisons G : Q → R over
+h and H : R → S over k, the two parenthesizations of the three-comparison composite agree after
+the canonical equality (k ∘ h) ∘ g=k ∘ (h ∘ g). -/
 theorem assoc {L'' : ChainComplex C ℕ}
     {R : CartanEilenbergResolution L''} {h : L' ⟶ L''}
     {L''' : ChainComplex C ℕ} {S : CartanEilenbergResolution L'''}
@@ -430,9 +447,10 @@ theorem assoc {L'' : ChainComplex C ℕ}
 
 end Hom
 
-/-- A comparison of supplied Cartan--Eilenberg resolutions exists over
-every chain map.  The boundary and homology lifts and both horseshoe
-middle maps are chosen noncanonically. -/
+/-- Let C be abelian, L,L′ nonnegative chain complexes, P and Q chosen Cartan–Eilenberg resolutions
+of L and L′, and g : L → L′ a chain map. There exists a comparison of P and Q over g. The
+boundary and homology projective-resolution lifts and the two horseshoe middle maps are chosen,
+so this asserts existence rather than a canonical strict comparison. -/
 theorem nonempty_hom : Nonempty (Hom P Q g) := by
   let beta (j : ℕ) :
       ProjectiveResolution.Hom (P.boundaryResolution j)

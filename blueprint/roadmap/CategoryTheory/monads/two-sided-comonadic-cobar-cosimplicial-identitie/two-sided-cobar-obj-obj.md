@@ -1,3 +1,5 @@
-# Two Sided Cobar obj obj
+# The pointwise object formula for two-sided cobar
 
-Pointwise objects on simplex objects.
+The pointwise object formula for two-sided cobar.
+
+In degree `n` and at `a ∈ A`, the value is `R(G^n(L(a)))`.

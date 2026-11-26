@@ -1,3 +1,5 @@
-# Vertical Homology Complex Map Of Shapes f
+# Components of a shape-generic vertical-homology map
 
-Components of the induced map between vertical-homology complexes.
+Let `C` have zero morphisms and chosen homology and
+`f : K → L` be a bicomplex map of shapes `c₁,c₂`. The degree-`p`
+component in fixed vertical degree `q` is `H_q(f_p)`.

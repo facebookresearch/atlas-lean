@@ -1,4 +1,5 @@
-# Matrix word entry
+# The ordered path expansion of a matrix-word entry
 
-Expanding an ordered word of n+1 matrices gives a finite sum over n
-internal vertices, with both endpoints retained.
+For k commutative and finite ι with decidable equality,
+(W_0⋯W_n)_\{st\}=∑_\{i_1,…,i_n\}(W_0)_\{s,i_1\}⋯(W_n)_\{i_n,t\}.
+The empty internal path for n=0 gives (W_0)_{st}.

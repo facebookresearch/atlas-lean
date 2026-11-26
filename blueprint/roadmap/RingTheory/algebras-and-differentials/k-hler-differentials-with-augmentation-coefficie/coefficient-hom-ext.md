@@ -1,4 +1,5 @@
-# Coefficient hom ext
+# Extended differential maps are determined by universal differential generators
 
-Maps out of the extended module are determined by `1 ⊗ dp`.
-The target needs only its given `A`-module structure.
+Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
+C=A⊗_PΩ. For any A-module M, if A-linear maps f,g:C → M have f(1⊗dp)=g(1⊗dp) for every p∈P, then
+f=g. No separately supplied P- or k-action on M is required for this extensionality statement.

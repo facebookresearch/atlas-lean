@@ -1,4 +1,4 @@
-# Determinantal Ideal finrank eq top of injective
+# An injective field map has a unit top-size ideal
 
-For an injective map over a field, the determinantal ideal in the source
-finrank is the unit ideal.
+Let `K` be a field, `P` a finite free `K`-vector space, `Q` a free `K`-vector space, and `f :
+P →ₗ[K] Q` injective. Then `I_(finrank K P)(f)=⊤`.

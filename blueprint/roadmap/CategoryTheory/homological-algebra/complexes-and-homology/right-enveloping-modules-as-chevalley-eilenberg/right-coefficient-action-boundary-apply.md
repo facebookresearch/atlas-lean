@@ -1,3 +1,6 @@
-# Right Coefficient Action Boundary apply ιMulti tmul
+# The positive right-action formula for coefficient boundaries
 
-The original action boundary has the positive right-action sign.
+The positive right-action formula for coefficient boundaries.
+
+The action boundary of `(⋀ᵢ vᵢ) ⊗ m` is `∑ᵢ (-1)^i (⋀_(j≠i) vⱼ) ⊗ (op(ι(vᵢ)) • m)`, with
+exterior survivors in order.

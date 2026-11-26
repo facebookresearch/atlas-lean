@@ -1,5 +1,5 @@
-# Exact of middle contraction
+# Exactness from a contraction of the middle identity
 
-A decomposition of the middle identity into the incoming and outgoing
-boundary terms forces exactness whenever native homology exists. The two maps
-need not retract or section the outer differentials.
+Let S=(A→B→D) be a short complex in a preadditive category C, with homology. If r:B→A and
+s:D→B satisfy r≫S.f+S.g≫s=1_B, then S is exact at B. Neither r nor s is assumed to split the
+corresponding outer differential.

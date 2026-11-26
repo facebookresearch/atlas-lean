@@ -13,16 +13,20 @@ public import MathlibExt.Algebra.Homology.HomotopyCategory.HomComplexReducedFact
 public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexShift
 
 /-!
-# Raw cokernel generators in degree zero
+# Homogeneous cochains and shifted cokernel generators
 
-A homogeneous cochain that vanishes on an complex map descends through its cokernel, then
-desuspends to a degree-zero raw cochain. Neither the input nor the output is assumed closed. Each
-component descends through the evaluated cokernel cofork, then the signed left shift produces the
-generator. Only cokernels in the base category are needed.
+In a preadditive category with cokernels, a degree-`d` homogeneous
+cochain `τ : C → A` annihilating `η : U → C` descends through
+`Q=coker(η)` and gives a degree-zero homogeneous cochain
+`γ : Q[-d] → A`. Signed unshifting and precomposition with
+`π : C → Q` recover all of `τ`, and this characterizes `γ` uniquely.
+Neither cochain needs to commute with differentials.
 
-The characteristic projection–unshift law determines the whole generator. It gives inverse
-reconstruction, additivity, and naturality under cokernel maps. Applying the internal Hom
-differential to recovery retains the shift sign; in degree one that sign is minus one.
+The construction is additive and natural in maps of cokernel squares.
+Differential recovery has factor `(-1)^(-d)`; recovery of each
+component through shift coordinates has triangular factor
+`(-1)^((-d)(-d-1)/2)`. In degree one both recovery formulas have
+a minus sign.
 -/
 
 @[expose] public section
@@ -40,11 +44,9 @@ variable {D : Type u} [Category.{v} D] [Preadditive D]
 variable [HasCokernels D]
 variable {U C A B : CochainComplex D ℤ}
 
-/--
-Precomposition by the cokernel projection is injective on raw cochains of any integer degree.
-Evaluation of the cokernel cofork supplies its universal uniqueness; no component epimorphism is
-assumed.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` an integer
+cochain map, `Q=coker(η)`, `π : C → Q`, and `d ∈ ℤ`. Precomposition by `π` is injective on all degree-`d`
+homogeneous cochains from `Q` to any integer cochain complex `A`. -/
 theorem cokernel_precomp_injective (η : U ⟶ C) (d : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     Function.Injective (fun ρ : Cochain (cokernel η) A d =>
@@ -67,10 +69,11 @@ theorem cokernel_precomp_injective (η : U ⟶ C) (d : ℤ) :
   change (cokernel.π η).f p ≫ ρ.v p q hpq = (cokernel.π η).f p ≫ σ.v p q hpq
   simpa only [zero_cochain_comp_v, ofHom_v] using congr_v hρσ p q hpq
 
-/--
-Construct the raw desuspended generator by cokernel descent. The shift is minus the integer
-cochain degree, with shift signs.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. Cokernel descent followed by signed left shifting gives
+a degree-zero homogeneous generator `γ : Q[-d] → A`. -/
 noncomputable def cokernelShiftGenerator (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d)
     (hpre : (ofHom η).comp τ (zero_add d) = 0) :
@@ -94,8 +97,12 @@ noncomputable def cokernelShiftGenerator (η : U ⟶ C) (d : ℤ)
       exact (CokernelCofork.IsColimit.desc' hS (τ.v p q hpq) hτ).1
   exact ρ.leftShift (-d) 0 (add_neg_cancel d)
 
-/-- Unshift and precompose with the literal cokernel projection to
-recover the entire original raw cochain, not only one component. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. Signed unshifting of the generator to degree `d`,
+followed by precomposition with `π`, recovers the entire cochain
+`τ`. -/
 theorem cokernelShiftGenerator_recover (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d)
     (hpre : (ofHom η).comp τ (zero_add d) = 0) :
@@ -125,8 +132,12 @@ theorem cokernelShiftGenerator_recover (η : U ⟶ C) (d : ℤ)
     (CokernelCofork.IsColimit.desc' hS (τ.v p q hpq) hτ).1 = τ.v p q hpq
   exact (CokernelCofork.IsColimit.desc' hS (τ.v p q hpq) hτ).2
 
-/-- Literal projection–unshift recovery uniquely determines the raw
-generator. No component epimorphism or splitting is a new hypothesis. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. Any degree-zero homogeneous cochain `γ : Q[-d] → A`
+whose signed unshift followed by `π` is `τ` equals the
+constructed cokernel-shift generator. -/
 theorem cokernelShiftGenerator_unique (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d)
     (hpre : (ofHom η).comp τ (zero_add d) = 0) :
@@ -147,13 +158,19 @@ theorem cokernelShiftGenerator_unique (η : U ⟶ C) (d : ℤ)
     z.leftShift (-d) 0 (add_neg_cancel d)) hfactor
   simpa only [leftShift_leftUnshift] using hs
 
-/-- The generator does not depend on the proof of source vanishing. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. The shifted cokernel generator depends only on `η,d,τ`,
+not on which witness of `η^*τ=0` is used. -/
 theorem cokernelShiftGenerator_proof_irrel (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d)
     (h₁ h₂ : (ofHom η).comp τ (zero_add d) = 0) :
     cokernelShiftGenerator η d τ h₁ = cokernelShiftGenerator η d τ h₂ := rfl
 
-/-- The raw zero cochain has zero generator, at every integer degree. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C` an integer
+cochain map, `Q=coker(η)`, `π : C → Q`, and `d ∈ ℤ`. The zero homogeneous cochain from `C` to `A` has zero
+shifted-cokernel generator, for every integer `d`. -/
 theorem cokernelShiftGenerator_zero (η : U ⟶ C) (d : ℤ) :
     cokernelShiftGenerator η d (0 : Cochain C A d)
       (Cochain.comp_zero (ofHom η) (zero_add d)) = 0 := by
@@ -175,8 +192,12 @@ private theorem leftUnshift_comp_raw_zero {Q : CochainComplex D ℤ} (d : ℤ)
       (-d) 0 (add_neg_cancel d)
   rw [leftShift_leftUnshift, leftShift_comp_zero_cochain, leftShift_leftUnshift]
 
-/-- The raw generator commutes with degree-zero target cochains, which
-need not themselves be closed. Source vanishing of the composite is derived. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. For any degree-zero homogeneous target cochain `κ : A → B`,
+the generator of `τ ≫ κ` is the generator of `τ` followed by `κ`.
+The composite annihilates `η` by the original vanishing equation. -/
 theorem cokernelShiftGenerator_comp (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d)
     (hpre : (ofHom η).comp τ (zero_add d) = 0) (κ : Cochain A B 0) :
@@ -193,10 +214,10 @@ theorem cokernelShiftGenerator_comp (η : U ⟶ C) (d : ℤ)
   rw [leftUnshift_comp_raw_zero, ← Cochain.comp_assoc_of_first_is_zero_cochain,
     cokernelShiftGenerator_recover]
 
-/--
-Unshifting any raw generator and precomposing with the projection gives a source-vanishing
-cochain. This is the converse to raw descent.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` an integer
+cochain map, `Q=coker(η)`, `π : C → Q`, and `d ∈ ℤ`. For any degree-zero cochain `γ : Q[-d] → A`, signed
+unshifting followed by `π` gives a degree-`d` cochain on `C`
+that annihilates `η`. -/
 theorem cokernelShiftGenerator_reconstruction_vanish (η : U ⟶ C) (d : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     ∀ γ : Cochain ((cokernel η)⟦-d⟧) A 0,
@@ -209,10 +230,10 @@ theorem cokernelShiftGenerator_reconstruction_vanish (η : U ⟶ C) (d : ℤ) :
   rw [← Cochain.comp_assoc_of_first_is_zero_cochain, ← ofHom_comp,
     cokernel.condition, ofHom_zero, Cochain.zero_comp]
 
-/--
-Descent after literal projection–unshift reconstruction returns the original raw generator. Both
-directions use the cokernel and shift.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` an integer
+cochain map, `Q=coker(η)`, `π : C → Q`, and `d ∈ ℤ`. Starting with any degree-zero cochain `γ : Q[-d] → A`,
+reconstructing by projection and signed unshift and then forming
+its cokernel-shift generator returns `γ`. -/
 theorem cokernelShiftGenerator_of_reconstruction (η : U ⟶ C) (d : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
     ∀ γ : Cochain ((cokernel η)⟦-d⟧) A 0,
@@ -229,8 +250,11 @@ theorem cokernelShiftGenerator_of_reconstruction (η : U ⟶ C) (d : ℤ) :
       (γ.leftUnshift d (add_neg_cancel d)) (zero_add d))
     (cokernelShiftGenerator_reconstruction_vanish η d γ) γ rfl
 
-/-- Addition of source-vanishing raw cochains gives addition of generators,
-in every integer degree. The source vanishing of the sum is derived. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. For two same-degree source-annihilating cochains,
+the generator of their sum is the sum of their generators. -/
 theorem cokernelShiftGenerator_add (η : U ⟶ C) (d : ℤ)
     (τ₁ τ₂ : Cochain C A d)
     (h₁ : (ofHom η).comp τ₁ (zero_add d) = 0)
@@ -247,10 +271,11 @@ theorem cokernelShiftGenerator_add (η : U ⟶ C) (d : ℤ)
   rw [leftUnshift_add, Cochain.comp_add,
     cokernelShiftGenerator_recover, cokernelShiftGenerator_recover]
 
-/--
-The raw generator of a negative cochain is the negative generator, with source vanishing proved by
-additive composition.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. The generator of `-τ` is the negative of the generator
+of `τ`; source vanishing is preserved by negation. -/
 theorem cokernelShiftGenerator_neg (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d) (hpre : (ofHom η).comp τ (zero_add d) = 0) :
     let hneg : (ofHom η).comp (-τ) (zero_add d) = 0 := by
@@ -337,10 +362,13 @@ private theorem leftUnshift_precomp_raw_zero
       (-d) 0 (add_neg_cancel d)
   rw [leftShift_leftUnshift, leftShift_precomp_raw_zero, leftShift_leftUnshift]
 
-/--
-A commuting square of complex maps transports the raw generator by the shifted cokernel map. No
-square map is assumed invertible.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. For a commuting square `η′ ≫ c = a ≫ η` with
+`a : U′ → U`, `c : C′ → C`, the generator of `c^*τ` is the
+pullback of the generator of `τ` along the induced cokernel map
+`coker(η′) → Q`, shifted by `-d`. -/
 theorem cokernelShiftGenerator_precomp
     {U' C' : CochainComplex D ℤ} (η : U ⟶ C) (η' : U' ⟶ C')
     (a : U' ⟶ U) (c : C' ⟶ C) (hsquare : η' ≫ c = a ≫ η)
@@ -368,10 +396,13 @@ theorem cokernelShiftGenerator_precomp
     ← ofHom_comp, hq, ofHom_comp, Cochain.comp_assoc_of_first_is_zero_cochain,
     cokernelShiftGenerator_recover]
 
-/--
-Whole recovery commutes with the internal Hom differential with the left-shift sign, including
-nonadjacent and negative integer degrees.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. For any integer `m`, writing `γ` for the generator,
+`δ_(d,m)τ = (-1)^(-d) π^*(unshift_m(δ_(0,m-d)γ))`.
+The unshift has output degree `m`; the identity also covers
+negative and nonconsecutive degrees. -/
 theorem cokernelShiftGenerator_δ_recover (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d) (hpre : (ofHom η).comp τ (zero_add d) = 0) (m : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
@@ -386,8 +417,10 @@ theorem cokernelShiftGenerator_δ_recover (η : U ⟶ C) (d : ℤ)
     comp_units_smul] at h
   exact h.symm
 
-/-- At degree one the internal differential recovery has a minus sign.
-This equation imposes no closedness and no total-Cobar compatibility. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C`, and
+`τ : C → A` a degree-one homogeneous cochain with `η^*τ=0`.
+For its generator `γ : coker(η)[-1] → A`,
+`δ_(1,2)τ = -π^*(unshift_2(δ_(0,1)γ))`. -/
 theorem cokernelShiftGenerator_δ_degree_one (η : U ⟶ C)
     (τ : Cochain C A 1) (hpre : (ofHom η).comp τ (zero_add 1) = 0) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η
@@ -401,10 +434,13 @@ theorem cokernelShiftGenerator_δ_degree_one (η : U ⟶ C)
       (show (2 : ℤ) + -1 = 1 by decide), comp_units_smul] at h
   simpa only [Int.negOnePow_neg, Int.negOnePow_one, Units.neg_smul, one_smul] using h.symm
 
-/--
-Literal component recovery with the shift-component isomorphism and its integer sign. The full raw
-generator is characterized by recovery.
--/
+/-- Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. For `p+d=q`, let `χ : Q[-d]^q ≅ Q^p` be the canonical
+shift-coordinate isomorphism and `γ` the degree-zero generator.
+Then `τ_(p,q) = (-1)^((-d)(-d-1)/2) • (π_p ≫ χ⁻¹ ≫ γ_q)`,
+for all integer component degrees. -/
 theorem cokernelShiftGenerator_recover_v (η : U ⟶ C) (d : ℤ)
     (τ : Cochain C A d) (hpre : (ofHom η).comp τ (zero_add d) = 0)
     (p q : ℤ) (hpq : p + d = q) :
@@ -421,8 +457,11 @@ theorem cokernelShiftGenerator_recover_v (η : U ⟶ C) (d : ℤ)
     Linear.comp_units_smul] at h
   simpa only [mul_zero, zero_add, Category.assoc] using h.symm
 
-/-- The degree-one generator has the literal negative inverse-unshift
-formula at every integer component, including negative source degrees. -/
+/-- Let `D` be preadditive with cokernels, `η : U → C`, and
+`τ : C → A` a degree-one homogeneous cochain annihilating `η`.
+For its generator `γ` and canonical shift-coordinate isomorphism
+`χ : coker(η)[-1]^(p+1) ≅ coker(η)^p`, the component formula is
+`τ_(p,p+1) = -(π_p ≫ χ⁻¹ ≫ γ_(p+1))`, including negative `p`. -/
 theorem cokernelShiftGenerator_recover_v_degree_one (η : U ⟶ C)
     (τ : Cochain C A 1) (hpre : (ofHom η).comp τ (zero_add 1) = 0) (p : ℤ) :
     let _ : HasCokernel η := HomologicalComplex.hasCokernel_of_hasCokernel_f η

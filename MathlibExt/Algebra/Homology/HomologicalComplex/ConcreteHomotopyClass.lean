@@ -13,11 +13,12 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.ConcreteCycleClass
 public import MathlibExt.Algebra.Homology.Homotopy.HomologyDegree
 
 /-!
-# Homology classes and homotopy-degree maps
+# Degree maps from a self-homotopy of zero
 
-The cycle map and homology projection characterize the degreewise homology
-map associated to a homotopy. This module gives the corresponding formulas
-for module elements using the chosen cycles and homology objects.
+A self-homotopy H of the zero map between module complexes has components
+in the reversed differential degrees. On a reverse edge i→j it maps cycles
+in degree i to cycles in degree j, and the induced homology map is
+represented by that same component on concrete elements.
 -/
 
 @[expose] public section
@@ -34,7 +35,11 @@ variable {k : Type u} [Ring k] {ι : Type w} {c : ComplexShape ι}
   (H : Homotopy (0 : K ⟶ L) 0) {i j : ι} (hji : c.Rel j i)
   [K.HasHomology i] [L.HasHomology j]
 
-/-- The original homotopy component takes the original concrete cycle to a genuine target cycle. -/
+/--
+Let k be a ring and K,L module complexes of shape c. Let H be a homotopy from the zero
+morphism K→L to itself. Fix i,j with c.Rel j i, and assume K has homology at i and L at j. For
+a cycle x∈Kᵢ, H.hom i j(x)∈Lⱼ is also a cycle: d_L at j annihilates it.
+-/
 theorem moduleCat_component_cycle (x : K.X i) (hx : (K.sc i).g x = 0) :
     (L.sc j).g (H.hom i j x) = 0 := by
   by_cases hji : c.Rel j i
@@ -53,7 +58,12 @@ theorem moduleCat_component_cycle (x : K.X i) (hx : (K.sc i).g x = 0) :
     rw [H.zero i j hji, ModuleCat.hom_zero, LinearMap.zero_apply]
     exact (L.sc j).g.hom.map_zero
 
-/-- The original native degree cycle map gives the native constructor of the same actual component. -/
+/--
+Let k be a ring and K,L module complexes of shape c. Let H be a homotopy from the zero
+morphism K→L to itself. Fix i,j with c.Rel j i, and assume K has homology at i and L at j. The
+degree map Zᵢ(K)→Zⱼ(L) induced by H sends the cycle of x to the cycle of H.hom i j(x). Thus it
+retains the concrete component value.
+-/
 theorem cyclesDegreeMap_moduleCat_cyclesMk (x : K.X i) (hx : (K.sc i).g x = 0) :
     H.cyclesDegreeMap hji ((K.sc i).cyclesMk x hx) =
       (L.sc j).cyclesMk (H.hom i j x) (H.moduleCat_component_cycle x hx) := by
@@ -66,7 +76,11 @@ theorem cyclesDegreeMap_moduleCat_cyclesMk (x : K.X i) (hx : (K.sc i).g x = 0) :
     (H.moduleCat_component_cycle x hx)
   exact (h.trans (congrArg (H.hom i j).hom hK)).trans hL.symm
 
-/-- The actual degree homology map sends the literal original cycle class through its original component. -/
+/--
+Let k be a ring and K,L module complexes of shape c. Let H be a homotopy from the zero
+morphism K→L to itself. Fix i,j with c.Rel j i, and assume K has homology at i and L at j. The
+induced degree map Hᵢ(K)→Hⱼ(L) sends a concrete cycle class [x] to [H.hom i j(x)].
+-/
 theorem homologyDegreeMap_moduleCatCycleClass (x : K.X i) (hx : (K.sc i).g x = 0) :
     H.homologyDegreeMap hji (HomologicalComplex.moduleCatCycleClass K i x hx) =
       HomologicalComplex.moduleCatCycleClass L j (H.hom i j x)

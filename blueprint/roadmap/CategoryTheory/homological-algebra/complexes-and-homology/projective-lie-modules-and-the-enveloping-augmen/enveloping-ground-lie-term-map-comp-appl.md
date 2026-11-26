@@ -1,4 +1,6 @@
-# Enveloping Ground Lie Term Map comp apply
+# Composition of ground Lie-induced term maps
 
-The ground CE degree maps preserve composition across
-independently sized Lie carriers.
+Composition of ground Lie-induced term maps.
+
+For `L → L' → L''`, composing the ground term maps equals the term map of the composite Lie
+homomorphism, even when the three carrier universes differ.

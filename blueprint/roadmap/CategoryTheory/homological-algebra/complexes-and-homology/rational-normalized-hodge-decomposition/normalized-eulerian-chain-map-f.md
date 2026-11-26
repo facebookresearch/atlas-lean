@@ -1,3 +1,6 @@
-# Normalized Eulerian Chain Map f
+# The component formula for a normalized Eulerian chain projector
 
-The native normalized chain projector retains its original coefficient-word component.
+The component formula for a normalized Eulerian chain projector.
+
+The degree-`n` component of the weight-`i` chain map is the normalized Eulerian operator
+`E_n^i`.

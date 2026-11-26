@@ -1,4 +1,5 @@
-# Coface Iso Whisker Nat Iso
+# Transporting coface isomorphisms through a functor comparison
 
-An functor comparison carries literal coface isomorphisms through the two functors, retaining
-their component maps.
+Let C,D,E be categories, A a cosimplicial C-object, B a cosimplicial D-object, J : C → D, Γ : C
+→ E, I : D → E, and g : Γ ≅ IJ a natural isomorphism. A coface-compatible isomorphism a : J(A) ≅
+B gives one Γ(A) ≅ I(B), whose degree-n component is g_{Aⁿ} followed by I(a_n).

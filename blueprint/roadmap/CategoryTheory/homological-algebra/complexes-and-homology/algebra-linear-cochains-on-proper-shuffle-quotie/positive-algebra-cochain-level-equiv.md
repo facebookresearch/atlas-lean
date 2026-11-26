@@ -1,3 +1,7 @@
-# Positive Algebra Cochain Level Equiv
+# Lifted Hom terms have quotient-cochain coordinates
 
-Native whole-level ULift coordinates are the original algebra-linear quotient cochains.
+Let k be a commutative ring, A a commutative k-algebra and M an A-module with compatible
+k-action. Write Sₙ ⊆ A ⊗[k] A^{⊗n} for the regular both-positive shuffle relations and Qₙ = (A
+⊗[k] A^{⊗n})/Sₙ. In degree n : ℕ, transporting through the canonical lifts of Qₙ and M gives an
+A-linear equivalence from the degree-n term of nativePositiveAlgebraCochainComplex to Qₙ →ₗ[A]
+M.

@@ -1,4 +1,6 @@
-# Enveloping Hom Coefficient Iso
+# The complex comparison between enveloping Hom and exterior cochains
 
-The exterior cochain model is isomorphic to Hom of the original
-enveloping CE complex.
+The complex comparison between enveloping Hom and exterior cochains.
+
+The degreewise exterior Hom-coordinate equivalences give an isomorphism from the enveloping
+Hom cochain complex to the exterior cochain complex with left coefficients.

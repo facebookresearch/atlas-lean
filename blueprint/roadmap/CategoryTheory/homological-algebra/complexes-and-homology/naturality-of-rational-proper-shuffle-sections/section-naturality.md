@@ -1,3 +1,6 @@
-# Section naturality
+# Naturality of the proper-shuffle Eulerian section
 
-Surjectivity of the quotient projection makes the original section natural.
+Naturality of the proper-shuffle Eulerian section.
+
+For compatible algebra and coefficient maps, applying the proper-quotient map and then the
+target Eulerian section equals the source section followed by the coefficient Hochschild map.

@@ -13,13 +13,17 @@ public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.LinearAlgebra.Dual.Lemmas
 
 /-!
-# Coefficient separation from actual natural-parameter evaluations
+# Coefficient separation for rational power families
 
-Native polynomial root finiteness separates finite rational power sums.
-The native separating algebraic dual transfers that separation to every
-rational module. A multiplicative natural-parameter polynomial family in a
-rational algebra therefore has orthogonal coefficient elements. The composition hypothesis is an
-ordinary polynomial identity.
+The scalar polynomial `P_a(X)=∑ i : Fin N, a_i X^i` is determined by its evaluations at all
+natural numbers. Applying linear forms gives the same coefficient-separation result for
+vector-valued families `∑ x^i • v_i` over `ℚ`.
+
+In any `ℚ`-algebra `R`, possibly noncommutative, a family `F(x)=∑ x^i e_i` with
+`F(a)F(b)=F(ab)` for all natural `a,b` has pairwise orthogonal idempotent coefficients: `e_i
+e_j=e_i` for `i=j` and zero otherwise.
+
+Reference: Bourbaki, *Algebra*, Chapters II and IV.
 -/
 
 @[expose] public section
@@ -31,24 +35,27 @@ universe u
 
 namespace Polynomial
 
-/-- The actual finite polynomial with its original coefficient index. -/
+/-- For `N : ℕ` and `a : Fin N → ℚ`, `finitePowerPolynomial N a = ∑ i : Fin N, monomial i.val (a
+i)` in `ℚ[X]`. -/
 def finitePowerPolynomial (N : ℕ) (a : Fin N → ℚ) : Polynomial ℚ :=
   ∑ i : Fin N, monomial i.val (a i)
 
-/-- Each original finite coefficient is recovered from the actual polynomial. -/
+/-- For `N : ℕ`, `a : Fin N → ℚ`, and `i : Fin N`, `(finitePowerPolynomial N a).coeff i.val = a
+i`. -/
 theorem finitePowerPolynomial_coeff (N : ℕ) (a : Fin N → ℚ) (i : Fin N) :
     (finitePowerPolynomial N a).coeff i.val = a i := by
   classical
   simp only [finitePowerPolynomial, finsetSum_coeff, coeff_monomial_apply,
     ← Fin.ext_iff, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
-/-- The actual polynomial evaluation is the original finite rational power sum. -/
+/-- For `N : ℕ`, `a : Fin N → ℚ`, and `x : ℚ`, `(finitePowerPolynomial N a).eval x = ∑ i : Fin N,
+a i * x^i.val`. -/
 theorem finitePowerPolynomial_eval (N : ℕ) (a : Fin N → ℚ) (x : ℚ) :
     (finitePowerPolynomial N a).eval x = ∑ i : Fin N, a i * x ^ i.val := by
   simp only [finitePowerPolynomial, eval_finsetSum, eval_monomial]
 
-/-- Equality at all actual natural rational values separates the actual finite scalar
-coefficients. -/
+/-- For `N : ℕ` and `a,b : Fin N → ℚ`, if `∑ i, a i * m^i.val = ∑ i, b i * m^i.val` in `ℚ` for
+every `m : ℕ`, then `a=b`. -/
 theorem finitePowerPolynomial_coefficients_eq (N : ℕ) (a b : Fin N → ℚ)
     (h : ∀ m : ℕ, (∑ i : Fin N, a i * (m : ℚ) ^ i.val) =
       ∑ i : Fin N, b i * (m : ℚ) ^ i.val) : a = b := by
@@ -65,11 +72,13 @@ theorem finitePowerPolynomial_coefficients_eq (N : ℕ) (a b : Fin N → ℚ)
 
 variable {V : Type u} [AddCommGroup V] [Module ℚ V]
 
-/-- The actual finite rational power combination in an arbitrary original rational module. -/
+/-- For a `ℚ`-vector space `V`, `N : ℕ`, vectors `a : Fin N → V`, and `x : ℚ`,
+`finitePowerCombination N a x = ∑ i : Fin N, x^i.val • a i`. -/
 def finitePowerCombination (N : ℕ) (a : Fin N → V) (x : ℚ) : V :=
   ∑ i : Fin N, x ^ i.val • a i
 
-/-- Native dual separation earns coefficient equality in every original rational module. -/
+/-- For a `ℚ`-vector space `V`, `N : ℕ`, and `a,b : Fin N → V`, if `finitePowerCombination N a m =
+finitePowerCombination N b m` for every natural `m` coerced to `ℚ`, then `a=b`. -/
 theorem finitePowerCombination_coefficients_eq (N : ℕ) (a b : Fin N → V)
     (h : ∀ m : ℕ, finitePowerCombination N a (m : ℚ) = finitePowerCombination N b (m : ℚ)) :
     a = b := by
@@ -90,8 +99,9 @@ namespace Algebra
 
 variable {R : Type u} [Ring R] [Algebra ℚ R]
 
-/-- The actual multiplicative polynomial-family identity forces orthogonality of its original
-coefficients. -/
+/-- Let `R` be a ring with a `ℚ`-algebra structure and `e : Fin N → R`. Put `F(x)=∑ i : Fin N,
+x^i.val • e i`. If `F(a)*F(b)=F(a*b)` for all natural `a,b` coerced to `ℚ`, then for every
+`i,j : Fin N`, `e i * e j = if i=j then e i else 0`. -/
 theorem finitePowerCombination_coefficients_mul (N : ℕ) (e : Fin N → R)
     (h : ∀ a b : ℕ,
       Polynomial.finitePowerCombination N e (a : ℚ) *

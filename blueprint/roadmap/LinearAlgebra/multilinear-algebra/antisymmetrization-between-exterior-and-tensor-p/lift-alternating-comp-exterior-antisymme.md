@@ -1,4 +1,6 @@
-# Lift alternating comp exterior Antisymmetrization
+# The factorial identity for an alternating functional
 
-Evaluating an actual alternating tensor functional after antisymmetrization yields
-exactly the factorial multiple of its exterior universal map.
+The factorial identity for an alternating functional.
+
+Let k be a commutative ring, V and N k-modules, and f : Vⁿ → N an alternating k-multilinear
+map. The tensor lift of f composed with Aₙ equals n! times the induced map ⋀ⁿV → N.

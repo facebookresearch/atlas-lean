@@ -1,4 +1,6 @@
-# Polynomial Antisymmetrization Homology coordinates
+# Differential-form coordinates invert polynomial antisymmetrization
 
-The signed polynomial class maps to the independently computed original
-coefficient differential form, with no factorial inverse.
+Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+For every coefficient n-form ω, applying polynomialAntisymmetrizationHomology and then
+symmetricHochschildDifferentialFormEquiv returns ω.

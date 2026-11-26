@@ -1,3 +1,6 @@
-# Augmented Chain Total Augmentation
+# The natural total augmentation of simplicial chain diagrams
 
-The actual total augmentation is native and natural in the original augmented diagram.
+The natural total augmentation of simplicial chain diagrams.
+
+The bicomplex augmentation induces a natural chain map from the flipped total complex to the
+augmentation-point chain complex.

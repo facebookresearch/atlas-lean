@@ -1,3 +1,6 @@
-# Unitization Odd Word d zero
+# The zero bottom boundary of an external-unit-leading word
 
-There is no hidden shifted bottom term: the original odd word has zero boundary in degree one.
+The zero bottom boundary of an external-unit-leading word.
+
+The odd word of `C_0(A)` in normalized degree one has zero boundary in degree zero, since `t_0
+= 1`.

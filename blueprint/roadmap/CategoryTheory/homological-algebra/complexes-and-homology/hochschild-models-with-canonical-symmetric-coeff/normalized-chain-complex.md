@@ -1,3 +1,6 @@
-# Normalized Chain Complex
+# The normalized Hochschild complex of symmetric coefficients
 
-The original normalized complex uses only the ground quotient A/(k*1) in its tail.
+The normalized Hochschild complex of symmetric coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, degree n is M
+⊗[k] (A/(k·1))⊗n, with the differential induced by the raw Hochschild boundary.

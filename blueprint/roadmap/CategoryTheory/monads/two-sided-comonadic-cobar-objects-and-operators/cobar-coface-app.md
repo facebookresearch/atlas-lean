@@ -1,7 +1,7 @@
-# Cobar Coface App
+# The component of a two-sided cobar coface
 
-Component formula for cofaces: extracted to avoid self-reference while
-defining `cobarCoface`. The right endpoint `δ⁰` is the reusable recursive
-iterated right coaction `rightCoactionPow G R n (L a)`. The left endpoint
-`δ^{n+1}` is the left coaction. Interior cofaces use the public
-reversed-position wrapper `cobarDeltaAtPos`, i.e. `deltaAtPos` with `Fin.rev`.
+The component of a two-sided cobar coface.
+
+At `a`, coface zero is the iterated right coaction, coface `n+1` is
+`R.map(G^n.map(L.coaction.app a))`, and each interior coface is the reversed-position
+comultiplication insertion mapped by `R`.

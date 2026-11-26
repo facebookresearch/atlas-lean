@@ -13,13 +13,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.NaiveFil
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.PositiveBarFiltration
 
 /-!
-# Ideal images in positive filtration zero
+# The positive ideal image is the bottom word-count stage
 
-The positive extension of the coefficient
-bar ideal inclusion maps into the quotient
-kernel. Its image is the bottom ideal-count
-stage in positive word coordinates, with
-the augmentation term remaining zero.
+Extend the V-coefficient bar inclusion I → A into positive word-length grading. Its composite
+with the quotient A → A/I is zero, so it lifts to the relative positive kernel. The
+degree-zero component is zero, and in degree n + 1 its word value is identity on V tensored
+with the inclusion of each of the n + 1 ideal entries.
+
+The all-ideal coefficient word span is the range of this tensorized inclusion. Through the
+injective kernel word map, its image equals barWordFiltration 0 n. These are image statements
+for arbitrary V, without a split-quotient assumption.
 -/
 
 @[expose] public section
@@ -37,12 +40,20 @@ variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
   (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The original ideal bar inclusion in its native positive word-length placement. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. positiveBarIdealMap is i_+, obtained by extending barAlgebraMap
+I.subtypeHom along n ↦ n + 1. -/
 abbrev positiveBarIdealMap : positiveBarComplex k I.Algebra V ⟶ positiveBarComplex k A V :=
   HomologicalComplex.extendMap (barAlgebraMap (V := V) I.subtypeHom)
     (ComplexShape.embeddingDown'Add (1 : ℕ) 1)
 
-/-- Native extension preserves the zero ideal-to-quotient bar composite. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. i_+ ≫ q_+ = 0 as a chain map from positiveBar(I,V) to
+positiveBar(A/I,V). -/
 theorem positiveBarIdeal_quotient_zero :
     positiveBarIdealMap k A I V ≫ positiveBarQuotientMap k A I V = 0 := by
   let e : ComplexShape.Embedding (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
@@ -52,7 +63,11 @@ theorem positiveBarIdeal_quotient_zero :
   rw [← HomologicalComplex.extendMap_comp, barIdeal_quotient_zero k A I V,
     HomologicalComplex.extendMap_zero]
 
-/-- The original ideal coefficient bar lands in the positive quotient kernel. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. idealToRelativePositiveBarComplex is the kernel lift j_+ :
+positiveBar(I,V) ⟶ K_+ defined by the zero composite i_+ ≫ q_+. -/
 def idealToRelativePositiveBarComplex :
     positiveBarComplex k I.Algebra V ⟶ relativePositiveBarComplex k A I V :=
   kernel.lift (positiveBarQuotientMap k A I V) (positiveBarIdealMap k A I V)
@@ -63,7 +78,10 @@ theorem idealToRelativePositiveBarComplex_ι :
     idealToRelativePositiveBarComplex k A I V ≫ kernel.ι (positiveBarQuotientMap k A I V) =
       positiveBarIdealMap k A I V := kernel.lift_ι _ _ _
 
-/-- Every component retains the original kernel inclusion. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. For N : ℕ, j_+.f N ≫ (kernel.ι q_+).f N = i_+.f N. -/
 theorem idealToRelativePositiveBarComplex_ι_f (n : ℕ) :
     (idealToRelativePositiveBarComplex k A I V).f n ≫
         (kernel.ι (positiveBarQuotientMap k A I V)).f n =
@@ -74,7 +92,12 @@ theorem idealToRelativePositiveBarComplex_ι_f (n : ℕ) :
       (idealToRelativePositiveBarComplex_ι k A I V)
 
 omit [I.IsTwoSided] in
-/-- The original positive ideal map has precisely the native extended bar components. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. For n : ℕ, i_+.f (n + 1) equals the base component
+(barAlgebraMap I.subtypeHom).f n conjugated by the source and target extension object
+isomorphisms. -/
 theorem positiveBarIdealMap_f (n : ℕ) :
     (positiveBarIdealMap k A I V).f (n + 1) =
       ((barComplex k I.Algebra V).extendXIso
@@ -85,13 +108,21 @@ theorem positiveBarIdealMap_f (n : ℕ) :
   HomologicalComplex.extendMap_f (barAlgebraMap (V := V) I.subtypeHom)
     (ComplexShape.embeddingDown'Add (1 : ℕ) 1) (i := n) rfl
 
-/-- The original ideal-to-kernel map has the zero augmentation component. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. The component j_+.f 0 is zero, since positiveBar(I,V).X 0 is a
+zero object. -/
 theorem idealToRelativePositiveBarComplex_f_zero :
     (idealToRelativePositiveBarComplex k A I V).f 0 = 0 :=
   (positiveBarComplex_isZero_zero k I.Algebra V).eq_of_src _ _
 
 omit [I.IsTwoSided] in
-/-- Word coordinates retain V and the original ideal inclusion on every original algebra entry. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. For n : ℕ, i_+.f (n+1) followed by positiveBarWordIso_A n
+equals positiveBarWordIso_I n followed by id_V ⊗ PiTensorProduct.map (fun _ => I.subtypeHom). -/
 theorem positiveBarIdealMap_word (n : ℕ) :
     (positiveBarIdealMap k A I V).f (n + 1) ≫ (positiveBarWordIso k A V n).hom =
       (positiveBarWordIso k I.Algebra V n).hom ≫
@@ -153,7 +184,9 @@ theorem positiveBarIdealMap_word (n : ℕ) :
   rw [hcoords]
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- The coefficient all-ideal span is the range of the original identity-coefficient tensor map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For N : ℕ,
+coefficientIdealWordSpan V N N equals range(id_V ⊗ inclusion_I^⊗N) in V ⊗[k] A^⊗N. -/
 theorem coefficientIdealWordSpan_all_eq_range (n : ℕ) :
     coefficientIdealWordSpan k A I V n n =
       LinearMap.range (TensorProduct.map (LinearMap.id : V →ₗ[k] V)
@@ -190,7 +223,9 @@ theorem coefficientIdealWordSpan_all_eq_range (n : ℕ) :
       coefficientIdealWordSpan k A I V n n
     exact hmem
 
-/-- The kernel inclusion followed by its original positive word isomorphism is injective. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For n : ℕ,
+relativePositiveBarWordMap n : K_+.X (n + 1) → V ⊗[k] A^⊗(n+1) is injective. -/
 theorem relativePositiveBarWordMap_injective (n : ℕ) :
     Function.Injective (relativePositiveBarWordMap k A I V n) := by
   let g := ((kernel.ι (positiveBarQuotientMap k A I V)).f (n + 1)).hom
@@ -199,7 +234,11 @@ theorem relativePositiveBarWordMap_injective (n : ℕ) :
       ((kernel.ι (positiveBarQuotientMap k A I V)).f (n + 1))).mp inferInstance
   exact (positiveBarWordIso k A V n).toLinearEquiv.injective.comp hg
 
-/-- The original ideal-to-kernel map has precisely the identity-coefficient word inclusion. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. For n : ℕ, relativePositiveBarWordMap n ∘ j_+.f (n+1) = (id_V ⊗
+inclusion_I^⊗(n+1)) ∘ positiveBarWordIso_I n.hom. -/
 theorem relativePositiveBarWordMap_idealToRelative (n : ℕ) :
     (relativePositiveBarWordMap k A I V n).comp
         ((idealToRelativePositiveBarComplex k A I V).f (n + 1)).hom =
@@ -220,7 +259,11 @@ theorem relativePositiveBarWordMap_idealToRelative (n : ℕ) :
   simp only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_ofHom] at hvalue
   exact hvalue
 
-/-- The original word getter evaluates every ideal-complex vector by its tensor inclusion. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. For x in positiveBar(I,V).X (n + 1), the word value of j_+(x)
+equals id_V ⊗ inclusion_I^⊗(n+1) applied to its positive ideal word coordinate. -/
 theorem relativePositiveBarWordMap_idealToRelative_apply (n : ℕ)
     (x : (positiveBarComplex k I.Algebra V).X (n + 1)) :
     relativePositiveBarWordMap k A I V n
@@ -230,7 +273,11 @@ theorem relativePositiveBarWordMap_idealToRelative_apply (n : ℕ)
         ((positiveBarWordIso k I.Algebra V n).hom.hom x) :=
   congrArg (fun f => f x) (relativePositiveBarWordMap_idealToRelative k A I V n)
 
-/-- The original coefficient is unchanged and every original ideal entry keeps its value and position. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. For v : V and a : Fin (n + 1) → I, lifting the positive word v
+⊗ tprod a through j_+ and reading its ambient word yields v ⊗ tprod(i ↦ I.subtypeHom(a_i)). -/
 theorem relativePositiveBarWordMap_idealToRelative_tprod (n : ℕ) (v : V)
     (a : Fin (n + 1) → I.Algebra) :
     relativePositiveBarWordMap k A I V n
@@ -248,7 +295,11 @@ theorem relativePositiveBarWordMap_idealToRelative_tprod (n : ℕ) (v : V)
   funext i
   rfl
 
-/-- The bottom positive bar stage is the image of the original arbitrary-coefficient ideal map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. Let i_+ :
+positiveBar(I,V) → positiveBar(A,V) be the extended ideal inclusion, q_+ the quotient map and
+j_+ its lift to K_+ = ker q_+. For n : ℕ, barWordFiltration 0 n = range (j_+.f (n + 1)).hom in
+the relative positive kernel's degree n + 1. -/
 theorem barWordFiltration_zero_eq_range (n : ℕ) :
     barWordFiltration k A I V 0 n =
       LinearMap.range ((idealToRelativePositiveBarComplex k A I V).f (n + 1)).hom := by

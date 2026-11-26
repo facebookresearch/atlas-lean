@@ -1,6 +1,5 @@
-# Adic Graded Piece
+# Adic homogeneous quotient
 
-The `n`-th graded piece `I ^ n / I ^ (n + 1)` of the `I`-adic filtration.
-
-The denominator is written as `I • ⊤` inside the subtype `I ^ n`; membership in
-it is equivalent to membership in `I ^ (n + 1)` in the ambient ring.
+For an ideal `I` in a commutative ring `R` and `n : ℕ`, the adic degree-`n` piece is
+`I^n/I^(n+1)`. It is represented by `(I^n : Ideal R) ⧸ (I • ⊤ : Submodule R (I^n : Ideal R))`;
+the denominator consists of representatives whose underlying elements lie in `I^(n+1)`.

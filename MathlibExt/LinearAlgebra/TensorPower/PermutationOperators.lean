@@ -15,12 +15,14 @@ public import Mathlib.GroupTheory.Perm.Sign
 public import MathlibExt.LinearAlgebra.TensorPower.Quotient
 
 /-!
-# Actual weighted place-permutation operators
+# Weighted place-permutation operators
 
-Every operator is a finite sum of the original tensor-factor permutations.
-The coefficient tensor factor is fixed. Uniform maps of the tail module,
-arbitrary coefficient maps, and factorwise quotient projections commute
-with the operator. No algebra structure on a quotient tail is required.
+For a commutative ring k, a k-module V and c : Sₙ → k, the operator O_c on V⊗n is ∑σ c(σ)ρₙ(σ),
+where ρₙ(σ)tprod(a) = tprod(a ∘ σ⁻¹). On M ⊗ V⊗n the analogous sum fixes the coefficient in a
+k-module M. These operators commute with coefficient maps, uniform maps of tensor factors and
+quotient maps V → V/S for submodules S.
+
+For the permutation functoriality of tensor powers, see N. Bourbaki, Algebra I, Chapter III.
 -/
 
 @[expose] public section
@@ -38,19 +40,28 @@ variable {k : Type u} [CommRing k]
   {M : Type w} [AddCommGroup M] [Module k M]
   {N : Type w'} [AddCommGroup N] [Module k N]
 
-/-- A finite linear combination of actual place permutations, using the inverse-word convention. -/
+/-- A weighted sum of place permutations.
+
+For a commutative ring k, a k-module V and c : Sₙ → k, O_c : V⊗n → V⊗n is ∑σ c(σ)ρₙ(σ). The
+permutation action sends a tensor word a to a ∘ σ⁻¹. -/
 def permutationOperator (n : ℕ) (c : Equiv.Perm (Fin n) → k) :
     TensorPower k n V →ₗ[k] TensorPower k n V := by
   classical
   exact ∑ σ : Equiv.Perm (Fin n),
     c σ • (PiTensorProduct.reindex k (fun _ : Fin n => V) σ).toLinearMap
 
-/-- The original coefficient is fixed by the finite place-permutation sum. -/
+/-- A weighted permutation sum with a fixed coefficient.
+
+For a commutative ring k, k-modules M,V and c : Sₙ → k, this endomorphism of M ⊗ V⊗n is ∑σ
+c(σ)(id_M ⊗ ρₙ(σ)), so each summand retains the coefficient in M. -/
 def coefficientPermutationOperator (n : ℕ) (c : Equiv.Perm (Fin n) → k) :
     M ⊗[k] TensorPower k n V →ₗ[k] M ⊗[k] TensorPower k n V :=
   TensorProduct.map LinearMap.id (permutationOperator (V := V) n c)
 
-/-- The pure tail word is the actual finite inverse-permutation sum. -/
+/-- The inverse-permutation formula on a pure tensor.
+
+For a commutative ring k, a k-module V, c : Sₙ → k and a : Fin n → V, O_c(tprod(a)) = ∑σ
+c(σ) · tprod(a ∘ σ⁻¹). -/
 theorem permutationOperator_tprod (n : ℕ) (c : Equiv.Perm (Fin n) → k)
     (a : Fin n → V) :
     permutationOperator (V := V) n c (PiTensorProduct.tprod k a) =
@@ -60,7 +71,10 @@ theorem permutationOperator_tprod (n : ℕ) (c : Equiv.Perm (Fin n) → k)
   simp only [permutationOperator, LinearMap.sum_apply, LinearMap.smul_apply,
     LinearEquiv.coe_toLinearMap, PiTensorProduct.reindex_tprod]
 
-/-- Every pure coefficient word has the literal inverse-permutation formula. -/
+/-- The weighted formula on a coefficient tensor word.
+
+For a commutative ring k, k-modules M,V, c : Sₙ → k, m ∈ M and a : Fin n → V, O_c(m ⊗
+tprod(a)) = ∑σ c(σ) · (m ⊗ tprod(a ∘ σ⁻¹)). -/
 theorem coefficientPermutationOperator_tprod (n : ℕ) (c : Equiv.Perm (Fin n) → k)
     (m : M) (a : Fin n → V) :
     coefficientPermutationOperator (M := M) (V := V) n c
@@ -73,7 +87,10 @@ theorem coefficientPermutationOperator_tprod (n : ℕ) (c : Equiv.Perm (Fin n) �
     LinearEquiv.coe_toLinearMap, PiTensorProduct.reindex_tprod,
     TensorProduct.tmul_sum, TensorProduct.tmul_smul]
 
-/-- Uniform tail maps commute with the actual finite permutation sum. -/
+/-- Naturality of a weighted permutation sum.
+
+For a commutative ring k, a k-linear map g : V → W and c : Sₙ → k, g⊗n ∘ O_c,V = O_c,W ∘
+g⊗n. -/
 theorem permutationOperator_naturality (n : ℕ) (c : Equiv.Perm (Fin n) → k)
     (g : V →ₗ[k] W) :
     (PiTensorProduct.map (fun _ : Fin n => g)).comp
@@ -89,7 +106,10 @@ theorem permutationOperator_naturality (n : ℕ) (c : Equiv.Perm (Fin n) → k)
     LinearEquiv.coe_toLinearMap, PiTensorProduct.reindex_tprod,
     PiTensorProduct.map_tprod, map_sum, map_smul]
 
-/-- Independent coefficient and uniform tail maps commute with the actual coefficient-fixed operator. -/
+/-- Naturality in a coefficient and uniform tensor factors.
+
+For a commutative ring k, k-linear maps f : M → N and g : V → W, and c : Sₙ → k, T = f ⊗ g⊗n
+satisfies T ∘ O_c,M,V = O_c,N,W ∘ T. The modules may have independent universes. -/
 theorem coefficientPermutationOperator_naturality (n : ℕ)
     (c : Equiv.Perm (Fin n) → k) (g : V →ₗ[k] W) (f : M →ₗ[k] N) :
     (TensorProduct.map f (PiTensorProduct.map (fun _ : Fin n => g))).comp
@@ -101,7 +121,10 @@ theorem coefficientPermutationOperator_naturality (n : ℕ)
   simp only [LinearMap.comp_id, LinearMap.id_comp]
   rw [permutationOperator_naturality]
 
-/-- The finite operator commutes with the actual factorwise tensor quotient projection. -/
+/-- Weighted permutations descend through a factorwise quotient.
+
+For a commutative ring k, k-modules M,V and a submodule S ≤ V, let q : V → V/S and T = id_M
+⊗ q⊗n. For every c : Sₙ → k, T ∘ O_c,M,V = O_c,M,V/S ∘ T. -/
 theorem coefficientQuotientMap_permutationOperator (S : Submodule k V) (n : ℕ)
     (c : Equiv.Perm (Fin n) → k) :
     (coefficientQuotientMap S M n).comp

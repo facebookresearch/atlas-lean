@@ -1,4 +1,6 @@
-# Enveloping Ground Differential apply ιMulti tmul
+# The signed ground-coordinate formula for enveloping boundaries
 
-The existing all-degree bracket/action formula in the exact scalar
-dictionary used by balanced tensor and Hom.
+The signed ground-coordinate formula for enveloping boundaries.
+
+For `v : Fin (n+1) → L`, the boundary of `(⋀ᵢ vᵢ) ⊗ a` is the bracket boundary tensored with
+`a`, plus `∑ᵢ (-1)^i (⋀_(j≠i) vⱼ) ⊗ aι(vᵢ)`. The exterior survivors retain their order.

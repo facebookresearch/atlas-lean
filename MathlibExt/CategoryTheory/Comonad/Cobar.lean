@@ -12,53 +12,21 @@ module
 public import MathlibExt.CategoryTheory.Comonad.Comodule
 
 /-!
-# Two-sided comonadic cobar construction – levelwise core + elementary operators
+# Two-sided comonadic cobar degrees and operators
 
-Mathematical source: J. P. May, *The Geometry of Iterated Loop Spaces*,
-Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
+Let `G` be a comonad on `C`, let `R : C ⥤ D` have right coaction `R ⟶ G ⋙ R`, and let `L : A ⥤
+C` have left coaction `L ⟶ L ⋙ G`. The degree-`n` cobar functor is `a ↦ R(G^n(L(a)))`, with
+powers `G^0 = 𝟭 C` and `G^(n+1) = G ⋙ G^n`.
+
+Coface zero uses the iterated right coaction, the last coface uses the left coaction, and
+interior cofaces insert comultiplication. Codegeneracies insert the counit. The cobar indices
+count from the right-comodule end; `Fin.rev` relates them to insertion indices counted from
+the left-comodule end. All operators are natural in `a`, with independent category and
+morphism universes for `A`, `C`, and `D`.
+
+Reference: the categorical dual of the two-sided bar construction in J. P. May, *The Geometry
+of Iterated Loop Spaces*, Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
 Construction 9.6 and Remark 9.12, <https://doi.org/10.1007/BFb0067491>.
-
-This file is the formal categorical dual of that cited bar construction:
-comonad `G` for monad `T`, comultiplication `δ` for multiplication `μ`,
-counit `ε` for unit `η`, and endpoint coactions for endpoint actions.
-Dual companion of the monadic bar core (`Monad.Bar`): for a comonad `G` on `C`
-with a right comodule `R : C ⥤ D` and a left comodule `L : A ⥤ C`, the
-degree-`n` cobar functor is `R.obj ((comonadPow G n).obj (L.obj a))`, i.e.
-`R (G^n (L a))`.
-
-General machinery: `comonadPow`, `comonadPow_obj_G_comm`,
-`comonadPow_succ_obj_eq`, `deltaAtPos`, `epsilonAtPos` with naturality, public
-reversed wrappers `cobarDeltaAtPos n i = deltaAtPos n i.rev` and
-`cobarEpsilonAtPos n i = epsilonAtPos n i.rev` with naturality, reusable
-recursive iterated right-comodule coaction `rightCoactionPow` with naturality,
-`cobarObj` with `cobarObj_obj`, `cobarObj_map`, `cobarObj_zero`,
-`cobarCofaceApp` component formula, `cobarCoface n i : C_n ⟶ C_{n+1}`
-(`δ⁰` recursive iterated right coaction, `δ^{n+1}` left coaction, interior
-`cobarDeltaAtPos`), `cobarCodegeneracy n i : C_{n+1} ⟶ C_n` via
-`cobarEpsilonAtPos`.
-
-Public indexing convention (counted from the right-comodule end, dual to the
-bar convention `d₀ =` right action):
-- `δ⁰ a = rightCoactionPow G R n (L a)` with
-  `rightCoactionPow G R 0 X = R.coaction.app X` definitionally and
-  `rightCoactionPow G R (n+1) X`
-  `= rightCoactionPow G R n (G.toFunctor.obj X)` definitionally;
-- `δ^{n+1} a = R.map (G^n.map (L.coaction.app a))`;
-- `δ^{i+1} a = R.map (cobarDeltaAtPos G n i (L a))` for `i : Fin n`;
-- `σ^i a = R.map (cobarEpsilonAtPos G n i (L a))` for `i : Fin (n+1)`.
-
-The raw helpers `deltaAtPos`/`epsilonAtPos` count insertion positions from the
-left-comodule end; the public wrappers reverse with `Fin.rev`, so `δ¹` uses the
-raw last position and `δ^n` the raw position zero. The recursive
-`rightCoactionPow` keeps the left-associated `comonadPow` while giving
-transport-free equations for the right endpoint; the left endpoint is already
-definitional.
-
-All operators are defined directly and proved by induction mirroring the bar
-calculus, keeping every component formula definitional, with public formulas
-and no opposite-monad transport dependency or equivalence claimed.
-
-
 -/
 
 @[expose] public section
@@ -72,19 +40,28 @@ variable {C : Type u₁} [Category.{v₁} C]
 variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 
-/-- Iterated comonad powers, left-associated: `G^(n+1) = G ⋙ G^n`. -/
+/-- The iterated powers of a comonad functor.
+
+Set `G^0 = 𝟭 C` and `G^(n+1) = G ⋙ G^n` for a comonad `G` on `C`. -/
 abbrev comonadPow (G : Comonad C) : ℕ → C ⥤ C
 | 0 => 𝟭 C
 | n + 1 => (G : C ⥤ C) ⋙ comonadPow G n
 
-/-- Degree-zero power is the identity functor. -/
+/-- The identity power of a comonad.
+
+The zeroth comonad power is the identity functor. -/
 @[simp] lemma comonadPow_zero (G : Comonad C) : comonadPow G 0 = 𝟭 C := rfl
 
-/-- Successor power unfolds one left-associated copy of `G`. -/
+/-- The successor formula for a comonad power.
+
+The power `G^(n+1)` is `G ⋙ G^n`. -/
 @[simp] lemma comonadPow_succ (G : Comonad C) (n : ℕ) :
     comonadPow G (n + 1) = (G : C ⥤ C) ⋙ comonadPow G n := rfl
 
-/-- Powers commute with application of `G` on objects. -/
+/-- Commutation of a comonad power with one objectwise application.
+
+For `X ∈ C`, the objects `G^n(G(X))` and `G(G^n(X))` are equal for the specified power
+recursion. -/
 theorem comonadPow_obj_G_comm (G : Comonad C) (n : ℕ) (X : C) :
     (comonadPow G n).obj (G.toFunctor.obj X) =
       G.toFunctor.obj ((comonadPow G n).obj X) := by
@@ -92,21 +69,27 @@ theorem comonadPow_obj_G_comm (G : Comonad C) (n : ℕ) (X : C) :
   | zero => rfl
   | succ n ih => exact ih (G.toFunctor.obj X)
 
-/-- Successor power applied to an object. -/
+/-- The object formula for a successor comonad power.
+
+The object `G^(n+1)(X)` is `G(G^n(X))`. -/
 theorem comonadPow_succ_obj_eq (G : Comonad C) (n : ℕ) (X : C) :
     (comonadPow G (n + 1)).obj X = G.toFunctor.obj ((comonadPow G n).obj X) :=
   comonadPow_obj_G_comm G n X
 
-/-- Comultiplication insertion at an arbitrary raw position:
-`(G^n).obj X ⟶ (G^{n+1}).obj X`. Position zero applies `G.δ` under `G^n`;
-later positions recurse under `G`. Counts from the left-comodule end. -/
+/-- Comultiplication insertion at a comonad-power position.
+
+For `i : Fin n`, insert `δ` into `G^n(X)` to obtain `G^(n+1)(X)`. Position zero is the
+innermost insertion near the left-comodule object; later positions recurse at `G(X)`. -/
 noncomputable def deltaAtPos (G : Comonad C) : (n : ℕ) → (i : Fin n) → (X : C) →
     (comonadPow G n).obj X ⟶ (comonadPow G (n + 1)).obj X
 | 0, i, _ => nomatch i
 | n + 1, ⟨0, _⟩, X => (comonadPow G n).map (G.δ.app X)
 | n + 1, ⟨k + 1, hk⟩, X => deltaAtPos G n ⟨k, by omega⟩ (G.toFunctor.obj X)
 
-/-- Naturality of comultiplication insertion in the carrier object. -/
+/-- Naturality of comultiplication insertion.
+
+For every position `i`, the insertion `G^n(X) → G^(n+1)(X)` commutes with the corresponding
+powers of a morphism `X → Y`. -/
 lemma deltaAtPos_naturality (G : Comonad C) (n : ℕ) (k : Fin n) {X Y : C}
     (f : X ⟶ Y) :
     (comonadPow G n).map f ≫ deltaAtPos G n k Y =
@@ -129,17 +112,20 @@ lemma deltaAtPos_naturality (G : Comonad C) (n : ℕ) (k : Fin n) {X Y : C}
       simp only [deltaAtPos]
       exact ih ⟨k, by omega⟩ (G.toFunctor.map f)
 
-/-- Counit insertion at an arbitrary raw position:
-`(G^{n+1}).obj X ⟶ (G^n).obj X`. The base case is `G.ε`; position zero maps
-`G.ε` under `G^{n+1}`; later positions recurse under `G`. Counts from the
-left-comodule end. -/
+/-- Counit insertion at a comonad-power position.
+
+For `i : Fin (n+1)`, insert `ε` into `G^(n+1)(X)` to obtain `G^n(X)`, counting positions from
+the left-comodule end. -/
 noncomputable def epsilonAtPos (G : Comonad C) : (n : ℕ) → (i : Fin (n + 1)) →
     (X : C) → (comonadPow G (n + 1)).obj X ⟶ (comonadPow G n).obj X
 | 0, _, X => G.ε.app X
 | n + 1, ⟨0, _⟩, X => (comonadPow G (n + 1)).map (G.ε.app X)
 | n + 1, ⟨k + 1, hk⟩, X => epsilonAtPos G n ⟨k, by omega⟩ (G.toFunctor.obj X)
 
-/-- Naturality of counit insertion in the carrier object. -/
+/-- Naturality of counit insertion.
+
+For every insertion position, counit contraction commutes with the powers of a carrier
+morphism `X → Y`. -/
 lemma epsilonAtPos_naturality (G : Comonad C) (n : ℕ) (i : Fin (n + 1)) {X Y : C}
     (f : X ⟶ Y) :
     (comonadPow G (n + 1)).map f ≫ epsilonAtPos G n i Y =
@@ -178,31 +164,41 @@ lemma epsilonAtPos_naturality (G : Comonad C) (n : ℕ) (i : Fin (n + 1)) {X Y :
       simp only [epsilonAtPos]
       exact ih ⟨k, by omega⟩ (G.toFunctor.map f)
 
-/-- Public reversed-position wrapper for interior cobar cofaces: counts from the
-right-comodule end (`δ⁰` = right coaction), i.e.
-`cobarDeltaAtPos n i = deltaAtPos n i.rev`. Raw `deltaAtPos` is preserved
-unchanged and counts from the left-comodule end. -/
+/-- The right-end indexing of an interior cobar coface.
+
+The interior coface insertion at `i : Fin n` is the comultiplication insertion at the reversed
+position `i.rev`. -/
 noncomputable def cobarDeltaAtPos (G : Comonad C) (n : ℕ) (i : Fin n) (X : C) :
     (comonadPow G n).obj X ⟶ (comonadPow G (n + 1)).obj X :=
   deltaAtPos G n i.rev X
 
-/-- Public reversed-position wrapper for cobar codegeneracies:
-`cobarEpsilonAtPos n i = epsilonAtPos n i.rev`. -/
+/-- The right-end indexing of a cobar codegeneracy.
+
+The codegeneracy insertion at `i : Fin (n+1)` is the counit insertion at the reversed position
+`i.rev`. -/
 noncomputable def cobarEpsilonAtPos (G : Comonad C) (n : ℕ) (i : Fin (n + 1))
     (X : C) :
     (comonadPow G (n + 1)).obj X ⟶ (comonadPow G n).obj X :=
   epsilonAtPos G n i.rev X
 
-/-- The reversed wrapper unfolds to the raw operator at `i.rev`. -/
+/-- The reversed-position formula for cobar comultiplication insertion.
+
+The right-end insertion at `i` equals the comultiplication insertion at `i.rev` in left-end
+indexing. -/
 @[simp] lemma cobarDeltaAtPos_rev (G : Comonad C) (n : ℕ) (i : Fin n) (X : C) :
     cobarDeltaAtPos G n i X = deltaAtPos G n i.rev X := rfl
 
-/-- The reversed wrapper unfolds to the raw operator at `i.rev`. -/
+/-- The reversed-position formula for cobar counit insertion.
+
+The right-end contraction at `i` equals the counit insertion at `i.rev` in left-end indexing. -/
 @[simp] lemma cobarEpsilonAtPos_rev (G : Comonad C) (n : ℕ) (i : Fin (n + 1))
     (X : C) :
     cobarEpsilonAtPos G n i X = epsilonAtPos G n i.rev X := rfl
 
-/-- Naturality of the public interior-coface insertion. -/
+/-- Naturality of right-indexed cobar comultiplication.
+
+The reversed-position comultiplication insertion commutes with powers of each morphism in the
+comonad's carrier category. -/
 lemma cobarDeltaAtPos_naturality (G : Comonad C) (n : ℕ) (i : Fin n) {X Y : C}
     (f : X ⟶ Y) :
     (comonadPow G n).map f ≫ cobarDeltaAtPos G n i Y =
@@ -210,7 +206,10 @@ lemma cobarDeltaAtPos_naturality (G : Comonad C) (n : ℕ) (i : Fin n) {X Y : C}
   simp only [cobarDeltaAtPos]
   exact deltaAtPos_naturality G n i.rev f
 
-/-- Naturality of the public codegeneracy insertion. -/
+/-- Naturality of right-indexed cobar counit contraction.
+
+The reversed-position counit insertion commutes with powers of each morphism in the comonad's
+carrier category. -/
 lemma cobarEpsilonAtPos_naturality (G : Comonad C) (n : ℕ) (i : Fin (n + 1))
     {X Y : C} (f : X ⟶ Y) :
     (comonadPow G (n + 1)).map f ≫ cobarEpsilonAtPos G n i Y =
@@ -222,52 +221,66 @@ section Elementary
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Degree-`n` cobar functor `R (G^n (L -)) : A ⥤ D`. -/
+/-- The functor in one degree of a two-sided comonadic cobar construction.
+
+For a right comodule `R : C ⥤ D` and left comodule `L : A ⥤ C`, degree `n` is `(L ⋙ G^n) ⋙ R :
+A ⥤ D`. -/
 abbrev cobarObj (G : Comonad C) (R : RightComodule G D) (L : LeftComodule A G)
     (n : ℕ) : A ⥤ D :=
   (L.functor ⋙ comonadPow G n) ⋙ R.functor
 
-/-- Objects of the degree-`n` cobar functor. -/
+/-- The object formula for a two-sided cobar degree.
+
+At `a ∈ A`, degree `n` has value `R(G^n(L(a)))`. -/
 @[simp] lemma cobarObj_obj (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) (n : ℕ) (a : A) :
     (cobarObj G R L n).obj a =
       R.functor.obj ((comonadPow G n).obj (L.functor.obj a)) := rfl
 
-/-- Morphisms of the degree-`n` cobar functor. -/
+/-- The carrier-morphism formula for a two-sided cobar degree.
+
+A morphism `f : a → b` maps to `R.map(G^n.map(L.map(f)))`. -/
 @[simp] lemma cobarObj_map {G : Comonad C} {R : RightComodule G D}
     {L : LeftComodule A G} {n : ℕ} {a b : A} (f : a ⟶ b) :
     (cobarObj G R L n).map f =
       R.functor.map ((comonadPow G n).map (L.functor.map f)) := rfl
 
-/-- Degree zero is the composite of the two underlying functors. -/
+/-- The degree-zero two-sided cobar functor.
+
+Degree zero is the composite `L ⋙ R` of the two underlying comodule functors. -/
 @[simp] lemma cobarObj_zero (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) :
     cobarObj G R L 0 = L.functor ⋙ R.functor := rfl
 
-/-- Reusable recursive iterated right-comodule coaction:
-`R.functor.obj ((comonadPow G n).obj X) ⟶ R.functor.obj ((comonadPow G (n+1)).obj X)`.
-Degree zero is definitionally `R.coaction.app X`; successor is definitionally
-the preceding iterated coaction evaluated at `G.toFunctor.obj X`. This gives
-transport-free recursive equations for the right endpoint while keeping
-left-associated `comonadPow`. -/
+/-- The iterated right-comodule coaction.
+
+The coaction gives `R(G^n(X)) → R(G^(n+1)(X))`, starting with the right coaction at `X` and
+defining the next degree by the preceding map at `G(X)`. -/
 noncomputable def rightCoactionPow (G : Comonad C) (R : RightComodule G D) :
     (n : ℕ) → (X : C) → R.functor.obj ((comonadPow G n).obj X) ⟶
       R.functor.obj ((comonadPow G (n + 1)).obj X)
 | 0, X => R.coaction.app X
 | n + 1, X => rightCoactionPow G R n (G.toFunctor.obj X)
 
-/-- Degree zero is the comodule coaction. -/
+/-- The zeroth iterated right-comodule coaction.
+
+The degree-zero iterated coaction is the right comodule coaction `R(X) → R(G(X))`. -/
 @[simp] lemma rightCoactionPow_zero (G : Comonad C) (R : RightComodule G D)
     (X : C) :
     rightCoactionPow G R 0 X = R.coaction.app X := rfl
 
-/-- Successor is the preceding iterated coaction under `G`. -/
+/-- The successor formula for iterated right coaction.
+
+The degree-`n+1` iterated right coaction at `X` is the degree-`n` iterated coaction at `G(X)`. -/
 @[simp] lemma rightCoactionPow_succ (G : Comonad C) (R : RightComodule G D)
     (n : ℕ) (X : C) :
     rightCoactionPow G R (n + 1) X =
       rightCoactionPow G R n (G.toFunctor.obj X) := rfl
 
-/-- Naturality of the iterated right coaction in the carrier object. -/
+/-- Naturality of iterated right-comodule coaction.
+
+The iterated coaction commutes with the maps `R(G^n(f))` and `R(G^(n+1)(f))` of every carrier
+morphism. -/
 lemma rightCoactionPow_naturality (G : Comonad C) (R : RightComodule G D)
     (n : ℕ) {X Y : C} (f : X ⟶ Y) :
     R.functor.map ((comonadPow G n).map f) ≫ rightCoactionPow G R n Y =
@@ -282,11 +295,11 @@ lemma rightCoactionPow_naturality (G : Comonad C) (R : RightComodule G D)
     exact ih (X := G.toFunctor.obj X) (Y := G.toFunctor.obj Y)
       (f := G.toFunctor.map f)
 
-/-- Component formula for cofaces: extracted to avoid self-reference while
-defining `cobarCoface`. The right endpoint `δ⁰` is the reusable recursive
-iterated right coaction `rightCoactionPow G R n (L a)`. The left endpoint
-`δ^{n+1}` is the left coaction. Interior cofaces use the public
-reversed-position wrapper `cobarDeltaAtPos`, i.e. `deltaAtPos` with `Fin.rev`. -/
+/-- The component of a two-sided cobar coface.
+
+At `a`, coface zero is the iterated right coaction, coface `n+1` is
+`R.map(G^n.map(L.coaction.app a))`, and each interior coface is the reversed-position
+comultiplication insertion mapped by `R`. -/
 noncomputable def cobarCofaceApp (n : ℕ) (i : Fin (n + 2)) (a : A) :
     (cobarObj G R L n).obj a ⟶ (cobarObj G R L (n + 1)).obj a :=
   if h0 : i.val = 0 then
@@ -301,7 +314,10 @@ noncomputable def cobarCofaceApp (n : ℕ) (i : Fin (n + 2)) (a : A) :
       omega
     R.functor.map (cobarDeltaAtPos G n ⟨i.val - 1, hk⟩ (L.functor.obj a))
 
-/-- Cofaces assemble into natural transformations `C_n ⟶ C_{n+1}`. -/
+/-- The natural coface between two-sided cobar degree functors.
+
+For `i : Fin (n+2)`, the endpoint coactions and interior comultiplication insertions define a
+natural transformation from degree `n` to degree `n+1`. -/
 noncomputable def cobarCoface (n : ℕ) (i : Fin (n + 2)) :
     cobarObj G R L n ⟶ cobarObj G R L (n + 1) where
   app a := cobarCofaceApp n i a
@@ -386,17 +402,23 @@ noncomputable def cobarCoface (n : ℕ) (i : Fin (n + 2)) :
                   R.functor.map (cobarDeltaAtPos G n k (L.functor.obj b)) := by
             rw [R.functor.map_comp]
 
-/-- The zeroth coface is the iterated right coaction. -/
+/-- The right-end component of a cobar coface.
+
+The zeroth coface at `a` is the iterated right coaction on `R(G^n(L(a)))`. -/
 @[simp] lemma cobarCofaceApp_right (n : ℕ) (a : A) :
     cobarCofaceApp n ⟨0, by omega⟩ a =
       rightCoactionPow G R n (L.functor.obj a) := rfl
 
-/-- The zeroth coface is the iterated right coaction. -/
+/-- The zeroth cobar coface as a natural-transformation component.
+
+The component of coface zero is the iterated right-comodule coaction. -/
 @[simp] lemma cobarCoface_right (n : ℕ) (a : A) :
     (cobarCoface n ⟨0, by omega⟩).app a =
       rightCoactionPow G R n (L.functor.obj a) := rfl
 
-/-- The last coface is the left coaction. -/
+/-- The left-end component of a cobar coface.
+
+The final coface at `a` is `R.map(G^n.map(L.coaction.app a))`. -/
 @[simp] lemma cobarCofaceApp_left (n : ℕ) (a : A) :
     cobarCofaceApp n ⟨n + 1, by omega⟩ a =
       R.functor.map ((comonadPow G n).map (L.coaction.app a)) := by
@@ -405,14 +427,19 @@ noncomputable def cobarCoface (n : ℕ) (i : Fin (n + 2)) :
   unfold cobarCofaceApp
   rw [dite_eq_right h0, dite_eq_left hlast]
 
-/-- The last coface is the left coaction. -/
+/-- The final cobar coface as a natural-transformation component.
+
+The component of coface `n+1` is the left-comodule coaction mapped through `G^n` and `R`. -/
 @[simp] lemma cobarCoface_left (n : ℕ) (a : A) :
     (cobarCoface n ⟨n + 1, by omega⟩).app a =
       R.functor.map ((comonadPow G n).map (L.coaction.app a)) := by
   change cobarCofaceApp n ⟨n + 1, by omega⟩ a = _
   rw [cobarCofaceApp_left]
 
-/-- Interior cofaces insert comultiplication at the reversed position. -/
+/-- The interior component of a cobar coface.
+
+For `i : Fin n`, coface `i+1` inserts comultiplication at left-end position `i.rev`, then
+applies `R`. -/
 @[simp] lemma cobarCofaceApp_middle (n : ℕ) (i : Fin n) (a : A) :
     cobarCofaceApp n
         ⟨i.val + 1,
@@ -438,15 +465,20 @@ noncomputable def cobarCoface (n : ℕ) (i : Fin (n + 2)) :
     simp
   simp only [cobarCofaceApp, dite_eq_right h0, dite_eq_right hlast, hk_eq]
 
-/-- Interior cofaces insert comultiplication at the reversed position. -/
+/-- An interior cobar coface as a natural-transformation component.
+
+The component of coface `i+1` is `R` applied to the right-indexed comultiplication insertion
+at `i`. -/
 @[simp] lemma cobarCoface_middle (n : ℕ) (i : Fin n) (a : A) :
     (cobarCoface n ⟨i.val + 1,
         Nat.lt_trans (Nat.succ_lt_succ i.isLt) (Nat.lt_succ_self _)⟩).app a =
       R.functor.map (cobarDeltaAtPos G n i (L.functor.obj a)) := by
   simp only [cobarCoface, cobarCofaceApp_middle]
 
-/-- Codegeneracies assemble into natural transformations `C_{n+1} ⟶ C_n`
-via counit insertion. -/
+/-- The natural codegeneracy of two-sided cobar degree functors.
+
+For `i : Fin (n+1)`, counit insertion at reversed position `i.rev`, followed by `R`, gives a
+natural map from degree `n+1` to degree `n`. -/
 noncomputable def cobarCodegeneracy (n : ℕ) (i : Fin (n + 1)) :
     cobarObj G R L (n + 1) ⟶ cobarObj G R L n where
   app a := R.functor.map (cobarEpsilonAtPos G n i (L.functor.obj a))
@@ -471,7 +503,9 @@ noncomputable def cobarCodegeneracy (n : ℕ) (i : Fin (n + 1)) :
             R.functor.map (cobarEpsilonAtPos G n i (L.functor.obj b)) := by
         rw [R.functor.map_comp]
 
-/-- Components of codegeneracies are counit insertions mapped by `R`. -/
+/-- The component formula for a two-sided cobar codegeneracy.
+
+At `a`, codegeneracy `i` is `R.map(cobarEpsilonAtPos G n i (L(a)))`. -/
 @[simp] lemma cobarCodegeneracy_app (n : ℕ) (i : Fin (n + 1)) (a : A) :
     (cobarCodegeneracy n i).app a =
       R.functor.map (cobarEpsilonAtPos G n i (L.functor.obj a)) := rfl

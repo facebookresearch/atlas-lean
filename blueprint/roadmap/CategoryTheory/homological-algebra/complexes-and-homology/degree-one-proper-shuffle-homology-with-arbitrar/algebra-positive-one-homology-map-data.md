@@ -1,4 +1,7 @@
-# Algebra Positive One Homology Map Data
+# The degree-one proper homology map data of a coefficient arrow
 
-Actual native homology map data from the original coefficient map and its
-proved original Kähler representative square.
+The degree-one proper homology map data of a coefficient arrow.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the
+map on cycles is its proper degree-one coefficient component and the homology-model map is
+algebraKaehlerCoefficientLift(f).

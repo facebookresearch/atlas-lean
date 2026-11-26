@@ -1,4 +1,5 @@
-# Id
+# Identity comparison of a projective horseshoe
 
-The identity horseshoe comparison, over the identity map of short
-complexes and the identity morphisms of the endpoint resolutions.
+For horseshoe data `H` over a short exact sequence `S` in an
+abelian category `C`, the identity of its middle resolution gives
+a strict comparison over `𝟙 S` and the identity endpoint resolution maps.

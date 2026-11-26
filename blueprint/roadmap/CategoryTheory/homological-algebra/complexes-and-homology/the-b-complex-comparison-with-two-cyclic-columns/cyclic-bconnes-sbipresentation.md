@@ -1,3 +1,6 @@
-# Cyclic BConnes SBIPresentation
+# The SBI presentation with the regular Hochschild complex
 
-The raw SBI engine with the b-complex as its ordinary model.
+The SBI presentation with the regular Hochschild complex.
+
+If `A` has a left unit, use the first-column quasi-isomorphism to take `b(A)` as the ordinary
+complex in the two-column Connes SBI presentation.

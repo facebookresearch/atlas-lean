@@ -1,3 +1,6 @@
-# Cyclic BTo First Two f
+# The tensor cell formula for the Hochschild two-column inclusion
 
-The comparison uses exactly the original zero-column tensor cell.
+The tensor cell formula for the Hochschild two-column inclusion.
+
+In degree `n`, the comparison is the bidegree `(0,n)` cell inclusion into the first-two-column
+total.

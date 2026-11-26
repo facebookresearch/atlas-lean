@@ -1,3 +1,6 @@
-# Unitization Relative Normalization
+# Normalization restricted to relative unitization chains
 
-The original normalization projection restricts by the native kernel-map API.
+Normalization restricted to relative unitization chains.
+
+The normalization projection induces a chain map from the relative scalar-projector kernel to
+the reduced normalized scalar-projector kernel.

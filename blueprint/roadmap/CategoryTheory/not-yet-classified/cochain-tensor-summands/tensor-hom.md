@@ -1,5 +1,7 @@
-# Ι tensor Hom
+# Tensor-complex morphism on a homogeneous summand
 
-The tensor product of two morphisms of homological complexes, restricted to a homogeneous
-summand, is the tensor product of their components.  Mathlib states this only for
-`HomologicalComplex.mapBifunctorMap`, by which `⊗ₘ` is defined.
+Let `C` be preadditive and monoidal with biadditive tensor,
+`I` an additive monoid with decidable equality, and `c` a complex
+shape on `I` with compatible tensor signs. For maps `f₁ : K₁ → L₁`, `f₂ : K₂ → L₂` and existing
+source and target tensors, the summand with `i₁+i₂=j` satisfies
+`ι_K ≫ (f₁ ⊗ f₂)_j = (f₁,i₁ ⊗ f₂,i₂) ≫ ι_L`.

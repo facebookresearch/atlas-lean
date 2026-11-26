@@ -1,3 +1,6 @@
-# Positive Augmented Projection
+# The quotient projection of augmented positive chain diagrams
 
-The original natural projection is an morphism of the same original augmented positive diagrams.
+The quotient projection of augmented positive chain diagrams.
+
+The natural positive projection gives a map from the augmented Hochschild diagram to the
+augmented proper-shuffle diagram, preserving their terminal augmentations.

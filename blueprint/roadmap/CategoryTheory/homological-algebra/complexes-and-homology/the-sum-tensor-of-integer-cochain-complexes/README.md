@@ -1,10 +1,10 @@
 # The sum tensor of integer cochain complexes
 
-- [Inst Has Map Bifunctor Module Cat Int Tensor Bifunctor At Up](inst-has-map-bifunctor-module-cat-int-te.md)
-- [Bifunctor At](bifunctor-at.md)
-- [Complex At](complex-at.md)
-- [Mk At](mk-at.md)
-- [Map At](map-at.md)
-- [Map At mk](map-at-mk.md)
-- [Map At precomp postcomp](map-at-precomp-postcomp.md)
-- [D mk At](d-mk-at.md)
+- [Tensor-totalization compatibility for module complexes](inst-has-map-bifunctor-module-cat-int-te.md)
+- [Tensor bifunctor on integer cochain complexes](bifunctor-at.md)
+- [The full sum tensor complex](complex-at.md)
+- [Pure tensor in its total cochain degree](mk-at.md)
+- [Simultaneous tensor map of cochain complexes](map-at.md)
+- [Tensor maps preserve the two pure-tensor values](map-at-mk.md)
+- [Factorwise maps compose to the simultaneous tensor map](map-at-precomp-postcomp.md)
+- [Signed differential of a pure cochain tensor](d-mk-at.md)

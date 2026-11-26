@@ -1,3 +1,6 @@
-# Unitization Original Scalar Complex Inclusion tprod
+# The scalar tensor formula for the lifted unitization inclusion
 
-This inclusion retains the original scalar coefficient and each scalar tensor factor.
+The scalar tensor formula for the lifted unitization inclusion.
+
+The inclusion sends `up(m ⊗ ⊗ᵢ aᵢ)` to `inl(m) ⊗ ⊗ᵢ inl(aᵢ)`, applying the scalar section to
+every entry.

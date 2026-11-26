@@ -1,3 +1,5 @@
-# Regular Head Evaluation
+# Evaluation of a regular coefficient on a chosen module element
 
-The original regular algebra acts on the chosen original coefficient.
+Evaluation of a regular coefficient on a chosen module element.
+
+For `m ∈ M`, this ground-linear map sends `up(a) ∈ ULift.{w} A` to `a • m`.

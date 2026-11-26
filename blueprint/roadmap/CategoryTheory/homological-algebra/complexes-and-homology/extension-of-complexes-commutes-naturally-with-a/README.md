@@ -2,11 +2,11 @@
 
 ## Homological Complex
 
-- [Extend Map Component Iso](extend-map-component-iso.md)
-- [Extend Map Component Iso d](extend-map-component-iso-d.md)
-- [Extend Map Iso](extend-map-iso.md)
-- [Extend Map Iso naturality](extend-map-iso-naturality.md)
+- [Functor comparison on an adjoined zero degree](extend-map-component-iso.md)
+- [Differential compatibility at retained and zero degrees](extend-map-component-iso-d.md)
+- [Extension by zero commutes with a zero-preserving functor](extend-map-iso.md)
+- [Naturality of the extension–functor comparison](extend-map-iso-naturality.md)
 
 ## Embedding
 
-- [Extend Functor Map Iso](extend-functor-map-iso.md)
+- [Natural isomorphism between functorial map and extension](extend-functor-map-iso.md)

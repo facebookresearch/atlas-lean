@@ -1,4 +1,6 @@
-# Associated Graded Module Piece Self Equiv initial Form
+# Initial forms agree for the regular module
 
-The regular-module equivalence sends a module initial form to the ring
-initial form of the same representative.
+Let `R` be a commutative ring, `I : Ideal R`, `n : ℕ`, and `x : (I^n : Ideal R)`. The
+regular-module equivalence satisfies `I.associatedGradedModulePieceSelfEquiv n
+(I.initialFormModule R n x) = I.initialForm n x`, where `x` on the module side is regarded as
+an element of `I^n • R`. Both classes therefore have the same representative.

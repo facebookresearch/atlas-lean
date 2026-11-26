@@ -1,3 +1,4 @@
-# Negate Functor
+# Endofunctor negating all differentials
 
-Same-object differential negation is functorial on every complex shape.
+In a preadditive category `C`, differential negation defines
+an endofunctor on homological complexes of any fixed shape `c`.

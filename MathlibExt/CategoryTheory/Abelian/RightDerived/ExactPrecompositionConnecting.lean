@@ -15,12 +15,15 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.DeltaFunctor
 public import MathlibExt.CategoryTheory.Abelian.DeltaFunctor.Precomposition
 
 /-!
-# Canonical connecting maps under exact source precomposition
+# Right-derived connecting maps under homology-preserving source change
 
-The image of the original injective horseshoe is an exact augmented diagram. It need not be an
-injective horseshoe. The existing strict comparison from an exact augmented diagram into a
-injective horseshoe gives the connecting-map square. Degreewise splittings are mapped by additive
-functors; no exactness of the functor being derived or injectivity of the image terms is used.
+Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+The image by `U` of a short exact sequence is short exact. The directional
+comparisons `R^n(U ⋙ L) → U ⋙ R^nL` commute with the associated
+connecting morphisms and form a morphism of cohomological delta-functors.
+This uses no injective-preservation hypothesis on `U` or exactness
+hypothesis on `L`.
 -/
 
 @[expose] public section
@@ -38,17 +41,21 @@ variable {C : Type uC} [Category.{vC} C] [Abelian C] [HasInjectiveResolutions C]
   (L : D ⥤ A) [L.Additive]
 
 omit [HasInjectiveResolutions C] [HasInjectiveResolutions D] in
-/-- The exact source change preserves the original short exact sequence. -/
+/-- For abelian `C,D` and additive homology-preserving `U : C → D`,
+the image `U(X₁) → U(X₂) → U(X₃)` of a short exact sequence
+`S : X₁ → X₂ → X₃` is short exact. -/
 theorem rightDerivedPrecompShortExact (S : ShortComplex C) (hS : S.ShortExact) :
     (S.map U).ShortExact := by
   let : PreservesFiniteLimits U := preservesFiniteLimits_of_preservesHomology U
   let : PreservesFiniteColimits U := preservesFiniteColimits_of_preservesHomology U
   exact hS.map_of_exact U
 
-/--
-The directional comparison carries the canonical connecting morphism. Neither source-change
-injective preservation nor output-functor exactness is a premise.
--/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+For a short exact `S : X₁ → X₂ → X₃`, the directional comparisons
+satisfy `δ_(U⋙L),n ≫ η_(n+1),X₁ = η_n,X₃ ≫ δ_L,n(U(S))`,
+where the connecting maps run from degree `n` at `X₃` to degree `n+1`
+at `X₁`. -/
 @[reassoc]
 theorem rightDerivedPrecompHomOfPreservesHomology_connecting
     (n : ℕ) (S : ShortComplex C) (hS : S.ShortExact) :
@@ -165,7 +172,11 @@ theorem rightDerivedPrecompHomOfPreservesHomology_connecting
   rw [hγ₁, hγ₃]
   exact (s₁.horiz_comp (s₂.horiz_comp s₃)).w.symm
 
-/-- All degrees and connecting maps assemble as one cohomological δ-morphism. -/
+/-- Let `C,D,A` be abelian, with injective resolutions in `C,D`,
+`U : C → D` additive and preserving homology, and `L : D → A` additive.
+The degree comparisons `R^n(U ⋙ L) → U ⋙ R^nL` and their connecting-map
+squares form a morphism from the delta-functor of `U ⋙ L` to the
+right-derived delta-functor of `L` precomposed with `U`. -/
 def rightDerivedPrecompDeltaHomOfPreservesHomology :
     (U ⋙ L).rightDerivedDeltaFunctor ⟶
       CohomologicalDeltaFunctor.precompose U (rightDerivedPrecompShortExact U)

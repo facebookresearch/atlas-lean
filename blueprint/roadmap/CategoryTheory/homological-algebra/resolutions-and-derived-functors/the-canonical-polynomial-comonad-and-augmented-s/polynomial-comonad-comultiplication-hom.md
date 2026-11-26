@@ -1,3 +1,6 @@
-# Polynomial Comonad comultiplication hom
+# The variable-renaming comultiplication
 
-Comultiplication renames each algebra element as its polynomial variable.
+The variable-renaming comultiplication.
+
+The comultiplication `T(A) → T²(A)` renames the variable indexed by `a ∈ A` to the variable
+indexed by `X_a ∈ T(A)`.

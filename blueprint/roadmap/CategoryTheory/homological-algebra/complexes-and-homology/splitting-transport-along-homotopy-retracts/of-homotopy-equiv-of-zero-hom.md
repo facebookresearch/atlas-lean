@@ -1,3 +1,5 @@
-# Of Homotopy Equiv of Zero hom
+# Splitting correction from a zero-differential source
 
-A zero-differential source leaves precisely the native target homotopy correction.
+Let K,L be c-complexes in a preadditive category C, assume every differential of K is zero,
+and let e:K≃L. Transporting the zero splitting of K gives component −e.homotopyInvHomId.hom i
+j on L, with no additional transported inverse term.

@@ -1,3 +1,4 @@
-# Adjacent Inversion eq none of pairwise le
+# Weakly increasing lists have no adjacent inversion
 
-Weakly increasing words are fixed by the adjacent-inversion search.
+For a pairwise weakly increasing list over a linearly ordered type,
+the adjacent-inversion search returns `none`.

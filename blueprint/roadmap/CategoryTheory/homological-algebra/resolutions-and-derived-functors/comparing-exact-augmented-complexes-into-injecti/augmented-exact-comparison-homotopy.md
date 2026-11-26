@@ -1,3 +1,6 @@
-# Augmented Exact Comparison Homotopy
+# Homotopy uniqueness of injective-target comparisons
 
-Maps agreeing on an exact augmentation are homotopic into injective terms.
+In an abelian category `C`, let `ι : X[0] → P` have exact
+augmentation and positive cochain rows. If all terms of `Q` are
+injective and `a,b : P → Q` agree after `ι`, there is a
+cochain homotopy `a ~ b`.

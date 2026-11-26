@@ -13,13 +13,20 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CyclicBracketUncurr
 public import MathlibExt.LinearAlgebra.Alternating.HeadAntisymmetrization
 
 /-!
-# The first-face formula for the alternating cyclic boundary
+# The first-face formula for a full alternating cyclic tensor
 
-The signed cyclic representation fixes the full alternating tensor. Each
-signed regular face is a conjugate of the first face, and the Connes
-projection removes the target conjugation. Hence the projected full boundary
-is the number of input factors times the alternatized first product,
-over the integral ground ring.
+For a k-algebra ring A over a commutative ring, let Ω_n(a) be the complete alternating tensor
+on n + 1 inputs, written in first-factor coordinates A ⊗[k] TensorPower k n A. Its Connes
+projection is the integral full exterior map, and the signed cyclic operator fixes Ω_n(a).
+
+On n + 2 inputs, applying the first regular Hochschild face multiplies the first two ordered
+factors. Its projected alternating value is the bracket-tail map obtained by double
+uncurrying. Every regular face contributes that same value after its boundary sign (−1)^i and
+Connes projection.
+
+Consequently the Connes differential applied to the projected full exterior word is (n + 2)
+times its projected first-face value. These are integral identities and use no rational
+normalization.
 -/
 
 @[expose] public section
@@ -39,12 +46,18 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
 local notation "Cλ" => ModuleCat.Algebra.Hochschild.NonUnital.connesComplex
 
-/-- The original full alternating tensor in native first-factor coordinates. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ and a : Fin
+(n + 1) → A, Ω_n(a) is (TensorPower.consEquiv k A n).symm applied to the full alternatization
+of tprod a. It lies in A ⊗[k] TensorPower k n A. -/
 def cyclicFullTensor (n : ℕ) (a : Fin (n + 1) → A) : A ⊗[k] TensorPower k n A :=
   (TensorPower.consEquiv k A n).symm
     ((PiTensorProduct.tprod k).alternatization a)
 
-/-- The native alternating tensor retains the complete original permutation representative. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For a : Fin (n + 1) →
+A, Ω_n(a) = ∑ σ : Perm(Fin(n+1)), sign(σ) • (a_(σ 0) ⊗ tprod(j ↦ a_(σ(j.succ)))). The first
+tensor factor is the permuted zero entry and the tail uses the remaining permuted positions. -/
 theorem cyclicFullTensor_eq_sum (n : ℕ) (a : Fin (n + 1) → A) :
     cyclicFullTensor k A n a =
       ∑ σ : Equiv.Perm (Fin (n + 1)), σ.sign •
@@ -57,7 +70,9 @@ theorem cyclicFullTensor_eq_sum (n : ℕ) (a : Fin (n + 1) → A) :
       (congrArg (fun x => σ.sign • x)
         (TensorPower.consEquiv_symm_tprod k A n (a ∘ σ)))
 
-/-- Its native Connes projection is the existing full exterior component. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ and a : Fin
+(n + 1) → A, π_n(Ω_n(a)) = cyclicFullExterior k A n (exteriorPower.ιMulti k (n + 1) a). -/
 theorem cyclicFullTensor_projection (n : ℕ) (a : Fin (n + 1) → A) :
     ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n (cyclicFullTensor k A n a) =
       cyclicFullExterior k A n (exteriorPower.ιMulti k (n + 1) a) := by
@@ -73,7 +88,11 @@ theorem cyclicFullTensor_projection (n : ℕ) (a : Fin (n + 1) → A) :
     ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n x)
       (TensorPower.consEquiv_symm_tprod k A n (a ∘ σ)).symm
 
-/-- The original first product as a multilinear form on the complete input tuple. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ,
+cyclicFirstProductMultilinear on a : Fin (n + 2) → A is the Connes class of (a₀*a₁) ⊗ a₂ ⊗ … ⊗
+a_(n+1). It is obtained from the complete tensor generator, the regular face with index zero,
+and π_n. -/
 def cyclicFirstProductMultilinear (n : ℕ) :
     MultilinearMap (RingHom.id k) (fun _ : Fin (n + 2) => A) ((Cλ k A).X n) :=
   (ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n).compMultilinearMap
@@ -81,8 +100,11 @@ def cyclicFirstProductMultilinear (n : ℕ) :
       ((TensorPower.consEquiv k A (n + 1)).symm.toLinearMap.compMultilinearMap
         (PiTensorProduct.tprod k)))
 
-/-- The full signed first-product sum is native twice uncurrying of the integral alternating
-tail. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ, the full
+alternatization of cyclicFirstProductMultilinear k A n equals cyclicTailProductUncurry k A n
+as alternating maps on Fin (n + 2). The opposite ordered products pair into associative Lie
+brackets. -/
 theorem cyclicFirstProduct_alternatization (n : ℕ) :
     (cyclicFirstProductMultilinear k A n).alternatization = cyclicTailProductUncurry k A n := by
   let f : A →ₗ[k] A →ₗ[k]
@@ -120,7 +142,10 @@ theorem cyclicFirstProduct_alternatization (n : ℕ) :
   rw [← hf, MultilinearMap.alternatization_uncurryLeft_twice]
   congr 2
 
-/-- Projecting the first face of the full alternating tensor gives the native product sum. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For a : Fin (n + 2) →
+A, π_n(regularFace_0(Ω_(n+1)(a))) = cyclicTailProductUncurry k A n a. The face multiplies the
+first two tensor factors in their displayed order. -/
 theorem cyclicFullTensor_firstFace (n : ℕ) (a : Fin (n + 2) → A) :
     ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n
       ((ModuleCat.Algebra.Hochschild.NonUnital.regularFace k A n 0).hom
@@ -144,7 +169,10 @@ theorem cyclicFullTensor_firstFace (n : ℕ) (a : Fin (n + 2) → A) :
   simp_rw [hproduct] at h
   exact h
 
-/-- The signed cyclic tensor automorphism fixes the integral full alternating tensor. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ and a : Fin
+(n + 1) → A, TensorPower.consCyclicOperator k A n (Ω_n(a)) = Ω_n(a). The cyclic operator
+includes its degree sign. -/
 theorem cyclicFullTensor_cyclic (n : ℕ) (a : Fin (n + 1) → A) :
     TensorPower.consCyclicOperator k A n (cyclicFullTensor k A n a) = cyclicFullTensor k A n a := by
   apply (TensorPower.consEquiv k A n).injective
@@ -168,7 +196,9 @@ theorem cyclicFullTensor_cyclic (n : ℕ) (a : Fin (n + 1) → A) :
   rw [hsign, mul_smul, hs]
   rfl
 
-/-- Every native integer cyclic action fixes the same original full alternating tensor. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ, j : ℤ and a
+: Fin (n + 1) → A, cyclicPowerMap k A n j sends Ω_n(a) to itself. -/
 theorem cyclicFullTensor_cyclicPower (n : ℕ) (j : ℤ) (a : Fin (n + 1) → A) :
     (ModuleCat.Algebra.Hochschild.NonUnital.cyclicPowerMap k A n j).hom
       (cyclicFullTensor k A n a) = cyclicFullTensor k A n a := by
@@ -183,7 +213,9 @@ theorem cyclicFullTensor_cyclicPower (n : ℕ) (j : ℤ) (a : Fin (n + 1) → A)
       rw [pow_succ', Module.End.mul_eq_comp, LinearMap.comp_apply,
         ih, cyclicFullTensor_cyclic]
 
-/-- The target Connes projection removes every signed cyclic action. -/
+/-- Let k be a commutative ring and A a k-algebra ring, and let π_n be its Connes projection from
+A ⊗[k] TensorPower k n A. For n : ℕ and j : ℤ, cyclicPowerMap k A n j ≫ π_n = π_n. Thus the
+quotient map identifies each signed cyclic rotation with the unrotated tensor class. -/
 theorem connesProjection_cyclicPower (n : ℕ) (j : ℤ) :
     ModuleCat.Algebra.Hochschild.NonUnital.cyclicPowerMap k A n j ≫
       ModuleCat.Algebra.Hochschild.Matrix.connesProjection k A n =
@@ -199,7 +231,10 @@ theorem connesProjection_cyclicPower (n : ℕ) (j : ℤ) :
   rw [← ht, TensorPower.consCyclicRepresentation_natCast]
   exact ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative_cyclic_pow k A n t x
 
-/-- Each signed face has the same full alternating projected first-product value. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ, i : Fin (n
++ 2) and a : Fin (n + 2) → A, (−1 : ℤ)^i.val • π_n(regularFace_i(Ω_(n+1)(a))) =
+π_n(regularFace_0(Ω_(n+1)(a))). -/
 theorem cyclicFullTensor_face (n : ℕ) (i : Fin (n + 2)) (a : Fin (n + 2) → A) :
     (-1 : ℤ) ^ i.val • ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n
       ((ModuleCat.Algebra.Hochschild.NonUnital.regularFace k A n i).hom
@@ -225,8 +260,11 @@ theorem cyclicFullTensor_face (n : ℕ) (i : Fin (n + 2)) (a : Fin (n + 2) → A
     _ = _ := (congrArg
       (ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n) h).trans hp
 
-/-- The full projected signed Hochschild boundary is the input cardinality times its first
-product. -/
+/-- Let k be a commutative ring and A a k-algebra ring. Write π_n : A ⊗[k] TensorPower k n A →
+Cλ_n for the Connes projection and Ω_n(a) for cyclicFullTensor k A n a. For n : ℕ and a : Fin
+(n + 2) → A, d_Cλ(n+1,n)(cyclicFullExterior k A (n + 1)(ιMulti a)) = (n + 2) •
+π_n(regularFace_0(Ω_(n+1)(a))). The factor n + 2 is natural-number repeated addition, coming
+from all signed regular faces. -/
 theorem cyclicFullTensor_boundary_first (n : ℕ) (a : Fin (n + 2) → A) :
     ((Cλ k A).d (n + 1) n).hom
         (cyclicFullExterior k A (n + 1) (exteriorPower.ιMulti k (n + 2) a)) =

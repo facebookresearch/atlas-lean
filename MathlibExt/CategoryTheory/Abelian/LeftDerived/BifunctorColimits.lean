@@ -13,13 +13,23 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerivedBifunctor
 public import MathlibExt.Algebra.Homology.ExactColimits
 public import Mathlib.CategoryTheory.Limits.Preserves.Limits
 
-/-!
+/- Proof implementation note.
 # Exact coefficient colimits for a left-derived bifunctor
 
 One projective resolution of the first variable computes the existing left-derived bifunctor
 naturally in its second variable. Colimit preservation of the original degreewise functors,
 followed by exact homology colimits, gives the canonical all-degree comparison. Only the first
 category needs projective resolutions.
+-/
+
+/-!
+# Colimits in coefficients of a left-derived bifunctor
+
+Let `C₁`, `D` be abelian, `C₂` a category, and the partial functors
+`F(-,B)` additive. A fixed projective resolution in `C₁` computes
+all coefficients at once. If the coefficient functors on projective
+terms preserve `J`-colimits and those colimits in `D` preserve
+homology, every left-derived degree preserves the same coefficient colimits.
 -/
 
 @[expose] public section
@@ -37,10 +47,15 @@ variable {C₁ : Type u₁} [Category.{v₁} C₁] [Abelian C₁]
   {D : Type u₃} [Category.{v₃} D] [Abelian D]
   (F : C₁ ⥤ C₂ ⥤ D) [∀ B : C₂, (F.flip.obj B).Additive]
 
-/--
+/- Proof implementation note.
 The original bifunctor applied to a fixed complex in its first variable. Coefficient maps are the
 maps of homological complexes.
 -/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, the coefficient
+complex functor sends `B` to the mapped chain complex `F(P,B)`
+and sends each coefficient map to its degreewise natural map. -/
 def coefficientComplexFunctor (P : ChainComplex C₁ ℕ) : C₂ ⥤ ChainComplex D ℕ where
   obj B := ((F.flip.obj B).mapHomologicalComplex (ComplexShape.down ℕ)).obj P
   map b := (NatTrans.mapHomologicalComplex (F.flip.map b) (ComplexShape.down ℕ)).app P
@@ -49,19 +64,39 @@ def coefficientComplexFunctor (P : ChainComplex C₁ ℕ) : C₂ ⥤ ChainComple
   map_comp {B B' B''} b b' := by
     rw [F.flip.map_comp, NatTrans.mapHomologicalComplex_comp, NatTrans.comp_app]
 
-/-- Each component is the coefficient map at the original stage. -/
+/- Proof implementation note.
+Each component is the coefficient map at the original stage.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, a map `b : B → B′`
+has degree-`i` component `F(P^i,b)` between its coefficient complexes. -/
 theorem coefficientComplexFunctor_map_f (P : ChainComplex C₁ ℕ)
     {B B' : C₂} (b : B ⟶ B') (i : ℕ) :
     ((F.coefficientComplexFunctor P).map b).f i =
       ((F.obj (P.X i)).map b) := rfl
 
-/-- Its differential is the original first-variable map of the differential. -/
+/- Proof implementation note.
+Its differential is the original first-variable map of the differential.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, the differential
+of the coefficient complex at `B` is `F(d_P,B)` in each
+index pair, retaining the natural-index chain shape. -/
 theorem coefficientComplexFunctor_obj_d (P : ChainComplex C₁ ℕ)
     (B : C₂) (i j : ℕ) :
     ((F.coefficientComplexFunctor P).obj B).d i j =
       (F.map (P.d i j)).app B := rfl
 
-/-- Evaluation exposes the original stage functor, including its maps. -/
+/- Proof implementation note.
+Evaluation exposes the original stage functor, including its maps.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, evaluation at
+degree `i` of the coefficient complex functor is naturally
+isomorphic to `F(P^i,-)`. -/
 def coefficientComplexFunctorEvalIso (P : ChainComplex C₁ ℕ) (i : ℕ) :
     F.coefficientComplexFunctor P ⋙
         HomologicalComplex.eval D (ComplexShape.down ℕ) i ≅
@@ -71,10 +106,10 @@ def coefficientComplexFunctorEvalIso (P : ChainComplex C₁ ℕ) (i : ℕ) :
     change (F.obj (P.X i)).map b ≫ 𝟙 _ = 𝟙 _ ≫ (F.obj (P.X i)).map b
     rw [Category.comp_id, Category.id_comp])
 
-/--
-Degreewise colimit preservation gives the fixed-complex colimit. No exactness of the coefficient
-or projectivity of its objects is needed.
--/
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, if each
+`F(P^i,-)` preserves colimits of shape `J`, the entire
+coefficient complex functor preserves those colimits. -/
 theorem coefficientComplexFunctor_preservesColimitsOfShape
     (J : Type w) [Category.{w'} J] (P : ChainComplex C₁ ℕ)
     [∀ i : ℕ, PreservesColimitsOfShape J (F.obj (P.X i))] :
@@ -84,10 +119,10 @@ theorem coefficientComplexFunctor_preservesColimitsOfShape
   exact preservesColimitsOfShape_of_natIso
     (F.coefficientComplexFunctorEvalIso P i).symm
 
-/--
-The chain-colimit comparison is induced by the stagewise coefficient maps, before applying
-homology.
--/
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, if `C₂` and `D`
+have `J`-colimits and each `F(P^i,-)` preserves them, then
+`F(P,colim K) ≅ colim_j F(P,K_j)` canonically for every `K : J → C₂`. -/
 def coefficientComplexColimitIso
     (J : Type w) [Category.{w'} J] [HasColimitsOfShape J C₂]
     [HasColimitsOfShape J D] (P : ChainComplex C₁ ℕ)
@@ -98,7 +133,15 @@ def coefficientComplexColimitIso
   letI := F.coefficientComplexFunctor_preservesColimitsOfShape J P
   exact preservesColimitIso (F.coefficientComplexFunctor P) K
 
-/-- Each original coefficient leg followed by the chain comparison is the chain-colimit injection. -/
+/- Proof implementation note.
+Each original coefficient leg followed by the chain comparison is the chain-colimit injection.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. For a chain complex `P` in `C₁`, under degreewise
+preservation of `J`-colimits in `C₂,D`, the map of an
+original coefficient injection `K_j → colim K` followed
+by the complex comparison is its chain-colimit injection. -/
 theorem map_ι_coefficientComplexColimitIso_hom
     (J : Type w) [Category.{w'} J] [HasColimitsOfShape J C₂]
     [HasColimitsOfShape J D] (P : ChainComplex C₁ ℕ)
@@ -112,10 +155,15 @@ theorem map_ι_coefficientComplexColimitIso_hom
 
 variable [HasProjectiveResolutions C₁]
 
-/--
+/- Proof implementation note.
 The fixed-resolution computation of the existing derived bifunctor is natural in its coefficient,
 with the original homology objects.
 -/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. A projective
+resolution `P` of `A` gives a natural coefficient comparison
+`L_nF(A,-) ≅ H_n(F(P,-))`. -/
 def leftDerivedBifunctorResolutionIso {A : C₁} (P : ProjectiveResolution A) (n : ℕ) :
     (F.leftDerivedBifunctor n).obj A ≅
       F.coefficientComplexFunctor P.complex ⋙
@@ -136,14 +184,24 @@ def leftDerivedBifunctorResolutionIso {A : C₁} (P : ProjectiveResolution A) (n
         congrArg (fun q => q ≫ e'.hom) h
       _ = _ := by rw [Category.assoc, Category.assoc, e'.inv_hom_id, Category.comp_id])
 
-/-- Components are the existing projective-resolution comparison, with no
-separate choice of an objectwise isomorphism. -/
+/- Proof implementation note.
+Components are the existing projective-resolution comparison, with no
+separate choice of an objectwise isomorphism.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. At a coefficient
+object `B`, the forward resolution comparison is the
+canonical map `L_n(F(-,B))(A) → H_n(F(P,B))`. -/
 theorem leftDerivedBifunctorResolutionIso_hom_app
     {A : C₁} (P : ProjectiveResolution A) (n : ℕ) (B : C₂) :
     (F.leftDerivedBifunctorResolutionIso P n).hom.app B =
       (P.isoLeftDerivedObj (F.flip.obj B) n).hom := rfl
 
-/-- The inverse components are the same resolution inverse. -/
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. At a coefficient
+object `B`, the inverse resolution comparison is the
+canonical map `H_n(F(P,B)) → L_n(F(-,B))(A)`. -/
 theorem leftDerivedBifunctorResolutionIso_inv_app
     {A : C₁} (P : ProjectiveResolution A) (n : ℕ) (B : C₂) :
     (F.leftDerivedBifunctorResolutionIso P n).inv.app B =
@@ -152,10 +210,16 @@ theorem leftDerivedBifunctorResolutionIso_inv_app
 variable (J : Type w) [Category.{w'} J] [HasColimitsOfShape J D]
   [(colim (J := J) (C := D)).PreservesHomology]
 
-/--
+/- Proof implementation note.
 Exact target colimits commute with every degree when the original stage functors preserve those
 colimits on projective first objects. Only the terms of a first-variable resolution are used.
 -/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. If `D` has
+homology-preserving `J`-colimits and each `F(X,-)` for
+projective `X` preserves them, then `L_nF(A,-)` preserves
+`J`-colimits for every `A,n`. -/
 theorem leftDerivedBifunctor_obj_preservesColimitsOfShape_of_projective
     (A : C₁) (n : ℕ)
     (hF : ∀ X : C₁, Projective X → PreservesColimitsOfShape J (F.obj X)) :
@@ -171,8 +235,15 @@ theorem leftDerivedBifunctor_obj_preservesColimitsOfShape_of_projective
   exact preservesColimitsOfShape_of_natIso
     (F.leftDerivedBifunctorResolutionIso P n).symm
 
-/-- Exact target colimits commute with every degree of the existing
-left-derived bifunctor in its coefficient variable. -/
+/- Proof implementation note.
+Exact target colimits commute with every degree of the existing
+left-derived bifunctor in its coefficient variable.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. If `D` has
+homology-preserving `J`-colimits and each `F(X,-)` preserves
+them, then `L_nF(A,-)` preserves `J`-colimits for every `A,n`. -/
 theorem leftDerivedBifunctor_obj_preservesColimitsOfShape
     (A : C₁) (n : ℕ) [∀ X : C₁, PreservesColimitsOfShape J (F.obj X)] :
     PreservesColimitsOfShape J ((F.leftDerivedBifunctor n).obj A) := by
@@ -181,14 +252,27 @@ theorem leftDerivedBifunctor_obj_preservesColimitsOfShape
 
 variable [HasColimitsOfShape J C₂] [∀ X : C₁, PreservesColimitsOfShape J (F.obj X)]
 
-/-- Canonical coefficient-colimit comparison on the derived objects. -/
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. Let `J` be a diagram category with colimits in `C₂` and `D`,
+and suppose the colimit functor on `J → D` preserves homology.
+Assume each coefficient functor `F(X,-)` preserves these colimits. There is a canonical
+isomorphism `L_nF(A,colim K) ≅ colim_j L_nF(A,K_j)`. -/
 def leftDerivedBifunctorCoefficientColimitIso (A : C₁) (n : ℕ) (K : J ⥤ C₂) :
     ((F.leftDerivedBifunctor n).obj A).obj (colimit K) ≅
       colimit (K ⋙ (F.leftDerivedBifunctor n).obj A) := by
   letI := F.leftDerivedBifunctor_obj_preservesColimitsOfShape J A n
   exact preservesColimitIso ((F.leftDerivedBifunctor n).obj A) K
 
-/-- Original coefficient injections are the forward comparison's injections. -/
+/- Proof implementation note.
+Original coefficient injections are the forward comparison's injections.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. Let `J` be a diagram category with colimits in `C₂` and `D`,
+and suppose the colimit functor on `J → D` preserves homology.
+Assume each coefficient functor `F(X,-)` preserves these colimits. The coefficient
+map `L_nF(A,K_j) → L_nF(A,colim K)` followed by the
+forward comparison is the corresponding colimit injection. -/
 theorem map_ι_leftDerivedBifunctorCoefficientColimitIso_hom
     (A : C₁) (n : ℕ) (K : J ⥤ C₂) (j : J) :
     ((F.leftDerivedBifunctor n).obj A).map (colimit.ι K j) ≫
@@ -197,7 +281,16 @@ theorem map_ι_leftDerivedBifunctorCoefficientColimitIso_hom
   let := F.leftDerivedBifunctor_obj_preservesColimitsOfShape J A n
   exact ι_preservesColimitIso_hom ((F.leftDerivedBifunctor n).obj A) K j
 
-/-- The inverse retains the original coefficient injection maps. -/
+/- Proof implementation note.
+The inverse retains the original coefficient injection maps.
+-/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. Let `J` be a diagram category with colimits in `C₂` and `D`,
+and suppose the colimit functor on `J → D` preserves homology.
+Assume each coefficient functor `F(X,-)` preserves these colimits. The colimit
+injection followed by the inverse comparison is precisely
+the original map induced by `K_j → colim K`. -/
 theorem ι_leftDerivedBifunctorCoefficientColimitIso_inv
     (A : C₁) (n : ℕ) (K : J ⥤ C₂) (j : J) :
     colimit.ι (K ⋙ (F.leftDerivedBifunctor n).obj A) j ≫
@@ -206,7 +299,12 @@ theorem ι_leftDerivedBifunctorCoefficientColimitIso_inv
   let := F.leftDerivedBifunctor_obj_preservesColimitsOfShape J A n
   exact ι_preservesColimitIso_inv ((F.leftDerivedBifunctor n).obj A) K j
 
-/-- The inverse is precisely the colimit map induced by those legs. -/
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. Let `J` be a diagram category with colimits in `C₂` and `D`,
+and suppose the colimit functor on `J → D` preserves homology.
+Assume each coefficient functor `F(X,-)` preserves these colimits. The inverse
+comparison is the colimit morphism induced by these original
+coefficient injection maps. -/
 theorem leftDerivedBifunctorCoefficientColimitIso_inv_eq_post
     (A : C₁) (n : ℕ) (K : J ⥤ C₂) :
     (F.leftDerivedBifunctorCoefficientColimitIso J A n K).inv =
@@ -216,7 +314,12 @@ theorem leftDerivedBifunctorCoefficientColimitIso_inv_eq_post
   exact (F.ι_leftDerivedBifunctorCoefficientColimitIso_inv J A n K j).trans
     (colimit.ι_post (F := K) (G := (F.leftDerivedBifunctor n).obj A) j).symm
 
-/-- Naturality in the entire coefficient diagram uses colimit maps. -/
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. Let `J` be a diagram category with colimits in `C₂` and `D`,
+and suppose the colimit functor on `J → D` preserves homology.
+Assume each coefficient functor `F(X,-)` preserves these colimits. A natural
+transformation `K → K′` of coefficient diagrams commutes
+with the forward derived coefficient-colimit comparisons. -/
 theorem leftDerivedBifunctorCoefficientColimitIso_hom_naturality
     (A : C₁) (n : ℕ) {K K' : J ⥤ C₂} (t : K ⟶ K') :
     ((F.leftDerivedBifunctor n).obj A).map (colimMap t) ≫
@@ -226,10 +329,18 @@ theorem leftDerivedBifunctorCoefficientColimitIso_hom_naturality
   let := F.leftDerivedBifunctor_obj_preservesColimitsOfShape J A n
   exact (preservesColimitNatIso ((F.leftDerivedBifunctor n).obj A)).hom.naturality t
 
-/--
+/- Proof implementation note.
 Naturality in the original resolved variable follows from the derived transformation and the two
 canonical colimit leg equations.
 -/
+
+/-- Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. Let `J` be a diagram category with colimits in `C₂` and `D`,
+and suppose the colimit functor on `J → D` preserves homology.
+Assume each coefficient functor `F(X,-)` preserves these colimits. An original
+map `a : A → A′` in the resolved variable commutes with
+the derived coefficient-colimit comparison, using the
+induced natural transformation on all coefficients. -/
 theorem leftDerivedBifunctorCoefficientColimitIso_hom_naturality_left
     {A A' : C₁} (a : A ⟶ A') (n : ℕ) (K : J ⥤ C₂) :
     ((F.leftDerivedBifunctor n).map a).app (colimit K) ≫

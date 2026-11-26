@@ -1,3 +1,5 @@
-# Cochain Flip π₁
+# First projection of the transposed complex
 
-The first projection of the flipped complex is literally its original first cochain complex.
+In an abelian category `C`, let `S` be a short complex of
+nonnegative cochain complexes. Projection to the first object of each transposed row
+recovers the first cochain complex `S₁`.

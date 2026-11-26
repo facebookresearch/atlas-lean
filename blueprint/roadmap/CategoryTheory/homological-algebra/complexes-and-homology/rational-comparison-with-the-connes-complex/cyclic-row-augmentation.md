@@ -1,4 +1,7 @@
-# Cyclic Row Augmentation
+# The augmentation of a horizontal cyclic row
 
-Each horizontal row augments to its evaluated first-column
-cokernel. The degree-zero map is the original cokernel projection.
+For a nonunital k-algebra A with k-bilinear multiplication
+and q ≥ 0, the qth horizontal cyclic row augments to the chain
+complex concentrated in position zero at Cλ_q(A) = coker(1−t_q).
+Its position-zero component is the quotient projection, and its
+positive-position components are zero.

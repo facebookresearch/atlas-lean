@@ -1,4 +1,5 @@
-# Map Semilinear
+# The exterior-power semilinear map
 
-The exterior-power map of an actual semilinear map, obtained from the
-universal alternating map after restriction along its scalar homomorphism.
+Let `R,S` be commutative rings, `M` an `R`-module, `N` an `S`-module, `φ : R →+* S`, and `f :
+M →ₛₗ[φ] N`. For every `n : ℕ`, `mapSemilinear φ f n : Λ^n_R M →ₛₗ[φ] Λ^n_S N` sends
+`ιMulti_R(v)` to `ιMulti_S(f ∘ v)`.

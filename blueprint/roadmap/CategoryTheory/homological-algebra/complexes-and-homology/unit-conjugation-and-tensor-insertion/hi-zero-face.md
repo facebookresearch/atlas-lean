@@ -1,3 +1,6 @@
-# Hi zero face
+# The identity endpoint of conjugation insertion
 
-The first insertion endpoint is exactly the original identity map.
+The identity endpoint of conjugation insertion.
+
+In degree `n`, the first face after the first insertion satisfies `d₀ h₀ = id` on coefficient-
+first Hochschild tensors.

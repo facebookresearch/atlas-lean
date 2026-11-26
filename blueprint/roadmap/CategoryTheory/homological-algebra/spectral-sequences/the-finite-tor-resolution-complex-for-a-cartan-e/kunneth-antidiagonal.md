@@ -1,3 +1,4 @@
-# Kunneth Antidiagonal
+# The finite nonnegative Künneth antidiagonal
 
-Pairs of nonnegative degrees on a fixed Künneth antidiagonal.
+For q ∈ ℕ, the Künneth antidiagonal is the finite set of pairs (i,j) of natural numbers with
+i+j=q.

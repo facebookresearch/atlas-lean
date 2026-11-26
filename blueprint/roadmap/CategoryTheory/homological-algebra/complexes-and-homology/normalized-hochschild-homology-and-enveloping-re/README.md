@@ -1,9 +1,9 @@
 # Normalized Hochschild homology and enveloping resolutions
 
-- [Coefficient Tensor Normalized Projection](coefficient-tensor-normalized-projection.md)
-- [Coefficient Tensor Normalized Projection mk tprod](coefficient-tensor-normalized-projection-2.md)
-- [Coefficient Tensor Normalized Homology Iso](coefficient-tensor-normalized-homology-i.md)
-- [Coefficient Tensor Normalized Homology Iso hom](coefficient-tensor-normalized-homology-i-2.md)
-- [Normalized Hochschild Homology Iso For Resolution](normalized-hochschild-homology-iso-for-r.md)
-- [Normalized Hochschild Homology Iso Derived](normalized-hochschild-homology-iso-deriv.md)
-- [Normalized Hochschild Homology Iso For Resolution derived](normalized-hochschild-homology-iso-for-r-2.md)
+- [The bar tensor projection to normalized Hochschild chains](coefficient-tensor-normalized-projection.md)
+- [The endpoint formula for the normalized bar projection](coefficient-tensor-normalized-projection-2.md)
+- [Normalized Hochschild homology from the bar tensor](coefficient-tensor-normalized-homology-i.md)
+- [The homology map of the normalized bar projection](coefficient-tensor-normalized-homology-i-2.md)
+- [Computing normalized Hochschild homology with a resolution](normalized-hochschild-homology-iso-for-r.md)
+- [The derived balanced tensor description of normalized homology](normalized-hochschild-homology-iso-deriv.md)
+- [Agreement of normalized resolution and derived computations](normalized-hochschild-homology-iso-for-r-2.md)

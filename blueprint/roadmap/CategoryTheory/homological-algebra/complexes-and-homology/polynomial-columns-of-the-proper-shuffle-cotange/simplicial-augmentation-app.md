@@ -1,3 +1,7 @@
-# Simplicial Augmentation app
+# The component of the simplicial cotangent augmentation
 
-The simplicial comparison uses the original cotangent augmentation of the level.
+The component of the simplicial cotangent augmentation.
+
+For a commutative ℚ-algebra k, P → B and a compatible B-module M, the component at i ∈ Δᵒᵖ is
+augmentationNat on the augmented algebra Pᵢ → B. The source remains its proper-shuffle
+cotangent complex.

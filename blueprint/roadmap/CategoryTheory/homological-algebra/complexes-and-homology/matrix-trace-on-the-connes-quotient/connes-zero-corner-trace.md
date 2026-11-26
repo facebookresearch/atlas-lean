@@ -1,3 +1,6 @@
-# Connes Zero Corner trace
+# The Connes quotient trace is stable under zero extension
 
-The full Connes trace is stable under every original finite zero corner.
+For a k-algebra A and r ≤ s, the zero-extension chain map
+Cλ(Mat_r(A)) → Cλ(Mat_s(A)) followed by the size-s trace equals
+the size-r trace. Thus Tλ^s ∘ Cλ(Z) = Tλ^r as chain maps, including
+the empty stage r = 0.

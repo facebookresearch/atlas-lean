@@ -1,3 +1,6 @@
-# Descending comonoid laws along epimorphisms
+# The comonoid structure descended along an epimorphism
 
-An actual descended comultiplication and counit inherit all comonoid laws from an epic source.
+The comonoid structure descended along an epimorphism.
+
+For an epic `q : X → Y` from a comonoid, target comultiplication and counit maps commuting
+with `q` inherit both counit laws and coassociativity.

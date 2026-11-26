@@ -1,3 +1,5 @@
-# Free Bar Resolution Split
+# Contracting augmentation splitting of the restricted adjunction bar
 
-The restricted Bar contraction gives original-chain augmentation split data.
+Let `C,D` be preadditive with zero objects, let `D` have kernels,
+and let `F : C → D` be left adjoint to additive `U : D → C`. The adjunction unit and restricted extra-degeneracy operators
+give a contracting splitting of the augmentation `U(Bar(M)) → U(M)[0]`.

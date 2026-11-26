@@ -1,5 +1,5 @@
 # Locally finite split-complex homology coproducts
 
-- [Finite Split Homology projector sum](finite-split-homology-projector-sum.md)
-- [Finite Split Homology Coproduct Iso](finite-split-homology-coproduct-iso.md)
-- [Finite Split Homology Coproduct Iso hom](finite-split-homology-coproduct-iso-hom.md)
+- [Finite degreewise completeness gives the homology projector identity](finite-split-homology-projector-sum.md)
+- [Split homology inclusions have a finite coproduct inverse](finite-split-homology-coproduct-iso.md)
+- [The homology coproduct isomorphism is induced by the inclusions](finite-split-homology-coproduct-iso-hom.md)

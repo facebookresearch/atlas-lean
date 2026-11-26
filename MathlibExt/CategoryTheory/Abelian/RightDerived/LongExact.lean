@@ -30,13 +30,15 @@ public import Mathlib.Algebra.Homology.ExactSequence
 public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 
 /-!
-# Long exact sequences for right-derived functors
+# Right-derived long exact sequences from endpoint resolutions
 
-An additive functor between abelian categories sends a degreewise-split injective horseshoe
-to a short exact sequence of cochain complexes. Its homology connecting morphism, transported
-through injective-resolution comparisons, gives the right-derived long exact sequence.
-Functor-parameter naturality also compares the connecting maps obtained by applying a short
-complex of additive functors to a fixed injective resolution.
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For short exact `X₁ → X₂ → X₃`, prescribed
+injective resolutions of `X₁,X₃` give a degreewise split horseshoe.
+Its mapped cohomology boundary, transported through the resolution
+comparisons, is `R^nF(X₃) → R^(n+1)F(X₁)`. The resulting five-arrow
+window is exact at each interior term. Coefficient transformation
+squares transport from mapped resolution cohomology to derived objects.
 -/
 
 @[expose] public section
@@ -51,7 +53,10 @@ variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
 namespace NatTrans
 
-/-- A commuting square of natural transformations remains commuting on every complex. -/
+/-- Let `A,B` be categories with zero morphisms, `c` any complex
+shape, and `F,G,H,L : A → B` preserve zero morphisms. If natural
+transformations satisfy `α ≫ β = γ ≫ δ`, their induced maps on
+any `c`-shaped complex `K` satisfy the same commuting square. -/
 lemma mapHomologicalComplex_app_comp_eq
     {A B : Type*} [Category A] [Category B] [HasZeroMorphisms A] [HasZeroMorphisms B]
     {ι : Type*} (c : ComplexShape ι) {F G H L : A ⥤ B}
@@ -66,7 +71,10 @@ lemma mapHomologicalComplex_app_comp_eq
   rw [← NatTrans.comp_app, ← NatTrans.mapHomologicalComplex_comp,
     ← NatTrans.comp_app, ← NatTrans.mapHomologicalComplex_comp, h]
 
-/-- A zero composite of natural transformations remains zero on every complex. -/
+/-- Let `A,B` be categories with zero morphisms, `c` any complex
+shape, and `F,G,H : A → B` preserve zero morphisms. If natural
+transformations `α : F → G`, `β : G → H` have zero composite,
+their induced maps on any `c`-shaped complex have zero composite. -/
 lemma mapHomologicalComplex_app_comp_eq_zero
     {A B : Type*} [Category A] [Category B] [HasZeroMorphisms A] [HasZeroMorphisms B]
     {ι : Type*} (c : ComplexShape ι) {F G H : A ⥤ B}
@@ -84,7 +92,12 @@ end NatTrans
 namespace InjectiveResolution
 
 set_option backward.isDefEq.respectTransparency false in
-/-- A naturality square between mapped homology objects transports to right-derived objects. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`R` an injective resolution of `X`. For additive `F₁,F₂,G₁,G₂ : C → D`,
+transformations `α : F₂ → F₁`, `β : G₂ → G₁`, and maps
+`d_k : Hⁿ(F_k(R)) → Hᵐ(G_k(R))`, suppose
+`d₂ ≫ Hᵐ(β_R) = Hⁿ(α_R) ≫ d₁`. Transporting by the resolution
+comparisons gives the corresponding square with `R^nα_X` and `R^mβ_X`. -/
 lemma conjugateHomology_naturality
     {F₁ F₂ G₁ G₂ : C ⥤ D} [F₁.Additive] [F₂.Additive] [G₁.Additive] [G₂.Additive]
     {X : C} (R : InjectiveResolution X) (α : F₂ ⟶ F₁) (β : G₂ ⟶ G₁) (n m : ℕ)
@@ -115,30 +128,41 @@ end InjectiveResolution
 
 namespace RightDerivedDelta
 
-/-- The injective-horseshoe SES of cocomplexes after applying `F`, using
-the shared arbitrary-resolution diagram. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, `S : X₁ → X₂ → X₃`
+short exact, and `I₁,I₃` injective resolutions of its endpoints. The endpoint injective horseshoe mapped by `F` is the short
+complex of nonnegative cochain complexes
+`F(I₁) → F(I₂) → F(I₃)`, with `I₂` the horseshoe middle resolution. -/
 noncomputable def RDhorseshoeF (F : C ⥤ D) [F.Additive] (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) : ShortComplex (CochainComplex D ℕ)  :=
   (Functor.RightDerived.HorseshoeData.ofEndpoints S hS I₁ I₃).mapped F
 
 omit [HasInjectiveResolutions C] in
-/-- Short exactness of the mapped endpoint horseshoe follows from the shared
-degreewise splitting, transported from the standard biproduct splitting. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, `S : X₁ → X₂ → X₃`
+short exact, and `I₁,I₃` injective resolutions of its endpoints. The mapped endpoint horseshoe is a short exact sequence of
+cochain complexes, since its degreewise biproduct splittings remain
+splittings under `F`. -/
 theorem RDhorseshoeF_shortExact (F : C ⥤ D) [F.Additive] (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
     (RDhorseshoeF F S hS I₁ I₃).ShortExact  :=
   (Functor.RightDerived.HorseshoeData.ofEndpoints S hS I₁ I₃).mapped_shortExact F
 
-/-- The shared connecting morphism for the prescribed endpoint resolutions. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The transported cohomology boundary of the endpoint horseshoe
+defines `δ_n : R^nF(X₃) → R^(n+1)F(X₁)`. -/
 noncomputable def RDdelta (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
     (F.rightDerived n).obj S.X₃ ⟶ (F.rightDerived (n + 1)).obj S.X₁  :=
   (Functor.RightDerived.HorseshoeData.ofEndpoints S hS I₁ I₃).delta F n (n + 1) rfl
 
-/-- Unfolded form of `RDdelta` (proof irrelevance for the SES proof). -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. For any short-exactness witness on the mapped horseshoe,
+`δ_n` is the comparison to `Hⁿ(F(I₃))`, followed by its cohomology
+boundary and the inverse comparison from `H^(n+1)(F(I₁))`. -/
 theorem RDdelta_eq (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃)
@@ -149,15 +173,20 @@ theorem RDdelta_eq (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
         (I₁.isoRightDerivedObj F (n + 1)).inv := rfl
 
 omit [HasInjectiveResolutions C] in
-/-- The endpoint interface uses the same mapped diagram as the shared core. -/
+/-- Let `C,D` be abelian, `F : C → D` additive, `S : X₁ → X₂ → X₃`
+short exact, and `I₁,I₃` injective resolutions of its endpoints. Its mapped endpoint-horseshoe diagram is the diagram obtained
+by applying `F` to the compatible horseshoe data constructed from
+`I₁,I₃`. -/
 lemma RDhorseshoeF_eq_mapped (F : C ⥤ D) [F.Additive] (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
     RDhorseshoeF F S hS I₁ I₃ =
       (Functor.RightDerived.HorseshoeData.ofEndpoints S hS I₁ I₃).mapped F := rfl
 
-/-- The endpoint connecting morphism is the shared connecting morphism, with
-no intervening comparison or choice. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The endpoint boundary `δ_n` equals the connecting map of
+the compatible horseshoe data constructed from `I₁,I₃`. -/
 lemma RDdelta_eq_ofEndpoints (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
@@ -165,7 +194,11 @@ lemma RDdelta_eq_ofEndpoints (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComp
       (Functor.RightDerived.HorseshoeData.ofEndpoints S hS I₁ I₃).delta
         F n (n + 1) rfl := rfl
 
-/-- The shared sequence has exactly the endpoint maps and connecting morphism. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The five-arrow window from the compatible endpoint data has
+maps `R^nF(S.f)`, `R^nF(S.g)`, `δ_n`, `R^(n+1)F(S.f)`,
+and `R^(n+1)F(S.g)` in that order. -/
 lemma RDlongSequence_eq (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
@@ -176,7 +209,9 @@ lemma RDlongSequence_eq (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C
         ((F.rightDerived (n + 1)).map S.g) := rfl
 
 omit [HasInjectiveResolutions C] in
-/-- LES middle composite vanishes (via the horseshoe relation). -/
+/-- Let `C,D` be abelian, `F : C → D` additive, `S : X₁ → X₂ → X₃`
+short exact, and `I₁,I₃` injective resolutions of its endpoints. In each degree `n`, the cohomology map of the mapped left
+horseshoe inclusion followed by that of its right projection is zero. -/
 theorem RDles_middle_zero (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
@@ -194,7 +229,11 @@ theorem RDles_middle_zero (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex
       (I₃ := I₃)).zero]
   simp
 
-/-- Exactness at `R^{n+1}(X₁)` in the shared long exact sequence. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The sequence
+`R^nF(X₃) → R^(n+1)F(X₁) → R^(n+1)F(X₂)` has zero composite
+and is exact at `R^(n+1)F(X₁)`. -/
 theorem RDexact_A (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
@@ -204,7 +243,10 @@ theorem RDexact_A (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     F n (n + 1) rfl
   exact ⟨h.toIsComplex.zero 2, h.exact 2⟩
 
-/-- Exactness at `R^n(X₂)` in the shared long exact sequence. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The sequence `R^nF(X₁) → R^nF(X₂) → R^nF(X₃)` has zero
+composite and is exact at `R^nF(X₂)`. -/
 theorem RDexact_B (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :
@@ -214,7 +256,10 @@ theorem RDexact_B (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     F n (n + 1) rfl
   exact ⟨h.toIsComplex.zero 0, h.exact 0⟩
 
-/-- Exactness at `R^n(X₃)` in the shared long exact sequence. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+`F : C → D` additive, `S : X₁ → X₂ → X₃` short exact, and
+`I₁,I₃` injective resolutions of its endpoints. The sequence `R^nF(X₂) → R^nF(X₃) → R^(n+1)F(X₁)` has
+zero composite and is exact at `R^nF(X₃)`. -/
 theorem RDexact_C (F : C ⥤ D) [F.Additive] (n : ℕ) (S : ShortComplex C)
     (hS : S.ShortExact) (I₁ : InjectiveResolution S.X₁)
     (I₃ : InjectiveResolution S.X₃) :

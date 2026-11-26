@@ -1,3 +1,6 @@
-# Chain Complex Iso hom f
+# The forward coefficient-bar comparison in degree n
 
-Primitive components of the comparison to the native bar complex.
+The forward coefficient-bar comparison in degree n.
+
+For a commutative ring k, an associative k-algebra A and a compatible A-bimodule M, the nth
+component of chainComplexIso.hom is the inverse coefficientBarObjIso tensor-coordinate map.

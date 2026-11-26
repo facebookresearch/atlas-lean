@@ -1,3 +1,6 @@
-# Cyclic Column Zero Iso hom f
+# The forward tensor formula for cyclic column zero
 
-The zero-column comparison preserves every original tensor level.
+The forward tensor formula for cyclic column zero.
+
+The forward comparison from cyclic column zero to the `b`-complex is the identity on every
+tensor level.

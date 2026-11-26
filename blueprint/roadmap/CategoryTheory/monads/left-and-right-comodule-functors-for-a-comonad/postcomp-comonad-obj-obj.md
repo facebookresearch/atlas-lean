@@ -1,3 +1,5 @@
-# Postcomp Comonad obj obj
+# The object formula for the postcomposition comonad
 
-Objects of the postcomposition comonad are computed pointwise.
+The object formula for the postcomposition comonad.
+
+At a functor `L` and object `a`, its value is `G(L(a))`.

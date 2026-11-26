@@ -1,3 +1,6 @@
-# Cyclic Column Zero Iso inv f
+# The inverse tensor formula for cyclic column zero
 
-Its inverse also preserves every original tensor level.
+The inverse tensor formula for cyclic column zero.
+
+The inverse comparison from the `b`-complex to cyclic column zero is the identity on every
+tensor level.

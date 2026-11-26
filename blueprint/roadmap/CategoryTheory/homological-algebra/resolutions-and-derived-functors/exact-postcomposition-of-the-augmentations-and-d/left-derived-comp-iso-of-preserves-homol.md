@@ -1,4 +1,6 @@
-# Left Derived Comp Iso Of Preserves Homology hom from Left Derived Zero
+# Forward postcomposition comparison preserves the zeroth augmentation
 
-The postcomposition isomorphism in degree zero carries the canonical augmentation, without any
-right-exactness hypothesis on F.
+Let `C,D,E` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and `U : D → E` additive and preserving homology. The forward degree-zero postcomposition comparison followed
+by the augmentation of `F ⋙ U` equals `U` applied to the canonical
+augmentation `L₀F → F`.

@@ -1,3 +1,6 @@
-# Left Derived Obj To Augmented Hom
+# Canonical left-derived map into an exact augmented complex
 
-The derived-to-exact-complex map, defined with the canonical source resolution.
+Let `C,D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive, `ρ : Q → Y[0]` a quasi-isomorphism of
+nonnegative chain complexes, and `f : X → Y`. Using the chosen source resolution defines the canonical
+map `L_nF(X) → H_n(F(Q))`.

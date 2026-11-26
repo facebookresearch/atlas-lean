@@ -14,13 +14,16 @@ public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
-# Boundary compatibility of A-balanced Hochschild deconcatenation
+# The signed boundary formula for A-balanced deconcatenation
 
-The first factor has original regular coefficient `ULift A`; the second has
-original coefficient `M`; every tail is a tensor power over `k`. The target
-balances over the original `A`. The original target-index boundary is used.
-The middle head faces are identified by native A-balancing before their
-opposite signs cancel. No new differential or caller boundary law is used.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. At p+q=n,
+deconcatenation Dₚ,ᵩ sends a degree-n coefficient word to an A-balanced pair. Its boundary
+formula is Dₚ,ᵩ bₙ = (bₚ ⊗ id)Dₚ₊₁,ᵩ + (-1)ᵖ(id ⊗ bᵩ)Dₚ,ᵩ₊₁. The first boundary acts on the
+regular coefficient ULift A. The two middle head terms cancel because A-balancing identifies
+their values and their integer signs are opposite.
+
+For the Hochschild differential and tensor signs, see J.-L. Loday, Cyclic Homology, 2nd ed.,
+Chapter 1 and §4.5.
 -/
 
 @[expose] public section
@@ -39,7 +42,11 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The deconcatenation cut at an explicitly identified original degree. -/
+/-- Deconcatenation with an explicit target-degree equality.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, p+q=n gives Dₚ,ᵩ : M ⊗[k] A⊗n → (ULift A ⊗[k] A⊗p) ⊗[A] (M ⊗[k] A⊗q), preserving the
+stated degree equality. -/
 def algebraDeconcatCutAt (p q n : ℕ) (h : p + q = n) :
     M ⊗[k] TensorPower k n A →ₗ[A]
       (ULift.{w} A ⊗[k] TensorPower k p A) ⊗[A] (M ⊗[k] TensorPower k q A) :=
@@ -47,7 +54,10 @@ def algebraDeconcatCutAt (p q n : ℕ) (h : p + q = n) :
     (TensorProduct.AlgebraTensorModule.lTensor A M
       (TensorPower.cast k A h).symm.toLinearMap)
 
-/-- Literal-sum degree transport is the original cut, with no new level model. -/
+/-- Explicit-degree deconcatenation at the sum p+q.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, using n=p+q and its reflexive equality recovers algebraDeconcatCut(p,q). -/
 @[simp]
 lemma algebraDeconcatCutAt_refl (p q : ℕ) :
     algebraDeconcatCutAt k A M p q (p + q) rfl = algebraDeconcatCut k A M p q := by
@@ -57,7 +67,11 @@ lemma algebraDeconcatCutAt_refl (p q : ℕ) :
       TensorPower k (p + q) A)) = algebraDeconcatCut k A M p q
   rw [TensorProduct.AlgebraTensorModule.lTensor_id, LinearMap.comp_id]
 
-/-- Degree transport retains the original appended pure tensor word. -/
+/-- Deconcatenation of a degree-cast appended tensor word.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, an appended p-word and q-word transported along p+q=n splits into (ULift.up(1_A) ⊗
+tprod(x)) ⊗[A] (m ⊗ tprod(y)), retaining both word orders. -/
 lemma algebraDeconcatCutAt_tprod (p q n : ℕ) (h : p + q = n)
     (m : M) (x : Fin p → A) (y : Fin q → A) :
     algebraDeconcatCutAt k A M p q n h
@@ -72,7 +86,7 @@ section TupleFaces
 
 variable {A}
 
-/-- The original appended pivot word agrees with the original snoc on the inclusive left block. -/
+/-- On the first p+1 positions, append(x,cons(c,y)) agrees with snoc(x,c). -/
 private lemma pivotWord_left {p q : ℕ} (x : Fin p → A) (c : A) (y : Fin q → A)
     (i : Fin (p + 1)) :
     Fin.append (m := p) (n := q + 1) x
@@ -99,7 +113,7 @@ private lemma mulAdjacent_gt {n : ℕ} (i j : Fin n) (a : Fin (n + 1) → A) (h 
     hochschildMulAdjacent i a j = a j.succ := by
   rw [hochschildMulAdjacent, if_neg (ne_of_gt h), Fin.succAbove_succ_of_lt i j h]
 
-/-- The original first face removes the same inclusive left-block entry. -/
+/-- Removing the first entry of append(x,cons(c,y)) removes the first entry of snoc(x,c). -/
 private lemma dropFirst_pivotWord {p q : ℕ} (x : Fin p → A) (c : A) (y : Fin q → A) :
     hochschildDropFirst (n := p + q) (Fin.append (m := p) (n := q + 1) x
         (Fin.cons (n := q) (α := fun _ => A) c y)) =
@@ -116,7 +130,7 @@ private lemma dropFirst_pivotWord {p q : ℕ} (x : Fin p → A) (c : A) (y : Fin
         (Fin.cons (n := q) (α := fun _ => A) c y) (Fin.natAdd p i.succ) = y i
     rw [Fin.append_right, Fin.cons_succ]
 
-/-- The original last face removes the same right-block entry. -/
+/-- Removing the last entry of append(x,cons(c,y)) removes the last entry of cons(c,y). -/
 private lemma dropLast_pivotWord {p q : ℕ} (x : Fin p → A) (c : A) (y : Fin q → A) :
     hochschildDropLast (n := p + q) (Fin.append (m := p) (n := q + 1) x
         (Fin.cons (n := q) (α := fun _ => A) c y)) =
@@ -133,7 +147,7 @@ private lemma dropLast_pivotWord {p q : ℕ} (x : Fin p → A) (c : A) (y : Fin 
           := fun _ => A) c y i.castSucc
     exact Fin.append_right x (Fin.cons (n := q) (α := fun _ => A) c y) i.castSucc
 
-/-- Each original left interior face is the original left-block adjacent multiplication. -/
+/-- An interior face in the left block multiplies adjacent entries of snoc(x,c). -/
 private lemma mulAdjacent_pivotWord_left {p q : ℕ} (x : Fin p → A) (c : A) (y : Fin q → A)
     (i : Fin p) :
     hochschildMulAdjacent (n := p + q) (Fin.castAdd q i) (Fin.append (m := p) (n := q + 1) x
@@ -173,7 +187,7 @@ private lemma mulAdjacent_pivotWord_left {p q : ℕ} (x : Fin p → A) (c : A) (
         (Fin.cons (n := q) (α := fun _ => A) c y) (Fin.natAdd p j.succ) = y j
     rw [Fin.append_right, Fin.cons_succ]
 
-/-- Each original right interior face is the original right-block adjacent multiplication. -/
+/-- An interior face in the right block multiplies adjacent entries of cons(c,y). -/
 private lemma mulAdjacent_pivotWord_right {p q : ℕ} (x : Fin p → A) (c : A) (y : Fin q → A)
     (i : Fin q) :
     hochschildMulAdjacent (n := p + q) (Fin.natAdd p i) (Fin.append (m := p) (n := q + 1) x
@@ -249,7 +263,11 @@ private lemma exists_pivotWord (p q : ℕ) (a : Fin (p + q + 1) → A) :
 
 end TupleFaces
 
-/-- The original A-linear boundary has its complete native endpoint/interior sum. -/
+/-- The full signed symmetric Hochschild boundary on a tensor word.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, bₙ(m ⊗ (a₀,…,aₙ)) is a₀m ⊗ (a₁,…,aₙ), plus ∑ᵢ₌₀ⁿ⁻¹ (-1)ⁱ⁺¹ m ⊗ (… ,aᵢaᵢ₊₁,…), plus
+(-1)ⁿ⁺¹ aₙm ⊗ (a₀,…,aₙ₋₁). -/
 lemma algebraBoundary_tprod_endpoints (n : ℕ) (m : M) (a : Fin (n + 1) → A) :
     algebraBoundary k A M n (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       ((a 0 • m) ⊗ₜ[k] PiTensorProduct.tprod k (hochschildDropFirst a)) +
@@ -287,7 +305,11 @@ private lemma ulift_smul_one (a : A) :
   change a * 1 = a
   exact mul_one a
 
-/-- The left-last and right-first head terms cancel in the native A-balanced target. -/
+/-- Opposite middle-head signs cancel after A-balancing.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, the terms (-1)ᵖ⁺¹((c ⊗ x) ⊗[A] (m ⊗ y)) and (-1)ᵖ((1_A ⊗ x) ⊗[A] ((c • m) ⊗ y)) sum
+to zero. -/
 lemma algebraMiddleHead_signed_cancel (p q : ℕ) (c : A) (m : M)
     (x : TensorPower k p A) (y : TensorPower k q A) :
     (-1 : ℤ) ^ (p + 1) • ((ULift.up c ⊗ₜ[k] x) ⊗ₜ[A] (m ⊗ₜ[k] y)) +
@@ -325,7 +347,7 @@ private lemma algebraDeconcatCutAt_pivot_right (p q : ℕ) (m : M)
         (Fin.cons (n := q) (α := fun _ => A) c y)))).trans
     (algebraDeconcatCut_tprod k A M p (q + 1) m x (Fin.cons (n := q) (α := fun _ => A) c y))
 
-/-- Cutting the original complete boundary partitions its endpoint/interior faces. -/
+/-- Deconcatenating the full boundary of the pivot word partitions its endpoint and interior faces. -/
 private lemma algebraDeconcatCut_boundary_pivot (p q : ℕ) (m : M)
     (x : Fin p → A) (c : A) (y : Fin q → A) :
     algebraDeconcatCut k A M p q
@@ -373,7 +395,11 @@ private lemma tmul_zsmul {X Y : Type*} [AddCommGroup X] [AddCommGroup Y]
     x ⊗ₜ[A] (s • y) = s • (x ⊗ₜ[A] y) :=
   TensorProduct.tmul_smul s x y
 
-/-- The A-balanced deconcatenation satisfies the original signed boundary identity on generators. -/
+/-- The deconcatenation boundary formula at an explicit middle vector.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, on the word append(x,cons(c,y)), Dₚ,ᵩ b equals the regular-coefficient boundary of
+Dₚ₊₁,ᵩ plus (-1)ᵖ times the M-coefficient boundary of Dₚ,ᵩ₊₁. -/
 lemma algebraDeconcatCutAt_boundary_pivot (p q : ℕ) (m : M)
     (x : Fin p → A) (c : A) (y : Fin q → A) :
     algebraDeconcatCutAt k A M p q (p + q) rfl
@@ -413,9 +439,11 @@ lemma algebraDeconcatCutAt_boundary_pivot (p q : ℕ) (m : M)
     (PiTensorProduct.tprod k x) (PiTensorProduct.tprod k y)
   exact add_middle_cancel (T := T) _ _ _ _ _ _ hmiddle
 
-/-- For p+q=n, A-balanced cuts commute with the original Hochschild boundary.
-The first regular coefficient is ULift A, the second is the original M, and the
-original k-tensor tails and both native coefficient endpoints are retained. -/
+/-- The A-balanced deconcatenation chain identity.
+
+For a commutative ring k, a commutative k-algebra A and an A-module M with compatible
+k-action, for p+q=n, Dₚ,ᵩ ∘ bₙ = (bₚ,ULift A ⊗ id) ∘ Dₚ₊₁,ᵩ + (-1)ᵖ(id ⊗ bᵩ,M) ∘ Dₚ,ᵩ₊₁, with
+both successor cuts in degree n+1. -/
 theorem algebraDeconcatCutAt_boundary (p q n : ℕ) (h : p + q = n) :
     (algebraDeconcatCutAt k A M p q n h).comp (algebraBoundary k A M n) =
       (TensorProduct.map (algebraBoundary k A (ULift.{w} A) p) LinearMap.id).comp

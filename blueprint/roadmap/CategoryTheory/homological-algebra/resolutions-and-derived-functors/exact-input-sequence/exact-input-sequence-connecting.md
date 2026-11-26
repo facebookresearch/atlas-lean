@@ -1,4 +1,6 @@
-# Exact Input Sequence connecting
+# Connecting map evaluated on the mapped exact input
 
-Evaluating the original connector on this typed input is literally the
-same mappedConnecting arrow, in every degree and for every original sequence.
+For additive short-exact-sequence-preserving `R : A → B` and a
+cohomological δ-functor `T : B → D` between preadditive categories,
+the degree-`q` connecting map evaluated on the input `R(S)` of a
+short exact `S` in `A` is `mappedConnecting R hR T q S hS`.

@@ -18,12 +18,16 @@ public import Mathlib.Algebra.Category.ModuleCat.Projective
 public import Mathlib.CategoryTheory.Monoidal.Tor
 
 /-!
-# The finite Tor-resolution complex for a Cartan--Eilenberg tensor convolution
+# Finite Tor resolutions of a tensor antidiagonal
 
-For a fixed inner total degree, the row-homology resolutions of a Cartan--Eilenberg resolution
-form a finite antidiagonal biproduct.  Its outer homology is the corresponding finite biproduct of
-`Tor` objects.  The identity pairing on each tensor row also gives a canonical chain map from this
-resolution complex to the vertical-homology complex of the tensor convolution.
+Let R be commutative, K,L nonnegative R-module complexes and P a Cartan–Eilenberg resolution of
+L. In inner degree q, the finite sum of Hᵢ(K) tensored with the vertical-homology resolution of
+Hⱼ(L), over i+j=q, is a resolution-degree chain complex. Its outer homology is ⨁_{i+j=q}
+Tor_p^R(Hᵢ(K),Hⱼ(L)), with the second factor resolved.
+
+The ordinary homogeneous tensor pairing gives a canonical map to vertical homology of the
+tensor-convolution bicomplex. Its summand formulas retain the actual row projective resolutions
+and their degree-zero augmentations.
 -/
 
 @[expose] public section
@@ -49,14 +53,16 @@ local instance :
     HasFiniteBiproducts (ChainComplex (ModuleCat.{u} R) ℕ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts
 
-/-- Pairs of nonnegative degrees on a fixed Künneth antidiagonal. -/
+/-- For q ∈ ℕ, the Künneth antidiagonal is the finite set of pairs (i,j) of natural numbers with
+i+j=q. -/
 abbrev KunnethAntidiagonal (q : ℕ) :=
   Finset.antidiagonal q
 
-/--
-The tensor of one homology object with one row-homology resolution.  The second factor is the one
-resolved in `CategoryTheory.Tor`.
--/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For a pair (i,j) with i+j=q, the summand resolution complex is Hᵢ(K) tensored with P's
+vertical-homology projective resolution of Hⱼ(L). Its resolution homology computes
+Tor_p^R(Hᵢ(K),Hⱼ(L)), with Hⱼ(L) the resolved second factor. -/
 noncomputable def kunnethTorResolutionSummand
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) {q : ℕ}
@@ -87,10 +93,10 @@ theorem kunnethTorResolutionSummand_d
         (P.bicomplex.verticalHomologyComplex ij.val.2).d (a + 1) a :=
   rfl
 
-/--
-The finite outer complex formed from the row-homology resolutions on one tensor-total
-antidiagonal.
--/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For each inner degree q, the outer resolution complex is the finite biproduct, over i+j=q, of
+Hᵢ(K) ⊗ the stored vertical-homology resolution of Hⱼ(L). -/
 noncomputable def kunnethTorResolutionComplex
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (q : ℕ) :
@@ -98,8 +104,11 @@ noncomputable def kunnethTorResolutionComplex
   ⨁ fun ij : KunnethAntidiagonal q =>
     kunnethTorResolutionSummand K P ij
 
-/-- The canonical chain map from the actual-row Tor-resolution complex to the
-vertical homology of the Cartan--Eilenberg tensor convolution. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. The ordinary homology tensor pairing in each antidiagonal summand defines a chain map from
+the finite Tor-resolution complex to the vertical-homology complex of the tensor convolution in
+inner degree q. -/
 noncomputable def kunnethCEVerticalHomologyPairing
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (q : ℕ) :
@@ -160,7 +169,11 @@ noncomputable def kunnethCEVerticalHomologyPairing
   change (⨁ A) ⟶ Y
   exact biproduct.desc component
 
-/-- The component of the canonical pairing map on an antidiagonal summand. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. In resolution degree a and antidiagonal summand (i,j), the pairing map is the ordinary
+homology pairing Hᵢ(K) ⊗ Hⱼ(P.bicomplex.Xₐ) → H_q(K ⊗ P.bicomplex.Xₐ), followed by the canonical
+total-degree identification i+j=q. -/
 @[reassoc]
 theorem kunnethCEVerticalHomologyPairing_ι_f
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -188,8 +201,11 @@ theorem kunnethCEVerticalHomologyPairing_ι_f
   rw [biproduct.ι_desc]
   rfl
 
-/-- Outer homology of the actual-row resolution complex is the finite
-antidiagonal biproduct of `Tor`, with the resolved factor in second position. -/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For p,q ∈ ℕ, the outer homology H_p of the finite degree-q resolution complex is canonically
+isomorphic to ⨁_{i+j=q} Tor_p^R(Hᵢ(K),Hⱼ(L)). The second factor Hⱼ(L) is computed by P's actual
+vertical-homology projective resolution. -/
 noncomputable def kunnethTorResolutionHomologyIso
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (p q : ℕ) :
@@ -224,10 +240,11 @@ noncomputable def kunnethTorResolutionHomologyIso
           ((P.cartanEilenbergVerticalHomologyResolution ij.val.2).isoLeftDerivedObj
             ((tensoringLeft (ModuleCat.{u} R)).obj (K.homology ij.val.1)) p).symm)
 
-/--
-The global finite Tor coordinate carries a selected homology injection to the corresponding
-Tor-summand injection through the supplied projective-resolution coordinate.
--/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For p,q ∈ ℕ and i+j=q, the homology map of the selected resolution-summand injection,
+followed by the global Tor isomorphism, is the summand's projective-resolution-derived
+comparison followed by the (i,j) Tor injection. -/
 theorem kunnethTorResolutionHomologyIso_ι
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (p q : ℕ)
@@ -308,10 +325,11 @@ theorem kunnethTorResolutionHomologyIso_ι
       congrArg (fun k => k ≫ m) hFinite
     _ = (eTor ij).hom ≫ biproduct.ι TorFamily ij := hMap
 
-/--
-The global finite Tor coordinate restricts on a selected homology summand to the
-projective-resolution derived coordinate.
--/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For p,q ∈ ℕ and i+j=q, the selected summand's homology injection followed by the global Tor
+comparison and projection back to that Tor factor equals the inverse canonical
+projective-resolution coordinate for tensoring Hᵢ(K) with the resolution of Hⱼ(L). -/
 theorem kunnethTorResolutionHomologyIso_ι_π
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (p q : ℕ)
@@ -399,11 +417,11 @@ theorem kunnethTorResolutionHomologyIso_ι_π
       dsimp only [π]
       rw [biproduct.ι_π_self, Category.comp_id]
 
-/--
-On an degree-zero representative, the selected summand of the finite Tor-resolution coordinate
-followed by Tor-zero is tensoring the canonical Cartan--Eilenberg column-zero homology
-augmentation.
--/
+/-- Let R be a commutative ring, K,L nonnegative chain complexes of R-modules, and P a
+Cartan–Eilenberg resolution of L. The bicomplex has resolution index a and inner tensor degree
+q. For i+j=q and outer degree zero, the selected Tor-resolution coordinate followed by
+Tor₀^R(Hᵢ(K),Hⱼ(L)) ≅ Hᵢ(K) ⊗ Hⱼ(L) is tensoring Hᵢ(K) with the canonical column-zero homology
+augmentation of the actual resolution of Hⱼ(L). -/
 theorem kunnethTorResolutionHomologyIso_zero_component
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (P : CartanEilenbergResolution L) (q : ℕ)

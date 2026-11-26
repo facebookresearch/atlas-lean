@@ -1,3 +1,6 @@
-# True Integer Lambda Chain Map
+# The signed positive-integer lambda chain map
 
-Loday's original true integer lambda, as a native map of the Hochschild complex.
+For a commutative ℚ-algebra k, a commutative k-algebra A,
+a compatible A-module M and m > 0, the integer lambda chain map on
+C_*(A,M) is (−1)^(m−1)Λ(m). The sign depends on the positive
+integer parameter m, while Λ(m) is the rational convolution map.

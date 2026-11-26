@@ -15,16 +15,16 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.DimensionShift
 public import Mathlib.Algebra.Homology.Embedding.RestrictionHomology
 
 /-!
-# Computing left-derived functors with acyclic resolutions
+# Left-derived values computed by acyclic resolutions
 
-An augmented quasi-isomorphism with positive-degree F-acyclic terms computes left derivation for a
-right-exact additive functor. The proof passes to the kernel-augmented tail. Degrees zero and one
-use the augmentation cokernel and the boundary-as-kernel description; higher degrees use the
-generic δ-functor dimension shift and restriction homology.
-
-The construction returns an isomorphism. It requires projective resolution availability and
-finite-colimit preservation. It does not require projectivity of the supplied resolution terms or
-preservation of homology.
+Let `C,D` be abelian, with projective resolutions in `C`, and
+`F : C → D` additive and preserving finite colimits. An augmentation
+quasi-isomorphism `Q → M[0]` whose terms satisfy
+`L_(n+1)F(Q_q)=0` for every `q,n` gives an isomorphism
+`L_nF(M) ≅ H_n(F(Q))`. Projectivity of the supplied terms is not
+required. Degree zero uses the augmentation quotient, degree one
+uses the boundary kernel, and higher degrees use kernel-tail
+dimension shifts.
 -/
 
 @[expose] public section
@@ -43,7 +43,11 @@ variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 local instance : ChainComplex.kernelTailEmbedding.IsRelIff :=
   ComplexShape.instIsRelIffEmbeddingDown'Add 1 1
 
-/-- A left-derived object computed from a augmented acyclic complex. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`, and
+`F : C → D` additive and preserving finite colimits. For a
+quasi-isomorphism `π : Q → M[0]` of nonnegative chain complexes
+with `L_(j+1)F(Q_q)=0` for all `q,j`, the acyclic comparison is
+`L_nF(M) ≅ H_n(F(Q))` in every degree `n`. -/
 noncomputable def leftDerivedObjIsoHomologyOfAcyclicResolution
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     {M : C} (Q : ChainComplex C ℕ) (π : Q ⟶ (ChainComplex.single₀ C).obj M)

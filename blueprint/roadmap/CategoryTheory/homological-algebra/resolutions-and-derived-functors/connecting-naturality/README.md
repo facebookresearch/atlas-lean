@@ -2,9 +2,9 @@
 
 ## Right Derived
 
-- [Canonical Connecting naturality functor](canonical-connecting-naturality-functor.md)
+- [Right-derived connecting maps are natural in the coefficient functor](canonical-connecting-naturality-functor.md)
 
 ## Nat Trans
 
-- [Right Derived Delta Functor Map](right-derived-delta-functor-map.md)
-- [Right Derived Delta Functor Map app](right-derived-delta-functor-map-app.md)
+- [Derived coefficient transformations give delta-functor morphisms](right-derived-delta-functor-map.md)
+- [Degrees of a derived coefficient delta-functor morphism](right-derived-delta-functor-map-app.md)

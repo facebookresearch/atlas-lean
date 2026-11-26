@@ -1,4 +1,6 @@
-# Right Coefficient Ground Map
+# Ground-linearity of a semilinear right coefficient map
 
-semilinearity for the UEA map implies ground linearity, by its
-original scalar algebra-map law.
+Ground-linearity of a semilinear right coefficient map.
+
+If `g : N → N'` is semilinear over the opposite of `U(f)`, the scalar equation
+`U(f)(algebraMap(R,U)(r)) = algebraMap(R,U')(r)` makes `g` an `R`-linear coefficient map.

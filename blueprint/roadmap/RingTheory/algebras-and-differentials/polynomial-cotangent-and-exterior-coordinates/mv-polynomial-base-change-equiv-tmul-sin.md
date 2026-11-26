@@ -1,3 +1,5 @@
-# Mv Polynomial Base Change Equiv tmul single
+# A free coordinate gives a variable differential
 
-The original extended coordinate generator is the actual differential of its variable.
+Let `k` be a commutative ring and `σ` a type. Set `A = MvPolynomial σ k`, `V = σ →₀ k`, and `Ω
+= KaehlerDifferential k A`. For `a : A` and `i : σ`, `mvPolynomialBaseChangeEquiv k σ (a ⊗
+single i 1) = a • D k A (X_i)`.

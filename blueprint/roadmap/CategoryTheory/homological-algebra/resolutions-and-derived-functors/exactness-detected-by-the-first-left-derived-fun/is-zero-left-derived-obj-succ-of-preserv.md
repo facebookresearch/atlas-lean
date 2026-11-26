@@ -1,3 +1,5 @@
-# Is Zero left Derived obj succ of preserves Homology
+# Homology-preserving additive functors have vanishing positive left derivation
 
-A homology-preserving additive functor has no positive left-derived values.
+Let `C,D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive. If `F` preserves homology, `L_(n+1)F(X)` is zero for every
+object `X` and every `n ∈ ℕ`.

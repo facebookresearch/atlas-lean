@@ -1,3 +1,6 @@
-# Ordered Word Exponent Equiv
+# The equivalence of ordered words and finite exponent functions
 
-The ordered-word/exponent-function bijection uses native multiset multiplicities.
+The equivalence of ordered words and finite exponent functions.
+
+Multiset multiplicities identify weakly increasing words with finitely supported functions `I
+→₀ ℕ`.

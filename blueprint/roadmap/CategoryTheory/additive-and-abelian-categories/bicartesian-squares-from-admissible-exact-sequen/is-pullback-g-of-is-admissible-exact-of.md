@@ -1,4 +1,5 @@
-# Is Pullback g of is Admissible Exact of is Iso left
+# Pullback of the final exact-sequence maps
 
-A morphism of admissible exact short complexes that is invertible on its
-left object induces a pullback square on the final two objects.
+In an additive exact category `C`, let `φ : S → T` be a morphism of
+admissible exact short complexes. If its left component `φ₁` is an
+isomorphism, the square formed by `S.g`, `T.g`, `φ₂`, and `φ₃` is a pullback.

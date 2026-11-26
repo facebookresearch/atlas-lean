@@ -17,13 +17,17 @@ public import Mathlib.Algebra.Polynomial.Eval.Coeff
 public import Mathlib.Tactic.NormNum
 
 /-!
-# Actual rational polynomial coefficients of the Eulerian cut count
+# Binomial polynomials for descent counts
 
-The polynomial is the native rising Pochhammer polynomial evaluated at
-X minus the actual descent number, divided by the original factorial.
-Native factorial/choose evaluation and the actual compatible-cut count
-prove its values on positive integers. No rational coefficient formula is
-supplied as a hypothesis.
+For `n,d : ℕ`, define `P_(n,d)(X) = (1/n!) ∏_(j=0)^(n-1) (X+j-d)` in `ℚ[X]`. It has degree at
+most `n` and leading coefficient `1/n!`.
+
+When `0<n` and `d<n`, evaluating at the positive integer `m+1` gives `choose(n+m-d,n)`. Its
+constant coefficient is zero; evaluation at `1` is one only for `d=0`, and evaluation at `2`
+gives `n+1`, `1`, or `0` for `d=0`, `d=1`, or larger descent counts.
+
+References: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 3; Loday, *Cyclic
+Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -33,12 +37,16 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- The exact rational binomial polynomial associated with a word length and descent count. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. `descentBinomialPolynomial n d` is this rational polynomial,
+equivalently the rising Pochhammer polynomial at `X-d` multiplied by `1/n!`. -/
 def descentBinomialPolynomial (n d : ℕ) : Polynomial ℚ :=
   Polynomial.C ((Nat.factorial n : ℚ)⁻¹) *
     (_root_.ascPochhammer ℚ n).comp (Polynomial.X - Polynomial.C (d : ℚ))
 
-/-- The native rising-factorial form is exactly the original finite factor product. -/
+/-- For `n,d : ℕ`, the rational polynomial satisfies `descentBinomialPolynomial n d = C((n!:ℚ)⁻¹)
+* ∏ j ∈ Finset.range n, (X + C((j:ℚ)-(d:ℚ)))`. The subtraction in each factor is in `ℚ`; the
+product is `1` for `n=0`. -/
 theorem descentBinomialPolynomial_eq_prod (n d : ℕ) :
     descentBinomialPolynomial n d = Polynomial.C ((Nat.factorial n : ℚ)⁻¹) *
       ∏ j ∈ Finset.range n, (Polynomial.X + Polynomial.C ((j : ℚ) - d)) := by
@@ -53,7 +61,9 @@ theorem descentBinomialPolynomial_eq_prod (n d : ℕ) :
     rw [← Polynomial.C_eq_natCast, Polynomial.C_sub]
     ring
 
-/-- The actual homogeneous descent polynomial has no coefficients beyond the word length. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. The natural degree satisfies `(descentBinomialPolynomial n d).natDegree
+≤ n`. -/
 theorem descentBinomialPolynomial_natDegree_le (n d : ℕ) :
     (descentBinomialPolynomial n d).natDegree ≤ n := by
   unfold descentBinomialPolynomial
@@ -61,7 +71,9 @@ theorem descentBinomialPolynomial_natDegree_le (n d : ℕ) :
   exact Polynomial.natDegree_comp_le.trans_eq (by
     rw [_root_.ascPochhammer_natDegree, Polynomial.natDegree_X_sub_C, mul_one])
 
-/-- The actual top-degree coefficient is the original reciprocal factorial in every degree. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. The coefficient of `X^n` is `(descentBinomialPolynomial n d).coeff n =
+(n!:ℚ)⁻¹`. -/
 theorem descentBinomialPolynomial_coeff_degree (n d : ℕ) :
     (descentBinomialPolynomial n d).coeff n = (Nat.factorial n : ℚ)⁻¹ := by
   rw [descentBinomialPolynomial, Polynomial.coeff_C_mul]
@@ -74,14 +86,17 @@ theorem descentBinomialPolynomial_coeff_degree (n d : ℕ) :
       Polynomial.leadingCoeff_X_sub_C, one_pow, one_mul] using h
   rw [hc, mul_one]
 
-/-- Evaluation is the original finite sum of actual homogeneous polynomial coefficients. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. For `x : ℚ`, `P_(n,d)(x) = ∑ i : Fin(n+1), coeff_i(P_(n,d)) * x^i.val`. -/
 theorem descentBinomialPolynomial_eval_eq_sum (n d : ℕ) (x : ℚ) :
     (descentBinomialPolynomial n d).eval x =
       ∑ i : Fin (n + 1), (descentBinomialPolynomial n d).coeff i.val * x ^ i.val := by
   rw [Polynomial.eval_eq_sum_range' (Nat.lt_succ_of_le (descentBinomialPolynomial_natDegree_le n d))]
   exact (Fin.sum_univ_eq_sum_range _ _).symm
 
-/-- The actual polynomial value is the original compatible-cut binomial count. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. If `0<n` and `d<n`, then for every `m : ℕ`, `P_(n,d)(m+1) = (Nat.choose
+(n+m-d) n : ℚ)`. -/
 theorem descentBinomialPolynomial_eval_succ (n d m : ℕ) (hn : 0 < n) (hd : d < n) :
     (descentBinomialPolynomial n d).eval (m + 1 : ℚ) = ((n + m - d).choose n : ℚ) := by
   classical
@@ -110,7 +125,9 @@ theorem descentBinomialPolynomial_eval_succ (n d m : ℕ) (hn : 0 < n) (hd : d <
       Nat.choose_eq_zero_of_lt (by omega : n + m - d < n)]
     rfl
 
-/-- The original polynomial has zero constant coefficient in every positive homogeneous degree. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. If `0<n` and `d<n`, the constant coefficient satisfies
+`(descentBinomialPolynomial n d).coeff 0 = 0`. -/
 theorem descentBinomialPolynomial_coeff_zero (n d : ℕ) (hn : 0 < n) (hd : d < n) :
     (descentBinomialPolynomial n d).coeff 0 = 0 := by
   rw [Polynomial.coeff_zero_eq_eval_zero]
@@ -118,7 +135,8 @@ theorem descentBinomialPolynomial_coeff_zero (n d : ℕ) (hn : 0 < n) (hd : d < 
     Polynomial.eval_comp, Polynomial.eval_sub, Polynomial.eval_X, zero_sub]
   rw [_root_.ascPochhammer_eval_neg_coe_nat_of_lt hd, mul_zero]
 
-/-- Evaluation at one selects exactly the original zero-descent class. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. If `0<n` and `d<n`, `P_(n,d)(1) = if d=0 then 1 else 0`. -/
 theorem descentBinomialPolynomial_eval_one (n d : ℕ) (hn : 0 < n) (hd : d < n) :
     (descentBinomialPolynomial n d).eval 1 = if d = 0 then 1 else 0 := by
   have h := descentBinomialPolynomial_eval_succ n d 0 hn hd
@@ -130,7 +148,9 @@ theorem descentBinomialPolynomial_eval_one (n d : ℕ) (hn : 0 < n) (hd : d < n)
   · rw [Nat.choose_eq_zero_of_lt (by omega : n - d < n)]
     rfl
 
-/-- Evaluation at two gives the two-cut multiplicities of the original zero/one-descent classes. -/
+/-- For `n,d : ℕ`, write `P_(n,d)(X) = (1/n!) ∏ j=0,...,n-1, (X+j-d)` in `ℚ[X]`, with the empty
+product equal to `1`. If `0<n` and `d<n`, `P_(n,d)(2) = if d=0 then (n+1:ℚ) else if d=1 then 1
+else 0`. -/
 theorem descentBinomialPolynomial_eval_two (n d : ℕ) (hn : 0 < n) (hd : d < n) :
     (descentBinomialPolynomial n d).eval 2 =
       if d = 0 then (n + 1 : ℚ) else if d = 1 then 1 else 0 := by

@@ -14,11 +14,19 @@ public import Mathlib.LinearAlgebra.Alternating.Uncurry.Fin
 public import Mathlib.Order.Interval.Finset.Fin
 
 /-!
-# Recursion for the Chevalley–Eilenberg bracket boundary
+# First-vector recursion for the exterior bracket boundary
 
-The ordered pair sum separates into the terms involving the first vector and
-the boundary on the remaining vectors. Moving the front bracket past the
-first vector accounts for the sign of the latter summand.
+Let R be commutative and L an R-Lie algebra. The bracket boundary
+β_n(v) has the coefficients (−1)^{i+j} for i<j, with the bracket
+put before the remaining wedge.
+
+For x followed by v=(v_0,…,v_n), its image in the exterior algebra is
+β_{n+1}(x,v)=
+∑_{j=0}^{n}(−1)^{j+1}[x,v_j]∧(v with entry j deleted)
+−ι(x)β_n(v).
+Equivalently, the first sum is minus the sum of words with v_j replaced
+by [x,v_j]. Thus β_{n+1}(x,v)=−ad_x(v_0∧⋯∧v_n)−ι(x)β_n(v).
+Both expressions preserve the order of the unremoved entries.
 -/
 
 @[expose] public section
@@ -34,8 +42,13 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- The bracket boundary, viewed in the ambient exterior algebra, has the
-same ordered pair formula as its exterior-power presentation. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+For v:Fin(n+2)→L, including β_{n+1}(v) into E preserves
+the triangular pair sum. In the compressed indices i≤j, the pair is
+(v_i,v_{j+1}) with coefficient (−1)^{i+j+1}, bracket first and
+the two entries removed from the remaining word. -/
 theorem bracketBoundary_succ_coe (n : ℕ) (v : Fin (n + 2) → L) :
     (bracketBoundary R L (n + 1) v : ExteriorAlgebra R L) =
       ∑ i : Fin (n + 1), ∑ j ∈ Finset.Ici i,
@@ -48,8 +61,12 @@ theorem bracketBoundary_succ_coe (n : ℕ) (v : Fin (n + 2) → L) :
   simp only [bracketBoundary, map_sum, map_smul, Submodule.coe_subtype,
     exteriorPower.ιMulti_apply_coe]
 
-/-- Splitting the boundary at the first vector preserves the order of the
-remaining factors and the sign of each original ordered pair. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+For x∈L and v:Fin(n+1)→L,
+β_{n+1}(x,v)=∑_{j=0}^{n}(−1)^{j+1}[x,v_j]∧v with j deleted
+−ι(x)β_n(v), as an equality in E. -/
 theorem bracketBoundary_vecCons_coe (n : ℕ) (x : L) (v : Fin (n + 1) → L) :
     (bracketBoundary R L (n + 1) (Matrix.vecCons x v) : ExteriorAlgebra R L) =
       (∑ j : Fin (n + 1), ((-1 : R) ^ (j.val + 1)) •
@@ -161,8 +178,13 @@ theorem bracketBoundary_vecCons_coe (n : ℕ) (x : L) (v : Fin (n + 1) → L) :
                   (j.removeNth (i.castSucc.removeNth v)))) := by
         simp only [Finset.mul_sum, Finset.sum_neg_distrib]
 
-/-- The first-vector part of the CE boundary is the negative sum of the
-words with one vector replaced by its bracket with the first vector. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+For x∈L and v:Fin(n+1)→L,
+β_{n+1}(x,v)=−∑_j ιMulti(v with v_j replaced by [x,v_j])
+−ι(x)β_n(v), in E. The bracket stays in its former position
+in each replacement word. -/
 theorem bracketBoundary_vecCons_update_coe
     (n : ℕ) (x : L) (v : Fin (n + 1) → L) :
     (bracketBoundary R L (n + 1) (Matrix.vecCons x v) : ExteriorAlgebra R L) =

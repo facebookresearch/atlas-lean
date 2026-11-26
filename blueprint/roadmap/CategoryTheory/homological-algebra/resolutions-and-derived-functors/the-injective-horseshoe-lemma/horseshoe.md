@@ -1,9 +1,7 @@
-# Horseshoe
+# Injective horseshoe of a short exact sequence
 
-The injective horseshoe from explicit endpoint resolutions.
-
-Informal sketch: apply the projective horseshoe in `Cᵒᵖ`, unop the middle
-resolution (`projectiveResolutionUnopInj`) and the SES maps (swapping
-inclusion/projection since `unop` reverses arrows). Augmentation compatibilities
-are the unop'd op-side ones; the proofs need `single₀`-naturality of
-`single₀UnopIso` through `op` (`HorseshoeData.single₀UnopIso_naturality`).
+For a short exact sequence `S : X₁ → X₂ → X₃` in an abelian category
+`C`, and injective resolutions `I₁` of `X₁`, `I₃` of `X₃`, the horseshoe
+construction supplies an injective resolution of `X₂`. Its resolution complex
+fits into a short exact sequence `I₁ → middle → I₃`, and both maps commute
+with the endpoint and middle augmentations.

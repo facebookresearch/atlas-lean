@@ -1,3 +1,6 @@
-# Algebra Normalized Positive Projection
+# Projection onto the normalized algebra-module proper quotient
 
-The original full normalized chain projects by its A-module quotient classes.
+Let k be a commutative ring, A a commutative k-algebra and M a left A-module with its induced
+k-action. Put V=A/(k·1), considered as a k-module, and C_n=M⊗_kV^{⊗n}. The A-linear chain map
+from algebraNormalizedChainComplex(A,M) to algebraNormalizedPositiveQuotientComplex(A,M) has
+degree-n component the quotient projection C_n → C_n/S̄_n.

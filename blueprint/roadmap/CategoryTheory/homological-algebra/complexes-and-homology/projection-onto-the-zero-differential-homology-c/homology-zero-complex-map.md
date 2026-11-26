@@ -1,3 +1,5 @@
-# Homology Zero Complex Map
+# Map between zero-differential homology complexes
 
-Native homology maps give the zero-complex map for just these two endpoints.
+Let C have zero morphisms and let f:P→Q be a map of c-complexes, both with homology at every
+degree. The induced maps Hᵢ(f):Hᵢ(P)→Hᵢ(Q) assemble into a morphism H(P)→H(Q) of
+zero-differential complexes.

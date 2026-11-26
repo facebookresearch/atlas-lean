@@ -18,13 +18,26 @@ public import MathlibExt.Algebra.Homology.Hochschild.Maps
 public import Mathlib.CategoryTheory.Abelian.LeftDerived
 
 /-!
-# Coefficient tensors of the enveloping bar
+# Coefficient tensors of the enveloping bar resolution
 
-Balanced tensoring a bimodule M with the enveloping bar identifies
-degree n with M ⊗[k] TensorPower(k, n, A). The first outer factor acts
-on the right of M and the last outer factor acts on the left. The
-comparison uses the given bimodule actions and arbitrary coefficient
-modules, with independent carrier universes.
+Let `k` be a commutative ring, `A` an associative unital `k`-algebra,
+and `M` a bimodule whose commuting left and right actions are
+compatible with its ground-ring action. Set `E=A ⊗[k] Aᵐᵒᵖ` and
+use the right action `m·(a ⊗ op(b))=b·m·a`.
+Balanced tensoring the enveloping bar terms
+`P_n=A ⊗[k] A^⊗(n+1)` gives
+`M ⊗_E P_n ≅ M ⊗[k] A^⊗n`.
+
+The first outer word factor acts on the right of `M` and the last
+acts on its left. These identifications commute with the bar and
+Hochschild differentials, giving a chain isomorphism. If `A` is
+projective over `k`, the bar resolves the lifted regular `E`-module
+`A` and identifies `HH_n(A,M)` with `L_n(M ⊗_E -)(A)`.
+The coefficient module needs no flatness or projectivity condition.
+
+## References
+
+* J.-L. Loday, *Cyclic Homology*, §1.1, for the bar and enveloping-algebra description of Hochschild homology.
 -/
 
 @[expose] public section
@@ -43,19 +56,34 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
   [SMulCommClass A Aᵐᵒᵖ M] [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- The original coefficient supplies the native right-enveloping balanced tensor functor. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. The coefficient balanced tensor is a functor from left
+`E`-modules in height `max(u,v)` to `k`-modules in
+`max(u,v,w)`, with value `M ⊗_E X`. -/
 def coefficientTensorFunctor :
     ModuleCat.{max u v} (EnvelopingAlgebra k A) ⥤ ModuleCat.{max u v w} k := by
   letI := EnvelopingCoefficient.rightEnvelopingModule k A M
   exact ModuleCat.BalancedTensor.functor k (EnvelopingAlgebra k A) M
 
-/-- Additivity is the property of the balanced tensor functor. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. The coefficient functor `F_M` is additive. -/
 instance coefficientTensorFunctor_additive : (coefficientTensorFunctor k A M).Additive := by
   letI := EnvelopingCoefficient.rightEnvelopingModule k A M
   exact ModuleCat.BalancedTensor.additive k (EnvelopingAlgebra k A) M
 
-/-- Native scalar restriction of the outer coordinate, compared with
-the original ground action on the induced tensor. -/
+/-- Let `k` be a commutative ring, `A` an associative unital `k`-algebra,
+`E=A ⊗[k] Aᵐᵒᵖ`, and `P_n=A ⊗[k] A^⊗(n+1)` with the outer
+left `E`-action. Restricting the scalar action to `k` gives the outer
+coordinate equivalence `P_n ≃ₗ[k] E ⊗[k] A^⊗n`, which records
+first and last outer factors and the middle word. -/
 def coefficientOuterCoordinate (n : ℕ) :
     ((ModuleCat.restrictScalars (algebraMap k (EnvelopingAlgebra k A))).obj
       (envelopingBarDegree k A n)) ≃ₗ[k]
@@ -65,19 +93,33 @@ def coefficientOuterCoordinate (n : ℕ) :
       (ModuleCat.compatibleRestrictScalarsEquiv k (EnvelopingAlgebra k A)
         ((EnvelopingAlgebra k A) ⊗[k] TensorPower k n A))
 
-/-- The restricted coordinate keeps exactly the original first/middle/opposite-last coordinate function. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `E=A ⊗[k] Aᵐᵒᵖ`. For a bar term element `x`,
+the restricted coordinate equivalence satisfies
+`coefficientOuterCoordinate_n(x)=TensorPower.outerCoordinate_n(x)`,
+recording the first and opposite last factors in `E` and the middle
+word in `A^⊗n`. -/
 theorem coefficientOuterCoordinate_apply (n : ℕ)
     (x : (ModuleCat.restrictScalars (algebraMap k (EnvelopingAlgebra k A))).obj
       (envelopingBarDegree k A n)) :
     coefficientOuterCoordinate k A n x = TensorPower.outerCoordinate k A n x := rfl
 
-/-- The restricted coordinate is equivariant for the original enveloping action. -/
+/-- Let `k` be a commutative ring, `A` an associative unital `k`-algebra,
+`E=A ⊗[k] Aᵐᵒᵖ`, and `P_n=A ⊗[k] A^⊗(n+1)` with the outer
+left `E`-action. The outer coordinates are `E`-equivariant:
+`ω_n(z·x)=z·ω_n(x)` for `z : E`, `x : P_n`. -/
 theorem coefficientOuterCoordinate_smul (n : ℕ) (z : EnvelopingAlgebra k A)
     (x : envelopingBarDegree k A n) :
     coefficientOuterCoordinate k A n (z • x) = z • coefficientOuterCoordinate k A n x := by
   exact (envelopingBarDegreeEquivBaseChange k A n).map_smul z x
 
-/-- Genuine native outer-coordinate transport followed by balancing cancellation. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Outer coordinates followed by balanced tensor cancellation
+give `Ψ_n : F_M(P_n) ≃ₗ[k] M ⊗[k] A^⊗n`. -/
 def coefficientTensorLevelEquiv (n : ℕ) :
     (coefficientTensorFunctor k A M).obj (envelopingBarDegree k A n) ≃ₗ[k]
       M ⊗[k] TensorPower k n A := by
@@ -88,7 +130,14 @@ def coefficientTensorLevelEquiv (n : ℕ) :
     (fun _ _ => rfl) (coefficientOuterCoordinate_smul k A n)).trans
       (TensorProduct.Balanced.cancelEquiv k (EnvelopingAlgebra k A) M (TensorPower k n A))
 
-/-- The balanced representative retains both original coefficient endpoints and the middle word. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. For `m : M`, first outer factor `a₀ : A`, and tail
+`a : Fin(n+1) → A`, the class `[m ⊗ (a₀ ⊗ tprod(a))]` maps to
+`((a_last·m)·a₀) ⊗ tprod(init(a))` under `Ψ_n`. -/
 theorem coefficientTensorLevelEquiv_mk_tprod (n : ℕ) (m : M) (a0 : A) (a : Fin (n + 1) → A) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     letI : Module k (envelopingBarDegree k A n).carrier :=
@@ -115,7 +164,14 @@ theorem coefficientTensorLevelEquiv_mk_tprod (n : ℕ) (m : M) (a0 : A) (a : Fin
   erw [coefficientOuterCoordinate_apply, TensorPower.outerCoordinate_tprod,
     TensorProduct.Balanced.cancelEquiv_mk_tmul, EnvelopingCoefficient.rightEnvelopingModule_tmul]
 
-/-- The original inverse inserts unit outer factors before the balanced quotient. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. For `m : M`, `a : Fin n → A`, the inverse of `Ψ_n`
+sends `m ⊗ tprod(a)` to the balanced class represented by
+`m ⊗ (1 ⊗ tprod(snoc(a,1)))`. -/
 theorem coefficientTensorLevelEquiv_symm_tprod (n : ℕ) (m : M) (a : Fin n → A) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     letI : Module k (envelopingBarDegree k A n).carrier :=
@@ -190,8 +246,15 @@ private theorem mulAdjacent_snoc_last (n : ℕ) (a : Fin (n + 1) → A) :
       (by simpa only [Fin.lt_def, Fin.val_last, Fin.val_castSucc] using j.isLt)]
     simp only [Fin.snoc_castSucc]
 
-/-- Every original adjacent face on the unit-outer inverse representative
-is the original coefficient Hochschild face, including both endpoint actions. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. For an inverse representative with unit outer factors,
+each adjacent bar face agrees under `Ψ_n` with the corresponding
+coefficient Hochschild face, including the right first-endpoint
+and left last-endpoint actions. -/
 private theorem coefficientTensor_unit_face (n : ℕ) (i : Fin (n + 2)) (m : M) (a : Fin (n + 1) → A) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     letI : Module k (envelopingBarDegree k A n).carrier :=
@@ -227,13 +290,26 @@ private theorem coefficientTensor_unit_face (n : ℕ) (i : Fin (n + 2)) (m : M) 
       coefficientTensorLevelEquiv_mk_tprod]
     simp only [Fin.snoc_last, Fin.init_snoc, op_one, one_smul]
 
-/-- The balanced tensor of the original enveloping bar, with native mapped differentials. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Applying `F_M` to the enveloping bar gives the coefficient
+tensor chain complex with term `F_M(P_n)` and differential the
+balanced tensor image of the bar differential. -/
 def coefficientTensorComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   ((coefficientTensorFunctor k A M).mapHomologicalComplex (ComplexShape.down ℕ)).obj
     (envelopingBar k A)
 
 omit [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M] in
-/-- The mapped boundary retains the original boundary on every balanced representative. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. On a balanced representative `[m ⊗ x]` in degree `n+1`,
+the mapped differential has value `[m ⊗ d_P(x)]` in degree `n`. -/
 theorem coefficientTensorComplex_d_mk (n : ℕ) (m : M) (x : envelopingBarDegree k A (n + 1)) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
     letI : Module k (envelopingBarDegree k A (n + 1)).carrier :=
@@ -252,8 +328,14 @@ theorem coefficientTensorComplex_d_mk (n : ℕ) (m : M) (x : envelopingBarDegree
   exact ModuleCat.BalancedTensor.map_mk k (EnvelopingAlgebra k A) M
     ((envelopingBar k A).d (n + 1) n) m x
 
-/-- Native balanced tensor cancellation commutes with the original complete
-coefficient Hochschild boundary in every degree. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. The degree equivalences satisfy
+`Ψ_n ∘ d_(F_M(P)) = d_HH ∘ Ψ_(n+1)`, intertwining the full
+bar and coefficient Hochschild boundaries. -/
 theorem coefficientTensorLevelEquiv_boundary (n : ℕ) :
     (coefficientTensorLevelEquiv k A M n).toLinearMap.comp
         ((coefficientTensorComplex k A M).d (n + 1) n).hom =
@@ -321,8 +403,13 @@ theorem coefficientTensorLevelEquiv_boundary (n : ℕ) :
     (g := (coefficientTensorLevelEquiv k A M (n + 1)).symm.toLinearMap)
     (coefficientTensorLevelEquiv k A M (n + 1)).symm.surjective).1 h
 
-/-- The coefficient tensor of the original enveloping bar is
-the original coefficient Hochschild chain complex, in all degrees. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. The maps `Ψ_n` form a chain isomorphism
+`F_M(P_*) ≅ C_*(A,M)` to the coefficient Hochschild complex. -/
 def coefficientTensorChainIso : coefficientTensorComplex k A M ≅
     ModuleCat.Algebra.Hochschild.chainComplex k A M :=
   HomologicalComplex.Hom.isoOfComponents
@@ -333,19 +420,37 @@ def coefficientTensorChainIso : coefficientTensorComplex k A M ≅
       apply ModuleCat.hom_ext
       exact (coefficientTensorLevelEquiv_boundary k A M j).symm)
 
-/-- The forward chain comparison is the original balanced cancellation in each degree. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. The degree-`n` forward component of the chain comparison
+is the balanced tensor equivalence `Ψ_n`. -/
 theorem coefficientTensorChainIso_hom_f (n : ℕ) :
     ((coefficientTensorChainIso k A M).hom.f n).hom =
       (coefficientTensorLevelEquiv k A M n).toLinearMap := rfl
 
-/-- The inverse chain comparison is the original unit-outer balanced representative map. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. The degree-`n` inverse component of the chain comparison
+is `Ψ_n⁻¹`, given by insertion of unit outer factors. -/
 theorem coefficientTensorChainIso_inv_f (n : ℕ) :
     ((coefficientTensorChainIso k A M).inv.f n).hom =
       (coefficientTensorLevelEquiv k A M n).symm.toLinearMap := rfl
 
-/-- The original coefficient Hochschild homology computes the native
-derived balanced tensor from the V11 original projective bar resolution.
-Ground projectivity is used only for that resolving bar, not for the coefficient. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Assume `A` is projective as a `k`-module. The resolving
+bar and chain comparison give
+`HH_n(A,M) ≅ L_n(F_M)(A_reg)`, where `A_reg` is the lifted
+left regular `E`-module with action `(a ⊗ op(b))·x=axb`. -/
 def coefficientHochschildHomologyIsoDerived [Module.Projective k A] (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.chainComplex k A M).homology n ≅
       ((coefficientTensorFunctor k A M).leftDerived n).obj (regularEnvelopingTarget k A) :=
@@ -360,8 +465,15 @@ variable {N : Type w'} [AddCommGroup N] [Module k N] [Module A N] [Module Aᵐ�
   [SMulCommClass A Aᵐᵒᵖ N] [SMulCommClass k A N] [SMulCommClass k Aᵐᵒᵖ N]
   [IsScalarTower k A N] [IsScalarTower k Aᵐᵒᵖ N]
 
-/-- The original coefficient map on the balanced tensor,
-with independent source and target coefficient carrier worlds. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `N` be another such bimodule and `f : M →ₗ[k] N`
+satisfy `f(a·m)=a·f(m)` and `f(m·a)=f(m)·a` for all `a,m`.
+The coefficient carriers may have different heights. The induced linear map on each balanced bar term
+`F_M(P_n) → F_N(P_n)` acts only on the coefficient factor. -/
 def coefficientTensorLevelMap (f : M →ₗ[k] N)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
     (hRight : ∀ (b : Aᵐᵒᵖ) (m : M), f (b • m) = b • f m) (n : ℕ) :
@@ -375,7 +487,15 @@ def coefficientTensorLevelMap (f : M →ₗ[k] N)
     (fun r m => EnvelopingCoefficient.rightEnvelopingAction_naturality k A M f hLeft hRight r m)
     (fun _ _ => rfl)
 
-/-- The balanced coefficient map applies only the original coefficient map. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `N` be another such bimodule and `f : M →ₗ[k] N`
+satisfy `f(a·m)=a·f(m)` and `f(m·a)=f(m)·a` for all `a,m`.
+The coefficient carriers may have different heights. On every balanced representative, the coefficient map
+has value `[m ⊗ x] ↦ [f(m) ⊗ x]`. -/
 theorem coefficientTensorLevelMap_mk (f : M →ₗ[k] N)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
     (hRight : ∀ (b : Aᵐᵒᵖ) (m : M), f (b • m) = b • f m) (n : ℕ) (m : M)
@@ -395,7 +515,15 @@ theorem coefficientTensorLevelMap_mk (f : M →ₗ[k] N)
     (fun r m => EnvelopingCoefficient.rightEnvelopingAction_naturality k A M f hLeft hRight r m)
     (fun _ _ => rfl) m x
 
-/-- The mapped bar differential is natural in the original coefficient map. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `N` be another such bimodule and `f : M →ₗ[k] N`
+satisfy `f(a·m)=a·f(m)` and `f(m·a)=f(m)·a` for all `a,m`.
+The coefficient carriers may have different heights. The degreewise coefficient maps commute with the
+mapped bar differentials: `d_N ∘ f_(n+1)=f_n ∘ d_M`. -/
 theorem coefficientTensorLevelMap_boundary (f : M →ₗ[k] N)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
     (hRight : ∀ (b : Aᵐᵒᵖ) (m : M), f (b • m) = b • f m) (n : ℕ) :
@@ -421,8 +549,17 @@ theorem coefficientTensorLevelMap_boundary (f : M →ₗ[k] N)
     (hdN.trans ((hmap').symm.trans
       (congrArg (coefficientTensorLevelMap k A M f hLeft hRight n) hdM.symm)))
 
-/-- Actual tensor-of-bar cancellation is natural in the original coefficient
-map in every degree, without identifying different carrier categories. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `N` be another such bimodule and `f : M →ₗ[k] N`
+satisfy `f(a·m)=a·f(m)` and `f(m·a)=f(m)·a` for all `a,m`.
+The coefficient carriers may have different heights. The equivalences satisfy
+`Ψ_n^N ∘ f_n = C_n(f) ∘ Ψ_n^M`, where the chain-level
+Hochschild coefficient map applies `f` to `M` and fixes all
+algebra word factors. -/
 theorem coefficientTensorLevelEquiv_naturality (f : M →ₗ[k] N)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
     (hRight : ∀ (b : Aᵐᵒᵖ) (m : M), f (b • m) = b • f m) (n : ℕ) :
@@ -476,7 +613,15 @@ variable {P : Type w} [AddCommGroup P] [Module k P] [Module A P] [Module Aᵐᵒ
   [SMulCommClass A Aᵐᵒᵖ P] [SMulCommClass k A P] [SMulCommClass k Aᵐᵒᵖ P]
   [IsScalarTower k A P] [IsScalarTower k Aᵐᵒᵖ P]
 
-/-- In a chosen common carrier category the coefficient maps form the native tensor-of-bar chain map. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `M′` be another such bimodule with the same carrier height
+`w`, and `f : M →ₗ[k] M′` preserve both left and right `A`-actions. At the common coefficient height, the degreewise
+balanced tensor maps form a chain map
+`F_M(P_*) → F_M′(P_*)`. -/
 def coefficientTensorComplexMap (f : M →ₗ[k] P)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
     (hRight : ∀ (b : Aᵐᵒᵖ) (m : M), f (b • m) = b • f m) :
@@ -488,7 +633,14 @@ def coefficientTensorComplexMap (f : M →ₗ[k] P)
     apply ModuleCat.hom_ext
     exact coefficientTensorLevelMap_boundary k A M f hLeft hRight j
 
-/-- The native original Hochschild coefficient chain map fixes every original algebra word. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `M′` be another such bimodule with the same carrier height
+`w`, and `f : M →ₗ[k] M′` preserve both left and right `A`-actions. The Hochschild coefficient chain map applies `f` to
+the coefficient and identity to every algebra factor. -/
 def originalCoefficientChainMap (f : M →ₗ[k] P)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
     (hRight : ∀ (b : Aᵐᵒᵖ) (m : M), f (b • m) = b • f m) :
@@ -501,7 +653,14 @@ def originalCoefficientChainMap (f : M →ₗ[k] P)
       exact ModuleCat.Algebra.Hochschild.linearMap_boundary_comm (NonUnitalAlgHom.id k A) f
         hLeft (fun a m => hRight (op a) m) n)
 
-/-- The forward chain comparison is natural in original coefficient maps. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `M′` be another such bimodule with the same carrier height
+`w`, and `f : M →ₗ[k] M′` preserve both left and right `A`-actions. The forward chain comparisons satisfy
+`tensorBar(f) ≫ Ψ_M′ = Ψ_M ≫ Hochschild(f)`. -/
 @[reassoc]
 theorem coefficientTensorChainIso_hom_naturality (f : M →ₗ[k] P)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
@@ -513,7 +672,14 @@ theorem coefficientTensorChainIso_hom_naturality (f : M →ₗ[k] P)
   apply ModuleCat.hom_ext
   exact coefficientTensorLevelEquiv_naturality k A M f hLeft hRight n
 
-/-- The inverse chain comparison is natural as well. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. Let `M′` be another such bimodule with the same carrier height
+`w`, and `f : M →ₗ[k] M′` preserve both left and right `A`-actions. The inverse chain comparisons satisfy
+`Ψ_M⁻¹ ≫ tensorBar(f) = Hochschild(f) ≫ Ψ_M′⁻¹`. -/
 @[reassoc]
 theorem coefficientTensorChainIso_inv_naturality (f : M →ₗ[k] P)
     (hLeft : ∀ (a : A) (m : M), f (a • m) = a • f m)
@@ -536,7 +702,13 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
   [SMulCommClass A Aᵐᵒᵖ M] [SMulCommClass k A M] [SMulCommClass k Aᵐᵒᵖ M]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
 
-/-- The chain isomorphism transports every original coefficient boundary pointwise. -/
+/-- Let `k` be a commutative ring, `A` an associative unital
+`k`-algebra, and `M` an `A`-bimodule with commuting left/right actions
+and a ground action compatible with both scalar towers. Put
+`E=A ⊗[k] Aᵐᵒᵖ`, acting on the right of `M` by
+`m·(a ⊗ op(b))=b·m·a`. Let `P_n=A ⊗[k] A^⊗(n+1)` be the
+enveloping bar terms and `F_M(X)=M ⊗_E X`. For every degree-`n+1` element `z` of the coefficient
+bar complex, `Ψ_n(d(z)) = d_HH(Ψ_(n+1)(z))`. -/
 theorem coefficientTensorLevelEquiv_boundary_apply (n : ℕ)
     (z : (coefficientTensorComplex k A M).X (n + 1)) :
     coefficientTensorLevelEquiv k A M n

@@ -1,4 +1,7 @@
-# Trunc LE'To Restriction f eq iso hom iso inv
+# Good-truncation comparison away from the boundary
 
-Away from the boundary, the comparison `K.truncLE' e ⟶ K.restriction e` is the identity of
-`K.X i'` up to the canonical isomorphisms.
+Let C have zero morphisms, let K be a c'-complex with homology in every degree, and let e:c→c'
+preserve and reflect relations with image closed under incoming differentials (IsTruncLE). Let
+κ:K.truncLE' e→K.restriction e be the comparison from the good restricted truncation. If
+e(i)=i' and i is not an outgoing boundary, both terms identify with K_{i'}. The component is
+θ_G.hom ≫ θ_R.inv, using the good-term and restriction coordinate isomorphisms.

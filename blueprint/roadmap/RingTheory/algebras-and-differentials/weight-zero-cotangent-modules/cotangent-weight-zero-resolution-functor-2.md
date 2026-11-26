@@ -1,3 +1,6 @@
-# Cotangent Weight Zero Resolution Functor Iso
+# The natural constant comparison for weight-zero resolutions
 
-The original zero-weight unitors are natural in every actual augmented-resolution map.
+The natural constant comparison for weight-zero resolutions.
+
+The weight-zero resolution functor is naturally isomorphic to the constant functor with value
+the constant simplicial `A`-module.

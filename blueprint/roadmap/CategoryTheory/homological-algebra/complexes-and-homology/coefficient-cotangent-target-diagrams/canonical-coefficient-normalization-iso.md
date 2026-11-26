@@ -1,4 +1,6 @@
-# Canonical Coefficient Normalization Iso
+# The additive normalization comparison for coefficient cotangent chains
 
-Additive normalization identifies the original coefficient complex with the
-normalized original proper-comparison cotangent diagram. No exactness of M tensor is used.
+The additive normalization comparison for coefficient cotangent chains.
+
+The ground coefficient chain model is isomorphic to normalized Moore chains of the coefficient
+cotangent diagram on the polynomial resolution of `B`.

@@ -1,3 +1,6 @@
-# Cyclic BTo First Two quasi Iso
+# The first-column quasi-isomorphism for a left-unital algebra
 
-Existence of an left unit makes the original comparison a quasi-isomorphism.
+The first-column quasi-isomorphism for a left-unital algebra.
+
+If `A` has an element `e` with `e*a = a` for all `a`, the inclusion of the `b`-complex into
+`CC^{(2)}(A)` is a quasi-isomorphism.

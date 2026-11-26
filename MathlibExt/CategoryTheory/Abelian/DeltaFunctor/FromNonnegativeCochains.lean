@@ -16,11 +16,12 @@ public import MathlibExt.Algebra.Homology.Embedding.UpNatToInt
 public import MathlibExt.Algebra.Homology.Embedding.ExtendExact
 
 /-!
-# δ-functors from nonnegative cochain families
+# Cohomological δ-functors of nonnegative cochain families
 
-The extension by zero supplies the missing predecessor of degree zero. The existing homology
-constructor supplies the connecting maps and exact sequence. Degree homology is identified through
-the extension isomorphism, with its naturality and boundary transport. Universality is separate.
+Let `A` be preadditive, `B` abelian, and `F : A → CochainComplex B ℕ`
+additive and preserving short exact sequences. Extension by zero outside
+nonnegative degrees gives a cohomological δ-functor with degree functor
+`Hⁿ(F(-))` and the connecting maps of the original cochain sequence.
 -/
 
 @[expose] public section
@@ -36,7 +37,10 @@ namespace CategoryTheory.CohomologicalDeltaFunctor
 variable (A : Type u₁) [Category.{v₁} A] [Preadditive A]
   (B : Type u₂) [Category.{v₂} B] [Abelian B]
 
-/-- The homology δ-functor of a nonnegative additive cochain family. -/
+/-- For a preadditive category `A`, an abelian category `B`, and an
+additive functor `F : A → CochainComplex B ℕ` preserving short
+exact sequences, the nonnegative cohomology functors of `F` form
+a cohomological δ-functor `A → B`. -/
 def ofNonnegativeCochains (F : A ⥤ CochainComplex B ℕ) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact) :
     CohomologicalDeltaFunctor A B :=
@@ -51,7 +55,10 @@ def ofNonnegativeCochains (F : A ⥤ CochainComplex B ℕ) [F.Additive]
     (fun X ↦ HomologicalComplex.isZero_homology_extendUpNat_neg
       (F.obj X) (-1) (by norm_num))
 
-/-- Its degree functor is naturally identified with the original Nat homology. -/
+/-- For additive short-exact-sequence-preserving
+`F : A → CochainComplex B ℕ`, with `A` preadditive and `B` abelian,
+the degree-`n` functor of the resulting δ-functor is naturally
+isomorphic to `F ⋙ homologyFunctor B (up ℕ) n`. -/
 def ofNonnegativeCochainsHomologyIso (F : A ⥤ CochainComplex B ℕ) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact) (n : ℕ) :
     (ofNonnegativeCochains A B F hF).T n ≅
@@ -63,7 +70,10 @@ def ofNonnegativeCochainsHomologyIso (F : A ⥤ CochainComplex B ℕ) [F.Additiv
     Functor.isoWhiskerLeft F
       (HomologicalComplex.homologyFunctorExtendUpNatIso (C := B) n)
 
-/-- A degree component is the homology comparison of the extension. -/
+/-- For additive short-exact-sequence-preserving
+`F : A → CochainComplex B ℕ`, with `A` preadditive and `B` abelian,
+the degree-`n` comparison at `X ∈ A` is the homology isomorphism
+from the extension-by-zero complex of `F(X)` to its original degree-`n` homology. -/
 theorem ofNonnegativeCochainsHomologyIso_hom_app
     (F : A ⥤ CochainComplex B ℕ) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)
@@ -84,7 +94,11 @@ theorem ofNonnegativeCochainsHomologyIso_hom_app
   simpa only [Functor.associator_hom_app, Functor.isoWhiskerLeft_hom,
     Functor.whiskerLeft_app, Category.id_comp] using hComponent
 
-/-- The connecting map agrees with the Nat boundary under those comparisons. -/
+/-- For additive short-exact-sequence-preserving
+`F : A → CochainComplex B ℕ`, with `A` preadditive and `B` abelian,
+the degree-`n` comparison carries the constructed connecting map
+to the boundary `Hⁿ(F(S.X₃)) → Hⁿ⁺¹(F(S.X₁))` of every
+short exact sequence `S` in `A`. -/
 theorem ofNonnegativeCochains_connecting_app
     (F : A ⥤ CochainComplex B ℕ) [F.Additive]
     (hF : ∀ S : ShortComplex.ShortExactSequences A, (S.obj.map F).ShortExact)

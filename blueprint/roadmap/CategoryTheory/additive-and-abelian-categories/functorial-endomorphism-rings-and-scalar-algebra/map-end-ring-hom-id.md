@@ -1,3 +1,5 @@
-# Map End Ring Hom id
+# The identity endomorphism-ring homomorphism of the identity functor
 
-The identity functor induces the identity endomorphism-ring morphism.
+The identity endomorphism-ring homomorphism of the identity functor.
+
+The identity functor induces the identity ring homomorphism on each endomorphism ring.

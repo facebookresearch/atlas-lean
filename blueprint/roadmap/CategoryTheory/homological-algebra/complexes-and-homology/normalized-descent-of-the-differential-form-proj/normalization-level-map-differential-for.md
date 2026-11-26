@@ -1,3 +1,6 @@
-# Normalization Level Map differential Forms
+# The degreewise factorization of coefficient-form projection through normalization
 
-Every descended degree has the original factorwise normalization representative law.
+The degreewise factorization of coefficient-form projection through normalization.
+
+In each degree, the factorwise normalized quotient map followed by the descended form-map
+component equals the coefficient-form component on the full tensor level.

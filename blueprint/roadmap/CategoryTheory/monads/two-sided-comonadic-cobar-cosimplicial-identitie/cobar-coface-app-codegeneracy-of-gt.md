@@ -1,3 +1,5 @@
-# Cobar Coface App codegeneracy of gt
+# The componentwise mixed cobar identity for a following coface
 
-Distant interchange for `j.castSucc < i` (dual of `of_gt`).
+The componentwise mixed cobar identity for a following coface.
+
+For `j<i`, the components satisfy `δ_(n+1)^(i+1) ≫ σ_(n+1)^j = σ_n^j ≫ δ_n^i`.

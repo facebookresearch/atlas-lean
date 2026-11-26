@@ -1,5 +1,5 @@
-# Precomp comp
+# Contravariant composition law for Hom cocycle precomposition
 
-Source-side precomposition is contravariantly functorial at fixed degree,
-turning precomposition with a composite into successive precompositions in reverse
-order; no target-side or shift claim.
+Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For z
+from H to K of degree n and maps f : F → G, g : G → H, precomposing z by g ∘ f equals first
+precomposing by g and then by f.

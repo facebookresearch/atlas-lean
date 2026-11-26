@@ -1,3 +1,6 @@
-# Normalized Hodge Complex Iso
+# The coproduct decomposition of normalized Hochschild chains by weight
 
-The sum of normalized image inclusions gives the full native Hodge complex isomorphism.
+The coproduct decomposition of normalized Hochschild chains by weight.
+
+The coproduct of normalized Eulerian image complexes is isomorphic to the normalized
+Hochschild complex, using local finiteness and the complete orthogonal projector family.

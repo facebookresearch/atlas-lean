@@ -15,12 +15,17 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.ContractionWedge
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
 /-!
-# Actual leading exterior determinant coefficients
+# Leading determinant functionals on exterior powers
 
-The coefficient functional uses the original exterior pairing on the actual
-dual coordinate tuple. When an outside basis index is absent from the other
-wedge factors, determinant expansion isolates that coordinate. No coefficient
-or containment model is supplied.
+Given a basis `b : I → M` over a commutative ring with ordered index type, prepend the
+coordinate `b.coord j` to the coordinates indexed by an ordered `n`-element subset `s`. Their
+exterior pairing defines a functional on `Λ^(n+1)_R M`.
+
+If every tail vector has zero `j`-coordinate, evaluation on `x ∧ a_0 ∧ ⋯ ∧ a_(n-1)` is the
+`j`-coordinate of `x` times the `s`-coordinate of the tail wedge. On an exterior basis vector
+indexed by `t` with `j ∉ t`, the value is `b.coord j x` when `s=t` and zero otherwise.
+
+Reference: Bourbaki, *Algebra*, Chapter III.
 -/
 
 public section
@@ -32,13 +37,21 @@ universe u v w
 variable {R : Type u} [CommRing R] {M : Type v} [AddCommGroup M] [Module R M]
 variable {I : Type w} [LinearOrder I] (b : Module.Basis I R M)
 
-/-- The actual determinant coefficient with an outside coordinate prepended to a basis tuple. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` indexed by a linearly
+ordered type `I`. For `n : ℕ` and `s : Set.powersetCard I n`, let `e_s : Fin n ↪o I` enumerate
+`s` in order. For `j : I`, define `φ_0=b.coord j` and `φ_(r+1)=b.coord(e_s r)`. The `R`-linear
+functional `leadingCoefficient b j s : Λ^(n+1)_R M → R` is the exterior pairing with
+`ιMulti_R(φ)`. No condition `j∉s` is imposed. -/
 def leadingCoefficient {n : ℕ} (j : I) (s : Set.powersetCard I n) :
     (⋀[R]^(n + 1) M) →ₗ[R] R :=
   pairingDual R M (n + 1)
     (ιMulti R (n + 1) (Fin.cons (b.coord j) (fun i => b.coord (Set.powersetCard.ofFinEmbEquiv.symm s i))))
 
-/-- The original determinant functional has its literal actual-coordinate matrix value. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` indexed by a linearly
+ordered type `I`. For `n : ℕ` and `s : Set.powersetCard I n`, let `e_s : Fin n ↪o I` enumerate
+`s` in order. For `j : I` and `a : Fin(n+1) → M`, `leadingCoefficient b j s (ιMulti_R
+a)=det(φ_k(a_i))`, with `φ_0=b.coord j` and `φ_(r+1)=b.coord(e_s r)`. Rows index input vectors
+and columns index these dual coordinates. -/
 theorem leadingCoefficient_ιMulti {n : ℕ} (j : I) (s : Set.powersetCard I n) (a : Fin (n + 1) → M) :
     leadingCoefficient b j s (ιMulti R (n + 1) a) =
       Matrix.det (Matrix.of (fun i k =>
@@ -47,7 +60,11 @@ theorem leadingCoefficient_ιMulti {n : ℕ} (j : I) (s : Set.powersetCard I n) 
   unfold leadingCoefficient
   rw [pairingDual_ιMulti_ιMulti]
 
-/-- The actual exterior determinant isolates an outside coordinate on a tuple with no outside factor. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` indexed by a linearly
+ordered type `I`. For `n : ℕ` and `s : Set.powersetCard I n`, let `e_s : Fin n ↪o I` enumerate
+`s` in order. Let `j : I`, `x : M`, and `a : Fin n → M` satisfy `b.coord j (a i)=0` for all
+`i`. Then `leadingCoefficient b j s (ιMulti_R(Fin.cons x a)) = b.coord j x * ιMultiDual R n b
+s (ιMulti_R a)`. -/
 theorem leadingCoefficient_cons {n : ℕ} (j : I) (s : Set.powersetCard I n) (x : M) (a : Fin n → M)
     (ha : ∀ i, b.coord j (a i) = 0) :
     leadingCoefficient b j s (ιMulti R (n + 1) (Fin.cons x a)) =
@@ -72,7 +89,10 @@ theorem leadingCoefficient_cons {n : ℕ} (j : I) (s : Set.powersetCard I n) (x 
   · intro h
     exact False.elim (h (Finset.mem_univ 0))
 
-/-- A leading exterior determinant vanishes on every different actual basis tuple without the outside index. -/
+/-- Let `R` be a commutative ring, `M` an `R`-module, and `b : Basis I R M` indexed by a linearly
+ordered type `I`. For `n : ℕ` and `s : Set.powersetCard I n`, let `e_s : Fin n ↪o I` enumerate
+`s` in order. Let `s,t` have cardinality `n`, `j∉t`, and `x : M`. Then `leadingCoefficient b j
+s (x ∧ (b.exteriorPower n t)) = if s=t then b.coord j x else 0`. -/
 theorem leadingCoefficient_wedge_basis {n : ℕ} (j : I) (s t : Set.powersetCard I n) (x : M)
     (hj : j ∉ t) :
     leadingCoefficient b j s (wedgeLeft R M x n (b.exteriorPower n t)) =

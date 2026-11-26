@@ -1,3 +1,6 @@
-# Unitization Quotient To Original
+# The reduced unitization map to its nonunital summand
 
-The original second projection descends through precisely the k·1 quotient.
+The reduced unitization map to its nonunital summand.
+
+The second projection descends to a ground-linear map `A⁺ / k·1 → A` sending the class of
+`(r,a)` to `a`.

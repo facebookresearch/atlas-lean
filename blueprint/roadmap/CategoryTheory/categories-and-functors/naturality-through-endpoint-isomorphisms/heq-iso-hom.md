@@ -1,3 +1,5 @@
-# Heq iso hom
+# Forward maps with identified endpoints
 
-From an `HEq` of isomorphisms over equal endpoints, an `HEq` of their `hom`s.
+In a category `C`, suppose `X = X′`, `Y = Y′`, and the
+isomorphisms `I : X ≅ Y`, `J : X′ ≅ Y′` agree after these
+endpoint identifications. Their forward maps also agree under the same identifications.

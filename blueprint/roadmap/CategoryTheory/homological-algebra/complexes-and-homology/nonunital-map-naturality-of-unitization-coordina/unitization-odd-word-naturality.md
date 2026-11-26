@@ -1,3 +1,6 @@
-# Unitization Odd Word naturality
+# Naturality of unit-leading unitization words
 
-The map preserves the external unit and original odd ideal word.
+Naturality of unit-leading unitization words.
+
+The normalized map retains the external unit coefficient and sends every ideal tail entry
+through `f`, giving the corresponding odd word for `B`.

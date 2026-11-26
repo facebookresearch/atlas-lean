@@ -15,15 +15,17 @@ public import MathlibExt.Data.Fin.Tuple.StableSort
 public import Mathlib.Logic.Equiv.Sum
 
 /-!
-# Actual stable-sort expansion and Eulerian composition
+# Stable-sort sums and Eulerian composition
 
-Every original finite labeling contributes its actual stable sorting
-permutation with its actual sign. The exact stable-sort fiber count is the
-original descent polynomial at the alphabet size. Successive stable sorting
-and the original product-alphabet bijection prove multiplication
-of the evaluated Eulerian elements multiplies their positive integer
-parameters. Zero parameters and degree zero are retained explicitly.
-No Eulerian composition or projector certificate is supplied.
+The element `C_n(m) = ∑ f : Fin n → Fin m, sign(sort f) [sort f]` in `ℚ[S_n]` equals the
+rational Eulerian convolution value `Λ_n(m)`.
+
+For all natural alphabet sizes `a,b`, successive stable sorting gives `C_n(a)C_n(b)=C_n(b*a)`.
+Consequently `Λ_n(a)Λ_n(b)=Λ_n(a*b)`. Zero alphabet size and the empty word are included in
+these identities.
+
+References: Stanley, *Enumerative Combinatorics*, Volume 1, Chapters 1 and 3; Loday, *Cyclic
+Homology*, Section 4.5.
 -/
 
 @[expose] public section
@@ -33,11 +35,14 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- The actual signed group-ring sum of native stable sorting permutations of original labels. -/
+/-- For `n,m : ℕ`, `signedStableSortElement n m = ∑ f : Fin n → Fin m, sign(Tuple.sort f)
+[Tuple.sort f]` in `ℚ[S_n]`. -/
 def signedStableSortElement (n m : ℕ) : MonoidAlgebra ℚ (Perm (Fin n)) :=
   ∑ f : Fin n → Fin m, MonoidAlgebra.single (Tuple.sort f) (((Tuple.sort f).sign : ℤ) : ℚ)
 
-/-- The exact signed native sorting sum is the original evaluated Eulerian element. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)`, `P_(n,d)(X) = (1/n!)∏_(j=0)^(n-1)(X+j-d)`, and
+`Λ_n(t) = ∑ σ ∈ S_n, P_(n,descentNumber σ)(t) sign(σ) [σ]` in `ℚ[S_n]`. For every `m : ℕ`,
+`signedStableSortElement n m = Λ_n(m)`. -/
 theorem signedStableSortElement_eq_eulerianLambda (n m : ℕ) :
     signedStableSortElement n m = eulerianLambda n (m : ℚ) := by
   classical
@@ -85,7 +90,8 @@ theorem signedStableSortElement_eq_eulerianLambda (n m : ℕ) :
         simpa only [Nat.cast_succ, hdegree] using he
       rw [he₂]
 
-/-- Multiplying the actual native signed sorting sums multiplies the original alphabet sizes. -/
+/-- For `n,a,b : ℕ`, `signedStableSortElement n a * signedStableSortElement n b =
+signedStableSortElement n (b*a)` in `ℚ[S_n]`. -/
 theorem signedStableSortElement_mul (n a b : ℕ) :
     signedStableSortElement n a * signedStableSortElement n b = signedStableSortElement n (b * a) := by
   classical
@@ -113,7 +119,9 @@ theorem signedStableSortElement_mul (n a b : ℕ) :
   rw [show Tuple.successiveStableFinLabelsEquiv n a b (e.symm h) = h from e.apply_symm_apply h] at hp
   rw [← hp]
 
-/-- The actual Eulerian polynomial elements satisfy the original natural-parameter composition law. -/
+/-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)`, `P_(n,d)(X) = (1/n!)∏_(j=0)^(n-1)(X+j-d)`, and
+`Λ_n(t) = ∑ σ ∈ S_n, P_(n,descentNumber σ)(t) sign(σ) [σ]` in `ℚ[S_n]`. For `a,b : ℕ`, `Λ_n(a)
+* Λ_n(b) = Λ_n(a*b)`, with all natural parameters coerced to `ℚ`. -/
 theorem eulerianLambda_mul_nat (n a b : ℕ) :
     eulerianLambda n (a : ℚ) * eulerianLambda n (b : ℚ) = eulerianLambda n ((a * b : ℕ) : ℚ) := by
   rw [← signedStableSortElement_eq_eulerianLambda,

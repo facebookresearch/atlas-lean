@@ -15,11 +15,15 @@ public import Mathlib.RingTheory.Finiteness.Basic
 import Mathlib.RingTheory.Finiteness.Ideal
 
 /-!
-# Finiteness of fixed associated-graded pieces
+# Finite generation in a fixed graded degree
 
-Finite generation of the filtration ideal makes every ring piece finite over the degree-zero
-quotient. If the filtered module is finite as well, every module piece is finite. These named
-providers use only finite-generation hypotheses and preserve the literal quotient carriers.
+Let `R` be a commutative ring and `I` a finitely generated ideal. For every `n : ℕ`, the
+quotient `I^n/I^(n+1)` is a finitely generated module over `R/I`.
+
+If `M` is a finitely generated `R`-module, then each module piece `I^n M/I^(n+1) M` is also
+finitely generated over `R/I`.
+
+References: Atiyah and Macdonald, *Introduction to Commutative Algebra*, Chapters 2 and 10.
 -/
 
 @[expose] public section
@@ -34,7 +38,9 @@ universe u v
 
 variable {R : Type u} [CommRing R]
 
-/-- If `I` is finitely generated, its degree-`n` associated-graded piece is finite over `R ⧸ I`. -/
+/-- Let `R` be a commutative ring, `I : Ideal R` a finitely generated ideal (`I.FG`), and `n : ℕ`.
+The degree-`n` quotient `I.AssociatedGradedPiece n = I^n/I^(n+1)` is a finitely generated
+`R/I`-module: `Module.Finite (R ⧸ I) (I.AssociatedGradedPiece n)`. -/
 theorem associatedGradedPiece_finite_of_fg
     (I : Ideal R) (hI : I.FG) (n : ℕ) :
     Module.Finite (R ⧸ I) (I.AssociatedGradedPiece n) := by
@@ -42,8 +48,9 @@ theorem associatedGradedPiece_finite_of_fg
     Module.Finite.iff_fg.mpr (Ideal.FG.pow hI)
   infer_instance
 
-/-- If `I` and `M` are finite, the degree-`n` associated-graded module piece is finite over
-`R ⧸ I`. -/
+/-- Let `R` be a commutative ring, `M` a finitely generated `R`-module, and `I : Ideal R` a
+finitely generated ideal (`I.FG`). For every `n : ℕ`, `I.AssociatedGradedModulePiece M n = I^n
+M/I^(n+1) M` is a finitely generated module over `R/I`. -/
 theorem associatedGradedModulePiece_finite_of_fg
     (I : Ideal R) (M : Type v)
     [AddCommGroup M] [Module R M] [Module.Finite R M]

@@ -1,3 +1,4 @@
-# Ordered First Equiv apply
+# The first-value equivalence is ordered insertion
 
-The inverse decomposition keeps the actual native insertion function.
+Let `n : ℕ`, `i : Fin(n+1)`, and `π : Equiv.Perm (Fin n)`. Write `ν_i(j) = i.succAbove j` for
+the increasing embedding that omits `i`. `orderedFirstEquiv n (i,π) = orderedFirst i π`.

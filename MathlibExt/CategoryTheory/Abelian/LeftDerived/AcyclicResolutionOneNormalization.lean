@@ -15,7 +15,13 @@ public import MathlibExt.Algebra.Homology.ChainComplexDegreeOneNormalization
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolution
 
 /-!
-# The kernel-tail horseshoe normalizes degree one with sign -1
+# The degree-one sign of the kernel-tail comparison
+
+Let `C`, `D` be abelian, with projective resolutions in `C`,
+and `F : C → D` additive and preserving finite colimits. The
+kernel-tail horseshoe boundary identifies degree-one derived
+homology with the kernel of the mapped augmentation inclusion
+with a minus sign.
 -/
 
 @[expose] public section
@@ -28,10 +34,17 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency false in
-/--
+/- Proof implementation note.
 The degree-one horseshoe boundary, followed by the original degree-zero quotient comparison, is
 the negative of the unsigned original kernel comparison.
 -/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`P` a projective resolution of `X`, and `F : C → D` additive
+and preserving finite colimits. The degree-one-to-zero boundary
+of the mapped kernel-tail horseshoe, followed by its degree-zero
+comparison, is the negative of the canonical preserved-kernel-tail
+map into `kernel(F(kernel.ι P.π₀))`. -/
 theorem normalizationKernelTail_mappedBoundary_zero_sign {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F] :
     ((normalizationKernelTailHorseshoe P).mapped_shortExact
@@ -104,7 +117,15 @@ theorem normalizationKernelTail_mappedBoundary_zero_sign {X : C} (P : Projective
 variable [HasProjectiveResolutions C]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The SAME derived boundary retains the degree-one minus sign. -/
+/- Proof implementation note.
+The SAME derived boundary retains the degree-one minus sign.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`P` a projective resolution of `X`, and `F : C → D` additive
+and preserving finite colimits. The native left-derived boundary
+for `kernel(P.π₀) → P⁰ → X`, followed by the degree-zero
+comparison, is the negative preserved-kernel-tail map from `L₁F(X)`. -/
 theorem normalizationKernelTail_nativeBoundary_zero_sign {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F] :
     (P.isoLeftDerivedObj F 1).inv ≫
@@ -123,7 +144,16 @@ theorem normalizationKernelTail_nativeBoundary_zero_sign {X : C} (P : Projective
     (normalizationKernelTail_mappedBoundary_zero_sign P F)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Under the original kernel iso the retained degree-one comparison has sign -1. -/
+/- Proof implementation note.
+Under the original kernel iso the retained degree-one comparison has sign -1.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and `P`
+a projective resolution whose terms are `F`-acyclic. The
+degree-one derived kernel comparison composed with
+`P.isoLeftDerivedObj F 1` inverse equals the negative canonical
+preserved-kernel-tail homology comparison. -/
 theorem normalizationAcyclicProjective_one_kernel {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q n : ℕ, IsZero ((F.leftDerived (n + 1)).obj (P.complex.X q))) :
@@ -140,7 +170,15 @@ theorem normalizationAcyclicProjective_one_kernel {X : C} (P : ProjectiveResolut
     (normalizationKernelTail_nativeBoundary_zero_sign P F)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- In degree one the retained acyclic comparison is the negative of the SAME projective comparison. -/
+/- Proof implementation note.
+In degree one the retained acyclic comparison is the negative of the SAME projective comparison.
+-/
+
+/-- Let `C`, `D` be abelian, with projective resolutions in `C`,
+`F : C → D` additive and preserving finite colimits, and `P`
+a projective resolution with `L_(n+1)F(P^q)=0` for all `q,n`.
+The degree-one acyclic comparison has forward map equal to
+the negative of the canonical projective-resolution comparison. -/
 theorem normalizationAcyclicProjective_one {X : C} (P : ProjectiveResolution X)
     (F : C ⥤ D) [F.Additive] [PreservesFiniteColimits F]
     (hP : ∀ q n : ℕ, IsZero ((F.leftDerived (n + 1)).obj (P.complex.X q))) :

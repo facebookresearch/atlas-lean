@@ -13,19 +13,15 @@ public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.LinearAlgebra.TensorProduct.Map
 
 /-!
-# Actual ring-equivalence tensor transport in an independent module world
+# Balanced tensor products under a scalar-ring equivalence
 
-The stock scalar restriction equivalence preserves the original two
-carriers. Native semilinear `TensorProduct.congr` identifies their actual
-balanced tensors over the two scalar rings. The ring worlds and the common
-module world are independent; the output world is explicitly large enough
-for both scalar rings. No monoidal unit or desired tensor certificate is
-an input.
+Let `e : R ≃+* S` be an equivalence of commutative rings in independent universes. For
+`S`-modules `M` and `N`, restriction of scalars along `e` gives an `R`-linear isomorphism
+`(Res_e M) ⊗[R] (Res_e N) ≅ Res_e(M ⊗[S] N)`.
 
-The native semilinear proof is the one used in the retained
-`ModuleCat/RingEquivTensor.lean`; the latter's monoidal wrapper has a real
-same-world signature. This declaration exposes the independent-world
-balanced tensor itself rather than instantiating that wrapper by cumulativity.
+The isomorphism and its inverse send pure tensors to pure tensors with the same coefficient
+values. It is natural in both module maps. The common module universe includes the two scalar-
+ring universes and an independent coefficient-size parameter.
 -/
 
 @[expose] public section
@@ -42,8 +38,10 @@ namespace ModuleCat.RingEquivUniverse
 variable {R : Type u} {S : Type v} [CommRing R] [CommRing S] (e : R ≃+* S)
 
 
-/-- The actual restriction-of-scalars tensor comparison, built from the
-two native semilinear identity carrier equivalences. -/
+/-- The balanced tensor comparison along a ring equivalence.
+
+For `e : R ≃+* S` and `S`-modules `M, N`, the semilinear identity maps on their carriers give
+an `R`-module isomorphism `(Res_e M) ⊗[R] (Res_e N) ≅ Res_e(M ⊗[S] N)`. -/
 def tensorIso (M N : ModuleCat.{max u v w} S) :
     ModuleCat.of R (((ModuleCat.restrictScalars.{max u v w} e.toRingHom).obj M) ⊗[R] ((ModuleCat.restrictScalars.{max
       u v w} e.toRingHom).obj N)) ≅
@@ -77,17 +75,28 @@ def tensorIso (M N : ModuleCat.{max u v w} S) :
         exact q.map_smulₛₗ r x }
   exact l.toModuleIso
 
+/-- The forward tensor formula along a ring equivalence.
+
+The comparison sends `m ⊗ₜ[R] n` in the tensor product of restricted modules to `m ⊗ₜ[S] n` in
+the restricted `S`-tensor product. -/
 theorem tensorIso_hom_tmul (M N : ModuleCat.{max u v w} S)
     (m : (ModuleCat.restrictScalars.{max u v w} e.toRingHom).obj M)
     (n : (ModuleCat.restrictScalars.{max u v w} e.toRingHom).obj N) :
     (tensorIso e M N).hom (m ⊗ₜ[R] n) = m ⊗ₜ[S] n := rfl
 
+/-- The inverse tensor formula along a ring equivalence.
+
+The inverse comparison sends `m ⊗ₜ[S] n` to the pure `R`-tensor of the same elements in the
+restricted coefficient modules. -/
 theorem tensorIso_inv_tmul (M N : ModuleCat.{max u v w} S) (m : M) (n : N) :
     (tensorIso e M N).inv (m ⊗ₜ[S] n) =
       (show (ModuleCat.restrictScalars.{max u v w} e.toRingHom).obj M from m) ⊗ₜ[R]
         (show (ModuleCat.restrictScalars.{max u v w} e.toRingHom).obj N from n) := rfl
 
-/-- The canonical comparison is natural in both original module maps. -/
+/-- Naturality of the ring-equivalence tensor comparison.
+
+For `S`-linear maps `f : M → M'` and `g : N → N'`, restricting their maps and tensoring over
+`R` commutes with the comparison to the restriction of `f ⊗[S] g`. -/
 @[reassoc]
 theorem tensorIso_naturality {M N M' N' : ModuleCat.{max u v w} S}
     (f : M ⟶ M') (g : N ⟶ N') :

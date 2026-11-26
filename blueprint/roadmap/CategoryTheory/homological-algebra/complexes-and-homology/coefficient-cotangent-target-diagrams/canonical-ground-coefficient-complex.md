@@ -1,3 +1,6 @@
-# Canonical Ground Coefficient Complex
+# The ground coefficient cotangent chain model
 
-The coefficient cotangent complex, with the original k-action obtained by restriction.
+The ground coefficient cotangent chain model.
+
+This is the ground restriction of `M ⊗[B] L_{B/k}`, where `L_{B/k}` is the normalized
+polynomial cotangent complex.

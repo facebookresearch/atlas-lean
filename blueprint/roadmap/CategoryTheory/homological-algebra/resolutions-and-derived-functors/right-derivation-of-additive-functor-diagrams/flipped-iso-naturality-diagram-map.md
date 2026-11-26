@@ -1,3 +1,6 @@
-# Flipped Iso naturality diagram Map
+# Flipped derived comparison is natural in maps of additive-functor diagrams
 
-A map of additive diagrams commutes with the canonical flipped comparison.
+Let `C,E` be abelian, with injective resolutions in `C`, and
+`Φ,Ψ : J → (C → E)` be diagrams of additive functors. A map
+`α : Φ → Ψ` commutes with the forward comparisons
+`R^n(flip Φ) ≅ flip(R^nΦ)` and `R^n(flip Ψ) ≅ flip(R^nΨ)`.

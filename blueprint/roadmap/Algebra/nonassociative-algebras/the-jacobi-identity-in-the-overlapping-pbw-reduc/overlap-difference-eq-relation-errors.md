@@ -1,4 +1,6 @@
-# Overlap difference eq relation Errors
+# The Jacobi relation among overlapping reduction paths
 
-The two overlapping reduction paths differ only by degree-two relation
-errors. Jacobi removes the potential degree-one remainder over every ring.
+The Jacobi relation among overlapping reduction paths.
+
+The left-first expansion minus the right-first expansion equals `r([y,z],x) + r(y,[x,z]) +
+r([x,y],z)`; Jacobi removes the degree-one remainder.

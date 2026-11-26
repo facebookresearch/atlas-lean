@@ -1,3 +1,6 @@
-# Cyclic BSBIConnecting
+# The SBI boundary into left-unital Hochschild homology
 
-The native SBI boundary with its target computed by the original b-complex.
+The SBI boundary into left-unital Hochschild homology.
+
+The connecting morphism, followed by the inverse two-column comparison, gives `B_n : HC_n(A) →
+H_(n+1)(b(A))`.

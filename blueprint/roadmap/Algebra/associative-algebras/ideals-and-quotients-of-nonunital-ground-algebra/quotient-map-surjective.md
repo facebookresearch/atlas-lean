@@ -1,3 +1,5 @@
-# Quotient Map surjective
+# Surjectivity of the nonunital quotient homomorphism
 
-The actual quotient is surjective in the original carrier world.
+Surjectivity of the nonunital quotient homomorphism.
+
+Every class in `A/I` is represented by an element of `A`.

@@ -1,3 +1,6 @@
-# Normalized Polynomial Eulerian Homology Projector
+# The pure Eulerian weight of normalized polynomial Hochschild homology
 
-Native normalization earns the same full polynomial HH purity on the original normalized homology.
+The pure Eulerian weight of normalized polynomial Hochschild homology.
+
+On degree-`n` normalized polynomial homology, the weight-`i` projector is the identity if
+`i=n` and zero otherwise.

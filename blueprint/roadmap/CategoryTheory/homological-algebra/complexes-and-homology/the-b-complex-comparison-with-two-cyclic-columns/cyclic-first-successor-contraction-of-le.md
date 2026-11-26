@@ -1,3 +1,6 @@
-# Cyclic First Successor Contraction Of Left Unit
+# The odd-column quotient contraction from a left unit
 
-An left unit contracts the signed, shifted quotient of the first successor step.
+The odd-column quotient contraction from a left unit.
+
+If `e*a = a` for every `a ∈ A`, the `b′` contraction transports to a contraction of the
+signed, degree-shifted quotient in the first partial-total successor sequence.

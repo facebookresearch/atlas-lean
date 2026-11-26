@@ -1,4 +1,6 @@
-# Tensor Obj eq
+# Congruence of graded tensor objects
 
-Congruence for a graded tensor object after substituting both carrier
-equalities, including their dependent tensor-existence instances.
+Congruence of graded tensor objects.
+
+For graded objects `X, Y, X', Y'` whose tensor coproducts exist, equalities `X = X'` and `Y =
+Y'` imply equality of their graded tensor objects.

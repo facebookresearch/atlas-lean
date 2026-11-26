@@ -1,3 +1,6 @@
-# Unitization Scalar Complex Inclusion
+# The lifted scalar inclusion on regular Hochschild complexes
 
-The scalar inclusion acts on every original coefficient and tensor factor.
+The lifted scalar inclusion on regular Hochschild complexes.
+
+Apply the scalar section to the regular coefficient and each tail entry to obtain `b(ULift.{v}
+k) → b(A⁺)`.

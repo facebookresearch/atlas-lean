@@ -1,4 +1,4 @@
 # Snake Lemma Functor
 
-- [Map Exact Functor](map-exact-functor.md)
-- [Map Exact Functor δ](map-exact-functor-2.md)
+- [An exact functor carries a snake-lemma diagram to a snake-lemma diagram](map-exact-functor.md)
+- [An exact functor preserves the snake connecting morphism](map-exact-functor-2.md)

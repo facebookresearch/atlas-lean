@@ -12,12 +12,15 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.IdealCountFaces
 
 /-!
-# Ideal images in filtration zero
+# The ideal image equals the bottom naive filtration stage
 
-The tensorized ideal inclusion and its kernel
-lift have image equal to the bottom naive
-filtration stage. This image equality does
-not require injectivity or a tensor splitting.
+A word of length N has at least N ideal entries exactly when every entry belongs to I. Hence
+the all-ideal tensor span is the range of the tensorized inclusion I^⊗N → A^⊗N.
+
+The relative naive word map is injective because it is a quotient-kernel inclusion in tensor
+coordinates. Comparing the ideal-to-kernel map through that inclusion identifies its component
+range with F_0. This proves the image equality without assuming a splitting of the ideal
+sequence.
 -/
 
 @[expose] public section
@@ -35,7 +38,8 @@ variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Requiring as many ideal entries as the original word length means every entry lies in the ideal. -/
+/-- Let k be commutative, A a nonunital k-module ring and I a k-subalgebra. For a : Fin n → A, n ≤
+idealEntryCount a if and only if a_i ∈ I for every i : Fin n. -/
 theorem idealEntryCount_length_le_iff {n : ℕ} (a : Fin n → A) :
     n ≤ idealEntryCount k A I a ↔ ∀ i, a i ∈ I.toSubmodule := by
   classical
@@ -55,7 +59,9 @@ theorem idealEntryCount_length_le_iff {n : ℕ} (a : Fin n → A) :
     simp
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- The all-ideal word span is the image of the original ideal inclusion on every tensor factor. -/
+/-- Let k be commutative, A a nonunital k-module ring and I a k-subalgebra. For n : ℕ,
+idealWordSpan n n equals the range of PiTensorProduct.map (fun _ => I.subtypeHom) : I^⊗n →
+A^⊗n. -/
 theorem idealWordSpan_all_eq_range (n : ℕ) :
     idealWordSpan k A I n n = LinearMap.range
       (PiTensorProduct.map (fun _ : Fin n => (I.subtypeHom : I.Algebra →ₗ[k] A))) := by
@@ -77,7 +83,10 @@ theorem idealWordSpan_all_eq_range (n : ℕ) :
     intro i
     exact (b i).property
 
-/-- The original quotient-kernel word inclusion is injective in its tensor coordinates. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. For each n : ℕ, relativeNaiveWordMap n : K_b.X n → A^⊗(n+1) is injective. -/
 theorem relativeNaiveWordMap_injective (n : ℕ) :
     Function.Injective (relativeNaiveWordMap k A I n) := by
   let g := ((kernel.ι (cyclicBComplexHom I.quotientMap)).f n).hom
@@ -86,7 +95,12 @@ theorem relativeNaiveWordMap_injective (n : ℕ) :
       inferInstance
   exact (TensorPower.consEquiv k A n).injective.comp hg
 
-/-- The ideal-to-kernel lift has the original tensorized ideal inclusion as its word map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. In degree n, relativeNaiveWordMap composed with idealToRelativeNaiveComplex equals
+the tensorized ideal inclusion I^⊗(n+1) → A^⊗(n+1) after TensorPower.consEquiv on the ideal
+complex. -/
 theorem relativeNaiveWordMap_idealToRelative (n : ℕ) :
     (relativeNaiveWordMap k A I n).comp ((idealToRelativeNaiveComplex k A I).f n).hom =
       (PiTensorProduct.map (fun _ : Fin (n + 1) => (I.subtypeHom : I.Algebra →ₗ[k] A))).comp
@@ -103,7 +117,11 @@ theorem relativeNaiveWordMap_idealToRelative (n : ℕ) :
       (TensorPower.consLevelMap (I.subtypeHom : I.Algebra →ₗ[k] A) n) = _
   exact TensorPower.consEquiv_naturality (I.subtypeHom : I.Algebra →ₗ[k] A) n
 
-/-- The bottom naive filtration stage is precisely the image of the original ideal chain map. -/
+/-- Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication and I a
+two-sided nonunital k-subalgebra. Let K_b be the relative naive quotient kernel. Write F_p,n
+for naiveWordFiltration p n and L_p,n for its predecessor, zero at p = 0 and F_(p−1),n
+otherwise. For n : ℕ, naiveWordFiltration 0 n equals range ((idealToRelativeNaiveComplex).f
+n).hom. This is an image equality and uses no split-quotient hypothesis. -/
 theorem naiveWordFiltration_zero_eq_range (n : ℕ) :
     naiveWordFiltration k A I 0 n =
       LinearMap.range ((idealToRelativeNaiveComplex k A I).f n).hom := by

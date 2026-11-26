@@ -17,17 +17,32 @@ public import MathlibExt.Algebra.Homology.TotalComplexFirstColumn
 public import Mathlib.Algebra.Algebra.Tower
 
 /-!
-# Degree-one cyclic homology and universal differentials
+# Degree-one cyclic homology and exact differential forms
 
-For a commutative k-algebra A, degree-one cyclic homology
-is identified with Ω(A/k) modulo the image of the ground-linear
-universal derivation d. This quotient and comparison are
-k-linear: the image of d need not be an A-submodule.
-The degree-two Hochschild boundary has the ordered Kähler
-presentation formula.
+Let k be a commutative ring and A a commutative unital k-algebra.
+There is a k-linear isomorphism
+HC_1(A/k) ≅ Ω_{A/k} / Im_k(d),
+where d : A → Ω_{A/k} is the universal k-derivation and the quotient
+uses its k-linear image. The comparison sends the cyclic tensor class
+[a ⊗ b] to [a db], and its inverse sends [a db] to that tensor class.
 
-References: Loday, Cyclic Homology, Proposition 2.1.14
-and Corollary 2.1.10.
+In ordered tensor coordinates, the regular Hochschild boundary is
+b_2(a ⊗ b ⊗ c) = ab ⊗ c − a ⊗ bc + ca ⊗ b.
+The degree-one mixed presentation has first arrow
+C_2 ⊕ C_0 → C_1, (x,y) ↦ b_2(x) + B_0(y), and b_1 = 0.
+The stored Connes value is B_0(a) = 1 ⊗ a + a ⊗ 1; modulo the
+b_2-image it represents da.
+
+The one- and two-factor tensor coordinate isomorphisms hold for any
+semimodule over a commutative semiring. For a nonunital associative
+k-bilinear ring, the Hochschild complex still maps to the cyclic total
+through its first column, naturally after common carrier lifting.
+For unital commutative algebras, the degree-one quotient isomorphism
+is natural in algebra homomorphisms. Its categorical target is the
+whole-module lift ULift.{u} Q_A in ModuleCat at max{u,v}.
+
+References: J.-L. Loday, Cyclic Homology, Proposition 2.1.14 and
+Corollary 2.1.10.
 -/
 
 @[expose] public section
@@ -44,30 +59,41 @@ section Coordinates
 
 variable (k : Type u) (A : Type v) [CommSemiring k] [AddCommMonoid A] [Module k A]
 
-/-- The native singleton tensor equivalence gives the degree-one coordinates. -/
+/-- Let k be a commutative semiring and A a k-semimodule.
+The singleton tensor coordinates give the k-linear equivalence
+A ⊗[k] A^{⊗1} ≃ A ⊗[k] A, retaining the first and single
+tail factors in order. -/
 def chainOneEquiv : A ⊗[k] TensorPower k 1 A ≃ₗ[k] A ⊗[k] A :=
   TensorProduct.congr (LinearEquiv.refl k A)
     (PiTensorProduct.subsingletonEquiv (R := k) (s := fun _ : Fin 1 => A) 0)
 
-/-- The equivalence retains the original coefficient and the single algebra factor. -/
+/-- Let k be a commutative semiring and A a k-semimodule.
+For a ∈ A and s : Fin 1 → A, the singleton coordinate
+isomorphism sends a ⊗ tprod(s) to a ⊗ s_0. -/
 lemma chainOneEquiv_tprod (a : A) (s : Fin 1 → A) :
     chainOneEquiv k A (a ⊗ₜ[k] PiTensorProduct.tprod k s) = a ⊗ₜ[k] s 0 := by
   simp only [chainOneEquiv, TensorProduct.congr_tmul, LinearEquiv.refl_apply,
     PiTensorProduct.subsingletonEquiv_apply_tprod]
 
-/-- The inverse inserts the singleton tensor, without a chosen coordinate map. -/
+/-- Let k be a commutative semiring and A a k-semimodule.
+The inverse singleton coordinate isomorphism sends a ⊗ b to
+a ⊗ tprod(j ↦ b), for the one-entry family on Fin 1. -/
 lemma chainOneEquiv_symm_tmul (a b : A) :
     (chainOneEquiv k A).symm (a ⊗ₜ[k] b) =
       a ⊗ₜ[k] PiTensorProduct.tprod k (fun _ : Fin 1 => b) := by
   apply (chainOneEquiv k A).injective
   rw [LinearEquiv.apply_symm_apply, chainOneEquiv_tprod]
 
-/-- Native cons and singleton equivalences give the ordered degree-two coordinates. -/
+/-- Let k be a commutative semiring and A a k-semimodule.
+The ordered degree-two tensor coordinates give a k-linear
+equivalence A ⊗[k] A^{⊗2} ≃ A ⊗[k] (A ⊗[k] A). -/
 def chainTwoEquiv : A ⊗[k] TensorPower k 2 A ≃ₗ[k] A ⊗[k] (A ⊗[k] A) :=
   TensorProduct.congr (LinearEquiv.refl k A)
     ((TensorPower.consEquiv k A 1).symm.trans (chainOneEquiv k A))
 
-/-- The degree-two equivalence preserves all three original tensor factors in order. -/
+/-- Let k be a commutative semiring and A a k-semimodule.
+For a ∈ A and s : Fin 2 → A, the two-tail coordinate
+isomorphism sends a ⊗ tprod(s) to a ⊗ (s_0 ⊗ s_1). -/
 lemma chainTwoEquiv_tprod (a : A) (s : Fin 2 → A) :
     chainTwoEquiv k A (a ⊗ₜ[k] PiTensorProduct.tprod k s) =
       a ⊗ₜ[k] (s 0 ⊗ₜ[k] s 1) := by
@@ -88,7 +114,12 @@ section OriginalBoundary
 variable (k : Type u) (A : Type v) [CommRing k] [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- The original regular Hochschild differential has the complete ordered b₂ formula. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Put C_n = A ⊗[k] A^{⊗n}
+and let T be the total of its cyclic b/b′ bicomplex.
+In ordered coordinates, the regular Hochschild boundary has value
+b_2(a ⊗ b ⊗ c) = ab ⊗ c − a ⊗ bc + ca ⊗ b.
+The last multiplication keeps the order ca. -/
 lemma regularBoundaryTwo_tprod (a : A) (s : Fin 2 → A) :
     ((NonUnital.bComplex k A).d 2 1).hom (a ⊗ₜ[k] PiTensorProduct.tprod k s) =
       (a * s 0) ⊗ₜ[k] PiTensorProduct.tprod k (fun _ : Fin 1 => s 1) -
@@ -125,7 +156,12 @@ lemma regularBoundaryTwo_tprod (a : A) (s : Fin 2 → A) :
     NonUnital.regularFace_last_tprod, hFirst, hMiddle, hLast]
   rfl
 
-/-- The original first cyclic column has the true Hochschild differential. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Put C_n = A ⊗[k] A^{⊗n}
+and let T be the total of its cyclic b/b′ bicomplex.
+If I_n : C_n → T_n is the column-zero coprojection, then
+d_T I_{n+1} = I_n b_{n+1}. Thus column zero has the regular
+Hochschild differential. -/
 lemma regularCyclicColumn_d (n : ℕ) :
     (NonUnital.cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) 0 (n + 1) (n + 1)
         (Nat.zero_add (n + 1)) ≫ (NonUnital.cyclicTotal k A).d (n + 1) n =
@@ -140,12 +176,21 @@ lemma regularCyclicColumn_d (n : ℕ) :
   exact hNative.trans (congrArg (fun d => d ≫
     R.ιTotal (ComplexShape.down ℕ) 0 n n (Nat.zero_add n)) hColumn)
 
-/-- The Hochschild complex maps to the cyclic total through its first column. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Put C_n = A ⊗[k] A^{⊗n}
+and let T be the total of its cyclic b/b′ bicomplex.
+The column-zero coprojections I_n define a chain map
+I : C_*(A) → T_*(A) from the regular Hochschild complex to
+the cyclic total. -/
 def regularCyclicChainMap : NonUnital.bComplex k A ⟶ NonUnital.cyclicTotal k A :=
   eqToHom (NonUnital.cyclicColumn_even k A 0 (show Even (0 : ℕ) from ⟨0, rfl⟩)).symm ≫
     HomologicalComplex₂.firstColumnTotalInclusion (NonUnital.cyclicBicomplex k A)
 
-/-- Each component is the original first-column coprojection; no unit is required. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Put C_n = A ⊗[k] A^{⊗n}
+and let T be the total of its cyclic b/b′ bicomplex.
+The degree-n component of I : C_*(A) → T_*(A) is precisely
+the coprojection of column zero and row n into total degree n. -/
 lemma regularCyclicChainMap_f (n : ℕ) :
     (regularCyclicChainMap k A).f n =
       (NonUnital.cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) 0 n n
@@ -159,14 +204,22 @@ lemma regularCyclicChainMap_f (n : ℕ) :
     (NonUnital.cyclicBicomplex k A).ιTotal (ComplexShape.down ℕ) 0 n n (Nat.zero_add n) = _
   exact Category.id_comp _
 
-/-- The original Hochschild inclusion is the canonical column map through the native column iso. -/
+/-- Let k be a commutative ring and A a nonunital associative ring
+with k-bilinear multiplication. Put C_n = A ⊗[k] A^{⊗n}
+and let T be the total of its cyclic b/b′ bicomplex.
+Under the identification of cyclic column zero with C_*(A),
+the chain map I is the total-complex inclusion of that first column. -/
 lemma regularCyclicChainMap_eq_firstColumn :
     regularCyclicChainMap k A =
       eqToHom (NonUnital.cyclicColumn_even k A 0
         (show Even (0 : ℕ) from ⟨0, rfl⟩)).symm ≫
           HomologicalComplex₂.firstColumnTotalInclusion (NonUnital.cyclicBicomplex k A) := rfl
 
-/-- The native total comparison carries the same first-column chain map. -/
+/-- Let k : Type u be a commutative ring and A : Type v a nonunital
+associative ring with k-bilinear multiplication. For any additional
+lift height ℓ, applying ULift to the Hochschild terms and cyclic
+bicomplex gives a first-column chain inclusion
+U^ℓ C_*(A) → Tot(U^ℓ K(A)) in carrier universe max{u,v,ℓ}. -/
 def regularCyclicChainMapLift.{xCL, uCL, vCL} (k : Type uCL) [CommRing k] (A : Type vCL) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] :
     ((ModuleCat.uliftFunctor.{xCL, max uCL vCL} k).mapHomologicalComplex
@@ -178,7 +231,10 @@ def regularCyclicChainMapLift.{xCL, uCL, vCL} (k : Type uCL) [CommRing k] (A : T
     (ComplexShape.down ℕ)).map (regularCyclicChainMap k A) ≫
       (NonUnital.cyclicTotalLiftIso.{xCL} k A).hom
 
-/-- Lifted components retain the original column, with independent lift and carrier worlds. -/
+/-- Let k : Type u be commutative and A : Type v a nonunital
+associative k-bilinear ring. At any lift height ℓ, the degree-n
+component of the lifted Hochschild-to-cyclic chain map is the
+column-zero, row-n coprojection into Tot(U^ℓ K(A)). -/
 lemma regularCyclicChainMapLift_f.{xCF, uCF, vCF}
     (k : Type uCF) [CommRing k] (A : Type vCF) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (n : ℕ) :
@@ -197,7 +253,13 @@ section FirstColumnMaps
 variable {k A} {B : Type w} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The nonunital maps commute with the first-column inclusion in independent worlds. -/
+/-- Let k be commutative and A,B nonunital associative rings with
+k-bilinear multiplication, in independent universes v,w. A
+multiplicative k-linear map f : A → B gives a map K(f) between
+their cyclic bicomplexes in common height max{u,v,w}.
+The lifted first-column inclusions satisfy
+Tot(K(f)) I_A = I_B K(f)_0,
+where A is lifted by w and B by v. -/
 lemma regularCyclicChainMapLift_naturality (f : A →ₙₐ[k] B) :
     regularCyclicChainMapLift.{w} k A ≫
         HomologicalComplex₂.total.map (NonUnital.cyclicBicomplexMap f)
@@ -245,7 +307,11 @@ section Commutative
 
 variable (k : Type u) (A : Type v) [CommRing k] [CommRing A] [Algebra k A]
 
-/-- Commutativity makes the degree-one Hochschild boundary zero. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The regular Hochschild boundary b_1 : C_1 → C_0 is zero,
+since b_1(a ⊗ b) = ab − ba and A is commutative. -/
 lemma regularBoundaryOne_eq_zero : (NonUnital.bComplex k A).d 1 0 = 0 := by
   apply ModuleCat.hom_ext
   apply tensorPower_ext
@@ -265,7 +331,14 @@ lemma regularBoundaryOne_eq_zero : (NonUnital.bComplex k A).d 1 0 = 0 := by
   have hLast : s (Fin.last 0) = s 0 := rfl
   erw [hLast, sub_self]
 
-/-- The chain differential is the Kähler b₂ under the native tensor coordinates. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The coordinate maps κ_1 : C_1 ≃ A ⊗[k] A and
+κ_2 : C_2 ≃ A ⊗[k] (A ⊗[k] A) satisfy
+κ_1 b_2 = b_2^Ω κ_2, where
+b_2^Ω(a ⊗ (b ⊗ c)) = ab ⊗ c − a ⊗ bc + ca ⊗ b
+is the Kähler presentation relation. -/
 lemma regularBoundaryTwo_eq :
     (chainOneEquiv k A).toLinearMap.comp ((NonUnital.bComplex k A).d 2 1).hom =
       ((KaehlerDifferential.Hochschild.boundaryTwo k A).restrictScalars k).comp
@@ -280,7 +353,12 @@ lemma regularBoundaryTwo_eq :
     chainOneEquiv_tprod, chainOneEquiv_tprod, chainTwoEquiv_tprod,
     KaehlerDifferential.Hochschild.boundaryTwo_tmul]
 
-/-- The raw B₀ has both positive endpoint tensors before quotienting by b₂. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+In degree-one tensor coordinates, the Connes boundary on a ∈ A
+has the two positive endpoint terms
+B_0(a) = 1 ⊗ a + a ⊗ 1. -/
 lemma chainOneEquiv_connesBoundary_zero (a : A) :
     chainOneEquiv k A ((NonUnital.connesBoundary k A 0).hom
       (a ⊗ₜ[k] PiTensorProduct.tprod k (fun i : Fin 0 => Fin.elim0 i))) =
@@ -288,7 +366,12 @@ lemma chainOneEquiv_connesBoundary_zero (a : A) :
   rw [NonUnital.connesBoundary, NonUnital.connesBoundaryWith_zero_tprod,
     map_add, chainOneEquiv_tprod, chainOneEquiv_tprod]
 
-/-- Modulo the b₂ range, raw B₀ is the native universal differential da. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+After quotienting C_1 by the b_2-image and identifying the quotient
+with Ω_A by a ⊗ b ↦ a db, the Connes class B_0(a) maps
+to d_A a. The term a d_A(1) is zero. -/
 lemma toKaehler_connesBoundary_zero (a : A) :
     KaehlerDifferential.Hochschild.toKaehler k A
       (KaehlerDifferential.Hochschild.quotientMap k A
@@ -300,21 +383,41 @@ lemma toKaehler_connesBoundary_zero (a : A) :
     KaehlerDifferential.Hochschild.toKaehler_tmul,
     Derivation.map_one_eq_zero, smul_zero, one_smul, add_zero]
 
-/-- The exact differentials form only their k-linear range, not an A-submodule. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The exact-differential quotient is Q_A = Ω_A / Im_k(d_A).
+The range is taken for the k-linear derivation, so this construction
+is a quotient k-module. -/
 abbrev KaehlerExactQuotient : Type v :=
   KaehlerDifferential k A ⧸ LinearMap.range (KaehlerDifferential.D k A).toLinearMap
 
-/-- The ground-linear quotient map onto Ω¹/dA. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The k-linear quotient map Ω_A → Q_A sends a differential form
+ω to its class [ω] modulo the exact differentials. -/
 def kaehlerClass : KaehlerDifferential k A →ₗ[k] KaehlerExactQuotient k A :=
   (LinearMap.range (KaehlerDifferential.D k A).toLinearMap).mkQ
 
-/-- The canonical degree-one tensor representative is the class of a db modulo dA. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The k-linear tensor representative τ_A : C_1 → Q_A is
+τ_A(a ⊗ b) = [a d_A b], under singleton tensor coordinates. -/
 def cyclicOneRepresentative : A ⊗[k] TensorPower k 1 A →ₗ[k] KaehlerExactQuotient k A :=
   (kaehlerClass k A).comp
     (((KaehlerDifferential.D k A).tensorProductTo.restrictScalars k).comp
       (chainOneEquiv k A).toLinearMap)
 
-/-- The representative uses the original coefficient and the original single algebra factor. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+For a ∈ A and s : Fin 1 → A, the tensor representative
+satisfies τ_A(a ⊗ tprod(s)) = [a d_A(s_0)]. -/
 lemma cyclicOneRepresentative_tprod (a : A) (s : Fin 1 → A) :
     cyclicOneRepresentative k A (a ⊗ₜ[k] PiTensorProduct.tprod k s) =
       kaehlerClass k A (a • KaehlerDifferential.D k A (s 0)) := by
@@ -322,7 +425,13 @@ lemma cyclicOneRepresentative_tprod (a : A) (s : Fin 1 → A) :
     (chainOneEquiv k A (a ⊗ₜ[k] PiTensorProduct.tprod k s))) = _
   rw [chainOneEquiv_tprod, Derivation.tensorProductTo_tmul]
 
-/-- The original b₂ maps to zero under the Ω¹/dA representative. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The tensor representative annihilates the degree-two Hochschild
+boundary: τ_A b_2 = 0. The relation is
+[ab dc − a d(bc) + ca db] = 0. -/
 lemma cyclicOneRepresentative_comp_boundaryTwo :
     (cyclicOneRepresentative k A).comp ((NonUnital.bComplex k A).d 2 1).hom = 0 := by
   apply LinearMap.ext
@@ -339,7 +448,13 @@ lemma cyclicOneRepresentative_comp_boundaryTwo :
     (chainOneEquiv k A (((NonUnital.bComplex k A).d 2 1).hom x))) = 0
   rw [hb, hD, map_zero]
 
-/-- The original B₀ also vanishes, by the k-linear range of the native derivation. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The tensor representative annihilates the Connes zero boundary:
+τ_A B_0 = 0. Its value on B_0(a) is [d_A a], which vanishes
+in the k-linear exact-differential quotient. -/
 lemma cyclicOneRepresentative_comp_connesBoundary :
     (cyclicOneRepresentative k A).comp (NonUnital.connesBoundary k A 0).hom = 0 := by
   apply tensorPower_ext
@@ -363,13 +478,26 @@ lemma cyclicOneRepresentative_comp_connesBoundary :
 local notation "S" => ChainComplex.mixedHomologyOneShortComplex
   (NonUnital.bComplex k A) (NonUnital.connesBoundaryHomotopy k A)
 
-/-- The same original tensor representative in the native common carrier universe. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Lifting the tensor representative gives the k-linear map
+C_1 → ULift.{u} Q_A, z ↦ ULift(τ_A(z)), with target in
+the common module universe max{u,v}. -/
 def cyclicOneRepresentativeLift : A ⊗[k] TensorPower k 1 A →ₗ[k]
     ULift.{u} (KaehlerExactQuotient k A) :=
   (ULift.moduleEquiv (R := k) (M := KaehlerExactQuotient k A)).symm.toLinearMap.comp
     (cyclicOneRepresentative k A)
 
-/-- The b₂/B₀ first arrow followed by the original tensor representative is zero. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Let S be the short complex C_2 ⊕ C_0 → C_1 → C_0,
+whose first map is (b_2,B_0) and whose second map b_1 is zero.
+The lifted representative τ_A^↑ : C_1 → ULift.{u} Q_A
+annihilates the first arrow: τ_A^↑ (b_2,B_0) = 0. -/
 lemma cyclicOneRepresentative_comp_f : (S).f ≫ ModuleCat.ofHom (cyclicOneRepresentativeLift k A) =
     0 := by
   change biprod.desc ((NonUnital.bComplex k A).d 2 1)
@@ -392,7 +520,13 @@ lemma cyclicOneRepresentative_comp_f : (S).f ≫ ModuleCat.ofHom (cyclicOneRepre
       (ULift.up y : ULift.{u} (KaehlerExactQuotient k A)))
       (LinearMap.congr_fun (cyclicOneRepresentative_comp_connesBoundary k A) x)
 
-/-- Every class in Ω¹/dA has a representative in the original Hochschild degree-one term. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The tensor representative τ_A : C_1 → Q_A is surjective.
+Every class of a differential form has a degree-one tensor
+representative, extended linearly from a ⊗ b ↦ [a db]. -/
 lemma cyclicOneRepresentative_surjective : Function.Surjective (cyclicOneRepresentative k A) := by
   intro z
   obtain ⟨ω, hω⟩ :=
@@ -405,7 +539,15 @@ lemma cyclicOneRepresentative_surjective : Function.Surjective (cyclicOneReprese
   change (LinearMap.range (KaehlerDifferential.D k A).toLinearMap).mkQ ω = z
   exact hω
 
-/-- The full kernel consists of b₂ and B₀ boundaries, with no flatness premise. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Let S be the short complex C_2 ⊕ C_0 → C_1 → C_0,
+whose first map is (b_2,B_0) and whose second map b_1 is zero.
+The sequence C_2 ⊕ C_0 → C_1 → Q_A is exact at C_1:
+ker(τ_A) = im(b_2,B_0). Thus the kernel is the sum of the
+Hochschild and Connes boundary images. -/
 lemma cyclicOneRepresentative_exact : Function.Exact (S).f.hom (cyclicOneRepresentative k A) := by
   intro x
   constructor
@@ -465,7 +607,15 @@ lemma cyclicOneRepresentative_exact : Function.Exact (S).f.hom (cyclicOneReprese
       (congrArg ModuleCat.Hom.hom (cyclicOneRepresentative_comp_f k A)) y
     exact congrArg ULift.down h
 
-/-- The tensor representative is a categorical cokernel of the original b₂/B₀ map. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Let S be the short complex C_2 ⊕ C_0 → C_1 → C_0,
+whose first map is (b_2,B_0) and whose second map b_1 is zero.
+The lifted representative τ_A^↑ : C_1 → ULift.{u} Q_A is
+a categorical cokernel of (b_2,B_0) in ModuleCat over k at
+max{u,v}. -/
 def cyclicOneIsCokernel :
     IsColimit (CokernelCofork.ofπ (ModuleCat.ofHom (cyclicOneRepresentativeLift k A))
       (cyclicOneRepresentative_comp_f k A)) := by
@@ -487,12 +637,28 @@ def cyclicOneIsCokernel :
   exact ModuleCat.isColimitCokernelCofork (S).f
     (ModuleCat.ofHom (cyclicOneRepresentativeLift k A)) hExact hSurjective
 
-/-- The mixed degree-one presentation has the Ω¹/dA cokernel. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Let S be the short complex C_2 ⊕ C_0 → C_1 → C_0,
+whose first map is (b_2,B_0) and whose second map b_1 is zero.
+The homology of S is k-linearly isomorphic to ULift.{u} Q_A.
+It identifies C_1 / (im b_2 + im B_0) with the quotient of
+universal differentials by their k-linear exact range. -/
 def mixedOneKaehlerIso : (S).homology ≅ ModuleCat.of k (ULift.{u} (KaehlerExactQuotient k A)) :=
   (S).asIsoHomologyι (regularBoundaryOne_eq_zero k A) ≪≫
     ((S).isoOpcyclesOfIsColimit (cyclicOneIsCokernel k A)).symm
 
-/-- The induced homology comparison retains the tensor quotient map. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Let S be the short complex C_2 ⊕ C_0 → C_1 → C_0,
+whose first map is (b_2,B_0) and whose second map b_1 is zero.
+The canonical quotient from C_1 to H(S), followed by
+H(S) ≅ ULift.{u} Q_A, equals the lifted tensor representative
+τ_A^↑. -/
 @[reassoc]
 lemma pOpcycles_mixedOneKaehlerIso :
     (S).pOpcycles ≫ ((S).asIsoHomologyι (regularBoundaryOne_eq_zero k A)).inv ≫
@@ -504,7 +670,15 @@ lemma pOpcycles_mixedOneKaehlerIso :
   rw [Iso.inv_hom_id_assoc]
   exact (S).pOpcycles_π_isoOpcyclesOfIsColimit_inv (cyclicOneIsCokernel k A)
 
-/-- The mixed total is compared to its b₂/B₀ presentation by the native coordinates. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Let S be the short complex C_2 ⊕ C_0 → C_1 → C_0,
+whose first map is (b_2,B_0) and whose second map b_1 is zero.
+The homology in degree one of the Connes mixed total is
+isomorphic to H(S). Its degree-two boundary is the pair
+(b_2,B_0) and its degree-one boundary is b_1 = 0. -/
 def connesMixedOnePresentationIso : (NonUnital.connesMixedTotal k A).homology 1 ≅
     (S).homology := by
   let hSquare : ∀ n,
@@ -518,34 +692,68 @@ def connesMixedOnePresentationIso : (NonUnital.connesMixedTotal k A).homology 1 
   exact ChainComplex.mixedHomologyOneIso (NonUnital.bComplex k A)
     (NonUnital.connesBoundaryHomotopy k A) hSquare
 
-/-- The mixed total has the canonical degree-one Kähler quotient comparison. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The degree-one homology of the Connes mixed total is isomorphic,
+as a k-module, to ULift.{u} Q_A through its (b_2,B_0)
+presentation. -/
 def connesMixedHomologyOneIso : (NonUnital.connesMixedTotal k A).homology 1 ≅
     ModuleCat.of k (ULift.{u} (KaehlerExactQuotient k A)) :=
   connesMixedOnePresentationIso k A ≪≫ mixedOneKaehlerIso k A
 
-/-- Loday 2.1.14: cyclic homology HC₁ is Ω¹ modulo the k-linear image of d. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The first cyclic homology is k-linearly isomorphic to
+ULift.{u} Q_A. The isomorphism identifies cyclic degree-one
+tensor classes with the classes of a db modulo Im_k(d_A). -/
 def cyclicHomologyOneIso : NonUnital.cyclicHomology k A 1 ≅
     ModuleCat.of k (ULift.{u} (KaehlerExactQuotient k A)) :=
   (NonUnital.mixedCyclicHomologyIso k A 1).symm ≪≫ connesMixedHomologyOneIso k A
 
-/-- The original-carrier linear equivalence retains independent ground and algebra universes. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+Removing the target whole-module lift gives the k-linear equivalence
+HC_1(A/k) ≃ Q_A, with independent ground and algebra universes. -/
 def cyclicHomologyOneLinearEquiv :
     NonUnital.cyclicHomology k A 1 ≃ₗ[k] KaehlerExactQuotient k A :=
   (cyclicHomologyOneIso k A).toLinearEquiv.trans
     (ULift.moduleEquiv (R := k) (M := KaehlerExactQuotient k A))
 
-/-- The original degree-one cyclic class is built from its cokernel and mixed comparison. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The degree-one tensor-class map q_A : C_1 → HC_1(A/k)
+sends a Hochschild tensor to its cyclic homology class through
+the first cyclic column. -/
 def cyclicOneClass : (NonUnital.bComplex k A).X 1 ⟶ NonUnital.cyclicHomology k A 1 :=
   (S).pOpcycles ≫ ((S).asIsoHomologyι (regularBoundaryOne_eq_zero k A)).inv ≫
     (connesMixedOnePresentationIso k A).inv ≫ (NonUnital.mixedCyclicHomologyIso k A 1).hom
 
-/-- Every HC₁ class is represented in the original Hochschild degree-one tensor term. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The tensor-class map q_A : C_1 → HC_1(A/k) is an epimorphism
+of k-modules. Every cyclic class has a representative in the full
+degree-one tensor module. -/
 instance cyclicOneClassEpi : Epi (cyclicOneClass k A) := by
   change Epi ((S).pOpcycles ≫ ((S).asIsoHomologyι (regularBoundaryOne_eq_zero k A)).inv ≫
     (connesMixedOnePresentationIso k A).inv ≫ (NonUnital.mixedCyclicHomologyIso k A 1).hom)
   infer_instance
 
-/-- The canonical cyclic class followed by the computed comparison is the a db quotient. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The tensor-class map q_A followed by the isomorphism
+E_A : HC_1(A/k) ≅ ULift.{u} Q_A is exactly τ_A^↑. -/
 @[reassoc]
 lemma cyclicOneClass_comp_cyclicHomologyOneIso :
     cyclicOneClass k A ≫ (cyclicHomologyOneIso k A).hom =
@@ -561,7 +769,12 @@ lemma cyclicOneClass_comp_cyclicHomologyOneIso :
   simp only [Category.assoc, Iso.hom_inv_id_assoc, Iso.inv_hom_id_assoc]
   exact pOpcycles_mixedOneKaehlerIso k A
 
-/-- The comparison sends the original cyclic tensor class a ⊗ b to the class of a db. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+On a ∈ A and s : Fin 1 → A, the isomorphism to the lifted
+quotient has value E_A(q_A(a ⊗ tprod(s))) = ULift([a d_A(s_0)]). -/
 lemma cyclicHomologyOneIso_class_tprod (a : A) (s : Fin 1 → A) :
     (cyclicHomologyOneIso k A).hom.hom
       ((cyclicOneClass k A).hom (a ⊗ₜ[k] PiTensorProduct.tprod k s)) =
@@ -573,7 +786,12 @@ lemma cyclicHomologyOneIso_class_tprod (a : A) (s : Fin 1 → A) :
           (ULift.up y : ULift.{u} (KaehlerExactQuotient k A)))
           (cyclicOneRepresentative_tprod k A a s))
 
-/-- The inverse retains the original cyclic tensor class. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The inverse of E_A : HC_1(A/k) ≅ ULift.{u} Q_A sends
+ULift([a db]) to q_A(a ⊗ tprod(j ↦ b)), for a,b ∈ A. -/
 lemma cyclicHomologyOneIso_inv_class (a b : A) :
     (cyclicHomologyOneIso k A).inv.hom
       (ULift.up (kaehlerClass k A (a • KaehlerDifferential.D k A b))) =
@@ -585,7 +803,12 @@ lemma cyclicHomologyOneIso_inv_class (a b : A) :
       ((cyclicOneClass k A).hom
         (a ⊗ₜ[k] PiTensorProduct.tprod k (fun _ : Fin 1 => b))))
 
-/-- The computed linear equivalence returns the original quotient representative. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The equivalence E_A : HC_1(A/k) ≃ Q_A
+satisfies E_A(q_A(z)) = τ_A(z) for every z ∈ C_1. -/
 lemma cyclicOneClass_linearEquiv (x : (NonUnital.bComplex k A).X 1) :
     cyclicHomologyOneLinearEquiv k A ((cyclicOneClass k A).hom x) =
       cyclicOneRepresentative k A x := by
@@ -593,14 +816,24 @@ lemma cyclicOneClass_linearEquiv (x : (NonUnital.bComplex k A).X 1) :
     (cyclicOneClass_comp_cyclicHomologyOneIso k A)) x
   exact congrArg ULift.down h
 
-/-- The original-carrier HC₁ equivalence sends the tensor class to [a db]. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The equivalence sends the cyclic tensor class
+q_A(a ⊗ tprod(s)) to [a d_A(s_0)], for a ∈ A and s : Fin 1 → A. -/
 lemma cyclicHomologyOneLinearEquiv_class_tprod (a : A) (s : Fin 1 → A) :
     cyclicHomologyOneLinearEquiv k A
       ((cyclicOneClass k A).hom (a ⊗ₜ[k] PiTensorProduct.tprod k s)) =
       kaehlerClass k A (a • KaehlerDifferential.D k A (s 0)) :=
   (cyclicOneClass_linearEquiv k A _).trans (cyclicOneRepresentative_tprod k A a s)
 
-/-- The inverse on the original carrier is the same cyclic tensor class. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Write Q_A = Ω_A / Im_k(d_A), the quotient as a k-module.
+The inverse equivalence Q_A ≃ HC_1(A/k)
+sends [a db] to q_A(a ⊗ tprod(j ↦ b)). -/
 lemma cyclicHomologyOneLinearEquiv_inv_class (a b : A) :
     (cyclicHomologyOneLinearEquiv k A).symm
       (kaehlerClass k A (a • KaehlerDifferential.D k A b)) =
@@ -609,7 +842,12 @@ lemma cyclicHomologyOneLinearEquiv_inv_class (a b : A) :
   exact (congrArg (cyclicHomologyOneLinearEquiv k A).symm h).symm.trans
     ((cyclicHomologyOneLinearEquiv k A).symm_apply_apply _)
 
-/-- The original commutative Hochschild degree-one tensor class is its native homology class. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Since b_1 = 0, every element of C_1 is a cycle. The map
+q_H : C_1 → HH_1(A/k) is its homology-class map, quotienting
+by the image of b_2. -/
 def regularHomologyOneClass : (NonUnital.bComplex k A).X 1 ⟶
     (NonUnital.bComplex k A).homology 1 :=
   ((NonUnital.bComplex k A).sc' 2 1 0).pOpcycles ≫
@@ -619,7 +857,11 @@ def regularHomologyOneClass : (NonUnital.bComplex k A).X 1 ⟶
           ((ComplexShape.down ℕ).prev_eq' (by show (ComplexShape.down ℕ).Rel 2 1; rfl))
           ((ComplexShape.down ℕ).next_eq' (by show (ComplexShape.down ℕ).Rel 1 0; rfl))).inv
 
-/-- The first-column inclusion induces the regular HH₁-to-HC₁ map. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The first cyclic-column inclusion induces the k-module map
+I_* : HH_1(A/k) → HC_1(A/k). -/
 def regularCyclicOneMap : (NonUnital.bComplex k A).homology 1 ⟶
     NonUnital.cyclicHomology k A 1 :=
   HomologicalComplex.homologyMap
@@ -629,7 +871,12 @@ def regularCyclicOneMap : (NonUnital.bComplex k A).homology 1 ⟶
         NonUnital.connesBoundary_square k A n)) 1 ≫
           (NonUnital.mixedCyclicHomologyIso k A 1).hom
 
-/-- The canonical cyclic chain inclusion is the first mixed column followed by I. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The Hochschild-to-cyclic chain inclusion factors as the inclusion
+of column zero into the Connes mixed total followed by the mixed-to-
+cyclic chain comparison. -/
 lemma regularCyclicChainMap_eq :
     regularCyclicChainMap k A =
       ChainComplex.mixedColumnZeroInclusion (NonUnital.bComplex k A)
@@ -655,7 +902,11 @@ lemma regularCyclicChainMap_eq :
       (NonUnital.mixedToCyclic k A).f n
   exact (NonUnital.mixedToCyclic_ι_zero k A n).symm
 
-/-- The HH₁-to-HC₁ map is native homology of the same original cyclic column. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The map I_* : HH_1(A/k) → HC_1(A/k) is H_1(I), where
+I is the first-column Hochschild-to-cyclic chain inclusion. -/
 lemma regularCyclicOneMap_eq_homologyMap :
     regularCyclicOneMap k A =
       HomologicalComplex.homologyMap (regularCyclicChainMap k A) 1 := by
@@ -679,7 +930,12 @@ lemma regularCyclicOneMap_eq_homologyMap :
       (congrArg (fun j : K ⟶ NonUnital.cyclicTotal k A => HomologicalComplex.homologyMap j 1)
         hChain.symm))
 
-/-- Cycle restriction of the original commutative Hochschild class is the native projection. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+Restricting the degree-one class map q_H : C_1 → HH_1(A/k)
+to the cycle module gives the canonical projection
+Z_1(C) → HH_1(A/k). -/
 @[reassoc]
 lemma iCycles_regularHomologyOneClass :
     (NonUnital.bComplex k A).iCycles 1 ≫ regularHomologyOneClass k A =
@@ -724,7 +980,11 @@ lemma iCycles_regularHomologyOneClass :
         ((congrArg (fun q => K.homologyπ 1 ≫ q) e.hom_inv_id).trans
           (Category.comp_id (K.homologyπ 1)))
 
-/-- The map on native Hochschild homology retains the original cyclic tensor class. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The degree-one class maps satisfy I_* q_H = q_A, where
+q_A : C_1 → HC_1(A/k) is the cyclic tensor-class map. -/
 @[reassoc]
 lemma regularHomologyOneClass_comp_regularCyclicOneMap :
     regularHomologyOneClass k A ≫ regularCyclicOneMap k A = cyclicOneClass k A := by
@@ -773,7 +1033,12 @@ lemma regularHomologyOneClass_comp_regularCyclicOneMap :
     ((congrArg (fun f => f ≫ (NonUnital.mixedCyclicHomologyIso k A 1).hom) hB).trans
       (Category.assoc qQ eM.inv (NonUnital.mixedCyclicHomologyIso k A 1).hom))
 
-/-- Commutativity makes the original degree-one first-column term a cycle. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The degree-one first-column map I_1 : C_1 → T_1 has cycle
+values: d_T I_1 = 0, because the regular Hochschild boundary
+b_1 is zero. -/
 lemma regularCyclicChainMap_f_one_closed :
     (regularCyclicChainMap k A).f 1 ≫ (NonUnital.cyclicTotal k A).d 1 0 = 0 :=
   ((regularCyclicChainMap k A).comm 1 0).trans
@@ -781,7 +1046,12 @@ lemma regularCyclicChainMap_f_one_closed :
       (regularBoundaryOne_eq_zero k A)).trans
         (Limits.zero_comp (f := (regularCyclicChainMap k A).f 0)))
 
-/-- The original cyclic tensor class is the native cycle class of the first cyclic column. -/
+/-- Let k be a commutative ring and A a commutative unital k-algebra.
+Put C_n = A ⊗[k] A^{⊗n}, Ω_A = Ω_{A/k}, and let
+d_A : A → Ω_A be the universal k-derivation.
+The cyclic tensor-class map q_A : C_1 → HC_1(A/k) is
+obtained by lifting I_1 to the cycle module Z_1(T) and then
+projecting to H_1(T). -/
 lemma cyclicOneClass_eq_liftCycles :
     cyclicOneClass k A =
       (NonUnital.cyclicTotal k A).liftCycles ((regularCyclicChainMap k A).f 1) 0
@@ -950,20 +1220,35 @@ section AlgebraMaps
 variable {k : Type u} [CommRing k] {A : Type v} [CommRing A] [Algebra k A]
   {B : Type w} [CommRing B] [Algebra k B]
 
-/-- An k-algebra map induces the native ground-linear map on Kähler differentials. -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+The induced k-linear map κ_f : Ω_A → Ω_B sends d_A a to
+d_B(f(a)). It is also f-semilinear for the algebra actions. -/
 def kaehlerMap (f : A →ₐ[k] B) : KaehlerDifferential k A →ₗ[k] KaehlerDifferential k B := by
   letI : Algebra A B := f.toRingHom.toAlgebra
   letI : IsScalarTower k A B := IsScalarTower.of_algHom f
   exact (KaehlerDifferential.map k k A B).restrictScalars k
 
-/-- The native map sends the original differential da to d(fa). -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+The universal-differential map satisfies
+κ_f(d_A a) = d_B(f(a)) for every a ∈ A. -/
 lemma kaehlerMap_D (f : A →ₐ[k] B) (a : A) :
     kaehlerMap f (KaehlerDifferential.D k A a) = KaehlerDifferential.D k B (f a) := by
   letI : Algebra A B := f.toRingHom.toAlgebra
   letI : IsScalarTower k A B := IsScalarTower.of_algHom f
   exact KaehlerDifferential.map_D k k A B a
 
-/-- The map retains the algebra coefficient action, while being only k-linear. -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+The map κ_f : Ω_A → Ω_B satisfies the algebra scalar law
+κ_f(aω) = f(a)κ_f(ω), while its ground action remains k-linear. -/
 lemma kaehlerMap_smul (f : A →ₐ[k] B) (a : A) (ω : KaehlerDifferential k A) :
     kaehlerMap f (a • ω) = f a • kaehlerMap f ω := by
   letI : Algebra A B := f.toRingHom.toAlgebra
@@ -972,7 +1257,12 @@ lemma kaehlerMap_smul (f : A →ₐ[k] B) (a : A) (ω : KaehlerDifferential k A)
   exact h.trans (IsScalarTower.algebraMap_smul B a
     (KaehlerDifferential.map k k A B ω)).symm
 
-/-- The differential map descends through the k-linear exact-differential ranges. -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+The map κ_f carries Im_k(d_A) into Im_k(d_B), so it induces
+a k-linear map Q(f) : Q_A → Q_B on exact-differential quotients. -/
 def kaehlerExactMap (f : A →ₐ[k] B) : KaehlerExactQuotient k A →ₗ[k]
     KaehlerExactQuotient k B :=
   (LinearMap.range (KaehlerDifferential.D k A).toLinearMap).liftQ
@@ -983,11 +1273,23 @@ def kaehlerExactMap (f : A →ₐ[k] B) : KaehlerExactQuotient k A →ₗ[k]
       rw [kaehlerMap_D, kaehlerClass, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
       exact ⟨f a, rfl⟩)
 
-/-- The quotient map acts on the differential representative. -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+On a form representative ω ∈ Ω_A, the quotient map has value
+Q(f)([ω]) = [κ_f(ω)]. -/
 lemma kaehlerExactMap_class (f : A →ₐ[k] B) (ω : KaehlerDifferential k A) :
     kaehlerExactMap f (kaehlerClass k A ω) = kaehlerClass k B (kaehlerMap f ω) := rfl
 
-/-- The canonical tensor representative commutes with the map on every original factor. -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+The tensor representatives satisfy
+Q(f) τ_A = τ_B (f ⊗_k f)
+in degree-one coordinates. Each coefficient and tail factor is mapped
+by the same algebra homomorphism. -/
 lemma cyclicOneRepresentative_naturality (f : A →ₐ[k] B) :
     (kaehlerExactMap f).comp (cyclicOneRepresentative k A) =
       (cyclicOneRepresentative k B).comp (TensorPower.consLevelMap f.toLinearMap 1) := by
@@ -1002,7 +1304,12 @@ lemma cyclicOneRepresentative_naturality (f : A →ₐ[k] B) :
     cyclicOneRepresentative_tprod]
   rfl
 
-/-- The cyclic homology linear map carries every original tensor class naturally. -/
+/-- Let k be commutative and A,B commutative unital k-algebras in
+independent carrier universes. For a multiplicative k-linear map
+f : A → B, the cyclic degree-one class maps satisfy
+HC_1(f) q_A = q_B (f ⊗_k f).
+This equality concerns the first-column tensor classes and does not
+require preservation of the unit by f. -/
 lemma cyclicOneClass_naturality (f : A →ₙₐ[k] B) :
     (NonUnital.cyclicHomologyLinearMap f 1).comp (cyclicOneClass k A).hom =
       (cyclicOneClass k B).hom.comp (TensorPower.consLevelMap (f : A →ₗ[k] B) 1) := by
@@ -1094,7 +1401,12 @@ lemma cyclicOneClass_naturality (f : A →ₙₐ[k] B) :
   have hOriginal := eB.toLinearEquiv.injective (hNative.trans hValue)
   exact congrArg ULift.down hOriginal
 
-/-- The computed Kähler quotient comparison is natural for the cyclic homology map. -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+The cyclic homology equivalences are natural:
+Q(f) E_A = E_B HC_1(f), as k-linear maps HC_1(A/k) → Q_B. -/
 lemma cyclicHomologyOneLinearEquiv_naturality (f : A →ₐ[k] B) :
     (kaehlerExactMap f).comp (cyclicHomologyOneLinearEquiv k A).toLinearMap =
       (cyclicHomologyOneLinearEquiv k B).toLinearMap.comp
@@ -1128,7 +1440,12 @@ lemma cyclicHomologyOneLinearEquiv_naturality (f : A →ₐ[k] B) :
         (NonUnital.cyclicHomologyLinearMap f.toNonUnitalAlgHom 1 ((cyclicOneClass k A).hom x)) :=
       congrArg (cyclicHomologyOneLinearEquiv k B) hMap.symm
 
-/-- The inverse retains the same cyclic map and native differential-quotient map. -/
+/-- Let k be commutative, A,B commutative unital k-algebras in
+independent carrier universes, and f : A → B a unital k-algebra
+homomorphism. Write Ω_A = Ω_{A/k}, Ω_B = Ω_{B/k}, and
+Q_A = Ω_A / Im_k(d_A), Q_B = Ω_B / Im_k(d_B).
+The inverse equivalences satisfy
+HC_1(f) E_A⁻¹ = E_B⁻¹ Q(f), as k-linear maps Q_A → HC_1(B/k). -/
 lemma cyclicHomologyOneLinearEquiv_inv_naturality (f : A →ₐ[k] B) :
     (NonUnital.cyclicHomologyLinearMap f.toNonUnitalAlgHom 1).comp
         (cyclicHomologyOneLinearEquiv k A).symm.toLinearMap =

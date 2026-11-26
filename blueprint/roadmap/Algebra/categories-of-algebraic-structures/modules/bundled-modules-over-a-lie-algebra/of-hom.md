@@ -1,3 +1,6 @@
-# Of Hom
+# The categorical map associated to a Lie-module homomorphism
 
-Regard a native Lie-module homomorphism as a categorical map.
+The categorical map associated to a Lie-module homomorphism.
+
+An `R`-linear `L`-equivariant map between bundled modules defines a morphism in the Lie-module
+category.

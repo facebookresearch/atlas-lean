@@ -1,3 +1,8 @@
-# Left Derived Bifunctor Coefficient Colimit Iso inv eq post
+# Inverse derived comparison is induced by coefficient injections
 
-The inverse is precisely the colimit map induced by those legs.
+Let `C₁`, `D` be abelian, `C₂` a category, and
+`F : C₁ → C₂ → D` have additive partials `F(-,B)`. Suppose `C₁` admits projective resolutions. Let `J` be a diagram category with colimits in `C₂` and `D`,
+and suppose the colimit functor on `J → D` preserves homology.
+Assume each coefficient functor `F(X,-)` preserves these colimits. The inverse
+comparison is the colimit morphism induced by these original
+coefficient injection maps.

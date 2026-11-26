@@ -1,3 +1,6 @@
-# Cotangent Map
+# The cotangent map induced by an augmented algebra map
 
-The canonical morphism induced by a morphism of augmented algebras.
+The cotangent map induced by an augmented algebra map.
+
+A map `f : P → Q` over `A` induces the `A`-linear map `A ⊗[P] Ω[P/k] → A ⊗[Q] Ω[Q/k]` sending
+`a ⊗ dp` to `a ⊗ d(f(p))`.

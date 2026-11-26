@@ -15,12 +15,20 @@ public import MathlibExt.LinearAlgebra.Matrix.ZeroExtension.Trace
 public import MathlibExt.LinearAlgebra.TensorPower.Cyclic
 
 /-!
-# Integral cyclic coherence of generalized trace
+# Cyclic rotation and stabilization of generalized trace
 
-The finite closed-cycle trace intertwines signed
-cyclic operators. Extension by zero preserves its
-coefficient maps, including empty matrix stages.
-The construction requires no inverse integers.
+Let k be a commutative ring and A a k-module. On
+A ⊗[k] A^⊗n, the signed cyclic operator is
+t_n(a₀ ⊗ ⋯ ⊗ aₙ) = (−1)^n aₙ ⊗ a₀ ⊗ ⋯ ⊗ a_(n−1).
+For a finite matrix index type ι, the closed-cycle generalized trace
+Mat_ι(A) ⊗[k] Mat_ι(A)^⊗n → A ⊗[k] A^⊗n commutes with t_n.
+This rotation identity requires no multiplication on A.
+
+For independent k-modules M and A, top-left extension by zero from
+r×r to s×s matrices, r ≤ s, preserves the generalized trace
+Mat_r(M) ⊗[k] Mat_r(A)^⊗n → M ⊗[k] A^⊗n. The equality holds for
+the full linear tensor map and includes r = 0. All formulas are integral:
+no integer is inverted.
 -/
 
 @[expose] public section
@@ -40,7 +48,12 @@ section Cyclic
 variable (A : Type v) [AddCommGroup A] [Module k A]
   (ι : Type z) [Fintype ι]
 
-/-- The trace commutes with the signed last-to-first cyclic operator. -/
+/-- For a commutative ring k, a k-module A, a finite index type ι
+and n ≥ 0, the closed-cycle trace T_n satisfies
+t_n^A ∘ T_n = T_n ∘ t_n^Mat on
+Mat_ι(A) ⊗[k] Mat_ι(A)^⊗n, where t_n rotates the last factor to the
+front and multiplies by (−1)^n. In degree zero t_0 is the identity.
+No algebra multiplication on A is assumed. -/
 theorem generalizedTrace_cyclic (n : ℕ) :
     (TensorPower.consCyclicOperator k A n).comp (generalizedTrace k ι n) =
       (generalizedTrace k ι n).comp (TensorPower.consCyclicOperator k (Matrix ι ι A) n) := by
@@ -120,7 +133,11 @@ section Stabilization
 variable {A : Type v} [AddCommGroup A] [Module k A]
   {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- Every excluded zero-extended cycle has a zero row entry in a tensor factor. -/
+/-- Let r ≤ s and let X and a₁,…,aₙ be r×r matrices over the
+k-modules M and A. In the closed-cycle trace of their zero extensions,
+a cycle γ : Fin(n+1) → Fin s that visits an index outside Fin r has a
+zero tensor factor. Its summand is therefore zero, including the
+coefficient factor when the outside index occurs at γ(0). -/
 private theorem zeroExtend_trace_summand_zero {r s n : ℕ} (h : r ≤ s)
     (X : Matrix (Fin r) (Fin r) M) (a : Fin n → Matrix (Fin r) (Fin r) A)
     (γ : Fin (n + 1) → Fin s) (hγ : ∃ j, r ≤ (γ j).val) :
@@ -136,7 +153,11 @@ private theorem zeroExtend_trace_summand_zero {r s n : ℕ} (h : r ≤ s)
         Matrix.zeroExtend_of_row h (a j) _ _ hj
       rw [(PiTensorProduct.tprod k).map_coord_zero j hz, TensorProduct.tmul_zero]
 
-/-- Actual top-left stabilization preserves the full integral coefficient trace in every degree. -/
+/-- For k-modules M and A, r ≤ s, n ≥ 0, a coefficient matrix
+X ∈ Mat_r(M) and algebra-factor matrices aⱼ ∈ Mat_r(A), extending each
+matrix by zero to its top-left s×s block leaves the closed-cycle trace
+of X ⊗ a₁ ⊗ ⋯ ⊗ aₙ unchanged. This includes an empty source matrix
+index set r = 0. -/
 theorem generalizedTrace_zeroExtend {r s : ℕ} (h : r ≤ s) (n : ℕ)
     (X : Matrix (Fin r) (Fin r) M) (a : Fin n → Matrix (Fin r) (Fin r) A) :
     generalizedTrace k (Fin s) n (Matrix.zeroExtend h X ⊗ₜ[k]
@@ -168,7 +189,11 @@ theorem generalizedTrace_zeroExtend {r s : ℕ} (h : r ≤ s) (n : ℕ)
     simp only [f, g, e, Matrix.zeroExtend_castLE]
   exact (Fintype.sum_of_injective e he f g hz hv).symm
 
-/-- The entire native linear tensor map, rather than only its generators, is stable. -/
+/-- For k-modules M and A and r ≤ s, let Z_n extend every factor
+from Mat_r(M) ⊗[k] Mat_r(A)^⊗n to
+Mat_s(M) ⊗[k] Mat_s(A)^⊗n by zero. The equality T_n^s ∘ Z_n = T_n^r
+holds as an equality of k-linear maps, with no restriction on n ≥ 0
+or on r = 0. -/
 theorem generalizedTrace_comp_zeroExtend {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     (generalizedTrace k (Fin s) n).comp
       (TensorProduct.map (Matrix.zeroExtendLinear (k := k) (A := M) h)

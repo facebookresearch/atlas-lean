@@ -1,4 +1,4 @@
 # Projective exterior powers have torsion-free scalar action
 
-- [Is Torsion Free of projective](is-torsion-free-of-projective.md)
-- [Is SMul Regular of projective](is-smul-regular-of-projective.md)
+- [Projective exterior powers are regular-scalar torsion-free](is-torsion-free-of-projective.md)
+- [Regular scalars act injectively on exterior powers](is-smul-regular-of-projective.md)

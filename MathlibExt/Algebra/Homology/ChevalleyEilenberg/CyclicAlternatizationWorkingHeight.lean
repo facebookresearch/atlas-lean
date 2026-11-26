@@ -13,15 +13,19 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.ConnesWorkingHeig
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CyclicAlternatization
 
 /-!
-# Universe lifts of cyclic exterior maps
+# Cyclic exterior maps in a common module universe
 
-The Connes projection and `TensorPower.consEquiv` give representatives at a
-common universe height. Full alternatization is integral; with `Algebra ℚ k`,
-the normalized map uses the factor `1/(n+1)`. The signed variant retains
-`(-1)^n`.
+For a k-algebra ring A, form its Connes quotient complex at height h = max u v z. The tensor
+representative is obtained by the first-factor tensor decomposition, the carrier lift and the
+quotient projection. It equals the base Connes representative followed by the module lift and
+the canonical isomorphism from the lifted quotient complex to the quotient formed at height h.
 
-Naturality across independent carrier universes follows from the quotient
-projection square and the tensor-power map.
+Full signed permutation alternation induces an integral map ⋀[k]^(n+1) A → Cλ_h(A)_n. For a
+ℚ-algebra k, normalization uses 1/(n + 1), and the degree-signed variant also uses (−1)^n.
+These maps are the corresponding base maps followed by the same lift comparison.
+
+For A and B in independent carrier universes and a nonunital k-algebra map f, all
+representative and exterior-map squares commute at the common height max u v w z.
 -/
 
 @[expose] public section
@@ -37,18 +41,29 @@ namespace ChevalleyEilenberg
 
 variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 
-/-- Carrier lift into the first-column tensor object. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. For n : ℕ, connesConsUpAtHeight is the k-linear map A
+⊗[k] TensorPower k n A → (cyclicBicomplexAtHeight k A).X 0.X n with value x ↦ ULift.up x. -/
 def connesConsUpAtHeight (n : ℕ) : (A ⊗[k] TensorPower k n A) →ₗ[k]
     ((ModuleCat.Algebra.Hochschild.NonUnital.cyclicBicomplexAtHeight.{u,v,z} k A).X 0).X n :=
   { toFun := ULift.up
     map_add' := by intros; rfl
     map_smul' := by intros; rfl }
 
-/-- The typed native lift still has the original prescribed point value. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. For n : ℕ and x : A ⊗[k] TensorPower k n A,
+connesConsUpAtHeight k A n x = ULift.up x in the first-column bicomplex term at height h. -/
 theorem connesConsUpAtHeight_apply (n : ℕ) (x : A ⊗[k] TensorPower k n A) :
     connesConsUpAtHeight.{u,v,z} k A n x = ULift.up x := rfl
 
-/-- Carrier lift into the lifted Connes term. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. For n : ℕ, connesTermUpAtHeight is the k-linear
+carrier lift Cλ(A)_n → ULift(Cλ(A)_n), the degree-n term of the complex obtained by applying
+ModuleCat.uliftFunctor from max u v to h. Its value is the inverse of the module up/down
+equivalence. -/
 def connesTermUpAtHeight (n : ℕ) :
     (ModuleCat.Algebra.Hochschild.NonUnital.connesComplex k A).X n →ₗ[k]
       (((ModuleCat.uliftFunctor.{max u v z, max u v} k).mapHomologicalComplex
@@ -58,15 +73,23 @@ def connesTermUpAtHeight (n : ℕ) :
       (ModuleCat.Algebra.Hochschild.NonUnital.connesComplex k A)).X n ≃ₗ[k]
         (ModuleCat.Algebra.Hochschild.NonUnital.connesComplex k A).X n).symm.toLinearMap
 
-/-- The original whole tensor representative followed by the higher Connes quotient. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. For n : ℕ, connesTensorRepresentativeAtHeight :
+TensorPower k (n + 1) A →ₗ[k] Cλ_h(A)_n first applies (TensorPower.consEquiv k A n).symm, then
+connesConsUpAtHeight, then connesProjectionAtHeight. -/
 def connesTensorRepresentativeAtHeight (n : ℕ) :
     TensorPower k (n + 1) A →ₗ[k]
       (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexAtHeight.{u,v,z} k A).X n :=
   ((ModuleCat.Algebra.Hochschild.NonUnital.connesProjectionAtHeight.{u,v,z} k A n).hom).comp
     ((connesConsUpAtHeight.{u,v,z} k A n).comp (TensorPower.consEquiv k A n).symm.toLinearMap)
 
-/-- The new representative is precisely the native lift image of the original Connes
-representative. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Write U_n : Cλ(A)_n → ULift(Cλ(A)_n) for
+connesTermUpAtHeight and J_n : ULift(Cλ(A)_n) ≃ Cλ_h(A)_n for the component of the canonical
+Connes lift comparison. For x : TensorPower k (n + 1) A, q_h(x) = J_n.hom(U_n(q_base(x))),
+where q_base is connesTensorRepresentative in the base universe. -/
 theorem connesTensorRepresentativeAtHeight_image (n : ℕ) (x : TensorPower k (n + 1) A) :
     connesTensorRepresentativeAtHeight.{u,v,z} k A n x =
       ((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexLiftIsoAtHeight.{u,v,z} k A).hom.f n).hom
@@ -87,7 +110,13 @@ theorem connesTensorRepresentativeAtHeight_image (n : ℕ) (x : TensorPower k (n
 
 variable {B : Type w} [Ring B] [Algebra k B]
 
-/-- Every original independent-universe coefficient map keeps the same tensor representative. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Let B : Type w be another k-algebra ring and f : A
+→ₙₐ[k] B a nonunital k-algebra map. Use the common height H = max u v w z and let Cλ_H(f) be
+the induced map between the two quotient complexes. For n : ℕ and x : TensorPower k (n + 1) A,
+Cλ_H(f)_n(q_H^A(x)) = q_H^B(PiTensorProduct.map (fun _ => f) x). Thus every tensor factor is
+mapped by f. -/
 theorem connesTensorRepresentativeAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ)
     (x : TensorPower k (n + 1) A) :
     ((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHomAtHeight.{u,v,w,z} k A f).f n).hom
@@ -121,19 +150,31 @@ theorem connesTensorRepresentativeAtHeight_naturality (f : A →ₙₐ[k] B) (n 
   exact h.trans (congrArg
     (fun y => qB.hom (connesConsUpAtHeight.{u,w,max u v w z} k B n y)) hc')
 
-/-- Native integral full alternatization in the common-height Connes object. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. For n : ℕ, cyclicFullAlternatingAtHeight is the
+alternating map on Fin (n + 1) obtained from q_h ∘ PiTensorProduct.tprod k by full signed
+permutation alternation. -/
 def cyclicFullAlternatingAtHeight (n : ℕ) :
     A [⋀^Fin (n + 1)]→ₗ[k]
       (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexAtHeight.{u,v,z} k A).X n :=
   ((connesTensorRepresentativeAtHeight.{u,v,z} k A n).compMultilinearMap
     (PiTensorProduct.tprod k)).alternatization
 
-/-- The integral exterior map at the prescribed native working height. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. For n : ℕ, cyclicFullExteriorAtHeight : ⋀[k]^(n+1) A
+→ₗ[k] Cλ_h(A)_n is the linear map corresponding to cyclicFullAlternatingAtHeight, with all
+signed permutation terms included. -/
 def cyclicFullExteriorAtHeight (n : ℕ) : (⋀[k]^(n + 1) A) →ₗ[k]
     (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexAtHeight.{u,v,z} k A).X n :=
   exteriorPower.alternatingMapLinearEquiv (cyclicFullAlternatingAtHeight.{u,v,z} k A n)
 
-/-- The full-permutation formula retains all original ordered tensor terms and signs. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. For a : Fin (n + 1) → A, cyclicFullExteriorAtHeight n
+(ιMulti a) = ∑ σ : Perm(Fin(n+1)), sign(σ) • q_h(tprod(a ∘ σ)). The tuple is reindexed by σ
+itself. -/
 theorem cyclicFullExteriorAtHeight_pure (n : ℕ) (a : Fin (n + 1) → A) :
     cyclicFullExteriorAtHeight.{u,v,z} k A n (exteriorPower.ιMulti k (n + 1) a) =
       ∑ σ : Equiv.Perm (Fin (n + 1)), σ.sign • connesTensorRepresentativeAtHeight.{u,v,z} k A n
@@ -142,8 +183,12 @@ theorem cyclicFullExteriorAtHeight_pure (n : ℕ) (a : Fin (n + 1) → A) :
     cyclicFullAlternatingAtHeight, MultilinearMap.alternatization_apply]
   rfl
 
-/-- Full alternatization at the working height is the native lift of the original integral
-exterior map. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Write U_n : Cλ(A)_n → ULift(Cλ(A)_n) for
+connesTermUpAtHeight and J_n : ULift(Cλ(A)_n) ≃ Cλ_h(A)_n for the component of the canonical
+Connes lift comparison. For every n : ℕ, cyclicFullExteriorAtHeight n = J_n.hom ∘ U_n ∘
+cyclicFullExterior n as k-linear maps from ⋀[k]^(n+1) A to Cλ_h(A)_n. -/
 theorem cyclicFullExteriorAtHeight_image (n : ℕ) :
     cyclicFullExteriorAtHeight.{u,v,z} k A n =
       (((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexLiftIsoAtHeight.{u,v,z} k A).hom.f n).hom).comp
@@ -161,7 +206,12 @@ theorem cyclicFullExteriorAtHeight_image (n : ℕ) :
   exact congrArg (fun y => σ.sign • y)
     (connesTensorRepresentativeAtHeight_image.{u,v,z} k A n (PiTensorProduct.tprod k (a ∘ σ)))
 
-/-- Integral full alternatization keeps the independent-universe coefficient square. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Let B : Type w be another k-algebra ring and f : A
+→ₙₐ[k] B a nonunital k-algebra map. Use the common height H = max u v w z and let Cλ_H(f) be
+the induced map between the two quotient complexes. For n : ℕ, Cλ_H(f)_n ∘
+cyclicFullExteriorAtHeight_A(n) = cyclicFullExteriorAtHeight_B(n) ∘ ⋀^(n+1) f. -/
 theorem cyclicFullExteriorAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     (((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHomAtHeight.{u,v,w,z} k A f).f n).hom).comp
         (cyclicFullExteriorAtHeight.{u,v,max u v w z} k A n) =
@@ -187,12 +237,21 @@ section Rational
 
 variable [Algebra ℚ k]
 
-/-- The rational exterior map uses only the original factor 1/(n+1). -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Assume k is a ℚ-algebra. For n : ℕ,
+cyclicExteriorAtHeight is algebraMap ℚ k ((n + 1 : ℚ)⁻¹) times cyclicFullExteriorAtHeight :
+⋀[k]^(n+1) A →ₗ[k] Cλ_h(A)_n. -/
 def cyclicExteriorAtHeight (n : ℕ) : (⋀[k]^(n + 1) A) →ₗ[k]
     (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexAtHeight.{u,v,z} k A).X n :=
   algebraMap ℚ k ((n + 1 : ℚ)⁻¹) • cyclicFullExteriorAtHeight.{u,v,z} k A n
 
-/-- The normalized higher exterior map is exactly the native lift of the original prescribed map. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Write U_n : Cλ(A)_n → ULift(Cλ(A)_n) for
+connesTermUpAtHeight and J_n : ULift(Cλ(A)_n) ≃ Cλ_h(A)_n for the component of the canonical
+Connes lift comparison. If k is a ℚ-algebra, cyclicExteriorAtHeight n = J_n.hom ∘ U_n ∘
+cyclicExterior n for every n : ℕ. Both normalized maps use the factor 1/(n + 1). -/
 theorem cyclicExteriorAtHeight_image (n : ℕ) :
     cyclicExteriorAtHeight.{u,v,z} k A n =
       (((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexLiftIsoAtHeight.{u,v,z} k A).hom.f n).hom).comp
@@ -200,8 +259,12 @@ theorem cyclicExteriorAtHeight_image (n : ℕ) :
   rw [cyclicExteriorAtHeight, cyclicExterior, cyclicFullExteriorAtHeight_image,
     LinearMap.comp_smul, LinearMap.comp_smul]
 
-/-- The original rational normalization leaves independent-universe coefficient naturality
-intact. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Assume k is a ℚ-algebra. Let B : Type w be another
+k-algebra ring and f : A →ₙₐ[k] B a nonunital k-algebra map. Use the common height H = max u v
+w z and let Cλ_H(f) be the induced map between the two quotient complexes. For n : ℕ,
+Cλ_H(f)_n ∘ cyclicExteriorAtHeight_A(n) = cyclicExteriorAtHeight_B(n) ∘ ⋀^(n+1) f. -/
 theorem cyclicExteriorAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     (((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHomAtHeight.{u,v,w,z} k A f).f n).hom).comp
         (cyclicExteriorAtHeight.{u,v,max u v w z} k A n) =
@@ -210,12 +273,21 @@ theorem cyclicExteriorAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
   rw [cyclicExteriorAtHeight, cyclicExteriorAtHeight, LinearMap.comp_smul, LinearMap.smul_comp,
     cyclicFullExteriorAtHeight_naturality]
 
-/-- The signed exterior map at a common height has degree factor `(-1)^n`. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Assume k is a ℚ-algebra. For n : ℕ,
+cyclicExteriorWeibelAtHeight : ⋀[k]^(n+1) A →ₗ[k] Cλ_h(A)_n equals (−1 : k)^n times
+cyclicExteriorAtHeight n. -/
 def cyclicExteriorWeibelAtHeight (n : ℕ) : (⋀[k]^(n + 1) A) →ₗ[k]
     (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexAtHeight.{u,v,z} k A).X n :=
   (-1 : k) ^ n • cyclicExteriorAtHeight.{u,v,z} k A n
 
-/-- The lift preserves the signed cyclic exterior map, including `(-1)^n`. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Write U_n : Cλ(A)_n → ULift(Cλ(A)_n) for
+connesTermUpAtHeight and J_n : ULift(Cλ(A)_n) ≃ Cλ_h(A)_n for the component of the canonical
+Connes lift comparison. If k is a ℚ-algebra, cyclicExteriorWeibelAtHeight n = J_n.hom ∘ U_n ∘
+cyclicExteriorWeibel n. Both maps retain the degree factor (−1)^n. -/
 theorem cyclicExteriorWeibelAtHeight_image (n : ℕ) :
     cyclicExteriorWeibelAtHeight.{u,v,z} k A n =
       (((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexLiftIsoAtHeight.{u,v,z} k A).hom.f n).hom).comp
@@ -223,7 +295,12 @@ theorem cyclicExteriorWeibelAtHeight_image (n : ℕ) :
   rw [cyclicExteriorWeibelAtHeight, cyclicExteriorWeibel, cyclicExteriorAtHeight_image,
     LinearMap.comp_smul, LinearMap.comp_smul]
 
-/-- The degree factor preserves the coefficient square across independent universes. -/
+/-- Let k : Type u be a commutative ring and A : Type v a k-algebra ring. For a spare universe z,
+put h = max u v z, let Cλ_h(A) be the Connes quotient complex formed in ModuleCat.{h} k, and
+let q_h be its whole-tensor projection. Assume k is a ℚ-algebra. Let B : Type w be another
+k-algebra ring and f : A →ₙₐ[k] B a nonunital k-algebra map. Use the common height H = max u v
+w z and let Cλ_H(f) be the induced map between the two quotient complexes. For n : ℕ,
+Cλ_H(f)_n ∘ cyclicExteriorWeibelAtHeight_A(n) = cyclicExteriorWeibelAtHeight_B(n) ∘ ⋀^(n+1) f. -/
 theorem cyclicExteriorWeibelAtHeight_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     (((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHomAtHeight.{u,v,w,z} k A f).f n).hom).comp
         (cyclicExteriorWeibelAtHeight.{u,v,max u v w z} k A n) =

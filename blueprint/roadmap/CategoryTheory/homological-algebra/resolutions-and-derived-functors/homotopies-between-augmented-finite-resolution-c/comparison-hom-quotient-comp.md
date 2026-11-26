@@ -1,4 +1,7 @@
-# Comparison Hom quotient comp
+# Composition of chosen finite-resolution comparisons in the homotopy category
 
-The original chosen comparisons preserve composition in the stock
-homotopy category, with their original literal forward maps.
+Let P be preadditive, A abelian and i : P → A additive full faithful. Let R₁,R₂ be finite
+resolutions of X₁,X₂ and f : X₁ → X₂. A comparison is a chain map of resolving complexes whose
+image commutes with augmentation. Assume i(P₀) is projective for every object P₀ of P. The
+homotopy class of the chosen comparison over g ∘ f is the composite of the homotopy classes of
+the chosen comparisons over f and g.

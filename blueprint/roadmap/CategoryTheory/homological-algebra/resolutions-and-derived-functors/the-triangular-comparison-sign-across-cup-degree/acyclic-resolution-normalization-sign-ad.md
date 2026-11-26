@@ -1,4 +1,5 @@
-# Acyclic Resolution Normalization Sign add
+# Product formula for triangular normalization signs
 
-The retained comparison sign contributes precisely the original (-1)^(p*q) factor across cup
-degrees.
+For natural numbers `p`, `q`, the integer normalization
+scalars satisfy `σ_(p+q) = (-1)^(pq) σ_p σ_q`,
+where `σ_n = (-1)^(n(n+1)/2)`.

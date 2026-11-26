@@ -1,4 +1,4 @@
 # The proper-shuffle cotangent map is a quasi-isomorphism in degree zero
 
-- [Proper Shuffle Cotangent Map f zero](proper-shuffle-cotangent-map-f-zero.md)
-- [Proper Shuffle Cotangent Map homology zero](proper-shuffle-cotangent-map-homology-ze.md)
+- [Degree-zero component of the proper cotangent chain map](proper-shuffle-cotangent-map-f-zero.md)
+- [Degree-zero cotangent homology map is the cokernel comparison](proper-shuffle-cotangent-map-homology-ze.md)

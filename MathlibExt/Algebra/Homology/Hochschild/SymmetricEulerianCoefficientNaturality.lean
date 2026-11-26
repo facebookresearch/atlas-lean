@@ -13,14 +13,22 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricCoefficientMaps
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianProperImage
 
 /-!
-# Naturality of rational coefficient Eulerian maps
+# Coefficient naturality of Eulerian projectors and first images
 
-Coefficient and algebra maps on raw,
-normalized and proper quotients commute
-with rational Eulerian operators,
-sections and first-image comparisons.
-Their ground and carrier universes
-remain those of the coefficient maps.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra, and M and
+N be A-modules with compatible ground k-actions in the same carrier
+world w. An A-linear map f : M → N gives coefficient maps on
+C_n(A,M) = M ⊗[k] A^⊗n by applying f to the first factor and leaving
+the algebra factors fixed.
+
+These maps commute with every A-linear Eulerian projector e_n^(i)
+and with the full first projector P_n = e_n^(0)+e_n^(1). The sections
+from the proper both-positive shuffle quotient to the raw complex
+are natural in f. Consequently the comparison between that quotient
+and the categorical image of P is natural as an A-linear chain
+isomorphism. The complexes lie in ModuleCat^max(u,v,w)(A), with
+independent worlds of k, A and the coefficient modules; no coefficient
+projectivity is required.
 -/
 
 @[expose] public section
@@ -45,7 +53,11 @@ section Eulerian
 
 variable [Algebra ℚ k]
 
-/-- Every original rational Eulerian operator commutes with the original coefficient-head map. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+compatible A-modules M and N and an A-linear map f : M → N, let
+F_n = f ⊗ id_(A^⊗n). Then
+F_n ∘ e_(M,n)^(i) = e_(N,n)^(i) ∘ F_n for all n,i ≥ 0,
+as A-linear maps on the coefficient Hochschild terms. -/
 theorem algebraEulerianOperator_coefficient (f : M →ₗ[A] N) (n i : ℕ) :
     (algebraCoefficientLevelMap k A f n).comp (algebraEulerianOperator k A M n i) =
       (algebraEulerianOperator k A N n i).comp (algebraCoefficientLevelMap k A f n) := by
@@ -56,14 +68,22 @@ theorem algebraEulerianOperator_coefficient (f : M →ₗ[A] N) (n i : ℕ) :
     algebraEulerianOperator, TensorProduct.AlgebraTensorModule.map_tmul,
     TensorProduct.AlgebraTensorModule.lTensor_tmul, LinearMap.id_apply]
 
-/-- The full first projectors commute with the original coefficient-head map. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A,
+compatible A-modules M,N and f : M →ₗ[A] N, the coefficient map
+F_n = f ⊗ id commutes with P_n = e_n^(0)+e_n^(1):
+F_n ∘ P_(M,n) = P_(N,n) ∘ F_n for every n ≥ 0.
+The weight-zero term is retained. -/
 theorem algebraFirstEulerianOperator_coefficient (f : M →ₗ[A] N) (n : ℕ) :
     (algebraCoefficientLevelMap k A f n).comp (algebraFirstEulerianOperator k A M n) =
       (algebraFirstEulerianOperator k A N n).comp (algebraCoefficientLevelMap k A f n) := by
   simp only [algebraFirstEulerianOperator, LinearMap.comp_add, LinearMap.add_comp,
     algebraEulerianOperator_coefficient]
 
-/-- The quotient section is natural in original A-linear coefficient maps. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A
+and f : M →ₗ[A] N between compatible coefficient modules, let
+F_raw and F_+ be the induced maps on the raw and proper both-positive
+shuffle quotient complexes. Their Eulerian sections s_M,s_N satisfy
+s_N ∘ F_+ = F_raw ∘ s_M, from the M-quotient to the N-raw complex. -/
 @[reassoc]
 theorem algebraPositiveEulerianSection_coefficient (f : M →ₗ[A] N) :
     algebraPositiveCoefficientMap k A f ≫ algebraPositiveEulerianSection k A N =
@@ -76,7 +96,11 @@ theorem algebraPositiveEulerianSection_coefficient (f : M →ₗ[A] N) :
   intro x
   exact (DFunLike.congr_fun (algebraFirstEulerianOperator_coefficient k A f n) x).symm
 
-/-- The original coefficient map on the full first Eulerian images. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+f : M →ₗ[A] N between compatible coefficient modules, the map
+Im(P_M) → Im(P_N) includes the M-image in the raw complex, applies
+the coefficient map f ⊗ id, and factors through the N-projector image.
+Its endpoints are A-linear chain complexes at height max(u,v,w). -/
 def algebraFirstEulerianImageCoefficientMap (f : M →ₗ[A] N) :
     algebraFirstEulerianImageComplex k A M ⟶ algebraFirstEulerianImageComplex k A N :=
   image.ι (algebraFirstEulerianChainMap k A M) ≫ algebraRawCoefficientMap k A f ≫
@@ -88,8 +112,12 @@ private theorem positiveSection_firstEulerian :
   rw [← algebraRawPositiveProjection_eulerianSection, ← Category.assoc,
     algebraPositiveEulerianSection_projection, Category.id_comp]
 
-/-- The proper quotient to first-image chain isomorphism is natural in
-the original A-linear coefficient map, with no coefficient projectivity. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A
+and f : M →ₗ[A] N between compatible coefficient modules, the
+quotient-to-image isomorphisms χ_M,χ_N satisfy
+χ_N ∘ F_+ = F_image ∘ χ_M.
+The source is the proper both-positive shuffle quotient for M and
+the target is Im(e_N^(0)+e_N^(1)); no projectivity of M or N is assumed. -/
 @[reassoc]
 theorem algebraFirstEulerianQuotientIso_coefficient (f : M →ₗ[A] N) :
     algebraPositiveCoefficientMap k A f ≫ (algebraFirstEulerianQuotientIso k A N).hom =

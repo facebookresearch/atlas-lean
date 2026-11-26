@@ -1,3 +1,6 @@
-# Cyclic BTo First Two Homology Iso
+# The homology comparison from a left unit
 
-The homology comparison is computed from the first-column quasi-isomorphism.
+The homology comparison from a left unit.
+
+If `A` has a left unit, the first-column inclusion gives `H_n(b(A)) ≅ H_n(CC^{(2)}(A))` for
+every `n ∈ ℕ`.

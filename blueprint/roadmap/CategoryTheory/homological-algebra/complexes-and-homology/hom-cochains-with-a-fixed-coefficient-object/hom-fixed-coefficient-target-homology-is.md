@@ -1,3 +1,4 @@
-# Hom Fixed Coefficient Target Homology Iso
+# Homology of a coefficient complex concentrated in degree zero
 
-The actual target single has native homology M in the earned degree-zero coordinate.
+Let C be abelian, M an object, and i an integer with i=0. The canonical concentrated-complex
+comparison is Hⁱ(M[0]) ≅ M.

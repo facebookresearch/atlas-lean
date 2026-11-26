@@ -1,4 +1,4 @@
 # The Chevalley–Eilenberg bracket boundary in list notation
 
-- [Bracket Boundary succ coe eq sum pairs](bracket-boundary-succ-coe-eq-sum-pairs.md)
-- [Bracket Boundary coe eq sum pairs](bracket-boundary-coe-eq-sum-pairs.md)
+- [The strict-pair list formula for positive boundary degree](bracket-boundary-succ-coe-eq-sum-pairs.md)
+- [The ordered pair formula in every exterior degree](bracket-boundary-coe-eq-sum-pairs.md)

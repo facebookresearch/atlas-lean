@@ -18,12 +18,15 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.ConnectingNaturalit
 public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 
 /-!
-# Derived δ-functors of additive functors
+# Derived delta-functors of additive functors
 
-A natural transformation between additive functors induces a morphism of their left- or
-right-derived δ-functors. Its degree maps are derived natural transformations, and naturality
-of the horseshoe boundaries gives compatibility with connecting maps. The two constructions
-have separate projective- and injective-resolution hypotheses.
+For abelian `C,D`, a natural transformation between additive functors
+`C → D` induces a morphism of their derived delta-functors. Projective
+resolutions in `C` give the homological left-derived construction;
+injective resolutions give the cohomological right-derived construction.
+In degree `n`, the maps are the derived natural transformations and
+commute with all horseshoe connecting maps. These assignments are
+functors on the category of additive functors.
 -/
 
 @[expose] public section
@@ -47,7 +50,8 @@ variable [HasProjectiveResolutions C]
 
 namespace NatTrans
 
-/-- Left-derived degree maps form a morphism of the derived δ-functors. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`. For additive `F,G : C → D` and `α : F → G`, the maps `L_nα`
+form a morphism of their left-derived homological delta-functors. -/
 def leftDerivedDeltaFunctorMap {F G : C ⥤ D} [F.Additive] [G.Additive] (α : F ⟶ G) :
     F.leftDerivedDeltaFunctor ⟶ G.leftDerivedDeltaFunctor := by
   let α' : AdditiveFunctor.of F ⟶ AdditiveFunctor.of G := ObjectProperty.homMk α
@@ -62,7 +66,8 @@ def leftDerivedDeltaFunctorMap {F G : C ⥤ D} [F.Additive] [G.Additive] (α : F
     G.leftDerivedDeltaFunctor_connecting_app]
   exact (LeftDerivedDelta.LDdelta_natural_functor α n S.obj S.property).symm
 
-/-- Every degree of the δ-functor map is the literal left-derived transformation. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`. For additive `F,G : C → D` and `α : F → G`, the degree-`n`
+component of the induced homological delta-functor morphism is `L_nα`. -/
 @[simp]
 theorem leftDerivedDeltaFunctorMap_app {F G : C ⥤ D} [F.Additive] [G.Additive]
     (α : F ⟶ G) (n : ℕ) :
@@ -72,7 +77,9 @@ theorem leftDerivedDeltaFunctorMap_app {F G : C ⥤ D} [F.Additive] [G.Additive]
 end NatTrans
 
 variable (C D) in
-/-- Additive functors form their left-derived homological δ-functor family. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`. Left derivation defines a functor from additive functors
+`C → D` to homological delta-functors, taking `F` to its family
+`L_nF` and a transformation to its derived degree maps. -/
 def leftDerivedDeltaFunctorFamily : (C ⥤+ D) ⥤ HomologicalDeltaFunctor C D where
   obj F := F.obj.leftDerivedDeltaFunctor
   map α := NatTrans.leftDerivedDeltaFunctorMap α.hom
@@ -89,11 +96,13 @@ def leftDerivedDeltaFunctorFamily : (C ⥤+ D) ⥤ HomologicalDeltaFunctor C D w
       (leftDerivedDegreeFunctor C D n).map α ≫ (leftDerivedDegreeFunctor C D n).map β
     exact (leftDerivedDegreeFunctor C D n).map_comp α β
 
-/-- The family object is the left-derived factory of the underlying functor. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`. The image of an additive functor `F : C → D` under this
+assignment is its left-derived homological delta-functor. -/
 theorem leftDerivedDeltaFunctorFamily_obj (F : C ⥤+ D) :
     (leftDerivedDeltaFunctorFamily C D).obj F = F.obj.leftDerivedDeltaFunctor := rfl
 
-/-- Degree evaluation of a family map recovers the parameter transformation. -/
+/-- Let `C,D` be abelian, with projective resolutions in `C`. For additive functors `F,G : C → D` and a transformation `α`,
+the degree-`n` component of the family map is `L_nα`. -/
 theorem leftDerivedDeltaFunctorFamily_map_app {F G : C ⥤+ D} (α : F ⟶ G) (n : ℕ) :
     HomologicalDeltaFunctor.Hom.app ((leftDerivedDeltaFunctorFamily C D).map α) n =
       NatTrans.leftDerived α.hom n := rfl
@@ -110,7 +119,9 @@ namespace NatTrans
 end NatTrans
 
 variable (C D) in
-/-- Additive functors form their right-derived cohomological δ-functor family. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`. Right derivation defines a functor from additive functors
+`C → D` to cohomological delta-functors, taking `F` to its family
+`R^nF` and a transformation to its derived degree maps. -/
 def rightDerivedDeltaFunctorFamily : (C ⥤+ D) ⥤ CohomologicalDeltaFunctor C D where
   obj F := F.obj.rightDerivedDeltaFunctor
   map α := NatTrans.rightDerivedDeltaFunctorMap α.hom
@@ -126,11 +137,13 @@ def rightDerivedDeltaFunctorFamily : (C ⥤+ D) ⥤ CohomologicalDeltaFunctor C 
       NatTrans.rightDerived α.hom n ≫ NatTrans.rightDerived β.hom n
     exact NatTrans.rightDerived_comp α.hom β.hom n
 
-/-- The family object is the right-derived factory of the underlying functor. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`. The image of an additive functor `F : C → D` under this
+assignment is its right-derived cohomological delta-functor. -/
 theorem rightDerivedDeltaFunctorFamily_obj (F : C ⥤+ D) :
     (rightDerivedDeltaFunctorFamily C D).obj F = F.obj.rightDerivedDeltaFunctor := rfl
 
-/-- Degree evaluation of a family map recovers the parameter transformation. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`. For additive functors `F,G : C → D` and a transformation `α`,
+the degree-`n` component of the family map is `R^nα`. -/
 theorem rightDerivedDeltaFunctorFamily_map_app {F G : C ⥤+ D} (α : F ⟶ G) (n : ℕ) :
     CohomologicalDeltaFunctor.Hom.app ((rightDerivedDeltaFunctorFamily C D).map α) n =
       NatTrans.rightDerived α.hom n := rfl

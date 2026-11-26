@@ -1,4 +1,6 @@
-# Cyclic First Two Map quasi Iso of cyclic Total Hom
+# A two-column quasi-isomorphism from a cyclic-total comparison
 
-The cyclic-total quasi-isomorphism detects the HH map in the source's
-`CC(A){2}` presentation, for the original nonunital algebra map.
+A two-column quasi-isomorphism from a cyclic-total comparison.
+
+If a nonunital algebra map induces a quasi-isomorphism on the full cyclic totals, it induces a
+quasi-isomorphism on the first-two-column totals.

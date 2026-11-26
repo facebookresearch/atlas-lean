@@ -14,11 +14,12 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Functoriality of split projectors
+# Additive functors preserve split complementary kernels and cokernels
 
-An additive functor sends a split inclusion and retraction to a split pair. The mapped pair gives
-the kernel and cokernel universal properties for the mapped complementary projector and hence
-preservation of those displayed diagrams.
+Let `F : C → D` be additive between preadditive categories and
+`i : Y → X`, `r : X → Y` satisfy `i ≫ r = 𝟙 Y`. The mapped
+split pair gives the kernel and cokernel universal properties for
+`F(q)`, where `q = 𝟙 X-r ≫ i`; hence `F` preserves these diagrams.
 -/
 
 @[expose] public section
@@ -38,7 +39,10 @@ variable {C : Type uC} [Category.{vC} C] [Preadditive C]
   (hi : i ≫ r = 𝟙 Y) (hq : q = 𝟙 X - r ≫ i)
 
 include hi hq in
-/-- The mapped split pair proves preservation of the original kernel diagram. -/
+/-- Let `F : C → D` be additive between preadditive categories, and
+let `i : Y → X`, `r : X → Y` satisfy `i ≫ r = 𝟙 Y`,
+`q = 𝟙 X-r ≫ i`. The functor `F` preserves the kernel of `q`,
+using the mapped inclusion and retraction. -/
 theorem preservesKernel_splitComplement :
     PreservesLimit (parallelPair q 0) F := by
   apply preservesLimit_of_preserves_limit_cone (splitComplementIsKernel q i r hi hq)
@@ -55,7 +59,10 @@ theorem preservesKernel_splitComplement :
   exact e.symm hMapped
 
 include hi hq in
-/-- The mapped split pair proves preservation of the original cokernel diagram. -/
+/-- Let `F : C → D` be additive between preadditive categories, and
+let `i : Y → X`, `r : X → Y` satisfy `i ≫ r = 𝟙 Y`,
+`q = 𝟙 X-r ≫ i`. The functor `F` preserves the cokernel of `q`,
+using the mapped inclusion and retraction. -/
 theorem preservesCokernel_splitComplement :
     PreservesColimit (parallelPair q 0) F := by
   apply preservesColimit_of_preserves_colimit_cocone (splitComplementIsCokernel q i r hi hq)

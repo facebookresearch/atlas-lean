@@ -1,3 +1,6 @@
-# Eulerian comp lambda Two
+# The left Eulerian eigenspace identity at parameter two
 
-Projecting an second-operation eigenvector retains the original eigenvalue.
+The left Eulerian eigenspace identity at parameter two.
+
+For a commutative ℚ-algebra k, a commutative k-algebra A and a compatible A-module M, for i≤n,
+eₙ⁽ⁱ⁾ ∘ Λₙ(2)=algebraMap(2ⁱ)·eₙ⁽ⁱ⁾.

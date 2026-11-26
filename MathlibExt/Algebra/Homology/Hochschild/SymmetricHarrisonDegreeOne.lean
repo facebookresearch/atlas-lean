@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- UNEXECUTED source proposal. Original b₂, proper quotient and native Kähler module. -/
+
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricCoefficientMaps
@@ -17,15 +17,16 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.Tactic.NormNum
 
 /-!
-# Degree-one proper-shuffle homology
+# Degree-one proper-shuffle homology and coefficient Kähler differentials
 
-The degree-one proper relation module is zero, and
-the degree-two boundary is the coefficient Kähler
-presentation boundary. Degree-one homology of the
-proper quotient is therefore M ⊗[A] Ω(A/k) for
-arbitrary coefficients, without rationality, flatness
-or coefficient projectivity assumptions. Ground,
-algebra and coefficient universes are independent.
+Let k be a commutative ring, A a commutative k-algebra and M a compatible A-module. Both-
+positive shuffle relations vanish in degree one. The degree-two Hochschild boundary presents M
+⊗[A] Ω¹(A/k), so H₁ of the proper-shuffle quotient is A-linearly isomorphic to that module.
+The class of m ⊗ a maps to m ⊗ da. This uses no rational scalar structure, and it is natural
+in A-linear coefficient maps.
+
+For degree-one Harrison/Kähler comparisons, see J.-L. Loday, Cyclic Homology, 2nd ed., Chapter
+4; the coefficient presentation uses tensor right exactness.
 -/
 
 @[expose] public section
@@ -42,14 +43,20 @@ variable (k : Type u) [CommRing k] (A : Type v) [CommRing A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- Native singleton coordinates and original coefficient cancellation in degree one. -/
+/-- Degree-one coefficient chains in the balanced Kähler presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, M ⊗[k] A⊗1 is
+A-linearly equivalent to M ⊗[A] (A ⊗[k] A). -/
 def algebraOneTensorEquiv :
     M ⊗[k] TensorPower k 1 A ≃ₗ[A] M ⊗[A] (A ⊗[k] A) :=
   (TensorProduct.AlgebraTensorModule.congr (LinearEquiv.refl A M)
     (PiTensorProduct.subsingletonEquiv (R := k) (s := fun _ : Fin 1 => A) 0)).trans
       (TensorProduct.AlgebraTensorModule.cancelBaseChange k A A M A).symm
 
-/-- Degree-one coordinates insert the regular head one and retain the original coefficient. -/
+/-- The degree-one word coordinate of the Kähler presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, m ⊗ tprod(a)
+maps to m ⊗[A] (1_A ⊗[k] a₀). -/
 theorem algebraOneTensorEquiv_tprod (m : M) (a : Fin 1 → A) :
     algebraOneTensorEquiv k A M (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[A] ((1 : A) ⊗ₜ[k] a 0) := by
@@ -58,7 +65,10 @@ theorem algebraOneTensorEquiv_tprod (m : M) (a : Fin 1 → A) :
     PiTensorProduct.subsingletonEquiv_apply_tprod,
     TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul]
 
-/-- Native cons/singleton coordinates and cancellation in degree two. -/
+/-- Degree-two coefficient chains in the balanced Kähler boundary presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, M ⊗[k] A⊗2 is
+A-linearly equivalent to M ⊗[A] (A ⊗[k] (A ⊗[k] A)). -/
 def algebraTwoTensorEquiv :
     M ⊗[k] TensorPower k 2 A ≃ₗ[A] M ⊗[A] (A ⊗[k] (A ⊗[k] A)) :=
   (TensorProduct.AlgebraTensorModule.congr (LinearEquiv.refl A M)
@@ -67,7 +77,10 @@ def algebraTwoTensorEquiv :
         (PiTensorProduct.subsingletonEquiv (R := k) (s := fun _ : Fin 1 => A) 0)))).trans
     (TensorProduct.AlgebraTensorModule.cancelBaseChange k A A M (A ⊗[k] A)).symm
 
-/-- Degree-two coordinates keep both original tail entries in their original order. -/
+/-- The degree-two word coordinate of the Kähler boundary presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, m ⊗ tprod(a)
+maps to m ⊗[A] (1_A ⊗[k] (a₀ ⊗[k] a₁)). -/
 theorem algebraTwoTensorEquiv_tprod (m : M) (a : Fin 2 → A) :
     algebraTwoTensorEquiv k A M (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[A] ((1 : A) ⊗ₜ[k] (a 0 ⊗ₜ[k] a 1)) := by
@@ -78,7 +91,11 @@ theorem algebraTwoTensorEquiv_tprod (m : M) (a : Fin 2 → A) :
     TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul]
   rfl
 
-/-- The coefficient boundary is the native Kähler b₂ after the original tensor coordinates. -/
+/-- The coefficient Hochschild degree-two boundary equals the tensor Kähler boundary.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the one- and
+two-word coordinate equivalences identify b₂ with M ⊗[A]
+KaehlerDifferential.Hochschild.boundaryTwo. -/
 theorem algebraBoundary_two_tensor :
     (algebraOneTensorEquiv k A M).toLinearMap.comp (algebraBoundary k A M 1) =
       ((KaehlerDifferential.Hochschild.boundaryTwo k A).lTensor M).comp
@@ -125,13 +142,19 @@ theorem algebraBoundary_two_tensor :
   simp only [TensorProduct.smul_tmul, TensorProduct.smul_tmul', smul_eq_mul,
     one_mul, mul_one, TensorProduct.tmul_add, TensorProduct.tmul_sub]
 
-/-- The original representative m⊗a maps to m tensor_A da in the native Kähler module. -/
+/-- The coefficient universal-differential map from degree-one chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, m ⊗ a maps
+A-linearly to m ⊗[A] da. -/
 def algebraOneToKaehler :
     M ⊗[k] TensorPower k 1 A →ₗ[A] M ⊗[A] KaehlerDifferential k A :=
   ((KaehlerDifferential.D k A).tensorProductTo.lTensor M).comp
     (algebraOneTensorEquiv k A M).toLinearMap
 
-/-- The representative map retains the original coefficient and native universal differential. -/
+/-- The universal-differential value of a pure degree-one coefficient word.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraOneToKaehler(m ⊗ tprod(a))=m ⊗[A] D(a₀). -/
 theorem algebraOneToKaehler_tprod (m : M) (a : Fin 1 → A) :
     algebraOneToKaehler k A M (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
       m ⊗ₜ[A] KaehlerDifferential.D k A (a 0) := by
@@ -139,8 +162,10 @@ theorem algebraOneToKaehler_tprod (m : M) (a : Fin 1 → A) :
     LinearEquiv.coe_coe, algebraOneTensorEquiv_tprod,
     LinearMap.lTensor_tmul, Derivation.tensorProductTo_tmul, one_smul]
 
-/-- Actual right exactness of native tensor transports the Kähler
-presentation to the original arbitrary coefficient boundary. -/
+/-- The degree-two boundary presents the kernel of coefficient differentials.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+image(b₂)=ker(algebraOneToKaehler). This uses tensor right exactness for arbitrary M. -/
 theorem algebraBoundary_two_exact :
     Function.Exact (algebraBoundary k A M 1) (algebraOneToKaehler k A M) := by
   have h : Function.Exact ((KaehlerDifferential.Hochschild.boundaryTwo k A).lTensor M)
@@ -175,12 +200,18 @@ theorem algebraBoundary_two_exact :
     rw [hb]
     exact (h _).mpr ⟨algebraTwoTensorEquiv k A M z, rfl⟩
 
-/-- The representative map is surjective without coefficient flatness. -/
+/-- Degree-one coefficient words surject onto coefficient Kähler differentials.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraOneToKaehler is surjective onto M ⊗[A] Ω¹(A/k). -/
 theorem algebraOneToKaehler_surjective : Function.Surjective (algebraOneToKaehler k A M) :=
   (LinearMap.lTensor_surjective M (KaehlerDifferential.tensorProductTo_surjective k A)).comp
     (algebraOneTensorEquiv k A M).surjective
 
-/-- Original degree-one proper quotient representatives map through the original Kähler representative map. -/
+/-- The universal-differential map from the degree-one proper quotient.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, descend m ⊗ a
+↦ m ⊗ da through the degree-one proper relation module, which is zero. -/
 def algebraPositiveOneToKaehler :
     ((M ⊗[k] TensorPower k 1 A) ⧸ algebraPositiveRelations k A M 1) →ₗ[A]
       M ⊗[A] KaehlerDifferential k A :=
@@ -188,28 +219,43 @@ def algebraPositiveOneToKaehler :
     rw [algebraPositiveRelations_low k A M 1 (by omega)]
     exact bot_le)
 
-/-- The proper quotient uses the original representative map. -/
+/-- The proper quotient differential map retains a degree-one representative.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveOneToKaehler([x])=algebraOneToKaehler(x). -/
 theorem algebraPositiveOneToKaehler_mkQ (x : M ⊗[k] TensorPower k 1 A) :
     algebraPositiveOneToKaehler k A M ((algebraPositiveRelations k A M 1).mkQ x) =
       algebraOneToKaehler k A M x := rfl
 
-/-- The same original Kähler representative in the chain category's full universe. -/
+/-- The lifted coefficient differential map from the degree-one proper quotient.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the target is
+ULift(M ⊗[A] Ω¹(A/k)), retaining independent carrier universes. -/
 def algebraPositiveOneToKaehlerLift :
     ((M ⊗[k] TensorPower k 1 A) ⧸ algebraPositiveRelations k A M 1) →ₗ[A]
       ULift.{u} (M ⊗[A] KaehlerDifferential k A) :=
   (ULift.moduleEquiv : ULift.{u} (M ⊗[A] KaehlerDifferential k A) ≃ₗ[A]
     M ⊗[A] KaehlerDifferential k A).symm.toLinearMap.comp (algebraPositiveOneToKaehler k A M)
 
-/-- Lifting the categorical target retains every original quotient representative. -/
+/-- The lifted differential value of a proper quotient representative.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, [x] maps to
+ULift.up(algebraOneToKaehler(x)). -/
 theorem algebraPositiveOneToKaehlerLift_mkQ (x : M ⊗[k] TensorPower k 1 A) :
     algebraPositiveOneToKaehlerLift k A M ((algebraPositiveRelations k A M 1).mkQ x) =
       ULift.up (algebraOneToKaehler k A M x) := rfl
 
-/-- The source short complex is the native degree-one short complex of the original proper quotient. -/
+/-- The short complex computing proper-shuffle homology in degree one.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, use degrees
+two, one and zero of algebraPositiveQuotientComplex; its outgoing degree-one boundary is zero. -/
 def algebraPositiveOneShortComplex : ShortComplex (ModuleCat.{max u v w} A) :=
   (algebraPositiveQuotientComplex k A M).sc 1
 
-/-- Its second map is the original symmetric degree-one zero boundary. -/
+/-- The outgoing map of the degree-one proper homology short complex is zero.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveOneShortComplex.g is the symmetric boundary b₁=0. -/
 theorem algebraPositiveOneShortComplex_g : (algebraPositiveOneShortComplex k A M).g = 0 := by
   let K := algebraPositiveQuotientComplex k A M
   have h10 : (ComplexShape.down ℕ).Rel 1 0 := rfl
@@ -234,7 +280,10 @@ theorem algebraPositiveOneShortComplex_g : (algebraPositiveOneShortComplex k A M
   apply (cancel_mono (K.xNextIso h10).hom).1
   rw [HomologicalComplex.dFrom_comp_xNextIso, hd, zero_comp]
 
-/-- The proper b₂ and original Kähler representative form an exact pair. -/
+/-- Exactness of the proper degree-one differential presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the image of
+the incoming proper boundary equals the kernel of algebraPositiveOneToKaehler. -/
 theorem algebraPositiveOneToKaehler_exact :
     Function.Exact (algebraPositiveOneShortComplex k A M).f.hom
       (algebraPositiveOneToKaehler k A M) := by
@@ -276,14 +325,19 @@ theorem algebraPositiveOneToKaehler_exact :
     have hp := congrArg (fun f : (algebraPositiveOneShortComplex k A M).X₁ ⟶ K.X 1 => f.hom z) hf
     exact (hD _).mpr ⟨e.hom z, hp.symm⟩
 
-/-- Surjectivity of the quotient representative map is inherited from the tensor map. -/
+/-- The proper degree-one quotient surjects onto coefficient differentials.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveOneToKaehler maps onto M ⊗[A] Ω¹(A/k). -/
 theorem algebraPositiveOneToKaehler_surjective :
     Function.Surjective (algebraPositiveOneToKaehler k A M) := by
   intro z
   obtain ⟨x, hx⟩ := algebraOneToKaehler_surjective k A M z
   exact ⟨(algebraPositiveRelations k A M 1).mkQ x, hx⟩
 
-/-- The full-universe representative remains an exact cokernel of the degree-two map. -/
+/-- Exactness of the lifted proper degree-one differential presentation.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the image of the incoming proper boundary equals the kernel of algebraPositiveOneToKaehlerLift. -/
 theorem algebraPositiveOneToKaehlerLift_exact :
     Function.Exact (algebraPositiveOneShortComplex k A M).f.hom
       (algebraPositiveOneToKaehlerLift k A M) := by
@@ -292,14 +346,20 @@ theorem algebraPositiveOneToKaehlerLift_exact :
   change ULift.up (algebraPositiveOneToKaehler k A M y) = ULift.up 0 ↔ _
   exact ULift.up_inj
 
-/-- The whole-module lift is surjective without coefficient hypotheses. -/
+/-- Surjectivity of the lifted proper differential map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, every element
+of ULift(M ⊗[A] Ω¹(A/k)) comes from the proper degree-one quotient. -/
 theorem algebraPositiveOneToKaehlerLift_surjective :
     Function.Surjective (algebraPositiveOneToKaehlerLift k A M) := by
   rintro ⟨z⟩
   obtain ⟨x, hx⟩ := algebraPositiveOneToKaehler_surjective k A M z
   exact ⟨x, congrArg ULift.up hx⟩
 
-/-- The proper degree-two boundary is killed by the differential representative. -/
+/-- The proper degree-two boundary is annihilated by lifted coefficient differentials.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the incoming
+map of algebraPositiveOneShortComplex followed by algebraPositiveOneToKaehlerLift is zero. -/
 @[reassoc]
 theorem algebraPositiveOne_boundary_toKaehler :
     (algebraPositiveOneShortComplex k A M).f ≫ ModuleCat.ofHom (algebraPositiveOneToKaehlerLift k A M) = 0 := by
@@ -308,53 +368,80 @@ theorem algebraPositiveOne_boundary_toKaehler :
   intro x
   exact (algebraPositiveOneToKaehlerLift_exact k A M _).mpr ⟨x, rfl⟩
 
-/-- The native cokernel cofork of the original proper b₂ with its original Kähler map. -/
+/-- The coefficient Kähler cokernel cofork for proper degree-one chains.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the incoming
+proper boundary has cofork projection algebraPositiveOneToKaehlerLift. -/
 def algebraPositiveOneCokernelCofork : CokernelCofork (algebraPositiveOneShortComplex k A M).f :=
   CokernelCofork.ofπ (ModuleCat.ofHom (algebraPositiveOneToKaehlerLift k A M))
     (algebraPositiveOne_boundary_toKaehler k A M)
 
-/-- The cofork is a native cokernel by the proved arbitrary-coefficient exact tensor presentation. -/
+/-- The coefficient differential cofork is the cokernel of the incoming proper boundary.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+algebraPositiveOneCokernelCofork satisfies the cokernel universal property. -/
 def algebraPositiveOneCokernelIsColimit : IsColimit (algebraPositiveOneCokernelCofork k A M) :=
   ModuleCat.isColimitCokernelCofork (algebraPositiveOneShortComplex k A M).f
     (ModuleCat.ofHom (algebraPositiveOneToKaehlerLift k A M))
     (algebraPositiveOneToKaehlerLift_exact k A M) (algebraPositiveOneToKaehlerLift_surjective k A M)
 
-/-- Native homology data from the cokernel and the original zero b₁. -/
+/-- The coefficient differential model of proper degree-one homology.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the zero
+outgoing boundary and the Kähler cokernel give LeftHomologyData for the degree-one short
+complex. -/
 def algebraPositiveOneHomologyData : (algebraPositiveOneShortComplex k A M).LeftHomologyData :=
   ShortComplex.LeftHomologyData.ofIsColimitCokernelCofork
     (algebraPositiveOneShortComplex k A M) (algebraPositiveOneShortComplex_g k A M)
     (algebraPositiveOneCokernelCofork k A M) (algebraPositiveOneCokernelIsColimit k A M)
 
-/-- The degree-one comparison targets the whole-module lift of the original Kähler tensor. -/
+/-- Proper-shuffle H₁ is the lifted coefficient Kähler module.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M,
+H₁(algebraPositiveQuotientComplex) ≅ ULift(M ⊗[A] Ω¹(A/k)) in ModuleCat A. -/
 def algebraPositiveHomologyOneIsoKaehler :
     (algebraPositiveQuotientComplex k A M).homology 1 ≅
       ModuleCat.of A (ULift.{u} (M ⊗[A] KaehlerDifferential k A)) :=
   (algebraPositiveOneHomologyData k A M).homologyIso
 
-/-- The same comparison returns the original coefficient Kähler tensor across independent worlds. -/
+/-- The coefficient Kähler equivalence for proper H₁ in the unlifted carrier.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the same
+degree-one homology is A-linearly equivalent to M ⊗[A] Ω¹(A/k). -/
 def algebraPositiveHomologyOneEquivKaehler :
     (algebraPositiveQuotientComplex k A M).homology 1 ≃ₗ[A] M ⊗[A] KaehlerDifferential k A :=
   (algebraPositiveHomologyOneIsoKaehler k A M).toLinearEquiv.trans ULift.moduleEquiv
 
-/-- The categorical comparison lifts precisely the original-world value. -/
+/-- The forward lifted H₁ comparison agrees with its unlifted equivalence.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the
+isomorphism sends x to ULift.up(algebraPositiveHomologyOneEquivKaehler(x)). -/
 theorem algebraPositiveHomologyOneIsoKaehler_hom_up (x : (algebraPositiveQuotientComplex k A M).homology 1) :
     (algebraPositiveHomologyOneIsoKaehler k A M).hom.hom x =
       ULift.up (algebraPositiveHomologyOneEquivKaehler k A M x) := rfl
 
-/-- Its inverse on a lifted original tensor is the original-world inverse equivalence. -/
+/-- The inverse lifted H₁ comparison agrees with the coefficient differential equivalence.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the inverse
+on ULift.up(x) is the inverse of algebraPositiveHomologyOneEquivKaehler on x. -/
 theorem algebraPositiveHomologyOneIsoKaehler_inv_up (x : M ⊗[A] KaehlerDifferential k A) :
     (algebraPositiveHomologyOneIsoKaehler k A M).inv.hom (ULift.up x) =
       (algebraPositiveHomologyOneEquivKaehler k A M).symm x := rfl
 
-/-- The independently specified native degree-one homology class of an original quotient representative. -/
+/-- The class map from proper degree-one chains to their homology.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, every degree-
+one proper quotient chain is a cycle because b₁=0, giving this homology class map. -/
 def algebraPositiveHomologyOneClass :
     (algebraPositiveQuotientComplex k A M).X 1 ⟶ (algebraPositiveQuotientComplex k A M).homology 1 :=
   (algebraPositiveOneShortComplex k A M).liftCycles (𝟙 _)
     (by rw [Category.id_comp, algebraPositiveOneShortComplex_g]) ≫
       (algebraPositiveOneShortComplex k A M).homologyπ
 
-/-- The homology comparison sends the original homology class
-through the original Kähler representative map. -/
+/-- The degree-one class map followed by the Kähler comparison.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, class
+followed by algebraPositiveHomologyOneIsoKaehler is algebraPositiveOneToKaehlerLift. -/
 @[reassoc]
 theorem algebraPositiveHomologyOneClass_toKaehler :
     algebraPositiveHomologyOneClass k A M ≫ (algebraPositiveHomologyOneIsoKaehler k A M).hom =
@@ -374,7 +461,10 @@ theorem algebraPositiveHomologyOneClass_toKaehler :
   rw [hl]
   exact Category.id_comp h.π
 
-/-- The original pure representative class maps to the original coefficient tensor the native differential da. -/
+/-- The lifted H₁ comparison on a pure coefficient tensor class.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the homology
+class of [m ⊗ tprod(a)] maps to ULift.up(m ⊗[A] D(a₀)). -/
 theorem algebraPositiveHomologyOneIsoKaehler_class_tprod (m : M) (a : Fin 1 → A) :
     (algebraPositiveHomologyOneIsoKaehler k A M).hom.hom
         ((algebraPositiveHomologyOneClass k A M).hom
@@ -384,7 +474,10 @@ theorem algebraPositiveHomologyOneIsoKaehler_class_tprod (m : M) (a : Fin 1 → 
     ((algebraPositiveRelations k A M 1).mkQ (m ⊗ₜ[k] PiTensorProduct.tprod k a))
   exact h.trans (congrArg ULift.up (algebraOneToKaehler_tprod k A M m a))
 
-/-- The original-world equivalence retains the original coefficient and universal differential value. -/
+/-- The unlifted H₁ comparison on a pure coefficient tensor class.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-module M, the homology
+class of [m ⊗ tprod(a)] maps to m ⊗[A] D(a₀). -/
 theorem algebraPositiveHomologyOneEquivKaehler_class_tprod (m : M) (a : Fin 1 → A) :
     algebraPositiveHomologyOneEquivKaehler k A M
       ((algebraPositiveHomologyOneClass k A M).hom
@@ -397,7 +490,10 @@ section CoefficientNaturality
 variable {N : Type w} [AddCommGroup N] [Module k N] [Module A N]
   [SMulCommClass k A N] [IsScalarTower k A N]
 
-/-- The original coefficient tensor map transported through whole-module lifts on both ends. -/
+/-- The lifted Kähler tensor map of an A-linear coefficient arrow.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, send
+ULift.up(m ⊗ ω) to ULift.up(f(m) ⊗ ω). -/
 def algebraKaehlerCoefficientLift (f : M →ₗ[A] N) :
     ULift.{u} (M ⊗[A] KaehlerDifferential k A) →ₗ[A] ULift.{u} (N ⊗[A] KaehlerDifferential k A) :=
   (ULift.moduleEquiv : ULift.{u} (N ⊗[A] KaehlerDifferential k A) ≃ₗ[A]
@@ -406,7 +502,10 @@ def algebraKaehlerCoefficientLift (f : M →ₗ[A] N) :
         (ULift.moduleEquiv : ULift.{u} (M ⊗[A] KaehlerDifferential k A) ≃ₗ[A]
           M ⊗[A] KaehlerDifferential k A).toLinearMap)
 
-/-- The native Kähler representative is natural in the original A-linear coefficient map. -/
+/-- Coefficient arrows commute with the degree-one universal-differential map.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, (f ⊗
+id) ∘ algebraOneToKaehler_M = algebraOneToKaehler_N ∘ algebraCoefficientLevelMap(f,1). -/
 theorem algebraOneToKaehler_coefficient (f : M →ₗ[A] N) :
     (TensorProduct.map f (LinearMap.id : KaehlerDifferential k A →ₗ[A] KaehlerDifferential k A)).comp
         (algebraOneToKaehler k A M) =
@@ -417,7 +516,11 @@ theorem algebraOneToKaehler_coefficient (f : M →ₗ[A] N) :
   simp only [LinearMap.restrictScalars_apply, LinearMap.comp_apply, algebraOneToKaehler_tprod,
     algebraCoefficientLevelMap_tmul, TensorProduct.map_tmul, LinearMap.id_apply]
 
-/-- The quotient Kähler map retains the original coefficient naturality square. -/
+/-- The proper degree-one Kähler presentation is natural in coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the
+lifted differential projection and algebraPositiveCoefficientMap(f) form the coefficient
+tensor square. -/
 @[reassoc]
 theorem algebraPositiveOneToKaehler_coefficient (f : M →ₗ[A] N) :
     ModuleCat.ofHom (algebraPositiveOneToKaehlerLift k A M) ≫
@@ -434,8 +537,11 @@ theorem algebraPositiveOneToKaehler_coefficient (f : M →ₗ[A] N) :
     ULift.up (algebraOneToKaehler k A N (algebraCoefficientLevelMap k A f 1 x))
   exact congrArg ULift.up (DFunLike.congr_fun (algebraOneToKaehler_coefficient k A M f) x)
 
-/-- Actual native homology map data from the original coefficient map and its
-proved original Kähler representative square. -/
+/-- The degree-one proper homology map data of a coefficient arrow.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N, the
+map on cycles is its proper degree-one coefficient component and the homology-model map is
+algebraKaehlerCoefficientLift(f). -/
 def algebraPositiveOneHomologyMapData (f : M →ₗ[A] N) :
     ShortComplex.LeftHomologyMapData
       ((HomologicalComplex.shortComplexFunctor (ModuleCat.{max u v w} A) (ComplexShape.down ℕ) 1).map
@@ -451,8 +557,11 @@ def algebraPositiveOneHomologyMapData (f : M →ₗ[A] N) :
     exact ((algebraPositiveCoefficientMap k A f).comm_to 1).symm
   commπ := algebraPositiveOneToKaehler_coefficient k A M f
 
-/-- The all-k degree-one proper-shuffle homology isomorphism is natural in
-arbitrary original A-linear coefficient maps; the target keeps M first. -/
+/-- The proper H₁ Kähler isomorphism is natural in A-linear coefficients.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+homologyMap(f,1) followed by the target Kähler comparison equals the source Kähler comparison
+followed by the lifted map f ⊗ id. -/
 @[reassoc]
 theorem algebraPositiveHomologyOneIsoKaehler_coefficient (f : M →ₗ[A] N) :
     HomologicalComplex.homologyMap (algebraPositiveCoefficientMap k A f) 1 ≫

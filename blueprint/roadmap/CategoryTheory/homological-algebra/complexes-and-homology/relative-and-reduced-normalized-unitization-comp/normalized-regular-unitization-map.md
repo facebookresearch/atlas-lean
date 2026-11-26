@@ -1,4 +1,6 @@
-# Normalized Regular Unitization Map
+# The normalized chain map of a unital map between unitizations
 
-A same-world unitization map uses the factor-quotient map.
-Its chain law is from the original epic normalization projection.
+The normalized chain map of a unital map between unitizations.
+
+A `k`-algebra homomorphism `A⁺ → B⁺` acts on the regular coefficient and quotient-tail
+factors, inducing a map between their normalized Hochschild complexes.

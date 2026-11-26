@@ -1,4 +1,6 @@
-# Exterior Antisymmetrization naturality
+# Naturality of the signed exterior lift
 
-Applying the original linear map to every tensor coordinate commutes with
-the complete signed antisymmetrization.
+Naturality of the signed exterior lift.
+
+For a commutative ring k and a k-linear map f : V → W, the factorwise map f⊗n satisfies f⊗n
+∘ Aₙ,V = Aₙ,W ∘ ⋀ⁿf. The modules V and W may lie in different universes.

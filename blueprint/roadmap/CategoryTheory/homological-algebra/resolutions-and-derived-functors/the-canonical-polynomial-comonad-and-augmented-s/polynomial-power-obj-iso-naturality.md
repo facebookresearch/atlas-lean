@@ -1,3 +1,6 @@
-# Polynomial Power Obj Iso naturality
+# Naturality of the successor-power polynomial comparison
 
-Equality transport of the actual power maps is natural; no additional power functor is built.
+Naturality of the successor-power polynomial comparison.
+
+For `f : A → B`, the comparison identifies `T^(n+1)(f)` with polynomial renaming along
+`T^n(f)`.

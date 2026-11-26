@@ -1,3 +1,5 @@
-# Cobar Coface right
+# The zeroth cobar coface as a natural-transformation component
 
-The zeroth coface is the iterated right coaction.
+The zeroth cobar coface as a natural-transformation component.
+
+The component of coface zero is the iterated right-comodule coaction.

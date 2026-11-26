@@ -1,4 +1,5 @@
-# Mapped Short Exact
+# Exact mapped kernel sequence
 
-The mapped kernel short complex is short exact when its final map is an
-epimorphism.
+For additive `i : P → A` into an abelian category and a kernel lift
+of `f : P₁ → P₂`, if `i(f)` is epic, the mapped sequence
+`i(K) → i(P₁) → i(P₂)` is short exact.

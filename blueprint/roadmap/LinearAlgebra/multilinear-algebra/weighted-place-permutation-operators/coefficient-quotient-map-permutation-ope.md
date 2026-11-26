@@ -1,3 +1,6 @@
-# Coefficient Quotient Map permutation Operator
+# Weighted permutations descend through a factorwise quotient
 
-The finite operator commutes with the actual factorwise tensor quotient projection.
+Weighted permutations descend through a factorwise quotient.
+
+For a commutative ring k, k-modules M,V and a submodule S ≤ V, let q : V → V/S and T = id_M
+⊗ q⊗n. For every c : Sₙ → k, T ∘ O_c,M,V = O_c,M,V/S ∘ T.

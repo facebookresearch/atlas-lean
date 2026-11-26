@@ -1,3 +1,5 @@
-# Precomp Comonad obj obj
+# The object formula for the precomposition comonad
 
-Objects of the precomposition comonad are computed pointwise.
+The object formula for the precomposition comonad.
+
+At a functor `R` and object `X`, its value is `R(G(X))`.

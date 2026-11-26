@@ -1,3 +1,6 @@
-# Normalized Projection regular Endomorphism
+# The normalization square for a unitization endomorphism
 
-The original endomorphism square forwards the one quotient-map construction.
+The normalization square for a unitization endomorphism.
+
+The normalized projection commutes with the regular and normalized chain endomorphisms induced
+by a unital map `A⁺ → A⁺`.

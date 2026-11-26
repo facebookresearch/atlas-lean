@@ -1,3 +1,5 @@
-# Cyclic Outer Tail Two Iso inv f f
+# The inverse cell formula for cyclic outer-tail periodicity
 
-Its inverse preserves those same literal tensor cells.
+The inverse cell formula for cyclic outer-tail periodicity.
+
+The inverse outer-tail comparison is the identity on every bidegree tensor cell.

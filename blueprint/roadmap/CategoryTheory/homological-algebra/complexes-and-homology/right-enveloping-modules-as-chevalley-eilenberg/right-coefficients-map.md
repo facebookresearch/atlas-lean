@@ -1,3 +1,6 @@
-# Right Coefficients Map
+# The Lie coefficient map of a right enveloping morphism
 
-An right UEA map is a map for the Lie coefficient actions.
+The Lie coefficient map of a right enveloping morphism.
+
+A `U_R(L)ᵐᵒᵖ`-linear map restricts to an `R`-linear map commuting with the negative generator
+Lie action.

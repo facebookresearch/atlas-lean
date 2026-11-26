@@ -16,13 +16,15 @@ public import MathlibExt.LinearAlgebra.TensorPower.Cyclic
 public import MathlibExt.LinearAlgebra.TensorPower.HeadFixingAction
 
 /-!
-# Actual Eulerian cyclic norm actions on original tensor powers
+# Eulerian convolution and the cyclic norm
 
-The actual rational permutation representation sends the original signed
-cyclic norm to the existing native tensor norm. The actual head-fixing
-group-ring embedding acts through the original first/tail tensor coordinates.
-Mapping the proved cyclic coefficient identity therefore gives the concrete
-operator identity at two, without a caller-supplied norm equation.
+Let k be a commutative ℚ-algebra and V a k-module. On V⊗(n+1), the signed cyclic operator is tₙ
+= (-1)ⁿρ(finRotate(n+1)), and its norm is Nₙ = ∑ᵣ₌₀ⁿ tₙʳ. The rational permutation action sends
+the signed cyclic norm element to Nₙ. Writing h for the embedding that fixes the first tensor
+factor, the convolution identity at two is Λₙ₊₁(2)Nₙ = 2Nₙh(Λₙ(2)).
+
+For cyclic norms and Eulerian operations, see J.-L. Loday, Cyclic Homology, 2nd ed., Chapter 1
+and §4.5.
 -/
 
 @[expose] public section
@@ -37,7 +39,10 @@ namespace TensorPower
 variable {k : Type u} [CommRing k] [Algebra ℚ k]
   {V : Type v} [AddCommGroup V] [Module k V]
 
-/-- The actual rational coefficient image of the native tail representation. -/
+/-- Scalar compatibility of the rational permutation action.
+
+For a commutative ℚ-algebra k, a k-module V, c ∈ ℚ and x ∈ ℚ[Sₙ], the action satisfies ρₙ(c
+x) = algebraMap(c) · ρₙ(x) on V⊗n. -/
 theorem rationalPermutationAction_smul (n : ℕ) (c : ℚ)
     (x : MonoidAlgebra ℚ (Equiv.Perm (Fin n))) :
     rationalPermutationAction (k := k) (V := V) n (c • x) =
@@ -50,7 +55,11 @@ theorem rationalPermutationAction_smul (n : ℕ) (c : ℚ)
     rw [rationalPermutationAction_single, map_one]
   rw [hc, smul_mul_assoc, _root_.one_mul]
 
-/-- The original group-ring cyclic norm has exactly the existing native signed tensor norm action. -/
+/-- The signed cyclic norm acts as the tensor norm.
+
+For a commutative ℚ-algebra k and a k-module V, the action of ∑ᵣ₌₀ⁿ
+sign(finRotate(n+1)ʳ)[finRotate(n+1)ʳ] equals Nₙ = ∑ᵣ₌₀ⁿ tₙʳ on V⊗(n+1), with tₙ =
+(-1)ⁿρ(finRotate(n+1)). -/
 theorem rationalPermutationAction_cyclicNorm (n : ℕ) :
     rationalPermutationAction (k := k) (V := V) (n + 1) (Equiv.Perm.signedCyclicNormElement ℚ n) =
       norm k V n := by
@@ -78,7 +87,10 @@ theorem rationalPermutationAction_cyclicNorm (n : ℕ) :
       map_neg, map_one]
   rw [hs]
 
-/-- The actual head-fixed rational group-ring action is the original tensor extension of its tail action. -/
+/-- The head-fixed action in first-factor tensor coordinates.
+
+For a commutative ℚ-algebra k, a k-module V and x ∈ ℚ[Sₙ], the action of h(x) on V⊗(n+1)
+corresponds, under consEquiv : V ⊗ V⊗n ≃ V⊗(n+1), to id_V ⊗ ρₙ(x). -/
 theorem rationalPermutationAction_headFixing_cons (n : ℕ)
     (x : MonoidAlgebra ℚ (Equiv.Perm (Fin n))) :
     (rationalPermutationAction (k := k) (V := V) (n + 1)
@@ -97,7 +109,10 @@ theorem rationalPermutationAction_headFixing_cons (n : ℕ)
       LinearMap.comp_smul]
     rw [permutationRepresentation_headFixing_cons]
 
-/-- The actual convolution-at-two operator and the original tensor norm have the exact head-fixed identity. -/
+/-- The convolution-at-two identity for the cyclic norm.
+
+For a commutative ℚ-algebra k and a k-module V, Λₙ₊₁(2) ∘ Nₙ = 2 · Nₙ ∘ ρₙ₊₁(h(Λₙ(2))). Here
+Nₙ is the signed cyclic norm on V⊗(n+1), and h fixes the first tensor factor. -/
 theorem rationalEulerianLambda_two_cyclicNorm (n : ℕ) :
     (rationalPermutationAction (k := k) (V := V) (n + 1) (Equiv.Perm.eulerianLambda (n + 1) 2)).comp
         (norm k V n) =

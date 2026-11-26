@@ -2,9 +2,9 @@
 
 ## Projective Resolution
 
-- [Augmented](augmented.md)
-- [Augmented acyclic](augmented-acyclic.md)
+- [The augmented chain complex of a projective resolution](augmented.md)
+- [Acyclicity of an augmented projective resolution](augmented-acyclic.md)
 
 ## Chain Complex
 
-- [Quasi Iso to Single₀ of augment acyclic](quasi-iso-to-single-of-augment-acyclic.md)
+- [An acyclic augmentation induces a quasi-isomorphism](quasi-iso-to-single-of-augment-acyclic.md)

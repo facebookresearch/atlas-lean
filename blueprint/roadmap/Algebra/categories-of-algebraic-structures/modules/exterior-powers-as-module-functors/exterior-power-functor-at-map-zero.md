@@ -1,3 +1,6 @@
-# Exterior Power Functor At map zero
+# The scalar coordinate of an exterior-degree-zero map
 
-Degree zero has the original regular-ring coordinate, across raw universes.
+The scalar coordinate of an exterior-degree-zero map.
+
+Under the canonical identifications `⋀⁰[R] M ≃ₗ[R] R` and `⋀⁰[R] N ≃ₗ[R] R`, the exterior map
+induced by `f : M → N` has scalar coordinate the identity.

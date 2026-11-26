@@ -1,3 +1,6 @@
-# Positive Quotient Augmentation Nat
+# The natural augmentation of positive proper-shuffle chain diagrams
 
-Original algebra augmentations supply the positive proper-quotient augmentation.
+The natural augmentation of positive proper-shuffle chain diagrams.
+
+Maps `P → B` induce a natural transformation from the positive quotient functor to its
+constant value at the identity augmentation of `B`.

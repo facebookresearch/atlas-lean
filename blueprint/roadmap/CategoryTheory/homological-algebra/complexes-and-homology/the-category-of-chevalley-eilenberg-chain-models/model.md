@@ -1,4 +1,5 @@
-# Model
+# A Lie algebra with bracket-presented exterior differentials
 
-A Lie algebra equipped with the canonical bracket-presented CE chain
-data.
+For a commutative ring R:Type u, a CE model consists of a Lie algebra
+carrier L:Type v, its R-Lie structure, and square-zero exterior
+differential data satisfying the canonical bracket prescription.

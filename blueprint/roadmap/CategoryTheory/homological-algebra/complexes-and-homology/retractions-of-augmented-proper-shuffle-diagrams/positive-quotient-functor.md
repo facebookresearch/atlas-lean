@@ -1,3 +1,5 @@
-# Positive Quotient Functor
+# The positive-index proper-shuffle quotient functor
 
-The original quotient functor after the same native positive-index restriction.
+The positive-index proper-shuffle quotient functor.
+
+Restrict the full proper-shuffle quotient functor along the same embedding `n ↦ n+1`.

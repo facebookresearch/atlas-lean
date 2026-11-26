@@ -13,15 +13,16 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialFormProjection
 
 /-!
-# Inverting polynomial form projection in one degree
+# Inverse factorial normalization in one polynomial degree
 
-In degree n, the unscaled form
-projection differs from the inverse
-polynomial antisymmetrization by n!.
-When n! is invertible in the ground
-ring, rescaling the projection gives
-that inverse. Only this fixed-degree
-unit condition is required.
+Let `k` be a commutative ring, `A` a polynomial `k`-algebra, and `M` a compatible symmetric
+coefficient module. In degree `n`, the universal-form projection satisfies `π_n ∘ ε_n = n! •
+id` for signed polynomial antisymmetrization `ε_n`.
+
+When `(n! : k)` is invertible, the scaled map `(n!)⁻¹ • π_n` is exactly the inverse polynomial
+exterior comparison. It is a two-sided inverse of `ε_n`. The polynomial comparison is defined
+over a general commutative ring; the fixed-degree invertibility condition identifies its
+forward map with this scaling.
 -/
 
 @[expose] public section
@@ -43,12 +44,18 @@ local notation "Ω" => KaehlerDifferential k A
 
 variable (n : ℕ) [Invertible (n.factorial : k)]
 
-/-- Rescale the original form projection by the fixed-degree inverse factorial. -/
+/-- The coefficient-form homology map scaled by an inverse factorial.
+
+For a fixed degree `n` with invertible `(n! : k)`, multiply the unscaled coefficient-form
+homology map by `(n!)⁻¹`. -/
 def scaledCoefficientFormHomologyMap :
     (Symmetric.chainComplex k A M).homology n →ₗ[k] M ⊗[A] (⋀[A]^n Ω) :=
   ⅟ (n.factorial : k) • Symmetric.coefficientDifferentialFormHomologyLinearMap k A M n
 
-/-- The rescaled projection is a left inverse of signed antisymmetrization. -/
+/-- The left inverse law for inverse-factorial form projection.
+
+For every degree-`n` coefficient form `ω`, the scaled projection of its signed polynomial
+antisymmetrization equals `ω`. -/
 theorem scaledCoefficientFormHomologyMap_antisymmetrization
     (ω : M ⊗[A] (⋀[A]^n Ω)) :
     scaledCoefficientFormHomologyMap k σ M n
@@ -57,8 +64,10 @@ theorem scaledCoefficientFormHomologyMap_antisymmetrization
     coefficientFormHomologyMap_antisymmetrization,
     ← Nat.cast_smul_eq_nsmul (R := k), smul_smul, invOf_mul_self, one_smul]
 
-/-- The rescaled original projection is exactly the original
-polynomial inverse, as an equality of linear maps. -/
+/-- The scaled form projection as the polynomial inverse comparison.
+
+With `(n! : k)` invertible, the scaled coefficient-form homology map equals the linear map of
+the polynomial differential-form equivalence. -/
 theorem scaledCoefficientFormHomologyMap_eq_inverse :
     scaledCoefficientFormHomologyMap k σ M n =
       (symmetricHochschildDifferentialFormEquiv k σ M n).toLinearMap := by
@@ -77,8 +86,10 @@ theorem scaledCoefficientFormHomologyMap_eq_inverse :
       ((congrArg E he).trans (polynomialAntisymmetrizationHomology_coordinates k σ M n ω))
   exact hl.trans hr.symm
 
-/-- The fixed-degree rescaled projection and antisymmetrization
-also satisfy the right inverse law on the original Hochschild homology. -/
+/-- The right inverse law for inverse-factorial form projection.
+
+For every degree-`n` polynomial Hochschild homology class, signed antisymmetrization after the
+scaled form projection returns the class. -/
 theorem antisymmetrization_scaledCoefficientFormHomologyMap
     (z : (Symmetric.chainComplex k A M).homology n) :
     polynomialAntisymmetrizationHomology k σ M n
@@ -87,20 +98,29 @@ theorem antisymmetrization_scaledCoefficientFormHomologyMap
   rw [← polynomialAntisymmetrizationHomologyEquiv_toLinearMap]
   exact LinearEquiv.symm_apply_apply _ _
 
-/-- The native polynomial form isomorphism has the rescaled projection
-as its forward linear map. -/
+/-- The polynomial coefficient-form homology isomorphism.
+
+The polynomial exterior comparison gives an isomorphism from degree-`n` Hochschild homology to
+the coefficient-form module. When `n!` is invertible, its forward map is the inverse-
+factorial-scaled form projection. -/
 def scaledCoefficientFormHomologyIso :
     (Symmetric.chainComplex k A M).homology n ≅ ModuleCat.of k (M ⊗[A] (⋀[A]^n Ω)) :=
   (symmetricHochschildDifferentialFormEquiv k σ M n).toModuleIso
 
-/-- The isomorphism retains the rescaled projection. -/
+/-- The forward map of the inverse-factorial form comparison.
+
+With `(n! : k)` invertible, the forward isomorphism map is the scaled coefficient-form
+homology projection. -/
 theorem scaledCoefficientFormHomologyIso_hom :
     (scaledCoefficientFormHomologyIso k σ M n).hom.hom =
       scaledCoefficientFormHomologyMap k σ M n := by
   exact (scaledCoefficientFormHomologyMap_eq_inverse k σ M n).symm
 
 omit [Invertible (n.factorial : k)] in
-/-- Its inverse is the signed polynomial antisymmetrization. -/
+/-- The signed inverse of the polynomial form comparison.
+
+The inverse isomorphism map is polynomial signed antisymmetrization. This inverse description
+is stated without a factorial-invertibility hypothesis. -/
 theorem scaledCoefficientFormHomologyIso_inv :
     (scaledCoefficientFormHomologyIso k σ M n).inv.hom =
       polynomialAntisymmetrizationHomology k σ M n :=

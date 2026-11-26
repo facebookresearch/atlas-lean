@@ -1,3 +1,6 @@
-# Lifted Enveloping Lie Term Map
+# The lifted semilinear map between enveloping resolution terms
 
-Native universe lift of the original semilinear CE term map.
+The lifted semilinear map between enveloping resolution terms.
+
+For free underlying modules of `L` and `L'`, lifting the semilinear Lie term map gives a map
+between their resolution terms in the joint carrier universe.

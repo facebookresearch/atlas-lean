@@ -1,4 +1,6 @@
-# Tmul mem enveloping Filtration
+# The total-degree bound for an arbitrary exterior tensor
 
-The same bound holds for arbitrary exterior vectors, using the native
-span of decomposable wedges instead of a new CE or exterior construction.
+The total-degree bound for an arbitrary exterior tensor.
+
+For any `w ∈ ⋀ⁿ[R] L` and `u ∈ U_q`, the tensor `w ⊗ u` belongs to total filtration stage `p`
+whenever `q+n ≤ p`.

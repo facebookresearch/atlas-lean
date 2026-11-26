@@ -15,13 +15,19 @@ public import MathlibExt.Algebra.Category.LieModuleCat.Restriction
 public import Mathlib.Algebra.Algebra.Opposite
 
 /-!
-# Adjoint actions on Chevalley–Eilenberg degrees
+# Adjoint actions on exterior CE degrees
 
-The adjoint exterior derivation preserves homogeneous degree and restricts
-to Lie representations and chain maps. Its negative is the right-adjoint
-action: it is anti-Lie in the ordinary endomorphism algebra and Lie in the
-opposite endomorphism algebra. Both actions generate the same coinvariant
-span. The chain action is a coderivation with zero counit.
+The adjoint exterior derivation of an R-Lie algebra L restricts in each degree to a Lie
+representation on ⋀[R]^n L. On a pure wedge it replaces one entry at a time by [x,v_i], with
+all coefficients positive. These representations commute with the CE differential and
+therefore define chain endomorphisms.
+
+For a Lie map ι : S → L, negating the restricted action gives the right-adjoint operator, with
+pure-wedge entries [v_i,ι(s)]. It is anti-Lie in the ordinary endomorphism ring and becomes a
+Lie homomorphism into its opposite ring. Lie maps intertwine the left degree actions.
+
+For the canonical tensor structure on the module category, the chain action is a coderivation
+of the CE coproduct: Δ ∘ D_x = (D_x ⊗ 1 + 1 ⊗ D_x) ∘ Δ. Its composite with the counit is zero.
 -/
 
 @[expose] public section
@@ -45,12 +51,16 @@ open scoped ModuleCat.UniverseTensor
 local instance degreeAdjointFiniteBiproducts : HasFiniteBiproducts (ModuleCat.{max u v} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u v} R)
 
-/-- Closedness of the canonical tensor structure for degreewise adjoint maps. -/
+/-- For a commutative ring R : Type u, the canonical tensor structure on ModuleCat.{max u v} R is
+monoidal closed. Tensoring with a fixed R-module has the internal R-linear Hom module as a
+right adjoint; the tensor unit is the lifted ring object. -/
 local instance degreeAdjointMonoidalClosed : MonoidalClosed (ModuleCat.{max u v} R) :=
   ModuleCat.UniverseScalarRestriction.monoidalClosed.{u,v} (R := R)
 
 
-/-- The adjoint derivation restricted to exterior degree `n`. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For n : ℕ,
+degreeAdjointAction R L n : L →ₗ⁅R⁆ Module.End R (⋀[R]^n L) is the restriction of
+adjointAction to exterior degree n. -/
 def degreeAdjointAction (n : ℕ) : L →ₗ⁅R⁆ Module.End R (⋀[R]^n L) where
   toFun x := (adjointAction R L x).restrict
     (fun a ha => adjointAction_mem_exteriorPower R L x n a ha)
@@ -77,7 +87,9 @@ def degreeAdjointAction (n : ℕ) : L →ₗ⁅R⁆ Module.End R (⋀[R]^n L) wh
 theorem degreeAdjointAction_coe (n : ℕ) (x : L) (a : ⋀[R]^n L) :
     (degreeAdjointAction R L n x a : (ExteriorAlgebra R L)) = adjointAction R L x (a : (ExteriorAlgebra R L)) := rfl
 
-/-- The degree action has the ordinary left-adjoint pure-wedge formula. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For n : ℕ, x
+: L and v : Fin n → L, degreeAdjointAction n x (ιMulti v) = ∑ i : Fin n,
+ιMulti(Function.update v i ⁅x,v_i⁆). All other entries keep their order. -/
 theorem degreeAdjointAction_pure (n : ℕ) (x : L) (v : Fin n → L) :
     degreeAdjointAction R L n x (exteriorPower.ιMulti R n v) =
       ∑ i : Fin n, exteriorPower.ιMulti R n (Function.update v i ⁅x, v i⁆) := by
@@ -85,7 +97,8 @@ theorem degreeAdjointAction_pure (n : ℕ) (x : L) (v : Fin n → L) :
   simpa only [degreeAdjointAction_coe, Submodule.coe_sum, exteriorPower.ιMulti_apply_coe] using
     adjointAction_ιMulti R L x n v
 
-/-- The adjoint degree-zero action is zero. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For every x
+: L, degreeAdjointAction R L 0 x = 0 as an endomorphism of ⋀[R]^0 L. -/
 theorem degreeAdjointAction_zero (x : L) : degreeAdjointAction R L 0 x = 0 := by
   apply exteriorPower.linearMap_ext (R := R) (n := 0) (M := L) (N := ⋀[R]^0 L)
   apply AlternatingMap.ext
@@ -93,7 +106,9 @@ theorem degreeAdjointAction_zero (x : L) : degreeAdjointAction R L 0 x = 0 := by
   simp only [LinearMap.compAlternatingMap_apply, degreeAdjointAction_pure,
     Finset.univ_eq_empty, Finset.sum_empty, LinearMap.zero_apply]
 
-/-- The degreewise action commutes with the CE differential. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For n : ℕ
+and x : L, differential R L n ∘ degreeAdjointAction R L (n + 1) x = degreeAdjointAction R L n
+x ∘ differential R L n. -/
 theorem differential_degreeAdjointAction (n : ℕ) (x : L) :
     (differential R L n).comp (degreeAdjointAction R L (n + 1) x) =
       (degreeAdjointAction R L n x).comp (differential R L n) := by
@@ -103,7 +118,9 @@ theorem differential_degreeAdjointAction (n : ℕ) (x : L) :
   simp only [LinearMap.comp_apply, differential_coe, degreeAdjointAction_coe]
   exact boundary_adjointAction R L x a
 
-/-- The native representation object, with a local transported action on its original carrier. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For n : ℕ,
+degreeAdjointModule R L n is the object of LieModuleCat.{max u v} R L with carrier ⋀[R]^n L
+and Lie action degreeAdjointAction n. -/
 def degreeAdjointModule (n : ℕ) : LieModuleCat.{max u v} R L := by
   letI : LieRingModule L (⋀[R]^n L) :=
     LieRingModule.compLieHom (⋀[R]^n L) (degreeAdjointAction R L n)
@@ -115,7 +132,10 @@ def degreeAdjointModule (n : ℕ) : LieModuleCat.{max u v} R L := by
 theorem degreeAdjointModule_lie (n : ℕ) (x : L) (a : degreeAdjointModule R L n) :
     (⁅x, a⁆ : degreeAdjointModule R L n) = degreeAdjointAction R L n x a := rfl
 
-/-- The degreewise adjoint action is a native chain map. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For x : L,
+degreeAdjointChainMap R L x is an endomorphism of the canonical CE complex with degree-n
+component degreeAdjointAction R L n x. The differential-equivariance equation supplies the
+chain-map law. -/
 def degreeAdjointChainMap (x : L) : ((canonicalChainData R L).complex) ⟶ ((canonicalChainData R L).complex) :=
   ChainComplex.ofHom (fun n => ModuleCat.ofHom (degreeAdjointAction R L n x))
     (fun n => by
@@ -136,11 +156,16 @@ section Restricted
 
 variable {S : Type w} [LieRing S] [LieAlgebra R S] (ι : S →ₗ⁅R⁆ L)
 
-/-- The right-adjoint action, with its linear type. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. Let S be
+another R-Lie algebra and ι : S →ₗ⁅R⁆ L. For n : ℕ, rightDegreeAdjointAction R L ι n : S →ₗ[R]
+Module.End R (⋀[R]^n L) sends s to −degreeAdjointAction R L n (ι(s)). -/
 def rightDegreeAdjointAction (n : ℕ) : S →ₗ[R] Module.End R (⋀[R]^n L) :=
   -((degreeAdjointAction R L n).comp ι).toLinearMap
 
-/-- The alternating right-adjoint formula. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. Let S be
+another R-Lie algebra and ι : S →ₗ⁅R⁆ L. For n : ℕ, s : S and v : Fin n → L,
+rightDegreeAdjointAction n s (ιMulti v) = ∑ i : Fin n, ιMulti(Function.update v i ⁅v_i,ι(s)⁆).
+Every summand has coefficient +1. -/
 theorem rightDegreeAdjointAction_pure (n : ℕ) (s : S) (v : Fin n → L) :
     rightDegreeAdjointAction R L ι n s (exteriorPower.ιMulti R n v) =
       ∑ i : Fin n, exteriorPower.ιMulti R n (Function.update v i ⁅v i, ι s⁆) := by
@@ -152,7 +177,9 @@ theorem rightDegreeAdjointAction_pure (n : ℕ) (s : S) (v : Fin n → L) :
   have hLie : -⁅ι s, v i⁆ = ⁅v i, ι s⁆ := lie_skew (v i) (ι s)
   exact congrArg (fun z => exteriorPower.ιMulti R n (Function.update v i z)) hLie
 
-/-- Right adjoint is anti Lie in the ordinary endomorphism algebra. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. Let S be
+another R-Lie algebra and ι : S →ₗ⁅R⁆ L. For n : ℕ and s, t : S, writing ρ =
+rightDegreeAdjointAction n, one has ρ(⁅s,t⁆) = ρ(t) ∘ ρ(s) − ρ(s) ∘ ρ(t). -/
 theorem rightDegreeAdjointAction_antiLie (n : ℕ) (s t : S) :
     rightDegreeAdjointAction R L ι n ⁅s, t⁆ =
       (rightDegreeAdjointAction R L ι n t).comp (rightDegreeAdjointAction R L ι n s) -
@@ -167,7 +194,10 @@ theorem rightDegreeAdjointAction_antiLie (n : ℕ) (s t : S) :
   simp only [LinearMap.neg_apply, map_neg, neg_neg]
   exact neg_sub _ _
 
-/-- The same right action is a Lie map into the opposite endomorphism algebra. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. Let S be
+another R-Lie algebra and ι : S →ₗ⁅R⁆ L. For n : ℕ, rightDegreeAdjointLieHom : S →ₗ⁅R⁆
+(Module.End R (⋀[R]^n L))ᵐᵒᵖ sends s to op(rightDegreeAdjointAction n s). Opposite
+multiplication converts the reversed commutator law into the Lie-homomorphism law. -/
 def rightDegreeAdjointLieHom (n : ℕ) :
     S →ₗ⁅R⁆ (Module.End R (⋀[R]^n L))ᵐᵒᵖ where
   toFun s := MulOpposite.op (rightDegreeAdjointAction R L ι n s)
@@ -192,7 +222,9 @@ section Naturality
 
 variable {L' : Type v'} [LieRing L'] [LieAlgebra R L']
 
-/-- Lie maps intertwine the exterior-degree adjoint actions. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For an R-Lie
+homomorphism f : L →ₗ⁅R⁆ L', n : ℕ and x : L, ⋀^n f ∘ degreeAdjointAction_L(n,x) =
+degreeAdjointAction_L'(n,f(x)) ∘ ⋀^n f. The Lie carriers may lie in different universes. -/
 theorem degreeAdjointAction_naturality (f : L →ₗ⁅R⁆ L') (n : ℕ) (x : L) :
     (exteriorPower.map n f.toLinearMap).comp (degreeAdjointAction R L n x) =
       (degreeAdjointAction R L' n (f x)).comp (exteriorPower.map n f.toLinearMap) := by
@@ -275,7 +307,10 @@ private theorem tensorDegreeAdjoint_realize (x : L) (n : ℕ) :
       exact (tensorAdjointAction_tmul R L x _ _).symm
     exact hRaw.trans (hPoint.trans hRhs.symm)))
 
-/-- The native chain action is a coderivation of the native CE coproduct. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. Use the
+canonical tensor structure on ModuleCat.{max u v} R and let D_x be degreeAdjointChainMap R L
+x. For the CE coproduct Δ = nativeComplexComul R L, D_x ≫ Δ = Δ ≫ (tensorHom D_x id +
+tensorHom id D_x). -/
 theorem degreeAdjointChainMap_comul (x : L) :
     letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
     letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -321,7 +356,9 @@ theorem degreeAdjointChainMap_comul (x : L) :
     ((show ⋀[R]^n L from a) : ExteriorAlgebra R L)).trans
       ((congrArg (tensorAdjointAction R L x) hRight).symm.trans hTensor.symm))
 
-/-- The chain action has zero counit. -/
+/-- Let R be a commutative ring and L an R-Lie algebra, with E = ExteriorAlgebra R L. For x : L,
+degreeAdjointChainMap R L x ≫ nativeComplexCounit R L = 0 as a chain map from the canonical CE
+complex to its counit target. -/
 theorem degreeAdjointChainMap_counit (x : L) :
     degreeAdjointChainMap R L x ≫ nativeComplexCounit R L = 0 := by
   apply HomologicalComplex.hom_ext

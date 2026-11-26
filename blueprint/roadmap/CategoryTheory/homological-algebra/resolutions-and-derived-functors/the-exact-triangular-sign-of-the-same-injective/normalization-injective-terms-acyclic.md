@@ -1,3 +1,5 @@
-# Normalization Injective Terms acyclic
+# Injective-resolution terms are acyclic for an additive functor
 
-Every original injective resolution term has its required positive-derived vanishing.
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive. For every injective resolution `J` of `X`,
+all its terms are `F`-acyclic: `R^(n+1)F(J^q)=0` for every `q,n`.

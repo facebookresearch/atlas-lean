@@ -1,3 +1,5 @@
-# Cyclic SBIInclusion epi one
+# The degree-one epimorphism of two-column SBI
 
-The degree-one raw Hochschild inclusion is epic, without a unitality premise.
+The degree-one epimorphism of two-column SBI.
+
+The inclusion `H_1(CC^{(2)}(A)) → HC_1(A)` is epic.

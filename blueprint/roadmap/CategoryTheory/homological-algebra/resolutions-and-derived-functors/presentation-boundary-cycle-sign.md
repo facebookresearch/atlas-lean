@@ -1,4 +1,7 @@
-# Degree-one boundary on the two-term projective presentation
+# The projective presentation boundary sends a cycle to its negative
 
-The horseshoe sends a presentation cycle to its negative in its original projective kernel, using
-the literal middle differential.
+Let `C,D` be abelian, with projective resolutions in `C`,
+`S : A → B → X` short exact with `A,B` projective, and `F : C → D`
+additive. For `x : Z → F(A)` with `x ≫ F(S.f)=0`, its class in
+`H₁(F(A → B))`, compared to `L₁F(X)`, then mapped by the boundary
+to `L₀F(A)` and the canonical augmentation to `F(A)`, is `-x`.

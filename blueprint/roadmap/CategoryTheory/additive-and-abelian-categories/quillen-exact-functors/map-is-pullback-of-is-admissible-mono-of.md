@@ -1,4 +1,6 @@
-# Map is Pullback of is Admissible Mono of is Admissible Epi
+# Exact functors preserve admissible pullback squares
 
-An exact functor preserves a pullback whose two target legs are respectively
-an admissible mono and an admissible epi.
+Let `F : C → D` be an additive exact functor between additive exact
+categories. If a pullback in `C` has target legs an admissible mono
+`i : X → Z` and an admissible epi `p : Y → Z`, the square obtained
+by applying `F` is a pullback in `D`.

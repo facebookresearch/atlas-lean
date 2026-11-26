@@ -1,3 +1,6 @@
-# Regular Coefficient Evaluation mem
+# Evaluation of a regular proper-shuffle relation
 
-Every evaluated regular proper product belongs to the original arbitrary-coefficient proper relation family.
+Evaluation of a regular proper-shuffle relation.
+
+Every regular relation formed from two positive chain degrees maps under regular coefficient
+evaluation to a proper both-positive relation with coefficients in `M`.

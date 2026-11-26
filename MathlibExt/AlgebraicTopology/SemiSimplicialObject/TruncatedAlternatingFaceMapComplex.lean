@@ -15,13 +15,17 @@ public import Mathlib.Algebra.Homology.Homotopy
 import Mathlib.Tactic.Abel
 
 /-!
-# The alternating face complex with the final face omitted
+# Alternating-face complexes with the last face omitted
 
-For an semisimplicial object, omit the final face from each alternating
-sum. The original degree-zero term is retained. The same two-region finite-sum
-pairing as for the full alternating differential proves square zero from the
-semisimplicial face identity, in every degree. No augmentation,
-degeneracy, unit or additional compatibility witness is assumed.
+For a semisimplicial object X in a preadditive category, use the terms X_n and boundaries
+d'_(n+1,n) = ∑ i : Fin (n + 1), (−1)^i δ_i, omitting the final face δ_(n+1). The face
+relations imply that these boundaries compose to zero, including in the lowest degrees, so
+they define a chain complex indexed by ℕ and a functor on semisimplicial objects.
+
+Maps s_n : X_n → X_(n+1) contract this complex when s_n δ₀ = 𝟙 and s_(n+1) δ_(i+1) = δ_i s_n
+for the retained faces. The contraction has component s_n in degree (n, n + 1). Its bottom
+equation is s₀ d'₁₀ = 𝟙, and its positive-degree equation is d'_(n+1,n) s_n + s_(n+1)
+d'_(n+2,n+1) = 𝟙.
 -/
 
 @[expose] public section
@@ -41,11 +45,15 @@ namespace TruncatedAlternatingFaceMapComplex
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 variable (X Y : SemiSimplicialObject C)
 
-/-- The original alternating face sum with its final face omitted. -/
+/-- For a semisimplicial object X in a preadditive category C, the morphism objD X n : X_(n+1) ⟶
+X_n is ∑ i : Fin (n + 1), (−1 : ℤ)^i • X.δ i.castSucc. It includes faces 0 through n and omits
+face n + 1; in degree one to zero it is δ₀. -/
 def objD (n : ℕ) : X _⦋n + 1⦌ₛ ⟶ X _⦋n⦌ₛ :=
   ∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val • X.δ i.castSucc
 
-/-- The truncated differential squares to zero, including the bottom square. -/
+/-- For a semisimplicial object X in a preadditive category C, one has objD X (n + 1) ≫ objD X n =
+0 for every n : ℕ, where objD X n is the alternating sum of faces 0 through n. Thus the
+composition X_(n+2) ⟶ X_n vanishes, including for n = 0. -/
 theorem d_squared (n : ℕ) : objD X (n + 1) ≫ objD X n = 0 := by
   dsimp only [objD]
   simp only [comp_sum, sum_comp, ← Finset.sum_product']
@@ -87,22 +95,28 @@ theorem d_squared (n : ℕ) : objD X (n + 1) ≫ objD X n = 0 := by
       simpa only [φ, Fin.castSucc_castLT, hcast] using
         (SemiSimplicialObject.δ_comp_δ X hji).symm
 
-/-- The truncated chain complex on the original terms, including `X₀`. -/
+/-- For a semisimplicial object X in a preadditive category C, define a chain complex of shape
+down ℕ with degree-n term X_n and boundary from n + 1 to n equal to ∑ i : Fin (n + 1), (−1)^i
+• X.δ i.castSucc. The degree-zero term is X₀ and all nonadjacent differentials are zero. -/
 def obj : ChainComplex C ℕ :=
   ChainComplex.of (fun n => X _⦋n⦌ₛ) (objD X) (d_squared X)
 
-/-- Truncation changes the differential, not the original degreewise objects. -/
+/-- For a semisimplicial object X in a preadditive category C, the degree-n object of the
+last-face-omitted complex obj X is X _⦋n⦌ₛ for every n : ℕ, including n = 0. -/
 @[simp]
 theorem obj_X (n : ℕ) : (obj X).X n = X _⦋n⦌ₛ := rfl
 
-/-- The adjacent differential is exactly the truncated alternating sum. -/
+/-- For a semisimplicial object X in a preadditive category C, the differential (obj X).d (n + 1)
+n is objD X n = ∑ i : Fin (n + 1), (−1)^i • X.δ i.castSucc, for every n : ℕ. -/
 @[simp]
 theorem obj_d (n : ℕ) : (obj X).d (n + 1) n = objD X n := by
   simp only [obj, ChainComplex.of_d]
 
 variable {X Y}
 
-/-- The original semisimplicial morphism gives the degreewise chain map. -/
+/-- For semisimplicial objects X and Y in a preadditive category C, a natural transformation f : X
+⟶ Y defines a chain map between their last-face-omitted complexes. Its degree-n component is
+f.app (op ⦋n⦌ₛ), and it commutes with the alternating sums of the retained faces. -/
 def map (f : X ⟶ Y) : obj X ⟶ obj Y :=
   ChainComplex.ofHom (fun n => f.app (op ⦋n⦌ₛ)) fun n => by
     simp only [obj, ChainComplex.of_d, objD]
@@ -113,7 +127,9 @@ def map (f : X ⟶ Y) : obj X ⟶ obj Y :=
     congr 1
     exact (f.naturality (SemiSimplexCategory.δ i.castSucc).op).symm
 
-/-- The chain map retains the original component. -/
+/-- For a semisimplicial map f : X ⟶ Y in a preadditive category C and n : ℕ, the degree-n
+component of the induced map between last-face-omitted complexes is (map f).f n = f.app (op
+⦋n⦌ₛ). -/
 @[simp]
 theorem map_f (f : X ⟶ Y) (n : ℕ) : (map f).f n = f.app (op ⦋n⦌ₛ) := rfl
 
@@ -127,14 +143,19 @@ variable (X : SemiSimplicialObject C)
     s (n + 1) ≫ X.δ i.succ.castSucc = X.δ i.castSucc ≫ s n)
 
 include hFirst in
-/-- The original bottom term is contracted by the first face. -/
+/-- Let X be a semisimplicial object in a preadditive category C and let s_n : X_n ⟶ X_(n+1)
+satisfy s_n ≫ X.δ 0 = 𝟙 X_n for all n : ℕ. The truncated bottom differential satisfies s₀ ≫
+objD X 0 = 𝟙 X₀, since objD X 0 is the first face δ₀. -/
 theorem frontInsertion_sum_zero : s 0 ≫ objD X 0 = 𝟙 (X _⦋0⦌ₛ) := by
   change s 0 ≫ (∑ i : Fin 1, (-1 : ℤ) ^ i.val • X.δ i.castSucc) = 𝟙 (X _⦋0⦌ₛ)
   rw [Fin.sum_univ_one]
   simpa only [Fin.val_zero, Fin.castSucc_zero, pow_zero, one_smul] using hFirst 0
 
 include hFirst hShift in
-/-- The shifted retained faces cancel the two truncated differentials. -/
+/-- Let X be a semisimplicial object in a preadditive category C, with maps s_n : X_n ⟶ X_(n+1).
+Assume s_n ≫ δ₀ = 𝟙 X_n for every n, and s_(n+1) ≫ δ_(i+1) = δ_i ≫ s_n for every i : Fin (n +
+1), where the faces have the casts i.succ.castSucc and i.castSucc. For every n : ℕ, the
+truncated boundaries satisfy objD X n ≫ s_n + s_(n+1) ≫ objD X (n + 1) = 𝟙 X_(n+1). -/
 theorem frontInsertion_sum_succ (n : ℕ) :
     objD X n ≫ s n + s (n + 1) ≫ objD X (n + 1) = 𝟙 (X _⦋n + 1⦌ₛ) := by
   have hs : s (n + 1) ≫ objD X (n + 1) =
@@ -160,7 +181,12 @@ theorem frontInsertion_sum_succ (n : ℕ) :
   abel
 
 include hFirst hShift in
-/-- The front insertion gives a native homotopy from the truncated identity to zero. -/
+/-- Let X be a semisimplicial object in a preadditive category C, with maps s_n : X_n ⟶ X_(n+1).
+Assume s_n ≫ δ₀ = 𝟙 X_n for every n, and s_(n+1) ≫ δ_(i+1) = δ_i ≫ s_n for every i : Fin (n +
+1), where the faces have the casts i.succ.castSucc and i.castSucc. These maps define a chain
+homotopy from 𝟙 (obj X) to the zero chain map on the last-face-omitted complex. Its adjacent
+component in degree (n, n + 1) is s_n; the contraction equations hold in degree zero and in
+every positive degree. -/
 def contractingHomotopy : Homotopy (𝟙 (obj X)) 0 := by
   let H (i j : ℕ) (hij : (ComplexShape.down ℕ).Rel j i) :
       (obj X).X i ⟶ (obj X).X j := by
@@ -186,7 +212,11 @@ def contractingHomotopy : Homotopy (𝟙 (obj X)) 0 := by
       exact frontInsertion_sum_succ X s hFirst hShift n
   exact (Homotopy.ofEq h.symm).trans (Homotopy.nullHomotopy' H)
 
-/-- The homotopy has precisely the original insertion component. -/
+/-- Let X be a semisimplicial object in a preadditive category C, with maps s_n : X_n ⟶ X_(n+1).
+Assume s_n ≫ δ₀ = 𝟙 X_n for every n, and s_(n+1) ≫ δ_(i+1) = δ_i ≫ s_n for every i : Fin (n +
+1), where the faces have the casts i.succ.castSucc and i.castSucc. For every n : ℕ,
+(contractingHomotopy X s hFirst hShift).hom n (n + 1) = s_n. This identifies the sign and the
+degree-raising map of the contraction of the truncated identity to zero. -/
 @[simp]
 theorem contractingHomotopy_hom (n : ℕ) :
     (contractingHomotopy X s hFirst hShift).hom n (n + 1) = s n := by
@@ -204,30 +234,40 @@ end TruncatedAlternatingFaceMapComplex
 
 variable (C : Type u) [Category.{v} C] [Preadditive C]
 
-/-- Last-face truncation as a functor to chain complexes. -/
+/-- For a preadditive category C, the functor SemiSimplicialObject C ⥤ ChainComplex C ℕ sends X to
+its last-face-omitted alternating complex with terms X_n and boundaries ∑ i : Fin (n + 1),
+(−1)^i • X.δ i.castSucc. It sends each semisimplicial morphism to the chain map given by its
+degree components. -/
 def truncatedAlternatingFaceMapComplex : SemiSimplicialObject C ⥤ ChainComplex C ℕ where
   obj := TruncatedAlternatingFaceMapComplex.obj
   map f := TruncatedAlternatingFaceMapComplex.map f
 
-/-- The functor retains all original objects. -/
+/-- For a semisimplicial object X in a preadditive category C and every n : ℕ, the degree-n term
+of (truncatedAlternatingFaceMapComplex C).obj X is X _⦋n⦌ₛ. -/
 @[simp]
 theorem truncatedAlternatingFaceMapComplex_obj_X (X : SemiSimplicialObject C) (n : ℕ) :
     ((truncatedAlternatingFaceMapComplex C).obj X).X n = X _⦋n⦌ₛ := rfl
 
-/-- Its differential is the truncated face sum. -/
+/-- For a semisimplicial object X in a preadditive category C, the differential from n + 1 to n in
+(truncatedAlternatingFaceMapComplex C).obj X equals ∑ i : Fin (n + 1), (−1 : ℤ)^i • X.δ
+i.castSucc, the alternating sum with the final face omitted. -/
 @[simp]
 theorem truncatedAlternatingFaceMapComplex_obj_d (X : SemiSimplicialObject C) (n : ℕ) :
     ((truncatedAlternatingFaceMapComplex C).obj X).d (n + 1) n =
       TruncatedAlternatingFaceMapComplex.objD X n := by
   exact TruncatedAlternatingFaceMapComplex.obj_d X n
 
-/-- A morphism is mapped using its original component in every degree. -/
+/-- For a morphism f : X ⟶ Y of semisimplicial objects in a preadditive category C, the degree-n
+component of (truncatedAlternatingFaceMapComplex C).map f equals f.app (op ⦋n⦌ₛ) for every n :
+ℕ. -/
 @[simp]
 theorem truncatedAlternatingFaceMapComplex_map_f {X Y : SemiSimplicialObject C}
     (f : X ⟶ Y) (n : ℕ) :
     ((truncatedAlternatingFaceMapComplex C).map f).f n = f.app (op ⦋n⦌ₛ) := rfl
 
-/-- Truncated alternating-face maps preserve addition of semisimplicial morphisms. -/
+/-- For a preadditive category C, the last-face-omitted alternating-complex functor is additive.
+It sends f + g to map f + map g and the zero semisimplicial morphism to the zero chain map;
+these equalities hold in every degree. -/
 instance truncatedAlternatingFaceMapComplexAdditive :
     (truncatedAlternatingFaceMapComplex C).Additive where
 

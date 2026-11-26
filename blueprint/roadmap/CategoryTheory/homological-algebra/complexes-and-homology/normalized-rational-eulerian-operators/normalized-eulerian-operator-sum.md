@@ -1,3 +1,6 @@
-# Normalized Eulerian Operator sum
+# Completeness of normalized Eulerian operators in one degree
 
-The normalized family is finite and complete in every original degree.
+Completeness of normalized Eulerian operators in one degree.
+
+The sum of the weight operators `E_n^i` for `0 ≤ i ≤ n` is the identity on the normalized
+degree-`n` coefficient tensor module.

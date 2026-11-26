@@ -1,3 +1,4 @@
-# Finite Power Combination coefficients eq
+# Natural vector evaluations determine all coefficients
 
-Native dual separation earns coefficient equality in every original rational module.
+For a `ℚ`-vector space `V`, `N : ℕ`, and `a,b : Fin N → V`, if `finitePowerCombination N a m =
+finitePowerCombination N b m` for every natural `m` coerced to `ℚ`, then `a=b`.

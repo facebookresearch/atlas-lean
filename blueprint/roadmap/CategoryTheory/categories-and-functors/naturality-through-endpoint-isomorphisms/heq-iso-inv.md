@@ -1,4 +1,6 @@
-# Heq iso inv
+# Inverse maps with identified endpoints
 
-From an `HEq` of isomorphisms over equal endpoints, an `HEq` of their `inv`s.
-The `.inv` companion of `heq_iso_hom`.
+In a category `C`, suppose `X = X′`, `Y = Y′`, and
+`I : X ≅ Y`, `J : X′ ≅ Y′` agree under these endpoint
+identifications. Their inverse maps `Y → X` and `Y′ → X′`
+agree under the corresponding identifications.

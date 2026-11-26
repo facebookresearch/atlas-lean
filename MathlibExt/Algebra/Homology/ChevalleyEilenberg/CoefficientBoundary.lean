@@ -15,20 +15,22 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.Exterior
 import Mathlib.Tactic.Abel
 
 /-!
-# The Chevalley–Eilenberg boundary with left coefficients
+# The exterior boundary with left Lie coefficients
 
-The adjoint exterior action and a left Lie-module action on `M` define the
-diagonal action on `ExteriorAlgebra R L ⊗[R] M`. The boundary is constructed by
-a Clifford fold, with generator recursion
+Let R be a commutative ring, L an R-Lie algebra and M a compatible
+left Lie module. On P=ExteriorAlgebra_R(L)⊗M, define the diagonal
+Lie action T_x=ad_x⊗id+id⊗[x,−] and insertion c_x(a⊗m)=ι(x)a⊗m.
+The coefficient boundary D is determined by
+D(r⊗m)=0 for exterior scalars and D c_x=−T_x−c_xD.
 
-```text
-D(ι(x) * a ⊗ m) = -T_x(a ⊗ m) - c_x(D(a ⊗ m)),
-```
+The diagonal representation satisfies its commutator law and
+T_x c_y=c_{[x,y]}+c_y T_x. The exterior quadratic relation gives c_x²=0.
+Together these identities yield DT_x=T_xD and D²=0.
+On a single exterior generator the boundary is
+D(ι(x)⊗m)=−1⊗[x,m].
 
-where `T` is the diagonal action and `c_x` inserts `ι(x)` on the left.
-The representation commutator gives equivariance and square-zero by exterior
-word induction. The construction applies to arbitrary left Lie modules over
-a commutative ring.
+The scalar, Lie-carrier and coefficient universes are independent;
+M is any compatible left Lie module.
 -/
 
 @[expose] public section
@@ -52,15 +54,22 @@ local notation "F" => M →ₗ[R] P
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-/-- The diagonal representation combines the adjoint exterior action with the
-given left coefficient action. The exterior action is the native pullback along
-`adjointAction`; no arbitrary action on the tensor product is a parameter. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The diagonal representation L→End_R(P) has value
+T_x(a⊗m)=ad_x(a)⊗m+a⊗[x,m]. -/
 def coefficientDiagonalAction : L →ₗ⁅R⁆ Module.End R P := by
   letI : LieRingModule L E := LieRingModule.compLieHom E (adjointAction R L)
   letI : LieModule R L E := LieModule.compLieHom E (adjointAction R L)
   exact LieModule.toEnd R L P
 
-/-- The two summands of the diagonal action on a pure tensor. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+On a pure tensor, T_x(a⊗m)=ad_x(a)⊗m+a⊗[x,m]. -/
 @[simp]
 theorem coefficientDiagonalAction_tmul (x : L) (a : E) (m : M) :
     coefficientDiagonalAction R L M x (a ⊗ₜ[R] m) =
@@ -71,26 +80,42 @@ theorem coefficientDiagonalAction_tmul (x : L) (a : E) (m : M) :
   rw [TensorProduct.LieModule.lie_tmul_right]
   rfl
 
-/-- On exterior scalars, only the coefficient action contributes. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+On exterior scalars, the adjoint term is zero:
+T_x(r⊗m)=r⊗[x,m] for r∈R. -/
 theorem coefficientDiagonalAction_algebraMap_tmul (x : L) (r : R) (m : M) :
     coefficientDiagonalAction R L M x ((algebraMap R E r) ⊗ₜ[R] m) =
       (algebraMap R E r) ⊗ₜ[R] ⁅x, m⁆ := by
   rw [coefficientDiagonalAction_tmul, adjointAction_algebraMap,
     TensorProduct.zero_tmul, zero_add]
 
-/-- On the empty exterior word, the diagonal action is the coefficient action. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The empty exterior word has diagonal action
+T_x(1⊗m)=1⊗[x,m]. -/
 theorem coefficientDiagonalAction_one_tmul (x : L) (m : M) :
     coefficientDiagonalAction R L M x ((1 : E) ⊗ₜ[R] m) =
       (1 : E) ⊗ₜ[R] ⁅x, m⁆ := by
   simpa only [map_one] using coefficientDiagonalAction_algebraMap_tmul R L M x 1 m
 
-/-- Insert one exterior generator before the exterior factor of a coefficient tensor. -/
+/-- Let R be commutative, L an R-Lie algebra and M an R-module.
+Put E=ExteriorAlgebra_R(L) and P=E⊗_R M.
+Insertion is the R-linear operator c_x:P→P, x∈L,
+with c_x(a⊗m)=ι(x)a⊗m. -/
 def coefficientInsertion : L →ₗ[R] Module.End R P :=
   (LinearMap.rTensorHom M).comp
     ((Algebra.lmul R E).toLinearMap.comp (ExteriorAlgebra.ι R))
 
 omit [LieRingModule L M] [LieModule R L M] in
-/-- Insertion acts only on the exterior factor. -/
+/-- Let R be commutative, L an R-Lie algebra and M an R-module.
+Put E=ExteriorAlgebra_R(L) and P=E⊗_R M.
+The insertion operator has pure-tensor value
+c_x(a⊗m)=ι(x)a⊗m, leaving the coefficient unchanged. -/
 @[simp]
 theorem coefficientInsertion_tmul (x : L) (a : E) (m : M) :
     coefficientInsertion R L M x (a ⊗ₜ[R] m) =
@@ -98,7 +123,10 @@ theorem coefficientInsertion_tmul (x : L) (a : E) (m : M) :
   rfl
 
 omit [LieRingModule L M] [LieModule R L M] in
-/-- Inserting the same generator twice is zero by the exterior quadratic relation. -/
+/-- Let R be commutative, L an R-Lie algebra and M an R-module.
+Put E=ExteriorAlgebra_R(L) and P=E⊗_R M.
+For every x∈L, insertion twice gives c_x²=0,
+since ι(x)²=0 in E. -/
 theorem coefficientInsertion_comp_self (x : L) :
     (coefficientInsertion R L M x).comp (coefficientInsertion R L M x) = 0 := by
   apply TensorProduct.ext'
@@ -107,26 +135,42 @@ theorem coefficientInsertion_comp_self (x : L) :
   rw [← mul_assoc, ExteriorAlgebra.ι_sq_zero, zero_mul, TensorProduct.zero_tmul]
 
 omit [LieRingModule L M] [LieModule R L M] in
-/-- Pointwise form of the exterior quadratic relation for insertion. -/
+/-- Let R be commutative, L an R-Lie algebra and M an R-module.
+Put E=ExteriorAlgebra_R(L) and P=E⊗_R M.
+For every p∈P, inserting x twice gives c_x(c_x(p))=0. -/
 theorem coefficientInsertion_squared (x : L) (p : P) :
     coefficientInsertion R L M x (coefficientInsertion R L M x p) = 0 :=
   LinearMap.congr_fun (coefficientInsertion_comp_self R L M x) p
 
-/-- The diagonal actions satisfy the representation commutator equation. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The diagonal action is a Lie representation:
+T_{[x,y]}=T_xT_y−T_yT_x as R-linear operators on P. -/
 theorem coefficientDiagonalAction_commutator (x y : L) :
     coefficientDiagonalAction R L M ⁅x, y⁆ =
       (coefficientDiagonalAction R L M x).comp (coefficientDiagonalAction R L M y) -
         (coefficientDiagonalAction R L M y).comp (coefficientDiagonalAction R L M x) :=
   LieHom.map_lie (coefficientDiagonalAction R L M) x y
 
-/-- Pointwise form of the representation commutator equation. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+For p∈P, T_{[x,y]}p=T_x(T_y p)−T_y(T_x p). -/
 theorem coefficientDiagonalAction_commutator_apply (x y : L) (p : P) :
     coefficientDiagonalAction R L M ⁅x, y⁆ p =
       coefficientDiagonalAction R L M x (coefficientDiagonalAction R L M y p) -
         coefficientDiagonalAction R L M y (coefficientDiagonalAction R L M x p) :=
   LinearMap.congr_fun (coefficientDiagonalAction_commutator R L M x y) p
 
-/-- The diagonal action differentiates insertion by the adjoint Lie bracket. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The diagonal action differentiates insertion:
+T_x c_y=c_{[x,y]}+c_y T_x. -/
 theorem coefficientDiagonalAction_comp_insertion (x y : L) :
     (coefficientDiagonalAction R L M x).comp (coefficientInsertion R L M y) =
       coefficientInsertion R L M ⁅x, y⁆ +
@@ -142,21 +186,33 @@ theorem coefficientDiagonalAction_comp_insertion (x y : L) :
     adjointAction_ι_mul, TensorProduct.add_tmul, map_add]
   abel
 
-/-- Pointwise compatibility between the diagonal action and insertion. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+For p∈P, T_x(c_y p)=c_{[x,y]}p+c_y(T_x p). -/
 theorem coefficientDiagonalAction_insertion (x y : L) (p : P) :
     coefficientDiagonalAction R L M x (coefficientInsertion R L M y p) =
       coefficientInsertion R L M ⁅x, y⁆ p +
         coefficientInsertion R L M y (coefficientDiagonalAction R L M x p) :=
   LinearMap.congr_fun (coefficientDiagonalAction_comp_insertion R L M x y) p
 
-/-- A diagonal action commutes with inserting the same Lie generator. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+For the same generator x, T_x c_x=c_x T_x because [x,x]=0. -/
 theorem coefficientDiagonalAction_comp_insertion_self (x : L) :
     (coefficientDiagonalAction R L M x).comp (coefficientInsertion R L M x) =
       (coefficientInsertion R L M x).comp (coefficientDiagonalAction R L M x) := by
   simpa only [lie_self, map_zero, zero_add] using
     coefficientDiagonalAction_comp_insertion R L M x x
 
-/-- Pointwise same-generator commutation, used in the Clifford fold relation. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+For p∈P, T_x(c_x p)=c_x(T_x p). -/
 theorem coefficientDiagonalAction_insertion_self (x : L) (p : P) :
     coefficientDiagonalAction R L M x (coefficientInsertion R L M x p) =
       coefficientInsertion R L M x (coefficientDiagonalAction R L M x p) :=
@@ -196,14 +252,23 @@ private theorem coefficientBoundaryStep_relation (x : L) (a : E) (g : F) :
     coefficientInsertion_squared]
   abel
 
-/-- The ambient Chevalley--Eilenberg boundary on exterior-first left coefficients,
-constructed by the native Clifford fold with initial state zero. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The R-linear coefficient boundary D:P→P vanishes on
+exterior scalars and satisfies D c_x=−T_x−c_xD. -/
 def coefficientBoundary : Module.End R P :=
   private_decl% (TensorProduct.lift
     (CliffordAlgebra.foldr' (0 : QuadraticForm R L)
       (coefficientBoundaryStep R L M) (coefficientBoundaryStep_relation R L M) (0 : F)))
 
-/-- The coefficient boundary vanishes on scalar exterior words for every coefficient. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The coefficient boundary vanishes on exterior scalar tensors:
+D(r⊗m)=0 for r∈R and m∈M. -/
 @[simp]
 theorem coefficientBoundary_algebraMap_tmul (r : R) (m : M) :
     coefficientBoundary R L M ((algebraMap R E r) ⊗ₜ[R] m) = 0 := by
@@ -212,13 +277,22 @@ theorem coefficientBoundary_algebraMap_tmul (r : R) (m : M) :
       (0 : F) (algebraMap R E r)) m = 0
   rw [CliffordAlgebra.foldr'_algebraMap, smul_zero, LinearMap.zero_apply]
 
-/-- The empty exterior word has zero boundary. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The empty exterior word has coefficient boundary D(1⊗m)=0. -/
 @[simp]
 theorem coefficientBoundary_one_tmul (m : M) :
     coefficientBoundary R L M ((1 : E) ⊗ₜ[R] m) = 0 := by
   simpa only [map_one] using coefficientBoundary_algebraMap_tmul R L M 1 m
 
-/-- Generator recursion of the ambient coefficient boundary. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The generator recursion is
+D(ι(x)a⊗m)=−T_x(a⊗m)−c_x D(a⊗m). -/
 @[simp]
 theorem coefficientBoundary_ι_mul_tmul (x : L) (a : E) (m : M) :
     coefficientBoundary R L M ((ExteriorAlgebra.ι R x * a) ⊗ₜ[R] m) =
@@ -231,7 +305,11 @@ theorem coefficientBoundary_ι_mul_tmul (x : L) (a : E) (m : M) :
   rw [coefficientBoundaryStep_apply]
   rfl
 
-/-- The coefficient boundary satisfies the insertion recursion on all tensors. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+As R-linear operators, D c_x=−T_x−c_xD for every x∈L. -/
 theorem coefficientBoundary_comp_insertion (x : L) :
     (coefficientBoundary R L M).comp (coefficientInsertion R L M x) =
       -coefficientDiagonalAction R L M x -
@@ -244,14 +322,23 @@ theorem coefficientBoundary_comp_insertion (x : L) :
   rw [coefficientInsertion_tmul]
   exact coefficientBoundary_ι_mul_tmul R L M x a m
 
-/-- Pointwise form of the insertion recursion for arbitrary coefficient tensors. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+For every p∈P, D(c_x p)=−T_x p−c_x(Dp). -/
 theorem coefficientBoundary_insertion (x : L) (p : P) :
     coefficientBoundary R L M (coefficientInsertion R L M x p) =
       -coefficientDiagonalAction R L M x p -
         coefficientInsertion R L M x (coefficientBoundary R L M p) :=
   LinearMap.congr_fun (coefficientBoundary_comp_insertion R L M x) p
 
-/-- The boundary of a single generator is the negative native left action. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+A single exterior generator has coefficient boundary
+D(ι(x)⊗m)=−1⊗[x,m]. -/
 @[simp]
 theorem coefficientBoundary_ι_tmul (x : L) (m : M) :
     coefficientBoundary R L M ((ExteriorAlgebra.ι R x) ⊗ₜ[R] m) =
@@ -286,7 +373,12 @@ private theorem coefficientBoundary_diagonalAction_tmul (x : L) (a : E) :
         coefficientDiagonalAction_commutator_apply]
       abel
 
-/-- The ambient coefficient boundary is equivariant for the canonical diagonal action. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The coefficient boundary is equivariant for the diagonal action:
+DT_x=T_xD on P. -/
 theorem coefficientBoundary_comp_diagonalAction (x : L) :
     (coefficientBoundary R L M).comp (coefficientDiagonalAction R L M x) =
       (coefficientDiagonalAction R L M x).comp (coefficientBoundary R L M) := by
@@ -294,7 +386,11 @@ theorem coefficientBoundary_comp_diagonalAction (x : L) :
   intro a m
   exact coefficientBoundary_diagonalAction_tmul R L M x a m
 
-/-- Pointwise equivariance on arbitrary coefficient tensors. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+For p∈P, D(T_x p)=T_x(Dp). -/
 theorem coefficientBoundary_diagonalAction (x : L) (p : P) :
     coefficientBoundary R L M (coefficientDiagonalAction R L M x p) =
       coefficientDiagonalAction R L M x (coefficientBoundary R L M p) :=
@@ -320,15 +416,23 @@ private theorem coefficientBoundary_squared_tmul (a : E) :
         coefficientBoundary_insertion, hp, map_zero]
       abel
 
-/-- The canonical ambient coefficient boundary squares to zero without assumptions
-on freeness, flatness, finite dimension, or the characteristic of the base ring. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+The canonical coefficient boundary satisfies D²=0 as an
+R-linear endomorphism of P. -/
 theorem coefficientBoundary_comp_self :
     (coefficientBoundary R L M).comp (coefficientBoundary R L M) = 0 := by
   apply TensorProduct.ext'
   intro a m
   exact coefficientBoundary_squared_tmul R L M a m
 
-/-- Pointwise square-zero on every ambient coefficient tensor. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Put E=ExteriorAlgebra_R(L), P=E⊗_R M,
+T_x=ad_x⊗id+id⊗[x,−], and c_x(a⊗m)=ι(x)a⊗m.
+For every p∈P, D(Dp)=0. -/
 theorem coefficientBoundary_squared (p : P) :
     coefficientBoundary R L M (coefficientBoundary R L M p) = 0 :=
   LinearMap.congr_fun (coefficientBoundary_comp_self R L M) p

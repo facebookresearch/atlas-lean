@@ -1,3 +1,6 @@
-# Polynomial Resolution Map generator
+# Renaming of polynomial resolution generators
 
-Coefficient functoriality is actual renaming of the preceding power's generator index.
+Renaming of polynomial resolution generators.
+
+For `f : A → B`, the degree-`n` resolution map sends the generator indexed by `x ∈ T^n(A)` to
+the generator indexed by `T^n(f)(x)`.

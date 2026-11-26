@@ -1,3 +1,5 @@
-# Resolution Bar face one degree one
+# First degree-one bar face is the mapped counit
 
-In degree one, the first face is `G(ε_A)`.
+Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `A : C`. The first face from bar degree one to zero is
+`G(ε_A) : G²(A) → G(A)`.

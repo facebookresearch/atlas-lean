@@ -1,3 +1,5 @@
-# Ideal Entry Count reindex
+# Permuting word positions preserves the ideal-entry count
 
-Reindexing the original entries does not change how many lie in the ideal.
+Let k be commutative, A a nonunital ring with k-module structure and I a nonunital
+k-subalgebra. For e : Perm(Fin n) and a : Fin n → A, idealEntryCount(a ∘ e) = idealEntryCount
+a.

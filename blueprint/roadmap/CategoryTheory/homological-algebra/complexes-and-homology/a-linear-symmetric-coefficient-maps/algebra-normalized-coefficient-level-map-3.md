@@ -1,4 +1,6 @@
-# Algebra Normalized Coefficient Level Map positive Relations
+# The normalized coefficient map preserves both-positive shuffle relations
 
-Actual normalized image relations are preserved by the corresponding
-original coefficient-head map, with no rational hypothesis.
+The normalized coefficient map preserves both-positive shuffle relations.
+
+For a commutative ring k, a commutative k-algebra A and a compatible A-linear f : M → N,
+normalized proper-shuffle images for M map into those for N in every degree.

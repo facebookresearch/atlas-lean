@@ -1,5 +1,5 @@
 # Actual zero objects, monomorphisms and exactness in the category of short complexes
 
-- [Is Zero of components](is-zero-of-components.md)
-- [Mono of components](mono-of-components.md)
-- [Exact of components](exact-of-components.md)
+- [A short complex with three zero coefficient objects is zero](is-zero-of-components.md)
+- [Componentwise monomorphisms give a monomorphism of short complexes](mono-of-components.md)
+- [Exact coefficient rows give an exact sequence of short complexes](exact-of-components.md)

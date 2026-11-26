@@ -1,6 +1,6 @@
 # Unshuffle formulas for the Chevalley–Eilenberg coproduct
 
-- [Coproduct Component eq unshuffle](coproduct-component-eq-unshuffle.md)
-- [Unshuffle Of Sum Eq](unshuffle-of-sum-eq.md)
-- [Unshuffle boundary](unshuffle-boundary.md)
-- [Native Complex Comul apply ιMulti](native-complex-comul-apply-multi.md)
+- [The projected coproduct is the exterior unshuffle](coproduct-component-eq-unshuffle.md)
+- [The unshuffle with a specified source degree](unshuffle-of-sum-eq.md)
+- [The unshuffle coderivation identity with empty blocks](unshuffle-boundary.md)
+- [The full finite-unshuffle formula for the chain coproduct](native-complex-comul-apply-multi.md)

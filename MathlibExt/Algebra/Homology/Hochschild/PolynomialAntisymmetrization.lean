@@ -13,14 +13,24 @@ public import MathlibExt.Algebra.Homology.Hochschild.KoszulAntisymmetrization
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialExteriorCoordinates
 
 /-!
-# Polynomial antisymmetric diagonal-to-bar comparison
+# Polynomial antisymmetrization from the diagonal Koszul resolution
 
-Signed permutation sums give a chain map from the polynomial
-diagonal Koszul resolution to the enveloping bar, covering
-multiplication with the unsigned degree-zero map. Tensoring with
-an arbitrary bimodule computes Hochschild homology through the
-diagonal complex over any commutative ground ring. No factorial
-inverse is required.
+Let k be a commutative ring, σ any variable set and A = k[σ]. The diagonal Koszul resolution
+over E = A ⊗[k] Aᵐᵒᵖ has generators δᵢ = Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ. Antisymmetrization sends an
+exterior generator word to its signed permutation sum in the enveloping bar resolution, with
+outer entries equal to 1. This chain map preserves the multiplication augmentation and is
+homotopic to the inverse projective-resolution comparison.
+
+Tensoring with an arbitrary compatible A-bimodule M gives a homotopy equivalence with the
+Hochschild chain complex. For symmetric coefficients, the diagonal differential vanishes, so the
+signed chain map yields the coefficient-form isomorphism M ⊗[A] ∧ⁿ_AΩ¹_{A/k} ≅ HHₙ(A,M). The
+comparison is constructed over k without division by n! and without a finiteness assumption on
+σ.
+
+The relation between polynomial diagonal resolutions and differential forms is the polynomial
+case of the Hochschild–Kostant–Rosenberg theorem; see G. Hochschild, B. Kostant and A.
+Rosenberg, “Differential forms on regular affine algebras,” Transactions of the American
+Mathematical Society 102 (1962), 383–408.
 -/
 
 @[expose] public section
@@ -45,15 +55,21 @@ local notation "P" => KoszulComplex.polynomialDiagonalProjectiveResolution k σ
 
 attribute [local instance] Module.Projective.of_free
 
-/-- The original polynomial generator map on the original ground free module. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. The k-linear map V → A sends each standard basis vector eᵢ to the variable Xᵢ;
+equivalently it sends a finitely supported family c to ∑ᵢ cᵢXᵢ. -/
 def polynomialGeneratorLinear : V →ₗ[k] A := Finsupp.linearCombination k MvPolynomial.X
 
-/-- The original unit free generator maps to its polynomial variable. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. For i ∈ σ, polynomialGeneratorLinear sends Finsupp.single i 1 to Xᵢ. -/
 theorem polynomialGeneratorLinear_single (i : σ) :
     polynomialGeneratorLinear k σ (Finsupp.single i (1 : k)) = MvPolynomial.X i := by
   rw [polynomialGeneratorLinear, Finsupp.linearCombination_single, one_smul]
 
-/-- The canonical free scalar coordinates preserve the original diagonal functional. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Under E ⊗[k] V ≅ ⊕ᵢ∈σ E·eᵢ, the generator-difference functional becomes the E-linear
+functional eᵢ ↦ Xᵢ ⊗ 1 − 1 ⊗ Xᵢᵐᵒᵖ, denoted δᵢ. The equality is stated after precomposition with
+the inverse scalar-coordinate isomorphism. -/
 theorem polynomialGeneratorDifference_comp_scalarCoordinates :
     (AdjacentBar.generatorDifferenceFunctional k A V (polynomialGeneratorLinear k σ)).comp
         (Finsupp.scalarExtensionCoordinates k E σ).symm.toLinearMap =
@@ -75,8 +91,11 @@ theorem polynomialGeneratorDifference_comp_scalarCoordinates :
       KoszulComplex.finsuppFunctional, Finsupp.linearCombination_single]
     rfl
 
-/-- The diagonal complex is expressed in its canonical scalar-extended
-generator coordinates. The original differential is preserved. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. The diagonal Koszul complex on the functional eᵢ ↦ δᵢ is isomorphic to the Koszul
+complex on E ⊗[k] V with its generator-difference functional. In degree n the map is the nth
+exterior power of the inverse free scalar-coordinate isomorphism, so it preserves the Koszul
+differential. -/
 def polynomialDiagonalScalarExtensionIso : KoszulComplex.polynomialDiagonalComplex k σ ≅
     KoszulComplex.complex E (E ⊗[k] V)
       (AdjacentBar.generatorDifferenceFunctional k A V (polynomialGeneratorLinear k σ)) := by
@@ -86,7 +105,10 @@ def polynomialDiagonalScalarExtensionIso : KoszulComplex.polynomialDiagonalCompl
     e
     (polynomialGeneratorDifference_comp_scalarCoordinates k σ)
 
-/-- The signed generator maps are a chain map into the original enriched bar. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Antisymmetrization gives an E-linear chain map from the Koszul complex on E ⊗[k] V to
+the enveloping bar resolution. A wedge of n variable generators maps to the sum of their n!
+permutation words, weighted by permutation signs, with outer entries equal to 1. -/
 def polynomialScalarKoszulToBar :
     KoszulComplex.complex E (E ⊗[k] V)
       (AdjacentBar.generatorDifferenceFunctional k A V (polynomialGeneratorLinear k σ)) ⟶
@@ -104,14 +126,17 @@ def polynomialScalarKoszulToBar :
       exact AdjacentBar.koszulAntisymmetrizationLevel_boundary
         k A V (polynomialGeneratorLinear k σ) n)
 
-/-- The concrete all-degree antisymmetric comparison from the original diagonal
-resolution to the original bar resolution. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Composing the scalar-coordinate isomorphism with Koszul antisymmetrization gives an
+E-linear chain map from the polynomial diagonal Koszul resolution to the enveloping bar
+resolution, in every degree n : ℕ. -/
 def polynomialAntisymmetricBarMap :
     KoszulComplex.polynomialDiagonalComplex k σ ⟶ AdjacentBar.envelopingBar k A :=
   (polynomialDiagonalScalarExtensionIso k σ).hom ≫ polynomialScalarKoszulToBar k σ
 
-/-- Every original standard exterior generator maps to the complete signed
-permutation word between the original outer units. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. For n : ℕ and f : Fin n → σ, the comparison sends e_{f(0)}∧…∧e_{f(n−1)} to ∑π
+sign(π)·(1 ⊗ X_{f(π(0))} ⊗ … ⊗ X_{f(π(n−1))} ⊗ 1), where π ranges over permutations of Fin n. -/
 theorem polynomialAntisymmetricBarMap_basis (n : ℕ) (f : Fin n → σ) :
     ((polynomialAntisymmetricBarMap k σ).f n).hom
       (exteriorPower.ιMulti E n (fun j => Finsupp.single (f j) (1 : E))) =
@@ -147,8 +172,10 @@ theorem polynomialAntisymmetricBarMap_basis (n : ℕ) (f : Fin n → σ) :
     (fun j => Finsupp.single (f j) (1 : k))).trans
       (congrArg (AdjacentBar.antisymmetricBarWord k A n) hg)
 
-/-- Scalar multiples of original exterior words keep their original
-enveloping scalar in the bar. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. For e ∈ E and an exterior word indexed by f : Fin n → σ, the bar comparison sends e
+times that wedge to e times its signed permutation bar word. The scalar acts through the
+E-module structure on the bar resolution. -/
 theorem polynomialAntisymmetricBarMap_smul_basis
     (n : ℕ) (e : E) (f : Fin n → σ) :
     ((polynomialAntisymmetricBarMap k σ).f n).hom
@@ -173,8 +200,10 @@ private theorem regularEnvelopingAction_multiplication (e : E) (a : A) :
   | add e e' he he' =>
     simp only [map_add, LinearMap.add_apply, add_mul, he, he']
 
-/-- The concrete unsigned zero component covers literal multiplication into
-the original regular enveloping target. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. For z in the degree-zero exterior power over E, applying the degree-zero
+antisymmetric bar map and then the bar augmentation equals the polynomial diagonal augmentation
+of z. Both augmentations use multiplication E → A. -/
 theorem polynomialAntisymmetricBarMap_augmentation_apply (z : ⋀[E]^0 VE) :
     ((AdjacentBar.envelopingBarAugmentationMap k A).f 0).hom
       (((polynomialAntisymmetricBarMap k σ).f 0).hom z) =
@@ -235,7 +264,10 @@ theorem polynomialAntisymmetricBarMap_augmentation_apply (z : ⋀[E]^0 VE) :
     KoszulComplex.polynomialDiagonalAugmentation_apply k σ z
   exact hleft.trans (ha.trans hd.symm)
 
-/-- The concrete chain comparison preserves the original augmentation. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. If F is polynomialAntisymmetricBarMap, εbar the enveloping bar augmentation and εdiag
+the polynomial diagonal augmentation, then F ≫ εbar = εdiag as maps to the complex concentrated
+in degree zero at the regular E-module A. -/
 @[reassoc]
 theorem polynomialAntisymmetricBarMap_augmentation :
     polynomialAntisymmetricBarMap k σ ≫ AdjacentBar.envelopingBarAugmentationMap k A =
@@ -250,8 +282,10 @@ theorem polynomialAntisymmetricBarMap_augmentation :
   ext z
   exact polynomialAntisymmetricBarMap_augmentation_apply k σ z
 
-/-- Native uniqueness of augmentation-preserving projective-resolution lifts
-identifies the signed map with the original canonical inverse comparison. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. The diagonal-to-bar antisymmetrization is chain homotopic to the inverse map of
+barComparison k σ. These are two augmentation-preserving maps between projective resolutions of
+the regular E-module A. -/
 def polynomialAntisymmetricBarMapHomotopy :
     Homotopy (polynomialAntisymmetricBarMap k σ) (barComparison k σ).inv := by
   let p := P
@@ -285,48 +319,69 @@ variable (M : Type w) [AddCommGroup M] [Module k M]
   [SMulCommClass k (MvPolynomial σ k) M] [SMulCommClass k (MvPolynomial σ k)ᵐᵒᵖ M]
   [IsScalarTower k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k)ᵐᵒᵖ M]
 
-/-- Tensor the signed diagonal-to-bar map with the original arbitrary
-coefficient, then use the original endpoint-sensitive bar cancellation. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. Tensoring the E-linear diagonal-to-bar antisymmetrization with M over E and
+then cancelling the bar endpoints gives a k-linear chain map from coefficientComplex k σ M to
+the Hochschild chain complex Cₙ(A,M) = M ⊗[k] A^{⊗n}. -/
 def polynomialAntisymmetricCoefficientMap :
     coefficientComplex k σ M ⟶ ModuleCat.Algebra.Hochschild.chainComplex k A M :=
   ((AdjacentBar.coefficientTensorFunctor k A M).mapHomologicalComplex (ComplexShape.down ℕ)).map
       (polynomialAntisymmetricBarMap k σ) ≫ (AdjacentBar.coefficientTensorChainIso k A M).hom
 
-/-- The signed coefficient comparison is homotopic to the original inverse
-native comparison, independently of coefficient flatness or projectivity. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. The antisymmetric coefficient chain map is homotopic to the inverse of
+coefficientComparison k σ M. This homotopy is obtained by tensoring the augmentation-preserving
+resolution homotopy with M, and imposes no flatness or projectivity condition on M. -/
 def polynomialAntisymmetricCoefficientMapHomotopy :
     Homotopy (polynomialAntisymmetricCoefficientMap k σ M) (coefficientComparison k σ M).inv :=
   ((AdjacentBar.coefficientTensorFunctor k A M).mapHomotopy
     (polynomialAntisymmetricBarMapHomotopy k σ)).compRight
       (AdjacentBar.coefficientTensorChainIso k A M).hom
 
-/-- The signed coefficient map is itself a chain homotopy equivalence.
-This conclusion comes from projective resolutions, not a factorial composite. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. The coefficient diagonal complex and the Hochschild chain complex are
+homotopy equivalent, with polynomialAntisymmetricCoefficientMap as the forward map. The
+equivalence is obtained from the comparison of projective resolutions. -/
 def polynomialAntisymmetricCoefficientComparison :
     HomotopyEquiv (coefficientComplex k σ M) (ModuleCat.Algebra.Hochschild.chainComplex k A M) :=
   (coefficientComparison k σ M).symm.copy
     (polynomialAntisymmetricCoefficientMapHomotopy k σ M).symm
 
-/-- The homotopy equivalence has the signed map as its forward map. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. The forward map of polynomialAntisymmetricCoefficientComparison k σ M is
+polynomialAntisymmetricCoefficientMap k σ M. -/
 theorem polynomialAntisymmetricCoefficientComparison_hom :
     (polynomialAntisymmetricCoefficientComparison k σ M).hom =
       polynomialAntisymmetricCoefficientMap k σ M := rfl
 
-/-- The signed homology map equals the original inverse resolution map. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. In every degree n : ℕ, the homology map of
+polynomialAntisymmetricCoefficientMap equals the homology map of (coefficientComparison k σ
+M).inv. -/
 theorem polynomialAntisymmetricCoefficientMap_homology (n : ℕ) :
     HomologicalComplex.homologyMap (polynomialAntisymmetricCoefficientMap k σ M) n =
       HomologicalComplex.homologyMap (coefficientComparison k σ M).inv n :=
   (polynomialAntisymmetricCoefficientMapHomotopy k σ M).homologyMap_eq n
 
-/-- The signed comparison computes the inverse of the original polynomial
-diagonal homology comparison in every degree. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. For each n : ℕ, antisymmetrization induces an isomorphism from the nth
+homology of the coefficient diagonal complex to HHₙ(A,M). -/
 def polynomialAntisymmetricCoefficientHomologyIso (n : ℕ) :
     (coefficientComplex k σ M).homology n ≅
       (ModuleCat.Algebra.Hochschild.chainComplex k A M).homology n :=
   (polynomialAntisymmetricCoefficientComparison k σ M).toHomologyIso n
 
-/-- Actual coefficient variable words have the complete signed raw Hochschild formula,
-with their original coefficient head and no rational normalization. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. For m ∈ M and f : Fin n → σ, the comparison sends the balanced tensor m ⊗_E
+(e_{f(0)}∧…∧e_{f(n−1)}) to ∑π sign(π)·(m ⊗ X_{f(π(0))} ⊗ … ⊗ X_{f(π(n−1))}), with π ranging over
+permutations of Fin n. -/
 theorem polynomialAntisymmetricCoefficientMap_mk_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     letI := EnvelopingCoefficient.rightEnvelopingModule k A M
@@ -380,8 +435,11 @@ theorem polynomialAntisymmetricCoefficientMap_mk_basis
     exact (hL _).symm.trans hc
   exact hstart.trans (hJ.trans ((hL _).trans hformula))
 
-/-- The free exterior inverse coordinate gives the complete original
-coefficient-first signed tensor formula. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. Identify the degree-n coefficient diagonal term with M ⊗[k] ∧ⁿₖV using
+coefficientFreeExteriorEquiv. The inverse-coordinate image of m ⊗ (e_{f(0)}∧…∧e_{f(n−1)}) maps
+to ∑π sign(π)·(m ⊗ X_{f(π(0))} ⊗ … ⊗ X_{f(π(n−1))}). -/
 theorem polynomialAntisymmetricCoefficientMap_free_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     ((polynomialAntisymmetricCoefficientMap k σ M).f n).hom
@@ -394,8 +452,11 @@ theorem polynomialAntisymmetricCoefficientMap_free_basis
   rw [coefficientFreeExteriorEquiv_symm_tmul_basis,
     polynomialAntisymmetricCoefficientMap_mk_basis]
 
-/-- In the free exterior coordinates every coefficient component is
-the canonical tensor of the full signed exterior antisymmetrization. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-bimodule whose two A-actions commute and are compatible with its
+k-module structure. Precomposing the degree-n antisymmetric coefficient map with
+coefficientFreeExteriorEquiv⁻¹ gives id_M ⊗ exteriorAntisymmetrizationAlong(X), a k-linear map
+from M ⊗[k] ∧ⁿₖV to M ⊗[k] A^{⊗n}. -/
 theorem polynomialAntisymmetricCoefficientMap_free_coordinates (n : ℕ) :
     ((polynomialAntisymmetricCoefficientMap k σ M).f n).hom.comp
         (coefficientFreeExteriorEquiv k σ M n).symm.toLinearMap =
@@ -455,8 +516,10 @@ section Symmetric
 variable (M : Type w) [AddCommGroup M] [Module k M] [Module (MvPolynomial σ k) M]
   [SMulCommClass k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k) M]
 
-/-- The signed polynomial exterior class is homology of the constructed
-chain map, applied to the native diagonal cycle with its original free coordinates. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+The coefficient diagonal differential is zero. Taking its cycle classes and applying the
+antisymmetric coefficient map defines a k-linear map M ⊗[k] ∧ⁿₖV → HHₙ(A,M) for every n : ℕ. -/
 def polynomialAntisymmetricExteriorClass (n : ℕ) :
     M ⊗[k] (⋀[k]^n V) →ₗ[k] (Symmetric.chainComplex k A M).homology n := by
   letI := Symmetric.opModule A M
@@ -468,8 +531,11 @@ def polynomialAntisymmetricExteriorClass (n : ℕ) :
     HomologicalComplex.homologyMap (polynomialAntisymmetricCoefficientMap k σ M) n).hom.comp
       (symmetricFreeExteriorEquiv k σ M n).symm.toLinearMap
 
-/-- Actual native lift uniqueness identifies the signed class with the class
-specified independently by the original diagonal comparison. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule. In
+degree n : ℕ, polynomialAntisymmetricExteriorClass equals symmetricHochschildFreeExteriorClass.
+Thus the signed chain construction and the diagonal resolution comparison define the same
+Hochschild classes. -/
 theorem polynomialAntisymmetricExteriorClass_eq_diagonal (n : ℕ) :
     polynomialAntisymmetricExteriorClass k σ M n = symmetricHochschildFreeExteriorClass k σ M n := by
   letI := Symmetric.opModule A M
@@ -480,8 +546,10 @@ theorem polynomialAntisymmetricExteriorClass_eq_diagonal (n : ℕ) :
   rw [polynomialAntisymmetricCoefficientMap_homology]
   rfl
 
-/-- The signed polynomial exterior class has its original free exterior
-coordinates in every degree, over every commutative ground ring. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+For n : ℕ and x ∈ M ⊗[k] ∧ⁿₖV, the free exterior coordinate map sends
+polynomialAntisymmetricExteriorClass k σ M n x back to x. -/
 theorem polynomialAntisymmetricExteriorClass_coordinates
     (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     symmetricHochschildFreeExteriorEquiv k σ M n
@@ -489,15 +557,21 @@ theorem polynomialAntisymmetricExteriorClass_coordinates
   rw [polynomialAntisymmetricExteriorClass_eq_diagonal,
     symmetricHochschildFreeExteriorClass_coordinates]
 
-/-- The polynomial antisymmetrization on coefficient differential forms.
-The definition uses the signed chain map, not an abstract chosen isomorphism. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+The polynomial differential-coordinate isomorphism M ⊗[k] ∧ⁿₖV ≅ M ⊗[A] ∧ⁿ_AΩ¹_{A/k}, followed
+in reverse by the signed exterior class map, defines polynomialAntisymmetrizationHomology from
+coefficient n-forms to HHₙ(A,M). -/
 def polynomialAntisymmetrizationHomology (n : ℕ) :
     M ⊗[A] (⋀[A]^n (KaehlerDifferential k A)) →ₗ[k]
       (Symmetric.chainComplex k A M).homology n :=
   (polynomialAntisymmetricExteriorClass k σ M n).comp
     ((KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv k σ M n).symm.restrictScalars k).toLinearMap
 
-/-- A coefficient differential-variable word has its signed native Hochschild class. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+For m ∈ M and f : Fin n → σ, antisymmetrization sends m ⊗ (dX_{f(0)}∧…∧dX_{f(n−1)}) to the
+signed exterior Hochschild class of m ⊗ (e_{f(0)}∧…∧e_{f(n−1)}). -/
 theorem polynomialAntisymmetrizationHomology_basis
     (n : ℕ) (m : M) (f : Fin n → σ) :
     polynomialAntisymmetrizationHomology k σ M n
@@ -514,8 +588,10 @@ theorem polynomialAntisymmetrizationHomology_basis
   exact congrArg (polynomialAntisymmetricExteriorClass k σ M n)
     (hc.trans (KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv_symm_tmul_basis k σ M n m f))
 
-/-- The signed polynomial class maps to the independently computed original
-coefficient differential form, with no factorial inverse. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+For every coefficient n-form ω, applying polynomialAntisymmetrizationHomology and then
+symmetricHochschildDifferentialFormEquiv returns ω. -/
 theorem polynomialAntisymmetrizationHomology_coordinates
     (n : ℕ) (ω : M ⊗[A] (⋀[A]^n (KaehlerDifferential k A))) :
     symmetricHochschildDifferentialFormEquiv k σ M n
@@ -526,15 +602,20 @@ theorem polynomialAntisymmetrizationHomology_coordinates
         ((KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv k σ M n).symm ω))) = ω
   rw [polynomialAntisymmetricExteriorClass_coordinates, LinearEquiv.apply_symm_apply]
 
-/-- The all-degree polynomial antisymmetrization is an isomorphism.
-Its inverse was from the original projective resolutions; the
-factorial composite is not used to infer this conclusion. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+For every n : ℕ there is a k-linear equivalence M ⊗[A] ∧ⁿ_AΩ¹_{A/k} ≅ HHₙ(A,M), inverse to the
+differential-form coordinates obtained from the diagonal projective resolution. Its forward map
+is the signed antisymmetrization. -/
 def polynomialAntisymmetrizationHomologyEquiv (n : ℕ) :
     M ⊗[A] (⋀[A]^n (KaehlerDifferential k A)) ≃ₗ[k]
       (Symmetric.chainComplex k A M).homology n :=
   (symmetricHochschildDifferentialFormEquiv k σ M n).symm
 
-/-- The equivalence is the signed antisymmetrization constructed above. -/
+/-- Let k be a commutative ring and σ any set of variables. Put A = k[σ], E = A ⊗[k] Aᵐᵒᵖ and V =
+⊕ᵢ∈σ k·eᵢ. Let M be an A-module with compatible k-action, regarded as a symmetric A-bimodule.
+The underlying k-linear map of polynomialAntisymmetrizationHomologyEquiv k σ M n equals
+polynomialAntisymmetrizationHomology k σ M n in every degree n : ℕ. -/
 theorem polynomialAntisymmetrizationHomologyEquiv_toLinearMap (n : ℕ) :
     (polynomialAntisymmetrizationHomologyEquiv k σ M n).toLinearMap =
       polynomialAntisymmetrizationHomology k σ M n := by

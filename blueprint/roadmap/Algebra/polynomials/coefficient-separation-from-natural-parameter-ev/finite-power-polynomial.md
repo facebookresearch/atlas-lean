@@ -1,3 +1,4 @@
-# Finite Power Polynomial
+# The polynomial of a finite coefficient vector
 
-The actual finite polynomial with its original coefficient index.
+For `N : ℕ` and `a : Fin N → ℚ`, `finitePowerPolynomial N a = ∑ i : Fin N, monomial i.val (a
+i)` in `ℚ[X]`.

@@ -14,12 +14,15 @@ public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
 
 /-!
-# The canonical cokernel–middle–kernel sequence
+# The canonical cokernel middle kernel sequence
 
-Four actual composable arrows a,u,m,d supply cokernel(a)→middle→kernel(d).
-The data requires their adjacent zero relations and the two local limits.
-Native exactness of the original sequence makes this actual short complex
-short exact in a preadditive category. No comparison is supplied.
+Let A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ be a four-arrow sequence whose adjacent composites vanish. If
+coker(a) and ker(d) exist, cokernel descent of u and kernel lift of m form coker(a) → A₂ →
+ker(d).
+
+Maps of the original sequences induce maps of these three objects with the usual quotient and
+inclusion characteristics. In a preadditive category, exactness of the original four-arrow
+sequence makes its canonical clip short exact.
 -/
 
 @[expose] public section
@@ -38,7 +41,8 @@ section ZeroMorphisms
 
 variable [HasZeroMorphisms C]
 
-/-- The original adjacent arrow, with finite indices computed in a public definition. -/
+/-- Let C be a category and S a sequence A₀ → A₁ → A₂ → A₃ → A₄ of four composable arrows. For
+i∈{0,1,2,3}, fourArrowMap(S,i) is the original arrow Aᵢ → Aᵢ₊₁. -/
 abbrev fourArrowMap (S : ComposableArrows C 4) (i : Fin 4) :
     S.obj i.castSucc ⟶ S.obj i.succ :=
   S.map (homOfLE (show i.castSucc ≤ i.succ from Nat.le_succ i.val))
@@ -48,7 +52,10 @@ section Data
 variable (S : ComposableArrows C 4) (hS : S.IsComplex)
   [HasCokernel (S.fourArrowMap 0)] [HasKernel (S.fourArrowMap 3)]
 
-/-- The canonical sequence uses the actual cokernel descent and kernel lift. -/
+/-- Let C have zero morphisms, and let S be A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ with a ≫ u=u ≫ m=m ≫ d=0.
+Assume the cokernel of a and the kernel of d exist. There is a canonical short complex coker(a)
+→ A₂ → ker(d). Its first arrow is the descent of u through coker(a), and its second arrow is the
+lift of m through ker(d); their composite is zero. -/
 @[implicit_reducible]
 def middleKernelCokernelSequence : ShortComplex C :=
   ShortComplex.mk
@@ -59,25 +66,35 @@ def middleKernelCokernelSequence : ShortComplex C :=
       simp only [Category.assoc, kernel.lift_ι, cokernel.π_desc_assoc,
         hS.zero 1, Limits.comp_zero, Limits.zero_comp])
 
-/-- The first object is the actual cokernel of the original first arrow. -/
+/-- Let C have zero morphisms, and let S be A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ with a ≫ u=u ≫ m=m ≫ d=0.
+Assume the cokernel of a and the kernel of d exist. The left object of the canonical clipped
+sequence coker(a) → A₂ → ker(d) is the cokernel of the original first arrow a. -/
 theorem middleKernelCokernelSequence_X₁ :
     (middleKernelCokernelSequence S hS).X₁ = cokernel (S.fourArrowMap 0) := rfl
 
-/-- The middle object is unchanged from the original sequence. -/
+/-- Let C have zero morphisms, and let S be A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ with a ≫ u=u ≫ m=m ≫ d=0.
+Assume the cokernel of a and the kernel of d exist. The middle object of the canonical clipped
+sequence is the original object A₂. -/
 theorem middleKernelCokernelSequence_X₂ :
     (middleKernelCokernelSequence S hS).X₂ = S.obj (2 : Fin 5) := rfl
 
-/-- The third object is the actual kernel of the original last arrow. -/
+/-- Let C have zero morphisms, and let S be A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ with a ≫ u=u ≫ m=m ≫ d=0.
+Assume the cokernel of a and the kernel of d exist. The right object of the canonical clipped
+sequence is the kernel of the original final arrow d. -/
 theorem middleKernelCokernelSequence_X₃ :
     (middleKernelCokernelSequence S hS).X₃ = kernel (S.fourArrowMap 3) := rfl
 
-/-- The actual first map factors the original second arrow. -/
+/-- Let C have zero morphisms, and let S be A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ with a ≫ u=u ≫ m=m ≫ d=0.
+Assume the cokernel of a and the kernel of d exist. If j : coker(a) → A₂ is the first clipped
+arrow and π : A₁ → coker(a) the cokernel quotient, then π ≫ j=u. -/
 @[reassoc]
 theorem middleKernelCokernelSequence_π_f :
     cokernel.π (S.fourArrowMap 0) ≫ (middleKernelCokernelSequence S hS).f = S.fourArrowMap 1 :=
   cokernel.π_desc _ _ _
 
-/-- The actual second map factors the original third arrow. -/
+/-- Let C have zero morphisms, and let S be A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ with a ≫ u=u ≫ m=m ≫ d=0.
+Assume the cokernel of a and the kernel of d exist. If r : A₂ → ker(d) is the second clipped
+arrow and i : ker(d) → A₃ the kernel inclusion, then r ≫ i=m. -/
 @[reassoc]
 theorem middleKernelCokernelSequence_g_ι :
     (middleKernelCokernelSequence S hS).g ≫ kernel.ι (S.fourArrowMap 3) = S.fourArrowMap 2 :=
@@ -92,7 +109,10 @@ variable {S T V : ComposableArrows C 4}
   [HasCokernel (T.fourArrowMap 0)] [HasKernel (T.fourArrowMap 3)]
   [HasCokernel (V.fourArrowMap 0)] [HasKernel (V.fourArrowMap 3)]
 
-/-- The original natural transformation induces its actual cokernel, middle and kernel maps. -/
+/-- Let C have zero morphisms, let φ : S → T be a componentwise commuting map of four-arrow
+sequences with all adjacent composites zero, and assume their first-arrow cokernels and
+last-arrow kernels exist. The induced map of clipped short complexes has components
+coker(φ₀,φ₁), φ₂, and ker(φ₃,φ₄), from coker(a_S) → S₂ → ker(d_S) to coker(a_T) → T₂ → ker(d_T). -/
 def middleKernelCokernelSequenceMap (φ : S ⟶ T) (hS : S.IsComplex) (hT : T.IsComplex) :
     middleKernelCokernelSequence S hS ⟶ middleKernelCokernelSequence T hT := by
   refine ShortComplex.homMk
@@ -114,12 +134,18 @@ def middleKernelCokernelSequenceMap (φ : S ⟶ T) (hS : S.IsComplex) (hT : T.Is
     rw [Category.assoc, kernel.lift_ι, kernel.lift_ι_assoc]
     exact (naturality' φ 2 3 (by decide) (by decide)).symm
 
-/-- The middle component is exactly the given map of the original middle objects. -/
+/-- Let C have zero morphisms, let φ : S → T be a componentwise commuting map of four-arrow
+sequences with all adjacent composites zero, and assume their first-arrow cokernels and
+last-arrow kernels exist. The middle component of the clipped-sequence map is precisely φ₂ : S₂
+→ T₂. -/
 theorem middleKernelCokernelSequenceMap_τ₂ (φ : S ⟶ T)
     (hS : S.IsComplex) (hT : T.IsComplex) :
     (middleKernelCokernelSequenceMap φ hS hT).τ₂ = app' φ 2 (by decide) := rfl
 
-/-- The first component retains the original map of cokernel representatives. -/
+/-- Let C have zero morphisms, let φ : S → T be a componentwise commuting map of four-arrow
+sequences with all adjacent composites zero, and assume their first-arrow cokernels and
+last-arrow kernels exist. The cokernel component c satisfies π_S ≫ c=φ₁ ≫ π_T, where π_S and π_T
+are the first-arrow cokernel quotients. -/
 @[reassoc]
 theorem middleKernelCokernelSequenceMap_π (φ : S ⟶ T)
     (hS : S.IsComplex) (hT : T.IsComplex) :
@@ -128,7 +154,10 @@ theorem middleKernelCokernelSequenceMap_π (φ : S ⟶ T)
   dsimp only [middleKernelCokernelSequenceMap, ShortComplex.homMk, cokernel.map]
   exact cokernel.π_desc _ _ _
 
-/-- The last component retains the original map of kernel representatives. -/
+/-- Let C have zero morphisms, let φ : S → T be a componentwise commuting map of four-arrow
+sequences with all adjacent composites zero, and assume their first-arrow cokernels and
+last-arrow kernels exist. The kernel component k satisfies k ≫ i_T=i_S ≫ φ₃, where i_S and i_T
+are the last-arrow kernel inclusions. -/
 @[reassoc]
 theorem middleKernelCokernelSequenceMap_ι (φ : S ⟶ T)
     (hS : S.IsComplex) (hT : T.IsComplex) :
@@ -137,7 +166,9 @@ theorem middleKernelCokernelSequenceMap_ι (φ : S ⟶ T)
   dsimp only [middleKernelCokernelSequenceMap, kernel.map]
   exact kernel.lift_ι _ _ _
 
-/-- Identity transformations act as identity on the canonical clipped sequence. -/
+/-- Let C have zero morphisms, and let S be A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ with a ≫ u=u ≫ m=m ≫ d=0.
+Assume the cokernel of a and the kernel of d exist. The identity on the original four-arrow
+sequence induces the identity on coker(a) → A₂ → ker(d). -/
 theorem middleKernelCokernelSequenceMap_id (hS : S.IsComplex) :
     middleKernelCokernelSequenceMap (𝟙 S) hS hS = 𝟙 (middleKernelCokernelSequence S hS) := by
   dsimp only [middleKernelCokernelSequence]
@@ -155,7 +186,9 @@ theorem middleKernelCokernelSequenceMap_id (hS : S.IsComplex) :
       𝟙 _ ≫ kernel.ι (S.fourArrowMap 3)
     rw [Category.id_comp, Category.comp_id]
 
-/-- Composition preserves the original natural-transformation order. -/
+/-- Let C have zero morphisms and let φ : S → T and ψ : T → V be maps of four-arrow complexes.
+Assume the relevant first-arrow cokernels and last-arrow kernels exist. The clipped-sequence map
+of ψ ∘ φ is the clipped map of φ followed by that of ψ. -/
 theorem middleKernelCokernelSequenceMap_comp (φ : S ⟶ T) (ψ : T ⟶ V)
     (hS : S.IsComplex) (hT : T.IsComplex) (hV : V.IsComplex) :
     middleKernelCokernelSequenceMap (φ ≫ ψ) hS hV =
@@ -191,7 +224,9 @@ section Exactness
 variable [Preadditive C] (S : ComposableArrows C 4)
   [HasCokernel (S.fourArrowMap 0)] [HasKernel (S.fourArrowMap 3)]
 
-/-- Native exactness of the given sequence makes the actual canonical clip short exact. -/
+/-- Let C be preadditive and let A₀ —a→ A₁ —u→ A₂ —m→ A₃ —d→ A₄ be exact. Assume coker(a) and ker(d)
+exist. The canonical sequence 0 → coker(a) → A₂ → ker(d) → 0 is short exact, with the arrows
+induced by u and m. -/
 theorem middleKernelCokernelSequence_shortExact (hS : S.Exact) :
     (middleKernelCokernelSequence S hS.toIsComplex).ShortExact := by
   let K := middleKernelCokernelSequence S hS.toIsComplex

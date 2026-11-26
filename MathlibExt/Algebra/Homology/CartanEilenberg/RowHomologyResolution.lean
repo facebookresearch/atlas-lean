@@ -13,11 +13,15 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.RowHomologyPositive
 public import MathlibExt.Algebra.Homology.CartanEilenberg.RowHomologyZeroAugmentation
 
 /-!
-# Uniform row-homology resolutions of a Cartan--Eilenberg resolution
+# Uniform vertical-homology projective resolutions
 
-The vertical-homology complex in every original degree is equipped as a projective resolution of
-the corresponding homology object.  Degree zero uses the canonical strict augmentation, while
-positive degrees use the transported stored homology-resolution augmentation.
+Let P be Cartan–Eilenberg data for a nonnegative complex L in an abelian category. For every
+original degree q, its resolution-direction vertical homology is equipped as a projective
+resolution of H_q(L).
+
+In degree zero the augmentation is the canonical column-zero homology augmentation. In positive
+degree it is transported from the stored homology resolution. The underlying complex remains the
+full vertical- homology complex in every degree.
 -/
 
 @[expose] public section
@@ -36,10 +40,11 @@ namespace HomologicalComplex.CartanEilenbergResolution
 variable {C : Type u} [Category.{v} C] [Abelian C]
 variable {L : ChainComplex C ℕ} (P : CartanEilenbergResolution L)
 
-/--
-The vertical row-homology complex, uniformly equipped as a projective resolution of the
-corresponding homology object.
--/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. For
+every q ∈ ℕ, P.bicomplex.verticalHomologyComplex(q) is equipped as a projective resolution of
+H_q(L). Degree zero uses the canonical row-homology augmentation and positive degrees use the
+stored homology-resolution comparison. -/
 noncomputable def cartanEilenbergVerticalHomologyResolution (q : ℕ) :
     ProjectiveResolution (L.homology q) where
   complex := P.bicomplex.verticalHomologyComplex q
@@ -64,23 +69,30 @@ noncomputable def cartanEilenbergVerticalHomologyResolution (q : ℕ) :
     | succ q =>
         exact (P.cartanEilenbergVerticalHomologySuccResolution q).quasiIso
 
-/-- The uniform resolution has the vertical-homology complex definitionally. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. For
+each q ∈ ℕ, the complex underlying the uniform projective resolution of H_q(L) is exactly
+P.bicomplex.verticalHomologyComplex(q). -/
 @[simp]
 theorem cartanEilenbergVerticalHomologyResolution_complex (q : ℕ) :
     (P.cartanEilenbergVerticalHomologyResolution q).complex =
       P.bicomplex.verticalHomologyComplex q :=
   rfl
 
-/-- In degree zero, the uniform resolution uses the canonical strict
-row-homology augmentation. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. At
+original degree zero, the uniform resolution's augmentation is the canonical
+rowHomologyAugmentation(0) to H₀(L)[0], induced by the term-resolution column augmentation. -/
 @[simp]
 theorem cartanEilenbergVerticalHomologyResolution_π_zero :
     (P.cartanEilenbergVerticalHomologyResolution 0).π =
       P.rowHomologyAugmentation 0 :=
   rfl
 
-/-- In positive degree, the uniform resolution reuses the transported
-positive-row augmentation. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. At
+original degree q+1, the uniform resolution uses precisely the augmentation of the positive-row
+resolution transported from PH_{q+1}. -/
 @[simp]
 theorem cartanEilenbergVerticalHomologyResolution_π_succ (q : ℕ) :
     (P.cartanEilenbergVerticalHomologyResolution (q + 1)).π =

@@ -15,11 +15,17 @@ public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.Data.Finset.Card
 
 /-!
-# Actual descent positions and the two-block shuffle cut criterion
+# Adjacent descents and the shuffle cut
 
-A permutation is a (p,q)-shuffle exactly when every adjacent descent is
-at the original cut p. This is proved from the actual two increasing-block
-conditions, without descent or shuffle classification certificates.
+For `σ ∈ S_n`, an ordinary descent position is `j` with `j+1<n` and `σ(j)>σ(j+1)`. Its descent
+number is the cardinality of this set.
+
+A permutation of `Fin(p+q)` is a `(p,q)`-shuffle precisely when every descent is at the cut
+between the blocks, meaning `j+1=p`. Thus a two-block shuffle has at most one descent. Zero
+descents characterize the identity permutation, and a positive length `n` gives fewer than `n`
+descents.
+
+Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1.
 -/
 
 @[expose] public section
@@ -27,15 +33,19 @@ noncomputable section
 
 namespace Equiv.Perm
 
-/-- The original adjacent descent positions, omitting the final position by an explicit successor bound. -/
+/-- Let `n : ℕ` and `σ : Equiv.Perm (Fin n)`. `descentPositions σ` is the finite set of `j : Fin
+n` such that `j.val+1<n` and `σ j > σ(j+1)`. The successor bound omits the final position. -/
 def descentPositions {n : ℕ} (σ : Perm (Fin n)) : Finset (Fin n) := by
   classical
   exact Finset.univ.filter (fun j => ∃ h : j.val + 1 < n, σ j > σ ⟨j.val + 1, h⟩)
 
-/-- The actual number of adjacent descents. -/
+/-- Let `n : ℕ` and `σ : Equiv.Perm (Fin n)`. `descentNumber σ = (descentPositions σ).card`,
+counting positions `j` with `j+1<n` and `σ j > σ(j+1)`. -/
 def descentNumber {n : ℕ} (σ : Perm (Fin n)) : ℕ := (descentPositions σ).card
 
-/-- The exact increasing-block shuffle criterion expressed at the original adjacent cut. -/
+/-- For `p,q : ℕ` and `σ ∈ S_(p+q)`, `IsShuffle σ` holds if and only if every adjacent descent `σ
+j > σ(j+1)` with `j+1<p+q` satisfies `j+1=p`. This is equivalent to increasing order inside
+each of the two input blocks. -/
 theorem isShuffle_iff_descents_at_cut {p q : ℕ} (σ : Perm (Fin (p + q))) :
     AlgebraicTopology.EilenbergZilber.IsShuffle σ ↔
       ∀ (j : Fin (p + q)) (h : j.val + 1 < p + q),
@@ -104,7 +114,7 @@ theorem isShuffle_iff_descents_at_cut {p q : ℕ} (σ : Perm (Fin (p + q))) :
         rw [hn] at hh
         exact hh
 
-/-- A permutation has no actual adjacent descents precisely when it is the identity. -/
+/-- Let `n : ℕ` and `σ : Equiv.Perm (Fin n)`. `descentPositions σ = ∅` if and only if `σ = 1`. -/
 theorem descentPositions_eq_empty_iff {n : ℕ} (σ : Perm (Fin n)) :
     descentPositions σ = ∅ ↔ σ = 1 := by
   classical
@@ -142,11 +152,13 @@ theorem descentPositions_eq_empty_iff {n : ℕ} (σ : Perm (Fin n)) :
       omega
     · simp
 
-/-- Zero actual descent number characterizes identity without a nonempty-degree assumption. -/
+/-- Let `n : ℕ` and `σ : Equiv.Perm (Fin n)`. `descentNumber σ = 0` if and only if `σ = 1`,
+including `n=0`. -/
 theorem descentNumber_eq_zero_iff {n : ℕ} (σ : Perm (Fin n)) : descentNumber σ = 0 ↔ σ = 1 := by
   rw [descentNumber, Finset.card_eq_zero, descentPositions_eq_empty_iff]
 
-/-- Every positive homogeneous degree has strictly fewer actual descents than letters. -/
+/-- Let `n : ℕ` and `σ : Equiv.Perm (Fin n)`. If `0<n`, then `descentNumber σ < n`, since at most
+the `n-1` successor positions can be descents. -/
 theorem descentNumber_lt {n : ℕ} (σ : Perm (Fin n)) (hn : 0 < n) : descentNumber σ < n := by
   classical
   cases n with
@@ -165,7 +177,8 @@ theorem descentNumber_lt {n : ℕ} (σ : Perm (Fin n)) (hn : 0 < n) : descentNum
       exact Finset.mem_univ _
     simpa only [descentNumber, Finset.card_univ, Fintype.card_fin] using Finset.card_lt_card hss
 
-/-- Every actual two-block shuffle has at most one adjacent descent. -/
+/-- For `p,q : ℕ` and `σ ∈ S_(p+q)` satisfying the `(p,q)`-shuffle condition, `descentNumber σ ≤
+1`. Any descent must lie at the single cut `j+1=p`. -/
 theorem descentNumber_le_one_of_shuffle {p q : ℕ} (σ : Perm (Fin (p + q)))
     (hs : AlgebraicTopology.EilenbergZilber.IsShuffle σ) : descentNumber σ ≤ 1 := by
   classical

@@ -1,3 +1,4 @@
-# Change Objects Iso hom f
+# Forward coordinate isomorphism in each degree
 
-The forward comparison has exactly the specified degreewise coordinate map.
+Let C have zero morphisms, let K be a complex of shape c on ι, and choose objects Xᵢ with
+isomorphisms eᵢ:Kᵢ≅Xᵢ. The forward degree-i component of K≅K.changeObjects e is eᵢ.hom:Kᵢ→Xᵢ.

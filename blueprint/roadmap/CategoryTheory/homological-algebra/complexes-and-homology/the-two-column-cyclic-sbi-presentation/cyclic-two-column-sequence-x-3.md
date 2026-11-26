@@ -1,3 +1,6 @@
-# Cyclic Two Column Sequence X₃
+# The cokernel term of the cyclic short complex
 
-The third term is the quotient, rather than a chosen comparison object.
+The cokernel term of the cyclic short complex.
+
+The third term of the two-column sequence is the quotient of `CC(A)` by the retained first-
+two-column total.

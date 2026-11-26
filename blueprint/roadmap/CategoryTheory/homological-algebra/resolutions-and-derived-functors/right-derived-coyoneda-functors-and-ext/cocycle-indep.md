@@ -1,4 +1,7 @@
-# Cocycle indep
+# Equal Ext classes are identified by every boundary-annihilating map
 
-Two cocycles represent the same `Ext` class only if every cofork-coherent
-map identifies them.
+Let `C` be abelian with hom-set universe `v`, injective
+resolutions, and Ext in universe `v`. Let `X : C` and `I` be an
+injective resolution of `Y`. If two degree-`n` cocycles represent the same Ext class,
+any additive-group map from cocycles annihilating incoming boundaries
+takes them to the same value.

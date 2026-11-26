@@ -15,13 +15,20 @@ public import MathlibExt.Combinatorics.Perm.ShuffleDescents
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 
 /-!
-# Actual descent fibers of cyclic rotations
+# Closing-edge partitions of cyclic rotations
 
-The ordinary descent count is the cyclic count minus the actual closing
-descent. Native rotation coordinates enumerate every possible closing edge.
-Consequently a word with `t` cyclic descents has exactly `t` rotations with
-ordinary descent count `t-1`, and `L-t` with ordinary count `t`, where `L`
-is its actual number of letters. The proof includes the one-letter case.
+For a permutation of `N=n+1` letters, the cyclic descent count is the ordinary count plus the
+closing comparison `σ(0)<σ(n)`. A position rotation with a closing descent has ordinary count
+`c(σ)-1`; one without it has ordinary count `c(σ)`.
+
+Exactly `c(σ)` rotation positions have a closing descent. Thus a finite sum over rotations
+splits into these two closing-edge parts, of sizes `c(σ)` and `N-c(σ)`. For one letter, the
+first part is empty and the ordinary count is zero.
+
+Fixing a zero head preserves the ordinary tail count; when the tail is nonempty, it adds one
+closing cyclic descent.
+
+Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1.
 -/
 
 @[expose] public section
@@ -31,7 +38,10 @@ open scoped BigOperators
 
 namespace Equiv.Perm
 
-/-- Ordinary descents are the actual adjacent comparisons, without a closing edge. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. The ordinary count is `descentNumber σ = ∑ i : Fin n, if
+σ(i.succ)<σ(i.castSucc) then 1 else 0`, omitting the closing edge. -/
 theorem descentNumber_eq_adjacent_sum {n : ℕ} (σ : Perm (Fin (n + 1))) :
     descentNumber σ = ∑ i : Fin n, if σ i.succ < σ i.castSucc then 1 else 0 := by
   classical
@@ -64,7 +74,9 @@ theorem descentNumber_eq_adjacent_sum {n : ℕ} (σ : Perm (Fin (n + 1))) :
     omega
   simp only [hp, hlast, if_false, add_zero]
 
-/-- The actual cyclic count is the ordinary count plus the original closing comparison. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. `c(σ)=descentNumber σ + (if σ 0<σ(Fin.last n) then 1 else 0)`. -/
 theorem cyclicDescentNumber_eq_ordinary_closing {n : ℕ} (σ : Perm (Fin (n + 1))) :
     cyclicDescentNumber σ = descentNumber σ + if σ 0 < σ (Fin.last n) then 1 else 0 := by
   rw [cyclicDescentNumber, Fin.sum_univ_castSucc, descentNumber_eq_adjacent_sum]
@@ -77,7 +89,8 @@ theorem cyclicDescentNumber_eq_ordinary_closing {n : ℕ} (σ : Perm (Fin (n + 1
     exact finRotate_of_lt i.isLt
   rw [hrotate]
 
-/-- Head fixing retains exactly the original ordinary tail descent count. -/
+/-- For `n : ℕ` and `π ∈ S_n`, the embedding `H_n(π)=headFixingHom n π` fixes zero and sends `j+1`
+to `π(j)+1`. It satisfies `descentNumber(H_n π)=descentNumber π`. -/
 theorem descentNumber_headFixing (n : ℕ) (π : Perm (Fin n)) :
     descentNumber (headFixingHom n π) = descentNumber π := by
   cases n with
@@ -108,7 +121,8 @@ theorem descentNumber_headFixing (n : ℕ) (π : Perm (Fin n)) :
     rw [Fin.sum_univ_succ, hzero, zero_add]
     exact Finset.sum_congr rfl (fun i _ => hsucc i)
 
-/-- With a nonempty tail, head fixing adds the one actual closing descent to the ordinary count. -/
+/-- For `n : ℕ` with `0<n` and `π ∈ S_n`, `cyclicDescentNumber(headFixingHom n π)=descentNumber
+π+1`. The fixed head is zero and the nonempty tail contributes the closing descent. -/
 theorem cyclicDescentNumber_headFixing (n : ℕ) (π : Perm (Fin n)) (hn : 0 < n) :
     cyclicDescentNumber (headFixingHom n π) = descentNumber π + 1 := by
   cases n with
@@ -121,7 +135,10 @@ theorem cyclicDescentNumber_headFixing (n : ℕ) (π : Perm (Fin n)) (hn : 0 < n
     simp only [headFixingPermutation_zero, headFixingPermutation_succ,
       Fin.lt_def, Fin.val_zero, Fin.val_succ, Nat.zero_lt_succ, if_true]
 
-/-- The original closing edge of a rotated permutation word. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. For `r : Fin N`, `closingDescent σ r` is the predicate
+`(σ*ρ^r.val) 0 < (σ*ρ^r.val)(Fin.last n)`. -/
 def closingDescent {n : ℕ} (σ : Perm (Fin (n + 1))) (r : Fin (n + 1)) : Prop :=
   (σ * finRotate (n + 1) ^ r.val) 0 < (σ * finRotate (n + 1) ^ r.val) (Fin.last n)
 
@@ -140,7 +157,10 @@ private theorem closingDescent_at_cut {n : ℕ}
   simp only [closingDescent, Equiv.Perm.mul_apply, closingCutEquiv_apply, h]
 
 open scoped Classical in
-/-- Exactly the actual cyclic descents occur as closing descents among all original rotations. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. `∑ r : Fin N, if closingDescent σ r then 1 else 0 = c(σ)`.
+Every cyclic edge occurs once as the closing edge of a rotation. -/
 theorem closingDescent_sum {n : ℕ} (σ : Perm (Fin (n + 1))) :
     (∑ r : Fin (n + 1), if closingDescent σ r then 1 else 0) = cyclicDescentNumber σ := by
   classical
@@ -151,7 +171,10 @@ theorem closingDescent_sum {n : ℕ} (σ : Perm (Fin (n + 1))) :
     (fun _ => rfl)
 
 open scoped Classical in
-/-- The actual ordinary count of a rotated word is determined by its closing edge. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. For `r : Fin N`, `descentNumber(σ*ρ^r.val) = if closingDescent
+σ r then c(σ)-1 else c(σ)`, with subtraction in `ℕ`. -/
 theorem descentNumber_rotation {n : ℕ} (σ : Perm (Fin (n + 1))) (r : Fin (n + 1)) :
     descentNumber (σ * finRotate (n + 1) ^ r.val) =
       if closingDescent σ r then cyclicDescentNumber σ - 1 else cyclicDescentNumber σ := by
@@ -170,7 +193,11 @@ theorem descentNumber_rotation {n : ℕ} (σ : Perm (Fin (n + 1))) (r : Fin (n +
     rw [if_neg hc'] at h
     omega
 
-/-- The all-degree actual cyclic descent fiber formula, with `L=n+1` original letters. -/
+/-- Let `n : ℕ`, `N=n+1`, `ρ=finRotate N`, and `σ ∈ S_N = Equiv.Perm (Fin N)`. Write
+`c(σ)=cyclicDescentNumber σ`, counting positions `i : Fin N` with `σ(ρ i)<σ i`. Products
+compose as `(u*v)(i)=u(v(i))`. For a commutative additive monoid `T` and `f : ℕ → T`, `∑ r :
+Fin N, f(descentNumber(σ*ρ^r.val)) = c(σ) • f(c(σ)-1) + (N-c(σ)) • f(c(σ))`. The scalar action
+is repeated addition, and the two weights count the closing-descent and non-descent parts. -/
 theorem sum_descentNumber_rotations {T : Type*} [AddCommMonoid T]
     {n : ℕ} (σ : Perm (Fin (n + 1))) (f : ℕ → T) :
     (∑ r : Fin (n + 1), f (descentNumber (σ * finRotate (n + 1) ^ r.val))) =

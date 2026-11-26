@@ -1,4 +1,6 @@
-# Comp Left zero
+# The composite left arrow is killed by the selected biproduct quotient
 
-The composite of the left maps of two split short complexes is killed by
-the map to the biproduct of their right endpoints.
+Let C be preadditive and let X —f₁→ Y —g₁→ Z₁ and Y —f₂→ Z —g₂→ Z₂ be short complexes with g₁ ∘
+f₁=g₂ ∘ f₂=0. Assume the biproduct Z₁ ⊕ Z₂ exists, and let s₂ be a splitting of the second
+complex with retraction r₂ : Z → Y. The map (g₁ ∘ r₂,g₂) : Z → Z₁ ⊕ Z₂ kills f₂ ∘ f₁ : X → Z. No
+splitting of the first short complex is needed for this zero-composite equation.

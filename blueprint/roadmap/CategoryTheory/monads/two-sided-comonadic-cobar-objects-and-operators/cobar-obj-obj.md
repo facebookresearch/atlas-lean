@@ -1,3 +1,5 @@
-# Cobar Obj obj
+# The object formula for a two-sided cobar degree
 
-Objects of the degree-`n` cobar functor.
+The object formula for a two-sided cobar degree.
+
+At `a ∈ A`, degree `n` has value `R(G^n(L(a)))`.

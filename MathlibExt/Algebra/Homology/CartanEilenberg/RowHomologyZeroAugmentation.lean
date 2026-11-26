@@ -14,11 +14,14 @@ public import MathlibExt.Algebra.Homology.CartanEilenberg.RowHomologyZeroShortEx
 import MathlibExt.Algebra.Homology.ShortComplex.CokernelSequence
 
 /-!
-# The degree-zero Cartan--Eilenberg row augmentation
+# The original-degree-zero vertical-homology augmentation
 
-The boundary-resolution quotient of degree-zero row homology is acyclic.
-Consequently the canonical homology-resolution inclusion and the already
-constructed strict row-homology augmentation are quasi-isomorphisms.
+Let P be Cartan–Eilenberg data for a nonnegative complex L in an abelian category. Its boundary
+resolution PB₀ resolves the zero outgoing boundary, so PB₀.complex is acyclic. The inclusion of
+PH₀ into the zero-degree vertical- homology complex is consequently a quasi-isomorphism.
+
+The canonical row augmentation restricts along this inclusion to the augmentation of PH₀. It is
+a quasi-isomorphism to H₀(L)[0].
 -/
 
 @[expose] public section
@@ -47,8 +50,10 @@ private theorem boundarySingleZero_isZero :
   (ChainComplex.single₀ C).map_isZero
     (boundaryFromZero_isZero (L := L))
 
-/-- The chosen resolution of the degree-zero outgoing boundary object is
-acyclic, although its complex need not be literally zero. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. The
+outgoing boundary B₀⁽out⁾ is zero, so the chosen projective resolution PB₀ has zero homology in
+every resolution degree. Its terms are not required to be individually zero. -/
 theorem boundaryResolutionZero_acyclic :
     (P.boundaryResolution 0).complex.Acyclic := by
   intro a
@@ -57,7 +62,10 @@ theorem boundaryResolutionZero_acyclic :
       ((HomologicalComplex.acyclic_of_isZero _
         (boundarySingleZero_isZero (L := L))) a)
 
-/-- The homology-resolution inclusion into degree-zero vertical homology is a quasi-isomorphism. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. The
+canonical inclusion PH₀.complex → P.bicomplex.verticalHomologyComplex(0) is a quasi-isomorphism,
+since its short exact quotient PB₀.complex is acyclic. -/
 theorem cartanEilenbergVerticalHomologyZeroι_quasiIso :
     QuasiIso P.cartanEilenbergVerticalHomologyZeroι := by
   exact (P.cartanEilenbergVerticalHomologyZeroShortExact.quasiIso_f_iff).2
@@ -283,8 +291,10 @@ private theorem
   rw [hcycles]
   rw [(P.cyclesComponentSplitting 0 0).s_g_assoc]
 
-/-- The canonical strict degree-zero augmentation restricts to the stored
-homology-resolution augmentation. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. The
+inclusion PH₀.complex → verticalHomology(0), followed by the canonical row augmentation to
+H₀(L)[0], equals the stored augmentation PH₀.complex → H₀(L)[0]. -/
 @[reassoc]
 theorem cartanEilenbergVerticalHomologyZeroι_comp_rowHomologyAugmentation :
     P.cartanEilenbergVerticalHomologyZeroι ≫
@@ -306,8 +316,10 @@ theorem cartanEilenbergVerticalHomologyZeroι_comp_rowHomologyAugmentation :
       (P.homologyResolution 0).π_f_succ]
     exact comp_zero
 
-/-- The canonical strict degree-zero row-homology augmentation is a
-quasi-isomorphism. -/
+/-- Let C be abelian, L a chain complex indexed by ℕ and P a Cartan–Eilenberg resolution of L. Write
+PBⱼ, PCⱼ, PTⱼ and PHⱼ for its boundary, cycles, term and homology projective resolutions. The
+canonical augmentation P.bicomplex.verticalHomologyComplex(0) → H₀(L)[0], induced by the
+term-resolution column-zero augmentation, is a quasi-isomorphism. -/
 theorem rowHomologyZeroAugmentation_quasiIso :
     QuasiIso (P.rowHomologyAugmentation 0) := by
   let _ : QuasiIso P.cartanEilenbergVerticalHomologyZeroι :=

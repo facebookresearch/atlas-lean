@@ -12,11 +12,17 @@ module
 
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.AcyclicResolution
 
-/-!
-# The zero-degree coaugmentation characteristic
+/- The proof uses the opposite augmentation cokernel and homology duality. -/
 
-The same right acyclic-resolution comparison carries its coaugmentation to the degree-zero cycle
-class. The proof uses the opposite augmentation cokernel and homology duality.
+/-!
+# Degree-zero coaugmentation under the acyclic comparison
+
+Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. For a termwise
+`F`-acyclic coaugmentation quasi-isomorphism `X[0] → I`, the degree-zero
+comparison identifies the canonical map to `R⁰F(X)` with the mapped
+coaugmentation cycle class. Under `R⁰F(X) ≅ F(X)`, its cycle inclusion
+is precisely the map `F(X) → F(I⁰)`.
 -/
 
 @[expose] public section
@@ -104,10 +110,10 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C] [HasInjectiveResolution
 variable {D : Type u₂} [Category.{v₂} D] [Abelian D]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-The zero endpoint is carried to the opposite left-derived zero endpoint by the same opposite
-comparison.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C` and
+projective resolutions in `Cᵒᵖ`, and `F : C → D` additive.
+The canonical map `F(X) → R⁰F(X)`, followed by right-derived opposite
+duality, equals the unop of `L₀(Fᵒᵖ)(Xᵒᵖ) → Fᵒᵖ(Xᵒᵖ)`. -/
 theorem toRightDerivedZero_rightDerivedOpIso [HasProjectiveResolutions Cᵒᵖ]
     (F : C ⥤ D) [F.Additive] (X : C) :
     F.toRightDerivedZero.app X ≫ ((F.rightDerivedOpIso 0).app X).hom =
@@ -163,10 +169,12 @@ theorem toRightDerivedZero_rightDerivedOpIso [HasProjectiveResolutions Cᵒᵖ]
   simpa only [Category.assoc] using congrArg (fun t => t ≫ eL.hom.unop) hBase
 
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-The coaugmentation is the degree-zero cycle class under the same right acyclic-resolution
-comparison and its zero endpoint.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. The canonical map `F(X) → R⁰F(X)`, followed by the acyclic
+comparison, `H⁰(F(I)) ≅ Z⁰(F(I))`, and the cycle inclusion into
+`F(I⁰)`, equals the mapped coaugmentation `F(ι⁰)`. -/
 theorem toRightDerivedZero_acyclicComparison_coaugmentation
     (F : C ⥤ D) [F.Additive] [PreservesFiniteLimits F]
     {X : C} (I : CochainComplex C ℕ)
@@ -275,10 +283,12 @@ theorem toRightDerivedZero_acyclicComparison_coaugmentation
     _ = F.map i := hQuota
 
 set_option backward.isDefEq.respectTransparency.types false in
-/--
-The zero comparison sends its cycle carrier to the coaugmentation preceded by the canonical
-right-derived zero isomorphism.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`, and
+`F : C → D` additive and preserving finite limits. Let
+`ι : X[0] → I` be a quasi-isomorphism of nonnegative cochain complexes
+with `R^(j+1)F(I^q)=0` for every `q,j`. The composite `R⁰F(X) → H⁰(F(I)) ≅ Z⁰(F(I)) → F(I⁰)`
+is the canonical degree-zero identification `R⁰F(X) → F(X)`
+followed by `F(ι⁰)`. -/
 theorem rightDerivedAcyclicComparison_zero_coaugmentation
     (F : C ⥤ D) [F.Additive] [PreservesFiniteLimits F]
     {X : C} (I : CochainComplex C ℕ)

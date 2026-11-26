@@ -1,4 +1,4 @@
 # The leading enveloping Chevalley–Eilenberg/Koszul differential
 
-- [Enveloping Koszul Defect](enveloping-koszul-defect.md)
-- [Enveloping Koszul Defect mem lower Filtration](enveloping-koszul-defect-mem-lower-filtr.md)
+- [The differential defect of the enveloping-to-polynomial coordinates](enveloping-koszul-defect.md)
+- [The lower total degree of the enveloping–Koszul defect](enveloping-koszul-defect-mem-lower-filtr.md)

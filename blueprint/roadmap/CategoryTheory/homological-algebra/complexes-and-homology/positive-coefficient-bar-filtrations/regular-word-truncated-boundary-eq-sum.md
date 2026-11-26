@@ -1,3 +1,5 @@
-# Regular Word Truncated Boundary eq sum
+# The truncated word boundary is the signed adjacent-face sum
 
-The original truncated boundary retains exactly the non-wrapping faces and their signs.
+For a nonunital k-algebra ring A over commutative k, regularWordTruncatedBoundary n = ∑ i :
+Fin(n+1), (−1 : ℤ)^i.val • regularWordFace n i.castSucc. Thus only the n + 1 adjacent
+non-wrapping faces occur.

@@ -1,4 +1,5 @@
-# Hom condition app
+# The component equation of a left comodule morphism
 
-Compatibility of a left comodule morphism with the coactions, in
-components.
+The component equation of a left comodule morphism.
+
+At `a`, one has `coact_M(a) ≫ G.map(f(a)) = f(a) ≫ coact_N(a)`.

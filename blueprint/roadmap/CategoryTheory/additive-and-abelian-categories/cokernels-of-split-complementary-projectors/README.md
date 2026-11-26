@@ -2,14 +2,14 @@
 
 ## Limits
 
-- [Split Complement comp retraction](split-complement-comp-retraction.md)
-- [Split Complement Is Cokernel](split-complement-is-cokernel.md)
-- [Cokernel Split Complement Iso](cokernel-split-complement-iso.md)
-- [Cokernel Split Complement Iso π hom](cokernel-split-complement-iso-hom.md)
-- [Cokernel Split Complement Iso inv](cokernel-split-complement-iso-inv.md)
-- [Cokernel Split Complement Iso naturality](cokernel-split-complement-iso-naturality.md)
-- [Cokernel Split Complement Iso inv naturality](cokernel-split-complement-iso-inv-natura.md)
+- [The retract quotient kills its complement](split-complement-comp-retraction.md)
+- [Cokernel universal property of a split complement](split-complement-is-cokernel.md)
+- [Cokernel identifies with the split retract](cokernel-split-complement-iso.md)
+- [Quotient formula for the cokernel comparison](cokernel-split-complement-iso-hom.md)
+- [Inverse cokernel comparison through the inclusion](cokernel-split-complement-iso-inv.md)
+- [Naturality of the forward cokernel–retract comparison](cokernel-split-complement-iso-naturality.md)
+- [Naturality of the inverse retract–cokernel comparison](cokernel-split-complement-iso-inv-natura.md)
 
 ## Category Theory
 
-- [Split Complement naturality](split-complement-naturality.md)
+- [Compatible retract maps preserve complementary projectors](split-complement-naturality.md)

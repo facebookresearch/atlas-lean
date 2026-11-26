@@ -1,4 +1,5 @@
-# Zero postcomp
+# Postcomposition preserves the zero Hom cocycle
 
-Postcomposing the zero cocycle itself on the covariant target side stays zero
-at fixed degree; no claim about nonzero cocycles, shifts, or cohomology.
+Let C be a preadditive category and F,G,H,K,L be integer-indexed cochain complexes in C. For a
+target map f : G → K, postcomposition sends the zero degree-n cocycle from F to G to the zero
+cocycle from F to K.

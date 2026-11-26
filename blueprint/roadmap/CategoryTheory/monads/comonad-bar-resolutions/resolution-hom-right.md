@@ -1,3 +1,5 @@
-# Resolution Hom right
+# Augmentation-point component of a comonad bar resolution map
 
-The target component of an augmented resolution map is the original map.
+Let `C` be a category, `G` a comonad with counit `ε` and
+comultiplication `Δ`, and `f : A → B` a morphism of objects in `C`. The component at the augmentation point of the comonad
+bar resolution map is `f : A → B`.

@@ -1,4 +1,6 @@
-# Ordered Word Linear normalize
+# Evaluation of a normalized basis word
 
-Every reduction computes the original word in the native enveloping
-algebra. This proves spanning without assuming confluence or independence.
+Evaluation of a normalized basis word.
+
+The enveloping value of the finite ordered normal form equals the enveloping value of the
+input basis word.

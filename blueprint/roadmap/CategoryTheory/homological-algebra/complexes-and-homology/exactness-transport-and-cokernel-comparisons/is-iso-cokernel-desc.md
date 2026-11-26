@@ -1,3 +1,4 @@
-# Is Iso cokernel desc
+# The universal cokernel map of an exact sequence with epi quotient
 
-The universal cokernel map of an exact complex with epi second map is an isomorphism.
+Let E be abelian and let S₁ → S₂ → S₃ be exact. If S₂ → S₃ is an epimorphism, the universal
+cokernel map coker(S₁ → S₂) → S₃ induced by the second arrow is an isomorphism.

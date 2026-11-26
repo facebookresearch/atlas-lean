@@ -1,4 +1,5 @@
-# Of Normalized bicomplex X is Zero of is Zero X
+# Zero entries in the chosen normalized Cartan–Eilenberg bicomplex
 
-The chosen normalized Cartan--Eilenberg bicomplex is zero in every
-resolution degree over each zero term of the original complex.
+Let C be abelian with projective resolutions for every object, and L a nonnegative chain
+complex. For all a,j ∈ ℕ with Lⱼ zero, the entry (a,j) of the chosen normalized Cartan–Eilenberg
+bicomplex is a zero object.

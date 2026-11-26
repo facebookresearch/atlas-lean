@@ -15,17 +15,19 @@ public import Mathlib.RingTheory.TensorProduct.MvPolynomial
 public import Mathlib.Algebra.Algebra.Opposite
 
 /-!
-# The polynomial diagonal in its actual enveloping algebra
+# Coordinates on the polynomial diagonal
 
-The original algebra is `MvPolynomial σ k`; the original enveloping algebra
-retains its opposite right factor. Native opposite, tensor and sum-variable
-equivalences identify it with the actual two-copy polynomial algebra.
-Translation then makes `X_left - X_right` the outer polynomial variables,
-while the original right variables remain the coefficient algebra.
+For a commutative ring `k` and a type `σ`, put `A = k[σ]` and `E = A ⊗[k] Aᵐᵒᵖ`. The two
+tensor copies identify with the variables of `k[σ ⊕ σ]`.
 
-The multiplication augmentation is the native tensor multiplication. Its
-equality with evaluation of these new variables at zero is proved on the
-original generators, rather than supplied as coordinate data.
+In diagonal coordinates `D = A[U_i]`, the right tensor variables are coefficients and the left
+tensor variables become `U_i + C(X_i)`. Hence `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)` maps to `U_i`.
+The coordinate change is a `k`-algebra equivalence `E ≃ₐ[k] D`.
+
+Diagonal multiplication `µ(a ⊗ op(b)) = a*b` is surjective and kills `δ_i`. Under the
+coordinate equivalence, it is evaluation at `U_i = 0`, fixing the coefficient algebra `A`.
+
+References: Loday, *Cyclic Homology*, Sections 1.1 and 3.2.
 -/
 
 @[expose] public section
@@ -39,21 +41,28 @@ namespace MvPolynomial
 
 variable (k : Type u) [CommRing k] (σ : Type v)
 
-/-- The original polynomial enveloping algebra, with its original opposite factor. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. `PolynomialEnveloping k σ` is the enveloping `k`-algebra `E`, with the second tensor
+factor carrying the opposite multiplication. -/
 abbrev PolynomialEnveloping : Type (max u v) :=
   (MvPolynomial σ k) ⊗[k] (MvPolynomial σ k)ᵐᵒᵖ
 
-/-- The original right-variable algebra remains the coefficient ring. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. `DiagonalPolynomial k σ = MvPolynomial σ A` is the polynomial algebra over the
+coefficient copy `A`; its outer variables index the left-minus-right diagonal differences. -/
 abbrev DiagonalPolynomial : Type (max u v) :=
   MvPolynomial σ (MvPolynomial σ k)
 
-/-- Use the native commutative opposite equivalence without changing either tensor carrier. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Commutativity of `A` gives the `k`-algebra equivalence `E ≃ₐ[k] A ⊗[k] A`, with `a ⊗
+op(b) ↦ a ⊗ b`. Its inverse restores `op` in the second factor. -/
 def envelopingPlainEquiv :
     PolynomialEnveloping k σ ≃ₐ[k] (MvPolynomial σ k) ⊗[k] (MvPolynomial σ k) :=
   Algebra.TensorProduct.congr (AlgEquiv.refl : MvPolynomial σ k ≃ₐ[k] MvPolynomial σ k)
     (AlgEquiv.toOpposite k (MvPolynomial σ k)).symm
 
-/-- The actual right opposite coordinate is unop, with the original order retained. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `a,b : A`, `envelopingPlainEquiv k σ (a ⊗ op(b)) = a ⊗ b` in `A ⊗[k] A`. -/
 @[simp]
 theorem envelopingPlainEquiv_tmul (a b : MvPolynomial σ k) :
     envelopingPlainEquiv k σ (a ⊗ₜ[k] MulOpposite.op b) = a ⊗ₜ[k] b := by
@@ -61,12 +70,16 @@ theorem envelopingPlainEquiv_tmul (a b : MvPolynomial σ k) :
     Algebra.TensorProduct.map_tmul]
   rfl
 
-/-- The two actual polynomial factors are the two copies of the original variable type. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. This is the `k`-algebra equivalence `E ≃ₐ[k] MvPolynomial (σ ⊕ σ) k`. A left tensor
+variable maps to `X_(Sum.inl i)` and a right tensor variable maps to `X_(Sum.inr i)`. -/
 def envelopingEquivSum :
     PolynomialEnveloping k σ ≃ₐ[k] MvPolynomial (σ ⊕ σ) k :=
   (envelopingPlainEquiv k σ).trans (tensorEquivSum k σ σ k)
 
-/-- The first original polynomial variable is the left sum variable. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `i : σ`, `envelopingEquivSum k σ (X_i ⊗ 1) = X_(Sum.inl i)` in `MvPolynomial (σ ⊕
+σ) k`. -/
 @[simp]
 theorem envelopingEquivSum_left_X (i : σ) :
     envelopingEquivSum k σ
@@ -82,7 +95,9 @@ theorem envelopingEquivSum_left_X (i : σ) :
       congrArg (tensorEquivSum k σ σ k) hv
     _ = X (Sum.inl i) := tensorEquivSum_X_tmul_one i
 
-/-- The second original polynomial variable is the right sum variable. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `i : σ`, `envelopingEquivSum k σ (1 ⊗ op(X_i)) = X_(Sum.inr i)` in `MvPolynomial (σ
+⊕ σ) k`. -/
 @[simp]
 theorem envelopingEquivSum_right_X (i : σ) :
     envelopingEquivSum k σ
@@ -91,13 +106,18 @@ theorem envelopingEquivSum_right_X (i : σ) :
   simp only [envelopingEquivSum, AlgEquiv.trans_apply, envelopingPlainEquiv_tmul,
     tensorEquivSum_one_tmul_X]
 
-/-- The actual coordinate change makes left-minus-right the outer variables. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Put `D = MvPolynomial σ A`, with outer variables `U_i` and coefficient embedding `C : A
+→ D`. The `k`-algebra equivalence `Ψ : E ≃ₐ[k] D` sends `X_i ⊗ 1` to `U_i + C(X_i)` and `1 ⊗
+op(X_i)` to `C(X_i)`. Therefore `Ψ(δ_i) = U_i` for `δ_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`. -/
 def envelopingDiagonalCoordinates :
     PolynomialEnveloping k σ ≃ₐ[k] DiagonalPolynomial k σ :=
   ((envelopingEquivSum k σ).trans (sumAlgEquiv k σ σ)).trans
     ((translationAlgEquiv (MvPolynomial σ k) (fun i : σ => X i)).restrictScalars k)
 
-/-- The original left variable is difference plus the original right variable. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Put `D = MvPolynomial σ A`, with outer variables `U_i` and coefficient embedding `C : A
+→ D`. For `i : σ`, `envelopingDiagonalCoordinates k σ (X_i ⊗ 1) = U_i + C(X_i)`. -/
 @[simp]
 theorem envelopingDiagonalCoordinates_left_X (i : σ) :
     envelopingDiagonalCoordinates k σ
@@ -109,7 +129,10 @@ theorem envelopingDiagonalCoordinates_left_X (i : σ) :
         ((X i : MvPolynomial σ k) ⊗ₜ[k] (1 : (MvPolynomial σ k)ᵐᵒᵖ)))) = _
   rw [envelopingEquivSum_left_X, sumAlgEquiv_X_inl, translationAlgEquiv_X]
 
-/-- The original right variable is a coefficient, without a new variable model. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Put `D = MvPolynomial σ A`, with outer variables `U_i` and coefficient embedding `C : A
+→ D`. For `i : σ`, `envelopingDiagonalCoordinates k σ (1 ⊗ op(X_i)) = C(X_i)`, a coefficient
+in `D`. -/
 @[simp]
 theorem envelopingDiagonalCoordinates_right_X (i : σ) :
     envelopingDiagonalCoordinates k σ
@@ -121,30 +144,41 @@ theorem envelopingDiagonalCoordinates_right_X (i : σ) :
         ((1 : MvPolynomial σ k) ⊗ₜ[k] MulOpposite.op (X i : MvPolynomial σ k)))) = _
   rw [envelopingEquivSum_right_X, sumAlgEquiv_X_inr, translationAlgEquiv_C]
 
-/-- The original left-minus-right diagonal relation in the original enveloping carrier. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `i : σ`, `diagonalDifference k σ i` is `X_i ⊗ op(1) - 1 ⊗ op(X_i)` in `E`, with the
+left-minus-right sign convention. -/
 def diagonalDifference (i : σ) : PolynomialEnveloping k σ :=
   (X i : MvPolynomial σ k) ⊗ₜ[k] MulOpposite.op (1 : MvPolynomial σ k) -
     (1 : MvPolynomial σ k) ⊗ₜ[k] MulOpposite.op (X i : MvPolynomial σ k)
 
-/-- Each original diagonal relation is the actual outer variable under the earned coordinates. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Put `D = MvPolynomial σ A`, with outer variables `U_i` and coefficient embedding `C : A
+→ D`. For every `i : σ`, the coordinate equivalence satisfies `envelopingDiagonalCoordinates k
+σ (diagonalDifference k σ i) = U_i`. -/
 @[simp]
 theorem envelopingDiagonalCoordinates_difference (i : σ) :
     envelopingDiagonalCoordinates k σ (diagonalDifference k σ i) = X i := by
   rw [diagonalDifference, map_sub, MulOpposite.op_one, envelopingDiagonalCoordinates_left_X,
     envelopingDiagonalCoordinates_right_X, add_sub_cancel_right]
 
-/-- The inverse sends an outer variable to the original diagonal difference. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Put `D = MvPolynomial σ A`, with outer variables `U_i` and coefficient embedding `C : A
+→ D`. For every `i : σ`, the inverse coordinate equivalence satisfies
+`(envelopingDiagonalCoordinates k σ).symm U_i = X_i ⊗ op(1) - 1 ⊗ op(X_i)`. -/
 @[simp]
 theorem envelopingDiagonalCoordinates_symm_X (i : σ) :
     (envelopingDiagonalCoordinates k σ).symm (X i) = diagonalDifference k σ i := by
   apply (envelopingDiagonalCoordinates k σ).injective
   rw [AlgEquiv.apply_symm_apply, envelopingDiagonalCoordinates_difference]
 
-/-- The original polynomial multiplication augmentation. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. This is the `k`-algebra homomorphism `µ : E →ₐ[k] A` given on pure tensors by `µ(a ⊗
+op(b)) = a*b`. -/
 def diagonalMultiplication : PolynomialEnveloping k σ →ₐ[k] MvPolynomial σ k :=
   (Algebra.TensorProduct.lmul' k).comp (envelopingPlainEquiv k σ).toAlgHom
 
-/-- Multiplication retains both original polynomial factors in their original order. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For `a,b : A`, `diagonalMultiplication k σ (a ⊗ op(b)) = a*b`. -/
 @[simp]
 theorem diagonalMultiplication_tmul (a b : MvPolynomial σ k) :
     diagonalMultiplication k σ (a ⊗ₜ[k] MulOpposite.op b) = a * b := by
@@ -152,24 +186,33 @@ theorem diagonalMultiplication_tmul (a b : MvPolynomial σ k) :
     (envelopingPlainEquiv k σ (a ⊗ₜ[k] MulOpposite.op b)) = a * b
   rw [envelopingPlainEquiv_tmul, Algebra.TensorProduct.lmul'_apply_tmul]
 
-/-- The actual multiplication augmentation kills each original diagonal difference. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. For every `i : σ`, `diagonalMultiplication k σ (X_i ⊗ op(1) - 1 ⊗ op(X_i)) = 0`. -/
 @[simp]
 theorem diagonalMultiplication_difference (i : σ) :
     diagonalMultiplication k σ (diagonalDifference k σ i) = 0 := by
   simp only [diagonalDifference, map_sub, diagonalMultiplication_tmul,
     mul_one, one_mul, sub_self]
 
-/-- The actual multiplication is surjective by its original unit section. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. The map `diagonalMultiplication k σ : E → A` is surjective. Every `a : A` is the image
+of `a ⊗ op(1)`. -/
 theorem diagonalMultiplication_surjective : Function.Surjective (diagonalMultiplication k σ) := by
   intro a
   exact ⟨a ⊗ₜ[k] MulOpposite.op (1 : MvPolynomial σ k), by
     rw [diagonalMultiplication_tmul, mul_one]⟩
 
-/-- Set the actual difference variables to zero, retaining the original right-variable algebra. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Put `D = MvPolynomial σ A`, with outer variables `U_i` and coefficient embedding `C : A
+→ D`. `diagonalEvalZero k σ : D →ₐ[A] A` fixes the coefficient algebra and sends every outer
+variable `U_i` to zero. -/
 def diagonalEvalZero : DiagonalPolynomial k σ →ₐ[MvPolynomial σ k] MvPolynomial σ k :=
   aeval (fun _ : σ => (0 : MvPolynomial σ k))
 
-/-- The earned coordinate augmentation is the original multiplication map. -/
+/-- Let `k` be a commutative ring and `σ` a type. Put `A = MvPolynomial σ k` and `E = A ⊗[k]
+Aᵐᵒᵖ`. Put `D = MvPolynomial σ A`, with outer variables `U_i` and coefficient embedding `C : A
+→ D`. If `Ψ = envelopingDiagonalCoordinates k σ` and `ev₀ = diagonalEvalZero k σ`, then `ev₀ ∘
+Ψ = diagonalMultiplication k σ` as `k`-algebra homomorphisms `E → A`. -/
 theorem diagonalEvalZero_comp_coordinates :
     ((diagonalEvalZero k σ).restrictScalars k).comp
         (envelopingDiagonalCoordinates k σ).toAlgHom = diagonalMultiplication k σ := by

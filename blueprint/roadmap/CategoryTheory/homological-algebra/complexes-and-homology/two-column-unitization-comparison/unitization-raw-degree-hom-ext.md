@@ -1,3 +1,6 @@
-# Unitization Raw Degree hom ext
+# Extensionality on the two retained cyclic column cells
 
-These retained cells jointly determine a map from the original raw degree.
+Extensionality on the two retained cyclic column cells.
+
+A map from a two-column total degree is determined by its zero-column cell and, in positive
+degree, its one-column cell.

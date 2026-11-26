@@ -1,6 +1,6 @@
-# Coalgebra Functor Of Comonad Hom Eq
+# The comparison of coalgebra transports along equal comonad morphisms
 
-Equal comonad morphisms induce isomorphic coalgebra functors.
+The comparison of coalgebra transports along equal comonad morphisms.
 
-Covariant dual of Mathlib `Monad.algebraFunctorOfMonadHomEq`, with transparent
-identity carrier components.
+Equal comonad morphisms induce naturally isomorphic coalgebra transport functors, with
+identity maps on the carriers.

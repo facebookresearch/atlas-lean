@@ -13,11 +13,18 @@ public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.BracketBoundaryRecu
 public import MathlibExt.Data.List.EraseIdxOfFn
 
 /-!
-# The Chevalley–Eilenberg bracket boundary in list notation
+# Ordered deletion in the Chevalley–Eilenberg boundary
 
-The finite-triangle reindexing identifies the compressed pair formula with
-the sum over strict ordered pairs. Deleting the higher index before the lower
-index preserves the order of the remaining exterior factors.
+Let R be commutative and L an R-Lie algebra. For an ordered tuple
+v=(v_0,…,v_n), the bracket boundary, included in ExteriorAlgebra_R(L),
+is
+∑_{0≤i<j≤n}(−1)^{i+j} ι([v_i,v_j])
+  · ∏_{ℓ≠i,j, in increasing order} ι(v_ℓ).
+
+The list expression deletes the higher index j before the lower i,
+so the remaining factors keep their given order. Each bracket is the
+first factor. For a one-entry tuple the pair sum is empty and the
+boundary is zero; in degree two the value is −[x,y].
 -/
 
 @[expose] public section
@@ -33,8 +40,13 @@ namespace ChevalleyEilenberg
 variable (R : Type u) [CommRing R]
 variable (L : Type v) [LieRing L] [LieAlgebra R L]
 
-/-- The compressed pair formula equals the full strict-pair sum, with the
-higher index deleted before the lower index in the remaining list. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+For v:Fin(n+2)→L, the image of β_{n+1}(v) in E is
+∑_{0≤i<j≤n+1}(−1)^{i+j} ι([v_i,v_j]) times the ordered
+product of all remaining generators. In list coordinates, erase j
+before i to retain the positions of the remaining entries. -/
 theorem bracketBoundary_succ_coe_eq_sum_pairs (n : ℕ) (v : Fin (n + 2) → L) :
     (bracketBoundary R L (n + 1) v : ExteriorAlgebra R L) =
       ∑ i : Fin (n + 2), ∑ j : Fin (n + 2),
@@ -94,8 +106,13 @@ theorem bracketBoundary_succ_coe_eq_sum_pairs (n : ℕ) (v : Fin (n + 2) → L) 
   rw [ExteriorAlgebra.ιMulti_succ_apply, Matrix.cons_val_zero, Matrix.tail_cons,
     Nat.add_assoc]
 
-/-- The full strict-pair list formula also includes the zero boundary on
-one-vector input. -/
+/-- Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+For v:Fin(n+1)→L, the image of β_n(v) is the strict-pair
+sum ∑_{i<j}(−1)^{i+j} ι([v_i,v_j]) times the ordered product
+with entries j and then i removed. This includes n=0, where the sum
+and boundary are zero. -/
 theorem bracketBoundary_coe_eq_sum_pairs (n : ℕ) (v : Fin (n + 1) → L) :
     (bracketBoundary R L n v : ExteriorAlgebra R L) =
       ∑ i : Fin (n + 1), ∑ j : Fin (n + 1),

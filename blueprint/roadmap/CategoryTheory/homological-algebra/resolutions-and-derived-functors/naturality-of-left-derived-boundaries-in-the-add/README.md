@@ -2,8 +2,8 @@
 
 ## Horseshoe Data
 
-- [Delta naturality functor](delta-naturality-functor.md)
+- [Specified left-derived horseshoe boundaries are natural in coefficients](delta-naturality-functor.md)
 
 ## Left Derived Delta
 
-- [LDdelta natural functor](lddelta-natural-functor.md)
+- [Canonical left-derived connecting maps are natural in coefficients](lddelta-natural-functor.md)

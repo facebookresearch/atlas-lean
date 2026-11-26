@@ -1,9 +1,6 @@
-# Op Proj Left
+# Opposite projective resolution of the right endpoint
 
-The op'd left-endpoint resolution, ascribed to the `ProjectiveResolution`
-type with the exact baked instances (`Abelian.hasZeroObject`,
-`Preadditive.preadditiveHasZeroMorphisms`) and object (`S.op.X₁`) that
-`HorseshoeData`'s `P₁` slot carries. (Without ascription, `rw`/`simp` fail:
-`injectiveResolutionOpProj` bakes `hasZeroMorphismsOpposite` over
-`op S.X₃`, which is only default-transparency defeq to the slot type, while
-tactics check at reducible transparency.)
+For a short complex `S` in an abelian category `C` and an injective
+resolution `I₃` of `S.X₃`, the opposite resolution is a projective resolution
+of `S.op.X₁ = op S.X₃` in `Cᵒᵖ`. Its underlying chain complex is indexed
+by `ℕ`, with the zero objects and zero morphisms supplied by the abelian structure.

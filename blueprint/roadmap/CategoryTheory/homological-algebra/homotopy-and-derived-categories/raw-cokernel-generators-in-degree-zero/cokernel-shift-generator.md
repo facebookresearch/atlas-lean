@@ -1,4 +1,7 @@
-# Cokernel Shift Generator
+# Degree-zero homogeneous generator on a shifted cokernel
 
-Construct the raw desuspended generator by cokernel descent. The shift is minus the integer
-cochain degree, with shift signs.
+Let `D` be preadditive with cokernels, `η : U → C` a map of
+integer cochain complexes, and `τ : C → A` a homogeneous cochain
+of integer degree `d` with `η^*τ=0`. Put `Q=coker(η)` and
+`π : C → Q`. Cokernel descent followed by signed left shifting gives
+a degree-zero homogeneous generator `γ : Q[-d] → A`.

@@ -1,3 +1,5 @@
-# Regular Head Evaluation up
+# The value of regular-head evaluation
 
-The original regular-head evaluation retains the scalar action.
+The value of regular-head evaluation.
+
+For `a ∈ A` and `m ∈ M`, evaluation sends `ULift.up a` to `a • m`.

@@ -1,3 +1,5 @@
-# Restriction Iso hom desc Short Complex
+# Restriction comparison preserves short-complex descent
 
-Restriction comparison commutes with the universal map attached to a short complex.
+Let C be preadditive with binary biproducts, e:c→c' outgoing-closed and relation-reflecting,
+and both relations decidable. For a short complex S=(A→B→D) of c'-complexes, the canonical
+cofiber comparison θ:H(S.f)|e≅H((S|e).f) satisfies θ.hom≫desc_{S|e}=restriction(desc_S).

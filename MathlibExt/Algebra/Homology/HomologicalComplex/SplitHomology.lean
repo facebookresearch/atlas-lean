@@ -13,23 +13,17 @@ public import MathlibExt.Algebra.Homology.HomologicalComplex.Splitting
 public import MathlibExt.Algebra.Homology.HomologicalComplex.HomologyProjection
 
 /-!
-# Split complexes and their homology complexes
+# Split complexes and their homology
 
-Normalized generalized inverses give a retraction onto cycles. Their
-complementary incoming projector descends to homology and gives a section
-of the homology quotient. When the original complex has homology in every
-degree, these maps form a homotopy equivalence with its zero-differential
-homology complex.
+In a preadditive category, a splitting of a complex K gives normalized
+cycles retractions and homology inclusions at each degree with homology.
+When homology exists in every degree, these maps form a projection onto
+and inclusion from the zero-differential complex H(K).
 
-The construction uses preadditivity, arbitrary complex shapes and
-independent object, morphism and index universes. Homology for the target
-complex follows from its zero differentials; a global category-with-homology
-assumption is unnecessary.
-
-## Source credit
-
-The characterization generalizes Weibel, *An Introduction to Homological
-Algebra* (1994), Exercise 1.4.4 and its published correction on page 18.
+The inclusion followed by projection is the identity of H(K); the reverse
+composite is homotopic to the identity of K. The two morphisms are
+quasi-isomorphisms and give a homotopy equivalence K ≃ H(K). Conversely,
+a homotopy equivalence with a zero-differential complex yields a splitting.
 -/
 
 @[expose] public section
@@ -47,7 +41,12 @@ section Preadditive
 
 variable [Preadditive C] {K L : HomologicalComplex C c}
 
-/-- A native homotopy equivalence with a zero-differential complex earns splitting data. -/
+/--
+Let K and L be complexes of the same shape c in a preadditive category C. Assume every
+differential of L vanishes and let e be a homotopy equivalence K ≃ L. If H is its homotopy
+from e.hom ≫ e.inv to 1_K, the reversed homotopy has components −Hᵢⱼ and gives a
+generalized-inverse splitting of K.
+-/
 def Splitting.ofZeroDifferentialHomotopyEquiv
     (hL : ∀ i j : ι, L.d i j = 0) (e : HomotopyEquiv K L) : Splitting K where
   hom := e.homotopyHomInvId.symm.hom
@@ -72,13 +71,22 @@ def Splitting.ofZeroDifferentialHomotopyEquiv
     · rw [K.shape i j hij]
       simp only [comp_zero]
 
-/-- The earned inverse components retain the actual native comparison homotopy. -/
+/--
+Let K and L be complexes of the same shape c in a preadditive category C. Assume L has zero
+differentials and e is a homotopy equivalence from K to L. The induced splitting has component
+−e.homotopyHomInvId.hom i j : Kᵢ → Kⱼ; the minus sign reverses the homotopy from e.hom ≫ e.inv
+to 1_K.
+-/
 lemma Splitting.ofZeroDifferentialHomotopyEquiv_hom
     (hL : ∀ i j : ι, L.d i j = 0) (e : HomotopyEquiv K L) (i j : ι) :
     (Splitting.ofZeroDifferentialHomotopyEquiv hL e).hom i j =
       -e.homotopyHomInvId.hom i j := rfl
 
-/-- Existence of a zero-differential homotopy comparison implies the literal split predicate. -/
+/--
+Let K and L be complexes of the same shape c in a preadditive category C. If all differentials
+of L vanish and K is homotopy equivalent to L, then K admits a splitting whose reverse-degree
+maps satisfy d h d = d.
+-/
 lemma isSplit_of_homotopyEquiv_zeroDifferential
     (hL : ∀ i j : ι, L.d i j = 0) (e : HomotopyEquiv K L) : IsSplit K :=
   ⟨Splitting.ofZeroDifferentialHomotopyEquiv hL e⟩
@@ -91,7 +99,13 @@ variable [Preadditive C] {K : HomologicalComplex C c}
 
 noncomputable section
 
-/-- The complementary outgoing inverse projection lifts through the actual cycle kernel. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume homology exists at degree i. Write Zᵢ for its cycles, Hᵢ for its homology, jᵢ : Zᵢ → Kᵢ
+for the cycle inclusion and πᵢ : Zᵢ → Hᵢ for the homology quotient. Let n be the normalized
+splitting and Dᵢ = dᵢ,next(i) ≫ n.hom next(i) i. The endomorphism 1_{Kᵢ} − Dᵢ factors through
+jᵢ, giving rᵢ : Kᵢ → Zᵢ with rᵢ ≫ jᵢ = 1_{Kᵢ} − Dᵢ.
+-/
 def Splitting.cyclesRetraction (s : Splitting K) (i : ι) [K.HasHomology i] : K.X i ⟶ K.cycles i :=
   K.liftCycles (𝟙 (K.X i) - dNext i s.normalize.hom) (c.next i) rfl (by
     change (𝟙 (K.X i) - K.d i (c.next i) ≫ s.normalize.hom (c.next i) i) ≫
@@ -99,13 +113,24 @@ def Splitting.cyclesRetraction (s : Splitting K) (i : ι) [K.HasHomology i] : K.
     rw [Preadditive.sub_comp, Category.id_comp]
     rw [Category.assoc, s.normalize.d_h_d i (c.next i), sub_self])
 
-/-- Its composite with the native cycle inclusion is the outgoing complementary projection. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume homology exists at degree i. Write Zᵢ for its cycles, Hᵢ for its homology, jᵢ : Zᵢ → Kᵢ
+for the cycle inclusion and πᵢ : Zᵢ → Hᵢ for the homology quotient. For the cycles retraction
+rᵢ constructed from s.normalize, rᵢ ≫ jᵢ = 1_{Kᵢ} − dᵢ,next(i) ≫ s.normalize.hom next(i) i.
+Thus it selects the complement of the normalized outgoing projector.
+-/
 @[reassoc]
 lemma Splitting.cyclesRetraction_iCycles (s : Splitting K) (i : ι) [K.HasHomology i] :
     s.cyclesRetraction i ≫ K.iCycles i = 𝟙 (K.X i) - dNext i s.normalize.hom :=
   K.liftCycles_i _ _ _ _
 
-/-- The earned map is a genuine retraction of the native cycle inclusion. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume homology exists at degree i. Write Zᵢ for its cycles, Hᵢ for its homology, jᵢ : Zᵢ → Kᵢ
+for the cycle inclusion and πᵢ : Zᵢ → Hᵢ for the homology quotient. The normalized cycles
+retraction rᵢ : Kᵢ → Zᵢ splits the inclusion: jᵢ ≫ rᵢ = 1_{Zᵢ}.
+-/
 @[reassoc]
 lemma Splitting.iCycles_cyclesRetraction (s : Splitting K) (i : ι) [K.HasHomology i] :
     K.iCycles i ≫ s.cyclesRetraction i = 𝟙 (K.cycles i) := by
@@ -119,7 +144,13 @@ lemma Splitting.iCycles_cyclesRetraction (s : Splitting K) (i : ι) [K.HasHomolo
     _ = K.iCycles i := by rw [Preadditive.comp_sub, Category.comp_id, ha, sub_zero]
     _ = 𝟙 (K.cycles i) ≫ K.iCycles i := (Category.id_comp _).symm
 
-/-- The incoming complementary projection descends the actual cycles inclusion to homology. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume homology exists at degree i. Write Zᵢ for its cycles, Hᵢ for its homology, jᵢ : Zᵢ → Kᵢ
+for the cycle inclusion and πᵢ : Zᵢ → Hᵢ for the homology quotient. Let Bᵢ = s.normalize.hom i
+prev(i) ≫ d_prev(i),i. The map jᵢ ≫ (1_{Kᵢ} − Bᵢ) descends through πᵢ, defining ℓᵢ : Hᵢ → Kᵢ
+with πᵢ ≫ ℓᵢ = jᵢ ≫ (1_{Kᵢ} − Bᵢ).
+-/
 def Splitting.homologyInclusionComponent (s : Splitting K) (i : ι) [K.HasHomology i] :
     K.homology i ⟶ K.X i :=
   (K.sc i).descHomology (K.iCycles i ≫ (𝟙 (K.X i) - prevD i s.normalize.hom)) (by
@@ -137,14 +168,26 @@ def Splitting.homologyInclusionComponent (s : Splitting K) (i : ι) [K.HasHomolo
     exact (Category.assoc (K.sc i).toCycles (K.iCycles i)
       (𝟙 (K.X i) - prevD i s.normalize.hom)).symm.trans (h.trans hZero))
 
-/-- Its quotient composite is the actual complementary cycles inclusion. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume homology exists at degree i. Write Zᵢ for its cycles, Hᵢ for its homology, jᵢ : Zᵢ → Kᵢ
+for the cycle inclusion and πᵢ : Zᵢ → Hᵢ for the homology quotient. The homology inclusion ℓᵢ
+from s satisfies πᵢ ≫ ℓᵢ = jᵢ ≫ (1_{Kᵢ} − Bᵢ), where Bᵢ = s.normalize.hom i prev(i) ≫
+d_prev(i),i is the normalized incoming projector.
+-/
 @[reassoc]
 lemma Splitting.homologyπ_homologyInclusionComponent (s : Splitting K) (i : ι) [K.HasHomology i] :
     K.homologyπ i ≫ s.homologyInclusionComponent i =
       K.iCycles i ≫ (𝟙 (K.X i) - prevD i s.normalize.hom) :=
   (K.sc i).π_descHomology _ _
 
-/-- The earned inclusion component lands in cycles for every differential pair. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume homology exists at degree i. Write Zᵢ for its cycles, Hᵢ for its homology, jᵢ : Zᵢ → Kᵢ
+for the cycle inclusion and πᵢ : Zᵢ → Hᵢ for the homology quotient. For the homology inclusion
+ℓᵢ : Hᵢ → Kᵢ constructed from s.normalize, every outgoing differential vanishes on its image:
+ℓᵢ ≫ K.d i j = 0 for all j.
+-/
 @[reassoc]
 lemma Splitting.homologyInclusionComponent_d (s : Splitting K) (i j : ι) [K.HasHomology i] :
     s.homologyInclusionComponent i ≫ K.d i j = 0 := by
@@ -170,7 +213,12 @@ variable [Preadditive C] {K : HomologicalComplex C c} [∀ i, K.HasHomology i]
 
 noncomputable section
 
-/-- The cycle retraction followed by the native quotient is an actual complex map. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. The normalized cycles retractions rᵢ : Kᵢ → Zᵢ followed by the quotients
+πᵢ : Zᵢ → Hᵢ assemble into a complex morphism Π : K → H(K). Its degree-i component is rᵢ ≫ πᵢ.
+-/
 def Splitting.homologyProjection (s : Splitting K) : K ⟶ homologyZeroComplex K where
   f i := s.cyclesRetraction i ≫ K.homologyπ i
   comm' i j _ := by
@@ -187,18 +235,33 @@ def Splitting.homologyProjection (s : Splitting K) : K ⟶ homologyZeroComplex K
         rw [s.iCycles_cyclesRetraction j, Category.id_comp]
       _ = 0 := K.toCycles_comp_homologyπ i j
 
-/-- The projection retains its earned cycle retraction and the actual native quotient. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. The canonical projection Π : K → H(K) has component Π.f i =
+s.cyclesRetraction i ≫ K.homologyπ i, from Kᵢ through its cycles to Hᵢ.
+-/
 lemma Splitting.homologyProjection_f (s : Splitting K) (i : ι) :
     s.homologyProjection.f i = s.cyclesRetraction i ≫ K.homologyπ i := rfl
 
-/-- The projection restricts on actual cycles to the original homology quotient. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. At every degree i, restricting the projection Π : K → H(K) to cycles gives
+the original quotient: K.iCycles i ≫ Π.f i = K.homologyπ i.
+-/
 @[reassoc]
 lemma Splitting.iCycles_homologyProjection_f (s : Splitting K) (i : ι) :
     K.iCycles i ≫ s.homologyProjection.f i = K.homologyπ i := by
   change K.iCycles i ≫ (s.cyclesRetraction i ≫ K.homologyπ i) = K.homologyπ i
   rw [← Category.assoc, s.iCycles_cyclesRetraction i, Category.id_comp]
 
-/-- The actual original differential vanishes after this earned projection. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. The projection Π : K → H(K) kills every incoming differential: K.d i j ≫
+Π.f j = 0 for all i,j, because H(K) has zero differential.
+-/
 @[reassoc]
 lemma Splitting.d_homologyProjection_f (s : Splitting K) (i j : ι) :
     K.d i j ≫ s.homologyProjection.f j = 0 := by
@@ -206,7 +269,12 @@ lemma Splitting.d_homologyProjection_f (s : Splitting K) (i j : ι) :
       K.d i j ≫ s.homologyProjection.f j := s.homologyProjection.comm i j
   exact h.symm.trans comp_zero
 
-/-- The actual homology inclusions form the reverse complex map. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. The maps ℓᵢ : Hᵢ → Kᵢ descending the normalized complements of incoming
+boundaries assemble into a complex morphism ℓ : H(K) → K.
+-/
 def Splitting.homologyInclusion (s : Splitting K) : homologyZeroComplex K ⟶ K where
   f i := s.homologyInclusionComponent i
   comm' i j _ := by
@@ -215,11 +283,22 @@ def Splitting.homologyInclusion (s : Splitting K) : homologyZeroComplex K ⟶ K 
     rw [zero_comp]
     exact s.homologyInclusionComponent_d i j
 
-/-- Its components are the earned descents of the true cycle inclusions. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. The canonical inclusion ℓ : H(K) → K has degree-i component ℓ.f i =
+s.homologyInclusionComponent i : Hᵢ → Kᵢ.
+-/
 lemma Splitting.homologyInclusion_f (s : Splitting K) (i : ι) :
     s.homologyInclusion.f i = s.homologyInclusionComponent i := rfl
 
-/-- The backward-forward composite is literally the identity on the native homology complex. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The composite on the homology complex is the identity: ℓ ≫ Π = 1_{H(K)}.
+-/
 lemma Splitting.homologyInclusion_homologyProjection (s : Splitting K) :
     s.homologyInclusion ≫ s.homologyProjection = 𝟙 (homologyZeroComplex K) := by
   apply HomologicalComplex.Hom.ext
@@ -242,7 +321,13 @@ lemma Splitting.homologyInclusion_homologyProjection (s : Splitting K) :
     (s.homologyInclusionComponent i) (s.homologyProjection.f i)
     (prevD i s.normalize.hom) hDescent hCycle hb
 
-/-- The earned projection-inclusion endomorphism is an actual idempotent. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The endomorphism Π ≫ ℓ of K is idempotent: (Π ≫ ℓ) ≫ (Π ≫ ℓ) = Π ≫ ℓ.
+-/
 lemma Splitting.homologyProjectionInclusion_idempotent (s : Splitting K) :
     (s.homologyProjection ≫ s.homologyInclusion) ≫
         (s.homologyProjection ≫ s.homologyInclusion) =
@@ -254,7 +339,14 @@ lemma Splitting.homologyProjectionInclusion_idempotent (s : Splitting K) :
     _ = s.homologyProjection ≫ s.homologyInclusion := by
       rw [s.homologyInclusion_homologyProjection, Category.id_comp]
 
-/-- The forward-backward component is the complementary normalized homology projection. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. At degree i, Π.f i ≫ ℓ.f i = 1_{Kᵢ} − (Dᵢ + Bᵢ), where Dᵢ = dᵢ,next(i) ≫
+s.normalize.hom next(i) i and Bᵢ = s.normalize.hom i prev(i) ≫ d_prev(i),i.
+-/
 lemma Splitting.homologyProjection_comp_homologyInclusion_f (s : Splitting K) (i : ι) :
     s.homologyProjection.f i ≫ s.homologyInclusion.f i =
       𝟙 (K.X i) - (dNext i s.normalize.hom + prevD i s.normalize.hom) := by
@@ -282,7 +374,14 @@ lemma Splitting.homologyProjection_comp_homologyInclusion_f (s : Splitting K) (i
         Category.comp_id, hab]
       abel
 
-/-- The actual normalized inverse maps give the forward-backward comparison homotopy. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The normalized inverse family n = s.normalize.hom is a homotopy from 1_K to Π ≫ ℓ:
+at degree i, 1_{Kᵢ} = (Π ≫ ℓ).f i + dNext i n + prevD i n.
+-/
 def Splitting.homotopyIdHomologyProjectionInclusion (s : Splitting K) :
     Homotopy (𝟙 K) (s.homologyProjection ≫ s.homologyInclusion) where
   hom := s.normalize.hom
@@ -292,7 +391,14 @@ def Splitting.homotopyIdHomologyProjectionInclusion (s : Splitting K) :
       s.homologyProjection_comp_homologyInclusion_f i]
     abel
 
-/-- These earned complex maps and homotopies form a native homotopy equivalence. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. These morphisms give a homotopy equivalence K ≃ H(K). The composite ℓ ≫ Π is
+exactly the identity of H(K), and Π ≫ ℓ is homotopic to 1_K through the normalized splitting.
+-/
 def Splitting.homotopyEquivHomology (s : Splitting K) :
     HomotopyEquiv K (homologyZeroComplex K) where
   hom := s.homologyProjection
@@ -300,20 +406,48 @@ def Splitting.homotopyEquivHomology (s : Splitting K) :
   homotopyHomInvId := s.homotopyIdHomologyProjectionInclusion.symm
   homotopyInvHomId := Homotopy.ofEq (s.homologyInclusion_homologyProjection)
 
-/-- The comparison uses the actual earned projection. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The forward morphism of the constructed homotopy equivalence K ≃ H(K) is precisely
+Π = s.homologyProjection.
+-/
 lemma Splitting.homotopyEquivHomology_hom (s : Splitting K) :
     s.homotopyEquivHomology.hom = s.homologyProjection := rfl
 
-/-- Its reverse is the actual earned inclusion. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The reverse morphism of the constructed homotopy equivalence K ≃ H(K) is precisely
+ℓ = s.homologyInclusion.
+-/
 lemma Splitting.homotopyEquivHomology_inv (s : Splitting K) :
     s.homotopyEquivHomology.inv = s.homologyInclusion := rfl
 
-/-- Its forward-backward homotopy retains the negative normalized inverse components. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The homotopy from Π ≫ ℓ to 1_K in this equivalence has component −s.normalize.hom i
+j at every pair i,j. It is the negative of the homotopy from 1_K to Π ≫ ℓ.
+-/
 lemma Splitting.homotopyEquivHomology_homotopyHomInvId_hom
     (s : Splitting K) (i j : ι) :
     s.homotopyEquivHomology.homotopyHomInvId.hom i j = -s.normalize.hom i j := rfl
 
-/-- The projection induces precisely the inverse canonical native homology comparison. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. Let ηᵢ : Hᵢ(H(K)) ≅ Hᵢ(K) be the canonical identification for a zero-differential
+complex. The induced projection map satisfies Hᵢ(Π) ≫ ηᵢ.hom = 1_{Hᵢ(K)}.
+-/
 @[reassoc]
 lemma Splitting.homologyProjection_homologyMap_hom (s : Splitting K) (i : ι) :
     homologyMap s.homologyProjection i ≫
@@ -345,14 +479,27 @@ lemma Splitting.homologyProjection_homologyMap_hom (s : Splitting K) (i : ι) :
   exact hFirst.trans (hMap.trans (hAssoc.trans
     (hCycle.trans (hNative.trans (hq.trans hLast)))))
 
-/-- The computed native homology map is the canonical comparison inverse. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. For the canonical identification ηᵢ : Hᵢ(H(K)) ≅ Hᵢ(K), the induced map on homology
+is Hᵢ(Π) = ηᵢ.inv.
+-/
 lemma Splitting.homologyProjection_homologyMap (s : Splitting K) (i : ι) :
     homologyMap s.homologyProjection i = (homologyZeroComplexHomologyIso K i).inv := by
   apply (cancel_mono (homologyZeroComplexHomologyIso K i).hom).1
   exact (s.homologyProjection_homologyMap_hom i).trans
     (homologyZeroComplexHomologyIso K i).inv_hom_id.symm
 
-/-- The reverse map induces the canonical native comparison, not a chosen homology map. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. For ηᵢ : Hᵢ(H(K)) ≅ Hᵢ(K), the induced map of the inclusion is Hᵢ(ℓ) = ηᵢ.hom.
+-/
 lemma Splitting.homologyInclusion_homologyMap (s : Splitting K) (i : ι) :
     homologyMap s.homologyInclusion i = (homologyZeroComplexHomologyIso K i).hom := by
   let e := homologyZeroComplexHomologyIso K i
@@ -363,7 +510,14 @@ lemma Splitting.homologyInclusion_homologyMap (s : Splitting K) (i : ι) :
   exact (show homologyMap s.homologyInclusion i ≫ e.inv = 𝟙 _ from by
     simpa only [s.homologyProjection_homologyMap i] using h).trans e.hom_inv_id.symm
 
-/-- The earned projection is a quasi-isomorphism for the original native homology. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The projection Π : K → H(K) is a quasi-isomorphism: its induced map on homology is
+an isomorphism at every degree.
+-/
 lemma Splitting.quasiIso_homologyProjection (s : Splitting K) :
     _root_.QuasiIso s.homologyProjection := by
   apply (quasiIso_iff s.homologyProjection).2
@@ -372,7 +526,14 @@ lemma Splitting.quasiIso_homologyProjection (s : Splitting K) :
   rw [s.homologyProjection_homologyMap i]
   infer_instance
 
-/-- The earned inclusion is a quasi-isomorphism for the original native homology. -/
+/--
+Let K be a complex of shape c in a preadditive category C, let s be a splitting of K, and
+assume K has homology at every degree. Let H(K) be the complex of its homology objects with
+zero differentials. Write Π : K → H(K) for the projection with components rᵢ ≫ πᵢ, where rᵢ :
+Kᵢ → Zᵢ is the normalized cycles retraction, and ℓ : H(K) → K for the normalized homology
+inclusion. The inclusion ℓ : H(K) → K is a quasi-isomorphism: its induced map on homology is
+an isomorphism at every degree.
+-/
 lemma Splitting.quasiIso_homologyInclusion (s : Splitting K) :
     _root_.QuasiIso s.homologyInclusion := by
   apply (quasiIso_iff s.homologyInclusion).2
@@ -381,7 +542,11 @@ lemma Splitting.quasiIso_homologyInclusion (s : Splitting K) :
   rw [s.homologyInclusion_homologyMap i]
   infer_instance
 
-/-- Literal splitting is equivalent to homotopy equivalence with the original homology complex. -/
+/--
+Let K be a complex of arbitrary shape c in a preadditive category C, with homology at every
+degree. Then K admits a generalized-inverse splitting if and only if it is homotopy equivalent
+to the complex H(K) whose terms are Hᵢ(K) and whose differentials vanish.
+-/
 lemma isSplit_iff_homotopyEquiv_homologyZeroComplex (K : HomologicalComplex C c)
     [∀ i, K.HasHomology i] :
     IsSplit K ↔ Nonempty (HomotopyEquiv K (homologyZeroComplex K)) := by

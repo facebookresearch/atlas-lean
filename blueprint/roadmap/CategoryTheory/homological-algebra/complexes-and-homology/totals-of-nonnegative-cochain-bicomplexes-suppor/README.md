@@ -1,10 +1,10 @@
 # Totals of nonnegative cochain bicomplexes supported in one row
 
-- [Single Row Up Nat](single-row-up-nat.md)
-- [From Single Row Up Nat](from-single-row-up-nat.md)
-- [To Single Row Up Nat](to-single-row-up-nat.md)
-- [ΙTotal comp to Single Row Up Nat](total-comp-to-single-row-up-nat.md)
-- [Single Row Up Nat Total Iso](single-row-up-nat-total-iso.md)
-- [Single Row Functor Up Nat](single-row-functor-up-nat.md)
-- [Single Row Up Nat Total Iso hom naturality](single-row-up-nat-total-iso-hom-naturali.md)
-- [Single Row Total Nat Iso Up Nat](single-row-total-nat-iso-up-nat.md)
+- [Bicomplex concentrated in outer degree zero](single-row-up-nat.md)
+- [Inclusion into the total of an outer-degree-zero bicomplex](from-single-row-up-nat.md)
+- [Projection from the total of an outer-degree-zero bicomplex](to-single-row-up-nat.md)
+- [Summand formula for the outer-degree-zero total projection](total-comp-to-single-row-up-nat.md)
+- [Canonical total isomorphism for an outer-degree-zero cochain bicomplex](single-row-up-nat-total-iso.md)
+- [Functor placing a cochain complex in outer degree zero](single-row-functor-up-nat.md)
+- [Naturality of the outer-degree-zero total isomorphism](single-row-up-nat-total-iso-hom-naturali.md)
+- [Natural isomorphism from row-zero totalization to the identity](single-row-total-nat-iso-up-nat.md)

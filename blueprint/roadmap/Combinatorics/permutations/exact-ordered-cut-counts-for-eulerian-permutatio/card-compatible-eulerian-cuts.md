@@ -1,3 +1,5 @@
-# Card compatible Eulerian Cuts
+# Counting descent-compatible cuts
 
-The compatible-cut count is the original descent-binomial coefficient.
+Let `n : ℕ`, `σ ∈ S_n = Equiv.Perm (Fin n)`, and `Des(σ) = {j | j+1<n and σ(j)>σ(j+1)}`. Put
+`d = |Des(σ)|`. For every `m : ℕ`, `Fintype.card (CompatibleEulerianCuts σ m) = Nat.choose
+(n+m-d) n`.

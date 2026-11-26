@@ -1,4 +1,6 @@
-# Reindexed Exact Input Sequence
+# Exact sequence under successive coefficient functors
 
-Reindex the ORIGINAL sequence by L, then map by R into T's input category. Both exactness proofs
-are the supplied functor providers.
+For preadditive categories `W,A,B,D`, let `L : W → A` and
+`R : A → B` be additive functors preserving short exact sequences.
+A short exact short complex `S` in `W` then gives the input sequence
+`R(L(S))` for any cohomological δ-functor `T : B → D`.

@@ -15,7 +15,14 @@ public import MathlibExt.CategoryTheory.Abelian.Injective.AugmentedExactComparis
 public import Mathlib.CategoryTheory.Abelian.RightDerived
 
 /-!
-## The augmentation comparison into an injective resolution computes derived cohomology
+# Augmented cochain complexes and right-derived cohomology
+
+For an abelian category `C` with injective resolutions, a coaugmentation
+quasi-isomorphism `X[0] → I` admits a coaugmentation-preserving map to
+the chosen injective resolution of `X`. An additive `F : C → D` into
+an abelian category then gives `Hⁿ(F(I)) → R^nF(X)`. This map is
+independent of the comparison chosen and agrees with the inverse
+resolution comparison when `I` itself is an injective resolution.
 -/
 @[expose] public section
 noncomputable section
@@ -26,10 +33,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory
 variable {C : Type u} [Category.{v} C] [Abelian C] [HasInjectiveResolutions C]
 
-/--
-A augmented exact complex has an comparison into the chosen injective resolution, with no
-injectivity assumption on its own terms.
--/
+/-- Let `C` be abelian with injective resolutions. For a nonnegative
+cochain complex `I` and a quasi-isomorphism `ι : X[0] → I`, there is a
+cochain map `a : I → I(X)` to the chosen injective resolution satisfying
+`ι ≫ a = ι_(I(X))`. The terms of `I` need not be injective. -/
 def augmentedResolutionComparison {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι] :
     {a : I ⟶ (injectiveResolution X).cocomplex // ι ≫ a = (injectiveResolution X).ι} := by
@@ -43,10 +50,10 @@ def augmentedResolutionComparison {X : C} (I : CochainComplex C ℕ)
 namespace Functor
 variable {D : Type u'} [Category.{v'} D] [Abelian D]
 
-/--
-The mapped augmentation comparison, followed by the injective-resolution isomorphism, gives the
-original cohomology-to-derived map.
--/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For a coaugmentation quasi-isomorphism `ι : X[0] → I`, mapping
+a comparison into an injective resolution and taking cohomology gives
+the canonical map `Hⁿ(F(I)) → R^nF(X)`. -/
 def augmentedResolutionToRightDerivedHom (F : C ⥤ D) [F.Additive]
     {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι] (n : ℕ) :
@@ -57,7 +64,11 @@ def augmentedResolutionToRightDerivedHom (F : C ⥤ D) [F.Additive]
           (augmentedResolutionComparison I ι).val) n ≫
     ((injectiveResolution X).isoRightDerivedObj F n).inv
 
-/-- Every comparison into the chosen resolution gives the SAME mapped homology map. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For `ι : X[0] → I` a quasi-isomorphism, any map
+`a : I → I(X)` preserving the coaugmentation computes the same map
+`Hⁿ(F(I)) → R^nF(X)`: it is `Hⁿ(F(a))` followed by the inverse
+injective-resolution comparison. -/
 theorem augmentedResolutionToRightDerivedHom_eq (F : C ⥤ D) [F.Additive]
     {X : C} (I : CochainComplex C ℕ)
     (ι : (CochainComplex.single₀ C).obj X ⟶ I) [QuasiIso ι]
@@ -74,7 +85,10 @@ theorem augmentedResolutionToRightDerivedHom_eq (F : C ⥤ D) [F.Additive]
       (augmentedResolutionComparison I ι).val a
       ((augmentedResolutionComparison I ι).property.trans ha.symm) n)
 
-/-- On every injective resolution, this comparison is exactly its right-derived inverse. -/
+/-- Let `C,D` be abelian, with injective resolutions in `C`,
+and `F : C → D` additive. For an injective resolution `J` of `X`, the augmented comparison
+`Hⁿ(F(J)) → R^nF(X)` is the inverse of its canonical
+right-derived resolution isomorphism. -/
 theorem augmentedResolutionToRightDerivedHom_injectiveResolution
     (F : C ⥤ D) [F.Additive] {X : C} (J : InjectiveResolution X) (n : ℕ) :
     F.augmentedResolutionToRightDerivedHom J.cocomplex J.ι n =

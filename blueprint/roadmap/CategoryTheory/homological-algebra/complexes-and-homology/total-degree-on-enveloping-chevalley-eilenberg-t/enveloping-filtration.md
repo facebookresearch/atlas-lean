@@ -1,5 +1,7 @@
-# Enveloping Filtration
+# The total filtration of an enveloping coefficient chain term
 
-The total-degree filtration on the original enveloping coefficient CE
-carrier. The degree condition includes exterior degree and has no truncated
-subtraction at stages smaller than that degree.
+The total filtration of an enveloping coefficient chain term.
+
+In degree `n`, stage `p` is spanned by decomposable tensors `w ⊗ u` with `u ∈ U_q` and `q+n ≤
+p`, where `U_q` is the enveloping degree filtration. The degree condition includes the
+exterior degree `n`.

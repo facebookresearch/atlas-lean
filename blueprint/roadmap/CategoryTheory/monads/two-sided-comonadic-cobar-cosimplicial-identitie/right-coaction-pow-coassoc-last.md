@@ -1,4 +1,6 @@
-# Right Coaction Pow coassoc last
+# The right-coaction coassociativity identity at the outer insertion
 
-Iterated right coaction absorbs comultiplication at the raw-last position.
-Dual of `Monad.rightActionPow_assoc_last`.
+The right-coaction coassociativity identity at the outer insertion.
+
+The iterated right coaction followed by comultiplication at the outermost left-end position
+equals two successive iterated right coactions.
