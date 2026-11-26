@@ -6,25 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# 3-MACHINE FLOW SHOP SCHEDULING is NP-complete
-
-Source:
-M. R. Garey, D. S. Johnson, and R. Sethi, "The complexity of flowshop and jobshop scheduling",
-Mathematics of Operations Research 1 (1976), 117-129; T. F. Gonzalez and S. Sahni, "Flowshop
-and jobshop schedules: complexity and approximation", Operations Research 26 (1978), 36-52.
--/
 module
 
-public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-
-
-@[expose] public section
-
-namespace MetaMathlibExt.Complexity.NPComplete.FlowShop
 
 /-!
 # 3-MACHINE FLOW SHOP SCHEDULING is NP-complete
@@ -45,6 +31,10 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.FlowShop
 
 /-- **Flow-shop instances.** A flow-shop instance is a pair consisting of a finite list of jobs,
 each a finite list of natural numbers (its processing times on machines 1, 2 and 3, in that
@@ -94,19 +84,5 @@ noncomputable def flowShopDec :
       (α := FlowShopInstance) x with
   | some i => decide (WellFormed i ∧ FlowShopFeasible i)
   | none => false
-
-/-- **3-MACHINE FLOW SHOP SCHEDULING is NP-complete.** The 3-machine flow shop scheduling
-decision problem belongs to NP, and every decision problem in NP reduces to it by a
-polynomial-time many-one reduction.
-
-Source: M. R. Garey, D. S. Johnson, and
-R. Sethi, "The complexity of flowshop and jobshop scheduling", Mathematics of Operations
-Research 1 (1976), 117-129; T. F. Gonzalez and S. Sahni, "Flowshop and jobshop schedules:
-complexity and approximation", Operations Research 26 (1978), 36-52. -/
-public theorem_wanted flowShop_npComplete :
-    flowShopDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
-      ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
-        L ∈ MetaMathlibExt.ComplexityTheory.NP →
-          Cslib.CookLevin.PolyManyOneRed L flowShopDec
 
 end MetaMathlibExt.Complexity.NPComplete.FlowShop
