@@ -17,6 +17,7 @@ prerequisites and links it under the dependency sections below:
 ## Depends on
 
 - [Oblivious adversarial bandits](oblivious-adversarial-bandits.md)
+- [Policy for an oblivious adversarial bandit](oblivious-adversarial-bandit-model/policy.md)
 
 ## Proof depends on
 

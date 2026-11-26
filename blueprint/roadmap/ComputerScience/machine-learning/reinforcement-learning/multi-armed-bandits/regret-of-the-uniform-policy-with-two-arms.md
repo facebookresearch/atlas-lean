@@ -16,7 +16,8 @@ $S_i = \sum_t x_{t,i}$, and $\max(S_1, S_2) - \tfrac12 (S_1 + S_2) = \tfrac12 \l
 ## Depends on
 
 - [Oblivious adversarial bandits](oblivious-adversarial-bandits.md)
-- [Action law of a bandit policy on a fixed reward table](action-law-of-a-bandit-policy-on-a-fixed-reward-table.md)
+- [Policy for an oblivious adversarial bandit](oblivious-adversarial-bandit-model/policy.md)
+- [Product formula for the action law of a bandit policy](action-law-of-a-bandit-policy-on-a-fixed-reward-table.md)
 - [Expectation under a probability mass function](../../../../Probability/distributions/discrete/expectation-under-a-probability-mass-function/expect.md)
 
 ## Proof depends on
