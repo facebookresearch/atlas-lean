@@ -9835,7 +9835,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/join-processing/characterizations-of-acyclic-database-schemas.md"}], "id": "af_c75bff87f83e28254de2a50f", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/join-processing/README.md"}], "id": "af_98d6e4082494d40d64635775"}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/join-processing/agm-output-size-bound-for-join-queries.md"}], "id": "af_845e87fe7290f67b052e52f8", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/bags-and-nulls/bag-relations-and-bag-relational-algebra.md"}], "id": "af_c04f96886f4575fa8a6b1aff", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/bags-and-nulls/bag-relations-and-bag-relational-algebra.md"}], "id": "af_c04f96886f4575fa8a6b1aff", "object": [{"location": {"declaration": "Cslib.Databases.bagRelationalAlgebra"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/bags-and-nulls/README.md"}], "id": "af_9a8d2e34a14a74eba4a3885a"}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/relational-calculus/codd-s-theorem-safe-range-calculus-equals-relational-algebra.md"}], "id": "af_001f04258f8e2d24a6e7f78f", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/databases/relational-calculus/README.md"}], "id": "af_214cca1a6c147a9d355383c2"}
