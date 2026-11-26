@@ -44,8 +44,12 @@ visits an event twice, so walks are paths.
   `s` to `t`, `ℓ(s, t)` is the least project duration `τ t - τ s` of an event schedule `τ`
   meeting every arc's duration, the slack `LS(v) - ES(v)` of every event is nonnegative and
   vanishes exactly on the events of a longest `s`–`t` walk, and the total float of every arc is
-  nonnegative and vanishes exactly on the arcs of a longest `s`–`t` walk. No sign condition on
-  the durations is needed.
+  nonnegative and vanishes exactly on the arcs of a longest `s`–`t` walk. None of this needs a
+  sign condition on the durations, but for durations of any sign an event schedule may put
+  events before `τ s`. With nonnegative durations every event of an event schedule lies between
+  `τ s` and `τ t`, and `ℓ(s, t)` is also the least `τ t` over event schedules with `τ s = 0` and
+  no negative event time, as in the linear-programming formulation of the minimum project
+  duration.
 - `slack_eq_zero_totalFloat_eq_one`: zero slack at both endpoints does not make an arc critical.
 
 `longestDuration` takes the junk value `0` when the walk durations from `u` to `v` have no
@@ -66,8 +70,7 @@ open scoped Classical in
 /-- **Longest walk duration.** The duration `ℓ(u, v)` of a longest walk from `u` to `v` in the
 activity-on-arc network `tail head : E → V` with arc durations `d : E → R`: the greatest element
 of the set of durations `(l.map d).sum` of the walks `l` from `u` to `v`. When that set has no
-greatest element, as when no walk runs from `u` to `v` or a cycle of positive duration lies on
-such a walk, the value is `0`, a junk value. -/
+greatest element, as when no walk runs from `u` to `v`, the value is `0`, a junk value. -/
 noncomputable def longestDuration (tail head : E → V) (d : E → R) (u v : V) : R :=
   if h : ∃ x, IsGreatest ((fun l : List E => (l.map d).sum) '' {l | IsArcWalk tail head u v l}) x
   then h.choose else 0
@@ -180,7 +183,12 @@ from `v` to `t`. Write `ℓ = longestDuration tail head d`, `L = ℓ s t`,
 * `ℓ u v` is the greatest duration of a walk from `u` to `v` whenever some walk runs from `u`
   to `v`;
 * `L` is the least project duration `τ t - τ s` of an event schedule `τ : V → R` meeting every
-  arc's duration, `τ (tail e) + d e ≤ τ (head e)` for every arc `e`;
+  arc's duration, `τ (tail e) + d e ≤ τ (head e)` for every arc `e`; for durations of any sign
+  such a schedule may put events before `τ s`;
+* if every duration is nonnegative, every event of an event schedule lies between `τ s` and
+  `τ t`, and `L` is also the least `τ t` over event schedules with `τ s = 0` and `0 ≤ τ v` for
+  every event `v` (no event before the start), as in the linear-programming formulation of the
+  minimum project duration;
 * every event `v` has slack `LS v - ES v ≥ 0`, with equality exactly when some walk of duration
   `L` from `s` to `t` passes through `v`, that is, is a walk from `s` to `v` followed by a walk
   from `v` to `t`;
@@ -194,6 +202,10 @@ theorem critical_path_slack [IsOrderedAddMonoid R] [Finite E] {tail head : E →
         (longestDuration tail head d u v)) ∧
     IsLeast {x | ∃ τ : V → R, (∀ e, τ (tail e) + d e ≤ τ (head e)) ∧ τ t - τ s = x}
       (longestDuration tail head d s t) ∧
+    ((∀ e, 0 ≤ d e) →
+      (∀ τ : V → R, (∀ e, τ (tail e) + d e ≤ τ (head e)) → ∀ v, τ s ≤ τ v ∧ τ v ≤ τ t) ∧
+      IsLeast {x | ∃ τ : V → R, (∀ e, τ (tail e) + d e ≤ τ (head e)) ∧ τ s = 0 ∧
+        (∀ v, 0 ≤ τ v) ∧ τ t = x} (longestDuration tail head d s t)) ∧
     (∀ v, 0 ≤ latestStart tail head d s t v - earliestStart tail head d s v) ∧
     (∀ v, latestStart tail head d s t v - earliestStart tail head d s v = 0 ↔
       ∃ l₁ l₂, IsArcWalk tail head s v l₁ ∧ IsArcWalk tail head v t l₂ ∧
@@ -230,20 +242,37 @@ theorem critical_path_slack [IsOrderedAddMonoid R] [Finite E] {tail head : E →
     have := hle (walk_append_mk h₁ (walk_cons_mk rfl h₂))
     rwa [List.map_append, List.sum_append, List.map_cons, List.sum_cons, e₁, e₂,
       ← add_assoc] at this
-  refine ⟨⟨⟨fun v => ℓ s v, fun e => ?_, ?_⟩, ?_⟩, fun v => ?_, fun v => ⟨fun h0 => ?_, ?_⟩,
-    fun e => ?_, fun e => ⟨fun h0 => ?_, ?_⟩⟩
-  · -- The earliest starts meet every arc's duration.
+  -- The earliest starts meet every arc's duration.
+  have hES : ∀ e, ℓ s (tail e) + d e ≤ ℓ s (head e) := fun e => by
     obtain ⟨l, hl, hsum⟩ := hfrom (tail e)
     have := hle (walk_snoc hl rfl)
     rwa [List.map_append, List.sum_append, hsum, List.map_singleton, List.sum_singleton] at this
-  · -- Their project duration is `L`.
-    simp only [hself, sub_zero]
-  · -- No event schedule meeting every arc's duration is shorter.
-    rintro _ ⟨τ, hτ, rfl⟩
-    obtain ⟨l, hl, hsum⟩ := hfrom t
-    have := add_sum_map_le_of_forall_add_le hτ hl
-    rw [hsum] at this
-    exact le_sub_iff_add_le'.2 this
+  -- No event schedule meeting every arc's duration is shorter than `L`.
+  have hlower : ∀ τ : V → R, (∀ e, τ (tail e) + d e ≤ τ (head e)) → ℓ s t ≤ τ t - τ s :=
+    fun τ hτ => by
+      obtain ⟨l, hl, hsum⟩ := hfrom t
+      have := add_sum_map_le_of_forall_add_le hτ hl
+      rw [hsum] at this
+      exact le_sub_iff_add_le'.2 this
+  refine ⟨⟨⟨fun v => ℓ s v, hES, by simp only [hself, sub_zero]⟩,
+    by rintro _ ⟨τ, hτ, rfl⟩; exact hlower τ hτ⟩, fun hd => ?_, fun v => ?_,
+    fun v => ⟨fun h0 => ?_, ?_⟩, fun e => ?_, fun e => ⟨fun h0 => ?_, ?_⟩⟩
+  · -- With nonnegative durations every event of a schedule lies between the source and the sink.
+    have hsum : ∀ l : List E, 0 ≤ (l.map d).sum := fun l =>
+      List.sum_nonneg fun x hx => by
+        obtain ⟨e, -, rfl⟩ := List.mem_map.1 hx
+        exact hd e
+    have hbetween : ∀ τ : V → R, (∀ e, τ (tail e) + d e ≤ τ (head e)) →
+        ∀ v, τ s ≤ τ v ∧ τ v ≤ τ t := fun τ hτ v => by
+      obtain ⟨l₁, h₁⟩ := (hcover v).1
+      obtain ⟨l₂, h₂⟩ := (hcover v).2
+      exact ⟨(le_add_of_nonneg_right (hsum l₁)).trans (add_sum_map_le_of_forall_add_le hτ h₁),
+        (le_add_of_nonneg_right (hsum l₂)).trans (add_sum_map_le_of_forall_add_le hτ h₂)⟩
+    refine ⟨hbetween, ⟨⟨fun v => ℓ s v, hES, hself, fun v => ?_, rfl⟩, ?_⟩⟩
+    · rw [← hself]
+      exact (hbetween _ hES v).1
+    · rintro _ ⟨τ, hτ, h0, -, rfl⟩
+      simpa [h0] using hlower τ hτ
   · rw [hslack, sub_nonneg]
     exact hvertex v
   · rw [hslack, sub_eq_zero] at h0

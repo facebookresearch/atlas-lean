@@ -21,10 +21,12 @@ set_option relaxedAutoImplicit false
 # Slack and total float checks
 
 Concrete consumers of `CSLibExt.Scheduling.ProjectNetwork.Slack`: the critical arcs of the
-three-event network of `slack_eq_zero_totalFloat_eq_one`, the one-event network with no
-activity, an activity of negative duration, and a network with an event that reaches no sink, on
-which the slack of that event is negative, so the coverage hypothesis of `critical_path_slack`
-is needed. Elaboration checks, not results.
+three-event network of `slack_eq_zero_totalFloat_eq_one` and its project length as the least
+finish time of a schedule with no event before the start, the one-event network with no
+activity, an activity of negative duration, a negative duration for which that least finish time
+differs from the project length, and a network with an event that reaches no sink, on which the
+slack of that event is negative, so the coverage hypothesis of `critical_path_slack` is needed.
+Elaboration checks, not results.
 -/
 
 namespace CSLibExtTest.Scheduling.ProjectNetwork.Slack
@@ -73,7 +75,7 @@ theorem longestDuration₃ : longestDuration tail₃ head₃ d₃ 0 2 = 2 := by
 
 /-- The arcs `s → 1` and `1 → t` of the longest walk have total float `0`. -/
 example : totalFloat tail₃ head₃ d₃ 0 2 1 = 0 ∧ totalFloat tail₃ head₃ d₃ 0 2 2 = 0 := by
-  obtain ⟨-, -, -, -, -, hzero⟩ := critical_path_slack (d := d₃) acyclic₃ cover₃
+  obtain ⟨-, -, -, -, -, -, hzero⟩ := critical_path_slack (d := d₃) acyclic₃ cover₃
   have hwalk : IsArcWalk tail₃ head₃ 0 2 [1, 2] := walk_cons_mk rfl (walk_singleton rfl rfl)
   exact ⟨(hzero 1).2 ⟨_, hwalk, by rw [longestDuration₃]; rfl, by simp⟩,
     (hzero 2).2 ⟨_, hwalk, by rw [longestDuration₃]; rfl, by simp⟩⟩
@@ -81,15 +83,23 @@ example : totalFloat tail₃ head₃ d₃ 0 2 1 = 0 ∧ totalFloat tail₃ head�
 /-- The arc `s → t` lies on no walk of the project length. -/
 example : ¬ ∃ l, IsArcWalk tail₃ head₃ 0 2 l ∧
     (l.map d₃).sum = longestDuration tail₃ head₃ d₃ 0 2 ∧ (0 : Fin 3) ∈ l := by
-  obtain ⟨-, -, -, -, -, hzero⟩ := critical_path_slack (d := d₃) acyclic₃ cover₃
+  obtain ⟨-, -, -, -, -, -, hzero⟩ := critical_path_slack (d := d₃) acyclic₃ cover₃
   rw [← hzero]
   norm_num [totalFloat, latestStart, earliestStart, longestDuration_self acyclic₃, longestDuration₃]
 
 /-- Its event `1` has slack `0`. -/
 example : latestStart tail₃ head₃ d₃ 0 2 1 - earliestStart tail₃ head₃ d₃ 0 1 = 0 := by
-  obtain ⟨-, -, -, hzero, -⟩ := critical_path_slack (d := d₃) acyclic₃ cover₃
+  obtain ⟨-, -, -, -, hzero, -⟩ := critical_path_slack (d := d₃) acyclic₃ cover₃
   exact (hzero 1).2 ⟨[1], [2], walk_singleton rfl rfl, walk_singleton rfl rfl, by
     rw [longestDuration₃]; rfl⟩
+
+/-- With nonnegative durations the project length `2` is also the least finish time of an event
+schedule that starts at time `0` and puts no event before it. -/
+example : IsLeast {x | ∃ τ : Fin 3 → ℤ, (∀ e, τ (tail₃ e) + d₃ e ≤ τ (head₃ e)) ∧ τ 0 = 0 ∧
+    (∀ v, 0 ≤ τ v) ∧ τ 2 = x} 2 := by
+  obtain ⟨-, -, hnonneg, -⟩ := critical_path_slack (d := d₃) acyclic₃ cover₃
+  rw [← longestDuration₃]
+  exact (hnonneg fun _ => zero_le_one).2
 
 /-- The real form of the example as stated. -/
 example : totalFloat (![0, 0, 1] : Fin 3 → Fin 3) ![2, 1, 2] (fun _ : Fin 3 => (1 : ℝ)) 0 2 0 =
@@ -109,7 +119,7 @@ example (d : Empty → ℤ) :
   have hcover : ∀ v : Unit, (∃ l, IsArcWalk (Empty.elim : Empty → Unit) Empty.elim () v l) ∧
       ∃ l, IsArcWalk (Empty.elim : Empty → Unit) Empty.elim v () l :=
     fun _ => ⟨⟨[], walk_nil⟩, [], walk_nil⟩
-  obtain ⟨-, -, -, hzero, -⟩ := critical_path_slack (d := d) hacyc hcover
+  obtain ⟨-, -, -, -, hzero, -⟩ := critical_path_slack (d := d) hacyc hcover
   refine ⟨longestDuration_self hacyc (), (hzero ()).2 ⟨[], [], walk_nil, walk_nil, ?_⟩⟩
   rw [longestDuration_self hacyc]
   rfl
@@ -133,7 +143,7 @@ example : totalFloat (fun _ : Unit => (0 : Fin 2)) (fun _ => 1) (fun _ => (-1 : 
     fin_cases v
     · exact ⟨⟨[], walk_nil⟩, [()], walk_singleton rfl rfl⟩
     · exact ⟨⟨[()], walk_singleton rfl rfl⟩, [], walk_nil⟩
-  obtain ⟨hgreat, hleast, -, -, -, hzero⟩ :=
+  obtain ⟨hgreat, hleast, -, -, -, -, hzero⟩ :=
     critical_path_slack (d := fun _ : Unit => (-1 : ℤ)) hacyc hcover
   have hL : longestDuration (fun _ : Unit => (0 : Fin 2)) (fun _ => 1) (fun _ => (-1 : ℤ)) 0 1 =
       -1 := by
@@ -142,6 +152,55 @@ example : totalFloat (fun _ : Unit => (0 : Fin 2)) (fun _ => 1) (fun _ => (-1 : 
     exact hleast.2 ⟨fun v => -((v : ℕ) : ℤ), fun _ => by decide, by decide⟩
   refine ⟨(hzero ()).2 ⟨[()], walk_singleton rfl rfl, by rw [hL]; rfl, by simp⟩, ?_⟩
   rwa [hL] at hleast
+
+/-- Tails of the arcs `s → 1` and `1 → t`, with `s = 0` and `t = 2`. -/
+abbrev tailNeg : Fin 2 → Fin 3 := ![0, 1]
+
+/-- Heads of the arcs `s → 1` and `1 → t`. -/
+abbrev headNeg : Fin 2 → Fin 3 := ![1, 2]
+
+/-- Durations `-1` and `1`. -/
+abbrev dNeg : Fin 2 → ℤ := ![-1, 1]
+
+/-- With a negative duration the event-schedule clause and the linear program with no event
+before the start differ: for the arcs `s → 1` of duration `-1` and `1 → t` of duration `1`, the
+project length is `0`, attained by the event times `0, -1, 0`, but every event schedule with
+`τ s = 0` and no negative event time finishes at time `1` or later. -/
+example : longestDuration tailNeg headNeg dNeg 0 2 = 0 ∧
+    IsLeast {x | ∃ τ : Fin 3 → ℤ, (∀ e, τ (tailNeg e) + dNeg e ≤ τ (headNeg e)) ∧ τ 0 = 0 ∧
+      (∀ v, 0 ≤ τ v) ∧ τ 2 = x} 1 := by
+  have hacyc : ∀ v (l : List (Fin 2)), IsArcWalk tailNeg headNeg v v l → l = [] := by
+    intro v l hl
+    have h : ∀ e, ((tailNeg e : ℕ) : ℤ) + 1 ≤ ((headNeg e : ℕ) : ℤ) := by
+      intro e
+      fin_cases e <;> decide
+    have h' : ((v : ℕ) : ℤ) + l.length ≤ ((v : ℕ) : ℤ) := by
+      simpa using add_sum_map_le_of_forall_add_le (τ := fun v : Fin 3 => ((v : ℕ) : ℤ))
+        (d := fun _ : Fin 2 => (1 : ℤ)) h hl
+    exact List.eq_nil_of_length_eq_zero (by omega)
+  have h01 : IsArcWalk tailNeg headNeg 0 2 [0, 1] := walk_cons_mk rfl (walk_singleton rfl rfl)
+  have hcover : ∀ v : Fin 3, (∃ l, IsArcWalk tailNeg headNeg 0 v l) ∧
+      ∃ l, IsArcWalk tailNeg headNeg v 2 l := by
+    intro v
+    fin_cases v
+    · exact ⟨⟨[], walk_nil⟩, _, h01⟩
+    · exact ⟨⟨[0], walk_singleton rfl rfl⟩, [1], walk_singleton rfl rfl⟩
+    · exact ⟨⟨_, h01⟩, [], walk_nil⟩
+  obtain ⟨hgreat, hleast, -⟩ := critical_path_slack (d := dNeg) hacyc hcover
+  refine ⟨le_antisymm ?_ ((hgreat 0 2 ⟨_, h01⟩).2 ⟨_, h01, rfl⟩), ⟨![0, 0, 1], ?_, rfl, ?_, rfl⟩,
+    ?_⟩
+  · refine hleast.2 ⟨![0, -1, 0], fun e => ?_, rfl⟩
+    fin_cases e <;> decide
+  · intro e
+    fin_cases e <;> decide
+  · intro v
+    fin_cases v <;> decide
+  · rintro _ ⟨τ, hτ, -, hnn, rfl⟩
+    -- `τ 1 + 1 ≤ τ 2` and `0 ≤ τ 1`.
+    have h1 : τ 1 + 1 ≤ τ 2 := by simpa using hτ 1
+    have h2 := hnn 1
+    show (1 : ℤ) ≤ τ 2
+    omega
 
 /-! ### Coverage is needed -/
 
