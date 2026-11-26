@@ -9,6 +9,19 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
+`Theorems/Thm_AlgebraicCurve_Divisor_degree_eq_sum.lean`,
+`P2M/Sol/S_AlgebraicCurve_Divisor_degree_eq_sum.lean`,
+`Theorems/Thm_AlgebraicCurve_Place_finite_residueField_of_finiteDimensional.lean`,
+`P2M/Sol/S_AlgebraicCurve_Place_finite_residueField_of_finiteDimensional.lean`,
+`Theorems/Thm_AlgebraicCurve_hasPrincipalDivisors_of_finiteDimensional_of_isSeparable.lean`,
+`P2M/Sol/S_AlgebraicCurve_hasPrincipalDivisors_of_finiteDimensional_of_isSeparable.lean`,
+`Theorems/Thm_AlgebraicCurve_finite_setOf_ord_ne_zero_of_finiteDimensional.lean`,
+`P2M/Sol/S_AlgebraicCurve_finite_setOf_ord_ne_zero_of_finiteDimensional.lean`,
+`P2M/Sol/S_AlgebraicCurve_kaehlerRankOne_of_transcendental.lean`,
+`Theorems/Thm_AlgebraicCurve_isCurveOver_of_transcendental.lean`,
+`P2M/Sol/S_AlgebraicCurve_isCurveOver_of_transcendental.lean`,
+`Theorems/Thm_AlgebraicCurve_exists_separating_transcendental_of_perfectField.lean`,
+`P2M/Sol/S_AlgebraicCurve_IsCurveOver_exists_separating_transcendental.lean`,
 `Theorems/Thm_AlgebraicCurve_isCurveOver_of_transcendental_of_perfectField.lean`
 and
 `P2M/Sol/S_AlgebraicCurve_isCurveOver_of_transcendental_of_perfectField.lean`

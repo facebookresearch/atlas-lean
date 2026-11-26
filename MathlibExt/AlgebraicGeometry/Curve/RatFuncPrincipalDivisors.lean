@@ -9,6 +9,16 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
+`Theorems/Thm_AlgebraicCurve_RationalFunctionField_algebraMap_polynomial_mem_of_ne_placeInfty.lean`,
+`P2M/Sol/S_AlgebraicCurve_RationalFunctionField_algebraMap_polynomial_mem_of_ne_placeInfty.lean`,
+`P2M/Sol/S_ModularCurve_CharPModel_place_eq_of_ord_pos_of_derivative_evalEval_ne_zero.lean`,
+`Theorems/Thm_AlgebraicCurve_RationalFunctionField_finite_setOf_ord_ne_zero.lean`,
+`P2M/Sol/S_AlgebraicCurve_RationalFunctionField_ord_ofHeightOneSpectrum_of_span.lean`,
+`Theorems/Thm_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap.lean`,
+`P2M/Sol/S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap.lean`,
+`Theorems/Thm_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord.lean`,
+`P2M/Sol/S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord.lean`,
+`P2M/Sol/S_AlgebraicCurve_instIsCurveOverRatFunc.lean`,
 `Theorems/Thm_AlgebraicCurve_RationalFunctionField_hasPrincipalDivisors.lean`
 and
 `P2M/Sol/S_AlgebraicCurve_RationalFunctionField_hasPrincipalDivisors.lean`
