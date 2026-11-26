@@ -1,10 +1,6 @@
 # Monotone span programs and linear secret sharing
 
-A *monotone span program* over a field $\mathbb{F}$ assigns to each party $P$ a matrix $M_P \in \mathbb{F}^{d_P \times d}$. It *accepts* a coalition $S$ if the target vector $e_1 = (1, 0, \dots, 0)$ lies in the row span of the stacked matrix $M_S$ of its members. The accepted coalitions form a monotone access structure. The *linear secret-sharing scheme* of the program shares $z$ with a uniform $\rho \in \mathbb{F}^{d-1}$ by giving party $P$ the vector $M_P\,(z, \rho)^{\mathsf T}$. An accepted coalition reconstructs $z = \sum \lambda \cdot \sigma$ for any recombination vector $\lambda$ with $\lambda^{\mathsf T} M_S = e_1$. Two programs are *equivalent* if for every secret their schemes give the same distribution of shares.
-
-## Depends on
-
-- [Monotone access structures and secret-sharing schemes](access-structures-and-secret-sharing.md)
+A *monotone span program* over a field $\mathbb{F}$ assigns to each party $P$ a matrix $M_P \in \mathbb{F}^{d_P \times d}$. It *accepts* a coalition $S$ if the target vector $e_1 = (1, 0, \dots, 0)$ lies in the row span of the stacked matrix $M_S$ of its members. The accepted coalitions form a monotone access structure: a superset of an accepted coalition is accepted. The *linear secret-sharing scheme* of the program shares $z$ with a uniform $\rho \in \mathbb{F}^{d-1}$ by giving party $P$ the vector $M_P\,(z, \rho)^{\mathsf T}$. An accepted coalition reconstructs $z = \sum \lambda \cdot \sigma$ for any recombination vector $\lambda$ with $\lambda^{\mathsf T} M_S = e_1$. Two programs are *equivalent* if for every secret their schemes give the same distribution of shares.
 
 ## Sources
 

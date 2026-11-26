@@ -1,14 +1,10 @@
 # Additive $n$-out-of-$n$ secret sharing
 
-Over an abelian group $G$, share $z$ among $n$ parties by drawing $\sigma_1, \dots, \sigma_{n-1}$ and setting $\sigma_n = z - \sum_{i<n}\sigma_i$. The full coalition reconstructs $z = \sum_i \sigma_i$, and every proper coalition's shares are uniform and independent of $z$ under every translation-invariant distribution of $(\sigma_1, \dots, \sigma_{n-1})$, so this is a perfectly private scheme for the all-party access structure. For infinite $G$ with $n \ge 2$ no translation-invariant probability mass function (discrete distribution) on $G$ exists, so with discrete randomness the scheme needs a finite group.
+Let $G$ be a finite abelian group and $n \ge 2$. Share $z \in G$ among $n$ parties by drawing $\sigma_1, \dots, \sigma_{n-1}$ independently and uniformly from $G$ and setting $\sigma_n = z - \sum_{i<n}\sigma_i$. The full coalition reconstructs $z = \sum_i \sigma_i$, and for every proper coalition $S \subsetneq \{1, \dots, n\}$ the shares $(\sigma_i)_{i \in S}$ are uniform on $G^S$ whatever $z$ is. So only the full coalition learns anything about the secret: this is a perfectly private $n$-out-of-$n$ secret-sharing scheme.
 
 ## Proof sketch
 
-Any $n - 1$ shares are an image of the key under a bijection that does not depend on $z$ after a translation by $z$; translation invariance gives equal laws.
-
-## Depends on
-
-- [Monotone access structures and secret-sharing schemes](access-structures-and-secret-sharing.md)
+If $n \notin S$, the shares of $S$ are among the independent uniform $\sigma_1, \dots, \sigma_{n-1}$. If $n \in S$, some $j < n$ lies outside $S$, and given the other $\sigma_i$ with $i < n$, the share $\sigma_n$ is a translate of $-\sigma_j$, hence uniform. Either way the law of $(\sigma_i)_{i \in S}$ is uniform on $G^S$ and does not depend on $z$.
 
 ## Sources
 

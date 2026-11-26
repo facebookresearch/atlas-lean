@@ -6,4 +6,4 @@ Signature schemes designed to resist quantum attacks: ML-DSA, SLH-DSA, unbalance
 - [Security of ML-DSA](ml-dsa-security/README.md)
 - [SLH-DSA (SPHINCS+) Hash-Based Signatures](slh-dsa-signatures/README.md)
 - [Unbalanced Oil and Vinegar Signatures](uov-signatures/README.md)
-- [VOLE-in-the-Head Signatures and Anonymous Credit Tokens](vole-in-the-head/README.md)
+- [VOLE-in-the-Head Signatures](vole-in-the-head/README.md)
