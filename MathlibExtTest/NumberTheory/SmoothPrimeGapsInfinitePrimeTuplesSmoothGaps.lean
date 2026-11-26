@@ -13,8 +13,10 @@ import MathlibExt.NumberTheory.SmoothPrimeGapsInfinitePrimeTuplesSmoothGaps
 /-!
 # Tests for prime m-tuples with smooth gaps
 
-Applying the theorem at `m = 2`, `k = 50` and at `m = 3`, `k = 100` yields prime
-tuples with smooth gaps; hence such tuples exist.
+Applying the theorem at `m = 2`, `k = 50` and at `m = 3`, `k = 100` shows that a prime pair or
+triple with smooth gaps exists, assuming the Maynard–Tao hypothesis `hk` at those values. The
+examples are conditional: Wu's Table 1 gives `k₂ = 50` but `k₃ = 35265`, so the hypothesis at
+`m = 3`, `k = 100` is not known to hold.
 -/
 
 namespace MathlibExtTest.NumberTheory.SmoothPrimeGapsInfinitePrimeTuplesSmoothGaps
@@ -31,7 +33,8 @@ example (hk : ∀ H : Finset ℤ, IsAdmissibleFinset H → 50 ≤ H.card →
   have h01 := hmono 1 0 (by decide)
   exact ⟨P, hprime, h01.1, h01.2⟩
 
-/-- From Maynard–Tao for triples: a prime triple with 100-smooth gaps exists. -/
+/-- Assuming the hypothesis `hk` at `m = 3`, `k = 100`: a prime triple with 100-smooth gaps
+exists. -/
 example (hk : ∀ H : Finset ℤ, IsAdmissibleFinset H → 100 ≤ H.card →
     {n : ℤ | 3 ≤ (H.filter (fun h => (n + h).toNat.Prime)).card}.Infinite) :
     ∃ P : Fin 3 → ℕ, (∀ i, (P i).Prime) ∧ P 0 < P 1 ∧ P 1 < P 2 ∧

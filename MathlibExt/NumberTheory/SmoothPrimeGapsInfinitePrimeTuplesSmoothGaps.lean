@@ -14,19 +14,17 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.Sort
 import Mathlib.Data.Int.Basic
 import Mathlib.Data.Int.NatAbs
-import Mathlib.Data.Nat.Prime.Factorial
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Finite.Lattice
-import Mathlib.Data.ZMod.Basic
 
 /-!
 # Prime m-tuples with smooth gaps
 
 Given the Maynard–Tao hypothesis for `m` and `k` (every admissible set of at least `k`
 integers yields `m` primes infinitely often), there are infinitely many prime `m`-tuples
-whose gaps are `k`-smooth. The proof applies the hypothesis to the admissible,
-difference-`k`-smooth set `{0, k!, …, (k-1) * k!}` and extracts a fixed `m`-subset
-occurring infinitely often.
+whose gaps are `k`-smooth. The proof applies the hypothesis to an admissible,
+difference-`k`-smooth set of `k` integers (`exists_admissible_differenceSmooth`) and extracts
+a fixed `m`-subset occurring infinitely often.
 
 Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44 (arXiv:2403.19696).
@@ -35,105 +33,6 @@ INTEGERS 25 (2025), Article A44 (arXiv:2403.19696).
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- The set `{0, k!, …, (k-1) * k!}` as a `Finset ℤ`. -/
-private def smoothAdmissibleSet (k : ℕ) : Finset ℤ :=
-  (Finset.range k).image (fun i => ((i * k.factorial : ℕ) : ℤ))
-
-/-- The set `smoothAdmissibleSet k` has `k` elements. -/
-private theorem card_smoothAdmissibleSet (k : ℕ) :
-    (smoothAdmissibleSet k).card = k := by
-  unfold smoothAdmissibleSet
-  rw [Finset.card_image_of_injective]
-  · exact Finset.card_range k
-  · intro a b hab
-    simp only at hab
-    have hcast : a * k.factorial = b * k.factorial := by exact_mod_cast hab
-    exact Nat.eq_of_mul_eq_mul_right (Nat.factorial_pos k) hcast
-
-/-- For prime `p ≤ k`, the factorial `k!` vanishes in `ZMod p`. -/
-private theorem zmod_factorial_eq_zero {p k : ℕ} (hp : p.Prime) (hpk : p ≤ k) :
-    ((k.factorial : ℕ) : ZMod p) = 0 := by
-  have : NeZero p := ⟨hp.ne_zero⟩
-  have hdvd : p ∣ k.factorial := (hp.dvd_factorial).mpr hpk
-  obtain ⟨t, ht⟩ := hdvd
-  rw [ht, Nat.cast_mul, ZMod.natCast_self, zero_mul]
-
-/-- The set `smoothAdmissibleSet k` is admissible. -/
-private theorem isAdmissible_smoothAdmissibleSet (k : ℕ) :
-    IsAdmissibleFinset (smoothAdmissibleSet k) := by
-  intro p hp
-  have := Fact.mk hp
-  by_cases hpk : p ≤ k
-  · have hK : ((k.factorial : ℕ) : ZMod p) = 0 := zmod_factorial_eq_zero hp hpk
-    refine ⟨1, fun h hh heq => ?_⟩
-    obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp hh
-    have h0 : (((i * k.factorial : ℕ) : ℤ) : ZMod p) = 0 := by
-      rw [Int.cast_natCast, Nat.cast_mul, hK, mul_zero]
-    exact zero_ne_one (h0.symm.trans heq)
-  · push Not at hpk
-    have himg : ((smoothAdmissibleSet k).image fun h : ℤ => (h : ZMod p)).card <
-        Fintype.card (ZMod p) := by
-      rw [ZMod.card]
-      have hle : ((smoothAdmissibleSet k).image fun h : ℤ => (h : ZMod p)).card ≤ k := by
-        calc _ ≤ (smoothAdmissibleSet k).card := Finset.card_image_le
-             _ = k := card_smoothAdmissibleSet k
-      exact hle.trans_lt hpk
-    obtain ⟨r, -, hr⟩ := Finset.exists_mem_notMem_of_card_lt_card
-      (s := (smoothAdmissibleSet k).image fun h : ℤ => (h : ZMod p)) (t := Finset.univ)
-      (by simpa using himg)
-    exact ⟨r, fun h hh hEq => hr (Finset.mem_image.mpr ⟨h, hh, hEq⟩)⟩
-
-/-- The factorial `k!` is `(k+1)`-smooth. -/
-private theorem factorial_mem_smoothNumbers (k : ℕ) :
-    k.factorial ∈ Nat.smoothNumbers (k + 1) := by
-  rw [Nat.mem_smoothNumbers']
-  intro p hp hdvd
-  have hle : p ≤ k := (hp.dvd_factorial).mp hdvd
-  exact Nat.lt_succ_of_le hle
-
-/-- The set `smoothAdmissibleSet k` is difference-`k`-smooth. -/
-private theorem isDifferenceSmooth_smoothAdmissibleSet (k : ℕ) :
-    IsDifferenceSmooth k (smoothAdmissibleSet k) := by
-  intro a ha b hb hab
-  obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp ha
-  obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hb
-  simp only [Finset.mem_range] at hi hj
-  rcases le_total i j with hle | hle
-  · have hne : i ≠ j := by
-      intro heq
-      apply hab
-      rw [heq]
-    have hlt : i < j := lt_of_le_of_ne hle hne
-    have hmul_le : i * k.factorial ≤ j * k.factorial :=
-      Nat.mul_le_mul_right _ hle
-    have hnat : ((↑(i * k.factorial) : ℤ) - (↑(j * k.factorial) : ℤ)).natAbs =
-        (j - i) * k.factorial := by
-      rw [Int.natAbs_natCast_sub_natCast_of_le hmul_le]
-      rw [← Nat.mul_sub_right_distrib]
-    rw [hnat]
-    have hd_pos : 0 < j - i := Nat.sub_pos_of_lt hlt
-    have hd_lt : j - i < k + 1 := lt_of_le_of_lt (Nat.sub_le j i) (Nat.lt_succ_of_le (le_of_lt hj))
-    have hd_smooth : (j - i) ∈ Nat.smoothNumbers (k + 1) :=
-      Nat.mem_smoothNumbers_of_lt hd_pos hd_lt
-    exact Nat.mul_mem_smoothNumbers hd_smooth (factorial_mem_smoothNumbers k)
-  · have hne : j ≠ i := by
-      intro heq
-      apply hab
-      rw [heq]
-    have hlt : j < i := lt_of_le_of_ne hle hne
-    have hmul_le : j * k.factorial ≤ i * k.factorial :=
-      Nat.mul_le_mul_right _ hle
-    have hnat : ((↑(i * k.factorial) : ℤ) - (↑(j * k.factorial) : ℤ)).natAbs =
-        (i - j) * k.factorial := by
-      rw [Int.natAbs_natCast_sub_natCast_of_ge hmul_le]
-      rw [← Nat.mul_sub_right_distrib]
-    rw [hnat]
-    have hd_pos : 0 < i - j := Nat.sub_pos_of_lt hlt
-    have hd_lt : i - j < k + 1 := lt_of_le_of_lt (Nat.sub_le i j) (Nat.lt_succ_of_le (le_of_lt hi))
-    have hd_smooth : (i - j) ∈ Nat.smoothNumbers (k + 1) :=
-      Nat.mem_smoothNumbers_of_lt hd_pos hd_lt
-    exact Nat.mul_mem_smoothNumbers hd_smooth (factorial_mem_smoothNumbers k)
 
 /-- If an infinite set is covered by finitely many sets, some intersection is infinite. -/
 private theorem exists_infinite_inter_of_infinite_cover {α : Type*} {S : Set α}
@@ -161,21 +60,6 @@ private theorem pos_of_toNat_prime {x : ℤ} (hp : x.toNat.Prime) : 0 < x := by
   have hnot : ¬ x ≤ 0 := fun hle => hne (Int.toNat_eq_zero.mpr hle)
   exact not_le.mp hnot
 
-/-- For `0 ≤ A ≤ B`, the difference of `toNat`s is the `toNat` of the difference. -/
-private theorem toNat_sub_eq_toNat_sub {A B : ℤ} (h0 : 0 ≤ A) (hle : A ≤ B) :
-    B.toNat - A.toNat = (B - A).toNat := by
-  have hBA : 0 ≤ B - A := by omega
-  have hB0 : 0 ≤ B := by omega
-  have hcast1 : ((B.toNat : ℕ) : ℤ) = B := Int.toNat_of_nonneg hB0
-  have hcast2 : ((A.toNat : ℕ) : ℤ) = A := Int.toNat_of_nonneg h0
-  have hcast3 : (((B - A).toNat : ℕ) : ℤ) = B - A := Int.toNat_of_nonneg hBA
-  have hle_nat : A.toNat ≤ B.toNat := Int.toNat_le_toNat hle
-  have hcast_sub : (((B.toNat - A.toNat : ℕ)) : ℤ) = B - A := by
-    rw [Nat.cast_sub hle_nat, hcast1, hcast2]
-  have h_eq : (((B.toNat - A.toNat : ℕ)) : ℤ) = (((B - A).toNat : ℕ) : ℤ) :=
-    hcast_sub.trans hcast3.symm
-  exact_mod_cast h_eq
-
 /-- For `0 ≤ x`, `toNat` equals `natAbs`. -/
 private theorem toNat_eq_natAbs_of_nonneg {x : ℤ} (hx : 0 ≤ x) : x.toNat = x.natAbs := by
   have h1 : ((x.toNat : ℕ) : ℤ) = x := Int.toNat_of_nonneg hx
@@ -199,53 +83,49 @@ public theorem infinite_prime_tuples_smooth_gaps (m k : ℕ) (hm : 2 ≤ m)
       {n : ℤ | m ≤ (H.filter (fun h => (n + h).toNat.Prime)).card}.Infinite) :
     {P : Fin m → ℕ | (∀ i, (P i).Prime) ∧
       ∀ i j, j < i → P j < P i ∧ P i - P j ∈ Nat.smoothNumbers (k + 1)}.Infinite := by
-  have hHcard : (smoothAdmissibleSet k).card = k := card_smoothAdmissibleSet k
-  have hHadm : IsAdmissibleFinset (smoothAdmissibleSet k) :=
-    isAdmissible_smoothAdmissibleSet k
-  have hHsmooth : IsDifferenceSmooth k (smoothAdmissibleSet k) :=
-    isDifferenceSmooth_smoothAdmissibleSet k
-  have hHle : k ≤ (smoothAdmissibleSet k).card := by rw [hHcard]
-  have hS_inf := hk (smoothAdmissibleSet k) hHadm hHle
+  obtain ⟨H, hHcard, hHadm, hHsmooth⟩ := exists_admissible_differenceSmooth k
+  have hHle : k ≤ H.card := by rw [hHcard]
+  have hS_inf := hk H hHadm hHle
   by_cases hmk : m ≤ k
   · -- Cover S by the sets where a fixed m-subset is prime
-    have hcover : {n : ℤ | m ≤ ((smoothAdmissibleSet k).filter
+    have hcover : {n : ℤ | m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card} ⊆
-        ⋃ T ∈ (↑((smoothAdmissibleSet k).powersetCard m) : Set (Finset ℤ)),
-          {n : ℤ | T ⊆ (smoothAdmissibleSet k).filter
+        ⋃ T ∈ (↑(H.powersetCard m) : Set (Finset ℤ)),
+          {n : ℤ | T ⊆ H.filter
             (fun h => (n + h).toNat.Prime)} := by
       intro n hn
-      have hn_le : m ≤ ((smoothAdmissibleSet k).filter
+      have hn_le : m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card := hn
       obtain ⟨T, hTsub, hTcard⟩ := Finset.exists_subset_card_eq hn_le
-      have hTH : T ⊆ smoothAdmissibleSet k := hTsub.trans (Finset.filter_subset _ _)
-      have hTmem : T ∈ (smoothAdmissibleSet k).powersetCard m :=
+      have hTH : T ⊆ H := hTsub.trans (Finset.filter_subset _ _)
+      have hTmem : T ∈ H.powersetCard m :=
         Finset.mem_powersetCard.mpr ⟨hTH, hTcard⟩
       exact Set.mem_biUnion (Finset.mem_coe.mpr hTmem) hTsub
     obtain ⟨T0, hT0mem, hN0inf⟩ := exists_infinite_inter_of_infinite_cover hS_inf
-      ((smoothAdmissibleSet k).powersetCard m)
-      (fun T => {n : ℤ | T ⊆ (smoothAdmissibleSet k).filter
+      (H.powersetCard m)
+      (fun T => {n : ℤ | T ⊆ H.filter
         (fun h => (n + h).toNat.Prime)})
       hcover
-    have hT0subcard : T0 ⊆ smoothAdmissibleSet k ∧ T0.card = m :=
+    have hT0subcard : T0 ⊆ H ∧ T0.card = m :=
       Finset.mem_powersetCard.mp hT0mem
-    have hT0sub : T0 ⊆ smoothAdmissibleSet k := hT0subcard.1
+    have hT0sub : T0 ⊆ H := hT0subcard.1
     have hT0card : T0.card = m := hT0subcard.2
     let e := T0.orderEmbOfFin hT0card
     let f : ℤ → (Fin m → ℕ) := fun n i => (n + e i).toNat
-    have hprime : ∀ n ∈ ({n : ℤ | m ≤ ((smoothAdmissibleSet k).filter
+    have hprime : ∀ n ∈ ({n : ℤ | m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card} ∩
-        {n : ℤ | T0 ⊆ (smoothAdmissibleSet k).filter
+        {n : ℤ | T0 ⊆ H.filter
           (fun h => (n + h).toNat.Prime)}),
         ∀ i : Fin m, (n + e i).toNat.Prime := by
       intro n hn i
-      have hnU : T0 ⊆ (smoothAdmissibleSet k).filter
+      have hnU : T0 ⊆ H.filter
         (fun h => (n + h).toNat.Prime) := hn.2
       have hei : e i ∈ T0 := Finset.orderEmbOfFin_mem T0 hT0card i
       have hmem := hnU hei
       exact (Finset.mem_filter.mp hmem).2
-    have hgood : ∀ n ∈ ({n : ℤ | m ≤ ((smoothAdmissibleSet k).filter
+    have hgood : ∀ n ∈ ({n : ℤ | m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card} ∩
-        {n : ℤ | T0 ⊆ (smoothAdmissibleSet k).filter
+        {n : ℤ | T0 ⊆ H.filter
           (fun h => (n + h).toNat.Prime)}),
         f n ∈ {P : Fin m → ℕ | (∀ i, (P i).Prime) ∧
           ∀ i j, j < i → P j < P i ∧ P i - P j ∈ Nat.smoothNumbers (k + 1)} := by
@@ -264,16 +144,16 @@ public theorem infinite_prime_tuples_smooth_gaps (m k : ℕ) (hm : 2 ≤ m)
         have hle : n + e j ≤ n + e i := le_of_lt hlt
         have hsub : (n + e i).toNat - (n + e j).toNat =
             ((n + e i) - (n + e j)).toNat :=
-          toNat_sub_eq_toNat_sub h0j hle
+          (Int.toNat_sub'' (h0j.trans hle) h0j).symm
         have heq : (n + e i) - (n + e j) = e i - e j := by omega
         rw [heq] at hsub
         have hnonneg : 0 ≤ e i - e j := by omega
         have htat : (e i - e j).toNat = (e i - e j).natAbs :=
           toNat_eq_natAbs_of_nonneg hnonneg
         rw [htat] at hsub
-        have hmem_i : e i ∈ smoothAdmissibleSet k :=
+        have hmem_i : e i ∈ H :=
           hT0sub (Finset.orderEmbOfFin_mem T0 hT0card i)
-        have hmem_j : e j ∈ smoothAdmissibleSet k :=
+        have hmem_j : e j ∈ H :=
           hT0sub (Finset.orderEmbOfFin_mem T0 hT0card j)
         have hne : e i ≠ e j := ne_of_gt he_lt
         have hsmooth : (e i - e j).natAbs ∈ Nat.smoothNumbers (k + 1) :=
@@ -282,9 +162,9 @@ public theorem infinite_prime_tuples_smooth_gaps (m k : ℕ) (hm : 2 ≤ m)
           rw [hsub]
           exact hsmooth
         exact ⟨hto_lt, hsmooth'⟩
-    have hinj : Set.InjOn f ({n : ℤ | m ≤ ((smoothAdmissibleSet k).filter
+    have hinj : Set.InjOn f ({n : ℤ | m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card} ∩
-        {n : ℤ | T0 ⊆ (smoothAdmissibleSet k).filter
+        {n : ℤ | T0 ⊆ H.filter
           (fun h => (n + h).toNat.Prime)}) := by
       intro n1 hn1 n2 hn2 heq
       have h0m : 0 < m := by omega
@@ -304,14 +184,14 @@ public theorem infinite_prime_tuples_smooth_gaps (m k : ℕ) (hm : 2 ≤ m)
         rw [hcast1, hcast2] at hcast_eq
         exact hcast_eq
       omega
-    have himg_inf : (f '' ({n : ℤ | m ≤ ((smoothAdmissibleSet k).filter
+    have himg_inf : (f '' ({n : ℤ | m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card} ∩
-        {n : ℤ | T0 ⊆ (smoothAdmissibleSet k).filter
+        {n : ℤ | T0 ⊆ H.filter
           (fun h => (n + h).toNat.Prime)})).Infinite :=
       Set.Infinite.image hinj hN0inf
-    have hsub : f '' ({n : ℤ | m ≤ ((smoothAdmissibleSet k).filter
+    have hsub : f '' ({n : ℤ | m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card} ∩
-        {n : ℤ | T0 ⊆ (smoothAdmissibleSet k).filter
+        {n : ℤ | T0 ⊆ H.filter
           (fun h => (n + h).toNat.Prime)}) ⊆
         {P : Fin m → ℕ | (∀ i, (P i).Prime) ∧
           ∀ i j, j < i → P j < P i ∧ P i - P j ∈ Nat.smoothNumbers (k + 1)} := by
@@ -320,15 +200,15 @@ public theorem infinite_prime_tuples_smooth_gaps (m k : ℕ) (hm : 2 ≤ m)
       exact hgood n hn
     exact Set.Infinite.mono hsub himg_inf
   · push Not at hmk
-    have hS_empty : {n : ℤ | m ≤ ((smoothAdmissibleSet k).filter
+    have hS_empty : {n : ℤ | m ≤ (H.filter
         (fun h => (n + h).toNat.Prime)).card} = ∅ := by
       rw [Set.eq_empty_iff_forall_notMem]
       intro n hn
-      have hn_le : m ≤ (((smoothAdmissibleSet k).filter
+      have hn_le : m ≤ ((H.filter
           (fun h => (n + h).toNat.Prime)).card) := hn
-      have hle : (((smoothAdmissibleSet k).filter
+      have hle : ((H.filter
           (fun h => (n + h).toNat.Prime)).card) ≤ k := by
-        calc _ ≤ (smoothAdmissibleSet k).card := Finset.card_filter_le _ _
+        calc _ ≤ H.card := Finset.card_filter_le _ _
              _ = k := hHcard
       omega
     rw [hS_empty] at hS_inf
