@@ -12,16 +12,25 @@ public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Basic.Real.Basic
 
 /-!
-# Cohen's kappa of independent raters
+# Cohen's kappa
 
 Two raters classify the same items into `k` categories with joint table `pᵢⱼ` (a probability
 table: entries nonnegative, summing to `1`), row margins `pᵢ.` and column margins `p.ⱼ`. The
 observed agreement is `p_o = ∑ᵢ pᵢᵢ`, the chance agreement is `p_e = ∑ᵢ pᵢ. p.ᵢ`, and Cohen's
-kappa is `κ = (p_o - p_e) / (1 - p_e)`. When the table is the product of its margins
-(independent raters), `p_o = p_e` and hence `κ = 0`.
+kappa is `κ = (p_o - p_e) / (1 - p_e)`.
 
-Sources: J. Cohen, "A coefficient of agreement for nominal scales", Educ. Psychol. Meas. 20
-(1960) 37–46, doi:10.1177/001316446002000104.
+## Main statements
+
+* `kappa_eq_zero_of_independent`: when the table is the product of its margins (independent
+  raters), `p_o = p_e`, so `κ = 0` when `p_e < 1`.
+
+The definitions follow Cohen (1960) as restated in secondary sources, and the statements here are
+derived from them.
+
+## References
+
+* J. Cohen, "A coefficient of agreement for nominal scales", Educ. Psychol. Meas. 20 (1960)
+  37–46, doi:10.1177/001316446002000104.
 -/
 
 @[expose] public section
@@ -48,6 +57,7 @@ noncomputable def chance {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
 noncomputable def kappa {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
   (observed P - chance P) / (1 - chance P)
 
+set_option linter.unusedVariables false in
 /-- **Independent raters** (Cohen 1960; derived): let `P` be a joint probability table that is the
 product of its margins (`pᵢⱼ = pᵢ. p.ⱼ` for all `i, j`) with chance agreement `p_e < 1`. Then
 `κ = 0`.
