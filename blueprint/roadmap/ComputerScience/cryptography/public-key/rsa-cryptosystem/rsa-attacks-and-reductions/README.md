@@ -1,0 +1,16 @@
+# RSA Attacks and Reductions
+
+- [BLS signatures](bls-signatures.md)
+- [Decisional composite residuosity (DCR) assumption](decisional-composite-residuosity.md)
+- [Fermat factoring of RSA moduli with close primes](fermat-factoring-close-primes.md)
+- [Shamir's trick: a common root from coprime exponents](shamir-trick-common-root.md)
+- [Fault attack on RSA-CRT signing](rsa-crt-fault-attack.md)
+- [An oracle for the RSA half predicate inverts RSA](rsa-half-predicate-inversion.md)
+- [RSA moduli sharing a prime are factored by their gcd](rsa-shared-prime-gcd.md)
+- [The RSA assumption with a uniform unit preimage](rsa-unit-preimage-variant.md)
+- [Strong RSA assumption](strong-rsa-assumption.md)
+- [BLS signatures are strongly unforgeable in the random oracle model](bls-signature-security.md)
+- [Paillier encryption](paillier-encryption.md)
+- [Accumulator in a group of unknown order](accumulator-group-of-unknown-order.md)
+- [Paillier encryption is IND-CPA under DCR, additively homomorphic, and not CCA secure](paillier-security-and-homomorphism.md)
+- [Security of the accumulator under strong RSA](accumulator-security-under-strong-rsa.md)

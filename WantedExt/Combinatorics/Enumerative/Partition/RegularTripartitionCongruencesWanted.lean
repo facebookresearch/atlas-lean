@@ -14,6 +14,7 @@ public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
 public import MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesTwo
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesRamanujanPsiPrimeDissection
 
 /-!
 # Congruences for `ℓ`-regular tripartitions, `ℓ ∈ {2, 3}` — wishlist
@@ -26,13 +27,15 @@ size `n`, i.e. `∑ T_ℓ(n) qⁿ = f_ℓ³ / f_1³` (paper, Section 1, eq. (1))
 `f_k = (q^k; q^k)_∞` is `qEulerProduct k`, written `𝔣 k` below. Eta-quotient identities are
 stated with denominators cleared (every `f_k` with `k ≥ 1` has constant coefficient `1`, so
 it is a unit of `ℤ⟦X⟧`). The Cui–Gu `p`-dissections (Lemmas 4 and 5) involve Ramanujan's
-`f(a, b)` with negated arguments and are stated for complex `q` with `‖q‖ < 1`, through
-`ramanujanThetaRaw` and `qPochhammerInfRaw`.
+`f(a, b)` with negated arguments. Lemma 5 is stated here for complex `q` with `‖q‖ < 1`, through
+`ramanujanThetaRaw` and `qPochhammerInfRaw`; Lemma 4 is `ramanujanPsi_prime_dissection`, proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesRamanujanPsiPrimeDissection`.
 
 Already stated elsewhere in this library: Lemma 2, eq. (4), is
 `qPochhammer_three_dissection_product_one_two`; Lemma 3, eq. (5), is
-`f1_cube_three_dissection`; Lemma 6, eq. (9), is the case `k = 1` of
-`qEulerProduct_pow_prime_pow_congruence`.
+`f1_cube_three_dissection`; Lemma 4 is `ramanujanPsi_prime_dissection`, in
+`MathlibExt.Combinatorics.Enumerative.Partition.RegularTripartitionCongruencesRamanujanPsiPrimeDissection`;
+Lemma 6, eq. (9), is the case `k = 1` of `qEulerProduct_pow_prime_pow_congruence`.
 -/
 
 open PowerSeries
@@ -126,29 +129,6 @@ public theorem_wanted one_div_f1_cube_three_dissection :
           8 * X ^ 3 * 𝔣 3 ^ 3 * 𝔣 6 ^ 3 * 𝔣 9 ^ 9 * 𝔣 18 ^ 9 +
           12 * X ^ 4 * 𝔣 3 ^ 4 * 𝔣 6 ^ 2 * 𝔣 9 ^ 6 * 𝔣 18 ^ 12 +
           16 * X ^ 6 * 𝔣 3 ^ 6 * 𝔣 18 ^ 18)
-
-/-- **Cui–Gu $p$-dissection of $\psi(q)$.** Let $p$ be an odd prime and $q$ a complex number with
-$|q| < 1$, let $f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta
-function, and let $\psi(q) = f(q, q^3)$. Then
-$$
-\psi(q) = \sum_{k=0}^{(p-3)/2} q^{k(k+1)/2}
-f\bigl(q^{(p^2 + (2k+1)p)/2}, q^{(p^2 - (2k+1)p)/2}\bigr) + q^{(p^2-1)/8} \psi(q^{p^2}),
-$$
-and $(m^2 + m)/2 \not\equiv (p^2 - 1)/8 \pmod p$ for every integer $m$ with
-$0 \le m \le (p - 3)/2$. All the divisions are exact.
-
-Source: Mohammed L. Nadji and Moussa Ahmia, *Congruences for l-Regular Tripartitions for
-l in {2,3}*, INTEGERS 24 (2024), Article A86, Lemma 4, eq. (7) (`integers-2024-A86-lem-4`),
-quoting S. Cui and N. Gu, *Arithmetic Properties of ℓ-Regular Partitions*, Adv. Appl. Math. 51
-(2013), 507–523, Theorem 2.1. -/
-public theorem_wanted ramanujanPsi_prime_dissection (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2)
-    (q : ℂ) (hq : ‖q‖ < 1) :
-    ramanujanThetaRaw q (q ^ 3) =
-        ∑ k ∈ Finset.range ((p - 1) / 2), q ^ (k * (k + 1) / 2) *
-            ramanujanThetaRaw (q ^ ((p ^ 2 + (2 * k + 1) * p) / 2))
-              (q ^ ((p ^ 2 - (2 * k + 1) * p) / 2)) +
-          q ^ ((p ^ 2 - 1) / 8) * ramanujanThetaRaw (q ^ (p ^ 2)) (q ^ (3 * p ^ 2)) ∧
-      ∀ m ≤ (p - 3) / 2, ¬ (m ^ 2 + m) / 2 ≡ (p ^ 2 - 1) / 8 [MOD p]
 
 /-- **Cui–Gu $p$-dissection of $f_1$.** Let $p \ge 5$ be a prime, let $s = (p - 1)/6$ if
 $p \equiv 1 \pmod 6$ and $s = (-p - 1)/6$ otherwise, and let $q$ be a complex number with
