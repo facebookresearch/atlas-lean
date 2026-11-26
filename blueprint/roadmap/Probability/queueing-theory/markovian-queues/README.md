@@ -9,6 +9,7 @@ claims, not consequences of normalization alone.
 - [Erlang's loss formula](erlang-loss-formula.md)
 - [Stationary law of the M/M/1 queue-length process](stationary-law-of-the-mm1-queue-length-process.md)
 - [Waiting and sojourn times in the M/M/1 queue](waiting-time-in-the-mm1-queue.md)
+- [Burke's output theorem](burke-s-output-theorem.md)
 - [Stationarity of the Erlang loss distribution and the Erlang-B recursion](stationary-law-of-the-erlang-loss-system.md)
 - [Optimal staffing for a loss system over finitely many server counts](optimal-staffing-for-a-loss-system.md)
 - [Staffing a loss system with a blocking target](staffing-a-loss-system-with-a-blocking-target.md)
