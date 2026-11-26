@@ -82,18 +82,4 @@ public theorem_wanted length_reductionSeq_cyclicSortingMachine_123_lt {n : ℕ} 
     {π : List ℕ} (hπ : π.Perm (List.range' 1 n)) :
     (reductionSeq (cyclicSortingMachine [1, 2, 3] π)).length < n
 
-/-- **Characterization of the permutations sorted by the consecutive $321$-cyclic stack.** Let
-$n \ge 2$ and let $\pi = \pi_1 \pi_2 \cdots \pi_n$ be a permutation of $[n] = \{1, \ldots, n\}$.
-The consecutive-cyclic-pattern-avoiding stack-sorting map $s^{[321]}$ sends $\pi$ to the identity
-$12 \cdots n$ (that is, $\pi \in \mathrm{Sort}_n(s^{[321]})$) if and only if $\pi_1 = n$ and
-$\pi_2 \cdots \pi_n$ is good: each of its entries is the minimum or the maximum of itself and all
-entries after it.
-
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Corollary 2 (`integers-2026-A15-cor-2`). -/
-public theorem_wanted mem_sortedPermutations_consecutiveCyclicStackSort_321_iff {n : ℕ}
-    (hn : 2 ≤ n) {π : List ℕ} (hπ : π.Perm (List.range' 1 n)) :
-    π ∈ sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) n ↔
-      π.head? = some n ∧ IsGoodSeq π.tail
-
 end MetaMathlibExt
