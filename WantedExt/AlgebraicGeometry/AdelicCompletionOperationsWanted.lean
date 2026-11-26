@@ -11,12 +11,14 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperations
 public import MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights
 public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperationsAdmissible
+public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperationsHeightLimit
 
 /-!
 # Construction requests on the literal adelic Cauchy quotient
 
 All outputs use its already computed pointwise limit norms. Height
-convergence retains the actual boundary integrability condition.
+convergence, proved in `MathlibExt.AlgebraicGeometry.AdelicCompletionOperationsHeightLimit`,
+retains the actual boundary integrability condition.
 Modelled on Yuan--Zhang, arXiv:2105.13587v9, Sections 2.5--2.6, 3.4 and 5.3.
 The completion is the fixed-gauge completion of `BoundaryMetricCompletionModels`, not
 Yuan--Zhang's boundary topology: their adelic line bundles and positivity notions are not
@@ -99,8 +101,5 @@ open MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights
 variable {K : Type} [Field K] {A : AdelicField K} {X : Over (Spec (.of K))}
   {L : X.left.Modules} (B : EffectiveBoundary A X) (m : BoundaryMetricCompletion (L := L) B)
   {x : BasePoint (K := K) ⟶ X} (F : PointFrame A X L x)
-
-/-- Heights of the native model sequence converge to the computed quotient height. -/
-public theorem_wanted heightLimit (D : DominatedApproximation B m F) : HeightConverges B m F D
 
 end WantedExt.AlgebraicGeometry.CompletedAdelicPointHeights
