@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
 
 /-! # Prime reciprocal sums of odd perfect and primitive non-deficient numbers
 
@@ -176,17 +177,6 @@ public theorem_wanted primitiveNondeficient_primeReciprocalSum_lt_of_single_odd_
     (heven : ∀ p ∈ n.primeFactors, p ≠ t → Even (n.factorization p))
     (h11 : 11 ≤ n.minFac) (hpt : 2 * n.minFac ≤ t + 2) :
     ∑ p ∈ n.primeFactors, (1 : ℝ) / p < Real.log 2 - 11 / (50 * (n.minFac : ℝ) ^ 2)
-
-/-- **Bound on the prime product of an odd perfect number via its least prime factor.** Let $n$ be
-an odd perfect number with least prime factor $p_1$, and let $H(n) = \prod_{p \mid n} p/(p-1)$,
-the product over the primes $p$ dividing $n$. Then $H(n) \le 2 + \frac{9}{4 p_1^2}$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 5 (`integers-2025-A59-prop-5`). -/
-public theorem_wanted oddPerfect_abundancySup_le
-    (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) :
-    abundancySup n ≤ 2 + 9 / (4 * (n.minFac : ℚ) ^ 2)
 
 /-- **Lower bound on the prime reciprocal sum of an odd primitive non-deficient number.** Let $n$
 be an odd primitive non-deficient number with least prime factor $p_1$, let
