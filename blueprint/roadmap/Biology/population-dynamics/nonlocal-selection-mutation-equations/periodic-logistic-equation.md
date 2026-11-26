@@ -12,7 +12,11 @@ and every solution with $\varrho(0) > 0$ satisfies $|\varrho(t) - \tilde\varrho(
 
 ## Depends on
 
-- [Logistic growth equation](../logistic-growth-equation/logistic.md)
+This node has no prerequisites.
+
+## Proof depends on
+
+Its proof is that of the source below, as the Expansion describes.
 
 ## Expansion
 

@@ -1,6 +1,6 @@
 # Global stability of the disease-free and emerging-strain equilibria
 
-In the [two-strain cross-immunity model](equilibria-and-harmless-delay-in-the-two-strain-cross-immunity-model.md) with reproduction numbers $R_i = a\beta_i/(d(d_i + \gamma_i))$ and any cross-immunity delay $\tau \ge 0$, consider solutions with nonnegative initial data.
+In the [two-strain cross-immunity model](equilibria-and-harmless-delay-in-the-two-strain-cross-immunity-model.md) with reproduction numbers $R_i = a\beta_i/(d(d_i + \gamma_i))$ and any cross-immunity delay $\tau \ge 0$, consider solutions whose initial data are bounded, continuous, nonnegative histories $(S, I_1, I_2, R_l)(\theta)$, $\theta \in [-\tau, 0]$.
 
 **Theorem (disease-free equilibrium).** If $\max\{R_1, R_2\} < 1$, then $E_0 = (a/d, 0, 0, 0)$ is globally asymptotically stable.
 
@@ -9,6 +9,10 @@ In the [two-strain cross-immunity model](equilibria-and-harmless-delay-in-the-tw
 ## Depends on
 
 - [Equilibria and harmless delay in the two-strain cross-immunity model](equilibria-and-harmless-delay-in-the-two-strain-cross-immunity-model.md)
+
+## Proof depends on
+
+- [Forward invariance of compact sublevel sets and LaSalle's principle for differential equations](../../../Analysis/ordinary-differential-equations/forward-invariance-of-compact-sublevel-sets-and-lasalle-s-principle.md)
 
 ## Expansion
 

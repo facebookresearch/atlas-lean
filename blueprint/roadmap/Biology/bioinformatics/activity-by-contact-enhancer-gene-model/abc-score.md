@@ -4,13 +4,13 @@ Fix a cell type. For a candidate regulatory element $E$ let its **activity** be
 
 $$A_E = \sqrt{\mathrm{DNase}_E \cdot \mathrm{H3K27ac}_E},$$
 
-the geometric mean of the (quantile-normalized) chromatin accessibility and H3K27ac signals over the element, the same for every gene. For an element $E$ and a gene $G$ let $C_{E,G} > 0$ be the **contact** frequency between $E$ and the transcription start site of $G$, measured by Hi-C or approximated by a power law in genomic distance, $C_{E,G} \propto d(E, G)^{-1}$.
+the geometric mean of the nonnegative (quantile-normalized) chromatin accessibility and H3K27ac signals over the element, the same for every gene. For an element $E$ and a gene $G$ let $C_{E,G}$ be the **contact** frequency between $E$ and the transcription start site of $G$, a finite positive number measured by Hi-C or approximated by a power law in genomic distance, $C_{E,G} \propto d(E, G)^{-1}$. This includes the self-contact $C_{P_G,G}$ of the promoter $P_G$ of $G$, where the distance is zero and the power law is undefined; it is set to a finite positive value (the source replaces each diagonal Hi-C entry by the maximum of its four neighboring entries).
 
 The **ABC score** of the pair is
 
 $$\mathrm{ABC}_{E,G} = \frac{A_E\, C_{E,G}}{\displaystyle\sum_{e \in \mathcal{E}(G)} A_e\, C_{e,G}},$$
 
-where $\mathcal{E}(G)$ is the set of all candidate elements within 5 Mb of the promoter of $G$, including the promoter of $G$ itself. An element is predicted to regulate $G$ when $\mathrm{ABC}_{E,G}$ exceeds a threshold. For fixed $G$ the scores are nonnegative and sum to $1$ over $\mathcal{E}(G)$.
+where $\mathcal{E}(G)$ is the set of all candidate elements within 5 Mb of the promoter of $G$, including the promoter of $G$ itself. The score is defined only for genes whose denominator is positive, that is, some element of $\mathcal{E}(G)$ has positive activity; when every activity in $\mathcal{E}(G)$ vanishes the gene gets no score. An element is predicted to regulate $G$ when $\mathrm{ABC}_{E,G}$ exceeds a threshold. For fixed $G$ with positive denominator the scores are nonnegative and sum to $1$ over $\mathcal{E}(G)$.
 
 ## Expansion
 

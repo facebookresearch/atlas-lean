@@ -22,6 +22,12 @@ $$u(x) = -\left|\int_{x_m}^{x}\sqrt{\bar\varrho - \bar a(y)}\,dy\right|.$$
 
 - [Selection of the trait with the largest time-averaged growth rate](selection-of-the-time-averaged-fittest-trait.md)
 - [Periodic logistic equation](periodic-logistic-equation.md)
+- [Viscosity solution of a first-order equation](../../../Analysis/partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/is-viscosity-solution.md)
+
+## Proof depends on
+
+- [Stability of viscosity solutions under locally uniform limits](../../../Analysis/partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/solution-of-tendsto-locally-uniformly-on.md)
+- [Classical solutions are viscosity solutions](../../../Analysis/partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/is-viscosity-solution-of-classical.md)
 
 ## Expansion
 

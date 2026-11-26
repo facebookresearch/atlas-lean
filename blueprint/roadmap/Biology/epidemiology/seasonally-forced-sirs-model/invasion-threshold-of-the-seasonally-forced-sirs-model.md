@@ -18,6 +18,10 @@ and linearly stable if $\mathcal{R}_0 < 1$. The amplitude $b_1$ and phase $\phi$
 
 - [Seasonally forced SIRS model with vital dynamics](seasonally-forced-sirs-model-with-vital-dynamics.md)
 
+## Proof depends on
+
+- [Variation of constants for time-varying linear systems](../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/variation-of-parameters-time-varying.md)
+
 ## Expansion
 
 At $I = 0$, $R = 0$ and $S = N$ the $S$ and $R$ equations are at rest. To first order in $I$, the infection term is $\beta(t)I$ and the outflow is $(\nu+\mu)I$, which gives a scalar linear periodic equation. Its solution is $I(t) = I(0)\exp\int_0^t(\beta - \nu - \mu)$. Since $\int_0^1\cos(2\pi t - \phi)\,dt = 0$, the growth over a period depends only on the mean transmission rate. With a single infected compartment, the basic reproduction number of the periodic model is the time-averaged transmission rate divided by the exit rate. With several infected classes, for example latent stages, the mean-over-period formula no longer holds in general, and the threshold must be computed from the Floquet spectrum of the linearized periodic system.

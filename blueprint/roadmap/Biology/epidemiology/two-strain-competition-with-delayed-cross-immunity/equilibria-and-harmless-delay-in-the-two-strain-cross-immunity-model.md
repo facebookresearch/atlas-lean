@@ -9,7 +9,7 @@ I_2' &= \beta_2 S I_2 + \beta_2 R_l I_2 - (\gamma_2 + d_2) I_2,\\
 R_l' &= \gamma_1 I_1(t - \tau) - \beta_2 R_l I_2 - d R_l .
 \end{aligned}$$
 
-Nonnegative initial data give nonnegative, bounded solutions.
+Initial data are histories on the delay interval: $(S, I_1, I_2, R_l)(\theta) = \varphi(\theta)$ for $\theta \in [-\tau, 0]$, with $\varphi$ bounded, continuous and nonnegative. Such histories give nonnegative, bounded solutions on $[0, \infty)$.
 
 **Reproduction numbers and equilibria.** The next-generation method gives $R_i = a\beta_i/(d(d_i + \gamma_i))$, $i = 1, 2$. The equilibria are
 
@@ -30,9 +30,13 @@ $$f(R_1) < R_2 < R_1 \quad\text{and}\quad R_2 < \frac{a\beta_1}{dd_1}, \qquad f(
 
 - [Basic reproduction number of the next-generation matrix](../next-generation-matrix-and-the-basic-reproductio/r0.md)
 
+## Proof depends on
+
+- [Eigenvalues of a block lower-triangular matrix](../next-generation-matrix-and-the-basic-reproductio/mem-spectrum-from-blocks-zero.md)
+
 ## Expansion
 
-At $E_0$ the Jacobian is block triangular with eigenvalues $-d$ (twice, the delay term $\gamma_1 e^{-\lambda\tau}$ sitting off the diagonal), $(d_1 + \gamma_1)(R_1 - 1)$ and $(d_2 + \gamma_2)(R_2 - 1)$. At $E_1$ the $I_2$ direction decouples, with growth rate $\beta_2(S^* + R_l^*) - (\gamma_2 + d_2)$, where $S^* + R_l^* = \frac{\gamma_1 + d_1}{\beta_1} + \frac{\gamma_1}{\beta_1}(R_1 - 1)$; this is negative exactly when $R_2 < f(R_1)$, and the remaining block is that of the one-strain model, stable for $R_1 > 1$. Since $f(R_1) = R_1(d_1 + \gamma_1)/(\gamma_1 R_1 + d_1) < R_1$ for $R_1 > 1$, and $f(R_1) \to 0$ as $R_1 \to \infty$, the recovered pool $R_l^*$ that strain 1 builds is extra fuel for strain 2: exclusion of the emerging strain requires $R_2$ to be smaller than $R_1$ by a margin that grows with $R_1$, and $f(1) = 1$. At $E_2$ the $I_1$ direction has growth rate $(d_1 + \gamma_1)(R_1/R_2 - 1)$ and $R_l^* = 0$, so the delayed term multiplies a zero perturbation coefficient and again drops out.
+At $E_0$ the Jacobian is block triangular with eigenvalues $-d$ (twice, the delay term $\gamma_1 e^{-\lambda\tau}$ sitting off the diagonal), $(d_1 + \gamma_1)(R_1 - 1)$ and $(d_2 + \gamma_2)(R_2 - 1)$. At $E_1$ the $I_2$ direction decouples, with growth rate $\beta_2(S^* + R_l^*) - (\gamma_2 + d_2)$, where $S^* + R_l^* = \frac{\gamma_1 + d_1}{\beta_1} + \frac{\gamma_1}{\beta_1}(R_1 - 1)$; this is negative exactly when $R_2 < f(R_1)$, and the remaining block is that of the one-strain model, stable for $R_1 > 1$. Since $a\beta_1/d = R_1(d_1 + \gamma_1)$, as a function of $R_1$ with $d_1, \gamma_1$ fixed, $f(R_1) = R_1(d_1 + \gamma_1)/(\gamma_1 R_1 + d_1)$. It satisfies $f(1) = 1$, is increasing, is bounded by its limit $(d_1 + \gamma_1)/\gamma_1$ as $R_1 \to \infty$ (not $0$), and $f(R_1) < R_1$ for $R_1 > 1$, with $R_1 - f(R_1) = \gamma_1 R_1(R_1 - 1)/(\gamma_1 R_1 + d_1)$. So the recovered pool $R_l^*$ that strain 1 builds is extra fuel for strain 2: exclusion of the emerging strain requires $R_2 < f(R_1)$, below $R_1$ by a margin that grows with $R_1$. Treating $R_1$ in Eq. (7) as a free plotting variable with $a\beta_1/d$ held fixed would make $f$ decrease to $0$, but $R_1$ is a derived parameter determined by $a\beta_1/d$, so that is not a property of the model. At $E_2$ the $I_1$ direction has growth rate $(d_1 + \gamma_1)(R_1/R_2 - 1)$ and $R_l^* = 0$, so the delayed term multiplies a zero perturbation coefficient and again drops out.
 
 ## Sources
 

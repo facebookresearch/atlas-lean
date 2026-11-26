@@ -6,11 +6,15 @@ $$\dot n_i(t) = S(t)\sum_{j\in\mathcal{S}} \beta_{ji}\, n_j(t) + \sum_{j\in\math
 
 where $\beta_{ij} \ge 0$ is the rate at which an individual in compartment $i$ creates new infections that start in compartment $j$ (transmission matrix $T = (\beta_{ij})$), and $Q = (q_{ij})$ is a transition-rate matrix with $q_{ij} \ge 0$ for $i \ne j$ and $q_{ii} = -\sum_{j\ne i} q_{ij}$.
 
-Suppose $\operatorname{rank}(T) = 1$, so that $\beta_{ij} = \lambda_i p_j$ for rates $\lambda_i \ge 0$ and a probability vector $(p_j)_{j\in\mathcal{S}}$. Let $X$ be the Markov chain with generator $Q$ and initial law $(p_j)$, put $p(a,i) = \mathbb{P}(X(a) = i)$ and $\tau(a) = \sum_{i} \lambda_i\, p(a,i)$, and let $n(t,a)$ solve the age-of-infection PDE with this $\tau$. Then $\tilde n_i(t) = \int_0^\infty n(t,a)\,p(a,i)\,da$ solves the ODE system. Conversely, every decorated age-of-infection model with a Markov life cycle and infection rate $\lambda_i$ in compartment $i$ gives an ODE system with $\beta_{ij} = \lambda_i\,p(0,j)$, which has rank one. Models whose transmission matrix has rank greater than one, such as models with assortative contacts between groups, cannot be written as a single decorated age-structured PDE.
+Suppose $\operatorname{rank}(T) = 1$, so that $\beta_{ij} = \lambda_i p_j$ for rates $\lambda_i \ge 0$ and a probability vector $(p_j)_{j\in\mathcal{S}}$. Let $X$ be the Markov chain with generator $Q$ and initial law $(p_j)$, put $p(a,i) = \mathbb{P}(X(a) = i)$ and $\tau(a) = \sum_{i} \lambda_i\, p(a,i)$, and let $n(t,a)$ solve the age-of-infection PDE with this $\tau$. Then $\tilde n_i(t) = \int_0^\infty n(t,a)\,p(a,i)\,da$ solves the ODE system. Conversely, every decorated age-of-infection model with a Markov life cycle and infection rates $\lambda_i \ge 0$ in compartment $i$ gives an ODE system with $\beta_{ij} = \lambda_i\,p(0,j)$, an outer product of $(\lambda_i)$ with a probability vector, which has rank at most one, and rank exactly one when some $\lambda_i > 0$ (if all $\lambda_i = 0$, then $T = 0$). Models whose transmission matrix has rank greater than one, such as models with assortative contacts between groups, cannot be written as a single decorated age-structured PDE.
 
 ## Depends on
 
 - [Decorated age-of-infection model and compartment counts](decorated-age-of-infection-model-and-compartment-counts.md)
+
+## Proof depends on
+
+- [Kolmogorov forward equation](../../../Probability/markov-chains/finite-continuous-time-markov-chains/the-transition-semigroup-of-a-finite-continuous/has-deriv-at-ctmc-transition-forward.md)
 
 ## Expansion
 
