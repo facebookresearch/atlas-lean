@@ -4,7 +4,7 @@
 
 - [Prev](prev.md)
 - [Characterization of the left neighbour](prev-eq-of.md)
-- [Prev mem or eq](prev-mem-or-eq.md)
+- [The previous point is a partition point or the point itself](prev-mem-or-eq.md)
 
 ## Inserting one point into a finite set
 

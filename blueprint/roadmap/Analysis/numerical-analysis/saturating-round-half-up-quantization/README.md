@@ -5,7 +5,7 @@
 - [Signed Min Code](signed-min-code.md)
 - [Signed Max Code](signed-max-code.md)
 - [The full-scale interval is well ordered](full-scale-le.md)
-- [Code eq floor add half](code-eq-floor-add-half.md)
+- [Rounding as the floor of y + 1/2](code-eq-floor-add-half.md)
 - [The saturating code lies in the code range](code-mem-icc.md)
 - [Unclipped inputs get the rounded code](code-eq-round-of-not-is-clipped.md)
 - [Below-range inputs saturate to the least code](code-eq-kmin-of-round-lt.md)

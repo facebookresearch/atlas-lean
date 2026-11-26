@@ -13,4 +13,4 @@
 
 - [Rotational Field](rotational-field.md)
 - [Triangle Loop](triangle-loop.md)
-- [Curve Integral rotational Field triangle Loop ne sub](curve-integral-rotational-field-triangle-2.md)
+- [The rotational field has no potential on a triangle loop](curve-integral-rotational-field-triangle-2.md)

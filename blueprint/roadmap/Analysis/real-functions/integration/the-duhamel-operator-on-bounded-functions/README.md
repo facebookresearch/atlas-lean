@@ -3,7 +3,7 @@
 ## The two-tag Riemann–Stieltjes integral for a general integrator
 
 - [Two Tag Sum one right](two-tag-sum-one-right.md)
-- [Has Two Tag RSIntegral one iff](has-two-tag-rsintegral-one-iff.md)
+- [The two-tag integral with unit second integrator](has-two-tag-rsintegral-one-iff.md)
 - [Two-tag sums only read the integrator on the interval](two-tag-sum-partition-pts-congr.md)
 
 ## The kernel factors are controlled

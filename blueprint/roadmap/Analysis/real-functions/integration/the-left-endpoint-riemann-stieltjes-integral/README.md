@@ -20,7 +20,7 @@
 
 ## Bounds on the sums
 
-- [Abs sum cells mul le](abs-sum-cells-mul-le.md)
+- [Bound on weighted increments over the cells of a partition](abs-sum-cells-mul-le.md)
 
 ## Bounds on the integral
 

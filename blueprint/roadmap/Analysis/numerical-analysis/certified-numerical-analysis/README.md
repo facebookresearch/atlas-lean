@@ -49,7 +49,7 @@
 - [Enclosure](enclosure.md)
 - [Root mem](root-mem.md)
 - [Every root in the bracket is the certified root](eq-root.md)
-- [Abs sub mid le](abs-sub-mid-le-2.md)
+- [The midpoint of a certified root enclosure is within half the tolerance](abs-sub-mid-le-2.md)
 
 ## G. Capstone: `x + exp x = 2`
 

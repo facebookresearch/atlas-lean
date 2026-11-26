@@ -1,6 +1,7 @@
-# Tsum mul eval eq zpow mul eval of recurrence
+# An eventually recurrent Laurent series times its annihilator
 
-Multiplication by the supplied annihilator records the finite residual
-between the lower support and the absolute recurrence threshold. No
-nonvanishing condition on `q.eval X` is needed, nor any ordering of `N` and `T`.
-The numerator and integer shift are fixed independently of `X`.
+Let $h : \mathbb{Z} \to \mathbb{C}$, let $q = \sum_{i \le d} q_i X^i$ be a complex polynomial of degree $d$, and let $N, T \in \mathbb{Z}$. Suppose $h(t) = 0$ for every $t < N$ and $\sum_{i=0}^{d} q_i\, h(t - i) = 0$ for every $t \ge T$. Then for every $X \ne 0$ at which $\sum_{t \in \mathbb{Z}} h(t) X^t$ is summable,
+
+$$\Bigl(\sum_{t \in \mathbb{Z}} h(t)\, X^t\Bigr)\, q(X) = X^N \sum_{0 \le j < \max(T - N, 0)} \Bigl(\sum_{i=0}^{d} q_i\, h(N + j - i)\Bigr) X^j.$$
+
+No condition $q(X) \ne 0$ is needed, nor any ordering of $N$ and $T$, and the polynomial on the right and the shift $N$ do not depend on $X$.

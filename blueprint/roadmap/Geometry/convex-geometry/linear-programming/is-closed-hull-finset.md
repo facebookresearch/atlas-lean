@@ -1,7 +1,3 @@
-# Is Closed hull finset
+# Finitely generated cones are closed
 
-Finitely generated cones are closed: in a real normed space, the
-nonnegative span `PointedCone.hull ℝ S` of a finite set `S` is closed.
-No finite-dimensionality is needed.
-
-Exports the private closedness proof of this file.
+In a real normed space, the cone of nonnegative linear combinations of a finite set $S$ is closed. No finite-dimensionality is needed.
