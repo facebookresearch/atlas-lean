@@ -14,3 +14,6 @@
 - [Proportional lift preserves flow value](flow-value-proportional-lift.md)
 - [Cut capacity of aggregated arc capacities](cut-capacity-aggregate-eq-sum-leaving.md)
 - [Max-flow min-cut theorem for arc networks](arc-max-flow-min-cut.md)
+- [Stock-level arc balance](stock-level-arc-balance.md)
+- [Arc flows aggregate to a feasible flow](is-feasible-flow-aggregate.md)
+- [Proportional lift of a feasible flow is arc-feasible](is-arc-feasible-proportional-lift.md)
