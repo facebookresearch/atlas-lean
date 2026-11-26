@@ -26,4 +26,15 @@ example : (∃ u < 2, 4 = u ^^^ 1 ^^^ 6) ∨ (∃ v < 1, 4 = 2 ^^^ v ^^^ 6) ∨
   HasNSProperty.exists_of_lt_xor_xor (hasNSProperty_div_two_pow (m := 1) (by decide))
     (hasNSProperty_const 5) (by decide) (by decide) (by decide)
 
+-- Halving both bounds at two, one and four: only a width cut reaches zero.
+example : (∃ u < 2, 0 = u ^^^ 1 ^^^ 4) ∨ (∃ v < 1, 0 = 2 ^^^ v ^^^ 4) ∨
+    ∃ w < 4, 0 = min (w / 2 ^ 1) 2 ^^^ min (w / 2 ^ 1) 1 ^^^ w :=
+  HasNSProperty.exists_of_lt_xor_xor (hasNSProperty_div_two_pow (m := 1) (by decide))
+    (hasNSProperty_div_two_pow (m := 1) (by decide)) (by decide) (by decide) (by decide)
+
+-- Neither coordinate reduction gives zero there, and the width zero is the only cut that does.
+example : (¬∃ u < 2, 0 = u ^^^ 1 ^^^ 4) ∧ (¬∃ v < 1, 0 = 2 ^^^ v ^^^ 4) ∧
+    ∀ w < 4, 0 = min (w / 2 ^ 1) 2 ^^^ min (w / 2 ^ 1) 1 ^^^ w ↔ w = 0 := by
+  decide
+
 end MathlibExtTest.GameTheory.ChocolateBarNSPropertyExistsOfLtXorXor
