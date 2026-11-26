@@ -1,0 +1,73 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import MathlibExt.NumberTheory.BonseSequence
+import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Data.Nat.Prime.Nth
+
+open Filter Topology MathlibExt.NumberTheory.BonseWanted
+
+-- Zero has the stipulated default, while positive indices start with the first prime.
+example : primeNth 0 = 2 ∧ primeNth 1 = 2 ∧ primeNth 2 = 3 := by
+  simp [primeNth]
+
+-- This sequence has log-product ratio 1 - 2⁻ⁿ and satisfies the regularity limit.
+example : ¬ IsBonseSeq (fun n : ℕ => 2 ^ 2 ^ n) := by
+  have htwo : 1 < (2 : ℕ) := by decide
+  have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hterm (n : ℕ) : Real.log ((2 ^ 2 ^ n : ℕ) : ℝ) = 2 ^ n * Real.log 2 := by
+    simp [Nat.cast_pow, Real.log_pow]
+  apply not_isBonseSeq_of_liminf_lt
+  · exact (pow_right_strictMono₀ htwo).comp (pow_right_strictMono₀ htwo)
+  · intro n
+    exact Nat.succ_le_of_lt (by positivity)
+  · simp only [hterm, Real.log_mul (pow_ne_zero _ (by norm_num : (2 : ℝ) ≠ 0)) hlog.ne',
+      Real.log_pow]
+    have hpoly (k : ℕ) := tendsto_pow_const_div_const_pow_of_one_lt k (by norm_num : (1 : ℝ) < 2)
+    have h := (((hpoly 2).add (hpoly 1)).const_mul (Real.log 2)).add
+      (((hpoly 1).add (hpoly 0)).const_mul (Real.log (Real.log 2)))
+    convert h.div_const (2 * Real.log 2) using 1
+    · ext n
+      simp only [pow_succ (2 : ℝ) n, pow_one, pow_zero]
+      ring
+    · simp
+  · refine ⟨1, by norm_num, Eventually.frequently (.of_forall fun n => ?_)⟩
+    rw [Real.log_prod (fun k _ => by positivity)]
+    simp only [hterm, ← Finset.sum_mul]
+    rw [div_lt_one (by positivity), mul_lt_mul_iff_left₀ hlog]
+    have h := geom_sum_mul (2 : ℝ) n
+    linarith
+
+-- For aₙ = 2ⁿ the log-product ratio is (n - 1) / 2 for n > 0. This also tests the named API
+-- when the first index is 1 (so its logarithm vanishes).
+example : IsBonseSeq (fun n : ℕ => 2 ^ n) := by
+  refine isBonseSeq_of_liminf_gt (a := fun n : ℕ => 2 ^ n)
+    (hmono := pow_right_strictMono₀ (by decide : 1 < (2 : ℕ)))
+    (hpos := fun n => Nat.succ_le_of_lt (by positivity)) (hlim := ?_)
+  refine ⟨3, by norm_num, ?_⟩
+  filter_upwards [eventually_ge_atTop (8 : ℕ)] with n hn
+  have hn' : (8 : ℝ) ≤ n := by exact_mod_cast hn
+  have hlog : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hsum (n : ℕ) : (∑ k ∈ Finset.range n, (k : ℝ)) = n * (n - 1) / 2 := by
+    induction n with
+    | zero => simp
+    | succ n ih => rw [Finset.sum_range_succ, ih, Nat.cast_succ]; ring
+  rw [Real.log_prod (fun k _ => by positivity)]
+  simp only [Nat.cast_pow, Nat.cast_ofNat, Real.log_pow, ← Finset.sum_mul, hsum]
+  rw [lt_div_iff₀ (mul_pos (by linarith : 0 < (n : ℝ)) hlog)]
+  rw [show (3 * ((n : ℝ) * Real.log 2)) = 3 * n * Real.log 2 by ring]
+  exact mul_lt_mul_of_pos_right (by nlinarith) hlog
+
+-- Eventual Bonse does not require the strict inequality at the empty prefix or the first term.
+example : ∀ n ∈ ({0, 1} : Finset ℕ), ¬ (primeNth (2 ^ n) : ℝ) ^ 2 <
+    ∏ k ∈ Finset.range n, (primeNth (2 ^ k) : ℝ) := by
+  intro n hn
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hn
+  rcases hn with rfl | rfl <;> norm_num [primeNth, Finset.prod_range_succ]

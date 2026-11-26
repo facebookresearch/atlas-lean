@@ -1,0 +1,15 @@
+# Multiple zeta values in positive characteristic
+
+- [Tuples of monic polynomials with strictly decreasing degrees](monic-strict-anti-nat-degree.md)
+- [Multiple zeta values in positive characteristic](a.md)
+- [Compositions of $w$ into $r$ parts](w.md)
+- [Multiple zeta values of given depth and weight](a-weight.md)
+- [The space $\mathcal{Z}_w$ of multiple zeta values of weight $w$](untitled.md)
+- [Restricted multiple zeta values of given depth](aux.md)
+- [The set $\mathcal{T}_w$ of restricted multiple zeta values](untitled-2.md)
+- [Multiple zeta values of given depth with small entries](0-aux.md)
+- [Multiple zeta values with small entries](0.md)
+- [Dimension sequence for multiple zeta values](d.md)
+- [Brown's theorem in positive characteristic](theorem-a.md)
+- [Linear independence of multiple zeta values with small entries](theorem-b.md)
+- [Dimension of multiple zeta values in low weight](theorem-d.md)

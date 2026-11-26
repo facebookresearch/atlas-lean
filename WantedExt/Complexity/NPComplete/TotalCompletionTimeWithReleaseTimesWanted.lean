@@ -21,12 +21,12 @@ doi:10.1016/S0167-5060(08)70743-X, Theorem 4(a) (KNAPSACK reduces to `1|rⱼ|∑
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Defs
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -46,7 +46,7 @@ This is SEQUENCING TO MINIMIZE WEIGHTED COMPLETION TIME ([SS4]) with individual 
 in place of the partial order and every task weight `w(t) = 1` (`1|rⱼ|∑ Cⱼ`), so the weights
 are not part of the instance. A one-processor schedule (Garey and Johnson, [SS1]) is a
 one-to-one function `σ : T → ℤ₀⁺` with `σ(t) > σ(t')` implying `σ(t) ≥ σ(t') + l(t')`; the
-predicate `IsOneProcessorSchedule` is reused from `SequencingToMinimizeWeightedTardinessWanted`.
+predicate `IsOneProcessorSchedule` is reused from `SequencingToMinimizeWeightedTardinessDefs`.
 The tasks are `Fin n`, one per listed pair `(l(t), r(t))`. Binary encoding of all numbers (the
 problem is NP-complete in the strong sense).
 

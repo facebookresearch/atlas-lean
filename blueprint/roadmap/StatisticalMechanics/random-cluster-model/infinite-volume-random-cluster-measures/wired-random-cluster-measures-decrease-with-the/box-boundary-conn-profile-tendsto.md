@@ -1,0 +1,3 @@
+# Ising FK box-boundary connection profile tends to $\theta^1(p, 2)$
+
+For $d \in \mathbb{N}$ and $0 < p < 1$, the [box-boundary connection profile](../../edwards-sokal-coupling-and-the-fk-representation/magnetization-equals-fk-percolation-probability/box-boundary-conn-profile.md) $\phi^w_{\Lambda_n,\partial\Lambda_n,p}(0 \leftrightarrow \partial\Lambda_n)$ (wired random-cluster measure on $\Lambda_n$ at $q = 2$) converges to the [wired percolation probability](../../critical-point-of-the-random-cluster-model/the-critical-point-of-the-random-cluster-model/fk-theta.md) $\theta^1(p, 2)$ as $n \to \infty$.

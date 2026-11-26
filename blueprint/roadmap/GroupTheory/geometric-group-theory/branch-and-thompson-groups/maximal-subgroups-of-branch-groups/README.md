@@ -1,0 +1,17 @@
+# Maximal subgroups of branch groups
+
+- [Vertices of the spherically homogeneous rooted tree (Kourovka 15.15)](tree-vertex.md)
+- [Rigid vertex stabilizer (Kourovka 15.15)](rigid-vertex-stabilizer.md)
+- [Rigid level stabilizer (Kourovka 15.15)](rigid-level-stabilizer.md)
+- [Branch group (Kourovka 15.15)](is-branch-group.md)
+- [Kourovka 15.15: maximal subgroups of finitely generated branch groups have finite index](branch-group-maximal-subgroups-finite-in.md)
+- [A finitely generated branch group with a maximal subgroup of infinite index](branch-group-maximal-subgroups-finite-in-2.md)
+- [Rooted tree given by levels](rooted-tree.md)
+- [Descendants in a rooted tree](is-descendant.md)
+- [Faithful level-transitive action on a rooted tree](level-transitive-faithful-action.md)
+- [Rigid vertex stabilizer](is-rigid-at.md)
+- [Rigid stabilizer of a level](rigid-level-stabilizer-2.md)
+- [Branch action](is-branch-action.md)
+- [Branch group](is-branch-group-2.md)
+- [Kourovka 20.101: finite-index maximal subgroups of finitely generated branch groups are normal](branch-group-finite-index-maximal-subgro.md)
+- [A finitely generated branch group with a non-normal maximal subgroup of finite index](branch-group-finite-index-maximal-subgro-2.md)

@@ -1,0 +1,29 @@
+# Probabilistic graphical models
+
+Bayesian networks and their Markov properties, structure scores and Markov equivalence, causal networks, adjustment and the do-calculus, structural causal models and counterfactuals, belief propagation and variable elimination, conditional random fields, hidden Markov models (forward-backward, Viterbi, Baum-Welch) and the Kalman filter.
+
+- [Hidden Markov models](hidden-markov-models/README.md)
+- [Baum–Welch algorithm](baum-welch-algorithm/README.md)
+- [Conditional random fields](conditional-random-fields/README.md)
+- [Kalman filter](kalman-filter/README.md)
+- [Markov equivalence and Bayesian network scores](markov-equivalence-and-bayesian-network-scores/README.md)
+- [Bayesian networks](bayesian-networks/README.md)
+- [Causal Bayesian networks](causal-bayesian-networks/README.md)
+- [Structural causal models and counterfactuals](structural-causal-models-and-counterfactuals/README.md)
+- [Variable elimination and belief propagation](variable-elimination-and-belief-propagation/README.md)
+- [Additive noise models and causal identifiability](additive-noise-models-and-causal-identifiability/README.md)
+
+- [Complete efficient criteria for generic identifiability of linear structural equation models](generic-identifiability-of-linear-structural-equation-models.md)
+- [Linear-time d-separation (Bayes-ball reachability)](linear-time-d-separation.md)
+- [Exact Bayesian-network inference is NP-hard](exact-bayesian-network-inference-is-np-hard.md)
+- [Sequential exchangeability and the g-formula](sequential-exchangeability-and-the-g-formula.md)
+- [HMM filtering is POMDP belief update](hmm-filtering-is-pomdp-belief-update.md)
+- [Soundness of the ID algorithm](soundness-of-the-id-algorithm.md)
+- [Induced width of an ordering](induced-width-of-an-ordering.md)
+- [Instrumental inequality and Balke-Pearl bounds](instrumental-inequality-and-balke-pearl-bounds.md)
+- [Natural direct/indirect effects and the mediation formula](natural-direct-indirect-effects-and-the-mediation-formula.md)
+- [Relative-frequency PCFG estimates are tight](relative-frequency-pcfg-estimates-are-tight.md)
+- [Probabilities of causation and their bounds](probabilities-of-causation-and-their-bounds.md)
+- [Bucket elimination over a commutative semiring](bucket-elimination-over-a-commutative-semiring.md)
+- [Transportability via S-admissible sets](transportability-via-s-admissible-sets.md)
+- [Variable elimination computes BN marginals](variable-elimination-computes-bn-marginals.md)

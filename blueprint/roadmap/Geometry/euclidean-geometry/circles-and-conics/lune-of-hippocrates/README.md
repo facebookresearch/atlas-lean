@@ -1,0 +1,16 @@
+# Lune of Hippocrates
+
+- [Coordinate plane for Hippocrates' lunes](plane.md)
+- [Planar determinant for Hippocrates' lunes](det2.md)
+- [Midpoint of two points in the plane](midpoint.md)
+- [Displacement vector between two points of the plane](vec.md)
+- [Squared Euclidean distance in the plane](euclidean-dist-sq.md)
+- [Closed half-disk on a diameter](closed-half-disk.md)
+- [Right-angle vertex of the lune triangle](a.md)
+- [Horizontal leg endpoint of the lune triangle](b.md)
+- [Vertical leg endpoint of the lune triangle](c.md)
+- [Half-disk on the hypotenuse](hypotenuse-semidisk.md)
+- [Lune on the horizontal leg](horizontal-lune.md)
+- [Hippocrates lune on the vertical leg](vertical-lune.md)
+- [Right triangle with legs on the axes](right-triangle.md)
+- [Hippocrates' theorem on lunes](hippocrates-lunes.md)

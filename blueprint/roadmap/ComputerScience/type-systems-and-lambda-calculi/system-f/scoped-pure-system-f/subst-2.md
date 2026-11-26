@@ -1,0 +1,3 @@
+# Simultaneous term substitution in System F terms
+
+For a term substitution $\sigma$ assigning to each $i < m$ a term $\sigma(i) \in \mathrm{Tm}_{n,k}$, the substitution $t[\sigma] \in \mathrm{Tm}_{n,k}$ of a [term](tm.md) $t \in \mathrm{Tm}_{n,m}$ is defined by $x_i[\sigma] = \sigma(i)$; $(\lambda A.\,b)[\sigma] = \lambda A.\,b[\sigma']$ with the [lifted substitution](lift-sub-2.md) $\sigma'$; $(f\,a)[\sigma] = f[\sigma]\,a[\sigma]$; $(\Lambda b)[\sigma] = \Lambda\,b[\sigma'']$, where $\sigma''(i)$ is $\sigma(i)$ with type variables [renamed](ty-rename.md) by $j \mapsto j + 1$; and $(f\,[A])[\sigma] = f[\sigma]\,[A]$. It avoids capture of both term and type variables.

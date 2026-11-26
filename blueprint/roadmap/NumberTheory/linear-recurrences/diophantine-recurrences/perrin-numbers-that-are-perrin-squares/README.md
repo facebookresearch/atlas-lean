@@ -1,0 +1,15 @@
+# Perrin numbers that are Perrin squares
+
+- [Perrin sequence at negative indices](perrin-neg.md)
+- [The Perrin sequence and its backward extension fit together at index zero](perrin-neg-bridge.md)
+- [Perrin recurrence at negative indices](perrin-neg-rec.md)
+- [Some values of the Perrin sequence at negative indices](perrin-neg-small-values.md)
+- [Perrin numbers that are squares of Perrin numbers](perrin-sequence-eq-sq-iff.md)
+- [Negative-index Perrin numbers equal to plus or minus a Perrin square](perrin-neg-eq-pm-perrin-sequence-sq.md)
+- [No positive-index Perrin number is the square of a negative-index one](perrin-sequence-ne-perrin-neg-sq.md)
+- [Negative-index Perrin numbers equal to plus or minus a negative-index Perrin square](perrin-neg-eq-pm-perrin-neg-sq.md)
+- [The only zero of the two-sided Perrin sequence](perrin-zero-unique.md)
+- [Size of the Perrin numbers at negative indices](perrin-neg-abs-bounds.md)
+- [Matveev's lower bound for two logarithms (complex case)](matveev-two-logs-complex-lower-bound.md)
+- [Lower bound for $|x - p/q|$ from bounded partial quotients](one-div-partial-quotient-bound-lt-abs-su.md)
+- [Convergents minimize $|p - qx|$ up to their denominator](abs-convergent-num-sub-lt-of-le-den.md)

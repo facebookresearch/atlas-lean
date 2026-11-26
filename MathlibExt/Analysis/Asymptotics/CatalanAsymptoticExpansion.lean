@@ -85,7 +85,7 @@ private lemma catalanExp_bernoulli_eval_add (n : ℕ) (x y : ℚ) :
     · rw [Polynomial.finsetSum_coeff, Finset.sum_eq_single k]
       · simp
       · intro b hb hbk
-        rw [Polynomial.coeff_monomial, ite_eq_right hbk]
+        rw [Polynomial.coeff_monomial_apply, ite_eq_right hbk]
       · simp [hk]
     · have hkn : n < k := by omega
       rw [Nat.choose_eq_zero_of_lt hkn, Nat.cast_zero, zero_smul,
@@ -95,7 +95,7 @@ private lemma catalanExp_bernoulli_eval_add (n : ℕ) (x y : ℚ) :
       intro b hb
       have hbn : b ≤ n := by simpa using (Finset.mem_range.mp hb)
       have hbk : b ≠ k := by omega
-      rw [Polynomial.coeff_monomial, ite_eq_right hbk]
+      rw [Polynomial.coeff_monomial_apply, ite_eq_right hbk]
   calc
     (Polynomial.bernoulli n).eval (x + y) =
         (Polynomial.taylor x (Polynomial.bernoulli n)).eval y := by
@@ -289,7 +289,7 @@ private lemma catalanExp_even_E_eq (E : ℕ → ℤ)
         (n.choose (2 * j) : ℤ) * E (n - 2 * j)) = 0) (m : ℕ) :
     (E (2 * m) : ℚ) = catalanExpEulerEvenQ m := by
   induction m using Nat.strong_induction_on with
-  | h m ih =>
+  | ind m ih =>
       by_cases hm : m = 0
       · subst m
         rw [mul_zero, hE.1, Int.cast_one, catalanExpEulerEvenQ_zero]
@@ -321,7 +321,19 @@ private lemma catalanExp_even_E_eq (E : ℕ → ℤ)
         simp only [Nat.choose_self, Nat.cast_one, one_mul] at hEoriented hQ
         linarith
 
-private lemma catalanExp_bernoulli_quarter_eq (E : ℕ → ℤ)
+/-- **Odd Bernoulli polynomials at one quarter via Euler numbers.**
+Let $E : \mathbb{N} \to \mathbb{Z}$ satisfy $E_0 = 1$ and
+$\sum_{j=0}^{\lfloor n/2 \rfloor} \binom{n}{2j} E_{n-2j} = 0$ for every positive integer $n$.
+Then for every integer $m \ge 0$, the Bernoulli polynomial of degree $2m+1$ satisfies
+
+$$B_{2m+1}(1/4) = -\frac{(2m+1) E_{2m}}{4^{2m+1}}.$$
+
+The Bernoulli polynomial addition formula at $1/4 \pm 1/4$ gives the Euler recurrence for the
+scaled odd values.
+
+Source: Zhi-Hong Sun, *Super congruences involving Bernoulli and Euler polynomials*,
+proof of Theorem 3.2, [p. 16](https://arxiv.org/pdf/1407.0636v6#page=16). -/
+public lemma EulerNumbers.bernoulli_eval_quarter_of_recurrence (E : ℕ → ℤ)
     (hE : E 0 = 1 ∧ ∀ n : ℕ, 0 < n →
       (∑ j ∈ Finset.range (n / 2 + 1),
         (n.choose (2 * j) : ℤ) * E (n - 2 * j)) = 0) (m : ℕ) :
@@ -420,7 +432,7 @@ private lemma catalanExp_second_even_coefficient (E : ℕ → ℤ)
     have h := Polynomial.bernoulli_eval_one_add (2 * r + 1) (1 / 4 : ℚ)
     norm_num at h ⊢
     simpa only [B, show 2 * r + 1 - 1 = 2 * r by omega] using h
-  have hB := catalanExp_bernoulli_quarter_eq E hE r
+  have hB := EulerNumbers.bernoulli_eval_quarter_of_recurrence E hE r
   change B = -(2 * r + 1 : ℚ) * (E (2 * r) : ℚ) /
     (4 : ℚ) ^ (2 * r + 1) at hB
   have htwo : (2 : ℚ) ^ (4 * r + 2) = (4 : ℚ) ^ (2 * r + 1) := by
@@ -1556,28 +1568,29 @@ private lemma catalanExp_second_sum_eq (E : ℕ → ℤ)
   convert hmul using 1
 
 /--
-The two Stirling-type asymptotic expansions of the Catalan numbers, in
-logarithmic form: with `C n = catalan n`, `log (C n * n * √(π * n) / 4 ^ n)`
-is asymptotic to `∑_{k=1}^{m} (-1)^{k+1} ((2^{-k} - 2) B_{k+1} - k - 1) /
-(k (k + 1)) n^{-k}` with remainder `o(n^{-m})` for every `m`, and
-`log (C n * √(π * (n + 3/4)^3) / 4 ^ n)` is asymptotic to
-`∑_{k=1}^{m} 2^{-4k-2} (4 - E_{2k}) / k (n + 3/4)^{-2k}` with remainder
-`o((n + 3/4)^{-2m})` for every `m`. The sequence `E` is pinned down by the
-Euler-number recurrence `E 0 = 1`, `∑_j C(n,2j) E_{n-2j} = 0` for `n > 0`
-(giving `E = 1, 0, -1, 0, 5, ...`), and `bernoulli` is the Bernoulli-number
-sequence. The `k = 1` term of the first expansion is `-9 / (8n)`, matching
-the classical `C_n = 4^n / (√π n^{3/2}) (1 - 9/(8n) + ...)`.
+**Stirling-type asymptotic expansions of the Catalan numbers.** Let $C_n$ be the $n$-th Catalan
+number and $B_k$ the $k$-th Bernoulli number, and let $(E_k)$ be a sequence of integers with
+$E_0 = 1$ and $\sum_{j=0}^{\lfloor n/2 \rfloor} \binom{n}{2j} E_{n-2j} = 0$ for every $n > 0$
+(these are the Euler numbers $1, 0, -1, 0, 5, \dots$). For $k \ge 1$ put
+$c_k = (-1)^{k+1} \left((2^{-k} - 2) B_{k+1} - k - 1\right) / (k (k + 1))$ and
+$d_k = 2^{-4k-2} (4 - E_{2k}) / k$. Then for every $m \ge 0$, as $n \to \infty$,
+$\log\left(C_n \, n \sqrt{\pi n} / 4^n\right) = \sum_{k=1}^{m} c_k n^{-k} + o(n^{-m})$ and,
+writing $x = n + 3/4$,
+$\log\left(C_n \sqrt{\pi x^3} / 4^n\right) = \sum_{k=1}^{m} d_k x^{-2k} + o(x^{-2m})$.
+
+The first coefficient is $c_1 = -9/8$, matching the classical expansion
+$C_n = \frac{4^n}{\sqrt{\pi} \, n^{3/2}} \left(1 - \frac{9}{8n} + \dots\right)$.
+
+Proof: The Catalan recurrence gives a logarithmic first-difference equation.
+Telescoping its Bernoulli-polynomial expansion yields both all-orders formulas.
+
+Proves `Wanted` entry `catalan_stirling_asymptotic_expansions`.
 
 Source: Neven Elezović, "Asymptotic Expansions of Central Binomial
 Coefficients and Catalan Numbers," Journal of Integer Sequences 17 (2014),
 Article 14.2.1, Catalan Stirling-type theorem (unlabeled, equation 42),
 lines 626–637,
 https://cs.uwaterloo.ca/journals/JIS/VOL17/Elezovic/elezovic5.tex
-
-Proves `Wanted` entry `catalan_stirling_asymptotic_expansions`.
-
-Proof: The Catalan recurrence gives a logarithmic first-difference equation.
-Telescoping its Bernoulli-polynomial expansion yields both all-orders formulas.
 -/
 public theorem catalan_stirling_asymptotic_expansions
     (E : ℕ → ℤ)

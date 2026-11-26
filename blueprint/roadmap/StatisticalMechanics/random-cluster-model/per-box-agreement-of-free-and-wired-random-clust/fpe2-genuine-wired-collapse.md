@@ -1,0 +1,3 @@
+# Wired average edge density collapse on boxes
+
+For $d, N \in \mathbb{N}$, the wired collapse condition holds when for every edge $e'$ of $\Lambda_N = \{-N, \dots, N\}^d$ and every $t \in \mathbb{R}$, the [average wired edge density](../convexity-of-the-free-energy-and-edge-densities/wpd-avg-wired-density.md) of $\Lambda_n$ with boundary $\partial\Lambda_n$ at $q = 2$ and tilt $t$ converges to $\theta^1_{e'}(\sigma(t))$ as $n \to \infty$; here $\theta^1_e(p)$ is the [wired edge density](wired-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the wired infinite-volume random-cluster measure on $\mathbb{Z}^d$) and $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).

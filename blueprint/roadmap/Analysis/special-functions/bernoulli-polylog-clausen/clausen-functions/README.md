@@ -1,0 +1,18 @@
+# Clausen functions
+
+- [Termwise bound for the Clausen series (Chapter 9, Entry 13)](chapter9-clausen-term-norm-bound.md)
+- [Summability of the Clausen series (Chapter 9, Entry 13)](chapter9-clausen-term-summable-of-two-le.md)
+- [Clausen function of order zero (Chapter 9, Entry 13)](chapter9-clausen-zero.md)
+- [Clausen function of order one (Chapter 9, Entry 13)](chapter9-clausen-one.md)
+- [Clausen functions of order at least two as series (Chapter 9, Entry 13)](chapter9-clausen-of-two-le.md)
+- [Integrals of $u^n \cot(u/2)$ via Clausen functions (Chapter 9, Entry 13)](ramanujan-part1-ch9-entry13-bernoulligen.md)
+- [Bound on the terms of the odd Clausen series](chapter9-odd-clausen-term-norm-bound.md)
+- [Summability of the odd Clausen series for $m \ge 2$](chapter9-odd-clausen-term-summable-of-tw.md)
+- [The odd Clausen function vanishes at $m = 0$](chapter9-odd-clausen-zero.md)
+- [The odd Clausen function at $m = 1$](chapter9-odd-clausen-one.md)
+- [The odd Clausen function as a series for $m \ge 2$](chapter9-odd-clausen-of-two-le.md)
+- [Odd-frequency part of a Clausen series for $m \ge 2$](chapter9-odd-clausen-eq-clausen-sub-of-t.md)
+- [Odd-frequency part of a Clausen function for $0 < |x| < \pi$](chapter9-odd-clausen-eq-clausen-sub.md)
+- [Odd reciprocal power sums in terms of $\zeta$](chapter9-chi-at-one-eq-zeta.md)
+- [Entry 14 of Chapter 9: the integral of $u^n / (2 \sin u)$](ramanujan-part1-ch9-entry14-xoversin.md)
+- [Entry 15 of Chapter 9: integrals of $u^n \cot u$ at $\pi/2 - x$](ramanujan-part1-ch9-entry15-xcot.md)

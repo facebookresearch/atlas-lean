@@ -1,0 +1,5 @@
+# Expansion of the Reimer deficit over one coordinate
+
+Let $\alpha$ be a finite set, $w : \alpha \times \{0,1\} \to \mathbb{R}$ arbitrary, $i \in \alpha$ and $\mathcal{A}, \mathcal{B}$ families of subsets of $\alpha$. Write $\mathcal{A}^+ = \{S \setminus \{i\} : S \in \mathcal{A},\ i \in S\}$ and $\mathcal{A}^- = \{S \in \mathcal{A} : i \notin S\}$, and similarly for $\mathcal{B}$; write $M = M_w$, $D = D_w$ for the [family weight](fmarg.md) and the [weighted number of disjoint pairs](wdpairs.md), and $M' = M_w^{(i)}$, $D' = D_w^{(i)}$ for the same quantities [off $i$](fmarg-2.md). Then
+
+$$\begin{aligned} M(\mathcal{A})M(\mathcal{B}) - D(\mathcal{A}, \mathcal{B}) &= w_i(1)^2\, M'(\mathcal{A}^+) M'(\mathcal{B}^+) \\ &\quad + w_i(1) w_i(0)\big(M'(\mathcal{A}^+) M'(\mathcal{B}^-) - D'(\mathcal{A}^+, \mathcal{B}^-)\big) \\ &\quad + w_i(0) w_i(1)\big(M'(\mathcal{A}^-) M'(\mathcal{B}^+) - D'(\mathcal{A}^-, \mathcal{B}^+)\big) \\ &\quad + w_i(0)^2\big(M'(\mathcal{A}^-) M'(\mathcal{B}^-) - D'(\mathcal{A}^-, \mathcal{B}^-)\big). \end{aligned}$$

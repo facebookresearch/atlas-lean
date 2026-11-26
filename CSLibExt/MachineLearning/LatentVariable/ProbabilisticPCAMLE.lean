@@ -50,7 +50,8 @@ open scoped RealInnerProductSpace
 
 variable {q d N : ℕ}
 
-/-- The probabilistic PCA covariance `W Wᵀ + σ² I`. -/
+/-- **Probabilistic PCA covariance.** For a real $d \times q$ matrix $W$ and a real number
+$\sigma^2$, the probabilistic PCA covariance is the $d \times d$ matrix $W W^\top + \sigma^2 I$. -/
 def ppcaCov (W : Matrix (Fin d) (Fin q) ℝ) (σ2 : ℝ) : Matrix (Fin d) (Fin d) ℝ :=
   W * Wᵀ + σ2 • 1
 
@@ -60,9 +61,13 @@ theorem ppcaCov_posDef (W : Matrix (Fin d) (Fin q) ℝ) {σ2 : ℝ} (hσ : 0 < �
     simpa [conjTranspose_eq_transpose_of_trivial] using posSemidef_self_mul_conjTranspose W
   exact PosDef.posSemidef_add hWW (PosDef.one.smul hσ)
 
-/-- **The density of the probabilistic PCA observation**: for `σ² > 0`, the law of
-`x = W z + μ + ε` has density `N(x | μ, W Wᵀ + σ² I)` with respect to Lebesgue measure (the
-marginal `ppca_map_eq` with MathlibExt's `multivariateGaussian_eq_withDensity`). -/
+/-- **The density of the probabilistic PCA observation.** Let $z$ and $\varepsilon$ be
+independent random vectors on a probability space, with $z$ standard Gaussian in $\mathbb{R}^q$
+and $\varepsilon$ Gaussian in $\mathbb{R}^d$ with mean $0$ and covariance $\sigma^2 I$, where
+$\sigma^2 > 0$. Then for every real $d \times q$ matrix $W$ and every $\mu \in \mathbb{R}^d$, the
+law of $x = W z + \mu + \varepsilon$ has density $\mathcal{N}(x \mid \mu, W W^\top + \sigma^2 I)$
+with respect to Lebesgue measure on $\mathbb{R}^d$, where $\mathcal{N}(x \mid \mu, \Sigma)$ is the
+multivariate Gaussian density with mean $\mu$ and covariance $\Sigma$. -/
 theorem ppca_map_eq_withDensity {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {Z : Ω → EuclideanSpace ℝ (Fin q)} {E : Ω → EuclideanSpace ℝ (Fin d)}
     {σ2 : ℝ} (hσ : 0 < σ2) (hZ : HasLaw Z (stdGaussian _) P)
@@ -74,29 +79,55 @@ theorem ppca_map_eq_withDensity {Ω : Type*} [MeasurableSpace Ω] {P : Measure �
   rw [ppca_map_eq hσ.le hZ hE hind W μ]
   exact multivariateGaussian_eq_withDensity μ (ppcaCov_posDef W hσ)
 
-/-- The probabilistic PCA log-likelihood `∑ n, log N(xₙ | μ, W Wᵀ + σ² I)` of data `xs`. -/
+/-- **Probabilistic PCA log-likelihood.** For data $x_1, \dots, x_N \in \mathbb{R}^d$, a mean
+$\mu \in \mathbb{R}^d$, a real $d \times q$ loading matrix $W$ and a real number $\sigma^2$, the
+probabilistic PCA log-likelihood of the data is
+$$
+\sum_{n=1}^N \log \mathcal{N}(x_n \mid \mu, W W^\top + \sigma^2 I),
+$$
+where, for a real $d \times d$ matrix $\Sigma$ and $x \in \mathbb{R}^d$,
+$$
+\mathcal{N}(x \mid \mu, \Sigma) = (2\pi)^{-d/2} \bigl(\sqrt{\det \Sigma}\bigr)^{-1}
+\exp\bigl(-\tfrac{1}{2} (x - \mu)^\top \Sigma^{-1} (x - \mu)\bigr)
+$$
+is the multivariate Gaussian density formula, read with the conventions $\sqrt{t} = 0$ for
+$t < 0$, $0^{-1} = 0$, $\Sigma^{-1} = 0$ for singular $\Sigma$ and $\log 0 = 0$. These conventions
+matter only when $W W^\top + \sigma^2 I$ is not positive definite. When $\sigma^2 > 0$ the matrix
+$W W^\top + \sigma^2 I$ is positive definite, and this is the density of the Gaussian with mean
+$\mu$ and covariance $W W^\top + \sigma^2 I$. -/
 noncomputable def logLik (xs : Fin N → EuclideanSpace ℝ (Fin d)) (μ : EuclideanSpace ℝ (Fin d))
     (W : Matrix (Fin d) (Fin q) ℝ) (σ2 : ℝ) : ℝ :=
   ∑ n, log (multivariateGaussianPDFReal μ (ppcaCov W σ2) (xs n))
 
-/-- The sample mean. -/
+/-- **Sample mean.** For data points $x_1, \dots, x_N \in \mathbb{R}^d$, the sample mean is
+$\bar x = \frac{1}{N} \sum_{n=1}^{N} x_n \in \mathbb{R}^d$.
+
+When $N = 0$ the sample mean is $0$. -/
 noncomputable abbrev sampleMean (xs : Fin N → EuclideanSpace ℝ (Fin d)) :
     EuclideanSpace ℝ (Fin d) :=
   weightedMean 1 xs
 
-/-- The sample covariance `(1 / N) ∑ n, (xₙ - x̄)(xₙ - x̄)ᵀ`. -/
+/-- **Sample covariance.** For data $x_1, \dots, x_N \in \mathbb{R}^d$ with sample mean
+$\bar{x}$, the sample covariance is the $d \times d$ matrix
+$S = \frac{1}{N} \sum_{n=1}^N (x_n - \bar{x})(x_n - \bar{x})^\top$, taken to be $0$ when
+$N = 0$. -/
 noncomputable abbrev sampleCov (xs : Fin N → EuclideanSpace ℝ (Fin d)) :
     Matrix (Fin d) (Fin d) ℝ :=
   weightedScatter 1 xs (sampleMean xs)
 
-/-- With no data the log-likelihood is zero. -/
+/-- **The log-likelihood of no data is zero.** For the empty data set ($N = 0$), the
+probabilistic PCA log-likelihood at every $\mu \in \mathbb{R}^d$, every real $d \times q$ matrix
+$W$ and every real number $\sigma^2$ is $0$. -/
 theorem logLik_of_N_eq_zero (hN : N = 0) (xs : Fin N → EuclideanSpace ℝ (Fin d))
     (μ : EuclideanSpace ℝ (Fin d)) (W : Matrix (Fin d) (Fin q) ℝ) (σ2 : ℝ) :
     logLik xs μ W σ2 = 0 := by
   subst hN
   simp [logLik]
 
-/-- **The mean MLE is the sample mean**, for any loading matrix `W` and `σ² > 0`. -/
+/-- **The mean MLE is the sample mean.** Let $x_1, \dots, x_N \in \mathbb{R}^d$ be data with
+sample mean $\bar{x}$. For every $\mu \in \mathbb{R}^d$, every real $d \times q$ loading matrix
+$W$ and every real $\sigma^2 > 0$, the probabilistic PCA log-likelihood of the data at
+$(\mu, W, \sigma^2)$ is at most its value at $(\bar{x}, W, \sigma^2)$. -/
 theorem logLik_le_sampleMean (xs : Fin N → EuclideanSpace ℝ (Fin d))
     (μ : EuclideanSpace ℝ (Fin d)) (W : Matrix (Fin d) (Fin q) ℝ) {σ2 : ℝ} (hσ : 0 < σ2) :
     logLik xs μ W σ2 ≤ logLik xs (sampleMean xs) W σ2 := by
@@ -106,10 +137,16 @@ theorem logLik_le_sampleMean (xs : Fin N → EuclideanSpace ℝ (Fin d))
   simpa [logLik] using
     sum_mul_log_multivariateGaussianPDFReal_le_weightedMean hw xs μ (ppcaCov_posDef W hσ)
 
-/-- **The probabilistic PCA likelihood is at most the unconstrained Gaussian maximum**: when the
-sample covariance is positive definite (for example, data not all in an affine hyperplane,
-`weightedScatter_posDef`), every `(μ, W, σ²)` has log-likelihood at most that of the Gaussian with
-the sample mean and the sample covariance. -/
+/-- **The probabilistic PCA likelihood is at most the unconstrained Gaussian maximum.** Let
+$x_1, \dots, x_N \in \mathbb{R}^d$ be data whose sample covariance $S$ is positive definite, and
+let $\bar{x}$ be their sample mean. Then for every $\mu \in \mathbb{R}^d$, every real
+$d \times q$ matrix $W$ and every real $\sigma^2 > 0$, the probabilistic PCA log-likelihood of the
+data at $(\mu, W, \sigma^2)$ is at most $\sum_{n=1}^N \log \mathcal{N}(x_n \mid \bar{x}, S)$,
+where $\mathcal{N}(x \mid \bar{x}, S)$ is the multivariate Gaussian density with mean $\bar{x}$
+and covariance $S$.
+
+The sample covariance is positive definite, for example, when the data do not all lie in an
+affine hyperplane. -/
 theorem logLik_le_gaussianMLE {xs : Fin N → EuclideanSpace ℝ (Fin d)}
     (hS : (sampleCov xs).PosDef) (μ : EuclideanSpace ℝ (Fin d)) (W : Matrix (Fin d) (Fin q) ℝ)
     {σ2 : ℝ} (hσ : 0 < σ2) :
@@ -122,15 +159,23 @@ theorem logLik_le_gaussianMLE {xs : Fin N → EuclideanSpace ℝ (Fin d)}
   simpa [logLik] using sum_mul_log_multivariateGaussianPDFReal_le_of_posDef hw hS μ
     (ppcaCov_posDef W hσ)
 
-/-- `(μ₀, W₀, σ₀²)` is a probabilistic PCA maximum-likelihood estimate: a valid parameter
-(`σ₀² > 0`) whose log-likelihood is at least that of every valid parameter `(μ, W, σ² > 0)`. -/
+/-- **Probabilistic PCA maximum-likelihood estimate.** Given data
+$x_1, \dots, x_N \in \mathbb{R}^d$, a triple $(\mu_0, W_0, \sigma_0^2)$ of a mean
+$\mu_0 \in \mathbb{R}^d$, a real $d \times q$ loading matrix $W_0$ and a real number $\sigma_0^2$
+is a probabilistic PCA maximum-likelihood estimate when $\sigma_0^2 > 0$ and, for every
+$\mu \in \mathbb{R}^d$, every real $d \times q$ matrix $W$ and every real $\sigma^2 > 0$, the
+probabilistic PCA log-likelihood of the data at $(\mu, W, \sigma^2)$ is at most its value at
+$(\mu_0, W_0, \sigma_0^2)$. -/
 def IsMLE (xs : Fin N → EuclideanSpace ℝ (Fin d)) (μ₀ : EuclideanSpace ℝ (Fin d))
     (W₀ : Matrix (Fin d) (Fin q) ℝ) (σ₀2 : ℝ) : Prop :=
   0 < σ₀2 ∧ ∀ (μ : EuclideanSpace ℝ (Fin d)) (W : Matrix (Fin d) (Fin q) ℝ) (σ2 : ℝ), 0 < σ2 →
     logLik xs μ W σ2 ≤ logLik xs μ₀ W₀ σ₀2
 
-/-- **Exact recovery**: if the sample covariance has the probabilistic PCA form `W₀ W₀ᵀ + σ₀² I`
-with `σ₀² > 0`, then `(x̄, W₀, σ₀²)` is a maximum-likelihood estimate. -/
+/-- **Probabilistic PCA MLE when the sample covariance has the model form.** Let
+$x_1, \dots, x_N \in \mathbb{R}^d$ be data with sample mean $\bar{x}$ and sample covariance $S$.
+If $W_0$ is a real $d \times q$ matrix and $\sigma_0^2 > 0$ is a real number with
+$S = W_0 W_0^\top + \sigma_0^2 I$, then $(\bar{x}, W_0, \sigma_0^2)$ is a probabilistic PCA
+maximum-likelihood estimate for the data. -/
 theorem isMLE_of_sampleCov_eq {xs : Fin N → EuclideanSpace ℝ (Fin d)}
     {W₀ : Matrix (Fin d) (Fin q) ℝ} {σ₀2 : ℝ} (hσ₀ : 0 < σ₀2)
     (h : sampleCov xs = ppcaCov W₀ σ₀2) : IsMLE xs (sampleMean xs) W₀ σ₀2 := by
@@ -138,8 +183,15 @@ theorem isMLE_of_sampleCov_eq {xs : Fin N → EuclideanSpace ℝ (Fin d)}
   have := logLik_le_gaussianMLE (h ▸ ppcaCov_posDef W₀ hσ₀) μ W hσ
   rwa [h] at this
 
-/-- **No latent factors (`W = 0`): the noise-variance MLE is `tr S / d`**, the average sample
-variance (Tipping and Bishop's `σ²` estimate with no retained components). -/
+/-- **No latent factors: the noise-variance MLE is the average sample variance.** Let
+$x_1, \dots, x_N \in \mathbb{R}^d$ be data with sample mean $\bar{x}$ and sample covariance $S$,
+and suppose $\operatorname{tr} S > 0$. Then for every $\mu \in \mathbb{R}^d$ and every real
+$\sigma^2 > 0$, the probabilistic PCA log-likelihood of the data with the zero $d \times q$
+loading matrix at $(\mu, 0, \sigma^2)$ is at most its value at
+$(\bar{x}, 0, \operatorname{tr} S / d)$.
+
+Here $\operatorname{tr} S / d$ is the average sample variance (Tipping and Bishop's $\sigma^2$
+estimate with no retained components). -/
 theorem logLik_zero_le {xs : Fin N → EuclideanSpace ℝ (Fin d)}
     (hT : 0 < (sampleCov xs).trace) (μ : EuclideanSpace ℝ (Fin d)) {σ2 : ℝ} (hσ : 0 < σ2) :
     logLik xs μ (0 : Matrix (Fin d) (Fin q) ℝ) σ2 ≤

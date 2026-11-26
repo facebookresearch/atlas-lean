@@ -1,0 +1,15 @@
+# N-continued fraction expansions
+
+- [Digit of the N-expansion map](n-expansion-digit.md)
+- [The $N$-expansion map](n-expansion-map.md)
+- [The digit away from the left endpoint](n-expansion-digit-of-ne.md)
+- [The N-expansion map away from the left endpoint](n-expansion-map-mem-ico-of-ne.md)
+- [The left endpoint goes to the right endpoint when $N/\alpha - \alpha$ is an integer](n-expansion-map-self-of-int.md)
+- [Ideal period words](ideal-period-word.md)
+- [The fifth ideal period word](ideal-period-word-five.md)
+- [Lengths of the first ideal period words](ideal-period-word-flatten-length-small.md)
+- [Orbits with the same digits alternate in order](n-expansion-orbit-gt-iff-odd.md)
+- [The ideal periodic points decrease](ideal-period-word-point-lt-iff.md)
+- [The ideal periodic point is the least point of its orbit](ideal-period-word-point-le-orbit.md)
+- [Length of the ideal period words](ideal-period-word-flatten-length.md)
+- [Block counts of the ideal period words](ideal-period-word-count-blocks.md)

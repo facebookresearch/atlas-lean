@@ -1,0 +1,18 @@
+# Circuit satisfiability
+
+- [Certificate position of a wire](to-fin.md)
+- [Boolean certificate verifier](verify-boolean-certificate.md)
+- [Characterization of accepted certificates](verify-boolean-certificate-iff.md)
+- [Soundness of the Boolean certificate verifier](verify-boolean-certificate-sound.md)
+- [Completeness of the Boolean certificate verifier](verify-boolean-certificate-complete.md)
+- [Short accepted certificates exist exactly for satisfiable circuits](verify-boolean-certificate-satisfiable-i.md)
+- [Cost of the Boolean certificate verifier](verify-boolean-certificate-time.md)
+- [Linear cost of the Boolean certificate verifier](verify-boolean-certificate-time-le-of-fa.md)
+- [Circuit-satisfiability instances](circuit-sat-instance.md)
+- [Resolving a circuit input](circuit-ref.md)
+- [Value of a gate](gate-value.md)
+- [Evaluating a circuit](eval-circuit.md)
+- [Well-formed circuit-satisfiability instances](well-formed.md)
+- [Satisfiable circuit instances](circuit-sat-feasible.md)
+- [The CIRCUIT SAT decision problem](circuit-sat-dec.md)
+- [CIRCUIT SAT is NP-complete](circuit-sat-np-complete.md)

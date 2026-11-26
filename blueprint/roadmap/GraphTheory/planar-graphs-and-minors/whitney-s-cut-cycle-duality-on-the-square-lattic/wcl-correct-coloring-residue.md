@@ -1,0 +1,3 @@
+# Cut coloring separating the ends of a dual edge
+
+The statement that, for every simple graph $H$ on $\mathbb{Z}^2$ and all adjacent faces $f_0, g_0$ such that every closed walk in the square lattice has an even number of cut steps (steps $\{a, b\}$ whose separating primal edge is an edge of $H$, or with $\{a, b\} = \{f_0, g_0\}$), there is a colouring $\varphi$ of the faces that changes value across a pair of adjacent faces exactly at the cut steps, with $\varphi(f_0) \neq \varphi(g_0)$, and $f_0$ and $g_0$ are not joined by a walk in the face-region graph of $H$ with the edge $\{f_0, g_0\}$ deleted.

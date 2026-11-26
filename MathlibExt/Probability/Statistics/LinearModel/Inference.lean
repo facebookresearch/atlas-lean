@@ -312,7 +312,9 @@ private lemma tStatistic_intercept {n : ℕ} (hn : 1 ≤ n) (μ : ℝ) (x : Fin 
     contrastVariance_intercept hn0, Fintype.card_fin, Fintype.card_fin, Nat.cast_sub hn,
     Nat.cast_one, div_sqrt_mul_inv _ _ (Nat.cast_nonneg n), hnum, hrss]
 
-private lemma hasLaw_pi_gaussianReal_standardize {n : ℕ} (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+/-- For `v ≠ 0`, standardizing each coordinate, `x ↦ (√v)⁻¹ • (x - μ)`, maps the i.i.d. `N(μ, v)`
+law on `Fin n → ℝ` to the i.i.d. standard normal law. -/
+lemma hasLaw_pi_gaussianReal_standardize {n : ℕ} (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
     HasLaw (fun x : Fin n → ℝ => (√(v : ℝ))⁻¹ • (x - fun _ => μ))
       (Measure.pi fun _ : Fin n => gaussianReal 0 1)
       (Measure.pi fun _ : Fin n => gaussianReal μ v) := by

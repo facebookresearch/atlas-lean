@@ -1,0 +1,5 @@
+# The trivial protocol for equality
+
+For $n \in \mathbb{N}$, the equality function $\mathrm{EQ}_n : \{0,1\}^n \times \{0,1\}^n \to \{0, 1\}$ is $1$ exactly on pairs $(x, y)$ with $x = y$. Here protocols have inputs $X = Y = \{0,1\}^n$. A protocol is a finite binary tree whose leaves are labelled by bits and whose internal nodes are each owned by Alice, labelled by a map $X \to \{0, 1\}$, or by Bob, labelled by a map $Y \to \{0, 1\}$, with a $0$-child and a $1$-child. On inputs $(x, y)$ the run starts at the root; at an Alice node with map $a$ the bit $a(x)$ is announced and the run moves to the child with that bit, at a Bob node with map $b$ the bit $b(y)$ is announced likewise; the output is the label of the leaf reached. For $n \in \mathbb{N}$, the trivial protocol for $\mathrm{EQ}_n$ has Alice announce the $n$ bits of her
+input $x$ one at a time; after the message $m$, Bob announces the bit $1$ if $m = y$ and $0$ otherwise, and
+the leaf reached outputs that bit. It exchanges $n + 1$ bits.

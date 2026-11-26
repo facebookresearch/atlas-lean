@@ -49,6 +49,24 @@ example : ∃ hc : ℝ, hc = (1 ^ 2 / (1 : ℝ)) ^ (1 / 3 : ℝ) ∧ hc = 1 := b
   rw [hhc]
   norm_num
 
+/-- The named critical depth at unit discharge and gravity is `1`. -/
+example : EarthScience.rectangularCriticalDepth 1 1 = 1 ∧
+    (EarthScience.rectangularCriticalDepth 1 1) ^ 3 = 1 := by
+  constructor
+  · unfold EarthScience.rectangularCriticalDepth
+    norm_num
+  · rw [EarthScience.rectangularCriticalDepth_cube (by norm_num)]
+    norm_num
+
+/-- Named minimizer form at unit discharge and gravity. -/
+example : ∀ h : ℝ, 0 < h →
+    EarthScience.rectangularSpecificEnergy 1 1 h ≥
+      EarthScience.rectangularSpecificEnergy 1 1
+        (EarthScience.rectangularCriticalDepth 1 1) := by
+  intro h hh
+  exact ((EarthScience.specific_energy_unique_minimum_at_rectangularCriticalDepth
+    (by norm_num) (by norm_num)).2 h hh).1
+
 /-- For `q = 1`, `g = 1` the minimum specific energy is `3 / 2`. -/
 example : ∃ hc : ℝ, hc = 1 ∧
     (1 : ℝ) + 1 ^ 2 / (2 * 1 * (1 : ℝ) ^ 2) = 3 / 2 ∧
@@ -65,6 +83,7 @@ example : ∃ hc : ℝ, hc = 1 ∧
     have hthis := (hmin h hh).1
     rw [hhc1] at hthis
     have h32 : (1 : ℝ) + 1 ^ 2 / (2 * 1 * (1 : ℝ) ^ 2) = 3 / 2 := by norm_num
+    unfold EarthScience.rectangularSpecificEnergy at hthis
     linarith
 
 /-! ## B. Values above the minimum -/

@@ -92,7 +92,47 @@ example :
       ≤ Real.sqrt 2 * Real.sqrt 2 := hbound
     _ = 2 := h2
 
+-- The zero extension agrees with the profile on the band and vanishes off it.
+example : PW.bandExt 1 (fun _ => (3 : ℂ)) (1 / 2) = 3 := by
+  have hmem : (1 / 2 : ℝ) ∈ Set.Icc (-1) 1 := ⟨by norm_num, by norm_num⟩
+  exact Set.indicator_of_mem hmem _
+
+example : PW.bandExt 1 (fun _ => (3 : ℂ)) 2 = 0 := by
+  have hmem : (2 : ℝ) ∉ Set.Icc (-1) 1 := by norm_num [Set.mem_Icc]
+  exact Set.indicator_of_notMem hmem _
+
+-- Sample-coefficient identity at the boundary `2 * B * T = 1`: the constant
+-- profile has zeroth coefficient `1`.
+example :
+    fourierCoeffOn (show (-(1 / (2 * (1 : ℝ))) : ℝ) < 1 / (2 * (1 : ℝ)) by norm_num)
+        (PW.bandExt (1 / 2) (fun _ => (1 : ℂ))) 0 = 1 := by
+  have h := PW.fourierCoeff_eq_sample (B := 1 / 2) (T := 1) (by norm_num) (by norm_num)
+    (by norm_num) (intervalIntegrable_const (c := (1 : ℂ))) 0
+  rw [h]
+  norm_num [PW.rep, intervalIntegral.integral_const]
+
+-- The sign convention is the sample at `-n * T`: for the non-even profile
+-- `ν ↦ ν`, the first coefficient is the representative at `-1`, not at `1`.
+example :
+    fourierCoeffOn (show (-(1 / (2 * (1 : ℝ))) : ℝ) < 1 / (2 * (1 : ℝ)) by norm_num)
+        (PW.bandExt (1 / 2) (fun ν => (ν : ℂ))) 1
+      = (1 : ℂ) * PW.rep (1 / 2) (fun ν => (ν : ℂ)) (-1) := by
+  have hg : IntervalIntegrable (fun ν => (ν : ℂ)) volume (-(1 / 2)) (1 / 2) :=
+    Complex.continuous_ofReal.intervalIntegrable _ _
+  simpa using PW.fourierCoeff_eq_sample (B := 1 / 2) (T := 1) (by norm_num) (by norm_num)
+    (by norm_num) hg 1
+
+-- Changing a profile off the band changes neither the zero extension nor the
+-- representative samples.
+example {g h : ℝ → ℂ} (hgh : Set.EqOn g h (Set.Icc (-1 : ℝ) 1)) :
+    PW.bandExt 1 g = PW.bandExt 1 h := by
+  funext ν
+  by_cases hν : ν ∈ Set.Icc (-1 : ℝ) 1
+  · simp [PW.bandExt, Set.indicator_of_mem hν, hgh hν]
+  · simp [PW.bandExt, Set.indicator_of_notMem hν]
+
 #print axioms PW.rep_add
 #print axioms PW.rep_smul
 #print axioms PW.rep_continuous
 #print axioms PW.norm_rep_le
+#print axioms PW.fourierCoeff_eq_sample

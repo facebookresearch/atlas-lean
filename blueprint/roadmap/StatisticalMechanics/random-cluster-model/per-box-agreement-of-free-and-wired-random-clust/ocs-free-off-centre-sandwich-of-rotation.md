@@ -1,0 +1,12 @@
+# Free off-centre sandwich from free rotation residues
+
+Let $d \ge 1$ and $N \in \mathbb{N}$, and suppose the [free rotation residue](ocs-free-rotation-residue.md) holds for every edge $e'$ of $\Lambda_N$ and every $t$: every edge $e$ of every box $\Lambda_m$ satisfies $\theta^0_e(\sigma(t)) = \theta^0_{e'}(\sigma(t))$. Then for every edge $e'$ of $\Lambda_N$ and every $t \in \mathbb{R}$, there are sets $I_n$ of edges of $\Lambda_n$ and numbers $\delta_n \ge 0$ with $\delta_n \to 0$ such that every $e \in I_n$ satisfies $\theta^0_e(\sigma(t)) = \theta^0_{e'}(\sigma(t))$ and $\theta^0_{e'}(\sigma(t)) - \delta_n \le \phi_n(e \text{ open})$, and $(E(n) - |I_n|)/E(n) \to 0$ (read as $0$ when $E(n) = 0$). Here $\theta^0_e(p)$ is the [free edge density](free-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the free infinite-volume random-cluster measure on $\mathbb{Z}^d$, a chosen subsequential weak limit of the free box measures), $\phi_n = \phi_{\Lambda_n,\sigma(t),2}$ is the [random-cluster probability](../random-cluster-measures-on-finite-graphs/fk-prob.md) of the nearest-neighbour graph on $\Lambda_n = \{-n, \dots, n\}^d$, $E(n)$ is the number of edges of $\Lambda_n = \{-n, \dots, n\}^d$, and $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).
+
+## Depends on
+
+- [Free off-centre sandwich hypothesis](../translation-invariance-and-ergodicity-of-the-q-2/bdp-free-off-centre-sandwich.md)
+- [Free infinite-volume edge density](free-edge-density.md)
+- [Free rotation residue for a box pair](ocs-free-rotation-residue.md)
+- [Logistic function $e^t/(1+e^t)$](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md)
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Probability of an ambient FK configuration](../random-cluster-measures-on-finite-graphs/fk-prob.md)

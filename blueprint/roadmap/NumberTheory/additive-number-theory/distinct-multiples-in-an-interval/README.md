@@ -1,0 +1,15 @@
+# Distinct multiples in an interval
+
+- [Distinct multiples of $1, \dots, n$ in an interval](has-distinct-multiples-in-interval.md)
+- [Least interval length containing distinct multiples](distinct-multiples-interval-length.md)
+- [Lengthening the interval preserves distinct multiples](mono.md)
+- [Some interval contains distinct multiples](exists-has-distinct-multiples-in-interva.md)
+- [The least interval length is admissible](has-distinct-multiples-in-interval-disti.md)
+- [Characterization of the least interval length](distinct-multiples-interval-length-le-if.md)
+- [The least interval length for $n = 1$](distinct-multiples-interval-length-one.md)
+- [An inequality between diagonal and shifted interval lengths](distinct-multiples-interval-length-mul-l.md)
+- [Erdős–Pomerance bounds for the diagonal interval length](distinct-multiples-interval-length-diag.md)
+- [Shifting the interval can greatly increase the least length](exists-distinct-multiples-interval-lengt.md)
+- [Erdős's matching function for multiples in intervals](f.md)
+- [Statement of Erdős Problem 650](conjecture.md)
+- [Erdős Problem 650: matching integers to distinct multiples](conjecture-holds.md)

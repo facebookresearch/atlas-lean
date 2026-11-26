@@ -1,0 +1,3 @@
+# Russo's formula for the Bernoulli product measure
+
+Let $E$ be a finite set, $A \subseteq \{0, 1\}^E$ an [increasing](../../../correlation-inequalities/harris-fkg-bk/increasing-events-and-the-fkg-lattice-condition/is-increasing.md) event and $0 < p < 1$. The function $q \mapsto \mathbb{P}_q(A)$ of [Bernoulli probabilities extended to $\mathbb{R}$](measure-prob.md) is differentiable at $p$ with derivative $\sum_{e \in E} I_e^p(A)$, the sum of the [influences](../../phase-transition/sharp-thresholds-from-influences/influence.md) $I_e^p(A) = \mathbb{P}_p(e \text{ is pivotal for } A)$; and at $p$ the value $\mathbb{P}_p(A)$ is the probability of $A$ under the Bernoulli product measure with parameter $p$.

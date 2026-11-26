@@ -60,4 +60,44 @@ example (S : Matrix (Fin 2) (Fin 2) ℝ) : gaussLogLik S 0 = 0 := by
 #print axioms condIndepFun_iff_inv_apply_eq_zero
 #print axioms eq_of_gaussLogLik_eq
 
+/-- Unequal weights on a disconnected graph (vertex `2` is isolated): the Laplacian quadratic form
+of `z = (1, 0, 5)` is `(∑ᵢ ∑ⱼ wᵢⱼ (zᵢ - zⱼ)²) / 2 = 3`. -/
+example : (![1, 0, 5] : Fin 3 → ℝ) ⬝ᵥ
+    (diagonal (fun i => ∑ j, !![0, 3, 0; 3, 0, 0; 0, 0, 0] i j) - !![0, 3, 0; 3, 0, 0; 0, 0, 0]) *ᵥ
+      ![1, 0, 5] = 3 := by
+  rw [(dotProduct_laplacian_mulVec_and_posDef_leroux (W := !![(0 : ℝ), 3, 0; 3, 0, 0; 0, 0, 0])
+    (by ext i j; fin_cases i <;> fin_cases j <;> rfl)).1]
+  simp [Fin.sum_univ_three]
+
+/-- Positive definiteness of the Leroux matrix for these weights at `ρ = 1/2`, although the graph
+is disconnected (so `L` itself is singular). -/
+example : ((1 / 2 : ℝ) • (diagonal (fun i => ∑ j, !![(0 : ℝ), 3, 0; 3, 0, 0; 0, 0, 0] i j) -
+    !![0, 3, 0; 3, 0, 0; 0, 0, 0]) + (1 - 1 / 2 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ)).PosDef :=
+  (((dotProduct_laplacian_mulVec_and_posDef_leroux (W := !![(0 : ℝ), 3, 0; 3, 0, 0; 0, 0, 0])
+    (by ext i j; fin_cases i <;> fin_cases j <;> rfl)).2.1 (1 / 2)
+    (by intro i j; fin_cases i <;> fin_cases j <;> norm_num) (by norm_num) (by norm_num)).2)
+
+/-- At `ρ = 0` the Leroux matrix is the identity, and `Q 1 = 1` for any weights. -/
+example (W : Matrix (Fin 3) (Fin 3) ℝ) (hW : Wᵀ = W) :
+    ((0 : ℝ) • (diagonal (fun i => ∑ j, W i j) - W) +
+        (1 - 0 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ)) *ᵥ (fun _ => (1 : ℝ)) =
+      (fun _ => (1 : ℝ)) := by
+  rw [(dotProduct_laplacian_mulVec_and_posDef_leroux hW).2.2 0]
+  simp
+
+/-- The block identity on a split `Fin 2 ⊕ Fin 1`. -/
+example {S : Matrix (Fin 2 ⊕ Fin 1) (Fin 2 ⊕ Fin 1) ℝ} (hS : S.PosDef) :
+    S.toBlocks₁₂ * S.toBlocks₂₂⁻¹ = -((S⁻¹.toBlocks₁₁)⁻¹ * S⁻¹.toBlocks₁₂) :=
+  toBlocks₁₂_mul_inv_toBlocks₂₂ hS
+
+/-- A concrete instance with `S = 1`: both sides vanish, as the blocks are uncorrelated. -/
+example : (1 : Matrix (Fin 1 ⊕ Fin 1) (Fin 1 ⊕ Fin 1) ℝ).toBlocks₁₂ *
+    (1 : Matrix (Fin 1 ⊕ Fin 1) (Fin 1 ⊕ Fin 1) ℝ).toBlocks₂₂⁻¹ = 0 := by
+  rw [toBlocks₁₂_mul_inv_toBlocks₂₂ PosDef.one]
+  ext i j
+  simp [Matrix.mul_apply, toBlocks₁₂]
+
+#print axioms dotProduct_laplacian_mulVec_and_posDef_leroux
+#print axioms toBlocks₁₂_mul_inv_toBlocks₂₂
+
 end MathlibExtTest.Probability.Statistics.GaussianGraphicalModel

@@ -1,0 +1,44 @@
+# The ATLAS wiki and its tooling. A change here needs one approval from the
+# code owners below (CONTRIBUTING.md, Graph PRs), except the wiki files that
+# scripts/sync_wiki.py declarations writes for a pull request's own
+# declarations, when those are its only wiki changes, a Lean pull request's
+# edits for the declarations it renames, moves or removes (but not unlinking a
+# page whose own declaration goes with no successor), and a graph-sync batch.
+# Any other file here, the tooling included, still needs that approval.
+# GitHub enforces approvals
+# only once a maintainer turns on "Require review from Code Owners" for main,
+# and then for every change here.
+/blueprint/                                       @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/generate_wiki.py                         @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/sync_wiki.py                             @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/graph_batch.py                           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/import_mathgraph.py                      @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/extract_v2_lean_dependencies.py          @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/dump_v2_dependencies.lean                @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/extract_mathlib_graph.py                 @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/dump_mathlib_dependencies.lean           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_extract_mathlib_graph.py            @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/check_blueprint_site.py                  @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/taxonomy.json                            @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/wiki-sync.json                           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/mathgraph-map.jsonl                      @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/requirements-blueprint.txt               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_generate_wiki_navigation.py         @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_generate_wiki_docstrings.py         @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_sync_wiki.py                        @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_graph_batch.py                      @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_import_mathgraph.py                 @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_extract_v2_lean_dependencies.py     @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_check_blueprint_site_navigation.py  @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_site_chrome.py                      @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_blueprint_workflow.py               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/scripts/test_blueprint_taxonomy.py               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/mkdocs.yml                                       @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/theme/                                           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/hooks/                                           @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/docs/BLUEPRINT.md                                @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/docs/mathgraph-import.md                         @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/.github/workflows/blueprint-pages.yml            @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/.github/workflows/graph-sync.yml                 @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/.github/autoform-ref                             @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal
+/.github/CODEOWNERS                               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua @CharlesArnal

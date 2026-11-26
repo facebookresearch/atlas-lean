@@ -1,0 +1,3 @@
+# Keep-reconnect residue for finite graphs
+
+The statement that, for every simple graph $H$ on $\mathbb{Z}^2$ with finitely many edges, all sites $p, q, f_0, g_0 \in \mathbb{Z}^2$ such that $p, q$ are nearest neighbours with $\{p, q\}$ not an edge of $H$, $f_0, g_0$ are adjacent unit faces (labelled by lower left corners) whose separating primal edge is $\{p, q\}$, and $p, q$ are not joined by a walk in $H$: the faces $f_0$ and $g_0$ are joined by a walk in the face-region graph of $H$ (adjacent faces joined unless their separating primal edge is an edge of $H$) with the edge $\{f_0, g_0\}$ deleted.

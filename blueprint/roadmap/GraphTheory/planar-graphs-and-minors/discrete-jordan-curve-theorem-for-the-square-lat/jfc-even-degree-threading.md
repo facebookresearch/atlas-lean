@@ -1,0 +1,3 @@
+# Whitney duality for even-degree planar lattice subgraphs
+
+The statement that Whitney's cut–cycle duality holds for every finite graph in the square lattice whose image has even degree at every site: for every finite graph $G = (V, E)$ with an injective map $\iota : V \to \mathbb{Z}^2$ sending edges to lattice edges such that every site has even degree in $\iota(G)$, for every subgraph $K \le G$, every edge $\{x, y\}$ of $G$ not in $K$ and every pair of adjacent faces $f_0, g_0$ separated by the primal edge $\{\iota(x), \iota(y)\}$, the vertices $x$ and $y$ are joined by a walk in $K$ if and only if $f_0$ and $g_0$ are not joined by a walk in the face-region graph of $\iota(K)$ with the dual edge $\{f_0, g_0\}$ deleted.

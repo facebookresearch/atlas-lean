@@ -1,0 +1,3 @@
+# Drift model of an admixture graph
+
+Let $G$ be an [admixture graph](admixture-graph.md) on a finite set of nodes, let $\mu$ be a measure on a measurable space $\Omega$, let $r$ be a square-integrable real function on $\Omega$ (the root frequency), and for each [edge](edge.md) $e$ of $G$ let $\delta_e$ be a square-integrable real function on $\Omega$ (the drift increment), with $\int \delta_e \delta_f \, d\mu = 0$ for $e \ne f$. The drift model of $G$ is the [drift model](../patterson-s-f-statistics/drift-model.md) whose populations are the nodes, whose edges are the edges of $G$, with root frequency $r$, increments $\delta_e$, drift lengths $\ell_e = \int \delta_e^2 \, d\mu$ and the [lineage weights](weight.md) of $G$.

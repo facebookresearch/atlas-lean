@@ -1,0 +1,18 @@
+# Toeplitz–Hessenberg determinants of recurrences
+
+- [Trudi's formula as a generating function](toeplitz-hessenberg-det-generating-funct.md)
+- [Generating function of Toeplitz–Hessenberg determinants with entries $(bk + c)d^k$](toeplitz-hessenberg-det-linear-mul-pow-g.md)
+- [Composition-sum formulas for $F_{2n}$, $F_{3n-1}$ and $P_{n-1}$](fib-pell-composition-sums.md)
+- [A composition sum with weights $(c_i + 1) 2^{c_i - 2}$ in terms of Fibonacci and Lucas numbers](composition-sum-succ-mul-two-zpow.md)
+- [Composition-sum formulas for $F_{n+3}$, $F_{3n+1}$ and Jacobsthal and Pell numbers](fib-jacobsthal-pell-composition-sums.md)
+- [Fibonacci subsequences $F_{\ell n + m}$ that are Toeplitz–Hessenberg determinants](fib-mul-add-eq-toeplitz-hessenberg-det-i.md)
+- [Pell and Pell–Lucas numbers as composition sums with $\sqrt 2$ weights](pell-pell-lucas-composition-sums-sqrt-tw.md)
+- [Toeplitz–Hessenberg determinants with Oresme entries](oresme-toeplitz-hessenberg-det-formulas.md)
+- [Horadam sequences as composition sums](horadam-eq-composition-sum.md)
+- [Horadam composition sums satisfy the Horadam recurrence](horadam-composition-sum-recurrence.md)
+- [Translates of a Gibonacci sequence as composition sums](gibonacci-add-eq-composition-sum.md)
+- [Multiples of a shifted Gibonacci sequence that are Toeplitz–Hessenberg determinants](gibonacci-mul-add-eq-toeplitz-hessenberg.md)
+- [Subsequences $G_{\ell n + m}$ of a Gibonacci sequence as composition sums](gibonacci-mul-add-eq-composition-sum.md)
+- [Fibonacci and Lucas translates as composition sums](fib-lucas-add-eq-composition-sum.md)
+- [Companion composition-sum formula for $F_{n+3}$](fib-add-three-companion-composition-sum.md)
+- [Gibonacci subsequences $G_{2n+m}$ as composition sums](gibonacci-two-mul-add-eq-composition-sum.md)

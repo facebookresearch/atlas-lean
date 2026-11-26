@@ -31,11 +31,11 @@ open Classical
 namespace MetaMathlibExt
 
 -- Combinatorics 496: Strongly k-colorable
-
 /-- Let G = (V,E) be a finite simple graph and let k be a positive integer. G is strongly
 k-colorable if for every partition 𝒫 into sets of size at most k, there exists a proper k-coloring
 of V which is injective on each set within 𝒫.
 -/
+
 def _root_.SimpleGraph.IsStronglyColorable {V : Type*}  [Fintype V] (G : SimpleGraph V) (k : ℕ) : Prop :=
   ∀ (P : Finpartition (Finset.univ : Finset V)),
     (∀ p ∈ P.parts, p.card ≤ k) →
@@ -43,10 +43,10 @@ def _root_.SimpleGraph.IsStronglyColorable {V : Type*}  [Fintype V] (G : SimpleG
       ∀ p ∈ P.parts, Set.InjOn c p
 
 -- Combinatorics 499: Strong Chromatic Number
-
 /-- Let G = (V,E) be a finite simple graph. The strong chromatic number χₛ(G) is the smallest
 positive integer k such that G is strongly k-colorable
 -/
+
 noncomputable def _root_.SimpleGraph.sChi {V:Type*} [Fintype V] (G : SimpleGraph V) : ℕ :=
   sInf {k | G.IsStronglyColorable k}
 

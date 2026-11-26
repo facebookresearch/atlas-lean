@@ -1,0 +1,10 @@
+# Congruence modulo an element of an additive commutative monoid
+
+For a nonzero integer $m$, integers $a$ and $b$ are congruent modulo $m$, written $a \equiv b \pmod m$, when $m$ divides $b - a$, that is, $b - a = km$ for some integer $k$. Mathlib defines congruence modulo an element $p$ of an arbitrary additive commutative monoid $M$: for $a, b \in M$, $a \equiv b \pmod p$ when $m p + a = n p + b$ for some natural numbers $m$ and $n$, where $m p$ is the sum of $m$ copies of $p$; no subtraction is used, since a monoid need not have it, and the modulus $p$ may be $0$, in which case the condition says $a = b$. In an additive commutative group Mathlib proves that $a \equiv b \pmod p$ exactly when $b - a = k p$ for some integer $k$, and for the integers the integer multiple $k p$ is the product $kp$, so that the condition is the divisibility of $b - a$ by $p$, for a modulus of either sign.
+
+## Sources
+
+- Kenneth Ireland and Michael Rosen, A Classical Introduction to Modern Number Theory, 2nd ed., Graduate Texts in Mathematics 84, Springer-Verlag, 1990.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for congruence modulo an element of an additive commutative monoid: `AddCommGroup.ModEq`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/ModEq.lean#L44-L56.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the characterization of congruence in an additive commutative group by integer multiples of the modulus: `AddCommGroup.modEq_iff_zsmul'`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/ModEq.lean#L218-L219.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for integer multiples of an integer as products: `Int.zsmul_eq_mul`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/Int/Defs.lean#L86.

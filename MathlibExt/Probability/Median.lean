@@ -29,12 +29,15 @@ namespace ProbabilityTheory
 
 open MeasureTheory Set
 
-/-- `m` is a **median** of the probability measure `ν`: each of `(-∞, m]` and `[m, ∞)` has
-probability at least `1 / 2`. -/
+/-- **Median of a measure on the real line.** Let $\nu$ be a measure on $\mathbb{R}$, typically a
+probability measure. A real number $m$ is a median of $\nu$ when $\nu((-\infty, m]) \ge 1/2$
+and $\nu([m, \infty)) \ge 1/2$, where a set of infinite measure counts as having measure $0$. -/
 def IsMedian (ν : Measure ℝ) (m : ℝ) : Prop :=
   1 / 2 ≤ ν.real (Iic m) ∧ 1 / 2 ≤ ν.real (Ici m)
 
-/-- On a finite measure, `θ ↦ |θ - c|` is integrable exactly when `ν` has a first moment. -/
+/-- **Absolute deviations are integrable exactly when the mean exists.** Let $\nu$ be a finite
+measure on $\mathbb{R}$ and let $c \in \mathbb{R}$. Then $\theta \mapsto |\theta - c|$ is
+$\nu$-integrable if and only if $\theta \mapsto \theta$ is $\nu$-integrable. -/
 theorem integrable_abs_sub_iff (ν : Measure ℝ) [IsFiniteMeasure ν] (c : ℝ) :
     Integrable (fun θ => |θ - c|) ν ↔ Integrable (fun θ : ℝ => θ) ν := by
   have h : (fun θ : ℝ => |θ - c|) = fun θ => ‖θ + -c‖ := by
@@ -58,9 +61,14 @@ private theorem integral_le_of_le_add_indicator (ν : Measure ℝ) [IsProbabilit
     integral_indicator_one hS, integral_const, probReal_univ, one_smul]
   nlinarith
 
-/-- **A median minimizes the expected absolute loss**: for every median `m` of `ν` and every
-`y`, `∫ |θ - m| dν ≤ ∫ |θ - y| dν`. (Without a first moment both integrals are `0` by Lean's
-convention for non-integrable functions.) -/
+/-- **A median minimizes the expected absolute loss.** Let $\nu$ be a probability measure on
+$\mathbb{R}$ and let $m$ be a median of $\nu$. Then for every $y \in \mathbb{R}$,
+$$
+\int |\theta - m| \, d\nu(\theta) \le \int |\theta - y| \, d\nu(\theta).
+$$
+
+When $\nu$ has no first moment, neither integrand is integrable and both integrals are $0$ by
+the convention for non-integrable functions. -/
 theorem integral_abs_sub_le_of_isMedian (ν : Measure ℝ) [IsProbabilityMeasure ν] {m : ℝ}
     (hm : IsMedian ν m) (y : ℝ) : ∫ θ, |θ - m| ∂ν ≤ ∫ θ, |θ - y| ∂ν := by
   by_cases hint : Integrable (fun θ => |θ - y|) ν

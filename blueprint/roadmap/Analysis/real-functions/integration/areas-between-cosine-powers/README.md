@@ -1,0 +1,18 @@
+# Areas between cosine powers
+
+- [Area between powers of cosines](cos-pow-area.md)
+- [The area between cosine powers vanishes for exponent zero](cos-pow-area-zero-left.md)
+- [The area between cosine powers vanishes at frequency one](cos-pow-area-one-right.md)
+- [Area between $\cos^n x$ and $\cos^n(kx)$ in the limit, odd $n$](tendsto-cos-pow-area-of-odd.md)
+- [Limiting area between even cosine powers](tendsto-cos-pow-area-of-even.md)
+- [Recursion for the limiting areas between cosine powers](cos-pow-area-limit-recursion.md)
+- [Limiting area between cosine powers via double factorials](tendsto-cos-pow-area-double-factorial.md)
+- [Double-factorial sums as derivatives of arcsine quotients](iterated-deriv-arcsin-div-one-sub-double.md)
+- [Half-period sine sum for even modulus](sum-sin-two-pi-mul-div-of-even.md)
+- [Half-period sine sum for odd modulus](sum-sin-two-pi-mul-div-of-odd.md)
+- [Half-step sine sum for even modulus and even multiplier](sum-sin-pi-mul-div-of-even-of-even.md)
+- [The cotangent limit $4/x$](tendsto-cot-div-pred-add-cot-div-succ.md)
+- [Integral sums of $\cos qkx - \cos qx$ for odd $q$ and odd $k$](tendsto-sum-integral-cos-sub-cos-odd-odd.md)
+- [Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and odd $k$](tendsto-sum-integral-cos-sub-cos-odd-eve.md)
+- [Alternating integral sums of $\cos qx - \cos qkx$ for odd $q$ and even $k$](tendsto-sum-integral-cos-sub-cos-even-od.md)
+- [Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and even $k$](tendsto-sum-integral-cos-sub-cos-even-ev.md)

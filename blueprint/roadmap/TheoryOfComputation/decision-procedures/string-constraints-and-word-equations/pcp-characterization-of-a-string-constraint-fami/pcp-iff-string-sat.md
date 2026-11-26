@@ -1,0 +1,8 @@
+# PCP is characterized by string-constraint satisfiability
+
+Let $\alpha$ be an alphabet. A domino over an alphabet $\alpha$ is a pair $d = (d^{\uparrow}, d^{\downarrow})$ of words over $\alpha$ (its top and bottom words). The block alphabet $\hat\alpha$ is the disjoint union of the set of all dominoes over $\alpha$ (whose elements, written $[d]$, are called domino letters) and $\alpha$ (plain letters). The top morphism $\tau$ and the bottom morphism $\beta$ are the monoid morphisms $\hat\alpha^* \to \hat\alpha^*$ given on letters by $\tau([d]) = d^{\uparrow}$ and $\beta([d]) = d^{\downarrow}$ (as words of plain letters) and $\tau(a) = \beta(a) = \varepsilon$ for plain letters $a$. For a finite list $P$ of dominoes, $R_P$ is the regular expression $(\sum_{d \in P} [d])^*$ over $\hat\alpha$ (the sum being the regular expression for the empty language when $P$ is empty), whose language is the set of concatenations of domino letters of dominoes in $P$. The PCP constraint of $P$ is the string-constraint formula over $\hat\alpha$ in one variable $x$ stating that $x$ lies in the language of $R_P$, that $\tau(x) = \beta(x)$, and that $|x| \ge 1$.
+
+For a finite list $P$ of dominoes, $P$ has a solution of Post's correspondence problem if there is a nonempty finite sequence $d_1, \dots, d_k$ of dominoes, each in $P$, with $d_1^{\uparrow} \cdots d_k^{\uparrow} = d_1^{\downarrow} \cdots d_k^{\downarrow}$. Then $P$ has such a solution if and only if some word $x$ over
+$\hat\alpha$ satisfies the PCP constraint of $P$.
+
+This is a characterization for each instance, not a computable reduction between decision problems.

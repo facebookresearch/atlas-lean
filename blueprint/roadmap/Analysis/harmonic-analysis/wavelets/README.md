@@ -1,0 +1,10 @@
+# Wavelets and multiscale analysis
+
+Wavelet orthonormal bases and multiresolution approximations, the Haar system, conjugate mirror filters and fast two-channel filter banks, and wavelet scattering transforms built from cascades of wavelet modulus operators. Frames and Riesz bases of general Hilbert spaces are under Hilbert spaces; sparse approximation in bases and dictionaries is under Approximation theory.
+
+A [multiresolution approximation](multiresolution-approximations/README.md) of $L^2(\mathbb{R})$ (S. Mallat, *Multiresolution approximations and wavelet orthonormal bases of $L^2(\mathbb{R})$*, Trans. Amer. Math. Soc. 315 (1989), 69–87) is an increasing sequence of closed subspaces $V_j \subset V_{j+1}$, with dense union and trivial intersection, invariant under integer translations and such that $f(x) \in V_j \iff f(2x) \in V_{j+1}$. The integer translates of one scaling function $\varphi$ form an orthonormal basis of $V_0$, and $\varphi$ is characterized by a $2\pi$-periodic filter $H$ with $\hat\varphi(2\omega) = H(\omega)\hat\varphi(\omega)$ and $|H(\omega)|^2 + |H(\omega + \pi)|^2 = 1$. The detail spaces $V_{j+1} \ominus V_j$ are spanned by the dilated translates of a wavelet $\psi$, and $\{2^{j/2}\psi(2^j x - k)\}_{j,k}$ is an orthonormal basis of $L^2(\mathbb{R})$. The [Haar system](haar-system/README.md) is the first example, and [conjugate mirror filters](conjugate-mirror-filters/README.md) compute the decomposition in $O(N)$ operations. The [wavelet scattering transform](wavelet-scattering-transform/README.md) cascades wavelet modulus operators to build translation-invariant representations that are stable to deformations. (Here resolution increases with $j$, as in the 1989 paper; texts that index the spaces by the scale $2^j$ write $V_{j+1} \subset V_j$ instead.)
+
+- [Multiresolution approximations](multiresolution-approximations/README.md)
+- [Haar system](haar-system/README.md)
+- [Conjugate mirror filters](conjugate-mirror-filters/README.md)
+- [Wavelet scattering transform](wavelet-scattering-transform/README.md)

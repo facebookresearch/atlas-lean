@@ -24,14 +24,18 @@ preferences lie below the identity; for `s` cars and `t` spots, the analogous
 partial sorted bound is shifted to `bᵢ ≤ t - s + i`.
 -/
 
-/-- A partial parking function with `s` cars and `t` spots: for every spot
-`k`, at most `t - k` cars prefer `k` or a later spot. -/
+/-- **Partial parking function.** Let $s, t \in \mathbb{N}$ and number the $t$ spots
+$0, \dots, t-1$. A map $f : \{0, \dots, s-1\} \to \{0, \dots, t-1\}$, giving the preferred spot
+of each of $s$ cars, is a partial parking function if for every spot $k \in \{0, \dots, t-1\}$,
+at most $t - k$ cars $i$ satisfy $f(i) \ge k$. -/
 def IsPartialParkingFunction (s t : ℕ) (f : Fin s → Fin t) : Prop :=
   ∀ k : Fin t,
     (Finset.univ.filter (fun i => k ≤ f i)).card ≤ t - (k : ℕ)
 
-/-- An ordinary parking function is a partial parking function with equally
-many cars and spots. -/
+/-- **Parking function.** Let $n \in \mathbb{N}$ and number the $n$ spots $0, \dots, n-1$.
+A map $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$, giving the preferred spot of each of
+$n$ cars, is a parking function if it is a partial parking function with $n$ cars and $n$
+spots, that is, if for every spot $k$, at most $n - k$ cars $i$ satisfy $f(i) \ge k$. -/
 def IsParkingFunction (n : ℕ) (f : Fin n → Fin n) : Prop :=
   IsPartialParkingFunction n n f
 
@@ -44,8 +48,10 @@ instance (n : ℕ) (f : Fin n → Fin n) : Decidable (IsParkingFunction n f) := 
   unfold IsParkingFunction
   infer_instance
 
-/-- The threshold definition of a parking function is equivalent to the usual
-lower-tail count: at least `k + 1` cars prefer one of the first `k + 1` spots. -/
+/-- **Lower-tail characterization of parking functions.** Let $n \in \mathbb{N}$, number
+the $n$ spots $0, \dots, n-1$, and let $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ give the
+preferred spot of each of $n$ cars. Then $f$ is a parking function if and only if, for every
+spot $k \in \{0, \dots, n-1\}$, at least $k + 1$ cars $i$ satisfy $f(i) \le k$. -/
 theorem isParkingFunction_iff_card_filter_le (n : ℕ) (f : Fin n → Fin n) :
     IsParkingFunction n f ↔
       ∀ k : Fin n,

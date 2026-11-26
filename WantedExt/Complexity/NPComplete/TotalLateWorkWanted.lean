@@ -19,11 +19,11 @@ one-processor schedule).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.SequencingToMinimizeWeightedTardinessDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ because the start times themselves are a certificate of polynomial bit length: m
 earlier never increases late work, so some optimal schedule starts every job by
 `n + ∑_j p_j`, and its total late work is checked with binary arithmetic. A nonpreemptive
 schedule is a one-processor schedule `σ` of start times as in Garey and Johnson's [SS1]
-(`IsOneProcessorSchedule` from `SequencingToMinimizeWeightedTardinessWanted`: one-to-one, and a
+(`IsOneProcessorSchedule` from `SequencingToMinimizeWeightedTardinessDefs`: one-to-one, and a
 job starting later than another starts no earlier than the other's completion); job `j`
 completes at `C_j = σ(j) + p_j`. Idle time is allowed, which does not change the question
 because late work does not decrease when completion times grow. Processing times, due dates

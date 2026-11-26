@@ -1,0 +1,15 @@
+# Restricted Gaussian partitions
+
+- [Gaussian partition](gaussian-partition.md)
+- [Block](block.md)
+- [Branch step](branch-step.md)
+- [Basic block multiplicity](basic-count.md)
+- [First-split exponent](branch-bound-exp.md)
+- [Removing the first occurrences of an entry](remove-first-npos.md)
+- [Split replacement in a dimension list](apply-split.md)
+- [Final dimensions of a block](block-final-dims.md)
+- [Stage segments of a restricted Gaussian partition](stage-segments.md)
+- [Adjacently valid chain](chain-adj-valid.md)
+- [Valid branch](branch-valid.md)
+- [Restricted Gaussian partition](is-restricted-gaussian-partition.md)
+- [Basic ancestors are restricted](basic-ancestor-is-restricted.md)

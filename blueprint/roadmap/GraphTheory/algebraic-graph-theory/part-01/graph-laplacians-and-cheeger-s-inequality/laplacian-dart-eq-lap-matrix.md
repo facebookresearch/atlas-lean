@@ -1,0 +1,3 @@
+# Graph Laplacian as a multigraph Laplacian
+
+Let $G$ be a finite simple graph with vertex set $V$. Consider the multigraph on $V$ whose edges are the darts (ordered pairs $(a, b)$ of adjacent vertices) of $G$, the dart $(a, b)$ going from $a$ to $b$, each with weight $1/2$. Its weighted [Laplacian](laplacian.md) is the Laplacian $D - A$ of $G$, with $D$ the diagonal degree matrix and $A$ the adjacency matrix. Since each edge of $G$ appears as two opposite darts, this identifies $L_G = \sum_{\{a, b\} \in E(G)} (\delta_a - \delta_b)(\delta_a - \delta_b)^{\mathsf T}$ with $D_G - A_G$ (D. A. Spielman, *Spectral and Algebraic Graph Theory*, draft of 2 April 2025, equation (3.3) and the remark after it).
