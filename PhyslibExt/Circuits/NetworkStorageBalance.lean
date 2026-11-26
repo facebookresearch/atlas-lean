@@ -262,7 +262,7 @@ lemma network_storage_deriv_eq_supplied_minus_losses (nN nB : ℕ)
   linarith
 
 /-- **Finite-horizon energy inequality (FTC / nonnegative loss).**
-If the circuit laws (KVL, KCL, and the resistor, capacitor and
+For `a ≤ b` and a branch partition, if the circuit laws (KVL, KCL, and the resistor, capacitor and
 inductor branch laws) hold at every `s ∈ [a, b]`, so that the
 storage-balance identity is derived from the network model there
 rather than assumed, with nonnegative resistances, positive inductances and capacitances, the

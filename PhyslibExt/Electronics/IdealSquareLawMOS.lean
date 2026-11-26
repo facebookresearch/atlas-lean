@@ -40,10 +40,13 @@ geometry, mobility and temperature are fixed.
 - `current_of_nonpos`, `current_of_triode`, `current_of_saturation`:
   the region formulas of the prioritized model.
 - `triode_eq_saturation_at_boundary` and `current_at_boundary`: the
-  active formulas agree at `Vds = u`.
+  active formulas agree at `Vds = u`, and for `u > 0` the current
+  there is their common value.
 - `continuousAt_u_zero`, `continuousAt_vds_boundary`,
-  `continuousAt_u_boundary`, `continuousAt_joint_boundary`:
-  continuity at the cutoff threshold and across the active boundary.
+  `continuousAt_u_boundary`, `continuousAt_joint_boundary`, all for
+  `beta > 0`: continuity in `u` at the cutoff threshold `u = 0` for
+  `Vds ≥ 0`, and across the active boundary, in `Vds` and jointly at
+  `Vds = u` for `u > 0` and in `u` at `u = Vds` for `Vds > 0`.
   No differentiability at any boundary is claimed.
 - `hasDerivAt_u_triode`, `hasDerivAt_vds_triode`,
   `hasDerivAt_u_saturation`, `hasDerivAt_vds_saturation`: the
@@ -412,8 +415,9 @@ lemma current_nonneg (beta u Vds : ℝ) (hbeta : 0 < beta)
   exact current_nonneg_aux beta u Vds hbeta hV
 
 /-- Ideal long-channel square-law nMOS, bundled for beta > 0:
-prioritized piecewise current, boundary agreement, continuity at
-u = 0 and across Vds = u, regional gm/gds on open regions,
+prioritized piecewise current, boundary agreement, continuity in u
+at u = 0 for Vds >= 0, continuity in Vds and joint continuity across
+Vds = u for u > 0, regional gm/gds on open regions,
 nonnegative triode gds, and nonnegative current on Vds >= 0. No
 derivative at any boundary and no global smoothness is asserted. -/
 lemma idealSquareLawMOS_spec (beta : ℝ) (hbeta : 0 < beta) :

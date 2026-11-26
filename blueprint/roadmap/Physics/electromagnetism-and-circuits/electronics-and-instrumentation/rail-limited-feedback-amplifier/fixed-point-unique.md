@@ -1,4 +1,4 @@
-# With negative feedback, there is at most one fixed point
+# With negative feedback and $v_{\min} < v_{\max}$, there is at most one fixed point
 
 For real numbers $A > 0$, $\beta > 0$ and $v_i$ and rails $v_{\min} < v_{\max}$, any two fixed
 points $v_o = F(v_o)$ and $v_o' = F(v_o')$ of the [rail-limited feedback map](rail-limited-map.md)

@@ -155,7 +155,7 @@ def ratFreeConstraintMatrix (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
       (ratFreeRows nN nG (0 : Matrix (Fin nE) (Fin nG) ℚ) (-ratBranchFlowMatrix nN nE tail head b))
 
 /-- Rational LP constraint matrix: the rational free constraint matrix on
-the positive parts and its negation on the negative parts. -/
+the first coordinate block and its negation on the second. -/
 def ratLpMatrix (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℚ) (gbus : Fin nG → Fin nN) (ref : Fin nN) :
     Matrix (Fin (numRows nN nE nG)) (Fin (numVars nN nG)) ℚ :=

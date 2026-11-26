@@ -1,4 +1,4 @@
-# In a shunt discharge the stored line energy strictly decreases
+# For C, G, ℓ > 0 and V ≠ 0 the shunt-discharge line energy strictly decreases
 
 Let `C > 0`, `G > 0`, `ℓ > 0` and `V ≠ 0`, and let `L` be real. For the shunt discharge
 `v(x, t) = V exp(−(G / C) t)`, `i = 0`, the [line energy](line-energy.md)

@@ -1,4 +1,4 @@
-# At nonzero slip, the split of the air-gap power
+# At nonzero slip and ω_s ≠ 0, the split of the air-gap power
 
 For every complex rotor current `I₂`, real `R₂`, slip `s ≠ 0` and synchronous speed `ω_s ≠ 0`,
 motoring or generating:

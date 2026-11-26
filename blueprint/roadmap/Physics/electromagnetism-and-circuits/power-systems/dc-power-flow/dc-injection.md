@@ -11,5 +11,5 @@ branch susceptances `b_e` and real node phase angles `θ_v`. The DC nodal inject
 
 the flow leaving `v` on the branches with tail `v` minus the flow arriving on the branches with head
 `v` (a loop at `v` enters both sums and cancels). It is read as the net real power injected into the
-network at `v`. In the physical reading the susceptances are positive; the definition allows all
-real `b` and `θ`.
+network at `v`. An inductive branch, of series reactance `x_e > 0`, has positive susceptance
+`b_e = 1/x_e`; the definition allows all real `b` and `θ`.

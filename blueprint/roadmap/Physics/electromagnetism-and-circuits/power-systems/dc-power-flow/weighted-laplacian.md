@@ -12,5 +12,6 @@ with no reference row or column deleted. Its diagonal entry at `v` is the sum of
 branches incident to `v` that are not loops, and its entry at `(u, v)` with `u ≠ v` is minus the sum
 of `b_e` over the branches joining `u` and `v` in either orientation. It is the
 [weighted Laplacian of the multigraph](../../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/laplacian.md)
-whose edges are the branches, each from its tail to its head, with weights `b`. In the physical
-reading the susceptances are positive; the definition allows all real `b`.
+whose edges are the branches, each from its tail to its head, with weights `b`. An inductive branch,
+of series reactance `x_e > 0`, has positive susceptance `b_e = 1/x_e`; the definition allows all
+real `b`.

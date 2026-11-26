@@ -1,4 +1,4 @@
-# For nonnegative conductivity the absorbed power V I is nonnegative
+# For positive A and ℓ and nonnegative conductivity the absorbed power V I is nonnegative
 
 Let `S ⊆ ℝ²` be a measurable cross-section of Lebesgue measure (area) `A > 0`, let `ℓ > 0` and `V`
 be real, and let `E, J : ℝ² → ℝ` satisfy `E = V / ℓ` (the

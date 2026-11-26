@@ -1,4 +1,4 @@
-# For $2\eta < \Delta$, signed wraparound at full scale lowers the level
+# For $w \ge 1$ and $2\eta < \Delta$, signed wraparound at full scale lowers the level
 
 Let $w \ge 1$ be a natural number, $\Delta$ and $\eta$ real numbers with $2\eta < \Delta$, and
 $e \colon \mathbb{Z} \to \mathbb{R}$ a level error with $|e(k)| \le \eta$ for every code

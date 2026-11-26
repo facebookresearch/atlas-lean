@@ -10,5 +10,5 @@ where `B` is the
 [electrical incidence](../../../../GraphTheory/algebraic-graph-theory/part-01/oriented-incidence-matrices/oriented-incidence.md),
 `B_{ve} = [t(e) = v] - [h(e) = v]` (`1` at the tail, `-1` at the head, a zero column for a loop).
 Componentwise [`f_e = b_e (θ_{t(e)} - θ_{h(e)})`](dc-branch-flow-apply.md), read as the real power
-flowing through branch `e` from its tail to its head. In the physical reading the susceptances are
-positive; the definition allows all real `b` and `θ`.
+flowing through branch `e` from its tail to its head. An inductive branch, of series reactance
+`x_e > 0`, has positive susceptance `b_e = 1/x_e`; the definition allows all real `b` and `θ`.

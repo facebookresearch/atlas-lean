@@ -1,4 +1,4 @@
-# For $\Delta \le 2\eta$, level errors can break strict monotonicity
+# For $0 < \Delta \le 2\eta$, level errors can break strict monotonicity
 
 For all real numbers $\Delta > 0$ and $\eta$ with $\Delta \le 2\eta$, there is a level error $e$
 with $|e(k)| \le \eta$ for the codes $k = 0, 1$ such that the [actual DAC levels](dac-level.md)

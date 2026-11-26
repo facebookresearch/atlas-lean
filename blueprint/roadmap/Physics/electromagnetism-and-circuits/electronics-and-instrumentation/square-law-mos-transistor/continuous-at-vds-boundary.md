@@ -1,4 +1,4 @@
-# For $u > 0$ the current is continuous in $V_{DS}$ at $V_{DS} = u$
+# For $\beta > 0$ and $u > 0$ the current is continuous in $V_{DS}$ at $V_{DS} = u$
 
 Let $\beta > 0$ and $u > 0$. Then the [square-law drain current](current.md) $I(\beta, u, V_{DS})$
 ($0$ for $u \le 0$, the [triode formula](triode-current.md) for $u > 0$ and $V_{DS} \le u$, the

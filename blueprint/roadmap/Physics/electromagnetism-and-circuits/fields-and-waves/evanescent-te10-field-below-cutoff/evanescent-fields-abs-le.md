@@ -1,4 +1,4 @@
-# On z ≥ 0 the evanescent fields are bounded by multiples of e^−κz
+# For a, ω > 0, κ ≥ 0 and z ≥ 0 the evanescent fields are bounded by multiples of e^−κz
 
 Let `a > 0`, `ω > 0`, `κ ≥ 0` and `E₀` real, with the [cutoff wavenumber](cutoff-wavenumber.md)
 `k_c = π/a`. For every time `t`, every point `(x, y, z)` with `z ≥ 0` and every component `i`, the

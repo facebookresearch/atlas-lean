@@ -64,17 +64,20 @@ charge, and nonplanar geometry are out of scope.
   vanishes at `x = 0` and `x = L`.
 - `poisson_secondDifference`: the discrete Poisson equation.
 - `gauss_1d`: the discrete Gauss law in 1D.
-- `fieldEnergyDensity_nonneg`: the field-energy density is nonnegative.
+- `fieldEnergyDensity_nonneg`: the field-energy density is nonnegative
+  for `eps ≥ 0`.
 - `planeWave_secondDifference_space`, `planeWave_secondDifference_time`,
   `planeWave_discreteWaveEquation`: the discrete wave equation.
 - `fresnel_energy`: lossless energy conservation
-  `R ^ 2 + (n2 / n1) * T ^ 2 = 1`.
+  `R ^ 2 + (n2 / n1) * T ^ 2 = 1` for `n1, n2 > 0`.
 - `snell_normal`: Snell's law at normal incidence.
 - `meanSquareAmplitude_nonneg`, `meanSquareAmplitude_smul`: the mean-square
   field amplitude is nonnegative and quadratic in the amplitude.
-- `einstein_ratio`: the Einstein relation `D / mu = kB * T / |q|`.
+- `einstein_ratio`: the Einstein relation `D / mu = kB * T / |q|` for
+  `mu ≠ 0` and `q ≠ 0`.
 - `conductivityTwoCarrier_eq_sum`, `conductivity_nonneg`: two-carrier
-  additivity and nonnegativity of the conductivity.
+  additivity and, for `n ≥ 0` and `mu ≥ 0`, nonnegativity of the
+  conductivity.
 
 ## iii. Table of contents
 

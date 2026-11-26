@@ -1,4 +1,4 @@
-# For positive overdrive the current is jointly continuous at $(u, u)$
+# For $\beta > 0$ and positive overdrive the current is jointly continuous at $(u, u)$
 
 Let $\beta > 0$ and $u > 0$. Then the [square-law drain current](current.md) $I(\beta, u, V_{DS})$
 ($0$ for $u \le 0$, the [triode formula](triode-current.md) for $u > 0$ and $V_{DS} \le u$, the

@@ -43,4 +43,4 @@ $x / 0 = 0$, so $I_f = V_f = 0$ when $Z_{\mathrm{th}} + Z_f = 0$.
 
 ## Combined statement
 
-- [With nonzero total impedance: fault solution, sequences, per-unit form](fault-correct.md)
+- [With nonzero total impedance and positive bases: fault solution, sequences, per-unit form](fault-correct.md)

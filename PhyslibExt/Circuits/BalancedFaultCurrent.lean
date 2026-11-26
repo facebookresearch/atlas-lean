@@ -265,9 +265,9 @@ lemma faultVoltage_bolted (E Zth : ℂ) : faultVoltage E Zth 0 = 0 :=
   zero_mul _
 
 /-- Bolted fault behind a purely reactive Thevenin impedance `X * i` with
-`X ≠ 0`: the fault current is `-i * E / X`, lagging the source by a
-quarter period for `X > 0` and leading it for `X < 0` (multiplying a phasor by `exp (-i θ)`
-delays it by `θ`, as for the balanced phases). -/
+`X ≠ 0`: the fault current is `-i * E / X`. For `E ≠ 0` it lags the source by a
+quarter period for `X > 0` and leads it for `X < 0`: with phasors rotating as `exp (i ω t)`,
+`ω > 0`, multiplying a phasor by `exp (-i θ)` is a phase lag `θ`, a time delay `θ / ω`. -/
 lemma faultCurrent_bolted_reactive (E : ℂ) (X : ℝ) (hX : X ≠ 0) :
     faultCurrent E ((X : ℂ) * Complex.I) 0 = -Complex.I * E / (X : ℂ) := by
   have hXc : (X : ℂ) ≠ 0 := by exact_mod_cast hX

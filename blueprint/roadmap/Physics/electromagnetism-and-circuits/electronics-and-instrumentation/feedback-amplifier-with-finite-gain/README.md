@@ -19,13 +19,13 @@
 
 - [One-pole open-loop response $A_0/(1 + s/\omega_p)$](open-loop-gain.md)
 - [Loaded closed-loop transfer $a b A_0/(1 + s/\omega_p + \beta b A_0)$](loaded-transfer.md)
-- [Away from denominator zeros the loaded model gives $v_o = G(s)\,v_i$](output-eq-loaded-transfer-mul-input.md)
+- [For $\omega_p \ne 0$, away from denominator zeros the loaded model gives $v_o = G(s)\,v_i$](output-eq-loaded-transfer-mul-input.md)
 
 ## Loaded DC gain
 
 - [Loaded DC gain $a b A_0/(1 + \beta b A_0)$](loaded-dc-gain.md)
 - [At $s = 0$ the loaded transfer equals the loaded DC gain](loaded-transfer-zero.md)
-- [If $1 + \beta b A_0 \ne 0$, the DC output is the DC gain times $v_i$](output-eq-loaded-dc-gain-mul-input.md)
+- [If $\omega_p \ne 0$ and $1 + \beta b A_0 \ne 0$, the DC output is the DC gain times $v_i$](output-eq-loaded-dc-gain-mul-input.md)
 - [Loaded DC gain is $a$ times the closed-loop gain of $b A_0$](loaded-dc-gain-eq-source-divider-mul-clo.md)
 - [For positive $A_0, \beta, a, b$ the DC gain lies in $(0, a/\beta)$](loaded-dc-gain-pos-and-lt.md)
 
@@ -38,6 +38,6 @@
 
 ## Lossless dividers and a worked example
 
-- [With zero source and output resistance both dividers equal 1](dividers-eq-one-of-no-source-output-resi.md)
+- [With zero source and output resistance and $R_{in}, R_L > 0$ both dividers equal 1](dividers-eq-one-of-no-source-output-resi.md)
 - [At $a = b = 1$, $G(s) = A_0/(1 + s/\omega_p + \beta A_0)$](loaded-transfer-at-unit-dividers.md)
 - [Example: halved dividers, $A_0 = 10$, $\beta = 1$, $\omega_p = 2$](loaded-example.md)

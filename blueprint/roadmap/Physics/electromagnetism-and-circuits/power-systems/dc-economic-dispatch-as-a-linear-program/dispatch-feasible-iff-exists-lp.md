@@ -7,5 +7,5 @@ generation `p` and angles `θ` form a [feasible dispatch](is-dispatch-feasible.m
 some feasible point of the [dispatch linear program](lp-matrix.md): a vector `x ≥ 0` with
 `A x ≤ rhs` for the [constraint matrix](lp-matrix.md) `A` and the [right-hand side](lp-rhs.md)
 decodes to them ([generation](decode-generation.md) `p`, [angles](decode-angle.md) `θ`). Since the
-split into positive and negative parts is not unique, a feasible dispatch is the decoding of some
-feasible LP point, not of a unique one.
+free variables are the first minus the second nonnegative coordinate block in many ways, a feasible
+dispatch is the decoding of some feasible LP point, not of a unique one.

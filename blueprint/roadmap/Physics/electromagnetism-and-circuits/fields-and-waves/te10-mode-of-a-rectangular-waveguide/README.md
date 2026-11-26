@@ -38,7 +38,7 @@ The [cutoff wavenumber](../evanescent-te10-field-below-cutoff/cutoff-wavenumber.
 - [At x = a/2 and t = z = 0, the y component of the TE10 field is E₀](te10-electric-field-center.md)
 - [For a > 0, E₀ ≠ 0 and ω > 0 the TE10 electric field is not zero](te10-electric-field-ne-zero.md)
 - [A nonnegative propagation constant exists exactly at or above cutoff](exists-nonneg-te10-dispersion-iff.md)
-- [For ω ≥ c k_c, the dispersion root β ≥ 0 is the propagation constant](nonneg-te10-dispersion-iff-eq-propagatio.md)
+- [For a > 0 and ω ≥ c k_c, the dispersion root β ≥ 0 is the propagation constant](nonneg-te10-dispersion-iff-eq-propagatio.md)
 - [At cutoff the dispersion relation holds exactly for β = 0](te10-dispersion-at-cutoff-iff.md)
 - [Below cutoff the TE10 dispersion relation has no real solution](not-exists-te10-dispersion-below-cutoff.md)
 - [Properties of the propagating TE10 mode of a rectangular guide](te10-mode-correct.md)

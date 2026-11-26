@@ -35,9 +35,9 @@ is the arc-network weighted Laplacian of
 identity, its kernel for nonnegative susceptances, and the positive
 definiteness of its grounded block are restated here for `L_b`. The
 injections sum to zero, and a uniform angle shift changes no flow, for
-susceptances of any sign. Physical susceptances are positive; each
-statement holds for all real susceptances unless it states a sign
-condition.
+susceptances of any sign. An inductive line, of series reactance
+`x > 0`, has positive susceptance `1 / x`; each statement holds for
+all real susceptances unless it states a sign condition.
 
 The nonlinear comparison is the lossless unit-magnitude AC model built
 on the network of `PhyslibExt.Circuits.ACInjectionLossBalance`: node
@@ -107,8 +107,8 @@ open MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian (positiveArcGraph)
 
 /-- DC branch flow `f = diag(b) * Bᵀ * θ` for branch susceptances `b` and
 node phase angles `θ`. With the tail-positive electrical incidence `B`,
-`f e = b e * (θ tail - θ head)`, read as the flow from tail to head. The
-physical susceptances are positive; the definition allows any real `b`. -/
+`f e = b e * (θ tail - θ head)`, read as the flow from tail to head. An
+inductive line has positive susceptance; the definition allows any real `b`. -/
 noncomputable def dcBranchFlow (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (θ : Fin nN → ℝ) : Fin nE → ℝ :=
   Matrix.mulVec
@@ -121,8 +121,8 @@ noncomputable def dcInjection (nN nE : ℕ) (tail head : Fin nE → Fin nN)
   Matrix.mulVec (electricalIncidence tail head) (dcBranchFlow nN nE tail head b θ)
 
 /-- Full susceptance-weighted Laplacian `L_b = B * diag(b) * Bᵀ`, with no
-reference row or column deleted. The physical susceptances are positive;
-the definition allows any real `b`. -/
+reference row or column deleted. An inductive line has positive
+susceptance; the definition allows any real `b`. -/
 noncomputable def weightedLaplacian (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) : Matrix (Fin nN) (Fin nN) ℝ :=
   electricalIncidence tail head * Matrix.diagonal b *
@@ -466,9 +466,10 @@ lemma acBranchRealPower_reverse (nN nE : ℕ) (tail head : Fin nE → Fin nN)
   rw [h, Real.sin_neg]
   ring
 
-/-- Out of model, nonunit magnitudes: for real `m`, `V v = m v * exp(i * θ v)`
-and a lossless branch, the sending-end real power carries the factor
-`m tail * m head`, so the cubic bound need not hold when that factor is not `1`. -/
+/-- Out of model, scaled voltages: for real signed scale factors `m` (the voltage magnitude at
+`v` is `|m v|`), `V v = m v * exp(i * θ v)` and a lossless branch, the sending-end real power
+carries the factor `m tail * m head`, so the cubic bound need not hold when that factor is not
+`1`. -/
 lemma realPower_scaledVoltage (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (m θ : Fin nN → ℝ) (e : Fin nE) :
     (complexPower ((m (tail e) : ℂ) * unitVoltage nN θ (tail e))

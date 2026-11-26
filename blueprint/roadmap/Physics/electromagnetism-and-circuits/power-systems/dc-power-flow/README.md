@@ -62,5 +62,5 @@ susceptance is positive, it differs from `f_e` by at most `b_e |θ_{t(e)} - θ_{
 
 ## Outside the lossless unit-magnitude model
 
-- [Lossless sending-end real power with non-unit voltage magnitudes](real-power-scaled-voltage.md)
+- [Lossless sending-end real power with signed voltage scale factors](real-power-scaled-voltage.md)
 - [Sending-end real power of a conductance branch at unit magnitudes](real-power-conductance.md)

@@ -1,4 +1,4 @@
-# On the motoring range, the developed torque is the torque curve
+# For R₂, ω_s > 0 and R_th ≥ 0, on the motoring range, the developed torque is the torque curve
 
 Let `R₂ > 0`, `ω_s > 0`, `R_th ≥ 0`, `X_eq` real, `V_th` complex and `0 < s ≤ 1` (the motoring range
 of the slip). The [developed torque](developed-torque.md) of the [rotor current](rotor-current.md)

@@ -7,5 +7,6 @@ branch susceptances `b_e` and real node phase angles `θ_v`. For every branch `e
 
 `f_e = b_e (θ_{t(e)} - θ_{h(e)})`.
 
-In the physical reading the susceptances are positive, so the flow runs from the end with the larger
-angle to the end with the smaller one; the formula holds for all real `b` and `θ`.
+On an inductive branch, of series reactance `x_e > 0`, the susceptance `b_e = 1/x_e` is positive,
+so the flow runs from the end with the larger angle to the end with the smaller one; the formula
+holds for all real `b` and `θ`.

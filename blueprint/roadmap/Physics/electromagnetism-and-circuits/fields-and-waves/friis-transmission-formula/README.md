@@ -3,7 +3,7 @@
 ## The Friis formula
 
 - [Friis transmission formula for a declared far-field link](received-power-eq-friis.md)
-- [Friis power ratio for positive transmit power](received-power-div-transmit-power-eq-fri.md)
+- [Friis power ratio for r, λ, Pt > 0 and Gt, Gr ≥ 0](received-power-div-transmit-power-eq-fri.md)
 
 ## Zero transmit power, flux and mismatch
 

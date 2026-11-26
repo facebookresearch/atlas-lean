@@ -62,13 +62,13 @@ open ComplexConjugate
 open PhyslibExt.Circuits.SymmetricalComponentCoordinates
 
 /-- Balanced positive-sequence (abc) phase set `(X, α² X, α X)`, indices `0, 1, 2` for phases
-`a, b, c`, for any complex `X`: with phasors rotating as `e^{iωt}`, phase `b` lags `a` by `2π/3`
-and phase `c` lags `b` by `2π/3`. -/
+`a, b, c`, for any complex `X`: for `X ≠ 0`, with phasors rotating as `e^{iωt}`, phase `b` lags
+`a` by `2π/3` and phase `c` lags `b` by `2π/3`. -/
 noncomputable def balancedPhases (X : ℂ) : ZMod 3 → ℂ :=
   ![X, alpha ^ 2 * X, alpha * X]
 
-/-- Balanced negative-sequence (acb) phase set `(X, α X, α² X)`: with phasors rotating as
-`e^{iωt}`, phase `c` lags `a` by `2π/3` and phase `b` lags `c` by `2π/3`. -/
+/-- Balanced negative-sequence (acb) phase set `(X, α X, α² X)`: for `X ≠ 0`, with phasors
+rotating as `e^{iωt}`, phase `c` lags `a` by `2π/3` and phase `b` lags `c` by `2π/3`. -/
 noncomputable def reversedPhases (X : ℂ) : ZMod 3 → ℂ :=
   ![X, alpha * X, alpha ^ 2 * X]
 
@@ -363,9 +363,9 @@ lemma sum_complexPower_balancedPhases (V I : ℂ) :
 
 /-! ### Line-to-line voltages: the `√3` factor and the phase-sequence sign -/
 
-/-- Positive sequence: the line-to-line set is again balanced, `V_ab = √3 e^{iπ/6} V_a`; with
-phasors rotating as `e^{iωt}`, each line voltage leads the phase voltage of its first index by
-`π/6`. -/
+/-- Positive sequence: the line-to-line set is again balanced, `V_ab = √3 e^{iπ/6} V_a`; for
+`V ≠ 0`, with phasors rotating as `e^{iωt}`, each line voltage leads the phase voltage of its first
+index by `π/6`. -/
 lemma lineVoltage_balancedPhases (V : ℂ) :
     lineVoltage (balancedPhases V) =
       balancedPhases ((Real.sqrt 3 : ℂ) *
@@ -389,8 +389,8 @@ lemma balancedPhases_neutral_power_lineVoltage (V I : ℂ) :
   exact ⟨neutralCurrent_balancedPhases I, sum_complexPower_balancedPhases V I,
     norm_lineVoltage_balancedPhases V⟩
 
-/-- Negative sequence: `V_ab = √3 e^{-iπ/6} V_a`, the opposite rotation: with phasors rotating
-as `e^{iωt}`, each line voltage lags the phase voltage of its first index by `π/6`. -/
+/-- Negative sequence: `V_ab = √3 e^{-iπ/6} V_a`, the opposite rotation: for `V ≠ 0`, with phasors
+rotating as `e^{iωt}`, each line voltage lags the phase voltage of its first index by `π/6`. -/
 lemma lineVoltage_reversedPhases (V : ℂ) :
     lineVoltage (reversedPhases V) =
       reversedPhases ((Real.sqrt 3 : ℂ) *
@@ -447,8 +447,8 @@ lemma sum_deltaLineCurrent (J : ZMod 3 → ℂ) : ∑ p, deltaLineCurrent J p = 
   simp only [deltaLineCurrent, zmod3_sub1_0, zmod3_sub1_1, zmod3_sub1_2]
   ring
 
-/-- Balanced delta: line currents are balanced, `I_a = √3 e^{-iπ/6} I_ab`; with phasors rotating
-as `e^{iωt}`, each line current lags the branch current of its index by `π/6`. -/
+/-- Balanced delta: line currents are balanced, `I_a = √3 e^{-iπ/6} I_ab`; for `J ≠ 0`, with
+phasors rotating as `e^{iωt}`, each line current lags the branch current of its index by `π/6`. -/
 lemma deltaLineCurrent_balancedPhases (J : ℂ) :
     deltaLineCurrent (balancedPhases J) =
       balancedPhases ((Real.sqrt 3 : ℂ) *
@@ -483,10 +483,10 @@ lemma norm_sum_complexPower_delta (V J : ℂ) :
 /-! ### Power factor -/
 
 /-- With `V = Vm e^{iθ}`, `I = Im e^{i(θ - φ)}`, `Vm, Im ≥ 0`: real power `3 Vm Im cos φ`,
-reactive power `3 Vm Im sin φ`, and in line quantities `P = √3 V_L I_L cos φ`. With phasors
-rotating as `e^{iωt}`, the current lags the voltage by `φ`, and `cos φ` is the power factor. The
-conditions `Vm, Im ≥ 0` make `Vm = ‖V‖` and `Im = ‖I‖`; the first two identities hold without
-them. For `Vm = 0` or `Im = 0` all three quantities are `0` for every `φ`. -/
+reactive power `3 Vm Im sin φ`, and in line quantities `P = √3 V_L I_L cos φ`. For `Vm, Im > 0`,
+with phasors rotating as `e^{iωt}`, the current lags the voltage by `φ`, and `cos φ` is the power
+factor. The conditions `Vm, Im ≥ 0` make `Vm = ‖V‖` and `Im = ‖I‖`; the first two identities hold
+without them. For `Vm = 0` or `Im = 0` all three quantities are `0` for every `φ`. -/
 lemma sum_complexPower_polar (Vm Im θ φ : ℝ) (hVm : 0 ≤ Vm) (hIm : 0 ≤ Im) :
     (∑ p, complexPower (balancedPhases ((Vm : ℂ) * Complex.exp ((θ : ℂ) * Complex.I)) p)
         (balancedPhases ((Im : ℂ) * Complex.exp (((θ - φ : ℝ) : ℂ) * Complex.I)) p)).re =

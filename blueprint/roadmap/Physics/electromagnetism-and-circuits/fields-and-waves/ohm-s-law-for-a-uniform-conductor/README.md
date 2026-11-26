@@ -14,7 +14,7 @@
 
 ## Resistance for positive conductivity
 
-- [For positive conductivity, V = R I](voltage-eq-resistance-mul-terminal-curre.md)
+- [For positive σ, A and ℓ, V = R I](voltage-eq-resistance-mul-terminal-curre.md)
 - [For positive σ, A and ℓ, conductance times resistance is 1](conductance-mul-resistance.md)
 - [For positive σ, A and ℓ the resistance is positive](resistance-pos.md)
 
@@ -23,5 +23,5 @@
 - [Zero conductivity gives zero conductance](conductance-zero-left.md)
 - [An insulating bar carries no terminal current](terminal-current-eq-zero-of-conductivity.md)
 - [Swapping the terminals reverses the terminal current](terminal-current-reversed.md)
-- [For nonnegative conductivity the absorbed power V I is nonnegative](voltage-mul-terminal-current-nonneg.md)
+- [For positive A and ℓ and nonnegative conductivity the absorbed power V I is nonnegative](voltage-mul-terminal-current-nonneg.md)
 - [A nonuniform field breaks the constant-field shortcut](nonuniform-field-constant-shortcut-fails.md)

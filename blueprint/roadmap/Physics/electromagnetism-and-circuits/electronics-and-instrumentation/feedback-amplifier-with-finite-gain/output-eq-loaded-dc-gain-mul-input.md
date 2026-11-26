@@ -1,4 +1,4 @@
-# If $1 + \beta b A_0 \ne 0$, the DC output is the DC gain times $v_i$
+# If $\omega_p \ne 0$ and $1 + \beta b A_0 \ne 0$, the DC output is the DC gain times $v_i$
 
 Let $A_0$, $\omega_p$, $\beta$, $a$, $b$ be real numbers with $\omega_p \ne 0$ and
 $1 + \beta b A_0 \ne 0$, and let the complex numbers $v_i$ (input), $v_{amp}$ (unloaded amplifier

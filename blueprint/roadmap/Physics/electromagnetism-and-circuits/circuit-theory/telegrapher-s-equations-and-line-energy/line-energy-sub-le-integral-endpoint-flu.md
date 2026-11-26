@@ -1,4 +1,4 @@
-# On a passive line the energy grows by at most the net inflow
+# On a passive line with ℓ > 0 and t₀ ≤ t₁ the energy grows by at most the net inflow
 
 Let `R`, `L`, `G` and `C` be real per-unit-length constants, `U` an open subset of the `(x, t)`
 plane, and `v`, `i` real functions of `(x, t)` that are continuously differentiable on `U` and

@@ -206,7 +206,7 @@ lemma one_lt_norm_reflectionCoefficient_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
 
 /-- Real part of the complex power at the load plane from the wave
 amplitudes, for `Z0 > 0`, `V = Aplus + Aminus` and `I = (Aplus - Aminus) / Z0`:
-`Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. This
+`Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. At every frequency `omega > 0` this
 is the time-averaged load power only for RMS phasors
 (`average_rmsWaveform_load_power_eq_incident_sub_reflected`); for peak
 phasors the average is half of it
@@ -243,8 +243,8 @@ theorem load_power_eq_incident_sub_reflected (V I Aplus Aminus : ℂ) (Z0 : ℝ)
   linear_combination hca - hcb + hcross
 
 /-- Real part of the complex power at the load plane from the load law:
-`Re (V * conj I) = Re ZL * |I| ^ 2`. This is the time-averaged load
-power only for RMS phasors
+`Re (V * conj I) = Re ZL * |I| ^ 2`. At every frequency `omega > 0` this is the
+time-averaged load power only for RMS phasors
 (`average_rmsWaveform_load_power_eq_re_mul_norm_sq`); for peak phasors
 the average is half of it
 (`average_peakWaveform_load_power_eq_re_mul_norm_sq`). -/

@@ -1,7 +1,7 @@
 # Objective of the dispatch linear program
 
 For cost coefficients `c`, the objective vector of the (maximized) linear program is `-c` on the
-positive parts of the generation, `0` on the positive parts of the angles, `c` on the negative parts
-of the generation and `0` on the negative parts of the angles. Its value at an LP point is minus the
-[cost](dispatch-cost.md) of the decoded generation
+generation entries of the first nonnegative coordinate block, `0` on its angle entries, `c` on the
+generation entries of the second block and `0` on its angle entries. Its value at an LP point is
+minus the [cost](dispatch-cost.md) of the decoded generation
 ([objective identity](lp-objective-dot-product.md)).

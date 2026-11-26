@@ -10,8 +10,8 @@
 - [Full-scale inputs have ADC-to-DAC error at most $\Delta/2 + \eta$](abs-dac-level-code-sub-le-of-mem-icc.md)
 - [The signed $w$-bit ADC-to-DAC error is at most $\Delta/2 + \eta$](abs-dac-level-code-signed-sub-le-of-not.md)
 - [Step, monotonicity and ADC-to-DAC error bounds for a DAC](dac-level-correct.md)
-- [For $2\eta < \Delta$, signed wraparound at full scale lowers the level](dac-level-to-int-int-max-add-one-lt.md)
-- [For $\Delta \le 2\eta$, level errors can break strict monotonicity](exists-not-strict-mono-on-of-le-two-mul.md)
+- [For $w \ge 1$ and $2\eta < \Delta$, signed wraparound at full scale lowers the level](dac-level-to-int-int-max-add-one-lt.md)
+- [For $0 < \Delta \le 2\eta$, level errors can break strict monotonicity](exists-not-strict-mono-on-of-le-two-mul.md)
 
 ## Settling on a holding interval
 

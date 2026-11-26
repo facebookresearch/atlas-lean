@@ -1,4 +1,4 @@
-# With zero source and output resistance both dividers equal 1
+# With zero source and output resistance and $R_{in}, R_L > 0$ both dividers equal 1
 
 For real numbers $R_{in} > 0$ and $R_L > 0$, the [source divider](source-divider.md) with zero
 source resistance and the [load divider](load-divider.md) with zero output resistance both equal

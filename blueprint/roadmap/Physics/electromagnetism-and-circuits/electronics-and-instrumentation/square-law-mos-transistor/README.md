@@ -16,10 +16,10 @@
 
 ## Continuity at the region boundaries
 
-- [For $V_{DS} \ge 0$ the current is continuous in $u$ at the threshold](continuous-at-u-zero.md)
-- [For $u > 0$ the current is continuous in $V_{DS}$ at $V_{DS} = u$](continuous-at-vds-boundary.md)
-- [For $V_{DS} > 0$ the current is continuous in $u$ at $u = V_{DS}$](continuous-at-u-boundary.md)
-- [For positive overdrive the current is jointly continuous at $(u, u)$](continuous-at-joint-boundary.md)
+- [For $\beta > 0$ and $V_{DS} \ge 0$ the current is continuous in $u$ at the threshold](continuous-at-u-zero.md)
+- [For $\beta > 0$ and $u > 0$ the current is continuous in $V_{DS}$ at $V_{DS} = u$](continuous-at-vds-boundary.md)
+- [For $\beta > 0$ and $V_{DS} > 0$ the current is continuous in $u$ at $u = V_{DS}$](continuous-at-u-boundary.md)
+- [For $\beta > 0$ and positive overdrive the current is jointly continuous at $(u, u)$](continuous-at-joint-boundary.md)
 
 ## Transconductance and output conductance
 

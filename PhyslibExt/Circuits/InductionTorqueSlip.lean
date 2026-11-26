@@ -275,8 +275,9 @@ noncomputable def rotorCopperLoss (I2 : ℂ) (R2 s : ℝ) : ℝ :=
 /-- Converted mechanical power: the air-gap power remaining after the
 rotor copper loss. It is defined as that difference; its expression as
 the fraction `1 - s` of the air-gap power is a theorem for nonzero
-slip, proved in `powerSplit_of_ne_zero`. With the convention `x / 0 = 0` it is
-`-3 ‖I2‖² R2` at `s = 0`, where the model current is zero. -/
+slip and nonzero synchronous speed, proved in `powerSplit_of_ne_zero`.
+With the convention `x / 0 = 0` it is `-3 ‖I2‖² R2` at `s = 0`, where
+the model current is zero. -/
 noncomputable def convertedPower (I2 : ℂ) (R2 s : ℝ) : ℝ :=
   airGapPower I2 R2 s - rotorCopperLoss I2 R2 s
 

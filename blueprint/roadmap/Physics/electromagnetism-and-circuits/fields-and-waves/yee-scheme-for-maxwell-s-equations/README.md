@@ -54,5 +54,5 @@
 - [Matching travelling magnetic field H_z](travelling-wave-h.md)
 - [The travelling wave satisfies the vacuum Maxwell equations](travelling-wave-source-free-vacuum-maxwe.md)
 - [For the travelling wave v = −u, and the opposite sign fails](travelling-wave-minus-sign.md)
-- [With k = 2π m / L the travelling wave has spatial period L](travelling-wave-is-spatially-periodic.md)
+- [For L ≠ 0 and k = 2π m / L the travelling wave has spatial period L](travelling-wave-is-spatially-periodic.md)
 - [The unit travelling wave is not periodic with period 1](travelling-wave-not-is-spatially-periodi.md)

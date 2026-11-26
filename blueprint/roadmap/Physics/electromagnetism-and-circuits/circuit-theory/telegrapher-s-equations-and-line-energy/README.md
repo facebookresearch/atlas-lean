@@ -14,9 +14,9 @@
 ## Dissipation signs
 
 - [For R, G ≥ 0 the dissipation density is nonnegative](dissipation-density-nonneg.md)
-- [On a passive line the energy grows by at most the net inflow](line-energy-sub-le-integral-endpoint-flu.md)
-- [A uniform shunt discharge solves the telegrapher equations](shunt-discharge-is-telegrapher-solution.md)
-- [In a shunt discharge the stored line energy strictly decreases](shunt-discharge-line-energy-strict-anti.md)
+- [On a passive line with ℓ > 0 and t₀ ≤ t₁ the energy grows by at most the net inflow](line-energy-sub-le-integral-endpoint-flu.md)
+- [For C > 0 the uniform shunt solution solves the telegrapher equations](shunt-discharge-is-telegrapher-solution.md)
+- [For C, G, ℓ > 0 and V ≠ 0 the shunt-discharge line energy strictly decreases](shunt-discharge-line-energy-strict-anti.md)
 
 ## Lossless traveling wave
 

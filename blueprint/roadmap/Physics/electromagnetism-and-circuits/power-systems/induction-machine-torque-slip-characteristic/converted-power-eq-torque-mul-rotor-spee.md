@@ -1,4 +1,4 @@
-# On the motoring range, converted power is torque times rotor speed
+# For R₂, ω_s > 0 and R_th ≥ 0, on the motoring range, converted power is torque times rotor speed
 
 Let `R₂ > 0`, `ω_s > 0`, `R_th ≥ 0`, `X_eq` real, `V_th` complex and `0 < s ≤ 1` (the motoring range
 of the slip), and let `I₂` be the [rotor current](rotor-current.md)

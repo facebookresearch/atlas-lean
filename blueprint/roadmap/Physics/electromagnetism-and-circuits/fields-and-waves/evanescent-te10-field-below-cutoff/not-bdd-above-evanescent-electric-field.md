@@ -1,4 +1,4 @@
-# For κ > 0 the evanescent field is unbounded toward negative z
+# For a, ω, κ > 0 and E₀ ≠ 0 the evanescent field is unbounded toward negative z
 
 Let `a > 0`, `E₀ ≠ 0`, `ω > 0` and `κ > 0`. For every `y`, the `y` component of the
 [evanescent electric field](evanescent-electric-field.md) at time `0` and points `(a/2, y, z)`,

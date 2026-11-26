@@ -17,5 +17,5 @@
 ## Load angle and current direction
 
 - [At zero load angle no real power is transferred](power-at-zero-angle.md)
-- [For load angles between 0 and π, the real power is positive](real-power-pos-of-angle-pos.md)
+- [For E, V, X_s > 0 and load angles between 0 and π, the real power is positive](real-power-pos-of-angle-pos.md)
 - [Reversing the current direction negates the complex power](total-complex-power-neg-current.md)

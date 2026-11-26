@@ -12,5 +12,6 @@ so that `d_e = V_{t(e)} - V_{h(e)}`. The sending-end real power of branch `e` is
 `P_e = Re(V_{t(e)} conj(I_e))`,
 
 the real part of the [complex power](../balanced-three-phase-power/complex-power.md) at the tail. It
-[equals `b_e sin(θ_{t(e)} - θ_{h(e)})`](ac-branch-real-power-eq-mul-sin.md). In the physical reading
-the susceptances are positive; the definition allows all real `b` and `θ`.
+[equals `b_e sin(θ_{t(e)} - θ_{h(e)})`](ac-branch-real-power-eq-mul-sin.md). An inductive branch, of
+series reactance `x_e > 0`, has positive susceptance `b_e = 1/x_e`; the definition allows all real
+`b` and `θ`.

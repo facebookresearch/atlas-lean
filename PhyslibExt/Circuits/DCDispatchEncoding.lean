@@ -36,8 +36,9 @@ The dispatch problem is encoded into the inequality form used by
 `MathlibExt.Analysis.Convex.LPCertificate.feasible_pair_equal_objectives_optimal`
 and `MathlibExt.Analysis.Convex.RationalLPCertificate.checksLPGap`:
 maximize `c ⬝ᵥ x` subject to `x ≥ 0` and `A *ᵥ x ≤ rhs`, with `Fin m`
-rows and `Fin n` columns. The free variables `(pg, θ)` are split into
-nonnegative positive and negative parts, each equality becomes two
+rows and `Fin n` columns. The free variables `(pg, θ)` are written as
+the first minus the second of two nonnegative coordinate blocks (`encode`
+takes their positive and negative parts), each equality becomes two
 opposite inequalities, the reference equation becomes two rows, and each
 two-sided bound becomes two rows; the minimized cost becomes the
 maximized objective `-cost ⬝ᵥ pg`. The split is carried out for this
@@ -127,8 +128,8 @@ def dispatchCost (nG : ℕ) (cost : Fin nG → ℝ) (pg : Fin nG → ℝ) : ℝ 
 
 /-! ## B. The canonical LP encoding -/
 
-/-- Number of LP columns: positive and negative parts of the free
-variables `(pg, θ)`. -/
+/-- Number of LP columns: two coordinate blocks, each with one entry per
+free variable of `(pg, θ)`. -/
 abbrev numVars (nN nG : ℕ) : ℕ :=
   (nG + nN) + (nG + nN)
 
@@ -165,7 +166,7 @@ noncomputable def freeConstraintMatrix (nN nE nG : ℕ) (tail head : Fin nE → 
       (freeRows nN nG (0 : Matrix (Fin nE) (Fin nG) ℝ) (-branchFlowMatrix nN nE tail head b))
 
 /-- Canonical LP constraint matrix `A`: the free constraint matrix on
-the positive parts and its negation on the negative parts. -/
+the first coordinate block and its negation on the second. -/
 noncomputable def lpMatrix (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (gbus : Fin nG → Fin nN) (ref : Fin nN) :
     Matrix (Fin (numRows nN nE nG)) (Fin (numVars nN nG)) ℝ :=
@@ -180,14 +181,14 @@ def lpRhs (nN nE nG : ℕ) (d : Fin nN → ℝ) (pmin pmax : Fin nG → ℝ)
   Fin.append (Fin.append (Fin.append (Fin.append (Fin.append (Fin.append (Fin.append
     (-d) d) (0 : Fin 1 → ℝ)) (0 : Fin 1 → ℝ)) pmax) (-pmin)) fmax) (-fmin)
 
-/-- Canonical LP objective (maximized): `-cost` on the positive
-generation parts, `cost` on the negative generation parts, zero on the
-angle parts. -/
+/-- Canonical LP objective (maximized): `-cost` on the generation
+entries of the first coordinate block, `cost` on those of the second,
+zero on the angle entries of both. -/
 def lpObjective (nN nG : ℕ) (cost : Fin nG → ℝ) : Fin (numVars nN nG) → ℝ :=
   Fin.append (Fin.append (-cost) (0 : Fin nN → ℝ)) (Fin.append cost (0 : Fin nN → ℝ))
 
-/-- Free variables recovered from an LP point: positive part minus
-negative part. -/
+/-- Free variables recovered from an LP point: its first coordinate
+block minus its second. -/
 def freePart (nN nG : ℕ) (x : Fin (numVars nN nG) → ℝ) : Fin (nG + nN) → ℝ :=
   fun a => x (Fin.castAdd (nG + nN) a) - x (Fin.natAdd (nG + nN) a)
 

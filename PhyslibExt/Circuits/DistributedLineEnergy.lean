@@ -28,8 +28,9 @@ its pointwise density satisfies
 change equals the integrated endpoint power flux minus the
 integrated dissipation. Lossless traveling waves carry flux at
 the wave speed `1/√(LC)` with equal electric and magnetic energy
-densities, and the shunt-discharge solution loses energy
-strictly. Swapping the endpoint fluxes breaks the balance.
+densities, and for `C, G, ℓ > 0` and `V ≠ 0` the uniform shunt
+solution `V exp(-(G/C) t)` loses energy strictly. Swapping the endpoint
+fluxes breaks the balance.
 
 ## ii. Key results
 
@@ -41,7 +42,7 @@ strictly. Swapping the endpoint fluxes breaks the balance.
   `travelingWave_electric_eq_magnetic`: the lossless traveling
   wave.
 - `shuntDischarge_lineEnergy_strictAnti`: stored energy strictly
-  decreases for the shunt discharge.
+  decreases for the shunt discharge with `C, G, ℓ > 0` and `V ≠ 0`.
 
 ## iii. Table of contents
 
@@ -815,8 +816,8 @@ lemma lineEnergy_sub_le_integral_endpointFlux (R L G C ℓ t₀ t₁ : ℝ) (U :
         (fun x hx => dissipationDensity_nonneg R G v i x s hR hG))
   linarith [hbal, hnn]
 
-/-- Lossy example: for `C > 0`, with no current, a uniform voltage `V e^{-(G/C) t}` solves the
-telegrapher equations (shunt-conductance discharge). -/
+/-- For `C > 0` and all real `R, L, G, V`, with no current, the uniform voltage `V e^{-(G/C) t}`
+solves the telegrapher equations: the uniform shunt solution (a discharge for `G > 0`). -/
 lemma shuntDischarge_isTelegrapherSolution (R L G C V : ℝ) (hC : 0 < C) :
     IsTelegrapherSolution R L G C univ (fun _ t => V * Real.exp (-(G / C) * t))
       (fun _ _ => 0) := by

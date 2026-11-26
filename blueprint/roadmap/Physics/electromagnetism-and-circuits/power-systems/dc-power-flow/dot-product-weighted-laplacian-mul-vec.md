@@ -10,5 +10,5 @@ where `L_b` is the [susceptance-weighted Laplacian](weighted-laplacian.md): its 
 the susceptance-weighted sum of the squared angle differences across the branches. This is a special
 case of the
 [Laplacian quadratic form](../../../../GraphTheory/algebraic-graph-theory/part-01/graph-laplacians-and-cheeger-s-inequality/dot-product-mul-vec-laplacian.md).
-In the physical reading the susceptances are positive, and the form is then nonnegative; the
-identity holds for all real `b`.
+When every branch is inductive, of series reactance `x_e > 0`, the susceptances `b_e = 1/x_e` are
+positive and the form is then nonnegative; the identity holds for all real `b`.

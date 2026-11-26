@@ -1,4 +1,4 @@
-# With nonzero total impedance: fault solution, sequences, per-unit form
+# With nonzero total impedance and positive bases: fault solution, sequences, per-unit form
 
 Let $E$, $Z_{\mathrm{th}}$ and $Z_f$ be complex numbers with $Z_{\mathrm{th}} + Z_f \neq 0$, and let
 $V_b > 0$ and $I_b > 0$ be real phase voltage and current bases. Write

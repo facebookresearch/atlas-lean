@@ -6,5 +6,6 @@ the [positive-sequence set](balanced-phases.md) `(V, α² V, α V)` differs from
 
 `√3 e^{iπ/6} V ≠ √3 e^{-iπ/6} V`.
 
-For `V = 0` both are `0`. So, for nonzero phase voltages, the phase sequence shows in the line
-voltages through the sign of the 30° rotation.
+For `V = 0` see the [positive-sequence](line-voltage-balanced-phases.md) and
+[negative-sequence](line-voltage-reversed-phases.md) line voltages. So, for nonzero phase voltages,
+the phase sequence shows in the line voltages through the sign of the 30° rotation.

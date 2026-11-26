@@ -1,4 +1,4 @@
-# Away from denominator zeros the loaded model gives $v_o = G(s)\,v_i$
+# For $\omega_p \ne 0$, away from denominator zeros the loaded model gives $v_o = G(s)\,v_i$
 
 Let $A_0$, $\omega_p$, $\beta$, $a$, $b$ be real numbers with $\omega_p \ne 0$, and let $s$ be a
 complex frequency at which both denominators of the model are nonzero:

@@ -8,5 +8,5 @@ model is
 
 `P_e = Re(V_{t(e)} conj(I_e)) = b_e sin(θ_{t(e)} - θ_{h(e)})`,
 
-with `V_v = exp(i θ_v)` and `I_e = -i b_e (V_{t(e)} - V_{h(e)})`. In the physical reading the
-susceptances are positive; the identity holds for all real `b`.
+with `V_v = exp(i θ_v)` and `I_e = -i b_e (V_{t(e)} - V_{h(e)})`. An inductive branch, of series
+reactance `x_e > 0`, has positive susceptance `b_e = 1/x_e`; the identity holds for all real `b`.
