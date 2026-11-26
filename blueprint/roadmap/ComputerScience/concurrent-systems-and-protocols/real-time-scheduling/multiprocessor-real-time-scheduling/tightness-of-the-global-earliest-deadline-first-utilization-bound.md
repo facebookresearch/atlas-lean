@@ -9,4 +9,5 @@ Let $m > 1$ be an integer, $0 < u_1 < 1$ and $0 < \varepsilon \le u_1$. There is
 
 ## Sources
 
-- J. Goossens, S. Funk and S. Baruah, *Priority-driven scheduling of periodic task systems on multiprocessors*, technical report TR01-024, Department of Computer Science, University of North Carolina at Chapel Hill, <http://www.cs.unc.edu/techreports/01-024.pdf>; published in *Real-Time Systems* 25(2–3):187–205, 2003, Section 4, Theorem 6, its proof and footnote 3.
+- J. Goossens, S. Funk and S. Baruah, *Priority-driven scheduling of periodic task systems on multiprocessors*, technical report TR01-024, Department of Computer Science, University of North Carolina at Chapel Hill, <http://www.cs.unc.edu/techreports/01-024.pdf>; published in *Real-Time Systems* 25(2–3):187–205, 2003; the section, theorem and footnote numbers below are those of the technical report, Section 4, Theorem 6, its proof and footnote 3.
+- R. I. Davis and A. Burns, "A survey of hard real-time scheduling for multiprocessor systems", *ACM Computing Surveys* 43(4), article 35, 2011; author version <https://www-users.york.ac.uk/~rd17/papers/MPSurveyv4.9.pdf>, Section 6.1.1, equation (27) and the sentence before it: Goossens et al. derived the bound $m - (m - 1)u_{\max}$ for global EDF and showed that it is tight.
