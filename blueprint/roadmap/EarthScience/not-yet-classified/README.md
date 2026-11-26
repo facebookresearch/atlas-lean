@@ -21,3 +21,4 @@ Topics added since this subject's fields were last revised.
 - [Shallow Water Hydrostatic Reconstruction](shallow-water-hydrostatic-reconstruction/README.md)
 - [Thermodynamics State](thermodynamics-state/README.md)
 - [Units Or Scaling](units-or-scaling/README.md)
+- [Weak Parabolic](weak-parabolic/README.md)

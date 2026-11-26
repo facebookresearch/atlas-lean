@@ -90,3 +90,25 @@ example (j : ℕ) :
       0 := by
   rw [(hyperseq_esymm_recurrence_closed_form_row_sums 0).2.2.2.2 (j + 1), Nat.zero_ascFactorial]
   simp
+
+/-! ### The coefficients `e_{j,k}(0)` -/
+
+-- The empty row has value `1` in degree zero and `0` in positive degrees.
+example : (Icc 1 0).val.esymm 0 = 1 ∧ (Icc 1 0).val.esymm 1 = 0 := by
+  have h := hyperseq_esymm_zero_recurrence_stirling.1
+  exact ⟨(h 0).trans (by decide), (h 1).trans (by decide)⟩
+
+-- Adding `4` contributes `4 · (1 + 2 + 3)` to the degree-two value `11`.
+example : (Icc 1 4).val.esymm 2 = 35 :=
+  (hyperseq_esymm_zero_recurrence_stirling.2.1 3 1).trans (by decide +kernel)
+
+-- Both closed forms recover the sum of pairwise products of `1, 2, 3, 4`.
+example : (∑ ℓ ∈ range 3, (2 + ℓ).choose ℓ * Nat.stirlingFirst 4 (2 + ℓ)) = 35 ∧
+    Nat.stirlingFirst 5 3 = 35 := by
+  obtain ⟨hsum, hstirling⟩ := hyperseq_esymm_zero_recurrence_stirling.2.2 4 2 (by decide)
+  have h : (Icc 1 4).val.esymm 2 = 35 := by decide +kernel
+  exact ⟨hsum.symm.trans h, hstirling.symm.trans h⟩
+
+-- On the boundary `k = j`, the product of all the variables is the first Stirling column.
+example : (Icc 1 4).val.esymm 4 = 24 :=
+  (hyperseq_esymm_zero_recurrence_stirling.2.2 4 4 le_rfl).2.trans (by decide)
