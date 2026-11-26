@@ -22,11 +22,12 @@ public import Domains.Biology.Ecology.ZeroDeterminantStrategyDotProductEqDivPdDe
 /-!
 # In the Prisoner's Dilemma X can fix any score of Y
 
-This module defines Y's view `yView`, the Markov matrix `markovMatrix`, stationary
-distributions `IsStationary`, Y's payoffs `payoffY`, the columns `pTilde` and `qTilde`,
-the Press–Dyson determinant `pdDet` and memory-one strategies `IsStrategy`, and proves
-that for `T > R > P > S` and every `σ ∈ [P, R]` there is a memory-one strategy fixing
-Y's long-run score at `σ` (`exists_strategy_fixing_score`).
+This module defines Y's payoffs `payoffY` and proves that for `T > R > P > S` and every
+`σ ∈ [P, R]` there is a memory-one strategy fixing Y's long-run score at `σ`
+(`exists_strategy_fixing_score`). Memory-one strategies `IsStrategy`, Y's view `yView`, the
+Markov matrix `markovMatrix`, stationary distributions `IsStationary`, the columns `pTilde`
+and `qTilde` and the Press–Dyson determinant `pdDet` come from
+`Domains.Biology.Ecology.ZeroDeterminantStrategyDotProductEqDivPdDet`.
 
 Sources: W. H. Press and F. J. Dyson, "Iterated Prisoner's Dilemma contains strategies that
 dominate any evolutionary opponent", Proc. Natl. Acad. Sci. USA 109 (2012) 10409–10413,
@@ -81,94 +82,7 @@ private theorem dot_pTilde_eq_zero (p q v : Fin 4 → ℝ)
   linarith [hsum]
 
 private theorem pdDet_zero_eq (p : Fin 4 → ℝ) : pdDet p 0 1 = p 1 - 1 - p 3 := by
-  have hexpand : pdDet p 0 1 = -(((Matrix.of fun i j =>
-      ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-        p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-        pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-          (0 : Fin 4).succAbove Fin.succ).det) := by
-    simp only [pdDet]
-    rw [Matrix.det_succ_column_zero]
-    simp only [Fin.sum_univ_four]
-    have h0 : (Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j) 0 0 = -1 := by simp
-    have h1 : (Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j) 1 0 = 0 := by simp
-    have h2 : (Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j) 2 0 = 0 := by simp
-    have h3 : (Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j) 3 0 = 0 := by simp
-    rw [h0, h1, h2, h3]
-    simp
-  have hminor : ((Matrix.of fun i j =>
-      ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-        p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-        pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-          (0 : Fin 4).succAbove Fin.succ).det = 1 - p 1 + p 3 := by
-    have h00 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 0 0 = -1 + p 1 := by
-      simp [Matrix.submatrix, pTilde]
-    have h01 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 0 1 = 0 := by
-      simp [Matrix.submatrix, qTilde]
-    have h02 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 0 2 = 1 := by
-      simp [Matrix.submatrix]
-    have h10 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 1 0 = p 2 := by
-      simp [Matrix.submatrix, pTilde]
-    have h11 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 1 1 = -1 := by
-      simp [Matrix.submatrix, qTilde]
-    have h12 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 1 2 = 1 := by
-      simp [Matrix.submatrix]
-    have h20 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 2 0 = p 3 := by
-      simp [Matrix.submatrix, pTilde]
-    have h21 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 2 1 = 0 := by
-      simp [Matrix.submatrix, qTilde]
-    have h22 : ((Matrix.of fun i j =>
-        ![![-1 + p 0 * (0 : Fin 4 → ℝ) 0, p 1 * (0 : Fin 4 → ℝ) 2,
-          p 2 * (0 : Fin 4 → ℝ) 1, p 3 * (0 : Fin 4 → ℝ) 3] i,
-          pTilde p i, qTilde (0 : Fin 4 → ℝ) i, (1 : Fin 4 → ℝ) i] j).submatrix
-            (0 : Fin 4).succAbove Fin.succ) 2 2 = 1 := by
-      simp [Matrix.submatrix]
-    rw [Matrix.det_fin_three, h00, h01, h02, h10, h11, h12, h20, h21, h22]
-    ring
-  rw [hexpand, hminor]
+  simp [pdDet, Matrix.det_succ_column_zero, Fin.sum_univ_succ, Fin.succAbove, pTilde, qTilde]
   ring
 
 /-- **In the Prisoner's Dilemma X can fix any score `P ≤ σ ≤ R` of Y** (Press and Dyson 2012,

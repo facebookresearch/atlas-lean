@@ -20,14 +20,14 @@ stationary distribution, Press and Dyson show that `v · f = D(p, q, f) / D(p, q
 feasible `p` with `p̃ = α S_X + β S_Y + γ 1`, then `α s_X + β s_Y + γ = 0` whatever Y does.
 The determinant formula `v · f = D(p, q, f) / D(p, q, 1)` needs the nondegeneracy condition
 `D(p, q, 1) ≠ 0` and is proved with it in
-`Domains.Biology.Ecology.ZeroDeterminantStrategyDotProductEqDivPdDet`. The existence of a
-strategy fixing the score (`exists_strategy_fixing_score`) is proved in
-`Domains.Biology.Ecology.ZeroDeterminantStrategyExistsStrategyFixingScore`. The linear payoff
+`Domains.Biology.Ecology.ZeroDeterminantStrategyDotProductEqDivPdDet`. The linear payoff
 relations do not: they follow from
 `v · p̃ = 0`, which holds for every stationary distribution `v` because `p̃` is the sum of the
 first two columns of `M(p, q) - I` (X cooperates next with probability `p_s` from outcome `s`).
 So they are stated for every stationary distribution. The paper notes that not all such
-strategies are feasible and that singular cases exist.
+strategies are feasible and that singular cases exist. The existence of a strategy fixing the
+score (`exists_strategy_fixing_score`) is proved in
+`Domains.Biology.Ecology.ZeroDeterminantStrategyExistsStrategyFixingScore`.
 
 Sources: W. H. Press and F. J. Dyson, "Iterated Prisoner's Dilemma contains strategies that
 dominate any evolutionary opponent", Proc. Natl. Acad. Sci. USA 109 (2012) 10409–10413,
