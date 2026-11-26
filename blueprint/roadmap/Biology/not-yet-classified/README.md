@@ -6,6 +6,7 @@ Topics added since this subject's fields were last revised.
 - [Chao Lower Bound](chao-lower-bound/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
+- [Complex Balanced Stability](complex-balanced-stability/README.md)
 - [General Markov Flattening](general-markov-flattening/README.md)
 - [General Markov Identifiability](general-markov-identifiability/README.md)
 - [Good Turing](good-turing/README.md)
@@ -21,3 +22,4 @@ Topics added since this subject's fields were last revised.
 - [Split Decomposition](split-decomposition/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [String Overlap](string-overlap/README.md)
+- [Deficiency-zero theorem, local asymptotic stability](local-asymptotic-stability.md)
