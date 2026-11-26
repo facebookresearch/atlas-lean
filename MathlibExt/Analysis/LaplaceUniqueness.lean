@@ -319,8 +319,8 @@ private theorem luqShift (H : ℂ → ℂ) (hH : Differentiable ℂ H) (σ₁ σ
   exact mul_left_cancel₀ Complex.I_ne_zero this
 
 /-- Two continuous functions `g₁` and `g₂` are equal if an entire function `Λ`, bounded on vertical
-strips, is the Laplace transform `∫ g₁ t * exp (s * t)` of `g₁` for `c < re s` and the Laplace transform
-of `g₂` for `re s < -c`, both integrands being integrable there. -/
+strips, is the Laplace transform `∫ g₁ t * exp (s * t)` of `g₁` for `c < re s` and the Laplace
+transform of `g₂` for `re s < -c`, both integrands being integrable there. -/
 theorem eq_of_laplace_eq_of_boundedOnStrips
     (g₁ g₂ : ℝ → ℂ) (hg₁ : Continuous g₁) (hg₂ : Continuous g₂)
     (c : ℝ) (Λ : ℂ → ℂ) (hΛ : Differentiable ℂ Λ) (hb : Complex.BoundedOnStrips Λ)

@@ -543,10 +543,10 @@ end MathlibExt.Analysis.Convex.KakutaniFixedPoint
 
 namespace MathlibExt.Analysis.Convex.KakutaniFixedPoint
 
-/-- Kakutani's fixed-point theorem: if `K` is a nonempty compact convex subset of a finite-dimensional
-real normed space and `Φ` assigns to each `x ∈ K` a nonempty convex set `Φ x ⊆ K` such that the graph
-`{(x, y) | x ∈ K ∧ y ∈ Φ x}` is closed, then some `x ∈ K` satisfies `x ∈ Φ x`. With `K` compact, the
-closed graph is the same as upper hemicontinuity with closed values. -/
+/-- Kakutani's fixed-point theorem: if `K` is a nonempty compact convex subset of a
+finite-dimensional real normed space and `Φ` assigns to each `x ∈ K` a nonempty convex set `Φ x ⊆ K`
+such that the graph `{(x, y) | x ∈ K ∧ y ∈ Φ x}` is closed, then some `x ∈ K` satisfies `x ∈ Φ x`.
+With `K` compact, the closed graph is the same as upper hemicontinuity with closed values. -/
 theorem exists_mem_self {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] {K : Set E} (hKc : IsCompact K) (hKcv : Convex ℝ K)
     (hKne : K.Nonempty)
