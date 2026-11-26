@@ -31,6 +31,22 @@ module
 public import Mathlib.RingTheory.HahnSeries.Multiplication
 public import Mathlib.RingTheory.LaurentSeries
 
+/-!
+# Expansion and decimation of Laurent series
+
+For a nonzero natural number `N`, `LaurentSeries.expand R N` is the ring homomorphism that
+replaces `X ^ k` by `X ^ (N * k)`. For a nonzero natural number `p`,
+`LaurentSeries.decimate K p` is the linear map that keeps the coefficients at indices
+divisible by `p` and divides those indices by `p`. Decimation undoes expansion by the same
+factor (`LaurentSeries.decimate_expand`), so it is a left inverse of expansion.
+
+The cited source calls these operators `qExpand` and `qDecimate`. It uses `qDecimate` in a
+separate predicate, `IsFrobPushDiff K Γ p C`, which says that
+`diffQExp (C ω) = qDecimate K p (diffQExp ω)` for every differential `ω` of a `q`-expansion
+function field; it describes a Frobenius pushforward on differentials. That predicate is not
+defined here.
+-/
+
 @[expose] public section
 
 open HahnSeries
@@ -39,11 +55,11 @@ namespace LaurentSeries
 
 section Expand
 
-variable {R : Type*} [CommRing R]
+variable {R : Type*} [Semiring R]
 
-/-- The expansion map on Laurent series: it replaces `X ^ k` by
-`X ^ (N * k)`, stretching the exponents by `N`. -/
-public noncomputable def expand (R : Type*) [CommRing R] (N : ℕ) [NeZero N] :
+/-- **Expansion of Laurent series.** It replaces `X ^ k` by `X ^ (N * k)`, stretching the
+exponents by `N`. -/
+public noncomputable def expand (R : Type*) [Semiring R] (N : ℕ) [NeZero N] :
     LaurentSeries R →+* LaurentSeries R :=
   HahnSeries.embDomainRingHom (AddMonoidHom.mulLeft (N : ℤ))
     (mul_right_injective₀ (by exact_mod_cast NeZero.ne N))
@@ -105,10 +121,10 @@ end Expand
 
 section Decimate
 
-variable (K : Type*) (p : ℕ) [NeZero p]
+variable {K : Type*} (p : ℕ) [NeZero p]
 
-/-- The coefficient support of a decimated Laurent series is bounded
-below. -/
+/-- **Bounded support of decimated coefficients.** The coefficient support of a decimated
+Laurent series is bounded below. -/
 public theorem bddBelow_support_decimate [Zero K] (x : LaurentSeries K) :
     BddBelow (Function.support fun k : ℤ => x.coeff ((p : ℤ) * k)) := by
   by_cases hne : x.support.Nonempty
@@ -127,18 +143,14 @@ public theorem bddBelow_support_decimate [Zero K] (x : LaurentSeries K) :
     rw [hne] at hk'
     exact hk'
 
-section Semiring
-
 variable [Semiring K]
 
-/-- The decimation map on Laurent series: it keeps only the coefficients
-whose index is divisible by `p`, reindexed by division by `p`. This is the
-series-level operator whose compatibility with the differential of a
-`q`-expansion function field defines the Frobenius pushforward on
-differentials. -/
+variable (K) in
+/-- **Decimation of Laurent series.** It keeps only the coefficients whose index is divisible
+by `p`, reindexed by division by `p`. -/
 public noncomputable def decimate : LaurentSeries K →ₗ[K] LaurentSeries K where
   toFun x := HahnSeries.ofSuppBddBelow (fun k : ℤ => x.coeff ((p : ℤ) * k))
-    (bddBelow_support_decimate K p x)
+    (bddBelow_support_decimate p x)
   map_add' x y := by
     ext k
     simp only [HahnSeries.coeff_ofSuppBddBelow, HahnSeries.coeff_add]
@@ -151,10 +163,9 @@ public theorem coeff_decimate (x : LaurentSeries K) (k : ℤ) :
     (decimate K p x).coeff k = x.coeff ((p : ℤ) * k) := by
   simp only [decimate, LinearMap.coe_mk, AddHom.coe_mk, HahnSeries.coeff_ofSuppBddBelow]
 
-end Semiring
-
-/-- Decimation undoes expansion by the same factor. -/
-public theorem decimate_expand [CommRing K] (x : LaurentSeries K) :
+/-- **Decimation undoes expansion.** Decimating the expansion of a Laurent series by the same
+factor gives the series back. -/
+public theorem decimate_expand (x : LaurentSeries K) :
     decimate K p (expand K p x) = x := by
   ext k
   rw [coeff_decimate, coeff_expand_mul]

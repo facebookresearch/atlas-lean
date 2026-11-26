@@ -56,6 +56,11 @@ example : qExpand ℚ 2 (qExpand ℚ 3 (HahnSeries.single (-1 : ℤ) (1 : ℚ)))
   rw [qExpand_qExpand, qExpand_single]
   norm_num
 
+/-- `qExpand` is the shared Laurent-series expansion, so decimation by `2` undoes
+`q ↦ q²`: it recovers `j(q)` from `j(q²)`. -/
+example : LaurentSeries.decimate ℚ 2 (jqN 2) = jq :=
+  LaurentSeries.decimate_expand 2 jq
+
 /-- The vanishing field of the carrier, at the exemplar. -/
 example : modularPolynomialDataOne.Φ.eval₂ evalAtJ (jqN 1) = 0 :=
   modularPolynomialDataOne.eval_eq_zero
