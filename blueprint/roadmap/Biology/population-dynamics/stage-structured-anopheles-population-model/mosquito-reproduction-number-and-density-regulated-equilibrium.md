@@ -1,7 +1,9 @@
 # Mosquito reproduction number and density-regulated equilibrium
 
 **Setting.** In the [stage-structured mosquito model](stage-structured-mosquito-model-with-density-dependent-larval-mortality.md), define the *effective mosquito reproduction number* at larval densities $(E, L)$ as the expected number of adult females produced by one adult female over her lifetime when larval death rates are frozen at $\mu_E(E,L)$, $\mu_L(E,L)$:
+
 $$R_{\mathrm{eff}}(E,L) = \frac{\beta}{2\mu_M}\cdot\frac{1}{1 + d_E\,\mu_E(E,L)}\cdot\frac{1}{1 + d_L\,\mu_L(E,L)}\cdot\frac{1}{1 + d_P\,\mu_P},$$
+
 and the *basic mosquito reproduction number* $R_0 = R_{\mathrm{eff}}(0,0)$, obtained with the low-density rates $\mu_E^0, \mu_L^0$.
 
 **Proposition.**

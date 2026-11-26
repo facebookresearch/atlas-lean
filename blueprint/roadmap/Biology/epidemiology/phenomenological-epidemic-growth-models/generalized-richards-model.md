@@ -1,12 +1,15 @@
 # Generalized Richards model
 
 **Model.** The cumulative number of cases satisfies
+
 $$C'(t) = r\,C(t)^{p}\Big[1 - \Big(\frac{C(t)}{K}\Big)^{a}\Big] \qquad \text{(Eq. 2)},$$
+
 with growth rate $r > 0$, deceleration-of-growth parameter $p \in [0,1]$, final epidemic size $K > 0$ and shape parameter $a > 0$, started from $0 < C(0) < K$.
 
 **Special cases.** $p = 1$ gives the Richards model $C' = rC[1 - (C/K)^a]$; $p = 1$, $a = 1$ gives the logistic equation; $K \to \infty$ gives the [generalized-growth model](generalized-growth-model.md).
 
 **Properties.** For $0 < C(0) < K$, the solution increases strictly and tends to $K$ as $t \to \infty$; while $C \ll K$, $C' \approx rC^p$, so the early phase ranges over constant incidence ($p = 0$), polynomial growth ($0 < p < 1$) and exponential growth ($p = 1$). The incidence curve $C'(t)$ is unimodal, peaking where $\frac{d}{dC}\big(C^p[1 - (C/K)^a]\big) = 0$, i.e. at
+
 $$C_{\mathrm{peak}} = K\Big(\frac{p}{p+a}\Big)^{1/a} \quad (p > 0).$$
 
 ## Depends on

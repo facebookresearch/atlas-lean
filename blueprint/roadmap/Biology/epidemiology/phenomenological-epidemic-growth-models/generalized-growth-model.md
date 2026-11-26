@@ -1,14 +1,18 @@
 # Generalized-growth model
 
 **Model.** The cumulative number of cases $C(t) > 0$ satisfies
+
 $$C'(t) = r\,C(t)^{p}, \qquad C(0) = C_0 > 0 \qquad \text{(Eq. 1)},$$
+
 with growth rate $r > 0$ and deceleration-of-growth parameter $p \in [0,1]$; $C'(t)$ is the incidence.
 
 **Proposition (explicit solution).**
 
 - If $p = 1$: $C(t) = C_0 e^{rt}$ (exponential growth).
 - If $0 \le p < 1$:
+
 $$C(t) = \Big(C_0^{\,1-p} + (1-p)\,r\,t\Big)^{1/(1-p)}, \qquad t \ge 0 .$$
+
 In particular $p = 0$ gives constant incidence $C'(t) = r$ and linear $C(t) = C_0 + rt$; for $0 < p < 1$, $C(t)$ grows like $t^{1/(1-p)}$, i.e. polynomially, and the incidence grows like $t^{p/(1-p)}$.
 
 **Diagnostic.** On a semi-logarithmic scale exponential growth is a straight line, while $p < 1$ produces downward curvature of $\log C'(t)$; systematic, autocorrelated residuals of an exponential fit to early data indicate sub-exponential growth.

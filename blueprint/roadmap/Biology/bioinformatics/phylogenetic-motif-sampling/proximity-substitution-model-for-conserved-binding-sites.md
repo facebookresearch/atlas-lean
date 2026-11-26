@@ -9,7 +9,9 @@ $$T_i(\alpha \mid \beta; q) = q\, \mathbf{1}\{\alpha = \beta\} + (1 - q)\, w_{\a
 1. *(Composition.)* $\sum_{\gamma'} T_i(\alpha \mid \gamma'; q_2)\, T_i(\gamma' \mid \beta; q_1) = T_i(\alpha \mid \beta; q_1 q_2)$, so inserting an intermediate ancestor multiplies proximities.
 2. *(Stationarity.)* $\sum_\beta T_i(\alpha \mid \beta; q)\, w_{\beta i} = w_{\alpha i}$; as $q \to 0$, $T_i(\alpha \mid \beta; q) \to w_{\alpha i}$, the law of an independently sampled site.
 3. *(Star phylogeny.)* If an aligned window contains bases $s_1, \dots, s_N$ at position $i$ in $N$ orthologous sequences descending independently from a common ancestor with proximities $q_1, \dots, q_N$, and the ancestral base is drawn from $w_{\cdot i}$, then
+
 $$P(W_i \mid w) = \sum_{\alpha} w_{\alpha i} \prod_{j = 1}^{N} \big(q_j \mathbf{1}\{s_j = \alpha\} + (1 - q_j)\, w_{s_j i}\big), \qquad P(W \mid w) = \prod_{i = 1}^{\ell} P(W_i \mid w),$$
+
 and for a general tree $P(W_i \mid w)$ is obtained by Felsenstein pruning with the transition matrices $T_i$.
 
 The background probability of a window is the same expression with $w_{\alpha i}$ replaced by background base frequencies.

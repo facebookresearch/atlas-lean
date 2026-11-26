@@ -22,7 +22,9 @@ Conversely, PCST reduces to MWCS by subdividing each edge $e$ with a new vertex 
 ## Expansion
 
 For a tree $T$ with $|V_T|$ vertices, $|E_T| = |V_T| - 1$, so
+
 $$p(T) = \sum_{v \in V_T}(w(v) - w') - (|V_T| - 1)(-w') = w(T) - |V_T| w' + |V_T| w' - w' = w(T) - w',$$
+
 so the two objectives differ on trees by the constant $-w' = |w'|$ and have the same maximizers, which is Corollary 1. (The theorem appears in the source as $w(T) = p(T) - w'$; the source's own worked example, quoted next, confirms the sign $p(T) = w(T) - w'$.) The edge cost charges each extra vertex exactly the amount $-w'$ added to its profit, so including a vertex pays off in PCST precisely when it pays off in MWCS. The source's example: an MWCS instance with minimum weight $-15$ and optimum $36$ maps to a PCST optimum of profit $126 - 75 = 51 = 36 + 15$.
 
 ## Sources

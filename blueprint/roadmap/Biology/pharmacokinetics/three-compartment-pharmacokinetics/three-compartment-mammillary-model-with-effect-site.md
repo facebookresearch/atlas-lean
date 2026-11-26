@@ -7,7 +7,9 @@ $$\begin{aligned}
 \dot A_3 &= Q_3\,(C_1 - C_3).
 \end{aligned}$$
 The effect-site concentration $C_e$ lags the plasma concentration $C_p = C_1$ through
+
 $$\dot C_e = k_{e0}\,(C_p - C_e), \qquad k_{e0} > 0,$$
+
 and the drug effect is a Hill function of $C_e$.
 
 **Properties.**

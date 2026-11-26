@@ -9,7 +9,9 @@ Define the steady-state threshold $\theta_\infty(V) = V_T - k_a \log h_\infty(V)
 **Proposition.**
 
 1. *(Exact threshold dynamics.)* Along any trajectory with $h > 0$,
+
 $$\frac{d\theta}{dt} = \frac{k_a}{\tau_h(V)}\Big(1 - \exp\Big(\frac{\theta - \theta_\infty(V)}{k_a}\Big)\Big).$$
+
 In particular $\theta$ increases when $\theta < \theta_\infty(V)$, decreases when $\theta > \theta_\infty(V)$, and is constant exactly when $\theta = \theta_\infty(V)$.
 2. *(Linearization.)* If $|\theta - \theta_\infty(V)| \ll k_a$, then $\tau_h(V)\, \dfrac{d\theta}{dt} \approx \theta_\infty(V) - \theta$: the threshold relaxes to its steady state with the inactivation time constant.
 3. *(Spike-triggered shift.)* If during a spike of duration $\Delta$ the equilibrium is $h_\infty \approx 0$ and the time constant averages $\bar\tau_h$, then $h \mapsto h\, e^{-\Delta/\bar\tau_h}$ and $\theta \mapsto \theta + k_a \Delta/\bar\tau_h$: each spike raises the threshold by a fixed amount.

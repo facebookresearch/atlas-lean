@@ -1,20 +1,29 @@
 # Discrete-time SIR model with change points and a reporting delay
 
 **Base model.** In a closed population of size $N$, susceptible ($S$), infected ($I$) and recovered ($R$) compartments follow the SIR equations with spreading rate $\lambda > 0$ and recovery rate $\mu > 0$,
+
 $$\frac{dS}{dt} = -\lambda \frac{S I}{N}, \qquad \frac{dI}{dt} = \lambda \frac{S I}{N} - \mu I, \qquad \frac{dR}{dt} = \mu I .$$
+
 With a time step $\Delta t$ (one day) this is discretized as
+
 $$I^{\mathrm{new}}_t = \lambda \Delta t \, \frac{S_{t-1}}{N} I_{t-1}, \qquad R^{\mathrm{new}}_t = \mu \Delta t \, I_{t-1},$$
+
 $$S_t = S_{t-1} - I^{\mathrm{new}}_t, \qquad R_t = R_{t-1} + R^{\mathrm{new}}_t, \qquad I_t = I_{t-1} + I^{\mathrm{new}}_t - R^{\mathrm{new}}_t ,$$
+
 started at $t = 0$ from $I_0$ infected people. $I_t$ counts currently active infections, $I^{\mathrm{new}}_t$ new infections.
 
 **Reporting delay.** New infections are reported after a delay of $D \ge 0$ days, so the modelled number of newly reported cases is $C_t = I^{\mathrm{new}}_{t-D}$. A weekly reporting modulation multiplies this by $1 - f(t)$ with
+
 $$f(t) = (1 - f_w)\left(1 - \left|\sin\!\left(\tfrac{\pi}{7} t - \tfrac{1}{2}\Phi_w\right)\right|\right),$$
+
 where $f_w \in [0, 1]$ and the phase $\Phi_w$ are estimated.
 
 **Change points.** The spreading rate is piecewise linear in time: given change-point times $t_1 < \dots < t_n$, durations $\Delta t_i > 0$ and rates $\lambda_0, \lambda_1, \dots, \lambda_n$, the rate equals $\lambda_{i-1}$ before $t_i$, moves linearly from $\lambda_{i-1}$ to $\lambda_i$ over a window of length $\Delta t_i$ around $t_i$, and equals $\lambda_i$ afterwards (until the next change point). The discrete recursion above is run with this time-varying $\lambda$.
 
 **Observation model.** Given observed daily reports $\hat C_t$ and parameters $\theta = \{\lambda_i, t_i, \Delta t_i, \mu, D, \sigma, I_0, f_w, \Phi_w\}$, the local likelihoods are independent Student-$t$ densities with $\nu = 4$ degrees of freedom,
+
 $$\hat C_t \mid \theta \sim \mathrm{StudentT}_{\nu = 4}\!\left(\text{location } C_t(\theta),\ \text{scale } \sigma \sqrt{C_t(\theta)}\right),$$
+
 so that the variance grows proportionally to the modelled mean (as for random subsampling of cases), while the heavy tails limit the influence of reporting outliers. The posterior is $p(\theta \mid \hat C) \propto \prod_t p(\hat C_t \mid \theta) \, p(\theta)$.
 
 Properties:

@@ -1,13 +1,19 @@
 # Hawkes process with a time-varying reproduction number
 
 Let $t_1 < t_2 < \dots$ be infection (or case) times. In the self-exciting branching point process the conditional intensity is
+
 $$\lambda(t) = \mu + \sum_{t_i < t} R(t_i)\, w(t - t_i), \tag{1}$$
+
 where $\mu \ge 0$ is the rate of exogenous cases, $R(t) \ge 0$ is the dynamic reproduction number, and $w$ is a probability density on $(0, \infty)$ (gamma or Weibull) for the time between an infection and the infections it causes. Equivalently, each event $j$ independently generates a Poisson number of direct offspring with mean $R(t_j)$, placed at times $t_j + $ independent draws from $w$, and exogenous events form a Poisson process of rate $\mu$.
 
 Given events $t_1, \dots, t_n$, the probability that event $i$ was caused by event $j < i$ is
+
 $$p_{ij} = \frac{R(t_j)\, w(t_i - t_j)}{\lambda(t_i)}, \tag{2}$$
+
 and $p_{ii} = \mu / \lambda(t_i)$ is the probability that $i$ is exogenous, so that $p_{ii} + \sum_{j < i} p_{ij} = 1$. With a histogram parameterization $R(t) = \sum_{k=1}^{B} r_k \mathbf{1}\{t \in I_k\}$ over time intervals $I_k$ (Eq. 3), the expectation–maximization update is
+
 $$r_k = \frac{1}{N_k}\sum_{t_i > t_j} p_{ij}\, \mathbf{1}\{t_j \in I_k\}, \tag{4}$$
+
 where $N_k$ is the number of events in $I_k$: the average expected number of offspring of the events in each interval.
 
 Properties:

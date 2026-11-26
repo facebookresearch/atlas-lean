@@ -29,7 +29,9 @@ The left integrals are the share of transmission due to, and the fraction of, in
 ## Expansion
 
 Since $R_0 = k(1 - q)/q$,
+
 $$\frac{x}{R_0}\mathrm{NB}(x; k, q) = \frac{\Gamma(x + k)}{\Gamma(k)\,(x-1)!}\, q^{k}(1-q)^{x}\cdot \frac{q}{k(1-q)} = \frac{\Gamma\big((x - 1) + (k + 1)\big)}{\Gamma(k + 1)\,(x - 1)!}\, q^{k + 1}(1 - q)^{x - 1},$$
+
 which is $\mathrm{NB}(x - 1; k + 1, q)$. On $[j, j+1)$ the integrand $\lfloor x \rfloor \mathrm{NB}(\lfloor x \rfloor; k, q)/R_0$ equals $\mathrm{NB}(j - 1; k + 1, q)$ for $j \ge 1$ and $0$ for $j = 0$, and the substitution $u = x - 1$ gives the second form of the defining equation. Small $k$ concentrates transmission: the source reports that with $R_0$ between 2 and 3 and $k \approx 0.1$, about 10% of cases account for 80% of secondary transmissions.
 
 ## Sources

@@ -1,20 +1,29 @@
 # Outbreak size and epidemic probability under bond percolation on a configuration-model network
 
 Let a large random contact network be built by the configuration model with degree distribution $(p_k)_{k \ge 0}$, finite mean $\langle k \rangle = \sum_k k p_k$ and finite second moment $\langle k^2 \rangle$. Let
+
 $$G_0(x) = \sum_{k} p_k x^k, \qquad G_1(x) = \frac{G_0'(x)}{G_0'(1)} = \frac{\sum_k k p_k x^{k-1}}{\langle k \rangle}$$
+
 be the generating functions of the degree and of the excess degree (the number of further edges at the end of a uniformly chosen edge). An SIR infection is transmitted along each edge incident to an infected vertex independently with probability $T \in [0,1]$ (the transmissibility), so the final outbreak from one index case is the bond-percolation cluster containing it.
 
 **Statements.**
 
 1. *Reproduction number and threshold.* The mean excess degree is $\langle k_e \rangle = G_1'(1) = \langle k^2 \rangle / \langle k \rangle - 1$, and
+
 $$R_0 = T\,\langle k_e \rangle = T\left(\frac{\langle k^2 \rangle}{\langle k \rangle} - 1\right).$$
+
 Large epidemics are possible only above the critical transmissibility $T_c = 1/\langle k_e \rangle$, that is, when $R_0 > 1$.
 2. *Mean outbreak size below threshold.* For $T < T_c$ the expected size of the outbreak started by a uniformly chosen vertex is
+
 $$\langle s \rangle = 1 + \frac{T \langle k \rangle}{1 - T \langle k_e \rangle},$$
+
 which diverges as $T \uparrow T_c$.
 3. *Epidemic probability.* Let $u \in [0,1]$ be the smallest solution of
+
 $$u = G_1\big(1 + (u - 1)T\big),$$
+
 the probability that the vertex reached along a random edge does not lead to an epidemic. Then the probability that a uniformly chosen index case starts a large epidemic, which also equals the expected fraction of the population infected in that event, is
+
 $$S = 1 - G_0\big(1 + (u - 1)T\big).$$
 
 ## Depends on

@@ -1,6 +1,7 @@
 # Transfer entropy
 
 Let $(I_n)$ and $(J_n)$ be jointly stationary discrete-valued processes, and for a Markov order $k \ge 1$ write $i^{(k)}_n = (i_n, i_{n-1}, \dots, i_{n-k+1})$ for the vector of the last $k$ values of $I$ up to time $n$, and similarly $j^{(k)}_n$. The **transfer entropy** from $J$ to $I$ is
+
 $$\mathrm{TE}_{J \to I} = \sum_{i_{n+1},\, i^{(k)}_n,\, j^{(k)}_n} P\big(i_{n+1}, i^{(k)}_n, j^{(k)}_n\big) \log \frac{P\big(i_{n+1} \mid i^{(k)}_n, j^{(k)}_n\big)}{P\big(i_{n+1} \mid i^{(k)}_n\big)} .$$
 
 Properties:

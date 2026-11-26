@@ -1,8 +1,11 @@
 # Pybus–Harvey gamma statistic
 
 Let a reconstructed ultrametric phylogeny have $n \ge 3$ tips, and let $g_k > 0$ ($k = 2, \dots, n$) be the internode interval during which exactly $k$ lineages are present. Set
+
 $$T = \sum_{j=2}^{n} j\, g_j, \qquad T_i = \sum_{k=2}^{i} k\, g_k \quad (i = 2, \dots, n - 1).$$
+
 The gamma statistic is
+
 $$\gamma = \frac{\dfrac{1}{n - 2}\displaystyle\sum_{i=2}^{n-1} T_i - \dfrac{T}{2}}{T\sqrt{\dfrac{1}{12(n - 2)}}}.$$
 
 Under a constant-rate pure-birth (Yule) process with speciation rate $\lambda > 0$, the scaled intervals $j g_j$ ($j = 2, \dots, n$) are independent $\mathrm{Exp}(\lambda)$ variables; consequently $(T_2/T, \dots, T_{n-1}/T)$ has the law of the order statistics of $n - 2$ independent uniform variables on $(0, 1)$, and $\gamma$ is approximately standard normal for large $n$.

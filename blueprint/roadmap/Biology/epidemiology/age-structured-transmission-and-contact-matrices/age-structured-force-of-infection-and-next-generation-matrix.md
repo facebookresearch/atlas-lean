@@ -1,13 +1,19 @@
 # Age-structured force of infection and next-generation matrix
 
 **Model.** Divide a population into age groups $i = 1, \dots, n$ of sizes $N_i > 0$. Let $c_{ij} \ge 0$ be the mean rate at which an individual of group $i$ makes epidemiologically relevant contacts with individuals of group $j$, $\sigma_i \ge 0$ the relative susceptibility of group $i$, and $q > 0$ a transmissibility parameter (probability of transmission per contact for a fully susceptible contact). With $I_j(t)$ infectious individuals in group $j$, the force of infection on a susceptible of group $i$ is
+
 $$\lambda_i(t) = q\,\sigma_i \sum_{j=1}^{n} c_{ij}\,\frac{I_j(t)}{N_j},$$
+
 and new infections in group $i$ occur at rate $\lambda_i(t)\,S_i(t)$. Reciprocity of contacts requires $N_i c_{ij} = N_j c_{ji}$ (the total number of $i$–$j$ contacts counted from either side).
 
 **Next-generation matrix.** For an SEIR-type natural history in which an infected individual of group $j$ is infectious for an expected duration $D_j$ (latent stages do not transmit), linearizing at the disease-free state $S_i = N_i$ gives the next-generation matrix
+
 $$K_{ij} = q\,\sigma_i\, c_{ij}\, \frac{N_i}{N_j}\, D_j \qquad (i, j = 1, \dots, n),$$
+
 the expected number of group-$i$ infections caused by one infectious individual of group $j$, and the basic reproduction number is its spectral radius
+
 $$R_0 = \rho(K).$$
+
 Consequences:
 
 - $R_0$ is linear in $q$, so $q$ can be calibrated from a target $R_0$ once the contact structure is fixed: $q = R_0 / \rho(K|_{q=1})$.

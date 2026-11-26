@@ -1,16 +1,23 @@
 # Normal–exponential convolution density and signal posterior mean
 
 Let $X = B + S$ where $B \sim \mathcal{N}(\mu, \sigma^2)$ is residual background and $S$ is the true signal, exponentially distributed with mean $\alpha > 0$, independent of $B$. (For a two-colour array, $X = R_f - R_b$ is the foreground minus background intensity of one channel; parameters are separate for each channel of each array.) Write $\varphi$ and $\Phi$ for the standard normal density and distribution function and
+
 $$\mu_{S \cdot X} = x - \mu - \frac{\sigma^2}{\alpha} .$$
 
 **Proposition.**
 
 1. The joint density of $(X, S)$ at $(x, s)$, $s > 0$, is
+
 $$f_{X,S}(x, s) = \frac{1}{\alpha \sigma}\, \exp\!\left(-\frac{x - \mu}{\alpha} + \frac{\sigma^2}{2\alpha^2}\right) \varphi\!\left(\frac{s - \mu_{S \cdot X}}{\sigma}\right).$$
+
 2. The marginal density of $X$ is
+
 $$f_X(x) = \frac{1}{\alpha} \exp\!\left(-\frac{x - \mu}{\alpha} + \frac{\sigma^2}{2\alpha^2}\right) \Phi\!\left(\frac{\mu_{S \cdot X}}{\sigma}\right).$$
+
 3. Given $X = x$, $S$ is $\mathcal{N}(\mu_{S \cdot X}, \sigma^2)$ truncated to $(0, \infty)$, and the background-corrected intensity is
+
 $$\mathbb{E}(S \mid X = x) = \mu_{S \cdot X} + \sigma\, \frac{\varphi(\mu_{S \cdot X}/\sigma)}{\Phi(\mu_{S \cdot X}/\sigma)} > 0 .$$
+
 4. The cumulant generating function of $X$ is $K_X(\theta) = \mu \theta + \tfrac{1}{2}\sigma^2 \theta^2 - \log(1 - \alpha\theta)$ for $\theta < 1/\alpha$.
 
 ## Expansion

@@ -5,7 +5,9 @@ Let $G_1, \dots, G_g$ be rooted binary gene trees on (subsets of) a sample set, 
 **Gene-tree conflict.** $C_{\mathrm{conf}}(\mathcal{D}) = \sum_{\ell = 1}^{g} \mathrm{dup}(G_\ell, \mathcal{D})$, where $\mathrm{dup}$ is the minimum number of gene duplications needed to reconcile $G_\ell$ with the species tree of $\mathcal{D}$ (the gene-tree parsimony criterion), counting only lineage-sorting events on interspecific branches. It measures oversplitting or a wrong species topology.
 
 **Excess structure.** Within each species $a$, decompose every gene tree into its maximal subtrees whose samples all belong to $a$, and for each pair of loci $\ell < \ell'$ let $\pi_{a,\ell\ell'}$ be the probability, under the neutral coalescent in a single panmictic population with the same sample size, of at least as many shared rooted triplets as observed between the two gene trees. Then
+
 $$C_{\mathrm{str}}(\mathcal{D}) = \frac{1}{g} \sum_{a = 1}^{s} \sum_{\ell < \ell'} \left(\frac{1}{\pi_{a,\ell\ell'}} - 1\right).$$
+
 It measures undersplitting: a species hiding several lineages produces more triplet agreement between loci than panmixia allows.
 
 The **total cost** is a weighted sum of $C_{\mathrm{conf}}$ and $C_{\mathrm{str}}$ with a user-chosen relative weight on structure (default $0.5$), minimized over delimited species trees by heuristic search; an optional $P$-threshold counts only structure terms with $\pi$ below a cutoff.

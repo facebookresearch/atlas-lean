@@ -3,11 +3,15 @@
 **Setting.** Every individual has exactly $n$ contacts in an unclustered (locally tree-like) network. Infection passes across an edge from an infective to a susceptible with probability $p = \tau/(\tau + \gamma)$, where $\tau$ is the per-edge transmission rate and $\gamma$ the recovery rate, and edges act independently.
 
 **Proposition (susceptibility-set argument).** In a major outbreak in a large population, the probability $S_\infty$ that a given individual escapes infection satisfies
+
 $$S_\infty = \big(1 - p + \tilde S p\big)^{n}, \qquad \tilde S = \big(1 - p + \tilde S p\big)^{n-1} \qquad \text{(Eq. 12)},$$
+
 where $\tilde S$ is the probability that a neighbor, reached through one edge, escapes infection from its other $n - 1$ edges; $\tilde S$ is taken as the root in $[0,1)$ of the second equation. The expected attack rate is $R_\infty = 1 - S_\infty$.
 
 **Percolation approximation.** If $f(\phi)$ is the fraction of nodes in the giant component after removing a fraction $\phi$ of edges, then
+
 $$R_\infty \approx f(1 - p) \qquad \text{(Eq. 13)},$$
+
 exact for unclustered graphs (where it reproduces Eq. 12) and approximate for clustered ones; the invasion threshold is the value of $p$ at which this giant component appears in the large-network limit.
 
 ## Depends on

@@ -1,6 +1,7 @@
 # Decomposition of transmission into presymptomatic, symptomatic and never-symptomatic contributions
 
 **Setting.** A fraction $p_{ns} \in [0, 1]$ of infections never become symptomatic and these transmit with relative infectiousness $r_{ns} \ge 0$ compared with infections that become symptomatic. For symptomatic infections, let $F$ be the distribution function of the incubation period (time from infection to symptom onset) and $I$ a probability density on $[0, \infty)$ describing infectiousness by time since infection, with incubation period and infectiousness profile independent. Define the fractions of all transmission due to never-symptomatic infections ($T_{ns}$), to symptomatic infections after onset ($T_s$) and before onset ($T_{ps}$):
+
 $$T_{ns} = \frac{p_{ns}\, r_{ns}}{p_{ns}\, r_{ns} + 1 - p_{ns}}, \qquad T_s = (1 - T_{ns})\int_0^\infty F(\tau)\, I(\tau)\, d\tau, \qquad T_{ps} = (1 - T_{ns})\int_0^\infty \bigl(1 - F(\tau)\bigr)\, I(\tau)\, d\tau .$$
 
 **Proposition.**

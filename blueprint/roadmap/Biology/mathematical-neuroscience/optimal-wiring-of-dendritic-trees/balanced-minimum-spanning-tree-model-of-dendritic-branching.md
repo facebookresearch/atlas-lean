@@ -1,7 +1,9 @@
 # Balanced minimum spanning tree model of dendritic branching
 
 **Setting.** Let $r \in \mathbb{R}^d$ be a root (the soma) and $P = \{p_1, \dots, p_m\} \subset \mathbb{R}^d \setminus \{r\}$ a finite set of distinct carrier points (target locations drawn from the density profile of the neuron's spanning field). Fix a balancing factor $\mathrm{bf} \ge 0$. The *balanced greedy tree* is built as follows. Start with the tree $T_0$ whose only node is $r$, with path length $\mathrm{PL}(r) = 0$. At step $j$, for every unconnected point $p$ and every tree node $v$ define
+
 $$c(p, v) = \|p - v\| + \mathrm{bf}\cdot\bigl(\mathrm{PL}(v) + \|p - v\|\bigr),$$
+
 the wiring cost of the new segment plus $\mathrm{bf}$ times the path length from the root to $p$ through $v$. Choose a pair $(p, v)$ minimizing $c$, add the edge $v \to p$, set $\mathrm{PL}(p) = \mathrm{PL}(v) + \|p - v\|$, and repeat until all points are connected. The result is a tree rooted at $r$, directed away from the root.
 
 **Proposition.**
@@ -15,7 +17,9 @@ So $\mathrm{bf}$ trades total wiring (minimal at $\mathrm{bf} = 0$) against cond
 ## Expansion
 
 (1): with $\mathrm{bf} = 0$ the selected pair minimizes $\|p - v\|$ over unconnected $p$ and connected $v$, which is exactly Prim's rule, and Prim's algorithm returns a minimum spanning tree by the cut property. (2) is the triangle inequality applied along the path. (3): while every connected node is joined to $r$, $\mathrm{PL}(v) = \|v - r\|$; for $v \neq r$ the general-position hypothesis gives a uniform gap $\eta = \min_{p \ne v} (\|p - v\| + \|v - r\| - \|p - r\|) > 0$ over the finite set. With $D = \max_{p, v} \|p - v\|$,
+
 $$c(p, v) - c(p, r) = (1 + \mathrm{bf})(\|p - v\| - \|p - r\|) + \mathrm{bf}\,\|v - r\| \ge \mathrm{bf}\,\eta - D,$$
+
 which is positive once $\mathrm{bf} > D/\eta$, so by induction every point attaches to the root. For neurons the authors chose $\mathrm{bf}$ by matching total cable length, mean path length and number of branch points of reconstructed cells (about $0.4$ for fly interneurons, $0.6$ for starburst amacrine cells, $0.4$–$0.7$ for cortical pyramidal dendrites); higher $\mathrm{bf}$ yields more stellate trees with stronger electrotonic segregation of sub-trees, which is how a single wiring parameter controls a computational property. The shape itself is set mainly by the density of carrier points, with extra weak constraints (suppressed multifurcations, spatial jitter) for particular cell types.
 
 ## Sources

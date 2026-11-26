@@ -3,7 +3,9 @@
 **Setting.** Let $\mathcal G$ be a set of $k$ unrooted gene trees on subsets of a taxon set of size $n$. For a gene tree $G$ and four of its leaves, $G{\restriction}Q$ is the induced quartet topology and $\delta_G(ab|cd) \in \{0, 1\}$ indicates that it is $ab|cd$. The *anchors* of $ab|cd$ in $G$ are the two internal nodes where the paths among $a, b, c$ and among $b, c, d$ meet; $P_G(\{a,b,c,d\})$ is the set of branches on the path between the anchors, $l_G(a, b)$ the path length (in substitutions per site) from $a$ to $b$, and $s_G(e) \in [0,1]$ the support of branch $e$.
 
 **Score.** For a candidate species tree $S$ with quartet set $\mathcal Q(S)$,
+
 $$W(S, \mathcal G) = \sum_{G \in \mathcal G} \sum_{Q \in \mathcal Q(S)} w_G(S{\restriction}Q),$$
+
 with one of the per-quartet weights
 
 - unweighted: $w_G(ab|cd) = \delta_G(ab|cd)$;
@@ -14,12 +16,17 @@ with one of the per-quartet weights
 The support factor is the probability that at least one anchor-path branch is correct if supports are independent probabilities of correctness; the length factor down-weights "long" quartets, whose terminal paths are long and which are most prone to long-branch attraction.
 
 **Decomposition over tripartitions.** Each internal node $v$ of a binary $S$ induces a tripartition $A|B|C$ of the taxa, and every quartet of $S$ is anchored at exactly two internal nodes. With $L_G$ the leaf set of $G$,
+
 $$W(A|B|C, G) = \frac12 \sum_{\substack{a \in A \cap L_G\\ b \in B \cap L_G \\ c \in C \cap L_G}} \Big(\sum_{d \in A \cap L_G \setminus\{a\}} w_G(ad|bc) + \sum_{d \in B \cap L_G \setminus\{b\}} w_G(bd|ac) + \sum_{d \in C \cap L_G \setminus\{c\}} w_G(cd|ab)\Big),$$
+
 $$W(S, \mathcal G) = \frac12 \sum_{A|B|C \in T_S}\ \sum_{G \in \mathcal G} W(A|B|C, G),$$
+
 where $T_S$ is the set of tripartitions of $S$.
 
 **Exact recovery condition (Theorem 4).** If a species tree $S^*$ satisfies, for each of its quartets $ab|cd$,
+
 $$\sum_{G} w_G(ab|cd) > \max\Big(\sum_G w_G(ac|bd),\ \sum_G w_G(ad|bc)\Big),$$
+
 then the greedy placement algorithm (which inserts taxa one at a time, each at the score-maximizing position, Theorem 3) outputs $S^*$; the divide-and-conquer version also outputs $S^*$ (Theorem 6) and runs in time $O(n^{1.5 + \epsilon} k H)$ with high probability, $H$ the average gene-tree height (Theorem 5).
 
 ## Depends on

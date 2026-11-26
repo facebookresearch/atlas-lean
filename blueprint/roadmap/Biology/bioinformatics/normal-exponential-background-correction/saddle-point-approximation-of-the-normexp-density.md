@@ -1,13 +1,17 @@
 # Saddle-point approximation of the normal–exponential density
 
 Let $X = B + S$ with $B \sim \mathcal{N}(\mu, \sigma^2)$ and $S$ exponential with mean $\alpha$, independent, so that $K(\theta) = \mu\theta + \tfrac{1}{2}\sigma^2\theta^2 - \log(1 - \alpha\theta)$ for $\theta < 1/\alpha$, with derivatives
+
 $$K'(\theta) = \mu + \sigma^2\theta + \frac{\alpha}{1 - \alpha\theta}, \qquad K''(\theta) = \sigma^2 + \frac{\alpha^2}{(1 - \alpha\theta)^2}, \qquad K^{(r)}(\theta) = \frac{(r-1)!\, \alpha^r}{(1 - \alpha\theta)^r} \ (r \ge 3).$$
 
 **Saddle point.** For each observation $x$ the equation $K'(\hat\theta) = x$ has exactly one solution with $\hat\theta < 1/\alpha$, namely, with $y = x - \mu$,
+
 $$\hat\theta = \frac{(\sigma^2 + \alpha y) - \sqrt{(\sigma^2 - \alpha y)^2 + 4 \sigma^2 \alpha^2}}{2 \sigma^2 \alpha} .$$
 
 **Approximation.** The second-order saddle-point (tilted Edgeworth) approximation of the density is
+
 $$\hat f_X(x) = \frac{\exp\big(K(\hat\theta) - \hat\theta x\big)}{\sqrt{2\pi K''(\hat\theta)}} \left(1 + \frac{\rho_4}{8} - \frac{5 \rho_3^2}{24}\right), \qquad \rho_r = \frac{K^{(r)}(\hat\theta)}{K''(\hat\theta)^{r/2}} ,$$
+
 and its logarithm is a closed-form expression, which retains good relative accuracy far into the tails where the exact density suffers from cancellation.
 
 **Estimation.** Maximizing $\sum_i \log \hat f_X(x_i)$ over $(\mu, \log\sigma^2, \log\alpha)$ gives saddle-point estimates; using them as starting values for maximizing the exact likelihood gives a reliable maximum likelihood estimator, which is more accurate than heuristic (mode- or quantile-partition) estimators.

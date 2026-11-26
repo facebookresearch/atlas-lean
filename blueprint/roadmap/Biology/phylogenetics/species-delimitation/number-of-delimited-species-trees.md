@@ -3,7 +3,9 @@
 A **delimited species tree** on a set $X$ of $n$ labelled samples is a partition of $X$ into $k \ge 1$ non-empty blocks (species), together with a rooted binary tree whose leaves are the $k$ blocks (no tree is needed when $k = 1$).
 
 **Proposition.** The number of delimited species trees on $n$ samples is
+
 $$D(n) = \sum_{k=1}^{n} \left\{ {n \atop k} \right\} (2k - 3)!!,$$
+
 where $\left\{ {n \atop k} \right\}$ is the Stirling number of the second kind, $(2k - 3)!! = 1 \cdot 3 \cdots (2k - 3)$ is the number of rooted binary trees on $k$ labelled leaves, and $(-1)!! = 1$. In particular the number of ways to split one species of $m$ samples into two species is $\left\{ {m \atop 2} \right\} = 2^{m-1} - 1$.
 
 Values: $D(20) \approx 6.03 \times 10^{23}$; splitting a species of $25$ samples into two admits $2^{24} - 1 = 16{,}777{,}215$ assignments.

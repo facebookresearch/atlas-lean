@@ -1,9 +1,13 @@
 # Hierarchical Poisson model of location-specific contact counts
 
 Let the participants $i$ of a contact survey belong to age groups $a_i \in \{1, \dots, K\}$, and let $X^L_{i,\alpha}$ be the number of contacts that $i$ reports on the survey day at location $L \in \{H, W, S, O\}$ (home, work, school, other) with persons in age group $\alpha$. Conditionally on the parameters, the counts are independent with
+
 $$X^L_{i,\alpha} \sim \mathrm{Poisson}(\mu^L_{i,\alpha}),$$
+
 $$\mu^H_{i,\alpha} = \sigma_i \lambda^H_{a_i,\alpha} (\nu_{i,\alpha} + \delta_H), \qquad \mu^W_{i,\alpha} = \sigma_i \lambda^W_{a_i,\alpha} (w_i + \delta_W),$$
+
 $$\mu^S_{i,\alpha} = \sigma_i \lambda^S_{a_i,\alpha} (s_i + \delta_S), \qquad \mu^O_{i,\alpha} = \sigma_i \lambda^O_{a_i,\alpha},$$
+
 where:
 
 - $\sigma_i > 0$ is a random effect for individual $i$ (its overall sociability);
@@ -13,7 +17,9 @@ where:
 - $\lambda^L_{a,\alpha} > 0$ is the typical contact rate between age groups $a$ and $\alpha$ at location $L$, the main estimand.
 
 The contact rates receive a smoothing hierarchical prior:
+
 $$\log \lambda^L_{a,\alpha} = \frac{1}{|N_{a,\alpha}|} \sum_{(A, A') \in N_{a,\alpha}} \epsilon^L_{A,A'},$$
+
 where $N_{a,\alpha}$ is the set of (up to) four age-group pairs adjacent to $(a, \alpha)$ together with $(a, \alpha)$ itself, and the $\epsilon^L_{A,A'}$ are hyperparameters.
 
 Properties:

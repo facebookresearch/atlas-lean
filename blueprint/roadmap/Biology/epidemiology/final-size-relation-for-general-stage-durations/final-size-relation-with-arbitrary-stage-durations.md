@@ -1,14 +1,21 @@
 # Final size relation with arbitrary stage durations
 
 Consider a newly invading infection in a closed, homogeneously mixing population of size $N$ with no demography, initially $S(0)$ susceptible people and a small number of infectious people. An individual infected at time $s$ has, at infection age $\tau \ge 0$, infectiousness $A(\tau) \ge 0$, so that the force of infection on each susceptible at time $t$ is
+
 $$F(t) = \frac{1}{N} \int_{-\infty}^{t} A(t - s)\, \iota(s)\, ds, \qquad S'(t) = -F(t)\, S(t),$$
+
 where $\iota(s) = -S'(s)$ is the incidence. The kernel $A$ may encode a latent stage, any number of distinct infectious stages and an isolation stage, each with an arbitrary integrable duration distribution, and may vary between individuals (for example super-spreaders) provided only its population average enters. The basic reproduction number is
+
 $$R_0 = \int_0^\infty A(\tau)\, d\tau < \infty .$$
 
 **Theorem (final size relation).** With $S_\infty = \lim_{t \to \infty} S(t)$, and neglecting the initial infectives' contribution,
+
 $$\ln \frac{S(0)}{S_\infty} = R_0 \, \frac{S(0) - S_\infty}{N} .$$
+
 In particular, if $S(0) \approx N$ the attack fraction $Z = 1 - S_\infty / N$ satisfies
+
 $$1 - Z = e^{-R_0 Z},$$
+
 which has a unique root $Z \in (0, 1)$ if and only if $R_0 > 1$. The relation is identical to the one for the SIR model with exponentially distributed infectious periods: given $R_0$, the expected epidemic size does not depend on the distributions of latent and infectious periods. It can fail under heterogeneous mixing (for example a core group, as for sexually transmitted infections), although it persists for a general class of spatial contact structures.
 
 ## Depends on

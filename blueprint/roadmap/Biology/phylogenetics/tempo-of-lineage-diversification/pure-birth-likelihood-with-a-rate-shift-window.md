@@ -1,9 +1,13 @@
 # Pure-birth likelihood with a rate-shift window
 
 Let a reconstructed ultrametric phylogeny with $n$ tips have branching times $t_1 > t_2 > \dots > t_{n-1}$ before the present, and let $k(t)$ be the number of lineages present at time $t$. Under a pure-birth process with piecewise-constant speciation rate
+
 $$\lambda(t) = \begin{cases} \lambda_2, & t \in [t_b, t_a] \text{ (the shift window)}, \\ \lambda_1, & \text{otherwise}, \end{cases}$$
+
 the likelihood of the branching times after the root, conditional on two lineages at the root and up to a factor not depending on $(\lambda_1, \lambda_2)$, is
+
 $$L(\lambda_1, \lambda_2) = \prod_{i=2}^{n-1} \lambda(t_i)\, \exp\!\left(-\int_0^{t_1} k(t)\, \lambda(t)\, dt\right).$$
+
 With $m_W$ and $m_O$ the numbers of branching events after the root inside and outside the window ($m_W + m_O = n - 2$), and $\ell_W = \int_{[t_b, t_a]} k(t)\, dt$ and $\ell_O = \int_{[0, t_1] \setminus [t_b, t_a]} k(t)\, dt$ the total branch lengths inside and outside it:
 
 1. the maximum-likelihood estimates are $\hat\lambda_2 = m_W / \ell_W$ and $\hat\lambda_1 = m_O / \ell_O$;

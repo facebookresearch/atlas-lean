@@ -1,14 +1,18 @@
 # Posterior-Viterbi decoding of label sequences under a topology grammar
 
 **Setting.** A hidden Markov model (or dynamic Bayesian network) for a protein sequence $o = o_1 \dots o_N$ has hidden states $s_i$ from a finite set, each mapped to a topology label $\ell(s_i)$ (for example signal peptide, cytoplasmic, membrane helix, non-cytoplasmic). Several states share a label (sub-regions with different emission or duration models), and the allowed state transitions define a **grammar** of admissible label sequences (a membrane segment must separate cytoplasmic and non-cytoplasmic loops, a signal peptide can only occur at the N-terminus, and so on). The goal is the most probable label sequence
+
 $$\lambda^* = \arg\max_{\lambda} \Pr(\lambda \mid o) = \arg\max_\lambda \sum_{s : \ell(s) = \lambda} \Pr(s \mid o),$$
+
 which is intractable in general because many state paths map to one label sequence; the Viterbi path $s^* = \arg\max_s \Pr(s \mid o)$ need not induce $\lambda^*$.
 
 **Two-stage decoder.**
 
 1. Compute the posterior label marginals $\pi_i(a) = \Pr(\ell(s_i) = a \mid o)$ by the forward–backward algorithm, marginalizing all other hidden variables.
 2. Find the admissible path maximizing the product of these marginals:
+
 $$\hat\lambda = \arg\max_{s \text{ admissible}} \prod_{i=1}^{N} \pi_i\big(\ell(s_i)\big),$$
+
 by a Viterbi recursion over the grammar's transition graph in which transition probabilities are replaced by $0/1$ admissibility indicators and emissions by $\pi_i$.
 
 **Properties.**

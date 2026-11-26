@@ -1,10 +1,13 @@
 # Conditional clade probability estimate of tree posteriors
 
 **Setting.** Let $X$ be a finite set of taxa and let $T_1, \dots, T_N$ be rooted binary trees on $X$ sampled from a posterior distribution (for example, gene trees sampled by MCMC under a sequence-evolution model). A **clade** is the leaf set $\gamma \subseteq X$ below a node; each internal node splits its clade $\gamma$ into an unordered pair $\{\gamma', \gamma \setminus \gamma'\}$. For a clade $\gamma$ with $|\gamma| \ge 2$ and a split $\{\gamma', \gamma\setminus\gamma'\}$, define the **conditional clade frequency**
+
 $$\hat P(\gamma', \gamma \setminus \gamma' \mid \gamma) = \frac{\#\{i : T_i \text{ contains } \gamma \text{ split as } \{\gamma', \gamma\setminus\gamma'\}\}}{\#\{i : T_i \text{ contains } \gamma\}} .$$
 
 **Definition (CCP estimate).** For any rooted binary tree $T$ on $X$ whose clades all occur in the sample (a tree that can be **amalgamated** from the sample), its posterior probability is estimated by
+
 $$\hat P(T) = \prod_{\gamma \in \mathcal{C}(T),\ |\gamma| \ge 2} \hat P(\text{split of } \gamma \text{ in } T \mid \gamma),$$
+
 where $\mathcal{C}(T)$ is the set of clades of $T$.
 
 **Properties.**

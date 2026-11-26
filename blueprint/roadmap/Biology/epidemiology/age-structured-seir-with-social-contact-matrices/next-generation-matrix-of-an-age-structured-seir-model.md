@@ -1,13 +1,19 @@
 # Next-generation matrix of an age-structured SEIR model
 
 **Model.** Divide a population into age groups $i = 1, \dots, n$ of sizes $n_i$, with $S_i, E_i, I_i, R_i$ the numbers susceptible, exposed, infectious and recovered. Let $B_{ij}(t) \ge 0$ be the mean number of contacts per unit time that an individual in group $i$ makes with individuals in group $j$, and let every contact carry the same transmission rate $\tau$. The force of infection on group $i$ is
+
 $$\lambda_i(t) = \tau \sum_{j} B_{ij}(t)\, \frac{I_j}{n_j},$$
+
 and
+
 $$\dot S_i = -\lambda_i S_i, \quad \dot E_i = \lambda_i S_i - \nu E_i, \quad \dot I_i = \nu E_i - g I_i, \quad \dot R_i = g I_i,$$
+
 with latent-to-infectious rate $\nu$ and recovery rate $g$. Contacts are reciprocal in aggregate: $n_i B_{ij} = n_j B_{ji}$. Time dependence of $B$ (for example term time versus school holidays) is piecewise constant.
 
 **Proposition.** For a fixed contact matrix $B$ and susceptible numbers $S_i$, the next-generation matrix has entries
+
 $$M_{ij} = \frac{\tau}{g}\, B_{ij}\, \frac{S_i}{n_j} = \frac{\tau}{g}\, B_{ji}\, \frac{S_i}{n_i},$$
+
 the expected number of new infections in group $i$ caused by one infectious individual in group $j$, and the reproduction number is its spectral radius $R = \rho(M)$. At the start of an epidemic with no prior immunity $S_i = n_i$; with pre-existing immunity in a fraction $\pi_i$ of group $i$, $S_i = (1 - \pi_i)n_i$. The disease-free state is unstable if and only if $R > 1$.
 
 ## Depends on

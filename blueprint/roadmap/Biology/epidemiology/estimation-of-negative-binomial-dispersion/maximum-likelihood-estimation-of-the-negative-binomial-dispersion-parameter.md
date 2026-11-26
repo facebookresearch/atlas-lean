@@ -1,13 +1,17 @@
 # Maximum-likelihood estimation of the negative binomial dispersion parameter
 
 For $m > 0$ and $k > 0$ the negative binomial law $\mathrm{NB}(m, k)$ on $\{0, 1, 2, \dots\}$ is
+
 $$\mathbb{P}(X = x) = \frac{\Gamma(k + x)}{\Gamma(k)\, x!} \left(\frac{k}{k + m}\right)^{k} \left(\frac{m}{k + m}\right)^{x}, \tag{1}$$
+
 with mean $m$ and variance $m(1 + m/k)$. It is the Poisson–gamma mixture: if $g \sim \mathrm{Gamma}$ with mean $m$ and shape $k$, and $X \mid g \sim \mathrm{Poisson}(g)$, then $X \sim \mathrm{NB}(m, k)$. The Poisson law is the limit $k \to \infty$, and $k = 1$ gives the geometric law.
 
 Let $x_1, \dots, x_n$ be independent $\mathrm{NB}(m, k)$ observations, not all zero, and reparameterize by $\alpha = 1/k$.
 
 1. **Mean.** For every fixed $k > 0$ the likelihood is maximized in $m$ at the sample mean $\hat m = \bar x$. Indeed, the score in $m$ is
+
 $$\sum_{i=1}^{n} \left(\frac{x_i}{m} - \frac{x_i + k}{m + k}\right) = \frac{k}{m(m + k)} \sum_{i=1}^{n} x_i - \frac{n k}{m + k},$$
+
 which vanishes exactly at $m = \bar x$.
 2. **Dispersion.** $\hat\alpha$ maximizes the log-likelihood in $\alpha$ with $m = \bar x$, numerically, over $\alpha > 0$, and $\hat k = 1/\hat\alpha$; underdispersed samples (sample variance below the mean) are assigned the boundary $\hat\alpha \to 0$, i.e. $\hat k \to \infty$.
 3. **Interval.** With $\sigma_{\hat\alpha}$ the asymptotic standard error from the inverse information, the $1 - 2q$ Wald interval for $\alpha$ is $[\hat\alpha - z_{1-q}\sigma_{\hat\alpha},\ \hat\alpha + z_{1-q}\sigma_{\hat\alpha}]$; the interval for $k$ is obtained by inverting the endpoints and reversing their order, with upper limit $k = \infty$ when $\hat\alpha - z_{1-q}\sigma_{\hat\alpha} < 0$. By the delta method, $\sigma^2_{\hat k} \approx \sigma^2_{\hat\alpha} / \hat\alpha^4$.

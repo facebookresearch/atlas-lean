@@ -1,15 +1,20 @@
 # Difference-of-sigmoids half-hat response
 
 Let $A > 0$ be the effective strength of a glomerulus's sensory input, set by odor ligand–receptor affinity at fixed concentration and measured in the same units as the half-activation constants. The direct activations of mitral cells and periglomerular cells are Hill sigmoids
+
 $$\{\mathrm{Mi}_{\mathrm{in}}, \mathrm{PG}\} = \frac{K}{1 + (Y_{1/2}/A)^{m}}, \tag{1}$$
+
 and mitral-cell output is excitation minus periglomerular inhibition:
+
 $$\mathrm{Mi}_{\mathrm{out}}(A) = \frac{K_e}{1 + (Y_{1/2}^{(e)}/A)^{m_e}} - \frac{K_i}{1 + (Y_{1/2}^{(i)}/A)^{m_i}}. \tag{2}$$
 
 With unit cooperativities ($m_e = m_i = 1$), write $Y_e = Y_{1/2}^{(e)}$ and $Y_i = Y_{1/2}^{(i)}$, so that $\mathrm{Mi}_{\mathrm{out}}(A) = K_e A/(A + Y_e) - K_i A/(A + Y_i)$, and assume $K_e > K_i > 0$ and $0 < Y_e < Y_i$ (the half-hat regime). Then:
 
 1. $\mathrm{Mi}_{\mathrm{out}}(A) > 0$ for all $A > 0$, $\mathrm{Mi}_{\mathrm{out}}(A) \to 0$ as $A \to 0$, and $\mathrm{Mi}_{\mathrm{out}}(A) \to K_e - K_i$ as $A \to \infty$;
 2. if $K_e Y_e < K_i Y_i$, $\mathrm{Mi}_{\mathrm{out}}$ has a unique interior maximum, at
+
 $$A^{*} = \frac{\sqrt{K_e Y_e}\, Y_i - \sqrt{K_i Y_i}\, Y_e}{\sqrt{K_i Y_i} - \sqrt{K_e Y_e}},$$
+
 increasing on $(0, A^{*})$ and decreasing on $(A^{*}, \infty)$: glomeruli of intermediate affinity respond most, and stronger inputs are suppressed relative to them;
 3. if $K_e Y_e \ge K_i Y_i$, $\mathrm{Mi}_{\mathrm{out}}$ is increasing on $(0, \infty)$ and there is no contrast enhancement.
 

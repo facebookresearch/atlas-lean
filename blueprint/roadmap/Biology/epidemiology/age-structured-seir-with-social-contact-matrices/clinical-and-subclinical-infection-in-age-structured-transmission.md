@@ -1,11 +1,15 @@
 # Clinical and subclinical infection in age-structured transmission
 
 **Model.** In an age-structured SEIR-type model with age groups $i = 1, \dots, n$, infected individuals pass through a latent stage (mean duration $d_E$) and then, with age-dependent probability $y_i$, a preclinical infectious stage (mean $d_P$) followed by a clinical infectious stage (mean $d_C$), or, with probability $1 - y_i$, a subclinical infectious stage (mean $d_S$). Preclinical and clinical individuals have infectiousness $1$ (clinical infectiousness may be scaled by $\kappa_C \in [0,1]$ to represent self-isolation of symptomatic cases), and subclinical individuals have relative infectiousness $f \in [0,1]$. Contacts are summed over settings,
+
 $$C = \sum_{s \in \{\text{home},\,\text{work},\,\text{school},\,\text{other}\}} w_s\, C^{(s)},$$
+
 where $C^{(s)}_{ij}$ is the mean number of daily contacts that a person in group $i$ has with group $j$ in setting $s$ and $w_s \in [0,1]$ is the fraction of setting-$s$ contacts kept under an intervention (for example $w_{\text{school}} = 0$ for school closures). Susceptibility per contact is a common constant $u$.
 
 **Proposition.** The next-generation matrix of this model at a fully susceptible population is
+
 $$K_{ij} = u\, C_{ij}\, \big[\, y_j\,(d_P + \kappa_C\, d_C) + (1 - y_j)\, f\, d_S \,\big],$$
+
 the expected number of infections in group $i$ caused by one infected person in group $j$, and $R_0 = \rho(K)$. Consequently:
 
 1. $R_0$ is linear in $u$, so $u$ can be calibrated to any target $R_0$ for a given contact structure.

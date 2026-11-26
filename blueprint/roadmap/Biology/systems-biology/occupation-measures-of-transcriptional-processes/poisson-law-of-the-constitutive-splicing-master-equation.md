@@ -1,14 +1,21 @@
 # Poisson law of the constitutive splicing master equation
 
 Consider transcription of unspliced RNA $U$ at a deterministic, piecewise continuous rate $\alpha(t) \ge 0$, splicing to $S$ at rate $\beta > 0$ and degradation of $S$ at rate $\gamma > 0$, $\gamma \ne \beta$:
+
 $$\varnothing \xrightarrow{\alpha(t)} U \xrightarrow{\beta} S \xrightarrow{\gamma} \varnothing .$$
+
 Let $P(x_u, x_s; t)$ be the law of the copy numbers given by the chemical master equation and $G(u_u, u_s; t) = \sum_{x} P(x; t) (u_u + 1)^{x_u} (u_s + 1)^{x_s}$ its generating function in shifted variables.
 
 **Theorem.** Starting from zero molecules (or, more generally, from a product of Poisson laws, whose contribution decays deterministically),
+
 $$\ln G(u_u, u_s; t) = \int_0^t \alpha(t - s)\, U_1(u_u, u_s; s)\, ds = \mu_u(t)\, u_u + \mu_s(t)\, u_s,$$
+
 $$U_1(u_u, u_s; s) = u_s \frac{\beta}{\beta - \gamma} e^{-\gamma s} + \Big(u_u - u_s \frac{\beta}{\beta - \gamma}\Big) e^{-\beta s},$$
+
 so that $U$ and $S$ are independent Poisson random variables,
+
 $$P(x_u, x_s; t) = \frac{\mu_u(t)^{x_u} e^{-\mu_u(t)}}{x_u!} \cdot \frac{\mu_s(t)^{x_s} e^{-\mu_s(t)}}{x_s!},$$
+
 with means solving $\mu_u' = \alpha(t) - \beta \mu_u$ and $\mu_s' = \beta \mu_u - \gamma \mu_s$ (closed form for piecewise constant $\alpha$). In particular, for constant $\alpha$ the stationary law is $\mathrm{Poisson}(\alpha/\beta) \otimes \mathrm{Poisson}(\alpha/\gamma)$, and the occupation measure over a uniform sampling window $[0, T]$ is $P(x) = T^{-1}\int_0^T P(x; t)\, dt$, a mixture of product Poissons.
 
 Extensions that keep generating-function tractability:

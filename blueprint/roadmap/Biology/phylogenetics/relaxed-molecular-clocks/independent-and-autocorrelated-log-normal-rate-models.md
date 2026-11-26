@@ -3,10 +3,13 @@
 **Setting.** A rooted time tree has node ages $t_v$ and branches $b$ with time durations $\Delta t_b$. A relaxed molecular clock assigns a substitution rate $r_b > 0$ to every branch, so that the expected number of substitutions per site on $b$ is $d_b = r_b \Delta t_b$. Let $\mu > 0$ be the mean rate (for one locus) and $\sigma^2 > 0$ a dispersion parameter.
 
 **Independent rates (IR).** The branch rates are i.i.d. log-normal with mean $\mu$:
+
 $$\log r_b \sim \mathcal{N}\big(\log\mu - \tfrac{1}{2}\sigma^2,\ \sigma^2\big), \qquad \mathbb{E}[r_b] = \mu,\ \ \mathrm{Var}(\log r_b) = \sigma^2 .$$
 
 **Autocorrelated rates (AR, geometric Brownian motion).** The root rate is $\mu$, and the rate at a node $v$ with parent $u$ is drawn given the parent's rate as
+
 $$\log r_v \mid r_u \sim \mathcal{N}\big(\log r_u - \tfrac{1}{2}\sigma^2 \Delta t_{uv},\ \sigma^2 \Delta t_{uv}\big),$$
+
 where $\Delta t_{uv} = t_u - t_v$; branch rates are computed from the rates at the branch ends.
 
 **Proposition.**

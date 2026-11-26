@@ -1,11 +1,15 @@
 # Stretched-exponential dwell times under multiplicative noise
 
 **Setting.** Add noise to the [quintic Hopf amplitude equation](quintic-normal-form-of-the-hopf-bifurcation.md) in its bistable window $-\lambda^2/4 < \beta < 0$, $\lambda > 0$:
+
 $$dr = (-r^5 + \lambda r^3 + \beta r)\,dt + \sigma\big(\eta_a\, dW_1 + \eta_m\, r\, dW_2\big),$$
+
 where $W_1, W_2$ are independent Wiener processes, the first term is additive (state-independent) noise and the second multiplicative (state-dependent) noise whose amplitude grows with $r$. The **dwell time** in a mode is the time between successive crossings of the separatrix $r_-$.
 
 **Definitions.** A dwell-time distribution is a **stretched exponential** if its survival function is
+
 $$\Pr(D > x) = \exp(-a x^b), \qquad a > 0,\ 0 < b \le 1,$$
+
 a Weibull law; $b = 1$ is the memoryless exponential law of a Poisson switching process. Its hazard rate is $h(x) = a b\, x^{b-1}$, and $\log(-\log \Pr(D > x)) = \log a + b \log x$, so $a$ and $b$ can be estimated by linear regression of the empirical survival function in $\log x$–$\log(-\log P)$ coordinates.
 
 **Properties.**

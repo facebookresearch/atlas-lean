@@ -1,13 +1,19 @@
 # Total-evidence posterior with stratigraphic age ranges
 
 Let $\mathcal{T}$ be a dated sampled tree of extant and fossil taxa (with possible sampled ancestors), $D$ the matrix of molecular and morphological characters, $\bar\theta$ the substitution and clock parameters, $\bar\eta$ the tree-prior (fossilized birth–death) parameters, and $\bar\tau$ the stratigraphic age intervals assigned to the fossils. Assume that, given that a fossilization event happened at time $y$, the probability of assigning a given interval does not depend on $y$ when $y$ lies in that interval and is zero otherwise. Then
+
 $$f(\mathcal{T}, \bar\theta, \bar\eta \mid D, \bar\tau) \propto f(D \mid \mathcal{T}, \bar\theta)\, \delta(\mathcal{T} \in \mathbb{T}_{\bar\tau})\, f(\mathcal{T} \mid \bar\eta)\, f(\bar\eta)\, f(\bar\theta), \tag{1}$$
+
 where $\mathbb{T}_{\bar\tau}$ is the set of trees whose fossil sampling times lie in their assigned intervals.
 
 For a fossil, let $H_1$ be the hypothesis that it is a sampled ancestor and $H_2$ that it is a terminal node. With the conditioned prior
+
 $$f(\mathcal{T}, \bar\eta \mid \bar\tau) \propto \delta(\mathcal{T} \in \mathbb{T}_{\bar\tau})\, f(\mathcal{T} \mid \bar\eta)\, f(\bar\eta), \tag{3}$$
+
 the ages-conditioned Bayes factor
+
 $$\widehat{BF} = \frac{P(H_1 \mid D, \bar\tau)\, P(H_2 \mid \bar\tau)}{P(H_2 \mid D, \bar\tau)\, P(H_1 \mid \bar\tau)}$$
+
 equals the ratio of character-data likelihoods $P(D \mid H_1, \bar\tau) / P(D \mid H_2, \bar\tau)$: it measures the evidence that the characters add, beyond the fossil ages, for the fossil being a sampled ancestor.
 
 ## Depends on

@@ -1,13 +1,16 @@
 # Attributable fractions for susceptibility and infectivity cofactors
 
 **Setting.** At a fixed time, index the sexual acts between an uninfected and an infected partner by types $\tau$ occurring at rates $n_\tau \ge 0$. A type has baseline per-act transmission probability $\beta_\tau > 0$, a susceptibility cofactor $a_\tau \ge 1$ (for example the per-exposure enhancement of acquisition while the uninfected partner sheds herpes simplex virus 2) and an infectivity cofactor $c_\tau \ge 1$ (the enhancement of transmission while the infected partner is dually infected and shedding). In the rare-event regime the incidence is $\Lambda = \sum_\tau n_\tau\, \beta_\tau\, a_\tau\, c_\tau$. Write $\Lambda_{\neg a}$, $\Lambda_{\neg c}$, $\Lambda_{\neg ac}$ for the counterfactual incidences with all $a_\tau = 1$, all $c_\tau = 1$, or both, holding the population state fixed, and define the population attributable fractions
+
 $$\mathrm{PAF}_{\mathrm{Sus}} = 1 - \frac{\Lambda_{\neg a}}{\Lambda}, \qquad \mathrm{PAF}_{\mathrm{Inf}} = 1 - \frac{\Lambda_{\neg c}}{\Lambda}, \qquad \mathrm{PAF}_{\mathrm{Sus+Inf}} = 1 - \frac{\Lambda_{\neg ac}}{\Lambda}.$$
 
 **Proposition.**
 
 1. $\max(\mathrm{PAF}_{\mathrm{Sus}}, \mathrm{PAF}_{\mathrm{Inf}}) \le \mathrm{PAF}_{\mathrm{Sus+Inf}} \le \mathrm{PAF}_{\mathrm{Sus}} + \mathrm{PAF}_{\mathrm{Inf}}$.
 2. The gap in the upper bound is
+
 $$\mathrm{PAF}_{\mathrm{Sus}} + \mathrm{PAF}_{\mathrm{Inf}} - \mathrm{PAF}_{\mathrm{Sus+Inf}} = \frac{1}{\Lambda}\sum_\tau n_\tau\, \beta_\tau\, (a_\tau - 1)(c_\tau - 1) \ge 0,$$
+
 the share of incidence from acts in which both cofactors operate; equality holds if and only if no act type has both $a_\tau > 1$ and $c_\tau > 1$.
 3. (Time-averaged relative risk) If the susceptibility cofactor $a > 1$ applies during a fraction $f$ of acts of an otherwise homogeneous group, the average per-act relative risk is $1 + f(a - 1)$, smaller than the per-exposure cofactor $a$.
 4. These fractions count only direct effects at the given time; infections caused by the cofactor go on to cause further infections regardless of it, which is measured instead by the excess prevalence: prevalence with the interaction minus prevalence in the counterfactual without it.

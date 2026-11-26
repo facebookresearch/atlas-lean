@@ -1,8 +1,11 @@
 # Stage-structured mosquito model with density-dependent larval mortality
 
 **Setting.** Let $E(t)$, $L(t)$, $P(t)$, $M(t) \ge 0$ be the numbers of early larval instars (eggs and instars 1–2), late larval instars (instars 3–4), pupae and adult females in one breeding site. Adult females lay $\beta$ eggs per day ([oviposition rate](oviposition-rate-from-the-gonotrophic-cycle.md)); the stages have mean durations $d_E, d_L, d_P > 0$; pupae and adults die at constant rates $\mu_P, \mu_M > 0$; half of emerging adults are female. Crowding acts only on the feeding larval stages, linearly in total larval density, through the death rates
+
 $$\mu_E(E,L) = \mu_E^0\left(1 + \frac{E + L}{K}\right), \qquad \mu_L(E,L) = \mu_L^0\left(1 + \gamma\,\frac{E + L}{K}\right),$$
+
 with low-density rates $\mu_E^0, \mu_L^0 > 0$, carrying capacity $K > 0$ (rainfall-dependent in the source) and $\gamma > 0$ the relative strength of density dependence on late instars. The dynamics are
+
 $$
 \begin{aligned}
 \frac{dE}{dt} &= \beta M - \frac{E}{d_E} - \mu_E(E,L)\,E, &
@@ -16,7 +19,9 @@ $$
 
 1. The closed orthant $\{E, L, P, M \ge 0\}$ is forward invariant, and $0$ is an equilibrium.
 2. Conditional on larval densities, the probabilities of surviving each aquatic stage are
+
 $$s_E = \frac{1}{1 + d_E\,\mu_E(E,L)}, \qquad s_L = \frac{1}{1 + d_L\,\mu_L(E,L)}, \qquad s_P = \frac{1}{1 + d_P\,\mu_P},$$
+
 each decreasing in total larval density (for $s_E, s_L$).
 3. The time spent from egg to emergence is a sum of three independent exponential durations, so its law is hypoexponential (approximately gamma-shaped), not exponential.
 

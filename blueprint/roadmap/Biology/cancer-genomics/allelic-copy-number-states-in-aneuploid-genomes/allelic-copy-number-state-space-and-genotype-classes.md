@@ -1,14 +1,18 @@
 # Allelic copy-number state space and genotype classes
 
 **Setting.** Before a somatic copy-number change a genomic segment carries one copy of each parental haplotype, and a biallelic SNP in it has germline genotype $AA$, $AB$ or $BB$. After the change the segment has total copy number $h \in \{0, 1, 2, \dots\}$, made of $g$ copies of one parental haplotype and $h - g$ of the other, labelled so that $0 \le g \le h - g$; $g$ is the *minor* and $h - g$ the *major* copy number. The pair $(g, h)$ is the *allelic copy-number state*. A SNP in a segment of state $(g, h)$ has one of the somatic genotypes
+
 $$A^{h}, \qquad A^{h-g}B^{g}, \qquad A^{g}B^{h-g}, \qquad B^{h},$$
+
 the first and last arising from germline homozygotes and the middle two from a germline heterozygote, according to which parental copy carries $B$.
 
 **Proposition.**
 
 1. For fixed total copy number $h$ there are $\lfloor h/2 \rfloor + 1$ states $(g, h)$, and the number of states with $h \le H$ is $\sum_{h=0}^{H} (\lfloor h/2 \rfloor + 1)$.
 2. The number of distinct genotype classes in state $(g, h)$ is
+
 $$\begin{cases} 1 & h = 0 \ (\text{homozygous deletion}),\\ 2 & h \ge 1,\ g = 0 \ (\text{loss of heterozygosity}),\\ 3 & g = h/2 \ge 1,\\ 4 & 1 \le g < h/2 . \end{cases}$$
+
 3. A germline heterozygous SNP is observed as heterozygous after the change if and only if $g \ge 1$; loss of heterozygosity ($g = 0$) can occur at any total copy number, including copy-neutral LOH at $h = 2$.
 
 ## Expansion

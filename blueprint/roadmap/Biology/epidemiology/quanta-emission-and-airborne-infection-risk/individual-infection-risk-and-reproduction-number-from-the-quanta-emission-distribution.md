@@ -1,11 +1,17 @@
 # Individual infection risk and reproduction number from the quanta emission distribution
 
 **Setting.** In the [well-mixed room model](transient-quanta-concentration-and-dose-in-a-well-mixed-room.md) with one infectious occupant ($I = 1$) and $n_0 = 0$, fix the room, the removal rate, the exposure time $T$ and the inhalation rate $\mathrm{IR}$ of the exposed. The quanta emission rate of the infected occupant is computed forward from the sputum viral load,
+
 $$\mathrm{ER}_q = c_v\, c_i\, \mathrm{IR}_e\, V_d, \qquad c_i = \frac{1}{c_{\mathrm{RNA}}\, c_{\mathrm{PFU}}},$$
+
 where $c_v$ is the viral load (RNA copies per mL), $c_{\mathrm{RNA}}$ the RNA copies per plaque-forming unit, $c_{\mathrm{PFU}}$ the plaque-forming units per quantum, $\mathrm{IR}_e$ the emitter's exhalation rate and $V_d$ the expired droplet volume concentration (mL per m$^3$), which depends on the expiratory activity. Treat $\mathrm{ER}_q$ as a random variable with law $\mu$ on $[0,\infty)$ (log-normal in the source), induced by the variability of $c_v$, $V_d$, $c_{\mathrm{RNA}}$ and $c_{\mathrm{PFU}}$. Write $P_I(e)$ for the infection probability when $\mathrm{ER}_q = e$; by the dose-response law $P_I(e) = 1 - e^{-\kappa e}$ with
+
 $$\kappa = \frac{\mathrm{IR}}{\mathrm{IVRR}\; V}\left[\, T - \frac{1 - e^{-\mathrm{IVRR}\, T}}{\mathrm{IVRR}} \right] \ge 0 .$$
+
 The *individual infection risk* is
+
 $$R = \int_0^\infty P_I(e)\, \mu(de),$$
+
 and, for $S$ exposed susceptibles, the event reproduction number is $R_0^{\mathrm{event}} = R \cdot S$.
 
 **Proposition.**

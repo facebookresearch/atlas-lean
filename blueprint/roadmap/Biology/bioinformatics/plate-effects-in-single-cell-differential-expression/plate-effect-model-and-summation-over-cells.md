@@ -1,13 +1,17 @@
 # Plate-effect model and summation over cells
 
 **Model.** Let $Y_{ijkg}$ be the read count of gene $i$ in cell $j = 1, \dots, n_{kg}$ of plate $k$ in group $g$. Let $\delta_{ikg} > 0$ be a gene- and plate-specific effect, drawn independently for each plate from a distribution with $\mathbb{E}[\delta_{ikg}] = 1$ and $\mathrm{Var}(\delta_{ikg}) = v_\delta > 0$, and $\theta_{jkg} > 0$ a cell-specific bias (library size, composition), independent of $\delta$, with $\mathbb{E}[\theta_{jkg}] = 1$. Given $\delta$ and $\theta$, counts are independent across genes and cells with
+
 $$\mathbb{E}(Y_{ijkg} \mid \delta_{ikg}, \theta_{jkg}) = \delta_{ikg}\, \theta_{jkg}\, \mu_{ig},$$
+
 where $\mu_{ig}$ is the expected count of gene $i$ in group $g$. The null hypothesis of no differential expression for gene $i$ is that $\mu_{ig}$ does not depend on $g$.
 
 **Proposition.**
 
 1. *(Within-plate correlation.)* For two distinct cells $j \ne j'$ on the same plate,
+
 $$\mathrm{Cov}(Y_{ijkg}, Y_{ij'kg}) = \mu_{ig}^2\, v_\delta > 0,$$
+
 while counts on different plates are independent. Cells are therefore not independent replicates, and a model treating them as such underestimates the variance of group means.
 2. *(Plate sums.)* The plate sums $Z_{ikg} = \sum_{j} Y_{ijkg}$ are independent across plates, with $\mathbb{E}[Z_{ikg}] = n_{kg}\, \mu_{ig}$; the expected log-fold change between groups computed from plate sums (normalized by cell numbers or library sizes) equals the one computed from cells, so summation changes the variance model, not the effect being tested.
 3. *(Variance reduction.)* If, given $\delta_{ikg}$, the cell counts are i.i.d. negative binomial with mean $m$ and dispersion $\phi$ (variance $m + \phi m^2$), the sum of $n$ of them has conditional variance $n m + n \phi m^2$ and squared coefficient of variation $\frac{1}{n m} + \frac{\phi}{n}$, which tends to $0$; relative to its mean, the plate sum is far less noisy than a single cell.

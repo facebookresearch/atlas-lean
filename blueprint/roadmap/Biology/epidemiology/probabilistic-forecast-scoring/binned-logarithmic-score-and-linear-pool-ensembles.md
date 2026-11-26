@@ -1,7 +1,9 @@
 # Binned logarithmic score and linear-pool ensembles
 
 Let a forecasting target take values in one of finitely many bins $\{1, \dots, B\}$ (for example peak week, or binned peak incidence). A forecast is a probability vector $p = (p_1, \dots, p_B)$ with $p_b \ge 0$ and $\sum_b p_b = 1$. If the observed outcome falls in bin $o$, the **logarithmic score** of the forecast is $\log p_o$ (equal to $-\infty$ if $p_o = 0$), and over $n$ forecasts with observed bins $o_1, \dots, o_n$ the average score is
+
 $$S_n = \frac{1}{n} \sum_{i=1}^{n} \log p^{(i)}_{o_i} .$$
+
 Higher is better. The **null forecast** assigns $1/B$ to every bin and scores $-\log B$. An equal-weight **ensemble** (linear pool) of forecasts $p^{(1)}, \dots, p^{(J)}$ is $\bar p = \frac{1}{J} \sum_j p^{(j)}$.
 
 **Proposition.**

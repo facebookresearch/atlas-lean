@@ -1,6 +1,7 @@
 # Basic reproduction number of an epidemic model with super-spreaders and hospital transmission
 
 **Setting.** A closed population of size $N$ is split into susceptible $S$, exposed $E$, symptomatic infectious $I$, super-spreaders $P$, asymptomatic $A$, hospitalized $H$, recovered $R$ and dead $F$:
+
 $$
 \begin{aligned}
 S' &= -\frac{S}{N}\bigl(\beta I + l\beta H + \beta' P\bigr), &
@@ -13,13 +14,16 @@ R' &= \gamma_i (I + P) + \gamma_r H, &
 F' &= \delta_i I + \delta_p P + \delta_h H,
 \end{aligned}
 $$
+
 with positive rates, $\rho_1, \rho_2 \ge 0$, $\rho_1 + \rho_2 \le 1$, and relative hospital infectiousness $l \ge 0$. Asymptomatic individuals do not transmit in this model. Write $\varpi_i = \gamma_a + \gamma_i + \delta_i$, $\varpi_p = \gamma_a + \gamma_i + \delta_p$, $\varpi_h = \gamma_r + \delta_h$.
 
 **Proposition.**
 
 1. The equations for $A$, $R$ and $F$ decouple: $A$, $R$, $F$ are integrals of $E$, $I + P$, $H$, and $S = N - (E + I + P + A + H + R + F)$.
 2. With infected compartments $(E, I, P, H)$, the next-generation matrix at the disease-free equilibrium $(N, 0, \dots, 0)$ has spectral radius
+
 $$R_0 = \frac{\beta\rho_1\,(\gamma_a l + \varpi_h)}{\varpi_i\,\varpi_h} + \frac{(\beta\gamma_a l + \beta'\varpi_h)\,\rho_2}{\varpi_p\,\varpi_h} .$$
+
 3. (Theorem 1) The disease-free equilibrium is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$.
 4. $R_0$ is linear in $(\rho_1, \rho_2)$ and in $(\beta, \beta')$; consequently the normalized sensitivity indices $\Upsilon_\theta = (\partial R_0/\partial \theta)(\theta/R_0)$ satisfy $\Upsilon_{\rho_1} + \Upsilon_{\rho_2} = 1$ and $\Upsilon_\beta + \Upsilon_{\beta'} = 1$.
 

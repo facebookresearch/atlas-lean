@@ -1,9 +1,13 @@
 # Generalized transfer entropy with same-bin interactions and state conditioning
 
 Let $x_i(t)$ be calcium fluorescence signals of nodes $i = 1, \dots, N$, sampled in time bins much longer than synaptic time constants. Preprocess by discrete differentiation, $y_i(t) = x_i(t) - x_i(t - 1)$, quantize $y_i$ into a small number of levels, and define the network-average signal
+
 $$g_t = \frac{1}{N} \sum_{i=1}^{N} x_i(t).$$
+
 For a conditioning threshold $\hat g$, restrict all probabilities to time points with $g_{n+1} < \hat g$ (a single dynamical regime, e.g. inter-burst periods). The **generalized transfer entropy** from $J$ to $I$ with Markov order $k$ is
+
 $$\mathrm{TE}^{*}_{J \to I}(\hat g) = \sum P\big(i_{n+1}, i^{(k)}_n, j^{(k)}_{n+1} \,\big|\, g_{n+1} < \hat g\big) \log \frac{P\big(i_{n+1} \mid i^{(k)}_n, j^{(k)}_{n+1}, g_{n+1} < \hat g\big)}{P\big(i_{n+1} \mid i^{(k)}_n, g_{n+1} < \hat g\big)},$$
+
 where $j^{(k)}_{n+1} = (j_{n+1}, j_n, \dots, j_{n-k+2})$ includes the present bin of the source.
 
 Properties:

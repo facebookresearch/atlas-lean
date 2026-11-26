@@ -1,13 +1,17 @@
 # ABC SMC model selection on the joint model–parameter space
 
 Let $\mathcal{M} = \{1, \dots, |\mathcal{M}|\}$ index candidate models, with prior $P(m)$, parameter priors $P(\theta \mid m)$ and simulators $D \sim f(D \mid \theta, m)$. Fix observed data $D_0$, a distance $d$ and a tolerance $\epsilon \ge 0$. The **ABC target** on the joint space is
+
 $$P_\epsilon(m, \theta \mid D_0) \propto P(m)\, P(\theta \mid m)\, \Pr\big(d(D_0, D^*) \le \epsilon \mid \theta, m\big), \qquad D^* \sim f(\cdot \mid \theta, m),$$
+
 whose model marginal $P_\epsilon(m \mid D_0)$ approximates the posterior model probability $P(m \mid D_0) \propto P(D_0 \mid m) P(m)$ as $\epsilon \to 0$, and ratios $P_\epsilon(m_1 \mid D_0) P(m_2) / (P_\epsilon(m_2 \mid D_0) P(m_1))$ approximate Bayes factors.
 
 **Rejection sampler.** Draw $m^* \sim P(m)$, $\theta^* \sim P(\theta \mid m^*)$, simulate $D^*$, and accept $(m^*, \theta^*)$ if $d(D_0, D^*) \le \epsilon$. With $N$ accepted particles, $\hat P(m \mid D_0) = \#\{\text{accepted particles with model } m\} / N$.
 
 **Sequential Monte Carlo.** Choose tolerances $\epsilon_1 > \dots > \epsilon_T \ge 0$. Population $t = 1$ is drawn as above with weights $1$. For $t > 1$, each candidate is proposed by drawing $m^*$ with probability $P_{t-1}(m^*)$ (the current model marginal), perturbing it with a model kernel $m^{**} \sim KM_t(\cdot \mid m^*)$, drawing $\theta^*$ from the previous population's particles of model $m^{**}$ with their weights, and perturbing $\theta^{**} \sim KP_{t, m^{**}}(\cdot \mid \theta^*)$; candidates with zero prior density are discarded. A candidate is accepted with the indicator-average $b_t = \frac{1}{B_t}\sum_{r=1}^{B_t} \mathbf{1}\{d(D_0, D^*_r) \le \epsilon_t\}$ over $B_t$ replicate simulations (a candidate with $b_t = 0$ is rejected; $B_t = 1$ for deterministic models) and receives the importance weight
+
 $$w_t(m^{**}, \theta^{**}) \propto \frac{P(m^{**})\, P(\theta^{**} \mid m^{**})\, b_t}{q_t(m^{**}, \theta^{**})}, \qquad q_t(m, \theta) = \Big[\sum_{m'} P_{t-1}(m')\, KM_t(m \mid m')\Big] \cdot \frac{\sum_{j : m_j = m} w^{(j)}_{t-1}\, KP_{t,m}(\theta \mid \theta^{(j)}_{t-1})}{\sum_{j : m_j = m} w^{(j)}_{t-1}},$$
+
 where $q_t$ is the density of the proposal mechanism just described. After normalizing, the model marginal is $P_t(m) = \sum_{i : m^{(i)}_t = m} w^{(i)}_t$.
 
 Properties:

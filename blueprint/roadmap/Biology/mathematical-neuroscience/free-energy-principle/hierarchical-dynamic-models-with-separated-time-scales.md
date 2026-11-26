@@ -6,11 +6,15 @@ y &= g\big(x^{(1)}\big) + z^{(1)}, & \dot x^{(1)} &= f\big(x^{(1)}, v^{(1)}\big)
 v^{(1)} &= g\big(x^{(2)}\big) + z^{(2)}, & \dot x^{(2)} &= f\big(x^{(2)}, v^{(2)}\big)/T^{(2)} + w^{(2)},
 \end{aligned}$$
 with Gaussian fluctuations $z^{(i)}, w^{(i)}$ of fixed precisions, time constants $T^{(2)} \gg T^{(1)}$, and the output of the slow level acting as a control parameter of the fast level. In the birdsong example both levels are Lorenz systems,
+
 $$f(x, v) = \begin{pmatrix} a(x_2 - x_1) \\ v x_1 - x_2 - x_1 x_3 \\ x_1 x_2 - c x_3 \end{pmatrix}, \qquad a = 10,\ c = 8/3,$$
+
 with $T^{(1)} = 0.25\,\mathrm{s}$, $T^{(2)} = 2\,\mathrm{s}$ and fixed Rayleigh number $v^{(2)} = 32$ at the slow level; the slow level's output is the Rayleigh number $v^{(1)}$ of the fast level, switching it between fixed-point, periodic and chaotic regimes.
 
 **Generalized coordinates of motion.** States are represented together with their temporal derivatives, $\tilde u = (u, u', u'', \dots)$. Truncating at order $p$, the trajectory near time $t$ is encoded by the Taylor polynomial
+
 $$u(t + \Delta t) \approx \sum_{k=0}^{p} \frac{u^{(k)}(t)}{k!}\, \Delta t^{k},$$
+
 so a point in generalized coordinates specifies a local trajectory, and the precision assigned to each order sets how far into the past and future that trajectory is represented with confidence.
 
 **Properties.**

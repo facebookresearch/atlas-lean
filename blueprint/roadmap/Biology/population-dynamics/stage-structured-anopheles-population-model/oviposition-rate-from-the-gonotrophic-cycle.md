@@ -5,9 +5,13 @@
 **Proposition.**
 
 1. The proportion of females surviving $j$ gonotrophic cycles is $p^j$ with $p = e^{-\mu_M \delta}$, and the expected lifetime egg output is
+
 $$\varepsilon \sum_{j \ge 1} p^j = \frac{\varepsilon\, p}{1 - p} = \frac{\varepsilon}{e^{\mu_M \delta} - 1}.$$
+
 2. Hence
+
 $$\beta = \frac{\varepsilon\, \mu_M}{e^{\mu_M \delta} - 1} \le \beta_{\max} = \frac{\varepsilon_{\max}\, \mu_M}{e^{\mu_M \delta} - 1},$$
+
 where $\varepsilon_{\max}$ is the maximum batch size; $\beta < \beta_{\max}$ when some eggs are laid in unsuitable sites or fail to hatch.
 3. $\beta \to \varepsilon/\delta$ as $\mu_M \delta \to 0$, and $\beta$ is decreasing in $\mu_M$ for fixed $\varepsilon, \delta$.
 

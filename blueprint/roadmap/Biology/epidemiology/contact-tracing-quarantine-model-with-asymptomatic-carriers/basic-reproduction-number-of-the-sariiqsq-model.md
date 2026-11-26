@@ -26,7 +26,9 @@ Traced infected contacts enter $I_q$ directly and do not contribute; perfect tra
 ## Expansion
 
 At the infection-free state
+
 $$F = \begin{pmatrix} 0 & \beta_s(1-\rho_s)\varepsilon_s & 0 \\ 0 & 0 & 0 \\ 0 & \beta_s\rho_s\varepsilon_s & 0\end{pmatrix}, \qquad V = \begin{pmatrix} \gamma_a + \xi_a & 0 & 0 \\ -\gamma_a & \gamma_i + \xi_i & 0 \\ 0 & -\gamma_i & \xi_q\end{pmatrix}.$$
+
 Since $(V^{-1})_{21} = \gamma_a/\big((\gamma_a + \xi_a)(\gamma_i + \xi_i)\big)$ and $(V^{-1})_{22} = 1/(\gamma_i + \xi_i)$, the matrix $F V^{-1}$ has first row $\big(\beta_s(1-\rho_s)\varepsilon_s (V^{-1})_{21},\ \beta_s(1-\rho_s)\varepsilon_s (V^{-1})_{22},\ 0\big)$, a zero second row and a zero third column. Its characteristic polynomial is therefore $\lambda^2\big(\lambda - \beta_s(1-\rho_s)\varepsilon_s (V^{-1})_{21}\big)$, giving the formula. Interpretation: an untraced infected contact becomes asymptomatic, progresses to symptoms with probability $\gamma_a/(\gamma_a + \xi_a)$, and then transmits at rate $\beta_s\varepsilon_s$ for a mean time $1/(\gamma_i + \xi_i)$; the factor $1 - \rho_s$ is the untraced fraction.
 
 ## Sources

@@ -1,8 +1,11 @@
 # Mask effectiveness, the reduced reproduction number and the attack rate
 
 **Setting.** Write the basic reproduction number as $R_0 = b\,\kappa\,D$, with per-contact transmission probability $b$, contact rate $\kappa$ and infectious duration $D$. Masks multiply $b$ by $1 - M_{\mathrm{eff}}$, where the population mask effectiveness
+
 $$M_{\mathrm{eff}} = M_{\mathrm{red}}\, M_{\mathrm{cov}}\, M_{\mathrm{ava}} \in [0, 1]$$
+
 is the product of the aerosol filtering efficiency given proper use ($M_{\mathrm{red}}$), the proportion using masks properly given access ($M_{\mathrm{cov}}$) and the proportion with access ($M_{\mathrm{ava}}$). The reduced reproduction number is $R_{\mathrm{int}} = (1 - M_{\mathrm{eff}})\,R_0$. In a fully susceptible, randomly mixing population the first-wave attack rate $a \in [0, 1]$ solves
+
 $$a = 1 - e^{-a R_{\mathrm{int}}} .$$
 
 **Proposition.**

@@ -1,21 +1,31 @@
 # Minor-outbreak probabilities in a host–vector branching process
 
 **Model (Ross).** Constant host and vector populations $H$ and $M$; $I$ infectious hosts recover at rate $\gamma$; infectious vectors $V$ infect hosts at rate $\alpha V S/H$; susceptible vectors $U$ acquire infection at rate $\beta U I/H$; vectors are born and die at rate $\mu$:
+
 $$\dot S = -\alpha V\frac{S}{H} + \gamma I,\quad \dot I = \alpha V\frac{S}{H} - \gamma I,\quad \dot U = -\beta U\frac{I}{H} + \mu M - \mu U,\quad \dot V = \beta U\frac{I}{H} - \mu V \quad \text{(Eq. 8)}.$$
+
 At the disease-free equilibrium $(H, 0, M, 0)$ the threshold quantity is
+
 $$R_0 = \frac{\alpha}{\mu}\cdot\frac{\beta M/H}{\gamma} \qquad \text{(Eq. 10)},$$
+
 the square of the spectral radius of $FV^{-1}$ for $F = \begin{pmatrix} 0 & \alpha \\ \beta M/H & 0\end{pmatrix}$, $V = \mathrm{diag}(\gamma, \mu)$.
 
 **Branching approximation.** Near the disease-free equilibrium $(I, V)$ is a two-type branching process with offspring generating functions
+
 $$f_1(u_1,u_2) = \frac{\gamma}{\gamma + \beta M/H} + \frac{\beta M/H}{\gamma + \beta M/H}\,u_1 u_2, \qquad f_2(u_1,u_2) = \frac{\mu}{\mu+\alpha} + \frac{\alpha}{\mu+\alpha}\,u_1u_2 \quad \text{(Eqs. 11–12)}.$$
 
 **Proposition.** If $R_0 > 1$, the system $f_1(u) = u_1$, $f_2(u) = u_2$ has in $[0,1]^2$ the solutions $(1,1)$ and $(q_1, q_2)$ with
+
 $$q_1 = \frac{\gamma}{\gamma + \beta M/H} + \frac{\beta M/H}{\gamma + \beta M/H}\cdot\frac{1}{R_0}, \qquad q_2 = \frac{\mu}{\mu+\alpha} + \frac{\alpha}{\mu+\alpha}\cdot\frac{1}{R_0} \quad \text{(Eqs. 13–14)},$$
+
 and starting from $I(0) = i$, $V(0) = v$,
+
 $$\mathbb{P}(\text{minor outbreak}) = \begin{cases} q_1^{\,i}\, q_2^{\,v}, & R_0 > 1,\\ 1, & R_0 < 1.\end{cases}$$
 
 **Link to the next-generation matrix.** With $\mathbf{M}$ the Jacobian of $(f_1, f_2)$ at $(1,1)$ and $W = \mathrm{diag}(\gamma + \beta M/H,\ \mu + \alpha)$,
+
 $$W(\mathbf{M} - I) = (F - V)^{\top} \qquad \text{(Eq. 15, up to the orientation convention for } \mathbf{M}),$$
+
 so $\rho(\mathbf{M}) > 1 \iff R_0 > 1$.
 
 ## Depends on

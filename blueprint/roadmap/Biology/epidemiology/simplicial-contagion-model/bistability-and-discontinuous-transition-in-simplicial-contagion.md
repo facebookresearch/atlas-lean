@@ -1,8 +1,11 @@
 # Bistability and discontinuous transition in simplicial contagion
 
 For the simplicial contagion model of order $D = 2$ in mean field, with rescaled infectivities $\lambda = \beta \langle k_1 \rangle / \mu \ge 0$ and $\lambda_\Delta = \beta_\Delta \langle k_2 \rangle / \mu > 0$ and time measured in units of $1/\mu$, the density of infectious vertices obeys
+
 $$\frac{d\rho}{dt} = -\rho + \lambda \rho (1 - \rho) + \lambda_\Delta \rho^2 (1 - \rho) = -\lambda_\Delta \, \rho \, (\rho - \rho^*_{+})(\rho - \rho^*_{-}),$$
+
 where $\rho^*_\pm$ are the roots of $1 - \lambda(1 - \rho) - \lambda_\Delta \rho (1 - \rho) = 0$:
+
 $$\rho^*_{\pm} = \frac{\lambda_\Delta - \lambda \pm \sqrt{(\lambda - \lambda_\Delta)^2 - 4 \lambda_\Delta (1 - \lambda)}}{2 \lambda_\Delta} .$$
 
 **Theorem (phase diagram on $\rho \in [0, 1]$).**

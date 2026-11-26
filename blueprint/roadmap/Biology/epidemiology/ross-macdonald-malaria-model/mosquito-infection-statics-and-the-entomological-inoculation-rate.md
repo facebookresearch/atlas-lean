@@ -10,10 +10,13 @@
 - Proportion of mosquitoes ever infected: $Y = \dfrac{acX}{g + acX}$ (Eq. 7), from $\nu(A) = 1 - e^{-acXA}$ (Eq. 6).
 - Sporozoite rate (proportion infectious): $Z = Y\,P_e = \dfrac{acX}{g + acX}\,e^{-gn}$ (Eq. 8), with $P_e = e^{-gn}$ the probability of surviving the incubation period.
 - Entomological inoculation rate (infectious bites per human per day):
+
 $$\mathrm{EIR} = maZ = \frac{m a^2 c X e^{-gn}}{g + acX}.$$
 
 **Small-prevalence limit.** With vectorial capacity $C = m a^2 e^{-gn}/g$,
+
 $$\mathrm{EIR} = cCX\,\frac{g}{g + acX} \le cCX, \qquad \frac{d\,\mathrm{EIR}}{dX}\Big|_{X=0} = cC,$$
+
 so $cCX$ approximates EIR when $X$ is small and overestimates it by the factor $1 + acX/g$.
 
 **Dynamic form.** The sporozoite rate obeys $\dot Z = acX\,(e^{-gn} - Z) - gZ$ (Eq. 18), whose equilibrium is Eq. 8.

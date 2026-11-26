@@ -1,17 +1,25 @@
 # Equilibrium social distancing as a pointwise best response
 
 **Epidemic.** A closed population of size $N$ follows SIR dynamics in which the transmission rate is scaled by the relative risk of the population's aggregate distancing investment $\bar\kappa(t) \ge 0$ per day:
+
 $$S' = -b\, \beta(\bar\kappa) \frac{S I}{N}, \qquad I' = b\, \beta(\bar\kappa) \frac{S I}{N} - g I, \qquad R' = g I,$$
+
 with baseline transmission rate $b > 0$ and removal rate $g > 0$. The **relative risk** $\beta \colon [0, \infty) \to (0, 1]$ satisfies $\beta(0) = 1$, is decreasing, bounded below by a positive constant (imperfect protection) and, by diminishing returns, convex.
 
 **Individual.** One susceptible individual using investment $\kappa(t)$ is infected at hazard $b\, \beta(\kappa(t))\, I(t)/N$; in an infinite population this choice does not affect $I(t)$. Infection costs $c_I > 0$ per day of illness, distancing costs $\kappa$ per day. Let $V_S(t)$ and $V_I(t)$ be the expected present values (negative expected future costs) of being susceptible or infected at time $t$ under the individual's strategy, so $V_S - V_I > 0$ is the expected cost averted by staying uninfected. In the absence of discounting, the values obey the adjoint (Bellman) equations of the individual's three-state Markov decision process,
+
 $$-V_S' = -\kappa + b\, \beta(\kappa) \frac{I}{N} (V_I - V_S), \qquad -V_I' = -c_I + g (V_R - V_I),$$
+
 with $V_R$ the (constant) value of the removed state.
 
 **Proposition (pointwise best response).** A strategy maximizes $V_S$ against a given epidemic course if and only if at almost every time it minimizes the instantaneous expected loss
+
 $$\kappa + b\, \beta(\kappa) \frac{I(t)}{N} \big(V_S(t) - V_I(t)\big)$$
+
 over $\kappa \ge 0$. If $\beta$ is differentiable and strictly convex, the minimizer is unique: writing $\Delta(t) = b\, (I(t)/N)\, (V_S(t) - V_I(t)) \ge 0$,
+
 $$\kappa^*(t) = 0 \ \text{ if } -\beta'(0)\, \Delta(t) \le 1, \qquad \text{otherwise } \kappa^*(t) \text{ solves } -\beta'(\kappa^*)\, \Delta(t) = 1 .$$
+
 A **Nash equilibrium** is a feedback strategy $\kappa^*$ that is a best response to itself: the epidemic is driven by $\bar\kappa = \kappa^*$ and every individual's best response to that epidemic is again $\kappa^*$; it is subgame perfect if this holds from every state the system can pass through.
 
 Properties:

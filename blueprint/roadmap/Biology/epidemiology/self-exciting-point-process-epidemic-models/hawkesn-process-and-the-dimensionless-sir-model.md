@@ -1,11 +1,17 @@
 # HawkesN process and the dimensionless SIR model
 
 In a population of size $N$, the HawkesN process modulates the self-exciting intensity by the fraction of individuals not yet infected:
+
 $$\lambda_h(t) = \left(1 - \frac{I_c(t)}{N}\right)\left(\mu + \sum_{t_i < t} R(t_i)\, w(t - t_i)\right), \tag{5}$$
+
 where $I_c(t)$ is the cumulative number of infections before $t$. Its deterministic counterpart is the SIR model
+
 $$\frac{dS}{dt} = -\beta \frac{I S}{N}, \qquad \frac{dI}{dt} = \beta\frac{I S}{N} - \gamma I, \qquad \frac{dR}{dt} = \gamma I, \tag{6}$$
+
 with $R_0 = \beta / \gamma$. Rescaling time by $\tau = \gamma t$ and writing $s = S/N$, $i = I/N$, $r = R/N$ gives, for a novel outbreak,
+
 $$\frac{ds}{d\tau} = -R_0\, i s, \qquad \frac{di}{d\tau} = R_0\, i s - i, \qquad \frac{dr}{d\tau} = i, \qquad (s, i, r)\big|_{\tau = 0} = (1 - \epsilon, \epsilon, 0), \tag{7}$$
+
 with $0 < \epsilon \ll 1$.
 
 Properties:

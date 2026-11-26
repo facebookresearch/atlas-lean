@@ -5,13 +5,20 @@ Work in the setting of [bond percolation on a configuration-model network](outbr
 **Statements.**
 
 1. *Index case of degree $k$.* The probability that a single index case of degree $k$ starts a large epidemic is
+
 $$\varepsilon_k = 1 - (1 - T + Tu)^k,$$
+
 which is increasing in $k$.
 2. *Several index cases.* If $N$ cases with degrees $k_1, \dots, k_N$ are currently infected (and their onward chains are asymptotically independent), the probability that at least one of them ignites an epidemic is
+
 $$1 - \prod_{i=1}^{N} (1 - \varepsilon_{k_i}).$$
+
 If only the number $N$ of current cases is known, each having been infected along an edge, the probability is
+
 $$1 - \left(\frac{\sum_k k p_k (1 - T + Tu)^{k-1}}{\sum_k k p_k}\right)^{N} = 1 - G_1(1 - T + Tu)^N.$$
+
 3. *Individual risk during an epidemic.* Conditional on a large epidemic, a vertex of degree $k$ is infected with probability
+
 $$\nu_k = 1 - (1 - T + Tu)^k = \varepsilon_k .$$
 
 ## Depends on

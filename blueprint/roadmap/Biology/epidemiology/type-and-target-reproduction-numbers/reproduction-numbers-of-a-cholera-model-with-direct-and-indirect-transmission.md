@@ -1,15 +1,21 @@
 # Reproduction numbers of a cholera model with direct and indirect transmission
 
 **Model (Tien–Earn).** A constant human population $N = S + I + R$ with per-capita birth and death rate $d$, recovery rate $\gamma$, and a waterborne pathogen concentration $B$ shed at rate $\xi$ per infective and decaying at rate $\delta$:
+
 $$\dot S = dN - b_B S B - b_I S I - dS,\quad \dot I = b_B S B + b_I S I - (d+\gamma) I,\quad \dot R = \gamma I - dR,\quad \dot B = \xi I - \delta B,$$
+
 with all parameters positive and disease-free equilibrium $(N, 0, 0, 0)$. Write $\beta_I = b_I N$ and $\beta_B = b_B N \xi/\delta$.
 
 **Proposition 1 (shedding as transition).** With $F = \begin{pmatrix} \beta_I & b_B N \\ 0 & 0\end{pmatrix}$ and $V = \begin{pmatrix} d+\gamma & 0 \\ -\xi & \delta\end{pmatrix}$ the next-generation matrix has rank one and
+
 $$R_0 = \frac{\beta_B + \beta_I}{d+\gamma} = R_{0B} + R_{0I}, \qquad R_{0B} = \frac{\beta_B}{d+\gamma},\ R_{0I} = \frac{\beta_I}{d+\gamma}.$$
+
 The elasticities are $\Upsilon_{\beta_B}^{R_0} = R_{0B}/R_0$, $\Upsilon_{\beta_I}^{R_0} = R_{0I}/R_0$ and $\Upsilon_{\gamma}^{R_0} = -\gamma/(d+\gamma)$.
 
 **Proposition 2 (shedding as new infection).** With $\tilde F = \begin{pmatrix} b_I N & b_B N \\ \xi & 0\end{pmatrix}$, $\tilde V = \mathrm{diag}(d+\gamma, \delta)$, the next-generation matrix $\tilde K = \tilde F \tilde V^{-1}$ has rank two and $\tilde R_0 = \rho(\tilde K)$ is the unique positive root of
+
 $$G(z) = z^2 - R_{0I}\, z - R_{0B}.$$
+
 Since $G(1) = 1 - R_{0I} - R_{0B}$, $\tilde R_0 < 1 \iff R_0 < 1$, although $\tilde R_0 \ne R_0$ in general.
 
 **Proposition 3 (target reproduction numbers for $\tilde K$).** Targeting direct transmission, $S = \{(1,1)\}$, gives $T_S = R_{0I}/(1 - R_{0B})$ when $R_{0B} < 1$. Targeting the water route, $S = \{(1,2)\}$, gives $T_S = R_{0B}/(1 - R_{0I})$ when $R_{0I} < 1$; then cutting a fraction greater than $(R_0 - 1)/R_{0B}$ of indirect transmission eliminates cholera.

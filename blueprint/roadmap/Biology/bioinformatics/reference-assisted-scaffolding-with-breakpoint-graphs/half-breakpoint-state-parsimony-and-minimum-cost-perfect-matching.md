@@ -3,9 +3,13 @@
 Let $BG(A, P_1, \dots, P_k)$ be the incomplete multi-colour breakpoint graph of an assembly $A$ and references $P_1, \dots, P_k$, and let $T$ be a rooted phylogeny with leaves $A, P_1, \dots, P_k$ and branch lengths $\tau$. Each vertex $u$ (a *half-breakpoint*) has, in genome $c$, a state $\mathrm{state}_c(u)$: the vertex joined to $u$ by the edge of colour $c$, or void if the block is absent from $c$.
 
 **Half-breakpoint state parsimony.** Given the leaf states of $u$, label the internal nodes of $T$ with states so as to minimize
+
 $$P(u, T) = \sum_{\text{branches } (i, j)} \bar\delta_{i,j}\, W(\tau_{ij}), \qquad W(\tau) = e^{-\tau}, \tag{1}$$
+
 where $\bar\delta_{i,j} = 0$ if the states at the ends of the branch agree and $1$ otherwise. A Sankoff-type recursion solves it exactly: $s_t(\ell) = 0$ if leaf $\ell$ has state $t$ and $+\infty$ otherwise, and for an internal node $v$ with children $c$ joined by branches of length $\tau_c$,
+
 $$s_t(v) = \sum_{c} \min_{t'} \big(s_{t'}(c) + \bar\delta_{t,t'}\, W(\tau_c)\big),$$
+
 with optimum $\min_t s_t(\mathrm{root})$, in time $O(n d)$ for $n$ leaves and $d$ candidate states.
 
 **Recovering adjacencies.** For each vertex $u$ without a red edge, and each candidate state $t$ (a vertex adjacent to $u$ in some reference), compute $P(u, T)$ with the target leaf fixed to state $t$. Give each candidate edge $\{u, t\}$ the weight $P(u, T \mid t) + P(t, T \mid u)$, remove the vertices already matched by red edges, and choose the missing red edges as a minimum-weight perfect matching of the remaining graph (blossom algorithm, $O(|V|^4)$ in the implementation). This choice minimizes the total half-breakpoint parsimony cost $\sum_u P(u, T)$ over all completions of the red matching that use candidate edges.

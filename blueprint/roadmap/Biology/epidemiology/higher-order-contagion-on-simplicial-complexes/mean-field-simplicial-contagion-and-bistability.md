@@ -1,9 +1,11 @@
 # Mean-field simplicial contagion and bistability
 
 In the simplicial SIS contagion model on a simplicial complex, a susceptible node is infected at rate $\beta$ through each link to an infectious neighbour and at rate $\beta_\Delta$ through each 2-simplex (triangle) whose other two vertices are both infectious, and infectious nodes recover at rate $\mu > 0$. Let $\langle k \rangle$ and $\langle k_\Delta \rangle$ be the mean numbers of links and of 2-simplices per node. The homogeneous mean-field equation for the infectious density $\rho(t) \in [0, 1]$ is
+
 $$\frac{d\rho}{dt} = -\mu\rho + \beta\langle k \rangle \rho(1 - \rho) + \beta_\Delta \langle k_\Delta \rangle \rho^2 (1 - \rho).$$
 
 With $\lambda = \beta\langle k \rangle / \mu > 0$ and $\lambda_\Delta = \beta_\Delta \langle k_\Delta \rangle / \mu > 0$, the equilibria are $\rho = 0$ and the roots in $(0, 1)$ of
+
 $$\lambda_\Delta \rho^2 - (\lambda_\Delta - \lambda)\rho + (1 - \lambda) = 0, \qquad \rho_\pm = \frac{(\lambda_\Delta - \lambda) \pm \sqrt{(\lambda + \lambda_\Delta)^2 - 4\lambda_\Delta}}{2\lambda_\Delta}.$$
 
 1. If $\lambda > 1$, $\rho = 0$ is unstable and there is exactly one equilibrium in $(0, 1)$, namely $\rho_+$, which is stable.

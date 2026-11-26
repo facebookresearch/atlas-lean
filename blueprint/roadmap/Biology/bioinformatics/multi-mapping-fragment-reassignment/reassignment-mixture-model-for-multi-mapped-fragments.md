@@ -1,7 +1,9 @@
 # Reassignment mixture model for multi-mapped fragments
 
 **Setting.** Fragments $f_1, \dots, f_N$ originate from transcripts $t_0, t_1, \dots, t_K$, where $t_1, \dots, t_K$ are annotated (for instance transposable-element loci) and $t_0$ collects fragments from unannotated sequence. For each fragment let $q_{ij} = \Pr(f_i \mid G_i = t_j) \ge 0$ be a mapping quality derived from the alignment score ($q_{ij} = 0$ if $f_i$ does not align to $t_j$), and let $y_i = 1$ if $f_i$ aligns to more than one transcript, $y_i = 0$ otherwise. The parameters are the fragment proportions $\pi = (\pi_0, \dots, \pi_K)$ and the reassignment weights $\theta = (\theta_0, \dots, \theta_K)$, both in the probability simplex. A fragment contributes the likelihood factor
+
 $$\Pr(f_i \mid \pi, \theta) \propto \sum_{j=0}^K \pi_j\, \theta_j^{\,y_i}\, q_{ij},$$
+
 so $\theta$ reweights only ambiguous fragments. With latent membership weights $x_{ij}$ ($\sum_j x_{ij} = 1$), the complete-data likelihood is $\prod_i \prod_j (\pi_j \theta_j^{y_i} q_{ij})^{x_{ij}}$, and pseudo-count priors $a_j, b_j \ge 0$ are added for $\pi$ and $\theta$.
 
 **Proposition (EM updates).** Starting from any $\pi, \theta$ with positive entries, iterate
@@ -13,7 +15,9 @@ Then:
 
 1. The M-step outputs lie in the simplex, and a fragment aligning to a single transcript $t_j$ always has $\hat x_{ij} = 1$.
 2. Each M-step maximizes $\sum_{i,j} \hat x_{ij}\left(\log \pi_j + y_i \log \theta_j\right) + \sum_j a_j \log \pi_j + \sum_j b_j \log \theta_j$ over the simplex, so each iteration does not decrease the penalized objective
+
 $$\ell(\pi, \theta) = \sum_{i=1}^N \log \sum_{j=0}^K \pi_j\, \theta_j^{y_i}\, q_{ij} + \sum_j a_j \log \pi_j + \sum_j b_j \log \theta_j .$$
+
 3. If $q_{i\cdot}$ is the same for all transcripts an ambiguous fragment hits, its posterior assignment is proportional to $\pi_j \theta_j$, so ambiguous fragments are pulled toward loci that are supported by uniquely aligned fragments.
 
 ## Expansion

@@ -1,14 +1,21 @@
 # Emotional valence as the rate of change of free energy
 
 **Variational free energy.** An agent with generative model $m$ receives sensory data $y$ caused by hidden states $\vartheta$, and holds a recognition density $q(\vartheta \mid \mu)$ with sufficient statistics $\mu$. The Kullback–Leibler divergence from $q$ to the true posterior decomposes as
+
 $$D_{\mathrm{KL}}\big[q(\vartheta \mid \mu)\,\|\,p(\vartheta \mid y, m)\big] = F(y, \mu) + \ln p(y \mid m) \qquad \text{(Eq. 1)},$$
+
 so that
+
 $$F(y, \mu) = D_{\mathrm{KL}}\big[q(\vartheta \mid \mu)\,\|\,p(\vartheta \mid y, m)\big] - \ln p(y \mid m) \;\ge\; -\ln p(y \mid m) \qquad \text{(Eq. 2)},$$
+
 and, equivalently, complexity minus accuracy,
+
 $$F = D_{\mathrm{KL}}\big[q(\vartheta \mid \mu)\,\|\,p(\vartheta \mid m)\big] - \mathbb{E}_q\big[\ln p(y \mid \vartheta, m)\big] \qquad \text{(Eq. 3)}.$$
+
 Free energy is an upper bound on surprise $-\ln p(y \mid m)$; minimizing it over $\mu$ makes $q$ an approximate posterior, and minimizing it through action changes $y$.
 
 **Definition (valence).** At level $i$ of a hierarchical model with free energy $F_i(t)$, emotional valence is the negative rate of change of free energy,
+
 $$\mathrm{valence}_i(t) = -\frac{dF_i}{dt}.$$
 
 **Basic forms of emotion.** Using the sign of $\dot F_i$ and of $\ddot F_i$:

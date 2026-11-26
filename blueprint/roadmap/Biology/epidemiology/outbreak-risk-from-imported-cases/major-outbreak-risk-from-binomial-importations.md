@@ -1,12 +1,17 @@
 # Risk of a major outbreak from binomially many imported cases
 
 **Setting.** A source region has accumulated $C \in \mathbb{N}$ infected individuals. Each of them, independently, ends up mixing into the population of a destination country with probability $\theta \in [0,1]$ (the *connectivity*: the baseline probability of travelling to that destination, multiplied by the fractions not stopped by travel reduction, exit screening and entry screening). The number of imported cases is therefore
+
 $$X \sim \mathrm{Bin}(C, \theta).$$
+
 Each imported case independently starts a Galton–Watson branching process whose offspring law is negative binomial with mean $R_{\mathrm{loc}} > 0$ (the local reproduction number) and dispersion $k > 0$, with probability generating function
+
 $$g(s) = \Big(1 + \frac{R_{\mathrm{loc}}}{k}(1 - s)\Big)^{-k}, \qquad s \in [0,1].$$
+
 Let $z \in [0,1]$ be the extinction probability of one such branch, i.e. the least root of $z = g(z)$ in $[0,1]$; $z < 1$ exactly when $R_{\mathrm{loc}} > 1$.
 
 **Statement.** Conditional on $X = i$, the outbreak dies out iff all $i$ independent branches die out, so the probability of a major outbreak is $1 - z^i$. The unconditional risk is
+
 $$\mathrm{Risk}(C, \theta, R_{\mathrm{loc}}) = \mathbb{E}\big[1 - z^{X}\big] = 1 - \big(1 - \theta(1 - z)\big)^{C}.$$
 
 Consequences:

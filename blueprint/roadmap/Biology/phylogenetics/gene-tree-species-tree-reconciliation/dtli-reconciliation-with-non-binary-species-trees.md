@@ -5,7 +5,9 @@
 **Reconciliation.** A reconciliation $R_{GS}$ assigns to every internal gene node $g$ a species $M(g) \in V_S$ and an event in $\{\mathrm{D}, \mathrm{T}, \mathrm{S}, \mathrm{I}\}$ (duplication, transfer, speciation, deep coalescence), and to every non-root gene node the losses on the edge from $P(g)$ to $g$. An edge $(u, v)$ is a transfer edge when the event at $u$ is a transfer and $M(u)$ and $M(v)$ are incomparable in $T_S$; the transfer goes from donor $M(u)$ to recipient $M(v)$.
 
 **Cost.** With costs $\delta, \lambda, \tau > 0$ and counts $D$, $L$, $T$ of duplications, losses and transfers,
+
 $$\pi(R_{GS}) = \delta D + \lambda L + \tau T \qquad \text{(Eq. 1)};$$
+
 speciations (co-divergence at binary species nodes) and deep coalescences (co-divergence at polytomies) cost $0$.
 
 **Model constraint (when lineage sorting suffices).** Let $g$ have children $c_1, c_2$ and $M(g) = s$. The divergence at $g$ is a co-divergence with $s$ iff each child lineage of $s$ vertically inherits at most one descendant of $g$, i.e. the sets $\Delta(c_1), \Delta(c_2) \subseteq C(s)$ of children of $s$ that vertically inherit descendants of $c_1$ and of $c_2$ are disjoint; if they intersect, $g$ is a duplication (Eq. 2). Equivalently, a deep coalescence is inferred exactly when the gene tree's branching below $g$ is consistent with some binary resolution of the polytomy $s$. When $s$ is binary, Eq. 2 reduces to the classical least-common-ancestor test for duplications.

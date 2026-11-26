@@ -1,9 +1,13 @@
 # Spatio-temporal Poisson relative-risk model
 
 Let areas $i = 1, \dots, n$ have populations $P_{ij}$ in age groups $j$, and let $f_j$ be the national incidence in age group $j$. The expected count of area $i$ by indirect standardization is
+
 $$E_i = \sum_j f_j P_{ij}. \tag{1}$$
+
 The observed counts $O_{it}$ (area $i$, day $t$) follow
+
 $$O_{it} \sim \mathrm{Poisson}(E_i\, \mu_{it}), \qquad \log \mu_{it} = \alpha + \sum_k \beta_k X_{ik} + p\big(X_{i,t-\ell}\big) + s_i + u_i + \delta_t + \varepsilon_t, \tag{2}$$
+
 where $\log E_i$ is an offset, $X_{ik}$ are area-level covariates, $p$ is a cubic polynomial in a covariate lagged by $\ell$ days, $s_i$ is a spatially structured effect (Besag intrinsic conditional autoregressive model on the contiguity graph: given the others, $s_i$ is normal with mean the average of $s$ over the $n_i$ neighbours of $i$ and variance $\sigma_s^2 / n_i$), $u_i$ and $\varepsilon_t$ are independent Gaussian effects, and $\delta_t$ is a second-order random walk ($\delta_t - 2\delta_{t-1} + \delta_{t-2}$ independent normal with mean zero and common variance).
 
 Properties:

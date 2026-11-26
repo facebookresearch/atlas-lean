@@ -1,14 +1,18 @@
 # Segment duration distributions in hidden Markov models
 
 **Setting.** In a hidden Markov model, a state $s$ with self-transition probability $1 - p$ ($0 < p \le 1$) produces segments whose duration $D_s$ (number of consecutive positions spent in $s$) is geometric:
+
 $$\Pr(D_s = d) = p(1 - p)^{d - 1}, \qquad d = 1, 2, \dots,$$
+
 with mode $1$, mean $1/p$, and positive probability for arbitrarily long segments. Biological segments such as transmembrane helices have length distributions concentrated on a finite window (roughly 15–30 residues), which a single geometric state cannot represent.
 
 **Constructions.**
 
 1. *Ladder (chain) of non-self-looping states.* $D_{\max}$ states traversed in order, with skip transitions, represent any distribution on $\{1, \dots, D_{\max}\}$: if from the entry point the chain jumps to the state $d$ steps from its end with probability $w_d$, then $\Pr(D = d) = w_d$.
 2. *Chain of $r$ self-looping states* with common exit probability $p$: the duration is a sum of $r$ independent geometrics, a negative binomial,
+
 $$\Pr(D = d) = \binom{d-1}{r-1} p^{r}(1 - p)^{d - r}, \qquad d \ge r,$$
+
 with mean $r/p$ and mode at least $r$.
 3. *Explicit duration variables (dynamic Bayesian network or hidden semi-Markov model).* A duration counter variable is sampled on entry to a state from a fixed duration $D$, from an arbitrary distribution on a window $[D_{\min}, D_{\max}]$, or from a geometric law, and decremented each position; the state is held until the counter reaches zero.
 

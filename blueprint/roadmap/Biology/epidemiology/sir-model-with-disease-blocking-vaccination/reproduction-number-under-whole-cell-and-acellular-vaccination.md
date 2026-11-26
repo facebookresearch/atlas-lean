@@ -10,11 +10,17 @@ R' &= \mu w + \gamma_s I_s + \gamma_a I_a - \omega R - \nu R .
 \end{aligned}$$
 
 **Proposition.** The infection-free equilibrium is
+
 $$S^* = 1 - a - \frac{\nu w}{\omega + \nu}, \qquad V^* = a, \qquad R^* = \frac{\nu w}{\omega + \nu},$$
+
 (so $S^* = 1 - w - a$, $R^* = w$ without waning), and the reproduction number of the vaccinated population is
+
 $$R_v = \beta\left[\frac{\sigma S^*}{\gamma_s + \nu} + \frac{(1 - \sigma)S^* + V^*}{\gamma_a + \nu}\right].$$
+
 In particular, if $\gamma_s = \gamma_a = \gamma$,
+
 $$R_v = \frac{\beta\,(S^* + V^*)}{\gamma + \nu} = \frac{\beta}{\gamma + \nu}\left(1 - \frac{\nu w}{\omega + \nu}\right),$$
+
 so disease-blocking vaccination ($a$) does not reduce transmission at all: it converts symptomatic infections into asymptomatic ones, while only infection-blocking vaccination ($w$) lowers $R_v$. The infection-free equilibrium is locally asymptotically stable if $R_v < 1$ and unstable if $R_v > 1$.
 
 ## Depends on
@@ -24,7 +30,9 @@ so disease-blocking vaccination ($a$) does not reduce transmission at all: it co
 ## Expansion
 
 With $\nu = \mu$ the infection-free equilibrium follows by setting $I_s = I_a = 0$: the $V$ equation gives $V^* = a$, the $R$ equation gives $R^* = \nu w/(\omega + \nu)$, and the $S$ equation gives $S^* = (1 - w - a) + \omega R^*/\nu$, which simplifies to the stated value; the three sum to one. For the infected compartments $(I_s, I_a)$ the new-infection matrix is
+
 $$F = \beta\begin{pmatrix} \sigma S^* & \sigma S^* \\ (1-\sigma)S^* + V^* & (1-\sigma)S^* + V^* \end{pmatrix}, \qquad V_{\text{tr}} = \operatorname{diag}(\gamma_s + \nu,\ \gamma_a + \nu),$$
+
 and $F V_{\text{tr}}^{-1}$ has identical columns up to scaling, so it has rank one and its spectral radius is its trace, which gives $R_v$. With equal recovery rates the bracket becomes $(S^* + V^*)/(\gamma + \nu)$, and $S^* + V^* = 1 - \nu w/(\omega + \nu)$ does not involve $a$. The model explains how replacing an infection-blocking vaccine by a disease-blocking one can permit resurgence driven by unobserved asymptomatic transmission.
 
 ## Sources

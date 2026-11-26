@@ -1,7 +1,9 @@
 # Conditional construction of a calibrated tree prior
 
 **Setting.** $\mathcal{G}$ is the space of time trees (genealogies) $g = \{\psi, h\}$ on $n$ taxa, with ranked topology $\psi$ and internal node heights $h$. Let $f_G$ be a tree prior density on $\mathcal{G}$ (e.g. Yule with birth rate $\lambda$), possibly restricted to trees in which a taxon set $\varphi$ is monophyletic. Let $\tau(g)$ be the age of the most recent common ancestor of $\varphi$, let
+
 $$f_T(x) = \int_{\mathcal{G}} \mathbf{1}\big(\tau(g) = x\big)\, f_G(g)\, dg$$
+
 be the marginal density of $\tau$ under $f_G$, and let $\rho_T$ be a desired calibration density on $\tau$.
 
 **Desired properties.**
@@ -10,7 +12,9 @@ be the marginal density of $\tau$ under $f_G$, and let $\rho_T$ be a desired cal
 - (II) Among trees with equal calibrated age, $\rho_G$ is proportional to $f_G$: $\tau(g_1) = \tau(g_2) \Rightarrow \rho_G(g_1)/\rho_G(g_2) = f_G(g_1)/f_G(g_2)$.
 
 **Proposition (conditional construction).** The density
+
 $$\rho_G(g) = f_G(g)\,\frac{\rho_T(\tau(g))}{f_T(\tau(g))} \qquad \text{(Eq. 4)}$$
+
 integrates to $1$ and satisfies (I) and (II); informally, $\rho_G(g) = f_G(g \mid \tau(g))\,\rho_T(\tau(g))$.
 
 **Contrast with the multiplicative construction.** The product $f_G(g)\,\rho_T(\tau(g))$ (normalized) generally has a marginal on $\tau$ proportional to $f_T(x)\rho_T(x)$, not $\rho_T(x)$, and can induce a non-uniform prior on topologies even when $f_G$ is uniform on them.

@@ -1,7 +1,9 @@
 # Incomplete multi-colour breakpoint graph
 
 Let $\mathcal{B}$ be a set of synteny blocks, let $P_1, \dots, P_k$ be reference genomes written as sequences (or cyclic sequences) of signed blocks, and let the target assembly $A$ be a set of contigs, each a sequence of signed blocks. Assume every block of $\mathcal{B}$ occurs exactly once in $A$ and at most once in each $P_c$ (blocks absent from $A$ and repeated blocks are filtered out first). The incomplete multi-colour breakpoint graph $BG(A, P_1, \dots, P_k) = (V, E)$ has vertex set
+
 $$V = \{\, b^{h}, b^{t} : b \in \mathcal{B} \,\},$$
+
 the head and tail of each block, and an undirected edge of colour $c \in \{\mathrm{red}, P_1, \dots, P_k\}$ between two block extremities whenever they are adjacent in genome $c$ (red for the assembly).
 
 Properties:

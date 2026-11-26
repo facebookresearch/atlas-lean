@@ -1,19 +1,27 @@
 # SEIR model with a hyperbolic-tangent reproduction number
 
 **Model.** For a population of size $N$ with latency rate $\alpha$ and recovery rate $\gamma$ (latent period $A = 1/\alpha$, infectious period $C = 1/\gamma$), the SEIR model with a time-varying effective reproduction number $R(t)$ is
+
 $$\dot S = -R(t)\,\gamma\,\frac{S I}{N}, \quad \dot E = R(t)\,\gamma\,\frac{S I}{N} - \alpha E, \quad \dot I = \alpha E - \gamma I, \quad \dot{\mathcal R} = \gamma I,$$
+
 i.e. the SEIR system with contact rate $\beta(t) = R(t)\,\gamma$; the recovered compartment is written $\mathcal R$ to keep it apart from the reproduction number. Interventions are encoded by the hyperbolic-tangent ansatz
+
 $$R(t) = R_0 - \tfrac12\Big[1 + \tanh\!\Big(\frac{t - t^*}{T}\Big)\Big]\,(R_0 - R_t),$$
+
 with four parameters: the basic reproduction number $R_0$ before interventions, the reproduction number $R_t$ under the interventions, the adaptation time $t^*$ (midpoint of the transition) and the transition time $T > 0$ (its duration scale).
 
 **Properties.**
 
 - $R(t) \to R_0$ as $t \to -\infty$, $R(t) \to R_t$ as $t \to +\infty$, $R(t^*) = (R_0 + R_t)/2$, and $R$ is monotone between the two values; $R'(t^*) = -(R_0 - R_t)/(2T)$.
 - $S + E + I + \mathcal R$ is conserved for any measurable $R(\cdot) \ge 0$, and integrating $\dot S / S = -R(t)\,\dot{\mathcal R}/N$ gives
+
 $$S(t) = S(0)\exp\!\Big(-\frac{1}{N}\int_0^t R(u)\,\dot{\mathcal R}(u)\,du\Big),$$
+
 so the final susceptible fraction under $R(\cdot)$ is at least as large as under the constant value $R_0$ whenever $R(t) \le R_0$ for all $t$: the infections that the intervention prevents are never "made up" in the final-size relation.
 - **Constrained equilibrium (approximation).** Treating the reproduction number as constant and equal to $R_t$ from the time $t^* + T/2$ onward, and applying the [Lambert-W final-size formula](lambert-w-solution-of-the-seir-final-size-relation.md) with the fractions $s_t, r_t$ at that time, gives the temporarily stable state
+
 $$s^*_\infty = -\frac{1}{R_t}\,W_0\!\big(-s_t R_t\, e^{-R_t (1 - r_t)}\big), \qquad r^*_\infty = 1 - s^*_\infty,$$
+
 with $s_\infty \le s^*_\infty$ and $r^*_\infty \le r_\infty$ relative to the unconstrained final size when $R_t \le R_0$. This state is stable only while the interventions hold; it is not the herd-immunity equilibrium, and lifting the interventions (returning $R$ toward $R_0$ with $R_0 s^*_\infty > 1$) restarts growth.
 
 ## Depends on

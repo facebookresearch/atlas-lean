@@ -8,7 +8,9 @@ Let $\mathcal{K}$ be a simplicial complex on $N$ vertices: a family of simplices
 Because all faces of a simplex belong to $\mathcal{K}$, a simplex in which only $p < \omega$ of the other vertices are infectious still transmits through its $p$-dimensional faces. For $D = 1$ only links transmit and the model is the SIS model on the graph of 1-simplices; for $D = 2$ one writes $\beta = \beta_1$ and $\beta_\Delta = \beta_2$.
 
 **Mean-field equation.** Let $k_\omega(i)$ be the generalized degree of vertex $i$ (the number of $\omega$-simplices containing $i$) and $\langle k_\omega \rangle$ its average. Under homogeneous mixing, with the states of distinct vertices treated as independent, the density of infectious vertices $\rho(t) = \frac{1}{N} \sum_i x_i(t)$ obeys
+
 $$\frac{d\rho}{dt} = -\mu \rho + \sum_{\omega = 1}^{D} \beta_\omega \langle k_\omega \rangle \, \rho^{\omega} (1 - \rho) .$$
+
 For $D = 1$ this is the SIS mean-field equation, with steady states $\rho^* = 0$ and $\rho^* = 1 - \mu / (\beta \langle k_1 \rangle)$ and a continuous transition at $\beta \langle k_1 \rangle / \mu = 1$.
 
 ## Depends on

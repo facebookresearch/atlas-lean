@@ -1,6 +1,7 @@
 # Flux balance analysis as a linear program
 
 **Setting.** A metabolic network has $m$ internal metabolites and $n$ reactions, with stoichiometric matrix $S \in \mathbb{R}^{m \times n}$ ($S_{ij}$ is the net number of molecules of metabolite $i$ produced by one unit of reaction $j$), flux vector $v \in \mathbb{R}^n$, bounds $\ell \le v \le u$ with $\ell_j \in [-\infty, \infty)$, $u_j \in (-\infty, \infty]$ (irreversible reactions have $\ell_j = 0$; exchange reactions carry uptake and secretion limits), and an objective vector $c \in \mathbb{R}^n$, typically selecting a biomass reaction. Metabolite concentrations $x$ obey $\dot x = S v$; at steady state $S v = 0$. Flux balance analysis (FBA) solves
+
 $$\max_{v \in \mathbb{R}^n} \; c^\top v \quad \text{subject to} \quad S v = 0, \quad \ell \le v \le u .$$
 
 **Proposition.**

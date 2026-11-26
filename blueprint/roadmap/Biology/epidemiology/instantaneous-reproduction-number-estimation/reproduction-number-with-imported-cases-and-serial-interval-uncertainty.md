@@ -1,21 +1,31 @@
 # Reproduction number estimation with imported cases and serial-interval uncertainty
 
 **Setting.** Time is discrete, $t = 0, 1, 2, \dots$. At each step the incidence splits into locally infected and imported cases,
+
 $$I_t = I_t^{\mathrm{local}} + I_t^{\mathrm{imported}},$$
+
 both observed. Let $w = (w_s)_{s \ge 1}$ be a discretized serial-interval distribution ($w_s \ge 0$, $\sum_s w_s = 1$, $w_0 = 0$). The total infectiousness at time $t$ is
+
 $$\Lambda_t(w) = \sum_{s=1}^{t} I_{t-s}\, w_s = \sum_{s=1}^{t}\big(I_{t-s}^{\mathrm{local}} + I_{t-s}^{\mathrm{imported}}\big) w_s ,$$
+
 so imported cases contribute to infectiousness but are never counted as offspring.
 
 **Model.** Over a window $W_t = \{t-\tau, \dots, t\}$ the reproduction number $R_t$ is constant and, conditionally on past incidence and $w$,
+
 $$I_k^{\mathrm{local}} \sim \mathrm{Poisson}\big(R_t\, \Lambda_k(w)\big), \qquad k \in W_t,$$
+
 independently. The prior is $R_t \sim \mathrm{Gamma}(\text{shape } a, \text{scale } b)$.
 
 **Proposition (conjugate posterior).** Conditionally on $w$, the posterior of $R_t$ is a gamma law with
+
 $$\text{shape } a + \sum_{k \in W_t} I_k^{\mathrm{local}}, \qquad \text{scale } \Big(\sum_{k \in W_t} \Lambda_k(w) + \frac{1}{b}\Big)^{-1},$$
+
 so its mean is $\big(a + \sum_{k} I_k^{\mathrm{local}}\big)\big/\big(\sum_k \Lambda_k(w) + 1/b\big)$.
 
 **Integration over the serial interval.** If $w^{(1)}, \dots, w^{(n)}$ is a posterior sample of serial-interval distributions (obtained from interval-censored onset times of index–secondary pairs), the posterior of $R_t$ given both data sources is the equal-weight mixture
+
 $$p(R_t \mid \text{incidence}, \text{pairs}) \approx \frac{1}{n} \sum_{i=1}^{n} \mathrm{Gamma}\Big(a + \sum_{k \in W_t} I_k^{\mathrm{local}},\ \big(\textstyle\sum_{k \in W_t} \Lambda_k(w^{(i)}) + 1/b\big)^{-1}\Big),$$
+
 sampled by drawing $m$ values of $R_t$ from each component.
 
 **Discretization.** A continuous serial-interval density $g$ is converted to $w_s = \int_{s-1/2}^{s+1/2} g(x)\,dx$ for $s \ge 1$, $w_0 = 0$, then renormalized to sum to $1$.

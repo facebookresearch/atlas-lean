@@ -1,7 +1,9 @@
 # Lower bound on the mean offspring of an outbreak dataset
 
 Consider an outbreak started by a single index case, with transmission chains fully reconstructed. List the cases in order of generation (the index case first, then all second-generation cases, then all third-generation cases, and so on, in any order within a generation), and let $x_i$ be the number of secondary cases infected by the $i$-th listed case. For $n \ge 1$, if the outbreak has at least $n$ cases, then
+
 $$\sum_{i=1}^{n} x_i \ge n - 1, \qquad\text{so}\qquad \hat m_n = \frac{1}{n}\sum_{i=1}^{n} x_i \ge \frac{n - 1}{n},$$
+
 with equality if and only if the outbreak has exactly $n$ cases.
 
 ## Expansion

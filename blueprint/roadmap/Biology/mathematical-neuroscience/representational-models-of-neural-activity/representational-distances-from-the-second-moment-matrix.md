@@ -1,14 +1,19 @@
 # Representational distances from the second-moment matrix
 
 With $U \in \mathbb{R}^{K \times P}$ the condition-by-channel activity patterns and $G = U U^{\mathsf T}/P$ their second-moment matrix, the squared Euclidean distance between the patterns of conditions $i$ and $k$, normalized by the number of channels, is
+
 $$d_{i,k} = \frac{(u_{i,\cdot} - u_{k,\cdot})(u_{i,\cdot} - u_{k,\cdot})^{\mathsf T}}{P} = G_{i,i} - 2G_{i,k} + G_{k,k}. \tag{19}$$
 
 1. With a contrast matrix $C$ whose rows have a $1$ and a $-1$ for each pair of conditions, the vector of all pairwise distances is $d = \operatorname{diag}(C G C^{\mathsf T})$ (Eq. 21); the cosine distance $1 - G_{k,i}/\sqrt{G_{i,i}G_{k,k}}$ is also a function of $G$ (Eq. 20).
 2. Let $D$ be the $K \times K$ matrix of the $d_{i,k}$ and $H = I_K - \mathbf{1}\mathbf{1}^{\mathsf T}/K$ the centring matrix. If the patterns are centred ($\mathbf{1}^{\mathsf T} U = 0$, equivalently every row and column of $G$ sums to zero), then
+
 $$G = -\tfrac{1}{2} H D H. \tag{22}$$
+
 Without centring, $D$ determines $G$ only up to the distances of the patterns to the baseline.
 3. **Cross-validated estimate.** Let $\hat u^{(m)}_{i,\cdot} = u_{i,\cdot} + \varepsilon^{(m)}_{i,\cdot}$ be (prewhitened) pattern estimates from $M \ge 2$ independent partitions, with noise independent across partitions and of mean zero, and let $\hat u^{(\sim m)}$ be the average over the partitions other than $m$. The crossnobis estimator
+
 $$\hat d_{i,k} = \frac{1}{M}\sum_{m=1}^{M} \frac{(\hat u^{(m)}_{i,\cdot} - \hat u^{(m)}_{k,\cdot})(\hat u^{(\sim m)}_{i,\cdot} - \hat u^{(\sim m)}_{k,\cdot})^{\mathsf T}}{P} \tag{23}$$
+
 is unbiased for $d_{i,k}$ (computed from the prewhitened true patterns), whereas the non-cross-validated squared distance of noisy estimates is biased upward by the noise variance.
 
 ## Depends on

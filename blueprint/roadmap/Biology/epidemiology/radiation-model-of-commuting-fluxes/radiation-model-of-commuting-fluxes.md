@@ -1,13 +1,16 @@
 # Radiation model of commuting fluxes
 
 Let locations $i$ have populations $m_i > 0$, let $T_i$ be the number of residents of $i$ who commute, and let $r_{ij}$ be the distance from $i$ to $j$. Let $s_{ij}$ be the total population living within distance $r_{ij}$ of $i$, excluding the populations of $i$ and $j$. The radiation model assigns to each ordered pair $i \ne j$ the commuting flux
+
 $$T_{ij} = T_i\, \frac{m_i\, n_j}{(m_i + s_{ij})(m_i + n_j + s_{ij})}, \qquad n_j = m_j. \tag{1}$$
 
 Properties:
 
 - each term splits as $\dfrac{m_i n_j}{(m_i + s_{ij})(m_i + n_j + s_{ij})} = \dfrac{m_i}{m_i + s_{ij}} - \dfrac{m_i}{m_i + n_j + s_{ij}}$;
 - if the destinations $j_1, j_2, \dots, j_L$ of $i$ are ordered by increasing distance with no ties, then $s_{i j_{\ell+1}} = s_{i j_\ell} + n_{j_\ell}$, the sum telescopes, and the total predicted outflow is
+
 $$\sum_{j \ne i} T_{ij} = T_i\left(1 - \frac{m_i}{m_i + \sum_{j \ne i} n_j}\right) = T_i\left(1 - \frac{m_i}{M}\right),$$
+
 with $M$ the total population; so a finite system assigns slightly fewer than $T_i$ commuters, and the shortfall is the fraction $m_i / M$;
 - the flux depends on distance only through the intervening population $s_{ij}$, so it does not change when the region is stretched or compressed in a way that preserves the distance order of destinations.
 

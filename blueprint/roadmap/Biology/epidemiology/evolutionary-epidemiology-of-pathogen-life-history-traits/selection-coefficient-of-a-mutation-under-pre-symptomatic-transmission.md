@@ -1,8 +1,11 @@
 # Selection coefficient of a mutation under pre-symptomatic transmission
 
 Consider an epidemic model with susceptible fraction $S$, exposed class $E$, asymptomatic class $A$, pre-symptomatic class $P$, symptomatic class $I$ and recovered class $R$. A fraction $f$ of new infections become asymptomatic, the rest pre-symptomatic; class $X \in \{A, P, I\}$ transmits at rate $\beta_X$; pre-symptomatic individuals develop symptoms at rate $\kappa_P$; symptomatic individuals die at rate $\alpha$ (virulence). Suppose symptomatic individuals are isolated at once and asymptomatic transmission is negligible ($\beta_I, \beta_A \approx 0$), and that the exposed stage is very short. Let a mutant differ from the wild type by $\Delta\beta_P$, $\Delta f$ and $\Delta\kappa_P$, and let $q_P$ be the mutant fraction among pre-symptomatic infections. Then
+
 $$\frac{dq_P}{dt} = s\, q_P (1 - q_P), \tag{1a}$$
+
 $$s = S(1 - f)\,\Delta\beta_P - S\beta_P\,\Delta f - \Delta\kappa_P. \tag{1b}$$
+
 Since the genetic variation $q_P(1 - q_P)$ is positive, the mutant increases exactly when $s > 0$: when it transmits more while pre-symptomatic, produces fewer asymptomatic infections, or stays pre-symptomatic (infectious) longer.
 
 ## Depends on

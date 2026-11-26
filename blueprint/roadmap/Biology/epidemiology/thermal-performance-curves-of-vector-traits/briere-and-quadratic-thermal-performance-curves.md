@@ -1,14 +1,18 @@
 # Brière and quadratic thermal performance curves
 
 **Setting.** For constants $q > 0$ and $0 \le T_{\min} < T_{\max}$ (temperatures in °C), the *Brière* and *quadratic* thermal performance curves are
+
 $$B(T) = q\,T\,(T - T_{\min})\sqrt{T_{\max} - T}, \qquad Q(T) = -q\,(T - T_{\min})(T - T_{\max}),$$
+
 for $T_{\min} \le T \le T_{\max}$, and $0$ outside $[T_{\min}, T_{\max}]$. Rate traits (development rates, biting rate, fecundity, parasite development rate) are fitted with $B$; probability traits (survival, vector competence) and lifespan with $Q$, truncated at $1$ where needed.
 
 **Proposition.**
 
 1. $Q$ is concave on $[T_{\min}, T_{\max}]$, symmetric about $(T_{\min} + T_{\max})/2$, and maximal there with $Q_{\max} = q (T_{\max} - T_{\min})^2/4$.
 2. $B$ has a unique maximum on $(T_{\min}, T_{\max})$, at
+
 $$T^\ast = \frac{4T_{\max} + 3T_{\min} + \sqrt{16T_{\max}^2 - 16T_{\min}T_{\max} + 9T_{\min}^2}}{10},$$
+
 and $T^\ast > (T_{\min} + T_{\max})/2$: Brière curves are left-skewed, rising slowly and collapsing quickly above the optimum. For $T_{\min} = 0$, $T^\ast = 0.8\,T_{\max}$.
 3. (Thermal limits of a product) If $R_0(T)$ is a positive power of a product of such curves (divided by positive functions such as a mortality rate), then $R_0(T) > 0$ exactly on the intersection of the open supports, so the lower thermal limit of transmission is the largest trait lower limit and the upper limit the smallest trait upper limit.
 4. (Jensen effect) If temperature fluctuates with mean $\bar T$ inside an interval on which a curve is concave, the mean performance is at most the performance at $\bar T$; in particular fluctuations around the optimum of $Q$ always lower mean performance.

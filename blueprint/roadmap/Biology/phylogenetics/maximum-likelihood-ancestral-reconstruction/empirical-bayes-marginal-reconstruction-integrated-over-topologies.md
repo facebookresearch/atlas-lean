@@ -3,11 +3,15 @@
 **Setting.** $d$ is an alignment column (the observed states at the leaves), $m$ a substitution model with equilibrium frequencies $\pi$, $t$ a tree topology with branch lengths and model parameters $\theta$. For an ancestral node, defined on every topology as the most recent common ancestor of a fixed set of descendant taxa, let $L(d \mid a, m, t, \theta)$ be the conditional likelihood of $d$ given state $a$ at that node.
 
 **Marginal (empirical Bayes) reconstruction on one tree.** With $\hat\theta_t$ the maximum-likelihood parameters on $t$,
+
 $$\Pr(a \mid d, m, t, \hat\theta_t) = \frac{\pi_a\, L(d \mid a, m, t, \hat\theta_t)}{\sum_{b} \pi_b\, L(d \mid b, m, t, \hat\theta_t)} \qquad \text{(Eq. 1)},$$
+
 the sum running over the 4 nucleotides or 20 amino acids. The reconstructed state is the one with the largest posterior probability; on the ML topology this is the usual "ML method".
 
 **Topological empirical Bayes (TEB).** Integrating over a set of topologies,
+
 $$\Pr_{\mathrm{TEB}}(a \mid d, m) = \sum_{t} P_{\mathrm{EB}}(t \mid D)\,\Pr(a \mid d, m, t, \hat\theta_t) \qquad \text{(Eq. 2)},$$
+
 where $P_{\mathrm{EB}}(t \mid D) \propto \Pr(t)\,L(D \mid t, \hat\theta_t)$ is the empirical Bayes posterior of $t$ given the whole alignment $D$, using the ML parameters on each tree. This is equivalent to the fully Bayesian expression that averages ancestral-state posteriors over the tree posterior (Eq. 3).
 
 **Robustness.** In simulations with both simple four-taxon and empirically derived uncertainty, TEB and ML reconstructions almost always choose the same state and have the same accuracy: sites whose ancestral state differs between plausible trees are those that carry strong phylogenetic signal, so they also make the tree posterior concentrated.

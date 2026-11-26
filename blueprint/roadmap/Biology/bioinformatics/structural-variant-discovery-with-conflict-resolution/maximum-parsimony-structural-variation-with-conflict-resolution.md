@@ -1,6 +1,7 @@
 # Maximum parsimony structural variation with conflict resolution
 
 **Setting.** Let $R = \{pe_1, \dots, pe_m\}$ be discordant paired-end reads, each with a finite set of candidate alignments, and let $\mathrm{MC} = \{V_1, \dots, V_n\}$ be candidate structural-variant (SV) clusters, each a set of alignments implying one SV (deletion, insertion, inversion, or a transposon insertion from a known mobile-element family). Cluster $V$ *covers* $pe$ if it contains one of the alignments of $pe$. Two clusters *conflict* in a haploid genome if one implied SV makes the other cluster's reads incoherent. The *conflict hypergraph* $\mathrm{CG}$ has vertex set $\mathrm{MC}$ and one hyperedge for each triple of pairwise conflicting clusters (diploid case); in the haploid case it is the ordinary conflict graph whose edges are conflicting pairs. A subset $\mathrm{SC} \subseteq \mathrm{MC}$ is *satisfiable* if it contains no (hyper)edge of $\mathrm{CG}$; in the haploid case these are exactly the independent sets of the conflict graph. Let $\delta(\mathrm{SC}, pe) = 1$ if no cluster of $\mathrm{SC}$ covers $pe$ and $0$ otherwise. For weights $k, l > 0$, the MPSV-CR problem asks for a satisfiable $\mathrm{SC}$ minimizing
+
 $$g(\mathrm{SC}) = k\,|\mathrm{SC}| + l \sum_{pe \in R} \delta(\mathrm{SC}, pe).$$
 
 **Proposition.**

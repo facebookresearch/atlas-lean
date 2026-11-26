@@ -5,9 +5,13 @@
 **Seeding scheme.** Split $Q$ into consecutive non-overlapping fragments of length $l_0/2$ and map each fragment end to end with threshold $\varepsilon_{\max}$.
 
 **Statement.** Let $Q_{\mathrm{sub}}$ be a substring of $Q$ of length $|Q_{\mathrm{sub}}| \ge l_0$ that aligns to $R$ with error rate $\le \varepsilon_{\max}$. Then $Q_{\mathrm{sub}}$ fully contains at least
+
 $$m = \Big\lfloor \frac{|Q_{\mathrm{sub}}| - l_0/2 + 1}{l_0/2} \Big\rfloor \ \ge 1$$
+
 fragments, each of which aligns end to end within the alignment of $Q_{\mathrm{sub}}$. If each such fragment is reported at its correct target independently with probability $p$, the probability that at least one seed mapping is reported along the optimal alignment is
+
 $$1 - (1 - p)^{m}.$$
+
 Consecutive fragment hits $q_i, \dots, q_j$ with reference start positions $p_0 \le p_1 \le \dots \le p_{j-i}$ and gaps $p_{k+1} - p_k \le l_0$ are merged into one local alignment segment, whose boundaries are the first and last hit and whose score is the mean identity estimate times the total fragment length.
 
 ## Expansion

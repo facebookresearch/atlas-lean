@@ -1,15 +1,21 @@
 # Degree-structured next-generation matrix on networks
 
 **Setting.** An SIR infection spreads on a static undirected contact network without short closed loops (locally tree-like). Write $[m]$ for the number of nodes of degree $m$ and $[km]$ for the number of edges joining a node of degree $k$ to a node of degree $m$. Along each edge between an infectious and a susceptible node, transmission occurs at rate $\tau$ while the infective recovers at rate $\gamma$, so infection eventually passes across the edge with probability
+
 $$p = \frac{\tau}{\tau + \gamma}.$$
 
 **Proposition.** During the early phase of an epidemic, the expected number of infections of degree-$k$ nodes caused by one infected node of degree $m$ is
+
 $$K_{km} = \frac{[km]}{m\,[m]}\,(m - 1)\,p \qquad \text{(Eq. 10)},$$
+
 and the basic reproduction number is the dominant eigenvalue
+
 $$R_0 = \rho\big((K_{km})\big) \qquad \text{(Eq. 11)},$$
+
 with invasion threshold $R_0 = 1$.
 
 **Corollary (uncorrelated networks).** If degrees are uncorrelated across edges, $[km]/(m[m]) = kP(k)/\langle k \rangle$ with degree distribution $P$, $K$ has rank one and
+
 $$R_0 = p\,\frac{\langle k^2\rangle - \langle k\rangle}{\langle k \rangle}.$$
 
 ## Expansion

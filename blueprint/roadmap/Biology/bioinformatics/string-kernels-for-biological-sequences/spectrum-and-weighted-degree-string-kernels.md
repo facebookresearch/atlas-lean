@@ -3,11 +3,15 @@
 Let $\Sigma$ be a finite alphabet (nucleotides or amino acids) and $x, x' \in \Sigma^*$ sequences.
 
 **Spectrum kernel.** For $\ell \ge 1$ let $\Phi_\ell(x) \in \mathbb N^{\Sigma^\ell}$ have coordinate $\Phi_\ell(x)_s$ equal to the number of occurrences of the $\ell$-mer $s$ in $x$. The $\ell$-spectrum kernel is
+
 $$k^{\mathrm{spec}}_\ell(x, x') = \langle \Phi_\ell(x), \Phi_\ell(x') \rangle = \sum_{s \in \Sigma^\ell} \Phi_\ell(x)_s\, \Phi_\ell(x')_s,$$
+
 and the mixed spectrum kernel with nonnegative weights $\beta_1, \dots, \beta_\ell$ is $k^{\mathrm{mix}}_\ell = \sum_{d=1}^{\ell} \beta_d\, k^{\mathrm{spec}}_d$.
 
 **Weighted degree kernel.** For sequences of a common length $L$, with $x[l : l + d]$ the substring of length $d$ starting at position $l$,
+
 $$k^{\mathrm{WD}}_\ell(x, x') = \sum_{d=1}^{\ell} \beta_d \sum_{l=1}^{L - d + 1} \mathbf 1\big\{x[l : l + d] = x'[l : l + d]\big\}, \qquad \beta_d = \frac{2(\ell - d + 1)}{\ell(\ell + 1)},$$
+
 the suggested weights decreasing linearly in $d$ and summing to $1$.
 
 **Properties.**

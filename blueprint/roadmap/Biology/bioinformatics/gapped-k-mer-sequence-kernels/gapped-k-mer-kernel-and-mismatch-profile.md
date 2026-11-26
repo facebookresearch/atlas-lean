@@ -1,11 +1,15 @@
 # Gapped k-mer kernel and its mismatch-profile formula
 
 Fix an alphabet $\mathcal{A}$ of size $b$ (for DNA $b = 4$), a word length $l$ and a number of informative positions $k$ with $1 \le k \le l$. A **gapped $k$-mer** is a pair $(P, w)$ where $P \subseteq \{1, \dots, l\}$ with $|P| = k$ is a set of informative positions and $w \in \mathcal{A}^P$ assigns a letter to each of them; the remaining $l - k$ positions are gaps (wildcards). There are $M = \binom{l}{k} b^k$ gapped $k$-mers. For a sequence $S$ with $n = |S| - l + 1$ full $l$-mers $u_1, \dots, u_n$ (its length-$l$ windows), let $f_{(P,w)}(S)$ be the number of pairs (window $i$, gapped $k$-mer $(P, w)$) such that $u_i$ restricted to $P$ equals $w$, and let $f(S) \in \mathbb{N}^M$ be the feature vector. The **gkm-kernel** is the normalized inner product
+
 $$K(S_1, S_2) = \frac{\langle f(S_1), f(S_2) \rangle}{\sqrt{\langle f(S_1), f(S_1) \rangle \, \langle f(S_2), f(S_2) \rangle}} \in [0, 1], \qquad K(S, S) = 1 .$$
 
 **Proposition (mismatch-profile formula).** For two $l$-mers $u, v$ differing at exactly $m$ positions ($0 \le m \le l$), the number of gapped $k$-mers matched by both is
+
 $$h_m = \binom{l - m}{k}$$
+
 (zero when $l - m < k$). Consequently, if $u^{(1)}_i$ and $u^{(2)}_j$ are the $l$-mers of $S_1$ and $S_2$ and $N_m(S_1, S_2)$ is the number of pairs $(i, j)$ whose $l$-mers have exactly $m$ mismatches (the **mismatch profile**),
+
 $$\langle f(S_1), f(S_2) \rangle = \sum_{i=1}^{n_1} \sum_{j=1}^{n_2} h\big(u^{(1)}_i, u^{(2)}_j\big) = \sum_{m=0}^{l - k} N_m(S_1, S_2)\, \binom{l - m}{k} .$$
 
 Properties:

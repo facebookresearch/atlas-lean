@@ -1,10 +1,13 @@
 # Quintic normal form of the Hopf bifurcation and its bistable window
 
 **Model.** In polar coordinates $(r, \phi)$, consider the amplitude–phase system
+
 $$\dot r = -r^5 + \lambda r^3 + \beta r, \qquad \dot\phi = \omega_0 + f(r),$$
+
 with shape parameter $\lambda \in \mathbb{R}$, bifurcation parameter $\beta \in \mathbb{R}$, and (here) constant phase velocity $f \equiv 0$. Fixed points of the amplitude equation with $r > 0$ are limit cycles of the planar system; $r = 0$ is always a fixed point (a focus of the planar system).
 
 **Proposition.** Positive amplitude equilibria satisfy $r^4 - \lambda r^2 - \beta = 0$, that is
+
 $$r_\pm^2 = \frac{\lambda \pm \sqrt{\lambda^2 + 4\beta}}{2}.$$
 
 1. *Supercritical case* ($\lambda < 0$). For $\beta < 0$ the origin is the global attractor. At $\beta = 0$ it loses stability and for $\beta > 0$ a unique stable limit cycle of amplitude $r_+$ grows continuously from zero ($r_+^2 \approx \beta/|\lambda|$ for small $\beta$).

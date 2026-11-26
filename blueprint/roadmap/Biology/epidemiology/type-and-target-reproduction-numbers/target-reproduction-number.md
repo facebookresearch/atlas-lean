@@ -3,6 +3,7 @@
 **Setting.** Let $K = [k_{ij}] \in \mathbb{R}^{n\times n}$ be a nonnegative next-generation matrix, $k_{ij}$ the expected number of new infections of type $i$ produced by one infected of type $j$, and $R_0 = \rho(K)$ its spectral radius. Let $S \subseteq \{1,\dots,n\}^2$ be a set of entries targeted by a control measure, and let $K_S$ be the matrix with $(K_S)_{ij} = k_{ij}$ for $(i,j) \in S$ and $0$ otherwise.
 
 **Definition.** If $\rho(K - K_S) < 1$, the target reproduction number is
+
 $$T_S = \rho\big(K_S\,(I - K + K_S)^{-1}\big).$$
 
 **Properties.**
@@ -12,7 +13,9 @@ $$T_S = \rho\big(K_S\,(I - K + K_S)^{-1}\big).$$
 3. Reducing every targeted entry by a common factor $1 - \varepsilon$ with $\varepsilon > 1 - 1/T_S$ brings the system below threshold, so $1 - 1/T_S$ is the critical control effort on the targeted entries.
 
 **Elasticity.** For a parameter $\omega$ entering $R_0$, the sensitivity index is $\partial R_0/\partial\omega$ and the elasticity index is
+
 $$\Upsilon_{\omega}^{R_0} = \frac{\partial R_0}{\partial \omega}\,\frac{\omega}{R_0},$$
+
 the relative change of $R_0$ per relative change of $\omega$; its sign gives the direction of the effect and its magnitude the relative importance of $\omega$.
 
 ## Depends on

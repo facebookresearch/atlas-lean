@@ -3,10 +3,13 @@
 The fossilized birth–death (FBD) process with speciation rate $\lambda$, extinction rate $\mu$, fossil-sampling rate $\psi \ge 0$, extant sampling probability $\rho \in (0, 1]$ and origin time $x_0 > 0$ (measured back from the present) is the following random sampled tree. A single lineage starts at time $x_0$; each lineage independently splits at rate $\lambda$, goes extinct at rate $\mu$, and leaves a fossil sample at the points of a Poisson process of rate $\psi$; at the present each surviving lineage is sampled independently with probability $\rho$. The sampled tree is the subtree spanned by the samples, conditioned on at least one sampled extant lineage. A fossil sample that lies on the path from the origin to another sample appears as a degree-two node, a *sampled ancestor*.
 
 For $\lambda > \mu > 0$ and $\psi \ge 0$, define the net diversification rate, the turnover and the fossil-sampling proportion
+
 $$d = \lambda - \mu, \qquad \nu = \frac{\mu}{\lambda}, \qquad s = \frac{\psi}{\mu + \psi}. \tag{2}$$
 
 1. The map $(\lambda, \mu, \psi) \mapsto (d, \nu, s)$ is a bijection from $\{\lambda > \mu > 0,\ \psi \ge 0\}$ onto $(0, \infty) \times (0, 1) \times [0, 1)$, with inverse
+
 $$\lambda = \frac{d}{1 - \nu}, \qquad \mu = \frac{\nu d}{1 - \nu}, \qquad \psi = \frac{s\, \mu}{1 - s}.$$
+
 2. $s$ is the probability that a lineage leaves a fossil sample before it goes extinct, counting only these two events (sampling at rate $\psi$, extinction at rate $\mu$).
 
 ## Expansion

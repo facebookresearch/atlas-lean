@@ -3,17 +3,25 @@
 **Setting.** Let $P(\sigma) = e^{-E(\sigma)}/Z$ be a [maximum entropy model](pairwise-and-k-pairwise-maximum-entropy-models-of-spiking-patterns.md) on the finite state space $\{0,1\}^N$, and let $S = -\sum_\sigma P(\sigma)\log P(\sigma)$ be its entropy (in nats). Direct estimation from samples is infeasible for large $N$, because almost every observed pattern is unique.
 
 **Temperature family.** For $T > 0$ define
+
 $$P_T(\sigma) = \frac{1}{Z(T)}\, e^{-E(\sigma)/T}, \qquad Z(T) = \sum_\sigma e^{-E(\sigma)/T},$$
+
 so $P_1 = P$. Let $U(T) = \langle E \rangle_T$, $S(T)$ the entropy of $P_T$, and
+
 $$C(T) = \frac{dU}{dT} = \frac{\langle E^2 \rangle_T - \langle E \rangle_T^2}{T^2}$$
+
 the heat capacity, i.e. the variance of the energy (of the log-probability, the "surprise") scaled by $T^{-2}$.
 
 **Statement 1 (heat-capacity integral).** $\dfrac{dS}{dT} = \dfrac{C(T)}{T}$, and if the minimum of $E$ is attained at a unique state then $S(T) \to 0$ as $T \to 0^+$, so
+
 $$S = S(1) = \int_0^1 \frac{C(T)}{T}\, dT .$$
+
 Each $C(T)$ can be estimated by Monte Carlo sampling from $P_T$ (energy variance), which stabilizes far sooner than estimates of the probabilities of individual states.
 
 **Statement 2 (entropy from the silent state).** If the all-silent pattern $\mathbf 0$ has energy $E(\mathbf 0)$ and probability $P(\mathbf 0)$, then
+
 $$Z = \frac{e^{-E(\mathbf 0)}}{P(\mathbf 0)}, \qquad S = \log Z + \langle E \rangle .$$
+
 For K-pairwise models $P(\mathbf 0)$ equals the empirical probability of silence (it is one of the matched constraints, $P(K = 0)$), and $E$ can be shifted so that $E(\mathbf 0) = 0$; then $S = -\log P_{\mathrm{data}}(K = 0) + \langle E \rangle$, needing only one Monte Carlo estimate of the mean energy.
 
 ## Depends on

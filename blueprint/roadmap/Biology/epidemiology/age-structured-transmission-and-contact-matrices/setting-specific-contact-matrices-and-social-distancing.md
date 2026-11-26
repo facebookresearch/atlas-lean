@@ -1,9 +1,13 @@
 # Setting-specific contact matrices and the reproduction number under social distancing
 
 **Setting.** Let the age-group contact matrix be a sum over social settings,
+
 $$C = \sum_{s \in \mathcal S} C^{(s)}, \qquad \mathcal S = \{\text{household}, \text{school}, \text{work}, \text{transport}, \text{leisure}, \text{other}\},$$
+
 with nonnegative matrices $C^{(s)} = (c^{(s)}_{ij})$, and let the [age-structured next-generation matrix](age-structured-force-of-infection-and-next-generation-matrix.md) be $K(C) = A\, C\, B$ with fixed nonnegative diagonal matrices $A = \mathrm{diag}(q\sigma_i N_i)$ and $B = \mathrm{diag}(D_j / N_j)$, so that $R(C) = \rho(K(C))$. A social-distancing scenario is a modified matrix
+
 $$C' = \sum_{s} \big(C^{(s)} - \Delta^{(s)}\big) \quad\text{or more generally}\quad 0 \le C' \le C \ \text{entrywise},$$
+
 for example: school closure removes $C^{(\text{school})}$; a fraction $f$ of workers staying home scales work and transport contacts of working-age adults by $1 - f$; isolation of seniors scales the rows and columns of the oldest group by $1 - g$; closure of leisure activities removes or halves $C^{(\text{leisure})}$. (Interventions that move contacts into households, such as telework, add to $C^{(\text{household})}$ and are not entrywise reductions.)
 
 **Statements.**
@@ -11,7 +15,9 @@ for example: school closure removes $C^{(\text{school})}$; a fraction $f$ of wor
 1. *Monotonicity.* If $0 \le C' \le C$ entrywise then $R(C') \le R(C)$.
 2. *Uniform reduction.* If every setting is reduced by the same factor, $C' = (1 - \epsilon)\, C$ with $\epsilon \in [0,1]$, then $R(C') = (1 - \epsilon)\, R(C)$; in particular the epidemic is controlled ($R(C') < 1$) iff $\epsilon > 1 - 1/R(C)$.
 3. *Partial reductions.* If the reduction factors differ across settings, $C' = \sum_s (1 - \epsilon_s)\, C^{(s)}$, then
+
 $$\big(1 - \max_s \epsilon_s\big)\, R(C) \le R(C') \le \big(1 - \min_s \epsilon_s\big)\, R(C),$$
+
 so a strategy that leaves any setting untouched cannot lower $R$ by more than that setting allows: if setting $s_0$ is unreduced, $R(C') \ge \rho\big(K(C^{(s_0)})\big)$.
 
 ## Depends on

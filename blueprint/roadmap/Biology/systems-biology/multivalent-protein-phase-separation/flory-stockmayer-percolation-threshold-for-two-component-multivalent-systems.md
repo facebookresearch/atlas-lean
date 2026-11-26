@@ -3,6 +3,7 @@
 **Setting.** Two multivalent molecular species interact only heterotypically: each molecule of species $1$ carries $s_1 \ge 2$ stickers and each molecule of species $2$ carries $s_2 \ge 2$ stickers, and a bond forms only between a sticker of species $1$ and a sticker of species $2$. Let $f_1, f_2 \in [0,1]$ be the fractions of stickers of each species that are bound, and $c_1, c_2$ the concentrations.
 
 **Percolation criterion (Flory–Stockmayer).** In the tree-like (no intramolecular loops) mean-field approximation, a system-spanning network forms when
+
 $$f_1 f_2\,(s_1 - 1)(s_2 - 1) > 1 .$$
 
 **Consequences.**

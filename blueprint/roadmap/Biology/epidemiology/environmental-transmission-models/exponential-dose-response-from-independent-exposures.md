@@ -4,10 +4,13 @@
 
 1. $P$ is nonincreasing and $P(0) = 1$;
 2. *no immunological memory of unsuccessful challenges*: escaping a dose $n_1$ does not change the response to a subsequent dose $n_2$, so
+
 $$P(n_1 + n_2) = P(n_1)\, P(n_2) \qquad \text{for all } n_1, n_2 \ge 0 .$$
 
 **Proposition.** Under these assumptions there is a constant $\alpha \ge 0$ (units: per virion) with
+
 $$P(n) = e^{-\alpha n}, \qquad n \ge 0,$$
+
 so the infection probability is $1 - e^{-\alpha n}$. If $\mathrm{ID}_{50}$ denotes the dose at which half of exposed hosts are infected, then $\alpha = \ln 2 / \mathrm{ID}_{50}$.
 
 **Corollary (environmental force of infection).** If a host ingests a fraction $\rho$ per unit time of an environmental virus pool of size $V(t)$ (so it receives dose $\rho V(t)\,dt$ in $[t, t + dt]$), then infection from the environment is a Poisson process with rate $\alpha \rho V(t)$, and the environmental transmission term for $S$ susceptible hosts is $\alpha\rho V(t)\, S(t)$.

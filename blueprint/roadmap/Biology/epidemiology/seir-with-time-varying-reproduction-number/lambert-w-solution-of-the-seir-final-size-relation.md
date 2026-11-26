@@ -1,14 +1,19 @@
 # Lambert-W solution of the SEIR final-size relation
 
 Let $(s, e, i, r)$ be a solution of the normalized SEIR system
+
 $$\dot s = -\beta s i, \quad \dot e = \beta s i - \alpha e, \quad \dot i = \alpha e - \gamma i, \quad \dot r = \gamma i,$$
+
 with $\alpha, \beta, \gamma > 0$, nonnegative initial data summing to $1$, and basic reproduction number $R_0 = \beta / \gamma$. Write $s_0 = s(0) > 0$, $r_0 = r(0)$, assume an infection is present, $e(0) + i(0) > 0$, and suppose $s(t) \to s_\infty$, $e(t), i(t) \to 0$ and hence $r(t) \to r_\infty = 1 - s_\infty$.
 
 **Final-size relation.** Dividing $\dot s$ by $\dot r$ and integrating gives $\log(s(t)/s_0) = -R_0\,(r(t) - r_0)$ for all $t$, hence
+
 $$s_\infty = s_0 \exp\!\big(-R_0\,(1 - s_\infty - r_0)\big).$$
 
 **Explicit solution.** Let $W_0$ denote the principal branch of the Lambert $W$ function (the inverse of $w \mapsto w e^{w}$ on $[-1, \infty)$). Then
+
 $$s_\infty = -\frac{1}{R_0}\, W_0\!\big(-s_0 R_0\, e^{-R_0 (1 - r_0)}\big), \qquad r_\infty = 1 + \frac{1}{R_0}\, W_0\!\big(-s_0 R_0\, e^{-R_0 (1 - r_0)}\big),$$
+
 and $s_\infty > 0$ whenever $s_0 > 0$: an SEIR epidemic never exhausts the susceptible pool.
 
 ## Depends on

@@ -1,7 +1,9 @@
 # Gravity model of commuting flows
 
 **Model.** Let municipalities (or other spatial units) $i$ have resident populations $N_i$ and pairwise distances $d_{ij} > 0$. The gravity model specifies the expected commuting flow from $i$ to $j \ne i$ as
+
 $$T_{ij} = \theta\, \frac{N_i^{\tau_f}\, N_j^{\tau_t}}{d_{ij}^{\rho}},$$
+
 with proportionality constant $\theta > 0$, exponents $\tau_f, \tau_t \ge 0$ tuning the dependence on donor and recipient sizes, and distance exponent $\rho > 0$. The probability that a commuter resident in $i$ works or studies in $j$ is then $T_{ij}/\sum_{l \ne i} T_{il}$. Fitted to Italian census commuting data, $\tau_f = 0.28$, $\tau_t = 0.66$ and $\rho = 2.95$; an exponential distance decay $e^{-d_{ij}/r}$ is a common alternative.
 
 **Properties.**

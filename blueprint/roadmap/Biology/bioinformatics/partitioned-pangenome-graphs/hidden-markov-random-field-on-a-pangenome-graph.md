@@ -1,19 +1,26 @@
 # Hidden Markov random field on a pangenome graph
 
 **Pangenome graph.** For $F$ gene families in $N$ genomes, the pangenome graph $G = (V, E)$ has a vertex $v_i$ for each family and an edge $i \sim i'$ whenever genes of families $i$ and $i'$ are adjacent in at least one genome, with weight
+
 $$w_{i \sim i'} = \frac1N \sum_{j=1}^{N} \mathrm{countNeighboringGenes}(v_{i,j}, v_{i',j}),$$
+
 the number of adjacencies between the two families across genomes divided by $N$.
 
 **Model.** Latent partition labels $Z_1, \dots, Z_F \in \{1, \dots, K\}$ follow the Gibbs distribution
+
 $$P(Z_1, \dots, Z_F) = W_\beta^{-1} \exp\!\Big(\sum_{i=1}^{F}\sum_{k=1}^{K} \pi_k\, \mathbf 1_{Z_i = k} + \beta\,\frac{F}{\sum_{i \sim i'} w_{i \sim i'}} \sum_{i \sim i'} w_{i \sim i'}\, \mathbf 1_{Z_i = Z_{i'}}\Big),$$
+
 with spatial-regularity parameter $\beta \ge 0$ and normalizing constant $W_\beta$ (a sum over all $K^F$ labelings, not computable in practice). Conditional on the labels, the presence/absence rows are independent with the [multivariate Bernoulli](multivariate-bernoulli-mixture-of-gene-presence-absence-patterns.md) laws of their partitions:
+
 $$P(X_1, \dots, X_F \mid Z) = \prod_{i=1}^{F}\prod_{j=1}^{N} \epsilon_{Z_i j}^{|x_{ij} - \mu_{Z_i j}|}(1 - \epsilon_{Z_i j})^{1 - |x_{ij} - \mu_{Z_i j}|}.$$
 
 **Properties.**
 
 - For $\beta = 0$ the labels are independent and the model reduces to the Bernoulli mixture (rows i.i.d.).
 - For $\beta > 0$ the conditional law of $Z_i$ given all other labels depends only on the labels of its graph neighbours,
+
 $$P(Z_i = k \mid Z_{-i}) \propto \exp\!\Big(\pi_k + \beta\,\frac{F}{\sum w} \sum_{i' \sim i} w_{i \sim i'}\,\mathbf 1_{Z_{i'} = k}\Big),$$
+
 so a family is pulled toward the partition held by a weighted majority of its genomic neighbours (the Markov property); larger $\beta$ means stronger smoothing.
 - The factor $F / \sum w$ normalizes the total coupling so that the strength of smoothing per family does not drift as the number of genomes, and hence the ratio of families to edge weight, changes.
 

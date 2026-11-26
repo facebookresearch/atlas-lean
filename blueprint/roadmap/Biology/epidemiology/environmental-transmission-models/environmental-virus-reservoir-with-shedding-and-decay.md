@@ -1,18 +1,24 @@
 # Environmental virus reservoir with shedding and decay
 
 **Model.** Infected hosts $I(t)$ shed virus into an environmental pool $V(t)$ at per-capita rate $\omega$, and environmental virus is cleared (decays) at rate $c > 0$, which may depend on temperature and season:
+
 $$\frac{dV}{dt} = \omega I(t) - c\,V(t).$$
+
 Susceptible hosts are infected from the environment at rate $\alpha\rho V(t)$ per host, as for an [exponential dose–response](exponential-dose-response-from-independent-exposures.md), in addition to direct transmission.
 
 **Proposition.**
 
 1. *Rescaling.* With $\tilde V = V/\omega$ (virus measured in units of the per-capita shedding rate), $d\tilde V/dt = I - c\tilde V$ and the environmental infection rate is $\alpha\rho\omega\, \tilde V$; the dynamics depend on $\alpha$, $\rho$ and $\omega$ only through the product $\alpha\rho\omega$ (rescaled environmental infectiousness).
 2. *Piecewise-constant shedding.* If $I(t) = I$ is constant on an interval $[t_0, t_0 + \Delta]$, then for $0 \le s \le \Delta$
+
 $$V(t_0 + s) = V(t_0)\, e^{-cs} + \frac{\omega I}{c}\big(1 - e^{-cs}\big),$$
+
 so $V$ relaxes exponentially, at rate $c$, toward the quasi-equilibrium $\omega I / c$; with no hosts present ($I = 0$) the pool decays as $V(t_0)e^{-cs}$.
 3. *Persistence across seasons.* For a site vacated for a period $\Delta$ (for example a breeding ground in winter), the virus surviving to the hosts' return is the fraction $e^{-c\Delta}$ of the pool left at departure; slow decay (cold water, small $c$) lets the environment carry infection between seasons even after infection has died out in the host population.
 4. *Reproduction number.* Near a disease-free state with $S_0$ susceptibles, direct transmission rate $\beta$ per susceptible–infective pair, and infectious period with removal rate $\gamma + d$ (recovery plus death), one infective generates on average
+
 $$R_0 = \frac{\beta S_0}{\gamma + d} + \frac{\alpha\rho\omega\, S_0}{c\,(\gamma + d)}$$
+
 secondary infections, the second term through the environment.
 
 ## Depends on

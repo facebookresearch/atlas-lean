@@ -8,10 +8,13 @@
 - changes to type $j \ne i$ at rate $m_{ij} \ge 0$ (with $m_{ii} = 0$).
 
 At the present, each extant type-$i$ individual is sampled with probability $\rho_i$. The process starts from one individual and stops when no infected individuals remain. Epidemiological summaries are the within- and between-type effective reproduction numbers, the becoming-non-infectious rate, and the sampling proportion,
+
 $$R_{ij,k} = \frac{\lambda_{ij,k}}{\mu_{i,k} + r\,\psi_{i,k}}, \qquad \delta_{i,k} = \mu_{i,k} + r\,\psi_{i,k}, \qquad s_{i,k} = \frac{\psi_{i,k}}{\mu_{i,k} + \psi_{i,k}} .$$
 
 **No-sample probabilities.** Let $p_{i,k}(t)$ be the probability that an individual of type $i$ alive at time $t \in [t_{k-1}, t_k)$ has no sampled descendants by time $T$. Then $p_{i,k}$ solves the backward master equation
+
 $$-\frac{d}{dt}\,p_{i,k}(t) = -\Big(\sum_{j=1}^{d}(\lambda_{ij,k} + m_{ij}) + \mu_{i,k} + \psi_{i,k}\Big) p_{i,k}(t) + \sum_{j=1}^{d}\lambda_{ij,k}\, p_{i,k}(t)\, p_{j,k}(t) + \sum_{j=1}^{d} m_{ij}\, p_{j,k}(t) + \mu_{i,k},$$
+
 a Riccati-type system coupled across types, integrated from the present backward. With no sampling at the present the terminal value is $p_{i,n}(T) = 1$ (the condition written in the source); with contemporaneous sampling probability $\rho_i$ it is $p_{i,n}(T) = 1 - \rho_i$, and across interval boundaries $p$ is continuous. When some $m_{ij} > 0$ there is in general no closed form and the system is solved numerically (Runge–Kutta).
 
 ## Expansion

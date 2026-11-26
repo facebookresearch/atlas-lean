@@ -1,10 +1,15 @@
 # Pattern-component model likelihood
 
 Let $Y \in \mathbb{R}^{N \times P}$ be activity measurements of $P$ channels, modelled by the linear mixed model
+
 $$Y = Z U + X B + \epsilon, \tag{6}$$
+
 with $Z$ the $N \times K$ design matrix of the $K$ conditions, $U \in \mathbb{R}^{K \times P}$ the activity patterns, $X$ a design matrix of nuisance effects with coefficients $B$, and noise $\epsilon$ independent and identically distributed $\mathcal{N}(0, \sigma_\epsilon^2)$. In pattern-component modelling (PCM) the activity profiles (columns of $U$) are random, independent across channels, with mean zero and covariance $s\, G$, where $G$ is the second-moment matrix predicted by a representational model and $s > 0$ a signal-strength parameter. Marginalizing over $U$, each channel is
+
 $$y_{\cdot,j} \sim \mathcal{N}\big(X b_{\cdot,j},\ V(\theta)\big), \qquad V(\theta) = Z\, s G\, Z^{\mathsf T} + \sigma_\epsilon^2 I, \qquad \theta = (s, \sigma_\epsilon^2). \tag{16}$$
+
 With the residual-forming matrix $R = I - X (X^{\mathsf T} V^{-1} X)^{-1} X^{\mathsf T} V^{-1}$ (Eq. 17), the restricted log-likelihood is
+
 $$l(Y \mid G, \theta) = -\frac{NP}{2}\log(2\pi) - \frac{P}{2}\log|V| - \frac{1}{2}\operatorname{trace}\big(Y^{\mathsf T} R^{\mathsf T} V^{-1} R Y\big) - \frac{P}{2}\log|X^{\mathsf T} V^{-1} X|. \tag{18}$$
 
 Models are compared by this likelihood with $\theta$ maximized or integrated out separately for each model, since signal and noise levels vary between regions and individuals and carry no model information.

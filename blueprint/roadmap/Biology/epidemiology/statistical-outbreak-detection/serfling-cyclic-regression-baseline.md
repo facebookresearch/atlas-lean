@@ -1,11 +1,15 @@
 # Serfling cyclic regression baseline for excess mortality
 
 **Model.** Let $y(t)$ be a surveillance count (for example weekly deaths attributed to pneumonia and influenza) observed at times $t = 1, 2, \dots$ with seasonal period $P$ (52 for weekly data, 13 for four-week periods). The Serfling model fits, to epidemic-free periods, the cyclic regression
+
 $$y(t) = \theta_0 + \theta_1 t + \sum_{k=1}^{K}\Big[\gamma_k \cos\!\Big(\frac{2\pi k t}{P}\Big) + \delta_k \sin\!\Big(\frac{2\pi k t}{P}\Big)\Big] + e(t),$$
+
 with $e(t)$ independent $\mathcal{N}(0, \sigma^2)$ errors, usually $K = 1$ (one annual harmonic) and optionally a quadratic trend term $\theta_2 t^2$. The parameters are estimated by ordinary least squares.
 
 **Detection rule.** With fitted baseline $\hat\mu(t)$ and residual standard deviation $\hat\sigma$, an alert is raised at time $t$ when
+
 $$y(t) > \hat\mu(t) + z_{1-\alpha}\, \hat\sigma,$$
+
 typically with a one-sided 95% threshold ($z_{0.95} \approx 1.645$). The excess over the baseline during alert periods, $\sum_t (y(t) - \hat\mu(t))_+$, is the estimated epidemic-attributable count.
 
 **Properties.**

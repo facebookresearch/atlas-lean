@@ -1,15 +1,21 @@
 # Allometric size scaling with sigmoid maturation
 
 **Allometric law.** A pharmacokinetic parameter $y$ (a clearance or a compartment volume) is scaled to a size descriptor $x > 0$ (total body weight, fat-free mass, or a volume itself) by
+
 $$y = b\,x^{a},$$
+
 with a constant $b > 0$ and an exponent $a$, commonly $a = 0.75$ for clearances. Referenced to a standard patient with size $x_{\mathrm{ref}}$ and parameter $y_{\mathrm{ref}}$, this is $y = y_{\mathrm{ref}}\,(x/x_{\mathrm{ref}})^{a}$.
 
 **Sigmoid maturation.** For a covariate $x \ge 0$ (postmenstrual age, or postnatal age plus 40 weeks), a half-maturation value $E_{50} > 0$ and a steepness $\lambda > 0$,
+
 $$f_{\mathrm{sigmoid}}(x; E_{50}, \lambda) = \frac{x^{\lambda}}{x^{\lambda} + E_{50}^{\lambda}} ,$$
+
 which increases from $0$ to $1$, equals $1/2$ at $x = E_{50}$, and multiplies the metabolic clearance of immature patients. Normalizing by its value at the reference patient keeps $y = y_{\mathrm{ref}}$ there.
 
 **Combined clearance model.** A clearance takes the form
+
 $$\mathrm{CL} = \theta_{\mathrm{CL}}\Big(\frac{x}{x_{\mathrm{ref}}}\Big)^{0.75}\,\frac{f_{\mathrm{sigmoid}}(\mathrm{PMA}; E_{50}, \lambda)}{f_{\mathrm{sigmoid}}(\mathrm{PMA}_{\mathrm{ref}}; E_{50}, \lambda)}\;\cdot\; g(\text{other covariates}),$$
+
 with $g$ collecting age-decline factors $f_{\mathrm{aging}}(\kappa) = e^{\kappa(\mathrm{AGE} - \mathrm{AGE}_{\mathrm{ref}})}$ and comedication effects. In the general-purpose propofol model the metabolic-clearance maturation uses $E_{50} = 42.3$ weeks and $\lambda = 9.06$ in postmenstrual age, and the central volume follows an $E_{\max}$ function of weight, $f_{\mathrm{sigmoid}}(\mathrm{WGT}; 33.6, 1)$.
 
 ## Expansion
