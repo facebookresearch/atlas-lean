@@ -19,7 +19,12 @@ import Mathlib.Tactic.FinCases
 
 We prove that exchanging `201` and `210` alongside `010`, `100`, `101`, and `120`
 preserves the avoidance counts. The bijection reverses the strictly monotone word
-following each run of a record maximum.
+following each run of a record maximum. It also preserves avoidance of `102`.
+
+## References
+
+* Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
+  (2024), Article A76, Theorem 11 (pp. 33–34) and the `201`/`210` case of Theorem 15 (p. 58).
 -/
 
 namespace MetaMathlibExt
@@ -205,17 +210,18 @@ private theorem allowed_iff (asc : Bool) (x y z : ℕ) :
     Allowed asc x y z ↔ ∀ p ∈ patterns asc, ¬ SameOrder x y z p := by
   cases asc <;> simp [Allowed, Ordered, patterns, SameOrder, Fin.forall_fin_succ] <;> omega
 
-private theorem avoidance_iff {n : ℕ} (asc : Bool) (e : Fin n → ℕ) :
-    (List.ofFn e).Triplewise (Allowed asc) ↔
-      ∀ p ∈ patterns asc, ¬ InvSeqContainsPattern e p := by
+private theorem avoidance_iff {R : ℕ → ℕ → ℕ → Prop} {S : Set (Fin 3 → ℕ)}
+    (hR : ∀ x y z, R x y z ↔ ∀ p ∈ S, ¬ SameOrder x y z p)
+    {n : ℕ} (e : Fin n → ℕ) :
+    (List.ofFn e).Triplewise R ↔ ∀ p ∈ S, ¬ InvSeqContainsPattern e p := by
   rw [List.triplewise_iff_getElem]
   constructor
   · intro h p hp ⟨f, hf⟩
     have hij := f.strictMono (show (0 : Fin 3) < 1 by decide)
     have hjk := f.strictMono (show (1 : Fin 3) < 2 by decide)
-    have ht : Allowed asc (e (f 0)) (e (f 1)) (e (f 2)) := by
+    have ht : R (e (f 0)) (e (f 1)) (e (f 2)) := by
       simpa using h (f 0).val (f 1).val (f 2).val hij hjk (by simp)
-    apply (allowed_iff ..).mp ht p hp
+    apply (hR ..).mp ht p hp
     have hv (i : Fin 3) : ![e (f 0), e (f 1), e (f 2)] i = e (f i) := by
       fin_cases i <;> rfl
     simpa only [SameOrder, hv] using hf
@@ -228,8 +234,8 @@ private theorem avoidance_iff {n : ℕ} (asc : Bool) (e : Fin n → ℕ) :
       · exact hij
       · exact hij.trans hjk
       · exact hjk
-    suffices Allowed asc (e (f 0)) (e (f 1)) (e (f 2)) by simpa [f] using this
-    apply (allowed_iff ..).mpr
+    suffices R (e (f 0)) (e (f 1)) (e (f 2)) by simpa [f] using this
+    apply (hR ..).mpr
     intro p hp hs
     refine h p hp ⟨OrderEmbedding.ofStrictMono f hm, ?_⟩
     have hv (a : Fin 3) : ![e (f 0), e (f 1), e (f 2)] a = e (f a) := by
@@ -237,32 +243,134 @@ private theorem avoidance_iff {n : ℕ} (asc : Bool) (e : Fin n → ℕ) :
     change ∀ a b, e (f a) < e (f b) ↔ p a < p b
     simpa only [SameOrder, hv] using hs
 
-private abbrev Words (asc : Bool) (n : ℕ) :=
-  {l : List ℕ // l.Triplewise (Allowed asc) ∧ Bounded 0 l ∧ l.length = n}
+private abbrev Words (R : ℕ → ℕ → ℕ → Prop) (n : ℕ) :=
+  {l : List ℕ // l.Triplewise R ∧ Bounded 0 l ∧ l.length = n}
 
-private noncomputable def listEquiv (asc : Bool) (n : ℕ) :
-    {e : Fin n → ℕ // (∀ i, e i ≤ i) ∧ ∀ p ∈ patterns asc, ¬ InvSeqContainsPattern e p} ≃
-      Words asc n := by
+private noncomputable def listEquiv {R : ℕ → ℕ → ℕ → Prop} {S : Set (Fin 3 → ℕ)}
+    (hR : ∀ x y z, R x y z ↔ ∀ p ∈ S, ¬ SameOrder x y z p) (n : ℕ) :
+    {e : Fin n → ℕ // (∀ i, e i ≤ i) ∧ ∀ p ∈ S, ¬ InvSeqContainsPattern e p} ≃ Words R n := by
   have bound (e : Fin n → ℕ) : Bounded 0 (List.ofFn e) ↔ ∀ i, e i ≤ i := by
     simp [Bounded, Fin.forall_iff]
-  refine Equiv.ofBijective (fun e => ⟨List.ofFn e.1, (avoidance_iff asc e.1).mpr e.2.2,
+  refine Equiv.ofBijective (fun e => ⟨List.ofFn e.1, (avoidance_iff hR e.1).mpr e.2.2,
     (bound e.1).mpr e.2.1, List.length_ofFn⟩) ⟨?_, ?_⟩
   · exact fun _ _ h => Subtype.ext (List.ofFn_injective (congrArg Subtype.val h))
   · rintro ⟨l, ht, hb, rfl⟩
-    refine ⟨⟨l.get, (bound l.get).mp ?_, (avoidance_iff asc l.get).mp ?_⟩,
+    refine ⟨⟨l.get, (bound l.get).mp ?_, (avoidance_iff hR l.get).mp ?_⟩,
       Subtype.ext (List.ofFn_get l)⟩
     · simpa using hb
     · simpa using ht
 
-private def flipWord {asc : Bool} {n : ℕ} (w : Words asc n) : Words (!asc) n :=
+private def flipWord {asc : Bool} {n : ℕ} (w : Words (Allowed asc) n) :
+    Words (Allowed !asc) n :=
   let h := flip_spec w.2.1 w.2.2.1
   ⟨flip w.1, h.2.1, h.2.2.1, h.1.length_eq.trans w.2.2.2⟩
 
-private def flipEquiv (n : ℕ) : Words false n ≃ Words true n where
+private def flipEquiv (n : ℕ) : Words (Allowed false) n ≃ Words (Allowed true) n where
   toFun := flipWord
   invFun := flipWord
   left_inv w := Subtype.ext (flip_spec w.2.1 w.2.2.1).2.2.2
   right_inv w := Subtype.ext (flip_spec w.2.1 w.2.2.1).2.2.2
+
+private def No102 (x y z : ℕ) : Prop := y < x → z ≤ x
+
+private theorem no102_of_ordered {asc : Bool} {v : List ℕ} (h : v.Pairwise (Ordered asc)) :
+    v.Triplewise No102 := by
+  rw [List.triplewise_iff_getElem]
+  intro i j k hij hjk hk
+  have hxy := List.pairwise_iff_getElem.mp h i j (by omega) (by omega) hij
+  have hxz := List.pairwise_iff_getElem.mp h i k (by omega) hk (hij.trans hjk)
+  cases asc <;> simp [Ordered, No102] at * <;> omega
+
+/-- A constant prefix cannot create a `102` across the join if the remaining entries
+are all on the same side of its value. -/
+private theorem no102_append_const {a : ℕ} {p q : List ℕ}
+    (hp : ∀ x ∈ p, x = a) (hq : q.Triplewise No102)
+    (hside : (∀ x ∈ q, x ≤ a) ∨ ∀ x ∈ q, a ≤ x) : (p ++ q).Triplewise No102 := by
+  refine List.triplewise_append.mpr ⟨?_, hq, ?_, ?_⟩
+  · rw [List.triplewise_iff_getElem]
+    intro i j k hij hjk hk
+    simp [No102, hp _ (List.getElem_mem (by omega : i < p.length)),
+      hp _ (List.getElem_mem (by omega : j < p.length))]
+  · intro x hx
+    apply List.pairwise_of_forall_mem_list
+    intro y hy z hz
+    rw [hp x hx]
+    rcases hside with hlo | hhi
+    · exact fun _ => hlo z hz
+    · exact fun h => (not_lt_of_ge (hhi y hy) h).elim
+  · intro z _
+    apply List.pairwise_of_forall_mem_list
+    intro x hx y hy
+    simp [No102, hp x hx, hp y hy]
+
+/-- In the block decomposition, a smaller letter followed by a larger one would
+form `102` with the leading letter. Thus at least one of the two blocks is empty. -/
+private theorem flip_preserves_no102 {asc : Bool} {m : ℕ} {l : List ℕ}
+    (h : l.Triplewise (Allowed asc)) (hb : Bounded m l) (h102 : l.Triplewise No102) :
+    (flip l).Triplewise No102 := by
+  cases l with
+  | nil => simp [flip]
+  | cons a r =>
+    obtain ⟨u, v, w, rfl, hu, hv, hs, hw⟩ := split_block (List.triplewise_cons.mp h).1
+    have hempty : v = [] ∨ w = [] := by
+      by_contra! hne
+      obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil v hne.1
+      obtain ⟨y, hy⟩ := List.exists_mem_of_ne_nil w hne.2
+      have hcross := (List.pairwise_append.mp (List.triplewise_cons.mp h102).1).2.2
+      exact (hw y hy).not_ge (hcross x (List.mem_append_right _ hx) y hy (hv x hx))
+    have hu' : ∀ x ∈ a :: u, x = a := by simpa using hu
+    rw [flip_block hu hv hw]
+    rcases hempty with rfl | rfl
+    · let p := (a :: u) ++ ([] : List ℕ)
+      have hpw : (p ++ w).Triplewise (Allowed asc) := h
+      have hbw : Bounded m (p ++ w) := hb
+      have hpw102 : (p ++ w).Triplewise No102 := h102
+      have hwt := (List.triplewise_append.mp hpw).2.1
+      have hwb := (bounded_append.mp hbw).2
+      have hw102 := (List.triplewise_append.mp hpw102).2.1
+      have hperm := (flip_spec hwt hwb).1
+      simpa using no102_append_const hu' (flip_preserves_no102 hwt hwb hw102)
+        (Or.inr fun x hx => (hw x (hperm.mem_iff.mp hx)).le)
+    · have hrev : v.reverse.Pairwise (Ordered !asc) := by
+        rw [List.pairwise_reverse]
+        cases asc <;> exact hs
+      simpa [flip] using no102_append_const hu' (no102_of_ordered hrev)
+        (Or.inl fun x hx => (hv x (List.mem_reverse.mp hx)).le)
+termination_by l.length
+decreasing_by subst_vars; simp
+
+private def patterns102 (asc : Bool) : Set (Fin 3 → ℕ) :=
+  {![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0],
+    if asc then ![2, 1, 0] else ![2, 0, 1]}
+
+private def Allowed102 (asc : Bool) (x y z : ℕ) : Prop := Allowed asc x y z ∧ No102 x y z
+
+private theorem allowed102_iff (asc : Bool) (x y z : ℕ) :
+    Allowed102 asc x y z ↔ ∀ p ∈ patterns102 asc, ¬ SameOrder x y z p := by
+  have hset : patterns102 asc = insert ![1, 0, 2] (patterns asc) := by
+    ext p
+    simp only [patterns102, patterns, Set.mem_insert_iff, Set.mem_singleton_iff]
+    tauto
+  have h102 : No102 x y z ↔ ¬ SameOrder x y z ![1, 0, 2] := by
+    simp [No102, SameOrder, Fin.forall_fin_succ]
+    omega
+  rw [hset, Set.forall_mem_insert, ← h102, ← allowed_iff, Allowed102, and_comm]
+
+private theorem triplewise_allowed102 {asc : Bool} {l : List ℕ} :
+    l.Triplewise (Allowed102 asc) ↔ l.Triplewise (Allowed asc) ∧ l.Triplewise No102 := by
+  simp only [List.triplewise_iff_getElem, Allowed102, forall_and]
+
+private def flipWord102 {asc : Bool} {n : ℕ} (w : Words (Allowed102 asc) n) :
+    Words (Allowed102 !asc) n :=
+  let h := triplewise_allowed102.mp w.2.1
+  let w' := flipWord (⟨w.1, h.1, w.2.2⟩ : Words (Allowed asc) n)
+  ⟨w'.1, triplewise_allowed102.mpr ⟨w'.2.1, flip_preserves_no102 h.1 w.2.2.1 h.2⟩, w'.2.2⟩
+
+private def flipEquiv102 (n : ℕ) : Words (Allowed102 false) n ≃ Words (Allowed102 true) n where
+  toFun := flipWord102
+  invFun := flipWord102
+  left_inv w := Subtype.ext (flip_spec (triplewise_allowed102.mp w.2.1).1 w.2.2.1).2.2.2
+  right_inv w := Subtype.ext (flip_spec (triplewise_allowed102.mp w.2.1).1 w.2.2.1).2.2.2
 
 end invSeq_wilf_010_100_101_120_201_210
 
@@ -280,6 +388,29 @@ public theorem invSeq_wilf_010_100_101_120_201_210 :
       invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0], ![2, 1, 0]}
           : Set (Fin 3 → ℕ)) := by
   funext n
-  exact Nat.card_congr ((listEquiv false n).trans ((flipEquiv n).trans (listEquiv true n).symm))
+  exact Nat.card_congr ((listEquiv (allowed_iff false) n).trans
+    ((flipEquiv n).trans (listEquiv (allowed_iff true) n).symm))
+
+open invSeq_wilf_010_100_101_120_201_210 in
+/-- **Exchanging $201$ and $210$ in $\{010, 100, 101, 102, 120, 201\}$.** Write length-3
+patterns as digit strings ($101$ is the pattern $(1, 0, 1)$) and let $|I_n(B)|$ be the number of
+inversion sequences of length $n$ that avoid every pattern in the set $B$. For a pattern $\tau$
+let $A_\tau = \{010, 100, 101, 102, 120, \tau\}$. Then for every $n \ge 0$,
+$|I_n(A_{201})| = |I_n(A_{210})|$.
+
+The source further claims $|I_n(A_{210})| = |I_n(B)| = |I_n(C)|$ for all $n$, with
+$B = \{010, 100, 110, 102, 120, 201\}$ and $C = \{010, 101, 110, 102, 120, 210\}$; these claims are
+false as printed ($|I_7| = 538, 537, 539$ for $A_{210}$, $B$, $C$) and are omitted.
+
+Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
+(2024), Article A76, Theorem 15 (`integers-2024-A76-thm-15`). -/
+public theorem invSeq_wilf_010_100_101_102_120_201_210 :
+    invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 0, 1]}
+        : Set (Fin 3 → ℕ)) =
+      invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 1, 0]}
+          : Set (Fin 3 → ℕ)) := by
+  funext n
+  exact Nat.card_congr ((listEquiv (allowed102_iff false) n).trans
+    ((flipEquiv102 n).trans (listEquiv (allowed102_iff true) n).symm))
 
 end MetaMathlibExt
