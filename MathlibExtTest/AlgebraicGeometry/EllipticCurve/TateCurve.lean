@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.TateCurve
 import MathlibExt.NumberTheory.ModularForms.JCoefficientBound
+import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.Simproc.Divisors
 
 @[expose] public section
@@ -22,12 +23,53 @@ private theorem exactSource_coeff (n : ℕ) :
       PowerSeries.coeff n tateA6 = -∑ d ∈ n.divisors, tateB d :=
   ⟨coeff_tateA4 n, coeff_tateA6 n⟩
 
-/-- The Tate curve over `ℤ⟦q⟧` has the stated Weierstrass coefficients. -/
+/-- The integral Tate model over `ℤ⟦q⟧` has the stated Weierstrass coefficients. -/
 example : tatePowerSeries.a₁ = 1 ∧ tatePowerSeries.a₄ = tateA4 ∧
     tatePowerSeries.a₆ = tateA6 :=
   ⟨rfl, rfl, rfl⟩
 
-/-- The Tate curve becomes elliptic after mapping to Laurent series. -/
+/-- The integral model is not elliptic over `ℤ⟦q⟧`: the constant coefficient of its
+discriminant is `0`, so the discriminant is not a unit. -/
+example : PowerSeries.constantCoeff tatePowerSeries.Δ = 0 ∧ ¬ tatePowerSeries.IsElliptic := by
+  have h0 : PowerSeries.constantCoeff tatePowerSeries.Δ = 0 := by
+    simp [WeierstrassCurve.Δ, WeierstrassCurve.b₂, WeierstrassCurve.b₄, WeierstrassCurve.b₆,
+      WeierstrassCurve.b₈, constantCoeff_tateA4, constantCoeff_tateA6]
+  refine ⟨h0, fun h => ?_⟩
+  have hu := tatePowerSeries.isUnit_Δ.map PowerSeries.constantCoeff
+  rw [h0] at hu
+  exact not_isUnit_zero hu
+
+/-- `laurentOfInt K` sends `q` to the Laurent variable `q`. -/
+example (K : Type*) [CommRing K] :
+    laurentOfInt K PowerSeries.X = HahnSeries.single 1 1 := by
+  rw [laurentOfInt_apply, PowerSeries.map_X, HahnSeries.ofPowerSeries_X]
+
+/-- `laurentOfInt` is not an embedding in general: over `ZMod 5` the nonzero constant series `5`
+maps to `0`. -/
+example : PowerSeries.C (5 : ℤ) ≠ 0 ∧ laurentOfInt (ZMod 5) (PowerSeries.C (5 : ℤ)) = 0 := by
+  refine ⟨fun h => ?_, ?_⟩
+  · have h' := congrArg PowerSeries.constantCoeff h
+    rw [PowerSeries.constantCoeff_C, map_zero] at h'
+    norm_num at h'
+  · have h5 : Int.castRingHom (ZMod 5) 5 = 0 := by decide
+    rw [laurentOfInt_apply, PowerSeries.map_C, h5, map_zero, map_zero]
+
+/-- `laurentOfInt K` is injective exactly when `Int.castRingHom K` is. -/
+private theorem laurentOfInt_injective_iff (K : Type*) [CommRing K] :
+    Function.Injective (laurentOfInt K) ↔ Function.Injective (Int.castRingHom K) := by
+  refine ⟨fun h a b hab => ?_, fun h f g hfg => ?_⟩
+  · have hC : PowerSeries.C a = PowerSeries.C b := h (by
+      rw [laurentOfInt_apply, laurentOfInt_apply, PowerSeries.map_C, PowerSeries.map_C, hab])
+    have h' := congrArg PowerSeries.constantCoeff hC
+    rwa [PowerSeries.constantCoeff_C, PowerSeries.constantCoeff_C] at h'
+  · rw [laurentOfInt_apply, laurentOfInt_apply] at hfg
+    exact PowerSeries.map_injective _ h (HahnSeries.ofPowerSeries_injective hfg)
+
+/-- In characteristic zero `laurentOfInt K` is injective. -/
+example (K : Type*) [CommRing K] [CharZero K] : Function.Injective (laurentOfInt K) :=
+  (laurentOfInt_injective_iff K).mpr Int.cast_injective
+
+/-- The Tate curve over `K((q))` is elliptic for every commutative ring `K`. -/
 example (K : Type*) [CommRing K] : (tateLaurent K).IsElliptic :=
   inferInstance
 
@@ -50,7 +92,7 @@ example : PowerSeries.coeff 1 eisenstein6 = -504 ∧ PowerSeries.coeff 2 eisenst
     PowerSeries.coeff 3 eisenstein6 = -122976 := by
   simp [eisenstein6, Nat.divisors_ofNat]
 
-/-- The invariant `c₄ = 1 - 48a₄` of the Tate curve is the Eisenstein series
+/-- The invariant `c₄ = 1 - 48a₄` of the integral Tate model is the Eisenstein series
 `E₄ = 1 + 240 ∑ σ₃(n) qⁿ`. -/
 example : tatePowerSeries.c₄ = ModularCurve.eisenstein4 := by
   ext n
@@ -66,7 +108,7 @@ example : tatePowerSeries.c₄ = ModularCurve.eisenstein4 := by
   · simp only [hn, ite_false, zero_sub, mul_neg, neg_neg, Finset.mul_sum]
     exact Finset.sum_congr rfl fun d _ => by ring
 
-/-- The invariant `c₆ = -1 + 72a₄ - 864a₆` of the Tate curve is `-E₆`. -/
+/-- The invariant `c₆ = -1 + 72a₄ - 864a₆` of the integral Tate model is `-E₆`. -/
 example : tatePowerSeries.c₆ = -eisenstein6 := by
   ext n
   have h : tatePowerSeries.c₆ =

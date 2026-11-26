@@ -34,13 +34,37 @@ public import Mathlib.RingTheory.HahnSeries.Multiplication
 public import Mathlib.RingTheory.LaurentSeries
 public import Mathlib.RingTheory.PowerSeries.Basic
 
+/-!
+# Tate curve: power series and origin coordinates
+
+This file sets up the formal series behind the Tate curve `y² + xy = x³ + a₄(q)x + a₆(q)`.
+
+* `TateCurve.tatePowerSeries` is the integral Weierstrass model over `ℤ⟦q⟧`, with coefficients
+  `TateCurve.tateA4` and `TateCurve.tateA6`. It is not an elliptic curve over `ℤ⟦q⟧`: the
+  constant coefficient of its discriminant is `0`.
+* `TateCurve.tateLaurent K` is its base change along `TateCurve.laurentOfInt K` to the Laurent
+  series ring `K((q))`, where `q` is invertible. There the discriminant is a unit, so this curve
+  is elliptic for every commutative ring `K`.
+* `TateCurve.tateOriginX K` and `TateCurve.tateOriginY K` expand Tate's coordinates `X(u, q)` and
+  `Y(u, q)` at the origin `u = 1` in the local parameter `T = u - 1`. They lie in `K⟦q⟧((T))`:
+  the outer Laurent variable is the local parameter `T`, and the inner power-series variable is
+  `q`, the variable of the coefficient series.
+
+The file proves the coefficient formulas, the ellipticity of `tateLaurent K`, and pole bounds for
+the origin coordinates: `tateOriginX K` has no term below `T⁻²` and `T⁻²`-coefficient `1`, and
+`tateOriginY K` has no term below `T⁻³` and `T⁻³`-coefficient `-1`. It does not prove that
+`(tateOriginX K, tateOriginY K)` satisfies the Weierstrass equation of the Tate curve.
+-/
+
 @[expose] public section
 
 open PowerSeries HahnSeries
 
 namespace TateCurve
 
-/-- The integer `(5d ^ 3 + 7d ^ 5) / 12`, integral for every natural `d`. -/
+/-- **Divisor terms of the Tate coefficient $a_6$.** For a natural number `d`, the integer quotient
+`(5d³ + 7d⁵) / 12`. The division is exact for every `d` (`twelve_mul_tateB`). These numbers are
+the divisor terms of the Tate coefficient `tateA6`. -/
 def tateB (d : ℕ) : ℤ := (5 * (d : ℤ) ^ 3 + 7 * (d : ℤ) ^ 5) / 12
 
 theorem twelve_mul_tateB (d : ℕ) :
@@ -62,15 +86,20 @@ theorem twelve_mul_tateB (d : ℕ) :
   rw [tateB]
   exact Int.mul_ediv_cancel' (key _)
 
-/-- The Tate coefficient series `a₄(q) = -∑_{n≥1} (∑_{d ∣ n} 5d³) qⁿ`. -/
+/-- **The Tate coefficient $a_4$.** The integer power series
+`a₄(q) = -∑_{n ≥ 1} (∑_{d ∣ n} 5d³) qⁿ = -5 ∑_{n ≥ 1} σ₃(n) qⁿ` in `ℤ⟦q⟧`, where
+`σ₃(n) = ∑_{d ∣ n} d³`. -/
 def tateA4 : PowerSeries ℤ :=
   PowerSeries.mk fun n => -∑ d ∈ n.divisors, (5 * (d : ℤ) ^ 3)
 
-/-- The Tate coefficient series `a₆(q) = -∑_{n≥1} (∑_{d ∣ n} tateB d) qⁿ`. -/
+/-- **The Tate coefficient $a_6$.** The integer power series
+`a₆(q) = -∑_{n ≥ 1} (∑_{d ∣ n} (5d³ + 7d⁵) / 12) qⁿ` in `ℤ⟦q⟧`, whose divisor terms are
+`tateB d`. -/
 def tateA6 : PowerSeries ℤ :=
   PowerSeries.mk fun n => -∑ d ∈ n.divisors, tateB d
 
-/-- The weight-six Eisenstein series `1 - 504 ∑_{n≥1} (∑_{d ∣ n} d⁵) qⁿ`. -/
+/-- **The Eisenstein series $E_6$ as an integer power series.** The `q`-expansion of the
+weight-six Eisenstein series, `E₆(q) = 1 - 504 ∑_{n ≥ 1} (∑_{d ∣ n} d⁵) qⁿ`, in `ℤ⟦q⟧`. -/
 def eisenstein6 : PowerSeries ℤ :=
   PowerSeries.mk fun n => if n = 0 then 1 else -504 * ∑ d ∈ n.divisors, (d : ℤ) ^ 5
 
@@ -108,7 +137,11 @@ theorem coeff_one_tateA6 : PowerSeries.coeff 1 tateA6 = -1 := by
   have h : tateB 1 = 1 := by norm_num [tateB]
   rw [coeff_tateA6, Nat.divisors_one, Finset.sum_singleton, h]
 
-/-- The Tate curve `y² + xy = x³ + a₄(q)x + a₆(q)` over `ℤ⟦q⟧`. -/
+/-- **The integral Tate model.** The Weierstrass model `y² + xy = x³ + a₄(q)x + a₆(q)` over
+`ℤ⟦q⟧`, with `a₁ = 1`, `a₂ = a₃ = 0`, `a₄ = tateA4` and `a₆ = tateA6`. It is an integral model, not
+an elliptic curve over `ℤ⟦q⟧`: the constant coefficient of its discriminant is `0`, so the
+discriminant is not a unit of `ℤ⟦q⟧`. Inverting `q` gives the Tate curve `tateLaurent K` over
+`K((q))`. -/
 noncomputable def tatePowerSeries : WeierstrassCurve (PowerSeries ℤ) := ⟨1, 0, 0, tateA4, tateA6⟩
 
 @[simp] theorem tatePowerSeries_a₁ : tatePowerSeries.a₁ = 1 := rfl
@@ -117,7 +150,11 @@ noncomputable def tatePowerSeries : WeierstrassCurve (PowerSeries ℤ) := ⟨1, 
 @[simp] theorem tatePowerSeries_a₄ : tatePowerSeries.a₄ = tateA4 := rfl
 @[simp] theorem tatePowerSeries_a₆ : tatePowerSeries.a₆ = tateA6 := rfl
 
-/-- The embedding of integer power series into Laurent series over `K`. -/
+/-- **From integer power series to Laurent series over $K$.** The ring map `ℤ⟦q⟧ → K((q))` that
+first changes coefficients along `Int.castRingHom K`, giving `ℤ⟦q⟧ → K⟦q⟧`, and then includes
+power series into Laurent series; it sends `q` to `q`. It is not an embedding in general: for
+`K = ZMod 5` the nonzero constant series `5` maps to `0`. It is injective exactly when
+`Int.castRingHom K` is, that is, when `K` has characteristic zero. -/
 noncomputable def laurentOfInt (K : Type*) [CommRing K] : PowerSeries ℤ →+* LaurentSeries K :=
   (HahnSeries.ofPowerSeries ℤ K).comp (PowerSeries.map (Int.castRingHom K))
 
@@ -125,7 +162,12 @@ theorem laurentOfInt_apply (K : Type*) [CommRing K] (f : PowerSeries ℤ) :
     laurentOfInt K f = HahnSeries.ofPowerSeries ℤ K (f.map (Int.castRingHom K)) :=
   rfl
 
-/-- The Tate curve over the Laurent series ring in `K`. -/
+/-- **The Tate curve over Laurent series.** The base change of `tatePowerSeries` along
+`laurentOfInt K`: the Weierstrass curve `y² + xy = x³ + a₄(q)x + a₆(q)` over the Laurent series
+ring `K((q))`. Its Laurent variable is the same `q`, now invertible; it is not the local parameter
+`T` of `tateOriginX`. The discriminant of `tatePowerSeries` is `q` times a unit of `ℤ⟦q⟧`, so here
+it is a unit, and the curve is elliptic for every commutative ring `K`
+(`instIsElliptic_tateLaurent`). -/
 noncomputable def tateLaurent (K : Type*) [CommRing K] : WeierstrassCurve (LaurentSeries K) :=
   tatePowerSeries.map (laurentOfInt K)
 
@@ -200,17 +242,16 @@ instance instIsElliptic_tateLaurent (K : Type*) [CommRing K] :
     by simp [HahnSeries.single_mul_single],
     by simp [HahnSeries.single_mul_single]⟩, rfl⟩
 
-private theorem coeff_ofPowerSeries_of_neg {K : Type*} [CommRing K]
-    (x : PowerSeries (PowerSeries K)) {n : ℤ} (hn : n < 0) :
-    (HahnSeries.ofPowerSeries ℤ (PowerSeries K) x).coeff n = 0 := by
-  rw [HahnSeries.ofPowerSeries_apply]
-  apply HahnSeries.embDomain_notin_image_support
-  rintro ⟨a, ha⟩
-  simp only [Nat.castOrderEmbedding_apply] at ha
-  have : (0 : ℤ) ≤ n := ha.2 ▸ Nat.cast_nonneg a
-  omega
-
-/-- The `X`-coordinate series of the Tate curve at the origin. -/
+/-- **The $X$-coordinate of the Tate curve at the origin.** Tate's coordinate
+`X(u, q) = ∑_{n ∈ ℤ} qⁿu / (1 - qⁿu)² - 2 ∑_{n ≥ 1} n qⁿ / (1 - qⁿ)`, expanded at the origin
+`u = 1` in the local parameter `T = u - 1`. It lies in `K⟦q⟧((T))`: the outer Laurent variable is
+the local parameter `T`, and the inner power-series variable is `q`. Explicitly it is
+`T⁻² + T⁻¹ + ∑_{k ≥ 0} c_k Tᵏ`, where `c_k ∈ K⟦q⟧` has constant term `0` and, for `M ≥ 1`,
+`qᴹ`-coefficient `∑_{e ∣ M} e (e.choose k + (-1)ᵏ (e + k - 1).choose k)`, minus
+`2σ₁(M) = 2 ∑_{e ∣ M} e` when `k = 0`. The pole bound (no term below `T⁻²`, and
+`T⁻²`-coefficient `1`) is `coeff_tateOriginX_of_lt` and `coeff_tateOriginX_neg_two`; that
+`(tateOriginX K, tateOriginY K)` satisfies the Weierstrass equation of the Tate curve is not
+formalized. -/
 noncomputable def tateOriginX (K : Type*) [CommRing K] : LaurentSeries (PowerSeries K) :=
   HahnSeries.single (-2 : ℤ) (1 : PowerSeries K) +
     HahnSeries.single (-1 : ℤ) (1 : PowerSeries K) +
@@ -221,7 +262,17 @@ noncomputable def tateOriginX (K : Type*) [CommRing K] : LaurentSeries (PowerSer
             (-1) ^ k * ((e + k - 1).choose k : K))) -
             (if k = 0 then 2 * ∑ e ∈ M.divisors, (e : K) else 0))
 
-/-- The `Y`-coordinate series of the Tate curve at the origin. -/
+/-- **The $Y$-coordinate of the Tate curve at the origin.** Tate's coordinate
+`Y(u, q) = ∑_{n ∈ ℤ} (qⁿu)² / (1 - qⁿu)³ + ∑_{n ≥ 1} n qⁿ / (1 - qⁿ)`, expanded at the origin
+`u = 1` in the local parameter `T = u - 1`, as an element of `K⟦q⟧((T))` with outer Laurent
+variable `T` and inner power-series variable `q`. Explicitly it is
+`-T⁻³ - 2T⁻² - T⁻¹ + ∑_{k ≥ 0} c_k Tᵏ`, where `c_k ∈ K⟦q⟧` has constant term `0` and, for
+`M ≥ 1`, `qᴹ`-coefficient
+`∑_{e ∣ M} (e.choose 2 · e.choose k - (e + 1).choose 2 · (-1)ᵏ (e + k - 1).choose k)`, plus
+`σ₁(M) = ∑_{e ∣ M} e` when `k = 0`. The pole bound (no term below `T⁻³`, and
+`T⁻³`-coefficient `-1`) is `coeff_tateOriginY_of_lt` and `coeff_tateOriginY_neg_three`; that
+`(tateOriginX K, tateOriginY K)` satisfies the Weierstrass equation of the Tate curve is not
+formalized. -/
 noncomputable def tateOriginY (K : Type*) [CommRing K] : LaurentSeries (PowerSeries K) :=
   HahnSeries.single (-3 : ℤ) (-1 : PowerSeries K) +
     HahnSeries.single (-2 : ℤ) (-2 : PowerSeries K) +
@@ -235,22 +286,22 @@ noncomputable def tateOriginY (K : Type*) [CommRing K] : LaurentSeries (PowerSer
 
 theorem coeff_tateOriginX_neg_two (K : Type*) [CommRing K] :
     (tateOriginX K).coeff (-2) = 1 := by
-  rw [tateOriginX, HahnSeries.coeff_add, HahnSeries.coeff_add,
-    coeff_ofPowerSeries_of_neg _ (by norm_num), HahnSeries.coeff_single,
-    HahnSeries.coeff_single, ite_eq_left rfl, ite_eq_right (by norm_num), add_zero, add_zero]
+  rw [tateOriginX, HahnSeries.coeff_add, HahnSeries.coeff_add, PowerSeries.coeff_coe,
+    ite_eq_left (by norm_num), HahnSeries.coeff_single, HahnSeries.coeff_single,
+    ite_eq_left rfl, ite_eq_right (by norm_num), add_zero, add_zero]
 
 theorem coeff_tateOriginX_of_lt (K : Type*) [CommRing K] {n : ℤ} (hn : n < -2) :
     (tateOriginX K).coeff n = 0 := by
   have h1 : n ≠ -2 := by omega
   have h2 : n ≠ -1 := by omega
-  rw [tateOriginX, HahnSeries.coeff_add, HahnSeries.coeff_add,
-    coeff_ofPowerSeries_of_neg _ (by omega), HahnSeries.coeff_single,
-    HahnSeries.coeff_single, ite_eq_right h1, ite_eq_right h2, add_zero, add_zero]
+  rw [tateOriginX, HahnSeries.coeff_add, HahnSeries.coeff_add, PowerSeries.coeff_coe,
+    ite_eq_left (by omega), HahnSeries.coeff_single, HahnSeries.coeff_single,
+    ite_eq_right h1, ite_eq_right h2, add_zero, add_zero]
 
 theorem coeff_tateOriginY_neg_three (K : Type*) [CommRing K] :
     (tateOriginY K).coeff (-3) = -1 := by
   rw [tateOriginY, HahnSeries.coeff_add, HahnSeries.coeff_add, HahnSeries.coeff_add,
-    coeff_ofPowerSeries_of_neg _ (by norm_num), HahnSeries.coeff_single,
+    PowerSeries.coeff_coe, ite_eq_left (by norm_num), HahnSeries.coeff_single,
     HahnSeries.coeff_single, HahnSeries.coeff_single, ite_eq_left rfl,
     ite_eq_right (by norm_num), ite_eq_right (by norm_num), add_zero, add_zero, add_zero]
 
@@ -260,7 +311,7 @@ theorem coeff_tateOriginY_of_lt (K : Type*) [CommRing K] {n : ℤ} (hn : n < -3)
   have h2 : n ≠ -2 := by omega
   have h3 : n ≠ -1 := by omega
   rw [tateOriginY, HahnSeries.coeff_add, HahnSeries.coeff_add, HahnSeries.coeff_add,
-    coeff_ofPowerSeries_of_neg _ (by omega), HahnSeries.coeff_single,
+    PowerSeries.coeff_coe, ite_eq_left (by omega), HahnSeries.coeff_single,
     HahnSeries.coeff_single, HahnSeries.coeff_single, ite_eq_right h1, ite_eq_right h2,
     ite_eq_right h3, add_zero, add_zero, add_zero]
 
