@@ -53,6 +53,7 @@ public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
 public import MathlibExt.NumberTheory.BinomialHarmonicExpansion
 public import MathlibExt.NumberTheory.DelannoyBinomialSum
 public import MathlibExt.NumberTheory.DelannoyBinomialCongruence
+public import MathlibExt.NumberTheory.DelannoyPrimeCube
 public import MathlibExt.NumberTheory.FermatQuotient
 
 set_option autoImplicit false
@@ -60,32 +61,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
-
-/-- **Delannoy triangle entries $T(2p, p; 1)$ and $T(2p-1, p-1; 1)$ modulo $p^3$.** Let
-$p \ge 5$ be a prime, let $q_p(2) = (2^{p-1} - 1)/p$ be the Fermat quotient of $2$, and let
-$T(n, k; 1)$ denote the entry of the ordinary Riordan Pascal-like triangle with $r = 1$ (the
-Delannoy triangle). Then
-$$T(2p, p; 1) \equiv 3 + 2p\,q_p(2) - p^2 q_p(2)^2 \pmod{p^3}$$
-and
-$$T(2p-1, p-1; 1) \equiv 1 + 2p\,q_p(2) - p^2 q_p(2)^2 \pmod{p^3}.$$
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Theorem 1. -/
-theorem_wanted delannoy_two_mul (p : ℕ) (hp : p.Prime)
-    (hp5 : 5 ≤ p) (h2p : IsCoprime (2 : ℤ) (p : ℤ)) :
-    (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
-          (2 * p) p 1 : ZMod (p ^ 3)) =
-        3 + 2 * (p : ZMod (p ^ 3)) *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) -
-          (p : ZMod (p ^ 3)) ^ 2 *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) ^ 2 ∧
-      (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
-            (2 * p - 1) (p - 1) 1 : ZMod (p ^ 3)) =
-        1 + 2 * (p : ZMod (p ^ 3)) *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) -
-          (p : ZMod (p ^ 3)) ^ 2 *
-            (Int.fermatQuotient p hp 2 h2p : ZMod (p ^ 3)) ^ 2
 
 /-- **Delannoy triangle entry $T(np-1, p-1; 1)$ modulo $p^3$.** Let $p \ge 5$ be a prime and
 $n \ge 1$ a natural number, let $q_p(2) = (2^{p-1} - 1)/p$ be the Fermat quotient of $2$, and
