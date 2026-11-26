@@ -1,4 +1,5 @@
-# Chained serve hits
+# A second serve of the same key returns the first response
 
-Lookup-level hit after one serve, with no concurrency semantics: the
-second serve answers the first serve's response. Proved via C4.
+For a handler $f$, a key $k$ and a memo table $t_0$, serve $k$ once and then serve $k$ again
+on the resulting table: the second serve returns the same response as the first. This is a
+statement about sequential table lookups only; it describes no concurrent execution.

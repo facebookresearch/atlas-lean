@@ -1,3 +1,4 @@
-# Ret timed Max Child
+# Counted child selection returns the standard larger child
 
-Erasure of counted child selection is the canonical Batteries selector.
+Forgetting the counters, the counted maximum-child selection at index $i$ returns the same
+child index (or no child) as the standard maximum-child selection of a binary heap.

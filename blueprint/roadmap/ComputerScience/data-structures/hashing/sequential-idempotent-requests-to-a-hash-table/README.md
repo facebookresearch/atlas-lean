@@ -10,4 +10,4 @@
 - [Fst serve of agree](fst-serve-of-agree.md)
 - [Agree serve](agree-serve.md)
 - [Stale serves run handler](stale-serves-run-handler.md)
-- [Chained serve hits](chained-serve-hits.md)
+- [A second serve of the same key returns the first response](chained-serve-hits.md)

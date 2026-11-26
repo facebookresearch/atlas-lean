@@ -45,7 +45,7 @@
 - [Membership in a red-black tree built from a list](mem-from-list.md)
 - [One le black Height](one-le-black-height.md)
 - [Two pow black Height le](two-pow-black-height-le.md)
-- [Height le black Height](height-le-black-height.md)
+- [Height of a red-black tree is at most twice its black height](height-le-black-height.md)
 - [Height le of valid](height-le-of-valid.md)
 - [Splicing two red-black trees](join.md)
 - [Unbalanced red-black tree deletion](del.md)

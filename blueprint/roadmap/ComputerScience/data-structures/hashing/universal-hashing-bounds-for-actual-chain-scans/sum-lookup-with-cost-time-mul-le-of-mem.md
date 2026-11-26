@@ -1,3 +1,7 @@
-# Sum lookup With Cost time mul le of mem
+# Average lookup cost of a stored key
 
-A fixed present query costs at most its self-comparison plus the other keys' load factor.
+Let $(h_i)_{i \in s}$ be a universal family of hash functions from keys to $\{0, \dots, m - 1\}$, indexed by a finite nonempty set $s$ (so $m > 0$), and for each $i \in s$ let $T_i$ be a hash table that hashes with $h_i$, has exactly $m$ buckets, stores every binding in its canonical bucket, and has key set $S$. For a key $k \in S$, the scan-event counts of looking up $k$ satisfy
+
+$$m \sum_{i \in s} \mathrm{time}(\mathrm{lookup}(k, T_i)) \le |s| \bigl(m + (|S| - 1)\bigr),$$
+
+that is, on average over $s$ at most one comparison for $k$ itself plus $(|S| - 1)/m$ for the other keys.

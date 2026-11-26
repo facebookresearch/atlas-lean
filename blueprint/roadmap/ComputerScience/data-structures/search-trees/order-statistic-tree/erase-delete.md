@@ -1,4 +1,5 @@
-# Erase delete
+# Forgetting sizes commutes with deletion
 
-Erasing after deletion agrees with deletion in the underlying binary search tree,
-for every tree, ordered or not and with correct caches or not.
+For every order-statistic tree, ordered or not and with correct cached sizes or not, deleting
+a key and then forgetting the cached subtree sizes gives the same binary tree as forgetting the
+sizes first and then deleting the key by ordinary binary-search-tree deletion.

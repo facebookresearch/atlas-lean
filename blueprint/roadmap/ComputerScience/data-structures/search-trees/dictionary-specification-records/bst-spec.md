@@ -1,5 +1,6 @@
-# Bst Spec
+# Binary search trees as ordered sets
 
-Binary search trees refine the finite ordered-set record, with the
-inorder traversal as the finite-set abstraction. Deletion is the deletion
-of `BinarySearchTree.Delete`.
+Binary search trees over a linear order implement the finite ordered-set specification, with
+the in-order traversal as the abstraction to a finite set: membership, insertion and deletion
+on trees satisfying the search-tree invariant correspond to membership, insertion and deletion
+of the represented finite set.

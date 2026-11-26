@@ -1,3 +1,5 @@
-# Rank add le rank iterate
+# Ranks grow along nonroot parent steps
 
-Saved ranks increase by at least one at every nonroot step of the original parent chain.
+Let $u$ be a union-find state with stored parent map $p$ on $\mathbb{N}$ and stored ranks $r$,
+and let $x, k \in \mathbb{N}$. If $p^j(x)$ is not a root (that is, $p(p^j(x)) \ne p^j(x)$)
+for every $j < k$, then $r(x) + k \le r(p^k(x))$.
