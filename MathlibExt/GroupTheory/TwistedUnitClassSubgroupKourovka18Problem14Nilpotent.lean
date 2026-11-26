@@ -26,7 +26,8 @@ in the 21st issue: for `φ ∈ Aut G` let `[e]_φ = {g⁻¹ g^φ | g ∈ G}`. Co
 subgroup for every `φ ∈ Aut G`, then `G` is nilpotent; if in addition `G` is finitely generated,
 then `G` is abelian.
 
-We prove the negative answer to the nilpotency assertion.
+We refute the nilpotency assertion using the full direct product of finite groups indexed by the
+odd primes. Nicotera's counterexample uses the restricted direct product.
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 18.14 (V. G. Bardakov, M. V. Neshchadim, T.

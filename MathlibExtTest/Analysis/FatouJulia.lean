@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Analysis.FatouJulia
+import MathlibExt.Analysis.Mandelbrot
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
@@ -26,6 +27,9 @@ example : Tc 1 2 = 5 := by norm_num [Tc]
 -- The Mandelbrot set is the set of parameters whose critical point `0` lies in the filled
 -- Julia set.
 example (c : ℂ) : c ∈ Mandelbrot ↔ (0 : ℂ) ∈ FilledJulia c := Iff.rfl
+
+open MathlibExt.Analysis.MandelbrotWanted.ComplexAnalysis in
+example (c : ℂ) : c ∈ Mandelbrot ↔ c ∈ MandelbrotProblem.Mandelbrot := Iff.rfl
 
 -- For `z ↦ z ^ 2`, the point `1` has a constant orbit and lies in the filled Julia set.
 example : (1 : ℂ) ∈ FilledJulia 0 :=

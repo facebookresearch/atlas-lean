@@ -53,12 +53,9 @@ import Mathlib.Tactic.Positivity
 /-!
 # Hurewicz theorem (degree 1): H₁ is the abelianization of π₁
 
-`hurewicz_h1_abelianization`: for a path-connected space, the first integral
-singular homology group is the abelianization of the fundamental group. Trusted
-helper `IntegralHomology` (non-hole). Path-connectedness is essential. Mathlib
-has singular homology and the fundamental group but not the degree-1 Hurewicz
-isomorphism.
-Category-(b) candidate from §153 of the Knill survey.
+For a path-connected space `X`, `hurewicz_h1_abelianization` identifies the abelianization of
+the fundamental group with the first integral singular homology group `IntegralHomology 1 X`.
+See §153 of the Knill survey.
 
 ## Proof
 
