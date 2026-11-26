@@ -119,25 +119,6 @@ public theorem mem_c4SqExceptionalSet_1625 : (1625 : ℤ) ∈ c4SqExceptionalSet
   ⟨1, 1, 1, 2, five_thirteen_mem_primesFiveModEight.1, five_thirteen_mem_primesFiveModEight.1,
     five_thirteen_mem_primesFiveModEight.2, by decide, by norm_num⟩
 
-/-- **Factorization of the complex group determinant of $C_4^2$.** For every
-$y \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{C}$,
-
-$$
-\det\bigl(y(h - g)\bigr)_{g, h \in \mathbb{Z}/4 \times \mathbb{Z}/4} =
-\prod_{k=0}^{3} D_4\bigl(z_k(0), z_k(1), z_k(2), z_k(3)\bigr), \qquad
-z_k(r) = \sum_{s=0}^{3} i^{ks} y(r, s),
-$$
-
-where $i = \sqrt{-1}$ and $D_4(x_0, x_1, x_2, x_3)$ is the determinant of the $4 \times 4$
-circulant matrix with first row $(x_0, x_1, x_2, x_3)$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Corollary 2 (`integers-2024-A30-cor-2`). -/
-public theorem_wanted c4Sq_groupDet_eq_prod_circulantDetFour (y : Fin 4 × Fin 4 → ℂ) :
-    (circulant y).det =
-      ∏ k : Fin 4, circulantDetFour fun r : Fin 4 =>
-        ∑ s : Fin 4, Complex.I ^ (k.val * s.val) * y (r, s)
-
 /-- **Sums of two squares congruent to −3 modulo 8.** Let $a$ and $b$ be integers with
 $a^2 + b^2 \equiv -3 \pmod 8$. Then there are integers $k$ and $l$ such that $8l - 3$ lies in
 the set $P$ of positive primes congruent to $5$ modulo $8$, and $a^2 + b^2 = (8k + 1)(8l - 3)$.
