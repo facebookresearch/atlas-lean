@@ -80797,7 +80797,7 @@
 "MetaMathlibExt.Complexity.NPComplete.MultiwayPartition.MultiwayPartitionFeasible": "62d4d33a87c425cf",
 "MetaMathlibExt.Complexity.NPComplete.MultiwayPartition.MultiwayPartitionInstance": "7fd3b5e20ebad72f",
 "MetaMathlibExt.Complexity.NPComplete.MultiwayPartition.multiwayPartitionDec": "c9cb3e8b98458c40",
-"MetaMathlibExt.Complexity.NPComplete.MultiwayPartition.multiwayPartition_npComplete": "a9e7259fd7edd0c5",
+"MetaMathlibExt.Complexity.NPComplete.MultiwayPartition.multiwayPartition_npComplete": "1233480a1166f9c5",
 "MetaMathlibExt.Complexity.NPComplete.NNIDistance.IsNNIStep": "7a2a3b789cdf2b52",
 "MetaMathlibExt.Complexity.NPComplete.NNIDistance.NNIDistanceAtMost": "c61e8e66915da428",
 "MetaMathlibExt.Complexity.NPComplete.NNIDistance.NNIDistanceFeasible": "b0ad0dc85144859a",
