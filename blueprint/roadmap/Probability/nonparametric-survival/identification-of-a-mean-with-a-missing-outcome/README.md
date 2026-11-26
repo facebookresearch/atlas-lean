@@ -22,3 +22,6 @@
 ## Inverse-response weighting under MAR, general covariate
 
 - [Identification by inverse-response weighting under MAR, general covariate](integral-ipw-eq-integral-of-mar-cond-exp.md)
+
+- [Complete-case identification under MCAR](complete-case-mean-eq-integral-of-mcar.md)
+- [Identification by inverse-response weighting under MAR](ipw-mean-eq-integral-of-mar.md)

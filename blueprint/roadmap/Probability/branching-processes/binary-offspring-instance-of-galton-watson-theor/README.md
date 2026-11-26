@@ -10,6 +10,7 @@
 ## PGF identity: `f(s) = 1 - p + p * s ^ 2`
 
 - [Mean binary Offspring](mean-binary-offspring.md)
+- [Generating function of the binary offspring law](pgf-binary-offspring.md)
 
 ## Extinction: specialisation of the least-fixed-point interface
 
@@ -20,3 +21,4 @@
 - [Extinction Prob binary Offspring eq one iff](extinction-prob-binary-offspring-eq-one.md)
 - [Extinction Prob binary Offspring of le](extinction-prob-binary-offspring-of-le.md)
 - [Extinction Prob binary Offspring of gt](extinction-prob-binary-offspring-of-gt.md)
+- [Least fixed point of the binary offspring equation](is-least-binary-fixed-point-one-of-le.md)

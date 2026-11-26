@@ -5,7 +5,7 @@
 - [Power Constraint](power-constraint.md)
 - [Mem Lp two](mem-lp-two.md)
 - [Integrable norm sq](integrable-norm-sq.md)
-- [Integral norm sq le](integral-norm-sq-le.md)
+- [A power constraint bounds the second moment](integral-norm-sq-le.md)
 - [Integrable](integrable.md)
 - [Power Constraint map iff](power-constraint-map-iff.md)
 
@@ -27,3 +27,7 @@
 - [Pos Semidef of covariance](pos-semidef-of-covariance.md)
 - [Pos Def output covariance](pos-def-output-covariance.md)
 - [Output moments of const input](output-moments-of-const-input.md)
+
+## The leaf bundle
+
+- [Linear Gaussian channel: joint law and moments](linear-gaussian-channel-law-and-moments.md)

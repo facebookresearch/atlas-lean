@@ -5,3 +5,4 @@
 - [Shannon Entropy Nats](shannon-entropy-nats.md)
 - [Shannon Entropy Nats eq mul log two](shannon-entropy-nats-eq-mul-log-two.md)
 - [Shannon Entropy Nats eq sum mul self Information](shannon-entropy-nats-eq-sum-mul-self-inf.md)
+- [Chebyshev form of the asymptotic equipartition property](aep-chebyshev.md)

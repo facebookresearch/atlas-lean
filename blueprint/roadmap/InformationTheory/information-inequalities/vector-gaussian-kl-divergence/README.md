@@ -27,3 +27,5 @@
 - [Kl Div multivariate Gaussian nondiagonal](kl-div-multivariate-gaussian-nondiagonal.md)
 - [Violated premise](kl-div-multivariate-gaussian-zero-covari.md)
 - [Kl Div multivariate Gaussian zero covariance ne](kl-div-multivariate-gaussian-zero-covari-2.md)
+- [Kullback-Leibler divergence between multivariate Gaussians](kl-div-multivariate-gaussian.md)
+- [KL divergence between Gaussians with equal covariance](kl-div-multivariate-gaussian-same-covari.md)

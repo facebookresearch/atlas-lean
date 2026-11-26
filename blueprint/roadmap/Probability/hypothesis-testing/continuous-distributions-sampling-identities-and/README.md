@@ -24,7 +24,7 @@
 
 ## D. Weibull survival and weakest-link scaling
 
-- [Weibull Survival](weibull-survival.md)
+- [Weibull survival function](weibull-survival.md)
 - [Weibull Survival of neg](weibull-survival-of-neg.md)
 - [Weibull Survival of nonneg](weibull-survival-of-nonneg.md)
 - [Bridge to the canonical Weibull law](weibull-survival-eq-weibull-measure-real.md)
@@ -49,7 +49,7 @@
 
 ## F. Maxwell speed density
 
-- [Maxwell Speed PDF](maxwell-speed-pdf.md)
+- [Maxwell speed density](maxwell-speed-pdf.md)
 - [Maxwell Speed PDF nonneg](maxwell-speed-pdf-nonneg.md)
 - [Normalization of the Maxwell speed density](integral-maxwell-speed-pdf.md)
 - [Second moment of the Maxwell speed density](integral-sq-mul-maxwell-speed-pdf.md)

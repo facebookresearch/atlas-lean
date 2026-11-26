@@ -4,7 +4,6 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 
 - [Congruence closure](congruence-closure/README.md)
 - [Cut elimination for classical linear logic](cut-elimination-for-classical-linear-logic/README.md)
-- [Ehrenfeucht–Fraïssé games on finite binary relations](ehrenfeucht-fra-ss-games-on-finite-binary-relati/README.md)
 - [Girard's translation into linear logic](girard-s-translation-into-linear-logic/README.md)
 - [Gödel's incompleteness theorems](g-del-s-incompleteness-theorems/README.md)
 - [Resolution](resolution/README.md)

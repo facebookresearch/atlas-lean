@@ -9,3 +9,5 @@
 - [Not exists affine log gaussian PDFReal ratio of ne variance](not-exists-affine-log-gaussian-pdfreal-r.md)
 - [Absolute continuity, density discharged](multivariate-gaussian-absolutely-continu.md)
 - [Rn Deriv multivariate Gaussian common covariance ae reference](rn-deriv-multivariate-gaussian-common-co-2.md)
+- [Likelihood ratio of Gaussians with a common covariance](rn-deriv-multivariate-gaussian-common-co.md)
+- [Gaussian Radon–Nikodym derivative with equal means is one](rn-deriv-multivariate-gaussian-self-eq-o.md)

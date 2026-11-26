@@ -6,3 +6,4 @@
 - [Integral cond selection Error eq](integral-cond-selection-error-eq.md)
 - [Covariance outcome Error selection Error](covariance-outcome-error-selection-error.md)
 - [Variance outcome Error](variance-outcome-error.md)
+- [Selected-sample mean under Gaussian selection](integral-cond-selected-outcome-eq.md)

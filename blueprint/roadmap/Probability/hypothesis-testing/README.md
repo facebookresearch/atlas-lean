@@ -23,7 +23,6 @@ These results compare hypotheses through their likelihoods: the Neyman–Pearson
 - [Neyman–Pearson lemma](neyman-pearson-dominated-two-simple.md)
 - [Monotone likelihood ratio](monotone-likelihood-ratio/README.md)
 - [Score, Wald and likelihood-ratio tests](score-wald-and-likelihood-ratio-tests/README.md)
-- [Sensitivity and uncertainty propagation: covariance of a linear map](sensitivity-and-uncertainty-propagation-covarian/README.md)
 - [Local power of the likelihood-ratio test](local-power-of-the-likelihood-ratio-test/README.md)
 - [Universal inference](universal-inference/README.md)
 
@@ -40,19 +39,16 @@ These procedures base inference on counts, ranks or random reassignments of the 
 - [Fisher's exact test](fisher-s-exact-test/README.md)
 - [Exact test for Hardy–Weinberg equilibrium](exact-test-for-hardy-weinberg-equilibrium/README.md)
 - [EXP3 loss estimator](exp3-loss-estimator/README.md)
-- [Finite conditioning cells: tower property and total variance](finite-conditioning-cells-tower-property-and-tot/README.md)
 - [Mann–Whitney statistic and ROC area](mann-whitney-statistic-and-roc-area/README.md)
 - [Measurable Bayes actions over a finite action space](measurable-bayes-actions-over-a-finite-action-sp/README.md)
 - [Permutation tests](permutation-tests/README.md)
 - [Prefix-dependent finite-horizon probability law](prefix-dependent-finite-horizon-probability-law/README.md)
 - [Split conformal prediction](split-conformal-prediction/README.md)
 - [Tail bounds for heterogeneous Bernoulli products](tail-bounds-for-heterogeneous-bernoulli-products/README.md)
-- [Tightness in `C(\[0,1\])` from a modulus of continuity](tightness-in-c-0-1-from-a-modulus-of-continuity/README.md)
 - [Full conformal prediction](full-conformal-prediction/README.md)
 - [Conformalized quantile regression](conformalized-quantile-regression/README.md)
 - [Continuous distributions, sampling identities and sampling limits](continuous-distributions-sampling-identities-and/README.md)
 - [Densities under a change of variables (normalizing flows)](densities-under-a-change-of-variables-normalizin/README.md)
-- [Donsker conditions under uniform bracketing entropy](donsker-conditions-under-uniform-bracketing-entr/README.md)
 - [Dyadic truncation of finite distributions](dyadic-truncation-of-finite-distributions/README.md)
 - [EOS finite-string mass conservation](eos-finite-string-mass-conservation/README.md)
 - [Uniform EOS: geometric tail and certain termination](uniform-eos-geometric-tail-and-certain-terminati/README.md)
@@ -88,5 +84,3 @@ Meta-analysis combines evidence from several studies and measures how much their
 - [The Bhattacharyya coefficient](bhattacharyya-coeff.md)
 
 ## Convergence in distribution implies boundedness in probability
-
-- [Convergence in distribution implies boundedness in probability](exists-forall-measure-lt-norm-le-of-tend.md)

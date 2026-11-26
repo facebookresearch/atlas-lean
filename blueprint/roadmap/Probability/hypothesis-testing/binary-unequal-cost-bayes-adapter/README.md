@@ -20,6 +20,7 @@
 - [Posterior losses](posterior-lintegral-binary-shifted-loss.md)
 - [Is Argmin Estimator binary Cost Rule](is-argmin-estimator-binary-cost-rule.md)
 - [Truth-only shift](binary-cost-avg-risk-eq-to-real-avg-risk.md)
+- [Finite-cost binary Bayes test](is-bayes-estimator-binary-cost-rule.md)
 
 ## Validation
 

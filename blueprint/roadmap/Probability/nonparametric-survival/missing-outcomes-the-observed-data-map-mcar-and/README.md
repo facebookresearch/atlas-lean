@@ -9,7 +9,7 @@
 ## Missingness mechanisms
 
 - [Missing completely at random](missing-completely-at-random.md)
-- [Missing at random](missing-at-random-cond-indep-fun.md)
+- [Missing at random through conditional independence given the covariate](missing-at-random-cond-indep-fun.md)
 
 ## MCAR through the response event
 
@@ -17,7 +17,7 @@
 - [Preimage mem cases](preimage-mem-cases.md)
 - [Missing Completely At Random iff](missing-completely-at-random-iff.md)
 - [MCAR as a discrete conditional independence](missing-completely-at-random-iff-cond-in.md)
-- [Cond Indep Discrete](cond-indep-discrete.md)
+- [Missing completely at random implies discrete conditional independence](cond-indep-discrete.md)
 
 ## Conditional probabilities given a countably valued covariate
 

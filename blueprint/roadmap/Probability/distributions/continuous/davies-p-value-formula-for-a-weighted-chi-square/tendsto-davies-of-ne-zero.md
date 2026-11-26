@@ -4,8 +4,6 @@
 
 $$\frac12 + \frac{1}{\pi} \int_0^T \frac{\operatorname{Im}\bigl(e^{-i t q} \varphi(t)\bigr)}{t} \, dt \;\longrightarrow\; P(Q > q).$$
 
-If all weights are zero then $Q \equiv 0$, and at $q = 0$ the limit is the mid-p value $\tfrac12$, not $P(Q > 0) = 0$, so the nonzero-weight hypothesis is needed.
-
 ## Sources
 
 R. B. Davies, *Algorithm AS 155: The distribution of a linear combination of χ² random variables*, J. R. Stat. Soc. C 29 (1980), 323–333, eq. (1).

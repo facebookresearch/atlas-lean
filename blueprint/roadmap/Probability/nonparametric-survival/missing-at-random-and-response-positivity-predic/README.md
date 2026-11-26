@@ -2,4 +2,4 @@
 
 - [Missing at random](missing-at-random.md)
 - [Positivity](response-positivity.md)
-- [Response Positivity iff](response-positivity-iff.md)
+- [Positivity for a finitely valued covariate](response-positivity-iff.md)

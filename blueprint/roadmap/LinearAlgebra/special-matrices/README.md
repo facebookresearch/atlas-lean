@@ -3,7 +3,6 @@
 Classes of matrices defined by their structure or entries: Toeplitz, Hankel and circulant matrices, Hadamard and sign matrices, combinatorial matrices, nonnegative, row-stochastic, doubly stochastic and totally positive matrices.
 
 - [Circulant matrices](circulant-matrices/README.md)
-- [Complex iwasawa](complex-iwasawa/README.md)
 - [Cross products under a real `3 × 3` matrix](cross-products-under-a-real-3-3-matrix/README.md)
 - [Entropy-minimizing table uniqueness](entropy-minimizing-table-uniqueness/README.md)
 - [Finite determination of linear observations](finite-determination-of-linear-observations/README.md)

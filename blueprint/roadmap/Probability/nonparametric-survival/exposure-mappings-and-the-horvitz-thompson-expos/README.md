@@ -11,3 +11,4 @@
 - [Design-unbiasedness of the exposure-total estimator](integral-exposure-httotal-of-consistent.md)
 - [Integral exposure HTTotal div card of consistent](integral-exposure-httotal-div-card-of-co.md)
 - [Design-unbiasedness of the mean estimator under the design-free Condition 1](integral-exposure-httotal-div-card.md)
+- [Design-unbiasedness of the exposure Horvitz-Thompson estimator](integral-exposure-httotal.md)

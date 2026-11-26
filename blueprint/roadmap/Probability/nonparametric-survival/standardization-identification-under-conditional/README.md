@@ -7,3 +7,5 @@
 - [Per cell treated](per-cell-treated.md)
 - [Per cell control](per-cell-control.md)
 - [Standardization, control arm](integral-eq-sum-standardized-control.md)
+- [Standardization, treated arm](integral-eq-sum-standardized-treated.md)
+- [Identification of the ATE by standardization](integral-sub-eq-sum-standardized.md)

@@ -13,5 +13,3 @@ Let $(\Omega, \mu)$ be a probability space, $X : \Omega \to \mathcal{X}$ a covar
 Let $\psi = m_1(X) - m_0(X) + \mathbf{1}_T (Y - m_1(X))/e(X) - \mathbf{1}_{T^c} (Y - m_0(X))/(1 - e(X))$ be the AIPW score at these nuisances. Write $h^* = m_1/e + m_0/(1 - e)$ for the efficient augmentation and, for $h : \mathcal{X} \to \mathbb{R}$, $\psi_h = \mathbf{1}_T Y/e(X) - \mathbf{1}_{T^c} Y/(1 - e(X)) - (\mathbf{1}_T - e(X))\, h(X)$ for the augmented IPW score. Write $B(c) = \mathbb{E}\bigl[s_1(X)/e(X) + s_0(X)/(1 - e(X)) + (m_1(X) - m_0(X) - c)^2\bigr]$ for Hahn's expression at center $c$. For every measurable $h : \mathcal{X} \to \mathbb{R}$ with $h(X) \in L^2(\mu)$, with $\tau = \mathbb{E}[Y_1 - Y_0]$,
 
 $$B(\tau) \le \operatorname{Var}(\psi_h).$$
-
-Since $\operatorname{Var}(\psi) = B(\tau)$, the AIPW score attains this minimum variance in the augmented IPW class.

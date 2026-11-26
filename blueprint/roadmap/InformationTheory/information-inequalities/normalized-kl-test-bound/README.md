@@ -3,6 +3,7 @@
 ## Proof-facing lemmas
 
 - [Absolutely Continuous tilted of absolutely Continuous](absolutely-continuous-tilted-of-absolute.md)
+- [Normalized test bound on the expected log-likelihood ratio](integral-le-integral-llr.md)
 
 ## Validation
 
@@ -13,3 +14,7 @@
 - [Integral two Point Score tilted](integral-two-point-score-tilted.md)
 - [Kl Div tilted two Point Score](kl-div-tilted-two-point-score.md)
 - [Kl Div self lt of Real integral const](kl-div-self-lt-of-real-integral-const.md)
+
+## Headline
+
+- [Normalized KL test bound](of-real-integral-le-kl-div.md)

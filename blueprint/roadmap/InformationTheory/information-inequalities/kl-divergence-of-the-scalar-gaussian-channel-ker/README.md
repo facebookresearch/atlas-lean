@@ -13,3 +13,5 @@
 - [Kl Div comp Prod gaussian Noise Kernel dirac three](kl-div-comp-prod-gaussian-noise-kernel-d-2.md)
 - [Scalar Gaussian Kernel KLReal gaussian Real](scalar-gaussian-kernel-klreal-gaussian-r.md)
 - [Kl Div comp Prod gaussian Noise Kernel gaussian Real](kl-div-comp-prod-gaussian-noise-kernel-g.md)
+- [Scalar Gaussian channel kernel divergence](kl-div-comp-prod-gaussian-noise-kernel.md)
+- [Scalar Gaussian channel divergence under a power bound](kl-div-comp-prod-gaussian-noise-kernel-o.md)

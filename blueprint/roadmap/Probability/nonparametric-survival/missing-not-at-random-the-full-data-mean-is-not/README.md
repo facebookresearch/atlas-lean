@@ -11,16 +11,18 @@
 
 - [The identified set of the mean is all of `ℝ`](exists-map-obs-ry-eq-integral-eq.md)
 - [Identification forces full response](measure-real-nonresponse-eq-zero-of-iden.md)
+- [Nonidentification of the mean under unmodeled MNAR](exists-map-obs-ry-eq-integral-ne.md)
 
 ## An explicit pair of full-data laws
 
-- [Const Outcome Law](const-outcome-law.md)
+- [The constant-outcome full-data law](const-outcome-law.md)
 - [Self Masking Law](self-masking-law.md)
 - [Map obs RY const Outcome Law](map-obs-ry-const-outcome-law.md)
 - [Integral snd const Outcome Law](integral-snd-const-outcome-law.md)
 - [Integral snd self Masking Law](integral-snd-self-masking-law.md)
 - [Cond Indep Discrete const Outcome Law](cond-indep-discrete-const-outcome-law.md)
 - [Not cond Indep Discrete self Masking Law](not-cond-indep-discrete-self-masking-law.md)
+- [Explicit nonidentifiability of a missing-not-at-random mean](const-outcome-law-self-masking-law-nonid.md)
 
 ## Summary-statistic imputation
 

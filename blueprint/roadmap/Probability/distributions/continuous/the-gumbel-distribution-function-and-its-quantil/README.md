@@ -1,7 +1,7 @@
 # The Gumbel distribution function and its quantile
 
 - [Gumbel CDF](gumbel-cdf.md)
-- [Gumbel Quantile](gumbel-quantile.md)
+- [Gumbel quantile function](gumbel-quantile.md)
 - [Gumbel CDF gumbel Quantile](gumbel-cdf-gumbel-quantile.md)
 - [Gumbel Quantile gumbel CDF](gumbel-quantile-gumbel-cdf.md)
 - [Strict Mono gumbel CDF](strict-mono-gumbel-cdf.md)

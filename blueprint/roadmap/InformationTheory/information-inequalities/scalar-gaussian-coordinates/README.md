@@ -26,3 +26,7 @@
 - [Not scalar Power Bound zero const](not-scalar-power-bound-zero-const.md)
 - [Scalar Power Bound gaussian Real](scalar-power-bound-gaussian-real.md)
 - [Not scalar Power Bound of neg](not-scalar-power-bound-of-neg.md)
+- [Scalar power bound equals the vector power constraint](scalar-power-bound-iff-power-constraint.md)
+- [Scalar embedding preserves Kullback–Leibler divergence](kl-div-map-scalar-coord.md)
+- [Scalar embedding preserves mutual information](measure-mutual-information-map-scalar-co.md)
+- [Scalar Gaussian channel as a one-dimensional vector channel](scalar-gaussian-channel-identification.md)

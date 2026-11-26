@@ -2,7 +2,7 @@
 
 ## Remainder
 
-- [Aipw Remainder](aipw-remainder.md)
+- [The AIPW remainder](aipw-remainder.md)
 - [Aipw Remainder eq zero of propensity](aipw-remainder-eq-zero-of-propensity.md)
 - [Aipw Remainder eq zero of outcome](aipw-remainder-eq-zero-of-outcome.md)
 - [The remainder is bounded by a product of `L²` nuisance errors](abs-aipw-remainder-le.md)

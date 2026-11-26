@@ -9,4 +9,4 @@ Then, with $\theta = \int \psi \, d\nu$,
 
 $$\sqrt{n}\,\bigl(\hat\theta_n - \theta\bigr) \xrightarrow{d} \mathcal{N}\bigl(0, \operatorname{Var}_\nu(\psi)\bigr),$$
 
-that is, it converges in distribution to any random variable $Z$ on a probability space with $Z \sim \mathcal{N}(0, \operatorname{Var}_\nu(\psi))$. No Donsker or entropy condition is assumed. For a Neyman-orthogonal score such as AIPW the bias is second order, so the bias condition holds under product rates of the nuisance errors of order $o_P(n^{-1/2})$.
+that is, it converges in distribution to any random variable $Z$ on a probability space with $Z \sim \mathcal{N}(0, \operatorname{Var}_\nu(\psi))$. No Donsker or entropy condition is assumed.

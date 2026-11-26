@@ -1,10 +1,12 @@
 # Kullback-Leibler divergence between real Gaussians
 
-- [Scalar Gaussian KLReal](scalar-gaussian-klreal.md)
+- [Closed-form expression for the divergence between real Gaussians](scalar-gaussian-klreal.md)
 - [Kl Div gaussian Real of pos](kl-div-gaussian-real-of-pos.md)
 - [Scalar Gaussian KLReal self](scalar-gaussian-klreal-self.md)
 - [Kl Div gaussian Real self](kl-div-gaussian-real-self.md)
-- [Scalar Gaussian KLReal same variance](scalar-gaussian-klreal-same-variance.md)
+- [The closed-form Gaussian divergence expression at a common variance](scalar-gaussian-klreal-same-variance.md)
 - [Kl Div gaussian Real same variance](kl-div-gaussian-real-same-variance.md)
 - [Kl Div gaussian Real zero variance](kl-div-gaussian-real-zero-variance.md)
-- [Kl Div gaussian Real zero variance ne](kl-div-gaussian-real-zero-variance-ne.md)
+- [The closed form fails for a zero first variance](kl-div-gaussian-real-zero-variance-ne.md)
+- [Scalar Gaussian divergence formula is the one-dimensional vector formula](scalar-gaussian-klreal-eq-multivariate-g.md)
+- [Kullback–Leibler divergence between real Gaussians](kl-div-gaussian-real.md)
