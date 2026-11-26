@@ -108,7 +108,7 @@ section RingLemmas
 variable {B R F : Type*} [CommRing B] [CommRing R] [CommRing F]
 
 /-- A ring map with values in the range of an injective ring map `j`, lifted through `j`. -/
-def liftOfRange (j : R →+* F) (hj : Function.Injective j) (g : B →+* F)
+private def liftOfRange (j : R →+* F) (hj : Function.Injective j) (g : B →+* F)
     (h : ∀ b, g b ∈ j.range) : B →+* R :=
   (RingEquiv.ofBijective j.rangeRestrict
       ⟨fun _ _ e => hj (congrArg Subtype.val e), j.rangeRestrict_surjective⟩).symm.toRingHom.comp
@@ -209,7 +209,7 @@ variable (S : ValuativeCommSq (gluedToBase K t))
   (φ : (glued K t).presheaf.stalk (genericPoint (glued K t)) ⟶ CommRingCat.of S.K)
 
 /-- The map from `L` to the fraction field of a valuative square, through the generic stalk. -/
-def gL : L →+* S.K := φ.hom.comp (gluedFunctionFieldEquiv K t).toRingHom
+private def gL : L →+* S.K := φ.hom.comp (gluedFunctionFieldEquiv K t).toRingHom
 
 omit [Algebra.IsSeparable K⟮t⟯ L] [FiniteDimensional K⟮t⁻¹⟯ L] [Algebra.IsSeparable K⟮t⁻¹⟯ L] in
 private theorem gL_ffEquiv_symm (y : (glued K t).functionField) :
@@ -217,7 +217,7 @@ private theorem gL_ffEquiv_symm (y : (glued K t).functionField) :
   congrArg φ.hom ((gluedFunctionFieldEquiv K t).apply_symm_apply y)
 
 /-- The valuation subring of `L` pulled back from the valuation ring of a valuative square. -/
-def pullbackVS : ValuationSubring L where
+private def pullbackVS : ValuationSubring L where
   toSubring := (algebraMap S.R S.K).range.comap (gL K t S φ)
   mem_or_inv_mem' y := by
     rcases ValuationRing.isInteger_or_isInteger S.R (gL K t S φ y) with ⟨r, hr⟩ | ⟨r, hr⟩
@@ -225,7 +225,7 @@ def pullbackVS : ValuationSubring L where
     · exact Or.inr ⟨r, by rw [map_inv₀]; exact hr⟩
 
 omit [Algebra.IsSeparable K⟮t⟯ L] [FiniteDimensional K⟮t⁻¹⟯ L] [Algebra.IsSeparable K⟮t⁻¹⟯ L] in
-theorem mem_pullbackVS_iff (y : L) :
+private theorem mem_pullbackVS_iff (y : L) :
     y ∈ pullbackVS K t S φ ↔ gL K t S φ y ∈ (algebraMap S.R S.K).range := Iff.rfl
 
 omit [Algebra.IsSeparable K⟮t⟯ L] [FiniteDimensional K⟮t⁻¹⟯ L] [Algebra.IsSeparable K⟮t⁻¹⟯ L] in
@@ -313,11 +313,11 @@ def stalkChartEquiv :
   (asIso (ιA.stalkMap p)).commRingCatIsoToRingEquiv
 
 /-- The map from the stalk of the chart `Spec A` at `p` to the fraction field of the square. -/
-def φA : (Spec (CommRingCat.of A)).presheaf.stalk p →+* S.K :=
+private def φA : (Spec (CommRingCat.of A)).presheaf.stalk p →+* S.K :=
   φ.hom.comp (stalkChartEquiv K t A ιA p).symm.toRingHom
 
 /-- The map from `A` to the fraction field of the square, through the stalk at `p`. -/
-def gA : A →+* S.K := (φA K t A ιA S p φ).comp (StructureSheaf.toStalk A p).hom
+private def gA : A →+* S.K := (φA K t A ιA S p φ).comp (StructureSheaf.toStalk A p).hom
 
 omit [Algebra.IsSeparable K⟮t⟯ L] [FiniteDimensional K⟮t⟯ L] [FiniteDimensional K⟮t⁻¹⟯ L]
     [Algebra.IsSeparable K⟮t⁻¹⟯ L] in

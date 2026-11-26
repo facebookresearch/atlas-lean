@@ -32,6 +32,7 @@ public import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
 public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 public import Mathlib.RingTheory.Valuation.Integral
 public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
+public import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaces
 import Mathlib.Algebra.Polynomial.Lifts
 import Mathlib.FieldTheory.Perfect
 import Mathlib.RingTheory.Polynomial.ScaleRoots
@@ -61,11 +62,11 @@ namespace CurveModel
 variable (K : Type u) [Field K] {L : Type u} [Field L] [Algebra K L]
 
 /-- Evaluation of polynomials at `s`, with values in `K[s]`. -/
-def aevalAdjoin (s : L) : K[X] →ₐ[K] Algebra.adjoin K ({s} : Set L) :=
+private def aevalAdjoin (s : L) : K[X] →ₐ[K] Algebra.adjoin K ({s} : Set L) :=
   (aeval (R := K) s).codRestrict (Algebra.adjoin K ({s} : Set L))
     (fun p => by simp [Algebra.adjoin_singleton_eq_range_aeval])
 
-theorem aevalAdjoin_surjective (s : L) : Function.Surjective (aevalAdjoin K s) := by
+private theorem aevalAdjoin_surjective (s : L) : Function.Surjective (aevalAdjoin K s) := by
   rintro ⟨x, hx⟩
   rw [Algebra.adjoin_singleton_eq_range_aeval] at hx
   obtain ⟨p, rfl⟩ := hx
@@ -80,17 +81,8 @@ scoped instance isDedekindDomain_adjoin_singleton (s : L) :
   inferInstance
 
 /-- The chart ring of `S`: the integral closure of `K[S]` in `L`. -/
-def chartRing (S : Set L) : Subalgebra K L where
-  carrier := {x | IsIntegral (Algebra.adjoin K S) x}
-  mul_mem' ha hb := ha.mul hb
-  one_mem' := isIntegral_one
-  add_mem' ha hb := ha.add hb
-  zero_mem' := isIntegral_zero
-  algebraMap_mem' a := by
-    have : IsIntegral (Algebra.adjoin K S)
-        (algebraMap (Algebra.adjoin K S) L (algebraMap K (Algebra.adjoin K S) a)) :=
-      isIntegral_algebraMap
-    simpa [← IsScalarTower.algebraMap_apply] using this
+abbrev chartRing (S : Set L) : Subalgebra K L :=
+  (integralClosure (Algebra.adjoin K S) L).restrictScalars K
 
 theorem mem_chartRing_iff {S : Set L} {x : L} :
     x ∈ chartRing K S ↔ IsIntegral (Algebra.adjoin K S) x := Iff.rfl
@@ -181,15 +173,11 @@ theorem adjoin_le_valuationSubring (O : ValuationSubring L)
   | mul y z _ _ hy hz => exact mul_mem hy hz
 
 /-- A valuation subring containing the image of `K`, as a `K`-subalgebra. -/
-def _root_.ValuationSubring.toSubalgebraOfBase (O : ValuationSubring L)
+private def _root_.ValuationSubring.toSubalgebraOfBase (O : ValuationSubring L)
     (hK : ∀ a : K, algebraMap K L a ∈ O) : Subalgebra K L :=
   { O.toSubring with algebraMap_mem' := hK }
 
-theorem _root_.ValuationSubring.mem_toSubalgebraOfBase_iff (O : ValuationSubring L)
-    (hK : ∀ a : K, algebraMap K L a ∈ O) {x : L} : x ∈ O.toSubalgebraOfBase hK ↔ x ∈ O :=
-  Iff.rfl
-
-theorem _root_.ValuationSubring.integers_toSubalgebraOfBase (O : ValuationSubring L)
+private theorem _root_.ValuationSubring.integers_toSubalgebraOfBase (O : ValuationSubring L)
     (hK : ∀ a : K, algebraMap K L a ∈ O) : O.valuation.Integers (O.toSubalgebraOfBase hK) where
   hom_inj := Subtype.val_injective
   map_le_one a := (O.valuation_le_one_iff _).mpr a.2
@@ -314,23 +302,11 @@ theorem mem_ofHeightOneSpectrum (𝔭 : HeightOneSpectrum (chartRing K ({s} : Se
   exact 𝔭.valuation_le_one (K := L)
     (⟨s, subset_chartRing K ({s} : Set L) (Set.mem_singleton s)⟩ : chartRing K ({s} : Set L))
 
-theorem ofHeightOneSpectrum_injective :
-    Function.Injective
-      (Place.ofHeightOneSpectrum (K := K) (F := L) (R := chartRing K ({s} : Set L))) := by
-  intro 𝔭 𝔮 h
-  have hv := congrArg Place.toValuationSubring h
-  simp only [Place.ofHeightOneSpectrum_toValuationSubring] at hv
-  have hequiv := (Valuation.isEquiv_iff_valuationSubring _ _).mpr hv
-  ext a
-  rw [← HeightOneSpectrum.valuation_lt_one_iff_mem (K := L),
-    ← HeightOneSpectrum.valuation_lt_one_iff_mem (K := L)]
-  exact hequiv.lt_one_iff_lt_one
-
 /-- Height-one primes of the chart ring of `{s}` are the places at which `s` is integral. -/
 def primeEquivChartPlaces : HeightOneSpectrum (chartRing K ({s} : Set L)) ≃ chartPlaces K s :=
   Equiv.ofBijective
     (fun 𝔭 => ⟨Place.ofHeightOneSpectrum (K := K) 𝔭, mem_ofHeightOneSpectrum K s 𝔭⟩)
-    ⟨fun 𝔭 𝔮 h => ofHeightOneSpectrum_injective K s (congrArg Subtype.val h),
+    ⟨fun 𝔭 𝔮 h => Place.ofHeightOneSpectrum_injective (K := K) (congrArg Subtype.val h),
      fun v => by
       obtain ⟨𝔭, h𝔭⟩ := exists_ofHeightOneSpectrum_eq K s v.1 v.2
       exact ⟨𝔭, Subtype.ext h𝔭⟩⟩

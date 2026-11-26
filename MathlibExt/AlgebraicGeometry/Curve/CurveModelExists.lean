@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
+`Definitions/Def_AlgebraicCurve_CurveModelConstruction.lean`,
+`P2M/Sol/S_AlgebraicCurve_CurveModel_isProper_smooth_places_affineCover_glued.lean`,
 `Theorems/Thm_AlgebraicCurve_CurveModel_nonempty_of_perfectField.lean`
 and
 `P2M/Sol/S_AlgebraicCurve_CurveModel_nonempty_of_perfectField.lean`

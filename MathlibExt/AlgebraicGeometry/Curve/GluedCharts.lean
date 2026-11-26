@@ -43,9 +43,11 @@ rings of `{t}` and `{t⁻¹}` along `Spec` of the chart ring of `{t, t⁻¹}` gi
 `AlgebraicCurve.CurveModel.glued K t` with a morphism `AlgebraicCurve.CurveModel.gluedToBase K t`
 to `Spec K`. This file identifies its function field with `L`
 (`AlgebraicCurve.CurveModel.gluedFunctionFieldEquiv`), proves that it is smooth of relative
-dimension one over `Spec K` when `K` is perfect, and, for transcendental `t`, that its closed points
-correspond bijectively to the places of `L / K` (`AlgebraicCurve.CurveModel.gluedPlaceOfPoint`),
-the local ring at a closed point being the valuation ring of its place.
+dimension one over `Spec K` when `K` is perfect and `t` is transcendental
+(`AlgebraicCurve.CurveModel.smoothOfRelativeDimension_one_gluedToBase`), and, for transcendental
+`t`, that its closed points correspond bijectively to the places of `L / K`
+(`AlgebraicCurve.CurveModel.gluedPlaceOfPoint`), the local ring at a closed point being the
+valuation ring of its place.
 
 Properness is proved in `MathlibExt.AlgebraicGeometry.Curve.GluedChartsProper`, and affine
 opens through finite sets of points in `MathlibExt.AlgebraicGeometry.Curve.GluedChartsAffine`.
@@ -771,7 +773,7 @@ theorem gluedPlaceOfPoint_injective (ht : Transcendental K t) :
   · obtain ⟨x₀, rfl⟩ := h₁
     obtain ⟨y₀, rfl⟩ := h₂
     rw [gluedPlaceOfPoint_ι₀, gluedPlaceOfPoint_ι₀] at hxy
-    have h' := ofHeightOneSpectrum_injective K t hxy
+    have h' := Place.ofHeightOneSpectrum_injective (K := K) hxy
     have hxy' : x₀ = y₀ := PrimeSpectrum.ext (congrArg HeightOneSpectrum.asIdeal h')
     subst hxy'
     rfl
@@ -793,7 +795,7 @@ theorem gluedPlaceOfPoint_injective (ht : Transcendental K t) :
     obtain ⟨yi, hyi⟩ := mem_range_ιInf_of_not_mem_range_ι₀ K t h₂
     rw [gluedPlaceOfPoint_of_not_mem K t ht ⟨x, hx⟩ h₁ xi hxi,
       gluedPlaceOfPoint_of_not_mem K t ht ⟨y, hy⟩ h₂ yi hyi] at hxy
-    have h' := ofHeightOneSpectrum_injective K t⁻¹ hxy
+    have h' := Place.ofHeightOneSpectrum_injective (K := K) hxy
     have hxy' : xi = yi := PrimeSpectrum.ext (congrArg HeightOneSpectrum.asIdeal h')
     subst hxy'
     exact Subtype.ext (hxi.symm.trans hyi)

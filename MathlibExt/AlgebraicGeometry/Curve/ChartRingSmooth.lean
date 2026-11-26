@@ -36,7 +36,6 @@ import Mathlib.AlgebraicGeometry.Morphisms.Etale
 import Mathlib.RingTheory.AlgebraicIndependent.Transcendental
 import Mathlib.RingTheory.DedekindDomain.Dvr
 import Mathlib.RingTheory.Etale.Kaehler
-import Mathlib.RingTheory.Extension.Presentation.Submersive
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.LocalRing.ResidueField.Instances
 import Mathlib.RingTheory.RingHom.LocallyStandardSmooth
@@ -108,25 +107,9 @@ private theorem transcendental_of_mem [IsDomain A] {𝔪 : Ideal A} (hne : 𝔪 
 
 end Coordinate
 
-/-- The presentation of a polynomial ring with no relations, as a submersive presentation. -/
-private def freeSubmersivePresentation (R : Type u) [CommRing R] (ι : Type) :
-    SubmersivePresentation R (MvPolynomial ι R) ι (PEmpty : Type) where
-  __ := Generators.mvPolynomial R ι
-  relation := PEmpty.elim
-  span_range_relation_eq_ker := by simp [Set.range_eq_empty, Generators.ker_mvPolynomial]
-  map := PEmpty.elim
-  map_inj := fun a => a.elim
-  jacobian_isUnit := by
-    rw [PreSubmersivePresentation.jacobian, LinearMap.det_eq_one_of_subsingleton, map_one]
-    exact isUnit_one
-
 private instance isStandardSmoothOfRelativeDimension_polynomial (R : Type u) [CommRing R] :
-    IsStandardSmoothOfRelativeDimension 1 R R[X] := by
-  have h : IsStandardSmoothOfRelativeDimension 1 R (MvPolynomial PUnit R) :=
-    (freeSubmersivePresentation R PUnit).isStandardSmoothOfRelativeDimension
-      (by simp [Presentation.dimension])
-  exact IsStandardSmoothOfRelativeDimension.of_algEquiv (n := 1) (R := R)
-    (S := MvPolynomial PUnit R) (MvPolynomial.uniqueAlgEquiv R PUnit)
+    IsStandardSmoothOfRelativeDimension 1 R R[X] :=
+  IsStandardSmoothOfRelativeDimension.of_algEquiv 1 (MvPolynomial.uniqueAlgEquiv R (Fin 1))
 
 private theorem isStandardSmoothOfRelativeDimension_adjoin_single (s : L)
     (hs : Transcendental K s) :

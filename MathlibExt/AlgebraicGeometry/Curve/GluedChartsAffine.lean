@@ -43,8 +43,6 @@ every finite set of points avoids one of these conditions, so it lies in an affi
 
 set_option backward.isDefEq.respectTransparency.types false
 
-@[expose] public section
-
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry IntermediateField IsDedekindDomain
@@ -160,10 +158,10 @@ def tma : chartRing K ({t} : Set L) := tChart K t - algebraMap K _ a
 /-- The element `1 - a t⁻¹` of the chart ring of `{t⁻¹}`. -/
 def gInf : chartRing K ({t⁻¹} : Set L) := 1 - algebraMap K _ a * tInvChart K t
 
-@[simp] theorem coe_tma : (tma K t a : L) = t - algebraMap K L a := by
+theorem coe_tma : (tma K t a : L) = t - algebraMap K L a := by
   rw [tma, Subalgebra.coe_sub, coe_tChart, Subalgebra.coe_algebraMap]
 
-@[simp] theorem coe_gInf : (gInf K t a : L) = 1 - algebraMap K L a * t⁻¹ := by
+theorem coe_gInf : (gInf K t a : L) = 1 - algebraMap K L a * t⁻¹ := by
   rw [gInf, Subalgebra.coe_sub, Subalgebra.coe_one, Subalgebra.coe_mul, coe_tInvChart,
     Subalgebra.coe_algebraMap]
 
@@ -624,7 +622,7 @@ section Packaging
 
 variable [Infinite K] [Fact (t ≠ 0)] [FiniteDimensional K⟮t⟯ L]
 
-theorem finset_subset_affineOpen_glued :
+public theorem finset_subset_affineOpen_glued :
     ∀ F : Finset (glued K t), ∃ U : (glued K t).Opens, IsAffineOpen U ∧ ∀ x ∈ F, x ∈ U := by
   intro F
   have hfin : ((⋃ x ∈ (F : Set (glued K t)), {a : K | x ∉ Ua K t a}) ∪
