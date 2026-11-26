@@ -88,7 +88,10 @@ private theorem representativeComparison_naturality
   let R : InjectiveResolution Q := injectiveResolution Q
   let R' : InjectiveResolution Q' := injectiveResolution Q'
   let φ : R.Hom R' τ :=
-    ⟨InjectiveResolution.desc τ R' R, InjectiveResolution.desc_commutes_zero τ R' R⟩
+    { hom := InjectiveResolution.desc τ R' R
+      ι_f_zero_comp_hom_f_zero := by
+        simpa only [CochainComplex.single₀_map_f_zero] using
+          InjectiveResolution.desc_commutes_zero τ R' R }
   let a : G.obj (R.cocomplex.X (n + 1)) ⟶ G.obj (R'.cocomplex.X (n + 1)) :=
     G.map (φ.hom.f (n + 1))
   let d : (G.rightDerived (n + 1)).obj Q ⟶ (G.rightDerived (n + 1)).obj Q' :=
@@ -166,21 +169,26 @@ private theorem representativeComparison_unique
 
 end GenericComparisons
 
-/-- One internally selected comparison carries every original sheaf map and is unique. -/
+/-- For abelian sheaves on the small étale site of `X`, one comparison between
+positive Ext groups and derived global sections is natural in every sheaf map.
+Among comparison families with the specified cycle-class and Ext-representative
+formulas, it is unique. The positive degree is `n + 1`. -/
 theorem positive_ext_original_map_naturality :
-    let Γ := Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}
-    ∃ p : ∀ (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ),
+    let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
+    letI : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
+    let Γ : C ⥤ AddCommGrpCat.{max u w} :=
+      Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}
+    ∃ p : ∀ (Q : C) (n : ℕ),
       (positiveShort.{u, w} X Q n).g.hom.ker →+ Sheaf.H.{max u w, max u w, u, u + 1} Q (n + 1),
-      ∃ e : ∀ (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ),
+      ∃ e : ∀ (Q : C) (n : ℕ),
         Sheaf.H.{max u w, max u w, u, u + 1} Q (n + 1) ≃+ (Γ.rightDerived (n + 1)).obj Q,
       positiveExtPacket.{u, w} X p e ∧
-      (∀ (Q Q' : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (τ : Q ⟶ Q') (n : ℕ) (α),
+      (∀ (Q Q' : C) (τ : Q ⟶ Q') (n : ℕ) (α),
         e Q' n (Sheaf.H.map τ (n + 1) α) = (Γ.rightDerived (n + 1)).map τ (e Q n α)) ∧
       ∀ p' e', positiveExtPacket.{u, w} X p' e' → e' = e := by
-  intro Γ
+  intro C hExt Γ
+  letI : HasExt.{max u w} C := hExt
   obtain ⟨p, e, hPacket⟩ := positive_ext_cycle_comparison.{u, w} X
-  let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
-  let : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
   let G : C ⥤ AddCommGrpCat.{max u w} := Γ
   let Z : C := integralSheaf.{u, w} X
   let V : C → ℕ → Type (max u w) := fun Q n => (positiveShort.{u, w} X Q n).g.hom.ker
