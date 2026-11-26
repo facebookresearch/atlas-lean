@@ -12221,6 +12221,7 @@
   "MathlibExt/GroupTheory/SylowTwoSymmetricRationalKourovka15Problem25": {"to": "GroupTheory/characters-of-finite-groups", "title": "Rational groups"},
   "MathlibExt/GroupTheory/SylowMaximalSigmaNilpotentSupplementKourovka19Problem88": {"to": "GroupTheory/soluble-finite-groups", "title": "Supplements of maximal subgroups of Sylow subgroups"},
   "MathlibExt/GroupTheory/SzeleCyclicNumber": {"to": "GroupTheory/orders-and-spectra", "title": "Cyclic numbers"},
+  "MathlibExt/GroupTheory/TwoGroupAbelianRankOrderBoundKourovka19Problem75": {"to": "GroupTheory/finite-p-groups", "title": "Orders of 2-groups of bounded abelian rank"},
   "MathlibExt/GroupTheory/TwoGroupNormalClosureConjugateKourovka12Problem15": {"to": "GroupTheory/finite-p-groups", "title": "2-groups in which normal closures determine conjugacy"},
   "MathlibExt/GroupTheory/ThompsonGroupHowson": {"to": "GroupTheory/geometric-group-theory/branch-and-thompson-groups", "title": "Thompson's group F"},
   "MathlibExt/GroupTheory/TorsionFreeQuasivarietyPresentationKourovka18Problem17": {"to": "GroupTheory/varieties-and-equations", "title": "Presentations in the torsion-free quasivariety"},
