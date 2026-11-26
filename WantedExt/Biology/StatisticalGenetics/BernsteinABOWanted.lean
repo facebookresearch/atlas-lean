@@ -18,7 +18,8 @@ antigens at two independent loci; with Hardy–Weinberg and linkage equilibrium 
 `(A + AB)(B + AB) = AB`, the relation Bernstein used to reject it (Crow 1993, p. 4).
 
 The square-root identities of the triple-allele model (derived from Crow's Table 1; they are not
-printed in that table) are proved in `Domains.Biology.StatisticalGenetics.BernsteinABOSqrtEstimates`.
+printed in that table) are proved in
+`Domains.Biology.StatisticalGenetics.BernsteinABOSqrtEstimates`.
 Recorded here: the two-locus constraint, and the fact (derived) that the
 triple-allele model never satisfies the two-locus constraint when both `A` and `B` alleles are
 present, so the two models are distinguishable from phenotype frequencies alone. Hardy–Weinberg
