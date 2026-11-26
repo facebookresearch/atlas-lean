@@ -11,9 +11,11 @@ LICENSE file in the root directory of this source tree.
 
 In a closed population of `N` animals, `n₁` are captured and marked; a second, independent
 sample of `n₂` animals, each subset of size `n₂` equally likely, contains `m` marked animals. Then
-`m` is hypergeometric:
-`P(m = k) = C(n₁, k) C(N - n₁, n₂ - k) / C(N, n₂)`. The Lincoln–Petersen estimate `n₁ n₂ / m` is
-undefined (infinite) when `m = 0`, which has positive probability exactly when `n₁ + n₂ ≤ N`.
+`m` is hypergeometric: `P(m = k) = C(n₁, k) C(N - n₁, n₂ - k) / C(N, n₂)` for `k ≤ n₂`, and
+`P(m = k) = 0` for `k > n₂`, where the quotient, read with natural-number subtraction, would not
+vanish (for `N = n₁ = 2`, `n₂ = 1`, `k = 2` it is `1/2`). The Lincoln–Petersen estimate
+`n₁ n₂ / m` is undefined (infinite) when `m = 0`, which has positive probability exactly when
+`n₁ + n₂ ≤ N`.
 Chapman's estimate `(n₁ + 1)(n₂ + 1)/(m + 1) - 1` is always defined, and its expectation is
 `N - (N + 1) C(N - n₁, n₂ + 1) / C(N + 1, n₂ + 1)`; so it is exactly unbiased when `n₁ + n₂ ≥ N`
 and strictly biased downward when `n₁ + n₂ < N`.
@@ -38,11 +40,11 @@ namespace WantedExt.Biology.Ecology.CaptureRecaptureWanted
 
 open ProbabilityTheory
 
-/-- Chapman's estimate `(n₁ + 1)(n₂ + 1)/(m + 1) - 1`. -/
+/-- **Chapman's estimate.** The population-size estimate `(n₁ + 1)(n₂ + 1)/(m + 1) - 1`. -/
 noncomputable def chapman (n₁ n₂ m : ℕ) : ℝ :=
   ((n₁ : ℝ) + 1) * ((n₂ : ℝ) + 1) / ((m : ℝ) + 1) - 1
 
-/-- **The recapture count is hypergeometric** (Chapman 1951). Let a population `Fin N` contain a
+/-- **The recapture count is hypergeometric.** Let a population `Fin N` contain a
 marked set `A` of size `n₁`, and let the second sample be a uniformly random subset of size
 `n₂ ≤ N`. For every `k : ℕ`, the proportion of `n₂`-subsets `S` with `#(S ∩ A) = k` equals
 `hypergeometricReal N n₁ n₂ k`, which is `C(n₁, k) C(N - n₁, n₂ - k) / C(N, n₂)` for `k ≤ n₂` and
@@ -56,7 +58,7 @@ public theorem_wanted card_filter_inter_eq {N n₁ n₂ : ℕ} (A : Finset (Fin 
     (((Finset.univ : Finset (Fin N)).powersetCard n₂).filter fun S => (S ∩ A).card = k).card /
         (N.choose n₂ : ℝ) = hypergeometricReal N n₁ n₂ k
 
-/-- **Expectation of Chapman's estimate** (Chapman 1951; derived). For `n₁ ≤ N` and `n₂ ≤ N`,
+/-- **Expectation of Chapman's estimate.** For `n₁ ≤ N` and `n₂ ≤ N`,
 with `m` hypergeometric,
 `E[(n₁ + 1)(n₂ + 1)/(m + 1) - 1] = N - (N + 1) C(N - n₁, n₂ + 1) / C(N + 1, n₂ + 1)`.
 
@@ -67,7 +69,7 @@ public theorem_wanted expectation_chapman {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ 
     ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k =
       N - (N + 1) * ((N - n₁).choose (n₂ + 1) : ℝ) / ((N + 1).choose (n₂ + 1) : ℝ)
 
-/-- **Exact unbiasedness and strict bias of Chapman's estimate** (Chapman 1951; derived). For
+/-- **Exact unbiasedness and strict bias of Chapman's estimate.** For
 `n₁ ≤ N` and `n₂ ≤ N`, with `m` hypergeometric: if `n₁ + n₂ ≥ N` then
 `E[(n₁ + 1)(n₂ + 1)/(m + 1) - 1] = N`, and if `n₁ + n₂ < N` then this expectation is strictly less
 than `N`.
@@ -81,7 +83,7 @@ public theorem_wanted chapman_unbiased_iff {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤
       (n₁ + n₂ < N →
         ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k < N)
 
-/-- **When the Lincoln–Petersen estimate is undefined** (Chapman 1951; derived). For `n₁ ≤ N` and
+/-- **When the Lincoln–Petersen estimate is undefined.** For `n₁ ≤ N` and
 `n₂ ≤ N`, the probability `P(m = 0)` that the second sample contains no marked animal, where the
 Lincoln–Petersen estimate `n₁ n₂ / m` is infinite, is positive if and only if `n₁ + n₂ ≤ N`.
 

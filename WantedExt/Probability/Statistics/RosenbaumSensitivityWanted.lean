@@ -18,8 +18,10 @@ in `[1 / Γ, Γ]`; `Γ = 1` is a randomized experiment.
 Under the sharp null hypothesis of no treatment effect, the sign statistic, the number of
 untied pairs in which the treated unit has the larger response, is a sum of independent
 Bernoulli variables with success probabilities `π_i` (one of `π_i`, `1 - π_i` per pair, both in
-the same interval). Its upper tail is increasing in each `π_i`, so it lies between the tails of
-the binomial laws `Bin(n, 1 / (1 + Γ))` and `Bin(n, Γ / (1 + Γ))`. These two tails bound the
+the same interval). Its upper tail is the Poisson-binomial tail `poissonBinomialTail π k` of
+`MathlibExt.Probability.Distributions.PoissonBinomial`, which is nondecreasing in each `π_i`
+(`poissonBinomialTail_mono`), so it lies between the tails of the binomial laws
+`Bin(n, 1 / (1 + Γ))` and `Bin(n, Γ / (1 + Γ))` (`upperTail_bounds`). These two tails bound the
 p-value of the sign test for every `Γ ≥ 1`.
 
 Sources: P. R. Rosenbaum, "Sensitivity analysis for certain permutation inferences in matched
@@ -29,25 +31,18 @@ observational studies", Biometrika 74 (1987) 13–26; P. R. Rosenbaum, *Observat
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.SpecialFunctions.Exp
-public import Mathlib.Data.Finset.Powerset
+public import MathlibExt.Probability.Distributions.PoissonBinomial
 
 @[expose] public section
 
 namespace WantedExt.Probability.Statistics.RosenbaumSensitivityWanted
 
-/-- The probability `P(∑ᵢ Bᵢ ≥ k)` for independent Bernoulli variables `Bᵢ` with success
-probabilities `π_i`, `i < n` (a Poisson-binomial upper tail), as a sum over the sets of
-successes. -/
-noncomputable def bernoulliSumUpperTail {n : ℕ} (π : Fin n → ℝ) (k : ℕ) : ℝ :=
-  ∑ S ∈ (Finset.univ : Finset (Finset (Fin n))).filter (fun S => k ≤ S.card),
-    (∏ i ∈ S, π i) * ∏ i ∈ Sᶜ, (1 - π i)
+open ProbabilityTheory
 
-/-- **Treatment probabilities under bounded hidden bias** (Rosenbaum 1987). For `γ ≥ 0` and
-unobserved covariates `u₁, u₂ ∈ [0, 1]`, the probability `exp(γ u₁) / (exp(γ u₁) + exp(γ u₂))`
-that the first unit of a pair is treated lies in `[1 / (1 + Γ), Γ / (1 + Γ)]` with
-`Γ = exp γ`.
+/-- **Treatment probabilities under bounded hidden bias.** For `γ ≥ 0` and unobserved covariates
+`u₁, u₂ ∈ [0, 1]`, the probability `exp(γ u₁) / (exp(γ u₁) + exp(γ u₂))` that the first unit of a
+pair is treated lies in `[1 / (1 + Γ), Γ / (1 + Γ)]` with `Γ = exp γ`.
 
 Sources: P. R. Rosenbaum, "Sensitivity analysis for certain permutation inferences in matched
 observational studies", Biometrika 74 (1987) 13–26; P. R. Rosenbaum, *Observational Studies*, 2nd
@@ -58,18 +53,27 @@ public theorem_wanted treatmentProb_mem {γ u₁ u₂ : ℝ} (hγ : 0 ≤ γ) (h
       Real.exp (γ * u₁) / (Real.exp (γ * u₁) + Real.exp (γ * u₂)) ≤
         Real.exp γ / (1 + Real.exp γ)
 
-/-- **Binomial bounds on the sign-test tail** (Rosenbaum 1987). Let `Γ ≥ 1`, and let the success
-probabilities `π_i`, `i < n`, of independent Bernoulli variables satisfy
+/-- **Binomial bounds on the sign-test tail.** Let `Γ ≥ 1`, and let the success probabilities
+`π_i`, `i < n`, of independent Bernoulli variables `B_i` satisfy
 `1 / (1 + Γ) ≤ π_i ≤ Γ / (1 + Γ)` for every `i`. Then for every `k`,
-`P(Bin(n, 1 / (1 + Γ)) ≥ k) ≤ P(∑ᵢ Bᵢ ≥ k) ≤ P(Bin(n, Γ / (1 + Γ)) ≥ k)`, the binomial tails
-being the Poisson-binomial tails with constant success probabilities.
+`P(Bin(n, 1 / (1 + Γ)) ≥ k) ≤ P(∑ᵢ Bᵢ ≥ k) ≤ P(Bin(n, Γ / (1 + Γ)) ≥ k)`, where
+`P(∑ᵢ Bᵢ ≥ k)` is the Poisson-binomial upper tail `poissonBinomialTail π k` and the binomial tails
+are the Poisson-binomial tails with constant success probabilities.
 
 Sources: P. R. Rosenbaum, "Sensitivity analysis for certain permutation inferences in matched
 observational studies", Biometrika 74 (1987) 13–26; P. R. Rosenbaum, *Observational Studies*, 2nd
 ed., Springer (2002), §4.3. -/
-public theorem_wanted upperTail_bounds {n : ℕ} {Γ : ℝ} (hΓ : 1 ≤ Γ) (π : Fin n → ℝ)
+public theorem upperTail_bounds {n : ℕ} {Γ : ℝ} (hΓ : 1 ≤ Γ) (π : Fin n → ℝ)
     (hlo : ∀ i, 1 / (1 + Γ) ≤ π i) (hhi : ∀ i, π i ≤ Γ / (1 + Γ)) (k : ℕ) :
-    bernoulliSumUpperTail (fun _ : Fin n => 1 / (1 + Γ)) k ≤ bernoulliSumUpperTail π k ∧
-      bernoulliSumUpperTail π k ≤ bernoulliSumUpperTail (fun _ : Fin n => Γ / (1 + Γ)) k
+    poissonBinomialTail (fun _ : Fin n => 1 / (1 + Γ)) k ≤ poissonBinomialTail π k ∧
+      poissonBinomialTail π k ≤ poissonBinomialTail (fun _ : Fin n => Γ / (1 + Γ)) k := by
+  have hpos : (0 : ℝ) < 1 + Γ := by linarith
+  have hlo₀ : 0 ≤ 1 / (1 + Γ) := by positivity
+  have hlo₁ : 1 / (1 + Γ) ≤ 1 := (div_le_one₀ hpos).mpr (by linarith)
+  have hhi₀ : 0 ≤ Γ / (1 + Γ) := div_nonneg (by linarith) hpos.le
+  have hhi₁ : Γ / (1 + Γ) ≤ 1 := (div_le_one₀ hpos).mpr (by linarith)
+  have hπ : ∀ i, π i ∈ Set.Icc (0 : ℝ) 1 := fun i => ⟨hlo₀.trans (hlo i), (hhi i).trans hhi₁⟩
+  exact ⟨poissonBinomialTail_mono (fun _ => ⟨hlo₀, hlo₁⟩) hπ hlo k,
+    poissonBinomialTail_mono hπ (fun _ => ⟨hhi₀, hhi₁⟩) hhi k⟩
 
 end WantedExt.Probability.Statistics.RosenbaumSensitivityWanted

@@ -44,17 +44,18 @@ namespace WantedExt.Probability.Statistics.WilcoxonSignedRankWanted
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.Statistics.Measurement (sampleRank)
 
-/-- The signed-rank statistic `W⁺`, the sum over the positive `x_i` of the rank
+/-- **Signed-rank statistic.** The statistic `W⁺`, the sum over the positive `x_i` of the rank
 `sampleRank (fun j => |x j|) i = 1 + #{j | |x_j| < |x_i|}` of `|x_i|`. -/
 noncomputable def signedRankStatistic {n : ℕ} (x : Fin n → ℝ) : ℕ :=
   ∑ i ∈ Finset.univ.filter (fun i => 0 < x i), sampleRank (fun j => |x j|) i
 
-/-- The number `c_n(t)` of subsets of `{1, …, n}` with sum `t`. -/
+/-- **Number of subsets with a given sum.** The number `c_n(t)` of subsets of `{1, …, n}` with
+sum `t`. -/
 def subsetSumCount (n t : ℕ) : ℕ :=
   ((Finset.univ : Finset (Finset (Fin n))).filter
     fun S : Finset (Fin n) => (∑ j ∈ S, ((j : ℕ) + 1)) = t).card
 
-/-- **Exact null law of the signed-rank statistic** (Wilcoxon 1945). Let `μ` be a probability
+/-- **Exact null law of the signed-rank statistic.** Let `μ` be a probability
 measure and `D_1, …, D_n : Ω → ℝ` independent measurable random variables, each with a law that
 has no atoms and is symmetric about `0` (the law of `D_i` equals the law of `-D_i`). Then for
 every `t`, `P(W⁺ = t) = c_n(t) / 2ⁿ`.
@@ -67,7 +68,7 @@ public theorem_wanted measureReal_signedRankStatistic_eq {Ω : Type*} [Measurabl
     (hsymm : ∀ i, μ.map (D i) = μ.map (fun ω => -D i ω)) (t : ℕ) :
     μ.real {ω | signedRankStatistic (fun i => D i ω) = t} = subsetSumCount n t / (2 : ℝ) ^ n
 
-/-- **Wilcoxon's normal null** (Wilcoxon 1945). Let `μ` be a probability measure, `σ² > 0`, and
+/-- **Wilcoxon's normal null.** Let `μ` be a probability measure, `σ² > 0`, and
 `D_1, …, D_n : Ω → ℝ` independent measurable random variables, each Gaussian with mean `0` and
 variance `σ²`. Then for every `t`, `P(W⁺ = t) = c_n(t) / 2ⁿ`.
 
@@ -79,7 +80,7 @@ public theorem_wanted measureReal_signedRankStatistic_eq_of_gaussian {Ω : Type*
     (hlaw : ∀ i, μ.map (D i) = gaussianReal 0 σsq) (t : ℕ) :
     μ.real {ω | signedRankStatistic (fun i => D i ω) = t} = subsetSumCount n t / (2 : ℝ) ^ n
 
-/-- **Moments and symmetry of the null law** (Wilcoxon 1945; derived). For every `n`, the law
+/-- **Moments and symmetry of the null law.** For every `n`, the law
 `t ↦ c_n(t) / 2ⁿ` of `∑_{j = 1}^n j B_j` has mean `n(n + 1)/4`, variance `n(n + 1)(2n + 1)/24`,
 and is symmetric about its mean: `c_n(t) = c_n(n(n + 1)/2 - t)` for `t ≤ n(n + 1)/2`. Means and
 variances are taken over the subsets `S` of `{1, …, n}`, each with probability `1 / 2ⁿ`.
@@ -92,7 +93,7 @@ public theorem_wanted subsetSum_moments_symm (n : ℕ) :
           (2 : ℝ) ^ n = n * (n + 1) * (2 * n + 1) / 24 ∧
       ∀ t, t ≤ n * (n + 1) / 2 → subsetSumCount n t = subsetSumCount n (n * (n + 1) / 2 - t)
 
-/-- **Wilcoxon's worked cases** (Wilcoxon 1945). For `15` pairs, `∑_{t ≤ 24} c_15(t) = 676`, so
+/-- **Wilcoxon's worked cases.** For `15` pairs, `∑_{t ≤ 24} c_15(t) = 676`, so
 `P(W⁺ ≤ 24) = 676 / 32768 ≈ 0.0206`, inside the source's range `[0.019, 0.054]`; for `8` pairs,
 `∑_{t ≤ 3} c_8(t) = 5`, so `P(W⁺ ≤ 3) = 5 / 256`.
 

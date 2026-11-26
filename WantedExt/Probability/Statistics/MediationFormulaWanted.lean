@@ -57,32 +57,34 @@ variable {Ω 𝒳 ℳ 𝒵 : Type*} [MeasurableSpace Ω]
   [Fintype ℳ] [MeasurableSpace ℳ] [MeasurableSingletonClass ℳ]
   [Fintype 𝒵] [MeasurableSpace 𝒵] [MeasurableSingletonClass 𝒵]
 
-/-- The observed mediator `M = M(X)`. -/
+/-- **Observed mediator.** The observed mediator `M = M(X)`. -/
 def observedMediator (X : Ω → 𝒳) (Mpot : 𝒳 → Ω → ℳ) (ω : Ω) : ℳ :=
   Mpot (X ω) ω
 
-/-- The observed outcome `Y = Y(X, M(X))`. -/
+/-- **Observed outcome.** The observed outcome `Y = Y(X, M(X))`. -/
 def observedOutcome (X : Ω → 𝒳) (Mpot : 𝒳 → Ω → ℳ) (Ypot : 𝒳 → ℳ → Ω → ℝ) (ω : Ω) : ℝ :=
   Ypot (X ω) (observedMediator X Mpot ω) ω
 
-/-- The mean `E[Y(x, M(x'))]` of the nested potential outcome. -/
+/-- **Mean of a nested potential outcome.** The mean `E[Y(x, M(x'))]`. -/
 noncomputable def nestedMean (μ : Measure Ω) (Mpot : 𝒳 → Ω → ℳ) (Ypot : 𝒳 → ℳ → Ω → ℝ)
     (x x' : 𝒳) : ℝ :=
   ∫ ω, Ypot x (Mpot x' ω) ω ∂μ
 
-/-- The observed conditional mean `E[Y | X = x, M = m, Z = z]`. -/
+/-- **Observed conditional mean outcome.** The observed conditional mean
+`E[Y | X = x, M = m, Z = z]`. -/
 noncomputable def condMeanOutcome (μ : Measure Ω) (X : Ω → 𝒳) (Mpot : 𝒳 → Ω → ℳ)
     (Ypot : 𝒳 → ℳ → Ω → ℝ) (Z : Ω → 𝒵) (x : 𝒳) (m : ℳ) (z : 𝒵) : ℝ :=
   ∫ ω, observedOutcome X Mpot Ypot ω
     ∂(μ[|X ⁻¹' {x} ∩ observedMediator X Mpot ⁻¹' {m} ∩ Z ⁻¹' {z}])
 
-/-- The observed conditional probability `P(M = m | X = x, Z = z)`. -/
+/-- **Observed conditional mediator probability.** The observed conditional probability
+`P(M = m | X = x, Z = z)`. -/
 noncomputable def condProbMediator (μ : Measure Ω) (X : Ω → 𝒳) (Mpot : 𝒳 → Ω → ℳ)
     (Z : Ω → 𝒵) (m : ℳ) (x : 𝒳) (z : 𝒵) : ℝ :=
   μ.real (observedMediator X Mpot ⁻¹' {m} ∩ X ⁻¹' {x} ∩ Z ⁻¹' {z}) /
     μ.real (X ⁻¹' {x} ∩ Z ⁻¹' {z})
 
-/-- **The mediation formula** (Pearl 2001). Let `μ` be a probability measure on `Ω`; let the
+/-- **The mediation formula.** Let `μ` be a probability measure on `Ω`; let the
 exposure `X : Ω → 𝒳`, the covariates `Z : Ω → 𝒵` and the potential mediators `M(x) : Ω → ℳ` be
 measurable with finite value types having measurable singletons; and let the potential outcomes
 `Y(x, m) : Ω → ℝ` be measurable and bounded (`|Y(x, m)| ≤ C`). Assume, for all `x, x', m, z`:

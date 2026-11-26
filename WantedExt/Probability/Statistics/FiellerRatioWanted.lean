@@ -37,11 +37,11 @@ namespace WantedExt.Probability.Statistics.FiellerRatioWanted
 
 open MeasureTheory ProbabilityTheory
 
-/-- Fieller's confidence set `{θ | (a - θ b)² ≤ z² (v_aa - 2 θ v_ab + θ² v_bb)}`. -/
+/-- **Fieller's confidence set.** The set `{θ | (a - θ b)² ≤ z² (v_aa - 2 θ v_ab + θ² v_bb)}`. -/
 def fiellerSet (a b vaa vab vbb z : ℝ) : Set ℝ :=
   {θ | (a - θ * b) ^ 2 ≤ z ^ 2 * (vaa - 2 * θ * vab + θ ^ 2 * vbb)}
 
-/-- **Exact coverage of Fieller's set** (Fieller 1954). Let `μ` be a probability measure and let
+/-- **Exact coverage of Fieller's set.** Let `μ` be a probability measure and let
 `(a, b) : Ω → ℝ × ℝ` have a Gaussian law under `μ`, with `Var a = v_aa`, `Var b = v_bb`,
 `Cov(a, b) = v_ab` and means satisfying `E a = θ E b`. Assume
 `V(θ) = v_aa - 2 θ v_ab + θ² v_bb > 0` and let `z > 0`. Then the probability that `θ` lies in
@@ -58,7 +58,7 @@ public theorem_wanted measureReal_mem_fiellerSet {Ω : Type*} [MeasurableSpace �
     μ.real {ω | θ ∈ fiellerSet (a ω) (b ω) vaa vab vbb z} =
       (gaussianReal 0 1).real (Set.Icc (-z) z)
 
-/-- **Shape of Fieller's set** (Fieller 1954). Let `v_aa ≥ 0`, `v_bb ≥ 0` and `v_ab² ≤ v_aa v_bb`
+/-- **Shape of Fieller's set.** Let `v_aa ≥ 0`, `v_bb ≥ 0` and `v_ab² ≤ v_aa v_bb`
 (a positive semidefinite covariance), let `z > 0`, and let `a, b` be real. If `b² > z² v_bb`,
 Fieller's set is a bounded closed interval `[l, u]` containing `a / b`. If `b² < z² v_bb`, it is
 either the whole real line or the complement of a bounded open interval `(l, u)` with `l < u`.

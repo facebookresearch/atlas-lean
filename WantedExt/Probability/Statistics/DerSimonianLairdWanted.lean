@@ -42,27 +42,29 @@ open MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics.MetaAnaly
 
 variable {k : ℕ}
 
-/-- The scaling `S₁ - S₂ / S₁` with `S_r = ∑ w_i^r` for the fixed-effect weights `w_i = v_i⁻¹`. -/
+/-- **Scaling of the moment estimator.** The scaling `S₁ - S₂ / S₁` with `S_r = ∑ w_i^r` for the
+fixed-effect weights `w_i = v_i⁻¹`. -/
 noncomputable def weightScale (v : Fin k → ℝ) : ℝ :=
   (∑ i, (v i)⁻¹) - (∑ i, ((v i)⁻¹) ^ 2) / ∑ i, (v i)⁻¹
 
-/-- The untruncated moment estimator `(Q - (k - 1)) / (S₁ - S₂ / S₁)` of `Δ²`, with Cochran's `Q`
-for sampling variances `v`. -/
+/-- **Untruncated moment estimator.** The estimator `(Q - (k - 1)) / (S₁ - S₂ / S₁)` of `Δ²`, with
+Cochran's `Q` for sampling variances `v`. -/
 noncomputable def momentEstimator (v y : Fin k → ℝ) : ℝ :=
   (cochranQ v y - (k - 1)) / weightScale v
 
-/-- The DerSimonian–Laird estimator `Δ̂² = max {0, (Q - (k - 1)) / (S₁ - S₂ / S₁)}`. -/
+/-- **DerSimonian–Laird estimator.** The truncated moment estimator
+`Δ̂² = max {0, (Q - (k - 1)) / (S₁ - S₂ / S₁)}`. -/
 noncomputable def dlEstimator (v y : Fin k → ℝ) : ℝ :=
   max 0 (momentEstimator v y)
 
-/-- The random-effects pooled estimate `∑ᵢ ωᵢ yᵢ`, where `ω` are the inverse-variance weights of
-the total variances `v_i + Δ²`. -/
+/-- **Random-effects pooled estimate.** The estimate `∑ᵢ ωᵢ yᵢ`, where `ω` are the inverse-variance
+weights of the total variances `v_i + Δ²`. -/
 noncomputable def pooledEstimate (v : Fin k → ℝ) (Δsq : ℝ) (y : Fin k → ℝ) : ℝ :=
   ∑ i, inverseVarianceWeights (fun j => v j + Δsq) i * y i
 
-/-- The random-effects model assumptions on study effects `δ`, sampling errors `e`, known sampling
-variances `v` and between-study variance `Δ²`: all `2k` deviations are square integrable with
-mean `0`, `Var δ_i = Δ²`, `Var e_i = v_i`, and distinct deviations are uncorrelated. -/
+/-- **Random-effects model.** The assumptions on study effects `δ`, sampling errors `e`, known
+sampling variances `v` and between-study variance `Δ²`: all `2k` deviations are square integrable
+with mean `0`, `Var δ_i = Δ²`, `Var e_i = v_i`, and distinct deviations are uncorrelated. -/
 structure RandomEffectsModel {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (δ e : Fin k → Ω → ℝ) (v : Fin k → ℝ) (Δsq : ℝ) : Prop where
   memLp_δ : ∀ i, MemLp (δ i) 2 μ
@@ -75,7 +77,7 @@ structure RandomEffectsModel {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
   cov_ee : ∀ i j, i ≠ j → cov[e i, e j; μ] = 0
   cov_δe : ∀ i j, cov[δ i, e j; μ] = 0
 
-/-- **Expectation of Cochran's `Q`** (DerSimonian and Laird 1986, p. 182). Let `μ` be a
+/-- **Expectation of Cochran's `Q`.** Let `μ` be a
 probability measure, `k ≥ 2`, `v_i > 0` known sampling variances, `Δ² ≥ 0`, and
 `y_i = m + δ_i + e_i` where `δ, e` satisfy the random-effects model assumptions (square
 integrable, mean `0`, `Var δ_i = Δ²`, `Var e_i = v_i`, distinct deviations uncorrelated). Then
@@ -89,7 +91,7 @@ public theorem_wanted integral_cochranQ {Ω : Type*} [MeasurableSpace Ω] (μ : 
     0 < weightScale v ∧
       ∫ ω, cochranQ v (fun i => m + δ i ω + e i ω) ∂μ = (k - 1) + Δsq * weightScale v
 
-/-- **Bias of the moment estimators** (DerSimonian and Laird 1986, p. 183). Under the hypotheses
+/-- **Bias of the moment estimators.** Under the hypotheses
 of `integral_cochranQ` (probability measure `μ`, `k ≥ 2`, sampling variances `v_i > 0`,
 `Δ² ≥ 0`, `y_i = m + δ_i + e_i` with the random-effects model assumptions), the untruncated
 estimator `(Q - (k - 1)) / (S₁ - S₂ / S₁)` has expectation `Δ²`, the DerSimonian–Laird estimator
@@ -105,7 +107,7 @@ public theorem_wanted momentEstimator_unbiased_dlEstimator_bias {Ω : Type*} [Me
       (∀ ω, 0 ≤ dlEstimator v (fun i => m + δ i ω + e i ω)) ∧
       Δsq ≤ ∫ ω, dlEstimator v (fun i => m + δ i ω + e i ω) ∂μ
 
-/-- **The random-effects pooled estimate with known `Δ²`** (DerSimonian and Laird 1986, (2)–(4)).
+/-- **The random-effects pooled estimate with known `Δ²`.**
 Under the hypotheses of `integral_cochranQ` (probability measure `μ`, `k ≥ 2`, sampling variances
 `v_i > 0`, `Δ² ≥ 0`, `y_i = m + δ_i + e_i` with the random-effects model assumptions), the pooled
 estimate `∑ᵢ ωᵢ yᵢ` with the inverse-variance weights `ω` of `v_i + Δ²` has expectation `m` and
@@ -123,7 +125,7 @@ public theorem_wanted pooledEstimate_optimal {Ω : Type*} [MeasurableSpace Ω] (
         (∑ i, (v i + Δsq)⁻¹)⁻¹ ∧
       (∑ i, (v i + Δsq)⁻¹)⁻¹ ≤ Var[fun ω => ∑ i, c i * (m + δ i ω + e i ω); μ]
 
-/-- **Equal sampling variances** (DerSimonian and Laird 1986, p. 183). Let `k ≥ 2` and let every
+/-- **Equal sampling variances.** Let `k ≥ 2` and let every
 sampling variance equal `s² > 0`. For real study estimates `y`, with `ȳ = ∑ y_i / k`: the
 DerSimonian–Laird estimator is `max {0, ∑ (y_i - ȳ)² / (k - 1) - s²}`, and for every `Δ² ≥ 0`
 the random-effects pooled estimate is `ȳ` with `(∑ᵢ (s² + Δ²)⁻¹)⁻¹ = (s² + Δ²) / k`.

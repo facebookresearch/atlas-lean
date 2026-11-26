@@ -36,17 +36,17 @@ open MeasureTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω]
 
-/-- The lower no-assumption bound `E[Y₁ 1_T] - (E[Y₀ 1_{Tᶜ}] + P(T))` on the average treatment
-effect. -/
+/-- **Lower no-assumption bound.** The lower bound `E[Y₁ 1_T] - (E[Y₀ 1_{Tᶜ}] + P(T))` on the
+average treatment effect. -/
 noncomputable def lowerBound (μ : Measure Ω) (T : Set Ω) (Y₀ Y₁ : Ω → ℝ) : ℝ :=
   (∫ ω in T, Y₁ ω ∂μ) - ((∫ ω in Tᶜ, Y₀ ω ∂μ) + μ.real T)
 
-/-- The upper no-assumption bound `E[Y₁ 1_T] + P(Tᶜ) - E[Y₀ 1_{Tᶜ}]` on the average treatment
-effect. -/
+/-- **Upper no-assumption bound.** The upper bound `E[Y₁ 1_T] + P(Tᶜ) - E[Y₀ 1_{Tᶜ}]` on the
+average treatment effect. -/
 noncomputable def upperBound (μ : Measure Ω) (T : Set Ω) (Y₀ Y₁ : Ω → ℝ) : ℝ :=
   ((∫ ω in T, Y₁ ω ∂μ) + μ.real Tᶜ) - ∫ ω in Tᶜ, Y₀ ω ∂μ
 
-/-- **Soundness, width and sign of the no-assumption bounds** (Manski 1990). Let `μ` be a
+/-- **Soundness, width and sign of the no-assumption bounds.** Let `μ` be a
 probability measure on `Ω`, `T` a measurable event (treatment), and `Y₀, Y₁ : Ω → ℝ` measurable
 potential outcomes with values in `[0, 1]`. Then the average treatment effect
 `∫ Y₁ dμ - ∫ Y₀ dμ` lies between `lowerBound` and `upperBound`, the width
@@ -62,7 +62,7 @@ public theorem_wanted bounds_sound (μ : Measure Ω) [IsProbabilityMeasure μ] (
       upperBound μ T Y₀ Y₁ - lowerBound μ T Y₀ Y₁ = 1 ∧
       lowerBound μ T Y₀ Y₁ ≤ 0 ∧ 0 ≤ upperBound μ T Y₀ Y₁
 
-/-- **Sharpness of the no-assumption bounds** (Manski 1990). Let `μ` be a probability measure on
+/-- **Sharpness of the no-assumption bounds.** Let `μ` be a probability measure on
 `Ω`, `T` a measurable event, and `Y₀, Y₁ : Ω → ℝ` measurable with values in `[0, 1]`. Then there
 are measurable potential outcomes `Y₀', Y₁'` with values in `[0, 1]` that agree with the observed
 ones (`Y₁' = Y₁` on `T` and `Y₀' = Y₀` on `Tᶜ`) and whose average treatment effect equals

@@ -49,23 +49,27 @@ open MathlibExt.Probability.Statistics.Measurement (sampleRank)
 
 variable {C N : ℕ}
 
-/-- The size `n_i` of sample `i` under the assignment `g` of positions to samples. -/
+/-- **Sample size.** The size `n_i` of sample `i` under the assignment `g` of positions to
+samples. -/
 def sampleSize (g : Fin N → Fin C) (i : Fin C) : ℕ :=
   (Finset.univ.filter fun k => g k = i).card
 
-/-- The rank sum `R_i = ∑_{k : g k = i} (σ k + 1)` of sample `i` under the ranking `σ`. -/
+/-- **Rank sum.** The rank sum `R_i = ∑_{k : g k = i} (σ k + 1)` of sample `i` under the
+ranking `σ`. -/
 def rankSum (g : Fin N → Fin C) (σ : Equiv.Perm (Fin N)) (i : Fin C) : ℕ :=
   ∑ k ∈ Finset.univ.filter (fun k => g k = i), ((σ k : ℕ) + 1)
 
-/-- The Kruskal–Wallis statistic `H = 12 / (N (N + 1)) ∑_i R_i² / n_i - 3 (N + 1)`. -/
+/-- **Kruskal–Wallis statistic.** The statistic
+`H = 12 / (N (N + 1)) ∑_i R_i² / n_i - 3 (N + 1)`. -/
 noncomputable def kruskalWallis (g : Fin N → Fin C) (σ : Equiv.Perm (Fin N)) : ℝ :=
   12 / (N * (N + 1)) * ∑ i, (rankSum g σ i : ℝ) ^ 2 / sampleSize g i - 3 * (N + 1)
 
-/-- The average of `f` over all `N!` rankings (the null distribution). -/
+/-- **Average over rankings.** The average of `f` over all `N!` rankings (the null
+distribution). -/
 noncomputable def permAverage (f : Equiv.Perm (Fin N) → ℝ) : ℝ :=
   (∑ σ, f σ) / (N.factorial : ℝ)
 
-/-- **The two forms of `H`** (Kruskal 1952, p. 526). For an assignment `g` of `N ≥ 1` positions to
+/-- **The two forms of `H`.** For an assignment `g` of `N ≥ 1` positions to
 `C` samples, each of size `n_i ≥ 1`, and every ranking `σ`,
 `H = 12 / (N (N + 1)) ∑_i n_i (R_i / n_i - (N + 1)/2)²`.
 
@@ -76,7 +80,7 @@ public theorem_wanted kruskalWallis_eq_sum_sq (g : Fin N → Fin C) (hN : 0 < N)
     kruskalWallis g σ = 12 / (N * (N + 1)) *
       ∑ i, (sampleSize g i : ℝ) * ((rankSum g σ i : ℝ) / sampleSize g i - (N + 1) / 2) ^ 2
 
-/-- **Null moments of the rank sums** (Kruskal and Wallis 1952, Section 3; Kruskal 1952, p. 527).
+/-- **Null moments of the rank sums.**
 For an assignment `g` of `N ≥ 2` positions to `C` samples of sizes `n_i ≥ 1`, under the uniform
 law on rankings, `E R_i = n_i (N + 1)/2`, `Var R_i = n_i (N - n_i)(N + 1)/12`, and for `i ≠ j`,
 `Cov(R_i, R_j) = -n_i n_j (N + 1)/12`.
@@ -94,7 +98,7 @@ public theorem_wanted rankSum_moments (g : Fin N → Fin C) (hN : 2 ≤ N)
             ((rankSum g σ j : ℝ) - sampleSize g j * (N + 1) / 2)) =
         -(sampleSize g i * sampleSize g j * (N + 1) / 12)
 
-/-- **Null mean and variance of `H`** (Kruskal 1952, pp. 526 and 535). For an assignment `g` of
+/-- **Null mean and variance of `H`.** For an assignment `g` of
 `N ≥ 2` positions to `C` samples of sizes `n_i ≥ 1`, under the uniform law on rankings,
 `E H = C - 1` and
 `Var H = 2 (C - 1) - 2 (3C² - 6C + N (2C² - 6C + 1)) / (5 N (N + 1)) - (6/5) ∑_i 1 / n_i`.
@@ -108,19 +112,19 @@ public theorem_wanted kruskalWallis_mean_variance (g : Fin N → Fin C) (hN : 2 
         2 * (C - 1) - 2 * (3 * C ^ 2 - 6 * C + N * (2 * C ^ 2 - 6 * C + 1)) / (5 * N * (N + 1)) -
           6 / 5 * ∑ i, 1 / (sampleSize g i : ℝ)
 
-/-- **Range of `H`** (Kruskal 1952, p. 535, (7.1)–(7.2)). For an assignment `g` of `N ≥ 1`
+/-- **Range of `H`.** For an assignment `g` of `N ≥ 1`
 positions to `C` samples of sizes `n_i ≥ 1` and every ranking `σ`,
 `0 ≤ H ≤ (N³ - ∑ n_i³) / (N (N + 1))`, and some ranking attains the upper bound.
 
 Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
-23 (1952) 525–540, p. 535, equation (7.2); the lower bound is derived. -/
+23 (1952) 525–540, p. 535, equations (7.1)–(7.2); the lower bound is derived. -/
 public theorem_wanted kruskalWallis_bounds (g : Fin N → Fin C) (hN : 0 < N)
     (hn : ∀ i, 0 < sampleSize g i) :
     (∀ σ, 0 ≤ kruskalWallis g σ ∧
       kruskalWallis g σ ≤ ((N : ℝ) ^ 3 - ∑ i, (sampleSize g i : ℝ) ^ 3) / (N * (N + 1))) ∧
       ∃ σ, kruskalWallis g σ = ((N : ℝ) ^ 3 - ∑ i, (sampleSize g i : ℝ) ^ 3) / (N * (N + 1))
 
-/-- **Two samples** (Kruskal 1952, p. 526). For an assignment `g` of `N` positions to two samples
+/-- **Two samples.** For an assignment `g` of `N` positions to two samples
 of sizes `n₀, n₁ ≥ 1` and every ranking `σ`,
 `H = 12 (R_0 - n_0 (N + 1)/2)² / ((N + 1) n_0 (N - n_0))`.
 
@@ -131,7 +135,7 @@ public theorem_wanted kruskalWallis_two_samples (g : Fin N → Fin 2)
     kruskalWallis g σ = 12 * ((rankSum g σ 0 : ℝ) - sampleSize g 0 * (N + 1) / 2) ^ 2 /
       ((N + 1) * sampleSize g 0 * (N - sampleSize g 0))
 
-/-- **Distribution-freeness** (Kruskal and Wallis 1952, Section 1; Kruskal 1952, p. 525). Let `μ`
+/-- **Distribution-freeness.** Let `μ`
 be a probability measure, `X_1, …, X_N : Ω → ℝ` independent measurable random variables with a
 common law (`X_k` and `X_l` have the same law for all `k, l`) that has no atoms, and `g` an
 assignment of the `N` positions to `C` samples. For every real `h`, the probability that the
@@ -152,7 +156,7 @@ public theorem_wanted kruskalWallis_distributionFree {Ω : Type*} [MeasurableSpa
       ((Finset.univ.filter fun σ : Equiv.Perm (Fin N) => kruskalWallis g σ = h).card : ℝ) /
         N.factorial
 
-/-- **The chi-square limit** (Kruskal 1952, Section 4). Let `C ≥ 2`, and for each `m` let `g m` be
+/-- **The chi-square limit.** Let `C ≥ 2`, and for each `m` let `g m` be
 an assignment of `N_m` positions to `C` samples of sizes `n_i(m)`, with `N_m → ∞` and
 `n_i(m) / N_m → ν_i > 0` for every `i`. Then under the uniform law on rankings, the Kruskal–Wallis
 statistic converges in distribution to the chi-square law with `C - 1` degrees of freedom: for

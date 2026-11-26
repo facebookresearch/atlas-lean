@@ -39,20 +39,23 @@ namespace WantedExt.Probability.Statistics.NeymanScottWanted
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal
 
-/-- The Gaussian log-likelihood of `n` pairs `y i 0, y i 1` with pair means `α i` and variance
-`s > 0`: `∑_i ∑_t (-(1/2) log (2 π s) - (y_{it} - α_i)² / (2 s))`. -/
+/-- **Gaussian log-likelihood of the pairs.** The Gaussian log-likelihood of `n` pairs
+`y i 0, y i 1` with pair means `α i` and variance `s > 0`:
+`∑_i ∑_t (-(1/2) log (2 π s) - (y_{it} - α_i)² / (2 s))`. -/
 noncomputable def logLik {n : ℕ} (y : Fin n → Fin 2 → ℝ) (α : Fin n → ℝ) (s : ℝ) : ℝ :=
   ∑ i, ∑ t, (-(1 / 2) * Real.log (2 * Real.pi * s) - (y i t - α i) ^ 2 / (2 * s))
 
-/-- The maximum-likelihood estimate `σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`. -/
+/-- **Maximum-likelihood variance estimate.** The estimate
+`σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`. -/
 noncomputable def mleVariance {n : ℕ} (y : Fin n → Fin 2 → ℝ) : ℝ :=
   (∑ i, (y i 0 - y i 1) ^ 2) / (4 * n)
 
-/-- The conditional (difference-based) estimate `σ̃² = (1 / (2n)) ∑_i (y_{i1} - y_{i2})²`. -/
+/-- **Difference-based variance estimate.** The conditional (difference-based) estimate
+`σ̃² = (1 / (2n)) ∑_i (y_{i1} - y_{i2})²`. -/
 noncomputable def conditionalVariance {n : ℕ} (y : Fin n → Fin 2 → ℝ) : ℝ :=
   (∑ i, (y i 0 - y i 1) ^ 2) / (2 * n)
 
-/-- **The joint maximum-likelihood estimate** (Neyman and Scott 1948). For real pairs
+/-- **The joint maximum-likelihood estimate.** For real pairs
 `y i 0, y i 1`, `i < n`, with `∑_i (y_{i1} - y_{i2})² > 0`, the log-likelihood over pair means
 `α ∈ ℝⁿ` and variance `s > 0` is maximized exactly at `α̂_i = (y_{i1} + y_{i2}) / 2` and
 `s = σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`: for every `α` and every `s > 0` the log-likelihood
@@ -66,7 +69,7 @@ public theorem_wanted logLik_max {n : ℕ} (y : Fin n → Fin 2 → ℝ)
       (logLik y α s = logLik y (fun i => (y i 0 + y i 1) / 2) (mleVariance y) ↔
         α = (fun i => (y i 0 + y i 1) / 2) ∧ s = mleVariance y)
 
-/-- **No maximum when all pairs agree** (Neyman and Scott 1948). For `n ≥ 1` real pairs with
+/-- **No maximum when all pairs agree.** For `n ≥ 1` real pairs with
 `y i 0 = y i 1` for every `i`, the log-likelihood at `α_i = y i 0` is unbounded above over `s > 0`:
 for every `M` there is `s > 0` with log-likelihood greater than `M`.
 
@@ -76,7 +79,7 @@ public theorem_wanted logLik_unbounded {n : ℕ} (hn : 0 < n) (y : Fin n → Fin
     (heq : ∀ i, y i 0 = y i 1) (M : ℝ) :
     ∃ s : ℝ, 0 < s ∧ M < logLik y (fun i => y i 0) s
 
-/-- **Inconsistency of the maximum-likelihood variance** (Neyman and Scott 1948). Let `μ` be a
+/-- **Inconsistency of the maximum-likelihood variance.** Let `μ` be a
 probability measure and `y i t`, `i ∈ ℕ`, `t ∈ {0, 1}`, independent real random variables with
 `y i t` Gaussian of mean `α_i` (arbitrary reals) and variance `σ² > 0`. Then for every `n ≥ 1`, the
 estimate `σ̂²_n` from the first `n` pairs has expectation `σ² / 2`, and `σ̂²_n → σ² / 2` almost
@@ -95,7 +98,7 @@ public theorem_wanted mleVariance_inconsistent {Ω : Type*} [MeasurableSpace Ω]
       ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ => mleVariance (fun (i : Fin n) t => y i t ω)) atTop
         (𝓝 ((σsq : ℝ) / 2))
 
-/-- **Consistency of the conditional estimate** (Neyman and Scott 1948). Let `μ` be a probability
+/-- **Consistency of the conditional estimate.** Let `μ` be a probability
 measure and `y i t`, `i ∈ ℕ`, `t ∈ {0, 1}`, independent real random variables with `y i t`
 Gaussian of mean `α_i` (arbitrary reals) and variance `σ² > 0`. Then the difference-based estimate
 `σ̃²_n = (1 / (2n)) ∑_{i < n} (y_{i1} - y_{i2})² = 2 σ̂²_n` converges to `σ²` almost surely.
