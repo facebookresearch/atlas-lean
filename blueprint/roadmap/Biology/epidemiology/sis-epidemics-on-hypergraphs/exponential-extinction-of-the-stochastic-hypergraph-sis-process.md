@@ -3,10 +3,13 @@
 Consider the exact continuous-time Markov hypergraph SIS process of [Spectral threshold for the mean-field hypergraph SIS model](spectral-threshold-for-the-mean-field-hypergraph-sis-model.md): node states $X_i(t) \in \{0,1\}$, infection rate $\beta \sum_h I_{ih} f(\sum_j X_j I_{jh})$ for susceptible node $i$, recovery rate $\delta$, and $W = I I^{\top}$. Assume $f$ is concave with $f(0) = 0$, and that initially each node is infected independently with probability $i_0$.
 
 **Theorem.** For all $t \ge 0$,
+
 $$\Pr\Big(\sum_i X_i(t) > 0\Big) \le n\, i_0\, \exp\!\big((\beta f'(0)\lambda(W) - \delta)\, t\big).$$
+
 Hence if $\lambda(W) f'(0)\beta/\delta < 1$ the infection dies out exponentially fast.
 
 **Corollary.** Under the same condition the extinction time $\tau$ satisfies
+
 $$\mathbb{E}[\tau] \le \frac{\log n + 1}{\delta - f'(0)\beta\lambda(W)} .$$
 
 With $K$ categories of hyperedges and concave $f_k$, the same bounds hold with $f'(0)\lambda(W)$ replaced by $\lambda\big(\sum_k f_k'(0) W^{(k)}\big)$.

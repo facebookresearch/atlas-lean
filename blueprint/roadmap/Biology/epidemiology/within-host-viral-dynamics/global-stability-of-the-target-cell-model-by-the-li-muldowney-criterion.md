@@ -1,12 +1,17 @@
 # Global stability of the target-cell model by the Li–Muldowney criterion
 
 **Model.** Uninfected target cells $E$ (pulmonary epithelial cells), infected cells $E^*$ and free virus $v$ satisfy
+
 $$\dot E = d_E(E_0 - E) - \beta E v, \qquad \dot E^* = \beta E v - d_{E^*} E^*, \qquad \dot v = \pi_v E^* - d_v v,$$
+
 with regeneration toward the uninfected level $E_0 > 0$ at rate $d_E$, infection rate $\beta$, infected-cell death rate $d_{E^*}$, virion production $\pi_v$ and clearance $d_v$. The nonnegative orthant is invariant and solutions enter the bounded set $\{E + E^* \le d_E E_0/\delta,\ v \le K\}$, $\delta = \min\{d_E, d_{E^*}\}$.
 
 **Reproduction number and equilibria.** By the next-generation method,
+
 $$\chi_0 = \frac{\pi_v \beta E_0}{d_{E^*} d_v}.$$
+
 The uninfected equilibrium is $S_1 = (E_0, 0, 0)$; for $\chi_0 > 1$ there is a unique infected equilibrium
+
 $$S_2 = \Big(\frac{E_0}{\chi_0},\ \frac{d_v d_E}{\beta\pi_v}(\chi_0 - 1),\ \frac{d_E}{\beta}(\chi_0 - 1)\Big).$$
 
 **Theorem.**
@@ -15,7 +20,9 @@ $$S_2 = \Big(\frac{E_0}{\chi_0},\ \frac{d_v d_E}{\beta\pi_v}(\chi_0 - 1),\ \frac
 2. If $\chi_0 > 1$, $S_2$ is globally asymptotically stable in the interior of the feasible region.
 
 **Li–Muldowney criterion** (used for part 2). Let $\dot x = f(x)$ with $f \in C^1(D)$ on an open simply connected $D \subset \mathbb{R}^n$, having a compact absorbing set $K \subset D$ and a unique equilibrium $\bar x \in D$. Let $J^{[2]}$ be the second additive compound of the Jacobian, $A(x)$ a $C^1$ nonsingular matrix function, $A_f$ its derivative along the flow, $B = A_f A^{-1} + A J^{[2]} A^{-1}$, and $\mu$ a Lozinskiĭ measure. If
+
 $$\bar q_2 = \limsup_{t \to \infty}\ \sup_{x_0 \in K}\ \frac{1}{t}\int_0^t \mu\big(B(x(s, x_0))\big)\, ds < 0,$$
+
 then $\bar x$ is globally asymptotically stable in $D$. For the target-cell model, $A = \mathrm{diag}(1, E^*/v, E^*/v)$ and the measure induced by a mixed vector norm give $\mu(B) \le \dot E^*/E^* - \delta$, so $\frac1t\int_0^t \mu(B)\,ds \le o(1) + \frac1t\ln\frac{E^*(t)}{E^*(\bar t)} - \frac{t - \bar t}{t}\delta \to -\delta < 0$.
 
 ## Expansion

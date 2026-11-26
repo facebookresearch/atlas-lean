@@ -1,7 +1,9 @@
 # Local k-mer selection methods and their densities
 
 **Definitions.** Fix an alphabet $\Sigma$ and $k \ge 1$. A *$k$-mer selection method* $f$ maps each string $S \in \Sigma^*$ to a set of pairs $(x, i)$ with $x = S[i, k]$ a $k$-mer of $S$ starting at position $i$. The method is **$q$-local** if, for every $S$ with $|S| \ge k + q - 1$,
+
 $$f(S) = \bigcup_{i=1}^{|S| - (k+q-1) + 1} f\big(S[i, k+q-1]\big)$$
+
 (positions shifted appropriately): $f$ is determined by its action on $(k+q-1)$-mers. A $1$-local method decides for each $k$-mer in isolation. A local method has the **$r$-window guarantee** if $f(s) \ne \emptyset$ for every $s \in \Sigma^{k+r-1}$, i.e. every $r$ consecutive $k$-mers contain a selected one. The **density** of $f$ is the limiting expected fraction of $k$-mers selected in a uniformly random i.i.d. string as $|S| \to \infty$.
 
 **Locality theorem.** If $f$ is $q$-local and $S[i, k+q-1] = S'[j, k+q-1]$, then every $k$-mer of $f(S[i, k+q-1])$ is selected in both $f(S)$ and $f(S')$. (MinHash sketches and "every $n$-th $k$-mer" rules are not local.)

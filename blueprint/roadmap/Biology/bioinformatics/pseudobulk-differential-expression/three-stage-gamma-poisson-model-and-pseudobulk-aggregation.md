@@ -9,9 +9,13 @@
 **Pseudobulk counts.** Let $K_{ij} = \sum_c K_{ijc}$ and $s_j = \sum_c s_{jc}$.
 
 **Theorem.** $\mathbb{E}K_{ij} = \mu_{ij} := s_j q_{ij}$ and
+
 $$\mathrm{Var}\,K_{ij} = \mu_{ij} + \Big(\alpha_i + \sigma_{ij}^2(1 + \alpha_i)\,\frac{\sum_c s_{jc}^2}{s_j^2}\Big)\mu_{ij}^2 .$$
+
 If $C_j^{-1}\sum_c s_{jc} \to k_1 > 0$ and $C_j^{-1}\sum_c s_{jc}^2 \to k_2$ as $C_j \to \infty$, then $\sum_c s_{jc}^2/s_j^2 = O(1/C_j)$ and
+
 $$\mathrm{Var}\,K_{ij} = \mu_{ij} + (\alpha_i + o(1))\,\mu_{ij}^2 .$$
+
 In the limit $\sigma_{ij}^2 \to 0$ the pseudobulk count is exactly negative binomial with mean $s_j q_{ij}$ and dispersion $\alpha_i$, the bulk RNA-seq (DESeq2) model.
 
 ## Expansion

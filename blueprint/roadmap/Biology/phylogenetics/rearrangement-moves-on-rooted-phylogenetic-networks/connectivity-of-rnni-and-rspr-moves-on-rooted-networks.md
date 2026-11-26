@@ -3,6 +3,7 @@
 **Networks.** A binary rooted phylogenetic network on a leaf set $X$ is a directed acyclic graph with one root (indegree $0$, outdegree $1$), leaves labelled bijectively by $X$ (indegree $1$, outdegree $0$), bifurcations (indegree $1$, outdegree $2$) and reticulations (indegree $2$, outdegree $1$).
 
 **Reticulate complexity.** For binary rooted networks $N_1, N_2$ on $X$ the following are equivalent: they have the same number $r$ of reticulations; the same number of vertices; the same number of arcs; the same number of arc removals needed to turn them into rooted trees. Indeed every such network has
+
 $$n = 2\,(r + |X|) \text{ vertices}.$$
 
 **rNNI move.** Say $N$ has an arc on $\{u, v\}$ if it contains $uv$ or $vu$. If $N$ has distinct vertices $s, u, v, t$ with arcs on $\{s,u\}$, $\{u,v\}$, $\{v,t\}$ and none on $\{u,t\}$, $\{s,v\}$, an rNNI move replaces the arcs on $\{s,u\}, \{u,v\}, \{v,t\}$ by arcs on $\{u,t\}, \{u,v\}, \{s,v\}$ such that (1) the in- and outdegrees of $s$ and $t$ are unchanged, (2) the in- and outdegrees of $u$ and $v$ stay at most $2$, and (3) the result is acyclic. The arc on $\{u,v\}$ may be reversed. rNNI moves preserve all vertex degrees, hence binarity and the number of reticulations; on trees they are ordinary rooted NNI moves.

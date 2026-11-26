@@ -9,6 +9,7 @@ A **context** is a string of length $w + k$, i.e. two consecutive windows (equiv
 Because selections can only move forward, counting selected positions in a string is the same as counting its charged contexts, so the density equals the probability that a uniformly random context $c \in \Sigma^{w+k}$ is charged.
 
 **Theorem (density of random minimizers).** If $k > (3 + \epsilon) \log_\sigma (w + 1)$ for some fixed $\epsilon > 0$, the expected density of a random minimizer, over both the random string and the random order, is
+
 $$\frac{2}{w + 1} + o\!\left(\frac{1}{w}\right) \qquad (w \to \infty).$$
 
 This recovers, without the earlier heuristic independence assumptions on the string, the classical estimate $2/(w+1)$ for winnowing and minimizer schemes.
@@ -18,6 +19,7 @@ This recovers, without the earlier heuristic independence assumptions on the str
 *Lemma.* If the first or last $k$-mer of the context is picked, it lies in only one of the two windows, so the two picks differ. Otherwise both windows pick a $k$-mer from their common part; if they picked different ones, both picks would lie in both windows and one of them would not be minimal, a contradiction.
 
 *Theorem.* Let $I(c)$ be the event that the $w + 1$ $k$-mers of $c$ are not all distinct. Under the stated growth of $k$, a random context has $P(I(c)) = o(1/w)$. If all $k$-mers are distinct, then under a uniformly random order each of the $w + 1$ $k$-mers is the minimum with probability exactly $1/(w+1)$; by the lemma the context is charged exactly when the minimum is the first or the last $k$-mer, two disjoint events, so $P_O(c \text{ charged} \mid \overline{I(c)}) = 2/(w+1)$. Hence
+
 $$\Big(1 - o(1/w)\Big)\frac{2}{w+1} \le P_{c,O}(c \text{ charged}) \le P(I(c)) + \frac{2}{w+1} = \frac{2}{w+1} + o(1/w).$$
 
 ## Sources

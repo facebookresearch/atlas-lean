@@ -1,9 +1,11 @@
 # Incremental cost-effectiveness ratio
 
 Let $\mathcal{S}=\{s_1,\dots,s_m\}$ be competing control strategies for an epidemic model (for example single or combined optimal controls), each with total cost $C(s)$, taken from the objective functional evaluated along the optimal trajectory, and effectiveness $E(s)$, the number of infections averted relative to no control, $E(s)=\int_0^{T}\big(I_{\text{no control}}(t)-I_{s}(t)\big)\,dt$ or the analogous difference in cumulative cases. Order the strategies so that $E(s_1)<E(s_2)<\dots<E(s_m)$. The incremental cost-effectiveness ratio of $s_{j}$ against the next less effective strategy $s_{i}$ still in the list is
+
 $$
 \mathrm{ICER}(s_j)=\frac{C(s_j)-C(s_i)}{E(s_j)-E(s_i)},
 $$
+
 with $\mathrm{ICER}(s_1)=C(s_1)/E(s_1)$ measured against no control. The cost-effective frontier is obtained by repeated elimination:
 
 1. **Strong dominance.** If $C(s_j)\le C(s_i)$ while $E(s_j)>E(s_i)$, so that $\mathrm{ICER}(s_j)\le 0$, then $s_i$ is dominated (costlier and less effective) and is removed.

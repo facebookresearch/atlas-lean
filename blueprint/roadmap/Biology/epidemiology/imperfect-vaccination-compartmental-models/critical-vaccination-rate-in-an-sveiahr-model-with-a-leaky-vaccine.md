@@ -10,7 +10,9 @@ $$\begin{aligned}
 with forces of infection $\beta_S = b(\omega_A A + \omega_I I + \omega_H H)/N$ and $\beta_V = (1-\varepsilon)\beta_S$, recruitment $\Pi$ with vaccinated fraction $p$, vaccination rate $v \ge 0$, vaccine efficacy $\varepsilon \in [0,1]$, and $g_1 = \mu + v$, $g_2 = \mu$, $g_3 = \sigma + \mu$, $g_4 = \gamma + \mu + \delta$, $g_5 = \lambda + \mu$, $g_6 = \tau + \mu + \delta$. The region $\{N \le \Pi/\mu\}$ of $\mathbb{R}^7_{\ge 0}$ is positively invariant.
 
 **Reproduction number.** The disease-free equilibrium has $S^0 = (1-p)\Pi/g_1$, $V^0 = \Pi(p g_1 + v(1-p))/(g_1 g_2)$, and
+
 $$\mathcal{R}_0(v) = \mathcal{R}_0 \cdot \frac{\mu(1-p) + (1-\varepsilon)(p\mu + v)}{\mu + v}, \qquad \mathcal{R}_0 = \frac{b\sigma\,(G_1 G_2 + G_3)}{g_3 g_4 g_5 g_6},$$
+
 where $G_1 = \lambda(1-\phi)(1-\psi) + g_5\psi$, $G_2 = g_6\omega_I + \gamma(1-\kappa)\omega_H$, $G_3 = g_4 g_6 (1-\psi)\omega_A$; $\mathcal{R}_0$ is the reproduction number in a fully susceptible population.
 
 **Results.**
@@ -18,7 +20,9 @@ where $G_1 = \lambda(1-\phi)(1-\psi) + g_5\psi$, $G_2 = g_6\omega_I + \gamma(1-\
 1. If $\mathcal{R}_0(v) < 1$, the disease-free equilibrium is globally asymptotically stable (by the [Castillo-Chavez–Feng–Huang criterion](../global-stability-of-disease-free-equilibria/castillo-chavez-feng-huang-global-stability-criterion.md)); if $\mathcal{R}_0(v) > 1$ there is a unique endemic equilibrium, the positive root of a quadratic in the force of infection whose constant term is proportional to $\mathcal{R}_0(v) - 1$.
 2. $\mathcal{R}_0(v)$ is strictly decreasing in $v$ when $\varepsilon p < 1$ and $\varepsilon > 0$, with $\lim_{v \to \infty}\mathcal{R}_0(v) = (1-\varepsilon)\mathcal{R}_0$. Hence elimination by vaccination is possible only if $\varepsilon > \varepsilon^* = 1 - 1/\mathcal{R}_0$.
 3. If $\mathcal{R}_0 > 1$, $\mathcal{R}_0(1 - \varepsilon p) > 1$ and $\varepsilon > \varepsilon^*$, the critical vaccination rate
+
 $$v^* = \frac{\mu\,[(1 - \varepsilon p)\mathcal{R}_0 - 1]}{(\varepsilon - \varepsilon^*)\,\mathcal{R}_0} > 0$$
+
 satisfies $\mathcal{R}_0(v^*) = 1$, and $\mathcal{R}_0(v) \gtrless 1$ according as $v \lessgtr v^*$.
 
 ## Depends on

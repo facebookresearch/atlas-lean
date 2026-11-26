@@ -1,7 +1,9 @@
 # Most permissive semantics of Boolean networks and completeness for refinements
 
 **Most permissive configurations.** Let $f = (f_1, \dots, f_n) : \mathbb{B}^n \to \mathbb{B}^n$ be a Boolean network. A most-permissive configuration is $x \in \{0, \nearrow, \searrow, 1\}^n$, where $\nearrow$ (increasing) and $\searrow$ (decreasing) are dynamic states that may be read as either Boolean value. Its admissible Boolean interpretations are
+
 $$\gamma(x) = \{ z \in \mathbb{B}^n : x_i \in \mathbb{B} \Rightarrow z_i = x_i \}.$$
+
 A component $i$ may change, independently of all others,
 
 - from $0$ or $\searrow$ to $\nearrow$ if $\exists z \in \gamma(x)$ with $f_i(z) = 1$;
@@ -11,7 +13,9 @@ A component $i$ may change, independently of all others,
 So a component cannot go from $\nearrow$ back to $0$ (or from $\searrow$ to $1$) without passing through the opposite dynamic state. These rules define the most permissive Boolean network (MPBN) transition relation.
 
 **Refinements.** A multivalued network on $M = \{0, 1, \dots, m\}$ is $F : M^n \to \{-1, 0, 1\}^n$ (the successors of $y$ add $F(y)$ to a subset of components, staying in $M^n$). With the binarizations
+
 $$\beta(y) = \{ y' \in \mathbb{B}^n : y_i = 0 \Rightarrow y'_i = 0,\ y_i = m \Rightarrow y'_i = 1 \},$$
+
 $F$ **refines** $f$ if for all $y$ and $i$: $F_i(y) < 0$ implies $f_i(y') = 0$ for some $y' \in \beta(y)$, and $F_i(y) > 0$ implies $f_i(y') = 1$ for some $y' \in \beta(y)$. The same definition applies to ODE systems $F : \mathbb{R}_{\ge 0}^n \to \mathbb{R}^n$, with $\beta$ defined by the sign structure and no upper bound $m$.
 
 **Theorem (completeness).** If a refinement $F$ of $f$ has an asynchronous trajectory from $y$ to $y''$, then from every most-permissive configuration $\hat y$ compatible with $y$ ($\hat y_i = 0$ if $y_i = 0$, $\hat y_i = 1$ if $y_i = m$, $\hat y_i \in \{\nearrow, \searrow\}$ otherwise) there is an MPBN trajectory to a configuration $\hat y''$ compatible with $y''$ and consistent with the direction of change ($\hat y''_i = \nearrow$ if $y_i < y''_i < m$, $\hat y''_i = \searrow$ if $0 < y''_i < y_i$, $\hat y''_i = \hat y_i$ if $y''_i = y_i$). The property extends to ODE refinements. Hence if the MPBN excludes a behaviour, no multivalued or quantitative model obeying the same logic can show it.

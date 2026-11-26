@@ -3,17 +3,25 @@
 **Setting.** In the [pairwise SIRS equations](pairwise-sirs-equations-and-the-edge-reproduction-number.md) on a degree-$n$ network ($n > 2$), let the waning rate $\epsilon$ be small compared with $\beta, \gamma$, and assume $\mathcal{R}_0 = \beta(n-2)/\gamma > 1$.
 
 **Fast limit** ($\epsilon = 0$). Along every orbit $[S]$ and $[SS]$ decrease, $[I], [SI], [II] \to 0$, and
+
 $$V = \ln[SS] - \frac{2(n-1)}{n}\ln[S]$$
+
 is a constant of motion, so $[SS]\,(t) = [SS]_0\big([S]\,(t)/[S]_0\big)^{2(n-1)/n}$ for all $t$.
 
 **Critical manifold.** The disease-free states $C_0 = \{[I] = [SI] = [II] = 0\}$ form a manifold of equilibria of the fast system. The linearization on $C_0$ has eigenvalues $0, 0$ (slow variables $[S], [SS]$), $-\gamma, -2\gamma$, and
+
 $$\lambda_5 = \beta(n-1)\frac{[SS]}{n[S]} - (\gamma + \beta),$$
+
 so $C_0$ is attracting below and repelling above the line of lost hyperbolicity
+
 $$[SS] = L[S], \qquad L = \frac{n(\beta + \gamma)}{\beta(n-1)} .$$
+
 An initial condition in the repelling region produces an outbreak that ends at a point of the attracting region, determined explicitly by the constant of motion.
 
 **Slow manifold and slow flow.** For $\epsilon > 0$, $C_0$ remains invariant and is, by Fenichel theory, a slow manifold (all slow manifolds are exponentially close to it where it is normally hyperbolic). On it, in slow time $\tau = \epsilon t$,
+
 $$\dot{[S]} = 1 - [S], \qquad \dot{[SS]} = 2(n[S] - [SS]),$$
+
 so $[S] \to 1$, $[SS] \to n$, and the parabola $\Gamma = \{[SS] = n[S]^2\}$ attracts uniformly: the distance $|[SS] - n[S]^2|$ decays as $e^{-2\tau}$. The endemic equilibrium lies $O(\epsilon)$ close to the line $[SS] = L[S]$.
 
 ## Depends on

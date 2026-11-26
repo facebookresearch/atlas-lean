@@ -1,7 +1,9 @@
 # Normalized forward sensitivity index
 
 **Definition.** Let $Q(\theta) > 0$ be a differentiable function of a positive parameter $\theta$ (typically $Q = R_0$ of an epidemic model and $\theta$ a transmission, recovery or mortality rate). The normalized forward sensitivity index (elasticity) of $Q$ with respect to $\theta$ is
+
 $$\Upsilon^Q_\theta = \frac{\partial Q}{\partial \theta}\cdot \frac{\theta}{Q} = \frac{\partial \log Q}{\partial \log \theta}.$$
+
 To first order, a $1\%$ increase in $\theta$ changes $Q$ by $\Upsilon^Q_\theta\,\%$.
 
 **Proposition.**
@@ -11,7 +13,9 @@ To first order, a $1\%$ increase in $\theta$ changes $Q$ by $\Upsilon^Q_\theta\,
 4. *(Scale invariance.)* The index does not depend on the units of $\theta$ or $Q$, and if $Q$ depends on $\theta$ only through a dimensionless group the indices of the parameters in that group are proportional to their exponents in it.
 
 **Example (vector-borne co-infection).** In a malaria–visceral-leishmaniasis co-infection model with mosquito and sandfly vectors and an animal reservoir, the next-generation spectral radius is $R_0 = \max\{R_m, R_l\}$, the larger of the two single-disease numbers, with the Ross–Macdonald form
+
 $$R_m = \sqrt{\frac{a_m^2\, b_m\, c_m\, m}{\mu_{v_m}(\gamma_1 + \delta_1 + \mu_h)}},$$
+
 ($a_m$ biting rate, $b_m, c_m$ transmission probabilities, $m$ vector-to-host ratio, $\mu_{v_m}$ vector mortality, $\gamma_1 + \delta_1 + \mu_h$ host exit rate). When $R_m > R_l$ the indices are $\Upsilon_{a_m} = 1$, $\Upsilon_{b_m} = \Upsilon_{c_m} = \tfrac12$, $\Upsilon_{\mu_{v_m}} = -\tfrac12$ and $\Upsilon_{\gamma_1} = -\tfrac12\,\gamma_1/(\gamma_1 + \delta_1 + \mu_h)$.
 
 ## Depends on

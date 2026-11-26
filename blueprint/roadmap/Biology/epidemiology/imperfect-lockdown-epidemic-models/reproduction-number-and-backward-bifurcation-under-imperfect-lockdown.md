@@ -9,13 +9,19 @@ J' &= \eta I - (\tau_2 + \delta + \mu) J, & R' &= \tau_1 I + \tau_2 J - \mu R .
 The region $\{N \le \Pi / \mu\}$ of $\mathbb{R}^6_{\ge 0}$ is positively invariant and attracting.
 
 **Disease-free equilibrium and threshold.** The disease-free equilibrium is
+
 $$S_0 = \frac{\Pi (\mu + \psi)}{\mu (\mu + \psi + l)}, \qquad L_0 = \frac{\Pi l}{\mu (\mu + \psi + l)},$$
+
 and the next-generation matrix gives
+
 $$\mathcal{R}_0 = \frac{\beta \gamma\, (\mu + \psi + r l)}{(\mu + \gamma)(\eta + \tau_1 + \mu)(\mu + \psi + l)} .$$
+
 The disease-free equilibrium is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$. Since $\partial \mathcal{R}_0 / \partial l = -\mathcal{R}_0 (1 - r)/(\mu + \psi + rl) \cdot (\mu + \psi)/(\mu + \psi + l) < 0$ for $r < 1$, faster lockdown always lowers the threshold, down to the factor $r$ as $l \to \infty$.
 
 **Endemic equilibria.** Every endemic equilibrium is determined by its force of infection $\lambda^\ast > 0$, which solves a quadratic
+
 $$A (\lambda^\ast)^2 + B \lambda^\ast + C = 0, \qquad A > 0, \qquad C = \mu k_3 k_4 k_5 (k_2 + l)(1 - \mathcal{R}_0),$$
+
 with $k_2 = \mu + \psi$, $k_3 = \gamma + \mu$, $k_4 = \eta + \tau_1 + \mu$, $k_5 = \tau_2 + \delta + \mu$. Hence there is a unique endemic equilibrium when $\mathcal{R}_0 > 1$ ($C < 0$), and when $\mathcal{R}_0 < 1$ there are two endemic equilibria if $B < 0$ and $B^2 - 4AC > 0$, and none if $B \ge 0$. In the two-equilibrium case the system has a backward bifurcation: a stable endemic state coexists with the stable disease-free state for $\mathcal{R}_0 < 1$, so bringing $\mathcal{R}_0$ below one is necessary but not sufficient for elimination.
 
 ## Expansion

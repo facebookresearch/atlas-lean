@@ -1,19 +1,29 @@
 # Single-switch optimal intervention maximizing final susceptibles
 
 **Model.** Susceptible and infected fractions $x, y$ follow the SIR model with a controlled reproduction number $\sigma(t) \in [0, \sigma_0]$ on a finite window $[0, T]$ and $\sigma = \sigma_0$ afterwards:
+
 $$x' = -\gamma\sigma(t)\, x y, \qquad y' = \gamma\sigma(t)\, x y - \gamma y, \qquad (x_0, y_0) \in \{x_0 > 0,\ y_0 > 0,\ x_0 + y_0 \le 1\},$$
+
 with recovery rate $\gamma > 0$ and basic reproduction number $\sigma_0 > 0$. The goal is to maximize the final susceptible fraction $x_\infty = \lim_{t\to\infty} x(t)$, i.e. to minimize the eventual number ever infected.
 
 **Final size from any state.** For the uncontrolled flow, $\mu(x, y) = x\, e^{-\sigma_0(x + y)}$ is a first integral, and the eventual susceptible fraction from state $(x, y)$ is
+
 $$x_\infty(x, y) = -\frac{1}{\sigma_0} W_0\big(-\sigma_0\, \mu(x, y)\big),$$
+
 with $W_0$ the principal branch of the Lambert $W$ function; it increases with $\mu$, and along a controlled trajectory
+
 $$\frac{d}{dt}\, x_\infty\big(x(t), y(t)\big) = \frac{\gamma\, y\, x_\infty}{1 - \sigma_0 x_\infty}\,\big(\sigma_0 - \sigma(t)\big) \ \ge 0 .$$
+
 Hence every admissible control weakly increases $x_\infty$, and $x_\infty(x_0, y_0) \le x_\infty(x(T), y(T)) \le 1/\sigma_0$.
 
 **Theorem.** With no running cost, the problem of maximizing $x_\infty(x(T), y(T))$ over measurable $\sigma : [0,T] \to [0, \sigma_0]$ has a unique solution, the single-switch bang–bang control
+
 $$\sigma^\ast(t) = \begin{cases} \sigma_0, & t < t^\ast,\\ 0, & t^\ast < t \le T, \end{cases}$$
+
 where $t^\ast = 0$ if $x_0 \le \dfrac{1}{\sigma_0(1 - e^{-\gamma T})}$, and otherwise $t^\ast \in (0, T)$ is the unique solution of
+
 $$x(t^\ast; \sigma_0, x_0, y_0) = \frac{1}{\sigma_0\big(1 - e^{-\gamma(T - t^\ast)}\big)} .$$
+
 That is, the epidemic runs uncontrolled until the susceptible fraction falls to this moving threshold, and the strongest intervention is applied for the rest of the window.
 
 ## Depends on

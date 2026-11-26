@@ -3,7 +3,9 @@
 **Setting.** A Boolean network (BN) on genes $x_1, \dots, x_n$ is a map $f : \{0,1\}^n \to \{0,1\}^n$ updated synchronously, $x(t+1) = f(x(t))$. A probabilistic Boolean network (PBN) consists of $r$ BNs $f^{(1)}, \dots, f^{(r)}$ with selection probabilities $c_1, \dots, c_r$ ($c_k > 0$, $\sum_k c_k = 1$) and a gene-perturbation rate $p \in [0, 1)$. At each step, with probability $(1-p)^n$ no gene is perturbed and the state is updated by a network $f^{(k)}$ chosen with probability $c_k$; otherwise a nonzero random vector $\gamma \in \{0,1\}^n$ with independent $\Pr\{\gamma_i = 1\} = p$ flips the corresponding genes, $x \mapsto x \oplus \gamma$. (When networks are chosen independently at every step, the network-switching probability does not enter the transition law.)
 
 **Statement.** The state process is a homogeneous Markov chain on $\{0,1\}^n$ with transition matrix
+
 $$T = \bar T + \tilde T, \qquad \bar T = (1-p)^n \sum_{k=1}^r c_k T_k, \qquad \tilde T_{s,w} = p^{\eta(s,w)} (1-p)^{n - \eta(s,w)} \, \mathbf{1}[s \ne w],$$
+
 where $T_k$ is the $0/1$ transition matrix of $f^{(k)}$ ($T_k(s, w) = 1$ iff $w = f^{(k)}(s)$) and $\eta(s,w)$ is the Hamming distance. Rows of $T$ sum to $1$, and $T$ can be assembled in $O(n\, r\, 2^n)$ operations.
 
 1. *Deterministic case* ($r = 1$, $p = 0$). Every trajectory enters an attractor (a fixed point or a cycle) and the basins partition $\{0,1\}^n$. Any probability vector that is uniform on each attractor cycle and zero off the attractors is stationary; the stationary distribution is unique iff there is exactly one attractor, and the chain converges to it from every initial law iff that attractor is a single fixed point.

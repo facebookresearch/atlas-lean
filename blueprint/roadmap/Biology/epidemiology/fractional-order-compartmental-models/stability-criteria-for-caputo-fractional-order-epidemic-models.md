@@ -1,9 +1,13 @@
 # Stability criteria for Caputo fractional-order epidemic models
 
 **Fractional derivatives.** For $n - 1 < p \le n$, $n \in \mathbb N$, the Caputo derivative of a $C^n$ function is
+
 $${}^{C}\!D^p_t X(t) = \frac{1}{\Gamma(n - p)} \int_0^t \frac{X^{(n)}(\zeta)}{(t - \zeta)^{p + 1 - n}}\, d\zeta, \qquad t > 0,$$
+
 which tends to $X'(t)$ as $p \to 1$ for $n = 1$. The Atangana–Baleanu–Caputo derivative of order $\Phi \in (0, 1)$ replaces the power-law kernel by a Mittag-Leffler kernel,
+
 $${}^{ABC}\!D^\Phi_t f(t) = \frac{B(\Phi)}{1 - \Phi} \int_0^t f'(\vartheta)\, E_\Phi\Bigl(-\frac{\Phi (t - \vartheta)^\Phi}{1 - \Phi}\Bigr) d\vartheta,$$
+
 with normalization $B(0) = B(1) = 1$; its associated integral is $\frac{1 - \Phi}{B(\Phi)} f(t) + \frac{\Phi}{B(\Phi)\Gamma(\Phi)} \int_0^t (t - \vartheta)^{\Phi - 1} f(\vartheta)\, d\vartheta$.
 
 **Model class.** A fractional compartmental model is ${}^{C}\!D^p_t x(t) = f(x(t))$, $p \in (0, 1]$, with $f$ the right-hand side of an ordinary compartmental model; its equilibria are the zeros of $f$, as in the integer-order model, and the disease-free equilibrium and $\mathcal R_0$ are unchanged.

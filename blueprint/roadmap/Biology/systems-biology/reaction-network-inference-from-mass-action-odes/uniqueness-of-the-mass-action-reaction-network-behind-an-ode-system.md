@@ -1,6 +1,7 @@
 # Uniqueness of the mass-action reaction network behind an ODE system
 
 **Networks and their ODEs.** A reaction network on species $x_1, \dots, x_n$ is a finite set of reactions $r$, each with reactant stoichiometry $a_r \in \mathbb{Z}_{\ge 0}^n$, product stoichiometry $b_r \in \mathbb{Z}_{\ge 0}^n$ and a rate law $f_r(x)$. It generates the ODE system
+
 $$\frac{dx_s}{dt} = \sum_r (b_{r,s} - a_{r,s})\, f_r(x), \qquad s = 1, \dots, n .$$
 
 **Conditions.**
@@ -10,10 +11,13 @@ $$\frac{dx_s}{dt} = \sum_r (b_{r,s} - a_{r,s})\, f_r(x), \qquad s = 1, \dots, n 
 3. (Distinct parameters for equal reactants.) If $r \ne r'$ and $a_r = a_{r'}$, then $k_r \ne k_{r'}$.
 
 Under Condition 1 the generated right-hand sides are polynomials in $x$ whose coefficients are integer linear combinations of the symbols $k_r$:
+
 $$\frac{dx_s}{dt} = \sum_{j} c_{j,s}\, k_j \prod_{t} x_t^{a_{j,t}}, \qquad c_{j,s} \in \mathbb{Z} .$$
 
 **Theorem.** For any ODE system of this form there is at most one reaction network satisfying Conditions 1–3 that generates it, up to elementary algebraic rewriting. When it exists it is obtained constructively: each distinct pair (parameter $k_j$, monomial $x^{a_j}$) is one reaction $j$ with reactants $a_j$, and its products are
+
 $$b_{j,s} = a_{j,s} + c_{j,s}, \qquad s = 1, \dots, n .$$
+
 If some $b_{j,s} < 0$, no network satisfying the conditions generates the system; for example, $\dot x = -2kx$ would need a reaction with one copy of $x$ as reactant and $-1$ copies as product.
 
 ## Expansion

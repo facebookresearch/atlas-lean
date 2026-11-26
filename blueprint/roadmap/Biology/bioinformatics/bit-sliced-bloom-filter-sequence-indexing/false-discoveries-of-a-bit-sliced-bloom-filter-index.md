@@ -1,15 +1,21 @@
 # False discoveries of a bit-sliced Bloom filter index
 
 **Index.** Let $N$ datasets each be summarized by a Bloom filter of length $m$ bits built with the same $\eta$ hash functions $h_1, \dots, h_\eta : \Sigma^k \to \{1, \dots, m\}$ applied to the dataset's set of distinct $k$-mers (at most $K_{\max}$ of them). Concatenating the filters as columns gives an $m \times N$ bit matrix $B$. A $k$-mer $x$ is reported present in dataset $j$ iff
+
 $$\bigwedge_{t=1}^{\eta} B_{h_t(x),\, j} = 1 ,$$
+
 that is, column $j$ of the bitwise AND of the $\eta$ rows $h_1(x), \dots, h_\eta(x)$. A query sequence with $L$ distinct $k$-mers is reported present in dataset $j$ when all $L$ of its $k$-mers are reported present (or, for approximate search, when a chosen fraction of them are). Bloom filters have no false negatives, so every dataset that truly contains all query $k$-mers is returned.
 
 **False discoveries.** Let $p$ be the false positive rate of a single filter for a single absent $k$-mer, and assume that false positives are independent across $k$-mers and datasets. Then the expected number $V$ of datasets falsely reported to contain an exact query with $L$ distinct $k$-mers, none of which they contain, satisfies
+
 $$q := \mathbb{E}[V] \le N p^{L} .$$
 
 **Parameter choice.** To guarantee $q \le q_{\max}$ for all queries with at least $L_{\min}$ distinct $k$-mers it suffices that $N p^{L_{\min}} = q_{\max}$, i.e.
+
 $$p = \left(\frac{q_{\max}}{N}\right)^{1/L_{\min}} .$$
+
 With the standard Bloom filter optimum for $n = K_{\max}$ inserted elements, $m = -n \ln p / (\ln 2)^2$ and $\eta = -\ln p / \ln 2$, this gives
+
 $$m = -\frac{K_{\max}\, \ln(q_{\max}/N)}{L_{\min} (\ln 2)^2}, \qquad \eta = -\frac{\ln(q_{\max}/N)}{L_{\min} \ln 2} .$$
 
 ## Expansion

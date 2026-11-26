@@ -1,7 +1,9 @@
 # Peaked dwell times require cycles and entropy production
 
 **Setting.** As for dwell times in a coarse-grained Markov chain: microstates with rates $w_{ij}$, an observed mesostate $A$ (two ON microstates in the minimal model) and the dwell-time density $f$ of sojourns in $A$. For a cycle $\mathcal C = (i_1 \to i_2 \to \dots \to i_L \to i_1)$ of the transition graph, the steady-state entropy produced per completion of the cycle in the forward direction is
+
 $$\Delta_{\mathcal C} s = k_B \ln \frac{w_{i_1 i_2} w_{i_2 i_3} \cdots w_{i_L i_1}}{w_{i_2 i_1} w_{i_3 i_2} \cdots w_{i_1 i_L}},$$
+
 and for a graph with a single cycle the entropy production rate is $\sigma = J\, \Delta_{\mathcal C} s$, where $J$ is the net stationary probability current around the cycle (Schnakenberg).
 
 **Statements.**

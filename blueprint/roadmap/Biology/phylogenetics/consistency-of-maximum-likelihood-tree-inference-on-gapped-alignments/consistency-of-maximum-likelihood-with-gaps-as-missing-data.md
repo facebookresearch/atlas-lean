@@ -3,6 +3,7 @@
 Keep the setting of [Consistency of maximum-likelihood tree estimation on ungapped alignments](consistency-of-maximum-likelihood-tree-estimation.md): taxa $N = \{1, \dots, n\}$, trees with positive edge lengths, the metric $D$, Jukes–Cantor substitutions. Now an alignment $A_m$ is an $n \times m$ matrix over $\{A, C, G, T, -\}$, where $-$ marks a taxon with no letter homologous to that column. Sequences evolve from an unobserved root sequence by a continuous-time Markov process in which substitutions and indels are **independent**, and inserted letters are drawn from the substitution model's equilibrium distribution. For $S \subseteq N$, the **site category** $C(S)$ is the set of columns whose non-gap letters occur exactly in the taxa of $S$, so $A_m[S, C(S)]$ is ungapped. For a tree $T$, $T|_S$ is the subtree spanning $S$ with degree-two vertices suppressed and lengths adjusted so that $d_{T|_S}(a,b) = d_T(a,b)$ on $S$.
 
 Treating gaps as missing data means scoring column $j$ by $\Pr[A_m[S, j] \mid T|_S]$, with $S$ its set of non-gap taxa, so
+
 $$L(A_m \mid T) = \frac{1}{m}\sum_{S \subseteq N} \log \Pr\big[A_m[S, C(S)] \,\big|\, T|_S\big].$$
 
 Assumptions on the indel process, both holding almost surely:

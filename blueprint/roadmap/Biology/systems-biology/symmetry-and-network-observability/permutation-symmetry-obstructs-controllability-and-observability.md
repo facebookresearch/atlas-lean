@@ -1,8 +1,11 @@
 # Permutation symmetry obstructs controllability and observability
 
 **Setting.** A linear (or linearized) network model with state $x \in \mathbb{R}^n$, input $u \in \mathbb{R}^p$ and measurement $y \in \mathbb{R}^q$:
+
 $$\dot x = A x + B u, \qquad y = C x .$$
+
 It is controllable iff the reachable subspace $\mathcal{R} = \operatorname{span}\{ A^k B : k = 0, \dots, n-1 \}$ equals $\mathbb{R}^n$, and observable iff the unobservable subspace $\mathcal{U} = \bigcap_{k=0}^{n-1} \ker (C A^k)$ is $\{0\}$ (Kalman rank conditions). A **symmetry** is a permutation matrix $P \ne I$ of the nodes (orthogonal, $P^\top = P^{-1}$) with
+
 $$P A = A P .$$
 
 **Theorem.**

@@ -1,7 +1,9 @@
 # Optimal noise correlations lie on the boundary of the correlation spectrahedron
 
 Fix tuning-curve derivatives $\mu' \in \mathbb{R}^n$ and noise variances $\sigma_1^2, \dots, \sigma_n^2 > 0$. The set of admissible noise covariance matrices with these variances,
+
 $$\mathcal{S} = \{\Sigma \in \mathbb{R}^{n\times n} : \Sigma = \Sigma^{\top} \succeq 0,\ \Sigma_{ii} = \sigma_i^2\},$$
+
 is a compact convex set (a **spectrahedron**, the slice of the positive semidefinite cone by the diagonal constraints), parametrized by the $n(n-1)/2$ noise correlations. Let $\mathcal{R} \subseteq \mathcal{S}$ be any compact convex region of allowed correlations (for example $\mathcal{S}$ itself, or $\mathcal{S}$ intersected with a norm ball on the correlations) on which the information measure is finite.
 
 **Theorem.** The linear Fisher information $I_F(\Sigma) = \mu'^{\top}\Sigma^{-1}\mu'$ is a convex function of $\Sigma$ on the positive definite cone. Consequently its maximum over $\mathcal{R}$ is attained at a boundary point of $\mathcal{R}$, and indeed at an extreme point of $\mathcal{R}$. The same holds for the optimal-linear-estimator information and for Gaussian mutual information.

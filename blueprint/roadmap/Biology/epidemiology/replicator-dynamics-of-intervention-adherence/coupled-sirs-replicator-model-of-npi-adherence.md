@@ -1,7 +1,9 @@
 # Coupled SIRS–replicator model of NPI adherence
 
 **Model.** In a population of constant size, $S, I, R = 1 - S - I$ are susceptible, infected and recovered fractions and $x \in [0,1]$ is the fraction adhering to a symmetric non-pharmaceutical intervention (NPI) that multiplies transmission by $p \in (0,1)$ whenever either party adheres. With transmission rate $\beta$, recovery $\gamma$, birth and death rate $\mu$, waning immunity $\delta$, perceived risk of infection $\xi > 0$ and adherence cost $c > 0$, the payoffs of non-adherers and adherers are
+
 $$\pi_N = -\beta I \xi (1 - x) - p \beta I \xi x, \qquad \pi_A = p\, \pi_N - c,$$
+
 and
 $$\begin{aligned}
 \dot S &= \mu - b(x)\beta S I - \mu S + \delta(1 - S - I),\\
@@ -15,7 +17,9 @@ Let $\mathcal{R}_0 = \beta/(\gamma + \mu)$.
 1. Disease-free equilibria $(S, I, x) = (1, 0, 0)$ and $(1, 0, 1)$. The first is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$; the second is always unstable (adherence is costly when there is no infection).
 2. Endemic equilibria with no or full adherence: $x = 0$, $S^* = 1/\mathcal{R}_0$, $I^* = \frac{\mu + \delta}{\mu + \delta + \gamma}\big(1 - \frac{1}{\mathcal{R}_0}\big)$; and $x = 1$, $S^* = 1/(p\mathcal{R}_0)$, $I^* = \frac{\mu + \delta}{\mu + \delta + \gamma}\big(1 - \frac{1}{p\mathcal{R}_0}\big)$, the latter existing only if $p\mathcal{R}_0 > 1$.
 3. A partial-adherence endemic equilibrium with
+
 $$I^*_m = \frac{\mu + \delta}{(1-p)(\gamma + \mu)(\mu + \delta)\,\xi/c + \gamma + \mu + \delta}, \qquad S^*_m = \frac{(1-p)(\gamma+\mu)\,\xi}{c}\, I^*_m, \qquad x^*_m = \frac{1}{1-p}\Big(1 - \frac{\gamma + \mu}{\beta S^*_m}\Big),$$
+
 which exists iff $0 < x^*_m < 1$. All three quantities depend on $c$ and $\xi$ only through the cost-to-risk ratio $c/\xi$. Whenever it exists it is locally stable, and the no- and full-adherence endemic equilibria are then unstable. In particular, if $\mathcal{R}_0 > 1$, no adherence is stable exactly when $c/\xi \ge (\mathcal{R}_0 - 1)(1-p)(\gamma+\mu)(\mu+\delta)/(\gamma+\mu+\delta)$, i.e. when $x^*_m \le 0$.
 
 **With vaccination** (fraction $q$ of births vaccinated, susceptibles vaccinated at rate $\nu$), the disease-free susceptible fraction becomes $S^0 = \frac{\mu(1-q) + \delta}{\mu + \nu + \delta}$ and the reproduction number $\mathcal{R}_0(\nu) = \mathcal{R}_0 S^0$, with analogous endemic equilibria in which $\mu + \delta$ is replaced by $\mu(1-q) + \delta$ in the infected fractions.

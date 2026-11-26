@@ -10,7 +10,9 @@ $$\begin{aligned}
 where $\Lambda = (1-c) m \beta$, $a_j = (1-c)\alpha_j$, $b_j = \sigma_j + \mu$, $k_j = \gamma_j + \epsilon_j + \mu$, $l_j = \gamma_j + \mu$ ($j \in \{r, s\}$), $\sigma_j$ is the treatment rate, $\gamma_j$ the recovery rate under treatment, $\epsilon_j$ the treatment-failure rate and $\omega$ the rate of waning immunity.
 
 **Reproduction number.** The disease-free equilibrium is $(s, i_r, i_s, \tau_r, \tau_s, r, x, y) = (1,0,0,0,0,0,1,0)$. With infected variables $(i_r, i_s, \tau_r, \tau_s, y)$, the next-generation matrix $FV^{-1}$ has spectral radius $\sqrt{\mathcal{R}_0}$, where
+
 $$\mathcal{R}_0 = \mathcal{R}_{0r} + \mathcal{R}_{0s}, \qquad \mathcal{R}_{0j} = \frac{\rho_j\, \Lambda\, a_j\, k_j}{\xi\,(\sigma_j l_j + \mu k_j)}, \quad \rho_r = \rho,\ \rho_s = 1-\rho,$$
+
 explicitly $\mathcal{R}_{0j} = (1-c)^2 \rho_j m \beta \alpha_j (\epsilon_j + \gamma_j + \mu) / \{\xi[\sigma_j(\gamma_j + \mu) + \mu(\epsilon_j + \gamma_j + \mu)]\}$. Here $\mathcal{R}_0$ counts infections over a full human–mosquito–human cycle, so $\mathcal{R}_0 < 1$ iff $\rho(FV^{-1}) < 1$.
 
 **Results.**

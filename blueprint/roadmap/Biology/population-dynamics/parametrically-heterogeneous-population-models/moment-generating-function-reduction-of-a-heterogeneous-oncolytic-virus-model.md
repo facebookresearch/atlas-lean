@@ -1,21 +1,31 @@
 # Moment-generating-function reduction of a heterogeneous oncolytic virus model
 
 **Homogeneous model.** Uninfected tumour cells $X$ and virus-infected tumour cells $Y$ (rescaled by the carrying capacity and the uninfected growth rate) satisfy
+
 $$\dot X = X\big(1 - (X + Y)\big) - \beta\frac{XY}{X + Y}, \qquad \dot Y = \gamma Y\big(1 - (X + Y)\big) + \beta\frac{XY}{X + Y} - \delta Y,$$
+
 with relative growth rate of infected cells $\gamma$, transmission coefficient $\beta$ (frequency-dependent infection) and virus-induced death rate $\delta$; virus abundance is taken proportional to infected cells.
 
 **Heterogeneous model.** Uninfected cells carry individual susceptibilities $\beta \in B \subseteq [0, \infty)$ with density $x(t, \beta)$, $X(t) = \int_B x(t,\beta)\,d\beta$:
+
 $$\partial_t x(t, \beta) = x(t,\beta)\big(1 - (X + Y)\big) - \beta\, x(t, \beta)\frac{Y}{X + Y}, \qquad \dot Y = \gamma Y\big(1 - (X + Y)\big) + E_\beta(t)\frac{XY}{X + Y} - \delta Y,$$
+
 with $x(0,\beta) = X_0\, p(0, \beta)$ and $E_\beta(t) = \int_B \beta\, x(t,\beta)\,d\beta / X(t)$ the current mean susceptibility.
 
 **Theorem (exact reduction).** Let $M(\lambda) = \int_B e^{\lambda\beta} p(0, \beta)\, d\beta$ be the moment generating function of the initial susceptibility distribution and define the auxiliary variable
+
 $$\dot q = -\frac{Y}{X + Y}, \qquad q(0) = 0 .$$
+
 Then
+
 $$E_\beta(t) = \frac{M'(q(t))}{M(q(t))} = \frac{d}{d\lambda}\ln M(\lambda)\Big|_{\lambda = q(t)},$$
+
 and $(X, Y, q)$ solve the closed ODE system obtained from the homogeneous model by replacing $\beta$ with $E_\beta(t)$; the density itself is $x(t, \beta) = X_0\, p(0,\beta)\, e^{\beta q(t)}\exp\!\int_0^t \big(1 - X - Y\big)ds$, so $p(t, \beta) = p(0,\beta)e^{\beta q(t)}/M(q(t))$. The mean susceptibility is nonincreasing, $\dot E_\beta = \mathrm{Var}_t(\beta)\,\dot q \le 0$.
 
 **Gamma example.** If $p(0, \cdot)$ is a gamma distribution with shape $k$ and rate $s$ shifted to $[\eta, \infty)$, then $\beta$ stays gamma distributed with
+
 $$E_\beta(t) = \eta + \frac{k}{s - q(t)},$$
+
 and if infected cells persist ($Y \ge c > 0$), $q(t) \to -\infty$ and $E_\beta(t) \to \eta$, the minimal susceptibility in the initial support.
 
 ## Expansion

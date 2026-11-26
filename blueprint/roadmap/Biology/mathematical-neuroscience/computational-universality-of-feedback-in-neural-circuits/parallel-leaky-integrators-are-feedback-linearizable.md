@@ -9,7 +9,9 @@
 Locally, linear independence together with involutivity of the distribution spanned by $g, \dots, \mathrm{ad}_f^{n-2} g$ is equivalent to feedback linearizability near a point (Frobenius).
 
 **Statement.** The rate-model circuit
+
 $$x_i' = -\lambda_i x_i + b_i v, \qquad i = 1, \dots, n,$$
+
 with $\lambda_i > 0$ pairwise distinct and all $b_i \ne 0$, is globally feedback linearizable. It is a fading-memory system (each unit is a leaky integrator), so by the universality theorem for feedback-linearizable circuits it can emulate any $n$-th order system $z^{(n)} = G(z, \dots, z^{(n-1)}) + u$ with a single memoryless feedback, which here can be taken linear in $x$ plus the emulated nonlinearity. Whether a general recurrent rate network $x' = -\Lambda x + \sigma(Ax) + b v$ is in this class depends on $A$ and $b$; the criterion has to be checked case by case.
 
 ## Expansion

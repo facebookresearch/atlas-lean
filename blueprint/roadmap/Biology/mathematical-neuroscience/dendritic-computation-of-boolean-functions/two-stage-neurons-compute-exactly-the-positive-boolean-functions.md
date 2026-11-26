@@ -1,7 +1,9 @@
 # Two-stage neurons compute exactly the positive Boolean functions
 
 Let $x \in \{0,1\}^n$ be a binary input. A **two-stage neuron** with $m$ dendritic sub-units has non-negative weight vectors $w_1, \dots, w_m \in \mathbb{R}_{\ge 0}^n$, non-decreasing dendritic activation functions $g_1, \dots, g_m : \mathbb{R}_{\ge 0} \to \mathbb{R}_{\ge 0}$, and somatic threshold $\Theta$; its output is
+
 $$y(x) = \mathbf{1}\Big[ \sum_{j=1}^{m} g_j(w_j \cdot x) \ge \Theta \Big].$$
+
 A Boolean function $f$ is **positive** (monotone) if $x \le x'$ componentwise implies $f(x) \le f(x')$. A function $g$ is **supra-linear** on a set if $g(a + b) > g(a) + g(b)$ for at least one admissible pair, **sub-linear** if $g(a+b) < g(a) + g(b)$ for at least one pair, and **strictly** sub-linear (supra-linear) if it is sub-linear but not supra-linear (respectively the reverse). A **spiking** dendritic activation (zero below a threshold, a fixed height above it) is both supra- and sub-linear; a **saturating** activation (linear up to a ceiling, then flat) is strictly sub-linear.
 
 **Lemma.** With non-negative weights and non-decreasing activations, $y$ is a positive Boolean function.

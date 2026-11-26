@@ -1,30 +1,39 @@
 # Well-posedness of Caputo fractional initial value problems
 
 Let $0<\alpha\le 1$ and let ${}^{C}D_t^{\alpha}$ denote the Caputo derivative
+
 $$
 {}^{C}D_t^{\alpha}x(t)=\frac{1}{\Gamma(1-\alpha)}\int_0^t (t-s)^{-\alpha}\,x'(s)\,ds .
 $$
+
 A compartmental epidemic model of Caputo type is a system ${}^{C}D_t^{\alpha}x(t)=Q(x(t),t)$, $x(0)=x_0\in\mathbb{R}^n$, where $x=(S,I,R,D,\dots)$ collects the compartments.
 
 **Integral equivalence.** For $h\in L^1[0,T]$, the problem ${}^{C}D_t^{\alpha}\Phi=h$, $\Phi(0)=\Phi_0$ has the unique solution
+
 $$
 \Phi(t)=\Phi_0+\frac{1}{\Gamma(\alpha)}\int_0^t (t-\zeta)^{\alpha-1}h(\zeta)\,d\zeta .
 $$
+
 Consequently a continuous $x$ solves the Caputo system if and only if it solves the Volterra equation
+
 $$
 x(t)=x_0+\frac{1}{\Gamma(\alpha)}\int_0^t (t-s)^{\alpha-1}Q(x(s),s)\,ds .
 $$
 
 **Local existence and uniqueness.** Suppose $Q$ is continuous on $[0,a_0]\times\overline{B}_b(x_0)$, bounded there by $\|Q\|_\infty\le M$, and Lipschitz in $x$ with constant $L$. Choose $0<a\le a_0$ with
+
 $$
 a<\Big(\frac{b\,\Gamma(\alpha+1)}{M}\Big)^{1/\alpha}\qquad\text{and}\qquad \frac{L\,a^{\alpha}}{\Gamma(\alpha+1)}<1 .
 $$
+
 Then the operator $\Psi x(t)=x_0+\Gamma(\alpha)^{-1}\int_0^t (t-s)^{\alpha-1}Q(x(s),s)\,ds$ maps the closed set of continuous functions $[0,a]\to\overline{B}_b(x_0)$ into itself and is a contraction in the supremum norm, so the Caputo system has a unique continuous solution on $[0,a]$.
 
 For the fractional SIRD model
+
 $$
 {}^{C}D_t^{\alpha}S=-\frac{\beta SI}{N},\quad {}^{C}D_t^{\alpha}I=\frac{\beta SI}{N}-(\gamma+\kappa)I,\quad {}^{C}D_t^{\alpha}R=\gamma I,\quad {}^{C}D_t^{\alpha}D=\kappa I,
 $$
+
 the right-hand side is a polynomial, hence locally Lipschitz, and the theorem applies on every bounded ball of initial data.
 
 ## Depends on

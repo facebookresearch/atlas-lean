@@ -1,17 +1,25 @@
 # Tensor GSVD and its angular distance
 
 **Matrix GSVD.** Let $D_1 \in \mathbb R^{K_1 \times N}$ and $D_2 \in \mathbb R^{K_2 \times N}$ have full column rank and the same columns (e.g. patients). Their generalized singular value decomposition is
+
 $$D_i = U_i \Sigma_i V^{\mathsf T}, \qquad i = 1, 2,$$
+
 with $U_i^{\mathsf T} U_i = I$, $\Sigma_i = \mathrm{diag}(\sigma_{i,1}, \dots, \sigma_{i,N})$ positive, and $V$ invertible with normalized but in general non-orthogonal columns, shared by both datasets. The *GSVD angular distance* of the $a$-th pattern is
+
 $$\theta_a = \arctan\!\left(\frac{\sigma_{1,a}}{\sigma_{2,a}}\right) - \frac{\pi}{4} \in \left[-\frac{\pi}{4}, \frac{\pi}{4}\right]. \tag{5}$$
+
 Here $\theta_a = \pi/4$ (resp. $-\pi/4$) marks a pattern exclusive to $D_1$ (resp. $D_2$), and $\theta_a = 0$ one common to both.
 
 **Tensor GSVD.** Let $\mathcal D_i \in \mathbb R^{K_i \times L \times M}$ ($i = 1,2$) be third-order tensors with matched column dimensions $L$ (patients) and $M$ (platforms) and independent row dimensions $K_i$ (probes). Take $U_i$ from the GSVD of the row-mode unfoldings $D_i \in \mathbb R^{K_i \times LM}$, and $V_x$, $V_y$ from the GSVDs of the unfoldings preserving the $L$- and the $M$-dimension. Contracting $\mathcal D_i$ with $U_i^{\mathsf T}$, $V_x^{-1}$ and $V_y^{-1}$ defines core tensors $\mathcal R_i$, giving
+
 $$\mathcal D_i = \mathcal R_i \times_a U_i \times_b V_x \times_c V_y = \sum_{a,b,c} \mathcal R_{i,abc}\; u_{i,a} \otimes v_{x,b} \otimes v_{y,c}. \tag{1}$$
+
 The tensor GSVD exists for tensors of any order and is unique up to signs and rotations within degenerate subspaces. For second-order tensors it reduces to the matrix GSVD, and when $D_1$ is the identity it reduces to the higher-order SVD of $\mathcal D_2$.
 
 **Theorem.** With the tensor GSVD angular distance $\Theta_{abc} = \arctan(\mathcal R_{1,abc}/\mathcal R_{2,abc}) - \pi/4$,
+
 $$\Theta_{abc} = \theta_a \qquad \text{for all } a, b, c .$$
+
 In particular $\mathcal R_{1,abc}/\mathcal R_{2,abc} = \sigma_{1,a}/\sigma_{2,a} > 0$, so $|\Theta_{abc}| \le \pi/4$, although the core entries themselves need not be positive.
 
 ## Expansion

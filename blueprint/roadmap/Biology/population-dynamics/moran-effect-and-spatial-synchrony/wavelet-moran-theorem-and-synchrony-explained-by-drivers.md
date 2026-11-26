@@ -6,11 +6,15 @@
 - A **wavelet linear model** is $w^{(0)}_{n,\sigma}(t) \approx \sum_{k=1}^K \beta_k(\sigma)\, w^{(k)}_{n,\sigma}(t)$ with complex coefficients $\beta_k(\sigma)$ (moduli are effect strengths, arguments are phase lags), fitted to maximize the spatial coherence between the two sides at each $\sigma$. Write $w^{(h)}_{n,\sigma} = \sum_k \beta_k(\sigma) w^{(k)}_{n,\sigma}$ for the fitted model transform and $\Pi^{(0h)}_\sigma$ for the spatial coherence of $x^{(0)}$ with the model ($0 \le |\Pi^{(0h)}_\sigma| \le 1$).
 
 **Theorem (wavelet Moran theorem).** If, at timescale $\sigma$, the only synchronizing influences on $x^{(0)}$ are the drivers $x^{(1)}, \dots, x^{(K)}$ (all remaining variation being spatially independent), then
+
 $$\{|r^{(0)}_\sigma|\}_t \approx \{|r^{(h)}_\sigma|\}_t\, \big|\Pi^{(0h)}_\sigma\big|^2 :$$
+
 the synchrony of the response equals the synchrony of the best-fitting driver model times the squared coherence of that model with the response. Additional independent synchronizing drivers turn $\approx$ into $>$, so the right side is the synchrony attributable to the included drivers, and its ratio to the left side is the fraction of synchrony explained.
 
 **Interaction decomposition.** Because the mean field is linear, $r^{(h)}_\sigma(t) = \sum_k \beta_k(\sigma)\, r^{(k)}_\sigma(t)$, hence
+
 $$\{|r^{(h)}_\sigma|\}_t = \sum_{k} |\beta_k|^2 \{|r^{(k)}_\sigma|\}_t + \sum_{k \ne l} \frac1T \sum_t \mathrm{Re}\Big(\beta_k \overline{\beta_l}\, r^{(k)}_\sigma(t)\, \overline{r^{(l)}_\sigma(t)}\Big).$$
+
 The first sum is the synchrony each driver would produce alone; the cross terms are interaction effects between Moran drivers. They are positive when the drivers' synchronous fluctuations, shifted by the phases of the $\beta_k$, arrive in phase at the response (reinforcement) and negative when they arrive out of phase (cancellation); destroying cross-driver phase relationships by surrogate randomization removes them.
 
 ## Depends on

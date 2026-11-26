@@ -10,14 +10,19 @@ $$\begin{aligned}
 where the factor $1/(1 + \gamma V)$ models viral suppression of interferon production (immunosuppression through the JAK/STAT pathway), $G$ is the Heaviside function and $\tau$ the delay before antibody production starts. All parameters are positive.
 
 **Reproduction number.** The disease-free equilibrium is $E_0 = (\Pi/\mu_1, 0, \dots, 0)$ and
+
 $$\mathcal{R}_0 = \frac{\Pi \beta k_1}{\mu_1 \mu_2 \mu_3}.$$
+
 $E_0$ is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
 
 **Immune-free persistence.** For $\mathcal{R}_0 > 1$ there is an equilibrium without immune activity,
+
 $$E_1:\quad H_1 = \frac{\Pi}{\mu_1\mathcal{R}_0}, \quad I_1 = \frac{\mu_1\mu_3}{\beta k_1}(\mathcal{R}_0 - 1), \quad V_1 = \frac{\mu_1}{\beta}(\mathcal{R}_0 - 1), \quad C = N = T = B = A = 0 .$$
+
 Further equilibria with innate immunity only ($T = B = A = 0$) and with full innate and adaptive responses exist under additional threshold conditions; at the full equilibrium $C^* = \mu_6/\lambda_1$ and $T^* = \mu_7/\lambda_2$, fixed by the T- and B-cell equations.
 
 **Antiviral treatment.** With a drug blocking infection with efficacy $\epsilon_1$ (replacing $\beta$ by $(1-\epsilon_1)\beta$) and one blocking virion production with efficacy $\epsilon_2$ (replacing $k_1$ by $(1-\epsilon_2)k_1$), the control reproduction number is
+
 $$\mathcal{R}_c = (1-\epsilon_1)(1-\epsilon_2)\,\mathcal{R}_0 < \mathcal{R}_0 .$$
 
 ## Expansion

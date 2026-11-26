@@ -9,6 +9,7 @@ V_k' &= \varphi_k S_k - \beta_V(k) V_k\Theta - \phi V_k .
 The disease-free equilibrium is $S_k^0 = \phi/(\varphi_k + \phi)$, $I_k^0 = 0$, $V_k^0 = \varphi_k/(\varphi_k + \phi)$.
 
 **Theorem.** Define
+
 $$R_0 = \frac{1}{\gamma\langle k\rangle}\sum_{k=1}^{n} \frac{k P(k)\big[\phi\beta_S(k) + \varphi_k \beta_V(k)\big]}{\varphi_k + \phi}, \qquad R_1(k) = \frac{\gamma\varphi_k\beta_V(k)\big[\beta_S(k) - \beta_V(k)\big]}{\big[\phi\beta_S(k) + \varphi_k\beta_V(k)\big]^2}.$$
 
 1. The disease-free equilibrium is locally asymptotically stable if $R_0 < 1$.
@@ -17,6 +18,7 @@ $$R_0 = \frac{1}{\gamma\langle k\rangle}\sum_{k=1}^{n} \frac{k P(k)\big[\phi\bet
 4. If $R_1(k) > 1$ (with the further conditions of the source on $R_2$ and $R_3 = f(\Theta_2) + 1$), there can be two endemic equilibria with $R_0 < 1$: imperfect vaccination produces a backward bifurcation, so reducing $R_0$ just below $1$ need not eradicate the infection.
 
 Endemic equilibria are in bijection with roots $\Theta \in (0, 1)$ of $f(\Theta) = 0$, where
+
 $$f(\Theta) = \frac{1}{\langle k\rangle}\sum_{k} \frac{k P(k)\big\{\beta_S(k)[\beta_V(k)\Theta + \phi] + \varphi_k\beta_V(k)\big\}}{[\beta_S(k)\Theta + \gamma][\beta_V(k)\Theta + \phi] + \varphi_k[\beta_V(k)\Theta + \gamma]} - 1, \qquad f(0) = R_0 - 1, \quad f(1) < 0 .$$
 
 ## Depends on

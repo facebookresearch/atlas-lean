@@ -1,7 +1,9 @@
 # Nominal coverage of credible intervals under the prior predictive
 
 Let $f_\Theta$ be a prior density on a parameter $\Theta$ and $f_{D\mid\Theta}$ a likelihood, defining the joint law $\theta \sim f_\Theta$, $d \mid \theta \sim f_{D\mid\Theta}(\cdot \mid \theta)$ and the posterior $f_{\Theta\mid D}(\theta \mid d) = f_{D\mid\Theta}(d\mid\theta) f_\Theta(\theta)/f_D(d)$. For $\alpha \in (0,1)$, let $I_\alpha(d)$ be any measurable set-valued map with posterior credibility exactly $\alpha$,
+
 $$\int_{I_\alpha(d)} f_{\Theta\mid D}(\theta \mid d)\, d\theta = \alpha \quad \text{for every } d,$$
+
 for example the highest-posterior-density (shortest) interval of a continuous scalar parameter.
 
 **Proposition.** If $(\theta, d)$ is drawn from the joint generative model, then $\Pr\big(\theta \in I_\alpha(d)\big) = \alpha$. Consequently, for $n$ independent replicates $(\theta_i, d_i)$, the number of indices with $\theta_i \in I_\alpha(d_i)$ is $\operatorname{Binomial}(n, \alpha)$. For $n = 100$ and $\alpha = 0.95$, the central $95\%$ range of this count is $90$ to $99$.

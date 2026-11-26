@@ -7,12 +7,15 @@
 - For $\alpha \in (\tfrac12, 1]$, $A$ has an $\alpha$-majority if some taxon accounts for at least $\alpha N$ entries (it is then unique, and an $\alpha$-majority is also an $\alpha'$-majority for $\tfrac12 < \alpha' \le \alpha$).
 - A reduction replaces entries by ancestors: $A' \preceq_r A$ if $a_k' \preceq a_k$ for every $k$. A consistent reduction collapses whole subtrees, so that no entry of the result is a strict ancestor of another; collapsing everything to the root always yields a $1$-majority.
 - The entropy of $A$ is the Shannon entropy of its empirical distribution $p_A(z) = r_A(z)/N$:
+
 $$H(A) = -\sum_{z} p_A(z) \log p_A(z) = \log N - \frac1N \sum_{z} r_A(z) \log r_A(z).$$
 
 **Minimal-entropy reduction.** Find a reduction $A \to^\ast A'$ such that $A'$ has an $\alpha$-majority and $|H(A) - H(A')|$ is minimal, and assign the contig to the majority taxon of $A'$.
 
 **Tree decomposition.** With $Y_x$ the children of $x$, $X_x = \{x\} \cup \bigcup_{y \in Y_x} X_y$, so the quantity to optimize, $\delta H(x; A') = -\sum_{z \in X_x} r_{A'}(z) \log r_{A'}(z)$, satisfies
+
 $$\delta H(x; A') = -r_{A'}(x) \log r_{A'}(x) + \sum_{y \in Y_x} \delta H(y; A'),$$
+
 which allows a single bottom-up pass over the tree.
 
 **Proposition.** For every $A$ and $\alpha > \tfrac12$ there is a taxon $\hat x$ and a consistent reduction $A \to^\ast A''$ such that (i) $A''$ has an $\alpha$-majority, (ii) $A''$ minimizes the entropy change among all consistent reductions with that property, and (iii) $A''$ differs from $A$ only in entries that become $\hat x$; that is, an optimal reduction collapses exactly the annotations in one subtree onto its root.

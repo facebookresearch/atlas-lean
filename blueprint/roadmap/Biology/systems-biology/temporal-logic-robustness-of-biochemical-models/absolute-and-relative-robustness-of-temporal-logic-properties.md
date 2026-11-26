@@ -5,9 +5,13 @@
 **Definitions.**
 
 - *Absolute robustness* (Kitano's definition with the satisfaction degree as evaluation function):
+
 $$R_{\phi, P} = \int_{P} sd(T_p, \phi)\, \mathrm{prob}(p)\, dp \qquad \Big(= \sum_{p \in P} sd(T_p, \phi)\, \mathrm{prob}(p) \text{ for discrete } P\Big).$$
+
 - *Relative robustness* with respect to the nominal behaviour:
+
 $$R_{\phi, P}^{\mathrm{rel}} = \frac{R_{\phi, P}}{sd(T_{p^*}, \phi)} .$$
+
 - *Distance from robust satisfaction:* $\mathrm{dist}\big(\bigcap_{p} \mathcal D_{T_p, \phi(y)},\ y^\phi\big)$, the smallest change of the constants of $\phi$ after which it holds under every perturbation.
 
 **Properties.** $R_{\phi,P} \in (0, 1]$, with $R_{\phi,P} = 1$ iff $\phi$ holds for almost every perturbation (when the satisfaction domains are closed). Absolute robustness is the mean functionality under perturbations, while relative robustness measures how much perturbations degrade the nominal performance: two systems whose performance functions $p \mapsto sd(T_p, \phi)$ have the same mean have equal absolute robustness even if one loses much more relative to its nominal value, and multiplying a performance function by a constant leaves relative robustness unchanged. The two notions answer different questions and should not be used interchangeably. $R$ is estimated by Monte Carlo sampling of $p$, and the satisfaction-degree landscape over parameter space can be explored for design.

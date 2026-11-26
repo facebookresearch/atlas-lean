@@ -1,11 +1,15 @@
 # Compass graph and minimum weighted edge removal
 
 **SNP–fragment matrix.** Let $M$ be an $m \times n$ matrix over $\{0, 1, -\}$ whose rows are sequence fragments (reads with non-polymorphic bases removed) and whose columns are heterozygous SNPs, with $M_{ik} \in \{0,1\}$ the allele read by fragment $i$ at SNP $k$ and $M_{ik} = -$ if fragment $i$ does not cover SNP $k$. Fragments $i \ne j$ are in **fragment conflict** if
+
 $$\exists\, k:\ M_{ik} \ne -,\ M_{jk} \ne -,\ M_{ik} \ne M_{jk}.$$
+
 The **fragment conflict graph** $G_F$ has a vertex per fragment and an edge per conflicting pair. Without sequencing errors the fragments split into two haplotype classes, and $M$ is called **feasible** when $G_F$ is bipartite.
 
 **Compass graph.** The compass graph $G_C$ has a vertex per SNP and an edge $e = \{k, l\}$ whenever some fragment covers both SNPs. Let $n_{ab}(e)$ be the number of fragments reading alleles $a$ at $k$ and $b$ at $l$, and give $e$ the weight
+
 $$w(e) = \big(n_{00}(e) + n_{11}(e)\big) - \big(n_{01}(e) + n_{10}(e)\big),$$
+
 so $w(e) > 0$ favours the in-phase relation ($k$, $l$ carry equal alleles on each haplotype) and $w(e) < 0$ the out-of-phase relation. Any spanning tree of a connected $G_C$ determines a unique phasing by propagating majority-rule edge relations.
 
 **Proposition (conflicting cycles).** A simple cycle of $G_C$ is **conflicting**, meaning two paths around it between the same vertices imply different phasings, if and only if it contains an edge of weight $0$ or an odd number of edges of negative weight.

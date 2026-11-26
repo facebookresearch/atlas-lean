@@ -6,10 +6,12 @@ Consider $\dot x=f(x,\phi)$ with $x\in\mathbb{R}^n$, parameter $\phi\in\mathbb{R
 - **(A2)** $A$ has a right eigenvector $w$ and a left eigenvector $v$ for the zero eigenvalue with $v\cdot w=1$, where $v\ge 0$ and $w_j>0$ for every coordinate $j$ in which the equilibrium vanishes (in epidemic models: the infected classes).
 
 Define
+
 $$
 a=\sum_{k,i,j=1}^{n}v_kw_iw_j\frac{\partial^2 f_k}{\partial x_i\partial x_j}(0,0),\qquad
 b=\sum_{k,i=1}^{n}v_kw_i\frac{\partial^2 f_k}{\partial x_i\partial\phi}(0,0).
 $$
+
 Then, for $|\phi|$ small:
 
 1. $a>0$, $b>0$: for $\phi<0$ the origin is locally asymptotically stable and a positive unstable equilibrium exists; for $\phi>0$ the origin is unstable and the bifurcating equilibrium is negative and stable (**backward bifurcation**).

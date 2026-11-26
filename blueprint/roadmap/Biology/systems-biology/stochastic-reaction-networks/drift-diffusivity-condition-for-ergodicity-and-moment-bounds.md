@@ -3,7 +3,9 @@
 **Setting.** A stochastic reaction network with $d$ species and reactions $k = 1, \dots, K$ is a continuous-time Markov chain $X(t)$ on an irreducible state space $\mathcal{E} \subseteq \mathbb{Z}^d_{\ge 0}$; reaction $k$ fires at rate (propensity) $\lambda_k(x)$ and changes the state by its stoichiometric vector $\zeta_k \in \mathbb{Z}^d$.
 
 **Condition DD (drift–diffusivity).** There are a vector $v \in \mathbb{R}^d_{>0}$ and constants $c_1, c_2 > 0$, $c_3, c_4 \ge 0$ such that, for all $x \in \mathcal{E}$,
+
 $$\text{(DD1)}\quad \sum_{k} \lambda_k(x)\,\langle v, \zeta_k\rangle \le c_1 - c_2 \langle v, x\rangle, \qquad \text{(DD2)}\quad \sum_k \lambda_k(x)\,\langle v, \zeta_k\rangle^2 \le c_3 + c_4 \langle v, x\rangle .$$
+
 DD1 bounds the drift and DD2 the diffusion of the scalar process $\langle v, X(t)\rangle$, measured in the weighted $\ell_1$ norm $\|x\|_v = \langle v, x\rangle$ on the nonnegative orthant.
 
 **Results.** Under Condition DD:

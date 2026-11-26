@@ -9,11 +9,17 @@ $$\begin{aligned}
 with Gompertz proliferation rates $\lambda_1, \lambda_2$, mutation rates $\tau_1$ (to resistance) and $\tau_2$ (back to sensitivity), log-kill chemotherapy of sensitive cells at rate $\beta_1 u(t)$, vascular stimulation $b$ and inhibition $d$ by the tumour (Hahnfeldt et al.), endothelial death $\mu$, and vascular sensitivities $\beta, \gamma$ to the chemotherapeutic dose $u(t)$ and anti-angiogenic dose $v(t)$. For bounded continuous doses, $\{N_1, N_2, K > 0\}$ is positively invariant and solutions exist for all $t \ge 0$.
 
 **Steady state under constant doses** $u, v$. Let $A = \lambda_1\tau_1$, $B = \lambda_2\tau_1 - \lambda_1\tau_2 + \beta_1\lambda_2 u$, $C = -\lambda_2\tau_2$, $\Delta = B^2 - 4AC > 0$, and
+
 $$R = \frac{\sqrt\Delta - B}{2A} > 0, \qquad \alpha = \frac{\tau_1 R - \tau_2}{\lambda_2} .$$
+
 System has exactly one positive steady state, with $\bar N_1/\bar N_2 = R$, $\bar N_1 + \bar N_2 = \bar K e^{\alpha}$ and
+
 $$\bar K = \frac{\big(b e^{\alpha} - \mu - \beta u - \gamma v\big)^{3/2}}{d^{3/2} e^{\alpha}},$$
+
 which exists iff $b e^{\alpha} - \mu - \beta u - \gamma v > 0$. It is locally stable if
+
 $$b\big(\bar K e^{\alpha} - 1\big) + \tfrac{2}{3}\, d\, \bar K^{2/3} e^{-\alpha/3} > 0$$
+
 and unstable under the reverse inequality; in particular $b e^{\alpha} - \mu - \beta u - \gamma v > d$ guarantees both existence and stability.
 
 ## Expansion

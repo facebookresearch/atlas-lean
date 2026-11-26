@@ -3,7 +3,9 @@
 Use the definition of an $(N, n, k)$-multipool from [False-positive bound for multipool testing](false-positive-bound-for-multipool-testing.md). Arrange $N = n^2$ samples as $X_{i,j}$ with $i, j \in \{0, \dots, n-1\}$.
 
 **Theorem (prime pool size).** Let $n$ be prime. For $l, m \in \{0,\dots,n-1\}$ define the sloped-line pools
+
 $$P(l, m) = \{ X_{j,\; l + m j \bmod n} : j = 0, \dots, n-1 \},$$
+
 and the column pools $P(l, \infty) = \{X_{l, j} : j = 0, \dots, n-1\}$. Then the $n(n+1)$ pools $\{P(l,m) : l \in \mathbb{Z}_n,\ m \in \mathbb{Z}_n \cup \{\infty\}\}$ form an $(n^2, n, n+1)$-multipool, and keeping the pools of any $k \le n + 1$ slopes gives an $(n^2, n, k)$-multipool.
 
 **Theorem (any $n \ge 2$, multiplicity 3).** For every $n \ge 2$, pooling along rows, columns and the periodically continued diagonals of slope $1$ gives an $(n^2, n, 3)$-multipool.

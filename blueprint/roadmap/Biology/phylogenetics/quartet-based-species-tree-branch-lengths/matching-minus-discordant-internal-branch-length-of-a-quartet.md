@@ -5,15 +5,23 @@
 **Quartet.** Take the unbalanced rooted species tree $(((A, B), C), D)$ on four taxa. Its focal internal branch $1$ (CU length $T_1$, rate $\mu_1$) is the stem of the cherry $(A, B)$; branch $2$ (CU length $T_2$, rate $\mu_2$) is the stem of $((A, B), C)$; and $\mu_3$ is the rate of the next species-tree branch above, so $\mu_2, \mu_3$ are the rates of the two branches above the focal one. Let $\Delta_I$ be the expected SU length of the internal branch of gene trees whose unrooted topology matches the species quartet $AB|CD$, minus the expected internal length of gene trees with a discordant unrooted topology.
 
 **Theorem.**
+
 $$\Delta_I = \frac{3\bigl(e^{-T_2} - e^{-3T_2}\bigr)\bigl(1 - e^{-T_1}\bigr)(\mu_2 - \mu_3) + 6\mu_1\bigl(e^{-T_1} - 1 + T_1\bigr)}{2\bigl(3 - 2e^{-T_1}\bigr)} .$$
+
 In particular, in each of the limits $T_2 \to \infty$, $T_2 \to 0$ and $\mu_2 \to \mu_3$,
+
 $$\Delta_I = \frac{3\mu_1\bigl(T_1 + e^{-T_1} - 1\bigr)}{3 - 2e^{-T_1}},$$
+
 which depends only on the focal branch.
 
 **Estimator.** Under a local clock ($\mu_2 = \mu_3 = \mu_1$) the expected internal length of discordant gene trees equals $\mu_1$, so with $\bar\Delta_I$ the observed matching-minus-discordant difference and $\bar L_I'$ the observed mean internal length of discordant gene trees, $\bar\delta = \bar\Delta_I / \bar L_I'$ satisfies
+
 $$\bar\delta = \frac{3\bigl(T_1 + e^{-T_1} - 1\bigr)}{3 - 2e^{-T_1}} .$$
+
 Replacing $e^{-T_1}$ by $1/(1 + T_1)$ turns this into $\bar\delta (1 + 3T_1) = 3T_1^2$, whose positive root is
+
 $$\hat T_1 = \frac{\bar\delta}{2} + \frac{1}{6}\sqrt{3\bar\delta(3\bar\delta + 4)},$$
+
 and the SU length estimate is $\hat t_1 = \bar L_I' \, \hat T_1$ (set to a small positive value when $\bar\delta < 0$).
 
 ## Expansion

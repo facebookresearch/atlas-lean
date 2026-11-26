@@ -1,6 +1,7 @@
 # Delay embedding and convergent cross mapping
 
 **Delay vectors.** For a scalar time series $Z(t)$, an embedding dimension $E \ge 1$ and a lag $\tau > 0$, the delay vector is
+
 $$\mathbf Z_E(t) = \big(Z(t), Z(t - \tau), \dots, Z(t - (E-1)\tau)\big) \in \mathbb R^E .$$
 
 **Takens' theorem.** Let $\varphi$ be the time-$\tau$ map of a smooth flow on a compact $m$-dimensional manifold $M$ and $h : M \to \mathbb R$ a smooth observation. For generic $(\varphi, h)$ and $E \ge 2m + 1$, the delay map $\Phi(p) = \big(h(p), h(\varphi^{-1}(p)), \dots, h(\varphi^{-(E-1)}(p))\big)$ is an embedding of $M$ into $\mathbb R^E$, i.e. a diffeomorphism onto its image.

@@ -1,7 +1,9 @@
 # Maximal balanced growth is attained in an elementary growth state
 
 **Setting.** A self-fabricating cell has $m$ metabolites with concentrations $x \in \mathbb{R}^m_{\ge 0}$, $n$ enzymes with concentrations $e_j$ catalysing reactions at rates $e_j f_j(x)$, and ribosomes $r$ that synthesize enzyme $j$ (and, for $j = n+1$, ribosomes themselves) at rate $r\,\alpha_j\, g_j(x)$, where $\alpha = (\alpha_1, \dots, \alpha_{n+1}) \ge 0$ is the ribosome allocation, $|\alpha| = \sum_j \alpha_j \le \lambda \le 1$, and $f_j, g_j$ are kinetic rate laws. Metabolic stoichiometry, precursor consumption by protein synthesis and a constant cell density determine the specific growth rate $\mu$, and all concentrations are diluted by growth. At **balanced growth** (all concentrations constant), eliminating $e$ and $r$ leaves equations that are *linear in $\alpha$* for fixed $(x, \mu)$:
+
 $$B(x, \mu)\, \alpha = \mu\, u_{m+1}, \qquad \alpha \ge 0, \qquad |\alpha| \le \lambda,$$
+
 where $B(x,\mu) \in \mathbb{R}^{(m+1)\times(n+1)}$ has one row per metabolite with nonzero concentration and a last row $(0, \dots, 0, g_{n+1}(x))$ expressing ribosome self-replication $\alpha_{n+1} g_{n+1}(x) = \mu$; $u_{m+1}$ is the last unit vector. Assume $B$ has full row rank for the $(x, \mu)$ considered.
 
 **Definitions.** For fixed $(x, \mu)$, $P_{x,\mu} = \{ \alpha \in \mathbb{R}^{n+1} : B(x,\mu)\alpha = \mu u_{m+1},\ \alpha \ge 0 \}$ is a convex polytope. Its vertices are the **elementary growth states** (EGSs) at $(x, \mu)$. Two EGSs, possibly at different $(x, \mu)$, are equivalent when they have the same support; the equivalence classes are the **elementary growth modes** (EGMs), the minimal sets of enzymes that can sustain balanced growth.

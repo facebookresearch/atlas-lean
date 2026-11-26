@@ -1,9 +1,13 @@
 # Modified centered log-ratio transform for zero-inflated compositions
 
 **Definition.** Let $x_i \in \mathcal S^p$ be a composition (non-negative entries summing to one) for sample $i$, with zero set $Z_i = \{ j : x_{ij} = 0 \}$ and non-zero set $N_i$, $|N_i| = p - q_i \ge 1$. Let
+
 $$\tilde g(x_i) = \Big( \prod_{j \in N_i} x_{ij} \Big)^{1/(p - q_i)}$$
+
 be the geometric mean of the non-zero entries. For a shift $\varepsilon \ge 0$ the modified centered log-ratio transform is
+
 $$\mathrm{mclr}_\varepsilon(x_i)_j = \begin{cases} 0, & j \in Z_i, \\ \log\{ x_{ij} / \tilde g(x_i) \} + \varepsilon, & j \in N_i. \end{cases}$$
+
 For $\varepsilon = 0$ this is the ordinary clr transform $\log\{x_{ij}/g(x_i)\}$ applied to the non-zero proportions only. The data-driven shift is $\varepsilon = |z_{\min}| + c$ with $z_{\min} = \min_{i, j \in N_i} \log\{x_{ij}/\tilde g(x_i)\}$ and a constant $c > 0$ (default $c = 1$).
 
 **Properties.**

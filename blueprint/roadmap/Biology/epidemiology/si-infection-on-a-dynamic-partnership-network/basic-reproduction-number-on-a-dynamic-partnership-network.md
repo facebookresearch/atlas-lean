@@ -1,7 +1,9 @@
 # Basic reproduction number on a dynamic partnership network
 
 On the binding-site partnership network of [Binding-site partnership network and its stationary degree distribution](binding-site-partnership-network-and-its-stationary-degree-distribution.md), superimpose an SI infection transmitted within each susceptible–infected partnership at rate $\beta > 0$; infected individuals stay infectious until death. Track binding sites of infected individuals in the linearized (early-epidemic) system by state: $A$ (free), $B_k$ (occupied by a susceptible partner who has $k$ partners), and $C$ (occupied by an infectious partner). Under the **mean field at distance one** closure, a susceptible partner of a newly infected individual is assumed to have $k$ partners with probability $Q_k$. The linearized binding-site dynamics are $\dot X = (T + \Sigma)X$ on $X = (X_A, X_{B_1}, \dots, X_{B_n}, X_C)$, where $\Sigma$ collects transitions and deaths (a matrix with non-negative off-diagonal entries and invertible, with $-\Sigma^{-1} \ge 0$) and $T \ge 0$ collects transmissions. Every column of $T$ is $\beta\,\phi_j$ or $0$, with
+
 $$\phi_j = (n-j)\,\psi_A + (j-1)\,\psi_B + \psi_C, \qquad \psi_A = e_A,\ \psi_B = (0, Q_1, \dots, Q_n, 0)^{\top},\ \psi_C = e_C,$$
+
 describing the $n$ sites of an individual just infected while having $j$ partners.
 
 **Theorem 1.** $R_0$, defined as the dominant eigenvalue of the next-generation matrix $T(-\Sigma)^{-1}$, is a threshold parameter for the zero state of $\dot X = (T+\Sigma)X$: $\operatorname{sgn}(R_0 - 1) = \operatorname{sgn}(r)$, where $r$ is the dominant eigenvalue of $T + \Sigma$.

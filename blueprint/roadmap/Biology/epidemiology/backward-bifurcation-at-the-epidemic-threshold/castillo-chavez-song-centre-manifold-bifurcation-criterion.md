@@ -6,6 +6,7 @@
 - **(A2)** $A$ has a right eigenvector $w$ and a left eigenvector $v$ for the zero eigenvalue, normalized by $v \cdot w = 1$.
 
 Define
+
 $$a = \sum_{k,i,j=1}^{n} v_k w_i w_j \frac{\partial^2 f_k}{\partial x_i \partial x_j}(0, 0), \qquad b = \sum_{k,i=1}^{n} v_k w_i \frac{\partial^2 f_k}{\partial x_i \partial \phi}(0, 0).$$
 
 **Theorem.** The local dynamics near $x = 0$, $\phi = 0$ are determined by the signs of $a$ and $b$:

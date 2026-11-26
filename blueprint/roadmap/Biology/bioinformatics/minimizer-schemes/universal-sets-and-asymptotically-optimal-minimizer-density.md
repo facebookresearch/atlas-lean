@@ -5,6 +5,7 @@ Let $\Sigma$ be an alphabet of size $\sigma \ge 2$ and fix integers $k, w \ge 1$
 A **universal set** $U \subseteq \Sigma^k$ is a set of nodes of the de Bruijn graph $D_{k,\sigma}$ meeting every path of $w$ nodes; equivalently every string of length $w+k-1$ contains a $k$-mer of $U$. A minimizers order is **compatible** with $U$ if every $k$-mer of $U$ is smaller than every $k$-mer outside $U$. Write $\beta_w(D_{k,\sigma})$ for the minimum size of a universal set.
 
 **Lemma.** If $f_U$ is a minimizers scheme compatible with a universal set $U$, then
+
 $$d_{f_U,k,w} \le \frac{|U|}{\sigma^k}.$$
 
 **Corollary.** $\beta_w(D_{k,\sigma}) \ge \sigma^k / w$.

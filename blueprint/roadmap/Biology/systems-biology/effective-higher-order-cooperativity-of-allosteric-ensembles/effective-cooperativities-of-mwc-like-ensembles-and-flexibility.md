@@ -3,13 +3,19 @@
 **Setting.** A target molecule has binding sites $1, \dots, n$ and conformations $c_1, \dots, c_N$. In conformation $c_k$, let $K_{c_k, i, S}$ be the association constant for ligand binding at site $i \notin S$ when exactly the sites in $S$ are bound, and $\omega_{c_k, i, S} = K_{c_k, i, S}/K_{c_k, i, \emptyset}$ the intrinsic higher-order cooperativity (HOC) of order $\#S$. The system is at thermodynamic equilibrium; let $\Pr_{c_k}$ be the equilibrium probability of conformation $c_k$ among empty (unbound) conformations and $\langle X(c_k) \rangle = \sum_{k} X(c_k)\Pr_{c_k}$. Let $\mu_S(c_k)$ be the product of equilibrium labels (association constants) along any binding path from the empty state to binding pattern $S$ within conformation $c_k$.
 
 **Effective parameters.** Coarse-graining over conformations at equilibrium gives a single-conformation binding graph with effective association constants and effective HOCs
+
 $$K^{\phi}_{i, S} = \frac{\langle K_{c_k, i, S}\, \mu_S(c_k) \rangle}{\langle \mu_S(c_k) \rangle}, \qquad \omega^{\phi}_{i, S} = \frac{\langle K_{c_k, i, S}\, \mu_S(c_k) \rangle}{\langle K_{c_k, i, \emptyset}\rangle\, \langle \mu_S(c_k) \rangle}.$$
+
 These do not depend on ligand concentration, satisfy $\omega^\phi_{i,\emptyset} = 1$, and reduce to the intrinsic HOC when $N = 1$.
 
 **Proposition (MWC-like ensembles).** Suppose there is no intrinsic cooperativity ($K_{c_k, i, S} = K_{c_k, i, \emptyset}$) and the sites are identical in each conformation ($K_{c_k, i, \emptyset} = K_{c_k}$), with any number $N$ of conformations. Then $\omega^\phi_{i,S}$ depends only on $s = \#S$ and
+
 $$\omega^{\phi}_{s} = \frac{\langle K_{c_k}^{\,s+1} \rangle}{\langle K_{c_k} \rangle \langle K_{c_k}^{\,s} \rangle}, \qquad s = 0, 1, \dots, n-1 .$$
+
 In particular the effective pairwise cooperativity is $\omega^\phi_1 = \langle K_{c_k}^2\rangle / \langle K_{c_k}\rangle^2$, and if $K_{c_k}$ is not constant over conformations,
+
 $$1 < \omega^{\phi}_1 < \omega^{\phi}_2 < \cdots < \omega^{\phi}_{n-1}.$$
+
 MWC-like ensembles thus produce only positive effective cooperativity, increasing with order; negative effective HOCs require non-identical sites.
 
 **Theorem (flexibility).** For any $n$, any positive targets $\beta_i$ for the effective bare constants $K^\phi_{i,\emptyset}$ and any positive targets for the independent effective HOCs $\omega^\phi_{i,S}$ ($i < \min S$), and any accuracy, there is an allosteric ensemble with $2^n$ conformations, no intrinsic cooperativity in any conformation, and suitable conformational probabilities and bare association constants whose effective parameters approximate all targets to that accuracy. Conversely, a dimension count over the free parameters of an ensemble with $N$ conformations and no intrinsic cooperativity ($n$ bare constants per conformation and $N-1$ conformational equilibrium labels) shows that the effective HOCs cannot take arbitrary values when $n(N - 1) < 2^n - 1$.

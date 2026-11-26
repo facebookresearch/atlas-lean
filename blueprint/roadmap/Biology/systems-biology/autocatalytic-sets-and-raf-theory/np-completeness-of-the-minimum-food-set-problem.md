@@ -14,7 +14,9 @@
 ## Expansion
 
 Membership in NP holds because closure, and hence $F'$-generation and the RAF property, can be checked in polynomial time. min-F generation reduces to min-F RAF by letting every molecule catalyse every reaction, so it suffices to reduce *exact cover by 3-sets* (X3C) to min-F generation. Given $Y$ with $|Y| = 3q$ and a family $S$ of 3-subsets, use molecules $Y \cup S \cup \{w_s : s \in S\}$, all in the food set, order $Y$ totally, and for each $s = \{a, b, c\}$ with $a < b < c$ add the three reactions
+
 $$s \to a + b + c, \qquad a + b \to w_s, \qquad w_s + c \to s .$$
+
 If $S' \subseteq S$ is an exact cover, starting from $S'$ generates all of $Y$, then every $w_s$, then every $s$, so the $3|S|$ reactions are $S'$-generated with $|S'| = q$. Conversely, any generating $F'$ with $|F'| \le q$ can be replaced by some $S' \subseteq S$ with $|S'| \le |F'|$; since elements of $Y$ are produced only by the splitting reactions, $S'$ must cover $Y$, forcing $|S'| \ge q$ and thus an exact cover. In practice approximately minimal food sets are found by a randomised removal search.
 
 ## Sources

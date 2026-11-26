@@ -1,18 +1,25 @@
 # Steady-state attractor probabilities under random gene perturbation
 
 **Setting.** Let $f : \{0,1\}^n \to \{0,1\}^n$ be a Boolean network with attractors $A_1, \dots, A_m$ and basins $B_1, \dots, B_m$ (so $A_k \subseteq B_k$ and the basins partition $\{0,1\}^n$). In the Boolean network with perturbation (BNp) each step is, with probability $b = (1-p)^n$, the update $x \mapsto f(x)$, and otherwise a perturbation $x \mapsto x \oplus \gamma$ with a nonzero flip pattern. For $0 < p < 1$ the chain has a unique stationary law $\pi$; write $\pi(B) = \sum_{x \in B}\pi(x)$. Let
+
 $$P^*_y(x) = \frac{p^{\eta(x,y)}(1-p)^{n-\eta(x,y)}}{1 - (1-p)^n}, \qquad x \ne y,$$
+
 be the probability of landing at $x$ from $y$ given that a perturbation occurs, let $\pi^*(y \mid B_i)$ be the long-run probability of being at $y$ just before a perturbation, conditioned on being in $B_i$, and let $\delta(x, A_k)$ be the number of iterations of $f$ needed to reach $A_k$ from $x \in B_k$.
 
 **Theorem 1 (basin probabilities).** With $P^*_{B_i B_k} = \sum_{x \in B_k}\sum_{y \in B_i} P^*_y(x)\, \pi^*(y \mid B_i)$,
+
 $$\pi(B_k) = \sum_{i=1}^m P^*_{B_i B_k}\, \pi(B_i), \qquad k = 1, \dots, m,$$
+
 i.e. $(\pi(B_1), \dots, \pi(B_m))$ is the stationary law of the $m$-state chain of basin-to-basin jumps at perturbation times.
 
 **Theorem 2 (attractor probabilities).**
+
 $$\pi(A_k) = \sum_{i=1}^m \sum_{x \in B_k} \sum_{y \in B_i} P^*_y(x)\, \pi^*(y \mid B_i)\, (1-p)^{n\,\delta(x, A_k)}\, \pi(B_i).$$
 
 **Small-$p$ approximation.** Between perturbations the system almost surely sits on an attractor, so $\pi^*(y \mid B_i) \approx \mathbf{1}[y \in A_i]/|A_i|$, giving
+
 $$P^*_{B_i B_k} \approx \frac{1}{|A_i|}\sum_{x \in B_k}\sum_{y \in A_i} P^*_y(x), \qquad \pi(A_k) \approx \sum_{i=1}^m \frac{\pi(B_i)}{|A_i|} \sum_{x \in B_k}\sum_{y \in A_i} P^*_y(x)\, (1-p)^{n\,\delta(x, A_k)}.$$
+
 Thus long-run attractor (phenotype) probabilities are obtained from an $m \times m$ linear system instead of the full $2^n$-state chain.
 
 ## Expansion

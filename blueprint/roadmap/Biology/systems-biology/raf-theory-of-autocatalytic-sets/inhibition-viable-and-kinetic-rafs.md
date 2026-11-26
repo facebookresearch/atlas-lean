@@ -4,7 +4,9 @@
 
 - An **inhibition assignment** is $I \subseteq X \times \mathcal R$. A subset $\mathcal R'$ is an **$I$-viable RAF** if it is a closed RAF and no reaction of $\mathcal R'$ is inhibited by a molecule of $\mathrm{cl}_{\mathcal R'}(F)$.
 - A **kinetic CRS** adds fixed reaction rates $v(r) > 0$ and a diffusion rate $\delta \ge 0$. For $\mathcal R' \subseteq \mathcal R$ let $S_{\mathcal R'}$ be the stoichiometric matrix with rows indexed by the non-food molecules of $\mathrm{supp}(\mathcal R')$ and columns by $\mathcal R'$ (net production of molecule $i$ by reaction $j$), and $v_{\mathcal R'}$ the rate vector. $\mathcal R'$ is a **kinetic RAF** (kRAF) if it is a closed RAF and
+
 $$S_{\mathcal R'}\, v_{\mathcal R'} \ \ge\ \delta\, \mathbf 1 \quad \text{(componentwise)},$$
+
 i.e. every non-food molecule of the set is produced at least as fast as it is lost to consumption and diffusion. In particular $S_{\mathcal R'} v_{\mathcal R'} \ge 0$ is necessary.
 
 **Theorem (complexity).**
@@ -12,7 +14,9 @@ i.e. every non-food molecule of the set is produced at least as fast as it is lo
 (b) Deciding whether a kinetic CRS with $\delta = 0$ contains a kRAF is NP-complete (reduction from 3-SAT). Checking whether a *given* RAF is a kRAF takes polynomial time.
 
 **Lemma (random catalysis and inhibition).** Suppose the events "$x$ catalyses $r$" and "$x$ inhibits $r$" are independent over all pairs $(x, r)$, the expected number $c(r)$ of catalysts of $r$ satisfies $c_l \le c(r) \le c_u$, and the expected number of inhibitors of any reaction is at most $\varepsilon$. Let $q_r$ be the probability that $r$ has no catalyst in $X$ or at least one inhibitor in $X$. Then
+
 $$1 - c_u \ \le\ q_r \ \le\ e^{-c_l} + \varepsilon .$$
+
 Under a species stratification of the molecule set and comparable catalysis rates across reactions (expected catalyst numbers within a constant factor $K$), these bounds show that the probability of an RAF is governed by how the average number of reactions catalysed per molecule type compares with the ratio of forward reactions to molecule types: it is small when that ratio-scaled catalysis level $\lambda$ is small and tends to one exponentially fast in $\lambda$ when it is large. For polymer models this ratio grows linearly with maximal polymer length, so the required catalysis rate grows only linearly; this holds for partitioned (for example peptide–RNA) systems as well, and small inhibition rates do not destroy the high-probability regime.
 
 ## Expansion

@@ -3,7 +3,9 @@
 **Construction.** Let $G$ and $H$ be labelled directed graphs (microstate graphs of two regulatory modules, for example two enhancers), not necessarily strongly connected or at equilibrium. The *product graph* $G \times H$ has vertices $(i, j)$ with $i \in G$, $j \in H$; for every edge $i_1 \xrightarrow{a} i_2$ of $G$ and every vertex $j$ of $H$ it has the edge $(i_1, j) \xrightarrow{a} (i_2, j)$, and for every edge $j_1 \xrightarrow{b} j_2$ of $H$ and every vertex $i$ of $G$ it has the edge $(i, j_1) \xrightarrow{b} (i, j_2)$; there are no other edges. Equal labels encode independence: each module's transitions occur at rates unaffected by the other module's state.
 
 **Theorem.** If $G$ and $H$ are strongly connected, then so is $G \times H$, and a basis vector of $\ker \mathcal L(G \times H)$ is the Kronecker product
+
 $$\rho^{G \times H} = \rho^{G} \otimes \rho^{H}, \qquad (\rho^G \otimes \rho^H)_{(i,j)} = \rho^G_i\, \rho^H_j .$$
+
 In general, if $\rho^{G,1}, \dots, \rho^{G,s}$ and $\rho^{H,1}, \dots, \rho^{H,r}$ are the terminal-component bases of $\ker \mathcal L(G)$ and $\ker \mathcal L(H)$, then the products $\rho^{G,k} \otimes \rho^{H,l}$ form a basis of $\ker \mathcal L(G \times H)$. Consequently steady-state microstate probabilities of independent modules factorize, $u^*_{(i,j)} = u^{*,G}_i\, u^{*,H}_j$, even far from equilibrium.
 
 ## Depends on

@@ -3,13 +3,19 @@
 **Setting.** Consider $\dot x = \mathcal{F}(t, x) - \mathcal{V}(t, x)$ with $x = (x_I, x_U)$, $x_I \in \mathbb{R}^m$ the infected compartments, all coefficients $\omega$-periodic in $t$, and a disease-free periodic solution $x^*(t) = (0, x_U^*(t))$. Let $F(t) = D_{x_I}\mathcal{F}_I(t, x^*(t)) \ge 0$ (new infections) and $V(t) = D_{x_I}\mathcal{V}_I(t, x^*(t))$ (transitions), with $-V(t)$ cooperative, and suppose the standard conditions hold: the uninfected subsystem has the globally attracting periodic state $x_U^*$, and the evolution operator $Y(t, s)$ of $\dot y = -V(t) y$ (with $Y(s,s) = I$) decays exponentially, i.e. $\rho(Y(\omega, 0)) < 1$.
 
 **Definition.** On the Banach space $C_\omega$ of continuous $\omega$-periodic functions $\mathbb{R} \to \mathbb{R}^m$, define
+
 $$(L\phi)(t) = \int_0^\infty Y(t, t-a)\,F(t-a)\,\phi(t-a)\, da .$$
+
 $F(t-a)\phi(t-a)$ is the rate of new infections produced at time $t-a$ by the infected distribution $\phi$, and $Y(t, t-a)$ transports those still infected to time $t$. $L$ is positive, continuous and compact, and
+
 $$\mathcal{R}_0 = \rho(L),$$
+
 characterized by a nonnegative nonzero $\phi \in C_\omega$ with $L\phi = \mathcal{R}_0\phi$.
 
 **Theorem (Wang–Zhao).** Let $\Phi_{F-V}(t)$ be the fundamental matrix of $\dot z = (F(t) - V(t)) z$. Then
+
 $$\mathcal{R}_0 \gtreqless 1 \iff \rho\big(\Phi_{F-V}(\omega)\big) \gtreqless 1,$$
+
 and the disease-free periodic solution $x^*(t)$ is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$. When all coefficients are constant, $\mathcal{R}_0 = \rho(FV^{-1})$.
 
 **Global stability via Floquet comparison.** If in addition $F(t) - V(t)$ is cooperative and irreducible, then for $\mu = \omega^{-1}\ln\rho(\Phi_{F-V}(\omega))$ there is a positive $\omega$-periodic $q(t)$ with $e^{\mu t} q(t)$ solving $\dot z = (F - V)z$. If the uninfected compartments converge to $x_U^*$ and the infected subsystem is bounded above by its linearization at $x^*$ up to a perturbation $\eta M(t)$ with $\rho(\Phi_{F - V + \eta M}(\omega)) < 1$ for small $\eta > 0$, then $\mathcal{R}_0 < 1$ implies $x_I(t) \le \theta e^{\xi t} q(t) \to 0$ with $\xi < 0$, so $x^*$ is globally attractive.

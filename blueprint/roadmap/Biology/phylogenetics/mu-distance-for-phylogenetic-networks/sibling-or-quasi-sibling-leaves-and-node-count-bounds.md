@@ -5,7 +5,9 @@
 **Lemma.** Every sbTSTC network with more than one leaf has a pair of leaves that are siblings or quasi-siblings.
 
 **Proposition (size bounds).** Let an sbTSTC network have $n$ leaves, $h$ hybrid nodes and $t$ internal tree nodes. If $n \le 2$ then $h = 0$ and $t = n - 1$; otherwise
+
 $$h \le 2n - 4, \qquad t \le 3n - 6,$$
+
 and both bounds are attained for every $n \ge 3$. In particular there are finitely many sbTSTC networks on a given leaf set up to isomorphism (for $n = 1, \dots, 5$: $1, 1, 10, 444, 61\,176$).
 
 ## Expansion

@@ -1,6 +1,7 @@
 # Basic reproduction number of the vector-bias malaria model
 
 Let $S_h, I_h$ be susceptible and infected humans and $S_v, I_v$ susceptible and infected mosquitoes. With vector-bias parameter $p > 0$ (relative attractiveness of infected humans to mosquitoes), recruitment $\Lambda_h, \Lambda_v$, death rates $\mu_h, \mu_v$, transmission rates $\beta_h$ (mosquito to human) and $\beta_v$ (human to mosquito), natural recovery rate $\delta_0$, extra recovery $\delta_1/(1 + a I_h)$ for the fraction $u_1 \in [0,1]$ of infected humans who are hospitalized (saturating with hospital capacity $a \ge 0$), and fumigation rate $u_2 \ge 0$, the model is
+
 $$
 \begin{aligned}
 \dot S_h &= \Lambda_h - \beta_h \frac{S_h I_v}{p I_h + S_h} - \mu_h S_h + (1-u_1)\delta_0 I_h + u_1\Big(\delta_0 + \frac{\delta_1}{1 + a I_h}\Big) I_h,\\
@@ -9,10 +10,13 @@ $$
 \dot I_v &= \beta_v \frac{p I_h}{p I_h + S_h} S_v - (\mu_v + u_2) I_v .
 \end{aligned}
 $$
+
 All parameters are positive except $u_1, u_2, a \ge 0$. The non-negative orthant is invariant, human numbers are eventually bounded by $\Lambda_h/\mu_h$ and mosquito numbers by $\Lambda_v/(\mu_v + u_2)$.
 
 **Proposition.** The disease-free equilibrium is $E_0 = (\Lambda_h/\mu_h, 0, \Lambda_v/(\mu_v+u_2), 0)$, and the next-generation matrix gives
+
 $$R_0 = \sqrt{\frac{p\,\Lambda_v\, \beta_h\, \beta_v\, \mu_h}{\Lambda_h\, (\mu_v + u_2)^2\, (u_1\delta_1 + \delta_0 + \mu_h)}} .$$
+
 $E_0$ is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$. Endemic equilibria correspond to positive roots of a cubic in $I_h$; one always exists when $R_0 > 1$, and for suitable saturation $a$ and vector bias $p$ the system undergoes a backward bifurcation at $R_0 = 1$, so endemic equilibria can coexist with the stable disease-free state when $R_0 < 1$.
 
 ## Depends on

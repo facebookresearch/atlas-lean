@@ -11,11 +11,15 @@
 Equivalently, populations with positive rates form a balanced sub-network ($[Wr+X]_a = 0$ whenever $r_a > 0$): a linear complementarity condition $r \ge 0$, $-(Wr + X) \ge 0$, $r^\top(Wr + X) = 0$.
 
 **Theorem 1 (fixed-point form).** $r$ is semi-balanced if and only if
+
 $$[\,Wr + X + r\,]_+ = r .$$
+
 Moreover, for every $c > 0$, $[Wr + X + r]_+ = r$ holds if and only if $[Wr + X + c\,r]_+ = c\,r$, so mixing quantities with units of rate and of input current is harmless.
 
 **Theorem 2 (bounded rates imply semi-balance).** Let $W, X$ be fixed and suppose that for all large $\overline{JK}$, $I = \overline{JK}[Wr + X]$ and $r = f(I)$ with $f$ non-negative, non-decreasing, $\lim_{x \to -\infty} f(x) = 0$ and $\lim_{x\to\infty} f(x) = M \in (0, \infty]$. If $r^\infty = \lim_{\overline{JK}\to\infty} r$ exists with $r^\infty_a < M$ for all $a$, then
+
 $$[\,W r^\infty + X + r^\infty\,]_+ = r^\infty .$$
+
 Conversely the semi-balanced state is the large-coupling limit of networks whose rates stay $O(1)$.
 
 ## Depends on

@@ -16,7 +16,9 @@ with $D' = \delta_i I + \delta_{H_s} H_s$, $q_1 = \eta_i + \tau + \rho + \delta_
 **Disease-free equilibrium.** Since unaware susceptibles convert to aware at rate $v$, the only infection-free equilibrium is $S_a = N$, with every other compartment zero.
 
 **Proposition.** The basic reproduction number given by the next-generation matrix is
+
 $$\mathcal{R}_0 = \alpha \beta \left( \frac{\sigma k}{\eta_a} + \frac{1 - k}{q_1} \right),$$
+
 and the disease-free equilibrium is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
 
 ## Expansion

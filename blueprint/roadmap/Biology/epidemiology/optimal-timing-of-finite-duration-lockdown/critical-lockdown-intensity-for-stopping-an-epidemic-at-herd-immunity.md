@@ -3,7 +3,9 @@
 **Setting.** As in [Optimal onset of a fixed-duration lockdown in the SIR model](optimal-onset-of-a-fixed-duration-lockdown-in-the-sir-model.md): controlled SIR dynamics $\dot S = -u \beta S I$, $\dot I = u\beta S I - \gamma I$ with $\mathcal{R}_0 = \beta/\gamma > 1$, herd immunity threshold $S_{\mathrm{herd}} = 1/\mathcal{R}_0$, lockdown intensity bound $\alpha \in [0,1)$, maximal duration $D$, and optimal final susceptible fraction $S^*_\infty(\alpha, D)$ over all onsets and admissible inputs.
 
 **Theorem.** For $S_0 \in (S_{\mathrm{herd}}, 1)$ and $I_0 > 0$ define
+
 $$\bar\alpha = \frac{S_{\mathrm{herd}}}{S_0 + I_0 - S_{\mathrm{herd}}\big(\ln S_0 - \ln S_{\mathrm{herd}}\big)} .$$
+
 Then $\bar\alpha \in (0, 1)$ and
 
 1. if $\alpha \in [0, \bar\alpha]$, then $\lim_{D \to \infty} S^*_\infty(\alpha, D) = S_{\mathrm{herd}}$: a sufficiently long and intense lockdown stops the epidemic arbitrarily close to herd immunity;

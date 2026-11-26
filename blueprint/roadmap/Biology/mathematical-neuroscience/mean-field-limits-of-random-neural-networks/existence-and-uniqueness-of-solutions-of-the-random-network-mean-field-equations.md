@@ -1,9 +1,13 @@
 # Existence and uniqueness of solutions of the random-network mean-field equations
 
 **Statement.** Work on a finite horizon $[t_0, T]$ with the multi-population mean-field equation written as a $kP$-dimensional linear SDE driven by the effective interaction process,
+
 $$d\tilde V(t) = \bigl( -L(t)\, \tilde V(t) + \tilde U^{V}_t + \tilde I(t) \bigr) dt + F(t)\, dW_t,$$
+
 and define the map $\mathcal F_k$ on laws of continuous Gaussian processes by
+
 $$\mathcal F_k(X)_t = \Phi_L(t, t_0)\, Z_0 + \int_{t_0}^{t} \Phi_L(t,s)\bigl(\tilde U^X_s + \tilde I(s)\bigr)\, ds + \int_{t_0}^{t} \Phi_L(t,s)\, F(s)\, dW_s,$$
+
 where $\Phi_L$ is the fundamental matrix of $-L$. Assume the rate functions $S_\beta$ are bounded with bounded derivatives, the inputs are bounded ($\sup_t |I_\alpha(t)| \le I_{\max}$), and the singular values of the noise matrix $F(u)$ are bounded below by $\lambda^{\Gamma}_{\min} > 0$.
 
 **Theorem.** For every nondegenerate $kP$-dimensional Gaussian initial condition $Z_0$, independent of the Brownian motion, and every initial Gaussian process $X$ with $X(t_0) = Z_0$, the map $\mathcal F_k$ has a unique fixed point in the space of laws on $C([t_0, T], \mathbb R^{kP})$, and the iterates $\mathcal F_k^{(n)}(X)$ converge in law to it. The fixed point is the unique solution of the mean-field equations, and the proof is constructive (Picard iteration on mean and covariance functions).

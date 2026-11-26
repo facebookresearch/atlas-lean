@@ -1,6 +1,7 @@
 # Rank uniformity in simulation-based calibration
 
 In the generative setting of [Nominal coverage of credible intervals under the prior predictive](nominal-coverage-of-credible-intervals-under-the-prior-predictive.md), draw $\theta \sim f_\Theta$, then $d \sim f_{D\mid\Theta}(\cdot\mid\theta)$, then $L$ draws $\theta'_1, \dots, \theta'_L$ independently from the posterior $f_{\Theta\mid D}(\cdot \mid d)$. For a scalar functional $g$ (a parameter, the root age of a tree, or a distance to a fixed reference tree), define the rank
+
 $$r = \#\{\, j \le L : g(\theta'_j) < g(\theta) \,\}.$$
 
 **Theorem.** If $g(\theta)$ has a continuous distribution (so ties have probability zero), then $r$ is uniformly distributed on $\{0, 1, \dots, L\}$.

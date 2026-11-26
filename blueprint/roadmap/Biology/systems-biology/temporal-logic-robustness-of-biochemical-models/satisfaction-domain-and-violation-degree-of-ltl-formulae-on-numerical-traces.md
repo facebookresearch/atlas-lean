@@ -11,12 +11,17 @@ This is the standard semantics on the trace completed by a self-loop on its last
 **Variable abstraction and satisfaction domain.** Replacing $q$ numerical constants of an LTL formula $\phi$ by real variables $y \in \mathbb{R}^q$ gives a quantifier-free formula $\phi(y)$ (QFLTL), and $\phi = \phi(y^\phi)$ for the vector $y^\phi$ of original constants. The satisfaction domain is $\mathcal D_{T, \phi(y)} = \{ y \in \mathbb{R}^q : T \models \phi(y)\}$.
 
 **Proposition (computation of satisfaction domains).** $\mathcal D_{T,\phi(y)} = \mathcal D_{s_0, \phi(y)}$ with
+
 $$\mathcal D_{s_i, \phi \wedge \psi} = \mathcal D_{s_i,\phi} \cap \mathcal D_{s_i,\psi}, \quad \mathcal D_{s_i, \phi \vee \psi} = \mathcal D_{s_i,\phi} \cup \mathcal D_{s_i,\psi}, \quad \mathcal D_{s_i, F\phi} = \bigcup_{j=i}^n \mathcal D_{s_j,\phi}, \quad \mathcal D_{s_i, G\phi} = \bigcap_{j=i}^n \mathcal D_{s_j,\phi},$$
+
 $$\mathcal D_{s_i, \phi U \psi} = \bigcup_{j=i}^n \Big( \mathcal D_{s_j,\psi} \cap \bigcap_{k=i}^{j-1} \mathcal D_{s_k,\phi} \Big),$$
+
 and $\mathcal D_{s_i, \pi(y)}$ the set of $y$ satisfying the linear constraint $\pi(y)$ at $s_i$. Hence $\mathcal D_{T,\phi(y)}$ is a finite union of convex polyhedra, computable with polyhedral libraries in time exponential in $q$ in the worst case but independent of the number of state variables.
 
 **Violation and satisfaction degree.** For a distance on $\mathbb{R}^q$ (Euclidean by default),
+
 $$vd(T, \phi) = \min_{y \in \mathcal D_{T,\phi(y)}} \| y - y^\phi \|, \qquad sd(T, \phi) = \frac{1}{1 + vd(T, \phi)} \in (0, 1].$$
+
 $vd$ measures how much the constants of $\phi$ must change for it to hold on $T$; $sd = 1$ when $\phi$ holds (with a closed domain) and $sd \to 0$ as the trace moves far from satisfying it.
 
 ## Expansion

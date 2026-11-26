@@ -1,9 +1,11 @@
 # Matignon stability threshold for Caputo epidemic models
 
 **Matignon's criterion.** Let $0<\alpha\le 1$ and let $x^*$ be an equilibrium of the commensurate-order Caputo system ${}^{C}D_t^{\alpha}x=f(x)$, $f\in C^1(\mathbb{R}^n)$, with Jacobian $J=Df(x^*)$. If every eigenvalue $\lambda$ of $J$ satisfies
+
 $$
 |\arg\lambda|>\frac{\alpha\pi}{2},
 $$
+
 then $x^*$ is locally asymptotically stable; if some eigenvalue satisfies $|\arg\lambda|<\alpha\pi/2$, then $x^*$ is unstable. For rational order $\alpha=q/M$ with $\gcd(q,M)=1$ the condition is equivalently stated on the roots of $\det(\mu^{q}I-J)=0$ in the variable $\mu=\lambda^{1/M}$: stability holds when every root has $|\arg\mu|>\pi/(2M)$.
 
 **Order-independent $R_0$ threshold.** Consider a Caputo compartmental model whose integer-order version ($\alpha=1$) has a disease-free equilibrium $E_0$ with next-generation decomposition $F,V$ and $R_0=\rho(FV^{-1})$. Then, for every order $0<\alpha\le 1$,

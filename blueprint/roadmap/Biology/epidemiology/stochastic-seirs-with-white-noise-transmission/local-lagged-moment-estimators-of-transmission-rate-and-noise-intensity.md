@@ -16,8 +16,11 @@ dE &= \big(\beta_0 S I - (\alpha + \delta) E - \tfrac12 \sigma^2 \beta_0^2 S I^2
 with the $I$ and $R$ equations unchanged, and the quadratic variation of $E$ is $d\langle E \rangle_t = \sigma^2 \beta_0^2 S^2 I^2\, dt$.
 
 **Moment estimators.** Observe the state at times $t_k = k\,\Delta t$ and write $\Delta E_k = E_k - E_{k-1}$, with $\mathcal{F}_{k}$ the information up to $t_k$. Fix a local window size $m_j \in \{2, \dots, M\}$. Integrating $S\,dE$ over $[t_{j - m_j + 1}, t_j]$, applying the integral mean value theorem to the continuous $\beta_0$, discretizing and taking conditional expectations gives the local estimators
+
 $$\widehat{\beta}_{j, m_j} = \frac{\displaystyle\sum_{k = j - m_j + 1}^{j} \Big( \mathbb{E}[S_{k-1} \Delta E_k \mid \mathcal{F}_{k-1}] + \tfrac12 \mathbb{E}[\Delta E_k^2 \mid \mathcal{F}_{k-1}] + (\alpha + \delta) S_{k-1} E_{k-1} \Delta t \Big)}{\displaystyle\sum_{k = j - m_j + 1}^{j} S_{k-1}^2 I_{k-1}\, \Delta t},$$
+
 $$\widehat{\sigma^2}_{j, m_j} = \frac{\displaystyle\sum_{k = j - m_j + 1}^{j} \mathbb{E}[\Delta E_k^2 \mid \mathcal{F}_{k-1}]}{\displaystyle\big(\widehat{\beta}_{j, m_j}\big)^2 \sum_{k = j - m_j + 1}^{j} S_{k-1}^2 I_{k-1}^2\, \Delta t},$$
+
 in which the conditional expectations are replaced by local averages of the observed increments. Both are well defined whenever some $I_{k-1}$ in the window is positive (if $I$ vanishes on the window, so does $E$ and transmission has ended), and $S$ cannot vanish on a whole window. The window size is then chosen at each $t_j$ (local lagged adaptive generalized method of moments): among $m_j \in \{2, \dots, M\}$, pick the one whose simulated trajectories, averaged over Monte Carlo runs, minimize the squared distance to the observed state at $t_j$.
 
 ## Depends on

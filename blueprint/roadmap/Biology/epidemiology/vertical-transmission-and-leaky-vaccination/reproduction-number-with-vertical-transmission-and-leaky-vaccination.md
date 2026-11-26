@@ -12,7 +12,9 @@ $$\begin{aligned}
 where a fraction $\rho \in [0,1]$ of the offspring of exposed parents is born exposed (vertical transmission), $\varepsilon$ and $\varepsilon_1$ are vaccination rates of susceptible and exposed individuals, $\lambda$ is waning of vaccine protection, $\kappa \in [0,1]$ is the relative susceptibility of vaccinated individuals (leaky vaccine), $\alpha$ the progression rate, $\gamma$ the severe fraction and $\delta_1, \delta_2$ recovery rates. The disease-free equilibrium is $S_0 = (\lambda + \mu)/(\varepsilon + \lambda + \mu)$, $V_0 = \varepsilon/(\varepsilon + \lambda + \mu)$.
 
 **Proposition.** With infected classes $(E, I, L)$ and new infections $F$ comprising both horizontal transmission and vertical births into $E$,
+
 $$R_0 = \underbrace{\frac{\rho\mu}{\alpha + \varepsilon_1 + \mu}}_{R_E} + \underbrace{\frac{\beta\alpha\gamma(\lambda + \mu + \kappa\varepsilon)}{(\alpha + \varepsilon_1 + \mu)(\varepsilon + \lambda + \mu)(\delta_1 + \mu)}}_{R_I} + \underbrace{\frac{\beta\alpha(1 - \gamma)(\lambda + \mu + \kappa\varepsilon)}{(\alpha + \varepsilon_1 + \mu)(\varepsilon + \lambda + \mu)(\delta_2 + \mu)}}_{R_L},$$
+
 the expected infections produced by one exposed individual through its exposed offspring, and through the severe and mild infectious stages it may pass through. The disease-free equilibrium is locally asymptotically stable for $R_0 < 1$ and unstable for $R_0 > 1$, globally asymptotically stable in the simplex for $R_0 \le 1$, and for $R_0 > 1$ a unique endemic equilibrium exists (globally stable when $\rho = \varepsilon_1 = 0$).
 
 ## Depends on

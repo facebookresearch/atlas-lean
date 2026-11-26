@@ -1,12 +1,14 @@
 # Sensitive-resistant model with drug-induced resistance
 
 Let $S(t), R(t) \ge 0$ be the sensitive and resistant tumour fractions, nondimensionalized so that the carrying capacity is $1$ and the sensitive growth rate is $1$. Let $u : [0,\infty) \to [0, u_{\max}]$ be a bounded measurable drug dose. With spontaneous resistance rate $\epsilon > 0$, induction rate $\alpha \ge 0$, cytotoxicity $d \ge 0$ against sensitive cells and relative resistant growth rate $p_r > 0$, consider
+
 $$
 \begin{aligned}
 \dot S &= \big(1 - (S + R)\big) S - \big(\epsilon + \alpha u(t)\big) S - d\, u(t)\, S,\\
 \dot R &= p_r\big(1 - (S + R)\big) R + \big(\epsilon + \alpha u(t)\big) S .
 \end{aligned}
 $$
+
 Resistance thus arises spontaneously at rate $\epsilon$ and is induced by the drug at rate $\alpha u(t)$; $\alpha = 0$ is the purely selective (Luria–Delbrück) case.
 
 **Theorem (well-posedness and invariance).** For every such $u$ and initial condition in $\mathcal{T} = \{(S,R) : S, R \ge 0,\ S + R \le 1\}$, there is a unique solution defined for all $t \ge 0$, and $\mathcal{T}$ is forward invariant.

@@ -1,12 +1,17 @@
 # Heterogeneous mean-field SIS model with media coverage
 
 **Model.** On an uncorrelated network with degree distribution $p(k)$, $k = 1, \dots, n$, mean degree $\langle k \rangle$ and $N$ nodes, let $i_k(t) \in [0, 1]$ be the infected fraction of degree-$k$ nodes and
+
 $$\Theta(t) = \frac{1}{\langle k\rangle}\sum_{k=1}^{n} k\, p(k)\, i_k(t)$$
+
 the probability that a random edge points to an infected node. A media variable $M(t) \ge 0$ grows with prevalence and reduces transmission of a degree-$k$ node by the saturating factor $P(M, k) = kM/(a + kM)$:
+
 $$i_k' = \beta \big(1 - P(M, k)\big) k (1 - i_k)\Theta - \mu i_k, \qquad M' = m_0 + \omega N \sum_{k} p(k) i_k - \lambda M,$$
+
 with $\beta, \mu, a, \omega, \lambda > 0$ and baseline coverage $m_0 \ge 0$. The box $\prod_k [0, 1] \times [m_0/\lambda, (m_0 + \omega N)/\lambda]$ attracts all solutions, and $E_0 = (0, \dots, 0, m_0/\lambda)$ is the unique disease-free equilibrium.
 
 **Theorem.** Let
+
 $$R_0 = \frac{a\beta\lambda}{\mu \langle k\rangle} \sum_{k=1}^{n} \frac{k^2 p(k)}{a\lambda + k m_0}.$$
 
 1. If $R_0 < 1$, $E_0$ is locally and globally asymptotically stable; if $R_0 > 1$, it is unstable.

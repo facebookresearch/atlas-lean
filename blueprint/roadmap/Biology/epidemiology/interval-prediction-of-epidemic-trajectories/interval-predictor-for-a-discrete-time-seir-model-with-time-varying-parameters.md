@@ -1,7 +1,9 @@
 # Interval predictor for a discrete-time SEIR model with time-varying parameters
 
 **Bounding lemma.** For $A \in \mathbb R^{m \times n}$ write $A^+ = \max\{0, A\}$ and $A^- = A^+ - A$ elementwise. If $\underline x \le x \le \overline x$ in $\mathbb R^n$, then for a constant matrix $A$
+
 $$A^+ \underline x - A^- \overline x \le A x \le A^+ \overline x - A^- \underline x .$$
+
 In the scalar positive case $x_{t+1} = a_t x_t + d_t$ with $x_t, a_t \ge 0$, $x_0 \in [\underline x_0, \overline x_0]$, $a_t \in [\underline a_t, \overline a_t]$, $d_t \in [\underline d_t, \overline d_t]$, the recursions $\underline x_{t+1} = \underline a_t \underline x_t + \underline d_t$ and $\overline x_{t+1} = \overline a_t \overline x_t + \overline d_t$ give $\underline x_t \le x_t \le \overline x_t$ for all $t$. The bounds stay bounded if $\overline a_t \le 1 - \epsilon$.
 
 **Model.** Consider the daily SEIR model with deaths on a population of size $N = S + E + I + R + D$,
@@ -21,7 +23,9 @@ $$\begin{aligned}
 \underline R_{t+1} &= \underline R_t + \underline\gamma\, \underline I_t + \kappa\underline\sigma\, \underline E_t, \qquad \underline D_{t+1} = \underline D_t + \underline\mu\, \underline I_t,
 \end{aligned}$$
 and the upper predictor by exchanging all lower and upper bounds, with the right-hand sides of $\overline E, \overline I, \overline R, \overline D$ capped at $N$. If
+
 $$2\,\overline b\, \sup_t \overline r_t \le 1, \qquad \overline\sigma \le \frac{1}{1+\kappa}, \qquad \overline\gamma + \overline\mu \le 1, \tag{10}$$
+
 then for all $t \in \mathbb N$ every state lies within its predicted interval, e.g. $S_t \in [\underline S_t, \overline S_t]$, and all predicted bounds lie in $[0, N]$.
 
 ## Depends on

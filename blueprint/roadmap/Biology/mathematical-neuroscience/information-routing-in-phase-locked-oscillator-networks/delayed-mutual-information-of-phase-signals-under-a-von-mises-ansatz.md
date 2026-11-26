@@ -1,13 +1,19 @@
 # Delayed mutual information of phase signals under a von Mises ansatz
 
 **Setting.** Let $\varphi_i(t), \varphi_j(t)$ be the phases (in $\mathbb{R}/2\pi\mathbb{Z}$) of two units of a stationary stochastic oscillator network. For a lag $d \in \mathbb{R}$ the **delayed mutual information** is
+
 $$\mathrm{dMI}_{i,j}(d) = \int\!\!\int p^{(d)}_{i,j}(x, y) \, \ln \frac{p^{(d)}_{i,j}(x,y)}{p_i(x)\, p_j(y)} \, dx \, dy ,$$
+
 where $p_i$ is the law of $\varphi_i(t)$ and $p^{(d)}_{i,j}$ the joint law of $(\varphi_i(t), \varphi_j(t+d))$. Asymmetry of $d \mapsto \mathrm{dMI}_{i,j}(d)$ about $d = 0$ indicates the dominant direction of information sharing; the signed difference of the areas under the curve for $d > 0$ and $d < 0$ is used as the directed strength $\delta \mathrm{MI}_{i,j}$ (positive: predominantly from $i$ to $j$), and the collection $\{\delta\mathrm{MI}_{i,j}\}$ is an *information routing pattern*.
 
 **Statement.** Assume (i) stationarity with a freely drifting common phase, so that each marginal is uniform, $p_i = p_j = 1/(2\pi)$; and (ii) the von Mises ansatz for the conditional law of the lagged phase,
+
 $$p^{(d)}_{i,j}(x, y) = \frac{1}{2\pi} \cdot \frac{\exp\big(\kappa \cos(y - x - \mu)\big)}{2\pi I_0(\kappa)}, \qquad \kappa = \kappa_{i,j}(d) \ge 0 ,$$
+
 with $I_n$ the modified Bessel function of the first kind of order $n$ and $\mu$ the locked phase offset. Then
+
 $$\mathrm{dMI}_{i,j}(d) = \kappa \, \frac{I_1(\kappa)}{I_0(\kappa)} - \ln I_0(\kappa), \qquad \kappa = \kappa_{i,j}(d).$$
+
 This function of $\kappa$ is $0$ at $\kappa = 0$, strictly increasing on $[0, \infty)$, behaves like $\kappa^2/4$ as $\kappa \to 0$ and like $\tfrac12 \ln(2\pi\kappa/e)$ as $\kappa \to \infty$. Hence all dependence of the information sharing on unit dynamics, coupling functions, topology, noise and the collective reference state enters only through the concentration (inverse variance) $\kappa_{i,j}(d)$ of the lagged phase difference.
 
 ## Expansion

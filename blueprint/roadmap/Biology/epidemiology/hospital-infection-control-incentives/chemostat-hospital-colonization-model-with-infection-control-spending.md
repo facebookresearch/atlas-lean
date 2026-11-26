@@ -1,19 +1,24 @@
 # Chemostat hospital colonization model with infection-control spending
 
 **Model.** Let $X(t) \in [0, 1]$ be the fraction of a hospital's patients colonized by a pathogen. Patients are discharged at rate $\sigma$ (mean stay $1/\sigma$), a fraction $\kappa \in [0, 1)$ of admissions is already colonized, colonization clears at rate $\lambda$, and transmission occurs at rate $\beta(c)$, where $c \ge 0$ is the total investment in infection control:
+
 $$\frac{dX}{dt} = \sigma(\kappa - X) + \beta(c)\, X (1 - X) - \lambda X, \qquad \beta(c) = \frac{a}{1 + b c}\quad (a, b > 0).$$
 
 **Equilibria.** With $\mathcal{R}_0(c) = \beta(c)/(\sigma + \lambda)$:
 
 - if $\kappa > 0$, the right-hand side is a downward quadratic in $X$ that is positive at $X = 0$, so there is exactly one equilibrium in $(0, 1)$,
+
 $$\bar X = \frac{(\beta - \sigma - \lambda) + \sqrt{(\beta - \sigma - \lambda)^2 + 4\beta\sigma\kappa}}{2\beta},$$
+
 and it is globally attracting on $[0, 1]$;
 - if $\kappa = 0$, the equilibria are $X = 0$ and $\bar X = 1 - 1/\mathcal{R}_0$; for $\mathcal{R}_0 > 1$ the positive one is stable and $X = 0$ unstable, for $\mathcal{R}_0 < 1$ only $X = 0$ is feasible, and the system has a transcritical bifurcation at $\mathcal{R}_0 = 1$.
 
 In both cases $\bar X$ is non-increasing in $c$, so infection-control spending lowers equilibrium colonization with diminishing returns.
 
 **Hospital optimum.** If stays are short enough that $X$ is near equilibrium, a hospital spending $h$ (with $c = h$) and paying $D$ per colonized patient minimizes $h + D \bar X(h)$; an interior optimum satisfies
+
 $$1 + D \frac{d\bar X}{dh} = 0 .$$
+
 Under a fixed subsidy $s$ (so $c = h + s$, while the hospital's own cost is still $h + D\bar X$), the optimal total investment $c^\ast$ is unchanged and the hospital's own spending falls one for one, $h^\ast = c^\ast - s$, while $c^\ast - s \ge 0$: the subsidy crowds out private spending. A subsidy paid per uncolonized patient is equivalent to raising $D$, and a matching subsidy raises the return on each dollar the hospital spends.
 
 ## Expansion

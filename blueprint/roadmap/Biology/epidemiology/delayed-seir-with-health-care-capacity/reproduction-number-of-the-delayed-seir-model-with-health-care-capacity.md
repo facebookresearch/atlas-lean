@@ -1,17 +1,24 @@
 # Basic reproduction number of a delayed SEIR model with health-care-capacity-dependent rates
 
 **Model.** A population with births at constant rate $b > 0$ and natural death rate $d > 0$ is split into susceptible $S$, exposed $E$, infectious $I$ and recovered $R$ individuals. Transmission is mass action with rate $\beta > 0$, the latent period is a fixed delay $\tau \ge 0$ with survival factor $e^{-d\tau}$, $\gamma > 0$ is the progression factor into $I$, and $\delta \ge 0$ moves non-infectious exposed individuals to $R$. A constant $c \in [0, 1]$ measures how much of the health-care capacity is available to infectious individuals: the recovery rate is $\alpha_1 + \alpha_2 c$ and the disease-induced death rate is $\mu_1 + \mu_2 (1 - c)$, with $\alpha_1, \alpha_2, \mu_1, \mu_2 \ge 0$, so $c = 1$ gives the maximal recovery and minimal death rate. Write
+
 $$K(c) = \mu_1 + \mu_2 (1 - c) + \alpha_1 + \alpha_2 c + d .$$
+
 Since $E$ and $R$ do not feed back into the other equations, the dynamics reduce to the delay system
+
 $$S'(t) = b - \beta S(t) I(t) - d S(t), \qquad I'(t) = \gamma \beta e^{-d\tau} S(t - \tau) I(t - \tau) - K(c)\, I(t),$$
+
 and the set $\Gamma = \{S, E, I, R \ge 0,\ S + E + I + R \le b/d\}$ is positively invariant and attracting.
 
 **Proposition.** Let
+
 $$R_0 = \frac{b \beta \gamma e^{-d\tau}}{d\, K(c)} .$$
 
 1. The disease-free equilibrium $P_0 = (b/d, 0)$ always exists; it is locally asymptotically stable if $R_0 < 1$ and unstable if $R_0 > 1$.
 2. A positive (endemic) equilibrium exists if and only if $R_0 > 1$; it is unique and equals
+
 $$P^* = (S^*, I^*) = \Big(\frac{b}{d R_0},\ \frac{d}{\beta}(R_0 - 1)\Big).$$
+
 3. $R_0$ is a decreasing function of the capacity level $c$ exactly when $\alpha_2 > \mu_2$, that is, when access to care raises the recovery rate by more than it lowers the death rate.
 
 ## Depends on

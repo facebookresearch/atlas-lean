@@ -1,12 +1,17 @@
 # Gap census for a target genome in metagenomic sequencing
 
 **Stevens' theorem.** Place $n \ge 1$ arcs, each of length $a \in (0, 1)$ (as a fraction of the circumference), on a circle of circumference $1$, with independent uniformly distributed starting points. Let $G$ be the number of uncovered gaps and $K = \min(n, \lfloor 1/a \rfloor)$, the largest number of arcs that fit without overlap. Then for $g = 0, 1, \dots, K$
+
 $$P(G = g) = \binom{n}{g} \sum_{k = g}^{K} (-1)^{k-g} \binom{n-g}{k-g} (1 - k a)^{n-1},$$
+
 and in particular the circle is completely covered with probability
+
 $$P(G = 0) = \sum_{k=0}^{K} (-1)^k \binom{n}{k} (1 - k a)^{n-1}.$$
 
 **Metagenomic gap census.** A sample yields $N$ reads, each independently derived from a target species with probability $p$ (its relative abundance in the read pool); a target read covers a fraction $a$ of the target's (circularised, composite) genome. Let $G$ be the number of gaps in the target and $K = \min(N, \lfloor 1/a \rfloor)$. For $g \ge 1$,
+
 $$P(G = g) = \sum_{k=g}^{K} (-1)^{k-g} \binom{k}{g} \binom{N}{k}\, p^{k}\, (1 - k a)^{k-1} (1 - p k a)^{N-k},$$
+
 and the probability that the target receives at least one read and is completely covered is $1 - \sum_{g \ge 1} P(G = g)$. For $p = 1$ this reduces to Stevens' theorem with $n = N$.
 
 ## Expansion

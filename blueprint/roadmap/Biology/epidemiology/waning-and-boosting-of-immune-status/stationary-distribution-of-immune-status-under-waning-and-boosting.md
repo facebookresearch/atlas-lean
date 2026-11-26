@@ -1,6 +1,7 @@
 # Stationary distribution of immune status under waning and boosting
 
 **Setting.** The waning-boosting process with waning flow $\pi$, Poisson exposure rate $\Lambda$ and boosting map $f$ (minimum at $y_c$, $f(y) > y$) has transition kernel $Q_t$. Its *next-generation operator* $K$ maps the distribution of immune levels just after one boost to the distribution just after the next boost:
+
 $$(K b)(\Gamma) = \int_{(0,\infty)} \int_0^\infty \Lambda e^{-\Lambda \sigma}\, \mathbf 1_\Gamma\bigl(f(\pi(\sigma, z))\bigr)\, d\sigma\; b(dz).$$
 
 **Fixed point.** Suppose there exist $0 < \rho < 1$ and $z \ge f(f(y_c))$ such that $f(\pi(\rho/\Lambda, y)) < y$ for all large $y$ (precisely, for $y \ge f_+^{-1}(z)$, with $f_+^{-1}$ the branch of the inverse above $y_c$) together with an integrability condition on the low-level branch. Then $K$ has a unique fixed point, with a density that is strictly positive on $(f(y_c), \infty)$. For $g(y) = -wy$ the first condition holds for any $\delta \ge 0$ and $\rho \in (0,1)$; with $f(y) = y(1 + \sigma_2 y^{-\sigma_1})$, the integrability condition holds, and also holds if $g(y) = -wy$ only near zero provided $\Lambda > w(\sigma_1 - 1)$.
@@ -8,7 +9,9 @@ $$(K b)(\Gamma) = \int_{(0,\infty)} \int_0^\infty \Lambda e^{-\Lambda \sigma}\, 
 **Correspondence.** If $m$ is a stationary distribution of the process, then $b(\Gamma) = m(f^{-1}(\Gamma))$ is a fixed point of $K$; conversely, if $b$ is a fixed point of $K$, then $m(\Gamma) = b(f(\Gamma))$ is a stationary distribution. Hence there is a unique normalized stationary distribution of immune status; it has a density, strictly positive on $(0, \infty)$.
 
 **Stability.** If moreover $f'(y)\, g(y) / g(f(y)) < 1$ for all $y > 0$, then for every initial distribution with density $\phi$, the density $T(t)\phi$ of $Q_t \times m$ satisfies
+
 $$\lim_{t \to \infty} \| T(t)\phi - \psi \|_{L^1} = 0,$$
+
 where $\psi$ is the stationary density.
 
 ## Depends on

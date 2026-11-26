@@ -1,7 +1,9 @@
 # Single-linkage min-cut partitioning of a tree
 
 Let $T = (V, E)$ be an unrooted binary weighted tree with leaf set $L$, leaf distance $d$, and threshold $\alpha$. A partition of $L$ is the **single-linkage clustering** at level $\alpha$ if leaves $a, b$ lie in the same cluster exactly when there is a chain $a = c_0, c_1, \dots, c_{m+1} = b$ of leaves with $d(c_i, c_{i+1}) \le \alpha$ for all $i$. The **single-linkage min-cut partitioning problem** is the min-cut partitioning problem (fewest admissible clusters obtained by deleting edges, see [greedy max-diameter partitioning](greedy-max-diameter-and-sum-length-tree-partitioning.md)) with cluster criterion
+
 $$f_T(S) = \max_{\emptyset \ne R \subsetneq S} \; \min_{u \in R,\, v \in S \setminus R} d(u, v) \le \alpha ,$$
+
 i.e. no split of a cluster into two parts has a gap larger than $\alpha$.
 
 **Proposition.** The optimal solution of the single-linkage min-cut partitioning problem is identical to the single-linkage clustering at level $\alpha$.

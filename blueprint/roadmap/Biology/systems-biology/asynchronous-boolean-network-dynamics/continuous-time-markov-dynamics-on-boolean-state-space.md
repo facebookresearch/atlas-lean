@@ -3,7 +3,9 @@
 **Setting.** A Boolean network has nodes $1, \dots, n$ and state space $\Sigma = \{0,1\}^n$. In asynchronous Boolean dynamics, each node $i$ has a logic $B_i : \Sigma \to \{0,1\}$, an asynchronous transition $S \to S'$ changes exactly one coordinate $j$ to $S'_j = B_j(S) \ne S_j$, and the discrete-time Markov chain moves to each of the $\gamma(S)$ available asynchronous successors with probability $1/\gamma(S)$.
 
 **Continuous-time generalization.** Replace each logic $B_i$ by two nonnegative rate functions $R_i^{\mathrm{up}}, R_i^{\mathrm{down}} : \Sigma \to [0, \infty)$ and define a time-homogeneous continuous-time Markov chain on $\Sigma$ with rates
+
 $$\rho(S \to S') = \begin{cases} R_i^{\mathrm{up}}(S) & \text{if } S, S' \text{ differ only at node } i \text{ and } S_i = 0,\\ R_i^{\mathrm{down}}(S) & \text{if } S, S' \text{ differ only at node } i \text{ and } S_i = 1,\\ 0 & \text{if } S, S' \text{ differ at more than one node.} \end{cases}$$
+
 The instantaneous probabilities $P_t(S)$ solve the master equation $\dot P_t(S) = \sum_{S'} [\rho(S' \to S) P_t(S') - \rho(S \to S') P_t(S)]$. Choosing $R_i^{\mathrm{up}}(S) = B_i(S)$ and $R_i^{\mathrm{down}}(S) = 1 - B_i(S)$ makes the embedded jump chain $P(S \to S') = \rho(S \to S')/\sum_{S''}\rho(S \to S'')$ the asynchronous Boolean dynamics.
 
 **Properties.** Since $\Sigma$ is finite:

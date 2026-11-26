@@ -1,16 +1,23 @@
 # Eradication threshold under pulse vaccination with distributed delay
 
 **Impulsive linear lemma.** For $a, b > 0$ and $0 < \theta < 1$, the impulsive system $\dot u = a - bu$ for $t \ne k\tau$, $u(k\tau^+) = (1-\theta)u(k\tau)$, has a unique positive $\tau$-periodic solution
+
 $$\tilde u_e(t) = \frac{a}{b} + \Big(u^\ast - \frac{a}{b}\Big)e^{-b(t - k\tau)}, \quad k\tau < t \le (k+1)\tau, \qquad u^\ast = \frac{a}{b}\cdot\frac{(1-\theta)(1 - e^{-b\tau})}{1 - (1-\theta)e^{-b\tau}},$$
+
 and it is globally asymptotically stable.
 
 **Model.** Time is scaled so that infecteds leave at rate $1$; $\mu$ is the birth and death rate, $R_0$ the basic reproduction number, $f \ge 0$ a probability density on $[0, h]$ describing the delay between infection and infectiousness (survival $e^{-\mu s}$), and a fraction $\theta \in (0,1)$ of susceptibles is vaccinated every $\tau$ time units:
+
 $$\dot S = \mu - R_0\int_0^h f(s) S(t-s) I(t-s) e^{-\mu s}ds - \mu S, \qquad \dot I = R_0\int_0^h f(s) S(t-s) I(t-s) e^{-\mu s}ds - I, \qquad t \ne k\tau,$$
+
 $$S(k\tau^+) = (1 - \theta) S(k\tau), \qquad I(k\tau^+) = I(k\tau).$$
+
 Without infection, $S$ converges to the periodic solution $\tilde S_e(t) = 1 - \dfrac{\theta\, e^{-\mu(t - k\tau)}}{1 - (1-\theta)e^{-\mu\tau}}$ on $(k\tau, (k+1)\tau]$.
 
 **Theorem.** Let
+
 $$R^\ast = R_0\,\frac{1 - e^{-\mu\tau}}{1 - (1-\theta)e^{-\mu\tau}}, \qquad R_\ast = (1-\theta)\,e^{-\mu h}\, R^\ast .$$
+
 1. If $R^\ast < 1$, the infection-free periodic solution $(\tilde S_e, 0)$ is globally attractive. In particular this holds for any $R_0 \le 1$, and for $R_0 > 1$ whenever $\theta > \theta^\ast = (R_0 - 1)(e^{\mu\tau} - 1)$ or $\tau < \tau_\ast = \frac{1}{\mu}\ln\big(1 + \frac{\theta}{R_0 - 1}\big)$.
 2. If $R_\ast > 1$, the disease is uniformly persistent: there is $q > 0$ with $I(t) \ge q$ for all large $t$; if moreover $\mu > R_0$ the system is permanent.
 

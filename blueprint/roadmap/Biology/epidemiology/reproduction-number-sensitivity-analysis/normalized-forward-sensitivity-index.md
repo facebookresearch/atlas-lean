@@ -1,9 +1,11 @@
 # Normalized forward sensitivity index
 
 For a quantity $R_0(p_1,\dots,p_m)$ that depends differentiably on positive model parameters, the normalized forward sensitivity index (elasticity) of $R_0$ with respect to $p$ is
+
 $$
 \Upsilon^{R_0}_{p}=\frac{\partial R_0}{\partial p}\cdot\frac{p}{R_0}=\frac{\partial\ln R_0}{\partial\ln p}.
 $$
+
 It is dimensionless and gives the first-order relative change: $\Delta R_0/R_0\approx\Upsilon^{R_0}_p\,\Delta p/p$, so a $1\%$ increase in $p$ changes $R_0$ by about $\Upsilon^{R_0}_p\,\%$. Properties:
 
 1. If $R_0=c\prod_i p_i^{e_i}$ is a monomial, then $\Upsilon^{R_0}_{p_i}=e_i$.
@@ -11,9 +13,11 @@ It is dimensionless and gives the first-order relative change: $\Delta R_0/R_0\a
 3. For a sum, $\Upsilon^{f+g}_p=\frac{f}{f+g}\Upsilon^f_p+\frac{g}{f+g}\Upsilon^g_p$.
 
 For the SIQ model with $R_0=\dfrac{\Lambda\gamma(d_0+\mu+\sigma)}{d_0\big[(d_0+k)(d_0+\mu+\sigma)+\eta(d_0+\mu)\big]}$, property 1 gives $\Upsilon^{R_0}_\Lambda=\Upsilon^{R_0}_\gamma=1$, and the quotient rule gives
+
 $$
 \Upsilon^{R_0}_\sigma=\frac{\sigma}{d_0+\mu+\sigma}-\frac{\sigma(d_0+k)}{(d_0+k)(d_0+\mu+\sigma)+\eta(d_0+\mu)}=\frac{\sigma\,\eta(d_0+\mu)}{(d_0+\mu+\sigma)\big[(d_0+k)(d_0+\mu+\sigma)+\eta(d_0+\mu)\big]}>0 ,
 $$
+
 so a higher rate of return from quarantine to the infected class always raises $R_0$, while $\Upsilon^{R_0}_\eta<0$.
 
 ## Depends on

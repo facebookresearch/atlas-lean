@@ -9,7 +9,9 @@
 - $c_0(v_1, v_2)$: the same minimum over forests with no such node.
 
 Then the minimum cost of an adjacency forest is $\min\{c_1(R_1, R_2), c_0(R_1, R_2)\}$, and $c_0, c_1$ satisfy a recurrence over the event types of $(v_1, v_2)$, evaluated in post-order on pairs of nodes. Base cases: two extant genes give $(c_1, c_0) = (0, \infty)$ if they form an adjacency and $(\infty, 0)$ otherwise; if either node is a gene loss, $c_1 = c_0 = 0$. For a pair of speciation nodes whose children are matched by species, $(a_1, a_2)$ and $(b_1, b_2)$,
+
 $$c_1(v_1, v_2) = \sum_{u \in \{a, b\}} \min\big\{ c_1(u_1, u_2),\ c_0(u_1, u_2) + C(\mathrm{Break}) \big\}, \qquad c_0(v_1, v_2) = \sum_{u \in \{a, b\}} \min\big\{ c_0(u_1, u_2),\ c_1(u_1, u_2) + C(\mathrm{Gain}) \big\},$$
+
 and duplication cases minimize over which duplication comes first or whether both genes duplicate together (an adjacency duplication). Backtracking from the optimal root value constructs an optimal forest; the running time is polynomial in the gene-tree sizes.
 
 ## Depends on

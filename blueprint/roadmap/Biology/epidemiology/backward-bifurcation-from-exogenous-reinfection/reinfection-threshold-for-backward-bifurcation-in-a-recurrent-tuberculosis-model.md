@@ -10,11 +10,15 @@ $$\begin{aligned}
 with recruitment $\Lambda$, natural mortality $\mu$, TB mortality $\mu_d$, treatment/recovery rate $r$, reactivation rate $k$, fraction $q \in [0,1]$ of new infections progressing fast, relative susceptibility $p \ge 0$ of latently infected individuals to exogenous reinfection, relative susceptibility $\theta \ge 0$ of recovered individuals to reinfection, and probability $\sigma \in [0,1]$ of fast progression after reinfection of a recovered individual. All parameters are positive except where stated; $N$ varies in time.
 
 **Reproduction number.** The disease-free equilibrium $(\Lambda/\mu, 0, 0, 0)$ is locally asymptotically stable if
+
 $$\mathcal R_0 = \frac{c\beta\, (k + \mu q)}{(\mu + k)(\mu + r + \mu_d)} < 1$$
+
 and unstable if $\mathcal R_0 > 1$; $\mathcal R_0$ does not involve the reinfection parameters $p, \theta, \sigma$.
 
 **Theorem (recurrent TB alone, $p = 0$).** Endemic equilibria correspond to positive roots $\lambda^*$ of $b_2 \lambda^2 + b_1 \lambda + b_0 = 0$ with $b_2 > 0$ and $b_0 \propto 1 - \mathcal R_0$. At $\mathcal R_0 = 1$ the system undergoes a backward bifurcation if
+
 $$\theta > \theta_c = \frac{(\mu + r)(\mu + k) + \mu \mu_d (1 - q)}{r\,(k + \mu\sigma)},$$
+
 and a forward bifurcation if $\theta < \theta_c$. In the backward case two positive endemic equilibria exist for $\mathcal R_0$ in an interval $(\mathcal R_c, 1)$, where $\mathcal R_c$ is defined by vanishing discriminant $b_1^2 - 4 b_2 b_0 = 0$, and TB can persist when $\mathcal R_0 < 1$.
 
 **Reinfection of latents ($p > 0$).** With all pathways present, equilibria are given by positive roots of a cubic in $\lambda$; there is a critical exogenous-reinfection level $p_c$ (decreasing as recurrent-TB reinfection $\theta$ grows) above which the bifurcation at $\mathcal R_0 = 1$ is backward. Even with a forward bifurcation, the cubic can produce a hysteresis loop of endemic states to the left of $\mathcal R_0 = 1$.

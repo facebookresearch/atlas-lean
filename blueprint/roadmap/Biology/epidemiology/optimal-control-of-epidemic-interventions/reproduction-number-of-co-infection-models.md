@@ -3,7 +3,9 @@
 **Setting.** Two pathogens $1$ and $2$ (for example SARS-CoV-2 and influenza, or HBV and SARS-CoV-2) circulate in one host population. Compartments are classified as infected with pathogen $1$ only, pathogen $2$ only, or both (co-infected), plus uninfected classes (susceptible, vaccinated against either pathogen, recovered). Let $\mathcal R_1$ and $\mathcal R_2$ be the reproduction numbers of the single-pathogen sub-models (the system restricted to the invariant faces where the other pathogen is absent), computed by the next-generation method at the common disease-free equilibrium.
 
 **Theorem.** If co-infected compartments are generated only through new infections of singly infected or co-infected hosts (so that at the disease-free equilibrium no new co-infections arise from a single infection), then the next-generation matrix of the full model at the disease-free equilibrium is block triangular with diagonal blocks the next-generation matrices of the two sub-models and a co-infection block with zero new-infection term, and
+
 $$\mathcal R_0 = \rho(FV^{-1}) = \max\{\mathcal R_1, \mathcal R_2\}.$$
+
 Hence the disease-free equilibrium of the co-infection model is locally asymptotically stable if $\max\{\mathcal R_1, \mathcal R_2\} < 1$ and unstable if it exceeds one; eliminating both diseases requires driving both single-pathogen reproduction numbers below one.
 
 ## Depends on

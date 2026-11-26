@@ -1,12 +1,17 @@
 # Folding recurrence for mean isotope peak masses
 
 For a molecule made of $l$ atoms, let $X_i$ be the (random) exact mass and $Y_i \in \mathbb{N}$ the mass number of atom $i$, drawn independently from the natural isotope distribution of its element. The molecule's mass is $X = \sum_i X_i$ and its nominal mass is $Y = \sum_i Y_i$. If $N$ is the monoisotopic nominal mass, the **isotopic distribution** is $p_k := \mathbb{P}(Y = N + k)$, $k \ge 0$, and the **mean peak mass** of the $+k$ peak is
+
 $$m_k := \mathbb{E}(X \mid Y = N + k).$$
+
 The pair $(p_k, m_k)_{k \ge 0}$ is the molecule's isotope pattern.
 
 **Theorem (folding of distributions and mean masses).** Let two independent molecules have isotope patterns $(p_k, m_k)$ and $(q_k, m_k')$ with monoisotopic nominal masses $N$ and $N'$. Their union $Z = Y + Y'$ has monoisotopic nominal mass $N + N'$, isotopic distribution
+
 $$r_k = \sum_{i=0}^{k} p_i\, q_{k-i},$$
+
 and, whenever $r_k > 0$, mean peak masses
+
 $$\tilde m_k = \frac{1}{r_k} \sum_{i=0}^{k} p_i\, q_{k-i}\, \bigl(m_i + m'_{k-i}\bigr).$$
 
 Consequences:

@@ -3,7 +3,9 @@
 **Setting.** As in the equilibrium propagation framework, let $F(\theta, v, \beta, s) = E(\theta, v, s) + \beta\, C(\theta, v, s)$ with $E, C$ twice continuously differentiable, and let $s^\beta = s^\beta_{\theta,v}$ be a differentiable family of fixed points satisfying $\partial_s F(\theta, v, \beta, s^\beta) = 0$ with $\partial^2_s F(\theta, v, \beta, s^\beta)$ symmetric positive definite for $\beta$ near $0$.
 
 **Proposition.** The function $\beta \mapsto C(\theta, v, s^\beta)$ has non-positive derivative at $\beta = 0$:
+
 $$\frac{d}{d\beta}\, C\big(\theta, v, s^{\beta}\big)\Big|_{\beta = 0} = -\left(\frac{\partial s^\beta}{\partial \beta}\Big|_{\beta=0}\right)^{\!\top} \frac{\partial^2 E}{\partial s^2}\big(\theta, v, s^0\big)\, \frac{\partial s^\beta}{\partial \beta}\Big|_{\beta=0} \le 0 .$$
+
 Hence, unless the free equilibrium is already stationary for the cost along this direction, a small positive nudge $\beta > 0$ moves the equilibrium to a state with strictly lower cost than the free fixed point.
 
 ## Depends on

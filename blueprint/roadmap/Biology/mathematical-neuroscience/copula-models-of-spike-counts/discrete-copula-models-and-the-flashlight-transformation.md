@@ -1,15 +1,21 @@
 # Discrete copula models and the flashlight transformation
 
 **Copulas and Sklar's theorem.** A $d$-copula is a CDF $C : [0,1]^d \to [0,1]$ with uniform marginals on $[0,1]$. For every $d$-dimensional CDF $F$ with marginals $F_1, \dots, F_d$ there is a copula $C$ with
+
 $$F(x_1, \dots, x_d) = C\big(F_1(x_1), \dots, F_d(x_d)\big) \quad \text{for all } x \in \mathbb R^d;$$
+
 $C$ is unique if all $F_i$ are continuous and unique on $\operatorname{Ran}F_1 \times \cdots \times \operatorname{Ran}F_d$ otherwise. Conversely, any copula $C$ and univariate CDFs $F_i$ define a $d$-dimensional CDF in this way.
 
 **Discrete marginals (spike counts).** If $X_i \in \{0, 1, 2, \dots\}$ with CDF $F_i$ (for example negative binomial), the joint probability mass function of the copula model is
+
 $$P(X = x) = \sum_{m \in \{0,1\}^d} (-1)^{|m|}\, C\big(F_1(x_1 - m_1), \dots, F_d(x_d - m_d)\big), \qquad |m| = \textstyle\sum_i m_i,$$
+
 a sum of $2^d$ copula evaluations (the rectangle inequality guarantees it is non-negative).
 
 **Flashlight transformation.** Let $U \sim C$ and let $S \subseteq \{1, \dots, d\}$. Define $V_i = 1 - U_i$ for $i \in S$ and $V_i = U_i$ for $i \notin S$. Then the CDF $C_S$ of $V$ is a $d$-copula and
+
 $$C_S(u) = \sum_{T \subseteq S} (-1)^{|T|}\, C\big(w^{T}(u)\big), \qquad w^{T}_i(u) = \begin{cases} 1 - u_i, & i \in T, \\ 1, & i \in S \setminus T, \\ u_i, & i \notin S. \end{cases}$$
+
 $C_\emptyset = C$, and $S = \{1, \dots, d\}$ gives the survival copula. If $C$ has lower-tail dependence (as the Clayton family), $C_S$ moves it to the orthant in which coordinates in $S$ are high and the others low, leaving the dependence structure otherwise unchanged.
 
 **Mixtures.** For copulas $C_1, \dots, C_K$ and weights $z_k \ge 0$ with $\sum_k z_k = 1$, $\sum_k z_k C_k$ is a copula; mixing flashlight-transformed Clayton copulas yields dependence concentrated in several orthants at once.

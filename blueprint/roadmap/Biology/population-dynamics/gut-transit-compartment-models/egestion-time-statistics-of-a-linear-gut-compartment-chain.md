@@ -1,13 +1,19 @@
 # Egestion time statistics of a linear gut compartment chain
 
 **Model.** A gut is a chain of compartments $i = 0, 1, \dots, n$ (e.g. foregut, midgut, hindgut). In compartment $i$ an ingested bacterium has per capita net reproduction rate $r_i = b_i - d_i$ (birth minus death or retention) and moves on to compartment $i + 1$ at rate $m_i > 0$, with exit from compartment $n$ meaning egestion in faeces. With $X_i(t)$ the population in compartment $i$ after a pulse ingestion $X_0(0) = X_0$,
+
 $$\dot X_0 = (r_0 - m_0) X_0, \qquad \dot X_i = m_{i-1} X_{i-1} + (r_i - m_i) X_i \quad (1 \le i \le n),$$
+
 and the egestion flux is $m_n X_n(t)$. Assume $m_i > r_i$ for all $i$ (the population drains out).
 
 **Egestion time distribution.** The egestion flux normalized to unit mass is the density of
+
 $$T = \sum_{i=0}^{n} E_i, \qquad E_i \sim \mathrm{Exp}(m_i - r_i) \ \text{independent},$$
+
 a hypoexponential law, and the total egested output relative to the ingested pulse (a fraction when net growth is negative) is $\prod_{i=0}^{n} m_i/(m_i - r_i)$. Hence the mean and variance of the egestion time are
+
 $$\mu = \sum_{i=0}^{n} \frac{1}{m_i - r_i}, \qquad \sigma^2 = \sum_{i=0}^{n} \frac{1}{(m_i - r_i)^2}.$$
+
 For inert tracers (microspheres, $r_i = 0$) these reduce to $\sum 1/m_i$ and $\sum 1/m_i^2$.
 
 **Consequences.**

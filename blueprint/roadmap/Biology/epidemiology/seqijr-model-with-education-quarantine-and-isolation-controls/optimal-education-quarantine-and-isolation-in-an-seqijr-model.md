@@ -1,7 +1,9 @@
 # Optimal public-education, quarantine and isolation efforts in an SEQIJR model
 
 **Model.** The population $N = S + E + Q + I + J + R$ consists of susceptible, exposed, quarantined, infectious non-isolated, isolated (hospitalized) and recovered individuals. With recruitment $\Lambda$ (a fraction $\pi$ entering $E$), natural death rate $\mu$, and force of infection
+
 $$\Psi = \frac{\beta (I + \varepsilon_1 E + \varepsilon_2 Q + \varepsilon_3 J)}{N},$$
+
 the state equations with time-dependent controls $\alpha(t)$ (public-health education), $\tau(t)$ (quarantine of exposed) and $\eta(t)$ (isolation of infectious) are
 $$\begin{aligned}
 S' &= \Lambda(1 - \pi) + q\sigma_1 Q - (1 - \alpha)\Psi S - \mu S, \\
@@ -12,11 +14,15 @@ J' &= (1 - q)\sigma_2 Q + \eta I - (\gamma_2 + d_2 + \mu) J, \\
 R' &= \gamma_1 I + \gamma_2 J - \mu R,
 \end{aligned}$$
 with $p, q, \pi \in [0, 1]$ and positive rates. Admissible controls are Lebesgue measurable with values in $[0, 1]$ on $[0, t_f]$, and the cost is
+
 $$G(\alpha, \tau, \eta) = \int_0^{t_f} \Big( I + \tfrac12 c_1 \alpha^2 + \tfrac12 c_2 \tau^2 + \tfrac12 c_3 \eta^2 \Big) dt, \qquad c_1, c_2, c_3 > 0 .$$
 
 **Theorem (necessary conditions).** Let $H = I + \tfrac12 (c_1\alpha^2 + c_2\tau^2 + c_3\eta^2) + \sum_{x} \lambda_x\, x'$ be the Hamiltonian, the sum running over the six state equations. If $(\alpha^*, \tau^*, \eta^*)$ minimizes $G$ with state $(S, E, Q, I, J, R)$, then there are adjoint functions $\lambda_S, \dots, \lambda_R$ with
+
 $$\lambda_x' = -\frac{\partial H}{\partial x}, \qquad \lambda_x(t_f) = 0,$$
+
 and, for almost every $t$,
+
 $$\alpha^* = \min\Big\{1, \max\Big\{0, \frac{(\lambda_E - \lambda_S)\Psi S}{c_1}\Big\}\Big\}, \quad \tau^* = \min\Big\{1, \max\Big\{0, \frac{(\lambda_E - \lambda_Q) p E}{c_2}\Big\}\Big\}, \quad \eta^* = \min\Big\{1, \max\Big\{0, \frac{(\lambda_I - \lambda_J) I}{c_3}\Big\}\Big\}.$$
 
 ## Expansion

@@ -3,7 +3,9 @@
 Use the notation of [Counting transmission trees compatible with a phylogeny](counting-transmission-trees-compatible-with-a-phylogeny.md): $T$ is a rooted binary phylogeny with root $r$, children $r_L, r_R$ and tips $t_1, \dots, t_n$; $\mathcal{P}(T)$ is the set of admissible partitions. Let $\mathcal{P}_i(T) \subseteq \mathcal{P}(T)$ be the partitions in which $r$ lies in the same part as $t_i$, so $\sum_i |\mathcal{P}_i(T)| = |\mathcal{P}(T)|$, and $|\mathcal{P}_1(T)| = 1$ when $T$ is the single tip $t_1$.
 
 **Proposition 4.** If $T$ has at least two tips, then for each $i$,
+
 $$|\mathcal{P}_i(T)| = \begin{cases} |\mathcal{P}_i(T_{r_L})|\;|\mathcal{P}(T_{r_R}^{*})| & \text{if } t_i \in T_{r_L},\\ |\mathcal{P}_i(T_{r_R})|\;|\mathcal{P}(T_{r_L}^{*})| & \text{if } t_i \in T_{r_R}.\end{cases}$$
+
 All values $|\mathcal{P}_i(T_u)|$ over internal nodes $u$ are computed by one postorder traversal in $O(n^2)$ time.
 
 **Sampler.** Assign $r$ to the part of $t_i$ with probability $|\mathcal{P}_i(T)|/|\mathcal{P}(T)|$. Then traverse in preorder: when a node $u$ is reached whose parent is in the part of $t_i$, put $u$ in the same part if $t_i$ descends from $u$ (forced by connectedness); otherwise put $u$ in its parent's part with probability $(|\mathcal{P}(T_u^*)| - |\mathcal{P}(T_u)|)/|\mathcal{P}(T_u^*)|$, and in the part of tip $t_j$ of $T_u$ with probability $|\mathcal{P}_j(T_u)|/|\mathcal{P}(T_u^*)|$. The output is a uniformly distributed element of $\mathcal{P}(T)$, and each sample costs $O(n)$ after preprocessing.

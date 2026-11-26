@@ -5,7 +5,9 @@ Let $G = (V, E)$ be a splicing graph: a finite directed acyclic graph with an ad
 **Cut sets are maximal incompatible sets.** For $1 \le i < |V|$ let $I_i = \{(v_a, v_b) \in E : a \le i < b\}$ be the edges crossing the gap between positions $i$ and $i + 1$. Then the edges of $I_i$ are pairwise incompatible, and every edge $e \notin I_i$ is compatible with some edge of $I_i$; so $I_i$ is a maximal set of pairwise incompatible edges.
 
 **Packing step.** Treat each edge as a bin of capacity $c = w(e)$ and each current transcript fragment as an item of size equal to the depth it carries. When moving from one cut to the next across a vertex with $m$ incoming edges (capacities $c_1, \dots, c_m$) and $n \ge m$ items $w_1, \dots, w_n$ on its outgoing edges, items are assigned to incoming edges by the 0–1 quadratic program
+
 $$\min_{x} \sum_{i=1}^{m} \Bigl(c_i - \sum_{j=1}^{n} w_j x_{ij}\Bigr)^2 \quad \text{s.t.} \quad \sum_{i=1}^{m} x_{ij} = 1 \ \forall j, \qquad \sum_{j=1}^{n} x_{ij} \ge 1 \ \forall i, \qquad x_{ij} \in \{0, 1\}.$$
+
 Each item goes to exactly one bin and every bin gets at least one item, so every junction is explained by at least one transcript; unlike classical bin packing, a bin may be over- or under-filled and the objective penalizes the squared mismatch. When $m > n$ (a "trap" vertex) the roles of items and bins are swapped, with the constraint that every previously filled bin keeps at least as many items as before. Linking each assigned item to its bin extends the fragments by one vertex; sweeping cut by cut, alternating direction at trap vertices, produces a set of $s$–$t$ paths covering all edges.
 
 **Linearization.** Each product $x_{ij} x_{ik}$ in the expanded objective is replaced by a binary $y_{ijk}$ with $y_{ijk} \le x_{ij}$, $y_{ijk} \le x_{ik}$, $x_{ij} + x_{ik} - 1 \le y_{ijk}$, which makes the program an equivalent 0–1 integer linear program.

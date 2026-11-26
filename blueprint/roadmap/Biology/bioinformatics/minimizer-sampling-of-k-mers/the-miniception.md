@@ -9,6 +9,7 @@ Fix an alphabet of size $\sigma \ge 2$ and parameters $w$, $k$ and $k_0 < k$, an
 Because $C_0$ is a universal hitting set over $k$-mers with path length $w_0$ (see [When minimizers can reach density O(1/w)](asymptotic-optimality-condition-for-minimizers.md)), every window of $w \ge w_0$ consecutive $k$-mers contains a $k$-mer of $C_0$, so the minimizer always picks from $C_0$; $O$ is a minimizer order *compatible* with that UHS.
 
 **Theorem (density of the Miniception).** Let $w = w_0 + 1$, $k = w_0 + k_0$ and $k_0 > (3 + \epsilon)\log_\sigma (2w_0 + 2)$. Then the expected density of the Miniception is at most
+
 $$\frac{1.67}{w} + o\!\left(\frac{1}{w}\right).$$
 
 With, for example, $k_0 = 4\log_\sigma w_0$ one has $w \approx k$, so this is a construction with practical parameters whose guaranteed density is below the random-minimizer value $2/(w+1) + o(1/w)$. Membership of a $k$-mer in $C_0$ is decided from its $k_0$-mers, so the picked positions of a string $S$ are found in $O(k|S|)$ time with hashing, as fast as a random minimizer, without precomputing $C_0$.

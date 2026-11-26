@@ -7,6 +7,7 @@ Let $n_k = n - k + 1$. The *uniquified k-mer set* $M^w_k(S)$ contains, for every
 **Theorem 1 ($\ell = 1$).** OMH with $\ell = 1$ is a locality-sensitive hash for the weighted Jaccard similarity: $\Pr[h_{1,\pi}(S_1) = h_{1,\pi}(S_2)] = J\bigl(M^w_k(S_1), M^w_k(S_2)\bigr)$.
 
 **Theorem 2.** For every $\ell \in [2, n - k]$ and $1 > s_1 \ge s_2 > 0$, OMH is $(s_1, s_2, p_1, p_2)$-sensitive for the edit similarity, with
+
 $$p_1 = \binom{n - n(k+2)(1 - s_1)}{\ell} \Big/ \binom{n_k + kn(1 - s_1)}{\ell}, \qquad p_2 \le \Bigl(\frac{n_k}{L}\Bigr)^{\ell} \binom{L}{\ell} \Big/ \binom{n_k}{\ell}, \quad L = n s_2 - k + 1 .$$
 
 **Lemma (patience sorting).** For integers $n \ge i \ge \ell$, a sequence of length $n$ whose longest increasing subsequence has length at most $i$ has at most $(n/i)^{\ell}\binom{i}{\ell}$ increasing subsequences of length $\ell$, and this bound is tight.

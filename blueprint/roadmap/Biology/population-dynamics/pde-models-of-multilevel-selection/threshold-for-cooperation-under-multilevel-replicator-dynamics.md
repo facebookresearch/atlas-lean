@@ -1,14 +1,19 @@
 # Threshold for cooperation under multilevel replicator dynamics
 
 **Model.** Groups contain cooperators (fraction $x$) and defectors; individuals reproduce at rates $\pi_C(x), \pi_D(x)$ and groups at rate $G(x)$, all continuously differentiable on $[0,1]$, with an individual advantage to defect $\pi_D(x) > \pi_C(x)$ and a collective advantage $G(1) > G(0)$. In the limit of many large groups, the density $f(t, x)$ of group compositions satisfies
+
 $$\partial_t f(t, x) = -\partial_x\big[x(1-x)\big(\pi_C(x) - \pi_D(x)\big) f(t, x)\big] + \lambda\, f(t, x)\Big[G(x) - \int_0^1 G(y) f(t, y)\, dy\Big],$$
+
 where $\lambda > 0$ is the relative strength of among-group to within-group selection. Characteristics follow the within-group replicator equation $\dot x = x(1-x)(\pi_C - \pi_D)$, and along them $f$ is multiplied by $\exp\big(\lambda\int_0^t [G - \langle G\rangle_{f(s,\cdot)}]\,ds\big)$.
 
 **Hölder exponent.** The initial density $f_0$ has Hölder exponent $\theta > 0$ at $x = 1$ if $\int_{1-y}^{1} f_0(z)\,dz \,/\, y^{\Theta}$ tends to $0$ for $\Theta < \theta$, to a positive constant for $\Theta = \theta$ and to $\infty$ for $\Theta > \theta$ as $y \to 0$ (e.g. $f_0(x) = \theta(1-x)^{\theta-1}$); small $\theta$ means many nearly fully cooperative groups initially.
 
 **Theorem.** Let
+
 $$\lambda^* = \frac{\theta\,\big(\pi_D(1) - \pi_C(1)\big)}{G(1) - G(0)} .$$
+
 If $\lambda \le \lambda^*$, $f(t, \cdot)$ converges to $\delta_0$ (all groups become pure defectors). If $\lambda > \lambda^*$, $f(t, \cdot)$ converges to a steady-state density $f_\theta^\lambda$ with positive cooperation, and the mean collective payoff converges to
+
 $$\langle G\rangle_{f_\theta^\lambda} = G(1) - \frac{\theta}{\lambda}\big(\pi_D(1) - \pi_C(1)\big) = \frac{\lambda^*}{\lambda} G(0) + \Big(1 - \frac{\lambda^*}{\lambda}\Big) G(1).$$
 
 **Shadow of lower-level selection.** The long-run mean payoff never exceeds $G(1)$, even as $\lambda \to \infty$. For the pairwise game with payoffs $b - c + d$ (mutual cooperation), $-c$, $b$, $0$, one has $\pi_C(x) = (b+d)x - c$, $\pi_D(x) = bx$, $G(x) = (b-c)x + dx^2$, a prisoner's dilemma for $c - b < d < c$, and $\lambda^*_{PD} = \theta(c - d)/(b - c + d)$. If $d < -(b-c)/2$, $G$ is maximized at the interior composition $x^* = (b-c)/(-2d) < 1$, which multilevel selection can never attain.

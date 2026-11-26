@@ -1,14 +1,21 @@
 # Tempered reward posterior is the stationary law of synaptic sampling
 
 **Setting.** A spiking network has synaptic parameters $\theta \in \mathbb{R}^{K}$ (one per potential synapse; a synapse is functional when its parameter is positive). Its performance is the expected discounted reward
+
 $$V(\theta) = \Big\langle \int_0^\infty e^{-\tau/\tau_e}\, r(\tau)\, d\tau \Big\rangle_{p(r \mid \theta)} > 0,$$
+
 where the expectation is over reward sequences produced by stochastic inputs, neuronal responses and reward delivery. Introduce a binary "goal reached" variable $v_b$ with likelihood $p_N(v_b = 1 \mid \theta) = V(\theta)/Z_V$, a structural prior $p_S(\theta)$, and the posterior $p^\ast(\theta \mid v_b = 1) \propto p_S(\theta)\, V(\theta)$. For temperature $T > 0$ the **tempered posterior** is
+
 $$p_T^\ast(\theta) = \frac{1}{Z}\, p^\ast(\theta \mid v_b = 1)^{1/T}.$$
+
 **Synaptic sampling** is the Itô diffusion, for each $i$,
+
 $$d\theta_i = \beta\Big( \frac{\partial}{\partial \theta_i} \log p_S(\theta) + \frac{\partial}{\partial\theta_i} \log V(\theta) \Big) dt + \sqrt{2\beta T}\, dW_i ,$$
+
 with learning rate $\beta > 0$ and independent Wiener processes $W_i$.
 
 **Theorem.** If $p^\ast(\theta \mid v_b = 1)$ is a strictly positive probability density that is twice continuously differentiable in $\theta$, then $p_T^\ast$ is invariant under synaptic sampling, and it is the unique stationary distribution of the associated Fokker–Planck equation
+
 $$\frac{\partial p_{FP}}{\partial t} = \sum_i \Big[ -\frac{\partial}{\partial\theta_i}\Big( \beta\, \frac{\partial}{\partial\theta_i}\log p^\ast(\theta\mid v_b=1)\; p_{FP} \Big) + \frac{\partial^2}{\partial\theta_i^2}\big( \beta T\, p_{FP} \big) \Big].$$
 
 ## Expansion

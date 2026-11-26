@@ -8,7 +8,9 @@
 This is the **periodic ribosome flow model** (PRFM).
 
 **Theorem.** The PRFM admits a unique $T$-periodic solution $\gamma : \mathbb{R}_{\ge 0} \to \operatorname{int} C^n$, and every trajectory converges to it:
+
 $$\lim_{t\to\infty} |x(t, a) - \gamma(t)| = 0 \qquad \text{for all } a \in C^n = [0,1]^n .$$
+
 In particular the translation rate $R(t) = \lambda_n(t) x_n(t)$ converges to the $T$-periodic function $\lambda_n(t)\gamma_n(t)$. The conclusion holds when only the initiation rate oscillates and the transition rates are constant, or when the initiation rate is constant and some transition rates oscillate.
 
 ## Depends on

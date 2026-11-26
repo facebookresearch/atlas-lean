@@ -1,6 +1,7 @@
 # Visit-and-return metapopulation SIR model
 
 Partition a population into $n$ regions and let $X_{ij}$ ($X\in\{S,I,R\}$) be the number of residents of region $j$ currently present in region $i$, with $X_{ii}$ the residents at home. Residents of $j$ leave home for region $i$ at per-capita rate $l_{ij}$ and visitors return home at rate $r$. Transmission in region $i$ is frequency-dependent on everyone present there, with rate $\beta_i$. With recruitment $\nu_i$, natural death $\mu$, disease death $\delta$ and progression to the removed class $\gamma$,
+
 $$
 \begin{aligned}
 \dot S_{ii}&=\nu_i-\beta_iS_{ii}\frac{\sum_j I_{ij}}{\sum_j N_{ij}}-S_{ii}\sum_j l_{ji}+r\sum_j S_{ji}-\mu S_{ii},\\
@@ -9,12 +10,15 @@ $$
 \dot I_{ij}&=\beta_iS_{ij}\frac{\sum_j I_{ij}}{\sum_j N_{ij}}-\gamma I_{ij}+l_{ij}I_{jj}-rI_{ij}-(\mu+\delta)I_{ij},
 \end{aligned}
 $$
+
 and analogous equations for $R_{ii}$, $R_{ij}$, where $N_{ij}=S_{ij}+I_{ij}+R_{ij}$. Unlike Eulerian patch models, individuals keep their residence label, so travel is a temporary visit rather than migration.
 
 **Reproduction number.** Linearizing the infected equations at the disease-free equilibrium gives $F=F_1\oplus\dots\oplus F_n$, where $F_i$ has every row of residents present in region $i$ equal to $\beta_iS^*_{i\cdot}/\sum_jN^*_{ij}$, and a transition matrix $V$ with diagonal entries $\kappa_{ii}+\sum_j l_{ji}$ and $\kappa_{ij}+r$ ($\kappa=\gamma+\mu+\delta$), nonpositive off-diagonal entries $-l_{ij}$, $-r$, and positive column sums $\kappa_{\cdot\cdot}$. A matrix with nonpositive off-diagonal entries and positive column sums is a nonsingular M-matrix, so $V^{-1}\ge 0$ exists and
+
 $$
 R_0=\rho\big((F_1\oplus\dots\oplus F_n)V^{-1}\big),
 $$
+
 which depends on the travel rates $l_{ij}$, $r$ as well as on the regional transmission rates. Without travel ($l_{ij}=r=0$, $\beta_i=\beta$) the model reduces to the SIR model with $R_0=\beta/(\gamma+\mu+\delta)$.
 
 ## Depends on

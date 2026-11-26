@@ -3,7 +3,9 @@
 Work over the DNA alphabet $\{A,C,G,T\}$ with complement $A \leftrightarrow T$, $C \leftrightarrow G$; $\mathrm{RC}(s)$ is $s$ reversed and complemented, and $s$ is a *palindrome* if $\mathrm{RC}(s) = s$. Measure the length of a sequence by its number of $k$-mers (a sequence of length $t$ has $t + k - 1$ letters). A sequence $s$ is *RC complete of order $k$* if for every $k$-mer $x$ at least one of $x$, $\mathrm{RC}(x)$ occurs in $s$; it is *optimal* if no RC complete sequence of order $k$ is shorter. Let $L(k)$ be the optimal length.
 
 1. **Lower bound.** For odd $k$ there are no palindromic $k$-mers, and for even $k$ there are exactly $4^{k/2}$. Hence
+
 $$L(k) \ge \begin{cases} \dfrac{4^k}{2}, & k \text{ odd}, \\[2mm] \dfrac{4^k + 4^{k/2}}{2}, & k \text{ even}. \end{cases}$$
+
 2. **Odd $k$: characterization.** An RC complete sequence $s$ attains the bound if and only if $s$ and $\mathrm{RC}(s)$ correspond to two edge-disjoint paths without repeated edges in the de Bruijn graph of order $k-1$ that together cover all its edges.
 3. **Odd $k$: construction.** An Euler-tour traversal that, whenever it appends an edge $e$ to the forward path, prepends $\mathrm{RC}(e)$ to a reverse path and marks both, outputs such a pair. It runs in time linear in the size of the graph, so the bound $4^k/2$ is attained.
 4. **Even $k$.** The bound is not tight. Augmenting the graph with paths that connect the palindromic $k$-mers in pairs, chosen by a maximum-weight matching of palindrome overlaps, gives an optimal RC complete sequence in time polynomial in the size of the de Bruijn graph of order $k-1$.

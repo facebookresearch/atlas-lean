@@ -1,11 +1,15 @@
 # Periodic orbit of a periodically forced linear difference equation
 
 Let $p \ge 1$ be an integer period, $\Upsilon(t)$ a nonnegative $\eta \times \eta$ matrix and $\Lambda(t) \in \mathbb R^\eta_{\ge 0}$ for $t \in \mathbb N$, both $p$-periodic: $\Upsilon(t+p) = \Upsilon(t)$, $\Lambda(t+p) = \Lambda(t)$. Consider
+
 $$x(t+1) = \Upsilon(t)\, x(t) + \Lambda(t), \qquad x(0) = x_0 .$$
+
 Define the transition products $\Phi(t,s) = \Upsilon(t-1)\Upsilon(t-2)\cdots\Upsilon(s)$ for $t > s$, $\Phi(s,s) = I$, and the monodromy matrix $\Phi = \Phi(p, 0)$.
 
 **Theorem.** If every eigenvalue of $\Phi$ lies strictly inside the unit circle, i.e. $\rho(\Phi) < 1$, then the system has a unique $p$-periodic solution $x^*$, with initial value
+
 $$x^*(0) = (I - \Phi)^{-1} \sum_{s=0}^{p-1} \Phi(p, s+1)\, \Lambda(s),$$
+
 and every solution satisfies $x(t) - x^*(t) \to 0$ geometrically as $t \to \infty$. If $\Lambda \ge 0$ and $\Upsilon \ge 0$, then $x^* \ge 0$.
 
 In the seasonal model of malaria in mosquitoes, $x(t)$ stacks the daily numbers of host-seeking mosquitoes that are uninfected, infected or infective, together with the cohorts still in their feeding cycle or in the parasite's development period. $\Lambda(t)$ is the seasonal emergence of new adults, and $\Upsilon(t)$ collects the daily probabilities of staying host-seeking, of feeding and surviving a feeding cycle, and of becoming infected. These depend periodically on host availability. Periodic field quantities, such as the parous, delayed-oocyst and sporozoite proportions and the entomological inoculation rate, are then ratios of components of $x^*$.

@@ -3,7 +3,9 @@
 In the duplication–loss–coalescent (DLCoal) model a *locus tree* first evolves inside a rooted species tree $S = (T_S, w_S)$ with branch lengths by a birth–death process of gene duplications and losses; gene lineages then coalesce backwards in time inside the locus tree under the multilocus coalescent, with a newly duplicated locus founded by a single lineage. The result is a gene tree $G$ whose leaves are labelled by species, possibly with several copies per species. *ASTRAL-one* takes a collection $\mathcal G$ of such gene trees, keeps one copy per species chosen uniformly at random in each tree, and returns the unrooted species tree maximizing the number of induced quartet topologies shared with the input.
 
 1. **Quartet dominance.** Let $S$ have four leaves and display the quartet $AB|CD$, let $G$ evolve in $S$ under DLCoal, and pick genes $a,b,c,d$ of species $A,B,C,D$ uniformly at random from $G$ (conditioning on their existence). Then
+
 $$\mathbb P[ab|cd \in G] > \mathbb P[ac|bd \in G] = \mathbb P[ad|bc \in G].$$
+
 2. **Consistency.** For any fixed species tree $S$ and gene trees evolving independently in $S$ under DLCoal, the probability that the ASTRAL-one estimate equals the unrooted topology of $T_S$ tends to $1$ as $|\mathcal G| \to \infty$.
 
 ## Expansion

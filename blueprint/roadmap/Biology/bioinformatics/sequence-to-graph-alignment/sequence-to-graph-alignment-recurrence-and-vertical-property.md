@@ -6,10 +6,13 @@ A **sequence graph** is a triple $G = (V, E, \sigma)$ with a finite node set $V 
 - **Unit-cost semi-global sequence-to-graph alignment (SGA):** find a path $p$ minimizing the edit distance $d(\sigma(p), s)$.
 
 For SGA let $C_{i,j}$ be the minimum of $d(\sigma(p), s[1..j])$ over paths $p$ ending at $v_i$. It satisfies the recurrence
+
 $$C_{i,j} = \min\Big\{\ \min_{k \in \delta_i^{\mathrm{in}}} \big(C_{k,j-1} + \Delta_{i,j}\big),\ \ \min_{k \in \delta_i^{\mathrm{in}}} \big(C_{k,j} + 1\big),\ \ C_{i,j-1} + 1 \Big\}$$
+
 with boundary $C_{i,1} = \Delta_{i,1}$, where $\Delta_{i,j} = 0$ if $\sigma(v_i) = s_j$ and $1$ otherwise. The three terms are the diagonal (match or mismatch), horizontal (graph letter deleted) and vertical (query letter inserted) moves. Despite the cyclic dependencies when $G$ has cycles, the recurrence has a unique solution, computable cell by cell in $O(|V| + m|E|)$ time.
 
 **Theorem (vertical property).** For all $i$ and all $2 \le j \le m$,
+
 $$C_{i,j} - C_{i,j-1} \in \{-1, 0, 1\}.$$
 
 This is what allows a column of the DP matrix (one node, all $m$ query rows) to be stored, as in Myers' algorithm for strings, by the bottom score and two $m$-bit vectors $VP$, $VN$ of $+1$ and $-1$ vertical differences, with $C_{i,j} = \mathrm{popcount}(VP_{0..j}) - \mathrm{popcount}(VN_{0..j})$; one edge is then processed in $O(\lceil m/w \rceil)$ word operations for machine word size $w$. On a DAG, processing nodes in topological order and merging the columns of several in-neighbours by a row-wise minimum (computable in $O(\lceil m/w\rceil \log w)$ time) gives SGA in $O(|V| + \lceil m/w\rceil |E| \log w)$ time. The analogous extension of Shift-And solves SGM in $O(|V| + \lceil m/w\rceil |E|)$ time on DAGs (states from several in-neighbours are merged by bitwise OR) and in $O(|V| + m|E|)$ time on general graphs by re-propagating changed states until none change.

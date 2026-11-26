@@ -1,11 +1,15 @@
 # Mean age system of a nonautonomous compartmental system
 
 **Setting.** A nonautonomous compartmental system $\dot x = B(t)x + s(t)$ on $d$ pools has bounded continuous $B(t)$ with $b_{ii}(t) < 0$, $b_{ij}(t) \ge 0$ for $i \ne j$ and $\sum_i b_{ij}(t) \le 0$, and bounded continuous inputs $s(t) \ge 0$. Let $p_i(a,t)$ be the density over age $a$ (time since entry into the system) of the mass in pool $i$ at time $t$; it obeys the McKendrick–von Foerster equation
+
 $$\frac{\partial p_i}{\partial t} + \frac{\partial p_i}{\partial a} = \sum_{j=1}^d b_{ij}(t)\, p_j, \qquad p_i(0, t) = s_i(t),$$
+
 with $\int_0^\infty p_i(a,t)\, da = x_i(t)$.
 
 **Theorem.** Along a solution with $x_i(t) > 0$, the mean ages $\bar a_i(t) = \int_0^\infty a\, p_i(a,t)\, da \,/\, x_i(t)$ satisfy the ordinary differential equation
+
 $$\dot{\bar a}_i = 1 + \frac{\sum_{j=1}^d (\bar a_j - \bar a_i)\, b_{ij}(t)\, x_j(t) - \bar a_i\, s_i(t)}{x_i(t)}, \qquad i = 1, \dots, d,$$
+
 equivalently $\dot{\bar a} = A(t, x(t))\,\bar a + \mathbf 1$ with $A = X(t)^{-1}\big(\text{off-diagonal } b_{ij}x_j;\ \text{diagonal } -s_i - \sum_{j\ne i} b_{ij}x_j\big)$ and $X = \operatorname{diag}(x)$. Together with the mass equation this is a skew-product system in $(x, \bar a)$ that is linear in $\bar a$ for given $x(\cdot)$. The transit time at time $t$, the mean age of the mass leaving the system, is $\sum_j \bar a_j(t)\, \ell_j(t) x_j(t) / \sum_j \ell_j(t) x_j(t)$ with $\ell_j = -\sum_i b_{ij}$ the loss rates.
 
 ## Expansion

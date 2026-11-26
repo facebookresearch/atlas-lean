@@ -1,7 +1,9 @@
 # Castillo-Chavez–Feng–Huang global stability criterion
 
 **Setting.** Write a compartmental epidemic model on a positively invariant set $\Omega$ as
+
 $$\dot X = F(X, Z), \qquad \dot Z = G(X, Z), \qquad G(X, 0) = 0,$$
+
 where $X \in \mathbb{R}^n$ collects the uninfected compartments and $Z \in \mathbb{R}^m$ the infected (latent, infectious, isolated, ...) compartments. Let $U_0 = (X^*, 0)$ be the disease-free equilibrium and $\mathcal{R}_0$ the basic reproduction number from the next-generation matrix at $U_0$.
 
 **Hypotheses.**

@@ -3,9 +3,11 @@
 Let $T$ be a rooted binary tree (a pathogen phylogeny without branch lengths) with node set $N(T)$ and $n$ tips, one tip per sampled host. A partition of $N(T)$ is **admissible** if each part contains exactly one tip and induces a connected subgraph of $T$. Under complete sampling, one sample per host and a complete bottleneck at transmission, admissible partitions are in bijection with transmission trees compatible with $T$ (the part of a host is the set of lineages present in that host). Let $\mathcal{P}(T)$ be the set of admissible partitions, and let $T^{*}$ be the tree obtained from $T$ by attaching one extra tip to its root by a new edge, viewed as an unrooted tree whose admissible partitions $\mathcal{P}(T^*)$ are defined in the same way. For an internal node $u$ write $T_u$ for the subtree rooted at $u$, and $r_L, r_R$ for the children of the root $r$.
 
 **Proposition 1.** If $T$ has at least two tips,
+
 $$|\mathcal{P}(T)| = |\mathcal{P}(T_{r_L})|\,|\mathcal{P}(T_{r_R}^{*})| + |\mathcal{P}(T_{r_R})|\,|\mathcal{P}(T_{r_L}^{*})| .$$
 
 **Proposition 2.** If $T$ has at least two tips,
+
 $$|\mathcal{P}(T^{*})| = |\mathcal{P}(T)| + |\mathcal{P}(T_{r_L}^{*})|\,|\mathcal{P}(T_{r_R}^{*})| .$$
 
 With $|\mathcal{P}(T)| = |\mathcal{P}(T^*)| = 1$ for a single tip, both counts follow by one postorder traversal in $O(n)$ arithmetic operations.

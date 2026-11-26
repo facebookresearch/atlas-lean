@@ -9,14 +9,21 @@ R_{i+1}^j &= R_i^j + \gamma_j I_i^j - d_j R_i^j + u_i^j S_i^j .
 Summing the three equations shows that $N^j$ is constant in time.
 
 **Control problem.** For weights $\alpha_j^I, \alpha_j^R, A_j > 0$, minimize
+
 $$J_j(u^j) = \alpha_j^I I_N^j - \alpha_j^R R_N^j + \sum_{i} \Bigl( \alpha_j^I I_i^j - \alpha_j^R R_i^j + \frac{A_j}{2} (u_i^j)^2 \Bigr)$$
+
 over admissible sequences $u^j = (u_0^j, \dots, u_{N-1}^j)$. Because the state space is finite-dimensional and the control set compact, an optimal control exists.
 
 **Necessary conditions.** With the Hamiltonian
+
 $$H_i^j = \alpha_j^I I_i^j - \alpha_j^R R_i^j + \frac{A_j}{2} (u_i^j)^2 + \zeta_{1,i+1}^j S_{i+1}^j + \zeta_{2,i+1}^j I_{i+1}^j + \zeta_{3,i+1}^j R_{i+1}^j ,$$
+
 where $S_{i+1}^j, I_{i+1}^j, R_{i+1}^j$ stand for the right-hand sides of the model, an optimal $(u^{j\ast}, S^{j\ast}, I^{j\ast}, R^{j\ast})$ admits costates satisfying the backward recursions
+
 $$\zeta_{1,i}^j = \frac{\partial H_i^j}{\partial S_i^j}, \qquad \zeta_{2,i}^j = \frac{\partial H_i^j}{\partial I_i^j}, \qquad \zeta_{3,i}^j = \frac{\partial H_i^j}{\partial R_i^j},$$
+
 with transversality conditions $\zeta_{1,N}^j = 0$, $\zeta_{2,N}^j = \alpha_j^I$, $\zeta_{3,N}^j = -\alpha_j^R$, and the optimal control is
+
 $$u_i^{j\ast} = \min\Bigl\{ \max\Bigl\{ u_{\min}^j,\ \frac{(\zeta_{1,i+1}^j - \zeta_{3,i+1}^j)\, S_i^{j\ast}}{A_j} \Bigr\},\ u_{\max}^j \Bigr\}, \qquad i = 0, \dots, N - 1 .$$
 
 ## Expansion

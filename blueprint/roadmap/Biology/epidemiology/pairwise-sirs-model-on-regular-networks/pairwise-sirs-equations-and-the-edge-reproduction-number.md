@@ -1,7 +1,9 @@
 # Pairwise SIRS equations and the edge reproduction number
 
 **Model.** On a network in which every node has degree $n > 2$, nodes are susceptible, infected or recovered; infection passes along each $S$–$I$ edge at rate $\beta$, infected nodes recover at rate $\gamma$ and recovered nodes lose immunity at rate $\epsilon$. Let $[X]$ be the fraction of nodes in state $X$ and $[XY]$ the correspondingly normalized number of edges (edges between equal states counted twice). The node equations are $[S]' = -\beta[SI] + \epsilon(1 - [S] - [I])$, $[I]' = \beta[SI] - \gamma[I]$; edge equations involve triples $[XYZ]$, closed by the pair approximation
+
 $$[XYZ] \approx \frac{n-1}{n}\,\frac{[XY][YZ]}{[Y]} .$$
+
 Using the degree constraints $[SS] + [SI] + [SR] = n[S]$, $[SI] + [II] + [IR] = n[I]$, the closed system is
 $$\begin{aligned}
 [S]' &= -\beta[SI] + \epsilon(1 - [S] - [I]), \qquad [I]' = \beta[SI] - \gamma[I],\\
@@ -12,11 +14,15 @@ $$\begin{aligned}
 It is well posed on the forward-invariant convex set $\{0 \le [S] + [I] \le 1,\ 0 \le [SS] + [SI] \le n[S],\ 0 \le [SI] + [II] \le n[I]\}$.
 
 **Thresholds.** For $\epsilon \to 0$, the pairwise SIR threshold is $\mathcal{R}_0 = \beta(n-2)/\gamma$, equivalently
+
 $$\mathcal{R}_1 = \frac{\beta(n-1)}{\beta + \gamma} \lessgtr 1 \iff \beta(n-2) \lessgtr \gamma .$$
+
 For $\epsilon > 0$, the next-generation matrix on $([SI], [II]/2, [IR])$ at the disease-free state $(1, 0, n, 0, 0)$ gives the **edge reproduction number**
+
 $$\mathcal{R}_1 = \frac{\beta(n-1)(\gamma + \epsilon)}{\gamma(\gamma + \beta + \epsilon)} .$$
 
 **Equilibria.** For small $\epsilon > 0$ and $\mathcal{R}_0 > 1$ there are exactly two relevant equilibria: the disease-free state $([S],[I],[SS],[SI],[II]) = (1, 0, n, 0, 0)$, which is unstable, and an endemic state with
+
 $$[S] = \frac{(n-1)(\gamma + \beta)}{(n^2 - n - 1)\beta - \gamma} + O(\epsilon), \qquad [I] = \epsilon\,\frac{n((n-2)\beta - \gamma)}{\gamma((n^2-n-1)\beta - \gamma)} + O(\epsilon^2) .$$
 
 ## Expansion

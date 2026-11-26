@@ -7,11 +7,15 @@
 **Lemma (counting by contexts).** For any sequence and minimizer, the number of selected positions equals the number of charged contexts plus $1$.
 
 **Energy.** The energy $E(c)$ of a context $c$ is the probability that $c$ is charged under a random minimizer. With $u(c)$ the number of distinct $k$-mers in $c$,
+
 $$E(c) = \begin{cases} 2/u(c) & \text{if the last } k\text{-mer of } c \text{ occurs only once in } c,\\ 1/u(c) & \text{otherwise.}\end{cases}$$
+
 Consequently the expected number of positions a random minimizer selects in $S$ is $1 + E_0(S)$ with initial energy $E_0(S) = \sum_c E(c)$. When all $w + 1$ $k$-mers of every context are distinct, $E(c) = 2/(w+1)$ (the baseline) and the density is $2/(w+1)$.
 
 **Savers and spenders.** A context is an energy saver if $E(c) < 2/(w+1)$ and a spender if $E(c) > 2/(w+1)$; the deficit and surplus of $S$ are
+
 $$D(S) = \sum_c \max\Bigl(0, \tfrac{2}{w+1} - E(c)\Bigr), \qquad X(S) = \sum_c \max\Bigl(0, E(c) - \tfrac{2}{w+1}\Bigr).$$
+
 A uniformly random context is a saver with probability at most $w\sigma^{-k}$ and a spender with probability at most $w(w+1)\sigma^{-k}/2$.
 
 ## Expansion

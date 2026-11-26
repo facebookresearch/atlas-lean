@@ -8,7 +8,9 @@
 **Theorem.** Let $M = \{ x \in L_V(c) : \dot V(x) = 0 \}$ and let $\Omega$ be the largest invariant set contained in $M$. Then every solution with $x(0) \in L_V(c)$ satisfies $x(t) \to \Omega$; in particular, if $\{x^\ast\}$ is the only invariant set in $M$, then $x(t) \to x^\ast$.
 
 **SAIR model.** With population fractions $S, A, I, R$ (susceptible, asymptomatic infectious, symptomatic infectious, removed), transmission rates $\beta_A, \beta_I > 0$, recovery rates $\gamma_A, \gamma_I > 0$ and symptom-onset rate $\delta > 0$,
+
 $$\dot S = -\beta_A A S - \beta_I I S, \qquad \dot A = \beta_A A S + \beta_I I S - (\gamma_A + \delta) A, \qquad \dot I = \delta A - \gamma_I I, \qquad \dot R = \gamma_A A + \gamma_I I .$$
+
 The simplex $\{(S,A,I) \in \mathbb{R}^3_{\ge 0} : S + A + I \le 1\}$ is invariant and the equilibria are exactly $\{(S, 0, 0) : S \in [0,1]\}$.
 
 **Corollary.** Every solution in the simplex converges to the disease-free set $\{A = I = 0\}$; that is, $A(t) \to 0$ and $I(t) \to 0$ as $t \to \infty$.

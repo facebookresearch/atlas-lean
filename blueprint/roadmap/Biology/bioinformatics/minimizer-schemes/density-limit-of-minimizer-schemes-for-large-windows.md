@@ -7,6 +7,7 @@ Use the definitions of local schemes, minimizers schemes and density from [Unive
 **Proposition (floor).** For any minimizers scheme $f$, $d_{f,k,w} \ge \sigma^{-k}$ for all $w$.
 
 **Theorem.** For any minimizers scheme $f$ and fixed $k$,
+
 $$\lim_{w \to \infty} d_{f,k,w} = \sigma^{-k}.$$
 
 Consequently the density factor $d_{f,k,w}\,(w+1)$ of every minimizers scheme grows at least linearly in $w$, whereas there exist **forward schemes** (local schemes whose selected positions are non-decreasing along the sequence) with density factor $O(\sqrt{w})$.

@@ -1,14 +1,20 @@
 # Threshold and stability of the infected equilibrium
 
 **Model.** Viral load $V \ge 0$ and effector T cells $T > 0$ obey
+
 $$\dot V = pV\Big(1 - \frac{V}{K}\Big) - c_T V T - cV, \qquad \dot T = s_T + r\,T\,G(V) - \delta_T T,$$
+
 with replication rate $p$, carrying capacity $K$, non-immune clearance $c$, T-cell killing rate $c_T$, homeostatic supply $s_T$ and decay $\delta_T$ (so the uninfected T-cell level is $T_0 = s_T/\delta_T$), maximal activation rate $r$, and a bounded activation function with $G(0) = 0$ and $G'(V) > 0$ for $V > 0$ (for example the Hill function $G(V) = V^m/(V^m + k_T^m)$). All parameters are positive.
 
 **Theorem.** Let
+
 $$\lambda = p - c - c_T T_0 .$$
+
 1. *(Virus-free equilibrium.)* $E_0 = (0, T_0)$ has Jacobian eigenvalues $-\delta_T$ and $\lambda$: it is a locally asymptotically stable node for $\lambda < 0$ (degenerate when $\lambda = -\delta_T$), non-hyperbolic at $\lambda = 0$, and a saddle for $\lambda > 0$.
 2. *(Infected equilibrium.)* An equilibrium $E^\ast = (V^\ast, T^\ast)$ with $V^\ast > 0$ exists if and only if $p > c$ and $\lambda > 0$, and it is then unique, with
+
 $$T^\ast = \frac{p\,\big(V_{\max} - V^\ast\big)}{c_T K}, \qquad V_{\max} = \frac{(p - c)K}{p},$$
+
 where $V^\ast$ is the unique root in $\big(0,\ V_{\max} - c_T T_0 K/p\big)$ of $G(V) = G_0(V) := \frac{\delta_T}{r}\Big(1 - \frac{c_T T_0 K}{p\,(V_{\max} - V)}\Big)$.
 3. *(Stability.)* Whenever $E^\ast$ exists it is locally asymptotically stable: the trace of $J(E^\ast)$ is $-\big(pV^\ast/K + s_T/T^\ast\big) < 0$ and its determinant is $p s_T V^\ast/(K T^\ast) + c_T r V^\ast T^\ast G'(V^\ast) > 0$; it is a node or a spiral according to the sign of the discriminant.
 

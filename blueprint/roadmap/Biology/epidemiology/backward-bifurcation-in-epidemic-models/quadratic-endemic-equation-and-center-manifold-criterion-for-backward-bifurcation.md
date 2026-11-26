@@ -3,11 +3,15 @@
 **Setting.** An epidemic model $\dot x = f(x, \phi)$ on $\mathbb{R}^n_{\ge 0}$ has a disease-free equilibrium $x_0$ for all values of a bifurcation parameter $\phi$ (usually a transmission rate), and a control reproduction number $R$ with $R = 1$ at $\phi = \phi^\ast$. The bifurcation at $R = 1$ is **forward** if endemic equilibria exist only for $R > 1$ and are small and stable near $R = 1$, and **backward** if, for some $R_c < R < 1$, two endemic equilibria (one stable, one unstable) coexist with the locally stable disease-free equilibrium.
 
 **Proposition (quadratic endemic equation).** Suppose endemic equilibria are in bijection with positive roots $\lambda^\ast > 0$ (the equilibrium force of infection) of
+
 $$a_1 \lambda^2 + a_2 \lambda + a_3 = 0, \qquad a_1 > 0, \qquad \operatorname{sign} a_3 = \operatorname{sign}(1 - R).$$
+
 Then: if $R > 1$ ($a_3 < 0$) there is exactly one endemic equilibrium; if $R = 1$ ($a_3 = 0$) there is one when $a_2 < 0$ and none otherwise; if $R < 1$ ($a_3 > 0$) there are two when $a_2 < 0$ and $a_2^2 - 4a_1a_3 > 0$, and none otherwise. A backward bifurcation therefore occurs exactly when $a_2 < 0$ at $R = 1$, and the critical value $R_c$ below which no endemic equilibrium exists solves $a_2^2 = 4 a_1 a_3$.
 
 **Theorem (Castillo-Chavez–Song).** Assume $f$ is $C^2$, the Jacobian $A = D_x f(x_0, \phi^\ast)$ has a simple zero eigenvalue and all other eigenvalues have negative real parts, with right and left null vectors $w$ and $v$ ($Aw = 0$, $v^\top A = 0$, $v^\top w = 1$). Let
+
 $$a = \sum_{k,i,j} v_k\, w_i\, w_j\, \frac{\partial^2 f_k}{\partial x_i\, \partial x_j}(x_0, \phi^\ast), \qquad b = \sum_{k,i} v_k\, w_i\, \frac{\partial^2 f_k}{\partial x_i\, \partial \phi}(x_0, \phi^\ast).$$
+
 If $b > 0$, then for $a < 0$ the bifurcation at $\phi = \phi^\ast$ is forward (a locally stable endemic equilibrium appears for $\phi > \phi^\ast$), and for $a > 0$ it is backward (a locally unstable endemic equilibrium exists for $\phi < \phi^\ast$ close to $\phi^\ast$).
 
 ## Depends on

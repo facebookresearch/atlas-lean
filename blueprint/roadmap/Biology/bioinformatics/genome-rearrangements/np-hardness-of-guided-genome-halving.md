@@ -1,10 +1,13 @@
 # NP-hardness of guided genome halving
 
 Represent a genome on genes $\{1, \dots, n\}$ as a set of $\chi$ chromosomes, each a string of signed genes, every gene appearing exactly once. Two genomes $G, H$ with the same number $\chi$ of chromosomes share an *adjacency* when two signed genes are consecutive (in either reading direction) in both, counting chromosome ends as adjacencies with a telomere. Their *breakpoint distance* is
+
 $$d_B(G, H) = n + \chi - \#\{\text{shared adjacencies}\}.$$
+
 A *doubled genome* $T$ carries two copies $i^1, i^2$ of each gene $i$, the copies being indistinguishable. A *doubled ancestor* $A' \oplus A''$ consists of $2\chi$ chromosomes, where $A'$ contains exactly one copy of each gene and $A''$ is $A'$ with every copy swapped for its twin; $A$ denotes $A'$ with copy labels erased.
 
 **Guided genome halving (GGH).** Given a doubled genome $T$ and an ordinary outgroup genome $R$, find a doubled ancestor minimizing
+
 $$d_B(A' \oplus A'', T) + d_B(A, R).$$
 
 **Theorem.** GGH with one outgroup under the breakpoint distance is NP-hard. Indeed, for genomes $P, Q, R$ on the same genes, set $T = P^1 \oplus Q^2$ (copy label $1$ on every gene of $P$, label $2$ on every gene of $Q$). Then the halved genome $A$ of any optimal GGH solution for $(T, R)$ minimizes $d_B(A,P) + d_B(A,Q) + d_B(A,R)$, i.e. it solves the breakpoint median problem for $P, Q, R$, which is NP-hard.

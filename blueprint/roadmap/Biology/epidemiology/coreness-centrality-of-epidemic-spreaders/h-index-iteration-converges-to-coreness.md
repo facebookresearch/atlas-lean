@@ -3,7 +3,9 @@
 **Definitions.** For a finite list of reals $(x_1, \dots, x_m)$ let $\mathcal H(x_1, \dots, x_m)$ be the largest integer $y \ge 0$ such that at least $y$ of the $x_j$ are $\ge y$. Let $G = (V, E)$ be a finite undirected simple graph (a contact network), $k_i$ the degree of node $i$, and $N(i)$ its neighbor set.
 
 - The *$n$-order H-index* is defined by $h_i^{(0)} = k_i$ and, for $n \ge 1$,
+
 $$h_i^{(n)} = \mathcal H\big(h_{j}^{(n-1)} : j \in N(i)\big).$$
+
 The (ordinary) H-index of node $i$ is $h_i^{(1)}$: the largest $h$ such that $i$ has at least $h$ neighbors of degree $\ge h$.
 - The *coreness* $c_i$ is the largest $k$ such that $i$ belongs to the $k$-core of $G$, the maximal induced subgraph in which every node has degree $\ge k$ (equivalently, the shell index assigned by repeatedly pruning nodes of degree $\le k$).
 

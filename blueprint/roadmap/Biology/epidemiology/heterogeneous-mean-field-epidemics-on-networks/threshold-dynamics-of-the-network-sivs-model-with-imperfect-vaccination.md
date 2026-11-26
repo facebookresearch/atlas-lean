@@ -1,6 +1,7 @@
 # Threshold dynamics of the network SIVS model with imperfect vaccination
 
 **Setting.** The [network SIVS model with imperfect vaccination](network-sivs-model-with-imperfect-vaccination-and-backward-bifurcation.md) on the invariant set $\Omega = \{0 \le S_k, I_k, V_k \le 1\}$, with vaccinated reproduction number $R_0$ and quantities $R_1(k)$ as defined there, and the vaccination-free number
+
 $$\tilde R_0 = \frac{1}{\gamma\langle k\rangle}\sum_{k=1}^{n} k\,\beta_S(k) P(k) \ \ge\ R_0 .$$
 
 **Theorem.**
@@ -19,7 +20,9 @@ In the band $R_0 < 1 \le \tilde R_0$ with some $R_1(k) > 1$, the outcome can dep
 ## Expansion
 
 For item 1, write $S_k = 1 - I_k - V_k$; then
+
 $$\Theta' = \frac{1}{\langle k\rangle}\sum_k kP(k)\Big\{\big[\beta_S(k)(1 - I_k) - (\beta_S(k) - \beta_V(k))V_k\big]\Theta - \gamma I_k\Big\} \le \gamma(\tilde R_0 - 1)\Theta,$$
+
 so $\Theta \to 0$ exponentially and every $I_k \to 0$; the linear equations $V_k' \approx \varphi_k(1 - V_k) - \phi V_k$ then force $V_k \to V_k^0$. Item 2 follows from abstract persistence theory: the boundary $\{I \equiv 0\}$ carries the linear system $S_k' = \phi V_k - \varphi_k S_k$, whose only limit point is the disease-free equilibrium, and that equilibrium repels interior orbits when $R_0 > 1$, because near it $\Theta' \ge \gamma(m_\delta - 1)\Theta$ with $m_\delta > 1$. Item 3 uses monotone iteration: persistence gives a positive lower bound on $\Theta$, and alternately bounding $I_k$ and $V_k$ above and below produces nested sequences of bounds that, when $f$ has a single root (guaranteed by $R_1(k) \le 1$), squeeze to the endemic values. Item 4 is the source's Remark 5, which rests on local stability for $R_0 < 1$ together with the absence of endemic equilibria when $R_1(k) \le 1$; the global statement additionally needs that no other invariant set attracts interior orbits, which the source does not argue separately.
 
 ## Sources

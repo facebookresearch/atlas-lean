@@ -6,7 +6,9 @@ u_t + m\frac{\dot\rho(t)}{\rho(t)}\, u &= \frac{1}{\rho(t)^2}\, \Delta u + \gamm
 v_t + m\frac{\dot\rho(t)}{\rho(t)}\, v &= \frac{d}{\rho(t)^2}\, \Delta v + \gamma g(u, v),
 \end{aligned} \qquad x \in \Omega_0,$$
 with zero-flux boundary conditions, non-negative bounded initial data, and Schnakenberg (activator-depleted) kinetics
+
 $$f(u, v) = a - u + u^2 v, \qquad g(u, v) = b - u^2 v,$$
+
 where $d$ is the diffusion ratio and $\gamma$ the scale parameter. The dilution term $m\dot\rho/\rho$ and the $\rho^{-2}$ factor on diffusion come from mass conservation on the moving domain.
 
 **Bayesian inverse problem.** Let $p$ be the unknown parameter in a separable Banach space $U$ with prior $P_0$, $\mathcal G : U \to Y$ the observation operator (parameter to observed pattern), and data $y = \mathcal G(p) + \eta$ with Gaussian noise $\eta \sim N(0, \Sigma)$, so the potential is $\Phi(p; y) = \|y - \mathcal G(p)\|_\Sigma^2$ (up to the conventional factor).

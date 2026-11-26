@@ -1,10 +1,13 @@
 # NIMFA equations and their spectral epidemic threshold
 
 **Equations.** Let $G$ be an undirected graph on $N$ nodes with symmetric adjacency matrix $A = (a_{ij})$, $a_{ij} \in \{0, 1\}$, and let each infected node infect each neighbour at rate $\beta > 0$ and recover at rate $\delta > 0$; write $\tau = \beta/\delta$ for the effective infection rate. NIMFA approximates the infection probability $v_i(t)$ of node $i$ by
+
 $$\frac{dv_i}{dt} = -\delta\, v_i + \beta\,(1 - v_i) \sum_{j=1}^{N} a_{ij} v_j, \qquad i = 1, \dots, N,$$
+
 or in vector form $\dot v = (\beta A - \delta I) v - \beta\, \mathrm{diag}(v) A v$. The cube $[0, 1]^N$ is forward invariant.
 
 **Steady states.** A non-zero steady state $v_\infty$ satisfies, for every $i$,
+
 $$v_{\infty, i} = 1 - \frac{1}{1 + \tau \sum_j a_{ij} v_{\infty, j}} .$$
 
 **Threshold theorem.** Let $\lambda_1$ be the largest eigenvalue (spectral radius) of $A$ and assume $G$ connected. Define the NIMFA epidemic threshold $\tau_c^{(1)} = 1/\lambda_1$.

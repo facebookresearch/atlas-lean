@@ -7,10 +7,13 @@
 - *Boosting*: at an exposure the level jumps from $y$ to $f(y)$, where $f$ is $C^1$, $f(y) > y$, $f$ decreases on $(0, y_c)$ and increases on $(y_c, \infty)$, $f(y) \to \infty$ as $y \downarrow 0$, and $f(y) = y + \delta + o(1)$, $f'(y) = 1 + o(1)$ as $y \to \infty$. Low levels ($y < y_c$, symptomatic infection) give a large boost; high levels give a small one.
 
 **Renewal equation.** The transition kernel $Q_t(y, \Gamma) = \mathbb P(Y(a + t) \in \Gamma \mid Y(a) = y)$ is independent of $a$ and satisfies
+
 $$Q = Q^0 + B^1 \otimes Q,$$
+
 where $Q^0_t(y, \Gamma) = e^{-\Lambda t}\, \delta_{\pi(t, y)}(\Gamma)$ (no exposure in $[a, a+t]$), $B^1_t(y, \Gamma) = \int_0^t \Lambda e^{-\Lambda \sigma}\, \delta_{f(\pi(\sigma, y))}(\Gamma)\, d\sigma$ (first exposure in $[a, a+t]$, recorded just after boosting), and $(\Phi \otimes \Psi)_t(y, \Gamma) = \int_{[0,t] \times (0,\infty)} \Phi_{ds}(y, dz)\, \Psi_{t-s}(z, \Gamma)$.
 
 **Generation expansion.** Iterating gives $Q = \sum_{k \ge 0} Q^k$ with $Q^{k+1} = B^1 \otimes Q^k$, where $Q^k$ accounts for exactly $k$ exposures, and
+
 $$Q^k_t\bigl(y, (0, \infty)\bigr) = \frac{(\Lambda t)^k}{k!}\, e^{-\Lambda t}, \qquad Q_t\bigl(y, (0, \infty)\bigr) = 1 .$$
 
 ## Expansion

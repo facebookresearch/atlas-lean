@@ -3,7 +3,9 @@
 **Setting.** A finite set of intervention strategies $s$ (for example single or combined optimal controls in an epidemic model) is evaluated over a fixed horizon against a common baseline (no intervention). For each strategy let $C_s \ge 0$ be its total cost and $E_s$ its total health effect, measured as infections (or cases, deaths) averted relative to the baseline, computed as the difference between baseline and controlled cumulative counts.
 
 **Definitions.**
+
 $$\mathrm{ACER}(s) = \frac{C_s}{E_s}, \qquad \mathrm{ICER}(s \mid s') = \frac{C_s - C_{s'}}{E_s - E_{s'}} \quad (E_s > E_{s'}),$$
+
 the average cost per unit of effect against the baseline, and the extra cost per extra unit of effect when moving from the less effective strategy $s'$ to $s$.
 
 **Ranking procedure.**

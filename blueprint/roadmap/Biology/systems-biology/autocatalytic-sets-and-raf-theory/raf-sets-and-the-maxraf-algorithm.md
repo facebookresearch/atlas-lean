@@ -11,7 +11,9 @@
 - a *RAF set* if it is both.
 
 **Theorem.** (i) The union of two RAF sets is a RAF set. Hence, if $\mathcal Q$ contains a RAF, it contains a unique maximal RAF (the maxRAF), the union of all RAFs. (ii) The maxRAF is found by the following iteration: set $\mathcal R_0 = \mathcal R$ and
+
 $$\mathcal R_{i+1} = \big\{ r \in \mathcal R_i : \rho(r) \subseteq \mathrm{cl}_{\mathcal R_i}(F) \text{ and } (x, r) \in C \text{ for some } x \in \mathrm{cl}_{\mathcal R_i}(F) \big\};$$
+
 the sequence is decreasing and stabilises at the maxRAF (or at $\emptyset$ if there is no RAF) in at most $|\mathcal R|$ rounds, with worst-case running time $O(|\mathcal R|^2 \log |\mathcal R|)$. (iii) A RAF is *irreducible* (irrRAF) if no proper subset is a RAF; there can be exponentially many irrRAFs inside a maxRAF, and finding a smallest one is NP-complete, but irrRAFs can be sampled by deleting a random reaction from a RAF and re-running the reduction until no deletion leaves a RAF.
 
 ## Expansion

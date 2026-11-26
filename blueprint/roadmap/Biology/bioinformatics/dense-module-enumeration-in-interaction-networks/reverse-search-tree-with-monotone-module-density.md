@@ -1,7 +1,9 @@
 # Reverse-search tree with monotone module density
 
 **Setting.** Let $V$ be the proteins of an interaction network with symmetric weights $W = (w_{ij})$, $0 \le w_{ij} \le 1$ ($w_{ij} = 0$ for missing edges). For a module $U \subseteq V$ with $|U| \ge 2$, the **density** is the average pairwise weight
+
 $$\rho_W(U) = \frac{\sum_{\{i,j\} \subseteq U,\ i \ne j} w_{ij}}{\binom{|U|}{2}}, \qquad \rho_W(U) := 1 \text{ if } |U| = 1,$$
+
 and the **weighted degree** of $u \in U$ within $U$ is $\deg_W(u, U) = \sum_{v \in U \setminus \{u\}} w_{uv}$. *Dense module enumeration*: given $\theta > 0$, list all $U \subseteq V$ with $\rho_W(U) \ge \theta$.
 
 **Lemma.** If $v \in U$ has minimum weighted degree in $U$ ($|U| \ge 3$), then $\rho_W(U \setminus \{v\}) \ge \rho_W(U)$.
@@ -13,7 +15,9 @@ and the **weighted degree** of $u \in U$ within $U$ is $\deg_W(u, U) = \sum_{v \
 ## Expansion
 
 Let $k = |U|$ and $S = \sum_{\{i,j\}\subseteq U} w_{ij}$, so $\rho_W(U) = 2S/(k(k-1))$ and $\sum_{u \in U} \deg_W(u,U) = 2S$. The minimum degree is at most the mean, $\deg_W(v, U) \le 2S/k$, so
+
 $$\rho_W(U\setminus\{v\}) = \frac{2\big(S - \deg_W(v,U)\big)}{(k-1)(k-2)} \ \ge\ \frac{2S(1 - 2/k)}{(k-1)(k-2)} = \frac{2S}{k(k-1)} = \rho_W(U).$$
+
 Every nonempty module has exactly one parent of size one less, so iterating the parent map reaches $\emptyset$ and the relation is a tree; by the lemma a module below threshold has no descendant above it, which justifies pruning. Ordinary superset-closure pruning fails because a superset of a module can be denser or sparser. Additional data enter as constraints that are themselves monotone along the tree, for example requiring all members to share a binary condition profile on at least a given number of conditions (a property inherited by every subset), so the same traversal enumerates dense, condition-consistent modules; a module none of whose one-node extensions meets the threshold is reported as locally maximal at no extra cost.
 
 ## Sources

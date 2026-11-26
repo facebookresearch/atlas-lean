@@ -3,7 +3,9 @@
 **Networks.** In a rooted DAG, a *tree node* has in-degree at most $1$ and a *hybrid node* in-degree at least $2$. A *phylogenetic network* on $S = \{1, \dots, n\}$ is a rooted DAG in which no tree node has out-degree $1$, every hybrid node has out-degree $1$ with a tree-node child, and the leaves are bijectively labelled by $S$; it is *semi-binary* if every hybrid node has in-degree exactly $2$. It is *tree-sibling* if every hybrid node has a sibling (a node sharing a parent) that is a tree node, and *time consistent* if there is $\tau : V \to \mathbb{N}$ with $\tau(\text{root}) = 0$, $\tau(u) = \tau(v)$ for every arc $(u,v)$ into a hybrid node and $\tau(u) < \tau(v)$ for every arc into a tree node. Write sbTSTC for semi-binary tree-sibling time-consistent networks.
 
 **μ-representation.** For a node $u$, the μ-vector is $\mu(u) = (m_1(u), \dots, m_n(u)) \in \mathbb{N}^n$, where $m_i(u)$ is the number of distinct directed paths from $u$ to leaf $i$. Then $\mu(i) = \delta(i)$ (the $i$-th unit vector) for a leaf, and $\mu(u) = \sum_{v \text{ child of } u} \mu(v)$ otherwise, so all μ-vectors are computable in polynomial time. The μ-representation $\mu(N)$ is the multiset of the μ-vectors of all nodes of $N$. For networks $N_1, N_2$ on $S$,
+
 $$d_\mu(N_1, N_2) = \big|\, \mu(N_1) \,\triangle\, \mu(N_2) \,\big|,$$
+
 the size of the multiset symmetric difference.
 
 **Theorem.** On sbTSTC phylogenetic networks on $S$, $d_\mu$ is a metric up to isomorphism: $d_\mu \ge 0$; $d_\mu(N_1, N_2) = 0$ iff $N_1 \cong N_2$ (leaf-label-preserving isomorphism); $d_\mu$ is symmetric; and $d_\mu(N_1, N_3) \le d_\mu(N_1, N_2) + d_\mu(N_2, N_3)$. On phylogenetic trees it equals the Robinson–Foulds distance (each non-leaf μ-vector is the indicator of a cluster), and it is also a metric on tree-child networks.

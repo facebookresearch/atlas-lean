@@ -3,8 +3,11 @@
 **Setting.** A binary choice between left and right items with subjective values $r_{\mathrm{left}}, r_{\mathrm{right}}$. During a trial the gaze alternates between the items; at each time step exactly one item is fixated.
 
 **Model.** A relative decision value $V_t$ starts at $V_0 = 0$ and evolves in discrete steps of length $\Delta t$ as
+
 $$V_t = V_{t - \Delta t} + \mu_t \Delta t + \varepsilon_t, \qquad \varepsilon_t \overset{\text{i.i.d.}}{\sim} \mathcal{N}(0, \sigma^2),$$
+
 $$\mu_t = \begin{cases} d\,(r_{\mathrm{left}} - \theta\, r_{\mathrm{right}}) & \text{if the left item is fixated at } t,\\ -d\,(r_{\mathrm{right}} - \theta\, r_{\mathrm{left}}) & \text{if the right item is fixated at } t, \end{cases}$$
+
 with integration speed $d > 0$, noise scale $\sigma > 0$ and attentional discount $\theta \in [0,1]$. The process stops when $|V_t| \ge 1$; the left item is chosen at $+1$, the right at $-1$, and the stopping time is the response time.
 
 **Properties.**

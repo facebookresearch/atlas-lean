@@ -3,20 +3,25 @@
 Let $0<\alpha_1<1$ (fractional order) and $0<\alpha_2\le 1$ (fractal dimension), and set $AB(\alpha_1)=1-\alpha_1+\alpha_1/\Gamma(\alpha_1)$, so $AB(0)=AB(1)=1$.
 
 **Atangana–Baleanu–Caputo derivative.** For $g$ in the Sobolev space $W^{1,2}$,
+
 $$
 {}^{ABC}_{\;\;0}D_t^{\alpha_1}g(t)=\frac{AB(\alpha_1)}{1-\alpha_1}\int_0^t g'(\tau)\,E_{\alpha_1}\!\Big[-\frac{\alpha_1}{1-\alpha_1}(t-\tau)^{\alpha_1}\Big]d\tau ,
 $$
+
 a non-singular Mittag-Leffler kernel in place of the Caputo power-law kernel.
 
 **Fractal-fractional derivative.** Replacing $d/dt$ by the fractal derivative $\frac{dg}{dt^{\alpha_2}}=\lim_{s\to t}\frac{g(t)-g(s)}{t^{\alpha_2}-s^{\alpha_2}}$ gives the fractal-fractional operator ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}$ with Mittag-Leffler kernel, whose associated integral is
+
 $$
 {}^{FFM}J^{\alpha_1,\alpha_2}_{0,t}g(t)=\frac{\alpha_1\alpha_2}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t s^{\alpha_2-1}g(s)(t-s)^{\alpha_1-1}ds+\frac{\alpha_2(1-\alpha_1)}{AB(\alpha_1)}t^{\alpha_2-1}g(t).
 $$
 
 **Integral form of the epidemic Cauchy problem.** A compartmental model ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}x(t)=g(t,x(t))$, $x(0)=x_0$, is equivalent to the integral equation
+
 $$
 x(t)=x_0+\frac{1-\alpha_1}{AB(\alpha_1)}\,\alpha_2 t^{\alpha_2-1}g(t,x(t))+\frac{\alpha_1\alpha_2}{AB(\alpha_1)\Gamma(\alpha_1)}\int_0^t \tau^{\alpha_2-1}g(\tau,x(\tau))(t-\tau)^{\alpha_1-1}d\tau .
 $$
+
 The source applies this to an eight-compartment COVID-19 model $(S,E,I,A,Q,H,R,M)$ with force of infection $\lambda=\eta_1(I+\psi A)/N+\eta_2 M$, in which each integer-order derivative is replaced by ${}^{FFM}D^{\alpha_1,\alpha_2}_{0,t}$; at $\alpha_1=\alpha_2=1$ the integral form reduces to the classical $x(t)=x_0+\int_0^t g(\tau,x(\tau))\,d\tau$.
 
 ## Depends on

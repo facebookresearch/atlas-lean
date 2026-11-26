@@ -6,19 +6,25 @@ Let $\dot x=f(x)$ with $f\in C^1(D)$, $D\subset\mathbb{R}^n$ open and simply con
 - **(H2)** the system has a unique equilibrium $x^*$ in $D$.
 
 Let $J^{[2]}$ be the second additive compound of the Jacobian $J=Df$; for $n=3$ and $J=(a_{ij})$,
+
 $$
 J^{[2]}=\begin{pmatrix}a_{11}+a_{22}&a_{23}&-a_{13}\\ a_{32}&a_{11}+a_{33}&a_{12}\\ -a_{31}&a_{21}&a_{22}+a_{33}\end{pmatrix}.
 $$
+
 Let $P(x)$ be a $C^1$ nonsingular $\binom n2\times\binom n2$ matrix function, $P_f$ its derivative along $f$, $B=P_fP^{-1}+PJ^{[2]}P^{-1}$, and $\mu$ a Lozinskii measure for some vector norm. If
+
 $$
 \bar q_2=\limsup_{t\to\infty}\ \sup_{x_0\in K}\ \frac1t\int_0^t\mu\big(B(x(s,x_0))\big)\,ds<0,
 $$
+
 then $x^*$ is globally asymptotically stable in $D$.
 
 The source applies this to the SIQ model
+
 $$
 \dot S=\Lambda-\gamma SI-d_0S,\qquad \dot I=\gamma SI-(d_0+k+\eta)I+\sigma Q,\qquad \dot Q=\eta I-(d_0+\mu+\sigma)Q,
 $$
+
 whose basic reproduction number is $R_0=\dfrac{\Lambda\gamma(d_0+\mu+\sigma)}{d_0\big[(d_0+k)(d_0+\mu+\sigma)+\eta(d_0+\mu)\big]}$. For $R_0>1$ the endemic equilibrium $E_2^*$ is the unique interior equilibrium and $\Omega=\{S+I+Q\le\Lambda/d_0\}$ is absorbing; with $P=(S/I)\,\mathrm{Id}_3$ and the norm $\|(X_1,X_2,X_3)\|=\max\{|X_1|,|X_2|+|X_3|\}$ the source's estimate gives $\bar q_2\le-2d_0<0$ under $\mu+\sigma>\eta$, so $E_2^*$ is globally asymptotically stable (Theorem 3).
 
 ## Depends on

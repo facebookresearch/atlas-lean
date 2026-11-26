@@ -1,10 +1,13 @@
 # Expected density of random-order minimizers
 
 Fix integers $k \ge 1$ and $w \ge 2$ and a total order $<$ on the $k$-mers over an alphabet $\Sigma$ of size $\sigma$. For a sequence $S$ let $m_0, m_1, \dots, m_{|S|-k}$ be its $k$-mers in order and let the window $W_i = (m_i, \dots, m_{i+w-1})$. The minimizer (winnowing) scheme selects, in every window, the position of its smallest $k$-mer (ties broken by position). Writing $A(S,k)$ for the set of selected positions, the density of the scheme on $S$ is
+
 $$d(A,S,k) = \frac{|A(S,k)|}{|S|-k+1}, \tag{1}$$
+
 the expected density $d(A,k)$ is its expectation over sequences whose letters are independent and uniform, and the density factor is $df(A,k) = d(A,k)\,(w+1)$.
 
 **Theorem.** Assume that in every window of $w+1$ consecutive $k$-mers each of the $w+1$ positions is equally likely, with probability $1/(w+1)$, to hold the smallest $k$-mer (this holds, up to ties, for an order drawn uniformly at random). Then
+
 $$d(A,k) = \frac{2}{w+1}, \qquad df(A,k) = 2 .$$
 
 A *local scheme* is any rule that picks a position in a window as a function of the window content alone. Every local scheme has expected density at least $1.5/(w+1)$, so random-order minimizers are within a factor $4/3$ of this bound.

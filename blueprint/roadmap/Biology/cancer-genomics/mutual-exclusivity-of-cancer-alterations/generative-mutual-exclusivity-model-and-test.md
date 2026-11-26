@@ -12,15 +12,21 @@
 The likelihood of an observed row depends only on the number $k$ of observed alterations in it, so with $c_k$ the number of rows containing exactly $k$ ones the data log-likelihood is $\sum_{k=0}^{n} c_k \log p_k(\gamma, \delta, \alpha, \beta)$.
 
 **Error-free case** ($\alpha = \beta = 0$). Then
+
 $$p_0 = 1 - \gamma, \qquad p_k = \gamma\, \frac{k}{n}\, \delta^{k-1} (1-\delta)^{n-k} \quad (1 \le k \le n),$$
+
 and the maximum likelihood estimates are
+
 $$\hat\gamma = \frac{1}{N}\sum_{k \ge 1} c_k, \qquad \hat\delta = \frac{\sum_{k \ge 1} (k-1)\, c_k}{(n-1)\sum_{k \ge 1} c_k}.$$
+
 With errors, parameters are identifiable for sufficiently large patterns and are estimated by an EM algorithm initialized at the error-free estimates.
 
 **Independence model.** Gene $j$ is altered independently with probability $q_j$, estimated by its alteration frequency $\hat q_j = N_j/N$.
 
 **Test.** The two models are not nested. With pointwise log-likelihood ratios $\ell_i = \log p^{\mathrm{ME}}(y_i) - \log p^{\mathrm{IND}}(y_i)$ at the maximum likelihood estimates, sample standard deviation $\hat\omega$, and a correction for the difference in numbers of free parameters, Vuong's statistic
+
 $$T = \frac{\sum_i \ell_i - \text{(parameter-count correction)}}{\sqrt{N}\, \hat\omega}$$
+
 is asymptotically standard normal when both models are equally close in Kullback–Leibler divergence to the truth; a large $T$ (small one-sided $p$-value) supports mutual exclusivity.
 
 ## Expansion

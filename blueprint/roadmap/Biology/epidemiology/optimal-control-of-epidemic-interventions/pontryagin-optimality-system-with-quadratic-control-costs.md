@@ -1,21 +1,33 @@
 # Pontryagin optimality system with quadratic control costs
 
 **Setting.** Let $x(t) \in \mathbb{R}^n_{\ge 0}$ be the state of a compartmental epidemic model on a finite horizon $[0, T]$,
+
 $$\dot x = f(x, u), \qquad x(0) = x_0,$$
+
 with $f$ continuously differentiable and affine in the control vector $u = (u_1, \dots, u_k)$, each control Lebesgue measurable with $u_i(t) \in [0, u_i^{\max}]$ (the admissible set $\mathcal{U}$). Minimize
+
 $$J(u) = \int_0^T \Big( \sum_{j} A_j x_j(t) + \sum_{i=1}^{k} B_i u_i(t)^2 \Big)\, dt,$$
+
 where $A_j \ge 0$ weight the infected compartments and $B_i > 0$ are relative control costs.
 
 **Existence.** If solutions of the state system are bounded on $[0,T]$ uniformly in $u \in \mathcal{U}$, the right-hand side is bounded by a linear function of the state and control, $\mathcal{U}$ is closed and convex, and the integrand is convex in $u$ (here, quadratic with $B_i > 0$), then an optimal control $u^* \in \mathcal{U}$ exists (Fleming–Rishel existence theorem).
 
 **Necessary conditions.** With Hamiltonian
+
 $$H(x, u, \lambda) = \sum_j A_j x_j + \sum_i B_i u_i^2 + \sum_{m=1}^{n} \lambda_m f_m(x, u),$$
+
 for an optimal pair $(x^*, u^*)$ there exist adjoint variables $\lambda(t)$ satisfying
+
 $$\dot\lambda_m = -\frac{\partial H}{\partial x_m}(x^*, u^*, \lambda), \qquad \lambda_m(T) = 0 \ (\text{transversality}),$$
+
 and $u^*(t)$ minimizes $H(x^*(t), \cdot, \lambda(t))$ over the box $\prod_i [0, u_i^{\max}]$. Because $H$ is strictly convex and quadratic in each $u_i$, the minimizer is the projection of the stationary point:
+
 $$u_i^*(t) = \min\Big\{ u_i^{\max},\ \max\Big\{0,\ -\frac{1}{2 B_i} \sum_m \lambda_m(t) \frac{\partial f_m}{\partial u_i}(x^*(t)) \Big\} \Big\}.$$
+
 For a control moving individuals from compartment $p$ to compartment $q$ at per-capita rate $u_i$ (e.g. vaccinating susceptibles $S \to V$, or treating hospitalized $H \to R$), $\partial f_p/\partial u_i = -x_p$ and $\partial f_q/\partial u_i = +x_p$, so
+
 $$u_i^* = \min\Big\{ u_i^{\max},\ \max\Big\{0,\ \frac{(\lambda_p - \lambda_q)\, x_p}{2 B_i}\Big\}\Big\}.$$
+
 The state equations forward in time, the adjoint equations backward in time, and this characterization form the **optimality system**; for small $T$ its solution is unique, which gives uniqueness of the optimal control.
 
 ## Expansion

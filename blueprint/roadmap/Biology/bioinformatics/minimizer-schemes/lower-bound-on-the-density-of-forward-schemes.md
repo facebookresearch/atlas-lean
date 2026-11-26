@@ -1,12 +1,15 @@
 # Lower bound on the density of forward schemes
 
 Let $\Sigma$ have size $\sigma$ and fix $k, w \ge 1$. A local scheme $f : \Sigma^{w+k-1} \to \{0,\dots,w-1\}$ is a **forward scheme** if for every window $\omega$ and every $x \in \Sigma$,
+
 $$f(\omega[1, w+k-2] \cdot x) \ge f(\omega) - 1,$$
+
 i.e. the selected position never moves backwards when the window slides by one base. Every minimizers scheme is a forward scheme. Let $d_{f,k,w}$ denote the density (expected fraction of selected positions on an i.i.d. uniform sequence).
 
 **Lemma.** If $X, Y$ are independent, identically distributed random variables with values in $\{0, \dots, w-1\}$, then $\Pr[X \ge Y] \ge \tfrac12 + \tfrac{1}{2w}$.
 
 **Theorem.** Every forward scheme satisfies
+
 $$d_{f,k,w} \;\ge\; \frac{1.5 + \max\!\left(0, \left\lfloor \frac{k-w}{w} \right\rfloor\right) + \frac{1}{2w}}{w+k}.$$
 
 In particular the density factor $d_{f,k,w}(w+1)$ of any forward scheme is at least about $1.5$ for large $w$.

@@ -3,15 +3,23 @@
 **Setting.** Information items $x_1, \dots, x_M$ (background) and $x_{M+1}$ (relevant) are i.i.d. uniform in the unit ball $B_n(1) \subset \mathbb{R}^n$. A neuron with synaptic weights $w \in \mathbb{R}^n$ and threshold $\theta \ge 0$ responds to $x$ when $\langle w, x\rangle > \theta$ (output $f(\langle w, x\rangle - \theta)$ with $f$ zero on $(-\infty, 0]$ and positive otherwise); it is *silent* on $x$ otherwise. It is *selective* to $x_{M+1}$ if it responds to $x_{M+1}$ and is silent on all background items.
 
 **Theorem.** Let $(w, \theta)$ satisfy $\langle w, x_{M+1}\rangle > \theta$ and $0 < \theta < \|w\|$. Then
+
 $$\mathbb{P}\big(\text{silent on all } x_1, \dots, x_M \mid w, \theta\big) \ge \Big(1 - \tfrac12\big(1 - \theta^2/\|w\|^2\big)^{n/2}\Big)^{M}.$$
+
 Moreover, with $w^* = x_{M+1}/\|x_{M+1}\|$ and $0 < D < \min\{\tfrac12, \|x_{M+1}\|\}$, every pair in
+
 $$\Omega_D = \big\{(w, \theta) : \|w - w^*\| < D,\ D \le \|x_{M+1}\| - \theta \le 2D\big\}$$
+
 responds to $x_{M+1}$, and the probability that all such pairs are silent on every background item is at least
+
 $$\max_{\varepsilon \in (0, 1 - 2D)} \big(1 - (1-\varepsilon)^n\big)\Big(1 - \tfrac12\rho(\varepsilon, D)^{n/2}\Big)^{M}, \qquad \rho(\varepsilon, D) = 1 - \Big(\frac{1 - \varepsilon - 2D}{1 + D}\Big)^2 .$$
+
 Since $\Omega_D$ has positive volume, selectivity is robust to small perturbations of $(w, \theta)$.
 
 **Corollary (memory capacity).** For reliability $\phi \in (0,1)$, the largest number $\bar M$ of background items for which the first bound is at least $\phi$ satisfies
+
 $$\bar M > -\ln\phi\,\big(2e^{\alpha n} - 1\big), \qquad \alpha = \ln\frac{\|w\|}{\sqrt{\|w\|^2 - \theta^2}} > 0,$$
+
 so it grows at least exponentially in the neuronal dimension $n$.
 
 ## Expansion

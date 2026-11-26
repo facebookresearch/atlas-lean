@@ -3,12 +3,17 @@
 **Model.** Consider a closed population of $N = 2$ individuals, one infectious and one susceptible, following the Markovian stochastic general (SIR) epidemic with time measured in units of the mean infectious period. The infectious individual recovers at rate $1$ (exponentially distributed infectious period with mean $1$), and while infectious it infects each of the other $N - 1$ individuals at rate $R_0/(N-1)$, so that over its whole infectious period it makes on average $R_0 > 0$ effective contacts; for $N = 2$ the infection rate is $R_0$. (Scaling the mass-action term by $N - 1$ rather than $N$ is what makes $R_0$ the expected number of infectious contacts when $N$ is small.)
 
 **Proposition (transmission probability).** The probability $q$ that the susceptible individual is eventually infected is
+
 $$q = \frac{R_0}{R_0 + 1}, \qquad R_0 = \frac{q}{1 - q}.$$
 
 **Binomial likelihood and estimator.** If $n$ pairs are run independently (no air exchange between pairs) with the same $R_0$, the number $K$ of pairs with successful transmission is $\mathrm{Binomial}(n, q)$:
+
 $$\Pr(K = k) = \binom{n}{k} \left(\frac{R_0}{R_0 + 1}\right)^{k} \left(\frac{1}{R_0 + 1}\right)^{n-k}, \qquad k = 0, \dots, n .$$
+
 Since $q \mapsto q/(1-q)$ is a bijection $[0,1) \to [0, \infty)$, the maximum likelihood estimator of $R_0$ is obtained by equating $q$ with the observed proportion $k/n$:
+
 $$\widehat{R}_0 = \frac{k}{n - k}, \qquad 0 \le k < n,$$
+
 with $\widehat{R}_0 = \infty$ when every pair transmits ($k = n$). Confidence limits for $R_0$ are the images under $q \mapsto q/(1-q)$ of exact binomial confidence limits for $q$; in particular, when $k = n$ only a finite lower limit exists, and when $k = 0$ the lower limit is $0$.
 
 ## Depends on

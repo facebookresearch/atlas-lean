@@ -1,11 +1,15 @@
 # Incremental cost-effectiveness ratio of control strategies
 
 **Setting.** Strategies $s = 1, \dots, K$ (single controls or combinations of controls in an optimally controlled epidemic model) each produce a total health effect $E_s \ge 0$ over the horizon, typically the number of infections averted relative to no intervention,
+
 $$E_s = \int_0^{t_f} \big( I^{\mathrm{none}}(t) - I^{(s)}(t) \big)\, dt \quad \text{(or a cumulative-incidence analogue)},$$
+
 and a total cost $C_s \ge 0$, typically $C_s = \int_0^{t_f} \sum_k \tfrac{b_k}{2}\, u_k^{(s)}(t)^2\, dt$ for the controls used by $s$.
 
 **Definition.** Order the strategies by increasing effect, $E_{(1)} \le E_{(2)} \le \cdots$. The **incremental cost-effectiveness ratio** of a strategy relative to the next less effective one still in the comparison is
+
 $$\mathrm{ICER}_{(i)} = \frac{C_{(i)} - C_{(i-1)}}{E_{(i)} - E_{(i-1)}}, \qquad \mathrm{ICER}_{(1)} = \frac{C_{(1)}}{E_{(1)}},$$
+
 the extra cost per extra unit of effect.
 
 **Elimination rule.** Repeat until no strategy is removed:

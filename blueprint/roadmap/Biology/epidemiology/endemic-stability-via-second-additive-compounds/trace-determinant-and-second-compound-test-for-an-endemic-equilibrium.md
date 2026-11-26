@@ -1,13 +1,17 @@
 # Trace, determinant and second-compound test for an endemic equilibrium
 
 **Second additive compound.** For a real $3 \times 3$ matrix $M = (m_{ij})$,
+
 $$M^{[2]} = \begin{pmatrix} m_{11} + m_{22} & m_{23} & -m_{13} \\ m_{32} & m_{11} + m_{33} & m_{12} \\ -m_{31} & m_{21} & m_{22} + m_{33} \end{pmatrix};$$
+
 its eigenvalues are the pairwise sums $\lambda_i + \lambda_j$ ($i < j$) of the eigenvalues of $M$.
 
 **Lemma.** If $\operatorname{tr} M < 0$, $\det M < 0$ and $\det M^{[2]} < 0$, then all eigenvalues of $M$ have negative real part (and conversely).
 
 **Application (SEIQR model with non-monotone incidence).** In a model with susceptible $S$, exposed $E$, infectious $I$, quarantined $Q$ and recovered $R$, recruitment $b$, natural death $\mu$, incidence $\beta S I (1 - \delta I)$, progression rate $\lambda$, recovery $\gamma$, disease death $\epsilon$, quarantine rates $d_3, d_2, d_1$ from $S, E, I$, release $\tau$ from quarantine and vaccination-type transfer $\eta$ from $S$ to $R$, the basic reproduction number is
+
 $$\mathcal R_0 = \frac{\lambda \beta b}{(\eta + \mu + d_3)(\lambda + \mu + d_2)(\mu + \epsilon + \gamma + d_1)},$$
+
 the disease-free equilibrium is locally asymptotically stable for $\mathcal R_0 < 1$, and for $\mathcal R_0 > 1$ a unique endemic equilibrium exists. Since $Q$ and $R$ do not feed back into $(S, E, I)$, the Jacobian at the endemic equilibrium has eigenvalues $-\mu$ and $-(\mu + \tau)$ plus those of the $3 \times 3$ block for $(S, E, I)$, to which the lemma applies, giving local asymptotic stability of the endemic equilibrium when $\mathcal R_0 > 1$.
 
 ## Depends on

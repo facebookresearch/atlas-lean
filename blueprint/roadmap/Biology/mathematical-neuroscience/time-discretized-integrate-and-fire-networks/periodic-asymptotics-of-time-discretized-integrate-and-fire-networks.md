@@ -1,8 +1,11 @@
 # Periodic asymptotics of time-discretized integrate-and-fire networks
 
 For the time-discretized conductance-based integrate-and-fire network $V(t+1) = F(V(t))$ on the compact invariant set $M$, with threshold $\theta$, let
+
 $$\Omega = \bigcap_{t \ge 0} F^t(M)$$
+
 be the $\omega$-limit set (the union of the $\omega$-limit sets of all points), and let the singularity set be $\mathcal S = \{V : V_i = \theta \text{ for some } i\}$. Define the distance from the asymptotic dynamics to the threshold
+
 $$d(\Omega, \mathcal S) = \inf_{V \in \Omega}\ \inf_{t \ge 0}\ \min_{i = 1, \dots, N} |V_i(t) - \theta| . \tag{29}$$
 
 1. **Uniform firing or uniform silence.** Suppose there are $\varepsilon > 0$ and $T < \infty$ such that for every $V \in M$ and every neuron $i$, either $V_i(t) \ge \theta$ for some $t \le T$, or $V_i(t) < \theta - \varepsilon$ for all $t$ from some time $t_0(V, \varepsilon)$ on. Then $\Omega$ consists of finitely many periodic orbits, each of period at most $T$.

@@ -1,6 +1,7 @@
 # Pulse solutions as thresholds for clot growth
 
 **Setting.** Consider the monotone two-component coagulation system $\partial_t v = D\,\partial_x^2 v + F(v)$, $v = (T, u)$, on $x \in \mathbb{R}$, with bistable kinetics (stable states $0$ and $(T^*, u^*)$, an unstable intermediate state) and travelling wave of speed $c$ connecting $(T^*, u^*)$ to $0$. A **pulse** is a positive stationary solution vanishing at infinity:
+
 $$D v_1'' + F_1(v_1, v_2) = 0, \qquad D v_2'' + F_2(v_1, v_2) = 0, \qquad v(\pm\infty) = 0 .$$
 
 **Theorem (existence and instability of pulses; source Theorem 2).** A pulse exists if and only if the wave speed $c$ is positive. The linearized operator $L w = D w'' + F'(v(x))\, w$ about a pulse has a positive eigenvalue, so the pulse is unstable as a stationary solution.

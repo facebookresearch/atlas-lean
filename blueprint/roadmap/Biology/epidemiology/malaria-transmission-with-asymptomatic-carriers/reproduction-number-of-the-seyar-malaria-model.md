@@ -1,8 +1,11 @@
 # Reproduction number of the SEYAR malaria model with exposure-dependent immunity
 
 **Exposure-dependent immunity.** Let $\varepsilon = E/N_H$ be the exposed proportion of humans and $u$ the proportion protected by naturally acquired immunity, rising from $u_{\mathrm{low}}$ toward $u_{\mathrm{high}}$ ($0 \le u_{\mathrm{low}} < u_{\mathrm{high}} < 1$) as exposure accumulates:
+
 $$\dot u = (u_{\mathrm{high}} - u)\,\dot\varepsilon, \qquad u(0) = u_{\mathrm{low}} .$$
+
 Hence $u$ is a function of $\varepsilon$ alone,
+
 $$u(\varepsilon) = u_{\mathrm{high}} + (u_{\mathrm{low}} - u_{\mathrm{high}})\,e^{\varepsilon_0 - \varepsilon}, \qquad \varepsilon_0 = \varepsilon(0).$$
 
 **Model.** Humans $S, E, Y$ (symptomatic), $A$ (asymptomatic), $R$ with $N_H = S+E+Y+A+R$, and mosquitoes $M_S, M_E, M_I$:
@@ -19,7 +22,9 @@ $$\begin{aligned}
 with biting rate $\sigma$, transmission probabilities $\beta_M$ (mosquito to human), $\beta_Y, \beta_A$ (symptomatic and asymptomatic human to mosquito), recruitment $\Omega_H, \Omega_M$, natural mortalities $\xi_H, \xi_M$, disease death $\delta$, progression rates $\gamma, \tau$ and recovery rates $\lambda_{YR}, \lambda_{AR}$. The disease-free equilibrium is $(\Omega_H/\xi_H, 0,0,0,0, \Omega_M/\xi_M, 0, 0)$.
 
 **Proposition.** With $U_{\mathrm{low}} = u(0) = e^{\varepsilon_0}(u_{\mathrm{low}} - u_{\mathrm{high}}) + u_{\mathrm{high}}$, the asymptomatic share of new infections at the disease-free state, the basic reproduction number is
+
 $$\mathcal R_0 = \sqrt{\frac{\sigma^2\,\tau\,\gamma\,\Omega_M\,\xi_H\,\beta_M}{\xi_M^2(\gamma + \xi_H)(\tau + \xi_M)\,\Omega_H}\left(\frac{\beta_A U_{\mathrm{low}}}{\lambda_{AR} + \xi_H} + \frac{\beta_Y(1 - U_{\mathrm{low}})}{\lambda_{YR} + \xi_H + \delta}\right)},$$
+
 and the disease-free equilibrium is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$. Because the bracket adds a non-negative asymptomatic term, setting $\beta_A = 0$ or omitting the $A$ class underestimates $\mathcal R_0$. The stability for $\mathcal R_0 < 1$ is not global in general: a backward bifurcation can create endemic equilibria below threshold unless an auxiliary parameter $\Lambda$ satisfies $\Lambda < 1$.
 
 ## Depends on

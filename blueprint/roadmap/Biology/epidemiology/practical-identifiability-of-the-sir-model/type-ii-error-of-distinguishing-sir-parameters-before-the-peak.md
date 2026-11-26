@@ -1,16 +1,23 @@
 # Type II error of distinguishing SIR parameters before the peak
 
 **Model.** The SIR proportions satisfy $\dot s = -\beta i s$, $\dot i = \beta i s - \gamma i$, $\dot r = \gamma i$ with $\theta = (\beta, \gamma)$, population size $N$, initial infected fraction $i_0$ and early growth rate $\delta = \beta - \gamma$. Daily new infections are $\Delta_t = N(s_{t-1} - s_t)$, and observations before the peak are
+
 $$Y_t = p\,\Delta_t + \xi_t, \qquad \xi_t \sim \mathcal{N}(0, \sigma_t^2) \text{ independent}, \qquad t = 1, \dots, T,$$
+
 with reporting probability $p$.
 
 **Early-phase approximation.** While $s \approx 1$, $i_t \approx i_0 e^{\delta t}$ and
+
 $$\Delta_t(\theta) \approx N i_0\, \frac{\beta\,(1 - e^{-\delta})}{\delta}\, e^{\delta t}.$$
+
 Among perturbations $\theta_\epsilon(\omega) = \theta + \epsilon(\cos\omega, \sin\omega)$ of fixed size $\epsilon$, the trajectory changes least in the directions $\omega = \pi/4$ and $5\pi/4$, i.e. along the line $\beta - \gamma = \text{const}$, which leaves $\delta$ unchanged.
 
 **Approximation (type II error).** For the most powerful level-$\alpha$ test of $H_0 : \theta = \theta_0$ against $H_1 : \theta = \theta_\epsilon(\omega)$ (the likelihood ratio test, by the Neyman–Pearson lemma), the type II error is $E_2(\omega) = 1 - \Phi\big(\Phi^{-1}(\alpha) + d(\omega)\big)$ with $d(\omega)^2 = \sum_t p^2\big(\Delta_t(\theta_\epsilon) - \Delta_t(\theta_0)\big)^2/\sigma_t^2$. Using the early-phase approximation, with $f(\omega) = \cos\omega - \sin\omega$,
+
 $$E_2(\omega) \approx 1 - \Phi\!\left(\Phi^{-1}(\alpha) + p N i_0 \sqrt{\sum_{t=1}^{T} \frac{e^{2\delta t}}{\sigma_t^2}\Big((\beta + \epsilon\cos\omega)\, e^{\epsilon t f(\omega)} - \beta\Big)^2}\right),$$
+
 and $E_2(\pi/4) \approx E_2(5\pi/4) \approx \sup_\omega E_2(\omega)$, where
+
 $$E_2(\pi/4) \approx 1 - \Phi\!\left(\Phi^{-1}(\alpha) + \frac{p N i_0\, \epsilon}{\sqrt 2}\sqrt{\sum_{t=1}^{T}\frac{e^{2\delta t}}{\sigma_t^2}}\right).$$
 
 **Consequences.** With any noise, the worst-case type II error tends to $1 - \alpha$ as $p \to 0$ or $\epsilon \to 0$. With noise proportional to population size ($\sigma_t = N\sigma$) it also tends to $1 - \alpha$ as $N \to \infty$ with $i_0 = 1/N$. Thus maximum likelihood estimates scatter along a line of slope one in the $(\beta, \gamma)$ plane, the growth rate $\beta - \gamma$ is well determined, and $\hat{\mathcal{R}}_0 = \hat\beta/\hat\gamma$ is highly uncertain before the peak.

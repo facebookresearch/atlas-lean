@@ -7,16 +7,22 @@
 - the single-infection submodels (all variables of the other pathogen set to zero) have next-generation matrices $F_i V_i^{-1}$ with reproduction numbers $\mathcal{R}_i = \rho(F_i V_i^{-1})$.
 
 **Theorem.** The next-generation matrix of the full model at $x^0$ has the form
+
 $$FV^{-1} = \begin{pmatrix} F_1 V_1^{-1} & 0 & * \\ 0 & F_2 V_2^{-1} & * \\ 0 & 0 & 0 \end{pmatrix}$$
+
 in the ordering $(Z_1, Z_2, Z_{12})$, hence the basic (or control) reproduction number of the co-infection model is
+
 $$\mathcal{R}_0 = \max\{\mathcal{R}_1, \mathcal{R}_2\},$$
+
 and by the van den Driessche–Watmough theorem the disease-free equilibrium is locally asymptotically stable if $\mathcal{R}_0 < 1$ and unstable if $\mathcal{R}_0 > 1$.
 
 **Examples.**
 
 1. *Dengue–COVID-19 with vectors:* $\mathcal{R}_0^{CD} = \max\{\mathcal{R}_0^{HC}, \mathcal{R}_0^{HD}\}$, where the dengue number is computed from the host–vector submodel.
 2. *HIV/AIDS–pneumonia with pneumonia vaccination:* with recruitment $\Lambda$, natural death $d$, vaccinated fraction $\pi$ at entry, vaccine waning $\tau_1$, vaccine leakiness $\epsilon \in [0,1)$, pneumonia transmission $\beta_2$ (mass action), treatment $\kappa$ and disease death $d_P$,
+
 $$\mathcal{R}_2 = \frac{\beta_2 \big(Y_1^0 + \epsilon Y_2^0\big)}{d + \kappa + d_P}, \qquad Y_1^0 = \frac{\Lambda(d + \tau_1 - \pi d)}{d(d+\tau_1)},\quad Y_2^0 = \frac{\Lambda \pi}{d + \tau_1},$$
+
 and the threshold of the full model is $\mathcal{R}_3 = \max\{\mathcal{R}_1, \mathcal{R}_2\}$ with $\mathcal{R}_1$ the HIV/AIDS submodel number.
 
 ## Expansion

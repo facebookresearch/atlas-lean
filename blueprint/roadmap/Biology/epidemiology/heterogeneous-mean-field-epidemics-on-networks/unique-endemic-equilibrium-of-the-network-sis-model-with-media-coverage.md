@@ -3,7 +3,9 @@
 **Setting.** The [heterogeneous mean-field SIS model with media coverage](heterogeneous-mean-field-sis-model-with-media-coverage.md), with degree classes $k = 1, \dots, n$, edge-infection probability $\Theta$, prevalence $i = \sum_k p(k) i_k$ and threshold $R_0$.
 
 **Theorem.** If $R_0 > 1$ the model has exactly one endemic equilibrium $E^* = (i_1^*, \dots, i_n^*, M^*)$; if $R_0 \le 1$ it has none. At $E^*$,
+
 $$M^* = \frac{m_0 + \omega N i^*}{\lambda}, \qquad i_k^* = \frac{a\beta\lambda k\Theta}{a\beta\lambda k\Theta + \mu(a\lambda + k m_0) + \mu k \omega N i^*},$$
+
 and $\Theta \in \big(0,\ 1 - \mu m_0/(a\beta\lambda)\big)$ is the unique positive root of the self-consistency equation $\Theta = G(\Theta)$ obtained by substituting $i_k^*$ (with $i^*$ expressed through $\Theta$) into $\Theta = \langle k\rangle^{-1}\sum_k k p(k) i_k^*$.
 
 ## Depends on

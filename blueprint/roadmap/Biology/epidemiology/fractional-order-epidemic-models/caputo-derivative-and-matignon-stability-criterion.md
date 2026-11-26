@@ -1,7 +1,9 @@
 # Caputo derivative and Matignon's stability criterion
 
 **Caputo derivative.** For $n - 1 < \vartheta < n$ with $n \in \mathbb N$ and a function $\varphi : [0, \infty) \to \mathbb R$ whose $n$-th derivative is locally integrable, the Caputo derivative of order $\vartheta$ is
+
 $$ {}^{C}_{0}D^{\vartheta}_t \varphi(t) = \frac{1}{\Gamma(n - \vartheta)} \int_0^t (t - \tau)^{n - \vartheta - 1}\, \varphi^{(n)}(\tau)\, d\tau ,$$
+
 and ${}^{C}_{0}D^{n}_t\varphi = \varphi^{(n)}$. Basic properties:
 
 - ${}^{C}_{0}D^{\vartheta}_t c = 0$ for a constant $c$;
@@ -11,7 +13,9 @@ and ${}^{C}_{0}D^{n}_t\varphi = \varphi^{(n)}$. Basic properties:
 **Fractional-order compartmental model.** Replace $\dot x = f(x)$, $x \in \mathbb R^m$, by ${}^{C}_{0}D^{\vartheta}_t x = f(x)$ with $0 < \vartheta \le 1$ (for dimensional consistency each rate parameter is often raised to the power $\vartheta$). Equilibria are the same zeros of $f$ as for $\vartheta = 1$.
 
 **Theorem (Matignon).** Let $0 < \vartheta \le 1$ and $x^*$ an equilibrium with Jacobian $J = Df(x^*)$. If every eigenvalue $\xi$ of $J$ satisfies
+
 $$|\arg \xi| > \frac{\vartheta\pi}{2},$$
+
 then $x^*$ is locally asymptotically stable; solutions of the linearisation decay like $t^{-\vartheta}$ (Mittag-Leffler decay) rather than exponentially. If some eigenvalue has $|\arg\xi| < \vartheta\pi/2$, $x^*$ is unstable.
 
 **Consequence for the reproduction number.** Since $\vartheta\pi/2 \le \pi/2$, every eigenvalue with negative real part satisfies the condition. Hence, for a fractional compartmental model whose integer-order version has the threshold property "the disease-free equilibrium is stable iff all Jacobian eigenvalues have negative real part iff $R_0 < 1$", the disease-free equilibrium of the fractional model is locally asymptotically stable when $R_0 < 1$; when $R_0 > 1$ a real positive eigenvalue ($\arg \xi = 0$) makes it unstable. $R_0$ is computed from the same next-generation matrix as for $\vartheta = 1$.

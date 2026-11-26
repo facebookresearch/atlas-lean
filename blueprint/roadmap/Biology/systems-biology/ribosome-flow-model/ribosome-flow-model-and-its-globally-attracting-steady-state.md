@@ -9,7 +9,9 @@ $$\begin{aligned}
 and the translation (protein production) rate is $R(t) = \lambda_n x_n(t)$. The flow from site $i$ to $i+1$ is proportional to the occupancy of site $i$ and the vacancy of site $i+1$, the mean-field version of the exclusion rule of TASEP. The unit cube $C^n = [0,1]^n$ is invariant.
 
 **Theorem.** The RFM admits a unique equilibrium $e \in \operatorname{int} C^n$, and $\lim_{t\to\infty} x(t, a) = e$ for every initial condition $a \in C^n$. Moreover the flow is non-expanding in the $\ell_1$ norm:
+
 $$|x(t, a) - x(t, b)|_1 \le |a - b|_1 \qquad \text{for all } a, b \in C^n,\ t \ge 0 .$$
+
 Hence the steady-state ribosome profile and translation rate $R = \lambda_n e_n$ are unique and depend only on the rates.
 
 ## Expansion

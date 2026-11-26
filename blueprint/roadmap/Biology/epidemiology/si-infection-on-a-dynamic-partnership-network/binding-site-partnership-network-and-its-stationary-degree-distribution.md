@@ -3,13 +3,21 @@
 Every individual has **partnership capacity** $n \ge 1$, pictured as $n$ binding sites that are free or occupied. Individuals enter the population at a constant rate and die at per-capita rate $\mu > 0$, so ages are exponentially distributed with density $\mu e^{-\mu a}$. Binding sites behave independently: an occupied site becomes free at rate $\sigma + \mu$ (separation or death of the partner), and a free site becomes occupied at rate $\rho F$, where $\rho > 0$ and $F(t)$ is the fraction of free binding sites in the population. Thus an individual with $k$ partners moves $k \to k+1$ at rate $\rho(n-k)F$ and $k \to k-1$ at rate $(\sigma+\mu)k$; newborns have $k = 0$.
 
 **Proposition.** The fraction of free binding sites satisfies the closed equation
+
 $$\frac{dF}{dt} = \mu + (\sigma + \mu)(1 - F) - \rho F^2 - \mu F,$$
+
 and $F(t) \to \bar F$ as $t \to \infty$, where
+
 $$\bar F = \frac{\sqrt{(\sigma + 2\mu)(4\rho + \sigma + 2\mu)} - (\sigma + 2\mu)}{2\rho},$$
+
 independent of $n$. With $F \equiv \bar F$, a binding site of an individual of age $a$ is occupied with probability
+
 $$\epsilon(a) = \frac{\rho \bar F}{\rho\bar F + \sigma + \mu}\Big(1 - e^{-(\rho \bar F + \sigma + \mu)a}\Big),$$
+
 and the stationary fraction of individuals with $k$ partners is
+
 $$P_k = \binom{n}{k}\int_0^\infty \mu e^{-\mu a}\, \epsilon(a)^k (1 - \epsilon(a))^{n-k}\, da .$$
+
 A newly acquired partner has $k$ partners (counting the new one) with probability $q_k = (n-k+1)P_{k-1}/(n\bar F)$, and one end of a uniformly chosen partnership has $k$ partners with probability $Q_k = k P_k / (n(1-\bar F))$.
 
 ## Expansion

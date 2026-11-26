@@ -7,7 +7,9 @@
 Hence an exact algorithm enumerates subsets $T \subseteq I_H(S) \setminus S$ and returns the cheapest minimum spanning tree of $S \cup T$ under $\|\cdot\|_1$. With copy numbers in $\{0, \dots, m - 1\}$ there are at most $s = m^d$ candidates and the running time is $O(2^s\, n \log n)$.
 
 **MST lower bound.** Let a weighted complete graph on nodes $1, \dots, n$ be such that only nodes $1, \dots, r$ can have degree $1$ in a minimum spanning tree (Steiner nodes of degree $1$ never reduce the weight, so they are excluded). With $w_v = \min_{u \ne v} w_{vu}$,
+
 $$W(\mathrm{MST}) \;\ge\; \sum_{v=1}^{n} w_v - \max_{1 \le v \le r} w_v .$$
+
 A candidate subset $T$ whose bound already exceeds the best tree found so far can be skipped without computing its MST.
 
 ## Expansion

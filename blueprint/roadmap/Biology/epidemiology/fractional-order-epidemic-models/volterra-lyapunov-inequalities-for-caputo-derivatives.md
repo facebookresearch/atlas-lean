@@ -1,13 +1,19 @@
 # Volterra-type Lyapunov inequalities for Caputo derivatives
 
 **Lemma.** Let $0 < \vartheta < 1$ and let $\varphi : [0, \infty) \to (0, \infty)$ be continuous and differentiable. Then for every $\varphi^* > 0$ and every $t \ge 0$,
+
 $$ {}^{C}_{0}D^{\vartheta}_t\left[ \varphi(t) - \varphi^* - \varphi^* \ln\frac{\varphi(t)}{\varphi^*} \right] \le \left(1 - \frac{\varphi^*}{\varphi(t)}\right) {}^{C}_{0}D^{\vartheta}_t \varphi(t),$$
+
 and, for real-valued differentiable $\varphi$,
+
 $$ \tfrac12\, {}^{C}_{0}D^{\vartheta}_t \varphi^2(t) \le \varphi(t)\, {}^{C}_{0}D^{\vartheta}_t \varphi(t).$$
+
 For $\vartheta = 1$ both become the chain-rule equalities.
 
 **Use in fractional epidemic models.** For a Caputo compartmental model ${}^{C}_{0}D^{\vartheta}_t x = f(x)$ with positive endemic equilibrium $x^*$, take the Volterra function $V(x) = \sum_i c_i\big(x_i - x_i^* - x_i^* \ln(x_i/x_i^*)\big)$ with $c_i > 0$. By the lemma,
+
 $${}^{C}_{0}D^{\vartheta}_t V(x(t)) \le \sum_i c_i \Big(1 - \frac{x_i^*}{x_i}\Big) f_i(x),$$
+
 which is exactly the expression $\dot V$ of the integer-order model. Any bound $\sum_i c_i(1 - x_i^*/x_i) f_i(x) \le 0$ proved for $\vartheta = 1$ therefore gives ${}^{C}_{0}D^{\vartheta}_t V \le 0$, and the fractional LaSalle invariance principle yields global asymptotic stability of $x^*$ in the positive orthant. Likewise $V = \tfrac12\sum_i x_i^2$-type functions handle the disease-free equilibrium.
 
 ## Depends on

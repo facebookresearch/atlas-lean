@@ -1,7 +1,9 @@
 # Inactivation principle for absolute-work optimal control
 
 Consider a fully actuated mechanical system with $n$ degrees of freedom, $\ddot x = \phi(x, \dot x, u)$, with configuration $x$, net joint torques $u \in U$, $U$ a box with $0$ in its interior, $\phi$ smooth and $\partial \phi/\partial u$ invertible (for a limb, $\phi = M(x)^{-1}(u - \cdots)$ with inertia matrix $M$). With $X = (x, y) = (x, \dot x)$, a pointing movement of fixed duration $T$ goes from $(x_s, 0)$ to $(x_t, 0)$ and minimizes
+
 $$J(u) = \int_0^T \Bigl(\dot A_w(X, u) + g(X, u)\Bigr)\, dt, \qquad \dot A_w = \sum_{i=1}^n |y_i u_i|,$$
+
 the absolute work of the torques plus a smooth comfort term $g$ (for instance $\alpha |\ddot x|^2$). The total integrand is assumed strictly convex in $u$. A *partial inactivation* is a time interval of positive length on which some $u_i \equiv 0$; a *total inactivation* has all $u_i \equiv 0$ simultaneously. An extremal of Pontryagin's maximum principle with cost multiplier $\lambda < 0$ is *regular*.
 
 1. **No abnormal extremals.** Since the system is feedback linearizable, every extremal with $\lambda = 0$ is bang (some control takes only boundary values), so optimal trajectories that are not bang are regular.

@@ -1,8 +1,11 @@
 # Equilibrium-set stability of the acute target-cell-limited model
 
 Let $U, I, V \ge 0$ be uninfected target cells, infected cells and free virus, with infection rate $\beta > 0$, infected-cell death rate $\delta > 0$, virion production rate $p > 0$ and virion clearance rate $c > 0$:
+
 $$\dot U = -\beta U V, \qquad \dot I = \beta U V - \delta I, \qquad \dot V = p I - c V,$$
+
 on the invariant set $\mathcal X = \mathbb{R}^3_{\ge 0}$. Define the critical target-cell level $U_c = \delta c/(\beta p)$, the instantaneous within-host reproduction number $\mathcal R(t) = \beta p\, U(t)/(c\delta) = U(t)/U_c$, and $R_0 = \mathcal R(0)$. Every point $(U_s, 0, 0)$ is an equilibrium; let
+
 $$\mathcal X_{s} = \{(U, 0, 0) : U \ge 0\}, \qquad \mathcal X_{s1} = \{(U, 0, 0) : 0 \le U < U_c\}.$$
 
 **Theorem.**

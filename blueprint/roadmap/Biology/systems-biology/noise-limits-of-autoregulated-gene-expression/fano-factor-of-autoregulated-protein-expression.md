@@ -4,11 +4,15 @@
 
 - *Law of large numbers.* If the initial densities converge, $V^N_P \Rightarrow v_P$, the solution of $\dot v_P = F(v_P)$, where $F(v) = \kappa_3\, \mathbb E_{\pi_v}[V_R] - \nu_3 v$ is translation (at rate $\kappa_3$ times the mRNA level averaged over the quasi-stationary distribution $\pi_v$ of the fast subsystem, which depends on $v$ through feedback) minus protein decay at rate $\nu_3$; the equilibrium $v_P^*$ solves $F(v_P^*) = 0$.
 - *Central limit theorem.* $\sqrt N\,(V^N_P - v_P) \Rightarrow U$, where
+
 $$U(t) = U(0) + \int_0^t c\big(v_P(s)\big)\,dW(s) + \int_0^t F'\big(v_P(s)\big)\,U(s)\,ds,$$
+
 with a standard Brownian motion $W$ and an effective diffusion coefficient $c$ that includes the fluctuations of the averaged fast gene and mRNA processes.
 
 **Equilibrium Fano factor.** In equilibrium $U$ is an Ornstein–Uhlenbeck process with variance $c(v_P^*)^2 / \big(-2F'(v_P^*)\big)$, so the protein Fano factor is
+
 $$\frac{\mathbb V[X_P]}{\mathbb E[X_P]} \approx \frac{\mathbb V[U]}{v_P^*} = -\frac{c(v_P^*)^2}{2\,F'(v_P^*)\, v_P^*},$$
+
 independent of $N$.
 
 **Limits of noise.** Compared with the unregulated gene with the same mean protein level, negative feedback makes $F'(v_P^*)$ more negative and reduces the Fano factor, but by at most a factor of $2$; in the limit of strong repression with low protein abundance the Fano factor tends to $1/2$ of its Poisson value. Positive feedback flattens $F$ at the equilibrium ($F'(v_P^*) \to 0^-$), so the Fano factor is potentially unbounded.

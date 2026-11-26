@@ -3,16 +3,25 @@
 **Setting.** A choice among items $i = 1, \dots, n$ ($n = 2$ for binary choice) with subjective values $r_i$ and observed dwell times $DT_i$ on each item during the trial.
 
 **Model.** The gaze proportion of item $i$ is $g_i = DT_i/\sum_j DT_j$. With gaze-bias parameter $\gamma$ ($\gamma \le 1$; negative values allowed, representing leakage of unattended evidence), the average absolute evidence for item $i$ is
+
 $$A_i = g_i r_i + (1 - g_i)\,\gamma\, r_i ,$$
+
 its relative evidence is $R_i^* = A_i - \max_{j \ne i} A_j$ (for $n = 2$, $R^*_{\mathrm{right}} = -R^*_{\mathrm{left}}$), and with scaling parameter $\tau \ge 0$ the accumulation rate input is the logistic transform
+
 $$R_i = \frac{1}{1 + e^{-\tau R_i^*}} \in (0,1).$$
+
 Independent accumulators race to a common threshold $b$ (fixed to $1$):
+
 $$E_i(t) = E_i(t-1) + \nu R_i + \epsilon_t, \qquad \epsilon_t \sim \mathcal{N}(0, \sigma^2), \quad E_i(0) = 0,$$
+
 with drift scale $\nu > 0$; the first accumulator to reach $b$ determines the choice and response time.
 
 **Likelihood.** In the continuous-time limit each accumulator is a Brownian motion with constant drift $v_i = \nu R_i > 0$, whose first-passage time to $b$ has the inverse Gaussian density
+
 $$f_i(t) = \frac{b}{\sigma\sqrt{2\pi t^3}} \exp\!\left(-\frac{(b - v_i t)^2}{2\sigma^2 t}\right), \qquad t > 0,$$
+
 with distribution function $F_i$. The joint density of choosing item $i$ at response time $t$ is
+
 $$p(i, t) = f_i(t) \prod_{j \ne i}\big(1 - F_j(t)\big).$$
 
 **Properties.**

@@ -1,7 +1,9 @@
 # Approximate majority network and the cell-cycle switch
 
 **Network.** Three species $x, y, b$ ($b$ the "undecided" state) with total count $N = x + y + b$ conserved, and the four catalytic reactions (mass action, common rate constant $k$)
+
 $$x + y \to x + b, \qquad x + y \to y + b, \qquad x + b \to x + x, \qquad y + b \to y + y,$$
+
 i.e. $x$ catalyses $y \to b \to x$ and $y$ catalyses $x \to b \to y$.
 
 **Stochastic (population-protocol) behaviour.** Interpreting each reaction as a random pairwise interaction among $N$ agents:
@@ -11,7 +13,9 @@ i.e. $x$ catalyses $y \to b \to x$ and $y$ catalyses $x \to b \to y$.
 3. *Robust:* correctness persists when a subpopulation of order $o(\sqrt N)$ behaves arbitrarily (adversarially).
 
 **Deterministic behaviour.** The mass-action ODE
+
 $$\dot x = k\,x(b - y), \qquad \dot y = k\,y(b - x), \qquad \dot b = k\,(2xy - xb - yb)$$
+
 on the simplex $x + y + b = N$ has stable equilibria $(N, 0, 0)$ and $(0, N, 0)$ and an interior equilibrium $x = y = b = N/3$, which is unstable: $\frac{d}{dt}(x - y) = k\,b\,(x - y)$, so any imbalance is amplified and the system switches to the initial majority.
 
 **Transformation to the cell-cycle switch.** Replacing the mutual autocatalysis by catalysis through intermediate activators ($r$ activated by $x$ and activating $x$; $z$ activated by $y$ and activating $y$, with threshold catalysts) gives the *simply catalytic* switch with the same convergence up to a time factor. Removing the catalytic activity of $y$ and letting $x$ inactivate $y$ through $z$ yields the core **cell-cycle switch**, with $x, y$ the active and inactive forms of the cyclin-dependent kinase and $r, z$ the active forms of the phosphatase Cdc25 and the kinase Wee1; this network still computes approximate majority and implements an input-driven switch, and its performance matches AM when the extra feedback present in natural cell-cycle networks is included.

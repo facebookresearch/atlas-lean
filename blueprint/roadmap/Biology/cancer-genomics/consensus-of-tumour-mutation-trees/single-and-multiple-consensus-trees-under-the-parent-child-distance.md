@@ -1,7 +1,9 @@
 # Single and multiple consensus trees under the parent-child distance
 
 **Definitions.** A *mutation tree* is a rooted tree whose $m$ nodes are uniquely labelled by mutations $[m] = \{1, \dots, m\}$ (obtained from an infinite-sites phylogeny by contracting unlabelled edges). For rooted trees $T = (V, E)$ and $T' = (V, E')$ on the same vertex set, the *parent-child distance* is
+
 $$d(T, T') = |E \setminus E'| + |E' \setminus E|,$$
+
 a metric. Given input trees $\mathcal T = \{T_1, \dots, T_n\}$ on $V$, the *parent-child graph* $G_{\mathcal T}$ is the directed graph on $V$ containing every edge of every input tree, with weight $\ell(u,v) = |\{ i : (u,v) \in E_i \}|$.
 
 - *Single Consensus Tree (SCT):* find a rooted tree $R$ on $V$ minimizing $d(\mathcal T, R) = \sum_i d(T_i, R)$.

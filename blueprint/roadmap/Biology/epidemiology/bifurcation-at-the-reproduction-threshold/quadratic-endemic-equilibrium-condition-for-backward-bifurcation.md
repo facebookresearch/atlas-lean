@@ -1,9 +1,11 @@
 # Quadratic endemic-equilibrium condition for backward bifurcation
 
 In many compartmental models with recruitment, every endemic equilibrium is determined by its equilibrium force of infection $\lambda^*>0$, and substituting the equilibrium compartments into the definition of $\lambda^*$ leaves a quadratic
+
 $$
 b_0(\lambda^*)^2+b_1\lambda^*+b_2=0,\qquad b_0>0,
 $$
+
 in which $b_2$ has the sign of $1-R_0$ (it vanishes exactly at $R_0=1$). Under these hypotheses:
 
 1. if $R_0>1$ (so $b_2<0$), there is exactly one endemic equilibrium;

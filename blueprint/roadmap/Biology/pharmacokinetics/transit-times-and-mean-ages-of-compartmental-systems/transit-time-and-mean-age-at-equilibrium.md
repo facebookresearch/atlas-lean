@@ -3,7 +3,9 @@
 **Compartmental system.** Mass in $d$ pools obeys $\dot x = Bx + s$ with input $0 \ne s \in [0,\infty)^d$ and a matrix $B$ with $b_{ii} < 0$, $b_{ij} \ge 0$ ($i \ne j$, rate of transfer from pool $j$ to pool $i$) and column sums $\sum_i b_{ij} \le 0$ (the deficit is the loss rate from pool $j$). Assume all eigenvalues of $B$ have negative real part, so $x^\ast = -B^{-1}s$ is the exponentially stable equilibrium.
 
 **Proposition.** Let $r_i$ be the mean remaining time in the system of a particle that has just entered pool $i$, $\beta = s/(\mathbf 1^\top s)$ the distribution of external inputs over pools and $\eta = x^\ast/(\mathbf 1^\top x^\ast)$ the equilibrium distribution of mass. Then
+
 $$r^\top = -\mathbf 1^\top B^{-1}, \qquad R = -\mathbf 1^\top B^{-1}\beta, \qquad M = -\mathbf 1^\top B^{-1}\eta,$$
+
 where $R$ is the mean transit time of the system (mean age of particles at exit) and $M$ the mean age of the particles present at equilibrium. Moreover $R$ equals the turnover time $\mathbf 1^\top x^\ast / \mathbf 1^\top s$, while in general $M \neq R$: both are convex combinations of the $r_i$, weighted by inputs and by stocks respectively.
 
 ## Depends on
