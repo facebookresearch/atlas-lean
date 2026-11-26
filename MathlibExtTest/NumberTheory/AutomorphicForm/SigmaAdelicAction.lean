@@ -25,7 +25,7 @@ private theorem exactSource (K L : Type) [Field K] [NumberField K] [Field L] [Nu
   AutomorphicForm.adelicHeight_sigmaAdelicAct K L D σ g
 
 /-- The same statement with the two fields in different, higher universes. -/
-public theorem exactSource_universe (K : Type u) (L : Type (v + 1)) [Field K] [Field L]
+private theorem exactSource_universe (K : Type u) (L : Type (v + 1)) [Field K] [Field L]
     [NumberField L] [Algebra K L] (D : IdeleGaloisDescent (𝓞 L) K L) (σ : L ≃ₐ[K] L)
     (g : AutomorphicForm.AdelicGL2 (𝓞 L) L) :
     adelicHeight L (AutomorphicForm.sigmaAdelicAct K L D σ g) = adelicHeight L g :=

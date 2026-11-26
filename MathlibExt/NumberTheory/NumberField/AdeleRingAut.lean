@@ -220,20 +220,13 @@ private theorem faithful_indicator (a : AdeleRing R F) (h : ∀ P, a * indicator
       snd_zero_apply] at h1
     rw [h1, snd_zero_apply]
 
-private theorem eq_zero_or_one_of_mul_self {K : Type*} [Ring K] [NoZeroDivisors K] {x : K}
-    (hx : x * x = x) : x = 0 ∨ x = 1 := by
-  have h : x * (x - 1) = 0 := by rw [mul_sub, mul_one, hx, sub_self]
-  rcases mul_eq_zero.mp h with h0 | h1
-  · exact Or.inl h0
-  · exact Or.inr (sub_eq_zero.mp h1)
-
 private theorem corner_indicator (e : AdeleRing R F) (he : IsIdempotentElem e)
     (P : PlaceIndex R F) : e * indicator R F P = 0 ∨ e * indicator R F P = indicator R F P := by
   rcases P with v | w
   · have hev : e.1 v * e.1 v = e.1 v := by
       have h1 := congrArg (fun x : AdeleRing R F => x.1 v) he.eq
       rwa [fst_mul_apply] at h1
-    rcases eq_zero_or_one_of_mul_self hev with h0 | h1
+    rcases IsIdempotentElem.iff_eq_zero_or_one.mp hev with h0 | h1
     · left
       refine adele_ext R F (fun u => ?_) (fun u => ?_)
       · rw [fst_mul_apply, fst_zero_apply]
@@ -251,7 +244,7 @@ private theorem corner_indicator (e : AdeleRing R F) (he : IsIdempotentElem e)
   · have hev : e.2 w * e.2 w = e.2 w := by
       have h1 := congrArg (fun x : AdeleRing R F => x.2 w) he.eq
       rwa [snd_mul_apply] at h1
-    rcases eq_zero_or_one_of_mul_self hev with h0 | h1
+    rcases IsIdempotentElem.iff_eq_zero_or_one.mp hev with h0 | h1
     · left
       refine adele_ext R F (fun u => ?_) (fun u => ?_)
       · rw [fst_mul_apply, indicator_inr_fst, Pi.zero_apply, mul_zero, fst_zero_apply]
@@ -283,13 +276,6 @@ section Corners
 
 variable (R F : Type*) [CommRing R] [IsDedekindDomain R] [Field F] [Algebra R F]
   [IsFractionRing R F]
-
-private theorem algebraMap_fst_apply_coe (x : F) (v : InfinitePlace F) :
-    (algebraMap F (AdeleRing R F) x).1 v = (x : v.Completion) :=
-  InfiniteAdeleRing.algebraMap_apply F x v
-
-private theorem algebraMap_snd_apply_coe (x : F) (w : HeightOneSpectrum R) :
-    (algebraMap F (AdeleRing R F) x).2 w = (x : w.adicCompletion F) := rfl
 
 private theorem continuous_fst_apply (v : InfinitePlace F) :
     Continuous (fun a : AdeleRing R F => a.1 v) :=
@@ -455,7 +441,7 @@ private theorem isNilAt_inl_iff (v : InfinitePlace F) (x : F) :
     rw [corner_pow_succ, mul_indicator_inl, map_pow]
     congr 1
     change ((algebraMap F (AdeleRing R F) x).1 v) ^ (n + 1) = _
-    rw [algebraMap_fst_apply_coe]
+    rw [algebraMap_fst_apply]
   rw [hseq, ← norm_coe_infinitePlace F v x, ← tendsto_pow_atTop_nhds_zero_iff_norm_lt_one,
     ← Filter.tendsto_add_atTop_iff_nat (f := fun n : ℕ => (x : v.Completion) ^ n) 1]
   constructor
@@ -663,7 +649,7 @@ theorem norm_fst_map_comap (v : InfinitePlace L) (a : AdeleRing (𝓞 L) L) :
   have hcoe : ∀ x : L, ψ (x : v.Completion) = (τ x : v'.Completion) := by
     intro x
     have h1 := hψ (algebraMap L (AdeleRing (𝓞 L) L) x)
-    rw [hτ, algebraMap_fst_apply_coe, algebraMap_fst_apply_coe] at h1
+    rw [hτ, algebraMap_fst_apply, algebraMap_fst_apply] at h1
     exact h1.symm
   have hdense : DenseRange (fun x : L => (x : v.Completion)) :=
     (AbsoluteValue.Completion.denseRange_coe v.1).comp

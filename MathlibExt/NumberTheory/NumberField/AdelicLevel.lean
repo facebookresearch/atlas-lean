@@ -41,6 +41,8 @@ Let `R` be a Dedekind domain with fraction field `K`. This file defines
 
 * `glArch` and `glFin`, the projections of `GL₂` over the adeles onto `GL₂` over the infinite
   and the finite adeles;
+* `archComponent K w` and `finComponent R K v`, the components of `GL₂` over the infinite and
+  the finite adeles at an infinite place `w` and at a finite place `v`;
 * `finiteLevelOne R K N`, the level subgroup of `GL₂` over the finite adeles at an ideal `N`:
   the matrices `g` such that `g` and `g⁻¹` have integral entries, lower-left entry in `N` and
   lower-right entry congruent to `1` modulo `N` at every finite place;
@@ -80,7 +82,7 @@ theorem glFin_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
       ((g : Matrix (Fin 2) (Fin 2) (AdeleRing R K)) i j).2 :=
   rfl
 
-/-- The component at an infinite place `w` of `GL₂` over the infinite adeles. -/
+/-- The component of an archimedean `GL(2)` element at one infinite place. -/
 def archComponent (w : InfinitePlace K) :
     GL (Fin 2) (InfiniteAdeleRing K) →* GL (Fin 2) w.Completion :=
   Matrix.GeneralLinearGroup.map (archEval K w)

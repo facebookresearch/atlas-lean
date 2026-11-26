@@ -42,7 +42,9 @@ bottom row `(c, d)` of `g`:
 * `archLocalHeight g = |det g| / (|c|² + |d|²)`, used at infinite places.
 
 The adelic height of `g ∈ GL₂(𝔸_F)` is the product of the archimedean local heights, each
-raised to the multiplicity of its place, and of the finite local heights.
+raised to the multiplicity of its place, and of the finite local heights. All but finitely many
+finite local heights are `1` (`hasFiniteMulSupport_finLocalHeight`): outside finitely many
+places, the entries of `g` and of `g⁻¹` are integral.
 
 `adelicHeight_map_of_norm_eq` shows that the adelic height is unchanged by a ring endomorphism
 of the adele ring that permutes the places, preserving multiplicities and the norms of the
@@ -109,6 +111,58 @@ theorem archLocalHeight_eq_of_norm_eq {K' : Type*} [NormedField K'] (g : GL (Fin
   unfold archLocalHeight rowNormSq
   rw [hdet, h₀, h₁]
 
+section Ultrametric
+
+variable [IsUltrametricDist K]
+
+private theorem norm_det_le_one {M : Matrix (Fin 2) (Fin 2) K} (h : ∀ i j, ‖M i j‖ ≤ 1) :
+    ‖M.det‖ ≤ 1 := by
+  rw [Matrix.det_fin_two, sub_eq_add_neg]
+  refine (IsUltrametricDist.norm_add_le_max _ _).trans (max_le ?_ ?_)
+  · rw [norm_mul]
+    exact (mul_le_of_le_one_left (norm_nonneg _) (h 0 0)).trans (h 1 1)
+  · rw [norm_neg, norm_mul]
+    exact (mul_le_of_le_one_left (norm_nonneg _) (h 0 1)).trans (h 1 0)
+
+/-- Over an ultrametric field, the finite local height of `g` is `1` when every entry of `g`
+and of `g⁻¹` has norm at most `1`. -/
+theorem finLocalHeight_eq_one (g : GL (Fin 2) K)
+    (h : ∀ i j, ‖(g : Matrix (Fin 2) (Fin 2) K) i j‖ ≤ 1)
+    (h' : ∀ i j, ‖((g⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) i j‖ ≤ 1) :
+    finLocalHeight g = 1 := by
+  have hd : ‖(g : Matrix (Fin 2) (Fin 2) K).det‖ ≤ 1 := norm_det_le_one h
+  have hd' : ‖((g⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K).det‖ ≤ 1 := norm_det_le_one h'
+  have hprod : ‖(g : Matrix (Fin 2) (Fin 2) K).det‖
+      * ‖((g⁻¹ : GL (Fin 2) K) : Matrix (Fin 2) (Fin 2) K).det‖ = 1 := by
+    rw [← norm_mul, ← Matrix.det_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one,
+      Matrix.det_one, norm_one]
+  have hdet1 : ‖(g : Matrix (Fin 2) (Fin 2) K).det‖ = 1 := by
+    refine le_antisymm hd ?_
+    by_contra hlt
+    push Not at hlt
+    have := (mul_le_of_le_one_right (norm_nonneg _) hd').trans_lt hlt
+    rw [hprod] at this
+    exact lt_irrefl _ this
+  have hrow_le : rowMaxNorm (g : Matrix (Fin 2) (Fin 2) K) ≤ 1 := max_le (h 1 0) (h 1 1)
+  have hrow_ge : 1 ≤ rowMaxNorm (g : Matrix (Fin 2) (Fin 2) K) := by
+    by_contra hlt
+    push Not at hlt
+    have h10 : ‖(g : Matrix (Fin 2) (Fin 2) K) 1 0‖ < 1 := (le_max_left _ _).trans_lt hlt
+    have h11 : ‖(g : Matrix (Fin 2) (Fin 2) K) 1 1‖ < 1 := (le_max_right _ _).trans_lt hlt
+    have hlt' : ‖(g : Matrix (Fin 2) (Fin 2) K).det‖ < 1 := by
+      rw [Matrix.det_fin_two, sub_eq_add_neg]
+      refine (IsUltrametricDist.norm_add_le_max _ _).trans_lt (max_lt ?_ ?_)
+      · rw [norm_mul]
+        exact (mul_le_of_le_one_left (norm_nonneg _) (h 0 0)).trans_lt h11
+      · rw [norm_neg, norm_mul]
+        exact (mul_le_of_le_one_left (norm_nonneg _) (h 0 1)).trans_lt h10
+    rw [hdet1] at hlt'
+    exact lt_irrefl _ hlt'
+  unfold finLocalHeight
+  rw [hdet1, le_antisymm hrow_le hrow_ge, one_pow, div_one]
+
+end Ultrametric
+
 end Local
 
 section Adelic
@@ -120,7 +174,8 @@ each raised to the multiplicity of `v`. -/
 def archHeight (g : GL (Fin 2) (InfiniteAdeleRing F)) : ℝ :=
   ∏ v : InfinitePlace F, archLocalHeight (archComponent F v g) ^ v.mult
 
-/-- The finite height: the product over the finite places of the local heights. -/
+/-- The finite height: the product over the finite places of the local heights. All but
+finitely many factors are `1` (`hasFiniteMulSupport_finLocalHeight`). -/
 def finHeight (g : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F)) : ℝ :=
   ∏ᶠ v : HeightOneSpectrum (𝓞 F), finLocalHeight (finComponent (𝓞 F) F v g)
 
@@ -133,6 +188,46 @@ theorem adelicHeight_one : adelicHeight F 1 = 1 := by
   simp [adelicHeight, archHeight, finHeight, finLocalHeight_one, archLocalHeight_one]
 
 variable {F}
+
+private theorem norm_le_one_of_mem_adicCompletionIntegers {v : HeightOneSpectrum (𝓞 F)}
+    {x : v.adicCompletion F} (hx : x ∈ v.adicCompletionIntegers F) : ‖x‖ ≤ 1 :=
+  Valued.toNormedField.norm_le_one_iff.mpr
+    ((HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).mp hx)
+
+/-- At all but finitely many finite places `v`, the local height of `g` at `v` is `1`: outside
+finitely many places, the entries of `g` and of `g⁻¹` are integral. -/
+theorem finLocalHeight_finComponent_eventually_eq_one
+    (g : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F)) :
+    ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite,
+      finLocalHeight (finComponent (𝓞 F) F v g) = 1 := by
+  have hg : ∀ i j, ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite,
+      (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 F) F)) i j v ∈ v.adicCompletionIntegers F :=
+    fun i j => ((g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 F) F)) i j).2
+  have hg' : ∀ i j, ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite,
+      ((g⁻¹ : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F)) :
+        Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 F) F)) i j v ∈ v.adicCompletionIntegers F :=
+    fun i j => (((g⁻¹ : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F)) :
+      Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 F) F)) i j).2
+  have hall : ∀ᶠ v : HeightOneSpectrum (𝓞 F) in Filter.cofinite,
+      (∀ i j, (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 F) F)) i j v
+        ∈ v.adicCompletionIntegers F)
+      ∧ ∀ i j, ((g⁻¹ : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F)) :
+          Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 F) F)) i j v ∈ v.adicCompletionIntegers F :=
+    (Filter.eventually_all.mpr fun i => Filter.eventually_all.mpr (hg i)).and
+      (Filter.eventually_all.mpr fun i => Filter.eventually_all.mpr (hg' i))
+  filter_upwards [hall] with v hv
+  refine finLocalHeight_eq_one _ (fun i j => ?_) (fun i j => ?_)
+  · rw [finComponent_apply]
+    exact norm_le_one_of_mem_adicCompletionIntegers (hv.1 i j)
+  · rw [← map_inv, finComponent_apply]
+    exact norm_le_one_of_mem_adicCompletionIntegers (hv.2 i j)
+
+/-- The local heights in the finite height of `g` are `1` at all but finitely many finite
+places, so `finHeight` is a finite product. -/
+theorem hasFiniteMulSupport_finLocalHeight (g : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F)) :
+    (fun v : HeightOneSpectrum (𝓞 F) =>
+      finLocalHeight (finComponent (𝓞 F) F v g)).HasFiniteMulSupport :=
+  Filter.eventually_cofinite.mp (finLocalHeight_finComponent_eventually_eq_one g)
 
 private theorem det_archComponent_glArch (g : GL (Fin 2) (AdeleRing (𝓞 F) F))
     (v : InfinitePlace F) :

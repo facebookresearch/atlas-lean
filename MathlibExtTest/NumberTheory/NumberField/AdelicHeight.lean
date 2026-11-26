@@ -12,7 +12,7 @@ public import MathlibExt.NumberTheory.NumberField.AdelicHeight
 
 @[expose] public section
 
-open NumberField NumberField.AdelicHeight IsDedekindDomain
+open NumberField NumberField.AdelicHeight NumberField.AdelicLevel IsDedekindDomain
 
 /-- The height of the identity is `1`. -/
 example : adelicHeight ℚ 1 = 1 := adelicHeight_one ℚ
@@ -31,3 +31,81 @@ example (c : ℚ) (hc : c ≠ 0) :
   have hc' : ‖c‖ ≠ 0 := norm_ne_zero_iff.mpr hc
   simp [finLocalHeight, rowMaxNorm, Matrix.det_fin_two, Matrix.diagonal]
   field_simp
+
+section FinitePlace
+
+variable {F : Type*} [Field F] [NumberField F]
+
+/-- `diag(x, 1)` over the finite adeles of `F`, for `x ≠ 0` in `F`. -/
+private noncomputable def diagFin (x : F) (hx : x ≠ 0) :
+    GL (Fin 2) (FiniteAdeleRing (𝓞 F) F) :=
+  Matrix.GeneralLinearGroup.map (algebraMap F (FiniteAdeleRing (𝓞 F) F))
+    (Matrix.GeneralLinearGroup.mkOfDetNeZero !![x, 0; 0, 1] (by simp [Matrix.det_fin_two, hx]))
+
+/-- At every finite place `w`, the local height of `diag(x, 1)` is `‖x‖_w`. -/
+private theorem finLocalHeight_diagFin (x : F) (hx : x ≠ 0) (w : HeightOneSpectrum (𝓞 F)) :
+    finLocalHeight (finComponent (𝓞 F) F w (diagFin x hx)) = ‖(x : w.adicCompletion F)‖ := by
+  have h0 : (0 : FiniteAdeleRing (𝓞 F) F) w = 0 := rfl
+  have h1 : (1 : FiniteAdeleRing (𝓞 F) F) w = 1 := rfl
+  simp [finLocalHeight, rowMaxNorm, Matrix.det_fin_two, finComponent_apply, diagFin,
+    Matrix.GeneralLinearGroup.map_apply, h0, h1]
+
+private theorem norm_coe_le_one (r : 𝓞 F) (w : HeightOneSpectrum (𝓞 F)) :
+    ‖((r : F) : w.adicCompletion F)‖ ≤ 1 := by
+  rw [Valued.toNormedField.norm_le_one_iff, HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
+  exact HeightOneSpectrum.valuation_le_one w r
+
+private theorem norm_coe_lt_one (r : 𝓞 F) (v : HeightOneSpectrum (𝓞 F)) (hrv : r ∈ v.asIdeal) :
+    ‖((r : F) : v.adicCompletion F)‖ < 1 := by
+  rw [Valued.toNormedField.norm_lt_one_iff, HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
+  exact (HeightOneSpectrum.valuation_lt_one_iff_mem v r).mpr hrv
+
+/-- A finite local factor that is not `1`: for a nonzero `r` in the prime of a finite place `v`,
+the local height of `diag(r, 1)` at `v` is `‖r‖_v < 1`. The finite height of `diag(r, 1)` is a
+finite product by `hasFiniteMulSupport_finLocalHeight`, its other factors are at most `1`, so it
+is `< 1` as well. -/
+private theorem finHeight_diagFin_lt_one (v : HeightOneSpectrum (𝓞 F)) (r : 𝓞 F)
+    (hr : (r : F) ≠ 0) (hrv : r ∈ v.asIdeal) :
+    finLocalHeight (finComponent (𝓞 F) F v (diagFin (r : F) hr)) < 1 ∧
+      finHeight F (diagFin (r : F) hr) < 1 := by
+  classical
+  have hv : finLocalHeight (finComponent (𝓞 F) F v (diagFin (r : F) hr)) < 1 := by
+    rw [finLocalHeight_diagFin]
+    exact norm_coe_lt_one r v hrv
+  refine ⟨hv, ?_⟩
+  have hfin := hasFiniteMulSupport_finLocalHeight (diagFin (r : F) hr)
+  have hmem : v ∈ hfin.toFinset := (Set.Finite.mem_toFinset hfin).mpr hv.ne
+  rw [finHeight, finprod_eq_prod _ hfin, ← Finset.mul_prod_erase _ _ hmem]
+  refine lt_of_le_of_lt ?_ hv
+  refine mul_le_of_le_one_right (by rw [finLocalHeight_diagFin]; exact norm_nonneg _) ?_
+  refine Finset.prod_le_one₀ (fun w _ => ?_) (fun w _ => ?_)
+  · rw [finLocalHeight_diagFin]
+    exact norm_nonneg _
+  · rw [finLocalHeight_diagFin]
+    exact norm_coe_le_one r w
+
+/-- Every finite place `v` has such an element, so the finite height is not identically `1`. -/
+example (v : HeightOneSpectrum (𝓞 F)) : ∃ g : GL (Fin 2) (FiniteAdeleRing (𝓞 F) F),
+    finLocalHeight (finComponent (𝓞 F) F v g) < 1 ∧ finHeight F g < 1 := by
+  obtain ⟨r, hrv, hr⟩ := Submodule.exists_mem_ne_zero_of_ne_bot v.ne_bot
+  exact ⟨_, finHeight_diagFin_lt_one v r (RingOfIntegers.coe_ne_zero_iff.mpr hr) hrv⟩
+
+/-- The adelic height sees the finite part: the adele with archimedean part `1` and finite part
+`diag(r, 1)` has adelic height `finHeight F (diag(r, 1)) < 1`. -/
+example (v : HeightOneSpectrum (𝓞 F)) (r : 𝓞 F) (hr : (r : F) ≠ 0) (hrv : r ∈ v.asIdeal) :
+    adelicHeight F ((Matrix.GeneralLinearGroup.prodEquiv (Fin 2) (InfiniteAdeleRing F)
+      (FiniteAdeleRing (𝓞 F) F)).symm (1, diagFin (r : F) hr)) < 1 := by
+  have e := (Matrix.GeneralLinearGroup.prodEquiv (Fin 2) (InfiniteAdeleRing F)
+    (FiniteAdeleRing (𝓞 F) F)).apply_symm_apply (1, diagFin (r : F) hr)
+  have harch : glArch (𝓞 F) F ((Matrix.GeneralLinearGroup.prodEquiv (Fin 2)
+      (InfiniteAdeleRing F) (FiniteAdeleRing (𝓞 F) F)).symm (1, diagFin (r : F) hr)) = 1 :=
+    congrArg Prod.fst e
+  have hfin : glFin (𝓞 F) F ((Matrix.GeneralLinearGroup.prodEquiv (Fin 2)
+      (InfiniteAdeleRing F) (FiniteAdeleRing (𝓞 F) F)).symm (1, diagFin (r : F) hr)) =
+      diagFin (r : F) hr :=
+    congrArg Prod.snd e
+  have h1 : archHeight F 1 = 1 := by simp [archHeight, archLocalHeight_one]
+  rw [adelicHeight, harch, hfin, h1, one_mul]
+  exact (finHeight_diagFin_lt_one v r hr hrv).2
+
+end FinitePlace
