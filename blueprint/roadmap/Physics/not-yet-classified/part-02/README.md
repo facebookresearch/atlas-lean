@@ -2,7 +2,7 @@
 
 - [Characteristic Speed](characteristic-speed/README.md)
 - [Column Buckling](column-buckling/README.md)
-- [Conditional Failure Events](conditional-failure-events/README.md)
+- [Conditional Failure Events](conditional-failure-events/README.md): the pages of this module are now under Reliability and monitoring.
 - [Conducting Plane Wave](conducting-plane-wave/README.md)
 - [Conduction Ports](conduction-ports/README.md)
 - [Contact And Lubrication](contact-and-lubrication/README.md)

@@ -13,5 +13,5 @@
 - [Periodic Yee Maxwell Bridge](periodic-yee-maxwell-bridge/README.md)
 - [Phasor Element Laws](phasor-element-laws/README.md)
 - [Physical Error Budgets](physical-error-budgets/README.md)
-- [Physical Failure Events](physical-failure-events/README.md)
+- [Physical Failure Events](physical-failure-events/README.md): the pages of this module are now under Fracture, fatigue damage and failure margins.
 - [Physical Galerkin Error](physical-galerkin-error/README.md)

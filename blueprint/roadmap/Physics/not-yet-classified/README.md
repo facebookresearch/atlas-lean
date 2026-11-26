@@ -16,7 +16,6 @@ Topics added since this subject's fields were last revised.
 - [Beam Modes](part-01/beam-modes/README.md)
 - [Box Terminal Flux](part-01/box-terminal-flux/README.md)
 - [Building Envelope](part-01/building-envelope/README.md)
-- [Calibration Ports](part-01/calibration-ports/README.md)
 - [Canonical Diode Port](part-01/canonical-diode-port/README.md)
 - [Cell Transmission](part-01/cell-transmission/README.md)
 
@@ -41,7 +40,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 3 of 10](part-03/README.md)
 
 - [Declared Friis Link](part-03/declared-friis-link/README.md)
-- [Design Sensitivity](part-03/design-sensitivity/README.md)
 - [Distributed Line Energy](part-03/distributed-line-energy/README.md)
 - [Ebers Moll Terminal Balance](part-03/ebers-moll-terminal-balance/README.md)
 - [Electrical Dimensions](part-03/electrical-dimensions/README.md)
