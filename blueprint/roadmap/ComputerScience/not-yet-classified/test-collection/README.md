@@ -1,7 +1,7 @@
 # Test Collection
 
-- [Test Collection](test-collection.md)
-- [Relevant](relevant.md)
-- [Relevant iff](relevant-iff.md)
-- [Not relevant of unjudged](not-relevant-of-unjudged.md)
-- [Not relevant of judged nonrelevant](not-relevant-of-judged-nonrelevant.md)
+- [Test collection](test-collection.md)
+- [Judged-relevant predicate](relevant.md)
+- [Relevant means judged relevant](relevant-iff.md)
+- [Unjudged documents are not judged relevant](not-relevant-of-unjudged.md)
+- [Judged-nonrelevant documents are not judged relevant](not-relevant-of-judged-nonrelevant.md)

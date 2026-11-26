@@ -1,3 +1,4 @@
-# Test Collection
+# Test collection
 
-Cranfield-style test collection: partial binary relevance judgments.
+A Cranfield-style test collection: partial binary
+relevance judgments.

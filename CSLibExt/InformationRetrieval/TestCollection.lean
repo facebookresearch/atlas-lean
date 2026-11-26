@@ -32,12 +32,15 @@ set_option autoImplicit false
 
 namespace Cslib.InformationRetrieval
 
-/-- Cranfield-style test collection: partial binary relevance judgments. -/
+/-- **Test collection.** A Cranfield-style test collection: partial binary
+relevance judgments. -/
 structure TestCollection (N : ℕ) (Q : Type*) where
   /-- `some true` relevant, `some false` nonrelevant, `none` unjudged. -/
   qrels : Q → Fin N → Option Bool
 
-/-- Relevance predicate used by `precisionAt`: judged relevant. -/
+/-- **Judged-relevant predicate.** The relevance predicate used by
+`precisionAt`: a document counts as relevant to a topic only when it is judged
+relevant. -/
 def TestCollection.relevant {N : ℕ} {Q : Type*} (T : TestCollection N Q)
     (q : Q) : Fin N → Prop :=
   fun d => T.qrels q d = some true
@@ -47,20 +50,23 @@ instance TestCollection.decidableRelevant {N : ℕ} {Q : Type*}
     DecidablePred (T.relevant q) :=
   fun d => decEq (T.qrels q d) (some true)
 
-/-- Membership in `relevant` unfolds to a `some true` judgment. -/
+/-- **Relevant means judged relevant.** Membership in `relevant` unfolds to a
+`some true` judgment. -/
 theorem TestCollection.relevant_iff {N : ℕ} {Q : Type*}
     (T : TestCollection N Q) (q : Q) (d : Fin N) :
     T.relevant q d ↔ T.qrels q d = some true :=
   Iff.rfl
 
-/-- Unjudged documents are nonrelevant. -/
+/-- **Unjudged documents are not judged relevant.** Unjudged documents do not
+count as relevant under this precision convention. -/
 theorem TestCollection.not_relevant_of_unjudged {N : ℕ} {Q : Type*}
     (T : TestCollection N Q) (q : Q) (d : Fin N)
     (h : T.qrels q d = none) : ¬ T.relevant q d := by
   rw [TestCollection.relevant_iff, h]
   simp
 
-/-- Documents judged nonrelevant are nonrelevant. -/
+/-- **Judged-nonrelevant documents are not judged relevant.** Documents judged
+nonrelevant do not count as relevant. -/
 theorem TestCollection.not_relevant_of_judged_nonrelevant {N : ℕ} {Q : Type*}
     (T : TestCollection N Q) (q : Q) (d : Fin N)
     (h : T.qrels q d = some false) :

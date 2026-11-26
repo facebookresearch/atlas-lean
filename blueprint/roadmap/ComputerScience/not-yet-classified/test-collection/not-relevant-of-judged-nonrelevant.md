@@ -1,3 +1,4 @@
-# Not relevant of judged nonrelevant
+# Judged-nonrelevant documents are not judged relevant
 
-Documents judged nonrelevant are nonrelevant.
+Documents judged
+nonrelevant do not count as relevant.
