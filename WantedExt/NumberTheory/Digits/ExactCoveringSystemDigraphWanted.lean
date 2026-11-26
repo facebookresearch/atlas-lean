@@ -46,19 +46,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Translation isomorphism of exact covering system digraphs.** Let $r \in \mathbb{N}$, let
-$d_1, \dots, d_r$, $a_1, \dots, a_r$ and $k$ be integers, and put $a_i' = a_i - (d_i - 1)k$.
-Then the map $x \mapsto x + k$ is a digraph isomorphism from
-$G(d_1 n + a_1, \dots, d_r n + a_r)$ onto $G(d_1 n + a_1', \dots, d_r n + a_r')$.
-
-The paper's exact-covering hypothesis on the rules is not needed.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 1
-(`integers-2026-A107-thm-1`). -/
-theorem_wanted ecsdAdj_shift_relIso {r : ℕ} (d a : Fin r → ℤ) (k : ℤ) :
-    ∃ e : ecsdAdj d a ≃r ecsdAdj d (fun i => a i - (d i - 1) * k), ∀ n, e n = n + k
-
 /-- **Normal form of the ECSDs $G(2n + a_1, 2n + a_2)$.** For all integers $a_1, a_2$ with
 $a_1 - a_2$ odd, the exact covering system digraph $G(2n + a_1, 2n + a_2)$, with an edge
 $m \to 2m + a_1$ and an edge $m \to 2m + a_2$ for every integer $m$, is isomorphic as a digraph

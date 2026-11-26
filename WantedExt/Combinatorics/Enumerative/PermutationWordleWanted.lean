@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleCounts
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleDerangements
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleLeftShift
 public import MathlibExt.NumberTheory.LucasSequence
 
 /-!
@@ -110,22 +111,6 @@ public theorem_wanted permWordleCoeff_three_cyclicShiftLeft_lt (n : ℕ) (hn : 4
     (S : (m : ℕ) → Equiv.Perm (Fin m)) (hS : IsInductivePermWordleStrategy n S)
     (hne : S n ≠ (finRotate n).symm) :
     permWordleCoeff (cyclicShiftLeftStrategy n) n 3 < permWordleCoeff S n 3
-
-/-- **Lucas-number count for the left-shift strategy.** Let $n \ge 4$ and let $\mathrm{CSL}_n$
-be the strategy whose component on $n$ positions is the left cyclic shift
-$j \mapsto j - 1 \bmod n$ and whose component on $m \ne n$ positions is the cyclic shift
-$j \mapsto j + 1 \bmod m$. The number of permutations $\pi$ of $\{0, \dots, n-1\}$ that
-$\mathrm{CSL}_n$ guesses in exactly three guesses, with the second guess being the first guess
-that has a correct position, is $L_n - n - 1$, where $L_n$ is the $n$-th Lucas number
-($L_0 = 2$, $L_1 = 1$, $L_{k+2} = L_{k+1} + L_k$).
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Theorem 15 (`jis-2026-26.1.7-thm-15`). -/
-public theorem_wanted card_solvedIn_three_firstCorrectAt_two_cyclicShiftLeft (n : ℕ)
-    (hn : 4 ≤ n) :
-    Nat.card {π : Equiv.Perm (Fin n) //
-      PermWordleSolvedIn (cyclicShiftLeftStrategy n) π 3 ∧
-        PermWordleFirstCorrectAt (cyclicShiftLeftStrategy n) π 2} = lucasNumber n - n - 1
 
 /-- **Among inductive strategies, cyclic shift left minimizes three-guess solves first correct at
 guess two.** Let $n \ge 4$ and let $S$ be an inductive strategy of length $n$ whose component

@@ -5,9 +5,11 @@ For $z = x + iy$ with $y > 0$, let
 $$Z(z, s) = \sum_{(m, n) \neq (0, 0)} \frac{y^s}{|m + n z|^{2s}} \qquad (\operatorname{Re} s > 1)$$
 
 be the Epstein zeta function of the binary quadratic form $Q_z(u, v) = y^{-1} |u + v z|^2$ of
-determinant $1$, the sum running over the pairs of integers other than $(0, 0)$, and put
-$\Lambda(z, s) = \pi^{-s} \Gamma(s) Z(z, s)$. Then $Z(z, s)$ continues to a meromorphic function of
-$s \in \mathbb{C}$ whose only pole is a simple pole at $s = 1$, with residue $\pi$, and
+determinant $1$, the sum running over the pairs of integers other than $(0, 0)$. Powers of these
+positive real bases use the real logarithm. Then $Z(z, s)$ continues to a meromorphic function of
+$s \in \mathbb{C}$ whose only pole is a simple pole at $s = 1$, with residue $\pi$.
+The completion $\Lambda(z, s)$ agrees with $\pi^{-s} \Gamma(s) Z(z, s)$ away from $s = 1$ and the
+poles of $\Gamma$. It extends analytically at the negative integers and satisfies, for $s \ne 0, 1$,
 
 $$\Lambda(z, s) = \Lambda(z, 1 - s).$$
 
@@ -36,11 +38,7 @@ $Z(z, s) = \pi^s \Lambda(z, s) / \Gamma(s)$ has no poles other than those of $\L
 [$\Gamma$ has no zeros](../../../Analysis/special-functions/gamma-function/gamma-function-no-zeros.md), while its poles at $0, -1, -2, \dots$ only cancel poles of
 $\Lambda$ or give zeros of $Z$; so the only pole of $Z(z, s)$ is the one at $s = 1$.
 
-## Depends on
-
-This node has no prerequisites.
-
-## Proof depends on
+## Informally uses
 
 - [Theta transformation of a Gaussian sum with a linear term](../../../Analysis/harmonic-analysis/fourier-series/gaussian-sum-with-linear-term-transformation.md), for the one-variable steps of Proposition 7, with the shift $m_2 \operatorname{Re} z$
 - [The complex gamma function has no zeros away from its poles](../../../Analysis/special-functions/gamma-function/gamma-function-no-zeros.md), for passing from $\Lambda(z, s)$ to $Z(z, s)$ without further poles
