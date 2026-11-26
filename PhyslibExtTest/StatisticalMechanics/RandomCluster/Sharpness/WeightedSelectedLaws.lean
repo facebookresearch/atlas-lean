@@ -14,7 +14,8 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedSe
 /-!
 # Tests for `PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedSelectedLaws`
 
-* `weightedOpenTolerance` evaluates to `1/3` at `p = 1/2`, `q = 2`, and is positive;
+* `weightedOpenTolerance_pos`: the open tolerance `FK.reducedDensity` is positive at `p = 1/2`,
+  `q = 2` (its value `1/3` there is tested with `ComparisonHolley`);
 * `weightedPhaseInfinite_hasBoxFiniteEnergy` for the homogeneous one-phase law on `ℤ²`;
 * `weightedSelectedPhaseFiniteEnergy`: the finite-energy predicate holds for that coupling;
 * `coherentTranslatedLaw_covariant`: translated laws are covariant.
@@ -32,12 +33,8 @@ open FKSharpnessWeightedPhaseTransport FKSharpnessWeightedSelectedLaws
 /-- The homogeneous one-phase coupling on `ℤ^d`. -/
 def unitJ (d : ℕ) : Unit → Sym2 (Site d) → ℝ := fun _ _ => 1
 
--- The open tolerance at `p = 1/2`, `q = 2` is `1/3`.
-example : weightedOpenTolerance (1 / 2) 2 = 1 / 3 := by
-  norm_num [weightedOpenTolerance]
-
 -- The open tolerance is positive for `0 < p < 1`, `q ≥ 1`.
-example : 0 < weightedOpenTolerance (1 / 2) 2 :=
+example : 0 < FK.reducedDensity (1 / 2) 2 :=
   weightedOpenTolerance_pos (by norm_num) (by norm_num) (by norm_num)
 
 -- The infinite-volume homogeneous phase law has box finite energy.

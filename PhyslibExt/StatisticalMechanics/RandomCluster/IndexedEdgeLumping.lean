@@ -229,7 +229,7 @@ private lemma indexedBundleSupport_split
 
 /-- Summing a function of the bundle support against the Bernoulli weight on `E` equals summing
 it against the product weight with the effective bundle parameters. -/
-theorem sum_indexedEdgeProduct_bundleSupport
+lemma sum_indexedEdgeProduct_bundleSupport
     (p : Real) (f : E → A) (F : (A → Bool) → Real) :
     ∑ eta : E → Bool,
         indexedEdgeProduct p eta * F (indexedBundleSupport f eta) =
@@ -278,7 +278,7 @@ theorem sum_indexedEdgeProduct_bundleSupport
 
 /-- The lumping identity for functions of the bundle support restricted to the edges of a simple
 graph `G`. -/
-theorem sum_indexedEdgeProduct_restrictActive_bundleSupport
+lemma sum_indexedEdgeProduct_restrictActive_bundleSupport
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (p : Real) (f : E → Sym2 V)

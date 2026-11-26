@@ -280,7 +280,7 @@ lemma prob_mul_expect_hamming_le {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
   nlinarith [hfkg]
 
 /-- `4 P(A) E[d(ω, A)] ≤` the Russo derivative bound (unconditional). -/
-theorem russoHamming {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
+lemma russoHamming {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     4 * prob p A * expect p (fun ω => (hammingToSet A ω : ℝ))
       ≤ deriv (fun p => prob p A) p := by
@@ -452,7 +452,7 @@ lemma gronwall_prob (A : Set (ConfigSpace E)) (c : ℝ) {p₁ p₂ : ℝ} (hp : 
   exact hle
 
 /-- Integrated comparison between `p₁ < p₂` (unconditional). -/
-theorem russoHammingIntegrated {p₁ p₂ : ℝ} (hp1 : 0 < p₁) (hp12 : p₁ < p₂) (hp2 : p₂ < 1)
+lemma russoHammingIntegrated {p₁ p₂ : ℝ} (hp1 : 0 < p₁) (hp12 : p₁ < p₂) (hp2 : p₂ < 1)
     (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
     prob p₁ A
       ≤ prob p₂ A

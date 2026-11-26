@@ -10,6 +10,7 @@ module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.Sharpness.WeightedPhaseTransport
 public import PhyslibExt.StatisticalMechanics.RandomCluster.LimitTranslationInvariance
+public import PhyslibExt.StatisticalMechanics.RandomCluster.ComparisonHolley
 
 /-!
 # Finite energy of the selected weighted laws
@@ -19,7 +20,7 @@ edges, and box finite energy of the infinite-volume phase laws.
 
 ## i. Overview
 
-Opening a single edge changes the measure by at most the factor `1 / weightedOpenTolerance p q`
+Opening a single edge changes the measure by at most the factor `1 / FK.reducedDensity p q`
 (`activeBCProb_singleOpen_preimage_bound`). This passes to cylinders in infinite volume and gives
 `weightedPhaseInfinite_hasBoxFiniteEnergy`. `coherentTranslatedLaw` translates a law, covariantly.
 All results are unconditional for `q ≥ 1`. The `Weighted*` files extend the OSSS sharpness argument
@@ -155,14 +156,10 @@ private lemma finite_singleOpen_preimage_bound
     · rw [Set.indicator_of_notMem hAclosed, zero_mul, add_zero]
       simp
 
-/-- The conditional open probability lower bound `p / (p + q (1 - p))`. -/
-noncomputable def weightedOpenTolerance (p q : Real) : Real :=
-  p / (p + q * (1 - p))
-
 lemma weightedOpenTolerance_pos {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q) :
-    0 < weightedOpenTolerance p q := by
-  unfold weightedOpenTolerance
+    0 < FK.reducedDensity p q := by
+  unfold FK.reducedDensity
   positivity
 
 private lemma activeBCWeight_open_pair
@@ -202,7 +199,7 @@ private lemma activeBCProb_open_pair
     {pf : Sym2 V -> Real} (hpf : forall e, 0 < pf e)
     (hpf1 : forall e, pf e < 1) {q : Real} (hq : 1 <= q)
     (e : G.edgeSet) (omega : ConfigSpace G.edgeSet) :
-    weightedOpenTolerance (pf e.1) q *
+    FK.reducedDensity (pf e.1) q *
         (activeBCProb G C pf q (setOpen e omega) +
           activeBCProb G C pf q (setClosed e omega)) <=
       activeBCProb G C pf q (setOpen e omega) := by
@@ -217,15 +214,15 @@ private lemma activeBCProb_open_pair
   have hpclosed : 0 < 1 - pf e.1 := sub_pos.mpr (hpf1 e.1)
   have hden : 0 < pf e.1 + q * (1 - pf e.1) :=
     add_pos (hpf e.1) (mul_pos hq0 hpclosed)
-  have hleft : weightedOpenTolerance (pf e.1) q *
+  have hleft : FK.reducedDensity (pf e.1) q *
         ((activeBCWeight G C pf q (setOpen e omega) +
           activeBCWeight G C pf q (setClosed e omega)) / activeBCZ G C pf q) =
-      (weightedOpenTolerance (pf e.1) q *
+      (FK.reducedDensity (pf e.1) q *
         (activeBCWeight G C pf q (setOpen e omega) +
           activeBCWeight G C pf q (setClosed e omega))) /
         activeBCZ G C pf q := by ring
   rw [hleft, div_le_div_iff_of_pos_right hZ]
-  unfold weightedOpenTolerance
+  unfold FK.reducedDensity
   rw [div_mul_eq_mul_div, div_le_iff₀ hden]
   nlinarith
 
@@ -235,13 +232,13 @@ lemma activeBCProb_singleOpen_preimage_bound
     {pf : Sym2 V -> Real} (hpf : forall e, 0 < pf e)
     (hpf1 : forall e, pf e < 1) {q : Real} (hq : 1 <= q)
     (e : G.edgeSet) (A : Set (ConfigSpace G.edgeSet)) :
-    weightedOpenTolerance (pf e.1) q *
+    FK.reducedDensity (pf e.1) q *
         (∑ omega, (setOpen e ⁻¹' A).indicator (fun _ => (1 : Real)) omega *
           activeBCProb G C pf q omega) <=
       ∑ omega, A.indicator (fun _ => (1 : Real)) omega *
         activeBCProb G C pf q omega := by
   exact finite_singleOpen_preimage_bound
-    (activeBCProb G C pf q) e (weightedOpenTolerance (pf e.1) q)
+    (activeBCProb G C pf q) e (FK.reducedDensity (pf e.1) q)
     (fun omega => (activeBCProb_pos G C hpf hpf1
       (zero_lt_one.trans_le hq) omega).le)
     (activeBCProb_open_pair G C hpf hpf1 hq e) A
@@ -277,7 +274,7 @@ lemma weightedPhaseFiniteMeasure_singleOpen_bound
     (hq : 1 <= q) (hbeta : 0 < beta)
     (e : (boxGraph d n).edgeSet)
     (A : Set (ConfigSpace (Sym2 (Site d)))) (hA : MeasurableSet A) :
-    weightedOpenTolerance
+    FK.reducedDensity
         (betaParams (phaseJ a) beta (boxActiveEdge d n e)) q *
       ((weightedPhaseFiniteMeasure d n phaseJ a hJ q beta
           (zero_lt_one.trans_le hq) hbeta :
@@ -317,7 +314,7 @@ lemma weightedPhaseInfinite_singleOpen_cylinder_bound
     (eb : Sym2 (boxVerts d N))
     (heb : eb ∈ (boxGraph d N).edgeFinset)
     (S : Set (ConfigSpace (Sym2 (boxVerts d N)))) :
-    weightedOpenTolerance
+    FK.reducedDensity
         (betaParams (phaseJ a) beta (edgeIncl d N eb)) q *
       ((weightedPhaseInfiniteVolume d phaseJ a hJ q beta
           (zero_lt_one.trans_le hq) hbeta :
@@ -333,9 +330,9 @@ lemma weightedPhaseInfinite_singleOpen_cylinder_bound
     (isClopen_boxRestrict_preimage N (setOpen eb ⁻¹' S))
   have hbase := hconv.tendsto_real_of_isClopen
     (isClopen_boxRestrict_preimage N S)
-  have hc : Tendsto (fun _ : Nat => weightedOpenTolerance
+  have hc : Tendsto (fun _ : Nat => FK.reducedDensity
       (betaParams (phaseJ a) beta (edgeIncl d N eb)) q) atTop
-      (nhds (weightedOpenTolerance
+      (nhds (FK.reducedDensity
         (betaParams (phaseJ a) beta (edgeIncl d N eb)) q)) :=
     tendsto_const_nhds
   apply le_of_tendsto_of_tendsto (hc.mul hpre) hbase
@@ -371,7 +368,7 @@ lemma weightedPhaseInfinite_singleOpen_fullCylinder_bound
     (eN : (boxGraph d N).edgeSet)
     (C : Set (ConfigSpace (Sym2 (Site d))))
     (hC : C ∈ measurableCylinders (fun _ : Sym2 (Site d) => Bool)) :
-    weightedOpenTolerance
+    FK.reducedDensity
         (betaParams (phaseJ a) beta (boxActiveEdge d N eN)) q *
       ((weightedPhaseInfiniteVolume d phaseJ a hJ q beta
           (zero_lt_one.trans_le hq) hbeta :
@@ -433,7 +430,7 @@ lemma weightedPhaseInfinite_setOpen_absolutelyContinuous
   let mu : Measure (ConfigSpace (Sym2 (Site d))) :=
     weightedPhaseInfiniteVolume d phaseJ a hJ q beta
       (zero_lt_one.trans_le hq) hbeta
-  let c := weightedOpenTolerance
+  let c := FK.reducedDensity
     (betaParams (phaseJ a) beta (boxActiveEdge d N eN)) q
   have hp : 0 < betaParams (phaseJ a) beta (boxActiveEdge d N eN) := by
     unfold betaParams
@@ -509,7 +506,7 @@ lemma weightedPhaseInfinite_hasBoxFiniteEnergy
   exact hforce (boxEdges d n) (fun _ => id)
 
 /-- `WeightedSelectedPhaseFiniteEnergy` holds. -/
-theorem weightedSelectedPhaseFiniteEnergy
+lemma weightedSelectedPhaseFiniteEnergy
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e)

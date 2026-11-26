@@ -12,6 +12,7 @@ public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusC
 public import PhyslibExt.StatisticalMechanics.RandomCluster.CriticalPoint.TorusConnected
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.JordanEnclosure
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.EulerComponentCount
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # The torus defect takes only the values 0, 1, 2
@@ -463,7 +464,7 @@ lemma torusCellDefect_le_two_unconditional
   torusCellDefect_le_two L G (onsTorusGraph_connected L) hG
 
 /-- The defect is `0`, `1` or `2` (unconditional). -/
-theorem torusCellDefect_classified_unconditional
+lemma torusCellDefect_classified_unconditional
     (L : ℕ) [Fact (2 < L)]
     (G : SimpleGraph (ZMod L × ZMod L))
     (hG : G ≤ onsTorusGraph L) :

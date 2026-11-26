@@ -594,7 +594,7 @@ lemma var_telescope {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ
 /-! ## B. Poincaré inequality -/
 
 /-- `Var f ≤ ∑ Cov(f, ω_e)` under the FKG lattice condition (unconditional). -/
-theorem monotonic_poincare {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
+lemma monotonic_poincare {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     var μ f ≤ ∑ e, cov μ f (coord e) := by

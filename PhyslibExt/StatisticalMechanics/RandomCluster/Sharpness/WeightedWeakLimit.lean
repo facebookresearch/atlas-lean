@@ -330,7 +330,7 @@ lemma lattice_finset_in_positive_box
   exact ⟨N, le_max_left 1 M, tN, htN, hrep⟩
 
 /-- Weak convergence to the selected law. -/
-theorem weightedPhaseFiniteMeasure_tendsto_selected
+lemma weightedPhaseFiniteMeasure_tendsto_selected
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real) (a : P)
     (hJ : forall e, 0 < phaseJ a e) (q beta : Real)

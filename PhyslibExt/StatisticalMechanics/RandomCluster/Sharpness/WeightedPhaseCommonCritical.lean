@@ -566,7 +566,7 @@ lemma covariantWeightedPhasePositivityTransport
       J phase phaseJ hJ hsurj hcov q hq)
 
 /-- All phases have the same critical point (unconditional). -/
-theorem covariant_weighted_phase_common_critical
+lemma covariant_weighted_phase_common_critical
     {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real) (phase : Site d -> P)
     (phaseJ : P -> Sym2 (Site d) -> Real)

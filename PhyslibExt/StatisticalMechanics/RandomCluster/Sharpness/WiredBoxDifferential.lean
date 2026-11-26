@@ -238,7 +238,7 @@ noncomputable def wiredActiveDenom (d n : Nat) (q beta : Real) : Real :=
 
 open Classical in
 /-- The OSSS differential inequality for the wired box (unconditional). -/
-theorem wired_box_differential_inequality
+lemma wired_box_differential_inequality
     (d n : Nat) (hd : 1 <= d) (hn : 1 <= n)
     (q beta beta0 : Real) (hq : 1 <= q) (hbeta : 0 < beta)
     (hbeta0 : beta <= beta0) :

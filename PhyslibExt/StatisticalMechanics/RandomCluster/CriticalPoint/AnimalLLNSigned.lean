@@ -122,7 +122,7 @@ lemma bddBelow_expSeq_signedAnimalValue [IsProbabilityMeasure ρ] (hρ : Integra
 /-! ## B. Limits and signs -/
 
 /-- Almost-sure convergence of the signed value. -/
-theorem signedAnimalValue_lln_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
+lemma signedAnimalValue_lln_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ)
     (c : ℝ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       Tendsto (fun n => signedAnimalValue ω c n / n) atTop
@@ -147,7 +147,7 @@ lemma tendsto_signedAnimalValue_div_animalLimit [IsProbabilityMeasure ρ]
     hω.sub_const c
 
 /-- The signed limit is `animalLimit ρ - c`. -/
-theorem signedAnimalLimit_eq [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
+lemma signedAnimalLimit_eq [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) (c : ℝ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       kingmanLimit shiftEnv (fun n ω => signedAnimalValue ω c n) ω = animalLimit ρ ω - c := by
   filter_upwards [signedAnimalValue_lln_ae hρ c, tendsto_signedAnimalValue_div_animalLimit hρ c]

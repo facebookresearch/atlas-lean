@@ -90,7 +90,7 @@ lemma fk_volume_codeFibre {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (fkMass_sum_eq_one G hp hp1 hq) σ x
 
 /-- The random-cluster mass is monotonic for `q ≥ 1` (unconditional). -/
-theorem fkMass_isMonotonic {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
+lemma fkMass_isMonotonic {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     Monotonic.IsMonotonicMeasure (fkMass G p q) := by
   have hq0 : 0 < q := lt_of_lt_of_le zero_lt_one hq
   exact Monotonic.fkg_implies_monotonic

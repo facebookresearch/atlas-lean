@@ -312,7 +312,7 @@ lemma absorb_cross_complement {θ D κ cR θ' : ℝ}
 
 open Classical in
 /-- The OSSS differential inequality, given the embedding hypotheses. -/
-theorem active_fk_differential_inequality
+lemma active_fk_differential_inequality
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (J : Sym2 V → ℝ) (hJ : ∀ e, 0 < J e)
     (q β β₀ : ℝ) (hq : 1 ≤ q) (hβ : 0 < β) (hββ₀ : β ≤ β₀)

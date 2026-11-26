@@ -89,7 +89,7 @@ lemma bmh_band_seed_half_faithful (n : ℤ) (hn : 0 < n)
 /-! ## B. Box-crossing property -/
 
 /-- BXP for every aspect ratio, conditional on `hpa`, measurability and `h2box`. -/
-theorem bmh_boxCrossingProperty_selfDual_faithful
+lemma bmh_boxCrossingProperty_selfDual_faithful
     (hpa : PositivelyAssociated halfMeasure)
     (hmeasGenH : ∀ a b : ℤ, 0 < a → 0 < b →
       MeasurableSet (horizontalCrossingEvent 0 a 0 b))

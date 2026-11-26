@@ -162,7 +162,7 @@ lemma var_le_avg_adaptive_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ}
   exact le_of_mul_le_mul_left hmain hκpos
 
 /-- `Var f ≤ D ∑ Cov` (FKG and revealment bound only). -/
-theorem var_le_avg_adaptive_reveal_mul_sum_cov_unconditional
+lemma var_le_avg_adaptive_reveal_mul_sum_cov_unconditional
     {μ : ConfigSpace E → ℝ}
     (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) {κ : Type*} [Fintype κ] [Nonempty κ]
@@ -225,12 +225,6 @@ lemma fk_q2_cov_lower_bound_of_adaptive_family_unconditional
   exact fk_q2_cov_lower_bound_of_adaptive_family G hp hp1 Tf hf hidem
     (adaptiveFamilyOSSS_of_causal hpos hμ1 hFKG Tf hf hTf)
     R D hDpos hreach hsum
-
-lemma wired_box_theta_tendsto {d : ℕ} {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
-    Tendsto
-      (fun n => IsingFK.boxBoundaryConnProfile d hp hp1 (by norm_num : (0 : ℝ) < 2) n)
-      atTop (nhds (FK.fkTheta d hp hp1 (by norm_num : (0 : ℝ) < 2) (q := 2))) :=
-  FK.boxBoundaryConnProfile_tendsto hp hp1
 
 end FamilyEqzzzResolution
 end OSSS

@@ -186,7 +186,7 @@ lemma maxActiveInfluence_qOne_corrected [Nonempty G.edgeSet]
   exact he
 
 /-- KKL lower bound on the maximal influence at `p = 1/2` (unconditional). -/
-theorem maxActiveInfluence_half [Nonempty G.edgeSet]
+lemma maxActiveInfluence_half [Nonempty G.edgeSet]
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     ∃ e : G.edgeSet,
       activeProbOf G (fun _ => (1 / 2 : ℝ)) 1 A *
@@ -201,7 +201,7 @@ theorem maxActiveInfluence_half [Nonempty G.edgeSet]
   exact he
 
 /-- The same bound for `p ∈ [ε, 1 - ε]`, conditional on `Hpb`. -/
-theorem maxActiveInfluence_qOne_compactWindow_of_bkkkl_u0
+lemma maxActiveInfluence_qOne_compactWindow_of_bkkkl_u0
     {W : Type} [Fintype W] [DecidableEq W]
     (H : SimpleGraph W) [DecidableRel H.Adj] [Nonempty H.edgeSet]
     {ε p : ℝ} (hε0 : 0 < ε) (hp : p ∈ Set.Icc ε (1 - ε))

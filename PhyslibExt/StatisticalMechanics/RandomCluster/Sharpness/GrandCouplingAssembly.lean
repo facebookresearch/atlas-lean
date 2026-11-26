@@ -641,7 +641,7 @@ lemma grandCoupling_telescope {μ : ConfigSpace E → ℝ} {n : ℕ} (σ : Fin n
     apply Finset.sum_congr rfl; intro t _; rw [abs_sub_comm]
 
 /-- Poincaré inequality `Var f ≤ ∑ Cov(f, ω_e)` for monotonic measures (unconditional). -/
-theorem tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma tree_osss_unconditional {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var μ f ≤ ∑ e, Lindeberg.cov μ f (Lindeberg.coord e) := by

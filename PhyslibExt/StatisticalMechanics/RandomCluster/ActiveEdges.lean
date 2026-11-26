@@ -448,7 +448,7 @@ lemma mean_closedProd_singleton (μ : ConfigSpace E → ℝ)
 
 /-- For an FKG probability vector, `∏_{e ∈ S} (1 - P(e open))` is at most the probability that every
 coordinate of `S` is closed. -/
-theorem prod_one_sub_openMarginal_le_closedProd
+lemma prod_one_sub_openMarginal_le_closedProd
     (μ : ConfigSpace E → ℝ) (hμ0 : 0 ≤ μ) (hμ1 : ∑ ω, μ ω = 1)
     (hFKG : FKGLatticeCondition μ) (S : Finset E) :
     (∏ e ∈ S, (1 - openMarginal μ e)) ≤
@@ -486,7 +486,7 @@ end ClosedProduct
 
 /-- For `q ≥ 1`, the probability that every edge of `S` is closed is at least `∏_{e ∈ S} (1 - p_e)`.
 -/
-theorem active_prod_closed_param_le {pf : Sym2 V → ℝ}
+lemma active_prod_closed_param_le {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 1 ≤ q) (S : Finset G.edgeSet) :
     (∏ e ∈ S, (1 - pf e.1)) ≤
@@ -655,7 +655,7 @@ lemma hasDerivAt_activeMean_beta_sum {J : Sym2 V → ℝ}
 
 /-- Russo-type formula: under `p_e = 1 - exp(-β J_e)`, the `β`-derivative of `P(A)` is `∑_e (J_e /
 p_e) Cov(𝟙_A, ω_e)`. -/
-theorem hasDerivAt_activeProbOf_beta_sum {J : Sym2 V → ℝ}
+lemma hasDerivAt_activeProbOf_beta_sum {J : Sym2 V → ℝ}
     (hJ : ∀ e, 0 < J e) {β : ℝ} (hβ : 0 < β)
     {q : ℝ} (hq : 0 < q) (A : Set (ConfigSpace G.edgeSet)) :
     HasDerivAt (fun b => activeProbOf G (betaParams J b) q A)

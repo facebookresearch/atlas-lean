@@ -655,7 +655,7 @@ lemma zfk_LeftArmEvent_measurableSet (k N : ℕ) :
   intro hxS
   apply MeasurableSet.iUnion
   intro a
-  exact zbd_measurableSet_connectedWithin (zfk_leftSquare N)
+  exact StatMech.RSW.Box.measurableSet_connectedWithin (zfk_leftSquare N)
     ⟨(a : Site 2), StatMech.RSW.Box.leftSide_subset a.2⟩ ⟨x, hxS⟩
 
 lemma zfk_RightArmEvent_measurableSet (k N : ℕ) :
@@ -691,7 +691,7 @@ lemma zfk_RightArmEvent_measurableSet (k N : ℕ) :
   intro hyS
   apply MeasurableSet.iUnion
   intro b
-  exact zbd_measurableSet_connectedWithin (zfk_rightSquare N) ⟨y, hyS⟩
+  exact StatMech.RSW.Box.measurableSet_connectedWithin (zfk_rightSquare N) ⟨y, hyS⟩
     ⟨(b : Site 2), StatMech.RSW.Box.rightSide_subset b.2⟩
 
 /-- A left and a right arm whose infinite clusters are joined inside the matched rectangle. -/
@@ -1134,13 +1134,13 @@ def zfk_FaceVerticalEvent (N : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
     (-(N : ℤ)) (N : ℤ) (-(N : ℤ) - 1) (N : ℤ)
 
 /-- The face-dual vertical crossing event of the matched rectangle. -/
-def zfk_FaithfulDualVerticalEvent (N : ℕ) :
+noncomputable def zfk_FaithfulDualVerticalEvent (N : ℕ) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   fci_faceDualConfig ⁻¹' zfk_FaceVerticalEvent N
 
 lemma zfk_FaithfulDualVerticalEvent_measurableSet (N : ℕ) :
     MeasurableSet (zfk_FaithfulDualVerticalEvent N) := by
-  exact (StatMech.Universality.measurableSet_verticalCrossingEvent _ _ _ _).preimage
+  exact (StatMech.RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _).preimage
     fci_faceDualConfig_measurePreserving.measurable
 
 lemma zfk_faithfulDualVertical_prob_eq_matched (N : ℕ) :
@@ -1151,12 +1151,12 @@ lemma zfk_faithfulDualVertical_prob_eq_matched (N : ℕ) :
   have hmeasSwap : MeasurableSet
       (StatMech.RSW.Box.horizontalCrossingEvent
         (-(N : ℤ) - 1) (N : ℤ) (-(N : ℤ)) (N : ℤ)) :=
-    StatMech.Universality.measurableSet_horizontalCrossingEvent _ _ _ _
+    StatMech.RSW.Box.measurableSet_horizontalCrossingEvent _ _ _ _
   calc
     halfMeasure.real (zfk_FaithfulDualVerticalEvent N) =
         halfMeasure.real (zfk_FaceVerticalEvent N) := by
       exact fci_faceDualConfig_measurePreserving.measureReal_preimage
-        (StatMech.Universality.measurableSet_verticalCrossingEvent _ _ _ _).nullMeasurableSet
+        (StatMech.RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _).nullMeasurableSet
     _ = halfMeasure.real
         (StatMech.RSW.Box.horizontalCrossingEvent
           (-(N : ℤ) - 1) (N : ℤ) (-(N : ℤ)) (N : ℤ)) := by

@@ -68,7 +68,7 @@ def zih_centerShift (x : Site 2) : Multiplicative (Site 2) :=
 
 /-- The event that the cluster of `x` reaches distance `m`: the shifted crossing event of the box of
   radius `m`. -/
-def zih_clusterApprox (x : Site 2) (m : ℕ) :
+noncomputable def zih_clusterApprox (x : Site 2) (m : ℕ) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   (ConfigSpace.shift (zih_centerShift x)) ⁻¹' crossingEvent 2 (m + 1)
 
@@ -160,7 +160,7 @@ lemma zih_leftArmFrom_dependsOn (x : Site 2) (N : ℕ) :
 
 /-- The finite approximation of the left arm event: a central site reaches distance `m` and the left
   side of the square. -/
-def zih_LeftArmApprox (k N m : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
+noncomputable def zih_LeftArmApprox (k N m : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   ⋃ x : zfk_leftCentralFinset k,
     zih_clusterApprox (x : Site 2) m ∩ {omega | zfk_LeftArmFrom omega x N}
 
@@ -263,7 +263,7 @@ lemma zih_rightArmFrom_dependsOn (y : Site 2) (N : ℕ) :
   simp only [Set.mem_ofPred_eq, hG]
 
 /-- The finite approximation of the right arm event. -/
-def zih_RightArmApprox (k N m : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
+noncomputable def zih_RightArmApprox (k N m : ℕ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   ⋃ y : zfk_rightCentralFinset k,
     zih_clusterApprox (y : Site 2) m ∩ {omega | zfk_RightArmFrom omega y N}
 

@@ -202,7 +202,7 @@ lemma pointwise_di_bernoulli {n : ℕ} (hn : 1 ≤ n)
 
 open Classical in
 /-- Exponential decay, conditional on the translation comparison. -/
-theorem osss_fk_sharpness_final {n : ℕ} (hn : 1 ≤ n)
+lemma osss_fk_sharpness_final {n : ℕ} (hn : 1 ≤ n)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))
     (hadj : ∀ e, (hypercubicLattice d).Adj (endU e) (endV e))

@@ -198,56 +198,6 @@ lemma zbd_iUnion_connectedWithinBox {d : ℕ} (x y : Site d) :
     obtain ⟨n, hx, hy, hwithin⟩ := zbd_connectedWithin_box_of_connected omega hxy
     exact Set.mem_iUnion.mpr ⟨n, hx, hy, hwithin⟩
 
-lemma zbd_measurableSet_connectedWithin {d : ℕ} (S : Set (Site d)) (x y : S) :
-    MeasurableSet {omega : ConfigSpace (Sym2 (Site d)) |
-      ConnectedWithin d omega S x y} := by
-  classical
-  have hchain : ∀ l : List S,
-      MeasurableSet {omega : ConfigSpace (Sym2 (Site d)) |
-        List.IsChain (openSubgraphInduce d omega S).Adj l} := by
-    intro l
-    induction l with
-    | nil => simp
-    | cons a l ih =>
-        cases l with
-        | nil => simp
-        | cons b l' =>
-            have heq :
-                {omega : ConfigSpace (Sym2 (Site d)) |
-                    List.IsChain (openSubgraphInduce d omega S).Adj (a :: b :: l')}
-                  = {omega | (openSubgraph d omega).Adj (a : Site d) (b : Site d)} ∩
-                    {omega | List.IsChain (openSubgraphInduce d omega S).Adj (b :: l')} := by
-              ext omega
-              simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, List.isChain_cons_cons,
-                openSubgraphInduce_adj]
-            rw [heq]
-            exact (measurableSet_openAdj (a : Site d) (b : Site d)).inter ih
-  have heq :
-      {omega : ConfigSpace (Sym2 (Site d)) | ConnectedWithin d omega S x y} =
-        ⋃ l : List S,
-          ({omega | List.IsChain (openSubgraphInduce d omega S).Adj (x :: l)} ∩
-            if (x :: l).getLast (List.cons_ne_nil _ _) = y then Set.univ else ∅) := by
-    ext omega
-    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, Set.mem_inter_iff]
-    unfold ConnectedWithin
-    rw [SimpleGraph.reachable_iff_reflTransGen]
-    constructor
-    · intro h
-      obtain ⟨l, hl, hlast⟩ := List.exists_isChain_cons_of_relationReflTransGen h
-      exact ⟨l, hl, by simp [hlast]⟩
-    · rintro ⟨l, hl, hlast⟩
-      have heqLast : (x :: l).getLast (List.cons_ne_nil _ _) = y := by
-        by_contra hne
-        simp [hne] at hlast
-      exact List.relationReflTransGen_of_exists_isChain_cons l hl heqLast
-  rw [heq]
-  apply MeasurableSet.iUnion
-  intro l
-  apply (hchain (x :: l)).inter
-  split_ifs
-  · exact MeasurableSet.univ
-  · exact MeasurableSet.empty
-
 lemma zbd_connectedWithinBox_measurableSet {d : ℕ} (x y : Site d) (n : ℕ) :
     MeasurableSet (zbd_connectedWithinBox x y n) := by
   classical
@@ -263,7 +213,7 @@ lemma zbd_connectedWithinBox_measurableSet {d : ℕ} (x y : Site d) (n : ℕ) :
         · intro h
           exact ⟨hx, hy, h⟩
       rw [heq]
-      exact zbd_measurableSet_connectedWithin (box d n) ⟨x, hx⟩ ⟨y, hy⟩
+      exact StatMech.RSW.Box.measurableSet_connectedWithin (box d n) ⟨x, hx⟩ ⟨y, hy⟩
     · have : zbd_connectedWithinBox x y n = ∅ := by
         ext omega
         simp [zbd_connectedWithinBox, hy]
@@ -865,7 +815,7 @@ lemma zbd_centeredMerge_subset_horizontalCrossing
 
 /-- The geometric data for Zhang's argument built from side events and the two-scale merge
   bounds. -/
-def zbd_geometricData_of_twoScale
+noncomputable def zbd_geometricData_of_twoScale
     {A B : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
     (L R : ℕ → Set (Site 2)) (M : ℕ → ℕ)
     (hbaseInc : ∀ n, IsIncreasing (zbd_sideHasInfinite (L n)))

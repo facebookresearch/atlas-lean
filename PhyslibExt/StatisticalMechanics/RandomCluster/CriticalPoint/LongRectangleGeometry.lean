@@ -138,11 +138,11 @@ lemma bdcLongRectangleEvent_isIncreasing (alpha n : ℕ)
 lemma bdcLongRectangleEvent_measurableSet (alpha n : ℕ)
     (k : BdcLongRectangleIndex alpha) :
     MeasurableSet (bdcLongRectangleEvent alpha n k) := by
-  exact StatMech.Universality.measurableSet_verticalCrossingEvent _ _ _ _
+  exact StatMech.RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _
 
 lemma bdcLongRectangleBaseEvent_measurableSet (alpha n : ℕ) :
     MeasurableSet (bdcLongRectangleBaseEvent alpha n) := by
-  exact StatMech.Universality.measurableSet_verticalCrossingEvent _ _ _ _
+  exact StatMech.RSW.Box.measurableSet_verticalCrossingEvent _ _ _ _
 
 lemma bdcLongRectangleEvent_probability_eq
     (mu : Measure (ConfigSpace (Sym2 (Site 2))))
@@ -223,7 +223,7 @@ def bdcLongRectangleOriginIndex (alpha : ℕ) (ha : 0 < alpha) :
   simp [bdcLongRectangleIndices]
 
 /-- Polynomial deficit bound, conditional on `hshift` and `hpa`. -/
-theorem bdcLongRectangle_polynomial_deficit
+lemma bdcLongRectangle_polynomial_deficit
     (mu : Measure (ConfigSpace (Sym2 (Site 2)))) [IsProbabilityMeasure mu]
     (hpa : PositivelyAssociated mu)
     (hshift : ∀ t : Site 2, MeasurePreserving (translateConfig t) mu mu)

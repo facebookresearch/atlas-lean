@@ -1732,7 +1732,7 @@ lemma rawInterval_inter_toReal_eq_overlapWeight (mu : ConfigSpace E → ℝ)
         constructor <;> constructor <;> linarith
       · rintro ⟨⟨hB0, hB1⟩, hT0, hT1⟩
         exact ⟨⟨by linarith, by linarith⟩, by linarith, by linarith⟩
-  have hm := measure_congr hae
+  have hm := measure_congr (Filter.eventuallyEqSet_iff'.mpr hae)
   change volume
     ((GrandCoupling.rawInterval mu sigma base i ∩
       GrandCoupling.rawInterval mu sigma target i) ∩ Set.Icc (0 : ℝ) 1) =
@@ -1783,7 +1783,7 @@ lemma rawInterval_tripleInter_toReal_eq_tripleOverlapWeight
       · rintro ⟨⟨⟨hB0, hB1⟩, hL0, hL1⟩, hR0, hR1⟩
         exact ⟨⟨⟨by linarith, by linarith⟩, by linarith⟩,
           by linarith, by linarith⟩
-  have hm := measure_congr hae
+  have hm := measure_congr (Filter.eventuallyEqSet_iff'.mpr hae)
   change volume
     ((GrandCoupling.rawInterval mu sigma base i ∩
       GrandCoupling.rawInterval mu sigma left i ∩

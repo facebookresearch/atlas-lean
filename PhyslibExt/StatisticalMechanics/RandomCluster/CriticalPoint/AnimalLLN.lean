@@ -184,7 +184,7 @@ lemma greedyAnimalValue_bddBelow {w : V → ℝ} (hw : ∀ v, 0 ≤ w v) (o : V)
   exact div_nonneg (greedyAnimalValue_nonneg hw o _) (Nat.cast_nonneg n)
 
 /-- Convergence of the normalized greedy animal value. -/
-theorem greedyAnimalValue_lln {w : V → ℝ} (hw : ∀ v, 0 ≤ w v) (o : V) :
+lemma greedyAnimalValue_lln {w : V → ℝ} (hw : ∀ v, 0 ≤ w v) (o : V) :
     Tendsto (fun n => greedyAnimalValue w o (n + 1) / n) atTop
       (𝓝 (greedyAnimalValue_succ_subadditive hw o).lim) :=
   (greedyAnimalValue_succ_subadditive hw o).tendsto_lim (greedyAnimalValue_bddBelow hw o)

@@ -69,7 +69,7 @@ lemma osss_onestep_cov_bound {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ
   exact adsD_adaptStepCovBound_of_condBBB hpos hmono σ hf hfC hBBB
 
 /-- OSSS for monotonic measures (unconditional). -/
-theorem osss_monotone_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma osss_monotone_sharp {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E)
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :
     Lindeberg.var μ f

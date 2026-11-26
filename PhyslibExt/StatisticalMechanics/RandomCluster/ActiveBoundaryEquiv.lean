@@ -142,7 +142,7 @@ lemma card_inactive_config :
 
 /-- The boundary-conditioned partition function is `2^{#inactive}` times the active partition
 function. -/
-theorem activeBCZ_factorization (p q : Real) :
+lemma activeBCZ_factorization (p q : Real) :
     bcZ G C p q = 2 ^ ecz_NE G * activeBCZ G C (fun _ => p) q := by
   rw [bcZ, ← Equiv.sum_comp (activeSplitEquiv G).symm
     (fun omega => bcWeight G C p q omega), Fintype.sum_prod_type]
@@ -185,7 +185,7 @@ lemma activeBCNumer_factorization (p q : Real)
 
 /-- The active expectation of `f` equals the expectation of `f ∘ restrictActive` under the
 boundary-conditioned measure. -/
-theorem activeBCMean_eq_bcProb_lift {p q : Real}
+lemma activeBCMean_eq_bcProb_lift {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (f : ConfigSpace G.edgeSet -> Real) :
     activeBCMean G C (fun _ => p) q f =
@@ -222,7 +222,7 @@ lemma activeBCProbOf_eq_bcProb_preimage {p q : Real}
 
 /-- With the boundary-clique wiring, the active expectation of `f` equals the expectation of `f ∘
 restrictActive` under the wired measure. -/
-theorem activeBCMean_boundaryClique_eq_wired
+lemma activeBCMean_boundaryClique_eq_wired
     (bdry : V -> Prop) [DecidablePred bdry]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (f : ConfigSpace G.edgeSet -> Real) :

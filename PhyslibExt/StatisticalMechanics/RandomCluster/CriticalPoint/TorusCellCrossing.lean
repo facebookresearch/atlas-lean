@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
+import Mathlib.Data.ZMod.Basic
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Edges of the discrete torus and the cell crossing

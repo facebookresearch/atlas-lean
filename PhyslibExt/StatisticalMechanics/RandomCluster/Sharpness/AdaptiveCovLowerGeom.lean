@@ -234,7 +234,7 @@ variable {W : Type*} [Fintype W] [DecidableEq W]
 
 open Classical in
 /-- The `q = 2` random-cluster case. -/
-theorem fk_q2_hcov_lattice
+lemma fk_q2_hcov_lattice
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {edge : Sym2 W → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : Sym2 W → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))

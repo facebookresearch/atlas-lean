@@ -237,7 +237,7 @@ lemma acl_fk_q2_hcov_of_translationComparison
   exact hmain
 
 /-- `Var ≤ ∑ Cov` for the crossing indicator. -/
-theorem acl_fk_q2_poincare_adaptive
+lemma acl_fk_q2_poincare_adaptive
     (G : SimpleGraph W) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {edge : Sym2 W → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : Sym2 W → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))

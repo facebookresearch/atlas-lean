@@ -58,7 +58,7 @@ open StatMech.OSSS.MonotonicFK
 /-! ## A. The q = 2 OSSS theorem -/
 
 /-- `Var f ≤ ∑ revealAdapt(e) · Cov(f, ω_e)` for monotone `0 ≤ f ≤ 1` (unconditional). -/
-theorem oqu_fk_q2_sharp {V : Type*} [Fintype V] [DecidableEq V]
+lemma oqu_fk_q2_sharp {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {n : ℕ} (σ : Fin n ≃ Sym2 V) {f : ConfigSpace (Sym2 V) → ℝ}
     (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1) :

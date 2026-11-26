@@ -323,7 +323,7 @@ lemma maxInfl_pbiased_corrected [Nonempty E]
         _ = δ := by field_simp [hn.ne']
 
 /-- Corrected KKL bound (unconditional). -/
-theorem maxInfluence_pbiased_corrected [Nonempty E]
+lemma maxInfluence_pbiased_corrected [Nonempty E]
     {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (A : Set (ConfigSpace E)) :
     ∃ e : E,
       StatMech.prob p A * (1 - StatMech.prob p A)

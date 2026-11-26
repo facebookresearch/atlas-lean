@@ -152,7 +152,7 @@ lemma maxInfl_half_ge_var_mul_log_card_div_card [Nonempty E]
       exact (div_le_iff₀ hn).2 (by simpa [mul_comm] using hmain)
 
 /-- KKL lower bound at `p = 1/2` (unconditional). -/
-theorem maxInfluence_half [Nonempty E]
+lemma maxInfluence_half [Nonempty E]
     (A : Set (ConfigSpace E)) :
     ∃ e : E,
       StatMech.prob (1 / 2 : ℝ) A * (1 - StatMech.prob (1 / 2 : ℝ) A)

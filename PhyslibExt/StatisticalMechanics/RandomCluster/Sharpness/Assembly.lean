@@ -176,7 +176,7 @@ lemma fk_q2_crossing_decay_poincare (G : SimpleGraph V) [DecidableRel G.Adj]
   rwa [he] at h
 
 /-- Decay and mean-field bounds, conditional on the supplied differential inequality and limits. -/
-theorem fk_sharpness_both (G : SimpleGraph V) [DecidableRel G.Adj]
+lemma fk_sharpness_both (G : SimpleGraph V) [DecidableRel G.Adj]
     {q : ℝ} (hq : 1 ≤ q) (A : Set (ConfigSpace (Sym2 V)))
     (a b κ : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1) (hκ : 0 < κ)
     (hdi : ∀ x ∈ Icc a b,

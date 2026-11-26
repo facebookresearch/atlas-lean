@@ -335,7 +335,7 @@ lemma torusAmbientProbability_selfDual_ratio_values
     rw [hw, mul_div_cancel_left₀ _ hWD]
 
 /-- The probability ratio is `q⁻¹`, `1` or `q`. -/
-theorem torusAmbientProbability_selfDual_ratio_mem
+lemma torusAmbientProbability_selfDual_ratio_mem
     (L : ℕ) [Fact (2 < L)] (omega : TorusAmbientConfig L)
     {q : ℝ} (hq1 : 1 ≤ q) :
     let ratio := torusAmbientProbability L (selfDualPoint q) q omega /

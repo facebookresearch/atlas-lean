@@ -73,7 +73,7 @@ lemma ofa_fk_q2_differential_inequality (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-- Decay, mean-field bound and threshold identification, conditional on `hbridge`, `hθub`, the
   mean-field limits, `hP1` and `hP2`. -/
-theorem ofa_fk_q2_sharpness (G : SimpleGraph V) [DecidableRel G.Adj]
+lemma ofa_fk_q2_sharpness (G : SimpleGraph V) [DecidableRel G.Adj]
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A)
     (a b κ : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1) (hκ : 0 < κ)
     (hbridge : ∀ x ∈ Icc a b,

@@ -539,7 +539,7 @@ lemma torus_concreteSquareCrossing_dual_cover
     L n hnL omega hsquare
 
 /-- `1 / (1 + q) ≤ P(horizontal crossing)` at `p_sd(q)` (unconditional). -/
-theorem torus_concreteSquareCrossing_ge_one_div_one_add_q_unconditional
+lemma torus_concreteSquareCrossing_ge_one_div_one_add_q_unconditional
     (L : ℕ) [Fact (2 < L)] (n : ℕ) (hn : 1 ≤ n) (hnL : n < L)
     {q : ℝ} (hq1 : 1 ≤ q) :
     1 / (1 + q) ≤

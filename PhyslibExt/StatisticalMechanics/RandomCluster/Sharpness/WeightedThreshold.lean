@@ -1113,7 +1113,7 @@ lemma weightedPhaseSum_subcritical_decay_of_threshold
   exact (div_le_div_iff_of_pos_right hc).mp h
 
 /-- Exponential decay below the threshold (unconditional). -/
-theorem weightedPhasePhysical_subcritical_decay_of_threshold
+lemma weightedPhasePhysical_subcritical_decay_of_threshold
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)
@@ -1331,7 +1331,7 @@ lemma weightedThreshold_eq_selectedPhaseEnvelopeCritical
         q beta0 hq hne hcut a)
 
 /-- Threshold = critical point, conditional on `hhigh`. -/
-theorem weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness
+lemma weightedThreshold_eq_selectedPhaseCritical_of_highBetaWitness
     (d : Nat) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin Jmax : Real) (hJmin : 0 < Jmin)

@@ -173,7 +173,7 @@ lemma activeCov_eq_marginal_mul_influence {p q : ℝ}
   field_simp [hm0.ne', (sub_pos.mpr hm1).ne']
 
 /-- Derivative ≥ `(ε ^ 2 / q) ·` total influence (unconditional). -/
-theorem active_deriv_ge_total_influence {p q ε : ℝ} (hε : 0 < ε)
+lemma active_deriv_ge_total_influence {p q ε : ℝ} (hε : 0 < ε)
     (hp0 : ε ≤ p) (hp1 : p ≤ 1 - ε) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     (ε ^ 2 / q) * (∑ e : G.edgeSet, activeInfluence G p q A e) ≤

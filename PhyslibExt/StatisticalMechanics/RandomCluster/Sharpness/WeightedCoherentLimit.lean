@@ -478,7 +478,7 @@ lemma weightedPhaseWiredTheta_tendsto_infiniteTheta
       filter_upwards [eventually_ge_atTop 1] with k hk using hshell_le k hk
 
 /-- Diagonal tail convergence for `q ≥ 1` (unconditional). -/
-theorem weightedPhaseDiagonalTailConvergence_of_one_le
+lemma weightedPhaseDiagonalTailConvergence_of_one_le
     (d : Nat) {P : Type*}
     (phaseJ : P -> Sym2 (Site d) -> Real)
     (hJ : forall a e, 0 < phaseJ a e) (q : Real) (hq : 1 <= q) :

@@ -1757,7 +1757,7 @@ lemma crr_leftFillInteriorArc
   exact (w.adj_of_mem_edges hfg').2
 
 /-- The combinatorial input, proved for every configuration without horizontal crossing. -/
-theorem crr_leftFillFrameArcOrder
+lemma crr_leftFillFrameArcOrder
     (omega : ConfigSpace (Sym2 (Site 2))) (n : Int)
     (hnoH : ¬ HorizontalCrossing omega 0 n 0 n) :
     crr_LeftFillFrameArcOrder omega n := by
@@ -1919,7 +1919,7 @@ def crr_FaceRectVerticalEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
 
 /-- The preimage of the face-rectangle vertical crossing event under the face-dual configuration
   map. -/
-def crr_FaceDualRectEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
+noncomputable def crr_FaceDualRectEvent (n : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   fci_faceDualConfig ⁻¹' crr_FaceRectVerticalEvent n
 
 lemma crr_faceDualRect_half_law (n : ℤ)
@@ -1974,7 +1974,7 @@ lemma crr_square_half_of_frameArcOrder (n : ℤ) (hn : 0 < n)
   linarith
 
 /-- `1/2 ≤ P(horizontal crossing of [0, n]²)` at `p = 1/2` (measurability hypotheses only). -/
-theorem crr_square_half (n : ℤ) (hn : 0 < n)
+lemma crr_square_half (n : ℤ) (hn : 0 < n)
     (hmeasH : MeasurableSet (horizontalCrossingEvent 0 n 0 n))
     (hmeasFace : MeasurableSet (crr_FaceRectVerticalEvent n))
     (hmeasThin : MeasurableSet (horizontalCrossingEvent (-1) n 0 (n - 1))) :

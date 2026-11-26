@@ -188,7 +188,7 @@ lemma activeBCWeight_logSupermodular {pf : Sym2 V -> Real}
           q ^ numClustersBC G C (extendActive G (omega ⊓ eta))) := by ring
 
 /-- For `q ≥ 1` the boundary-wired active measure satisfies the FKG lattice condition. -/
-theorem activeBCProb_FKGLatticeCondition {pf : Sym2 V -> Real}
+lemma activeBCProb_FKGLatticeCondition {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q) :
     FKGLatticeCondition (activeBCProb G C pf q) := by
@@ -252,7 +252,7 @@ lemma activeBC_openMarginal_le_param {pf : Sym2 V -> Real}
 
 /-- For `q ≥ 1`, the probability that every edge of `S` is closed is at least `∏_{e ∈ S} (1 - p_e)`.
 -/
-theorem activeBC_prod_closed_param_le {pf : Sym2 V -> Real}
+lemma activeBC_prod_closed_param_le {pf : Sym2 V -> Real}
     (hpf : forall e, 0 < pf e) (hpf1 : forall e, pf e < 1)
     {q : Real} (hq : 1 <= q) (S : Finset G.edgeSet) :
     S.prod (fun e => 1 - pf e.1) <=
@@ -415,7 +415,7 @@ lemma hasDerivAt_activeBCMean_beta_sum {J : Sym2 V -> Real}
 
 /-- Russo-type formula: under `p_e = 1 - exp(-β J_e)`, the `β`-derivative of `P(A)` is `∑_e (J_e /
 p_e) Cov(𝟙_A, ω_e)`. -/
-theorem hasDerivAt_activeBCProbOf_beta_sum {J : Sym2 V -> Real}
+lemma hasDerivAt_activeBCProbOf_beta_sum {J : Sym2 V -> Real}
     (hJ : forall e, 0 < J e) {beta : Real} (hbeta : 0 < beta)
     {q : Real} (hq : 0 < q) (A : Set (ConfigSpace G.edgeSet)) :
     HasDerivAt (fun b => activeBCProbOf G C (betaParams J b) q A)

@@ -354,7 +354,7 @@ lemma weightedOuterInnerConn_le_phase_strict
     _ = weightedPhaseWiredTheta d phaseJ (phase x) q beta k := hprofile.symm
 
 /-- Strict off-centre domination (unconditional). -/
-theorem weightedPhaseOffCentreStrict_of_covariant
+lemma weightedPhaseOffCentreStrict_of_covariant
     (d n : Nat) {P : Type*}
     (J : Sym2 (Site d) -> Real) (hJ : forall e, 0 < J e)
     (phase : Site d -> P) (phaseJ : P -> Sym2 (Site d) -> Real)

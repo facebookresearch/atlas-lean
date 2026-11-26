@@ -388,10 +388,10 @@ theorem zfe_criticalProbability_eq_half :
   apply zih_criticalProbability_eq_half_of_faithful_exclusive
     zfe_faithfulMatchedExclusive
   · intro a b _ha _hb
-    exact StatMech.Universality.measurableSet_horizontalCrossingEvent 0 a 0 b
+    exact StatMech.RSW.Box.measurableSet_horizontalCrossingEvent 0 a 0 b
   · intro n _hn
-    exact StatMech.Universality.measurableSet_verticalCrossingEvent 0 (n - 1) (-1) n
+    exact StatMech.RSW.Box.measurableSet_verticalCrossingEvent 0 (n - 1) (-1) n
   · intro n _hn
-    exact StatMech.Universality.measurableSet_horizontalCrossingEvent (-1) n 0 (n - 1)
+    exact StatMech.RSW.Box.measurableSet_horizontalCrossingEvent (-1) n 0 (n - 1)
 
 end StatMech.TwoDim

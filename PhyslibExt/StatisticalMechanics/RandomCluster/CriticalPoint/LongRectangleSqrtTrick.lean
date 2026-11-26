@@ -90,7 +90,7 @@ lemma finite_complUnion_fkg_bound {ι E : Type*}
           simp
 
 /-- The square-root trick. -/
-theorem finite_symmetric_sqrt_trick {ι E : Type*}
+lemma finite_symmetric_sqrt_trick {ι E : Type*}
     (μ : Measure (ConfigSpace E)) [IsProbabilityMeasure μ]
     (hpa : PositivelyAssociated μ) (s : Finset ι)
     (A : ι → Set (ConfigSpace E)) {i₀ : ι} (hi₀ : i₀ ∈ s)

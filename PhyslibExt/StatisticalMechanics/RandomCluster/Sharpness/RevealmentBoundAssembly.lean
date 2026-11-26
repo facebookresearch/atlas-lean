@@ -117,7 +117,7 @@ lemma var_le_revealBound_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω
   exact mul_le_mul_of_nonneg_right (hD e) hcov
 
 /-- `θ(1 - θ) / D ≤ ∑ Cov`, conditional on `revealment ≤ D`. -/
-theorem os_cov_lower_bound_assembled {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma os_cov_lower_bound_assembled {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (hmono : IsMonotonicMeasure μ)
     {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f)
     (hf1 : ∀ ω, f ω ≤ 1) (hidem : ∀ ω, f ω * f ω = f ω)

@@ -289,7 +289,7 @@ lemma hbg_fk_q2_subcritical_decay_connEvent (x y : V)
     hθub
 
 /-- Sharpness package, conditional on `hθub`, the mean-field limits, `hP1` and `hP2`. -/
-theorem hbg_fk_q2_sharpness_connEvent (x y : V)
+lemma hbg_fk_q2_sharpness_connEvent (x y : V)
     (a b κ : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1) (hκ : 0 < κ)
     (hθub : ∀ s ∈ Icc a b, fkProbOf G s 2 (connEvent G x y) ≤ 1 - κ)
     (T : ℕ → ℝ → ℝ) (mseq : ℕ → ℝ) (β' β fβ fβ' m : ℝ)

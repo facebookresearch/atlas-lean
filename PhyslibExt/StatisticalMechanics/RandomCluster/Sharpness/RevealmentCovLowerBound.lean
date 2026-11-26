@@ -70,7 +70,7 @@ variable {E : Type*} [Fintype E] [DecidableEq E]
 /-! ## A. Averaged OSSS -/
 
 /-- `Var f ≤ (average revealment) ∑ Cov` (unconditional). -/
-theorem var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
+lemma var_le_avg_reveal_mul_sum_cov {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω)
     (hμ1 : ∑ ω, μ ω = 1) (hFKG : FKGLatticeCondition μ) (hmono : IsMonotonicMeasure μ)
     {κ : Type*} [Fintype κ] [Nonempty κ] {m : ℕ} (σf : κ → (Fin m ≃ E))
     {f : ConfigSpace E → ℝ} (hf : Monotone f) (hf0 : 0 ≤ f) (hf1 : ∀ ω, f ω ≤ 1)

@@ -265,7 +265,7 @@ lemma adaptiveCode_fibre_mass (μ : ConfigSpace E → ℝ)
     ((Vcube n) {u | adaptiveCode μ σ u = x}).toReal = μ x := by
   have hset : {u | adaptiveCode μ σ u = x} =ᵐ[Vcube n] adaptiveFibre μ σ x := by
     filter_upwards [adaptiveCode_eq_iff_ae μ hpos hμ1 σ hσ x] with u hu
-    exact propext hu
+    exact hu
   rw [measure_congr hset]
   exact vcube_adaptiveFibre μ hpos hμ1 σ x
 

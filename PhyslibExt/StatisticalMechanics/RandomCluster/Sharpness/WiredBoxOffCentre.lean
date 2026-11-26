@@ -1252,7 +1252,7 @@ lemma wired_outer_inner_differential_uniform
 
 open Classical in
 /-- The sharp differential inequality (unconditional). -/
-theorem wired_outer_inner_differential_uniform_box
+lemma wired_outer_inner_differential_uniform_box
     (d n : Nat) (hn : 1 <= n) (q beta beta0 : Real)
     (hq : 1 <= q) (hbeta : 0 < beta) (hbeta0 : beta <= beta0) :
     Real.exp (-beta0) ^ (2 * d) *

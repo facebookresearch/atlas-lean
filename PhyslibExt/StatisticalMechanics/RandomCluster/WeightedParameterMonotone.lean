@@ -187,7 +187,7 @@ lemma bcWeightW_cross_params_of_nonneg
 
 /-- For `0 ≤ pf1 ≤ pf2 < 1` pointwise and `q ≥ 1`, every increasing event is at least as likely
 under the inhomogeneous random-cluster measure with parameters `pf2` as with `pf1`. -/
-theorem bcProbW_mono_params_of_nonneg
+lemma bcProbW_mono_params_of_nonneg
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {pf1 pf2 : Sym2 V -> Real}
     (hpf1 : forall e, 0 <= pf1 e) (hpf1' : forall e, pf1 e < 1)

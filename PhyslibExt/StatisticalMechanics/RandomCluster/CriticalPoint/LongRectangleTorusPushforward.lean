@@ -566,7 +566,7 @@ lemma torusPlanarPushforward_allShiftInvariant_of_torus
     L hp hp1 hq t (hshift t)
 
 /-- The planar pushforward is translation invariant. -/
-theorem torusPlanarPushforward_allShiftInvariant
+lemma torusPlanarPushforward_allShiftInvariant
     (L : ℕ) [Fact (2 < L)] {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     ∀ t : Site 2, MeasurePreserving (translateConfig t)

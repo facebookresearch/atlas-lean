@@ -159,7 +159,7 @@ lemma torusCell_numClusters_dualConfig_dualConfig
   exact hcard.trans hshift
 
 /-- Defect of `ω` plus defect of its dual equals `2`. -/
-theorem torusCellDefect_add_dualConfig (L : ℕ) [Fact (2 < L)]
+lemma torusCellDefect_add_dualConfig (L : ℕ) [Fact (2 < L)]
     (omega : ConfigSpace (Sym2 (ZMod L × ZMod L))) :
     torusCellDefect L (FK.openSub (onsTorusGraph L) omega) +
       torusCellDefect L

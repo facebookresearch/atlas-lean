@@ -502,7 +502,7 @@ lemma hcov_reindexed_openCross_mass
 
 open Classical in
 /-- The OSSS differential inequality on finite graphs. -/
-theorem activeBC_openCross_differential_inequality
+lemma activeBC_openCross_differential_inequality
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (J : Sym2 V → Real) (hJ : ∀ e, 0 < J e)

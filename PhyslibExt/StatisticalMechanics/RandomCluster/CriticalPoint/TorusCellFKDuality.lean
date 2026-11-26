@@ -132,7 +132,7 @@ lemma torusCell_weight_duality_signed (L : ℕ) [Fact (2 < L)]
       ring
 
 /-- The same for random-cluster weights of configurations. -/
-theorem torusCell_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
+lemma torusCell_fkWeight_duality_signed (L : ℕ) [Fact (2 < L)]
     (ω : ConfigSpace (Sym2 (ZMod L × ZMod L)))
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q) :
     FK.fkWeight (onsTorusGraph L) p q ω *

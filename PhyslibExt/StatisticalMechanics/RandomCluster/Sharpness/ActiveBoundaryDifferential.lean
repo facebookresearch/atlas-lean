@@ -208,7 +208,7 @@ lemma activeBC_fk_differential_logistic
 
 open Classical in
 /-- The OSSS differential inequality, given the geometric embedding hypotheses. -/
-theorem activeBC_fk_differential_inequality
+lemma activeBC_fk_differential_inequality
     (G : SimpleGraph V) [DecidableRel G.Adj] [Nonempty G.edgeSet]
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (J : Sym2 V -> Real) (hJ : forall e, 0 < J e)

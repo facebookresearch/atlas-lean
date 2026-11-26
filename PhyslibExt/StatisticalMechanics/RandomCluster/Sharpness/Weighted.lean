@@ -100,7 +100,7 @@ lemma weighted_wired_box_hasDerivAt
       (zero_lt_one.trans_le hq) (crossIndG (boxActiveEdge d n) 0 n)
 
 /-- `c θ / D ≤ ∂θ/∂β` (unconditional). -/
-theorem weighted_wired_box_differential_inequality
+lemma weighted_wired_box_differential_inequality
     (d n : ℕ) (hd : 1 ≤ d) (hn : 1 ≤ n)
     (J : Sym2 (boxVerts d n) → ℝ) (hJ : ∀ e, 0 < J e)
     (q beta beta0 : ℝ) (hq : 1 ≤ q) (hbeta : 0 < beta)

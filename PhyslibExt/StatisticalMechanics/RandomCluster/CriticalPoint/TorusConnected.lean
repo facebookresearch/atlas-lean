@@ -11,6 +11,7 @@ module
 public import PhyslibExt.CondensedMatter.IsingModel.Onsager.Torus
 public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Combinatorics.SimpleGraph.Circulant
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # The discrete torus is connected

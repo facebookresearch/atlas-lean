@@ -162,7 +162,7 @@ lemma osss_differential_inequality_disch (n : ℕ) (c₀ cR D θ θ' S : ℝ)
   differential_inequality n c₀ cR D θ θ' S hD hcov (le_of_eq hRussoEq.symm) hcR.le
 
 /-- Russo's inequality for the random-cluster model (unconditional). -/
-theorem fk_russo_discharges {V : Type*} [Fintype V] [DecidableEq V]
+lemma fk_russo_discharges {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
     (A : Set (ConfigSpace (Sym2 V))) :

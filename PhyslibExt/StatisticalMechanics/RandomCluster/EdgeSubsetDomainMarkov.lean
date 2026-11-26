@@ -129,7 +129,7 @@ lemma edgeSubsetFibreConfig_agreesOff (K : SimpleGraph V)
     exact he (SimpleGraph.mem_edgeFinset.mpr hmem)
   simp [edgeSubsetFibreConfig, hnot]
 
-@[simp] theorem edgeSubsetFibreConfig_restrictActive (K : SimpleGraph V)
+@[simp] lemma edgeSubsetFibreConfig_restrictActive (K : SimpleGraph V)
     [DecidableRel K.Adj]
     (psi : ConfigSpace (Sym2 V)) (eta : ConfigSpace K.edgeSet) :
     restrictActive K (edgeSubsetFibreConfig K psi eta) = eta := by
@@ -358,8 +358,6 @@ lemma bcWeight_edgeSubsetFibre_eq_induced
   unfold bcWeight
   ring
 
--- The fibre sum unfolds large `Finset` sums over configurations.
-
 lemma edgeSubset_inducedBcZ_eq
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
@@ -442,7 +440,7 @@ lemma edgeSubsetFibreCondEventMass_eq_activeBCProbOf
 
 /-- Domain Markov property for events: the conditional probability of an event of `K` given the
 exterior equals its probability under the random-cluster measure on `K` with the induced wiring. -/
-theorem edgeSubsetFibreCondEventMass_eq_bcEventMass
+lemma edgeSubsetFibreCondEventMass_eq_bcEventMass
     (K H B : SimpleGraph V) [DecidableRel K.Adj]
     [DecidableRel H.Adj] [DecidableRel B.Adj]
     (hKH : K ≤ H) (psi : ConfigSpace (Sym2 V))
@@ -457,8 +455,6 @@ theorem edgeSubsetFibreCondEventMass_eq_bcEventMass
     activeBCProbOf_eq_bcProb_preimage
       K (edgeSubsetInducedWiring K H B psi) hp hp1 hq]
   rfl
-
--- The fibre sum unfolds large `Finset` sums over configurations.
 
 lemma edgeSubsetFibreCondEventMass_eq_ambientSum
     (K H B : SimpleGraph V) [DecidableRel K.Adj]

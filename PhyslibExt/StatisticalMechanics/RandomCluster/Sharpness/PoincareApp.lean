@@ -122,7 +122,7 @@ lemma lindebergCov_fkMass_coord (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) (e 
 
 /-- Poincaré inequality for increasing indicators (unconditional): the canonical
 random-cluster statement, used by `Assembly` and its consumers. -/
-theorem fk_poincare_indicator {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma fk_poincare_indicator {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace (Sym2 V))) (hA : IsIncreasing A) :
     FK.fkProbOf G p q A * (1 - FK.fkProbOf G p q A)
       ≤ ∑ e, FK.fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (FK.coord e) := by

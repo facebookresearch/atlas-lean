@@ -92,7 +92,7 @@ lemma kbw_kesten_bxp_supplied
     hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold
 
 /-- `p_c ≤ 1/2` (measurability hypotheses only). -/
-theorem kbw_criticalProbability_le_half_square_faithful
+lemma kbw_criticalProbability_le_half_square_faithful
     (hmeasGenH : ∀ a b : ℤ, 0 < a → 0 < b →
       MeasurableSet (horizontalCrossingEvent 0 a 0 b))
     (hmeasFace : ∀ n : ℤ, 0 < n → MeasurableSet (crr_FaceRectVerticalEvent n))
@@ -119,7 +119,7 @@ theorem kbw_criticalProbability_le_half_square_faithful
   norm_num at hlimge
 
 /-- `p_c = 1/2`, conditional on `hpa`, `h2box` and `hCorLowerBound`. -/
-theorem kbw_kesten_square_faithful
+lemma kbw_kesten_square_faithful
     (hpa : PositivelyAssociated halfMeasure)
     (hmeasGenH : ∀ a b : ℤ, 0 < a → 0 < b →
       MeasurableSet (horizontalCrossingEvent 0 a 0 b))

@@ -114,7 +114,7 @@ lemma hasDerivAt_activeNumer_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   exact Finset.sum_congr rfl fun ω _ => by ring
 
 /-- The `p`-derivative of the active expectation of `f` is `(p(1 - p))⁻¹ ∑_e Cov(f, ω_e)`. -/
-theorem hasDerivAt_activeMean_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma hasDerivAt_activeMean_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (f : ConfigSpace G.edgeSet → ℝ) :
     HasDerivAt (fun x => activeMean G (fun _ => x) q f)
       ((∑ e : G.edgeSet,
@@ -148,7 +148,7 @@ theorem hasDerivAt_activeMean_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   field_simp
 
 /-- Russo's formula: the `p`-derivative of `P(A)` is `(p(1 - p))⁻¹ ∑_e Cov(𝟙_A, ω_e)`. -/
-theorem hasDerivAt_activeProbOf_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma hasDerivAt_activeProbOf_p {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (A : Set (ConfigSpace G.edgeSet)) :
     HasDerivAt (fun x => activeProbOf G (fun _ => x) q A)
       ((∑ e : G.edgeSet, activeCov G (fun _ => p) q

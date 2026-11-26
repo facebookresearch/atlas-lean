@@ -178,7 +178,7 @@ lemma animalValue_nonneg_ae [IsProbabilityMeasure ρ] (n : ℕ) :
   Filter.Eventually.of_forall (fun ω => animalValue_nonneg ω n)
 
 /-- Almost-sure convergence of `animalValue ω n / n`. -/
-theorem animalValue_lln_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
+lemma animalValue_lln_ae [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     ∀ᵐ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)),
       Tendsto (fun n => animalValue ω n / n) atTop
         (𝓝 (kingmanLimit shiftEnv (fun n ω => animalValue ω n) ω)) :=
@@ -215,7 +215,7 @@ lemma integral_animalLimit_le [IsProbabilityMeasure ρ] (hρ : Integrable (id : 
   integral_kingmanLimit_le_gamma (animalCocycle hρ) (fun n => animalValue_nonneg_ae n)
 
 /-- The integral of the limit is the subadditive constant. -/
-theorem integral_animalLimit_eq_gamma [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
+lemma integral_animalLimit_eq_gamma [IsProbabilityMeasure ρ] (hρ : Integrable (id : ℝ → ℝ) ρ) :
     (∫ ω, animalLimit ρ ω ∂(Measure.infinitePi (fun _ : ℤ => ρ)))
       = SubadditiveCocycle.gamma (animalCocycle hρ) := by
   have hcoc := animalCocycle hρ

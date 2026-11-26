@@ -133,7 +133,7 @@ lemma active_prob_mul_mean_hamming_le_cov {p q : ℝ}
   nlinarith [hfkg]
 
 /-- `4 P(A) E[d(ω, A)] ≤` derivative bound (unconditional). -/
-theorem active_russoHamming {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma active_russoHamming {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     4 * activeProbOf G (fun _ => p) q A *
         activeMean G (fun _ => p) q (fun ω => (hammingToSet A ω : ℝ))
@@ -263,7 +263,7 @@ lemma active_gronwall (q : ℝ) (A : Set (ConfigSpace G.edgeSet))
   exact hle
 
 /-- Integrated comparison between `p₁` and `p₂` (unconditional). -/
-theorem active_russoHammingIntegrated {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁)
+lemma active_russoHammingIntegrated {p₁ p₂ q : ℝ} (hp₁ : 0 < p₁)
     (hp₁₂ : p₁ < p₂) (hp₂ : p₂ < 1) (hq : 1 ≤ q)
     (A : Set (ConfigSpace G.edgeSet)) (hA : IsIncreasing A) :
     activeProbOf G (fun _ => p₁) q A ≤

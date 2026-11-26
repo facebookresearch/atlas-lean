@@ -256,7 +256,7 @@ lemma cmn_Cross41 {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 
   le_of_eq (cmn_cross_pred_eq μ hpos hμ1 hmono σ hf hfC t htn A).symm
 
 /-- `acp_TailCondLaw μ σ f` for monotonic `μ` and monotone `f` (unconditional). -/
-theorem cmn_tailCondLaw {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
+lemma cmn_tailCondLaw {μ : ConfigSpace E → ℝ} (hpos : ∀ ω, 0 < μ ω) (hμ1 : ∑ ω, μ ω = 1)
     (hmono : IsMonotonicMeasure μ) {n : ℕ} (σ : Fin n ≃ E) {f : ConfigSpace E → ℝ}
     (hf : Monotone f) (hfC : ∀ ω, |f ω| ≤ 1) :
     acp_TailCondLaw μ σ f :=

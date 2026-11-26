@@ -13,6 +13,7 @@ public import MathlibExt.Probability.OSSS.BetaThresholdBound
 public import PhyslibExt.StatisticalMechanics.RandomCluster.WiredDomChain
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.Harmonic.Bounds
+import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 
 /-!
 # Logarithmic Cesàro limits and the mean-field lower bound
@@ -204,7 +205,7 @@ private lemma weighted_error_tendsto_zero {u : ℕ → ℝ}
     _ = ε := by ring
 
 /-- Logarithmic Cesàro averages preserve limits. -/
-theorem logCesaro_tendsto {u : ℕ → ℝ} {l : ℝ} (hu : Tendsto u atTop (nhds l)) :
+lemma logCesaro_tendsto {u : ℕ → ℝ} {l : ℝ} (hu : Tendsto u atTop (nhds l)) :
     Tendsto (fun n => logCesaro u n) atTop (nhds l) := by
   have herr : Tendsto (fun n => u n - l) atTop (nhds 0) := by
     simpa using hu.sub_const l

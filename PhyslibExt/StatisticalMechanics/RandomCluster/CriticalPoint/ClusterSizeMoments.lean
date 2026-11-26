@@ -117,7 +117,7 @@ lemma fkClusterSizeTail_le_one {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < 
     (s := fkClusterSizeLargeEvent G x N)
 
 /-- Stochastic domination by Bernoulli percolation for `q ≥ 1`. -/
-theorem fkClusterSizeTail_le_bernoulli {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma fkClusterSizeTail_le_bernoulli {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (x : V) (N : ℕ) :
     fkClusterSizeTail G p q x N ≤ fkClusterSizeTail G p 1 x N :=
   (fk_le_bernoulli G hp hp1 hq).real (fkClusterSizeLargeEvent G x N)

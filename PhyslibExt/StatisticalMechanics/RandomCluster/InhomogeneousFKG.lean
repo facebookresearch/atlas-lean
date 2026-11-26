@@ -120,7 +120,7 @@ lemma fkProbW_sum_eq_one {pf : Sym2 V → ℝ}
 
 /-- For `0 < p(e) < 1` and `q ≥ 1`, the inhomogeneous FK measure satisfies the FKG lattice
 condition. -/
-theorem fkProbW_FKGLatticeCondition {pf : Sym2 V → ℝ}
+lemma fkProbW_FKGLatticeCondition {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 1 ≤ q) :
     FKGLatticeCondition (fkProbW G pf q) := by
@@ -134,7 +134,7 @@ theorem fkProbW_FKGLatticeCondition {pf : Sym2 V → ℝ}
 
 /-- For `0 < p(e) < 1` and `q ≥ 1`, the inhomogeneous FK measure is monotonic: the conditional
 probability that an edge is open increases with the rest of the configuration. -/
-theorem fkProbW_isMonotonic {pf : Sym2 V → ℝ}
+lemma fkProbW_isMonotonic {pf : Sym2 V → ℝ}
     (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)
     {q : ℝ} (hq : 1 ≤ q) :
     OSSS.Monotonic.IsMonotonicMeasure (fkProbW G pf q) := by

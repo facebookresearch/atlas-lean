@@ -1976,15 +1976,15 @@ lemma rlc_horizontalCrossing_dependsOn (a b c d : ℤ) :
   exact rlc_lrRestrictedEvent_dependsOn a b c d Set.univ Set.univ
 
 /-- `1/2 ≤ P(horizontal crossing of [0, m]²)` at `p = 1/2` (unconditional). -/
-theorem rlc_square_half (m : ℤ) (hm : 0 < m) :
+lemma rlc_square_half (m : ℤ) (hm : 0 < m) :
     (1 : ℝ) / 2 ≤ halfMeasure.real
       (horizontalCrossingEvent 0 m 0 m) := by
   exact crr_square_half m hm
-    (StatMech.Universality.measurableSet_horizontalCrossingEvent 0 m 0 m)
+    (StatMech.RSW.Box.measurableSet_horizontalCrossingEvent 0 m 0 m)
     (by
       change MeasurableSet (verticalCrossingEvent 0 (m - 1) (-1) m)
-      exact StatMech.Universality.measurableSet_verticalCrossingEvent 0 (m - 1) (-1) m)
-    (StatMech.Universality.measurableSet_horizontalCrossingEvent (-1) m 0 (m - 1))
+      exact StatMech.RSW.Box.measurableSet_verticalCrossingEvent 0 (m - 1) (-1) m)
+    (StatMech.RSW.Box.measurableSet_horizontalCrossingEvent (-1) m 0 (m - 1))
 
 lemma rlc_centered_square_horizontal_half (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 2 ≤ halfMeasure.real
@@ -1992,7 +1992,7 @@ lemma rlc_centered_square_horizontal_half (n : ℤ) (hn : 0 < n) :
   have hbase := rlc_square_half (2 * n) (by omega)
   have htrans := cti_horizontalCrossing_translation_invariant
     0 (2 * n) 0 (2 * n) (![0, -n] : Site 2)
-    (StatMech.Universality.measurableSet_horizontalCrossingEvent 0 (2 * n) 0 (2 * n))
+    (StatMech.RSW.Box.measurableSet_horizontalCrossingEvent 0 (2 * n) 0 (2 * n))
   have heq : halfMeasure.real
       (horizontalCrossingEvent 0 (2 * n) (-n) n) =
       halfMeasure.real (horizontalCrossingEvent 0 (2 * n) 0 (2 * n)) := by
@@ -2004,10 +2004,10 @@ lemma rlc_centered_square_vertical_half (n : ℤ) (hn : 0 < n) :
       (verticalCrossingEvent 0 (2 * n) (-n) n) := by
   have hH := rlc_centered_square_horizontal_half n hn
   have hswap := crf_verticalCrossing_eq_horizontal_swap 0 (2 * n) (-n) n
-    (StatMech.Universality.measurableSet_horizontalCrossingEvent (-n) n 0 (2 * n))
+    (StatMech.RSW.Box.measurableSet_horizontalCrossingEvent (-n) n 0 (2 * n))
   have htrans := cti_horizontalCrossing_translation_invariant
     (-n) n 0 (2 * n) (![n, -n] : Site 2)
-    (StatMech.Universality.measurableSet_horizontalCrossingEvent (-n) n 0 (2 * n))
+    (StatMech.RSW.Box.measurableSet_horizontalCrossingEvent (-n) n 0 (2 * n))
   have heq : halfMeasure.real
       (verticalCrossingEvent 0 (2 * n) (-n) n) =
       halfMeasure.real (horizontalCrossingEvent 0 (2 * n) (-n) n) := by
@@ -2017,14 +2017,14 @@ lemma rlc_centered_square_vertical_half (n : ℤ) (hn : 0 < n) :
   rwa [heq]
 
 /-- `1/32 ≤ P(right diagonal event)` (unconditional). -/
-theorem rlc_half_rightDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
+lemma rlc_half_rightDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 32 ≤ halfMeasure.real (rlc_rightDiagonal n) :=
   rlc_half_rightDiagonal_lower_bound n hn
     (rlc_centered_square_horizontal_half n hn)
     (rlc_centered_square_vertical_half n hn)
 
 /-- `1/32 ≤ P(left diagonal event)` at `p = 1/2` (unconditional). -/
-theorem rlc_half_leftDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
+lemma rlc_half_leftDiagonal_unconditional (n : ℤ) (hn : 0 < n) :
     (1 : ℝ) / 32 ≤ halfMeasure.real (rlc_leftDiagonal n) := by
   rw [rlc_leftDiagonal_prob_eq_right]
   exact rlc_half_rightDiagonal_unconditional n hn
@@ -3511,7 +3511,7 @@ lemma rlc_bottomTraceVertex_safe {n : ℤ} (hn : 0 < n)
           hvTopDelta hvBelowDelta
 
 /-- The frontier of the joint bottom region along the union of the two paths. -/
-def rlc_jointBottomTraceFrontier {n : ℤ}
+noncomputable def rlc_jointBottomTraceFrontier {n : ℤ}
     (gamma delta : RlcRightDiagonalPath n) : Set (Site 2) :=
   rlc_jointBottomTraceBoundary gamma delta ∪
     (bottomSide 0 (2 * n) (-n) n ∩

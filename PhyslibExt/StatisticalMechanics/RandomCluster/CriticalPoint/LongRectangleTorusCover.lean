@@ -185,7 +185,7 @@ lemma bdcTorusThinCrossing_iff_pullback_mem_union
     bdcLongRectangleIndices, bdcLongRectangleEvent]
 
 /-- The planar lift of a set of torus configurations: its image under the planar pullback. -/
-def bdcTorusPlanarLiftEvent (L : ℕ) [Fact (2 < L)]
+noncomputable def bdcTorusPlanarLiftEvent (L : ℕ) [Fact (2 < L)]
     (A : Set (TorusAmbientConfig L)) :
     Set (ConfigSpace (Sym2 (Site 2))) :=
   torusPlanarPullback L '' A

@@ -383,7 +383,7 @@ lemma exists_weightedSelectedPhaseSum_pos_of_two_le
   exact Finset.sum_pos (fun a ha => hphase a) Finset.univ_nonempty
 
 /-- A high-β witness exists for `d ≥ 2` (unconditional). -/
-theorem exists_weightedSelectedPhaseHighBetaWitness_of_two_le
+lemma exists_weightedSelectedPhaseHighBetaWitness_of_two_le
     (d : Nat) (hd : 2 <= d) {P : Type*} [Fintype P] [Nonempty P]
     (J : Sym2 (Site d) -> Real)
     (Jmin : Real) (hJmin : 0 < Jmin)
