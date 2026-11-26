@@ -12735,7 +12735,6 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryDivisorParity": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryFortyOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
-  "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfectEq2160OfFactorizationTwoEqFour": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfectExistsPrimeGeFiveDvdSigmaBiunitaryPrimePow": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfectNotFiveDvdOfFactorizationTwoEqFour": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/CompletelyMultiplicative": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Completely multiplicative functions"},
