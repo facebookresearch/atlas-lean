@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "MathlibExt/GraphTheory/SnortOppositionsExistsLargeTreeSnortSecondPlayerWins.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "18bd0ceaeafb5c363dba8d5a09388eb7b55153fa39d6b8cc92a7cf8969d08535", "rationale": "Moved `snortMoverWins`, `SnortSecondPlayerWins` from WantedExt/GraphTheory/SnortOppositionsWanted.lean when `exists_large_tree_snortSecondPlayerWins` was proved, preserving their names, definitions and statements."}
+  ]
+}

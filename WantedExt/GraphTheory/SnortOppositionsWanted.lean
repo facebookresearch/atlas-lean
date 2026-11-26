@@ -16,10 +16,14 @@ William Kellough, "On Graph Automorphisms Related to SNORT", *INTEGERS* 26
 Snort on a finite simple graph: the players alternately colour an uncoloured
 vertex that is not adjacent to a vertex coloured by the opponent; a player with
 no legal move loses. Since the rules are symmetric, `snortMoverWins G k mine
-theirs` records whether the player to move (owning `mine`) wins, with `k` a
+theirs` (defined in
+`MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWins`)
+records whether the player to move (owning `mine`) wins, with `k` a
 fuel bound on the number of remaining moves; at fuel `Fintype.card V` from the
 empty position the fuel never runs out, so `SnortFirstPlayerWins` and
-`SnortSecondPlayerWins` are the outcomes of the game on the untinted graph.
+`SnortSecondPlayerWins` (the latter also defined in
+`MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWins`)
+are the outcomes of the game on the untinted graph.
 
 An *opposition* of `G` is an involutive automorphism `f` with `f v ∉ N[v]`
 for all `v`; `G` is *opposable* if it has one. A set `S` is *admissible* if
@@ -43,29 +47,13 @@ public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Data.Fintype.Pi
 public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
 public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
+public import MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWins
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 variable {V W : Type*}
-
-/-- **Snort positions with a move bound.** Let $G$ be a finite simple graph, let $k$ be a natural
-number, and let $A$ and $B$ be finite sets of vertices of $G$, the vertices coloured so far by
-the player to move and by the opponent. A legal move colours a vertex $v$ that lies in neither
-$A$ nor $B$ and has no neighbour in $B$. With move bound $0$ the player to move loses. With move
-bound $k + 1$ the player to move wins at $(A, B)$ exactly when some legal move $v$ leaves a
-position $(B, A \cup \{v\})$ that the opponent, now to move with move bound $k$, does not win.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 1 (rules of
-Snort). -/
-def snortMoverWins [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] :
-    ℕ → Finset V → Finset V → Bool
-  | 0, _, _ => false
-  | k + 1, mine, theirs =>
-      decide (∃ v : V, v ∉ mine ∧ v ∉ theirs ∧ (∀ w ∈ theirs, ¬ G.Adj v w) ∧
-        snortMoverWins G k theirs (insert v mine) = false)
 
 /-- **First player wins Snort.** Let $G$ be a finite simple graph. In Snort on $G$ the two players
 alternately colour a vertex that is not yet coloured and is not adjacent to any vertex coloured
@@ -78,21 +66,6 @@ Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 1. -/
 def SnortFirstPlayerWins [Fintype V] [DecidableEq V] (G : SimpleGraph V)
     [DecidableRel G.Adj] : Prop :=
   snortMoverWins G (Fintype.card V) ∅ ∅ = true
-
-/-- **Second-player win in Snort.** Let $G$ be a finite simple graph. In Snort on $G$, two
-players alternately colour a vertex of $G$ that is not yet coloured, each with their own
-colour, and a player may not colour a vertex adjacent to a vertex of the opponent's colour; a
-player with no legal move loses. The second player wins Snort on $G$ if, starting from the
-position in which no vertex is coloured, the player who moves first has no winning strategy.
-
-Every move colours a new vertex, so the game ends after at most $|V(G)|$ moves and has no
-draws; hence this says that the second player has a winning strategy.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 1. -/
-def SnortSecondPlayerWins [Fintype V] [DecidableEq V] (G : SimpleGraph V)
-    [DecidableRel G.Adj] : Prop :=
-  snortMoverWins G (Fintype.card V) ∅ ∅ = false
 
 /-- **Snort response pairs.** In Snort on a finite graph $G$, a pair $(u, v)$ of vertices is a
 response pair if $u \neq v$, $u$ and $v$ are not adjacent (so the first player colouring $u$ and
@@ -290,15 +263,6 @@ public theorem_wanted snortSecondPlayerWins_firework [Fintype V] [DecidableEq V]
     (huv : IsSnortResponsePair G u v) (hdist : 3 ≤ G.edist u v) (n : ℕ)
     (hn : Fintype.card V ≤ n) [DecidableRel (firework G u v n).Adj] :
     SnortSecondPlayerWins (firework G u v n)
-
-/-- **Arbitrarily large trees on which the second player wins Snort.** For every natural number
-$N$ there is a tree $T$ on $n \ge N$ vertices such that the second player wins Snort on $T$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Corollary 2. -/
-public theorem_wanted exists_large_tree_snortSecondPlayerWins (N : ℕ) :
-    ∃ n ≥ N, ∃ T : SimpleGraph (Fin n), ∃ _ : DecidableRel T.Adj,
-      T.IsTree ∧ SnortSecondPlayerWins T
 
 /-- **Almost opposable graphs are first-player wins in Snort.** For every finite simple graph $G$
 that is almost opposable, the first player wins Snort on $G$.
