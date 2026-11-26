@@ -4,7 +4,6 @@ Approximation and interpolation of functions: Chebyshev equioscillation, best ap
 
 - [Bernstein coefficient bounds on boxes](bernstein-coefficient-bounds-on-boxes/README.md)
 - [Bernstein bounds for polynomial matrices](bernstein-bounds-for-polynomial-matrices/README.md)
-- [Bernstein degree elevation](bernstein-degree-elevation/README.md)
 - [Bernstein polynomials](bernstein-polynomials/README.md)
 - [Bernstein subdivision](bernstein-subdivision/README.md)
 - [Best approximation in normed spaces](best-approximation-in-normed-spaces/README.md)
