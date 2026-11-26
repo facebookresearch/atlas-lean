@@ -19,7 +19,9 @@ stationary distribution, Press and Dyson show that `v · f = D(p, q, f) / D(p, q
 `p̃ = (-1 + p₁, -1 + p₂, p₃, p₄)`, `q̃ = (-1 + q₁, q₃, -1 + q₂, q₄)` and `f`. If X chooses a
 feasible `p` with `p̃ = α S_X + β S_Y + γ 1`, then `α s_X + β s_Y + γ = 0` whatever Y does.
 The determinant formula `v · f = D(p, q, f) / D(p, q, 1)` needs the nondegeneracy condition
-`D(p, q, 1) ≠ 0` and is stated with it. The linear payoff relations do not: they follow from
+`D(p, q, 1) ≠ 0` and is proved with it in
+`Domains.Biology.Ecology.ZeroDeterminantStrategyDotProductEqDivPdDet`. The linear payoff
+relations do not: they follow from
 `v · p̃ = 0`, which holds for every stationary distribution `v` because `p̃` is the sum of the
 first two columns of `M(p, q) - I` (X cooperates next with probability `p_s` from outcome `s`).
 So they are stated for every stationary distribution. The paper notes that not all such
@@ -36,29 +38,13 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Order.Interval.Set.Basic
+public import Domains.Biology.Ecology.ZeroDeterminantStrategyDotProductEqDivPdDet
 
 @[expose] public section
 
 namespace WantedExt.Biology.Ecology.ZeroDeterminantStrategyWanted
 
 open Matrix Set
-
-/-- Y's cooperation probabilities re-indexed to X's view of the outcome:
-`(q₁, q₃, q₂, q₄)`. -/
-def yView (q : Fin 4 → ℝ) : Fin 4 → ℝ :=
-  ![q 0, q 2, q 1, q 3]
-
-/-- The **Markov matrix** `M(p, q)` of outcomes `cc, cd, dc, dd`: from outcome `s`, X
-cooperates with probability `p s`, Y cooperates with probability `yView q s`, independently;
-X cooperates in outcomes `0, 1` and Y in outcomes `0, 2`. -/
-def markovMatrix (p q : Fin 4 → ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
-  Matrix.of fun s s' =>
-    (if s' = 0 ∨ s' = 1 then p s else 1 - p s) *
-      (if s' = 0 ∨ s' = 2 then yView q s else 1 - yView q s)
-
-/-- `v` is a **stationary distribution** of `M`: `vᵀ M = vᵀ`, `v ≥ 0` and `∑ v = 1`. -/
-def IsStationary (M : Matrix (Fin 4) (Fin 4) ℝ) (v : Fin 4 → ℝ) : Prop :=
-  v ᵥ* M = v ∧ (∀ i, 0 ≤ v i) ∧ ∑ i, v i = 1
 
 /-- X's stage payoffs `S_X = (R, S, T, P)` over `cc, cd, dc, dd`. -/
 def payoffX (R S T P : ℝ) : Fin 4 → ℝ :=
@@ -67,33 +53,6 @@ def payoffX (R S T P : ℝ) : Fin 4 → ℝ :=
 /-- Y's stage payoffs `S_Y = (R, T, S, P)` over `cc, cd, dc, dd` (seen from X). -/
 def payoffY (R S T P : ℝ) : Fin 4 → ℝ :=
   ![R, T, S, P]
-
-/-- X's column `p̃ = (-1 + p₁, -1 + p₂, p₃, p₄)`. -/
-def pTilde (p : Fin 4 → ℝ) : Fin 4 → ℝ :=
-  ![-1 + p 0, -1 + p 1, p 2, p 3]
-
-/-- Y's column `q̃ = (-1 + q₁, q₃, -1 + q₂, q₄)`. -/
-def qTilde (q : Fin 4 → ℝ) : Fin 4 → ℝ :=
-  ![-1 + q 0, q 2, -1 + q 1, q 3]
-
-/-- The Press–Dyson determinant `D(p, q, f)`, with columns
-`(-1 + p₁q₁, p₂q₃, p₃q₂, p₄q₄)`, `p̃`, `q̃` and `f`. -/
-def pdDet (p q f : Fin 4 → ℝ) : ℝ :=
-  (Matrix.of fun i j =>
-    ![![-1 + p 0 * q 0, p 1 * q 2, p 2 * q 1, p 3 * q 3] i, pTilde p i, qTilde q i, f i] j).det
-
-/-- `p` is a memory-one strategy: every component lies in `[0, 1]`. -/
-def IsStrategy (p : Fin 4 → ℝ) : Prop :=
-  ∀ i, p i ∈ Icc (0 : ℝ) 1
-
-/-- **Press–Dyson determinant lemma** (Press and Dyson 2012, eqs. (4)–(6)). For memory-one
-strategies `p, q` (components in `[0, 1]`), every stationary distribution `v` of `M(p, q)` with
-`D(p, q, 1) ≠ 0`, and every `f : Fin 4 → ℝ`, `v · f = D(p, q, f) / D(p, q, 1)`.
-
-Source: Press and Dyson (2012), "Zero-determinant strategies", eqs. (4)–(6). -/
-public theorem_wanted dotProduct_eq_div_pdDet {p q : Fin 4 → ℝ} (hp : IsStrategy p)
-    (hq : IsStrategy q) {v : Fin 4 → ℝ} (hv : IsStationary (markovMatrix p q) v)
-    (hD : pdDet p q 1 ≠ 0) (f : Fin 4 → ℝ) : v ⬝ᵥ f = pdDet p q f / pdDet p q 1
 
 /-- **Zero-determinant strategies** (Press and Dyson 2012, eq. (7)). Let `p` be a memory-one
 strategy with `p̃ = α S_X + β S_Y + γ 1` for reals `α, β, γ` and payoffs `R, S, T, P`. Then for
