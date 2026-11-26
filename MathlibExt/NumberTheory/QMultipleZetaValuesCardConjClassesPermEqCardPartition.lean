@@ -8,25 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.MvPolynomial.Basic
-public import Mathlib.Algebra.Polynomial.AlgebraMap
-public import Mathlib.Analysis.Calculus.FDeriv.Basic
-public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
-public import Mathlib.Combinatorics.Enumerative.Partition.Basic
-public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
-public import Mathlib.Data.Fintype.Pi
 public import Mathlib.GroupTheory.Perm.Cycle.Type
-public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
-public import Mathlib.NumberTheory.Bernoulli
-public import Mathlib.RingTheory.MvPowerSeries.Substitution
-public import Mathlib.RingTheory.PowerSeries.Derivative
-public import Mathlib.RingTheory.PowerSeries.Exp
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.RingTheory.PowerSeries.Substitution
-public import MathlibExt.NumberTheory.MultipleZeta.CyclicSumFormula
-public import MathlibExt.NumberTheory.MultipleZeta.OOZDuality
+public import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.GroupTheory.Perm.Cycle.PossibleTypes
-import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # Conjugacy classes of the symmetric group
