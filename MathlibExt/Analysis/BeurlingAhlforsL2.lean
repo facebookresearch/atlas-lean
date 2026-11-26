@@ -508,9 +508,16 @@ constants $C \ge 0$ such that $\|Bf\|_{L^2} \le C\,\|f\|_{L^2}$ in $[0, \infty]$
 everywhere strongly measurable $f : \mathbb{C} \to \mathbb{C}$ (taken to be $0$ when there is no
 such $C$) equals $1$.
 
+Proof: By Plancherel's theorem the Fourier multiplier $\bar\xi/\xi$, of modulus one almost
+everywhere, defines an isometry $T$ of $L^2$. For $f \in L^2$, the disk-average formula in the
+proof of Theorem 3 of J. Mateu and J. Verdera, Math. Res. Lett. 13 (2006),
+https://arxiv.org/abs/math/0603077, writes the truncated integral at radius $\varepsilon$ as the
+average of $Tf$ over the closed disk of radius $\varepsilon$ about $z$. By Lebesgue's
+differentiation theorem $Bf = Tf$ almost everywhere, so $\|Bf\|_{L^2} = \|f\|_{L^2}$; the
+indicator of a disk shows that no constant below $1$ works.
+
 Source: the `L²` isometry recorded in Bañuelos--Janakiraman (2008),
-introduction: `‖B‖₂ = 1`. Known literature result; the Fourier-side
-proof is not supplied here. -/
+introduction: `‖B‖₂ = 1`. -/
 public theorem l2Norm_wanted :
     beurlingNorm 2 = 1 := by
   have he (f : ℂ → ℂ) (hf : MemLp f 2 volume) :
