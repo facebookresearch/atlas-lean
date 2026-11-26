@@ -15,3 +15,8 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Binary tree partitions of subclonal frequencies](binary-tree-partitions-of-subclonal-frequencies/README.md)
+- [Chromosome partitioning in multipolar mitosis](chromosome-partitioning-in-multipolar-mitosis/README.md)
+- [Maximum likelihood mixture decomposition of tumour copy number](maximum-likelihood-mixture-decomposition-of-tumour-copy-number/README.md)
+- [Multi-labeled tree dissimilarity of clonal trees](multi-labeled-tree-dissimilarity-of-clonal-trees/README.md)
+- [Probability-raising models of cancer progression](probability-raising-models-of-cancer-progression/README.md)
