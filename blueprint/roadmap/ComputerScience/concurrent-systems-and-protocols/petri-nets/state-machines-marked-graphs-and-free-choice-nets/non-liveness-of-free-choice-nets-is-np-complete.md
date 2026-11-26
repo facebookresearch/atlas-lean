@@ -1,6 +1,6 @@
 # Non-liveness of free-choice nets is NP-complete
 
-The problem that asks, given a net $(N, M_0)$ that is [extended free-choice](extended-free-choice-nets.md), whether $(N, M_0)$ is not [live](../liveness-and-deadlock-freedom.md) is NP-complete. Membership in NP guesses a [siphon](../siphons-and-traps.md) and checks in polynomial time that the largest trap it contains is unmarked at $M_0$; hardness is a reduction from satisfiability of Boolean formulas.
+The problem that asks, given a net $(N, M_0)$ that is [extended free-choice](extended-free-choice-nets.md) and whose net is connected and has at least one transition, whether $(N, M_0)$ is not [live](../liveness-and-deadlock-freedom.md) is NP-complete. Membership in NP guesses a [siphon](../siphons-and-traps.md) and checks in polynomial time that the largest trap it contains is unmarked at $M_0$; hardness is a reduction from satisfiability of Boolean formulas.
 
 ## Depends on
 

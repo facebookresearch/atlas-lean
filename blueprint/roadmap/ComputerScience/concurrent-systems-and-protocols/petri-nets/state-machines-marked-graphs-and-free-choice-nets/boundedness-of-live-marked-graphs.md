@@ -1,6 +1,6 @@
 # Bounded places of live marked graphs
 
-Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](../subclasses-of-petri-nets.md) whose net is connected and has at least one place and one transition. A place of $N$ is bounded, that is, has a bound on its number of tokens over all reachable markings, if and only if it lies on some directed circuit; and $(N, M_0)$ is [bounded](../boundedness-and-safeness.md) if and only if $N$ is strongly connected.
+Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) [marked graph](../subclasses-of-petri-nets.md) whose net is connected and has at least one place and one transition. Then $(N, M_0)$ is [bounded](../boundedness-and-safeness.md) if and only if $N$ is strongly connected, since a place is bounded exactly when it lies on a directed circuit (see [Safeness of live marked graphs](../safeness-of-live-marked-graphs.md)).
 
 ## Depends on
 

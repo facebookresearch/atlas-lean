@@ -19,7 +19,6 @@ Decision procedures for Petri nets in their foundations: the monotonicity of fir
 - [Predecessors of an upward-closed set of markings are upward closed](predecessors-of-an-upward-closed-set-are-upward-closed.md)
 - [Backward reachability from an upward-closed set stabilizes](backward-reachability-stabilizes.md)
 - [Petri nets are well-structured transition systems](petri-nets-are-well-structured-transition-systems.md)
-- [Linear and semilinear sets of vectors](semilinear-sets.md)
 - [Semilinear sets are the sets definable in Presburger arithmetic](semilinear-sets-are-the-presburger-definable-sets.md)
 - [Non-reachability in Petri nets has a semilinear inductive invariant](non-reachability-has-a-semilinear-inductive-invariant.md)
 - [Deadlock-freedom reduces to reaching a marking empty on a set of places](deadlock-freedom-reduces-to-emptying-a-set-of-places.md)

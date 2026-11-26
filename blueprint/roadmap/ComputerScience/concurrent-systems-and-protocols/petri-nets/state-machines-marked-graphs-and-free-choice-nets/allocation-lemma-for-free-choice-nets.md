@@ -1,6 +1,6 @@
 # Allocation lemma for live free-choice nets
 
-Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) net that is [extended free-choice](extended-free-choice-nets.md), let $\mathcal{C}$ be a set of [clusters](clusters-of-a-net.md) and $\alpha$ an [allocation](allocations-of-clusters.md) of $\mathcal{C}$. There is an infinite firing sequence from $M_0$ that contains infinitely many occurrences of allocated transitions and no occurrence of a transition of $\bigcup_{c \in \mathcal{C}} c \setminus \{\alpha(c)\}$.
+Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) net that is [extended free-choice](extended-free-choice-nets.md), let $\mathcal{C}$ be a nonempty set of [clusters](clusters-of-a-net.md) and $\alpha$ an [allocation](allocations-of-clusters.md) of $\mathcal{C}$. There is an infinite firing sequence from $M_0$ that contains infinitely many occurrences of allocated transitions and no occurrence of a transition of $\bigcup_{c \in \mathcal{C}} c \setminus \{\alpha(c)\}$.
 
 ## Depends on
 

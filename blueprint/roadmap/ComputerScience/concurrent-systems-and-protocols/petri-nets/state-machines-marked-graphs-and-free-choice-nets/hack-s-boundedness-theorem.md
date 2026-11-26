@@ -1,6 +1,6 @@
 # Hack's boundedness theorem for free-choice nets
 
-Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) net that is [extended free-choice](extended-free-choice-nets.md). Then $(N, M_0)$ is [bounded](../boundedness-and-safeness.md) if and only if every place of $N$ belongs to an [S-component](s-components.md). Moreover, if $(N, M_0)$ is live and bounded, the bound of each place $s$ is the minimum of $M_0(P')$ over the sets of places $P'$ of the S-components containing $s$.
+Let $(N, M_0)$ be a [live](../liveness-and-deadlock-freedom.md) net that is [extended free-choice](extended-free-choice-nets.md), whose net is connected and has at least one place and one transition. Then $(N, M_0)$ is [bounded](../boundedness-and-safeness.md) if and only if every place of $N$ belongs to an [S-component](s-components.md). Moreover, if $(N, M_0)$ is live and bounded, the bound of each place $s$ is the minimum of $M_0(P')$ over the sets of places $P'$ of the S-components containing $s$.
 
 ## Depends on
 

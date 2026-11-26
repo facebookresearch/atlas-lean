@@ -1,10 +1,10 @@
 # Semilinear sets are the sets definable in Presburger arithmetic
 
-A set $X \subseteq \mathbb{N}^k$ is [semilinear](semilinear-sets.md) if and only if there is a formula $\varphi(x_1, \dots, x_k)$ of Presburger arithmetic, the first-order theory of $(\mathbb{N}, 0, +, <)$, such that $X = \{ (n_1, \dots, n_k) \mid \mathbb{N} \models \varphi(n_1, \dots, n_k) \}$; both translations are effective.
+A set $X \subseteq \mathbb{N}^k$ is [semilinear](../../../../TheoryOfComputation/context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md) if and only if there is a formula $\varphi(x_1, \dots, x_k)$ of Presburger arithmetic, the first-order theory of $(\mathbb{N}, 0, +, <)$, such that $X = \{ (n_1, \dots, n_k) \mid \mathbb{N} \models \varphi(n_1, \dots, n_k) \}$; both translations are effective.
 
 ## Depends on
 
-- [Linear and semilinear sets of vectors](semilinear-sets.md)
+- [Semilinear set of vectors](../../../../TheoryOfComputation/context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md)
 ## Proof depends on
 
 - [Quantifier elimination for Presburger arithmetic](../../../../Logic/model-theory/quantifier-elimination-for-presburger-arithmetic.md)
