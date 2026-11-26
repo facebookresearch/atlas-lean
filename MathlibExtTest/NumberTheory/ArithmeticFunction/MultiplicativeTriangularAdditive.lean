@@ -14,6 +14,7 @@ import MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditi
 # Tests for Park's vanishing lemmas
 
 The indicators of the divisors of 3 and 5 realize the two possible nonzero exceptional values.
+The indicator of the divisors of 1 realizes vanishing throughout the interval.
 -/
 
 namespace MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted
@@ -62,5 +63,15 @@ example (n : ℕ) (hlo : 2 ≤ n) (hhi : n ≤ 21) (hn5 : n ≠ 5) : divisorIndi
   multiplicative_additive_on_sum_two_triangular_zero_of_five_ne_zero (divisorIndicator 5)
     (divisorIndicator_multiplicative 5) (divisorIndicator_add (Or.inr rfl))
     rfl one_ne_zero n hlo hhi hn5
+
+example (n : ℕ) (hlo : 2 ≤ n) (hhi : n ≤ 21) : divisorIndicator 1 n = 0 := by
+  have vanish (k : ℕ) (hk : 2 ≤ k) : divisorIndicator 1 k = 0 := by
+    simp [divisorIndicator, show k ≠ 1 by omega]
+  refine multiplicative_additive_on_sum_two_triangular_zero_of_all_zero (divisorIndicator 1)
+    (divisorIndicator_multiplicative 1) ?_ rfl rfl rfl n hlo hhi
+  intro a b ha hb
+  have ha' := small_triangular_sums ha
+  have hb' := small_triangular_sums hb
+  rw [vanish a (by omega), vanish b (by omega), vanish (a + b) (by omega), add_zero]
 
 end MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted
