@@ -5,7 +5,7 @@ Let $G$ be a control-flow graph with $E$ edges, an entry node and an exit node, 
 1. A node $Y$ is [control dependent](control-dependence.md) on a node $X$ if and only if $X \in \mathrm{RDF}(Y)$.
 2. Consequently, the sets $\mathrm{CD}(X)$ of nodes control dependent on each $X$ are obtained by computing $\mathrm{RDF}$ and inverting it, in time $O(E + \sum_Y |\mathrm{RDF}(Y)|)$ once the dominator tree of the reverse graph is known.
 
-**Proof.** By the equivalent form of the first condition, $Y$ is control dependent on $X$ if and only if $Y$ postdominates a successor of $X$ but does not strictly postdominate $X$. In the reverse graph this says that $Y$ dominates a predecessor of $X$ but does not strictly dominate $X$, that is, $X \in \mathrm{RDF}(Y)$.
+**Proof.** By [the successor lemma](postdominating-a-successor.md), the first condition is equivalent to postdominating a successor, so $Y$ is control dependent on $X$ if and only if $Y$ postdominates a successor of $X$ but does not strictly postdominate $X$. In the reverse graph this says that $Y$ dominates a predecessor of $X$ but does not strictly dominate $X$, that is, $X \in \mathrm{RDF}(Y)$.
 
 ## Depends on
 
@@ -14,6 +14,7 @@ Let $G$ be a control-flow graph with $E$ edges, an entry node and an exit node, 
 
 ## Proof depends on
 
+- [Postdominating a successor](postdominating-a-successor.md)
 - [Computing dominance frontiers bottom up](computing-dominance-frontiers-bottom-up.md)
 
 ## Sources

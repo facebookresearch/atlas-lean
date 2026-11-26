@@ -4,14 +4,18 @@ Let $P$ be a strict program in SSA form with interference graph $G$, and let $\m
 
 **Theorem.** Coloring the variables greedily in the reverse of the [perfect elimination order given by dominance](dominance-order-gives-a-perfect-elimination-order.md), each with the first color not used by its already colored neighbors, uses exactly $\mathrm{maxlive}$ colors. This is the chromatic number of $G$, which equals the size of its largest clique. So $P$ can be allocated to $k$ registers without spilling if and only if $\mathrm{maxlive} \le k$, and then the coloring is found in quadratic time.
 
-**Proof.** When a variable is colored, its colored neighbors come after it in the elimination order, so they form a clique together with it; the color chosen is therefore at most the size of the largest clique. That size is $\mathrm{maxlive}$ by [the clique property](cliques-in-ssa-interference-graphs.md), and every coloring needs at least that many colors, since the variables live at one label pairwise interfere.
+**Proof.** By [greedy coloring along a perfect elimination order](greedy-coloring-along-a-perfect-elimination-or.md) the coloring uses as many colors as the largest clique, which has $\mathrm{maxlive}$ variables by [the clique property](cliques-in-ssa-interference-graphs.md).
 
 ## Depends on
 
 - [Interfering variables of a strict SSA program are simultaneously live](cliques-in-ssa-interference-graphs.md)
 - [Dominance order gives a perfect elimination order](dominance-order-gives-a-perfect-elimination-order.md)
 
+## Proof depends on
+
+- [Greedy coloring along a perfect elimination order](greedy-coloring-along-a-perfect-elimination-or.md)
+
 ## Sources
 
-- S. Hack, D. Grund and G. Goos, "Register allocation for programs in SSA-form", *Compiler Construction (CC 2006)*, LNCS 3923, Springer, 2006, pp. 247–262, <https://compilers.cs.uni-saarland.de/papers/ssara.pdf>, Section 3: the greedy reinsertion coloring along a perfect elimination order, bounded by the size of the largest clique; the consequence that SSA interference graphs can be colored optimally in quadratic time; and the remark after Theorem 2 that the chromatic number is determined by the largest clique, which by Theorem 1 corresponds to a label where all its variables are live.
+- S. Hack, D. Grund and G. Goos, "Register allocation for programs in SSA-form", *Compiler Construction (CC 2006)*, LNCS 3923, Springer, 2006, pp. 247–262, <https://compilers.cs.uni-saarland.de/papers/ssara.pdf>, Section 3: the greedy reinsertion coloring along a perfect elimination order, the consequence that SSA interference graphs can be colored optimally in quadratic time, and the remark after Theorem 2 that the chromatic number is determined by the largest clique.
 - F. M. Q. Pereira and J. Palsberg, "Register allocation after classical SSA elimination is NP-complete", *Foundations of Software Science and Computation Structures (FoSSaCS 2006)*, <https://web.cs.ucla.edu/~palsberg/paper/fossacs06.pdf>: the abstract and Section 1.2 (Bouchez, Brisk and Hack proved independently that the interference graphs of SSA programs are chordal).

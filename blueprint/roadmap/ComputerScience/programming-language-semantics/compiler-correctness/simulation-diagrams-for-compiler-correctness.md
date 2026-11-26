@@ -10,6 +10,13 @@ If $\sim$ is a *lock-step simulation*, meaning that $S_1 \sim S_2$ and $G_1 \vda
 ## Depends on
 
 - [Notions of semantic preservation](notions-of-semantic-preservation.md)
+- [Transition semantics and simulation relations](transition-semantics-and-simulation-relations.md)
+
+## Proof depends on
+
+- [Plus and option simulations are star simulations](plus-and-option-simulations-are-star-simulatio.md)
+- [Star simulations preserve finite runs](star-simulations-preserve-finite-runs.md)
+- [Measured divergence implies divergence](measured-divergence-implies-divergence.md)
 
 ## Sources
 
