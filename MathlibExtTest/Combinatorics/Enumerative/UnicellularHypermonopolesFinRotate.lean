@@ -54,3 +54,30 @@ example : Fintype.card {α : Equiv.Perm (Fin 3) //
     cycleQuotientCount (α⁻¹ * finRotate 3) = 1 ∧ cycleQuotientCount α = 5} = 0 := by
   rw [card_unicellular_hypermonopoles_finRotate]
   decide
+
+open Polynomial
+
+-- The generating identity includes the convention at size zero.
+example : ∑ k ∈ Finset.range 1, C (cyclicProductNumber 0 k : ℚ) * X ^ k = 0 := by
+  rw [sum_cyclicProductNumber_mul_X_pow 0]
+  simp
+
+-- At size three only the odd powers occur, with coefficients 1 and 1.
+example : C (((3 + 1 : ℚ) * 3)⁻¹) * (ascPochhammer ℚ 4 - descPochhammer ℚ 4) = X + X ^ 3 := by
+  have hpoly := (sum_cyclicProductNumber_mul_X_pow 3).symm
+  simp only [Nat.cast_ofNat, Nat.reduceAdd] at hpoly
+  rw [hpoly]
+  have h : cyclicProductNumber 3 0 = 0 ∧ cyclicProductNumber 3 1 = 1 ∧
+      cyclicProductNumber 3 2 = 0 ∧ cyclicProductNumber 3 3 = 1 := by decide
+  simp [Finset.sum_range_succ, h.1, h.2.1, h.2.2.1, h.2.2.2]
+
+-- At size four only the positive even powers occur, with coefficients 5 and 1.
+example : C (((4 + 1 : ℚ) * 4)⁻¹) * (ascPochhammer ℚ 5 - descPochhammer ℚ 5) =
+    5 * X ^ 2 + X ^ 4 := by
+  have hpoly := (sum_cyclicProductNumber_mul_X_pow 4).symm
+  simp only [Nat.cast_ofNat, Nat.reduceAdd] at hpoly
+  rw [hpoly]
+  have h : cyclicProductNumber 4 0 = 0 ∧ cyclicProductNumber 4 1 = 0 ∧
+      cyclicProductNumber 4 2 = 5 ∧ cyclicProductNumber 4 3 = 0 ∧
+      cyclicProductNumber 4 4 = 1 := by decide
+  simp [Finset.sum_range_succ, h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2]
