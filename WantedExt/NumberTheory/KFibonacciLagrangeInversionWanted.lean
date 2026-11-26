@@ -17,6 +17,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.Binomial
 public import MathlibExt.NumberTheory.KFibonacciAlternatingBinomial
 public import MathlibExt.NumberTheory.KFibonacciBinomialTruncation
+public import MathlibExt.NumberTheory.KFibonacciTruncatedRecurrence
 
 /-!
 # Lagrange inversion and the `k`-Fibonacci numbers
@@ -149,18 +150,6 @@ public theorem_wanted kFibonacci_eq_kFibonacciBinomialTruncation (k n : ℕ) (hk
     (hn : 2 ≤ n) (F : ℕ → ℤ) (hF0 : ∀ i < k - 1, F i = 0) (hF1 : F (k - 1) = 1)
     (hrec : ∀ m, F (m + k) = ∑ i ∈ Finset.range k, F (m + i)) :
     (F (n + k - 2) : ℚ) = kFibonacciBinomialTruncation k n
-
-/-- **Recurrence for the truncated binomial sums.** Let $G_n^{(k)}$ be the truncated binomial
-sum. For all natural numbers $k \ge 2$ and $n \ge 2$,
-$G_{n+k+1}^{(k)} = 2 G_{n+k}^{(k)} - G_n^{(k)}$.
-
-Source: Bakir Farhi, *Some Applications of the Lagrange Inversion Formula for the
-k-Fibonacci Numbers*, Journal of Integer Sequences 27 (2024), Article 24.1.1,
-Proposition 11 (`jis-2024-24.1.1-prop-11`). -/
-public theorem_wanted kFibonacciBinomialTruncation_recurrence (k n : ℕ) (hk : 2 ≤ k)
-    (hn : 2 ≤ n) :
-    kFibonacciBinomialTruncation k (n + k + 1) =
-      2 * kFibonacciBinomialTruncation k (n + k) - kFibonacciBinomialTruncation k n
 
 /-- **Binomial-sum formula for the $k$-Fibonacci numbers.** Let $k \ge 2$ and let
 $(F_n)_{n \ge 0}$ be the $k$-Fibonacci sequence, given by $F_0 = \dots = F_{k-2} = 0$,
