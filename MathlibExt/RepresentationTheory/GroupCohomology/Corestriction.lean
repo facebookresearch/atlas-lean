@@ -214,9 +214,7 @@ section Cor
 variable {k G : Type u} [CommRing k] [Group G] {H : Subgroup G} [H.FiniteIndex]
   (A : Rep k G) (τ : Transversal H)
 
-/-- **Finitely many cosets.** For a subgroup `H` of finite index, the `Fintype` structure on the
-left cosets `G ⧸ H` given by their finiteness (`Fintype.ofFinite`). -/
-@[reducible, local instance] noncomputable def fintypeQuot : Fintype (G ⧸ H) := Fintype.ofFinite _
+attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
 
 /-- **Corestriction of 1-cochains.** For a subgroup `H` of finite index, a representation `A` of
 `G` and a transversal `τ` of the left cosets of `H`, the 1-cochain of `G` given by

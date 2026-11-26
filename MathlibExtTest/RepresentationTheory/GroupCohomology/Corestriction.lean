@@ -30,7 +30,7 @@ theorem cor₂_top {k G : Type u} [CommRing k] [Group G] (A : Rep k G)
     (u : (⊤ : Subgroup G) × (⊤ : Subgroup G) → A) (g₁ g₂ : G) :
     Cores.cor₂ A τ u (g₁, g₂) = u (⟨g₁, Subgroup.mem_top g₁⟩, ⟨g₂, Subgroup.mem_top g₂⟩) := by
   have := QuotientGroup.subsingleton_quotient_top (G := G)
-  let _ : Fintype (G ⧸ (⊤ : Subgroup G)) := Cores.fintypeQuot
+  let _ : Fintype (G ⧸ (⊤ : Subgroup G)) := Subgroup.fintypeQuotientOfFiniteIndex
   have h₁ : τ.lam g₁ = ⟨g₁, Subgroup.mem_top g₁⟩ := τ.lam_of_mem ⟨g₁, Subgroup.mem_top g₁⟩
   have h₂ : τ.lam (g₁ * g₂) = ⟨g₁ * g₂, Subgroup.mem_top _⟩ :=
     τ.lam_of_mem ⟨g₁ * g₂, Subgroup.mem_top _⟩
@@ -120,7 +120,7 @@ lemma cor₂_τ₄ (u : evenSub × evenSub → ZMod 5) (g₁ g₂ : C₄) :
       u (τ₄.lam g₁, (τ₄.lam g₁)⁻¹ * τ₄.lam (g₁ * g₂)) +
         2 * u (τ₄.lam (gen⁻¹ * g₁), (τ₄.lam (gen⁻¹ * g₁))⁻¹ * τ₄.lam (gen⁻¹ * g₁ * g₂)) := by
   have hσ : τ₄.σ ((gen : C₄) : C₄ ⧸ evenSub) = gen := by decide
-  let _ : Fintype (C₄ ⧸ evenSub) := Cores.fintypeQuot
+  let _ : Fintype (C₄ ⧸ evenSub) := Subgroup.fintypeQuotientOfFiniteIndex
   rw [Cores.cor₂_apply, Fintype.sum_eq_add _ _ mk_one_ne_mk_gen
       fun q hq => ((mk_cases q).elim hq.1 hq.2).elim,
     τ₄.σ_one, hσ, map_one, inv_one, one_apply_eq_self, A₄_ρ_gen]
@@ -164,7 +164,7 @@ whatever `g₂`. The proof only splits the sum over the two cosets and evaluates
 example (g₁ g₂ : C₄) :
     (Cores.corCocycles₂ A₄ τ₄ u₀ : C₄ × C₄ → A₄) (g₁, g₂) =
       ![(3 : ZMod 5), 1, 2, 4] (Multiplicative.toAdd g₁) := by
-  let _ : Fintype (C₄ ⧸ evenSub) := Cores.fintypeQuot
+  let _ : Fintype (C₄ ⧸ evenSub) := Subgroup.fintypeQuotientOfFiniteIndex
   rw [Cores.coe_corCocycles₂, Cores.cor₂_apply, Fintype.sum_eq_add _ _ mk_one_ne_mk_gen
     fun q hq => ((mk_cases q).elim hq.1 hq.2).elim]
   revert g₁ g₂
@@ -180,7 +180,7 @@ example (g₁ g₂ : C₄) :
     Cores.cor₂ A₄ τ₄ u₁ (g₁, g₂) =
       ![![(0 : ZMod 5), 1, 3, 2], ![2, 4, 0, 3], ![1, 2, 4, 3], ![4, 1, 2, 0]]
         (Multiplicative.toAdd g₁) (Multiplicative.toAdd g₂) := by
-  let _ : Fintype (C₄ ⧸ evenSub) := Cores.fintypeQuot
+  let _ : Fintype (C₄ ⧸ evenSub) := Subgroup.fintypeQuotientOfFiniteIndex
   rw [Cores.cor₂_apply, Fintype.sum_eq_add _ _ mk_one_ne_mk_gen
     fun q hq => ((mk_cases q).elim hq.1 hq.2).elim]
   revert g₁ g₂
@@ -342,7 +342,7 @@ lemma cor₂_τ₆ (g₁ g₂ : C₆) :
       ![![(0 : ZMod 3), 0, 0, 0, 0, 0], ![0, 0, 0, 0, 1, 1], ![0, 0, 0, 1, 2, 1],
         ![0, 0, 1, 2, 2, 1], ![0, 1, 2, 2, 2, 1], ![0, 1, 1, 1, 1, 0]]
         (Multiplicative.toAdd g₁) (Multiplicative.toAdd g₂) := by
-  let _ : Fintype (C₆ ⧸ evenSub₆) := Cores.fintypeQuot
+  let _ : Fintype (C₆ ⧸ evenSub₆) := Subgroup.fintypeQuotientOfFiniteIndex
   rw [Cores.cor₂_apply, Fintype.sum_eq_add _ _ mk_one_ne_mk_gen₆
     fun q hq => ((mk_cases₆ q).elim hq.1 hq.2).elim]
   revert g₁ g₂
@@ -354,7 +354,7 @@ lemma cor₂_τ₆' (g₁ g₂ : C₆) :
       ![![(0 : ZMod 3), 0, 0, 0, 0, 0], ![0, 2, 2, 0, 2, 2], ![0, 2, 0, 0, 2, 0],
         ![0, 0, 0, 0, 0, 0], ![0, 2, 2, 0, 2, 2], ![0, 2, 0, 0, 2, 0]]
         (Multiplicative.toAdd g₁) (Multiplicative.toAdd g₂) := by
-  let _ : Fintype (C₆ ⧸ evenSub₆) := Cores.fintypeQuot
+  let _ : Fintype (C₆ ⧸ evenSub₆) := Subgroup.fintypeQuotientOfFiniteIndex
   rw [Cores.cor₂_apply, Fintype.sum_eq_add _ _ mk_one_ne_mk_gen₆
     fun q hq => ((mk_cases₆ q).elim hq.1 hq.2).elim]
   revert g₁ g₂
