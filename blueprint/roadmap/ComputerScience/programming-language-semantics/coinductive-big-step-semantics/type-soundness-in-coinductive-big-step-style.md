@@ -15,6 +15,7 @@ evaluations.
 ## Depends on
 
 - [Coinductive divergence](coinductive-divergence.md)
+- [Call-by-value λ-calculus with constants](call-by-value-lambda-calculus-with-constants.md)
 
 ## Proof depends on
 
@@ -23,3 +24,4 @@ evaluations.
 ## Sources
 
 - X. Leroy and H. Grall, "Coinductive big-step operational semantics", arXiv:0808.0586v1, 2008, <https://arxiv.org/abs/0808.0586v1>: Section 8, the typing rules and the fixed-point example, Lemmas 42–43, Theorems 45 and 47 (soundness with infinite reduction and safe reduction), Lemma 48 (big-step preservation), Theorem 49 and Lemma 50 (big-step progress).
+- X. Leroy and H. Grall, "Coinductive big-step operational semantics", *Information and Computation* 207(2):284–304, 2009, <https://doi.org/10.1016/j.ic.2007.12.004>: the published version, with the same numbering: Section 8, the typing rules and the fixed-point example, Lemmas 42–43, Theorems 45 and 47 (soundness with infinite reduction and safe reduction), Lemma 48 (big-step preservation), Theorem 49 and Lemma 50 (big-step progress).

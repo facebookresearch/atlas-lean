@@ -2,7 +2,8 @@
 
 The blame calculus has types $S, T ::= B \mid S \to T \mid \mathrm{Dyn} \mid \{x : B \mid t\}$, with base types $B$, the dynamic type $\mathrm{Dyn}$ and subset (refinement)
 types; a type is well formed when, in every subset type $\{x : B \mid t\}$, the predicate $t$ has type $\mathrm{Bool}$ assuming $x : B$, with no other free variables. Ground
-types are $G ::= B \mid \mathrm{Dyn} \to \mathrm{Dyn}$. Terms include casts $\langle T \Leftarrow S \rangle^p\, s$ between compatible types $S \sim T$, where the blame
+types are $G ::= B \mid \mathrm{Dyn} \to \mathrm{Dyn}$. *Compatibility* $S \sim T$ is the least relation with $B \sim B$, $\mathrm{Dyn} \sim T$, $S \sim \mathrm{Dyn}$, $S \to T \sim S' \to T'$ when $S \sim S'$ and $T \sim T'$, and
+$\{x : B \mid t\} \sim T$ and $T \sim \{x : B \mid t\}$ when $B \sim T$; it is reflexive and symmetric but not transitive. Terms include casts $\langle T \Leftarrow S \rangle^p\, s$ between compatible types $S \sim T$, where the blame
 label $p$ has a complement $\bar p$ with $\bar{\bar p} = p$, and a failed cast reduces to blame $\Uparrow p$. Blaming $p$ (positive blame) means the term inside the cast
 is at fault; blaming $\bar p$ (negative blame) means the context is. A cast between function types checks its argument with the labels swapped.
 

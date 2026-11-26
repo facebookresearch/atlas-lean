@@ -15,6 +15,9 @@ For [simple type assignment à la Curry](simple-type-assignment-a-la-curry.md):
 
 - [Simple type assignment à la Curry](simple-type-assignment-a-la-curry.md)
 - [Log-space many-one reductions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/log-space-red.md)
+- [Lists of equations](../../../Logic/first-order-logic/first-order-unification/equations.md)
+- [Unifier of a list of equations](../../../Logic/first-order-logic/first-order-unification/unifies.md)
+- [Polynomial time on multi-tape machines](../../../TheoryOfComputation/complexity-classes/time-and-space-classes-on-multi-tape-machines/p.md)
 
 ## Proof depends on
 

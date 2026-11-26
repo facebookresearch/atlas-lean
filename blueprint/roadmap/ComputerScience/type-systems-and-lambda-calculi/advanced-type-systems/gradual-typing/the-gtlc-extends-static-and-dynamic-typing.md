@@ -17,6 +17,14 @@ The source states both equivalences with the same result letter on both sides; t
 - [The gradually typed λ-calculus](the-gradually-typed-lambda-calculus.md)
 - [The cast calculus and cast insertion](cast-calculus-and-cast-insertion.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The simply typed λ-calculus with base types $\mathrm{int}$ and $\mathrm{bool}$ and their constants, with its typing $\vdash_S$ and big-step evaluation $\Downarrow_S$ (statement prerequisite; not yet stated)
+- The dynamically typed λ-calculus with constants and its big-step evaluation $\Downarrow_D$, including its errors (statement prerequisite; not yet stated)
+- The embedding $\lceil \cdot \rceil$ of dynamically typed terms into the GTLC, which casts every constant to $?$ (statement prerequisite; not yet stated)
+
 ## Sources
 
 - J. G. Siek, M. M. Vitousek, M. Cimini and J. T. Boyland, "Refined criteria for gradual typing", *1st Summit on Advances in Programming Languages (SNAPL 2015)*, LIPIcs 32, pp. 274–293, 2015, <https://drops.dagstuhl.de/storage/00lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf>: Section 4.1, Theorem 1 (equivalence to the simply typed λ-calculus for fully annotated terms) and Theorem 2 (embedding of the DTLC).
