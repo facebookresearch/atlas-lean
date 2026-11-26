@@ -49,7 +49,6 @@
 - [Initial output of the sequential transducer of a Mealy machine](to-sequential-init-out.md)
 - [Final outputs of the sequential transducer of a Mealy machine](to-sequential-final-out.md)
 - [The sequential transducer of a Mealy machine computes its transduction](translates-to-sequential-iff.md)
-- [A Mealy machine translates a word to its output word](translates-iff-2.md)
 
 ## Automata
 
@@ -69,4 +68,3 @@
 - [Initial output of the sequential transducer of a Moore machine](to-sequential-init-out-2.md)
 - [Final outputs of the sequential transducer of a Moore machine](to-sequential-final-out-2.md)
 - [The sequential transducer of a Moore machine computes its transduction](translates-to-sequential-iff-2.md)
-- [A Moore machine translates a word to its output word](translates-iff-3.md)

@@ -4,4 +4,4 @@ In a monoid, if an element $x$ satisfies $x^{n+1} = x^n$, then $x^{k+1} = x^k$ f
 
 ## Sources
 
-- Pin, "Mathematical Foundations of Automata Theory", Proposition IV.3.2.
+- J.-É. Pin, *Mathematical Foundations of Automata Theory*, version of 24 March 2025, Chapter VI, §2, Proposition 2.1; the statement here is an elementary consequence, valid in any monoid.

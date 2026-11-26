@@ -4,4 +4,4 @@ A pseudovariety of finite monoids is a class of finite monoids that contains the
 
 ## Sources
 
-- Eilenberg, "Automata, Languages, and Machines" Vol. B, Chapter IV, Definition 1.1.
+- S. Eilenberg, *Automata, Languages, and Machines*, Vol. B, Chapter V, §1, pp. 109–110. Requiring the trivial monoid explicitly is the convention adopted here, not a verbatim clause of the cited closure conditions.

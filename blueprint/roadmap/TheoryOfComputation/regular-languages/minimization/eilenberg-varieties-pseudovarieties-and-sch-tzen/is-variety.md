@@ -4,4 +4,4 @@ A variety of regular languages assigns to each finite alphabet a class of langua
 
 ## Sources
 
-- Eilenberg, "Automata, Languages, and Machines" Vol. B, Chapter IV, Definition 2.1.
+- S. Eilenberg, *Automata, Languages, and Machines*, Vol. B, Chapter VII, §3, pp. 192–194 (Theorem 3.2 and the definition following it). Requiring the empty language in each class explicitly is the convention adopted here, not a verbatim clause of the cited closure conditions.

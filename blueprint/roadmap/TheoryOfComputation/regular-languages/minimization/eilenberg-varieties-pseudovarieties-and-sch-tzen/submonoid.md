@@ -4,4 +4,4 @@ Every submonoid of an aperiodic monoid is aperiodic.
 
 ## Sources
 
-- Pin, "Mathematical Foundations of Automata Theory", Proposition IV.3.4.
+- J.-É. Pin, *Mathematical Foundations of Automata Theory*, version of 24 March 2025, Chapter XI, Proposition 4.22 (background); this closure property is stated here for arbitrary monoids, a generalisation.

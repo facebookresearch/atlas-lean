@@ -1,3 +1,0 @@
-# A Mealy machine translates a word to its output word
-
-A transducer, in the general sense, is anything that relates input words to output words; its translation relation says which output word it produces from which input word. A Mealy machine has states, a start state, and a transition function giving, for a state and an input letter, a next state and one output letter; its output word on an input word $x$ is the sequence of output letters emitted while reading $x$ from the start state. Viewed as a general transducer, a Mealy machine relates an input word $x$ to an output word $y$ if and only if $y$ is its output word on $x$.

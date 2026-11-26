@@ -1,15 +1,11 @@
 # Syntactic monoids and Boolean operations
 
 - [Complement preserves syntactic equivalence](syntactic-rel-compl-iff.md)
-- [A language and its complement have the same syntactic congruence](syntactic-con-compl.md)
 - [The syntactic monoids of a language and its complement are isomorphic](syntactic-monoid-compl-equiv.md)
 - [Complement preserves finiteness of the syntactic monoid](finite-syntactic-monoid-compl-iff.md)
 - [Syntactic equivalence passes to the intersection](syntactic-rel-inter.md)
 - [Syntactic equivalence passes to the union](syntactic-rel-union.md)
 - [Syntactic equivalence passes to the difference](syntactic-rel-diff.md)
-- [Two syntactic congruences together refine that of the intersection](syntactic-con-inf-le-inter.md)
-- [Two syntactic congruences together refine that of the union](syntactic-con-inf-le-union.md)
-- [Two syntactic congruences together refine that of the difference](syntactic-con-inf-le-diff.md)
 - [The product of recognizers recognizes the intersection](inter.md)
 - [The product of recognizers recognizes the union](union.md)
 - [The product of recognizers recognizes the difference](diff.md)

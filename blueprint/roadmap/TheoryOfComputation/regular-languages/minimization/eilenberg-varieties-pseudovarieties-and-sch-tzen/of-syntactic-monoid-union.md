@@ -4,4 +4,4 @@ If the syntactic monoids of languages $L$ and $K$ are aperiodic, then so is the 
 
 ## Sources
 
-- Pin, "Mathematical Foundations of Automata Theory", Proposition IV.3.4.
+- J.-É. Pin, *Mathematical Foundations of Automata Theory*, version of 24 March 2025, Chapter XI, Proposition 4.22 (background); the statement here is a consequence for the syntactic monoid of a union.

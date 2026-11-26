@@ -4,4 +4,4 @@ For $n$ positions and tuples of $d + 1$ numbers, the cost bound for the costed v
 
 ## Sources
 
-- M. Jurdziński, "Small progress measures for solving parity games", Proceedings of STACS 2000, LNCS 1770, 290-301.
+- M. Jurdziński, "Small progress measures for solving parity games", Proceedings of STACS 2000, LNCS 1770, 290-301 (background: the paper defines progress measures and the lifting algorithm; the verifier and its comparison counts here are not the paper's algorithm or bound).

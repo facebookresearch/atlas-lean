@@ -4,4 +4,4 @@ For a language $L$, a word $w$ and $k \in \mathbb{N}$, if the image $\bar w$ of 
 
 ## Sources
 
-- Pin, "Mathematical Foundations of Automata Theory", Proposition IV.3.2.
+- J.-É. Pin, *Mathematical Foundations of Automata Theory*, version of 24 March 2025, Chapter VI, §2, Proposition 2.1 (background); the statement here is a direct consequence of the definition of the syntactic congruence.

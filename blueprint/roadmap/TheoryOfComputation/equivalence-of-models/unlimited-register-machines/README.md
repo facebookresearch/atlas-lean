@@ -38,7 +38,6 @@
 - [Output after a given number of steps](halted-output.md)
 - [The URM output after a given number of steps is computable](computable-halted-output.md)
 - [A URM-computable partial function is partial recursive](partrec-of-computable.md)
-- [A register-machine computable total function is computed by a multi-stack Turing machine](tm2-computable.md)
 - [A URM-decidable predicate is computable](computable-pred.md)
 - [A URM-recognizable predicate is recursively enumerable](re-pred.md)
 - [A URM-decidable predicate is decidable by a single-tape Turing machine](single-tape-decidable.md)

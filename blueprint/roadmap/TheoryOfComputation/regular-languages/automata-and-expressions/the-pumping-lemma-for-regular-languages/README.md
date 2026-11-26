@@ -7,7 +7,6 @@
 - [A strict bound on all word lengths is a pumping length](of-forall-length-lt.md)
 - [Zero is a pumping length only for the empty language](is-pumping-length-zero-iff.md)
 - [Pumped words lie in a language containing x y* z](mem-of-pumping-language-le.md)
-- [Every regular language has a pumping length](exists-is-pumping-length.md)
 - [Least pumping length of a regular language](pumping-length.md)
 - [The least pumping length is a pumping length](pumping-length-spec.md)
 - [Nothing below the least pumping length is a pumping length](not-is-pumping-length-of-lt.md)
