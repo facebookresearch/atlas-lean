@@ -4,5 +4,5 @@ There is a constant $C$ such that for every $\varepsilon \in (0, 1)$, every $n \
 
 ## Sources
 
-- A. Marcus, in *Arbeitsgemeinschaft: The Kadison-Singer Conjecture*, Oberwolfach Reports 12 (2015), no. 17, pp. 965–966, Problem 4(4), DOI 10.4171/OWR/2015/17.
+- A. Marcus, in *Arbeitsgemeinschaft: The Kadison-Singer Conjecture*, Oberwolfach Reports, vol. 12, issue 2, Report 17/2015, pp. 965–966, Problem 4(4), DOI 10.4171/OWR/2015/17.
 - M. Ravichandran and N. Srivastava, Asymptotically optimal multi-paving, *Int. Math. Res. Not. IMRN* (2021), arXiv:1706.03737, Theorem 1.

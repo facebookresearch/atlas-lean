@@ -13,8 +13,3 @@
 - [Associativity of composition of regular functions](comp-assoc.md)
 - [Evaluation of a regular function at a point](aeval.md)
 - [Evaluation respects composition](comp-aeval.md)
-
-## Finite fibers of homogeneous polynomial maps
-
-- [Jarden's question on fibres of homogeneous systems](conjecture.md)
-- [Fibres of a homogeneous system with only the trivial common zero are finite](conjecture-holds.md)

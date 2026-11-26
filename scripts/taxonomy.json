@@ -15483,7 +15483,6 @@
   "WantedExt/Algebra/IntegerGroupDeterminantsC4SqWanted": {"to": "GroupTheory/characters-of-finite-groups", "title": "Integer group determinants"},
   "WantedExt/Algebra/IntertwinedIntegerSequencesWanted": {"to": "Algebra/orthogonal-polynomials", "title": "Kassel–Reutenauer polynomials"},
   "WantedExt/Algebra/InvariantRingFiniteGenerationHilbertProblem14Wanted": {"to": "RingTheory/invariant-theory", "title": "Finiteness of rings of invariants"},
-  "WantedExt/Algebra/JardenFiniteFiberClaimWanted": {"to": "Algebra/polynomials", "title": "Polynomial maps between affine spaces"},
   "WantedExt/Algebra/KoetheNilLeftIdealsWanted": {"to": "Algebra/associative-algebras", "title": "Köthe's conjecture"},
   "WantedExt/Algebra/LaplacianAlgebraMaximalAMR67Problem0023Wanted": {"to": "RingTheory/invariant-theory", "title": "Laplacian algebras of polynomials"},
   "WantedExt/Algebra/LinearDeterminantalSquarefreeInitialOWR824Problem003Wanted": {"to": "RingTheory/ideals-and-constructions", "title": "Initial ideals of determinantal ideals"},

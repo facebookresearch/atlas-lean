@@ -8,4 +8,4 @@ where $P_S$ is the diagonal $0$/$1$ projection onto the coordinates in $S$ and n
 
 ## Sources
 
-- A. Marcus, in *Arbeitsgemeinschaft: The Kadison-Singer Conjecture*, Oberwolfach Reports 12 (2015), no. 17, pp. 965–966, Problem 4(4), DOI 10.4171/OWR/2015/17.
+- A. Marcus, in *Arbeitsgemeinschaft: The Kadison-Singer Conjecture*, Oberwolfach Reports, vol. 12, issue 2, Report 17/2015, pp. 965–966, Problem 4(4), DOI 10.4171/OWR/2015/17.

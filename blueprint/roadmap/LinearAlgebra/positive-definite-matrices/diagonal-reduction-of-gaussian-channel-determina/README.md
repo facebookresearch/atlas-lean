@@ -1,6 +1,6 @@
 # Diagonal reduction of Gaussian channel determinants
 
-- [Whitened channel Gram matrix](channel-gram.md)
+- [Channel matrix HᵀR⁻¹H](channel-gram.md)
 - [The whitened channel Gram matrix is positive semidefinite](channel-gram-pos-semidef.md)
 - [Channel eigenvalues](channel-eigenvalues.md)
 - [Orthogonal eigenbasis of the channel Gram matrix](input-basis.md)

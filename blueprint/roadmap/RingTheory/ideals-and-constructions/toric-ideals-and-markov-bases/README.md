@@ -19,7 +19,7 @@ needs.
 - [A binomial lies in the toric ideal iff its exponents have the same statistic](monomial-sub-monomial-mem-toric-ideal-if.md)
 - [Toric map of the Birkhoff model](birkhoff-toric-map.md)
 - [Low-degree binomials in the Birkhoff toric ideal](birkhoff-binomials.md)
-- [AIM computational algebraic statistics Problem 1 (Markov degree of the Birkhoff model)](birkhoff-markov-degree-three.md)
+- [The Diaconis–Eriksson conjecture (Markov degree of the Birkhoff model)](birkhoff-markov-degree-three.md)
 - [The Birkhoff model has Markov degree three](birkhoff-markov-degree-three-holds.md)
 - [Positive part of an integer move](pos-part-nat.md)
 - [Negative part of an integer move](neg-part-nat.md)
