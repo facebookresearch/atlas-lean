@@ -3,6 +3,8 @@
 **Corollary.** The intruder deduction problem for the [Dolev–Yao inference system](dolev-yao-terms-and-deduction.md) is decidable in polynomial time: given a finite set of
 terms $S$ and a term $t$, whether $S \vdash_{\mathcal I_{\mathrm{DY}}} t$ is decidable in time polynomial in the size of $S$ and $t$.
 
+The system is local, and with its seven rules one saturation round only tries each rule on pairs of known terms, which takes polynomial time.
+
 ## Depends on
 
 - [Dolev–Yao terms and intruder deduction](dolev-yao-terms-and-deduction.md)

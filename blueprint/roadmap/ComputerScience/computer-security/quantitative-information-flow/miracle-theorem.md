@@ -1,6 +1,6 @@
 # The miracle theorem: min-capacity bounds every g-capacity
 
-**Theorem ("Miracle").** For every [channel](information-theoretic-channels.md) $C$ and every gain function $g$, $ML_g(C) \le ML(C)$: the
+**Theorem ("Miracle").** For every [channel](information-theoretic-channels.md) $C$ and every positive gain function $g$, $ML_g(C) \le ML(C)$: the
 [g-capacity](g-leakage-and-g-capacity.md) never exceeds the min-capacity.
 
 For every prior $\pi$, bounding $C[x, y]$ by its column maximum gives $V_g(\pi, C) \le \big(\sum_y \max_x C[x, y]\big)\, V_g(\pi) = 2^{ML(C)}\, V_g(\pi)$. In particular a

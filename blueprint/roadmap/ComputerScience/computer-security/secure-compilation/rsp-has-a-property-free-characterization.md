@@ -4,11 +4,12 @@
 
 $$\mathrm{RSC}:\quad \forall \mathsf P.\ \forall \mathbf C_T.\ \forall m.\ \mathbf C_T[\mathsf P{\downarrow}] \rightsquigarrow m \implies \exists \mathsf C_S.\ \mathsf C_S[\mathsf P] \rightsquigarrow m,$$
 
-the analogue of the characterization of RTP with finite trace prefixes $m$ in place of traces.
+the analogue of the characterization of RTP with [finite prefixes](compilation-chains-and-robust-satisfaction.md) $m$, terminated or open, in place of traces.
 
 ## Depends on
 
 - [Robust safety property preservation](robust-safety-property-preservation.md)
+- [Compilation chains and robust satisfaction](compilation-chains-and-robust-satisfaction.md)
 
 ## Sources
 

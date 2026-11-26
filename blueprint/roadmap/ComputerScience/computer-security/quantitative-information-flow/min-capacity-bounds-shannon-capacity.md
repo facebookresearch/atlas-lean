@@ -4,7 +4,7 @@
 of the input $X \sim \pi$ and the output $Y$ under the joint distribution $\pi[x] C[x, y]$, is at most its [min-capacity](g-leakage-and-g-capacity.md)
 $ML(C)$.
 
-The proof bounds $I(X; Y) = \sum_{x, y} p(x, y) \log_2 \frac{p(y \mid x)}{p(y)}$ by Jensen's inequality and then by $\log_2 \sum_y \max_x C[x, y]$.
+The proof bounds $I(X; Y) = \sum_{x, y} p(x, y) \log_2 \frac{p(y \mid x)}{p(y)}$ by [Jensen's inequality for the concave logarithm](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/finite-jensen-inequality-for-concave-functions.md) and then by $\log_2 \sum_y \max_x C[x, y]$.
 
 ## Depends on
 
@@ -14,6 +14,7 @@ The proof bounds $I(X; Y) = \sum_{x, y} p(x, y) \log_2 \frac{p(y \mid x)}{p(y)}$
 ## Proof depends on
 
 - [Min-capacity is the logarithm of the sum of column maxima](min-capacity-is-the-log-of-the-sum-of-column-maxima.md)
+- [Finite Jensen inequality for concave functions](../../../MeasureTheory/integration/jensen-s-inequality-for-integrals/jensen-s-inequality/finite-jensen-inequality-for-concave-functions.md)
 
 ## Sources
 

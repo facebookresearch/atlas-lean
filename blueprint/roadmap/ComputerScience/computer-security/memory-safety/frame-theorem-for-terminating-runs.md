@@ -10,6 +10,10 @@ The extra state $s_2$ is untouched, and the result differs from $s'_1$ only by r
 
 - [A memory-safe language with block identifiers](block-structured-memory-safe-language.md)
 
+## Proof depends on
+
+- [Renaming block identifiers commutes with execution](renaming-identifiers-commutes-with-execution.md)
+
 ## Sources
 
 - A. Azevedo de Amorim, C. Hriţcu and B. C. Pierce, "The meaning of memory safety", *Principles of Security and Trust (POST 2018)*, arXiv:1705.07354v3, <https://arxiv.org/abs/1705.07354v3>: Section 3.1, Theorem 1 (Frame OK), with Theorem 2 (renaming states) used in its proof.

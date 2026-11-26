@@ -1,7 +1,7 @@
 # g-leakage is nonnegative
 
-**Theorem.** For every gain function $g$, prior $\pi$ and channel $C$, $V_g(\pi, C) \ge V_g(\pi)$; consequently the [g-leakage](g-leakage-and-g-capacity.md) satisfies
-$L_g(\pi, C) \ge 0$.
+**Theorem.** For every gain function $g$, prior $\pi$ and channel $C$, $V_g(\pi, C) \ge V_g(\pi)$; consequently, for every positive gain function, the
+[g-leakage](g-leakage-and-g-capacity.md) satisfies $L_g(\pi, C) \ge 0$.
 
 The proof exchanges the sum over outputs with the maximum over guesses: $\sum_y \max_w \sum_x p(x, y) g(w, x) \ge \max_w \sum_y \sum_x p(x, y) g(w, x)$.
 

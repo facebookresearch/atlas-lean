@@ -1,7 +1,8 @@
 # Binary, partition and k-tries gain functions
 
 For a nonempty family $\mathcal W$ of subsets of a finite set $\mathcal X$ of secrets, the *binary gain function* $g_{\mathcal W} : \mathcal W \times \mathcal X \to [0, 1]$ is
-$g_{\mathcal W}(W, x) = 1$ if $x \in W$ and $0$ otherwise (see [gain functions and g-vulnerability](gain-functions-and-g-vulnerability.md)). Special cases:
+$g_{\mathcal W}(W, x) = 1$ if $x \in W$ and $0$ otherwise (see [gain functions and g-vulnerability](gain-functions-and-g-vulnerability.md)); it is positive exactly when the sets in $\mathcal W$
+cover $\mathcal X$, as they do in all the cases below. Special cases:
 
 - *2-block gain functions*, with $\mathcal W = \{W, \mathcal X \setminus W\}$ for a property $W$ of the secret;
 - *partition gain functions* $g_\sim$, with $\mathcal W = \mathcal X/{\sim}$ for an equivalence relation $\sim$; the identity relation gives $g_{\mathrm{id}}$, and the universal relation gives

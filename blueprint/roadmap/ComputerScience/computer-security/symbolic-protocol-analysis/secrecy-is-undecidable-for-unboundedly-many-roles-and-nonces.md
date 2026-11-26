@@ -6,12 +6,16 @@ whether some run with any number of role instances and nonces, and facts of size
 message depth, message width, the number of distinct roles and role length are bounded.
 
 The problem is recursively enumerable; the lower bound encodes derivability in Horn theories with existential quantification, which is undecidable by
-reduction from the halting problem for two-counter machines.
+reduction from the [halting problem for two-counter machines](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md).
 
 ## Depends on
 
 - [Restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)
 
+## Proof depends on
+
+- [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+
 ## Sources
 
-- N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Section 5, Theorem 1, Proposition 5.1 (upper bound, Section 5.4.1) and Proposition 5.5 (lower bound, Section 5.5.2), and the summary in the introduction.
+- N. Durgin, P. Lincoln, J. Mitchell and A. Scedrov, "Multiset rewriting and the complexity of bounded security protocols", *Journal of Computer Security* 12(2):247–311, 2004, copy at <http://www-cs-students.stanford.edu/~nad/papers/msr-jcs215.pdf>: Section 5, Theorem 1, Proposition 5.1 (upper bound, Section 5.4.1) and Proposition 5.5 (lower bound, Section 5.5.2, via the undecidability of existential Horn theories by reduction from two-counter machine halting), and the summary in the introduction.

@@ -1,7 +1,7 @@
 # The strong g-leakage order is preserved by pre-composition
 
 **Theorem.** For all [channels](information-theoretic-channels.md) $C$, $C_1$ and $C_2$ for which the products are defined, if $C_1 \le_G C_2$ in the strong g-leakage order of
-[composition refinement of channels](composition-refinement-of-channels.md), then $C C_1 \le_G C C_2$. Moreover, if $L_g(\pi_u, C_1) \le L_g(\pi_u, C_2)$ for every gain function $g$ at the
+[composition refinement of channels](composition-refinement-of-channels.md), then $C C_1 \le_G C C_2$. Moreover, if $L_g(\pi_u, C_1) \le L_g(\pi_u, C_2)$ for every positive gain function $g$ at the
 uniform prior $\pi_u$, then $C_1 \le_G C_2$.
 
 ## Depends on

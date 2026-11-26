@@ -1,24 +1,25 @@
-# Combined transfer and the can·know predicate
+# The can·know predicate, rwtg-paths and connections
 
-Let $G_0$ be a [protection graph](take-grant-protection-graphs.md). A *combined transfer* applies any sequence of de jure rules (Take, Grant, Create, Remove), which
-match explicit edges only, and [de facto rules](de-facto-rules-and-admissible-rw-paths.md) (Post, Pass, Spy, Find), which match explicit or implicit edges. For
-distinct vertices $p, q$, $\mathrm{can{\cdot}know}(p, q, G_0)$ holds if there are graphs $G_1, \dots, G_n$ with $G_0 \vdash^* G_n$ by combined transfers such that $G_n$
-has an edge, explicit or implicit, from $p$ to $q$ labelled $r$.
+Let $G_0$ be a [protection graph](take-grant-protection-graphs.md). The predicate $\mathrm{can{\cdot}know}(x, y, G_0)$ holds if and only if there is a sequence of
+protection graphs $G_0, \dots, G_n$, each obtained from the previous one by a de jure rule or a [de facto rule](de-facto-rules.md), such that $G_n$ has an edge from
+$x$ to $y$ labelled $r$ or an edge from $y$ to $x$ labelled $w$, and if that edge is explicit then its source is a subject.
 
-An *rwtg-path* joins consecutive vertices by edges whose labels contain $r$, $w$, $t$ or $g$, and has associated words over
-$\{\vec t, \overleftarrow t, \vec g, \overleftarrow g, \vec r, \overleftarrow r, \vec w, \overleftarrow w\}$ as for [tg-paths](tg-paths-islands-spans-and-bridges.md). An
-rwtg-path $v_0, \dots, v_k$ ($k > 0$) whose first vertex $v_0$ is a subject is an *rw-initial span* if it has an associated word in $\vec t^{\,*} \vec w$ and an
-*rw-terminal span* if it has an associated word in $\vec t^{\,*} \vec r$. The languages of *bridges* and *connections* are
+An *rwtg-path* is a nonempty sequence $v_0, \dots, v_n$ of distinct vertices such that consecutive vertices are joined by an edge, in either direction, whose label
+contains $t$, $g$, $r$ or $w$; its associated words over $\{\vec t, \overleftarrow t, \vec g, \overleftarrow g, \vec r, \overleftarrow r, \vec w, \overleftarrow w\}$ are formed as for
+[tg-paths](tg-paths-islands-spans-and-bridges.md). A vertex $v_0$
 
-$$B = \vec t^{\,*} \cup \overleftarrow t^{\,*} \cup \vec t^{\,*} \vec g\, \overleftarrow t^{\,*} \cup \vec t^{\,*} \overleftarrow g\, \overleftarrow t^{\,*}, \qquad
-C = \vec t^{\,*} \vec r \cup \overleftarrow w\, \overleftarrow t^{\,*} \cup \vec t^{\,*} \vec r\, \overleftarrow w\, \overleftarrow t^{\,*}.$$
+- *rw-initially spans to* $v_n$ if $v_0$ is a subject and some rwtg-path between them has an associated word in $\vec t^{\,*} \vec w \cup \{\nu\}$;
+- *rw-terminally spans to* $v_n$ if $v_0$ is a subject and some rwtg-path between them has an associated word in $\vec t^{\,*} \vec r$.
+
+A *connection* is an rwtg-path whose endpoints are both subjects and which has an associated word in
+$C = \vec t^{\,*} \vec r \cup \overleftarrow w\, \overleftarrow t^{\,*} \cup \vec t^{\,*} \vec r\, \overleftarrow w\, \overleftarrow t^{\,*}$.
 
 ## Depends on
 
 - [Take–grant protection graphs](take-grant-protection-graphs.md)
-- [De facto rules and admissible rw-paths](de-facto-rules-and-admissible-rw-paths.md)
+- [De facto rules](de-facto-rules.md)
 - [tg-paths, islands, spans and bridges](tg-paths-islands-spans-and-bridges.md)
 
 ## Sources
 
-- M. Bishop and L. Snyder, *The Transfer of Information and Authority in a Protection System*, Research Report 166, Department of Computer Science, Yale University, July 1979, <http://nob.cs.ucdavis.edu/~bishop/notes/1979-yalecs-166/yale-166.pdf>: Section 5, the definitions of combined transfer, can·know, rwtg-paths, rw-initial and rw-terminal spans, and the languages $B$ and $C$ (p. 22).
+- M. Bishop, "Conspiracy and information flow in the take-grant protection model", *Journal of Computer Security* 4(4):331–359, 1996, author copy at <http://nob.cs.ucdavis.edu/bishop/papers/1996-jcs/tgconsp.pdf>: Section 2, the definitions of can·know, rwtg-path, rw-initially spans, rw-terminally spans and connection.
