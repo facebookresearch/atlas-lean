@@ -5,5 +5,4 @@ Differentiation on normed spaces, from Fréchet derivatives and tangent cones to
 - [Fréchet derivatives](frechet-derivatives/README.md)
 
 - [Constant rank theorem](constant-rank-theorem.md)
-- [Constant rank theorem in finite-dimensional normed spaces](exists-constant-rank-coordinates.md)
 - [Inverse function theorem](inverse-function-theorem.md)

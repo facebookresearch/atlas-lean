@@ -1,6 +1,6 @@
 # Highly strongly connected tournaments split into strongly connected parts
 
-For every $t \ge 1$ and all positive integers $k_1, \dots, k_t$ there is $g$ such that every strongly $g$-connected tournament has a partition $V_1, \dots, V_t$ of its vertex set in which each $V_i$ induces a strongly $k_i$-connected subtournament; here a vertex set $S$ induces a strongly $k$-connected subtournament when $|S| > k$ and it remains strongly connected after deleting any fewer than $k$ vertices. Kühn, Osthus and Townsend proved that every strongly $10^7 k^6 t^3 \log(k t^2)$-connected tournament has a vertex partition into $t$ strongly $k$-connected subtournaments, which answers Thomassen's problem in the affirmative.
+For every $t \ge 1$ and all positive integers $k_1, \dots, k_t$ there is $g$ such that every strongly $g$-connected tournament has a partition $V_1, \dots, V_t$ of its vertex set in which each $V_i$ induces a strongly $k_i$-connected subtournament; here a vertex set $S$ induces a strongly $k$-connected subtournament when $|S| > k$ and it remains strongly connected after deleting any fewer than $k$ vertices. Kühn, Osthus and Townsend proved that, for $t \ge 2$, every strongly $10^7 k^6 t^3 \log(k t^2)$-connected tournament has a vertex partition into $t$ strongly $k$-connected subtournaments, which answers Thomassen's problem in the affirmative.
 
 ## Sources
 

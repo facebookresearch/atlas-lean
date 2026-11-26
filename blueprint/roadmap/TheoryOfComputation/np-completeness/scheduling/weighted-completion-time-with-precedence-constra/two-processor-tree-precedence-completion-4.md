@@ -4,9 +4,5 @@ The decision problem TWO-PROCESSOR TREE-PRECEDENCE SCHEDULING TO MINIMIZE TOTAL 
 
 ## Sources
 
-- M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of NP-Completeness*, W. H. Freeman (1979), problem [SS13] SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME, comment (attributed there to R. Sethi, 1977).
-
-## Sources
-
 - M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of NP-Completeness*, W. H. Freeman (1979), problem [SS13] SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME, comment.
 - R. Sethi, "On the complexity of mean flow time scheduling", Mathematics of Operations Research 2 (1977), 320-330.
