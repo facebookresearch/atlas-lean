@@ -21,10 +21,12 @@ implementation by diffusion.
 
 ## Specification
 
-Reliable broadcast is given by two primitives, R-broadcast and R-deliver. Every message carries
-the identity of its sender and a sequence number. A run is recorded by the set of its correct
-processes and, at each time, its R-broadcast or R-deliver event, if any. `IsReliableBroadcast`
-asks for validity, agreement and uniform integrity.
+Reliable broadcast is given by two primitives, R-broadcast and R-deliver. Messages range over
+any type with a map giving the sender of each message. A run is recorded by the set of its
+correct processes and, at each time, its R-broadcast or R-deliver event, if any.
+`IsReliableBroadcast` asks for validity, agreement and uniform integrity. In the source, every
+message carries its sender and a sequence number, which make it unique; the specification does
+not assume this, and the diffusion algorithm below ensures it.
 
 ## Diffusion
 
@@ -73,28 +75,17 @@ set_option autoImplicit false
 
 namespace Cslib.Distributed.ReliableBroadcast
 
--- A message carries the identity of its sender, the sequence number its sender gives it and a
--- payload.
-structure Message (P D : Type*) where
-  /-- The process that R-broadcasts the message. -/
-  sender : P
-  /-- The sequence number of the message among those of its sender. -/
-  seq : ℕ
-  /-- The contents of the message. -/
-  payload : D
-deriving DecidableEq
-
 -- An event of reliable broadcast: `broadcast p m` when process `p` R-broadcasts `m`, and
 -- `deliver p m` when `p` R-delivers `m`.
-inductive Event (P D : Type*) where
-  | broadcast (p : P) (m : Message P D)
-  | deliver (p : P) (m : Message P D)
+inductive Event (P M : Type*) where
+  | broadcast (p : P) (m : M)
+  | deliver (p : P) (m : M)
 
-variable {P D : Type*}
+variable {P M D : Type*}
 
-/-- **Reliable broadcast.** Messages carry the identity of their sender, a sequence number and a
-payload. A run of a system of processes `P` is recorded by the set `correct` of its correct
-processes and by its events: `ev t` is the event of the run at time `t`, if any, where
+/-- **Reliable broadcast.** Messages range over a type `M`, and `sender m` is the process that
+sends the message `m`. A run of a system of processes `P` is recorded by the set `correct` of its
+correct processes and by its events: `ev t` is the event of the run at time `t`, if any, where
 `Event.broadcast p m` says that process `p` R-broadcasts the message `m` and `Event.deliver p m`
 says that `p` R-delivers `m`. The run satisfies reliable broadcast if it has the following
 properties.
@@ -104,8 +95,9 @@ properties.
 * Agreement: if a correct process R-delivers `m`, then every correct process R-delivers `m` at
   some time.
 * Uniform integrity: every process `p`, correct or not, R-delivers each message `m` at most once,
-  and only at a time `t` such that the sender of `m` R-broadcasts `m` at some time `t' < t`. -/
-structure IsReliableBroadcast (correct : Set P) (ev : ℕ → Option (Event P D)) : Prop where
+  and only at a time `t` such that `sender m` R-broadcasts `m` at some time `t' < t`. -/
+structure IsReliableBroadcast (sender : M → P) (correct : Set P) (ev : ℕ → Option (Event P M)) :
+    Prop where
   /-- A correct process R-delivers every message it R-broadcasts, at that time or later. -/
   validity : ∀ p ∈ correct, ∀ m t, ev t = some (.broadcast p m) →
     ∃ t', t ≤ t' ∧ ev t' = some (.deliver p m)
@@ -116,9 +108,21 @@ structure IsReliableBroadcast (correct : Set P) (ev : ℕ → Option (Event P D)
   it. -/
   uniformIntegrity : ∀ p m t, ev t = some (.deliver p m) →
     (∀ t', ev t' = some (.deliver p m) → t' = t) ∧
-      ∃ t' < t, ev t' = some (.broadcast m.sender m)
+      ∃ t' < t, ev t' = some (.broadcast (sender m) m)
 
 namespace Diffusion
+
+-- A message of the diffusion algorithm carries the identity of its sender, the sequence number
+-- its sender gives it and a payload.
+structure Message (P D : Type*) where
+  /-- The process that R-broadcasts the message. -/
+  sender : P
+  /-- The sequence number of the message among those of its sender. -/
+  seq : ℕ
+  /-- The contents of the message. -/
+  payload : D
+deriving DecidableEq
+
 
 -- The state of the diffusion algorithm.
 structure State (P D : Type*) where
@@ -154,7 +158,7 @@ inductive Step (P D : Type*) where
 
 -- The R-broadcast or R-deliver event of a step, if any: a step that crashes while relaying a
 -- message does not R-deliver it.
-def Step.event : Step P D → Option (Event P D)
+def Step.event : Step P D → Option (Event P (Message P D))
   | .broadcast p m _ => some (.broadcast p m)
   | .deliver p _ m none => some (.deliver p m)
   | _ => none
@@ -566,7 +570,7 @@ uniform integrity. Neither the number of processes nor the number of crashes is 
 theorem diffusion_isReliableBroadcast [DecidableEq P] [DecidableEq D]
     {ss : ωSequence (State P D)} {μs : ωSequence (Step P D)} (h0 : ss 0 = init)
     (hex : lts.OmegaExecution ss μs) (hfair : ReliableDelivery ss μs) :
-    IsReliableBroadcast (correct ss) fun t => (μs t).event := by
+    IsReliableBroadcast Message.sender (correct ss) fun t => (μs t).event := by
   -- Every message in a delivered set has been R-delivered.
   have hdel : ∀ p m T, m ∈ (ss T).delivered p → ∃ t, (μs t).event = some (.deliver p m) := by
     intro p m T hm
