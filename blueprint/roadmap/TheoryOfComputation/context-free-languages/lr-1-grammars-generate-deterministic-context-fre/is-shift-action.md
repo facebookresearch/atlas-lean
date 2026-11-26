@@ -4,10 +4,6 @@ Let $g$ be a context-free grammar with terminal alphabet $T$, nonterminals $N$ a
 
 For a sentential form $\pi$ and a lookahead $\ell$, there is a shift action at $\pi$ with lookahead $\ell$ when $\ell$ is a terminal $a$ (not the end of input) and $\pi a$ is a viable prefix.
 
-## Depends on
-
-- [Viable prefixes](is-viable-prefix.md)
-
 ## Sources
 
 - A. V. Aho, M. S. Lam, R. Sethi, and J. D. Ullman, *Compilers: Principles, Techniques, and Tools*, 2nd ed., Chapter 4.
