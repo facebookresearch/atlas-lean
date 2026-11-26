@@ -2,9 +2,9 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Capture Recapture](capture-recapture/README.md)
 - [Center Star](center-star/README.md)
 - [Chao Lower Bound](chao-lower-bound/README.md)
+- [Capture Recapture](capture-recapture/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
 - [General Markov Flattening](general-markov-flattening/README.md)

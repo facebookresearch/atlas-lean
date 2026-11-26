@@ -1,6 +1,6 @@
 # The mediation formula
 
-**The mediation formula** (Pearl 2001). Let `μ` be a probability measure on `Ω`; let the
+Let `μ` be a probability measure on `Ω`; let the
 exposure `X : Ω → 𝒳`, the covariates `Z : Ω → 𝒵` and the potential mediators `M(x) : Ω → ℳ` be
 measurable with finite value types having measurable singletons; and let the potential outcomes
 `Y(x, m) : Ω → ℝ` be measurable and bounded (`|Y(x, m)| ≤ C`). Assume, for all `x, x', m, z`:

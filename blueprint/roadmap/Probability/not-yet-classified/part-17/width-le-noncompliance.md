@@ -1,6 +1,6 @@
 # The width is at most the noncompliance rate
 
-**The width is at most the noncompliance rate** (Balke and Pearl 1997). For every
+For every
 distribution `q` of the sixteen response types (a `TypeLaw`), the Balke–Pearl upper bound (5)
 minus the lower bound (4), both computed from the observed law `q.obs`, is at most the
 noncompliance rate `P(D = 1 | Z = 0) + P(D = 0 | Z = 1)

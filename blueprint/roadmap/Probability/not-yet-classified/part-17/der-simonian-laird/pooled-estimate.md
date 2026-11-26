@@ -1,4 +1,4 @@
-# Pooled Estimate
+# Random-effects pooled estimate
 
-The random-effects pooled estimate `∑ᵢ ωᵢ yᵢ`, where `ω` are the inverse-variance weights of
-the total variances `v_i + Δ²`.
+The estimate `∑ᵢ ωᵢ yᵢ`, where `ω` are the inverse-variance
+weights of the total variances `v_i + Δ²`.

@@ -1,8 +1,8 @@
 # Mediation Formula
 
-- [Observed Mediator](observed-mediator.md)
-- [Observed Outcome](observed-outcome.md)
-- [Nested Mean](nested-mean.md)
-- [Cond Mean Outcome](cond-mean-outcome.md)
-- [Cond Prob Mediator](cond-prob-mediator.md)
+- [Observed mediator](observed-mediator.md)
+- [Observed outcome](observed-outcome.md)
+- [Mean of a nested potential outcome](nested-mean.md)
+- [Observed conditional mean outcome](cond-mean-outcome.md)
+- [Observed conditional mediator probability](cond-prob-mediator.md)
 - [The mediation formula](mediation-formula.md)

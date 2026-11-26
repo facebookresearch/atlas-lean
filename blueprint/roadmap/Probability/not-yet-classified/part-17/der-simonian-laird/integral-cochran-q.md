@@ -1,6 +1,6 @@
 # Expectation of Cochran's `Q`
 
-**Expectation of Cochran's `Q`** (DerSimonian and Laird 1986, p. 182). Let `μ` be a
+Let `μ` be a
 probability measure, `k ≥ 2`, `v_i > 0` known sampling variances, `Δ² ≥ 0`, and
 `y_i = m + δ_i + e_i` where `δ, e` satisfy the random-effects model assumptions (square
 integrable, mean `0`, `Var δ_i = Δ²`, `Var e_i = v_i`, distinct deviations uncorrelated). Then

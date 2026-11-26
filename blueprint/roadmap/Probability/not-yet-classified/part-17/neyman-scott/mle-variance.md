@@ -1,3 +1,4 @@
-# Mle Variance
+# Maximum-likelihood variance estimate
 
-The maximum-likelihood estimate `σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`.
+The estimate
+`σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`.

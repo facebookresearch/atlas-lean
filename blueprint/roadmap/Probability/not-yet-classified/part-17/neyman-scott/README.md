@@ -1,8 +1,8 @@
 # Neyman Scott
 
-- [Log Lik](log-lik.md)
-- [Mle Variance](mle-variance.md)
-- [Conditional Variance](conditional-variance.md)
+- [Gaussian log-likelihood of the pairs](log-lik.md)
+- [Maximum-likelihood variance estimate](mle-variance.md)
+- [Difference-based variance estimate](conditional-variance.md)
 - [The joint maximum-likelihood estimate](log-lik-max.md)
 - [No maximum when all pairs agree](log-lik-unbounded.md)
 - [Inconsistency of the maximum-likelihood variance](mle-variance-inconsistent.md)

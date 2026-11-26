@@ -1,6 +1,6 @@
 # Distribution-freeness
 
-**Distribution-freeness** (Kruskal and Wallis 1952, Section 1; Kruskal 1952, p. 525). Let `μ`
+Let `μ`
 be a probability measure, `X_1, …, X_N : Ω → ℝ` independent measurable random variables with a
 common law (`X_k` and `X_l` have the same law for all `k, l`) that has no atoms, and `g` an
 assignment of the `N` positions to `C` samples. For every real `h`, the probability that the
