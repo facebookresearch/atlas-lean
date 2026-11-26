@@ -29,7 +29,8 @@ import Mathlib.Data.ZMod.Basic
 /-!
 # Per-label measurement circuits
 
-For one Pauli label `(a, b)` addressed at injective positions `addr`, a
+For one Pauli label `(a, b)` addressed at injective positions `addr`, all
+below `N`, and an ancilla `0 < anc < N` outside them, a
 circuit of per-qubit basis changes (`ωH`, and `S†` then `ωH` for `Y`
 letters), parity accumulation of the changed bits into a clean ancilla by
 CNOTs, an optional sign flip, and a swap of the answer into qubit `0`
@@ -415,8 +416,8 @@ theorem pauliEmb_zero_zero {N k : ℕ} {addr : Fin k → ℕ} :
         ite_eq_right (fun heq => hst (eq_of_agree h heq))]
     · rw [ite_eq_right h, Matrix.one_apply, ite_eq_right hst]
 
-/-- The Pauli quadratic form is bounded by the squared norm:
-`|⟨ψ|P_emb|ψ⟩| ≤ sqNorm ψ`. -/
+/-- The Pauli quadratic form is bounded by the squared norm: for injective
+addresses `addr` with every `addr i < N`, `|⟨ψ|P_emb|ψ⟩| ≤ sqNorm ψ`. -/
 theorem abs_pauliExpect_le {N k : ℕ} {addr : Fin k → ℕ}
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
     (a b : Fin k → ZMod 2) (ψ : Fin (2 ^ N) → ℂ) :
@@ -484,7 +485,9 @@ private theorem flatMap_length_le_of_le {α β : Type} (f : α → List β)
       rw [Nat.mul_add, Nat.mul_one]
     omega
 
-/-- Every gate of the per-label circuit is well-formed. -/
+/-- Every gate of the per-label circuit is well-formed when every address
+`addr i` is below `N`, the ancilla satisfies `0 < anc < N`, and no address
+equals the ancilla. The addresses need not be injective. -/
 theorem perLabelCircuit_wellFormed {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (neg : Bool)
     (hlt : ∀ i, addr i < N) (hanc0 : 0 < anc) (hanc : anc < N)
@@ -556,8 +559,8 @@ theorem perLabelCircuit_length_le {k anc : ℕ} (addr : Fin k → ℕ)
     by_cases hn : neg = true <;> simp [hn]
   omega
 
-/-- After the output swap, acceptance reads the ancilla bit of the
-pre-swap state. -/
+/-- After the output swap with an ancilla `0 < anc < N`, acceptance reads
+the ancilla bit of the pre-swap state. -/
 theorem acceptProb_outputSwap {N anc : ℕ} (hanc0 : 0 < anc) (hanc : anc < N)
     (φ : Fin (2 ^ N) → ℂ) :
     acceptProb (applyCircuit N [outputSwap anc] φ) =
@@ -1706,8 +1709,12 @@ private theorem ancCorr_flatMap {N k anc : ℕ} {addr : Fin k → ℕ}
         simp only [List.mem_cons, hji, false_or]
     rw [hA, hB]
 
-/-- Core identity: the weight of the answer ancilla reading `1` after the
-core, a probability when `sqNorm ψ = 1`. -/
+/-- Core identity. Let the addresses `addr` be injective with every
+`addr i < N`, and let the ancilla satisfy `0 < anc < N` and `addr i ≠ anc`
+for every `i`. On a state with a clean ancilla (zero amplitude at every basis
+state whose ancilla bit is `1`), the weight of the answer ancilla reading `1`
+after the core is `(sqNorm ψ - σ ⟨ψ|P_emb|ψ⟩) / 2`, where `σ = -1` when `neg`
+holds and `σ = 1` otherwise; it is a probability when `sqNorm ψ = 1`. -/
 theorem ancProb_perLabelCore {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (neg : Bool)
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
@@ -1766,10 +1773,13 @@ theorem ancProb_perLabelCore {N k anc : ℕ} {addr : Fin k → ℕ}
     rw [hflat]
     ring
 
-/-- **Per-label expectation identity.** On a state with a clean ancilla,
-the acceptance weight of the circuit is `(‖ψ‖² - σ ⟨ψ|P_emb|ψ⟩) / 2`. It is
-a probability only for a unit state, the case of
-`acceptProb_perLabelCircuit_signOne`. -/
+/-- **Per-label expectation identity.** Let the addresses `addr` be
+injective with every `addr i < N`, and let the ancilla satisfy
+`0 < anc < N` and `addr i ≠ anc` for every `i`. On a state with a clean
+ancilla (zero amplitude at every basis state whose ancilla bit is `1`), the
+acceptance weight of the circuit is `(‖ψ‖² - σ ⟨ψ|P_emb|ψ⟩) / 2`, where
+`σ = -1` when `neg` holds and `σ = 1` otherwise. It is a probability only
+for a unit state, the case of `acceptProb_perLabelCircuit_signOne`. -/
 theorem acceptProb_perLabelCircuit {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (neg : Bool)
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
@@ -1784,7 +1794,12 @@ theorem acceptProb_perLabelCircuit {N k anc : ℕ} {addr : Fin k → ℕ}
   exact ancProb_perLabelCore a b neg haddr hlt hanc0 hanc hne hclean
 
 /-- For a unit state, the acceptance probability in `signOne` form (with
-`signOne 0 = +1`), the shape consumed by the Pauli-test acceptance identity. -/
+`signOne 0 = +1`), the shape consumed by the Pauli-test acceptance identity.
+Let the addresses `addr` be injective with every `addr i < N`, let the
+ancilla satisfy `0 < anc < N` and `addr i ≠ anc` for every `i`, and let `ψ`
+have a clean ancilla (zero amplitude at every basis state whose ancilla bit
+is `1`) and `sqNorm ψ = 1`. Then the circuit with sign `neg = (c < 0)`
+accepts with probability `(1 - signOne c * ⟨ψ|P_emb|ψ⟩) / 2`. -/
 theorem acceptProb_perLabelCircuit_signOne {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (c : ℝ)
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
@@ -1803,7 +1818,12 @@ theorem acceptProb_perLabelCircuit_signOne {N k anc : ℕ} {addr : Fin k → ℕ
   rw [hs]
   simpa only [decide_eq_true_eq] using h
 /-- Accept-iff-`σ · parity = -1` on computational-basis inputs, for
-`Z`-strings. -/
+`Z`-strings. Let every address `addr i` be below `N` (the addresses need not
+be injective), and let the ancilla satisfy `0 < anc < N` and `addr i ≠ anc`
+for every `i`. For a basis state `s` whose ancilla bit is `0`, the circuit
+for the label `(0, b)` accepts `s` with probability `1` when
+`σ · (-1) ^ (b · localBits addr s) = -1` and `0` otherwise, where `σ = -1`
+when `neg` holds and `σ = 1` otherwise. -/
 theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k → ℕ}
     (b : Fin k → ZMod 2) (neg : Bool)
     (hlt : ∀ i, addr i < N)
@@ -2019,8 +2039,10 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
         simp [this]
       simp [hpow]
       norm_num [hpow]
-/-- Locality: the core preserves the support condition at every qubit
-outside the addresses and the ancilla. -/
+/-- Locality: let every address `addr i` be below `N`, and let the ancilla
+satisfy `0 < anc < N` and `addr i ≠ anc` for every `i`. For a qubit `q`
+outside the addresses and the ancilla, if the state vanishes at every basis
+state whose bit `q` differs from `v`, so does its image under the core. -/
 theorem perLabelCore_preserves_qBit {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (neg : Bool)
     (hlt : ∀ i, addr i < N) (hanc0 : 0 < anc) (hanc : anc < N)
