@@ -10,8 +10,8 @@ Under the Jukes-Cantor, Kimura 2-parameter or Kimura 3-parameter constraints, wh
 
 ## Depends on
 
-- [Jukes-Cantor stochastic matrix](../../jukes-cantor-model/jc-stochastic-matrix.md)
-- [Kimura two-parameter transition matrix](../../kimura-two-parameter-model/kimura-prob.md)
+- [Jukes-Cantor stochastic matrix](../../../jukes-cantor-model/jc-stochastic-matrix.md)
+- [Kimura two-parameter transition matrix](../../../kimura-two-parameter-model/kimura-prob.md)
 
 ## Expansion
 

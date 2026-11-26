@@ -14,15 +14,15 @@ The denominator $k(2n-k-1)/2 = \sum_{d=1}^{k}(n - d)$ is the number of pairs ave
 
 ## Depends on
 
-- [Small parsimony problem](../../small-parsimony-problem/README.md)
+- [Small parsimony problem](../../../small-parsimony-problem/README.md)
 
 ## Proof depends on
 
-- [Four-gamete condition for two sites](../../../coalescent-theory/hudson-kaplan-bound-on-recombination-events/four-gametes.md)
+- [Four-gamete condition for two sites](../../../../coalescent-theory/hudson-kaplan-bound-on-recombination-events/four-gametes.md)
 
 ## Expansion
 
-For two biallelic sites, $l = 2$ exactly when at most three of the four gametes occur, so $\iota = 0$ iff the two sites do not show all four gametes in the sense of the [four-gamete condition](../../../coalescent-theory/hudson-kaplan-bound-on-recombination-events/four-gametes.md); for multistate sites $\iota$ counts how many extra mutations a pair forces. Under recombination, sites close together share genealogies more often than distant ones, so the local average $\Phi_w$ falls below the average over random site orders. The refined score can be computed in time linear in the number of sequences. The paper uses $w = 100$.
+For two biallelic sites, $l = 2$ exactly when at most three of the four gametes occur, so $\iota = 0$ iff the two sites do not show all four gametes in the sense of the [four-gamete condition](../../../../coalescent-theory/hudson-kaplan-bound-on-recombination-events/four-gametes.md); for multistate sites $\iota$ counts how many extra mutations a pair forces. Under recombination, sites close together share genealogies more often than distant ones, so the local average $\Phi_w$ falls below the average over random site orders. The refined score can be computed in time linear in the number of sequences. The paper uses $w = 100$.
 
 ## Sources
 
