@@ -17,6 +17,7 @@ import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.DistinctEisensteinPrimes
 import MathlibExt.NumberTheory.PrimeInterval.Breusch.Theta
 
 /-!
@@ -34,32 +35,15 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.DistinctEisensteinPrimesWanted
 
-open Finset ArithmeticFunction
-
-private def chi (n : ℕ) : ℝ := if n % 3 = 1 then 1 else if n % 3 = 2 then -1 else 0
+open Finset ArithmeticFunction MathlibExt.NumberTheory.CharModThree
 
 private def mask (n : ℕ) : ℝ := if n % 3 = 0 then 0 else 1
-
-private lemma chi_mul (m n : ℕ) : chi (m * n) = chi m * chi n := by
-  simp only [chi, Nat.mul_mod m n]
-  have hm := Nat.mod_lt m (by decide : 0 < 3)
-  have hn := Nat.mod_lt n (by decide : 0 < 3)
-  interval_cases m % 3 <;> interval_cases n % 3 <;> norm_num
 
 private lemma mask_mul (m n : ℕ) : mask (m * n) = mask m * mask n := by
   simp only [mask, Nat.mul_mod m n]
   have hm := Nat.mod_lt m (by decide : 0 < 3)
   have hn := Nat.mod_lt n (by decide : 0 < 3)
   interval_cases m % 3 <;> interval_cases n % 3 <;> norm_num
-
-private lemma sum_chi (n : ℕ) :
-    ∑ i ∈ Ioc 0 n, chi i = if n % 3 = 1 then 1 else 0 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [sum_Ioc_succ_top (Nat.zero_le _), ih]
-    simp only [chi]
-    split_ifs <;> first | omega | norm_num
 
 private lemma sum_mask (n : ℕ) :
     ∑ i ∈ Ioc 0 n, mask i = (n : ℝ) - (n / 3 : ℕ) := by
@@ -77,21 +61,6 @@ private lemma sum_mask (n : ℕ) :
         simp only [hd, Nat.cast_add, Nat.cast_one]; ring
       | have hd : (n + 1) / 3 = n / 3 + 1 := by omega
         simp only [hd, Nat.cast_add, Nat.cast_one]; ring
-
-private lemma sum_chi_log (n : ℕ) :
-    ∑ i ∈ Ioc 0 n, chi i * Real.log i ≤ if n % 3 = 1 then Real.log n else 0 := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [sum_Ioc_succ_top (Nat.zero_le _)]
-    refine (add_le_add_left ih _).trans ?_
-    have hlog : Real.log n ≤ Real.log (n + 1 : ℕ) := by
-      rcases n with _ | n
-      · simp
-      · apply Real.log_le_log (by positivity)
-        exact_mod_cast Nat.le_succ _
-    simp only [chi]
-    split_ifs <;> first | omega | simp_all
 
 private lemma convolution (w : ℕ → ℝ) (hw : w 0 = 0)
     (hmul : ∀ a b, w (a * b) = w a * w b) (N : ℕ) :

@@ -49,3 +49,14 @@ example : ¬ ∃ S : Finset ℕ, (∀ p ∈ S, p.Prime ∧ p % 6 = 5) ∧ (∑ p
   simp only [Finset.sum_singleton] at hs
   subst p
   exact (by decide : ¬ Nat.Prime 161) (hp 161 (by simp)).1
+
+open MathlibExt.NumberTheory.CharModThree in
+-- Two residues of two modulo three multiply to a residue of one.
+example : chi (2 * 5) = 1 := by
+  rw [chi_mul]
+  norm_num [chi]
+
+open MathlibExt.NumberTheory.CharModThree in
+-- The partial sums of the character vanish after each full period.
+example : ∑ i ∈ Finset.Ioc 0 9, chi i = 0 := by
+  simp [sum_chi]
