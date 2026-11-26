@@ -13,6 +13,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Probability.Geometry.KLSLowerBound
+public import MathlibExt.Probability.Geometry.KLSPoincareCheeger
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 
 @[expose] public section
@@ -132,17 +133,6 @@ public theorem_wanted klartag2023_poincare_lower_bound {n : ℕ} (hn : 0 < n)
     {μ : Measure (EuclideanSpace ℝ (Fin n))} (hμ : IsIsotropicLogConcave μ) :
     ENNReal.ofReal (1 / 9) * inverseCheegerConstant μ ^ 2 ≤
       smoothPoincareConstant μ
-
-/-- **Cheeger's inequality for isotropic log-concave measures.** Let $n \ge 1$, let $\mu$ be an
-isotropic log-concave probability measure on $\mathbb{R}^n$, and let $\psi_\mu \in [0, \infty]$ be
-the inverse Cheeger constant of $\mu$. Then the smooth Poincaré constant of $\mu$ is at most
-$4 \psi_\mu^2$.
-
-Source: optimizationproblems `constants/20c.md`, comparison display, and
-Klartag, arXiv:2303.14938v1, Introduction. -/
-public theorem_wanted poincare_cheeger_upper_bound {n : ℕ} (hn : 0 < n)
-    {μ : Measure (EuclideanSpace ℝ (Fin n))} (hμ : IsIsotropicLogConcave μ) :
-    smoothPoincareConstant μ ≤ 4 * inverseCheegerConstant μ ^ 2
 
 /-- **Dimensional KLS constant versus thin-shell variance, up to a squared logarithm.** Let
 $\Sigma \in [0, \infty]$ be the thin-shell variance constant: the supremum, over all dimensions
