@@ -51,7 +51,8 @@ noncomputable def erf (u : ℝ) : ℝ :=
 noncomputable def siegertTime (τ μ σ V₀ θ : ℝ) : ℝ :=
   τ * √π * ∫ u in (V₀ - μ) / σ..(θ - μ) / σ, exp (u ^ 2) * (1 + erf u)
 
-/-- The membrane voltage `V(t) = μ + (V₀ - μ) e^{-t/τ} + X(t)` started at `V₀`. -/
+/-- **Membrane voltage**: `V(t, ω) = μ + (V₀ - μ) e^{-t/τ} + X(t, ω)`. In general
+`V(0, ω) = V₀ + X(0, ω)`, which equals the initial voltage `V₀` when `X(0, ω) = 0`. -/
 noncomputable def voltage (τ μ V₀ : ℝ) (X : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) (ω : Ω) : ℝ :=
   μ + (V₀ - μ) * exp (-(t : ℝ) / τ) + X t ω
 
