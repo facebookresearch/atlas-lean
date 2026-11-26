@@ -26,13 +26,13 @@ namespace MetaMathlibExt
 
 open Finset
 
-namespace sum_bernoulli_to_prime_sub_three_mod_prime
+/-- **The positive-sign Bernoulli numbers below $p - 1$ are $p$-integral.** Let $p$ be a prime and
+let $n$ be a natural number with $n + 1 < p$. Then the positive-sign Bernoulli number $B_n^{+}$
+(`bernoulli' n`) has $p$-adic valuation at most $1$: $p$ does not divide its denominator.
 
-variable {p : ℕ} [hp : Fact p.Prime]
-
-/-- Every denominator in the recurrence for the positive-sign Bernoulli numbers is a unit
-modulo `p` when the index is below `p - 1`. -/
-private lemma integral_bernoulli' (n : ℕ) (hn : n + 1 < p) :
+The proof runs the binomial recurrence for $B_n^{+}$, whose denominators $n - j + 1$ are units
+modulo $p$ in this range. -/
+public theorem padicValuation_bernoulli'_le_one {p : ℕ} [Fact p.Prime] (n : ℕ) (hn : n + 1 < p) :
     Rat.padicValuation p (bernoulli' n) ≤ 1 := by
   induction n using Nat.strong_induction_on with
   | ind n ih =>
@@ -46,6 +46,10 @@ private lemma integral_bernoulli' (n : ℕ) (hn : n + 1 < p) :
     rw [← Nat.cast_sub hjn.le, ← Nat.cast_add_one, map_mul, map_div₀,
       Rat.padicValuation_natCast, Rat.padicValuation_natCast, hunit, div_one]
     exact mul_le_one' (Int.padicValuation_le_one _ _) (ih j hjn (by omega))
+
+namespace sum_bernoulli_to_prime_sub_three_mod_prime
+
+variable {p : ℕ} [hp : Fact p.Prime]
 
 /-- Pascal's identity makes successive entries in row `p - 1` negatives modulo `p`. -/
 private lemma choose_mod_prime (j : ℕ) (hj : j < p) :
@@ -70,7 +74,7 @@ private lemma reduce_weighted_sum (a : ℕ → ℤ) (n : ℕ) (hn : n < p) :
   | zero => simp
   | succ n ih =>
     obtain ⟨hs, hcast⟩ := ih (by omega)
-    have hB := integral_bernoulli' n hn
+    have hB := padicValuation_bernoulli'_le_one n hn
     have hterm : Rat.padicValuation p ((a n : ℚ) * bernoulli' n) ≤ 1 := by
       rw [map_mul, Rat.padicValuation_cast]
       exact mul_le_one' (Int.padicValuation_le_one _ _) hB
