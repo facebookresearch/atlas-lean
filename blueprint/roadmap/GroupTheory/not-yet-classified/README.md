@@ -11,3 +11,4 @@ Topics added since this subject's fields were last revised.
 - [Integral Root Coinvariants](integral-root-coinvariants/README.md)
 - [Perfect Normal Closure](perfect-normal-closure/README.md)
 - [Sum](sum/README.md)
+- [Irreducible Unipotent SL2](range-to-gl-le-of-irreducible-of-exists.md)
