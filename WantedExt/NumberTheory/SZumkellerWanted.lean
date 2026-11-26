@@ -39,19 +39,12 @@ public import MathlibExt.NumberTheory.SZumkellerSixDvdOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven
 public import MathlibExt.NumberTheory.SZumkellerNotIsUnitarySZumkellerOfOdd
 public import MathlibExt.NumberTheory.SZumkellerIsUnitarySZumkellerBounds
+public import MathlibExt.NumberTheory.SZumkellerTwelveLeCardDivisorsOfIsSZumkeller
 public import MathlibExt.NumberTheory.SZumkellerIsSZumkellerEvenProps
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Even s-Zumkeller numbers have at least twelve divisors.** If $n$ is an even s-Zumkeller
-number, then $n$ has at least $12$ positive divisors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 3. -/
-public theorem_wanted twelve_le_card_divisors_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n)
-    (he : Even n) : 12 ≤ n.divisors.card
 
 /-- **A prime-factor product bound for s-Zumkeller numbers.** Let $n$ be an s-Zumkeller number
 and let $p_1$ be its least prime factor. Then
