@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitDivis
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientFormula
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvInverseOfIsMultiplicative
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusSupportDensity
 
 namespace MetaMathlibExt
 
@@ -144,28 +145,6 @@ public theorem_wanted squareSplitDivisorCount_sum_asymptotic :
         (Aτ * x * Real.log x + Aτ * (2 * Real.eulerMascheroniConstant - 1 - Bτ -
           2 * (deriv riemannZeta 2 / riemannZeta 2).re) * x))
       =O[atTop] fun x => x ^ (1 / 2 : ℝ) * Real.log x ^ 3
-
-/-- **Support and density of the square-splitting Möbius function.** Let $\star$ be the
-square-splitting convolution, $\mathbf{1}$ the constant function $1$ on the positive integers,
-$\varepsilon$ the identity element ($\varepsilon(1) = 1$ and $\varepsilon(n) = 0$ for $n \ne 1$),
-and let $\mu_\star$ be any complex-valued arithmetic function with
-$\mathbf{1} \star \mu_\star = \varepsilon$. Then for every $n \ge 1$, $\mu_\star(n) \ne 0$ if and
-only if every prime exponent of $n$ is at most $3$. The proportion of the integers
-$1 \le n \le N$ with $\mu_\star(n) \ne 0$ tends to $\prod_p (1 - p^{-4})$ as $N \to \infty$, and
-$\prod_p (1 - p^{-4}) = 1/\zeta(4)$. Finally,
-$\sum_{1 \le n \le x} |\mu_\star(n)|^2 \sim x/\zeta(4)$ as $x \to \infty$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 11
-(`integers-2026-A56-thm-11`). -/
-public theorem_wanted squareSplitMoebius_support_density (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1) :
-    (∀ n ≠ 0, m n ≠ 0 ↔ ∀ p, n.factorization p ≤ 3) ∧
-    Tendsto (fun N : ℕ => (((Finset.Icc 1 N).filter fun n => m n ≠ 0).card : ℝ) / N) atTop
-      (𝓝 (∏' p : Nat.Primes, (1 - 1 / ((p : ℕ) : ℝ) ^ 4))) ∧
-    ((∏' p : Nat.Primes, (1 - 1 / ((p : ℕ) : ℝ) ^ 4) : ℝ) : ℂ) = 1 / riemannZeta 4 ∧
-    (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ‖m n‖ ^ 2) ~[atTop]
-      fun x => x / (riemannZeta 4).re
 
 /-- **A square-splitting divisor function and its Euler product.** Let
 $\alpha \in \mathbb{C}$, let $\sigma_\beta(m) = \sum_{d \mid m} d^\beta$ for $\beta \in \mathbb{C}$
