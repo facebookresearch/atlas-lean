@@ -15,6 +15,7 @@ Topics added since this subject's fields were last revised.
 - [Projective Northcott](projective-northcott/README.md)
 - [Rational Strong Approximation](rational-strong-approximation/README.md)
 - [Root Height Bound](root-height-bound/README.md)
+- [Supersingular JSet](supersingular-jset/README.md)
 - [Tate Local](tate-local/README.md)
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
