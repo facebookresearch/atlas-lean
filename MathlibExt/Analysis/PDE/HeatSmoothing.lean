@@ -32,7 +32,7 @@ For `g` on `EuclideanSpace ℝ (Fin n)` that is a.e. strongly measurable with `|
 almost every `y`, the heat convolution
 `u(t, x) = ∫ y, g y * heatKernel (EuclideanSpace ℝ (Fin n)) t (x - y)`, where
 `heatKernel E t z = (4πt)^(-n/2) * exp(-‖z‖² / (4t))` is the heat kernel of
-`MathlibExt.Analysis.PDE.HeatKernel`, is smooth (`ContDiffOn ℝ ∞`, i.e. `C^∞`, not analytic) at
+`MathlibExt.Analysis.PDE.HeatKernel`, is smooth (`ContDiffOn ℝ ∞`, i.e. `C^∞`) at
 positive time, satisfies the heat equation `u_t = Δu` at positive time, and preserves the
 constant function `1` at positive time. For finite `p ≥ 1` and compactly supported `C²` data `φ`,
 the right-hand difference quotient `(u(t) - φ) / t` converges to `Δφ` in `L^p` as `t → 0⁺`.
@@ -3822,8 +3822,9 @@ open scoped ContDiff
 
 /-- **The heat convolution is smooth at positive time.** Let `g` be a.e. strongly measurable on
 `EuclideanSpace ℝ (Fin n)` with `|g y| ≤ M` for almost every `y`, for some `M`. Then
-`(t, x) ↦ heatConvolution n g t x` is `ContDiffOn ℝ ∞` (`C^∞`, not analytic) on
-`(0, ∞) × EuclideanSpace ℝ (Fin n)`. -/
+`(t, x) ↦ heatConvolution n g t x` is `ContDiffOn ℝ ∞` (`C^∞`) on
+`(0, ∞) × EuclideanSpace ℝ (Fin n)`. This is `C^∞` regularity only: the theorem asserts neither
+analyticity nor its failure. -/
 theorem heat_convolution_smooth (n : ℕ) {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M) :
