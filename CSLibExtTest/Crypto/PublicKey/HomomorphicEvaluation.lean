@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import CSLibExt.Crypto.PublicKey.HomomorphicEvaluation
+import Cslib.Computability.Circuit.Depth
 import Mathlib.Tactic.FinCases
 
 /-!
@@ -211,7 +212,7 @@ private theorem incompatible (D : DecryptionCircuit) : ¬ (D.Implements fixture 
 
 example (tag : Encoding Boolean.Op Bool) : ¬ LeveledFullyHomomorphic (A := fun _ => bits)
     (fun d _ => if d.val = 1 then fixture else flipped) tag := by
-  rintro ⟨_, _, ⟨_, D, hD⟩, _⟩
+  rintro ⟨_, ⟨_, D, hD⟩, _⟩
   exact incompatible (D 0) ⟨(hD 0).2 1, (hD 0).2 2⟩
 
 -- The same two-gate NOT chain is outside level one and inside level two.
@@ -224,8 +225,28 @@ example : ¬ doubleNot.depth ≤ 1 ∧ doubleNot.depth ≤ 2 := by decide
 example {σ : Signature} {A : ℕ → Spaces σ} {E : ℕ+ → (n : ℕ) → Scheme (A n)}
     {tag : Encoding σ.Op Bool} (h : LeveledFullyHomomorphic E tag) (d : ℕ+) :
     CompactlyEvaluates (E d) fun _ _ => {c | c.depth ≤ d.val} := by
-  obtain ⟨_, _, ⟨p, D, hD⟩, hc, _⟩ := h
+  obtain ⟨_, ⟨p, D, hD⟩, hc, _⟩ := h
   exact ⟨hc d, p, fun n => ⟨D n, (hD n).1, (hD n).2 d⟩⟩
+
+-- One input, one gate and depth at most one do not control the syntax of an infinite basis:
+-- symbol j has j+1 incoming wires, all of which can read the very same input.
+private abbrev wide : Signature := ⟨ℕ, fun j => j + 1⟩
+
+private def repeatedInput (j : ℕ) : Circuit wide 1 1 :=
+  ⟨.gate .empty ⟨j, fun _ => .input 0⟩, fun _ => .gate 0⟩
+
+example (j : ℕ) : (repeatedInput j).size = 1 ∧ (repeatedInput j).depth ≤ 1 ∧
+    j ≤ (circuitCode unaryEncodingNat (repeatedInput j)).length := by
+  refine ⟨rfl, (repeatedInput j).depth_le_size, ?_⟩
+  have htag : (unaryEncodingNat.encode j).length = j := unary_decode_encode_nat j
+  simp only [repeatedInput, circuitCode, circuitCode.program, List.length_append,
+    MetaMathlibExt.BitstringEncoding.length_delimit, htag]
+  omega
+
+-- This is a model restriction, not a lower bound on the running time of every evaluator.
+example {A : ℕ → Spaces wide} (E : ℕ+ → (n : ℕ) → Scheme (A n)) :
+    ¬ LeveledOverBasis E unaryEncodingNat := fun h =>
+  (not_finite_iff_infinite.mpr inferInstance : ¬ Finite ℕ) h.2.2.1
 
 -- No decryption circuit, however wired, can accommodate an unbounded raw ciphertext field.
 private abbrev words : Spaces Boolean.signature :=
@@ -263,7 +284,7 @@ private theorem weak_incomplete : ¬ weak.IsComplete := by
 private abbrev weakBits : Spaces Boolean.signature := { bits with gates := weak }
 
 example (E : ℕ → Scheme weakBits) (tag : Encoding Boolean.Op Bool) :
-    ¬ FullyHomomorphic (A := fun _ => weakBits) E tag := fun h => weak_incomplete (h.2.1 0)
+    ¬ FullyHomomorphic (A := fun _ => weakBits) E tag := fun h => weak_incomplete (h.1 0)
 
 -- The machine must actually halt: even a deterministic point mass cannot be sampled in zero steps.
 example (T : Turing.SingleTapeTM Bool) (arg : List Bool) (k : ℕ) :

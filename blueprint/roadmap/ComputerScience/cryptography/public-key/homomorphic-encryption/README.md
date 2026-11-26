@@ -13,7 +13,7 @@
 - [Compactness](compact.md)
 - [Evaluates Basis](evaluates-basis.md)
 - [Full homomorphism](fully-homomorphic.md)
-- [Leveled Over Basis](leveled-over-basis.md)
+- [Leveled evaluation over a finite basis](leveled-over-basis.md)
 - [Circuit description](circuit-code.md)
 - [Sampling a distribution within a time bound](samples-within.md)
 - [Polynomial running time across levels](polynomial-time.md)

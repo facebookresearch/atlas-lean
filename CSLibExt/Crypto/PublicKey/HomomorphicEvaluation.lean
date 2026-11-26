@@ -34,7 +34,10 @@ spaces and encodings common to all legal keys at a given parameter, as in `PKESc
 functionality predicates do not assert efficiency. Both full notions additionally require actual
 polynomial-time machines. Definition 2.1.5 fixes a gate set; Theorem 4.2.1 (printed p. 49,
 PDF p. 59) distinguishes bounded-depth evaluation over that set from full homomorphism over a
-universal set. Here universality is functional completeness, including nullary constants.
+universal set. Here universality is functional completeness, including nullary constants. The
+runtime model is restricted to finite operation types and charges the number of inputs plus gates.
+This is a specialization, not a finiteness assumption in §2.1.5; Theorem 4.2.2 (printed p. 49)
+explicitly counts wires. The correctness and compact-evaluation predicates need no such restriction.
 -/
 
 @[expose] public section
@@ -177,16 +180,18 @@ def SamplesWithin (T : Turing.SingleTapeTM Bool) (coins steps : ℕ)
     (Probability.PMF.uniformOfFintype (BitString coins)).map draw = law ∧
     ∀ r, T.OutputsWithinTime (frame arg ++ List.ofFn r) (draw r) steps
 
-/-- Four fixed single-tape Turing machines realize the algorithms with one pair of polynomials
-for fair-tape length and worst-case steps. Encryption runs on every declared public key and
-message; evaluation on every public key and ciphertext tuple for each admitted circuit;
-decryption on every secret key and ciphertext, not only generated or fresh inputs. Decryption
-receives the security parameter but no level. The budget parameter for all four is the security
-parameter plus the positive level if present. A level imposes its depth cutoff; no level admits
-all depths. Only evaluation adds the input arity and gate count, not the gate-code lengths. -/
+/-- Finite-basis polynomial time: the operation type is finite, and four fixed single-tape Turing
+machines realize the algorithms with one pair of polynomials for fair-tape length and worst-case
+steps. Encryption runs on every declared public key and message; evaluation on every public key
+and ciphertext tuple for each admitted circuit; decryption on every secret key and ciphertext,
+not only generated or fresh inputs. Decryption receives the security parameter but no level. The
+budget parameter is the security parameter plus the positive level if present. A level imposes
+its depth cutoff; no level admits all depths. Only evaluation adds input arity and gate count.
+For the fixed finite operation type, both tag length and fan-in are bounded independently of the
+circuit. This topology count is not a wire-count convention for arbitrary signatures. -/
 def PolynomialTime {ι : Type} (level : ι → Option ℕ+) (E : ι → (n : ℕ) → Scheme (A n))
     (tag : Encoding σ.Op Bool) : Prop :=
-  ∃ (q p : Polynomial ℕ) (gen enc dec ev : Turing.SingleTapeTM Bool), ∀ i n,
+  Finite σ.Op ∧ ∃ (q p : Polynomial ℕ) (gen enc dec ev : Turing.SingleTapeTM Bool), ∀ i n,
     let S := E i n
     let B := A n
     let k := n + (level i).elim 0 (·.val)
@@ -213,14 +218,15 @@ At each parameter every single-output function at every arity is computed by a c
 scheme compactly evaluates all those circuits without a depth cutoff, and the four algorithms
 have polynomial-time realizations, with no level parameter. -/
 def FullyHomomorphic (E : (n : ℕ) → Scheme (A n)) (tag : Encoding σ.Op Bool) : Prop :=
-  Finite σ.Op ∧ (∀ n, (A n).gates.IsComplete) ∧ EvaluatesBasis E ∧
+  (∀ n, (A n).gates.IsComplete) ∧ EvaluatesBasis E ∧
     PolynomialTime (fun _ : Unit => none) (fun _ => E) tag
 
-/-- Leveled evaluation over the specified gates (the fixed-gate clause of Definition 2.1.5).
+/-- Leveled evaluation over a specified finite gate basis (a specialization of Definition 2.1.5).
 One polynomially bounded decryption circuit at each security parameter implements decryption
 at every positive level. Each fixed level `d` has one negligible bound for all arities and circuits
 through depth `d` inclusive. The four algorithms have uniform polynomial running time across
-levels. This property does not require universality. -/
+levels in the finite-basis model, charging evaluation for input arity and gate count. This does
+not require universality. -/
 def LeveledOverBasis (E : ℕ+ → (n : ℕ) → Scheme (A n)) (tag : Encoding σ.Op Bool) : Prop :=
   (∃ (p : Polynomial ℕ) (D : ℕ → DecryptionCircuit), ∀ n,
     (D n).inputs + (D n).outputs + (D n).circuit.size ≤ p.eval n ∧
@@ -232,6 +238,6 @@ specified-gate conditions (Definition 2.1.5), and the interpretation at each par
 every single-output function at every arity. The universality qualification distinguishes this
 from leveled evaluation on a restricted basis, as in Gentry's Theorem 4.2.1. -/
 def LeveledFullyHomomorphic (E : ℕ+ → (n : ℕ) → Scheme (A n)) (tag : Encoding σ.Op Bool) : Prop :=
-  Finite σ.Op ∧ (∀ n, (A n).gates.IsComplete) ∧ LeveledOverBasis E tag
+  (∀ n, (A n).gates.IsComplete) ∧ LeveledOverBasis E tag
 
 end Cslib.Crypto.Homomorphic
