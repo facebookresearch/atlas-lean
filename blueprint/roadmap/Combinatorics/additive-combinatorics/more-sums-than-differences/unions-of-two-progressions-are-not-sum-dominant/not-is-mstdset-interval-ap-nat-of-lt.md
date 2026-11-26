@@ -7,4 +7,4 @@ $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 ## Sources
 
-- Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 3.
+- Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Theorem 1, the case of natural $x$ and $d$ (Section 3.1); Lemmas 1 and 2 treat $x \ge n + 1$, and the case $x = n$ is not treated separately.
