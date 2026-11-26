@@ -43,3 +43,17 @@ example : antiRecurrence [1, 2] 3 ∈ Finset.Icc 15 21 ∧
 example : antiRecurrence [1, 1] 4 = 18 ∧
     antiRecurrenceComplement [1, 1] 13 = 16 ∧ antiRecurrenceComplement [1, 1] 14 = 17 := by
   decide +kernel
+
+example (a : List ℕ) (ha : ∀ x ∈ a, 0 < x)
+    (hk : 1 < a.length) (A B : ℕ → ℕ) :
+    (StrictMono A ∧ StrictMono B ∧ (∀ i, 0 < B i) ∧
+        (∀ m, 0 < m → (m ∈ Set.range A ↔ m ∉ Set.range B)) ∧
+        ∀ i, A i = ∑ j : Fin a.length, a[j] * B (i * a.length + j)) ↔
+      (A = fun i => antiRecurrence a (i + 1)) ∧ B = fun i => antiRecurrenceComplement a (i + 1)
+    :=
+  MetaMathlibExt.antiRecurrence_unique (a := a) (ha := ha) (hk := hk) (A := A) (B := B)
+
+-- In the first block for [1, 2], the sum is 5, so 5 is excluded from the complement.
+example : 5 ∉ Set.range (fun i => antiRecurrenceComplement [1, 2] (i + 1)) := by
+  have h := (antiRecurrence_unique [1, 2] (by simp) (by decide) _ _).mpr ⟨rfl, rfl⟩
+  exact (h.2.2.2.1 5 (by decide)).mp ⟨0, by decide +kernel⟩
