@@ -20,13 +20,13 @@ import Mathlib.Probability.ProductMeasure
 /-!
 # Guerra's replica-symmetry-breaking bound for the SK model
 
-For `β > 0`, every field `h` and all admissible Parisi parameters `k, m, q`, the free energy
-`F_N = (1 / N) E log ∑_σ exp(H_N(σ) + h ∑_i σ_i)` of the Sherrington–Kirkpatrick model satisfies
-`limsup_N F_N ≤ P_k(m, q)`, where `P_k` is the Parisi functional for `ξ(x) = β² x² / 2`
-(`freeEnergy_le_parisiFunctional_eventually`). As in Guerra's paper, the proof gives
-`F_N ≤ P_k(m, q)` for every `N ≥ 1`. The upper limit is written, as in
-`MathlibExt.Probability.ParisiFormulaWanted`, as "eventually `F_N ≤ P_k(m, q) + ε` for every
-`ε > 0`"; the conventions for `H_N`, `F_N` and `P_k` are those of
+For every `β`, every field `h`, all admissible Parisi parameters `k, m, q` and every `N ≥ 1`, the
+free energy `F_N = (1 / N) E log ∑_σ exp(H_N(σ) + h ∑_i σ_i)` of the Sherrington–Kirkpatrick
+model satisfies `F_N ≤ P_k(m, q)`, where `P_k` is the Parisi functional for `ξ(x) = β² x² / 2`
+(`freeEnergy_le_parisiFunctional`, Guerra's Theorem 3). Hence, for `β > 0`,
+`limsup_N F_N ≤ P_k(m, q)` (`freeEnergy_le_parisiFunctional_eventually`), the upper limit being
+written, as in `MathlibExt.Probability.ParisiFormulaWanted`, as "eventually
+`F_N ≤ P_k(m, q) + ε` for every `ε > 0`". The conventions for `H_N`, `F_N` and `P_k` are those of
 `MathlibExt.Probability.SpinGlass.SherringtonKirkpatrick`.
 
 The proof is Guerra's interpolation. For `t ∈ [0, π / 2]` the couplings enter the Hamiltonian
@@ -2298,15 +2298,36 @@ private theorem parisiFunctional_sk (β h : ℝ) {k : ℕ} {m q : ℕ → ℝ} (
   rw [hS]
   ring
 
-/-- **Guerra's bound for every `N ≥ 1`.** -/
-private theorem freeEnergy_le_parisiFunctional_of_pos (β h : ℝ) (hN : 0 < N) {k : ℕ} {m q : ℕ → ℝ}
+end Main
+
+end PartD
+
+end
+
+end MathlibExt.Probability.ParisiFormulaWanted.Guerra
+
+namespace MathlibExt.Probability.ParisiFormulaWanted
+
+open Filter Topology Real MathlibExt.Probability.SherringtonKirkpatrick
+
+/-- **Guerra's replica-symmetry-breaking bound for the SK model at every system size.**
+For every `β`, every field `h`, all admissible Parisi parameters `k, m, q` and every `N ≥ 1`, the
+free energy of the SK model satisfies `F_N ≤ P_k(m, q)`, where `P_k` is the Parisi functional for
+`ξ(x) = β² x² / 2`.
+
+Source: F. Guerra, *Broken replica symmetry bounds in the mean field spin glass model*, Comm.
+Math. Phys. 233 (2003), 1–12; arXiv:cond-mat/0205123, Section 4, Theorem 3 (its first bound, for
+a piecewise constant functional order parameter; the source writes the field term as
+`βh ∑_i σ_i`). -/
+theorem freeEnergy_le_parisiFunctional (β h : ℝ) {N : ℕ} (hN : 0 < N) {k : ℕ} {m q : ℕ → ℝ}
     (hp : IsParisiParameter k m q) :
     freeEnergy β h N ≤ parisiFunctional (skCovariance β) h k m q := by
-  obtain ⟨Ft, g, H, K, B, hreg, hcl⟩ := top_spec β hN hp
+  obtain ⟨Ft, g, H, K, B, hreg, hcl⟩ := Guerra.top_spec β hN hp
   set h₀ : (Fin N → Bool) → ℝ := fun σ => h * ∑ i, spin (σ i) with hh₀
-  set S := Ssum β k m q (k + 1) with hS
-  set Γ : ℝ → ℝ := fun t => levelOp (cLevel β N) (casc β N k m q (k + 1)) t h₀ +
-    N * S / 2 * sin t ^ 2 with hΓ
+  set S := Guerra.Ssum β k m q (k + 1) with hS
+  set Γ : ℝ → ℝ := fun t =>
+    Guerra.levelOp (Guerra.cLevel β N) (Guerra.casc β N k m q (k + 1)) t h₀ +
+      N * S / 2 * sin t ^ 2 with hΓ
   have hderiv : ∀ t, HasDerivAt Γ (Ft t h₀ + N * S * (sin t * cos t)) t := fun t => by
     have h1 := hreg.hasDerivAt_t t h₀
     have h2 : HasDerivAt (fun t => N * S / 2 * sin t ^ 2) (N * S * (sin t * cos t)) t := by
@@ -2325,27 +2346,17 @@ private theorem freeEnergy_le_parisiFunctional_of_pos (β h : ℝ) (hN : 0 < N) 
       nlinarith
   have hpi : (0 : ℝ) ≤ π / 2 := by positivity
   have hle := hanti (Set.left_mem_Icc.2 hpi) (Set.right_mem_Icc.2 hpi) hpi
-  simp only [hΓ, hh₀, top_pi_div_two β h hN, top_zero β h hp, sin_pi_div_two, sin_zero] at hle
-  rw [parisiFunctional_sk β h hp, ← hS]
+  simp only [hΓ, hh₀, Guerra.top_pi_div_two β h hN, Guerra.top_zero β h hp, sin_pi_div_two,
+    sin_zero] at hle
+  rw [Guerra.parisiFunctional_sk β h hp, ← hS]
   have hN' : (0 : ℝ) < N := Nat.cast_pos.2 hN
   have : (N : ℝ) * freeEnergy β h N ≤
       N * (Real.log 2 + parisiRecursion (deriv (skCovariance β)) k m q (k + 1) h - S / 2) := by
     nlinarith
   exact le_of_mul_le_mul_left this hN'
 
-end Main
-
-end PartD
-
-end
-
-end MathlibExt.Probability.ParisiFormulaWanted.Guerra
-
-namespace MathlibExt.Probability.ParisiFormulaWanted
-
-open Filter Topology MathlibExt.Probability.SherringtonKirkpatrick
-
--- The hypothesis `hβ` is kept to match the stated theorem; the bound holds for every `β`.
+-- The hypothesis `hβ` is kept to match the stated theorem; the bound holds for every `β`
+-- (`freeEnergy_le_parisiFunctional`).
 set_option linter.unusedVariables false in
 /-- **Guerra's replica-symmetry-breaking bound for the SK model** (Talagrand, *The Parisi
 formula*, Ann. of Math. 163 (2006), discussion after Theorem 1.1: Guerra proves that the left-hand
@@ -2355,7 +2366,6 @@ theorem freeEnergy_le_parisiFunctional_eventually (β h : ℝ) (hβ : 0 < β) {k
     {m q : ℕ → ℝ} (hp : IsParisiParameter k m q) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ N : ℕ in atTop, freeEnergy β h N ≤ parisiFunctional (skCovariance β) h k m q + ε := by
   filter_upwards [eventually_ge_atTop 1] with N hN
-  exact (Guerra.freeEnergy_le_parisiFunctional_of_pos β h hN hp).trans
-    (le_add_of_nonneg_right hε.le)
+  exact (freeEnergy_le_parisiFunctional β h hN hp).trans (le_add_of_nonneg_right hε.le)
 
 end MathlibExt.Probability.ParisiFormulaWanted

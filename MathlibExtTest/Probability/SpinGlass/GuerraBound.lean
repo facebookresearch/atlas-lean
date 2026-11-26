@@ -13,8 +13,11 @@ public import MathlibExt.Probability.SpinGlass.GuerraBound
 /-!
 # Tests for Guerra's bound for the SK model
 
-Applications of `freeEnergy_le_parisiFunctional_eventually`:
+Applications of `freeEnergy_le_parisiFunctional` (every size `N ≥ 1`) and
+`freeEnergy_le_parisiFunctional_eventually`:
 
+* at a fixed size `N ≥ 1` and for every `β`, the replica-symmetric parameters bound `F_N`, also
+  checked on a concrete instance with `β < 0`;
 * the replica-symmetric parameters `k = 1`, `m = (0, 1)`, `q = (0, q₁, 1)` give Guerra's
   replica-symmetric bound, also checked on a concrete instance;
 * two choices of parameters combine, so that eventually `F_N` lies below the smaller of the two
@@ -27,6 +30,22 @@ Applications of `freeEnergy_le_parisiFunctional_eventually`:
 namespace MathlibExtTest.Probability.GuerraBound
 
 open Filter MathlibExt.Probability.SherringtonKirkpatrick MathlibExt.Probability.ParisiFormulaWanted
+
+/-- Guerra's bound at a fixed size `N ≥ 1` for the replica-symmetric parameters `m = (0, 1)`,
+`q = (0, q₁, 1)`, with no condition on `β`. -/
+theorem freeEnergy_le_replicaSymmetric_of_pos (β h : ℝ) {N : ℕ} (hN : 0 < N) {q₁ : ℝ}
+    (h0 : 0 ≤ q₁) (h1 : q₁ ≤ 1) :
+    freeEnergy β h N ≤
+      parisiFunctional (skCovariance β) h 1 (fun ℓ => if ℓ = 0 then 0 else 1)
+        (fun ℓ => if ℓ = 0 then 0 else if ℓ = 1 then q₁ else 1) :=
+  freeEnergy_le_parisiFunctional β h hN (isParisiParameter_replicaSymmetric h0 h1)
+
+/-- A concrete instance at a fixed size and a negative inverse temperature: `β = -2`, `h = 1`,
+`N = 3` and `q₁ = 1 / 2`. -/
+example : freeEnergy (-2) 1 3 ≤
+    parisiFunctional (skCovariance (-2)) 1 1 (fun ℓ => if ℓ = 0 then 0 else 1)
+      (fun ℓ => if ℓ = 0 then 0 else if ℓ = 1 then 1 / 2 else 1) :=
+  freeEnergy_le_replicaSymmetric_of_pos (-2) 1 (by norm_num) (by norm_num) (by norm_num)
 
 /-- Guerra's bound for the replica-symmetric parameters `m = (0, 1)`, `q = (0, q₁, 1)`. -/
 theorem freeEnergy_le_replicaSymmetric (β h : ℝ) (hβ : 0 < β) {q₁ : ℝ} (h0 : 0 ≤ q₁)
