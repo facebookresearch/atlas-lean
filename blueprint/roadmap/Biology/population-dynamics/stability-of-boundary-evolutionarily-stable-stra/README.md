@@ -1,6 +1,5 @@
 # Stability of boundary evolutionarily stable strategies
 
-- [Simplex](simplex.md)
 - [Replicator Field](replicator-field.md)
 - [Is Locally Superior](is-locally-superior.md)
 - [Is Asymptotically Stable](is-asymptotically-stable.md)
