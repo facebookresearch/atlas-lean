@@ -1666,6 +1666,7 @@
   "CSLibExt/Foundations/Semantics/LTS/OmegaExecution": {"to": "ComputerScience/process-calculi", "title": "Labelled transition systems"},
   "CSLibExt/Foundations/Semantics/LTS/OmegaRun": {"to": "ComputerScience/process-calculi", "title": "Labelled transition systems"},
   "CSLibExt/Foundations/Semantics/LTS/WeakBisimulation": {"to": "ComputerScience/process-calculi", "title": "Bisimulation"},
+  "CSLibExt/Foundations/Semantics/WeakMemory/X86TSOAbstractMachine": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Weak memory models"},
   "CSLibExt/Foundations/Unification/Basic": {"to": "Logic/first-order-logic", "title": "First-order unification"},
   "CSLibExt/Languages/CCS/Choice": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/CCS/Parallel": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
