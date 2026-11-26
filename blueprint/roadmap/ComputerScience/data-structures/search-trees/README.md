@@ -7,6 +7,7 @@ Ordered dictionaries: binary search trees and their balanced variants (AVL, red-
 - [Binary search tree](binary-search-tree/README.md)
 - [AVL tree](avl-tree/README.md)
 - [Cartesian tree](cartesian-tree/README.md)
+- [Dictionary specification records](dictionary-specification-records/README.md)
 - [Order statistic tree](order-statistic-tree/README.md)
 - [Red–black tree](red-black-tree/README.md)
 - [Skip list](skip-list/README.md)

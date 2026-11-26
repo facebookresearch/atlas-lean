@@ -3,6 +3,7 @@
 - [Parent index in a level-order binary tree](heap-parent.md)
 - [Left child index in a level-order binary tree](heap-left.md)
 - [Right child index in an array-backed binary tree](heap-right.md)
+- [Heap Parent lt](heap-parent-lt.md)
 - [The parent of a valid nonroot index is valid](heap-parent-lt-size.md)
 - [Heap order on a level-order array](heap-ordered.md)
 - [Arrays ready for sift-up](sift-up-ready.md)
