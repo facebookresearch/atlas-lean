@@ -13,7 +13,7 @@ two steps:
 
 1. let $i$ be the largest index such that $b_j$ is an even priority for every $j < i$; if $b_i = -$ or $b_i < p$, set $b_i := p$ and $b_j := -$ for
    all $j < i$ (otherwise leave the record unchanged);
-2. in the result, let $i$ be the largest index with $p > b_i$; if there is one, set $b_i := p$
+2. in the result, let $i$ be the largest index with $b_i \ne -$ and $p > b_i$; if there is one, set $b_i := p$
    and $b_j := -$ for all $j < i$.
 
 These play summaries are those of Calude, Jain, Khoussainov, Li and Stephan, in the presentation of the cited chapter.
