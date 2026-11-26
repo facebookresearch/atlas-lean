@@ -6,9 +6,11 @@ $\Gamma_0$, a list whose visible type schemes are closed, binds each constant to
 constructor or a destructor. The reduction rules $\xrightarrow{\delta}$ of the constants are pure, that is, they neither read nor update a store,
 and they agree with the signature:
 
-1. each $\delta$-redex is a destructor applied to exactly as many values as its arity, and each $\delta$-reduct binds no constant;
-2. each $\delta$-reduction preserves typing in $\Gamma_0$; and
-3. every well-typed application $c\, v_1 \cdots v_k$ of a constant to values is either reducible or a value.
+1. each $\delta$-redex is a destructor applied to exactly as many values as its arity, and the $\delta$-reduct of a redex that binds no constant binds no constant;
+2. each $\delta$-reduction of a redex that binds no constant preserves typing in $\Gamma_0$; and
+3. every well-typed application $c\, v_1 \cdots v_k$ of a constant to values that binds no constant is either reducible or a value.
+
+Programs never bind a constant, since program variables and constants are distinct, so these conditions say nothing about an expression that does.
 
 **Type soundness.** Let a program bind no constant and have a type in $\Gamma_0$. Then no configuration it reduces to is stuck: every program it
 reduces to in finitely many steps is a value or is reducible. The result follows from

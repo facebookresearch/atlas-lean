@@ -31,6 +31,10 @@ destructor `not : bool → bool` with δ-rules `not tt ↦ ff` and `not ff ↦ t
   δ-redex, yet it reduces, by reducing its head `d u`. δ agrees with this signature, which needs
   agreement to ask for reducibility rather than a δ-step at the root; `(d u) u` reduces to `u`
   and is safe.
+- A primitive on an expression that is no program: the identity primitive
+  `d : (int → int) → (int → int)` with `d v ↦ v` for every value `v` agrees with its signature.
+  The value `λd. d`, whose binder shadows the constant `d`, has type `int → int`, so `d (λd. d)`
+  is typed and reduces to `λd. d`; neither is well formed, and agreement asks nothing of them.
 - Statement pins for the safety theorems, closed by the theorems themselves.
 -/
 
@@ -80,9 +84,9 @@ theorem agrees : K₀.Agrees δ₀ := by
         by simpa using val "tt" (by decide) (by decide)⟩
     · exact ⟨"not", [.var "ff"], rfl, by decide, by simp [K₀], by simp [K₀],
         by simpa using val "ff" (by decide) (by decide)⟩
-  · intro e e' h
+  · intro e e' h _
     rcases h with ⟨-, rfl⟩ | ⟨-, rfl⟩ <;> simp [Constants.WF, Expr.bv]
-  · intro e e' τ h he
+  · intro e e' τ h he _
     rcases h with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
     · obtain ⟨τ₁, h₁, -⟩ := hasType_app_iff.mp he
       obtain ⟨σ, ts, hσ, hτ⟩ := hasType_var_iff.mp h₁
@@ -100,7 +104,7 @@ theorem agrees : K₀.Agrees δ₀ := by
       cases hτ
       simpa [inst_toScheme] using HasType.var (Γ := K₀.ctx) (x := "tt") (fun _ ↦ tB)
         (σ := toScheme tB) (by simp [K₀, Ctx.lookup])
-  · intro c args τ hc hargs he
+  · intro c args τ hc hargs he _
     have hhead : ∀ (rest : List Expr) (h : Expr) (τ : Ty Base),
         HasType K₀.ctx (h.apps rest) τ → ∃ τ', HasType K₀.ctx h τ' := by
       intro rest
@@ -386,7 +390,8 @@ theorem badDelta_breaks : K₀.Step δ₁ (.app (.var "not") (.var "tt")) (.var 
 
 /-- The bad δ does not agree with the signature. -/
 theorem badDelta_not_agrees : ¬ K₀.Agrees δ₁ :=
-  fun h ↦ badDelta_breaks.2.2 (h.preserve ⟨rfl, rfl⟩ badDelta_breaks.2.1)
+  fun h ↦ badDelta_breaks.2.2
+    (h.preserve ⟨rfl, rfl⟩ badDelta_breaks.2.1 (by unfold Constants.WF; decide))
 
 /-! ### Capture -/
 
@@ -465,11 +470,11 @@ theorem agrees_ud : Kud.Agrees δud := by
   · intro e e' h
     obtain ⟨rfl, rfl⟩ := h
     exact ⟨"d", [.var "u"], rfl, by decide, by simp [Kud], by simp [Kud], by simpa using valU⟩
-  · intro e e' h
+  · intro e e' h _
     obtain ⟨-, rfl⟩ := h
     unfold Constants.WF
     decide
-  · intro e e' τ h he
+  · intro e e' τ h he _
     obtain ⟨rfl, rfl⟩ := h
     obtain ⟨τ₁, h₁, -⟩ := hasType_app_iff.mp he
     obtain ⟨σ, ts, hσ, hτ⟩ := hasType_var_iff.mp h₁
@@ -480,7 +485,7 @@ theorem agrees_ud : Kud.Agrees δud := by
     refine HasType.lam ?_
     simpa [inst_toScheme] using HasType.var (Γ := ("x", toScheme tI) :: Kud.ctx) (x := "x")
       (fun _ ↦ tI) (σ := toScheme tI) (by simp [Ctx.lookup])
-  · intro c args τ hc hargs he
+  · intro c args τ hc hargs he _
     have hhead : ∀ (rest : List Expr) (h : Expr) (τ : Ty Base),
         HasType Kud.ctx (h.apps rest) τ → ∃ τ', HasType Kud.ctx h τ' := by
       intro rest
@@ -555,6 +560,74 @@ theorem overapp_safe : Relation.ReflTransGen (Kud.Step δud) overapp (.var "u") 
   unfold Constants.WF
   decide
 
+/-! ### A primitive on an expression that is no program -/
+
+/-- A third signature: the destructor `d : (int → int) → (int → int)` of arity 1. -/
+def Kid : Constants Base where
+  ctx := [("d", toScheme (node (node tI tI) (node tI tI)))]
+  arity _ := 1
+  IsCtor _ := False
+  closed := by decide
+
+/-- δ for the identity primitive: `d v ↦ v` for every value `v`. -/
+def δid (e e' : Expr) : Prop := ∃ v, Kid.IsValue v ∧ e = .app (.var "d") v ∧ e' = v
+
+/-- `d (λd. d)`: the binder of the argument shadows the constant `d`. -/
+def dShadow : Expr := .app (.var "d") (.lam "d" (.var "d"))
+
+/-- The identity primitive agrees with its signature. Its reduct is its argument, so the reduct
+of a well-formed δ-redex is well formed; a typed application `d v` has `v : int → int`, so the
+reduct keeps the type; and `d` applied to one or more values reduces. -/
+theorem agrees_id : Kid.Agrees δid := by
+  have hsteps : ∀ (rest : List Expr) (h h' : Expr), Kid.Step δid h h' →
+      Kid.Step δid (h.apps rest) (h'.apps rest) := by
+    intro rest
+    induction rest with
+    | nil => exact fun h h' hs ↦ hs
+    | cons r rs ih => exact fun h h' hs ↦ ih (.app h r) (.app h' r) (Constants.Step.appL hs)
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro e e' h
+    obtain ⟨v, hv, rfl, he'⟩ := h
+    subst e'
+    exact ⟨"d", [v], rfl, by decide, by simp [Kid], by simp [Kid], by simpa using hv⟩
+  · intro e e' h hwf
+    obtain ⟨v, -, rfl, he'⟩ := h
+    subst e'
+    simpa [Constants.WF, Expr.bv] using hwf
+  · intro e e' τ h he _
+    obtain ⟨v, -, rfl, he'⟩ := h
+    subst e'
+    obtain ⟨τ₁, h₁, h₂⟩ := hasType_app_iff.mp he
+    obtain ⟨σ, ts, hσ, hτ⟩ := hasType_var_iff.mp h₁
+    simp [Kid, Ctx.lookup] at hσ
+    subst hσ
+    rw [inst_toScheme] at hτ
+    cases hτ
+    exact h₂
+  · intro c args τ hc hargs _ _
+    have hcd : c = "d" := by simpa [Constants.names, Kid] using hc
+    subst hcd
+    rcases args with _ | ⟨a, rest⟩
+    · exact Or.inl (Constants.IsValue.const hc (by simp) (Or.inr ⟨by simp [Kid], by simp [Kid]⟩))
+    · exact Or.inr ⟨_, hsteps rest (.app (.var "d") a) a
+        (Constants.Step.delta ⟨a, hargs a List.mem_cons_self, rfl, rfl⟩)⟩
+
+/-- The boundary: `d (λd. d)` has type `int → int` and reduces to `λd. d`, but neither is well
+formed, so the conditions of agreement say nothing about them. -/
+theorem dShadow_boundary : HasType Kid.ctx dShadow (node tI tI) ∧
+    Kid.Step δid dShadow (.lam "d" (.var "d")) ∧ ¬ Kid.WF dShadow ∧
+    ¬ Kid.WF (.lam "d" (.var "d")) := by
+  have v : ∀ {Γ : Ctx Base} {x : String} {τ : Ty Base} (ts : ℕ → Ty Base),
+      (Γ.lookup x).map (Scheme.inst ts) = some τ → HasType Γ (.var x) τ := fun ts h ↦ by
+    obtain ⟨σ, hσ, rfl⟩ := Option.map_eq_some_iff.mp h
+    exact .var ts hσ
+  refine ⟨.app (τ₁ := node tI tI) (v Term.var (by decide)) (.lam (v Term.var (by decide))),
+    Constants.Step.delta ⟨.lam "d" (.var "d"), Constants.IsValue.lam, rfl, rfl⟩, ?_, ?_⟩
+  · unfold Constants.WF
+    decide
+  · unfold Constants.WF
+    decide
+
 /-! ### Statement pins -/
 
 section Pins
@@ -564,13 +637,19 @@ variable {B : Type} {K : Constants B} {δ : Expr → Expr → Prop} {e e' : Expr
 example : K.Agrees δ → HasType K.ctx e τ → K.WF e → K.Step δ e e' →
     HasType K.ctx e' τ ∧ K.WF e' := Constants.Step.preservation
 
-example : K.Agrees δ → HasType K.ctx e τ → K.IsValue e ∨ ∃ e', K.Step δ e e' :=
+example : K.Agrees δ → HasType K.ctx e τ → K.WF e → K.IsValue e ∨ ∃ e', K.Step δ e e' :=
   Constants.progress
 
 example : K.Agrees δ → K.IsValue e → ¬ K.Step δ e e' := Constants.IsValue.not_step
 
+example (hK : K.Agrees δ) : δ e e' → K.WF e → K.WF e' := hK.wf
+
+example (hK : K.Agrees δ) : δ e e' → HasType K.ctx e τ → K.WF e → HasType K.ctx e' τ :=
+  hK.preserve
+
 example (hK : K.Agrees δ) {c : String} {args : List Expr} : c ∈ K.names →
     (∀ a ∈ args, K.IsValue a) → HasType K.ctx ((Expr.var c).apps args) τ →
+    K.WF ((Expr.var c).apps args) →
     K.IsValue ((Expr.var c).apps args) ∨ ∃ e', K.Step δ ((Expr.var c).apps args) e' :=
   hK.progress
 

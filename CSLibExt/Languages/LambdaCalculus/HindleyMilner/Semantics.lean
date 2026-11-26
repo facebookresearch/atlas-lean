@@ -35,9 +35,12 @@ The δ-relation is a parameter. `Constants.Agrees` collects the hypotheses on it
 the shape of δ-redexes, well-formedness of δ-reducts, and the two requirements of Pottier and
 Rémy's Definition 10.5.5 (δ-reduction preserves types; a well-typed constant application to values
 is a value or reduces). The reduction need not happen at the root: a destructor applied to more
-values than its arity reduces inside the application, by reducing its saturated head. δ relates
-expressions only, with no store, so every constant has a pure semantics in the sense of their
-Definition 10.5.6 and no value restriction is used.
+values than its arity reduces inside the application, by reducing its saturated head. The
+well-formedness of reducts, preservation and progress are asked only of well-formed expressions:
+the source keeps program variables and constants apart (§10.1), so an expression that binds a
+constant name is no program, and δ owes it nothing. δ relates expressions only, with no store, so
+every constant has a pure semantics in the sense of their Definition 10.5.6 and no value
+restriction is used.
 
 ## Main definitions
 
@@ -126,23 +129,30 @@ def WF (e : Expr) : Prop := Disjoint e.bv K.names
 $K$:
 
 - every δ-redex is a destructor applied to exactly as many values as its arity;
-- every δ-reduct is well formed;
-- δ-reduction preserves types in the initial context (Pottier and Rémy, Definition 10.5.5 (i));
-- a constant applied to values that is well typed in the initial context is a value or reduces
-  (Definition 10.5.5 (ii)). The reduction need not be a δ-step at the root: a destructor applied
-  to more values than its arity reduces in the evaluation context of the application, by
-  reducing its saturated head. -/
+- the δ-reduct of a well-formed δ-redex is well formed;
+- δ-reduction of a well-formed δ-redex preserves types in the initial context (Pottier and
+  Rémy, Definition 10.5.5 (i));
+- a well-formed constant application to values that is well typed in the initial context is a
+  value or reduces (Definition 10.5.5 (ii)). The reduction need not be a δ-step at the root: a
+  destructor applied to more values than its arity reduces in the evaluation context of the
+  application, by reducing its saturated head.
+
+The last three conditions concern only well-formed expressions, which bind no constant: the
+source keeps program variables and constants apart (§10.1), so an expression that binds a
+constant name is no program and places no obligation on δ. -/
 structure Agrees (δ : Expr → Expr → Prop) : Prop where
   /-- δ-redexes are saturated destructor applications to values. -/
   redex : ∀ {e e' : Expr}, δ e e' → ∃ c args, e = (Expr.var c).apps args ∧ c ∈ K.names ∧
     ¬ K.IsCtor c ∧ args.length = K.arity c ∧ ∀ a ∈ args, K.IsValue a
-  /-- δ-reducts are well formed. -/
-  wf : ∀ {e e' : Expr}, δ e e' → K.WF e'
-  /-- δ-reduction preserves types in the initial context. -/
-  preserve : ∀ {e e' : Expr} {τ : Ty B}, δ e e' → HasType K.ctx e τ → HasType K.ctx e' τ
-  /-- A well-typed constant application to values is a value or reduces. -/
+  /-- The δ-reduct of a well-formed δ-redex is well formed. -/
+  wf : ∀ {e e' : Expr}, δ e e' → K.WF e → K.WF e'
+  /-- δ-reduction of a well-formed δ-redex preserves types in the initial context. -/
+  preserve : ∀ {e e' : Expr} {τ : Ty B}, δ e e' → HasType K.ctx e τ → K.WF e →
+    HasType K.ctx e' τ
+  /-- A well-formed, well-typed constant application to values is a value or reduces. -/
   progress : ∀ {c : String} {args : List Expr} {τ : Ty B}, c ∈ K.names →
     (∀ a ∈ args, K.IsValue a) → HasType K.ctx ((Expr.var c).apps args) τ →
+    K.WF ((Expr.var c).apps args) →
     K.IsValue ((Expr.var c).apps args) ∨ ∃ e', K.Step δ ((Expr.var c).apps args) e'
 
 /-- **Typed programs.** An expression is a typed program of type $\tau$ for the signature $K$

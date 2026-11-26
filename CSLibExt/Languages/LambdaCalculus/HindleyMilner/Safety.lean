@@ -28,7 +28,7 @@ its relational form (`final_or_step_of_reflTransGen`) and over the operational-s
 ## Main results
 
 - `Constants.Step.preservation` : subject reduction.
-- `Constants.progress` : a typed expression is a value or reduces.
+- `Constants.progress` : a typed, well-formed expression is a value or reduces.
 - `Constants.IsValue.not_step` : values are irreducible.
 - `Constants.typeSafety` : no typed program reduces to a stuck expression.
 - `Constants.opSem`, `Constants.safe` : the calculus as an operational semantics, in which typed
@@ -97,7 +97,7 @@ theorem Step.preservation (hK : K.Agrees δ) (he : HasType K.ctx e τ) (hwf : K.
     refine ⟨HasType.subst_gen (lookup_eq_none_of_not_mem hwf.1) h₁ h₂ hd, ?_⟩
     exact Finset.disjoint_of_subset_left (Expr.bv_subst_subset hd)
       (Finset.disjoint_union_left.mpr ⟨hwf.2.2, hwf.2.1⟩)
-  | delta hδ => exact ⟨hK.preserve hδ he, hK.wf hδ⟩
+  | delta hδ => exact ⟨hK.preserve hδ he hwf, hK.wf hδ hwf⟩
   | appL _ ih =>
     obtain ⟨τ₁, h₁, h₂⟩ := hasType_app_iff.mp he
     simp only [WF, Expr.bv, Finset.disjoint_union_left] at hwf ⊢
@@ -177,37 +177,41 @@ private theorem isValue_iff : K.IsValue e ↔
     · exact IsValue.lam
     · exact IsValue.const hc hargs hlen
 
-/-- **Progress.** Let $\delta$ agree with the signature $K$. If $e$ has a type in the initial
-context, then $e$ is a value or reduces. -/
-theorem progress (hK : K.Agrees δ) (he : HasType K.ctx e τ) :
+/-- **Progress.** Let $\delta$ agree with the signature $K$. If a well-formed expression $e$ has
+a type in the initial context, then $e$ is a value or reduces. -/
+theorem progress (hK : K.Agrees δ) (he : HasType K.ctx e τ) (hwf : K.WF e) :
     K.IsValue e ∨ ∃ e', K.Step δ e e' := by
   induction e generalizing τ with
   | var y =>
     obtain ⟨σ, ts, hy, rfl⟩ := hasType_var_iff.mp he
     have hc : y ∈ K.names := List.mem_toFinset.mpr (Ctx.mem_names_of_lookup hy)
-    exact hK.progress (args := []) hc (by simp) he
+    exact hK.progress (args := []) hc (by simp) he hwf
   | lam z b => exact Or.inl IsValue.lam
   | app e₁ e₂ ih₁ ih₂ =>
     obtain ⟨τ₁, h₁, h₂⟩ := hasType_app_iff.mp he
-    rcases ih₁ h₁ with hv₁ | ⟨e₁', hs⟩
-    · rcases ih₂ h₂ with hv₂ | ⟨e₂', hs⟩
+    have hwf' := hwf
+    simp only [WF, Expr.bv, Finset.disjoint_union_left] at hwf'
+    rcases ih₁ h₁ hwf'.1 with hv₁ | ⟨e₁', hs⟩
+    · rcases ih₂ h₂ hwf'.2 with hv₂ | ⟨e₂', hs⟩
       · rcases isValue_iff.mp hv₁ with ⟨z, rfl, hz⟩ | ⟨z, b, rfl⟩ | ⟨c, args, rfl, hc, hargs, -⟩
         · obtain ⟨σ, ts, hσ, -⟩ := hasType_var_iff.mp h₁
           exact absurd (List.mem_toFinset.mpr (Ctx.mem_names_of_lookup hσ)) hz
         · exact Or.inr ⟨_, Step.beta hv₂⟩
-        · rw [← apps_concat] at he ⊢
+        · rw [← apps_concat] at he hwf ⊢
           have hargs' : ∀ a ∈ args ++ [e₂], K.IsValue a := by
             intro a ha
             rcases List.mem_append.mp ha with ha | ha
             · exact hargs a ha
             · rw [List.mem_singleton.mp ha]
               exact hv₂
-          exact hK.progress hc hargs' he
+          exact hK.progress hc hargs' he hwf
       · exact Or.inr ⟨_, Step.appR hv₁ hs⟩
     · exact Or.inr ⟨_, Step.appL hs⟩
   | let_ z e₁ e₂ ih₁ _ =>
     obtain ⟨τ₁, h₁, -⟩ := hasType_let_iff.mp he
-    rcases ih₁ h₁ with hv₁ | ⟨e₁', hs⟩
+    have hwf' := hwf
+    simp only [WF, Expr.bv, Finset.disjoint_insert_left, Finset.disjoint_union_left] at hwf'
+    rcases ih₁ h₁ hwf'.2.1 with hv₁ | ⟨e₁', hs⟩
     · exact Or.inr ⟨_, Step.letV hv₁⟩
     · exact Or.inr ⟨_, Step.letL hs⟩
 
@@ -280,7 +284,7 @@ does not go wrong. -/
 theorem typeSafety (hK : K.Agrees δ) (he : HasType K.ctx e τ) (hwf : K.WF e)
     (hr : Relation.ReflTransGen (K.Step δ) e e') : K.IsValue e' ∨ ∃ e'', K.Step δ e' e'' :=
     final_or_step_of_reflTransGen (K.Step δ) K.IsValue K.Typed
-      (fun he ↦ progress hK he.1)
+      (fun he ↦ progress hK he.1 he.2)
       (by
         intro A a b hs ha
         exact Step.preservation hK ha.1 ha.2 hs)
@@ -300,7 +304,7 @@ $\delta$ agree with it. If a well-formed expression $e$ has type $\tau$ in the i
 then no configuration reachable from $e$ in `opSem hK` is stuck. -/
 theorem safe (hK : K.Agrees δ) (he : HasType K.ctx e τ) (hwf : K.WF e) : (opSem hK).Safe e :=
     OpSem.safe_of_progress_preservation (opSem hK) K.Typed
-      (fun he ↦ (progress hK he.1).imp id fun ⟨e', hs⟩ ↦ ⟨e', (), hs⟩)
+      (fun he ↦ (progress hK he.1 he.2).imp id fun ⟨e', hs⟩ ↦ ⟨e', (), hs⟩)
       (by
         intro A a b hs ha
         obtain ⟨_, hs⟩ := hs
