@@ -13,12 +13,15 @@ and its mean sojourn time is $E[S_i] = E[W_i] + E[B_i]$. For $i = 1$ the formula
 - [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Little's law](../littles-law/littles-law.md)
 
+## Proof depends on
+
+- [Poisson arrivals see time averages](../poisson-arrivals-see-time-averages.md): for each class, an arriving customer finds a class-$j$ customer in service with probability $\rho_j$ and then waits for its residual service time.
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
 - existence of the stationary regime of the multiclass queue when $\sigma_r < 1$;
-- [Poisson arrivals see time averages](../poisson-arrivals-see-time-averages.md) for each class, so that an arriving customer finds a class-$j$ customer in service with probability $\rho_j$ and then waits for its residual service time;
 - the mean of the higher-priority work arriving during a waiting time, as in the derivation of equation (9.2) of the source.
 
 ## Sources

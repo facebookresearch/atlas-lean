@@ -13,12 +13,15 @@ whatever the distribution of $B$. In particular the fraction of customers lost i
 - [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Erlang's loss formula](../markovian-queues/erlang-loss-formula.md)
 
+## Proof depends on
+
+- [Poisson arrivals see time averages](../poisson-arrivals-see-time-averages.md): to read $p_c$ as the fraction of customers lost.
+
 ## Expansion
 
-This page becomes ready once these prerequisites are stated and the source of the general case, which the cited notes take from the literature, is checked:
+This page becomes ready once this prerequisite is stated and the source of the general case, which the cited notes take from the literature, is checked:
 
-- a Markovian description of the loss system with general service times, for example by the residual or elapsed service times of the customers in service, and its stationary distribution;
-- [Poisson arrivals see time averages](../poisson-arrivals-see-time-averages.md), to read $p_c$ as the fraction of customers lost.
+- a Markovian description of the loss system with general service times, for example by the residual or elapsed service times of the customers in service, and its stationary distribution.
 
 ## Sources
 

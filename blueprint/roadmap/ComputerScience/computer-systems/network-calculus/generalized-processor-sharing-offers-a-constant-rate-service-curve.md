@@ -1,12 +1,8 @@
 # Generalized processor sharing offers a constant-rate service curve
 
-A *generalized processor sharing* (GPS) node with total output rate $c$ serves several flows in parallel, flow $i$ having a weight $\phi_i > 0$. At every time $t$ it serves flow $i$ at rate $0$ if flow $i$ has no backlog, and otherwise at rate $c\,\phi_i / \sum_{j \in B(t)} \phi_j$, where $B(t)$ is the set of flows backlogged at $t$; so the output of flow $i$ is
+A *generalized processor sharing* (GPS) node with total output rate $c$ serves several flows in parallel as a fluid, flow $i$ having a weight $\phi_i > 0$; let $r_i = c\,\phi_i / \sum_j \phi_j$, the sum running over all flows. Its guarantee is that whenever flow $i$ has data in the node throughout an interval $(s, t]$, it receives at least $r_i (t - s)$ of service in it, $R_i^*(t) - R_i^*(s) \ge r_i (t - s)$: the backlogged flows share the rate $c$ in proportion to their weights, so each gets at least its share of the total. Then the node offers to flow $i$ the [service curve](service-curves.md) $\lambda_{r_i}$, the peak-rate function with rate $r_i$.
 
-$$
-R_i^*(t) = \int_0^t \frac{\phi_i}{\sum_{j \in B(s)} \phi_j}\, c\, \mathbf 1\{i \in B(s)\}\, ds .
-$$
-
-Then the node offers to flow $i$ the [service curve](service-curves.md) $\lambda_{r_i}$, the peak-rate function with rate $r_i = c\,\phi_i / \sum_j \phi_j$, the sum running over all flows: during each backlogged period of flow $i$ its service rate is at least $r_i$.
+**Proof.** Fix $t$. If flow $i$ has no backlog at $t$, then $R_i^*(t) = R_i(t) \ge (R_i \otimes \lambda_{r_i})(t)$. Otherwise let $s_0$ be the infimum of the $s$ such that flow $i$ is backlogged throughout $(s, t]$. There are times $w \le s_0$ arbitrarily close to $s_0$ with zero backlog, $R_i(w) = R_i^*(w)$ (at worst $w = 0$, where both vanish), and for every $s \in (s_0, t]$, $R_i^*(t) \ge R_i^*(s) + r_i (t - s) \ge R_i(w) + r_i (t - w) - r_i (s - w)$. Letting $s$ and $w$ tend to $s_0$ gives $R_i^*(t) \ge (R_i \otimes \lambda_{r_i})(t)$; since $\lambda_{r_i}$ is continuous, no continuity of the flows is needed.
 
 ## Depends on
 

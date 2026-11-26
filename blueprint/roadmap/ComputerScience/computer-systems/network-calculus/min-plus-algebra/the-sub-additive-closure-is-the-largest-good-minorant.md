@@ -1,6 +1,6 @@
 # The sub-additive closure is the largest good minorant
 
-Let $f$ be in the set $\mathcal F$ of [min-plus convolution](min-plus-convolution-and-deconvolution.md) and $\bar f$ its [sub-additive closure](sub-additive-closure.md). Then $\bar f \le f$, $\bar f \in \mathcal F$ and $\bar f$ is sub-additive with $\bar f(0) = 0$; and every sub-additive $g \in \mathcal F$ with $g(0) = 0$ and $g \le f$ satisfies $g \le \bar f$. Consequently, for $f \in \mathcal F$ the following are equivalent: $f(0) = 0$ and $f$ is sub-additive; $f \otimes f = f$; $\bar f = f$.
+Let $f$ be in the set $\mathcal F$ of [min-plus convolution](min-plus-convolution-and-deconvolution.md) and $\bar f$ its [sub-additive closure](sub-additive-closure.md). Then $\bar f \le f$, $\bar f \in \mathcal F$ and $\bar f$ is sub-additive with $\bar f(0) = 0$; and every sub-additive $g \in \mathcal F$ with $g(0) = 0$ and $g \le f$ satisfies $g \le \bar f$. Consequently, for $f \in \mathcal F$ the following are equivalent: $f(0) = 0$ and $f$ is sub-additive; $f(0) = 0$ and $f \otimes f = f$; $\bar f = f$. (Idempotence alone is not enough: $\varepsilon \otimes \varepsilon = \varepsilon$ while $\bar\varepsilon = \delta_0$; the source's proof infers $f(0) = 0$ from $f(0) + f(0) = f(0)$, which fails when $f(0) = +\infty$.)
 
 ## Depends on
 

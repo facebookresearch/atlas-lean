@@ -17,6 +17,7 @@ Since customers arrive and leave one at a time, arriving customers, departing cu
 - [The embedded Markov chain of the M/G/1 queue](the-embedded-markov-chain-of-the-mg1-queue.md)
 - [Poisson arrivals during an independent service time](poisson-arrivals-during-an-independent-service-time.md)
 - [Arrivals and departures see the same queue length](arrivals-and-departures-see-the-same-queue-length.md)
+- [Poisson arrivals see time averages](../poisson-arrivals-see-time-averages.md): the arrival distribution is the time-stationary one.
 
 ## Expansion
 
