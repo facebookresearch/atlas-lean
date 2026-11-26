@@ -19,6 +19,8 @@
 - [Flux of the Gibbs density under a rotational gradient drift](flux-rotational-gibbs.md)
 - [Rotational drifts share the Gibbs stationary density](divergence-flux-rotational-gibbs.md)
 - [An explicit rotational drift with nonzero flux](exists-rotational-flux-ne-zero.md)
+- [The forward equation as an equation for measures](forward-equation-as-a-measure-equation.md)
+- [Probability current and boundary mass](probability-current-and-boundary-mass.md)
 
 ## Related topics
 

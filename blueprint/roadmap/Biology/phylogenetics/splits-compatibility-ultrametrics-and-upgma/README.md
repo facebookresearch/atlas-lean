@@ -46,6 +46,7 @@
 - [Robinson–Foulds distance vanishes exactly on isomorphic trees](rf-dist-eq-zero-iff.md)
 - [Isomorphism invariance of the Robinson–Foulds distance](rf-dist-congr.md)
 - [Maximum of the Robinson–Foulds distance](rf-dist-le.md)
+- [Linear-time Robinson–Foulds comparison of two trees (Day)](linear-time-comparison-of-two-trees-via-cluster-tables-robinson-foulds.md)
 
 ## Majority-rule consensus and bootstrap support
 
@@ -77,3 +78,9 @@
 - [Correctness of BUILD](build-spec.md)
 - [Tree displaying a quartet](displays-quartet.md)
 - [An unrooted binary tree is determined by its quartets](iso-of-displays-quartet-iff.md)
+
+## Split decomposition, split networks and perfect phylogeny
+
+- [Linear independence and characterization of the canonical split summands](split-decomposition-of-a-metric-bandelt-dress-canonical-decomposition.md)
+- [Consistency of Neighbor-Net on circular distances](consistency-of-neighbor-net-on-circular-distances.md)
+- [Perfect phylogeny is polynomial for a bounded number of states](perfect-phylogeny-is-polynomial-for-a-fixed-number-of-states.md)

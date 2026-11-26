@@ -42,3 +42,18 @@
 - [Coalescing random walks dual to the voter model on a finite graph](coalescing-random-walks-dual-to-the-voter-moran.md)
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
+
+## Further structured ancestral models
+
+- [Genealogies of samples from a large torus](large-space-genealogical-limits.md)
+- [The coalescent with partial self-fertilization](partial-selfing-coalescent.md)
+- [Genealogies within a fixed pedigree](fixed-pedigree-versus-averaged-genealogy.md)
+- [The coalescent with separate sexes](coalescent-limit-with-separate-sexes.md)
+- [Unlinked loci are not unconditionally independent](unlinked-does-not-mean-universally-independent.md)
+- [Backward migration probabilities from forward migration and deme sizes](backward-versus-forward-migration.md)
+- [Mean coalescence times in the finite island model are expected absorption times](island-pair-means-as-path-expectations.md)
+- [Distribution of the pairwise coalescence time in the island model](island-coalescence-time-distribution.md)
+- [Scattering and collecting phases of the many-demes coalescent](many-demes-scattering-collecting-phases.md)
+- [Isolation with migration: piecewise structured histories and gene-tree likelihoods](isolation-with-migration-and-population-splits.md)
+- [Exact structured-coalescent likelihood and its approximations](exact-versus-approximate-structured-likelihood.md)
+- [Duality between structured diffusions and the structured coalescent](structured-coalescent-duality.md)

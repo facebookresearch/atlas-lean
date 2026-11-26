@@ -18,3 +18,8 @@
 - [Effective size for an X-linked locus](effective-size-for-x-linked-loci.md)
 
 - [Consistency of the linkage-disequilibrium estimator of effective population size under a calibration hypothesis](ld-based-effective-size-estimator-definition-and.md)
+- [Decay of heterozygosity under a changing population size](decay-of-heterozygosity-in-the-time-changed-diffusion.md)
+- [Coalescent effective size and failure of binary universality](effective-size-universality-and-counterexamples.md)
+- [Effective versus census population size in the fixation probability](effective-versus-census-population-size.md)
+- [The harmonic-mean effective size](harmonic-mean-effective-size.md)
+- [Different effective population sizes need not coincide](effective-size-definitions-need-not-coincide.md)

@@ -7,6 +7,10 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Admissibility of maximum-likelihood tree estimation](admissibility-of-maximum-likelihood-tree-estimation.md)
 - [Sample complexity of maximum parsimony](sample-complexity-of-maximum-parsimony.md)
 - [NP-hardness of maximum parsimony and maximum likelihood tree reconstruction](np-hardness-of-maximum-parsimony-and-maximum-likelihood-tree.md)
+- [Consistency of maximum likelihood for the general Markov model on trees](identifiability-of-the-general-markov-model-on-trees.md)
+- [Short quartet methods reconstruct almost all trees from polylogarithmically many sites](short-quartet-methods-reconstruct-trees-from-polynomially-many-sites.md)
+- [The duplication-optimal reconciliations form an interval above the LCA reconciliation](lca-reconciliation-minimizes-duplication-and-loss-costs-over-all-recon.md)
+- [Steel's conjecture: logarithmic sequence length below the Kesten–Stigum threshold](steels-conjecture-o-log-n-sequence-length-suffices-below-the-kesten-st.md)
 
 ## Networks and recorded lineages
 
@@ -18,3 +22,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
+- [Fixed-parameter tractability of the rooted SPR distance](rooted-spr-distance-equals-maximum-agreement-forest.md)
+- [Reductions and fixed-parameter tractability of the TBR distance](tbr-distance-equals-maximum-agreement-forest.md)
+- [Maximum agreement subtree of two trees in polynomial time](maximum-agreement-subtree-of-two-leaf-labelled-trees-in-polynomial-tim.md)
+- [Polynomial-time geodesics in tree space (Owen–Provan)](polynomial-time-geodesics-in-bhv-tree-space-owen-provan-gtp-algorithm.md)

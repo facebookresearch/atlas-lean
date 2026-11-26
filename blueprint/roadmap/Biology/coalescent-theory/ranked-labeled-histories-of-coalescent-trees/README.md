@@ -26,3 +26,7 @@
 - [The ancestral partitions determine the ranked labeled history](partitions-of-injective.md)
 
 - [The common ancestor of a subsample is that of the whole sample with probability (n+1)(m−1)/((n−1)(m+1))](mrca-of-a-subsample-equals-sample-mrca-with-prob.md)
+
+## Further results
+
+- [Cherries of the Kingman genealogy](external-branches-and-cherries.md)

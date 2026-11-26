@@ -49,3 +49,5 @@
 - [Almost-sure repeated clicking of a finite mutation ratchet](muller-s-ratchet-model-and-almost-sure-clicking.md)
 
 - [Fates of a duplicated gene in a finite duplication–degeneration–complementation model](gene-duplicate-fates-in-a-finite-ddc-style-model.md)
+- [The mutational load with epistatic gene interactions](multilocus-epistatic-mutation-load.md)
+- [Mutation load in finite populations](finite-population-mutation-load.md)

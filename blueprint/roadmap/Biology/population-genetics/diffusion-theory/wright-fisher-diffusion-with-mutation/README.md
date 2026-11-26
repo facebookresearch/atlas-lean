@@ -29,3 +29,7 @@
 - [Uniqueness for the selection–mutation martingale problem by an inverse tilt](uniqueness-for-the-selection-mutation-martingale.md)
 - [Wright–Fisher martingale-problem solutions are weak solutions of the equation](wf-martingale-problem-solutions-are-weak-sde-sol.md)
 - [Jacobi eigenbasis of the Wright–Fisher generator with mutation](jacobi-eigenbasis-with-mutation.md)
+- [Uniqueness and reversibility of the Dirichlet stationary law under parent-independent mutation](dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Sampling consistency and exchangeability for diffusion samples](sampling-consistency-and-exchangeability.md)
+- [Boundary classification of the Wright–Fisher diffusion with mutation](wright-fisher-boundary-classification.md)
+- [Infinite-alleles limits of finite-allele diffusions](infinite-alleles-and-finite-allele-limits.md)

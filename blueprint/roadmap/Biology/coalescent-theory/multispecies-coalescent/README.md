@@ -118,3 +118,8 @@
 - [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
 - [One species-tree branch: exit law and merge order of the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
+
+## Species-tree inference
+
+- [Quartet concordance inside larger species trees](quartet-concordance-inside-larger-trees.md)
+- [Identifiability of the rooted species tree from unrooted gene trees](rooted-species-tree-identifiability.md)

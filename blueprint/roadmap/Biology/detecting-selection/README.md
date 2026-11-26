@@ -14,3 +14,5 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Selection from genealogies](selection-from-genealogies/README.md)
+- [Calibration of inferential claims in population genetics](calibration-of-inferential-claims.md)

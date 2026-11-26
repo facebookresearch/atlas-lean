@@ -55,6 +55,10 @@
 - [Linearized SIS threshold, stable side](is-hurwitz-iff.md)
 - [Linearized SIS threshold, unstable side](exists-re-pos-iff.md)
 
+## The stochastic SIS epidemic
+
+- [Gumbel limit for extinction times in the subcritical SIS logistic epidemic](brightwell-house-luczak-gumbel-limit-for-extinction-times-in-the-subcr.md)
+
 ## Global stability of the SIS endemic equilibrium via a Lyapunov function
 
 - [Goh–Volterra Lyapunov function of the SIS endemic equilibrium](lyapunov.md)

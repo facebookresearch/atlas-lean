@@ -8,6 +8,7 @@
 - [Covariance of two linear SFS statistics](covariance-sum.md)
 - [Variance of a linear SFS statistic](variance-sum.md)
 - [Variance of a linear combination as a double sum of covariances](variance-sum-eq-sum-covariance.md)
+- [Conditional moments of site-frequency counts under Poisson mutation](conditional-moments-of-site-frequency-counts.md)
 
 ## Weights of θ_π and of Tajima's D numerator
 
@@ -25,3 +26,4 @@
 - [Variance of a weighted SFS estimator](variance-theta-weighted-kingman.md)
 - [Variance of Tajima's θ_π from the SFS](variance-theta-pi-kingman.md)
 - [Variance of Tajima's D numerator from the SFS](variance-tajima-numerator-kingman.md)
+- [Joint law and generating function of the site-frequency spectrum](joint-sfs-law-and-generating-function.md)

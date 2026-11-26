@@ -21,6 +21,7 @@
 - [Second moments of the holding times](integral-t-mul-t.md)
 - [Time to the most recent common ancestor of the whole population under Kingman’s coalescent](time-to-the-most-recent-common-ancestor-of-the-w.md)
 - [Law of the total branch length of Kingman's coalescent](law-of-the-total-branch-length-of-kingman-s-coal.md)
+- [Laplace transform of the time to the most recent common ancestor in Kingman's coalescent](tmrca-laplace-transform.md)
 
 ## Watterson's estimator
 

@@ -46,3 +46,7 @@
 - [Multi-allelic linkage disequilibria tend to zero](tendsto-linkage-diseq-iterate-2.md)
 
 - [Many-locus variance components and the covariance of relatives](many-locus-variance-components-and-covariance-of.md)
+
+## Further results
+
+- [Linked selection with recombination: background effects on fixation](linked-selection-and-hill-robertson-interference.md)

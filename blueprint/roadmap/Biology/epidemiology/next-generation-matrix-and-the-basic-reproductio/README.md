@@ -13,3 +13,4 @@
 
 - [Spectral bound and reproduction number for infinite-dimensional population structure](spectral-bound-and-reproduction-number-for-infinite-dimensional-structure.md)
 - [Threshold dynamics of compartmental epidemic models in periodic environments](threshold-dynamics-in-periodic-environments.md)
+- [Next-generation operator and the basic reproduction ratio](next-generation-operator-characterization-of-r0-diekmann-heesterbeek-m.md)

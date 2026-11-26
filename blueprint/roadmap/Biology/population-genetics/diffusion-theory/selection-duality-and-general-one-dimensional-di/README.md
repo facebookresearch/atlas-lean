@@ -15,6 +15,8 @@
 - [Neutral stationary weights sum to one](has-sum-asg-stationary-zero.md)
 - [Loss probability in Kimura's fixation formula](one-sub-kimura-fixation.md)
 - [Loss probability from the stationary ancestral selection graph](has-sum-asg-stationary-mul-one-sub-pow.md)
+- [Ancestral selection graph and duality for the selected diffusion](asg-duality-for-the-selected-diffusion.md)
+- [Construction of the ancestral selection graph](ancestral-selection-graph-construction.md)
 
 ## General one-dimensional diffusions
 
@@ -86,3 +88,7 @@
 - [Green function, occupation times and mean exit times of a one-dimensional diffusion](green-function-occupation-times-and-mean-exit-ti.md)
 - [Hitting probabilities equal scale ratios when both endpoints are accessible](hitting-probabilities-equal-scale-ratios-under-a.md)
 - [Scale function and exit probabilities for one-dimensional diffusions (process level)](scale-function-and-exit-probabilities-for-one-di.md)
+
+## Further results
+
+- [Fixation probabilities under frequency-dependent selection](frequency-dependent-selection.md)

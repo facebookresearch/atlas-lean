@@ -10,6 +10,7 @@
 - [Positivity of the sweep duration](sweep-duration-pos.md)
 - [Duration of a complete deterministic sweep](sweep-duration-full.md)
 - [Probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md)
+- [The hitchhiking approximation of a selective sweep](hitchhiking-approximation.md)
 
 ## Extended haplotype homozygosity under a star-shaped sweep genealogy
 

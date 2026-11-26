@@ -41,3 +41,10 @@
 - [Weak convergence of Wright–Fisher chains with weak selection and mutation](weak-convergence-of-wf-chains-with-weak-selectio.md)
 - [Well-posedness of the biallelic Wright–Fisher diffusion with general diploid selection and mutation](well-posedness-of-the-biallelic-wf-diffusion-wit.md)
 - [Well-posedness of the K-allele Wright–Fisher diffusion with diploid selection](well-posedness-of-the-k-allele-wf-diffusion-with.md)
+
+## Further stationary laws
+
+- [Stationary law of the multi-allele diffusion with diploid selection](diploid-selection-potential.md)
+- [Stationary law of the Wright–Fisher diffusion with dominance and mutation](dominance-stationary-law.md)
+- [Reversibility and the Dirichlet form of the Wright–Fisher diffusion](reversibility-and-dirichlet-form.md)
+- [Small-mutation limits of stationary laws](small-mutation-limits.md)

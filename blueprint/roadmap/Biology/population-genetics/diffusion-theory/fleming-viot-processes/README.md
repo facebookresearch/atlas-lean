@@ -21,3 +21,5 @@
 - [Moran particle system with bounded mutation on a compact type space](moran-particle-system-with-feller-mutation-on-a.md)
 - [Tightness of the Moran empirical-measure processes in the space of continuous paths](tightness-of-measure-valued-approximations-in-c.md)
 - [Uniform Aldous bounds for Moran empirical-measure projections](uniform-aldous-bounds-for-moran-empirical-measur.md)
+- [Duality between Fleming–Viot processes and coalescents](fleming-viot-coalescent-duality.md)
+- [The lookdown construction: almost-sure path convergence to the Fleming–Viot process](lookdown-construction.md)
