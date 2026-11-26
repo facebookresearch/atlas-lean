@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperations
 public import MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights
+public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperationsAdmissible
 
 /-!
 # Construction requests on the literal adelic Cauchy quotient
@@ -98,9 +99,6 @@ open MathlibExt.AlgebraicGeometry.CompletedAdelicPointHeights
 variable {K : Type} [Field K] {A : AdelicField K} {X : Over (Spec (.of K))}
   {L : X.left.Modules} (B : EffectiveBoundary A X) (m : BoundaryMetricCompletion (L := L) B)
   {x : BasePoint (K := K) ⟶ X} (F : PointFrame A X L x)
-
-/-- The integrable model norms and actual integrable boundary gauge dominate the limit. -/
-public theorem_wanted admissible (D : DominatedApproximation B m F) : IsAdmissible B m F
 
 /-- Heights of the native model sequence converge to the computed quotient height. -/
 public theorem_wanted heightLimit (D : DominatedApproximation B m F) : HeightConverges B m F D
