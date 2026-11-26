@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Computability.Distributed.FailureDetector
 public import Cslib.Foundations.Semantics.LTS.OmegaExecution
 public import Mathlib.Data.Finset.Defs
 public import Mathlib.Data.Multiset.AddSub
@@ -54,6 +55,9 @@ asks for validity, agreement and uniform integrity.
 
 * `diffusion_isReliableBroadcast`: every fair run of the diffusion algorithm satisfies validity,
   agreement and uniform integrity.
+* `Diffusion.exists_failurePattern`: with finitely many processes, one of them correct, the
+  crashed sets of a run form a failure pattern (`FailureDetector.FailurePattern`) with the same
+  correct processes.
 
 ## References
 
@@ -385,6 +389,14 @@ private theorem crashed_mono (hex : lts.OmegaExecution ss μs) {t t' : ℕ} (h :
   induction t', h using Nat.le_induction with
   | base => exact subset_rfl
   | succ n _ ih => exact ih.trans (crashed_subset (hex n))
+
+-- With finitely many processes, one of them correct, the crashed sets of a run form a failure
+-- pattern in the sense of Chandra and Toueg, whose correct processes are those of the run.
+theorem exists_failurePattern [Finite P] (hex : lts.OmegaExecution ss μs)
+    (h : (correct ss).Nonempty) :
+    ∃ F : FailureDetector.FailurePattern P,
+      (∀ t, F.crashedBy t = (ss t).crashed) ∧ F.correct = correct ss :=
+  ⟨⟨fun t => (ss t).crashed, fun _ _ hle => crashed_mono hex hle, h⟩, fun _ => rfl, rfl⟩
 
 private theorem delivered_mono (hex : lts.OmegaExecution ss μs) {t t' : ℕ} (h : t ≤ t')
     (p : P) : (ss t).delivered p ⊆ (ss t').delivered p := by

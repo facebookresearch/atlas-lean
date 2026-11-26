@@ -23,7 +23,8 @@ Two processes, `0` and `1`, and the message `m₀` of process `0` with sequence 
 * A fair run of the diffusion algorithm: `0` crashes while it R-broadcasts `m₀`, having sent it
   only to `1`; then `1` receives `m₀`, relays it and R-delivers it, and discards its own copy.
   The run satisfies the hypotheses of `diffusion_isReliableBroadcast`, with `1` its only correct
-  process, so they are satisfiable with a crash in the middle of a broadcast.
+  process, so they are satisfiable with a crash in the middle of a broadcast. Its crashed sets
+  form a failure pattern with the same correct process.
 -/
 
 @[expose] public section
@@ -226,6 +227,12 @@ theorem run_reliableDelivery : ReliableDelivery runStates runSteps := by
 theorem run_isReliableBroadcast :
     IsReliableBroadcast (correct runStates) fun t => (runSteps t).event :=
   diffusion_isReliableBroadcast rfl run_execution run_reliableDelivery
+
+/-- The crashed sets of the run form a failure pattern whose only correct process is `1`. -/
+example : ∃ F : FailureDetector.FailurePattern (Fin 2),
+    (∀ t, F.crashedBy t = (runStates t).crashed) ∧ F.correct = {1} := by
+  rw [← correct_run]
+  exact exists_failurePattern run_execution ⟨1, by simp [correct_run]⟩
 
 /-- In the run, `0` R-broadcasts `m₀` and `1` R-delivers it, although `0` crashed during the
 broadcast. -/
