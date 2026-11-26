@@ -26,13 +26,15 @@ subsequence of terms with indices `j*n`, and offset `k` means indices
 `ℚ`; its negative-index convention is the standard one used in the
 paper.  The Lucas extension uses `L_{-m} = (-1)^m * L_m`.
 Signed values are needed for the `n = 0` case of Theorem 3 and for
-negative offsets in Theorem 5.
+negative offsets in Theorem 5 (`lucas_step_offset_sury_fib_sum`, now proved in
+`MathlibExt.NumberTheory.Recurrences.SuryIdentityExtensionsLucasStepOffsetSuryFibSum`).
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Recurrences.SuryIdentityExtensions
 public import MathlibExt.NumberTheory.Recurrences.SuryIdentityExtensionsFibStepOffsetSurySum
+public import MathlibExt.NumberTheory.Recurrences.SuryIdentityExtensionsLucasStepOffsetSuryFibSum
 
 set_option autoImplicit false
 
@@ -77,23 +79,5 @@ theorem_wanted fib_step_sury_sum
       ∑ i ∈ Finset.range (n + 1),
         (-1 : ℚ) ^ (j * (n + i)) * lucasAtInt (j : ℤ) ^ i *
           fibAtInt ((j : ℤ) * (i : ℤ))
-
-/-- **Offset step extension of Sury's identity, Lucas form.** Let $F_n$ and $L_n$ be the
-Fibonacci and Lucas numbers at integer indices. For all natural numbers $j$ and $n$ and every
-integer $k$ with $|k| < j$,
-$$F_{j(n+1)} = \frac{F_j}{L_k} \sum_{i=0}^{n}
-\left(\frac{(-1)^k L_{j-k}}{L_k}\right)^{n-i} L_{ji+k}.$$
-
-Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 5, formula
-(54). -/
-theorem_wanted lucas_step_offset_sury_fib_sum
-    (j : ℕ) (k : ℤ) (n : ℕ)
-    (hjk : |k| < (j : ℤ)) :
-    fibAtInt ((j : ℤ) * ((n : ℤ) + 1)) =
-      (fibAtInt (j : ℤ) / lucasAtInt k) *
-        ∑ i ∈ Finset.range (n + 1),
-          ((-1 : ℚ) ^ k * lucasAtInt ((j : ℤ) - k) / lucasAtInt k) ^
-              (n - i) *
-            lucasAtInt ((j : ℤ) * (i : ℤ) + k)
 
 end MathlibExt.NumberTheory.Recurrences.SuryIdentityExtensionsWanted
