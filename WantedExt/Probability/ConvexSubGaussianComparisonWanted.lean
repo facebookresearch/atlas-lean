@@ -31,8 +31,9 @@ Davis–Power equation data it uses is defined.
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.ConvexSubGaussianComparison
 
--- The Davis–Power equation data (Davis–Power 2026, equations (3)-(6)), kept with its
--- owning literature requests instead of the reusable `MathlibExt` library.
+-- The Davis–Power constant `c_0` (Davis–Power 2026, equation (6)), kept with its owning
+-- literature requests; the equation data it is defined from is in
+-- `MathlibExt.Probability.ConvexSubGaussianComparisonDavisPowerSystemExistsUnique`.
 namespace MathlibExt.Probability.ConvexSubGaussianComparisonWantedDavis
 
 open Set
