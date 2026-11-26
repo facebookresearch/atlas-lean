@@ -95,3 +95,4 @@
 ## Related topics
 
 - [Quantum Fourier transform](../../../QuantumInformation/quantum-operations/quantum-fourier-transform/README.md): the normalised discrete Fourier transform acting on quantum amplitudes, which Shor implements for $q = 2^l$ by a circuit of Hadamard and controlled phase gates.
+- [Polynomial multiplication by evaluation and interpolation](polynomial-multiplication-by-evaluation-and.md)
