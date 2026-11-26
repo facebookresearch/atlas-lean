@@ -12,6 +12,7 @@ Portions of this file are adapted from:
 `LeanEval/Analysis/SupremumOfSelectorProcesses.lean` (leanprover/lean-eval, revision
 38361be884302c7edce1908c4aef8296eb2cb27e), based on
 `AnnalsChallenge/AnnalsOfMathematics/2024-199-3-SupremumOfSelectorProcesses.lean` (v1.0.0).
+Copyright (c) 2025 David Ledvinka. All rights reserved.
 Copyright 2026 Lean FRO, LLC.
 Authors: David Ledvinka (lean-eval submission).
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
