@@ -14,6 +14,7 @@ public import MathlibExt.NumberTheory.PolygonalSumParity
 public import MathlibExt.NumberTheory.PracticalNumber
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.PracticalPolygonalSums
+public import MathlibExt.NumberTheory.PolygonalSumModPrimePow
 public import MathlibExt.NumberTheory.OddSquareTriangular
 
 /-!
@@ -78,23 +79,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 8
 public theorem_wanted exists_sq_add_sq_modEq_prime_pow (p n k : ℕ) (hp : p.Prime)
     (hp4 : p % 4 = 1) (hn : 0 < n) (hk : 0 < k) :
     ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ n [MOD p ^ k] ∧ ¬ p ∣ y
-
-/-- **Sums of two polygonal numbers modulo prime powers.** For a natural number $s > 3$ and a
-natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. There
-is a prime $p$ with $p \equiv 1 \pmod{4}$ and $p \nmid s - 2$ such that for all natural numbers
-$k > 0$ and $n > 0$ there are natural numbers $x, y > 0$ with
-$P_s(x) + P_s(y) \equiv n \pmod{p^k}$.
-
-The paper's statement asks only for an odd prime; the condition $p \equiv 1 \pmod{4}$ is the
-choice made in its proof via Lemma 8 (arXiv Lemma 4.3).
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 9
-(arXiv Lemma 4.4; `jis-2024-24.5.1-lem-9`). -/
-public theorem_wanted exists_prime_polygonal_add_polygonal_modEq_prime_pow (s : ℕ)
-    (hs : 3 < s) :
-    ∃ p : ℕ, p.Prime ∧ p % 4 = 1 ∧ ¬ p ∣ s - 2 ∧ ∀ k n : ℕ, 0 < k → 0 < n →
-      ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ Nat.polygonalNumber s x + Nat.polygonalNumber s y ≡ n [MOD p ^ k]
 
 /-- **Exceptions to sums of a practical number and polygonal numbers.** (a) Let $s \ge 3$ with
 $s \equiv 0$ or $s \equiv 4 \pmod{12}$. Then there are infinitely many positive integers $n$ that
