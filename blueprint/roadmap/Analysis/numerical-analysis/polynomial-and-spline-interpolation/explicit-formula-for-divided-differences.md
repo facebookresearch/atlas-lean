@@ -4,7 +4,7 @@ For distinct real numbers $x_0, \dots, x_n$ and a real function $f$ defined at t
 
 $$f[x_0, \dots, x_n] = \sum_{j=0}^{n} \frac{f(x_j)}{\prod_{k \ne j} (x_j - x_k)}.$$
 
-In particular it is a symmetric function of $x_0, \dots, x_n$: it does not depend on the order of the points. It is the [leading coefficient formula of Lagrange interpolation](leading-coefficient-of-a-polynomial-from-its-values.md), proved in Mathlib for every field, applied to the interpolating polynomial $Q$ of $f$ at the nodes: by definition the divided difference is the coefficient of $x^n$ in $Q$, $\deg Q \le n$, and $Q(x_j) = f(x_j)$, also when $\deg Q < n$.
+In particular it is a symmetric function of $x_0, \dots, x_n$: it does not depend on the order of the points. It is the [coefficient formula of Lagrange interpolation](coefficient-of-a-polynomial-from-its-values.md), proved in Mathlib for every field, applied to the interpolating polynomial $Q$ of $f$ at the nodes: by definition the divided difference is the coefficient of $x^n$ in $Q$, $\deg Q \le n$, and $Q(x_j) = f(x_j)$, also when $\deg Q < n$.
 
 ## Depends on
 
@@ -13,7 +13,7 @@ In particular it is a symmetric function of $x_0, \dots, x_n$: it does not depen
 ## Proof depends on
 
 - [Lagrange interpolant](../../approximation-theory/lagrange-interpolation/eval-interpolant.md)
-- [Leading coefficient of a polynomial from its values at distinct nodes](leading-coefficient-of-a-polynomial-from-its-values.md)
+- [Coefficient of index m − 1 of a polynomial of degree below m from its values at m distinct nodes](coefficient-of-a-polynomial-from-its-values.md)
 
 ## Sources
 

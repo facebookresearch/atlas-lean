@@ -15,3 +15,4 @@ In particular the first characteristic polynomial of a consistent method has the
 ## Sources
 
 - E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.3, the paragraph after (47) (necessity of $C_0 = C_1 = 0$), and the proof of Theorem 9, estimate (73) (a method with $C_0 = C_1 = 0$ has $|\sigma(1) T_n| \le K\chi(kh) \to 0$ for continuously differentiable solutions). <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
+- G. Dahlquist, "33 years of numerical instability, Part I", *BIT* 25 (1985), 188–204, Section 3, the order of consistency (order at least $1$ means that $L_h$ annihilates the polynomials of degree at most $1$, which are the two equations $C_0 = C_1 = 0$). <https://doi.org/10.1007/BF01934997>

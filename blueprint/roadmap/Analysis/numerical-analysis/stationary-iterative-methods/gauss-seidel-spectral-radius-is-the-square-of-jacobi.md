@@ -4,7 +4,7 @@ Let $A = \begin{pmatrix} D_1 & A_{12} \\ A_{21} & D_2 \end{pmatrix}$ be an $n \t
 
 $$\rho(G_{GS}) = \rho(G_J)^2.$$
 
-So when $\rho(G_J) < 1$, both iterations converge and the asymptotic convergence rate of Gauss–Seidel, $-\log \rho(G_{GS})$, is twice that of Jacobi: one Gauss–Seidel sweep reduces the error asymptotically as much as two Jacobi sweeps. When $\rho(G_J) \ge 1$ neither converges.
+So when $0 < \rho(G_J) < 1$, both iterations converge and the asymptotic convergence rate of Gauss–Seidel, $-\log \rho(G_{GS})$, is twice that of Jacobi. This compares worst-case rates over all starting vectors; for a particular starting vector the errors can behave otherwise: for $A = \begin{pmatrix} 2 & -1 \\ -1 & 2 \end{pmatrix}$, $b = 0$ and $x_0 = (1, 0)$, one Gauss–Seidel sweep gives $0$, while two Jacobi sweeps give $(1/4, 0)$. When $\rho(G_J) = 0$, both iteration matrices are nilpotent and both iterations reach the solution after at most $n$ steps, for example after one step for $A = I$. When $\rho(G_J) \ge 1$, neither iteration converges for every starting vector.
 
 ## Depends on
 
@@ -18,3 +18,4 @@ So when $\rho(G_J) < 1$, both iterations converge and the asymptotic convergence
 ## Sources
 
 - J. W. Demmel, Math 221 (Applied Numerical Linear Algebra), University of California, Berkeley, Fall 2024, typed notes of Lecture 12 (Splitting Methods, 12 November 2024), Theorem 4 and its proof (the case $w = 1$ of the relation $(\lambda + w - 1)^2 = \lambda w^2 \mu^2$), referring to J. W. Demmel, *Applied Numerical Linear Algebra*, SIAM, 1997, Theorem 6.6. <https://people.eecs.berkeley.edu/~demmel/ma221_Fall24/Lectures/Lecture_12.txt>
+- Y. Saad, *Iterative Methods for Sparse Linear Systems*, 2nd edition, SIAM, 2003, Section 4.2.1, the general and specific convergence factors and the convergence rate $\tau = -\ln \rho$, and Section 4.2.5, the block form (4.42) and Theorem 4.16 with $\omega = 1$ ($\lambda = \mu^2$ for the nonzero eigenvalues $\lambda$ of the Gauss–Seidel matrix). <https://www-users.cse.umn.edu/~saad/IterMethBook_2ndEd.pdf>
