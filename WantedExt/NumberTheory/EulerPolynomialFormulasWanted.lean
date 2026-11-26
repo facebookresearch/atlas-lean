@@ -20,11 +20,13 @@ through Bernoulli polynomials by
 `E_n(x) = (2 / (n + 1)) (B_{n+1}(x) - 2^{n+1} B_{n+1}(x / 2))`.
 The paper's generalized Stirling polynomial
 `S(n, k, x) = (1 / k!) ∑_j (k choose j) (-1)^{k-j} (x + j)^n`
-(Proposition 3.1) is `genStirlingPoly n k`. The
+(Proposition 3.1) is `genStirlingPoly n k`, defined in
+`MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyHalfEqSum`. The
 coefficients `α_k` of the paper's Lemma 2.2, the Taylor
 coefficients of `(2 + 2z) / (2 + 2z + z^2)`, are
-`eulerAlpha`, defined by the recurrence that generating
-function imposes. The order-`α` Euler polynomials
+`eulerAlpha`, defined in
+`MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyHalfEqSum` by the
+recurrence that generating function imposes. The order-`α` Euler polynomials
 `E_n^{(α)}(x)` (with generating function
 `(2 / (e^t + 1))^α e^{xt}`) are `eulerPolyGen`, built
 from the numbers `eulerNumGen α k = E_k^{(α)}(0)`, which
@@ -56,6 +58,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyHalfEqSum
 
 set_option autoImplicit false
 
@@ -64,32 +67,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/-- **Generalized Stirling polynomial.** For natural numbers $n$ and $k$, the generalized
-Stirling polynomial $S(n, k, x)$ is the polynomial in $x$ with rational coefficients
-$$S(n, k, x) = \frac{1}{k!} \sum_{j=0}^{k} \binom{k}{j} (-1)^{k-j} (x + j)^n.$$
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Proposition 3.1 (definition). -/
-noncomputable def genStirlingPoly (n k : ℕ) : ℚ[X] :=
-  (1 / (Nat.factorial k : ℚ)) •
-    ∑ j ∈ Finset.range (k + 1),
-      ((Nat.choose k j : ℚ) * (-1) ^ (k - j)) •
-        (X + C (j : ℚ)) ^ n
-
-/-- **Taylor coefficients of (2 + 2z)/(2 + 2z + z²).** The rational numbers $\alpha_k$,
-$k \ge 0$, are defined by $\alpha_0 = 1$, $\alpha_1 = 0$ and
-$2\alpha_{k+2} + 2\alpha_{k+1} + \alpha_k = 0$ for every $k \ge 0$. They are the Taylor
-coefficients of $(2 + 2z)/(2 + 2z + z^2)$ at $z = 0$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Lemma 2.2 (generating function). -/
-def eulerAlpha : ℕ → ℚ
-  | 0 => 1
-  | 1 => 0
-  | k + 2 => -eulerAlpha (k + 1) - eulerAlpha k / 2
 
 /-- **Fuel-bounded recurrence for the Euler numbers of order α.** Let $E_m(x)$ denote the Euler
 polynomial. For a complex number $\alpha$, the complex numbers $a_\alpha(f, n)$, for natural
@@ -135,21 +112,6 @@ polynomials). -/
 noncomputable def eulerPolyGen (α : ℂ) (n : ℕ) : ℂ[X] :=
   ∑ k ∈ Finset.range (n + 1),
     C ((Nat.choose n k : ℂ) * eulerNumGen α k) * X ^ (n - k)
-
-/-- **Euler polynomials at (x + 1)/2 via generalized Stirling polynomials.** Let $E_n(x)$ denote
-the Euler polynomial, $\alpha_k$ the Taylor coefficients of $(2 + 2z)/(2 + 2z + z^2)$, and
-$S(n, k, x) = \frac{1}{k!} \sum_{j=0}^{k} \binom{k}{j} (-1)^{k-j} (x + j)^n$ the generalized
-Stirling polynomial. For every $n \ge 0$, as polynomials in $x$ with rational coefficients,
-$2^n E_n\left(\frac{x + 1}{2}\right) = \sum_{k=0}^{n} k! \, \alpha_k \, S(n, k, x)$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Proposition 3.1. -/
-theorem_wanted eulerPoly_half_eq_sum (n : ℕ) :
-    (2 : ℚ) ^ n • (eulerPoly n).comp (C (1 / 2) * (X + 1)) =
-      ∑ k ∈ Finset.range (n + 1),
-        ((Nat.factorial k : ℚ) * eulerAlpha k) •
-          genStirlingPoly n k
 
 /-- **Recurrence for Euler polynomials of order α.** Let $E_m(x)$ denote the Euler polynomial
 and $E_m^{(\alpha)}(x)$ the Euler polynomial of order $\alpha$. For every complex number
