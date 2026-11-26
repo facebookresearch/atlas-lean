@@ -13,7 +13,9 @@ Since the roots of $\rho$ are $1$ and $0$, every Adams method is zero-stable.
 ## Depends on
 
 - [Linear multistep method](../linear-multistep-method.md)
+- [Order of accuracy and error constants of a linear multistep method](../order-of-accuracy-and-error-constants.md)
+- [Zero-stability](../zero-stability.md)
 
 ## Sources
 
-- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.1, the expansions (41)–(42) and their truncations; Example 4(b); Section 3.6, the definition of Adams, Adams–Bashforth and Adams–Moulton methods by $\rho(z) = z^k - z^{k-1}$; Section 3.7.2, the list of $k$-step Adams methods for $k \le 4$. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>
+- E. Süli, *Numerical Solution of Ordinary Differential Equations*, lecture notes, Mathematical Institute, University of Oxford, version of 2 March 2022, Section 3.1, the expansions (41)–(42) and their truncations; Example 4(b); the end of Section 3.5, the definition of Adams, Adams–Bashforth and Adams–Moulton methods by $\rho(z) = z^k - z^{k-1}$; Section 3.7.2, the list of $k$-step Adams methods for $k \le 4$. <https://people.maths.ox.ac.uk/suli/nsodes.pdf>

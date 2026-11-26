@@ -6,6 +6,10 @@ $$\prod_{i=1}^n (1 + \delta_i)^{\rho_i} = 1 + \theta_n, \qquad |\theta_n| \le \e
 
 with probability at least $1 - 2\exp(-\lambda^2/2)$. The partial sums $E_k = \sum_{i \le k} \rho_i \delta_i$ form a martingale with increments bounded by $u$, so the Azuma–Hoeffding inequality gives $|E_n| \le \lambda\sqrt n\,u$ with that probability. Since [stochastic rounding errors are mean independent](stochastic-rounding-errors-are-mean-independent.md), the bound holds for stochastic rounding with $u$ replaced by $2u$, without any modelling assumption.
 
+## Depends on
+
+- [Stochastic rounding](stochastic-rounding.md)
+
 ## Proof depends on
 
 - [Azuma's inequality](../../../../Probability/concentration-inequalities/azuma-inequality.md)

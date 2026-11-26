@@ -9,6 +9,7 @@ It is *A(0)-stable* if it is A(α)-stable for some $\alpha \in (0, \pi/2)$, and 
 ## Depends on
 
 - [Absolute stability of a linear multistep method](absolute-stability.md)
+- [A-stability](a-stability.md)
 
 ## Related topics
 

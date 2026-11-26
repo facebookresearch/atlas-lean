@@ -14,6 +14,7 @@ and its interval of absolute stability is $(-1, 0)$.
 
 - [Adams methods](adams-methods.md)
 - [Order of accuracy and error constants](../order-of-accuracy-and-error-constants.md)
+- [Absolute stability of a linear multistep method](../absolute-stability-and-a-stability/absolute-stability.md)
 
 ## Proof depends on
 

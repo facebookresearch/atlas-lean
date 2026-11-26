@@ -5,6 +5,7 @@ The only [A(0)-stable](a-alpha-stability.md) linear $k$-step method whose order 
 ## Depends on
 
 - [A(α)-stability](a-alpha-stability.md)
+- [Order of accuracy and error constants of a linear multistep method](../order-of-accuracy-and-error-constants.md)
 
 ## Related topics
 

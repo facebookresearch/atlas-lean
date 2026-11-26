@@ -6,6 +6,10 @@ $$\langle f(x, u) - f(x, v),\ u - v \rangle \le \nu(x)\, \|u - v\|^2 \qquad \tex
 
 If $\nu(x) \le 0$ for all $x$, the system $y' = f(x, y)$ is [dissipative](dissipative-system.md). A function Lipschitz in $u$ with constant $L$ satisfies it with $\nu = L$, but the best $\nu$ can be far smaller than $L$, and negative.
 
+## Depends on
+
+- [Dissipative system](dissipative-system.md)
+
 ## Related topics
 
 - [Dissipative system](dissipative-system.md)

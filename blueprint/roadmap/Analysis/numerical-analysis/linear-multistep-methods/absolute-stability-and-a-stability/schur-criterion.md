@@ -8,6 +8,10 @@ a polynomial of degree at most $k - 1$. Then $\varphi$ is a Schur polynomial if 
 
 Applied recursively to the stability polynomial $\pi(r; \bar h) = \rho(r) - \bar h \sigma(r)$, it decides whether a linear multistep method is [absolutely stable](absolute-stability.md) for $\bar h$.
 
+## Depends on
+
+- [Absolute stability of a linear multistep method](absolute-stability.md)
+
 ## Related topics
 
 - [Routh–Hurwitz criterion](routh-hurwitz-criterion.md)

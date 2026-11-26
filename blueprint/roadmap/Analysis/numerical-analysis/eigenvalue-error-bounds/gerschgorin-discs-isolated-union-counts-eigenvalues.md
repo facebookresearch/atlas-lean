@@ -2,7 +2,7 @@
 
 Let $A$ be an $n \times n$ complex matrix, and for each $i$ let $D_i = \{z \in \mathbb{C} : |z - a_{ii}| \le \sum_{j \ne i} |a_{ij}|\}$ be its $i$-th Gerschgorin disc. Suppose that for a set $I$ of $m$ indices the union $S = \bigcup_{i \in I} D_i$ is disjoint from every disc $D_j$, $j \notin I$. Then $S$ contains exactly $m$ eigenvalues of $A$, counted with algebraic multiplicity.
 
-In particular a Gerschgorin disc disjoint from all the others contains exactly one eigenvalue, which is real when $A$ and its diagonal are real. Gerschgorin's theorem, that every eigenvalue lies in some $D_i$, is Mathlib's `Matrix.eigenvalue_mem_ball`.
+In particular a Gerschgorin disc disjoint from all the others contains exactly one eigenvalue, which is real when $A$ and its diagonal are real. Gerschgorin's theorem, that every eigenvalue lies in some $D_i$, is Mathlib's `eigenvalue_mem_ball`.
 
 ## Related topics
 

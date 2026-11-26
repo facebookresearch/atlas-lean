@@ -17,4 +17,4 @@ whose components are in order of increasing magnitude (except that any $h_i$ may
 
 ## Sources
 
-- J. R. Shewchuk, "Adaptive precision floating-point arithmetic and fast robust geometric predicates", *Discrete & Computational Geometry* 18(3):305–363, 1997; technical report version CMU-CS-96-140R, Section 2.5, Theorem 10 (algorithm GROW-EXPANSION) and its proof. <https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf>
+- J. R. Shewchuk, "Adaptive precision floating-point arithmetic and fast robust geometric predicates", *Discrete & Computational Geometry* 18(3):305–363, 1997; technical report version CMU-CS-96-140R, Section 2.4, Theorem 10 (algorithm GROW-EXPANSION) and its proof. <https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf>

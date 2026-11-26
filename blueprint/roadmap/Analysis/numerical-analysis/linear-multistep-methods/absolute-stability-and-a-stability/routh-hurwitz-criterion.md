@@ -8,6 +8,10 @@ Then every root of $q$ lies in the open left half-plane $\Re z < 0$ if and only 
 
 Under the map $z = (r - 1)/(r + 1)$, which takes the open unit disc onto the open left half-plane, $(1 - z)^k \pi\big(\tfrac{1+z}{1-z}; \bar h\big)$ is, for real $\bar h$, a real polynomial whose roots lie in the left half-plane exactly when those of $\pi(\cdot\,; \bar h)$ lie in the unit disc; when it has degree $k$, multiplying it by $-1$ if necessary to make $a_0 > 0$, the criterion decides absolute stability of a linear multistep method.
 
+## Depends on
+
+- [Absolute stability of a linear multistep method](absolute-stability.md)
+
 ## Related topics
 
 - [Schur's criterion](schur-criterion.md)

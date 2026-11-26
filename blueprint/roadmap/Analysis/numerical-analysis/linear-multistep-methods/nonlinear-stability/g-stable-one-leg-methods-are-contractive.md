@@ -10,6 +10,7 @@ the discrete counterpart of [contractivity of the exact solutions](dissipative-s
 
 - [G-stability](g-stability.md)
 - [Dissipative system](dissipative-system.md)
+- [One-leg twin of a linear multistep method](one-leg-twin.md)
 
 ## Related topics
 

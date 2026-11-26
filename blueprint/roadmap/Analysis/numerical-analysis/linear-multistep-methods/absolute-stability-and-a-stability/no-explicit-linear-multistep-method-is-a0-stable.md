@@ -8,6 +8,7 @@ Consistency is needed, as for [A-stability](no-explicit-a-stable-linear-multiste
 
 - [A(α)-stability](a-alpha-stability.md)
 - [Truncation error and consistency of a linear multistep method](../truncation-error-and-consistency.md)
+- [Absolute stability of a linear multistep method](absolute-stability.md)
 
 ## Related topics
 

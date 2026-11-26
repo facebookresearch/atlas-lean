@@ -9,6 +9,7 @@ So for an M-matrix every regular splitting, for instance the Jacobi splitting, g
 ## Depends on
 
 - [Regular splitting](regular-splitting.md)
+- [M-matrix](m-matrix.md)
 
 ## Proof depends on
 
