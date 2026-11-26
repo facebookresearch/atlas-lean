@@ -37,7 +37,14 @@ open MathlibExt.AlgebraicGeometry
 open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModifications
 open AnalyticMeromorphicCoordinates
 
-/-- The global comparison element represents the original map on every refined point. -/
+/-- In integral frames, a modification of $G$-bundles is left multiplication by its comparison
+element: let $p$ be a prime, $E$ a field and $G$ a group scheme over $E$ (with the given
+torsor-descent data `H` and pullback preservation `P`), $d : D \to X$ a map of analytic spaces over
+$E$ with puncture $U$ (the open complement of its image), $Q$ a pole chart of $d$, $M$ a
+modification of $G$-bundles along $d$ (an isomorphism over $U$ between two $G$-bundles on $X$), and
+integral frames of the two bundles of $M$ on $Q$. Then on every test object $T$ over the punctured
+chart, the isomorphism of $M$ read in the two frames sends each $a \in G(T)$ to $g|_T \cdot a$,
+where $g$ is the comparison element (`comparisonElement`). -/
 public theorem_wanted comparison_refinement_normalization
     (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
     (G : Over (Spec (.of E))) [GrpObj G]
@@ -52,7 +59,13 @@ public theorem_wanted comparison_refinement_normalization
       ((pointGroups p E G).map T.hom.op).hom
         (comparisonElement p E G H P d U Q M left right) * a
 
-/-- Actual etale Cartier pole charts of the fixed marked-untilt divisor. -/
+/-- The divisor of an untilt is an étale-locally principal Cartier divisor: let $p$ be a prime, $E$
+a finite extension of $\mathbb{Q}_p$ with the given coefficient data, affine realization and integer
+presentation, $A$ a family of relative Fargues–Fontaine curves, $T$ an untilt over a base $S$, $D$
+the divisor of $T$ on the curve with its formal cover (`UntiltingCartierChartModels.SourceDivisor`)
+and $U$ a puncture of it. Then the inclusion of the divisor is a closed embedding, surjective on
+stalks, and the divisor is covered by pole charts: affinoid étale neighbourhoods on which a regular
+parameter generates its ideal (`CartierAtlas`). -/
 public def_wanted untiltPoleCharts
     (p : ℕ) [Fact p.Prime] {E : LocalWittCoefficientFields.MixedField p}
     (C : LocalWittCoefficientFields.CoefficientData p E)
