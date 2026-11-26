@@ -55,8 +55,11 @@ noncomputable def siegertTime (τ μ σ V₀ θ : ℝ) : ℝ :=
 noncomputable def voltage (τ μ V₀ : ℝ) (X : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) (ω : Ω) : ℝ :=
   μ + (V₀ - μ) * exp (-(t : ℝ) / τ) + X t ω
 
-/-- The **firing time**: the first `t ≥ 0` with `V(t) ≥ θ`, as Mathlib's `hittingAfter` with
-values in `WithTop ℝ≥0` (`⊤` if the neuron never fires). -/
+/-- The **firing time** (first-passage infimum): Mathlib's `hittingAfter` of the membrane voltage
+`V(t)` to `[θ, ∞)` starting from `0`, taking values in `WithTop ℝ≥0` (`⊤` if the hit set
+`{t ≥ 0 | θ ≤ V(t)}` is empty). For an arbitrary path this is the infimum of the hit set (not
+necessarily attained at that time for discontinuous paths); for continuous paths it is the first
+time `V(t) ≥ θ`. -/
 noncomputable def firingTime (τ μ V₀ θ : ℝ) (X : ℝ≥0 → Ω → ℝ) : Ω → WithTop ℝ≥0 :=
   hittingAfter (voltage τ μ V₀ X) (Set.Ici θ) 0
 

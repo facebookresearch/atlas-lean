@@ -55,7 +55,10 @@ def IsElliptical (ν : Measure (Fin n → ℝ)) : Prop :=
   ∃ A : Matrix (Fin n) (Fin n) ℝ, IsUnit A.det ∧ ∃ ρ : Measure (Fin n → ℝ), IsSpherical ρ ∧
     ν = ρ.map (fun z => A *ᵥ z)
 
-/-- The second-moment (covariance) matrix `Σ_ij = ∫ x_i x_j dν` of a law `ν` on `ℝⁿ`. -/
+/-- The uncentered **second-moment matrix** `Σ_ij = ∫ x_i x_j dν` of a measure `ν` on `ℝⁿ`. For a
+centered probability law (`∫ x_i dν = 0`) with finite second moments, this agrees with the
+covariance matrix of `ν` (on uncentered laws such as a point mass at `1`, it differs from
+covariance). -/
 noncomputable def covMatrix (ν : Measure (Fin n → ℝ)) : Matrix (Fin n) (Fin n) ℝ :=
   Matrix.of fun i j => ∫ x, x i * x j ∂ν
 
