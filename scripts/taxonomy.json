@@ -13549,6 +13549,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/WeakPNTArithmeticProgression": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Prime number theorem for arithmetic progressions"},
   "MathlibExt/NumberTheory/PrimeCounting/WeightedHilbert": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
   "MathlibExt/NumberTheory/PrimeCounting/WeightedLargeSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
+  "MathlibExt/NumberTheory/PrimeCountingFromDivisors": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime-counting formulas from divisor functions"},
   "MathlibExt/NumberTheory/PrimeCubeSquareNeighbors": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Consecutive powerful numbers"},
   "MathlibExt/NumberTheory/PrimeDvdChoose": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/PrimeDvdChoosePowMulPowMul": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
