@@ -4,4 +4,4 @@ For natural numbers $m \le n$, $\nu_2(H_n - H_m) = -\max_{m < k \le n} \nu_2(k)$
 
 ## Sources
 
-- T. Lengyel, On the 2-adic valuation of differences of harmonic numbers, Integers 24 (2024), Article A27, Lemma 1.
+- T. Lengyel, On the 2-adic valuation of differences of harmonic numbers, Integers 24 (2024), Article A27: the unique-most-negative-term argument following Theorem 2 gives the formula for $m < n$; Lemma 1 is the special case $H_{2n} - H_n$. The convention at $m = n$ is this page's.

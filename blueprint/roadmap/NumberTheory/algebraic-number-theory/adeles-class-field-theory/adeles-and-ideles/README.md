@@ -6,7 +6,7 @@
 - [Pure tensors in the adelic Schwartz–Bruhat space](pure-tensor-set.md)
 - [Schwartz–Bruhat functions on the adeles](schwartz-bruhat.md)
 - [Adelic GL₂](adelic-gl2.md)
-- [Diagonal embedding of GL₂(K) into adelic GL₂](global-points.md)
+- [Diagonal homomorphism from GL₂(K) to adelic GL₂](global-points.md)
 - [Local finiteness of the adelic kernel](adelic-kernel-local-finiteness.md)
 - [Rational points of GL₂ meet adelic compact sets finitely often](adelic-kernel-local-finiteness-2.md)
 - [Number fields are dense in their finite adeles](dense-range-algebra-map-finite-adele-rin.md)

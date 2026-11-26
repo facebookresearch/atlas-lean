@@ -53,7 +53,8 @@ variable (R : Type*) [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K]
 abbrev AdelicGL2 : Type _ :=
   Matrix.GeneralLinearGroup (Fin 2) (AdeleRing R K)
 
-/-- The diagonal embedding of rational `GL(2)` points into adelic `GL(2)`. -/
+/-- The diagonal homomorphism from rational `GL(2)` points to adelic `GL(2)`; it need not be
+injective for an arbitrary Dedekind domain (for `R = K = 𝔽₃` the target is trivial). -/
 def globalPoints : Matrix.GeneralLinearGroup (Fin 2) K →* AdelicGL2 R K :=
   Matrix.GeneralLinearGroup.map (algebraMap K (AdeleRing R K))
 

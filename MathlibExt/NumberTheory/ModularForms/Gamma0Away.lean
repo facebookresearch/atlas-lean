@@ -174,7 +174,8 @@ theorem coe_slToAway (g : SL(2, ℤ)) :
       ((g : Matrix (Fin 2) (Fin 2) ℤ)).map (algebraMap ℤ (ZAway q)) :=
   rfl
 
-/-- The first vertex map: `Γ₀(N)` over `ℤ` maps into `SL(2, ℤ[1/q])`. -/
+/-- The first vertex map: entrywise base change of `Γ₀(N)` over `ℤ` into `SL(2, ℤ[1/q])`
+(not injective when `q = 0`, where `ℤ[1/0]` is the zero ring). -/
 def vertexZero : CongruenceSubgroup.Gamma0 N →* SL(2, ZAway q) :=
   (slToAway q).comp (CongruenceSubgroup.Gamma0 N).subtype
 
@@ -184,7 +185,8 @@ theorem coe_vertexZero (g : CongruenceSubgroup.Gamma0 N) :
       (((g : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)).map (algebraMap ℤ (ZAway q)) :=
   rfl
 
-/-- The second vertex map: `Γ₀(N)` conjugated by `diag(1, q)`. -/
+/-- The second vertex map: entrywise base change of `Γ₀(N)` followed by
+`A ↦ diag(1, q) * A * diag(1, q)⁻¹`, the inverse of `wConj`. -/
 noncomputable def vertexOne : CongruenceSubgroup.Gamma0 N →* SL(2, ZAway q) :=
   (wConj q).symm.toMonoidHom.comp (vertexZero N q)
 

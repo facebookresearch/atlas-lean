@@ -13,7 +13,7 @@
 - [The congruence subgroup Γ₀(N) over Z\[1/q\]](gamma0-away.md)
 - [The matrix diag(1, q) over Z\[1/q\]](w-mat.md)
 - [The matrix diag(1, 1/q) over Z\[1/q\]](w-mat-inv.md)
-- [Conjugation by diag(1, q)](w-conj.md)
+- [Conjugation by diag(1, q)⁻¹ on the left](w-conj.md)
 - [Base change from SL₂(Z) to SL₂(Z\[1/q\])](sl-to-away.md)
 - [First vertex map for Ihara's amalgam](vertex-zero.md)
 - [Second vertex map for Ihara's amalgam](vertex-one.md)
