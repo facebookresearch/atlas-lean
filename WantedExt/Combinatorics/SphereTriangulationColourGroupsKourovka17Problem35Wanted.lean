@@ -20,7 +20,7 @@ triangles. Conjecture: `G_W` is isomorphic to `G_B`.
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Combinatorics.SimplicialSphereShared
+public import MathlibExt.Combinatorics.SimplicialSphereShared
 
 @[expose] public section
 
@@ -33,7 +33,7 @@ Wanless, N. J. Cavenagh). UnsolvedMath record UM-00701337 (`KOU-17.35`), dataset
 v1.8.0.
 
 A finite triangulation of the sphere is the shared `FiniteSimplicialSphere 3`
-(`WantedExt.Combinatorics.SimplicialSphereShared`): a finite geometric simplicial complex in `ℝ³`
+(`MathlibExt.Combinatorics.SimplicialSphereShared`): a finite geometric simplicial complex in `ℝ³`
 whose underlying space is homeomorphic to `S²` (by Steinitz's theorem every finite simplicial
 triangulation of the sphere is realizable this way). Its triangles are the faces with three
 vertices. A proper colouring is `white : Finset ℝ³ → Bool` giving different colours to distinct
