@@ -482,6 +482,51 @@ public theorem accelZeck_odd_unique_losing_move (k n : ℕ) (hk : Odd k) (hn : 2
   obtain ⟨hbound, rfl⟩ := hforced hmove ht
   exact ⟨hbound, hmove, ht, fun _ hmove' ht' => (hforced hmove' ht').2⟩
 
+private theorem accelZeckMove_from_ones {n : ℕ} {t : ℕ →₀ ℕ}
+    (h : AccelZeckMove (Finsupp.single 1 n) t) :
+    ∃ m, 0 < m ∧ 2 * m ≤ n ∧ t = Finsupp.single 1 (n - 2 * m) + Finsupp.single 2 m := by
+  rcases h with ⟨m, hm, ⟨i, hi, -, hs, -⟩ | ⟨hs, rfl⟩ | ⟨hs, -⟩ | ⟨i, hi, hs, -⟩⟩
+  · simp [Finsupp.single_eq_of_ne (show i ≠ 1 by omega)] at hs
+    omega
+  · exact ⟨m, hm, by simpa using hs, by rw [Finsupp.single_tsub]⟩
+  · simp at hs
+    omega
+  · simp [Finsupp.single_eq_of_ne (show i ≠ 1 by omega)] at hs
+    omega
+
+-- Combining the additional pairs of ones reaches the larger opening position.
+private theorem accelZeckMove_between_openings {n a b : ℕ} (hab : a < b) (hb : 2 * b ≤ n) :
+    AccelZeckMove (Finsupp.single 1 (n - 2 * a) + Finsupp.single 2 a)
+      (Finsupp.single 1 (n - 2 * b) + Finsupp.single 2 b) := by
+  refine ⟨b - a, by omega, Or.inr (Or.inl ⟨?_, ?_⟩)⟩
+  · simp
+    omega
+  · ext i
+    simp only [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+    split_ifs <;> omega
+
+/-- **Unique winning first move.** For every $n$, if the state consisting of $n$ copies of $F_1$
+is winning, then exactly one state reachable from it in one move is losing: when the first
+player has a winning strategy in the game on $n$, exactly one first move preserves it.
+
+Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
+Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
+Article milleretal04072023, Proposition 1.5. -/
+public theorem accelZeck_unique_winning_first_move (n : ℕ)
+    (h : AccelZeckWinning (Finsupp.single 1 n)) :
+    ∃! t, AccelZeckMove (Finsupp.single 1 n) t ∧ AccelZeckLosing t := by
+  obtain ⟨t, ht, htl⟩ := (accelZeckWinning_iff _).mp h
+  refine ⟨t, ⟨ht, htl⟩, ?_⟩
+  rintro u ⟨hu, hul⟩
+  obtain ⟨a, _, ha, rfl⟩ := accelZeckMove_from_ones ht
+  obtain ⟨b, _, hb, rfl⟩ := accelZeckMove_from_ones hu
+  rcases lt_trichotomy a b with hab | rfl | hba
+  · exact ((accelZeckLosing_iff_not_winning _).mp htl
+      (.intro _ _ (accelZeckMove_between_openings hab hb) hul)).elim
+  · rfl
+  · exact ((accelZeckLosing_iff_not_winning _).mp hul
+      (.intro _ _ (accelZeckMove_between_openings hba ha) htl)).elim
+
 end
 
 end MetaMathlibExt
