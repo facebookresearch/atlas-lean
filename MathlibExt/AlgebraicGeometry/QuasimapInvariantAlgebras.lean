@@ -124,9 +124,10 @@ def irrelevantOpenCover (h : IrrelevantCovers 𝒜 f) : X.OpenCover :=
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.defeqAttrib.useBackward true in
-/-- The map to `Proj` glued from Mathlib's chart maps `D(f r) ⟶ D₊(r)`. This is
-the construction of `Proj.fromOfGlobalSections`, which uses its global hypothesis
-only to produce this cover. -/
+/-- The morphism $X \to \operatorname{Proj} A$ defined by a ring map
+$f : A \to \Gamma(X, \mathcal{O}_X)$ from an $\mathbb{N}$-graded ring $A$ such that the basic opens
+$D(f(r))$, for $r$ homogeneous of positive degree, cover $X$: it is glued from the morphisms
+$D(f(r)) \to D_+(r)$ induced by $f$. -/
 def fromOfIrrelevantCover (h : IrrelevantCovers 𝒜 f) : X ⟶ Proj 𝒜 := by
   refine (irrelevantOpenCover 𝒜 f h).glueMorphisms
     (fun ri ↦ Proj.toBasicOpenOfGlobalSections 𝒜 f rfl ri.2.2.1 ri.2.2.2 ≫ Scheme.Opens.ι _) ?_

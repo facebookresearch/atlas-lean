@@ -8,3 +8,4 @@
 - [Band Restriction Laws](band-restriction-laws.md)
 - [Automorphism Restriction](automorphism-restriction.md)
 - [Banded Isom Torsor](banded-isom-torsor.md)
+- [Marked cameral objects exist and are isomorphic étale locally](native-local-gerbe.md)
