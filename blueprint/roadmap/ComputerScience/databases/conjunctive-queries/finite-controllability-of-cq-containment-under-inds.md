@@ -14,7 +14,7 @@ a published proof and cites it with its locator under `## Sources`.
 ## Depends on
 
 - [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
-- [Implication of inclusion dependencies is PSPACE-complete](../dependencies-and-the-chase/implication-of-inclusion-dependencies-is-pspace-complete.md)
+- [Inclusion dependencies and finite implication](../dependencies-and-the-chase/inclusion-dependencies-and-finite-implication.md)
 
 ## Sources
 
