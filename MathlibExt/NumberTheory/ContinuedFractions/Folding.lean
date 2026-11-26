@@ -80,7 +80,9 @@ namespace finiteContFrac_neg_block
 
 /-- **Negating every entry negates the value.** For every finite list of integers
 $s_1, \dots, s_n$ ($n \ge 0$), the finite continued fractions satisfy
-$[-s_1; -s_2, \dots, -s_n] = -[s_1; s_2, \dots, s_n]$.
+$[-s_1; -s_2, \dots, -s_n] = -[s_1; s_2, \dots, s_n]$. Here the brackets denote `finiteContFrac`,
+evaluated from the right, with the empty list valued $0$ and with $0^{-1} = 0$ whenever an
+intermediate value is zero: the ordinary $[1; 0]$ is undefined, but its value here is $1$.
 
 Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
 Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 (bracket notation). -/
