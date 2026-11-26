@@ -4,7 +4,7 @@ The *incidence graph* of a CSP instance is the bipartite graph between its varia
 
 ## Depends on
 
-- [Boolean constraint languages and CSP(Γ)](../polymorphisms-of-boolean-relations/boolean-constraint-languages.md)
+- [Boolean constraint languages and CSP(Γ)](../../boolean-constraint-satisfaction/polymorphisms-of-boolean-relations/boolean-constraint-languages.md)
 - [Straight-line planar graph](../../../../GraphTheory/planar-graphs-and-minors/straight-line-planar-drawings/is-planar.md)
 
 ## Sources

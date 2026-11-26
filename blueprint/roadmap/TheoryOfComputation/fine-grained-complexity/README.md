@@ -8,5 +8,5 @@ Exact running times of hard problems beyond the polynomial/non-polynomial divide
 - [Conditional Fine-Grained Lower Bounds](conditional-lower-bounds/README.md)
 - [Exponential-Time Algorithms for k-SAT](exponential-sat-algorithms/README.md)
 - [Linear-Size Reductions and Exponential Lower Bounds for Graph Problems](linear-size-reductions-and-graph-lower-bounds/README.md)
-- [SAT Exponents, ETH Variants and the Satisfiability Hypothesis](sat-exponents-and-hypotheses/README.md)
+- [SAT Exponents and ETH Variants](sat-exponents-and-hypotheses/README.md)
 - [The Sparsification Lemma](sparsification-lemma/README.md)

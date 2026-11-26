@@ -1,10 +1,10 @@
 # Lichtenstein: planar 3-SAT is NP-complete, also with three occurrences per variable
 
-Satisfiability of planar CNF formulas whose clauses have at most three literals is NP-complete, and remains so when every variable occurs at most three times. Positive planar exact-one 3SAT (every clause consists of exactly three distinct positive variables, exactly one of which must be true, each variable occurring at most three times, and the formula is planar) is also NP-complete. Moreover the reduction from 3-SAT can be made parsimonious, so counting satisfying assignments of planar 3-CNF formulas is $\#\mathsf{P}$-complete.
+Satisfiability of planar CNF formulas whose clauses have at most three literals is NP-complete, and remains so when every variable occurs at most three times. Moreover the reduction from 3-SAT can be made parsimonious, so counting satisfying assignments of planar 3-CNF formulas is $\#\mathsf{P}$-complete.
 
 ## Proof sketch
 
-Draw the incidence graph of an arbitrary 3-CNF in the plane with crossings, and replace every crossing of two edges by the crossover gadget, which transmits both values unchanged with a unique internal extension; wires are realized by implication chains. Gluing gadgets with private auxiliary variables preserves satisfiability and model counts. A variable with many occurrences is split into copies tied by a cycle of implications, which keeps the incidence graph planar and leaves at most three occurrences per copy; the exact-one variant replaces the clauses by planar exact-one gadgets.
+Draw the incidence graph of an arbitrary 3-CNF in the plane with crossings, and replace every crossing of two edges by the crossover gadget, which transmits both values unchanged with a unique internal extension; wires are realized by implication chains. Gluing gadgets with private auxiliary variables preserves satisfiability and model counts. A variable with many occurrences is split into copies tied by a cycle of implications, which keeps the incidence graph planar and leaves at most three occurrences per copy.
 
 ## Depends on
 
@@ -16,10 +16,8 @@ Draw the incidence graph of an arbitrary 3-CNF in the plane with crossings, and 
 - [Gluing CNF gadgets with private auxiliary variables](../../../../Logic/propositional-logic/cnf-gadgets-and-encodings/gluing-cnf-gadgets.md)
 - [3SAT is NP-complete](../3-satisfiability/sat3-dec-np-complete.md)
 - [3-SAT WITH BOUNDED OCCURRENCES is NP-complete](../3-sat-with-bounded-occurrences/bounded-occurrence-three-sat-np-complete.md)
-- [1-IN-3-SAT is NP-complete](../1-in-3-sat/one-in-three-sat-np-complete.md)
 
 ## Sources
 
 - D. Lichtenstein, "Planar Formulae and Their Uses", SIAM Journal on Computing 11(2), 329–343, 1982.
 - H. B. Hunt III, M. V. Marathe, V. Radhakrishnan and R. E. Stearns, "The Complexity of Planar Counting Problems", SIAM Journal on Computing 27(4), 1142–1167, 1998.
-- MIT Hardness Group et al., "ETH is Dead, Long Live SH", arXiv:2611.02650v2, 2026.

@@ -9,7 +9,7 @@ Hardness: without Schaefer polymorphisms, constants or disequality and the 1-in-
 ## Depends on
 
 - [Planar Boolean CSP](planar-boolean-csp.md)
-- [Schaefer's six tractable classes](../schaefer-dichotomy/schaefers-six-tractable-classes.md)
+- [Schaefer's six tractable classes](../../boolean-constraint-satisfaction/schaefer-dichotomy/schaefers-six-tractable-classes.md)
 - [Delta-matroids and even delta-matroids](delta-matroids-and-even-delta-matroids.md)
 
 ## Proof depends on
@@ -17,7 +17,7 @@ Hardness: without Schaefer polymorphisms, constants or disequality and the 1-in-
 - [Dvořák–Kupec crossover gadgets](dvorak-kupec-crossover-gadgets.md)
 - [Planar expressibility of constants and disequality](planar-expressibility-of-constants.md)
 - [Planar CSPs over even delta-matroids reduce to edge CSPs](planar-even-delta-matroid-csp-tractable.md)
-- [Schaefer's dichotomy theorem](../schaefer-dichotomy/schaefers-dichotomy-theorem.md)
+- [Schaefer's dichotomy theorem](../../boolean-constraint-satisfaction/schaefer-dichotomy/schaefers-dichotomy-theorem.md)
 
 ## Sources
 

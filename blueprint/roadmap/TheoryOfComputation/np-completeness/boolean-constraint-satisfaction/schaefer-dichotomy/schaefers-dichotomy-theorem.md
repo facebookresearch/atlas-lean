@@ -21,8 +21,8 @@ Tractability uses the normal forms of each class (Horn, dual Horn, 2-CNF, affine
 - [Affine relations are exactly the minority-closed relations](../polymorphisms-of-boolean-relations/affine-iff-minority-closed.md)
 - [Correctness of the Horn satisfiability test](../../../../Logic/propositional-logic/horn-satisfiability/horn-sat-eq-true-iff.md)
 - [2-SAT characterization](../../../../Logic/propositional-logic/2-satisfiability/cnf-sat-iff-of-is-two-cnf.md)
-- [1-IN-3-SAT is NP-complete](../1-in-3-sat/one-in-three-sat-np-complete.md)
-- [NOT-ALL-EQUAL 3-SAT is NP-complete](../not-all-equal-3-sat/nae-three-sat-np-complete.md)
+- [1-IN-3-SAT is NP-complete](../../satisfiability/1-in-3-sat/one-in-three-sat-np-complete.md)
+- [NOT-ALL-EQUAL 3-SAT is NP-complete](../../satisfiability/not-all-equal-3-sat/nae-three-sat-np-complete.md)
 
 ## Sources
 

@@ -8,5 +8,4 @@ For a set $Y$ of variables, a polynomial $f$ has *split rank at most $w$ across 
 
 ## Sources
 
-- Amir Shpilka, "Polynomial-size hitting sets for multilinear any-order read-once algebraic branching programs and for set-multilinear depth-3 circuits with constant-size variable sets", Electronic Colloquium on Computational Complexity, 2026.
 - Michael A. Forbes, Ramprasad Saptharishi, Amir Shpilka, "Hitting Sets for Multilinear Read-Once Algebraic Branching Programs, in any Order", Proceedings of the 46th Annual ACM Symposium on Theory of Computing, 2014.

@@ -4,7 +4,7 @@ A **rotation system** of a finite multigraph (loops and parallel edges allowed) 
 
 ## Proof sketch
 
-A planar embedding induces a rotation system with the embedding's faces, which satisfy Euler's formula; conversely a rotation system of genus zero can be realized by gluing polygons along the face boundaries into a sphere, giving a polygonal (indeed orthogonal grid) drawing.
+A planar embedding induces a rotation system with the embedding's faces, which satisfy Euler's formula; conversely a rotation system of genus zero can be realized by gluing polygons along the face boundaries into a sphere, giving a polygonal drawing.
 
 ## Depends on
 
@@ -12,5 +12,5 @@ A planar embedding induces a rotation system with the embedding's faces, which s
 
 ## Sources
 
-- MIT Hardness Group et al., "ETH is Dead, Long Live SH", arXiv:2611.02650v2, 2026.
 - Michael R. Garey and David S. Johnson, "Computers and Intractability: A Guide to the Theory of NP-Completeness", W. H. Freeman, 1979.
+- Bojan Mohar and Carsten Thomassen, "Graphs on Surfaces", Johns Hopkins University Press, 2001.

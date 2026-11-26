@@ -9,7 +9,7 @@ Contracting a blossom found by the forest search into a single new constraint (w
 
 ## Proof depends on
 
-- [Local contraction preserves even delta-matroids](../../../../TheoryOfComputation/np-completeness/satisfiability/planar-boolean-csp/local-contraction-preserves-even-delta-matroids.md)
+- [Local contraction preserves even delta-matroids](../../../../TheoryOfComputation/np-completeness/boolean-constraint-satisfaction/planar-boolean-csp/local-contraction-preserves-even-delta-matroids.md)
 
 ## Sources
 

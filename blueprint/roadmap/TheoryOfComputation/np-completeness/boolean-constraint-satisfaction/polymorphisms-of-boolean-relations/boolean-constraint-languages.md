@@ -4,7 +4,7 @@ A *Boolean constraint language* $\Gamma$ is a set of relation symbols, each with
 
 ## Depends on
 
-- [BINARY CONSTRAINT SATISFACTION is NP-complete](../binary-constraint-satisfaction/binary-csp-np-complete.md)
+- [BINARY CONSTRAINT SATISFACTION is NP-complete](../../satisfiability/binary-constraint-satisfaction/binary-csp-np-complete.md)
 
 ## Sources
 

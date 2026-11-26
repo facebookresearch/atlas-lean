@@ -9,7 +9,7 @@ Compare with any valid labeling: saturation of the scans bounds local disagreeme
 ## Depends on
 
 - [Edge CSPs, occurrence labelings and defects](edge-csps-and-defects.md)
-- [Delta-matroids and even delta-matroids](../../../../TheoryOfComputation/np-completeness/satisfiability/planar-boolean-csp/delta-matroids-and-even-delta-matroids.md)
+- [Delta-matroids and even delta-matroids](../../../../TheoryOfComputation/np-completeness/boolean-constraint-satisfaction/planar-boolean-csp/delta-matroids-and-even-delta-matroids.md)
 - [Augmenting walks remove two defects](edge-csp-augmenting-walks.md)
 
 ## Sources

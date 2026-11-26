@@ -4,7 +4,7 @@ Fix a finite domain $D$ and a relation alphabet with interpretations $\mathrm{se
 
 ## Depends on
 
-- [Boolean constraint languages and CSP(Γ)](../polymorphisms-of-boolean-relations/boolean-constraint-languages.md)
+- [Boolean constraint languages and CSP(Γ)](../../boolean-constraint-satisfaction/polymorphisms-of-boolean-relations/boolean-constraint-languages.md)
 
 ## Sources
 

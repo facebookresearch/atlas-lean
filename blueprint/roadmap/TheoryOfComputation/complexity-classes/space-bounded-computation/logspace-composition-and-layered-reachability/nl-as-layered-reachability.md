@@ -19,4 +19,3 @@ Take the configuration graph of the NL machine (configurations encoded compactly
 ## Sources
 
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
-- William M. Hoza, "NL = UL", Electronic Colloquium on Computational Complexity, report TR26-323, 2026.

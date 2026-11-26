@@ -10,4 +10,3 @@ A *fair semi-circuit* over $n$ variables consists of a system of affine equation
 ## Sources
 
 - Magnus Gausdal Find, Alexander Golovnev, Edward A. Hirsch, Alexander S. Kulikov, "A Better-than-3n Lower Bound for the Circuit Complexity of an Explicit Function", IEEE 57th Annual Symposium on Foundations of Computer Science, 2016.
-- Om Swostik Mishra, Rahul Santhanam, "An Explicit 3.5n - o(n) Size Lower Bound against General Boolean Circuits", Electronic Colloquium on Computational Complexity, report TR26-260, 2026.

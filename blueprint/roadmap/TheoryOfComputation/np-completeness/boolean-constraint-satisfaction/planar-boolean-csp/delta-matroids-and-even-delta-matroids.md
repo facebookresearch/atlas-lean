@@ -4,7 +4,7 @@ A Boolean relation $R \subseteq \{0,1\}^n$ is a *delta-matroid* if for all $x, y
 
 ## Depends on
 
-- [Boolean constraint languages and CSP(Γ)](../polymorphisms-of-boolean-relations/boolean-constraint-languages.md)
+- [Boolean constraint languages and CSP(Γ)](../../boolean-constraint-satisfaction/polymorphisms-of-boolean-relations/boolean-constraint-languages.md)
 
 ## Sources
 

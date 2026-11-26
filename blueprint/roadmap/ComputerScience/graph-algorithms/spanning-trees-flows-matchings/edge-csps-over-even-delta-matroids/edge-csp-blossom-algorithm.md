@@ -9,7 +9,7 @@ Termination: defects decrease by two per successful improvement and contraction 
 ## Depends on
 
 - [Edge CSPs, occurrence labelings and defects](edge-csps-and-defects.md)
-- [Delta-matroids and even delta-matroids](../../../../TheoryOfComputation/np-completeness/satisfiability/planar-boolean-csp/delta-matroids-and-even-delta-matroids.md)
+- [Delta-matroids and even delta-matroids](../../../../TheoryOfComputation/np-completeness/boolean-constraint-satisfaction/planar-boolean-csp/delta-matroids-and-even-delta-matroids.md)
 - [General matching is in P (Edmonds' blossom algorithm)](../../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/matching-in-p.md)
 - [Augmenting walks remove two defects](edge-csp-augmenting-walks.md)
 - [Blossom contraction preserves improvability](edge-csp-blossom-contraction.md)

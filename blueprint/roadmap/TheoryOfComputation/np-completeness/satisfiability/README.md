@@ -25,7 +25,4 @@ Variants of SAT and CSP: 3SAT and the SAT-to-3SAT reduction, bounded-occurrence,
 - [Stable model existence](stable-model-existence/README.md)
 - [Constraint Satisfaction Problems and Encodings](constraint-satisfaction-encodings/README.md)
 - [Exact-One and Not-All-Equal Satisfiability](exact-one-and-not-all-equal-satisfiability/README.md)
-- [Planar Boolean CSPs and Even Delta-Matroids](planar-boolean-csp/README.md)
 - [Planar Satisfiability Gadgets](planar-satisfiability-gadgets/README.md)
-- [Polymorphisms of Boolean Relations](polymorphisms-of-boolean-relations/README.md)
-- [Schaefer's Dichotomy for Boolean CSPs](schaefer-dichotomy/README.md)

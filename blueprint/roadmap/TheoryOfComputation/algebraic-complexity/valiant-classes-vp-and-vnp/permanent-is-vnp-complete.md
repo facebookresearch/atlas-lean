@@ -16,7 +16,6 @@ Given $f=\sum_e g(x,e)$ with $g$ of polynomial formula size (formula-size summan
 - [The permanent is in VNP via Ryser's formula](permanent-is-in-vnp.md)
 - [The Hamiltonian cycle polynomial is in VNP](hamiltonian-cycle-polynomial-in-vnp.md)
 - [Arithmetic formulas are projections of the permanent](../determinantal-and-permanental-complexity/formulas-are-projections-of-permanents.md)
-- [Grid sums are affine projections of the permanent and of the Hamiltonian cycle polynomial](grid-sums-are-projections-of-the-permanent.md)
 - [VP is contained in VNP, and VNP is closed under p-projections](vp-subset-vnp.md)
 
 ## Sources

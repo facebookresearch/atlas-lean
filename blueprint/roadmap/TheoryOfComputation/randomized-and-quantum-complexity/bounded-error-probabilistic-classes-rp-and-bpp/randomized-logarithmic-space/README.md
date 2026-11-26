@@ -6,4 +6,3 @@
 - [Error reduction for RL](rl-error-reduction.md)
 - [Saks–Zhou seed bound for randomized logspace](saks-zhou-seeds.md)
 - [BPL ⊆ DSPACE(log² n)](bpl-in-dspace-log-squared.md)
-- [Correction-and-Copy Hierarchies for Logspace Derandomization](correction-and-copy-hierarchy/README.md)

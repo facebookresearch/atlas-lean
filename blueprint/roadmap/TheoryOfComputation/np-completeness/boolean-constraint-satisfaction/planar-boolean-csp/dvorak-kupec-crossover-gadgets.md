@@ -10,7 +10,7 @@ Normalize the obstruction by planar operations (cyclic rotation, adjacent identi
 
 - [Planar Boolean CSP](planar-boolean-csp.md)
 - [Delta-matroids and even delta-matroids](delta-matroids-and-even-delta-matroids.md)
-- [Primitive-positive definitions and gadgets](../polymorphisms-of-boolean-relations/primitive-positive-definitions.md)
+- [Primitive-positive definitions and gadgets](../../boolean-constraint-satisfaction/polymorphisms-of-boolean-relations/primitive-positive-definitions.md)
 
 ## Sources
 

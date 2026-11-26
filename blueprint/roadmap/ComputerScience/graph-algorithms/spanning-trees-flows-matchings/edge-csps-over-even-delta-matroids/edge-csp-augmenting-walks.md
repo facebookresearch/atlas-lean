@@ -9,7 +9,7 @@ The six invariants of the forest (unique incoming arcs, saturation of completed 
 ## Depends on
 
 - [Edge CSPs, occurrence labelings and defects](edge-csps-and-defects.md)
-- [Delta-matroids and even delta-matroids](../../../../TheoryOfComputation/np-completeness/satisfiability/planar-boolean-csp/delta-matroids-and-even-delta-matroids.md)
+- [Delta-matroids and even delta-matroids](../../../../TheoryOfComputation/np-completeness/boolean-constraint-satisfaction/planar-boolean-csp/delta-matroids-and-even-delta-matroids.md)
 
 ## Sources
 

@@ -9,5 +9,3 @@
 - [Basic bounds on information cost](basic-bounds-on-information-cost.md)
 - [Unambiguous covers, partition number and SUM-rank](unambiguous-covers-and-partition-number.md)
 - [Kaibel–Weltge: unique disjointness needs (3/2)^n rectangles](kaibel-weltge-unique-disjointness-cover-bound.md)
-- [Sergeev: upper bound on the partition rank of unique disjointness](sergeev-partition-rank-upper-bound.md)
-- [Sergeev: the Kaibel–Weltge bound is tight up to a polynomial factor](sergeev-covering-rank-upper-bound.md)

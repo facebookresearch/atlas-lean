@@ -9,11 +9,11 @@ Each of the six failed Schaefer polymorphisms has a witnessing relation; minors 
 ## Depends on
 
 - [Planar Boolean CSP](planar-boolean-csp.md)
-- [Schaefer's six tractable classes](../schaefer-dichotomy/schaefers-six-tractable-classes.md)
+- [Schaefer's six tractable classes](../../boolean-constraint-satisfaction/schaefer-dichotomy/schaefers-six-tractable-classes.md)
 
 ## Proof depends on
 
-- [Without Schaefer polymorphisms, all polymorphisms are projections or negated projections](../schaefer-dichotomy/without-schaefer-polymorphisms.md)
+- [Without Schaefer polymorphisms, all polymorphisms are projections or negated projections](../../boolean-constraint-satisfaction/schaefer-dichotomy/without-schaefer-polymorphisms.md)
 
 ## Sources
 

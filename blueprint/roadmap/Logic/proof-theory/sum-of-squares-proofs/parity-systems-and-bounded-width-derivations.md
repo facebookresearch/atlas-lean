@@ -4,7 +4,7 @@ A *parity system* is a finite list of equations $\bigoplus_{i \in S} x_i = b$ ov
 
 ## Depends on
 
-- [Affine relations are exactly the minority-closed relations](../../../TheoryOfComputation/np-completeness/satisfiability/polymorphisms-of-boolean-relations/affine-iff-minority-closed.md)
+- [Affine relations are exactly the minority-closed relations](../../../TheoryOfComputation/np-completeness/boolean-constraint-satisfaction/polymorphisms-of-boolean-relations/affine-iff-minority-closed.md)
 
 ## Sources
 
