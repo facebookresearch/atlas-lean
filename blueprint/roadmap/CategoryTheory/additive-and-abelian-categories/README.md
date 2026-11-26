@@ -4,3 +4,4 @@ Categories enriched in abelian groups and modules: preadditive, additive and lin
 
 - [Essential epimorphisms and projective covers](essential-epimorphisms-and-projective-covers/README.md)
 - [Objects killed by an integer](objects-killed-by-an-integer/README.md)
+- [Semisimple objects and categories](semisimple-objects-and-categories/README.md)
