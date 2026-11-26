@@ -30,6 +30,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibility
+public import MathlibExt.NumberTheory.Recurrences.OddFibonacciSumDivisibility
 
 set_option autoImplicit false
 
@@ -83,16 +84,5 @@ theorem_wanted fib_two_mul_prime_odd_and_fib_fib_add_two_mod
     (hn : n = 2 * p ∨ n = 4 * p) :
     Nat.fib n % 2 = 1 ∧
       Nat.fib (Nat.fib n + 2) % Nat.fib n = 1
-
-/-- **Infinitely many odd $k$ divide the sum of the first $k$ Fibonacci numbers.** Let $F_i$ denote
-the $i$-th Fibonacci number, with $F_1 = F_2 = 1$. There are infinitely many odd positive integers
-$k$ such that $k$ divides $F_1 + F_2 + \dots + F_k$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Corollary 2. -/
-theorem_wanted infinite_setOf_odd_dvd_sum_fib
-    :
-    {k : ℕ | Odd k ∧ k ∣ (∑ i ∈ Finset.Icc 1 k, Nat.fib i)}.Infinite
 
 end MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
