@@ -8,22 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.NumberTheory.LSeries.RiemannZeta
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 public import MathlibExt.Analysis.Ramanujan.Part1Ch7DirichletBeta
 
+import Mathlib.Analysis.Real.Pi.Leibniz
 import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry17Bernoullipolysymmetry
-import Mathlib.Analysis.Real.Pi.Leibniz
-import Mathlib.Topology.Algebra.InfiniteSum.Order
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Positivity
+import MathlibExt.NumberTheory.TothOddZeta
 
 /-!
 # Dirichlet beta at odd positive integers
@@ -36,9 +27,10 @@ and the Derivation of Related New Identities Involving the Bernoulli Numbers and
 Numbers*, INTEGERS 25 (2025), Article A50, Proposition 3, Equation (12)
 (`integers-2025-A50-prop-3`), citing its references [3], [6].
 
-The proof reuses existing formalizations: the generating function `eulerEGF` of the even-index
-Euler numbers, the series `coshPS` and their product identity `euler_cosh` come from
-`MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry`, and the identification
+The proof reuses existing formalizations: the value `bernoulli_eval_quarter_eq_chapter5EulerEven`
+of the Bernoulli polynomials at $1/4$ in terms of the even-index Euler numbers comes from
+`MathlibExt.NumberTheory.TothOddZeta` (itself derived from
+`EulerNumbers.bernoulli_eval_quarter_of_recurrence`), and the identification
 `sinZeta_quarter_eq_beta` of the sine zeta function at $1/4$ with $\beta$ comes from
 `MathlibExt.Analysis.Ramanujan.Part1Ch7Entry17Bernoullipolysymmetry`.
 -/
@@ -52,112 +44,6 @@ open MathlibExt.Analysis.Ramanujan.Part1Ch7.DirichletBeta
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.Entry17Bernoullipolysymmetry
 open Finset
 
-private noncomputable def bq (t : ℚ) : PowerSeries ℚ :=
-  PowerSeries.rescale 4 (PowerSeries.mk fun n =>
-    Polynomial.aeval t ((1 / (n.factorial : ℚ)) • Polynomial.bernoulli n))
-private lemma bq_coeff (t : ℚ) (n : ℕ) :
-    PowerSeries.coeff n (bq t) = 4 ^ n * (Polynomial.bernoulli n).eval t / n.factorial := by
-  simp [bq, Polynomial.aeval_def]
-  ring
-private lemma bq_rel (t : ℚ) :
-    bq t * (PowerSeries.exp ℚ ^ 4 - 1) =
-      4 * PowerSeries.X * PowerSeries.rescale (t * 4) (PowerSeries.exp ℚ) := by
-  have h := congrArg (PowerSeries.rescale (4 : ℚ))
-    (Polynomial.bernoulli_generating_function t)
-  simp only [map_mul, map_sub, map_one, PowerSeries.rescale_rescale,
-    PowerSeries.rescale_X] at h
-  simpa only [bq, PowerSeries.exp_pow_eq_rescale_exp, Nat.cast_ofNat,
-    map_ofNat] using h
-private lemma bq_odd (n : ℕ) :
-    PowerSeries.coeff n (bq (3 / 4)) = (-1 : ℚ) ^ n * PowerSeries.coeff n (bq (1 / 4)) := by
-  rw [bq_coeff, bq_coeff]
-  have h := Polynomial.bernoulli_eval_one_sub n (1 / 4)
-  norm_num only at h
-  rw [h]
-  ring
-private noncomputable def bEuler : PowerSeries ℚ :=
-  PowerSeries.mk fun n =>
-    -(PowerSeries.coeff (n + 1) (bq (1 / 4)) - PowerSeries.coeff (n + 1) (bq (3 / 4))) / 2
-private lemma X_bEuler :
-    PowerSeries.X * bEuler = -(bq (1 / 4) - bq (3 / 4)) * PowerSeries.C (1 / 2) := by
-  ext n
-  cases n with
-  | zero =>
-    rw [PowerSeries.coeff_zero_X_mul, PowerSeries.coeff_mul_C, map_neg, map_sub,
-      bq_coeff, bq_coeff]
-    simp
-  | succ n => simp [PowerSeries.coeff_succ_X_mul, bEuler, PowerSeries.coeff_mul_C]; ring
-private lemma exp_ne : PowerSeries.exp ℚ ^ 4 - 1 ≠ 0 := by
-  intro h
-  have hc := congrArg (PowerSeries.coeff 1) h
-  simp [PowerSeries.exp_pow_eq_rescale_exp, PowerSeries.coeff_rescale,
-    PowerSeries.coeff_exp] at hc
-private lemma bEuler_cosh : bEuler * coshPS = 1 := by
-  have h1 := bq_rel (1 / 4)
-  have h3 := bq_rel (3 / 4)
-  norm_num only at h1 h3
-  simp only [PowerSeries.rescale_one, RingHom.id_apply] at h1
-  have hp3 : PowerSeries.exp ℚ ^ 3 = PowerSeries.rescale (3 : ℚ) (PowerSeries.exp ℚ) := by
-    simpa using PowerSeries.exp_pow_eq_rescale_exp (A := ℚ) 3
-  rw [← hp3] at h3
-  have hprod : PowerSeries.exp ℚ * PowerSeries.rescale (-1) (PowerSeries.exp ℚ) = 1 := by
-    have h := PowerSeries.exp_mul_exp_eq_exp_add (A := ℚ) 1 (-1)
-    simpa using h
-  have hE : (bq (1 / 4) - bq (3 / 4)) *
-      (PowerSeries.exp ℚ + PowerSeries.rescale (-1) (PowerSeries.exp ℚ)) =
-      -4 * PowerSeries.X := by
-    apply mul_right_cancel₀ exp_ne
-    calc
-      _ = (4 * PowerSeries.X * (PowerSeries.exp ℚ - PowerSeries.exp ℚ ^ 3)) *
-          (PowerSeries.exp ℚ + PowerSeries.rescale (-1) (PowerSeries.exp ℚ)) := by
-        linear_combination (PowerSeries.exp ℚ +
-          PowerSeries.rescale (-1) (PowerSeries.exp ℚ)) * (h1 - h3)
-      _ = _ := by
-        linear_combination 4 * PowerSeries.X * (1 - PowerSeries.exp ℚ ^ 2) * hprod
-  apply mul_left_cancel₀ (PowerSeries.X_ne_zero (R := ℚ))
-  rw [← mul_assoc, X_bEuler]
-  unfold coshPS
-  have hc : PowerSeries.C (1 / 2 : ℚ) * PowerSeries.C (2⁻¹ : ℚ) =
-      PowerSeries.C (1 / 4 : ℚ) := by rw [← map_mul]; norm_num
-  calc
-    _ = -(bq (1 / 4) - bq (3 / 4)) *
-        (PowerSeries.exp ℚ + PowerSeries.rescale (-1) (PowerSeries.exp ℚ)) *
-        PowerSeries.C (1 / 4) := by rw [← hc]; ring
-    _ = _ := by
-      rw [neg_mul, hE]
-      simp only [neg_mul, neg_neg]
-      have hfour : (4 : PowerSeries ℚ) * PowerSeries.C (1 / 4 : ℚ) = 1 := by
-        rw [← map_ofNat PowerSeries.C 4, ← map_mul]
-        norm_num
-      rw [mul_right_comm (4 : PowerSeries ℚ), hfour, one_mul, mul_one]
-private lemma euler_bernoulli (m : ℕ) :
-    (chapter5EulerEven m : ℚ) =
-      -(4 : ℚ) ^ (2 * m + 1) * (Polynomial.bernoulli (2 * m + 1)).eval (1 / 4) /
-        (2 * m + 1) := by
-  have hc : coshPS ≠ 0 := by
-    intro h
-    have hh := euler_cosh
-    rw [h, mul_zero] at hh
-    exact zero_ne_one hh
-  have he : eulerEGF = bEuler := mul_right_cancel₀ hc (euler_cosh.trans bEuler_cosh.symm)
-  have h := congrArg (PowerSeries.coeff (2 * m)) he
-  rw [coeff_eulerEGF] at h
-  have hmod : ¬ (2 * m % 2 = 1) := by omega
-  have hdiv : 2 * m / 2 = m := by omega
-  rw [ite_eq_right hmod, hdiv] at h
-  simp only [bEuler, PowerSeries.coeff_mk, bq_odd] at h
-  have hodd : Odd (2 * m + 1) := ⟨m, by ring⟩
-  rw [hodd.neg_one_pow] at h
-  rw [bq_coeff] at h
-  have hf : ((2 * m).factorial : ℚ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero (2 * m)
-  have hn : (2 * m + 1 : ℚ) ≠ 0 := by positivity
-  have hfac : ((2 * m + 1).factorial : ℚ) =
-      (2 * m + 1 : ℚ) * ((2 * m).factorial : ℚ) := by
-    rw [Nat.factorial_succ]; push_cast; rfl
-  rw [hfac] at h
-  field_simp at h ⊢
-  linear_combination (1 / 2 : ℚ) * h
-
 private lemma beta_signed (m : ℕ) (hm : m ≠ 0) :
     chapter7DirichletBeta (2 * m + 1) =
       (Real.pi : ℂ) ^ (2 * m + 1) * ((-1 : ℂ) ^ m * (chapter5EulerEven m : ℂ)) /
@@ -168,8 +54,6 @@ private lemma beta_signed (m : ℕ) (hm : m ≠ 0) :
     have hq : ((1 / 4 : ℝ) : ℂ) = algebraMap ℚ ℂ (1 / 4 : ℚ) := by norm_num
     rw [hq, Polynomial.eval₂_at_apply]
     simp
-  have he := congrArg ((↑) : ℚ → ℂ) (euler_bernoulli m)
-  push_cast at he
   have hf4 : (4 : ℂ) ^ (2 * m + 1) ≠ 0 := pow_ne_zero _ (by norm_num)
   have hfact : (((2 * m).factorial : ℕ) : ℂ) ≠ 0 := by
     exact_mod_cast Nat.factorial_ne_zero (2 * m)
@@ -177,9 +61,10 @@ private lemma beta_signed (m : ℕ) (hm : m ≠ 0) :
     exact_mod_cast (show (2 * m + 1 : ℕ) ≠ 0 by omega)
   have hb : (((Polynomial.bernoulli (2 * m + 1)).eval (1 / 4 : ℚ) : ℚ) : ℂ) =
       -((2 * (m : ℂ) + 1) * (chapter5EulerEven m : ℂ)) / (4 : ℂ) ^ (2 * m + 1) := by
-    apply (eq_div_iff hf4).mpr
-    have he' := (eq_div_iff hn).mp he
-    linear_combination he'
+    have h := congrArg ((↑) : ℚ → ℂ) (bernoulli_eval_quarter_eq_chapter5EulerEven m)
+    push_cast at h
+    rw [h]
+    ring
   rw [← sinZeta_quarter_eq_beta, HurwitzZeta.sinZeta_two_mul_nat_add_one hm
     (by constructor <;> norm_num), hB, hb]
   have hfac : (((2 * m + 1).factorial : ℕ) : ℂ) =
