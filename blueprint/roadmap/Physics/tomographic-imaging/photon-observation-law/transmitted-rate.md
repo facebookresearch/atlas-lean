@@ -4,4 +4,4 @@ For rays $j \in \iota$ and a finite set of cells $\kappa$, take nonnegative sour
 
 $$I_0(j)\, e^{-(A x)_j}.$$
 
-This is the monochromatic Beer–Lambert model: a single energy, so one attenuation coefficient per cell and an exponential decay along the ray. For a mixture of energies the transmitted rate is not of this form (see [the two-energy mixture counterexample](../monochromatic-ct-attenuation/mixture-log-ne-mean.md)).
+This is the monochromatic Beer–Lambert model: a single energy, so one attenuation coefficient per cell and an exponential decay along the ray. For a mixture of energies, the negative log of the transmitted fraction need not equal the mean attenuation (see [the two-energy mixture counterexample](../monochromatic-ct-attenuation/mixture-log-ne-mean.md)).
