@@ -16,4 +16,4 @@ space, and Savitch's theorem removes the nondeterminism. Nonemptiness itself is 
 
 ## Sources
 
-- M. Y. Vardi, "An automata-theoretic approach to linear temporal logic", in *Logics for Concurrency: Structure versus Automata*, Lecture Notes in Computer Science 1043, Springer, 1996, pp. 238–266; numbering from the author's posted version, <https://www.cs.rice.edu/~vardi/papers/banff94rj.pdf>: Section 2.1, Proposition 12 (crediting A. R. Meyer and L. J. Stockmeyer, SWAT 1972) and its proof, with Proposition 11 (nonemptiness in nondeterministic logarithmic space).
+- M. Y. Vardi, "An automata-theoretic approach to linear temporal logic", in *Logics for Concurrency: Structure versus Automata*, Lecture Notes in Computer Science 1043, Springer, 1996, pp. 238–266; numbering from the author's posted version, <https://www.cs.rice.edu/~vardi/papers/banff94rj.pdf>: Section 2.3, Proposition 12 (crediting A. R. Meyer and L. J. Stockmeyer, SWAT 1972) and its proof, with Proposition 11 (nonemptiness in nondeterministic logarithmic space).

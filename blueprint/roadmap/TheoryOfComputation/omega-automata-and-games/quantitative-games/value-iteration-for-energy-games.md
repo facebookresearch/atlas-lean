@@ -16,4 +16,4 @@ algorithm computes them in time $O(nmW)$, every finite energy value being at mos
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.2, "A second value iteration algorithm using energy", Lemma 5.4 and Theorem 5.5 with its proof.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.2, "A second value iteration algorithm using energy", Lemma 5.4 and Theorem 5.5 with its proof.

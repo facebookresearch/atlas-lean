@@ -18,4 +18,4 @@ follows because the iterates are unions of regions.
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 11 (N. Markey and O. Sankur, "Timed games"): Section 11.3, the operators $\mathrm{Pred}_{\ge 0}$, $\mathrm{Pred}_c$, $\mathrm{Pred}_u$ and $\pi$ with Lemma 11.1, and Section 11.4, Theorem 11.3 (correctness of the backward algorithm) with its proof sketch via regions.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 11 (N. Markey and O. Sankur, "Timed games"): Section 11.3, the operators $\mathrm{Pred}_{\ge 0}$, $\mathrm{Pred}_c$, $\mathrm{Pred}_u$ and $\pi$ with Lemma 11.1, and Section 11.4, Theorem 11.3 (correctness of the backward algorithm) with its proof sketch via regions.

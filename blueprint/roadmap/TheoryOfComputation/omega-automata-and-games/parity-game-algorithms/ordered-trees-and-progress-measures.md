@@ -20,4 +20,4 @@ $\delta_t(\ell, p) = \min_\le \{\ell' : \ell \lhd_p \ell'\}$, minimizing over th
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.5, the definitions of trees and embeddings before Definition 2.2, "Ordering the leaves" (the relations $\lhd_p$ and Lemma 2.12) and "Progress measures" (the lattice $Y_t$, the function $\delta_t$, the operator $\mathcal{O}_t$ and the unfolded condition).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.5, the definitions of trees and embeddings before Definition 2.2, "Ordering the leaves" (the relations $\lhd_p$ and Lemma 2.12) and "Progress measures" (the lattice $Y_t$, the function $\delta_t$, the operator $\mathcal{O}_t$ and the unfolded condition).

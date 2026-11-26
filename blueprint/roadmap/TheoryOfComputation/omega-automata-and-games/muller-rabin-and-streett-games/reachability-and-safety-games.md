@@ -22,4 +22,4 @@ unit-cost RAM model). By duality the same holds for safety games, with the roles
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 1 (N. Fijalkow, "Introduction"): Section 1.2, the definitions of $\mathrm{Reach}$ and $\mathrm{Safe}$, Theorem 1.1 and Lemma 1.1 (characterization of the winning region by attractors) with their proofs.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 1 (N. Fijalkow, "Introduction"): Section 1.2, the definitions of $\mathrm{Reach}$ and $\mathrm{Safe}$, Theorem 1.1 and Lemma 1.1 (characterization of the winning region by attractors) with their proofs.

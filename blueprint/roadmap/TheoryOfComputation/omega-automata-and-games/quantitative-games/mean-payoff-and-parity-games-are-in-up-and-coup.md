@@ -18,4 +18,4 @@ discounted-payoff games, and placing the latter in $\mathrm{UP} \cap \mathrm{coU
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.3, Corollary 5.4 with its proof.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.3, Corollary 5.4 with its proof.

@@ -1,6 +1,6 @@
 # Stochastic arenas, stochastic reachability games and simple stochastic games
 
-A *stochastic arena* is a graph whose vertices are partitioned into those of Max, those of Min and *random* vertices, together with
+A *stochastic arena* is a finite graph whose vertices are partitioned into those of Max, those of Min and *random* vertices, together with
 a function $\delta$ giving each random vertex a probability distribution on its outgoing edges. Strategies map finite plays to
 distributions on edges; a pair of strategies and an initial vertex induce a probability measure on infinite plays. A
 *stochastic reachability game* has a sink $\mathrm{Win}$, and the payoff of a pair of strategies from $v$ is the probability of reaching
@@ -16,4 +16,4 @@ each of them with probability $1/2$.
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 7 (N. Bertrand, P. Bouyer, N. Fijalkow and M. Skomra, "Stochastic games"): Definitions 7.1 and 7.2, the paragraphs on strategies, reachability objectives and values that follow, Definition 7.4 (normalised games) and Definition 7.5 (binary and simple stochastic games).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 7 (N. Bertrand, P. Bouyer, N. Fijalkow and M. Skomra, "Stochastic games"): Definitions 7.1 and 7.2, the paragraphs on strategies, reachability objectives and values that follow, Definition 7.4 (normalised games) and Definition 7.5 (binary and simple stochastic games).

@@ -20,4 +20,4 @@ $x$ turns $f$ into the qualitative condition $f_{\ge x} = \{\pi : f(\pi) \ge x\}
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 1 (N. Fijalkow, "Introduction"): Section 1.9, "Quantitative games", "Values in quantitative games" (including Fact 1.9) and Definitions 1.9 and 1.10.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 1 (N. Fijalkow, "Introduction"): Section 1.9, "Quantitative games", "Values in quantitative games" (including Fact 1.9) and Definitions 1.9 and 1.10.

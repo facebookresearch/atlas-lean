@@ -14,4 +14,4 @@ performed, ties going to Adam, leading to $(\ell', (\nu + d)[R \leftarrow 0])$. 
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 11 (N. Markey and O. Sankur, "Timed games"): Section 11.1, Definition 11.1, the semantics of actions and steps that follows it, and Problem 11.1 (solving a timed reachability game).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 11 (N. Markey and O. Sankur, "Timed games"): Section 11.1, Definition 11.1, the semantics of actions and steps that follows it, and Problem 11.1 (solving a timed reachability game).

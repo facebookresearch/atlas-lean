@@ -13,4 +13,4 @@ the fixed-point equation gives positional optimal strategies for both players.
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.3, Fact 5.3 and Lemma 5.7 (values as unique fixed point) with its proof, using the Banach fixed-point theorem (Theorem 1.5).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.3, Fact 5.3 and Lemma 5.7 (values as unique fixed point) with its proof, using the Banach fixed-point theorem (Theorem 1.5).

@@ -18,4 +18,4 @@ $T(n, m, W)$ thus solves mean-payoff games in the same time and computes mean-pa
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.2, Lemma 5.3 (relating mean payoff and energy objectives) and Corollary 5.3 with their proofs.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.2, Lemma 5.3 (relating mean payoff and energy objectives) and Corollary 5.3 with their proofs.

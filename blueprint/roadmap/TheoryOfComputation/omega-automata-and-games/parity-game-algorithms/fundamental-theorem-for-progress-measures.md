@@ -7,6 +7,7 @@ measure is not $\top$ at $v$, and then applies this to the graph left by a posit
 
 ## Depends on
 
+- [Parity game](../parity-games/parity-game.md)
 - [Ordered trees and progress measures](ordered-trees-and-progress-measures.md)
 
 ## Proof depends on
@@ -15,4 +16,4 @@ measure is not $\top$ at $v$, and then applies this to the graph left by a posit
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.5, Theorem 2.8 and Lemma 2.13 (the fundamental lemma for parity graphs) with their proofs.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.5, Theorem 2.8 and Lemma 2.13 (the fundamental lemma for parity graphs) with their proofs.

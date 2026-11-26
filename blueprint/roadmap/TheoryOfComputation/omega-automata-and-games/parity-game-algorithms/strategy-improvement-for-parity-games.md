@@ -22,4 +22,4 @@ Jurdziński; Friedmann constructed exponential lower bounds for many switching r
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.3, Theorem 2.3 with Lemmas 2.4–2.7 (progress and optimality), and the bibliographic references at the end of the chapter, crediting the first discrete strategy improvement algorithm to J. Vöge and M. Jurdziński (CAV 2000) and the exponential lower bounds to O. Friedmann.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Section 2.3, Theorem 2.3 with Lemmas 2.4–2.7 (progress and optimality), and the bibliographic references at the end of the chapter, crediting the first discrete strategy improvement algorithm to J. Vöge and M. Jurdziński (CAV 2000) and the exponential lower bounds to O. Friedmann.

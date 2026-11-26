@@ -1,19 +1,12 @@
 # Brzozowski derivatives of regular expressions
 
-Regular expressions over an alphabet $\Sigma$ are built from $0$ (empty language), $1$ (empty word), letters $a$, sum $r + s$, concatenation $r \cdot s$
-and star $r^*$, with their usual [languages](../kleene-s-theorem/is-regex-denoted.md) $L(r)$. Let $\mathrm{nullable}(r)$ hold when the empty word is in $L(r)$, computed by
-structural recursion. The *derivative* of $r$ with respect to a letter $a$ is defined by
-
-$$\partial_a 0 = \partial_a 1 = 0,\quad \partial_a b = (1 \text{ if } b = a \text{ else } 0),\quad \partial_a (r + s) = \partial_a r + \partial_a s,\quad \partial_a r^* = \partial_a r \cdot r^*,$$
-
-$$\partial_a (r \cdot s) = \begin{cases} \partial_a r \cdot s + \partial_a s & \text{if } \mathrm{nullable}(r),\\ \partial_a r \cdot s & \text{otherwise,}\end{cases}$$
-
-and extended to words by $\partial_\varepsilon r = r$ and $\partial_{wa} r = \partial_a(\partial_w r)$. By induction on $r$, $L(\partial_a r) = a^{-1} L(r) = \{w : aw \in L(r)\}$, so $w \in L(r)$ if
-and only if $\partial_w r$ is nullable (Brzozowski).
-
-## Depends on
-
-- [Language denoted by a regular expression](../kleene-s-theorem/is-regex-denoted.md)
+Regular expressions over an alphabet $\alpha$ with decidable equality are built from $0$ (empty language), $1$ (empty word), letters, sum $P + Q$,
+concatenation $P \cdot Q$ and star $P^*$. Let $\mathrm{matchEpsilon}(P)$ be the Boolean that holds when $P$ matches the empty word, computed by structural
+recursion: false for $0$ and letters, true for $1$ and $P^*$, the disjunction for $P + Q$ and the conjunction for $P \cdot Q$. The *Brzozowski derivative*
+of $P$ with respect to a letter $a$ is defined by
+$\partial_a 0 = \partial_a 1 = 0$, $\partial_a b = 1$ if $b = a$ and $0$ otherwise, $\partial_a (P + Q) = \partial_a P + \partial_a Q$, $\partial_a P^* = \partial_a P \cdot P^*$, and
+$\partial_a (P \cdot Q) = \partial_a P \cdot Q + \partial_a Q$ if $\mathrm{matchEpsilon}(P)$ and $\partial_a P \cdot Q$ otherwise. The derivative of $P$ matches a word $x$
+exactly when $P$ matches $a x$.
 
 ## Sources
 

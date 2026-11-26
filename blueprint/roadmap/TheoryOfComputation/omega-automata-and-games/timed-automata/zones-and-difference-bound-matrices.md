@@ -16,4 +16,4 @@ $n \times n$ DBM is a union (federation) of at most $n(n - 1)$ zones.
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 11 (N. Markey and O. Sankur, "Timed games"): Section 11.2, the definitions of zones and difference-bound matrices with Example 11.4, the operations $\mathrm{Post}_{\ge 0}$, $\mathrm{Pre}_{\ge 0}$, $\mathrm{Reset}_R$ and $\mathrm{Unreset}_R$, Theorem 11.1 (complexity of basic operations on DBMs) and Theorem 11.2 (complement of DBMs).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 11 (N. Markey and O. Sankur, "Timed games"): Section 11.2, the definitions of zones and difference-bound matrices with Example 11.4, the operations $\mathrm{Post}_{\ge 0}$, $\mathrm{Pre}_{\ge 0}$, $\mathrm{Reset}_R$ and $\mathrm{Unreset}_R$, Theorem 11.1 (complexity of basic operations on DBMs) and Theorem 11.2 (complement of DBMs).

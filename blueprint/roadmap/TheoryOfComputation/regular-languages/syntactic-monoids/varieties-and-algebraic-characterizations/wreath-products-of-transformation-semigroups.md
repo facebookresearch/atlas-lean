@@ -7,10 +7,6 @@ $(p, q) \cdot (f, t) = (p + q \cdot f,\ q \cdot t)$, with product $(f, t)(f', t'
 semigroups is the semigroup of $(S^1, S) \circ (T^1, T)$; every semidirect product of $S$ and $T$ is a subsemigroup of $S \circ T$. In automata terms the wreath product
 is the cascade of two automata.
 
-## Depends on
-
-- [Syntactic monoid](../syntactic-monoid/syntactic-monoid.md)
-
 ## Sources
 
 - J.-É. Pin, *Mathematical Foundations of Automata Theory*, lecture notes, version of March 24, 2025, <https://www.irif.fr/~jep/PDF/MPRI/MPRI.pdf>: Chapter XVIII, Section 1 (semidirect product) and Section 2 (wreath product, the action (2.1), its faithfulness and the product on $W$, and Proposition XVIII.2.1).

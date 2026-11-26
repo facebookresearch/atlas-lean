@@ -8,9 +8,15 @@ machine has a recurring computation is $\Sigma^1_1$-hard, along the lines of the
 nondeterministic Turing machine on the empty tape that visits its starting state infinitely often.
 In particular the problem is undecidable, and it is not even in the arithmetical hierarchy.
 
-## Depends on
+## Proof depends on
 
 - [Two-counter machines are universal](two-counter-machines-are-universal.md)
+
+## Expansion
+
+This page becomes ready once:
+
+- The $\Sigma^1_1$-completeness of the existence of a computation of a nondeterministic Turing machine on the empty tape that visits its starting state infinitely often (Harel, Pnueli and Stavi), from which the cited proof reduces (proof prerequisite; not yet stated)
 
 ## Sources
 

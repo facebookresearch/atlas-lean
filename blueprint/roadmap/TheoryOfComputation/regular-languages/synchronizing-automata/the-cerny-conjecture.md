@@ -3,6 +3,11 @@
 Is the reset threshold of every [synchronizing automaton](synchronizing-automata-and-reset-words.md) with $n$ states at most $(n - 1)^2$, that is, is the Černý function
 $C(n)$ equal to $(n - 1)^2$? The [Černý automata](the-cerny-automata.md) show that the bound would be tight.
 
+## Depends on
+
+- [Synchronizing automata and reset words](synchronizing-automata-and-reset-words.md)
+- [The Černý automata reach reset threshold $(n-1)^2$](the-cerny-automata.md)
+
 ## What would settle it
 
 A proof that every synchronizing automaton with $n$ states has a reset word of length at most $(n-1)^2$, or a synchronizing automaton whose

@@ -16,4 +16,4 @@ polynomial when the weights are written in unary.
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.2, "A first value iteration algorithm", Corollary 5.2 and Theorem 5.4 with its proof, and the bibliographic references crediting the algorithm to U. Zwick and M. Paterson, *Theoretical Computer Science* 158 (1996).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 5 (N. Fijalkow and B. Monmege, "Games with payoffs"): Section 5.2, "A first value iteration algorithm", Corollary 5.2 and Theorem 5.4 with its proof, and the bibliographic references crediting the algorithm to U. Zwick and M. Paterson, *Theoretical Computer Science* 158 (1996).
