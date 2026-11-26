@@ -1,0 +1,3 @@
+# Greenwood’s formula for the asymptotic covariance of Kaplan–Meier
+
+For a competing-risks subject law $\mu$ on a finite grid with causes $c$, write $e_{l,c} = P(X = l, \delta = 1, J = c)$, $d_l = \sum_ce_{l,c}$, $y_l = P(X \ge l)$, $S(l-)$ the product-limit survival before $l$, $S(j)$ the Kaplan–Meier survival and $F_c$ the Aalen–Johansen cumulative incidences of the mean cell vector, and suppose $P(\min(T, C) \ge m) \ne 0$ and $d_l \ne y_l$ for $l \le j \wedge j'$, $j, j' \le m$. Then the influence covariance of the Kaplan–Meier coordinates at $j$ and $j'$ is $S(j)S(j')\sum_{l\le j\wedge j'}\frac{d_l}{y_l(y_l - d_l)}$.
