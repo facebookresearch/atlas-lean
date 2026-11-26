@@ -5,11 +5,15 @@
 **Bounds.** If $\ell$ is the number of leaves, $2^\ell \le \mathrm{cdag}(O) \le 2^{|V|}$; a chain on $|V|$ vertices has $|V| + 1$ consistent subgraphs.
 
 **Trees.** For a rooted tree, the number $c(v)$ of consistent subtrees of the subtree at $v$ satisfies
+
 $$c(v) = 1 + \prod_{w \text{ child of } v} c(w),$$
+
 and a forest's count is the product over its trees, giving a linear-time algorithm.
 
 **Pivot decomposition (Equation 1).** For any vertex $u$,
+
 $$\mathrm{cdag}(O) = \mathrm{cdag}\big(O[-D^+(u)]\big) + \mathrm{cdag}\big(O[-A^+(u)]\big).$$
+
 Recursing with multi-parent pivots until the graph is a forest yields an exact algorithm with running time $T(n) \le T(n-1) + T(n-3) + f(n)$; it is polynomial when the number of multi-parent vertices is $O(\log n)$.
 
 **Reverse graph.** $\mathrm{cdag}(O) = \mathrm{cdag}(O^R)$, where $O^R$ reverses every edge.

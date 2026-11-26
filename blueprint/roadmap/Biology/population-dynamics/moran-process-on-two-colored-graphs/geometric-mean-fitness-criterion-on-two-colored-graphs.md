@@ -1,7 +1,9 @@
 # Geometric-mean fitness criterion on two-colored graphs
 
 **Theorem.** Under the hypotheses of the [fixation formula on properly two-colored biregular graphs](fixation-probability-on-properly-two-colored-biregular-graphs.md) (birth-death Moran process, proper two-coloring, green degree $k_G$, red degree $k_R$, fitness $a_G, a_R$ for $A$ and $b_G, b_R$ for $B$),
+
 $$\rho_A > \frac{1}{N} > \rho_B \iff \rho_A > \rho_B \iff a_G a_R > b_G b_R .$$
+
 Moreover $\rho_A = 1/N$ (neutral fixation) if and only if $a_G a_R = b_G b_R$. Thus selection favors $A$ exactly when its geometric-mean fitness over the two colors, $g_A = \sqrt{a_G a_R}$, exceeds that of $B$, $g_B = \sqrt{b_G b_R}$, irrespective of $N_G$, $N_R$ and the degrees; arithmetic mean fitness does not decide the outcome.
 
 ## Depends on

@@ -5,9 +5,11 @@
 **Network model.** A level-1 phylogenetic network $N$ (cycles are vertex-disjoint) with $m$ edges and $c$ cycles carries one group-based transition matrix per edge and one mixing parameter per cycle; the leaf distribution is the mixture, over the trees displayed by $N$, of the tree models. The Zariski closure of the image of the parameterization is the **network variety** $V_N(G,B)$. Counting parameters gives the expected dimension $l(m - c) + 1$, which is always an upper bound.
 
 **Theorem.** Let $N$ be a level-1 triangle-free phylogenetic network with $m$ edges and $c$ cycles, $G$ a finite abelian group with $|G| \ge 3$, $B \le \mathrm{Aut}(G)$, and $l + 1$ the number of $B$-orbits. Then
+
 $$\dim V_N(G,B) = l(m - c) + 1.$$
 
 **Theorem (CFN model).** Let $G = \mathbb{Z}/2$ and let $N$ be a level-1 network with $m$ edges, $c_{\ge 5}$ cycles of length at least 5, $c_4$ 4-cycles and $c_3$ 3-cycles. Then
+
 $$\dim V_N(G) = m - (c_{\ge 5} + 2c_4 + 3c_3) + 1.$$
 
 ## Expansion

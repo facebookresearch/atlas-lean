@@ -6,7 +6,9 @@ $$\begin{aligned}
 \dot F_W &= r\nu_A A - (\delta + \mu_F) F_W, & \dot F_{WW} &= \delta F_W - \mu_{F,WW} F_{WW}.
 \end{aligned}$$
 The **basic offspring number** is
+
 $$\mathcal R(\delta) = \frac{b_W r \nu_A}{(\nu_A + \mu_A)(\mu_F + \delta)} + \frac{\delta}{\mu_F + \delta}\,\frac{b_{WW} r\nu_A}{\mu_{F,WW}(\nu_A + \mu_A)} = \mathcal N(\delta)\left(1 + \frac{b_{WW}\,\delta}{b_W\,\mu_{F,WW}}\right),$$
+
 where $\mathcal N(\delta) = b_W r\nu_A / [(\nu_A + \mu_A)(\mu_F + \delta)]$ counts offspring of single-mated females only, so $\mathcal N \le \mathcal R$.
 
 **Theorem (wild dynamics).** The system is a forward dynamical system on $\{A \le K\} \subset \mathbb R_+^4$. If $\mathcal R < 1$ the origin is globally asymptotically stable. If $\mathcal R > 1$ there is a positive equilibrium with $A^* = (1 - 1/\mathcal R)K$, $M^* = \frac{(1-r)\nu_A}{\mu_M} A^*$, $F_W^* = \frac{r\nu_A}{\delta+\mu_F}A^*$, $F_{WW}^* = \frac{\delta}{\mu_{F,WW}}F_W^*$, globally asymptotically stable off the invariant set $\{(0,M,0,0)\}$.

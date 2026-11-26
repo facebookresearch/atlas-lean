@@ -1,16 +1,22 @@
 # Competitive exclusion of prion strains in the nucleated polymerization model
 
 **Model.** Let $V(t)$ be the amount of normal monomer, and for strains $i = 1, \dots, N$ let $U_i(t)$ be the number of aggregates and $P_i(t)$ their total mass (number of misfolded monomers). Monomers are produced at rate $\lambda$ and degraded at rate $\gamma$; strain-$i$ aggregates recruit monomers at rate $\tau_i$, break at rate $\beta_i$ per link, are cleared at rate $\mu_i$, and fragments below the nucleus size $x_i$ return their monomers to the normal pool. In the variables $W_i = P_i - x_i U_i$ the moment equations read
+
 $$\frac{dV}{dt} = \lambda - \gamma V + \sum_{i=1}^N \big(-\tau_i V U_i + \beta_i x_i^2 U_i\big), \qquad \frac{dU_i}{dt} = \beta_i W_i - (\mu_i + \beta_i x_i) U_i, \qquad \frac{dW_i}{dt} = \tau_i V U_i - (\mu_i + \beta_i x_i) W_i,$$
+
 equivalently $\dot U_i = \beta_i P_i - (\mu_i + 2\beta_i x_i) U_i$ and $\dot P_i = \tau_i V U_i - \mu_i P_i - \beta_i x_i^2 U_i$.
 
 **Theorem 1.** Assume all parameters are positive. The system has a unique positive solution for every initial condition in $X = \{V, U_i, P_i - x_i U_i \ge 0\}$. Let
+
 $$R_0^i = \frac{\lambda \beta_i \tau_i}{\gamma (\mu_i + \beta_i x_i)^2}$$
+
 be distinct and $R_0 = \max_i R_0^i$.
 
 1. If $R_0 \le 1$, the disease-free equilibrium $(\lambda/\gamma, 0, \dots, 0)$ is globally asymptotically stable on $X$.
 2. If $R_0 > 1$ and strain 1 attains the maximum, there is a single-strain endemic equilibrium for every strain with $R_0^i > 1$, and the strain-1 equilibrium
+
 $$V^* = \frac{(\mu_1 + \beta_1 x_1)^2}{\beta_1 \tau_1}, \quad U_1^* = \frac{\lambda \beta_1 \tau_1 - \gamma (\mu_1 + \beta_1 x_1)^2}{\mu_1 \tau_1 (\mu_1 + 2\beta_1 x_1)}, \quad P_1^* = \frac{\lambda \beta_1 \tau_1 - \gamma (\mu_1 + \beta_1 x_1)^2}{\mu_1 \beta_1 \tau_1},$$
+
 with all other strains absent, is globally asymptotically stable on $\{U_1 > 0, P_1 > 0\} \cap X$.
 
 So at most one strain propagates stably: the one with the largest $R_0^i$.

@@ -1,7 +1,9 @@
 # Locus of the weighted Fréchet mean in BHV tree space
 
 **Setting.** Let $\mathcal T$ be the BHV space of rooted phylogenetic trees with edge lengths on a fixed leaf set (pendant edges dropped), a union of nonnegative orthants $\mathbb{R}_{\ge0}^{m}$, one per fully resolved topology, glued along faces; with the induced geodesic metric $d$ it is CAT(0), so geodesics are unique and squared distance is strictly convex along geodesics. For vertex trees $T_0,\dots,T_k \in \mathcal T$ and weights $w$ in the simplex $\Delta_k = \{w \in \mathbb{R}_{\ge0}^{k+1} : \sum_i w_i = 1\}$, the weighted Fréchet mean
+
 $$\mu(w) = \arg\min_{T\in\mathcal T}\ \sum_{i=0}^k w_i\, d(T, T_i)^2$$
+
 exists and is unique. The *locus of the weighted Fréchet mean* is $\mathcal L(T_0,\dots,T_k) = \{\mu(w) : w \in \Delta_k\}$, the tree-space analogue of the affine span of $k+1$ points, used as a $k$-th order principal locus.
 
 A geodesic between fully resolved trees is *simple* if at most one edge length contracts to zero at a time as it is traversed. Fixing a fully resolved orthant $\mathcal O$, a *support region* is a set of $T \in \mathcal O$ on which the combinatorial support of the geodesic from $T$ to a given vertex tree is constant; a *mutual support region* is an intersection of support regions, one for each vertex tree.

@@ -1,11 +1,15 @@
 # Branch-length likelihood under phase-type waiting times to speciation
 
 **Phase-type law.** Let $\{X(t)\}_{t\ge 0}$ be a continuous-time Markov chain on $\{1,\dots,n\}\cup\{n+1\}$ with $n+1$ absorbing, initial row vector $\boldsymbol\alpha$ on the transient states and generator $\begin{pmatrix}\mathbf Q&\mathbf q\\ \mathbf 0&0\end{pmatrix}$, so $\mathbf q=-\mathbf Q\mathbf 1$. The absorption time $Z\sim\mathrm{PH}(\boldsymbol\alpha,\mathbf Q)$ has
+
 $$F_Z(z)=1-\boldsymbol\alpha e^{\mathbf Qz}\mathbf 1,\qquad f_Z(z)=\boldsymbol\alpha e^{\mathbf Qz}\mathbf q,\qquad \mathbb E(Z)=-\boldsymbol\alpha\mathbf Q^{-1}\mathbf 1 .$$
+
 A **Coxian** law has $\boldsymbol\alpha=(1,0,\dots,0)$ and bidiagonal $\mathbf Q$ with $Q_{ii}=-\lambda_i$, $Q_{i,i+1}=p_i\lambda_i$, $0<p_i\le 1$: the chain moves through phases in order and may exit early from any phase.
 
 **Model and likelihood.** Suppose a tree grows by symmetric speciation without extinction, each lineage waiting an independent $\mathrm{PH}(\boldsymbol\alpha,\mathbf Q)$ time until it splits into two new lineages. For a tree $T$ with internal branches (root branch included) of lengths $b_1,\dots,b_k$ and pendant branches of lengths $\tilde b_1,\dots,\tilde b_\ell$, where $k=\ell-1$, an internal branch contributes the density of its length and a pendant branch the survival probability of its length, so
+
 $$\mathcal L(T\mid\boldsymbol\alpha,\mathbf Q)=\prod_{i=1}^{k}\boldsymbol\alpha e^{\mathbf Qb_i}\mathbf q\;\times\;\prod_{j=1}^{\ell}\boldsymbol\alpha e^{\mathbf Q\tilde b_j}\mathbf 1 ,$$
+
 multiplied by $(\ell-1)!$ when tip permutations are counted. Independent trees multiply. With one exponential phase ($\mathbf Q=-\lambda$) this reduces to the Yule branch-length likelihood $\prod_i\lambda e^{-\lambda b_i}\prod_j e^{-\lambda\tilde b_j}$.
 
 ## Expansion

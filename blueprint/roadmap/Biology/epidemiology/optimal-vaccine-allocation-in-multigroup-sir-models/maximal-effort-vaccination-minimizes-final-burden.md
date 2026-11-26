@@ -1,16 +1,23 @@
 # Maximal-effort vaccination minimizes final burden
 
 **Model.** A population is split into groups $i = 1, \dots, n$ of sizes $N_i$ (total $1$), with compartments $S_i, I_i, R_i$ for people infected while unvaccinated and $S_i^V, I_i^V, R_i^V$ for vaccinated people. Doses are given at rate $U_i(t)$ to group $i$, with cumulative doses $W_i(t) = \int_0^t U_i$, and are assigned **at random among the not-yet-vaccinated** members of the group, so susceptibles are vaccinated at rate $U_i(t)\,S_i/(N_i - W_i(t))$:
+
 $$\dot S_i = -\sum_j (\beta^1_{ij} I_j + \beta^2_{ij} I_j^V) S_i - \frac{U_i S_i}{N_i - W_i},\qquad \dot S_i^V = -\sum_j (\beta^3_{ij} I_j + \beta^4_{ij} I_j^V) S_i^V + \frac{U_i S_i}{N_i - W_i},$$
+
 $$\dot I_i = \sum_j (\beta^1_{ij} I_j + \beta^2_{ij} I_j^V) S_i - \mu^1_i I_i,\quad \dot I_i^V = \sum_j (\beta^3_{ij} I_j + \beta^4_{ij} I_j^V) S_i^V - \mu^2_i I_i^V,\quad \dot R_i = \mu^1_i I_i,\quad \dot R_i^V = \mu^2_i I_i^V,$$
+
 with vaccination "locally effective": vaccinated people transmit and are infected no more than unvaccinated ones in the same group, and recover no more slowly ($\mu^2_i \ge \mu^1_i > 0$). The classical model with vaccination term $U_i^* S_i$ is the special case $W_i = N_i(1 - e^{-\int_0^t U_i^*})$. The objective is the weighted final burden
+
 $$H(U) = \sum_i p_i\big(R_i(\infty) + \kappa_i R_i^V(\infty)\big), \qquad 0 \le \kappa_i \le 1,$$
+
 covering total infections or deaths, minimized over bounded integrable policies with $\sum_i U_i(t) \le A(t)$ (rate capacity) and $\sum_i W_i(t) \le B(t)$ (cumulative supply).
 
 **Theorem (monotonicity).** If two feasible policies satisfy $\int_0^t U_i \le \int_0^t \tilde U_i$ for every group $i$ and all $t \ge 0$, then $H(U) \ge H(\tilde U)$: vaccinating more, sooner, in every group never increases the final weighted burden.
 
 **Theorem (maximal effort is optimal).** Suppose $B$ is differentiable, an optimal policy exists, and the maximal achievable effort
+
 $$\chi(t) = \begin{cases} A(t) & \text{if } \int_0^t \chi < B(t), \\ \min(A(t), B'(t)) & \text{if } \int_0^t \chi \ge B(t) \end{cases}$$
+
 exists and is bounded. Then there is an optimal policy that uses the full effort, $\sum_i \tilde W_i(t) = \min\big(\int_0^t \chi, 1\big)$, and if $\chi$ is continuous almost everywhere, one with $\sum_i \tilde U_i(t) = \chi(t)$ until everyone is vaccinated. The same holds when a cost $F(W(\infty))$ of the doses used is added to the objective, with vaccination at full effort up to a stopping time $\tau$ and none afterwards.
 
 ## Expansion

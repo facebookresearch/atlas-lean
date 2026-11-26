@@ -5,12 +5,15 @@ A **phylogenetic network** on a finite leaf set $X$ is a rooted DAG with leaf se
 For a vertex $v$ let $C_N(v)$ be the set of leaves below $v$. The **softwired cluster system** $\mathcal S(N)$ is the union of the cluster systems $\{C_T(u)\}$ of all phylogenetic trees $T$ displayed by $N$, and $\mathcal S(N)^- = \mathcal S(N) \setminus \{X\}$.
 
 **Lemma (vertices and arcs).** For $n \ge 3$ and $N = (V,A) \in \mathcal L_1(n)^-$,
+
 $$2n + 1 \le |V| \le 3n - 2, \qquad 2n + 1 \le |A| \le 3.5\,(n-1),$$
+
 with equality throughout when $n = 3$, in which case $N$ is simple.
 
 **Theorem (galls).** For $n \ge 2$ and $N \in \mathcal L_1(n)$, $g(N) \le n - c_N - 2$, with equality if $N$ is a tree or every gall has exactly three outgoing arcs.
 
 **Theorem (cluster count).** For $n \ge 2$ and $N \in \mathcal L_1(n)$,
+
 $$|\mathcal S(N)^-| = 3n - 4 - c_N.$$
 
 **Proposition (no triplet analogue).** For every $n \ge 6$ there are $N_1, N_2 \in \mathcal L_1(n)$ with the same numbers of galls and of non-trivial cut arcs but $|\mathcal R(N_1)| \ne |\mathcal R(N_2)|$, where $\mathcal R(N)$ is the set of rooted triplets displayed by $N$.

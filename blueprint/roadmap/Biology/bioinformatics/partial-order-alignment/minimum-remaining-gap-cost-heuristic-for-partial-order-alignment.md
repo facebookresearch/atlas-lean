@@ -5,6 +5,7 @@ Let $G = (V, E)$ be a partial order alignment (POA) graph: a DAG of character-la
 For each node let $d^{\min}_{v,\tau}$ and $d^{\max}_{v,\tau}$ be the shortest and longest path lengths (in edges) from $v$ to $\tau$, computable in $O(|V| + |E|)$ in reverse topological order, and let $l_r = m - i$ be the unaligned query length.
 
 **Definition (minimum number of indels).**
+
 $$N_g^{\min}\langle v,i\rangle = \begin{cases} l_r - (d^{\max}_{v,\tau} - 1), & d^{\max}_{v,\tau} - 1 < l_r,\\ (d^{\min}_{v,\tau} - 1) - l_r, & d^{\min}_{v,\tau} - 1 > l_r,\\ 0, & \text{otherwise.}\end{cases}$$
 
 **Lemma (admissibility).** The heuristic $h\langle v,i\rangle = N_g^{\min}\langle v,i\rangle\,\Delta_g$ is a lower bound on the cost of completing the alignment from $\langle v, i\rangle$, so A* with $h$ returns an optimal alignment.

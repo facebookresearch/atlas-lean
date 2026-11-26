@@ -1,14 +1,18 @@
 # Morse-decomposition criterion for robust permanence
 
 **Setting.** Consider
+
 $$\frac{dx_i}{dt} = x_i f_i(x,y)\ (i = 1,\dots,n), \qquad \frac{dy_j}{dt} = g_j(x,y)\ (j = 1,\dots,m),$$
+
 on $S = \mathbb{R}_+^n \times K$ with $K \subset \mathbb{R}^m$, where $x$ are population densities and $y$ are feedback variables. Assume (S1) $x_if_i$ and $g_j$ are locally Lipschitz and (S2) there is a compact forward-invariant $Q \subseteq S$ that every trajectory eventually enters. Let $z.t$ be the flow, $\Gamma = \omega(Q)$ the global attractor, and $S_0 = \{(x,y) \in S : \prod_i x_i = 0\}$ the (invariant) extinction set. The system is *permanent* if there is $\beta > 0$ with $\liminf_{t\to\infty} x_i(t) \ge \beta$ for all $i$ and all initial $z \in S\setminus S_0$. A $(\delta, Q)$-perturbation $(\tilde f, \tilde g)$ satisfies $|\tilde f_i - f_i| < \delta$, $|\tilde g_j - g_j| < \delta$ on $Q$, the same Lipschitz property, and has $Q$ as a forward-invariant absorbing set; the system is *robustly permanent* if one $\beta$ works for every $(\delta,Q)$-perturbation, for some $\delta > 0$.
 
 A *Morse decomposition* of a compact invariant set $\Gamma'$ is a family of pairwise disjoint isolated compact invariant sets $M_1,\dots,M_\ell$ such that every $z \in \Gamma' \setminus \bigcup_k M_k$ has $\omega(z) \subset M_i$ and $\alpha(z) \subset M_j$ for some $i < j$.
 
 **Theorem.** Let $\{M_1,\dots,M_\ell\}$ be a Morse decomposition of $S_0 \cap \Gamma$.
 1. If for each $k$ there are weights $p_{k1},\dots,p_{kn} > 0$ such that every $z \in M_k$ has some $T_z > 0$ with
+
 $$\sum_{i=1}^n p_{ki}\int_0^{T_z} f_i(z.t)\,dt > 0,$$
+
 then the system is permanent, and in fact robustly permanent.
 2. (Partial converse.) If for each $k$ there are $p_{ki} > 0$ such that every $z \in M_k$ has $T_z > 0$ with $\sum_i p_{ki}\int_0^{T_z} f_i(z.t)\,dt < 0$, then the system is not permanent; more strongly, $S_0 \cap \Gamma$ is an attractor in $\Gamma$.
 

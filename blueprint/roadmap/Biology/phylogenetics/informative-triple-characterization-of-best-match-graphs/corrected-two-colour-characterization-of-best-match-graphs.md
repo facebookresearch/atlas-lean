@@ -1,7 +1,9 @@
 # Corrected two-colour characterization of best match graphs
 
 **Setting.** Notation as for colored best match graphs: $(G, \sigma)$ is a vertex-coloured digraph on $L$, an $n$-cBMG is a digraph of the form $G(T, \sigma)$ for a leaf-coloured rooted tree, $(G_{st}, \sigma_{st})$ is the subgraph induced by the vertices of colours $s$ and $t$, and $R(G, \sigma)$ is the set of informative triples $ab \mid b'$ ($\sigma(a) \ne \sigma(b) = \sigma(b')$, $ab \in E(G)$, $ab' \notin E(G)$). For each pair of colours whose induced subgraph is a 2-cBMG, let $(T^{*}_{st}, \sigma_{st})$ be its least resolved tree and put
+
 $$\mathcal{R} := \bigcup_{s, t \in S} r(T^{*}_{st}),$$
+
 the union of all triples displayed by these trees, with $\mathrm{Aho}(\mathcal{R})$ built on the full leaf set $L = V(G)$.
 
 **Sink-freeness.** Every cBMG has the property that each vertex $x$ has an out-arc to at least one vertex of every colour other than $\sigma(x)$. For properly 2-coloured digraphs this is the condition (N4) that the out-neighbourhood of every class (set of vertices with identical in- and out-neighbourhoods) is non-empty. It must be imposed explicitly as a hypothesis in the 2-colour least-resolved-tree construction, and an algorithm building that tree must check it, which costs $O(|E|)$.
@@ -15,7 +17,9 @@ the union of all triples displayed by these trees, with $\mathrm{Aho}(\mathcal{R
 In that case $(\mathrm{Aho}(\mathcal{R}), \sigma)$ is the unique least resolved tree explaining $(G, \sigma)$.
 
 **Conditions 1 and 2 are not sufficient.** There is a 3-coloured digraph on vertices $a_1, a_2, b, c_1, c_2$ whose three 2-coloured induced subgraphs are 2-cBMGs with consistent triple union
+
 $$\mathcal{R} = \{a_1 b \mid a_2,\ a_1 c_1 \mid a_2,\ a_1 c_1 \mid c_2,\ a_2 c_2 \mid a_1,\ a_2 c_2 \mid c_1\},$$
+
 yet $G(\mathrm{Aho}(\mathcal{R}), \sigma)$ lacks the arc $bc_2$ of $(G, \sigma)$, so $(G, \sigma)$ is not a 3-cBMG. The reason is that $\mathrm{Aho}(\mathcal{R})$ can display triples present in none of the 2-coloured trees.
 
 **Supporting propositions.**

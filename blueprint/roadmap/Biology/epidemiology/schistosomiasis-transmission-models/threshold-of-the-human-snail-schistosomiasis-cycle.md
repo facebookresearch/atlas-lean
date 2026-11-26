@@ -1,7 +1,9 @@
 # Threshold of the human-snail schistosomiasis cycle
 
 **Model.** Humans are susceptible $S_H$ or infected $I_B$; snails are susceptible $S_S$ or infected $I_S$; free-living larvae are miracidia $M$ (shed by humans, infect snails) and cercariae $P$ (shed by snails, infect humans). With recruitment $\Lambda_H, \Lambda_S$, natural mortalities $\mu_H, \mu_S, \mu_M, \mu_P$, disease-induced mortalities $d_B, d_S$, treatment (recovery) rate $\omega$, and saturating forces of infection
+
 $$\lambda_P = \frac{\beta_P P}{P_0 + \epsilon P}, \qquad \lambda_M = \frac{\beta_M M}{M_0 + \epsilon M},$$
+
 the schistosomiasis-only system is
 $$\begin{aligned}
 S_H' &= \Lambda_H + \omega I_B - (\lambda_P + \mu_H) S_H, & I_B' &= \lambda_P S_H - (\mu_H + \omega + d_B) I_B,\\
@@ -11,6 +13,7 @@ S_S' &= \Lambda_S - (\lambda_M + \mu_S) S_S, & I_S' &= \lambda_M S_S - (\mu_S + 
 with all parameters positive ($N_E \gamma$ is the effective miracidial output per infected human, $\theta$ the cercarial output per infected snail). The disease-free equilibrium is $(\Lambda_H/\mu_H, 0, 0, \Lambda_S/\mu_S, 0, 0)$.
 
 **Threshold.** Define
+
 $$\mathcal R_H = \frac{\beta_P N_E \gamma \Lambda_H}{\mu_M \mu_H P_0 (\mu_H + \omega + d_B)}, \qquad \mathcal R_S = \frac{\beta_M \theta \Lambda_S}{\mu_P \mu_S M_0 (\mu_S + d_S)}, \qquad \mathcal R_B = \mathcal R_H \mathcal R_S .$$
 
 **Theorem.** The disease-free equilibrium is locally asymptotically stable if $\mathcal R_B < 1$ and unstable if $\mathcal R_B > 1$. Moreover it is globally asymptotically stable in the biologically feasible region whenever $\mathcal R_B < 1$. Treatment lowers the threshold: the elasticity is $\frac{\omega}{\mathcal R_B}\frac{\partial \mathcal R_B}{\partial \omega} = -\frac{\omega}{\mu_H + \omega + d_B} < 0$.

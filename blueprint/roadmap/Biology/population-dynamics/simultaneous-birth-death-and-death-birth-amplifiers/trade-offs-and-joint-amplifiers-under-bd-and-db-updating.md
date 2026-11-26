@@ -1,7 +1,9 @@
 # Trade-offs and joint amplifiers under Bd and dB updating
 
 Let $G_N$ be a connected undirected graph on $N$ nodes with positive edge weights $w(u,v)$; residents have fitness $1$ and mutants fitness $r\ge 1$. In the **Birth-death (Bd)** process a node $u$ reproduces with probability proportional to fitness and replaces a neighbour $v$ with probability $w(u,v)/\sum_{v'}w(u,v')$. In the **death-Birth (dB)** process a uniformly random node $v$ dies and is replaced by a neighbour $u$ with probability $f(u)w(u,v)/\sum_{u'}f(u')w(u',v)$. Write $\rho^{Bd}_r(G_N,v)$ and $\rho^{dB}_r(G_N,v)$ for the fixation probability of a single mutant at $v$, and $\rho_r(G_N)$ for its average over a uniformly random initial node. For the complete graph $K_N$,
+
 $$\rho_r^{Bd}(K_N)=\frac{1-1/r}{1-1/r^N},\qquad \rho_r^{dB}(K_N)=\frac{N-1}{N}\cdot\frac{1-1/r}{1-1/r^{N-1}},$$
+
 and $G_N$ is a **Bd$_r$-amplifier** (resp. **dB$_r$-amplifier**) if $\rho_r^{Bd}(G_N)>\rho_r^{Bd}(K_N)$ (resp. $\rho_r^{dB}(G_N)>\rho_r^{dB}(K_N)$).
 
 **Theorem 1 (neutral trade-off).** For every graph $G_N$ and node $v$, either $\rho_1^{Bd}(G_N,v)<\rho_1^{Bd}(K_N)$, or $\rho_1^{dB}(G_N,v)<\rho_1^{dB}(K_N)$, or both equal their complete-graph values. The statement fails for initial mutant sets of size $k\ge 2$.

@@ -20,13 +20,19 @@ So the delay kernel changes the value of the threshold through $\hat f$ but cann
 ## Expansion
 
 *Item 1.* Take
+
 $$V = \sum_k a_k \int_1^{S_k} \frac{x - 1}{x}\, dx + \sum_k a_k I_k + \frac{\mu+\gamma}{\hat f} \int_0^\infty f(\tau) e^{-(\mu+\gamma)\tau} \int_{t-\tau}^{t} \theta(v)\, dv\, d\tau .$$
+
 Along solutions the $S_k$ factors in the incidence cancel and $\sum_k a_k (\mu+\gamma) I_k = (\mu+\gamma)\theta(t)$, which gives
+
 $$\dot V = -\mu \sum_k a_k \frac{(S_k - 1)^2}{S_k} + \frac{\mu + \gamma}{\hat f}\, (\mathcal R_0 - 1) \int_0^\infty f(\tau) e^{-(\mu+\gamma)\tau}\, \theta(t-\tau)\, d\tau \le 0,$$
+
 and LaSalle's invariance principle gives convergence to $E_0$.
 
 *Item 2.* For each $k$ use the Volterra-type functional
+
 $$V_k = S_k - S_k^* - S_k^* \ln\frac{S_k}{S_k^*} + I_k - I_k^* - I_k^* \ln\frac{I_k}{I_k^*} + \beta k S_k^* \sum_j a_j I_j^* \int_0^\infty \alpha(\tau)\, \psi\Bigl(\frac{I_j(t-\tau)}{I_j^*}\Bigr) d\tau,$$
+
 with $\psi(x) = x - 1 - \ln x \ge 0$ and $\alpha(\tau) = \int_\tau^\infty f(s) e^{-(\mu+\gamma)s}\, ds$. Integration by parts in the delay term turns $\dot V_k$ into $-\mu(S_k - S_k^*)^2/S_k$ plus a sum over arcs $j \to k$ of nonpositive terms of the form $-\psi(\cdot)$ and a cyclic remainder $G_{kj} = \bigl(I_j/I_j^* - \ln(I_j/I_j^*)\bigr) - \bigl(I_k/I_k^* - \ln(I_k/I_k^*)\bigr)$. Weight $V = \sum_k c_k V_k$ with $c_k > 0$ the diagonal cofactors of the Laplacian of the weighted digraph with arc weights $\bar\beta_{kj} = \beta k \hat f S_k^* a_j I_j^*$, which is strongly connected because all weights are positive. By Kirchhoff's matrix-tree theorem $\sum_{k,j} c_k \bar\beta_{kj} G_{kj} = 0$, so $\dot V \le 0$, with equality only at $E_+$, and LaSalle's principle finishes the proof.
 
 ## Sources

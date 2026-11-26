@@ -1,7 +1,9 @@
 # Poisson-type degree distributions
 
 Let $\psi(u) = \sum_{k\ge 0} p_k u^k$ be the probability generating function (PGF) of a random variable on $\mathbb{Z}_{\ge 0}$, so $\psi(1) = 1$. Say the variable is *Poisson-type* (PT) if its PGF solves
+
 $$\psi'(u) = \alpha\,\psi(u)^{\kappa}$$
+
 for some constants $\alpha > 0$, $\kappa > 0$.
 
 **Theorem.** A PGF satisfies $\psi' = \alpha\psi^\kappa$ if and only if the distribution is one of:
@@ -13,7 +15,9 @@ for some constants $\alpha > 0$, $\kappa > 0$.
 | $\kappa > 1$ | negative binomial $\mathrm{NB}(r,p)$ | $r = 1/(\kappa-1)$, $p = \alpha(\kappa-1)/(\alpha(\kappa-1)+1)$ |
 
 Equivalently, when $\psi(0) > 0$ and $\psi'(0) > 0$, the PT laws are exactly those with
+
 $$\frac{\psi''(u)\,\psi(u)}{\psi'(u)^2} = \kappa \quad\text{constant on } [0,1],$$
+
 and the constant is $\kappa = (n-1)/n$, $1$, $(r+1)/r$ for the three families respectively.
 
 ## Expansion

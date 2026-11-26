@@ -9,7 +9,9 @@ Let $X$ be the set of $C^1$ vector fields on $\mathbb{R}^n$ with bounded global 
 **Theorem.** Let $\Sigma$ be a heteroclinic cycle of $f \in X_{\mathcal{I}}$ between hyperbolic equilibria with this connection scheme.
 
 1. If $\Sigma$ is robust to perturbations in $X_{\mathcal{I}}$ (preserving the connection scheme), then for every $i$
+
 $$\dim\big(W^u(x_i) \cap I_{c(i)}\big) + \dim\big(W^s(x_{i+1}) \cap I_{c(i)}\big) \ge \dim I_{c(i)} + 1. \qquad (*)$$
+
 2. Conversely, if $(*)$ holds for every $i$, there is $\tilde f \in X_{\mathcal{I}}$ arbitrarily close to $f$ for which $\Sigma$ is a heteroclinic cycle robust to perturbations in $X_{\mathcal{I}}$.
 
 ## Expansion

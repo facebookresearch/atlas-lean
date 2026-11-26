@@ -1,7 +1,9 @@
 # Uniform sampling by mass-equivalent compound substitution
 
 **Setting.** A metabolic network is a directed bipartite graph $G = (V_c \cup V_r, E)$ of compounds and reactions, with substrates $r_{\mathrm{in}}$, products $r_{\mathrm{out}}$ and stoichiometric coefficients $s_{c,r} \in \mathbb N_{>0}$. Each compound has a mass vector $m_c \in \mathbb N^n$ of element counts (e.g. over C, H, N, O, P, S). A reaction is **mass balanced** iff
+
 $$\sum_{c \in r_{\mathrm{in}}} s_{c,r} m_c = \sum_{c \in r_{\mathrm{out}}} s_{c,r} m_c.$$
+
 Two compounds are **mass equivalent** iff their (non-zero) mass vectors are linearly dependent; this is an equivalence relation with classes $\sigma(c)$. In reaction $r$, a substrate (product) $c$ is *substitutable* by $c'$ iff $c' \in \sigma(c)$ and $c'$ is not already a substrate (product) of $r$; replacing $c$ by $c'$ and rescaling coefficients keeps $r$ mass balanced. Let $\Psi_s(r)$ be the set of such substitutions. The **transition graph** $\Sigma_G$ has as nodes the networks reachable from $G_0$ by substitutions and an edge for each substitution; it is undirected (substitutions are reversible) and connected.
 
 **Theorem.**

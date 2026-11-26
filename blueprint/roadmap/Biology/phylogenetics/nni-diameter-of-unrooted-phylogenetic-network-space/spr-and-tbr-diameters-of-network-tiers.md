@@ -5,7 +5,9 @@ Use the networks and tiers $N_i(X)$ of [the NNI diameter bounds](nni-diameter-bo
 **Theorem.**
 1. (Inclusions) $\mathrm{NNI} \subseteq \mathrm{SPR} \subseteq \mathrm{TBR}$ as sets of moves, so $d_{\rm TBR} \le d_{\rm SPR} \le d_{\rm NNI}$; conversely $d_{\rm SPR}(N,N') \le 2\,d_{\rm TBR}(N,N')$ for $N, N' \in N_i(X)$.
 2. (Lower bound) For $i \ge 1$ and $n \ge 6$,
+
 $$\Delta_i^{\rm TBR} \ge \tfrac12\Delta_i^{\rm SPR} \ge \frac{(n-3)\ln(n/2 - 2) - (2i-1)\ln(i-1) - (n-2i)}{8\ln\big(2(n+i)\big)},$$
+
 with the convention $\ln 0 = 0$.
 3. (Upper bound) $\Delta_i^{\rm TBR} \le \Delta_i^{\rm SPR} \le n^2 + 4n$.
 

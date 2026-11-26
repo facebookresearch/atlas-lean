@@ -1,15 +1,21 @@
 # Stationary distributions of stochastic May–Leonard models
 
 **Mean-field model.** Three competing species with counts $N_1, N_2, N_3$, system size $\Omega > 0$ and cyclic competition coefficients $\alpha, \beta$ (indices mod $3$) follow
+
 $$\frac{dN_i}{dt} = N_i\Big(r - \frac{N_i}{\Omega} - \frac{\alpha}{\Omega} N_{i+1} - \frac{\beta}{\Omega} N_{i+2}\Big),$$
+
 which for $\alpha + \beta > 2$ with $\alpha < 1$ or $\beta < 1$ exhibits May–Leonard heteroclinic cycling between the single-species states. Demographic noise is introduced by a stochastic mass-action reaction network on $\mathbb Z_{\ge 0}^3$ with reactions, for each $i$,
+
 $$A_i \xrightarrow{b} 2A_i, \qquad 2A_i \xrightarrow{2/\Omega} A_i, \qquad A_i + A_{i+1} \xrightarrow{\alpha/\Omega} A_{i+1}, \qquad A_i + A_{i+2} \xrightarrow{\beta/\Omega} A_{i+2},$$
+
 plus, in the **general variance model**, individual death $A_i \xrightarrow{d} \emptyset$ with $b - d = r > 0$. The **minimal model** has no individual death and $b = r$. Both have the same mean-field limit.
 
 **Proposition 1 (total extinction).** In the general variance model with $d > 0$, the unique stationary distribution is $\pi = \delta_{(0,0,0)}$: all three species go extinct with probability one from every initial condition.
 
 **Proposition 2 (single-species persistence).** The minimal model has exactly four stationary distributions: $\delta_{(0,0,0)}$ and, for each $i \in \{1,2,3\}$,
+
 $$\pi(N) = \frac{(r\Omega)^{N_i}}{N_i!\,\big(e^{r\Omega} - 1\big)}\ \delta(N_{i+1})\,\delta(N_{i+2}), \qquad N_i \ge 1,$$
+
 a zero-truncated Poisson law of mean parameter $r\Omega$ for the surviving species, the others being extinct.
 
 ## Expansion

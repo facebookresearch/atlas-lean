@@ -12,11 +12,15 @@ $$\begin{aligned}
 so the biting dwell time is $\mathrm{PH}(\vec\alpha, A)$ (linear chain trick). Here $\rho_J$ is maturation, $\mu_J, \mu$ are death rates, $\gamma_V, \gamma_R$ are the rates of leaving oviposition and rest, and the recruitment $\varphi(V,J)$ satisfies regularity assumptions with $\phi_V = \partial_V\varphi(0,0)$ and $\phi_J = \partial_J\varphi(0,0)$.
 
 Define
+
 $$\tau = \vec\alpha^{T}(\mu I - A)^{-1}(-A\vec 1), \qquad n_G = \left(1 - \tau\,\frac{\gamma_V}{\mu + \gamma_V}\,\frac{\gamma_R}{\mu + \gamma_R}\right)^{-1}.$$
+
 Here $\tau$ is the probability of leaving the biting state alive, and $n_G$ is the expected number of gonotrophic cycles.
 
 **Theorem.** With the **basic offspring number**
+
 $$\mathcal N_0 = \tau \times \frac{\phi_V}{\mu + \gamma_V} \times \frac{\rho_J}{\rho_J + \mu_J - \phi_J} \times n_G,$$
+
 the extinction equilibrium is locally asymptotically stable if and only if $\mathcal N_0 < 1$. For logistic recruitment $\varphi = \phi(1 - J/K_J)V$ there is a unique positive equilibrium exactly when $\mathcal N_0 > 1$. For linear recruitment $\varphi = \phi V$ a positive equilibrium exists only in the degenerate case $\mathcal N_0 = 1$.
 
 ## Expansion

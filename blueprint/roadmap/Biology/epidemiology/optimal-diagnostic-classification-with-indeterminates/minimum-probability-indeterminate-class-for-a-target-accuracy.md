@@ -3,16 +3,25 @@
 **Setting.** Measurements $r \in \Omega$ have density $P(r)$ for positive and $N(r)$ for negative samples, both summable and assigning zero mass to single points; with prevalence $p$, a test sample has density $Q(r) = pP(r) + (1-p)N(r)$. A classification partitions $\Omega$ (up to null sets) into positive, negative and indeterminate domains $D_P, D_N, D_h$. The error rate $E[D_P,D_N] = \int_{D_P}(1-p)N + \int_{D_N}pP$ does not count indeterminates; the accuracy restricted to classified samples is $L = 1 - E/\int_{D}Q$, $D = D_P \cup D_N$.
 
 **Binary optimum.** With no indeterminate class, the error is minimized by
+
 $$D_P^\star = \{r : pP(r) > (1-p)N(r)\}, \qquad D_N^\star = \{r : (1-p)N(r) > pP(r)\},$$
+
 with the tie set $\{pP = (1-p)N\}$ split arbitrarily when it has positive measure. Define the local accuracy of this rule,
+
 $$Z^\star(r) = \frac{\max\{pP(r),\ (1-p)N(r)\}}{Q(r)} \in [\tfrac12, 1].$$
 
 **Theorem.** Let $X$ be a target accuracy with $L[D_P^\star, D_N^\star] < X$, and suppose $Z^\star > X$ on a set of positive measure. Among all classifications whose classified samples have accuracy exactly $X$,
+
 $$p\int_{D_P}P + (1-p)\int_{D_N}N = X\int_D Q,$$
+
 the probability $\int_{D_h}Q$ of the indeterminate class is minimized by
+
 $$D_h = \{r : Z^\star(r) < Z_0(X)\} \cup C(X), \qquad D_P = D_P^\star \setminus D_h, \qquad D_N = D_N^\star \setminus D_h,$$
+
 where the threshold $Z_0(X)$ solves
+
 $$\int_{\Omega\setminus(\{Z^\star < Z_0\}\cup C)} \big(Z^\star(r) - X\big)\,Q(r)\,dr = 0$$
+
 and $C(X) \subset \{Z^\star = Z_0\}$ is any subset that makes this hold (empty when the level set is $Q$-null). Thus the samples to hold out are exactly those with the lowest local accuracy, and $Z_0(X)$, the largest local accuracy that is held out, is also the smallest accuracy among classified samples.
 
 ## Depends on

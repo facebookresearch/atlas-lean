@@ -8,13 +8,16 @@ $$\begin{aligned}
 \partial_t F &= \alpha(G + S + T)(J_F * F) - \phi(w * G)F,
 \end{aligned}$$
 where the kernels are even probability densities (H1–H2), and the fire responses $\omega$ (sapling recruitment) and $\phi$ (forest mortality) are step functions of flammable cover with thresholds $\theta_1, \theta_2 \in (0,1)$ (H3). With resource limitation on forest growth with competition kernel $R$ and constraint $r \in (0,1]$, the grass–forest subsystem ($F = 1 - G$) reduces to
+
 $$\partial_t G = (1 - G)\,\phi(w * G) - \alpha G\big(1 - J_F * G\big)\Big(1 - \tfrac1r + \tfrac1r R * G\Big).$$
 
 **Theorem.**
 1. (No patterns from fire alone) Every locally asymptotically stable equilibrium of the non-spatial Staver–Levin model is a locally asymptotically stable homogeneous equilibrium of the spatial model, for all kernels satisfying (H1–H2) and fire responses satisfying (H3).
 2. (All-grass state) With resource limitation and positive definite kernels (non-negative Fourier transforms, e.g. kernels maximal at $0$), a stable all-grass state of the non-spatial model remains stable in the spatial model.
 3. (Mixed states) For a mixed equilibrium $\bar G \in (0,1)$ the dispersion relation is
+
 $$\lambda(\xi) = A\,\hat w(|\xi|) + B\,\hat R(|\xi|) + C\,\hat J_F(|\xi|) + D,$$
+
 with $A = \phi'(\bar G)(1 - \bar G)$ ($= 0$ almost everywhere under (H3)), $B = -\tfrac{\alpha}{r}\bar G(1 - \bar G) < 0$ from resource competition, $C > 0$ from seed dispersal and $D = \lim_{|\xi|\to\infty}\lambda(\xi)$. A Turing instability occurs iff $\lambda(0) = A + B + C + D < 0$, $D < 0$, and $\lambda(\xi) > 0$ for some $\xi \ne 0$; this requires $\hat R$ to decay faster than $\hat J_F$, i.e. competition acting over longer distances than seed dispersal in the relevant range of wave numbers.
 
 ## Depends on

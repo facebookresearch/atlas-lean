@@ -3,7 +3,9 @@
 Let $(T, t, \sigma)$ be a leaf-colored, event-labeled gene tree (event labels $\bullet$ for speciation and $\square$ for duplication on inner vertices), with reciprocal best match graph $G(T, \sigma)$ and orthology relation $\Theta(T, t) = \{xy : t(\mathrm{lca}_T(x, y)) = \bullet\}$. For genes $a, b \in L(T)$ let $v = \mathrm{lca}_T(a, b)$ and let $v_a, v_b$ be the children of $v$ with $a \preceq_T v_a$ and $b \preceq_T v_b$. Write $\sigma(L(T(u)))$ for the set of species represented below $u$.
 
 **Theorem 3.** $ab$ is a false-positive orthology edge, $ab \in E(G(T, \sigma)) \setminus E(\Theta(T, t))$, if and only if
+
 $$t(v) = \square \quad\text{and}\quad \sigma(a), \sigma(b) \in \sigma(L(T(v_a))) \,\triangle\, \sigma(L(T(v_b))),$$
+
 where $\triangle$ is the symmetric set difference. Equivalently, $a$ and $b$ are paralogs separated by a duplication after which the lineage containing $a$ lost every copy in species $\sigma(b)$ and the lineage containing $b$ lost every copy in species $\sigma(a)$.
 
 ## Depends on

@@ -1,7 +1,9 @@
 # Two-site modification steady states as two quartic equations
 
 **Setting.** A substrate $S$ is modified at two sites in a fixed order by a forward enzyme $E$ and demodified in the reverse order by an enzyme $F$, giving three modforms $S_0, S_1, S_2$ ($S_i$ has $i$ modified sites). Each of the four reactions $S_0 \xrightarrow{E} S_1$, $S_1 \xrightarrow{E} S_2$, $S_1 \xrightarrow{F} S_0$, $S_2 \xrightarrow{F} S_1$ may follow any reasonable distributive mass-action mechanism built from substrate binding, intermediate complexes and product release; product rebinding is allowed. The linear framework summarizes the steady state of each mechanism by generalized parameters: for $S_i \xrightarrow{X} S_j$, reciprocal total generalized Michaelis–Menten constants $\kappa^X_{i,j}, \kappa^X_{j,i} \ge 0$ with
+
 $$\kappa^X_{i,j}[X][S_i] + \kappa^X_{j,i}[X][S_j] = \sum_{S_i \to_X S_j} [Y^*],$$
+
 the total steady-state concentration of that mechanism's intermediate complexes, and total generalized catalytic efficiencies $c^X_{i,j}, c^X_{j,i}$ giving the net rate contribution $c^X_{i,j}[X][S_i] - c^X_{j,i}[X][S_j]$. Irreversibility is imposed as $\kappa^X_{i,j} > 0$, $c^X_{i,j} > 0$, $\kappa^X_{j,i} \ge 0$, $c^X_{j,i} = 0$ for the forward direction of each reaction.
 
 **Reduction.** Let $\alpha = c^E_{0,1}/c^F_{1,0}$, $\beta = c^E_{1,2}/c^F_{2,1}$, $\epsilon_0 = \kappa^E_{0,1}E_{\mathrm{tot}}$, $\epsilon_1 = (\kappa^E_{1,0}+\kappa^E_{1,2})E_{\mathrm{tot}}$, $\epsilon_2 = \kappa^E_{2,1}E_{\mathrm{tot}}$, $\phi_0 = \kappa^F_{0,1}F_{\mathrm{tot}}$, $\phi_1 = (\kappa^F_{1,0}+\kappa^F_{1,2})F_{\mathrm{tot}}$, $\phi_2 = \kappa^F_{2,1}F_{\mathrm{tot}}$, together with the totals $\sigma = S_{\mathrm{tot}}/E_{\mathrm{tot}}$, $\lambda = S_{\mathrm{tot}}/F_{\mathrm{tot}}$, $\zeta = E_{\mathrm{tot}}/F_{\mathrm{tot}}$ and the free-enzyme fractions $u = [E]/E_{\mathrm{tot}}$, $v = [F]/F_{\mathrm{tot}}$. Then:

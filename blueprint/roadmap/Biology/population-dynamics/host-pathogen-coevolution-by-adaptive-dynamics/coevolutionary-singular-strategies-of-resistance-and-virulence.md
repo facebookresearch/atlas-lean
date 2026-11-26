@@ -1,14 +1,21 @@
 # Coevolutionary singular strategies of resistance and virulence
 
 **Ecological model.** Susceptible hosts $S$ and infected hosts $I$ (which neither reproduce nor recover), with total density $N = S + I$ and density-dependent mortality $m(N) = m_0 + m_1 N$, obey
+
 $$\dot S = b(x_1)S - \beta(x_1 - x_2)SI - m(N)S, \qquad \dot I = \beta(x_1 - x_2)SI - \alpha(x_2)I - m(N)I,$$
+
 where $x_1$ is host resistance, $x_2$ pathogen virulence, $b' < 0$ (resistance is costly), $\alpha' > 0$ (virulence kills the host) and $\beta$ is decreasing in $x_1 - x_2$ (an asymmetric interaction). Infection can spread iff
+
 $$\mathcal R_0 = \frac{\beta(x_1 - x_2)\,(b(x_1) - m_0)}{(b(x_1) + \alpha(x_2))\,m_1} > 1,$$
+
 and then the endemic equilibrium $(S^*, I^*)$ is globally asymptotically stable in the open positive quadrant.
 
 **Invasion fitness and canonical equation.** A rare mutant host $y_1$ or pathogen $y_2$ in the resident community at $(S^*, I^*)$ has invasion fitness
+
 $$f_1(y_1; x_1, x_2) = b(y_1) - \beta(y_1 - x_2)I^* - m(N^*), \qquad f_2(y_2; x_1, x_2) = \beta(x_1 - y_2)S^* - \alpha(y_2) - m(N^*),$$
+
 and successful invasion leads to trait substitution. With small rare mutations (probabilities $\mu_i$, variances $\sigma_i^2$),
+
 $$\frac{dx_1}{d\tau} = \tfrac12\mu_1\sigma_1^2 S^*\,g_1, \qquad \frac{dx_2}{d\tau} = \tfrac12\mu_2\sigma_2^2 I^*\,g_2, \qquad g_i = \frac{\partial f_i}{\partial y_i}\Big|_{y_i = x_i}.$$
 
 **Theorem.** Let $(x_1^*, x_2^*)$ be a singular strategy ($g_1 = g_2 = 0$) with $\mathcal R_0 > 1$, and let $J$ be the Jacobian of the canonical equation there.

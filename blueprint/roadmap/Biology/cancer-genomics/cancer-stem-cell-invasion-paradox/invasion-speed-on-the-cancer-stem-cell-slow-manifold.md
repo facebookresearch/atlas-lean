@@ -1,15 +1,21 @@
 # Invasion speed on the cancer stem cell slow manifold
 
 Let $u(x,t)$ and $v(x,t)$ be the densities of cancer stem cells and non-stem tumour cells, $n=u+v$, and let $F:[0,1]\to[0,1]$ be a decreasing volume-limitation function with $F(0)=1$ and $F(1)=0$ (e.g. $F(n)=1-n$). With stem-cell self-renewal probability $p_s=\varepsilon$, slow motility $D=\varepsilon d$ and tumour-cell death rate $\alpha>0$,
+
 $$u_t=\varepsilon du_{xx}+\varepsilon F(n)u,\qquad v_t=\varepsilon dv_{xx}+(1-\varepsilon)F(n)u+F(n)v-\alpha v .$$
 
 **Slow manifold.** As $\varepsilon\to 0$ the fast dynamics relaxes to
+
 $$M=\{(u,v):\alpha v=F(u+v)(u+v)\},$$
+
 which is the graph of a differentiable function $v_\alpha$ on $[0,1]$ with $v_\alpha(1)=0$. If $\alpha<1$ it starts at $(0,v_\alpha^*)$ where $F(v^*_\alpha)=\alpha$; if $\alpha\ge 1$ it starts at $(0,0)$. Moreover $\alpha_1>\alpha_2$ implies $v_{\alpha_1}(u)<v_{\alpha_2}(u)$ for $u\in(0,1)$, and the total density $n(u)=u+v_\alpha(u)$ is strictly increasing along $M$. On the slow time scale $\tau=\varepsilon t$ the stem cells obey the Fisher–KPP-type equation
+
 $$u_\tau=du_{xx}+F\bigl(u+v_\alpha(u)\bigr)u .$$
 
 **Theorem (invasion paradox).** For a solution of the reduced equation with invasion initial data (monotonically decreasing, tending to $1$ at $-\infty$ and vanishing beyond some $x^*$), $u$ converges to a travelling wave with minimal speed
+
 $$\sigma^*=\begin{cases}2\sqrt{d\alpha},&0<\alpha<1,\\ 2\sqrt d,&\alpha\ge 1.\end{cases}$$
+
 So the invasion speed increases with the death rate of non-stem cells up to $\alpha=1$, and the two branches join continuously.
 
 ## Expansion

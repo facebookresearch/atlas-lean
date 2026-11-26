@@ -1,8 +1,11 @@
 # Free-boundary biofilm model and its local well-posedness
 
 **Model.** A biofilm occupies $0 \le z \le L(t)$ above a substratum at $z = 0$. Microbial species $i \in J_f$ (for plasmid transfer: plasmid-free cells, plasmid carriers, conjugation-able donors, inert biomass, and so on) have volume fractions $f_i(z, t) \ge 0$ with $\sum_i f_i = 1$, and dissolved substances $j \in J_S$ (nutrients, metals, antibiotics) have concentrations $S_j(z, t)$. With growth rates $r_{M,i}(f, S)$ and conversion terms $R_i(z, f, S)$ (decay, conjugation, gene expression; possibly nonlocal in $z$) satisfying $\sum_i R_i = 0$, the model is
+
 $$\partial_t f_i + \partial_z (u f_i) = r_{M,i}(f, S) + R_i(z, f, S), \qquad \partial_z u = \sum_{i \in J_f} r_{M,i}(f, S), \quad u(0, t) = 0,$$
+
 $$\partial_t S_j - \partial_z\big(D_{S,j}\, \partial_z S_j\big) = r_{S,j}(f, S), \qquad \dot L(t) = u(L(t), t) - \sigma_d(L(t), t), \quad \sigma_d = \delta L^2,$$
+
 (Equations 1, 2, 23, 27, 28), with initial fractions $f_{i,0}$ on $[0, L_0]$, no-flux conditions for $S_j$ at the substratum and Dirichlet data $S_j^*(t)$ at the free boundary. The growth velocity $u$ is obtained by summing the $f_i$ equations, since $\sum_i f_i \equiv 1$ and conversions do not create volume.
 
 **Theorem 1 (local existence and uniqueness).** Write the system in Lagrangian coordinates along the characteristics $z = c(z_0, t)$, $\partial_t c = u(c, t)$, $c(z_0, 0) = z_0 \in [0, L_0]$, with unknowns $c$, $\partial_{z_0} c$, $x_i(z_0, t) = f_i(c(z_0, t), t)$ and $s_j(z_0, t)$. Suppose the initial data $f_{i,0}$ and boundary data $S_j^* > 0$ are continuous, the total growth $G = \sum_i r_{M,i}$ is essentially positive, $L_0$ is small, and all right-hand sides of the transformed system are bounded and Lipschitz in their arguments, with bounds $M$ and Lipschitz constants as in the hypotheses. Then the transformed system has a unique continuous solution $(c, \partial_{z_0} c, x, s)$ on $[0, L_0] \times [0, T]$ for an explicit $T > 0$ depending on $L_0$, the bounds and the admissible deviations from the initial data.

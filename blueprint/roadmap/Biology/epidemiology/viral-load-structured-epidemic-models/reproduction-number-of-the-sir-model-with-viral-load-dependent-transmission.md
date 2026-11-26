@@ -11,6 +11,7 @@ $$\begin{aligned}
 with birth and death rate $b, \mu > 0$, transmission coefficient $\beta > 0$, viral load $v_0$ of newly infected individuals, rate $\lambda\gamma > 0$ of viral-load updates and $\nu_1, \nu_2 \in (0,1)$ shaping the within-host viral-load kinetics. The region $\{0 < \rho_S + \rho_{I_1} + \rho_{I_2} \le b/\mu,\ n_{I_j} \le \rho_{I_j}\}$ is positively invariant, and the disease-free equilibrium is $(b/\mu, 0, 0, 0, 0)$.
 
 **Theorem 1.** The disease-free equilibrium is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$, where, with $a = \lambda\gamma$,
+
 $$\mathcal R_0 = \frac{\beta b}{\mu}\cdot\frac{a\nu_1\big(a\nu_1(1-\nu_2)^2 + a\nu_2(2-\nu_2) + \mu\big) + v_0(a\nu_1 + \mu)\big(a\nu_1(1-\nu_1) + a\nu_2(2-\nu_2) + \mu\big)}{(a\nu_1 + \mu)\big(a\nu_1(2-\nu_1) + \mu\big)\big(a\nu_2(2-\nu_2) + \mu\big)}.$$
 
 **Theorem 2.** If $\mathcal R_0 < 1$ there is no endemic equilibrium; if $\mathcal R_0 > 1$ there is a unique one, with $\rho_S^E = \frac{b}{\mu}\frac{1}{\mathcal R_0}$ and $\rho_{I_1}^E = \frac{b}{a\nu_1 + \mu}\big(1 - \frac{1}{\mathcal R_0}\big)$.

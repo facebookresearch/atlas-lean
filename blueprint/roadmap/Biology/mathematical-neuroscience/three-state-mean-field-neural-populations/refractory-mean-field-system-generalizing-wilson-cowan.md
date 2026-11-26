@@ -1,13 +1,17 @@
 # Refractory mean-field system generalizing Wilson–Cowan
 
 Neurons are sensitive, active or refractory. In population $J$ a sensitive neuron activates at rate $\alpha_JF_J(B_J)$, an active one becomes refractory at rate $\beta_J$, and a refractory one becomes sensitive at rate $\gamma_J$, where $F_J\ge 0$ is an increasing response function and $B_J=\sum_K c_{JK}A_K+Q_J$ is the input, with $c_{JK}=|K|W_{JK}$. With the mean-field closure (covariances neglected), the active, refractory and sensitive fractions $A_J,R_J,S_J=1-A_J-R_J$ satisfy
+
 $$\dot A_J=-\beta_JA_J+\alpha_JF_J(B_J)S_J,\qquad \dot R_J=-\gamma_JR_J+\beta_JA_J,\qquad \dot S_J=-\alpha_JF_J(B_J)S_J+\gamma_JR_J,$$
+
 a $2n$-dimensional system on $\mathcal D_n=\{(A_J,R_J)_J: A_J,R_J\ge 0,\ A_J+R_J\le 1\}$.
 
 **Proposition 1.** $\mathcal D_n$ is invariant under the flow.
 
 **Wilson–Cowan reduction.** Fixing each refractory fraction at its equilibrium value $R_J=\frac{\beta_J}{\gamma_J}A_J$ gives the $n$-dimensional subsystem
+
 $$\dot A_J=-\beta_JA_J+\alpha_JF_J(B_J)\Bigl(1-\bigl(1+\tfrac{\beta_J}{\gamma_J}\bigr)A_J\Bigr),$$
+
 which is Wilson and Cowan's equation with $\tau_J=1/\beta_J$, refractory period $r_J=1/\beta_J+1/\gamma_J$, $f_J=\alpha_JF_J$ and $w_{JK}=c_{JK}/\beta_K$ written for the firing rate $\beta_JA_J$. Both systems have the same fixed points.
 
 **Proposition 2.** The Wilson–Cowan domain $\mathcal D_n^{\mathrm{WC}}=\{R_J=\tfrac{\beta_J}{\gamma_J}A_J\ \forall J\}$ is not invariant under the full flow; hence it is not an attracting set and the Wilson–Cowan subsystem is not stable inside the full system.

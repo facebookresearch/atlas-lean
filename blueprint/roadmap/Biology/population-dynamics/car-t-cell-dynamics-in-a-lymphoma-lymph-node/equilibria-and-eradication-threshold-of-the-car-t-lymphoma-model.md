@@ -1,13 +1,17 @@
 # Equilibria and eradication threshold of the CAR T-cell lymphoma model
 
 **Model (dimensionless).** Let $C \ge 0$ be the CAR T-cell population and $L \ge 0$ the B-cell lymphoma load in a lymph node, after rescaling. With nonnegative parameters $m_1$ (antigen-driven CAR T expansion), $m_2$ (tumor-induced CAR T inactivation), $m_3$ (saturation of inactivation), $m_4$ (CAR T death and efflux) and $m_5$ (tumor killing by CAR T cells),
+
 $$\frac{dC}{dt} = 1 + m_1 \frac{C L}{1 + L} - m_2 \frac{C L}{1 + m_3 C} - m_4 C, \qquad \frac{dL}{dt} = L - m_5 C L,$$
+
 where the constant $1$ is the rescaled inflow of CAR T cells into the node. The nonnegative quadrant is positively invariant (Proposition 1).
 
 **Tumor-free state (Proposition 2).** $E_1 = (1/m_4, 0)$ always exists, with Jacobian eigenvalues $-m_4$ and $1 - m_5/m_4$. It is asymptotically stable if $m_5 > m_4$ and unstable if $m_5 < m_4$.
 
 **Coexistence states (Propositions 3-4).** Any other equilibrium has $C = 1/m_5$ and $L$ a root of $aL^2 + bL + c = 0$ with
+
 $$a = -\frac{m_2}{1 + m_3/m_5}, \qquad b = m_1 + m_5 - m_4 - \frac{m_2}{1 + m_3/m_5}, \qquad c = m_5 - m_4,$$
+
 giving a high-load state $E_2$ with $L_2 = (-b - \sqrt\Delta)/(2a)$ and a low-load state $E_3$ with $L_3 = (-b + \sqrt\Delta)/(2a)$, $\Delta = b^2 - 4ac$. Writing $k = m_2/(1 + m_3/m_5)$:
 - they exist iff $m_5 \ge m_4$, or $m_5 < m_4$ and $k \le (m_1 + m_4 - m_5) - 2\sqrt{m_1(m_4 - m_5)}$ or $k \ge (m_1 + m_4 - m_5) + 2\sqrt{m_1(m_4 - m_5)}$;
 - $L_2 \ge 0$ iff $m_5 \ge m_4$ or $k \le m_1 + m_5 - m_4$;

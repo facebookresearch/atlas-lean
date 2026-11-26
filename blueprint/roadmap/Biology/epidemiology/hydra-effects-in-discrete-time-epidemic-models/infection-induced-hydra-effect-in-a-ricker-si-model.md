@@ -1,8 +1,11 @@
 # Infection-induced hydra effect in a Ricker SI model
 
 **Model.** Hosts reproduce with Ricker growth $g(x) = r x e^{-bx}$ ($r > 0$ maximal per-capita growth, $b > 0$ density dependence), survive each generation with probability $1 - d$, and susceptibles escape infection with probability $e^{-\beta I}$. Infected hosts have relative fecundity $w \in [0,1]$ (fecundity reduction $\tilde w = 1 - w$) and extra mortality probability $\mu \in [0,1]$. The disease-free and with-disease systems are
+
 $$\bar S_{t+1} = r\bar S_t e^{-b\bar S_t} + (1 - d)\bar S_t,$$
+
 $$S_{t+1} = r(S_t + wI_t)e^{-b(S_t + wI_t)} + (1 - d)S_t e^{-\beta I_t}, \qquad I_{t+1} = (1 - d)S_t\bigl(1 - e^{-\beta I_t}\bigr) + (1 - d)(1 - \mu)I_t,$$
+
 with total population $T = S + I$. The disease-free fixed point is $\bar S^* = \frac1b \ln\frac rd$ (for $r > d$).
 
 **Hydra effects.** At a fixed point $(S^*, I^*)$, a *classical* hydra effect with respect to a fitness-reducing parameter $\alpha \in \{\tilde w, \mu\}$ means $\partial T^*/\partial\alpha > 0$; at a $k$-cycle, the cycle average of $\partial T_i^*/\partial\alpha$ is positive. An *infection-induced* hydra effect means the with-disease system has a fixed point with $S^* + I^* > \bar S^*$.
@@ -10,7 +13,9 @@ with total population $T = S + I$. The disease-free fixed point is $\bar S^* = \
 1. **Endemic equilibrium.** The endemic fixed point ($I^* > 0$) exists and is unique, and it satisfies $S^* + wI^* < \bar S^*$: the *effective reproducing* population is always below the disease-free level.
 2. **Mortality hydra implies fecundity hydra.** If $\ln\frac rd < \dfrac{wbd}{\beta(1 - d)}$ and there is a classical hydra effect in $\mu$ at the fixed point ($\partial T^*/\partial\mu > 0$), then there is also one in the fecundity reduction ($\partial T^*/\partial\tilde w > 0$).
 3. **Sufficient condition for an infection-induced hydra effect.** If
+
 $$w < 1 - \frac{\beta}{b} \qquad\text{and}\qquad d \ge \frac12,$$
+
 then the endemic fixed point has $S^* + I^* > \bar S^*$, regardless of the disease-induced mortality $\mu$.
 
 Numerically, hydra effects are most widespread when the disease-free population cycles: infection can enlarge the time-averaged population across period-doubling and chaotic regimes even where no fixed-point hydra effect exists.

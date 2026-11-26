@@ -3,7 +3,9 @@
 In the aspiration dynamics of a two-strategy $d$-player game on a regular network of degree $d - 1$ (payoffs $a_k$, $b_k$; personal aspirations $e_i$; decision functions $g_i(\beta(e_i - \pi_i))$), assume each $g_i$ is differentiable with $g_i' > 0$ and $0 < g_i < 1$ on $\mathbb{R}$.
 
 **Theorem.** In the limit of weak selection $\beta \to 0^+$ there are $d$ coefficients $\sigma_0, \dots, \sigma_{d-1}$, depending on the decision functions, the population size and the network but on neither the payoff entries nor the aspirations, such that strategy $A$ is more abundant than $B$ (average abundance above $\tfrac12$) whenever
+
 $$\sum_{k=0}^{d-1} \sigma_k \,\big(a_k - b_{d-1-k}\big) > 0.$$
+
 In particular, heterogeneous personal aspirations select the same strategy as a homogeneous aspiration level.
 
 ## Depends on

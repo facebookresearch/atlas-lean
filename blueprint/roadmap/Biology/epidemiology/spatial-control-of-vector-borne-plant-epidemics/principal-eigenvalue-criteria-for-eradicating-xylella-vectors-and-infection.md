@@ -1,11 +1,15 @@
 # Principal-eigenvalue criteria for eradicating Xylella vectors and infection
 
 **Model.** On a bounded habitat $\Omega \subset \mathbb R^N$ with no-flux boundary, insect vectors (susceptible $s_1$, infective $i_1$, total $C_I = s_1 + i_1$) diffuse with coefficient $d > 0$ and reproduce logistically on host weeds of spatial density $M(x) \ge 0$; olive-tree canopy (healthy $s_2$, infected $i_2$, total $C_T$) does not move. Controls act on a subregion $\omega \subseteq \Omega$ with indicator $I_\omega$: extra vector mortality $\gamma_1 \ge 0$, weed removal $\gamma_{21} \in [0,1]$, and reduced transmission $\gamma_{22}, \gamma_{23}, \gamma_3 \in [0,1]$. The total vector density satisfies
+
 $$\partial_t C_I = d\,\Delta C_I + r\big[M(x)(1 - \gamma_{21}I_\omega(x)) - \chi C_I\big] C_I - \big(n + \gamma_1 I_\omega(x)\big) C_I, \qquad \partial_\nu C_I = 0,$$
+
 and the canopy obeys $\partial_t C_T = (q - \ell) C_T - C_T^2/C - (\mu + q) i_2$, so $\limsup C_T \le C(q - \ell)^+$, the tree carrying capacity. Infection passes from vectors to trees through $\zeta i_1 s_2$ and the secondary term $b\ell\, i_2 s_2$, and from trees to vectors through $\beta s_1 \int_\Omega k(x, x') i_2(x', t)\,dx'$ with a bounded kernel $k$.
 
 **Vector threshold.** Let $\tilde\lambda_1$ be the principal eigenvalue of
+
 $$-d\,\Delta\varphi - \big[r M(x)(1 - \gamma_{21}I_\omega(x)) - (n + \gamma_1 I_\omega(x))\big]\varphi = \lambda\varphi \ \text{in } \Omega, \qquad \partial_\nu \varphi = 0.$$
+
 $\tilde\lambda_1$ increases with $\gamma_1$, $\gamma_{21}$ and, by inclusion, with $\omega$ (Rayleigh's principle).
 
 **Proposition 1.**
@@ -13,7 +17,9 @@ $\tilde\lambda_1$ increases with $\gamma_1$, $\gamma_{21}$ and, by inclusion, wi
 2. If $\tilde\lambda_1 < 0$, there is a unique positive stationary solution $C_I^\ast$, the maximal nonnegative one, and $C_I(\cdot,t) \to C_I^\ast$ in $L^\infty(\Omega)$ whenever $C_I(\cdot,0) \not\equiv 0$.
 
 **Theorem 2 (eradication of infection with surviving vectors).** When the transmission-reducing controls $\gamma_{22}, \gamma_{23}, \gamma_3$ act on the whole habitat, if $\tilde\lambda_1 < 0$, $q > \ell$, $C_I(\cdot, 0) \not\equiv 0$ and
+
 $$\Big[(1 - \gamma_{23})\|C_I^\ast\|_\infty \|k\|_2 + \zeta(1 - \gamma_{22})\, C(q-\ell)^+\Big]^2 < \lambda_1\Big[\mu + \ell + \alpha - b(1 - \gamma_3)\ell\, C(q - \ell)^+\Big],$$
+
 with $\lambda_1 \ge n$ the principal eigenvalue of the diffusion operator governing infective vectors (it can be made arbitrarily large by strong culling over a large enough region), then $i_1(\cdot, t) \to 0$ and $i_2(\cdot, t) \to 0$ in $L^1(\Omega)$.
 
 ## Expansion

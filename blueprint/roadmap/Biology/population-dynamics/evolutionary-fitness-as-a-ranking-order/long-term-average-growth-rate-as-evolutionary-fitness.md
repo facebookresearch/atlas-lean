@@ -1,6 +1,7 @@
 # Long-term average per-capita growth rate as evolutionary fitness
 
 In the measure framework for selection (strategies in a compact metric space $V$, bounded presence measures with densities $\eta(v, t)$), define the long-term average of the generalised reproduction coefficient
+
 $$J_1(v) = \lim_{T \to \infty} \frac{1}{T}\int_0^T \frac{\partial_t \eta(v, t)}{\eta(v, t)}\,dt = \lim_{T \to \infty} \frac{\ln \eta(v, T)}{T}.$$
 
 **Theorem.** Assume the limit exists for every $v$ with $\eta(v, 0) > 0$, and that every point has a neighbourhood on which the convergence is uniform. Then $J_1(v) > J_1(w)$ implies $v \succ w$; that is, $J_1$ is an evolutionary fitness.

@@ -1,13 +1,17 @@
 # Suffix support bound for repeated structured motifs
 
 **Setting.** A structured motif is
+
 $$\mathcal M = M_1[l_1, u_1]\,M_2[l_2, u_2]\cdots M_{k-1}[l_{k-1}, u_{k-1}]\,M_k,$$
+
 where the $M_i$ are simple motif components (short strings over $\{A,C,G,T\}$, possibly matched with a bounded number of substitutions) and $0 \le l_i \le u_i$ are the minimum and maximum gap lengths between $M_i$ and $M_{i+1}$: if $M_i$ ends at $e_i$ and $M_{i+1}$ starts at $s_{i+1}$, the gap $g_i = s_{i+1} - e_i - 1$ must lie in $[l_i, u_i]$. An occurrence of $\mathcal M$ in a sequence set is a choice of positions of all components satisfying the gap constraints; the **weighted support** $\pi_w(\mathcal M) = |\mathcal O(\mathcal M)|$ counts all occurrences (including repeated ones in the same sequence). Write $W_m = u_m - l_m + 1$ for the span of the $m$-th gap range.
 
 In the repeated-motif problem the downward closure property fails: in GCTTT the pattern G[1,3]T occurs three times while its sub-pattern G occurs once.
 
 **Theorem.** For a structured motif $\mathcal M = M_1\cdots M_k$ and its suffix $\mathcal M' = M_i\cdots M_k$ ($1 \le i \le k$, with the same gaps),
+
 $$\pi_w(\mathcal M') \ge \frac{\pi_w(\mathcal M)}{\prod_{m=1}^{i-1} W_m}.$$
+
 Consequently, if $\mathcal M$ must reach a quorum of $q$ occurrences, every suffix $\mathcal M'$ that can be extended to such an $\mathcal M$ must have $\pi_w(\mathcal M') \ge q / \prod_{m=1}^{i-1}W_m$, and suffixes below this bound can be pruned.
 
 ## Depends on

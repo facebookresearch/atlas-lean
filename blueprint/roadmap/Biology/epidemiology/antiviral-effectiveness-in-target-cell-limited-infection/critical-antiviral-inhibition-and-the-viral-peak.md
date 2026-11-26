@@ -1,9 +1,13 @@
 # Critical antiviral inhibition and the viral peak
 
 **Model.** Uninfected target cells $U$, infected cells $I$ and virus $V$ obey
+
 $$\dot U = -\beta(1-\eta_\beta(t))UV, \qquad \dot I = \beta(1-\eta_\beta(t))UV - \delta I, \qquad \dot V = p(1-\eta_p(t))I - cV,$$
+
 on $\mathbb{R}^3_{\ge0}$, with $\beta, \delta, p, c > 0$. Treatment starting at time $t_{tr}$ sets the inhibition of infection $\eta_\beta(t)$ and of replication $\eta_p(t)$ from $0$ to constants $\eta_\beta, \eta_p \in [0,1)$ for $t \ge t_{tr}$. Without treatment, if $U(0) > U_c = c\delta/(\beta p)$, $I(0) = 0$ and $V(0) > 0$, the virus has a local minimum at $\check t_V$ and a peak at $\hat t_V > \check t_V$. A treatment started at $t_{tr} \in (\check t_V, \hat t_V)$ is *effective* if the treated virus peaks at $\hat t_{V,tr} < \hat t_V$, and *ineffective* otherwise. The within-host reproduction number at treatment time and the critical inhibition are
+
 $$\mathcal R(t_{tr}) = \frac{U(t_{tr})\,p(1-\eta_p)\,\beta(1-\eta_\beta)}{c\delta}, \qquad \eta^c(t_{tr}) = 1 - \frac{c\delta}{U(t_{tr})\beta p},$$
+
 the same critical value for $\eta_p$ and $\eta_\beta$; it increases with $U(t_{tr})$, so it decreases as treatment is delayed, approaching $0$ near the untreated peak.
 
 **Theorem.** Let $t_{tr} \in (\check t_V, \hat t_V)$ and consider one inhibition $\eta \in \{\eta_p, \eta_\beta\}$ at a time.

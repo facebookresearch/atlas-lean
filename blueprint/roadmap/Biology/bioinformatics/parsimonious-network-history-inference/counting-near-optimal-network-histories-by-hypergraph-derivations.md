@@ -3,12 +3,15 @@
 **Network history problem.** Given present-day protein interaction networks and binary gene trees whose internal nodes are duplications or speciations, an interaction event $(u, v, \pm)$ gains or loses an interaction between ancestral proteins $u, v$ (neither an ancestor of the other). Interactions are inherited through duplications. A set of events is valid if it is logically and temporally consistent, and it reconstructs the data if the inherited interactions at the leaves are exactly the observed ones. The **network history inference problem** asks for a valid reconstructing set of minimum total cost $\sum c(e)$ (Problem 1).
 
 **Hypergraph encoding.** Build an acyclic directed ordered hypergraph whose vertices are pairs $(\{u,v\}, \text{present/absent})$, meaning the interaction state between $u$ and $v$ just before either duplicates. Hyperarcs recurse into the children of $u$ or of $v$, with cost $0$ for keeping the state and the gain or loss cost for switching it, with special arcs for homodimers $\{u,u\}$, and leaf arcs whose cost is $0$ or one event depending on whether the observed edge agrees. A **derivation** is a tree of hyperarcs from the root down to leaves; its cost is the sum of hyperarc costs, and the optimal derivation satisfies the recurrence
+
 $$\delta(v) = \min_{e \in \mathrm{BS}(v)} \Big( c(e) + \sum_{i} \delta(t_i(e)) \Big),$$
+
 where $\mathrm{BS}(v)$ is the backward star of $v$ and $t_i(e)$ the tail vertices.
 
 **Theorem 2.** The gains and losses read off the state switches of an optimal derivation form a minimum-cost solution of Problem 1, except that the set may contain temporally inconsistent events.
 
 **Counting cost classes.** Let $D_j(x)$ be the set of derivations rooted at $x$ in the $j$-th best cost class, with common cost $c_j(x)$. For a hyperarc $e$ with tail $(t_1, \dots, t_r)$ and a vector of cost classes $\mathbf d = (d_1, \dots, d_r)$,
+
 $$\#\{\text{derivations using } e \text{ and classes } \mathbf d\} = \prod_{i=1}^r |D_{d_i}(t_i)|, \qquad |D_j(x)| = \sum_{e \in \mathrm{BS}(x)} \ \sum_{\mathbf d:\ c(e) + \sum_i c_{d_i}(t_i) = c_j(x)} \ \prod_i |D_{d_i}(t_i)| .$$
 
 **Lemma 3.** Every class-$(j+1)$ combination at $x$ arises from a class-$j$ combination by raising the cost class of exactly one tail entry by one. Hence the top-$k$ cost classes and their sizes can be enumerated with a priority queue processing vertices in topological order, without listing individual derivations.

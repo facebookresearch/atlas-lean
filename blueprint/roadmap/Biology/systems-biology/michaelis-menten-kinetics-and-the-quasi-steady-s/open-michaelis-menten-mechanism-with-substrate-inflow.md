@@ -1,15 +1,20 @@
 # Open Michaelis–Menten mechanism with substrate inflow
 
 **Model.** Substrate $S$ flows in at constant rate $k_0 \ge 0$ and is converted by enzyme $E$ through a complex $C$: $\varnothing \xrightarrow{k_0} S$, $S + E \underset{k_{-1}}{\overset{k_1}{\rightleftharpoons}} C \xrightarrow{k_2} E + P$. With total enzyme $e_T = e + c$ conserved, mass action gives on the first quadrant
+
 $$\dot s = k_0 - k_1(e_T - c)s + k_{-1}c, \qquad \dot c = k_1(e_T - c)s - (k_{-1} + k_2)c. \tag{2.4}$$
+
 The open standard quasi-steady-state approximation (sQSSA) replaces $c$ by $w(s) = k_1 e_T s/(k_1 s + k_{-1} + k_2)$, giving $\dot s = k_0 - k_2 e_T s/(K_M + s)$ with $K_M = (k_{-1} + k_2)/k_1$.
 
 1. **Equilibria and invariance.** The first quadrant is positively invariant and solutions exist for all $t \ge 0$; if $k_{-1} + k_2 > 0$ they enter the invariant strip $c \le e_T$. Under the genericity conditions $k_1 \ne 0$, $k_2 \ne 0$, $k_2 e_T \ne k_0$ there is exactly one stationary point
+
 $$P_0 = \Bigl(\frac{(k_{-1} + k_2)k_0}{k_1(k_2 e_T - k_0)},\ \frac{k_0}{k_2}\Bigr),$$
+
 lying in the first quadrant (an attracting node) iff $k_2 e_T > k_0$ and in the second quadrant (a saddle) iff $k_2 e_T < k_0$. There are no non-constant periodic orbits.
 2. **Global dynamics.** If $k_2 e_T > k_0$, every solution in the first quadrant converges to $P_0$. If $k_2 e_T < k_0$ (inflow exceeds the maximal clearance rate), every solution in the first quadrant has $s(t) \to \infty$ with $c(t) \to e_T$: substrate accumulates without bound while the enzyme saturates. In each case a unique distinguished trajectory (through a saddle at infinity, or from $P_0$ to infinity) is a natural candidate for a global slow manifold.
 3. **QSS parameter values.** The QSS curve $\psi(s,c) = k_1(e_T - c)s - (k_{-1} + k_2)c = 0$ is invariant for (2.4) exactly when $e_T = 0$, or $k_1 = 0$, or $k_0 = k_2 = 0$, or $k_{-1} = k_2 = 0$. The singular-perturbation (Tikhonov–Fenichel) parameter values relevant to the sQSSA are $k_0 = e_T = 0$ with the other rates positive, so in contrast to the closed mechanism QSS reduction is justified on a wider parameter set ($e_T$ small, $k_0$ not small) than singular perturbation reduction.
 4. **Approach to the QSS curve.** On a suitable invariant wedge around $\psi = 0$, the squared distance to the QSS curve relaxes with fast time constant $(k_{-1} + k_2)^{-1}$ to a level of order $\varepsilon_*^2$, where
+
 $$\varepsilon_* = \frac{k_0\, k_1 e_T}{(k_{-1} + k_2)^2}.$$
 
 ## Expansion

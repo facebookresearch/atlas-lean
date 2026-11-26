@@ -3,13 +3,17 @@
 **Definitions.** A rooted binary phylogenetic network on leaf set $[n] = \{1,\dots,n\}$ is a rooted acyclic digraph whose non-root, non-leaf vertices are tree vertices (in-degree 1, out-degree 2) or reticulation vertices (in-degree 2, out-degree 1). It is **tree-child** if every non-leaf vertex has a child that is a tree vertex or leaf, and **normal** if it is tree-child and has no shortcut (no arc $(u,v)$ with another directed path from $u$ to $v$). A **hybridization network** is a tree-child network with a temporal ranking: dates with $T(u) < T(v)$ on tree arcs and $T(u) = T(v) = T(w)$ for a reticulation $v$ with parents $u, w$. Every hybridization network is normal. Let $N_{n,k}$ and $H_{n,k}$ count normal and hybridization networks with $n$ leaves and $k$ reticulations, and $r_n = (2n-3)!!$ the number of rooted binary trees on $[n]$.
 
 **Tree decoration.** A $k$-fold decorated tree places, one at a time, $k$ new arcs $(p_i, p'_i)$ between subdivision points of the edges of a rooted binary tree $T$ (with a root edge). For a fixed base tree there are
+
 $$|S(T,k)| = \frac{(2n-1)(2n)\cdots(2n+2k-2)}{k!} \sim \frac{4^k n^{2k}}{k!}$$
+
 such decorations, so in total $|S(n,k)| = r_n\,|S(T,k)| \sim \frac{2^{2k-1}\sqrt2}{k!}\big(\tfrac{2}{e}\big)^n n^{n+2k-1}$.
 
 **Theorem.**
 1. For fixed $k$, the fraction of $k$-fold decorated trees whose resulting digraph is not a normal network tends to $0$ as $n \to \infty$; the exceptions (cycles, non-tree-child or shortcut configurations) number $O\big((2/e)^n n^{n+2k-3/2}\big)$.
 2. Consequently, since a normal network with $k$ reticulations displays exactly $2^k$ trees,
+
 $$N_{n,k} \sim \frac{2^{k-1}\sqrt2}{k!}\Big(\frac{2}{e}\Big)^n n^{n+2k-1},$$
+
 and this remains valid when $k = o(n^{1/3})$.
 3. Hybridization networks have the same asymptotics: $H_{n,k} \sim \frac{2^{k-1}\sqrt2}{k!}(2/e)^n n^{n+2k-1}$ for fixed $k$, and also for $k = o(n^{1/3})$.
 

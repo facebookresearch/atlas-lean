@@ -1,9 +1,13 @@
 # Kelly bet-hedging as the unique competitive equilibrium
 
 Environments $X_1, X_2, \dots$ are i.i.d. with $P(X = i) = p_i$, $i = 1, \dots, k$. A lineage produces phenotype $j$ with probability $f_j$, $f \in \Delta^{k-1}$, and phenotype $j$ has fitness $o_{ij} \ge 0$ in environment $i$, with $o_{ii} > o_{ij}$ and $o_{ii} > 1$. Writing $\bar o_i(f) = \sum_j o_{ij} f_j$ and $H \sim \mathrm{Multinomial}(n, p)$ for the environment counts, the lineage size after $n$ generations is
+
 $$W_n(f) = \prod_{i=1}^k \bar o_i(f)^{H_i}, \qquad G(f) := \lim_{n\to\infty} W_n(f)^{1/n} = \prod_{i=1}^k \bar o_i(f)^{p_i} \ \text{a.s.}$$
+
 The **Kelly strategy** $f_{\mathrm{Kelly}}$ maximizes $G$ (equivalently $E\log W_1$) over the simplex. For $k = 2$ with $f = f_1$,
+
 $$f_{\mathrm{Kelly}}(p) = \frac{(1-p)\,o_{12}}{o_{12} - o_{11}} + \frac{p\,o_{22}}{o_{22} - o_{21}} \quad \text{for } p \in [p_-, p_+],$$
+
 with $f_{\mathrm{Kelly}} = 0$ for $p \le p_-$ and $f_{\mathrm{Kelly}} = 1$ for $p \ge p_+$, where $p_\pm$ are the values at which the linear expression equals $0$ and $1$; the interval $[p_-, p_+]$ is the bet-hedging region.
 
 **Competitive game ($k = 2$).** Two lineages with strategies $f$ and $g$ experience the same environments and have independent initial sizes $W_0, V_0$ with a common uniform distribution (fair randomization). The payoff is $M_n(f,g) = P(W_0 W_n(f) > V_0 W_n(g))$.

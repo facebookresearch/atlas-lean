@@ -1,11 +1,15 @@
 # Two-parameter reduction of sampled birth–death tree densities
 
 Consider a birth–death process with birth rate $\lambda>0$ and death rate $\mu\ge 0$, started from one individual and stopped after time $t_0$, in which each extant individual is sampled independently with probability $\rho\in(0,1]$. Let $\mathcal T$ be the reconstructed tree on the $n$ sampled tips with branching times $t_1>\dots>t_{n-1}$ before the present. For $\lambda\ne\mu$ and $r=\lambda-\mu$,
+
 $$p_{1,1}(t)=\frac{\rho\,r^2e^{-rt}}{\bigl(\rho\lambda+(\lambda(1-\rho)-\mu)e^{-rt}\bigr)^2},\qquad 1-p_0(t)=\frac{\rho\,r}{\rho\lambda+(\lambda(1-\rho)-\mu)e^{-rt}},$$
+
 are the probabilities that one lineage has exactly one, respectively at least one, sampled descendant after time $t$; the unconditioned density is $f(\mathcal T\mid L(t_0)=1)=p_{1,1}(t_0)\prod_{i=1}^{n-1}\lambda\,p_{1,1}(t_i)$.
 
 Define
+
 $$\lambda'=\rho\lambda,\qquad \mu'=\mu-\lambda(1-\rho),$$
+
 so $\lambda'-\mu'=\lambda-\mu$, and $\mu'$ may be negative.
 
 **Theorem.**

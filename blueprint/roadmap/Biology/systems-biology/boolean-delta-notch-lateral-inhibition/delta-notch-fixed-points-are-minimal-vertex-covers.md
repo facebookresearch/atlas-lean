@@ -1,8 +1,11 @@
 # Delta–Notch fixed points are minimal vertex covers
 
 Let $\mathcal G$ be a finite undirected graph on the cells $C=\{1,\dots,L\}$ and let $\mathcal S(i)$ be the neighbours of $i$. The **Boolean Delta–Notch system** $F:\mathbb B^{2L}\to\mathbb B^{2L}$ on states $(n,d)$ (Notch and Delta levels) is
+
 $$F_i(n,d)=\bigvee_{j\in\mathcal S(i)}d_j,\qquad F_{i+L}(n,d)=\bar n_i\qquad(i\in C),$$
+
 updated asynchronously (one component at a time). Eliminating the Delta variables gives the reduced OR–NOT network $N:\mathbb B^L\to\mathbb B^L$,
+
 $$N_i(n)=\bigvee_{j\in\mathcal S(i)}\bar n_j=\overline{\textstyle\bigwedge_{j\in\mathcal S(i)}n_j}.$$
 
 **Elimination lemma.** For $f:\mathbb B^n\to\mathbb B^n$ whose interaction graph has no loop at $n$, set $\tilde f_i(x)=f_i(x,f_n(x,0))$. Then $x$ is a fixed point of $\tilde f$ if and only if $(x,f_n(x,0))$ is a fixed point of $f$, and a path from $x$ to $y$ in the asynchronous graph of $\tilde f$ lifts to a path from $(x,f_n(x,0))$ to $(y,f_n(y,0))$ for $f$.

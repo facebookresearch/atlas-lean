@@ -9,9 +9,13 @@ $$\begin{aligned}
 At the disease-free equilibrium $\bar S_0^* = (1-p)N$, $S_0^* = (1 - \tau_S)pN$, $\tilde S_0^* = \tau_S pN$. Let $\lambda_0^*$ and $\tilde\lambda_0^*$ be the derivatives of $\Lambda$ and $\tilde\Lambda$ with respect to infectives there ($\beta\kappa$ and $\beta K$ for mass-action incidence with contact coefficients $\kappa$, $K$; $\beta\omega/(\bar S_0^* + S_0^*)$ and $\beta\Omega/\tilde S_0^*$ for ratio-dependent incidence).
 
 **Theorem.** With
+
 $$a = \frac{\lambda_0^*(\bar S_0^* + S_0^*)}{\rho},\qquad d = \frac{\rho + m^I_{rc}}{\rho}\cdot\frac{\tilde\lambda_0^*\tilde S_0^*}{m^I_{cr}},\qquad e = \frac{m^I_{rc}}{\rho}\cdot\frac{\lambda_0^* S_0^*}{\rho}\cdot\frac{\tilde\lambda_0^*\tilde S_0^*}{m^I_{cr}},$$
+
 the basic reproduction number is
+
 $$\mathcal{R}_0 = \tfrac12\Big(a + d + \sqrt{(a - d)^2 + 4e}\Big),$$
+
 and $\mathcal{R}_0 < 1$ if and only if $a < 1$, $d < 1$ and $(1 - a)(1 - d) > e$.
 
 For mass-action incidence in both phases, $\mathcal{R}_0$ as a function of the commuter ratio $p$ has an interior minimum $p^* \in (0,1)$ exactly under an explicit condition on the ratio $K/\kappa$ of social to private contact coefficients and the durations $\tau_S, \tau_I, \rho$; otherwise it is monotone, and its maximum over $p \in [0,1]$ is attained at $p = 0$ or $p = 1$. With mass-action private and ratio-dependent social incidence, $\mathcal{R}_0$ is monotone in $p$.

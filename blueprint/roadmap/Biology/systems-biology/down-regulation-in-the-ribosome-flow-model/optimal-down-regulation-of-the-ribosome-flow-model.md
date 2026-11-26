@@ -1,7 +1,9 @@
 # Optimal down-regulation of the ribosome flow model
 
 **Model.** The ribosome flow model (RFM) with $n$ sites has normalised ribosome densities $x_i(t) \in [0,1]$ and positive transition rates $\lambda_0$ (initiation), $\lambda_1, \dots, \lambda_{n-1}$ (elongation) and $\lambda_n$ (exit):
+
 $$\dot x_i = \lambda_{i-1} x_{i-1}(1 - x_i) - \lambda_i x_i (1 - x_{i+1}), \qquad i = 1,\dots,n,$$
+
 with the conventions $x_0 \equiv 1$, $x_{n+1} \equiv 0$. The unit cube is invariant, there is a unique globally asymptotically stable steady state $e(\lambda) \in (0,1)^n$, and the production rate $R(t) = \lambda_n x_n(t)$ converges to $R(\lambda) = \lambda_n e_n(\lambda)$.
 
 **Spectral facts used.** $R(\lambda) = \zeta^{-2}$, where $\zeta$ is the largest eigenvalue of the $(n+2) \times (n+2)$ symmetric tridiagonal matrix with zero diagonal and off-diagonal entries $\lambda_0^{-1/2}, \dots, \lambda_n^{-1/2}$. Consequently $R$ is positively homogeneous of degree one, strictly increasing in every rate, and strictly concave on $\mathbb R^{n+1}_{>0}$; the sensitivities $s_i = \partial R / \partial \lambda_i$ are computable from the Perron eigenvector.

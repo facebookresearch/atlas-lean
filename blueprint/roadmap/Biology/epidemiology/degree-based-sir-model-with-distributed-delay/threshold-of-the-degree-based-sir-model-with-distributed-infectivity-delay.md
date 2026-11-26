@@ -15,7 +15,9 @@ $$\hat f = \int_0^\infty f(\tau) e^{-(\mu+\gamma)\tau}\, d\tau, \qquad \mathcal 
 **Theorem.**
 
 1. The disease-free equilibrium $E_0$ ($S_k = 1$, $I_k = 0$) always exists. If $\mathcal R_0 \le 1$ there is no endemic equilibrium. If $\mathcal R_0 > 1$ there is a unique endemic equilibrium $E_+$, with
+
 $$S_k^* = \frac{\mu}{\beta k \hat f \theta^* + \mu}, \qquad I_k^* = \frac{\mu\, \beta k \hat f \theta^*}{(\mu + \gamma)(\beta k \hat f \theta^* + \mu)},$$
+
 where $\theta^*$ is the unique positive root of $g(x) = x$ with $g(x) = \frac{\mu}{\mu+\gamma}\sum_k a_k \frac{\beta k \hat f x}{\beta k \hat f x + \mu}$.
 2. $E_0$ is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$.
 3. $I_k^*$ increases with the degree $k$: better-connected nodes carry higher endemic prevalence.
@@ -27,7 +29,9 @@ where $\theta^*$ is the unique positive root of $g(x) = x$ with $g(x) = \frac{\m
 ## Expansion
 
 At equilibrium the delay integral equals $\hat f\,\theta^*$, which gives the formulas for $S_k^*, I_k^*$; substituting them into $\theta^* = \sum_k a_k I_k^*$ gives $\theta^* = g(\theta^*)$. The function $g$ is increasing and strictly concave on $[0, \infty)$ with $g(0) = 0$, $g(1) < 1$ and $g'(0) = \frac{\beta \hat f}{\mu+\gamma}\sum_k k a_k = \mathcal R_0$, so a positive fixed point exists, and is unique, exactly when $\mathcal R_0 > 1$. For local stability at $E_0$, the linearization has $n$ eigenvalues $-\mu$, $n - 1$ eigenvalues $-(\mu+\gamma)$, and one more root $\Lambda$ of
+
 $$\Lambda + \mu + \gamma = \beta \frac{\langle k^2\rangle}{\langle k\rangle} \int_0^\infty f(\tau) e^{-(\Lambda + \mu+\gamma)\tau}\, d\tau .$$
+
 The real function $\varphi(x) = x - (\mu+\gamma)\bigl[\mathcal R_0 \hat f^{-1}\int_0^\infty f e^{-(x+\mu+\gamma)\tau}\,d\tau - 1\bigr]$ is increasing with $\varphi(0) = -(\mu+\gamma)(\mathcal R_0 - 1)$, so there is a positive real root iff $\mathcal R_0 > 1$; when $\mathcal R_0 < 1$, a root with nonnegative real part is impossible because the right side then has real part below $\mu + \gamma$. The threshold grows with the network heterogeneity $\langle k^2\rangle/\langle k\rangle$ and with the delay kernel; $f = \delta_{\tau_0}$ recovers a discrete delay.
 
 ## Sources

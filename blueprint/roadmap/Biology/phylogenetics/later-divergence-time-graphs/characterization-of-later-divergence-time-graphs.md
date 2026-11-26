@@ -3,11 +3,15 @@
 **Relaxed scenarios.** A relaxed scenario $\mathcal{S} = (T, S, \sigma, \mu, \tau_T, \tau_S)$ consists of a planted gene tree $T$ with leaf set $L$, a planted species tree $S$ with leaf set $M$, a coloring $\sigma : L \to M$ assigning each gene to its species, a reconciliation map $\mu$ from $T$ into $S$ (leaves to leaves, compatible with $\sigma$), and time maps $\tau_T, \tau_S$ that decrease from root to leaves, agree on leaves ($\tau_T(x) = \tau_S(\sigma(x))$), and are time-consistent with $\mu$. This framework contains the usual duplication–transfer–loss scenarios. For genes $a, b$ let their divergence time be $\tau_T(\mathrm{lca}_T(a,b))$ and the divergence time of their species $\tau_S(\mathrm{lca}_S(\sigma(a), \sigma(b)))$.
 
 **LDT graph.** The **later-divergence-time graph** $G_<(\mathcal{S})$ has vertex set $L$ and an edge $ab$ whenever
+
 $$\tau_T(\mathrm{lca}_T(a,b)) < \tau_S(\mathrm{lca}_S(\sigma(a), \sigma(b))),$$
+
 i.e. the two genes diverged after their species did. A vertex-colored graph $(G, \sigma)$ is an LDT graph if $G = G_<(\mathcal{S})$ for some relaxed scenario.
 
 For a colored graph $(G = (L,E), \sigma)$ define the **color triple set**
+
 $$\mathcal{S}(G,\sigma) = \{\sigma(x)\sigma(y) \,|\, \sigma(z) : \sigma(x), \sigma(y), \sigma(z) \text{ pairwise distinct},\ xz, yz \in E,\ xy \notin E\}.$$
+
 A set of rooted triples is **compatible** if some tree displays all of them. A **cograph** is a graph with no induced path on four vertices.
 
 **Theorem.** A vertex-colored graph $(G, \sigma)$ is an LDT graph if and only if it is a properly colored cograph and $\mathcal{S}(G, \sigma)$ is compatible.

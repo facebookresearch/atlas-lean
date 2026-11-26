@@ -3,9 +3,11 @@
 Let $\mathcal B(n)$ be the set of unrooted binary phylogenetic trees on the leaf set $[n]=\{1,\dots,n\}$, so $B(n)=|\mathcal B(n)|=(2n-5)!!=\frac{(2n-4)!}{(n-2)!\,2^{n-2}}$. A **snowflake** in $T\in\mathcal B(n)$ is a subtree consisting of a distinguished interior vertex $v$ (its centre) together with six interior vertices at distance $2$ from $v$; equivalently, $v$ is the centre of a snowflake if and only if every leaf of $T$ is at distance at least $3$ from $v$.
 
 **Counting forests (Carter et al.).** For $n\ge k\ge 1$, the number of forests of $k$ rooted binary phylogenetic trees whose leaf sets partition a set of size $n$ is
+
 $$N(n,k)=\frac{(2n-k-1)!}{(n-k)!\,(k-1)!\,2^{n-k}}.$$
 
 **Mean number of centres.** Let $X_n$ be the number of snowflake centres in a tree drawn uniformly from $\mathcal B(n)$. For $n\ge 12$,
+
 $$\mathbb E(X_n)=4\cdot\frac{(2n-13)!}{(2n-4)!}\cdot\frac{(n-2)!}{(n-12)!}\sim n\,2^{-7}.$$
 
 **Theorem.** $\mathbb P(X_n=0)\to 0$ as $n\to\infty$: the fraction of binary phylogenetic trees on $n$ leaves that contain a snowflake tends to $1$. The same holds for the unrooted tree obtained by suppressing the root of a Yule–Harding tree.

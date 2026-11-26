@@ -11,6 +11,7 @@ $$P(i \mid r) = 1 - \prod_{v \in V} (1 - r[v])^{\tau(v,i)}.$$
 2. $R$ is a monotone submodular lattice function: raising one coordinate of $r$ yields a smaller marginal gain at a componentwise larger $r$.
 3. The greedy algorithm that repeatedly raises the (agent, rate) pair with the largest average marginal gain until the budget is spent achieves $R(\hat r) \ge (1 - 1/e)\,R(r^*)$.
 4. (Online bound.) For each agent let $\Delta_v = \max_{a \in [0,1]} [R(\hat r \vee a\chi_{\{v\}}) - R(\hat r)]$ with maximizer $\sigma_v$, order agents $s_1, s_2, \dots$ by decreasing $\Delta_v / (c[v]\sigma_v)$, and let $K$ be the first index with $\sum_{i \le K} c[s_i]\sigma_{s_i} > B$ and $\theta = \sum_{i < K} c[s_i]\sigma_{s_i}$. Then
+
 $$R(r^*) \le R(\hat r) + \sum_{i=1}^{K-1} \Delta_{s_i} + \frac{B - \theta}{c[s_K]\,\sigma_{s_K}}\,\Delta_{s_K}.$$
 
 The expected-detection-time objective is not submodular, so the greedy guarantee does not extend to it.

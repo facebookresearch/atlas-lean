@@ -1,18 +1,26 @@
 # Crawl-by transients in a pulsed consumer–resource model with group defense
 
 **Model.** Consumers $p_m \ge 0$ and resource $n_m \ge 0$ (nondimensionalized) at reproductive pulse $m$ obey
+
 $$p_{m+1} = \delta_p p_m + \frac{\gamma_p\,p_m n_m}{1 + \sigma n_m^2}, \qquad n_{m+1} = \delta_n n_m \exp\!\Big(-\frac{\gamma_n p_m}{1 + \sigma n_m^2}\Big) + \frac{R\,n_m\,e^{-p_m}}{1 + n_m},$$
+
 with between-pulse survival $\delta_p, \delta_n \in (0,1)$, consumption parameters $\gamma_p, \gamma_n > 0$, group-defense strength $\sigma > 0$ (a Holling type IV response, decreasing for large resource density) and resource recruitment $R > 0$ with Beverton–Holt density dependence. Let $(0, n^*)$ be the resource-only equilibrium and assume $n^* > 1/\sigma$, so group defense acts below carrying capacity. The equilibria $(0, n^*)$ and a coexistence saddle undergo a transcritical bifurcation at
+
 $$\gamma_p^* = \frac{(1-\delta_p)(1 + \sigma n^{*2})}{n^*};$$
+
 $(0,n^*)$ is stable for $\gamma_p < \gamma_p^*$ and unstable for $\gamma_p > \gamma_p^*$.
 
 **Theorem.**
 1. (Global attractor) The system has a compact, connected global attractor in the closed first quadrant.
 2. (Crawl-by at resource extinction) Let $\varepsilon \ll 1$. If $p_0$ is of order $\varepsilon^{-1}$ and $n_0$ of order 1, the resource collapses to near zero and recovers only after approximately
+
 $$M = O\!\left(\frac{\log\varepsilon}{\log\delta_p}\right)$$
+
 pulses, the time for consumers to decay by their survival factor $\delta_p$ from order $\varepsilon^{-1}$ to order 1.
 3. (Crawl-by at carrying capacity) If $\gamma_p > \gamma_p^*$, set $\lambda_1 = \delta_p + \gamma_p n^*/(1 + \sigma n^{*2}) > 1$. From $(p_0, n_0) = (\varepsilon, n^* - \varepsilon)$, the system stays near $(0, n^*)$ and the resource begins to decline after approximately
+
 $$M = O\!\left(\frac{\log(1/\varepsilon)}{\log\lambda_1}\right)$$
+
 pulses.
 
 For $\gamma_p$ slightly below $\gamma_p^*$, trajectories converge to $(0,n^*)$ only after long pseudo-oscillations (a ghost of the cycle present for $\gamma_p > \gamma_p^*$), whose duration is fitted numerically by a power law $\tau \approx A(\gamma_p^* - \gamma_p)^{-B}$.

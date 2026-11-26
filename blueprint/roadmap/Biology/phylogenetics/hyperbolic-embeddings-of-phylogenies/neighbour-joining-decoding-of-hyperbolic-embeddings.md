@@ -1,9 +1,13 @@
 # Neighbour-joining decoding of hyperbolic embeddings
 
 **Setting.** For curvature $\kappa < 0$ and dimension $d \ge 2$, the hyperboloid model is $\mathbb H^d = \{x \in \mathbb R^{d+1} : \langle x, x\rangle = -1, x_0 > 0\}$ with Lorentz product $\langle x, y\rangle = -x_0y_0 + \sum_{i \ge 1}x_iy_i$ and distance
+
 $$d_\kappa(x, y) = \frac{1}{\sqrt{-\kappa}}\operatorname{arcosh}\big(-\langle x, y\rangle\big).$$
+
 Taxa $1, \dots, n$ are represented by points $X = (x_1, \dots, x_n)$, parametrized by their tangent coordinates $(x_1, \dots, x_d) \mapsto (\sqrt{1 + \|x\|^2}, x)$, and a tree is decoded as $T = \mathrm{NJ}(D(X))$ with $D_{ij} = d_\kappa(x_i, x_j)$. A metric space is **$\delta$-hyperbolic** if every quadruple satisfies the relaxed four-point condition
+
 $$d(x,w) + d(y,z) \le \max\{d(x,y) + d(z,w),\, d(x,z) + d(y,w)\} + 2\delta;$$
+
 $\delta = 0$ is exactly the condition for $D$ to be additive (realized by a weighted tree).
 
 **Theorem.**

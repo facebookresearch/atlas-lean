@@ -4,9 +4,13 @@ Let $A_n$ and $B_n$ be the numbers of pitchforks and cherries in a random rooted
 
 **Theorem.** For any initial tree $T_m$ ($m \ge 2$) from which the process is run:
 1. (YHK) $\frac1n(A_n,B_n) \to \big(\tfrac16,\tfrac13\big)$ almost surely, and
+
 $$\frac{(A_n,B_n) - n(1/6, 1/3)}{\sqrt n} \xrightarrow{d} N\!\left(0,\ \frac{1}{1260}\begin{pmatrix}69 & -28\\ -28 & 56\end{pmatrix}\right).$$
+
 2. (PDA) $\frac1n(A_n,B_n) \to \big(\tfrac18,\tfrac14\big)$ almost surely, and
+
 $$\frac{(A_n,B_n) - n(1/8, 1/4)}{\sqrt n} \xrightarrow{d} N\!\left(0,\ \frac{1}{64}\begin{pmatrix}3 & 0\\ 0 & 4\end{pmatrix}\right),$$
+
 so under PDA the two counts are asymptotically independent.
 3. The same limits hold for unrooted trees grown from any initial unrooted tree with $m \ge 6$ leaves.
 

@@ -1,7 +1,9 @@
 # RowDiff transform and its anchor conditions
 
 **Setting.** Let $G_k = (V_k, E_k)$ be the vertex-centric de Bruijn graph of order $k$ of a sequence collection (vertices are $k$-mers, with an arc $(u, v)$ when the $(k-1)$-suffix of $u$ equals the $(k-1)$-prefix of $v$), and let $A \in \{0, 1\}^{|V_k| \times |L|}$ be a binary annotation matrix whose row $A_u$ marks the labels (samples, genomes) containing $k$-mer $u$. For each non-sink vertex $u$, its **RowDiff successor** $\mathrm{succ}(u)$ is its lexicographically largest out-neighbour. Given an anchor vector $a \in \{0, 1\}^{|V_k|}$, the **RowDiff transform** replaces $A$ by $A^*$ with
+
 $$A_u^* = \begin{cases} A_u, & a_u = 1 \text{ (anchor)}, \\ A_u \oplus A_{\mathrm{succ}(u)}, & a_u = 0, \end{cases}$$
+
 where $\oplus$ is element-wise XOR. The inverse (Algorithm 1) reconstructs $A_u$ by following $u, \mathrm{succ}(u), \mathrm{succ}^2(u), \dots$ until the first anchor $w$ and XOR-ing the transformed rows along the path: $A_u = A_u^* \oplus A^*_{\mathrm{succ}(u)} \oplus \cdots \oplus A_w^*$.
 
 A **RowDiff cycle** is a directed cycle $u_1 \to u_2 \to \cdots \to u_r \to u_1$ with $u_{i+1} = \mathrm{succ}(u_i)$.

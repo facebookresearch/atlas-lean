@@ -1,11 +1,15 @@
 # Screening-interval threshold for eradication under logistic regrowth
 
 Between screening rounds, the expected prevalence $f(t)$ in a community follows the logistic equation
+
 $$\frac{df}{dt} = \kappa f\left(1 - \frac{f}{K}\right), \qquad \kappa > 0,\ 0 < K \le 1,$$
+
 so that after the $n$-th round $f(S_n + \delta) = K / (1 + A_n e^{-\kappa\delta})$ with $A_n = K/f(S_n^+) - 1$. Each round, held every $\tau > 0$ time units, detects and removes the infected who participate (fraction $p \in (0,1]$) and test positive (sensitivity $s \in (0,1]$), so $f(S_n^+) = (1 - ps)\,f(S_n^-)$ with $ps < 1$.
 
 Then $A_{n+1} = \alpha A_n + \beta$ with
+
 $$\alpha = \frac{e^{-\kappa\tau}}{1 - ps}, \qquad \beta = \frac{ps}{1 - ps}, \qquad A_0 = \frac{K}{f(0)} - 1.$$
+
 Let $\bar f_{n,n+1}$ be the expected average prevalence between rounds $n$ and $n+1$, and $\tau^* = -\log(1-ps)/\kappa$.
 
 **Proposition (eradication threshold).**
@@ -15,7 +19,9 @@ Let $\bar f_{n,n+1}$ be the expected average prevalence between rounds $n$ and $
 The threshold $\tau^*$ does not depend on the carrying capacity $K$.
 
 **Proposition (rounds to elimination).** If $f(0) > C$ and $\tau \le \tau^*$ (equivalently $\alpha \ge 1$), the expected prevalence first falls to at most $C$ after round $n^*$, where
+
 $$n^* = \begin{cases} \log_{\alpha}\dfrac{K/C - 1 + \beta/(\alpha-1)}{A_0 + \beta/(\alpha-1)}, & \alpha > 1,\\[2ex] \dfrac{K/C - 1 - A_0}{\beta}, & \alpha = 1,\end{cases}$$
+
 rounded up to an integer.
 
 ## Expansion

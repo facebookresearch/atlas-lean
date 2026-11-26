@@ -1,10 +1,13 @@
 # Feinberg's decomposition theorem for positive steady states
 
 Let $\mathcal N$ be a chemical reaction network with species $X_1,\dots,X_m$ and reaction set $\mathcal R$, with kinetics $K$ assigning a rate function $K_r:\mathbb R^m_{>0}\to\mathbb R_{\ge 0}$ to each reaction $r:y_r\to y_r'$, so that
+
 $$\dot x=f(x)=\sum_{r\in\mathcal R}K_r(x)\,(y_r'-y_r).$$
+
 A partition $\mathcal R=\mathcal R_1\sqcup\dots\sqcup\mathcal R_\alpha$ induces subnetworks $\mathcal N_i$ with kinetics $K_i=K|_{\mathcal R_i}$, species-formation rates $f_i(x)=\sum_{r\in\mathcal R_i}K_r(x)(y_r'-y_r)$, and stoichiometric subspaces $S_i=\operatorname{span}\{y_r'-y_r:r\in\mathcal R_i\}$. The decomposition is **independent** if the stoichiometric subspace $S$ of $\mathcal N$ is the direct sum $S=S_1\oplus\dots\oplus S_\alpha$, equivalently $\operatorname{rank}S=\sum_i\operatorname{rank}S_i$. Let $E$ and $E_i$ denote the sets of positive steady states of $\mathcal N$ and $\mathcal N_i$.
 
 **Theorem (Feinberg).** For every decomposition, $E_1\cap\dots\cap E_\alpha\subseteq E$. If the decomposition is independent, then
+
 $$E_1\cap E_2\cap\dots\cap E_\alpha=E .$$
 
 ## Expansion

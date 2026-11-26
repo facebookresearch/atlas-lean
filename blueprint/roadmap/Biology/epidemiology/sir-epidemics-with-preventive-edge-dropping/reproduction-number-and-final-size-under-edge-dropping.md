@@ -3,11 +3,15 @@
 **Model.** Individuals form a configuration-model network on $N$ vertices whose degree $D$ has distribution $(p_k)$, mean $\mu_D$, variance $\sigma_D^2$, bounded support and probability generating function $f_D(s) = \sum_k p_k s^k$. An infectious individual infects each susceptible neighbour at rate $\beta$ along their shared edge and recovers at rate $\gamma$; each susceptible drops each edge to an infectious neighbour at rate $\omega$, independently. Initially a vanishing fraction is infectious and all others susceptible.
 
 **Basic reproduction number (2.1).**
+
 $$R_0 = \frac{\beta}{\beta + \gamma + \omega}\left(\mu_D + \frac{\sigma_D^2}{\mu_D} - 1\right).$$
+
 The first factor is the probability that an infective transmits across a given edge before it recovers or the neighbour drops the edge; the second is the mean excess degree $\mathbb{E}[\tilde D] - 1$ of the size-biased neighbour degree $P(\tilde D = k) = k p_k / \mu_D$. $R_0$ is strictly decreasing in $\omega$.
 
 **Final size (Proposition 5.1(b)).** If $R_0 > 1$, the fraction ultimately infected in the large-population deterministic limit of a major outbreak is
+
 $$\rho = 1 - f_D(s), \qquad (\beta + \omega + \gamma)\, s - (\omega + \gamma) = \frac{\beta}{\mu_D} f_D'(s),$$
+
 where $s$ is the unique solution in $[0, 1)$.
 
 **Equivalence with increased recovery (Remark 5.3).** The law-of-large-numbers limit of the susceptible process (classified by effective degree), and therefore $R_0$, the Malthusian growth rate and $\rho$, depend on $(\gamma, \omega)$ only through $\gamma + \omega$: they coincide with those of the standard Markov SIR epidemic on the same network without dropping and with recovery rate $\gamma + \omega$. The infective process and the central-limit fluctuations differ between the two models.

@@ -1,11 +1,15 @@
 # Tropical Laplace distribution on the space of ultrametric trees
 
 Equidistant (ultrametric) trees on $m$ leaves are encoded by their vectorised pairwise distances in $\mathbb{R}^e$, $e = \binom{m}{2}$, and viewed in the **tropical projective torus** $\mathbb{R}^e/\mathbb{R}\mathbf{1}$, where the space of ultrametrics is a tropical linear space. The **tropical metric** (generalised Hilbert projective metric) is
+
 $$d_{\mathrm{tr}}(v, w) = \max_i (v_i - w_i) - \min_i (v_i - w_i),$$
+
 a well-defined metric on $\mathbb{R}^e/\mathbb{R}\mathbf{1}$. On two trees it measures the spread of the differences in pairwise divergences.
 
 **Proposition (normalising constant).** The tropical Laplace density with centre $\omega$ and scale $\sigma > 0$,
+
 $$f(x) = \frac{1}{\Lambda}\exp\!\Big(-\frac{d_{\mathrm{tr}}(x, \omega)}{\sigma}\Big), \qquad x \in \mathbb{R}^e/\mathbb{R}\mathbf{1},$$
+
 has $\Lambda = e!\,\sigma^{e-1}$.
 
 **Proposition (distance law).** Let $d$ be positively homogeneous on $\mathbb{R}^n$ ($d(\alpha x) = \alpha d(x)$ for $\alpha \ge 0$), and let $X$ have density proportional to $\exp\!\big(-d(x)^i/(i\sigma^i)\big)$ for some $i \in \mathbb{N}$. Then $d(X)^i \sim i\sigma^i\,\mathrm{Gamma}(n/i)$. Consequently, under the tropical Laplace ($i = 1$) or tropical normal ($i = 2$) law on $\mathbb{R}^e/\mathbb{R}\mathbf{1} \cong \mathbb{R}^{e-1}$, $d_{\mathrm{tr}}(X, \omega)^i \sim i\sigma^i\,\mathrm{Gamma}\big((e-1)/i\big)$, whereas the Euclidean analogues in $\mathbb{R}^e$ give $\mathrm{Gamma}(e/i)$.

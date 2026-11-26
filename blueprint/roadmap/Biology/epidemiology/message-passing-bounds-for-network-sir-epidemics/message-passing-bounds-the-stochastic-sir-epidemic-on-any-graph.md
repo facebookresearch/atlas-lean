@@ -5,14 +5,19 @@ Let $G = (V, E)$ be a graph (finite or countable) with neighbourhoods $N_i$. Eac
 - these families are mutually independent over $i$ and independent of the initial states.
 
 Let $f_{ij}(\tau)$ be the density of the time, measured from $j$'s infection, at which $j$ makes an infectious contact to $i$, and let $r_i$ be the density of $\mu_i$. The **message-passing system** is
+
 $$F_{i\leftarrow j}(t) = 1 - \int_0^t f_{ij}(\tau)\Bigl(1 - y_j - z_j \prod_{k \in N_j\setminus i} F_{j\leftarrow k}(t - \tau)\Bigr)d\tau,$$
+
 $$S^{(i)}_{\mathrm{mes}}(t) = z_i \prod_{j \in N_i} F_{i\leftarrow j}(t), \qquad R^{(i)}_{\mathrm{mes}}(t) = y_i + \int_0^t r_i(\tau)\bigl[1 - y_i - S^{(i)}_{\mathrm{mes}}(t - \tau)\bigr]d\tau,$$
+
 where $F_{i\leftarrow j}(t)$ approximates the probability that $i$, held in the cavity state (unable to transmit), has received no infectious contact from $j$ by time $t$.
 
 **Theorem 1 (well-posedness).** If degrees are bounded and $\sup_{(i,j)}\sup_\tau f_{ij}(\tau) < \infty$, there is a unique feasible solution ($F_{i\leftarrow j} \in [0,1]$), and each feasible $F_{i\leftarrow j}$ is continuous and non-increasing.
 
 **Theorem 2 (bounds).** For all $t \ge 0$ and $i \in V$,
+
 $$P(i \text{ susceptible at } t) \ge S^{(i)}_{\mathrm{mes}}(t), \qquad P(i \text{ recovered at } t) \le R^{(i)}_{\mathrm{mes}}(t),$$
+
 with equality when $G$ is a tree or forest. Summing over $i$, message passing gives an upper bound on the expected epidemic size at every time.
 
 **Theorem 3 (cycles inhibit spread).** In the homogeneous model on an $n$-regular arc-transitive graph, with i.i.d. individual behaviour, the probability that an individual is susceptible at time $t$ is smallest, and the probability that it is recovered is largest, on the $n$-regular Bethe lattice (infinite tree).

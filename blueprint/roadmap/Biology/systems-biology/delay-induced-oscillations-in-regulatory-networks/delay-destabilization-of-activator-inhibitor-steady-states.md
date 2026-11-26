@@ -1,7 +1,9 @@
 # Delay destabilization of activator–inhibitor steady states
 
 **Setting.** Consider a two-component regulatory system $\dot x = f(x)$ whose components are monotone in each regulator (each interaction is purely activating or purely inhibiting) and whose solutions are bounded, and introduce a delay $\tau \ge 0$ in one cross-regulation, e.g. $\dot x_1 = f_1(x_1, x_2(t-\tau))$, $\dot x_2 = f_2(x_1, x_2)$. At a fixed point $x^*$ with Jacobian entries $a_{ij}$ the characteristic equation is
+
 $$\Delta(\lambda, \tau) = (\lambda - a_{11})(\lambda - a_{22}) - a_{12}a_{21}e^{-\lambda\tau} = 0.$$
+
 An **activator–inhibitor oscillator** has signed Jacobian $\begin{pmatrix} + & - \\ + & - \end{pmatrix}$ at $x^*$: self-activation $a_{11} > 0$, self-decay $a_{22} < 0$, and a negative loop $a_{12}a_{21} < 0$ (the substrate-depletion oscillator, $\begin{pmatrix} - & - \\ + & + \end{pmatrix}$, is analogous).
 
 **Theorem.**

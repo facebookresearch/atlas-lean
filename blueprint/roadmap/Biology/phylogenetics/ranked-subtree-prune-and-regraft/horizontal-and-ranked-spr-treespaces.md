@@ -3,7 +3,9 @@
 **Ranked trees.** A ranked tree on leaves $\{l_1, \dots, l_n\}$ is a rooted binary phylogenetic tree whose $n - 1$ internal nodes carry distinct ranks $1, \dots, n-1$ increasing towards the root (the root has rank $n - 1$). It can be written as the list $[C_1, \dots, C_{n-1}]$ of the clusters induced by the nodes of rank $1, \dots, n-1$. Edges are written $(u^+, u^-)$ for parent $u^+$ and child $u^-$.
 
 **Moves.** A **horizontal SPR (HSPR) move** prunes the subtree below a non-root edge, removes the node $i$ (of rank $i$) at its top, and reattaches the subtree at a new node of the same rank $i$ on another edge spanning that rank. Formally (Theorem 2), $T'$ with
+
 $$E(T') = E(T) \setminus \{(i^+, i), (i, i^-), (j^+, j^-)\} \cup \{(i^+, i^-), (j^+, i), (i, j^-)\}$$
+
 is an HSPR neighbour of $T$ iff $(i^+, i), (i, i^-), (j^+, j^-) \in E(T)$ and $j^- \prec i \prec j^+$. A **rank move** swaps the ranks of two nodes with consecutive ranks that are not joined by an edge. The graph **HSPR** joins trees differing by one HSPR move; **RSPR** joins trees differing by one HSPR move or one rank move. Their path metrics are $d_{\mathrm{HSPR}}$ and $d_{\mathrm{RSPR}}$.
 
 **Results.**

@@ -3,13 +3,17 @@
 For a $p$-variate expression profile $\mathbf Y$ with density $f$, the heterogeneity is measured by the differential entropy $H(\mathbf Y)=-\int f\log f$; for $\mathbf Y\sim\mathcal N(\boldsymbol\mu,\boldsymbol\Sigma)$, $H(\mathbf Y)=\tfrac12\log\det(2\pi e\,\boldsymbol\Sigma)$.
 
 **Proposition 1 (mixtures).** If $f_z$ is a density for each $z$ in a domain $D$, $G$ is a probability distribution on $D$ and $f_G=\int_Df_z\,dG(z)$, then
+
 $$-\int f_G\log f_G\ \ge\ -\int_D\int f_z\log f_z\,d\mathbf Y\,dG(z):$$
+
 a population mixing regulatory states (e.g. modules with different DNA copy number) is at least as heterogeneous as the average of its components.
 
 **Proposition 2 (disturbances).** Let $\mathbf Y_t=\boldsymbol\nu+\mathbf A\mathbf Y_{t-1}+\boldsymbol\varepsilon_t$ be a Gaussian VAR(1) process with $\boldsymbol\varepsilon_t\sim\mathcal N(\mathbf 0,\boldsymbol\Sigma_\varepsilon)$ independent and $\mathbf Y_0=\mathbf 0$, and let $\mathbf Y^{(\tau)}_t$ add an independent disturbance $\boldsymbol\delta_\tau\sim\mathcal N(\mathbf 0,\boldsymbol\Sigma_\delta)$ at time $\tau$. Then $H(\mathbf Y^{(\tau)}_t)>H(\mathbf Y_t)$, and $H(\mathbf Y^{(\tau_1)}_t)>H(\mathbf Y^{(\tau_2)}_t)$ when $\tau_2>\tau_1$: an earlier disturbance leaves more heterogeneity.
 
 **Proposition 3 (decoupling).** Let $\mathbf X\sim\mathcal N(\mathbf 0,\boldsymbol\Sigma_X)$ and $\mathbf Y\sim\mathcal N(\mathbf 0,\boldsymbol\Sigma_Y)$ have equal marginal variances, and suppose their partial correlation matrices (standardized concentration matrices) have the block form
+
 $$\boldsymbol\Omega_{\boldsymbol\gamma}=\begin{pmatrix}\boldsymbol\Omega_{11}&\gamma_{12}\boldsymbol\Omega_{12}&\cdots&\gamma_{1r}\boldsymbol\Omega_{1r}\\ \gamma_{12}\boldsymbol\Omega_{12}^\top&\boldsymbol\Omega_{22}&&\vdots\\ \vdots&&\ddots&\vdots\\ \gamma_{1r}\boldsymbol\Omega_{1r}^\top&\cdots&\cdots&\boldsymbol\Omega_{rr}\end{pmatrix},\qquad \boldsymbol\gamma\in[0,1]^{r(r-1)/2},$$
+
 with the same blocks and coupling vectors $\boldsymbol\gamma^{(x)}$, $\boldsymbol\gamma^{(y)}$. If $\boldsymbol\gamma^{(x)}\le\boldsymbol\gamma^{(y)}$ elementwise, then $H(\mathbf Y)\le H(\mathbf X)$: weaker conditional dependence between gene modules gives larger entropy.
 
 ## Expansion

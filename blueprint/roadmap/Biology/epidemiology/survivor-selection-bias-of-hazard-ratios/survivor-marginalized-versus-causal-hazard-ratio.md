@@ -1,7 +1,9 @@
 # Survivor-marginalized versus causal hazard ratio
 
 **Setting.** Each individual $i$ has a latent frailty $U_{0i}$, a latent effect modifier $U_{1i}$ and independent uniform noise $N_{Ti}$. Under an intervention setting exposure to level $a$ (with $a = 0$ unexposed), the potential event time is
+
 $$T_i^a = \min\Big\{t > 0 : \exp\Big(-\int_0^t \lambda_i^a(s)\,ds\Big) \le N_{Ti}\Big\}, \qquad \lambda_i^a(t) = f_0(t, U_{0i})\, f_1(t, U_{1i}, a), \quad f_1(t, U_1, 0) = 1,$$
+
 so $f_1(t,U_{1i},a)$ is the individual's hazard ratio. In a randomized trial the assignment $A$ is independent of $(U_0, U_1, N_T)$, and causal consistency gives $T = T^A$. Define
 
 - the **causal hazard ratio** $\mathrm{CHR}(t) = \dfrac{\mathbb E[f_0(t,U_0) f_1(t,U_1,a)]}{\mathbb E[f_0(t,U_0)]}$ (ratio of population-averaged individual hazards in the all-exposed and all-unexposed worlds);
@@ -9,7 +11,9 @@ so $f_1(t,U_{1i},a)$ is the individual's hazard ratio. In a randomized trial the
 
 **Theorem.** Assume the hazard has no infinite discontinuity (for each $t$, $\mathbb E[f_0(t+h,U_0)f_1(t+h,U_1,a) \mid T^a \ge t] < \infty$ for small $h > 0$).
 1. In a randomized trial $\mathrm{OHR}(t)$ equals the **survivor-marginalized causal hazard ratio**
+
 $$\mathrm{SMCHR}(t) = \frac{\mathbb E[f_0(t,U_0) f_1(t,U_1,a) \mid T^a \ge t]}{\mathbb E[f_0(t,U_0) \mid T^0 \ge t]},$$
+
 in which each expectation is over the survivors of its own counterfactual world; the CHR is not identifiable from the observed data without assumptions on the law of $(U_0, U_1)$.
 2. (Frailty, homogeneous effect) If $f_1(t,U_1,a) = f_1(t,a)$, then $\mathrm{SMCHR}(t) = f_1(t,a)\,\dfrac{\mathbb E[f_0(t,U_0) \mid T^a \ge t]}{\mathbb E[f_0(t,U_0) \mid T^0 \ge t]}$. If the exposure lowers every individual's cumulative hazard, the frailty factor exceeds $1$, so a protective effect appears weaker than it is; if it raises every cumulative hazard, the factor is below $1$ and a harmful effect appears weaker. With $f_0 = U_0\lambda_0(t)$ and Laplace transform $\mathcal L$ of $U_0$, $\mathbb E[U_0 \mid T^a \ge t] = -\mathcal L'(\Lambda_a(t))/\mathcal L(\Lambda_a(t))$, where $\Lambda_a(t) = \int_0^t \lambda_0 f_1(s,a)\,ds$.
 3. (Effect heterogeneity, no frailty) If $f_0(t,U_0) = \lambda_0(t)$, then $\mathrm{SMCHR}(t) = \mathbb E[f_1(t,U_1,a) \mid T^a \ge t] \le \mathbb E[f_1(t,U_1,a)] = \mathrm{CHR}(t)$, so the exposure looks more beneficial than it is, whether it helps or harms on average.

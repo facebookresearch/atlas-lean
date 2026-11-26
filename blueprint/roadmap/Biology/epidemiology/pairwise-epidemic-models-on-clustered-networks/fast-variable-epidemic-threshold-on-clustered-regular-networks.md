@@ -1,17 +1,23 @@
 # Fast-variable epidemic threshold on clustered regular networks
 
 **Pairwise model.** SIR spreads on a regular network of $N$ nodes and degree $n$ with per-link transmission rate $\tau$ and recovery rate $\gamma$; $\phi \in [0,1)$ is the global clustering coefficient (fraction of closed triples). Singles $[A]$, pairs $[AB]$ and triples $[ABC]$ denote expected counts. The pair equations require triples $[ASI]$, closed by Keeling's clustered closure
+
 $$[ASI] = \frac{n-1}{n}\,\frac{[AS][SI]}{[S]}\Big( (1 - \phi) + \phi\, \frac{N [AI]}{n [A][I]} \Big),$$
+
 which mixes the independent-neighbor closure with a correction by the correlation factor $C_{AI} = N[AI]/(n[A][I])$ on closed triangles. Correlations of the exact process satisfy $C_{SI} \le 1$, $C_{II} \ge 1$, $C_{SS} \ge 1$.
 
 **Fast variables.** With $\xi = (n-1)/n$, the ratios $\alpha = [SI]/[I]$ (susceptible neighbors per infected node) and $\delta = [II]/[I]$ relax quickly to a quasi-equilibrium during the early epidemic, where $[S] \approx N$, and satisfy
+
 $$\dot\alpha = -\tau\alpha + \tau\xi n (1 - \phi)\alpha + \tau\xi\phi\alpha^2 - \tau\xi \tfrac1n \phi \alpha^2 \delta - \tau\alpha^2, \qquad \dot\delta = 2\tau\alpha - \gamma\delta + 2\tau\xi\tfrac1n\phi\alpha^2\delta - \tau\alpha\delta .$$
+
 The epidemic threshold is the growth-rate-based quantity $R = \tau \alpha^\ast/\gamma$, with $\alpha^\ast$ the quasi-equilibrium; $R = 1$ exactly when $R_0 = 1$.
 
 **Results.**
 1. Without clustering ($\phi = 0$): $(\alpha^\ast, \delta^\ast) = \big(n-2,\ 2\tau(n-2)/(\gamma + \tau(n-2))\big)$, so $R = \tau(n-2)/\gamma$.
 2. With clustering, a unique biologically meaningful steady state in $D = \{0 \le \alpha \le n,\ 0 \le \delta \le n - \alpha\}$ exists provided $\phi < (n-2)/(n-1)$; for larger $\phi$ the disease dies out. $\alpha^\ast$ is the admissible root of the cubic
+
 $$2\tau\xi\phi(1 - \xi\phi)\alpha^3 + \big(\tau\xi n\phi - 2\tau\xi^2 n\phi(1-\phi) - \tau n\big)\alpha^2 + \big(-n(\tau+\gamma) + \tau\xi n^2(1-\phi) + \gamma\xi n\phi\big)\alpha + \gamma\xi n^2(1-\phi) - \gamma n = 0,$$
+
 with $\alpha^\ast = (n-2) + O(\phi)$.
 3. By the Bendixson criterion the steady state is globally stable in $D$ if $\phi < 2n/(3(n-1))$, which covers all admissible $\phi$ when $n < 6$.
 

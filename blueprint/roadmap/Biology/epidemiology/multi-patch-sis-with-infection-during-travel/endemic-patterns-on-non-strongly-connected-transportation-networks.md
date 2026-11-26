@@ -1,10 +1,15 @@
 # Endemic patterns on non-strongly-connected transportation networks
 
 Consider $n \ge 2$ regions $\Omega = \{1,\dots,n\}$. In region $j$ let $N_j$ be the total population and $I_j$ the infectives, with recruitment $A_j > 0$, death rate $d_j > 0$, recovery $\delta_j \ge 0$ and contact rate $\beta_j > 0$ (standard incidence). Individuals (susceptible and infective alike) leave region $k$ for region $j$ at per-capita rate $\alpha_{jk} \ge 0$, travel for time $\tau_{jk} \ge 0$ without births or deaths, and during the journey follow SIS dynamics with contact rate $\beta^T_{jk}$ and recovery $\delta^T_{jk}$ (with $\beta^T_{jk} \ne \delta^T_{jk}$). With $l_j = \sum_k \alpha_{kj}$, solving the travel stage along characteristics gives the delay system
+
 $$\dot N_j = A_j - (d_j + l_j) N_j + \sum_{k} \alpha_{jk} N_k(t - \tau_{jk}),$$
+
 $$\dot I_j = I_j\Bigl(\beta_j - d_j - \delta_j - l_j - \beta_j \frac{I_j}{N_j}\Bigr) + \sum_k \frac{\alpha_{jk} e^{(\beta^T_{jk} - \delta^T_{jk})\tau_{jk}} I_k(t - \tau_{jk})}{1 + \frac{e^{(\beta^T_{jk} - \delta^T_{jk})\tau_{jk}} - 1}{\beta^T_{jk} - \delta^T_{jk}}\, \beta^T_{jk}\, \frac{I_k(t - \tau_{jk})}{N_k(t - \tau_{jk})}}.$$
+
 The next-generation matrix is
+
 $$M = \operatorname{diag}\Bigl(\frac{\beta_j}{d_j + \delta_j + l_j}\Bigr) + \Bigl(\frac{\alpha_{jk}\, e^{(\beta^T_{jk} - \delta^T_{jk})\tau_{jk}}}{d_k + \delta_k + l_k}\Bigr)_{j,k}, \qquad \mathcal R_0 = \rho(M),$$
+
 and $\max_j \beta_j/(d_j + \delta_j + l_j) \le \mathcal R_0$.
 
 1. **Total population.** The $N$-subsystem has a unique positive equilibrium $N^+$, which is globally asymptotically stable.

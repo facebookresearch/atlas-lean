@@ -1,9 +1,13 @@
 # Tropical logistic regression on tree space: optimal log-odds, consistency and error bounds
 
 **Optimal model.** Let $Y \sim \mathrm{Bernoulli}(r)$ and $X \mid Y \sim f_Y$ on $\mathbb{R}^n$. Then $Y \mid X \sim \mathrm{Bernoulli}\big(S(h(X))\big)$ with $S$ the logistic function and
+
 $$h(x) = \log\frac{r f_1(x)}{(1 - r) f_0(x)},$$
+
 and $p = S \circ h$ maximises the expected log-likelihood. Gaussian classes give classical logistic regression. If the classes are equiprobable tropical Laplace laws on ultrametric trees in $\mathbb{R}^e/\mathbb{R}\mathbf{1}$ with centres $\omega_Y$ and scales $\sigma_Y$, the optimal log-odds are
+
 $$h(x) = \frac{d_{\mathrm{tr}}(x, \omega_0)}{\sigma_0} - \frac{d_{\mathrm{tr}}(x, \omega_1)}{\sigma_1} + (e-1)\log\frac{\sigma_0}{\sigma_1}.$$
+
 The **one-species model** ($\omega_0 = \omega_1 = \omega$, $\sigma_0 < \sigma_1$) classifies by $d_{\mathrm{tr}}(x, \omega) > c$ with $\lambda = \sigma_0^{-1} - \sigma_1^{-1}$ and $\lambda c = (e-1)\log(\sigma_1/\sigma_0)$; the **two-species model** ($\sigma_0 = \sigma_1$) assigns $x$ to the nearer centre.
 
 **Theorem (consistency).** Let $\Omega \subset \mathbb{R}^e/\mathbb{R}\mathbf{1}$ and $\Sigma \subset \mathbb{R}_+$ be compact, let $(X_i, Y_i)$ be i.i.d. with $Y_i \sim \mathrm{Bernoulli}\big(S(h(X_i; \omega^*, \sigma^*))\big)$, and let $d_{\mathrm{tr}}(X, \omega_Y)$ be square-integrable. Then the maximum-likelihood estimator $(\hat\omega, \hat\sigma) \in \Omega^2 \times \Sigma^2$ converges in probability to $(\omega^*, \sigma^*)$.

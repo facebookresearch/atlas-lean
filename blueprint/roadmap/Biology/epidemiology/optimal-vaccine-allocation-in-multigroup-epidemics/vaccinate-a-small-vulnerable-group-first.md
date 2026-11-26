@@ -1,12 +1,17 @@
 # Vaccinate a small vulnerable group first
 
 **Model.** A population of total size $1$ is split into groups $i = 1, \dots, n$ of sizes $N_i$. Each group has unvaccinated $S_i, I_i, R_i$ and vaccinated $S_i^V, I_i^V, R_i^V$ classes, with transmission matrices $\beta^1, \beta^2, \beta^3, \beta^4$ (unvaccinated or vaccinated recipient $\times$ unvaccinated or vaccinated source, $\beta^1_{ij} \ge \beta^2_{ij}$, $\beta^3_{ij} \ge \beta^4_{ij}$) and recovery rates $\mu_i^1 \le \mu_i^2$:
+
 $$\dot S_i = -\sum_j (\beta^1_{ij} I_j + \beta^2_{ij} I_j^V) S_i - \frac{U_i(t) S_i}{N_i - W_i(t)}, \qquad \dot S_i^V = -\sum_j (\beta^3_{ij} I_j + \beta^4_{ij} I_j^V) S_i^V + \frac{U_i(t) S_i}{N_i - W_i(t)},$$
+
 with the usual infection and recovery equations, where $U_i(t) \ge 0$ is the vaccination rate in group $i$, $W_i(t) = \int_0^t U_i \le N_i$, and vaccines go to unvaccinated people at random. A policy is feasible if $\sum_i U_i(t) \le A(t)$ (rate cap) and $\sum_i W_i(t) \le B(t)$ (supply). The objective is the weighted final size
+
 $$H(U) = \sum_{i=1}^n p_i\big(R_i(\infty) + \kappa_i R_i^V(\infty)\big), \qquad 0 \le \kappa_i \le 1.$$
 
 **Theorem.** Let group 1 have size $N_1 = \epsilon$, initial susceptibles $\sigma\epsilon$ and infected $(1-\sigma)\epsilon$ with $\sigma \in (0,1)$, and cost weight $p_1 = 1/\epsilon$ (so the cost of infecting the whole group stays fixed), all other parameters fixed. Suppose group 1 can be infected by some other group $j$ with vaccine protection, $\beta^1_{1j} > \beta^3_{1j} \ge 0$, that every group except group 1 is infected in the $\epsilon = 0$ limit, and let $U(\cdot;\epsilon)$ be any finitely supported policy that, at some fixed time $\tau$, has vaccinated at least a fixed amount $w > 0$ in total but less than a fixed fraction $\alpha$ of group 1 ($W_1(\tau;\epsilon) < \alpha\epsilon$), with $|W_i(t;\epsilon) - W_i(t;0)| < \epsilon$. Let $\tilde U$ redirect all of $U$'s vaccines to group 1 until $\epsilon$ doses have been given and then follow $U$. Then $\tilde U$ is feasible and, for all sufficiently small $\epsilon$,
+
 $$H(U(\cdot;\epsilon)) > H(\tilde U(\cdot;\epsilon)).$$
+
 If moreover $\sigma = 1$ and the initial difference in force of infection on unvaccinated versus vaccinated members of group 1 is positive, then optimal policies satisfy $\lim_{\epsilon\to 0} \bar W_1(t;\epsilon)/\epsilon = 1$ whenever any vaccine has been available by time $t$: in the limit the vulnerable group is vaccinated as fast as possible.
 
 ## Expansion

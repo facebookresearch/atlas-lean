@@ -1,19 +1,26 @@
 # Weak-coupling shift of the Turing threshold in bilayer systems
 
 **Model.** On an interval $(0,L)$, a surface layer with $n$ species $u_S$ and a thin bulk layer with $m \ge n$ species $u_B$ (the first $n$ of which, $\tilde u_B$, can cross the interface; $\tilde u_S$ denotes $u_S$ padded with zeros) evolve by
+
 $$\partial_t u_S = f_S(u_S) + \eta A(\tilde u_B - u_S) + \partial_x\bigl(D_S(u_S)\partial_x u_S\bigr),$$
+
 $$\partial_t u_B = f_B(u_B) + \eta \tilde B(\tilde u_S - u_B) + \partial_x\bigl(D_B(u_B)\partial_x u_B\bigr),$$
+
 with coupling strength $\eta \ge 0$, nonnegative exchange matrices $A$, $\tilde B$, and diffusion matrices that may contain cross-diffusion (e.g. chemotaxis) terms. This 1D–1D system is the thin-bulk limit of a 1D surface over a 2D bulk with a linear flux condition at the interface. Let $w^*(\eta) = (u_S^*, u_B^*)$ be a homogeneous equilibrium, $J_S, J_B$ the reaction Jacobians, and for the squared wavenumber $\xi$ set $P_0 = \xi D_S - J_S$, $Q_0 = \xi D_B - J_B$ (evaluated at $\eta = 0$). Write $\operatorname{co}(M)$ for the cofactor matrix and $M \cdot N = \operatorname{Tr}(M^{\mathsf T}N)$.
 
 Suppose the uncoupled surface layer undergoes a Turing bifurcation as a diffusion coefficient $\delta$ crosses $\delta_c(0)$ at squared wavenumber $\xi_c(0)$, i.e. $|P_0| = \partial_\xi|P_0| = 0$ while $|Q_0| \ne 0$ (surface-driven symmetry breaking), with the transversality condition $\partial^2_{\xi\xi}|P_0|\,\partial_\delta|P_0| \ne 0$. Then the critical value extends to a differentiable curve $\eta \mapsto \delta_c(\eta)$ near $0$, and:
 
 1. **First-order shift.**
+
 $$\delta_c'(0) = -\frac{\operatorname{co}(P_0)\cdot A + u_S^{*\prime}(0)\cdot\nabla_{u}|P_0|}{\partial_\delta|P_0|},$$
+
 evaluated at $(\xi_c(0), \delta_c(0))$. To first order the shift does not depend on the bulk parameters except through the equilibrium drift $u_S^{*\prime}(0)$.
 2. **Equilibrium drift.** If $J_S$ and $J_B$ are invertible, the equilibrium curve exists for small $\eta$ with $u_S^{*\prime}(0) = J_S^{-1}A\bigl(u_S^*(0) - \tilde u_B^*(0)\bigr)$. It vanishes when the two uncoupled layers share the same equilibrium, which is always the case for a surface over a 2D bulk.
 3. **Shared equilibria.** If $u_S^*(0) = \tilde u_B^*(0)$ and $A = I$ (all surface species exchange equally), then $\delta_c'(0)$ and $\partial_\delta|P_0|$ have opposite signs: coupling always makes patterning harder. For pure reaction–diffusion surfaces ($D_S$ constant diagonal) some diagonal $A$ makes them have the same sign, so selective exchange can promote patterning.
 4. **Activator–inhibitor case.** For two surface species with activator diffusion $1$, inhibitor diffusion $\delta = d_v$ satisfying the classical Turing conditions ($f_u > 0$, $g_v < 0$), shared equilibria and $A = \operatorname{diag}(\alpha, \beta)$,
+
 $$\partial_\delta|P_0| < 0, \qquad \delta_c'(0) = \alpha\,\frac{\delta_c(0)}{\xi_c(0)}\Bigl(1 - \frac{\beta/\alpha}{\delta_c(0)}\Bigr),$$
+
 so the coupling raises the inhibitor-diffusion threshold (inhibits patterning) iff $\beta < \alpha\,\delta_c(0)$, i.e. unless the inhibitor leaks through the interface fast enough relative to the activator.
 
 ## Depends on

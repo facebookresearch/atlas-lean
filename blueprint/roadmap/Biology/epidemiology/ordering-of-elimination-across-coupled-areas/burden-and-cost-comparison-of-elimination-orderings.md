@@ -4,10 +4,14 @@
 
 **Proposition.**
 1. (Burden) The total burdens are $E_A = (b_1 + B_2)T_1 + b_2T_2$ and $E_B = (b_2 + B_1)T_2 + b_1T_1$, so
+
 $$\Delta E = E_B - E_A = B_1T_2 - B_2T_1 .$$
+
 Hence with equal durations $T_1 = T_2$, strategy $A$ always minimizes burden (and with many areas, burden is minimized by proceeding in order of decreasing burden); if $T_1 > T_2$, strategy $A$ minimizes burden if and only if $B_1/B_2 > T_1/T_2$.
 2. (Cost) The additional importation cost of strategy $A$ over $B$ is
+
 $$\Delta C = V_1T_2(\beta + \gamma R_1) - V_2T_1(\beta + \gamma R_2).$$
+
 With equal durations $T$ and low-transmission vulnerabilities, $\Delta C = \eta T(\beta + \gamma)(R_2 - R_1) < 0$, so targeting the higher-transmission area first is also cheaper; with $T_1 > T_2$ and low-transmission vulnerabilities this remains true. With saturated (high-transmission) vulnerabilities $V_1 = V_2$ and equal durations, $\Delta C = VT\gamma(R_1 - R_2) > 0$, so strategy $B$ is cheaper.
 
 ## Expansion

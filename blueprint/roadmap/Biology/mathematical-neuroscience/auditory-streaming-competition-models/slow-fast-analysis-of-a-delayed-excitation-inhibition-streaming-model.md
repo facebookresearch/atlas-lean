@@ -1,10 +1,15 @@
 # Slow–fast analysis of a delayed excitation–inhibition streaming model
 
 **Model.** Two populations with firing rates $u_A, u_B$ and inhibitory synaptic variables $s_A, s_B$ obey the delay differential equations
+
 $$\tau\dot u_A = -u_A + H\big(a u_B - b s_B(t - D) + i_A(t)\big), \qquad \tau\dot u_B = -u_B + H\big(a u_A - b s_A(t - D) + i_B(t)\big),$$
+
 $$\dot s_X = H(u_X)(1 - s_X)/\tau - s_X/\tau_i, \qquad X \in \{A, B\},$$
+
 where $H(x) = \mathbf 1[x \ge \theta]$ with threshold $\theta \in (0,1)$, $a \ge 0$ is the fast excitation strength, $b \ge 0$ the strength of inhibition with delay $D$ and slow decay time $\tau_i \gg \tau$. Tones are presented alternately: A tones on $I_A^k = [2kT_R, 2kT_R + T_D]$ and B tones on $I_B^k = [(2k+1)T_R, (2k+1)T_R + T_D]$, with $T_R \ge T_D$ and $T_R \ge D$, and
+
 $$i_A = c\sum_k \chi_{I_A^k} + d\sum_k \chi_{I_B^k}, \qquad i_B = d\sum_k \chi_{I_A^k} + c\sum_k \chi_{I_B^k}, \qquad c \ge d \ge 0.$$
+
 Let $I$ be the union of all tone intervals. Assume (U1) $a - b < \theta$ and (U2) $c \ge \theta$.
 
 **Theorem.** In the singular limit $\tau \to 0$:

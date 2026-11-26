@@ -1,9 +1,13 @@
 # Classification of similar-strategy invasions near singular strategies in fluctuating environments
 
 **Setting.** As in the invasion-implies-substitution article: strategies $x_i = x + \epsilon\xi_i$ in a stochastic, ergodic resident–environment system with invasion fitness $S_x(y)$, and frequency $P^\epsilon$ of $x_2$. Suppose $x$ is singular along the deviation, $\partial_y S_x(y)|_{y=x}(\xi_2 - \xi_1) = 0$, and let
+
 $$C_{11} = \tfrac12\partial_{xx}S_x(y)|_{y=x},\quad C_{21} = \tfrac12\partial_{yx}S_x(y)|_{y=x},\quad C_{22} = \tfrac12\partial_{yy}S_x(y)|_{y=x}.$$
+
 On the slower time $t_2 = \epsilon^2 t$ the averaged frequency obeys
+
 $$\dot{\bar P} = \bar P(1 - \bar P)\Big((\xi_2 + \xi_1)^\top(C_{22} + C_{21})(\xi_2 - \xi_1) + \big(\tfrac12 - \bar P\big)(\xi_2 - \xi_1)^\top(C_{22} + C_{11})(\xi_2 - \xi_1)\Big),$$
+
 whose equilibria in $[0,1]$ are $0$, $1$ and $S_{x_1}(x_2)/\big(S_{x_1}(x_2) + S_{x_2}(x_1)\big)$.
 
 **Theorem (classification).** Under the square-integrability hypothesis, if $(\xi_2 - \xi_1)^\top(C_{22} + C_{11})(\xi_2 - \xi_1) \ne 0$ then, in the sense that $P^\epsilon$ stays $\delta$-close to the attractor of the averaged system for all large $t_2$ with probability one as $\epsilon \to 0$:

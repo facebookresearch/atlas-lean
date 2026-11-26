@@ -1,11 +1,15 @@
 # Final size of the multi-stage pairwise SIR model
 
 **Setting.** Pairwise SIR model on a network of $N$ nodes, each of degree $n$, with per-link transmission rate $\tau$ and an infectious period consisting of $K$ exponential stages of rate $K\gamma$ (Erlang with mean $1/\gamma$). Node and edge equations
+
 $$\dot{[S]} = -\tau\sum_{i=1}^K [SI_i], \qquad \dot{[SS]} = -2\tau\sum_{i=1}^K [SSI_i], \qquad \dot{[SI_1]} = -(\tau + K\gamma)[SI_1] + \tau\sum_i [SSI_i] - \tau\sum_i [I_iSI_1],$$
+
 $\dot{[SI_j]} = -(\tau + K\gamma)[SI_j] + K\gamma[SI_{j-1}] - \tau\sum_i [I_iSI_j]$ for $j \ge 2$, with the stage chain $\dot{[I_1]} = \tau\sum_i[SI_i] - K\gamma[I_1]$, $\dot{[I_j]} = K\gamma([I_{j-1}] - [I_j])$, are closed by $[XSY] \approx \frac{n-1}{n}\frac{[XS][SY]}{[S]}$.
 
 **Theorem.** For a single outbreak in a closed population started from a vanishingly small level of infection, the final epidemic size $R_\infty = 1 - [S]_\infty/N$ satisfies
+
 $$R_\infty = 1 - \big(1 - \tilde\tau + \tilde\tau\,\theta\big)^{n}, \qquad \theta = \big(1 - \tilde\tau + \tilde\tau\,\theta\big)^{n-1},$$
+
 where $\tilde\tau = 1 - (K\gamma/(\tau + K\gamma))^K$ is the edge transmissibility and $\theta = S_\infty^{(n-1)/n}$. The final size depends on the infectious-period distribution only through $\tilde\tau$; since $\tilde\tau$ increases with $K$, so does $R_\infty$ at fixed mean infectious period. In the well-mixed multi-stage model the final size $R_\infty = 1 - e^{-R_0 R_\infty}$ is independent of $K$.
 
 ## Depends on

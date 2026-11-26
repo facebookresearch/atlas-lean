@@ -1,9 +1,13 @@
 # Ulam–Hyers stability of fractional-order compartmental models
 
 Let $P : [0,\tau] \to \mathbb R^n$ be the vector of compartments of an epidemic model written as the Caputo initial value problem
+
 $$ {}^{C}D^{\vartheta}_{0^+} P(t) = Z(t, P(t)), \qquad P(0) = P_0, \qquad 0 < \vartheta \le 1, $$
+
 on the Banach space $\mathcal X = C([0,\tau]; \mathbb R^n)$ with the sup norm, where $Z$ is continuous and globally Lipschitz in $P$ with constant $L_Z$. Solutions are exactly the fixed points of
+
 $$ (\mathcal T P)(t) = P_0 + \frac{1}{\Gamma(\vartheta)} \int_0^t (t-r)^{\vartheta - 1} Z(r, P(r))\,dr. $$
+
 The problem is **Ulam–Hyers stable** if there is $C > 0$ such that for every $\zeta > 0$ and every $V \in \mathcal X$ with $\big|{}^{C}D^{\vartheta}_{0^+} V(t) - Z(t, V(t))\big| \le \zeta$ on $[0,\tau]$, there is a solution $\bar V$ with $\|V - \bar V\| \le C\zeta$. It is *generalized* Ulam–Hyers stable if $C\zeta$ is replaced by $\varphi(\zeta)$ for a continuous $\varphi$ with $\varphi(0) = 0$.
 
 **Theorem.** Let $a = \tau^{\vartheta}/\Gamma(\vartheta + 1)$. If $a L_Z < 1$, then:

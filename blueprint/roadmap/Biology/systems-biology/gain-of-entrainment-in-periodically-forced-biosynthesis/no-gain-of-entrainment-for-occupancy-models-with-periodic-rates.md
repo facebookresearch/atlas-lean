@@ -3,7 +3,9 @@
 **Setting.** A system **entrains** to a $T$-periodic input if every trajectory converges to a unique $T$-periodic solution. For an entraining control system with output $h$, compare the average output along the periodic attractor under a $T$-periodic control $u$ with that under the constant control having the same time average. The **gain of entrainment** is the supremum of the improvement over admissible periodic controls with values in $[\ell, L]$, $0 < \ell < L$, and prescribed averages. Augmenting the state with $\xi_j(t) = \int_0^t u_j$ and imposing $x(0) = x(T)$, $\xi_j(T) = T\bar u_j$ turns this into a periodic optimal control problem, solvable with the Pontryagin maximum principle.
 
 **Occupancy model.** In the ribosome flow model with controlled initiation rate $u_0(t)$ and exit rate $u_1(t)$,
+
 $$\dot x_1 = u_0(1 - x_1) - \lambda_1 x_1(1 - x_2),\ \ \dot x_i = \lambda_{i-1}x_{i-1}(1 - x_i) - \lambda_i x_i(1 - x_{i+1}),\ \ \dot x_n = \lambda_{n-1}x_{n-1}(1 - x_n) - u_1 x_n,$$
+
 with $x_i \in [0,1]$ the occupancy of site $i$; $T$-periodic rates are known to entrain the system. The objective is the average production rate $J = \frac{1}{T}\int_0^T u_1(t)\,x_n(t)\,dt$ subject to $\frac{1}{T}\int_0^T u_j = \bar u_j \in (\ell, L)$.
 
 **Theorem.**

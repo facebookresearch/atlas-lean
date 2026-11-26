@@ -1,17 +1,27 @@
 # Optimal treatment allocation under mean-reverting treatment uncertainty
 
 **Model.** In a stochastic SIR model, let $I(t)$ be the infected fraction and let a fraction $\alpha(t)$ of infected individuals receive a treatment (the constraint $\alpha \in [0, 1]$ is relaxed; $\alpha > 1$ can be read as extra doses and $\alpha < 0$ as switching away from a harmful treatment). Untreated infected individuals leave the infected class at recovery rate $K_0$ and death rate $\mu_0$, treated ones at death rate $\mu_1$ and at an uncertain recovery rate $K_1(t)$ modelled as an Ornstein–Uhlenbeck process,
+
 $$dK_1 = \lambda_k(\bar k_1 - K_1)\, dt + \sigma_k\, dB(t), \qquad \lambda_k > 0,$$
+
 and treatment outcomes carry measurement noise $-\alpha I \sigma\, dB(t)$ driven by the same Brownian motion $B$, with $\sigma < 0$ by convention. In the low-infection regime ($S \approx 1$, no transmission noise) the *risk-free infection rate* $r = \beta - K_0 - \mu_0$ is constant, and with the *treatment risk*
+
 $$X(t) = \frac{K_0 + \mu_0 - \mu_1 - K_1(t)}{\sigma}, \qquad \sigma_x = \frac{\sigma_k}{\sigma},$$
+
 the controlled dynamics are
+
 $$dI = \bigl(r + \alpha\sigma X\bigr) I\, dt + \alpha\sigma I\, dB, \qquad dX = \lambda_k(\bar X - X)\, dt - \sigma_x\, dB .$$
+
 A risk-averse decision-maker chooses $\alpha$ to maximize $\mathbb E\bigl[-I(T)^{1-\gamma}/(1-\gamma)\bigr]$ with $\gamma < 0$ (for $\gamma = -1$ this is minimizing $\mathbb E[I(T)^2]$).
 
 **Theorem.** This control problem is the Merton–Wachter problem of portfolio choice with a mean-reverting market price of risk, with $I$ in the role of wealth, $\alpha$ the risky allocation and $X$ the Sharpe ratio. If $\sigma_x < 0$, it has a unique optimal solution. The optimally controlled state is
+
 $$I^*(t) = Z(t)^{1/\gamma}\, H_0\bigl(X(t), T - t\bigr), \qquad \frac{dZ}{Z} = \bigl(r + X^2\bigr) dt + X\, dB, \qquad Z(0) = \Bigl(\frac{I(0)}{H_0(X(0), T)}\Bigr)^{\gamma},$$
+
 with kernel $H_0(X, \tau) = \exp\bigl(\tfrac{1}{\gamma}\bigl(\tfrac12 A_{0,1}(\tau)X^2 + A_{0,2}(\tau)X + A_{0,3}(\tau)\bigr)\bigr)$, and the optimal treatment allocation is
+
 $$\alpha^*(t) = \underbrace{\frac{X(t)}{\gamma\sigma}}_{\text{myopic}} + \underbrace{\frac{\sigma_x}{|\gamma|\sigma}\bigl(A_{0,1}(T-t)\,X(t) + A_{0,2}(T-t)\bigr)}_{\text{hedging}} .$$
+
 Here $A_{0,1}, A_{0,2}, A_{0,3}$ are explicit deterministic functions of the time to go $\tau$: $A_{0,1}$ is the solution of a scalar Riccati equation with $A_{0,1}(0) = 0$, finite for all $\tau \ge 0$ when $\sigma_x < 0$, and $A_{0,2}, A_{0,3}$ are integrals of it.
 
 ## Expansion

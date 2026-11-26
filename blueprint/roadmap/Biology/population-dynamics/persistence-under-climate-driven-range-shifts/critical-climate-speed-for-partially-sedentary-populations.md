@@ -1,14 +1,21 @@
 # Critical climate speed for partially sedentary populations
 
 **Model.** A population with discrete annual generations lives in a suitable habitat patch of length $L$ that shifts at climate speed $c$ per year. After growth $n \mapsto f(n)$, with $f(0) = 0$ and $f'(0) = R > 1$, a fraction $p \in (0,1]$ disperses with a symmetric kernel $k$ and the rest stays put; individuals outside the patch die:
+
 $$n_{t+1}(x) = \int_{-L/2 + ct}^{L/2 + ct} p\,f(n_t(y))\,k(x - y)\,dy + (1 - p)\,f(n_t(x)), \qquad x \in [-L/2 + c(t+1),\ L/2 + c(t+1)].$$
+
 In the moving frame, persistence is decided by the dominant eigenvalue $\lambda$ of the linearized problem
+
 $$\lambda\,u(x) = \int_{-L/2}^{L/2} pR\,u(y)\,k(x - y + c)\,dy + (1-p)R\,u(x + c)\ \ (x \in [-L/2, L/2]), \qquad u = 0 \text{ otherwise};$$
+
 the population persists if $\lambda > 1$, and the **critical speed** $c^*$ solves $\lambda(c^*) = 1$.
 
 **Lemma (top-hat kernel).** Let $k(x) = \frac{1}{4\beta}\chi_{[-2\beta, 2\beta]}(x)$ with $2\beta > L$ and $c < 2\beta - L$. Let $q = R(1-p)$ and $n(x) = \min\{n \ge 1 : x + nc \notin [-L/2, L/2]\}$. Then the eigenfunction is the step function
+
 $$u(x) = \frac{B\,(\lambda^{n(x)} - q^{n(x)})}{\lambda^{n(x)}(\lambda - q)}, \qquad B = \frac{Rp}{4\beta}\int_{-L/2}^{L/2} u(y)\,dy,$$
+
 with $\lceil L/c \rceil = N + 1$ steps. Writing $\epsilon = L/c - N$, the critical speed satisfies
+
 $$c = \frac{4\beta\,(1 - q)}{pR\,\Big(N + \epsilon\,(1 - q^{N+1}) - \dfrac{q\,(1 - q^{N})}{1 - q}\Big)} .$$
 
 ## Expansion

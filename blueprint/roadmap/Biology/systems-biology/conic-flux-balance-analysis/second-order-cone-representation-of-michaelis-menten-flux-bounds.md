@@ -1,10 +1,13 @@
 # Second-order cone representation of Michaelis–Menten flux bounds
 
 **Kinetic flux bound.** In a metabolic network with stoichiometric matrix $S$, fluxes $v$ and metabolite concentrations $z \ge 0$, let each reaction $i$ in a set $Q$ be limited by Michaelis–Menten kinetics in its substrate $z_{\sigma(i)}$ with maximal rate $V_i^{\max} > 0$ and Michaelis constant $K_i^m > 0$:
+
 $$0 \le v_i \le \frac{V_i^{\max} z_{\sigma(i)}}{K_i^m + z_{\sigma(i)}} \qquad \text{(Equation 2)}.$$
 
 **SOC representation.** Writing $V = V_i^{\max}$, $K = K_i^m$, $z = z_{\sigma(i)}$, for $z \ge 0$ and $v \ge 0$ the bound is equivalent to the hyperbolic constraint $VK \le (V - v)(K + z)$ with $V - v \ge 0$, i.e. to the second-order cone constraint
+
 $$\left\| \begin{pmatrix} 2\sqrt{VK} \\ (V - v) - (K + z) \end{pmatrix} \right\|_2 \le (V - v) + (K + z),$$
+
 which the paper writes in an equivalent rescaled form (Equation 4). The set of feasible $(v, z)$ is therefore convex, although the rate law is nonlinear.
 
 **Conic flux balance analysis (CFBA).** Maximizing a linear objective $c^\top v$ subject to $Sv = 0$, linear flux and concentration bounds, and the cone constraints above for $i \in Q$ is a second-order cone program; it predicts steady-state fluxes and concentrations together, and conic duality yields sensitivities of the optimum to $V_i^{\max}$ and $K_i^m$.

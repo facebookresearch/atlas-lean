@@ -1,8 +1,11 @@
 # Global structural identifiability of the linear ERK model
 
 **Linear ERK model.** Let $S_0,S_1,S_2$ be the concentrations of unphosphorylated, singly and doubly phosphorylated ERK under MEK action, with
+
 $$\dot S_0=-\kappa_1S_0,\qquad \dot S_1=-\kappa_2S_1+(1-\pi)\kappa_1S_0,\qquad \dot S_2=\pi\kappa_1S_0+\kappa_2S_1,$$
+
 parameters $\kappa_1,\kappa_2>0$ and processivity $\pi\in[0,1)$, and initial condition $S_0(0)=5$, $S_1(0)=S_2(0)=0$. It is the quasi-steady-state reduction of the mass-action model in which $\kappa_i=E_{tot}k_{f_i}k_{c_i}/(k_{c_i}+k_{r_i})$ and $\pi=k_{c_2}/(k_{c_2}+k_{r_2})$. The solution is $S_0=5e^{-\kappa_1t}$, $S_2=5-S_0-S_1$ and
+
 $$S_1(t)=\begin{cases}\dfrac{5\kappa_1(1-\pi)}{\kappa_1-\kappa_2}\bigl(e^{-\kappa_2t}-e^{-\kappa_1t}\bigr),&\kappa_1\ne\kappa_2,\\[1ex] 5\kappa_1(1-\pi)\,t\,e^{-\kappa_1t},&\kappa_1=\kappa_2.\end{cases}$$
 
 **Definitions.** For time points $t_1,\dots,t_l$, the model prediction map $\phi_{t_1,\dots,t_l}$ sends a parameter to the vector of outputs at those times, and $\theta\sim\theta'$ when $\phi(\theta)=\phi(\theta')$. The model is **globally identifiable** if every equivalence class has one element, **generically identifiable** if this holds off a proper subvariety, and **locally identifiable** if almost all classes are finite. It is **practically identifiable** at a data point $z^*$ and level $\alpha$ if the likelihood-ratio confidence region $U_\delta(z^*)$ is bounded in parameter space; with i.i.d. Gaussian noise, $U_\delta(z^*)=\phi^{-1}(B_\rho(z^*))$ is the preimage of a Euclidean ball around the data.

@@ -9,13 +9,17 @@ I_v' &= ac\,\frac{I_h + (1-\sigma) Q_h}{H - \sigma Q_h}\,(V - I_v) - \mu I_v .
 For $\theta = 0$ this is the classical Ross–Macdonald model with $\mathcal R_0 = \sqrt{a^2 b c m/(\gamma\mu)}$ and global threshold dynamics.
 
 **Reproduction number.** The next-generation matrix gives
+
 $$\mathcal R_{10} = \sqrt{\frac{a^2 b c m\,\big(\theta(1-\sigma)\gamma_1 + \gamma_2\big)}{\mu\,\gamma_2\,\big(\theta\gamma_1 + (1-\theta)\gamma\big)}} = \sqrt{\mathcal R_{10i}^2 + \mathcal R_{10q}^2},$$
+
 the contributions of infectious and of quarantined humans. Let $\mathcal R_0$ denote the same quantity with $\sigma = 0$, so $\mathcal R_{10} \le \mathcal R_0$.
 
 **Theorem 2.** The disease-free equilibrium is locally asymptotically stable if $\mathcal R_{10} < 1$, unstable if $\mathcal R_{10} > 1$, and globally asymptotically stable if $\mathcal R_0 \le 1$.
 
 **Theorem 3 (backward bifurcation).** The model undergoes a backward bifurcation at $\mathcal R_{10} = 1$ if
+
 $$ac\big(\theta\gamma_1(1-\sigma) + \gamma_2\big) + \mu\big(\theta\gamma_1(1 - 2\sigma) + \gamma_2\big) < 0,$$
+
 which requires efficient quarantine ($\sigma > 1/2$). Then up to two endemic equilibria exist for $\mathcal R_{10} < 1$ (Proposition 1), and the disease can persist although $\mathcal R_{10} < 1$; the disease persists uniformly when $\mathcal R_{10} > 1$ (Theorem 4). With bilinear (mass-action) incidence the analogous number $\mathcal R_{20}$ gives forward threshold behavior with a unique endemic equilibrium (Theorems 5-6).
 
 ## Expansion

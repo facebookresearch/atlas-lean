@@ -13,11 +13,15 @@ Solutions exist globally, are unique, and stay positive when $x_0 > 0$. Let $F_A
 **Theorem 2.** If $F_A < 0$ and $F(t,x) \to f(t) > 0$ uniformly as $x \to \infty$, there is a curve $\gamma : [0,1) \to (0,\infty)$ such that solutions with $x_0 < \gamma(t_0)$ converge to $0$, solutions with $x_0 > \gamma(t_0)$ diverge to $+\infty$, and the solution with $x_0 = \gamma(t_0)$ is the unique periodic solution, whose graph separates the two basins.
 
 **Lemma (linear periodic forcing).** For $\dot x = F(t) - G(t)x$, $x(0) = 0$, with $1$-periodic $F$ and $G > 0$, $G_A = \int_0^1 G$, every solution converges to the $1$-periodic function
+
 $$x^*(t) = \frac{K}{1 - e^{-G_A}}\,e^{-\int_0^{\{t\}} G} + \int_0^{\{t\}} F(s)\,e^{-\int_s^{\{t\}} G}\,ds, \qquad K = \int_0^1 F(s)\,e^{-\int_s^1 G}\,ds,$$
+
 where $\{t\} = t - \lfloor t \rfloor$.
 
 **Application (prostate cancer vaccination).** In a seven-equation model of vaccine uptake by dendritic cells, regulatory and cytotoxic T cells and tumour cells, periodic vaccination makes every immune variable asymptotically $1$-periodic (by the lemma), and the scaled tumour size obeys
+
 $$\dot x = x\left(g - \frac{H(t)}{1 + x}\right),$$
+
 with tumour growth rate $g$ and periodic immune killing $H(t)$. If $g > H_A := \int_0^1 H$ the tumour grows without bound from any positive size; if $g < H_A$ there is a periodic threshold $x^*(t_0)$ below which treatment cures and above which it fails.
 
 ## Expansion

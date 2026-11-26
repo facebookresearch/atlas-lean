@@ -7,12 +7,17 @@
 **Motifs.** A subnetwork motif $M$ is a gene-family-specific substructure on $k \le m$ families, say families $1, \dots, k$, whose original instance is the $k$ founders. Under **full duplication** every duplicated gene inherits all regulatory links, so every choice of one gene per family is an instance and $|M(n)| = c_1 c_2 \cdots c_k$.
 
 **Theorem 1.** For $1 \le k \le m \le n$,
+
 $$\mathbb E\,|M(n)| = \frac{\binom{n+k-1}{m+k-1}}{\binom{n-1}{m-1}} = \frac{\Gamma(n+k)\,\Gamma(m)}{\Gamma(n)\,\Gamma(m+k)} = \frac{(n+k-1)_k}{(m+k-1)_k},$$
+
 with falling factorials $(a)_k$. If moreover $n \ge k^2$, then
+
 $$\frac{n^k}{(m+k-1)_k} \le \mathbb E\,|M(n)| \le \frac{n^k}{(m+k-1)_k}\Big(1 + \frac{3k^2}{4n}\Big) \qquad \text{(Corollary 1)}.$$
 
 **Second moment.** The same generating-function argument gives
+
 $$\mathbb E\,|M(n)|^2 = \binom{n-1}{m-1}^{-1} \sum_{i=0}^{k} \binom{k}{i}\, 2^i \binom{n+k-1}{m+k+i-1},$$
+
 and the variance vanishes exactly when $m = 1$ or $m = n$. These moments give the null mean and variance for significance tests of over-represented family-specific motifs in gene regulatory networks.
 
 ## Expansion

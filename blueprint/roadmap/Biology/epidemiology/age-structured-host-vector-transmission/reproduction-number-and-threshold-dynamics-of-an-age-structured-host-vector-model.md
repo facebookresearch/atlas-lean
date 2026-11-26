@@ -1,12 +1,16 @@
 # Reproduction number and threshold dynamics of an age-structured host–vector model
 
 Humans are split into age classes $i \in \{J, A, S\}$ (juvenile, adult, senior) with maturation $J \to A$ at rate $\alpha$ and $A \to S$ at rate $\xi$, and each class into susceptible $S_i$, exposed $E_i$, asymptomatic $I_{Ai}$, symptomatic $I_{Si}$ and recovered $R_i$. Juveniles are recruited at rate $\pi_J$, class $i$ dies at rate $\mu_i$, exposed humans of class $i$ become infectious at rate $\sigma_i$, splitting into asymptomatic and symptomatic fractions, and recover at rates $\gamma_{Ai}, \gamma_{Si}$. Vectors are susceptible $S_M$, exposed $E_M$ or infectious $I_M$, recruited at rate $\pi_M$, dying at rate $\mu_M$ and becoming infectious at rate $\sigma_M$. With biting rate $b_M$, per-bite transmission probabilities $\beta_i$ (vector to human of class $i$) and $\beta_M$ (human to vector), and total human population $N_H$, the forces of infection are
+
 $$\lambda_i = \frac{\beta_i b_M I_M}{N_H}, \qquad \lambda_M = \frac{\beta_M b_M \sum_{j} (I_{Aj} + I_{Sj})}{N_H}.$$
+
 Infection classes move with their hosts on maturation. The feasible region $\Omega$ (human total at most $\pi_J/\mu_H$, vector total at most $\pi_M/\mu_M$) is positively invariant, and there is a unique disease-free equilibrium $\mathcal E_0$ with susceptible levels $S_J^*, S_A^*, S_S^*, S_M^*$.
 
 **Theorem.**
 1. (Reproduction number) With $F$ and $V$ the new-infection and transfer matrices at $\mathcal E_0$,
+
 $$\mathcal R_0 = \rho(FV^{-1}) = \sqrt{(\mathcal R_{JM} + \mathcal R_{AM} + \mathcal R_{SM})\, \mathcal R_{MH}},$$
+
 where $\mathcal R_{iM}$ is the expected number of infectious humans that end up in the infectious classes from infections of age class $i$ caused by one infectious vector (counting progression through later age classes), and $\mathcal R_{MH}$ is the expected number of infectious vectors produced by such human infections. $\mathcal E_0$ is locally asymptotically stable if $\mathcal R_0 < 1$ and unstable if $\mathcal R_0 > 1$.
 2. (Global stability) On $\Omega_1 = \{X \in \Omega : S_J \le S_J^*, S_A \le S_A^*, S_S \le S_S^*, S_M \le S_M^*\}$, which is positively invariant, $\mathcal E_0$ is globally asymptotically stable whenever $\mathcal R_0 \le 1$.
 3. (Endemic equilibrium) Without disease-induced death, the model has a unique endemic equilibrium when $\mathcal R_0 > 1$: the steady-state force of infection on juveniles solves a cubic $b_3 x^3 + b_2 x^2 + b_1 x + b_0(1 - \mathcal R_0^2) = 0$ with $b_3, b_0 > 0$.

@@ -5,6 +5,7 @@ Consider a reaction network with species $X_1, \dots, X_n$, reactions $R_1, \dot
 A locally Lipschitz function $\tilde V : \mathbb{R}^\nu \to \mathbb{R}_{\ge 0}$ is a **robust Lyapunov function (RLF)** if $\tilde V(r) = 0$ exactly when $\Gamma r = 0$ and $V(x) = \tilde V(R(x))$ is nonincreasing along trajectories (in the sense of Dini derivatives) for every admissible $R$; a network admitting one is **structurally attractive**.
 
 Let $\mathcal{P} = \{(j,i) : X_i \text{ is a reactant of } R_j\}$ be the reaction–reactant pairs, enumerated $(j_\ell, i_\ell)$, $\ell = 1, \dots, s$, and let $\gamma_i^{\mathsf T}$ be the $i$-th row of $\Gamma$. Define the rank-one matrices
+
 $$Q_\ell = e_{j_\ell}\,\gamma_{i_\ell}^{\mathsf T} \in \mathbb{R}^{\nu \times \nu}, \qquad \ell = 1, \dots, s.$$
 
 **Theorem.** A function $\tilde V : \bar{\mathbb{R}}_+^\nu \to \bar{\mathbb{R}}_+$ is an RLF for the network if and only if it is a common Lyapunov function for the linear systems $\dot r = Q_1 r, \dots, \dot r = Q_s r$ (with zero set $\bigcap_\ell \ker Q_\ell$).

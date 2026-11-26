@@ -1,11 +1,15 @@
 # Permanence of Lotka–Volterra systems with ergodic forcing
 
 Consider a Lotka–Volterra system whose intrinsic growth rates are driven by an autonomous environment,
+
 $$\frac{dx}{dt} = x \circ \big(Ax + b(y)\big), \qquad \frac{dy}{dt} = g(y), \quad y \in K,$$
+
 with $K \subset \mathbb{R}^m$ compact, $A = (a_{ij})$ constant and $\circ$ the componentwise product. Suppose the environmental flow on $K$ is uniquely ergodic with invariant probability $\mu$, and let $\bar b_i = \int_K b_i\,d\mu$ be the time-averaged intrinsic growth rates.
 
 **Proposition 1.** Assume the system has a compact absorbing set (assumption S2 of the [Morse-decomposition criterion](morse-decomposition-criterion-for-robust-permanence.md)). If there are $p_1,\dots,p_n > 0$ such that
+
 $$\sum_{i} p_i\Big(\sum_j a_{ij}x_j + \bar b_i\Big) > 0$$
+
 for every $x \in \mathbb{R}_+^n$ with $\prod_i x_i = 0$ and $\sum_j a_{ij}x_j = -\bar b_i$ whenever $x_i > 0$ (that is, at every boundary equilibrium of the averaged system), then the forced system is robustly permanent.
 
 **Proposition 2.** If there is no $x \in \mathbb{R}_+^n$ with $x_i > 0$ and $\sum_j a_{ij}x_j = -\bar b_i$ for all $i$ (the averaged system has no interior equilibrium), then $\omega(z) \subset S_0$ for every $z \in S \setminus S_0$: some species is driven to extinction.

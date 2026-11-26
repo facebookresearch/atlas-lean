@@ -5,7 +5,9 @@
 **Projections.** For a partition $V_1, \dots, V_k$ of $V$, write $s|_{V_j}$ for the projection of a state and lift it to sets; $C_j \subseteq \mathrm{ind}(V_j)$ is an APC on $V_j$ if the APC condition holds after projecting attractors and basins to $V_j$.
 
 **Proposition 1.** If $C^{\min}$ is a min-APC of the network, then for every block $V_j$ the restriction $C^{\min} \cap \mathrm{ind}(V_j)$ is a min-APC on $V_j$, and
+
 $$C^{\min} = \bigcup_{j=1}^k \big( C^{\min} \cap \mathrm{ind}(V_j) \big).$$
+
 Consequently $\sum_j |C_j| \le |C^{\min}|$ for any choice of min-APCs $C_j$ on the blocks, and a min-APC of the whole network can be searched for among unions of block-wise min-APCs, enlarging the blocks' candidate sets only when no union is a valid global APC.
 
 ## Expansion

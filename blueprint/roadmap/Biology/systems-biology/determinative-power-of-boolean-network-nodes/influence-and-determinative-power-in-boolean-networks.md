@@ -5,6 +5,7 @@
 **Influence and sensitivity (Definition 1).** The influence of $x_j$ on $f_i$ is $I_j(f_i) = P\big(f_i(X) \ne f_i(X \oplus e_j)\big)$, the average sensitivity is $\mathrm{avs}(f_i) = \sum_j I_j(f_i)$, and the strength is $\sigma(f_i) = \sum_j I_i(f_j)$.
 
 **Proposition 1.** With $T_j = (I - C_{\varphi_j})^*(I - C_{\varphi_j})$ and $T = \sum_j T_j$,
+
 $$I_j(f_i) = \langle T_j f_i, f_i \rangle, \qquad \mathrm{avs}(f_i) = \langle T f_i, f_i \rangle, \qquad \sigma(f_i) = \sum_j \langle T_i f_j, f_j \rangle .$$
 
 **Proposition 2.** If $\Lambda_j$ and $\Lambda$ are the largest eigenvalues of $T_j$ and $T$, then $I_j(f) \le \Lambda_j\, \mathbb{E}[f(X)]$, $\mathrm{avs}(f) \le \Lambda\, \mathbb{E}[f(X)]$, and $\sigma(f_i) \le \Lambda_i\, \mathbb{E}\big[\sum_j f_j(X)\big]$.

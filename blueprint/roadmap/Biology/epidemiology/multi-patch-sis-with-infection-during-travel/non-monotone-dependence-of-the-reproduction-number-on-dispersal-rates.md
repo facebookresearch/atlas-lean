@@ -1,11 +1,17 @@
 # Non-monotone dependence of the reproduction number on dispersal rates
 
 Take two regions in the multi-patch SIS model with infection during travel. Region $j$ has contact rate $\beta_j$, death rate $d_j$, recovery rate $\delta_j$; individuals move from region $k$ to region $j$ at rate $\alpha_{jk} > 0$ and travel for time $\tau_{jk}$ with in-transit contact and recovery rates $\beta^T_{jk}, \delta^T_{jk}$. Writing
+
 $$R_j = \frac{\beta_j}{d_j + \delta_j + \alpha_{kj}}, \qquad r_{jk} = \frac{\alpha_{jk}\, e^{(\beta^T_{jk} - \delta^T_{jk})\tau_{jk}}}{d_k + \delta_k + \alpha_{jk}} \quad (k \ne j),$$
+
 the basic reproduction number is
+
 $$\mathcal R_0 = \tfrac12\Bigl(R_1 + R_2 + \sqrt{(R_1 - R_2)^2 + 4 r_{12} r_{21}}\Bigr).$$
+
 Let $R_j(0) = \beta_j/(d_j + \delta_j)$ be the local reproduction numbers without travel, assume $R_1(0) \ge R_2(0)$, and define the in-transit reproduction number
+
 $$\eta = \exp\Bigl(\tfrac12\bigl[(\beta^T_{21} - \delta^T_{21})\tau_{21} + (\beta^T_{12} - \delta^T_{12})\tau_{12}\bigr]\Bigr) = \lim_{\alpha_{12}, \alpha_{21} \to \infty} \mathcal R_0 .$$
+
 Write $\partial_1 = \partial/\partial \alpha_{21}$ (travel out of region $1$) and $\partial_2 = \partial/\partial \alpha_{12}$ (travel out of region $2$).
 
 **Theorem.** For $\alpha_{21}, \alpha_{12} > 0$:

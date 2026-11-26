@@ -5,7 +5,9 @@ Let $F = (f_{i,j}) \in [0,1]^{n \times m}$ record, for each of $n$ samples (or c
 The **ancestry graph** $G$ of $F$ is the directed graph on $\{0, 1, \dots, m\}$ with an edge $(j, j')$ iff $j = 0$, or $f_{i,j} \ge f_{i,j'}$ for every row $i$. For a spanning arborescence $H$ of $G$ rooted at $0$, write $\delta^+_H(j)$ for the children of $j$.
 
 **Theorem.** $F$ admits a solution to the PPM problem if and only if $G$ has a spanning arborescence $H$ rooted at $0$ satisfying the **sum condition**
+
 $$f_{i,j} \ \ge \sum_{j' \in \delta^+_H(j)} f_{i,j'} \qquad \text{for all } i \in \{1,\dots,n\},\ j \in \{0,1,\dots,m\},$$
+
 with $f_{i,0} := 1$. The arborescence $H$, with the edge into vertex $j$ labelled by mutation $j$, is then the clone tree $S$ determining $B$.
 
 ## Expansion

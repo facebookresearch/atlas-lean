@@ -3,12 +3,17 @@
 Consider the normalized SIR model $\dot S = -\beta S I$, $\dot I = \beta S I - \gamma I$, $\dot R = \gamma I$ with $\beta, \gamma > 0$, $S(0), I(0) > 0$, $S(0) + I(0) + R(0) = 1$, and $R_0 = \beta / \gamma$. Suppose $S(0) > R_0^{-1}$, so that $I$ initially increases.
 
 **Peak height (Equations 34, 37).** $I$ attains its maximum when $S = S_p = R_0^{-1}$, and
+
 $$I_p = I(0) + S(0) - R_0^{-1}\big(1 + \ln(R_0 S(0))\big);$$
+
 for an epidemic started from $S(0) \approx 1$, $I(0) \approx 0$ this gives $I_p \approx 1 - R_0^{-1}(1 + \ln R_0)$, a function of $R_0$ alone.
 
 **Linearizing time change (Equations 39–41).** Define $\tau$ by $d\tau/dt = I(t)$, $\tau(0) = 0$. Then $dS/d\tau = -\beta S$, $dI/d\tau = \beta S - \gamma$, $dR/d\tau = \gamma$ is linear, with solution
+
 $$S = S(0) e^{-\beta\tau}, \qquad I = I(0) + S(0)\big(1 - e^{-\beta\tau}\big) - \gamma\tau, \qquad R = R(0) + \gamma\tau,$$
+
 valid for $0 \le \tau < \int_0^\infty I(s)\, ds$. The peak occurs at $\tau_p = \ln(R_0 S(0)) / \beta$, i.e. at physical time
+
 $$t_p = \int_0^{\tau_p} \frac{d\tau'}{I(0) + S(0)\big(1 - e^{-\beta\tau'}\big) - \gamma\tau'} .$$
 
 ## Depends on

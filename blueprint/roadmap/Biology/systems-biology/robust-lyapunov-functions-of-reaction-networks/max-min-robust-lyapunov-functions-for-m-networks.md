@@ -9,9 +9,13 @@ Split the reactions into reversible pairs $R_j \rightleftharpoons R_{-j}$, $j = 
 2. every product of a forward reaction $R_j$ ($j \le \nu_1$) is a product of no other reaction.
 
 Then, with the list of scaled net rates
+
 $$\mathcal{R}(x) = \Big\{ \tfrac{1}{w_1}(R_1 - R_{-1}), \dots, \tfrac{1}{w_{\nu_1}}(R_{\nu_1} - R_{-\nu_1}),\ \tfrac{1}{w_{\nu_1+1}} R_{\nu_1+1}, \dots, \tfrac{1}{w_{\tilde\nu}} R_{\tilde\nu} \Big\},$$
+
 the function
+
 $$V(x) = \max \mathcal{R}(x) - \min \mathcal{R}(x)$$
+
 is a convex piecewise-linear robust Lyapunov function, for every admissible kinetics.
 
 ## Expansion

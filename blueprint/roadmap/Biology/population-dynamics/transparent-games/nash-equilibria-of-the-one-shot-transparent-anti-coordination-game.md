@@ -10,7 +10,9 @@
 - both play $(1;0;1)$ iff (6) fails.
 
 Condition (5) implies (6). When (5) holds there is also a mixed equilibrium in which player $i$ plays $(s^i_1; 0; 1)$ with
+
 $$s^1_1 = \frac{(1 - p_{21})(S - P) - p_{12}(T - P)}{(1 - p_{12} - p_{21})(T + S - P - R)}, \qquad s^2_1 = \frac{(1 - p_{12})(S - P) - p_{21}(T - P)}{(1 - p_{12} - p_{21})(T + S - P - R)} .$$
+
 The same classification holds for every one-shot transparent game with $S > T > R$ and $S > P$, which includes Hawk–Dove (Snowdrift) and Leader games.
 
 **Example.** With $(S, T, R, P) = (4, 3, 2, 1)$ and $p_{12} = p_{21} = p$: for $p < 1/3$ there are two asymmetric pure equilibria and a symmetric mixed one with blind insisting probability $(3 - 5p)/(4 - 8p)$; for $p > 1/3$ the unique equilibrium is that both insist unless they see the partner insist.

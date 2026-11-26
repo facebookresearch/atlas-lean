@@ -1,8 +1,11 @@
 # Observability threshold of real-time PCR
 
 Let $Z_n$ be the number of DNA molecules after $n$ PCR cycles, started from a fixed $Z_0$, with
+
 $$Z_n = Z_{n-1} + \sum_{j=1}^{Z_{n-1}} \xi_{n,j}, \qquad P(\xi_{n,j} = 1 \mid \mathcal F_{n-1}) = \frac{vK}{K + Z_{n-1}},$$
+
 where $\xi_{n,j} \in \{0,1\}$, $v \in (0,1]$ is the maximal replication efficiency and $K$ is a large Michaelis–Menten constant. Let $X_n = Z_n/K$ be the density process, $b = 1 + v$, and
+
 $$f(x) = x + \frac{v x}{1 + x} = E(X_n \mid X_{n-1} = x).$$
 
 **Fixed-horizon law of large numbers.** If $X_0 \to x_0$ as $K \to \infty$, then $X_n \to f^n(x_0)$ in probability for each fixed $n$. With $Z_0$ fixed, $x_0 = 0$ and $f^n(0) = 0$, so at any fixed cycle the reaction is not observable in the limit.
@@ -12,7 +15,9 @@ $$f(x) = x + \frac{v x}{1 + x} = E(X_n \mid X_{n-1} = x).$$
 **The function $H$.** The limit $H(x) = \lim_{n\to\infty} f^n(x/b^n)$ exists, is continuous and strictly increasing on $[0,\infty)$, and solves Schröder's equation $H(x) = f(H(x/b))$.
 
 **Theorem.** Along $K \to \infty$ with $\log_b K$ an integer,
+
 $$X_{\log_b K} \xrightarrow{\ D\ } H\bigl(W(Z_0)\bigr),$$
+
 and more generally $\{X_{\log_b K + n}\}_{n\in\mathbb Z} \to \{f^n(H(W(Z_0)))\}_{n\in\mathbb Z}$ in distribution as random sequences. For general $K$, $X_{\lfloor\log_b K\rfloor} - H\bigl(W(Z_0)\,b^{\lfloor\log_b K\rfloor - \log_b K}\bigr) \to 0$ in distribution.
 
 For $v = 1$ the early phase is deterministic, $W(Z_0) = Z_0$, and the initial number can be recovered by inverting $H$. For $v < 1$ the limit is a continuous random variable with positive variance, and the random early phase blurs the information about $Z_0$.

@@ -1,9 +1,13 @@
 # Exact AIC network selection by pruning nested cytokine models
 
 **Model.** For cytokines $i = 1, \dots, K$ with concentrations $x_i(t)$, $x_i(0) = 0$, the secretion rate under a stimulus of strength $s_i$ is
+
 $$\frac{dx_i}{dt} = y_i(t) = s_i \prod_u \big(1 + \alpha_{u,i}x_u(t)\big) \prod_v \frac{1}{1 + \beta_{v,i}x_v(t)},$$
+
 with $\alpha_{u,i} \ge 0$ (up-regulation of $i$ by $u$) and $\beta_{v,i} \ge 0$ (down-regulation), never both positive for the same pair. A network configuration is the set of non-zero edge parameters. With log-normal measurement error of known standard deviation $\sigma_i$, the likelihood of measured rates $\hat y_{i,j}$ is $L(\theta) = \prod_{i,j}(2\pi\sigma_i^2)^{-1/2}\exp\big(-(\log_{10}y_{i,j} - \log_{10}\hat y_{i,j})^2/(2\sigma_i^2)\big)$, and for a configuration $S$ with $|S|$ edges
+
 $$D(S) = \min_\theta\, -2\log L(\theta), \qquad \mathrm{AIC}(S) = D(S) + 2|S|.$$
+
 Candidate edges are restricted to the set $O$ of $N$ edges whose blocking produced a statistically significant change, so there are $2^N$ configurations instead of $3^{K^2}$.
 
 **Monotonicity.** If $S_i \subseteq S_j$ then $D(S_i) \ge D(S_j)$, since the smaller model is the larger one with some edge parameters fixed at $0$.

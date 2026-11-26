@@ -1,10 +1,13 @@
 # Quarantine efficacy as a phase-type escape probability
 
 **Stage model.** For a pathogen variant $X$, an infected individual passes through a non-infectious latent stage $L_1$ (rate $\epsilon_1$), an infectious latent stage $L_2$ (rate $\epsilon_2$), after which a fraction $p \in [0,1]$ becomes detected ($D_1 \to D_2$) and $1-p$ stays undetected ($U_1 \to U_2$), each infectious stage being left at rate $\gamma$ (so the infectious period is Erlang with mean $2/\gamma$); detected cases end in recovery $R^D$ or death $M$ (case fatality $\delta$), undetected cases in removal $R^U$. With transmission rate $\beta$, relative infectiousness $\eta$ of $L_2$ and $\xi$ of detected cases, and initial susceptible population $S(0)$, the single-variant reproduction number is
+
 $$\mathcal R_0 = \beta\Big(\frac{\eta}{\epsilon_2} + \frac{2p\xi}{\gamma} + \frac{2(1-p)}{\gamma}\Big) S(0).$$
 
 **Quarantine efficacy.** Order the nine states as $(L_1, L_2, D_1, D_2, U_1, U_2, R^D, R^U, M)$ and let $T = [t_{ij}]$ be the generator, $t_{ij}$ the rate from state $j$ to state $i$ (columns of absorbing states are zero, diagonal entries make columns sum to zero). The state distribution $C(t)$ of one individual satisfies $C'(t) = T C(t)$, so $C(t) = e^{Tt}C(0)$. Let $u = (1,1,0,0,1,1,0,0,0)$ be the indicator of the *unobserved infected* states $\{L_1, L_2, U_1, U_2\}$. Travellers arrive at Poisson rate $\lambda$ with initial state distribution $C(0)$ supported on these states (detected cases do not travel) and are held without contacts for $t_q$ time units. The **quarantine efficacy** is
+
 $$c(t_q) = 1 - u\, e^{T t_q} C(0),$$
+
 the probability that at release the traveller is detected, dead, or removed rather than still in an unobserved infected state.
 
 **Proposition.**

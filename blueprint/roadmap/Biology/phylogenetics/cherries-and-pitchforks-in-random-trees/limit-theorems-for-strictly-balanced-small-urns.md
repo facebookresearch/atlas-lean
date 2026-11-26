@@ -1,7 +1,9 @@
 # Limit theorems for strictly balanced small urn models
 
 An urn holds balls of $d$ colors with configuration $C_n = (C_{n,1},\dots,C_{n,d})$ and total $t_n = \sum_i C_{n,i} > 0$. At step $n$ a ball is drawn uniformly, giving the indicator row vector $\chi_n$ with $P(\chi_n = e_i \mid \mathcal F_{n-1}) = C_{n-1,i}/t_{n-1}$, and the configuration is updated by
+
 $$C_n = C_{n-1} + \chi_n R$$
+
 for a fixed real $d\times d$ replacement matrix $R$ (entries may be negative). Assume:
 - (A1) *Tenable*: the replacement rule can always be followed.
 - (A2) *Small*: all eigenvalues of $R$ are real, the largest $\lambda_1 = s$ is positive and $s > 2\lambda$ for every other eigenvalue $\lambda$.
@@ -11,6 +13,7 @@ for a fixed real $d\times d$ replacement matrix $R$ (entries may be negative). A
 **Theorem.** Under (A1)–(A4),
 1. (Strong law) $(ns)^{-1}C_n \to v_1$ almost surely and in $L^r$ for every $r > 0$;
 2. (Central limit theorem) $n^{-1/2}(C_n - ns\,v_1) \to N(0,\Sigma)$ in distribution, where
+
 $$\Sigma = \sum_{i,j=2}^d \frac{s\,\lambda_i\lambda_j}{s - \lambda_i - \lambda_j}\,\big(u_i^\top \operatorname{diag}(v_1)\,u_j\big)\, v_i^\top v_j .$$
 
 ## Expansion

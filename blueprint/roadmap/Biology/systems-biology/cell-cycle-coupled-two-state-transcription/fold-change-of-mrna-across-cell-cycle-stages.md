@@ -3,11 +3,15 @@
 **Model.** A cell alternates between stage $S_1$ (from division until the gene is replicated) and stage $S_2$ (from replication until the next division), with exponentially distributed durations of rates $\kappa_1 > 0$ and $\kappa_2 > 0$. In stage $S_i$ each gene copy follows the two-state promoter model: activation rate $\lambda_i > 0$, inactivation rate $\gamma_i > 0$, transcription at rate $\nu_i > 0$ while active, and mRNA degradation at rate $\delta_i > 0$. Stage $S_1$ has one gene copy and stage $S_2$ two independent copies; every stage starts with all copies OFF, and at the end of $S_2$ each mRNA goes to the tracked daughter independently with probability $1/2$.
 
 **Stationary means.** Let $D = \bigl[2(\delta_1 + \kappa_1)(\delta_2 + \kappa_2) - \kappa_1\kappa_2\bigr]\,(\lambda_1 + \gamma_1 + \kappa_1)(\lambda_2 + \gamma_2 + \kappa_2)$. The stationary mean mRNA numbers within the two stages are
+
 $$m_1^* = \frac{2\nu_1\lambda_1(\delta_2 + \kappa_2)(\lambda_2 + \gamma_2 + \kappa_2) + 2\nu_2\lambda_2\kappa_1(\lambda_1 + \gamma_1 + \kappa_1)}{D},$$
+
 $$m_2^* = \frac{2\nu_1\lambda_1\kappa_2(\lambda_2 + \gamma_2 + \kappa_2) + 4\nu_2\lambda_2(\delta_1 + \kappa_1)(\lambda_1 + \gamma_1 + \kappa_1)}{D},$$
+
 and the population mean is $m^* = m_1^*\,\kappa_2/(\kappa_1 + \kappa_2) + m_2^*\,\kappa_1/(\kappa_1 + \kappa_2)$. The fold change $r^* = m_2^*/m_1^*$ involves all ten parameters.
 
 **Stage-independent kinetics.** Suppose $\nu_i = \nu$, $\delta_i = \delta$, $\lambda_i = \lambda$, $\gamma_i = \gamma$ for $i = 1,2$, and write $a = \lambda + \gamma$. Then
+
 $$r^* = \frac{2(\delta + \kappa_1)(a + \kappa_1) + \kappa_2(a + \kappa_2)}{\kappa_1(a + \kappa_1) + (\delta + \kappa_2)(a + \kappa_2)}.$$
 
 1. **Full range.** For every $C > 0$ there are admissible parameters with $r^* = C$: doubling the gene dosage does not constrain the fold change.

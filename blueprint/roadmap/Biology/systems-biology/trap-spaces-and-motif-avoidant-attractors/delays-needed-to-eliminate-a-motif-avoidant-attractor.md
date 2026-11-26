@@ -3,7 +3,9 @@
 Let a Boolean network on $N$ variables, updated asynchronously, have a motif-avoidant attractor $A$ (an attractor contained in no minimal trap space) and let $T$ be a minimal trap space it avoids. A **linear extension** (delay) of a regulatory edge $j \to i$ inserts a new variable $z$ with $f_z = x_j$ and replaces $x_j$ by $z$ in $f_i$; it doubles the state space. Let $d \le N$ be the number of variables that oscillate in $A$, and $m < d$ the minimal number of oscillating variables on which a state of $A$ disagrees with the fixed values of $T$.
 
 1. **Upper bound.** $A$ can be eliminated (no attractor of the delay-expanded network projects onto it) by linear extensions of at most
+
 $$(N - d)(N - 1) + \frac{m(m + 1)}{2}$$
+
 edges. If the smallest trap space containing both $A$ and $T$ has $M < N$ free variables, $N$ may be replaced by $M$. For a complete interaction graph with $E_{\max} = N^2$ edges, this is strictly less than $E_{\max}$, improving on the previous bound obtained by extending all edges until the graph is L-cuttable.
 2. **Single delay.** If $N = d$ (or $M = d$) and $m = 1$, one linear extension suffices, namely of the self-regulation of the variable whose value differs between $A$ and $T$.
 3. **Lower bound.** For the star-shaped family (complete interaction graph, point attractor $11\cdots1$, MAA consisting of $00\cdots0$ and the $N$ unit vectors), exactly $\lfloor N^2/4 \rfloor$ delays are necessary and sufficient. Hence no general bound can be below $\lfloor N^2/4 \rfloor \approx E_{\max}/4$.

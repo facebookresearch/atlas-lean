@@ -5,7 +5,9 @@ Let $\gamma > 1$, $\alpha, \beta > 0$ and $0 < \nu < 1$. The **Michaelis–Mente
 $$\frac{dx}{d\tau} = 1 - \frac{x y^{\gamma}}{1 + \nu y^{\gamma}(\beta + x)}, \qquad \frac{dy}{d\tau} = \alpha\left[\frac{x y^{\gamma}}{1 + \nu y^{\gamma}(\beta + x)} - y\right].$$
 
 **Theorem (escape asymptotics).** There is $\epsilon > 0$ such that every solution with $x(0) > \epsilon^{-1}$ and $x(0)\,y(0)^{\gamma} < \epsilon$ satisfies, for some constant $y_1$,
+
 $$x(\tau) = \tau\,(1 + o(1)), \qquad y(\tau) = y_1 e^{-\alpha\tau}(1 + o(1)) \quad (\tau \to \infty),$$
+
 and there is a solution, unique up to time translation, with $x(\tau) = \tau(1+o(1))$ and $y(\tau) = \tau^{-1/(\gamma-1)}(1+o(1))$. The leading-order asymptotics do not depend on $\nu$.
 
 **Theorem (global properties).**

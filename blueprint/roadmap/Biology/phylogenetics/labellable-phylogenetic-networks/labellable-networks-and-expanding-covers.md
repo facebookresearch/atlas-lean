@@ -7,7 +7,9 @@
 **Theorem (characterization).** A labelling step is always available: if some vertex is unlabelled, then some unlabelled vertex has all of its children labelled. Consequently $N$ is labellable if and only if $c_N(x) \ne c_N(y)$ for all distinct non-leaf vertices $x, y$, i.e. iff $c_N$ is injective.
 
 **Covers.** The sets of sibling labels of a labelled network form a *cover* $C$ of $[m]$, a set of non-empty subsets of $[m]$ whose union is $[m]$. A label that appears in two or more sets of $C$ marks a reticulation. If $C$ comes from a network on $n$ leaves, then
+
 $$n = m - |C| + 1 .$$
+
 A cover $C$ is *expanding* if (1) no element of $[n]$ is repeated in $C$, and (2) for each $i = 1, \dots, |C|$, $C$ contains at least $i$ subsets of $[n + i - 1]$.
 
 **Theorem (bijection).** Labellable phylogenetic networks on $n$ leaves are in bijection with expanding covers, via the cover of sibling sets in one direction and a deterministic reconstruction in the other.

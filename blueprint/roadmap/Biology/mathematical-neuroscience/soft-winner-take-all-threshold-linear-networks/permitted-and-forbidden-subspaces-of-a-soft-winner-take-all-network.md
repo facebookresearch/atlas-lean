@@ -1,7 +1,9 @@
 # Permitted and forbidden subspaces of a soft winner-take-all network
 
 **Network.** Let $x_1, \dots, x_{N-1} \ge 0$ be excitatory and $x_N \ge 0$ inhibitory linear threshold units, $f(u) = \max(u, 0)$, with self-excitation $\alpha_1$, nearest-neighbour excitation $\alpha_2$, inhibitory feedback $\beta_1$, excitatory drive of the inhibitory unit $\beta_2$, leak $G_i > 0$, time constant $\tau > 0$ and inputs $I_i(t)$:
+
 $$\tau\dot x_i + G_i x_i = f\big(I_i + \alpha_1 x_i + \alpha_2(x_{i-1} + x_{i+1}) - \beta_1 x_N\big), \qquad \tau\dot x_N + G_N x_N = f\Big(\beta_2 \sum_{j<N} x_j\Big),$$
+
 i.e. $\tau\dot x = f(Wx + I) - Gx$ with an asymmetric weight matrix $W$. At a state where the units with indicators $\sigma_i \in \{0,1\}$ are above threshold, the effective (functional) Jacobian is $J = \Sigma W - G$ with $\Sigma = \operatorname{diag}(\sigma_i)$. An active set, with projection $V$ onto the directions in which it cannot be a steady state, is **forbidden** if it is expanding, $\Theta V J V^{\top}\Theta^{-1} > 0$ in some metric $\Theta$, and **permitted** if its effective Jacobian is contracting, $\Theta J \Theta^{-1} < 0$.
 
 **Theorem.**

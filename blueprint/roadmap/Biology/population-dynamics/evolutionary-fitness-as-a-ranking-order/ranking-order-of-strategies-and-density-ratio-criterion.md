@@ -11,7 +11,9 @@
 Under boundedness, $v \succ w$ forces the measure of some neighbourhood of $w$ to vanish, and only global maximisers of an evolutionary fitness survive in the long run (the variational principle of selection).
 
 **Theorem (density criterion).** Suppose $\mu^{(t)}$ has a density $\eta(v, t)$ with respect to a fixed measure $\mu^*$. If there are neighbourhoods $O(v)$ and $O(w)$ such that
+
 $$\frac{\eta(w', t)}{\eta(v', t)} \to 0 \quad \text{uniformly in } v' \in O(v),\ w' \in O(w), \quad t \to \infty,$$
+
 then $v \succ w$.
 
 ## Expansion

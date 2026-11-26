@@ -5,7 +5,9 @@
 **Informative triples.** A rooted triple $ab \mid b'$ on pairwise distinct vertices is *informative* for $(G, \sigma)$ if $\sigma(a) \ne \sigma(b) = \sigma(b')$, $ab \in E(G)$ and $ab' \notin E(G)$. Write $R(G, \sigma)$ for the set of informative triples, and $\mathrm{Aho}(R)$ for the tree on $L$ returned by the BUILD (Aho) algorithm when the triple set $R$ is consistent.
 
 **Theorem.** A vertex-coloured digraph $(G, \sigma)$ is an $n$-cBMG if and only if
+
 $$G\bigl(\mathrm{Aho}(R(G, \sigma)), \sigma\bigr) = (G, \sigma).$$
+
 Moreover, for an $n$-cBMG, $(\mathrm{Aho}(R(G, \sigma)), \sigma)$ is the unique least resolved tree that explains it. No connectedness assumption is needed.
 
 **Supporting facts.**

@@ -1,19 +1,29 @@
 # Optimal release ratio for the sterile-insect integrodifference model
 
 **State equation.** On a bounded habitat $\Omega$, the wild mosquito density $W_t(x)$ in discrete generations $t = 0, \dots, T$ evolves as
+
 $$W_{t+1}(x) = \int_\Omega k(x,y)\,\frac{1}{1 + r_t(y)\,\bar W(y)/W_t(y)}\, f\big(W_t(y), y\big)\,dy, \qquad f(W, y) = A\,W e^{-K(y) W},$$
+
 where $f$ is Ricker growth (intrinsic growth $A$, density feedback $K$), $k(x,y) \ge 0$ is a bounded dispersal kernel with $\int_\Omega k(x,y)\,dy \le 1$, $\bar W$ is the wild equilibrium, and $r_t(x) \in [0, r_{\max}]$ is the release ratio: $r_t\bar W$ sterile insects are released, so a wild female mates fertilely with probability $W_t/(W_t + r_t\bar W)$.
 
 **Control problem.** Minimize
+
 $$J(r) = \sum_{t=0}^{T-1}\int_\Omega \Big(m_t W_t(x) + n_t r_t(x)\bar W(x) + s_t\, r_t(x)^2\,\bar W(x)^2\Big)\,dx$$
+
 (linear cost of wild insects, quadratic cost of rearing and releasing sterile ones) over bounded measurable controls.
 
 **Theorem (necessary conditions).** The control-to-state map is differentiable, with sensitivity $\psi$ solving the linearized integrodifference equation with $\psi_0 = 0$. If $r^*$ is optimal with state $W$, there is a weak solution $\lambda$ of the adjoint system
+
 $$\lambda_t(x) = \frac{1}{1 + r_t(x)\bar W(x)/W_t(x)}\,\frac{\partial f}{\partial W}\big(W_t(x), x\big)\int_\Omega k(y,x)\lambda_{t+1}(y)\,dy + m_t, \qquad \lambda_T = 0,$$
+
 and the optimal release ratio is
+
 $$r_t^*(x) = \big(X - 1\big)\,\frac{W_t(x)}{\bar W(x)},$$
+
 where $X$ is the real root of the cubic $X^3 + bX^2 + d = 0$ with
+
 $$b = \frac{n_t}{2 s_t W_t(x)} - 1, \qquad d = -\,\frac{f\big(W_t(x), x\big)\int_\Omega \lambda_{t+1}(y)k(y,x)\,dy}{2 s_t\, W_t(x)\,\bar W(x)} ;$$
+
 when the root gives a negative ratio the control is set to zero (no release).
 
 ## Expansion

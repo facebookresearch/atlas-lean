@@ -7,6 +7,7 @@
 - copy transfer (EGTcopy): $\tilde s(x_l) = \tilde s(x_r) = \tilde s(x)$ and $\tilde b(x_l) \ne \tilde b(x_r)$;
 
 unary nodes are cut transfers (EGTcut, moving a gene to the other genome), and grafted leaves are losses. With speciations free and unit cost for every other event, the minimum cost is the **DLE-distance** $\mathrm{DLE}(T,S)$; $\mathrm{DL}(T,S)$ denotes the classical duplication–loss distance. Let $d(x) = 1$ if $x$ is a duplication in the optimal DL-reconciliation. For a binary labelling $\tilde b$ of $V(T)$ extending $b$, set $\Delta_{\tilde b}(x) = 0$ at leaves and otherwise
+
 $$\Delta_{\tilde b}(x) = \max\big(0,\; |\tilde b(x) - \tilde b(x_l)| + |\tilde b(x) - \tilde b(x_r)| - d(x)\big), \qquad \mathrm{cost}(T, S, \tilde b) = \sum_{x \in V(T)}\Delta_{\tilde b}(x).$$
 
 **Theorem.**

@@ -8,12 +8,15 @@ $$\begin{aligned}
 with $V = v_2 + v_3$, $P = x + y$, and nonnegative history on $[-\tau, 0]$. Solutions are nonnegative and enter the bounded set $\{x + y \le M,\ v_2 + v_3 \le N\}$.
 
 Write $\bar b = b e^{-c\tau}$. For $r > \mu$ and $\bar b > c$ the disease-free state is $\bar x = k(r - \mu)/r$, $\bar v_2 = a\bar x \ln(\bar b/c)$, and
+
 $$\mathcal{R}_0 = \frac{\beta\lambda\,\bar v_2}{c\,\bar x\,(\alpha + \mu)} = \frac{\beta\lambda\,a\,\ln(\bar b/c)}{c\,(\alpha + \mu)} = \frac{\beta\lambda a\,\big(\ln(b/c) - c\tau\big)}{c(\alpha + \mu)} .$$
 
 **Theorem.**
 1. The disease-free equilibrium is stable for $\mathcal{R}_0 < 1$, unstable for $\mathcal{R}_0 > 1$, and undergoes a steady-state bifurcation at $\mathcal{R}_0 = 1$.
 2. A biologically feasible endemic equilibrium exists if and only if
+
 $$1 < \mathcal{R}_0 < 1 + \frac{(\beta + c)(r - \mu)}{c\,(\alpha + \mu)};$$
+
 above the upper bound, infection drives the plants, and with them the vectors, extinct.
 3. If $\mathcal{R}_0 > 1$ and the endemic equilibrium is stable without delay (Routh–Hurwitz conditions on the $\tau = 0$ characteristic quartic), then it remains stable for all $\tau \ge 0$ when the associated frequency polynomial has no positive real root; otherwise stability can be lost through a Hopf bifurcation at critical delays, producing periodic oscillations.
 

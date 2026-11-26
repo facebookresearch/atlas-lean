@@ -3,9 +3,13 @@
 Let $p_{n,m}(t\mid\lambda,\mu)$ be the probability that a linear birth–death process with per-individual birth rate $\lambda\ge 0$ and death rate $\mu\ge 0$, started from $n$ individuals, has $m$ individuals after time $t\ge 0$.
 
 **Theorem (Waugh 1958).** For all $\lambda,\mu\ge 0$ and $n\ge 1$,
+
 $$p_{n,n}(t\mid\lambda,\mu)=p_{n,n}(t\mid\mu,\lambda).$$
+
 More generally, with $\tilde p_{n,m}(t\mid\lambda,\mu):=\lambda^n\mu^m\,p_{n,m}(t\mid\lambda,\mu)$, for all $m\ge 0$ and $n\ge 1$,
+
 $$\tilde p_{n,m}(t\mid\lambda,\mu)=\tilde p_{n,m}(t\mid\mu,\lambda).$$
+
 In particular, the probability that one individual has exactly one descendant after time $t$ is the same in a process with births at rate $\lambda$ and deaths at rate $\mu$ as in the process with the two rates swapped.
 
 ## Expansion

@@ -3,15 +3,21 @@
 **Setting.** The SIR model on households embedded in a configuration network, with notation as in the threshold article ($\tilde\rho_n$, $\tilde C^{(n)}$ the global offspring of a single-household epidemic in a household of size $n$ started by a globally infected case, $R_*$ the pre-vaccination threshold).
 
 **Household-based allocation.** Let $x_{nv}$ be the fraction of size-$n$ households with $v$ vaccinated members. The coverage is
+
 $$p_V = \sum_{n}\tilde\rho_n\sum_{v=0}^n \frac{v}{n}\,x_{nv}.$$
+
 Under an all-or-nothing vaccine (each vaccinee fully immune with probability $\varepsilon$, otherwise unaffected) the post-vaccination threshold is
+
 $$R_v = \sum_n \tilde\rho_n \sum_{v=0}^n x_{nv}\,\mu_{n,v}, \qquad \mu_{n,v} = \sum_{k=0}^{v}\binom{v}{k}\varepsilon^k(1-\varepsilon)^{v-k}\,\frac{n-k}{n}\,E\big[\tilde C^{(n-k)}\big],$$
+
 and a major outbreak is possible iff $R_v > 1$. For a non-random vaccine response (relative susceptibility $a$, infectivity $b$) $R_v$ is the dominant eigenvalue of a $2\times 2$ mean offspring matrix; it takes the same linear form when that matrix has rank one, which holds for a leaky vaccine ($b = 1$) or $a = 1$.
 
 **Optimal allocation.** With a maximum household size, both "minimize $p_V$ subject to $R_v \le 1$" and "minimize $R_v$ subject to a coverage bound" are linear programs in the household counts. Writing $R_v = \sum_{(n,v)} h_{nv} M_{n,v}$ over households and $G_{n,v} = M_{n,v} - M_{n,v+1}$ for the reduction from one more vaccination in a household in state $(n,v)$: if $G_{n,v}$ is decreasing in $v$ for each $n$, an optimal scheme vaccinates individuals greedily in order of decreasing $G_{n,v}$ until the target is met; otherwise only states on the lower convex hull of $\{(v, G_{n,v})\}$ can occur in an optimum.
 
 **Acquaintance vaccination.** Each individual is sampled independently with probability $p_S$ and each sampled individual nominates each global neighbour independently with probability $p_N$; nominees are vaccinated. The coverage is
+
 $$p_V = 1 - f_D(1 - p_S p_N),$$
+
 and the early epidemic is a 6-type household branching process (primary case named by its infector, otherwise vaccinated, or unvaccinated; sampled or not), which keeps neighbour degrees independent and avoids typing by degree.
 
 ## Depends on

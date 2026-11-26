@@ -1,7 +1,9 @@
 # Target associated k-set problem
 
 **Problem.** Let $J = \{j_1, \dots, j_m\}$ be tumour samples and $G = \{g_1, \dots, g_n\}$ genes, with $A_g \subseteq J$ the samples in which gene $g$ is altered. Each sample has a target value $w_j \in \mathbb{R}$ (a normalized functional phenotype) and a penalty $p_j > 0$. For $S \subseteq G$ let $c_S(j) = |\{g \in S : j \in A_g\}|$ and $U_S = \bigcup_{g \in S} A_g$. The weight of $S$ is
+
 $$W(S) = \sum_{j \in U_S} w_j - \sum_{j \in U_S} \big(c_S(j) - 1\big)\, p_j ,$$
+
 rewarding coverage of high-target samples and penalizing samples covered more than once. The **target associated $k$-set problem** asks for $S$ with $|S| \le k$ maximizing $W(S)$.
 
 **Theorem 1.** The target associated $k$-set problem is NP-hard.

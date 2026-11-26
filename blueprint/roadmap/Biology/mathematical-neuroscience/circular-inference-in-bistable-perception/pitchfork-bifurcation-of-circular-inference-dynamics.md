@@ -3,10 +3,13 @@
 **Generative model.** A hidden binary state $X_t \in \{0,1\}$ (the 3D interpretation) switches as a continuous-time Markov chain with rates $r_{\mathrm{on}}$ ($0 \to 1$) and $r_{\mathrm{off}}$ ($1 \to 0$). It predicts a binary intermediate variable $X_{2D}$ with reliability $w_S = P(X_{3D} = X_{2D}) \in (1/2, 1)$, and $X_{2D}$ generates a scalar sensory signal $S$ that is Gaussian with mean $\pm \mu_{\mathrm{int}}$ and variance $\sigma_{\mathrm{int}}^2$. Let $L_t = \log \frac{P(X_t = 1 \mid S_{0 \to t})}{P(X_t = 0 \mid S_{0 \to t})}$ be the posterior log-odds.
 
 **Exact inference.** The log-odds obey the leaky integrator
+
 $$\frac{dL}{dt} = -\Phi(L) + w_{\mathrm{int}}\, S, \qquad -\Phi(L) = \big(r_{\mathrm{on}} e^{-L} - r_{\mathrm{off}} e^{L}\big) + (r_{\mathrm{on}} - r_{\mathrm{off}}), \qquad w_{\mathrm{int}} = \frac{2\mu_{\mathrm{int}}}{\sigma_{\mathrm{int}}^2}(2w_S - 1).$$
+
 Without input, $L$ relaxes to the unique stable fixed point $L^\ast = \log(r_{\mathrm{on}}/r_{\mathrm{off}})$, the prior.
 
 **Circular inference.** If top-down messages are re-counted as bottom-up evidence with loop strength $a_P \ge 0$ (descending loops) and bottom-up messages are re-counted as prior with strength $a_S \ge 0$ (ascending loops), the dynamics become
+
 $$\frac{dL}{dt} = -\Phi(L) + aL + w^\ast_{\mathrm{int}}\, S, \qquad a = 2 a_P w_S, \qquad w^\ast_{\mathrm{int}} = w_{\mathrm{int}}(1 + 2 w_S a_S).$$
 
 **Proposition (pitchfork).** Let $r_{\mathrm{on}} = r_{\mathrm{off}} = r$ and $S \equiv 0$. Then $-\Phi(L) + aL = -2r\sinh L + aL$, and

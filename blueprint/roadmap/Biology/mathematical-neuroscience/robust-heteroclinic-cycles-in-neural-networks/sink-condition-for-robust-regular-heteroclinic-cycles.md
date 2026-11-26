@@ -5,7 +5,9 @@ Use the setting of [robustness under invariant-subspace constraints](robustness-
 A heteroclinic cycle is **regular** if it consists of hyperbolic equilibria and connections $s_i \subset W^u(x_i)$ with $W^u(x_i) \subset W^s(x_{i+1})$ for every $i$.
 
 **Theorem (equilibria).** Let $\Sigma$ be a regular heteroclinic cycle of $f \in X_{\mathcal{I}}$ between hyperbolic equilibria. If for every $i$ the next equilibrium is a sink for the dynamics restricted to the connecting subspace,
+
 $$\dim\big(W^s(x_{i+1}) \cap I_{c(i)}\big) = \dim I_{c(i)},$$
+
 then $\Sigma$ is robust to perturbations in $X_{\mathcal{I}}$.
 
 **Theorem (equilibria or periodic orbits).** Let $\Sigma$ be a heteroclinic cycle of $f \in X_{\mathcal{I}}$ between hyperbolic equilibria or hyperbolic periodic orbits $x_1, \dots, x_p$ that contains all their unstable manifolds, with $S_i$ the manifold of connections from $x_i$ to $x_{i+1}$. If there are $I_{c(1)}, \dots, I_{c(p)} \in \mathcal{I}$ with $I_{c(i)} \supseteq S_i$ and $\dim(W^s(x_{i+1}) \cap I_{c(i)}) = \dim I_{c(i)}$ for all $i$, then $\Sigma$ is robust to perturbations within $X_{\mathcal{I}}$.

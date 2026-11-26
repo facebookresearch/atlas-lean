@@ -1,13 +1,18 @@
 # Synchronization period in a GnRH neuron network model
 
 **Model.** For neurons $j = 1,\dots,N$ with electrical variables $(x_j, y_j)$ of FitzHugh–Nagumo type and intracellular calcium $\mathrm{Ca}_j$, and one network-level synchronization variable $\sigma$,
+
 $$x_j' = \tau\bigl(-y_j + 4x_j - x_j^3 - \phi_{\mathrm{fall}}(\mathrm{Ca}_j)\bigr),\qquad y_j' = \tau\varepsilon k_j\bigl(x_j + a_1 y_j + a_2 - \eta_j\,\phi_{\mathrm{syn}}(\sigma)\bigr),$$
+
 $$\mathrm{Ca}_j' = \tau\varepsilon\Bigl(\phi_{\mathrm{rise}}(x_j) - \frac{\mathrm{Ca}_j - \mathrm{Ca}_{\mathrm{bas}}}{\tau_{\mathrm{Ca}}}\Bigr),\qquad \sigma' = \tau\Bigl(\delta\varepsilon\,\sigma - \gamma(\sigma - \sigma_0)\,\phi_\sigma\Bigl(\frac1N\sum_{i=1}^N \mathrm{Ca}_i - \mathrm{Ca}_{\mathrm{desyn}}\Bigr)\Bigr),$$
+
 with $0 < \varepsilon \ll 1$, sigmoids $\phi_{\mathrm{syn}}(\sigma) = \bigl(1 + e^{-\rho_{\mathrm{syn}}(\sigma - \sigma_{\mathrm{on}})}\bigr)^{-1}$ and $\phi_\sigma$ of steepness $\rho_\sigma$, and $0 < \sigma_0 < \sigma_{\mathrm{on}}$. When $\sigma$ exceeds $\sigma_{\mathrm{on}}$, the input $\eta_j\phi_{\mathrm{syn}}(\sigma)$ pushes all neurons into a common firing regime (synchronized calcium peak); high mean calcium then activates $\phi_\sigma$ and resets $\sigma$ towards $\sigma_0$.
 
 1. **Scaling invariance.** For every $\alpha > 0$, the calcium outputs $\mathrm{Ca}_j$ are unchanged when $(\sigma_0, \sigma_{\mathrm{on}}, \rho_{\mathrm{syn}})$ is replaced by $(\alpha\sigma_0, \alpha\sigma_{\mathrm{on}}, \rho_{\mathrm{syn}}/\alpha)$; only the ratio $\sigma_{\mathrm{on}}/\sigma_0$ matters.
 2. **Synchronization period.** In the limit $\rho_\sigma = \infty$ (switch-like reset) and for $\gamma$ large relative to $\varepsilon$ and $\delta$, the time between two successive synchronization episodes is approximately
+
 $$T_{\mathrm{syn}} = \frac{1}{\tau\varepsilon\delta}\,\ln\frac{\sigma_{\mathrm{on}}}{\sigma_0}.$$
+
 Consequently any prescribed period $T_{\mathrm{syn}} > 0$ is obtained by choosing $\delta = \ln(\sigma_{\mathrm{on}}/\sigma_0)/(\tau\varepsilon T_{\mathrm{syn}})$, with all other parameters fixed.
 
 ## Expansion

@@ -1,7 +1,9 @@
 # Qualitative abstraction of piecewise-affine gene network models
 
 **Model.** A piecewise-affine differential equation (PADE) model of a genetic regulatory network with concentrations $x \in \Omega \subset \mathbb{R}_{\ge 0}^n$ has the form
+
 $$\dot x_i = \sum_{l \in L_i} \kappa_{il}\, b_{il}(x) - \gamma_i x_i, \qquad i = 1, \dots, n,$$
+
 with synthesis constants $\kappa_{il} > 0$, degradation constants $\gamma_i > 0$, and regulation functions $b_{il}(x) \in \{0, 1\}$ that are Boolean combinations of step functions $s^+(x_j, \theta_j) = 1$ if $x_j > \theta_j$ and $0$ if $x_j < \theta_j$, with $s^- = 1 - s^+$. At thresholds the step functions are replaced by the interval extension $S^\pm(\theta_j, \theta_j) = [0, 1]$, turning the system into a differential inclusion (Filippov solutions).
 
 **Partition.** Let $\Theta_i = \{\theta_{ij}\}$ be the thresholds of $x_i$ and $\Lambda_i = \{\sum_{l \in B} \kappa_{il} / \gamma_i : B \subseteq L_i\}$ its **focal values**. The hyperplanes $x_i = c$, $c \in \Theta_i \cup \Lambda_i$, define a rectangular partition $\mathcal{D}$ of $\Omega$ into domains (open boxes and their lower-dimensional faces). In each domain $D$ the interval-valued regulation functions are constant, $B_{il}(x) = B_{il}(D)$, so every component of the vector field has a constant sign pattern on $D$.

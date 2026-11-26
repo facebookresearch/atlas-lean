@@ -1,17 +1,26 @@
 # Optimal public-health incentive in the imitation-dynamics vaccination model
 
 **Model.** Let $S, I, R$ be the susceptible, infected and recovered fractions of a population facing an outbreak with transmission rate $\beta$ and recovery rate $\gamma$, and let $x \in (0, 1)$ be the fraction of individuals who adopt the vaccinating strategy; susceptibles are vaccinated at per-capita rate $x$. A vaccinator's perceived payoff is $-r_v$ (perceived risk of vaccine morbidity) and a non-vaccinator's is $-r_i m I$ (infection morbidity risk $r_i$ times a sensitivity $m$ to current prevalence). Individuals sample others at rate $k$ and imitate strategies with higher payoff, which gives replicator (imitation) dynamics. A public-health effort $u(t) \in [0, u_{\max}]$ (campaigns, risk communication) raises the payoff of vaccinating by $f(u)$, with $f$ increasing and $f(0) = 0$:
+
 $$\dot S = -\beta S I - xS, \qquad \dot I = \beta S I - \gamma I, \qquad \dot x = k\, x(1-x)\bigl(-r_v + r_i m I + f(u)\bigr),$$
+
 with recovered and vaccinated individuals removed from transmission ($R$ does not feed back).
 The planner maximizes
+
 $$J(u) = \int_0^T \bigl[-c_I\, \beta S I - \eta\, u\bigr]\, dt$$
+
 (cost $c_I$ per new infection, cost $\eta$ per unit effort) over measurable $u$ with values in $[0, u_{\max}]$.
 
 **Theorem.** An optimal control $u^*$ exists. Along the optimal trajectory, with adjoint variables $\lambda_S, \lambda_I, \lambda_x$ solving $\dot\lambda_j = -\partial H/\partial j$ for the Hamiltonian
+
 $$H = -c_I\beta S I - \eta u + \lambda_S(-\beta S I - xS) + \lambda_I(\beta S I - \gamma I) + \lambda_x\, k x(1-x)\bigl(-r_v + r_i m I + f(u)\bigr),$$
+
 the interior stationarity condition is
+
 $$f'(u_k^*) = \frac{\eta}{\lambda_x\, k\, x^*(1 - x^*)},$$
+
 and $u^*(t)$ is $u_k^*(t)$ projected onto $[0, u_{\max}]$ wherever $H$ is strictly concave in $u$. Examples: for $f(u) = \xi u^2$, $u_k^* = \eta/\bigl(2\xi\lambda_x k x^*(1-x^*)\bigr)$; for linear $f$ the control is bang–bang; and for linear incentive $f(u) = \xi u$ with quadratic cost $\eta u^2$ in $J$,
+
 $$u^*(t) = \min\Bigl\{u_{\max},\ \max\Bigl\{0,\ \frac{\xi\, \lambda_x(t)\, k\, x^*(t)(1 - x^*(t))}{2\eta}\Bigr\}\Bigr\}.$$
 
 The factor $x(1-x)$ shows that effort is worth most when vaccinating behaviour is most divided ($x$ near $1/2$) and worthless when the population is nearly unanimous, because imitation then has no one to copy or no one left to convert.

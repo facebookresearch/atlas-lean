@@ -3,11 +3,13 @@
 **Setting.** Let $A_j^{(g)} > 0$ be the absolute abundance of taxon $j \in \{1, \dots, P\}$ in condition $g \in \{1,2\}$, and $R_j^{(g)} = A_j^{(g)} / \sum_{j'} A_{j'}^{(g)}$ its relative abundance, the only quantity sequencing measures. Taxon $j$ is **differentially abundant (DA)** if $A_j^{(2)} \ne A_j^{(1)}$.
 
 **Proposition (reference set).** If $T_0 \subseteq \{1, \dots, P\}$ is any nonempty set of non-DA taxa, then for every taxon $j$,
+
 $$\frac{R_j^{(2)} \big/ \sum_{k \in T_0} R_k^{(2)}}{R_j^{(1)} \big/ \sum_{k \in T_0} R_k^{(1)}} = \frac{A_j^{(2)}}{A_j^{(1)}}.$$
 
 **Proposition (null case).** If no taxon is DA then $R_j^{(2)} = R_j^{(1)}$ for all $j$; conversely, if all relative abundances are unchanged then all absolute fold changes $A_j^{(2)}/A_j^{(1)}$ are equal.
 
 **Proposition (order preservation).** For any taxa $j, k$,
+
 $$\frac{R_j^{(2)}}{R_j^{(1)}} \le \frac{R_k^{(2)}}{R_k^{(1)}} \iff \frac{A_j^{(2)}}{A_j^{(1)}} \le \frac{A_k^{(2)}}{A_k^{(1)}}.$$
 
 **Proposition (median rule).** If fewer than half of the taxa are DA, then taxon $j$ is non-DA if and only if its relative fold change equals the median, $R_j^{(2)}/R_j^{(1)} = \mathrm{Median}_{j'}\{R_{j'}^{(2)}/R_{j'}^{(1)}\}$.

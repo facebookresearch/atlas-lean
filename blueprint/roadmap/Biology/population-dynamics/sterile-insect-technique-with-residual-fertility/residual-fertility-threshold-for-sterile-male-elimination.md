@@ -1,13 +1,19 @@
 # Residual-fertility threshold for sterile-male elimination
 
 **Wild model.** Larvae $L$ (carrying capacity $K$), pupae $P$, males $M_W$, and single- and double-mated females $F_W,F_{WW}$ follow
+
 $$\dot L=(b_WF_W+b_{WW}F_{WW})\Bigl(1-\frac LK\Bigr)-(\nu_L+\mu_L)L,\quad \dot P=\nu_LL-(\nu_P+\mu_P)P,\quad \dot M_W=(1-r)\nu_PP-\mu_MM_W,$$
+
 $$\dot F_W=r\nu_PP-(\delta+\mu_F)F_W,\qquad \dot F_{WW}=\delta F_W-\mu_{F,WW}F_{WW},$$
+
 with re-mating rate $\delta$. Its basic offspring number is
+
 $$\mathcal R_W=\mathcal N_W\Bigl(1+\frac{b_{WW}}{b_W}\frac{\delta}{\mu_{F,WW}}\Bigr),\qquad \mathcal N(b,\delta,\mu)=\frac{rb}{\mu+\delta}\frac{\nu_L}{\nu_L+\mu_L}\frac{\nu_P}{\nu_P+\mu_P},\quad\mathcal N_W=\mathcal N(b_W,\delta,\mu_F).$$
+
 If $\mathcal R_W\le 1$ the origin is globally asymptotically stable; if $\mathcal R_W>1$ the positive equilibrium with $L^*=(1-1/\mathcal R_W)K$ is globally asymptotically stable off the invariant set $\{L=P=F_W=F_{WW}=0\}$.
 
 **Sterile releases.** Sterile males released at constant rate $\Lambda$ (stationary level $M_S^*=\Lambda/\mu_S$) mate with females with competitiveness weights, producing sterile-mated classes $F_S,F_{SS}$ (and mixed $F_{WS},F_{SW}$) whose fecundity is reduced by the residual fertility $\varepsilon\in[0,1]$. Define
+
 $$\mathcal R_S=\mathcal N(b_S,\delta_S,\mu_{F,S})\Bigl(1+\frac{b_{SS}}{b_S}\frac{\delta_S}{\mu_{F,SS}}\Bigr).$$
 
 **Theorem.** Assume $\mathcal R_W>1$.

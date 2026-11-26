@@ -3,8 +3,11 @@
 In the configuration-model SIR epidemic with infection rate $\beta$, recovery rate $\gamma$ and preventive edge-dropping rate $\omega > 0$ (the $(\gamma, \omega)$ model), compare with the model without dropping and recovery rate $\gamma + \omega$ (the $(\gamma + \omega, 0)$ model). Early in an outbreak, let $Y_k^{(\gamma,\omega)}$ be the number of its $k$ susceptible neighbours that an infective infects, with probability generating function $f_k^{(\gamma,\omega)}$, and similarly $f_k^{(\gamma+\omega)}$. The approximating branching processes have offspring generating function $f(s) = \sum_k p_k f_k(s)$ in the first generation and $\tilde f(s) = \sum_k \tilde p_k f_k(s)$ afterwards, with $\tilde p_k = (k+1) p_{k+1} / \mu_D$.
 
 **Theorem 8.1.** (a) Both models have the same basic reproduction number
+
 $$R_0 = \frac{\beta}{\beta + \gamma + \omega}\left(\mu_D + \frac{\sigma_D^2}{\mu_D} - 1\right).$$
+
 (b) If $R_0 > 1$, the probability of a major outbreak started by one infective, $p_{\mathrm{maj}} = 1 - f(\sigma)$ with $\sigma$ the unique root in $[0, 1)$ of $\tilde f(s) = s$, satisfies
+
 $$p_{\mathrm{maj}}^{(\gamma, \omega)} > p_{\mathrm{maj}}^{(\gamma + \omega, 0)}.$$
 
 ## Depends on

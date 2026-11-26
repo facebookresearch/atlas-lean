@@ -1,14 +1,19 @@
 # Convex maximum likelihood for branch lengths under irreversible mutation
 
 **Model.** Let $\mathcal T$ be a rooted tree topology on $n$ sampled cells with edge set $E$ and branch lengths $l \in \mathbb R_{\ge 0}^{E}$. Each of $k$ independent characters starts in the unmutated state $0$ at the root and evolves along the chronogram $\mathcal T_l$ by the irreversible continuous-time Markov chain with rate matrix
+
 $$Q = \begin{pmatrix} -c & c q_1 & c q_2 & \cdots \\ 0 & 0 & 0 & \cdots \\ \vdots & & \ddots \end{pmatrix}, \qquad P(t) = \begin{pmatrix} e^{-ct} & (1 - e^{-ct}) q_1 & (1 - e^{-ct}) q_2 & \cdots \\ 0 & 1 & 0 & \cdots \\ \vdots & & \ddots \end{pmatrix},$$
+
 where $c > 0$ is the mutation (cut) rate and $q$ a distribution over mutated states $1, 2, \dots$; mutated states never change again. Missing entries are assumed ignorable (missing at random with parameters distinct from $(l, c, q)$). Ancestral states are filled in by a conservative maximum-parsimony reconstruction $\tilde x$ that leaves ambiguous states missing. For node $v$ and character $i$ let $u = \mathrm{gpa}_i(v)$ be the nearest ancestor with an observed state, $l_{uv}$ the path length from $u$ to $v$, and let
+
 $$\mathrm{uncuts}(u \to v) = \#\{i : \tilde x_{u,i} = \tilde x_{v,i} = 0\}, \qquad \mathrm{cuts}(u \to v) = \#\{i : \tilde x_{u,i} = 0,\ \tilde x_{v,i} > 0\}.$$
 
 **Proposition 1 (ignorability).** Under ignorable missingness, the likelihood factors as $p_{\theta,\phi}(\tilde X = \tilde x) = g_\phi(\tilde R = \tilde r)\, p_\theta(\tilde Z^{(1)} = \tilde x^{(1)})$, so branch lengths can be estimated from the marginal law of the observed entries alone.
 
 **Theorem (convex reformulation).** The maximum likelihood estimator of the branch lengths does not depend on $q$, and, after fixing the scale by requiring unit tree depth, equals the rescaled solution of
+
 $$\max_{l \ge 0,\ \mathcal T_l \text{ ultrametric}} \ \sum_{u, v} \Big[ -\mathrm{uncuts}(u \to v)\, l_{uv} + \mathrm{cuts}(u \to v)\, \log\big(1 - e^{-l_{uv}}\big) \Big]$$
+
 (taking $c = 1$). This is a convex optimization problem in the edge lengths, and it remains convex after adding a minimum branch length $l_e \ge \epsilon$ and $\lambda$ pseudocount cuts and uncuts per edge (a MAP estimator).
 
 ## Expansion

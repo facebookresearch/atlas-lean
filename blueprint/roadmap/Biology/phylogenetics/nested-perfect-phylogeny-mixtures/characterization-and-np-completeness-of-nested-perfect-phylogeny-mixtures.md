@@ -5,7 +5,9 @@
 Let $G$ be the ancestry graph of $F$ (vertices $0,\dots,m$; edge $(j,j')$ iff $j = 0$ or $f_{i,j} \ge f_{i,j'}$ for all $i$) and $\delta^+_H(j)$ the children of $j$ in an arborescence $H$.
 
 1. **Characterization.** $F$ admits a solution to the ENPPM problem if and only if (i) the binarization $F'$ of $F$ is a perfect phylogeny matrix, and (ii) $G$ has a spanning arborescence $H$ rooted at $0$ such that for all cells $i$ and clones $j$,
+
 $$f_{i,j} > \sum_{j' \in \delta^+_H(j)} f_{i,j'} \ \text{ if } f_{i,j} > 0, \qquad \sum_{j' \in \delta^+_H(j)} f_{i,j'} = 0 \ \text{ if } f_{i,j} = 0.$$
+
 2. **Complexity.** The ENPPM problem is NP-complete, even with $n = 2$ cells.
 
 Condition (i) can be checked in polynomial time, so the hardness lies in finding an arborescence meeting the strict sum condition (ii).

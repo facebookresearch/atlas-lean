@@ -5,7 +5,9 @@ The contact structure is a tree $T$ whose edges are split into $n$ classes, each
 Let $Z(x)$ be the generating function of the number infected by patient zero and $\tilde Z(x)$ that for an individual reached along a random edge (using the excess-degree distribution, with the infecting edge removed). Without quarantine, $\tilde Z = \tilde Z_{\mathrm{free}}$, and with quarantine $\tilde Z = Q + (1-Q)\tilde Z_{\mathrm{free}}$.
 
 **Proposition 1 (reproduction number).** $R_0 = \tilde Z'(1) = (1-Q)\,R_0^{\mathrm{free}}$, and for independent layer degrees
+
 $$R_0 = (1-Q)\sum_{j=1}^n T_j\,E(k_j)\left(1 - \frac{1}{\sum_l E(k_l)}\right) + (1-Q)\sum_{j=1}^n T_j\,\frac{\sigma(k_j)^2}{\sum_l E(k_l)},$$
+
 where $\sigma(k_j)^2$ is the variance of the class-$j$ degree.
 
 **Proposition 2 and Theorems 3–4 (extinction).** The probability $P_\infty$ that the chain started from an individual reached along an edge dies out satisfies $P_\infty = \tilde Z(P_\infty)$, and $\tilde Z$ has at most two fixed points in $[0,1]$. The probability that the outbreak from patient zero dies out is $P = Z(P_\infty)$. If $R_0 \le 1$ then $P = P_\infty = 1$; if $R_0 > 1$ then $P_\infty, P \in (0,1)$. In all cases $P_\infty > Q$ and $P \ge Q$.
