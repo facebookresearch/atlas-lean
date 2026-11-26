@@ -14,3 +14,5 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Accessible paths in random fitness landscapes](accessible-paths-in-random-fitness-landscapes/README.md)
+- [Context-dependent substitution processes](context-dependent-substitution-processes/README.md)

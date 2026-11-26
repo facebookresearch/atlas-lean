@@ -28,3 +28,9 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
+- [Discrete-time recombination and migration equations](discrete-time-recombination-and-migration-equations/README.md)
+- [Fixation in random fitness landscapes](fixation-in-random-fitness-landscapes/README.md)
+- [Gradient-flow structure of evolutionary models](gradient-flow-structure-of-evolutionary-models/README.md)
+- [Neutral two-patch Wright–Fisher metacommunity](neutral-two-patch-wright-fisher-metacommunity/README.md)
+- [Occupancy sampling from Gibbs–Poisson abundance models](occupancy-sampling-from-gibbs-poisson-abundance-models/README.md)
+- [Replicator dynamics in Aitchison geometry](replicator-dynamics-in-aitchison-geometry/README.md)
