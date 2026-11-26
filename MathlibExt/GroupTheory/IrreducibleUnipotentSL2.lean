@@ -151,39 +151,6 @@ private lemma exists_fixed_vec {M : Matrix (Fin 2) (Fin 2) F} (h : (M - 1) ^ 2 =
   rw [Matrix.one_mulVec, hMv] at h1
   exact sub_eq_zero.mp h1.symm
 
-private lemma eq_one_of_fixes_two {M : Matrix (Fin 2) (Fin 2) F} {v w : Fin 2 → F}
-    (hv : M.mulVec v = v) (hw : M.mulVec w = w) (hD : v 0 * w 1 - v 1 * w 0 ≠ 0) :
-    M = 1 := by
-  set D := v 0 * w 1 - v 1 * w 0 with hDdef
-  have hcancel : ∀ x y : Fin 2 → F, D • x = D • y → x = y := by
-    intro x y hxy
-    funext i
-    have hi := congrFun hxy i
-    simp only [Pi.smul_apply, smul_eq_mul] at hi
-    exact mul_left_cancel₀ hD hi
-  have hfix : ∀ x y : F, M.mulVec (x • v + y • w) = x • v + y • w := by
-    intro x y
-    rw [Matrix.mulVec_add, Matrix.mulVec_smul, Matrix.mulVec_smul, hv, hw]
-  have he0 : (w 1 : F) • v + (-(v 1)) • w = D • ![1, 0] := by
-    funext i
-    fin_cases i <;> simp [hDdef] <;> ring
-  have he1 : (-(w 0) : F) • v + (v 0) • w = D • ![0, 1] := by
-    funext i
-    fin_cases i <;> simp [hDdef] <;> ring
-  have h0 : D • M.mulVec ![1, 0] = D • ![1, 0] := by
-    rw [← Matrix.mulVec_smul, ← he0, hfix, he0]
-  have h1 : D • M.mulVec ![0, 1] = D • ![0, 1] := by
-    rw [← Matrix.mulVec_smul, ← he1, hfix, he1]
-  have h0' := hcancel _ _ h0
-  have h1' := hcancel _ _ h1
-  rw [mulVec_e0] at h0'
-  rw [mulVec_e1] at h1'
-  have e00 : M 0 0 = 1 := congrFun h0' 0
-  have e10 : M 1 0 = 0 := congrFun h0' 1
-  have e01 : M 0 1 = 0 := congrFun h1' 0
-  have e11 : M 1 1 = 1 := congrFun h1' 1
-  rw [Matrix.eta_fin_two M, e00, e10, e01, e11, ← Matrix.one_fin_two]
-
 private lemma exists_smul_eq_of_cross_eq_zero {v w : Fin 2 → F} (hv : v ≠ 0)
     (hD : v 0 * w 1 - v 1 * w 0 = 0) : ∃ c : F, w = c • v := by
   have hkey : v 0 * w 1 = v 1 * w 0 := sub_eq_zero.mp hD
@@ -272,8 +239,9 @@ private lemma conj_unipotent {g : GL (Fin 2) (ZMod p)} (h : GL (Fin 2) (ZMod p))
     noncomm_ring
   rw [key, hsq, hinv', mul_one, ← pow_two, hg, mul_zero, zero_mul]
 
-/-- An irreducible subgroup of `GL(2, ZMod p)` containing a nontrivial
-square-zero unipotent contains the image of `SL(2, ZMod p)`. -/
+/-- **Irreducible subgroups with a unipotent contain `SL(2, ZMod p)`.** For a prime `p`, a
+subgroup of `GL(2, ZMod p)` that leaves no line invariant (an irreducible subgroup) and contains
+a nontrivial square-zero unipotent contains the image of `SL(2, ZMod p)`. -/
 theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 2) (ZMod p)))
     (hirr : ∀ v : Fin 2 → ZMod p, v ≠ 0 → ∃ g ∈ H, ∀ c : ZMod p,
       ((g : GL (Fin 2) (ZMod p)) : 𝕄).mulVec v ≠ c • v)
