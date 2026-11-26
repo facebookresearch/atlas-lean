@@ -3,7 +3,7 @@
 1. The program $\{p \leftarrow \mathrm{not}\ p\}$ has no [stable model](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md).
 2. The program $\{p \leftarrow \mathrm{not}\ q,\ q \leftarrow \mathrm{not}\ p\}$ has exactly the two stable models $\{p\}$ and $\{q\}$.
 
-So a normal program may have no stable model or several, unlike a [definite program](a-definite-program-has-exactly-one-stable-model.md).
+So a normal program may have no stable model or several.
 
 **Proof.** Check the four interpretations of each program. For part 1, the [reduct](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/reduct.md) with respect to $\emptyset$ is $\{p \leftarrow\}$, whose least model is $\{p\} \ne \emptyset$, and the reduct with respect to $\{p\}$ is empty, whose least model is $\emptyset \ne \{p\}$. For part 2, the reduct with respect to $\{p\}$ is $\{p \leftarrow\}$, with least model $\{p\}$, and symmetrically for $\{q\}$; the reduct with respect to $\emptyset$ is $\{p \leftarrow,\ q \leftarrow\}$ and the one with respect to $\{p, q\}$ is empty, so neither set is stable.
 

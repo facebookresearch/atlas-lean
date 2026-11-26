@@ -9,6 +9,7 @@ Let $P$ be a [finite ground normal logic program](normal-logic-program.md) with 
 
 ## Depends on
 
+- [Normal logic program](normal-logic-program.md)
 - [Supported models](supported-models.md)
 - [Immediate-consequence operator of a normal program](immediate-consequence-operator-of-a-normal-program.md)
 

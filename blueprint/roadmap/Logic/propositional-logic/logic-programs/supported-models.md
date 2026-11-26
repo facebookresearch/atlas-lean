@@ -6,6 +6,7 @@ Supported models need not be minimal: the program $p \leftarrow p$ has the suppo
 
 ## Depends on
 
+- [Normal logic program](normal-logic-program.md)
 - [Models of a normal logic program](models-of-a-normal-logic-program.md)
 
 ## Sources

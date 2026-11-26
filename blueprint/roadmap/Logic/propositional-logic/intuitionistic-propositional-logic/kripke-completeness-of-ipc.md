@@ -1,6 +1,6 @@
 # Kripke completeness of intuitionistic propositional logic
 
-If every [Kripke model](kripke-models-for-ipc.md) $\mathcal{C}$ with $\mathcal{C} \Vdash \Gamma$ satisfies $\mathcal{C} \Vdash \varphi$, then $\Gamma \vdash \varphi$ in [natural deduction for IPC](natural-deduction-for-intuitionistic-propositional-logic.md). With [soundness](kripke-soundness-of-ipc.md), $\Gamma \vdash \varphi$ holds exactly when $\varphi$ is forced in every Kripke model forcing $\Gamma$.
+If every [Kripke model](kripke-models-for-ipc.md) $\mathcal{C}$ with $\mathcal{C} \Vdash \Gamma$ satisfies $\mathcal{C} \Vdash \varphi$, then $\Gamma \vdash \varphi$ in [natural deduction for IPC](natural-deduction-for-intuitionistic-propositional-logic.md). With soundness, $\Gamma \vdash \varphi$ holds exactly when $\varphi$ is forced in every Kripke model forcing $\Gamma$.
 
 **Proof.** If $\Gamma \nvdash \varphi$, then by [completeness for Heyting algebras](soundness-and-completeness-of-ipc-for-heyting-algebras.md) some $H, v$ satisfies $\Gamma$ but not $\varphi$, and the [Kripke model of prime filters](heyting-algebras-embed-into-kripke-models.md) of $H$ forces $\Gamma$ but not $\varphi$.
 
@@ -11,6 +11,7 @@ If every [Kripke model](kripke-models-for-ipc.md) $\mathcal{C}$ with $\mathcal{C
 
 ## Proof depends on
 
+- [Kripke soundness of intuitionistic propositional logic](kripke-soundness-of-ipc.md)
 - [Soundness and completeness of IPC for Heyting algebras](soundness-and-completeness-of-ipc-for-heyting-algebras.md)
 - [Heyting algebra valuations are represented by Kripke models](heyting-algebras-embed-into-kripke-models.md)
 

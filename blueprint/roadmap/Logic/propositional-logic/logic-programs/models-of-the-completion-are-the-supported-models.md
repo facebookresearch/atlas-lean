@@ -6,8 +6,13 @@ Let $P$ be a [finite ground normal logic program](normal-logic-program.md). An i
 
 ## Depends on
 
+- [Normal logic program](normal-logic-program.md)
 - [Clark completion of a normal program](clark-completion-of-a-normal-program.md)
 - [Supported models](supported-models.md)
+
+## Proof depends on
+
+- [Models of a normal logic program](models-of-a-normal-logic-program.md)
 
 ## Sources
 

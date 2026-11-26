@@ -5,7 +5,7 @@ Let $\emptyset \parallel F \Longrightarrow^*_{\mathcal{FT}} S$ be a derivation i
 1. $S$ is FailState if and only if $F$ is $T$-unsatisfiable;
 2. if $S = M \parallel F'$, then $M$ is a $T$-model of $F$.
 
-So, with a decision procedure for $T$-consistency of conjunctions of ground literals, any strategy that [terminates](termination-of-dpll-modulo-theories.md) and applies [T-Learn when the assignment is $T$-inconsistent](conflicting-clauses-enable-fail-or-t-backjump.md) decides $T$-satisfiability.
+So, with a decision procedure for $T$-consistency of conjunctions of ground literals, any strategy that terminates and applies T-Learn when the assignment is $T$-inconsistent decides $T$-satisfiability.
 
 ## Depends on
 
@@ -13,6 +13,7 @@ So, with a decision procedure for $T$-consistency of conjunctions of ground lite
 
 ## Proof depends on
 
+- [Termination of DPLL modulo theories](termination-of-dpll-modulo-theories.md)
 - [Invariants of DPLL modulo theories](invariants-of-dpll-modulo-theories.md)
 - [Conflicting clauses enable Fail or T-Backjump](conflicting-clauses-enable-fail-or-t-backjump.md)
 

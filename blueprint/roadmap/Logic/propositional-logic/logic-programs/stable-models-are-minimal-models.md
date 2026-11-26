@@ -6,6 +6,7 @@ Let $P$ be a [finite ground normal logic program](normal-logic-program.md). Ever
 
 ## Depends on
 
+- [Normal logic program](normal-logic-program.md)
 - [Stable models of a normal logic program](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md)
 - [Models of a normal logic program](models-of-a-normal-logic-program.md)
 

@@ -10,6 +10,7 @@ If $\vdash \varphi \vee \psi$ in [natural deduction for IPC](natural-deduction-f
 
 ## Proof depends on
 
+- [Kripke models for intuitionistic propositional logic](kripke-models-for-ipc.md)
 - [Kripke soundness of intuitionistic propositional logic](kripke-soundness-of-ipc.md)
 - [Kripke completeness of intuitionistic propositional logic](kripke-completeness-of-ipc.md)
 - [Persistence of forcing in Kripke models](persistence-of-forcing-in-kripke-models.md)

@@ -6,6 +6,7 @@ Viewing each learned clause as derived by a resolution derivation from the input
 
 ## Depends on
 
+- [Unit resolution and SAT-solver states](unit-resolution-and-sat-solver-states.md)
 - [Conflict clauses and asserting clauses](conflict-clauses-and-asserting-clauses.md)
 - [Resolution derivability](../resolution/resolution-derivable.md)
 

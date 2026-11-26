@@ -4,6 +4,7 @@ Let $S = (\Delta, \Gamma, D)$ be a 1-inconsistent [SAT state](unit-resolution-an
 
 ## Depends on
 
+- [Unit resolution and SAT-solver states](unit-resolution-and-sat-solver-states.md)
 - [Conflict clauses and asserting clauses](conflict-clauses-and-asserting-clauses.md)
 - [Empowering and 1-provable clauses](empowering-and-1-provable-clauses.md)
 

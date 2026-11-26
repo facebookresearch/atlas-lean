@@ -6,6 +6,7 @@ Let $P$ be a [finite ground normal logic program](normal-logic-program.md). If $
 
 ## Depends on
 
+- [Normal logic program](normal-logic-program.md)
 - [Stable models of a normal logic program](../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md)
 
 ## Proof depends on

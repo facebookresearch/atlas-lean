@@ -8,6 +8,10 @@ Let $F$ be a proper [filter](prime-filters-of-a-heyting-algebra.md) in a Heyting
 
 - [Prime filters of a Heyting algebra](prime-filters-of-a-heyting-algebra.md)
 
+## Proof depends on
+
+- [Zorn's lemma](../../../Order/ordered-sets/zorns-lemma.md)
+
 ## Sources
 
 - M. H. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, 1998 (published as volume 149 of *Studies in Logic and the Foundations of Mathematics*, Elsevier, 2006), Section 2.5: Lemma 2.5.4 with the hint after it, and Exercise 2.7.12 (the maximal element is prime).

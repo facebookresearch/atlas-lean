@@ -6,6 +6,7 @@ A subsuming clause absorbs the clauses it subsumes, adding clauses to $\Delta$ n
 
 ## Depends on
 
+- [Conflict clauses and asserting clauses](conflict-clauses-and-asserting-clauses.md)
 - [Unit resolution and SAT-solver states](unit-resolution-and-sat-solver-states.md)
 
 ## Sources

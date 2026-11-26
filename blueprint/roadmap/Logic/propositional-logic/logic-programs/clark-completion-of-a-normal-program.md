@@ -8,6 +8,7 @@ where $\mathrm{Bodies}(a)$ is the set of bodies of the rules of $P$ with head $a
 
 ## Depends on
 
+- [Models of a normal logic program](models-of-a-normal-logic-program.md)
 - [Normal logic program](normal-logic-program.md)
 
 ## Sources

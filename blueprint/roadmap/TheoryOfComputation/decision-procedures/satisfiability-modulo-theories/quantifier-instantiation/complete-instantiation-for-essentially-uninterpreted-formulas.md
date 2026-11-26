@@ -3,7 +3,7 @@
 Let $F$ be an [essentially uninterpreted](essentially-uninterpreted-formulas.md) set of clauses over a background theory $T$. Then $F$ and its instantiation $F^*$ by the least solution of $\Delta_F$ are equisatisfiable modulo $T$.
 
 1. The least solution of $\Delta_F$ is finite if and only if $\Delta_F$ is stratified.
-2. Hence, for $F$ in the finite essentially uninterpreted fragment, satisfiability modulo $T$ reduces to satisfiability of the finite ground set $F^*$, which a decision procedure for ground formulas modulo $T$ decides. The problem is NEXPTIME-hard, as the Bernays–Schönfinkel class is contained in the fragment.
+2. Hence, for $F$ in the finite essentially uninterpreted fragment, satisfiability modulo $T$ reduces to satisfiability of the finite ground set $F^*$, which a decision procedure for ground formulas modulo $T$ decides.
 
 The background must be a first-order theory $T$: the theorem fails when $T$ is replaced by the complete theory of the expansions of the integers by arbitrary functions, which restricts the interpretations of the uninterpreted symbols.
 
@@ -19,4 +19,4 @@ The background must be a first-order theory $T$: the theorem fails when $T$ is r
 
 ## Sources
 
-- Y. Ge and L. de Moura, "Complete instantiation for quantified formulas in satisfiability modulo theories", in *Computer Aided Verification (CAV 2009)*, LNCS 5643, Springer, 2009, pp. 306–320, <https://leodemoura.github.io/files/ci.pdf>, Section 3: Theorem 1 and its proof, Proposition 2 (finiteness of the least solution and stratification) and the remarks on the decision procedure and NEXPTIME-hardness after it.
+- Y. Ge and L. de Moura, "Complete instantiation for quantified formulas in satisfiability modulo theories", in *Computer Aided Verification (CAV 2009)*, LNCS 5643, Springer, 2009, pp. 306–320, <https://leodemoura.github.io/files/ci.pdf>, Section 3: Theorem 1 and its proof, Proposition 2 (finiteness of the least solution and stratification) and the remark on the decision procedure after it.
