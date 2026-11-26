@@ -336,8 +336,7 @@ as formal power series, such that $h^*_i = h^*_{d-i}$ for all $0 \le i \le d$ bu
 unimodal.
 
 Mustaţă and Payne (Example 1.1) give a reflexive $6$-dimensional lattice polytope with
-$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal. Another witness is
-the simplex in Payne’s Example 4.2 with $(b,k,r)=(3,2,0)$ and $h^*$-vector $(1,1,2,1,2,1,1)$.
+$h^*$-vector $(1, 6, 8, 6, 8, 6, 1)$, which is symmetric and not unimodal.
 
 Source: C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra,
 Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI
@@ -347,9 +346,6 @@ numbers, Math. Ann. 333 (2005), 787-795, DOI 10.1007/s00208-005-0691-x, arXiv:ma
 ..., e6 - f, P is reflexive with δ_P = (1, 6, 8, 6, 8, 6, 1), a counterexample to Hibi's conjecture
 for d = 6 (abstract: 'counterexamples to Hibi's conjecture on the unimodality of delta-vectors of
 reflexive polytopes'), https://arxiv.org/abs/math/0504486.
-
-Source: Sam Payne, *Ehrhart series and lattice triangulations*, Example 4.2,
-https://arxiv.org/abs/math/0702052.
 -/
 public theorem hibiSymmetricUnimodal_refuted : ¬ hibiSymmetricUnimodal := by
   intro h
