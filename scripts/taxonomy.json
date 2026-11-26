@@ -13701,6 +13701,7 @@
   "MathlibExt/NumberTheory/WatsonAlternatingBounds": {"to": "NumberTheory/exponential-sums", "title": "Watson's cosecant and cosine sums"},
   "MathlibExt/NumberTheory/WatsonCotangentDerivatives": {"to": "NumberTheory/exponential-sums", "title": "Watson's cosecant and cosine sums"},
   "MathlibExt/NumberTheory/WeaklyPrimeAdditive": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Weakly prime-additive numbers"},
+  "MathlibExt/NumberTheory/WeightedDirichletConvolutionBFreeCoprimeIndicatorMulMoebius": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Weighted sums of Dirichlet convolutions"},
   "MathlibExt/NumberTheory/WeightedZeroSumCosets": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/NumberTheory/WesleyFractionalConstant": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/NumberTheory/WieferichOrder": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
