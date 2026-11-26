@@ -47,4 +47,13 @@ example : ∏ i ∈ Icc 1 15, (primesFrom7 i : ℝ) ≤
       norm_num [primesFrom7])
     (by decide)).2.1 (by decide) (by decide)
 
+-- Stone's square-root bound for the HBC-admissible tuple `(3, 4)` at `1/2` attains equality.
+example : (3 : ℝ) * 4 ≤ 2 ^ 4 - 2 ^ 2 := by
+  have h := MetaMathlibExt.hbcAdmissible_prod_le_sqrt 1 1 2
+    (by decide) (by decide) (by decide) (by decide) (fun i => i + 2)
+    (by decide) (fun i _ _ => by omega)
+    (by norm_num [Finset.prod_Icc_succ_top])
+    (by norm_num)
+  convert h using 1 <;> norm_num [Finset.prod_Icc_succ_top]
+
 end HBCHalfPrimeProductBoundsTest
