@@ -23,7 +23,8 @@ namespace MathlibExt.Combinatorics.GreenProblem1LargeSumFreeWanted
 /-- **Sum-free sets of natural numbers.** A finite set $S$ of natural numbers is sum-free if
 $x + y \notin S$ for all $x, y \in S$, where $x = y$ is allowed.
 
-Source: [GREEN-001]. -/
+Source: [GREEN-001]; Benjamin Bedert, Large sum-free subsets of sets of integers via L¹-estimates
+for trigonometric series, arXiv:2502.08624v1, abstract, https://arxiv.org/abs/2502.08624v1. -/
 def IsSumFree (s : Finset ℕ) : Prop :=
   ∀ x ∈ s, ∀ y ∈ s, x + y ∉ s
 

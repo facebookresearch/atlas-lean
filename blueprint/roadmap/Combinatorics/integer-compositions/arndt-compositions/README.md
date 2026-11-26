@@ -54,7 +54,6 @@
 - [Holonomic recurrence for Arndt compositions](arndt-composition-count-holonomic-recurr.md)
 - [Asymptotics of Arndt compositions with a fixed number of parts](arndt-composition-count-is-equivalent.md)
 - [Arndt compositions are counted by Fibonacci numbers](arndt-composition-total-eq-fib.md)
-- [Leading-pair recurrence for Arndt compositions](add-two.md)
 - [Expected number of parts of an Arndt composition](arndt-composition-expected-parts-is-equi.md)
 - [Generating function of anti-palindromic compositions](bivariate-count-gf-anti-palindromic.md)
 - [Generating function of reduced anti-palindromic compositions](bivariate-count-gf-reduced-anti-palindro.md)

@@ -1,7 +1,8 @@
-# Constant term of the regular cubic Euler quotient
+# Constant term of the overlined ℓ-regular cubic partition numbers
 
-For every natural number $\ell \ge 1$,
-the constant coefficient $a_\ell(0)$ of the Euler quotient in Eq. (2) equals $1$.
+For every natural number
+$\ell \ge 1$, the coefficient $a_\ell(0)$ of $q^0$ in the generating function of $\ell$-regular
+cubic partitions with odd parts overlined equals $1$.
 
 ## Sources
 
