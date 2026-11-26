@@ -16,6 +16,10 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Unbounded fan-in circuits](unbounded-fan-in-circuits/README.md)
 - [Constant depth circuit lower bounds](constant-depth-circuit-lower-bounds/README.md)
 
+- [Hardness Magnification for MCSP](hardness-magnification/README.md)
+
+- [The Minimum Circuit Size Problem](minimum-circuit-size-problem/README.md)
+
 - [Algorithmic Method: NQP and Almost-Everywhere Bounds](algorithmic-method-nqp-and-almost-everywhere-bounds/README.md)
 
 - [Monotone Separations and Supercritical Depth](monotone-separations-and-supercritical-depth/README.md)
