@@ -23,3 +23,9 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 
 - [Entropy and randomness extraction](randomness-extraction/README.md)
 - [Program obfuscation](program-obfuscation/README.md)
+
+- [Discrete Differentially Private Mechanisms](discrete-privacy-mechanisms/README.md)
+
+- [Lower Bounds and Reconstruction Attacks for Differential Privacy](differential-privacy-lower-bounds/README.md)
+
+- [Rényi Differential Privacy and Privacy Loss](renyi-differential-privacy/README.md)

@@ -9,3 +9,7 @@ Collisions and the birthday bound, and the Merkle–Damgård transform with leng
 
 - [Bounded universal hash functions](bounded-universal-hash-functions.md)
 - [Collision resistance and target collision resistance](collision-resistance-and-target-collision-resistance.md)
+- [Generic Attacks on Hash Functions](generic-attacks-on-hash-functions/README.md)
+- [Hash Constructions and Idealized-Model Analyses](hash-constructions-and-idealized-models/README.md)
+- [Lattice-Based Collision-Resistant Hashing](lattice-based-hashing/README.md)
+- [Second-Preimage and Target Collision Resistance](second-preimage-and-target-collision-resistance/README.md)

@@ -24,3 +24,4 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Curry–Howard correspondence for implicational logic](curry-howard-correspondence-for-implicational-logic.md)
 - [Typed terms give natural-deduction derivations](typed-terms-give-natural-deduction-derivations.md)
 - [Uniqueness of normal forms in System F](uniqueness-of-normal-forms-in-system-f.md)
+- [Partial Combinatory Algebras and Kleene's Models](partial-combinatory-algebras/README.md)

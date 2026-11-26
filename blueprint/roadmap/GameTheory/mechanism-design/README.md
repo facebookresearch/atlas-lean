@@ -26,3 +26,25 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 
 - [Menu-size complexity of revenue approximation](menu-size-complexity-of-revenue-approximation.md)
 - [Optimal prophet-secretary ratio](optimal-prophet-secretary-ratio.md)
+
+- [Characterizations of Dominant-Strategy Incentive Compatibility](dsic-characterizations/README.md)
+
+- [Combinatorial Auctions](combinatorial-auctions/README.md)
+
+- [Divisible Resource Allocation Mechanisms](divisible-resource-allocation/README.md)
+
+- [Facility Location without Money](facility-location-without-money/README.md)
+
+- [Indirect Mechanisms and Ex-Post Implementation](indirect-mechanisms-and-ex-post-implementation/README.md)
+
+- [Ironing and Optimal Auctions for Irregular Distributions](ironing-and-irregular-distributions/README.md)
+
+- [Online Mechanism Design](online-mechanism-design/README.md)
+
+- [Prior-Free Digital Goods and Position Auctions](prior-free-and-position-auctions/README.md)
+
+- [Single-Parameter Auctions](single-parameter-auctions/README.md)
+
+- [Standard Proper Scoring Rules](standard-scoring-rules/README.md)
+
+- [Truthful Scheduling and Budget-Constrained Auctions](truthful-scheduling-and-budgets/README.md)

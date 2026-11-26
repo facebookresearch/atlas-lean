@@ -26,3 +26,7 @@ Social choice theory studies rules that aggregate individual preferences into a 
 - [Maximum size of Condorcet domains](maximum-size-of-condorcet-domains.md)
 
 - [Existence of complete EFX allocations](existence-of-complete-efx-allocations.md)
+- [Envy-Free Division Protocols](envy-free-division-protocols/README.md)
+- [Monotonicity and the Gibbard–Satterthwaite Reduction](monotonicity-and-the-gibbard-satterthwaite-reduction/README.md)
+- [Random Assignment](random-assignment/README.md)
+- [Strategy-Proofness on Single-Peaked Domains](strategy-proofness-on-single-peaked-domains/README.md)
