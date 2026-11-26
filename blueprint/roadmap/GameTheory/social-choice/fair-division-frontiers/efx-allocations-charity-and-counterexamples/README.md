@@ -6,7 +6,6 @@
 - [EFX exists for two agents with arbitrary monotone valuations](efx-two-agents-monotone-valuations.md)
 - [Rainbow cycle number](rainbow-cycle-number.md)
 - [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
-- [EFX allocations can fail to exist for monotone valuations](efx-counterexample-monotone-valuations.md)
 - [Upper bounds on the rainbow cycle number](rainbow-cycle-number-upper-bounds.md)
 - [EFX with bounded charity: fewer than n goods left unallocated](efx-with-bounded-charity.md)
 - [Lexicographic improvement step for partial EFX allocations of three agents](efx-three-agents-lexicographic-improvement.md)
