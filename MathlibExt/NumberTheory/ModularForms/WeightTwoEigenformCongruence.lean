@@ -50,7 +50,8 @@ prime `ℓ ∤ N`.
 
 * `CuspForm.exists_isNormalizedEigenform_congruent_of_heckeT_congr`: the statement above.
 * `CuspForm.exists_isNormalizedEigenform_congruent_of_isLatticeRealized`: the same conclusion
-  when `a` is a formal Hecke eigensystem with nebentypus `χ₋₃` away from `N`.
+  when `a` is a formal Hecke eigensystem with nebentypus values `χ₋₃(ℓ)` at the primes `ℓ ∤ N`
+  and `0` at the primes `ℓ ∣ N`.
 -/
 
 @[expose] public section
@@ -84,11 +85,12 @@ theorem exists_isNormalizedEigenform_congruent_of_heckeT_congr
     exists_isNormalizedEigenform_congruent_of_isMaximal hN 𝔪₁ h𝔪₁ (p := 3) h3𝔪₁
   exact ⟨f, hf, 𝔪', h𝔪', h3𝔪', fun ℓ hℓ hℓN => hcong ℓ hℓ hℓN (a ℓ) (hT𝔪₁ ℓ hℓ hℓN)⟩
 
-/-- **Deligne–Serre lifting in weight two, eigensystem form.** If the weight-two cusp forms on
-`Γ₀(N)` have an integral basis and `a` is a formal Hecke eigensystem with nebentypus `χ₋₃`
-away from `N` whose bridge series is realized modulo `3` by an integral cusp form, then some
-normalized eigenform on `Γ₀(N)` has eigenvalues congruent to `a ℓ` modulo a maximal ideal
-above `3` of the algebraic integers, for every prime `ℓ ∤ N`. -/
+/-- **Deligne–Serre lifting in weight two, eigensystem form.** Suppose the weight-two cusp forms
+on `Γ₀(N)` have an integral basis, and `a` is a formal Hecke eigensystem with nebentypus values
+`χ₋₃(ℓ)` at the primes `ℓ ∤ N` and `0` at the primes `ℓ ∣ N` (there the recursion reads
+`a (ℓ n) = a ℓ · a n`), whose bridge series is realized modulo `3` by an integral cusp form.
+Then some normalized eigenform on `Γ₀(N)` has eigenvalues congruent to `a ℓ` modulo a maximal
+ideal above `3` of the algebraic integers, for every prime `ℓ ∤ N`. -/
 theorem exists_isNormalizedEigenform_congruent_of_isLatticeRealized
     {N : ℕ} [NeZero N] (h : HasIntegralBasis N) {a : ℕ → ℤ}
     (heig : FormalHecke.IsEigensystem

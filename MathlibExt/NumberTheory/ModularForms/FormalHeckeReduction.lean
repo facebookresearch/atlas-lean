@@ -85,8 +85,8 @@ power series, and this produces a maximal ideal of the Hecke algebra above `3` c
 * `CuspForm.exists_reductionModule_of_isLatticeRealized`: a lattice realization gives such a
   reduction module.
 * `FormalHecke.IsEigensystem.three_dvd_coeff_heckeT_bridgeProduct_sub_smul`: a formal
-  eigensystem with nebentypus `χ₋₃` makes `bridgeProduct a` a formal `T_ℓ`-eigenvector
-  modulo `3`.
+  eigensystem with nebentypus values `χ₋₃(ℓ)` at the primes `ℓ ∤ N` and `0` at the primes
+  `ℓ ∣ N` makes `bridgeProduct a` a formal `T_ℓ`-eigenvector modulo `3` for every prime `ℓ ∤ N`.
 -/
 
 @[expose] public section
@@ -109,7 +109,8 @@ def heckeU (ℓ : ℕ) : R⟦X⟧ →ₗ[R] R⟦X⟧ where
     coeff n (heckeU ℓ f) = coeff (ℓ * n) f := by
   simp [heckeU]
 
-/-- The formal operator `V_ℓ` on power series: `∑ aₙ Xⁿ ↦ ∑ aₙ X^{ℓ n}`. -/
+/-- The formal operator `V_ℓ` on power series: for `ℓ ≠ 0` it is the substitution
+`∑ aₙ Xⁿ ↦ ∑ aₙ X^{ℓ n}`; for `ℓ = 0` it keeps only the constant coefficient. -/
 def heckeV (ℓ : ℕ) : R⟦X⟧ →ₗ[R] R⟦X⟧ where
   toFun f := mk fun n => if ℓ ∣ n then coeff (n / ℓ) f else 0
   map_add' f g := by ext n; by_cases h : ℓ ∣ n <;> simp [h]
@@ -786,9 +787,10 @@ private theorem three_dvd_coeff_heckeT_two_sub_residual {R : Type*} [CommRing R]
   rw [hkey]
   exact dvd_sub (dvd_add (hA (ℓ * n)) (hD.mul_left (ℓ : R))) ((hA n).mul_left (a ℓ))
 
-/-- If `a` is a formal Hecke eigensystem whose nebentypus is `χ₋₃` away from the level `N`,
-then for every prime `ℓ ∤ N` the series `bridgeProduct a` is a formal `T_ℓ`-eigenvector of
-weight two with eigenvalue `a ℓ` modulo `3`. -/
+/-- Let `a` be a formal Hecke eigensystem with nebentypus values `χ₋₃(ℓ)` at the primes `ℓ ∤ N`
+and `0` at the primes `ℓ ∣ N`, where the recursion reads `a (ℓ n) = a ℓ · a n`. Then for every
+prime `ℓ ∤ N` the series `bridgeProduct a` is a formal `T_ℓ`-eigenvector of weight two with
+eigenvalue `a ℓ` modulo `3`. -/
 theorem three_dvd_coeff_heckeT_bridgeProduct_sub_smul
     {R : Type*} [CommRing R] {N : ℕ} {a : ℕ → R}
     (heig : FormalHecke.IsEigensystem
