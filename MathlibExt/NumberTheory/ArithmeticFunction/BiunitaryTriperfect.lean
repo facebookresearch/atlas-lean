@@ -542,154 +542,9 @@ private theorem sigmaBiunitary_ge_self {n : ℕ} (hn : 1 ≤ n) : n ≤ sigmaBiu
 private theorem sigmaBiunitary_pos {n : ℕ} (hn : 1 ≤ n) : 0 < sigmaBiunitary n :=
   lt_of_lt_of_le (by omega) (sigmaBiunitary_ge_self hn)
 
-private theorem gcd_mem_unitaryDivisors_inter {d₁ d₂ q₁ q₂ e : ℕ}
-    (h12 : d₁.Coprime d₂)
-    (hdQ2 : d₁.Coprime q₂) (hdQ1 : d₂.Coprime q₁) (hq₁ : q₁ ≠ 0)
-    (he : e ∈ (d₁ * d₂).unitaryDivisors ∩ (q₁ * q₂).unitaryDivisors) :
-    e.gcd d₁ ∈ d₁.unitaryDivisors ∩ q₁.unitaryDivisors := by
-  obtain ⟨hed, heQ⟩ := Finset.mem_inter.mp he
-  have hdvd : e ∣ d₁ * d₂ := Nat.dvd_of_mem_unitaryDivisors hed
-  have hQdvd : e ∣ q₁ * q₂ := Nat.dvd_of_mem_unitaryDivisors heQ
-  have hsplit : e.gcd d₁ * e.gcd d₂ = e := by
-    rw [← Nat.Coprime.gcd_mul e h12, Nat.gcd_eq_left hdvd]
-  have he₁e : e.gcd d₁ ∣ e := Nat.gcd_dvd_left _ _
-  have he₁dvd : e.gcd d₁ ∣ d₁ := Nat.gcd_dvd_right _ _
-  have he₂e : e.gcd d₂ ∣ e := Nat.gcd_dvd_left _ _
-  have he₂dvd : e.gcd d₂ ∣ d₂ := Nat.gcd_dvd_right _ _
-  have hc1 : (e.gcd d₁).Coprime q₂ := hdQ2.coprime_dvd_left he₁dvd
-  have hc2 : (e.gcd d₂).Coprime q₁ := hdQ1.coprime_dvd_left he₂dvd
-  have hq₁dvd : e.gcd d₁ ∣ q₁ := hc1.dvd_of_dvd_mul_right (dvd_trans he₁e hQdvd)
-  have hq₂dvd : e.gcd d₂ ∣ q₂ := hc2.dvd_of_dvd_mul_left (dvd_trans he₂e hQdvd)
-  have hmem1 : e.gcd d₁ ∈ d₁.unitaryDivisors :=
-    Nat.gcd_mem_unitaryDivisors_of_mem_mul h12 hed
-  have hQdiv : q₁ * q₂ / e = q₁ / e.gcd d₁ * (q₂ / e.gcd d₂) := by
-    conv_lhs => rw [← hsplit]
-    rw [← Nat.div_mul_div_comm hq₁dvd hq₂dvd]
-  have hQe : q₁ / e.gcd d₁ ∣ q₁ * q₂ / e := by
-    rw [hQdiv]
-    exact dvd_mul_right _ _
-  have heQcoprime : e.Coprime (q₁ * q₂ / e) := Nat.coprime_div_of_mem_unitaryDivisors heQ
-  have hmemQ : e.gcd d₁ ∈ q₁.unitaryDivisors := by
-    rw [Nat.mem_unitaryDivisors]
-    exact ⟨hq₁dvd, hq₁, (heQcoprime.coprime_dvd_left he₁e).coprime_dvd_right hQe⟩
-  exact Finset.mem_inter.mpr ⟨hmem1, hmemQ⟩
-
-private theorem mem_biunitaryDivisors_mul {m n d₁ d₂ : ℕ} (hm : m ≠ 0) (hn : n ≠ 0)
-    (hcop : m.Coprime n) (hd₁ : d₁ ∣ m) (hd₂ : d₂ ∣ n) :
-    d₁ * d₂ ∈ biunitaryDivisors (m * n) ↔
-      d₁ ∈ biunitaryDivisors m ∧ d₂ ∈ biunitaryDivisors n := by
-  have hd₁0 : d₁ ≠ 0 := (Nat.pos_of_dvd_of_pos hd₁ (Nat.pos_of_ne_zero hm)).ne'
-  have hd₂0 : d₂ ≠ 0 := (Nat.pos_of_dvd_of_pos hd₂ (Nat.pos_of_ne_zero hn)).ne'
-  have hq₁0 : m / d₁ ≠ 0 := fun h => hm (by rw [← Nat.div_mul_cancel hd₁, h, zero_mul])
-  have hq₂0 : n / d₂ ≠ 0 := fun h => hn (by rw [← Nat.div_mul_cancel hd₂, h, zero_mul])
-  have hq₁dvd : m / d₁ ∣ m := Nat.div_dvd_of_dvd hd₁
-  have hq₂dvd : n / d₂ ∣ n := Nat.div_dvd_of_dvd hd₂
-  have h12 : d₁.Coprime d₂ := (hcop.coprime_dvd_left hd₁).coprime_dvd_right hd₂
-  have hQ : (m / d₁).Coprime (n / d₂) :=
-    (hcop.coprime_dvd_left hq₁dvd).coprime_dvd_right hq₂dvd
-  have hdQ2 : d₁.Coprime (n / d₂) :=
-    (hcop.coprime_dvd_left hd₁).coprime_dvd_right hq₂dvd
-  have hdQ1 : d₂.Coprime (m / d₁) :=
-    ((hcop.coprime_dvd_right hd₂).symm.coprime_dvd_right hq₁dvd)
-  have hdiv : m * n / (d₁ * d₂) = m / d₁ * (n / d₂) :=
-    (Nat.div_mul_div_comm hd₁ hd₂).symm
-  have e1 : d₁ * d₂ ∈ biunitaryDivisors (m * n) ↔
-      gcdUnitary (d₁ * d₂) (m * n / (d₁ * d₂)) = 1 := by
-    constructor
-    · intro h
-      exact (mem_biunitaryDivisors.mp h).2.2
-    · intro h
-      exact mem_biunitaryDivisors.mpr ⟨Nat.mul_dvd_mul hd₁ hd₂, mul_ne_zero hm hn, h⟩
-  have e2 : d₁ ∈ biunitaryDivisors m ↔ gcdUnitary d₁ (m / d₁) = 1 := by
-    constructor
-    · intro h
-      exact (mem_biunitaryDivisors.mp h).2.2
-    · intro h
-      exact mem_biunitaryDivisors.mpr ⟨hd₁, hm, h⟩
-  have e3 : d₂ ∈ biunitaryDivisors n ↔ gcdUnitary d₂ (n / d₂) = 1 := by
-    constructor
-    · intro h
-      exact (mem_biunitaryDivisors.mp h).2.2
-    · intro h
-      exact mem_biunitaryDivisors.mpr ⟨hd₂, hn, h⟩
-  rw [e1, e2, e3, hdiv,
-    gcdUnitary_eq_one_iff (mul_ne_zero hd₁0 hd₂0) (mul_ne_zero hq₁0 hq₂0),
-    gcdUnitary_eq_one_iff hd₁0 hq₁0, gcdUnitary_eq_one_iff hd₂0 hq₂0]
-  constructor
-  · intro H
-    refine ⟨?_, ?_⟩
-    · intro e₁ he₁
-      have h1d₂ : (1 : ℕ) ∈ d₂.unitaryDivisors := by simp [hd₂0]
-      have h1q₂ : (1 : ℕ) ∈ (n / d₂).unitaryDivisors := by simp [hq₂0]
-      have he1d := Nat.mul_mem_unitaryDivisors_mul h12 (Finset.mem_inter.mp he₁).1 h1d₂
-      have he1q := Nat.mul_mem_unitaryDivisors_mul hQ (Finset.mem_inter.mp he₁).2 h1q₂
-      have h := H _ (Finset.mem_inter.mpr ⟨he1d, he1q⟩)
-      simpa using h
-    · intro e₂ he₂
-      have h1d₁ : (1 : ℕ) ∈ d₁.unitaryDivisors := by simp [hd₁0]
-      have h1q₁ : (1 : ℕ) ∈ (m / d₁).unitaryDivisors := by simp [hq₁0]
-      have he2d := Nat.mul_mem_unitaryDivisors_mul h12 h1d₁ (Finset.mem_inter.mp he₂).1
-      have he2q := Nat.mul_mem_unitaryDivisors_mul hQ h1q₁ (Finset.mem_inter.mp he₂).2
-      have h := H _ (Finset.mem_inter.mpr ⟨he2d, he2q⟩)
-      simpa using h
-  · rintro ⟨H₁, H₂⟩ e he
-    have h1 := H₁ _ (gcd_mem_unitaryDivisors_inter (d₁ := d₁) (d₂ := d₂)
-      (q₁ := m / d₁) (q₂ := n / d₂) (e := e) h12 hdQ2 hdQ1 hq₁0 he)
-    have he' : e ∈ (d₂ * d₁).unitaryDivisors ∩ ((n / d₂) * (m / d₁)).unitaryDivisors := by
-      rw [mul_comm d₂ d₁, mul_comm (n / d₂) (m / d₁)]
-      exact he
-    have h2 := H₂ _ (gcd_mem_unitaryDivisors_inter (d₁ := d₂) (d₂ := d₁)
-      (q₁ := n / d₂) (q₂ := m / d₁) (e := e) h12.symm hdQ1 hdQ2 hq₂0 he')
-    have hdvd : e ∣ d₁ * d₂ := Nat.dvd_of_mem_unitaryDivisors (Finset.mem_inter.mp he).1
-    have hsplit : e = e.gcd d₁ * e.gcd d₂ := by
-      rw [← Nat.Coprime.gcd_mul e h12, Nat.gcd_eq_left hdvd]
-    rw [hsplit, h1, h2, mul_one]
-
-private theorem sigmaBiunitary_mul {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0)
-    (hcop : m.Coprime n) : sigmaBiunitary (m * n) = sigmaBiunitary m * sigmaBiunitary n := by
-  have hbij : ∑ p ∈ (biunitaryDivisors m) ×ˢ (biunitaryDivisors n), p.1 * p.2 =
-      ∑ d ∈ biunitaryDivisors (m * n), d := by
-    refine Finset.sum_bij (fun p _ => p.1 * p.2) ?hi ?inj ?surj (fun p _ => rfl)
-    · intro p hp
-      rw [Finset.mem_product] at hp
-      exact (mem_biunitaryDivisors_mul hm hn hcop
-        (dvd_of_mem_biunitaryDivisors hp.1)
-        (dvd_of_mem_biunitaryDivisors hp.2)).mpr hp
-    · intro p₁ hp₁ p₂ hp₂ h
-      rw [Finset.mem_product] at hp₁ hp₂
-      have hd1 : p₁.1 ∣ m := dvd_of_mem_biunitaryDivisors hp₁.1
-      have hd2 : p₁.2 ∣ n := dvd_of_mem_biunitaryDivisors hp₁.2
-      have hd3 : p₂.1 ∣ m := dvd_of_mem_biunitaryDivisors hp₂.1
-      have hd4 : p₂.2 ∣ n := dvd_of_mem_biunitaryDivisors hp₂.2
-      have hc13 : p₁.1.Coprime p₂.2 := (hcop.coprime_dvd_left hd1).coprime_dvd_right hd4
-      have hc31 : p₂.1.Coprime p₁.2 := (hcop.coprime_dvd_left hd3).coprime_dvd_right hd2
-      have hle1 : p₁.1 ∣ p₂.1 := hc13.dvd_of_dvd_mul_right ⟨p₁.2, h.symm⟩
-      have hle2 : p₂.1 ∣ p₁.1 := hc31.dvd_of_dvd_mul_right ⟨p₂.2, h⟩
-      have heq1 : p₁.1 = p₂.1 := dvd_antisymm hle1 hle2
-      have h10 : p₁.1 ≠ 0 :=
-        (Nat.pos_of_dvd_of_pos hd1 (Nat.pos_of_ne_zero hm)).ne'
-      have heq2 : p₁.2 = p₂.2 := by
-        rw [← heq1] at h
-        exact mul_left_cancel₀ h10 h
-      exact Prod.ext heq1 heq2
-    · intro d hd
-      have hdvd : d ∣ m * n := dvd_of_mem_biunitaryDivisors hd
-      have hdeq : d = d.gcd m * d.gcd n := by
-        rw [← Nat.Coprime.gcd_mul d hcop, Nat.gcd_eq_left hdvd]
-      have hmem := (mem_biunitaryDivisors_mul hm hn hcop
-        (Nat.gcd_dvd_right d m) (Nat.gcd_dvd_right d n)).mp (hdeq ▸ hd)
-      refine ⟨(d.gcd m, d.gcd n), Finset.mem_product.mpr hmem, ?_⟩
-      exact hdeq.symm
-  have h2 : (∑ p ∈ (biunitaryDivisors m) ×ˢ (biunitaryDivisors n), p.1 * p.2) =
-      (∑ d₁ ∈ biunitaryDivisors m, d₁) * (∑ d₂ ∈ biunitaryDivisors n, d₂) := by
-    rw [Finset.sum_product]
-    change (∑ x ∈ biunitaryDivisors m, ∑ y ∈ biunitaryDivisors n, x * y) = _
-    exact (Finset.sum_mul_sum _ _ _ _).symm
-  rw [sigmaBiunitary, sigmaBiunitary, sigmaBiunitary, ← hbij, h2]
-
-private theorem dvd_sigmaBiunitary_of_exact {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0)
-    (hcop : m.Coprime n) : sigmaBiunitary m ∣ sigmaBiunitary (m * n) := by
-  rw [sigmaBiunitary_mul hm hn hcop]
+private theorem dvd_sigmaBiunitary_of_exact {m n : ℕ} (hcop : m.Coprime n) :
+    sigmaBiunitary m ∣ sigmaBiunitary (m * n) := by
+  rw [sigmaBiunitary_mul_of_coprime hcop]
   exact dvd_mul_right _ _
 
 private theorem le_of_mod_eq_one {q t : ℕ} (hq : q.Prime) (hmod : q % t = 1) :
@@ -817,7 +672,7 @@ private theorem aux_e1 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
   have hMpos : 0 < M := Nat.pos_of_ne_zero hM0
   have hcop2M : Nat.Coprime 2 M := Nat.prime_two.coprime_iff_not_dvd.mpr h2M
   have hσN : sigmaBiunitary N = 3 * sigmaBiunitary M := by
-    rw [hNM, sigmaBiunitary_mul (by decide) hM0 hcop2M, sigmaBiunitary_two]
+    rw [hNM, sigmaBiunitary_mul_of_coprime hcop2M, sigmaBiunitary_two]
   have hσM : sigmaBiunitary M = 2 * M := by
     rw [hσN, hNM] at hσ
     omega
@@ -839,7 +694,7 @@ private theorem aux_e1 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
   have hσM2 : sigmaBiunitary M =
       sigmaBiunitary (3 ^ M.factorization 3) * sigmaBiunitary m := by
     conv_lhs => rw [hMm]
-    exact sigmaBiunitary_mul (pow_ne_zero _ (by decide)) hm0 hcop3m
+    exact sigmaBiunitary_mul_of_coprime hcop3m
   have hσ3pos : 0 < sigmaBiunitary (3 ^ M.factorization 3) := by
     apply sigmaBiunitary_pos
     have hpos : 0 < (3 : ℕ) ^ M.factorization 3 := pow_pos (by decide) _
@@ -930,7 +785,7 @@ private theorem aux_e2 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
     exact hbase.pow_left 2
   have hσN : sigmaBiunitary N = 5 * sigmaBiunitary M := by
     conv_lhs => rw [hNM]
-    rw [sigmaBiunitary_mul (by decide) hM0 hcop4M, sigmaBiunitary_four]
+    rw [sigmaBiunitary_mul_of_coprime hcop4M, sigmaBiunitary_four]
   have h5M : 5 ∣ M := by
     have heq : 5 * sigmaBiunitary M = 3 * N := by rw [← hσN, hσ]
     have h5N : (5 : ℕ) ∣ 3 * N := ⟨sigmaBiunitary M, heq.symm⟩
@@ -988,12 +843,12 @@ private theorem aux_e2 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
     have hσM : sigmaBiunitary M =
         sigmaBiunitary (3 ^ M.factorization 3) * sigmaBiunitary m := by
       conv_lhs => rw [hMm]
-      exact sigmaBiunitary_mul (pow_ne_zero _ (by decide)) hm0
+      exact sigmaBiunitary_mul_of_coprime
         (((Nat.prime_three.coprime_iff_not_dvd).mpr h3m).pow_left _)
     have hσm : sigmaBiunitary m =
         sigmaBiunitary (5 ^ m.factorization 5) * sigmaBiunitary R := by
       conv_lhs => rw [hmR]
-      exact sigmaBiunitary_mul (pow_ne_zero _ (by decide)) hR0
+      exact sigmaBiunitary_mul_of_coprime
         (((Nat.prime_five.coprime_iff_not_dvd).mpr h5R).pow_left _)
     have he3 : Even (sigmaBiunitary (3 ^ M.factorization 3)) := by
       apply even_sigmaBiunitary_of_odd_pos
@@ -1028,7 +883,7 @@ private theorem aux_e2 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
           (sigmaBiunitary (3 ^ M.factorization 3) *
             (sigmaBiunitary (5 ^ m.factorization 5) * sigmaBiunitary R)) := by
         conv_lhs => rw [hNM]
-        rw [sigmaBiunitary_mul (by decide) hM0 hcop4M, hσM, hσm]
+        rw [sigmaBiunitary_mul_of_coprime hcop4M, hσM, hσm]
       rw [hσN']
       exact dvd_mul_of_dvd_right h8 _
     rw [hσ] at hdvd8
@@ -1062,8 +917,7 @@ private theorem aux_e2 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
         exact (by decide : ¬ (3 : ℕ) ∣ 5) h35
     exact hbase.pow_left _
   have hσ3dvd : sigmaBiunitary (3 ^ M.factorization 3) ∣ 3 * N := by
-    have h := dvd_sigmaBiunitary_of_exact (pow_ne_zero _ (by decide))
-      (mul_ne_zero (by decide) (pow_ne_zero _ (by decide))) hcop3K
+    have h := dvd_sigmaBiunitary_of_exact hcop3K
     rw [← hNK, hσ] at h
     exact h
   have hn3σ3 : ¬ (3 : ℕ) ∣ sigmaBiunitary (3 ^ M.factorization 3) := by
@@ -1109,13 +963,12 @@ private theorem aux_e2 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
     ring
   have hσ108 : sigmaBiunitary 108 = 200 := by
     have h108 : (108 : ℕ) = 4 * 27 := rfl
-    rw [h108, sigmaBiunitary_mul (by decide) (by decide)
+    rw [h108, sigmaBiunitary_mul_of_coprime
       (by decide : Nat.Coprime 4 27), sigmaBiunitary_four, sigmaBiunitary_twentySeven]
   have h200dvd : (200 : ℕ) ∣ 3 * N := by
     have hcop108 : Nat.Coprime 108 (5 ^ m.factorization 5) :=
       (((by decide : Nat.Coprime 5 108).pow_left _).symm)
-    have h := dvd_sigmaBiunitary_of_exact (by decide : (108 : ℕ) ≠ 0)
-      (pow_ne_zero _ (by decide)) hcop108
+    have h := dvd_sigmaBiunitary_of_exact hcop108
     rw [← hN108, hσ108, hσ] at h
     exact h
   have hg2 : 2 ≤ m.factorization 5 := by
@@ -1143,8 +996,7 @@ private theorem aux_e2 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
       rw [hN108, mul_comm]
     have hcop5 : Nat.Coprime (5 ^ m.factorization 5) 108 :=
       (by decide : Nat.Coprime 5 108).pow_left _
-    have h := dvd_sigmaBiunitary_of_exact (pow_ne_zero _ (by decide))
-      (by decide) hcop5
+    have h := dvd_sigmaBiunitary_of_exact hcop5
     rw [← hN5, hσ] at h
     exact h
   have hq3N : q ∣ 3 * N := hqdvd.trans hσ5dvd
@@ -1186,7 +1038,7 @@ private theorem aux_e3 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
     exact hbase.pow_left 3
   have hσN : sigmaBiunitary N = 15 * sigmaBiunitary M := by
     conv_lhs => rw [hNM]
-    rw [sigmaBiunitary_mul (by decide) hM0 hcop8M, sigmaBiunitary_eight]
+    rw [sigmaBiunitary_mul_of_coprime hcop8M, sigmaBiunitary_eight]
   have h5M : 5 ∣ M := by
     have heq : 15 * sigmaBiunitary M = 3 * N := by rw [← hσN, hσ]
     have h5N : (5 : ℕ) ∣ 3 * N := ⟨3 * sigmaBiunitary M, by omega⟩
@@ -1242,17 +1094,17 @@ private theorem aux_e3 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
   have hσM : sigmaBiunitary M =
       sigmaBiunitary (3 ^ M.factorization 3) * sigmaBiunitary m := by
     conv_lhs => rw [hMm]
-    exact sigmaBiunitary_mul (pow_ne_zero _ (by decide)) hm0
+    exact sigmaBiunitary_mul_of_coprime
       (((Nat.prime_three.coprime_iff_not_dvd).mpr h3m).pow_left _)
   have hσm : sigmaBiunitary m =
       sigmaBiunitary (5 ^ m.factorization 5) * sigmaBiunitary R := by
     conv_lhs => rw [hmR]
-    exact sigmaBiunitary_mul (pow_ne_zero _ (by decide)) hR0
+    exact sigmaBiunitary_mul_of_coprime
       (((Nat.prime_five.coprime_iff_not_dvd).mpr h5R).pow_left _)
   have hσN' : sigmaBiunitary N = 15 * (sigmaBiunitary (3 ^ M.factorization 3) *
       (sigmaBiunitary (5 ^ m.factorization 5) * sigmaBiunitary R)) := by
     conv_lhs => rw [hNM]
-    rw [sigmaBiunitary_mul (by decide) hM0 hcop8M, sigmaBiunitary_eight, hσM, hσm]
+    rw [sigmaBiunitary_mul_of_coprime hcop8M, sigmaBiunitary_eight, hσM, hσm]
   have hNeqFull : N = 8 * (3 ^ M.factorization 3 * (5 ^ m.factorization 5 * R)) := by
     rw [hNM]
     congr 1
@@ -1280,8 +1132,7 @@ private theorem aux_e3 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
           · exact h5R h
       exact hbase.pow_left _
     have hσ5dvd : sigmaBiunitary (5 ^ m.factorization 5) ∣ 3 * N := by
-      have h := dvd_sigmaBiunitary_of_exact (pow_ne_zero _ (by decide))
-        (mul_ne_zero (by decide) (mul_ne_zero (pow_ne_zero _ (by decide)) hR0)) hcop5K
+      have h := dvd_sigmaBiunitary_of_exact hcop5K
       rw [← hN5, hσ] at h
       exact h
     rw [hσ25] at hσ5dvd
@@ -1350,10 +1201,7 @@ private theorem aux_e3 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
               · exact absurd h h135
               · exact absurd h h13R'
         exact hbase.pow_left _
-      have h := dvd_sigmaBiunitary_of_exact (pow_ne_zero _ (by decide))
-        (mul_ne_zero (by decide)
-          (mul_ne_zero (pow_ne_zero _ (by decide))
-            (mul_ne_zero (pow_ne_zero _ (by decide)) hR'0))) hcop13
+      have h := dvd_sigmaBiunitary_of_exact hcop13
       rw [← hN13, hσ] at h
       exact h
     have hp33N : p3 ∣ 3 * N := hp3dvd.trans hσ13dvd
@@ -1424,12 +1272,12 @@ private theorem aux_e3 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
     have hσR : sigmaBiunitary R =
         sigmaBiunitary (13 ^ R.factorization 13) * sigmaBiunitary R' := by
       conv_lhs => rw [hRR']
-      exact sigmaBiunitary_mul (pow_ne_zero _ (by decide)) hR'0
+      exact sigmaBiunitary_mul_of_coprime
         ((((by decide : Nat.Prime 13).coprime_iff_not_dvd).mpr h13R').pow_left _)
     have hσR' : sigmaBiunitary R' =
         sigmaBiunitary (p3 ^ R'.factorization p3) * sigmaBiunitary R'' := by
       conv_lhs => rw [hR'R'']
-      exact sigmaBiunitary_mul (pow_ne_zero _ hp3prime.ne_zero) hR''0
+      exact sigmaBiunitary_mul_of_coprime
         (((hp3prime.coprime_iff_not_dvd).mpr hp3R'').pow_left _)
     have he13 : Even (sigmaBiunitary (13 ^ R.factorization 13)) := by
       apply even_sigmaBiunitary_of_odd_pos
@@ -1467,7 +1315,7 @@ private theorem aux_e3 {N : ℕ} (hN : 0 < N) (hσ : sigmaBiunitary N = 3 * N)
           (sigmaBiunitary (13 ^ R.factorization 13) *
             (sigmaBiunitary (p3 ^ R'.factorization p3) * sigmaBiunitary R'')))) := by
       conv_lhs => rw [hNM]
-      rw [sigmaBiunitary_mul (by decide) hM0 hcop8M, hσM, hσm, hσR, hσR']
+      rw [sigmaBiunitary_mul_of_coprime hcop8M, hσM, hσm, hσR, hσR']
     have h16N : (16 : ℕ) ∣ sigmaBiunitary N := by
       have e3 : (2 : ℕ) ∣ sigmaBiunitary (3 ^ M.factorization 3) :=
         even_iff_two_dvd.mp he3'
