@@ -25,8 +25,8 @@ the roots of `2x² - (p + q)x + 3pq + 1 = 0`, that is, `2(r + s) = p + q` and
 `2rs = 3pq + 1`.
 
 The statements already proved, such as the oddness of every positive `n` with
-`D(C(n)) = C(D(n))`, live in `MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, which
-this module imports publicly.
+`D(C(n)) = C(D(n))` and the prime gap bound for semiprime solutions, live in
+`MathlibExt/NumberTheory/CollatzArithmeticDerivative.lean`, which this module imports publicly.
 -/
 module
 
@@ -61,18 +61,6 @@ public theorem_wanted arithmeticDerivative_bounds (n : ℕ) (hn : 2 ≤ n) :
       (lower = arithmeticDerivative n ↔ IsPrimePow n) ∧
       ((arithmeticDerivative n : ℝ) = upper ↔ IsPrimePow n)
 
-/-- **Positive solutions of the Collatz arithmetic differential equation are composite.** Let
-$D$ be the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$
-with $D(C(n)) = C(D(n))$ is composite, that is, $n > 1$ and $n$ is not prime.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 3 (`jis-2025-25.1.8-prop-3`). -/
-public theorem_wanted composite_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
-    (h : arithmeticDerivative (collatzAccelerated n) =
-      collatzAccelerated (arithmeticDerivative n)) :
-    1 < n ∧ ¬ n.Prime
-
 /-- **Prime tetrations where the arithmetic derivative and the Collatz map commute.** Let $D$ be
 the arithmetic derivative and $C$ the accelerated Collatz map. For a prime $p$,
 $D(C(p^p)) = C(D(p^p))$ if and only if $C(p^p) = q^q$ for some prime $q$.
@@ -85,20 +73,6 @@ public theorem_wanted arithmeticDerivative_collatz_comm_prime_tetration_iff (p :
     arithmeticDerivative (collatzAccelerated (p ^ p)) =
         collatzAccelerated (arithmeticDerivative (p ^ p)) ↔
       ∃ q : ℕ, q.Prime ∧ collatzAccelerated (p ^ p) = q ^ q
-
-/-- **Prime gap bound for semiprime solutions.** Let $D$ be the arithmetic derivative and let $C$
-be the accelerated Collatz map, $C(n) = n/2$ for even $n$ and $C(n) = (3n + 1)/2$ for odd $n$.
-If $p$ and $q$ are primes with $q < p$ and $D(C(pq)) = C(D(pq))$, then
-$p - q \ge 2\sqrt{30p^2 + 2} - 10p$.
-
-Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
-Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
-Proposition 5 (`jis-2025-25.1.8-prop-5`). -/
-public theorem_wanted prime_gap_bound_of_arithmeticDerivative_collatz_comm (p q : ℕ)
-    (hp : p.Prime) (hq : q.Prime) (hqp : q < p)
-    (h : arithmeticDerivative (collatzAccelerated (p * q)) =
-      collatzAccelerated (arithmeticDerivative (p * q))) :
-    2 * Real.sqrt (30 * (p : ℝ) ^ 2 + 2) - 10 * p ≤ (p : ℝ) - q
 
 /-- **No special semiprime solves the derivative–Collatz equation.** Let $D$ be the arithmetic
 derivative and let $C$ be the accelerated Collatz map, $C(n) = n/2$ for even $n$ and

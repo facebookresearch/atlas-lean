@@ -1,0 +1,16 @@
+# Adelic Completion Operations
+
+- [All Place Tensor](all-place-tensor.md)
+- [All Place Iso](all-place-iso.md)
+- [Algebraic Dual](algebraic-dual.md)
+- [Completed Metric](completed-metric.md)
+- [All Place Tensor](all-place-tensor-2.md)
+- [All Place Iso](all-place-iso-2.md)
+- [Tensor](tensor.md)
+- [Power](power.md)
+- [All Place Dual](all-place-dual.md)
+- [Dual](dual.md)
+- [All Place Pullback](all-place-pullback.md)
+- [Pullback](pullback.md)
+- [Admissible](admissible.md)
+- [Height Limit](height-limit.md)

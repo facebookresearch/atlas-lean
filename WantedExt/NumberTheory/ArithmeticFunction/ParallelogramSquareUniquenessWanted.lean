@@ -79,25 +79,6 @@ public theorem_wanted parallelogram_multiplicative_two_pow (f : ArithmeticFuncti
     (f 4 = 0 → ∀ r : ℕ, 2 ≤ r → f (2 ^ r) = 0) ∧
       (f 4 ≠ 0 → ∀ r : ℕ, 1 ≤ r → f (2 ^ r) = (2 : ℂ) ^ (2 * r))
 
-/-- **Parallelogram induction: the values at p + 2 and (p + 2)².**
-Let $f$ be a complex-valued multiplicative arithmetic function
-(so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
-$m > n \ge 1$.
-Let $p$ be a prime such that $f(q^s) = q^{2s}$ for every prime $q < p$ and every integer
-$s \ge 1$.
-If $p \equiv 3 \pmod 4$, then $f(p + 2) = (p + 2)^2$ and $f((p + 2)^2) = (p + 2)^4$.
-
-Source: Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative
-Functions*, INTEGERS 24 (2024), Article A108, Lemma 2 (`integers-2024-A108-lem-2`). -/
-public theorem_wanted parallelogram_multiplicative_add_two (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hpar : ∀ m n : ℕ, 0 < n → n < m →
-      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
-    {p : ℕ} (hp : p.Prime)
-    (hind : ∀ q s : ℕ, q.Prime → q < p → 1 ≤ s → f (q ^ s) = (q : ℂ) ^ (2 * s))
-    (hp4 : p % 4 = 3) :
-    f (p + 2) = ((p + 2 : ℕ) : ℂ) ^ 2 ∧ f ((p + 2) ^ 2) = ((p + 2 : ℕ) : ℂ) ^ 4
-
 /-- **Parallelogram induction: the values at k² + 1 and 4k² + 1.**
 Let $f$ be a complex-valued multiplicative arithmetic function
 (so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
