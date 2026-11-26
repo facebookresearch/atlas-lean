@@ -9,10 +9,11 @@ surjective and whose kernel $\nu^{-1}(0_A)$ is $C$.
 A quotient $(A, \nu)$ has the universal property of $B / C$: every homomorphism $B \to A'$ of
 abelian varieties over $k$ that vanishes on $C$ factors uniquely through $\nu$. In particular two
 quotients $(A, \nu)$ and $(A', \nu')$ of $B$ by $C$ are isomorphic by a unique isomorphism
-$\varphi \colon A \to A'$ with $\varphi \circ \nu = \nu'$, and $\dim A = \dim B - \dim C$. Chow proved
-that a quotient exists; Shimura's "quotient of $B$ by an abelian subvariety $C$" is such a pair, "an
-abelian variety $A$ which canonically represents $B/C$ and a natural map $\nu \colon B \to A$ with
-$C = \mathrm{Ker}(\nu)$".
+$\varphi \colon A \to A'$ with $\varphi \circ \nu = \nu'$, and $\dim A = \dim B - \dim C$. For every abelian
+subvariety $C$ of $B$ defined over $k$ a quotient of $B$ by $C$ over $k$ exists. Shimura's
+quotient of $B$ by an abelian subvariety $C$ is such a pair: "a couple $(A, \nu)$ formed by an abelian
+variety $A$ which canonically represents $B/C$ and a natural map $\nu \colon B \to A$ with
+$C = \mathrm{Ker}(\nu)$ (cf. Chow [3])".
 
 ## Depends on
 
@@ -39,4 +40,4 @@ This node is still to be broken down. A good expansion states and links:
   Japan 25 (1973), 523–544, <https://doi.org/10.2969/jmsj/02530523>: §1, p. 525 (the definition of
   a quotient of $B$ by an abelian subvariety $C$, "cf. Chow [3]").
 - W.-L. Chow, *On the quotient variety of an abelian variety*, Proc. Nat. Acad. Sci. U.S.A. 38
-  (1952), 1039–1044, as cited in Shimura (1973) above.
+  (1952), 1039–1044, as cited in Shimura (1973) above; not read for this page.

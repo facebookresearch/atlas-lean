@@ -3,8 +3,10 @@
 Let $\Gamma$ be a subgroup of $\mathrm{GL}_2(\mathbb{R})$ and $k \in \mathbb{Z}$. For
 $g = \begin{pmatrix} a & b \\ c & d \end{pmatrix} \in \mathrm{GL}_2(\mathbb{R})$ and a function
 $f$ on the upper half-plane $\mathfrak{H}$, the weight-$k$ slash action is
-$(f \mid_k g)(z) = \sigma_g\bigl(f(g z)\bigr)\, |\det g|^{k-1} (c z + d)^{-k}$, where $\sigma_g$ is the
-identity when $\det g > 0$ and complex conjugation when $\det g < 0$. A **cusp form** of weight $k$
+$(f \mid_k g)(z) = \sigma_g\bigl(f(g \cdot z)\bigr)\, |\det g|^{k-1} (c z + d)^{-k}$, where $\sigma_g$ is the
+identity when $\det g > 0$ and complex conjugation when $\det g < 0$, and
+$g \cdot z = \sigma_g\bigl((a z + b)/(c z + d)\bigr)$ is the action of $\mathrm{GL}_2(\mathbb{R})$ on $\mathfrak{H}$,
+which goes through $\bar z$ when $\det g < 0$. A **cusp form** of weight $k$
 for $\Gamma$ is a holomorphic function $f \colon \mathfrak{H} \to \mathbb{C}$ with $f \mid_k \gamma = f$ for
 every $\gamma \in \Gamma$ that vanishes at every cusp of $\Gamma$. They form a complex vector space
 $S_k(\Gamma)$. A subgroup of $\mathrm{SL}_2(\mathbb{Z})$, such as [$\Gamma_0(N)$](congruence-subgroup-gamma0.md)

@@ -14,14 +14,15 @@ $\Gamma \times \Gamma$, and the endomorphism of $J$ it defines is
 $$\{\Gamma \alpha \Gamma\} = (\pi_2)_* \circ \pi_1^* \colon J \to J,$$
 with $\pi_1^*$ the [pullback](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pullback.md)
 and $(\pi_2)_*$ the [pushforward](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pushforward.md)
-on Jacobians. On the class of a point it is $[z] \mapsto \sum_\nu [\alpha_\nu z]$, where
+on Jacobians. On divisors, it sends the point $[z]$ of $\mathfrak{H}^*/\Gamma$, for $z \in \mathfrak{H}$
+whose image is not a branch point of $\pi_1$, to $\sum_\nu [\alpha_\nu z]$, where
 $\Gamma \alpha \Gamma = \bigsqcup_\nu \Gamma \alpha_\nu$.
 
 For a positive integer $n$, let $q$ be the largest divisor of $n$ prime to $N$ and $m = n / q$. The
 **Hecke endomorphism** $\xi_n$ of $J$ is
 $$\xi_n = \xi_m \xi_q, \qquad \xi_m = \{\Gamma \alpha \Gamma\} \text{ with } \alpha = \begin{pmatrix} 1 & 0 \\ 0 & m \end{pmatrix}, \qquad \xi_q = \sum_\beta \{\Gamma \beta \Gamma\},$$
 the last sum over the same double cosets $\Gamma \beta \Gamma$ as in the definition of the
-[Hecke operators $T_n$](hecke-operators-of-level-n.md): integral $\beta$ with $\det \beta = q$ and
+[Hecke operators $T_n$](hecke-operators-of-level-n.md): $\beta \in M_2(\mathbb{Z})$ with $\det \beta = q$ and
 $\beta \equiv \begin{pmatrix} 1 & 0 \\ 0 & q \end{pmatrix} \pmod N$. The $\xi_n$ are endomorphisms of
 the abelian variety $J$ over $\mathbb{Q}$, that is, they are defined over $\mathbb{Q}$, and $\xi_1$ is the
 identity.
@@ -66,6 +67,6 @@ This node is still to be broken down. A good expansion states and links:
   over $\mathbb{Q}$, in the proof of Theorem 1).
 - G. Shimura, *Introduction to the Arithmetic Theory of Automorphic Functions*, Publ. Math. Soc.
   Japan 11, Iwanami Shoten and Princeton University Press, 1971: §7.2, as cited in Shimura (1973)
-  above (p. 525) for the correspondences $X(\Gamma' \alpha \Gamma)$.
+  above (p. 525) for the correspondences $X(\Gamma' \alpha \Gamma)$; not read for this page.
 - A. Weil, *Variétés abéliennes et courbes algébriques*, Hermann, Paris, 1948: §VI, as cited in
-  Shimura (1973) above, for the homomorphism attached to a correspondence.
+  Shimura (1973) above, for the homomorphism attached to a correspondence; not read for this page.
