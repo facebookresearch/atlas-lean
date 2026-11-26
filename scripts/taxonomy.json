@@ -13955,7 +13955,6 @@
   "MathlibExt/NumberTheory/ReducedResiduePrimeBound": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/RegularResidues": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Regular integers modulo n"},
   "MathlibExt/NumberTheory/RemainderSet": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Sets of remainders"},
-  "MathlibExt/NumberTheory/RemainderSetBoundsCardLeastPrimeFactorIntervalError": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Sets of remainders"},
   "MathlibExt/NumberTheory/RepetendTable": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/BaseShift": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/DigitDifference": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
