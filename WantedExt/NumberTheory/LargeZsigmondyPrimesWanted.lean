@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.TotientSqrtLowerBound
 public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimeMul
 public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimitiveDivisor
 public import MathlibExt.NumberTheory.PrimitiveDivisor
+public import MathlibExt.NumberTheory.LargeZsigmondyPrimesHomogenizedCyclotomicMemIcc
 public import MathlibExt.NumberTheory.LargeZsigmondyPrimesEqSubOneOfNotIsLargeZsigmondyPrime
 
 /-!
@@ -67,18 +68,6 @@ theorem_wanted homogenizedCyclotomic_prime_pow_mul {p β k : ℕ} (hp : p.Prime)
       homogenizedCyclotomic (p ^ β * k) a b *
           homogenizedCyclotomic k (a ^ p ^ (β - 1)) (b ^ p ^ (β - 1)) =
         homogenizedCyclotomic k (a ^ p ^ β) (b ^ p ^ β)
-
-/-- **Bounds for homogenized cyclotomic values.** Let $a > b$ be positive integers and let
-$n \ge 1$. Then the homogenized cyclotomic value $\Phi_n(a, b)$ satisfies
-$(a - b)^{\varphi(n)} \le \Phi_n(a, b) \le (a + b)^{\varphi(n)}$, where $\varphi$ is Euler's
-totient function.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (ii)
-(quoted from reference [6]). -/
-theorem_wanted homogenizedCyclotomic_mem_Icc {a b n : ℕ} (hb : 0 < b) (hba : b < a)
-    (hn : 0 < n) :
-    ((a : ℤ) - b) ^ Nat.totient n ≤ homogenizedCyclotomic n a b ∧
-      homogenizedCyclotomic n a b ≤ ((a : ℤ) + b) ^ Nat.totient n
 
 /-- **$p$-adic valuation of homogenized cyclotomic values at an odd prime.** Let $a > b$ be
 positive integers, let $p$ be an odd prime dividing neither $a$ nor $b$, and let $k$ be the least
