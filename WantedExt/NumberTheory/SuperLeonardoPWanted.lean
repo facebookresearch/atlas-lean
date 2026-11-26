@@ -53,19 +53,6 @@ public theorem_wanted superLeonardoP_eq_add_mul (p k : ℕ) (hp : 1 ≤ p) (x : 
         (if p < n then superLeonardoP p 1 (fun i => (i : ℝ) + 1) (n - (p + 1)) else 0) *
           k
 
-/-- **Binomial sum for supergeneralized Leonardo p-numbers with linear initial values.** Let
-$p \ge 1$ be a natural number and $y$ the real sequence $y_i = i + 1$, so that the initial values
-are $y_0, \dots, y_p = 1, \dots, p + 1$. For every natural number $n$, the supergeneralized
-Leonardo $p$-numbers $\mathcal{L}_{p,1,y}$ with $k = 1$ and initial values $y$ satisfy
-$$\mathcal{L}_{p,1,y}(n) = \sum_{i=0}^{\lfloor (n+1)/(p+1) \rfloor} \binom{n+1-pi}{i+1}.$$
-
-Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
-Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Theorem 5. -/
-public theorem_wanted superLeonardoP_one_succ_eq_sum_choose (p : ℕ) (hp : 1 ≤ p) (n : ℕ) :
-    superLeonardoP p 1 (fun i => (i : ℝ) + 1) n =
-      ∑ i ∈ Finset.range ((n + 1) / (p + 1) + 1), ((n + 1 - p * i).choose (i + 1) : ℝ)
-
 /-- **Supergeneralized Leonardo p-numbers via Fibonacci p-numbers.** For all natural numbers
 $p \ge 1$, $k$ and $n$ with $n > p$ and every real sequence $x$, the supergeneralized Leonardo
 $p$-numbers $\mathcal{L}_{p,k,x}$ and the Fibonacci $p$-numbers $F_p$ satisfy
