@@ -72,8 +72,11 @@ Mathlib's `ProbabilityTheory.poissonMeasure λ`, which is `e^{-λ} λ^w / w!`
 noncomputable def poissonProb (lam : ℝ≥0) (w : ℕ) : ℝ :=
   (poissonMeasure lam).real {w}
 
-/-- **Poisson expectation.** `E h(Z)` for `Z` Poisson of mean `λ ≥ 0`: the integral of `h` against
-`ProbabilityTheory.poissonMeasure λ`, which is `∑_w e^{-λ} λ^w / w! · h(w)`
+/-- **Poisson expectation.** `E h(Z)` for `Z` Poisson of mean `λ ≥ 0`, as the Bochner integral of
+`h` against `ProbabilityTheory.poissonMeasure λ`: the ordinary, finite expectation when `h` is
+integrable, and `0` otherwise, even when the expectation of a nonnegative `h` is `+∞` (for `λ = 1`
+and `h(w) = e · w!` every term of the weighted sum is `1`). It is the series
+`∑_w e^{-λ} λ^w / w! · h(w)`, read as `0` when not summable
 (`ProbabilityTheory.integral_poissonMeasure`). -/
 noncomputable def poissonMean (lam : ℝ≥0) (h : ℕ → ℝ) : ℝ :=
   ∫ w, h w ∂poissonMeasure lam
@@ -139,7 +142,8 @@ structure BernoulliSetting (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Se
 noncomputable def pr (P : Measure Ω) (X : I → Ω → ℕ) (a : I) : ℝ≥0∞ :=
   ∫⁻ ω, (X a ω : ℝ≥0∞) ∂P
 
-/-- `λ = ∑_α p_α`, as a real number. -/
+/-- **Sum of the means.** `λ = ∑_α p_α` as a real number: the `ENNReal.toReal` of the sum, so `0`
+when the sum is infinite. In the dependent Bernoulli setting the sum is finite. -/
 noncomputable def lam (P : Measure Ω) (X : I → Ω → ℕ) : ℝ :=
   (∑' a, pr P X a).toReal
 
@@ -169,11 +173,15 @@ abbrev outsideSigma (X : I → Ω → ℕ) (B : I → Set I) (a : I) : Measurabl
 noncomputable abbrev outsideSumSigma (X : I → Ω → ℕ) (B : I → Set I) (a : I) : MeasurableSpace Ω :=
   MeasurableSpace.comap (fun ω => ∑' b : ((B a)ᶜ : Set I), (X b ω : ℕ∞)) inferInstance
 
-/-- `b₃ = ∑_α E |E(X_α - p_α | σ(X_β : β ∉ B_α))|`. -/
+/-- **Coefficient b₃.** `b₃ = ∑_α E |E(X_α - p_α | σ(X_β : β ∉ B_α))|`. Mathlib's conditional
+expectation is `0` in degenerate cases, such as a non-integrable function, and `p_α` enters
+through `ENNReal.toReal`; in the dependent Bernoulli setting under a probability measure both are
+the ordinary quantities. -/
 noncomputable def b₃ (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Set I) : ℝ≥0∞ :=
   ∑' a, ∫⁻ ω, ‖P[fun ω => (X a ω : ℝ) - (pr P X a).toReal | outsideSigma X B a] ω‖ₑ ∂P
 
-/-- `b₃' = ∑_α E |E(X_α - p_α | ∑_{β ∉ B_α} X_β)|`. -/
+/-- **Coefficient b₃'.** `b₃' = ∑_α E |E(X_α - p_α | ∑_{β ∉ B_α} X_β)|`, with the conventions of
+`b₃`. -/
 noncomputable def b₃' (P : Measure Ω) (X : I → Ω → ℕ) (B : I → Set I) : ℝ≥0∞ :=
   ∑' a, ∫⁻ ω, ‖P[fun ω => (X a ω : ℝ) - (pr P X a).toReal | outsideSumSigma X B a] ω‖ₑ ∂P
 

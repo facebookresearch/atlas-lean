@@ -112,18 +112,23 @@ noncomputable def globalScore (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) (t :
 noncomputable def M (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) (n : ℕ) (ω : Ω) : ℝ :=
   localScore μ δ (fun i => Z (Sum.inl i) ω) (fun j => Z (Sum.inr j) ω) n
 
-/-- The **growth constant** `a(μ, δ) = sup_{t ≥ 1} E S_t / t`. -/
+/-- **Growth constant.** `a(μ, δ) = sup_{t ≥ 1} E S_t / t`, with `E` the Bochner integral: the
+ordinary expectation of an integrable `S_t`, and `0` otherwise. -/
 noncomputable def growthConst (P : Measure Ω) (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) : ℝ :=
   ⨆ t : ℕ, (∫ ω, globalScore μ δ Z (t + 1) ω ∂P) / (t + 1)
 
 /-- **Rate function.** `r(q) = inf_{k ≥ 1} -(1/k) log P(S_k ≥ q k)` (equation (7)), used for
 `0 ≤ q ≤ 1`. For i.i.d. letters from a countable alphabet with measurable singletons, under a
-probability measure, every probability in it is then at least `P(A₁ = B₁) ^ k > 0`. -/
+probability measure, every probability in it is then at least `P(A₁ = B₁) ^ k > 0`. For `q > 1`
+and `μ, δ ≥ 0` they vanish (`S_k ≤ k`), and `Real.log 0 = 0` makes `rate` `0` there instead of the
+source's `∞`. -/
 noncomputable def rate (P : Measure Ω) (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) (q : ℝ) : ℝ :=
   ⨅ k : ℕ, -Real.log (P.real {ω | q * (k + 1) ≤ globalScore μ δ Z (k + 1) ω}) / (k + 1)
 
-/-- The **logarithmic coefficient** `b = max_{q ≥ 0} q / r(q)` (equation (8)), the supremum over
-`0 < q ≤ 1` (larger `q` have `r(q) = ∞`). -/
+/-- **Logarithmic coefficient.** `b = max_{q ≥ 0} q / r(q)` (equation (8)), the supremum over
+`0 < q ≤ 1` (larger `q` have `r(q) = ∞`). With Lean's `x / 0 = 0`, a `q` with `r(q) = 0`
+contributes `0`; when `a(μ, δ) < 0`, as in the logarithmic regime, `r(q) > 0` for these `q`
+(Theorem 2). -/
 noncomputable def logCoeff (P : Measure Ω) (μ δ : ℝ) (Z : ℕ ⊕ ℕ → Ω → α) : ℝ :=
   sSup ((fun q => q / rate P μ δ Z q) '' Set.Ioc 0 1)
 

@@ -131,8 +131,9 @@ def HMMFamily.Equiv {p r K : ℕ} (M : HMMFamily p r K) (θ θ' : EuclideanSpace
     Prop :=
   ∀ (n : ℕ) (y : ℕ → Fin K), likelihood (M.toHMM θ) y n = likelihood (M.toHMM θ') y n
 
-/-- The **log-likelihood** `𝓛_n(θ) = log p̄_θ(Y_0, …, Y_n)` of the first `n + 1` observations,
-the logarithm of `likelihood (M.toHMM θ) ω n`. -/
+/-- **Log-likelihood.** `𝓛_n(θ) = log p̄_θ(Y_0, …, Y_n)` of the first `n + 1` observations, the
+logarithm of `likelihood (M.toHMM θ) ω n`. `Real.log` sends `0` to `0` (not `-∞`) and `x < 0` to
+`log |x|`; on `Θ` under `HMMFamily.Regular` the likelihood is positive. -/
 noncomputable def HMMFamily.logLik {p r K : ℕ} (M : HMMFamily p r K)
     (θ : EuclideanSpace ℝ (Fin p)) (n : ℕ) (ω : ℕ → Fin K) : ℝ :=
   Real.log (likelihood (M.toHMM θ) ω n)
