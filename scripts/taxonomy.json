@@ -11225,6 +11225,10 @@
   "MathlibExt/Combinatorics/Graph/ArcNetworkLaplacian": {"to": "GraphTheory/algebraic-graph-theory", "title": "Graph Laplacians and Cheeger's inequality"},
   "MathlibExt/Combinatorics/Graph/CompleteBipartiteCrossing": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Crossing number of complete bipartite graphs"},
   "MathlibExt/Combinatorics/Graph/CycleContinuousAntichain": {"to": "GraphTheory/algebraic-graph-theory", "title": "Cycle-continuous maps"},
+  "MathlibExt/Combinatorics/Graph/FiveColorTheorem": {
+    "to": "GraphTheory/graph-coloring",
+    "title": "Five color theorem"
+  },
   "MathlibExt/Combinatorics/Graph/GraphMinor": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Graph minors"},
   "MathlibExt/Combinatorics/Graph/KovariSosTuran": {"to": "GraphTheory/extremal-graph-theory", "title": "Kővári–Sós–Turán theorem"},
   "MathlibExt/Combinatorics/Graph/MaxFlowMinCut": {"to": "GraphTheory/matchings-and-flows", "title": "Max-flow min-cut theorem"},
