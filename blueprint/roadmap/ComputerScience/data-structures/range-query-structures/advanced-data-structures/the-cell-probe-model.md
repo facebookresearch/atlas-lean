@@ -1,10 +1,16 @@
 # The cell-probe model
 
-In the *cell-probe model*, a data structure's memory is an array of cells of $w$ bits each, where the word size $w$ is a parameter. The cost of an operation is the number of cells it reads or writes, its *probes*. All other computation is free, including arbitrary functions of the cells already read.
+In the *cell-probe model*, memory is a total map from the fixed set of cell addresses to $w$-bit words. A deterministic operation is a finite decision tree, chosen from the operation's input without inspecting the initial cell contents. Its execution returns the value at the reached leaf, the final memory, and the number of probes. The evaluation rules are:
 
-The model is stronger than the transdichotomous RAM and the [word RAM](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md). A word-RAM data structure with word size $w$ that uses $t$ time per operation makes at most $O(t)$ probes, since each word-RAM instruction touches $O(1)$ cells. So a lower bound on probes in the cell-probe model with word size $w$ is a lower bound on time for every word-RAM implementation with the same word size.
+- A return yields its value and leaves the memory unchanged, at zero probe cost.
+- A read selects its continuation using the current word at the addressed cell and passes it unchanged memory.
+- A write replaces only the addressed word before running its continuation, without observing the old word.
 
-Usually $w = \Theta(\log n)$, or more generally $w \ge \log n$, so that a cell can hold a pointer.
+Each executed read or write adds one probe, including repeated accesses to the same cell and writes of the value already stored there. No other computation is charged. Addresses and word width are independent parameters: an address need not fit in a word. With no cells there are no addresses to probe; with zero-bit words each cell has only one possible value.
+
+For comparison, a word-RAM instruction accesses only a bounded number of cells, so an operation taking $t$ word-RAM instructions uses $O(t)$ probes at the same word width. This is the basis for transferring lower bounds on probes to time in the [word RAM](../../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/the-word-ram-model.md), under the corresponding memory assumptions.
+
+A data structure that stores addresses inside cells must choose a word wide enough to hold them.
 
 ## Background
 

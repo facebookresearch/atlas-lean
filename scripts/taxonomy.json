@@ -955,6 +955,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/BloomFilterFalsePositive": {"to": "ComputerScience/data-structures/hashing", "title": "Bloom filter"},
   "CSLibExt/Algorithms/Lean/DataStructures/CartesianTree": {"to": "ComputerScience/data-structures/search-trees", "title": "Cartesian tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/CatenableHeap": {"to": "ComputerScience/data-structures/linear-structures", "title": "Join list (catenable heap)"},
+  "CSLibExt/Algorithms/Lean/DataStructures/CellProbe": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Advanced data structures"},
   "CSLibExt/Algorithms/Lean/DataStructures/CuckooHashing": {"to": "ComputerScience/data-structures/hashing", "title": "Cuckoo hashing"},
   "CSLibExt/Algorithms/Lean/DataStructures/DaryHeap": {"to": "ComputerScience/data-structures/heaps", "title": "d-ary heap"},
   "CSLibExt/Algorithms/Lean/DataStructures/Deque": {"to": "ComputerScience/data-structures/linear-structures", "title": "Double-ended queue"},
