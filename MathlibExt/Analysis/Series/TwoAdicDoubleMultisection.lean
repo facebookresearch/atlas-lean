@@ -28,9 +28,11 @@ even index $(2n + 2) 2^j$ reaches $p$ once for each $j < \nu_2(p)$. So the weigh
 $b_{p,q}$ factors as $(2^v - \sum_{i < v} 2^i)(2^w - \sum_{i < w} 2^i) = 1$, where
 $v = \nu_2(p)$ and $w = \nu_2(q)$.
 
-`tsum_twoAdic_parametric_multisection` uses the same index maps for a single series, with a
-complex weight parameter. The even-index contribution is subtracted, and its finite geometric
-sum cancels the odd-index weight down to one without dividing by the parameter minus one.
+`tsum_twoAdic_parametric_multisection` is an absolutely summable formulation of Vignat and
+Milgram's equation (30). It assumes absolute summability of each weighted family; convergence of
+the unweighted series alone does not ensure this. The proof uses the same index maps for a single
+series, with a complex weight parameter. The even-index contribution is subtracted, and its finite
+geometric sum reduces the net weight to one without dividing by the parameter minus one.
 
 ## References
 
@@ -206,12 +208,8 @@ private theorem hasSum_multisection_fibers {α : ℕ → Type} [∀ m, Fintype (
 /-- The sum of the odd and signed even weights is one, including at `q = 1`. -/
 private theorem parametric_multisection_weight (q : ℂ) (v : ℕ) :
     q ^ v - (∑ j : Fin v, q ^ (j : ℕ) * (q - 1)) = 1 := by
-  rw [Fin.sum_univ_eq_sum_range (fun j => q ^ j * (q - 1)) v]
-  induction v with
-  | zero => simp
-  | succ v ih =>
-    rw [Finset.sum_range_succ, pow_succ]
-    linear_combination ih
+  rw [Fin.sum_univ_eq_sum_range (fun j => q ^ j * (q - 1)) v, ← Finset.sum_mul,
+    geom_sum_mul, sub_sub_cancel]
 
 open tsum_twoAdic_double_multisection in
 /-- **Parametric two-adic multisection.** Let $q \in \mathbb{C}$ and let $b : \mathbb{N} \to
