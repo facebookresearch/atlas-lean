@@ -34,8 +34,24 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
+
+      # On a pull request, whether it needs the tool tests of scripts/test_scripts.sh,
+      # which read only scripts, workflows and the pins (scripts/ci_scope.py). Every
+      # other check here runs, and other runs never ask; a failure here runs them.
+      - name: Decide whether to run the tool tests
+        id: scope
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          # `--` ends the revisions: a file named HEAD must not make them ambiguous.
+          git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          python3 -I scripts/ci_scope.py "$RUNNER_TEMP/changed-paths" >> "$GITHUB_OUTPUT"
 
       - name: Run deterministic repository checks
+        env:
+          ATLAS_TOOL_TESTS: ${{ (github.event_name == 'pull_request' && steps.scope.outputs.tool_tests == 'false') && 'skip' || 'run' }}
         run: scripts/check.sh preflight
 
       - name: Test v1 metadata inventory
@@ -94,7 +110,42 @@ jobs:
           uvx --from "git+https://github.com/facebookresearch/autoform-bot.git@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+  # On a pull request, whether it needs `build` (scripts/ci_scope.py): one that
+  # changes only graph data and documentation does not. Other runs skip this
+  # job, so that `build` starts without waiting for a runner to run it.
+  changes:
+    name: decide which checks to run
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      build: ${{ steps.decide.outputs.build }}
+    steps:
+      - name: Check out the merge commit and its base
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          sparse-checkout: /scripts/ci_scope.py
+          sparse-checkout-cone-mode: false
+
+      - name: Decide
+        id: decide
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          # `--` ends the revisions: a file named HEAD must not make them ambiguous.
+          git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          python3 -I scripts/ci_scope.py "$RUNNER_TEMP/changed-paths" >> "$GITHUB_OUTPUT"
+
+  # A skipped required check counts as passed, so only a pull request can skip
+  # `build`, and only when `changes` succeeds and says it needs none. Merge
+  # groups, pushes and manual runs always build: `!cancelled()` runs `build`
+  # when `changes` is skipped.
   build:
+    needs: changes
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.build != 'false') }}
     # A merge group runs on a 16-core runner, pull requests and pushes on the
     # standard one. In probes on 25 November 2026, a merge group's build took
     # about 4 minutes on the 16-core runner against 12.5 on the standard one,

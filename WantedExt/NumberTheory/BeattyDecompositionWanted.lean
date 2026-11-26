@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.Beatty.FloorSubTwoIdentity
 public import MathlibExt.NumberTheory.Beatty.FloorTwoSubIdentity
 public import MathlibExt.NumberTheory.Beatty.SelfBetween
 public import MathlibExt.NumberTheory.Beatty.SelfBetweenIncrement
+public import MathlibExt.NumberTheory.BeattyDecompositionBeattyFloorFiberCardEqOrEqSucc
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
 
@@ -71,21 +72,6 @@ public theorem_wanted beatty_card_compl_between_isBeatty {α β : ℝ} (hirr : I
     ∃ r : ℝ, 0 < r ∧ r < 1 ∧ ∀ n : ℤ, 0 < n →
       ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
         beattySeq r n
-
-/-- **Multiplicities of the values of $\lfloor n\alpha\rfloor$ for $1/(k + 1) < \alpha < 1/k$.**
-Let $k$ be a positive integer and let $\alpha$ be a real number with
-$1/(k + 1) < \alpha < 1/k$. Then every non-negative integer $t$ equals $\lfloor n\alpha\rfloor$
-for exactly $k$ or exactly $k + 1$ positive integers $n$, there are infinitely many $t$ for which
-it is exactly $k$, and there are infinitely many $t$ for which it is exactly $k + 1$.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Lemma 1 (`integers-2025-A104-lem-1`). -/
-public theorem_wanted beatty_floor_fiber_card_eq_or_eq_succ {α : ℝ} {k : ℕ}
-    (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
-    (∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k ∨
-        {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1) ∧
-      {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k}.Infinite ∧
-      {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1}.Infinite
 
 /-- **The values of $\lfloor n\alpha\rfloor$ of each multiplicity form Beatty sets.** Let $k$ be a
 positive integer and let $\alpha$ be an irrational number with $1/(k + 1) < \alpha < 1/k$. Then
