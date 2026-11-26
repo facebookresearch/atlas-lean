@@ -15,3 +15,4 @@
 - [Convergence of state-based CRDTs](convergence-of-state-based-crdts.md)
 - [Bracha's Byzantine reliable broadcast](bracha-s-byzantine-reliable-broadcast.md)
 - [Causal broadcast with vector timestamps](causal-broadcast-with-vector-timestamps.md)
+- [Total-Order Broadcast and Replicated Data Types](total-order-broadcast-and-replicated-data/README.md)
