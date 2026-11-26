@@ -22,4 +22,3 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Factor analysis and structural equation models](factor-analysis-and-structural-equation-models/README.md)
 - [Panel data models](panel-data-models/README.md)
 - [Gauss–Markov covariance minimality](gauss-markov-covariance-minimality.md)
-- [Wright's path-coefficient rules](wrights-method-of-path-coefficients.md)

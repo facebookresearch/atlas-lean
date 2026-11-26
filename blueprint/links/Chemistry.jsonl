@@ -1354,4 +1354,3 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/reaction-diffusion-and-flame-fronts/premixed-flame-fronts/README.md"}], "id": "af_55a66356e5734da9631beef4"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/electrode-kinetics/README.md"}], "id": "af_8da8d5eb7f4410fdbd37e62d"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/reaction-diffusion-and-flame-fronts/README.md"}], "id": "af_bdcfeb3a55096a6de26cc9bf"}
-{"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/rate-laws/debye-smoluchowski-diffusion-limited-rate-constant.md"}], "id": "af_fae74ab7745db4cd6a25a26a", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
