@@ -4,9 +4,9 @@ Let $x(t)$ and $y(t)$ be the numbers of Wolbachia-infected and uninfected mosqui
 
 $$\frac{dx}{dt} = (b_I - \delta_I)\, x - d\, x (x + y), \qquad \frac{dy}{dt} = b_U\, \frac{y}{x + y}\, y - \delta_U\, y - d\, y (x + y),$$
 
-where $y / (x + y)$ is the probability that an uninfected female mates with an uninfected male. Assume $b_I > d + \delta_I$, $b_U > d + \delta_U$ (Eq. 2) and the fitness cost $b_U \ge b_I$, $\delta_I \ge \delta_U$ (Eq. 3), and set $\kappa = (b_I - \delta_I)/d$.
+where $y / (x + y)$ is the probability that an uninfected female mates with an uninfected male. Assume $b_I > d + \delta_I$, $b_U > d + \delta_U$ (Eq. 2) and the strict fitness cost $b_U \ge b_I$, $\delta_I \ge \delta_U$ with $b_U - b_I + \delta_I - \delta_U > 0$ (so $p^* > 0$; in the no-cost equality case $b_U = b_I$ and $\delta_I = \delta_U$, $p^* = 0$, $E_3$ collapses onto $E_1$, $\dot p = b_U p^2(1-p)$, and $p(t) \to 1$ for every $p(0) > 0$), and set $\kappa = (b_I - \delta_I)/d$.
 
-**Equilibria.** The system has the locally stable equilibria $E_1 = \big(0, (b_U - \delta_U)/d\big)$ (uninfected only) and $E_2 = (\kappa, 0)$ (infected only), and the saddle
+**Equilibria.** Under the strict cost $p^* > 0$, the system has the locally stable equilibria $E_1 = \big(0, (b_U - \delta_U)/d\big)$ (uninfected only) and $E_2 = (\kappa, 0)$ (infected only), and the saddle
 
 $$E_3 = \Big( \frac{\kappa\,(b_U - \delta_U - b_I + \delta_I)}{b_U},\ \frac{\kappa\,(b_I - \delta_I + \delta_U)}{b_U} \Big).$$
 

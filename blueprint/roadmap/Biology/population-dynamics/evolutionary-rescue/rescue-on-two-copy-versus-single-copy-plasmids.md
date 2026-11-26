@@ -4,7 +4,7 @@ Use the establishment probabilities $p_{\mathrm{est}}(1)$, $p_{\mathrm{est}}(2)$
 
 **Proposition.**
 
-1. *(No dosage effect: mutant homozygotes have rates $\lambda_{\mathrm{hom}} > \mu_{\mathrm{hom}}$ for both $n = 1$ and $n = 2$.)* Then $p_{\mathrm{est}}(1) > p_{\mathrm{est}}(2)$, and
+1. *(No dosage effect: mutant homozygotes have rates $\lambda_{\mathrm{hom}} > \mu_{\mathrm{hom}}$ for both $n = 1$ and $n = 2$, and heterozygotes are no fitter than homozygotes, $\lambda_{\mathrm{het}}/\mu_{\mathrm{het}} \le \lambda_{\mathrm{hom}}/\mu_{\mathrm{hom}}$; more generally, $p_{\mathrm{est}}(1) > p_{\mathrm{est}}(2)$ holds iff $\mu_{\mathrm{het}}/\lambda_{\mathrm{het}} > \tfrac{2}{3}\,\mu_{\mathrm{hom}}/\lambda_{\mathrm{hom}}$.)* Then $p_{\mathrm{est}}(1) > p_{\mathrm{est}}(2)$, and
 
 $$P_{\mathrm{rescue}}(n=2) > P_{\mathrm{rescue}}(n=1) \iff \frac{\lambda_{\mathrm{het}}}{\mu_{\mathrm{het}}} > \frac{3\,\lambda_{\mathrm{hom}}/\mu_{\mathrm{hom}}}{1 + 2\,\lambda_{\mathrm{hom}}/\mu_{\mathrm{hom}}}.$$
 
