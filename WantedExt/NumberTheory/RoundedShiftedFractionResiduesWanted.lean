@@ -132,16 +132,6 @@ public theorem_wanted card_sq_add_sq_eq (n : ℕ) (hn : 0 < n) :
       4 * (((n.divisors.filter (fun d : ℕ => d % 4 = 1)).card : ℤ) -
         (n.divisors.filter (fun d : ℕ => d % 4 = 3)).card)
 
-/-- **The rounding sequence parity count drops by at most one.** For every natural number $n$,
-the rounding sequence parity count $\mathcal{R}$ satisfies
-$\mathcal{R}_{n+1} \ge \mathcal{R}_n - 1$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Corollary 19 (`jis-2024-24.2.5-cor-19`). -/
-public theorem_wanted roundQuotientOddCount_sub_one_le_succ (n : ℕ) :
-    (roundQuotientOddCount n : ℤ) - 1 ≤ roundQuotientOddCount (n + 1)
-
 /-- **Gauss's bound for lattice points in a disc.** There is a constant $C$ such that for every
 real $x \ge 1$, the number $N(x)$ of integer pairs $(a, b)$ with $a^2 + b^2 \le x$ satisfies
 $|N(x) - \pi x| \le C \sqrt{x}$.
