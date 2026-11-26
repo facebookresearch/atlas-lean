@@ -13238,6 +13238,7 @@
   "MathlibExt/NumberTheory/PowerfulNumbersArithmeticProgressions": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Powerful numbers in arithmetic progressions"},
   "MathlibExt/NumberTheory/PracticalNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Practical numbers"},
   "MathlibExt/NumberTheory/PracticalPolygonalSums": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
+  "MathlibExt/NumberTheory/PracticalPolygonalSumsExistsSqAddSqModEqPrimePow": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
   "MathlibExt/NumberTheory/PrimeCounting/ArithmeticLargeSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
   "MathlibExt/NumberTheory/PrimeCounting/AverageOmegaHFree": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Prime factors of h-free integers"},
   "MathlibExt/NumberTheory/PrimeCounting/AxlerEffectivePrimeEstimates": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit bounds for the prime-counting function"},
