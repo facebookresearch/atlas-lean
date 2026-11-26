@@ -24,11 +24,12 @@ namespace Cslib.Distributed.AsynchronousSharedMemory
 
 universe u v w x y
 
-/-- A process has a local state while running; halted and crashed processes cannot take steps. -/
+/-- The execution status of a process, together with its current local state. Halting and
+crashing disable further steps without erasing the local state. -/
 public inductive Status (State : Type u) where
   | running (state : State)
-  | halted
-  | crashed
+  | halted (state : State)
+  | crashed (state : State)
 
 /-- The process and object interfaces of an asynchronous shared-memory system.
 
@@ -62,17 +63,17 @@ public structure Model where
   apply : (o : Object) → (op : Operation o) → ObjectState o → Reply o op × ObjectState o
 
 /-- Classify a process's local state as halted when it has no next operation, and as running
-otherwise. This applies on initialization and on entry to a state after an operation, not on
-an additional turn of the schedule. -/
+otherwise. Both outcomes retain that state. This applies on initialization and after an
+operation, not on an additional turn of the schedule. -/
 @[expose] public def Model.localStatus (M : Model) (p : M.Process) (s : M.LocalState p) :
     Status (M.LocalState p) :=
   match M.next p s with
-  | none => .halted
+  | none => .halted s
   | some _ => .running s
 
 /-- The vector of process states and the vector of shared object states at one point in a run. -/
 public structure Configuration (M : Model) where
-  /-- The status and, when running, local state of every process. -/
+  /-- The status and current local state of every process. -/
   processState : (p : M.Process) → Status (M.LocalState p)
   /-- The state of every shared object. -/
   objectState : (o : M.Object) → M.ObjectState o
@@ -91,8 +92,8 @@ public inductive Event (M : Model) where
 /-- Valid scheduled transitions. The operation must be the one chosen by the running process;
 its reply determines that process's next local state, and the process halts if that state has
 no next operation. An operation can change only the selected object's state and the selected
-process's status. A crash is possible only for a running process with a pending operation, and
-changes only its status to crashed, without touching any shared object. -/
+process's status. A crash is possible only for a running process with a pending operation,
+and marks its local state as crashed without changing that state or any shared object. -/
 public inductive Step (M : Model) : Configuration M → Event M → Configuration M → Prop where
   | operate {before after : Configuration M} {p : M.Process} {o : M.Object}
       {s : M.LocalState p} {op : M.Operation o} {resume : M.Reply o op → M.LocalState p}
@@ -106,14 +107,14 @@ public inductive Step (M : Model) : Configuration M → Event M → Configuratio
       Step M before (.operate p o op) after
   | crash {before after : Configuration M} {p : M.Process} {s : M.LocalState p}
       (running : before.processState p = .running s) (pending : M.next p s ≠ none)
-      (process : after.processState p = .crashed)
+      (process : after.processState p = .crashed s)
       (otherProcesses : ∀ q, q ≠ p → after.processState q = before.processState q)
       (objects : after.objectState = before.objectState) : Step M before (.crash p) after
 
-/-- A halted or crashed process keeps that status under every subsequent step. -/
+/-- A halted or crashed process retains its local state and status under every subsequent step. -/
 public theorem Step.stopped_preserved {M : Model} {before after : Configuration M}
-    {event : Event M} {p : M.Process} (step : Step M before event after)
-    (stopped : before.processState p = .halted ∨ before.processState p = .crashed) :
+    {event : Event M} {p : M.Process} {s : M.LocalState p} (step : Step M before event after)
+    (stopped : before.processState p = .halted s ∨ before.processState p = .crashed s) :
     after.processState p = before.processState p := by
   cases step with
   | operate running _ _ _ other _ => exact other p (by rintro rfl; simp [running] at stopped)
@@ -147,8 +148,8 @@ public structure InfiniteExecution (M : Model) where
 unless it has halted or crashed. A crash itself is not an atomic operation.
 This constrains schedules; it does not assume that every execution is fair. -/
 @[expose] public def InfiniteExecution.Fair {M : Model} (run : InfiniteExecution M) : Prop :=
-  ∀ p, (∃ i, (run.configuration i).processState p = .halted ∨
-      (run.configuration i).processState p = .crashed) ∨
+  ∀ p, (∃ i s, (run.configuration i).processState p = .halted s ∨
+      (run.configuration i).processState p = .crashed s) ∨
     ∀ n, ∃ i ≥ n, ∃ o op, run.event i = .operate p o op
 
 end Cslib.Distributed.AsynchronousSharedMemory

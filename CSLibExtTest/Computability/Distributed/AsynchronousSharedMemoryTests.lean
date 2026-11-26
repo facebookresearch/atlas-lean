@@ -43,11 +43,11 @@ private def afterSwap : Configuration registers where
   objectState o := if o then 99 else 9
 
 private def afterFinalRead : Configuration registers where
-  processState p := if p then .running 7 else .halted
+  processState p := if p then .running 7 else .halted 9
   objectState := afterSwap.objectState
 
 private def afterReaderRead : Configuration registers where
-  processState p := if p then .running 9 else .halted
+  processState p := if p then .running 9 else .halted 9
   objectState := afterSwap.objectState
 
 private theorem swapStep : Step registers registers.initial (.operate false false (.swap 9))
@@ -108,12 +108,12 @@ private def normalTermination : InfiniteExecution registers where
 example : normalTermination.Fair := by
   intro p
   cases p with
-  | false => exact Or.inl ⟨2, Or.inl rfl⟩
+  | false => exact Or.inl ⟨2, 9, Or.inl rfl⟩
   | true => exact Or.inr fun n => ⟨n + 2, by omega, false, .read, rfl⟩
 
--- An initially terminal local state is already halted.
+-- An initially terminal local state is already halted, retaining its value.
 example : ({ registers with initialProcess := fun _ => 9 } : Model).initial.processState false =
-    .halted := rfl
+    .halted 9 := rfl
 
 private theorem readInitial : Step registers registers.initial (.operate true false .read)
     registers.initial :=
@@ -128,17 +128,17 @@ private def starvation : InfiniteExecution registers where
 -- An always-running process that is never selected cannot satisfy fairness.
 example : ¬ starvation.Fair := by
   intro fair
-  rcases fair false with ⟨i, stop | stop⟩ | often
-  · change Status.running 0 = Status.halted at stop
+  rcases fair false with ⟨i, s, stop | stop⟩ | often
+  · change Status.running 0 = Status.halted s at stop
     cases stop
-  · change Status.running 0 = Status.crashed at stop
+  · change Status.running 0 = Status.crashed s at stop
     cases stop
   · obtain ⟨i, _, o, op, h⟩ := often 0
     change Event.operate (M := registers) true false .read = .operate false o op at h
     cases h
 
 private def afterCrash : Configuration registers where
-  processState p := if p then .running 7 else .crashed
+  processState p := if p then .running 7 else .crashed 0
   objectState := registers.initial.objectState
 
 private theorem crashStep : Step registers registers.initial (.crash false) afterCrash := by
@@ -166,7 +166,7 @@ private def crashRun : InfiniteExecution registers where
 example : crashRun.Fair := by
   intro p
   cases p with
-  | false => exact Or.inl ⟨1, Or.inr rfl⟩
+  | false => exact Or.inl ⟨1, 0, Or.inr rfl⟩
   | true => exact Or.inr fun n => ⟨n + 1, Nat.le_succ n, false, .read, rfl⟩
 
 -- A halted process cannot instead be counted as crashed.
@@ -204,5 +204,71 @@ example :
     have bad := otherObjects true (by decide)
     change (100 : Nat) = 99 at bad
     cases bad
+
+-- One process writes once; the other reads once and retains its decision on halting.
+private abbrev decisionRegisters : Model := { registers with
+  initialProcess := fun _ => 0
+  next := fun p s =>
+    if s = 0 then
+      if p then some ⟨false, .read, id⟩ else some ⟨false, .write 9, fun _ => 9⟩
+    else none }
+
+private def decisionConfig (writer reader : Status Nat) (memory : Nat) :
+    Configuration decisionRegisters where
+  processState p := if p then reader else writer
+  objectState o := if o then 99 else memory
+
+private theorem decisionInitial : decisionRegisters.initial =
+    decisionConfig (.running 0) (.running 0) 7 := by
+  unfold Model.initial decisionConfig
+  congr 1
+  funext p
+  cases p <;> rfl
+
+private theorem decisionWrite (reader : Status Nat) (memory : Nat) :
+    Step decisionRegisters (decisionConfig (.running 0) reader memory)
+      (.operate false false (.write 9)) (decisionConfig (.halted 9) reader 9) := by
+  refine .operate (s := (0 : Nat)) (resume := fun _ => 9) rfl rfl rfl rfl ?_ ?_
+  · intro p h
+    cases p with
+    | false => exact (h rfl).elim
+    | true => rfl
+  · intro o h
+    cases o with
+    | false => exact (h rfl).elim
+    | true => rfl
+
+private theorem decisionRead (writer : Status Nat) (memory : Nat) (hnz : memory ≠ 0) :
+    Step decisionRegisters (decisionConfig writer (.running 0) memory)
+      (.operate true false .read) (decisionConfig writer (.halted memory) memory) := by
+  refine .operate (s := (0 : Nat)) (resume := id) rfl rfl ?_ rfl ?_ (fun _ _ => rfl)
+  · change Status.halted memory = decisionRegisters.localStatus true memory
+    simp [Model.localStatus, hnz]
+  · intro p h
+    cases p with
+    | false => rfl
+    | true => exact (h rfl).elim
+
+-- The memory and writer agree after either schedule, but the halted reader's results differ.
+example :
+    let readFirst := decisionConfig (.halted 9) (.halted 7) 9
+    let writeFirst := decisionConfig (.halted 9) (.halted 9) 9
+    FiniteExecution decisionRegisters [.operate true false .read, .operate false false (.write 9)]
+      readFirst
+        [decisionRegisters.initial, decisionConfig (.running 0) (.halted 7) 7, readFirst] ∧
+    FiniteExecution decisionRegisters [.operate false false (.write 9), .operate true false .read]
+      writeFirst
+        [decisionRegisters.initial, decisionConfig (.halted 9) (.running 0) 9, writeFirst] ∧
+    readFirst ≠ writeFirst := by
+  dsimp only [FiniteExecution]
+  rw [decisionInitial]
+  refine ⟨LTS.Execution.stepL (lts := decisionRegisters.lts)
+    (decisionRead (.running 0) 7 (by decide)) (.of_tr (decisionWrite (.halted 7) 7)),
+    LTS.Execution.stepL (lts := decisionRegisters.lts)
+      (decisionWrite (.running 0) 7) (.of_tr (decisionRead (.halted 9) 9 (by decide))), ?_⟩
+  intro h
+  have different := congrArg (fun c : Configuration decisionRegisters => c.processState true) h
+  change Status.halted 7 = Status.halted 9 at different
+  cases different
 
 end Cslib.Distributed.AsynchronousSharedMemory
