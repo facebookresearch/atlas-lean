@@ -158,7 +158,8 @@ noncomputable def expSolution (κ : ℂ) (v : E) : C(ℝ, E) :=
 theorem expSolution_apply (κ : ℂ) (v : E) (t : ℝ) :
     expSolution κ v t = Complex.exp (t * κ) • v := rfl
 
-/-- The segments of the exponential path are multiples of the exponential segment. -/
+/-- The segment at time `t` of the exponential path is `exp (t κ)` times the exponential
+segment. -/
 theorem segment_expSolution (κ : ℂ) (v : E) (t : ℝ) :
     segment τ (expSolution κ v) t = Complex.exp (t * κ) • expSegment τ κ v := by
   ext θ

@@ -19,6 +19,7 @@
 - [Deterministic equivalent of a two-stage stochastic linear program](deterministic-equivalent-of-a-two-stage-program.md)
 - [Consistency of sample average approximation over finitely many decisions](consistency-of-sample-average-approximation.md)
 - [Validity and attainment of Benders cuts](validity-of-benders-cuts.md)
+- [Finitely generated cones are closed](is-closed-hull-finset.md)
 
 ## Related topics
 

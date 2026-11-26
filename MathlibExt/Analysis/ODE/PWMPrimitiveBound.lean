@@ -454,7 +454,7 @@ theorem pwmPrimitive_ramp : pwmPrimitive 1 (fun u => u / 2) 2 = -1 / 2 := by
 
 /-- Rapidly discontinuous duty: the indicator of the rationals (values in `[0,1]`, Lipschitz on
 no nontrivial interval). For rational `ε > 0` every sample `k ε` is rational, so the switch is
-always on while `d = 0` almost everywhere, and `q(t) = t`. -/
+always on while `d = 0` almost everywhere, and `q(t) = t` for `t ≥ 0`. -/
 theorem pwmPrimitive_ratIndicator (q : ℚ) (hq : 0 < q) (t : ℝ) (ht : 0 ≤ t) :
     pwmPrimitive (q : ℝ) ((range ((↑) : ℚ → ℝ)).indicator 1) t = t := by
   have hnull : ∀ᵐ x ∂(volume : Measure ℝ), x ∉ range ((↑) : ℚ → ℝ) :=

@@ -2,6 +2,10 @@
 
 Asymptotic expansions and methods: Euler–Maclaurin and Watson's lemma, Laplace-type integrals, coefficient asymptotics of power series (Bender's lemma), Stirling-type and inverse-factorial expansions, and asymptotic expansions of power sums, Lambert series and log sums; complex-analytic saddle-point results on entire functions go to Complex analysis.
 
+- [Raw Bernoulli kernel through the fractional part](bernoulli-kernel-apply.md)
+- [Bernoulli Kernel int Cast](bernoulli-kernel-int-cast.md)
+- [Bernoulli Kernel periodic](bernoulli-kernel-periodic.md)
+- [Continuity of the periodic Bernoulli function](bernoulli-kernel-continuous.md)
 - [Euler–Maclaurin formula](euler-maclaurin-formula.md)
 - [Asymptotic expansion of Poisson averages](asymptotic-expansion-of-poisson-averages/README.md)
 - [Asymptotic expansion of the Catalan numbers](asymptotic-expansion-of-the-catalan-numbers/README.md)

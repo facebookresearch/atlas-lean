@@ -31,6 +31,7 @@
 - [The uniform law on a convex body spans the whole space](body-law-affine-span-support.md)
 - [The uniform law on a convex body as an intrinsic log-concave law](body-intrinsic-log-concave-law.md)
 - [Identification of the line with one-dimensional Euclidean space](line-isometry.md)
+- [Inverse of the identification of the line with one-dimensional Euclidean space](line-isometry-symm-apply.md)
 - [Symmetric interval in one-dimensional Euclidean space](symmetric-interval.md)
 - [Uniform distribution on a symmetric interval](uniform-interval.md)
 - [The uniform law on $[-\sqrt3, \sqrt3]$ is isotropic log-concave](uniform-interval-sqrt-three-is-isotropic.md)

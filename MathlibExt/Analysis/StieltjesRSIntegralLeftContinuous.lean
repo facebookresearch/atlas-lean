@@ -161,7 +161,8 @@ def HasLeftRSIntegral (f h : ℝ → ℝ) (a b I : ℝ) : Prop :=
 def LeftRSIntegrable (f h : ℝ → ℝ) (a b : ℝ) : Prop :=
   ∃ I, HasLeftRSIntegral f h a b I
 
-/-- The left-endpoint integral of `f` against `h` on `[a, b]`, or `0` if it does not exist. -/
+/-- The left-endpoint integral of `f` against `h` on `[a, b]`: the limit of the left-endpoint
+sums when they converge; unspecified (`limUnder` picks no particular value) otherwise. -/
 noncomputable def leftRSIntegral (f h : ℝ → ℝ) (a b : ℝ) : ℝ :=
   limUnder atTop (leftPartitionSum f h a b)
 

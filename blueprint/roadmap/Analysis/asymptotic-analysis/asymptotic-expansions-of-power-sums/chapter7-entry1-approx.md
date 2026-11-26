@@ -1,0 +1,5 @@
+# Truncated power-sum expansion
+
+For $r \in \mathbb{C}$ and $N, n \in \mathbb{N}$, the truncated power-sum expansion through $N$ Bernoulli corrections is defined, for all these parameters, as $\zeta(-r) + \frac{n^{r+1}}{r+1} + \frac{n^r}{2} + \sum_{j < N} T_j(r, n)$, with $T_j$ the [Bernoulli corrections](chapter7-entry1-term.md), principal complex powers, and total complex division ($z/0 = 0$, so the second term is $0$ when $r = -1$).
+
+Here $\zeta$ is the Riemann zeta function as a total function on $\mathbb{C}$: at its pole $s = 1$, reached for $r = -1$, it takes a conventional finite value rather than being undefined. For $r = -1$ and $N = 0$ the expression is therefore that fixed value plus $\frac{1}{2n}$, whereas the harmonic sums $\sum_{k \le n} 1/k$ grow like $\log n$. The expansion is an asymptotic description of the power sums $\sum_{k \le n} k^r$ only under the hypotheses of the [asymptotic theorem](ramanujan-part1-ch7-entry1-powersum.md): $r \neq -1$, $N > 0$ and $\operatorname{Re} r < 2N$.

@@ -4,10 +4,12 @@ The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausd
 
 - [Bernstein inequalities for band-limited functions](bernstein-inequalities-for-band-limited-function/README.md)
 - [Beurling–Ahlfors transform](beurling-ahlfors-transform/README.md)
+- [Characteristic function of a weighted chi-square mixture](characteristic-function-of-a-weighted-chi-square/README.md)
 - [Fourier interpolation in dimensions 8 and 24](fourier-interpolation-in-dimensions-8-and-24/README.md)
 - [Fourier transform of dilations](fourier-transform-of-dilations/README.md)
 - [Fourier–Laplace transform](fourier-laplace-transform/README.md)
 - [Fractal uncertainty principle](fractal-uncertainty-principle/README.md)
+- [Gil-Pelaez inversion formula](gil-pelaez-inversion-formula/README.md)
 - [Heisenberg uncertainty principle](heisenberg-uncertainty-principle/README.md)
 - [Kakeya sets](kakeya-sets/README.md)
 - [Linear independence of time–frequency translates](linear-independence-of-time-frequency-translates/README.md)

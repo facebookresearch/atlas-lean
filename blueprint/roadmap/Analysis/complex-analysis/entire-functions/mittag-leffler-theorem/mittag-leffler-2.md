@@ -13,7 +13,7 @@ $(P_\nu)$ be complex polynomials. Then:
 
     for every $z$ different from all $b_\nu$, the series converging.
 
-A constant term of $P_\nu$ contributes nothing singular and is absorbed into $g$. Unlike
+A constant term of $P_\nu$ contributes nothing singular and is absorbed into $g$. Textbook statements usually normalize each $P_\nu$ to have zero constant term, so that $P_\nu\bigl((z - b_\nu)^{-1}\bigr)$ is a genuine singular part; that normalized form is the special case of the statement above. Unlike
 [the Mittag-Leffler theorem](mittag-leffler.md) for a closed discrete set with finitely supported
 coefficients, which asserts existence only, this form takes a sequence of poles with polynomial
 principal parts and also describes all solutions.
