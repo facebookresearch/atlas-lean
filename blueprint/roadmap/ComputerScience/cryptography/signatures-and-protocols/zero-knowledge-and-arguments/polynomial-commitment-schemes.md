@@ -40,6 +40,7 @@ A computational instantiation must account for the uniform algorithms, encodings
 - [Correct prediction at an undisclosed index](polynomial-commitment-fresh-prediction.md)
 - [Negligible advantage as a function of the security parameter](../../security-games/asymptotic-security/negligible-adv.md)
 - [Polynomial-time computable functions on encoded data](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/is-poly-time.md)
+- [Uniform probabilistic polynomial-time adversaries](../../security-games/asymptotic-security/probabilistic-polynomial-time-turing-machines.md)
 
 ## Sources
 
