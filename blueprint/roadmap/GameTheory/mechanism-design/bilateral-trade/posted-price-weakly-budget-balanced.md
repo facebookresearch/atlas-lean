@@ -1,3 +1,4 @@
-# Posted Price weakly Budget Balanced
+# Posted prices are weakly budget-balanced
 
-The posted-price mechanism is weakly budget-balanced (both sides use `p`).
+The posted-price mechanism is weakly
+budget-balanced (both sides use `p`).

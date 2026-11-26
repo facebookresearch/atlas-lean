@@ -18,77 +18,89 @@ import Mathlib.Tactic.Linarith
 
 One seller owns an item and has cost `s ∈ [0, 1]` for parting with it; one buyer
 has value `b ∈ [0, 1]` for it. A deterministic mechanism chooses whether trade
-occurs and two prices: what the buyer pays and what the seller receives. This
-file proves the dominant-strategy form of the Myerson--Satterthwaite theorem:
-no mechanism is simultaneously ex-post efficient (trade whenever `b > s`, none
-whenever `b < s`),
-dominant-strategy incentive compatible for both sides, ex-post individually
-rational, and weakly budget-balanced. The reason is the threshold-payment
-argument of Myerson's lemma in this two-agent setting: efficiency, DSIC and IR
-force the buyer to pay `s` and the seller to receive `b` at interior trade
-profiles `0 < s < b < 1`,
-leaving a deficit of `b - s > 0`. The posted-price mechanism is the positive
-control: it is DSIC, ex-post IR and weakly budget-balanced, but never efficient.
+occurs and two prices: what the buyer pays and what the seller receives. No money
+changes hands without trade: both utilities are `0` when there is no trade. For
+these mechanisms this file proves the dominant-strategy impossibility of efficient
+bilateral trade: no mechanism is simultaneously ex-post efficient (trade whenever
+`b > s`, none whenever `b < s`), dominant-strategy incentive compatible for both
+sides, ex-post individually rational, and weakly budget-balanced. The reason is the
+threshold-payment argument of Myerson's lemma in this two-agent setting: at an
+interior profile `0 < s < b < 1`, efficiency, buyer DSIC and ex-post IR force the
+buyer to pay `s`, and efficiency, seller DSIC and ex-post IR force the seller to
+receive `b`, leaving a deficit of `b - s > 0`. Efficiency alone fixes no price:
+trading exactly when `b > s` with both transfers zero is efficient. The
+posted-price mechanism is the positive control: it is DSIC, ex-post IR and weakly
+budget-balanced, but never efficient.
+
+This is not the Bayesian Myerson--Satterthwaite theorem, nor a statement about
+mechanisms that randomize trade or make payments without trade.
 
 ## References
 
 * R. B. Myerson and M. A. Satterthwaite, "Efficient mechanisms for bilateral
   trading", *J. Econom. Theory* 29(2) (1983), 265--281.
 * K. Goldner, DS 574 Algorithmic Mechanism Design, Lecture 15 (Fall 2025),
-  Theorem 1 and conditions (1)--(3): the dominant-strategy statement formalized
-  here. The original Bayesian form of Myerson--Satterthwaite is not treated.
+  Definition 2, the utilities after it (utility `0` without trade), conditions
+  (1)--(3) and Theorem 1: the dominant-strategy statement formalized here. The
+  original Bayesian form of Myerson--Satterthwaite is not treated.
 -/
 
 namespace MathlibExt.GameTheory.MechanismDesign.BilateralTrade
 
-/-- A deterministic bilateral-trade mechanism on reports: `alloc s b ∈ {0, 1}` is the
-trade decision when the seller reports cost `s` and the buyer reports value `b`,
-`payBuyer s b` is the price charged to the buyer and `paySeller s b` the amount paid
-to the seller when trade occurs. -/
+/-- **Bilateral-trade mechanism.** A deterministic bilateral-trade mechanism on reports:
+`alloc s b ∈ {0, 1}` is the trade decision when the seller reports cost `s` and the buyer
+reports value `b`, `payBuyer s b` is the price charged to the buyer and `paySeller s b` the
+amount paid to the seller when trade occurs. No money changes hands without trade: `buyerUtil`
+and `sellerUtil` are `0` when `alloc s b = 0`, whatever the two prices are there. -/
 structure BilateralMechanism where
   alloc : ℝ → ℝ → ℝ
   payBuyer : ℝ → ℝ → ℝ
   paySeller : ℝ → ℝ → ℝ
   alloc_mem : ∀ s b, alloc s b = 0 ∨ alloc s b = 1
 
-/-- Buyer utility with true value `v` when the seller reports `s` and the buyer
-reports `r`: `x * (v - pB)`, and `0` when there is no trade. -/
+/-- **Buyer utility.** The utility of a buyer with true value `v` when the seller reports `s`
+and the buyer reports `r`: `x * (v - pB)`, and `0` when there is no trade. -/
 def buyerUtil (M : BilateralMechanism) (s v r : ℝ) : ℝ :=
   M.alloc s r * (v - M.payBuyer s r)
 
-/-- Seller utility with true cost `c` when the buyer reports `b` and the seller
-reports `r`: `x * (pS - c)`, and `0` when there is no trade. -/
+/-- **Seller utility.** The utility of a seller with true cost `c` when the buyer reports `b`
+and the seller reports `r`: `x * (pS - c)`, and `0` when there is no trade. -/
 def sellerUtil (M : BilateralMechanism) (c b r : ℝ) : ℝ :=
   M.alloc r b * (M.paySeller r b - c)
 
-/-- Dominant-strategy incentive compatibility for the buyer, for types and reports
-in `[0, 1]`: against every seller report, truthful reporting maximizes buyer utility. -/
+/-- **Buyer DSIC.** Dominant-strategy incentive compatibility for the buyer, for types and
+reports in `[0, 1]`: against every seller report, truthful reporting maximizes buyer utility.
+For each seller report `s` this is `SingleParameter.IsIncentiveCompatibleOn` on `[0, 1]` with
+allocation `M.alloc s` and payment `fun r => M.alloc s r * M.payBuyer s r`. It is stated per
+side, not bundled with `SellerDSIC` as in `IsDominantStrategyIncentiveCompatible`, because each
+threshold price uses one side's condition. -/
 def BuyerDSIC (M : BilateralMechanism) : Prop :=
   ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ v ∈ Set.Icc (0 : ℝ) 1, ∀ r ∈ Set.Icc (0 : ℝ) 1,
     buyerUtil M s v r ≤ buyerUtil M s v v
 
-/-- Dominant-strategy incentive compatibility for the seller, for types and reports
-in `[0, 1]`: against every buyer report, truthful reporting maximizes seller utility. -/
+/-- **Seller DSIC.** Dominant-strategy incentive compatibility for the seller, for types and
+reports in `[0, 1]`: against every buyer report, truthful reporting maximizes seller utility.
+For each buyer report `b` this is `SingleParameter.IsIncentiveCompatibleOn` on `[-1, 0]`
+once the cost `c` is read as the value `-c`. -/
 def SellerDSIC (M : BilateralMechanism) : Prop :=
   ∀ b ∈ Set.Icc (0 : ℝ) 1, ∀ c ∈ Set.Icc (0 : ℝ) 1, ∀ r ∈ Set.Icc (0 : ℝ) 1,
     sellerUtil M c b r ≤ sellerUtil M c b c
 
-/-- Ex-post efficiency for reports in `[0, 1]`: trade is required when the
-reported buyer value strictly exceeds the reported seller cost, and forbidden
-when it is strictly below it. At equality both outcomes maximize welfare, so the
-allocation is unconstrained there. -/
+/-- **Ex-post efficiency.** For reports in `[0, 1]`, trade is required when the reported buyer
+value strictly exceeds the reported seller cost, and forbidden when it is strictly below it.
+At equality both outcomes maximize welfare, so the allocation is unconstrained there. -/
 def Efficient (M : BilateralMechanism) : Prop :=
   ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ b ∈ Set.Icc (0 : ℝ) 1,
     (s < b → M.alloc s b = 1) ∧ (b < s → M.alloc s b = 0)
 
-/-- Ex-post individual rationality for types in `[0, 1]`: truthful participation
-gives both sides nonnegative utility at every report profile. -/
+/-- **Ex-post individual rationality.** For types in `[0, 1]`, truthful participation gives
+both sides nonnegative utility at every report profile. -/
 def ExPostIR (M : BilateralMechanism) : Prop :=
   ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ b ∈ Set.Icc (0 : ℝ) 1,
     0 ≤ buyerUtil M s b b ∧ 0 ≤ sellerUtil M s b s
 
-/-- Weak budget balance: whenever trade occurs, the buyer's payment covers the
-seller's receipt. -/
+/-- **Weak budget balance.** Whenever trade occurs, the buyer's payment covers the seller's
+receipt. -/
 def WeaklyBudgetBalanced (M : BilateralMechanism) : Prop :=
   ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ b ∈ Set.Icc (0 : ℝ) 1,
     M.alloc s b = 1 → M.paySeller s b ≤ M.payBuyer s b
@@ -189,12 +201,21 @@ theorem paySeller_eq_of_lt (M : BilateralMechanism) (hE : Efficient M)
     simp only [sellerUtil, halloc_sb, halloc_cb, one_mul, zero_mul] at hdsic
     linarith
 
-/-- **Dominant-strategy bilateral-trade impossibility** (Myerson–Satterthwaite,
-dominant-strategy form). No bilateral-trade mechanism on `[0, 1]` types is
-simultaneously ex-post efficient, DSIC for both sides, ex-post individually
-rational, and weakly budget-balanced: at an interior trade profile
-`0 < s < b < 1`, efficiency forces the buyer to pay `s` and the seller to
-receive `b`, a deficit of `b - s > 0`. -/
+/-- **Dominant-strategy bilateral-trade impossibility.** No deterministic bilateral-trade
+mechanism on `[0, 1]` types is simultaneously ex-post efficient, DSIC for both sides, ex-post
+individually rational, and weakly budget-balanced. At an interior profile `0 < s < b < 1`
+efficiency forces trade; efficiency, buyer DSIC and ex-post IR force the buyer to pay `s`
+(`payBuyer_eq_of_lt`), and efficiency, seller DSIC and ex-post IR force the seller to receive
+`b` (`paySeller_eq_of_lt`). The seller would then receive `b - s > 0` more than the buyer pays,
+which weak budget balance forbids.
+
+The mechanism is deterministic (`alloc s b ∈ {0, 1}`) and has zero transfers off trade by
+construction: both utilities are `0` when `alloc s b = 0`. So this is neither the Bayesian
+Myerson–Satterthwaite impossibility nor a statement about mechanisms that randomize trade or
+make payments without trade.
+
+Source: K. Goldner, DS 574 Algorithmic Mechanism Design, Lecture 15 (Fall 2025), Definition 2,
+the utilities after it, conditions (1)–(3) and Theorem 1. -/
 theorem not_exists_efficient_dsic_ir_wbb :
     ¬ ∃ M : BilateralMechanism, Efficient M ∧ BuyerDSIC M ∧ SellerDSIC M ∧
       ExPostIR M ∧ WeaklyBudgetBalanced M := by
@@ -214,9 +235,8 @@ theorem not_exists_efficient_dsic_ir_wbb :
   rw [hpayB, hpayS] at hwbb
   linarith
 
-/-- The posted-price mechanism at price `p`: trade occurs if and only if the
-reported seller cost is at most `p` and the reported buyer value is at least `p`;
-both sides transact at `p`. -/
+/-- **Posted-price mechanism.** At price `p`, trade occurs if and only if the reported seller
+cost is at most `p` and the reported buyer value is at least `p`; both sides transact at `p`. -/
 noncomputable def postedPrice (p : ℝ) : BilateralMechanism where
   alloc s b := if s ≤ p ∧ p ≤ b then 1 else 0
   payBuyer _ _ := p
@@ -224,7 +244,7 @@ noncomputable def postedPrice (p : ℝ) : BilateralMechanism where
   alloc_mem s b := by
     by_cases h : s ≤ p ∧ p ≤ b <;> simp [h]
 
-/-- The posted-price mechanism is DSIC for the buyer. -/
+/-- **Posted prices are buyer DSIC.** The posted-price mechanism is DSIC for the buyer. -/
 theorem postedPrice_buyerDSIC {p : ℝ} :
     BuyerDSIC (postedPrice p) := by
   intro s hs v hv r hr
@@ -232,7 +252,7 @@ theorem postedPrice_buyerDSIC {p : ℝ} :
   by_cases hs_le : s ≤ p <;> by_cases hr_le : p ≤ r <;> by_cases hv_le : p ≤ v <;>
     simp [hs_le, hr_le, hv_le]; linarith
 
-/-- The posted-price mechanism is DSIC for the seller. -/
+/-- **Posted prices are seller DSIC.** The posted-price mechanism is DSIC for the seller. -/
 theorem postedPrice_sellerDSIC {p : ℝ} :
     SellerDSIC (postedPrice p) := by
   intro b hb c hc r hr
@@ -240,21 +260,23 @@ theorem postedPrice_sellerDSIC {p : ℝ} :
   by_cases hb_le : p ≤ b <;> by_cases hr_le : r ≤ p <;> by_cases hc_le : c ≤ p <;>
     simp [hb_le, hr_le, hc_le]; linarith
 
-/-- The posted-price mechanism is ex-post individually rational. -/
+/-- **Posted prices are ex-post individually rational.** The posted-price mechanism is ex-post
+individually rational. -/
 theorem postedPrice_exPostIR {p : ℝ} :
     ExPostIR (postedPrice p) := by
   intro s hs b hb
   simp only [buyerUtil, sellerUtil, postedPrice]
   by_cases h : s ≤ p ∧ p ≤ b <;> simp [h]
 
-/-- The posted-price mechanism is weakly budget-balanced (both sides use `p`). -/
+/-- **Posted prices are weakly budget-balanced.** The posted-price mechanism is weakly
+budget-balanced (both sides use `p`). -/
 theorem postedPrice_weaklyBudgetBalanced {p : ℝ} :
     WeaklyBudgetBalanced (postedPrice p) := by
   intro s hs b hb halloc
   simp [postedPrice]
 
-/-- No posted-price mechanism with price in `[0, 1]` is ex-post efficient:
-some gains from trade are always left unrealized. -/
+/-- **Posted prices are not efficient.** No posted-price mechanism with price in `[0, 1]` is
+ex-post efficient: some gains from trade are always left unrealized. -/
 theorem postedPrice_not_efficient {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
     ¬ Efficient (postedPrice p) := by
   obtain ⟨hp0_le, hp1_le⟩ := Set.mem_Icc.mp hp
