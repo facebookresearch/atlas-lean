@@ -43,3 +43,4 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
+- [Point identification under a budget of invalid instruments](point-identification-under-a-budget-of-invalid-instruments.md)

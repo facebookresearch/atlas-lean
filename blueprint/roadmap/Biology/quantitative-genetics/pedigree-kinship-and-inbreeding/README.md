@@ -65,3 +65,4 @@
 - [Trivial ancestral path](singleton-mem-anc-paths.md)
 - [Wright's path formula for kinship](kinship-eq-sum-paths.md)
 - [Wright's path formula for the inbreeding coefficient](inbreeding-eq-sum-paths.md)
+- [Ancestor counts under nth-cousin mating and n-anacci numbers](ancestor-counts-under-nth-cousin-mating-and-n-anacci-numbers.md)
