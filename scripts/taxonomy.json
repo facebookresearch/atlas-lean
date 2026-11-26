@@ -1585,6 +1585,7 @@
   "CSLibExt/Computability/Machines/Turing/MultiTape/Bridge": {"to": "TheoryOfComputation/equivalence-of-models", "title": "Multi-tape machines decide only recursive predicates"},
   "CSLibExt/Computability/Machines/Turing/MultiTape/Code": {"to": "TheoryOfComputation/turing-machines/universal-machines", "title": "Codes for multi-tape Turing machines"},
   "CSLibExt/Computability/Machines/Turing/MultiTape/CodeCompleteness": {"to": "TheoryOfComputation/turing-machines/universal-machines", "title": "Codes for multi-tape Turing machines"},
+  "CSLibExt/Computability/Machines/Turing/MultiTape/RandomTape": {"to": "ComputerScience/cryptography/security-games", "title": "Asymptotic security"},
   "CSLibExt/Computability/Machines/Turing/MultiTape/Relabel": {"to": "TheoryOfComputation/turing-machines/multi-tape-and-multi-stack", "title": "Multi-tape Turing machines"},
   "CSLibExt/Computability/Machines/Turing/MultiTape/TimeFromSpace": {"to": "TheoryOfComputation/complexity-classes", "title": "Containments between time and space classes"},
   "CSLibExt/Computability/Machines/Turing/MultiTape/TimeSpace": {"to": "TheoryOfComputation/complexity-classes", "title": "Time and space classes on multi-tape machines"},

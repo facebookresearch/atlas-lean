@@ -42,4 +42,16 @@
 ## Efficient adversaries
 
 - [Efficient adversaries](efficient-adversaries.md)
+
+## Uniform probabilistic machines
+
 - [Probabilistic polynomial-time Turing machines](probabilistic-polynomial-time-turing-machines.md)
+- [Finite random-tape machines](random-tape-tm.md)
+- [Loading the random tape](load-tape.md)
+- [Running a machine with a fixed random tape](run.md)
+- [Iterating the transition table](run-eq-iterate.md)
+- [Worst-case running time](runs-in-time.md)
+- [The law of the random tape](tape-law.md)
+- [Measurability of the output word](measurable-run-output.md)
+- [The distribution of the output word](output-law.md)
+- [Output probabilities at any valid time bound](output-law-apply.md)
