@@ -15,7 +15,10 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.NumberTheory.LegendreSymbol.Basic
 import Mathlib.NumberTheory.PrimesCongruentOne
-import Mathlib.Tactic
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-! # Sums of two polygonal numbers modulo prime powers
 
