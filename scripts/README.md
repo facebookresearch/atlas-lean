@@ -25,6 +25,11 @@ collision check, then the compiled audit of trust and dependency policies, which
 longer than the collision check. Every check runs and every failure is reported, unless
 `ATLAS_CHECK_FAIL_FAST=1`, which CI sets for merge groups: `scripts/check.sh` then stops
 at the first failing check.
+With `ATLAS_TOOL_TESTS=skip`, `scripts/test_scripts.sh` leaves out the nine tool test suites at
+its end, whose tests read only scripts, workflows and the pins. CI sets it only on a pull request
+whose every changed path is graph data, documentation, a Lean file of the nine libraries or under
+`provenance/` (`scripts/ci_scope.py`); every other run, merge groups and pushes included, runs
+them.
 The compiled audit runs its batches in parallel, as many as the available memory
 holds at 6 GiB each; on a shared machine, `ATLAS_AUDIT_WORKERS=N` sets the count
 (`1` runs them one after another).

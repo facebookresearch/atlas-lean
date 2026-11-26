@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.GroupTheory.Nilpotent
-public import MathlibExt.GroupTheory.GroupGrowth
+public import MathlibExt.GroupTheory.VirtuallyNilpotentGrowth
 
 /-!
 # Gromov's polynomial growth theorem
@@ -32,14 +31,5 @@ growth and expanding maps*, Publ. Math. IHÉS 53 (1981), Main theorem, p. 54; pr
 theorem_wanted virtuallyNilpotent_of_hasPolynomialGrowth {G ι : Type*} [Group G] [Finite ι]
     (P : Group.Generators G ι) (h : P.HasPolynomialGrowth) :
     ∃ H : Subgroup G, H.FiniteIndex ∧ Group.IsNilpotent H
-
-/-- **Virtually nilpotent groups have polynomial growth** (Wolf 1968, Bass 1972; the converse of
-Gromov's theorem, as recalled in Gromov, *Groups of polynomial growth and expanding maps*, Publ.
-Math. IHÉS 53 (1981), p. 54: "If a finitely generated group Γ has a nilpotent subgroup of finite
-index then Γ has polynomial growth"). If `G` has a nilpotent subgroup of finite index, every finite
-generating family of `G` has polynomial growth. -/
-theorem_wanted hasPolynomialGrowth_of_virtuallyNilpotent {G ι : Type*} [Group G] [Finite ι]
-    (P : Group.Generators G ι) (H : Subgroup G) (hH : H.FiniteIndex) (hn : Group.IsNilpotent H) :
-    P.HasPolynomialGrowth
 
 end MathlibExt.GroupTheory.PolynomialGrowthWanted
