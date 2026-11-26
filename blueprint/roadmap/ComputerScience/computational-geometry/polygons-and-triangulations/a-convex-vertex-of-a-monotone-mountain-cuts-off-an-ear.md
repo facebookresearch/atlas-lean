@@ -1,6 +1,6 @@
 # A convex vertex of a monotone mountain cuts off an ear
 
-A *monotone mountain* is a simple polygon $P = p_0 p_1 \cdots p_{n-1}$ whose vertices have strictly increasing $x$-coordinates, $x(p_0) < x(p_1) < \dots < x(p_{n-1})$, so that its boundary consists of the $x$-monotone chain $p_0 p_1 \cdots p_{n-1}$ and the edge $p_{n-1} p_0$, the *base*. Suppose $n \ge 4$ and all vertices other than $p_0$ and $p_{n-1}$ lie strictly above the line through the base. Then some vertex $p_i$ with $0 < i < n - 1$ is *convex*, meaning that its interior angle is less than $\pi$ (for example the vertex farthest from the base), and for every such convex vertex the segment $p_{i-1} p_{i+1}$ is an interior diagonal of $P$.
+A *monotone mountain* is a simple polygon $P = p_0 p_1 \cdots p_{n-1}$ whose vertices have strictly increasing $x$-coordinates, $x(p_0) < x(p_1) < \dots < x(p_{n-1})$, so that its boundary consists of the $x$-monotone chain $p_0 p_1 \cdots p_{n-1}$ and the edge $p_{n-1} p_0$, the *base*. Suppose $n \ge 4$ and all vertices other than $p_0$ and $p_{n-1}$ lie strictly above the line through the base. Then some vertex $p_i$ with $0 < i < n - 1$ is *convex*, meaning that its interior angle is less than $\pi$ (for example the leftmost of the vertices farthest from the base), and for every such convex vertex the segment $p_{i-1} p_{i+1}$ is an interior diagonal of $P$.
 
 ## Depends on
 
