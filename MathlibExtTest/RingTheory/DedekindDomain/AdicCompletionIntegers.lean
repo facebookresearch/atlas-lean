@@ -46,5 +46,19 @@ example (h2 : Prime (Ideal.span {(2 : ℤ)})) :
   rw [HeightOneSpectrum.ofPrime_asIdeal]
   exact Ideal.mem_span_singleton_self 2
 
+-- Consumer with the original binders: an arbitrary Dedekind domain, not
+-- only a number field.
+example (v : HeightOneSpectrum A) :
+    IsAdicComplete (IsLocalRing.maximalIdeal ↥(v.adicCompletionIntegers K))
+      ↥(v.adicCompletionIntegers K) :=
+  v.adicCompletionIntegers_isAdicComplete
+
+-- Higher-universe consumer.
+example {A' : Type (max 3 5)} {K' : Type (max 1 7)} [CommRing A'] [IsDedekindDomain A']
+    [Field K'] [Algebra A' K'] [IsFractionRing A' K'] (v : HeightOneSpectrum A') :
+    IsAdicComplete (IsLocalRing.maximalIdeal ↥(v.adicCompletionIntegers K'))
+      ↥(v.adicCompletionIntegers K') :=
+  v.adicCompletionIntegers_isAdicComplete
+
 end MathlibExtTest.RingTheory.DedekindDomain.AdicCompletionIntegers
 
