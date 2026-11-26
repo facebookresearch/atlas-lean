@@ -97515,6 +97515,7 @@
 "ModularCurve.Period.IsEquivariantPrimitive.period": "48ae20a3a08d2077",
 "ModularCurve.Period.IsEquivariantPrimitive.periodHom": "fc5072eb0e9c87c8",
 "ModularCurve.Period.IsEquivariantPrimitive.periodHom_eq_of_hasDerivAt": "aafb3455120d390a",
+"ModularCurve.SiegelUnit.exists_peaked_exponent": "ddaba4be9f5aba38",
 "ModularCurve.periodMap": "36eef7bc4f3a88ab",
 "ModularCurve.periodMap_eq_periodHom": "67e9ef8591462d5a",
 "ModularCurve.periodMap_heckeTLin": "9b778bba4fa2faf5",
