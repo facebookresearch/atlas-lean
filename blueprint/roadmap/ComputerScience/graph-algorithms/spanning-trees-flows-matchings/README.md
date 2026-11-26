@@ -15,3 +15,4 @@ Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Ka
 - [Flows with bounds and supplies by maximum flow](circulations-with-bounds-by-maximum-flow.md)
 - [Dual certificate for the assignment problem](dual-certificate-for-the-assignment-problem.md)
 - [An exact implementation of the Hungarian method on rational costs](exact-hungarian-method-on-rational-costs.md)
+- [Edge CSPs over Even Delta-Matroids](edge-csps-over-even-delta-matroids/README.md)

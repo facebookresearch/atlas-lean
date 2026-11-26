@@ -1,0 +1,16 @@
+# Circuit Synthesis Upper Bounds
+
+- [Every Boolean function has a CNF with at most l·2^l connectives](cnf-with-l-times-two-to-the-l-connectives.md)
+- [Boolean circuits for multiplication in GF(2^n)](circuits-for-binary-field-multiplication.md)
+- [Karatsuba multiplication circuits](karatsuba-boolean-multiplication-circuits.md)
+- [Lupanov's asymptotic circuit upper bound](lupanov-circuit-upper-bound.md)
+- [Lupanov's partition of a power-of-two cube into open spheres](lupanov-open-sphere-partition.md)
+- [Parity of n + 1 bits with 3n binary De Morgan gates](parity-circuit-with-3n-binary-gates.md)
+- [Linear-size population counting and threshold circuits](linear-size-population-count.md)
+- [All minterms in linear size](all-minterms-in-linear-size.md)
+- [Batched lookup and routing circuits from sorting networks](batched-lookup-and-routing-via-sorting.md)
+- [Sparse languages have polynomial-size circuits](sparse-languages-have-polynomial-size-circuits.md)
+- [Threshold functions by quadratic-size De Morgan circuits](threshold-functions-by-quadratic-circuits.md)
+- [Yablonskii's formula upper bound for parity](yablonskii-formula-upper-bound-for-parity.md)
+- [Lupanov's upper bound for De Morgan formulas](lupanov-formula-upper-bound.md)
+- [Shannon-type synthesis: every function has circuits of size 27·2^n/n](shannon-synthesis-27-two-to-the-n-over-n.md)

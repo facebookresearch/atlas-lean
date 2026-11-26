@@ -8,3 +8,4 @@ The PCP theorem and Dinur's gap amplification, optimization classes (NPO, APX, M
 - [The PCP theorem: NP = PCP(O(log n), O(1))](pcp-theorem.md)
 - [Blum–Luby–Rubinfeld linearity test](blum-luby-rubinfeld-linearity-test/README.md)
 - [Pcp constructions](pcp-constructions/README.md)
+- [Maximum Satisfiability by Random Assignments](maximum-satisfiability-by-random-assignments/README.md)

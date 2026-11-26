@@ -13,3 +13,4 @@ Grammar basics and derivation forests, Chomsky and Greibach normal forms, ε- an
 - [Pushdown automata and context-free grammars](pushdown-automata-and-context-free-grammars/README.md)
 - [Deterministic context-free languages](deterministic-context-free-languages/README.md)
 - [Regular languages over a finite alphabet are context-free](is-context-free.md)
+- [Multistack Pushdown Automata and Hole-Bounded Reachability](multistack-pushdown-automata/README.md)

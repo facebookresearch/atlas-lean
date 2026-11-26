@@ -1,0 +1,17 @@
+# Hitting Sets for Polynomial Identity Testing
+
+- [Hitting sets for classes of polynomials](hitting-sets-for-polynomials.md)
+- [Ben-Or–Tiwari: a hitting set for sparse polynomials](ben-or-tiwari-sparse-hitting-set.md)
+- [Hitting sets give lower bounds (Heintz–Schnorr)](hitting-sets-give-lower-bounds.md)
+- [Algebraic independence of the logarithmic curve](algebraic-independence-of-logarithms.md)
+- [The Nisan–Wigderson generator for polynomials](nisan-wigderson-generator-for-polynomials.md)
+- [The Wronskian of a derivative-closed space depends only on t](wronskian-of-a-derivative-closed-space.md)
+- [Quasipolynomial hitting sets for ROABPs in unknown order](hitting-sets-for-roabps-in-unknown-order.md)
+- [Split rank of a polynomial across a variable partition](split-rank-across-a-partition.md)
+- [Hitting sets for polynomials in small derivative-closed spaces](hitting-sets-for-derivative-closed-spaces.md)
+- [Quasipolynomial matrix hitting sets for non-commutative ABPs](matrix-hitting-sets-for-non-commutative-abps.md)
+- [Support-concentrating shifts for multilinear polynomials of small split rank](support-concentrating-shifts.md)
+- [Kabanets–Impagliazzo: hardness gives hitting sets for constant-depth formulas](hardness-to-hitting-sets-for-constant-depth-formulas.md)
+- [Polynomial-size hitting sets for affine orbits of sparse polynomials](hitting-sets-for-sparse-affine-orbits.md)
+- [Polynomial-size hitting sets for multilinear any-order ROABPs](hitting-sets-for-any-order-roabps.md)
+- [Subexponential hitting sets for constant-depth formulas from the LST lower bound](subexponential-hitting-sets-for-constant-depth-formulas.md)

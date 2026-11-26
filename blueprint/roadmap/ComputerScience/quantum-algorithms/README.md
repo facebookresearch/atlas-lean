@@ -21,6 +21,8 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Shor success budget after approximation and repetition](shor-success-budget-after-approximation-and-repetition.md)
 - [Counting good outcomes of Shor period finding](counting-good-outcomes-of-shor-period-finding.md)
 - [Outcome distribution of Shor period finding when the order divides q](outcome-distribution-of-shor-period-finding-when-the-order-divides-q.md)
+- [Quantum Adversary Methods](quantum-adversary-methods/README.md)
+- [Quantum Query Bounds and Algorithms](quantum-query-bounds-and-algorithms/README.md)
 
 ## Related topics
 

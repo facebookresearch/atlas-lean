@@ -9,3 +9,4 @@ Collisions and the birthday bound, and the Merkle–Damgård transform with leng
 
 - [Bounded universal hash functions](bounded-universal-hash-functions.md)
 - [Collision resistance and target collision resistance](collision-resistance-and-target-collision-resistance.md)
+- [Polynomial Universal Hashing](polynomial-universal-hashing/README.md)

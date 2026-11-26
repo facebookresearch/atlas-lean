@@ -15,3 +15,19 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
   foundations: pseudorandom functions, semantically secure encryption (Goldwasser–Micali) and
   zero-knowledge proofs.
 - [Derandomization](derandomization/README.md)
+
+- [Affine Dispersers](affine-dispersers/README.md)
+
+- [Affine Sources and Sumset Extractors](affine-and-sumset-extractors/README.md)
+
+- [Designs, Generators and Hardness versus Randomness](hardness-and-generators/README.md)
+
+- [Distributional Problems and Average-Case Complexity](average-case-complexity/README.md)
+
+- [Distributional Reductions and Worst-Case to Average-Case Encodings](distributional-reductions/README.md)
+
+- [Pseudorandomness for Space-Bounded Computation](space-bounded-pseudorandomness/README.md)
+
+- [Small-Bias Spaces](small-bias-spaces/README.md)
+
+- [Weak Sources and Randomness Extractors](weak-sources-and-extractors/README.md)

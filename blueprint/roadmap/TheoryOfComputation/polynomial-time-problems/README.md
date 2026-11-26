@@ -14,3 +14,5 @@ Proofs or statements that specific problems lie in P or L: graph reachability (P
 - [Undirected s-t connectivity](undirected-s-t-connectivity/README.md)
 
 - [Strongly polynomial linear programming](strongly-polynomial-linear-programming.md)
+- [Algorithms for 2-SAT and XOR-SAT](two-sat-and-xor-sat-algorithms/README.md)
+- [Polynomial-Time Exact Algebraic and Combinatorial Algorithms](exact-algebraic-and-combinatorial-algorithms/README.md)

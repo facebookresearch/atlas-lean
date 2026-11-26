@@ -1,0 +1,18 @@
+# Data-Structure Interfaces, Refinement and Resource Certificates
+
+- [Resizable Word RAM (virtual memory model)](resizable-word-ram.md)
+- [State-transition specification of a data structure](state-transition-specification.md)
+- [Weakest precondition with cost for data-structure clients](weakest-precondition-with-cost.md)
+- [Oblivious-sequence specification of a randomized data structure](oblivious-sequence-specification.md)
+- [Ordered-set interface](ordered-set-interface.md)
+- [Refinement of a data-structure specification by an abstraction function](refinement-by-abstraction-function.md)
+- [Word-addressed memory as a specification](word-addressed-memory-specification.md)
+- [Word-RAM implementation certificate with potential-amortized running time](word-ram-implementation-certificate.md)
+- [Independent resource certificates combine additively](independent-resource-certificates.md)
+- [Composition of amortized refinements adds potentials](composition-of-amortized-refinements.md)
+- [Linking a client through methods is oracle interpretation](linking-is-oracle-interpretation.md)
+- [Footprints and framing of data structures sharing one memory](footprints-and-framing.md)
+- [Randomized state-transition specification and distributional refinement](randomized-specification-and-refinement.md)
+- [Expected-amortized bounds with distribution invariants](expected-amortized-bounds.md)
+- [Fixed dispatcher programs execute adaptive clients within certified budgets](fixed-dispatcher-execution-of-clients.md)
+- [From per-operation to per-sequence high-probability bounds](whp-union-bound-over-operations.md)

@@ -10,3 +10,7 @@ Representations of collections with their invariants, operations and costs (wors
 - [Tries, suffix structures and integer dictionaries](tries-and-integer-dictionaries/README.md)
 - [Disjoint sets and dynamic trees](disjoint-sets-and-dynamic-trees/README.md)
 - [Amortized analysis](amortized-analysis/README.md)
+- [Cell-Probe Complexity](cell-probe-complexity/README.md)
+- [Cell-Probe Lower Bounds for Dynamic Succinct Dictionaries](succinct-dictionary-lower-bounds/README.md)
+- [Data-Structure Interfaces, Refinement and Resource Certificates](data-structure-interfaces-and-refinement/README.md)
+- [Graph Representations](graph-representations/README.md)

@@ -1,0 +1,20 @@
+# Grenet's determinantal representation of the permanent
+
+For every $n\ge1$ and every $n\times n$ matrix $A$ over a commutative ring, $\mathrm{per}(A)=\det G(A)$ for a $(2^n-1)\times(2^n-1)$ matrix $G(A)$ whose entries are entries of $A$, $0$ or $-1$. Hence $\mathrm{dc}(\mathrm{per}_n)\le 2^n-1$.
+
+## Proof sketch
+
+Take the algebraic branching program on the subsets of $\{1,\dots,n\}$ with an arc from $S$ to $S\cup\{j\}$ ($j\notin S$) of weight $a_{|S|+1,j}$; source-to-sink paths correspond to permutations and have weight $\prod_ia_{i\sigma(i)}$. Identifying source and sink and writing the branching program as a determinant gives size $2^n-1$.
+
+## Depends on
+
+- [Specialization matrices and determinantal representations](specialization-matrices-and-determinantal-representations.md)
+- [Permanent of an encoded 0-1 matrix](../../counting-complexity/complexity-of-the-permanent/perm-fun.md)
+
+## Proof depends on
+
+- [Algebraic branching programs as determinants](../../../LinearAlgebra/determinants-and-matrix-identities/determinant-identities-for-complexity/branching-programs-as-determinants.md)
+
+## Sources
+
+- Bruno Grenet, "An upper bound for the permanent versus determinant problem", Manuscript, 2011.

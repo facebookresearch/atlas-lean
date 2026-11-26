@@ -7,3 +7,4 @@ Single-tape machines: configurations, steps, halting, composition of machines, t
 - [Running two single-tape machines one after the other](running-two-single-tape-machines-one-after-the-o/README.md)
 - [Simulating multi-stack machines on a single tape](simulating-multi-stack-machines-on-a-single-tape/README.md)
 - [Equivalent tape representations](equivalent-tape-representations/README.md)
+- [Crossing Sequences and Single-Tape Time Lower Bounds](single-tape-time-lower-bounds/README.md)

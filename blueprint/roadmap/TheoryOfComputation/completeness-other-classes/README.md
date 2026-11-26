@@ -15,3 +15,5 @@ Problems complete for classes other than NP: P (circuit value), NL (s-t connecti
 - [Succinct circuit value problem](succinct-circuit-value-problem/README.md)
 - [True quantified Boolean formulas](true-quantified-boolean-formulas/README.md)
 - [Unsatisfiability](unsatisfiability/README.md)
+- [NL-Complete and Logspace Graph Problems](nl-complete-graph-problems/README.md)
+- [Nondeterministic Constraint Logic and Reconfiguration](nondeterministic-constraint-logic/README.md)

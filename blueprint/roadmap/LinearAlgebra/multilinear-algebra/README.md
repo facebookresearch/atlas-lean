@@ -15,3 +15,4 @@ Multilinear and alternating maps, tensor products of modules and of families of 
 - [The first coordinate of a tensor power](the-first-coordinate-of-a-tensor-power/README.md)
 - [Base change for exterior contraction](contract-left-base-change.md)
 - [Restriction of scalars for alternating maps](restrict-scalars.md)
+- [Tensors over Parties and Spectral Points](tensors-over-parties/README.md)

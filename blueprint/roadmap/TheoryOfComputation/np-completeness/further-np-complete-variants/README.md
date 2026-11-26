@@ -1,0 +1,10 @@
+# Further NP-Complete Problems and Variants
+
+- [Murty–Kabadi: matrix copositivity is coNP-complete](matrix-copositivity-conp-complete.md)
+- [Directed Hamiltonian path without prescribed endpoints is NP-complete](directed-hamiltonian-path-any-endpoints.md)
+- [3SAT with exactly three distinct variables per clause: NP-complete in general, trivial with three occurrences](exact-three-variable-3sat.md)
+- [Integer programming with unbounded integer variables is in NP](general-integer-programming-in-np.md)
+- [Lichtenstein: planar 3SAT is NP-complete, also with three occurrences per variable](planar-3sat-np-complete.md)
+- [TMSAT is NP-complete](tmsat-np-complete.md)
+- [The halting problem is NP-hard but not in NP](halting-np-hard.md)
+- [Circuit satisfiability is complete for PC under Levin reductions](circuit-sat-levin-complete.md)

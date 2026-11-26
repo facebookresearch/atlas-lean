@@ -15,3 +15,5 @@ Ordered dictionaries: binary search trees and their balanced variants (AVL, red-
 - [Weight-balanced tree](weight-balanced-tree/README.md)
 - [Dynamic optimality](dynamic-optimality/README.md)
 - [Randomized search trees](randomized-search-trees/README.md)
+- [B+-Trees](b-plus-trees/README.md)
+- [Cost Models for B-Tree Operations](b-tree-cost-models/README.md)

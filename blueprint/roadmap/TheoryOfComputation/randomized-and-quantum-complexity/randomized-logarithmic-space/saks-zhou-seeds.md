@@ -1,0 +1,20 @@
+# Saks–Zhou seed bound for randomized logspace
+
+For every $L\in\mathsf{BPL}$ there is a deterministic estimation procedure, parameterized by a pair $(h,z)$ consisting of $s=\lfloor\sqrt{R}\rfloor+1$ shared Nisan hash seeds and $s$ random rounding shifts, with $R=O(\log n)$ the logarithm of the number of configurations, using $O(\log^{3/2} n)$ random bits in total, such that for every input $x$ a strict majority of the pairs $(h,z)$ yields an estimate on the correct side of $1/2$. The estimate is obtained by iterating $s$ times: raise the transition matrix to the power $2^s$ with Nisan's generator, then round entries down to $d=O(R)$ bits after subtracting the random shift.
+
+## Proof sketch
+
+Each Nisan-powering step approximates $M^{2^s}$ within $2^{-\Omega(d)}$ for most seeds; random-shift rounding makes the result a fixed function of the exact matrix with high probability, so the same seed can be reused across iterations; a union bound over $s$ levels and $|V|$ entries bounds the bad pairs.
+
+## Depends on
+
+- [Randomized logarithmic space RL and BPL](rl-and-bpl.md)
+
+## Proof depends on
+
+- [Nisan's pseudorandom generator for space-bounded computation](nisan-generator.md)
+
+## Sources
+
+- Michael Saks and Shiyu Zhou, "BP_HSPACE(S) ⊆ DSPACE(S^3/2)", Journal of Computer and System Sciences 58(2), 1999.
+- Noam Nisan, "Pseudorandom Generators for Space-Bounded Computation", Combinatorica 12(4), 1992.

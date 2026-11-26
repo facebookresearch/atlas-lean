@@ -15,3 +15,4 @@ equivalence test for regular expressions.
 - [Star height](star-height/README.md)
 - [Thompson's construction](thompson-s-construction/README.md)
 - [Two-way finite automata](two-way-finite-automata/README.md)
+- [Weighted Automata and Rational Series](weighted-automata-and-rational-series/README.md)

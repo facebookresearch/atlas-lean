@@ -13,3 +13,4 @@ Algorithms deciding questions about finite automata, regular expressions and con
 - [String constraints and word equations](string-constraints-and-word-equations/README.md)
 
 - [Satisfiability modulo theories](satisfiability-modulo-theories/README.md)
+- [Existential Theory of the Reals](existential-theory-of-the-reals/README.md)

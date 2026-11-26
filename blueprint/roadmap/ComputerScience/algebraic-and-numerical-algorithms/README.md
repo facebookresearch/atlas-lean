@@ -17,3 +17,4 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Solving linear congruences](solving-linear-congruences/README.md)
 - [Strassen algorithm](strassen-algorithm/README.md)
 - [Lattice basis reduction](lattice-basis-reduction/README.md)
+- [Fast Zeta Transforms and Subset Convolution](fast-zeta-transform-and-subset-convolution/README.md)
