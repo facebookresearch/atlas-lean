@@ -36,6 +36,9 @@ A computational instantiation must account for the uniform algorithms, encodings
 - [Honest full and evaluation correctness](polynomial-commitment-honest.md)
 - [Polynomial binding conflict](polynomial-binding-conflict.md)
 - [Evaluation binding conflict](evaluation-binding-conflict.md)
+- [The commitment and disclosed evaluations at a given public key](polynomial-commitment-view.md)
+- [Correct prediction at an undisclosed index](polynomial-commitment-fresh-prediction.md)
+- [Negligible advantage as a function of the security parameter](../../security-games/asymptotic-security/negligible-adv.md)
 - [Polynomial-time computable functions on encoded data](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/is-poly-time.md)
 
 ## Sources
