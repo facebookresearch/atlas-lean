@@ -3,7 +3,9 @@
 The terms of the type-free *λΔ-calculus* are $M ::= x \mid \lambda x.\, M \mid M\, M' \mid \Delta x.\, M$, where $\Delta x$ binds $x$. Its simply typed version has the implicational
 formulas over propositional variables and $\bot$ as types, writes $\neg\varphi$ for $\varphi \to \bot$, and extends the Curry-style rules of the simply typed λ-calculus by the rule
 for double-negation elimination
+
 $$\frac{\Gamma, x : \neg\varphi \vdash M : \bot}{\Gamma \vdash \Delta x.\, M : \varphi}$$
+
 (in the Church-style variant, $\Delta x{:}\neg\varphi.\, M$). Computationally, $\Delta$ is a control operator, akin to Scheme's call/cc.
 
 *Δ-reduction* $\to_\Delta$ is the least compatible relation containing, on Church-style terms,

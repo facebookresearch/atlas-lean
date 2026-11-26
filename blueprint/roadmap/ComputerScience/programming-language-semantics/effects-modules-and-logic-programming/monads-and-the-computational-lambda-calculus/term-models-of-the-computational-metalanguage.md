@@ -2,7 +2,9 @@
 
 Every theory $\mathcal{T}$ of [the computational metalanguage](the-computational-metalanguage-and-its-interpretation.md), viewed as a category $F(\mathcal{T})$ whose objects are types and
 whose morphisms $\tau_1 \to \tau_2$ are terms $x : \tau_1 \vdash e : \tau_2$ up to provable equality, has finite products and a [strong monad](strong-monads.md) whose tensorial strength is
+
 $$t_{\tau_1, \tau_2} = [\, x : \tau_1 \times T\tau_2 \vdash (\mathrm{let}_T\ x_2 \Leftarrow \pi_2\, x\ \mathrm{in}\ [\langle \pi_1\, x, x_2 \rangle]_T) : T(\tau_1 \times \tau_2) \,]_{\mathcal{T}}.$$
+
 The equations that hold in this term model are exactly those provable in $\mathcal{T}$, so an equation of the metalanguage that holds in every category with finite
 products and a strong monad is provable.
 
