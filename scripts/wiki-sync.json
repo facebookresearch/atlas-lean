@@ -11354,6 +11354,7 @@
 "CongruenceSubgroup.exists_mem_Gamma_map_eq_of_not_dvd": "be38abd7337e74bf",
 "CongruenceSubgroup.neg_one_mem_Gamma1_iff": "e6cfc0d4caa8bd72",
 "CongruenceSubgroup.one_mem_strictPeriods_Gamma0": "4bf3314470310ad1",
+"CongruenceSubgroup.subsingleton_H2_Gamma0": "e73ae1104ee14234",
 "ContDiff.exists_localGraph_of_surjective_fderiv": "4edc603ce5c3138d",
 "ContDiff.isImmersion_graph": "200f970191da7342",
 "ContDiffOn.eVariationOn_Icc_eq_ofReal_integral_norm_derivWithin": "0125cb34520fdc83",
