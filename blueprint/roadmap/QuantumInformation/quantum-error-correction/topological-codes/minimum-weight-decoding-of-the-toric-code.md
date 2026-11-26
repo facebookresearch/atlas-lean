@@ -10,15 +10,25 @@ $X^{e + e'}$ lies in the stabilizer, and fails when its total homology class is 
 together bound a strip and do not cause failure. Phase-flip errors are decoded in the
 same way using the vertex operators. When syndrome measurements are themselves faulty, a spatial matching of one round's defects
 no longer works, since a single wrong readout produces an isolated apparent defect. Dennis, Kitaev, Landahl and Preskill
-then work in a three-dimensional spacetime lattice: space-like edges stand for data errors of rate $p$ in a round,
-time-like edges for readout errors of rate $q$, and the syndrome chain $S$ records where the measured syndrome changes.
-Their analysis assumes the complete syndrome history, with measurements repeated indefinitely, so that $S + E$ is a
-cycle (the closed world lines of the defects) for the error chain $E$. The decoder chooses a chain $E'$ with
-$\partial E' = \partial S$ of least weighted length $H \log((1 - p)/p) + V \log((1 - q)/q)$, for $H$ space-like and $V$
-time-like edges and $0 < p, q < 1/2$; when $p = 0$ or $q = 0$ the edges of that type are not used. Decoding fails when
-$E + E'$ contains a cycle that is homologically nontrivial in the spatial directions. A decoder that sees only a finite
-record of rounds needs a rule at the last round, where a single wrong readout leaves an unpaired change; Dennis, Kitaev,
-Landahl and Preskill treat that case separately, with chains closed relative to the final time slice.
+then work in a three-dimensional spacetime lattice, stated here for a finite record. Start from a code state with no
+errors (the syndrome before round $1$ is trivial); before each of rounds $1, \dots, T$ every edge suffers a bit flip
+independently with probability $p$, and in each of these rounds every face check is read out wrongly independently with
+probability $q$; round $T + 1$ is read out without error, which closes the record at a temporal boundary. On the lattice
+of faces times rounds $0, \dots, T + 1$, space-like edges join neighbouring faces within a round and stand for data
+errors, and time-like edges join a face in consecutive rounds and stand for readout errors. The syndrome chain $S$ is the
+set of time-like edges on which the measured syndrome is nontrivial; its boundary $D = \partial S$ is the set of
+detection events, the vertices $(f, \tau)$ at which the measured syndrome of face $f$ changes between rounds $\tau - 1$
+and $\tau$. For example, two consecutive wrong readouts of one check, with correct readouts around them and no data
+error, give two adjacent edges of $S$ but only their two outer endpoints in $D$. The decoder chooses a chain $E'$ with
+$\partial E' = D$ of least weighted length $H \log((1 - p)/p) + V \log((1 - q)/q)$, for $H$ space-like and $V$ time-like
+edges and $0 < p, q < 1/2$, a finite minimum since the record is finite; when $p = 0$ or $q = 0$ the edges of that type
+are not used. It then applies $X$ on the projection of the space-like edges of $E'$ onto the torus. The actual fault chain
+$E$ also has $\partial E = D$, so $E + E'$ is a cycle, and the residual data error is the projection of its space-like
+edges. Decoding succeeds when that projection is homologically trivial and fails when its total spatial homology class
+is nonzero; a cycle of $E + E'$ that winds around the torus does not by itself cause failure, since two parallel winding
+loops bound a strip. A decoder that sees a finite record without a final error-free round needs its own rule at the last
+round; Dennis, Kitaev, Landahl and Preskill treat that case separately, with chains closed relative to the final time
+slice.
 
 ## Depends on
 
@@ -28,4 +38,4 @@ Landahl and Preskill treat that case separately, with chains closed relative to 
 
 ## Sources
 
-- E. Dennis, A. Kitaev, A. Landahl and J. Preskill, *Topological quantum memory*, J. Math. Phys. 43 (2002), 4452–4505, arXiv:quant-ph/0110143, Section V.A, equations (44)–(46) (the weights and the minimal chain), Section V.B (failure as a homologically nontrivial path in $E + E_{\min}$), and the opening of Section VI (the complete syndrome history assumed in Section V) and Section VI.A (a finite record, with chains closed relative to the final time slice).
+- E. Dennis, A. Kitaev, A. Landahl and J. Preskill, *Topological quantum memory*, J. Math. Phys. 43 (2002), 4452–4505, arXiv:quant-ph/0110143, Section V.A, equations (44)–(46) (the weights and the minimal chain), Section V.B (failure as a homologically nontrivial path in $E + E_{\min}$), Section IV.C (the syndrome chain $S$ as the time-like links on which the measured syndrome is nontrivial, and $\partial S$), the opening of Section VI (the complete syndrome history assumed in Section V, which this page replaces by a finite record with an error-free final round so that the weighted minimum is finite) and Section VI.A (a finite record without that round, with chains closed relative to the final time slice).
