@@ -4,8 +4,10 @@ Topics added since this subject's fields were last revised.
 
 - [Center Star](center-star/README.md)
 - [Chao Lower Bound](chao-lower-bound/README.md)
+- [Capture Recapture](capture-recapture/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
+- [Complex Balanced Stability](complex-balanced-stability/README.md)
 - [Current Fluctuation Theorem](current-fluctuation-theorem/README.md)
 - [Diffusion Limited Rate](diffusion-limited-rate/README.md)
 - [General Markov Flattening](general-markov-flattening/README.md)
@@ -26,5 +28,6 @@ Topics added since this subject's fields were last revised.
 - [Smith Hazel Index](smith-hazel-index/README.md)
 - [Spearman Karber](spearman-karber/README.md)
 - [Split Decomposition](split-decomposition/README.md)
+- [Stability Composition](stability-composition/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [String Overlap](string-overlap/README.md)
