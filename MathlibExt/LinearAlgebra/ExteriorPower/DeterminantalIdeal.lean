@@ -276,8 +276,11 @@ theorem coefficientIdeal_eq_top_of_ne_zero
   exact Ideal.eq_top_of_isUnit_mem _ hmem (isUnit_iff_ne_zero.mpr (by
     simpa [Module.Basis.coord_apply] using hi))
 
-/-- For an injective map over a field, the determinantal ideal in the source
-finrank is the unit ideal. -/
+/-- **Full-rank determinantal ideal of an injection.** Let `K` be a field and `P,Q` free
+`K`-modules, with `P` finite-dimensional over `K`. For an injective `K`-linear map
+`f : P →ₗ[K] Q`, the determinantal ideal of size `dim_K P` is the unit ideal:
+`f.determinantalIdeal (Module.finrank K P) = ⊤`. The target `Q` may be infinite-dimensional,
+and the conclusion includes a zero-dimensional source. -/
 theorem determinantalIdeal_finrank_eq_top_of_injective
     [Module.Free K P] [Module.Finite K P] [Module.Free K Q]
     (f : P →ₗ[K] Q) (hf : Injective f) :
