@@ -20,6 +20,7 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Simplicial data to simplicial objects](simplicial-data-to-simplicial-objects/README.md)
 - [To Simplicial](to-simplicial/README.md)
 - [Data-level left extra degeneracy](extra-degeneracy.md)
+- [Kan complex](kan-complex.md)
 - [Literal coherent Hom of adjacent vertices](literal-coherent-hom-of-adjacent-vertices/README.md)
 - [Coherent realization and nerve adjunction](coherent-realization-and-nerve-adjunction/README.md)
 - [Parallel arrows and a noninvertible coherent cell](parallel-arrows-and-a-noninvertible-coherent-cel/README.md)
