@@ -11,6 +11,7 @@
 - [Unique second-order Copeland winners in SECOND-ORDER COPELAND MANIPULATION](is-unique-winner-iff-second-order-copela.md)
 - [Feasible instances of SECOND-ORDER COPELAND MANIPULATION (unique winner)](second-order-copeland-manipulation-feasi.md)
 - [The SECOND-ORDER COPELAND MANIPULATION (unique winner) decision problem](second-order-copeland-manipulation-dec.md)
+- [SECOND-ORDER COPELAND MANIPULATION (unique winner) is NP-complete](second-order-copeland-manipulation-np-co.md)
 - [Instances of SHIFT BRIBERY for Borda](shift-bribery-borda-instance.md)
 - [Voters of the instance in SHIFT BRIBERY for Borda](voter.md)
 - [Vote `v` after shifting `p` up by `k` places in SHIFT BRIBERY for Borda](shift.md)

@@ -25,6 +25,4 @@ Clique, independent set, vertex cover, domination variants, feedback vertex and 
 - [Total dominating set](total-dominating-set/README.md)
 - [Zero forcing](zero-forcing/README.md)
 - [Clique in geometric intersection graphs](clique-in-geometric-intersection-graphs/README.md)
-- [Dominating set in geometric intersection graphs](dominating-set-in-geometric-intersection-graphs/README.md)
-- [Independent set in restricted graph classes](independent-set-in-restricted-graph-classes/README.md)
 - [Rainbow domination](rainbow-domination/README.md)
