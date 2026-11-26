@@ -13199,6 +13199,7 @@
   "MathlibExt/NumberTheory/HenselFactorization": {"to": "RingTheory/valuation-rings", "title": "Henselian rings and Hensel's lemma"},
   "MathlibExt/NumberTheory/HenselFactorizationUniqueness": {"to": "RingTheory/valuation-rings", "title": "Henselian rings and Hensel's lemma"},
   "MathlibExt/NumberTheory/HigherANumbersPeriodicSum": {"to": "NumberTheory/function-fields", "title": "Higher a-numbers in ℤ_p-towers"},
+  "MathlibExt/NumberTheory/HigherANumbersPeriodicSumFloorMulPowModEq": {"to": "NumberTheory/function-fields", "title": "Higher a-numbers in ℤ_p-towers"},
   "MathlibExt/NumberTheory/HigherOrderHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Higher-order harmonic numbers"},
   "MathlibExt/NumberTheory/HighlyComposite": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Highly composite numbers"},
   "MathlibExt/NumberTheory/HilbertWaring": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Hilbert–Waring theorem"},
