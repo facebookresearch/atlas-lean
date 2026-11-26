@@ -123,4 +123,66 @@ public theorem kFibonacciBinomialTruncation_recurrence (k n : ℕ) (hk : 2 ≤ k
   rw [hp, hp, hp, show n + k + 1 - 1 = n + k by omega, sum_weightedBinomialDiff_extend k n hn,
     ← hq, ← mul_assoc, ← hpow, ← hscaled, mul_sub, sub_sub_cancel]
 
+/-- **$k$-Fibonacci numbers as truncated binomial sums.** Let $k \ge 2$ and let
+$(F_n)_{n \ge 0}$ be the $k$-Fibonacci sequence, given by $F_0 = \dots = F_{k-2} = 0$,
+$F_{k-1} = 1$ and $F_{m+k} = F_m + F_{m+1} + \dots + F_{m+k-1}$ for all $m \ge 0$. For integers
+$a$ and $j \ge 0$ write $\binom{a}{j} = a(a-1)\cdots(a-j+1)/j!$, and put $\binom{a}{-1} = 0$.
+For $n \ge 2$ let $G_n^{(k)}$ be the truncated binomial sum
+$G_n^{(k)} = 2^{n-2} \sum_{\ell=0}^{\lfloor (n-1)/(k+1) \rfloor} \left(\binom{(k+1)\ell-n}{\ell} -
+\binom{(k+1)\ell-n}{\ell-1}\right) 2^{-(k+1)\ell}$. Then $F_{n+k-2} = G_n^{(k)}$ for every
+$n \ge 2$.
+
+Source: Bakir Farhi, *Some Applications of the Lagrange Inversion Formula for the
+k-Fibonacci Numbers*, Journal of Integer Sequences 27 (2024), Article 24.1.1, Theorem 9
+(`jis-2024-24.1.1-thm-9`). -/
+public theorem kFibonacci_eq_kFibonacciBinomialTruncation (k n : ℕ) (hk : 2 ≤ k)
+    (hn : 2 ≤ n) (F : ℕ → ℤ) (hF0 : ∀ i < k - 1, F i = 0) (hF1 : F (k - 1) = 1)
+    (hrec : ∀ m, F (m + k) = ∑ i ∈ Finset.range k, F (m + i)) :
+    (F (n + k - 2) : ℚ) = kFibonacciBinomialTruncation k n := by
+  -- Compare the two length-`k` sums after separating their non-overlapping terms.
+  have hslide (m : ℕ) : F (m + k + 1) = 2 * F (m + k) - F m := by
+    have hfirst : F (m + k) = F m + ∑ i ∈ Finset.range (k - 1), F (m + 1 + i) := by
+      rw [hrec m]
+      conv_lhs => rw [show k = k - 1 + 1 by omega, Finset.sum_range_succ']
+      simp only [Nat.add_zero, Nat.add_assoc, Nat.add_comm 1, add_comm (F m)]
+    have hnext : F (m + 1 + k) = (∑ i ∈ Finset.range (k - 1), F (m + 1 + i)) + F (m + k) := by
+      rw [hrec (m + 1)]
+      conv_lhs => rw [show k = k - 1 + 1 by omega, Finset.sum_range_succ]
+      rw [show m + 1 + (k - 1) = m + k by omega]
+    rw [show m + k + 1 = m + 1 + k by omega, hnext]
+    omega
+  have hshort (m : ℕ) : (F (m + k + 1) : ℚ) = 2 * (F (m + k) : ℚ) - (F m : ℚ) := by
+    exact_mod_cast hslide m
+  have hFk : F k = 1 := calc
+    F k = ∑ i ∈ Finset.range k, F i := by simpa only [zero_add] using hrec 0
+    _ = 1 := by
+      rw [show k = k - 1 + 1 by omega, Finset.sum_range_succ, hF1,
+        Finset.sum_eq_zero (fun i hi => hF0 i (Finset.mem_range.mp hi)), zero_add]
+  -- The short recurrence doubles the value until the term being subtracted reaches `F (k - 1)`.
+  have hpow (m : ℕ) (hm : m ≤ k - 1) : (F (m + k) : ℚ) = (2 : ℚ) ^ m := by
+    induction m with
+    | zero => simp [hFk]
+    | succ m ih =>
+      rw [show m.succ + k = m + k + 1 by omega, hshort, ih (by omega),
+        hF0 m (by omega), Int.cast_zero, sub_zero, pow_succ, mul_comm]
+  have hinit := kFibonacciBinomialTruncation_initial_values k hk
+  revert hn
+  induction n using Nat.strong_induction_on with
+  | ind n ih =>
+    intro hn
+    by_cases hle : n ≤ k + 1
+    · rw [hinit.1 n hn hle, show n + k - 2 = n - 2 + k by omega, hpow (n - 2) (by omega)]
+    by_cases heq : n = k + 2
+    · have hpowk : (2 : ℚ) ^ k = 2 * (2 : ℚ) ^ (k - 1) := by
+        conv_lhs => rw [show k = k - 1 + 1 by omega, pow_succ, mul_comm]
+      rw [heq, hinit.2, show k + 2 + k - 2 = k - 1 + k + 1 by omega,
+        hshort, hpow (k - 1) le_rfl, hF1, Int.cast_one, hpowk]
+    let m := n - (k + 1)
+    have hm : 2 ≤ m := by dsimp [m]; omega
+    have hmn : m + k + 1 = n := by dsimp [m]; omega
+    rw [← hmn, kFibonacciBinomialTruncation_recurrence k m hk hm,
+      show m + k + 1 + k - 2 = (m + k - 2) + k + 1 by omega, hshort,
+      show m + k - 2 + k = m + k + k - 2 by omega,
+      ih (m + k) (by omega) (by omega), ih m (by omega) hm]
+
 end MetaMathlibExt

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Nat.Fib.Basic
 import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.KFibonacciTruncatedRecurrence
 
@@ -32,3 +33,25 @@ example : kFibonacciBinomialTruncation 2 5 = 5 := by
         2 * kFibonacciBinomialTruncation 2 4 - kFibonacciBinomialTruncation 2 2 :=
       kFibonacciBinomialTruncation_recurrence 2 2 (by decide) (by decide)
     _ = 5 := by norm_num [kFibonacciBinomialTruncation_two_four, kFibonacciBinomialTruncation_two_two]
+
+private theorem fib_int_recurrence (m : ℕ) : (Nat.fib (m + 2) : ℤ) =
+    ∑ i ∈ Finset.range 2, (Nat.fib (m + i) : ℤ) := by
+  simp [Finset.sum_range_succ, Nat.fib_add_two]
+
+private theorem fib_int_zero (i : ℕ) (hi : i < 2 - 1) : (Nat.fib i : ℤ) = 0 := by
+  have hz : i = 0 := by omega
+  subst i
+  rfl
+
+-- The smallest allowed index uses only the first nonzero value of the sequence.
+example : kFibonacciBinomialTruncation 2 2 = 1 := by
+  simpa using (kFibonacci_eq_kFibonacciBinomialTruncation 2 2 (by decide) (by decide)
+    (fun i => (Nat.fib i : ℤ)) fib_int_zero (by simp)
+    fib_int_recurrence).symm
+
+-- This index is past the initial-value range; compare with the ordinary Fibonacci number.
+example : kFibonacciBinomialTruncation 2 8 = 21 := by
+  have hf : Nat.fib 8 = 21 := by decide
+  simpa [hf] using (kFibonacci_eq_kFibonacciBinomialTruncation 2 8 (by decide) (by decide)
+    (fun i => (Nat.fib i : ℤ)) fib_int_zero (by simp)
+    fib_int_recurrence).symm
