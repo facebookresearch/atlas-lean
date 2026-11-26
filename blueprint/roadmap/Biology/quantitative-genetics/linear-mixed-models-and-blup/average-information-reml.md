@@ -30,4 +30,4 @@ Use $\partial V / \partial \sigma_i = V_i$, $\partial P / \partial \sigma_i = -P
 
 ## Sources
 
-- A. R. Gilmour, R. Thompson and B. R. Cullis, "Average information REML: an efficient algorithm for variance parameter estimation in linear mixed models", *Biometrics* 51 (1995), 1440–1450, <https://doi.org/10.2307/2533274>. Statement reconstructed from the canonical algorithm (full text not available; no equation numbers cited).
+- A. R. Gilmour, R. Thompson and B. R. Cullis, "Average information REML: an efficient algorithm for variance parameter estimation in linear mixed models", *Biometrics* 51 (1995), 1440–1450, <https://doi.org/10.2307/2533274>.

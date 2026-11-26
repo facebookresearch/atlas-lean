@@ -14,6 +14,10 @@ $$\partial_t n - \Delta n = n \Bigl[\bigl(1 - s + s(1 - p)^2\bigr)\bigl(r(1 - n)
 
 At $p = 1$ the population declines to $\max\{0, 1 - s / (r(1 - s))\}$, so the drive eradicates the population when $r < s / (1 - s)$; the frequency dynamics are bistable with threshold $(2s - 1)/s$ when $s > 1/2$.
 
+## Depends on
+
+None; this page states the reaction-diffusion model directly.
+
 ## Expansion
 
 The total per-capita birth factor is $p(1-s)(2 - p) + (1-p)^2 = 1 - s + s(1-p)^2$, which gives the equation for $n$; the equation for $p$ follows from the quotient rule, the gradient term coming from diffusion of the ratio $n_D / n$. The density feedback multiplies the selection term by $r(1 - n) + 1$, which drops as the drive suppresses the population.

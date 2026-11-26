@@ -22,6 +22,10 @@ mimicking a population decline.
 
 - [Inverse instantaneous coalescence rate of a pairwise coalescence time](iicr-of-a-pairwise-coalescence-time.md)
 
+## Proof depends on
+
+None beyond the definition of the IICR listed above; the proof differentiates the mixture hazard directly, as the Expansion describes.
+
 ## Expansion
 
 Write $\mathrm{IICR}(t)^{-1} = \sum_i \mu_i w_i(t)$ with weights $w_i(t) = a_i e^{-\mu_i t}/\sum_k a_k e^{-\mu_k t}$, the posterior

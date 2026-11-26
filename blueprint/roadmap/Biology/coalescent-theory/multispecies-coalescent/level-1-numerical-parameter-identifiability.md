@@ -18,8 +18,11 @@ except the hybridization parameters and the lengths of edges in and adjacent to 
 
 ## Depends on
 
-- [Topological identifiability of a level-1 species network from quartet CFs](level-1-topological-identifiability-from-quartet-cfs.md)
 - [Two-cycles of a level-1 network are not identifiable from quartet CFs](level-1-two-cycles-not-identifiable.md)
+
+## Proof depends on
+
+- [Topological identifiability of a level-1 species network from quartet CFs](level-1-topological-identifiability-from-quartet-cfs.md)
 
 ## Expansion
 

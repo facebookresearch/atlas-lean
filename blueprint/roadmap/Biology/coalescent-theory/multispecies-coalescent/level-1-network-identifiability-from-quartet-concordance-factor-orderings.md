@@ -15,6 +15,10 @@ Moreover, if a set $\{a, b, c, d\}$ satisfies the Cycle property but not the Big
 - [Concordance-factor signatures of cycles in level-1 quartet networks](big-cycle-property-detects-4-cycles.md)
 - [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
 
+## Proof depends on
+
+- [An unrooted binary tree is determined by its induced quartet trees](../../phylogenetics/quartet-support-and-determination-of-trees-by-qu/iso-of-induces-iff.md)
+
 ## Expansion
 
 The proof is by induction on the number of cycles of size at least 4. With none, every quartet network is treelike after contracting 2- and 3-cycles, the orderings give each induced quartet tree, and quartet trees determine the tree. For generic parameters, a set satisfying the Big Cycle property exists for a cycle $C_v$ exactly when $C_v$ has size $k_v \ge 4$ and the four taxa lie in distinct $v$-blocks, one of them the hybrid block. Two such sets sharing three taxa determine the same hybrid node, which lets the sets be grouped by cycle and the $v$-blocks and $k_v$ be reconstructed; which concordance factor is smallest records which blocks are adjacent, giving the cyclic order. The hybrid block itself is recovered only when $k_v \ge 5$, so the directions of hybrid edges in 4-cycles are not identified.
