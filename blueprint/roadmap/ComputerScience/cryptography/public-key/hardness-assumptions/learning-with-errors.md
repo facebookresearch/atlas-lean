@@ -1,12 +1,10 @@
-# Learning with errors
+# Decision learning-with-errors assumption
 
-Let $n, m, q$ be positive integers and $\chi$ a distribution on $\mathbb{Z}_q$. In the *search* learning-with-errors problem $\mathrm{LWE}_{n,m,q,\chi}$, given $(A, As + e)$ with $A$ uniform in $\mathbb{Z}_q^{m \times n}$, $s$ uniform in $\mathbb{Z}_q^n$ and $e \sim \chi^m$, the task is to find $s$. In the *decision* problem, the task is to distinguish $(A, As + e)$ from $(A, u)$ with $u$ uniform in $\mathbb{Z}_q^m$. For a family of parameters indexed by the dimension $n$, with $m$ and $q$ bounded by polynomials in $n$, the decision LWE assumption asserts that every algorithm running in time polynomial in $n$ has advantage negligible in $n$ in the decision problem.
+Let $m$ and $q$ be functions of the dimension $n$ bounded by polynomials in $n$, with $q(n) \ge 1$, and let $\chi_n$ be a probability distribution on $\mathbb{Z}_{q(n)}$ for every $n$. A distinguisher $D$ in dimension $n$ maps a matrix in $\mathbb{Z}_{q(n)}^{m(n) \times n}$, a vector in $\mathbb{Z}_{q(n)}^{m(n)}$ and coins in a finite nonempty set $S_n$ to a bit. Its decision LWE advantage is $|\Pr[D(A, As + e, c) = 1] - \Pr[D(A, u, c) = 1]|$, where $A \in \mathbb{Z}_{q(n)}^{m(n) \times n}$, $s \in \mathbb{Z}_{q(n)}^n$, $u \in \mathbb{Z}_{q(n)}^{m(n)}$ and the coins $c \in S_n$ are uniform and the error $e \in \mathbb{Z}_{q(n)}^{m(n)}$ is drawn from $\chi_n^{m(n)}$, all independently: the decision problem is to distinguish the LWE samples $(A, As + e)$ from uniform ones $(A, u)$. Fix a class of admissible distinguisher families, each giving one distinguisher $D_n$ for every $n$. The decision LWE assumption holds for these parameters and this class when every admissible family has negligible advantage $n \mapsto \mathrm{adv}(D_n)$.
 
-## Depends on
-
-- [Winning probability of a game](../../security-games/games-and-advantages/win-prob.md)
+In the sources the admissible families are those computed by one probabilistic algorithm running in time polynomial in $n$. The assumption holds vacuously when no family is admissible.
 
 ## Sources
 
-- O. Regev, "On lattices, learning with errors, random linear codes, and cryptography", *Journal of the ACM* 56(6), Article 34, 2009, Sections 1 and 2; <https://arxiv.org/abs/2401.03703>
-- C. Peikert, "A decade of lattice cryptography", *Foundations and Trends in Theoretical Computer Science* 10(4):283–424, 2016; ePrint 2015/939, <https://eprint.iacr.org/2015/939>
+- O. Regev, "On lattices, learning with errors, random linear codes, and cryptography", *Journal of the ACM* 56(6), Article 34, 2009, Section 1 (the samples as a matrix and a vector, with $m$ and the modulus polynomial in $n$) and Section 2 (negligible functions, distinguishers, and efficient algorithms as those running in time polynomial in $n$); <https://arxiv.org/abs/2401.03703>
+- C. Peikert, "A decade of lattice cryptography", *Foundations and Trends in Theoretical Computer Science* 10(4):283–424, 2016, Section 4.2.1, Definitions 4.2.1 (the LWE distribution) and 4.2.3 (decision LWE); ePrint 2015/939, <https://eprint.iacr.org/2015/939>

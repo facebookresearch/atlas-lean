@@ -35,11 +35,20 @@
 
 - [RSA inversion versus factoring](rsa-inversion-versus-factoring.md)
 
+## Learning with errors
+
+- [LWE error distribution](lwe-errors.md)
+- [Search LWE experiment](lwe-search-game.md)
+- [Search LWE advantage](lwe-search-advantage.md)
+- [Real LWE experiment](lwe-real.md)
+- [Random LWE experiment](lwe-rand.md)
+- [Decision LWE advantage](lwe-advantage.md)
+- [Decision learning-with-errors assumption](learning-with-errors.md)
+- [Regev's public-key encryption from learning with errors](regev-s-public-key-encryption-from-learning.md)
+
 ## Trapdoor functions
 
 - [Trapdoor permutations](trapdoor-permutations.md)
-- [Learning with errors](learning-with-errors.md)
 - [Black-box constructions and oracle separations](black-box-constructions-and-oracle-separations.md)
-- [Regev's public-key encryption from learning with errors](regev-s-public-key-encryption-from-learning.md)
 - [No relativizing construction of key agreement from one-way permutations](no-relativizing-construction-of-key-agreement.md)
 - [Shoup's generic lower bound for discrete logarithms](shoup-s-generic-lower-bound-for-discrete.md)
