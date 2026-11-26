@@ -28,4 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [Sub-inhibitory selection of antibiotic resistance](sub-inhibitory-selection-of-antibiotic-resistance/README.md)

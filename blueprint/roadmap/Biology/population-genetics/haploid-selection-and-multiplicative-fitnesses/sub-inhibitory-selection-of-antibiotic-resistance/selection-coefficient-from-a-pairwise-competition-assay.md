@@ -10,7 +10,7 @@ Given measurements at times $t_1, \dots, t_n$, the regression estimate of $s$ is
 
 ## Depends on
 
-- [Log-odds grow linearly under repeated haploid selection on two types](../haploid-selection-and-multiplicative-fitnesses/log-odds-iterate-select.md)
+- [Log-odds grow linearly under repeated haploid selection on two types](../log-odds-iterate-select.md)
 
 ## Expansion
 
