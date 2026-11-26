@@ -29,14 +29,17 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluation
 public import MathlibExt.AlgebraicGeometry.Curve.RationalFunctionField
-import Mathlib.NumberTheory.RatFunc.Ostrowski
+import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationLemmas
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyDeg
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyOrd
 
 /-!
 # Weil reciprocity for the rational function field
 
-For `K` algebraically closed of characteristic zero, two nonzero rational functions `f, g` in
-`RatFunc K` with disjoint divisors satisfy `f(div g) = g(div f)`.
+For `K` algebraically closed, two nonzero rational functions `f, g` in `RatFunc K` with disjoint
+divisors satisfy `f(div g) = g(div f)`.
 -/
 
 @[expose] public section
@@ -53,15 +56,6 @@ open scoped Polynomial
 
 namespace AlgebraicCurve
 
-namespace Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-theorem isRational_of_deg_eq_one (h : v.deg = 1) : v.IsRational :=
-  (AlgebraicCurve.Place.isRational_iff_deg_eq_one v).2 h
-
-end Place
-
 namespace RationalFunctionField
 
 variable (K : Type*) [Field K]
@@ -71,37 +65,9 @@ theorem ord_finitePlace_ne_zero_iff {p : K[X]} (hp : Irreducible p) {q : K[X]} (
   rw [finitePlace, Place.ord_ofHeightOneSpectrum_ne_zero_iff (K := K) _ hq,
     heightOneSpectrumOfIrreducible_asIdeal, Ideal.mem_span_singleton]
 
-section PlaceInfty
-
-variable [DecidableEq (RatFunc K)]
-
-theorem placeInfty_ne_ofHeightOneSpectrum (w : HeightOneSpectrum K[X]) :
-    placeInfty K ≠ Place.ofHeightOneSpectrum w := by
-  intro h
-  refine RatFunc.adicValuation_not_isEquiv_infty_valuation w
-    ((Valuation.isEquiv_iff_valuationSubring _ _).mpr ?_)
-  have h2 := congrArg Place.toValuationSubring h
-  rw [placeInfty_toValuationSubring, Place.ofHeightOneSpectrum_toValuationSubring] at h2
-  exact h2.symm
-
-end PlaceInfty
-
 variable {K}
 
-section DegInfty
-
-variable (K) [DecidableEq (RatFunc K)]
-
-end DegInfty
-
 end RationalFunctionField
-
-namespace Place
-open AlgebraicCurve.Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-end Place
 
 namespace RationalFunctionField
 open AlgebraicCurve.RationalFunctionField
@@ -119,15 +85,6 @@ theorem ord_ofHeightOneSpectrum_eq_zero_of_notMem (w : HeightOneSpectrum K[X]) {
 section PlaceInftyOrd
 
 variable [DecidableEq (RatFunc K)]
-
-theorem ord_placeInfty {f : RatFunc K} (hf : f ≠ 0) :
-    (placeInfty K).ord f = -f.intDegree := by
-  have hπ : RatFunc.inftyValuation K (RatFunc.X)⁻¹ = exp (-1 : ℤ) := by
-    rw [map_inv₀, RatFunc.inftyValuation.X]
-    exact (exp_neg (1 : ℤ)).symm
-  rw [(placeInfty K).ord_eq_neg_log_of_valuationSubring_eq (RatFunc.inftyValuation K) rfl hπ
-      hf,
-    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero K hf, log_exp]
 
 theorem ord_placeInfty_algebraMap {q : K[X]} (hq : q ≠ 0) :
     (placeInfty K).ord (algebraMap K[X] (RatFunc K) q) = -(q.natDegree : ℤ) := by
@@ -147,18 +104,14 @@ private theorem single_add_single_apply_eq_ord_loc {p : K[X]} (hp : Irreducible 
   have hp0 : p ≠ 0 := hp.ne_zero
   rw [Finsupp.add_apply]
   rcases eq_ofHeightOneSpectrum_or_eq_placeInfty v with ⟨w, rfl⟩ | rfl
-  ·
-    rw [Finsupp.single_eq_of_ne (Ne.symm (placeInfty_ne_ofHeightOneSpectrum K w)), add_zero]
+  · rw [Finsupp.single_eq_of_ne (Ne.symm (placeInfty_ne_ofHeightOneSpectrum K w)), add_zero]
     by_cases hcase :
         Place.ofHeightOneSpectrum (K := K) (F := RatFunc K) w = finitePlace K hp
-    ·
-      rw [hcase, Finsupp.single_eq_same]
+    · rw [hcase, Finsupp.single_eq_same]
       exact (ord_ofHeightOneSpectrum_of_span (heightOneSpectrumOfIrreducible K hp) hp0
         (heightOneSpectrumOfIrreducible_asIdeal K hp)).symm
-    ·
-      rw [Finsupp.single_eq_of_ne hcase]
+    · rw [Finsupp.single_eq_of_ne hcase]
       refine (ord_ofHeightOneSpectrum_eq_zero_of_notMem w hp0 fun hmem => hcase ?_).symm
-
       have hspan : Ideal.span {p} = w.asIdeal :=
         (PrincipalIdealRing.isMaximal_of_irreducible hp).eq_of_le w.isPrime.ne_top
           ((Ideal.span_singleton_le_iff_mem _).mpr hmem)
@@ -166,8 +119,7 @@ private theorem single_add_single_apply_eq_ord_loc {p : K[X]} (hp : Irreducible 
         HeightOneSpectrum.ext
           (hspan.symm.trans (heightOneSpectrumOfIrreducible_asIdeal K hp).symm)
       rw [hwp, finitePlace_def]
-  ·
-    rw [Finsupp.single_eq_of_ne
+  · rw [Finsupp.single_eq_of_ne
         (show placeInfty K ≠ finitePlace K hp from
           placeInfty_ne_ofHeightOneSpectrum K (heightOneSpectrumOfIrreducible K hp)),
       Finsupp.single_eq_same, zero_add]
@@ -204,41 +156,31 @@ open AlgebraicCurve.RationalFunctionField
 
 variable (K : Type*) [Field K]
 
-theorem placeOfPoint_ne_placeInfty [DecidableEq (RatFunc K)] (a : K) :
-    placeOfPoint K a ≠ placeInfty K := by
-  rw [placeOfPoint_eq_ofHeightOneSpectrum]
-  exact fun h => placeInfty_ne_ofHeightOneSpectrum K _ h.symm
-
 variable {K}
 
 theorem ord_placeOfPoint_algebraMap_eq_mul (a : K) {q : K[X]} (hq : q ≠ 0) :
     (placeOfPoint K a).ord (algebraMap K[X] (RatFunc K) q)
       = (rootMultiplicity a q : ℤ)
           * (placeOfPoint K a).ord (algebraMap K[X] (RatFunc K) (X - C a)) := by
-
   obtain ⟨r, hr⟩ := pow_rootMultiplicity_dvd q a
   set m : ℕ := rootMultiplicity a q with hm
   have hXa : (X : K[X]) - C a ≠ 0 := X_sub_C_ne_zero a
   have hr0 : r ≠ 0 := by
     rintro rfl
     exact hq (by simpa using hr)
-
   have hndvd : ¬((X : K[X]) - C a) ∣ r := by
     intro ⟨s, hs⟩
     have : (X - C a) ^ (m + 1) ∣ q := ⟨s, by rw [hr, hs]; ring⟩
     have := (le_rootMultiplicity_iff hq).mpr this
     omega
-
   have hinj := IsFractionRing.injective K[X] (RatFunc K)
   have hXa' : algebraMap K[X] (RatFunc K) (X - C a) ≠ 0 := (map_ne_zero_iff _ hinj).mpr hXa
   have hr0' : algebraMap K[X] (RatFunc K) r ≠ 0 := (map_ne_zero_iff _ hinj).mpr hr0
   have hpow' : algebraMap K[X] (RatFunc K) ((X - C a) ^ m) ≠ 0 :=
     (map_ne_zero_iff _ hinj).mpr (pow_ne_zero m hXa)
-
   have hordr : (placeOfPoint K a).ord (algebraMap K[X] (RatFunc K) r) = 0 := by
     by_contra hcon
     exact hndvd (((ord_finitePlace_ne_zero_iff K (irreducible_X_sub_C a) hr0).mp) hcon)
-
   calc (placeOfPoint K a).ord (algebraMap K[X] (RatFunc K) q)
       = (placeOfPoint K a).ord (algebraMap K[X] (RatFunc K) ((X - C a) ^ m)
           * algebraMap K[X] (RatFunc K) r) := by rw [← map_mul, ← hr]
@@ -268,19 +210,15 @@ theorem ord_placeOfPoint_X_sub_C (a : K) :
     (placeOfPoint K a).ord (algebraMap K[X] (RatFunc K) (X - C a)) = 1 := by
   set v := placeOfPoint K a with hv
   set n : ℤ := v.ord (algebraMap K[X] (RatFunc K) (X - C a)) with hn
-
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
   have hπ0 : (π : RatFunc K) ≠ 0 := by
     simpa using hπ.ne_zero
   have h1 : v.ord (π : RatFunc K) = 1 := v.ord_coe_irreducible hπ
-
   have hdvd : n ∣ 1 := h1 ▸ dvd_ord_placeOfPoint a hπ0
-
   have hmem : algebraMap K[X] (RatFunc K) (X - C a) ∈ v.toValuationSubring := by
     rw [hv, placeOfPoint_eq_ofHeightOneSpectrum]
     exact algebraMap_mem_ofHeightOneSpectrum K _ _
   have hnonneg : 0 ≤ n := v.ord_nonneg_of_mem hmem
-
   rcases Int.isUnit_iff.mp (isUnit_of_dvd_one hdvd) with h | h
   · exact h
   · omega
@@ -298,16 +236,16 @@ open AlgebraicCurve.RationalFunctionField
 
 variable {K : Type*} [Field K]
 
-theorem algebraMap_polynomial_ne_zero {q : K[X]} (hq : q ≠ 0) :
-    algebraMap K[X] (RatFunc K) q ≠ 0 :=
-  RatFunc.algebraMap_ne_zero hq
-
 theorem algebraMap_C (c : K) :
     algebraMap K[X] (RatFunc K) (C c) = algebraMap K (RatFunc K) c := by
   rw [IsScalarTower.algebraMap_apply K K[X] (RatFunc K), Polynomial.algebraMap_eq]
 
+theorem isRational_placeOfPoint (a : K) : (placeOfPoint K a).IsRational :=
+  (Place.isRational_iff_deg_eq_one _).2 (deg_placeOfPoint K a)
+
 theorem evalAt_placeOfPoint_algebraMap (a : K) (q : K[X]) :
-    (placeOfPoint K a).evalAt (algebraMap K[X] (RatFunc K) q) = q.eval a := by
+    (placeOfPoint K a).evalAt (isRational_placeOfPoint a) (algebraMap K[X] (RatFunc K) q)
+      = q.eval a := by
   have hmem : algebraMap K[X] (RatFunc K) q ∈ (placeOfPoint K a).toValuationSubring :=
     algebraMap_mem_ofHeightOneSpectrum K _ q
   have hmem' : algebraMap K (RatFunc K) (q.eval a) ∈ (placeOfPoint K a).toValuationSubring :=
@@ -315,9 +253,11 @@ theorem evalAt_placeOfPoint_algebraMap (a : K) (q : K[X]) :
   have hsub : algebraMap K[X] (RatFunc K) q - algebraMap K (RatFunc K) (q.eval a)
       = algebraMap K[X] (RatFunc K) (q - C (q.eval a)) := by
     rw [map_sub, algebraMap_C]
-  have hcongr : (placeOfPoint K a).evalAt (algebraMap K[X] (RatFunc K) q)
-      = (placeOfPoint K a).evalAt (algebraMap K (RatFunc K) (q.eval a)) := by
-    refine Place.evalAt_congr _ hmem hmem' ?_
+  have hcongr :
+      (placeOfPoint K a).evalAt (isRational_placeOfPoint a) (algebraMap K[X] (RatFunc K) q)
+        = (placeOfPoint K a).evalAt (isRational_placeOfPoint a)
+            (algebraMap K (RatFunc K) (q.eval a)) := by
+    refine Place.evalAt_congr _ _ hmem hmem' ?_
     rw [hsub]
     rcases eq_or_ne (q - C (q.eval a)) 0 with h0 | h0
     · exact Or.inl (by rw [h0, map_zero])
@@ -329,7 +269,8 @@ theorem evalAt_placeOfPoint_algebraMap (a : K) (q : K[X]) :
   rw [hcongr, Place.evalAt_algebraMap]
 
 theorem evalAt_placeOfPoint_X_sub_C (a b : K) :
-    (placeOfPoint K a).evalAt (algebraMap K[X] (RatFunc K) (X - C b)) = a - b := by
+    (placeOfPoint K a).evalAt (isRational_placeOfPoint a) (algebraMap K[X] (RatFunc K) (X - C b))
+      = a - b := by
   rw [evalAt_placeOfPoint_algebraMap]
   simp
 
@@ -341,10 +282,14 @@ theorem mem_placeInfty_of_intDegree_nonpos {f : RatFunc K} (hf : f ≠ 0)
     (h : f.intDegree ≤ 0) : f ∈ (placeInfty K).toValuationSubring :=
   (placeInfty K).mem_of_ord_nonneg hf (by rw [ord_placeInfty hf]; omega)
 
+variable (K) in
+theorem isRational_placeInfty : (placeInfty K).IsRational :=
+  (Place.isRational_iff_deg_eq_one _).2 (deg_placeInfty K)
+
 theorem evalAt_placeInfty_eq {f : RatFunc K} {c : K}
     (h : f - algebraMap K (RatFunc K) c = 0
       ∨ (f - algebraMap K (RatFunc K) c).intDegree < 0) :
-    (placeInfty K).evalAt f = c := by
+    (placeInfty K).evalAt (isRational_placeInfty K) f = c := by
   have hsubmem : f - algebraMap K (RatFunc K) c ∈ (placeInfty K).toValuationSubring := by
     rcases h with h | h
     · rw [h]; exact zero_mem _
@@ -356,9 +301,9 @@ theorem evalAt_placeInfty_eq {f : RatFunc K} {c : K}
     have : f = (f - algebraMap K (RatFunc K) c) + algebraMap K (RatFunc K) c := by ring
     rw [this]
     exact add_mem hsubmem ((placeInfty K).algebraMap_mem' c)
-  have hcongr : (placeInfty K).evalAt f
-      = (placeInfty K).evalAt (algebraMap K (RatFunc K) c) := by
-    refine Place.evalAt_congr _ hmem ((placeInfty K).algebraMap_mem' c) ?_
+  have hcongr : (placeInfty K).evalAt (isRational_placeInfty K) f
+      = (placeInfty K).evalAt (isRational_placeInfty K) (algebraMap K (RatFunc K) c) := by
+    refine Place.evalAt_congr _ _ hmem ((placeInfty K).algebraMap_mem' c) ?_
     rcases h with h | h
     · exact Or.inl h
     · refine Or.inr ?_
@@ -371,11 +316,11 @@ theorem evalAt_placeInfty_eq {f : RatFunc K} {c : K}
   rw [hcongr, Place.evalAt_algebraMap]
 
 theorem evalAt_placeInfty_X_sub_C_div (a a₀ : K) :
-    (placeInfty K).evalAt
+    (placeInfty K).evalAt (isRational_placeInfty K)
         (algebraMap K[X] (RatFunc K) (X - C a) / algebraMap K[X] (RatFunc K) (X - C a₀))
       = 1 := by
   have ha₀ : algebraMap K[X] (RatFunc K) (X - C a₀) ≠ 0 :=
-    algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a₀)
+    RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)
   refine evalAt_placeInfty_eq ?_
   have hkey : algebraMap K[X] (RatFunc K) (X - C a) / algebraMap K[X] (RatFunc K) (X - C a₀)
         - algebraMap K (RatFunc K) 1
@@ -390,7 +335,7 @@ theorem evalAt_placeInfty_X_sub_C_div (a a₀ : K) :
   · refine Or.inr ?_
     have hC : (C (a₀ - a) : K[X]) ≠ 0 := by
       simpa [sub_eq_zero] using hne
-    rw [RatFunc.intDegree_div (algebraMap_polynomial_ne_zero hC) ha₀,
+    rw [RatFunc.intDegree_div (RatFunc.algebraMap_ne_zero hC) ha₀,
       RatFunc.intDegree_polynomial, RatFunc.intDegree_polynomial, natDegree_C,
       natDegree_X_sub_C]
     norm_num
@@ -402,7 +347,7 @@ section CrossRatio
 variable [DecidableEq (RatFunc K)]
 
 theorem principalDivisor_X_sub_C (b : K) :
-    principalDivisor (algebraMap_polynomial_ne_zero (X_sub_C_ne_zero b))
+    principalDivisor (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero b))
       = Finsupp.single (placeOfPoint K b) 1 + Finsupp.single (placeInfty K) (-1) := by
   ext v
   have h := single_add_single_apply_eq_ord_loc (irreducible_X_sub_C b) v
@@ -416,32 +361,33 @@ theorem ord_X_sub_C (b : K) (v : Place K (RatFunc K)) :
           + Finsupp.single (placeInfty K) (-1 : ℤ)) v := by
   rw [← principalDivisor_X_sub_C b, principalDivisor_apply]
 
+omit [DecidableEq (RatFunc K)] in
 theorem ord_X_sub_C_placeOfPoint_of_ne {a b : K} (hab : a ≠ b) :
     (placeOfPoint K a).ord (algebraMap K[X] (RatFunc K) (X - C b)) = 0 := by
+  classical
   rw [ord_X_sub_C, Finsupp.add_apply,
     Finsupp.single_eq_of_ne
       (show placeOfPoint K a ≠ placeOfPoint K b from
         fun h => hab (placeOfPoint_injective K h)),
     Finsupp.single_eq_of_ne (placeOfPoint_ne_placeInfty K a), add_zero]
 
+omit [DecidableEq (RatFunc K)] in
 theorem ord_X_sub_C_placeOfPoint_self (b : K) :
     (placeOfPoint K b).ord (algebraMap K[X] (RatFunc K) (X - C b)) = 1 := by
+  classical
   rw [ord_X_sub_C, Finsupp.add_apply, Finsupp.single_eq_same,
     Finsupp.single_eq_of_ne (placeOfPoint_ne_placeInfty K b), add_zero]
 
 omit [DecidableEq (RatFunc K)] in
-
-theorem isRational_placeOfPoint (a : K) : (placeOfPoint K a).IsRational :=
-  Place.isRational_of_deg_eq_one _ (deg_placeOfPoint K a)
-
 theorem principalDivisor_X_sub_C_div (a a₀ : K) :
-    principalDivisor (div_ne_zero (algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a))
-        (algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a₀)))
+    principalDivisor (div_ne_zero (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a))
+        (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)))
       = Finsupp.single (placeOfPoint K a) 1 + Finsupp.single (placeOfPoint K a₀) (-1) := by
+  classical
   have hLa : algebraMap K[X] (RatFunc K) (X - C a) ≠ 0 :=
-    algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a)
+    RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a)
   have hLa₀ : algebraMap K[X] (RatFunc K) (X - C a₀) ≠ 0 :=
-    algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a₀)
+    RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)
   ext v
   have hneg : (Finsupp.single (placeOfPoint K a₀) (-1 : ℤ)) v
       = -((Finsupp.single (placeOfPoint K a₀) (1 : ℤ)) v) := by
@@ -454,12 +400,14 @@ theorem principalDivisor_X_sub_C_div (a a₀ : K) :
   rw [hneg]
   ring
 
+omit [DecidableEq (RatFunc K)] in
 theorem evalAt_placeOfPoint_X_sub_C_div (a a₀ : K) {b : K} (hba₀ : b ≠ a₀) :
-    (placeOfPoint K b).evalAt
+    (placeOfPoint K b).evalAt (isRational_placeOfPoint b)
         (algebraMap K[X] (RatFunc K) (X - C a) / algebraMap K[X] (RatFunc K) (X - C a₀))
       = (b - a) / (b - a₀) := by
+  classical
   have hLa₀ : algebraMap K[X] (RatFunc K) (X - C a₀) ≠ 0 :=
-    algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a₀)
+    RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)
   have hord : (placeOfPoint K b).ord (algebraMap K[X] (RatFunc K) (X - C a₀)) = 0 :=
     ord_X_sub_C_placeOfPoint_of_ne hba₀
   rw [div_eq_mul_inv, (placeOfPoint K b).evalAt_mul (isRational_placeOfPoint b)
@@ -476,25 +424,26 @@ section Reciprocity
 variable [IsAlgClosed K] [DecidableEq (RatFunc K)]
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem isRational_of_isAlgClosed (v : Place K (RatFunc K)) : v.IsRational :=
-  Place.isRational_of_deg_eq_one v (deg_eq_one_of_isAlgClosed K v)
+  (Place.isRational_iff_deg_eq_one v).2 (deg_eq_one_of_isAlgClosed K v)
+
+/-- Evaluation on a divisor of `RatFunc K`, every place being rational over an algebraically
+closed `K`. -/
+local notation "evalFunR " f:max D:max =>
+  CurveDivisor.evalFun f D (fun v _ => isRational_of_isAlgClosed v)
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
-
 theorem algebraMap_const_ne_zero {c : K} (hc : c ≠ 0) : algebraMap K (RatFunc K) c ≠ 0 := by
   simpa using hc
 
 local instance : DecidableEq (Place K (RatFunc K)) := Classical.decEq _
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
-
 theorem ord_ne_zero_of_mem_support {g : RatFunc K} (hg : g ≠ 0) {v : Place K (RatFunc K)}
     (hv : v ∈ (principalDivisor hg).support) : v.ord g ≠ 0 := by
   rwa [Finsupp.mem_support_iff, principalDivisor_apply] at hv
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem sum_ord_eq_zero {f : RatFunc K} (hf : f ≠ 0) :
     ∑ v ∈ (principalDivisor hf).support, v.ord f = 0 := by
   rw [← sum_ord_mul_deg_eq_zero hf]
@@ -502,7 +451,6 @@ theorem sum_ord_eq_zero {f : RatFunc K} (hf : f ≠ 0) :
     rw [deg_eq_one_of_isAlgClosed K v, Nat.cast_one, mul_one]
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
-
 theorem zpow_sum_eq_prod {c : K} (hc : c ≠ 0) {ι : Type*} (s : Finset ι) (n : ι → ℤ) :
     ∏ i ∈ s, c ^ n i = c ^ (∑ i ∈ s, n i) := by
   induction s using Finset.cons_induction with
@@ -510,108 +458,102 @@ theorem zpow_sum_eq_prod {c : K} (hc : c ≠ 0) {ι : Type*} (s : Finset ι) (n 
   | cons a s ha ih => rw [Finset.prod_cons, Finset.sum_cons, zpow_add₀ hc, ih]
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
-
 theorem principalDivisor_congr {f g : RatFunc K} (hf : f ≠ 0) (hg : g ≠ 0) (h : f = g) :
     principalDivisor hf = principalDivisor hg := by
   subst h
   rfl
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem reciprocity_algebraMap_right {f : RatFunc K} (hf : f ≠ 0) {c : K} (hc : c ≠ 0) :
-    Divisor.evalFun f (principalDivisor (algebraMap_const_ne_zero hc))
-      = Divisor.evalFun (algebraMap K (RatFunc K) c) (principalDivisor hf) := by
+    evalFunR f (principalDivisor (algebraMap_const_ne_zero hc))
+      = evalFunR (algebraMap K (RatFunc K) c) (principalDivisor hf) := by
   have hzero : principalDivisor (algebraMap_const_ne_zero hc) = 0 := by
     ext v
     rw [principalDivisor_apply, v.ord_algebraMap, Finsupp.coe_zero, Pi.zero_apply]
-  rw [hzero, Divisor.evalFun_zero, Divisor.evalFun_def]
-  rw [Finset.prod_congr rfl fun v _ => by rw [Place.evalAt_algebraMap],
-    zpow_sum_eq_prod hc]
+  rw [hzero, CurveDivisor.evalFun_zero, CurveDivisor.evalFun_def,
+    Finset.prod_attach (principalDivisor hf).support fun v =>
+      v.evalAt (isRational_of_isAlgClosed v) (algebraMap K (RatFunc K) c) ^ principalDivisor hf v,
+    Finset.prod_congr rfl fun v _ => by rw [Place.evalAt_algebraMap], zpow_sum_eq_prod hc]
   rw [show ∑ v ∈ (principalDivisor hf).support, principalDivisor hf v
       = ∑ v ∈ (principalDivisor hf).support, v.ord f from
     Finset.sum_congr rfl fun v _ => principalDivisor_apply hf v, sum_ord_eq_zero hf,
     zpow_zero]
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem reciprocity_mul_right {f g₁ g₂ : RatFunc K} (hf : f ≠ 0) (hg₁ : g₁ ≠ 0) (hg₂ : g₂ ≠ 0)
     (hd₁ : ∀ v : Place K (RatFunc K), v.ord f = 0 ∨ v.ord g₁ = 0)
     (hd₂ : ∀ v : Place K (RatFunc K), v.ord f = 0 ∨ v.ord g₂ = 0)
-    (h₁ : Divisor.evalFun f (principalDivisor hg₁) = Divisor.evalFun g₁ (principalDivisor hf))
-    (h₂ : Divisor.evalFun f (principalDivisor hg₂)
-      = Divisor.evalFun g₂ (principalDivisor hf)) :
-    Divisor.evalFun f (principalDivisor (mul_ne_zero hg₁ hg₂))
-      = Divisor.evalFun (g₁ * g₂) (principalDivisor hf) := by
+    (h₁ : evalFunR f (principalDivisor hg₁) = evalFunR g₁ (principalDivisor hf))
+    (h₂ : evalFunR f (principalDivisor hg₂)
+      = evalFunR g₂ (principalDivisor hf)) :
+    evalFunR f (principalDivisor (mul_ne_zero hg₁ hg₂))
+      = evalFunR (g₁ * g₂) (principalDivisor hf) := by
   have hsplit : principalDivisor (mul_ne_zero hg₁ hg₂)
       = principalDivisor hg₁ + principalDivisor hg₂ := by
     ext v
     rw [principalDivisor_apply, Finsupp.add_apply, principalDivisor_apply,
       principalDivisor_apply, v.ord_mul hg₁ hg₂]
   rw [hsplit,
-    Divisor.evalFun_add f
-      (fun v hv => v.evalAt_ne_zero (isRational_of_isAlgClosed v) hf
-        ((hd₁ v).resolve_right (ord_ne_zero_of_mem_support hg₁ hv)))
-      (fun v hv => v.evalAt_ne_zero (isRational_of_isAlgClosed v) hf
-        ((hd₂ v).resolve_right (ord_ne_zero_of_mem_support hg₂ hv))),
+    CurveDivisor.evalFun_add f (fun v _ => isRational_of_isAlgClosed v)
+      (fun v _ => isRational_of_isAlgClosed v) (fun v _ => isRational_of_isAlgClosed v)
+      (fun v hv hvD => v.evalAt_ne_zero hv hf
+        ((hd₁ v).resolve_right (ord_ne_zero_of_mem_support hg₁ hvD)))
+      (fun v hv hvD => v.evalAt_ne_zero hv hf
+        ((hd₂ v).resolve_right (ord_ne_zero_of_mem_support hg₂ hvD))),
     h₁, h₂,
-    ← Divisor.evalFun_mul (fun v _ => isRational_of_isAlgClosed v)
+    ← CurveDivisor.evalFun_mul (fun v _ => isRational_of_isAlgClosed v)
       (fun v hv => v.mem_of_ord_nonneg hg₁
         ((hd₁ v).resolve_left (ord_ne_zero_of_mem_support hf hv)).ge)
       (fun v hv => v.mem_of_ord_nonneg hg₂
         ((hd₂ v).resolve_left (ord_ne_zero_of_mem_support hf hv)).ge)]
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem reciprocity_mul_left {f₁ f₂ g : RatFunc K} (hf₁ : f₁ ≠ 0) (hf₂ : f₂ ≠ 0) (hg : g ≠ 0)
     (hd₁ : ∀ v : Place K (RatFunc K), v.ord f₁ = 0 ∨ v.ord g = 0)
     (hd₂ : ∀ v : Place K (RatFunc K), v.ord f₂ = 0 ∨ v.ord g = 0)
-    (h₁ : Divisor.evalFun f₁ (principalDivisor hg) = Divisor.evalFun g (principalDivisor hf₁))
-    (h₂ : Divisor.evalFun f₂ (principalDivisor hg)
-      = Divisor.evalFun g (principalDivisor hf₂)) :
-    Divisor.evalFun (f₁ * f₂) (principalDivisor hg)
-      = Divisor.evalFun g (principalDivisor (mul_ne_zero hf₁ hf₂)) :=
+    (h₁ : evalFunR f₁ (principalDivisor hg) = evalFunR g (principalDivisor hf₁))
+    (h₂ : evalFunR f₂ (principalDivisor hg)
+      = evalFunR g (principalDivisor hf₂)) :
+    evalFunR (f₁ * f₂) (principalDivisor hg)
+      = evalFunR g (principalDivisor (mul_ne_zero hf₁ hf₂)) :=
   (reciprocity_mul_right hg hf₁ hf₂ (fun v => (hd₁ v).symm) (fun v => (hd₂ v).symm)
     h₁.symm h₂.symm).symm
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem reciprocity_zpow_right {f g : RatFunc K} (hf : f ≠ 0) (hg : g ≠ 0) (n : ℤ)
     (hd : ∀ v : Place K (RatFunc K), v.ord f = 0 ∨ v.ord g = 0)
-    (h : Divisor.evalFun f (principalDivisor hg)
-      = Divisor.evalFun g (principalDivisor hf)) :
-    Divisor.evalFun f (principalDivisor (zpow_ne_zero n hg))
-      = Divisor.evalFun (g ^ n) (principalDivisor hf) := by
+    (h : evalFunR f (principalDivisor hg)
+      = evalFunR g (principalDivisor hf)) :
+    evalFunR f (principalDivisor (zpow_ne_zero n hg))
+      = evalFunR (g ^ n) (principalDivisor hf) := by
   have hsplit : principalDivisor (zpow_ne_zero n hg) = n • principalDivisor hg := by
     ext v
     rw [principalDivisor_apply, Finsupp.smul_apply, principalDivisor_apply, v.ord_zpow,
       smul_eq_mul]
-  rw [hsplit, Divisor.evalFun_zsmul, h,
-    ← Divisor.evalFun_zpow_left hg n (fun v _ => isRational_of_isAlgClosed v)
+  rw [hsplit, CurveDivisor.evalFun_zsmul f _ n fun v _ => isRational_of_isAlgClosed v, h,
+    ← CurveDivisor.evalFun_zpow_left hg n (fun v _ => isRational_of_isAlgClosed v)
       (fun v hv => (hd v).resolve_left (ord_ne_zero_of_mem_support hf hv))]
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem reciprocity_zpow_left {f g : RatFunc K} (hf : f ≠ 0) (hg : g ≠ 0) (n : ℤ)
     (hd : ∀ v : Place K (RatFunc K), v.ord f = 0 ∨ v.ord g = 0)
-    (h : Divisor.evalFun f (principalDivisor hg)
-      = Divisor.evalFun g (principalDivisor hf)) :
-    Divisor.evalFun (f ^ n) (principalDivisor hg)
-      = Divisor.evalFun g (principalDivisor (zpow_ne_zero n hf)) :=
+    (h : evalFunR f (principalDivisor hg)
+      = evalFunR g (principalDivisor hf)) :
+    evalFunR (f ^ n) (principalDivisor hg)
+      = evalFunR g (principalDivisor (zpow_ne_zero n hf)) :=
   (reciprocity_zpow_right hg hf n (fun v => (hd v).symm) h.symm).symm
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
-
 theorem exists_algebraMap_of_forall_ord_eq_zero {g : RatFunc K} (hg : g ≠ 0)
     (h : ∀ v : Place K (RatFunc K), v.ord g = 0) :
     ∃ c : K, c ≠ 0 ∧ g = algebraMap K (RatFunc K) c := by
   have hnum0 : g.num ≠ 0 := RatFunc.num_ne_zero hg
   have hden0 : g.denom ≠ 0 := g.denom_ne_zero
-  have hnum0' : algebraMap K[X] (RatFunc K) g.num ≠ 0 := algebraMap_polynomial_ne_zero hnum0
-  have hden0' : algebraMap K[X] (RatFunc K) g.denom ≠ 0 := algebraMap_polynomial_ne_zero hden0
+  have hnum0' : algebraMap K[X] (RatFunc K) g.num ≠ 0 := RatFunc.algebraMap_ne_zero hnum0
+  have hden0' : algebraMap K[X] (RatFunc K) g.denom ≠ 0 := RatFunc.algebraMap_ne_zero hden0
   have hsplit : g = algebraMap K[X] (RatFunc K) g.num
       * (algebraMap K[X] (RatFunc K) g.denom)⁻¹ := by
     rw [← div_eq_mul_inv, g.num_div_denom]
-
   have hkey : ∀ p : K[X], Irreducible p → ¬p ∣ g.num ∧ ¬p ∣ g.denom := by
     intro p hpirr
     have hord : (finitePlace K hpirr).ord (algebraMap K[X] (RatFunc K) g.num)
@@ -645,47 +587,58 @@ theorem exists_algebraMap_of_forall_ord_eq_zero {g : RatFunc K} (hg : g ≠ 0)
   refine ⟨c₁ / c₂, div_ne_zero hc₁0 hc₂0, ?_⟩
   rw [← g.num_div_denom, ← hc₁, ← hc₂, algebraMap_C, algebraMap_C, map_div₀]
 
-omit [IsAlgClosed K] in
-
-theorem crossRatio_reciprocity {a a₀ b : K} (hba : b ≠ a) (hba₀ : b ≠ a₀) :
-    Divisor.evalFun
+omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
+theorem crossRatio_reciprocity {a a₀ b : K} (hba : b ≠ a) (hba₀ : b ≠ a₀)
+    (hD₁ : ∀ v ∈ (principalDivisor (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero b))).support,
+      v.IsRational)
+    (hD₂ : ∀ v ∈ (principalDivisor (div_ne_zero (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a))
+      (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)))).support, v.IsRational) :
+    CurveDivisor.evalFun
         (algebraMap K[X] (RatFunc K) (X - C a) / algebraMap K[X] (RatFunc K) (X - C a₀))
-        (principalDivisor (algebraMap_polynomial_ne_zero (X_sub_C_ne_zero b)))
-      = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b))
-        (principalDivisor (div_ne_zero (algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a))
-          (algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a₀)))) := by
-  rw [principalDivisor_X_sub_C b, principalDivisor_X_sub_C_div a a₀,
-    Divisor.evalFun_single_sub_single _
-      (by rw [evalAt_placeOfPoint_X_sub_C_div a a₀ hba₀]
-          exact div_ne_zero (sub_ne_zero.mpr hba) (sub_ne_zero.mpr hba₀))
-      (by rw [evalAt_placeInfty_X_sub_C_div a a₀]; exact one_ne_zero),
-    Divisor.evalFun_single_sub_single _
-      (by rw [evalAt_placeOfPoint_X_sub_C]
-          exact sub_ne_zero.mpr fun h => hba h.symm)
-      (by rw [evalAt_placeOfPoint_X_sub_C]
-          exact sub_ne_zero.mpr fun h => hba₀ h.symm),
-    evalAt_placeOfPoint_X_sub_C_div a a₀ hba₀, evalAt_placeInfty_X_sub_C_div a a₀,
-    evalAt_placeOfPoint_X_sub_C, evalAt_placeOfPoint_X_sub_C, div_one]
-  rw [div_eq_div_iff (sub_ne_zero.mpr hba₀) (sub_ne_zero.mpr fun h => hba₀ h.symm)]
-  ring
+        (principalDivisor (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero b))) hD₁
+      = CurveDivisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b))
+        (principalDivisor (div_ne_zero (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a))
+          (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)))) hD₂ := by
+  classical
+  have key : ∀ (D₁ D₂ : Divisor K (RatFunc K)) (h₁ : ∀ v ∈ D₁.support, v.IsRational)
+      (h₂ : ∀ v ∈ D₂.support, v.IsRational),
+      D₁ = Finsupp.single (placeOfPoint K b) 1 + Finsupp.single (placeInfty K) (-1) →
+      D₂ = Finsupp.single (placeOfPoint K a) 1 + Finsupp.single (placeOfPoint K a₀) (-1) →
+      CurveDivisor.evalFun
+          (algebraMap K[X] (RatFunc K) (X - C a) / algebraMap K[X] (RatFunc K) (X - C a₀)) D₁ h₁
+        = CurveDivisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b)) D₂ h₂ := by
+    rintro D₁ D₂ h₁ h₂ rfl rfl
+    rw [CurveDivisor.evalFun_single_sub_single _ (isRational_placeOfPoint b)
+        (isRational_placeInfty K)
+        (by rw [evalAt_placeOfPoint_X_sub_C_div a a₀ hba₀]
+            exact div_ne_zero (sub_ne_zero.mpr hba) (sub_ne_zero.mpr hba₀))
+        (by rw [evalAt_placeInfty_X_sub_C_div a a₀]; exact one_ne_zero),
+      CurveDivisor.evalFun_single_sub_single _ (isRational_placeOfPoint a)
+        (isRational_placeOfPoint a₀)
+        (by rw [evalAt_placeOfPoint_X_sub_C]
+            exact sub_ne_zero.mpr fun h => hba h.symm)
+        (by rw [evalAt_placeOfPoint_X_sub_C]
+            exact sub_ne_zero.mpr fun h => hba₀ h.symm),
+      evalAt_placeOfPoint_X_sub_C_div a a₀ hba₀, evalAt_placeInfty_X_sub_C_div a a₀,
+      evalAt_placeOfPoint_X_sub_C, evalAt_placeOfPoint_X_sub_C, div_one]
+    rw [div_eq_div_iff (sub_ne_zero.mpr hba₀) (sub_ne_zero.mpr fun h => hba₀ h.symm)]
+    ring
+  exact key _ _ hD₁ hD₂ (principalDivisor_X_sub_C b) (principalDivisor_X_sub_C_div a a₀)
 
 omit [DecidableEq (RatFunc K)] in
-
 theorem reciprocity_of_forall_ord_eq_zero {f g : RatFunc K} (hf : f ≠ 0) (hg : g ≠ 0)
     (hzero : ∀ v : Place K (RatFunc K), v.ord g = 0) :
-    Divisor.evalFun f (principalDivisor hg) = Divisor.evalFun g (principalDivisor hf) := by
+    evalFunR f (principalDivisor hg) = evalFunR g (principalDivisor hf) := by
   obtain ⟨c, hc, rfl⟩ := exists_algebraMap_of_forall_ord_eq_zero hg hzero
   exact reciprocity_algebraMap_right hf hc
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
-
 theorem ord_div_zpow (v : Place K (RatFunc K)) {g h : RatFunc K} (hg : g ≠ 0) (hh : h ≠ 0)
     (m : ℤ) : v.ord (g / h ^ m) = v.ord g - m * v.ord h := by
   rw [div_eq_mul_inv, v.ord_mul hg (inv_ne_zero (zpow_ne_zero m hh)), v.ord_inv, v.ord_zpow,
     sub_eq_add_neg]
 
 omit [IsAlgClosed K] in
-
 theorem ord_X_sub_C_eq_zero_of_ne (b : K) {v : Place K (RatFunc K)}
     (hvb : v ≠ placeOfPoint K b) (hvinf : v ≠ placeInfty K) :
     v.ord (algebraMap K[X] (RatFunc K) (X - C b)) = 0 := by
@@ -696,11 +649,11 @@ theorem reciprocity_linear (b : K) :
     ∀ (n : ℕ) (f : RatFunc K) (hf : f ≠ 0),
       (placeInfty K).ord f = 0 → (placeOfPoint K b).ord f = 0 →
       (principalDivisor hf).support.card ≤ n →
-      Divisor.evalFun f
-          (principalDivisor (algebraMap_polynomial_ne_zero (X_sub_C_ne_zero b)))
-        = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf) := by
+      evalFunR f
+          (principalDivisor (RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero b)))
+        = evalFunR (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf) := by
   have hLb : algebraMap K[X] (RatFunc K) (X - C b) ≠ 0 :=
-    algebraMap_polynomial_ne_zero (X_sub_C_ne_zero b)
+    RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero b)
   intro n
   induction n with
   | zero =>
@@ -715,7 +668,6 @@ theorem reciprocity_linear (b : K) :
     · refine (reciprocity_of_forall_ord_eq_zero hLb hf fun v => ?_).symm
       rw [← principalDivisor_apply hf v, Finsupp.support_eq_empty.mp hempty]
       rfl
-
     have hsum := sum_ord_eq_zero hf
     have hexpos : ∃ v ∈ (principalDivisor hf).support, 0 < v.ord f := by
       by_contra hcon
@@ -751,7 +703,6 @@ theorem reciprocity_linear (b : K) :
       · exact h
       · rw [h, hinf] at hvn
         exact absurd hvn (lt_irrefl 0)
-
     have hab : a ≠ b := by
       rintro rfl
       rw [hb] at hvp
@@ -764,11 +715,10 @@ theorem reciprocity_linear (b : K) :
       intro h
       rw [h] at hvp
       omega
-
     have hLa : algebraMap K[X] (RatFunc K) (X - C a) ≠ 0 :=
-      algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a)
+      RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a)
     have hLa₀ : algebraMap K[X] (RatFunc K) (X - C a₀) ≠ 0 :=
-      algebraMap_polynomial_ne_zero (X_sub_C_ne_zero a₀)
+      RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero a₀)
     have hrne : algebraMap K[X] (RatFunc K) (X - C a) / algebraMap K[X] (RatFunc K) (X - C a₀)
         ≠ 0 := div_ne_zero hLa hLa₀
     have hord_r : ∀ v : Place K (RatFunc K),
@@ -779,7 +729,6 @@ theorem reciprocity_linear (b : K) :
     set m : ℤ := (placeOfPoint K a).ord f with hm
     have hrm_ne : (algebraMap K[X] (RatFunc K) (X - C a)
         / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m ≠ 0 := zpow_ne_zero m hrne
-
     have hf' : f / (algebraMap K[X] (RatFunc K) (X - C a)
         / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m ≠ 0 := div_ne_zero hf hrm_ne
     have hord_f' : ∀ v : Place K (RatFunc K),
@@ -788,7 +737,6 @@ theorem reciprocity_linear (b : K) :
           = v.ord f - m * (Finsupp.single (placeOfPoint K a) (1 : ℤ)
               + Finsupp.single (placeOfPoint K a₀) (-1 : ℤ)) v := fun v => by
       rw [ord_div_zpow v hf hrne m, hord_r v]
-
     have hf'_inf : (placeInfty K).ord (f / (algebraMap K[X] (RatFunc K) (X - C a)
         / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m) = 0 := by
       rw [hord_f', hinf, Finsupp.add_apply,
@@ -810,7 +758,6 @@ theorem reciprocity_linear (b : K) :
       rw [hord_f', Finsupp.add_apply, Finsupp.single_eq_same,
         Finsupp.single_eq_of_ne haa₀, ← hm]
       ring
-
     have hsupp' : (principalDivisor hf').support
         ⊆ (principalDivisor hf).support.erase (placeOfPoint K a) := by
       intro v hv
@@ -835,7 +782,6 @@ theorem reciprocity_linear (b : K) :
       have h1 := Finset.card_le_card hsupp'
       rw [Finset.card_erase_of_mem hvp_mem] at h1
       omega
-
     have hd_r_Lb : ∀ v : Place K (RatFunc K),
         v.ord (algebraMap K[X] (RatFunc K) (X - C a)
             / algebraMap K[X] (RatFunc K) (X - C a₀)) = 0
@@ -864,45 +810,44 @@ theorem reciprocity_linear (b : K) :
       rcases eq_or_ne v (placeInfty K) with rfl | hvinf
       · exact Or.inl hf'_inf
       · exact Or.inr (ord_X_sub_C_eq_zero_of_ne b hvb hvinf)
-
     have hcross_pow :
-        Divisor.evalFun ((algebraMap K[X] (RatFunc K) (X - C a)
+        evalFunR ((algebraMap K[X] (RatFunc K) (X - C a)
             / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m)
           (principalDivisor hLb)
-        = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b))
+        = evalFunR (algebraMap K[X] (RatFunc K) (X - C b))
             (principalDivisor (zpow_ne_zero m hrne)) :=
       reciprocity_zpow_left hrne hLb m hd_r_Lb
-        (crossRatio_reciprocity (fun h => hab h.symm) (fun h => ha₀b h.symm))
+        (crossRatio_reciprocity (fun h => hab h.symm) (fun h => ha₀b h.symm)
+          (fun v _ => isRational_of_isAlgClosed v) (fun v _ => isRational_of_isAlgClosed v))
     have hih :
-        Divisor.evalFun (f / (algebraMap K[X] (RatFunc K) (X - C a)
+        evalFunR (f / (algebraMap K[X] (RatFunc K) (X - C a)
             / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m)
           (principalDivisor hLb)
-        = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf') :=
+        = evalFunR (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf') :=
       ih _ hf' hf'_inf hf'_b hcard'
     have hmul :
-        Divisor.evalFun ((algebraMap K[X] (RatFunc K) (X - C a)
+        evalFunR ((algebraMap K[X] (RatFunc K) (X - C a)
               / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m
             * (f / (algebraMap K[X] (RatFunc K) (X - C a)
               / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m))
           (principalDivisor hLb)
-        = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b))
+        = evalFunR (algebraMap K[X] (RatFunc K) (X - C b))
             (principalDivisor (mul_ne_zero (zpow_ne_zero m hrne) hf')) :=
       reciprocity_mul_left (zpow_ne_zero m hrne) hf' hLb hd_rm_Lb hd_f'_Lb hcross_pow hih
-
     have hfeq : f = (algebraMap K[X] (RatFunc K) (X - C a)
         / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m
         * (f / (algebraMap K[X] (RatFunc K) (X - C a)
           / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m) := by
       rw [mul_comm, div_mul_cancel₀ _ hrm_ne]
-    calc Divisor.evalFun f (principalDivisor hLb)
-        = Divisor.evalFun ((algebraMap K[X] (RatFunc K) (X - C a)
+    calc evalFunR f (principalDivisor hLb)
+        = evalFunR ((algebraMap K[X] (RatFunc K) (X - C a)
               / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m
             * (f / (algebraMap K[X] (RatFunc K) (X - C a)
               / algebraMap K[X] (RatFunc K) (X - C a₀)) ^ m))
           (principalDivisor hLb) := by rw [← hfeq]
-      _ = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b))
+      _ = evalFunR (algebraMap K[X] (RatFunc K) (X - C b))
             (principalDivisor (mul_ne_zero (zpow_ne_zero m hrne) hf')) := hmul
-      _ = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf) := by
+      _ = evalFunR (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf) := by
           rw [principalDivisor_congr (mul_ne_zero (zpow_ne_zero m hrne) hf') hf hfeq.symm]
 
 theorem reciprocity_of_ord_placeInfty_eq_zero :
@@ -910,11 +855,10 @@ theorem reciprocity_of_ord_placeInfty_eq_zero :
       (placeInfty K).ord f = 0 →
       (∀ v : Place K (RatFunc K), v.ord f = 0 ∨ v.ord g = 0) →
       ((principalDivisor hg).support.erase (placeInfty K)).card ≤ n →
-      Divisor.evalFun f (principalDivisor hg) = Divisor.evalFun g (principalDivisor hf) := by
-
+      evalFunR f (principalDivisor hg) = evalFunR g (principalDivisor hf) := by
   have hbase : ∀ (f g : RatFunc K) (hf : f ≠ 0) (hg : g ≠ 0),
       (principalDivisor hg).support.erase (placeInfty K) = ∅ →
-      Divisor.evalFun f (principalDivisor hg) = Divisor.evalFun g (principalDivisor hf) := by
+      evalFunR f (principalDivisor hg) = evalFunR g (principalDivisor hf) := by
     intro f g hf hg hempty
     refine reciprocity_of_forall_ord_eq_zero hf hg fun v => ?_
     by_contra hv
@@ -943,7 +887,6 @@ theorem reciprocity_of_ord_placeInfty_eq_zero :
     rcases Finset.eq_empty_or_nonempty
       ((principalDivisor hg).support.erase (placeInfty K)) with hempty | hne
     · exact hbase f g hf hg hempty
-
     obtain ⟨vb, hvb⟩ := hne
     rw [Finset.mem_erase] at hvb
     obtain ⟨b, rfl⟩ : ∃ x : K, vb = placeOfPoint K x := by
@@ -953,10 +896,9 @@ theorem reciprocity_of_ord_placeInfty_eq_zero :
     have hordb : (placeOfPoint K b).ord g ≠ 0 := ord_ne_zero_of_mem_support hg hvb.2
     have hfb : (placeOfPoint K b).ord f = 0 := (hd _).resolve_right hordb
     have hLb : algebraMap K[X] (RatFunc K) (X - C b) ≠ 0 :=
-      algebraMap_polynomial_ne_zero (X_sub_C_ne_zero b)
+      RatFunc.algebraMap_ne_zero (X_sub_C_ne_zero b)
     set m : ℤ := (placeOfPoint K b).ord g with hm
     have hLbm : (algebraMap K[X] (RatFunc K) (X - C b)) ^ m ≠ 0 := zpow_ne_zero m hLb
-
     have hg' : g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m ≠ 0 := div_ne_zero hg hLbm
     have hord_g' : ∀ v : Place K (RatFunc K),
         v.ord (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m)
@@ -966,7 +908,6 @@ theorem reciprocity_of_ord_placeInfty_eq_zero :
         (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m) = 0 := by
       rw [hord_g', ord_X_sub_C_placeOfPoint_self, ← hm]
       ring
-
     have hsupp' : (principalDivisor hg').support.erase (placeInfty K)
         ⊆ ((principalDivisor hg).support.erase (placeInfty K)).erase (placeOfPoint K b) := by
       intro v hv
@@ -986,7 +927,6 @@ theorem reciprocity_of_ord_placeInfty_eq_zero :
       have h1 := Finset.card_le_card hsupp'
       rw [Finset.card_erase_of_mem (Finset.mem_erase.mpr hvb)] at h1
       omega
-
     have hd_f_Lb : ∀ v : Place K (RatFunc K),
         v.ord f = 0 ∨ v.ord (algebraMap K[X] (RatFunc K) (X - C b)) = 0 := by
       intro v
@@ -1006,36 +946,34 @@ theorem reciprocity_of_ord_placeInfty_eq_zero :
       · refine Or.inr ?_
         rw [hord_g' v, (hd v).resolve_left hv, (hd_f_Lb v).resolve_left hv, mul_zero,
           sub_zero]
-
     have hlin :
-        Divisor.evalFun f (principalDivisor hLb)
-          = Divisor.evalFun (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf) :=
+        evalFunR f (principalDivisor hLb)
+          = evalFunR (algebraMap K[X] (RatFunc K) (X - C b)) (principalDivisor hf) :=
       reciprocity_linear b (principalDivisor hf).support.card f hf hinf hfb le_rfl
     have hlin_pow :
-        Divisor.evalFun f (principalDivisor hLbm)
-          = Divisor.evalFun ((algebraMap K[X] (RatFunc K) (X - C b)) ^ m)
+        evalFunR f (principalDivisor hLbm)
+          = evalFunR ((algebraMap K[X] (RatFunc K) (X - C b)) ^ m)
               (principalDivisor hf) :=
       reciprocity_zpow_right hf hLb m hd_f_Lb hlin
     have hih :
-        Divisor.evalFun f (principalDivisor hg')
-          = Divisor.evalFun (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m)
+        evalFunR f (principalDivisor hg')
+          = evalFunR (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m)
               (principalDivisor hf) :=
       ih f _ hf hg' hinf hd_f_g' hcard'
     have hmul :
-        Divisor.evalFun f (principalDivisor (mul_ne_zero hLbm hg'))
-          = Divisor.evalFun ((algebraMap K[X] (RatFunc K) (X - C b)) ^ m
+        evalFunR f (principalDivisor (mul_ne_zero hLbm hg'))
+          = evalFunR ((algebraMap K[X] (RatFunc K) (X - C b)) ^ m
               * (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m)) (principalDivisor hf) :=
       reciprocity_mul_right hf hLbm hg' hd_f_Lbm hd_f_g' hlin_pow hih
-
     have hgeq : g = (algebraMap K[X] (RatFunc K) (X - C b)) ^ m
         * (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m) := by
       rw [mul_comm, div_mul_cancel₀ _ hLbm]
-    calc Divisor.evalFun f (principalDivisor hg)
-        = Divisor.evalFun f (principalDivisor (mul_ne_zero hLbm hg')) := by
+    calc evalFunR f (principalDivisor hg)
+        = evalFunR f (principalDivisor (mul_ne_zero hLbm hg')) := by
           rw [principalDivisor_congr hg (mul_ne_zero hLbm hg') hgeq]
-      _ = Divisor.evalFun ((algebraMap K[X] (RatFunc K) (X - C b)) ^ m
+      _ = evalFunR ((algebraMap K[X] (RatFunc K) (X - C b)) ^ m
             * (g / (algebraMap K[X] (RatFunc K) (X - C b)) ^ m)) (principalDivisor hf) := hmul
-      _ = Divisor.evalFun g (principalDivisor hf) := by rw [← hgeq]
+      _ = evalFunR g (principalDivisor hf) := by rw [← hgeq]
 
 end Reciprocity
 
@@ -1047,15 +985,13 @@ end
 
 open Polynomial IsDedekindDomain WithZero IsLocalRing _root_.AlgebraicCurve AlgebraicCurve
   _root_.AlgebraicCurve.RationalFunctionField AlgebraicCurve.RationalFunctionField in
-/-- Weil reciprocity for the rational function field over an algebraically closed field of
-characteristic zero. -/
+/-- Weil reciprocity for the rational function field over an algebraically closed field. -/
 theorem AlgebraicCurve.RationalFunctionField.weilReciprocity (K : Type*) [Field K] [IsAlgClosed K] :
     WeilReciprocity K (RatFunc K) := by
   classical
   intro f g Df Dg hf hg hDf hDg hdisj _ _
-  have hDf' : Df = principalDivisor hf := Finsupp.ext fun v => hDf v
-  have hDg' : Dg = principalDivisor hg := Finsupp.ext fun v => hDg v
-  rw [hDf', hDg']
+  obtain rfl : Df = principalDivisor hf := Finsupp.ext fun v => hDf v
+  obtain rfl : Dg = principalDivisor hg := Finsupp.ext fun v => hDg v
   rcases hdisj (placeInfty K) with h | h
   · exact reciprocity_of_ord_placeInfty_eq_zero
       (principalDivisor hg).support.card f g hf hg h hdisj Finset.card_erase_le

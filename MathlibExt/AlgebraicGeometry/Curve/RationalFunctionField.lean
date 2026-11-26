@@ -42,33 +42,35 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.AlgebraicGeometry.Curve.PlaceDivisor
-import Mathlib.NumberTheory.RatFunc.Ostrowski
+public import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceClassification
 import Mathlib.RingTheory.DedekindDomain.Factorization
+import MathlibExt.AlgebraicGeometry.Curve.OrdEqNegLog
+import MathlibExt.AlgebraicGeometry.Curve.PlaceEvaluationLemmas
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncNonFinitePlaceDeg
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncNonFinitePlaceOrd
+import MathlibExt.AlgebraicGeometry.Curve.RatFuncPlaceInftyDeg
 
 /-!
-# Places and principal divisors of the rational function field
+# Principal divisors of the rational function field
 
-The places of `RatFunc K` over `K` are the finite places attached to monic irreducible
-polynomials together with the place at infinity. We show that a nonzero rational function
-has finitely many zeros and poles, that its principal divisor has degree zero
-(`AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors`), and that every place has degree
-one when `K` is algebraically closed. We also show that a finite extension of `RatFunc K`
-generated over `K` by a nonconstant element `g` is finite over the subfield `K(g)`.
+The places of `RatFunc K` over `K` are the finite places attached to irreducible polynomials
+(`Curve/RatFuncPlaces`) and the place at infinity (`Curve/RatFuncPlaceInfty`). We show that a
+nonzero rational function has finitely many zeros and poles, that its principal divisor has
+degree zero (`AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors`), and that every place
+has degree one when `K` is algebraically closed. We also show that a field `F` finite over
+`RatFunc K` is finite over the image of any `K`-algebra map `RatFunc K → F`, and that over an
+algebraically closed `K` every nonconstant element of `F` is the image of `X` under such a map.
 -/
 
 @[expose] public section
 
 noncomputable section
 
-section
-
 open Polynomial
 
 theorem AlgebraicCurve.FunctionField.exists_ratFuncAlgHom_apply_X_eq {K F : Type*} [Field K]
     [IsAlgClosed K] [Field F] [Algebra K F] {g : F} (hg : g ∉ Set.range (algebraMap K F)) : ∃ φ :
     RatFunc K →ₐ[K] F, φ RatFunc.X = g := by
-
   have htr : Transcendental K g := by
     intro halg
     apply hg
@@ -87,15 +89,7 @@ theorem AlgebraicCurve.FunctionField.exists_ratFuncAlgHom_apply_X_eq {K F : Type
   · rw [RatFunc.liftAlgHom_apply]
     simp
 
-end
-
-section
-
-open Polynomial
-
-set_option synthInstance.maxHeartbeats 800000
-
-namespace G1
+section FiniteOverImage
 
 private theorem isTranscendenceBasis_polynomial_X (K : Type*) [Field K] :
     IsTranscendenceBasis K ![(X : K[X])] := by
@@ -108,9 +102,9 @@ private theorem isTranscendenceBasis_polynomial_X (K : Type*) [Field K] :
 
 private theorem isTranscendenceBasis_ratFunc_X (K : Type*) [Field K] :
     IsTranscendenceBasis K ![(RatFunc.X : RatFunc K)] := by
-  haveI : Algebra.IsAlgebraic K[X] (RatFunc K) :=
+  have : Algebra.IsAlgebraic K[X] (RatFunc K) :=
     IsLocalization.isAlgebraic (RatFunc K) (nonZeroDivisors K[X])
-  haveI : FaithfulSMul K[X] (RatFunc K) :=
+  have : FaithfulSMul K[X] (RatFunc K) :=
     (faithfulSMul_iff_algebraMap_injective K[X] (RatFunc K)).mpr
       (IsFractionRing.injective K[X] (RatFunc K))
   have h := (isTranscendenceBasis_polynomial_X K).algebraMap_comp (A := RatFunc K)
@@ -124,13 +118,14 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 private theorem isTranscendenceBasis_t0 :
     IsTranscendenceBasis K ![algebraMap (RatFunc K) F RatFunc.X] := by
-  haveI : Algebra.IsAlgebraic (RatFunc K) F := Algebra.IsAlgebraic.of_finite _ _
+  have : Algebra.IsAlgebraic (RatFunc K) F := Algebra.IsAlgebraic.of_finite _ _
   have h := (isTranscendenceBasis_ratFunc_X K).algebraMap_comp (A := F)
   convert h using 1
   ext i
   fin_cases i
   simp
 
+omit [Algebra (RatFunc K) F] [IsScalarTower K (RatFunc K) F] [FiniteDimensional (RatFunc K) F] in
 private theorem transcendental_apply_X (φ : RatFunc K →ₐ[K] F) :
     Transcendental K (φ RatFunc.X) := by
   rw [transcendental_iff_injective]
@@ -146,12 +141,10 @@ private theorem isTranscendenceBasis_apply_X (φ : RatFunc K →ₐ[K] F) :
   classical
   set g := φ RatFunc.X with hg
   set t₀ := algebraMap (RatFunc K) F RatFunc.X with ht₀
-
   have hbase_t : (AlgebraicIndependent.matroid K F).IsBase ({t₀} : Set F) := by
     rw [AlgebraicIndependent.matroid_isBase_iff]
     have h := (isTranscendenceBasis_t0 (K := K) (F := F)).to_subtype_range
     convert h using 2 <;> simp [ht₀]
-
   have hind_g : (AlgebraicIndependent.matroid K F).Indep ({g} : Set F) := by
     rw [AlgebraicIndependent.matroid_indep_iff]
     have h := (algebraicIndependent_iff_transcendental.mpr (transcendental_apply_X
@@ -167,6 +160,7 @@ private theorem isTranscendenceBasis_apply_X (φ : RatFunc K →ₐ[K] F) :
   rw [← AlgebraicIndependent.matroid_isBase_iff, hgb]
   exact hB
 
+omit [FiniteDimensional (RatFunc K) F] in
 private theorem algebraMap_polynomial_mem {E : Type*} [Field E] [Algebra K E] [Algebra E F]
     [IsScalarTower K E F]
     (T : IntermediateField E F) (ht : algebraMap (RatFunc K) F RatFunc.X ∈ T) (p : K[X]) :
@@ -192,7 +186,7 @@ private theorem finite_over_adjoin (φ : RatFunc K →ₐ[K] F) :
   set t₀ := algebraMap (RatFunc K) F RatFunc.X with ht₀
   obtain ⟨s, hs⟩ := Module.Finite.fg_top (R := RatFunc K) (M := F)
   let S : Set F := insert t₀ (s : Set F)
-  haveI : Finite S := Set.finite_coe_iff.mpr ((s.finite_toSet).insert t₀)
+  have : Finite S := Set.finite_coe_iff.mpr ((s.finite_toSet).insert t₀)
   have hint : ∀ x ∈ S, IsIntegral Kg x := fun x _ => (halg.isAlgebraic x).isIntegral
   have hfin : FiniteDimensional Kg (IntermediateField.adjoin Kg S) :=
     IntermediateField.finiteDimensional_adjoin hint
@@ -216,9 +210,8 @@ private theorem finite_over_adjoin (φ : RatFunc K →ₐ[K] F) :
   rw [htop] at hfin
   exact LinearEquiv.finiteDimensional (IntermediateField.topEquiv (F := Kg) (E := F)).toLinearEquiv
 
-end G1
+end FiniteOverImage
 
-open G1 in
 theorem AlgebraicCurve.FunctionField.finite_of_ratFuncAlgHom {K F : Type*} [Field K] [Field F]
     [Algebra K F] [Algebra (RatFunc K) F] [IsScalarTower K (RatFunc K) F]
     [FiniteDimensional (RatFunc K) F] (φ : RatFunc K →ₐ[K] F) : @Module.Finite (RatFunc K) F _ _
@@ -226,8 +219,7 @@ theorem AlgebraicCurve.FunctionField.finite_of_ratFuncAlgHom {K F : Type*} [Fiel
   classical
   set g := φ RatFunc.X with hg
   set Kg := IntermediateField.adjoin K ({g} : Set F) with hKg
-  haveI hKF : FiniteDimensional Kg F := finite_over_adjoin φ
-
+  have hKF : FiniteDimensional Kg F := finite_over_adjoin φ
   have hrange : ∀ c : RatFunc K, φ c ∈ Kg := by
     intro c
     have hpoly : ∀ p : K[X], φ (algebraMap K[X] (RatFunc K) p) ∈ Kg := by
@@ -238,7 +230,6 @@ theorem AlgebraicCurve.FunctionField.finite_of_ratFuncAlgHom {K F : Type*} [Fiel
       exact IntermediateField.algebra_adjoin_le_adjoin K _ (aeval_mem_adjoin_singleton K _)
     rw [← RatFunc.num_div_denom c, map_div₀]
     exact div_mem (hpoly _) (hpoly _)
-
   let φ' : RatFunc K →+* Kg := φ.toRingHom.codRestrict Kg.toSubalgebra.toSubring hrange
   have hsurj : Function.Surjective φ' := by
     have hle : Kg ≤ φ.fieldRange := by
@@ -248,41 +239,20 @@ theorem AlgebraicCurve.FunctionField.finite_of_ratFuncAlgHom {K F : Type*} [Fiel
     intro y
     obtain ⟨c, hc⟩ := hle y.2
     exact ⟨c, Subtype.ext hc⟩
-  letI : Algebra (RatFunc K) Kg := φ'.toAlgebra
-  letI algφ : Algebra (RatFunc K) F := φ.toRingHom.toAlgebra
-  haveI : IsScalarTower (RatFunc K) Kg F := IsScalarTower.of_algebraMap_eq fun c => rfl
-  haveI : Module.Finite (RatFunc K) Kg :=
+  let : Algebra (RatFunc K) Kg := φ'.toAlgebra
+  let algφ : Algebra (RatFunc K) F := φ.toRingHom.toAlgebra
+  have : IsScalarTower (RatFunc K) Kg F := IsScalarTower.of_algebraMap_eq fun c => rfl
+  have : Module.Finite (RatFunc K) Kg :=
     Module.Finite.of_surjective (Algebra.linearMap (RatFunc K) Kg) hsurj
   exact Module.Finite.trans Kg F
-
-end
-
-section
-
-section
-
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
 
 namespace AlgebraicCurve
 
 namespace RationalFunctionField
 
-variable (K : Type*) [Field K]
+open IsDedekindDomain WithZero IsLocalRing
 
-variable {K}
-
-theorem eq_ofHeightOneSpectrum_or_eq_placeInfty [DecidableEq (RatFunc K)]
-    (v : Place K (RatFunc K)) :
-    (∃ w : HeightOneSpectrum K[X], v = Place.ofHeightOneSpectrum w) ∨ v = placeInfty K := by
-  have := v.adicValuation_isRankOneDiscrete
-  have := v.adicValuation_isTrivialOn
-  rcases (RatFunc.valuation_isEquiv_infty_or_adic (v := v.adicValuation)).or with h | h
-  · exact Or.inr (Place.ext (v.adicValuation_valuationSubring.symm.trans
-      ((Valuation.isEquiv_iff_valuationSubring _ _).mp h)))
-  · obtain ⟨w, hw, -⟩ := h
-    exact Or.inl ⟨w, Place.ext (v.adicValuation_valuationSubring.symm.trans
-      ((Valuation.isEquiv_iff_valuationSubring _ _).mp hw))⟩
+variable {K : Type*} [Field K]
 
 private theorem finite_setOf_valuation_ne_one' {f : RatFunc K} (hf : f ≠ 0) :
     {w : HeightOneSpectrum K[X] | w.valuation (RatFunc K) f ≠ 1}.Finite := by
@@ -293,7 +263,7 @@ private theorem finite_setOf_valuation_ne_one' {f : RatFunc K} (hf : f ≠ 0) :
   refine Set.Finite.subset ((Ideal.finite_factors hnum).union (Ideal.finite_factors hden))
     fun w hw => ?_
   by_contra hcon
-  simp only [Set.mem_union, Set.mem_setOf_eq, not_or, Ideal.dvd_span_singleton] at hcon
+  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, Ideal.dvd_span_singleton] at hcon
   refine hw ?_
   have h1 : w.valuation (RatFunc K) (algebraMap K[X] (RatFunc K) f.num) = 1 :=
     (HeightOneSpectrum.valuation_eq_one_iff_notMem w).mpr hcon.1
@@ -322,8 +292,8 @@ theorem finite_setOf_ord_ne_zero {f : RatFunc K} (hf : f ≠ 0) :
         (finite_setOf_valuation_ne_one' hf))
       (Set.Subsingleton.finite subsingleton_setOf_forall_ne_ofHeightOneSpectrum))
     fun v hv => ?_
-  simp only [Set.mem_setOf_eq] at hv
-  simp only [Set.mem_union, Set.mem_image, Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq] at hv
+  simp only [Set.mem_union, Set.mem_image, Set.mem_ofPred_eq]
   by_cases hcase : ∃ w : HeightOneSpectrum K[X], v = Place.ofHeightOneSpectrum w
   · obtain ⟨w, rfl⟩ := hcase
     refine Or.inl ⟨w, fun hone => hv ?_, rfl⟩
@@ -336,13 +306,8 @@ end RationalFunctionField
 
 end AlgebraicCurve
 
-end
+open AlgebraicCurve IsDedekindDomain WithZero IsLocalRing
 
-end
-
-section
-
-open AlgebraicCurve in
 theorem AlgebraicCurve.RationalFunctionField.exists_forall_ne_ofHeightOneSpectrum {K : Type*}
     [Field K] : ∃ v : Place K (RatFunc K), ∀ w : IsDedekindDomain.HeightOneSpectrum (Polynomial K),
     v ≠ Place.ofHeightOneSpectrum w := by
@@ -355,16 +320,6 @@ theorem AlgebraicCurve.RationalFunctionField.exists_forall_ne_ofHeightOneSpectru
     Place.ofHeightOneSpectrum_toValuationSubring] at h2
   exact h2.symm
 
-end
-
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
-
 theorem AlgebraicCurve.RationalFunctionField.ord_ofHeightOneSpectrum_eq_neg_log {K : Type*} [Field
   K] (w : IsDedekindDomain.HeightOneSpectrum (Polynomial K)) {p : Polynomial K} (hp : p ≠ 0) (hw :
     w.asIdeal = Ideal.span {p}) {f : RatFunc K} (hf : f ≠ 0) : (Place.ofHeightOneSpectrum (K := K)
@@ -375,16 +330,6 @@ theorem AlgebraicCurve.RationalFunctionField.ord_ofHeightOneSpectrum_eq_neg_log 
     simpa using w.valuation_of_algebraMap (K := RatFunc K) p
   exact (Place.ofHeightOneSpectrum (K := K) (F := RatFunc K)
     w).ord_eq_neg_log_of_valuationSubring_eq (w.valuation (RatFunc K)) rfl hval hf
-
-end
-
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
 
 theorem AlgebraicCurve.RationalFunctionField.ord_ofHeightOneSpectrum_of_span {K : Type*} [Field K]
   (w : IsDedekindDomain.HeightOneSpectrum (Polynomial K)) {p : Polynomial K} (hp : p ≠ 0) (hw :
@@ -398,181 +343,9 @@ theorem AlgebraicCurve.RationalFunctionField.ord_ofHeightOneSpectrum_of_span {K 
     (RatFunc.algebraMap_ne_zero hp), hval]
   simp [log_exp]
 
-end
+namespace AlgebraicCurve.RationalFunctionField
 
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
-
-theorem AlgebraicCurve.RationalFunctionField.toValuationSubring_eq_of_forall_ne_ofHeightOneSpectrum
-    {K : Type*} [Field K] [DecidableEq (RatFunc K)] (v : Place K (RatFunc K))
-    (hv : ∀ w : IsDedekindDomain.HeightOneSpectrum (Polynomial K), v ≠ Place.ofHeightOneSpectrum w)
-    : v.toValuationSubring = (RatFunc.inftyValuation K).valuationSubring := by
-  haveI := v.adicValuation_isRankOneDiscrete
-  haveI := v.adicValuation_isTrivialOn
-  rcases (RatFunc.valuation_isEquiv_infty_or_adic (v := v.adicValuation)).or with h | h
-  · exact v.adicValuation_valuationSubring.symm.trans
-      ((Valuation.isEquiv_iff_valuationSubring _ _).mp h)
-  · obtain ⟨w, hw, -⟩ := h
-    exact absurd (Place.ext (v.adicValuation_valuationSubring.symm.trans
-      ((Valuation.isEquiv_iff_valuationSubring _ _).mp hw))) (hv w)
-
-end
-
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
-
-theorem AlgebraicCurve.RationalFunctionField.ord_eq_neg_intDegree_of_forall_ne_ofHeightOneSpectrum
-    {K : Type*} [Field K] (v : Place K (RatFunc K))
-    (hv : ∀ w : IsDedekindDomain.HeightOneSpectrum (Polynomial K), v ≠ Place.ofHeightOneSpectrum w)
-    {f : RatFunc K} (hf : f ≠ 0) : v.ord f = -f.intDegree := by
-  classical
-  have hπ : RatFunc.inftyValuation K (RatFunc.X)⁻¹ = exp (-1 : ℤ) := by
-    rw [map_inv₀, RatFunc.inftyValuation.X]
-    exact (exp_neg (1 : ℤ)).symm
-  rw [v.ord_eq_neg_log_of_valuationSubring_eq (RatFunc.inftyValuation K)
-      (AlgebraicCurve.RationalFunctionField.toValuationSubring_eq_of_forall_ne_ofHeightOneSpectrum
-        v hv).symm hπ hf,
-    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero K hf, log_exp]
-
-end
-
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
-
-section
-
-namespace AlgebraicCurve
-namespace RationalFunctionField
-open AlgebraicCurve
-
-variable (K : Type*) [Field K] [DecidableEq (RatFunc K)]
-
-private theorem exists_sub_algebraMap_intDegree_neg {x : RatFunc K}
-    (hx : RatFunc.inftyValuation K x ≤ 1) :
-    ∃ c : K, x - algebraMap K (RatFunc K) c = 0 ∨
-      (x - algebraMap K (RatFunc K) c).intDegree < 0 := by
-  rcases eq_or_ne x 0 with rfl | hx0
-  · exact ⟨0, Or.inl (by simp)⟩
-  have hdeg : x.intDegree ≤ 0 := by
-    rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero K hx0,
-      show (1 : ℤᵐ⁰) = exp 0 from rfl, exp_le_exp] at hx
-    exact hx
-  have hnum0 : x.num ≠ 0 := RatFunc.num_ne_zero hx0
-  have hden0 : x.denom ≠ 0 := x.denom_ne_zero
-  rcases lt_or_eq_of_le hdeg with hlt | heq
-  · exact ⟨0, Or.inr (by simpa using hlt)⟩
-  have hndeg : x.num.natDegree = x.denom.natDegree := by
-    have h2 := heq
-    rw [RatFunc.intDegree, sub_eq_zero] at h2
-    exact_mod_cast h2
-  set c : K := x.num.leadingCoeff / x.denom.leadingCoeff with hc
-  have hc0 : c ≠ 0 := by
-    rw [hc]
-    exact div_ne_zero (Polynomial.leadingCoeff_ne_zero.mpr hnum0)
-      (Polynomial.leadingCoeff_ne_zero.mpr hden0)
-  refine ⟨c, ?_⟩
-  have hsub : x - algebraMap K (RatFunc K) c
-      = algebraMap K[X] (RatFunc K) (x.num - Polynomial.C c * x.denom)
-        / algebraMap K[X] (RatFunc K) x.denom := by
-    rw [map_sub, map_mul, sub_div, x.num_div_denom, mul_div_assoc,
-      div_self ((map_ne_zero_iff _ (IsFractionRing.injective K[X] (RatFunc K))).mpr hden0),
-      mul_one, IsScalarTower.algebraMap_apply K K[X] (RatFunc K), Polynomial.algebraMap_eq]
-  rcases eq_or_ne (x.num - Polynomial.C c * x.denom) 0 with hzero | hnz
-  · exact Or.inl (by rw [hsub, hzero, map_zero, zero_div])
-  refine Or.inr ?_
-  rw [hsub, RatFunc.intDegree_div ((map_ne_zero_iff _
-      (IsFractionRing.injective K[X] (RatFunc K))).mpr hnz)
-    ((map_ne_zero_iff _ (IsFractionRing.injective K[X] (RatFunc K))).mpr hden0),
-    RatFunc.intDegree_polynomial, RatFunc.intDegree_polynomial, sub_neg]
-  have hCdeg : (Polynomial.C c * x.denom).degree = x.denom.degree := by
-    rw [Polynomial.degree_mul, Polynomial.degree_C hc0, zero_add]
-  have hdegeq : x.num.degree = (Polynomial.C c * x.denom).degree := by
-    rw [hCdeg, Polynomial.degree_eq_natDegree hnum0, Polynomial.degree_eq_natDegree hden0,
-      hndeg]
-  have hlc : x.num.leadingCoeff = (Polynomial.C c * x.denom).leadingCoeff := by
-    rw [Polynomial.leadingCoeff_mul, Polynomial.leadingCoeff_C, hc,
-      div_mul_cancel₀ _ (Polynomial.leadingCoeff_ne_zero.mpr hden0)]
-  have hlt := Polynomial.degree_sub_lt hdegeq hnum0 hlc
-  rw [hdegeq, hCdeg] at hlt
-  exact_mod_cast Polynomial.natDegree_lt_natDegree hnz hlt
-
-
-end AlgebraicCurve.RationalFunctionField
-
-end
-
-theorem AlgebraicCurve.RationalFunctionField.deg_eq_one_of_forall_ne_ofHeightOneSpectrum {K : Type*}
-    [Field K] (v : Place K (RatFunc K))
-    (hv : ∀ w : IsDedekindDomain.HeightOneSpectrum (Polynomial K), v ≠ Place.ofHeightOneSpectrum w)
-    : v.deg = 1 := by
-  classical
-  have hvS : v.toValuationSubring = (RatFunc.inftyValuation K).valuationSubring :=
-    AlgebraicCurve.RationalFunctionField.toValuationSubring_eq_of_forall_ne_ofHeightOneSpectrum v hv
-  have hequiv : (RatFunc.inftyValuation K).IsEquiv v.adicValuation :=
-    v.isEquiv_adicValuation_of_valuationSubring_eq hvS.symm
-  have hbij : Function.Bijective (Algebra.ofId K v.ResidueField) := by
-    constructor
-    · exact fun a b h => (algebraMap K v.ResidueField).injective h
-    · intro y
-      obtain ⟨⟨x, hx⟩, rfl⟩ := IsLocalRing.residue_surjective y
-      have hx' : RatFunc.inftyValuation K x ≤ 1 := by
-        rw [hvS] at hx
-        exact (Valuation.mem_valuationSubring_iff _ _).mp hx
-      obtain ⟨c, hc⟩ :=
-        AlgebraicCurve.RationalFunctionField.exists_sub_algebraMap_intDegree_neg K hx'
-      refine ⟨c, ?_⟩
-      show IsLocalRing.residue _ (algebraMap K v.toValuationSubring c) = _
-      rw [← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff,
-        Place.mem_maximalIdeal_iff_adicValuation_lt_one]
-      show v.adicValuation (algebraMap K (RatFunc K) c - x) < 1
-      rw [← hequiv.lt_one_iff_lt_one,
-        show algebraMap K (RatFunc K) c - x = -(x - algebraMap K (RatFunc K) c) from
-          (neg_sub _ _).symm, Valuation.map_neg]
-      rcases hc with hc | hc
-      · rw [hc, map_zero]
-        exact zero_lt_one
-      · rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuationDef]
-        split
-        · exact zero_lt_one
-        · rw [show (1 : ℤᵐ⁰) = exp 0 from rfl, exp_lt_exp]
-          exact hc
-  rw [Place.deg, ← (AlgEquiv.ofBijective _ hbij).toLinearEquiv.finrank_eq,
-    Module.finrank_self]
-
-end
-
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
-
-section
-
-namespace AlgebraicCurve
-namespace RationalFunctionField
-open AlgebraicCurve
-
-variable (K : Type*) [Field K]
-
-variable {K}
+variable {K : Type*} [Field K]
 
 private theorem single_add_single_apply_eq_ord {vinf : Place K (RatFunc K)}
     (hvinf : ∀ w : HeightOneSpectrum K[X], vinf ≠ Place.ofHeightOneSpectrum w)
@@ -584,7 +357,6 @@ private theorem single_add_single_apply_eq_ord {vinf : Place K (RatFunc K)}
   rw [Finsupp.add_apply]
   by_cases hfin : ∃ w : HeightOneSpectrum K[X], v = Place.ofHeightOneSpectrum w
   · obtain ⟨w, rfl⟩ := hfin
-
     rw [Finsupp.single_eq_of_ne (hvinf w).symm, add_zero]
     by_cases hcase :
         Place.ofHeightOneSpectrum (K := K) (F := RatFunc K) w = finitePlace K hp
@@ -605,8 +377,7 @@ private theorem single_add_single_apply_eq_ord {vinf : Place K (RatFunc K)}
           (hspan.symm.trans (heightOneSpectrumOfIrreducible_asIdeal K hp).symm)
       rw [hwp]
       rfl
-  ·
-    have hv : ∀ w : HeightOneSpectrum K[X], v ≠ Place.ofHeightOneSpectrum w :=
+  · have hv : ∀ w : HeightOneSpectrum K[X], v ≠ Place.ofHeightOneSpectrum w :=
       fun w h => hfin ⟨w, h⟩
     have hveq : v = vinf := subsingleton_setOf_forall_ne_ofHeightOneSpectrum hv hvinf
     rw [Finsupp.single_eq_of_ne (show v ≠ finitePlace K hp from hv _), zero_add, hveq,
@@ -627,10 +398,7 @@ private theorem degree_single_add_single {vinf : Place K (RatFunc K)}
   push_cast
   ring
 
-
 end AlgebraicCurve.RationalFunctionField
-
-end
 
 theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_algebraMap {K : Type*}
     [Field K] (q : Polynomial K) : ∀ D : Divisor K (RatFunc K),
@@ -676,16 +444,6 @@ theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_alg
     rw [hsplit, map_add, hdeg_p, zero_add]
     exact hdeg_a
 
-end
-
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
-
 theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord {K : Type*} [Field K]
     {f : RatFunc K} (D : Divisor K (RatFunc K)) (hD : ∀ v : Place K (RatFunc K), D v = v.ord f) :
     Divisor.degree D = 0 := by
@@ -696,7 +454,6 @@ theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord {K 
     rw [hzero, map_zero]
   · have hden : f.denom ≠ 0 := f.denom_ne_zero
     have hdenF : algebraMap K[X] (RatFunc K) f.denom ≠ 0 := RatFunc.algebraMap_ne_zero hden
-
     set Dden : Divisor K (RatFunc K) :=
       Finsupp.ofSupportFinite
         (fun v : Place K (RatFunc K) => v.ord (algebraMap K[X] (RatFunc K) f.denom))
@@ -720,16 +477,6 @@ theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord {K 
     rw [map_add, h2, add_zero] at h1
     exact h1
 
-end
-
-section
-
-attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
-attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
-open AlgebraicCurve
-open IsDedekindDomain WithZero IsLocalRing
-open scoped Polynomial
-
 theorem AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors (K : Type*) [Field K] :
     HasPrincipalDivisors K (RatFunc K) :=
   ⟨fun f hf =>
@@ -738,133 +485,9 @@ theorem AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors (K : Type*) [F
       fun _ => rfl,
       AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord _ fun _ => rfl⟩⟩
 
-end
-
-section
-
-section
-
-open Polynomial IsDedekindDomain WithZero IsLocalRing
-
-open scoped Polynomial
-
-namespace AlgebraicCurve
-
-namespace Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-end Place
-
-namespace RationalFunctionField
+namespace AlgebraicCurve.RationalFunctionField
 
 variable (K : Type*) [Field K]
-
-section PlaceInfty
-
-variable [DecidableEq (RatFunc K)]
-
-theorem inftyValuation_isEquiv_adicValuation :
-    (RatFunc.inftyValuation K).IsEquiv (placeInfty K).adicValuation :=
-  (placeInfty K).isEquiv_adicValuation_of_valuationSubring_eq rfl
-
-end PlaceInfty
-
-variable {K}
-
-section DegInfty
-
-variable (K) [DecidableEq (RatFunc K)]
-
-theorem deg_placeInfty : (placeInfty K).deg = 1 := by
-  have hbij : Function.Bijective (Algebra.ofId K (placeInfty K).ResidueField) := by
-    constructor
-    · exact fun a b h => (algebraMap K ((placeInfty K).ResidueField)).injective h
-    · intro y
-      obtain ⟨⟨x, hx⟩, rfl⟩ := IsLocalRing.residue_surjective y
-      obtain ⟨c, hc⟩ := exists_sub_algebraMap_intDegree_neg K
-        ((Valuation.mem_valuationSubring_iff _ _).mp hx)
-      refine ⟨c, ?_⟩
-      show IsLocalRing.residue _ (algebraMap K (placeInfty K).toValuationSubring c) = _
-      rw [← sub_eq_zero, ← map_sub, IsLocalRing.residue_eq_zero_iff,
-        Place.mem_maximalIdeal_iff_adicValuation_lt_one]
-      show (placeInfty K).adicValuation (algebraMap K (RatFunc K) c - x) < 1
-      rw [← (inftyValuation_isEquiv_adicValuation K).lt_one_iff_lt_one,
-        show algebraMap K (RatFunc K) c - x = -(x - algebraMap K (RatFunc K) c) from
-          (neg_sub _ _).symm, Valuation.map_neg]
-      rcases hc with hc | hc
-      · rw [hc, map_zero]
-        exact zero_lt_one
-      · rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuationDef]
-        split
-        · exact zero_lt_one
-        · rw [show (1 : ℤᵐ⁰) = exp 0 from rfl, exp_lt_exp]
-          exact hc
-  rw [Place.deg, ← (AlgEquiv.ofBijective _ hbij).toLinearEquiv.finrank_eq,
-    Module.finrank_self]
-
-end DegInfty
-
-end RationalFunctionField
-
-namespace Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-end Place
-
-namespace RationalFunctionField
-
-variable {K : Type*} [Field K]
-
-section PlaceInftyOrd
-
-variable [DecidableEq (RatFunc K)]
-
-end PlaceInftyOrd
-
-section IrreducibleDivisor
-
-variable [DecidableEq (RatFunc K)]
-
-end IrreducibleDivisor
-
-end RationalFunctionField
-
-namespace RationalFunctionField
-open AlgebraicCurve.RationalFunctionField
-
-variable (K : Type*) [Field K]
-
-variable {K}
-
-variable (K)
-
-theorem exists_eq_placeOfPoint [IsAlgClosed K] (w : HeightOneSpectrum K[X]) :
-    ∃ a : K, Place.ofHeightOneSpectrum (K := K) (F := RatFunc K) w = placeOfPoint K a := by
-  obtain ⟨p, hp, hwp⟩ := exists_irreducible_span K w
-
-  have hdeg : p.degree ≠ 0 := by
-    rw [IsAlgClosed.degree_eq_one_of_irreducible K hp]
-    exact one_ne_zero
-  obtain ⟨a, ha⟩ := IsAlgClosed.exists_root p hdeg
-  refine ⟨a, ?_⟩
-
-  have hassoc : Associated ((X : K[X]) - C a) p :=
-    (irreducible_X_sub_C a).associated_of_dvd hp (dvd_iff_isRoot.mpr ha)
-  have hideal : w = heightOneSpectrumOfIrreducible K (irreducible_X_sub_C a) :=
-    HeightOneSpectrum.ext (by
-      rw [hwp, heightOneSpectrumOfIrreducible_asIdeal]
-      exact (Ideal.span_singleton_eq_span_singleton.mpr hassoc).symm)
-  rw [hideal, placeOfPoint_eq_ofHeightOneSpectrum]
-
-theorem eq_placeOfPoint_or_eq_placeInfty [IsAlgClosed K] [DecidableEq (RatFunc K)]
-    (v : Place K (RatFunc K)) :
-    (∃ a : K, v = placeOfPoint K a) ∨ v = placeInfty K := by
-  rcases eq_ofHeightOneSpectrum_or_eq_placeInfty v with ⟨w, hw⟩ | hw
-  · obtain ⟨a, ha⟩ := exists_eq_placeOfPoint K w
-    exact Or.inl ⟨a, hw.trans ha⟩
-  · exact Or.inr hw
 
 theorem deg_eq_one_of_isAlgClosed [IsAlgClosed K] (v : Place K (RatFunc K)) : v.deg = 1 := by
   classical
@@ -872,37 +495,4 @@ theorem deg_eq_one_of_isAlgClosed [IsAlgClosed K] (v : Place K (RatFunc K)) : v.
   · exact deg_placeOfPoint K a
   · exact deg_placeInfty K
 
-end RationalFunctionField
-
-namespace RationalFunctionField
-open AlgebraicCurve.RationalFunctionField
-
-variable {K : Type*} [Field K]
-
-section PlaceInfty
-
-variable [DecidableEq (RatFunc K)]
-
-end PlaceInfty
-
-section CrossRatio
-
-variable [DecidableEq (RatFunc K)]
-
-end CrossRatio
-
-section Reciprocity
-
-variable [IsAlgClosed K] [DecidableEq (RatFunc K)]
-
-end Reciprocity
-
-end RationalFunctionField
-
-end AlgebraicCurve
-
-end
-
-end
-
-end
+end AlgebraicCurve.RationalFunctionField
