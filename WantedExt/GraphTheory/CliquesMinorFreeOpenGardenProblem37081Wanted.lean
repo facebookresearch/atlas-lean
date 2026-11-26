@@ -38,8 +38,9 @@ Lee and Oum's Theorem 1.1. The constant `c` is a real number, uniform in `t` and
 
 open MetaMathlibExt
 
-/-- The number of nonempty cliques (sets of pairwise adjacent vertices, not necessarily maximal) of
-a graph on a finite vertex type. -/
+/-- The number of nonempty cliques (finite sets of pairwise adjacent vertices, not necessarily
+maximal) of `G`, as a `Nat.card`: it is `0` when `G` has infinitely many nonempty cliques, which
+happens on every infinite vertex type, since every singleton is a clique. -/
 noncomputable def numCliques {V : Type} (G : SimpleGraph V) : ℕ :=
   Nat.card {s : Finset V // s.Nonempty ∧ G.IsClique (s : Set V)}
 
