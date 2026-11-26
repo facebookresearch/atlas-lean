@@ -152,6 +152,7 @@ Topics added since this subject's fields were last revised.
 - [Mediation Formula](part-17/mediation-formula/README.md)
 - [Neyman Scott](part-17/neyman-scott/README.md)
 - [Rosenbaum Sensitivity](part-17/rosenbaum-sensitivity/README.md)
+- [Standardized Selection](part-17/standardized-selection/README.md)
 - [Wilcoxon Signed Rank](part-17/wilcoxon-signed-rank/README.md)
 - [Spearman-Brown formula for the reliability of a sum](part-17/reliability-sum-spearman-brown.md)
 - [The width is at most the noncompliance rate](part-17/width-le-noncompliance.md)
