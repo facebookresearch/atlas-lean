@@ -67,6 +67,22 @@ example :
       (Finset.univ.filter fun i => stirlingDisplacement (n := 2) ![1, 2, 2, 1] i = 0).card = 2 :=
   by decide
 
+-- At order one the two lucky-set bounds coincide.
+example : (stirlingLuckySet (n := 1) ![1, 1]).card = 1 := by
+  have h := stirlingLuckySet_basic 1 (by decide) ![1, 1] (by unfold IsStirlingPermutation; decide)
+  exact le_antisymm h.2.2.2 h.2.2.1
+
+-- In 2211, car 3 is the first to prefer spot 1.
+example : 1 ∈ stirlingLuckySet (n := 2) ![2, 2, 1, 1] ∧
+    3 ∈ stirlingLuckySet (n := 2) ![2, 2, 1, 1] := by
+  have h := stirlingLuckySet_basic 2 (by decide) ![2, 2, 1, 1]
+    (by unfold IsStirlingPermutation; decide)
+  exact ⟨h.1, h.2.1 2 (by decide) (by decide)⟩
+
+-- Both lucky-set bounds are attained at order two.
+example : (stirlingLuckySet (n := 2) ![1, 1, 2, 2]).card = 1 ∧
+    (stirlingLuckySet (n := 2) ![2, 2, 1, 1]).card = 2 := by decide
+
 -- An extremely lucky word with a nested pair and nonconsecutive lucky positions.
 example (v : Fin (2 * 3) → ℕ) (hv : IsStirlingPermutation 3 v)
     (hd : ∀ i, stirlingDisplacement v i = (![0, 0, 1, 0, 3, 5] : Fin (2 * 3) → ℕ) i) :
