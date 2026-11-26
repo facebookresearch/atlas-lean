@@ -19,7 +19,9 @@ Jarzynski's equality for the isolated system (no heat bath during switching) is
 canonical density `Z_0⁻¹ e^{-β H_0}` (Eq. (2a)). Its proof combines Liouville's theorem (the
 flow preserves phase-space volume) with the energy balance `W(z₀) = H_1(φ_{t_s} z₀) - H_0(z₀)`;
 the source's density argument is replaced here by the equivalent change of variables
-`z = φ_{t_s} z₀`.
+`z = φ_{t_s} z₀`. This module states the two prerequisite wanted lemmas (`measurePreserving_flow`
+and `work_eq`); the Jarzynski equality itself is tracked as a planned roadmap page depending on
+both prerequisites.
 
 The flow is taken as data: for every `z₀` a solution on `[0, t_s]` starting at `z₀`, and every
 point at every time `t ∈ [0, t_s]` lies on such a trajectory. The second condition (global
@@ -108,23 +110,5 @@ Source: Jarzynski (1997), isolated-system argument. -/
 theorem_wanted work_eq (H : ℝ → PhaseSpace d → ℝ) (β ts : ℝ)
     (φ : ℝ → PhaseSpace d → PhaseSpace d) (h : Hypotheses H β ts φ) (z₀ : PhaseSpace d) :
     work H ts φ z₀ = H 1 (φ ts z₀) - H 0 z₀
-
-/-- **Jarzynski equality** for the isolated system (Jarzynski 1997, Eq. (2a)). Under the
-standing hypotheses (`Hypotheses`: `H` is `C²`, `β > 0`, `t_s > 0`, `φ` a flow of the switched
-Hamiltonian system on `[0, t_s]`, and integrable `e^{-β H_0}`, `e^{-β H_1}`): `Z_0 > 0`,
-`Z_1 > 0`, the canonical average of `e^{-β W}` is
-`∫ Z_0⁻¹ e^{-β H_0(z₀)} e^{-β W(z₀)} dz₀ = Z_1 / Z_0`, and this equals `e^{-β ΔF}` with
-`ΔF = F_1 - F_0 = -β⁻¹ ln Z_1 + β⁻¹ ln Z_0`.
-
-Source: Jarzynski (1997), Eq. (2a). -/
-theorem_wanted jarzynski (H : ℝ → PhaseSpace d → ℝ) (β ts : ℝ)
-    (φ : ℝ → PhaseSpace d → PhaseSpace d) (h : Hypotheses H β ts φ) :
-    0 < partitionFunction H β 0 ∧ 0 < partitionFunction H β 1 ∧
-      ∫ z₀, (partitionFunction H β 0)⁻¹ * Real.exp (-β * H 0 z₀) *
-          Real.exp (-β * work H ts φ z₀) =
-        partitionFunction H β 1 / partitionFunction H β 0 ∧
-      partitionFunction H β 1 / partitionFunction H β 0 =
-        Real.exp (-β * (-β⁻¹ * Real.log (partitionFunction H β 1) +
-          β⁻¹ * Real.log (partitionFunction H β 0)))
 
 end WantedExt.Biology.Biophysics.JarzynskiEqualityWanted

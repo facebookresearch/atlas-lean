@@ -8,4 +8,4 @@
 - [Hypotheses](hypotheses.md)
 - [Liouville's theorem](measure-preserving-flow.md)
 - [Energy balance](work-eq.md)
-- [Jarzynski equality](jarzynski.md)
+- [Jarzynski equality for the isolated system](jarzynski.md)
