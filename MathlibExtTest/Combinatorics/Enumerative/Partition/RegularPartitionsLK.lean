@@ -61,3 +61,21 @@ example : regularPartitionCount 2 5 3 = 2 := by
   decide
 
 end MetaMathlibExt.regularPartitionCount_two_prime_mod_two
+
+namespace MetaMathlibExt
+
+-- Here 8r + 1 is a nonsquare but 24r + 1 is a square modulo 5.
+example (n : ℕ) : regularPartitionCount 4 5 (5 * n + 2) ≡ 0 [MOD 2] :=
+  regularPartitionCount_four_prime_mod_two (p := 5) (r := 2) (by decide) (by decide)
+    (by
+      change ¬ ∃ a : ZMod 5, (2 : ZMod 5) = a * a
+      decide) n
+
+-- The representative r need not be less than p.
+example (n : ℕ) : regularPartitionCount 4 7 (7 * n + 9) ≡ 0 [MOD 2] :=
+  regularPartitionCount_four_prime_mod_two (p := 7) (r := 9) (by decide) (by decide)
+    (by
+      change ¬ ∃ a : ZMod 7, (3 : ZMod 7) = a * a
+      decide) n
+
+end MetaMathlibExt

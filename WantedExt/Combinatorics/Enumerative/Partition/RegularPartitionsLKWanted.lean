@@ -33,22 +33,6 @@ namespace MetaMathlibExt
 
 local notation "𝔣" => qEulerProduct
 
-/-- **Parity of $(4, p)$-regular partitions in nonresidue progressions.** Let $p \ge 5$ be a
-prime and let $r$ be a natural number such that $8r + 1$ is not a square modulo $p$ (a quadratic
-nonresidue). Write $b_{4,p}(m)$ for the number of $(4, p)$-regular partitions of $m$, that is,
-partitions of $m$ none of whose parts is divisible by $4$ or by $p$. Then
-$b_{4,p}(pn + r) \equiv 0 \pmod 2$ for every natural number $n$.
-
-Restricting $r$ to natural numbers loses nothing: every residue class modulo $p$ has a
-natural-number representative.
-
-Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
-Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
-28 (2025), Article 25.6.1, Theorem 1 (`jis-2025-25.6.1-thm-1`). -/
-public theorem_wanted regularPartitionCount_four_prime_mod_two {p r : ℕ} (hp : p.Prime)
-    (h5 : 5 ≤ p) (hr : ¬ IsSquare ((8 * r + 1 : ℕ) : ZMod p)) (n : ℕ) :
-    regularPartitionCount 4 p (p * n + r) ≡ 0 [MOD 2]
-
 /-- **Congruences modulo $12$ for $b_{4,9}$ along powers of $2$.** Let $b_{4,9}(n)$ be the
 number of partitions of $n$ with no part divisible by $4$ or by $9$. For all natural numbers
 $\alpha \ge 3$ and $n$, $b_{4,9}(2^\alpha n + 6 \cdot 2^{\alpha - 3} + 1) \equiv 0 \pmod{12}$.

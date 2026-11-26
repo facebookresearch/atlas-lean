@@ -16,14 +16,16 @@ import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.PowerSeries.Expand
+import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 import Mathlib.Topology.Instances.ZMod
+import MathlibExt.Combinatorics.Enumerative.Partition.RamanujanPartitionCongruence
 
 /-!
 # Parity of regular partition counts
 
-This file defines the number of `(ℓ, k)`-regular partitions and proves the parity congruence
-for `(2, p)`-regular partitions in nonresidue progressions.
+This file defines the number of `(ℓ, k)`-regular partitions and proves parity congruences
+for `(2, p)`- and `(4, p)`-regular partitions in nonresidue progressions.
 -/
 
 open PowerSeries
@@ -73,7 +75,7 @@ public theorem regularPartitionCount_of_lt {l k n : ℕ} (hl : n < l) (hk : n < 
   exact ⟨fun h => absurd (Nat.le_of_dvd hpos h) (by omega),
     fun h => absurd (Nat.le_of_dvd hpos h) (by omega)⟩
 
-namespace regularPartitionCount_two_prime_mod_two
+namespace RegularPartitionParity
 
 open PowerSeries.WithPiTopology
 
@@ -129,28 +131,32 @@ private lemma euler_expand_two_mul (k : ℕ) (hk : k ≠ 0) :
   simpa only [ZMod.card] using FiniteField.PowerSeries.expand_card (expand k hk 𝓔)
 
 -- Clear the Euler product denominators in the restricted-partition generating function.
+private lemma generatingFunction_mul_euler_mul_expand {k p : ℕ} (hk : k ≠ 0) (hp : p ≠ 0)
+    (hcop : k.Coprime p) :
+    (mk fun n => (regularPartitionCount k p n : ZMod 2)) * 𝓔 *
+        expand (k * p) (mul_ne_zero hk hp) 𝓔 = expand k hk 𝓔 * expand p hp 𝓔 := by
+  let G := mk fun n => (regularPartitionCount k p n : ZMod 2)
+  have hG := Nat.Partition.hasProd_powerSeriesMk_card_restricted (ZMod 2)
+    (fun i => ¬ k ∣ i ∧ ¬ p ∣ i)
+  change HasProd (fun i : ℕ => if ¬ k ∣ i + 1 ∧ ¬ p ∣ i + 1 then
+    ∑' j : ℕ, X ^ ((i + 1) * j) else 1) G at hG
+  -- The Euler factor occurs twice at part sizes divisible by both k and p.
+  refine ((hG.mul (hasProd_one_sub_X_pow (ZMod 2))).mul
+    (hasProd_euler_multiples _ _)).unique
+    (((hasProd_euler_multiples k hk).mul (hasProd_euler_multiples p hp)).congr_fun ?_)
+  intro i
+  have hboth : k * p ∣ i + 1 ↔ k ∣ i + 1 ∧ p ∣ i + 1 :=
+    ⟨fun h => ⟨dvd_of_mul_right_dvd h, dvd_of_mul_left_dvd h⟩,
+      fun h => hcop.mul_dvd_of_dvd_of_dvd h.1 h.2⟩
+  by_cases hk' : k ∣ i + 1 <;> by_cases hp' : p ∣ i + 1 <;> simp [hboth, hk', hp']
+  simpa only [pow_mul] using tsum_pow_mul_one_sub_of_constantCoeff_eq_zero
+    (f := (X : (ZMod 2)⟦X⟧) ^ (i + 1)) (by simp)
+
 private lemma generatingFunction_mul_euler {p : ℕ} (hp : p.Prime) (h5 : 5 ≤ p) :
     (mk fun n => (regularPartitionCount 2 p n : ZMod 2)) * expand p hp.ne_zero 𝓔 = 𝓔 := by
   let G := mk fun n => (regularPartitionCount 2 p n : ZMod 2)
-  have hG := Nat.Partition.hasProd_powerSeriesMk_card_restricted (ZMod 2)
-    (fun i => ¬ 2 ∣ i ∧ ¬ p ∣ i)
-  change HasProd (fun i : ℕ => if ¬ 2 ∣ i + 1 ∧ ¬ p ∣ i + 1 then
-    ∑' j : ℕ, X ^ ((i + 1) * j) else 1) G at hG
   have hcop : Nat.Coprime 2 p := (Nat.coprime_primes Nat.prime_two hp).mpr (by omega)
-  -- The Euler factor occurs twice at part sizes divisible by both 2 and p.
-  have hprod : G * 𝓔 * expand (2 * p) (mul_ne_zero two_ne_zero hp.ne_zero) 𝓔 =
-      expand 2 two_ne_zero 𝓔 * expand p hp.ne_zero 𝓔 := by
-    refine ((hG.mul (hasProd_one_sub_X_pow (ZMod 2))).mul
-      (hasProd_euler_multiples _ _)).unique
-      (((hasProd_euler_multiples 2 two_ne_zero).mul
-        (hasProd_euler_multiples p hp.ne_zero)).congr_fun ?_)
-    intro i
-    have hboth : 2 * p ∣ i + 1 ↔ 2 ∣ i + 1 ∧ p ∣ i + 1 :=
-      ⟨fun h => ⟨dvd_of_mul_right_dvd h, dvd_of_mul_left_dvd h⟩,
-        fun h => hcop.mul_dvd_of_dvd_of_dvd h.1 h.2⟩
-    by_cases h₂ : 2 ∣ i + 1 <;> by_cases hp' : p ∣ i + 1 <;> simp [hboth, h₂, hp']
-    simpa only [pow_mul] using tsum_pow_mul_one_sub_of_constantCoeff_eq_zero
-      (f := (X : (ZMod 2)⟦X⟧) ^ (i + 1)) (by simp)
+  have hprod := generatingFunction_mul_euler_mul_expand two_ne_zero hp.ne_zero hcop
   have hE : 𝓔 ≠ 0 := by
     intro h
     simpa [h] using euler_constantCoeff
@@ -205,9 +211,86 @@ private lemma coeff_eq_zero_of_nonresidue {p r : ℕ} (hp : p ≠ 0)
         · rw [coeff_expand_of_not_dvd _ _ _ hd, mul_zero]
     exact hsingle ▸ hcoeff
 
-end regularPartitionCount_two_prime_mod_two
+private lemma map_pentagonalSeries :
+    map (Int.castRingHom (ZMod 2)) (pentagonalSeries ℤ) = 𝓔 := by
+  ext n
+  rw [coeff_map]
+  by_cases h : n ∈ Set.range pentagonal
+  · obtain ⟨i, rfl⟩ := h
+    simp only [coeff_pentagonalSeries_pentagonal, Int.coe_castRingHom, Int.coe_negOnePow,
+      Int.cast_pow, Int.cast_neg, Int.cast_one, ZMod.neg_one_eq_one_iff.mpr (Or.inr rfl)]
+  · simp [coeff_pentagonalSeries_eq_zero _ h]
 
-open regularPartitionCount_two_prime_mod_two in
+private lemma euler_expand_four_mul (k : ℕ) (hk : k ≠ 0) :
+    expand (4 * k) (mul_ne_zero (by decide) hk) 𝓔 = (expand k hk 𝓔) ^ 4 := by
+  have h := euler_expand_two_mul (2 * k) (mul_ne_zero two_ne_zero hk)
+  rw [euler_expand_two_mul k hk] at h
+  simpa only [← Nat.mul_assoc, show (2 : ℕ) * 2 = 4 by decide, ← pow_mul] using h
+
+private lemma generatingFunction_four_mul_euler_cube {p : ℕ} (hp : p.Prime) (h5 : 5 ≤ p) :
+    (mk fun n => (regularPartitionCount 4 p n : ZMod 2)) * expand p hp.ne_zero (𝓔 ^ 3) =
+      𝓔 ^ 3 := by
+  let G := mk fun n => (regularPartitionCount 4 p n : ZMod 2)
+  let E := expand p hp.ne_zero 𝓔
+  have hcop : Nat.Coprime 2 p := (Nat.coprime_primes Nat.prime_two hp).mpr (by omega)
+  have hprod := generatingFunction_mul_euler_mul_expand (show (4 : ℕ) ≠ 0 by decide)
+    hp.ne_zero (show Nat.Coprime 4 p from hcop.pow_left 2)
+  rw [euler_expand_four_mul p hp.ne_zero, show expand 4 (by decide) 𝓔 = 𝓔 ^ 4 by
+    simpa using euler_expand_four_mul 1 one_ne_zero] at hprod
+  have hunit : IsUnit (𝓔 * E) := by
+    rw [PowerSeries.isUnit_iff_constantCoeff]
+    simp [E, euler_constantCoeff]
+  rw [map_pow]
+  apply hunit.mul_right_cancel
+  calc
+    (G * E ^ 3) * (𝓔 * E) = G * 𝓔 * E ^ 4 := by ring
+    _ = 𝓔 ^ 4 * E := hprod
+    _ = 𝓔 ^ 3 * (𝓔 * E) := by ring
+
+private lemma coeff_euler_cube_eq_zero {p r m : ℕ}
+    (hr : ¬ IsSquare ((8 * r + 1 : ℕ) : ZMod p)) (hm : (m : ZMod p) = r) :
+    coeff m (𝓔 ^ 3) = 0 := by
+  rw [← map_pentagonalSeries, ← map_pow, pentagonalSeries_pow_three, coeff_map]
+  suffices h : ∀ k : ℕ, (k + 1).choose 2 ≠ m by
+    rw [coeff_jacobiCubeSeries_eq_zero h, map_zero]
+  intro k hk
+  apply hr
+  refine ⟨((2 * k + 1 : ℕ) : ZMod p), ?_⟩
+  have htriangle := two_mul_choose_two_succ k
+  rw [hk] at htriangle
+  have hsquare : 8 * m + 1 = (2 * k + 1) * (2 * k + 1) := by nlinarith
+  have hcast := congrArg (fun a : ℕ => (a : ZMod p)) hsquare
+  push_cast at hcast ⊢
+  rwa [hm] at hcast
+
+private lemma coeff_eq_zero_of_nonresidue_four {p r : ℕ} (hp : p ≠ 0)
+    (hr : ¬ IsSquare ((8 * r + 1 : ℕ) : ZMod p))
+    {F : (ZMod 2)⟦X⟧} (hF : F * expand p hp (𝓔 ^ 3) = 𝓔 ^ 3) (m : ℕ)
+    (hm : (m : ZMod p) = r) : F.coeff m = 0 := by
+  have hunit : IsUnit (𝓔 ^ 3) := by
+    rw [PowerSeries.isUnit_iff_constantCoeff]
+    simp [euler_constantCoeff]
+  obtain ⟨u, hu⟩ := hunit
+  -- Expand the inverse of the cube, so its support is contained in the multiples of p.
+  let Q := expand p hp (↑(u⁻¹) : (ZMod 2)⟦X⟧)
+  have hinv : expand p hp (𝓔 ^ 3) * Q = 1 := by
+    dsimp only [Q]
+    rw [← hu, ← map_mul, Units.mul_inv, map_one]
+  have hquot : F = 𝓔 ^ 3 * Q := by
+    rw [← hF, mul_assoc, hinv, mul_one]
+  rw [hquot, coeff_mul]
+  apply Finset.sum_eq_zero
+  intro a ha
+  by_cases hd : p ∣ a.2
+  · have ha' := Finset.mem_antidiagonal.mp ha
+    have hcast := congrArg (fun k : ℕ => (k : ZMod p)) ha'
+    rw [Nat.cast_add, (ZMod.natCast_eq_zero_iff _ _).mpr hd, add_zero, hm] at hcast
+    rw [coeff_euler_cube_eq_zero hr hcast, zero_mul]
+  · rw [coeff_expand_of_not_dvd _ _ _ hd, mul_zero]
+
+end RegularPartitionParity
+
+open RegularPartitionParity in
 /-- **Parity of $(2, p)$-regular partitions in nonresidue progressions.** Let $p \ge 5$ be a
 prime and let $r$ be a natural number such that $24r + 1$ is not a square modulo $p$ (a quadratic
 nonresidue). Write $b_{2,p}(m)$ for the number of $(2, p)$-regular partitions of $m$, that is,
@@ -227,6 +310,28 @@ public theorem regularPartitionCount_two_prime_mod_two {p r : ℕ} (hp : p.Prime
     simp [Nat.cast_add, Nat.cast_mul]
   have hz := coeff_eq_zero_of_nonresidue hp.ne_zero hr
     (generatingFunction_mul_euler hp h5) (p * n + r) hm
+  exact Nat.modEq_zero_iff_dvd.mpr ((ZMod.natCast_eq_zero_iff _ _).mp (by simpa using hz))
+
+open RegularPartitionParity in
+/-- **Parity of $(4, p)$-regular partitions in nonresidue progressions.** Let $p \ge 5$ be a
+prime and let $r$ be a natural number such that $8r + 1$ is not a square modulo $p$ (a quadratic
+nonresidue). Write $b_{4,p}(m)$ for the number of $(4, p)$-regular partitions of $m$, that is,
+partitions of $m$ none of whose parts is divisible by $4$ or by $p$. Then
+$b_{4,p}(pn + r) \equiv 0 \pmod 2$ for every natural number $n$.
+
+Restricting $r$ to natural numbers loses nothing: every residue class modulo $p$ has a
+natural-number representative.
+
+Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
+Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
+28 (2025), Article 25.6.1, Theorem 1 (`jis-2025-25.6.1-thm-1`). -/
+public theorem regularPartitionCount_four_prime_mod_two {p r : ℕ} (hp : p.Prime)
+    (h5 : 5 ≤ p) (hr : ¬ IsSquare ((8 * r + 1 : ℕ) : ZMod p)) (n : ℕ) :
+    regularPartitionCount 4 p (p * n + r) ≡ 0 [MOD 2] := by
+  have hm : ((p * n + r : ℕ) : ZMod p) = r := by
+    simp [Nat.cast_add, Nat.cast_mul]
+  have hz := coeff_eq_zero_of_nonresidue_four hp.ne_zero hr
+    (generatingFunction_four_mul_euler_cube hp h5) (p * n + r) hm
   exact Nat.modEq_zero_iff_dvd.mpr ((ZMod.natCast_eq_zero_iff _ _).mp (by simpa using hz))
 
 end
