@@ -1,4 +1,4 @@
-# To Locally Nameless eq of alpha Equiv
+# The translation respects α-equivalence
 
-α-equivalent named terms have equal translations: the translation is well defined on
-α-classes. It needs no fresh name.
+**The translation respects α-equivalence.** α-equivalent named terms have equal
+translations: the translation is well defined on α-classes. It needs no fresh name.

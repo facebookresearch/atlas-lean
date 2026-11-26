@@ -1,4 +1,5 @@
-# Alpha Equiv of to Locally Nameless eq
+# The translation is injective on α-classes
 
-Named terms with equal translations are α-equivalent: the translation is injective on
-α-classes. The α-rule for abstractions asks for a fresh name.
+Suppose every finite set of names misses
+some name (`[HasFresh Var]`). Named terms with equal translations are α-equivalent. The α-rule
+for abstractions asks for a fresh name.

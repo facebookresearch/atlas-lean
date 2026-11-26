@@ -21,7 +21,7 @@ variable becomes a free variable, an application is translated componentwise, an
 becomes the abstraction of the translation of `M` closed for `x` at index `0`. The translation is
 a bijection between the α-classes of named terms and the locally closed terms
 (A. Charguéraud, *The locally nameless representation*, Journal of Automated Reasoning 49(3),
-2012, Sections 2.2 to 2.4 and 3):
+2012, Sections 2.1 to 2.4 and 3):
 
 * `toLocallyNameless_lc`: every translation is locally closed;
 * `alphaEquiv_iff_toLocallyNameless_eq`: two named terms are α-equivalent if and only if their
@@ -46,17 +46,17 @@ open scoped LocallyNameless.Untyped.Term
 
 universe u
 
-/-- The locally nameless form of a named term: the variable `x` becomes the free variable
-`fvar x`, an application is translated componentwise, and `λx.M` becomes `abs` of the
-translation of `M` closed for `x` at index `0`, so that the occurrences of `x` bound by this
-binder become bound indices. -/
+/-- **The translation to locally nameless terms.** The locally nameless form of a named term:
+the variable `x` becomes the free variable `fvar x`, an application is translated
+componentwise, and `λx.M` becomes `abs` of the translation of `M` closed for `x` at index `0`,
+so that the occurrences of `x` bound by this binder become bound indices. -/
 @[expose] def toLocallyNameless {Var : Type u} [DecidableEq Var] :
     Term Var → LocallyNameless.Untyped.Term Var
   | .var x => .fvar x
   | .abs x m => .abs ((toLocallyNameless m)⟦0 ↜ x⟧)
   | .app m n => .app (toLocallyNameless m) (toLocallyNameless n)
 
-/-- The translation keeps the free variables. -/
+/-- **Free variables of a translation.** The translation keeps the free variables. -/
 @[simp] theorem fv_toLocallyNameless {Var : Type u} [DecidableEq Var] (m : Term Var) :
     (toLocallyNameless m).fv = m.fv := by
   induction m with
@@ -66,32 +66,34 @@ binder become bound indices. -/
       Finset.sdiff_singleton_eq_erase]
   | app m n ihm ihn => simp [toLocallyNameless, ihm, ihn]
 
-/-- Substituting for `x` a name `y` that is not free, then closing `y` at index `k`, is closing
-`x` at index `k`. -/
+/-- **Closing a fresh substitute.** Substituting for `x` a name `y` that is not free, then
+closing `y` at index `k`, is closing `x` at index `k`. -/
 theorem closeRec_subst_fvar_self {Var : Type u} [DecidableEq Var] {x y : Var} {k : ℕ}
     {t : LocallyNameless.Untyped.Term Var} :
     y ∉ t.fv → (t[x := fvar y])⟦k ↜ y⟧ = t⟦k ↜ x⟧ := by
   intro hy
   induction t generalizing k <;> grind
 
-/-- Closing a name `z` commutes with substituting `fvar y` for `x` when `z` is neither `x`
-nor `y`. -/
+/-- **Closing commutes with an unrelated substitution.** Closing a name `z` commutes with
+substituting `fvar y` for `x` when `z` is neither `x` nor `y`. -/
 theorem closeRec_subst_fvar_of_ne {Var : Type u} [DecidableEq Var] {x y z : Var} {k : ℕ}
     {t : LocallyNameless.Untyped.Term Var} :
     z ≠ x → z ≠ y → (t[x := fvar y])⟦k ↜ z⟧ = (t⟦k ↜ z⟧)[x := fvar y] := by
   intro hzx hzy
   induction t generalizing k <;> grind
 
-/-- Closing raises the level of local closure by one: if every bound index of `t` is below `k`,
-then after closing `x` at index `k` every bound index is below `k + 1`. -/
+/-- **Closing raises the level of local closure.** Closing raises the level of local closure by
+one: if every index of `t` that lies under `d` abstractions of `t` is below `k + d`, then after
+closing `x` at index `k` every such index is below `k + 1 + d`. -/
 theorem lcAt_succ_closeRec {Var : Type u} [DecidableEq Var] {x : Var} {k : ℕ}
     {t : LocallyNameless.Untyped.Term Var} :
     t.LcAt k → (t⟦k ↜ x⟧).LcAt (k + 1) := by
   intro h
   induction t generalizing k <;> grind
 
-/-- Renaming `x` to a name `y` that does not occur in `m`, free or bound, acts on the translation
-as substituting `fvar y` for `x`: the bound occurrences of `x` are indices there. -/
+/-- **Renaming a free variable.** Renaming `x` to a name `y` that does not occur in `m`, free or
+bound, acts on the translation as substituting `fvar y` for `x`: the bound occurrences of `x`
+are indices there. -/
 theorem toLocallyNameless_rename {Var : Type u} [DecidableEq Var] {x y : Var} {m : Term Var} :
     y ∉ m.vars → toLocallyNameless (m.rename x y) = (toLocallyNameless m)[x := fvar y] := by
   intro hy
@@ -119,8 +121,8 @@ theorem toLocallyNameless_rename {Var : Type u} [DecidableEq Var] {x y : Var} {m
     simp only [Term.rename, toLocallyNameless, LocallyNameless.Untyped.Term.subst_app, ihm hym,
       ihn hyn]
 
-/-- Every translation is locally closed: the first clause of the bijection. It needs no fresh
-name. -/
+/-- **Translations are locally closed.** Every translation is locally closed: the first clause of
+the bijection. It needs no fresh name. -/
 theorem toLocallyNameless_lc {Var : Type u} [DecidableEq Var] (m : Term Var) :
     (toLocallyNameless m).LC := by
   have lc_of_lcAt : ∀ t : LocallyNameless.Untyped.Term Var, t.LcAt 0 → t.LC := by
@@ -144,8 +146,8 @@ theorem toLocallyNameless_lc {Var : Type u} [DecidableEq Var] (m : Term Var) :
   | abs x m ih => exact lcAt_succ_closeRec ih
   | app m n ihm ihn => simp [toLocallyNameless, ihm, ihn]
 
-/-- α-equivalent named terms have equal translations: the translation is well defined on
-α-classes. It needs no fresh name. -/
+/-- **The translation respects α-equivalence.** α-equivalent named terms have equal
+translations: the translation is well defined on α-classes. It needs no fresh name. -/
 theorem toLocallyNameless_eq_of_alphaEquiv {Var : Type u} [DecidableEq Var] {m n : Term Var} :
     m =α n → toLocallyNameless m = toLocallyNameless n := by
   intro h
@@ -167,8 +169,9 @@ theorem toLocallyNameless_eq_of_alphaEquiv {Var : Type u} [DecidableEq Var] {m n
     exact congrArg LocallyNameless.Untyped.Term.abs hc
   | app _ _ ih1 ih2 => simp [toLocallyNameless, ih1, ih2]
 
-/-- Named terms with equal translations are α-equivalent: the translation is injective on
-α-classes. The α-rule for abstractions asks for a fresh name. -/
+/-- **The translation is injective on α-classes.** Suppose every finite set of names misses
+some name (`[HasFresh Var]`). Named terms with equal translations are α-equivalent. The α-rule
+for abstractions asks for a fresh name. -/
 theorem alphaEquiv_of_toLocallyNameless_eq {Var : Type u} [DecidableEq Var] [HasFresh Var]
     {m n : Term Var} : toLocallyNameless m = toLocallyNameless n → m =α n := by
   induction m using Term.induction_by_sizeOf generalizing n with
@@ -207,14 +210,16 @@ theorem alphaEquiv_of_toLocallyNameless_eq {Var : Type u} [DecidableEq Var] [Has
         exact .app (ih m1 (by simp only [Term.app.sizeOf_spec]; omega) h1)
           (ih m2 (by simp only [Term.app.sizeOf_spec]; omega) h2)
 
-/-- Two named terms are α-equivalent if and only if their translations are equal: the second
-clause of the bijection. -/
+/-- **α-equivalence is equality of translations.** When every finite set of names misses some
+name (`[HasFresh Var]`), two named terms are α-equivalent if and only if their translations are
+equal: the second clause of the bijection. -/
 theorem alphaEquiv_iff_toLocallyNameless_eq {Var : Type u} [DecidableEq Var] [HasFresh Var]
     {m n : Term Var} : m =α n ↔ toLocallyNameless m = toLocallyNameless n := by
   exact ⟨toLocallyNameless_eq_of_alphaEquiv, alphaEquiv_of_toLocallyNameless_eq⟩
 
-/-- Every locally closed term is the translation of a named term, closing each abstraction for a
-fresh name: the third clause of the bijection. -/
+/-- **Every locally closed term is a translation.** Suppose every finite set of names misses
+some name (`[HasFresh Var]`). Every locally closed term is the translation of a named term,
+closing each abstraction for a fresh name: the third clause of the bijection. -/
 theorem exists_toLocallyNameless_eq {Var : Type u} [DecidableEq Var] [HasFresh Var]
     {t : LocallyNameless.Untyped.Term Var} : t.LC → ∃ m, toLocallyNameless m = t := by
   intro ht
@@ -232,11 +237,12 @@ theorem exists_toLocallyNameless_eq {Var : Type u} [DecidableEq Var] [HasFresh V
     obtain ⟨n, hn⟩ := ihr
     exact ⟨.app m n, by simp only [toLocallyNameless, hm, hn]⟩
 
-/-- **Adequacy of the locally nameless representation.** The translation is a bijection between
-the α-classes of named terms and the locally closed terms, stated relationally: every
-translation is locally closed, two named terms are α-equivalent if and only if their translations
-are equal, and every locally closed term is a translation (A. Charguéraud, *The locally nameless
-representation*, Sections 2.2 to 2.4 and 3). -/
+/-- **Adequacy of the locally nameless representation.** Suppose every finite set of names
+misses some name (`[HasFresh Var]`). Then the translation is a bijection between the α-classes
+of named terms and the locally closed terms, stated relationally: every translation is locally
+closed, two named terms are α-equivalent if and only if their translations are equal, and every
+locally closed term is a translation (following A. Charguéraud, *The locally nameless
+representation*, Sections 2.1 to 2.4 and 3). -/
 theorem toLocallyNameless_relational_bijection {Var : Type u} [DecidableEq Var] [HasFresh Var] :
     (∀ m : Term Var, (toLocallyNameless m).LC) ∧
       (∀ m n : Term Var, m =α n ↔ toLocallyNameless m = toLocallyNameless n) ∧

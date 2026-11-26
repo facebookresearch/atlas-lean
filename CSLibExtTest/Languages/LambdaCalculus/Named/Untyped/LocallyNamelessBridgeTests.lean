@@ -182,4 +182,10 @@ example : ∀ {Var : Type u} [DecidableEq Var] [HasFresh Var],
       (∀ t : LocallyNameless.Untyped.Term Var, t.LC → ∃ m, toLocallyNameless m = t) :=
   @toLocallyNameless_relational_bijection
 
+/-- The third clause applied to a concrete locally closed term. -/
+example : ∃ m : Term ℕ,
+    toLocallyNameless m = .abs (.app (.bvar 0) (.fvar 5)) :=
+  (toLocallyNameless_relational_bijection (Var := ℕ)).2.2 _
+    ((LocallyNameless.Untyped.Term.lcAt_iff_LC _).1 (by decide))
+
 end Cslib.LambdaCalculus.Named.Untyped.LocallyNamelessBridgeTests
