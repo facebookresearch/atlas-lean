@@ -5,7 +5,6 @@ Probabilistic classes (RP, BPP), Arthur–Merlin and interactive proofs (AM, MA,
 - [Arthur–Merlin and Merlin–Arthur classes](arthur-merlin-and-merlin-arthur-classes/README.md)
 - [Bounded-error probabilistic classes RP and BPP](bounded-error-probabilistic-classes-rp-and-bpp/README.md)
 - [Bounded-error quantum polynomial time (BQP)](bounded-error-quantum-polynomial-time-bqp/README.md)
-- [BPP error amplification](bpp-error-amplification/README.md)
 - [Goldwasser–Sipser theorem](goldwasser-sipser-theorem/README.md)
 - [Graph isomorphism and Arthur–Merlin proofs](graph-isomorphism-and-arthur-merlin-proofs/README.md)
 - [Local Hamiltonian problem](local-hamiltonian-problem/README.md)

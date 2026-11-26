@@ -7,6 +7,8 @@
 
 ## [Part 4 of 20](part-04/README.md)
 
+- [BPPAmplification](part-04/bppamplification/README.md)
+
 ## [Part 10 of 20](part-10/README.md)
 
 - [Compositional Fragment](part-10/compositional-fragment/README.md)
