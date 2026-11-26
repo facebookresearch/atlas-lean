@@ -1,8 +1,3 @@
 # Rank iterate
 
-Rank increases along find paths in a union-find forest:
-`p` is the parent function on `α` (roots are fixed points),
-`r` assigns ranks. If every non-root has rank below its parent's
-rank, then walking `k` parent steps from `x` (through non-roots)
-raises the rank by at least `k`. This is the invariant that
-makes `find` logarithmic once ranks are `O(log n)`.
+Let $p : \alpha \to \alpha$ be a parent map, whose roots are its fixed points, and let $r : \alpha \to \mathbb{N}$ be a rank function with natural-number values such that every nonroot $z$ has $r(z) < r(p(z))$. If $k$ parent steps from $x$ pass only through nonroots, that is, $p^i(x)$ is not a root for every $i < k$, then $r(x) + k \le r(p^k(x))$. Natural-number ranks matter: strict increase then gains at least one per step. Consequently, when ranks are logarithmic in the number of elements, so is the number of parent steps on such a path; the statement bounds parent steps and contains no running-time model.
