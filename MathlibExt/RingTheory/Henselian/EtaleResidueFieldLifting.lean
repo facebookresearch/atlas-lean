@@ -14,6 +14,15 @@ moduleFinite_of_henselianLocalRing.lean`
 and
 `P2M/Sol/S_Algebra_Etale_existsUnique_algHom_baseChange_residueField_eq_of_
 moduleFinite_of_henselianLocalRing.lean`
+and the upstream results it uses, from
+`Theorems/Thm_HenselianLocalRing_exists_completeOrthogonalIdempotents_forall_isLocalRing_
+quotient_of_moduleFinite.lean`,
+`P2M/Sol/S_HenselianLocalRing_exists_completeOrthogonalIdempotents_forall_isLocalRing_
+quotient_of_moduleFinite.lean`,
+`Theorems/Thm_Algebra_Etale_algHom_ext_of_forall_sub_mem_map_maximalIdeal_of_
+henselianLocalRing.lean`,
+`P2M/Sol/S_Algebra_Etale_algHom_ext_of_forall_sub_mem_map_maximalIdeal_of_
+henselianLocalRing.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -40,6 +49,7 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.RingTheory.TensorProduct.Basic
 public import Mathlib.RingTheory.Unramified.Basic
 public import Mathlib.RingTheory.Unramified.LocalRing
+import Mathlib.RingTheory.LocalRing.ResidueField.Fiber
 import Mathlib.RingTheory.Smooth.Flat
 import Mathlib.Tactic
 import MathlibExt.RingTheory.Henselian.IdempotentLifting
@@ -56,22 +66,6 @@ set_option autoImplicit false
 section hensSplitHelpers
 
 open IsLocalRing
-
-private theorem hensSplit_comap_map_mk {S : Type v} [CommRing S] {K m : Ideal S} (hK : K ≤ m) :
-    (m.map (Ideal.Quotient.mk K)).comap (Ideal.Quotient.mk K) = m := by
-  rw [Ideal.comap_map_of_surjective (Ideal.Quotient.mk K) Ideal.Quotient.mk_surjective,
-    ← RingHom.ker_eq_comap_bot, Ideal.mk_ker, sup_eq_left.mpr hK]
-
-private theorem hensSplit_isMaximal_map_mk {S : Type v} [CommRing S] {K m : Ideal S} (hm :
-  m.IsMaximal)
-    (hK : K ≤ m) : (m.map (Ideal.Quotient.mk K)).IsMaximal := by
-  rcases Ideal.map_eq_top_or_isMaximal_of_surjective (Ideal.Quotient.mk K)
-    Ideal.Quotient.mk_surjective hm
-    with h | h
-  · exfalso
-    apply hm.ne_top
-    rw [← hensSplit_comap_map_mk hK, h, Ideal.comap_top]
-  · exact h
 
 private theorem hensSplit_map_maximalIdeal_le {R : Type u} [CommRing R] [IsLocalRing R]
     {S : Type v} [CommRing S] [Algebra R S] [Module.Finite R S] (m : Ideal S) (hm : m.IsMaximal) :
@@ -104,8 +98,10 @@ private theorem hensSplit_finite_maximalSpectrum {R : Type u} [CommRing R] [IsLo
   set J : Ideal S := (maximalIdeal R).map (algebraMap R S) with hJ
   haveI : IsArtinianRing (S ⧸ J) := hensSplit_isArtinianRing_fibre
   let F : MaximalSpectrum S → MaximalSpectrum (S ⧸ J) := fun m =>
+    have := m.isMaximal
     ⟨m.asIdeal.map (Ideal.Quotient.mk J),
-      hensSplit_isMaximal_map_mk m.isMaximal (hensSplit_map_maximalIdeal_le (R := R) _ m.isMaximal)⟩
+      Ideal.IsMaximal.map_of_surjective_of_ker_le Ideal.Quotient.mk_surjective
+        (by rw [Ideal.mk_ker]; exact hensSplit_map_maximalIdeal_le (R := R) _ m.isMaximal)⟩
   refine Finite.of_injective F ?_
   intro m₁ m₂ h
   have h2 : (m₁.asIdeal.map (Ideal.Quotient.mk J)).comap (Ideal.Quotient.mk J) =
@@ -113,19 +109,9 @@ private theorem hensSplit_finite_maximalSpectrum {R : Type u} [CommRing R] [IsLo
     have := congrArg MaximalSpectrum.asIdeal h
     simp only [F] at this
     rw [this]
-  rw [hensSplit_comap_map_mk (hensSplit_map_maximalIdeal_le (R := R) _ m₁.isMaximal),
-    hensSplit_comap_map_mk (hensSplit_map_maximalIdeal_le (R := R) _ m₂.isMaximal)] at h2
+  rw [Ideal.comap_map_mk (hensSplit_map_maximalIdeal_le (R := R) _ m₁.isMaximal),
+    Ideal.comap_map_mk (hensSplit_map_maximalIdeal_le (R := R) _ m₂.isMaximal)] at h2
   exact MaximalSpectrum.ext h2
-
-private theorem hensSplit_isIdempotentElem_eq_zero_or_one {R : Type u} [CommRing R] [IsLocalRing R]
-  {a : R}
-    (ha : IsIdempotentElem a) : a = 0 ∨ a = 1 := by
-  rcases IsLocalRing.isUnit_or_isUnit_one_sub_self a with h | h
-  · right
-    exact h.mul_left_cancel (by rw [mul_one]; exact ha.eq)
-  · left
-    have : (1 - a) * a = (1 - a) * 0 := by rw [mul_zero, sub_mul, one_mul, ha.eq, sub_self]
-    exact h.mul_left_cancel this
 
 private theorem hensSplit_isIdempotentElem_eq_of_mk_eq {R : Type u} [CommRing R]
   [HenselianLocalRing R]
@@ -145,7 +131,9 @@ private theorem hensSplit_isLocalRing_quotient {S : Type v} [CommRing S] (e : S)
   have hK : K ≤ m := by
     rw [hKdef, Ideal.span_le, Set.singleton_subset_iff]
     exact h1
-  refine ⟨m.map (Ideal.Quotient.mk K), hensSplit_isMaximal_map_mk hm hK, ?_⟩
+  refine ⟨m.map (Ideal.Quotient.mk K),
+    Ideal.IsMaximal.map_of_surjective_of_ker_le Ideal.Quotient.mk_surjective
+      (by rwa [Ideal.mk_ker]), ?_⟩
   intro N hN
   have hNc : (N.comap (Ideal.Quotient.mk K)).IsMaximal :=
     Ideal.comap_isMaximal_of_surjective (Ideal.Quotient.mk K) Ideal.Quotient.mk_surjective
@@ -393,40 +381,6 @@ private theorem one_tmul_eq_zero_iff (c : C) :
     rfl
   exact h1.trans h2.symm
 
-private theorem exists_one_tmul (z : ResidueField R ⊗[R] C) : ∃ c : C, z = (1 : ResidueField R)
-  ⊗ₜ[R] c := by
-  induction z using TensorProduct.induction_on with
-  | zero => exact ⟨0, by rw [TensorProduct.tmul_zero]⟩
-  | tmul a c =>
-    obtain ⟨r, rfl⟩ := IsLocalRing.residue_surjective a
-    refine ⟨r • c, ?_⟩
-    rw [show IsLocalRing.residue R r = r • (1 : ResidueField R) from Algebra.algebraMap_eq_smul_one
-      r,
-      TensorProduct.smul_tmul]
-  | add x y hx hy =>
-    obtain ⟨c, rfl⟩ := hx
-    obtain ⟨c', rfl⟩ := hy
-    exact ⟨c + c', by rw [TensorProduct.tmul_add]⟩
-
-variable [IsLocalRing C] [IsLocalHom (algebraMap R C)]
-
-private theorem nontrivial_residueField_tensor : Nontrivial (ResidueField R ⊗[R] C) := by
-  refine ⟨⟨(1 : ResidueField R) ⊗ₜ[R] (1 : C), 0, ?_⟩⟩
-  rw [Ne, one_tmul_eq_zero_iff]
-  intro h
-  have hle : (maximalIdeal R).map (algebraMap R C) ≤ maximalIdeal C :=
-    ((local_hom_TFAE (algebraMap R C)).out 1 3 rfl rfl).mp ‹_›
-  exact (maximalIdeal.isMaximal C).ne_top (Ideal.eq_top_of_isUnit_mem _ (hle h) isUnit_one)
-
-private theorem isLocalRing_residueField_tensor : IsLocalRing (ResidueField R ⊗[R] C) := by
-  haveI := nontrivial_residueField_tensor (R := R) (C := C)
-  refine IsLocalRing.of_surjective'
-    (Algebra.TensorProduct.includeRight (R := R) (A := ResidueField R) (B := C) : C →+*
-      ResidueField R ⊗[R] C) ?_
-  intro z
-  obtain ⟨c, rfl⟩ := exists_one_tmul z
-  exact ⟨c, rfl⟩
-
 end Residue
 
 end H1Aux
@@ -589,7 +543,6 @@ private theorem exists_algHom_of_isLocalRing [IsLocalRing C]
     rw [hσ, hpbar, map_one, one_mul]
   refine ⟨ψ, ?_⟩
 
-  haveI : IsLocalRing (ResidueField R ⊗[R] C) := isLocalRing_residueField_tensor
   haveI : IsArtinianRing (ResidueField R ⊗[R] C) := IsArtinianRing.of_finite (ResidueField R) _
   have hθsurj : Function.Surjective θ := by
     intro x
@@ -641,30 +594,21 @@ private theorem mul_mem_map_maximalIdeal_of_mk_mem [IsLocalRing R] (e c : C) (he
     c * e ∈ (maximalIdeal R).map (algebraMap R C) := by
   rw [IsScalarTower.algebraMap_eq R C (C ⧸ Ideal.span {1 - e}), ← Ideal.map_map,
     Ideal.Quotient.algebraMap_eq,
-    Ideal.mem_map_iff_of_surjective _ Ideal.Quotient.mk_surjective] at h
-  obtain ⟨c', hc', hcc'⟩ := h
-  rw [Ideal.Quotient.eq, Ideal.mem_span_singleton] at hcc'
-  obtain ⟨d, hd⟩ := hcc'
-  have : c * e = c' * e := by
-    calc c * e = (c' - (c' - c)) * e := by ring
-      _ = (c' - (1 - e) * d) * e := by rw [hd]
-      _ = c' * e - d * ((1 - e) * e) := by ring
-      _ = c' * e := by rw [he.one_sub_mul_self, mul_zero, sub_zero]
-  rw [this]
-  exact Ideal.mul_mem_right _ _ hc'
+    Ideal.mem_map_span_singleton_iff_of_isIdempotentElem he.one_sub, sub_sub_cancel] at h
+  rwa [mul_comm]
 
 omit [Module.Finite R O] [Algebra.Etale R O] [Module.Finite R C] in
 private theorem eq_zero_of_forall_map_mk_eq_zero {ι : Type*} [Fintype ι] (e : ι → C)
     (hce : CompleteOrthogonalIdempotents e) (z : ResidueField R ⊗[R] C)
     (hz : ∀ i, Algebra.TensorProduct.map (AlgHom.id (ResidueField R) (ResidueField R))
       (Ideal.Quotient.mkₐ R (Ideal.span {1 - e i})) z = 0) : z = 0 := by
-  obtain ⟨c, rfl⟩ := exists_one_tmul z
-  rw [one_tmul_eq_zero_iff]
+  obtain ⟨c, rfl⟩ := Algebra.TensorProduct.includeRight_surjective C residue_surjective z
+  rw [Algebra.TensorProduct.includeRight_apply, one_tmul_eq_zero_iff]
   have hi : ∀ i, c * e i ∈ (maximalIdeal R).map (algebraMap R C) := by
     intro i
     have h := hz i
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, Ideal.Quotient.mkₐ_eq_mk,
-      one_tmul_eq_zero_iff] at h
+    rw [Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.map_tmul, AlgHom.id_apply,
+      Ideal.Quotient.mkₐ_eq_mk, one_tmul_eq_zero_iff] at h
     exact mul_mem_map_maximalIdeal_of_mk_mem (R := R) (e i) c (hce.idem i) h
   have hc : c = ∑ i, c * e i := by rw [← Finset.mul_sum, hce.complete, mul_one]
   rw [hc]
