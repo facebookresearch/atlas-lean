@@ -22476,6 +22476,7 @@
 "Cslib.Databases.TxnBefore": "479aa2d752729a9c",
 "Cslib.Databases.WellFormed": "a952855556aa30e6",
 "Cslib.Databases.attrClosure": "e95bb3e58d19d15b",
+"Cslib.Databases.bagRelationalAlgebra": "861ff393361efc8d",
 "Cslib.Databases.bcnfCandidates": "8834130edd1e51ab",
 "Cslib.Databases.bcnfDecompose": "f3fd566c1b5b9837",
 "Cslib.Databases.bcnfDecomposition": "887450cace1dfa62",
