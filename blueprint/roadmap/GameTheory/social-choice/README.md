@@ -13,6 +13,10 @@ Social choice theory studies rules that aggregate individual preferences into a 
 - [May's theorem](may-s-theorem.md)
 - [Proportionality and envy-freeness coincide for two agents](proportionality-and-envy-freeness-coincide-for-two-agents.md)
 - [Query count of the Dubins-Spanier protocol](query-count-of-the-dubins-spanier-protocol.md)
+- [Envy-Free Division Protocols](envy-free-division-protocols/README.md)
+- [Monotonicity and the Gibbard–Satterthwaite Reduction](monotonicity-and-the-gibbard-satterthwaite-reduction/README.md)
+- [Random Assignment](random-assignment/README.md)
+- [Strategy-Proofness on Single-Peaked Domains](strategy-proofness-on-single-peaked-domains/README.md)
 
 ## Related topics
 

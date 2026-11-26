@@ -9,6 +9,7 @@ Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, 
 - [Consequences of canonical polynomial-time reductions](consequences-of-canonical-polynomial-time-reduct/README.md)
 - [Countdown as a consumer of canonical RAM instruction costs](countdown-as-a-consumer-of-canonical-ram-instruc/README.md)
 - [Polynomial-time first projection of bitstring pairs](polynomial-time-first-projection-of-bitstring-pa/README.md)
+- [Circuit matrices and register-pair layouts](circuit-matrices-and-register-pair-layouts/README.md)
 - [Polynomially bounded functions](polynomially-bounded-functions/README.md)
 - [Quadratic overhead of single-tape simulation](quadratic-overhead-of-single-tape-simulation/README.md)
 - [Resource annotation laws](resource-annotation-laws/README.md)
