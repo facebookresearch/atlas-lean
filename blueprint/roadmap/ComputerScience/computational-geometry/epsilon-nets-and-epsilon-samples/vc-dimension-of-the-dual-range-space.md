@@ -1,6 +1,6 @@
 # VC dimension of the dual range space
 
-Let $S = (X, R)$ be a range space. Its *dual range space* is $S^\star = (R, X^\star)$ with $X^\star = \{R_p : p \in X\}$, where $R_p = \{r \in R : p \in r\}$ is the set of ranges containing $p$. If $S$ has VC dimension $\delta$, then $S^\star$ has VC dimension less than $2^{\delta + 1}$.
+Let $S = (X, R)$ be a range space. Its *dual range space* is $S^\star = (R, X^\star)$ with $X^\star = \{R_p : p \in X\}$, where $R_p = \{r \in R : p \in r\}$ is the set of ranges containing $p$. If $S$ has VC dimension $\delta$, then $S^\star$ has VC dimension at most $2^{\delta + 1}$.
 
 ## Depends on
 
