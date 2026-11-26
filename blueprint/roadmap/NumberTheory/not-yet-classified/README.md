@@ -6,6 +6,8 @@ Topics added since this subject's fields were last revised.
 - [Adelic Periodization](adelic-periodization/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Fundamental Domain Exact Volume](fundamental-domain-exact-volume/README.md)
+- [Hecke Algebra](hecke-algebra/README.md)
+- [Hecke Local](hecke-local/README.md)
 - [Hecke Operator](hecke-operator/README.md)
 - [Hecke Torsion Cayley Hamilton](hecke-torsion-cayley-hamilton/README.md)
 - [Hecke UGamma H](hecke-ugamma-h/README.md)
