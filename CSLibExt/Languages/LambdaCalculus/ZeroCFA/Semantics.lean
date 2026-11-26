@@ -72,14 +72,19 @@ abbrev Env (Var : Type u) (Lab : Type v) : Type (max u v) :=
   List (Var × Clos Var Lab)
 
 /-- **Looking a name up.** The closure bound to `x` by the newest binding of `x` in the
-environment, or `none` when the environment does not bind `x`. -/
+environment, or `none` when the environment does not bind `x`. It is `List.lookup x env`, the
+value of the first pair in the list whose key is `x`. -/
 def Env.lookup {Var : Type u} {Lab : Type v} [DecidableEq Var] :
-    Env Var Lab → Var → Option (Clos Var Lab)
-  | [], _ => none
-  | (y, c) :: env, x => if x = y then some c else Env.lookup env x
+    Env Var Lab → Var → Option (Clos Var Lab) :=
+  fun env x => List.lookup x env
 
-/-- **Continuations.** What remains to be done with the value being computed. The frames record
-the label `site` of the application they belong to. -/
+/-- **Continuations.** What remains to be done with the value being computed, in one of three
+forms. The empty continuation `mt` means that the value is the result. The argument frame
+`ar site arg env k` holds the argument `arg` of the application labelled `site`, the environment
+`env` in which to evaluate it, and the continuation `k` that follows. The function frame
+`fn site f k` holds the function closure `f` of the application labelled `site` and the
+continuation `k` that follows. The label `site` records the application a frame belongs to; no
+transition rule inspects it. -/
 inductive Kont (Var : Type u) (Lab : Type v) : Type (max u v) where
   /-- Nothing remains: the value is the result. -/
   | mt
@@ -98,8 +103,24 @@ inductive State (Var : Type u) (Lab : Type v) : Type (max u v) where
   /-- Return the closure `v` to `k`. -/
   | ret (v : Clos Var Lab) (k : Kont Var Lab)
 
-/-- **Transitions of the CEK machine.** The five rules of call-by-value evaluation; a variable
-whose name has no binding has no transition. -/
+/-- **Transitions of the CEK machine.** Call-by-value evaluation in five rules, where
+`ev e env k` evaluates `e` in the environment `env` and `ret v k` returns the closure `v` to `k`:
+
+* `var`: `ev (var x l) env k` steps to `ret c k` when `Env.lookup env x = some c`, the newest
+  binding of `x` in the current environment `env`;
+* `lam`: `ev (lam x body l) env k` steps to `ret (mk x body l env) k`, the closure of the
+  abstraction in the current environment `env`;
+* `app`: `ev (app fn arg l) env k` steps to `ev fn env (ar l arg env k)`, which evaluates the
+  function `fn` in `env` and saves the argument `arg` and `env` in an argument frame;
+* `arg`: `ret c (ar l arg env k)` steps to `ev arg env (fn l c k)`, which evaluates the argument
+  in the environment `env` saved in the frame and saves the function closure `c` in a function
+  frame;
+* `call`: `ret v (fn l (mk x body l' env) k)` steps to `ev body ((x, v) :: env) k`, which runs
+  the body of the function closure in the environment `env` of that closure, not the caller's,
+  extended by binding its parameter `x` to the argument `v`.
+
+A variable whose name has no binding in the current environment, and a closure returned to the
+empty continuation, have no transition. -/
 inductive Step {Var : Type u} {Lab : Type v} [DecidableEq Var] :
     State Var Lab → State Var Lab → Prop
   /-- A variable returns the closure bound to its name. -/
@@ -239,8 +260,12 @@ inductive KontIn {Var : Type u} {Lab : Type v} (P : Tm Var Lab) : Kont Var Lab �
   | fn {l : Lab} {fn arg : Tm Var Lab} {c : Clos Var Lab} {k : Kont Var Lab} :
       Tm.app fn arg l ∈ P.subterms → ClosIn P c → KontIn P k → KontIn P (.fn l c k)
 
-/-- **States from a program.** `StateIn P s` says that the control term of `s` is a subterm of
-`P` and that its environment, closure and continuation come from `P`. -/
+/-- **States from a program.** `StateIn P s` says that the state `s` comes from the program `P`,
+in one of two cases. An evaluating state `ev e env k` comes from `P` when `e` is a subterm of `P`,
+its environment comes from `P` (`EnvIn P env`) and its continuation comes from `P`
+(`KontIn P k`). A returning state `ret v k` has no control term or environment of its own: it comes
+from `P` when the returned closure comes from `P` (`ClosIn P v`) and its continuation comes from
+`P` (`KontIn P k`). -/
 inductive StateIn {Var : Type u} {Lab : Type v} (P : Tm Var Lab) : State Var Lab → Prop
   /-- Evaluating a subterm of `P`. -/
   | ev {e : Tm Var Lab} {env : Env Var Lab} {k : Kont Var Lab} :
@@ -260,7 +285,7 @@ private theorem closIn_of_lookup {Var : Type u} {Lab : Type v} [DecidableEq Var]
     obtain ⟨y, c'⟩ := b
     cases h with
     | cons _ hc' henv =>
-      simp only [Env.lookup] at hx
+      simp only [Env.lookup, List.lookup_cons] at hx
       split at hx
       · cases hx
         exact hc'

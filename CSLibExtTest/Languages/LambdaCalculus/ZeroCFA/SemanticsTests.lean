@@ -15,9 +15,11 @@ public import CSLibExt.Languages.LambdaCalculus.ZeroCFA.Semantics
 /-!
 # Client tests for labelled λ-terms and their CEK machine
 
-The higher-order example of *Static Program Analysis* §9.1 runs to the closure that the analysis
-predicts for the whole program, and at the call `s z` the name `s` is bound to the closure of
-`λn.λt.λe.e`, as the analysis predicts for `s`. The term `Ω` runs forever around a cycle of five
+The higher-order example of *Static Program Analysis* §9.1 runs to a closure that has the
+abstraction the analysis predicts for the whole program, `λt.λe.e`, and at the call `s z` the
+name `s` is bound to a closure that has the abstraction the analysis predicts for `s`,
+`λn.λt.λe.e`. The analysis predicts abstractions, not the environments that closures capture.
+The term `Ω` runs forever around a cycle of five
 transitions. The negative controls check that an unbound variable is stuck, that closures use the
 environment of their definition (static scoping), that the newest binding of a name wins, and
 that the program conditions reject a repeated label and a repeated binder. Erasure, the
@@ -70,10 +72,20 @@ example {Var : Type u} {Lab : Type v} (x : Var) (body : Tm Var Lab) (l : Lab)
     (env : Env Var Lab) : (Clos.mk x body l env).term = .lam x body l :=
   rfl
 
+example {Var : Type u} {Lab : Type v} [DecidableEq Var] (env : Env Var Lab) (x : Var) :
+    Env.lookup env x = List.lookup x env :=
+  rfl
+
 example {Var : Type u} {Lab : Type v} [DecidableEq Var] (y x : Var) (c : Clos Var Lab)
     (env : Env Var Lab) :
-    Env.lookup ((y, c) :: env) x = if x = y then some c else Env.lookup env x :=
-  rfl
+    Env.lookup ((y, c) :: env) x = if x = y then some c else Env.lookup env x := by
+  show List.lookup x ((y, c) :: env) = if x = y then some c else List.lookup x env
+  rw [List.lookup_cons]
+  by_cases h : x = y
+  · subst h
+    simp
+  · rw [beq_eq_false_iff_ne.mpr h]
+    simp [h]
 
 example {Var : Type u} {Lab : Type v} (P : Tm Var Lab) : inj P = .ev P [] .mt :=
   rfl
@@ -170,8 +182,8 @@ example : Reachable spa spaResult := by
   unfold Reachable inj
   cek_steps
 
-/-- The value of the program is a closure of `λt.λe.e`, the label-`9` abstraction, which is what
-the analysis predicts for the whole program. -/
+/-- The returned closure has the abstraction the analysis predicts for the whole program, the
+label-`9` abstraction `λt.λe.e`; the analysis does not predict the environment it captures. -/
 example : (Clos.mk V.t (.lam .e (.var .e 11) 10) 9 [(.n, closR)]).term =
     .lam .t (.lam .e (.var .e 11) 10) 9 :=
   rfl
@@ -184,8 +196,8 @@ example : Reachable spa (.ev (.app (.var .s 6) (.var .z 7) 5) [(.z, closR), (.s,
   unfold Reachable inj
   cek_steps
 
-/-- There `s` is bound to the closure of `λn.λt.λe.e`, which is what the analysis predicts for
-`s`. -/
+/-- There `s` is bound to a closure that has the abstraction the analysis predicts for `s`,
+`λn.λt.λe.e`. -/
 example : Env.lookup [(V.z, closR), (V.s, closN)] V.s = some closN ∧ closN.term = lamN :=
   ⟨rfl, rfl⟩
 
