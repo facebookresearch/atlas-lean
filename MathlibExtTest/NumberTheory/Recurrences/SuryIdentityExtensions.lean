@@ -22,6 +22,30 @@ example (n : ℕ) :
   norm_num [Nat.cast_add] at h
   linear_combination h / 4
 
+-- A negative offset includes signed Fibonacci terms and gives a nontrivial weight of 2.
+example (n : ℕ) :
+    -fibAtInt ((n : ℤ) + 1) =
+      ∑ i ∈ Finset.range (n + 1), (2 : ℚ) ^ (n - i) * fibAtInt ((i : ℤ) - 2) := by
+  have hrec (m : ℤ) : fibAtInt (m + 2) = 1 * fibAtInt (m + 1) + 1 * fibAtInt m := by
+    simpa only [fibAtInt, Int.cast_add, one_mul, add_comm] using
+      congrArg (fun x : ℤ => (x : ℚ)) (Int.fib_add_two m)
+  have h0 : fibAtInt 0 = 0 := by decide
+  have h1 : fibAtInt 1 = 1 := by decide
+  have hk : fibAtInt (-2) = -1 := by decide
+  have hprev : fibAtInt (-3) = 2 := by decide
+  have h := second_order_recurrence_offset_sury_sum fibAtInt 1 1 (by decide) hrec (-2)
+    (by decide) (by decide) n
+  norm_num only [h0, h1, hk, hprev, zero_mul, zero_add, one_mul, zero_sub, one_pow,
+    neg_div_neg_eq, neg_mul, mul_one, div_one, sub_eq_add_neg] at h ⊢
+  exact h
+
+-- A constant sequence has zero initial determinant, even though its offset terms are nonzero.
+example (k : ℤ) (n : ℕ) :
+    (1 : ℚ) * 1 - 1 * 1 = ((1 * 1 - 1 ^ 2) / 1) *
+      ∑ _i ∈ Finset.range (n + 1), (-(1 : ℚ) * 1 / 1) ^ (n - _i) * 1 :=
+  second_order_recurrence_offset_sury_sum (fun _ => 1) 0 1 (by decide)
+    (fun _ => by simp) k (by decide) (by decide) n
+
 -- Signed Fibonacci and Lucas numbers have opposite signs at the same negative index.
 example : fibAtInt (-4) = -3 ∧ lucasAtInt (-4) = 7 := by decide +kernel
 example : fibAtInt (-3) = 2 ∧ lucasAtInt (-3) = -4 := by decide +kernel

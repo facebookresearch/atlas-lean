@@ -25,6 +25,10 @@ Multiplication by `c₁ - A 1` advances the weights of all terms already in the 
 This gives the induction step in Gregory Dresden and Xiaoya Gao,
 "Further Extensions of Sury's Identity", Theorem 1 (<https://arxiv.org/abs/2512.12841>).
 
+For the offset identity (Theorem 2), normalize by `X k` and use the initial-one identity.
+The determinant in the numerator scales by `(-c₂) ^ k` under a shift by `k`, both for the
+left-hand side and for its initial value (equations (22) and (23) in the paper).
+
 For the Lucas step identity (Theorem 4), Binet's formulas give
 `L_j F_{k+j} - F_j L_{k+j} = 2 (-1)^j F_k`. At `k = j*n` this accounts for the new
 summand, while multiplication by `(-1)^j` updates the signs of the previous terms.
@@ -89,6 +93,86 @@ theorem second_order_recurrence_initial_one_sury_sum
       _ = _ := by
         rw [ih, hS]
         ring
+
+/-- **Offset form of Sury's identity for a second-order recurrence.** Let $c_1, c_2$ be rational
+numbers with $c_2 \neq 0$, and let $(X_n)_{n \in \mathbb{Z}}$ be a sequence of rational numbers
+with $X_{n+2} = c_1 X_{n+1} + c_2 X_n$ for all integers $n$. Let $k$ be an integer with
+$X_k \neq 0$ and $X_{k-1} \neq 0$. Then for every natural number $n$,
+$$X_0 X_{n+2} - X_1 X_{n+1} = \frac{X_0 X_2 - X_1^2}{X_k}
+\sum_{i=0}^{n} \left(\frac{-c_2 X_{k-1}}{X_k}\right)^{n-i} X_{i+k}.$$
+
+The offset $k$ may be negative; requiring the recurrence at every integer index encodes the
+paper's backward extension of the sequence, which uses $c_2 \neq 0$.
+
+Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 2. -/
+theorem second_order_recurrence_offset_sury_sum
+    (X : ℤ → ℚ) (c₁ c₂ : ℚ)
+    (hc₂ : c₂ ≠ 0)
+    (hrec : ∀ n : ℤ, X (n + 2) = c₁ * X (n + 1) + c₂ * X n)
+    (k : ℤ) (hXk : X k ≠ 0) (hXk_pred : X (k - 1) ≠ 0)
+    (n : ℕ) :
+    X 0 * X ((n : ℤ) + 2) - X 1 * X ((n : ℤ) + 1) =
+      ((X 0 * X 2 - X 1 ^ 2) / X k) *
+        ∑ i ∈ Finset.range (n + 1),
+          (-c₂ * X (k - 1) / X k) ^ (n - i) * X ((i : ℤ) + k) := by
+  let A (m : ℕ) := X ((m : ℤ) + k) / X k
+  have hA0 : A 0 = 1 := by simp [A, hXk]
+  have hArec (m : ℕ) : A (m + 2) = c₁ * A (m + 1) + c₂ * A m := by
+    simpa only [A, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat,
+      add_right_comm (m : ℤ) k, add_div, mul_div_assoc] using
+      congrArg (fun x : ℚ => x / X k) (hrec ((m : ℤ) + k))
+  have htform : c₁ - A 1 = -c₂ * X (k - 1) / X k := by
+    have h := hrec (k - 1)
+    rw [show k - 1 + 2 = 1 + k by omega, sub_add_cancel] at h
+    change c₁ - X (1 + k) / X k = _
+    rw [h]
+    field_simp [hXk]
+    ring
+  have ht : c₁ - A 1 ≠ 0 := by
+    rw [htform]
+    exact div_ne_zero (mul_ne_zero (neg_ne_zero.mpr hc₂) hXk_pred) hXk
+  -- Shifting both columns of the determinant multiplies it by `-c₂`.
+  let D (s m : ℤ) := X s * X (m + s + 2) - X (s + 1) * X (m + s + 1)
+  have hshift (s m : ℤ) : D (s + 1) m = -c₂ * D s m := by
+    have hm := hrec (m + s + 1)
+    rw [show m + s + 1 + 2 = m + (s + 1) + 2 by omega,
+      show m + s + 1 + 1 = m + (s + 1) + 1 by omega] at hm
+    dsimp only [D]
+    rw [show s + 1 + 1 = s + 2 by omega, hrec s, hm,
+      show m + (s + 1) + 1 = m + s + 2 by omega]
+    ring
+  have hc : -c₂ ≠ 0 := neg_ne_zero.mpr hc₂
+  have hscale (s m : ℤ) : D s m = (-c₂) ^ s * D 0 m := by
+    induction s using Int.inductionOn' (b := 0) with
+    | zero => simp
+    | succ s _ ih =>
+      rw [hshift, ih, zpow_add₀ hc, zpow_one]
+      ring
+    | pred s _ ih =>
+      apply mul_left_cancel₀ hc
+      rw [← hshift (s - 1) m, sub_add_cancel, ih, zpow_sub₀ hc, zpow_one,
+        ← mul_assoc, mul_comm (-c₂), div_mul_cancel₀ _ hc]
+  have hnormalized (m : ℕ) : A (m + 2) - A 1 * A (m + 1) = D k m / X k ^ 2 := by
+    simp only [A, D, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat,
+      add_right_comm (m : ℤ) 1 k, add_right_comm (m : ℤ) 2 k, add_comm (1 : ℤ) k]
+    field_simp [hXk]
+  have hseed : A 2 - A 1 ^ 2 = D k 0 / X k ^ 2 := by
+    simpa only [Nat.cast_zero, pow_two] using hnormalized 0
+  let S := ∑ i ∈ Finset.range (n + 1), (-c₂ * X (k - 1) / X k) ^ (n - i) * X ((i : ℤ) + k)
+  have hsum : (∑ i ∈ Finset.range (n + 1), (c₁ - A 1) ^ (n - i) * A i) = S / X k := by
+    rw [htform]
+    simp only [S, A, div_eq_mul_inv, Finset.sum_mul, mul_assoc]
+  have h := second_order_recurrence_initial_one_sury_sum A c₁ c₂ hc₂ hA0 hArec ht n
+  rw [hnormalized n, hseed, hsum, hscale k (n : ℤ), hscale k 0] at h
+  have hk2 : X k ^ 2 ≠ 0 := pow_ne_zero _ hXk
+  have hscaled : (-c₂) ^ k * D 0 n = (-c₂) ^ k * (D 0 0 / X k * S) := by
+    calc
+      _ = ((-c₂) ^ k * D 0 n / X k ^ 2) * X k ^ 2 := (div_mul_cancel₀ _ hk2).symm
+      _ = _ := by
+        rw [h, div_mul_eq_mul_div, div_mul_cancel₀ _ hk2]
+        ring
+  have hfinal := mul_left_cancel₀ (zpow_ne_zero k hc) hscaled
+  simpa only [D, add_zero, zero_add, pow_two, S] using hfinal
 
 private theorem lucas_mul_fib_sub_fib_mul_lucas (j k : ℕ) :
     lucasAtInt j * fibAtInt ↑(k + j) - fibAtInt j * lucasAtInt ↑(k + j) =
