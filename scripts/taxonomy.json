@@ -13014,6 +13014,7 @@
   "MathlibExt/NumberTheory/KFibonacciTruncatedRecurrence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/JosephusHighExtremal": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusThreeHighExtremalRecurrences": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
+  "MathlibExt/NumberTheory/JosephusThreeHighExtremalSuccCases": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/KFull": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Powerful and k-full numbers"},
   "MathlibExt/NumberTheory/KGeneralizedFibonacciDiscriminant": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Discriminants of k-generalized Fibonacci polynomials"},
   "MathlibExt/NumberTheory/KMahlerFunction": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Mahler functions"},
