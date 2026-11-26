@@ -1,6 +1,6 @@
 # Stationary distribution of the telegraph model of gene expression
 
-In the two-state (telegraph) model a gene switches from off to on at rate $k_0$ and from on to off at rate $k_1$, produces mRNA at rate $v_0$ while on, and each mRNA degrades at rate $d_0$. Iyer-Biswas, Hayot and Jayaprakash (2009, Eq. (10)), solving the master equation through the generating function $G(z) = \sum_m z^m P(m)$ with time measured in units of the mRNA lifetime, give the stationary generating function as a Kummer confluent hypergeometric function; in the present notation
+In the two-state (telegraph) model a gene switches from off to on at rate $k_0 > 0$ and from on to off at rate $k_1 > 0$, produces mRNA at rate $v_0 \ge 0$ while on, and each mRNA degrades at rate $d_0 > 0$, so that the Beta parameters $k_0/d_0$ and $k_1/d_0$ below are positive. Iyer-Biswas, Hayot and Jayaprakash (2009, Eq. (10)), solving the master equation through the generating function $G(z) = \sum_m z^m P(m)$ with time measured in units of the mRNA lifetime, give the stationary generating function as a Kummer confluent hypergeometric function; in the present notation
 
 $$G(z) = {}_1F_1\Bigl(\frac{k_0}{d_0};\, \frac{k_0 + k_1}{d_0};\, \frac{v_0}{d_0}(z - 1)\Bigr).$$
 

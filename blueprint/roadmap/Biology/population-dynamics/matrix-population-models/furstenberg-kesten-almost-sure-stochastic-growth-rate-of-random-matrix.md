@@ -4,7 +4,7 @@ Let the environment $e_t$ follow either an i.i.d. sequence with distribution $\n
 
 $$a = \lim_{t \to \infty} \frac1t \log N_t(i) = \lim_{t \to \infty} \frac1t \log \frac{\sum_i N_t(i)}{\sum_i N_0(i)}$$
 
-exists almost surely and is deterministic: almost every realization gives the same value, for every stage $i$, because the environmental process is ergodic; it is the stochastic growth rate, the leading Lyapunov exponent of the random matrix product (Steinsaltz, Tuljapurkar and Horvitz, Section 2, conditions (i)–(iii)). The normalized structure $N_t/\sum_i N_t(i)$ does not converge to a fixed limit but converges in distribution. The existence of the leading Lyapunov exponent goes back to Furstenberg and Kesten (1960).
+exists almost surely and is deterministic: almost every realization gives the same value, for every stage $i$, because the environmental process is ergodic; it is the stochastic growth rate, the leading Lyapunov exponent of the random matrix product (Steinsaltz, Tuljapurkar and Horvitz, Section 2, under the conditions above). The normalized structure $N_t/\sum_i N_t(i)$ need not converge almost surely; it converges in distribution. The existence of the leading Lyapunov exponent goes back to Furstenberg and Kesten (1960).
 
 ## Proof depends on
 
@@ -12,9 +12,9 @@ exists almost surely and is deterministic: almost every realization gives the sa
 
 ## Expansion
 
-1. The model: the environmental process, the projection matrices and conditions (i)–(iii), which give demographic weak ergodicity.
+1. The model: the environmental process, the projection matrices and conditions (i)–(ii), which give demographic weak ergodicity.
 2. The general theorem for stationary random matrices with $E \log^+\|X_1\| < \infty$: $\frac1n\log\|X_n \cdots X_1\|$ converges almost surely, to a constant under ergodicity, by subadditivity and Kingman's theorem.
-3. Independence of the norm, and the identification of the norm growth rate with the growth rate of every stage under conditions (i)–(iii).
+3. Independence of the norm, and the identification of the norm growth rate with the growth rate of every stage under conditions (i)–(ii).
 4. Convergence in distribution of the normalized structure, as a separate statement.
 
 ## Sources

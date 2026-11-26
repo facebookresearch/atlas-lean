@@ -9,7 +9,7 @@ Kenah and Robins (2007) state large-population consequences of the [epidemic per
 ## Expansion
 
 1. Giant components of random directed and semi-directed networks (in-, out- and strongly connected components) and the small-component size distribution, for an explicit network model.
-2. Rigorous versions of (i)–(iv) as limits along a sequence of populations.
+2. Rigorous versions of the four large-population claims of clause (1) as limits along a sequence of populations.
 3. Newman's bond percolation model and the computation showing equal mean outbreak size, threshold and final size.
 4. An explicit nondegenerate infectious period for which the outbreak size distribution and the epidemic probability differ.
 
