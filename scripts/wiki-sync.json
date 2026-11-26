@@ -34141,6 +34141,7 @@
 "Ideal.cardQuot_coprime_residue_eq": "70eb4672045d7643",
 "Ideal.card_inertia_eq_ramificationIdxIn_mul_finInsepDegree": "2108a556bce7df3d",
 "Ideal.card_inertia_tower_formula": "74e601e6e5742669",
+"Ideal.charP_quotient_and_forall_exists_pow_eq": "bb0608e617c930da",
 "Ideal.comap_eq_base_maximal_of_isAdicComplete_of_isIntegral": "e9bf7a44746177bb",
 "Ideal.comap_map_eq_of_not_le_conductor": "d5f87c56fec3520f",
 "Ideal.comap_ne_bot_of_ne_bot": "16e4642528455757",
