@@ -12178,6 +12178,7 @@
   "MathlibExt/GroupTheory/BaerSpeckerSubgroupDualFree": {"to": "GroupTheory/abelian-groups", "title": "Baer–Specker group"},
   "MathlibExt/GroupTheory/BoundaryFixingHomeomorphismsOrderableKourovka17Problem20": {"to": "GroupTheory/orderable-groups", "title": "Orderability of homeomorphism groups"},
   "MathlibExt/GroupTheory/BraidGroupShared": {"to": "GroupTheory/presentations-and-decision-problems/braid-and-artin", "title": "Braid group"},
+  "MathlibExt/GroupTheory/BraidTorsionFreeQuotient": {"to": "GroupTheory/presentations-and-decision-problems/braid-and-artin", "title": "Endomorphisms of braid groups"},
   "MathlibExt/GroupTheory/AxiomatizableFormationVarietyKourovka14Problem32": {"to": "GroupTheory/varieties-and-equations", "title": "Axiomatizable classes of groups"},
   "MathlibExt/GroupTheory/BrauerCharacterInCyclotomic": {"to": "GroupTheory/characters-of-finite-groups", "title": "Brauer's splitting field theorem"},
   "MathlibExt/GroupTheory/BrauerFowler": {"to": "GroupTheory/finite-simple-groups", "title": "Brauer–Fowler theorem"},
