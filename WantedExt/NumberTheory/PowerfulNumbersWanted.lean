@@ -38,6 +38,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.PellThreeNegTwo
 public import MathlibExt.NumberTheory.PellThreeOne
 public import MathlibExt.NumberTheory.PowerfulNumbers
+public import MathlibExt.NumberTheory.PrimeCubeSquareNeighbors
 public import MathlibExt.NumberTheory.QuarticToCubic
 
 set_option autoImplicit false
@@ -45,17 +46,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PowerfulNumbersWanted
-
-/-- **No cube whose neighbours are prime cubes times squares.** There are no primes $p$, $q$
-and positive integers $x$, $y$, $z$ with $x^3 - 1 = p^3 y^2$ and $x^3 + 1 = q^3 z^2$.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Theorem 1. -/
-theorem_wanted not_exists_prime_cube_square_neighbors_of_cube :
-    ¬ ∃ p q x y z : ℕ,
-      p.Prime ∧ q.Prime ∧ 0 < x ∧ 0 < y ∧ 0 < z ∧
-        (x : ℤ) ^ 3 - 1 = (p : ℤ) ^ 3 * (y : ℤ) ^ 2 ∧
-          (x : ℤ) ^ 3 + 1 = (q : ℤ) ^ 3 * (z : ℤ) ^ 2
 
 /-- **No integer solutions of $64x^6 - 1 = p^3 q^3 y^2$ with $p$, $q$ prime.** There are no
 integers $x$, $y$ and primes $p$, $q$ with $64 x^6 - 1 = p^3 q^3 y^2$.
