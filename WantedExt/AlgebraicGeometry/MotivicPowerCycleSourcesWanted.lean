@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.MotivicPowerDescentModels
 public import MathlibExt.AlgebraicGeometry.MotivicBocksteinModels
+public import MathlibExt.AlgebraicGeometry.MotivicPowerCycleSourcesIntegralCoefficientSequenceExact
 
 /-!
 # Original finite-power quotient, cycle descent and coefficient requests
@@ -86,12 +87,6 @@ def_wanted relativePowerCycle (k H : Type) [Field k] [Group H] [Fintype H]
     (z : CoefficientCycles X (A.affine i) R) (E : ExternalSystem P)
     (B : CycleDescent P U r Q D G R A i V z E) (d : DiagonalDescent P U r Q)
     (W : PullbackPowerBundle P U r A i V (X := X)) : RelativePowerCycle P U r Q D G R A i V z B d W
-
-/-- For a prime ℓ, the sequence of $\mathbb{Z}$-modules
-$0 \to \mathbb{Z} \to \mathbb{Z} \to \mathbb{Z}/\ell \to 0$, multiplication by ℓ followed by
-reduction modulo ℓ, is short exact. -/
-theorem_wanted integralCoefficientSequenceExact (ell : ℕ) [Fact ell.Prime] :
-  (integralSequence ell).ShortExact
 
 /-- For a prime ℓ, the sequence of $\mathbb{Z}$-modules
 $0 \to \mathbb{Z}/\ell \to \mathbb{Z}/\ell^2 \to \mathbb{Z}/\ell \to 0$, with first map
