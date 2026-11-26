@@ -13,6 +13,7 @@ public import MathlibExt.NumberTheory.LurothConsecutiveDigitsIntegral
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 public import MathlibExt.NumberTheory.LurothConsecutiveDigitsLeVolumeLurothDigitsGe
+public import MathlibExt.NumberTheory.LurothConsecutiveDigitsVolumeLurothCylinder
 
 /-!
 # Functions of consecutive digits in Lüroth series
@@ -88,19 +89,6 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 
 theorem lurothDigitSeq_succ (x : ℝ) (k : ℕ) :
     lurothDigitSeq x (k + 1) = lurothDigitSeq (lurothMap x) k := by
   simp [lurothDigitSeq, Function.iterate_succ_apply]
-
-/-- **Measure of Lüroth cylinders.** Write $d_k(x)$ for the $k$-th Lüroth digit of $x$. For every
-$n \in \mathbb{N}$ and all natural numbers $c_1, \dots, c_n$, the set
-$\{x \in (0, 1] : d_j(x) = c_j \text{ for } 1 \le j \le n\}$ has Lebesgue measure
-$\prod_{j=1}^{n} \frac{1}{c_j (c_j - 1)}$, with the convention $1/0 = 0$; in particular both
-sides vanish when some $c_j < 2$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Proposition 1,
-(10) (`integers-2024-A67-prop-1`). -/
-public theorem_wanted volume_lurothCylinder {n : ℕ} (c : Fin n → ℕ) :
-    volume {x ∈ Set.Ioc (0 : ℝ) 1 | ∀ j : Fin n, lurothDigitSeq x j = c j} =
-      ∏ j, ENNReal.ofReal (1 / ((c j : ℝ) * ((c j : ℝ) - 1)))
 
 /-- **Zero-one law for weighted products of consecutive Lüroth digits.** Let $m \ge 1$, let
 $t_0, \dots, t_{m-1}$ be positive reals, let $T = \max_i t_i$ and let $\ell$ be the number of
