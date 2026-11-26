@@ -68,9 +68,9 @@ open MathlibExt.Biology.StatisticalGenetics.FisherDecomposition
 
 namespace Domains.Biology.PopulationGenetics.DiploidFundamentalTheorem
 
-/-- The domain of the one-locus diploid viability-selection model: the allele frequencies `p`
-lie in the probability simplex, the genotype fitnesses `w` are nonnegative and symmetric, and
-the mean fitness is positive. -/
+/-- **Domain of the diploid viability-selection model.** The allele frequencies `p` lie in the
+probability simplex, the genotype fitnesses `w` are nonnegative and symmetric, and the mean
+fitness is positive. -/
 structure IsDiploidModel {ι : Type*} [Fintype ι] (p : ι → ℝ) (w : ι → ι → ℝ) : Prop where
   /-- Every allele frequency is nonnegative. -/
   freq_nonneg : ∀ i, 0 ≤ p i
@@ -83,15 +83,16 @@ structure IsDiploidModel {ι : Type*} [Fintype ι] (p : ι → ℝ) (w : ι → 
   /-- The mean fitness is positive. -/
   meanFitness_pos : 0 < diploidMeanFitness p w
 
-/-- The mean genotypic value of `FisherDecomposition`, applied to genotype fitnesses, is the
-diploid mean fitness of `Selection`. -/
+/-- **Mean genotypic value in fitness.** The mean genotypic value of `FisherDecomposition`,
+applied to genotype fitnesses, is the diploid mean fitness of `Selection`. -/
 theorem meanValue_eq_diploidMeanFitness {ι : Type*} [Fintype ι] (p : ι → ℝ)
     (w : ι → ι → ℝ) : meanValue p w = diploidMeanFitness p w := by
   rfl
 
-/-- For symmetric genotype fitnesses, the marginal fitness of allele `i` is the mean fitness plus
-the average effect (average excess) of `i` in fitness: `m_i = w̄ + α_i`. This is an algebraic
-identity of the definitions; it holds for every real `p`, in the model domain or not. -/
+/-- **Marginal fitness as mean fitness plus average effect.** For symmetric genotype fitnesses,
+the marginal fitness of allele `i` is the mean fitness plus the average effect (average excess)
+of `i` in fitness: `m_i = w̄ + α_i`. This is an algebraic identity of the definitions; it holds
+for every real `p`, in the model domain or not. -/
 theorem marginalFitness_eq_add_avgEffect {ι : Type*} [Fintype ι] {p : ι → ℝ}
     {w : ι → ι → ℝ} (hw : ∀ i j, w i j = w j i) (i : ι) :
     marginalFitness p w i = diploidMeanFitness p w + avgEffect p w i := by
@@ -99,8 +100,8 @@ theorem marginalFitness_eq_add_avgEffect {ι : Type*} [Fintype ι] {p : ι → �
   simp only [mul_comm]
   ring
 
-/-- In the model domain, one generation of diploid viability selection changes the frequency of
-allele `i` by `Δp_i = p_i α_i / w̄`. -/
+/-- **Allele-frequency change under diploid selection.** In the model domain, one generation of
+diploid viability selection changes the frequency of allele `i` by `Δp_i = p_i α_i / w̄`. -/
 theorem diploidSelect_sub_eq {ι : Type*} [Fintype ι] {p : ι → ℝ} {w : ι → ι → ℝ}
     (hm : IsDiploidModel p w) (i : ι) :
     diploidSelect p w i - p i = p i * avgEffect p w i / diploidMeanFitness p w := by
@@ -109,11 +110,12 @@ theorem diploidSelect_sub_eq {ι : Type*} [Fintype ι] {p : ι → ℝ} {w : ι 
   field_simp [hW]
   ring
 
-/-- **Fisher's fundamental theorem of natural selection** (Fisher 1930), in the exact
-partial-change form of Price (1972) and Ewens (1989): in the model domain, the change in mean
-fitness due to natural selection, `2 ∑ i, α_i Δp_i` (the allele-frequency change weighted by the
-average effects in fitness, which are held fixed), equals the additive genetic variance in
-fitness divided by the mean fitness, `V_A / w̄`. -/
+/-- **Fisher's fundamental theorem with the additive genetic variance.** Fisher's fundamental
+theorem of natural selection (Fisher 1930), in the exact partial-change form of Price (1972) and
+Ewens (1989): in the model domain, the change in mean fitness due to natural selection,
+`2 ∑ i, α_i Δp_i` (the allele-frequency change weighted by the average effects in fitness, which
+are held fixed), equals the additive genetic variance in fitness divided by the mean fitness,
+`V_A / w̄`. -/
 theorem two_mul_sum_avgEffect_mul_diploidSelect_sub {ι : Type*} [Fintype ι] {p : ι → ℝ}
     {w : ι → ι → ℝ} (hm : IsDiploidModel p w) :
     2 * ∑ i, avgEffect p w i * (diploidSelect p w i - p i) =
@@ -186,8 +188,8 @@ private theorem selected_domDev_eq {ι : Type*} [Fintype ι] {p : ι → ℝ}
       dsimp [d]
       ring
 
-/-- In the model domain, the total change in mean fitness over one generation is the additive
-term `V_A / w̄` plus a dominance term:
+/-- **Total change in mean fitness under diploid selection.** In the model domain, the total
+change in mean fitness over one generation is the additive term `V_A / w̄` plus a dominance term:
 `w̄(p') - w̄(p) = V_A / w̄ + (∑ i, ∑ j, p_i p_j α_i α_j δ_ij) / w̄ ^ 2`. In general the total
 discrete change is therefore not `V_A / w̄`. -/
 theorem diploidMeanFitness_diploidSelect_sub_eq {ι : Type*} [Fintype ι] {p : ι → ℝ}
@@ -209,8 +211,9 @@ theorem diploidMeanFitness_diploidSelect_sub_eq {ι : Type*} [Fintype ι] {p : �
     selected_domDev_eq hm, hpartial]
   ring
 
-/-- In the model domain with no dominance deviations in fitness (fitnesses additive over the two
-genes), the total change in mean fitness over one generation equals `V_A / w̄`. -/
+/-- **Total change in mean fitness without dominance.** In the model domain with no dominance
+deviations in fitness (fitnesses additive over the two genes), the total change in mean fitness
+over one generation equals `V_A / w̄`. -/
 theorem diploidMeanFitness_diploidSelect_sub_of_domDev_eq_zero {ι : Type*} [Fintype ι]
     {p : ι → ℝ} {w : ι → ι → ℝ} (hm : IsDiploidModel p w)
     (hδ : ∀ i j, domDev p w i j = 0) :

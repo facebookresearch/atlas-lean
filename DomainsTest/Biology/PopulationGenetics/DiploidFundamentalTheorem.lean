@@ -19,11 +19,12 @@ import Mathlib.Tactic.FinCases
 # Tests for the diploid fundamental theorem
 
 Concrete two-allele witnesses: under overdominance the partial change equals `V_A / w̄` while the
-total change differs from it; under genic (additive) fitnesses both coincide; the symmetry
-hypothesis is load-bearing for the marginal-fitness identity. Both populations lie in the model
-domain `IsDiploidModel`. A boundary population with "frequencies" `(2, -1)` meets every condition
-of the domain except `0 ≤ p`, and there the quantity called the additive genetic variance is
-`-4`, while in the domain the partial change is never negative.
+total change differs from it by the dominance term `-9/968` of the general total-change theorem;
+under genic (additive) fitnesses both coincide; the symmetry hypothesis is needed for the
+marginal-fitness identity. Both populations lie in the model domain `IsDiploidModel`. A boundary
+population with "frequencies" `(2, -1)` meets every condition of the domain except `0 ≤ p`, and
+there the quantity called the additive genetic variance is `-4`, while in the domain the partial
+change is never negative.
 -/
 
 @[expose] public section
@@ -108,6 +109,27 @@ example : diploidMeanFitness (diploidSelect pQ wOver) wOver - diploidMeanFitness
   norm_num [avgEffect, meanValue, addVar, diploidMeanFitness, diploidSelect,
     marginalFitness, pQ, wOver, Fin.sum_univ_two]
 
+/-- Through the general total-change theorem at the overdominant population, the additive term is
+`V_A / w̄ = 3/44` and the dominance correction is `-9/968`, which does not vanish. -/
+example : diploidMeanFitness (diploidSelect pQ wOver) wOver - diploidMeanFitness pQ wOver =
+    3 / 44 + -9 / 968 := by
+  rw [diploidMeanFitness_diploidSelect_sub_eq isDiploidModel_pQ_wOver]
+  congr 1
+  · norm_num [addVar, avgEffect, meanValue, diploidMeanFitness, pQ, wOver, Fin.sum_univ_two]
+  · norm_num [domDev, avgEffect, meanValue, diploidMeanFitness, pQ, wOver, Fin.sum_univ_two]
+
+/-- Through `meanValue_eq_diploidMeanFitness`, the mean genotypic value in fitness at the
+overdominant population is its mean fitness `11/8`. -/
+example : meanValue pQ wOver = 11 / 8 := by
+  rw [meanValue_eq_diploidMeanFitness]
+  norm_num [diploidMeanFitness, pQ, wOver, Fin.sum_univ_two]
+
+/-- Through `marginalFitness_eq_add_avgEffect`, the marginal fitness of the first allele at the
+overdominant population is `w̄ + α_0 = 11/8 + 3/8 = 7/4`. -/
+example : marginalFitness pQ wOver 0 = 7 / 4 := by
+  rw [marginalFitness_eq_add_avgEffect wOver_symm]
+  norm_num [avgEffect, meanValue, diploidMeanFitness, pQ, wOver, Fin.sum_univ_two]
+
 /-- Genic fitnesses have no dominance deviations. -/
 theorem domDev_wGenic : ∀ i j, domDev pQ wGenic i j = 0 := by
   intro i j
@@ -122,7 +144,7 @@ example : diploidMeanFitness (diploidSelect pQ wGenic) wGenic -
   norm_num [addVar, avgEffect, meanValue, diploidMeanFitness, pQ, wGenic,
     Fin.sum_univ_two]
 
-/-- The symmetry hypothesis of `marginalFitness_eq_add_avgEffect` is load-bearing. -/
+/-- The symmetry hypothesis of `marginalFitness_eq_add_avgEffect` is needed. -/
 example : marginalFitness pH wAsym 0 ≠ diploidMeanFitness pH wAsym + avgEffect pH wAsym 0 := by
   norm_num [marginalFitness, diploidMeanFitness, avgEffect, meanValue, pH, wAsym,
     Fin.sum_univ_two]

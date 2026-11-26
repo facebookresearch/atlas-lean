@@ -10291,6 +10291,7 @@
   "Domains/Biology/PopulationGenetics/Diffusion/StochasticCalculusRoute": {"to": "Biology/population-genetics/diffusion-theory", "title": "Wright–Fisher diffusion with selection and mutation"},
   "Domains/Biology/PopulationGenetics/Diffusion/TransitionKernel": {"to": "Biology/population-genetics/diffusion-theory", "title": "Wright–Fisher semigroup and moment duality"},
   "Domains/Biology/PopulationGenetics/Diffusion/WrightFisher": {"to": "Biology/population-genetics/diffusion-theory", "title": "Wright–Fisher diffusion"},
+  "Domains/Biology/PopulationGenetics/DiploidFundamentalTheorem": {"to": "Biology/population-genetics", "title": "Natural selection, Fisher's theorem and the Price equation"},
   "Domains/Biology/PopulationGenetics/DiploidSelection": {"to": "Biology/population-genetics", "title": "Baum–Eagon inequality for diploid selection"},
   "Domains/Biology/PopulationGenetics/DistributionOfFitnessEffects": {"to": "Biology/detecting-selection", "title": "Distribution of fitness effects"},
   "Domains/Biology/PopulationGenetics/Ewens": {"to": "Biology/population-genetics", "title": "Ewens sampling formula and the Chinese restaurant process"},
