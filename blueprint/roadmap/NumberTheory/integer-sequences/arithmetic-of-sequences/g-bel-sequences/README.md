@@ -19,6 +19,7 @@
 - [Residue of an integer](rat-residue-int-cast.md)
 - [Residues of the $(k, l)$-Göbel sequence modulo $p^r$](gobel-sequence-residues-singleton-or-inj.md)
 - [Propagation of a congruence along the $(k, l)$-Göbel sequence](gobel-sequence-mul-index-congr.md)
+- [The logarithmic identity behind the Göbel error](gobel-sequence-log-series-sub-correction.md)
 - [The residue walk $\tilde g_l$](gobel-residue-walk.md)
 - [Initial value of the residue walk](gobel-residue-walk-one.md)
 - [Recurrence of the residue walk at interior values](gobel-residue-walk-succ-of-between.md)
