@@ -52,7 +52,7 @@ variable {C : Type u'} [Category.{v'} C] {J : GrothendieckTopology C}
   {R : Sheaf J RingCat.{u}}
   [HasSheafify J AddCommGrpCat.{v}] [J.WEqualsLocallyBijective AddCommGrpCat.{v}]
 
-private theorem epi_toSheaf_map_of_epi {M N : SheafOfModules.{v} R} (φ : M ⟶ N) [Epi φ] :
+theorem epi_toSheaf_map_of_epi {M N : SheafOfModules.{v} R} (φ : M ⟶ N) [Epi φ] :
     Epi ((toSheaf R).map φ) := by
   let adj := PresheafOfModules.sheafificationAdjunction.{v} (𝟙 R.obj)
   let G := SheafOfModules.forget.{v} R ⋙ PresheafOfModules.restrictScalars (𝟙 R.obj)

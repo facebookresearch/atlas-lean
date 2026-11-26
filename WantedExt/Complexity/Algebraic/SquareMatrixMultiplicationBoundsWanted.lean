@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.Complexity.Algebraic.SquareMatrixMultiplicationBounds
 public import CSLibExt.Complexity.Algebraic.StrassenCircuit
 public import Mathlib.Algebra.CharP.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -23,10 +24,11 @@ node costs one, and constants, input references and output references are free.
 The output-cost lower bound `2 ≤ ω` is proved upstream as
 `two_le_squareMatrixMultiplicationCircuitExponent`.
 
-The catalogue rows are stated for every field; the bridge and invariance rows
-below are stated for infinite fields. Transfers from approximate or
-border-rank algorithms, recursive tensor constructions, division elimination,
-the operation/rank bridge and characteristic invariance are not proved here.
+The catalogue rows are stated for every field; the invariance row below and the
+bridge row in `CSLibExt.Complexity.Algebraic.SquareMatrixMultiplicationBounds`
+are stated for infinite fields. Transfers from approximate or border-rank
+algorithms, recursive tensor constructions, division elimination and
+characteristic invariance are not proved here.
 The final sharpness proposition records the catalogue comment that `2` is
 conjectured sharp; it is a definition, not an asserted theorem.
 -/
@@ -257,17 +259,6 @@ theorem_wanted dupontEisenbergerEtAl2026Upper :
     ∀ (F : Type u) [Field F],
       squareMatrixMultiplicationCircuitExponent F ≤
         ENNReal.ofReal ((2371177 : ℝ) / 1000000)
-
-/-- **Circuit size and tensor rank give the same square exponent.** For every infinite field $F$,
-the square matrix multiplication exponent of $F$ defined by arithmetic-circuit size equals the
-matrix multiplication exponent of $F$ defined by tensor rank.
-
-Source: C15a additional comments and [B2013]: the arithmetic-operation
-exponent agrees with the tensor-rank exponent. This bridge is not proved. -/
-theorem_wanted squareOperationRankBridge :
-    ∀ (F : Type u) [Field F] [Infinite F],
-      squareMatrixMultiplicationCircuitExponent F =
-        MatrixMultiplicationExponent.matrixMultiplicationExponent F
 
 /-- **The square exponent depends only on the characteristic.** If two infinite fields $F$ and $K$
 have the same characteristic, then the square matrix multiplication exponents of $F$ and $K$ in the
