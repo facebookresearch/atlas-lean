@@ -1,8 +1,8 @@
 # Misra-Gries heavy hitters
 
-- [Counter](counter.md)
+- [Misra–Gries counter](counter.md)
 - [Mass](mass.md)
-- [Step](step.md)
+- [Misra–Gries step](step.md)
 - [Run](run.md)
 - [Run nodup](run-nodup.md)
 - [Run counter pos](run-counter-pos.md)

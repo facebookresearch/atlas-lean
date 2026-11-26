@@ -2,7 +2,7 @@
 
 - [Incident Arcs](incident-arcs.md)
 - [Compat](compat.md)
-- [Compat On](compat-on.md)
+- [Compatibility against a list of arcs](compat-on.md)
 - [Forward Check](forward-check.md)
 - [Search Order](search-order.md)
 - [To Total](to-total.md)
@@ -32,4 +32,4 @@
 - [Of Linear Order](of-linear-order.md)
 - [Mrv Candidates](mrv-candidates.md)
 - [Minimum remaining values](mrv.md)
-- [Mrv pick card le](mrv-pick-card-le.md)
+- [The minimum-remaining-values rule picks a smallest domain](mrv-pick-card-le.md)

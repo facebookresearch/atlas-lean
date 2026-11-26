@@ -5,7 +5,7 @@
 - [Backlog](backlog.md)
 - [Delay](delay.md)
 - [Is Arrival Curve](is-arrival-curve.md)
-- [Min Plus Conv](min-plus-conv.md)
+- [Min-plus convolution](min-plus-conv.md)
 - [Is Service Curve](is-service-curve.md)
 - [Vdev](vdev.md)
 - [Hdev](hdev.md)

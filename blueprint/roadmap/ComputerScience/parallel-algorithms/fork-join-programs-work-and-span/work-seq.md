@@ -1,5 +1,3 @@
-# Work seq
+# Work of a sequential composition
 
-Work and span of sequential composition are additive in work
-and span, and parallel composition is additive in work and
-maximal in span (the fork-join cost semantics).
+The work of the sequential composition of two fork-join programs is the sum of their works.

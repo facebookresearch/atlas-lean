@@ -1,3 +1,3 @@
-# Map List
+# Instantiating a list of shapes
 
-`GameTree.map` on each tree of a list.
+Apply the leaf instantiation $i \mapsto f(i)$ to each shape of a list.

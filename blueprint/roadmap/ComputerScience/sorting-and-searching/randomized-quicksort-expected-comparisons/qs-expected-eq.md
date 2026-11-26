@@ -1,6 +1,5 @@
-# Qs Expected eq
+# Closed form of the expected comparison count
 
-The pair-count identity behind the bound: closed form
-`qsExpected (n + 1) = 2 * (n + 2) * harmonic (n + 1) - 4 * (n + 1)`
-(the exact expected number of comparisons is
-`2 (n+2) H (n+1) - 4 (n+1)`, i.e. `2 (n+1) H n - 4 n`).
+For every $n$, the expected number $E_{n+1}$ of comparisons of randomized quicksort on $n + 1$
+distinct keys is $E_{n+1} = 2(n + 2) H_{n+1} - 4(n + 1)$, where $H_m$ is the $m$-th harmonic number;
+equivalently $E_m = 2(m + 1) H_m - 4m$.

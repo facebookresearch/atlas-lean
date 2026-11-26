@@ -1,5 +1,4 @@
-# Card eq vertices length
+# The vertex list enumerates the vertex set
 
-The Fintype carrier has exactly the enumerated vertices: `vertices_nodup`
-and `vertices_complete` identify `Finset.univ` with `g.vertices.toFinset`,
-so `Fintype.card V = g.vertices.length` (`Finset.card` of a nodup list).
+For a directed graph on a finite vertex type given by adjacency lists, its list of vertices has no
+repetitions and contains every vertex, so its length equals the number of vertices.

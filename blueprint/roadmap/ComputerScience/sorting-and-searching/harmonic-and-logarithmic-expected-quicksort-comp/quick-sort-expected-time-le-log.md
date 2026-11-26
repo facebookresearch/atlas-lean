@@ -1,4 +1,4 @@
-# Quick Sort expected Time le log
+# Logarithmic bound on expected quicksort comparisons
 
-An explicit logarithmic bound for the expected comparison count. At `n = 0` the
-bound is zero; the logarithm's totalized value is multiplied by zero.
+For a duplicate-free list of length $n$, the expected number of quicksort comparisons on a uniformly
+random permutation of it is at most $2n(1 + \log n)$. For $n = 0$ the bound is $0$.

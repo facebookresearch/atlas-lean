@@ -4,5 +4,5 @@
 - [Work](work.md)
 - [Span](span.md)
 - [Span le work](span-le-work.md)
-- [Work seq](work-seq.md)
+- [Work of a sequential composition](work-seq.md)
 - [Brent level bound](brent-level-bound.md)

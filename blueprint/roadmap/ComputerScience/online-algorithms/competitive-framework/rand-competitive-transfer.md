@@ -1,5 +1,6 @@
-# Rand Competitive transfer
+# Transfer of randomized competitiveness along a simulation
 
-Seedwise transfer of randomized competitiveness along a simulation,
-with the same coefficients as the deterministic transfer; measurability
-of the transferred cost is part of the conclusion's hypothesis check.
+If a randomized strategy is $(c, b)$-competitive against an oblivious adversary for $Y$, and $Y$
+simulates $X$ with coefficients $(a, p, d, q)$, then translating the strategy seed by seed gives a
+randomized strategy for $X$ that is $(acd,\ acq + ab + p)$-competitive, provided the translated run
+cost on every legal input of $X$ is measurable in the seed.

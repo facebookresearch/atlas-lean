@@ -14,22 +14,22 @@
 
 ## One step
 
-- [Mark Step](mark-step.md)
-- [Mark Event](mark-event.md)
+- [Marking step](mark-step.md)
+- [Cache event of a marking step](mark-event.md)
 - [Starts Phase](starts-phase.md)
 - [A marking algorithm never evicts a marked page](mark-event-victim.md)
 - [Mark Step of mem](mark-step-of-mem.md)
 - [Mark Step marked of starts Phase](mark-step-marked-of-starts-phase.md)
 - [Mem marked mark Step](mem-marked-mark-step.md)
 - [Marked subset mark Step](marked-subset-mark-step.md)
-- [Each step is a legal transition](mark-step-tr.md)
+- [Each marking step is a legal cache transition](mark-step-tr.md)
 
 ## Request sequences
 
 - [Mark Run](mark-run.md)
 - [Mark Trace](mark-trace.md)
 - [Marking Pager](marking-pager.md)
-- [A marking algorithm is a legal cache manager](mark-trace-spec.md)
+- [Events of a marking run](mark-trace-spec.md)
 - [No New Phase](no-new-phase.md)
 - [Within a phase marks only accumulate](marked-subset-mark-run.md)
 - [Marked pages stay cached within a phase](mem-cache-mark-run.md)

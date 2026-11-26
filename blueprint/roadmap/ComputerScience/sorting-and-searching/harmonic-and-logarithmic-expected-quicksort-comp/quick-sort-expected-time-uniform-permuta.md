@@ -1,4 +1,4 @@
-# Quick Sort expected Time uniform Permutation ne top
+# Expected quicksort comparisons are finite
 
-The expected comparison count on a uniform permutation is finite, even with duplicates.
-This fact is established before passing to the totalized real coercion.
+For every list, possibly with duplicates, the expected number of quicksort comparisons on a
+uniformly random permutation of it is finite.

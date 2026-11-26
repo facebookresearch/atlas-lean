@@ -1,5 +1,6 @@
-# A marking algorithm is a legal cache manager
+# Events of a marking run
 
-Its events form a trace of `cacheLTS k`
-from the current cache to the final one, serve exactly the requests, and miss exactly as often
-as `markingPager`.
+For every eviction rule, marking state $s$ and request sequence $\sigma$, the events emitted while
+serving $\sigma$ from $s$ form a legal run of the paging system from the current cache to the final
+one, their requests are exactly $\sigma$, and their number of misses equals the number of misses of
+the marking pager on $\sigma$ from $s$.

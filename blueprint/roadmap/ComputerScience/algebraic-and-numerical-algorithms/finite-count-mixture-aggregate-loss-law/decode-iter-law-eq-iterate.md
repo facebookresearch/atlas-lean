@@ -1,3 +1,5 @@
-# Decode iter Law eq iterate
+# Decoding the deterministic-count law
 
-Decoding the deterministic-count law `iterLaw S n` gives the `n`-fold independent sum of `decode S` draws: iterating `q ↦ q.bind (fun a => (decode S).map (a + ·))` `n` times from `PMF.pure 0`.
+For a rational loss law $S$ and $n \in \mathbb N$, the probability mass function obtained from the
+deterministic-count law of $S$ at count $n$ is the law of $X_1 + \dots + X_n$ for independent
+draws $X_1, \dots, X_n$ from the law of $S$; for $n = 0$ it is the point mass at $0$.

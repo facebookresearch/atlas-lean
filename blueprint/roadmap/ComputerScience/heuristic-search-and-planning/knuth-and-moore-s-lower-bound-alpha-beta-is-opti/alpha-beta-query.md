@@ -1,3 +1,4 @@
-# Alpha Beta Query
+# Alpha-beta as a query algorithm
 
-`alphaBeta` as a query algorithm: it queries a leaf where `alphaBeta` evaluates it.
+Alpha-beta search on a shape whose leaves are variables, written as a query algorithm: it queries
+the value of a leaf variable exactly where alpha-beta evaluates that leaf.

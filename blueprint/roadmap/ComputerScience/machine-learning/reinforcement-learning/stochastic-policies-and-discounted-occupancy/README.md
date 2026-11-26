@@ -61,7 +61,7 @@ Stationary stochastic policies on finite discounted Markov decision processes, M
 - [Expected reward under a row-stochastic policy](policy-reward-2.md)
 - [Indicator Reward](indicator-reward.md)
 - [Sum mul q Value](sum-mul-q-value.md)
-- [Chain Value](chain-value.md)
+- [Discounted value of a Markov chain](chain-value.md)
 - [Chain Value const](chain-value-const.md)
 - [Chain Value eq sum](chain-value-eq-sum.md)
 - [Chain Value nonneg](chain-value-nonneg.md)
@@ -75,7 +75,7 @@ Stationary stochastic policies on finite discounted Markov decision processes, M
 - [Eq stoch Policy Value](eq-stoch-policy-value.md)
 - [Total mass of the state-action occupancy of a row-stochastic policy](sum-occupancy.md)
 - [Sum mul stoch Policy Value](sum-mul-stoch-policy-value.md)
-- [Deterministic embedding](stoch-policy-value-det-policy.md)
+- [A deterministic policy as a stochastic policy has the same value](stoch-policy-value-det-policy.md)
 - [Performance difference lemma for row-stochastic policies](performance-difference.md)
 
 ## Related topics

@@ -1,4 +1,6 @@
-# Alpha Beta List true time of le
+# Maximizer's scan when every child fails low
 
-If every child fails low (`minimax false u ≤ a`), the maximizer's scan keeps `a`, never cuts,
-and evaluates every child with the window `[a, b]`.
+Let $a < b$, let $u_1, \dots, u_m$ be the children of a maximizer node, and suppose every child
+has minimizer value at most $a$ and costs exactly $c$ leaf evaluations under alpha-beta with
+window $(a, b)$. Then the maximizer's scan keeps the bound $a$, never cuts off, and evaluates
+exactly $m c$ leaves.

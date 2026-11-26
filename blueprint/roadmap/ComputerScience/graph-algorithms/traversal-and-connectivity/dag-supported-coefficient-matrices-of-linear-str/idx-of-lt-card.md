@@ -1,4 +1,4 @@
-# Idx Of lt card
+# Positions in a complete topological order
 
-Rank bound: every vertex occurs in a complete order, so `List.idxOf`
-is below the order length, which is `Fintype.card V`.
+In a topological order of a directed graph that lists every vertex and has length equal to the
+number of vertices, the position of every vertex is less than the number of vertices.

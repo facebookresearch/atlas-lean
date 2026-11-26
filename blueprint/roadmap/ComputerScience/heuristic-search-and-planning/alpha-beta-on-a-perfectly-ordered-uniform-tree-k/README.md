@@ -12,12 +12,12 @@
 
 ## Scans over children that all fail the window
 
-- [Alpha Beta List true time of le](alpha-beta-list-true-time-of-le.md)
-- [Alpha Beta List false time of le](alpha-beta-list-false-time-of-le.md)
+- [Maximizer's scan when every child fails low](alpha-beta-list-true-time-of-le.md)
+- [Minimizer's scan when every child fails high](alpha-beta-list-false-time-of-le.md)
 
 ## Cut and all nodes
 
-- [Alpha Beta time cut all](alpha-beta-time-cut-all.md)
+- [Alpha-beta cost at cut and all nodes](alpha-beta-time-cut-all.md)
 - [Cut node of the minimizer](alpha-beta-time-cut-false.md)
 - [Cut node of the maximizer](alpha-beta-time-cut-true.md)
 

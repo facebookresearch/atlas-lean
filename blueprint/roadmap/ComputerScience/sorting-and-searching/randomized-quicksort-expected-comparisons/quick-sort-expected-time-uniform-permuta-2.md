@@ -1,4 +1,5 @@
-# Quick Sort expected Time uniform Permutation eq qs Expected
+# Quicksort's expected comparisons satisfy the recurrence
 
-The formal expected comparison count of `quickSort` on a uniformly
-random ordering of a duplicate-free list is `qsExpected` of its length.
+For a duplicate-free list of length $n$, the expected number of comparisons of quicksort on a
+uniformly random ordering of it equals $E_n$, the solution of $E_0 = 0$,
+$E_{n+1} = n + \frac{2}{n+1} \sum_{k \le n} E_k$.

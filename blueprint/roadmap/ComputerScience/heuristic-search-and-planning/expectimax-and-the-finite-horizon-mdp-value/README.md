@@ -18,4 +18,4 @@
 - [Unfold Tree](unfold-tree.md)
 - [Expectimax of the MDP unfolding is the finite-horizon value](expectimax-unfold-tree.md)
 - [Unfolding an MDP gives a well-formed chance tree](unfold-tree-well-formed.md)
-- [Unfold Tree is Max Chance](unfold-tree-is-max-chance.md)
+- [The unfolding of an MDP has no min nodes](unfold-tree-is-max-chance.md)

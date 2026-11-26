@@ -1,3 +1,4 @@
-# Quick Sort expected Time le mul log
+# n log n bound on expected quicksort comparisons
 
-A pure `n log n` comparison bound for inputs of length at least two.
+For a duplicate-free list of length $n \ge 2$, the expected number of quicksort comparisons on a
+uniformly random permutation of it is at most $6 n \log n$.

@@ -1,3 +1,3 @@
-# Unit Law weights
+# Weights of the unit law
 
-The weights of the unit law are the point mass at 0.
+The unit law has mass $1$ at loss $0$ and mass $0$ at every other loss.

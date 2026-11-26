@@ -26,11 +26,11 @@
 - [Greedy tree-CSP assignment](greedy.md)
 - [Greedy Inv](greedy-inv.md)
 - [Greedy assignment is sound on a tree-structured CSP](is-solution-of-greedy-eq-some.md)
-- [Backtrack-free](greedy-ne-none.md)
+- [Greedy assignment succeeds on directionally arc consistent domains](greedy-ne-none.md)
 - [Greedy assignment on a tree CSP](greedy-ne-none-iff.md)
 
 ## The tree-CSP algorithm
 
 - [Tree Solve](tree-solve.md)
-- [Is Solution of tree Solve eq some](is-solution-of-tree-solve-eq-some.md)
+- [The tree-CSP algorithm returns only solutions](is-solution-of-tree-solve-eq-some.md)
 - [The tree-CSP algorithm is complete without backtracking](tree-solve-ne-none-iff.md)
