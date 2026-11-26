@@ -22,6 +22,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.FareyStaircase
 public import MathlibExt.NumberTheory.FareyStaircaseFareyStaircaseLeFloorDiv
 public import MathlibExt.NumberTheory.FareyStaircaseFareyStaircaseSubMemIcc
+public import MathlibExt.NumberTheory.FareyStaircaseIciOneSubLogTwoSubsetClosureFloorGaps
 
 namespace MetaMathlibExt
 
@@ -50,19 +51,6 @@ public theorem_wanted tendsto_fareyZoom_sub_at_rational {x : ℝ} (hx : 0 ≤ x)
       (fun n : ℕ => fareyZoom n (x + (p : ℝ) / q * n) - fareyZoom n ((p : ℝ) / q * n))
       Filter.atTop
       (nhds ((q : ℝ)⁻¹ * ∑ k ∈ Finset.Icc 1 ⌊(q : ℝ) * x⌋₊, Real.log (q * x / k)))
-
-/-- **Floor gaps of Farey staircases are dense above $1 - \log 2$.** For $n \ge 1$ and
-$x \in \mathbb{R}$ let $f_n(x) = \lfloor nx \rfloor - n A_n(x)$, where $A_n$ is the Farey staircase
-of order $n$; thus $f_n(x) = \lfloor nx \rfloor - \sum_{k=1}^n \lfloor kx \rfloor / k$. Every real
-number $y \ge 1 - \log 2$ lies in the closure of the set
-$S = \{f_n(x) : n \ge 1,\ x \in \mathbb{R}\}$, that is, $S$ is dense in $[1 - \log 2, \infty)$.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Theorem 5 (i) (`integers-2024-A37-thm-5`), also Corollary 6
-(`integers-2024-A37-cor-6`). -/
-public theorem_wanted Ici_one_sub_log_two_subset_closure_floor_gaps :
-    Set.Ici (1 - Real.log 2) ⊆
-      closure {y : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ x : ℝ, y = ⌊(n : ℝ) * x⌋ - n * fareyStaircase n x}
 
 /-- **Finiteness of small floor gaps of the Farey staircase.** For a natural number $n \ge 1$ and a
 real number $x$, let $f_n(x) = \lfloor nx \rfloor - n A_n(x)$, where $A_n$ is the Farey staircase
