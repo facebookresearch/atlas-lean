@@ -286,12 +286,14 @@ theorem whiskerRight_rel {X Y : SumRelCat.{u}} (f : X ⟶ Y) (Z : SumRelCat.{u})
   rw [tensor_rel]
   cases x <;> cases y <;> rfl
 
-/-- The associator is determined by the three relational projections. -/
+/-- The associator is the pairing `⟨π₁ ≫ π₁, ⟨π₁ ≫ π₂, π₂⟩⟩` of the projections
+`(X ⊕ Y) ⊕ Z ⟶ X ⊕ (Y ⊕ Z)`. -/
 theorem associator_hom_eq_pair (X Y Z : SumRelCat.{u}) :
     (α_ X Y Z).hom = pair (fst (sum X Y) Z ≫ fst X Y)
       (pair (fst (sum X Y) Z ≫ snd X Y) (snd (sum X Y) Z)) := rfl
 
-/-- The inverse associator is determined by the same three projections. -/
+/-- The inverse associator is the pairing `⟨⟨π₁, π₂ ≫ π₁⟩, π₂ ≫ π₂⟩` of the projections
+`X ⊕ (Y ⊕ Z) ⟶ (X ⊕ Y) ⊕ Z`. -/
 theorem associator_inv_eq_pair (X Y Z : SumRelCat.{u}) :
     (α_ X Y Z).inv = pair (pair (fst X (sum Y Z)) (snd X (sum Y Z) ≫ fst Y Z))
       (snd X (sum Y Z) ≫ snd Y Z) := rfl

@@ -49,7 +49,8 @@ theorem Triple.consequence {X Y : C} {f : X ⟶ Y} {P P' : F.obj X} {Q Q' : F.ob
 @[simp] theorem triple_id_iff {X : C} (P Q : F.obj X) :
     Triple F (𝟙 X) P Q ↔ P ≤ Q := by simp [Triple]
 
-/-- Sequential verification is equivalent to an intermediate assertion. -/
+/-- Sequential verification is equivalent to an intermediate assertion `Q` for which both
+`{P} f {Q}` and `{Q} g {R}` hold. -/
 theorem triple_comp_iff {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z)
     (P : F.obj X) (R : F.obj Z) :
     Triple F (f ≫ g) P R ↔ ∃ Q, Triple F f P Q ∧ Triple F g Q R := by

@@ -3,7 +3,7 @@
 - [Triple](triple.md)
 - [Consequence](consequence.md)
 - [Triple id iff](triple-id-iff.md)
-- [Triple comp iff](triple-comp-iff.md)
+- [Sequential verification through an intermediate assertion](triple-comp-iff.md)
 - [Comp](comp.md)
 - [Hoare triples for morphisms between tensor products](tensor-triple.md)
 - [Tensor triples through the comparison maps](tensor-triple-iff.md)

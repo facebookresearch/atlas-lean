@@ -6,7 +6,7 @@
 - [Mono](mono.md)
 - [Feedback mono](feedback-mono.md)
 - [Finite-path feedback of a relation](feedback-rel.md)
-- [Feedback zero](feedback-zero.md)
+- [Feedback over the empty hidden set](feedback-zero.md)
 - [Unfolding a terminating execution](feedback-path-unfold.md)
 - [Least](least.md)
 - [Feedback eq empty of no exit](feedback-eq-empty-of-no-exit.md)
