@@ -3,7 +3,9 @@
 **Model.** A diploid chromosome carries $n$ SNPs, all heterozygous: one homologue has alleles $S_1,\dots,S_n\in\{0,1\}$ and the other $S_1^c,\dots,S_n^c$. The haplotype is determined up to swapping homologues by the parities $L_i=S_i\oplus S_{i+1}$, $1\le i\le n-1$. Each aligned mate-pair read covers SNPs $i,i+1$ with $i$ uniform in $\{1,\dots,n-1\}$, comes from either homologue with probability $\tfrac12$, and each of its two SNP calls is wrong independently with probability $p$. The number of reads is $\mathrm{Poisson}(c\,(n-1)\ln n)$. $c(p)$ is the *optimal coverage* if for every $\epsilon>0$, $(c(p)-\epsilon)n\ln n$ reads do not suffice to reconstruct with probability at least $1-\epsilon$, while $(c(p)+\epsilon)n\ln n$ reads do, as $n\to\infty$.
 
 **Theorem.** Let $\theta=2p(1-p)$ be the probability that a read reports the wrong parity and $D(\theta)=D(\tfrac12\,\|\,\theta)$ the relative entropy in nats. Then
+
 $$c(p)=\frac1{1-e^{-D(\theta)}}$$
+
 is the optimal coverage. In the noiseless case $p=0$, reconstruction is the coupon collector problem on $n-1$ adjacent pairs, so $c(n-1)\log(n-1)$ reads succeed with high probability for $c>1$ and fail for $c<1$; at $p=\tfrac12$ no finite coverage suffices.
 
 ## Expansion

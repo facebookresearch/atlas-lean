@@ -3,7 +3,9 @@
 **Setting.** A *unicellular map* of genus $g$ is a connected graph embedded in the closed orientable surface of genus $g$ with exactly one face; equivalently a fatgraph (a graph with a cyclic order of half-edges at each vertex) with a single boundary component. Genus-$0$ unicellular maps are plane trees, counted by the Catalan numbers $\mathrm{Cat}(n)=\frac{1}{n+1}\binom{2n}{n}$ ($n$ edges). Unicellular maps are the Poincaré duals of RNA diagrams of genus $g$ (pseudoknotted base-pair diagrams whose fatgraph, with the backbone collapsed to one vertex, has genus $g$), with boundary components of the diagram becoming vertices of the map. Let $C_g(z)=\sum_n\epsilon_g(n)z^n$ count unicellular maps of genus $g$ by edges.
 
 **Theorem.** For $g\ge1$ there are rational coefficients $a^{(g)}_t$ such that, with $\kappa^{(g)}_t=a^{(g)}_t\,\mathrm{Cat}(2g+t)$,
+
 $$C_g(z)=\sum_{t=0}^{g-1}\kappa^{(g)}_t\,\frac{z^{2g+t}}{(1-4z)^{2g+t+\frac12}} .$$
+
 The first values are $\kappa^{(1)}_0=1$; $\kappa^{(2)}_0=21$, $\kappa^{(2)}_1=105$; $\kappa^{(3)}_0=1485$, $\kappa^{(3)}_1=18018$, $\kappa^{(3)}_2=50050$. For example $C_1(z)=z^2(1-4z)^{-5/2}$, giving $1$ genus-one map with $2$ edges and $10$ with $3$ edges.
 
 ## Expansion

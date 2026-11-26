@@ -1,12 +1,17 @@
 # Global well-posedness of the time-fractional Keller–Segel system with singular sensitivity
 
 Memory-driven "stop-and-go" gliding of myxobacteria on rough surfaces is modeled by a Keller–Segel system with a Caputo time derivative ${}^C_0D^{\alpha}_t f=\frac{1}{\Gamma(1-\alpha)}\int_0^t(t-s)^{-\alpha}\partial_sf(s)\,ds$ of order $\alpha\in(0,1)$ and logarithmic (singular) sensitivity:
+
 $${}^C_0D^{\alpha}_t n=\mathcal D\Delta n-\mathcal D\chi\nabla\cdot\Big(\frac{n}{c}\nabla c\Big),\qquad {}^C_0D^{\alpha}_t c=\mathcal D\Delta c-\gamma c+n,$$
+
 on a smooth bounded $\Omega\subset\mathbb R^d$ with homogeneous Neumann conditions; $n$ is cell density, $c$ slime-trail concentration, $\mathcal D,\chi,\gamma>0$. Initial data satisfy $n_0\in C^0(\overline\Omega)$, $n_0\ge0$, $n_0\not\equiv0$, and $c_0\in W^{1,\infty}(\Omega)$, $c_0>0$ on $\overline\Omega$.
 
 **Theorem.** (i) For $d\ge2$, cell mass is conserved, $\int_\Omega n(t)=\int_\Omega n_0$, and
+
 $$\int_\Omega c(t)\le\max\Big\{\frac{t^{\alpha}}{\Gamma(1+\alpha)}\int_\Omega n_0,\ \int_\Omega c_0\Big\}.$$
+
 (ii) For $d\in\{2,3\}$ and $0<\chi<\frac12$, for every $p>d$ there is a unique global mild solution with $n\ge0$, $c>0$, $n\in C([0,\infty);L^\infty)$, $c\in C([0,\infty);W^{1,p})$, Hölder-in-time regularity of order $\alpha/2$, and a uniform bound
+
 $$\sup_{t>0}\big(\|n(t)\|_{L^\infty}+\|c(t)\|_{W^{1,p}}\big)\le M .$$
 
 As $\alpha\to1$ the system reduces to the classical singular-sensitivity Keller–Segel model.

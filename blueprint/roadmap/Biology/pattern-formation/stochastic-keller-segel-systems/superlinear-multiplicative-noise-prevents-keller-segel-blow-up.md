@@ -9,7 +9,9 @@ with $\chi > 0$, $\sigma_0 > 0$, $r > 1$, and either $\tau = 0$ (parabolic-ellip
 **Theorem.**
 1. ($r > 3/2$) For every $d \ge 1$, every $\sigma_0 > 0$ and both $\tau = 0$ and $\tau > 0$, there is a pathwise unique global nonnegative mild solution. For each $T < \infty$ and $\lambda \in (0,1)$, $\mathbb{P}\big(\sup_{0\le t\le T}\|u(t)\|_\infty \ge R\big) \le C_{T,\lambda}(1+R)^{-\lambda}$ in the parabolic-elliptic case, and $\mathbb{E}\big[\sup_{t\le T}\|u(t)\|_\infty^s\big] < \infty$ for every $s \in (0,1)$.
 2. ($r = 3/2$) If $\tau = 0$ and $\sigma_0^2 \ge 2\chi$, there is a pathwise unique global nonnegative mild solution in every dimension, with
+
 $$\mathbb{P}\Big(\sup_{0\le t\le T}\|u(t)\|_\infty \ge R\Big) \le \frac{\log(1+U_0) + \chi T}{\log(1+R)}, \qquad U_0 = 1 + \|u_0\|_\infty < R.$$
+
 If $d = 2$, both systems are globally well posed for every $\sigma_0 > 0$.
 3. (Mass extinction) For any global nonnegative mild solution with $r > 1$, $\|u(t)\|_{L^1} \to 0$ and $\|v(t)\|_{L^1} \to 0$ almost surely, $\int_0^\infty M(t)^{2r}\,dt < \infty$ almost surely, where $M(t) = \|u(t)\|_{L^1}$, and $\mathbb{E}\big[\sup_{t\ge0}M(t)^s\big] \le M_0^s/(1-s)$ for $s \in (0,1)$.
 

@@ -5,6 +5,7 @@
 - (A2) genes at a given time are conditionally independent given the past: $X^i_t\perp X^j_t\mid X_{1:t-1}$ for $i\ne j$.
 
 For $j\in[p]$ let $X^{-j}_{t-1}$ denote the other $p-1$ genes at time $t-1$. Define the full-order DAG and, for $q<p$, the **$q$-th order conditional dependence DAG**
+
 $$\mathcal{G}_{\min}:\ X^j_{t-1}\to X^i_t\iff X^i_t\not\perp X^j_{t-1}\mid X^{-j}_{t-1};\qquad \mathcal{G}^{(q)}:\ X^j_{t-1}\to X^i_t\iff X^i_t\not\perp X^j_{t-1}\mid X^{Q}_{t-1}\ \ \forall\,Q\subseteq[p]\setminus\{j\},\ |Q|=q .$$
 
 **Results.**

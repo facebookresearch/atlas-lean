@@ -8,11 +8,15 @@ $$\begin{aligned}
 with homogeneous Neumann conditions for $\varphi, \mu, \sigma$ and initial data $\varphi_0, \sigma_0$.
 
 **Control problem with free treatment time.** For $r > 0$, weights $\beta_u, \beta_T > 0$, $\beta_Q, \beta_\Omega, \beta_S \ge 0$, targets $\varphi_Q, \varphi_\Omega$ and a treatment time $\tau \in [0,T]$, minimize
+
 $$J_r(\varphi, u, \tau) = \frac{\beta_Q}{2}\int_0^\tau\!\!\int_\Omega|\varphi - \varphi_Q|^2 + \frac{\beta_\Omega}{2r}\int_{\tau-r}^\tau\!\!\int_\Omega|\varphi - \varphi_\Omega|^2 + \frac{\beta_S}{2r}\int_{\tau-r}^\tau\!\!\int_\Omega(1+\varphi) + \frac{\beta_u}{2}\int_0^T\!\!\int_\Omega|u|^2 + \beta_T\tau$$
+
 over $u \in \mathcal{U}_{\mathrm{ad}} = \{u \in L^\infty(Q) : 0 \le u \le 1\}$ and $\tau$. The averaged terms over $(\tau - r, \tau)$ relax the end-time terms $\int_\Omega|\varphi(\tau) - \varphi_\Omega|^2$ and $\int_\Omega(1 + \varphi(\tau))$ (tumour size at the end of treatment), and $\beta_T\tau$ penalizes long treatment.
 
 **Theorem (well-posedness).** Assume $\varphi_0 \in H^3$ with $\partial_\nu\varphi_0 = 0$, $\sigma_0 \in H^1$ with $0 \le \sigma_0 \le 1$, $0 \le \sigma_S \le 1$, $h \in C^2$ Lipschitz with values in $[0,1]$, and $\Psi \in C^3$ of at most quartic growth with $|\Psi'| \le k_0\Psi + k_1$ and $\Psi(s) \ge k_2|s| - k_3$. Then for each $u \in \mathcal{U}_{\mathrm{ad}}$ there is a unique weak solution with
+
 $$\varphi \in L^\infty(0,T;H^2) \cap L^2(0,T;H^3) \cap H^1(0,T;L^2) \cap C^0(\overline{Q}), \qquad 0 \le \sigma \le 1,$$
+
 depending continuously on $u$.
 
 **Theorem (existence of an optimal treatment).** Under the same assumptions there is at least one minimizer $(\varphi_*, u_*, \tau_*)$ of $J_r$; the trivial cases $\tau_* = 0$ and $\tau_* = T$ cannot be excluded.

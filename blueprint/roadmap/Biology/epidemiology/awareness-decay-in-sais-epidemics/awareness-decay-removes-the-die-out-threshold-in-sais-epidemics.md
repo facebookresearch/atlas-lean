@@ -1,7 +1,9 @@
 # Awareness decay removes the die-out threshold in SAIS epidemics
 
 **Model.** On a $k$-regular random network, individuals are susceptible ($s$), aware ($a$) or infectious ($i=1-s-a$). Infectious individuals recover at rate $\delta$; susceptibles are infected at per-node rate $\beta$ and become aware at rate $\kappa$ through contact with infectious neighbours; aware individuals are infected at the reduced rate $\beta_a<\beta$ and lose awareness at rate $\delta_a$. The mean-field system on regular random networks (with $\beta,\kappa,\beta_a$ per-node rates, $k$ times the per-contact rates) is
+
 $$\dot s=(1-s-a)\bigl(\delta-(\kappa+\beta)s\bigr)+\delta_aa,\qquad \dot a=(1-s-a)(\kappa s-\beta_aa)-\delta_aa,$$
+
 on the triangle $R=\{s,a\ge0,\ s+a\le1\}$, whose edge $L=\{s+a=1\}$ consists of disease-free states.
 
 **Theorem (no awareness decay, $\delta_a=0$).**

@@ -3,7 +3,9 @@
 **Setting.** A sequence is *compatible* with a secondary structure if every arc joins two nucleotides that can pair. Consider $r$-canonical secondary structures of length $n$ with minimum arc-length $\lambda$ ($1\le\lambda\le4$, $1\le r\le3$), counted by $s^{[r]}_\lambda(n)$, and let $\mu^{[r]}_\lambda,\sigma^{[r]}_\lambda$ be the mean and standard deviation per nucleotide of their number of arcs (which is asymptotically Gaussian). For a composition vector, let $s_{\cdot}(n)$ count the structures that admit at least one compatible sequence with that composition (counts $\lfloor p n\rfloor$, rounded consistently).
 
 **Theorem.** In each case below, with the stated *effective pairing capacity* $q$,
+
 $$\frac{\#\{\text{structures with a compatible sequence}\}}{s^{[r]}_\lambda(n)}=\Phi\!\Big(\frac{(q-\mu^{[r]}_\lambda)\sqrt n}{\sigma^{[r]}_\lambda}\Big)+O(n^{-1/2}),$$
+
 where $\Phi$ is the standard normal distribution function:
 
 1. *Purine–pyrimidine pairs* (alphabet $\{R,Y\}$, pairs $R$–$Y$), purine fraction $p\in(0,\tfrac12]$: $q=p$. Here a structure with $l$ arcs has a compatible sequence exactly when $l\le\min(\lfloor pn\rfloor,\lceil(1-p)n\rceil)$.

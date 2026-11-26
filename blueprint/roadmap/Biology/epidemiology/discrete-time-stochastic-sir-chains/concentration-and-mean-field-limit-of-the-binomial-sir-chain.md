@@ -1,12 +1,16 @@
 # Concentration and mean-field limit of the binomial SIR chain
 
 **Model.** A closed population of size $N=S_t^h+I_t^h+R_t^h$ evolves on the time grid $t\in h\mathbb{N}$. Given the state, each susceptible is infected during $[t,t+h)$ independently with probability $1-e^{-\lambda I_t^h h}$, and each infective recovers with probability $1-e^{-\gamma h}$:
+
 $$I_{t+h}^h=I_t^h+\sum_{i=1}^{S_t^h}X_i-\sum_{i=1}^{I_t^h}Y_i,\qquad S_{t+h}^h=S_t^h-\sum_{i=1}^{S_t^h}X_i,$$
+
 with $X_i\sim\mathrm{Bernoulli}(1-e^{-\lambda I_t^hh})$ and $Y_i\sim\mathrm{Bernoulli}(1-e^{-\gamma h})$. The contact rate $\lambda=\lambda(N)$ may depend on $N$.
 
 **Theorems.**
 1. *(Concentration.)* If $0\le\lambda(N)\le\lambda'/N$, there is $K>0$ independent of $N$ such that for every $n$ and $\varepsilon>0$
+
 $$\mathbb{P}\Bigl(\Bigl|\tfrac{I_{nh}^h}{N}-\mathbb{E}\tfrac{I_{nh}^h}{N}\Bigr|>\varepsilon\Bigr)\le e^{-\frac{\varepsilon^2\sqrt N}{2(n+1)K^n}}+n\,e^{-2\sqrt N/K^n},$$
+
 and similarly for $S_{nh}^h/N$.
 2. *(Mean-field limit.)* If moreover $N\lambda(N)$ converges and $S_0/N$, $I_0/N$ converge to positive limits, then $\mathbb{E}(S_t/N)$ and $\mathbb{E}(I_t/N)$ converge for every $t\in h\mathbb{N}$, and $S_t/N$, $I_t/N$ converge in probability to these limits.
 3. *(Variance.)* For $h\le\min(1,1/\gamma)$, $\operatorname{Var}(R_t^h/N)\le\frac{\gamma t}{N}+\frac{2\gamma^2t^2}{\sqrt N}+th$, which vanishes as $N\to\infty$ and $h\to0$.

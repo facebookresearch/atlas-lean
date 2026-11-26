@@ -3,14 +3,19 @@
 **Model.** On the $d$-dimensional torus of volume $N$, type-$(i-1)$ points acquire an $i$-th mutation as a space–time Poisson process of rate $\mu_i$ per unit volume, and every mutation spreads as a ball of radius growing at speed $\alpha$, overtaking points of lower type. Let $\sigma_k$ be the first time some point has type $k$. For $c_1, \dots, c_k > 0$, let $Z_{d,k}(c_1, \dots, c_k)$ denote the same waiting time for the process on the unit torus $[0,1]^d$ with speed $1$ and rates $c_1, \dots, c_k$; let $\gamma_d$ be the volume of the unit ball.
 
 **Theorem (critical regime).** Fix $k \ge 2$. If $\mu_iN^{(d+1)/d}/\alpha \to c_i \in (0,\infty)$ for every $i \le k$, then
+
 $$\frac{\alpha\,\sigma_k}{N^{1/d}} \Rightarrow Z_{d,k}(c_1, \dots, c_k).$$
+
 For $k = 2$, if $\mu_1N^{(d+1)/d}/\alpha \to c_1$ and $\mu_2\alpha^d/(N\mu_1)^{d+1} \to c_2$, then $\alpha\sigma_2/N^{1/d} \Rightarrow Z_{d,2}(c_1, c_2c_1^{d+1})$. In this regime the arrival of a mutation, its spread over a macroscopic fraction of the space, and the next arrival all occur on the same time scale, so the limit is a nondegenerate law that depends on the full geometry of overlapping balls.
 
 **Proposition (bounds on the limit law).** With $W_1, \dots, W_k$ independent and $W_i \sim \mathrm{Exp}(c_i)$,
+
 $$\sum_{i=1}^kW_i \preceq Z_{d,k}(c_1, \dots, c_k) \preceq \frac{(k-1)\sqrt{d}}{2} + \sum_{i=1}^kW_i$$
+
 in the stochastic order.
 
 **Proposition (small-time behavior).** For all $d, k \ge 1$ and $c_1, \dots, c_k > 0$,
+
 $$\lim_{t \to 0}t^{-((k-1)d+k)}\,\mathbb{P}\big(Z_{d,k}(c_1, \dots, c_k) \le t\big) = \frac{(d!)^{k-1}\gamma_d^{k-1}c_1\cdots c_k}{((k-1)d+k)!}.$$
 
 ## Expansion

@@ -1,9 +1,13 @@
 # Free energy and critical points of the generalized Poland–Scheraga model
 
 **Model.** Two DNA strands of lengths $N$ and $M$ (not necessarily equal or complementary) are paired at the points of a bivariate renewal process $\tau=\{\tau_0=(0,0),\tau_1,\tau_2,\dots\}\subset\mathbb N_0^2$ with both coordinates strictly increasing. The inter-arrival law is
+
 $$\mathbf P(\tau_1=(n,m))=K(n+m),\qquad K(n)=\frac{L(n)}{n^{1+\alpha}},\quad n\ge2,$$
+
 with $L$ slowly varying, $\alpha\ge1$ and $\sum_{n,m\ge1}K(n+m)=1$. An inter-arrival $(1,1)$ is a base pair, and $(i,j)$ with $i+j\ge3$ is a loop with $i+j-2$ unpaired bases (possibly asymmetric). Each contact is rewarded by $e^{h}$, $h\in\mathbb R$, so the constrained partition function is
+
 $$Z^c_{N,M,h}=\sum_{n=1}^{N\wedge M}\ \sum_{\substack{l\in\mathbb N^n\\|l|=N}}\ \sum_{\substack{t\in\mathbb N^n\\|t|=M}}\ \prod_{i=1}^ne^{h}K(l_i+t_i).$$
+
 The free version $Z^f_{N,M,h}=\sum_{i\le N,j\le M}K_f(i)K_f(j)Z^c_{N-i,M-j,h}$ allows unbound end segments with weights $K_f(n)=\overline L(n)/n^{\overline\alpha}$. The free energy is $\mathrm F_\gamma(h)=\lim\frac1N\log Z^f_{N,M,h}$ as $N,M\to\infty$ with $M/N\to\gamma$, and it coincides with the constrained limit.
 
 **Theorem.** Let $\alpha\ge1$ and $\gamma\ge1$.

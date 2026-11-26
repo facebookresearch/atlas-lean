@@ -1,8 +1,11 @@
 # Well-posedness and ill-conditioning of chemotaxis kernel reconstruction
 
 **Forward model.** In one space dimension with velocities $V=\{\pm1\}$, the bacterial phase-space density $f(t,x,v)$ solves the run-and-tumble equation
+
 $$\partial_t f+v\,\partial_x f=\int_V\bigl(K(x,v,v')f(t,x,v')-K(x,v',v)f(t,x,v)\bigr)\,dv',\qquad f(0,x,v)=\phi(x,v),$$
+
 with tumbling kernel $K\ge0$, bounded by $C_K$, piecewise constant in $x$ on intervals $I_r=[a_{r-1},a_r)$, $r=1,\dots,R$. **Data**: for test functions $\mu_l$ and a time $T$, $M_l(K)=\int_{\mathbb{R}}\int_V f_K(x,T,v)\,dv\,\mu_l(x)\,dx$, $l=1,\dots,L$ (the macroscopic density only). **Inverse problem**:
+
 $$\min_K\ \mathcal{C}(K)=\frac{1}{2L}\sum_{l=1}^L\bigl(M_l(K)-y_l\bigr)^2 .$$
 
 **Theorem (local well-posedness).** If the Hessian $H_K\mathcal{C}(K_\star)$ is positive definite at the true kernel $K_\star$ and the measurement Hessians are uniformly bounded in Frobenius norm near $K_\star$, then $H_K\mathcal{C}$ stays positive definite on an $L^\infty$-neighborhood $U$ of $K_\star$, with $|\lambda_{\min}(H_K\mathcal{C}(K_\star))-\lambda_{\min}(H_K\mathcal{C}(K))|\le C'\|K_\star-K\|_\infty$; the problem is Tikhonov well-posed on $U$ and gradient descent started in $U$ converges.

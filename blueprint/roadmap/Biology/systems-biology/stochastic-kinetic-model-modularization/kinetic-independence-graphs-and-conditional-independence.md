@@ -3,14 +3,18 @@
 **Stochastic kinetic models.** A stochastic kinetic model (SKM) $[N,S,\mathsf P]$ describes species $\mathcal V$ reacting through reactions $m\in\mathcal M$. It is the multivariate counting process $N(t)=(N_m(t))_{m\in\mathcal M}$ of reaction occurrences, with stoichiometric matrix $S$ (species counts are $X(t)=X(0)+SN(t)$) and mass-action-type conditional intensities $\lambda_m(t)$ that depend on the current counts of the reactants $R[m]$ of $m$. For $A\subseteq\mathcal V$ let $\Delta(A)=\{m:S^A_m\ne0\}$ be the reactions that change $A$. The subprocess $N^A$ is the counting process of $\Delta(A)$ with reactions grouped by identical effect on $A$; its intensity sums the $\lambda_m$ in each group, and its internal history $\mathcal F^A_t$ is equivalent to the history of the counts of $A$.
 
 **Kinetic independence graph.** The KIG of the SKM is the directed (generally cyclic) graph on $\mathcal V$ with parent sets
+
 $$\operatorname{pa}(k)=R[\Delta(k)]\setminus\{k\},$$
+
 so $j\to k$ when $j$ is a reactant in a reaction that changes $k$. Let $G^\sim$ be its undirected version, and write $A\perp_{G^\sim}B\mid D$ when $D$ separates $A$ from $B$.
 
 **Theorem.** Let $[A,B,D]$ partition $\mathcal V$.
 
 1. (Local independence) $\lambda^B(t)$ is $\mathcal F^{\operatorname{cl}(B)}_t$-measurable. If $A\perp_{G^\sim}B\mid D$, then $N^B$ is locally independent of $N^A$ given $N^{B\cup D}$, and symmetrically.
 2. (Global independence) Suppose the reactions $\Gamma=\Delta(A)\cap\Delta(B)$ are *identified by consumption of reactants*: each consumes, and never produces, its reactants, and no two of them consume reactants identically. Then $A\perp_{G^\sim}B\mid D$ implies
+
 $$\mathcal F^A_t\perp\!\!\!\perp\mathcal F^B_t\ \big|\ \mathcal F^{D^*}_t\qquad\text{for all }t\ge0,$$
+
 under both $\mathsf P_t$ and a reference measure $\tilde{\mathsf P}_t$. Here $N^{D^*}$ refines $N^D$ by recording separately the jumps of $D$ caused by reactions that also change $A$ only, $A$ and $B$, $B$ only, or $D$ alone. The likelihood ratio factorizes as $d\mathsf P_t/d\tilde{\mathsf P}_t=\psi_{AD^*,t}\,\psi_{BD^*,t}$, with each factor measurable with respect to its own side.
 3. (Sharpness) Under the same hypotheses, conditioning on $\mathcal F^D_t$ alone instead of $\mathcal F^{D^*}_t$ need not give conditional independence: in the network $A\rightleftharpoons D\rightleftharpoons B$ neither $\mathcal F^A_t\perp\!\!\!\perp\mathcal F^B_t\mid\mathcal F^D_t$ under $\mathsf P_t$ nor under $\tilde{\mathsf P}_t$ holds.
 

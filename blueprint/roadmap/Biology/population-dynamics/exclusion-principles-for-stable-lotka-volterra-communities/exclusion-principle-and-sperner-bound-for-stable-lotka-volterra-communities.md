@@ -1,7 +1,9 @@
 # Exclusion principle and Sperner bound for stable Lotka–Volterra communities
 
 **Model.** For $N$ species with populations $p_i\ge0$,
+
 $$p_i'=p_i\Bigl(a_i-\sum_{j=1}^NB_{ij}p_j\Bigr),\qquad i\in\mathcal N=\{1,\dots,N\}.$$
+
 The support of an equilibrium $\bar p\ge0$ is its *community* $\mathcal I=\{i:\bar p_i>0\}$. $\bar p$ is *internally stable* if the community matrix $-\mathrm{diag}(\bar p_{\mathcal I})B_{\mathcal I\mathcal I}$ is stable, *strictly stable* if moreover $a_i-(B\bar p)_i<0$ for all $i\notin\mathcal I$ (no absent species can invade), and *$\mathcal Q$-stable* for $\mathcal Q\supseteq\mathcal I$ if it is internally stable and $a_i-(B\bar p)_i<0$ for $i\in\mathcal Q\setminus\mathcal I$. Linear asymptotic stability of $\bar p$ in $\mathbb R^N$ and in $\mathbb R^N_{\ge0}$ are equivalent to stability of the Jacobian. An equilibrium is *internally $D$-stable* if $-DB_{\mathcal I\mathcal I}$ is stable for every positive diagonal $D$ (guaranteed, e.g., by diagonal dominance or Volterra–Lyapunov stability).
 
 **Theorem (exclusion).**

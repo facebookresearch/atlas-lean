@@ -16,7 +16,9 @@ $$\mathcal{R}^s_0 = \frac{1}{c_I}\Big(\frac{\beta A}{\mu_1} - \frac{A^2\sigma_\b
 1. (Ergodicity) If $\mathcal{R}^s_0 > 1$, the system has a unique stationary distribution and is ergodic.
 2. (Persistence in the mean) If $\mathcal{R}^s_0 > 1$, then $\liminf_{t\to\infty}\frac1t\int_0^tI(s)\,ds > 0$ almost surely, with an explicit lower bound proportional to $\mathcal{R}^s_0 - 1$.
 3. (Extinction) If either $\widehat{\mathcal{R}}^s_0 < 1$ and $\sigma_\beta^2 \le \mu_1\beta/A$, or
+
 $$\frac{\beta^2}{2\sigma_\beta^2} - c_I - \Lambda_2 < 0,$$
+
 then $\limsup_{t\to\infty}\frac{\ln I(t)}{t} < 0$ almost surely; in the first case the exponent is at most $c_I(\widehat{\mathcal{R}}^s_0 - 1)$.
 
 ## Expansion

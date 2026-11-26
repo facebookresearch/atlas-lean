@@ -12,7 +12,9 @@ with chemotactic strength $\gamma>0$ and $a=\sigma\sigma^{\mathsf T}$. Assume (H
 
 1. (Local well-posedness) There is $T_*>0$, depending on $n$, $\gamma$, the structural constants, $\|\rho_0\|_{L^1}$, $\|\rho_0\|_{L^\infty}$, $\|u_0\|_{W^{1,\infty}}$ and $\|\nabla f_0\|_{L^\infty}$, such that a unique strong solution exists on $[0,T_*]$ with $\rho\in C([0,T_*];L^1_+)\cap L^\infty(0,T_*;L^\infty)$. No spatial derivative of $\rho_0$ is required.
 2. (Continuation) Writing $m_0=\|\rho_0\|_{L^1}$, along the maximal solution
+
 $$\sup_{t\le\tau}\|u(t)\|_{L^\infty}\le e^{2\|\phi\|_\infty m_0\tau}\Big[\|u_0\|_{L^\infty}+\gamma C_T\tau\|\nabla f_0\|_{L^\infty}+\tfrac{2\gamma}{3}C_T\|\psi\|_\infty m_0\tau^{3/2}\Big],$$
+
 so $u$ itself never blows up. The solution extends past $T_{\max}<T$ as long as $\sup_{t<T_{\max}}\|\nabla u(t)\|_{L^\infty}<\infty$; breakdown means that $\nabla u$ blows up.
 3. (Finite-time breakdown) Fix a characteristic $X(\cdot;a)$ along which a certain auxiliary quantity $\mathcal S(t)$ built from the solution stays nonnegative. If the initial compression $-\nabla\cdot u_0(a)$ exceeds an explicit threshold depending on $\gamma$, the kernels and the data (and a compatibility condition on the time scales holds), then $T_{\max}$ is finite, with an explicit upper bound.
 4. (One dimension) Let $Z_0=\|(\partial_xu_0)^-\|_\infty$ and let $A^\gamma_\tau$ bound the time integral of the chemotactic forcing along characteristics. If $e^{B\tau}\tau(Z_0+A^\gamma_\tau)<1$, then the solution exists on $[0,\tau]$ and $\partial_xu$ stays bounded there.

@@ -8,17 +8,27 @@
 Write $H_n=\sum_{k=1}^n 1/k$ and $H_n^{(2)}=\sum_{k=1}^n 1/k^2$, and let $S_n=S(T_n)$, $\Phi_n=\Phi(T_n)$.
 
 **Theorem (exact Yule variances).** For every $n\ge 1$,
+
 $$\sigma_Y^2(S_n)=7n^2-4n^2H_n^{(2)}-2nH_n-n,$$
+
 $$\sigma_Y^2(\Phi_n)=\frac{1}{12}\left(n^4-10n^3+131n^2-2n\right)-4n^2H_n^{(2)}-6nH_n,$$
+
 and the covariance of the two indices is
+
 $$\operatorname{Cov}_Y(S_n,\Phi_n)=4n\left(nH_n^{(2)}+H_n\right)+\frac{1}{6}n\left(n^2-51n+2\right).$$
+
 For the combined index $\overline\Phi=S+\Phi$ the formulas collapse to $E_Y(\overline\Phi_n)=n(n-1)$ and
+
 $$\sigma_Y^2(\overline\Phi_n)=2\binom{n}{4}.$$
+
 (The means used are $E_Y(S_n)=2n(H_n-1)$ and $E_Y(\Phi_n)=n(n-1)-2n(H_n-1)$.)
 
 **Asymptotics.** As $n\to\infty$, with $\gamma$ Euler's constant,
+
 $$\sigma_Y^2(S_n)=\Big(7-\frac{2\pi^2}{3}\Big)n^2+n\big(3-2\ln n-2\gamma\big)-3+O(1/n),$$
+
 $$\sigma_Y^2(\Phi_n)=\frac{n^4}{12}-\frac{5}{6}n^3+\Big(\frac{131}{12}-\frac{2\pi^2}{3}\Big)n^2-6n\ln n+\Big(\frac{23}{6}-6\gamma\Big)n-5+O(1/n).$$
+
 So the Sackin index has standard deviation of order $n$, while the cophenetic index has standard deviation of order $n^2$.
 
 ## Depends on

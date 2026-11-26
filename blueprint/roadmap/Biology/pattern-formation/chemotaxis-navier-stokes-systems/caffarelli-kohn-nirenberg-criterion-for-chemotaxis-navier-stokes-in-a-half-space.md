@@ -1,12 +1,17 @@
 # Caffarelli–Kohn–Nirenberg criterion for chemotaxis–Navier–Stokes in a half-space
 
 **Model.** In the half-space $\mathbb H^3=\{x\in\mathbb R^3: x_3>0\}$ consider the chemotaxis–Navier–Stokes system for a cell density $n\ge 0$, an oxygen concentration $c\ge 0$, a velocity $u$ and a pressure $p$:
+
 $$\partial_t n+u\cdot\nabla n-\Delta n=-\nabla\cdot(n\nabla c),\qquad \partial_t c+u\cdot\nabla c-\Delta c=-nc,$$
+
 $$\partial_t u+u\cdot\nabla u-\Delta u+\nabla p=-n\nabla\phi,\qquad \nabla\cdot u=0,$$
+
 with no-slip ($u=0$) and no-flux ($\partial_{x_3}n=\partial_{x_3}c=0$) conditions on $\{x_3=0\}$, where the gravitational potential $\phi$ is time independent with $M_\phi=\|\nabla\phi\|_{L^\infty}<\infty$, and $M_c$ bounds $\|c\|_{L^\infty}$. A point is *regular* if the solution is Hölder continuous in a parabolic neighborhood of it; $\tilde c$ is the normalized oxygen variable used in the local entropy–energy inequality.
 
 **Theorem (dissipation criterion).** There is $\varepsilon_3=\varepsilon_3(M_c,M_\phi)>0$ such that, for every suitable weak solution on $\mathbb H^3\times(0,\infty)$, a point $z_0=(x_0,t_0)\in\overline{\mathbb H^3}\times(0,\infty)$ is regular whenever
+
 $$\limsup_{r\downarrow 0}\frac1r\int_{\mathcal Q_r(z_0)}\Bigl(|\nabla\sqrt n|^2+|\nabla^2\sqrt{\tilde c}|^2+|\nabla u|^2\Bigr)\,dx\,dt\le\varepsilon_3,$$
+
 where $\mathcal Q_r(z_0)$ is the parabolic cylinder (interior points) or half-cylinder (boundary points) of radius $r$.
 
 **Corollary (size of the singular set).** For every global suitable weak solution, the space–time singular set $\mathcal S\subset\overline{\mathbb H^3}\times(0,\infty)$, boundary points included, has vanishing one-dimensional parabolic Hausdorff measure: $\mathcal P^1(\mathcal S)=0$.

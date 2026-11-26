@@ -7,7 +7,9 @@
 1. $0\le k(f,T)\le n-2$.
 2. $f$ has a unique Dollo-$k$ labeling: assign state $1$ to the nodes of $\mathcal T(f)$ and $0$ to all others. It can be computed in linear time.
 3. If $f$ has at most one leaf in state $1$, then $k(f,T)=0$. Otherwise
+
 $$k(f,T)=\big|\{v\in V(\mathcal T(f)):\deg(v)=2\}\big|-1,$$
+
 where degrees are taken in the subtree $\mathcal T(f)$; equivalently, $k(f,T)$ is the number of maximal $0$-clade roots lying strictly below the most recent common ancestor of the state-$1$ leaves.
 4. $f$ is persistent on $T$ if and only if $\mathcal T(f)$ has at most two nodes of degree $2$.
 

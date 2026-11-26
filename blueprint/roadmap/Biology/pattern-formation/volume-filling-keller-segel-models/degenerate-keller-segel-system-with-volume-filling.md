@@ -1,7 +1,9 @@
 # Degenerate Keller–Segel system with volume filling
 
 **System.** On a bounded domain $\Omega$ with no-flux boundary conditions, for $m\ge1$, $\chi>0$, $\tau,\eta>0$,
+
 $$\partial_t\rho=\operatorname{div}\bigl((1-\rho)\rho^{m-1}\nabla\rho-\chi\rho(1-\rho)\nabla c\bigr),\qquad \tau\,\partial_t c=\eta\Delta c-c+\rho,$$
+
 where $\rho\in[0,1]$ is the cell volume fraction and $c$ the chemoattractant. Diffusion degenerates at $\rho=0$ (porous-medium type, $m>1$) and both diffusion and drift vanish at the packing limit $\rho=1$.
 
 **Theorems.**

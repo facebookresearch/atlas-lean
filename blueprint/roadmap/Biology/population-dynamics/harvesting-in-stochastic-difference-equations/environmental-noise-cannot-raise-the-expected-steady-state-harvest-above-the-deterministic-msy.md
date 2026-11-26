@@ -1,7 +1,9 @@
 # Environmental noise cannot raise the expected steady-state harvest above the deterministic MSY
 
 **Model.** A population with pre-harvest size $Y_t$ is harvested by a stationary policy $h$, leaving escapement $u(y)=y-h(y)$, and then reproduces in a random environment $\xi_{t+1}$ (i.i.d.):
+
 $$Y_{t+1}=u(Y_t)\,f\big(u(Y_t),\xi_{t+1}\big).$$
+
 Let $\bar f(x)=\mathbb{E}f(x,\xi_1)$, $\bar F(x)=x\bar f(x)$ and $\bar G(x)=\bar F(x)-x$. The averaged deterministic model $x_{t+1}=x_t\bar f(x_t)$ has equilibrium yield $\bar G(u(y))$, and its **deterministic maximum sustainable yield** is $M_{\det}=\max_x\bar G(x)=\bar G(x_1)$. Persistence under harvesting requires $\mathbb{E}\ln\big(u'(0)f(0,\xi_1)\big)>0$. When $Y_t$ converges to a stationary law $\pi_u$ with $Y_\infty\sim\pi_u$, the long-run average and expected yields both converge to the **expected steady-state yield** $\mathbb{E}h(Y_\infty)$.
 
 **Theorem.**
@@ -12,7 +14,9 @@ Let $\bar f(x)=\mathbb{E}f(x,\xi_1)$, $\bar F(x)=x\bar f(x)$ and $\bar G(x)=\bar
 ## Expansion
 
 At stationarity $Y_\infty$ and $u(Y_\infty)f(u(Y_\infty),\xi_1)$ have the same law, with $\xi_1$ independent of $Y_\infty$, so
+
 $$\mathbb{E}h(Y_\infty)=\mathbb{E}Y_\infty-\mathbb{E}u(Y_\infty)=\mathbb{E}\,\bar G\big(u(Y_\infty)\big)\le\max\bar G=M_{\det},$$
+
 with equality only if the escapement $u(Y_\infty)$ sits at $x_1$ almost surely, which forces the bang-bang policy and a self-sustaining threshold. For constant effort, $\mathbb{E}Y_\infty=\frac{1}{1-\theta}\mathbb{E}\bar F\big((1-\theta)Y_\infty\big)$, and Jensen's inequality for strictly concave $\bar F$ gives the strict loss. Environmental fluctuations are therefore generically detrimental to yield, and even when the mean is preserved the yield becomes variable.
 
 ## Sources

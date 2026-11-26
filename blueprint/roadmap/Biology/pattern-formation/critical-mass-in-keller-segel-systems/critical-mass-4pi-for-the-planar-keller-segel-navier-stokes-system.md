@@ -1,6 +1,7 @@
 # Critical mass $4\pi$ for the planar Keller–Segel–Navier–Stokes system
 
 **Model.** Let $\Omega \subset \mathbb{R}^2$ be a bounded domain with smooth boundary and outward normal $\nu$. Cells of density $n$ respond chemotactically to a signal $c$ and are transported by an incompressible fluid of velocity $u$ and pressure $P$, which is in turn forced by buoyancy through a gravitational potential $\phi$:
+
 $$
 \begin{cases}
 n_t + u\cdot\nabla n = \Delta n - \nabla\cdot(n\nabla c), & x\in\Omega,\ t>0,\\
@@ -9,11 +10,15 @@ u_t + (u\cdot\nabla)u = \Delta u - \nabla P + n\nabla\phi, \quad \nabla\cdot u =
 \partial_\nu n = \partial_\nu c = 0,\quad u = 0, & x\in\partial\Omega,\ t>0.
 \end{cases}
 $$
+
 Assume $\phi \in W^{2,\infty}(\Omega)$, $n_0 \in C^0(\overline\Omega)$ with $n_0 \ge 0$, $n_0 \not\equiv 0$, $c_0 \in W^{1,\infty}(\Omega)$ with $c_0 \ge 0$, and $u_0 \in D(\mathcal{A})$, where $\mathcal{A}$ is the Stokes operator with Dirichlet conditions on the solenoidal space $L^2_\sigma(\Omega)$.
 
 **Theorem.** If the total cell mass satisfies
+
 $$ m := \int_\Omega n_0 < 4\pi, $$
+
 then the problem has a unique global classical solution $(n,c,u)$ (with a pressure $P \in C^{1,0}(\Omega\times(0,\infty))$), and it is uniformly bounded in time: for every $q > 2$ there is $C > 0$ with
+
 $$ \|n(\cdot,t)\|_{L^\infty(\Omega)} + \|c(\cdot,t)\|_{W^{1,q}(\Omega)} + \|u(\cdot,t)\|_{L^\infty(\Omega)} \le C \qquad \text{for all } t > 0. $$
 
 Since the fluid-free fully parabolic Keller–Segel system on a simply connected planar domain has unbounded solutions for suitable data of every mass $m \in (4\pi,\infty)\setminus 4\pi\mathbb{N}$, the threshold $4\pi$ is the same with and without fluid coupling: the Navier–Stokes feedback does not lower the critical mass below the classical value (previous fluid-coupled results required $m < 2\pi$).

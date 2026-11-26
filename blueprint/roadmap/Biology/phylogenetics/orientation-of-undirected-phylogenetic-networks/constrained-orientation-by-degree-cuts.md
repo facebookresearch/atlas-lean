@@ -7,7 +7,9 @@ A *degree cut* is a pair $(V',E')$ with $V'\subseteq V$ and $E'$ an edge cut of 
 **Theorem (characterization and uniqueness).**
 
 1. $(N,e_\rho,d^-_N)$ is orientable if and only if it has no degree cut and
+
 $$\sum_{v\in V} d^-_N(v)=|E|+1 .$$
+
 2. If it is orientable, the orientation is unique, and it can be found (or non-orientability certified) in $O(|E|)$ time.
 3. *(Binary case.)* For binary $N$ the data reduce to the set $R\subseteq V$ of desired reticulations (in-degree 2). Then $(N,e_\rho,R)$ is orientable if and only if $(N,e_\rho,R)$ has no *reticulation cut* (a degree cut $(R',E')$ with $R'\subseteq R$ and $|R'|=|E'|$) and $|R|=|E|-|V|+1$, the cycle rank of $N$. In that case $N\setminus R$ is a forest.
 

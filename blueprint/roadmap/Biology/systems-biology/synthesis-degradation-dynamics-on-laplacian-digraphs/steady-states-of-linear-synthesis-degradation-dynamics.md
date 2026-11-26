@@ -10,12 +10,18 @@ Nonlinear networks fit this frame when nonlinearities are absorbed into edge lab
 
 1. The SD dynamics have a unique solution for each initial condition.
 2. *(Strongly connected case.)* If $G^\star$ is strongly connected, $F=\mathcal L(G)-D$ is non-singular with all eigenvalues in $\{\operatorname{Re}\lambda<0\}$, and there is a unique globally stable steady state
+
 $$\mathbf x_{ES}=-(\mathcal L(G)-D)^{-1}\mathbf s,\qquad (\mathbf x_{ES})_i=\frac{(\boldsymbol\rho^{G^\star})_i}{(\boldsymbol\rho^{G^\star})_\star},$$
+
 where $\boldsymbol\rho^{G^\star}$ is the Matrix-Tree kernel vector of $\mathcal L(G^\star)$ (entry $k$ is the total weight of spanning trees of $G^\star$ rooted at $k$). In particular synthesis and degradation balance, $\sum_id_ix_i=\sum_is_i$.
 3. *(General case.)* If $G^\star$ is not strongly connected, order the vertices so that
+
 $$F=\begin{pmatrix}N&0\\B&T\end{pmatrix},\qquad \mathbf s=\begin{pmatrix}\mathbf s'\\ \mathbf s''\end{pmatrix},$$
+
 where $N$ collects the (non-singular, perturbed-Laplacian) blocks of strongly connected components that leak to $\star$ or to other components, and $T$ collects the Laplacian blocks of the terminal components of $G^\star$ that carry no degradation. A steady state exists if and only if
+
 $$\mathbf s''=0\qquad\text{and}\qquad B\,N^{-1}\mathbf s'=0 .$$
+
 4. Whenever a steady state exists, every solution converges to a steady state as $t\to\infty$, and the limit is computable from the graph through spanning-tree weights.
 
 ## Expansion

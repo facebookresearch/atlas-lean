@@ -7,11 +7,15 @@
 - **switching SDE:** $dX_i=X_i\big(f_i(\mathbf X,r(t))\,dt+g_i(\mathbf X,r(t))\,dE_i\big)$.
 
 Let $\mathcal M$ be the set of ergodic invariant probability measures supported on the extinction boundary $\partial\mathbb R^n_+$ (subcommunities in which some species is absent), and $\mathrm{Conv}(\mathcal M)$ its convex hull. The **invasion rate** of species $i$ into the subcommunity $\mu$ is
+
 $$\lambda_i(\mu)=\sum_{k}\int_{\partial\mathbb R^n_+}\Big(f_i(\mathbf x,k)-\frac{\sigma_{ii}g_i^2(\mathbf x,k)}{2}\Big)\mu(d\mathbf x,k),$$
+
 with $g_i=0$ for PDMPs and a single state for SDEs.
 
 **Theorem.** Suppose that for every $\mu\in\mathrm{Conv}(\mathcal M)$
+
 $$\max_{i=1,\dots,n}\lambda_i(\mu)>0,$$
+
 that is, every boundary invariant measure is repelled by at least one missing species. Then the system is strongly stochastically persistent: for every $\epsilon>0$ there is $\delta>0$ with $\liminf_{t\to\infty}\mathbb P\{X_i(t)\ge\delta\ \forall i\}\ge1-\epsilon$ from any interior initial state. Under the technical (nondegeneracy, irreducibility) assumptions of each setting, there is a unique invariant probability measure $\mu^*$ on the interior, and the law of $\mathbf X(t)$ converges to $\mu^*$ in total variation; for nondegenerate SDEs the convergence is exponentially fast.
 
 **Application (competitive Lotka–Volterra with switching).** For two competitors whose growth rates switch between two environments with stationary weights $\nu_1,\nu_2$, if each survives alone ($\nu_1\ell_i(1)+\nu_2\ell_i(2)>0$) and each can invade the other's stationary state ($\lambda_1(\mu_2)>0$, $\lambda_2(\mu_1)>0$), then both persist and the process converges to a unique stationary distribution on $(0,\infty)^2\times\{1,2\}$, even when one environment alone would lead to competitive exclusion.

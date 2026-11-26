@@ -1,12 +1,17 @@
 # τ-independent logistic damping threshold for Keller–Segel boundedness
 
 Let $\Omega\subset\mathbb R^N$ ($N\ge1$) be a bounded convex domain with smooth boundary and consider the fully parabolic Keller–Segel system with quadratic logistic growth,
+
 $$u_t=\Delta u-\chi\nabla\cdot(u\nabla v)+\lambda u-\mu u^2,\qquad \tau v_t=\Delta v-v+u,$$
+
 with homogeneous Neumann conditions, $\chi,\mu,\tau>0$, $\lambda\in\mathbb R$, and nonnegative data $u_0\in C(\overline\Omega)$, $v_0\in W^{1,\infty}(\Omega)$.
 
 **Theorem.** If
+
 $$\mu>\frac{N\chi}{4},$$
+
 then for every $\tau>0$ there is a unique nonnegative global classical solution with $\sup_{t>0}\big(\|u(t)\|_{L^\infty}+\|v(t)\|_{W^{1,\infty}}\big)<\infty$. With $\delta=\mu-N\chi/4$ and $C_*=\frac{(\lambda+\tau^{-1})_+^2}{4\delta}$, the absorbing bounds are
+
 $$\limsup_{t\to\infty}\|u(t)\|_{L^\infty}\le\frac{\big((\tau-1)\lambda+\chi\tau C_*\big)_+}{(\tau-1)\mu+\chi}\ \ (\tau>1),\qquad \limsup_{t\to\infty}\|u(t)\|_{L^\infty}\le C_*\ \ (\tau=1).$$
 
 The explicit damping condition $\mu>N\chi/4$, previously known only for equal cell and signal diffusivities ($\tau=1$), therefore prevents chemotactic collapse for every ratio of diffusivities and in every dimension. For general coefficients $u_t=d_1\Delta u-\chi\nabla\cdot(u\nabla v)+\lambda u-\mu u^2$, $v_t=d_2\Delta v-\beta v+\alpha u$, rescaling turns it into $\mu>N\alpha\chi/(4d_1)$.

@@ -3,9 +3,13 @@
 **Setting.** Consider one zone of the size–condition transport–renewal model (size $l\in[l_0,l_m]$, condition $c\in[0,c_m]$, growth velocity $g$, condition drift $h$, mortality $\mu$, harvest effort $\bar q$ with selectivity $\sigma$, fecundity $\beta$ and recruit-condition law $\Pi$), with the environment frozen at $y^\ast$ and constant effort $\bar q$. Assume the extinction resource level $R^\circ$ is the unique root of $F(R^\circ,y^\ast)=0$ with $\partial_RF(R^\circ,y^\ast)<0$, and freeze every rate at $(x,R)=(0,R^\circ)$: $g^\circ,h^\circ,\mu^\circ,\beta^\circ,\Pi^\circ$ and $u^\circ=\bar q\,\sigma\,\eta(0,y^\ast)$, with $g^\circ\ge g_{\min}>0$.
 
 For a newborn of condition $c_0$ let $(L(\tau;c_0),C(\tau;c_0))$ solve $\dot L=g^\circ(L,C)$, $\dot C=h^\circ(L,C)$, $L(0)=l_0$, $C(0)=c_0$, leaving the domain at time $\tau_{\max}(c_0)\le(l_m-l_0)/g_{\min}$, and let
+
 $$\ell(\tau;c_0)=\exp\Big(-\int_0^\tau\big[\partial_lg^\circ+\partial_ch^\circ+\mu^\circ+u^\circ\big]\,(L(s),C(s))\,ds\Big)$$
+
 be the density survival factor. The next-generation kernel and operator on $\mathcal V=L^1(\Omega_c)$ are
+
 $$\mathscr K(c,c_0)=\int_0^{\tau_{\max}(c_0)}\beta^\circ(L,C)\,\Pi^\circ(c\mid L,C)\,\ell(\tau;c_0)\,d\tau,\qquad (\mathcal K\psi)(c)=\int_{\Omega_c}\mathscr K(c,c_0)\psi(c_0)\,dc_0 ,$$
+
 and the reduced basic reproduction number is $\mathcal R_0(y^\ast,\bar q)=r(\mathcal K)$, the spectral radius.
 
 **Theorem.** Assume the integrand of $\mathscr K$ is dominated by an integrable majorant and $\mathscr K\in C(\Omega_c\times\Omega_c)$.

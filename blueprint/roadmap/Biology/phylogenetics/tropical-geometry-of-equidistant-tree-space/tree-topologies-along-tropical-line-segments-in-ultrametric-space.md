@@ -1,7 +1,9 @@
 # Tree topologies along tropical line segments in ultrametric space
 
 **Setting.** An equidistant (ultrametric) phylogenetic tree on $n$ leaves is represented by its vector of pairwise distances $u \in \mathbb R^{e}$, $e = \binom n2$, satisfying the ultrametric condition $\max\{u_{ij},u_{ik},u_{jk}\}$ attained at least twice. Working in the tropical projective torus $\mathbb R^e/\mathbb R\mathbf 1$ (max-plus arithmetic $a\oplus b = \max\{a,b\}$, $a\odot b = a+b$), the space of ultrametrics $\mathcal U_n$ is the tropicalization of a linear space and is tropically convex. The *tropical line segment* between $u$ and $v$ is
+
 $$\Gamma_{u,v} = \{a_1\odot u \oplus a_2\odot v : a_1,a_2 \in \mathbb R\},$$
+
 a concatenation of at most $e-1$ ordinary line segments; it is unique, a geodesic in $\mathcal U_n$ for the tropical metric, and intrinsic to $\mathcal U_n$. It can be computed in $O(n^2\log n)$ time.
 
 **Topology along a segment.** Points on the same ordinary piece of $\Gamma_{u,v}$ have the same tree topology (more generally, two points in the same cell of a tropical polytope spanned by ultrametrics have the same topology).

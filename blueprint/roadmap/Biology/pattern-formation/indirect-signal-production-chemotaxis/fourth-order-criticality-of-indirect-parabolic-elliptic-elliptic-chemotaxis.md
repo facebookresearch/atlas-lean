@@ -1,9 +1,13 @@
 # Fourth-order criticality of indirect parabolic–elliptic–elliptic chemotaxis
 
 **Model (PES).** On $\Omega=\mathbb{R}^N$, $\mathbb{T}^N$ or a bounded $C^2$ domain with no-flux conditions, with $\chi,\tau>0$,
+
 $$\partial_t u=\Delta u-\chi\nabla\cdot(u\nabla c),\qquad 0=\Delta w-w+u,\qquad 0=\tau\Delta c-c+w .$$
+
 Eliminating the signals gives $c=K_\tau u$ with the positive self-adjoint fourth-order smoothing operator $K_\tau=(I-\tau\Delta)^{-1}(I-\Delta)^{-1}$, and the PES equation is the gradient flow $\partial_t u=\nabla\cdot\bigl(u\nabla(\log u-\chi K_\tau u)\bigr)$ of the free energy
+
 $$\mathcal{F}_{\mathrm{PES}}[u]=\int_\Omega u\log u\,dx-\frac{\chi}{2}\int_\Omega u\,K_\tau u\,dx .$$
+
 It arises from the two-stage signalling system when both signal relaxation times are short compared with cell migration.
 
 **Results.**

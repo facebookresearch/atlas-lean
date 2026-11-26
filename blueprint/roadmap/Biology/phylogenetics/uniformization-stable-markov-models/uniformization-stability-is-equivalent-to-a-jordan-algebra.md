@@ -3,7 +3,9 @@
 **Setting.** Let $\mathcal L_n=\{Q\in\mathrm{Mat}_n(\mathbb R):Q\mathbf 1=0\}$ be the zero row sum matrices and $\mathcal L_n^+\subset\mathcal L_n$ the rate matrices (non-negative off-diagonal entries) of continuous-time Markov chains on $n$ states, e.g. nucleotides. A *Markov model* is a subset $\mathcal L^+\subseteq\mathcal L_n^+$; it is *linear* if $\mathcal L^+=\mathcal L\cap\mathcal L_n^+$ for a linear subspace $\mathcal L\subseteq\mathcal L_n$, and then $\mathcal L^+=\mathrm{span}_{\mathbb R}(\mathcal L^+)\cap\mathcal L_n^+$. A subspace $\mathcal J$ of matrices is a *Jordan algebra* if it is closed under $A\odot B=AB+BA$; equivalently, it is closed under positive integer powers $C^k$.
 
 **Definition.** $\mathcal L^+$ is *uniformization stable* if for all $t\ge 0$ and $Q\in\mathcal L^+$ there is $\hat Q\in\mathcal L^+$ with
+
 $$e^{Qt}-I_n=\hat Q .$$
+
 Equivalently, with the uniformization $e^{Qt}=\sum_{k\ge0}e^{-\lambda t}\frac{(\lambda t)^k}{k!}R^k$, $R=I_n+\lambda^{-1}Q$, both $e^{Qt}$ and the discrete-time matrix $R$ are of the form $I_n+(\text{rate matrix in the model})$.
 
 **Theorem.** Let $\mathcal L^+$ be a linear Markov model. Then $\mathcal L^+$ is uniformization stable if and only if $\mathrm{span}_{\mathbb R}(\mathcal L^+)$ is a Jordan algebra.

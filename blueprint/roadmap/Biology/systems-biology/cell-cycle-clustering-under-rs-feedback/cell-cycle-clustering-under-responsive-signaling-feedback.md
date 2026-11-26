@@ -1,7 +1,9 @@
 # Cell-cycle clustering under responsive/signaling feedback
 
 **Model.** Represent the cell cycle as the circle $[0,1)$ with $1\equiv0$. Cell $i$ of a culture of $n$ cells has phase $x_i$, and
+
 $$\frac{dx_i}{dt}=1+a(x_i,\bar x),$$
+
 where $\bar x$ is the state of all cells. This is a **responsive/signaling (RS) feedback system** if:
 
 - (H1) a responsive interval $R=[r,1)$ directly precedes a signaling interval $S=[0,s)$, with $0<s<r<1$;

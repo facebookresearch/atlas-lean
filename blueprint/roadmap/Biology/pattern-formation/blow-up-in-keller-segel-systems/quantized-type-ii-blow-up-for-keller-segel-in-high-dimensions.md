@@ -1,13 +1,19 @@
 # Quantized type II blow-up for Keller–Segel in high dimensions
 
 **Model.** For radial solutions of the parabolic–elliptic Keller–Segel system $\partial_t\rho=\Delta\rho-\nabla\cdot(\rho\nabla c)$, $-\Delta c=\rho$ on $\mathbb R^d$, the averaged mass $u(r,t)=r^{-d}\int_0^r\rho(s,t)s^{d-1}\,ds$ satisfies the local scalar equation
+
 $$\partial_t u=\partial_{rr}u+\frac{d+1}{r}\partial_r u+u\,(r\partial_r u+d\,u),$$
+
 with scaling $u_\lambda(r,t)=\lambda^{-2}u(r/\lambda,t/\lambda^2)$. Let $Q$ be the normalized positive stationary state, and let
+
 $$\gamma(d)=\tfrac12\Bigl(d-2-\sqrt{(d-2)(d-10)}\Bigr)\in(2,3]\qquad(d\ge11),$$
+
 the smaller root of $x^2-(d-2)x+2(d-2)=0$. A blow-up at time $T$ is of type II if $(T-t)\|u(t)\|_{L^\infty}$ is unbounded.
 
 **Theorem.** Let $d\ge11$ and fix an integer $l\ge2$ (equivalently $2l>\gamma$). There is a smooth radial solution that blows up at a finite time $T$ with
+
 $$u(t,r)=\frac{1}{\lambda^2(t)}\Bigl[Q\Bigl(\frac{r}{\lambda(t)}\Bigr)+\varepsilon\Bigl(t,\frac{r}{\lambda(t)}\Bigr)\Bigr],\qquad \lambda(t)=c(u_0)\,(T-t)^{l/\gamma}\bigl(1+o(1)\bigr),\quad c(u_0)>0,$$
+
 such that:
 1. the regime is stable within a codimension-$(l-1)$ class of radial initial data;
 2. $\varepsilon\to0$ in $L^\infty(|y|\le B)$ for every $B>0$;

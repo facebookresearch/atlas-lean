@@ -12,9 +12,13 @@ with all parameters positive and $\sigma_0\in[0,1]$: recruitment $\Lambda$, tran
 **Results.**
 1. Positive initial data give positive solutions, and $N=S+V+I+R$ satisfies $N'\le\Lambda-d_0N$, so $\Omega=\{N\le\Lambda/d_0\}$ is positively invariant and attracting.
 2. The unique disease-free equilibrium is $E^0=(S^0,V^0,0,0)$ with $S^0=\dfrac{\Lambda(d_0+\upsilon)}{d_0(d_0+\varpi+\upsilon)}$ and $V^0=\dfrac{\varpi\Lambda}{d_0(d_0+\varpi+\upsilon)}$, and
+
 $$\mathcal R_0=\iota\,\frac{S^0+\sigma_0V^0}{d_0+\gamma_0+d}=\frac{\Lambda\iota\,(d_0+\upsilon+\sigma_0\varpi)}{d_0(d_0+\varpi+\upsilon)(d_0+\gamma_0+d)} .$$
+
 3. If $\mathcal R_0>1$ and the media intensity is large enough,
+
 $$m\ge\frac{\sigma_0\iota\varpi(1-\sigma_0)}{(d_0+\upsilon+\varpi)(d_0+\upsilon+\sigma_0\varpi)},$$
+
 there is a unique endemic equilibrium $E^\ast=(S^\ast,V^\ast,I^\ast,R^\ast)$.
 4. $E^0$ is locally asymptotically stable for $\mathcal R_0<1$ and unstable for $\mathcal R_0>1$, for every delay.
 5. If $\iota\Lambda<d_0(d_0+\gamma_0+d)$, then $E^0$ is globally asymptotically stable in $\Omega$. This condition implies $\mathcal R_0<1$ because $S^0+\sigma_0V^0\le\Lambda/d_0$.

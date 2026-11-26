@@ -1,7 +1,9 @@
 # Global boundedness under weakly singular sensitivity and nonlocal logistic damping
 
 **Model.** Let $\Omega \subset \mathbb{R}^N$ ($N \ge 1$) be a smooth bounded domain, $\chi, r, \mu, \gamma > 0$, $k \in (0,1)$ and $\alpha, \beta \ge 1$. Population density $u$ and signal $v$ satisfy, with homogeneous Neumann conditions,
+
 $$u_t = \Delta u - \chi\nabla\cdot\Big(\frac{u}{v^k}\nabla v\Big) + u^\alpha\Big(r - \mu\int_\Omega u^\beta\Big), \qquad 0 = \Delta v - v + u^\gamma,$$
+
 with $u_0 \in C^0(\overline\Omega)$, $u_0 \ge 0$, $m_0 = \int_\Omega u_0 > 0$.
 
 **Hypothesis $\mathcal{H}$.** One of the following holds:

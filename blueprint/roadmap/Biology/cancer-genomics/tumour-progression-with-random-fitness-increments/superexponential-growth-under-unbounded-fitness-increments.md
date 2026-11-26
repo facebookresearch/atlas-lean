@@ -27,7 +27,9 @@ So $\log Z_1(t)$ grows like $t^{(\alpha+1)/\alpha}$ rather than linearly, and, u
 ## Expansion
 
 A mutant born at time $s$ with increment $x$ that survives reaches size about $\zeta e^{(\lambda_0+x)(t-s)}$ with $\zeta$ exponential, so $\log Z_1(t)$ is governed by the maximum of the growth exponents $z=(\lambda_0+x)(t-s)$ over the Poisson process of mutations. The expected number of mutations with exponent at least $z$ is
+
 $$\mu(z,\infty)=V_0u_1\int_0^t\Big(\frac{z}{t-s}-\lambda_0\Big)^{\beta}\exp\big(\phi(s,z)\big)\,ds,\qquad \phi(s,z)=\lambda_0s-\gamma\Big(\frac{z}{t-s}-\lambda_0\Big)^{\alpha},$$
+
 and $\phi(\cdot,z)$ is concave in the relevant range, so Laplace's method locates the maximizing birth time $s_z$. For $\alpha=1$ the maximizer is explicit, which gives the $t^2$ leading order with constant $\lambda_0/(4\gamma)$ and the Gumbel-type fluctuations of order $t$; for $\alpha>1$ the fluctuations are only of order $t^{1/\alpha}$, which forces the finer expansion of the centering. The extreme point dominates the sum because the intensity decays exponentially in $y$.
 
 These are Theorems 6 and 7 and Conjecture 1 of the source.

@@ -5,7 +5,9 @@
 **Theorem.**
 1. *(Monotonicity.)* Lowering one prior, $p'_j\le p_j\le\tfrac12$ with all other priors equal, cannot increase the optimal error: $P_e^*(G,\mathbf{p}')\le P_e^*(G,\mathbf{p})$. Hence $P_e^*(G,\mathbf{p}_{\max})\ge P_e^*(G,\mathbf{p})\ge P_e^*(G,\mathbf{p}_{\min})$ for the constant vectors at $\max_ip_i$ and $\min_ip_i$.
 2. *(Lower bound.)* Driving the error to $0$ as $N\to\infty$ requires
+
 $$T=\Omega\big(\min\{N,\ N\,p_{\min}\log N\}\big).$$
+
 If $\mathbf{p}$ is $\eta$-bounded for a constant $\eta$, then $T=\Omega(\min\{N,\,N\bar p\log N\})=\Omega(\min\{N,\,Np_{\max}\log N\})$, with $\bar p$ the mean prior.
 3. *(Daily testing under SIR community spread.)* In a discrete-time SIR stochastic block model with $N$ people in communities of size $C$, within- and between-community daily transmission probabilities $q_1,q_2$ and initial infection probability $p_{\rm init}$: if $p_{\rm init}\le\tfrac12$, $q_1\le(1-1/\sqrt2)/C$ and $q_2\le(1-1/\sqrt2)/N$, then every day's infection probabilities stay $\le\tfrac12$, and if $q_1/q_2\le\eta$ each day's prior vector is $\eta$-bounded. So identifying every new infection each day needs $\Omega(\min\{N,N\bar p_t\log N\})$ tests on day $t$, and this lower bound falls below $N$ (complete testing) only while daily infection probabilities are $o(1/\log N)$.
 

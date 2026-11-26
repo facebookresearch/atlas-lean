@@ -1,9 +1,13 @@
 # Harvest quadrature and spurious local minima in discretized harvesting control
 
 **Pure harvesting.** A population with initial density $y^0>0$ is harvested with effort $u^n\in[0,U_{\max}]$ on steps of length $\tau$, catchability $q>0$, over $N$ steps. The positivity-preserving (Patankar-type) update is
+
 $$y^{n+1}=\frac{y^n}{1+\tau qu^n},\qquad y^n-y^{n+1}=\tau qu^ny^{n+1},$$
+
 so the catch on step $n$ is exactly $\tau qu^ny^{n+1}$. Compare two harvest quadratures in the cost (effort penalty $\lambda>0$, harvest reward $\eta\ge0$):
+
 $$j_1(u)=\frac{\lambda\tau}2\sum_{n<N}(u^n)^2-\eta\tau q\sum_{n<N}u^ny^{n+1}\quad\text{(flux / new-state rule)},$$
+
 $$j_0(u)=\frac{\lambda\tau}2\sum_{n<N}(u^n)^2-\eta\tau q\sum_{n<N}u^ny^{n}\quad\text{(old-state rule)}.$$
 
 **Proposition.**

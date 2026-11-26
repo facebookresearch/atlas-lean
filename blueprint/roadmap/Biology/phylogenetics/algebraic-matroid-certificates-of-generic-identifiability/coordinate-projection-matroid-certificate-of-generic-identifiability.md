@@ -5,7 +5,9 @@
 **Coordinate projection matroid.** For an irreducible variety $V\subset k^n$ and $S\subseteq[n]$ let $\pi_S$ be the coordinate projection. The sets $S$ with $\overline{\pi_S(V)}=k^{|S|}$ are the independent sets of a matroid $\mathcal M(V)$; equivalently $S$ is independent iff the vanishing ideal $P$ of $V$ satisfies $P\cap k[x_i:i\in S]=\langle0\rangle$. If $V=\overline{\phi(k^d)}$ for a polynomial parametrization $\phi$, then $\mathcal M(V)$ is the linear matroid of the columns of the transposed Jacobian $J(\phi)=(\partial\phi_j/\partial\theta_i)$ over $k(\theta)$, and (in characteristic zero) also the linear matroid of $J(\phi)$ evaluated at generic parameter values.
 
 **Proposition (matroid certificate).** Let $M_1,M_2\subset\Delta_r$ be irreducible algebraic models with $\dim M_1\ge\dim M_2$. If some set of coordinates $S$ satisfies
+
 $$S\in\mathcal M(M_2)\setminus\mathcal M(M_1),$$
+
 then $\dim(M_1\cap M_2)<\min(\dim M_1,\dim M_2)$.
 
 **Randomized certification.** If $S$ is independent for $J(\phi)$ over $k(\theta)$ and a non-vanishing $|S|\times|S|$ minor has degree $\alpha$, then for parameters drawn uniformly from a finite $E\subseteq k$ with $|E|>\alpha$, the probability that $S$ is dependent in the specialized Jacobian is at most $\alpha/|E|$ (Schwartz–Zippel). Random subsets $S$ with $|S|\le\dim M_2$ tested on numerical Jacobians therefore yield certificates with error probability as small as desired.

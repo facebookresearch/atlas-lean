@@ -1,21 +1,28 @@
 # Integral representation of the linear-determinacy threshold
 
 Consider the Lotka–Volterra competition–diffusion system
+
 $$
 u_t=u_{xx}+u(1-u-av),\qquad v_t=d\,v_{xx}+r\,v(1-v-bu),\qquad x\in\mathbb{R},
 $$
+
 in the **monostable** regime $0<a<1$, $b>0$, $d,r>0$, where $u$ invades the state $(0,1)$. Linearizing at $(0,1)$ gives the candidate speed $c_0=2\sqrt{1-a}$, and the minimal front speed satisfies $c^*(a,b,d,r)\ge c_0$. *Linear determinacy* means $c^*=c_0$ (pulled front); *nonlinear determinacy* means $c^*>c_0$ (pushed front). There is a unique threshold $b_0(a,d,r)\in(0,\infty)$ with
+
 $$
 c^*=c_0\ \text{ for } 0<b\le b_0,\qquad c^*>c_0\ \text{ for } b>b_0 .
 $$
+
 Unlike the standing-front problem, this speed does not depend on $d,r$ only through $d/r$.
 
 **Gaussian recursion.** Let $A(\beta)=\dfrac{1-a}{1-a\min\{\beta,1\}}$. Let $f_a(x)=\tfrac{1-a}{2}\cos^2(\pi x/2)$ for $|x|\le1$ and $f_a(x)=0$ otherwise, and let $G_{\kappa,h}$ be the heat kernel of variance $2\kappa h$. For $m\ge1$ set $K_\beta=2+r(1+\beta)$, $N=\lceil K_\beta m^2e^{m^2}\rceil$, $h=m/N$. Start from $p_0=f_a$, $q_0=0$ and iterate, for $0\le k<N$,
+
 $$
 p_{k+1}=G_{1,h}*\bigl[p_k+h\,p_k(1-a-p_k+aq_k)\bigr],\qquad
 q_{k+1}=G_{d,h}*\bigl[q_k+hr(1-q_k)(\beta p_k-q_k)\bigr].
 $$
+
 Define the total mass and the speed gap
+
 $$
 M_m(\beta)=\int_{\mathbb{R}}p_N(x)\,dx,\qquad D_m(\beta)=\Bigl(\frac{M_m(\beta)}{2A(\beta)m}-2\sqrt{1-a}\Bigr)_+ .
 $$

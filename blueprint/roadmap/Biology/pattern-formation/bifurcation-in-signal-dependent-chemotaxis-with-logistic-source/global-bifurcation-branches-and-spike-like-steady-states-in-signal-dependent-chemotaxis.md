@@ -1,11 +1,17 @@
 # Global bifurcation branches and spike-like steady states in signal-dependent chemotaxis
 
 **Model.** On $(0,L)$ with Neumann conditions, consider
+
 $$u_t = u_{xx} - \chi_0\Big(\frac{u^m}{(1+v)^\beta}v_x\Big)_x + au - bu^{1+\alpha}, \qquad 0 = v_{xx} - \mu v + \nu u^\gamma,$$
+
 with $\alpha, \gamma, m, \mu, \nu > 0$, $a, b, \beta \ge 0$ and $\chi_0 \in \mathbb{R}$. Either $a, b > 0$ (non-minimal model, $u^* = (a/b)^{1/\alpha}$) or $a = b = 0$ (minimal model, any $u^* > 0$, with perturbations of zero mean); in both cases $v^* = \nu (u^*)^\gamma/\mu$. With Neumann eigenvalues $\lambda_n = n^2\pi^2/L^2$ and eigenfunctions $\phi_n = \cos(n\pi x/L)$, the linearization at $(u^*,v^*)$ has eigenvalues
+
 $$\sigma_n(\chi_0) = -\lambda_n + \chi_0\,\nu\gamma\,\frac{(u^*)^{m+\gamma-1}}{(1+v^*)^\beta}\,\frac{\lambda_n}{\mu+\lambda_n} - a\alpha,$$
+
 and the constant state is linearly stable for $\chi_0 < \chi^*$ and unstable for $\chi_0 > \chi^*$, where
+
 $$\chi^*(u^*) = \inf_{n\ge1}\chi_n(u^*), \qquad \chi_n(u^*) = \frac{(1+v^*)^\beta}{\nu\gamma(u^*)^{m+\gamma-1}}\,\frac{(\lambda_n + a\alpha)(\mu + \lambda_n)}{\lambda_n}.$$
+
 A mode $n_0 \ge 1$ with $\chi_{n_0} = \chi^*$ is a bifurcation mode; it is unique when $L \in (L_{k-1}, L_k)$ with $L_0 = 0$, $L_k = \pi\sqrt{k(k+1)}/(a\alpha\mu)^{1/4}$ (then $n_0 = k$), and for the minimal model $n_0 = 1$ for every $L$.
 
 **Theorem (global branches).** Let $n_0$ be the unique bifurcation mode with $\beta_{n_0} \ne 0$, and let $\mathcal{C}^\pm_{n_0}$ be the maximal connected continua of positive stationary solutions in $(0,\infty)\times H^2$ that emanate from $(\chi^*, u^*)$ along the local half-branches $\Gamma^\pm_{n_0}$ (each excluding the opposite half-branch).

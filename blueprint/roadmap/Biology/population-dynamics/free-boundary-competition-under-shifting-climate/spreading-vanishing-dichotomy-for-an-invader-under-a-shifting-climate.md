@@ -1,10 +1,15 @@
 # Spreading–vanishing dichotomy for an invader under a shifting climate
 
 **Model.** An invader $u$ with a Stefan-type free boundary $h(t)$ competes with a native species $v$ on the half-line, while the invader's habitat quality shifts at constant speed $c>0$:
+
 $$u_t=d_1u_{xx}+\bigl(A(x-ct)-b_1u-c_1v\bigr)u,\quad 0<x<h(t),\qquad v_t=d_2v_{xx}+(a_2-b_2u-c_2v)v,\quad x>0,$$
+
 $$u_x(t,0)=v_x(t,0)=0,\qquad u=0\ (x\ge h(t)),\qquad h'(t)=-\mu\bigl(A(h(t)-ct)\bigr)u_x(t,h(t)).$$
+
 Here $A$ is Lipschitz, $A=a_1>0$ on $(-\infty,0]$, $A=a_0<0$ on $[l_0,\infty)$ and decreasing in between, so the favourable region $\{x<ct\}$ advances at speed $c$. Assume weak competition
+
 $$\frac{c_1}{c_2}<\frac{a_1}{a_2}<\frac{b_1}{b_2},$$
+
 with coexistence state $u^*=\frac{a_1c_2-a_2c_1}{b_1c_2-b_2c_1}$, $v^*=\frac{a_2b_1-a_1b_2}{b_1c_2-b_2c_1}$, and let $R^*=\frac\pi2\sqrt{d_1c_2/(a_1c_2-a_2c_1)}$.
 
 **Theorem (dichotomy).** Exactly one of the following occurs:

@@ -1,16 +1,23 @@
 # Critical delay in a delayed Beverton–Holt recurrence
 
 **Model.** Let $z_t\ge0$ be the number of fecund individuals in generation $t$. Newborns need $\tau\in\mathbb N$ steps to reach fecundity, and those that die during this delay do not contribute to growth. With parameters $a,b,c>0$, the model modifies the Beverton–Holt map as
+
 $$z_{t+1}=\frac{1}{m(z_t)}\Big\{z_t+\frac{ab\,z_{t-\tau+1}}{M(z_{t-\tau+1})}\Big\}=:H(z_t,z_{t-\tau+1}),$$
+
 where
+
 $$m(x)=1+b+cx,\qquad M(x)=b\beta+(\beta-1)cx,\qquad\beta=(1+b)^\tau,$$
+
 and the initial data $(z_0,\dots,z_{\tau-1})$ are nonnegative. For $\tau=0$ it reduces to the Beverton–Holt recurrence $z_{t+1}=z_t/(1+b-a+cz_t)$. The **critical delay** is
+
 $$\tau_c=\frac{\log(a/b)}{\log(1+b)}.$$
 
 **Theorem.**
 
 1. (Equilibria) If $\tau\ge\lceil\tau_c\rceil$, the only nonnegative equilibrium is $0$. If $\tau<\lceil\tau_c\rceil$, there is also a unique positive equilibrium
+
 $$\tilde z_+=\frac{-b(2\beta-1)+\sqrt{b^2(2\beta-1)^2+4b(a-b\beta)(\beta-1)}}{2c(\beta-1)}.$$
+
 2. (Extinction) If $\tau\ge\lceil\tau_c\rceil$, the zero equilibrium is globally asymptotically stable for all nonnegative initial conditions.
 3. (Persistence) If $\tau<\lceil\tau_c\rceil$, then $0$ is unstable and $\tilde z_+$ is globally asymptotically stable for all initial conditions $\vec z_0\not\equiv0$.
 4. The positive equilibrium decreases as the delay $\tau$ increases.

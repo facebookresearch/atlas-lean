@@ -1,7 +1,9 @@
 # Distributed-delay stem cell model and Hopf bifurcation
 
 **Model.** The resting pluripotent stem cell density $x(t)$ satisfies
+
 $$x'(t)=-\bigl(\delta+\beta(x(t))\bigr)x(t)+\frac{2}{\tau-\tau_{\min}}\int_{\tau_{\min}}^{\tau}\beta(x(t-r))\,x(t-r)\,dr,$$
+
 where $\delta>0$ is the loss rate by death and differentiation, cells re-enter the cell cycle at the Hill rate $\beta(x)=\beta_0\theta^n/(\theta^n+x^n)$, and the cell-cycle duration is uniformly distributed on $[\tau_{\min},\tau]$; each dividing cell returns two daughters.
 
 **Theorems.**

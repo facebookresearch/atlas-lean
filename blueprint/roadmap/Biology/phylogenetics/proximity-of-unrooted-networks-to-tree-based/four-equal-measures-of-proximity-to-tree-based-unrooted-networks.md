@@ -7,7 +7,9 @@
 4. $\tau(N)$, the minimum tier of a support network contained in $N$ (a tier-$0$ support network is a support tree).
 
 **Theorem.** For every unrooted phylogenetic network $N$ with $|X|\ge2$,
+
 $$\ell(N)=p(N)=t(N)=\tau(N).$$
+
 In particular $N$ is tree-based iff this common value is $0$.
 
 **Related bounds.** The edge-addition measure satisfies $\tfrac12\ell(N)\le e(N)\le\ell(N)$; the NNI-based measure $m(N)$ satisfies $\ell(N)\le m(N)$; and the level-based measure $\lambda(N)$ satisfies $\lambda(N)\le\tau(N)$, with equality for simple networks.

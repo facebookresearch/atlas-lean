@@ -1,6 +1,7 @@
 # Editing a digraph to a binary-explainable BMG is NP-complete
 
 Let $(\vec G,\sigma)$ be a properly vertex-colored digraph on the gene set $L$, with colors denoting species. It is a **best match graph (BMG)** if some leaf-colored tree $(T,\sigma)$ *explains* it: $(x,y)$ is an arc iff $\sigma(x)\ne\sigma(y)$ and $y$ is a closest relative of $x$ in $T$ (minimal last common ancestor) among the genes of color $\sigma(y)$. The graph is **sf-colored** (sink-free) if every vertex has an out-neighbor of every other color. Its **informative** and **forbidden** triples are
+
 $$\mathscr{R}=\{ab|b':\sigma(a)\ne\sigma(b)=\sigma(b'),\ (a,b)\in E,\ (a,b')\notin E\},\qquad \mathscr{F}=\{ab|b':\sigma(a)\ne\sigma(b)=\sigma(b'),\ b\ne b',\ (a,b),(a,b')\in E\}.$$
 
 **Problem ($\ell$-BMG EBEG).** Given a properly $\ell$-colored digraph $(\vec G=(V,E),\sigma)$ and an integer $k$, decide whether there is a set $F$ of non-loop arcs with $|F|\le k$ such that $(V,E\,\triangle\,F)$ with coloring $\sigma$ is a binary-explainable $\ell$-BMG. The deletion-only variant (DBEG) requires $F\subseteq E$, the completion-only variant (CBEG) requires $F\cap E=\emptyset$.

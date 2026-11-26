@@ -9,7 +9,9 @@
 2. If $\beta^- > (3-\tau)/\deg f$, then $d_{f,L}(v^1_n, v^2_n) \to \infty$ in probability.
 
 **Theorem (limit law in the explosive case).** If in addition the connection probabilities and weight laws converge, as $n \to \infty$, to those of an infinite model $\mathrm{IGIRG}_{W,L}(1)$, and $\beta^+ < (3-\tau)/\deg f$, then
+
 $$d_{f,L}(v^1_n, v^2_n) \Rightarrow Y^{(1)} + Y^{(2)},$$
+
 where $Y^{(1)}, Y^{(2)}$ are independent copies of the explosion time of the origin in the infinite model, conditioned to be finite.
 
 ## Expansion

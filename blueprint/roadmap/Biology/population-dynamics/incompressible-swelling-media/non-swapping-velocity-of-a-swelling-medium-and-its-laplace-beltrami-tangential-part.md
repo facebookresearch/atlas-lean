@@ -3,12 +3,17 @@
 **Setting.** Let the packed density $n(x,t) = \tau(x,t)^{-1}\mathbf{1}_{\Omega_N(t)}$ be the equilibrium of $N$ non-overlapping particles of volume $\tau(x,t)$ in a confining effective potential $W(x,t)$, where $\Omega_N(t) = \{0 \le W(\cdot,t) \le U_N(t)\}$. Let $\pi(x,t) = \int_{\{W(\cdot,t) \le W(x,t)\}}\tau^{-1}\,dy$ be the number of particles enclosed by the level set through $x$; its level sets $\Sigma_p(t) = \{\pi(\cdot,t) = p\}$, $p \in (0,N)$, are the potential level sets labeled by enclosed particle number, with outward normal $\nu = \nabla\pi/|\nabla\pi|$. The **non-swapping** heuristic says particles never exchange positions, so each particle stays on the surface enclosing the same number of particles.
 
 **Theorem (normal velocity).** The surface $\Sigma_p(t)$ moves with normal speed $w_\perp = -\partial_t\pi/|\nabla\pi|$. Any velocity field $v$ with $v\cdot\nu = w_\perp$ satisfies the continuity equation $\partial_t n + \nabla\cdot(nv) = 0$ in the averaged sense
+
 $$ \big\langle \delta\circ(\pi(\cdot,t) - p),\ \partial_t n + \nabla\cdot(nv) \big\rangle = 0 \qquad \text{for all } t > 0,\ p \in (0,N). $$
 
 **Theorem (tangential velocity).** Writing $v = w_\perp\nu + v_\parallel$, full mass conservation imposes on each $\Sigma_p(t)$
+
 $$ \nabla\cdot(\tau^{-1}v_\parallel) = f, \qquad f := -\partial_t\tau^{-1} - \nabla\cdot(\tau^{-1}w_\perp\nu), $$
+
 where $f$ has zero average on each level surface. Selecting $v_\parallel$ by minimal parallel kinetic energy on each $\Sigma_p(t)$ forces $v_\parallel = -\nabla_\parallel\theta$ (surface gradient), with $\theta$ solving
+
 $$ -\nabla_\parallel\cdot(\tau^{-1}\nabla_\parallel\theta) = f \ \text{ on } \Sigma_p(t), \qquad \langle\delta\circ(\pi - p), \theta\rangle = 0 . $$
+
 This weighted Laplace–Beltrami problem has a unique solution, with $\theta \in C^0\big((0,N)\times(0,\infty); H^1(\Sigma_p(t))\big)$. Under spherical symmetry $\theta = 0$ and the motion is purely normal; in general $d \ge 2$, $v_\parallel \ne 0$.
 
 The resulting velocity, normal part tied to level-set motion and tangential part given by a Laplace–Beltrami inversion on each level set, has a geometric structure that a Darcy law $v = -\nabla p$ does not produce.

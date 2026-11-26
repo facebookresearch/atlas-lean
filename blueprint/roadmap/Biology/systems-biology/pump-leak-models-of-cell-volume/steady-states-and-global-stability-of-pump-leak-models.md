@@ -1,10 +1,13 @@
 # Steady states and global stability of pump-leak models of cell volume
 
 **Model.** A cell of volume $v$ contains $N$ ion species with concentrations $c_k$ and valences $z_k$, and an amount $A$ of impermeant organic solute of valence $z$. It is bathed in a fixed extracellular medium with concentrations $c_k^{\rm e}>0$ satisfying $\sum_kz_kc_k^{\rm e}=0$. With membrane potential $\phi$ and chemical potential jumps $\mu_k=\ln(c_k/c_k^{\rm e})+z_k\phi$, the (dimensionless) **pump-leak model** is the differential-algebraic system
+
 $$\frac{d}{dt}(vc_k)=-j_k-p_k,\qquad \sum_kz_kc_k+\frac{zA}{v}=0,\qquad \frac{dv}{dt}=-j_{\rm w}(\pi_{\rm w}),\quad \pi_{\rm w}=\sum_kc_k^{\rm e}-\Big(\sum_kc_k+\frac Av\Big),$$
+
 with passive fluxes $j_k$, active (pump) fluxes $p_k$ and osmotic water flux $j_{\rm w}$.
 
 **Free energy identity.** Solutions satisfy
+
 $$\frac{dG}{dt}=-\sum_k\mu_k(j_k+p_k)-\pi_{\rm w}j_{\rm w},\qquad G=v\Big[\sum_k\Big(c_k\big(\ln\tfrac{c_k}{c_k^{\rm e}}-1\big)+c_k^{\rm e}\Big)+\frac Av\Big(\ln\frac Av-1\Big)\Big].$$
 
 **Theorem (linear fluxes).** Let $j=L\mu$ with $L$ symmetric positive definite, $j_{\rm w}=\zeta\pi_{\rm w}$ with $\zeta>0$, and constant pump vector $p$. Put $q=L^{-1}p$, and let $f(\phi)=\sum_kc_k^{\rm e}\big(e^{-q_k-z_k\phi}-1\big)$, which has a unique minimizer $\phi_{\min}$.

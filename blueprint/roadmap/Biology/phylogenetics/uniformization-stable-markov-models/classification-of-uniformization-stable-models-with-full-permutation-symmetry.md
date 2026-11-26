@@ -3,7 +3,9 @@
 **Setting.** $S_n$ acts on matrices by simultaneous row and column permutation, $\sigma\cdot X=K_\sigma^TXK_\sigma$. A linear Markov model $\mathcal L^+=\mathcal L\cap\mathcal L_n^+$, with $\mathcal L$ the minimal subspace, has *full $S_n$-symmetry* if $\mathcal L$ is an $S_n$-module. Let $L_{ij}$ be the elementary rate matrix ($1$ at $(i,j)$, $-1$ at $(i,i)$), $L_\sigma=K_\sigma-I_n$, $J=\frac1n\mathbf 1\mathbf 1^T-I_n$, and $R_i$ the rate matrix with ones on the off-diagonal entries of column $i$.
 
 **Decomposition.** For $n>3$, as $S_n$-modules,
+
 $$\mathcal L_n\cong\{n\}\oplus2\{n-1,1\}\oplus\{n-2,2\}\oplus\{n-2,1^2\}.$$
+
 A non-zero $S_n$-submodule gives a non-trivial model iff it contains $\mathrm{span}(J)\cong\{n\}$.
 
 **Theorem.** The nontrivial, linear, uniformization stable Markov models with full $S_n$ symmetry are exactly the intersections with $\mathcal L_n^+$ of the following subspaces. For $n>4$:

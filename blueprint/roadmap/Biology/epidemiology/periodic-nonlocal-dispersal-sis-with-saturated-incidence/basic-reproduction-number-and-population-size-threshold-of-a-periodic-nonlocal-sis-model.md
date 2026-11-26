@@ -1,9 +1,13 @@
 # Basic reproduction number and population-size threshold of a periodic nonlocal-dispersal SIS model with saturated incidence
 
 **Model.** On a bounded smooth domain $\Omega\subset\mathbb{R}^n$ with total population $N=\int_\Omega(S+I)$,
+
 $$\begin{aligned}S_t&=d_S\!\int_\Omega J(x-y,t)\,[S(y,t)-S(x,t)]\,dy-\frac{\beta SI}{m+S+I}+\gamma I,\\ I_t&=d_I\!\int_\Omega J(x-y,t)\,[I(y,t)-I(x,t)]\,dy+\frac{\beta SI}{m+S+I}-\gamma I,\end{aligned}$$
+
 with $T$-periodic positive coefficients $\beta(x,t)$ (transmission), $\gamma(x,t)$ (recovery), saturation parameter $m(x,t)\ge0$ and a nonnegative continuous dispersal kernel $J$; integrating only over $\Omega$ is the nonlocal analogue of a Neumann condition. The unique disease-free equilibrium is $(N/|\Omega|,0)$. Linearizing there gives the effective transmission rate
+
 $$\theta(x,t)=\frac{\beta(x,t)\,N/|\Omega|}{m(x,t)+N/|\Omega|},$$
+
 and $R_0=R_0(d_I,N,m)$ is the spectral radius of the next-generation operator of the periodic problem $\partial_t\varphi=d_I\mathcal{J}[\varphi]-\gamma\varphi+\theta\varphi$.
 
 **Theorem.**

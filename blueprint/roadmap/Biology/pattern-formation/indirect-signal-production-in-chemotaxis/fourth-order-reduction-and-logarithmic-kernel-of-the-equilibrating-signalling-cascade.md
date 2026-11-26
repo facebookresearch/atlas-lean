@@ -10,7 +10,9 @@ posed on $\mathbb{R}^N$, on $\mathbb{T}^N$, or on a bounded $C^2$ domain with ho
 1. (Reduction) PES reduces to $\partial_t u = \Delta u - \chi\nabla\cdot(u\nabla K_\tau u)$ with $K_\tau = A_\tau^{-1}A^{-1}$, whose Fourier multiplier is $\big((1+|\xi|^2)(1+\tau|\xi|^2)\big)^{-1}$. $K_\tau$ is positive and self-adjoint on $L^2$, and it is a smoothing operator of principal order $-4$ with principal part $\tau^{-1}(-\Delta)^{-2}$.
 2. (Scaling) The high-frequency scaling of PES is $u_\lambda(x,t) = \lambda^4 u(\lambda x, \lambda^2 t)$, so the scaling-critical Lebesgue exponent is $q_c = N/4$ and the mass-critical dimension is $N = 4$ (instead of $N = 2$ for the classical Keller-Segel system).
 3. (Logarithmic kernel) On $\mathbb{R}^4$ the kernel of $K_\tau$ satisfies
+
 $$G_\tau(x) = \frac{1}{8\pi^2\tau}\log\frac{1}{|x|} + R_\tau(x),$$
+
 with $R_\tau$ locally bounded; the same interior expansion holds on $\mathbb{T}^4$ and in smooth bounded Neumann domains.
 4. (Memory) MEP does not reduce to a static operator: eliminating $w$ and $c$ gives a Volterra (time-memory) drift whose near-diagonal limit has principal order $-1$, as in the two-dimensional Keller-Segel problem, so PES-type static scaling does not determine its criticality.
 

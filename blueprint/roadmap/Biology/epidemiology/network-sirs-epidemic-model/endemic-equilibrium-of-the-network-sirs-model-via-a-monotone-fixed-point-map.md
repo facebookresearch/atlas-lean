@@ -1,11 +1,15 @@
 # Endemic equilibrium of the network SIRS model via a monotone fixed-point map
 
 **Model.** Populations $i\in\mathcal V$ (a finite set) interact through a nonnegative interaction matrix $W\in\mathbb R_+^{\mathcal V\times\mathcal V}$, assumed irreducible (strongly connected interaction graph). With susceptible, infected and recovered fractions $x_i,y_i,z_i$, recovery rates $\gamma_i>0$ and loss-of-immunity rates $\delta_i>0$, the network SIRS model is
+
 $$\dot x_i=-x_i\sum_jW_{ij}y_j+\delta_iz_i,\qquad \dot y_i=x_i\sum_jW_{ij}y_j-\gamma_iy_i,\qquad \dot z_i=\gamma_iy_i-\delta_iz_i ,$$
+
 on $\mathcal X=\{(x,y,z)\ge 0:\ x+y+z=\mathbf 1\}$, which is forward invariant. Write $[\gamma],[\delta]$ for the diagonal matrices of the rates and define
+
 $$R_0=\rho\big([\gamma]^{-1}W\big).$$
 
 **Fixed-point map.** For $\alpha\in\mathbb R_{++}^{\mathcal V}$ let $\Psi(y,\alpha)_i=y_i/(1+(1+\alpha_i)y_i)$, $\mathcal Y_\alpha=\{0\le y_i\le(1+\alpha_i)^{-1}\}$ and $\Phi(y,M,\alpha)=\Psi(My,\alpha)$. Then $(x^\ast,y^\ast,z^\ast)$ is an equilibrium iff
+
 $$y^\ast=\Phi\big(y^\ast,[\gamma]^{-1}W,[\delta]^{-1}\gamma\big),\qquad z^\ast=[\delta]^{-1}[\gamma]y^\ast,\qquad x^\ast=\mathbf 1-y^\ast-z^\ast .$$
 
 **Theorem.** Let $M\ge 0$ be irreducible with dominant eigenvalue $\lambda_M$, $\alpha>0$, and iterate $\xi_{k+1}=\Phi(\xi_k,M,\alpha)$ on $\mathcal Y_\alpha$.

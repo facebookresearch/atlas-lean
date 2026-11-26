@@ -3,8 +3,11 @@
 **Objects.** A *tree-child network* is a binary phylogenetic network (rooted DAG with tree vertices of in/out-degree $1/2$, reticulations of in/out-degree $2/1$, and leaves) in which every internal vertex has a child that is a tree vertex or a leaf. A *ranked tree-child network* (RTCN) on $\ell$ labeled leaves additionally orders its $\ell-1$ events $U_1 \prec \dots \prec U_{\ell-1}$ in time, each event being either a *branching* or a *reticulation event* (a branching whose new lineage is immediately merged into a contemporary lineage, so that $b + r = \ell - 1$). Its *profile* is $\mathbf q = (q_1,\dots,q_{\ell-1})$ with $q_k = 1$ if $U_k$ is a branching and $q_k = 0$ otherwise ($q_1 = 1$). A tree-child network is *temporal* if and only if it is the underlying network of some RTCN, and the fraction of tree-child networks that admit a ranking tends to $0$.
 
 **Theorem (enumeration).** The number of RTCNs with profile $\mathbf q$ is
+
 $$F(\mathbf q) = \prod_{k=1}^{\ell-1}\big(q_k + (k-1)(1-q_k)\big)\; T_\ell, \qquad T_\ell = \frac{\ell!\,(\ell-1)!}{2^{\ell-1}},$$
+
 where $T_\ell$ is the number of ranked trees on $\ell$ labeled leaves. Hence the number with $b$ branchings is $C_{\ell,b} = {\ell-1 \brack b}\,T_\ell$ (unsigned Stirling numbers of the first kind), and the total number of RTCNs with $\ell \ge 2$ labeled leaves is
+
 $$C_\ell = \frac{\ell!\,\big((\ell-1)!\big)^2}{2^{\ell-1}}.$$
 
 **Uniform sampling (backward).** Start from $\ell$ labeled lineages; while $k+1 \ge 2$ lineages remain, choose uniformly among all $\binom{k+1}{2}$ coalescences of two lineages and all $(k-1)\binom{k+1}{2}$ reticulations of three lineages. The result is a uniform RTCN.

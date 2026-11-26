@@ -1,7 +1,9 @@
 # Supercritical non-uniqueness for the parabolic–elliptic Keller–Segel system
 
 **Model.** The parabolic–elliptic Keller–Segel system on $\mathbb R^n$ for a cell density $\rho$ and chemical concentration $c$ is
+
 $$\partial_t\rho=\Delta\rho-\nabla\cdot(\rho\nabla c),\qquad -\Delta c=\rho .$$
+
 It is invariant under $\rho_\lambda(x,t)=\lambda^2\rho(\lambda x,\lambda^2t)$, so $L^{n/2}(\mathbb R^n)$ is the critical Lebesgue space and $L^q$, $q<n/2$, is supercritical. Mild $L^q$-solutions are defined through the Duhamel formula.
 
 **Theorem.** Let $n\in\{3,\dots,9\}$.

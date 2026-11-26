@@ -5,10 +5,14 @@
 **Theorem.**
 
 1. *(Functional equation.)* With $\mathbf A^{[r]}(x,y)=1-x^2y+(x^2y)^r$ and $\mathbf B^{[r]}_\lambda(x,y)=(1-x)\mathbf A^{[r]}(x,y)+(x^2y)^r\sum_{i=0}^{\lambda-2}x^i$,
+
 $$(x^2y)^r\,\mathbf S^{[r]}_\lambda(x,y)^2-\mathbf B^{[r]}_\lambda(x,y)\,\mathbf S^{[r]}_\lambda(x,y)+\mathbf A^{[r]}(x,y)=0,$$
+
 so that $\mathbf S^{[r]}_\lambda=\dfrac{\mathbf A^{[r]}}{\mathbf B^{[r]}_\lambda}\,\mathbf C\!\Big(\dfrac{(x^2y)^r\mathbf A^{[r]}}{(\mathbf B^{[r]}_\lambda)^2}\Big)$ with $\mathbf C(z)=\frac{1-\sqrt{1-4z}}{2z}$ the Catalan generating function.
 2. *(Central limit theorem.)* Let $Y^{[r]}_{\lambda,n}$ be the number of arcs of a uniformly random $r$-canonical structure of length $n$ with minimum arc-length $\lambda$. There are constants $\mu^{[r]}_\lambda,\sigma^{[r]}_\lambda>0$, given by $\mu=-\theta'(0)/\theta(0)$ and $\sigma^2=(\theta'(0)/\theta(0))^2-\theta''(0)/\theta(0)$ where $\theta(s)=\rho^{[r]}_\lambda(e^s)$ and $\rho^{[r]}_\lambda(y)$ is the dominant singularity of $x\mapsto\mathbf S^{[r]}_\lambda(x,y)$, such that
+
 $$\frac{Y^{[r]}_{\lambda,n}-\mu^{[r]}_\lambda n}{\sqrt{n}\,\sigma^{[r]}_\lambda}\xrightarrow{d}\mathcal N(0,1)$$
+
 with speed of convergence $O(n^{-1/2})$.
 
 Numerically, $\mu^{[1]}_2=0.2764$, $\mu^{[2]}_4=0.2865$, and for the biophysically realistic case $\lambda=4$, $r=3$ (hairpins with at least three unpaired bases, stacks of length at least three) $\mu^{[3]}_4=0.3113$ arcs per nucleotide with $(\sigma^{[3]}_4)^2=0.0793$.

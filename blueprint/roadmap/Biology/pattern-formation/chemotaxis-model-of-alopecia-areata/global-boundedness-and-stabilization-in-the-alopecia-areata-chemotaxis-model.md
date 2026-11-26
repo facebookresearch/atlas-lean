@@ -13,7 +13,9 @@ with $\chi_1,\chi_2,\mu_1,\mu_2,r > 0$ and $k \in (0,1)$. Initial data: $u_0, v_
 **Theorem.**
 1. (Boundedness) The system has a unique global classical solution, and there is $C > 0$ with $\|u(\cdot,t)\|_{L^\infty} + \|v(\cdot,t)\|_{L^\infty} + \|w(\cdot,t)\|_{W^{1,\infty}} \le C$ for all $t > 0$, for all sensitivities $\chi_1,\chi_2 > 0$.
 2. (Stabilization) If $\mu_1 < \mu_2 < 3\mu_1$ and $r = \mu_2 - \mu_1$, then the solution converges in $L^\infty(\Omega)$ to the homogeneous steady state
+
 $$u_* = v_* = \frac{2}{\mu_1}, \qquad w_* = \frac{4}{\mu_1}.$$
+
 3. (Exponential rate) Under the same conditions, there are $C, \lambda > 0$ with $\|u - u_*\|_{L^\infty} + \|v - v_*\|_{L^\infty} + \|w - w_*\|_{L^\infty} \le Ce^{-\lambda t}$ for $t > 0$.
 
 ## Expansion

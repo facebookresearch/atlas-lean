@@ -5,7 +5,9 @@
 **Theorem.**
 1. (Parsimonious length) The minimum length of a 2-break scenario is $l(G) = e(G) - c(G)$, and the cycles traced by any parsimonious scenario form a maximum alternating cycle decomposition.
 2. (Decomposition) For any cost function $\varphi$ on 2-breaks, the minimum cost of a parsimonious scenario equals
+
 $$\min_{C\ \text{a MACD of}\ G}\ \sum_{c\in C}\mathrm{MCPS}_\varphi(c),$$
+
 and the cost of a simple cycle is the minimum cost over its Eulerian circles. So the problem reduces to independent instances on *circles* (graphs where each vertex meets exactly one black and one gray edge).
 3. (Coloured cost) Colour the vertices and let a 2-break cost $0$ if it preserves the multiset of colour pairs of the two edges and $1$ otherwise (e.g. $(x,y),(z,t) \to (x,z),(y,t)$ is free iff $\mathrm{col}(x) = \mathrm{col}(t)$ or $\mathrm{col}(y) = \mathrm{col}(z)$), modelling spatial proximity of loci in the nucleus. With $J(G,\mathrm{col})$ the graph obtained by merging same-coloured vertices, the minimum cost over all (not necessarily parsimonious) scenarios is $l(J(G,\mathrm{col}))$, and deciding whether a circle has a scenario of cost at most $k$ is NP-hard.
 4. (Parsimonious coloured cost) For a circle $O$ the minimum parsimonious cost is $e(O) - |I|$ for a maximum independent set of arcs $I$ of $O$, and the minimum-cost parsimonious scenario for the coloured cost on a breakpoint graph is computable in $O(n^4)$ time.

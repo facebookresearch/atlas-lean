@@ -5,9 +5,13 @@
 **Theorem.** Let $W \sim \mathrm{Exp}(1)$.
 1. *(Fast sweep, rare second hit.)* If $\mu_1 \ll \alpha/N^{(d+1)/d}$ and $\mu_2 \ll \mu_1$, then $N\mu_2\sigma_2 \Rightarrow W$.
 2. *(Many small type-1 regions, deterministic coverage.)* If $\mu_1 \gg \alpha/N^{(d+1)/d}$ and $(\mu_1\alpha^d)^{1/(d+1)}/N \ll \mu_2 \ll (N\mu_1)^{d+1}/\alpha^d$, then
+
 $$\mathbb{P}(\sigma_2 > \beta_2t) \to \exp\Big(-\frac{\gamma_dt^{d+2}}{(d+1)(d+2)}\Big).$$
+
 3. *(Overlapping coverage.)* If $\mu_1 \gg \alpha/N^{(d+1)/d}$ and $N\mu_2/(\mu_1\alpha^d)^{1/(d+1)} \to c \in (0,\infty)$, then
+
 $$\mathbb{P}(\sigma_2 > \beta_2t) \to \exp\Big(-c^{(d+1)/(d+2)}\int_0^t\Big(1 - \exp\Big(-\frac{\gamma_du^{d+1}}{(d+1)c^{(d+1)/(d+2)}}\Big)\Big)du\Big).$$
+
 4. *(Space saturated before the second hit.)* If $\mu_1 \gg \alpha/N^{(d+1)/d}$ and $\mu_2 \ll (\mu_1\alpha^d)^{1/(d+1)}/N$, then $N\mu_2\sigma_2 \Rightarrow W$.
 5. *(Critical first rate, rare second hit.)* If $\mu_1 \asymp \alpha/N^{(d+1)/d}$ and $\mu_2 \ll (N\mu_1)^{d+1}/\alpha^d$, then $N\mu_2\sigma_2 \Rightarrow W$.
 
@@ -16,7 +20,9 @@ Together with the regimes where the first mutation is rate-limiting ($N\mu_1\sig
 ## Expansion
 
 At time $t$, a point is covered by type $1$ with probability $q(t) = 1 - \exp(-\gamma_d\mu_1\alpha^dt^{d+1}/(d+1))$, since type-$1$ mutations born at time $r$ cover a ball of volume $\gamma_d(\alpha(t-r))^d$. When many independent small regions exist, the covered volume concentrates at $Nq(t)$ and
+
 $$\mathbb{P}(\sigma_2 > t) \approx \exp\Big(-\int_0^tN\mu_2q(r)\,dr\Big).$$
+
 Linearizing $q$ gives part 2 (exponent $d+2$); keeping $q$ exactly when the second hit coincides with substantial coverage gives part 3; and once $q \approx 1$ the second hit arrives at the full rate $N\mu_2$, giving parts 1, 4 and 5. The rigorous proofs control the variance of the covered volume and the overlap of regions with concentration lemmas.
 
 ## Sources

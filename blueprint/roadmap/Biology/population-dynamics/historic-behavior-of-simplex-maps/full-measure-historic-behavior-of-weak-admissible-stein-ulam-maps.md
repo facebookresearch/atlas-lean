@@ -10,7 +10,9 @@ Let $\Delta^{m-1}=\{x\in\mathbb R^m: x_i\ge 0,\ \sum_i x_i=1\}$ be the simplex o
 - **(W6)** every maximal lifted residence block of length $\ell$ through $I_j$ entered at time $b$ satisfies $\ell\ge A_j\log^+_{C_j}\big(B_j/\varphi(K^b(x))\big)$ for constants $A_j,B_j>0$, $C_j>1$.
 
 **Theorem.** If $K$ is a weak admissible Stein–Ulam type map, then for every $x\in\operatorname{int}\Delta^{m-1}\setminus\{p\}$ and every $s\in\mathbb N$ the vector Cesàro averages
+
 $$A_n(K^s)(x)=\frac1n\sum_{k=0}^{n-1}K^{sk}(x)$$
+
 do not converge. Consequently:
 
 1. $K$ (and every power $K^s$) has vector-valued historic behavior on a set of full relative $(m-1)$-dimensional Lebesgue measure;

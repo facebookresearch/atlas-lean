@@ -5,10 +5,14 @@
 **Theorems.**
 1. *(Immature cells determine the dynamics.)* If two sets of initial data agree on maturities $[0,b]$ for some $0<b<1$, the corresponding solutions agree on all maturities after an explicit finite time $\bar t=\ln\bigl[h(g(1))/h(g(b))\bigr]+(N+2)\tau_{\max}$. In particular, if the initial data vanish on $[0,b]$, the whole population is extinct after a finite time (a model of aplastic anemia).
 2. *(Stem cell compartment.)* At $m=0$ the resting density $x(t)=N(t,0)$ solves the delay equation
+
 $$x'(t)=-\bigl(\rho+\beta(0,x(t))\bigr)x(t)+2\bar\xi(0)\,\beta(0,x(t-r))\,x(t-r),$$
+
 with $\rho=\delta(0)+V'(0)$ and $r=\tau(0)$. Its solutions are bounded if $\rho>0$, while for $\rho=0$ and $x\beta(0,x)$ eventually decreasing there are unbounded solutions. The trivial solution is globally stable iff $(2\bar\xi(0)-1)\beta(0,0)<\rho$.
 3. *(Global stability.)* If $\Delta(m)<m$ on $(0,1]$, where $\Delta(m)$ is the maturity at commitment of a mother cell whose daughters are born with maturity $m$ (daughters are born more mature than their mother was at commitment), and the trivial solution is locally stable, it is globally stable on the set of initial data for which $N(t,0),P(t,0)\to0$. Under the explicit condition
+
 $$\Bigl(1+2\sup\xi\Bigr)\sup_m\beta(m,0)<\min\Bigl\{\inf_m(\delta+V'),\ \inf_m(\gamma+V')\Bigr\},$$
+
 it is globally exponentially stable.
 4. *(Instability.)* If $\rho\le(2\bar\xi(0)-1)\beta(0,0)$, the trivial solution is unstable.
 

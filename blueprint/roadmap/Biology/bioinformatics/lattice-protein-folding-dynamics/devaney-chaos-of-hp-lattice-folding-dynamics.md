@@ -1,9 +1,13 @@
 # Devaney chaos of the folding dynamics in the 2D HP lattice protein model
 
 **Setting.** In the two-dimensional hydrophobic–hydrophilic (HP) square-lattice model, a protein of $\mathsf N+1$ residues is a lattice walk, encoded in *absolute encoding* by the directions $C=(C_1,\dots,C_{\mathsf N})\in(\mathbb Z/4\mathbb Z)^{\mathsf N}$ of its successive bonds. Folding at residue $|k|$ rotates the tail of the chain clockwise ($k>0$) or anticlockwise ($k<0$) by one quarter turn:
+
 $$f_k(C)=\big(C_1,\dots,C_{|k|-1},f^{\operatorname{sign}k}(C_{|k|}),\dots,f^{\operatorname{sign}k}(C_{\mathsf N})\big),\qquad f(x)=x+1\pmod4,$$
+
 and $k=0$ leaves $C$ unchanged. A folding process is a sequence $F=(F^n)_{n\ge0}\in[\![-\mathsf N,\mathsf N]\!]^{\mathbb N}$. On the phase space $\mathcal X=\mathfrak S_{\mathsf N}\times[\![-\mathsf N,\mathsf N]\!]^{\mathbb N}$, where $\mathfrak S_{\mathsf N}$ is the set of admissible conformations, the dynamics is
+
 $$X^{n+1}=G(X^n),\qquad G(C,F)=\big(f_{F^0}(C),\ \sigma(F)\big),$$
+
 with $\sigma$ the shift. The metric is $d(X,\check X)=d_C+d_F$, where $d_C(C,\check C)=\sum_{k=1}^{\mathsf N}\delta(C_k,\check C_k)\,2^{\mathsf N-k}$ and $d_F(F,\check F)=\frac{9}{2\mathsf N}\sum_{k\ge0}|F^k-\check F^k|\,10^{-(k+1)}$.
 
 **Theorem.** $G$ is continuous on $(\mathcal X,d)$, and the folding process is:

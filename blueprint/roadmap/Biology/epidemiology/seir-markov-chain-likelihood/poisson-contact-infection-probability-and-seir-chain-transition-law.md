@@ -7,9 +7,13 @@
 
 **Theorem.**
 1. (Infection probability) With no births or deaths, the probability that a given susceptible becomes infected during epoch $k$ is
+
 $$p^i(t_k) = 1 - e^{-p\,\alpha^i(t_k)\,\lambda\,\Delta t}.$$
+
 2. (Transition law with unit incubation and infectious periods) If in addition the incubation and infectious periods are constant and equal to $\Delta t$, then $\{X(t_k)\}$ is a Markov chain with
+
 $$\mathbb{P}\big(X(t_{k+1}) = x^{k+1} \mid X(t_k) = x^k\big) = \binom{s_k}{s_{k+1}}\big(p^i(t_k)\big)^{s_k - s_{k+1}}\big(1 - p^i(t_k)\big)^{s_{k+1}}$$
+
 on the feasible set $\{s_{k+1} + e_{k+1} = s_k,\ i_{k+1} = e_k,\ 0 \le s_{k+1}, e_{k+1}, i_{k+1} \le s_k\}$, and $0$ elsewhere: new exposures are $\mathrm{Binomial}(s_k, p^i(t_k))$, exposed individuals become infectious after one step and infectious individuals are removed after one step.
 3. (General case) With births, deaths, or random incubation and infectious periods, $X(t_k)$ is still a discrete-time Markov chain whose transition probabilities are products of the laws of the conversion counts $C_{SE}$, $C_{EI}$, $C_{IR}$ and of births and deaths; for Poisson conversions with rates $\delta_e$, $\delta_r$ these factors are explicit.
 

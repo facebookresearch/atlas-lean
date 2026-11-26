@@ -3,10 +3,15 @@
 **Setting.** Let $G$ be a strongly connected directed (multi)graph with $n$ nodes and $m > n$ arcs that is not a single cycle (an assembly graph). A walk starts and ends in arcs. A *circular $k$-solution* is a set of at most $k$ closed walks that together cover every arc of $G$; a walk $W$ is *$k$-circular safe* if it is a subwalk of some walk in every circular $k$-solution (the 1-circular safe walks are the *omnitigs*).
 
 **Hydrostructure.** For a walk $W$ with at least two arcs, define the restricted reachabilities
+
 $$R^+(W) = \{x \in G : \exists\ \text{a walk from the start of } W \text{ to } x \text{ not containing } W\},$$
+
 $$R^-(W) = \{x \in G : \exists\ \text{a walk from } x \text{ to the end of } W \text{ not containing } W\},$$
+
 and partition $G$ (nodes and arcs) into
+
 $$\mathsf{Sea} = R^+ \setminus R^-, \quad \mathsf{Cloud} = R^- \setminus R^+, \quad \mathsf{Vapor} = R^+ \cap R^-, \quad \mathsf{River} = G \setminus (R^+ \cup R^-).$$
+
 For a walk, let $w_i$ be its first join arc and $w_j$ its last split arc; if $i < j$ the *non-trivial heart* $\mathrm{heart}(W)$ is the $w_i$–$w_j$ subwalk.
 
 **Theorem (1-circular safety).** A non-trivial walk $W$ is 1-circular safe if and only if $\mathsf{Vapor}(\mathrm{heart}(W))$ is a path.

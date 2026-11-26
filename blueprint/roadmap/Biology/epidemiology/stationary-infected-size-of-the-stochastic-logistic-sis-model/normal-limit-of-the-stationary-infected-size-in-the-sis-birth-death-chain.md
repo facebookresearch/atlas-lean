@@ -4,7 +4,9 @@
 
 **Theorem.** Assume $R > 1$ and $\epsilon > 0$ fixed.
 1. As $M \to \infty$, $\pi^{[\epsilon]}_M(k) \sim \pi(k)$ for $k = 1,\dots,M$, where
+
 $$\pi(k) = \frac{R-1}{R}\,\frac{M}{(M-k)!\,k}\Big(\frac{M}{R}\Big)^{M-k}e^{-M/R}.$$
+
 Equivalently, $\pi(k) \propto \frac{M}{k}\,\mathbb{P}(X = M-k)$ with $X \sim \mathrm{Poisson}(M/R)$, and the normalization uses $\mathbb{E}[M/(M-X)\mid X<M] \to R/(R-1)$.
 2. The stationary infected size is asymptotically normal with mean $(1 - \tfrac{1}{R})M$ and variance $\tfrac{M}{R}$.
 

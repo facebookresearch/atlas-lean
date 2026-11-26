@@ -1,7 +1,9 @@
 # Stability switches in the brood-maturation delay honey bee model
 
 **Model.** An alternative stage-structured honey bee model lets adults mature from the surviving brood stock of $\tau$ days earlier rather than from the brood cohort laid then:
+
 $$B'=\frac{rH^2}{K+H^2}-d_bB-e^{-d_b\tau}B(t-\tau),\qquad H'=e^{-d_b\tau}B(t-\tau)-d_hH ,$$
+
 with egg-laying rate $r$, half-saturation $K>0$ and mortalities $d_b,d_h>0$. Interior equilibria satisfy $B^\ast=d_he^{d_b\tau}H^\ast$ and $\dfrac{rH}{K+H^2}=d_h(1+d_be^{d_b\tau})$.
 
 **Theorem (extinction equilibrium).** $E_e=(0,0)$ always exists.

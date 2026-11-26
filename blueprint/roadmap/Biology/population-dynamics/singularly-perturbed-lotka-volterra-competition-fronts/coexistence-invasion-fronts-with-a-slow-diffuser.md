@@ -1,7 +1,9 @@
 # Coexistence-invasion fronts of Lotka–Volterra competition with a slow diffuser
 
 Consider the two-species Lotka–Volterra competition–diffusion system
+
 $$u_t=u_{xx}+u(1-u-rv),\qquad v_t=\varepsilon v_{xx}+\ell v(1-su-v),\qquad x\in\mathbb R,$$
+
 with $r<1$, $\ell>0$, a small diffusion rate $0<\varepsilon\ll1$ for $v$ and a small competition coefficient $s=O(\varepsilon)$. The coexistence state is $(u^*_\varepsilon,v^*_\varepsilon)=\big(\frac{1-r}{1-rs},\frac{1-s}{1-rs}\big)=(1-r,1)+O(\varepsilon)$. An $(e_4,e_1)$-wave is a solution $(u,v)=(U,V)(x-ct)$ with $(U,V)(-\infty)=(u^*_\varepsilon,v^*_\varepsilon)$ and $(U,V)(+\infty)=(0,0)$, that is, a front along which both species jointly invade empty space.
 
 **Theorem.** Assume $r<1$ and $s=O(\varepsilon)$. For all sufficiently small $\varepsilon>0$:

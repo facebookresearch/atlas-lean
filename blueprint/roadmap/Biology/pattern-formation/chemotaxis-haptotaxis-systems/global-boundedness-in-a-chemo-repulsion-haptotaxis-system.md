@@ -7,7 +7,9 @@ u_t=\Delta u+\chi\nabla\cdot(u\nabla v)-\xi\nabla\cdot(S(u)\nabla w), & x\in\Ome
 w_t=-vw,
 \end{cases}$$
 with no-flux boundary conditions $\partial_\nu u+\chi u\,\partial_\nu v-\xi S(u)\,\partial_\nu w=\partial_\nu v=0$. Here $u$ is the cell density, $v$ a signal produced by the cells that repels them (the sign $+\chi$), and $w$ a matrix degraded by the signal that attracts cells. The $C^2$ hapto-sensitivity satisfies, for some $\theta\in\mathbb{R}$,
+
 $$0=S(0)\le S(u)\le u(u+1)^{\theta-1}\qquad(u\ge0).$$
+
 Initial data: $u_0\in C(\bar\Omega)$, $u_0\ge0$, $u_0\not\equiv0$; $\tau v_0\in W^{1,\infty}(\Omega)$, $\tau v_0\ge0$; $w_0\in C^2(\bar\Omega)$, $w_0\ge0$, $\partial_\nu w_0=0$.
 
 **Theorem.** In each of the following cases the problem has a unique global positive classical solution with $\sup_{t\ge0}\bigl(\|u(t)\|_{L^\infty}+\|v(t)\|_{W^{1,\infty}}+\|w(t)\|_{W^{1,\infty}}\bigr)<\infty$:

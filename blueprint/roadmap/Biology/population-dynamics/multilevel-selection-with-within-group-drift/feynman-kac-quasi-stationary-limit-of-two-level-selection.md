@@ -3,9 +3,13 @@
 **Particle model.** A population of $m$ groups of $n$ individuals contains two types; let $X^i_t$ be the number of type-$C$ individuals (for instance cooperators) in group $i$ and $\mu^{m;n}_t = \frac1m\sum_i \delta_{X^i_t/n}$ the empirical distribution of group compositions. Within groups (rate $w_I$), Moran-type replacement events occur with type $C$ disadvantaged by a selective cost $s>0$; between groups (rate $w_G$), a group of composition $j/n$ replaces a uniformly chosen group at rate proportional to $1 + r(j/n)$, where $r$ is the group-level fitness of composition $x$.
 
 **Large-population limit.** If $w_I/n \to \omega_I$ and $n\,s \to \sigma$ as $n,m\to\infty$ with $w_G$, $r$ fixed and i.i.d. initial groups with law converging to $\mu_0$, then $\mu^{m;n}$ converges weakly to the unique solution of
+
 $$\partial_t\langle\mu_t,f\rangle = \langle\mu_t,\mathcal L_{WF}f\rangle + \langle\mu_t, rf\rangle - \langle\mu_t,f\rangle\langle\mu_t,r\rangle, \qquad \mathcal L_{WF}f(x) = -s\,x(1-x)f'(x) + \tfrac{\sigma^2}{2}\,x(1-x)f''(x),$$
+
 the forward equation of a Wright–Fisher diffusion with selection against $C$, reweighted by group-level selection. Equivalently, with $dX_t = -sX_t(1-X_t)\,dt + \sigma\sqrt{X_t(1-X_t)}\,dB_t$, $X_0 \sim \mu_0$, and $Z_t = \exp\big(\int_0^t r(X_u)\,du\big)$,
+
 $$\langle\mu_t,f\rangle = \frac{\mathbb E[f(X_t)Z_t]}{\mathbb E[Z_t]},$$
+
 a Feynman–Kac penalization: $\mu_t$ is the law of $X_t$ conditioned on survival when $X$ is killed at rate $\max r - r(X)$.
 
 **Quasi-stationarity.** Restricted to $(0,1)$ (killing also at the fixation times $\tau_0$, $\tau_1$), there is a unique quasi-stationary distribution $\alpha$ with extinction rate $\rho_\alpha$ and exponential convergence in total variation. Let $\rho_0 = -r(0)$, $\rho_1 = -r(1)$ be the rates attached to the monomorphic states $\delta_0$, $\delta_1$.

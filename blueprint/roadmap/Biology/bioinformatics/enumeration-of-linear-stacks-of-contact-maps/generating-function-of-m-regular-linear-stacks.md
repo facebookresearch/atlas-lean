@@ -8,7 +8,9 @@ Let $r_m(n)$ count $m$-regular linear stacks on $[n]$, $R_m(x)=\sum_{n\ge0}r_m(n
 1. *(Zigzag stacks.)* $x^2(x-1)Z^3(x)+2xZ^2(x)-(x+1)Z(x)+1=0$, and $z(n)\sim 0.4781905\times4.6107186^n\,n^{-3/2}$.
 2. *(Reduction.)* If $Z_m$ counts $m$-reduced zigzag stacks, then $z_m(n)=r_m(n+m-1)$, i.e. $R_m(x)=1+x+\dots+x^{m-2}+x^{m-1}Z_m(x)$.
 3. *(Main equation.)* For every $m\ge2$, $R_m$ satisfies the quintic
+
 $$\sum_{j=0}^{5}c_j(x)R_m^j=0,$$
+
 with $c_0=(x-1)(x^m-1)^3$, $c_1=(x^m-1)^2(x^{2m+1}-2x^{m+2}-x^{m+1}+x^m-3x^3+8x^2-3x-1)$, $c_2=-x(x-1)(x^m-1)(5x^{2m+1}-6x^{m+2}-9x^{m+1}+5x^m-3x^3+12x^2+x-5)$, $c_3=x^2(x-1)^2(x^m-1)(11x^{m+1}-8x^2-11x+8)$, $c_4=x^3(x-1)^3(-11x^{m+1}+4x^2+11x-4)$, $c_5=4x^5(x-1)^4$.
 4. *(Asymptotics.)* For fixed $m$, $r_m(n)\sim\gamma_m\,\omega_m^n\,n^{-3/2}$; for $m=2$ this recovers $r_2(n)\sim0.250536155\times4.1012475^n\,n^{-3/2}$ for extended RNA secondary structures, and e.g. $r_3(n)\sim0.19005341\times3.5271506^n\,n^{-3/2}$.
 

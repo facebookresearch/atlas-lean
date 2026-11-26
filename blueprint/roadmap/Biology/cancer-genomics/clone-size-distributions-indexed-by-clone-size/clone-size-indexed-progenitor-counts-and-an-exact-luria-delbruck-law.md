@@ -4,11 +4,17 @@
 
 **Theorem 1.**
 1. For $k \ge 1$,
+
 $$P_{n,k} = \sum_{i=0}^{\lfloor (n-k)/2\rfloor}\binom{n-1}{k+2i-1}\Big(\binom{k+2i-1}{i} - \binom{k+2i-1}{i-1}\Big)a^{k+i-1}b^{n-k-2i}c^i,$$
+
 and the probability that a clone of size $n$ is fully differentiated is the weighted Motzkin number
+
 $$P_{n,0} = \sum_{i=0}^{\lfloor (n-2)/2\rfloor}\binom{n-2}{2i}\Big(\binom{2i}{i} - \binom{2i}{i-1}\Big)a^ib^{n-2-2i}c^{i+1}.$$
+
 2. The generating function of the absorption probabilities is
+
 $$G(t) = \sum_{n}P_{n,0}t^n = \frac{1 - bt - \sqrt{(bt-1)^2 - 4act^2}}{2a},$$
+
 and $F(x,t) = \sum_{n,k}P_{n,k}x^kt^n$ has an explicit algebraic form. Evaluating at $t=1$ gives the probability that a single progenitor's lineage eventually differentiates completely, $G(1) = \min\{a,c\}/a$, i.e. $1$ if $c \ge a$ and $c/a$ if $c < a$.
 
 **Exact Luria-Delbrück recursion.** In a pure-birth (Yule) clone started from one non-mutant cell, a dividing non-mutant produces a mutant daughter with probability $\mu_1$ (otherwise two non-mutants, probability $\mu_0 = 1-\mu_1$), and mutants breed true. With $p^{(k)}_m$ the probability of $m$ mutants among $k$ cells, $p^{(1)}_0 = 1$ and

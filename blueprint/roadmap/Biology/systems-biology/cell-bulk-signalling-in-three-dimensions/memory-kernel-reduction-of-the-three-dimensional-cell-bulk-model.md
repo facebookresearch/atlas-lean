@@ -1,13 +1,19 @@
 # Memory-kernel reduction of the three-dimensional cell-bulk model
 
 **Model.** $N$ spherical cells $\Omega_{\varepsilon_j}=\{|x-x_j|\le\varepsilon\}$ in $\mathbb{R}^3$, well separated, exchange a signal $U$ that diffuses and decays in the bulk:
+
 $$\partial_t U=D\Delta U-\sigma U\quad(x\notin\cup_j\Omega_{\varepsilon_j}),\qquad U(x,0)=0,\qquad \varepsilon D\,\partial_nU=d_{1j}U-\frac{d_{2j}}{\varepsilon}u_{1j}\ \text{on }\partial\Omega_{\varepsilon_j},$$
+
 coupled to intracellular kinetics $\mathbf{u}_j=(u_{1j},\dots,u_{mj})$:
+
 $$\frac{d\mathbf{u}_j}{dt}=\mathbf{F}_j(\mathbf{u}_j)+\frac{\mathbf{e}_1}{\varepsilon}\int_{\partial\Omega_{\varepsilon_j}}\Bigl(d_{1j}U-\frac{d_{2j}}{\varepsilon}u_{1j}\Bigr)dS .$$
 
 **Reduction.** As $\varepsilon\to0$, for $t\gg O(\varepsilon^2)$,
+
 $$\frac{d\mathbf{u}_j}{dt}=\mathbf{F}_j(\mathbf{u}_j)-\kappa_ju_{1j}\mathbf{e}_1+\frac{\varepsilon d_{1j}}{d_{2j}}\kappa_jB_j(t)\,\mathbf{e}_1,$$
+
 $$B_j(t)=-\frac{\kappa_ju_{1j}(0)}{4\pi D^{3/2}}g(t)-\frac{\kappa_j}{4\pi D^{3/2}}\int_0^tu_{1j}'(\tau)g(t-\tau)\,d\tau+\sum_{k\ne j}\kappa_k\int_0^tu_{1k}(\tau)\,G(a_{jk},t-\tau)\,d\tau,$$
+
 with self-interaction kernel $g(t)=\frac{e^{-\sigma t}}{\sqrt{\pi t}}+\sqrt\sigma\,\mathrm{erf}(\sqrt{\sigma t})$, free-space kernel $G(a,t)=\frac{e^{-\sigma t}e^{-a^2/(4t)}}{(4\pi Dt)^{3/2}}$, scaled distances $a_{jk}=|x_j-x_k|/\sqrt D$ and $\kappa_j=\frac{4\pi Dd_{2j}}{d_{1j}+D}$. The bulk field is $U(x,t)\sim\sum_j\kappa_j\int_0^tu_{1j}(\tau)G(|x-x_j|/\sqrt D,t-\tau)\,d\tau$.
 
 **Consequences.**

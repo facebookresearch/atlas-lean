@@ -6,9 +6,13 @@ Let $\mathbf{T}_k(z)=\sum_n\delta^{(k)}_nz^n$ count $k$-noncrossing $\sigma$-can
 
 **Theorem.**
 1. *(Bivariate generating function.)* The generating function of structures counted by $z^{\text{length}}u^{\#\text{irreducible blocks}}$ is
+
 $$\mathbf{U}_k(z,u)=\frac{1}{1-z-u\,\mathbf{R}_k(z)}=\frac{1/(1-z)}{1-u\left(1-\frac{1}{(1-z)\mathbf{T}_k(z)}\right)},\qquad \mathbf{R}_k(z)=1-z-\frac{1}{\mathbf{T}_k(z)} .$$
+
 2. *(Limit law.)* With $\tau_k=1-\dfrac{1}{(1-\alpha_k)\mathbf{T}_k(\alpha_k)}<1$,
+
 $$\lim_{n\to\infty}\mathbb{P}\big(\xi^{(k)}_n=i\big)=q_i=\frac{(1-\tau_k)^2}{\tau_k}\,i\,\tau_k^{\,i},\qquad i\ge1,$$
+
 a discrete $\Gamma(-\ln\tau_k,2)$ law, with probability generating function $q(u)=\dfrac{u(1-\tau_k)^2}{(1-\tau_ku)^2}$.
 
 ## Expansion

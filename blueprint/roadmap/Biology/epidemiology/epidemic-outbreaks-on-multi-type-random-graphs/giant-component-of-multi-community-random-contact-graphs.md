@@ -1,7 +1,9 @@
 # Giant component of multi-community random contact graphs
 
 **Model.** A population is split into $r$ communities $V_1,\dots,V_r$ with $|V_i|=n_i$ and $n=\sum_in_i$. Each pair $v\in V_i$, $u\in V_j$ is joined independently with probability
+
 $$p_{ij}=\frac{\lambda_{ij}}{\sqrt{n_in_j}},\qquad \lambda_{ij}=\lambda_{ji}\ge0,$$
+
 an edge meaning that infection would pass between the two individuals; the final outbreak started from $v$ is the connected component of $v$. Let $M_{ij}=p_{ij}n_j=\lambda_{ij}\sqrt{n_j/n_i}$, the mean number of type-$j$ individuals infected by one type-$i$ individual, and let $\rho(M)$ be its spectral radius (Perron–Frobenius eigenvalue), the basic reproduction number.
 
 **Theorem.** Fix $r$, $A$ and $\varepsilon>0$. Suppose $n$ is large, $n_i\le An_j$ for all $i,j$, the interaction pattern $\Lambda=(\lambda_{ij})$ is connected, and each $\lambda_{ij}$ is either $0$ or in $[\varepsilon,1/\varepsilon]$. Then, with probability $1-o(1)$:

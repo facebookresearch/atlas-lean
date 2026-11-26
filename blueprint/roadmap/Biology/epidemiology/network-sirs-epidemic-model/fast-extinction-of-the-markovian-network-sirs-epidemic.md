@@ -3,13 +3,17 @@
 **Model.** Individuals are the nodes of a connected undirected graph $G$ on $N$ nodes with symmetric adjacency matrix $A$ and spectral radius $\lambda_1(A)$. Each node is in state $S$, $I$ or $R$; as a continuous-time Markov chain on $\{S,I,R\}^N$, a susceptible node is infected at rate $\beta\sum_ja_{ij}\mathbf 1\{X_j=I\}$, an infected node recovers at rate $\delta$, a recovered node loses immunity at rate $\gamma$, and (optionally) a susceptible node is vaccinated, moving to $R$, at rate $\sigma\ge 0$. All infection-free configurations form a closed class, which the chain enters in finite time almost surely. Write $\tau=\beta/\delta$.
 
 **Proposition (persistence bound).** With $\sigma=0$, for every initial configuration and all $t\ge 0$,
+
 $$\mathbb P\Big(\sum_i\mathbf 1\{X_i(t)=I\}>0\Big)\le\sqrt{N\sum_i\mathbf 1\{X_i(0)=I\}}\;e^{(\beta\lambda_1(A)-\delta)t}.$$
 
 **Corollary (mean extinction time).** Let $\tau^{FS}$ be the hitting time of the infection-free set. If $\beta/\delta<1/\lambda_1(A)$, then
+
 $$\mathbb E\,\tau^{FS}\le\frac{\log N+1}{\delta-\beta\lambda_1(A)} .$$
+
 Hence along a graph sequence with $\delta-\beta\lambda_1(A_N)\ge c>0$ (for instance $k$-regular graphs, where $\lambda_1=k$), the infection dies out in time $O(\log N)$ in expectation.
 
 **Proposition (absorption in the all-susceptible state).** If moreover $-\gamma$ is not an eigenvalue of $\beta A-\delta I$, there is a constant $C=C(A,\beta,\delta,\gamma)>0$ with
+
 $$\mathbb P\big(Y(t)\ne(S,\dots,S)\big)\le C\sqrt{N\sum_i\mathbf 1\{X_i(0)\in\{I,R\}\}}\;e^{\max\{\beta\lambda_1(A)-\delta,\,-\gamma\}\,t}.$$
 
 ## Expansion

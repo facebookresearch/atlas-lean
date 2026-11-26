@@ -10,6 +10,7 @@ i_3(t,0)=\displaystyle\int_0^\infty\gamma_2i_2\,da,\quad(\partial_t+\partial_a)i
 with frequency-dependent incidence through $P=S+\int(i_1+i_2+i_3)\,da$. Here $\beta(a)$ is stage-age-dependent infectivity, the factors $\varepsilon,\delta$ scale infectivity in stages 2 and 3, $\gamma_j(a)$ are progression rates, and $d_j\ge\mu$ are death rates; all are bounded, and $\beta,\gamma_j$ are Lipschitz and positive at arbitrarily large ages. Let $D_j(a)=\exp\!\big(-\int_0^a(\gamma_j+d_j)\big)$ for $j=1,2$ and $D_3(a)=\exp\!\big(-\int_0^ad_3\big)$, and set $\Omega_j=\int_0^\infty\beta D_j$ and $\Gamma_j=\int_0^\infty\gamma_jD_j$.
 
 **Theorem.** The model generates a unique strongly continuous, bounded dissipative and asymptotically smooth semiflow with a compact global attractor. With
+
 $$\mathcal R_0=\Omega_1+\varepsilon\,\Omega_2\Gamma_1+\delta\,\Omega_3\Gamma_1\Gamma_2,$$
 
 1. if $\mathcal R_0\le1$ the disease-free equilibrium $E^0=(\Lambda/\mu,0,0,0)$ is the only equilibrium; if $\mathcal R_0>1$ there is also a unique endemic equilibrium $E^*$;

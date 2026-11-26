@@ -3,7 +3,9 @@
 **Model.** Under the Cavender–Farris–Neyman (CFN) model, a binary root sequence of length $m$ with i.i.d. uniform sites evolves along the edges of a rooted tree $T$: each site flips independently at rate given by the edge lengths, and sites evolve independently. For a fixed $k \in \mathbb N$, the *$k$-mer frequency vector* of a leaf sequence counts the occurrences of each of the $2^k$ words of length $k$ among its $m-k+1$ (overlapping) windows. Let $\mathcal L^{(i)}_m$ be the joint law of the $k$-mer frequency vectors of all $n$ leaf sequences of length $m$ when the tree is $T_i$.
 
 **Theorem.** Fix $k \in \mathbb N$. For every $n \ge 3$ there exist distinct trees $T_1 \neq T_2$ with $n$ leaves, which can be chosen independently of $k$, such that
+
 $$\limsup_{m\to\infty}\ \big\|\mathcal L^{(1)}_m - \mathcal L^{(2)}_m\big\|_{\mathrm{TV}} < 1.$$
+
 Consequently there is $\varepsilon > 0$ such that every estimator that sees only the $k$-mer counts of the whole leaf sequences recovers the correct tree with probability at most $1-\varepsilon$, uniformly in $m \ge k$: no alignment-free method based solely on full-sequence $k$-mer counts is statistically consistent, even as the sequence length tends to infinity. (The result does not cover block decompositions, which count $k$-mers in separate blocks.)
 
 ## Expansion

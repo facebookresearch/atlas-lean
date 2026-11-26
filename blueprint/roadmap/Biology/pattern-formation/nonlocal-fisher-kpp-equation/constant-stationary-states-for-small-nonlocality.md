@@ -1,7 +1,9 @@
 # Only constant bounded stationary states for the nonlocal Fisher–KPP equation with small nonlocality
 
 The **nonlocal Fisher–KPP equation** $u_t=\Delta u+\mu u(1-\phi*u)$ on $\mathbb R^d$ models a population whose per-capita growth is limited by competition with neighbors weighted by a kernel $\phi$. Its stationary equation is
+
 $$0=\Delta u+\mu u(1-\phi*u),\qquad x\in\mathbb R^d.$$
+
 After the rescaling $\tilde x=\sigma x$ with $\mu=\sigma^2$, this becomes $0=\Delta u+u(1-\phi_\sigma*u)$, where $\phi_\sigma(x)=\sigma^{-d}\phi(x/\sigma)\to\delta$ as $\sigma\to0$. The constants $u\equiv0$ and $u\equiv1$ always solve it when $\int\phi=1$.
 
 **Theorem.** Assume (A): $\phi\in L^1(\mathbb R^d)$, $\phi\ge0$, $\int_{\mathbb R^d}\phi=1$. For every $K>1$ there is $\sigma_0>0$ (equivalently $\mu_0>0$) such that, for $\sigma\in[0,\sigma_0]$ (respectively $\mu\in(0,\mu_0]$), the only nonnegative bounded classical solutions $u\in C^2_b(\mathbb R^d)$ with $\|u\|_{C^2_b}\le K$ of the stationary nonlocal Fisher–KPP equation are $u\equiv0$ and $u\equiv1$.

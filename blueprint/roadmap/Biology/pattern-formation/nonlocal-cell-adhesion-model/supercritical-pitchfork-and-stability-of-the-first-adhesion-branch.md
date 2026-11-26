@@ -3,9 +3,13 @@
 **Setting.** Steady states $u'' = \alpha\,(u\,\mathcal K[u])'$ of the nonlocal adhesion model on $S^1_L$, $L>2$, with linear adhesion $h(u)=u$, mean $\bar u>0$, odd kernel $\Omega(r) = \operatorname{sign}(r)\omega(r)$, sine coefficients $M_n(\omega) = \int_0^1 \sin(2\pi n r/L)\,\omega(r)\,dr$, and bifurcation values $\alpha_n = n\pi/(\bar u L M_n(\omega))$.
 
 **Theorem (bifurcation type).** Near $(\alpha_n,\bar u)$ the bifurcating branch has the expansion
+
 $$\begin{pmatrix} u_n(x,s)\\ \alpha_n(s)\end{pmatrix} = \begin{pmatrix}\bar u\\ \alpha_n\end{pmatrix} + s\begin{pmatrix}\alpha_n\\ 0\end{pmatrix}\cos\!\Big(\frac{2\pi n x}{L}\Big) + s^2\begin{pmatrix} p_1(x)\\ \alpha_{3,n}\end{pmatrix} + o(s^2),$$
+
 so $\alpha_n'(0)=0$ and the bifurcation is a pitchfork. Its direction is the sign of
+
 $$\alpha_{3,n} = \frac{1}{4\bar u^5}\Big(\frac{\pi n}{L}\Big)^3\Big[M_n(\omega)^2\big(2M_n(\omega) - M_{2n}(\omega)\big)\Big]^{-1},$$
+
 i.e. it is supercritical exactly when $\Delta M_n := 2M_n(\omega) - M_{2n}(\omega) > 0$.
 
 **Corollary (uniform kernel).** If $\omega \equiv \tfrac12$ and $M_n(\omega)>0$, then $\Delta M_n > 0$: only supercritical pitchforks occur. In particular the $n$-th bifurcation is supercritical whenever $n < L/2$, so the first bifurcation is always supercritical.

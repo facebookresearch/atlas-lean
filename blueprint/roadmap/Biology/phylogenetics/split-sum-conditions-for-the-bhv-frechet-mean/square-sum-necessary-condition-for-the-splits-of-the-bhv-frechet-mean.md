@@ -3,11 +3,15 @@
 **Setting.** As for the split-sum condition: a sample $\mathcal T=\{T_1,\dots,T_r\}$ in BHV tree space $\mathbb T_n$, weights $|x|_T$, sample split set $E(\mathcal T)$, and $X(S)$ the splits incompatible with at least one split of $S$.
 
 **Definition.** For a set of splits $S\subseteq E(\mathcal T)$, the *square-sum difference* is
+
 $$\mathrm{ssd}(S,\mathcal T)=\sum_{s\in S}\Big(\sum_{T\in\mathcal T}|s|_T\Big)^2-\sum_{x\in E(\mathcal T)\cap X(S)}\ \sum_{T\in\mathcal T}|x|_T^2 .$$
 
 **Theorem.** Let $\mu$ be the Fréchet mean of $\mathcal T$ and $S=\{s_1,\dots,s_m\}$ its splits of positive weight. Then $\mathrm{ssd}(S,\mathcal T)>0$, that is
+
 $$\sum_{i=1}^m\Big(\sum_{T\in\mathcal T}|s_i|_T\Big)^2>\sum_{x\in E(\mathcal T)\cap X(\mu)}\ \sum_{T\in\mathcal T}|x|_T^2 .$$
+
 Consequently, by Cauchy–Schwarz,
+
 $$r\sum_{i=1}^m\sum_{T}|s_i|_T^2>\sum_{x\in E(\mathcal T)\cap X(\mu)}\sum_T|x|_T^2,\qquad r\sum_{i=1}^m\Big(\sum_T|s_i|_T\Big)^2>\sum_{x\in E(\mathcal T)\cap X(\mu)}\Big(\sum_T|x|_T\Big)^2 .$$
 
 Any candidate split set (orthant) for the mean with non-positive square-sum difference can therefore be discarded before solving for the mean. The condition is not sufficient: several compatible split sets can satisfy it for the same sample.

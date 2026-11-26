@@ -1,14 +1,21 @@
 # Hydrodynamic limit of nematic alignment of self-propelled particles
 
 **Kinetic model.** Self-propelled particles in the plane move at unit speed in direction $v(\theta) = (\cos\theta,\sin\theta)$ and align *nematically* with their neighbours: a particle turns towards the local mean axis $\bar\theta_f$ (an angle of lines, defined modulo $\pi$ by $\int \sin 2(\theta - \bar\theta_f)\,f\,d\theta = 0$), choosing whichever orientation along the axis is closer, with angular noise. In the hydrodynamic scaling the one-particle density $f^\varepsilon(x,\theta,t)$ solves
+
 $$\varepsilon\big(\partial_t f^\varepsilon + \nabla_x\cdot(v(\theta)f^\varepsilon)\big) = Q^0_{\rm al}f^\varepsilon, \qquad Q^0_{\rm al}f = \partial_\theta\Big[\operatorname{sign}\!\big(\cos(\theta-\bar\theta_f)\big)\sin(\theta-\bar\theta_f)\,f + D\cos^2(\theta-\bar\theta_f)\,\partial_\theta f\Big],$$
+
 with $\kappa = 1/D$. The equilibria of $Q^0_{\rm al}$ are exactly
+
 $$\bar f_{\rho_+,\rho_-,\bar\theta}(\theta) = M_{\bar\theta}(\theta)\big[\rho_+\mathbf 1_{\cos(\theta-\bar\theta)>0} + \rho_-\mathbf 1_{\cos(\theta-\bar\theta)<0}\big], \qquad M_{\bar\theta}(\theta) \propto e^{-\kappa/|\cos(\theta-\bar\theta)|},$$
+
 parametrized by the densities $\rho_\pm \ge 0$ of particles moving parallel and anti-parallel to the axis $\bar\theta$: the set of equilibria is three-dimensional although only mass is conserved.
 
 **Theorem (formal hydrodynamic limit).** As $\varepsilon \to 0$, $f^\varepsilon \to \bar f_{\rho_+,\rho_-,\bar\theta}$, where
+
 $$\partial_t\rho_+ + d_1\nabla_x\cdot\big(\rho_+v(\bar\theta)\big) = 0, \qquad \partial_t\rho_- - d_1\nabla_x\cdot\big(\rho_-v(\bar\theta)\big) = 0,$$
+
 $$(\rho_+ + \rho_-)\,\partial_t\bar\theta + d_2(\rho_+ - \rho_-)\big(v(\bar\theta)\cdot\nabla_x\big)\bar\theta + \mu\,v(\bar\theta)^\perp\cdot\nabla_x(\rho_+ - \rho_-) = 0,$$
+
 with $d_1 = \langle\cos\rangle_M$ and $d_2$, $\mu$ explicit ratios of $M$-averages of the generalized collision invariant $g$, where $\langle\varphi\rangle_M = \frac{2}{Z_\kappa}\int_0^{\pi/2}\varphi(\theta)e^{-\kappa/\cos\theta}\,d\theta$. This system is hyperbolic but non-conservative.
 
 **Weakly non-local interactions.** If alignment is computed over a small but finite neighbourhood, the $\bar\theta$ equation acquires the diffusive right-hand side $2k\,\mathcal D\,\nabla_x\cdot\big((\rho_+ + \rho_-)\nabla_x\bar\theta\big)$ with $\mathcal D = d_2 + d_3 - \mu - 2/\kappa \ge 0$ for all $\kappa \ge 0$. Adding reversals of direction at density-dependent rates $\lambda(\rho_\pm)$, as in myxobacteria, adds the exchange terms $\pm\big(\lambda(\rho_+)\rho_- - \lambda(\rho_-)\rho_+\big)$ to the density equations.

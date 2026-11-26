@@ -3,7 +3,9 @@
 **Setting.** For proper unrooted binary phylogenetic networks $N,N'$ on $X$ (the set $\mathcal U_n$), a TBR operation either moves an edge by pruning it at both ends and regrafting (TBR$^0$), adds an edge between two subdivided edges (TBR$^+$, raising the tier by one), or removes an edge (TBR$^-$). A PR operation is the same except that PR$^0$ prunes and regrafts an edge at only one endpoint. $d_{\mathrm{TBR}}$ and $d_{\mathrm{PR}}$ are the lengths of shortest operation sequences, and $d_{\mathrm{AD}}$ is the agreement distance (number of disagreement edges of a maximum agreement graph).
 
 **Theorem.** For all $N,N'\in\mathcal U_n$,
+
 $$d_{\mathrm{AD}}(N,N')\ \le\ d_{\mathrm{TBR}}(N,N')\ \le\ 2\,d_{\mathrm{AD}}(N,N'),\qquad d_{\mathrm{AD}}(N,N')\ \le\ d_{\mathrm{PR}}(N,N')\ \le\ 4\,d_{\mathrm{AD}}(N,N').$$
+
 Moreover:
 - $d_{\mathrm{AD}}(N,N')=1$ if and only if $d_{\mathrm{TBR}}(N,N')=1$;
 - if $N'$ (tier $r'$) displays $N$ (tier $r\le r'$), then $d_{\mathrm{AD}}(N,N')=d_{\mathrm{TBR}}(N,N')=r'-r$;

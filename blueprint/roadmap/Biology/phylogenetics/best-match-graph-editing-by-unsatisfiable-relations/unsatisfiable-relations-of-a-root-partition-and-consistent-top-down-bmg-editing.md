@@ -4,7 +4,9 @@
 
 **Theorem.**
 1. *(Explicit form.)* $U(\vec G,\mathscr{V})$ is the disjoint union of
+
 $$\begin{aligned}U_1&=\{(x,y)\in E:\ x\in V_i,\ y\notin V_i,\ \sigma(y)\in\sigma(V_i)\},\\ U_2&=\{(x,y)\notin E:\ x\in V_i,\ y\notin V_i,\ \sigma(y)\notin\sigma(V_i)\},\\ U_3&=\{(x,y)\notin E:\ x\ne y\in V_i,\ V_i[\sigma(y)]=\{y\}\},\end{aligned}$$
+
 so it can be computed in $O(|V|^2)$ time without enumerating trees.
 2. *(Edits forced by every tree.)* For $|V|\ge2$, the pairs that must be edited for every phylogenetic tree on $V$ are exactly $U^*(\vec G)=\{(x,y)\notin E:\ x\ne y,\ V[\sigma(y)]=\{y\}\}$: missing arcs into a gene that is the only one of its species.
 3. *(Top-down editing.)* Recursively choose a partition of the current vertex set, apply the edits $U(\vec G^*[V'],\mathscr{V})$, and recurse into each part. The output graph equals $\vec G(T,\sigma)$ for the tree $T$ built from the partitions, so it is a BMG, and its edit cost is the sum of the UR-costs of the chosen partitions (edit sets of different steps are disjoint).

@@ -1,8 +1,11 @@
 # Optimal tail criterion for infinite-time blow-up below the Chandrasekhar solution
 
 **Model.** The parabolic–elliptic Keller–Segel system in $\mathbb{R}^N$,
+
 $$u_t=\nabla\cdot(\nabla u-u\nabla v),\qquad 0=\Delta v+u,\qquad u(x,0)=u_0(x)\ge 0,$$
+
 with $N\ge 3$ has the singular steady state (Chandrasekhar solution) $U_\infty(r)=(2N-4)/r^2$. Assume $u_0$ is radial, continuous, and lies strictly below it: $0<u_0(r)<U_\infty(r)$ for all $r>0$. Such solutions are global and satisfy $|B_r|^{-1}\int_{B_r}u(\cdot,t)\le 2N/r^2$, but may still become unbounded as $t\to\infty$. For $N\ge 10$ set
+
 $$\lambda_0=\frac{N-2-\sqrt{(N-2)(N-10)}}{2}.$$
 
 **Theorem.**

@@ -9,7 +9,9 @@ P_{n+1}-P_n &= (r_n - b_nP_{n+1})P_n + \gamma_na_n f(S_{n+1},I_n,P_n)P_n + \thet
 with bounded non-negative coefficient sequences, $0 < \mu_n \le c_n$, $\Lambda_n, r_n, b_n$ bounded away from $0$, and general $C^1$ predation functional responses $f$ (on susceptible prey) and $g$ (on infected prey) that are non-increasing in $I$, with $f$ non-decreasing and $g$ non-increasing in $S$.
 
 **Thresholds.** Let $s^*_n$ solve the prey-only equation $s_{n+1} = (\Lambda_n + s_n)/(1+\mu_n)$, $y^*_n$ the predator-only logistic equation $y_{n+1} = (r_n+1)y_n/(1+b_ny_n)$, and $(x^*_n,z^*_n)$ the globally attracting solution of the disease-free predator–prey subsystem. For $\lambda \in \mathbb N$ define
+
 $$\mathcal R^u(\lambda) = \limsup_{n\to\infty}\prod_{k=n}^{n+\lambda}\frac{1+\beta_ks^*_{k+1}}{1+c_k+\eta_k g(s^*_k,0,y^*_k)}, \qquad \mathcal R^\ell(\lambda) = \liminf_{n\to\infty}\prod_{k=n}^{n+\lambda}\frac{1+\beta_kx^*_{k+1}}{1+c_k+\eta_k g(x^*_k,0,z^*_k)},$$
+
 which do not depend on the chosen positive solutions.
 
 **Theorem (extinction).** If $g(S+I,0,P) \le g(S,I,P)$ and $\mathcal R^u(\lambda) < 1$ for some $\lambda$, the infected prey go extinct. If moreover $a \equiv 0$ (no predation on susceptible prey) and $g(S,I,P) = g_0(S,I)P$, every disease-free solution is globally attractive.

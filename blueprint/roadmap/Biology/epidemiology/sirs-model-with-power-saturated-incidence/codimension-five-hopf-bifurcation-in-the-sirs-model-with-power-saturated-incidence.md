@@ -1,8 +1,11 @@
 # Codimension-five Hopf bifurcation in the SIRS model with power-saturated incidence
 
 **Model.** The SIRS model with nonlinear incidence $kI^pS/(1+\alpha I^q)$, $p>0$, $q\ge 0$, is
+
 $$S'=\Lambda-dS-\frac{kI^pS}{1+\alpha I^q}+\delta R,\qquad I'=\frac{kI^pS}{1+\alpha I^q}-(d+\mu)I,\qquad R'=\mu I-(d+\delta)R,$$
+
 with positive rates. Since $N=S+I+R$ satisfies $N'=\Lambda-dN$, the plane $N=\Lambda/d$ is invariant and attracting, and the limit dynamics are those of the planar system
+
 $$I'=\frac{kI^p}{1+\alpha I^q}\Big(\frac{\Lambda}{d}-I-R\Big)-(d+\mu)I,\qquad R'=\mu I-(d+\delta)R .$$
 
 **Normalization.** Rescaling $I=\frac{\Lambda}{d}X$, $R=\frac{\mu\Lambda}{d(d+\delta)}Y$, $t'=(d+\delta)t$ gives $X'=\frac{k_1X^p}{1+bX^q}(1-X-sY)-rX$, $Y'=X-Y$ with $s=\mu/(d+\delta)>0$ and $s<r=(\mu+d)/(d+\delta)<s+1$. A positive equilibrium $(\tilde X,\tilde X)$ needs $0<\tilde X<1/(s+1)$; rescaling by $\tilde X$ moves it to $E_1=(1,1)$ and leaves the six independent parameters $p>0$, $q\ge 0$, $\tilde X$, $B\ge 0$, $s$, $r$. Keeping the coefficient of $x^p$ explicit removes exponentials in $p$ from the focus-value computations.

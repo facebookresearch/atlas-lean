@@ -4,14 +4,20 @@
 
 **Theorem.** Assume: (a) the initial densities converge in law to $\overline\nu_\infty$; (b) $0 < \liminf N_n\pi^{(n)}_{\min} \le \limsup N_n\pi^{(n)}_{\max} < \infty$; (c) three coalescence constants $\overline\kappa_{(2,3)|0}$, $\overline\kappa_{(0,3)|2}$, $\overline\kappa_{0|2|3} \ge 0$, built from meeting probabilities of ancestral lineages, exist and depend only on the spatial structure; (d) there is an admissible time change $\theta_n \to \infty$ with $\theta_n/\gamma_n \to 0$, together with mixing conditions, $\mu_n(\sigma)\theta_n \to \mu_\infty(\sigma)$, $w_n \to 0$ and $w_n\theta_n/(2\gamma_n\nu_n(\mathbf{1})) \to w_\infty$. Then:
 1. The density process $p(\xi_{\theta_nt})$ converges in law to the solution of the extended replicator–mutator equation
+
 $$ \dot X_\sigma = w_\infty X_\sigma\Big(F_\sigma(X) + \widetilde F_\sigma(X) - \sum_{\sigma''}F_{\sigma''}(X)X_{\sigma''}\Big) + \mu_\infty(\sigma)(1 - X_\sigma) - \mu_\infty(S\setminus\{\sigma\})X_\sigma, $$
+
 where $F_\sigma(X) = \overline\kappa_{0|2|3}\sum_{\sigma'}\Pi(\sigma,\sigma')X_{\sigma'}$ and
+
 $$ \widetilde F_\sigma(X) = (\overline\kappa_{(2,3)|0} - \overline\kappa_{0|2|3})\Big(\Pi(\sigma,\sigma) - \sum_{\sigma'}\Pi(\sigma',\sigma')X_{\sigma'}\Big) + (\overline\kappa_{(0,3)|2} - \overline\kappa_{0|2|3})\sum_{\sigma'}\big[\Pi(\sigma,\sigma') - \Pi(\sigma',\sigma)\big]X_{\sigma'} , $$
+
 with the combined constant strictly positive, so selection acts nontrivially.
 2. If moreover $\gamma_n\nu_n(\mathbf{1})/\theta_n \to 0$, the rescaled martingale fluctuations $(\gamma_n/\theta_n)^{1/2}M^{(n)}$ converge to a centered Gaussian martingale with Wright–Fisher covariation $\int_0^t X_\sigma(s)[\delta_{\sigma\sigma'} - X_{\sigma'}(s)]\,ds$.
 
 **Corollary (prisoner's dilemma).** For two strategies with $\Pi = \begin{pmatrix} b - c & -c\\ b & 0\end{pmatrix}$ (cooperator $1$, defector $0$), symmetric $q^{(n)}$ and asymptotically constant two-step return probability $q^{(n),2}(x,x) \approx q^{(\infty),2}$, the cooperator density satisfies
+
 $$ \dot X_1 = w_\infty\big(b\,q^{(\infty),2} - c\big)X_1(1 - X_1) + \mu_\infty(1)(1 - X_1) - \mu_\infty(0)X_1 . $$
+
 Cooperation is favored iff $b\,q^{(\infty),2} > c$. On large random $k$-regular graphs $q^{(\infty),2} = 1/k$, so the condition is $b/c > k$.
 
 ## Expansion

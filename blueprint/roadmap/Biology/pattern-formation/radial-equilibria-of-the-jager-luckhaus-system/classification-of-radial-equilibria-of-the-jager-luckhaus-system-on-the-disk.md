@@ -1,7 +1,9 @@
 # Classification of radial equilibria of the Jäger–Luckhaus system on the disk
 
 **Model.** On the unit disk $\Omega=B_1(0)\subset\mathbb R^2$ consider the Jäger–Luckhaus (parabolic–elliptic Keller–Segel) chemotaxis system with no-flux boundary conditions
+
 $$u_t=\Delta u-\nabla\cdot(u\nabla v),\qquad 0=\Delta v-\mu+u,\qquad \partial_\nu u=\partial_\nu v=0\ \text{on }\partial\Omega,$$
+
 where $u\ge0$ is the cell density, $v$ the chemical signal normalized by $\int_\Omega v=0$, $M=\int_\Omega u_0>0$ is the conserved total mass and $\mu=M/\pi$. Let $j_{1,1}\approx 3.8317$ be the first positive zero of the Bessel function $J_1$ and set $\Lambda=j_{1,1}^2$.
 
 **Theorem.** For every $M>0$ the unique constant equilibrium is $(\mu,0)$. Nonconstant, nonnegative classical radial equilibria are classified by mass:

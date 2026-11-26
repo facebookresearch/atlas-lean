@@ -1,7 +1,9 @@
 # Stability–instability dichotomy of constant states in the fully parabolic Keller–Segel system
 
 Consider the fully parabolic Keller–Segel system on $\mathbb R^d$, $d\ge2$, with signal relaxation and decay normalized to one,
+
 $$\partial_t b-\Delta b=-\nabla\cdot(b\nabla a),\qquad \partial_t a-\Delta a=b-a,$$
+
 where $b$ is cell density and $a$ chemoattractant concentration. Every constant pair $(A,A)$, $A\ge0$, is an equilibrium. Write $n=b-A$, $c=a-A$ and take $(n_0,c_0)\in H^s\times H^{s+1}$ with integer $s>d/2$. The critical density is $A_{\rm crit}=1$.
 
 **Theorem.**

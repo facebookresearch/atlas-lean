@@ -3,7 +3,9 @@
 **Setting.** An RNA diagram is a set of arcs (base pairs, possibly crossing) on backbone vertices $1,\dots,n$, each vertex in at most one arc. Thickening the backbone and arcs into ribbons gives a fatgraph; collapsing the backbone to one vertex, a diagram with $e$ arcs and $b$ boundary components has genus $g$ with $2-2g=1-e+b$. Arc $(i,i+1)$ is a *1-arc*; arcs $(i,j)$ and $(i+1,j-1)$ are *parallel*. A *shape* is a diagram with no 1-arcs and no parallel arcs, with a rainbow arc enclosing everything; the shape of a structure is obtained by collapsing every stack to a single arc, deleting 1-arcs and repeating, so shapes are the homotopy classes of arc configurations. Let $\eta_g(n,0)$ be the number of shapes of genus $g$ with $n$ arcs and $S_g(z)=\sum_n\eta_g(n,0)z^n$.
 
 **Theorem.** For $g\ge1$, with the unicellular-map coefficients $\kappa^{(g)}_t=a^{(g)}_t\,\mathrm{Cat}(2g+t)$,
+
 $$S_g(z)=\sum_{t=0}^{g-1}\kappa^{(g)}_t\,z^{2g+t}(1+z)^{2g+t}.$$
+
 In particular $S_g$ is a polynomial: for fixed genus there are finitely many shapes, every shape of genus $g$ has between $2g$ and $6g-2$ arcs, and $\eta_g(n,0)=\sum_{t=0}^{g-1}a^{(g)}_t\binom{2g+t}{n-2g-t}\mathrm{Cat}(2g+t)$. For $g=1$, $S_1(z)=z^2(1+z)^2=z^2+2z^3+z^4$: four genus-one shapes, with two, three, three and four arcs. Moreover, choosing $t$ with probability proportional to $a^{(g)}_t\eta_0(n,2g+t+1)$ and then gluing a uniformly random planar shape gives a uniform random generator of genus-$g$ shapes with $n$ arcs.
 
 ## Expansion

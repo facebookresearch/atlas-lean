@@ -3,8 +3,11 @@
 For the multispecies volume-filling Keller–Segel system ($\partial_tu_i=\nabla\cdot(J_i-u_i\sum_kJ_k)$ with $J_i=\alpha_iu_i^{m_i-1}\nabla u_i+u_i\sum_k\chi_{ik}\nabla c_k$, $\partial_tc_j=D_j\Delta c_j-\lambda_jc_j+\sum_kb_{jk}u_k$, no-flux conditions, $\sum_{i=0}^nu_i=1$), let $u_i^\infty=|\Omega|^{-1}\int_\Omega u_i^0$ and $c_j^\infty=\lambda_j^{-1}\sum_kb_{jk}u_k^\infty$. Write $b'=(b_{ji}-b_{j0})$, $\chi'=(\chi_{ij}-\chi_{0j})$, $\alpha_*=\min_{i\ge1}\alpha_i$, $D_*=\min_jD_j$, $\lambda_*=\min_j\lambda_j$, $C_P$ the Poincaré constant and $\|\cdot\|_2$ the spectral norm.
 
 **Theorem (long-time behavior).** Let $1\le m_i\le2$ and
+
 $$\frac{C_P^2\|b'\|_2^2\|\chi'\|_2^2}{4\alpha_*^2D_*\lambda_*}<1 .$$
+
 Then every weak solution satisfying the entropy inequality converges exponentially to the homogeneous state: for some $C,\mu>0$,
+
 $$\sum_{i=1}^n\|u_i(t)-u_i^\infty\|_{L^2}^2+\sum_{j=1}^g\|c_j(t)-c_j^\infty\|_{L^2}^2\le Ce^{-\mu t}.$$
 
 **Theorem (vanishing diffusion limit).** Let $\partial\Omega\in C^{1,1}$, $1\le m_i\le2$, and set $D_j=\varepsilon$ for all $j$. Along a subsequence, as $\varepsilon\to0$, $u_i^\varepsilon\to u_i$, $c_j^\varepsilon\to c_j$ and $\varepsilon\Delta c_j^\varepsilon\to0$ strongly in $L^2(\Omega\times(0,T))$, where $(u,c)$ solves the same cell equations coupled to the non-diffusing signal ODEs $\partial_tc_j=-\lambda_jc_j+\sum_kb_{jk}u_k$.

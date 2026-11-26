@@ -6,10 +6,14 @@
 
 1. (Symmetry) For every $p$ the joint distribution of the patterns $12\cdots p$ and $p\cdots21$ over matchings of size $n$ is symmetric. In particular, $12$ and $21$ are equidistributed, and the number of matchings with $k$ copies of $21$ and $m$ of $12$ equals the number with $m$ copies of $21$ and $k$ of $12$.
 2. (Recurrence) $a_{1,0}=1$, $a_{1,k}=0$ for $k\ne0$, and
+
 $$a_{n+1,k}=a_{n,k-1}+2(n-k)\,a_{n,k}+2(k+1)\,a_{n,k+1}.$$
+
 Consequently $a_{n+1,0}=2na_{n,0}+2(n-1)a_{n-1,0}$ with $a_{2,0}=2$, and $a_{n+1,1}=2n(a_{n,1}+a_{n-1,1})$ with $a_{2,1}=1$.
 3. (Asymptotics) For each fixed $k$, as $n\to\infty$,
+
 $$a_{n,k}\sim\frac{1}{2^kk!}\Big(\frac2e\Big)^{n+1/2}n^n,\qquad\frac{a_{n,k}}{a_{n,k+1}}\to2(k+1).$$
+
 4. (Poisson limit) In a uniformly random matching of size $n$, the number of occurrences of $21$ (and likewise of $12$) converges in distribution to $\mathrm{Poisson}(1/2)$.
 
 ## Expansion

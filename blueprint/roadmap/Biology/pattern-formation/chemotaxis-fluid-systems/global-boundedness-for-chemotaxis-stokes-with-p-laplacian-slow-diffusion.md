@@ -9,7 +9,9 @@ u_t+\nabla\pi=\Delta u+n\nabla\phi,\qquad\operatorname{div}u=0,
 with no-flux conditions $(|\nabla n|^{p-2}\nabla n-\chi n\nabla c)\cdot\nu=\partial_\nu c=0$ and $u=0$ on $\partial\Omega$. Here $\chi>0$ and $\phi$ is a gravitational potential. Assume $n_0\in L^\infty(\Omega)$ with $\nabla n_0^{1-1/p}\in L^p(\Omega)$, $c_0\in W^{2,r}(\Omega)$ and $u_0\in W^{2,r}(\Omega)\cap W^{1,r}_0(\Omega)$ with $\operatorname{div}u_0=0$ for all $r>1$, $\phi\in W^{1,\infty}(\Omega)$, and $n_0,c_0\ge0$.
 
 **Theorem.** For every $p>2$ the problem has a global bounded strong solution $(n,c,u,\pi)$, with no logistic damping and no smallness condition on the data. For every $\beta\in(\tfrac34,1)$ and $r>1$,
+
 $$\sup_{t>0}\Big(\|n\|_{L^\infty}+\|c\|_{W^{1,\infty}}+\|u\|_{W^{1,\infty}}+\|\nabla n\|_{L^p}+\|A^\beta u\|_{L^2}\Big)\le M_1(\beta),$$
+
 where $A$ is the Stokes operator. On unit time cylinders $Q_1(t)=\Omega\times(t,t+1)$, the quantities $n_t$, $\Delta_pn$, $|\nabla n|^{p-2}D^2n$ (in $L^2$), $\nabla n$ (in $L^{2p}$), $(c,u)$ (in $W^{2,1}_r$) and $\nabla\pi$ (in $L^r$) are bounded uniformly in $t$.
 
 ## Expansion

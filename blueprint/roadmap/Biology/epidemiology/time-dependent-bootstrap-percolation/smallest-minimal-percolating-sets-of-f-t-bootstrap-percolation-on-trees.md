@@ -1,7 +1,9 @@
 # Smallest minimal percolating sets of $F(t)$-bootstrap percolation on trees
 
 **Model.** For a graph $G=(V,E)$ and a **percolation function** $F:\mathbb{N}\to\mathbb{N}$, $F(t)$-bootstrap percolation started from $A_0\subseteq V$ evolves by
+
 $$A_{t+1}=A_t\cup\{v\in V:\ |N(v)\cap A_t|\ge F(t)\},$$
+
 with final infected set $A_\infty$. It models a pathogen whose transmissibility changes over time by mutation: a node is infected at time $t$ once $F(t)$ neighbors are infected. A motivating choice is $F(t)=\big\lceil 1/\beta(t)\big\rceil$ with $\beta(t)=(b_0-b_f)(1-k)^t+b_f$, $0<k<1$. A **percolating set** satisfies $A_\infty=V$ in finite time; it is **minimal** if no proper subset percolates.
 
 **Results.**

@@ -1,11 +1,15 @@
 # Strict monotonicity and domain limits of the spectral bound for cooperative nonlocal dispersal
 
 **Setting.** For $m$ interacting populations (or infection classes) with dispersal rates $d_1,\dots,d_m>0$ on a bounded domain $\Omega\subset\mathbb R^n$, consider the cooperative nonlocal dispersal operator on $[C(\overline\Omega)]^m$
+
 $$\mathcal J_{A,\Omega}[\varphi]_i(x)=d_i\int_\Omega J_i(x,y)\varphi_i(y)\,dy+\sum_jA_{ij}(x)\varphi_j(x),\qquad x\in\overline\Omega,$$
+
 with nonnegative continuous kernels and a continuous matrix field $A(x)$ that is cooperative (nonnegative off-diagonal entries) and irreducible at some point of $\Omega$. Let $s(\cdot)$ denote the spectral bound and $s(A,\overline\Omega)=\max_{x\in\overline\Omega}s(A(x))$. A real eigenvalue with a componentwise positive eigenfunction is a *principal eigenvalue*; unlike for local diffusion, it need not exist, because the multiplication part is not compact.
 
 **Existence and characterization.** Always $s(\mathcal J_{A,\Omega})\ge s(A,\overline\Omega)$, and $s(\mathcal J_{A,\Omega})$ is the limit of principal eigenvalues of operators with slightly perturbed coefficients $A^\pm_\epsilon\to A$. If
+
 $$\int_\Omega\frac{dx}{s(A,\overline\Omega)-s(A(x))}=\infty$$
+
 (for instance if $s(A(x))$ is constant and maximal on an open set, or in one dimension if $s(A(\cdot))$ is locally Lipschitz near a maximum point), then $s(\mathcal J_{A,\Omega})>s(A,\overline\Omega)$ and it is a principal eigenvalue. Without a principal eigenvalue, $s(\mathcal J_{A,\Omega})=s(A,\overline\Omega)$.
 
 **Theorem (strict comparison).**
@@ -16,7 +20,9 @@ $$\int_\Omega\frac{dx}{s(A,\overline\Omega)-s(A(x))}=\infty$$
 Without principal eigenvalues, strict monotonicity can fail.
 
 **Theorem (small and large domains).** If $x_0$ is an irreducibility point, $s(\mathcal J_{A,B_\sigma(x_0)})\to s(A(x_0))$ as $\sigma\to0$. If the kernels are even convolution kernels $J_i(x,y)=K_i(y-x)$, $A(x)\le A^\infty$ for a constant cooperative irreducible $A^\infty$, and $A\to A^\infty$ uniformly on cubes of side $l_k\to\infty$, then
+
 $$\lim_{l\to\infty}s(\mathcal J_{A,B_l(0)})=s(A^\infty+D),\qquad D=\operatorname{diag}(d_i).$$
+
 Consequently, if $s(A(0))<0<s(A^\infty+D)$, there is a unique critical habitat size $l_*$ at which the spectral bound of the linearization crosses zero: for a two-class heterogeneous epidemic model on $(0,l)$, the infection dies out for $l\le l_*$ and persists for $l>l_*$; for a scalar nonlocal free-boundary model with front $h(t)$, spreading occurs whenever $h_0\ge l_*$, vanishing forces $h(\infty)\le l_*$, and for $h_0<l_*$ there is a sharp expansion-rate threshold $\mu^*$ separating vanishing from spreading.
 
 ## Expansion

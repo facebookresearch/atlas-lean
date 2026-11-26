@@ -1,7 +1,9 @@
 # Absence of critical mass in one-dimensional critical quasilinear Keller–Segel systems
 
 **Setting.** Let $m \in \mathbb{R}$, $\tau, k \in \{0,1\}$ with $(\tau,k) \in \{(0,0),(0,1),(1,1)\}$ (Jäger–Luckhaus, parabolic–elliptic and fully parabolic settings), and consider on $(0,1)\times(0,T)$ with homogeneous Neumann conditions
+
 $$u_t = \big(D(u)u_x - S(u)v_x\big)_x, \qquad \tau v_t = v_{xx} - k v - (1-k)M + u,$$
+
 where $D(\sigma) = (\sigma+1)^{m-1}$, $S(\sigma) = \sigma(\sigma+1)^m$ for $\sigma \ge 0$, and $M = \int_0^1 u_0$. The ratio $S(u)/D(u) \sim u^2$ for large $u$, which is the critical growth $u^{2/n}$ for $n = 1$. Initial data satisfy $u_0, \tau v_0 \in \bigcup_{\theta>1} W^{1,\theta}((0,1))$, $0 \not\equiv u_0 \ge 0$, $\tau v_0 \ge 0$.
 
 **Theorem.** Let $(u,v)$ be the maximal classical solution.

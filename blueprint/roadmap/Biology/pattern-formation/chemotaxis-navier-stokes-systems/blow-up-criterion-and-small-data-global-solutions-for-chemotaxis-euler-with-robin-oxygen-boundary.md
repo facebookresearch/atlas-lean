@@ -1,13 +1,19 @@
 # Blow-up criterion and small-data global solutions for chemotaxis–Euler with Robin oxygen boundary
 
 **Model.** In a smooth bounded domain $\Omega\subset\mathbb R^2$ with boundary $\Gamma$, consider the inviscid chemotaxis–fluid system (Tuval et al. with zero fluid viscosity)
+
 $$n_t+u\cdot\nabla n+\nabla\cdot(n\nabla c)=\Delta n,\qquad c_t+u\cdot\nabla c+nc=\Delta c,$$
+
 $$u_t+u\cdot\nabla u+\nabla p=-n\nabla\phi,\qquad\nabla\cdot u=0,$$
+
 with no-flux for the bacteria, $(\nabla n-n\nabla c)\cdot\nu=0$, impermeability $u\cdot\nu=0$, and a Robin condition for oxygen exchange with the air,
+
 $$\nabla c\cdot\nu=\kappa(x)\bigl(\gamma(x)-c\bigr)\quad\text{on }\Gamma,$$
+
 where $\kappa,\gamma\ge0$ are given and $\gamma$ is the ambient oxygen level. For $n_0,c_0\in H^2$, $u_0\in H^3$ nonnegative and compatible, a unique local solution exists in $C([0,T];H^2\times H^2\times H^3)$.
 
 **Theorem (blow-up criterion).** If the maximal existence time $T^*$ is finite, then
+
 $$\|n\|_{L^q(0,T^*;L^p(\Omega))}=\infty\qquad\text{for all } \frac2p+\frac2q\le1,\ 2<p\le\infty .$$
 
 **Theorem (global existence).** If moreover $\max\{\|\gamma\|_{L^\infty(\Gamma)},\|c_0\|_{L^\infty(\Omega)}\}\le\frac1{48}$, the solution is global, with $(n,c,u,\nabla p)\in C([0,T];H^2\times H^2\times H^3\times H^2)$ for every $T>0$.

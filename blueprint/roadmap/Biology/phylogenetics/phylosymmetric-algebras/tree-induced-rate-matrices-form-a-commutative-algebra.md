@@ -1,13 +1,17 @@
 # Tree-induced rate matrices form a commutative algebra
 
 **Construction.** Let $\mathcal T$ be a rooted tree whose $n$ leaves are the character states (e.g. amino acids), and assign a rate $\omega(u)$ to each non-leaf vertex $u$. The rate of change between states $x\ne y$ is the rate at their most recent common ancestor, $\omega(\mathrm{mrca}(x,y))$. For a rate value $\alpha=\omega(u)$, the **$\alpha$-mrca graph** $G_\alpha$ has an edge $\{x,y\}$ iff $\omega(\mathrm{mrca}(x,y))=\alpha$; it is a complete multipartite graph on the leaves below $u$ (one part per child of $u$) plus isolated vertices. Set
+
 $$Q_\alpha=-L(G_\alpha)=A(G_\alpha)-D(G_\alpha),$$
+
 minus the graph Laplacian, so the rate matrix of the model is $Q=\sum_\alpha\alpha Q_\alpha$. The **phylosymmetric algebra** is $\mathcal Q_{\mathcal T}=\operatorname{span}_{\mathbb R}\{Q_\alpha\}$. Hierarchies on $X$ (equivalently rooted trees) are in bijection with such tree-induced graph sets.
 
 **Theorem (products).** Let $u,v$ be non-leaf vertices with rates $\alpha,\beta$, let $T^\alpha$ be the subtree at $u$ and $|T|$ its number of leaves.
 
 1. If $v$ is a descendant of $u$ and $T^\alpha_\beta$ is the subtree at the child of $u$ that is an ancestor of $v$, then
+
 $$Q_\alpha Q_\beta=\big(|T^\alpha_\beta|-|T^\alpha|\big)Q_\beta=Q_\beta Q_\alpha.$$
+
 2. If $u$ and $v$ are incomparable, then $Q_\alpha Q_\beta=0$.
 3. $(Q_\alpha^2)_{ii}=d_i(d_i+1)$, $(Q_\alpha^2)_{ij}=-|T^\alpha|$ if $i,j$ lie in different parts of $G_\alpha$, and $(Q_\alpha^2)_{ij}=d_i$ if $i\ne j$ lie in the same part, where $d_i$ is the degree of $i$ in $G_\alpha$.
 

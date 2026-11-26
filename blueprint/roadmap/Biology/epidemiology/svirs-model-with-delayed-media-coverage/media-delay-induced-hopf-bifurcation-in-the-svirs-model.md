@@ -1,9 +1,13 @@
 # Media-delay-induced Hopf bifurcation in the SVIRS model
 
 **Setting.** In the SVIRS model with delayed media-reduced transmission $\iota I e^{-mI(t-\tau)}$, waning vaccine and natural immunity, and saturated recovery $\gamma_0I/(1+\alpha I)$, assume $\mathcal R_0>1$ and the media-intensity bound that makes the endemic equilibrium $E^\ast$ unique, and assume (Routh–Hurwitz condition (H)) that $E^\ast$ is locally asymptotically stable at $\tau=0$. Linearizing at $E^\ast$ gives
+
 $$\lambda^4+a_{11}\lambda^3+a_{12}\lambda^2+a_{13}\lambda+a_{14}+\big(a_{21}\lambda^3+a_{22}\lambda^2+a_{23}\lambda+a_{24}\big)e^{-\lambda\tau}=0 .$$
+
 A root $\lambda=iw$, $w>0$, exists iff $z=w^2>0$ solves
+
 $$H(z)=z^4+s_1z^3+s_2z^2+s_3z+s_4=0,$$
+
 $s_1=a_{11}^2-2a_{12}-a_{21}^2$, $s_2=a_{12}^2+2a_{14}-2a_{11}a_{13}-a_{22}^2+2a_{21}a_{23}$, $s_3=a_{13}^2-2a_{12}a_{14}+2a_{22}a_{24}-a_{23}^2$, $s_4=a_{14}^2-a_{24}^2$. For each positive root $z_k$ with $w_k=\sqrt{z_k}$ there is an increasing sequence of critical delays $\tau_n^{(k)}\to\infty$ at which $\pm iw_k$ are roots; let $\tau_0$ be the smallest.
 
 **Theorem.**

@@ -5,12 +5,15 @@
 **Quartet events.** Fix species $A,B,C,D$ with species quartet $AB|CD$. Condition on the copy numbers $\mathcal X=(\mathcal A,\mathcal B,\mathcal C,\mathcal D)\ge\vec 1$ and on the number $I\ge1$ of locus copies leaving the most recent common ancestor $R$ of the quartet (measure $\mathbb P''$). Pick one copy $a,b,c,d$ per species uniformly at random, let $i_x$ be the ancestral lineage of $x$ at $R$, and let $Q_1,Q_2,Q_3$ be the events that the gene quartet is $ab|cd$, $ac|bd$, $ad|bc$. Put $x=\mathbb P''[i_a=i_b]$, $y=\mathbb P''[i_c=i_d]$.
 
 **Proposition (balanced quartet).** If the root of $T^{\{A,B,C,D\}}$ lies on the internal edge, then almost surely $x\wedge y\ge 1/I$ and
+
 $$\mathbb P''[Q_1]-\mathbb P''[Q_2]>\tfrac1{12}\Big(\big(x-\tfrac1I\big)\wedge\big(y-\tfrac1I\big)\Big).$$
 
 **Proposition (caterpillar quartet).** If the root lies on the pendant edge of $D$, then almost surely $x\ge 1/I$ and
+
 $$\mathbb P''[Q_1]-\mathbb P''[Q_2]>\tfrac13\big(x-\tfrac1I\big).$$
 
 **Branching-process bounds.** Let $\sigma=\min_{\mathcal Q}\mathbb P[\mathcal X_{\mathcal Q}\ge\vec 1]$ (worst quartet survival probability) and $\alpha=\max_R\mathbb E[I_R]$. Then $\sigma\ge\big[e^{-(\mu-\lambda)\Delta}(1-\lambda/\mu)\big]^4$ if $\mu>\lambda$, $\sigma\ge(1-\mu/\lambda)^4$ if $\lambda>\mu$, and $\alpha\le 1\vee e^{(\lambda-\mu)\Delta}$. With $\gamma=1-e^{-f}$ and $\delta'=\mathbb P'[Q_1]-\tfrac13$ under conditioning on $\mathcal X\ge\vec1$ only,
+
 $$\delta'\ \ge\ \tfrac23\Big\{\gamma\wedge\tfrac18\Big\}\frac{\sigma^3}{\alpha^3}.$$
 
 ## Expansion

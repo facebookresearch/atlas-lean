@@ -14,7 +14,9 @@ where $u$ is the cell density, $w$ an intermediate (non-diffusing) signal-produc
 **Theorem.**
 
 1. Under (H1), if $\beta<\dfrac{2(\theta+2)}{d}$, the problem has a globally bounded classical solution: there is $C>0$ independent of $t$ with
+
 $$\|u(\cdot,t)\|_{L^\infty(\Omega)}+\|v(\cdot,t)\|_{W^{1,\infty}(\Omega)}+\|w(\cdot,t)\|_{L^\infty(\Omega)}\le C\qquad(t>0).$$
+
 2. Under (H1) and (H2), the same conclusion holds for the larger range $\beta<\dfrac{d(\theta+1)+2(\theta+2)}{2d}$, provided $\theta>\dfrac{4-d}{d-2}$.
 
 Local classical solutions with the stated Hölder regularity are unique.

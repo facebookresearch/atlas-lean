@@ -1,16 +1,23 @@
 # Local null controllability of parabolic–elliptic chemotaxis by Neumann boundary control
 
 **System.** On an interval $(0,\mathrm L)$ and time horizon $T>0$, a density $w$ is advected by a drift depending on an elliptic signal $u$:
+
 $$w_t = w_{xx} + f(u)\,w_x, \qquad 0 = u_{xx} - u - w \quad \text{in } (0,T)\times(0,\mathrm L),$$
+
 $$w_x(t,0) = g(t), \quad w_x(t,\mathrm L) = 0, \quad u_x(t,0) = u_x(t,\mathrm L) = 0, \quad w(0,\cdot) = w_0,$$
+
 with $f:\mathbb R\to\mathbb R$ locally Lipschitz and a single scalar control $g$ acting through the Neumann condition at the left endpoint. Equivalently $u = -(I - \partial_{xx,N})^{-1}w$, so the drift is nonlocal in space.
 
 **Theorem.** There is $c_1 > 0$, depending on $\mathrm L$ and $f$ but not on $T$, such that for every $T>0$ and every $w_0 \in L^\infty(0,\mathrm L)$ with
+
 $$\|w_0\|_{L^\infty(0,\mathrm L)} \le \exp\!\big(-c_1(1 + T + 1/T)\big),$$
+
 there is a control $g \in L^\infty(0,T)$ for which the system has a weak solution with $w(T) = 0$ in $L^2(0,\mathrm L)$; moreover $u \in C([0,T];H^2(0,\mathrm L))$ and $u(T) = 0$.
 
 **Linear step.** For any bounded drift coefficient $B \in L^\infty$, the linear problem $w_t = w_{xx} + B w_x$ with the same boundary control is null controllable with a bounded control satisfying $\|g\|_{L^\infty(0,T)} \le e^{C\kappa}\|w_0\|_{L^2}$, where $\kappa$ grows like $1 + 1/T + M^2 + TM^2$ with $M = \|B\|_{L^\infty}$. This rests on an observability inequality for the adjoint,
+
 $$\|\varphi(0)\|_{L^2(I)}^2 \le \exp\!\big(C(1 + 1/T + M^2 + TM^2)\big)\int_0^T\!\!\int_{\tilde\omega}|\varphi|^2\,dx\,dt,$$
+
 proved by a Carleman estimate on an extended interval $I \supset (0,\mathrm L)$.
 
 ## Expansion

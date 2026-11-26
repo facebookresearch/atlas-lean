@@ -3,7 +3,9 @@
 **Setting.** A leaf-colored rooted tree $(T,\sigma)$ with leaf set $L$ and coloring $\sigma:L\to\{r,s\}$ explains the *best match graph* (BMG) $\mathcal{G}(T,\sigma)$: there is an arc $x\to y$ for $\sigma(x)\ne\sigma(y)$ whenever $\operatorname{lca}_T(x,y)\preceq_T\operatorname{lca}_T(x,y')$ for every leaf $y'$ of color $\sigma(y)$. Every BMG has a unique *least resolved tree* (LRT), the explaining tree from which no inner edge can be contracted without changing the graph. For a vertex $u$ of $T$ the *support leaves* are $S_u=\operatorname{child}_T(u)\cap L$.
 
 For a properly 2-colored digraph $(\mathcal{G},\sigma)$ on $L$, the *umbrella vertices* are
+
 $$U(\mathcal{G},\sigma)=\{x\in L:\ N^+(x)=\{y\in L:\sigma(y)\ne\sigma(x)\}\},$$
+
 the vertices pointing to every vertex of the other color. A *support set* is a maximal $S\subseteq U$ such that $x\in S$ implies $N^-(x)\subseteq S$. Every 2-colored digraph has a unique support set (the union of two such sets is again one), and it is the limit of the decreasing sequence $S^{(0)}=U$, $S^{(k)}=\{x\in S^{(k-1)}:N^-(x)\subseteq S^{(k-1)}\}$.
 
 **Theorem.** Let $(T,\sigma)$ be the LRT of a 2-colored BMG $(\mathcal{G},\sigma)$ with root $\rho$. Then $S_\rho=S(\mathcal{G},\sigma)$. In particular $S(\mathcal{G},\sigma)\ne\emptyset$ if and only if $\mathcal{G}$ is connected.

@@ -1,6 +1,7 @@
 # Endpoint agreement distance and the PR-distance
 
 **Endpoint agreement graph.** Let $N,N'$ be proper unrooted binary phylogenetic networks on $X$ in tiers $r\le r'$, $l=r'-r$. A graph $H$ with components $S_1,\dots,S_m$ and $l$ single-edge components $E_1,\dots,E_l$ on unlabelled vertices is an *endpoint agreement graph* (EAG) if $H$ minus $E_1,\dots,E_l$ has an agreement embedding into $N$ and $H$ has an agreement embedding into $N'$. Unlike for agreement graphs, the agreement subgraphs $S_i$ may now contain sprouts (unlabelled degree-one vertices). A *maximum* EAG has the fewest sprouts. If it has $s$ sprouts on agreement subgraphs and $l$ disagreement edges, the *endpoint agreement distance* is
+
 $$d_{\mathrm{EAD}}(N,N')=s+l .$$
 
 **Theorem.** For networks $N,N'$ on $X$:

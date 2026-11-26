@@ -8,8 +8,11 @@ with buoyancy-type forcing $n\nabla r$. For $A \ge 1$, the Taylor-Couette flow $
 
 **Theorem.** Let $0 \le n_{\mathrm{in}} \in L^1\cap L^\infty\cap H^1_0(\Omega)$, $u_{\mathrm{in}} \in H^2$ divergence-free with $u_{\mathrm{in}}\cdot e_r = w_{\mathrm{in}} = 0$ on $r = 1$, and $r^2n_{\mathrm{in}}, r^2w_{\mathrm{in}} \in L^2(\Omega)$. No smallness is assumed on the cell mass or on $u_{\mathrm{in}}$.
 1. (Global existence) There are $A_0 \ge 1$ and $M_0 > 0$, depending only on $\Omega$ and the initial data, such that for every $A \ge A_0$ there is a unique global strong solution, with
+
 $$\sup_{t\ge0}\big(\|n(t)\|_{L^2} + \|n(t)\|_{L^\infty} + \|c(t)\|_{W^{1,\infty}}\big) \le M_0.$$
+
 2. (Averaging) Let $(N,C)$ be the global radial solution of the Keller-Segel system on $r > 1$ with $N(t,1) = C(t,1) = 0$ and initial density the angular average $N(0,r) = \frac{1}{2\pi}\int_0^{2\pi}n_{\mathrm{in}}(r,\theta)\,d\theta$. Then for all $0 < \delta < T < \infty$,
+
 $$\lim_{A\to\infty}\sup_{\delta\le t\le T}\|n^A(t) - N(t)\|_{L^2(\Omega)} = 0.$$
 
 ## Expansion

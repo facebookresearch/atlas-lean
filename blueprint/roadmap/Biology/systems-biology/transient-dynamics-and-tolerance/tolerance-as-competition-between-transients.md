@@ -9,7 +9,9 @@
 3. (Linear systems, distinct eigenvalues) For $\dot{\mathbf x}=A\mathbf x$ with eigenvalues $\lambda_2<\lambda_1<0$ and eigenvectors $v$, $w$, write $(x_r,y_r)=c_1v+c_2w$ and $(x_p,y_p)=d_1v+d_2w$.
    - If $v_1=0$ (the slow eigenvector is vertical) or $w_1=0$, tolerance never occurs.
    - If $v_1=w_1=1$, tolerance holds for all $t>T$ iff $c_1>d_1$ and $c_2<d_2$, with
+
 $$T=\frac{\ln\big[(d_2-c_2)/(c_1-d_1)\big]}{\lambda_1-\lambda_2}.$$
+
 4. (Linear systems, repeated eigenvalue) If $\lambda_1=\lambda_2<0$ with two independent eigenvectors, tolerance is impossible. With a one-dimensional eigenspace, tolerance is decided explicitly by the coefficients along the eigenvector and the generalized eigenvector.
 
 ## Expansion

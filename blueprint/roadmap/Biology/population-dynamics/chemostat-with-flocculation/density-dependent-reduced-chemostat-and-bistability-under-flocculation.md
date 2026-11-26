@@ -5,7 +5,9 @@
 $$\dot S = D(S_{in} - S) - f(S)u - g(S)v, \quad \dot u = (f(S) - D_0)u - \tfrac{a}{\varepsilon}(u+v)u + \tfrac{b}{\varepsilon}v, \quad \dot v = (g(S) - D_1)v + \tfrac{a}{\varepsilon}(u+v)u - \tfrac{b}{\varepsilon}v.$$
 
 **Theorem (slow-fast reduction).** Let $x = u + v$ and $p(x) = b/(b+ax)$. For $S_0 \ge 0$, $u_0 > 0$, $v_0 \ge 0$, as $\varepsilon \to 0$ the solution satisfies $S = \overline{S} + o(1)$ and $x = \overline{x} + o(1)$ uniformly on $[0,T]$, and $u = p(\overline{x})\overline{x} + o(1)$, $v = (1-p(\overline{x}))\overline{x} + o(1)$ uniformly on $[t_0,T]$ for any $t_0 > 0$, where $(\overline{S},\overline{x})$ solves the reduced chemostat
+
 $$\dot S = D(S_{in} - S) - \mu(S,x)x, \qquad \dot x = (\mu(S,x) - d(x))x, \qquad \mu(S,x) = \frac{bf(S) + axg(S)}{b+ax}, \quad d(x) = \frac{bD_0 + axD_1}{b+ax},$$
+
 with $\overline S(0) = S_0$, $\overline x(0) = u_0 + v_0$. Both the growth function and the apparent removal rate are density dependent.
 
 **Theorem (one-species reduced model).** Assume $\mu(0,x) = 0$, $\mu > 0$ for $S > 0$, $\partial_S\mu > 0 > \partial_x\mu$, and $d(0) = D_0 > d(+\infty) = D_1$, $d' < 0$, $(xd)' > 0$ (with $D_0 \le D$). Let $f(S) = \mu(S,0)$, $g(S) = \mu(S,+\infty)$, $\lambda_0 = f^{-1}(D_0)$, $\lambda_1 = g^{-1}(D_1)$ (or $+\infty$), plus the sign conditions H3/H4 comparing $d'(x)$ with $\partial_x\mu$ between $\lambda_0$ and $\lambda_1$.

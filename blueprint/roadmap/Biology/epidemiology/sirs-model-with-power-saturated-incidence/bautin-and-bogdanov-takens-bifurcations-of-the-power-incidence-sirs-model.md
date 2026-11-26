@@ -1,7 +1,9 @@
 # Bautin and Bogdanov–Takens bifurcations of the power-incidence SIRS model
 
 **Setting.** After restriction to the invariant plane $S+I+R=\Lambda/d$ and normalization of the positive equilibrium to $E_1=(1,1)$, the SIRS model with incidence $kI^pS/(1+\alpha I^q)$ becomes
+
 $$x'=\frac{Kx^p}{1+Bx^q}\Big(\frac{1}{\tilde X}-x-sy\Big)-rx,\qquad y'=x-y,$$
+
 with $p>0$, $q\ge 0$, $B\ge 0$, $0<\tilde X<1/(s+1)$, $0<s<r<s+1$ and $K[1-(1+s)\tilde X]=r\tilde X(1+B)$. Put $\tilde X_1=1-(s+1)\tilde X\in(0,1)$.
 
 **Stability.** $E_1$ is locally asymptotically stable for $0<p\le 1$ (every $q\ge 0$, $B\ge 0$), and more generally in seven explicit parameter regions; a Hopf bifurcation from $E_1$ occurs on the curve $B=B_{\mathrm H}$ in two of them.

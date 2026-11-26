@@ -1,8 +1,11 @@
 # Uniqueness of monostable Lotka–Volterra competition travelling waves
 
 **Model.** Two competitors $u, v$ on $\mathbb{R}$ follow the Lotka–Volterra competition–diffusion system
+
 $$ u_t = u_{xx} + u(1 - u - av), \qquad v_t = d\,v_{xx} + rv(1 - v - bu), $$
+
 with $d, r > 0$, $a \in (0,1)$ and $b \in (0,1)\cup(1,\infty)$. Let $(u^\star, v^\star)$ denote the stable state reached behind the invasion: the coexistence state $\big(\tfrac{1-a}{1-ab}, \tfrac{1-b}{1-ab}\big)$ when $0 < b < 1$, and $(1,0)$ when $b > 1$. A travelling wave of speed $c > 0$ is a profile $(U,V)(x - ct)$ solving
+
 $$ U'' + cU' + U(1 - U - aV) = 0, \qquad dV'' + cV' + rV(1 - V - bU) = 0 . $$
 
 **Theorem.** Let $c > 0$. If $(U,V)$ and $(\widetilde U,\widetilde V)$ are bounded nonnegative travelling waves of speed $c$ connecting $(u^\star,v^\star)$ at $-\infty$ to $(0,1)$ at $+\infty$, then $U' < 0 < V'$ on $\mathbb{R}$ and $(U,V) \equiv (\widetilde U(\cdot - \sigma), \widetilde V(\cdot - \sigma))$ for some $\sigma \in \mathbb{R}$.

@@ -1,12 +1,17 @@
 # Universal large-time asymptotics of the critical-mass Keller–Segel equation
 
 Consider the parabolic–elliptic Keller–Segel model of chemotactic aggregation on the plane,
+
 $$\partial_t u=\Delta u-\nabla\cdot(u\nabla\Phi_u),\qquad -\Delta\Phi_u=u,\qquad x\in\mathbb R^2,\ t>0,$$
+
 with $u(0)=u_0\ge 0$ and $\nabla\Phi_u=-\frac{1}{2\pi}\frac{x}{|x|^2}*u$. Let $U(x)=\frac{8}{(1+|x|^2)^2}$ be the stationary state of mass $\int U=8\pi$.
 
 **Theorem.** Assume $\int_{\mathbb R^2}u_0(x)(1+|x|^2)\,dx<\infty$ and critical mass $\int u_0=8\pi$. Let $x^*$ be the center of mass and $\mu=\int|x-x^*|^2u_0\,dx$ the second moment. Then the solution is global, its second moment stays equal to $\mu$, and for large times
+
 $$u(x,t)=\frac{1}{\lambda(t)^2}U\!\left(\frac{x-x(t)}{\lambda(t)}\right)+\tilde u(x,t),\qquad \lambda(t)=\sqrt{\frac{\mu}{8\pi}}\,\frac{1+o(1)}{\sqrt{\ln t}},$$
+
 with, for every $\epsilon>0$ and some $C=C(u,\epsilon)$,
+
 $$\|\tilde u(t)\|_{L^1}+\lambda(t)^2\|\tilde u(t)\|_{L^\infty}\le Ct^{-1+\epsilon},\qquad |x(t)-x^*|\le Ct^{-1/2+\epsilon}\quad(t\ge1).$$
 
 So every finite-second-moment threshold solution concentrates the same bubble at the same logarithmic rate: infinite-time blow-up at critical mass is universal, and the conserved second moment alone selects the scale.

@@ -5,11 +5,15 @@
 - **sparse tree**: the first $n$ descendants along a single line of descent.
 
 **Estimator.** With a kernel $K$ (bounded, compactly supported, with $\int x^kK(x)\,dx = \mathbf{1}_{\{k=0\}}$ for $0 \le k \le n_0$), $K_h(x) = h^{-1}K(x/h)$ and a threshold $\varpi > 0$, set
+
 $$ \widehat B_n(y) = \frac{y}{2}\,\frac{n^{-1}\sum_{u\in\mathcal{U}_n}K_h(\xi_u - y/2)}{\Big(n^{-1}\sum_{u\in\mathcal{U}_n}\tau_{u^-}^{-1}\mathbf{1}_{\{\xi_{u^-}\le y,\ \xi_u \ge y/2\}}\Big)\vee\varpi} . $$
+
 This is a plug-in of the identity $\nu_B(y/2) = \frac{2B(y)}{y}\mathbb{E}_{\nu_B}\big[\tau_{u^-}^{-1}\mathbf{1}_{\{\xi_{u^-}\le y,\ \xi_u\ge y/2\}}\big]$ for the invariant birth-size density $\nu_B$: kernel density estimation for the numerator, an empirical mean for the denominator.
 
 **Theorem.** Under the model constraints of either observation scheme (growth-rate kernels with $\rho_{\min}(A) \le \rho(v,A) \le \rho_{\max}(A)$ for fixed finite measures $\rho_{\min} \le \rho_{\max}$, $\rho_{\min}(\mathcal{E}) > 0$; and $B$ in a class $\mathcal{F}^\lambda(\mathfrak{c})$, $2^\lambda > \sup\mathcal{E}/\inf\mathcal{E}$, which requires among other things $\int_0^{r/2}x^{-1}B(2x)\,dx \le L$, $\int_{r/2}^{r}x^{-1}B(2x)\,dx \ge \ell$ and polynomial growth control, and ensures geometric ergodicity), take $h_n = c_0n^{-1/(2s+1)}$ and $\varpi_n \to 0$. For every $M > 0$ there are $c_0$ and $d(\mathfrak{c}) \ge 0$ such that for every $0 < s < n_0$ and every compact interval $\mathcal{D} \subset (d(\mathfrak{c}),\infty)$ with $\inf\mathcal{D} \ge r/2$,
+
 $$ \sup_{\rho,\ B \in \mathcal{F}^\lambda(\mathfrak{c})\cap\mathcal{H}^s(\mathcal{D},M)}\mathbb{E}_\mu\Big[\|\widehat B_n - B\|^2_{L^2(\mathcal{D})}\Big]^{1/2} \lesssim \varpi_n^{-1}(\log n)^{1/2}\,n^{-s/(2s+1)}, $$
+
 uniformly over initial laws $\mu$ with a finite second moment of the Lyapunov function.
 
 Up to logarithmic factors this is the classical nonparametric rate $n^{-s/(2s+1)}$ for $s$-Hölder functions. It improves on the rate $n^{-s/(2s+3)}$ obtained from indirect observation of the population size distribution, where $B$ appears as the solution of an ill-posed inverse problem. The method has been applied to single-cell *Escherichia coli* lineage data.

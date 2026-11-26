@@ -1,9 +1,11 @@
 # Logarithmic corrections to the replacement front in strong–weak Lotka–Volterra competition
 
 Consider the one-dimensional Lotka–Volterra competition–diffusion system
+
 $$
 u_t = u_{xx} + u(1-u-av),\qquad v_t = d\,v_{xx} + r\,v(1-v-bu),\qquad t>0,\ x\in\mathbb{R},
 $$
+
 in the **strong–weak** regime $0<a<1<b$, $d>0$, $r>0$: $u$ is the stronger competitor, $(1,0)$ is stable and $(0,1)$ is unstable for the kinetics. Take compactly supported initial data with $0\le u_0,v_0\le 1$, $u_0\not\equiv 0$, $v_0\not\equiv 0$.
 
 Notation:
@@ -19,12 +21,18 @@ For $\theta\in(0,1)$ let $X_\theta(t)=\sup\{x: u(t,x)\ge\theta\}$ be the rightmo
 **Theorem.** Exactly one of the following holds.
 
 1. **Strict nonlocal pulling**, $2<c_v<f(c^*)$:
+
 $$X_\theta(t)=c^{**}t-\frac{\tfrac32-\sqrt a\,\eta_v}{\lambda^{**}}\log t+O_\theta(1).$$
+
 2. **Pushed**, $c^*>c_{\min}$ and $c_v\ge f(c^*)$: $X_\theta(t)=c^*t+O_\theta(1)$, with no logarithmic correction.
 3. **Critical nonlocal line, pulled tail**, $c^*=c_{\min}$, $c_v=f(c_{\min})$, $1<b<b^*$:
+
 $$X_\theta(t)=c_{\min}t-\frac{\tfrac54-\tfrac12\sqrt a\,\eta_v}{\lambda_{\min}}\log t+O_\theta(1).$$
+
 4. **Critical nonlocal line at the transition**, $c^*=c_{\min}$, $c_v=f(c_{\min})$, $b=b^*$:
+
 $$X_\theta(t)=\begin{cases}c_{\min}t-\dfrac{1}{2\lambda_{\min}}\log t+O_\theta(1), & \sqrt a\,\eta_v<\tfrac12,\\[2mm] c_{\min}t-\dfrac{1}{2\lambda_{\min}}\log t+\dfrac{1}{\lambda_{\min}}\log\log t+O_\theta(1), & \sqrt a\,\eta_v=\tfrac12,\\[2mm] c_{\min}t+\dfrac{-\tfrac32+\sqrt a\,\eta_v}{2\lambda_{\min}}\log t+O_\theta(1), & \sqrt a\,\eta_v>\tfrac12.\end{cases}$$
+
 The resonance $\sqrt a\,\eta_v=\tfrac12$ is equivalent to $3d\sqrt a=\sqrt a+\sqrt{1-a}$.
 5. **Local pulling**, $c^*=c_{\min}$ and $c_v>f(c_{\min})$: $X_\theta(t)=c_{\min}t-\dfrac{3}{2\lambda_{\min}}\log t+O_\theta(1)$ if $1<b<b^*$, and $X_\theta(t)=c_{\min}t-\dfrac{1}{2\lambda_{\min}}\log t+O_\theta(1)$ if $b=b^*>1$.
 

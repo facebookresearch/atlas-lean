@@ -3,15 +3,23 @@
 **Setting.** Let $\nu_\ell$ be a uniformly random ranked tree-child network (RTCN) on $\ell$ labeled leaves. A *cherry* is a pair of leaves with a common parent; a *trident* (reticulated cherry) is a triple of leaves whose parents form a reticulation pattern created by a single reticulation event. Let $\kappa_\ell$ and $\chi_\ell$ be the numbers of cherries and tridents of $\nu_\ell$.
 
 **Theorem (cherries).** For all $\ell \ge 2$,
+
 $$\mathbb E[\kappa_\ell] = \frac{(3\ell-5)\,\ell}{12(\ell-1)(\ell-2)},$$
+
 the factorial moments satisfy $\mathbb E[\kappa_\ell(\kappa_\ell-1)\cdots(\kappa_\ell-n+1)] \to 4^{-n}$, and hence
+
 $$\kappa_\ell \xrightarrow[\ell\to\infty]{d} \mathrm{Poisson}(1/4).$$
+
 The factorial moments $m^n_\ell$ obey $m^n_{\ell+1} = \big(\frac{\ell-2n}{\ell}\big)^2 m^n_\ell + \frac{n(\ell-2n+2)}{\ell^2}\,m^{n-1}_\ell$.
 
 **Proposition (tridents).** The mean $\mu_\ell = \mathbb E[\chi_\ell]$ satisfies
+
 $$\mu_{\ell+1} = \Big(\frac{\ell-3}{\ell}\Big)^2\mu_\ell + \frac{\ell-1}{\ell},$$
+
 so $\mu_2 = 0$, $\mu_3 = 1/2$, $\mu_4 = 2/3$ and, for $\ell \ge 4$,
+
 $$\mu_\ell = \frac{(15\ell^3 - 85\ell^2 + 144\ell - 71)\,\ell}{105(\ell-1)(\ell-2)(\ell-3)}, \qquad \operatorname{Var}(\chi_\ell) = \frac{24}{637}\,\ell + \frac1{21} + o(1).$$
+
 Thus a uniform RTCN has only $O(1)$ cherries but about $\ell/7$ tridents, in contrast with uniform ranked trees, which have about $\ell/3$ cherries.
 
 ## Depends on

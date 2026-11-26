@@ -1,11 +1,15 @@
 # Traveling waves of the hyperbolic Keller–Segel equations with quorum sensing
 
 **Model.** The one-dimensional hyperbolic Keller–Segel system with quorum (logistic) sensitivity is
+
 $$\partial_t\sigma+\partial_x\big(\sigma(1-\sigma)\partial_xS\big)=0,\qquad -\partial_{xx}S+S=\sigma,\qquad x\in\mathbb R,$$
+
 for a cell volume fraction $\sigma\in[0,1]$ and chemical concentration $S$. Admissible weak solutions satisfy an entropy inequality $\partial_t\eta(\sigma)+\partial_x(\partial_xS\,q(\sigma))+(\sigma-S)(q-g\eta')(\sigma)\le0$ for convex entropy pairs. Consider one-sided far-field conditions, either vacuum $S(-\infty)=\sigma(-\infty)=0$ or non-vacuum $S(-\infty)=\sigma(-\infty)=\sigma_\infty\in(0,1]$.
 
 **Jump conditions.** Along a discontinuity curve $x=x(t)$ of an entropy solution, $S$ and $\partial_xS$ are continuous, the shock speed is
+
 $$x'(t)=\partial_xS\,(1-\sigma^+-\sigma^-),$$
+
 and the entropy condition requires $\partial_xS\le0$ if $\sigma^+>\sigma^-$ and $\partial_xS\ge0$ if $\sigma^+<\sigma^-$.
 
 **Theorem.** For every speed $c$ there are entropy traveling waves $\sigma(t,x)=\sigma_c(x-ct)$, $S(t,x)=S_c(x-ct)$.

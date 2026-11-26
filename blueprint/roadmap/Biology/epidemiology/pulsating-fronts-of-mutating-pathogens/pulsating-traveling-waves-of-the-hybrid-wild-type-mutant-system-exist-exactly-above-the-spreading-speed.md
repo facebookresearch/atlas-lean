@@ -1,10 +1,13 @@
 # Pulsating traveling waves of the hybrid wild-type–mutant system exist exactly above the spreading speed
 
 **Model.** Two pathogen strains (wild type $u$, mutant $v$) in an $L$-periodic environment, obtained from an SIS model with mutation:
+
 $$\begin{aligned}u_t&=(\sigma(x)u_x)_x+\big(r_u(x)-\kappa_u(x)(u+v)\big)u+\mu_v(x)v-\mu_u(x)u,\\ v_t&=(\sigma(x)v_x)_x+\big(r_v(x)-\kappa_v(x)(u+v)\big)v+\mu_u(x)u-\mu_v(x)v,\end{aligned}\qquad t>0,\ x\in\mathbb{R},$$
+
 with $L$-periodic continuous coefficients, $\sigma\in C^1$, $\sigma,\kappa_u,\kappa_v,\mu_u,\mu_v>0$ and growth rates $r_u,r_v$ of arbitrary sign. The system is cooperative through mutation and competitive through the shared crowding term, so it has no comparison principle.
 
 **Principal eigenvalues.** For $\lambda\in\mathbb{R}$, let $k(\lambda)$ be the principal eigenvalue of the linearization at $0$ acting on $\lambda$-exponentially weighted periodic pairs $(\varphi,\psi)>0$ (the $\lambda$-periodic principal eigenvalue), and let $\lambda_1^{per}=k(0)$. If $\lambda_1^{per}>0$, front-like data spread to the right at speed
+
 $$c_R^*=\min_{\lambda>0}\frac{k(\lambda)}{\lambda},\qquad\text{and to the left at}\qquad c_L^*=\min_{\lambda>0}\frac{k(-\lambda)}{\lambda}.$$
 
 A **right pulsating traveling wave** of speed $c>0$ is an entire solution with $u(t+L/c,x)=u(t,x+L)$, $v(t+L/c,x)=v(t,x+L)$, vanishing as $x\to+\infty$ and staying bounded away from $0$ as $x\to-\infty$.

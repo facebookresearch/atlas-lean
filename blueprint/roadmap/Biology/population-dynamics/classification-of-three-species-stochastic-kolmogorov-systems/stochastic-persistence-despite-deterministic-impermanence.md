@@ -1,6 +1,7 @@
 # Stochastic persistence despite deterministic impermanence
 
 Consider two competing prey $X_1,X_2$ sharing a predator $X_3$ that uses a **switching functional response**: it hunts each prey in proportion to that prey's relative abundance. The deterministic model is
+
 $$
 \begin{aligned}
 \dot X_1&=X_1\Bigl(r-X_1-\beta X_2-\tfrac{X_1}{X_1+X_2}X_3\Bigr),\\
@@ -8,12 +9,15 @@ $$
 \dot X_3&=X_3\Bigl(\tfrac{X_1^2+X_2^2}{X_1+X_2}-d-cX_3\Bigr),
 \end{aligned}
 $$
+
 with prey growth rate $r>0$, interspecific competition coefficient $\beta>0$, predator death rate $d$ and predator self-limitation $c>0$. The ODE is **permanent** if there is $m>0$ with $1/m\le\liminf_t\min_iX_i(t)\le\limsup_t\max_iX_i(t)\le m$ for every positive initial condition. The stochastic version adds independent environmental noise $\varepsilon X_i\,dB_i(t)$ to each equation.
 
 **Proposition (deterministic).** Let $\beta>1$. If
+
 $$
 \frac{r}{1+\beta}>d\qquad\text{and}\qquad \frac{r}{\beta}\bigl(1+c(1-\beta)\bigr)>d,
 $$
+
 the ODE is permanent. If either inequality is reversed, it is not permanent.
 
 **Proposition (stochastic).** Let $\beta>0$. If $\frac{r}{\beta}\bigl(1+c(1-\beta)\bigr)>d$ and $\varepsilon>0$ is sufficiently small, the stochastic system is strongly stochastically persistent: it has a unique invariant probability measure on $(0,\infty)^3$ that attracts all positive initial conditions.

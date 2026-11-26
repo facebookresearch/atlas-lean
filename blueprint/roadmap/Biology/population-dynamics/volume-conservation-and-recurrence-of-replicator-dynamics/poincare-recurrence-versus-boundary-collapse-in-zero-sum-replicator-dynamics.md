@@ -11,7 +11,9 @@
 **Theorem 9 (periodicity with three strategies).** For a one-population zero-sum game with $n = 3$ strategies and an interior Nash equilibrium, every interior non-equilibrium point lies on a periodic orbit.
 
 On the collapsed face both convergence and boundary cycling occur. For Rock-Paper-Scissors with a dominated fourth strategy,
+
 $$A = \begin{pmatrix} 0 & -1 & 1 & 10 \\ 1 & 0 & -1 & 10 \\ -1 & 1 & 0 & 10 \\ -10 & -10 & -10 & 0 \end{pmatrix},$$
+
 the unique Nash equilibrium is $(\tfrac13, \tfrac13, \tfrac13, 0)$; the source reports that the orbit from $(\tfrac14, \tfrac14, \tfrac14, \tfrac14)$ converges to it while the orbit from $(\tfrac{3}{16}, \tfrac{5}{16}, \tfrac14, \tfrac14)$ approaches a periodic orbit on the face $x_4 = 0$.
 
 ## Expansion

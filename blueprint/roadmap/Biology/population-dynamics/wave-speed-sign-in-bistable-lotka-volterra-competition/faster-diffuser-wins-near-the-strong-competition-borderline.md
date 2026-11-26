@@ -1,11 +1,15 @@
 # Faster diffuser wins near the strong-competition borderline
 
 **Setting.** For the Lotka–Volterra competition–diffusion system with diffusion rate $1$ for $u$ and $d$ for $v$, growth rates $1$ and $r$, and equal competition coefficient $k>1$ (strong competition, bistable), a travelling wave $(u,v)(x-st)$ solves
+
 $$u''+su'+u(1-u)-kuv=0,\qquad dv''+sv'+rv(1-v)-kuv=0,\qquad (u,v)(-\infty)=(0,1),\ (u,v)(+\infty)=(1,0),$$
+
 with a unique speed $s=s(d,r,k)$. The sign of $s$ decides the winner: $s>0$ means $v$ invades the region occupied by $u$. The speed is strictly increasing in $r\in(0,k)$, and there is a unique $r_c\in(0,k)$ with $s=0$.
 
 **Minimax characterization (prior result).** With
+
 $$R_H(u)=\frac{k\,uH(u)+dH'(u)\,u\,[1-u-kH(u)]+2dH''(u)\int_0^u t\,[1-t-kH(t)]\,dt}{H(u)(1-H(u))}$$
+
 over an admissible class $\Lambda$ of profiles $H$, $r_c=\inf_{H\in\Lambda}\sup_{u\in(0,1)}R_H(u)=\sup_{H\in\Lambda}\inf_{u\in(0,1)}R_H(u)$.
 
 **Theorems.** Let $d>1$ ($v$ diffuses faster) and $k=1+\theta$.

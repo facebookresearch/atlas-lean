@@ -1,11 +1,15 @@
 # Detailed balance excludes heteroclinic cycles in Wilson–Cowan networks
 
 **Model.** The spatially discrete Wilson–Cowan/Amari firing-rate system for $n$ neuronal populations is
+
 $$\dot x=-x+\sigma(Wx+b),\qquad x\in\mathbb R^n,$$
+
 with connectivity $W$, positive inputs $b$, and a smooth strictly increasing activation $\sigma:\mathbb R\to(-\alpha,\beta)$ applied componentwise. $W$ satisfies *detailed balance* if there are $\tau_i>0$ with $\tau_iW_{ij}=\tau_jW_{ji}$, i.e. $TW$ is symmetric for $T=\mathrm{diag}(\tau)$.
 
 **Theorem (Lyapunov function).** Under detailed balance,
+
 $$V(x)=\sum_{i=1}^n\tau_i\int_0^{x_i}\sigma^{-1}(s)\,ds-\tfrac12x^\top TWx-x^\top Tb$$
+
 is a strict Lyapunov function on $(-\alpha,\beta)^n$, so the network has no heteroclinic cycles and no nonconstant periodic orbits; this persists for small perturbations of $W$ outside a neighbourhood of the equilibria.
 
 **Theorem (prescribed sequential states).** Suppose $W$ is designed so that $n$ linearly independent activity patterns $\bar x_1,\dots,\bar x_n$ are equilibria, each with entries in $\{0,a_i\}$ for some $a_i\in(-\alpha,\beta)\setminus\{0\}$, and the vector $u^\top=\mathbf 1^\top\bar X^{-1}$ is positive. Then $W$ automatically satisfies detailed balance, so the network cannot cycle through these states. If moreover $\sigma'(s)<\sigma(s)/s<\sigma'(0)$ for $s\ne0$, each $\bar x_i$ has real Jacobian spectrum with at least $|S_i|$ stable and $n-|S_i|-1$ unstable directions, where $S_i$ is the active set of $\bar x_i$.

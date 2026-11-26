@@ -1,11 +1,15 @@
 # Sample complexity of ASTRAL-one under the DLCoal model
 
 **Method.** Given $k$ multi-labelled gene trees $t_1,\dots,t_k$ on species set $S$ with $|S|=n$, ASTRAL-one keeps one uniformly random copy per species in each $t_i$, giving $\tilde t_i$, and returns the species tree $\widetilde T$ maximizing the quartet score
+
 $$Q_k(\widetilde T)=\sum_{i=1}^k\ \sum_{\mathcal J=\{a,b,c,d\}}\mathbf 1\big(\widetilde T_{ext}^{\mathcal J},\tilde t_i^{\mathcal J}\big),$$
+
 where $\widetilde T_{ext}$ attaches all copies of a species at its leaf.
 
 **Theorem.** Suppose gene trees are generated i.i.d. under the DLCoal model (duplication rate $\lambda$, loss rate $\mu\ne\lambda$) on a species tree with finite minimum branch length $f$ (coalescent units) and depth $\Delta$. For every $\epsilon>0$ there are universal constants $C,C'>0$ such that exact ASTRAL-one returns the true unrooted species tree with probability at least $1-\epsilon$ whenever
+
 $$k\ \ge\ C'\,\frac1{f^2}\,\frac{e^{C|\mu-\lambda|\Delta}}{\big(1-\frac\lambda\mu\wedge\frac\mu\lambda\big)^{C}}\,\log\frac n\epsilon .$$
+
 Concretely, $k\ge\dfrac{2304\,\alpha^6}{\sigma^7\gamma^2}\log\dfrac n\epsilon$ suffices, with $\gamma=1-e^{-f}$, $\sigma$ the worst quartet survival probability and $\alpha$ the largest expected number of copies at a species-tree vertex.
 
 The bound grows both in the subcritical regime ($\mu/\lambda$ large: species often have no copy) and in the supercritical regime ($\lambda/\mu$ large: many copies at the ancestor of a quartet create conflicting gene quartets).

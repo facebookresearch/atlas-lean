@@ -3,15 +3,23 @@
 Let $B_n$ be the number of cherries (pairs of leaves adjacent to a common vertex) and $A_n$ the number of pitchforks (subtrees with exactly three leaves) of a random unrooted binary phylogenetic tree with $n$ leaves. Under the **PDA model** the tree is uniform over all $(2n-5)!!$ unrooted trees; under the **YHK model** it is grown by attaching each new leaf to a uniformly chosen pendant edge.
 
 **Theorem (PDA).** For $n\ge4$ and $1<k<n$,
+
 $$\mathbb{P}(B_{n+1}=k)=\frac{n+2k-3}{2n-3}\,\mathbb{P}(B_n=k)+\frac{n-2k+2}{2n-3}\,\mathbb{P}(B_n=k-1),$$
+
 and for $2\le k\le n/2$
+
 $$\mathbb{P}_{\mathrm{PDA}}(B_n=k)=\frac{n!\,(n-2)!\,(n-4)!\,2^{n-2k}}{(n-2k)!\,(2n-4)!\,k!\,(k-2)!}.$$
+
 Hence
+
 $$\mathbb{E}_{\mathrm{PDA}}(B_n)=\frac{n(n-1)}{2(2n-5)},\qquad \operatorname{Var}_{\mathrm{PDA}}(B_n)=\frac{n(n-1)(n-4)(n-5)}{2(2n-5)^2(2n-7)},$$
+
 and $\mathbb{E}_{\mathrm{PDA}}(A_n)=\dfrac{n(n-1)(n-2)}{2(2n-5)(2n-7)}$ for $n\ge6$.
 
 **Theorem (YHK).** For $n\ge4$ and $1<k<n$,
+
 $$\mathbb{P}(B_{n+1}=k)=\frac{2k}{n}\,\mathbb{P}(B_n=k)+\frac{n-2k+2}{n}\,\mathbb{P}(B_n=k-1),$$
+
 with $\mathbb{E}_{\mathrm{YHK}}(B_n)=\frac{n}{3}+\frac{4}{(n-1)(n-2)}$ ($n\ge4$), $\operatorname{Var}_{\mathrm{YHK}}(B_n)=\frac{2n}{45}-\frac{4(n^2-3n+14)}{3(n-1)^2(n-2)^2}$ ($n\ge5$), and $\mathbb{E}_{\mathrm{YHK}}(A_n)=\frac{n}{6}+\frac{4(2n-3)}{(n-1)(n-2)(n-3)}$ ($n\ge6$).
 
 **Theorem (log-concavity).** For $n\ge4$ and $2\le k\le n/2$ the unrooted cherry probability mass functions $\sigma_n(k)=\mathbb{P}_{\mathrm{PDA}}(B_n=k)$ and $\tau_n(k)=\mathbb{P}_{\mathrm{YHK}}(B_n=k)$ are strictly log-concave: $\sigma_n(k)^2>\sigma_n(k-1)\sigma_n(k+1)$ and likewise for $\tau_n$. For $n>8$, $\sigma_n$ increases strictly up to $\lceil n/4\rceil$ and decreases afterwards. Moreover $\tau_n(k)/\sigma_n(k)$ is strictly increasing in $k$ for $n\ge6$.

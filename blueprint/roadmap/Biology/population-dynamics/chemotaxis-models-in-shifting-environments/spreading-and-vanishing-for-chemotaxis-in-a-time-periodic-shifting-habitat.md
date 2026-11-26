@@ -1,9 +1,13 @@
 # Spreading and vanishing for chemotaxis in a time-periodic shifting habitat
 
 **Model.** A species $u$ that produces its own chemoattractant $v$ lives on $\mathbb R$ in a habitat whose suitability moves with a time-periodic speed:
+
 $$u_t=u_{xx}-\chi(uv_x)_x+u\bigl(r(t,x-s(t))-bu\bigr),\qquad 0=v_{xx}-\lambda v+\mu u,$$
+
 with positive constants $\chi,b,\lambda,\mu$ and $s'(t)$ continuous and $\omega$-periodic. Assume (H1): $r$ is globally Hölder, $\omega$-periodic in $t$, nondecreasing in $\xi$, with uniform limits $r(t,-\infty)<0<r(t,\infty)$; and (H2): $b>\chi\mu$ and $b\ge\Bigl(1+\frac12\frac{(\sqrt{r^*}-\sqrt\lambda)_+}{\sqrt{r^*}+\sqrt\lambda}\Bigr)\chi\mu$. Set
+
 $$c=\frac1\omega\int_0^\omega s'(t)\,dt,\qquad r^*=\frac1\omega\int_0^\omega r(t,\infty)\,dt,\qquad c^*=2\sqrt{r^*},$$
+
 and let $p(t)$ be the positive $\omega$-periodic solution of $p'=p\,(r(t,\infty)-bp)$. If $\chi\mu<b$, solutions with bounded uniformly continuous nonnegative data are global and bounded.
 
 **Theorem (compactly supported data).** Let $u_0\ge0$ have nonempty compact support.

@@ -1,6 +1,7 @@
 # Finite-time blow-up in the chemotaxis–May–Nowak system below the diffusion threshold
 
 **Model.** Let $\Omega \subset \mathbb{R}^n$ be a bounded smooth domain. Uninfected cells $u$, infected cells $v$ and free virus $w$ follow the quasilinear chemotaxis–May–Nowak system
+
 $$
 \begin{cases}
 u_t = \nabla\cdot\big((1+u)^{m-1}\nabla u\big) - \chi\nabla\cdot(u\nabla v) - u - uw + \varphi, \\
@@ -9,6 +10,7 @@ w_t = \Delta w - w + v,
 \end{cases}
 \qquad x \in \Omega,\ t > 0,
 $$
+
 with homogeneous Neumann conditions, $\chi > 0$, $m > 0$, and $\tau \in \{0,1\}$ ($\tau = 0$: parabolic–elliptic–parabolic; $\tau = 1$: fully parabolic). Uninfected cells are attracted to infected ones, infection $uw$ converts $u$ into $v$, and $\varphi \in C^\alpha(\overline\Omega\times[0,\infty))$ with $0 \le \varphi \le \varphi_*$ is the cell supply. Initial data $u_0, w_0 \in W^{2,\infty}(\Omega)$ are nonnegative, not identically zero, with zero normal derivative (and likewise $v_0$ when $\tau = 1$).
 
 **Theorem.** Take $\tau = 0$, $\Omega = B_R(0)$ and $\varphi$ radial in space.

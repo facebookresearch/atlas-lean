@@ -3,6 +3,7 @@
 **Group-based models.** For a finite abelian group $G$ of order $\kappa$ and a rooted binary tree $T$, a group-based model has edge transition matrices $M^e_{g,h}=f_e(g-h)$; in Fourier coordinates its parametrization is monomial, $q_{g_1,\dots,g_n}=\prod_e a^e_{\sum_{i\in A_e}g_i}$ when $\sum_ig_i=0$ (and $0$ otherwise), where $A_e$ is one side of the split of $e$. The Cavender–Farris–Neyman (CFN) model is $G=\mathbb Z/2$ and the Kimura 3-parameter (K3P) model is $G=\mathbb Z/2\times\mathbb Z/2$. Let $V_T$ be the Zariski closure of the model on $T$.
 
 **Mixtures.** The 2-tree mixture model on $\{T_1,T_2\}$ is the set of distributions $\pi p_1+(1-\pi)p_2$ with $p_i$ in the model on $T_i$; its closure is the join variety $V_{T_1}\ast V_{T_2}$. The tree parameters are *generically identifiable* if for every two distinct multisets $\{T_1,T_2\}\ne\{S_1,S_2\}$ of $n$-leaf trees
+
 $$\dim\big((V_{T_1}\ast V_{T_2})\cap(V_{S_1}\ast V_{S_2})\big)<\min\big(\dim V_{T_1}\ast V_{T_2},\ \dim V_{S_1}\ast V_{S_2}\big).$$
 
 **Theorem.**

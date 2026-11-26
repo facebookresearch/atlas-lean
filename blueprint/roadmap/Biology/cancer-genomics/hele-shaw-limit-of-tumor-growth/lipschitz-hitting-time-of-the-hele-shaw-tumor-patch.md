@@ -14,7 +14,9 @@ where $V$ is the outward normal velocity of the free boundary (Darcy's law). In 
 
 **Theorem.**
 1. (General source) Under these hypotheses, $\partial\{p>0\} = \{(x,T(x)) : x \in O\}$ with $O = T^{-1}((0,\infty))$, and $T$ is continuous. For each $\tau > 0$ there are $L < \infty$ and $\varepsilon > 0$ depending only on $d$, $r_0$, $\tau$, $\inf c$, $\|\nabla_x c\|_\infty$ and $\|(\partial_t c)^-\|_{L^1L^\infty}$ such that
+
 $$|T(x) - T(y)| \le L|x-y| \qquad \text{whenever } \min\{T(x),T(y)\} < \tau,\ |x-y| < \varepsilon.$$
+
 Moreover the pressure is linearly nondegenerate: $\sup_{B_r(x)} p(\cdot,t) \ge \kappa r$ for $x \in \partial\Omega_t$, $0<t<\tau$, $0<r<r_*$.
 2. (Tumor model) Let $d \in \{1,2,3\}$ and let $(\rho,p,c)$ be a patch solution of the density-nutrient system with $\Omega_0^+$ bounded and satisfying (IB), and $c_0 \in W^{2,\infty}(\mathbb{R}^d)$ with $\inf c_0 > 0$. Then the nutrient satisfies all the source hypotheses, so the tumor's hitting time is locally Lipschitz on $\{T < \infty\}$.
 3. (No-collision times) If at time $t_0$ the patch has no collision-type singular points, then on a time interval around $t_0$, $T$ is $C^1$, the space-time free boundary is a $C^1$ hypersurface, and its singular points are exactly the points where $\nabla T = 0$, i.e. where the normal velocity of the patch diverges.

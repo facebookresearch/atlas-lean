@@ -3,7 +3,9 @@
 **Setting.** In the planar free-boundary model of a vascularized tumor, with quasi-steady nutrient $\Delta u=u$, Robin vascular exchange $\partial_nu+\alpha(u-\phi(t))=0$, Darcy pressure $-\Delta p=\mu(u-\psi(t))$, curvature boundary condition $p=\kappa$ and normal velocity $V_n=-\partial_np$, let the supply $\phi$ and demand $\psi$ be positive $T$-periodic with $\bar\phi>\bar\psi$, so that a unique radially symmetric $T$-periodic solution $(u_\ast,p_\ast,R_\ast)$ exists. Perturb the boundary as $r=R_\ast(t)+\varepsilon\rho(\theta,t)$ and linearize.
 
 **Theorem.** Assume the stronger pointwise condition $\phi_\ast=\min_t\phi(t)>\psi^\ast=\max_t\psi(t)$. Then there is $\mu_\ast>0$ such that for every aggressiveness $0<\mu<\mu_\ast$ the periodic radial solution is linearly stable: there are constants $a_1,b_1$ and $C,\delta>0$ with
+
 $$\big|\rho(\theta,t)-\big(a_1\cos\theta+b_1\sin\theta\big)\big|\le Ce^{-\delta t}\qquad(t\to\infty).$$
+
 The mode $n=1$ is not damped because it is a translation of the tumor center.
 
 Under only the averaged condition $\bar\phi>\bar\psi$ the periodic solution exists, but no $\mu$-independent positive lower bound on $R_\ast$ is available, and linear stability is open.

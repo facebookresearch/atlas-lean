@@ -1,10 +1,13 @@
 # Threshold stability of the network SIRS model
 
 **Setting.** Network SIRS model on populations $i\in\mathcal V$ with irreducible interaction matrix $W\ge 0$, recovery rates $\gamma_i>0$ and loss-of-immunity rates $\delta_i>0$:
+
 $$\dot y=[\mathbf 1-y-z]\,W y-[\gamma]y,\qquad \dot z=[\gamma]y-[\delta]z,\qquad x=\mathbf 1-y-z ,$$
+
 with $R_0=\rho([\gamma]^{-1}W)$ and (for $R_0>1$) unique endemic equilibrium $(x^\ast,y^\ast,z^\ast)$, $y^\ast>\mathbf 0$. Let $\bar v>\mathbf 0$ be the left Perron eigenvector of $[\gamma]^{-1}W$ and $V=\bar v^{\mathsf T}[\gamma]^{-1}y$.
 
 **Lyapunov identity.** Along solutions,
+
 $$\dot V=(R_0-1)\,\bar v^{\mathsf T}y-\bar v^{\mathsf T}[\gamma]^{-1}[y+z]\,Wy .$$
 
 **Theorem.**

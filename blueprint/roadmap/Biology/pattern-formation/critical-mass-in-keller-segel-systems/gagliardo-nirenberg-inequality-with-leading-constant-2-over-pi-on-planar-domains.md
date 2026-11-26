@@ -3,11 +3,15 @@
 **Setting.** Let $\Omega \subset \mathbb{R}^2$ be a bounded domain with smooth boundary. On the whole plane, the sharp Gagliardo–Nirenberg–Sobolev inequality reads $\pi \int_{\mathbb{R}^2} v^6 \le \left(\int_{\mathbb{R}^2} v^4\right)\left(\int_{\mathbb{R}^2} |\nabla v|^2\right)$ for $v \in W^{1,2}(\mathbb{R}^2)$.
 
 **Relative isoperimetry at small volume.** For every $\varepsilon > 0$ there is $\mathfrak{s} \in (0,|\Omega|]$ such that every finite-perimeter set $E \subset \Omega$ with $|E| \le \mathfrak{s}$ satisfies
+
 $$ \mathscr{P}_\Omega(E)^2 \ge (2\pi - \varepsilon)\,|E|, $$
+
 where $\mathscr{P}_\Omega(E)$ is the perimeter of $E$ relative to $\Omega$ (boundary of $E$ lying on $\partial\Omega$ is not counted). The constant $2\pi$ is half the planar isoperimetric constant $4\pi$: the worst small sets are half-discs sitting on a smooth boundary.
 
 **Theorem.** For every $\varepsilon > 0$ there is $C > 0$ such that
+
 $$ \int_\Omega f^6 \le \left(\frac{2}{\pi} + \varepsilon\right)\left(\int_\Omega f^4\right)\left(\int_\Omega |\nabla f|^2\right) + C\left(\int_\Omega f^4\right)^{3/2} $$
+
 for all nonnegative $f \in C^1(\overline\Omega)$.
 
 The leading constant $2/\pi$ is twice the whole-plane constant $1/\pi$, mirroring the halving of the isoperimetric constant at the boundary.

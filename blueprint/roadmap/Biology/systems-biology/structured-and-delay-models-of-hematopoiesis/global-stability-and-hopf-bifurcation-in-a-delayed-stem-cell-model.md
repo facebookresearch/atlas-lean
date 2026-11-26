@@ -1,8 +1,11 @@
 # Global stability and Hopf bifurcation in a delayed stem-cell model
 
 **Model.** Hematopoietic stem cells are proliferating ($P$) or resting ($N$); both die at rate $\delta$; resting cells enter proliferation at rate $\beta(S)$, which depends on the total stem-cell population $S=P+N$; a proliferating phase lasts $\tau$ and ends with division into two resting cells. Then
+
 $$\frac{dS}{dt}=-\delta S(t)+e^{-\delta\tau}\beta\bigl(S(t-\tau)\bigr)N(t-\tau),$$
+
 $$\frac{dN}{dt}=-\delta N(t)-\beta\bigl(S(t)\bigr)N(t)+2e^{-\delta\tau}\beta\bigl(S(t-\tau)\bigr)N(t-\tau),$$
+
 with $\beta$ positive, decreasing and tending to zero (e.g. a Hill function). Nonnegative data give nonnegative global solutions.
 
 **Steady states.** If $(2e^{-\delta\tau}-1)\beta(0)>\delta$, there are exactly two steady states, $E^0=(0,0)$ and $E^*=(S^*,N^*)$ with $(2e^{-\delta\tau}-1)\beta(S^*)=\delta$ and $N^*=(2e^{-\delta\tau}-1)e^{\delta\tau}S^*$; otherwise $E^0$ is the only one.

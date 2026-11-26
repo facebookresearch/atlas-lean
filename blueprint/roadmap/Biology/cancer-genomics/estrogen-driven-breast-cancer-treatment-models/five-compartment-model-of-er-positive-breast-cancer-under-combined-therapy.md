@@ -1,10 +1,15 @@
 # Five-compartment model of ER-positive breast cancer under combined therapy
 
 **Model.** Normal cells $N$, tumor cells $T$, immune cells $I$, estrogen $E$ and an immunotherapy agent $M$ evolve by
+
 $$\dot N=N(a_1-b_1N)-\frac{d_1TN}{1+\epsilon T}-l_1NE(1-k),$$
+
 $$\dot T=T(a_2d-b_2T)-g_1IT-m_dT+l_1NE(1-k),$$
+
 $$\dot I=s+\frac{rIT}{o+T}-g_2IT-mI-\frac{l_3IE}{g+E}(1-k)+\frac{p_MIM}{j_M+M},$$
+
 $$\dot E=p(1-k)-\theta E,\qquad \dot M=v_M(t)-n_MM+\frac{\chi MI}{\xi+I}.$$
+
 Here $k\in[0,1]$ is the efficacy of endocrine therapy (blocking estrogen production and action), $d$ is the ketogenic-diet dose modulating tumor growth, $m_d$ is the tumor death rate due to nutrient starvation, $l_1NE$ is estrogen-induced transformation of normal cells (DNA damage), $d_1TN/(1+\epsilon T)$ is saturated tumor damage to normal tissue, $s$ is the immune source, the Michaelis–Menten terms describe tumor-stimulated immune recruitment and immunotherapy activation, and $v_M$ is the immunotherapy dosing schedule.
 
 **Results.**

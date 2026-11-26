@@ -1,9 +1,13 @@
 # Endemic steady states of age-structured SIR with fomite transmission
 
 **Model.** In a stationary population with age density $U(a)$ on $(0, a_m)$ (net reproduction rate one), let $\overline{S}, \overline{I}, \overline{R}$ be the age-specific proportions susceptible, infected and recovered. Infection arrives by direct contact, with age-dependent transmission kernel $r(a,b) \in L^\infty$, and by indirect contact with contaminated surfaces (fomites) at age-specific rate $c(a) \ge 0$; $b(a)$ is the recovery rate. The steady states solve
+
 $$\frac{d\overline{S}}{da} = -(\lambda(a) + c(a))\overline{S}, \qquad \frac{d\overline{I}}{da} = (\lambda(a) + c(a))\overline{S} - b(a)\overline{I}, \qquad \overline{S}(0) = 1,\ \overline{I}(0) = 0,$$
+
 with force of infection $\lambda(a) = \int_0^{a_m} r(a,\eta)U(\eta)\overline{I}(\eta)\,d\eta$. Eliminating $\overline{S}, \overline{I}$ turns this into the fixed-point equation $\lambda = \Phi(\lambda)$ on the positive cone of $L^1(0,a_m)$,
+
 $$\Phi(\psi)(a) = \int_0^{a_m}\phi(a,\sigma)\big(\psi(\sigma) + c(\sigma)\big)e^{-\int_0^\sigma(\psi + c)}\,d\sigma, \qquad \phi(a,\sigma) = \int_\sigma^{a_m} r(a,\zeta)U(\zeta)e^{-\int_\sigma^\zeta b}\,d\zeta.$$
+
 Assume (A1) $r$ is $L^1$-continuous under translation in its first argument; (A2) $r(a,b) \ge m > 0$ for $b$ in an interval $(a_m - \alpha, a_m)$; (A3) $c > 0$ a.e. on some interval $(a_1, a_2)$.
 
 **Theorem (existence; no disease-free state).** Under (A1)–(A3), $\Phi$ maps a closed ball $\{\psi \in L^1_+ : \|\psi\|_1 \le M\}$ into itself and is completely continuous, so by Schauder's theorem it has a fixed point. Since $\lambda \ge \Phi(0) = \int_0^{a_m}\phi(\cdot,\sigma)c(\sigma)e^{-\int_0^\sigma c}\,d\sigma > 0$, every steady state has a strictly positive force of infection: as long as fomites transmit, there is no disease-free steady state.

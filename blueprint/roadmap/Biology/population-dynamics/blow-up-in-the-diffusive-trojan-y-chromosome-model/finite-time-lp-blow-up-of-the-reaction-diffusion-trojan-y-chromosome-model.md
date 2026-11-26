@@ -7,7 +7,9 @@ $$\partial_t f = \Delta f + \tfrac12 \beta L f m - \delta f, \qquad \partial_t m
 on $\Omega \times (0,\infty)$ with homogeneous Neumann conditions $\nabla f \cdot n = \nabla m \cdot n = \nabla s \cdot n = 0$ on $\partial\Omega$ and positive initial data $(f(\cdot,0), m(\cdot,0), s(\cdot,0))$.
 
 **Theorem 3.1 (blow-up without releases).** If $\mu = 0$, there exist positive initial data for which the solution blows up in finite time:
+
 $$\limsup_{t \to T^{*}} \|f(\cdot,t)\|_{L^p(\Omega)} = +\infty \quad\text{and}\quad \limsup_{t \to T^{**}} \|m(\cdot,t)\|_{L^p(\Omega)} = \infty$$
+
 for some finite $T^{*}$, $T^{**}$ and every $p \ge 1$.
 
 **Theorem 3.2 (blow-up driven by releases).** If $\mu > 0$, then for every positive initial datum there is a threshold $\mu^{*}$ such that for every $\mu > \mu^{*}$ the solution blows up in finite time in the same sense, for every $p \ge 1$.
@@ -19,7 +21,9 @@ The thresholds obtained in the proofs are not claimed to be sharp; numerical exp
 ## Expansion
 
 The mechanism is inherited from the spatially homogeneous system. The reaction term of the male equation at $m = 0$ is $\beta f s\,(1 - (f+s)/K)$, which is negative once $f + s > K$, so the quasi-positivity condition for invariance of the nonnegative cone fails and $m$ can become negative on a time interval $[T_1, T_2]$. Writing $m = -\tilde m$ with $\delta_1 < \tilde m < \delta_2$ there and integrating the female equation over $\Omega$ (the Laplacian integrates to zero under Neumann conditions), the term $\tfrac{\beta}{2K} f^2 \tilde m$ dominates. With $F(t) = \int_\Omega f\,dx$ and Jensen's or Hölder's inequality this gives a Riccati-type inequality
+
 $$F'(t) \ge c_1 F(t)^2 - c_2 F(t), \qquad c_1, c_2 > 0,$$
+
 so $F$, the $L^1$ norm of $f$, blows up in finite time once $F(0)$ exceeds an explicit threshold; since $\Omega$ is bounded, the $L^p$ norms for $p \ge 1$ blow up too. With releases, $s$ approaches $\mu/\delta$, and the extra positive contribution $\tfrac{\beta}{2K} f \tilde m s$ supplies the required growth once $\mu$ is large, independently of the size of the initial data.
 
 The result shows that the well-posedness defect of the classical Trojan Y-chromosome model is not a lumped-model artifact: diffusion alone does not restore positivity, so any eradication analysis built on this model presupposes positivity that is not guaranteed.

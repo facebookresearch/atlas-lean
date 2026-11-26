@@ -5,6 +5,7 @@ Let $\mathcal T=\{T_1,\dots,T_t\}$ be rooted binary phylogenetic trees on a comm
 **Cherry picking sequences.** $\{x,y\}$ is a *cherry* of a tree if $x$ and $y$ are siblings; it is a cherry of $\mathcal T$ if it is a cherry of some tree, and a *trivial cherry* if it is a cherry of every tree that contains both $x$ and $y$. Applying a pair $(x,y)$ removes $x$ (and suppresses the parent of $y$) in each tree where $\{x,y\}$ is a cherry. A sequence $S=\langle(x_1,y_1),\dots,(x_r,y_r),(x_{r+1},-)\rangle$ is a *tree-child cherry picking sequence* for $\mathcal T$ if it reduces every tree to the single leaf $x_{r+1}$ and $y_j\ne x_i$ for all $i<j$. Its weight is $w(S)=|S|-|X|$. Linz and Semple showed $h_{tc}(\mathcal T)=\min_Sw(S)$, and a tree-child network $N$ displaying $\mathcal T$ with $h(N)\le w(S)$ can be built from $S$ in linear time.
 
 **Theorem.** Given $t$ binary $X$-trees with $|X|=n$ and an integer $k$, one can decide whether $h_{tc}(\mathcal T)\le k$ and, if so, output a tree-child cherry picking sequence of weight at most $k$ and a tree-child network displaying $\mathcal T$ with at most $k$ reticulations, in time
+
 $$O\big((8k)^k\,nt\log t+nt\log(nt)\big).$$
 
 The key structural facts are:

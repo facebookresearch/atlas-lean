@@ -1,7 +1,9 @@
 # Time-reversible models are uniformization stable
 
 **Setting.** For a strictly positive distribution $\pi=(\pi_1,\dots,\pi_n)$ let $D(\pi)=\mathrm{diag}(\pi)$. A rate matrix $Q=(q_{ij})$ is time-reversible with respect to $\pi$ if it satisfies detailed balance $\pi_iq_{ij}=\pi_jq_{ji}$, i.e. $D(\pi)Q=Q^TD(\pi)$. Define
+
 $$\mathrm{GTR}_\pi=\{Q\in\mathcal L_n: D(\pi)Q=Q^TD(\pi)\},\qquad \mathrm{GTR}_\pi^+=\mathrm{GTR}_\pi\cap\mathcal L_n^+,$$
+
 and the general time-reversible model $\mathrm{GTR}^+=\bigcup_\pi\mathrm{GTR}_\pi^+$, where $\mathcal L_n$ are the zero row sum matrices and $\mathcal L_n^+$ the rate matrices.
 
 **Lemma.** For any fixed $D\in\mathrm{Mat}_n(\mathbb R)$, $\mathrm{Comm}^T(D)=\{A: DA=A^TD\}$ is a Jordan subalgebra of $\mathrm{Mat}_n(\mathbb R)$. Hence $\mathrm{GTR}_\pi=\mathrm{Comm}^T(D(\pi))\cap\mathcal L_n$ is a Jordan algebra.

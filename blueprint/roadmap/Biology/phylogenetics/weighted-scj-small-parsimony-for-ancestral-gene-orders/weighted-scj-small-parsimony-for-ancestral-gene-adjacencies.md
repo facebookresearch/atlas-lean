@@ -3,7 +3,9 @@
 **Setting.** Genomes are encoded by *adjacencies*: unordered pairs $\{a,b\}$ of extremities (heads or tails) of distinct markers (genes) that are neighbors on a chromosome. A set of adjacencies is *consistent*, that is free of *conflicts*, if no extremity lies in two adjacencies. Given a rooted species tree $T = (V,E)$ with $n$ leaves labeled by consistent adjacency sets $\mathcal{A}_l$ of $N$ markers, the **Small Parsimony Problem** under the Single-Cut-or-Join (SCJ) distance labels the internal nodes with consistent adjacency sets so as to minimize the total number of adjacency gains and losses along the branches. For SCJ alone this is solvable in polynomial time.
 
 **Weighted SCJ labeling problem.** Each candidate ancestral adjacency $a$ at internal node $v$ carries a weight $w_{v,a} \in [0,1]$, for instance from ancient DNA reads or a probabilistic analysis of adjacency evolution. For a labeling $\lambda$, let $p_{v,a} = 1$ iff $a \in \lambda(v)$, and $c_{v,a} = 1$ iff $a$ is gained or lost on the branch above $v$. For $\alpha \in [0,1]$, an *optimal weighted SCJ labeling* is a conflict-free labeling minimizing
+
 $$ D(\lambda,T) = \sum_{v,a}\Big(\alpha\,(1 - p_{v,a})\,w_{v,a} + (1 - \alpha)\,c_{v,a}\Big), $$
+
 a convex combination of the weight of discarded ancestral adjacencies and the SCJ evolutionary cost.
 
 **Theorem.**

@@ -7,7 +7,9 @@ For the planar parabolic–elliptic Keller–Segel equation $\partial_t u=\Delta
 1. *Subcritical, $M<8\pi$.* The solution is global and converges to the unique radial self-similar expander $\Psi_M$ of mass $M$: $u(t,x)=\frac{1}{t+1}\Psi_M\big(\frac{x}{\sqrt{t+1}}\big)+\tilde u$ with $(1+t)^{\alpha}\big(\|\tilde u\|_{L^1}+t\|\tilde u\|_{L^\infty}\big)\to0$ for some $\alpha>0$.
 2. *Critical, $M=8\pi$.* The solution is global and $u=\lambda^{-2}U((x-x(t))/\lambda)+\tilde u$ with $\lambda(t)=\sqrt{\mu/(8\pi)}\,(1+o(1))/\sqrt{\ln t}$ and $(1+t)^{1-\epsilon}\big(\|\tilde u\|_{L^1}+\lambda^2\|\tilde u\|_{L^\infty}\big)\to0$ for every $\epsilon>0$ (infinite-time concentration).
 3. *Supercritical, $M>8\pi$.* The solution blows up in finite time $T<\infty$ by concentrating one bubble at the origin, $u=\lambda^{-2}U(x/\lambda)+\tilde u$, at the universal type II rate
+
 $$\lambda(t)=2e^{-1-\gamma/2}\sqrt{T-t}\,\exp\!\Big(-\sqrt{\tfrac{|\log(T-t)|}{2}}\Big)(1+o(1)),$$
+
 where $\gamma$ is the Euler–Mascheroni constant, with $\lim_{R\to0}\sup_{[0,T)}\|\tilde u\|_{L^1(|x|<R)}=0$ and $\lambda^2\|\tilde u\|_{L^\infty}\to0$.
 
 ## Depends on

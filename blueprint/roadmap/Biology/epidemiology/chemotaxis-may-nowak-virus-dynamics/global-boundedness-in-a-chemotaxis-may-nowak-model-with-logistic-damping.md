@@ -9,7 +9,9 @@ w_t=\Delta w-w+v,
 where $u$ are uninfected cells, $v$ infected cells and $w$ free virus; $\chi\in\mathbb{R}$, $\mu>0$, $\alpha>0$, $k\in[0,1)$, $\gamma\in\{0,1\}$, and the source $\kappa\in C^1(\bar\Omega\times[0,\infty))$ is nonnegative with $\|\kappa\|_{L^\infty}\le\kappa_*$. The chemotactic term (attractive or repulsive, depending on the sign of $\chi$) couples cell motion to infected-cell density.
 
 **Theorem (parabolic case, $\gamma=1$).** For suitably regular nonnegative initial data, the system has a unique global classical solution, positive in $\bar\Omega\times(0,\infty)$, with
+
 $$\sup_{t>0}\Bigl(\|u(t)\|_{L^\infty}+\|v(t)\|_{W^{1,\infty}}+\|w(t)\|_{L^\infty}\Bigr)<\infty,$$
+
 in each of the cases
 - (A) $n=2$, $k\in[0,1)$, $\alpha=1$, $\mu>0$ (sub-logistic damping $u^2/\ln^k(u+e)$ suffices in the plane);
 - (B) $3\le n\le5$, $k=0$, $\alpha=1$, $\mu>\mu_0$ for some $\mu_0>0$;

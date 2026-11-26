@@ -5,7 +5,9 @@
 For a pair $(c,i)$ let $D_{(c,i)}$ be the set of states of character $c$ descending from $(c,i)$ in $T$, $f^+_p(D)=\sum_{l\in D}f_{p,(c,l)}$ the cumulative frequency, and $\delta(c,i)$ the children of $(c,i)$ in $T$.
 
 **Theorem (multi-state sum condition).** $T$ generates $\mathcal F$ iff for all pairs $(c,i)$ and samples $p$,
+
 $$f^+_p(D_{(c,i)})-\sum_{(d,j)\in\delta(c,i)}f^+_p(D_{(d,j)})\ge0,$$
+
 and then the usage matrix is unique: $u_{p,(c,i)}$ equals the left-hand side.
 
 **Theorem (ancestry-graph characterization).** Build the multi-state ancestry graph $G_{\mathcal F}$ with a vertex per pair and an edge $(c,i)\to(d,j)$ labelled $(D,D')$ for every valid descendant-set pair, i.e. $f^+_p(D)\ge f^+_p(D')$ in all samples (with $D'\subsetneq D$ when $c=d$). Then $T$ generates $\mathcal F$ iff $T$ is a *threaded* spanning tree of $G_{\mathcal F}$ (adjacent edges agree on the shared descendant set, and descendant sets of the same character are nested exactly along ancestry) satisfying the sum condition.

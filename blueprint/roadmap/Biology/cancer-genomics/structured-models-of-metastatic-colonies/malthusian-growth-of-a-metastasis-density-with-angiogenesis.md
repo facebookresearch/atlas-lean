@@ -1,7 +1,9 @@
 # Malthusian growth of a two-dimensional metastasis density with angiogenesis
 
 **Model.** Each metastasis is described by its size $x$ and its angiogenic capacity $\theta$ (the carrying capacity set by its vasculature), and grows by the Hahnfeldt–Panigrahy–Folkman–Hlatky dynamics
+
 $$\dot X=G(X),\qquad G(x,\theta)=\Big(ax\ln\frac{\theta}{x},\ cx-d\theta x^{2/3}\Big),$$
+
 restricted to the square $\Omega=(1,b)^2$, on whose boundary $\Gamma$ the field $G$ points inward and vanishes at the corner $(b,b)$. The density $\rho(t,x,\theta)$ of metastases satisfies the transport equation with a nonlocal birth boundary condition
 $$\begin{cases}\partial_t\rho+\operatorname{div}(G\rho)=0,& (x,\theta)\in\Omega,\\[2pt]
 -G\cdot\nu\,\rho(t,\sigma)=N(\sigma)\displaystyle\int_\Omega\beta(x,\theta)\rho(t,x,\theta)\,dx\,d\theta+f(t,\sigma),&\sigma\in\Gamma,\\[2pt]
@@ -12,9 +14,12 @@ where $\beta$ is the emission rate of new metastases, $N$ the distribution of th
 
 1. (Well-posedness) For $\rho^0\in L^1(\Omega)$ and $f\in L^1((0,\infty)\times\Gamma)$ there is a unique weak solution $\rho=e^{tA}\rho^0+\mathcal Tf\in C([0,\infty);L^1(\Omega))$. Here $A$ generates a positive semigroup with $\|e^{tA}\|\le e^{t\|\beta\|_\infty}$; its natural domain uses the space $W^{\rm div}(\Omega)=\{V\in L^1:\operatorname{div}(GV)\in L^1\}$, and $\rho\ge0$ when $\rho^0,f\ge0$.
 2. (Malthus parameter) If $\int_0^\infty\int_\Gamma\beta(\Phi_\tau(\sigma))N(\sigma)\,d\sigma\,d\tau>1$, there is a unique $\lambda_0>0$ with
+
 $$\int_0^\infty\int_\Gamma\beta(\Phi_\tau(\sigma))N(\sigma)e^{-\lambda_0\tau}\,d\sigma\,d\tau=1,$$
+
 and a unique positive eigentriple $(\lambda_0,V,\Psi)$ of $A$ and $A^*$, with $V(\Phi_\tau(\sigma))=C\,N(\sigma)e^{-\lambda_0\tau}|J_\Phi(\tau,\sigma)|^{-1}$.
 3. (Asymptotic behavior) If moreover $\beta-\mu\Psi\ge0$ for some $\mu>0$, then with $m(t)=\int_\Omega\rho^0\Psi+\int_0^te^{-\lambda_0s}\int_\Gamma f\Psi$,
+
 $$\big\|\rho(t)e^{-\lambda_0t}-m(t)V\big\|_{L^1_\Psi}\le e^{-\mu t}\Big(\|\rho^0-m(0)V\|_{L^1_\Psi}+2\int_0^te^{-(\lambda_0-\mu)s}\int_\Gamma|f|(s,\sigma)\Psi(\sigma)\,d\sigma\,ds\Big).$$
 
 ## Expansion

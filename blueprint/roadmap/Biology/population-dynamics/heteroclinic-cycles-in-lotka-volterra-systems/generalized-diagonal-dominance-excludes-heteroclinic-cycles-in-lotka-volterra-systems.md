@@ -1,7 +1,9 @@
 # Generalized diagonal dominance excludes heteroclinic cycles in Lotka–Volterra systems
 
 **Model.** For $N$ interacting species,
+
 $$ \dot u_i = u_i\Big(b_i + \sum_{j=1}^N a_{ij}u_j\Big), \qquad i = 1,\dots,N, \qquad \mathbf{u} \in \mathbb{R}^N_{\ge 0}, $$
+
 with intrinsic growth vector $\mathbf{b} \in \mathbb{R}^N$ and interaction matrix $A$ with negative self-interactions $a_{ii} < 0$. At a nonnegative equilibrium $\mathbf{x}$ the invasion rate of species $i$ is $r_i(\mathbf{x}) = b_i + (A\mathbf{x})_i$.
 
 **Three graphs on equilibria.** For distinct nonnegative equilibria $\mathbf{x}, \mathbf{y}$ with supports $I, J$:
@@ -17,7 +19,9 @@ with intrinsic growth vector $\mathbf{b} \in \mathbb{R}^N$ and interaction matri
 3. the semiflow is gradient with respect to its equilibria: some continuous $\mathcal{L}$ strictly decreases along every nonequilibrium trajectory, and the $\alpha$-limit of each bounded complete orbit is a single equilibrium.
 
 No hyperbolicity is assumed. Concretely, if $\mathbf{w} > 0$ satisfies $M^{\mathsf T}\mathbf{w} > 0$ for the comparison matrix $M$ ($M_{ii} = |a_{ii}|$, $M_{ij} = -|a_{ij}|$), then $V_{\mathbf{w}}(\mathbf{x}) = \mathbf{w}^{\mathsf T}r(\mathbf{x})$ satisfies
+
 $$ V_{\mathbf{w}}(\mathbf{y}) - V_{\mathbf{w}}(\mathbf{x}) \le -(M^{\mathsf T}\mathbf{w})^{\mathsf T}|\mathbf{y} - \mathbf{x}| < 0 $$
+
 along every weak-graph edge $\mathbf{x} \to \mathbf{y}$ (with bound $-\|\mathbf{y} - \mathbf{x}\|_1$ for $\mathbf{w} = M^{-\mathsf T}\mathbf{1}$), so a cycle would have to strictly decrease a function back to its starting value.
 
 **Connections without hyperbolicity.** For every Volterra–Lyapunov stable $A$, $\mathbf{x} \to \mathbf{y}$ in the connection graph iff $r_j(\mathbf{x}) > 0$ for $j \in J\setminus I$ and $r_i(\mathbf{y}) \le 0$ for $i \in I\setminus J$. Hence invasion graph $\subseteq$ connection graph $\subseteq$ weak graph, with equality when all equilibria are hyperbolic.

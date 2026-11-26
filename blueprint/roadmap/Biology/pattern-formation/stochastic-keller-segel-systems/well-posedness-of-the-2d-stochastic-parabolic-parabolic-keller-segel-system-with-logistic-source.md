@@ -1,12 +1,14 @@
 # Well-posedness of the 2D stochastic parabolic–parabolic Keller–Segel system with logistic source
 
 **Model.** Let $\mathcal{O} \subset \mathbb{R}^2$ be a bounded smooth domain with outward normal $\mathbf{n}$, and let $W_1, W_2$ be independent cylindrical Wiener processes on $L^2(\mathcal{O})$. The cell density $n$ and chemoattractant $c$ satisfy, for $t \in [0,T]$, $x \in \mathcal{O}$,
+
 $$
 \begin{aligned}
 dn - \Delta n\,dt + \chi\nabla\cdot(n\nabla c)\,dt &= (\alpha n - \mu n^2)\,dt + g_1(n)\,dW_1(t),\\
 dc - \Delta c\,dt &= (n - c)\,dt + g_2(c)\,dW_2(t),
 \end{aligned}
 $$
+
 with $\mathbf{n}\cdot\nabla n = \mathbf{n}\cdot\nabla c = 0$ on $\partial\mathcal{O}$, where $\chi > 0$, $\alpha \in \mathbb{R}$ (net birth rate) and $\mu > 0$ (logistic damping). The noise is multiplicative and in non-divergence form.
 
 **Assumptions.**

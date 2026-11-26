@@ -5,11 +5,17 @@
 **Theorem.**
 1. *(Two genomes.)* For $x,y,z\in S_n$, $z\in M(\{x,y\})$ iff $\mathcal{A}_{x,y}\subseteq\mathcal{A}_z\subseteq\mathcal{A}_x\cup\mathcal{A}_y$.
 2. *(Sandwich.)* If $m\in S_n$ satisfies
+
 $$\bigcup_{i<j}\mathcal{A}_{x_ix_j}\ \subseteq\ \mathcal{A}_m\ \subseteq\ \bigcup_{x\in X}\mathcal{A}_x,$$
+
 then $m\in M(X)$ and
+
 $$\mu(X)=(k-1)(n-1)-\sum_{r=1}^k(r-1)\sum_{|U|=r}|\mathcal{B}^X_U| .$$
+
 3. *(Bounds.)* For every $X$, with $\lambda_n(X)=\sum_{r}(r-1)\sum_{|U|=r}|\mathcal{B}^X_U|$ and $\upsilon_n(X)=\max_i\sum_{j\ne i}|\mathcal{A}_{ij}|$,
+
 $$(k-1)(n-1)-\lambda_n(X)\ \le\ \mu(X)\ \le\ (k-1)(n-1)-\upsilon_n(X).$$
+
 4. *(Tree search spaces.)* The rooted labeled trees built by extending prefixes only through adjacencies allowed by local constraints derived from $X$ are connected, contain $X$ among their leaves, contain every breakpoint median, and every leaf genome $y$ satisfies $0\le d_T(y,X)-\mu(X)\le\lambda_n(X)$.
 
 ## Expansion

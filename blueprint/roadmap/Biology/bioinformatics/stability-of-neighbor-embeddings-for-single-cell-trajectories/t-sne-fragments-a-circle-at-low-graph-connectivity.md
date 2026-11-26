@@ -1,7 +1,9 @@
 # t-SNE fragments a circle at low graph connectivity
 
 **Setting.** t-SNE embeds points $x_1,\dots,x_n$ (e.g. single-cell expression profiles along a continuous trajectory) as $y_1,\dots,y_n\in\mathbb{R}^2$ by maximizing
+
 $$C^*(y)=\sum_{i\ne j}p_{ij}\log q_{ij},\qquad q_{ij}=\frac{(1+\|y_i-y_j\|^2)^{-1}}{\sum_{k\ne l}(1+\|y_k-y_l\|^2)^{-1}},$$
+
 where the input affinities $p_{ij}$ have an effective neighborhood size (graph connectivity parameter, controlled by perplexity). In the prototypical case of the discrete unit circle $P_n=\{(\cos\frac{2\pi i}{n},\sin\frac{2\pi i}{n})\}_{i\le n}$ take $k$-nearest-neighbor affinities $p_{ij}=1/(2nk)$ for neighbors and $0$ otherwise. A map $\phi$ is **bilipschitz** with scaling $S>0$ and distortion $L\ge1$ if $S\le\|\phi(x)-\phi(x')\|/\|x-x'\|\le SL$ for all $x\ne x'$.
 
 **Theorem (t-SNE artifact).** Let $\phi^*$ be an optimal t-SNE embedding of $P_n$ with these affinities and $k=O(1)$ as $n\to\infty$. If $\phi^*$ is bilipschitz with scaling factor $S(\phi^*)=n^\tau$ for some $0<\tau<1$, then its distortion is unbounded: $L(\phi^*)\to\infty$ as $n\to\infty$. So with connectivity fixed while the sample grows, the optimal embedding of a smooth closed curve must tear it into pieces with gaps.

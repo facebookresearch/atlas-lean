@@ -1,9 +1,13 @@
 # Convergence of doubly parabolic Keller–Segel to the parabolic–elliptic system as $\tau\to0$
 
 **Models.** In $\mathbb{R}^2$ consider the parabolic–elliptic system (PE) and the doubly parabolic system (PP) with parameter $\tau>0$:
+
 $$\text{(PE)}\ \ u_t=\Delta u-\nabla\cdot(u\nabla\varphi),\ \ \Delta\varphi+u=0;\qquad \text{(PP)}\ \ u_t=\Delta u-\nabla\cdot(u\nabla\varphi),\ \ \tau\varphi_t=\Delta\varphi+u,\ \ \varphi(0)=0,$$
+
 both with $u(0)=u_0$. Here $u$ is a cell density and $\varphi$ a chemoattractant concentration; $\tau$ measures how slowly the chemical relaxes. Define the space-time decay norm and the critical data space
+
 $$\|u\|_{\mathcal{X}}=\operatorname*{ess\,sup}_{t>0,\,x\in\mathbb{R}^2}(t+|x|^2)\,|u(x,t)|,\qquad \|u_0\|_E=\|e^{t\Delta}u_0\|_{\mathcal{X}} .$$
+
 $E$ contains the Dirac mass and embeds in the weak Hardy space $\mathcal{H}^1_w$, so its elements may be nonintegrable.
 
 **Theorem.**

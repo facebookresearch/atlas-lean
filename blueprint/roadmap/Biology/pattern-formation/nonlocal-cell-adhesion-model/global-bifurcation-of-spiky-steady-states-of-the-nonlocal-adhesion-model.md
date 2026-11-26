@@ -1,13 +1,19 @@
 # Global bifurcation of spiky steady states of the nonlocal adhesion model
 
 **Model.** On the circle $S^1_L$ of length $L>2$ (sensing radius normalized to $1$, diffusion to $1$), the Armstrong–Painter–Sherratt nonlocal adhesion model for a cell density $u(x,t)$ is
+
 $$u_t = u_{xx} - \alpha\,\big(u\,\mathcal K[u]\big)_x, \qquad \mathcal K[u]\,(x) = \int_{-1}^{1} h\big(u(x+r)\big)\,\Omega(r)\,dr,$$
+
 with adhesion strength $\alpha$, adhesive force function $h$, and an odd kernel $\Omega(r) = \operatorname{sign}(r)\,\omega(r)$, where $\omega \ge 0$ is even, $\omega \in L^1 \cap L^\infty(0,1)$, $\|\omega\|_{L^1(0,1)} = \tfrac12$, and
+
 $$M_n(\omega) = \int_0^1 \sin\!\Big(\frac{2\pi n r}{L}\Big)\,\omega(r)\,dr > 0$$
+
 for infinitely many $n$. Steady states solve $u'' = \alpha\,(u\,\mathcal K[u])'$ on $S^1_L$ with prescribed mean $\bar u > 0$; the constant $\bar u$ is a solution for every $\alpha$.
 
 **Local bifurcation.** For each $n$ with $M_n(\omega)>0$, the constant state bifurcates at
+
 $$\alpha_n = \frac{n\pi}{\bar u\, h'(\bar u)\, L\, M_n(\omega)}, \qquad e_n(x) = \cos\!\Big(\frac{2\pi n x}{L}\Big),$$
+
 and near $(\alpha_n,\bar u)$ all nontrivial steady states lie on a curve $u_n(x,s) = \bar u + s\,\alpha_n e_n(x) + o(s)$ (Crandall–Rabinowitz).
 
 **Theorem (global bifurcation, linear adhesion $h(u)=u$).** Restrict to the space $H^2_{\Sigma_n}$ of $L/n$-periodic, even functions (dihedral symmetry $\Sigma_n$). The steady-state set contains a closed connected continuum $\mathcal C \subset \mathbb R \times H^2_{\Sigma_n}$ such that

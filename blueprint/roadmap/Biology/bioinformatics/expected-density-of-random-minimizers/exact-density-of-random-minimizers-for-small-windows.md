@@ -5,10 +5,15 @@
 **General formula.** If a $(w+k)$-string $v$ contains $t$ distinct $k$-mers, the probability that a random order makes the last window of $v$ select a new position is $P_{\sigma,k}(v)=2/t$ if the $k$-suffix of $v$ occurs only once in $v$, and $1/t$ otherwise. Hence $\mathcal{R}_\sigma(k,w)=\sigma^{-(w+k)}\sum_{v\in\Sigma^{w+k}}P_{\sigma,k}(v)$, computable in $O(k\sigma^{w+k})$ time and $O(w+k)$ space.
 
 **Theorem ($w\le k$).** If $w\le k$,
+
 $$\mathcal{R}_\sigma(k,w)=\frac{2}{w+1}+\frac{\mathrm{dev}_\sigma(w)}{\sigma^{w+k}},$$
+
 $$\mathrm{dev}_\sigma(w)=\sum_{t=1}^{w}\frac1t\Bigl(\mathrm{Prim}_\sigma(t)+\sum_{p=1}^{t-1}\mathrm{Prim}_\sigma(p)\,\sigma^{t-p}\Bigl(2t-2p+1-\frac{4t-4p-1}{\sigma}+\frac{2t-2p-2}{\sigma^2}\Bigr)\Bigr)-\frac{2}{w+1}\sum_{p=1}^{w}\mathrm{Prim}_\sigma(p)\,\sigma^{w-p}\Bigl(w-p+1-\frac{w-p}{\sigma}\Bigr),$$
+
 which does not depend on $k$. So $\mathcal{R}_\sigma(k,w)$ is computable in $O(w^2)$ time independently of $\sigma$ and $k$ (the paper also gives an $O(w\log w)$ evaluation), and
+
 $$\mathcal{R}_\sigma(k+1,w)=\frac{2}{w+1}+\frac1\sigma\Bigl(\mathcal{R}_\sigma(k,w)-\frac{2}{w+1}\Bigr),$$
+
 so for fixed $w$ the density tends to $2/(w+1)$ at exact exponential rate $\sigma$ as $k\to\infty$.
 
 **Theorem (sign of the deviation).** For every $\sigma\ge2$ there are $w_\sigma,w'_\sigma\ge11$ such that $\mathcal{F}_\sigma(k,w)>2$ for $2\le w\le\min\{w_\sigma,k\}$, while $\mathcal{F}_\sigma(k,w)<2$ for $w'_\sigma\le w\le k$, with $2-\mathcal{F}_\sigma(k,w)=\Theta\bigl(1/(w\sigma^k)\bigr)$. Thus random minimizers beat the folklore $2/(w+1)$ by a tiny margin once $w$ is moderately large.

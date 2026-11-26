@@ -11,7 +11,9 @@ dv &= \big[\Delta v - \chi_2\nabla\cdot(v\nabla w) + \mu_2v(1 - v^{\zeta_2} - a_
 The noise coefficients are globally Lipschitz as $\ell^2$-valued maps, vanish at $0$ (no noise on an extinct species) and grow at most linearly; all deterministic coefficients are positive.
 
 **Theorem.** Assume superquadratic self-damping and at least linear competition,
+
 $$\zeta_1 > 2, \qquad \zeta_2 > 2, \qquad \eta_1 \ge 1, \qquad \eta_2 \ge 1,$$
+
 and nonnegative $\mathcal{F}_0$-measurable initial data $u_0, v_0 \in C(\overline{\mathcal{O}})$, $w_0 \in W^{1,\infty}(\mathcal{O})$ with finite moments of all orders.
 1. (Global solutions) There is a unique global adapted nonnegative mild solution, with $u, v \in L^1(\Omega; C([0,T]; C(\overline{\mathcal{O}})))$ and $w \in L^1(\Omega; C([0,T]; W^{1,q}(\mathcal{O})))$ for every $T > 0$, $q > n$.
 2. (Continuous dependence) If initial data $X_{0,k} \to X_0$ in $L^p(\Omega;\mathcal{X}_q)$, $p \ge 2$, with the same coefficients and Wiener processes and uniformly bounded expected sup-norms, then $X_k \to X$ in probability in $C([0,T];\mathcal{X}_q)$.

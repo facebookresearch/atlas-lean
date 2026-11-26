@@ -1,7 +1,9 @@
 # Mean-field limit of the Stevens two-species chemotaxis particle system
 
 **Target equation.** The doubly parabolic Keller–Segel system on $\mathbb R^2$,
+
 $$\partial_t\rho=\Delta\rho-\chi\nabla\cdot(\rho\nabla c),\qquad \theta\partial_tc=\Delta c-\lambda c+\rho,$$
+
 with $\rho_0$ a probability measure, $c_0\in L^1\cap L^\infty$ nonnegative, sensitivity $\chi>0$, time-scale ratio $\theta>0$ and decay rate $\lambda\ge0$.
 
 **Particle system (2SKS).** $N$ cells start i.i.d. with law $\rho_0$ and about $NM\|c_0\|_{L^1}$ chemoattractant particles start i.i.d. with law $c_0/\|c_0\|_{L^1}$. Each cell emits chemoattractant particles at its own position according to a Poisson process of rate $M/\theta$; each chemoattractant particle moves as a Brownian motion with diffusion coefficient $\sqrt{2/\theta}$ and dies at rate $\lambda/\theta$. Each cell moves as a Brownian motion with diffusion coefficient $\sqrt2$ plus the drift $\chi\,(\nu_t*\nabla\phi_\varepsilon)(X^i_t)$, where $\nu_t$ is the chemoattractant empirical measure normalized by $NM$ and $\phi_\varepsilon$ is a mollifier at scale $\sqrt\varepsilon$.

@@ -1,7 +1,9 @@
 # Population collapse in Elite-dominated HANDY-type models
 
 **Setting.** The HANDY model of Motesharrei, Rivas and Kalnay couples a human population, split into Commoners $C$ (who produce wealth) and Elites $E$ (who consume it at a higher rate), to natural resources and accumulated wealth. The analysis replaces its explicit equations by a generic system for total food resources $B$,
+
 $$B'=B\,R_B(B,C,E),\qquad C'=C\,R_C(B,C,E),\qquad E'=E\,R_E(B,C,E),$$
+
 with $B,C,E>0$, subject to qualitative hypotheses:
 
 - **H$_1$** $R_B,R_C,R_E$ are $C^1$ and $(B,C,E)$ is a solution;

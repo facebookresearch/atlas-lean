@@ -1,9 +1,11 @@
 # Binary-explainable BMGs are characterized by consistency of the extended informative triples
 
 Let $(\vec G,\sigma)$ be a properly vertex-colored digraph on the gene set $L$, with colors denoting species. It is a **best match graph (BMG)** if some leaf-colored tree $(T,\sigma)$ *explains* it: $(x,y)$ is an arc iff $\sigma(x)\ne\sigma(y)$ and $y$ is a closest relative of $x$ in $T$ (minimal last common ancestor) among the genes of color $\sigma(y)$. The graph is **sf-colored** (sink-free) if every vertex has an out-neighbor of every other color. Its **informative** and **forbidden** triples are
+
 $$\mathscr{R}=\{ab|b':\sigma(a)\ne\sigma(b)=\sigma(b'),\ (a,b)\in E,\ (a,b')\notin E\},\qquad \mathscr{F}=\{ab|b':\sigma(a)\ne\sigma(b)=\sigma(b'),\ b\ne b',\ (a,b),(a,b')\in E\}.$$
 
 A BMG is **binary-explainable** if a binary (fully resolved) tree explains it. Define the extended informative triple set
+
 $$\mathscr{R}_{\mathrm{bin}}(\vec G,\sigma)=\mathscr{R}(\vec G,\sigma)\cup\{bb'|a:\ ab|b'\in\mathscr{F}(\vec G,\sigma),\ \sigma(b)=\sigma(b')\}.$$
 
 **Theorem.** A properly colored digraph $(\vec G,\sigma)$ is binary-explainable if and only if (i) it is sf-colored and (ii) $\mathscr{R}_{\mathrm{bin}}$ is consistent (displayed by some tree). In that case every refinement of the Aho tree $\mathrm{Aho}(\mathscr{R}_{\mathrm{bin}},L)$ explains $(\vec G,\sigma)$, and a binary explaining tree can be constructed, or its nonexistence certified, in $O(|L|^3\log^2|L|)$ time.

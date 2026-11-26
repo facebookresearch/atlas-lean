@@ -1,11 +1,15 @@
 # Optimal control of a logistic Keller–Segel system through its taxis flux
 
 **State system.** On a bounded $C^2$ domain $\Omega\subset\mathbb{R}^2$, $\Omega_T=\Omega\times(0,T)$, with Neumann conditions,
+
 $$\partial_tu-D_u\Delta u+\nabla\cdot(f\,u\nabla v)=ru-\mu u^2,\qquad \partial_tv-D_v\Delta v+\alpha v=\beta u,$$
+
 where $u$ is the cell density, $v$ the chemoattractant, and the control $f(x,t)$ is the chemotactic sensitivity, taken in the admissible set $\mathcal{F}=\{f\in L^4(\Omega_T):\xi_1\le f\le\xi_2\text{ a.e.}\}$ for given bounds $\xi_1\le\xi_2$ in $L^\infty$.
 
 **Cost.**
+
 $$J(u,v,f)=\gamma_u\int_0^T\|u-u_d\|_{L^2}^2dt+\gamma_{\mathrm{taxis}}\int_0^T\|f\,u\nabla v\|_{L^2}^2dt+\gamma_f\int_0^T\|f\|_{L^4}^4dt+\gamma_T\|u(T)-u_T\|_{L^2}^2,$$
+
 combining tracking of a target density $u_d$, penalization of the taxis flux, control cost and a terminal target $u_T$.
 
 **Theorems.**
@@ -13,8 +17,11 @@ combining tracking of a target density $u_d$, penalization of the taxis flux, co
 $u\in L^\infty(0,T;L^4)\cap L^2(0,T;H^1)$, $\partial_tu\in L^2(0,T;(H^1)')$, $v\in C([0,T];W^{3/2,4}_{\mathbf n})\cap L^4(0,T;W^{2,4})$, $\partial_tv\in L^4(\Omega_T)$, bounded by a constant depending on the data and the bounds of $\mathcal{F}$.
 2. *(Existence of optimal controls.)* The problem $\min J$ over admissible triples has at least one solution.
 3. *(First-order conditions.)* At a local optimum $(\tilde u,\tilde v,\tilde f)$ there is a Lagrange multiplier $(\lambda,\eta)\in L^2(0,T;H^1)\times L^{4/3}(\Omega_T)$ solving the backward adjoint system
+
 $$-\partial_t\lambda-D_u\Delta\lambda-\tilde f\nabla\tilde v\cdot\nabla\lambda-r\lambda+2\mu\tilde u\lambda-\beta\eta=2\gamma_u(\tilde u-u_d)+2\gamma_{\mathrm{taxis}}|\tilde f|^2\tilde u|\nabla\tilde v|^2,$$
+
 $$-\partial_t\eta-D_v\Delta\eta+\alpha\eta+\nabla\cdot(\tilde f\tilde u\nabla\lambda)=-2\gamma_{\mathrm{taxis}}\nabla\cdot(|\tilde f|^2|\tilde u|^2\nabla\tilde v),$$
+
 with Neumann and terminal conditions, together with a variational inequality characterizing $\tilde f$ over the critical cone of $\mathcal{F}$.
 
 ## Expansion

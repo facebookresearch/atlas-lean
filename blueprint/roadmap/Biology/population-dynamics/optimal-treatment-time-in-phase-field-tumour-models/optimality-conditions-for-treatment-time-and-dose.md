@@ -10,9 +10,13 @@ q &= \Delta p, \qquad -\partial_tr = \Delta r - \mathcal{B}r - \mathcal{C}h(\var
 with homogeneous Neumann conditions and zero terminal data at $\tau_*$ (the signs follow from the weak form in the source).
 
 **Theorem (first-order necessary conditions).** Let $(u_*, \tau_*)$ be a minimizer with state $(\varphi_*, \mu_*, \sigma_*)$ and adjoint $(p, q, r)$. Then
+
 $$\int_0^T\!\!\int_\Omega\beta_uu_*(u - u_*) - \int_0^{\tau_*}\!\!\int_\Omega\alpha h(\varphi_*)p\,(u - u_*) \ge 0 \qquad \text{for all } u \in \mathcal{U}_{\mathrm{ad}},$$
+
 so, extending $p$ by zero after $\tau_*$, $u_*$ is the $L^2(Q)$-projection of $\beta_u^{-1}\alpha h(\varphi_*)p$ onto $[0,1]$. Moreover, with
+
 $$G(\tau) = \beta_T + \frac{\beta_Q}{2}\|(\varphi_* - \varphi_Q)(\tau)\|^2_{L^2} + \frac{\beta_S}{2r}\int_\Omega\big(\varphi_*(\tau) - \varphi_*(\tau - r)\big) + \frac{\beta_\Omega}{2r}\Big(\|(\varphi_* - \varphi_\Omega)(\tau)\|^2_{L^2} - \|(\varphi_* - \varphi_\Omega)(\tau - r)\|^2_{L^2}\Big),$$
+
 the optimal time satisfies $G(\tau_*) \ge 0$ if $\tau_* = 0$, $G(\tau_*) = 0$ if $\tau_* \in (0,T)$, and $G(\tau_*) \le 0$ if $\tau_* = T$.
 
 ## Expansion

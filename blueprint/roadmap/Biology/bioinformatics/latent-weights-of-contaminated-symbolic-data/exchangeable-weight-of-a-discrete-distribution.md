@@ -1,11 +1,15 @@
 # Exchangeable weight of a discrete distribution
 
 **Latent weight.** Let $\mathcal{P}$ be the probability measures on a finite set $\Omega$ and $\mathcal{Q}\subseteq\mathcal{P}$ a model class. The *latent weight* of $\mathcal{Q}$ in $P\in\mathcal{P}$ is
+
 $$\lambda_{\mathcal{Q}}(P)=\sup\{\lambda:\ P\ge\lambda Q\text{ pointwise for some }Q\in\mathcal{Q}\},$$
+
 the largest fraction of $P$ that can be explained by a model in $\mathcal{Q}$ when the rest is arbitrary contamination: $P=\lambda Q+(1-\lambda)R$. For closed $\mathcal{Q}$: $\lambda_{\mathcal{Q}}(P)=1$ iff $P\in\mathcal{Q}$, and $\lambda_{\mathcal{Q}}(P)=\sup_{Q\in\mathcal{Q}}\min_{\omega}P(\omega)/Q(\omega)$, with the supremum attained.
 
 **Exchangeable weight.** Take $\Omega=\mathcal{X}^d$ (for example $d$ CpG sites read on one DNA fragment, $\mathcal{X}$ = methylated/unmethylated) and $\mathcal{Q}=\mathcal{E}$, the exchangeable distributions. For $x\in\mathcal{X}^d$ let $[x]$ be its orbit under coordinate permutations. Then
+
 $$\lambda_{\mathcal{E}}(P)=\sum_{x\in\mathcal{X}^d}\min_{y\in[x]}P(y)=\sum_{z\in[\mathcal{X}^d]}|z|\cdot\min_{x\in z}P(x),$$
+
 and if $\lambda_{\mathcal{E}}(P)>0$ the exchangeable component is unique: $Q(x)=\min_{y\in[x]}P(y)/\lambda_{\mathcal{E}}(P)$.
 
 **Properties.**

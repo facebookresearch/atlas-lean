@@ -1,18 +1,22 @@
 # Finite-time extinction of the stronger competitor under sublinear interference
 
 Consider the two-species Lotka–Volterra competition model in which the interference term felt by $u$ is sublinear in $u$:
+
 $$
 \frac{du}{dt}=a_1u-b_1u^2-c_1u^{p}v,\qquad \frac{dv}{dt}=a_2v-b_2v^2-c_2u v^{q},\qquad 0<p\le1,\ 0<q\le1,
 $$
+
 with positive constants $a_i,b_i,c_i$. The classical model is $p=q=1$. For $0<p<1$ the right-hand side is not Lipschitz at $u=0$, so $u$ can reach $0$ in finite time (finite-time extinction, FTE).
 
 **Exclusion case.** Suppose $\dfrac{a_1}{a_2}>\max\Bigl\{\dfrac{b_1}{c_2},\dfrac{c_1}{b_2}\Bigr\}$, so that in the classical model $(a_1/b_1,0)$ attracts every positive solution and $u$ excludes $v$. Take $q=1$.
 
 1. There is $p\in(0,1)$ for which an interior saddle equilibrium $E_3$ exists. The $u$-nullcline $v=u^{1-p}(a_1-b_1u)/c_1$ crosses the unchanged $v$-nullcline.
 2. **Theorem (FTE of the stronger competitor).** Let $0<p<1$ and let $u(0)>0$, $v(0)>0$ with $u(0)\le a_1/b_1$. If
+
 $$
 v(0)>f(u(0)),\qquad f(u)=\frac{a_1c_2+(1-p)a_1b_1}{(1-p)\,c_1b_1}\,u^{1-p},
 $$
+
 then $u$ goes extinct in finite time and the trajectory approaches $(0,a_2/b_2)$. If instead $(u(0),v(0))$ lies below the stable manifold $W^s(E_3)$, the trajectory converges to $(a_1/b_1,0)$.
 
 So the classically dominant species loses from initial conditions where the weaker species starts abundant enough.

@@ -2,13 +2,17 @@
 
 **Setting.** A stochastic reaction network on $\mathbb{Z}^d$ with reactions $k=1,\dots,R$, reaction vectors $\zeta_k$ and intensities $\lambda_k$ (for $X$) or $\tilde\lambda_k$ (for $Z$, e.g. perturbed parameters) has the random time-change representation $X(t)=X(0)+\sum_kY_k\big(\int_0^t\lambda_k(X(s))\,ds\big)\zeta_k$ with independent unit-rate Poisson processes $Y_k$. Couplings of $X$ and $Z$ reduce the variance of finite-difference sensitivity and multilevel Monte Carlo estimators.
 - **Split coupling (SC):** with $r_{1k}=\lambda_k(X)\wedge\tilde\lambda_k(Z)$, $r_{2k}=\lambda_k(X)-r_{1k}$, $r_{3k}=\tilde\lambda_k(Z)-r_{1k}$,
+
 $$X_{\rm sc}(t)=X(0)+\sum_k\Big[Y_{1k}\Big(\int_0^tr_{1k}\Big)+Y_{2k}\Big(\int_0^tr_{2k}\Big)\Big]\zeta_k,\qquad Z_{\rm sc}(t)=Z(0)+\sum_k\Big[Y_{1k}\Big(\int_0^tr_{1k}\Big)+Y_{3k}\Big(\int_0^tr_{3k}\Big)\Big]\zeta_k,$$
+
 so the two processes share the jumps counted by $Y_{1k}$.
 - **Common reaction path (CRP):** both processes use the same $Y_k$, $X$ through $\int\lambda_k(X)$ and $Z$ through $\int\tilde\lambda_k(Z)$. Once the internal clocks drift apart the processes decouple, and estimator variance often approaches that of independent samples.
 - **Local CRP on a partition** $\pi_n=\{0=s_0<s_1<\cdots\}$: on each interval $[s_m,s_{m+1})$ fresh unit Poisson processes $Y^n_{km}$ are started and shared by $X$ and $Z$, which re-synchronizes the clocks at every $s_m$.
 
 **Theorem.** Assume $X$ and $Z$ are non-explosive. If $\operatorname{mesh}(\pi_n)\to0$, then
+
 $$\big(X^{\pi_n}_{\rm crp},Z^{\pi_n}_{\rm crp}\big)\Longrightarrow\big(X_{\rm sc},Z_{\rm sc}\big)$$
+
 weakly in the product Skorokhod topology on $D_{\mathbb{R}^d}[0,\infty)^2$. More generally the same holds for any splitting of the intensities into nonnegative parts $r_{1k}+r_{2k}$ for $X$ and $r_{1k}+r_{3k}$ for $Z$: local CRP with shared clocks for these rates converges to the corresponding split-type coupling.
 
 ## Expansion

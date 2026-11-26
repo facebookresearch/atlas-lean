@@ -3,10 +3,13 @@
 **Setting.** A rooted binary phylogenetic $X$-tree is *balanced* if $|X|=2^m$ and its height is $m$ (a complete binary tree with labelled leaves). For trees $\mathcal S,\mathcal T$ on the same leaf set and $Y\subseteq X$, $\mathcal S|Y$ is an *agreement subtree* if the restrictions $\mathcal S|Y$ and $\mathcal T|Y$ (minimal subtrees on $Y$ with degree-two vertices suppressed) are isomorphic as leaf-labelled trees; $\mathrm{mast}(\mathcal S,\mathcal T)$ is the largest such $|Y|$. Martin and Thatte conjectured that two balanced trees on $n$ leaves always satisfy $\mathrm{mast}\ge n^{1/2}$.
 
 **Theorem (counterexample).** For every $c>0$ there are balanced rooted binary phylogenetic $X$-trees $\mathcal S,\mathcal T$, $n=|X|$, with
+
 $$\mathrm{mast}(\mathcal S,\mathcal T)<c\,n^{1/2}.$$
+
 Explicitly, for every positive integer $k$ there are balanced trees on $|X|=2^{2^{k+1}-k-2}$ leaves with $\mathrm{mast}(\mathcal S,\mathcal T)=2^{2^k-k}$; since $(2^{2^{k+1}-k-2})^{1/2}=2^{2^k-k/2-1}$, the ratio $\mathrm{mast}/n^{1/2}=2^{1-k/2}\to0$.
 
 **Theorem (lower bound).** For any two balanced rooted binary phylogenetic $X$-trees with $n=|X|$,
+
 $$\mathrm{mast}(\mathcal S,\mathcal T)\ge n^{0.17}>n^{1/6}.$$
 
 ## Expansion

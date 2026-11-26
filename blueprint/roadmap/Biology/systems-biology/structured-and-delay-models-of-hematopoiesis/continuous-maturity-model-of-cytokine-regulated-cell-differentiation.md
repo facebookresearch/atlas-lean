@@ -1,7 +1,9 @@
 # Continuous-maturity model of cytokine-regulated cell differentiation
 
 **Model.** Stem cells $w(t)$ self-renew at a net rate $\alpha(v)$ regulated by a cytokine signal $v(t)$; progenitors $u(x,t)$ mature continuously along a maturity variable $x\in[0,x^*]$ at speed $g(x,v)$ while proliferating at rate $p(x)$; fully mature cells leaving at $x^*$ feed the signal, which decays at rate $\mu$:
+
 $$\frac{dw}{dt}=\alpha(v)w,\qquad \partial_tu+\partial_x\bigl[g(x,v)u\bigr]=p(x)u,\qquad u(0,t)=w(t),\qquad \frac{dv}{dt}=g(x^*,v)\,u(x^*,t)-\mu v .$$
+
 Assume $g_x,g_{xx}$ bounded, $p\in C^1$, $\alpha$ continuous and decreasing with values in $[\alpha_\infty,\alpha(0)]$ and $\alpha_\infty<0$, and $0<g_-\le g\le g_+$. The model is the continuum limit of the multi-compartment hematopoiesis model with many intermediate compartments.
 
 **Theorem.**
@@ -11,7 +13,9 @@ Assume $g_x,g_{xx}$ bounded, $p\in C^1$, $\alpha$ continuous and decreasing with
 4. *(Steady state)* A strictly positive steady state exists iff $\alpha(0)>0$, and it is unique.
 
 **Stability.** If $g=g(x)$ does not depend on $v$, linearization gives the delay-type characteristic equation
+
 $$\lambda^2+\mu\lambda=\mu\bar v\,\alpha'(\bar v)\,e^{-\tau\lambda},\qquad \tau=\int_0^{x^*}\frac{ds}{g(s)},$$
+
 and for $1<\tau\bar v|\alpha'(\bar v)|<\pi/2$ a Hopf bifurcation occurs at a single value $\mu_0>0$ of the decay rate; further bifurcations occur when $\tau\bar v|\alpha'(\bar v)|>2k\pi+\pi/2$. For the rates inherited from the discrete compartment model, $g(x,v)=2\bigl[1-\frac{a(x)}{1+kv}\bigr]p(x)$ with self-renewal fraction $a(0)=a_w>\frac12$, the steady state is locally linearly stable when $g$ is independent of $x$ and $p$ is constant; a non-decreasing proliferation rate can destabilize it.
 
 ## Expansion

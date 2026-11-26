@@ -1,9 +1,13 @@
 # Weak Allee effect is necessary for Turing patterns in female harvesting–male stocking
 
 **Model.** The female-harvesting, male-stocking (FHMS) strategy mimics the Trojan Y chromosome biocontrol by removing females and adding males of an invasive species. In dimensionless form, with female and male densities $f,m$, female birth fraction $r\in(0,1)$, mating rate $\alpha$, harvesting rate $h$ and stocking rate $s$,
+
 $$\frac{df}{dt}=r\alpha fm(1-f-m)-(1+h)f,\qquad \frac{dm}{dt}=(1-r)\alpha fm(1-f-m)+(s-1)m .$$
+
 A *weak Allee effect* in females replaces the mating term $fm$ by $f^2m$:
+
 $$\frac{df}{dt}=r\alpha f^2m(1-f-m)-(1+h)f,\qquad \frac{dm}{dt}=(1-r)\alpha f^2m(1-f-m)+(s-1)m .$$
+
 Spatial versions add diffusion $d_1\Delta f$, $d_2\Delta m$ with Neumann boundary conditions.
 
 **Results (ODE).** In both models solutions stay nonnegative and bounded and the extinction state $E_0=(0,0)$ is locally asymptotically stable. With the weak Allee effect, the invader is eliminated through a saddle–node bifurcation as the harvesting rate $h$ increases through a critical value $h^*$; a Hopf bifurcation produces oscillations when the trace condition holds as $s$ varies. The separatrix between extinction and persistence basins (the extinction boundary) is not hyperbola-shaped in the weak-Allee model, unlike in earlier mating models.

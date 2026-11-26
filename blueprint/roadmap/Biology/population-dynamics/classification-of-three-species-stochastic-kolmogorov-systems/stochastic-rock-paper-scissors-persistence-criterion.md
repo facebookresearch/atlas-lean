@@ -1,9 +1,11 @@
 # Stochastic rock–paper–scissors persistence criterion
 
 Consider three species with densities $\mathbf X(t)=(X_1,X_2,X_3)$ in a stochastic Kolmogorov (generalized Lotka–Volterra) system driven by environmental noise:
+
 $$
 dX_i=X_i f_i(\mathbf X)\,dt+X_i g_i(\mathbf X)\,dE_i(t),\qquad i=1,2,3,
 $$
+
 where $\mathbf E=\Gamma^\top\mathbf B$ for a standard Brownian motion $\mathbf B$ and $\Gamma^\top\Gamma=\Sigma=(\sigma_{ij})$. Standing assumptions:
 
 - $f_i,g_i$ are locally Lipschitz on $\mathbb{R}^3_+$ and $(g_ig_j\sigma_{ij})$ is positive definite everywhere.
@@ -13,13 +15,17 @@ where $\mathbf E=\Gamma^\top\mathbf B$ for a standard Brownian motion $\mathbf B
 Then solutions exist, are unique, never leave the faces they start on, and the process is Feller.
 
 For an ergodic invariant probability measure $\mu$ with species support $I_\mu$, the **invasion rates** (external Lyapunov exponents) are
+
 $$
 \lambda_i(\mu)=\int\Bigl(f_i(x)-\tfrac{\sigma_{ii}}{2}g_i^2(x)\Bigr)\mu(dx),\qquad i\notin I_\mu,
 $$
+
 and $\lambda_i(\mu)=0$ for $i\in I_\mu$. If $\lambda_i(\boldsymbol\delta_0)>0$ for all $i$, each species alone has a unique ergodic measure $\mu_i$ on its axis. $\mathbf X$ is a **rock–paper–scissors system of type (a)** if additionally
+
 $$
 \min\{\lambda_1(\mu_2),\lambda_2(\mu_3),\lambda_3(\mu_1)\}>0>\max\{\lambda_1(\mu_3),\lambda_2(\mu_1),\lambda_3(\mu_2)\},
 $$
+
 so species $1$ can invade $2$, $2$ can invade $3$, $3$ can invade $1$, and none of the reverse invasions succeeds. This is a stochastic heteroclinic cycle.
 
 **Theorem.** Let $\mathbf X$ be a rock–paper–scissors system of type (a).

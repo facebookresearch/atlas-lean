@@ -12,7 +12,9 @@
 2. OOS decomposes over connected components of $\mathrm{OG}(\mathcal A)$: concatenating optimal solutions of the sub-instances gives an optimal solution.
 3. (Non-branching OOS) If the constraint graph $\mathrm{COG}(\mathcal O)$ is non-branching, so that each scaffold's orientation is constrained relative to at most two others, OOS is solvable in polynomial time.
 4. (FPT algorithm) In general OOS can be solved in time
+
 $$O\big(2^{\alpha}\,|S(\mathcal A)|^2\,|\mathrm{CC}(\mathcal O)|\big),\qquad \alpha=\max_{c\in\mathrm{CC}(\mathcal O)}|\mathrm{BV}(\mathcal O)\cap V(c)|,$$
+
 where $\mathrm{CC}(\mathcal O)$ is the set of connected components of the constraint graph and $\mathrm{BV}(\mathcal O)$ its branching vertices.
 
 ## Expansion

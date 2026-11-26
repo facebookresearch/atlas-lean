@@ -5,9 +5,13 @@
 **Assumptions.** (1) Exclusion and independence: $W_i(\mathbf{x})=W_i(x_i)$, $W_i(x_i)\perp W_j(x_j)\mid\mathbf{L}$, $W_i(x_i)\perp\mathbf{L}_j\mid\mathbf{L}_i$. (2) $Z_i(w_j,\mathbf{x})\perp W_j(x_j)\mid\mathbf{L}$. (3) Treatment exchangeability given $\mathbf{L}$. (4) Consistency. (5) Positivity.
 
 **Theorem.** Under (1)–(5), the distribution of $W_i(x_i)$ given $\mathbf{L}_i$ is identified by the cause-specific hazard
+
 $$F_i(w\mid x_i,\mathbf{l}_i)=1-\exp\Bigl[-\int_0^w\frac{p(T_i=u,T_j>u\mid\mathbf{X}=\mathbf{x},\mathbf{L}=\mathbf{l})}{\Pr(T_i>u,T_j>u\mid\mathbf{X}=\mathbf{x},\mathbf{L}=\mathbf{l})}\,du\Bigr]$$
+
 (for any fixed $x_j,\mathbf{l}_j$), and for $w_j<t$
+
 $$\mathbb{E}[Y_i(t;w_j,\mathbf{x})\mid\mathbf{L}=\mathbf{l}]=F_i(w_j\mid x_i,\mathbf{l}_i)+\bigl(1-F_i(w_j\mid x_i,\mathbf{l}_i)\bigr)\,\mathbb{E}[Y_i(t)\mid T_i\ge w_j,T_j=w_j,\mathbf{X}=\mathbf{x},\mathbf{L}=\mathbf{l}],$$
+
 while for $t\le w_j$ it equals $F_i(t\mid x_i,\mathbf{l}_i)$. Natural outcomes are identified by $\mathbb{E}[Y_i(t;W_j(x_j),\mathbf{x})\mid\mathbf{L}]=\mathbb{E}[Y_i(t)\mid\mathbf{X}=\mathbf{x},\mathbf{L}]$, and, under an extra cross-world assumption, by integrating the controlled outcome against $dF_j(w_j\mid x_j',\mathbf{l}_j)$.
 
 **Estimands.** Controlled *contagion* effect $\mathrm{CE}(t,w_j,w_j',\mathbf{x})=\mathbb{E}[Y_i(t;w_j,\mathbf{x})-Y_i(t;w_j',\mathbf{x})]$; *susceptibility* effect $\mathrm{SE}(t,w_j,x_j)$, changing $x_i$ with $w_j$ fixed; *infectiousness* effect $\mathrm{IE}(t,w_j,x_i)$, changing $x_j$ with $w_j$ fixed.

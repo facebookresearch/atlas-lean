@@ -3,6 +3,7 @@
 **Setting.** $\mathbb T_n$ is BHV tree space of metric phylogenetic trees on $n$ leaves, a CAT(0) space glued from one non-negative orthant per tree topology, with coordinates the interior edge weights. For a split $s$ and tree $T$, $|s|_T$ is the weight of $s$ in $T$ ($0$ if absent). For a finite sample $\mathcal T=\{T_1,\dots,T_r\}$, $E(\mathcal T)$ is the set of splits occurring in some $T_i$, and $X(s)$ the set of splits incompatible with $s$. The Fréchet mean $\mu$ minimizes $\sum_i d(\mu,T_i)^2$ and is unique.
 
 **Definition.** The *split sum* of $s$ for $\mathcal T$ is
+
 $$\sigma(s,\mathcal T)=\sum_{T\in\mathcal T}|s|_T-\sum_{x\in E(\mathcal T)\cap X(s)}\ \sum_{T\in\mathcal T}|x|_T .$$
 
 **Theorem.** If $s$ occurs in some tree of $\mathcal T$ and $\sigma(s,\mathcal T)>0$, i.e. the total weight of $s$ exceeds the total weight of all sample splits incompatible with $s$, then $s$ is a split of the Fréchet mean of $\mathcal T$. More precisely:

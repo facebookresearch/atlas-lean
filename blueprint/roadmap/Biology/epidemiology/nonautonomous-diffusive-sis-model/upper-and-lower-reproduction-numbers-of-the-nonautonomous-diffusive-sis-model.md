@@ -14,7 +14,9 @@ When they coincide (e.g. periodic $\beta,\gamma$) the common value is the basic 
 
 **Theorem.**
 1. $1 - \underline{\mathcal{R}}_0$ has the sign of $\limsup_{T}\frac{1}{T}\int_0^T H(s;\gamma-\beta)\,ds$, and $1-\overline{\mathcal{R}}_0$ has the sign of the corresponding $\liminf$. If $\beta,\gamma$ are uniformly Hölder in time,
+
 $$\liminf_{T\to\infty}\frac{\int_0^T\!\int_\Omega \beta}{\int_0^T\!\int_\Omega\gamma} \le \underline{\mathcal{R}}_0 \le \sup_{x(\cdot)\in C(\mathbb{R};\overline{\Omega})}\liminf_{T\to\infty}\frac{\int_0^T \beta(x(s),s)\,ds}{\int_0^T\gamma(x(s),s)\,ds},$$
+
 and the same with $\limsup$ for $\overline{\mathcal{R}}_0$.
 2. (Extinction) If $\overline{\mathcal{R}}_0 < 1$, then $(S,I)(\cdot,t) \to (N_{\mathrm{total}}/|\Omega|, 0)$ in $C(\overline{\Omega})$.
 3. (Persistence in mean) If $d_S = d_I$ and $\underline{\mathcal{R}}_0 > 1$, then $\liminf_{T\to\infty}\frac{1}{T}\int_0^T\int_\Omega I(x,s)\,dx\,ds > 0$.

@@ -9,7 +9,9 @@ In the MILPs each walk is encoded by integer variables $x_{uv,i}=W_i(uv)$.
 **Theorem (antichains in graphs with cycles).** Computing a maximum-weight antichain of edges (pairwise mutually unreachable edges maximizing $\sum_{e\in A}w(e)$) in a graph $G$ reduces in $O(|V|+|E|)$ time to the same problem on a DAG $G'$ with $|V'|\le2|V|$, $|E'|\le|E|$, hence is polynomial.
 
 **Variable fixing.** Let $A=\{e_1,\dots,e_t\}$ be an antichain and $S(e_i)$ a safe edge sequence through $e_i$ (for edge-covering solutions). No $s$-$t$ walk contains two of these sequences, so in every solution they lie in distinct walks, $k\ge t$, and after relabelling $S(e_i)\subseteq W_i$. Hence one may set, for $i\le t$ and $uv\in S(e_i)$,
+
 $$x_{uv,i}=1\ \text{ if $uv$ joins different strongly connected components},\qquad x_{uv,i}\ge S(e_i)(uv)\ \text{ if $uv$ lies inside one},$$
+
 make every variable of an inter-component edge binary, and set $x_{uv,i}=0$ for every edge $uv$ such that $v$ does not reach the first vertex of $S(e_i)$, the last vertex of $S(e_i)$ does not reach $u$, and no two consecutive edges $ab,cd$ of $S(e_i)$ have $b$ reaching $u$ and $v$ reaching $c$.
 
 ## Depends on

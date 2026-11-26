@@ -1,6 +1,7 @@
 # Rank and Hasse-diagram metric of the hierarchy-preserving order
 
 **Setting.** On the poset $(RP(X),\le_{\rm HP})$ of rooted phylogenetic trees on $X$, $|X|=n$, let $d_{\rm HP}(T,T')$ be the graph distance between $T$ and $T'$ in the (undirected) Hasse diagram. For a tree $T$ with proper clusters $P(T)$ (clusters other than $X$ and singletons), define the rank
+
 $$f(T)=\sum_{A\in P(T)}\bigl(|A|-1\bigr).$$
 
 **Theorem.**

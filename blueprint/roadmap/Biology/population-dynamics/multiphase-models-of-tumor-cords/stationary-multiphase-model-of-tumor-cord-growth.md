@@ -1,6 +1,7 @@
 # Stationary multiphase model of tumor cord growth
 
 **Model.** A tumor cord is a cylinder of tumor cells growing around a blood vessel, which supplies a nutrient. It is modeled as a saturated mixture of proliferating cells, extracellular fluid and a rigid extracellular matrix, embedded in a host tissue. Neglecting matrix remodeling and nondimensionalizing reduces the model to equations for the cell volume ratio $\phi$ and the nutrient concentration $c$. In the stationary one-dimensional problem across the cord, with the vessel wall at $x = 0$ and the tumor–host interface (cord width $w$) rescaled to $x = 1$:
+
 $$
 \begin{cases}
 -\partial_x^2F(\phi) = w^2\,g(\phi)\,\Gamma(c) & \text{in } (0,1),\\
@@ -9,6 +10,7 @@ $$
 \phi = \phi_0,\quad \partial_xc = 0 & x = 1 .
 \end{cases}
 $$
+
 Here $F$, with $F'(\phi) = \phi\,(\phi\Sigma(\phi))'$, is a generalized stress function built from the cell stress $\Sigma$. $g$ is the specific growth function, $\Gamma(c)$ regulates proliferation (above a critical nutrient level) or death (below it), $\alpha > 0$ is the consumption rate, and $\phi_0 \in (0,1)$ is the stress-free cell density.
 
 **Assumptions.** $F \in C^1([0,1])$ with $F' \ge 0$, $F' > 0$ on $(0,1]$, $F(0) = 0$, $F(1) = 1$; $g$ is Lipschitz on $[0,1]$ with constant $L_g$ and $g \ge 0$ there; $\Gamma$ is Lipschitz on $[0,1]$.

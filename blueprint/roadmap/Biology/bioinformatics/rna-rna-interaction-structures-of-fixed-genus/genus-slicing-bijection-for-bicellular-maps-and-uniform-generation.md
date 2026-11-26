@@ -5,10 +5,14 @@
 **Theorem.**
 1. (Trisection count) Every planted bicellular map of genus $g$ has exactly $2(g+1)$ trisections.
 2. (Slicing bijection) Let $D_{b,g}(n)$ be the bicellular maps of genus $g$ with $n$ edges and a distinguished trisection, $B_p(n)^t$ bicellular maps of genus $p$ with $t$ distinguished vertices, and $(U_{g_1}(m), U_{p-g_1}(n-m))^t$ pairs of unicellular maps with $t$ distinguished vertices. There is an explicit bijection
+
 $$\Xi_b : D_{b,g}(n) \to \Big(\dot\bigcup_{p=0}^{g-1}B_p(n)^{2g-2p+1}\Big)\ \dot\cup\ \Big(\dot\bigcup_{p=0}^{g}\dot\bigcup_{g_1=0}^{p}\dot\bigcup_{m=0}^{n}\big(U_{g_1}(m), U_{p-g_1}(n-m)\big)^{2g-2p+3}\Big):$$
+
 slicing either lowers the genus of the bicellular map or disconnects it into a pair of single-stranded structures.
 3. (Recursion) Consequently, with $\mathsf{B}_g(n)$ and $\mathsf{U}_g(n)$ the numbers of such maps, $\mu_{g_1} = m + 1 - 2g_1$ and $\nu_{g_1,i} = n - m - 2i + 2g_1 + 1$,
+
 $$2(g+1)\mathsf{B}_g(n) = \sum_{i=0}^{g-1}\binom{n-2i}{2g-2i+1}\mathsf{B}_i(n) + \sum_{i=0}^{g}\sum_{g_1=0}^{i}\sum_{m=0}^{n}\sum_{k=1}^{2g-2i+2}\binom{\mu_{g_1}}{k}\binom{\nu_{g_1,i}}{2g-2i+3-k}\mathsf{U}_{g_1}(m)\,\mathsf{U}_{i-g_1}(n-m),$$
+
 and iterating the slicing reduces every bicellular map to a pair of planar trees.
 4. (Uniform sampling) Running the bijection backwards from uniformly sampled planar trees ("genus induction") generates bicellular maps of fixed genus $g$ uniformly at random in linear time.
 

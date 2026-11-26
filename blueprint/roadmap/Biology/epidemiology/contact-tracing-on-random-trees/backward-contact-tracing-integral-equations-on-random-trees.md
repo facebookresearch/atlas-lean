@@ -4,10 +4,15 @@
 
 **Theorem.** Under backward tracing, $\kappa^-$ does not depend on the generation and satisfies:
 1. *(Recursive.)*
+
 $$\kappa_r^-(a)=e^{-(\alpha+\sigma)a}\,G\!\left(1-p\int_0^a\big[1-e^{-\beta(a-\tilde a)}\big]\Big[-\tfrac{d}{d\tilde a}\kappa_r^-(\tilde a)-\alpha\kappa_r^-(\tilde a)\Big]\,d\tilde a\right).$$
+
 2. *(One-step.)*
+
 $$\kappa_o^-(a)=e^{-(\alpha+\sigma)a}\,G\!\left(1-p\int_0^a\big[1-e^{-\beta(a-\tilde a)}\big]\,\sigma\,\kappa_o^-(\tilde a)\,d\tilde a\right).$$
+
 3. *(First order in $p$.)* For $\beta\ne\alpha+\sigma$ and $K$ with finite moments, both modes agree to first order:
+
 $$\kappa^-(a)=\hat\kappa(a)\left(1+\frac{p\sigma\,\mathbb{E}K}{\alpha+\sigma-\beta}\big(e^{-\beta a}-\hat\kappa(a)\big)-\frac{p\sigma\,\mathbb{E}K}{\alpha+\sigma}\big(1-\hat\kappa(a)\big)\right)+O(p^2).$$
 
 Analogous recursions hold for forward tracing (found through one's infector, now generation-dependent), and the full process combines the two; the homogeneously mixing results are recovered as a limit.

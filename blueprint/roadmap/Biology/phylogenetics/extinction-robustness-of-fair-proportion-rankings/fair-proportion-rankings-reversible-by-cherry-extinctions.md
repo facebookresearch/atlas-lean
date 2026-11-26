@@ -1,7 +1,9 @@
 # Fair Proportion rankings reversible by cherry extinctions
 
 **Setting.** Let $T$ be a rooted binary phylogenetic $X$-tree, $|X|=n$, with strictly positive edge lengths $\lambda_e$. The *Fair Proportion index* of a leaf $x$ is
+
 $$FP_T(x)=\sum_{e\in P(T;\rho,x)}\frac{\lambda_e}{D_e},$$
+
 where $P(T;\rho,x)$ is the root-to-$x$ path and $D_e$ the number of leaves below $e$; so $\sum_xFP_T(x)=\sum_e\lambda_e$, the phylogenetic diversity of $X$. A *cherry* is a pair of leaves with a common parent; $c_T$ is the number of cherries. For $X'\subset X$, $\widetilde T=T_{X\setminus X'}$ is the induced subtree (merging edge lengths). The ranking $\pi_T$ of $X$ by $FP_T$ is *strict* if $FP_T$ is injective, and *reversible* with respect to $X'$ if the ranking of $\widetilde X=X\setminus X'$ by $FP_{\widetilde T}$ is exactly the opposite of its ranking by $FP_T$.
 
 **Theorem.**

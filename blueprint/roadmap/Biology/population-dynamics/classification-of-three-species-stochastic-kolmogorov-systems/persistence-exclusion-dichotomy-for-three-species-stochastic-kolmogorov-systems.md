@@ -1,15 +1,19 @@
 # Persistence–exclusion dichotomy for three-species stochastic Kolmogorov systems
 
 Consider three species following the stochastic Kolmogorov system
+
 $$
 dX_i=X_if_i(\mathbf X)\,dt+X_ig_i(\mathbf X)\,dE_i(t),\qquad i=1,2,3,
 $$
+
 with correlated Brownian environmental noise $\mathbf E=\Gamma^\top\mathbf B$, $\Gamma^\top\Gamma=\Sigma$. Assume the standing conditions: locally Lipschitz coefficients, non-degenerate noise, dissipativity at infinity, and $g_i^2$ growing slightly slower than $|f_i|$. For an ergodic invariant probability measure $\mu$ with species support $I_\mu\subseteq\{1,2,3\}$, the invasion rates are $\lambda_i(\mu)=\int(f_i-\tfrac{\sigma_{ii}}{2}g_i^2)\,d\mu$. Let $p_y(\mu)$ be the probability, starting from $y$, that the occupation measures $\frac1t\int_0^t\mathbf 1_{\{\mathbf X(s)\in\cdot\}}ds$ converge to $\mu$ and every species outside $I_\mu$ declines at an exponential rate. $\mathbf X$ is **strongly stochastically persistent** if there is a unique invariant probability measure $\mu$ with $I_\mu=\{1,2,3\}$ and $p_y(\mu)=1$ for all $y\in(0,\infty)^3$.
 
 **Theorem.** Assume $\mathbf X$ is not a rock–paper–scissors system, and that all invasion rates are non-zero: $\lambda_i(\mu)\neq0$ for every ergodic $\mu$ and $i\notin I_\mu$.
 
 1. **Persistence.** $\mathbf X$ is strongly stochastically persistent iff
+
 $$\max_{i}\lambda_i(\mu)>0\qquad\text{for every ergodic }\mu\text{ with }|I_\mu|\le2 .$$
+
 In that case $\mathbb P_y(\mathbf X(t)\in\cdot)$ converges in total variation to the persistent invariant measure for every $y\in(0,\infty)^3$.
 2. **Exclusion.** Otherwise there are ergodic measures $\mu^1,\dots,\mu^k$ with $k\le3$ such that
    - $|I_{\mu^i}|\le2$,

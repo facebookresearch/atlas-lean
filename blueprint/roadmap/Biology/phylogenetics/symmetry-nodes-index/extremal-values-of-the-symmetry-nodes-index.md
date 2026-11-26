@@ -1,7 +1,9 @@
 # Extremal values of the symmetry nodes index
 
 Let $T$ be a rooted binary tree with $n$ leaves. An interior node is a **symmetry node** if its two maximal pendant subtrees are isomorphic (same shape). With $s(T)$ the number of symmetry nodes, the **symmetry nodes index** is
+
 $$\mathrm{SNI}(T)=(n-1)-s(T),$$
+
 the number of interior nodes that are not symmetry nodes; small values mean balanced trees. It satisfies $\mathrm{SNI}((T_a,T_b))=\mathrm{SNI}(T_a)+\mathrm{SNI}(T_b)+\delta$, with $\delta=0$ if the root is a symmetry node and $\delta=1$ otherwise.
 
 Let $wt(n)$ be the binary weight of $n$ (number of ones in its binary expansion). A **rooted binary weight tree** for $n=\sum_i n_i2^i$ is any tree obtained from an arbitrary rooted binary "top tree" with $wt(n)$ leaves by replacing its leaves with fully balanced trees of heights $i$, one for each $i$ with $n_i=1$.

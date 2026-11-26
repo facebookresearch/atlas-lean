@@ -5,7 +5,9 @@
 **Agreement embeddings.** A graph $G$ with $n$ vertices labelled bijectively by $X$ has an *agreement embedding* into $N$ if subdivisions of its components embed into pairwise edge-disjoint subgraphs of $N$ such that (i) the embedded components cover every edge of $N$, (ii) at most two vertices of $G$ map to the same vertex of $N$, and if two do, one is a sprout and the other a labelled isolated vertex, and (iii) each labelled vertex of $N$ is the image of the vertex of $G$ with the same label.
 
 **Agreement graph.** Let $N,N'\in\mathcal U_n$ be in tiers $r\le r'$ and $l=r'-r$. A graph $G$ with components $S_1,\dots,S_m$ (no sprouts) and $E_1,\dots,E_k$ (each a single edge on two unlabelled vertices) is an *agreement graph* of $N$ and $N'$ if $G$ minus $E_{k-l+1},\dots,E_k$ has an agreement embedding into $N$ and $G$ has an agreement embedding into $N'$. The $S_i$ are *agreement subgraphs*, the $E_j$ *disagreement edges*. A *maximum agreement graph* (MAG) has the fewest disagreement edges, and the *agreement distance* is
+
 $$d_{\mathrm{AD}}(N,N')=k,$$
+
 the number of disagreement edges of a MAG (equivalently, half its number of sprouts). For two trees a MAG is a maximum agreement forest together with its connecting disagreement edges.
 
 **Theorem.**

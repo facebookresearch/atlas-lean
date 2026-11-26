@@ -8,7 +8,9 @@ Uninfected cells move toward infected cells (taxis sensitivity $\chi > 0$), $\va
 
 **Theorem.**
 1. ($\kappa = 0$) If
+
 $$m > 1 + \frac{n}{4}\ (n \ge 4), \qquad m > 3 - \frac{4}{n}\ (n \in \{2,3\}),$$
+
 the solution is global and $\|u(\cdot,t)\|_{L^\infty} + \|v(\cdot,t)\|_{W^{1,\infty}} + \|w(\cdot,t)\|_{L^\infty} \le C$ for all $t > 0$.
 2. ($\kappa = 1$) If $n \ge 4$ and $m > 1 + \frac{n}{4}$, the same global boundedness holds.
 

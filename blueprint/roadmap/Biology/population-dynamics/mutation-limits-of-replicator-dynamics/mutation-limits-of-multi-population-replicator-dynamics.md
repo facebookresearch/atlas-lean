@@ -1,7 +1,9 @@
 # Mutation limits of multi-population replicator dynamics
 
 **Setting.** Populations $i\in I$ each have pure strategies $h\le n_i$; the state space is the product of simplices $\Delta=\prod_i\Delta_{n_i}$ and $f\in C^1(U\supset\Delta,\mathbb{R}^S)$ gives payoffs $f_{ih}(x)$ with population averages $\bar f_i(x)=\sum_h x_{ih}f_{ih}(x)$. The replicator dynamics (RD) and the replicator–mutator dynamics (RMD) with mutation rate $M>0$ toward a reference state $c\in\operatorname{int}\Delta$ are
+
 $$\dot x_{ih}=x_{ih}\bigl(f_{ih}(x)-\bar f_i(x)\bigr),\qquad \dot x_{ih}=x_{ih}\bigl(f_{ih}(x)-\bar f_i(x)\bigr)+M\,(c_{ih}-x_{ih}).$$
+
 A *mutation equilibrium* for $M$ is a rest point $x^M$ of the RMD.
 
 **Definition.** A connected compact set $X\subseteq\Delta$ is a *mutation limit* if for **every** $c\in\operatorname{int}\Delta$ there is a sequence of mutation equilibria $x^{M}$, $M\to0$, converging to a point of $X$, and no proper subset of $X$ has this property. It is *attracting* if, for every $c$ and every such sequence converging into $X$, the $x^M$ are asymptotically stable for all sufficiently small $M$.
