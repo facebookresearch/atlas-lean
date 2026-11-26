@@ -11794,6 +11794,7 @@
   "MathlibExt/Combinatorics/SymmetricFunctionsYoungTableaux": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Symmetric functions and skew Young tableaux"},
   "MathlibExt/Combinatorics/TensorNetwork": {"to": "TheoryOfComputation/fine-grained-complexity", "title": "Tensor-network contraction"},
   "MathlibExt/Combinatorics/ThreeArmedV": {"to": "Geometry/discrete-geometry", "title": "Pancake cutting with exotic knives"},
+  "MathlibExt/Combinatorics/ThreeChain": {"to": "Geometry/discrete-geometry", "title": "Pancake cutting with exotic knives"},
   "MathlibExt/Combinatorics/ThreeChromaticHypergraphDegreeErdosProblem833": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Degrees in 3-chromatic hypergraphs"},
   "MathlibExt/Combinatorics/ThreeChromaticZeroTwoGraph": {"to": "GraphTheory/graph-coloring", "title": "Chromatic number of (0,2)-graphs"},
   "MathlibExt/Combinatorics/ThueMorseReducedComplexity": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Reduced factor complexity"},
