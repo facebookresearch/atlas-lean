@@ -1384,6 +1384,7 @@
   "CSLibExt/Computability/Complexity/Karp/ColorCorrect": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Graph 3-coloring"},
   "CSLibExt/Computability/Complexity/Karp/ColorEmit": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Graph 3-coloring"},
   "CSLibExt/Computability/Complexity/Karp/ColorVerify": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Graph 3-coloring"},
+  "CSLibExt/Computability/Complexity/Karp/EqualCardinalityPartition": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Partition variants"},
   "CSLibExt/Computability/Complexity/Karp/HamPath": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian path in directed graphs"},
   "CSLibExt/Computability/Complexity/Karp/HamPathCheck": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian path in directed graphs"},
   "CSLibExt/Computability/Complexity/Karp/HamPathComplete": {"to": "TheoryOfComputation/np-completeness/paths-cycles-and-subgraphs", "title": "Hamiltonian path in directed graphs"},

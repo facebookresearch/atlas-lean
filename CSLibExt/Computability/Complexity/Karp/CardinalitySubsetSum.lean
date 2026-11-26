@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Computability.Complexity.Defs
+public import CSLibExt.Computability.Complexity.Karp.SubsetSumVerify
 public import MathlibExt.Computability.BinaryNatEncoding
 import Mathlib.Tactic.FinCases
 import CSLibExt.Computability.Complexity.FramedCNF.NormalizeMachine
@@ -56,18 +57,19 @@ noncomputable def cardinalitySubsetSumDec :
 open ComplexityTheory BitstringEncoding Computability Turing Function TM2Program
 open Cslib.Complexity Cslib.Complexity.Karp
 
-private abbrev Bits := List Bool
+abbrev Bits := List Bool
 
 /-! ### Polynomial-time streaming passes on the raw input -/
 
-private def scan {Q : Type} (step : Q → Bool → Q × Bits) (finish : Q → Bits)
+-- These helpers also support the equal-cardinality PARTITION verifier and padding map.
+def scan {Q : Type} (step : Q → Bool → Q × Bits) (finish : Q → Bits)
     (q : Q) : Bits → Bits
   | [] => finish q
   | b :: x => (step q b).2 ++ scan step finish (step q b).1 x
 
-/-- A finite-state scan stores output in reverse order and reverses it once at the end.
-Each transition emits a bounded number of bits because the state and input alphabets are finite. -/
-private theorem polyScan {Q : Type} [Finite Q]
+-- A finite-state scan stores output in reverse order and reverses it once at the end.
+-- Each transition emits a bounded number of bits because the state and input alphabets are finite.
+theorem polyScan {Q : Type} [Finite Q]
     (step : Q → Bool → Q × Bits) (finish : Q → Bits) (q₀ : Q) :
     IsPolyTime (scan step finish q₀) := by
   classical
@@ -178,7 +180,7 @@ private theorem field_delimit (left right : Bool) (p r : Bits) :
   | cons b p ih =>
     cases left <;> simp_all [field, delimit, scan, splitStep]
 
-private theorem polyAppend {f g : Bits → Bits} (hf : IsPolyTime f) (hg : IsPolyTime g) :
+theorem polyAppend {f g : Bits → Bits} (hf : IsPolyTime f) (hg : IsPolyTime g) :
     IsPolyTime (fun x => f x ++ g x) := by
   apply (polyPair hf hg).comp (g := fun p : Bits × Bits => p.1 ++ p.2)
   apply polyEncoded (polyField true true)
@@ -204,7 +206,7 @@ private theorem unframeBits_encode (x : Bits) : unframeBits (bitEncode x) = x :=
   | nil => rfl
   | cons b x ih => simpa [unframeBits, DenseSAT.Converter.encSnd, scan] using ih
 
-private theorem polyCombinePair {f g : Bits × Bits → Bool} (hf : IsPolyTime f)
+theorem polyCombinePair {f g : Bits × Bits → Bool} (hf : IsPolyTime f)
     (hg : IsPolyTime g) : IsPolyTime (fun q => f q && g q) := by
   let unpack (s : Bits) := (unframeBits (field true false s), unframeBits (field false true s))
   have hu : IsPolyTime unframeBits := polyScan _ _ _
@@ -361,6 +363,20 @@ private theorem syntax_list_aux (fuel : ℕ) (x : Bits) (hx : x.length ≤ fuel)
           omega
         simpa using ih r hr
 
+-- If the input has malformed list framing, appending this suffix forces rejection.
+def listRejectSuffix (x : Bits) : Bits :=
+  if (undelimitBlocks x).isSome then [] else [true]
+
+theorem polyListRejectSuffix : IsPolyTime listRejectSuffix := by
+  let mark (_ : Unit) (b : Bool) : Unit × Bits := ((), if b then [] else [true])
+  have h : scan mark (fun _ => []) () ∘ syntaxFlag true 0 = listRejectSuffix := by
+    funext x
+    change scan mark _ _ (syntaxFlag true 0 x) = _
+    rw [syntax_list_aux x.length x le_rfl]
+    change scan mark _ _ [(undelimitBlocks x).isSome] = _
+    cases hx : undelimitBlocks x <;> simp [listRejectSuffix, hx, scan, mark]
+  exact h ▸ (polyScan (synStep true) _ (0 : Fin 4)).comp (polyScan mark _ ())
+
 private def valid (x : Bits) :=
   (undelimit x).isSome && (undelimit (field false true x)).isSome &&
     (undelimitBlocks (field true false x)).isSome
@@ -457,7 +473,7 @@ private theorem polyVerify : IsPolyTime verify := by
   have each (c : Bool) := (polyCheckInput c).map_fst.comp isPolyTime_ssCheck
   exact polyCombinePair (polyCombinePair (isPolyTime_fst.comp polyValid) (each false)) (each true)
 
-private theorem count_pick (as : List ℕ) (w : Bits) :
+theorem count_pick (as : List ℕ) (w : Bits) :
     (SSVerify.pick (List.replicate as.length 1) w).sum = (SSVerify.pick as w).length := by
   induction as generalizing w with
   | nil => rfl
@@ -465,7 +481,7 @@ private theorem count_pick (as : List ℕ) (w : Bits) :
     cases h : (w.head?).getD false <;>
       simp [SSVerify.pick, List.replicate_succ, h, ih, Nat.add_comm]
 
-private theorem ssCheck_encode (as : List ℕ) (t : ℕ) (w : Bits) :
+theorem ssCheck_encode (as : List ℕ) (t : ℕ) (w : Bits) :
     SSVerify.ssCheck (encodeSS as t) w = true ↔ (SSVerify.pick as w).sum = t := by
   simp [SSVerify.ssCheck, SSVerify.decodeSS_eq_some.mpr (rfl : encodeSS as t = _)]
 
