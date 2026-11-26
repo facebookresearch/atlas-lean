@@ -11,6 +11,20 @@ module
 public import Mathlib.CategoryTheory.Limits.Types.Pushouts
 public import Mathlib.Topology.Category.TopCat.Limits.Pullbacks
 
+/-! # Pushout complements and their open subspaces
+
+Let `f : S → X₁` and `g : S → X₂` be maps of sets. In any pushout of
+this span, a point of `X₂` outside the image of `g` is identified neither
+with another point of `X₂` nor with a point of `X₁`.
+
+For a pushout square of topological spaces with maps `t : X₁ → X₂`,
+`l : X₁ → X₃`, `r : X₂ → X₄` and `b : X₃ → X₄`, the map
+`X₂ ⊕ X₃ → X₄` induced by `r` and `b` is a quotient map. If an open
+set `U ⊆ X₄` has empty inverse image under `r` and its inverse image
+under `b` avoids the image of `l`, then `b` restricts to a homeomorphism
+from `b⁻¹(U)` to `U`.
+-/
+
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits Topology
@@ -71,6 +85,10 @@ private theorem pushout_inl_ne_inr_of_not_mem_range_aux
   have hbad : Sum.inl z = Sum.inr x := (hInv hEqv).mpr rfl
   cases hbad
 
+/-- For maps `f : S → X₁` and `g : S → X₂`, let `c` be a pushout cocone
+of their span. If `x ∈ X₂` does not lie in the image of `g`, then
+`c.inr(x) = c.inr(y)` implies `x = y` for every `y ∈ X₂`. The condition
+on the second point `y` is unrestricted. -/
 theorem pushoutCocone_inr_eq_inr_of_not_mem_range_of_isColimit
     {c : PushoutCocone f g} (hc : IsColimit c)
     {x y : X₂} (hx : x ∉ Set.range g) (hxy : c.inr x = c.inr y) : x = y := by
@@ -85,6 +103,9 @@ theorem pushoutCocone_inr_eq_inr_of_not_mem_range_of_isColimit
     · exact ConcreteCategory.congr_hom (e.hom.w WalkingSpan.right).symm y
   exact pushout_inr_injectiveOn_compl_range_aux hx hcanonical
 
+/-- For a pushout cocone of `f : S → X₁` and `g : S → X₂`, a point
+`x ∈ X₂` outside the image of `g` has image distinct from the image of
+every `z ∈ X₁`: `c.inl(z) ≠ c.inr(x)`. -/
 theorem pushoutCocone_inl_ne_inr_of_not_mem_range_of_isColimit
     {c : PushoutCocone f g} (hc : IsColimit c)
     {z : X₁} {x : X₂} (hx : x ∉ Set.range g) : c.inl z ≠ c.inr x := by
@@ -100,6 +121,9 @@ theorem pushoutCocone_inl_ne_inr_of_not_mem_range_of_isColimit
     · exact ConcreteCategory.congr_hom (e.hom.w WalkingSpan.right).symm x
   exact pushout_inl_ne_inr_of_not_mem_range_aux (f := f) (g := g) hx hcanonical
 
+/-- For a pushout cocone of `f : S → X₁` and `g : S → X₂`, the right
+inclusion is injective on the complement of the image of `g` in `X₂`.
+No injectivity assumption is imposed on either map of the original span. -/
 theorem pushoutCocone_inr_injectiveOn_compl_range_of_isColimit
     {c : PushoutCocone f g} (hc : IsColimit c) :
     Set.InjOn c.inr (Set.range g)ᶜ := by
@@ -114,6 +138,11 @@ variable {X₁ X₂ X₃ X₄ : TopCat.{u}}
 variable {t : X₁ ⟶ X₂} {l : X₁ ⟶ X₃}
 variable {r : X₂ ⟶ X₄} {b : X₃ ⟶ X₄}
 
+/-- Suppose `t : X₁ → X₂`, `l : X₁ → X₃`, `r : X₂ → X₄` and
+`b : X₃ → X₄` form a pushout square of topological spaces. The induced
+map `X₂ ⊕ X₃ → X₄`, equal to `r` on the first summand and to `b` on
+the second, is a quotient map. Thus it is surjective, and a subset of
+`X₄` is open exactly when its inverse images under both maps are open. -/
 theorem isQuotientMap_sumElim_of_isPushout
     (h : IsPushout t l r b) :
     IsQuotientMap (Sum.elim r b : X₂ ⊕ X₃ → X₄) := by
@@ -141,6 +170,11 @@ theorem isQuotientMap_sumElim_of_isPushout
     · obtain ⟨y, rfl⟩ := hx
       exact ⟨Sum.inr y, rfl⟩
 
+/-- Let `t : X₁ → X₂`, `l : X₁ → X₃`, `r : X₂ → X₄` and
+`b : X₃ → X₄` form a pushout square of topological spaces. Suppose
+`U ⊆ X₄` is open, `r⁻¹(U)` is empty, and `b⁻¹(U)` is disjoint from
+the image of `l`. Then the restriction `b⁻¹(U) → U` is a homeomorphism,
+where both spaces carry their subspace topologies. -/
 theorem isHomeomorph_restrictPreimage_inr_of_isPushout
     (h : IsPushout t l r b) {U : Set X₄} (hU : IsOpen U)
     (hr : r ⁻¹' U = ∅) (hl : b ⁻¹' U ⊆ (Set.range l)ᶜ) :

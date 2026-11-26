@@ -6,5 +6,6 @@ Categories of topological spaces and their limits and colimits, compact Hausdorf
 - [Finite closed-colimit gluing in TopCat](finite-closed-colimit-gluing-in-topcat/README.md)
 - [Fixed-fiber gauges](fixed-fiber-gauges/README.md)
 - [Open subspaces of delta-generated spaces](open-subspaces-of-delta-generated-spaces/README.md)
+- [PushoutOpenComplement](pushoutopencomplement/README.md)
 - [Subspace inclusions and maps in TopCat](subspace-inclusions-and-maps-in-topcat/README.md)
 - [Fixed-right product-pushout symmetry adapter](is-pushout-prod-map-fixed-right-of-fixed.md)
