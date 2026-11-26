@@ -9,9 +9,14 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_AlgebraicCurve_six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_two.lean`
+`Theorems/Thm_AlgebraicCurve_six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_two.lean`,
+`P2M/Sol/S_AlgebraicCurve_six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_two.lean`,
+`Theorems/Thm_AlgebraicCurve_RationalFunctionField_ord_placeInfty_X.lean`,
+`P2M/Sol/S_AlgebraicCurve_RationalFunctionField_ord_placeInfty_X.lean`,
+`Theorems/Thm_AlgebraicCurve_RationalFunctionField_ord_X_nonneg_of_ne_placeInfty.lean`,
+`P2M/Sol/S_AlgebraicCurve_RationalFunctionField_ord_X_nonneg_of_ne_placeInfty.lean`
 and
-`P2M/Sol/S_AlgebraicCurve_six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_two.lean`
+`P2M/Sol/S_AlgebraicCurve_isCurveOver_of_transcendental.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -54,7 +59,7 @@ separable over `K(y)`.
 
 ## Main statements
 
-* `AlgebraicCurve.Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord`
+* `AlgebraicCurve.Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord_of_isSeparable`
 * `AlgebraicCurve.six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_two`
 -/
 
@@ -162,10 +167,14 @@ private theorem degree_eq_finrank_ratFunc {K F : Type*} [Field K] [Field F] [Alg
   push_cast
   ring
 
-/-- If `x : F` is transcendental over `K` and `F` is finite and separable over `K(x)`, then the
-pole divisor of `x` has degree `[F : K(x)]`. -/
-theorem Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord {K F : Type*} [Field K] [Field F]
-    [Algebra K F] {x : F} (hx : Transcendental K x) [FiniteDimensional K⟮x⟯ F]
+-- The upstream theorem `AlgebraicCurve.Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord` assumes
+-- `[IsCurveOver K F]` and a finite-dimensional `LSpace 0` instead of separability; neither
+-- statement implies the other, so this one records its separability hypothesis in its name.
+/-- **Degree of the pole divisor of a separating element.** If `x : F` is transcendental over `K`
+and `F` is finite and separable over `K(x)`, then the pole divisor of `x` has degree
+`[F : K(x)]`. -/
+theorem Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord_of_isSeparable {K F : Type*} [Field K]
+    [Field F] [Algebra K F] {x : F} (hx : Transcendental K x) [FiniteDimensional K⟮x⟯ F]
     [Algebra.IsSeparable K⟮x⟯ F] (D : Divisor K F)
     (hD : ∀ v : Place K F, D v = max 0 (-v.ord x)) :
     Divisor.degree D = (Module.finrank K⟮x⟯ F : ℤ) := by
@@ -195,10 +204,11 @@ theorem Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord {K F : Type*} [Field 
 
 end PoleDivisor
 
-/-- Let `K` be algebraically closed, `y : F` transcendental over `K` with `F` finite and separable
-over `K(y)`, such that every zero of `y` has order `3` and every zero of `y - 1728` has order `2`.
-If `D` has coefficient `⌊2 m ord_w y / 3⌋` at the zeros of `y`, `⌊m ord_w (y - 1728) / 2⌋` at the
-zeros of `y - 1728` and `m ord_w y` at the poles of `y`, then `6 deg D = m [F : K(y)]`. -/
+/-- **Degrees of divisors with ramification orders three and two.** Let `k` be algebraically
+closed and `y : F` transcendental over `k` with `F` finite and separable over `k(y)`, such that
+every zero of `y` has order `3` and every zero of `y - 1728` has order `2`. If `D` has coefficient
+`⌊2 m ord_w y / 3⌋` at the zeros of `y`, `⌊m ord_w (y - 1728) / 2⌋` at the zeros of `y - 1728`,
+`m ord_w y` at the poles of `y` and `0` at every other place, then `6 deg D = m [F : k(y)]`. -/
 theorem six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_two
     (k : Type*) [Field k] [IsAlgClosed k] {F : Type*} [Field F] [Algebra k F]
     (y : F) (hy : Transcendental k y)
@@ -248,7 +258,7 @@ theorem six_mul_degree_eq_mul_finrank_of_forall_eq_weightFloor_of_ord_eq_three_t
     by_cases hv : v ∈ T
     · rw [ite_eq_left hv, max_eq_right]; have := (hT v).1 hv; omega
     · rw [ite_eq_right hv, max_eq_left]; have := (hT v).not.1 hv; omega
-  have hPdeg := Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord hy P hP
+  have hPdeg := Divisor.degree_eq_finrank_adjoin_of_eq_max_neg_ord_of_isSeparable hy P hP
   have hPdeg' : Divisor.degree P = ∑ v ∈ T, -(v.ord y) := by
     simp only [P, map_sum, Divisor.degree_single, hdeg1, Nat.cast_one, mul_one]
   have hTsum : ∑ v ∈ T, v.ord y = -n := by
