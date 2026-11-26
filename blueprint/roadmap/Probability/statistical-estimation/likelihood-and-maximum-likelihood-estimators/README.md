@@ -29,5 +29,5 @@
 
 ## Incidental parameters and latent structure
 
-- [Neyman–Scott inconsistency with incidental parameters](neyman-scott-incidental-parameter-inconsistency.md)
+- [Neyman–Scott inconsistency for groups of any size](neyman-scott-incidental-parameter-inconsistency.md)
 - [Hidden Markov and latent structure models](hidden-markov-and-latent-structure-models/README.md)

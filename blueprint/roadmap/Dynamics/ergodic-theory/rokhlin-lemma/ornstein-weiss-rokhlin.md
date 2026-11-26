@@ -13,8 +13,7 @@ $1 - \varepsilon$.
 ## Sources
 
 - Donald S. Ornstein and Benjamin Weiss, *Entropy and isomorphism theorems for actions of amenable groups*,
-  J. Anal. Math. 48 (1987), 1–141, DOI 10.1007/bf02790325, Theorem 5.2 (the Rokhlin lemma for free actions of
-  amenable groups, in particular $\mathbb{Z}^d$).
+  J. Anal. Math. 48 (1987), 1–141, DOI 10.1007/bf02790325.
 - Oliver Knill, *Some Fundamental Theorems in Mathematics* (2023), §109 (Rokhlin-Kakutani approximation; the
   Ornstein–Weiss generalization to free $\mathbb{Z}^d$-actions), <https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf>.
 - Problem `ornstein_weiss_rokhlin` of the lean-eval benchmark.
