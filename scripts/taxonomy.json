@@ -12838,7 +12838,6 @@
   "MathlibExt/NumberTheory/ConsecutivePrime": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Prime gaps"},
   "MathlibExt/NumberTheory/ConsecutivePrimePowerSums": {"to": "NumberTheory/additive-number-theory", "title": "Sums of powers of consecutive primes"},
   "MathlibExt/NumberTheory/ConsecutiveSquares": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Sums of consecutive squares"},
-  "MathlibExt/NumberTheory/ConsecutiveSquaresSoCSNotFinitePlanes": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Sums of consecutive squares"},
   "MathlibExt/NumberTheory/ConstantTermLinearRepresentation": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Constant terms of powers of Laurent polynomials"},
   "MathlibExt/NumberTheory/ContinuedFractionFolding": {"to": "NumberTheory/continued-fractions-expansions", "title": "Folding lemma and paperfolding continued fractions"},
   "MathlibExt/NumberTheory/ContinuedFractions/BestApproximation": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Perrin numbers that are Perrin squares"},
