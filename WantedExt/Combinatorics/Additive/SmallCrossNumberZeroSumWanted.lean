@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Additive.SmallCrossNumberZeroSum
+public import MathlibExt.Combinatorics.Additive.SmallCrossNumberZeroSumZModTwo
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Analysis.Asymptotics.Defs
@@ -105,7 +106,7 @@ theorem halfGoodThreshold_eq_one_of_card_le_two (Γ : Type*) [AddCommGroup Γ] [
       exact_mod_cast hpos
     have hcard' : (0 : ℝ) < (Nat.card Γ : ℝ) := by exact_mod_cast hcard
     have h2 : (Nat.card Γ : ℝ) ≤ 2 := by exact_mod_cast h
-    show (1 : ℝ) / 2 ≤ goodSequenceProb Γ 1
+    change (1 : ℝ) / 2 ≤ goodSequenceProb Γ 1
     rw [goodSequenceProb, pow_one, le_div_iff₀ hcard']
     linarith
   refine le_antisymm (Nat.sInf_le h1) (Nat.one_le_iff_ne_zero.2 fun hz => ?_)
@@ -239,7 +240,7 @@ Abelian Groups*, INTEGERS 24 (2024), Article A93, characteristic lemma of the Se
 grid costs. -/
 theorem gridCost_eq_of_eq_off {d k : ℕ} (w : Fin d → ℕ) {x y : Fin d → Fin k} {i : Fin d}
     (hj : ∀ j, j ≠ i → x j = y j) (hi : x i ≠ y i) : gridCost w s(x, y) = w i := by
-  show (∑ j, if x j = y j then 0 else w j) = w i
+  change (∑ j, if x j = y j then 0 else w j) = w i
   rw [Finset.sum_eq_single i (fun j _ hji => by simp [hj j hji]) (by simp)]
   simp [hi]
 
@@ -322,18 +323,6 @@ public theorem_wanted cube_pebbling_threshold_bounds (ε : ℝ) (hε : 0 < ε) (
     (fun d : ℕ => ((2 : ℝ) ^ d) ^ (1 - ε)) =O[Filter.atTop] t ∧
       t =O[Filter.atTop]
         fun d : ℕ => (2 : ℝ) ^ d / Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d)) ^ (1 - ε)
-
-/-- **Threshold for good sequences in $\mathbb{Z}_2^d$.** Write $\lg = \log_2$. Let $t$ be a
-threshold function, in $d$, for the probability that a uniformly random sequence of $s$ elements
-of $\mathbb{Z}_2^d$ is good, and write $n = 2^d$. Then for every $\varepsilon > 0$,
-$t(d) = O\left(n / (\lg \lg n)^{1-\varepsilon}\right)$ as $d \to \infty$.
-
-Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
-Abelian Groups*, INTEGERS 24 (2024), Article A93, Theorem 11 (`integers-2024-A93-thm-11`). -/
-public theorem_wanted zmod_two_pi_good_threshold_isBigO (ε : ℝ) (hε : 0 < ε) (t : ℕ → ℝ)
-    (ht : IsThresholdFunction (fun d s => goodSequenceProb (Fin d → ZMod 2) s) t) :
-    t =O[Filter.atTop]
-      fun d : ℕ => (2 : ℝ) ^ d / Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d)) ^ (1 - ε)
 
 end
 
