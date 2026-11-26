@@ -46,10 +46,13 @@ every $\rho_{f,\lambda}(\sigma)$. $\overline{\mathbb{Z}}$ is the integral closur
 $\overline{\mathbb{Q}}$. Unramified at $p$ means that the inertia group of every $\mathfrak{p}$ over
 $p$, the elements acting trivially on $\overline{\mathbb{Z}}/\mathfrak{p}$, acts trivially. An
 arithmetic Frobenius at $\mathfrak{p}$ is any $\sigma$ acting as $x \mapsto x^p$ on
-$\overline{\mathbb{Z}}/\mathfrak{p}$. The coefficients $a_p(f)$ and $\chi(p)\,p^{k-1}$ lie in $K_f$
-and enter as the elements `a` and `b` of $K_f$ with these complex values. The theorem has no
-weight hypothesis: for $k \ge 2$ the representation is due to Deligne, for $k = 1$ to
-Deligne–Serre, and for $k \le 0$ there are no nonzero cusp forms.
+$\overline{\mathbb{Z}}/\mathfrak{p}$. For each such $p$ the theorem asserts elements `a` and `b`
+of $K_f$ whose complex values are $a_p(f)$ and $\chi(p)\,p^{k-1}$, so both coefficients lie in
+$K_f$, and the characteristic polynomial is formed from them; the unramifiedness clause does not
+depend on them. The theorem has no weight hypothesis: for $k \ge 2$ the representation is due to
+Deligne, for $k = 1$ to Deligne and Serre (P. Deligne and J.-P. Serre, *Formes modulaires de
+poids 1*, Ann. Sci. École Norm. Sup. (4) 7 (1974), 507–530), and for $k \le 0$ there are no
+nonzero cusp forms.
 
 Source: Fred Diamond and Jerry Shurman, *A First Course in Modular Forms*, Graduate Texts in
 Mathematics 228, Springer (2005),
@@ -71,8 +74,8 @@ public theorem_wanted exists_galoisRep_charpoly_frob
         ∀ 𝔭 : Ideal (integralClosure ℤ (AlgebraicClosure ℚ)), 𝔭.IsMaximal →
           𝔭.under ℤ = Ideal.span {(p : ℤ)} →
           (∀ σ ∈ 𝔭.inertia (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ), ρ σ = 1) ∧
-          ∀ a b : K, (a : ℂ) = ModularFormClass.qCoeff f p →
-            (b : ℂ) = χ (p : ZMod N) * (p : ℂ) ^ (k - 1) →
+          ∃ a b : K, (a : ℂ) = ModularFormClass.qCoeff f p ∧
+            (b : ℂ) = χ (p : ZMod N) * (p : ℂ) ^ (k - 1) ∧
             ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, IsArithFrobAt ℤ σ 𝔭 →
               (ρ σ : Matrix (Fin 2) (Fin 2) (v.adicCompletion K)).charpoly =
                 X ^ 2 - C (algebraMap K (v.adicCompletion K) a) * X +
