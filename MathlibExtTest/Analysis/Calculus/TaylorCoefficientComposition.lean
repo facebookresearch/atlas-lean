@@ -17,6 +17,7 @@ import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 /-!
 # Tests for Faà di Bruno's formula for Taylor coefficients
 
+At order `0`, the right-hand side reduces to `f (g a)`.
 The first-order case is the chain rule, and the second-order case is checked
 numerically for `f x = x ^ 3` and `g x = x ^ 2` at `1`, where the two
 partitions of `2` contribute `3` and `12`. A direct computation of the second
@@ -73,6 +74,13 @@ private def part11 : Nat.Partition 2 :=
     intro i hi
     have h1 : i = 1 := by simpa using hi
     omega, by decide⟩
+
+/-- The zeroth-order case: the empty partition is the only partition of `0` and
+`Finset.Icc 1 0` is empty, so the right-hand side reduces to `f (g a)`. -/
+example (f g : ℝ → ℝ) (a : ℝ) (hf : ContDiffAt ℝ 0 f (g a)) (hg : ContDiffAt ℝ 0 g a) :
+    iteratedDeriv 0 (f ∘ g) a / (Nat.factorial 0 : ℝ) = f (g a) := by
+  rw [taylorCoeff_comp_eq_sum_partitions f g a 0 hf hg]
+  simp
 
 /-- The first-order case is the chain rule. -/
 example (f g : ℝ → ℝ) (a : ℝ) (hf : ContDiffAt ℝ 1 f (g a)) (hg : ContDiffAt ℝ 1 g a) :
