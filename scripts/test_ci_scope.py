@@ -252,6 +252,10 @@ class WorkflowTests(unittest.TestCase):
         # These must run outside the block; a suite in neither list runs too, until it is shown to read only
         # scripts, workflows and the pins and is moved into the block.
         self.assertEqual([name for name in ALWAYS if name not in suites(rest)], [])
+        # And nothing outside the block depends on the variable: no `else` branch or second gate holds a suite.
+        self.assertEqual((text.count("tool_tests"), text.count("ATLAS_TOOL_TESTS")), (4, 4))
+        self.assertTrue(text.endswith('\nelse\n  echo "skipped [scripts]: the tool tests (ATLAS_TOOL_TESTS=skip)."\nfi\n\n'
+                                      'echo "ok [scripts]: repository policy regression tests passed."\n'))
         # The skipped block holds those suites and nothing else: another command there would be skipped unseen.
         lines = [line for line in gated.replace("\\\n", " ").splitlines() if line.strip()]
         self.assertEqual([line for line in lines if not suite.fullmatch(line)], [])
