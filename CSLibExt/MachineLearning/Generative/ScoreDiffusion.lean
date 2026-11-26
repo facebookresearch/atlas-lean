@@ -48,12 +48,11 @@ All objects are laws, given by the source's closed forms.
 
 ## Non-claims
 
-Theorem 2 of the source is `tvDist_ddpmOutput_le` in
-`WantedExt.ComputerScience.MachineLearning.ScoreDiffusionSamplingWanted`. This file does not
-claim: the identification of `ouMarginal` or `ddpmStep` with solutions of the stochastic
-differential equations (2.1) and (2.8) of the source; existence or the law of the time reversal
-(2.4); the equivalence of score matching objectives (2.5) and (2.6); the time-rescaled process
-(2.2); Theorem 1, Corollaries 3-5, Theorems 6, 7, 9 and 15, or Lemmas 10 and 11 of the source.
+This file does not claim: the sampling guarantee (Theorem 2 of the source); the identification of
+`ouMarginal` or `ddpmStep` with solutions of the stochastic differential equations (2.1) and (2.8)
+of the source; existence or the law of the time reversal (2.4); the equivalence of score matching
+objectives (2.5) and (2.6); the time-rescaled process (2.2); Theorem 1, Corollaries 3-5, Theorems
+6, 7, 9 and 15, or Lemmas 10 and 11 of the source.
 -/
 
 @[expose] public section
