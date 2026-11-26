@@ -12497,6 +12497,7 @@
   "MathlibExt/NumberTheory/Amicable": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Average and divisibility of the divisor sum"},
   "MathlibExt/NumberTheory/ApostolBernoulliNumber": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Apostol–Bernoulli numbers"},
   "MathlibExt/NumberTheory/AppellSequence": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Appell sequences"},
+  "MathlibExt/NumberTheory/ArithmeticBilliardsRotatedRectangle": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/ArithmeticDerivative": {"to": "NumberTheory/arithmetic-functions", "title": "Arithmetic derivative"},
   "MathlibExt/NumberTheory/ArithmeticFunction/AbundancyIndexDiv": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Primitive non-deficient numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/AbundancySupDivIndex": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
