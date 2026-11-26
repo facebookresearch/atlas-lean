@@ -19,42 +19,13 @@ public import MathlibExt.NumberTheory.Cyclotomic.ComposedFactorization
 public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
 public import MathlibExt.NumberTheory.Cyclotomic.PrimePowerDivisibility
 public import MathlibExt.NumberTheory.Cyclotomic.TwoPowRamifiedBound
+public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsHybridBoundPrimeDivisors
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Polynomial
-
-/-- The hybrid bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with distinct primes `p_i` (in any order),
-`x > 1`, and `ω_n = ω(x^n - 1)`. With `p_0 := 1`, let
-`Π^j = {ρ prime : ρ ≡ 1 (mod p_j), ρ ≢ 1 (mod p_s) for j < s ≤ m}` and `r_{i,j}` its `i`-th
-element (`Nat.nth`, `0`-indexed here). The source's
-`x ≥ min_{k_0 + ⋯ + k_m = ω_n} max_{0 ≤ t ≤ m} (1 + ∏_{j ≤ t} ∏_{i ≤ k_j} r_{i,j})^{T(t)}` with
-`T(t) = ∏_{s=1}^t p_s^{-a_s}` is stated equivalently, after raising to the power
-`∏_{s ≤ t} p_s^{a_s}`, as the existence of a composition `k` meeting every bound. The parts `k_j`
-range over `ℕ` (the source writes `k_i ∈ ℤ⁺`; with positive parts the claim fails for
-`n = 3`, `x = 2`, where `x^3 - 1 = 7` and `ω_n = 1` admits no positive composition into two
-parts). The source's factors are all primes, and since `Nat.nth` returns `0` past the end of
-a finite set, the statement requires every factor to be a genuine (positive) element of its
-prime class.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Theorem 1 (`integers-2026-A95-thm-1`). -/
-public theorem_wanted hybrid_bound_prime_divisors (m : ℕ) (p a : ℕ → ℕ)
-    (hp : ∀ i ∈ Finset.Icc 1 m, (p i).Prime) (hinj : Set.InjOn p (Finset.Icc 1 m))
-    (ha : ∀ i ∈ Finset.Icc 1 m, 0 < a i) {x : ℕ} (hx : 1 < x) :
-    ∃ k : ℕ → ℕ,
-      ∑ j ∈ Finset.range (m + 1), k j =
-          (x ^ (∏ i ∈ Finset.Icc 1 m, p i ^ a i) - 1).primeFactors.card ∧
-        (∀ j ≤ m, ∀ i < k j, 0 < Nat.nth (fun ρ => ρ.Prime ∧
-          (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
-            ∀ s ∈ Finset.Ioc j m, ¬ Nat.ModEq (p s) ρ 1) i) ∧
-        ∀ t ≤ m,
-          1 + ∏ j ∈ Finset.range (t + 1), ∏ i ∈ Finset.range (k j),
-              Nat.nth (fun ρ => ρ.Prime ∧ (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
-                ∀ s ∈ Finset.Ioc j m, ¬ Nat.ModEq (p s) ρ 1) i ≤
-            x ^ ∏ s ∈ Finset.Icc 1 t, p s ^ a s
 
 /-- The `p`-hybrid bound (Theorem 1 for prime `n = p`). For a prime `p`, `x > 1` and
 `ω_p = ω(x^p - 1)`, let `r_{i,0}` and `r_{j,1}` enumerate the primes `≢ 1` and `≡ 1 (mod p)`
