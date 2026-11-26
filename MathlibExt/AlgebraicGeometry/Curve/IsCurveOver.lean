@@ -9,9 +9,7 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Definitions/Def_AlgebraicCurve_IsCurveOver.lean`,
-`Definitions/Def_AlgebraicCurve_DivisorClassGroup.lean`,
-`Theorems/Thm_AlgebraicCurve_IsCurveOver_exists_separating_transcendental.lean`
+`Definitions/Def_AlgebraicCurve_IsCurveOver.lean`
 and
 `P2M/Sol/S_AlgebraicCurve_IsCurveOver_exists_separating_transcendental.lean`
 (https://github.com/anthropics/fermats-last-theorem):
