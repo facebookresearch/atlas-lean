@@ -538,6 +538,26 @@ def command_bridge(args: argparse.Namespace) -> int:
     project_rows = v2.read_dump(Path(args.v2_dump))[0]
     collisions = v2.private_collisions(project_rows, listed.keys() | set(listed.values()))
     atlas_rows = v2.publish_private_targets(project_rows, manifest | listed.keys())
+    sources = functools.cache(v2.lean_index)
+    # An article the annotations name with redundant quotes has its row under Lean's own spelling: it is joined to
+    # that row as the v2 extraction joins it, with the same checks, which stop the bridge before it writes. The
+    # bridge reads no registry, so only the duplicates are endpoints the join must not touch. An explicit manifest
+    # comes with no Lean sources to show the name's one owner, so its names are taken as given. The join comes before
+    # the constants in both dumps are dropped, which would otherwise drop an article's row; neither spelling of a
+    # joined article may be a constant of the Mathlib dump, whatever the Mathlib layer makes of it.
+    missing = manifest - atlas_rows.keys()
+    if args.articles is None and any("«" in name for name in missing):
+        compiled = set(atlas_rows)
+        try:
+            atlas_rows = v2.join_missing_quoted_articles(atlas_rows, missing, manifest, listed, {}, sources)
+        except ValueError as error:
+            raise SystemExit(str(error)) from None
+        except OSError as error:
+            from autoform_cli.lean import index_failure_message
+
+            raise SystemExit(index_failure_message(error)) from None
+        if clashes := sorted((compiled ^ atlas_rows.keys()) & rows.keys()):
+            raise SystemExit(f"quoted articles whose compiled or authored names are in the Mathlib dump: {clashes[:5]}")
     # A reserved name that both a v2 module and a Mathlib module the v2 module does not import realise on
     # demand (`AddMonoidHom.mk.congr_simp`) is in both dumps: the two are the same generated lemma.
     realised_twice = sorted(atlas_rows.keys() & rows.keys())
@@ -549,7 +569,6 @@ def command_bridge(args: argparse.Namespace) -> int:
     # The duplicates as the v2 extraction counts them: one this dump cannot count stops the bridge before it writes, and
     # one the Lean no longer declares is warned about. Only the checkout's Lean sources can tell a deleted declaration
     # from an incomplete dump: an explicit manifest has none.
-    sources = functools.cache(v2.lean_index)
     alias, problems, warnings = v2.resolve_aliases(
         listed, manifest, atlas_rows,
         (lambda name: name in sources().declarations) if args.articles is None else (lambda name: None), collisions)
