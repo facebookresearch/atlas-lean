@@ -1,12 +1,7 @@
-# Complex Box Point mem cells Prepartition i Union iff
+# Selected half-open union is detected by multiplicity
 
-A point belongs to the selected half-open prepartition union exactly when its multiplicity is
-one.
-
-```lean
-theorem complexBoxPoint_mem_cellsPrepartition_iUnion_iff
-    (D : GridFilling) (B : BoxIntegral.Box (Fin 2))
-    (hB : ∀ v ∈ D.cells, D.cellBox v ≤ B) (z : ℂ) :
-    complexBoxPoint z ∈ (D.cellsPrepartition B hB).iUnion ↔
-      D.cellMultiplicity z = 1
-```
+For a filling `D` of scale
+`t>0`, write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected,
+`0` otherwise. Let `B` be a nondegenerate real box containing all selected cell boxes, and
+let `π` be their prepartition in `B`. Then `(-Re z,-Im z)∈union(π)` if and only if
+`m_D(z)=1`.

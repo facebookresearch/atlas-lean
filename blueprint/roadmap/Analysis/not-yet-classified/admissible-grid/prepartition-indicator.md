@@ -1,3 +1,5 @@
-# Prepartition Indicator
+# Integer indicator of prepartition membership
 
-Membership indicator of a finite box prepartition.
+Let `B` be a nondegenerate half-open box
+in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes. For a
+nondegenerate box `I`, define `1_π(I)=1` when `I∈π` and `0` otherwise.

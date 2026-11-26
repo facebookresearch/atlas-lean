@@ -1,8 +1,6 @@
-# Cell Multiplicity eq one iff
+# Multiplicity one means the owner cell is selected
 
-Multiplicity is one exactly when the floor-based owner cell is selected.
-
-```lean
-theorem cellMultiplicity_eq_one_iff (D : GridFilling) (z : ℂ) :
-    D.cellMultiplicity z = 1 ↔ D.ownerIndex z ∈ D.cells
-```
+For a filling `D` of scale `t>0`,
+write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected, `0`
+otherwise. For every `z∈ℂ`, `m_D(z)=1` if and only if `o_D(z)∈D.cells`. This equality
+includes points on cell boundaries under the fixed half-open owner convention.

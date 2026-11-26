@@ -1,13 +1,7 @@
-# Cell Multiplicity eq one iff overlay Box subset right
+# Second multiplicity detects containment of an overlay box
 
-On an overlay box, second-filling multiplicity is one exactly when the whole box lies in the
-second selected-cell union.
-
-```lean
-theorem cellMultiplicity_eq_one_iff_overlayBox_subset_right
-    (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
-    (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
-    (hz : complexBoxPoint z ∈ I) :
-    E.cellMultiplicity z = 1 ↔
-      (I : Set (Fin 2 → ℝ)) ⊆ (D.rightCellPrepartition E).iUnion
-```
+Let `D,H` be finite
+positive-scale fillings and `I` a box in their common overlay prepartition. If `(-Re z,-Im
+z)∈I`, then the second multiplicity `m_H(z)` is one exactly when `I` is contained in the
+union of the second selected-cell prepartition. Multiplicity is the selected indicator at
+the floor-based owner.

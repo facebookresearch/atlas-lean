@@ -1,13 +1,5 @@
-# Edge Integral comp comm
+# Continuous linear maps commute with an edge integral
 
-A continuous complex-linear map commutes with an edge integral when the integrand is continuous
-on that edge.
-
-```lean
-theorem edgeIntegral_comp_comm {E F : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
-    (D : GridFilling) (e : GridEdge) (L : E →L[ℂ] F) (f : ℂ → E)
-    (hf : ContinuousOn f (D.edgeTrace e)) :
-    D.edgeIntegral e (fun z ↦ L (f z)) = L (D.edgeIntegral e f)
-```
+Let `E,F` be complete complex
+normed vector spaces, `D` a finite positive-scale filling, `e` a grid edge, and
+`L:E→L[ℂ]F`. If `f:ℂ→E` is continuous on `D.edgeTrace(e)`, then `I_D(e,L∘f)=L(I_D(e,f))`.

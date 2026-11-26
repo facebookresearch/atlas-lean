@@ -1,12 +1,6 @@
-# Rep germ
+# The chosen representative recovers its spectrum germ
 
-The chosen representative has exactly the original spectrum germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_germ (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    (f.rep a : SpectrumGerm a) = f.1
-```
+Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `h∈Hol(a)`, `[rep(h)]=h` in `Germ(S)`.

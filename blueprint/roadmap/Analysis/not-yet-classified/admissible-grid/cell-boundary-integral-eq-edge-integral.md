@@ -1,15 +1,7 @@
-# Cell boundary Integral eq edge Integral
+# A cell boundary integral is its signed four-edge sum
 
-The boundary integral of one grid cell is the signed sum of its four
-canonical grid-edge integrals.
-
-```lean
-theorem cell_boundaryIntegral_eq_edgeIntegral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (v : GridIndex) (f : ℂ → E) :
-    (D.cell v).boundaryIntegral f =
-      D.edgeIntegral (.horizontal v) f -
-        D.edgeIntegral (.horizontal (v.succ 1)) f +
-          D.edgeIntegral (.vertical (v.succ 0)) f -
-            D.edgeIntegral (.vertical v) f
-```
+Let `E` be a complete complex
+normed vector space. Let `D` be a finite grid filling of scale `t>0`. For `f:ℂ→E` and any
+cell index `v`, its counterclockwise boundary integral is
+`I(h_v,f)-I(h_{v+e₁},f)+I(v_{v+e₀},f)-I(v_v,f)`, where `I(e,f)` is the positively oriented
+grid-edge integral. No continuity premise is required for this identity.

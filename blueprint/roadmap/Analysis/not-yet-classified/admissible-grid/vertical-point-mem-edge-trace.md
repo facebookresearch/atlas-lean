@@ -1,11 +1,5 @@
-# Vertical point mem edge Trace
+# Every point of the vertical edge interval lies on its trace
 
-The complete stated vertical coordinate interval belongs to the corresponding edge trace.
-
-```lean
-theorem vertical_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
-    {y : ℝ} (hy : y ∈ Icc ((v 1 : ℝ) / D.scale)
-      (((v 1 : ℝ) + 1) / D.scale)) :
-    ((v 0 : ℝ) / D.scale : ℂ) + (y : ℂ) * Complex.I ∈
-      D.edgeTrace (.vertical v)
-```
+Let `D` be a finite grid
+filling of scale `t>0`. For an index `v∈ℤ²` and `v₁/t≤y≤(v₁+1)/t`, the point `v₀/t+i y`
+lies on the trace of the vertical edge based at `v`.

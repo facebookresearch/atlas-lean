@@ -1,12 +1,7 @@
-# Const smul
+# Scalar multiple of a holomorphic spectrum germ
 
-Complex scalar multiplication preserves holomorphic spectrum germs.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.const_smul (a : A) (c : ℂ)
-    {f : SpectrumGerm a} (hf : IsHolomorphicNearSpectrum a f) :
-    IsHolomorphicNearSpectrum a (c • f)
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `c∈ℂ` and a holomorphic germ `h`, the
+scalar multiple `c • h` is holomorphic.

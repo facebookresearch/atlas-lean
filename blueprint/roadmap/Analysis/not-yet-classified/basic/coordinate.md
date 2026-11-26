@@ -1,6 +1,7 @@
-# Coordinate
+# Coordinate holomorphic spectrum germ
 
-The coordinate germ `z ↦ z`.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
+Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. `coordinate a` is the germ of the entire scalar identity
+function `z↦z`.

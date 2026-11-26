@@ -45,6 +45,13 @@ multiplication and complex scalar multiplication, sends the constant-one germ
 to `1`, and sends the coordinate germ to `a`. The resulting map is a complex
 algebra homomorphism into the original, possibly noncommutative algebra.
 The zero algebra and empty spectrum retain the same total definitions.
+
+## References
+
+John B. Conway, *A Course in Functional Analysis*, second edition, Graduate Texts in
+Mathematics 96, Springer (1990), Chapter VII, §4, pp. 199–204: formula 4.5, contour
+independence 4.6 and the Riesz functional calculus 4.7. The contour carrier used here
+is the finite oriented rectilinear-grid formulation of the admissible-contour result.
 -/
 
 @[expose] public section
@@ -55,17 +62,20 @@ open scoped Topology
 
 variable {A : Type*} [NormedRing A] [NormedAlgebra ℂ A]
 
-/-- Germs of scalar functions on neighborhoods of the spectrum of `a`.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Scalar-function germs at the complex spectrum.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. `SpectrumGerm a=Germ(S)` is the commutative
+ring of global functions `ℂ→ℂ` modulo equality near `S`, using the filter `𝓝ˢ S`. No
+completeness or nonzero-algebra hypothesis is required. -/
 abbrev SpectrumGerm (a : A) := Filter.Germ (𝓝ˢ (spectrum ℂ a)) ℂ
 
-/-- A spectrum germ is holomorphic when one (equivalently every)
-representative is analytic on a neighborhood of every spectral point.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Holomorphicity of a spectrum germ.** Let `A` be a unital complex normed algebra, `a∈A`,
+and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an open
+neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h∈Germ(S)`, the property means that a
+representative `f : ℂ→ℂ` has `AnalyticAt ℂ f z` for every `z∈S`. Equality of
+representatives near `S` makes this independent of the representative. -/
 def IsHolomorphicNearSpectrum (a : A) (f : SpectrumGerm a) : Prop :=
   f.liftOn (fun F ↦ AnalyticOnNhd ℂ F (spectrum ℂ a)) fun F G hFG ↦ by
     apply propext
@@ -75,60 +85,39 @@ def IsHolomorphicNearSpectrum (a : A) (f : SpectrumGerm a) : Prop :=
     · intro hG z hz
       exact (hG z hz).congr (hFG.symm.filter_mono (nhds_le_nhdsSet hz))
 
-/-- A global scalar function determines a holomorphic spectrum germ exactly when it is analytic on
-a neighborhood of every spectral point.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem isHolomorphicNearSpectrum_coe (a : A) (f : ℂ → ℂ) :
-    IsHolomorphicNearSpectrum a (f : SpectrumGerm a) ↔
-      AnalyticOnNhd ℂ f (spectrum ℂ a)
-``` -/
+/-- **Analytic criterion for a represented spectrum germ.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For a scalar function `f : ℂ→ℂ`, its germ
+is holomorphic if and only if `f` is analytic at every point of `S`, equivalently analytic
+on a neighborhood of every spectral point. -/
 @[simp]
 theorem isHolomorphicNearSpectrum_coe (a : A) (f : ℂ → ℂ) :
     IsHolomorphicNearSpectrum a (f : SpectrumGerm a) ↔
       AnalyticOnNhd ℂ f (spectrum ℂ a) :=
   Iff.rfl
 
-/-- The zero spectrum germ is holomorphic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.zero (a : A) :
-    IsHolomorphicNearSpectrum a 0
-``` -/
+/-- **The zero spectrum germ is holomorphic.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. The germ of `z↦0` belongs to `Hol(a)`. -/
 theorem IsHolomorphicNearSpectrum.zero (a : A) :
     IsHolomorphicNearSpectrum a 0 :=
   analyticOnNhd_const
 
-/-- The constant-one spectrum germ is holomorphic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.one (a : A) :
-    IsHolomorphicNearSpectrum a 1
-``` -/
+/-- **The constant-one spectrum germ is holomorphic.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. The germ of `z↦1` belongs to `Hol(a)`. -/
 theorem IsHolomorphicNearSpectrum.one (a : A) :
     IsHolomorphicNearSpectrum a 1 :=
   analyticOnNhd_const
 
-/-- The sum of two holomorphic spectrum germs is holomorphic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.add (a : A) {f g : SpectrumGerm a}
-    (hf : IsHolomorphicNearSpectrum a f)
-    (hg : IsHolomorphicNearSpectrum a g) :
-    IsHolomorphicNearSpectrum a (f + g)
-``` -/
+/-- **Sum of holomorphic spectrum germs.** Let `A` be a unital complex normed algebra, `a∈A`,
+and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an open
+neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For holomorphic germs `h,k`, the sum `h+k` is
+holomorphic, represented locally by the sum of their analytic representatives. -/
 theorem IsHolomorphicNearSpectrum.add (a : A) {f g : SpectrumGerm a}
     (hf : IsHolomorphicNearSpectrum a f)
     (hg : IsHolomorphicNearSpectrum a g) :
@@ -137,16 +126,11 @@ theorem IsHolomorphicNearSpectrum.add (a : A) {f g : SpectrumGerm a}
   intro F G hF hG
   exact AnalyticOnNhd.add hF hG
 
-/-- The additive inverse of a holomorphic spectrum germ is holomorphic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.neg (a : A) {f : SpectrumGerm a}
-    (hf : IsHolomorphicNearSpectrum a f) :
-    IsHolomorphicNearSpectrum a (-f)
-``` -/
+/-- **Additive inverse of a holomorphic spectrum germ.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For a holomorphic germ `h`, the germ `-h`
+is holomorphic. -/
 theorem IsHolomorphicNearSpectrum.neg (a : A) {f : SpectrumGerm a}
     (hf : IsHolomorphicNearSpectrum a f) :
     IsHolomorphicNearSpectrum a (-f) := by
@@ -154,17 +138,11 @@ theorem IsHolomorphicNearSpectrum.neg (a : A) {f : SpectrumGerm a}
   intro F hF
   exact AnalyticOnNhd.neg hF
 
-/-- The product of two holomorphic spectrum germs is holomorphic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.mul (a : A) {f g : SpectrumGerm a}
-    (hf : IsHolomorphicNearSpectrum a f)
-    (hg : IsHolomorphicNearSpectrum a g) :
-    IsHolomorphicNearSpectrum a (f * g)
-``` -/
+/-- **Product of holomorphic spectrum germs.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For holomorphic scalar germs `h,k`, the pointwise
+product germ `h*k` is holomorphic. -/
 theorem IsHolomorphicNearSpectrum.mul (a : A) {f g : SpectrumGerm a}
     (hf : IsHolomorphicNearSpectrum a f)
     (hg : IsHolomorphicNearSpectrum a g) :
@@ -173,16 +151,11 @@ theorem IsHolomorphicNearSpectrum.mul (a : A) {f g : SpectrumGerm a}
   intro F G hF hG
   exact AnalyticOnNhd.mul hF hG
 
-/-- Complex scalar multiplication preserves holomorphic spectrum germs.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.const_smul (a : A) (c : ℂ)
-    {f : SpectrumGerm a} (hf : IsHolomorphicNearSpectrum a f) :
-    IsHolomorphicNearSpectrum a (c • f)
-``` -/
+/-- **Scalar multiple of a holomorphic spectrum germ.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `c∈ℂ` and a holomorphic germ `h`, the
+scalar multiple `c • h` is holomorphic. -/
 theorem IsHolomorphicNearSpectrum.const_smul (a : A) (c : ℂ)
     {f : SpectrumGerm a} (hf : IsHolomorphicNearSpectrum a f) :
     IsHolomorphicNearSpectrum a (c • f) := by
@@ -190,10 +163,11 @@ theorem IsHolomorphicNearSpectrum.const_smul (a : A) (c : ℂ)
   intro F hF
   exact AnalyticOnNhd.const_smul (c := c) hF
 
-/-- The subring of spectrum germs represented by scalar functions analytic near the spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Subring of holomorphic spectrum germs.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. The holomorphic germs form a subring of `Germ(S)`,
+closed under zero, one, addition, negation and multiplication. -/
 noncomputable def holomorphicNearSpectrumSubring (a : A) :
     Subring (SpectrumGerm a) where
   carrier := {f | IsHolomorphicNearSpectrum a f}
@@ -203,35 +177,30 @@ noncomputable def holomorphicNearSpectrumSubring (a : A) :
   neg_mem' := IsHolomorphicNearSpectrum.neg a
   mul_mem' := IsHolomorphicNearSpectrum.mul a
 
-/-- The complex algebra of holomorphic scalar-function germs near the spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Complex algebra of holomorphic spectrum germs.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. `HolomorphicNearSpectrum a=Hol(a)` is the
+complex algebra of these holomorphic scalar germs. Its operations are inherited from
+pointwise scalar-function operations; the coefficient algebra `A` need not be commutative. -/
 abbrev HolomorphicNearSpectrum (a : A) := ↥(holomorphicNearSpectrumSubring a)
 
-/-- A globally defined function analytic near the spectrum determines an
-element of `Hol(a)`.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Holomorphic germ of an analytic representative.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `f : ℂ→ℂ` analytic at every `z∈S`,
+`ofFunction a f` is its germ in `Hol(a)`. No condition on values outside a neighborhood of
+`S` is imposed. -/
 noncomputable def HolomorphicNearSpectrum.ofFunction (a : A) (f : ℂ → ℂ)
     (hf : AnalyticOnNhd ℂ f (spectrum ℂ a)) : HolomorphicNearSpectrum a :=
   ⟨(f : SpectrumGerm a), hf⟩
 
-/-- Two analytic scalar representatives define the same holomorphic germ exactly when they agree on
-a neighborhood of the spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.ofFunction_eq_iff_eventuallyEq (a : A)
-    (f g : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a))
-    (hg : AnalyticOnNhd ℂ g (spectrum ℂ a)) :
-    HolomorphicNearSpectrum.ofFunction a f hf =
-        HolomorphicNearSpectrum.ofFunction a g hg ↔
-      f =ᶠ[𝓝ˢ (spectrum ℂ a)] g
-``` -/
+/-- **Equality of two analytic representatives as germs.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For functions `f,g : ℂ→ℂ` analytic near
+`S`, their elements of `Hol(a)` are equal exactly when `f=g` on some neighborhood of `S`,
+that is, `f =ᶠ[𝓝ˢ S] g`. -/
 theorem HolomorphicNearSpectrum.ofFunction_eq_iff_eventuallyEq (a : A)
     (f g : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a))
     (hg : AnalyticOnNhd ℂ g (spectrum ℂ a)) :
@@ -244,27 +213,30 @@ theorem HolomorphicNearSpectrum.ofFunction_eq_iff_eventuallyEq (a : A)
   · intro h
     exact Subtype.ext (Filter.Germ.coe_eq.mpr h)
 
-/-- Constant holomorphic germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Constant holomorphic spectrum germ.** Let `A` be a unital complex normed algebra, `a∈A`,
+and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an open
+neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `c∈ℂ`, `const a c` is the germ of the constant
+function `z↦c`. -/
 noncomputable def HolomorphicNearSpectrum.const (a : A) (c : ℂ) :
     HolomorphicNearSpectrum a :=
   .ofFunction a (fun _ ↦ c) analyticOnNhd_const
 
-/-- The coordinate germ `z ↦ z`.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Coordinate holomorphic spectrum germ.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. `coordinate a` is the germ of the entire scalar identity
+function `z↦z`. -/
 noncomputable def HolomorphicNearSpectrum.coordinate (a : A) :
     HolomorphicNearSpectrum a :=
   .ofFunction a id analyticOnNhd_id
 
-/-- The scalar algebra structure on the classical `Hol(a)`.  Scalar constants are
-represented by constant germs; no star operation is asserted.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Complex scalar algebra structure on holomorphic germs.** Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. Scalar `c∈ℂ` acts by the constant germ
+`const a c`; multiplication is pointwise germ multiplication. No star operation on
+holomorphic germs is asserted. -/
 noncomputable instance HolomorphicNearSpectrum.instAlgebra (a : A) :
     Algebra ℂ (HolomorphicNearSpectrum a) where
   smul c f :=
@@ -289,51 +261,33 @@ noncomputable instance HolomorphicNearSpectrum.instAlgebra (a : A) :
     apply Subtype.ext
     exact Filter.Germ.inductionOn f.1 fun F ↦ rfl
 
-/-- The scalar algebra map into holomorphic spectrum germs is the constant-germ map.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.algebraMap_apply (a : A) (c : ℂ) :
-    algebraMap ℂ (HolomorphicNearSpectrum a) c =
-      HolomorphicNearSpectrum.const a c
-``` -/
+/-- **Algebra scalar map is the constant-germ map.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `c∈ℂ`, `algebraMap ℂ (Hol(a)) c=const a
+c`. -/
 @[simp]
 theorem HolomorphicNearSpectrum.algebraMap_apply (a : A) (c : ℂ) :
     algebraMap ℂ (HolomorphicNearSpectrum a) c =
       HolomorphicNearSpectrum.const a c :=
   rfl
 
-/-- The underlying spectrum germ of a scalar multiple is the scalar multiple of the underlying germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.coe_smul (a : A) (c : ℂ)
-    (f : HolomorphicNearSpectrum a) :
-    ((c • f : HolomorphicNearSpectrum a) : SpectrumGerm a) = c • f.1
-``` -/
+/-- **Underlying germ of a scalar multiple.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `c∈ℂ` and `h∈Hol(a)`, the underlying germ of `c • h`
+is `c` times the underlying germ of `h`. -/
 @[simp]
 theorem HolomorphicNearSpectrum.coe_smul (a : A) (c : ℂ)
     (f : HolomorphicNearSpectrum a) :
     ((c • f : HolomorphicNearSpectrum a) : SpectrumGerm a) = c • f.1 :=
   rfl
 
-/-- Taking an analytic representative to its spectrum germ preserves addition.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.ofFunction_add (a : A)
-    (f g : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a))
-    (hg : AnalyticOnNhd ℂ g (spectrum ℂ a)) :
-    HolomorphicNearSpectrum.ofFunction a (f + g) (hf.add hg) =
-      HolomorphicNearSpectrum.ofFunction a f hf +
-        HolomorphicNearSpectrum.ofFunction a g hg
-``` -/
+/-- **Analytic representatives preserve addition of germs.** Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For scalar `f,g` analytic near `S`,
+`ofFunction a (f+g)=ofFunction a f+ofFunction a g`. -/
 @[simp]
 theorem HolomorphicNearSpectrum.ofFunction_add (a : A)
     (f g : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a))
@@ -344,17 +298,11 @@ theorem HolomorphicNearSpectrum.ofFunction_add (a : A)
   apply Subtype.ext
   rfl
 
-/-- Taking an analytic representative to its spectrum germ preserves complex scalar multiplication.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.ofFunction_const_smul (a : A) (c : ℂ)
-    (f : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a)) :
-    HolomorphicNearSpectrum.ofFunction a (c • f) hf.const_smul =
-      c • HolomorphicNearSpectrum.ofFunction a f hf
-``` -/
+/-- **Analytic representatives preserve scalar multiplication.** Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `c∈ℂ` and `f` analytic near `S`,
+`ofFunction a (c • f)=c • ofFunction a f`. -/
 @[simp]
 theorem HolomorphicNearSpectrum.ofFunction_const_smul (a : A) (c : ℂ)
     (f : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a)) :
@@ -363,41 +311,30 @@ theorem HolomorphicNearSpectrum.ofFunction_const_smul (a : A) (c : ℂ)
   apply Subtype.ext
   rfl
 
-/-- A global scalar representative of the given holomorphic germ, analytic near the spectrum and
-equal to that germ on a spectrum neighborhood.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Chosen analytic representative of a spectrum germ.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `h∈Hol(a)`, `rep(h) : ℂ→ℂ` is a chosen
+global representative of `h`. It is analytic near each point of `S` and its germ equals
+`h`; global pointwise identities between chosen representatives are not asserted. -/
 noncomputable def HolomorphicNearSpectrum.rep (a : A)
     (f : HolomorphicNearSpectrum a) : ℂ → ℂ :=
   Quotient.out f.1
 
-/-- The chosen representative has exactly the original spectrum germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_germ (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    (f.rep a : SpectrumGerm a) = f.1
-``` -/
+/-- **The chosen representative recovers its spectrum germ.** Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `h∈Hol(a)`, `[rep(h)]=h` in `Germ(S)`. -/
 theorem HolomorphicNearSpectrum.rep_germ (a : A)
     (f : HolomorphicNearSpectrum a) :
     (f.rep a : SpectrumGerm a) = f.1 :=
   Quotient.out_eq _
 
-/-- Two holomorphic germs are equal exactly when their chosen representatives agree near the
-spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.eq_iff_rep_eventuallyEq (a : A)
-    (f g : HolomorphicNearSpectrum a) :
-    f = g ↔ f.rep a =ᶠ[𝓝ˢ (spectrum ℂ a)] g.rep a
-``` -/
+/-- **Germ equality from chosen representative agreement.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `h,k∈Hol(a)`, `h=k` if and only if
+`rep(h)=rep(k)` on a neighborhood of `S`. -/
 theorem HolomorphicNearSpectrum.eq_iff_rep_eventuallyEq (a : A)
     (f g : HolomorphicNearSpectrum a) :
     f = g ↔ f.rep a =ᶠ[𝓝ˢ (spectrum ℂ a)] g.rep a := by
@@ -409,49 +346,32 @@ theorem HolomorphicNearSpectrum.eq_iff_rep_eventuallyEq (a : A)
     rw [← f.rep_germ a, ← g.rep_germ a]
     exact Filter.Germ.coe_eq.mpr h
 
-/-- The representative of a constant germ has the same germ as the corresponding constant function.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_const_germ (a : A) (c : ℂ) :
-    ((HolomorphicNearSpectrum.const a c).rep a : SpectrumGerm a) =
-      ((fun _ : ℂ ↦ c) : SpectrumGerm a)
-``` -/
+/-- **Representative germ of a scalar constant.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `c∈ℂ`, `rep(const a c)` and the function `z↦c` have
+the same germ. -/
 theorem HolomorphicNearSpectrum.rep_const_germ (a : A) (c : ℂ) :
     ((HolomorphicNearSpectrum.const a c).rep a : SpectrumGerm a) =
       ((fun _ : ℂ ↦ c) : SpectrumGerm a) := by
   rw [HolomorphicNearSpectrum.rep_germ]
   rfl
 
-/-- The representative of the coordinate germ has the same germ as the identity scalar function.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_coordinate_germ (a : A) :
-    ((HolomorphicNearSpectrum.coordinate a).rep a : SpectrumGerm a) =
-      ((id : ℂ → ℂ) : SpectrumGerm a)
-``` -/
+/-- **Representative germ of the coordinate function.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. The chosen representative of `coordinate a`
+and `z↦z` have the same germ. -/
 theorem HolomorphicNearSpectrum.rep_coordinate_germ (a : A) :
     ((HolomorphicNearSpectrum.coordinate a).rep a : SpectrumGerm a) =
       ((id : ℂ → ℂ) : SpectrumGerm a) := by
   rw [HolomorphicNearSpectrum.rep_germ]
   rfl
 
-/-- The representative of a sum has the sum of the two representative germs.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_add_germ (a : A)
-    (f g : HolomorphicNearSpectrum a) :
-    ((f + g).rep a : SpectrumGerm a) =
-      (f.rep a : SpectrumGerm a) + (g.rep a : SpectrumGerm a)
-``` -/
+/-- **Representative germ of a sum.** Let `A` be a unital complex normed algebra, `a∈A`, and
+`S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an open
+neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h,k∈Hol(a)`, `[rep(h+k)]=[rep(h)+rep(k)]`. -/
 theorem HolomorphicNearSpectrum.rep_add_germ (a : A)
     (f g : HolomorphicNearSpectrum a) :
     ((f + g).rep a : SpectrumGerm a) =
@@ -466,17 +386,10 @@ private theorem HolomorphicNearSpectrum.rep_mul_germ (a : A)
   rw [HolomorphicNearSpectrum.rep_germ, f.rep_germ, g.rep_germ]
   rfl
 
-/-- The representative of a scalar multiple has the scalar multiple of the representative germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_const_smul_germ (a : A) (c : ℂ)
-    (f : HolomorphicNearSpectrum a) :
-    ((c • f).rep a : SpectrumGerm a) =
-      c • (f.rep a : SpectrumGerm a)
-``` -/
+/-- **Representative germ of a scalar multiple.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `c∈ℂ`, `h∈Hol(a)`, `[rep(c • h)]=[c • rep(h)]`. -/
 theorem HolomorphicNearSpectrum.rep_const_smul_germ (a : A) (c : ℂ)
     (f : HolomorphicNearSpectrum a) :
     ((c • f).rep a : SpectrumGerm a) =
@@ -484,16 +397,11 @@ theorem HolomorphicNearSpectrum.rep_const_smul_germ (a : A) (c : ℂ)
   rw [HolomorphicNearSpectrum.rep_germ, f.rep_germ]
   rfl
 
-/-- The chosen representative is analytic on a neighborhood of every spectral point.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.analyticOnNhd_rep (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    AnalyticOnNhd ℂ (f.rep a) (spectrum ℂ a)
-``` -/
+/-- **Analyticity of the chosen representative near the spectrum.** Let `A` be a unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function
+germs modulo equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs
+represented by functions analytic near every point of `S`. For `h∈Hol(a)`, `rep(h)` is
+analytic at each `z∈S`. -/
 theorem HolomorphicNearSpectrum.analyticOnNhd_rep (a : A)
     (f : HolomorphicNearSpectrum a) :
     AnalyticOnNhd ℂ (f.rep a) (spectrum ℂ a) := by
@@ -501,52 +409,39 @@ theorem HolomorphicNearSpectrum.analyticOnNhd_rep (a : A)
   rw [← f.rep_germ a] at hf
   exact hf
 
-/-- The open set of complex points where the chosen representative is analytic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Analytic locus of a spectrum-germ representative.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `h∈Hol(a)`, `analyticDomain a h={z∈ℂ |
+AnalyticAt ℂ (rep(h)) z}`. It is an open neighborhood of `S`. -/
 noncomputable def HolomorphicNearSpectrum.analyticDomain (a : A)
     (f : HolomorphicNearSpectrum a) : Set ℂ :=
   {z | AnalyticAt ℂ (f.rep a) z}
 
-/-- The representative analytic domain is open.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.isOpen_analyticDomain (a : A)
-    (f : HolomorphicNearSpectrum a) : IsOpen (f.analyticDomain a)
-``` -/
+/-- **The representative analytic locus is open.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h∈Hol(a)`, the set `{z | AnalyticAt ℂ (rep(h)) z}`
+is open in `ℂ`. -/
 theorem HolomorphicNearSpectrum.isOpen_analyticDomain (a : A)
     (f : HolomorphicNearSpectrum a) : IsOpen (f.analyticDomain a) :=
   isOpen_analyticAt ℂ (f.rep a)
 
-/-- The representative analytic domain contains the complex spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.spectrum_subset_analyticDomain (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    spectrum ℂ a ⊆ f.analyticDomain a
-``` -/
+/-- **The analytic locus contains the spectrum.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h∈Hol(a)`, every `z∈S` belongs to the analytic
+domain of `rep(h)`. -/
 theorem HolomorphicNearSpectrum.spectrum_subset_analyticDomain (a : A)
     (f : HolomorphicNearSpectrum a) :
     spectrum ℂ a ⊆ f.analyticDomain a :=
   f.analyticOnNhd_rep a
 
-/-- The chosen representative is complex differentiable throughout its analytic domain.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.differentiableOn_analyticDomain (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    DifferentiableOn ℂ (f.rep a) (f.analyticDomain a)
-``` -/
+/-- **Complex differentiability throughout the analytic locus.** Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `h∈Hol(a)`, `rep(h)` is complex
+differentiable on its analytic domain `{z | AnalyticAt ℂ (rep(h)) z}`. -/
 theorem HolomorphicNearSpectrum.differentiableOn_analyticDomain (a : A)
     (f : HolomorphicNearSpectrum a) :
     DifferentiableOn ℂ (f.rep a) (f.analyticDomain a) := by
@@ -557,13 +452,13 @@ theorem HolomorphicNearSpectrum.differentiableOn_analyticDomain (a : A)
 ### Power-series germs
 -/
 
-/-- The holomorphic spectrum germ represented by the scalar power series
-`sum n, c n * z ^ n` when its radius of convergence strictly exceeds the
-spectral radius. Values of `FormalMultilinearSeries.sum` outside its
-convergence disk do not affect this germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Spectrum germ of a scalar power series.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For coefficients `c : ℕ→ℂ`, let
+`R=(FormalMultilinearSeries.ofScalars ℂ c).radius`. If `spectralRadius ℂ a<R`, the sum of
+`∑ c_n z^n` gives an element of `Hol(a)`. Values outside the convergence disk do not
+affect the germ. -/
 noncomputable def HolomorphicNearSpectrum.ofScalars
     (a : A) (c : ℕ → ℂ)
     (h : spectralRadius ℂ a <
@@ -579,20 +474,12 @@ noncomputable def HolomorphicNearSpectrum.ofScalars
           exact le_iSup₂_of_le z hz (le_refl (‖z‖₊ : ENNReal))
         exact hzle.trans_lt h
 
-/-- The chosen representative of a scalar-series germ agrees, as a germ,
-with the sum of the corresponding formal multilinear series.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_ofScalars_germ
-    (a : A) (c : ℕ → ℂ)
-    (h : spectralRadius ℂ a <
-      (FormalMultilinearSeries.ofScalars ℂ c).radius) :
-    ((HolomorphicNearSpectrum.ofScalars a c h).rep a : SpectrumGerm a) =
-      ((FormalMultilinearSeries.ofScalars ℂ c).sum : SpectrumGerm a)
-``` -/
+/-- **Chosen representative of a scalar-series germ.** Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. With `c : ℕ→ℂ` and convergence radius
+strictly greater than `spectralRadius ℂ a`, the chosen representative of `ofScalars a c`
+has the same germ as the scalar-series sum near `S`. -/
 theorem HolomorphicNearSpectrum.rep_ofScalars_germ
     (a : A) (c : ℕ → ℂ)
     (h : spectralRadius ℂ a <
@@ -606,22 +493,12 @@ theorem HolomorphicNearSpectrum.rep_ofScalars_germ
 ### Holomorphic factorization and reciprocals
 -/
 
-/-- An element of `Hol(a)` admits the linear factorization used in the classical
-proof of the spectral mapping theorem at every spectral point.  The divided
-difference is analytic even when the zero has higher multiplicity.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.exists_factor_sub_eval
-    (a : A) (f : HolomorphicNearSpectrum a) {z₀ : ℂ}
-    (hz₀ : z₀ ∈ spectrum ℂ a) :
-    ∃ g : HolomorphicNearSpectrum a,
-      f - algebraMap ℂ (HolomorphicNearSpectrum a) (f.rep a z₀) =
-        (HolomorphicNearSpectrum.coordinate a -
-          algebraMap ℂ (HolomorphicNearSpectrum a) z₀) * g
-``` -/
+/-- **Linear factorization of a holomorphic germ at a spectral point.** Let `A` be a unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function
+germs modulo equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs
+represented by functions analytic near every point of `S`. For `h∈Hol(a)` and `z₀∈S`,
+there is `g∈Hol(a)` with `h-const a (rep(h)(z₀))=(coordinate a-const a z₀)*g`. The divided
+difference remains analytic at `z₀`, including zeros of higher multiplicity. -/
 theorem HolomorphicNearSpectrum.exists_factor_sub_eval
     (a : A) (f : HolomorphicNearSpectrum a) {z₀ : ℂ}
     (hz₀ : z₀ ∈ spectrum ℂ a) :
@@ -658,18 +535,11 @@ theorem HolomorphicNearSpectrum.exists_factor_sub_eval
   exact Filter.Eventually.of_forall fun z ↦ by
     simpa [smul_eq_mul] using (sub_smul_dslope (f.rep a) z₀ z).symm
 
-/-- If a holomorphic spectrum germ avoids a scalar value on the spectrum,
-then subtracting that scalar gives a unit of `Hol(a)`.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.isUnit_sub_const_of_ne_on_spectrum
-    (a : A) (f : HolomorphicNearSpectrum a) {c : ℂ}
-    (hc : ∀ z ∈ spectrum ℂ a, f.rep a z ≠ c) :
-    IsUnit (f - algebraMap ℂ (HolomorphicNearSpectrum a) c)
-``` -/
+/-- **Nonvanishing germ difference is a unit.** Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h∈Hol(a)` and `c∈ℂ`, if `rep(h)(z)≠c` for every
+`z∈S`, then `h-const a c` is a unit of `Hol(a)`. -/
 theorem HolomorphicNearSpectrum.isUnit_sub_const_of_ne_on_spectrum
     (a : A) (f : HolomorphicNearSpectrum a) {c : ℂ}
     (hc : ∀ z ∈ spectrum ℂ a, f.rep a z ≠ c) :
@@ -750,28 +620,21 @@ private theorem GridFilling.toCycle_integral_sub
   simpa [sub_eq_add_neg] using hadd.trans
     (congrArg (D.toCycle.integral f + ·) hneg')
 
-/-- An admissible positive finite-grid contour around the spectrum inside the chosen representative
-analytic domain.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed. -/
+/-- **Admissible finite grid contour for a holomorphic germ.** Let `A` be a complete unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function
+germs analytic near `S`. For `h∈Hol(a)`, let `G_h={z | AnalyticAt ℂ (rep(h)) z}`. `contour
+a h` is a chosen positive-scale finite grid filling admissible for `S⊆G_h`: its reduced
+trace lies in `G_h∖S`, its index is one on `S`, and zero outside `G_h`. -/
 noncomputable def HolomorphicNearSpectrum.contour (a : A)
     (f : HolomorphicNearSpectrum a) : GridFilling :=
   Classical.choose <| GridFilling.exists_isAdmissibleFor
     (spectrum.isCompact a) (f.isOpen_analyticDomain a)
     (f.spectrum_subset_analyticDomain a)
 
-/-- The chosen contour has reduced trace in the analytic domain outside the spectrum, index one on
-the spectrum and index zero outside the domain.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem HolomorphicNearSpectrum.contour_isAdmissibleFor (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    (f.contour a).IsAdmissibleFor (spectrum ℂ a) (f.analyticDomain a)
-``` -/
+/-- **The chosen spectrum contour is admissible.** Let `A` be a complete unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic
+near `S`. For `h∈Hol(a)` with analytic locus `G_h`, `contour a h` has reduced trace in
+`G_h∖S`, index one on `S`, and index zero outside `G_h`. -/
 theorem HolomorphicNearSpectrum.contour_isAdmissibleFor (a : A)
     (f : HolomorphicNearSpectrum a) :
     (f.contour a).IsAdmissibleFor (spectrum ℂ a) (f.analyticDomain a) :=
@@ -779,27 +642,20 @@ theorem HolomorphicNearSpectrum.contour_isAdmissibleFor (a : A)
     (spectrum.isCompact a) (f.isOpen_analyticDomain a)
     (f.spectrum_subset_analyticDomain a)
 
-/-- The normalized Riesz contour value of the holomorphic germ, evaluated using an analytic
-representative and admissible contour.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed. -/
+/-- **Riesz value of a holomorphic spectrum germ.** Let `A` be a complete unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs
+analytic near `S`. For `h∈Hol(a)`, `rieszFunctionalCalculus a h=(2πi)⁻¹∮Γ rep(h)(z) •
+(z·1-a)⁻¹ dz`, where `Γ` is the boundary cycle of the admissible grid `contour a h`. The
+result is an element of the original algebra with its given norm. -/
 noncomputable def rieszFunctionalCalculus (a : A)
     (f : HolomorphicNearSpectrum a) : A :=
   rieszIntegral (f.contour a).toCycle a (f.rep a)
 
-/-- Every admissible grid in the chosen representative analytic domain gives the same
-functional-calculus value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_eq_rieszIntegral_rep (a : A)
-    (f : HolomorphicNearSpectrum a) (D : GridFilling)
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) (f.analyticDomain a)) :
-    rieszFunctionalCalculus a f = rieszIntegral D.toCycle a (f.rep a)
-``` -/
+/-- **Any admissible grid gives the same chosen-representative value.** Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. For `h∈Hol(a)`, let `G_h` be the analytic locus
+of `rep(h)`. If a finite grid filling `D` is admissible for `S⊆G_h`, then
+`rieszFunctionalCalculus a h=rieszIntegral D.toCycle a (rep(h))`. -/
 theorem rieszFunctionalCalculus_eq_rieszIntegral_rep (a : A)
     (f : HolomorphicNearSpectrum a) (D : GridFilling)
     (hD : D.IsAdmissibleFor (spectrum ℂ a) (f.analyticDomain a)) :
@@ -809,18 +665,11 @@ theorem rieszFunctionalCalculus_eq_rieszIntegral_rep (a : A)
     (f.differentiableOn_analyticDomain a)
 
 omit [CompleteSpace A] in
-/-- Every scalar representative of the given germ agrees with the chosen representative on some
-open neighborhood of the spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.exists_open_eqOn_rep
-    (a : A) (f : HolomorphicNearSpectrum a) (g : ℂ → ℂ)
-    (hg : (g : SpectrumGerm a) = f.1) :
-    ∃ U : Set ℂ, IsOpen U ∧ spectrum ℂ a ⊆ U ∧ Set.EqOn (f.rep a) g U
-``` -/
+/-- **A representative agrees with the chosen one near the spectrum.** Let `A` be a unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function
+germs modulo equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs
+represented by functions analytic near every point of `S`. For `h∈Hol(a)` and a scalar
+function `g` whose germ equals `h`, there is an open `U⊇S` on which `g=rep(h)`. -/
 theorem HolomorphicNearSpectrum.exists_open_eqOn_rep
     (a : A) (f : HolomorphicNearSpectrum a) (g : ℂ → ℂ)
     (hg : (g : SpectrumGerm a) = f.1) :
@@ -832,23 +681,12 @@ theorem HolomorphicNearSpectrum.exists_open_eqOn_rep
     ⟨U, ⟨hU, hσU⟩, hUeq⟩
   exact ⟨U, hU, hσU, fun z hz ↦ hUeq hz⟩
 
-/-- Evaluate the functional calculus using any global representative of a
-spectrum germ and any admissible contour in an open domain of analyticity.
-This removes both representative and contour choices from
-`rieszFunctionalCalculus`.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_eq_rieszIntegral_of_germ_eq
-    (a : A) (f : HolomorphicNearSpectrum a) (g : ℂ → ℂ)
-    (hgerm : (g : SpectrumGerm a) = f.1) {G : Set ℂ}
-    (hG : IsOpen G) (hσG : spectrum ℂ a ⊆ G)
-    (hg : DifferentiableOn ℂ g G) (D : GridFilling)
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszFunctionalCalculus a f = rieszIntegral D.toCycle a g
-``` -/
+/-- **Riesz value from any analytic representative and admissible contour.** Let `A` be a
+complete unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. Let `h∈Hol(a)` and `g : ℂ→ℂ` have germ `h`. If
+`G⊆ℂ` is open with `S⊆G`, `g` is complex differentiable on `G`, and a finite grid filling
+`D` is admissible for `S⊆G`, then `rieszFunctionalCalculus a h=rieszIntegral D.toCycle a
+g`. -/
 theorem rieszFunctionalCalculus_eq_rieszIntegral_of_germ_eq
     (a : A) (f : HolomorphicNearSpectrum a) (g : ℂ → ℂ)
     (hgerm : (g : SpectrumGerm a) = f.1) {G : Set ℂ}
@@ -877,23 +715,11 @@ theorem rieszFunctionalCalculus_eq_rieszIntegral_of_germ_eq
     _ = rieszIntegral D.toCycle a g :=
       rieszIntegral_eq_of_isAdmissibleFor hEG hD hg
 
-/-- Evaluate the functional calculus by the Riesz integral of a globally
-defined function analytic on an open neighborhood of the spectrum.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_ofFunction_eq_rieszIntegral
-    (a : A) (g : ℂ → ℂ) {G : Set ℂ}
-    (hG : IsOpen G) (hσG : spectrum ℂ a ⊆ G)
-    (hg : DifferentiableOn ℂ g G) (D : GridFilling)
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofFunction a g
-          ((hg.analyticOnNhd hG).mono hσG)) =
-      rieszIntegral D.toCycle a g
-``` -/
+/-- **Riesz value of an analytic function on an admissible grid.** Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. Let `G⊆ℂ` be open with `S⊆G`, let `g : ℂ→ℂ` be
+complex differentiable on `G`, and let `D` be an admissible finite grid for `S⊆G`. Then
+the Riesz value of the germ of `g` equals `rieszIntegral D.toCycle a g`. -/
 theorem rieszFunctionalCalculus_ofFunction_eq_rieszIntegral
     (a : A) (g : ℂ → ℂ) {G : Set ℂ}
     (hG : IsOpen G) (hσG : spectrum ℂ a ⊆ G)
@@ -914,17 +740,10 @@ Preservation of one is kept with the remaining normalization results used to
 build the eventual algebra homomorphism.
 -/
 
-/-- The Riesz functional calculus preserves addition of holomorphic germs.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_add (a : A)
-    (f g : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculus a (f + g) =
-      rieszFunctionalCalculus a f + rieszFunctionalCalculus a g
-``` -/
+/-- **Riesz calculus preserves addition.** Let `A` be a complete unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic
+near `S`. Write `h(a)=rieszFunctionalCalculus a h`. For `h,k∈Hol(a)`,
+`(h+k)(a)=h(a)+k(a)`. -/
 @[simp]
 theorem rieszFunctionalCalculus_add (a : A)
     (f g : HolomorphicNearSpectrum a) :
@@ -981,18 +800,10 @@ theorem rieszFunctionalCalculus_add (a : A)
     _ = rieszFunctionalCalculus a f + rieszFunctionalCalculus a g := by
       rw [← hf, ← hg]
 
-/-- The Riesz functional calculus preserves multiplication in the displayed order, including for a
-noncommutative target algebra.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_mul (a : A)
-    (f g : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculus a (f * g) =
-      rieszFunctionalCalculus a f * rieszFunctionalCalculus a g
-``` -/
+/-- **Riesz calculus preserves ordered multiplication.** Let `A` be a complete unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs
+analytic near `S`. Write `h(a)=rieszFunctionalCalculus a h`. For `h,k∈Hol(a)`,
+`(h*k)(a)=h(a)*k(a)`, in the displayed order even when `A` is noncommutative. -/
 @[simp]
 theorem rieszFunctionalCalculus_mul (a : A)
     (f g : HolomorphicNearSpectrum a) :
@@ -1243,16 +1054,10 @@ theorem rieszFunctionalCalculus_mul (a : A)
     _ = rieszFunctionalCalculus a f * rieszFunctionalCalculus a g := by
       rw [← hf, ← hg]
 
-/-- The Riesz functional calculus preserves complex scalar multiplication.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_smul (a : A) (c : ℂ)
-    (f : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculus a (c • f) = c • rieszFunctionalCalculus a f
-``` -/
+/-- **Riesz calculus preserves complex scalar multiplication.** Let `A` be a complete unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function
+germs analytic near `S`. Write `h(a)=rieszFunctionalCalculus a h`. For `c∈ℂ`, `h∈Hol(a)`,
+`(c • h)(a)=c • h(a)`. -/
 @[simp]
 theorem rieszFunctionalCalculus_smul (a : A) (c : ℂ)
     (f : HolomorphicNearSpectrum a) :
@@ -1295,15 +1100,9 @@ theorem rieszFunctionalCalculus_smul (a : A) (c : ℂ)
     _ = c • rieszIntegral D.toCycle a (f.rep a) := hRiesz
     _ = c • rieszFunctionalCalculus a f := by rw [← hf]
 
-/-- The zero holomorphic germ has Riesz value zero.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_zero (a : A) :
-    rieszFunctionalCalculus a 0 = 0
-``` -/
+/-- **Zero germ has zero Riesz value.** Let `A` be a complete unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic near `S`.
+Write `h(a)=rieszFunctionalCalculus a h`. The zero germ has Riesz value `0∈A`. -/
 @[simp]
 theorem rieszFunctionalCalculus_zero (a : A) :
     rieszFunctionalCalculus a 0 = 0 := by
@@ -1311,27 +1110,20 @@ theorem rieszFunctionalCalculus_zero (a : A) :
     (0 : HolomorphicNearSpectrum a)
   simpa using h
 
-/-- The complex-linear map from holomorphic spectrum germs to their Riesz values in the complete
-normed algebra.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed. -/
+/-- **Complex-linear Riesz calculus on holomorphic germs.** Let `A` be a complete unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function
+germs analytic near `S`. The map `h↦rieszFunctionalCalculus a h` is bundled as
+`Hol(a)→ₗ[ℂ]A`, with the same value on every germ. -/
 noncomputable def rieszFunctionalCalculusLinearMap (a : A) :
     HolomorphicNearSpectrum a →ₗ[ℂ] A where
   toFun := rieszFunctionalCalculus a
   map_add' := rieszFunctionalCalculus_add a
   map_smul' := rieszFunctionalCalculus_smul a
 
-/-- The bundled linear map has the stated functional-calculus value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculusLinearMap_apply (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculusLinearMap a f = rieszFunctionalCalculus a f
-``` -/
+/-- **Value of the bundled Riesz linear map.** Let `A` be a complete unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic
+near `S`. For `h∈Hol(a)`, `rieszFunctionalCalculusLinearMap a h=rieszFunctionalCalculus a
+h`. -/
 @[simp]
 theorem rieszFunctionalCalculusLinearMap_apply (a : A)
     (f : HolomorphicNearSpectrum a) :
@@ -1342,16 +1134,10 @@ theorem rieszFunctionalCalculusLinearMap_apply (a : A)
 ### Normalization
 -/
 
-/-- the constant-function normalization: the Riesz functional calculus sends the constant-one
-germ to the identity of the Banach algebra.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_one (a : A) :
-    rieszFunctionalCalculus a (1 : HolomorphicNearSpectrum a) = 1
-``` -/
+/-- **Constant-one germ has identity Riesz value.** Let `A` be a complete unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs
+analytic near `S`. Write `h(a)=rieszFunctionalCalculus a h`. The germ of `z↦1` has Riesz
+value `1∈A`. -/
 @[simp]
 theorem rieszFunctionalCalculus_one (a : A) :
     rieszFunctionalCalculus a (1 : HolomorphicNearSpectrum a) = 1 := by
@@ -1372,16 +1158,10 @@ theorem rieszFunctionalCalculus_one (a : A) :
       simpa [f] using hEval
     _ = 1 := rieszIntegral_one_of_isAdmissibleFor hD
 
-/-- the coordinate-function normalization: the Riesz functional calculus sends the coordinate
-germ to the Banach-algebra element.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_coordinate (a : A) :
-    rieszFunctionalCalculus a (HolomorphicNearSpectrum.coordinate a) = a
-``` -/
+/-- **Coordinate germ has the original algebra element as its Riesz value.** Let `A` be a
+complete unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. Write `h(a)=rieszFunctionalCalculus a h`. The
+germ of `z↦z` has Riesz value `a`. -/
 @[simp]
 theorem rieszFunctionalCalculus_coordinate (a : A) :
     rieszFunctionalCalculus a (HolomorphicNearSpectrum.coordinate a) = a := by
@@ -1400,26 +1180,21 @@ theorem rieszFunctionalCalculus_coordinate (a : A) :
       simpa [f] using hEval
     _ = a := rieszIntegral_id_of_isAdmissibleFor hD
 
-/-- The complex algebra homomorphism assigning each holomorphic spectrum germ its Riesz value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed. -/
+/-- **Unital complex algebra homomorphism of the Riesz calculus.** Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. The map `h↦rieszFunctionalCalculus a h` is
+bundled as `Hol(a)→ₐ[ℂ]A`, preserving scalar constants, one, addition and ordered
+multiplication. -/
 noncomputable def rieszFunctionalCalculusAlgHom (a : A) :
     HolomorphicNearSpectrum a →ₐ[ℂ] A :=
   AlgHom.ofLinearMap (rieszFunctionalCalculusLinearMap a)
     (by simp)
     (fun f g ↦ by simp)
 
-/-- The bundled algebra homomorphism has the stated functional-calculus value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculusAlgHom_apply (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculusAlgHom a f = rieszFunctionalCalculus a f
-``` -/
+/-- **Value of the bundled Riesz algebra homomorphism.** Let `A` be a complete unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs
+analytic near `S`. For `h∈Hol(a)`, `rieszFunctionalCalculusAlgHom a
+h=rieszFunctionalCalculus a h`. -/
 @[simp]
 theorem rieszFunctionalCalculusAlgHom_apply (a : A)
     (f : HolomorphicNearSpectrum a) :

@@ -1,10 +1,5 @@
-# Mem overlay Prepartition of mem common Overlay support
+# Every surviving signed box belongs to the global subdivision
 
-Every box with nonzero signed overlay coefficient lies in the global overlay partition.
-
-```lean
-theorem mem_overlayPrepartition_of_mem_commonOverlay_support
-    (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
-    (hI : I ∈ (D.commonOverlay E).support) :
-    I ∈ D.overlayPrepartition E
-```
+Let `D,H` be finite grid
+fillings with positive, possibly different, scales. If the common-overlay coefficient at a
+real box `I` is nonzero, then `I` belongs to the chosen global overlay prepartition.

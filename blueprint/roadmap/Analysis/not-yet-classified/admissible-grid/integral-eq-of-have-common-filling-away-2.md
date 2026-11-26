@@ -1,13 +1,8 @@
-# Integral eq of have Common Filling Away From complex
+# Scalar grid integrals agree under a common signed filling
 
-The scalar contour integrals agree under the common-filling condition and complex
-differentiability on `G \ K`.
-
-```lean
-theorem integral_eq_of_haveCommonFillingAwayFrom_complex
-    {D E : GridFilling} {K G : Set ℂ} {f : ℂ → ℂ}
-    (hD : D.reducedTrace ⊆ G \ K) (hE : E.reducedTrace ⊆ G \ K)
-    (hDE : D.HaveCommonFillingAwayFrom E K G)
-    (hf : DifferentiableOn ℂ f (G \ K)) :
-    D.toCycle.integral f = E.toCycle.integral f
-```
+Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the
+selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. For `K,G⊆ℂ`, assume both reduced traces lie in `G∖K` and
+`closure(S)⊆G∖K`. If `f:ℂ→ℂ` is complex differentiable on `G∖K`, then `∮_{D.toCycle}
+f=∮_{H.toCycle} f`. Openness and compactness are not additional hypotheses.

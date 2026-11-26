@@ -1,13 +1,6 @@
-# Rep const smul germ
+# Representative germ of a scalar multiple
 
-The representative of a scalar multiple has the scalar multiple of the representative germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_const_smul_germ (a : A) (c : ℂ)
-    (f : HolomorphicNearSpectrum a) :
-    ((c • f).rep a : SpectrumGerm a) =
-      c • (f.rep a : SpectrumGerm a)
-```
+Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `c∈ℂ`, `h∈Hol(a)`, `[rep(c • h)]=[c • rep(h)]`.

@@ -1,12 +1,7 @@
-# Neg
+# Additive inverse of a holomorphic spectrum germ
 
-The additive inverse of a holomorphic spectrum germ is holomorphic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.neg (a : A) {f : SpectrumGerm a}
-    (hf : IsHolomorphicNearSpectrum a f) :
-    IsHolomorphicNearSpectrum a (-f)
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For a holomorphic germ `h`, the germ `-h`
+is holomorphic.

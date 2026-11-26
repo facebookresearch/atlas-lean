@@ -1,3 +1,4 @@
-# Complex Box Point
+# Sign-reversed real coordinates of a complex point
 
-The real coordinate pair `(-Re z,-Im z)` used for the half-open box convention.
+For `z∈ℂ`, the associated vector in
+`ℝ²` is `q(z)=(-Re z,-Im z)`.

@@ -1,9 +1,5 @@
-# Edge Trace subset cell carrier of mem cell Edges
+# Every edge of a grid cell lies in its closed square
 
-Each canonical edge of a cell lies in that cell's closed carrier.
-
-```lean
-theorem edgeTrace_subset_cell_carrier_of_mem_cellEdges
-    (D : GridFilling) (v : GridIndex) {e : GridEdge} (he : e ∈ cellEdges v) :
-    D.edgeTrace e ⊆ (D.cell v).carrier
-```
+Let `D` be a finite grid filling
+of scale `t>0`. If `e` is one of the four edges adjacent to the cell at `v∈ℤ²`, then
+`D.edgeTrace(e)⊆carrier(D.cell(v))`. The cell need not be selected.

@@ -1,8 +1,4 @@
-# Rectangle Of Box cell Box
+# A cell box recovers the same closed grid square
 
-The half-open presentation of a cell has exactly the same associated closed rectangle.
-
-```lean
-theorem rectangleOfBox_cellBox (D : GridFilling) (v : GridIndex) :
-    rectangleOfBox (D.cellBox v) = D.cell v
-```
+For a filling `D` of scale `t>0` and
+`v∈ℤ²`, the sign-reversed complex rectangle associated with `D.cellBox(v)` is `D.cell(v)`.

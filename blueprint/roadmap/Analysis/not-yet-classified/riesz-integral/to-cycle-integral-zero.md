@@ -1,9 +1,6 @@
-# To Cycle integral zero
+# Zero integrand on a finite grid contour
 
-The integral of the zero complete Banach-valued function over any filling cycle is zero.
-
-```lean
-theorem toCycle_integral_zero {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) :
-    D.toCycle.integral (0 : ℂ → E) = 0
-```
+Let `E` be a complete complex normed vector
+space and `D` a finite grid filling with positive scale `t`. Write `∮_D f` for the complex
+contour integral around its counterclockwise cell boundary cycle, with internal edges
+cancelled. Then `∮_D 0=0`. The filling may be empty.

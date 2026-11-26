@@ -1,9 +1,6 @@
-# Mono left
+# Admissibility persists for a smaller index-one set
 
-Admissibility for an index-one set implies admissibility for each subset of that set.
-
-```lean
-theorem IsAdmissibleFor.mono_left {D : GridFilling} {K L G : Set ℂ}
-    (hD : D.IsAdmissibleFor L G) (hKL : K ⊆ L) :
-    D.IsAdmissibleFor K G
-```
+Let `D` be a finite positive-scale
+filling and `K,L,G⊆ℂ` with `K⊆L`. Admissibility for `K` in `G` means reduced trace in
+`G∖K`, index one on `K`, and index zero outside `G`. If `D` is admissible for `L` in `G`,
+then it is admissible for `K` in `G`.

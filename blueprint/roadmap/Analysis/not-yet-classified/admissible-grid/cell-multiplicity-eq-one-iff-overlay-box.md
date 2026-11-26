@@ -1,13 +1,7 @@
-# Cell Multiplicity eq one iff overlay Box subset left
+# First multiplicity detects containment of an overlay box
 
-On an overlay box, first-filling multiplicity is one exactly when the whole box lies in the
-first selected-cell union.
-
-```lean
-theorem cellMultiplicity_eq_one_iff_overlayBox_subset_left
-    (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
-    (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
-    (hz : complexBoxPoint z ∈ I) :
-    D.cellMultiplicity z = 1 ↔
-      (I : Set (Fin 2 → ℝ)) ⊆ (D.leftCellPrepartition E).iUnion
-```
+Let `D,H` be finite
+positive-scale fillings and `I` a box in their common overlay prepartition. If `(-Re z,-Im
+z)∈I`, then the first multiplicity `m_D(z)` is one exactly when `I` is contained in the
+union of the first selected-cell prepartition. Here `m_D` is the selected indicator at its
+floor-based owner.

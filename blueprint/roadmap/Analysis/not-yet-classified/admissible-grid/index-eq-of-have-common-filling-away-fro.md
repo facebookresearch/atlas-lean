@@ -1,12 +1,8 @@
-# Index eq of have Common Filling Away From
+# Common-filling support gives equal winding indices off both traces
 
-Discrete-Stokes bridge supplied by the subdivision-invariant common
-filling condition: the two analytic indices agree away from the comparison
-region, whenever the point is off both reduced boundaries.
-
-```lean
-theorem index_eq_of_haveCommonFillingAwayFrom
-    {D E : GridFilling} {K G : Set ℂ} (hDE : D.HaveCommonFillingAwayFrom E K G)
-    {z : ℂ} (hz : z ∉ G \ K) (hzD : z ∉ D.reducedTrace)
-    (hzE : z ∉ E.reducedTrace) : D.toCycle.index z = E.toCycle.index z
-```
+Let `D,H` be
+finite grid fillings with positive, possibly different, scales. Write
+`m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. If `closure(S)⊆G∖K`, `z∉G∖K`, and `z` lies on
+neither reduced trace, then `D.toCycle.index(z)=H.toCycle.index(z)`. The trace exclusions
+allow the discrete residue formula to identify each index with its multiplicity.

@@ -1,15 +1,7 @@
-# Of Function add
+# Analytic representatives preserve addition of germs
 
-Taking an analytic representative to its spectrum germ preserves addition.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.ofFunction_add (a : A)
-    (f g : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a))
-    (hg : AnalyticOnNhd ℂ g (spectrum ℂ a)) :
-    HolomorphicNearSpectrum.ofFunction a (f + g) (hf.add hg) =
-      HolomorphicNearSpectrum.ofFunction a f hf +
-        HolomorphicNearSpectrum.ofFunction a g hg
-```
+Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For scalar `f,g` analytic near `S`,
+`ofFunction a (f+g)=ofFunction a f+ofFunction a g`.

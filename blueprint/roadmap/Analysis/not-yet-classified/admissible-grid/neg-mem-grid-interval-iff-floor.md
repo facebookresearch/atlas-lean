@@ -1,10 +1,4 @@
-# Neg mem grid Interval iff floor
+# Half-open grid intervals are characterized by the floor function
 
-For positive `t`, membership of `-x` in `(-(n+1)/t,-n/t]` is equivalent to `floor(t*x)=n`.
-
-```lean
-theorem neg_mem_gridInterval_iff_floor {t : ℝ} (ht : 0 < t)
-    (n : ℤ) (x : ℝ) :
-    -x ∈ Ioc (-(((n : ℝ) + 1) / t)) (-((n : ℝ) / t)) ↔
-      ⌊t * x⌋ = n
-```
+For `t>0`, `n∈ℤ`,
+and `x∈ℝ`, `-x∈(-(n+1)/t,-n/t]` if and only if `⌊t x⌋=n`.

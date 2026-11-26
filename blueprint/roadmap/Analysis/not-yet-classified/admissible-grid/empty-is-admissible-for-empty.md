@@ -1,9 +1,5 @@
-# Empty is Admissible For empty
+# An empty grid is admissible for the empty set in every domain
 
-The empty positive-scale filling is admissible for the empty index-one set inside any ambient
-set.
-
-```lean
-theorem empty_isAdmissibleFor_empty (t : ℝ) (ht : 0 < t) (G : Set ℂ) :
-    (empty t ht).IsAdmissibleFor ∅ G
-```
+For any `t>0` and
+`G⊆ℂ`, the empty scale-`t` filling has empty reduced trace and zero index everywhere. It
+is therefore admissible for `K=∅` in `G`, with the index-one requirement vacuous.

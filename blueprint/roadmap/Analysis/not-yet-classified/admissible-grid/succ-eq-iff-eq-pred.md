@@ -1,8 +1,4 @@
-# Succ eq iff eq pred
+# Forward lattice equality and its backward inverse
 
-Equality after a forward step is equivalent to equality before its inverse backward step.
-
-```lean
-theorem succ_eq_iff_eq_pred (v w : GridIndex) (i : Fin 2) :
-    v.succ i = w ↔ v = w.pred i
-```
+For `v,w:ℤ²` and `i∈Fin 2`,
+`succ_i(v)=w` if and only if `v=pred_i(w)`.

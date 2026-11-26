@@ -1,9 +1,6 @@
-# Continuous At reduced Integral cauchy Kernel of not mem reduced Trace
+# Reduced Cauchy integral is continuous off the grid trace
 
-The reduced Cauchy-kernel integral is continuous in its pole off the reduced trace.
-
-```lean
-theorem continuousAt_reducedIntegral_cauchyKernel_of_not_mem_reducedTrace
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.reducedTrace) :
-    ContinuousAt (fun w : ℂ ↦ D.reducedIntegral (fun ξ ↦ (ξ - w)⁻¹)) z
-```
+Let `D` be a finite grid
+filling of scale `t>0`. Write `T_D` for the reduced trace, the union of line segments
+belonging to edges with nonzero boundary coefficient. If `z∉T_D`, then
+`w↦D.reducedIntegral(ξ↦(ξ-w)⁻¹)` is continuous at `z`.

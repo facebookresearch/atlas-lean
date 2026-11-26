@@ -1,11 +1,7 @@
-# Prepartition To Box Overlay Chain to Cycle integral
+# Integral of an unsigned prepartition cycle
 
-An unsigned prepartition cycle integrates to the finite sum of its boxes' boundary integrals.
-
-```lean
-theorem prepartitionToBoxOverlayChain_toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B) (f : ℂ → E) :
-    (prepartitionToBoxOverlayChain π).toCycle.integral f =
-      ∑ I ∈ π.boxes, (rectangleOfBox I).boundaryIntegral f
-```
+Let `E` be a complete complex normed
+vector space. Let `B` be a nondegenerate half-open box in `ℝ²` and `π` a finite
+prepartition of `B` into pairwise disjoint boxes. For any `f:ℂ→E`, the contour integral of
+the coefficient-one box chain is `∑_{I∈π.boxes} ∮_{boundary(rectangleOfBox I)} f`. No
+regularity assumption on `f` is needed.

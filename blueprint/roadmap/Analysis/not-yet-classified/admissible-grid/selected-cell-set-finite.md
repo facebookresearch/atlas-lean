@@ -1,9 +1,5 @@
-# Selected Cell Set finite
+# A compact set has finitely many thickening-selected cells
 
-At positive scale, the cells meeting a closed thickening of a compact planar set form a finite
-set.
-
-```lean
-theorem selectedCellSet_finite (K : Set ℂ) (r : ℝ) {t : ℝ} (ht : 0 < t)
-    (hK : IsCompact K) : (selectedCellSet K r t).Finite
-```
+If `K⊆ℂ` is compact, `t>0`,
+and `r∈ℝ`, then the cells meeting `cthickening(r,K)` form a finite set. No
+nonnegative-radius premise is required for finiteness.

@@ -1,9 +1,6 @@
-# Dist le two div scale of mem cell carrier
+# Diameter bound for a closed grid square
 
-Points in one closed cell have complex distance at most `2/D.scale`.
-
-```lean
-theorem dist_le_two_div_scale_of_mem_cell_carrier (D : GridFilling)
-    (v : GridIndex) {z w : ℂ} (hz : z ∈ (D.cell v).carrier)
-    (hw : w ∈ (D.cell v).carrier) : dist z w ≤ 2 / D.scale
-```
+Let `D` be a finite grid filling of scale
+`t>0`. If `z,w` lie in the same cell carrier at an index `v∈ℤ²`, then their complex
+distance satisfies `dist(z,w)≤2/t`. This bound uses the sum of the two coordinate lengths
+and does not require the cell to be selected.

@@ -1,7 +1,4 @@
-# Empty cells
+# The empty filling has no selected indices
 
-An empty positive-scale filling has no selected cells.
-
-```lean
-theorem empty_cells (t : ℝ) (ht : 0 < t) : (empty t ht).cells = ∅
-```
+For `t>0`, the selected-cell set of the
+empty scale-`t` filling is `∅`.

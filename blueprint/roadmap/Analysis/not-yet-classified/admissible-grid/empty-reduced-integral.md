@@ -1,9 +1,5 @@
-# Empty reduced Integral
+# Every reduced integral of the empty filling is zero
 
-Every complete Banach-valued reduced integral of an empty filling is zero.
-
-```lean
-theorem empty_reducedIntegral {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (t : ℝ) (ht : 0 < t) (f : ℂ → E) :
-    (empty t ht).reducedIntegral f = 0
-```
+Let `E` be a complete complex
+normed vector space, `t>0`, and `f:ℂ→E`. The reduced signed-edge integral of `f` over the
+empty scale-`t` filling is `0`, with no continuity premise.

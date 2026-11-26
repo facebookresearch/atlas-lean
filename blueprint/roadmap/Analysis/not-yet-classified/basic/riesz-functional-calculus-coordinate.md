@@ -1,12 +1,6 @@
-# Riesz Functional Calculus coordinate
+# Coordinate germ has the original algebra element as its Riesz value
 
-the coordinate-function normalization: the Riesz functional calculus sends the coordinate
-germ to the Banach-algebra element.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_coordinate (a : A) :
-    rieszFunctionalCalculus a (HolomorphicNearSpectrum.coordinate a) = a
-```
+Let `A` be a
+complete unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. Write `h(a)=rieszFunctionalCalculus a h`. The
+germ of `z↦z` has Riesz value `a`.

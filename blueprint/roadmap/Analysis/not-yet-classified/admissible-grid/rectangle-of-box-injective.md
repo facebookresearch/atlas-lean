@@ -1,7 +1,5 @@
-# Rectangle Of Box injective
+# The box-to-rectangle correspondence is injective
 
-The associated closed rectangle determines a nondegenerate two-dimensional box uniquely.
-
-```lean
-theorem rectangleOfBox_injective : Function.Injective rectangleOfBox
-```
+For nondegenerate boxes `I,J⊆ℝ²`,
+equality of their sign-reversed closed complex rectangles implies `I=J`. Both lower and
+upper coordinate bounds are recovered from the diagonal endpoints.

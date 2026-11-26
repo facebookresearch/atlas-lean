@@ -1,10 +1,4 @@
-# Pairwise Disjoint cell Boxes
+# Selected half-open cells form a disjoint family
 
-The finite selected half-open cell boxes are pairwise disjoint.
-
-```lean
-theorem pairwiseDisjoint_cellBoxes (D : GridFilling) :
-    Set.Pairwise (↑D.cellBoxes)
-      (Function.onFun Disjoint fun I : BoxIntegral.Box (Fin 2) ↦
-        (I : Set (Fin 2 → ℝ)))
-```
+For any finite positive-scale filling
+`D`, distinct boxes in `D.cellBoxes` are disjoint as subsets of `ℝ²`.

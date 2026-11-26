@@ -1,13 +1,7 @@
-# Of Function const smul
+# Analytic representatives preserve scalar multiplication
 
-Taking an analytic representative to its spectrum germ preserves complex scalar multiplication.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.ofFunction_const_smul (a : A) (c : ℂ)
-    (f : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a)) :
-    HolomorphicNearSpectrum.ofFunction a (c • f) hf.const_smul =
-      c • HolomorphicNearSpectrum.ofFunction a f hf
-```
+Let `A` be a unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `c∈ℂ` and `f` analytic near `S`,
+`ofFunction a (c • f)=c • ofFunction a f`.

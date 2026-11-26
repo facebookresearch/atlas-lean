@@ -1,10 +1,5 @@
-# Cell eq of Bounds
+# Coordinate bounds of a positive-scale grid square
 
-A cell is the closed rectangle between its successive scaled integer coordinates.
-
-```lean
-theorem cell_eq_ofBounds (D : GridFilling) (v : GridIndex) :
-    D.cell v = RectilinearRectangle.ofBounds
-      ((v 0 : ℝ) / D.scale) (((v 0 : ℝ) + 1) / D.scale)
-      ((v 1 : ℝ) / D.scale) (((v 1 : ℝ) + 1) / D.scale)
-```
+For a filling `D` of scale `t>0`
+and `v∈ℤ²`, `D.cell(v)` is the rectangle with real bounds `v₀/t,(v₀+1)/t` and imaginary
+bounds `v₁/t,(v₁+1)/t`.

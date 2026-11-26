@@ -1,15 +1,8 @@
-# Exponential
+# The Riesz calculus sends the scalar exponential to the algebra exponential
 
-The Riesz functional calculus of the entire scalar exponential germ is the
-ordinary Banach-algebra exponential.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_exp (a : A) :
-    rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofFunction a NormedSpace.exp
-          (fun z _ => NormedSpace.exp_analytic z)) =
-      NormedSpace.exp a
-```
+Let `A` be
+a complete unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. The entire scalar
+function `z↦exp(z)` gives a holomorphic germ at `S`. Its Riesz value is `exp(a)=∑ a^n/n!`,
+the ordinary Banach-algebra exponential using the original multiplication and norm.
+Equivalently, `rieszFunctionalCalculus a [exp]=NormedSpace.exp a`. This holds for every
+`a`, including in noncommutative and zero algebras.

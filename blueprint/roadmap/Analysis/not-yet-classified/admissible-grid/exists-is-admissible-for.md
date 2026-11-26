@@ -1,9 +1,6 @@
-# Exists is Admissible For
+# Existence of an admissible finite grid around a compact set
 
-Every compact subset of an open planar set admits a finite positively oriented admissible grid
-contour.
-
-```lean
-theorem exists_isAdmissibleFor {K G : Set ℂ} (hK : IsCompact K)
-    (hG : IsOpen G) (hKG : K ⊆ G) : ∃ D : GridFilling, D.IsAdmissibleFor K G
-```
+For compact `K⊆ℂ`
+contained in open `G⊆ℂ`, there exists a positive-scale finite filling `D` with reduced
+trace in `G∖K`, cycle index one on `K`, and index zero outside `G`. This existence
+statement includes empty `K`.

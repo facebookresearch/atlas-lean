@@ -1,10 +1,6 @@
-# Prepartition To Box Overlay Chain apply of not Mem
+# A box outside a prepartition has coefficient zero
 
-A nonmember box has integer coefficient zero in an unsigned prepartition chain.
-
-```lean
-theorem prepartitionToBoxOverlayChain_apply_of_notMem
-    {B : BoxIntegral.Box (Fin 2)} {π : BoxIntegral.Prepartition B}
-    {I : BoxIntegral.Box (Fin 2)} (hI : I ∉ π) :
-    prepartitionToBoxOverlayChain π I = 0
-```
+Let `B` be a nondegenerate
+half-open box in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes.
+If a nondegenerate box `I` does not belong to `π`, its coefficient in the associated
+integer box chain is `0`.

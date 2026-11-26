@@ -1,13 +1,6 @@
-# Contour is Admissible For
+# The chosen spectrum contour is admissible
 
-The chosen contour has reduced trace in the analytic domain outside the spectrum, index one on
-the spectrum and index zero outside the domain.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem HolomorphicNearSpectrum.contour_isAdmissibleFor (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    (f.contour a).IsAdmissibleFor (spectrum ℂ a) (f.analyticDomain a)
-```
+Let `A` be a complete unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic
+near `S`. For `h∈Hol(a)` with analytic locus `G_h`, `contour a h` has reduced trace in
+`G_h∖S`, index one on `S`, and index zero outside `G_h`.

@@ -1,18 +1,8 @@
-# Exists factor sub eval
+# Linear factorization of a holomorphic germ at a spectral point
 
-An element of `Hol(a)` admits the linear factorization used in the classical
-proof of the spectral mapping theorem at every spectral point.  The divided
-difference is analytic even when the zero has higher multiplicity.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.exists_factor_sub_eval
-    (a : A) (f : HolomorphicNearSpectrum a) {z₀ : ℂ}
-    (hz₀ : z₀ ∈ spectrum ℂ a) :
-    ∃ g : HolomorphicNearSpectrum a,
-      f - algebraMap ℂ (HolomorphicNearSpectrum a) (f.rep a z₀) =
-        (HolomorphicNearSpectrum.coordinate a -
-          algebraMap ℂ (HolomorphicNearSpectrum a) z₀) * g
-```
+Let `A` be a unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function
+germs modulo equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs
+represented by functions analytic near every point of `S`. For `h∈Hol(a)` and `z₀∈S`,
+there is `g∈Hol(a)` with `h-const a (rep(h)(z₀))=(coordinate a-const a z₀)*g`. The divided
+difference remains analytic at `z₀`, including zeros of higher multiplicity.

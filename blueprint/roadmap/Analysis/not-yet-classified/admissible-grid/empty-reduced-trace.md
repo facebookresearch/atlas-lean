@@ -1,8 +1,4 @@
-# Empty reduced Trace
+# The empty filling has empty reduced trace
 
-The reduced trace of an empty filling is empty.
-
-```lean
-theorem empty_reducedTrace (t : ℝ) (ht : 0 < t) :
-    (empty t ht).reducedTrace = ∅
-```
+For `t>0`, the union of surviving edge
+segments of the empty filling is `∅`.

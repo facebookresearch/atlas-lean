@@ -1,15 +1,8 @@
-# Riesz Integral eq of homologous In
+# Riesz integral invariance under rectangular homology
 
-Rectangular-homology form of contour independence: two cycles have the same
-Riesz integral when their difference has a rectangle filling in the analytic
-resolvent domain.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_eq_of_homologousIn {Γ Λ : RectilinearCycle} {a : A}
-    {f : ℂ → ℂ} {G : Set ℂ} (hΓΛ : Γ.HomologousIn Λ (G \ spectrum ℂ a))
-    (hf : DifferentiableOn ℂ f G) :
-    rieszIntegral Γ a f = rieszIntegral Λ a f
-```
+Let `A` be a complete unital
+complex normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) •
+(z·1-a)⁻¹ dz`, with total inverse. Let `f` be complex differentiable on `G⊆ℂ`. If every
+rectangle with nonzero coefficient in `Γ-Λ` has its closed carrier contained in
+`G∖spectrum ℂ a`, so that the cycles are homologous there, then `R_Γ(a,f)=R_Λ(a,f)`. The
+homology relation is the finite rectangular filling relation.

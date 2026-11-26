@@ -1,11 +1,7 @@
-# Reduced Integral eq edge Integral Add Hom
+# Reduced integration equals integration of the summed boundary chain
 
-The reduced integral is the additive edge-chain integral evaluated at the filling boundary
-chain.
-
-```lean
-theorem reducedIntegral_eq_edgeIntegralAddHom {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) :
-    D.reducedIntegral f = D.edgeIntegralAddHom f D.boundaryChain
-```
+Let `E` be a
+complete complex normed vector space. Let `D` be a finite grid filling of scale `t>0`. For
+any `f:ℂ→E`, `D.reducedIntegral(f)=D.edgeIntegralAddHom(f)(D.boundaryChain)`. The right
+side integrates the sum of selected-cell signed edge chains; no continuity premise is
+required.

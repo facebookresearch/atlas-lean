@@ -1,10 +1,7 @@
-# Reduced Integral congr
+# Reduced integrals depend only on values on surviving edges
 
-Integrands agreeing on the reduced trace have equal complete Banach-valued reduced integrals.
-
-```lean
-theorem reducedIntegral_congr {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling)
-    {f g : ℂ → E} (hfg : Set.EqOn f g D.reducedTrace) :
-    D.reducedIntegral f = D.reducedIntegral g
-```
+Let `E` be a complete
+complex normed vector space. Let `D` be a finite grid filling of scale `t>0`. Write `T_D`
+for the reduced trace, the union of line segments belonging to edges with nonzero boundary
+coefficient. If `f,g:ℂ→E` agree at every point of `T_D`, then
+`D.reducedIntegral(f)=D.reducedIntegral(g)`. No continuity premise is required.

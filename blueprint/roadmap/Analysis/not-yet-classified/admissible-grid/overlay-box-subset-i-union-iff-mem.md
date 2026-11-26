@@ -1,13 +1,6 @@
-# Overlay Box subset i Union iff mem
+# Point membership detects an aligned overlay box
 
-For aligned partitions, an overlay box lies wholly in the first union exactly when a given
-point of that box lies there.
-
-```lean
-theorem overlayBox_subset_iUnion_iff_mem
-    {B : BoxIntegral.Box (Fin 2)} (π ρ : BoxIntegral.Prepartition B)
-    (halign : π ⊓ ρ = ρ.filter fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ π.iUnion)
-    {I : BoxIntegral.Box (Fin 2)} (hI : I ∈ ρ) {x : Fin 2 → ℝ}
-    (hx : x ∈ I) :
-    (I : Set (Fin 2 → ℝ)) ⊆ π.iUnion ↔ x ∈ π.iUnion
-```
+Let `π,ρ` be finite prepartitions of
+the same nondegenerate real box and suppose `π⊓ρ={J∈ρ | J⊆union(π)}`. For `I∈ρ` and `x∈I`,
+`I⊆union(π)` if and only if `x∈union(π)`. This uses alignment, not a general assertion for
+arbitrary intersecting boxes.

@@ -1,12 +1,6 @@
-# Right Overlay Prepartition to Cycle integral
+# Refining the second grid preserves its contour integral
 
-Subdivision of the second filling preserves the contour integral of a globally continuous
-complete Banach-valued integrand.
-
-```lean
-theorem rightOverlayPrepartition_toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
-    (prepartitionToBoxOverlayChain (D.rightOverlayPrepartition E₁)).toCycle.integral f =
-      E₁.toCycle.integral f
-```
+Let `E` be a complete complex
+normed vector space. Let `D,H` be finite grid fillings with positive, possibly different,
+scales. If `f:ℂ→E` is globally continuous, the contour integral of the refined second box
+chain equals `∮_{H.toCycle} f`.

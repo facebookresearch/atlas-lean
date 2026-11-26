@@ -1,8 +1,4 @@
-# Empty boundary Edges
+# The empty filling has no surviving boundary edges
 
-An empty positive-scale filling has no reduced boundary edges.
-
-```lean
-theorem empty_boundaryEdges (t : ℝ) (ht : 0 < t) :
-    (empty t ht).boundaryEdges = ∅
-```
+For `t>0`, every boundary
+coefficient of the empty filling is zero, so its reduced edge set is `∅`.

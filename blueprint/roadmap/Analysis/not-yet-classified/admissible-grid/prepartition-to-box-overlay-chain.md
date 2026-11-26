@@ -1,4 +1,6 @@
-# Prepartition To Box Overlay Chain
+# Integer chain of a finite box prepartition
 
-A prepartition regarded as the unsigned box chain with coefficient one on
-each of its boxes.
+Let `B` be a nondegenerate half-open box
+in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes. Assign
+coefficient `1` to each box of `π` and `0` to every other box, obtaining a finite
+integer-weighted box chain.

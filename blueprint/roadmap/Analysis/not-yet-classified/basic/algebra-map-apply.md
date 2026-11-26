@@ -1,12 +1,7 @@
-# Algebra Map apply
+# Algebra scalar map is the constant-germ map
 
-The scalar algebra map into holomorphic spectrum germs is the constant-germ map.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.algebraMap_apply (a : A) (c : ℂ) :
-    algebraMap ℂ (HolomorphicNearSpectrum a) c =
-      HolomorphicNearSpectrum.const a c
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `c∈ℂ`, `algebraMap ℂ (Hol(a)) c=const a
+c`.

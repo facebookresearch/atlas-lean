@@ -1,12 +1,6 @@
-# Riesz Functional Calculus Linear Map apply
+# Value of the bundled Riesz linear map
 
-The bundled linear map has the stated functional-calculus value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculusLinearMap_apply (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculusLinearMap a f = rieszFunctionalCalculus a f
-```
+Let `A` be a complete unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic
+near `S`. For `h∈Hol(a)`, `rieszFunctionalCalculusLinearMap a h=rieszFunctionalCalculus a
+h`.

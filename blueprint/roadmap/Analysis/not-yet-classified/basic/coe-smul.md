@@ -1,12 +1,7 @@
-# Coe smul
+# Underlying germ of a scalar multiple
 
-The underlying spectrum germ of a scalar multiple is the scalar multiple of the underlying germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.coe_smul (a : A) (c : ℂ)
-    (f : HolomorphicNearSpectrum a) :
-    ((c • f : HolomorphicNearSpectrum a) : SpectrumGerm a) = c • f.1
-```
+Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `c∈ℂ` and `h∈Hol(a)`, the underlying germ of `c • h`
+is `c` times the underlying germ of `h`.

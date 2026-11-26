@@ -1,12 +1,6 @@
-# To Cycle integral
+# Integral of a signed box cycle
 
-The cycle integral of a signed box chain is its finite integer-weighted sum of rectangle
-boundary integrals.
-
-```lean
-theorem BoxOverlayChain.toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (C : BoxOverlayChain) (f : ℂ → E) :
-    C.toCycle.integral f =
-      C.sum fun I n ↦ n • (rectangleOfBox I).boundaryIntegral f
-```
+Let `E` be a complete complex normed vector space. For
+a finitely supported integer box chain `C` and `f:ℂ→E`, `∮_{C.toCycle} f=∑_I C(I) •
+∮_{boundary(rectangleOfBox I)} f`. No continuity hypothesis is needed for this finite-sum
+identity.

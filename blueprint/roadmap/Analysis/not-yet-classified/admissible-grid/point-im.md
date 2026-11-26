@@ -1,8 +1,4 @@
-# Point im
+# Imaginary coordinate of a filling vertex
 
-The imaginary vertex coordinate is its second integer coordinate divided by the filling scale.
-
-```lean
-theorem point_im (D : GridFilling) (v : GridIndex) :
-    (D.point v).im = (v 1 : ℝ) / D.scale
-```
+For a filling `D` of scale `t>0` and `v∈ℤ²`,
+`Im(D.point(v))=v₁/t`.

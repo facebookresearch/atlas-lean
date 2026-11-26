@@ -1,19 +1,7 @@
-# Riesz Functional Calculus of Function eq riesz Integral
+# Riesz value of an analytic function on an admissible grid
 
-Evaluate the functional calculus by the Riesz integral of a globally
-defined function analytic on an open neighborhood of the spectrum.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_ofFunction_eq_rieszIntegral
-    (a : A) (g : ℂ → ℂ) {G : Set ℂ}
-    (hG : IsOpen G) (hσG : spectrum ℂ a ⊆ G)
-    (hg : DifferentiableOn ℂ g G) (D : GridFilling)
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofFunction a g
-          ((hg.analyticOnNhd hG).mono hσG)) =
-      rieszIntegral D.toCycle a g
-```
+Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. Let `G⊆ℂ` be open with `S⊆G`, let `g : ℂ→ℂ` be
+complex differentiable on `G`, and let `D` be an admissible finite grid for `S⊆G`. Then
+the Riesz value of the germ of `g` equals `rieszIntegral D.toCycle a g`.

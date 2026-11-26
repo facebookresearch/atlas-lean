@@ -1,12 +1,7 @@
-# Rep coordinate germ
+# Representative germ of the coordinate function
 
-The representative of the coordinate germ has the same germ as the identity scalar function.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_coordinate_germ (a : A) :
-    ((HolomorphicNearSpectrum.coordinate a).rep a : SpectrumGerm a) =
-      ((id : ℂ → ℂ) : SpectrumGerm a)
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. The chosen representative of `coordinate a`
+and `z↦z` have the same germ.

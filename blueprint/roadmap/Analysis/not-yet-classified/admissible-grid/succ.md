@@ -1,3 +1,4 @@
-# Succ
+# Forward lattice step in one coordinate
 
-Move one grid step in coordinate `i`.
+For `v:ℤ²` and `i∈Fin 2`, `succ_i(v)` has
+coordinate `v_i+1` at `i` and agrees with `v` at the other coordinate.

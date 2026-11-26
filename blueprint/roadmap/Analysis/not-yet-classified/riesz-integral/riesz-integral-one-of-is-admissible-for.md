@@ -1,14 +1,8 @@
-# Riesz Integral one of is Admissible For
+# The constant-one Riesz value on a spectrum contour
 
-An admissible positively oriented grid around the spectrum gives the algebra identity as the
-Riesz value of the constant-one function.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_one_of_isAdmissibleFor
-    {D : GridFilling} {a : A} {G : Set ℂ}
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszIntegral D.toCycle a (fun _ : ℂ ↦ 1) = 1
-```
+Let `A` be a complete unital
+complex normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) •
+(z·1-a)⁻¹ dz`, with total inverse. A filling is admissible for `S=spectrum ℂ a` in `G⊆ℂ`
+when its reduced trace lies in `G∖S`, its cycle index is one on `S`, and its index is zero
+outside `G`. For every admissible `D`, `R_{D.toCycle}(a,z↦1)=1_A`. No openness assumption
+on `G` is needed; the zero algebra is included.

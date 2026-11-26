@@ -1,3 +1,5 @@
-# Grid Cell Box
+# Half-open box for a positive-scale grid cell
 
-For positive scale, the corresponding nondegenerate half-open box in sign-reversed coordinates.
+For `t>0` and `v∈ℤ²`, the box in
+sign-reversed coordinates is the product of intervals `(-(v_i+1)/t,-v_i/t]`, `i=0,1`.
+Positivity makes both intervals nondegenerate.

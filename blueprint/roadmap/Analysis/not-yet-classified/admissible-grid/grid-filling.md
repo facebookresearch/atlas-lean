@@ -1,4 +1,5 @@
-# Grid Filling
+# A finite positive-scale square-grid filling
 
-A positive scale and a finite set of selected integer cells. Physical side length is the
-reciprocal scale, and the finite set may be empty.
+A filling consists of a real scale `t>0`
+and a finite set `C⊆ℤ²` of selected cells. The cell side length is `1/t`; the selected set
+may be empty.

@@ -1,9 +1,6 @@
-# Selected Filling reduced Trace disjoint
+# The thickening-selected reduced boundary avoids the compact set
 
-The selected filling's reduced trace is disjoint from the original compact set.
-
-```lean
-theorem selectedFilling_reducedTrace_disjoint
-    (K : Set ℂ) {r t : ℝ} (ht : 0 < t) (hK : IsCompact K) :
-    Disjoint (selectedFilling K r t ht hK).reducedTrace K
-```
+Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. For
+any real `r`, the reduced trace of `D` is disjoint from `K`. No nonnegative-radius premise
+occurs in this assertion.

@@ -1,7 +1,4 @@
-# Succ pred
+# Backward step reverses a forward lattice step
 
-A forward step followed by the matching backward step returns the original index.
-
-```lean
-theorem succ_pred (v : GridIndex) (i : Fin 2) : (v.succ i).pred i = v
-```
+For `v:ℤ²` and `i∈Fin 2`,
+`pred_i(succ_i(v))=v`.

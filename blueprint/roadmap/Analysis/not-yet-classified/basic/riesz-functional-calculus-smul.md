@@ -1,12 +1,6 @@
-# Riesz Functional Calculus smul
+# Riesz calculus preserves complex scalar multiplication
 
-The Riesz functional calculus preserves complex scalar multiplication.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_smul (a : A) (c : ℂ)
-    (f : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculus a (c • f) = c • rieszFunctionalCalculus a f
-```
+Let `A` be a complete unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function
+germs analytic near `S`. Write `h(a)=rieszFunctionalCalculus a h`. For `c∈ℂ`, `h∈Hol(a)`,
+`(c • h)(a)=c • h(a)`.

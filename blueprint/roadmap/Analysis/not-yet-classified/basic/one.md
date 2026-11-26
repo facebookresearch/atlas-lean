@@ -1,11 +1,6 @@
-# One
+# The constant-one spectrum germ is holomorphic
 
-The constant-one spectrum germ is holomorphic.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem IsHolomorphicNearSpectrum.one (a : A) :
-    IsHolomorphicNearSpectrum a 1
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. The germ of `z↦1` belongs to `Hol(a)`.

@@ -1,8 +1,5 @@
-# Mem owner cell carrier
+# Every complex point lies in its owner cell carrier
 
-Every complex point lies in its floor-based owner cell's closed carrier.
-
-```lean
-theorem mem_owner_cell_carrier (D : GridFilling) (z : ℂ) :
-    z ∈ (D.cell (D.ownerIndex z)).carrier
-```
+Let `D` be a finite grid filling
+of scale `t>0`. For each `z∈ℂ`, the closed square at `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` contains
+`z`. The owner index need not be selected in `D`.

@@ -1,7 +1,6 @@
-# Riesz Functional Calculus Linear Map
+# Complex-linear Riesz calculus on holomorphic germs
 
-The complex-linear map from holomorphic spectrum germs to their Riesz values in the complete
-normed algebra.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
+Let `A` be a complete unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function
+germs analytic near `S`. The map `h↦rieszFunctionalCalculus a h` is bundled as
+`Hol(a)→ₗ[ℂ]A`, with the same value on every germ.

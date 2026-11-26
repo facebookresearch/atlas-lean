@@ -1,19 +1,8 @@
-# Riesz Functional Calculus eq riesz Integral of germ eq
+# Riesz value from any analytic representative and admissible contour
 
-Evaluate the functional calculus using any global representative of a
-spectrum germ and any admissible contour in an open domain of analyticity.
-This removes both representative and contour choices from
-`rieszFunctionalCalculus`.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_eq_rieszIntegral_of_germ_eq
-    (a : A) (f : HolomorphicNearSpectrum a) (g : ℂ → ℂ)
-    (hgerm : (g : SpectrumGerm a) = f.1) {G : Set ℂ}
-    (hG : IsOpen G) (hσG : spectrum ℂ a ⊆ G)
-    (hg : DifferentiableOn ℂ g G) (D : GridFilling)
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszFunctionalCalculus a f = rieszIntegral D.toCycle a g
-```
+Let `A` be a
+complete unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. Let `h∈Hol(a)` and `g : ℂ→ℂ` have germ `h`. If
+`G⊆ℂ` is open with `S⊆G`, `g` is complex differentiable on `G`, and a finite grid filling
+`D` is admissible for `S⊆G`, then `rieszFunctionalCalculus a h=rieszIntegral D.toCycle a
+g`.

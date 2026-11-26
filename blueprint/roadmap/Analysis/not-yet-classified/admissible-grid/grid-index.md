@@ -1,3 +1,5 @@
-# Grid Index
+# Integer indices for a planar square grid
 
-Integer coordinates of a square in a two-dimensional grid.
+A grid index is a function `v:Fin 2→ℤ`,
+written `(v₀,v₁)`. It records integer coordinates; no scale or selected-cell condition is
+part of the index.

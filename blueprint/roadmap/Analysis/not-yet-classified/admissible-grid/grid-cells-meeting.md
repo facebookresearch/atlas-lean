@@ -1,3 +1,5 @@
-# Grid Cells Meeting
+# Lattice cells meeting a planar set
 
-Grid indices whose closed physical cells meet `S`.
+For `t∈ℝ` and `S⊆ℂ`, the selected indices are
+`{v∈ℤ² | carrier(gridCell t v)∩S≠∅}`. This set-valued definition requires neither
+boundedness of `S` nor positivity of `t`.

@@ -1,8 +1,5 @@
-# To Cycle sub
+# Subtraction of signed box chains gives subtraction of cycles
 
-Taking rectangle boundaries sends subtraction of signed box chains to subtraction of cycles.
-
-```lean
-theorem BoxOverlayChain.toCycle_sub (C D : BoxOverlayChain) :
-    (C - D).toCycle = C.toCycle - D.toCycle
-```
+For finite integer box
+chains `C,D`, `(C-D).toCycle=C.toCycle-D.toCycle`, where each cycle is the
+integer-weighted sum of its boxes' counterclockwise rectangle boundaries.

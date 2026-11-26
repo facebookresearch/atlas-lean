@@ -1,11 +1,5 @@
-# Horizontal point mem edge Trace
+# Every point of the horizontal edge interval lies on its trace
 
-The complete stated horizontal coordinate interval belongs to the corresponding edge trace.
-
-```lean
-theorem horizontal_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
-    {x : ℝ} (hx : x ∈ Icc ((v 0 : ℝ) / D.scale)
-      (((v 0 : ℝ) + 1) / D.scale)) :
-    (x : ℂ) + ((v 1 : ℝ) / D.scale : ℂ) * Complex.I ∈
-      D.edgeTrace (.horizontal v)
-```
+Let `D` be a finite
+grid filling of scale `t>0`. For an index `v∈ℤ²` and `v₀/t≤x≤(v₀+1)/t`, the point `x+i
+v₁/t` lies on the trace of the horizontal edge based at `v`.

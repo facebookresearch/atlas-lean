@@ -1,11 +1,6 @@
-# To Cycle integral eq zero of differentiable On region
+# Scalar Cauchy theorem on a filled grid region
 
-A scalar function differentiable on the entire filled grid region has
-zero integral around the associated rectilinear cycle.
-
-```lean
-theorem toCycle_integral_eq_zero_of_differentiableOn_region
-    (D : GridFilling) {f : ℂ → ℂ}
-    (hf : DifferentiableOn ℂ f D.region) :
-    D.toCycle.integral f = 0
-```
+Let `D` be a positive-scale finite grid
+filling and `f:ℂ→ℂ` complex differentiable on its entire filled region. Then
+`D.toCycle.integral f=0`. The hypothesis is differentiability on the region, including its
+boundary; no larger open domain is a premise.

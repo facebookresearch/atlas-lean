@@ -1,8 +1,4 @@
-# Succ apply of ne
+# Other coordinates are fixed by a forward lattice step
 
-A forward step leaves every other integer coordinate unchanged.
-
-```lean
-theorem succ_apply_of_ne (v : GridIndex) {i j : Fin 2} (h : j ≠ i) :
-    v.succ i j = v j
-```
+For `v:ℤ²` and distinct
+`i,j∈Fin 2`, `(succ_i(v))_j=v_j`.

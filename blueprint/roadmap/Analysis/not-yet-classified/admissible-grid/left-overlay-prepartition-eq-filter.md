@@ -1,11 +1,6 @@
-# Left Overlay Prepartition eq filter
+# Refined first cells are a restriction of the global subdivision
 
-The refined first filling is the global split restricted to its selected-cell union.
-
-```lean
-theorem leftOverlayPrepartition_eq_filter (D E : GridFilling) :
-    D.leftOverlayPrepartition E =
-      (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
-        (D.overlayHyperplanes E)).filter
-          fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ (D.leftCellPrepartition E).iUnion
-```
+Let `D,H` be finite
+grid fillings with positive, possibly different, scales. For the chosen global subdivision
+`ρ`, the first refined family equals `{I∈ρ | I⊆union(firstCellPrepartition)}`. Thus no
+overlay box crosses the first family's half-open union boundary.

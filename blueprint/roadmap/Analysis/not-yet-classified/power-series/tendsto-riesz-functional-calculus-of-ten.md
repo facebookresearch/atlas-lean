@@ -1,26 +1,9 @@
-# Tendsto riesz Functional Calculus of tendsto Locally Uniformly On
+# Locally uniform analytic limits pass through the Riesz calculus
 
-On one common open neighborhood of the spectrum, locally uniform
-convergence of analytic scalar representatives implies norm convergence of
-their Riesz functional-calculus values.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem tendsto_rieszFunctionalCalculus_of_tendstoLocallyUniformlyOn
-    {ι : Type uι} {l : Filter ι}
-    (a : A) {G : Set ℂ} (hG : IsOpen G)
-    (hσG : spectrum ℂ a ⊆ G) {F : ι → ℂ → ℂ} {f : ℂ → ℂ}
-    (hF : ∀ i, DifferentiableOn ℂ (F i) G)
-    (hf : DifferentiableOn ℂ f G)
-    (hconv : TendstoLocallyUniformlyOn F f l G) :
-    Tendsto
-      (fun i ↦ rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofFunction a (F i)
-          (((hF i).analyticOnNhd hG).mono hσG)))
-      l
-      (𝓝 (rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofFunction a f
-          ((hf.analyticOnNhd hG).mono hσG))))
-```
+Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `ι` be any index type with
+filter `l`, and let `G⊆ℂ` be open with `S⊆G`. Suppose every scalar function `F_i : ℂ→ℂ`
+and `f : ℂ→ℂ` is complex differentiable on `G`. If `F_i→f` locally uniformly on `G` along
+`l`, their Riesz values satisfy `F_i(a)→f(a)` in the norm of `A` along `l`. Locally
+uniform means uniform on every compact subset of `G`. Noncommutative and zero algebras are
+included.

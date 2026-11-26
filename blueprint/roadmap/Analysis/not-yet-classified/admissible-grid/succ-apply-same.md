@@ -1,7 +1,4 @@
-# Succ apply same
+# Coordinate increment under a forward lattice step
 
-A forward step increases its chosen integer coordinate by one.
-
-```lean
-theorem succ_apply_same (v : GridIndex) (i : Fin 2) : v.succ i i = v i + 1
-```
+For `v:ℤ²` and `i∈Fin 2`,
+`(succ_i(v))_i=v_i+1`.

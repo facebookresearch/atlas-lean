@@ -1,8 +1,5 @@
-# Is Compact edge Trace
+# A grid-edge trace is compact
 
-A canonical edge trace is a compact complex line segment.
-
-```lean
-theorem isCompact_edgeTrace (D : GridFilling) (e : GridEdge) :
-    IsCompact (D.edgeTrace e)
-```
+Let `D` be a finite grid filling of scale `t>0`. For
+every horizontal or vertical edge `e`, the real line segment between its complex endpoints
+is compact in `ℂ`.

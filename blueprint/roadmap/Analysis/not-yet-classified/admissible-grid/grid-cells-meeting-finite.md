@@ -1,8 +1,4 @@
-# Grid Cells Meeting finite
+# Only finitely many grid cells meet a bounded set
 
-At positive scale, only finitely many closed cells meet a bounded planar set.
-
-```lean
-theorem gridCellsMeeting_finite {S : Set ℂ} (hS : Bornology.IsBounded S)
-    {t : ℝ} (ht : 0 < t) : (gridCellsMeeting t S).Finite
-```
+For a bounded `S⊆ℂ` and `t>0`, the
+set `{v∈ℤ² | carrier(gridCell t v)∩S≠∅}` is finite. Compactness of `S` is not required.

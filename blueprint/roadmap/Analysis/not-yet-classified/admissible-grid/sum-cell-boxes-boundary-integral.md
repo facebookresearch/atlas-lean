@@ -1,11 +1,6 @@
-# Sum cell Boxes boundary Integral
+# Cell-index and cell-box sums have equal boundary integrals
 
-The box-presentation boundary sum equals the boundary sum indexed by the selected grid cells.
-
-```lean
-theorem sum_cellBoxes_boundaryIntegral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) :
-    ∑ I ∈ D.cellBoxes, (rectangleOfBox I).boundaryIntegral f =
-      ∑ v ∈ D.cells, (D.cell v).boundaryIntegral f
-```
+Let `E` be a complete
+complex normed vector space. For a finite positive-scale filling `D` and `f:ℂ→E`,
+`∑_{I∈D.cellBoxes} ∮_{boundary(rectangleOfBox I)} f=∑_{v∈D.cells} ∮_{boundary(D.cell(v))}
+f`. Injectivity of the cell-box map prevents repetitions.

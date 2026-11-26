@@ -1,9 +1,5 @@
-# Eq of mem cell Interior of mem cell carrier
+# An interior point determines its grid cell uniquely
 
-A point in one cell's open interior belongs to no other closed cell at the same scale.
-
-```lean
-theorem eq_of_mem_cellInterior_of_mem_cell_carrier (D : GridFilling)
-    {u v : GridIndex} {z : ℂ} (hzv : z ∈ D.cellInterior v)
-    (hzu : z ∈ (D.cell u).carrier) : u = v
-```
+Let `D` be a finite grid filling
+of scale `t>0`. If `z` lies in the open square at index `v` and in the closed cell at
+index `u`, then `u=v`. The strict interior bounds exclude shared boundary faces.

@@ -1,9 +1,7 @@
-# Horizontal boundary Coeff eq zero iff
+# Cancellation criterion for a horizontal grid edge
 
-A horizontal edge cancels exactly when its adjacent cell indicators agree.
-
-```lean
-theorem horizontal_boundaryCoeff_eq_zero_iff (D : GridFilling) (v : GridIndex) :
-    D.boundaryCoeff (.horizontal v) = 0 ↔
-      D.cellCoeff v = D.cellCoeff (v.pred 1)
-```
+Let `D` be a finite grid filling of
+scale `t>0`. Write `c_D(v)=1` for a selected integer cell `v∈ℤ²`, and `0` otherwise. The
+horizontal edge based at `v` has zero net boundary coefficient if and only if
+`c_D(v)=c_D(v-e₁)`. It cancels when both adjacent cells are selected or neither is
+selected.

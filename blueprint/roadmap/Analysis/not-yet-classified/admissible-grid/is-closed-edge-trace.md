@@ -1,8 +1,4 @@
-# Is Closed edge Trace
+# A grid-edge trace is closed
 
-A canonical edge trace is closed in the complex plane.
-
-```lean
-theorem isClosed_edgeTrace (D : GridFilling) (e : GridEdge) :
-    IsClosed (D.edgeTrace e)
-```
+Let `D` be a finite grid filling of scale `t>0`. For
+every grid edge `e`, its closed real line segment is a closed subset of the complex plane.

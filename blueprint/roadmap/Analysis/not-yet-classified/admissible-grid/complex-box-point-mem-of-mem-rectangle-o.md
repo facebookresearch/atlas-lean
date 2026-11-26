@@ -1,10 +1,5 @@
-# Complex Box Point mem of mem rectangle Of Box Interior
+# Interior points give half-open box coordinates
 
-An open-rectangle point has its sign-reversed coordinate pair in the corresponding half-open
-box.
-
-```lean
-theorem complexBoxPoint_mem_of_mem_rectangleOfBoxInterior
-    (I : BoxIntegral.Box (Fin 2)) {z : ℂ}
-    (hz : z ∈ rectangleOfBoxInterior I) : complexBoxPoint z ∈ I
-```
+Let `I=(l₀,u₀]×(l₁,u₁]` with
+`l_i<u_i`. If `z` lies in its sign-reversed open complex rectangle, then `q(z)=(-Re z,-Im
+z)` belongs to `I`.

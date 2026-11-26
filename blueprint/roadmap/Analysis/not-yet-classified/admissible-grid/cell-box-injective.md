@@ -1,7 +1,5 @@
-# Cell Box injective
+# Distinct lattice indices give distinct cell boxes
 
-Different integer indices give different half-open cell boxes at a fixed positive scale.
-
-```lean
-theorem cellBox_injective (D : GridFilling) : Function.Injective D.cellBox
-```
+For a finite filling `D` of scale
+`t>0`, the map `v∈ℤ²↦∏_{i=0,1}(-(v_i+1)/t,-v_i/t]` is injective. Positivity of `t` allows
+recovery of both integer coordinates from the box bounds.

@@ -1,4 +1,5 @@
-# Grid Edge
+# Oriented horizontal and vertical lattice edges
 
-A canonical oriented edge in a rectangular grid.  Horizontal edges point
-right and vertical edges point upward.
+A grid edge consists of an integer
+base point `v∈ℤ²` and either a horizontal or vertical direction. Horizontal edges point
+right; vertical edges point up. Physical endpoints are obtained after choosing a scale.

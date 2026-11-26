@@ -1,9 +1,6 @@
-# To Cycle index
+# A filling winding index is the sum of cell indices
 
-The filling-cycle analytic index is the sum of the selected cells' analytic indices.
-
-```lean
-theorem toCycle_index (D : GridFilling) (z : ℂ) :
-    D.toCycle.index z =
-      ∑ v ∈ D.cells, (RectilinearCycle.ofRectangle (D.cell v)).index z
-```
+For a finite positive-scale
+filling `D` and any `z∈ℂ`, `index(D.toCycle,z)=∑_{v∈D.cells}
+index(boundary(D.cell(v)),z)`, where each index is `(2πi)⁻¹∮(ζ-z)⁻¹ dζ`. The index uses
+the total inverse, so the identity is stated at every `z`.

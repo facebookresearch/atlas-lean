@@ -1,16 +1,8 @@
-# Of Function eq iff eventually Eq
+# Equality of two analytic representatives as germs
 
-Two analytic scalar representatives define the same holomorphic germ exactly when they agree on
-a neighborhood of the spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.ofFunction_eq_iff_eventuallyEq (a : A)
-    (f g : ℂ → ℂ) (hf : AnalyticOnNhd ℂ f (spectrum ℂ a))
-    (hg : AnalyticOnNhd ℂ g (spectrum ℂ a)) :
-    HolomorphicNearSpectrum.ofFunction a f hf =
-        HolomorphicNearSpectrum.ofFunction a g hg ↔
-      f =ᶠ[𝓝ˢ (spectrum ℂ a)] g
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For functions `f,g : ℂ→ℂ` analytic near
+`S`, their elements of `Hol(a)` are equal exactly when `f=g` on some neighborhood of `S`,
+that is, `f =ᶠ[𝓝ˢ S] g`.

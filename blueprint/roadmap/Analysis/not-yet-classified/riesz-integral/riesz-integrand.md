@@ -1,7 +1,6 @@
-# Riesz Integrand
+# Resolvent-weighted scalar integrand
 
-For `a ∈ A` and a scalar function `f`, the function `z ↦ f(z) • resolvent(a,z)`, with resolvent
-`(z·1-a)⁻¹` and the total inverse convention.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
+Let `A` be a unital complex normed algebra with
+its given norm and `a∈A`. For `f:ℂ→ℂ`, the integrand is `z↦f(z) • (z·1-a)⁻¹`, with
+Mathlib's total inverse. Completeness and commutative multiplication are not required; the
+zero algebra is allowed.

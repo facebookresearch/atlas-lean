@@ -1,9 +1,5 @@
-# Index of cell eq one of mem cell Interior
+# A counterclockwise grid square has index one in its interior
 
-A counterclockwise cell boundary has analytic index one at an interior point.
-
-```lean
-theorem index_of_cell_eq_one_of_mem_cellInterior (D : GridFilling)
-    (v : GridIndex) {z : ℂ} (hz : z ∈ D.cellInterior v) :
-    (RectilinearCycle.ofRectangle (D.cell v)).index z = 1
-```
+Let `D` be a finite grid
+filling of scale `t>0`. If `z∈D.cellInterior(v)`, then
+`(2πi)⁻¹∮_{boundary(D.cell(v))}(ζ-z)⁻¹ dζ=1`.

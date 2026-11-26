@@ -1,14 +1,8 @@
-# Riesz Integral id of is Admissible For
+# The coordinate Riesz value on a spectrum contour
 
-An admissible positively oriented grid around the spectrum gives `a` as the Riesz value of the
-coordinate function.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_id_of_isAdmissibleFor
-    {D : GridFilling} {a : A} {G : Set ℂ}
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszIntegral D.toCycle a id = a
-```
+Let `A` be a complete unital complex
+normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) •
+(z·1-a)⁻¹ dz`, with total inverse. A filling is admissible for `S=spectrum ℂ a` in `G⊆ℂ`
+when its reduced trace lies in `G∖S`, its cycle index is one on `S`, and its index is zero
+outside `G`. For every admissible `D`, `R_{D.toCycle}(a,z↦z)=a`. No openness assumption on
+`G` is needed, and the formula includes the zero algebra.

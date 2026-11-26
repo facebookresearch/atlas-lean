@@ -1,3 +1,6 @@
-# Left Overlay Prepartition
+# First-filling cells after common coordinate subdivision
 
-Left cell prepartition after applying the chosen common split.
+Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Subdivide each selected first-filling
+box by the chosen common cuts and take the union of those finite subpartitions. This is
+the refined first-filling prepartition inside the common bounding box.

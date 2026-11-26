@@ -1,11 +1,6 @@
-# Common Overlay apply
+# Signed overlay coefficients are differences of indicators
 
-The signed overlay coefficient is the first refined indicator minus the second.
-
-```lean
-theorem commonOverlay_apply (D E : GridFilling)
-    (I : BoxIntegral.Box (Fin 2)) :
-    D.commonOverlay E I =
-      prepartitionIndicator (D.leftOverlayPrepartition E) I -
-        prepartitionIndicator (D.rightOverlayPrepartition E) I
-```
+Let `D,H` be finite grid
+fillings with positive, possibly different, scales. For every real box `I`, the
+common-overlay coefficient is `1_{leftOverlay}(I)-1_{rightOverlay}(I)`, with each
+indicator taking integer values `0,1`.

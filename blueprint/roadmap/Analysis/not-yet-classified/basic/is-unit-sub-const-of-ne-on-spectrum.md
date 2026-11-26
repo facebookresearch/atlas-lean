@@ -1,14 +1,7 @@
-# Is Unit sub const of ne on spectrum
+# Nonvanishing germ difference is a unit
 
-If a holomorphic spectrum germ avoids a scalar value on the spectrum,
-then subtracting that scalar gives a unit of `Hol(a)`.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.isUnit_sub_const_of_ne_on_spectrum
-    (a : A) (f : HolomorphicNearSpectrum a) {c : ℂ}
-    (hc : ∀ z ∈ spectrum ℂ a, f.rep a z ≠ c) :
-    IsUnit (f - algebraMap ℂ (HolomorphicNearSpectrum a) c)
-```
+Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h∈Hol(a)` and `c∈ℂ`, if `rep(h)(z)≠c` for every
+`z∈S`, then `h-const a c` is a unit of `Hol(a)`.

@@ -1,9 +1,5 @@
-# Boundary Coeff eq one or neg one of mem
+# Each surviving grid edge has unit signed weight
 
-Every surviving boundary edge has coefficient one or negative one.
-
-```lean
-theorem boundaryCoeff_eq_one_or_neg_one_of_mem
-    (D : GridFilling) {e : GridEdge} (he : e ∈ D.boundaryEdges) :
-    D.boundaryCoeff e = 1 ∨ D.boundaryCoeff e = -1
-```
+Let `D` be a finite grid filling of
+scale `t>0`. If `e∈D.boundaryEdges`, then its net integer boundary coefficient is `1` or
+`-1`. This follows from taking differences of zero-or-one adjacent-cell indicators.

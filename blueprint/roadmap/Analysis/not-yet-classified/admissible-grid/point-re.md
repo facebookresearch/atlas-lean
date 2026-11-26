@@ -1,8 +1,4 @@
-# Point re
+# Real coordinate of a filling vertex
 
-The real vertex coordinate is its first integer coordinate divided by the filling scale.
-
-```lean
-theorem point_re (D : GridFilling) (v : GridIndex) :
-    (D.point v).re = (v 0 : ℝ) / D.scale
-```
+For a filling `D` of scale `t>0` and `v∈ℤ²`,
+`Re(D.point(v))=v₀/t`.

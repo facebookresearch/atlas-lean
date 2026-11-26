@@ -1,11 +1,5 @@
-# Riesz Functional Calculus zero
+# Zero germ has zero Riesz value
 
-The zero holomorphic germ has Riesz value zero.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_zero (a : A) :
-    rieszFunctionalCalculus a 0 = 0
-```
+Let `A` be a complete unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic near `S`.
+Write `h(a)=rieszFunctionalCalculus a h`. The zero germ has Riesz value `0∈A`.

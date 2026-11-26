@@ -1,10 +1,7 @@
-# Closure multiplicity Difference Support subset
+# Closing the difference support adds points only on grid traces
 
-Only points of the two reduced traces can be added by closing the multiplicity-difference
-support.
-
-```lean
-theorem closure_multiplicityDifferenceSupport_subset (D E : GridFilling) :
-    closure (D.multiplicityDifferenceSupport E) ⊆
-      (D.multiplicityDifferenceSupport E ∪ D.reducedTrace) ∪ E.reducedTrace
-```
+Let `D,H` be finite
+grid fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for
+the selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. Then `closure(S)⊆S∪trace(D)∪trace(H)`, where each trace is the union of
+surviving signed-edge segments.

@@ -1,13 +1,7 @@
-# Eq iff rep eventually Eq
+# Germ equality from chosen representative agreement
 
-Two holomorphic germs are equal exactly when their chosen representatives agree near the
-spectrum.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.eq_iff_rep_eventuallyEq (a : A)
-    (f g : HolomorphicNearSpectrum a) :
-    f = g ↔ f.rep a =ᶠ[𝓝ˢ (spectrum ℂ a)] g.rep a
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For `h,k∈Hol(a)`, `h=k` if and only if
+`rep(h)=rep(k)` on a neighborhood of `S`.

@@ -1,12 +1,7 @@
-# Rep const germ
+# Representative germ of a scalar constant
 
-The representative of a constant germ has the same germ as the corresponding constant function.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_const_germ (a : A) (c : ℂ) :
-    ((HolomorphicNearSpectrum.const a c).rep a : SpectrumGerm a) =
-      ((fun _ : ℂ ↦ c) : SpectrumGerm a)
-```
+Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `c∈ℂ`, `rep(const a c)` and the function `z↦c` have
+the same germ.

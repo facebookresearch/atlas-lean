@@ -1,10 +1,5 @@
-# Selected Filling cell Multiplicity eq zero of not mem cthickening
+# Selected multiplicity vanishes outside the enlarged thickening
 
-For nonnegative radius, multiplicity is zero outside the closed `(2/t+r)`-thickening.
-
-```lean
-theorem selectedFilling_cellMultiplicity_eq_zero_of_not_mem_cthickening
-    (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K)
-    {z : ℂ} (hz : z ∉ Metric.cthickening (2 / t + r) K) :
-    (selectedFilling K r t ht hK).cellMultiplicity z = 0
-```
+Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. If
+`r≥0` and `z∉cthickening(r+2/t,K)`, then `m_D(z)=0`.

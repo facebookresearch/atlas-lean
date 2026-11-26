@@ -1,8 +1,5 @@
-# Closure rectangle Of Box Interior
+# Closure of an open box rectangle
 
-The closure of the open rectangle associated with a nondegenerate box is its closed carrier.
-
-```lean
-theorem closure_rectangleOfBoxInterior (I : BoxIntegral.Box (Fin 2)) :
-    closure (rectangleOfBoxInterior I) = (rectangleOfBox I).carrier
-```
+For a nondegenerate real box `I=(l₀,u₀]×(l₁,u₁]`,
+the closure of its sign-reversed open complex rectangle is the closed carrier
+`[-u₀,-l₀]×[-u₁,-l₁]`.

@@ -35,6 +35,13 @@ natural powers is introduced.
 limit property for a nonunital complex algebra homomorphism on the holomorphic
 germ algebra. The Riesz algebra homomorphism satisfies it after forgetting
 only its unital field. All norms are those of the original Banach algebra.
+
+## References
+
+John B. Conway, *A Course in Functional Analysis*, second edition, Graduate Texts in
+Mathematics 96, Springer (1990), Chapter VII, §4, pp. 199–204, Theorem 4.7 on the
+Riesz functional calculus and its power-series and locally uniform limit properties.
+The filter-generic statement extends the sequential source formulation.
 -/
 
 @[expose] public section
@@ -146,30 +153,13 @@ private theorem summable_smul_pow_of_spectralRadius_lt_radius
     simpa only [ENNReal.coe_pow] using hpowENN.le
   simpa only [coe_nnNorm, NNReal.coe_pow] using NNReal.coe_mono hpowNN
 
-/-- On one common open neighborhood of the spectrum, locally uniform
-convergence of analytic scalar representatives implies norm convergence of
-their Riesz functional-calculus values.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem tendsto_rieszFunctionalCalculus_of_tendstoLocallyUniformlyOn
-    {ι : Type uι} {l : Filter ι}
-    (a : A) {G : Set ℂ} (hG : IsOpen G)
-    (hσG : spectrum ℂ a ⊆ G) {F : ι → ℂ → ℂ} {f : ℂ → ℂ}
-    (hF : ∀ i, DifferentiableOn ℂ (F i) G)
-    (hf : DifferentiableOn ℂ f G)
-    (hconv : TendstoLocallyUniformlyOn F f l G) :
-    Tendsto
-      (fun i ↦ rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofFunction a (F i)
-          (((hF i).analyticOnNhd hG).mono hσG)))
-      l
-      (𝓝 (rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofFunction a f
-          ((hf.analyticOnNhd hG).mono hσG))))
-``` -/
+/-- **Locally uniform analytic limits pass through the Riesz calculus.** Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `ι` be any index type with
+filter `l`, and let `G⊆ℂ` be open with `S⊆G`. Suppose every scalar function `F_i : ℂ→ℂ`
+and `f : ℂ→ℂ` is complex differentiable on `G`. If `F_i→f` locally uniformly on `G` along
+`l`, their Riesz values satisfy `F_i(a)→f(a)` in the norm of `A` along `l`. Locally
+uniform means uniform on every compact subset of `G`. Noncommutative and zero algebras are
+included. -/
 theorem tendsto_rieszFunctionalCalculus_of_tendstoLocallyUniformlyOn
     {ι : Type uι} {l : Filter ι}
     (a : A) {G : Set ℂ} (hG : IsOpen G)
@@ -312,22 +302,12 @@ theorem tendsto_rieszFunctionalCalculus_of_tendstoLocallyUniformlyOn
         div_lt_iff₀ hBpos]
       nlinarith
 
-/-- If a scalar power series has radius strictly larger than the spectral
-radius of `a`, its ordered operator series sums to its Riesz
-functional-calculus value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem hasSum_rieszFunctionalCalculus_ofScalars
-    (a : A) (c : ℕ → ℂ)
-    (h : spectralRadius ℂ a <
-      (FormalMultilinearSeries.ofScalars ℂ c).radius) :
-    HasSum (fun n : ℕ ↦ c n • a ^ n)
-      (rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofScalars a c h))
-``` -/
+/-- **A scalar power series sums to its Riesz value.** Let `A` be a complete unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. For coefficients `c : ℕ→ℂ`, let `R` be the
+convergence radius of `∑ c_n z^n`. If `spectralRadius ℂ a<R`, let `f` be its analytic germ
+near `S`. Then `∑ c_n • a^n` has sum `rieszFunctionalCalculus a f`. The radius may be
+infinite. Natural powers and products are those of the original algebra; commutativity is
+not assumed. -/
 theorem hasSum_rieszFunctionalCalculus_ofScalars
     (a : A) (c : ℕ → ℂ)
     (h : spectralRadius ℂ a <
@@ -390,11 +370,13 @@ theorem hasSum_rieszFunctionalCalculus_ofScalars
   exact (Summable.hasSum_iff_tendsto_nat
     (summable_smul_pow_of_spectralRadius_lt_radius a c h)).2 htendsto
 
-/-- Sequential compact-open continuity for a nonunital complex algebra
-homomorphism on holomorphic spectrum germs.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed. -/
+/-- **Sequential compact-open continuity of a spectrum-germ algebra map.** Let `A` be a
+complete unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Hol(a)` be the
+complex algebra of scalar-function germs analytic near `S`, and let `τ : Hol(a)→ₙₐ[ℂ]A` be
+a nonunital complex algebra homomorphism. `PreservesCompactOpenSeqLimits a τ` means: for
+every open `G⊇S`, scalar functions `F_n,f` complex differentiable on `G`, and locally
+uniform convergence `F_n→f` on `G`, one has `τ([F_n])→τ([f])` in the algebra norm.
+Brackets denote germs at `S`; representative values outside `G` do not affect them. -/
 def PreservesCompactOpenSeqLimits
     (a : A) (τ : HolomorphicNearSpectrum a →ₙₐ[ℂ] A) : Prop :=
   ∀ {G : Set ℂ} (hG : IsOpen G) (hσG : spectrum ℂ a ⊆ G)
@@ -409,18 +391,12 @@ def PreservesCompactOpenSeqLimits
         (𝓝 (τ (HolomorphicNearSpectrum.ofFunction a f
           ((hf.analyticOnNhd hG).mono hσG))))
 
-/-- The Riesz functional-calculus algebra homomorphism preserves sequential
-compact-open limits on a common analytic neighborhood of the spectrum.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculusAlgHom_preservesCompactOpenSeqLimits
-    (a : A) :
-    PreservesCompactOpenSeqLimits a
-      (rieszFunctionalCalculusAlgHom a).toNonUnitalAlgHom
-``` -/
+/-- **The Riesz homomorphism preserves sequential analytic limits.** Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. For each common open `G⊇S` and
+scalar functions `F_n,f` complex differentiable on `G`, locally uniform convergence
+`F_n→f` gives convergence of their Riesz values in norm. Thus the canonical Riesz
+homomorphism, viewed as a nonunital complex algebra homomorphism on `Hol(a)`, satisfies
+`PreservesCompactOpenSeqLimits a τ`. Zero and noncommutative algebras are included. -/
 theorem rieszFunctionalCalculusAlgHom_preservesCompactOpenSeqLimits
     (a : A) :
     PreservesCompactOpenSeqLimits a

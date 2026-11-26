@@ -1,12 +1,6 @@
-# Edge Integral Add Hom cell Boundary Chain
+# Integrating one cell chain gives its rectangle boundary integral
 
-Integrating a cell's four signed canonical edges gives its counterclockwise rectangle boundary
-integral.
-
-```lean
-theorem edgeIntegralAddHom_cellBoundaryChain {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) (v : GridIndex) :
-    D.edgeIntegralAddHom f (cellBoundaryChain v) =
-      (D.cell v).boundaryIntegral f
-```
+Let `E` be a
+complete complex normed vector space. Let `D` be a finite grid filling of scale `t>0`. For
+`f:ℂ→E` and `v∈ℤ²`, integration of the signed four-edge chain `h_v-h_{v+e₁}+v_{v+e₀}-v_v`
+equals the counterclockwise boundary integral of `D.cell(v)`.

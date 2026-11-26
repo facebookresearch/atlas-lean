@@ -1,13 +1,8 @@
-# To Cycle integral add
+# Addition of continuous grid-contour integrands
 
-A fixed reduced grid contour is additive in a Banach-valued integrand
-that is continuous on the contour.
-
-```lean
-theorem toCycle_integral_add {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling)
-    {f g : ℂ → E} (hf : ContinuousOn f D.reducedTrace)
-    (hg : ContinuousOn g D.reducedTrace) :
-    D.toCycle.integral (f + g) =
-      D.toCycle.integral f + D.toCycle.integral g
-```
+Let `E` be a complete complex normed
+vector space and `D` a finite grid filling with positive scale `t`. Write `∮_D f` for the
+complex contour integral around its counterclockwise cell boundary cycle, with internal
+edges cancelled. If `f,g:ℂ→E` are continuous on the reduced trace of `D`, then
+`∮_D(f+g)=∮_D f+∮_D g`. No differentiability or condition in the filled interior is
+required.

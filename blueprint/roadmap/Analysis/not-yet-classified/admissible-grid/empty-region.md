@@ -1,8 +1,4 @@
-# Empty region
+# The empty filling has empty closed region
 
-The region of an empty filling is empty.
-
-```lean
-theorem empty_region (t : ℝ) (ht : 0 < t) :
-    (empty t ht).region = ∅
-```
+For `t>0`, the union of its selected closed
+grid cell carriers is `∅`.

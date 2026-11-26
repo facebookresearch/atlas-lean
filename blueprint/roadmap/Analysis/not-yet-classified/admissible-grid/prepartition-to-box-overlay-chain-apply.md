@@ -1,10 +1,6 @@
-# Prepartition To Box Overlay Chain apply
+# Box-chain coefficients equal the prepartition indicator
 
-The unsigned box-chain coefficient is exactly the prepartition membership indicator.
-
-```lean
-theorem prepartitionToBoxOverlayChain_apply
-    {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B)
-    (I : BoxIntegral.Box (Fin 2)) :
-    prepartitionToBoxOverlayChain π I = prepartitionIndicator π I
-```
+Let `B` be a nondegenerate
+half-open box in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes.
+At every box `I`, the coefficient of the associated integer chain is `1_π(I)`, equal to
+`1` or `0` according to membership in `π`.

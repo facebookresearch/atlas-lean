@@ -1,11 +1,9 @@
-# Have Common Filling Away From of is Admissible For
+# Admissible grids have comparison support in the punctured domain
 
-Any two admissible grid fillings have subdivision-invariant comparison
-support inside the collar domain.
-
-```lean
-theorem haveCommonFillingAwayFrom_of_isAdmissibleFor
-    {D E : GridFilling} {K G : Set ℂ}
-    (hD : D.IsAdmissibleFor K G) (hE : E.IsAdmissibleFor K G) :
-    D.HaveCommonFillingAwayFrom E K G
-```
+Let `D,H` be finite
+grid fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for
+the selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. Admissibility for `K` in `G` means reduced trace in `G∖K`, index one on
+`K`, and index zero outside `G`. If both fillings are admissible for the same `K` in `G`,
+then `closure(S)⊆G∖K`. No compactness or openness premise is needed for this comparison
+theorem.

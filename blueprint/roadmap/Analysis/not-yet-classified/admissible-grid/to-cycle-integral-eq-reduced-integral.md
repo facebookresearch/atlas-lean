@@ -1,12 +1,7 @@
-# To Cycle integral eq reduced Integral
+# Discrete Stokes equality for a finite grid filling
 
-Algebraic discrete Stokes: summing the rectangle boundaries of all
-selected cells gives exactly the integral over the reduced oriented edge
-chain.
-
-```lean
-theorem toCycle_integral_eq_reducedIntegral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) :
-    D.toCycle.integral f = D.reducedIntegral f
-```
+Let `E` be a complete complex
+normed vector space. Let `D` be a finite grid filling of scale `t>0`. For every `f:ℂ→E`,
+the sum of its counterclockwise selected-cell boundary integrals equals the reduced
+signed-edge integral: `D.toCycle.integral(f)=D.reducedIntegral(f)`. Internal edges cancel,
+without a continuity hypothesis on `f`.

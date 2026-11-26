@@ -1,9 +1,6 @@
-# Cell Multiplicity eq zero of not mem region
+# Cell multiplicity vanishes outside the selected region
 
-Selected-cell multiplicity is zero outside the filling region.
-
-```lean
-theorem cellMultiplicity_eq_zero_of_not_mem_region
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.region) :
-    D.cellMultiplicity z = 0
-```
+For a filling `D` of scale
+`t>0`, write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected,
+`0` otherwise. If `z` does not belong to the union of selected closed cell carriers, then
+`m_D(z)=0`.

@@ -1,3 +1,5 @@
-# Grid Point
+# Physical vertex of a scaled integer grid
 
-The complex vertex `(v 0/t,v 1/t)`, using total division with `x/0=0`.
+For any real `t` and `v∈ℤ²`, `p_t(v)=v₀/t+i
+v₁/t`. Division is total, so `p_0(v)=0`; this definition alone does not require a positive
+scale.

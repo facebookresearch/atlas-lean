@@ -1,14 +1,8 @@
-# To Cycle integral eq zero of has Deriv At
+# A complex derivative has zero grid-contour integral
 
-The integral of a complex derivative around a reduced grid boundary is
-zero.  Only the reduced trace is involved: no differentiability in the
-interior of the filling is required.
-
-```lean
-theorem toCycle_integral_eq_zero_of_hasDerivAt
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) {F f : ℂ → E}
-    (hf : ContinuousOn f D.reducedTrace)
-    (hF : ∀ z ∈ D.reducedTrace, HasDerivAt F (f z) z) :
-    D.toCycle.integral f = 0
-```
+Let `E` be a complete complex
+normed vector space and `D` a finite grid filling with positive scale `t`. Write `∮_D f`
+for the complex contour integral around its counterclockwise cell boundary cycle, with
+internal edges cancelled. Let `F,f:ℂ→E`. If `f` is continuous on the reduced trace and `F`
+has complex derivative `f(z)` at every point `z` of that trace, then `∮_D f=0`. No
+derivative hypothesis is imposed in the interior.

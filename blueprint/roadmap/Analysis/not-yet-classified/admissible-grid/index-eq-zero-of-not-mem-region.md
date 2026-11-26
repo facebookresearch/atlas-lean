@@ -1,9 +1,5 @@
-# Index eq zero of not mem region
+# Winding index vanishes outside the selected grid region
 
-The analytic winding index is zero outside the selected-cell region.
-
-```lean
-theorem index_eq_zero_of_not_mem_region
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.region) :
-    D.toCycle.index z = 0
-```
+Let `D` be a finite grid
+filling of scale `t>0`. If `z` lies outside the union of selected closed cell carriers,
+then `D.toCycle.index(z)=0`. Such a point is also off the reduced trace.

@@ -1,12 +1,7 @@
-# Analytic On Nhd rep
+# Analyticity of the chosen representative near the spectrum
 
-The chosen representative is analytic on a neighborhood of every spectral point.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.analyticOnNhd_rep (a : A)
-    (f : HolomorphicNearSpectrum a) :
-    AnalyticOnNhd ℂ (f.rep a) (spectrum ℂ a)
-```
+Let `A` be a unital
+complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function
+germs modulo equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs
+represented by functions analytic near every point of `S`. For `h∈Hol(a)`, `rep(h)` is
+analytic at each `z∈S`.

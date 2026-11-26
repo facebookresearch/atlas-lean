@@ -1,10 +1,6 @@
-# Edge Integral Add Hom apply
+# Value of the additive edge-chain integral
 
-The additive edge-chain integral is the finite sum weighted by its integer edge coefficients.
-
-```lean
-theorem edgeIntegralAddHom_apply {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E)
-    (c : GridEdge →₀ ℤ) :
-    D.edgeIntegralAddHom f c = c.sum fun e n ↦ n • D.edgeIntegral e f
-```
+Let `E` be a complete complex normed vector
+space. Let `D` be a finite grid filling of scale `t>0`. For `f:ℂ→E` and a finitely
+supported integer edge chain `c`, `D.edgeIntegralAddHom(f)(c)=∑_e c(e) •
+D.edgeIntegral(e,f)`. No continuity premise is required.

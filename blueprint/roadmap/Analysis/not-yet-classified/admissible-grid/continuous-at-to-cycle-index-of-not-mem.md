@@ -1,9 +1,6 @@
-# Continuous At to Cycle index of not mem reduced Trace
+# Grid winding index is continuous off the reduced trace
 
-The filling's analytic winding index is continuous off its reduced boundary.
-
-```lean
-theorem continuousAt_toCycle_index_of_not_mem_reducedTrace
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.reducedTrace) :
-    ContinuousAt (fun w : ℂ ↦ D.toCycle.index w) z
-```
+Let `D` be a finite grid
+filling of scale `t>0`. Write `T_D` for the reduced trace, the union of line segments
+belonging to edges with nonzero boundary coefficient. For `z∉T_D`, the analytic index
+`w↦(2πi)⁻¹∮_{D.toCycle}(ξ-w)⁻¹ dξ` is continuous at `z`.

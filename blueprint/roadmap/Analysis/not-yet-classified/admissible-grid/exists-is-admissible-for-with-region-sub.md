@@ -1,10 +1,7 @@
-# Exists is Admissible For with region subset
+# A compact set has an admissible finite grid inside an open neighborhood
 
-A compact set contained in an open planar set admits an admissible finite filling whose whole
-cell region remains in the open set.
-
-```lean
-theorem exists_isAdmissibleFor_with_region_subset {K G : Set ℂ}
-    (hK : IsCompact K) (hG : IsOpen G) (hKG : K ⊆ G) :
-    ∃ D : GridFilling, D.IsAdmissibleFor K G ∧ D.region ⊆ G
-```
+If `K⊆ℂ` is
+compact, `G⊆ℂ` is open, and `K⊆G`, there exists a positive-scale finite filling `D`
+admissible for `K` in `G` whose entire selected closed-cell region lies in `G`.
+Admissibility for `K` in `G` means reduced trace in `G∖K`, index one on `K`, and index
+zero outside `G`. The empty compact set is allowed.

@@ -20,31 +20,38 @@ import Mathlib.Analysis.Complex.Tietze
 /-!
 # Finite oriented grid contours
 
-A grid index is a pair of integers. At positive scale `t`, its physical
-vertex is `(v₀/t, v₁/t)` and each cell has side length `1/t`. A finite
-filling is a positive scale and a finite set of selected cells, possibly
-empty. Unrestricted vertex formulas use total real division, including
+A grid index is a pair of integers. At positive scale `t`, its physical vertex is `(v₀/t, v₁/t)`
+and each cell has side length `1/t`. A finite filling is a positive scale and a finite set of
+selected cells, possibly empty. Unrestricted vertex formulas use total real division, including
 `x/0 = 0`; nondegenerate fillings and half-open boxes use positive scale.
 
-Horizontal edges point right and vertical edges point up. Horizontal
-boundary coefficients are the selected-cell indicator above minus that
-below; vertical coefficients are the indicator on the left minus that
-on the right. Internal edges cancel. The associated cycle is the sum of
-counterclockwise cell boundaries. Its reduced trace is the finite union
-of edges with nonzero coefficients. Integer-weighted edge integration
-uses the stated complete complex normed target spaces and their norms.
+Horizontal edges point right and vertical edges point up. Horizontal boundary coefficients are
+the selected-cell indicator above minus that below; vertical coefficients are the indicator on
+the left minus that on the right. Internal edges cancel. The associated cycle is the sum of
+counterclockwise cell boundaries. Its reduced trace is the finite union of edges with nonzero
+coefficients. Integer-weighted edge integration uses the stated complete complex normed target
+spaces and their norms.
 
-Off the reduced trace, the analytic winding index equals the zero-or-one
-multiplicity of the floor-based owner cell. Compact `K` contained in open
-`G` admits a finite filling with reduced trace in `G \ K`, index one on
-`K`, index zero outside `G`, and whole region in `G`. Empty `K` admits an
-empty filling.
+Off the reduced trace, the analytic winding index equals the zero-or-one multiplicity of the
+floor-based owner cell. Compact `K` contained in open `G` admits a finite filling with reduced
+trace in `G \ K`, index one on `K`, index zero outside `G`, and whole region in `G`. Empty `K`
+admits an empty filling.
 
-Two positive scales may be unrelated. A finite signed rectangular
-overlay compares their cell multiplicities. If the closure of their
-multiplicity-difference support and both reduced traces lie in `G \ K`,
-then every complex-differentiable complete Banach-valued integrand on
-`G \ K` has equal integrals over the two cycles.
+Two positive scales may be unrelated. A finite signed rectangular overlay compares their cell
+multiplicities. If the closure of their multiplicity-difference support and both reduced traces
+lie in `G \ K`, then every complex-differentiable complete Banach-valued integrand on `G \ K`
+has equal integrals over the two cycles.
+
+## References
+
+John B. Conway, *A Course in Functional Analysis*, second edition, Graduate Texts in Mathematics
+96, Springer, 1990, Chapter VII §4, 4.4, p. 201, gives the admissible-contour step for
+Riesz calculus. The construction here realizes that step with finite integer square grids,
+compact-set thickenings, cancellation of oriented edges, and common rectangular refinements. Its
+integration and comparison proofs use Mathlib's box-additive boundary integrals, rectangle
+Cauchy–Goursat theory, Tietze extension, and separating continuous linear functionals. The scope
+is finite rectilinear grids; no construction of arbitrary smooth, simple, disjoint, or
+rectifiable contour families is asserted.
 -/
 
 @[expose] public section
@@ -53,64 +60,51 @@ then every complex-differentiable complete Banach-valued integrand on
 open Filter Set
 open scoped Topology
 
-/-- Integer coordinates of a square in a two-dimensional grid. -/
+/-- **Integer indices for a planar square grid.** A grid index is a function `v:Fin 2→ℤ`,
+written `(v₀,v₁)`. It records integer coordinates; no scale or selected-cell condition is
+part of the index. -/
 abbrev GridIndex := Fin 2 → ℤ
 
 namespace GridIndex
 
-/-- Move one grid step in coordinate `i`. -/
+/-- **Forward lattice step in one coordinate.** For `v:ℤ²` and `i∈Fin 2`, `succ_i(v)` has
+coordinate `v_i+1` at `i` and agrees with `v` at the other coordinate. -/
 def succ (v : GridIndex) (i : Fin 2) : GridIndex :=
   Function.update v i (v i + 1)
 
-/-- Move one grid step backwards in coordinate `i`. -/
+/-- **Backward lattice step in one coordinate.** For `v:ℤ²` and `i∈Fin 2`, `pred_i(v)` has
+coordinate `v_i-1` at `i` and agrees with `v` elsewhere. -/
 def pred (v : GridIndex) (i : Fin 2) : GridIndex :=
   Function.update v i (v i - 1)
 
-/-- A forward step increases its chosen integer coordinate by one.
-
-```lean
-theorem succ_apply_same (v : GridIndex) (i : Fin 2) : v.succ i i = v i + 1
-``` -/
+/-- **Coordinate increment under a forward lattice step.** For `v:ℤ²` and `i∈Fin 2`,
+`(succ_i(v))_i=v_i+1`. -/
 @[simp]
 theorem succ_apply_same (v : GridIndex) (i : Fin 2) : v.succ i i = v i + 1 := by
   simp [succ]
 
-/-- A backward step decreases its chosen integer coordinate by one.
-
-```lean
-theorem pred_apply_same (v : GridIndex) (i : Fin 2) : v.pred i i = v i - 1
-``` -/
+/-- **Coordinate decrement under a backward lattice step.** For `v:ℤ²` and `i∈Fin 2`,
+`(pred_i(v))_i=v_i-1`. -/
 @[simp]
 theorem pred_apply_same (v : GridIndex) (i : Fin 2) : v.pred i i = v i - 1 := by
   simp [pred]
 
-/-- A forward step leaves every other integer coordinate unchanged.
-
-```lean
-theorem succ_apply_of_ne (v : GridIndex) {i j : Fin 2} (h : j ≠ i) :
-    v.succ i j = v j
-``` -/
+/-- **Other coordinates are fixed by a forward lattice step.** For `v:ℤ²` and distinct
+`i,j∈Fin 2`, `(succ_i(v))_j=v_j`. -/
 @[simp]
 theorem succ_apply_of_ne (v : GridIndex) {i j : Fin 2} (h : j ≠ i) :
     v.succ i j = v j := by
   simp [succ, h]
 
-/-- A backward step leaves every other integer coordinate unchanged.
-
-```lean
-theorem pred_apply_of_ne (v : GridIndex) {i j : Fin 2} (h : j ≠ i) :
-    v.pred i j = v j
-``` -/
+/-- **Other coordinates are fixed by a backward lattice step.** For `v:ℤ²` and distinct
+`i,j∈Fin 2`, `(pred_i(v))_j=v_j`. -/
 @[simp]
 theorem pred_apply_of_ne (v : GridIndex) {i j : Fin 2} (h : j ≠ i) :
     v.pred i j = v j := by
   simp [pred, h]
 
-/-- A backward step followed by the matching forward step returns the original index.
-
-```lean
-theorem pred_succ (v : GridIndex) (i : Fin 2) : (v.pred i).succ i = v
-``` -/
+/-- **Forward step reverses a backward lattice step.** For `v:ℤ²` and `i∈Fin 2`,
+`succ_i(pred_i(v))=v`. -/
 @[simp]
 theorem pred_succ (v : GridIndex) (i : Fin 2) : (v.pred i).succ i = v := by
   funext j
@@ -119,11 +113,8 @@ theorem pred_succ (v : GridIndex) (i : Fin 2) : (v.pred i).succ i = v := by
     simp
   · simp [succ_apply_of_ne, pred_apply_of_ne, h]
 
-/-- A forward step followed by the matching backward step returns the original index.
-
-```lean
-theorem succ_pred (v : GridIndex) (i : Fin 2) : (v.succ i).pred i = v
-``` -/
+/-- **Backward step reverses a forward lattice step.** For `v:ℤ²` and `i∈Fin 2`,
+`pred_i(succ_i(v))=v`. -/
 @[simp]
 theorem succ_pred (v : GridIndex) (i : Fin 2) : (v.succ i).pred i = v := by
   funext j
@@ -132,12 +123,8 @@ theorem succ_pred (v : GridIndex) (i : Fin 2) : (v.succ i).pred i = v := by
     simp
   · simp [succ_apply_of_ne, pred_apply_of_ne, h]
 
-/-- Equality after a forward step is equivalent to equality before its inverse backward step.
-
-```lean
-theorem succ_eq_iff_eq_pred (v w : GridIndex) (i : Fin 2) :
-    v.succ i = w ↔ v = w.pred i
-``` -/
+/-- **Forward lattice equality and its backward inverse.** For `v,w:ℤ²` and `i∈Fin 2`,
+`succ_i(v)=w` if and only if `v=pred_i(w)`. -/
 theorem succ_eq_iff_eq_pred (v w : GridIndex) (i : Fin 2) :
     v.succ i = w ↔ v = w.pred i := by
   constructor
@@ -146,12 +133,8 @@ theorem succ_eq_iff_eq_pred (v w : GridIndex) (i : Fin 2) :
   · rintro rfl
     exact pred_succ w i
 
-/-- Equality after a backward step is equivalent to equality before its inverse forward step.
-
-```lean
-theorem pred_eq_iff_eq_succ (v w : GridIndex) (i : Fin 2) :
-    v.pred i = w ↔ v = w.succ i
-``` -/
+/-- **Backward lattice equality and its forward inverse.** For `v,w:ℤ²` and `i∈Fin 2`,
+`pred_i(v)=w` if and only if `v=succ_i(w)`. -/
 theorem pred_eq_iff_eq_succ (v w : GridIndex) (i : Fin 2) :
     v.pred i = w ↔ v = w.succ i := by
   constructor
@@ -162,36 +145,46 @@ theorem pred_eq_iff_eq_succ (v w : GridIndex) (i : Fin 2) :
 
 end GridIndex
 
-/-- A canonical oriented edge in a rectangular grid.  Horizontal edges point
-right and vertical edges point upward. -/
+/-- **Oriented horizontal and vertical lattice edges.** A grid edge consists of an integer
+base point `v∈ℤ²` and either a horizontal or vertical direction. Horizontal edges point
+right; vertical edges point up. Physical endpoints are obtained after choosing a scale. -/
 inductive GridEdge where
   | horizontal (base : GridIndex)
   | vertical (base : GridIndex)
 deriving DecidableEq
 
-/-- A positive scale and a finite set of selected integer cells. Physical side length is the
-reciprocal scale, and the finite set may be empty. -/
+/-- **A finite positive-scale square-grid filling.** A filling consists of a real scale `t>0`
+and a finite set `C⊆ℤ²` of selected cells. The cell side length is `1/t`; the selected set
+may be empty. -/
 structure GridFilling where
   scale : ℝ
   scale_pos : 0 < scale
   cells : Finset GridIndex
 
-/-- The complex vertex `(v 0/t,v 1/t)`, using total division with `x/0=0`. -/
+/-- **Physical vertex of a scaled integer grid.** For any real `t` and `v∈ℤ²`, `p_t(v)=v₀/t+i
+v₁/t`. Division is total, so `p_0(v)=0`; this definition alone does not require a positive
+scale. -/
 noncomputable def gridPoint (t : ℝ) (v : GridIndex) : ℂ :=
   (((v 0 : ℤ) : ℝ) / t : ℂ) +
     (((v 1 : ℤ) : ℝ) / t : ℂ) * Complex.I
 
-/-- The closed physical rectangle between successive scaled integer coordinates. -/
+/-- **Closed cell between diagonal scaled grid vertices.** For `t∈ℝ` and `v∈ℤ²`, the cell is
+the axis-parallel closed rectangle with diagonal endpoints `p_t(v)` and `p_t(v+(1,1))`,
+where `p_t(v)=v₀/t+i v₁/t`. At `t=0` it is degenerate; for `t>0` it is a square of side
+`1/t`. -/
 noncomputable def gridCell (t : ℝ) (v : GridIndex) : RectilinearRectangle where
   first := gridPoint t v
   second := gridPoint t (fun i => v i + 1)
 
-/-- Grid indices whose closed physical cells meet `S`. -/
+/-- **Lattice cells meeting a planar set.** For `t∈ℝ` and `S⊆ℂ`, the selected indices are
+`{v∈ℤ² | carrier(gridCell t v)∩S≠∅}`. This set-valued definition requires neither
+boundedness of `S` nor positivity of `t`. -/
 noncomputable def gridCellsMeeting (t : ℝ) (S : Set ℂ) : Set GridIndex :=
   {v | ((gridCell t v).carrier ∩ S).Nonempty}
 
-/-- For positive scale, the corresponding nondegenerate half-open box in sign-reversed coordinates.
--/
+/-- **Half-open box for a positive-scale grid cell.** For `t>0` and `v∈ℤ²`, the box in
+sign-reversed coordinates is the product of intervals `(-(v_i+1)/t,-v_i/t]`, `i=0,1`.
+Positivity makes both intervals nondegenerate. -/
 noncomputable def gridCellBox (t : ℝ) (ht : 0 < t) (v : GridIndex) :
     BoxIntegral.Box (Fin 2) where
   lower i := -(((v i : ℝ) + 1) / t)
@@ -199,22 +192,21 @@ noncomputable def gridCellBox (t : ℝ) (ht : 0 < t) (v : GridIndex) :
   lower_lt_upper i := neg_lt_neg
     ((div_lt_div_iff_of_pos_right ht).2 (by norm_num))
 
-/-- Convert a two-dimensional Mathlib box to the corresponding present
-axis-parallel rectangle. -/
+/-- **Closed complex rectangle associated with a real box.** Let `I=(l₀,u₀]×(l₁,u₁]` with
+`l_i<u_i`. Its associated complex rectangle has real interval `[-u₀,-l₀]` and imaginary
+interval `[-u₁,-l₁]`; both coordinates are sign-reversed. -/
 noncomputable def rectangleOfBox (I : BoxIntegral.Box (Fin 2)) : RectilinearRectangle :=
   RectilinearRectangle.ofBounds (-I.upper 0) (-I.lower 0) (-I.upper 1) (-I.lower 1)
 
-/-- Open physical rectangle corresponding to a Mathlib half-open box. -/
+/-- **Open interior of the rectangle associated with a box.** For `I=(l₀,u₀]×(l₁,u₁]`,
+`l_i<u_i`, this is `{z∈ℂ | -u₀<Re z<-l₀ and -u₁<Im z<-l₁}`. -/
 noncomputable def rectangleOfBoxInterior (I : BoxIntegral.Box (Fin 2)) : Set ℂ :=
   Ioo (-I.upper 0) (-I.lower 0) ×ℂ
     Ioo (-I.upper 1) (-I.lower 1)
 
-/-- The closure of the open rectangle associated with a nondegenerate box is its closed carrier.
-
-```lean
-theorem closure_rectangleOfBoxInterior (I : BoxIntegral.Box (Fin 2)) :
-    closure (rectangleOfBoxInterior I) = (rectangleOfBox I).carrier
-``` -/
+/-- **Closure of an open box rectangle.** For a nondegenerate real box `I=(l₀,u₀]×(l₁,u₁]`,
+the closure of its sign-reversed open complex rectangle is the closed carrier
+`[-u₀,-l₀]×[-u₁,-l₁]`. -/
 theorem closure_rectangleOfBoxInterior (I : BoxIntegral.Box (Fin 2)) :
     closure (rectangleOfBoxInterior I) = (rectangleOfBox I).carrier := by
   have h₀ : -I.upper 0 < -I.lower 0 := neg_lt_neg (I.lower_lt_upper 0)
@@ -224,11 +216,9 @@ theorem closure_rectangleOfBoxInterior (I : BoxIntegral.Box (Fin 2)) :
   simp [rectangleOfBox, RectilinearRectangle.carrier, Complex.Rectangle, uIcc_of_le h₀.le,
     uIcc_of_le h₁.le]
 
-/-- The associated closed rectangle determines a nondegenerate two-dimensional box uniquely.
-
-```lean
-theorem rectangleOfBox_injective : Function.Injective rectangleOfBox
-``` -/
+/-- **The box-to-rectangle correspondence is injective.** For nondegenerate boxes `I,J⊆ℝ²`,
+equality of their sign-reversed closed complex rectangles implies `I=J`. Both lower and
+upper coordinate bounds are recovered from the diagonal endpoints. -/
 theorem rectangleOfBox_injective : Function.Injective rectangleOfBox := by
   intro I J h
   have hfirst := congrArg RectilinearRectangle.first h
@@ -247,23 +237,21 @@ theorem rectangleOfBox_injective : Function.Injective rectangleOfBox := by
   cases J
   simp_all
 
-/-- Embedding of nondegenerate boxes into the present rectangle type. -/
+/-- **Embedding of nondegenerate real boxes as complex rectangles.** The map sends
+`I=(l₀,u₀]×(l₁,u₁]` to the closed complex rectangle `[-u₀,-l₀]×[-u₁,-l₁]`. It is
+injective; it does not identify the half-open box with its closed carrier. -/
 noncomputable def rectangleOfBoxEmbedding : BoxIntegral.Box (Fin 2) ↪ RectilinearRectangle where
   toFun := rectangleOfBox
   inj' := rectangleOfBox_injective
 
-/-- The real coordinate pair `(-Re z,-Im z)` used for the half-open box convention. -/
+/-- **Sign-reversed real coordinates of a complex point.** For `z∈ℂ`, the associated vector in
+`ℝ²` is `q(z)=(-Re z,-Im z)`. -/
 noncomputable def complexBoxPoint (z : ℂ) : Fin 2 → ℝ :=
   fun i ↦ if i = 0 then -z.re else -z.im
 
-/-- An open-rectangle point has its sign-reversed coordinate pair in the corresponding half-open
-box.
-
-```lean
-theorem complexBoxPoint_mem_of_mem_rectangleOfBoxInterior
-    (I : BoxIntegral.Box (Fin 2)) {z : ℂ}
-    (hz : z ∈ rectangleOfBoxInterior I) : complexBoxPoint z ∈ I
-``` -/
+/-- **Interior points give half-open box coordinates.** Let `I=(l₀,u₀]×(l₁,u₁]` with
+`l_i<u_i`. If `z` lies in its sign-reversed open complex rectangle, then `q(z)=(-Re z,-Im
+z)` belongs to `I`. -/
 theorem complexBoxPoint_mem_of_mem_rectangleOfBoxInterior
     (I : BoxIntegral.Box (Fin 2)) {z : ℂ}
     (hz : z ∈ rectangleOfBoxInterior I) : complexBoxPoint z ∈ I := by
@@ -274,14 +262,8 @@ theorem complexBoxPoint_mem_of_mem_rectangleOfBoxInterior
   · change I.lower 1 < -z.im ∧ -z.im ≤ I.upper 1
     constructor <;> linarith [hz.2.1, hz.2.2]
 
-/-- For positive `t`, membership of `-x` in `(-(n+1)/t,-n/t]` is equivalent to `floor(t*x)=n`.
-
-```lean
-theorem neg_mem_gridInterval_iff_floor {t : ℝ} (ht : 0 < t)
-    (n : ℤ) (x : ℝ) :
-    -x ∈ Ioc (-(((n : ℝ) + 1) / t)) (-((n : ℝ) / t)) ↔
-      ⌊t * x⌋ = n
-``` -/
+/-- **Half-open grid intervals are characterized by the floor function.** For `t>0`, `n∈ℤ`,
+and `x∈ℝ`, `-x∈(-(n+1)/t,-n/t]` if and only if `⌊t x⌋=n`. -/
 theorem neg_mem_gridInterval_iff_floor {t : ℝ} (ht : 0 < t)
     (n : ℤ) (x : ℝ) :
     -x ∈ Ioc (-(((n : ℝ) + 1) / t)) (-((n : ℝ) / t)) ↔
@@ -301,28 +283,22 @@ theorem neg_mem_gridInterval_iff_floor {t : ℝ} (ht : 0 < t)
       exact (lt_div_iff₀ ht).2 (by simpa [mul_comm] using hx.2)
     constructor <;> linarith
 
-/-- Finite signed chains of nondegenerate two-dimensional boxes. -/
+/-- **Finite integer-weighted chains of real boxes.** A box chain is a finitely supported
+function from nondegenerate two-dimensional real boxes to `ℤ`. Its coefficients may have
+either sign. -/
 abbrev BoxOverlayChain := BoxIntegral.Box (Fin 2) →₀ ℤ
 
-/-- Regard a signed box overlay as a rectilinear cycle by taking the boundary
-of every box with its integer multiplicity. -/
+/-- **Rectilinear cycle of a signed box chain.** For a finite box chain `C`, form `∑_I C(I) •
+boundary(rectangleOfBox I)`, using the sign-reversed complex rectangle of each box.
+Integer coefficients give the contour orientations. -/
 noncomputable def BoxOverlayChain.toCycle (C : BoxOverlayChain) : RectilinearCycle :=
   Finsupp.mapDomain rectangleOfBoxEmbedding C
 
-/-- Rectangle boundary integration is additive under a coordinate split when
-the integrand is globally continuous.
-
-```lean
-theorem boundaryIntegral_rectangleOfBox_split {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (f : ℂ → E) (hf : Continuous f) (I : BoxIntegral.Box (Fin 2))
-    (i : Fin 2) (x : ℝ) (hx : x ∈ Ioo (I.lower i) (I.upper i)) :
-    (I.splitLower i x).elim' 0
-        (fun J ↦ (rectangleOfBox J).boundaryIntegral f) +
-      (I.splitUpper i x).elim' 0
-        (fun J ↦ (rectangleOfBox J).boundaryIntegral f) =
-      (rectangleOfBox I).boundaryIntegral f
-``` -/
+/-- **Boundary integral is additive under a coordinate cut.** Let `E` be a complete complex
+normed vector space and `f:ℂ→E` globally continuous. For a nondegenerate real box `I`,
+coordinate `i∈Fin 2`, and cut `l_i<x<u_i`, the boundary integral of its sign-reversed
+complex rectangle equals the sum for the lower and upper subboxes. Their common edge
+cancels. -/
 theorem boundaryIntegral_rectangleOfBox_split {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (f : ℂ → E) (hf : Continuous f) (I : BoxIntegral.Box (Fin 2))
@@ -360,8 +336,10 @@ theorem boundaryIntegral_rectangleOfBox_split {E : Type*}
         (-I.upper 0) (-I.lower 0) (-I.upper 1) (-x) (-I.lower 1)
         (hf.comp (by fun_prop)) (hf.comp (by fun_prop))).symm
 
-/-- Globally continuous rectangle boundary integration, packaged as a
-Mathlib box-additive map. -/
+/-- **Box-additive map of complex boundary integrals.** Let `E` be a complete complex normed
+vector space and `f:ℂ→E` globally continuous. Assign each nondegenerate real box `I` the
+counterclockwise boundary integral of `f` over its sign-reversed complex rectangle. This
+assignment is additive under finite coordinate subdivision. -/
 noncomputable def boundaryIntegralBoxAdditive {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (f : ℂ → E) (hf : Continuous f) :
@@ -372,74 +350,56 @@ noncomputable def boundaryIntegralBoxAdditive {E : Type*}
 
 namespace GridFilling
 
-/-- The physical complex point represented by a lattice vertex. -/
+/-- **Physical vertex for a finite grid filling.** For a filling `D` of scale `t>0` and
+integer vertex `v∈ℤ²`, `D.point(v)=v₀/t+i v₁/t`. -/
 noncomputable def point (D : GridFilling) (v : GridIndex) : ℂ :=
   gridPoint D.scale v
 
-/-- The real vertex coordinate is its first integer coordinate divided by the filling scale.
-
-```lean
-theorem point_re (D : GridFilling) (v : GridIndex) :
-    (D.point v).re = (v 0 : ℝ) / D.scale
-``` -/
+/-- **Real coordinate of a filling vertex.** For a filling `D` of scale `t>0` and `v∈ℤ²`,
+`Re(D.point(v))=v₀/t`. -/
 @[simp]
 theorem point_re (D : GridFilling) (v : GridIndex) :
     (D.point v).re = (v 0 : ℝ) / D.scale := by
   simp [point, gridPoint]
 
-/-- The imaginary vertex coordinate is its second integer coordinate divided by the filling scale.
-
-```lean
-theorem point_im (D : GridFilling) (v : GridIndex) :
-    (D.point v).im = (v 1 : ℝ) / D.scale
-``` -/
+/-- **Imaginary coordinate of a filling vertex.** For a filling `D` of scale `t>0` and `v∈ℤ²`,
+`Im(D.point(v))=v₁/t`. -/
 @[simp]
 theorem point_im (D : GridFilling) (v : GridIndex) :
     (D.point v).im = (v 1 : ℝ) / D.scale := by
   simp [point, gridPoint]
 
-/-- The closed physical square at lattice index `v`. -/
+/-- **Closed square at a filling-grid index.** For a filling `D` of scale `t>0` and any
+`v∈ℤ²`, `D.cell(v)` has real interval `[v₀/t,(v₀+1)/t]` and imaginary interval
+`[v₁/t,(v₁+1)/t]`. The index need not be selected in `D`. -/
 noncomputable def cell (D : GridFilling) (v : GridIndex) : RectilinearRectangle :=
   gridCell D.scale v
 
-/-- Mathlib box presentation of a physical cell. -/
+/-- **Half-open real box of a filling-grid square.** For a filling `D` of scale `t>0` and
+`v∈ℤ²`, `D.cellBox(v)=∏_{i=0,1}(-(v_i+1)/t,-v_i/t]` in sign-reversed coordinates. -/
 noncomputable def cellBox (D : GridFilling) (v : GridIndex) :
     BoxIntegral.Box (Fin 2) :=
   gridCellBox D.scale D.scale_pos v
 
-/-- The half-open presentation of a cell has exactly the same associated closed rectangle.
-
-```lean
-theorem rectangleOfBox_cellBox (D : GridFilling) (v : GridIndex) :
-    rectangleOfBox (D.cellBox v) = D.cell v
-``` -/
+/-- **A cell box recovers the same closed grid square.** For a filling `D` of scale `t>0` and
+`v∈ℤ²`, the sign-reversed complex rectangle associated with `D.cellBox(v)` is `D.cell(v)`. -/
 theorem rectangleOfBox_cellBox (D : GridFilling) (v : GridIndex) :
     rectangleOfBox (D.cellBox v) = D.cell v := by
   ext <;> simp [rectangleOfBox, cellBox, gridCellBox, cell, gridCell,
     gridPoint, RectilinearRectangle.ofBounds]
 
-/-- A cell is the closed rectangle between its successive scaled integer coordinates.
-
-```lean
-theorem cell_eq_ofBounds (D : GridFilling) (v : GridIndex) :
-    D.cell v = RectilinearRectangle.ofBounds
-      ((v 0 : ℝ) / D.scale) (((v 0 : ℝ) + 1) / D.scale)
-      ((v 1 : ℝ) / D.scale) (((v 1 : ℝ) + 1) / D.scale)
-``` -/
+/-- **Coordinate bounds of a positive-scale grid square.** For a filling `D` of scale `t>0`
+and `v∈ℤ²`, `D.cell(v)` is the rectangle with real bounds `v₀/t,(v₀+1)/t` and imaginary
+bounds `v₁/t,(v₁+1)/t`. -/
 theorem cell_eq_ofBounds (D : GridFilling) (v : GridIndex) :
     D.cell v = RectilinearRectangle.ofBounds
       ((v 0 : ℝ) / D.scale) (((v 0 : ℝ) + 1) / D.scale)
       ((v 1 : ℝ) / D.scale) (((v 1 : ℝ) + 1) / D.scale) := by
   ext <;> simp [cell, gridCell, gridPoint, RectilinearRectangle.ofBounds]
 
-/-- Closed-cell membership is exactly the pair of stated closed coordinate-interval conditions.
-
-```lean
-theorem mem_cell_carrier_iff (D : GridFilling) (v : GridIndex) (z : ℂ) :
-    z ∈ (D.cell v).carrier ↔
-      z.re ∈ Icc ((v 0 : ℝ) / D.scale) (((v 0 : ℝ) + 1) / D.scale) ∧
-        z.im ∈ Icc ((v 1 : ℝ) / D.scale) (((v 1 : ℝ) + 1) / D.scale)
-``` -/
+/-- **Membership in a closed grid square.** For a filling `D` of scale `t>0`, `v∈ℤ²`, and
+`z∈ℂ`, `z∈carrier(D.cell(v))` precisely when `v₀/t≤Re z≤(v₀+1)/t` and `v₁/t≤Im
+z≤(v₁+1)/t`. -/
 theorem mem_cell_carrier_iff (D : GridFilling) (v : GridIndex) (z : ℂ) :
     z ∈ (D.cell v).carrier ↔
       z.re ∈ Icc ((v 0 : ℝ) / D.scale) (((v 0 : ℝ) + 1) / D.scale) ∧
@@ -451,55 +411,60 @@ theorem mem_cell_carrier_iff (D : GridFilling) (v : GridIndex) (z : ℂ) :
   simp [cell, gridCell, RectilinearRectangle.carrier, Complex.Rectangle, gridPoint,
     Complex.mem_reProdIm, uIcc_of_le h₀, uIcc_of_le h₁]
 
-/-- Build a filling from a scale and a finite set of cell indices. -/
+/-- **Filling determined by a scale and selected indices.** For `t>0` and a finite `C⊆ℤ²`,
+form the grid filling with scale `t` and selected-cell set `C`. Its cells have side length
+`1/t`, and `C` may be empty. -/
 def ofCells (t : ℝ) (ht : 0 < t) (s : Finset GridIndex) : GridFilling where
   scale := t
   scale_pos := ht
   cells := s
 
-/-- Indicator coefficient of a selected cell. -/
+/-- **Zero-or-one coefficient of a selected grid cell.** For a finite filling `D` and `v∈ℤ²`,
+`c_D(v)=1` if `v` is selected in `D`, and `c_D(v)=0` otherwise. The coefficient is an
+integer. -/
 def cellCoeff (D : GridFilling) (v : GridIndex) : ℤ :=
   if v ∈ D.cells then 1 else 0
 
-/-- The finite sum of counterclockwise boundaries of the selected physical cells. -/
+/-- **Counterclockwise boundary cycle of selected cells.** For a finite filling `D` of scale
+`t>0`, its rectilinear cycle is `∑_{v∈D.cells} boundary(D.cell(v))`. Each closed square
+has the counterclockwise orientation, and shared internal edges cancel. -/
 noncomputable def toCycle (D : GridFilling) : RectilinearCycle :=
   ∑ v ∈ D.cells, RectilinearCycle.ofRectangle (D.cell v)
 
-/-- In a complete complex normed target, the filling-cycle integral is the sum of its selected cell
-boundary integrals.
-
-```lean
-theorem toCycle_integral {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E) :
-    D.toCycle.integral f = ∑ v ∈ D.cells, (D.cell v).boundaryIntegral f
-``` -/
+/-- **A filling integral is the sum of its cell-boundary integrals.** Let `E` be a complete
+complex normed vector space, `D` a finite positive-scale filling, and `f:ℂ→E`. Then
+`∮_{D.toCycle} f=∑_{v∈D.cells} ∮_{boundary(D.cell(v))} f`. No continuity premise is
+required for this finite-sum identity. -/
 theorem toCycle_integral {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E) :
     D.toCycle.integral f = ∑ v ∈ D.cells, (D.cell v).boundaryIntegral f := by
   change RectilinearCycle.integralAddHom f D.toCycle = _
   simp [toCycle]
 
-/-- The filling-cycle analytic index is the sum of the selected cells' analytic indices.
-
-```lean
-theorem toCycle_index (D : GridFilling) (z : ℂ) :
-    D.toCycle.index z =
-      ∑ v ∈ D.cells, (RectilinearCycle.ofRectangle (D.cell v)).index z
-``` -/
+/-- **A filling winding index is the sum of cell indices.** For a finite positive-scale
+filling `D` and any `z∈ℂ`, `index(D.toCycle,z)=∑_{v∈D.cells}
+index(boundary(D.cell(v)),z)`, where each index is `(2πi)⁻¹∮(ζ-z)⁻¹ dζ`. The index uses
+the total inverse, so the identity is stated at every `z`. -/
 theorem toCycle_index (D : GridFilling) (z : ℂ) :
     D.toCycle.index z =
       ∑ v ∈ D.cells, (RectilinearCycle.ofRectangle (D.cell v)).index z := by
   change RectilinearCycle.indexAddHom z D.toCycle = _
   simp [toCycle]
 
-/-- All cell-face coordinates of two fillings in one coordinate direction,
-with `0` and `1` added to make the set nonempty and nontrivial. -/
+/-- **Face coordinates for a common grid refinement.** Let `D,H` be finite grid fillings with
+positive, possibly different, scales. For coordinate `i∈Fin 2`, form the finite set of all
+lower and upper bounds of selected boxes from either filling, together with `0` and `1`.
+The two extra coordinates ensure distinct extrema even when both fillings are empty. -/
 noncomputable def commonCoordinates (D E : GridFilling) (i : Fin 2) : Finset ℝ :=
   {0, 1} ∪
     (D.cells.biUnion fun v ↦ {(D.cellBox v).lower i, (D.cellBox v).upper i}) ∪
       (E.cells.biUnion fun v ↦ {(E.cellBox v).lower i, (E.cellBox v).upper i})
 
-/-- A nondegenerate box containing every selected cell of both fillings. -/
+/-- **A nondegenerate box containing two grid fillings.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. In each coordinate, take the minimum and
+maximum of their face-coordinate set, including `0` and `1`. The resulting half-open box
+contains every selected cell box of both fillings and remains nondegenerate when both are
+empty. -/
 noncomputable def commonBoundingBox (D E : GridFilling) :
     BoxIntegral.Box (Fin 2) where
   lower i := (D.commonCoordinates E i).min' (by simp [commonCoordinates])
@@ -511,11 +476,9 @@ noncomputable def commonBoundingBox (D E : GridFilling) :
       ((D.commonCoordinates E i).le_max' 1
         (by simp [commonCoordinates] : (1 : ℝ) ∈ D.commonCoordinates E i)))
 
-/-- Different integer indices give different half-open cell boxes at a fixed positive scale.
-
-```lean
-theorem cellBox_injective (D : GridFilling) : Function.Injective D.cellBox
-``` -/
+/-- **Distinct lattice indices give distinct cell boxes.** For a finite filling `D` of scale
+`t>0`, the map `v∈ℤ²↦∏_{i=0,1}(-(v_i+1)/t,-v_i/t]` is injective. Positivity of `t` allows
+recovery of both integer coordinates from the box bounds. -/
 theorem cellBox_injective (D : GridFilling) : Function.Injective D.cellBox := by
   intro v w h
   funext i
@@ -524,13 +487,10 @@ theorem cellBox_injective (D : GridFilling) : Function.Injective D.cellBox := by
   apply_fun (fun x : ℝ ↦ x * D.scale) at hi
   simpa [D.scale_pos.ne'] using hi
 
-/-- Distinct half-open grid cells are disjoint, with boundary faces assigned by the half-open
-convention.
-
-```lean
-theorem disjoint_cellBox (D : GridFilling) {v w : GridIndex} (hvw : v ≠ w) :
-    Disjoint (D.cellBox v : Set (Fin 2 → ℝ)) (D.cellBox w : Set (Fin 2 → ℝ))
-``` -/
+/-- **Distinct half-open grid cells are disjoint.** For a finite filling `D` of scale `t>0`
+and distinct indices `v,w∈ℤ²`, the sign-reversed half-open boxes `D.cellBox(v)` and
+`D.cellBox(w)` are disjoint as subsets of `ℝ²`. Shared faces of closed physical cells are
+assigned to only one half-open box. -/
 theorem disjoint_cellBox (D : GridFilling) {v w : GridIndex} (hvw : v ≠ w) :
     Disjoint (D.cellBox v : Set (Fin 2 → ℝ)) (D.cellBox w : Set (Fin 2 → ℝ)) := by
   rw [Set.disjoint_left]
@@ -557,21 +517,16 @@ theorem disjoint_cellBox (D : GridFilling) {v w : GridIndex} (hvw : v ≠ w) :
       exact neg_le_neg ((div_le_div_iff_of_pos_right D.scale_pos).2 hstep)
     exact (not_lt_of_ge (hxvi.2.trans hscaled)) hxwi.1
 
-/-- The selected grid cells as a finite set of pairwise-disjoint half-open
-Mathlib boxes. -/
+/-- **Finite collection of selected half-open cells.** For a finite positive-scale filling
+`D`, take the image of its selected index set under `v↦D.cellBox(v)`. This finite box
+family may be empty. -/
 noncomputable def cellBoxes (D : GridFilling) : Finset (BoxIntegral.Box (Fin 2)) :=
   by
     classical
     exact D.cells.image D.cellBox
 
-/-- The finite selected half-open cell boxes are pairwise disjoint.
-
-```lean
-theorem pairwiseDisjoint_cellBoxes (D : GridFilling) :
-    Set.Pairwise (↑D.cellBoxes)
-      (Function.onFun Disjoint fun I : BoxIntegral.Box (Fin 2) ↦
-        (I : Set (Fin 2 → ℝ)))
-``` -/
+/-- **Selected half-open cells form a disjoint family.** For any finite positive-scale filling
+`D`, distinct boxes in `D.cellBoxes` are disjoint as subsets of `ℝ²`. -/
 theorem pairwiseDisjoint_cellBoxes (D : GridFilling) :
     Set.Pairwise (↑D.cellBoxes)
       (Function.onFun Disjoint fun I : BoxIntegral.Box (Fin 2) ↦
@@ -583,7 +538,10 @@ theorem pairwiseDisjoint_cellBoxes (D : GridFilling) :
   rcases hJ with ⟨w, hw, rfl⟩
   exact D.disjoint_cellBox fun hvw ↦ hIJ (congrArg D.cellBox hvw)
 
-/-- Selected cells as a prepartition of any containing box. -/
+/-- **Selected cells as a box prepartition.** Let `D` be a finite positive-scale filling and
+`B` a nondegenerate real box containing every selected `D.cellBox(v)`. The selected boxes,
+with their pairwise disjointness and containment in `B`, form a prepartition of `B`; they
+need not cover `B`. -/
 noncomputable def cellsPrepartition (D : GridFilling)
     (B : BoxIntegral.Box (Fin 2)) (hB : ∀ v ∈ D.cells, D.cellBox v ≤ B) :
     BoxIntegral.Prepartition B where
@@ -595,12 +553,9 @@ noncomputable def cellsPrepartition (D : GridFilling)
     exact hB v hv
   pairwiseDisjoint := D.pairwiseDisjoint_cellBoxes
 
-/-- Each selected cell of the first filling lies in the nondegenerate common bounding box.
-
-```lean
-theorem cellBox_le_commonBoundingBox_left (D E : GridFilling)
-    {v : GridIndex} (hv : v ∈ D.cells) : D.cellBox v ≤ D.commonBoundingBox E
-``` -/
+/-- **First-filling cells lie in the common bounding box.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. For every index `v` selected in `D`,
+`D.cellBox(v)⊆D.commonBoundingBox(H)` as half-open real boxes. -/
 theorem cellBox_le_commonBoundingBox_left (D E : GridFilling)
     {v : GridIndex} (hv : v ∈ D.cells) : D.cellBox v ≤ D.commonBoundingBox E := by
   rw [BoxIntegral.Box.le_iff_bounds]
@@ -616,12 +571,9 @@ theorem cellBox_le_commonBoundingBox_left (D E : GridFilling)
     exact Finset.mem_union_left _ (Finset.mem_union_right _
       (Finset.mem_biUnion.mpr ⟨v, hv, by simp⟩))
 
-/-- Each selected cell of the second filling lies in the nondegenerate common bounding box.
-
-```lean
-theorem cellBox_le_commonBoundingBox_right (D E : GridFilling)
-    {v : GridIndex} (hv : v ∈ E.cells) : E.cellBox v ≤ D.commonBoundingBox E
-``` -/
+/-- **Second-filling cells lie in the common bounding box.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. For every index `v` selected in `H`,
+`H.cellBox(v)⊆D.commonBoundingBox(H)` as half-open real boxes. -/
 theorem cellBox_le_commonBoundingBox_right (D E : GridFilling)
     {v : GridIndex} (hv : v ∈ E.cells) : E.cellBox v ≤ D.commonBoundingBox E := by
   rw [BoxIntegral.Box.le_iff_bounds]
@@ -637,31 +589,29 @@ theorem cellBox_le_commonBoundingBox_right (D E : GridFilling)
     exact Finset.mem_union_right _
       (Finset.mem_biUnion.mpr ⟨v, hv, by simp⟩)
 
-/-- The cells of the left filling as a prepartition of the common bounding
-box. -/
+/-- **First grid filling as a prepartition of a common box.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. The boxes of `D` form a pairwise
+disjoint finite prepartition of the common bounding box of `D,H`. Its union is the union
+of selected first-filling half-open cells. -/
 noncomputable def leftCellPrepartition (D E : GridFilling) :
     BoxIntegral.Prepartition (D.commonBoundingBox E) :=
   D.cellsPrepartition (D.commonBoundingBox E) fun _v hv ↦
     D.cellBox_le_commonBoundingBox_left E hv
 
-/-- The cells of the right filling as a prepartition of the common bounding
-box. -/
+/-- **Second grid filling as a prepartition of a common box.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. The boxes of `H` form a pairwise
+disjoint finite prepartition of the common bounding box of `D,H`. Its union is the union
+of selected second-filling half-open cells. -/
 noncomputable def rightCellPrepartition (D E : GridFilling) :
     BoxIntegral.Prepartition (D.commonBoundingBox E) :=
   E.cellsPrepartition (D.commonBoundingBox E) fun _v hv ↦
     D.cellBox_le_commonBoundingBox_right E hv
 
-/-- Finitely many coordinate cuts align both cell prepartitions as restrictions of one global split.
-
-```lean
-theorem exists_overlayHyperplanes (D E : GridFilling) :
-    ∃ s : Finset (Fin 2 × ℝ),
-      ∀ π ∈ ({D.leftCellPrepartition E, D.rightCellPrepartition E} :
-          Set (BoxIntegral.Prepartition (D.commonBoundingBox E))),
-        π ⊓ BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E) s =
-          (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E) s).filter
-            fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ π.iUnion
-``` -/
+/-- **Finite coordinate cuts align two grid prepartitions.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. There exists a finite set `s⊆Fin 2×ℝ` of
+coordinate cuts such that, for each of their selected-cell prepartitions `π`, if
+`ρ=splitMany(commonBox,s)`, then `π⊓ρ` is exactly the subfamily `{I∈ρ | I⊆union(π)}`. No
+rational relation between the two scales is required. -/
 theorem exists_overlayHyperplanes (D E : GridFilling) :
     ∃ s : Finset (Fin 2 × ℝ),
       ∀ π ∈ ({D.leftCellPrepartition E, D.rightCellPrepartition E} :
@@ -673,23 +623,19 @@ theorem exists_overlayHyperplanes (D E : GridFilling) :
     {D.leftCellPrepartition E, D.rightCellPrepartition E}
     (Set.Finite.insert _ (Set.finite_singleton _))
 
-/-- A chosen finite family of hyperplanes aligning the two cell
-prepartitions. -/
+/-- **Coordinate cuts chosen for two grid fillings.** Let `D,H` be finite grid fillings with
+positive, possibly different, scales. Choose a finite family of real coordinate
+hyperplanes that aligns both selected-cell prepartitions with one subdivision of their
+common bounding box: each refined prepartition is the global subdivision restricted to its
+own union. -/
 noncomputable def overlayHyperplanes (D E : GridFilling) : Finset (Fin 2 × ℝ) :=
   Classical.choose (D.exists_overlayHyperplanes E)
 
-/-- The chosen coordinate cuts satisfy the simultaneous alignment identities for both fillings.
-
-```lean
-theorem overlayHyperplanes_spec (D E : GridFilling) :
-    ∀ π ∈ ({D.leftCellPrepartition E, D.rightCellPrepartition E} :
-        Set (BoxIntegral.Prepartition (D.commonBoundingBox E))),
-      π ⊓ BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
-          (D.overlayHyperplanes E) =
-        (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
-          (D.overlayHyperplanes E)).filter
-            fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ π.iUnion
-``` -/
+/-- **The selected coordinate cuts give simultaneous alignment.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Let `ρ` be the subdivision of their
+common bounding box by the chosen cuts. For either selected-cell prepartition `π`,
+`π⊓ρ={I∈ρ | I⊆union(π)}`. Here intersection denotes common refinement and the right side
+is a filtered box family. -/
 theorem overlayHyperplanes_spec (D E : GridFilling) :
     ∀ π ∈ ({D.leftCellPrepartition E, D.rightCellPrepartition E} :
         Set (BoxIntegral.Prepartition (D.commonBoundingBox E))),
@@ -700,22 +646,19 @@ theorem overlayHyperplanes_spec (D E : GridFilling) :
             fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ π.iUnion :=
   Classical.choose_spec (D.exists_overlayHyperplanes E)
 
-/-- A prepartition regarded as the unsigned box chain with coefficient one on
-each of its boxes. -/
+/-- **Integer chain of a finite box prepartition.** Let `B` be a nondegenerate half-open box
+in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes. Assign
+coefficient `1` to each box of `π` and `0` to every other box, obtaining a finite
+integer-weighted box chain. -/
 noncomputable def prepartitionToBoxOverlayChain
     {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B) : BoxOverlayChain :=
   by
     classical
     exact ∑ I ∈ π.boxes, Finsupp.single I 1
 
-/-- A member box has integer coefficient one in an unsigned prepartition chain.
-
-```lean
-theorem prepartitionToBoxOverlayChain_apply_of_mem
-    {B : BoxIntegral.Box (Fin 2)} {π : BoxIntegral.Prepartition B}
-    {I : BoxIntegral.Box (Fin 2)} (hI : I ∈ π) :
-    prepartitionToBoxOverlayChain π I = 1
-``` -/
+/-- **A prepartition member has coefficient one.** Let `B` be a nondegenerate half-open box in
+`ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes. If `I∈π`, its
+coefficient in the associated integer box chain is `1`. -/
 theorem prepartitionToBoxOverlayChain_apply_of_mem
     {B : BoxIntegral.Box (Fin 2)} {π : BoxIntegral.Prepartition B}
     {I : BoxIntegral.Box (Fin 2)} (hI : I ∈ π) :
@@ -728,14 +671,10 @@ theorem prepartitionToBoxOverlayChain_apply_of_mem
     exact Finsupp.single_eq_of_ne hJI.symm
   · exact fun h ↦ (h hI).elim
 
-/-- A nonmember box has integer coefficient zero in an unsigned prepartition chain.
-
-```lean
-theorem prepartitionToBoxOverlayChain_apply_of_notMem
-    {B : BoxIntegral.Box (Fin 2)} {π : BoxIntegral.Prepartition B}
-    {I : BoxIntegral.Box (Fin 2)} (hI : I ∉ π) :
-    prepartitionToBoxOverlayChain π I = 0
-``` -/
+/-- **A box outside a prepartition has coefficient zero.** Let `B` be a nondegenerate
+half-open box in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes.
+If a nondegenerate box `I` does not belong to `π`, its coefficient in the associated
+integer box chain is `0`. -/
 theorem prepartitionToBoxOverlayChain_apply_of_notMem
     {B : BoxIntegral.Box (Fin 2)} {π : BoxIntegral.Prepartition B}
     {I : BoxIntegral.Box (Fin 2)} (hI : I ∉ π) :
@@ -752,7 +691,9 @@ theorem prepartitionToBoxOverlayChain_apply_of_notMem
     exact hI (hJI ▸ hJ)
   · rfl
 
-/-- Membership indicator of a finite box prepartition. -/
+/-- **Integer indicator of prepartition membership.** Let `B` be a nondegenerate half-open box
+in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes. For a
+nondegenerate box `I`, define `1_π(I)=1` when `I∈π` and `0` otherwise. -/
 noncomputable def prepartitionIndicator
     {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B)
     (I : BoxIntegral.Box (Fin 2)) : ℤ :=
@@ -760,14 +701,10 @@ noncomputable def prepartitionIndicator
     classical
     exact if I ∈ π then 1 else 0
 
-/-- The unsigned box-chain coefficient is exactly the prepartition membership indicator.
-
-```lean
-theorem prepartitionToBoxOverlayChain_apply
-    {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B)
-    (I : BoxIntegral.Box (Fin 2)) :
-    prepartitionToBoxOverlayChain π I = prepartitionIndicator π I
-``` -/
+/-- **Box-chain coefficients equal the prepartition indicator.** Let `B` be a nondegenerate
+half-open box in `ℝ²` and `π` a finite prepartition of `B` into pairwise disjoint boxes.
+At every box `I`, the coefficient of the associated integer chain is `1_π(I)`, equal to
+`1` or `0` according to membership in `π`. -/
 theorem prepartitionToBoxOverlayChain_apply
     {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B)
     (I : BoxIntegral.Box (Fin 2)) :
@@ -779,34 +716,37 @@ theorem prepartitionToBoxOverlayChain_apply
   · rw [prepartitionToBoxOverlayChain_apply_of_notMem hI]
     simp [prepartitionIndicator, hI]
 
-/-- The global box partition on which both refined cell collections are
-filters. -/
+/-- **Common finite subdivision for two grid fillings.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. Subdivide their common bounding box using the
+chosen aligning coordinate hyperplanes. Both refined selected-cell collections are
+subfamilies of this global prepartition. -/
 noncomputable def overlayPrepartition (D E : GridFilling) :
     BoxIntegral.Prepartition (D.commonBoundingBox E) :=
   BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
     (D.overlayHyperplanes E)
 
-/-- Left cell prepartition after applying the chosen common split. -/
+/-- **First-filling cells after common coordinate subdivision.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Subdivide each selected first-filling
+box by the chosen common cuts and take the union of those finite subpartitions. This is
+the refined first-filling prepartition inside the common bounding box. -/
 noncomputable def leftOverlayPrepartition (D E : GridFilling) :
     BoxIntegral.Prepartition (D.commonBoundingBox E) :=
   (D.leftCellPrepartition E).biUnion fun I ↦
     BoxIntegral.Prepartition.splitMany I (D.overlayHyperplanes E)
 
-/-- Right cell prepartition after applying the chosen common split. -/
+/-- **Second-filling cells after common coordinate subdivision.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Subdivide each selected second-filling
+box by the chosen common cuts and take their finite union. This is the refined
+second-filling prepartition inside the common bounding box. -/
 noncomputable def rightOverlayPrepartition (D E : GridFilling) :
     BoxIntegral.Prepartition (D.commonBoundingBox E) :=
   (D.rightCellPrepartition E).biUnion fun I ↦
     BoxIntegral.Prepartition.splitMany I (D.overlayHyperplanes E)
 
-/-- The refined first filling is the global split restricted to its selected-cell union.
-
-```lean
-theorem leftOverlayPrepartition_eq_filter (D E : GridFilling) :
-    D.leftOverlayPrepartition E =
-      (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
-        (D.overlayHyperplanes E)).filter
-          fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ (D.leftCellPrepartition E).iUnion
-``` -/
+/-- **Refined first cells are a restriction of the global subdivision.** Let `D,H` be finite
+grid fillings with positive, possibly different, scales. For the chosen global subdivision
+`ρ`, the first refined family equals `{I∈ρ | I⊆union(firstCellPrepartition)}`. Thus no
+overlay box crosses the first family's half-open union boundary. -/
 theorem leftOverlayPrepartition_eq_filter (D E : GridFilling) :
     D.leftOverlayPrepartition E =
       (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
@@ -815,15 +755,9 @@ theorem leftOverlayPrepartition_eq_filter (D E : GridFilling) :
   rw [leftOverlayPrepartition, ← BoxIntegral.Prepartition.inf_splitMany]
   exact D.overlayHyperplanes_spec E (D.leftCellPrepartition E) (by simp)
 
-/-- The refined second filling is the global split restricted to its selected-cell union.
-
-```lean
-theorem rightOverlayPrepartition_eq_filter (D E : GridFilling) :
-    D.rightOverlayPrepartition E =
-      (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
-        (D.overlayHyperplanes E)).filter
-          fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ (D.rightCellPrepartition E).iUnion
-``` -/
+/-- **Refined second cells are a restriction of the global subdivision.** Let `D,H` be finite
+grid fillings with positive, possibly different, scales. For the chosen global subdivision
+`ρ`, the second refined family equals `{I∈ρ | I⊆union(secondCellPrepartition)}`. -/
 theorem rightOverlayPrepartition_eq_filter (D E : GridFilling) :
     D.rightOverlayPrepartition E =
       (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E)
@@ -832,21 +766,19 @@ theorem rightOverlayPrepartition_eq_filter (D E : GridFilling) :
   rw [rightOverlayPrepartition, ← BoxIntegral.Prepartition.inf_splitMany]
   exact D.overlayHyperplanes_spec E (D.rightCellPrepartition E) (by simp)
 
-/-- The signed difference of the two refined finite box chains; boxes shared by both have zero
-coefficient. -/
+/-- **Signed box overlay of two grid fillings.** Let `D,H` be finite grid fillings with
+positive, possibly different, scales. Subtract the integer chain of the refined
+second-cell prepartition from that of the refined first-cell prepartition. A box shared by
+both has coefficient zero; boxes belonging only to the first or second have coefficient
+`1` or `-1`. -/
 noncomputable def commonOverlay (D E : GridFilling) : BoxOverlayChain :=
   prepartitionToBoxOverlayChain (D.leftOverlayPrepartition E) -
     prepartitionToBoxOverlayChain (D.rightOverlayPrepartition E)
 
-/-- The signed overlay coefficient is the first refined indicator minus the second.
-
-```lean
-theorem commonOverlay_apply (D E : GridFilling)
-    (I : BoxIntegral.Box (Fin 2)) :
-    D.commonOverlay E I =
-      prepartitionIndicator (D.leftOverlayPrepartition E) I -
-        prepartitionIndicator (D.rightOverlayPrepartition E) I
-``` -/
+/-- **Signed overlay coefficients are differences of indicators.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. For every real box `I`, the
+common-overlay coefficient is `1_{leftOverlay}(I)-1_{rightOverlay}(I)`, with each
+indicator taking integer values `0,1`. -/
 theorem commonOverlay_apply (D E : GridFilling)
     (I : BoxIntegral.Box (Fin 2)) :
     D.commonOverlay E I =
@@ -857,14 +789,9 @@ theorem commonOverlay_apply (D E : GridFilling)
     prepartitionToBoxOverlayChain_apply,
     prepartitionToBoxOverlayChain_apply]
 
-/-- Every box with nonzero signed overlay coefficient lies in the global overlay partition.
-
-```lean
-theorem mem_overlayPrepartition_of_mem_commonOverlay_support
-    (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
-    (hI : I ∈ (D.commonOverlay E).support) :
-    I ∈ D.overlayPrepartition E
-``` -/
+/-- **Every surviving signed box belongs to the global subdivision.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. If the common-overlay coefficient at a
+real box `I` is nonzero, then `I` belongs to the chosen global overlay prepartition. -/
 theorem mem_overlayPrepartition_of_mem_commonOverlay_support
     (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
     (hI : I ∈ (D.commonOverlay E).support) :
@@ -887,17 +814,10 @@ theorem mem_overlayPrepartition_of_mem_commonOverlay_support
     prepartitionToBoxOverlayChain_apply_of_notMem hleft,
     prepartitionToBoxOverlayChain_apply_of_notMem hright, sub_self]
 
-/-- For aligned partitions, an overlay box lies wholly in the first union exactly when a given
-point of that box lies there.
-
-```lean
-theorem overlayBox_subset_iUnion_iff_mem
-    {B : BoxIntegral.Box (Fin 2)} (π ρ : BoxIntegral.Prepartition B)
-    (halign : π ⊓ ρ = ρ.filter fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ π.iUnion)
-    {I : BoxIntegral.Box (Fin 2)} (hI : I ∈ ρ) {x : Fin 2 → ℝ}
-    (hx : x ∈ I) :
-    (I : Set (Fin 2 → ℝ)) ⊆ π.iUnion ↔ x ∈ π.iUnion
-``` -/
+/-- **Point membership detects an aligned overlay box.** Let `π,ρ` be finite prepartitions of
+the same nondegenerate real box and suppose `π⊓ρ={J∈ρ | J⊆union(π)}`. For `I∈ρ` and `x∈I`,
+`I⊆union(π)` if and only if `x∈union(π)`. This uses alignment, not a general assertion for
+arbitrary intersecting boxes. -/
 theorem overlayBox_subset_iUnion_iff_mem
     {B : BoxIntegral.Box (Fin 2)} (π ρ : BoxIntegral.Prepartition B)
     (halign : π ⊓ ρ = ρ.filter fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ π.iUnion)
@@ -916,16 +836,10 @@ theorem overlayBox_subset_iUnion_iff_mem
     obtain rfl : J = I := ρ.eq_of_mem_of_mem hJ.1 hI hxJ hx
     exact hJ.2
 
-/-- The cycle integral of a signed box chain is its finite integer-weighted sum of rectangle
-boundary integrals.
-
-```lean
-theorem BoxOverlayChain.toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (C : BoxOverlayChain) (f : ℂ → E) :
-    C.toCycle.integral f =
-      C.sum fun I n ↦ n • (rectangleOfBox I).boundaryIntegral f
-``` -/
+/-- **Integral of a signed box cycle.** Let `E` be a complete complex normed vector space. For
+a finitely supported integer box chain `C` and `f:ℂ→E`, `∮_{C.toCycle} f=∑_I C(I) •
+∮_{boundary(rectangleOfBox I)} f`. No continuity hypothesis is needed for this finite-sum
+identity. -/
 theorem BoxOverlayChain.toCycle_integral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (C : BoxOverlayChain) (f : ℂ → E) :
@@ -936,18 +850,17 @@ theorem BoxOverlayChain.toCycle_integral {E : Type*}
     (fun _ m n ↦ by simp [add_zsmul])]
   rfl
 
-/-- Taking rectangle boundaries sends subtraction of signed box chains to subtraction of cycles.
-
-```lean
-theorem BoxOverlayChain.toCycle_sub (C D : BoxOverlayChain) :
-    (C - D).toCycle = C.toCycle - D.toCycle
-``` -/
+/-- **Subtraction of signed box chains gives subtraction of cycles.** For finite integer box
+chains `C,D`, `(C-D).toCycle=C.toCycle-D.toCycle`, where each cycle is the
+integer-weighted sum of its boxes' counterclockwise rectangle boundaries. -/
 theorem BoxOverlayChain.toCycle_sub (C D : BoxOverlayChain) :
     (C - D).toCycle = C.toCycle - D.toCycle := by
   simp [BoxOverlayChain.toCycle, Finsupp.mapDomain_sub]
 
-/-- The additive map assigning a signed box chain its integer-weighted complete Banach-valued
-boundary integral. -/
+/-- **Additive boundary-integral map on signed box chains.** Let `E` be a complete complex
+normed vector space. For `f:ℂ→E`, send a finitely supported integer box chain `C` to `∑_I
+C(I) • ∮_{boundary(rectangleOfBox I)} f`. This is an additive homomorphism from box chains
+to `E`; no continuity premise is part of its definition. -/
 noncomputable def boxBoundaryIntegralAddHom {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (f : ℂ → E) : BoxOverlayChain →+ E where
@@ -960,15 +873,11 @@ noncomputable def boxBoundaryIntegralAddHom {E : Type*}
     · intro I m n
       simp [add_zsmul]
 
-/-- An unsigned prepartition cycle integrates to the finite sum of its boxes' boundary integrals.
-
-```lean
-theorem prepartitionToBoxOverlayChain_toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B) (f : ℂ → E) :
-    (prepartitionToBoxOverlayChain π).toCycle.integral f =
-      ∑ I ∈ π.boxes, (rectangleOfBox I).boundaryIntegral f
-``` -/
+/-- **Integral of an unsigned prepartition cycle.** Let `E` be a complete complex normed
+vector space. Let `B` be a nondegenerate half-open box in `ℝ²` and `π` a finite
+prepartition of `B` into pairwise disjoint boxes. For any `f:ℂ→E`, the contour integral of
+the coefficient-one box chain is `∑_{I∈π.boxes} ∮_{boundary(rectangleOfBox I)} f`. No
+regularity assumption on `f` is needed. -/
 theorem prepartitionToBoxOverlayChain_toCycle_integral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     {B : BoxIntegral.Box (Fin 2)} (π : BoxIntegral.Prepartition B) (f : ℂ → E) :
@@ -979,15 +888,10 @@ theorem prepartitionToBoxOverlayChain_toCycle_integral {E : Type*}
   change boxBoundaryIntegralAddHom f (prepartitionToBoxOverlayChain π) = _
   simp [prepartitionToBoxOverlayChain, boxBoundaryIntegralAddHom]
 
-/-- The box-presentation boundary sum equals the boundary sum indexed by the selected grid cells.
-
-```lean
-theorem sum_cellBoxes_boundaryIntegral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) :
-    ∑ I ∈ D.cellBoxes, (rectangleOfBox I).boundaryIntegral f =
-      ∑ v ∈ D.cells, (D.cell v).boundaryIntegral f
-``` -/
+/-- **Cell-index and cell-box sums have equal boundary integrals.** Let `E` be a complete
+complex normed vector space. For a finite positive-scale filling `D` and `f:ℂ→E`,
+`∑_{I∈D.cellBoxes} ∮_{boundary(rectangleOfBox I)} f=∑_{v∈D.cells} ∮_{boundary(D.cell(v))}
+f`. Injectivity of the cell-box map prevents repetitions. -/
 theorem sum_cellBoxes_boundaryIntegral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D : GridFilling) (f : ℂ → E) :
@@ -998,16 +902,10 @@ theorem sum_cellBoxes_boundaryIntegral {E : Type*}
   · simp [rectangleOfBox_cellBox]
   · exact fun _ _ _ _ h ↦ D.cellBox_injective h
 
-/-- Subdivision of the first filling preserves the contour integral of a globally continuous
-complete Banach-valued integrand.
-
-```lean
-theorem leftOverlayPrepartition_toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
-    (prepartitionToBoxOverlayChain (D.leftOverlayPrepartition E₁)).toCycle.integral f =
-      D.toCycle.integral f
-``` -/
+/-- **Refining the first grid preserves its contour integral.** Let `E` be a complete complex
+normed vector space. Let `D,H` be finite grid fillings with positive, possibly different,
+scales. If `f:ℂ→E` is globally continuous, the contour integral of the refined first box
+chain equals `∮_{D.toCycle} f`. The internal edges introduced by subdivision cancel. -/
 theorem leftOverlayPrepartition_toCycle_integral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
@@ -1032,16 +930,10 @@ theorem leftOverlayPrepartition_toCycle_integral {E : Type*}
       rw [leftCellPrepartition, cellsPrepartition, D.sum_cellBoxes_boundaryIntegral,
         ← D.toCycle_integral]
 
-/-- Subdivision of the second filling preserves the contour integral of a globally continuous
-complete Banach-valued integrand.
-
-```lean
-theorem rightOverlayPrepartition_toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
-    (prepartitionToBoxOverlayChain (D.rightOverlayPrepartition E₁)).toCycle.integral f =
-      E₁.toCycle.integral f
-``` -/
+/-- **Refining the second grid preserves its contour integral.** Let `E` be a complete complex
+normed vector space. Let `D,H` be finite grid fillings with positive, possibly different,
+scales. If `f:ℂ→E` is globally continuous, the contour integral of the refined second box
+chain equals `∮_{H.toCycle} f`. -/
 theorem rightOverlayPrepartition_toCycle_integral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
@@ -1066,16 +958,11 @@ theorem rightOverlayPrepartition_toCycle_integral {E : Type*}
       rw [rightCellPrepartition, cellsPrepartition,
         E₁.sum_cellBoxes_boundaryIntegral, ← E₁.toCycle_integral]
 
-/-- For a globally continuous complete Banach-valued integrand, the signed overlay integral is the
-difference of the filling integrals.
-
-```lean
-theorem commonOverlay_toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
-    (D.commonOverlay E₁).toCycle.integral f =
-      D.toCycle.integral f - E₁.toCycle.integral f
-``` -/
+/-- **Signed overlay integral is the difference of grid integrals.** Let `E` be a complete
+complex normed vector space. Let `D,H` be finite grid fillings with positive, possibly
+different, scales. For globally continuous `f:ℂ→E`, `∮_{commonOverlay(D,H).toCycle}
+f=∮_{D.toCycle} f-∮_{H.toCycle} f`. This comparison allows unrelated positive scales and
+empty fillings. -/
 theorem commonOverlay_toCycle_integral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
@@ -1087,22 +974,29 @@ theorem commonOverlay_toCycle_integral {E : Type*}
     D.leftOverlayPrepartition_toCycle_integral E₁ f hf,
     D.rightOverlayPrepartition_toCycle_integral E₁ f hf]
 
-/-- A horizontal coefficient is the selected indicator above minus that below; a vertical
-coefficient is the indicator on the left minus that on the right. -/
+/-- **Signed coefficient of a grid boundary edge.** Let `D` be a finite grid filling of scale
+`t>0`. Write `c_D(v)=1` for a selected integer cell `v∈ℤ²`, and `0` otherwise. For the
+horizontal edge based at `v`, the coefficient is `c_D(v)-c_D(v-e₁)`; for the vertical edge
+it is `c_D(v-e₀)-c_D(v)`. Here `e₀,e₁` are the two unit lattice steps. Thus the
+coefficients are above-minus-below and left-minus-right. -/
 def boundaryCoeff (D : GridFilling) : GridEdge → ℤ
   | .horizontal v => D.cellCoeff v - D.cellCoeff (v.pred 1)
   | .vertical v => D.cellCoeff (v.pred 0) - D.cellCoeff v
 
-/-- The four oriented grid edges contributed by one positively oriented
-cell, before adjacent cells are cancelled. -/
+/-- **Four-edge chain of a counterclockwise grid square.** For `v∈ℤ²`, its oriented edge chain
+is `h_v-h_{v+e₁}+v_{v+e₀}-v_v`, where `h_u` is the rightward horizontal edge and `v_u` the
+upward vertical edge based at `u`. The integer coefficients give the bottom, top, right
+and left orientations. -/
 noncomputable def cellBoundaryChain (v : GridIndex) : GridEdge →₀ ℤ :=
   Finsupp.single (.horizontal v) 1 -
     Finsupp.single (.horizontal (v.succ 1)) 1 +
       Finsupp.single (.vertical (v.succ 0)) 1 -
         Finsupp.single (.vertical v) 1
 
-/-- The finitely supported oriented edge chain obtained by summing all cell
-boundaries.  Its coefficients are exactly `boundaryCoeff`. -/
+/-- **Sum of oriented selected-cell edge chains.** Let `D` be a finite grid filling of scale
+`t>0`. Sum the four-edge chain of each selected `v∈D.cells`. At a horizontal edge `h_v`
+the coefficient is `c_D(v)-c_D(v-e₁)`, and at a vertical edge `v_v` it is
+`c_D(v-e₀)-c_D(v)`, with `c_D` the selected-cell indicator. Internal edges cancel. -/
 noncomputable def boundaryChain (D : GridFilling) : GridEdge →₀ ℤ :=
   ∑ v ∈ D.cells, cellBoundaryChain v
 
@@ -1218,71 +1112,63 @@ private theorem sum_vertical_succ_single
       exact hx
     · rfl
 
-/-- The summed boundary chain has the above-minus-below cell coefficient on each horizontal edge.
-
-```lean
-theorem boundaryChain_horizontal (D : GridFilling) (v : GridIndex) :
-    D.boundaryChain (.horizontal v) = D.boundaryCoeff (.horizontal v)
-``` -/
+/-- **Horizontal coefficient in the summed cell-boundary chain.** Let `D` be a finite grid
+filling of scale `t>0`. Write `c_D(v)=1` for a selected integer cell `v∈ℤ²`, and `0`
+otherwise. At the rightward edge based at `v`, the summed chain coefficient is
+`c_D(v)-c_D(v-e₁)`, the indicator above minus the indicator below. -/
 @[simp]
 theorem boundaryChain_horizontal (D : GridFilling) (v : GridIndex) :
     D.boundaryChain (.horizontal v) = D.boundaryCoeff (.horizontal v) := by
   classical
   simp [boundaryChain, cellBoundaryChain, boundaryCoeff, cellCoeff]
 
-/-- The summed boundary chain has the left-minus-right cell coefficient on each vertical edge.
-
-```lean
-theorem boundaryChain_vertical (D : GridFilling) (v : GridIndex) :
-    D.boundaryChain (.vertical v) = D.boundaryCoeff (.vertical v)
-``` -/
+/-- **Vertical coefficient in the summed cell-boundary chain.** Let `D` be a finite grid
+filling of scale `t>0`. Write `c_D(v)=1` for a selected integer cell `v∈ℤ²`, and `0`
+otherwise. At the upward edge based at `v`, the summed chain coefficient is
+`c_D(v-e₀)-c_D(v)`, the indicator on the left minus the indicator on the right. -/
 @[simp]
 theorem boundaryChain_vertical (D : GridFilling) (v : GridIndex) :
     D.boundaryChain (.vertical v) = D.boundaryCoeff (.vertical v) := by
   classical
   simp [boundaryChain, cellBoundaryChain, boundaryCoeff, cellCoeff]
 
-/-- A horizontal edge cancels exactly when its adjacent cell indicators agree.
-
-```lean
-theorem horizontal_boundaryCoeff_eq_zero_iff (D : GridFilling) (v : GridIndex) :
-    D.boundaryCoeff (.horizontal v) = 0 ↔
-      D.cellCoeff v = D.cellCoeff (v.pred 1)
-``` -/
+/-- **Cancellation criterion for a horizontal grid edge.** Let `D` be a finite grid filling of
+scale `t>0`. Write `c_D(v)=1` for a selected integer cell `v∈ℤ²`, and `0` otherwise. The
+horizontal edge based at `v` has zero net boundary coefficient if and only if
+`c_D(v)=c_D(v-e₁)`. It cancels when both adjacent cells are selected or neither is
+selected. -/
 theorem horizontal_boundaryCoeff_eq_zero_iff (D : GridFilling) (v : GridIndex) :
     D.boundaryCoeff (.horizontal v) = 0 ↔
       D.cellCoeff v = D.cellCoeff (v.pred 1) := by
   simp [boundaryCoeff, sub_eq_zero]
 
-/-- A vertical edge cancels exactly when its adjacent cell indicators agree.
-
-```lean
-theorem vertical_boundaryCoeff_eq_zero_iff (D : GridFilling) (v : GridIndex) :
-    D.boundaryCoeff (.vertical v) = 0 ↔
-      D.cellCoeff (v.pred 0) = D.cellCoeff v
-``` -/
+/-- **Cancellation criterion for a vertical grid edge.** Let `D` be a finite grid filling of
+scale `t>0`. Write `c_D(v)=1` for a selected integer cell `v∈ℤ²`, and `0` otherwise. The
+vertical edge based at `v` has zero net coefficient if and only if `c_D(v-e₀)=c_D(v)`, so
+the left and right selection indicators agree. -/
 theorem vertical_boundaryCoeff_eq_zero_iff (D : GridFilling) (v : GridIndex) :
     D.boundaryCoeff (.vertical v) = 0 ↔
       D.cellCoeff (v.pred 0) = D.cellCoeff v := by
   simp [boundaryCoeff, sub_eq_zero]
 
-/-- The four canonical edges contributed by one selected cell before
-cancellation. -/
+/-- **The four oriented edges adjacent to a grid cell.** For `v∈ℤ²`, take the horizontal edges
+based at `v,v+e₁` and the vertical edges based at `v,v+e₀`. These are the four candidate
+edges of the cell before signs and cancellation are applied. -/
 def cellEdges (v : GridIndex) : Finset GridEdge :=
   {.horizontal v, .horizontal (v.succ 1),
     .vertical v, .vertical (v.succ 0)}
 
-/-- Finite reduced boundary: candidate cell edges filtered by nonzero net
-coefficient. -/
+/-- **Surviving edges of a finite grid boundary.** Let `D` be a finite grid filling of scale
+`t>0`. Take the finite union of the four edges of each selected cell and retain exactly
+those with nonzero signed boundary coefficient. Horizontal coefficients are
+above-minus-below and vertical coefficients left-minus-right. -/
 def boundaryEdges (D : GridFilling) : Finset GridEdge :=
   (D.cells.biUnion cellEdges).filter fun e => D.boundaryCoeff e ≠ 0
 
-/-- The reduced boundary edges are exactly those with nonzero net integer coefficient.
-
-```lean
-theorem mem_boundaryEdges_iff (D : GridFilling) (e : GridEdge) :
-    e ∈ D.boundaryEdges ↔ D.boundaryCoeff e ≠ 0
-``` -/
+/-- **Reduced-edge membership is equivalent to a nonzero coefficient.** Let `D` be a finite
+grid filling of scale `t>0`. For any horizontal or vertical grid edge `e`,
+`e∈D.boundaryEdges` if and only if `D.boundaryCoeff(e)≠0`. Every nonzero coefficient
+therefore occurs among edges adjacent to selected cells. -/
 theorem mem_boundaryEdges_iff (D : GridFilling) (e : GridEdge) :
     e ∈ D.boundaryEdges ↔ D.boundaryCoeff e ≠ 0 := by
   rw [boundaryEdges, Finset.mem_filter]
@@ -1307,13 +1193,9 @@ theorem mem_boundaryEdges_iff (D : GridFilling) (e : GridEdge) :
         exact Finset.mem_biUnion.mpr
           ⟨v.pred 0, hp, by simp [cellEdges]⟩
 
-/-- Every surviving boundary edge has coefficient one or negative one.
-
-```lean
-theorem boundaryCoeff_eq_one_or_neg_one_of_mem
-    (D : GridFilling) {e : GridEdge} (he : e ∈ D.boundaryEdges) :
-    D.boundaryCoeff e = 1 ∨ D.boundaryCoeff e = -1
-``` -/
+/-- **Each surviving grid edge has unit signed weight.** Let `D` be a finite grid filling of
+scale `t>0`. If `e∈D.boundaryEdges`, then its net integer boundary coefficient is `1` or
+`-1`. This follows from taking differences of zero-or-one adjacent-cell indicators. -/
 theorem boundaryCoeff_eq_one_or_neg_one_of_mem
     (D : GridFilling) {e : GridEdge} (he : e ∈ D.boundaryEdges) :
     D.boundaryCoeff e = 1 ∨ D.boundaryCoeff e = -1 := by
@@ -1326,29 +1208,30 @@ theorem boundaryCoeff_eq_one_or_neg_one_of_mem
       simp only [boundaryCoeff, cellCoeff] at he ⊢
       split_ifs at he ⊢ <;> omega
 
-/-- The initial point of a canonical horizontal or vertical edge is its base grid vertex. -/
+/-- **Initial complex point of an oriented grid edge.** Let `D` be a finite grid filling of
+scale `t>0`. A horizontal or vertical edge based at `v∈ℤ²` begins at `v₀/t+i v₁/t`. -/
 noncomputable def edgeStart (D : GridFilling) : GridEdge → ℂ
   | .horizontal v => D.point v
   | .vertical v => D.point v
 
-/-- The endpoint is the next first-coordinate vertex for a horizontal edge and the next
-second-coordinate vertex for a vertical edge. -/
+/-- **Terminal complex point of an oriented grid edge.** Let `D` be a finite grid filling of
+scale `t>0`. The horizontal edge based at `v` ends at `(v₀+1)/t+i v₁/t`, while the
+vertical edge ends at `v₀/t+i(v₁+1)/t`. The orientations are rightward and upward. -/
 noncomputable def edgeEnd (D : GridFilling) : GridEdge → ℂ
   | .horizontal v => D.point (v.succ 0)
   | .vertical v => D.point (v.succ 1)
 
-/-- Geometric segment traced by a grid edge. -/
+/-- **Closed segment traced by an oriented grid edge.** Let `D` be a finite grid filling of
+scale `t>0`. For a grid edge `e`, its trace is the real line segment joining its initial
+and terminal complex points. Orientation affects integration, not this geometric set; its
+length is `1/t`. -/
 noncomputable def edgeTrace (D : GridFilling) (e : GridEdge) : Set ℂ :=
   segment ℝ (D.edgeStart e) (D.edgeEnd e)
 
 set_option linter.flexible false in
-/-- Each canonical edge of a cell lies in that cell's closed carrier.
-
-```lean
-theorem edgeTrace_subset_cell_carrier_of_mem_cellEdges
-    (D : GridFilling) (v : GridIndex) {e : GridEdge} (he : e ∈ cellEdges v) :
-    D.edgeTrace e ⊆ (D.cell v).carrier
-``` -/
+/-- **Every edge of a grid cell lies in its closed square.** Let `D` be a finite grid filling
+of scale `t>0`. If `e` is one of the four edges adjacent to the cell at `v∈ℤ²`, then
+`D.edgeTrace(e)⊆carrier(D.cell(v))`. The cell need not be selected. -/
 theorem edgeTrace_subset_cell_carrier_of_mem_cellEdges
     (D : GridFilling) (v : GridIndex) {e : GridEdge} (he : e ∈ cellEdges v) :
     D.edgeTrace e ⊆ (D.cell v).carrier := by
@@ -1362,13 +1245,9 @@ theorem edgeTrace_subset_cell_carrier_of_mem_cellEdges
     constructor <;>
       exact (div_le_div_iff_of_pos_right D.scale_pos).2 (by norm_num)
 
-/-- Each reduced boundary edge lies in at least one selected cell's closed carrier.
-
-```lean
-theorem exists_selected_cell_of_mem_boundaryEdges
-    (D : GridFilling) {e : GridEdge} (he : e ∈ D.boundaryEdges) :
-    ∃ v ∈ D.cells, D.edgeTrace e ⊆ (D.cell v).carrier
-``` -/
+/-- **A surviving boundary edge belongs to a selected cell.** Let `D` be a finite grid filling
+of scale `t>0`. For every `e∈D.boundaryEdges`, there is a selected index `v∈D.cells` such
+that `D.edgeTrace(e)⊆carrier(D.cell(v))`. -/
 theorem exists_selected_cell_of_mem_boundaryEdges
     (D : GridFilling) {e : GridEdge} (he : e ∈ D.boundaryEdges) :
     ∃ v ∈ D.cells, D.edgeTrace e ⊆ (D.cell v).carrier := by
@@ -1376,35 +1255,22 @@ theorem exists_selected_cell_of_mem_boundaryEdges
   rcases Finset.mem_biUnion.mp he.1 with ⟨v, hv, hev⟩
   exact ⟨v, hv, D.edgeTrace_subset_cell_carrier_of_mem_cellEdges v hev⟩
 
-/-- A canonical edge trace is a compact complex line segment.
-
-```lean
-theorem isCompact_edgeTrace (D : GridFilling) (e : GridEdge) :
-    IsCompact (D.edgeTrace e)
-``` -/
+/-- **A grid-edge trace is compact.** Let `D` be a finite grid filling of scale `t>0`. For
+every horizontal or vertical edge `e`, the real line segment between its complex endpoints
+is compact in `ℂ`. -/
 theorem isCompact_edgeTrace (D : GridFilling) (e : GridEdge) :
     IsCompact (D.edgeTrace e) := by
   rw [edgeTrace, segment_eq_image_lineMap]
   exact isCompact_Icc.image AffineMap.lineMap_continuous
 
-/-- A canonical edge trace is closed in the complex plane.
-
-```lean
-theorem isClosed_edgeTrace (D : GridFilling) (e : GridEdge) :
-    IsClosed (D.edgeTrace e)
-``` -/
+/-- **A grid-edge trace is closed.** Let `D` be a finite grid filling of scale `t>0`. For
+every grid edge `e`, its closed real line segment is a closed subset of the complex plane. -/
 theorem isClosed_edgeTrace (D : GridFilling) (e : GridEdge) :
     IsClosed (D.edgeTrace e) := (D.isCompact_edgeTrace e).isClosed
 
-/-- The complete stated horizontal coordinate interval belongs to the corresponding edge trace.
-
-```lean
-theorem horizontal_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
-    {x : ℝ} (hx : x ∈ Icc ((v 0 : ℝ) / D.scale)
-      (((v 0 : ℝ) + 1) / D.scale)) :
-    (x : ℂ) + ((v 1 : ℝ) / D.scale : ℂ) * Complex.I ∈
-      D.edgeTrace (.horizontal v)
-``` -/
+/-- **Every point of the horizontal edge interval lies on its trace.** Let `D` be a finite
+grid filling of scale `t>0`. For an index `v∈ℤ²` and `v₀/t≤x≤(v₀+1)/t`, the point `x+i
+v₁/t` lies on the trace of the horizontal edge based at `v`. -/
 theorem horizontal_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
     {x : ℝ} (hx : x ∈ Icc ((v 0 : ℝ) / D.scale)
       (((v 0 : ℝ) + 1) / D.scale)) :
@@ -1431,15 +1297,9 @@ theorem horizontal_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
   rw [heq]
   exact lineMap_mem_segment ℝ _ _ ht
 
-/-- The complete stated vertical coordinate interval belongs to the corresponding edge trace.
-
-```lean
-theorem vertical_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
-    {y : ℝ} (hy : y ∈ Icc ((v 1 : ℝ) / D.scale)
-      (((v 1 : ℝ) + 1) / D.scale)) :
-    ((v 0 : ℝ) / D.scale : ℂ) + (y : ℂ) * Complex.I ∈
-      D.edgeTrace (.vertical v)
-``` -/
+/-- **Every point of the vertical edge interval lies on its trace.** Let `D` be a finite grid
+filling of scale `t>0`. For an index `v∈ℤ²` and `v₁/t≤y≤(v₁+1)/t`, the point `v₀/t+i y`
+lies on the trace of the vertical edge based at `v`. -/
 theorem vertical_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
     {y : ℝ} (hy : y ∈ Icc ((v 1 : ℝ) / D.scale)
       (((v 1 : ℝ) + 1) / D.scale)) :
@@ -1466,7 +1326,11 @@ theorem vertical_point_mem_edgeTrace (D : GridFilling) (v : GridIndex)
   rw [heq]
   exact lineMap_mem_segment ℝ _ _ ht
 
-/-- Banach-valued integral along one canonically oriented boundary edge. -/
+/-- **Banach-valued integral along an oriented grid edge.** Let `E` be a complete complex
+normed vector space. Let `D` be a finite grid filling of scale `t>0`. For `f:ℂ→E`,
+integrate `f(x+i v₁/t)` over `x∈[v₀/t,(v₀+1)/t]` on the horizontal edge at `v`. On the
+vertical edge integrate `i • f(v₀/t+i y)` over `y∈[v₁/t,(v₁+1)/t]`. These are interval
+integrals with the positive rightward and upward orientations. -/
 noncomputable def edgeIntegral {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling)
     (e : GridEdge) (f : ℂ → E) : E :=
@@ -1479,19 +1343,11 @@ noncomputable def edgeIntegral {E : Type*} [NormedAddCommGroup E]
         ∫ y : ℝ in (v 1 : ℝ) / D.scale..((v 1 : ℝ) + 1) / D.scale,
           f (((v 0 : ℝ) / D.scale) + y * Complex.I)
 
-/-- The boundary integral of one grid cell is the signed sum of its four
-canonical grid-edge integrals.
-
-```lean
-theorem cell_boundaryIntegral_eq_edgeIntegral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (v : GridIndex) (f : ℂ → E) :
-    (D.cell v).boundaryIntegral f =
-      D.edgeIntegral (.horizontal v) f -
-        D.edgeIntegral (.horizontal (v.succ 1)) f +
-          D.edgeIntegral (.vertical (v.succ 0)) f -
-            D.edgeIntegral (.vertical v) f
-``` -/
+/-- **A cell boundary integral is its signed four-edge sum.** Let `E` be a complete complex
+normed vector space. Let `D` be a finite grid filling of scale `t>0`. For `f:ℂ→E` and any
+cell index `v`, its counterclockwise boundary integral is
+`I(h_v,f)-I(h_{v+e₁},f)+I(v_{v+e₀},f)-I(v_v,f)`, where `I(e,f)` is the positively oriented
+grid-edge integral. No continuity premise is required for this identity. -/
 theorem cell_boundaryIntegral_eq_edgeIntegral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D : GridFilling) (v : GridIndex) (f : ℂ → E) :
@@ -1503,7 +1359,11 @@ theorem cell_boundaryIntegral_eq_edgeIntegral {E : Type*}
   simp [RectilinearRectangle.boundaryIntegral, edgeIntegral, cell, gridCell,
     gridPoint, GridIndex.succ]
 
-/-- Integration of a finitely supported oriented grid-edge chain. -/
+/-- **Additive integral of an integer-weighted grid-edge chain.** Let `E` be a complete
+complex normed vector space. Let `D` be a finite grid filling of scale `t>0`. For `f:ℂ→E`,
+send a finite integer edge chain `c` to `∑_e c(e) • I_D(e,f)`, where `I_D(e,f)` is the
+rightward or upward edge integral. This defines an additive homomorphism from edge chains
+to `E`. -/
 noncomputable def edgeIntegralAddHom {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E) :
     (GridEdge →₀ ℤ) →+ E where
@@ -1516,30 +1376,20 @@ noncomputable def edgeIntegralAddHom {E : Type*} [NormedAddCommGroup E]
     · intro e m n
       simp [add_zsmul]
 
-/-- The additive edge-chain integral is the finite sum weighted by its integer edge coefficients.
-
-```lean
-theorem edgeIntegralAddHom_apply {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E)
-    (c : GridEdge →₀ ℤ) :
-    D.edgeIntegralAddHom f c = c.sum fun e n ↦ n • D.edgeIntegral e f
-``` -/
+/-- **Value of the additive edge-chain integral.** Let `E` be a complete complex normed vector
+space. Let `D` be a finite grid filling of scale `t>0`. For `f:ℂ→E` and a finitely
+supported integer edge chain `c`, `D.edgeIntegralAddHom(f)(c)=∑_e c(e) •
+D.edgeIntegral(e,f)`. No continuity premise is required. -/
 @[simp]
 theorem edgeIntegralAddHom_apply {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E)
     (c : GridEdge →₀ ℤ) :
     D.edgeIntegralAddHom f c = c.sum fun e n ↦ n • D.edgeIntegral e f := rfl
 
-/-- Integrating a cell's four signed canonical edges gives its counterclockwise rectangle boundary
-integral.
-
-```lean
-theorem edgeIntegralAddHom_cellBoundaryChain {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) (v : GridIndex) :
-    D.edgeIntegralAddHom f (cellBoundaryChain v) =
-      (D.cell v).boundaryIntegral f
-``` -/
+/-- **Integrating one cell chain gives its rectangle boundary integral.** Let `E` be a
+complete complex normed vector space. Let `D` be a finite grid filling of scale `t>0`. For
+`f:ℂ→E` and `v∈ℤ²`, integration of the signed four-edge chain `h_v-h_{v+e₁}+v_{v+e₀}-v_v`
+equals the counterclockwise boundary integral of `D.cell(v)`. -/
 @[simp]
 theorem edgeIntegralAddHom_cellBoundaryChain {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
@@ -1549,14 +1399,10 @@ theorem edgeIntegralAddHom_cellBoundaryChain {E : Type*}
   rw [cellBoundaryChain, map_sub, map_add, map_sub]
   simp [cell_boundaryIntegral_eq_edgeIntegral]
 
-/-- The Cauchy-kernel integral along one grid edge varies continuously with
-the pole away from that edge.
-
-```lean
-theorem continuousOn_edgeIntegral_cauchyKernel (D : GridFilling) (e : GridEdge) :
-    ContinuousOn (fun z : ℂ ↦ D.edgeIntegral e (fun ξ ↦ (ξ - z)⁻¹))
-      (D.edgeTrace e)ᶜ
-``` -/
+/-- **Cauchy edge integral is continuous away from its pole trace.** Let `D` be a finite grid
+filling of scale `t>0`. For any grid edge `e`, `z↦∫_e(ξ-z)⁻¹ dξ` is continuous on
+`ℂ∖D.edgeTrace(e)`. The inverse is total, but the continuity assertion excludes poles on
+the integrated segment. -/
 theorem continuousOn_edgeIntegral_cauchyKernel (D : GridFilling) (e : GridEdge) :
     ContinuousOn (fun z : ℂ ↦ D.edgeIntegral e (fun ξ ↦ (ξ - z)⁻¹))
       (D.edgeTrace e)ᶜ := by
@@ -1635,34 +1481,35 @@ theorem continuousOn_edgeIntegral_cauchyKernel (D : GridFilling) (e : GridEdge) 
           simp [q, Set.projIcc_of_mem hab hy']]
       exact hcont'.const_smul Complex.I
 
-/-- Reduced geometric boundary after cancellation of internal edges. -/
+/-- **Geometric trace of the reduced grid boundary.** Let `D` be a finite grid filling of
+scale `t>0`. The reduced trace is `T_D=⋃_{e∈D.boundaryEdges}D.edgeTrace(e)`, a finite
+union of the surviving closed edge segments after internal-edge cancellation. It is empty
+for an empty filling. -/
 noncomputable def reducedTrace (D : GridFilling) : Set ℂ :=
   ⋃ e ∈ D.boundaryEdges, D.edgeTrace e
 
-/-- The reduced trace is closed as a finite union of closed edge segments.
-
-```lean
-theorem isClosed_reducedTrace (D : GridFilling) : IsClosed D.reducedTrace
-``` -/
+/-- **The reduced grid trace is closed.** Let `D` be a finite grid filling of scale `t>0`.
+Write `T_D` for the reduced trace, the union of line segments belonging to edges with
+nonzero boundary coefficient. Since the surviving edge family is finite and each segment
+is closed, `T_D` is closed in `ℂ`. -/
 theorem isClosed_reducedTrace (D : GridFilling) : IsClosed D.reducedTrace := by
   apply isClosed_biUnion_finset
   intro e he
   exact D.isClosed_edgeTrace e
 
-/-- Integral over the reduced boundary, with the signed net coefficient of
-each surviving edge. -/
+/-- **Integral of the reduced signed grid boundary.** Let `E` be a complete complex normed
+vector space. Let `D` be a finite grid filling of scale `t>0`. For `f:ℂ→E`, define
+`D.reducedIntegral(f)=∑_{e∈D.boundaryEdges}D.boundaryCoeff(e) • D.edgeIntegral(e,f)`. The
+surviving integer coefficients are `1` or `-1`; an empty filling has integral zero. -/
 noncomputable def reducedIntegral {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E) : E :=
   ∑ e ∈ D.boundaryEdges, D.boundaryCoeff e • D.edgeIntegral e f
 
-/-- Integrands agreeing on the reduced trace have equal complete Banach-valued reduced integrals.
-
-```lean
-theorem reducedIntegral_congr {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling)
-    {f g : ℂ → E} (hfg : Set.EqOn f g D.reducedTrace) :
-    D.reducedIntegral f = D.reducedIntegral g
-``` -/
+/-- **Reduced integrals depend only on values on surviving edges.** Let `E` be a complete
+complex normed vector space. Let `D` be a finite grid filling of scale `t>0`. Write `T_D`
+for the reduced trace, the union of line segments belonging to edges with nonzero boundary
+coefficient. If `f,g:ℂ→E` agree at every point of `T_D`, then
+`D.reducedIntegral(f)=D.reducedIntegral(g)`. No continuity premise is required. -/
 theorem reducedIntegral_congr {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling)
     {f g : ℂ → E} (hfg : Set.EqOn f g D.reducedTrace) :
@@ -1695,17 +1542,9 @@ theorem reducedIntegral_congr {E : Type*} [NormedAddCommGroup E]
             simpa [uIcc_of_le hab] using hy)))
   rw [hedge]
 
-/-- A continuous complex-linear map commutes with an edge integral when the integrand is continuous
-on that edge.
-
-```lean
-theorem edgeIntegral_comp_comm {E F : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
-    (D : GridFilling) (e : GridEdge) (L : E →L[ℂ] F) (f : ℂ → E)
-    (hf : ContinuousOn f (D.edgeTrace e)) :
-    D.edgeIntegral e (fun z ↦ L (f z)) = L (D.edgeIntegral e f)
-``` -/
+/-- **Continuous linear maps commute with an edge integral.** Let `E,F` be complete complex
+normed vector spaces, `D` a finite positive-scale filling, `e` a grid edge, and
+`L:E→L[ℂ]F`. If `f:ℂ→E` is continuous on `D.edgeTrace(e)`, then `I_D(e,L∘f)=L(I_D(e,f))`. -/
 theorem edgeIntegral_comp_comm {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
@@ -1743,17 +1582,10 @@ theorem edgeIntegral_comp_comm {E F : Type*}
       simp only [edgeIntegral, map_smul]
       rw [L.intervalIntegral_comp_comm hcont.intervalIntegrable]
 
-/-- A continuous complex-linear map commutes with the reduced integral when the integrand is
-continuous on a containing set.
-
-```lean
-theorem reducedIntegral_comp_comm {E F : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
-    (D : GridFilling) (L : E →L[ℂ] F) (f : ℂ → E)
-    {U : Set ℂ} (hD : D.reducedTrace ⊆ U) (hf : ContinuousOn f U) :
-    D.reducedIntegral (fun z ↦ L (f z)) = L (D.reducedIntegral f)
-``` -/
+/-- **Continuous linear maps commute with a reduced grid integral.** Let `E,F` be complete
+complex normed vector spaces, `D` a finite positive-scale filling, and `L:E→L[ℂ]F`. If the
+reduced trace lies in `U⊆ℂ` and `f:ℂ→E` is continuous on `U`, then
+`D.reducedIntegral(L∘f)=L(D.reducedIntegral(f))`. -/
 theorem reducedIntegral_comp_comm {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
@@ -1768,27 +1600,21 @@ theorem reducedIntegral_comp_comm {E F : Type*}
   exact hf.mono fun z hz ↦ hD
     (mem_iUnion_of_mem e (mem_iUnion_of_mem he hz))
 
-/-- The reduced boundary-edge set is exactly the support of the signed boundary chain.
-
-```lean
-theorem boundaryEdges_eq_boundaryChain_support (D : GridFilling) :
-    D.boundaryEdges = D.boundaryChain.support
-``` -/
+/-- **Surviving grid edges are the support of the boundary chain.** Let `D` be a finite grid
+filling of scale `t>0`. The finite set `D.boundaryEdges` equals the support of the
+finitely supported sum of all selected-cell four-edge chains. Both contain exactly the
+edges with nonzero net integer coefficient. -/
 theorem boundaryEdges_eq_boundaryChain_support (D : GridFilling) :
     D.boundaryEdges = D.boundaryChain.support := by
   ext e
   rw [mem_boundaryEdges_iff, Finsupp.mem_support_iff]
   cases e <;> simp
 
-/-- The reduced integral is the additive edge-chain integral evaluated at the filling boundary
-chain.
-
-```lean
-theorem reducedIntegral_eq_edgeIntegralAddHom {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) :
-    D.reducedIntegral f = D.edgeIntegralAddHom f D.boundaryChain
-``` -/
+/-- **Reduced integration equals integration of the summed boundary chain.** Let `E` be a
+complete complex normed vector space. Let `D` be a finite grid filling of scale `t>0`. For
+any `f:ℂ→E`, `D.reducedIntegral(f)=D.edgeIntegralAddHom(f)(D.boundaryChain)`. The right
+side integrates the sum of selected-cell signed edge chains; no continuity premise is
+required. -/
 theorem reducedIntegral_eq_edgeIntegralAddHom {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D : GridFilling) (f : ℂ → E) :
@@ -1799,13 +1625,10 @@ theorem reducedIntegral_eq_edgeIntegralAddHom {E : Type*}
   intro e he
   cases e <;> simp
 
-/-- The reduced Cauchy-kernel integral is continuous in its pole off the reduced trace.
-
-```lean
-theorem continuousAt_reducedIntegral_cauchyKernel_of_not_mem_reducedTrace
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.reducedTrace) :
-    ContinuousAt (fun w : ℂ ↦ D.reducedIntegral (fun ξ ↦ (ξ - w)⁻¹)) z
-``` -/
+/-- **Reduced Cauchy integral is continuous off the grid trace.** Let `D` be a finite grid
+filling of scale `t>0`. Write `T_D` for the reduced trace, the union of line segments
+belonging to edges with nonzero boundary coefficient. If `z∉T_D`, then
+`w↦D.reducedIntegral(ξ↦(ξ-w)⁻¹)` is continuous at `z`. -/
 theorem continuousAt_reducedIntegral_cauchyKernel_of_not_mem_reducedTrace
     (D : GridFilling) {z : ℂ} (hz : z ∉ D.reducedTrace) :
     ContinuousAt (fun w : ℂ ↦ D.reducedIntegral (fun ξ ↦ (ξ - w)⁻¹)) z := by
@@ -1822,16 +1645,11 @@ theorem continuousAt_reducedIntegral_cauchyKernel_of_not_mem_reducedTrace
       ((D.isClosed_edgeTrace e).isOpen_compl.mem_nhds hez)
   exact (hedge.const_smul (D.boundaryCoeff e)).tendsto
 
-/-- Algebraic discrete Stokes: summing the rectangle boundaries of all
-selected cells gives exactly the integral over the reduced oriented edge
-chain.
-
-```lean
-theorem toCycle_integral_eq_reducedIntegral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) (f : ℂ → E) :
-    D.toCycle.integral f = D.reducedIntegral f
-``` -/
+/-- **Discrete Stokes equality for a finite grid filling.** Let `E` be a complete complex
+normed vector space. Let `D` be a finite grid filling of scale `t>0`. For every `f:ℂ→E`,
+the sum of its counterclockwise selected-cell boundary integrals equals the reduced
+signed-edge integral: `D.toCycle.integral(f)=D.reducedIntegral(f)`. Internal edges cancel,
+without a continuity hypothesis on `f`. -/
 theorem toCycle_integral_eq_reducedIntegral {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D : GridFilling) (f : ℂ → E) :
@@ -1841,13 +1659,10 @@ theorem toCycle_integral_eq_reducedIntegral {E : Type*}
     D.edgeIntegralAddHom f (∑ v ∈ D.cells, cellBoundaryChain v)
   simp only [map_sum, edgeIntegralAddHom_cellBoundaryChain]
 
-/-- The filling's analytic winding index is continuous off its reduced boundary.
-
-```lean
-theorem continuousAt_toCycle_index_of_not_mem_reducedTrace
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.reducedTrace) :
-    ContinuousAt (fun w : ℂ ↦ D.toCycle.index w) z
-``` -/
+/-- **Grid winding index is continuous off the reduced trace.** Let `D` be a finite grid
+filling of scale `t>0`. Write `T_D` for the reduced trace, the union of line segments
+belonging to edges with nonzero boundary coefficient. For `z∉T_D`, the analytic index
+`w↦(2πi)⁻¹∮_{D.toCycle}(ξ-w)⁻¹ dξ` is continuous at `z`. -/
 theorem continuousAt_toCycle_index_of_not_mem_reducedTrace
     (D : GridFilling) {z : ℂ} (hz : z ∉ D.reducedTrace) :
     ContinuousAt (fun w : ℂ ↦ D.toCycle.index w) z := by
@@ -1860,15 +1675,15 @@ theorem continuousAt_toCycle_index_of_not_mem_reducedTrace
   rw [heq]
   exact continuousAt_const.mul hred
 
-/-- Closed region presented by the selected grid cells. -/
+/-- **Closed region of the selected grid cells.** Let `D` be a finite grid filling of scale
+`t>0`. The region is `R_D=⋃_{v∈D.cells}carrier(D.cell(v))`, the finite union of selected
+closed squares. It may be empty and need not be connected. -/
 noncomputable def region (D : GridFilling) : Set ℂ :=
   ⋃ v ∈ D.cells, (D.cell v).carrier
 
-/-- The selected-cell region is compact, including for an empty filling.
-
-```lean
-theorem isCompact_region (D : GridFilling) : IsCompact D.region
-``` -/
+/-- **The selected-cell region is compact.** Let `D` be a finite grid filling of scale `t>0`.
+The finite union `R_D=⋃_{v∈D.cells}carrier(D.cell(v))` is compact in the complex plane,
+including the empty selected-cell case. -/
 theorem isCompact_region (D : GridFilling) : IsCompact D.region := by
   rw [region]
   apply D.cells.isCompact_biUnion
@@ -1876,12 +1691,10 @@ theorem isCompact_region (D : GridFilling) : IsCompact D.region := by
   simpa [RectilinearRectangle.carrier, Complex.Rectangle] using
     (isCompact_uIcc.reProdIm isCompact_uIcc)
 
-/-- The reduced trace lies in the selected closed-cell region.
-
-```lean
-theorem reducedTrace_subset_region (D : GridFilling) :
-    D.reducedTrace ⊆ D.region
-``` -/
+/-- **The reduced boundary lies in the selected-cell region.** Let `D` be a finite grid
+filling of scale `t>0`. Every point of the reduced trace
+`⋃_{e∈D.boundaryEdges}D.edgeTrace(e)` belongs to the closed union
+`⋃_{v∈D.cells}carrier(D.cell(v))`. -/
 theorem reducedTrace_subset_region (D : GridFilling) :
     D.reducedTrace ⊆ D.region := by
   intro z hz
@@ -1892,17 +1705,22 @@ theorem reducedTrace_subset_region (D : GridFilling) :
   rw [region]
   exact Set.mem_iUnion_of_mem v (Set.mem_iUnion_of_mem hv (hev hze))
 
-/-- Fine-grid selection rule: take every closed cell
-meeting a prescribed thickening of `K`. -/
+/-- **Grid cells meeting a closed thickening of a planar set.** For `K⊆ℂ` and `r,t∈ℝ`, select
+`{v∈ℤ² | carrier(gridCell t v)∩cthickening(r,K)≠∅}`. The set-valued definition makes no
+compactness, nonnegative-radius, or positive-scale assumption; such hypotheses occur in
+its finiteness and geometry lemmas. -/
 noncomputable def selectedCellSet (K : Set ℂ) (r t : ℝ) : Set GridIndex :=
   gridCellsMeeting t (Metric.cthickening r K)
 
-/-- Open physical grid square at lattice index `v`. -/
+/-- **Open square inside a positive-scale grid cell.** Let `D` be a finite grid filling of
+scale `t>0`. For `v∈ℤ²`, the interior is `{z | v₀/t<Re z<(v₀+1)/t and v₁/t<Im
+z<(v₁+1)/t}`. The index need not be selected. -/
 noncomputable def cellInterior (D : GridFilling) (v : GridIndex) : Set ℂ :=
   Ioo ((v 0 : ℝ) / D.scale) (((v 0 : ℝ) + 1) / D.scale) ×ℂ
     Ioo ((v 1 : ℝ) / D.scale) (((v 1 : ℝ) + 1) / D.scale)
 
-/-- Two integer coordinates determine a grid index. -/
+/-- **Integer coordinate embedding of grid indices.** Send the grid index `v:Fin 2→ℤ` to the
+pair `(v₀,v₁)∈ℤ×ℤ`. This map is injective because the two coordinates determine `v`. -/
 def gridIndexEmbedding : GridIndex ↪ ℤ × ℤ where
   toFun v := (v 0, v 1)
   inj' := by
@@ -1912,12 +1730,8 @@ def gridIndexEmbedding : GridIndex ↪ ℤ × ℤ where
     · exact congrArg Prod.fst h
     · exact congrArg Prod.snd h
 
-/-- At positive scale, only finitely many closed cells meet a bounded planar set.
-
-```lean
-theorem gridCellsMeeting_finite {S : Set ℂ} (hS : Bornology.IsBounded S)
-    {t : ℝ} (ht : 0 < t) : (gridCellsMeeting t S).Finite
-``` -/
+/-- **Only finitely many grid cells meet a bounded set.** For a bounded `S⊆ℂ` and `t>0`, the
+set `{v∈ℤ² | carrier(gridCell t v)∩S≠∅}` is finite. Compactness of `S` is not required. -/
 theorem gridCellsMeeting_finite {S : Set ℂ} (hS : Bornology.IsBounded S)
     {t : ℝ} (ht : 0 < t) : (gridCellsMeeting t S).Finite := by
   obtain ⟨C, hSC⟩ := hS.subset_closedBall (0 : ℂ)
@@ -1961,44 +1775,33 @@ theorem gridCellsMeeting_finite {S : Set ℂ} (hS : Bornology.IsBounded S)
   exact ⟨coord_bounds 0 z.re hzcell'.1 hzre,
     coord_bounds 1 z.im hzcell'.2 hzim⟩
 
-/-- At positive scale, the cells meeting a closed thickening of a compact planar set form a finite
-set.
-
-```lean
-theorem selectedCellSet_finite (K : Set ℂ) (r : ℝ) {t : ℝ} (ht : 0 < t)
-    (hK : IsCompact K) : (selectedCellSet K r t).Finite
-``` -/
+/-- **A compact set has finitely many thickening-selected cells.** If `K⊆ℂ` is compact, `t>0`,
+and `r∈ℝ`, then the cells meeting `cthickening(r,K)` form a finite set. No
+nonnegative-radius premise is required for finiteness. -/
 theorem selectedCellSet_finite (K : Set ℂ) (r : ℝ) {t : ℝ} (ht : 0 < t)
     (hK : IsCompact K) : (selectedCellSet K r t).Finite :=
   gridCellsMeeting_finite hK.cthickening.isBounded ht
 
-/-- Finite filling consisting of every closed grid cell meeting a prescribed
-closed thickening of `K`. -/
+/-- **Finite filling selected by a compact-set thickening.** For compact `K⊆ℂ`, `t>0`, and
+`r∈ℝ`, form the scale-`t` filling whose selected cells meet `cthickening(r,K)`. The
+definition includes empty `K`; it does not assume `r≥0`. -/
 noncomputable def selectedFilling (K : Set ℂ) (r t : ℝ) (ht : 0 < t)
     (hK : IsCompact K) : GridFilling :=
   ofCells t ht (selectedCellSet_finite K r ht hK).toFinset
 
-/-- Membership in the constructed filling is exactly the prescribed cell-thickening intersection
-condition.
-
-```lean
-theorem mem_selectedFilling_cells (K : Set ℂ) (r : ℝ) {t : ℝ}
-    (ht : 0 < t) (hK : IsCompact K) (v : GridIndex) :
-    v ∈ (selectedFilling K r t ht hK).cells ↔ v ∈ selectedCellSet K r t
-``` -/
+/-- **Membership rule for the thickening-selected filling.** For compact `K⊆ℂ`, `t>0`, `r∈ℝ`,
+and `v∈ℤ²`, the index `v` is selected precisely when its closed physical cell meets
+`cthickening(r,K)`. This is the selection rule used to form the finite filling. -/
 @[simp]
 theorem mem_selectedFilling_cells (K : Set ℂ) (r : ℝ) {t : ℝ}
     (ht : 0 < t) (hK : IsCompact K) (v : GridIndex) :
     v ∈ (selectedFilling K r t ht hK).cells ↔ v ∈ selectedCellSet K r t := by
   exact (selectedCellSet_finite K r ht hK).mem_toFinset
 
-/-- Points in one closed cell have complex distance at most `2/D.scale`.
-
-```lean
-theorem dist_le_two_div_scale_of_mem_cell_carrier (D : GridFilling)
-    (v : GridIndex) {z w : ℂ} (hz : z ∈ (D.cell v).carrier)
-    (hw : w ∈ (D.cell v).carrier) : dist z w ≤ 2 / D.scale
-``` -/
+/-- **Diameter bound for a closed grid square.** Let `D` be a finite grid filling of scale
+`t>0`. If `z,w` lie in the same cell carrier at an index `v∈ℤ²`, then their complex
+distance satisfies `dist(z,w)≤2/t`. This bound uses the sum of the two coordinate lengths
+and does not require the cell to be selected. -/
 theorem dist_le_two_div_scale_of_mem_cell_carrier (D : GridFilling)
     (v : GridIndex) {z w : ℂ} (hz : z ∈ (D.cell v).carrier)
     (hw : w ∈ (D.cell v).carrier) : dist z w ≤ 2 / D.scale := by
@@ -2022,16 +1825,10 @@ theorem dist_le_two_div_scale_of_mem_cell_carrier (D : GridFilling)
     _ ≤ 1 / D.scale + 1 / D.scale := by simpa using add_le_add hre him
     _ = 2 / D.scale := by ring
 
-/-- For nonnegative radius, each selected closed cell lies in the closed `(2/t+r)`-thickening of
-the compact set.
-
-```lean
-theorem selectedFilling_cell_carrier_subset_cthickening
-    (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K)
-    {v : GridIndex} (hv : v ∈ (selectedFilling K r t ht hK).cells) :
-    ((selectedFilling K r t ht hK).cell v).carrier ⊆
-      Metric.cthickening (2 / t + r) K
-``` -/
+/-- **A selected cell lies in an enlarged compact-set thickening.** Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. For
+`r≥0`, every selected closed cell is contained in `cthickening(r+2/t,K)`. The `2/t` term
+bounds the diameter of one physical cell. -/
 theorem selectedFilling_cell_carrier_subset_cthickening
     (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K)
     {v : GridIndex} (hv : v ∈ (selectedFilling K r t ht hK).cells) :
@@ -2046,14 +1843,10 @@ theorem selectedFilling_cell_carrier_subset_cthickening
     ((selectedFilling K r t ht hK).dist_le_two_div_scale_of_mem_cell_carrier
       v hzcell hycell)
 
-/-- For nonnegative radius, the full selected-cell region lies in the same closed
-`(2/t+r)`-thickening.
-
-```lean
-theorem selectedFilling_region_subset_cthickening
-    (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K) :
-    (selectedFilling K r t ht hK).region ⊆ Metric.cthickening (2 / t + r) K
-``` -/
+/-- **The thickening-selected region stays within a controlled enlargement.** Let `K⊆ℂ` be
+compact, `t>0`, and let `D` consist of all scale-`t` closed cells meeting
+`cthickening(r,K)`. If `r≥0`, the union of its selected closed cell carriers is contained
+in `cthickening(r+2/t,K)`. -/
 theorem selectedFilling_region_subset_cthickening
     (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K) :
     (selectedFilling K r t ht hK).region ⊆ Metric.cthickening (2 / t + r) K := by
@@ -2063,14 +1856,10 @@ theorem selectedFilling_region_subset_cthickening
   rcases Set.mem_iUnion.mp hz with ⟨hv, hzcell⟩
   exact selectedFilling_cell_carrier_subset_cthickening K hr ht hK hv hzcell
 
-/-- For nonnegative radius, the reduced trace lies in the closed `(2/t+r)`-thickening.
-
-```lean
-theorem selectedFilling_reducedTrace_subset_cthickening
-    (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K) :
-    (selectedFilling K r t ht hK).reducedTrace ⊆
-      Metric.cthickening (2 / t + r) K
-``` -/
+/-- **The selected reduced boundary lies in an enlarged thickening.** Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. If
+`r≥0`, the reduced trace of `D` lies in `cthickening(r+2/t,K)` because every surviving
+edge belongs to a selected cell. -/
 theorem selectedFilling_reducedTrace_subset_cthickening
     (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K) :
     (selectedFilling K r t ht hK).reducedTrace ⊆
@@ -2083,13 +1872,10 @@ theorem selectedFilling_reducedTrace_subset_cthickening
     ⟨v, hv, hev⟩
   exact selectedFilling_cell_carrier_subset_cthickening K hr ht hK hv (hev hze)
 
-/-- The selected filling's reduced trace is disjoint from the original compact set.
-
-```lean
-theorem selectedFilling_reducedTrace_disjoint
-    (K : Set ℂ) {r t : ℝ} (ht : 0 < t) (hK : IsCompact K) :
-    Disjoint (selectedFilling K r t ht hK).reducedTrace K
-``` -/
+/-- **The thickening-selected reduced boundary avoids the compact set.** Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. For
+any real `r`, the reduced trace of `D` is disjoint from `K`. No nonnegative-radius premise
+occurs in this assertion. -/
 theorem selectedFilling_reducedTrace_disjoint
     (K : Set ℂ) {r t : ℝ} (ht : 0 < t) (hK : IsCompact K) :
     Disjoint (selectedFilling K r t ht hK).reducedTrace K := by
@@ -2122,25 +1908,18 @@ theorem selectedFilling_reducedTrace_disjoint
       simp [boundaryCoeff, cellCoeff, selected_of_mem_carrier v hzv,
         selected_of_mem_carrier (v.pred 0) hzpred]
 
-/-- A cell's open interior lies in its closed carrier.
-
-```lean
-theorem cellInterior_subset_carrier (D : GridFilling) (v : GridIndex) :
-    D.cellInterior v ⊆ (D.cell v).carrier
-``` -/
+/-- **The open grid square lies in its closed cell.** Let `D` be a finite grid filling of
+scale `t>0`. For every index `v∈ℤ²`, the square with strict coordinate bounds
+`v_i/t<x_i<(v_i+1)/t` is contained in the closed carrier of `D.cell(v)`. -/
 theorem cellInterior_subset_carrier (D : GridFilling) (v : GridIndex) :
     D.cellInterior v ⊆ (D.cell v).carrier := by
   intro z hz
   rw [mem_cell_carrier_iff]
   exact ⟨⟨hz.1.1.le, hz.1.2.le⟩, ⟨hz.2.1.le, hz.2.2.le⟩⟩
 
-/-- A counterclockwise cell boundary has analytic index one at an interior point.
-
-```lean
-theorem index_of_cell_eq_one_of_mem_cellInterior (D : GridFilling)
-    (v : GridIndex) {z : ℂ} (hz : z ∈ D.cellInterior v) :
-    (RectilinearCycle.ofRectangle (D.cell v)).index z = 1
-``` -/
+/-- **A counterclockwise grid square has index one in its interior.** Let `D` be a finite grid
+filling of scale `t>0`. If `z∈D.cellInterior(v)`, then
+`(2πi)⁻¹∮_{boundary(D.cell(v))}(ζ-z)⁻¹ dζ=1`. -/
 theorem index_of_cell_eq_one_of_mem_cellInterior (D : GridFilling)
     (v : GridIndex) {z : ℂ} (hz : z ∈ D.cellInterior v) :
     (RectilinearCycle.ofRectangle (D.cell v)).index z = 1 := by
@@ -2153,13 +1932,9 @@ theorem index_of_cell_eq_one_of_mem_cellInterior (D : GridFilling)
     · exact Complex.I_ne_zero
   exact inv_mul_cancel₀ h
 
-/-- A point in one cell's open interior belongs to no other closed cell at the same scale.
-
-```lean
-theorem eq_of_mem_cellInterior_of_mem_cell_carrier (D : GridFilling)
-    {u v : GridIndex} {z : ℂ} (hzv : z ∈ D.cellInterior v)
-    (hzu : z ∈ (D.cell u).carrier) : u = v
-``` -/
+/-- **An interior point determines its grid cell uniquely.** Let `D` be a finite grid filling
+of scale `t>0`. If `z` lies in the open square at index `v` and in the closed cell at
+index `u`, then `u=v`. The strict interior bounds exclude shared boundary faces. -/
 theorem eq_of_mem_cellInterior_of_mem_cell_carrier (D : GridFilling)
     {u v : GridIndex} {z : ℂ} (hzv : z ∈ D.cellInterior v)
     (hzu : z ∈ (D.cell u).carrier) : u = v := by
@@ -2181,14 +1956,10 @@ theorem eq_of_mem_cellInterior_of_mem_cell_carrier (D : GridFilling)
         ((le_div_iff₀ D.scale_pos).1 hzu.2.2)
     exact le_antisymm (Int.lt_add_one_iff.mp huv) (Int.lt_add_one_iff.mp hvu)
 
-/-- At an interior point of a grid cell, the filling-cycle index is that cell's selected indicator
-coerced to a complex number.
-
-```lean
-theorem toCycle_index_eq_cellCoeff_of_mem_cellInterior (D : GridFilling)
-    (v : GridIndex) {z : ℂ} (hz : z ∈ D.cellInterior v) :
-    D.toCycle.index z = (D.cellCoeff v : ℂ)
-``` -/
+/-- **Grid index equals cell selection at an interior point.** Let `D` be a finite grid
+filling of scale `t>0`. For `z∈D.cellInterior(v)`, the analytic winding index of
+`D.toCycle` is the complex coercion of `c_D(v)`, equal to `1` for a selected cell and `0`
+otherwise. -/
 theorem toCycle_index_eq_cellCoeff_of_mem_cellInterior (D : GridFilling)
     (v : GridIndex) {z : ℂ} (hz : z ∈ D.cellInterior v) :
     D.toCycle.index z = (D.cellCoeff v : ℂ) := by
@@ -2209,19 +1980,15 @@ theorem toCycle_index_eq_cellCoeff_of_mem_cellInterior (D : GridFilling)
       intro hzu
       exact hv (D.eq_of_mem_cellInterior_of_mem_cell_carrier hz hzu ▸ hu)
 
-/-- The half-open grid cell canonically owning `z`, using floor in each
-coordinate. -/
+/-- **Floor-based owner of a complex point in a grid.** Let `D` be a finite grid filling of
+scale `t>0`. For `z∈ℂ`, define the integer owner index `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)`. It
+determines the unique sign-reversed half-open cell box containing `(-Re z,-Im z)`. -/
 noncomputable def ownerIndex (D : GridFilling) (z : ℂ) : GridIndex :=
   fun i => if i = 0 then ⌊D.scale * z.re⌋ else ⌊D.scale * z.im⌋
 
-/-- The sign-reversed coordinate pair lies in a half-open cell box exactly when that cell is the
-floor-based owner.
-
-```lean
-theorem complexBoxPoint_mem_cellBox_iff (D : GridFilling)
-    (v : GridIndex) (z : ℂ) :
-    complexBoxPoint z ∈ D.cellBox v ↔ D.ownerIndex z = v
-``` -/
+/-- **Half-open cell membership identifies the floor-based owner.** Let `D` be a finite grid
+filling of scale `t>0`. For `v∈ℤ²` and `z∈ℂ`, `(-Re z,-Im z)∈D.cellBox(v)` if and only if
+`o_D(z)=v`, where `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)`. -/
 theorem complexBoxPoint_mem_cellBox_iff (D : GridFilling)
     (v : GridIndex) (z : ℂ) :
     complexBoxPoint z ∈ D.cellBox v ↔ D.ownerIndex z = v := by
@@ -2240,12 +2007,9 @@ theorem complexBoxPoint_mem_cellBox_iff (D : GridFilling)
     · apply (neg_mem_gridInterval_iff_floor D.scale_pos (v 1) z.im).2
       simpa [ownerIndex] using congrFun hz 1
 
-/-- Every complex point lies in its floor-based owner cell's closed carrier.
-
-```lean
-theorem mem_owner_cell_carrier (D : GridFilling) (z : ℂ) :
-    z ∈ (D.cell (D.ownerIndex z)).carrier
-``` -/
+/-- **Every complex point lies in its owner cell carrier.** Let `D` be a finite grid filling
+of scale `t>0`. For each `z∈ℂ`, the closed square at `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` contains
+`z`. The owner index need not be selected in `D`. -/
 theorem mem_owner_cell_carrier (D : GridFilling) (z : ℂ) :
     z ∈ (D.cell (D.ownerIndex z)).carrier := by
   rw [D.mem_cell_carrier_iff]
@@ -2261,12 +2025,9 @@ theorem mem_owner_cell_carrier (D : GridFilling) (z : ℂ) :
     · apply (le_div_iff₀ D.scale_pos).2
       simpa [ownerIndex, mul_comm] using (Int.lt_floor_add_one (D.scale * z.im)).le
 
-/-- Every complex point lies in the closure of its owner cell's open interior.
-
-```lean
-theorem mem_closure_cellInterior_ownerIndex (D : GridFilling) (z : ℂ) :
-    z ∈ closure (D.cellInterior (D.ownerIndex z))
-``` -/
+/-- **A point lies in the closure of its owner square interior.** Let `D` be a finite grid
+filling of scale `t>0`. Every `z∈ℂ` belongs to the closure of `D.cellInterior(o_D(z))`,
+where `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)`. Boundary points are included through closure. -/
 theorem mem_closure_cellInterior_ownerIndex (D : GridFilling) (z : ℂ) :
     z ∈ closure (D.cellInterior (D.ownerIndex z)) := by
   have h₀ : (D.ownerIndex z 0 : ℝ) / D.scale <
@@ -2288,12 +2049,8 @@ theorem mem_closure_cellInterior_ownerIndex (D : GridFilling) (z : ℂ) :
     · apply (le_div_iff₀ D.scale_pos).2
       simpa [ownerIndex, mul_comm] using (Int.lt_floor_add_one (D.scale * z.im)).le
 
-/-- A point in a cell's open interior has that cell as its owner.
-
-```lean
-theorem ownerIndex_eq_of_mem_cellInterior (D : GridFilling) {v : GridIndex}
-    {z : ℂ} (hz : z ∈ D.cellInterior v) : D.ownerIndex z = v
-``` -/
+/-- **Interior points have the corresponding grid owner.** Let `D` be a finite grid filling of
+scale `t>0`. If `z` lies in the open cell at `v∈ℤ²`, then `(⌊t Re z⌋,⌊t Im z⌋)=v`. -/
 theorem ownerIndex_eq_of_mem_cellInterior (D : GridFilling) {v : GridIndex}
     {z : ℂ} (hz : z ∈ D.cellInterior v) : D.ownerIndex z = v := by
   funext i
@@ -2309,22 +2066,18 @@ theorem ownerIndex_eq_of_mem_cellInterior (D : GridFilling) {v : GridIndex}
     · simpa [mul_comm] using ((div_lt_iff₀ D.scale_pos).1 hz.2.1).le
     · simpa [mul_comm] using (lt_div_iff₀ D.scale_pos).1 hz.2.2
 
-/-- Selected-cell multiplicity of the grid component containing `z`.
-
-Away from the reduced boundary, adjacent cell indicators agree; hence this
-floor-based representative is the same multiplicity on the whole component.
-The discrete residue/Stokes theorem identifies its complex coercion with the
-analytic winding index. -/
+/-- **Selected-cell multiplicity at a complex point.** For a filling `D` of scale `t>0`, write
+`o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected, `0` otherwise.
+This integer-valued function is the selected-cell indicator evaluated at the floor-based
+owner. Away from the reduced boundary it is constant on each connected component, and its
+complex coercion equals the analytic winding index. -/
 noncomputable def cellMultiplicity (D : GridFilling) (z : ℂ) : ℤ :=
   D.cellCoeff (D.ownerIndex z)
 
-/-- Selected-cell multiplicity is zero outside the filling region.
-
-```lean
-theorem cellMultiplicity_eq_zero_of_not_mem_region
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.region) :
-    D.cellMultiplicity z = 0
-``` -/
+/-- **Cell multiplicity vanishes outside the selected region.** For a filling `D` of scale
+`t>0`, write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected,
+`0` otherwise. If `z` does not belong to the union of selected closed cell carriers, then
+`m_D(z)=0`. -/
 theorem cellMultiplicity_eq_zero_of_not_mem_region
     (D : GridFilling) {z : ℂ} (hz : z ∉ D.region) :
     D.cellMultiplicity z = 0 := by
@@ -2336,35 +2089,26 @@ theorem cellMultiplicity_eq_zero_of_not_mem_region
       (Set.mem_iUnion_of_mem hmem (D.mem_owner_cell_carrier z))
   simp [cellMultiplicity, cellCoeff, howner]
 
-/-- Multiplicity is one exactly when the floor-based owner cell is selected.
-
-```lean
-theorem cellMultiplicity_eq_one_iff (D : GridFilling) (z : ℂ) :
-    D.cellMultiplicity z = 1 ↔ D.ownerIndex z ∈ D.cells
-``` -/
+/-- **Multiplicity one means the owner cell is selected.** For a filling `D` of scale `t>0`,
+write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected, `0`
+otherwise. For every `z∈ℂ`, `m_D(z)=1` if and only if `o_D(z)∈D.cells`. This equality
+includes points on cell boundaries under the fixed half-open owner convention. -/
 theorem cellMultiplicity_eq_one_iff (D : GridFilling) (z : ℂ) :
     D.cellMultiplicity z = 1 ↔ D.ownerIndex z ∈ D.cells := by
   simp [cellMultiplicity, cellCoeff]
 
-/-- Selected-cell multiplicity is always zero or one.
-
-```lean
-theorem cellMultiplicity_eq_zero_or_one (D : GridFilling) (z : ℂ) :
-    D.cellMultiplicity z = 0 ∨ D.cellMultiplicity z = 1
-``` -/
+/-- **Grid multiplicity takes only the values zero and one.** For a filling `D` of scale
+`t>0`, write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected,
+`0` otherwise. At every complex point `z`, `m_D(z)=0` or `m_D(z)=1`, since it is an
+integer selection indicator. -/
 theorem cellMultiplicity_eq_zero_or_one (D : GridFilling) (z : ℂ) :
     D.cellMultiplicity z = 0 ∨ D.cellMultiplicity z = 1 := by
   simp only [cellMultiplicity, cellCoeff]
   split_ifs <;> simp
 
-/-- Every point of the compact set has multiplicity one in its selected filling.
-
-```lean
-theorem selectedFilling_cellMultiplicity_eq_one_of_mem
-    (K : Set ℂ) {r t : ℝ} (ht : 0 < t) (hK : IsCompact K)
-    {z : ℂ} (hz : z ∈ K) :
-    (selectedFilling K r t ht hK).cellMultiplicity z = 1
-``` -/
+/-- **Thickening-selected multiplicity is one on the compact set.** Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. For
+any real `r` and every `z∈K`, the floor-based owner cell is selected, hence `m_D(z)=1`. -/
 theorem selectedFilling_cellMultiplicity_eq_one_of_mem
     (K : Set ℂ) {r t : ℝ} (ht : 0 < t) (hK : IsCompact K)
     {z : ℂ} (hz : z ∈ K) :
@@ -2376,14 +2120,9 @@ theorem selectedFilling_cellMultiplicity_eq_one_of_mem
       Metric.self_subset_cthickening K hz⟩
   simp [cellMultiplicity, cellCoeff, hmem]
 
-/-- For nonnegative radius, multiplicity is zero outside the closed `(2/t+r)`-thickening.
-
-```lean
-theorem selectedFilling_cellMultiplicity_eq_zero_of_not_mem_cthickening
-    (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K)
-    {z : ℂ} (hz : z ∉ Metric.cthickening (2 / t + r) K) :
-    (selectedFilling K r t ht hK).cellMultiplicity z = 0
-``` -/
+/-- **Selected multiplicity vanishes outside the enlarged thickening.** Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. If
+`r≥0` and `z∉cthickening(r+2/t,K)`, then `m_D(z)=0`. -/
 theorem selectedFilling_cellMultiplicity_eq_zero_of_not_mem_cthickening
     (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K)
     {z : ℂ} (hz : z ∉ Metric.cthickening (2 / t + r) K) :
@@ -2396,16 +2135,11 @@ theorem selectedFilling_cellMultiplicity_eq_zero_of_not_mem_cthickening
       ((selectedFilling K r t ht hK).mem_owner_cell_carrier z)
   simp [cellMultiplicity, cellCoeff, hnot]
 
-/-- A point belongs to the selected half-open prepartition union exactly when its multiplicity is
-one.
-
-```lean
-theorem complexBoxPoint_mem_cellsPrepartition_iUnion_iff
-    (D : GridFilling) (B : BoxIntegral.Box (Fin 2))
-    (hB : ∀ v ∈ D.cells, D.cellBox v ≤ B) (z : ℂ) :
-    complexBoxPoint z ∈ (D.cellsPrepartition B hB).iUnion ↔
-      D.cellMultiplicity z = 1
-``` -/
+/-- **Selected half-open union is detected by multiplicity.** For a filling `D` of scale
+`t>0`, write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected,
+`0` otherwise. Let `B` be a nondegenerate real box containing all selected cell boxes, and
+let `π` be their prepartition in `B`. Then `(-Re z,-Im z)∈union(π)` if and only if
+`m_D(z)=1`. -/
 theorem complexBoxPoint_mem_cellsPrepartition_iUnion_iff
     (D : GridFilling) (B : BoxIntegral.Box (Fin 2))
     (hB : ∀ v ∈ D.cells, D.cellBox v ≤ B) (z : ℂ) :
@@ -2429,17 +2163,11 @@ theorem complexBoxPoint_mem_cellsPrepartition_iUnion_iff
       exact ⟨D.ownerIndex z, hz, rfl⟩
     · exact (D.complexBoxPoint_mem_cellBox_iff (D.ownerIndex z) z).2 rfl
 
-/-- On an overlay box, first-filling multiplicity is one exactly when the whole box lies in the
-first selected-cell union.
-
-```lean
-theorem cellMultiplicity_eq_one_iff_overlayBox_subset_left
-    (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
-    (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
-    (hz : complexBoxPoint z ∈ I) :
-    D.cellMultiplicity z = 1 ↔
-      (I : Set (Fin 2 → ℝ)) ⊆ (D.leftCellPrepartition E).iUnion
-``` -/
+/-- **First multiplicity detects containment of an overlay box.** Let `D,H` be finite
+positive-scale fillings and `I` a box in their common overlay prepartition. If `(-Re z,-Im
+z)∈I`, then the first multiplicity `m_D(z)` is one exactly when `I` is contained in the
+union of the first selected-cell prepartition. Here `m_D` is the selected indicator at its
+floor-based owner. -/
 theorem cellMultiplicity_eq_one_iff_overlayBox_subset_left
     (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
     (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
@@ -2453,17 +2181,11 @@ theorem cellMultiplicity_eq_one_iff_overlayBox_subset_left
     (D.leftCellPrepartition E) (D.overlayPrepartition E)
     (D.overlayHyperplanes_spec E (D.leftCellPrepartition E) (by simp)) hI hz).symm
 
-/-- On an overlay box, second-filling multiplicity is one exactly when the whole box lies in the
-second selected-cell union.
-
-```lean
-theorem cellMultiplicity_eq_one_iff_overlayBox_subset_right
-    (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
-    (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
-    (hz : complexBoxPoint z ∈ I) :
-    E.cellMultiplicity z = 1 ↔
-      (I : Set (Fin 2 → ℝ)) ⊆ (D.rightCellPrepartition E).iUnion
-``` -/
+/-- **Second multiplicity detects containment of an overlay box.** Let `D,H` be finite
+positive-scale fillings and `I` a box in their common overlay prepartition. If `(-Re z,-Im
+z)∈I`, then the second multiplicity `m_H(z)` is one exactly when `I` is contained in the
+union of the second selected-cell prepartition. Multiplicity is the selected indicator at
+the floor-based owner. -/
 theorem cellMultiplicity_eq_one_iff_overlayBox_subset_right
     (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
     (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
@@ -2477,16 +2199,10 @@ theorem cellMultiplicity_eq_one_iff_overlayBox_subset_right
     (D.rightCellPrepartition E) (D.overlayPrepartition E)
     (D.overlayHyperplanes_spec E (D.rightCellPrepartition E) (by simp)) hI hz).symm
 
-/-- The coefficient of an overlay box is the first multiplicity minus the second at any point of
-that box.
-
-```lean
-theorem commonOverlay_apply_eq_cellMultiplicity_sub
-    (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
-    (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
-    (hz : complexBoxPoint z ∈ I) :
-    D.commonOverlay E I = D.cellMultiplicity z - E.cellMultiplicity z
-``` -/
+/-- **A signed overlay coefficient is the pointwise multiplicity difference.** Let `D,H` be
+finite positive-scale fillings and `I` a box in their common overlay prepartition. If
+`(-Re z,-Im z)∈I`, then `commonOverlay(D,H)(I)=m_D(z)-m_H(z)`, where each multiplicity is
+the integer selection indicator at the corresponding floor-based owner. -/
 theorem commonOverlay_apply_eq_cellMultiplicity_sub
     (D E : GridFilling) {I : BoxIntegral.Box (Fin 2)}
     (hI : I ∈ D.overlayPrepartition E) {z : ℂ}
@@ -2538,23 +2254,25 @@ theorem commonOverlay_apply_eq_cellMultiplicity_sub
       · exact (hsub ((D.cellMultiplicity_eq_one_iff_overlayBox_subset_right E hI hz).1 hone)).elim
   rw [hd, he]
 
-/-- Center of a physical grid cell. -/
+/-- **Center of a positive-scale grid square.** Let `D` be a finite grid filling of scale
+`t>0`. For `v∈ℤ²`, the cell center is `(v₀+1/2)/t+i(v₁+1/2)/t`. It lies halfway between
+the two coordinate bounds of the cell. -/
 noncomputable def cellCenter (D : GridFilling) (v : GridIndex) : ℂ :=
   (((v 0 : ℤ) : ℝ) / D.scale + 1 / (2 * D.scale) : ℂ) +
     (((v 1 : ℤ) : ℝ) / D.scale + 1 / (2 * D.scale) : ℂ) * Complex.I
 
-/-- For every point off the reduced trace, the analytic cycle index equals the complex coercion of
-its floor-based selected-cell multiplicity. -/
+/-- **Discrete residue identity for a finite grid filling.** For a filling `D` of scale `t>0`,
+write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected, `0`
+otherwise. The predicate requires, for every `z` off the reduced trace,
+`index(D.toCycle,z)=(m_D(z):ℂ)`, where the analytic index is `(2πi)⁻¹∮(ζ-z)⁻¹ dζ`. -/
 def HasDiscreteResidueFormula (D : GridFilling) : Prop :=
   ∀ z ∉ D.reducedTrace, D.toCycle.index z = (D.cellMultiplicity z : ℂ)
 
-/-- The analytic index of any finite grid filling equals its selected-cell multiplicity away from
-the reduced boundary.
-
-```lean
-theorem hasDiscreteResidueFormula (D : GridFilling) :
-    D.HasDiscreteResidueFormula
-``` -/
+/-- **Analytic grid index equals discrete cell multiplicity.** For a filling `D` of scale
+`t>0`, write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected,
+`0` otherwise. For every `z` off the reduced trace, `(2πi)⁻¹∮_{D.toCycle}(ζ-z)⁻¹
+dζ=(m_D(z):ℂ)`. Internal-edge cancellation makes the owner convention agree with the
+analytic index there. -/
 theorem hasDiscreteResidueFormula (D : GridFilling) :
     D.HasDiscreteResidueFormula := by
   intro z hz
@@ -2568,13 +2286,9 @@ theorem hasDiscreteResidueFormula (D : GridFilling) :
   simpa [cellMultiplicity, v] using
     D.toCycle_index_eq_cellCoeff_of_mem_cellInterior v hw
 
-/-- The analytic winding index is zero outside the selected-cell region.
-
-```lean
-theorem index_eq_zero_of_not_mem_region
-    (D : GridFilling) {z : ℂ} (hz : z ∉ D.region) :
-    D.toCycle.index z = 0
-``` -/
+/-- **Winding index vanishes outside the selected grid region.** Let `D` be a finite grid
+filling of scale `t>0`. If `z` lies outside the union of selected closed cell carriers,
+then `D.toCycle.index(z)=0`. Such a point is also off the reduced trace. -/
 theorem index_eq_zero_of_not_mem_region
     (D : GridFilling) {z : ℂ} (hz : z ∉ D.region) :
     D.toCycle.index z = 0 := by
@@ -2584,117 +2298,90 @@ theorem index_eq_zero_of_not_mem_region
     D.cellMultiplicity_eq_zero_of_not_mem_region hz]
   simp
 
-/-- Empty grid filling at an arbitrary positive scale. -/
+/-- **Empty filling at a positive grid scale.** For any `t>0`, take the finite grid filling
+with scale `t` and no selected integer cells. The scale remains positive although its
+region, cycle and reduced boundary are empty. -/
 def empty (t : ℝ) (ht : 0 < t) : GridFilling where
   scale := t
   scale_pos := ht
   cells := ∅
 
-/-- An empty positive-scale filling has no selected cells.
-
-```lean
-theorem empty_cells (t : ℝ) (ht : 0 < t) : (empty t ht).cells = ∅
-``` -/
+/-- **The empty filling has no selected indices.** For `t>0`, the selected-cell set of the
+empty scale-`t` filling is `∅`. -/
 @[simp]
 theorem empty_cells (t : ℝ) (ht : 0 < t) : (empty t ht).cells = ∅ := rfl
 
-/-- An empty positive-scale filling has the zero cycle.
-
-```lean
-theorem empty_toCycle (t : ℝ) (ht : 0 < t) :
-    (empty t ht).toCycle = 0
-``` -/
+/-- **The empty filling has zero rectilinear cycle.** For `t>0`, summing the counterclockwise
+boundaries of the empty selected-cell set gives the zero rectilinear cycle. -/
 @[simp]
 theorem empty_toCycle (t : ℝ) (ht : 0 < t) :
     (empty t ht).toCycle = 0 := by
   simp [toCycle]
 
-/-- An empty positive-scale filling has no reduced boundary edges.
-
-```lean
-theorem empty_boundaryEdges (t : ℝ) (ht : 0 < t) :
-    (empty t ht).boundaryEdges = ∅
-``` -/
+/-- **The empty filling has no surviving boundary edges.** For `t>0`, every boundary
+coefficient of the empty filling is zero, so its reduced edge set is `∅`. -/
 @[simp]
 theorem empty_boundaryEdges (t : ℝ) (ht : 0 < t) :
     (empty t ht).boundaryEdges = ∅ := by
   simp [boundaryEdges]
 
-/-- The reduced trace of an empty filling is empty.
-
-```lean
-theorem empty_reducedTrace (t : ℝ) (ht : 0 < t) :
-    (empty t ht).reducedTrace = ∅
-``` -/
+/-- **The empty filling has empty reduced trace.** For `t>0`, the union of surviving edge
+segments of the empty filling is `∅`. -/
 @[simp]
 theorem empty_reducedTrace (t : ℝ) (ht : 0 < t) :
     (empty t ht).reducedTrace = ∅ := by
   simp [reducedTrace]
 
-/-- The region of an empty filling is empty.
-
-```lean
-theorem empty_region (t : ℝ) (ht : 0 < t) :
-    (empty t ht).region = ∅
-``` -/
+/-- **The empty filling has empty closed region.** For `t>0`, the union of its selected closed
+grid cell carriers is `∅`. -/
 @[simp]
 theorem empty_region (t : ℝ) (ht : 0 < t) :
     (empty t ht).region = ∅ := by
   simp [region]
 
-/-- Every complete Banach-valued reduced integral of an empty filling is zero.
-
-```lean
-theorem empty_reducedIntegral {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (t : ℝ) (ht : 0 < t) (f : ℂ → E) :
-    (empty t ht).reducedIntegral f = 0
-``` -/
+/-- **Every reduced integral of the empty filling is zero.** Let `E` be a complete complex
+normed vector space, `t>0`, and `f:ℂ→E`. The reduced signed-edge integral of `f` over the
+empty scale-`t` filling is `0`, with no continuity premise. -/
 @[simp]
 theorem empty_reducedIntegral {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (t : ℝ) (ht : 0 < t) (f : ℂ → E) :
     (empty t ht).reducedIntegral f = 0 := by
   simp [reducedIntegral]
 
-/-- The reduced trace is contained in `G \ K`, the analytic index is one on `K`, and the analytic
-index is zero outside `G`. -/
+/-- **Admissibility of a finite grid contour around a set.** For a finite positive-scale
+filling `D` and arbitrary `K,G⊆ℂ`, admissibility means exactly: the reduced trace lies in
+`G∖K`; `D.toCycle.index(z)=1` for every `z∈K`; and `D.toCycle.index(z)=0` for every `z∉G`.
+Filled-region containment in `G` is a separate condition. -/
 def IsAdmissibleFor (D : GridFilling) (K G : Set ℂ) : Prop :=
   D.reducedTrace ⊆ G \ K ∧
     (∀ z ∈ K, D.toCycle.index z = 1) ∧
     ∀ z ∉ G, D.toCycle.index z = 0
 
-/-- Admissibility persists when the ambient set is enlarged.
-
-```lean
-theorem IsAdmissibleFor.mono_right {D : GridFilling} {K G H : Set ℂ}
-    (hD : D.IsAdmissibleFor K G) (hGH : G ⊆ H) : D.IsAdmissibleFor K H
-``` -/
+/-- **Admissibility persists under enlargement of the ambient set.** Let `D` be a finite
+positive-scale filling and `K,G,H⊆ℂ`. Admissibility for `K` in `G` means reduced trace in
+`G∖K`, index one on `K`, and index zero outside `G`. If `D` is admissible for `K` in `G`
+and `G⊆H`, then it is admissible for `K` in `H`. -/
 theorem IsAdmissibleFor.mono_right {D : GridFilling} {K G H : Set ℂ}
     (hD : D.IsAdmissibleFor K G) (hGH : G ⊆ H) : D.IsAdmissibleFor K H := by
   refine ⟨fun z hz ↦ ⟨hGH (hD.1 hz).1, (hD.1 hz).2⟩, hD.2.1, ?_⟩
   intro z hzH
   exact hD.2.2 z fun hzG ↦ hzH (hGH hzG)
 
-/-- Admissibility for an index-one set implies admissibility for each subset of that set.
-
-```lean
-theorem IsAdmissibleFor.mono_left {D : GridFilling} {K L G : Set ℂ}
-    (hD : D.IsAdmissibleFor L G) (hKL : K ⊆ L) :
-    D.IsAdmissibleFor K G
-``` -/
+/-- **Admissibility persists for a smaller index-one set.** Let `D` be a finite positive-scale
+filling and `K,L,G⊆ℂ` with `K⊆L`. Admissibility for `K` in `G` means reduced trace in
+`G∖K`, index one on `K`, and index zero outside `G`. If `D` is admissible for `L` in `G`,
+then it is admissible for `K` in `G`. -/
 theorem IsAdmissibleFor.mono_left {D : GridFilling} {K L G : Set ℂ}
     (hD : D.IsAdmissibleFor L G) (hKL : K ⊆ L) :
     D.IsAdmissibleFor K G := by
   refine ⟨fun z hz => ⟨(hD.1 hz).1, fun hzK => (hD.1 hz).2 (hKL hzK)⟩,
     fun z hzK => hD.2.1 z (hKL hzK), hD.2.2⟩
 
-/-- A compact set contained in an open planar set admits an admissible finite filling whose whole
-cell region remains in the open set.
-
-```lean
-theorem exists_isAdmissibleFor_with_region_subset {K G : Set ℂ}
-    (hK : IsCompact K) (hG : IsOpen G) (hKG : K ⊆ G) :
-    ∃ D : GridFilling, D.IsAdmissibleFor K G ∧ D.region ⊆ G
-``` -/
+/-- **A compact set has an admissible finite grid inside an open neighborhood.** If `K⊆ℂ` is
+compact, `G⊆ℂ` is open, and `K⊆G`, there exists a positive-scale finite filling `D`
+admissible for `K` in `G` whose entire selected closed-cell region lies in `G`.
+Admissibility for `K` in `G` means reduced trace in `G∖K`, index one on `K`, and index
+zero outside `G`. The empty compact set is allowed. -/
 theorem exists_isAdmissibleFor_with_region_subset {K G : Set ℂ}
     (hK : IsCompact K) (hG : IsOpen G) (hKG : K ⊆ G) :
     ∃ D : GridFilling, D.IsAdmissibleFor K G ∧ D.region ⊆ G := by
@@ -2733,29 +2420,20 @@ theorem exists_isAdmissibleFor_with_region_subset {K G : Set ℂ}
         K hr ht hK hzouter
   · exact (selectedFilling_region_subset_cthickening K hr ht hK).trans houterG
 
-/-- Every compact subset of an open planar set admits a finite positively oriented admissible grid
-contour.
-
-```lean
-theorem exists_isAdmissibleFor {K G : Set ℂ} (hK : IsCompact K)
-    (hG : IsOpen G) (hKG : K ⊆ G) : ∃ D : GridFilling, D.IsAdmissibleFor K G
-``` -/
+/-- **Existence of an admissible finite grid around a compact set.** For compact `K⊆ℂ`
+contained in open `G⊆ℂ`, there exists a positive-scale finite filling `D` with reduced
+trace in `G∖K`, cycle index one on `K`, and index zero outside `G`. This existence
+statement includes empty `K`. -/
 theorem exists_isAdmissibleFor {K G : Set ℂ} (hK : IsCompact K)
     (hG : IsOpen G) (hKG : K ⊆ G) : ∃ D : GridFilling, D.IsAdmissibleFor K G := by
   obtain ⟨D, hD, -⟩ := exists_isAdmissibleFor_with_region_subset hK hG hKG
   exact ⟨D, hD⟩
 
-/-- Nested admissible grids for the classical multiplicativity argument.  The
-outer grid has index one on the entire inner grid region and its reduced
-trace is strictly outside that region.  By `IsAdmissibleFor.mono_left` it is
-also admissible for the original compact set.
-
-```lean
-theorem exists_nested_isAdmissibleFor {K G : Set ℂ}
-    (hK : IsCompact K) (hG : IsOpen G) (hKG : K ⊆ G) :
-    ∃ D E : GridFilling,
-      D.IsAdmissibleFor K G ∧ E.IsAdmissibleFor (K ∪ D.region) G
-``` -/
+/-- **Nested admissible grids around a compact set and an inner region.** For compact `K⊆ℂ`
+contained in open `G⊆ℂ`, there exist positive-scale finite fillings `D,H` such that `D` is
+admissible for `K` in `G` and `H` is admissible for `K∪D.region` in `G`. Admissibility for
+`K` in `G` means reduced trace in `G∖K`, index one on `K`, and index zero outside `G`.
+Thus the outer reduced trace avoids the whole inner region and its index is one there. -/
 theorem exists_nested_isAdmissibleFor {K G : Set ℂ}
     (hK : IsCompact K) (hG : IsOpen G) (hKG : K ⊆ G) :
     ∃ D E : GridFilling,
@@ -2767,44 +2445,42 @@ theorem exists_nested_isAdmissibleFor {K G : Set ℂ}
   obtain ⟨E, hE⟩ := exists_isAdmissibleFor hcompact hG hsubset
   exact ⟨D, E, hD, hE⟩
 
-/-- Pointwise support of the signed cell-multiplicity difference of two grid
-fillings.  Unlike the support of their free rectangle presentations, this set
-is unchanged when either filling is subdivided without changing its region. -/
+/-- **Pointwise support of the difference of grid multiplicities.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the
+selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. The difference support is exactly `S`, the support of the integer
+function `m_D-m_H`. It is defined from pointwise multiplicity, rather than from the formal
+support of rectangle presentations. -/
 noncomputable def multiplicityDifferenceSupport (D E : GridFilling) : Set ℂ :=
   Function.support fun z ↦ D.cellMultiplicity z - E.cellMultiplicity z
 
-/-- Membership in the difference support means exactly that the two cell multiplicities differ.
-
-```lean
-theorem mem_multiplicityDifferenceSupport_iff (D E : GridFilling) (z : ℂ) :
-    z ∈ D.multiplicityDifferenceSupport E ↔
-      D.cellMultiplicity z ≠ E.cellMultiplicity z
-``` -/
+/-- **Difference-support membership means unequal grid multiplicities.** Let `D,H` be finite
+grid fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for
+the selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. For every `z∈ℂ`, membership in the difference support is equivalent to
+`m_D(z)≠m_H(z)`. -/
 theorem mem_multiplicityDifferenceSupport_iff (D E : GridFilling) (z : ℂ) :
     z ∈ D.multiplicityDifferenceSupport E ↔
       D.cellMultiplicity z ≠ E.cellMultiplicity z := by
   simp only [multiplicityDifferenceSupport, Function.mem_support]
   exact sub_ne_zero
 
-/-- The multiplicity-difference support is symmetric in the two fillings.
-
-```lean
-theorem multiplicityDifferenceSupport_comm (D E : GridFilling) :
-    D.multiplicityDifferenceSupport E = E.multiplicityDifferenceSupport D
-``` -/
+/-- **The multiplicity-difference support is symmetric.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the
+selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. Interchanging `D,H` negates the integer difference but leaves its
+pointwise support unchanged: `S(D,H)=S(H,D)`. -/
 theorem multiplicityDifferenceSupport_comm (D E : GridFilling) :
     D.multiplicityDifferenceSupport E = E.multiplicityDifferenceSupport D := by
   ext z
   simp [mem_multiplicityDifferenceSupport_iff, ne_comm]
 
-/-- Each closed rectangle with nonzero overlay coefficient lies in the closure of the
-multiplicity-difference support.
-
-```lean
-theorem commonOverlay_rectangle_carrier_subset (D E : GridFilling)
-    {I : BoxIntegral.Box (Fin 2)} (hI : I ∈ (D.commonOverlay E).support) :
-    (rectangleOfBox I).carrier ⊆ closure (D.multiplicityDifferenceSupport E)
-``` -/
+/-- **Every surviving overlay rectangle lies in the closed difference support.** Let `D,H` be
+finite grid fillings with positive, possibly different, scales. Write
+`m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. If a nondegenerate box `I` has nonzero coefficient
+in the common signed overlay, the closed carrier of its sign-reversed complex rectangle is
+contained in `closure(S)`. -/
 theorem commonOverlay_rectangle_carrier_subset (D E : GridFilling)
     {I : BoxIntegral.Box (Fin 2)} (hI : I ∈ (D.commonOverlay E).support) :
     (rectangleOfBox I).carrier ⊆ closure (D.multiplicityDifferenceSupport E) := by
@@ -2819,14 +2495,12 @@ theorem commonOverlay_rectangle_carrier_subset (D E : GridFilling)
   rw [D.commonOverlay_apply_eq_cellMultiplicity_sub E hglobal hpoint,
     hmult, sub_self]
 
-/-- The difference cycle is filled by signed rectangles with closed carriers in the closure of the
-multiplicity-difference support.
-
-```lean
-theorem commonOverlay_fillingSupportedIn (D E : GridFilling) :
-    (D.commonOverlay E).toCycle.FillingSupportedIn
-      (closure (D.multiplicityDifferenceSupport E))
-``` -/
+/-- **The signed overlay gives a filling supported in the closed difference support.** Let
+`D,H` be finite grid fillings with positive, possibly different, scales. Write
+`m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. Every rectangle with nonzero coefficient in the
+common-overlay cycle has its closed complex carrier in `closure(S)`. Hence that
+rectilinear cycle is filled by rectangles supported there. -/
 theorem commonOverlay_fillingSupportedIn (D E : GridFilling) :
     (D.commonOverlay E).toCycle.FillingSupportedIn
       (closure (D.multiplicityDifferenceSupport E)) := by
@@ -2835,20 +2509,20 @@ theorem commonOverlay_fillingSupportedIn (D E : GridFilling) :
   rcases Finset.mem_map.1 hr with ⟨I, hI, rfl⟩
   exact D.commonOverlay_rectangle_carrier_subset E hI
 
-/-- The closure of the pointwise cell-multiplicity difference support is contained in `G \ K`. -/
+/-- **Common signed filling away from an excluded set.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the
+selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. For arbitrary `K,G⊆ℂ`, the predicate is exactly `closure(S)⊆G∖K`. It
+controls the closed support of the multiplicity difference and imposes no separate trace
+hypothesis. -/
 def HaveCommonFillingAwayFrom (D E : GridFilling) (K G : Set ℂ) : Prop :=
   closure (D.multiplicityDifferenceSupport E) ⊆ G \ K
 
-/-- Off both reduced traces, closure membership in the multiplicity-difference support implies
-support membership.
-
-```lean
-theorem mem_multiplicityDifferenceSupport_of_mem_closure_of_not_mem_reducedTrace
-    (D E : GridFilling) {z : ℂ}
-    (hz : z ∈ closure (D.multiplicityDifferenceSupport E))
-    (hzD : z ∉ D.reducedTrace) (hzE : z ∉ E.reducedTrace) :
-    z ∈ D.multiplicityDifferenceSupport E
-``` -/
+/-- **Off both grid traces the difference support is relatively closed.** Let `D,H` be finite
+grid fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for
+the selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. If `z∈closure(S)` and `z` lies on neither reduced trace, then `z∈S`, so
+`m_D(z)≠m_H(z)`. -/
 theorem mem_multiplicityDifferenceSupport_of_mem_closure_of_not_mem_reducedTrace
     (D E : GridFilling) {z : ℂ}
     (hz : z ∈ closure (D.multiplicityDifferenceSupport E))
@@ -2882,14 +2556,11 @@ theorem mem_multiplicityDifferenceSupport_of_mem_closure_of_not_mem_reducedTrace
     rcases E.cellMultiplicity_eq_zero_or_one w with hE₀ | hE₁ <;>
     simp_all [dist_eq_norm]
 
-/-- Only points of the two reduced traces can be added by closing the multiplicity-difference
-support.
-
-```lean
-theorem closure_multiplicityDifferenceSupport_subset (D E : GridFilling) :
-    closure (D.multiplicityDifferenceSupport E) ⊆
-      (D.multiplicityDifferenceSupport E ∪ D.reducedTrace) ∪ E.reducedTrace
-``` -/
+/-- **Closing the difference support adds points only on grid traces.** Let `D,H` be finite
+grid fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for
+the selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. Then `closure(S)⊆S∪trace(D)∪trace(H)`, where each trace is the union of
+surviving signed-edge segments. -/
 theorem closure_multiplicityDifferenceSupport_subset (D E : GridFilling) :
     closure (D.multiplicityDifferenceSupport E) ⊆
       (D.multiplicityDifferenceSupport E ∪ D.reducedTrace) ∪ E.reducedTrace := by
@@ -2902,15 +2573,13 @@ theorem closure_multiplicityDifferenceSupport_subset (D E : GridFilling) :
     (D.mem_multiplicityDifferenceSupport_of_mem_closure_of_not_mem_reducedTrace
       E hz hzD hzE))
 
-/-- Any two admissible grid fillings have subdivision-invariant comparison
-support inside the collar domain.
-
-```lean
-theorem haveCommonFillingAwayFrom_of_isAdmissibleFor
-    {D E : GridFilling} {K G : Set ℂ}
-    (hD : D.IsAdmissibleFor K G) (hE : E.IsAdmissibleFor K G) :
-    D.HaveCommonFillingAwayFrom E K G
-``` -/
+/-- **Admissible grids have comparison support in the punctured domain.** Let `D,H` be finite
+grid fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for
+the selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. Admissibility for `K` in `G` means reduced trace in `G∖K`, index one on
+`K`, and index zero outside `G`. If both fillings are admissible for the same `K` in `G`,
+then `closure(S)⊆G∖K`. No compactness or openness premise is needed for this comparison
+theorem. -/
 theorem haveCommonFillingAwayFrom_of_isAdmissibleFor
     {D E : GridFilling} {K G : Set ℂ}
     (hD : D.IsAdmissibleFor K G) (hE : E.IsAdmissibleFor K G) :
@@ -2938,30 +2607,30 @@ theorem haveCommonFillingAwayFrom_of_isAdmissibleFor
   · exact hD.1 hz
   · exact hE.1 hz
 
-/-- Closed set on which a scalar integrand must be retained while extending
-it globally for the common-overlay argument. -/
+/-- **Closed carrier for comparing two grid contour integrals.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the
+selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. Define the comparison carrier `C=closure(S)∪trace(D)∪trace(H)`. It
+includes the closed signed-overlay support and both reduced contours on which an integrand
+must be retained. -/
 noncomputable def comparisonCarrier (D E : GridFilling) : Set ℂ :=
   closure (D.multiplicityDifferenceSupport E) ∪
     D.reducedTrace ∪ E.reducedTrace
 
-/-- The comparison carrier of two fillings is closed.
-
-```lean
-theorem isClosed_comparisonCarrier (D E : GridFilling) :
-    IsClosed (D.comparisonCarrier E)
-``` -/
+/-- **The grid comparison carrier is closed.** Let `D,H` be finite grid fillings with
+positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the selected-cell
+indicators at each filling's floor-based owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. The set
+`C=closure(S)∪trace(D)∪trace(H)` is closed in `ℂ`, since each reduced trace is a finite
+union of closed segments. -/
 theorem isClosed_comparisonCarrier (D E : GridFilling) :
     IsClosed (D.comparisonCarrier E) :=
   (isClosed_closure.union D.isClosed_reducedTrace).union E.isClosed_reducedTrace
 
-/-- If both traces and their common-filling support lie in `G \ K`, so does the comparison carrier.
-
-```lean
-theorem comparisonCarrier_subset {D E : GridFilling} {K G : Set ℂ}
-    (hD : D.reducedTrace ⊆ G \ K) (hE : E.reducedTrace ⊆ G \ K)
-    (hDE : D.HaveCommonFillingAwayFrom E K G) :
-    D.comparisonCarrier E ⊆ G \ K
-``` -/
+/-- **The comparison carrier lies in the punctured domain under trace and filling
+conditions.** Let `D,H` be finite grid fillings with positive, possibly different, scales.
+Write `m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. Let `K,G⊆ℂ`. If both reduced traces lie in `G∖K` and
+`closure(S)⊆G∖K`, then `C=closure(S)∪trace(D)∪trace(H)` also lies in `G∖K`. -/
 theorem comparisonCarrier_subset {D E : GridFilling} {K G : Set ℂ}
     (hD : D.reducedTrace ⊆ G \ K) (hE : E.reducedTrace ⊆ G \ K)
     (hDE : D.HaveCommonFillingAwayFrom E K G) :
@@ -2974,15 +2643,12 @@ theorem comparisonCarrier_subset {D E : GridFilling} {K G : Set ℂ}
   · exact hD hz
   · exact hE hz
 
-/-- A scalar function continuous on a containing set extends globally and agrees on the closed
-comparison carrier.
-
-```lean
-theorem exists_continuous_extension_on_comparisonCarrier
-    {D E : GridFilling} {U : Set ℂ} {f : ℂ → ℂ}
-    (hf : ContinuousOn f U) (hsub : D.comparisonCarrier E ⊆ U) :
-    ∃ g : ℂ → ℂ, Continuous g ∧ Set.EqOn g f (D.comparisonCarrier E)
-``` -/
+/-- **A scalar integrand extends continuously while retaining its comparison values.** Let
+`D,H` be finite grid fillings with positive, possibly different, scales. Write
+`m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. Let `C=closure(S)∪trace(D)∪trace(H)`. If `C⊆U⊆ℂ` and
+`f:ℂ→ℂ` is continuous on `U`, there exists globally continuous `g:ℂ→ℂ` with `g=f` on `C`.
+No openness or boundedness premise on `U` is required. -/
 theorem exists_continuous_extension_on_comparisonCarrier
     {D E : GridFilling} {U : Set ℂ} {f : ℂ → ℂ}
     (hf : ContinuousOn f U) (hsub : D.comparisonCarrier E ⊆ U) :
@@ -2995,17 +2661,12 @@ theorem exists_continuous_extension_on_comparisonCarrier
   have hgz := congrArg (fun F ↦ F ⟨z, hz⟩) hg
   exact hgz
 
-/-- The scalar contour integrals agree under the common-filling condition and complex
-differentiability on `G \ K`.
-
-```lean
-theorem integral_eq_of_haveCommonFillingAwayFrom_complex
-    {D E : GridFilling} {K G : Set ℂ} {f : ℂ → ℂ}
-    (hD : D.reducedTrace ⊆ G \ K) (hE : E.reducedTrace ⊆ G \ K)
-    (hDE : D.HaveCommonFillingAwayFrom E K G)
-    (hf : DifferentiableOn ℂ f (G \ K)) :
-    D.toCycle.integral f = E.toCycle.integral f
-``` -/
+/-- **Scalar grid integrals agree under a common signed filling.** Let `D,H` be finite grid
+fillings with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the
+selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. For `K,G⊆ℂ`, assume both reduced traces lie in `G∖K` and
+`closure(S)⊆G∖K`. If `f:ℂ→ℂ` is complex differentiable on `G∖K`, then `∮_{D.toCycle}
+f=∮_{H.toCycle} f`. Openness and compactness are not additional hypotheses. -/
 theorem integral_eq_of_haveCommonFillingAwayFrom_complex
     {D E : GridFilling} {K G : Set ℂ} {f : ℂ → ℂ}
     (hD : D.reducedTrace ⊆ G \ K) (hE : E.reducedTrace ⊆ G \ K)
@@ -3039,20 +2700,13 @@ theorem integral_eq_of_haveCommonFillingAwayFrom_complex
     rw [← D.commonOverlay_toCycle_integral E g hg, hoverEq, hoverZero]
   exact hDf.trans ((sub_eq_zero.mp hdiff).trans hEf.symm)
 
-/-- Finite-overlay/common-refinement theorem.  Multiplicity-difference
-support inside `G \ K`, together with the two reduced traces there, implies
-equality of Banach-valued contour integrals for every function complex
-differentiable on `G \ K`.
-
-```lean
-theorem integral_eq_of_haveCommonFillingAwayFrom {F : Type*}
-    [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
-    {D E : GridFilling} {K G : Set ℂ} {f : ℂ → F}
-    (hD : D.reducedTrace ⊆ G \ K) (hE : E.reducedTrace ⊆ G \ K)
-    (hDE : D.HaveCommonFillingAwayFrom E K G)
-    (hf : DifferentiableOn ℂ f (G \ K)) :
-    D.toCycle.integral f = E.toCycle.integral f
-``` -/
+/-- **Banach-valued grid integrals agree under a common signed filling.** Let `F` be a
+complete complex normed vector space. Let `D,H` be finite grid fillings with positive,
+possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators
+at each filling's floor-based owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. For `K,G⊆ℂ`, assume
+both reduced traces lie in `G∖K` and `closure(S)⊆G∖K`. If `f:ℂ→F` is complex
+differentiable on `G∖K`, then `∮_{D.toCycle} f=∮_{H.toCycle} f`. The target need not be an
+algebra. -/
 theorem integral_eq_of_haveCommonFillingAwayFrom {F : Type*}
     [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
     {D E : GridFilling} {K G : Set ℂ} {f : ℂ → F}
@@ -3077,17 +2731,12 @@ theorem integral_eq_of_haveCommonFillingAwayFrom {F : Type*}
   rw [hDL, hEL]
   exact integral_eq_of_haveCommonFillingAwayFrom_complex hD hE hDE hfL
 
-/-- Admissible fillings for the same `K` and `G` have equal contour integrals of every complete
-Banach-valued function complex differentiable on `G \ K`.
-
-```lean
-theorem integral_eq_of_isAdmissibleFor {F : Type*}
-    [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
-    {D E : GridFilling} {K G : Set ℂ} {f : ℂ → F}
-    (hD : D.IsAdmissibleFor K G) (hE : E.IsAdmissibleFor K G)
-    (hf : DifferentiableOn ℂ f (G \ K)) :
-    D.toCycle.integral f = E.toCycle.integral f
-``` -/
+/-- **Admissible grids give the same Banach-valued contour integral.** Let `F` be a complete
+complex normed vector space and `D,H` finite positive-scale fillings. Admissibility for
+`K` in `G` means reduced trace in `G∖K`, index one on `K`, and index zero outside `G`. If
+both are admissible for the same `K,G⊆ℂ` and `f:ℂ→F` is complex differentiable on `G∖K`,
+then `∮_{D.toCycle} f=∮_{H.toCycle} f`. No extra compactness or openness premise is
+imposed. -/
 theorem integral_eq_of_isAdmissibleFor {F : Type*}
     [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
     {D E : GridFilling} {K G : Set ℂ} {f : ℂ → F}
@@ -3097,34 +2746,28 @@ theorem integral_eq_of_isAdmissibleFor {F : Type*}
   integral_eq_of_haveCommonFillingAwayFrom hD.1 hE.1
     (haveCommonFillingAwayFrom_of_isAdmissibleFor hD hE) hf
 
-/-- The common-filling-away-from condition is symmetric in the two fillings.
-
-```lean
-theorem haveCommonFillingAwayFrom_comm (D E : GridFilling) (K G : Set ℂ) :
-    D.HaveCommonFillingAwayFrom E K G ↔ E.HaveCommonFillingAwayFrom D K G
-``` -/
+/-- **The common-filling-away-from condition is symmetric.** Let `D,H` be finite grid fillings
+with positive, possibly different, scales. Write `m_D(z),m_H(z)∈{0,1}` for the
+selected-cell indicators at each filling's floor-based owner, and `S={z∈ℂ |
+m_D(z)≠m_H(z)}`. For arbitrary `K,G⊆ℂ`, `closure(S(D,H))⊆G∖K` if and only if
+`closure(S(H,D))⊆G∖K`. -/
 theorem haveCommonFillingAwayFrom_comm (D E : GridFilling) (K G : Set ℂ) :
     D.HaveCommonFillingAwayFrom E K G ↔ E.HaveCommonFillingAwayFrom D K G := by
   rw [HaveCommonFillingAwayFrom, HaveCommonFillingAwayFrom,
     multiplicityDifferenceSupport_comm]
 
-/-- A filling has the common-filling-away-from condition with itself for arbitrary sets.
-
-```lean
-theorem haveCommonFillingAwayFrom_self (D : GridFilling) (K G : Set ℂ) :
-    D.HaveCommonFillingAwayFrom D K G
-``` -/
+/-- **A filling compares with itself away from every excluded set.** For a finite
+positive-scale filling `D` and arbitrary `K,G⊆ℂ`, its multiplicity difference with itself
+is zero. Thus its closed difference support is empty and lies in `G∖K`. -/
 theorem haveCommonFillingAwayFrom_self (D : GridFilling) (K G : Set ℂ) :
     D.HaveCommonFillingAwayFrom D K G := by
   simp [HaveCommonFillingAwayFrom, multiplicityDifferenceSupport]
 
-/-- Under the common-filling condition, the multiplicities agree outside `G \ K`.
-
-```lean
-theorem cellMultiplicity_eq_of_haveCommonFillingAwayFrom
-    {D E : GridFilling} {K G : Set ℂ} (hDE : D.HaveCommonFillingAwayFrom E K G)
-    {z : ℂ} (hz : z ∉ G \ K) : D.cellMultiplicity z = E.cellMultiplicity z
-``` -/
+/-- **Common-filling support gives equal multiplicities outside the punctured domain.** Let
+`D,H` be finite grid fillings with positive, possibly different, scales. Write
+`m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. If `closure(S)⊆G∖K` and `z∉G∖K`, then
+`m_D(z)=m_H(z)`. No exclusion of the reduced traces is needed for this integer equality. -/
 theorem cellMultiplicity_eq_of_haveCommonFillingAwayFrom
     {D E : GridFilling} {K G : Set ℂ} (hDE : D.HaveCommonFillingAwayFrom E K G)
     {z : ℂ} (hz : z ∉ G \ K) : D.cellMultiplicity z = E.cellMultiplicity z := by
@@ -3133,16 +2776,12 @@ theorem cellMultiplicity_eq_of_haveCommonFillingAwayFrom
   apply hDE
   exact subset_closure ((D.mem_multiplicityDifferenceSupport_iff E z).2 hne)
 
-/-- Discrete-Stokes bridge supplied by the subdivision-invariant common
-filling condition: the two analytic indices agree away from the comparison
-region, whenever the point is off both reduced boundaries.
-
-```lean
-theorem index_eq_of_haveCommonFillingAwayFrom
-    {D E : GridFilling} {K G : Set ℂ} (hDE : D.HaveCommonFillingAwayFrom E K G)
-    {z : ℂ} (hz : z ∉ G \ K) (hzD : z ∉ D.reducedTrace)
-    (hzE : z ∉ E.reducedTrace) : D.toCycle.index z = E.toCycle.index z
-``` -/
+/-- **Common-filling support gives equal winding indices off both traces.** Let `D,H` be
+finite grid fillings with positive, possibly different, scales. Write
+`m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. If `closure(S)⊆G∖K`, `z∉G∖K`, and `z` lies on
+neither reduced trace, then `D.toCycle.index(z)=H.toCycle.index(z)`. The trace exclusions
+allow the discrete residue formula to identify each index with its multiplicity. -/
 theorem index_eq_of_haveCommonFillingAwayFrom
     {D E : GridFilling} {K G : Set ℂ} (hDE : D.HaveCommonFillingAwayFrom E K G)
     {z : ℂ} (hz : z ∉ G \ K) (hzD : z ∉ D.reducedTrace)
@@ -3150,15 +2789,14 @@ theorem index_eq_of_haveCommonFillingAwayFrom
   rw [D.hasDiscreteResidueFormula z hzD, E.hasDiscreteResidueFormula z hzE]
   exact_mod_cast cellMultiplicity_eq_of_haveCommonFillingAwayFrom hDE hz
 
-/-- For admissible fillings, the trace hypotheses in the discrete-Stokes
-bridge follow automatically outside `G \ K`.
-
-```lean
-theorem index_eq_of_haveCommonFillingAwayFrom_of_isAdmissibleFor
-    {D E : GridFilling} {K G : Set ℂ} (hD : D.IsAdmissibleFor K G)
-    (hE : E.IsAdmissibleFor K G) (hDE : D.HaveCommonFillingAwayFrom E K G)
-    {z : ℂ} (hz : z ∉ G \ K) : D.toCycle.index z = E.toCycle.index z
-``` -/
+/-- **Admissible common fillings have equal indices outside the punctured domain.** Let `D,H`
+be finite grid fillings with positive, possibly different, scales. Write
+`m_D(z),m_H(z)∈{0,1}` for the selected-cell indicators at each filling's floor-based
+owner, and `S={z∈ℂ | m_D(z)≠m_H(z)}`. Admissibility for `K` in `G` means reduced trace in
+`G∖K`, index one on `K`, and index zero outside `G`. If both fillings are admissible for
+`K` in `G`, their common-filling-away-from condition holds, and `z∉G∖K`, then their
+analytic winding indices at `z` are equal. Admissibility places both reduced traces inside
+`G∖K`. -/
 theorem index_eq_of_haveCommonFillingAwayFrom_of_isAdmissibleFor
     {D E : GridFilling} {K G : Set ℂ} (hD : D.IsAdmissibleFor K G)
     (hE : E.IsAdmissibleFor K G) (hDE : D.HaveCommonFillingAwayFrom E K G)
@@ -3167,13 +2805,9 @@ theorem index_eq_of_haveCommonFillingAwayFrom_of_isAdmissibleFor
   · exact fun hzD ↦ hz (hD.1 hzD)
   · exact fun hzE ↦ hz (hE.1 hzE)
 
-/-- The empty positive-scale filling is admissible for the empty index-one set inside any ambient
-set.
-
-```lean
-theorem empty_isAdmissibleFor_empty (t : ℝ) (ht : 0 < t) (G : Set ℂ) :
-    (empty t ht).IsAdmissibleFor ∅ G
-``` -/
+/-- **An empty grid is admissible for the empty set in every domain.** For any `t>0` and
+`G⊆ℂ`, the empty scale-`t` filling has empty reduced trace and zero index everywhere. It
+is therefore admissible for `K=∅` in `G`, with the index-one requirement vacuous. -/
 theorem empty_isAdmissibleFor_empty (t : ℝ) (ht : 0 < t) (G : Set ℂ) :
     (empty t ht).IsAdmissibleFor ∅ G := by
   simp [IsAdmissibleFor]

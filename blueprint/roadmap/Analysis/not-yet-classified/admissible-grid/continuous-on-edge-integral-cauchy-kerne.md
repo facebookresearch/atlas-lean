@@ -1,10 +1,6 @@
-# Continuous On edge Integral cauchy Kernel
+# Cauchy edge integral is continuous away from its pole trace
 
-The Cauchy-kernel integral along one grid edge varies continuously with
-the pole away from that edge.
-
-```lean
-theorem continuousOn_edgeIntegral_cauchyKernel (D : GridFilling) (e : GridEdge) :
-    ContinuousOn (fun z : ℂ ↦ D.edgeIntegral e (fun ξ ↦ (ξ - z)⁻¹))
-      (D.edgeTrace e)ᶜ
-```
+Let `D` be a finite grid
+filling of scale `t>0`. For any grid edge `e`, `z↦∫_e(ξ-z)⁻¹ dξ` is continuous on
+`ℂ∖D.edgeTrace(e)`. The inverse is total, but the continuity assertion excludes poles on
+the integrated segment.

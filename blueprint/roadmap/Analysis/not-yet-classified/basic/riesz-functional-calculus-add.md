@@ -1,13 +1,6 @@
-# Riesz Functional Calculus add
+# Riesz calculus preserves addition
 
-The Riesz functional calculus preserves addition of holomorphic germs.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_add (a : A)
-    (f g : HolomorphicNearSpectrum a) :
-    rieszFunctionalCalculus a (f + g) =
-      rieszFunctionalCalculus a f + rieszFunctionalCalculus a g
-```
+Let `A` be a complete unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs analytic
+near `S`. Write `h(a)=rieszFunctionalCalculus a h`. For `h,k∈Hol(a)`,
+`(h+k)(a)=h(a)+k(a)`.

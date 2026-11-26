@@ -1,10 +1,6 @@
-# To Cycle index eq cell Coeff of mem cell Interior
+# Grid index equals cell selection at an interior point
 
-At an interior point of a grid cell, the filling-cycle index is that cell's selected indicator
-coerced to a complex number.
-
-```lean
-theorem toCycle_index_eq_cellCoeff_of_mem_cellInterior (D : GridFilling)
-    (v : GridIndex) {z : ℂ} (hz : z ∈ D.cellInterior v) :
-    D.toCycle.index z = (D.cellCoeff v : ℂ)
-```
+Let `D` be a finite grid
+filling of scale `t>0`. For `z∈D.cellInterior(v)`, the analytic winding index of
+`D.toCycle` is the complex coercion of `c_D(v)`, equal to `1` for a selected cell and `0`
+otherwise.

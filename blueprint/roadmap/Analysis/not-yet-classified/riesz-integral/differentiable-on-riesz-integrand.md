@@ -1,13 +1,6 @@
-# Differentiable On riesz Integrand
+# Differentiability of the Riesz integrand off the spectrum
 
-The Riesz integrand is complex differentiable away from the spectrum on
-every domain where the scalar function is complex differentiable.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem differentiableOn_rieszIntegrand {a : A} {f : ℂ → ℂ} {G : Set ℂ}
-    (hf : DifferentiableOn ℂ f G) :
-    DifferentiableOn ℂ (rieszIntegrand a f) (G \ spectrum ℂ a)
-```
+Let `A` be a complete
+unital complex normed algebra with its given norm and `a∈A`. If `f:ℂ→ℂ` is complex
+differentiable on `G⊆ℂ`, then `z↦f(z) • (z·1-a)⁻¹` is complex differentiable on
+`G∖spectrum ℂ a`. Neither openness of `G` nor a nonzero algebra is an additional premise.

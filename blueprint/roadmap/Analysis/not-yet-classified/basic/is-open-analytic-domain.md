@@ -1,11 +1,7 @@
-# Is Open analytic Domain
+# The representative analytic locus is open
 
-The representative analytic domain is open.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.isOpen_analyticDomain (a : A)
-    (f : HolomorphicNearSpectrum a) : IsOpen (f.analyticDomain a)
-```
+Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h∈Hol(a)`, the set `{z | AnalyticAt ℂ (rep(h)) z}`
+is open in `ℂ`.

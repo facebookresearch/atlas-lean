@@ -1,8 +1,6 @@
-# Boundary Edges eq boundary Chain support
+# Surviving grid edges are the support of the boundary chain
 
-The reduced boundary-edge set is exactly the support of the signed boundary chain.
-
-```lean
-theorem boundaryEdges_eq_boundaryChain_support (D : GridFilling) :
-    D.boundaryEdges = D.boundaryChain.support
-```
+Let `D` be a finite grid
+filling of scale `t>0`. The finite set `D.boundaryEdges` equals the support of the
+finitely supported sum of all selected-cell four-edge chains. Both contain exactly the
+edges with nonzero net integer coefficient.

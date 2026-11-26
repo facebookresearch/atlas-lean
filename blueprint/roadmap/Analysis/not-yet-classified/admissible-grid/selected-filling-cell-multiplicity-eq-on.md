@@ -1,10 +1,5 @@
-# Selected Filling cell Multiplicity eq one of mem
+# Thickening-selected multiplicity is one on the compact set
 
-Every point of the compact set has multiplicity one in its selected filling.
-
-```lean
-theorem selectedFilling_cellMultiplicity_eq_one_of_mem
-    (K : Set ℂ) {r t : ℝ} (ht : 0 < t) (hK : IsCompact K)
-    {z : ℂ} (hz : z ∈ K) :
-    (selectedFilling K r t ht hK).cellMultiplicity z = 1
-```
+Let `K⊆ℂ` be compact,
+`t>0`, and let `D` consist of all scale-`t` closed cells meeting `cthickening(r,K)`. For
+any real `r` and every `z∈K`, the floor-based owner cell is selected, hence `m_D(z)=1`.

@@ -1,10 +1,6 @@
-# To Cycle integral
+# A filling integral is the sum of its cell-boundary integrals
 
-In a complete complex normed target, the filling-cycle integral is the sum of its selected cell
-boundary integrals.
-
-```lean
-theorem toCycle_integral {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (f : ℂ → E) :
-    D.toCycle.integral f = ∑ v ∈ D.cells, (D.cell v).boundaryIntegral f
-```
+Let `E` be a complete
+complex normed vector space, `D` a finite positive-scale filling, and `f:ℂ→E`. Then
+`∮_{D.toCycle} f=∑_{v∈D.cells} ∮_{boundary(D.cell(v))} f`. No continuity premise is
+required for this finite-sum identity.

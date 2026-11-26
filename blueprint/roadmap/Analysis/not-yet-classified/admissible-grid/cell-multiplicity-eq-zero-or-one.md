@@ -1,8 +1,6 @@
-# Cell Multiplicity eq zero or one
+# Grid multiplicity takes only the values zero and one
 
-Selected-cell multiplicity is always zero or one.
-
-```lean
-theorem cellMultiplicity_eq_zero_or_one (D : GridFilling) (z : ℂ) :
-    D.cellMultiplicity z = 0 ∨ D.cellMultiplicity z = 1
-```
+For a filling `D` of scale
+`t>0`, write `o_D(z)=(⌊t Re z⌋,⌊t Im z⌋)` and `m_D(z)=1` if this owner cell is selected,
+`0` otherwise. At every complex point `z`, `m_D(z)=0` or `m_D(z)=1`, since it is an
+integer selection indicator.

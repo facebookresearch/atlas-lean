@@ -1,18 +1,8 @@
-# Has Sum riesz Functional Calculus of Scalars
+# A scalar power series sums to its Riesz value
 
-If a scalar power series has radius strictly larger than the spectral
-radius of `a`, its ordered operator series sums to its Riesz
-functional-calculus value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem hasSum_rieszFunctionalCalculus_ofScalars
-    (a : A) (c : ℕ → ℂ)
-    (h : spectralRadius ℂ a <
-      (FormalMultilinearSeries.ofScalars ℂ c).radius) :
-    HasSum (fun n : ℕ ↦ c n • a ^ n)
-      (rieszFunctionalCalculus a
-        (HolomorphicNearSpectrum.ofScalars a c h))
-```
+Let `A` be a complete unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. For coefficients `c : ℕ→ℂ`, let `R` be the
+convergence radius of `∑ c_n z^n`. If `spectralRadius ℂ a<R`, let `f` be its analytic germ
+near `S`. Then `∑ c_n • a^n` has sum `rieszFunctionalCalculus a f`. The radius may be
+infinite. Natural powers and products are those of the original algebra; commutativity is
+not assumed.

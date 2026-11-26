@@ -1,8 +1,4 @@
-# Owner Index eq of mem cell Interior
+# Interior points have the corresponding grid owner
 
-A point in a cell's open interior has that cell as its owner.
-
-```lean
-theorem ownerIndex_eq_of_mem_cellInterior (D : GridFilling) {v : GridIndex}
-    {z : ℂ} (hz : z ∈ D.cellInterior v) : D.ownerIndex z = v
-```
+Let `D` be a finite grid filling of
+scale `t>0`. If `z` lies in the open cell at `v∈ℤ²`, then `(⌊t Re z⌋,⌊t Im z⌋)=v`.

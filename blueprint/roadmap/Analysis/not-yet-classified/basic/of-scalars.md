@@ -1,9 +1,9 @@
-# Of Scalars
+# Spectrum germ of a scalar power series
 
-The holomorphic spectrum germ represented by the scalar power series
-`sum n, c n * z ^ n` when its radius of convergence strictly exceeds the
-spectral radius. Values of `FormalMultilinearSeries.sum` outside its
-convergence disk do not affect this germ.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
+Let `A` be a unital complex normed algebra,
+`a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an
+open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For coefficients `c : ℕ→ℂ`, let
+`R=(FormalMultilinearSeries.ofScalars ℂ c).radius`. If `spectralRadius ℂ a<R`, the sum of
+`∑ c_n z^n` gives an element of `Hol(a)`. Values outside the convergence disk do not
+affect the germ.

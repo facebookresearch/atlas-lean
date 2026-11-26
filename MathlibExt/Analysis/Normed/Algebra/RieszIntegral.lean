@@ -20,35 +20,38 @@ import Mathlib.Topology.Order.ProjIcc
 /-!
 # Riesz contour integration in complex normed algebras
 
-For an element `a` of a unital complex normed algebra, the Riesz integrand is
-`f(z) • (z·1-a)⁻¹`, using Mathlib's resolvent and its total inverse. The
-integrand definition requires no completeness. In a complete complex normed
-algebra the Riesz integral over a rectilinear cycle is this contour integral
-multiplied by `(2πi)⁻¹`. Multiplication need not commute, and the zero algebra
-is allowed.
+For an element `a` of a unital complex normed algebra, the Riesz integrand is `f(z) •
+(z·1-a)⁻¹`, using Mathlib's resolvent and its total inverse. The integrand definition requires
+no completeness. In a complete complex normed algebra the Riesz integral over a rectilinear
+cycle is this contour integral multiplied by `(2πi)⁻¹`. Multiplication need not commute, and the
+zero algebra is allowed.
 
-A finite grid filling has positive scale `t` and counterclockwise cell
-boundaries. Its reduced boundary integral is additive and complex-linear for
-integrands continuous on the reduced trace, is continuous under joint
-continuous parameter variation, and obeys Fubini without interchanging the
-order of algebra factors. A uniform real bound `C` gives the norm bound
-`number_of_surviving_edges / t * C`. Empty fillings have length and integral
-zero. Every Banach-valued statement has the displayed complete complex
-normed target hypotheses.
+A finite grid filling has positive scale `t` and counterclockwise cell boundaries. Its reduced
+boundary integral is additive and complex-linear for integrands continuous on the reduced trace,
+is continuous under joint continuous parameter variation, and obeys Fubini without interchanging
+the order of algebra factors. A uniform real bound `C` gives the norm bound
+`number_of_surviving_edges / t * C`. Empty fillings have length and integral zero. Every
+Banach-valued statement has the displayed complete complex normed target hypotheses.
 
-Complex derivatives integrate to zero when the derivative relation and
-continuity hold on the reduced trace. Cauchy's formula additionally assumes
-an open analytic domain containing the filled region, a point in that domain
-off the trace, and analytic index one. The first resolvent identity needs two
-resolvent points that are distinct; no completeness is needed for that
+Complex derivatives integrate to zero when the derivative relation and continuity hold on the
+reduced trace. Cauchy's formula additionally assumes an open analytic domain containing the
+filled region, a point in that domain off the trace, and analytic index one. The first resolvent
+identity needs two resolvent points that are distinct; no completeness is needed for that
 identity, and the distinctness condition protects the total scalar inverse.
 
-Two cycles give equal Riesz integrals when their difference is filled by
-rectangles in the analytic resolvent domain. In particular, admissible grid
-fillings around the spectrum give a representative-independent value. The
-constant function one integrates to the algebra identity, and the coordinate
-function integrates to `a`. Scalar values on the reduced trace determine a
+Two cycles give equal Riesz integrals when their difference is filled by rectangles in the
+analytic resolvent domain. In particular, admissible grid fillings around the spectrum give a
+representative-independent value. The constant function one integrates to the algebra identity,
+and the coordinate function integrates to `a`. Scalar values on the reduced trace determine a
 fixed contour integral.
+
+## References
+
+John B. Conway, *A Course in Functional Analysis*, second edition, Graduate Texts in Mathematics
+96, Springer, 1990, Chapter VII §4, pp. 199–204. Definition 4.5 introduces the normalized Riesz
+contour integral and Proposition 4.6 gives its contour independence. The finite rectilinear-grid
+integration lemmas here supply the contour calculations for that calculus; they do not assert
+existence of arbitrary smooth or rectifiable contour systems.
 -/
 
 @[expose] public section
@@ -58,33 +61,28 @@ open Set Filter
 
 variable {A : Type*} [NormedRing A] [NormedAlgebra ℂ A]
 
-/-- For `a ∈ A` and a scalar function `f`, the function `z ↦ f(z) • resolvent(a,z)`, with resolvent
-`(z·1-a)⁻¹` and the total inverse convention.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed. -/
+/-- **Resolvent-weighted scalar integrand.** Let `A` be a unital complex normed algebra with
+its given norm and `a∈A`. For `f:ℂ→ℂ`, the integrand is `z↦f(z) • (z·1-a)⁻¹`, with
+Mathlib's total inverse. Completeness and commutative multiplication are not required; the
+zero algebra is allowed. -/
 noncomputable def rieszIntegrand (a : A) (f : ℂ → ℂ) (z : ℂ) : A :=
   f z • resolvent a z
 
 variable [CompleteSpace A]
 
-/-- The normalized contour value `(2πi)⁻¹ • ∮Γ f(z) • (z·1-a)⁻¹ dz` along the stated rectilinear
-cycle.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed. -/
+/-- **Normalized Riesz contour integral.** Let `A` be a complete unital complex normed algebra
+with its given norm and `a∈A`. For a rectilinear cycle `Γ` and `f:ℂ→ℂ`, Write
+`R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) • (z·1-a)⁻¹ dz`, with total inverse. The definition imposes
+no regularity condition on `f`. Multiplication may be noncommutative and `A` may be zero. -/
 noncomputable def rieszIntegral (Γ : RectilinearCycle) (a : A) (f : ℂ → ℂ) : A :=
   ((2 * Real.pi : ℂ) * Complex.I)⁻¹ • Γ.integral (rieszIntegrand a f)
 
 namespace GridFilling
 
-/-- The integral of the zero complete Banach-valued function over any filling cycle is zero.
-
-```lean
-theorem toCycle_integral_zero {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) :
-    D.toCycle.integral (0 : ℂ → E) = 0
-``` -/
+/-- **Zero integrand on a finite grid contour.** Let `E` be a complete complex normed vector
+space and `D` a finite grid filling with positive scale `t`. Write `∮_D f` for the complex
+contour integral around its counterclockwise cell boundary cycle, with internal edges
+cancelled. Then `∮_D 0=0`. The filling may be empty. -/
 @[simp]
 theorem toCycle_integral_zero {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) :
@@ -95,17 +93,12 @@ theorem toCycle_integral_zero {E : Type*} [NormedAddCommGroup E]
   intro e he
   cases e <;> simp [edgeIntegral]
 
-/-- A fixed reduced grid contour is additive in a Banach-valued integrand
-that is continuous on the contour.
-
-```lean
-theorem toCycle_integral_add {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling)
-    {f g : ℂ → E} (hf : ContinuousOn f D.reducedTrace)
-    (hg : ContinuousOn g D.reducedTrace) :
-    D.toCycle.integral (f + g) =
-      D.toCycle.integral f + D.toCycle.integral g
-``` -/
+/-- **Addition of continuous grid-contour integrands.** Let `E` be a complete complex normed
+vector space and `D` a finite grid filling with positive scale `t`. Write `∮_D f` for the
+complex contour integral around its counterclockwise cell boundary cycle, with internal
+edges cancelled. If `f,g:ℂ→E` are continuous on the reduced trace of `D`, then
+`∮_D(f+g)=∮_D f+∮_D g`. No differentiability or condition in the filled interior is
+required. -/
 theorem toCycle_integral_add {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling)
     {f g : ℂ → E} (hf : ContinuousOn f D.reducedTrace)
@@ -133,15 +126,11 @@ theorem toCycle_integral_add {E : Type*} [NormedAddCommGroup E]
     D.reducedIntegral f + D.reducedIntegral g
   simpa [L, p] using hL
 
-/-- A fixed reduced grid contour commutes with complex scalar multiplication
-of a Banach-valued integrand continuous on the contour.
-
-```lean
-theorem toCycle_integral_smul {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (c : ℂ)
-    (f : ℂ → E) (hf : ContinuousOn f D.reducedTrace) :
-    D.toCycle.integral (c • f) = c • D.toCycle.integral f
-``` -/
+/-- **Complex scaling of a grid-contour integral.** Let `E` be a complete complex normed
+vector space and `D` a finite grid filling with positive scale `t`. Write `∮_D f` for the
+complex contour integral around its counterclockwise cell boundary cycle, with internal
+edges cancelled. For `c∈ℂ` and `f:ℂ→E` continuous on the reduced trace, `∮_D(c • f)=c •
+∮_D f`. This includes `c=0` and the empty filling. -/
 theorem toCycle_integral_smul {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] [CompleteSpace E] (D : GridFilling) (c : ℂ)
     (f : ℂ → E) (hf : ContinuousOn f D.reducedTrace) :
@@ -225,17 +214,12 @@ private theorem continuousOn_edgeIntegral_param
           simp [q, Set.projIcc_of_mem hab hy']]
       exact hcont'.const_smul Complex.I
 
-/-- Integrating one variable of a jointly continuous Banach-valued function
-along a fixed reduced grid contour gives a function continuous in the other
-variable.
-
-```lean
-theorem continuousOn_toCycle_integral_param
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) {S : Set ℂ} (F : ℂ → ℂ → E)
-    (hF : ContinuousOn (Function.uncurry F) (S ×ˢ D.reducedTrace)) :
-    ContinuousOn (fun z ↦ D.toCycle.integral (F z)) S
-``` -/
+/-- **Continuity of a grid integral in a complex parameter.** Let `E` be a complete complex
+normed vector space and `D` a finite grid filling with positive scale `t`. Write `∮_D f`
+for the complex contour integral around its counterclockwise cell boundary cycle, with
+internal edges cancelled. For any `S⊆ℂ` and `F:ℂ×ℂ→E` continuous on `S×trace(D)`, the
+function `z↦∮_D F(z,ζ) dζ` is continuous on `S`. Continuity is relative to these sets;
+they need not be open. -/
 theorem continuousOn_toCycle_integral_param
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D : GridFilling) {S : Set ℂ} (F : ℂ → ℂ → E)
@@ -476,19 +460,11 @@ private theorem edgeIntegral_edgeIntegral_swap
           simpa [edgeIntegral, p, q, a, b, c, d] using
             congrArg (fun x : E ↦ Complex.I • (Complex.I • x)) hswap
 
-/-- Fubini's theorem for two reduced rectilinear grid contours.  The order
-of the two arguments of `F` is unchanged, so the result applies to functions
-with values in a noncommutative Banach algebra.
-
-```lean
-theorem toCycle_integral_swap
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D H : GridFilling) (F : ℂ → ℂ → E)
-    (hF : ContinuousOn (Function.uncurry F)
-      (D.reducedTrace ×ˢ H.reducedTrace)) :
-    D.toCycle.integral (fun z ↦ H.toCycle.integral (F z)) =
-      H.toCycle.integral (fun ζ ↦ D.toCycle.integral (fun z ↦ F z ζ))
-``` -/
+/-- **Fubini equality for two finite grid contours.** Let `E` be a complete complex normed
+vector space and `D` a finite grid filling with positive scale `t`. Let `H` be another
+finite grid filling. If `F:ℂ×ℂ→E` is jointly continuous on `trace(D)×trace(H)`, then `∮_D
+[∮_H F(z,ζ) dζ] dz=∮_H [∮_D F(z,ζ) dz] dζ`. The arguments of `F` retain their order; no
+algebra product is exchanged. -/
 theorem toCycle_integral_swap
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D H : GridFilling) (F : ℂ → ℂ → E)
@@ -552,18 +528,13 @@ theorem toCycle_integral_swap
         (hFswap.mono <| Set.prod_mono
           (fun z hz ↦ Set.mem_iUnion_of_mem d (Set.mem_iUnion_of_mem hd hz)) Subset.rfl)
 
-/-- Norm bound for a Banach-valued integral along a reduced grid boundary.
-The factor before `C` is exactly the total length of the surviving grid
-edges.
-
-```lean
-theorem norm_toCycle_integral_le_of_norm_le
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) {f : ℂ → E} {C : ℝ}
-    (hf : ∀ z ∈ D.reducedTrace, ‖f z‖ ≤ C) :
-    ‖D.toCycle.integral f‖ ≤
-      ((D.boundaryEdges.card : ℝ) / D.scale) * C
-``` -/
+/-- **Length bound for a grid-contour integral.** Let `E` be a complete complex normed vector
+space and `D` a finite grid filling with positive scale `t`. Write `∮_D f` for the complex
+contour integral around its counterclockwise cell boundary cycle, with internal edges
+cancelled. Let `b` be the number of surviving boundary edges. If `C∈ℝ` and `‖f(z)‖≤C` on
+the reduced trace, then `‖∮_D f‖≤(b/t)C`. No continuity premise is required by this bound.
+For an empty filling, both the integral and `b/t` are zero; no separate `C≥0` assumption
+is made. -/
 theorem norm_toCycle_integral_le_of_norm_le
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D : GridFilling) {f : ℂ → E} {C : ℝ}
@@ -639,18 +610,12 @@ theorem norm_toCycle_integral_le_of_norm_le
       rw [Finset.sum_const, nsmul_eq_mul]
       ring
 
-/-- The integral of a complex derivative around a reduced grid boundary is
-zero.  Only the reduced trace is involved: no differentiability in the
-interior of the filling is required.
-
-```lean
-theorem toCycle_integral_eq_zero_of_hasDerivAt
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D : GridFilling) {F f : ℂ → E}
-    (hf : ContinuousOn f D.reducedTrace)
-    (hF : ∀ z ∈ D.reducedTrace, HasDerivAt F (f z) z) :
-    D.toCycle.integral f = 0
-``` -/
+/-- **A complex derivative has zero grid-contour integral.** Let `E` be a complete complex
+normed vector space and `D` a finite grid filling with positive scale `t`. Write `∮_D f`
+for the complex contour integral around its counterclockwise cell boundary cycle, with
+internal edges cancelled. Let `F,f:ℂ→E`. If `f` is continuous on the reduced trace and `F`
+has complex derivative `f(z)` at every point `z` of that trace, then `∮_D f=0`. No
+derivative hypothesis is imposed in the interior. -/
 theorem toCycle_integral_eq_zero_of_hasDerivAt
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     (D : GridFilling) {F f : ℂ → E}
@@ -762,15 +727,10 @@ theorem toCycle_integral_eq_zero_of_hasDerivAt
       intro v hv
       exact hcell v
 
-/-- A scalar function differentiable on the entire filled grid region has
-zero integral around the associated rectilinear cycle.
-
-```lean
-theorem toCycle_integral_eq_zero_of_differentiableOn_region
-    (D : GridFilling) {f : ℂ → ℂ}
-    (hf : DifferentiableOn ℂ f D.region) :
-    D.toCycle.integral f = 0
-``` -/
+/-- **Scalar Cauchy theorem on a filled grid region.** Let `D` be a positive-scale finite grid
+filling and `f:ℂ→ℂ` complex differentiable on its entire filled region. Then
+`D.toCycle.integral f=0`. The hypothesis is differentiability on the region, including its
+boundary; no larger open domain is a premise. -/
 theorem toCycle_integral_eq_zero_of_differentiableOn_region
     (D : GridFilling) {f : ℂ → ℂ}
     (hf : DifferentiableOn ℂ f D.region) :
@@ -782,20 +742,10 @@ theorem toCycle_integral_eq_zero_of_differentiableOn_region
   exact hf.mono fun z hz ↦
     Set.mem_iUnion_of_mem v (Set.mem_iUnion_of_mem hv hz)
 
-/-- Cauchy's integral formula for a reduced grid contour whose filled region
-lies in an open domain of differentiability.  The evaluation point is
-required to lie off the reduced trace, where the Cauchy kernel is defined,
-and the index-one hypothesis records the positive orientation.
-
-```lean
-theorem toCycle_cauchy_formula
-    (D : GridFilling) {G : Set ℂ} (hG : IsOpen G) (hDG : D.region ⊆ G)
-    {f : ℂ → ℂ} (hf : DifferentiableOn ℂ f G) {z : ℂ}
-    (hzG : z ∈ G) (hztrace : z ∉ D.reducedTrace)
-    (hindex : D.toCycle.index z = 1) :
-    ((2 * Real.pi : ℂ) * Complex.I)⁻¹ *
-        D.toCycle.integral (fun ζ ↦ f ζ * (ζ - z)⁻¹) = f z
-``` -/
+/-- **Cauchy evaluation formula for a grid contour.** Let `D` be a positive-scale finite grid
+filling, `G⊆ℂ` open with `D.region⊆G`, and `f:ℂ→ℂ` complex differentiable on `G`. If `z∈G`
+is off the reduced trace and `D.toCycle.index z=1`, then `(2πi)⁻¹∮_D f(ζ)(ζ-z)⁻¹ dζ=f(z)`.
+The contour index specifies the positive orientation. -/
 theorem toCycle_cauchy_formula
     (D : GridFilling) {G : Set ℂ} (hG : IsOpen G) (hDG : D.region ⊆ G)
     {f : ℂ → ℂ} (hf : DifferentiableOn ℂ f G) {z : ℂ}
@@ -863,8 +813,10 @@ theorem toCycle_cauchy_formula
     _ = f z * (c⁻¹ * D.toCycle.integral k) := by ring
     _ = f z := by rw [hindex', mul_one]
 
-/-- Laurent monomials other than `z⁻¹` have zero integral around a
-reduced grid contour that avoids the origin. -/
+/-- **Vanishing integral of a nonresidual Laurent monomial.** For a positive-scale finite grid
+filling `D` whose reduced trace avoids zero and an integer `m≠-1`, `∮_D z^m dz=0`.
+Negative powers use the total complex inverse; avoidance of zero gives the derivative
+relation on the contour. -/
 private theorem toCycle_integral_zpow_eq_zero (D : GridFilling) {m : ℤ}
     (hm : m ≠ -1) (hzero : (0 : ℂ) ∉ D.reducedTrace) :
     D.toCycle.integral (fun z : ℂ ↦ z ^ m) = 0 := by
@@ -920,9 +872,11 @@ private theorem toCycle_integral_finsetSum
       intro k hk
       exact hf k (Finset.mem_insert_of_mem hk)
 
-/-- Finite Neumann expansion of the resolvent outside the norm ball.  The
-remainder order agrees with `NormedRing.inverse_one_sub_nth_order'`; this is
-important because the ambient Banach algebra need not be commutative. -/
+/-- **Finite Neumann expansion with an ordered resolvent remainder.** Let `A` be a complete
+unital complex normed algebra with its given norm and `a∈A`. For `z≠0`, `‖z⁻¹ • a‖<1`, and
+`N∈ℕ`, `(z·1-a)⁻¹=∑_{n<N} z^{-(n+1)} • a^n + (z⁻¹ • a)^N * (z·1-a)⁻¹`. The remainder power
+multiplies the resolvent on the left. The formula includes `N=0` and noncommutative or
+zero algebras. -/
 private theorem resolvent_eq_finsetSum_zpow_add_remainder
     (a : A) (z : ℂ) (hz : z ≠ 0) (N : ℕ)
     (hsmall : ‖z⁻¹ • a‖ < 1) :
@@ -1018,21 +972,10 @@ private theorem toCycle_integral_inv_eq_two_pi_I
     exact mul_ne_zero (by exact_mod_cast Real.two_pi_pos.ne') Complex.I_ne_zero
   simpa [c] using (inv_mul_eq_iff_eq_mul₀ hc).mp hindex
 omit [CompleteSpace A] in
-/-- The first resolvent identity in the orientation used by the classical
-multiplicativity proof.  The order of the two resolvent factors is retained,
-so the statement applies to noncommutative Banach algebras.  The inequality
-`z ≠ ζ` is essential because Mathlib's scalar inverse is totalized.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem resolvent_mul_resolvent {a : A} {z ζ : ℂ}
-    (hz : z ∈ resolventSet ℂ a) (hζ : ζ ∈ resolventSet ℂ a)
-    (hzζ : z ≠ ζ) :
-    resolvent a z * resolvent a ζ =
-      (ζ - z)⁻¹ • (resolvent a z - resolvent a ζ)
-``` -/
+/-- **Ordered first resolvent identity.** Let `A` be a unital complex normed algebra with its
+given norm and `a∈A`. If `z,ζ∈resolventSet ℂ a` and `z≠ζ`, then `(z·1-a)⁻¹ *
+(ζ·1-a)⁻¹=(ζ-z)⁻¹ • [(z·1-a)⁻¹-(ζ·1-a)⁻¹]`. The two resolvent factors retain their
+displayed order. No completeness or nonzero-algebra assumption is needed. -/
 theorem resolvent_mul_resolvent {a : A} {z ζ : ℂ}
     (hz : z ∈ resolventSet ℂ a) (hζ : ζ ∈ resolventSet ℂ a)
     (hzζ : z ≠ ζ) :
@@ -1068,32 +1011,19 @@ theorem resolvent_mul_resolvent {a : A} {z ζ : ℂ}
   have hζz : ζ - z ≠ 0 := sub_ne_zero.mpr hzζ.symm
   rw [hdiff, smul_smul, inv_mul_cancel₀ hζz, one_smul]
 
-/-- The normalized Riesz integral over the zero rectilinear cycle is zero for every element and
-scalar integrand.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_zero (a : A) (f : ℂ → ℂ) :
-    rieszIntegral (0 : RectilinearCycle) a f = 0
-``` -/
+/-- **Riesz integral on the zero cycle.** Let `A` be a complete unital complex normed algebra
+with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) • (z·1-a)⁻¹ dz`, with
+total inverse. For every scalar function `f`, `R_0(a,f)=0`. There is no regularity premise
+on `f` and the algebra may be zero. -/
 @[simp]
 theorem rieszIntegral_zero (a : A) (f : ℂ → ℂ) :
     rieszIntegral (0 : RectilinearCycle) a f = 0 := by
   simp [rieszIntegral]
 
-/-- The Riesz integrand is complex differentiable away from the spectrum on
-every domain where the scalar function is complex differentiable.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem differentiableOn_rieszIntegrand {a : A} {f : ℂ → ℂ} {G : Set ℂ}
-    (hf : DifferentiableOn ℂ f G) :
-    DifferentiableOn ℂ (rieszIntegrand a f) (G \ spectrum ℂ a)
-``` -/
+/-- **Differentiability of the Riesz integrand off the spectrum.** Let `A` be a complete
+unital complex normed algebra with its given norm and `a∈A`. If `f:ℂ→ℂ` is complex
+differentiable on `G⊆ℂ`, then `z↦f(z) • (z·1-a)⁻¹` is complex differentiable on
+`G∖spectrum ℂ a`. Neither openness of `G` nor a nonzero algebra is an additional premise. -/
 theorem differentiableOn_rieszIntegrand {a : A} {f : ℂ → ℂ} {G : Set ℂ}
     (hf : DifferentiableOn ℂ f G) :
     DifferentiableOn ℂ (rieszIntegrand a f) (G \ spectrum ℂ a) := by
@@ -1103,19 +1033,12 @@ theorem differentiableOn_rieszIntegrand {a : A} {f : ℂ → ℂ} {G : Set ℂ}
   exact (hf.mono sdiff_subset z hz).smul
     (spectrum.hasDerivAt_resolvent_const_left hzres).differentiableAt.differentiableWithinAt
 
-/-- Rectangular-homology form of contour independence: two cycles have the same
-Riesz integral when their difference has a rectangle filling in the analytic
-resolvent domain.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_eq_of_homologousIn {Γ Λ : RectilinearCycle} {a : A}
-    {f : ℂ → ℂ} {G : Set ℂ} (hΓΛ : Γ.HomologousIn Λ (G \ spectrum ℂ a))
-    (hf : DifferentiableOn ℂ f G) :
-    rieszIntegral Γ a f = rieszIntegral Λ a f
-``` -/
+/-- **Riesz integral invariance under rectangular homology.** Let `A` be a complete unital
+complex normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) •
+(z·1-a)⁻¹ dz`, with total inverse. Let `f` be complex differentiable on `G⊆ℂ`. If every
+rectangle with nonzero coefficient in `Γ-Λ` has its closed carrier contained in
+`G∖spectrum ℂ a`, so that the cycles are homologous there, then `R_Γ(a,f)=R_Λ(a,f)`. The
+homology relation is the finite rectangular filling relation. -/
 theorem rieszIntegral_eq_of_homologousIn {Γ Λ : RectilinearCycle} {a : A}
     {f : ℂ → ℂ} {G : Set ℂ} (hΓΛ : Γ.HomologousIn Λ (G \ spectrum ℂ a))
     (hf : DifferentiableOn ℂ f G) :
@@ -1123,20 +1046,13 @@ theorem rieszIntegral_eq_of_homologousIn {Γ Λ : RectilinearCycle} {a : A}
   apply congrArg (((2 * Real.pi : ℂ) * Complex.I)⁻¹ • ·)
   exact Γ.integral_eq_of_homologousIn hΓΛ (differentiableOn_rieszIntegrand hf)
 
-/-- Two admissible grid fillings around the spectrum have equal Riesz integrals for a scalar
-function complex differentiable on their common domain.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_eq_of_isAdmissibleFor {D E : GridFilling} {a : A}
-    {f : ℂ → ℂ} {G : Set ℂ}
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G)
-    (hE : E.IsAdmissibleFor (spectrum ℂ a) G)
-    (hf : DifferentiableOn ℂ f G) :
-    rieszIntegral D.toCycle a f = rieszIntegral E.toCycle a f
-``` -/
+/-- **Contour independence for admissible spectrum grids.** Let `A` be a complete unital
+complex normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) •
+(z·1-a)⁻¹ dz`, with total inverse. A filling is admissible for `S=spectrum ℂ a` in `G⊆ℂ`
+when its reduced trace lies in `G∖S`, its cycle index is one on `S`, and its index is zero
+outside `G`. If `D` and `H` are both admissible for `S` in `G` and `f` is complex
+differentiable on `G`, then `R_{D.toCycle}(a,f)=R_{H.toCycle}(a,f)`. Filled-region
+containment in `G` is not part of the admissibility predicate. -/
 theorem rieszIntegral_eq_of_isAdmissibleFor {D E : GridFilling} {a : A}
     {f : ℂ → ℂ} {G : Set ℂ}
     (hD : D.IsAdmissibleFor (spectrum ℂ a) G)
@@ -1147,18 +1063,12 @@ theorem rieszIntegral_eq_of_isAdmissibleFor {D E : GridFilling} {a : A}
   exact GridFilling.integral_eq_of_isAdmissibleFor hD hE
     (differentiableOn_rieszIntegrand hf)
 
-/-- An admissible positively oriented grid around the spectrum gives the algebra identity as the
-Riesz value of the constant-one function.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_one_of_isAdmissibleFor
-    {D : GridFilling} {a : A} {G : Set ℂ}
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszIntegral D.toCycle a (fun _ : ℂ ↦ 1) = 1
-``` -/
+/-- **The constant-one Riesz value on a spectrum contour.** Let `A` be a complete unital
+complex normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) •
+(z·1-a)⁻¹ dz`, with total inverse. A filling is admissible for `S=spectrum ℂ a` in `G⊆ℂ`
+when its reduced trace lies in `G∖S`, its cycle index is one on `S`, and its index is zero
+outside `G`. For every admissible `D`, `R_{D.toCycle}(a,z↦1)=1_A`. No openness assumption
+on `G` is needed; the zero algebra is included. -/
 theorem rieszIntegral_one_of_isAdmissibleFor
     {D : GridFilling} {a : A} {G : Set ℂ}
     (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
@@ -1359,18 +1269,12 @@ theorem rieszIntegral_one_of_isAdmissibleFor
           (differentiableOn_const (1 : ℂ))
     _ = 1 := hEvalE
 
-/-- An admissible positively oriented grid around the spectrum gives `a` as the Riesz value of the
-coordinate function.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_id_of_isAdmissibleFor
-    {D : GridFilling} {a : A} {G : Set ℂ}
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
-    rieszIntegral D.toCycle a id = a
-``` -/
+/-- **The coordinate Riesz value on a spectrum contour.** Let `A` be a complete unital complex
+normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ f(z) •
+(z·1-a)⁻¹ dz`, with total inverse. A filling is admissible for `S=spectrum ℂ a` in `G⊆ℂ`
+when its reduced trace lies in `G∖S`, its cycle index is one on `S`, and its index is zero
+outside `G`. For every admissible `D`, `R_{D.toCycle}(a,z↦z)=a`. No openness assumption on
+`G` is needed, and the formula includes the zero algebra. -/
 theorem rieszIntegral_id_of_isAdmissibleFor
     {D : GridFilling} {a : A} {G : Set ℂ}
     (hD : D.IsAdmissibleFor (spectrum ℂ a) G) :
@@ -1464,17 +1368,11 @@ theorem rieszIntegral_id_of_isAdmissibleFor
       (Algebra.mul_smul_comm _ _ _).symm
     _ = a := by rw [honeNormalized, mul_one]
 
-/-- On a fixed reduced grid contour, the Riesz integral depends only on the
-values of the scalar function on that contour.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszIntegral_congr_of_eqOn_reducedTrace (D : GridFilling) (a : A)
-    {f g : ℂ → ℂ} (hfg : Set.EqOn f g D.reducedTrace) :
-    rieszIntegral D.toCycle a f = rieszIntegral D.toCycle a g
-``` -/
+/-- **Riesz integral depends on scalar values on the reduced trace.** Let `A` be a complete
+unital complex normed algebra with its given norm and `a∈A`. Write `R_Γ(a,f)=(2πi)⁻¹ • ∮_Γ
+f(z) • (z·1-a)⁻¹ dz`, with total inverse. Let `D` be a positive-scale finite grid filling
+and `f,g:ℂ→ℂ` agree on its reduced trace. Then `R_{D.toCycle}(a,f)=R_{D.toCycle}(a,g)`. No
+continuity, differentiability, or admissibility premise is required. -/
 theorem rieszIntegral_congr_of_eqOn_reducedTrace (D : GridFilling) (a : A)
     {f g : ℂ → ℂ} (hfg : Set.EqOn f g D.reducedTrace) :
     rieszIntegral D.toCycle a f = rieszIntegral D.toCycle a g := by

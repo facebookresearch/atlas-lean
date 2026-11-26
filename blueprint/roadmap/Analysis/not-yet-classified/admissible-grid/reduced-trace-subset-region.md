@@ -1,8 +1,6 @@
-# Reduced Trace subset region
+# The reduced boundary lies in the selected-cell region
 
-The reduced trace lies in the selected closed-cell region.
-
-```lean
-theorem reducedTrace_subset_region (D : GridFilling) :
-    D.reducedTrace ⊆ D.region
-```
+Let `D` be a finite grid
+filling of scale `t>0`. Every point of the reduced trace
+`⋃_{e∈D.boundaryEdges}D.edgeTrace(e)` belongs to the closed union
+`⋃_{v∈D.cells}carrier(D.cell(v))`.

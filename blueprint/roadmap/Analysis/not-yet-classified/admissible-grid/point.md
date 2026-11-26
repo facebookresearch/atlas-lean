@@ -1,3 +1,4 @@
-# Point
+# Physical vertex for a finite grid filling
 
-The physical complex point represented by a lattice vertex.
+For a filling `D` of scale `t>0` and
+integer vertex `v∈ℤ²`, `D.point(v)=v₀/t+i v₁/t`.

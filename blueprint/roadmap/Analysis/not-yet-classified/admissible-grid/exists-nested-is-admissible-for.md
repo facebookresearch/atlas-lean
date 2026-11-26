@@ -1,13 +1,7 @@
-# Exists nested is Admissible For
+# Nested admissible grids around a compact set and an inner region
 
-Nested admissible grids for the classical multiplicativity argument.  The
-outer grid has index one on the entire inner grid region and its reduced
-trace is strictly outside that region.  By `IsAdmissibleFor.mono_left` it is
-also admissible for the original compact set.
-
-```lean
-theorem exists_nested_isAdmissibleFor {K G : Set ℂ}
-    (hK : IsCompact K) (hG : IsOpen G) (hKG : K ⊆ G) :
-    ∃ D E : GridFilling,
-      D.IsAdmissibleFor K G ∧ E.IsAdmissibleFor (K ∪ D.region) G
-```
+For compact `K⊆ℂ`
+contained in open `G⊆ℂ`, there exist positive-scale finite fillings `D,H` such that `D` is
+admissible for `K` in `G` and `H` is admissible for `K∪D.region` in `G`. Admissibility for
+`K` in `G` means reduced trace in `G∖K`, index one on `K`, and index zero outside `G`.
+Thus the outer reduced trace avoids the whole inner region and its index is one there.

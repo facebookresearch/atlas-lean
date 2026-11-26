@@ -1,12 +1,6 @@
-# Riesz Functional Calculus one
+# Constant-one germ has identity Riesz value
 
-the constant-function normalization: the Riesz functional calculus sends the constant-one
-germ to the identity of the Banach algebra.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_one (a : A) :
-    rieszFunctionalCalculus a (1 : HolomorphicNearSpectrum a) = 1
-```
+Let `A` be a complete unital complex
+normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for scalar-function germs
+analytic near `S`. Write `h(a)=rieszFunctionalCalculus a h`. The germ of `z↦1` has Riesz
+value `1∈A`.

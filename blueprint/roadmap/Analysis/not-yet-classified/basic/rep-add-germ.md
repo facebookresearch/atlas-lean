@@ -1,13 +1,6 @@
-# Rep add germ
+# Representative germ of a sum
 
-The representative of a sum has the sum of the two representative germs.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem HolomorphicNearSpectrum.rep_add_germ (a : A)
-    (f g : HolomorphicNearSpectrum a) :
-    ((f + g).rep a : SpectrumGerm a) =
-      (f.rep a : SpectrumGerm a) + (g.rep a : SpectrumGerm a)
-```
+Let `A` be a unital complex normed algebra, `a∈A`, and
+`S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo equality on an open
+neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented by functions
+analytic near every point of `S`. For `h,k∈Hol(a)`, `[rep(h+k)]=[rep(h)+rep(k)]`.

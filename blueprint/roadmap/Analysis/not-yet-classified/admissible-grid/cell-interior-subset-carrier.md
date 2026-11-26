@@ -1,8 +1,5 @@
-# Cell Interior subset carrier
+# The open grid square lies in its closed cell
 
-A cell's open interior lies in its closed carrier.
-
-```lean
-theorem cellInterior_subset_carrier (D : GridFilling) (v : GridIndex) :
-    D.cellInterior v ⊆ (D.cell v).carrier
-```
+Let `D` be a finite grid filling of
+scale `t>0`. For every index `v∈ℤ²`, the square with strict coordinate bounds
+`v_i/t<x_i<(v_i+1)/t` is contained in the closed carrier of `D.cell(v)`.

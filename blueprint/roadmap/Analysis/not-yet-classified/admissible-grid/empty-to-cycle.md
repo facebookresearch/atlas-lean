@@ -1,8 +1,4 @@
-# Empty to Cycle
+# The empty filling has zero rectilinear cycle
 
-An empty positive-scale filling has the zero cycle.
-
-```lean
-theorem empty_toCycle (t : ℝ) (ht : 0 < t) :
-    (empty t ht).toCycle = 0
-```
+For `t>0`, summing the counterclockwise
+boundaries of the empty selected-cell set gives the zero rectilinear cycle.

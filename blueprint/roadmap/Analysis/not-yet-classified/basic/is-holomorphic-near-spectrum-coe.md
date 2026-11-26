@@ -1,13 +1,8 @@
-# Is Holomorphic Near Spectrum coe
+# Analytic criterion for a represented spectrum germ
 
-A global scalar function determines a holomorphic spectrum germ exactly when it is analytic on
-a neighborhood of every spectral point.
-
-Here `A` is a unital complex normed algebra with its given norm. Multiplication need not commute;
-no nonzero-algebra hypothesis is imposed.
-
-```lean
-theorem isHolomorphicNearSpectrum_coe (a : A) (f : ℂ → ℂ) :
-    IsHolomorphicNearSpectrum a (f : SpectrumGerm a) ↔
-      AnalyticOnNhd ℂ f (spectrum ℂ a)
-```
+Let `A` be a unital complex normed
+algebra, `a∈A`, and `S=spectrum ℂ a`. Let `Germ(S)` be scalar-function germs modulo
+equality on an open neighborhood of `S`, and `Hol(a)` its subalgebra of germs represented
+by functions analytic near every point of `S`. For a scalar function `f : ℂ→ℂ`, its germ
+is holomorphic if and only if `f` is analytic at every point of `S`, equivalently analytic
+on a neighborhood of every spectral point.

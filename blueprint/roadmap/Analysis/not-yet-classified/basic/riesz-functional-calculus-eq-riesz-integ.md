@@ -1,14 +1,7 @@
-# Riesz Functional Calculus eq riesz Integral rep
+# Any admissible grid gives the same chosen-representative value
 
-Every admissible grid in the chosen representative analytic domain gives the same
-functional-calculus value.
-
-Here `A` is a complete unital complex normed algebra with its given norm. Multiplication need not
-commute; the zero algebra remains allowed.
-
-```lean
-theorem rieszFunctionalCalculus_eq_rieszIntegral_rep (a : A)
-    (f : HolomorphicNearSpectrum a) (D : GridFilling)
-    (hD : D.IsAdmissibleFor (spectrum ℂ a) (f.analyticDomain a)) :
-    rieszFunctionalCalculus a f = rieszIntegral D.toCycle a (f.rep a)
-```
+Let `A` be a complete
+unital complex normed algebra, `a∈A`, and `S=spectrum ℂ a`. Write `Hol(a)` for
+scalar-function germs analytic near `S`. For `h∈Hol(a)`, let `G_h` be the analytic locus
+of `rep(h)`. If a finite grid filling `D` is admissible for `S⊆G_h`, then
+`rieszFunctionalCalculus a h=rieszIntegral D.toCycle a (rep(h))`.

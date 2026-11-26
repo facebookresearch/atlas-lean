@@ -1,10 +1,6 @@
-# Selected Filling region subset cthickening
+# The thickening-selected region stays within a controlled enlargement
 
-For nonnegative radius, the full selected-cell region lies in the same closed
-`(2/t+r)`-thickening.
-
-```lean
-theorem selectedFilling_region_subset_cthickening
-    (K : Set ℂ) {r t : ℝ} (hr : 0 ≤ r) (ht : 0 < t) (hK : IsCompact K) :
-    (selectedFilling K r t ht hK).region ⊆ Metric.cthickening (2 / t + r) K
-```
+Let `K⊆ℂ` be
+compact, `t>0`, and let `D` consist of all scale-`t` closed cells meeting
+`cthickening(r,K)`. If `r≥0`, the union of its selected closed cell carriers is contained
+in `cthickening(r+2/t,K)`.

@@ -1,4 +1,5 @@
-# To Cycle
+# Rectilinear cycle of a signed box chain
 
-Regard a signed box overlay as a rectilinear cycle by taking the boundary
-of every box with its integer multiplicity.
+For a finite box chain `C`, form `∑_I C(I) •
+boundary(rectangleOfBox I)`, using the sign-reversed complex rectangle of each box.
+Integer coefficients give the contour orientations.

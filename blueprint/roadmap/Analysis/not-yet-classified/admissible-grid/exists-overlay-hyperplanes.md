@@ -1,13 +1,7 @@
-# Exists overlay Hyperplanes
+# Finite coordinate cuts align two grid prepartitions
 
-Finitely many coordinate cuts align both cell prepartitions as restrictions of one global split.
-
-```lean
-theorem exists_overlayHyperplanes (D E : GridFilling) :
-    ∃ s : Finset (Fin 2 × ℝ),
-      ∀ π ∈ ({D.leftCellPrepartition E, D.rightCellPrepartition E} :
-          Set (BoxIntegral.Prepartition (D.commonBoundingBox E))),
-        π ⊓ BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E) s =
-          (BoxIntegral.Prepartition.splitMany (D.commonBoundingBox E) s).filter
-            fun J ↦ (J : Set (Fin 2 → ℝ)) ⊆ π.iUnion
-```
+Let `D,H` be finite grid fillings
+with positive, possibly different, scales. There exists a finite set `s⊆Fin 2×ℝ` of
+coordinate cuts such that, for each of their selected-cell prepartitions `π`, if
+`ρ=splitMany(commonBox,s)`, then `π⊓ρ` is exactly the subfamily `{I∈ρ | I⊆union(π)}`. No
+rational relation between the two scales is required.

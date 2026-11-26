@@ -1,8 +1,6 @@
-# Mem boundary Edges iff
+# Reduced-edge membership is equivalent to a nonzero coefficient
 
-The reduced boundary edges are exactly those with nonzero net integer coefficient.
-
-```lean
-theorem mem_boundaryEdges_iff (D : GridFilling) (e : GridEdge) :
-    e ∈ D.boundaryEdges ↔ D.boundaryCoeff e ≠ 0
-```
+Let `D` be a finite
+grid filling of scale `t>0`. For any horizontal or vertical grid edge `e`,
+`e∈D.boundaryEdges` if and only if `D.boundaryCoeff(e)≠0`. Every nonzero coefficient
+therefore occurs among edges adjacent to selected cells.

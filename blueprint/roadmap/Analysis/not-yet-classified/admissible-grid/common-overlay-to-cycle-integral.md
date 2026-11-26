@@ -1,12 +1,7 @@
-# Common Overlay to Cycle integral
+# Signed overlay integral is the difference of grid integrals
 
-For a globally continuous complete Banach-valued integrand, the signed overlay integral is the
-difference of the filling integrals.
-
-```lean
-theorem commonOverlay_toCycle_integral {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
-    (D E₁ : GridFilling) (f : ℂ → E) (hf : Continuous f) :
-    (D.commonOverlay E₁).toCycle.integral f =
-      D.toCycle.integral f - E₁.toCycle.integral f
-```
+Let `E` be a complete
+complex normed vector space. Let `D,H` be finite grid fillings with positive, possibly
+different, scales. For globally continuous `f:ℂ→E`, `∮_{commonOverlay(D,H).toCycle}
+f=∮_{D.toCycle} f-∮_{H.toCycle} f`. This comparison allows unrelated positive scales and
+empty fillings.

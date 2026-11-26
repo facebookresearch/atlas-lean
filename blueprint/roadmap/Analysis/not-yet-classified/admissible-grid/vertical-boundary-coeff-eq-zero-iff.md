@@ -1,9 +1,6 @@
-# Vertical boundary Coeff eq zero iff
+# Cancellation criterion for a vertical grid edge
 
-A vertical edge cancels exactly when its adjacent cell indicators agree.
-
-```lean
-theorem vertical_boundaryCoeff_eq_zero_iff (D : GridFilling) (v : GridIndex) :
-    D.boundaryCoeff (.vertical v) = 0 ↔
-      D.cellCoeff (v.pred 0) = D.cellCoeff v
-```
+Let `D` be a finite grid filling of
+scale `t>0`. Write `c_D(v)=1` for a selected integer cell `v∈ℤ²`, and `0` otherwise. The
+vertical edge based at `v` has zero net coefficient if and only if `c_D(v-e₀)=c_D(v)`, so
+the left and right selection indicators agree.
