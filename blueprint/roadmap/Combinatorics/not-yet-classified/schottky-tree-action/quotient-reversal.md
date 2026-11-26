@@ -1,5 +1,0 @@
-# Quotient Reversal
-
-The reversal of an oriented quotient edge, induced by dart reversal. It fixes
-exactly the dart orbits of the edges that some element of `G` inverts
-(`quotientReversal_mk_eq_self_iff`).
