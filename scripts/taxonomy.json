@@ -13307,6 +13307,7 @@
   "MathlibExt/NumberTheory/PrimeSquareTail": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Sets of remainders"},
   "MathlibExt/NumberTheory/PrimeSupport": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Integers with the same prime divisors"},
   "MathlibExt/NumberTheory/PrimitiveDivisor": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Primitive divisors"},
+  "MathlibExt/NumberTheory/PrimitiveNondeficient": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Primitive non-deficient numbers"},
   "MathlibExt/NumberTheory/PrimitivePrimeDivisorPowAddOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/PrimitivePrimeDivisorPowSubOne": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "MathlibExt/NumberTheory/PrimitiveLambdaRoots": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Primitive λ-roots"},
