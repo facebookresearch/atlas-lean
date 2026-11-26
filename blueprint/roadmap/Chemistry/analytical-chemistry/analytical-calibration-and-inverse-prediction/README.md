@@ -36,3 +36,9 @@
 - [A common drift cancels in the internal-standard ratio](internal-standard-ratio-common-drift.md)
 - [Independent drifts scale the internal-standard ratio](internal-standard-ratio-independent-drif.md)
 - [Unequal drifts do not cancel in the internal-standard ratio](internal-standard-ratio-independent-drif-2.md)
+
+## Inverse calibration error budget
+
+- [Error bound for inverse prediction with perturbed parameters](inverse-prediction-error-le.md)
+- [Error bound for inverse prediction with exact parameters](inverse-prediction-error-le-known-params.md)
+- [Measure bound on the bad event of inverse prediction](inverse-prediction-error-event-measure-l.md)

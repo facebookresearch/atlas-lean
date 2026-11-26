@@ -97,11 +97,13 @@ are not modeled.
 
 namespace PhyslibExt.Electronics.LoadedOnePoleAmplifier
 
-/-- The source divider `Rin / (Rs + Rin)`. -/
+/-- The source divider `Rin / (Rs + Rin)`. With `x / 0 = 0` it is `0` when `Rs + Rin = 0`; the
+intended domain is `Rs ≥ 0`, `Rin > 0`. -/
 noncomputable def sourceDivider (Rs Rin : ℝ) : ℝ :=
   Rin / (Rs + Rin)
 
-/-- The load divider `RL / (Ro + RL)`. -/
+/-- The load divider `RL / (Ro + RL)`. With `x / 0 = 0` it is `0` when `Ro + RL = 0`; the
+intended domain is `Ro ≥ 0`, `RL > 0`. -/
 noncomputable def loadDivider (Ro RL : ℝ) : ℝ :=
   RL / (Ro + RL)
 
@@ -131,12 +133,15 @@ lemma loadDivider_pos_and_le_one (Ro RL : ℝ) (hRL : 0 < RL)
 
 /-! ## B. Open-loop and loaded transfer -/
 
-/-- The one-pole open-loop response `A0 / (1 + s / wp)`. -/
+/-- The one-pole open-loop response `A0 / (1 + s / wp)`. With `z / 0 = 0` it is `A0` for every
+`s` when `wp = 0`, and `0` at `s = -wp` when `wp ≠ 0`; the intended domain is `A0 > 0`,
+`wp > 0`. -/
 noncomputable def openLoopGain (A0 wp : ℝ) (s : ℂ) : ℂ :=
   (A0 : ℂ) / (1 + s / (wp : ℂ))
 
 /-- The loaded closed-loop transfer
-`a * b * A0 / (1 + s / wp + beta * b * A0)`. -/
+`a * b * A0 / (1 + s / wp + beta * b * A0)`. With `z / 0 = 0` it is `0` where the loaded
+denominator vanishes, and the constant `a * b * A0 / (1 + beta * b * A0)` when `wp = 0`. -/
 noncomputable def loadedTransfer (A0 wp beta a b : ℝ) (s : ℂ) : ℂ :=
   ((a * b * A0 : ℝ) : ℂ) / (1 + s / (wp : ℂ) + ((beta * b * A0 : ℝ) : ℂ))
 
@@ -191,18 +196,17 @@ theorem output_eq_loadedTransfer_mul_input (A0 wp beta a b : ℝ) (s vi vo vamp 
 /-! ## C. Direct-current gain -/
 
 /-- The loaded DC gain `a * b * A0 / (1 + beta * b * A0)` as a real number.
-It is the physical DC gain only when `1 + beta * b * A0 ≠ 0`; at the
-singular parameter choices the division is the totalized one and the
-value carries no physical meaning. -/
+It is the physical DC gain when `1 + beta * b * A0 ≠ 0`; at the singular parameter choices the
+division is the totalized one, the value is `0` and it carries no physical meaning. -/
 noncomputable def loadedDcGain (A0 beta a b : ℝ) : ℝ :=
   a * b * A0 / (1 + beta * b * A0)
 
 /-- At `s = 0` the loaded transfer expression is the cast of the real
 loaded DC gain expression. This is an identity between the two
 expressions for every parameter choice, because both use the same
-division; it makes no physical claim at the singular parameters
-where `1 + beta * b * A0 = 0`. The guarded signal-level statement is
-`output_eq_loadedDcGain_mul_input`. -/
+division; at the singular parameters where `1 + beta * b * A0 = 0` both sides are `0`, and no
+physical claim is made there. The guarded signal-level statement at `s = 0` assumes
+`1 + beta * b * A0 ≠ 0` and `wp ≠ 0`. -/
 lemma loadedTransfer_zero (A0 wp beta a b : ℝ) :
     loadedTransfer A0 wp beta a b 0 = ((loadedDcGain A0 beta a b : ℝ) : ℂ) := by
   unfold loadedTransfer loadedDcGain
@@ -235,7 +239,7 @@ theorem output_eq_loadedDcGain_mul_input (A0 wp beta a b : ℝ) (vi vo vamp : �
 is the source divider times the canonical closed-loop gain of the
 load-referred open-loop gain `b * A0`. This is a rearrangement of the
 two real divisions after rewriting `1 + (b * A0) * beta` as
-`1 + beta * b * A0`. -/
+`1 + beta * b * A0`, valid for all real inputs; when `1 + beta * b * A0 = 0` both sides are `0`. -/
 lemma loadedDcGain_eq_sourceDivider_mul_closedLoopGain (A0 beta a b : ℝ) :
     loadedDcGain A0 beta a b =
       a * PhyslibExt.Electronics.FiniteGainFeedback.closedLoopGain (b * A0) beta := by
@@ -245,7 +249,7 @@ lemma loadedDcGain_eq_sourceDivider_mul_closedLoopGain (A0 beta a b : ℝ) :
   ring
 
 /-- The loaded DC gain is positive and below the divider-scaled ideal gain
-`a / beta` under the stated positive signs. -/
+`a / beta` for positive `A0`, `beta`, `a` and `b`. -/
 theorem loadedDcGain_pos_and_lt (A0 beta a b : ℝ) (hA0 : 0 < A0)
     (hbeta : 0 < beta) (ha : 0 < a) (hb : 0 < b) :
     0 < loadedDcGain A0 beta a b ∧ loadedDcGain A0 beta a b < a / beta := by
@@ -263,8 +267,8 @@ theorem loadedDcGain_pos_and_lt (A0 beta a b : ℝ) (hA0 : 0 < A0)
 /-! ## D. Denominator zero and stability -/
 
 /-- The closed-loop pole location `-wp * (1 + beta * b * A0)` as a real
-number; its cast to `ℂ` is the loaded denominator zero characterized
-below. -/
+number; for `wp > 0` its cast to `ℂ` is the only zero of the loaded denominator. It is not
+necessarily a pole of the loaded transfer: with `a = 0` the transfer is identically `0`. -/
 noncomputable def closedLoopPole (wp beta b A0 : ℝ) : ℝ :=
   -wp * (1 + beta * b * A0)
 
@@ -300,9 +304,8 @@ theorem denominator_eq_zero_iff (wp beta b A0 : ℝ) (hwp : 0 < wp) (s : ℂ) :
     rw [h3]
     ring
 
-/-- The closed-loop pole location is strictly negative under the stated
-positive signs, so the denominator zero lies in the open left
-half-plane. -/
+/-- The closed-loop pole location is strictly negative for positive `wp`, `beta`, `b` and `A0`,
+so the denominator zero lies in the open left half-plane. -/
 theorem closedLoopPole_neg (wp beta b A0 : ℝ) (hwp : 0 < wp)
     (hbeta : 0 < beta) (hb : 0 < b) (hA0 : 0 < A0) :
     closedLoopPole wp beta b A0 < 0 := by
@@ -312,10 +315,9 @@ theorem closedLoopPole_neg (wp beta b A0 : ℝ) (hwp : 0 < wp)
   have h2 : -wp < (0 : ℝ) := neg_lt_zero.mpr hwp
   exact mul_neg_of_neg_of_pos h2 h1
 
-/-- **No denominator zero in the closed right half-plane.** Under the
-stated positive signs, the transfer denominator is nonzero at every
-point with nonnegative real part. At a hypothetical zero the point
-would equal the cast of a strictly negative real number, which
+/-- **No denominator zero in the closed right half-plane.** For positive `A0`, `wp`, `beta` and
+`b`, the transfer denominator is nonzero at every point with nonnegative real part. At a
+hypothetical zero the point would equal the cast of a strictly negative real number, which
 contradicts the sign of its real part. -/
 theorem denominator_ne_zero_of_re_nonneg (A0 wp beta b : ℝ) (hA0 : 0 < A0)
     (hwp : 0 < wp) (hbeta : 0 < beta) (hb : 0 < b) (s : ℂ)
@@ -347,7 +349,8 @@ theorem denominator_ne_zero_of_re_nonneg (A0 wp beta b : ℝ) (hA0 : 0 < A0)
 
 /-! ## E. Lossless dividers and a concrete example -/
 
-/-- With no source or output resistance, both dividers equal one. -/
+/-- With no source or output resistance, both dividers equal one, for positive input and load
+resistances (`Rin > 0`, `RL > 0`); with `x / 0 = 0`, `Rin = 0` would give a source divider `0`. -/
 lemma dividers_eq_one_of_no_source_output_resistance (Rin RL : ℝ)
     (hRin : 0 < Rin) (hRL : 0 < RL) :
     sourceDivider 0 Rin = 1 ∧ loadDivider 0 RL = 1 := by
@@ -357,7 +360,8 @@ lemma dividers_eq_one_of_no_source_output_resistance (Rin RL : ℝ)
   · rw [zero_add, div_self (ne_of_gt hRL)]
 
 /-- At unit dividers the loaded transfer is the unloaded one-pole
-closed-loop transfer. -/
+closed-loop transfer `A0 / (1 + s / wp + beta * A0)`, for all inputs (both sides are `0` where
+the denominator vanishes). -/
 lemma loadedTransfer_at_unit_dividers (A0 wp beta : ℝ) (s : ℂ) :
     loadedTransfer A0 wp beta 1 1 s =
       (A0 : ℂ) / (1 + s / (wp : ℂ) + ((beta * A0 : ℝ) : ℂ)) := by

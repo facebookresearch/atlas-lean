@@ -105,7 +105,8 @@ open PhyslibExt.Instrumentation.DACLevelError
 namespace PhyslibExt.Instrumentation.HeldDACSettling
 
 /-- The explicit settling output on one holding interval: held
-level plus initial mismatch decayed by the exponential factor. -/
+level plus initial mismatch decayed by the exponential factor. It is meant for `tau > 0` and
+`t ≥ tk`; with `x / 0 = 0`, `tau = 0` gives `yStart` for every `t`. -/
 noncomputable def settlingOutput (u yStart tk tau t : ℝ) : ℝ :=
   u + (yStart - u) * Real.exp (-(t - tk) / tau)
 
@@ -197,10 +198,10 @@ theorem heldOutput_eq_settlingOutput (tau u tk tk1 : ℝ) (htau : 0 < tau)
   unfold settlingOutput
   linarith
 
-/-- Endpoint recurrence: under the same hypotheses, the output
-at the right endpoint is the held level plus the initial
-mismatch decayed over the whole interval length. This value is
-the initial value of the next holding interval. -/
+/-- Endpoint recurrence: for `tau > 0`, `tk < tk1` and an output continuous on `[tk, tk1]` and
+differentiable with `tau * y' = u - y` on `(tk, tk1)`, the output at the right endpoint is the held
+level plus the initial mismatch decayed over the whole interval length. This value is the initial
+value of the next holding interval. -/
 lemma heldOutput_endpoint_recurrence (tau u tk tk1 : ℝ) (htau : 0 < tau)
     (htk : tk < tk1) (y : ℝ → ℝ)
     (hcont : ContinuousOn y (Set.Icc tk tk1))
@@ -211,10 +212,10 @@ lemma heldOutput_endpoint_recurrence (tau u tk tk1 : ℝ) (htau : 0 < tau)
   have h := heldOutput_eq_settlingOutput tau u tk tk1 htau htk y hcont hdiff hode tk1 hmem
   simpa [settlingOutput] using h
 
-/-- Settling error on one holding interval: under the same
-hypotheses, the absolute deviation from the held level is the
-initial absolute deviation times the exponential factor, at
-every time of the closed interval. -/
+/-- Settling error on one holding interval: for `tau > 0`, `tk < tk1` and an output continuous on
+`[tk, tk1]` and differentiable with `tau * y' = u - y` on `(tk, tk1)`, the absolute deviation from
+the held level is the initial absolute deviation times the exponential factor, at every time of the
+closed interval. -/
 theorem settlingError_eq (tau u tk tk1 : ℝ) (htau : 0 < tau)
     (htk : tk < tk1) (y : ℝ → ℝ)
     (hcont : ContinuousOn y (Set.Icc tk tk1))
@@ -229,9 +230,9 @@ theorem settlingError_eq (tau u tk tk1 : ℝ) (htau : 0 < tau)
     ring
   rw [hsub, abs_mul, abs_of_pos (Real.exp_pos _)]
 
-/-- The settling error never exceeds the initial mismatch on
-the interval, because the exponential factor is at most one
-for nonnegative elapsed time, under the same hypotheses. -/
+/-- For `tau > 0`, `tk < tk1` and an output continuous on `[tk, tk1]` and differentiable with
+`tau * y' = u - y` on `(tk, tk1)`, the settling error never exceeds the initial mismatch on the
+interval, because the exponential factor is at most one for nonnegative elapsed time. -/
 lemma settlingError_le_initial (tau u tk tk1 : ℝ) (htau : 0 < tau)
     (htk : tk < tk1) (y : ℝ → ℝ)
     (hcont : ContinuousOn y (Set.Icc tk tk1))
@@ -277,10 +278,10 @@ lemma heldOutput_twoIntervals (tau u1 u2 tk tk1 tk2 : ℝ) (htau : 0 < tau)
   rw [h_end] at h_main
   exact h_main
 
-/-- Code-held settling: when the held level is the actual level
-of an integer code from the converter level model, the settling
-error on the interval is measured against that actual level,
-under the same first-order hypotheses with that level held. -/
+/-- Code-held settling: when the held level is the actual level `dacLevel Δ e k` of an integer code
+from the converter level model, the settling error on the interval is measured against that actual
+level, for `tau > 0`, `tk < tk1` and an output continuous on `[tk, tk1]` and differentiable with
+`tau * y' = dacLevel Δ e k - y` on `(tk, tk1)`. -/
 lemma codeHeld_settlingError_eq (tau Δ : ℝ) (htau : 0 < tau) (e : ℤ → ℝ)
     (k : ℤ) (tk tk1 : ℝ) (htk : tk < tk1) (y : ℝ → ℝ)
     (hcont : ContinuousOn y (Set.Icc tk tk1))
@@ -292,7 +293,7 @@ lemma codeHeld_settlingError_eq (tau Δ : ℝ) (htau : 0 < tau) (e : ℤ → ℝ
       |y tk - dacLevel Δ e k| * Real.exp (-(t - tk) / tau) := by
   exact settlingError_eq tau (dacLevel Δ e k) tk tk1 htau htk y hcont hdiff hode t ht
 
-/-- Headline: on one holding interval with `tau > 0` and
+/-- On one holding interval with `tau > 0` and
 `tk < tk1`, a continuous output obeying `tau * y' = u - y` at
 every interior time is the explicit settling output, its right
 endpoint obeys the endpoint recurrence, and its settling error

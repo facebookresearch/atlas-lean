@@ -1,6 +1,3 @@
 # DACLevel Error
 
-- [DAC level](dac-level.md)
-- [Adjacent DAC step error](abs-dac-level-add-one-sub-sub-le.md)
-- [DAC levels are strictly increasing](dac-level-strict-mono-on.md)
-- [DAC level contract](dac-level-correct.md)
+The pages of this module are now under [Digital-to-analog converters: level errors and settling](../../../electromagnetism-and-circuits/electronics-and-instrumentation/digital-to-analog-converters-level-errors-and-se/README.md).

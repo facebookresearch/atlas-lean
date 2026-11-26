@@ -243,10 +243,11 @@ theorem hasDerivAt_rotorKineticEnergy {J kt b : ℝ} {i ω τL : ℝ → ℝ} {t
 
 /-! ## D. Electromechanical energy balance -/
 
-/-- **DC motor energy identity.** If `i` and `ω` are differentiable at `t` and satisfy the
-armature equation `u = R i + L i' + ke ω` and the rotor equation `J ω' = kt i - b ω - τL` at `t`,
-the stored energy `E = L i²/2 + J ω²/2` has derivative
-`u i - R i² - b ω² - τL ω + (kt - ke) i ω` at `t`. No sign condition on the parameters is used. -/
+/-- **DC motor energy identity.** If `i` and `ω` are differentiable at `t` and satisfy the armature
+equation `u = R i + L i' + ke ω` and the rotor equation `J ω' = kt i - b ω - τL` at `t`, the stored
+energy `E = L i²/2 + J ω²/2` has derivative `u i - R i² - b ω² - τL ω + (kt - ke) i ω` at `t`. No
+sign condition on the parameters is used; the load torque `τL` counts positive when it opposes
+positive rotation. -/
 theorem hasDerivAt_motorEnergy {R L J b ke kt : ℝ} {u i ω τL : ℝ → ℝ} {t : ℝ}
     (hi : DifferentiableAt ℝ i t) (hω : DifferentiableAt ℝ ω t)
     (helec : u t = R * i t + L * deriv i t + ke * ω t)

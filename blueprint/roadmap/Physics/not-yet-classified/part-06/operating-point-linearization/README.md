@@ -1,4 +1,3 @@
 # Operating Point Linearization
 
-- [Small-signal remainder bound on an operating box](small-signal-remainder-le-of-hessian-bou.md)
-- [Small-signal remainder bound along a segment](small-signal-remainder-le-of-segment-bou.md)
+The pages of this module are now under [Taylor's theorem in several variables](../../../../Analysis/real-functions/multivariable-calculus/taylor-s-theorem-in-several-variables/README.md).

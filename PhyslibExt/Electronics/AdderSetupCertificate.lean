@@ -35,8 +35,9 @@ depths of the existing adders, `2 n + 1` for the `n`-bit ripple-carry adder
 this gives `rippleCarryAdder_setupMet`, `carryLookaheadAdder_setupMet` and
 `carryLookaheadAdder_claLevels_setupMet`.
 
-Under uniform gate delays, with every input arriving exactly at `tq`, the
-certificate is exact for every circuit without constant gates
+Under uniform gate delays `D ≥ 0`, with every input arriving exactly at
+`tq ≥ 0`, the certificate is exact for every circuit with at least one output
+and without constant gates
 (`setupMet_uniform_iff_of_noConstantGates`, its signature-wide form
 `setupMet_uniform_iff`, and the two adder `_uniform_iff` forms): a violated
 certificate is a real setup violation of the model, whether or not the adder
@@ -58,8 +59,8 @@ of scope.
   `carryLookaheadAdder_claLevels_setupMet`: the certificates for the two
   adders at their width hypotheses.
 - `setupMet_uniform_iff_of_noConstantGates`: exactness under uniform delays
-  and every input arriving exactly at `tq`, for a circuit whose gates all read
-  at least one wire.
+  `D ≥ 0` and every input arriving exactly at `tq ≥ 0`, for a circuit with at
+  least one output whose gates all read at least one wire.
 - `setupMet_uniform_iff`, `rippleCarryAdder_setupMet_uniform_iff`,
   `carryLookaheadAdder_setupMet_uniform_iff`: the same for a signature
   without constants, and for the two adders.
@@ -99,9 +100,11 @@ universe v
 circuit `c`: a clock edge at time `0` launches it and the next edge, at the
 period `T`, captures it. The circuit inputs (the launching register's
 outputs) settle at `inputArrival`, gate `j` has delay `delay j`, and output
-arrival times are those of the gate-delay model. The capturing register's
-setup constraint holds when every designated output settles at least the
-setup time `ts` plus the clock uncertainty `u` before the capturing edge. -/
+arrival times are those of the gate-delay model: a gate settles at its delay plus the latest of
+`0` and the arrivals of the wires it reads, so a constant gate settles at its delay. The capturing
+register's setup constraint holds when every designated output settles at least the
+setup time `ts` plus the clock uncertainty `u` before the capturing edge; it holds trivially
+without designated outputs. -/
 def SetupMet {σ : Signature.{v}} {inputCount outputCount : ℕ}
     (c : Circuit σ inputCount outputCount) (delay : Fin c.size → ℝ)
     (inputArrival : Fin inputCount → ℝ) (ts u T : ℝ) : Prop :=
@@ -127,7 +130,8 @@ theorem setupMet_of_depth {σ : Signature.{v}} {inputCount outputCount : ℕ}
 /-! ## C. Adder certificates -/
 
 /-- **Ripple-carry certificate.** For `n ≥ 1` bits the adder has depth
-`2 n + 1`, so `tq + D * (2 n + 1) + ts + u ≤ T` certifies setup. -/
+`2 n + 1`, so, with every gate delay in `[0, D]` and every input settled by `tq ≥ 0`,
+`tq + D * (2 n + 1) + ts + u ≤ T` certifies setup. -/
 lemma rippleCarryAdder_setupMet (n : ℕ) (hn : 1 ≤ n)
     (delay : Fin (rippleCarryAdder n).size → ℝ) (inputArrival : Fin (2 * n + 1) → ℝ)
     (tq D ts u T : ℝ) (htq : 0 ≤ tq) (hinput : ∀ i, inputArrival i ≤ tq)
@@ -139,8 +143,9 @@ lemma rippleCarryAdder_setupMet (n : ℕ) (hn : 1 ≤ n)
   exact hcert
 
 /-- **Carry-lookahead certificate.** With `K ≥ 1` Kogge-Stone levels and
-`n ≥ 2` bits the adder has depth `2 K + 3`, so
-`tq + D * (2 K + 3) + ts + u ≤ T` certifies setup. -/
+`n ≥ 2` bits the adder has depth `2 K + 3`, so, with every gate delay in `[0, D]` and every
+input settled by `tq ≥ 0`, `tq + D * (2 K + 3) + ts + u ≤ T` certifies setup, whether or not
+`n ≤ 2 ^ K`. -/
 lemma carryLookaheadAdder_setupMet (n K : ℕ) (hK : 1 ≤ K) (hn : 2 ≤ n)
     (delay : Fin (CarryLookahead.carryLookaheadAdder n K).size → ℝ)
     (inputArrival : Fin (2 * n + 1) → ℝ)
@@ -153,7 +158,8 @@ lemma carryLookaheadAdder_setupMet (n K : ℕ) (hK : 1 ≤ K) (hn : 2 ≤ n)
   exact hcert
 
 /-- **Carry-lookahead certificate at `claLevels n` levels.** For `n ≥ 2`
-bits, `tq + D * (2 log₂ n + 5) + ts + u ≤ T` certifies setup. -/
+bits, with `⌊log₂ n⌋ + 1` levels, every gate delay in `[0, D]` and every input settled by
+`tq ≥ 0`, `tq + D * (2 ⌊log₂ n⌋ + 5) + ts + u ≤ T` certifies setup. -/
 lemma carryLookaheadAdder_claLevels_setupMet (n : ℕ) (hn : 2 ≤ n)
     (delay : Fin (CarryLookahead.carryLookaheadAdder n
       (CarryLookahead.claLevels n)).size → ℝ)
@@ -216,8 +222,9 @@ lemma setupMet_uniform_iff {σ : Signature.{v}} {inputCount outputCount : ℕ}
   setupMet_uniform_iff_of_noConstantGates c (noConstantGates_of_arity_pos hσ _) hout
     tq D ts u T htq hD
 
-/-- Under uniform delays, with every input arriving exactly at `tq`, the
-ripple-carry setup certificate is exact, so `T < tq + D * (2 n + 1) + ts + u`
+/-- Under a uniform delay `D ≥ 0`, with every input arriving exactly at `tq ≥ 0`, the
+ripple-carry setup certificate for `n ≥ 1` bits is exact: setup holds iff
+`tq + D * (2 n + 1) + ts + u ≤ T`, so `T < tq + D * (2 n + 1) + ts + u`
 is a setup violation. -/
 lemma rippleCarryAdder_setupMet_uniform_iff (n : ℕ) (hn : 1 ≤ n)
     (tq D ts u T : ℝ) (htq : 0 ≤ tq) (hD : 0 ≤ D) :
@@ -226,8 +233,9 @@ lemma rippleCarryAdder_setupMet_uniform_iff (n : ℕ) (hn : 1 ≤ n)
   have hσ : ∀ op, 0 < arithSignature.Arity op := fun _ => two_pos
   rw [setupMet_uniform_iff hσ _ (Nat.succ_pos n) _ _ _ _ _ htq hD, rippleCarryAdder_depth hn]
 
-/-- Under uniform delays, with every input arriving exactly at `tq`, the
-carry-lookahead setup certificate is exact, so `T < tq + D * (2 K + 3) + ts + u`
+/-- Under a uniform delay `D ≥ 0`, with every input arriving exactly at `tq ≥ 0`, the
+carry-lookahead setup certificate for `K ≥ 1` levels and `n ≥ 2` bits is exact: setup holds iff
+`tq + D * (2 K + 3) + ts + u ≤ T`, so `T < tq + D * (2 K + 3) + ts + u`
 is a setup violation. -/
 lemma carryLookaheadAdder_setupMet_uniform_iff (n K : ℕ) (hK : 1 ≤ K) (hn : 2 ≤ n)
     (tq D ts u T : ℝ) (htq : 0 ≤ tq) (hD : 0 ≤ D) :

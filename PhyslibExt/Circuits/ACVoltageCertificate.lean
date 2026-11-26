@@ -332,9 +332,10 @@ theorem certifiedLowerBound_le_acCost (nN nE k : ℕ) (P : CurrentLimitedOPF nN 
   exact (currentLimitedACLift_sound nN nE P).2 _
     (fun W hW => certifiedLowerBound_le_sdpCost nN nE k P cert hnonneg hfactor W hW) V hV
 
-/-- Optimality by equality: a supplied AC-feasible voltage whose cost equals the certified
-bound is a global minimizer of the AC problem, and its lift minimizes the relaxation. No
-rank-one property of any other relaxed point is assumed. -/
+/-- Optimality by equality: under the sign check and the exact factorization of the dual slack, a
+supplied AC-feasible voltage whose cost equals the certified bound is a global minimizer of the AC
+problem, and its lift minimizes the relaxation. No rank-one property of any other relaxed point is
+assumed. -/
 theorem acOptimal_of_acCost_eq_certifiedLowerBound (nN nE k : ℕ)
     (P : CurrentLimitedOPF nN nE) (cert : ACDualCertificate nN nE k) (hnonneg : cert.Nonneg)
     (hfactor : dualSlack nN nE k P cert = cert.factor * cert.factorᴴ)

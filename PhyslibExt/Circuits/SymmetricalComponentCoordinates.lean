@@ -117,7 +117,7 @@ private theorem conj_alpha_sq_eq : conj (alpha ^ 2) = alpha := by
   have h3 : alpha ^ 3 = 1 := isPrimitiveRoot_alpha.pow_eq_one
   linear_combination alpha * h3
 
-/-- The DFT kernel on `ZMod 3` at `1` is `α`: `ZMod.stdAddChar 1 = α`. -/
+/-- The standard additive character of `ZMod 3` at `1` is `α`: `ZMod.stdAddChar 1 = α`. -/
 lemma stdAddChar_one_eq_alpha : ZMod.stdAddChar (1 : ZMod 3) = alpha := by
   have h := ZMod.stdAddChar_coe (N := 3) (1 : ℤ)
   rw [Int.cast_one] at h

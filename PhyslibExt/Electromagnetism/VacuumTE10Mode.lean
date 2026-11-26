@@ -86,14 +86,16 @@ open PhyslibExt.Electromagnetism.SeparableVacuumMaxwell
 
 /-! ## A. The TE10 mode -/
 
-/-- The TE10 cutoff wavenumber `kc = π / a` of a guide of width `a`. -/
+/-- The TE10 cutoff wavenumber `kc = π / a` of a guide of width `a` (`0` at `a = 0`, by the
+convention `x / 0 = 0`). -/
 noncomputable def cutoffWavenumber (a : ℝ) : ℝ := Real.pi / a
 
 /-- The TE10 transverse profile `sin (kc x)`. -/
 noncomputable def te10Profile (a : ℝ) : ℝ → ℝ :=
   fun x => Real.sin (cutoffWavenumber a * x)
 
-/-- The propagating longitudinal mode `f(t, z) = -(E0 / ω) sin (ω t - β z)`. -/
+/-- The propagating longitudinal mode `f(t, z) = -(E0 / ω) sin (ω t - β z)`; with `x / 0 = 0` it is
+`0` when `ω = 0`. -/
 noncomputable def te10Mode (E0 omega beta : ℝ) : ℝ → ℝ → ℝ :=
   fun t z => -(E0 / omega) * Real.sin (omega * t - beta * z)
 
@@ -114,7 +116,9 @@ def fieldAtTime (F : ℝ → ℝ → ℝ → ℝ → Fin 3 → ℝ) (t : ℝ) : 
 def te10Dispersion (c0 a omega beta : ℝ) : Prop :=
   omega ^ 2 = c0 ^ 2 * (cutoffWavenumber a ^ 2 + beta ^ 2)
 
-/-- The propagation constant `sqrt (ω^2 / c0^2 - kc^2)`; meaningful at or above cutoff. -/
+/-- The propagation constant `sqrt (ω^2 / c0^2 - kc^2)`; meaningful at or above cutoff (below cutoff
+the radicand is negative and the value is `0`, by `√x = 0` for `x < 0`; `ω^2 / c0^2 = 0` when
+`c0 = 0`). -/
 noncomputable def propagationConstant (c0 a omega : ℝ) : ℝ :=
   Real.sqrt (omega ^ 2 / c0 ^ 2 - cutoffWavenumber a ^ 2)
 
@@ -376,7 +380,7 @@ lemma te10Mode_modeEquation_iff (c0 a E0 omega beta : ℝ) (hE0 : E0 ≠ 0)
 
 /-! ## D. Field components -/
 
-/-- The TE10 electric field is `(0, E0 sin (kc x) cos (ω t - β z), 0)`. -/
+/-- For `ω ≠ 0`, the TE10 electric field is `(0, E0 sin (kc x) cos (ω t - β z), 0)`. -/
 lemma te10ElectricField_apply (a E0 omega beta : ℝ) (homega : omega ≠ 0)
     (t x y z : ℝ) :
     te10ElectricField a E0 omega beta t x y z =
@@ -392,7 +396,8 @@ lemma te10ElectricField_apply (a E0 omega beta : ℝ) (homega : omega ≠ 0)
   rw [hmid]
 
 /-- The TE10 magnetic field is
-`(-(β E0 / ω) sin (kc x) cos (ω t - β z), 0, -(kc E0 / ω) cos (kc x) sin (ω t - β z))`. -/
+`(-(β E0 / ω) sin (kc x) cos (ω t - β z), 0, -(kc E0 / ω) cos (kc x) sin (ω t - β z))`, with
+`x / 0 = 0` (so it is `0` when `ω = 0`). -/
 lemma te10MagneticField_apply (a E0 omega beta : ℝ) (t x y z : ℝ) :
     te10MagneticField a E0 omega beta t x y z =
       ![-(beta * E0 / omega * Real.sin (cutoffWavenumber a * x) *
@@ -521,8 +526,8 @@ theorem te10_rectangularGuidePECTraces (a b E0 omega beta : ℝ) (ha : 0 < a) (h
 
 /-! ## G. Nonvanishing -/
 
-/-- Validation value: at `x = a / 2`, `t = z = 0` and any `y`, the electric component `E_y`
-equals `E0`. -/
+/-- Validation value: for `a ≠ 0` and `ω ≠ 0`, at `x = a / 2`, `t = z = 0` and any `y`, the electric
+component `E_y` equals `E0`. -/
 lemma te10ElectricField_center (a E0 omega beta : ℝ) (ha : a ≠ 0) (homega : omega ≠ 0)
     (y : ℝ) :
     te10ElectricField a E0 omega beta 0 (a / 2) y 0 1 = E0 := by
@@ -531,7 +536,7 @@ lemma te10ElectricField_center (a E0 omega beta : ℝ) (ha : a ≠ 0) (homega : 
   simp only [Matrix.cons_val_one, Matrix.cons_val_zero, hkc2, Real.sin_pi_div_two,
     mul_zero, sub_zero, Real.cos_zero, mul_one]
 
-/-- For a nonzero amplitude the TE10 electric field is not identically zero. -/
+/-- For `a > 0`, `ω > 0` and a nonzero amplitude the TE10 electric field is not identically zero. -/
 lemma te10ElectricField_ne_zero (a E0 omega beta : ℝ) (ha : 0 < a) (hE0 : E0 ≠ 0)
     (homega : 0 < omega) :
     te10ElectricField a E0 omega beta ≠ 0 := by
@@ -543,8 +548,8 @@ lemma te10ElectricField_ne_zero (a E0 omega beta : ℝ) (ha : 0 < a) (hE0 : E0 �
 
 /-! ## H. Cutoff -/
 
-/-- **Cutoff.** A nonnegative propagation constant satisfying the dispersion relation exists
-exactly when `ω ≥ c0 kc`. -/
+/-- **Cutoff.** A nonnegative propagation constant satisfying the dispersion relation exists exactly
+when `ω ≥ c0 kc`, for `a > 0` and `ω > 0`. -/
 theorem exists_nonneg_te10Dispersion_iff (c : SpeedOfLight) (a omega : ℝ) (ha : 0 < a)
     (homega : 0 < omega) :
     (∃ beta : ℝ, 0 ≤ beta ∧ te10Dispersion c a omega beta) ↔
@@ -561,8 +566,8 @@ theorem exists_nonneg_te10Dispersion_iff (c : SpeedOfLight) (a omega : ℝ) (ha 
     exact ⟨propagationConstant c a omega, Real.sqrt_nonneg _,
       te10Dispersion_propagationConstant c a omega ha hcut⟩
 
-/-- At or above cutoff, the nonnegative solutions of the dispersion relation are exactly the
-propagation constant. -/
+/-- For `a > 0`, at or above cutoff, the nonnegative solutions of the dispersion relation are
+exactly the propagation constant. -/
 lemma nonneg_te10Dispersion_iff_eq_propagationConstant (c : SpeedOfLight)
     (a omega beta : ℝ) (ha : 0 < a) (hcut : (c : ℝ) * cutoffWavenumber a ≤ omega) :
     (0 ≤ beta ∧ te10Dispersion c a omega beta) ↔ beta = propagationConstant c a omega := by
@@ -582,7 +587,8 @@ lemma nonneg_te10Dispersion_iff_eq_propagationConstant (c : SpeedOfLight)
     exact ⟨Real.sqrt_nonneg _,
       te10Dispersion_propagationConstant c a omega ha hcut⟩
 
-/-- Cutoff equality: at `ω = c0 kc` the dispersion relation holds exactly for `β = 0`. -/
+/-- Cutoff equality: for `a > 0`, at `ω = c0 kc` the dispersion relation holds exactly for
+`β = 0`. -/
 lemma te10Dispersion_at_cutoff_iff (c : SpeedOfLight) (a beta : ℝ) (ha : 0 < a) :
     te10Dispersion c a ((c : ℝ) * cutoffWavenumber a) beta ↔ beta = 0 := by
   have _ := ha
@@ -601,7 +607,8 @@ lemma te10Dispersion_at_cutoff_iff (c : SpeedOfLight) (a beta : ℝ) (ha : 0 < a
     rw [hβ]
     ring
 
-/-- Below cutoff no real propagation constant satisfies the dispersion relation. -/
+/-- For `a > 0` and `ω > 0`, below cutoff no real propagation constant satisfies the dispersion
+relation. -/
 theorem not_exists_te10Dispersion_below_cutoff (c : SpeedOfLight) (a omega : ℝ)
     (ha : 0 < a) (homega : 0 < omega) (hbelow : omega < (c : ℝ) * cutoffWavenumber a) :
     ¬ ∃ beta : ℝ, te10Dispersion c a omega beta := by

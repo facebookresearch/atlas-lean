@@ -92,19 +92,21 @@ open PhyslibExt.Electromagnetism.SeparableVacuumMaxwell
 
 /-! ## A. The evanescent TE10 field -/
 
-/-- The TE10 cutoff wavenumber `kc = π / a` of a guide of width `a`. -/
+/-- The TE10 cutoff wavenumber `kc = π / a` of a guide of width `a` (`0` at `a = 0`, by the
+convention `x / 0 = 0`). -/
 noncomputable def cutoffWavenumber (a : ℝ) : ℝ := Real.pi / a
 
 /-- The TE10 transverse profile `sin (kc x)`. -/
 noncomputable def te10Profile (a : ℝ) : ℝ → ℝ :=
   fun x => Real.sin (cutoffWavenumber a * x)
 
-/-- The below-cutoff decay rate `κ = sqrt (kc^2 - ω^2 / c0^2)`. -/
+/-- The below-cutoff decay rate `κ = sqrt (kc^2 - ω^2 / c0^2)`; at or above cutoff the radicand is
+not positive and the value is `0` (`√x = 0` for `x < 0`), and `ω^2 / c0^2 = 0` when `c0 = 0`. -/
 noncomputable def decayRate (c0 a omega : ℝ) : ℝ :=
   Real.sqrt (cutoffWavenumber a ^ 2 - omega ^ 2 / c0 ^ 2)
 
-/-- The evanescent longitudinal mode `f(t, z) = -(E0 / ω) exp (-κ z) sin (ω t)` with rate
-`kappa`. -/
+/-- The evanescent longitudinal mode `f(t, z) = -(E0 / ω) exp (-κ z) sin (ω t)` with rate `kappa`;
+with `x / 0 = 0` it is `0` when `ω = 0`. -/
 noncomputable def evanescentMode (E0 omega kappa : ℝ) : ℝ → ℝ → ℝ :=
   fun t z => -(E0 / omega) * Real.exp (-kappa * z) * Real.sin (omega * t)
 
@@ -333,14 +335,14 @@ private lemma decayRate_arg_pos (c : SpeedOfLight) (a omega : ℝ) (homega : 0 <
 
 /-! ## C. The decay rate -/
 
-/-- Strictly below cutoff the decay rate is positive. -/
+/-- For `ω > 0` strictly below cutoff the decay rate is positive. -/
 lemma decayRate_pos (c : SpeedOfLight) (a omega : ℝ) (homega : 0 < omega)
     (hbelow : omega < (c : ℝ) * cutoffWavenumber a) :
     0 < decayRate c a omega := by
   unfold decayRate
   exact Real.sqrt_pos.mpr (decayRate_arg_pos c a omega homega hbelow)
 
-/-- Strictly below cutoff the decay rate squares to `kc^2 - ω^2 / c0^2`. -/
+/-- For `ω > 0` strictly below cutoff the decay rate squares to `kc^2 - ω^2 / c0^2`. -/
 lemma decayRate_sq (c : SpeedOfLight) (a omega : ℝ) (homega : 0 < omega)
     (hbelow : omega < (c : ℝ) * cutoffWavenumber a) :
     decayRate c a omega ^ 2 = cutoffWavenumber a ^ 2 - omega ^ 2 / (c : ℝ) ^ 2 := by
@@ -398,7 +400,8 @@ lemma evanescentMode_modeEquation_iff (c0 a E0 omega kappa : ℝ) (hE0 : E0 ≠ 
   · intro hrate
     exact modeEquation_of_rate_eq c0 a E0 omega kappa hrate
 
-/-- Strictly below cutoff, the evanescent mode with the decay rate solves the mode equation. -/
+/-- For `ω > 0` strictly below cutoff, the evanescent mode with the decay rate solves the mode
+equation. -/
 lemma evanescentMode_decayRate_modeEquation (c : SpeedOfLight) (a E0 omega : ℝ)
     (homega : 0 < omega) (hbelow : omega < (c : ℝ) * cutoffWavenumber a) :
     modeEquation c (cutoffWavenumber a) (evanescentMode E0 omega (decayRate c a omega)) := by
@@ -415,7 +418,7 @@ lemma evanescentMode_decayRate_modeEquation (c : SpeedOfLight) (a E0 omega : ℝ
 
 /-! ## E. Field components -/
 
-/-- The evanescent electric field is `(0, E0 sin (kc x) exp (-κ z) cos (ω t), 0)`. -/
+/-- For `ω ≠ 0`, the evanescent electric field is `(0, E0 sin (kc x) exp (-κ z) cos (ω t), 0)`. -/
 lemma evanescentElectricField_apply (a E0 omega kappa : ℝ) (homega : omega ≠ 0)
     (t x y z : ℝ) :
     evanescentElectricField a E0 omega kappa t x y z =
@@ -438,8 +441,8 @@ lemma evanescentElectricField_apply (a E0 omega kappa : ℝ) (homega : omega ≠
   rw [hEv, partialTime_eq, hmid]
 
 /-- The evanescent magnetic field is
-`(-(κ E0 / ω) sin (kc x) exp (-κ z) sin (ω t), 0, -(kc E0 / ω) cos (kc x) exp (-κ z) sin (ω t))`.
--/
+`(-(κ E0 / ω) sin (kc x) exp (-κ z) sin (ω t), 0, -(kc E0 / ω) cos (kc x) exp (-κ z) sin (ω t))`,
+with `x / 0 = 0` (so it is `0` when `ω = 0`). -/
 lemma evanescentMagneticField_apply (a E0 omega kappa : ℝ) (t x y z : ℝ) :
     evanescentMagneticField a E0 omega kappa t x y z =
       ![-(kappa * E0 / omega * Real.sin (cutoffWavenumber a * x) * Real.exp (-kappa * z) *
@@ -465,8 +468,9 @@ lemma evanescentMagneticField_apply (a E0 omega kappa : ℝ) (t x y z : ℝ) :
 
 /-! ## F. Bulk equations -/
 
-/-- **Bulk theorem for the evanescent mode.** Strictly below cutoff, the evanescent fields with
-the decay rate satisfy the source-free vacuum Maxwell equations at every time and point. -/
+/-- **Bulk theorem for the evanescent mode.** For `ω > 0` strictly below cutoff, the evanescent
+fields with the decay rate satisfy the source-free vacuum Maxwell equations at every time and
+point. -/
 theorem evanescent_sourceFreeVacuumMaxwell (c : SpeedOfLight) (a E0 omega : ℝ)
     (homega : 0 < omega) (hbelow : omega < (c : ℝ) * cutoffWavenumber a) :
     sourceFreeVacuumMaxwell c (evanescentElectricField a E0 omega (decayRate c a omega))
@@ -545,8 +549,8 @@ theorem evanescent_rectangularGuidePECTraces (a b E0 omega kappa : ℝ) (ha : 0 
 
 /-! ## H. Nonvanishing -/
 
-/-- Validation value: at `x = a / 2`, `t = z = 0` and any `y`, the electric component `E_y`
-equals `E0`. -/
+/-- Validation value: for `a ≠ 0` and `ω ≠ 0`, at `x = a / 2`, `t = z = 0` and any `y`, the electric
+component `E_y` equals `E0`. -/
 lemma evanescentElectricField_center (a E0 omega kappa : ℝ) (ha : a ≠ 0)
     (homega : omega ≠ 0) (y : ℝ) :
     evanescentElectricField a E0 omega kappa 0 (a / 2) y 0 1 = E0 := by
@@ -554,7 +558,8 @@ lemma evanescentElectricField_center (a E0 omega kappa : ℝ) (ha : a ≠ 0)
   rw [hEv]
   simp [cutoffWavenumber, harg_half a ha, Real.sin_pi_div_two, Real.exp_zero, Real.cos_zero]
 
-/-- For a nonzero amplitude the evanescent electric field is not identically zero. -/
+/-- For `a > 0`, `ω > 0` and a nonzero amplitude the evanescent electric field is not identically
+zero. -/
 lemma evanescentElectricField_ne_zero (a E0 omega kappa : ℝ) (ha : 0 < a) (hE0 : E0 ≠ 0)
     (homega : 0 < omega) :
     evanescentElectricField a E0 omega kappa ≠ 0 := by
@@ -629,7 +634,7 @@ lemma evanescentFields_eq_exp_smul (a E0 omega kappa : ℝ) (t x y z : ℝ) :
       simp only [mul_zero, Real.exp_zero]
       ring
 
-/-- **Exponential decay on the half-guide.** For a guide of positive width, `ω > 0` and a rate
+/-- **Exponential bound on the half-guide.** For a guide of positive width, `ω > 0` and a rate
 `κ ≥ 0`, on `z ≥ 0` every electric component is bounded by `|E0| exp (-κ z)` and every magnetic
 component by `((κ + kc) |E0| / ω) exp (-κ z)`. -/
 theorem evanescentFields_abs_le (a E0 omega kappa : ℝ) (ha : 0 < a) (homega : 0 < omega)
@@ -914,7 +919,8 @@ lemma not_bddAbove_evanescentElectricField_nonpos (a E0 omega kappa : ℝ) (ha :
 `0 < ω < c0 kc`, the decay rate `κ = sqrt (kc^2 - ω^2 / c0^2)` is positive with
 `κ^2 = kc^2 - ω^2 / c0^2`; the evanescent fields satisfy the source-free vacuum Maxwell
 equations and the PEC traces on all four side walls at every time; the electric field is not
-identically zero; and on the half-guide `z ≥ 0` every component decays like `exp (-κ z)`. -/
+identically zero; and on the half-guide `z ≥ 0` every component is bounded by a multiple of
+`exp (-κ z)`. -/
 theorem te10Evanescent_correct (c : SpeedOfLight) (a b E0 omega : ℝ) (ha : 0 < a)
     (hb : 0 < b) (hE0 : E0 ≠ 0) (homega : 0 < omega)
     (hbelow : omega < (c : ℝ) * cutoffWavenumber a) :

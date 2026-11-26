@@ -187,12 +187,11 @@ def IsNetworkTrajectory {nN nB : ℕ} (P : NetworkPlant nN nB)
     (∀ t : ℝ, ∀ e ∈ P.inductorSet,
       DifferentiableAt ℝ (fun s => x.branchCurrent s e) t)
 
-/-- The trajectory obeys the network laws of the plant at every time in
-`S`: potential voltage, node current balance for the independent
-injection, and the resistor, capacitor and inductor laws.
-The capacitor and inductor laws use derivatives within `S` and
-differentiability within `S`, so the relation depends only on the signal
-values at times of `S`; at an endpoint of an interval they are one-sided. -/
+/-- The trajectory obeys the network laws of the plant at every time in `S`: potential voltage, node
+current balance for the independent injection, and the resistor, capacitor and inductor laws. The
+capacitor and inductor laws use derivatives within `S` and differentiability within `S`, so the
+relation depends only on the signal values at times of `S`; at an endpoint of an interval they are
+one-sided, and at an isolated point of `S` the derivative within `S` is taken to be `0`. -/
 def IsNetworkTrajectoryOn {nN nB : ℕ} (P : NetworkPlant nN nB)
     (x : NetworkTrajectory nN nB) (S : Set ℝ) : Prop :=
   (∀ t ∈ S, x.branchVoltage t = P.incidence.transpose *ᵥ x.potential t) ∧
@@ -259,8 +258,11 @@ lemma IsNetworkTrajectoryOn.congr {nN nB : ℕ} {P : NetworkPlant nN nB}
   · intro t ht e he
     exact (hLdiff t ht e he).congr (hie e) (hie e ht)
 
-/-- Finite-horizon passivity of one trajectory of a plant on an interval:
-the increase of storage is at most the integral of the supply rate. -/
+/-- Finite-horizon passivity of one trajectory of a plant between the times `a` and `b`: the
+increase of storage `E(b) - E(a)` is at most the interval integral of the supply rate from `a` to
+`b`. The integral is oriented, so for `b < a` it is minus the integral from `b` to `a`, and it is
+`0` when the supply rate is not integrable; the intended use is `a ≤ b` with an integrable supply
+rate. -/
 def FiniteHorizonPassiveOn {nN nB : ℕ} (P : NetworkPlant nN nB)
     (x : NetworkTrajectory nN nB) (a b : ℝ) : Prop :=
   plantStorage P x b - plantStorage P x a ≤ ∫ s in a..b, plantSupplyRate P x s
@@ -394,9 +396,9 @@ lemma IsNetworkTrajectoryOn.continuousOn_plantStorage {nN nB : ℕ}
       fun t ht => (hLdiff t ht e he).continuousWithinAt
     exact (continuousOn_const.mul (hi.pow 2)).div_const 2
 
-/-- Storage balance at interior times: if the network laws hold on
-`[a, b]`, then at every time of `(a, b)` storage has derivative supply
-minus resistive loss, read off the canonical storage balance. -/
+/-- Storage balance at interior times: for nonnegative resistances and positive inductances and
+capacitances, if the network laws hold on `[a, b]`, then at every time of `(a, b)` storage has
+derivative supply minus resistive loss, read off the canonical storage balance. -/
 lemma IsNetworkTrajectoryOn.hasDerivAt_plantStorage {nN nB : ℕ}
     {P : NetworkPlant nN nB} {x : NetworkTrajectory nN nB} {a b : ℝ}
     (hP : IsNetworkTrajectoryOn P x (Set.Icc a b))
@@ -433,10 +435,10 @@ lemma IsNetworkTrajectoryOn.hasDerivAt_plantStorage {nN nB : ℕ}
   rw [hE.deriv] at hbalance
   exact hE.congr_deriv hbalance
 
-/-- Finite-horizon passivity under interval-scoped trajectory hypotheses:
-if the network laws hold on `[a, b]`, with continuous supply rate and
-integrable balance rate there, the increase of storage is at most the
-integral of the supply rate. -/
+/-- Finite-horizon passivity under interval-scoped trajectory hypotheses: for a plant with
+nonnegative resistances and positive inductances and capacitances, if `a ≤ b` and the network laws
+hold on `[a, b]`, with continuous supply rate and integrable balance rate there, the increase of
+storage is at most the integral of the supply rate. -/
 lemma plant_finiteHorizonPassive_of_trajectoryOn {nN nB : ℕ} (P : NetworkPlant nN nB)
     (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
     (hL : ∀ e ∈ P.inductorSet, 0 < P.inductance e)
@@ -478,9 +480,10 @@ lemma finiteHorizonPassive_zeroLength {nN nB : ℕ} (P : NetworkPlant nN nB)
     plantStorage P x a - plantStorage P x a ≤ ∫ s in a..a, plantSupplyRate P x s := by
   simp [intervalIntegral.integral_same]
 
-/-- Finite-horizon passivity: on a network trajectory over an interval,
-with continuous supply rate and integrable balance rate, the increase of
-storage is at most the integral of the supply rate. -/
+/-- Finite-horizon passivity: for a plant with nonnegative resistances and positive inductances and
+capacitances, on a network trajectory (the laws holding at every time) and for `a ≤ b`, with
+continuous supply rate and integrable balance rate on `[a, b]`, the increase of storage is at most
+the integral of the supply rate. -/
 lemma plant_finiteHorizonPassive {nN nB : ℕ} (P : NetworkPlant nN nB)
     (x : NetworkTrajectory nN nB) (hP : IsNetworkTrajectory P x)
     (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
@@ -495,11 +498,10 @@ lemma plant_finiteHorizonPassive {nN nB : ℕ} (P : NetworkPlant nN nB)
       (hP.isNetworkTrajectoryOn (uniqueDiffOn_Icc hlt)) hsupply_cont hderiv_int
   · exact finiteHorizonPassive_zeroLength P x _
 
-/-- Headline passivity correctness for a fixed plant: along every
-trajectory storage is nonnegative, along every network trajectory the
-storage derivative is supply minus loss, and every admissible trajectory
-is finite-horizon passive on every interval satisfying the stated
-regularity. -/
+/-- Passivity of a fixed plant with nonnegative resistances and positive inductances and
+capacitances: along every trajectory storage is nonnegative, along every network trajectory the
+storage derivative is supply minus loss, and every admissible trajectory is finite-horizon passive
+on every interval satisfying the stated regularity. -/
 lemma networkPlant_passivity {nN nB : ℕ} (P : NetworkPlant nN nB)
     (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
     (hL : ∀ e ∈ P.inductorSet, 0 < P.inductance e)
@@ -518,10 +520,10 @@ lemma networkPlant_passivity {nN nB : ℕ} (P : NetworkPlant nN nB)
 
 /-! ### D. Validation cases -/
 
-/-- Undamped case under interval-scoped trajectory hypotheses: if the
-network laws hold on `[a, b]` and the supply and loss rates vanish there,
-storage is constant on that interval, not decaying: at every time of
-`[a, b]` it equals its value at `a`. -/
+/-- Undamped case under interval-scoped trajectory hypotheses: for nonnegative resistances and
+positive inductances and capacitances, if `a ≤ b`, the network laws hold on `[a, b]`, the supply and
+loss rates vanish there and the balance rate is integrable there, storage is constant on that
+interval, not decaying: at every time of `[a, b]` it equals its value at `a`. -/
 lemma plantStorage_constant_of_zero_supply_loss_of_trajectoryOn {nN nB : ℕ}
     (P : NetworkPlant nN nB)
     (hR : ∀ e ∈ P.resistorSet, 0 ≤ P.resistance e)
@@ -549,8 +551,9 @@ lemma plantStorage_constant_of_zero_supply_loss_of_trajectoryOn {nN nB : ℕ}
   rw [intervalIntegral.integral_congr hEqOn, intervalIntegral.integral_zero] at hFTC
   exact (sub_eq_zero.mp hFTC.symm)
 
-/-- Undamped case: if supply and loss rates vanish on an interval and the
-trajectory hypotheses hold there, storage is constant on that interval, not
+/-- Undamped case: for nonnegative resistances and positive inductances and capacitances, on a
+network trajectory (the laws holding at every time), if `a ≤ b`, the supply and loss rates vanish on
+`[a, b]` and the balance rate is integrable there, storage is constant on that interval, not
 decaying: at every time of `[a, b]` it equals its value at `a`. -/
 lemma plantStorage_constant_of_zero_supply_loss {nN nB : ℕ} (P : NetworkPlant nN nB)
     (x : NetworkTrajectory nN nB) (hP : IsNetworkTrajectory P x)

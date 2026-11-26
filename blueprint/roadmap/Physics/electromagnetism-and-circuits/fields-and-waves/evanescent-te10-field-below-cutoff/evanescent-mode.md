@@ -1,0 +1,11 @@
+# Longitudinal factor of the evanescent TE10 field
+
+For a real amplitude `E₀`, frequency `ω` and rate `κ`, the longitudinal factor of the evanescent
+field is
+
+`f(t, z) = -(E₀/ω) e^{-κz} sin(ωt)`.
+
+With the convention `x/0 = 0` it is identically `0` when `ω = 0`. The rate is a free parameter.
+For a speed of light `c` and `0 < ω < c k_c`, strictly below cutoff, the evanescent fields built
+from this factor with the [decay rate](decay-rate.md) as rate satisfy the source-free
+[vacuum Maxwell equations](evanescent-source-free-vacuum-maxwell.md).

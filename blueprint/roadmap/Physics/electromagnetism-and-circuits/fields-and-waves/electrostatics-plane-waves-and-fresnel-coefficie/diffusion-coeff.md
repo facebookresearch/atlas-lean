@@ -1,0 +1,8 @@
+# Einstein diffusion coefficient
+
+For reals `μ` (mobility), `kB` (Boltzmann constant), `T` (temperature) and `q` (signed carrier
+charge), `D = μ kB T / |q|`, the Einstein relation solved for `D`; for `μ ≠ 0` and `q ≠ 0` it gives
+the
+[ratio form](../../electronics-and-instrumentation/ideal-diode-as-a-network-port/einstein-ratio-eq-thermal-voltage.md)
+`D / μ = kB T / |q|`. With the convention `x / 0 = 0` it is `0` when `q = 0`. In the physical
+reading `kB, T > 0`, `q ≠ 0` and `μ ≥ 0`, the carrier sign being carried by `q`.

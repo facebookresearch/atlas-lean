@@ -59,14 +59,15 @@ open Real
 noncomputable def shortDipoleIntensity (K θ : ℝ) : ℝ :=
   K * Real.sin θ ^ 2
 
-/-- Total radiated power of an azimuthally symmetric intensity pattern `U(θ)`, integrated
-against the solid-angle measure `sin θ dθ dφ` over `θ ∈ [0, π]`, `φ ∈ [0, 2π]`. -/
+/-- Total radiated power of an azimuthally symmetric intensity pattern `U(θ)`, integrated against
+the solid-angle measure `sin θ dθ dφ` over `θ ∈ [0, π]`, `φ ∈ [0, 2π]` (the inner integral is `0`
+when `U θ * sin θ` is not integrable on `[0, π]`). -/
 noncomputable def radiatedPower (U : ℝ → ℝ) : ℝ :=
   ∫ _φ in (0 : ℝ)..(2 * π), ∫ θ in (0 : ℝ)..π, U θ * Real.sin θ
 
 /-- Directivity `D(θ) = 4π U(θ) / P_rad`, for a pattern of positive radiated power. For zero
 radiated power the value is `0` (`x / 0 = 0`), which is not a directivity
-(`directivity_shortDipoleIntensity_zero_ne`); the results that use it assume `P_rad ≠ 0`. -/
+(`directivity_shortDipoleIntensity_zero_ne`). -/
 noncomputable def directivity (U : ℝ → ℝ) (θ : ℝ) : ℝ :=
   4 * π * U θ / radiatedPower U
 
@@ -79,7 +80,8 @@ coefficient is four times smaller. -/
 noncomputable def shortDipoleIntensityCoeff (η k Ipeak l : ℝ) : ℝ :=
   η * k ^ 2 * Ipeak ^ 2 * l ^ 2 / (32 * π ^ 2)
 
-/-- Radiation resistance in the peak-amplitude convention `P_rad = ½ I_peak² R_rad`. -/
+/-- Radiation resistance in the peak-amplitude convention `P_rad = ½ I_peak² R_rad`; with
+`x / 0 = 0` it is `0` when `Ipeak = 0`. -/
 noncomputable def radiationResistance (Prad Ipeak : ℝ) : ℝ :=
   2 * Prad / Ipeak ^ 2
 
@@ -96,7 +98,7 @@ private theorem pi_div_two_mem_Icc : (π / 2 : ℝ) ∈ Set.Icc 0 π := by
   · linarith [Real.pi_pos]
   · linarith [Real.pi_pos]
 
-/-- **Short-dipole radiated power** `P_rad = 8πK/3`. -/
+/-- **Short-dipole radiated power** `P_rad = 8πK/3`, for `K > 0`. -/
 lemma radiatedPower_shortDipoleIntensity (K : ℝ) (hK : 0 < K) :
     radiatedPower (shortDipoleIntensity K) = 8 * π * K / 3 := by
   have hfun : (fun θ : ℝ => shortDipoleIntensity K θ * Real.sin θ)
@@ -109,7 +111,7 @@ lemma radiatedPower_shortDipoleIntensity (K : ℝ) (hK : 0 < K) :
     intervalIntegral.integral_const, smul_eq_mul]
   ring
 
-/-- **Short-dipole directivity** `D(θ) = 3 sin²θ / 2`. -/
+/-- **Short-dipole directivity** `D(θ) = 3 sin²θ / 2`, for `K > 0`. -/
 lemma directivity_shortDipoleIntensity (K : ℝ) (hK : 0 < K) (θ : ℝ) :
     directivity (shortDipoleIntensity K) θ = 3 * Real.sin θ ^ 2 / 2 := by
   have hP := radiatedPower_shortDipoleIntensity K hK
@@ -123,7 +125,7 @@ lemma directivity_shortDipoleIntensity (K : ℝ) (hK : 0 < K) (θ : ℝ) :
   rw [div_eq_iff hden]
   ring
 
-/-- **Maximum directivity** `3/2`: it is the greatest value of `D` on `θ ∈ [0, π]`. -/
+/-- **Maximum directivity** `3/2`: it is the greatest value of `D` on `θ ∈ [0, π]`, for `K > 0`. -/
 lemma isGreatest_directivity_shortDipoleIntensity (K : ℝ) (hK : 0 < K) :
     IsGreatest (directivity (shortDipoleIntensity K) '' Set.Icc 0 π) (3 / 2) := by
   constructor
@@ -137,7 +139,7 @@ lemma isGreatest_directivity_shortDipoleIntensity (K : ℝ) (hK : 0 < K) :
     linarith
 
 /-- **Short-dipole radiation resistance** `R_rad = η k² l² / (6π)` for
-`K = η k² I_peak² l² / (32 π²)`. -/
+`K = η k² I_peak² l² / (32 π²)` and positive `η`, `k`, `I_peak` and `l`. -/
 lemma radiationResistance_shortDipole (η k Ipeak l : ℝ) (hη : 0 < η) (hk : 0 < k)
     (hIpeak : 0 < Ipeak) (hl : 0 < l) :
     radiationResistance
@@ -194,7 +196,7 @@ lemma radiatedPower_directivity (U : ℝ → ℝ) (hU : radiatedPower U ≠ 0) :
         exact hUeq.symm
     _ = 4 * π := div_mul_cancel₀ _ hU
 
-/-- Validation: the maximum `3/2` is attained on `[0, π]` exactly at `θ = π/2`. -/
+/-- Validation: for `K > 0`, the maximum `3/2` is attained on `[0, π]` exactly at `θ = π/2`. -/
 lemma directivity_shortDipoleIntensity_eq_max_iff (K : ℝ) (hK : 0 < K) (θ : ℝ)
     (hθ : θ ∈ Set.Icc 0 π) :
     directivity (shortDipoleIntensity K) θ = 3 / 2 ↔ θ = π / 2 := by
@@ -216,13 +218,13 @@ lemma shortDipoleIntensity_on_axis (K : ℝ) :
     shortDipoleIntensity K 0 = 0 ∧ shortDipoleIntensity K π = 0 := by
   simp [shortDipoleIntensity, Real.sin_zero, Real.sin_pi]
 
-/-- Validation: null directivity on the dipole axis, `θ = 0` and `θ = π`. -/
+/-- Validation: for `K > 0`, null directivity on the dipole axis, `θ = 0` and `θ = π`. -/
 lemma directivity_shortDipoleIntensity_on_axis (K : ℝ) (hK : 0 < K) :
     directivity (shortDipoleIntensity K) 0 = 0 ∧ directivity (shortDipoleIntensity K) π = 0 := by
   rw [directivity_shortDipoleIntensity K hK, directivity_shortDipoleIntensity K hK]
   simp [Real.sin_zero, Real.sin_pi]
 
-/-- Validation: full angular normalization of the short-dipole directivity,
+/-- Validation: for `K > 0`, full angular normalization of the short-dipole directivity,
 `∫∫ D(θ) sin θ dθ dφ = 4π`. -/
 lemma radiatedPower_directivity_shortDipoleIntensity (K : ℝ) (hK : 0 < K) :
     radiatedPower (directivity (shortDipoleIntensity K)) = 4 * π := by
@@ -243,8 +245,8 @@ lemma radiatedPower_shortDipoleIntensity_zero :
   rw [hfun]
   simp
 
-/-- Validation, `K = 0`: the ratio-defined directivity is not the short-dipole pattern
-(at `θ = π/2` it is not `3/2`), so `K > 0` is needed for the directivity claim. -/
+/-- At `K = 0` the ratio-defined directivity is not the short-dipole pattern (at `θ = π/2` it is
+not `3/2`), so the directivity claim fails at `K = 0`; it is proved for `K > 0`. -/
 lemma directivity_shortDipoleIntensity_zero_ne :
     directivity (shortDipoleIntensity 0) (π / 2) ≠ 3 / 2 := by
   have hP := radiatedPower_shortDipoleIntensity_zero

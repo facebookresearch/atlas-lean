@@ -239,9 +239,10 @@ lemma integral_rmsWaveform_mul_rmsWaveform_over_period
   field_simp [hω']
   ring
 
-/-- Headline result: the average of `v * i` over any complete period
-`2 * π / ω`, for RMS phasors `v` and `i` sharing the frequency `ω` and
-the `exp (+i * ω * t)` convention, is `Re (V * conj I)`. -/
+/-- For `ω > 0` and every start `a`, the average of `v * i` over the complete period
+`[a, a + 2 * π / ω]`, for RMS phasors `v` and `i` sharing the frequency `ω` and the
+`exp (+i * ω * t)` convention, is `Re (V * conj I)`; equivalently, the integral over that period is
+`(2 * π / ω) * Re (V * conj I)`. -/
 lemma average_rmsWaveform_mul_rmsWaveform
     (V I : ℂ) {ω : ℝ} (hω : 0 < ω) (a : ℝ) :
     (∫ t in a..(a + 2 * Real.pi / ω),
@@ -256,9 +257,9 @@ lemma average_rmsWaveform_mul_rmsWaveform
   rw [h]
   field_simp [hT]
 
-/-- In-phase validation case: a waveform averaged against itself
-gives the canonical norm square `Complex.normSq V`, i.e.
-`Re (V * conj V)`. -/
+/-- For `ω > 0` and every start `a`, a waveform averaged against itself over the period
+`[a, a + 2 * π / ω]` gives the norm square `Complex.normSq V`, i.e.
+`Re (V * conj V) = (Re V) ^ 2 + (Im V) ^ 2`. -/
 lemma average_rmsWaveform_mul_self
     (V : ℂ) {ω : ℝ} (hω : 0 < ω) (a : ℝ) :
     (∫ t in a..(a + 2 * Real.pi / ω),
@@ -277,8 +278,8 @@ lemma average_rmsWaveform_mul_self_re_im
   rw [h, Complex.normSq_apply]
   ring
 
-/-- Quadrature validation case: a waveform averaged against the
-waveform of the phasor rotated by `i` gives zero. -/
+/-- For `ω > 0` and every start `a`, a waveform averaged over the period `[a, a + 2 * π / ω]`
+against the waveform of the phasor rotated by `i` gives zero. -/
 lemma average_rmsWaveform_mul_quadrature
     (V : ℂ) {ω : ℝ} (hω : 0 < ω) (a : ℝ) :
     (∫ t in a..(a + 2 * Real.pi / ω),
@@ -319,9 +320,10 @@ lemma integral_peakWaveform_mul_peakWaveform_over_period
   rw [hmain, h]
   field_simp [hω']
 
-/-- Peak-phasor convention: omitting the `sqrt(2)` RMS factor, the
-average of the product over any complete period has the factor
-`1 / 2`, not the RMS formula. -/
+/-- Peak-phasor convention: for `ω > 0` and every start `a`, omitting the `sqrt(2)` RMS factor, the
+average of the product over the period `[a, a + 2 * π / ω]` has the factor `1 / 2`, not the RMS
+formula; equivalently, the integral over that period is
+`(2 * π / ω) * (1 / 2) * Re (V * conj I)`. -/
 lemma average_peakWaveform_mul_peakWaveform
     (V I : ℂ) {ω : ℝ} (hω : 0 < ω) (a : ℝ) :
     (∫ t in a..(a + 2 * Real.pi / ω),

@@ -101,20 +101,23 @@ open PhyslibExt.Electromagnetism.ConductingPlaneWave
 
 /-! ## A. Good-conductor quantities -/
 
-/-- Displacement-to-conduction current ratio `rho = omega * epsilon / sigma`. -/
+/-- Displacement-to-conduction current ratio `rho = omega * epsilon / sigma` (`0` at `sigma = 0`, by
+the convention `x / 0 = 0`). -/
 noncomputable def conductionRatio (epsilon omega sigma : ℝ) : ℝ :=
   omega * epsilon / sigma
 
-/-- Good-conductor attenuation `alpha0 = sqrt (omega * mu * sigma / 2)`. -/
+/-- Good-conductor attenuation `alpha0 = sqrt (omega * mu * sigma / 2)` (`0` when
+`omega * mu * sigma ≤ 0`). -/
 noncomputable def goodConductorAttenuation (mu omega sigma : ℝ) : ℝ :=
   Real.sqrt (omega * mu * sigma / 2)
 
-/-- Good-conductor skin depth `delta0 = 1 / alpha0`. -/
+/-- Good-conductor skin depth `delta0 = 1 / alpha0` (`0` when `alpha0 = 0`, by the convention
+`x / 0 = 0`). -/
 noncomputable def goodConductorSkinDepth (mu omega sigma : ℝ) : ℝ :=
   1 / goodConductorAttenuation mu omega sigma
 
-/-- Relative attenuation error `1 - alpha / alpha0` of the good-conductor
-approximation against the exact attenuation root. -/
+/-- Relative attenuation error `1 - alpha / alpha0` of the good-conductor approximation against the
+exact attenuation root (`1` when `alpha0 = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def relativeAttenuationError (epsilon mu omega sigma : ℝ) : ℝ :=
   1 - attenuationConstant epsilon mu omega sigma /
     goodConductorAttenuation mu omega sigma
@@ -134,7 +137,7 @@ lemma goodConductorAttenuation_pos (mu omega sigma : ℝ)
   rw [Real.sqrt_pos]
   positivity
 
-/-- `delta0 = sqrt (2 / (omega * mu * sigma))`. -/
+/-- For `mu, omega, sigma > 0`, `delta0 = sqrt (2 / (omega * mu * sigma))`. -/
 lemma goodConductorSkinDepth_eq_sqrt (mu omega sigma : ℝ)
     (hmu : 0 < mu) (homega : 0 < omega) (hsigma : 0 < sigma) :
     goodConductorSkinDepth mu omega sigma =
@@ -146,7 +149,7 @@ lemma goodConductorSkinDepth_eq_sqrt (mu omega sigma : ℝ)
 
 /-! ## B. Normalized exact root and the relative error bound -/
 
-/-- Normalization of the exact attenuation root:
+/-- Normalization of the exact attenuation root: for `epsilon, mu, omega, sigma > 0`,
 `alpha / alpha0 = sqrt (sqrt (1 + rho ^ 2) - rho)`. -/
 lemma attenuationConstant_div_goodConductorAttenuation
     (epsilon mu omega sigma : ℝ)
@@ -222,8 +225,8 @@ lemma attenuationConstant_div_goodConductorAttenuation
   rw [← hdiv2]
   exact (Real.sqrt_sq hnn).symm
 
-/-- Lower bound: the exact attenuation never exceeds the good-conductor
-value, `0 <= 1 - alpha / alpha0`. -/
+/-- Lower bound: for `epsilon, mu, omega, sigma > 0`, the exact attenuation never exceeds the
+good-conductor value, `0 <= 1 - alpha / alpha0`. -/
 lemma relativeAttenuationError_nonneg (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 < sigma) :
@@ -246,7 +249,7 @@ lemma relativeAttenuationError_nonneg (epsilon mu omega sigma : ℝ)
     linarith
   linarith
 
-/-- Upper bound: `1 - alpha / alpha0 <= rho`. -/
+/-- Upper bound: for `epsilon, mu, omega, sigma > 0`, `1 - alpha / alpha0 <= rho`. -/
 lemma relativeAttenuationError_le_conductionRatio
     (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
@@ -304,8 +307,8 @@ lemma relativeAttenuationError_le_conductionRatio
       _ ≤ Real.sqrt (Real.sqrt (1 + conductionRatio epsilon omega sigma ^ 2) -
           conductionRatio epsilon omega sigma) := Real.sqrt_nonneg _
 
-/-- The upper bound is never attained: `1 - alpha / alpha0 < rho` for
-every positive conductivity, so `rho` is a weak bound. -/
+/-- The upper bound is never attained: for `epsilon, mu, omega, sigma > 0`,
+`1 - alpha / alpha0 < rho`, so `rho` is a weak bound. -/
 lemma relativeAttenuationError_lt_conductionRatio
     (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
@@ -363,7 +366,7 @@ lemma relativeAttenuationError_lt_conductionRatio
 
 /-! ## C. Skin-depth bounds -/
 
-/-- `delta0 <= delta` for every positive conductivity. -/
+/-- `delta0 <= delta` for `epsilon, mu, omega > 0` and every positive conductivity. -/
 lemma goodConductorSkinDepth_le_skinDepth (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 < sigma) :
@@ -384,7 +387,7 @@ lemma goodConductorSkinDepth_le_skinDepth (epsilon mu omega sigma : ℝ)
   unfold goodConductorSkinDepth skinDepth
   exact one_div_le_one_div_of_le hα hle
 
-/-- `delta <= delta0 / (1 - rho)` when `rho < 1`. -/
+/-- `delta <= delta0 / (1 - rho)` when `rho < 1`, for `epsilon, mu, omega, sigma > 0`. -/
 lemma skinDepth_le_goodConductorSkinDepth_div (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 < sigma) (hrho : conductionRatio epsilon omega sigma < 1) :
@@ -411,10 +414,9 @@ lemma skinDepth_le_goodConductorSkinDepth_div (epsilon mu omega sigma : ℝ)
   rw [div_div]
   exact one_div_le_one_div_of_le (mul_pos hα0 h1ρ) (by linarith [hle])
 
-/-- Headline: the relative attenuation error of the good-conductor
-approximation lies in `[0, rho]`; for `0 <= rho < 1` the exact skin
-depth lies in `[delta0, delta0 / (1 - rho)]`; and
-`delta0 = sqrt (2 / (omega * mu * sigma))`. -/
+/-- Headline: for `epsilon, mu, omega, sigma > 0`, the relative attenuation error of the
+good-conductor approximation lies in `[0, rho]`; for `0 <= rho < 1` the exact skin depth lies in
+`[delta0, delta0 / (1 - rho)]`; and `delta0 = sqrt (2 / (omega * mu * sigma))`. -/
 lemma skinDepthApproximation_error (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 < sigma) :
@@ -442,8 +444,8 @@ lemma skinDepthApproximation_error (epsilon mu omega sigma : ℝ)
 
 /-! ## D. Forward roots of the dispersion equation -/
 
-/-- Any root of the squared propagation equation with positive imaginary
-part is the forward root, so its real part is the attenuation constant. -/
+/-- For `epsilon, mu, omega > 0` and `sigma >= 0`, any root of the squared propagation equation with
+positive imaginary part is the forward root, so its real part is the attenuation constant. -/
 lemma forwardRoot_re_eq_attenuationConstant (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
     (hsigma : 0 ≤ sigma) (gamma : ℂ)
@@ -479,8 +481,8 @@ lemma forwardRoot_re_eq_attenuationConstant (epsilon mu omega sigma : ℝ)
     rw [heq]
     exact hre
 
-/-- The headline bounds stated for an arbitrary forward root `gamma` of
-the squared propagation equation, with `alpha = gamma.re` and
+/-- The headline bounds, for `epsilon, mu, omega, sigma > 0`, stated for an arbitrary forward root
+`gamma` of the squared propagation equation (positive imaginary part), with `alpha = gamma.re` and
 `delta = 1 / gamma.re`. -/
 lemma forwardRoot_skinDepthApproximation_error (epsilon mu omega sigma : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega)
@@ -512,9 +514,9 @@ lemma forwardRoot_skinDepthApproximation_error (epsilon mu omega sigma : ℝ)
 
 /-! ## E. Weak-bound and zero-conductivity checks -/
 
-/-- At `rho = 1` (that is, `sigma = omega * epsilon`) the exact ratio is
-`alpha / alpha0 = sqrt (sqrt 2 - 1)`, about `0.644`; the relative error
-`0.356` is well inside the bound `rho = 1`. -/
+/-- For `epsilon, mu, omega > 0`, at `rho = 1` (that is, `sigma = omega * epsilon`) the exact ratio
+is `alpha / alpha0 = sqrt (sqrt 2 - 1)`, about `0.644`; the relative error `0.356` is well inside
+the bound `rho = 1`. -/
 lemma attenuation_ratio_at_unit_conductionRatio (epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) :
     attenuationConstant epsilon mu omega (omega * epsilon) /
@@ -528,8 +530,8 @@ lemma attenuation_ratio_at_unit_conductionRatio (epsilon mu omega : ℝ)
   have h12 : (1 : ℝ) + 1 ^ 2 = 2 := by norm_num
   rw [hnorm, hrho, h12]
 
-/-- At `sigma = 0` there is no finite skin depth: the attenuation is zero,
-so `alpha * delta` is not `1`. -/
+/-- For `epsilon, mu, omega > 0`, at `sigma = 0` there is no finite skin depth: the attenuation is
+zero, so `alpha * delta` is not `1` (by the convention `x / 0 = 0`, `delta = 0`). -/
 lemma attenuationConstant_mul_skinDepth_zero_sigma (epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) :
     attenuationConstant epsilon mu omega 0 * skinDepth epsilon mu omega 0 ≠ 1 := by
@@ -538,9 +540,9 @@ lemma attenuationConstant_mul_skinDepth_zero_sigma (epsilon mu omega : ℝ)
   rw [h0]
   simp
 
-/-- Violated premise: at `sigma = 0` the error bound fails for the
-library's total division, since the ratio is `0` and the relative error
-is `1`. The positive-conductivity hypothesis is therefore needed. -/
+/-- Violated premise: for `epsilon, mu, omega > 0`, at `sigma = 0` the error bound fails for the
+library's total division, since the ratio is `0` and the relative error is `1`. The
+positive-conductivity hypothesis is therefore needed. -/
 lemma conductionRatio_lt_relativeAttenuationError_zero_sigma
     (epsilon mu omega : ℝ)
     (hepsilon : 0 < epsilon) (hmu : 0 < mu) (homega : 0 < omega) :

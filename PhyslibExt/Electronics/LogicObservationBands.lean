@@ -57,10 +57,11 @@ output bit. Nothing here is a transistor, cell or netlist claim.
 
 namespace PhyslibExt.Electronics.LogicObservationBands
 
-/-- The physical observation of a voltage: `some false` for low,
-`some true` for high, and `none` inside the invalid band
-`(Vil, Vih)`. At the thresholds themselves the observation is the
-corresponding Boolean value. -/
+/-- The physical observation of a voltage: `some false` for low (`v <= Vil`, tested first),
+`some true` for high (`Vih <= v`), and `none` otherwise. For `Vil < Vih` the value `none` fills
+the invalid band `(Vil, Vih)`, and at the thresholds themselves the observation is the
+corresponding Boolean value; for `Vih <= Vil` there is no invalid band and every `v > Vil` is
+observed high. -/
 noncomputable def observe (Vil Vih v : ℝ) : Option Bool :=
   if v <= Vil then some false
   else if Vih <= v then some true
@@ -72,7 +73,7 @@ lemma observe_eq_false_of_le {Vil v : ℝ} (hv : v <= Vil) (Vih : ℝ) :
   unfold observe
   simp [hv]
 
-/-- A voltage at or above the high threshold is observed high. -/
+/-- For `Vil < Vih`, a voltage at or above the high threshold is observed high. -/
 lemma observe_eq_true_of_le {Vil Vih v : ℝ} (hVilVih : Vil < Vih)
     (hv : Vih <= v) :
     observe Vil Vih v = some true := by
@@ -80,7 +81,7 @@ lemma observe_eq_true_of_le {Vil Vih v : ℝ} (hVilVih : Vil < Vih)
   unfold observe
   simp [h, hv]
 
-/-- The observation is invalid exactly on the open gap band. -/
+/-- For `Vil < Vih`, the observation is invalid exactly on the open gap band `(Vil, Vih)`. -/
 lemma observe_eq_none_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) :
     observe Vil Vih v = none ↔ Vil < v ∧ v < Vih := by
   by_cases h1 : v <= Vil
@@ -106,7 +107,7 @@ lemma observe_eq_none_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) :
       · intro _
         rfl
 
-/-- The observation, when defined, agrees with the two threshold
+/-- For `Vil < Vih`, the observation, when defined, agrees with the two threshold
 predicates and with no other Boolean value. -/
 lemma observe_eq_some_iff {Vil Vih v : ℝ} (hVilVih : Vil < Vih) (b : Bool) :
     observe Vil Vih v = some b ↔ (b = false ∧ v <= Vil) ∨ (b = true ∧ Vih <= v) := by
@@ -154,7 +155,7 @@ lemma observe_noisy_low {Vol Vil Vih y e : ℝ} (hVol : Vol < Vil)
   have he' : e ≤ |e| := le_abs_self e
   linarith
 
-/-- High-side noise preservation: a promised high output `y >= Voh`,
+/-- High-side noise preservation: for `Vil < Vih < Voh`, a promised high output `y >= Voh`,
 perturbed by noise of absolute value below the high margin
 `Voh - Vih`, is still observed high. -/
 lemma observe_noisy_high {Voh Vil Vih y e : ℝ} (hVilVih : Vil < Vih)

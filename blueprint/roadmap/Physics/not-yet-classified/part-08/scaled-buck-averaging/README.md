@@ -1,6 +1,3 @@
 # Scaled Buck Averaging
 
-## E. Error bounds
-
-- [Scaled-state switched-to-averaged error bound for the ideal buck](scaled-state-switched-averaged-error-le.md)
-- [Scaled ideal-buck averaging bound](buck-switched-averaged-error-le.md)
+The pages of this module are now under [Buck converter: stored energy and averaging](../../../electromagnetism-and-circuits/circuit-theory/buck-converter-stored-energy-and-averaging/README.md).
