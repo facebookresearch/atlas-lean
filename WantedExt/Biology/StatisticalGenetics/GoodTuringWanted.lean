@@ -21,9 +21,11 @@ probability of the species seen exactly `r` times in a sample of size `N` is
 `(r + 1) E[n_{r+1}(N + 1)] / (N + 1)`; for `r = 0`, the expected missing mass is
 `E[M₀(N)] = E[n₁(N + 1)] / (N + 1)`.
 
-Recorded here: the two exact identities, in total-mass form, for samples drawn independently
-from `p`. The text read locally is an OCR copy whose displayed equations are partly garbled; the
-equation numbers follow Good (1953), and the total-mass form is derived from eq. 15 and eq. 11.
+Recorded here: the identity for species seen `r` times, in total-mass form, for samples drawn
+independently from `p`. The definitions and the case `r = 0` (`expect_missingMass`) are in
+`Domains.Biology.StatisticalGenetics.GoodTuring`, which this module imports. The text read locally
+is an OCR copy whose displayed equations are partly garbled; the equation numbers follow Good
+(1953), and the total-mass form is derived from eq. 15 and eq. 11.
 
 Sources: I. J. Good, "The population frequencies of species and the estimation of population
 parameters", Biometrika 40 (1953) 237–264, doi:10.1093/biomet/40.3-4.237, eqs. 6, 9, 11 and 15.

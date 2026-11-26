@@ -15,6 +15,22 @@ public import Mathlib.Data.Fintype.Pi
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.Ring
 
+/-!
+# The Good–Turing identity for the missing mass
+
+Draw an independent sample `ω : Fin N → α` of size `N` from a distribution `p` on a finite set
+`α` of species. This file defines the probability `sampleProb p ω` of the ordered sample, the
+number `count ω a` of occurrences of the species `a`, the number `freqOfFreq ω r` of species seen
+exactly `r` times, their total population frequency `massSeen p ω r`, and the expectation
+`expect N p f` over samples of size `N`. It proves Good's exact identity for the missing mass,
+`E[M₀(N)] = E[n₁(N + 1)] / (N + 1)` (`expect_missingMass`).
+
+## References
+
+* I. J. Good, "The population frequencies of species and the estimation of population
+  parameters", Biometrika 40 (1953) 237–264, doi:10.1093/biomet/40.3-4.237, eqs. 9 and 15.
+-/
+
 @[expose] public section
 
 namespace WantedExt.Biology.StatisticalGenetics.GoodTuringWanted
