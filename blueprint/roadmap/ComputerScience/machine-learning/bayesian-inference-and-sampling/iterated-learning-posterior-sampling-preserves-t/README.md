@@ -18,3 +18,4 @@
 - [Uninformative data](transmission-kernel-eq-prior.md)
 - [Disjoint likelihood supports](transmission-kernel-eq-pure.md)
 - [Bind eq of eq pure](bind-eq-of-eq-pure.md)
+- [Stationarity of iterated Bayesian learning](transmission-stationary.md)

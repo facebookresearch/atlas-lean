@@ -21,3 +21,4 @@
 - [Pieces LE relu comp](pieces-le-relu-comp.md)
 - [Node pieces LE](node-pieces-le.md)
 - [Net pieces LE](net-pieces-le.md)
+- [Bounded number of affine pieces](pieces-le.md)

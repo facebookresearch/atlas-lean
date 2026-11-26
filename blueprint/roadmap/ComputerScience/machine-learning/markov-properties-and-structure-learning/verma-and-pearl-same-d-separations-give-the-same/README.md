@@ -11,3 +11,5 @@
 - [Collider iff not mem of d Separated Pa](collider-iff-not-mem-of-d-separated-pa.md)
 - [Adjacent iff of d Separated Pa iff](adjacent-iff-of-d-separated-pa-iff.md)
 - [Is VStructure iff of d Separated Pa iff](is-vstructure-iff-of-d-separated-pa-iff.md)
+- [Verma–Pearl characterization of Markov equivalence](markov-equivalent-iff-d-separated-pa-iff.md)
+- [Verma–Pearl characterization of Markov equivalence for Bayesian networks](markov-equivalent-iff-d-separated-iff.md)

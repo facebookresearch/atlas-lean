@@ -18,3 +18,4 @@
 - [Code WS1 STerm injective](code-ws1-sterm-injective.md)
 - [Code WS1 S](code-ws1-s.md)
 - [Code WS1 S injective](code-ws1-s-injective.md)
+- [WS1S formulas](ws1-sformula.md)

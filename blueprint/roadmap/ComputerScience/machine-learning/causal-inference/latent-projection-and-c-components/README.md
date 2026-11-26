@@ -16,3 +16,8 @@
 - [Lt](lt.md)
 - [Latent Projection dir irrefl](latent-projection-dir-irrefl.md)
 - [Is Descendant iff refl Trans Gen latent Projection](is-descendant-iff-refl-trans-gen-latent.md)
+- [Acyclic directed mixed graph](admg.md)
+- [C-component](c-component.md)
+- [Latent projection](latent-projection.md)
+- [Bidirected edges of the latent projection](latent-projection-bidir-adj-iff.md)
+- [Directed edges of the latent projection](latent-projection-dir-iff.md)

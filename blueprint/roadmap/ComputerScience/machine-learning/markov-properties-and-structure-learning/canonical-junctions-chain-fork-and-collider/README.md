@@ -9,3 +9,4 @@
 - [Berkson Net](berkson-net.md)
 - [Berkson Net marginal collider](berkson-net-marginal-collider.md)
 - [Berkson Net cond Indep parents](berkson-net-cond-indep-parents.md)
+- [Collider junction (Berkson's paradox)](berkson-net-not-cond-indep-given-collide.md)

@@ -8,3 +8,4 @@
 - [Single](single.md)
 - [Tent Net](tent-net.md)
 - [Tent Net forward](tent-net-forward.md)
+- [Iterated tent map](tent-iter.md)

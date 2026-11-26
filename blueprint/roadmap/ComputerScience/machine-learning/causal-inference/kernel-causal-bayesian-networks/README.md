@@ -23,3 +23,8 @@
 - [Discrete embedding](to-kernel-cbn-joint-singleton.md)
 - [Std Simplex Measure single](std-simplex-measure-single.md)
 - [To Kernel CBN intervene](to-kernel-cbn-intervene.md)
+- [Kernel causal Bayesian network](kernel-cbn.md)
+- [Joint law of a kernel causal Bayesian network](joint.md)
+- [Intervention](intervene.md)
+- [Map joint intervene apply eq dirac](map-joint-intervene-apply-eq-dirac.md)
+- [Joint law of a discrete Bayesian network as a density](to-kernel-cbn-joint-eq-with-density.md)
