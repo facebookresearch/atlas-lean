@@ -14,6 +14,9 @@ Its positive extension to continuous functions on the cube is represented by a f
 
 ## Sources
 
+- T. H. Hildebrandt and I. J. Schoenberg, *On linear functional operations and the moment problem
+  for a finite interval in one or several dimensions*, Ann. of Math. 34 (1933), 317–328.
+  The cube criterion is the positive-measure case of their moment theorem.
 - F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921), for the
   one-dimensional criterion.
 - O. Knill, *Some fundamental theorems in mathematics*, §115 “Moments”, p. 52, describes

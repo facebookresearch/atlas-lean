@@ -36,6 +36,9 @@ import Mathlib.Tactic.Ring
 `hausdorff_positivity` characterizes the moments of finite positive measures on the cube by
 nonnegativity of all iterated backward differences.
 
+The cube criterion is the positive-measure case of the moment theorem of T. H. Hildebrandt and
+I. J. Schoenberg, *On linear functional operations and the moment problem for a finite interval
+in one or several dimensions*, Ann. of Math. 34 (1933), 317–328.
 F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921), gives the
 one-dimensional criterion. O. Knill, *Some fundamental theorems in mathematics*,
 arXiv:1807.08416v4, §115 “Moments”, p. 52, describes positivity in several dimensions.
@@ -378,9 +381,12 @@ $a_n = \int_{[0,1]^d} x^n \, d\mu(x)$ for every multi-index $n \in \mathbb{N}^d$
 $x^n = \prod_i x_i^{n_i}$, if and only if $(\Delta^k a)_n \ge 0$ for all multi-indices $k, n$ with
 $k \le n$ coordinatewise, where $\Delta^k a$ is the iterated backward difference of $a$.
 
-Source: F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921). Knill, *Some
-fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem
-`hausdorff_positivity_criterion`. -/
+Source: The cube criterion is the positive-measure case of the moment theorem of T. H. Hildebrandt
+and I. J. Schoenberg, *On linear functional operations and the moment problem for a finite interval
+in one or several dimensions*, Ann. of Math. 34 (1933), 317–328. For the one-dimensional criterion,
+see F. Hausdorff, *Summationsmethoden und Momentfolgen I, II*, Math. Z. 9 (1921). O. Knill, *Some
+fundamental theorems in mathematics*, arXiv:1807.08416v4, §115, p. 52, surveys the cube criterion.
+Via leanprover/lean-eval@38361be, problem `hausdorff_positivity_criterion`. -/
 public theorem hausdorff_positivity {d : ℕ} (a : (Fin d → ℕ) → ℝ) :
     IsPositiveMomentConfiguration a ↔ ∀ k n : Fin d → ℕ, k ≤ n → 0 ≤ diff a k n := by
   constructor
