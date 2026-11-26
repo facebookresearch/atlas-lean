@@ -50,10 +50,11 @@ is a corollary.
 
 open Polynomial
 
-/-- Let a group `G` act on an integrally closed domain `B` containing the domain
-`A`, commuting with `A`, such that every element of `B` fixed by `G` comes from
-`A`. Then `A` is integrally closed. The action of `G` need not be faithful, but
-the algebra map `A → B` must be injective (`FaithfulSMul A B`). -/
+/-- **Invariant subrings of integrally closed domains are integrally closed.** Let a group `G`
+act on an integrally closed domain `B` containing the domain `A`, commuting with `A`, such
+that every element of `B` fixed by `G` comes from `A`. Then `A` is integrally closed. The
+action of `G` need not be faithful, but the algebra map `A → B` must be injective
+(`FaithfulSMul A B`). -/
 theorem Algebra.IsInvariant.isIntegrallyClosed_of_isIntegrallyClosed
     (G : Type*) [Group G] {A B : Type*} [CommRing A] [IsDomain A] [CommRing B]
     [IsDomain B] [Algebra A B] [FaithfulSMul A B] [MulSemiringAction G B]
@@ -99,9 +100,9 @@ theorem Algebra.IsInvariant.isIntegrallyClosed_of_isIntegrallyClosed
   have haa : a * a₂ = a₁ := hinj (by rw [map_mul, ha, hb'])
   rw [eq_div_iff hKa₂, ← map_mul, haa]
 
-/-- Let `A` and `B` be domains, with the algebra map `A → B` injective
-(`FaithfulSMul A B`), and let `G` be a Galois group for `B / A`. If `B` is
-integrally closed, then so is `A`. -/
+/-- **Galois-fixed subrings of integrally closed domains are integrally closed.** Let `A` and
+`B` be domains, with the algebra map `A → B` injective (`FaithfulSMul A B`), and let `G` be a
+Galois group for `B / A`. If `B` is integrally closed, then so is `A`. -/
 theorem IsGaloisGroup.isIntegrallyClosed_of_isIntegrallyClosed
     (G : Type*) [Group G] {A B : Type*} [CommRing A] [IsDomain A] [CommRing B]
     [IsDomain B] [Algebra A B] [FaithfulSMul A B] [MulSemiringAction G B]
