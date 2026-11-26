@@ -1,3 +1,4 @@
-# XInf
+# Affine chart at infinity
 
-The affine chart at infinity `Spec (chartAlgInf N ℓ)` of the Igusa scheme.
+The affine chart `Spec (chartAlgInf N ℓ)` of the Igusa
+scheme.

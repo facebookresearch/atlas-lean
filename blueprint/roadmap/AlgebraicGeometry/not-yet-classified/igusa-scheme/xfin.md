@@ -1,3 +1,3 @@
-# XFin
+# Finite affine chart
 
-The finite affine chart `Spec (chartAlgFin N ℓ)` of the Igusa scheme.
+The affine chart `Spec (chartAlgFin N ℓ)` of the Igusa scheme.

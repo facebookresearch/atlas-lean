@@ -1,3 +1,4 @@
-# Chart Fin Open
+# Open image of the finite chart
 
-The image of the finite chart, an affine open subscheme of the Igusa scheme.
+The image of the finite chart, an affine open subscheme
+of the Igusa scheme.

@@ -1,3 +1,4 @@
-# J Inv Chart Inf
+# The element j⁻¹ of the chart algebra at infinity
 
-The element `j⁻¹` of the chart algebra at infinity `chartAlgInf N ℓ`.
+The element `j⁻¹` of
+`chartAlgInf N ℓ`.

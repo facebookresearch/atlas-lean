@@ -1,4 +1,4 @@
-# Chart Alg Mid
+# Overlap chart algebra
 
-The overlap chart algebra: the integral closure of `ℤ_(ℓ)[j, j⁻¹]` in
+The integral closure of `ℤ_(ℓ)[j, j⁻¹]` in
 `modularFunctionFieldFull N`, where `ℤ_(ℓ)` is `Rat.localizedAt ℓ`.

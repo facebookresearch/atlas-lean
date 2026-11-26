@@ -1,4 +1,4 @@
-# Igusa To
+# Structure morphism of the Igusa scheme
 
-The structure morphism from the Igusa scheme to `Spec (Rat.localizedAt ℓ)`, glued from the
-structure maps of the two affine charts.
+The morphism from the Igusa scheme to
+`Spec (Rat.localizedAt ℓ)`, glued from the structure maps of the two affine charts.

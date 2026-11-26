@@ -1,3 +1,3 @@
-# J Chart Fin
+# The element j of the finite chart algebra
 
-The element `j` of the finite chart algebra `chartAlgFin N ℓ`.
+The element `j` of `chartAlgFin N ℓ`.
