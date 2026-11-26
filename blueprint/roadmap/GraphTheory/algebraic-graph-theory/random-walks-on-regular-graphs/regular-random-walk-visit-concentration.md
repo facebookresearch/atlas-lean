@@ -8,7 +8,7 @@ No aperiodicity is assumed; no explicit rate is given.
 
 ## Proof sketch
 
-By the maximum principle the fixed vectors of the walk operator are the constants, so von Neumann's mean ergodic theorem makes the Cesaro averages of $W^j(1_v - 1/n)$ tend to $0$ uniformly in the start. A first-step recursion for the second moment of $S_t = \mathrm{vis} - t/n$ then gives $\mathbb{E} S_t^2 = o(t^2)$, and Chebyshev's inequality concludes.
+By the maximum principle the fixed vectors of the walk operator are the constants, so von Neumann's mean ergodic theorem makes the Cesaro averages of $W^j(1_v - 1/n)$ tend to $0$ uniformly in the start. A first-step recursion for the second moment of $S_t = \mathrm{vis} - t/n$ then gives $\mathbb{E} S_t^2 = o(t^2)$, and Chebyshev's inequality concludes. Equivalently, the walk along uniform labels is an irreducible Markov chain whose stationary law is uniform (the rotation map is a bijection), so the ergodic theorem gives $\mathrm{vis}_{u,v}/t \to 1/n$ almost surely, hence in probability.
 
 ## Depends on
 
@@ -20,4 +20,4 @@ By the maximum principle the fixed vectors of the walk operator are the constant
 
 ## Sources
 
-- S. Arora, B. Barak, "Computational Complexity: A Modern Approach", web draft of 2007-01-08, 2007.
+- D. A. Levin and Y. Peres, "Markov Chains and Mixing Times", 2nd ed., American Mathematical Society, 2017, Appendix C, Theorem C.1 (Ergodic Theorem).

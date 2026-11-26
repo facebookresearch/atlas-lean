@@ -1,6 +1,6 @@
 # Diminishing marginal returns characterize submodularity
 
-For a finite set $E$ and $f : 2^E \to \beta$ into an ordered cancellative abelian monoid, the following are equivalent: (i) $f(A \cup B) + f(A \cap B) \le f(A) + f(B)$ for all $A, B$; (ii) for all $A \subseteq B$ and $x \notin B$, $f(B \cup \{x\}) - f(B) \le f(A \cup \{x\}) - f(A)$. Consequently, for submodular $f$ and any $A, B$, $f(B) - f(A) \le \sum_{x \in B \setminus A} \big(f(A \cup \{x\}) - f(A)\big)$ when $f$ is monotone.
+For a finite set $E$ and a real-valued $f : 2^E \to \mathbb{R}$, the following are equivalent: (i) $f(A \cup B) + f(A \cap B) \le f(A) + f(B)$ for all $A, B$; (ii) for all $A \subseteq B$ and $x \notin B$, $f(B \cup \{x\}) - f(B) \le f(A \cup \{x\}) - f(A)$. Consequently, for submodular $f$ and any $A, B$, $f(B) - f(A) \le \sum_{x \in B \setminus A} \big(f(A \cup \{x\}) - f(A)\big)$ when $f$ is monotone.
 
 ## Proof sketch
 

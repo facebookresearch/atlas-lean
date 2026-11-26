@@ -6,7 +6,7 @@ $$
 \|P^t(x,\cdot) - P^t(y,\cdot)\|_{TV} \le \kappa^t \rho(x,y).
 $$
 
-Consequently, for a stationary $\pi$, $d(t) \le e^{-\alpha t}\,\mathrm{diam}_\rho(S)$ and $t_{\mathrm{mix}}(\varepsilon) \le \lceil (\log \mathrm{diam}_\rho(S) - \log\varepsilon)/\alpha \rceil$. The same holds relative to a set $C$ closed under $P$, with all hypotheses and conclusions restricted to states of $C$. Hamming distance on $\prod_v A_v$ satisfies the hypotheses with $N$ = "differ in one coordinate".
+Consequently, for a stationary $\pi$, $d(t) \le e^{-\alpha t}\,\mathrm{diam}_\rho(S)$. If $\mathrm{diam}_\rho(S) = 0$ (at most one state), then $d(t) = 0$ and $t_{\mathrm{mix}}(\varepsilon) = 0$ for every $\varepsilon > 0$. Otherwise $\mathrm{diam}_\rho(S) \ge 1$, and for $0 < \varepsilon \le 1$, $t_{\mathrm{mix}}(\varepsilon) \le \lceil (\log \mathrm{diam}_\rho(S) - \log\varepsilon)/\alpha \rceil$, a nonnegative integer. The same holds relative to a set $C$ closed under $P$, with all hypotheses and conclusions restricted to states of $C$. Hamming distance on $\prod_v A_v$ satisfies the hypotheses with $N$ = "differ in one coordinate".
 
 ## Proof sketch
 

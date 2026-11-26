@@ -19,4 +19,4 @@ Each pair is unequal with probability $2\rho(1-\rho)$, and given that it is uneq
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", web draft of 2007-01-08, Section 7.4, Lemma 7.15.
+- J. von Neumann, "Various Techniques Used in Connection with Random Digits", in "Monte Carlo Method", National Bureau of Standards Applied Mathematics Series 12, 1951, pp. 36-38 (the procedure that rejects equal pairs of tosses and is rigorously unbiased).

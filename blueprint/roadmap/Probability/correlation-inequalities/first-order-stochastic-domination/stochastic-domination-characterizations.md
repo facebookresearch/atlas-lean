@@ -1,6 +1,6 @@
 # Characterizations and closure properties of stochastic domination
 
-Let $\mu, \nu$ be probability measures on a preordered measurable space $\alpha$ (s-finite measures suffice for item 1).
+Let $\mu, \nu$ be probability measures on a preordered measurable space $\alpha$.
 
 1. $\nu \preceq_{\mathrm{st}} \mu$ iff $\int f\,d\nu \le \int f\,d\mu$ for every measurable monotone $f : \alpha \to [0,\infty]$, iff the same holds for every integrable measurable monotone $f : \alpha \to \mathbb{R}$.
 2. On $\mathbb{N}$: $\nu \preceq_{\mathrm{st}} \mu$ iff $\nu([n, \infty)) \le \mu([n,\infty))$ for all $n$. On $\mathbb{R}$: iff the distribution functions satisfy $F_\mu(x) \le F_\nu(x)$ for all $x$. Mutual domination on $\mathbb{N}$ or $\mathbb{R}$ implies equality.
@@ -8,7 +8,7 @@ Let $\mu, \nu$ be probability measures on a preordered measurable space $\alpha$
 
 ## Proof sketch
 
-Monotone functions are increasing limits of nonnegative combinations of indicators of upper sets (layer-cake representation), giving item 1; the converse takes $f = \mathbf 1_U$. Upper sets of $\mathbb{N}$ and $\mathbb{R}$ are rays, giving item 2. For mixtures, $\nu\eta(U) = \int \eta(x)(U)\,d\nu \le \int \kappa(x)(U)\,d\nu \le \int \kappa(x)(U)\,d\mu$ since $x \mapsto \kappa(x)(U)$ is monotone; sums are the special case of a translation kernel.
+For a nonnegative monotone $f$, the layer-cake representation $\int f\,d\nu = \int_0^\infty \nu(\{f > s\})\,ds$ over the upper sets $\{f > s\}$ gives the inequality for nonnegative tests. For an integrable monotone real $f$, apply this to the nonnegative monotone functions $\max(f, -k) + k$; since $\mu$ and $\nu$ have the same total mass $1$, subtracting $k$ gives $\int \max(f,-k)\,d\nu \le \int \max(f,-k)\,d\mu$, and dominated convergence (by $|f|$) as $k \to \infty$ gives item 1. The converse takes $f = \mathbf 1_U$. Upper sets of $\mathbb{N}$ and $\mathbb{R}$ are rays, giving item 2. For mixtures, $\nu\eta(U) = \int \eta(x)(U)\,d\nu \le \int \kappa(x)(U)\,d\nu \le \int \kappa(x)(U)\,d\mu$ since $x \mapsto \kappa(x)(U)$ is monotone; sums are the special case of a translation kernel.
 
 ## Depends on
 

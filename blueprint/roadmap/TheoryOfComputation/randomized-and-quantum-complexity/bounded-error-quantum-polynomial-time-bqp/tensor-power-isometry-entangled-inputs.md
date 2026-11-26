@@ -12,7 +12,7 @@ Part 1 splits off coordinate $j$: $A^{\otimes k}$ is $A$ on copy $j$ after $A^{\
 
 ## Depends on
 
-- [Density matrices, pure states and reduced states](../../../../QuantumInformation/quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
+- [Density matrices, pure states and reduced states](../../../QuantumInformation/quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Sources
 

@@ -1,12 +1,12 @@
 # Rapid mixing of Glauber dynamics for colorings when q > 2 Delta
 
-Let $G$ have $n \ge 1$ vertices and maximum degree $\Delta$, and let $q > \Delta$. The uniform distribution on proper $q$-colorings is nonempty, reversible and stationary for Glauber dynamics, and the uniform distribution on $X_U(b)$ is reversible for the dynamics updating $U$. If $q > 2\Delta$ then
+Let $G$ have $n \ge 1$ vertices and maximum degree $\Delta$, and let $q > \Delta$. The uniform distribution on proper $q$-colorings is nonempty, reversible and stationary for Glauber dynamics, and for nonempty $U$ the uniform distribution on $X_U(b)$ is reversible for the dynamics updating $U$. If $q > 2\Delta$ then for $0 < \varepsilon \le 1$
 
 $$
 t_{\mathrm{mix}}(\varepsilon) \le \Bigl\lceil \frac{q - \Delta}{q - 2\Delta}\, n\,(\log n - \log \varepsilon) \Bigr\rceil .
 $$
 
-With a frozen boundary, started from any coloring agreeing with $b$ off $U$, the distance to the uniform law on $X_U(b)$ after $t$ steps is at most $(1 - c/|U|)^t |U|$ with $c = (q-2\Delta)/(q-\Delta)$; in particular it is at most $\delta$ once $t \ge \frac{q-\Delta}{q-2\Delta}\, n (\log n - \log \delta)$ and $|U| \le n$.
+With a frozen boundary and a nonempty update set $U \ne \varnothing$, started from any coloring agreeing with $b$ off $U$, the distance to the uniform law on $X_U(b)$ after $t$ steps is at most $(1 - c/|U|)^t |U|$ with $c = (q-2\Delta)/(q-\Delta)$; in particular, for $0 < \delta \le 1$, it is at most $\delta$ once $t \ge \frac{q-\Delta}{q-2\Delta}\, n (\log n - \log \delta)$ and $|U| \le n$.
 
 ## Proof sketch
 

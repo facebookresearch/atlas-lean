@@ -20,4 +20,4 @@ The output is $1$ exactly when the uniform real $0.b_0b_1\cdots$ lies below $0.d
 
 ## Sources
 
-- Sanjeev Arora and Boaz Barak, "Computational Complexity: A Modern Approach", web draft of 2007-01-08, Section 7.4, Lemma 7.14.
+- L. Devroye, "Non-Uniform Random Variate Generation", Springer, 1986, Chapter XV, Section 1.2 (the Bernoulli($p$) generator that compares random bits with the binary expansion of $p$, exits after $i$ bits with probability $2^{-i}$ and uses exactly $2$ bits on average).
