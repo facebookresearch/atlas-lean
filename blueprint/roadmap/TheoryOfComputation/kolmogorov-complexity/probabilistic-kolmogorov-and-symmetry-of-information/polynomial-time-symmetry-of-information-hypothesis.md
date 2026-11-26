@@ -6,7 +6,7 @@ $$
 \mu^{p(t)}(x\mid y)+\mu^{p(t)}(y)\ \le\ \mu^{t}(x,y)+c\log t .
 $$
 
-The reverse inequality $\mu^{p(t)}(x,y)\le \mu^t(y)+\mu^t(x\mid y)+c\log t$ holds unconditionally, by concatenating self-delimiting descriptions. For time-unbounded Kolmogorov complexity the analogue holds with additive $O(\log(|x|+|y|))$ error (Kolmogorov and Levin), mirroring the identity $I(X;Y)=I(Y;X)$ for Shannon information; whether any polynomial-time version holds is open, and it is stated here only as a hypothesis.
+The reverse inequality $\mu^{p(t)}(x,y)\le \mu^t(y)+\mu^t(x\mid y)+c\log t$ holds unconditionally, by concatenating self-delimiting descriptions. For time-unbounded Kolmogorov complexity the analogue holds with additive $O(\log(|x|+|y|))$ error (Kolmogorov and Levin), mirroring the identity $I(X;Y)=I(Y;X)$ for Shannon information; the polynomial-time version is stated here as a hypothesis.
 
 ## Depends on
 

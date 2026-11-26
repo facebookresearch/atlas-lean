@@ -4,7 +4,7 @@ Given SIDH public data $(E_A,\varphi_A(P_B),\varphi_A(Q_B))$ with $3^{b}>2^{a}$,
 
 ## Proof sketch
 
-Write $3^{b}=2^{a}+c$ and find an auxiliary isogeny $\gamma$ of degree $c$ (from a known endomorphism of $E_0$ composed with small isogenies, or via a sum-of-squares decomposition in higher dimension). The diamond formed by $\varphi_A$ and $\gamma$ yields, by Kani's lemma, an $N$-isogeny with $N=3^{b}$ whose kernel is determined by the torsion point images; computing it with Richelot-type isogeny chains reveals $\varphi_A$. Robert's version replaces the auxiliary isogeny by multiplication by integers on $E^{4}$ or $E^{8}$ via four-squares decompositions, needing no endomorphism knowledge.
+Write $3^{b}=2^{a}+c$ and find an auxiliary isogeny $\gamma$ of degree $c$ (from a known endomorphism of $E_0$ composed with small isogenies, or via a sum-of-squares decomposition in higher dimension). The diamond formed by $\varphi_A$ and $\gamma$ yields, by Kani's lemma, an $N$-isogeny with $N=3^{b}$ whose kernel is determined by the torsion point images; computing it with chains of $(3,3)$-isogenies reveals $\varphi_A$. Robert's version replaces the auxiliary isogeny by multiplication by integers on $E^{4}$ or $E^{8}$ via four-squares decompositions, needing no endomorphism knowledge.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Le Gall-Nishimura-Thakkar: Order Verification is in QCMA
 
-For black-box groups, Order Verification is in $\mathrm{QCMA}$: there is a polynomial-time quantum verifier which, given generators of $H \le G$, an integer $N$ and a classical witness of polynomial length, accepts with probability at least $2/3$ for some witness if $|H| = N$ and with probability at most $1/3$ for every witness if $|H| \ne N$. Consequently Group Non-Membership is in $\mathrm{QCMA}$, resolving a question of Watrous (2000) and confirming a conjecture of Aaronson and Kuperberg (2006).
+For black-box groups with unique encoding, Order Verification is in $\mathrm{QCMA}$: there is a polynomial-time quantum verifier which, given generators of $H \le G$, an integer $N$ and a classical witness of polynomial length, accepts with probability at least $2/3$ for some witness if $|H| = N$ and with probability at most $1/3$ for every witness if $|H| \ne N$. Consequently Group Non-Membership is in $\mathrm{QCMA}$, resolving a question of Watrous (2000) and confirming a conjecture of Aaronson and Kuperberg (2006).
 
 ## Proof sketch
 

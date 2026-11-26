@@ -4,7 +4,7 @@ Let $k = k(n) \ge 4$ and let $\varepsilon > 0$ be a constant. There are unsatisf
 
 ## Proof sketch
 
-Construct $F_n$ by composing a formula of small width with a hardness condensation transformation that compresses many variables into few via an expanding substitution: any narrow refutation of the condensed formula must simulate a narrow refutation of the original with many variables, inheriting a tree-size lower bound in terms of the original number of variables, which is polynomially larger than $n$.
+Construct $\tau_n$ by composing a formula of small width with a hardness condensation transformation that compresses many variables into few via an expanding substitution: any narrow refutation of the condensed formula must simulate a narrow refutation of the original with many variables, inheriting a tree-size lower bound in terms of the original number of variables, which is polynomially larger than $n$.
 
 ## Depends on
 
