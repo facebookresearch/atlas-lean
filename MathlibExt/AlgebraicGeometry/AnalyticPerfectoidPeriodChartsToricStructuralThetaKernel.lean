@@ -7,20 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.AnalyticPerfectoidPeriodCharts
-
-import Mathlib.CategoryTheory.Limits.ConcreteCategory.Basic
 
 /-!
 # Toric coordinates in the structural theta kernel
 
 The structural theta map annihilates the infinitesimal coordinates of toric charts.
-A private lemma identifies theta on Teichmüller lifts with sharp.
+The proof uses `UntiltingData.theta_teichmuller`: theta sends Teichmüller lifts to sharp.
 
-Sources: Scholze, *Perfectoid spaces*, arXiv:1205.3463v2, Theorem 6.5, Definition 6.8 and
-Proposition 6.10; Bhatt--Morrow--Scholze, *Integral p-adic Hodge theory*,
-arXiv:1602.03148v3, Section 5.1.
+Sources: Scholze, *p-adic Hodge theory for rigid-analytic varieties*, arXiv:1205.3463v2,
+Theorem 6.5, Definition 6.8 and Proposition 6.10; Bhatt--Morrow--Scholze, *Integral p-adic
+Hodge theory*, arXiv:1602.03148v3, Section 5.1.
 -/
 
 set_option backward.isDefEq.respectTransparency false
@@ -42,34 +39,6 @@ open MathlibExt.CategoryTheory.SheafScalarQuotients
 open MathlibExt.CategoryTheory.SheafKernelCompletion
 open MathlibExt.CategoryTheory.SheafWittSource
 open MathlibExt.CategoryTheory.UntiltingSheafSources
-
-universe v u
-
-private theorem thetaTeichmuller {D : Type u} [Category.{v} D]
-    {J : GrothendieckTopology D} [HasSheafify J CommRingCat.{1}]
-    (p : ℕ) [Fact p.Prime] (R : Sheaf J CommRingCat.{1})
-    (A : UntiltingData p R) (U : Dᵒᵖ) (x : (tilt p R).obj.obj U) :
-    ((A.theta.hom.app U).hom)
-      (((toSheafify J (wittPresheaf p (tilt p R))).app U).hom
-        (WittVector.teichmuller p x)) = A.sharp U x := by
-  apply Concrete.isLimit_ext
-    (tower R (modP p R) (modPUnit p R) ⋙ sheafToPresheaf J CommRingCat.{1} ⋙
-      (evaluation Dᵒᵖ CommRingCat.{1}).obj U)
-    (isLimitOfPreserves (sheafToPresheaf J CommRingCat.{1} ⋙
-      (evaluation Dᵒᵖ CommRingCat.{1}).obj U) (limit.isLimit _))
-  intro n
-  change ((positiveProjection p R n.unop).hom.app U).hom _ =
-    ((positiveProjection p R n.unop).hom.app U).hom _
-  have hs : (∑ i ∈ Finset.range (n.unop + 1),
-      (p : (positiveCompletion p R).obj.obj U) ^ i *
-        A.sharp U ((((inverseFrobenius p R) ^ i).asHom.hom.app U).hom
-          ((WittVector.teichmuller p x).coeff i))) = A.sharp U x := by
-    rw [Finset.sum_eq_single 0]
-    · simp
-    · intro i _hi hi
-      simp [WittVector.teichmuller_coeff_pos p x i (Nat.pos_of_ne_zero hi), A.sharp_zero]
-    · simp
-  simpa only [hs] using A.theta_source U (WittVector.teichmuller p x) n.unop
 
 /-- **The toric coordinates lie in the kernel of the structural theta map.** Let $p$ be a prime,
 $K$ a base field (`BaseField p`) with base realization $B$, $X$ an analytic space over $B$ with a
@@ -142,6 +111,7 @@ public theorem toricStructuralThetaKernel
         ((S.untilting.theta.hom.app U).hom w) at ht
   rw [ht]
   dsimp only [w]
-  erw [thetaTeichmuller p S.positive S.untilting U (C.root i), C.sharp_source, sub_self]
+  erw [UntiltingData.theta_teichmuller p S.positive S.untilting U (C.root i), C.sharp_source,
+    sub_self]
 
 end WantedExt.AlgebraicGeometry.AnalyticPerfectoidPeriodCharts

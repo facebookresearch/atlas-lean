@@ -11,6 +11,8 @@ public import MathlibExt.CategoryTheory.SheafScalarQuotients
 public import MathlibExt.CategoryTheory.SheafKernelCompletion
 public import MathlibExt.CategoryTheory.SheafWittSource
 public import Mathlib.Data.Finset.Range
+public import Mathlib.RingTheory.WittVector.Teichmuller
+import Mathlib.CategoryTheory.Limits.ConcreteCategory.Basic
 
 /-!
 # Intrinsic untilting and positive de Rham sheaf sources
@@ -112,6 +114,31 @@ def positiveFiltration (n : ℕ) (U : Cᵒᵖ) : Ideal (A.deRhamPositive.obj.obj
   | 0 => ⊤
   | n + 1 => RingHom.ker
       ((projection (rationalInf p R) (completedRegular p R) A.rationalTheta n).hom.app U).hom
+
+/-- Theta sends the Teichmüller lift `[x]` of a section `x` of the tilt to `x^♯`:
+`A.theta [x] = A.sharp U x` on every object `U`. -/
+theorem theta_teichmuller (U : Cᵒᵖ) (x : (tilt p R).obj.obj U) :
+    ((A.theta.hom.app U).hom)
+      (((toSheafify J (wittPresheaf p (tilt p R))).app U).hom
+        (WittVector.teichmuller p x)) = A.sharp U x := by
+  apply Concrete.isLimit_ext
+    (tower R (modP p R) (modPUnit p R) ⋙ sheafToPresheaf J CommRingCat.{1} ⋙
+      (evaluation Cᵒᵖ CommRingCat.{1}).obj U)
+    (isLimitOfPreserves (sheafToPresheaf J CommRingCat.{1} ⋙
+      (evaluation Cᵒᵖ CommRingCat.{1}).obj U) (limit.isLimit _))
+  intro n
+  change ((positiveProjection p R n.unop).hom.app U).hom _ =
+    ((positiveProjection p R n.unop).hom.app U).hom _
+  have hs : (∑ i ∈ Finset.range (n.unop + 1),
+      (p : (positiveCompletion p R).obj.obj U) ^ i *
+        A.sharp U ((((inverseFrobenius p R) ^ i).asHom.hom.app U).hom
+          ((WittVector.teichmuller p x).coeff i))) = A.sharp U x := by
+    rw [Finset.sum_eq_single 0]
+    · simp
+    · intro i _hi hi
+      simp [WittVector.teichmuller_coeff_pos p x i (Nat.pos_of_ne_zero hi), A.sharp_zero]
+    · simp
+  simpa only [hs] using A.theta_source U (WittVector.teichmuller p x) n.unop
 
 end UntiltingData
 

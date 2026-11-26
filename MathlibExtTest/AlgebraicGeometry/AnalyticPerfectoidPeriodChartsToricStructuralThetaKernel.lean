@@ -14,9 +14,9 @@ public import MathlibExt.AlgebraicGeometry.AnalyticPerfectoidPeriodChartsToricSt
 
 Every section times a toric infinitesimal coordinate has zero structural theta image.
 
-Sources: Scholze, *Perfectoid spaces*, arXiv:1205.3463v2, Theorem 6.5, Definition 6.8 and
-Proposition 6.10; Bhatt--Morrow--Scholze, *Integral p-adic Hodge theory*,
-arXiv:1602.03148v3, Section 5.1.
+Sources: Scholze, *p-adic Hodge theory for rigid-analytic varieties*, arXiv:1205.3463v2,
+Theorem 6.5, Definition 6.8 and Proposition 6.10; Bhatt--Morrow--Scholze, *Integral p-adic
+Hodge theory*, arXiv:1602.03148v3, Section 5.1.
 -/
 
 set_option backward.isDefEq.respectTransparency false

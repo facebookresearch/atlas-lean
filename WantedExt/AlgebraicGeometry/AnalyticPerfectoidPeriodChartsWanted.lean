@@ -18,11 +18,11 @@ The forms are the ACTUAL absolute Omega_X/K continuous quotient sheaf,
 followed by its ORIGINAL native pro inverse image. Toric coordinate
 qualification retains an actual finite original affinoid stage, native
 K scalars and a finite etale rational polydisc map. Taylor is fixed on
-every finite structural theta quotient; this is
-`toricStructuralThetaKernel`, now proved in
-`MathlibExt.AlgebraicGeometry.AnalyticPerfectoidPeriodChartsToricStructuralThetaKernel`.
-The full connection is the local ABSOLUTE-theta-generator fraction
-extension of the positive one.
+every finite structural theta quotient. The full connection is the
+local ABSOLUTE-theta-generator fraction extension of the positive one.
+The toric coordinates lie in the structural theta kernel
+(`toricStructuralThetaKernel`, in
+`MathlibExt.AlgebraicGeometry.AnalyticPerfectoidPeriodChartsToricStructuralThetaKernel`).
 
 The structural period objects are the naive ones of `StructuralDeRhamPeriodSources` (Scholze's
 withdrawn Definition 6.8, erratum item (3)): the Taylor map is requested, but its invertibility
