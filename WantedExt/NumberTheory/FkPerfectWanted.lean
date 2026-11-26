@@ -42,19 +42,13 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFkPerfectTwoMulPow
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
-$[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_k(n) + d^k = n^k + 3n$. -/
-def IsDeficientFkPerfect (k n : ℕ) : Prop :=
-  IsKLDeficientPerfect k 3 n
 
 /-- **Near $F_k$-perfect numbers.** For natural numbers $k$ and $n$, the number $n$ is near
 $F_k$-perfect when it is $[k,3]$-near-perfect, that is, when some proper divisor $d$ of $n$
@@ -306,16 +300,6 @@ theorem_wanted not_isNearFkPerfect_prime_pow_mul
     (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
     (hne : p₁ ≠ p₂) :
     ¬ IsNearFkPerfect k (p₁ ^ a * p₂)
-
-/-- **No deficient $F_k$-perfect number of the form $2p^a$ for $k > 2$.** Let $k > 2$, let $p$ be
-an odd prime and let $a$ be a natural number. Then $2p^a$ is not deficient $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 18. -/
-theorem_wanted not_isDeficientFkPerfect_two_mul_pow
-    (k p a : ℕ) (hk : 2 < k) (hp : p.Prime) (hpo : Odd p) :
-    ¬ IsDeficientFkPerfect k (2 * p ^ a)
 
 /-- **No deficient $F_k$-perfect number $p_1^a p_2^b$ with $a + b$ odd or $a, b$ both odd.** Let
 $k > 1$ be a natural number, let $p_1 \ne p_2$ be odd primes and let $a, b \ge 1$ be natural
