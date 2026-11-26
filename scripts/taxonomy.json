@@ -13174,6 +13174,7 @@
   "MathlibExt/NumberTheory/InclExclLikeSumBounds": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/InclExclLikeSumRelations": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/IncompleteExponentialSum": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
+  "MathlibExt/NumberTheory/IncompleteExponentialSumSumMinOneDivAbsSinLt": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/IncompleteLeonardoP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/InfiniteNonSophieGermainPrimes": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
   "MathlibExt/NumberTheory/InfiniteRieselRepdigits": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
