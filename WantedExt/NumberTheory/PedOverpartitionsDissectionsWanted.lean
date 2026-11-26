@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.Combinatorics.Enumerative.Partition.EulerQuotientThreeDissection
+public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductFourthTwoDissection
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 
 /-!
@@ -261,18 +262,6 @@ theorem cubicCoeffVector_one_two :
     (List.range 5).map (cubicCoeffVector 1) = [3, 0, 0, 0, 0] ∧
       (List.range 5).map (cubicCoeffVector 2) = [3, 81, 729, 0, 0] := by
   decide
-
-/-- **The 2-dissection of $f_1^4$.** For $k \ge 1$ let $f_k = \prod_{m \ge 1} (1 - q^{km})$, an
-integer power series in $q$. Then
-$$f_1^4 f_2^2 f_4^2 f_8^4 = f_4^{12} - 4 q f_2^4 f_8^8.$$
-Dividing by $f_2^2 f_4^2 f_8^4$ gives
-$f_1^4 = \frac{f_4^{10}}{f_2^2 f_8^4} - 4q \frac{f_2^2 f_8^4}{f_4^2}$.
-
-Source: Harishkumar T, Shruthi Menezes, and M. S. Mahadeva Naika, *On [j, k]-Overpartitions with
-Even Parts Distinct*, INTEGERS 25 (2025), Article A69, Lemma 1, (7)
-(`integers-2025-A69-lem-1`). -/
-public theorem_wanted qEulerProduct_fourth_two_dissection :
-    𝔣 1 ^ 4 * 𝔣 2 ^ 2 * 𝔣 4 ^ 2 * 𝔣 8 ^ 4 = 𝔣 4 ^ 12 - 4 * X * 𝔣 2 ^ 4 * 𝔣 8 ^ 8
 
 /-- **Congruences modulo 32 for $\mathrm{ped}_{9,9}$.** For $k \ge 1$ let
 $f_k = \prod_{m \ge 1} (1 - q^{km})$, an integer power series in $q$, and let
