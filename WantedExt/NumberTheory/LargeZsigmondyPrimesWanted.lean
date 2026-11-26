@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimeMul
 public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimitiveDivisor
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.LargeZsigmondyPrimesHomogenizedCyclotomicMemIcc
+public import MathlibExt.NumberTheory.LargeZsigmondyPrimesHomogenizedCyclotomicPrimePowMul
 
 /-!
 # Large Zsigmondy primes
@@ -61,24 +62,6 @@ theorem isLargeZsigmondyPrime_two_one_three_seven : IsLargeZsigmondyPrime 2 1 3 
   refine ⟨⟨by norm_num, by norm_num, by norm_num, by norm_num, ?_⟩, Or.inr (by norm_num)⟩
   intro s hs hs3
   interval_cases s <;> norm_num
-
-/-- **Homogenized cyclotomic values at $p^\beta k$.** Let $p$ be a prime, let $\beta \ge 1$ and
-$k \ge 1$ be integers with $p \nmid k$, and let $a, b$ be integers; write $\Phi_m(a, b)$ for the
-homogenized cyclotomic value. Then
-$\Phi_{p^\beta k}(a, b) = \Phi_{pk}(a^{p^{\beta - 1}}, b^{p^{\beta - 1}})$ and
-$\Phi_{p^\beta k}(a, b) \cdot \Phi_k(a^{p^{\beta - 1}}, b^{p^{\beta - 1}}) =
-\Phi_k(a^{p^\beta}, b^{p^\beta})$.
-
-The paper states the second identity as a quotient; here it is cleared of its denominator.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Corollary 1. -/
-theorem_wanted homogenizedCyclotomic_prime_pow_mul {p β k : ℕ} (hp : p.Prime) (hβ : 0 < β)
-    (hk : 0 < k) (hpk : ¬ p ∣ k) (a b : ℤ) :
-    homogenizedCyclotomic (p ^ β * k) a b =
-        homogenizedCyclotomic (p * k) (a ^ p ^ (β - 1)) (b ^ p ^ (β - 1)) ∧
-      homogenizedCyclotomic (p ^ β * k) a b *
-          homogenizedCyclotomic k (a ^ p ^ (β - 1)) (b ^ p ^ (β - 1)) =
-        homogenizedCyclotomic k (a ^ p ^ β) (b ^ p ^ β)
 
 /-- **$p$-adic valuation of homogenized cyclotomic values at an odd prime.** Let $a > b$ be
 positive integers, let $p$ be an odd prime dividing neither $a$ nor $b$, and let $k$ be the least
