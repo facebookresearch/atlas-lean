@@ -10,12 +10,16 @@ the specialization to $p = 3/4$ of the Rényi divergence $\frac{1}{\alpha-1}\log
 
 ## Proof sketch
 
-The likelihood ratio of the outputs for the two inputs is $(3/4)/(1/4) = 3$ or its inverse; the Rényi divergence of two Bernoulli laws is a two-term sum.
+The $(\ln 3, 0)$ bound is the case $p = 3/4$ of the privacy of randomized response with truthful probability $p \in (1/2, 1)$, whose budget is $\ln(p/(1-p))$: the likelihood ratio of the outputs for the two inputs is $(3/4)/(1/4) = 3$ or its inverse, which also shows that no smaller $\varepsilon$ works. The Rényi divergence of two Bernoulli laws is a two-term sum.
 
 ## Depends on
 
 - [Differential privacy](../differential-privacy/differentially-private.md)
 - [Rényi divergence and Rényi differential privacy](../renyi-differential-privacy/renyi-differential-privacy.md)
+
+## Proof depends on
+
+- [Randomized response is differentially private](is-dp-rr-mech.md)
 
 ## Sources
 
