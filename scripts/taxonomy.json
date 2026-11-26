@@ -9343,6 +9343,7 @@
   "MathlibExt/AlgebraicGeometry/EllipticCurve/ManinTwistCharTwo": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Hasse bound"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/NeronOggShafarevich": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Néron–Ogg–Shafarevich criterion"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/PointCount": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Point counts and Frobenius traces"},
+  "MathlibExt/AlgebraicGeometry/EllipticCurve/ProjectiveWeierstrassPrime": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Elliptic curves in projective coordinates"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/Supersingular": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Supersingular elliptic curves"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/VariableChangePoint": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Weierstrass curves"},
   "MathlibExt/AlgebraicGeometry/EllipticCurve/XYIdeal": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Weierstrass curves"},
