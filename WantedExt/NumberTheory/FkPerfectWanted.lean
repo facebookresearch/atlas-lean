@@ -99,21 +99,6 @@ theorem_wanted klNearPerfectWith_prime_pow_two_iff
     KLNearPerfectWith 2 l (p ^ a) d ↔
       a = 2 ∧ l = 1 ∧ d = 1
 
-/-- **$[2,\ell]$-deficient-perfect prime powers (corrected).** Let $p$ be a prime and let $a$ and
-$\ell$ be natural numbers. If $p^a$ is $[2,\ell]$-deficient-perfect, then $\ell = 1$, and either
-$a = 2$, or $p = 2$ and $a = 1$.
-
-The printed statement allows only the exception $a = 2$, $\ell = 1$, and so omits the solution
-$p = 2$, $a = 1$, $\ell = 1$, $d = 1$ (the number $2$ of Corollary 1).
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 3. -/
-theorem_wanted isKLDeficientPerfect_prime_pow_two_imp
-    (p a l : ℕ) (hp : p.Prime) :
-    IsKLDeficientPerfect 2 l (p ^ a) →
-      l = 1 ∧ (a = 2 ∨ (p = 2 ∧ a = 1))
-
 /-- **Prime powers that are $[k,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $k$, $\ell$
 and $d$ be natural numbers with $k \ge 1$ and $\ell \ge 1$, and write
 $\sigma_k(m) = \sum_{e \mid m} e^k$. Then $d$ is a proper divisor of $p^a$ ($d \mid p^a$ and
