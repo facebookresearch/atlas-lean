@@ -1,12 +1,14 @@
 # Equilibrium succession with carrying capacity in a density-dependent coinfection model
 
 **Model.** Let $S$ be susceptibles, $I_1, I_2$ hosts infected by strain $1$ or $2$ only, and $I_{12}$ coinfected hosts. With intrinsic growth rate $r > 0$, carrying capacity $K > 0$, transmission rates $\alpha_1, \alpha_2, \alpha_3$ (strain 1, strain 2, both strains), removal rates $\mu_i = \rho_i + d_i$ (recovery plus death), rates $\gamma_1, \gamma_2$ at which singly infected hosts acquire the other strain, $\bar\gamma = \gamma_1 + \gamma_2$, and rates $\eta_1, \eta_2$ at which singly infected hosts are coinfected by contact with $I_{12}$,
+
 $$\begin{aligned}
 S' &= \big(r(1 - S/K) - \alpha_1 I_1 - \alpha_2 I_2 - \alpha_3 I_{12}\big) S,\\
 I_1' &= (\alpha_1 S - \eta_1 I_{12} - \gamma_1 I_2 - \mu_1) I_1,\\
 I_2' &= (\alpha_2 S - \eta_2 I_{12} - \gamma_2 I_1 - \mu_2) I_2,\\
 I_{12}' &= (\alpha_3 S + \eta_1 I_1 + \eta_2 I_2 - \mu_3) I_{12} + \bar\gamma I_1 I_2 .
 \end{aligned}$$
+
 Put $\sigma_i = \mu_i/\alpha_i$ and assume $\sigma_1 < \sigma_2 < \sigma_3$ (strain 1 spreads most easily in a naive population; coinfection has the smallest reproduction number), and $\Delta_\alpha = \eta_1\alpha_2 - \eta_2\alpha_1 \ne 0$. Define
 
 $$A_1 = \frac{\alpha_1\alpha_3(\sigma_3 - \sigma_1)}{r}, \quad A_2 = \frac{\alpha_2\alpha_3(\sigma_3 - \sigma_2)}{r}, \qquad \eta_1^* = \frac{\eta_1}{A_1}, \quad \eta_2^* = \frac{\eta_2}{A_2}.$$

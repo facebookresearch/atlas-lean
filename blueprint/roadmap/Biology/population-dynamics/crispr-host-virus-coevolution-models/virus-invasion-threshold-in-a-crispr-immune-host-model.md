@@ -1,11 +1,13 @@
 # Virus invasion threshold in a CRISPR immune-host model
 
 **Model.** Let $x(t)$ and $y(t)$ be the densities of immune hosts (immunity level $p$) and sensitive hosts (innate immunity $s$, with $0\le s\le p\le 1$), and $z(t)$ the density of viruses. With immunity decay rate $l$, immunity acquisition rate $e$, virus death rate $d$, virus burst size $M$, encounter rate $b$, crowding coefficient $a\ge0$ and unit host growth rates,
+
 $$\begin{aligned}
 \dot x&=x\big(1-l-a(x+y)\big)-bxz(1-p)+esyz,\\
 \dot y&=y+lx-ay(x+y)-byz(1-s)-esyz,\\
 \dot z&=z\big(-d+bM\,(x(1-p)+y(1-s))-b\,(xp+ys)\big).
 \end{aligned}$$
+
 Here a virus that meets a host either reproduces (probability $1-p$ or $1-s$) or is destroyed. In the virus-dependent version the immunity of immune hosts is $p(z)=(1-s)e^{-kz}+s$ with $k>0$, declining from $1$ toward $s$ as the viral load grows.
 
 **Statement 1 (trivial and virus-free equilibria).** The origin $O=(0,0,0)$ is an equilibrium for all parameters and is always unstable. If $a>0$, the virus-free equilibrium of sensitive hosts only, $A=(0,1/a,0)$, exists; it is asymptotically stable if

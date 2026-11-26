@@ -1,8 +1,10 @@
 # Travelling waves of the proliferating–quiescent glioma model
 
 **Model.** Let $p(x,t)$ and $q(x,t)$ be the densities of proliferating and quiescent (functionally necrotic) tumour cells, normalised so that $p+q\le 1$, and let $w=1-p-q$ be the free space or available growth factor. In one space dimension the model is the cross-diffusion system
+
 $$\partial_t p=\partial_x\!\Big[\tfrac{Dp}{p+q}\,\partial_x(p+q)\Big]+\rho\,g(w)\,p-k\,\delta(w)\,p,\qquad
 \partial_t q=\partial_x\!\Big[\tfrac{Dq}{p+q}\,\partial_x(p+q)\Big]+k\,\delta(w)\,p,$$
+
 with $D,\rho,k>0$. The birth and quiescence functions satisfy
 
 $$g'(w)\ge0,\quad \delta'(w)\le0,\quad g(1)=1,\ \delta(1)=0,\quad g(0)=0,\ \delta(0)=1,$$

@@ -1,11 +1,13 @@
 # Next-generation numbers and bistability in a stage-structured Wolbachia model
 
 **Model.** Uninfected ($u$) and Wolbachia-infected ($w$) mosquitoes are tracked as eggs $E$, larvae/pupae $L$, adult males $M$ and adult females $F$:
+
 $$\begin{aligned}
 \dot M_j&=b_m\psi L_j-\mu_{mj}M_j, &\dot F_j&=b_f\psi L_j-\mu_{fj}F_j\quad(j=u,w),\\
 \dot E_u&=\phi_u\,\mathcal M_u\,F_u+\phi_w v_u F_w-(\delta+\mu_{eu})E_u, &\dot E_w&=v_w\phi_w F_w-(\delta+\mu_{ew})E_w,\\
 \dot L_j&=\delta\,\mathcal K\,E_j-(\psi+\mu_l)L_j, &\mathcal K&=1-\frac{L_u+L_w}{K_l},
 \end{aligned}$$
+
 where $\mathcal M_u=M_u/(M_u+M_w)$ is the probability that an uninfected female mates with an uninfected male (complete cytoplasmic incompatibility: uninfected females mated to infected males lay no viable eggs), $v_w\in(0,1]$ is the maternal transmission fraction, $v_u=1-v_w$, $b_f+b_m=1$, $\psi$ is the emergence rate, $\delta$ the hatching rate, $\phi_j$ egg-laying rates and $\mu$ death rates.
 
 **Next-generation numbers.**

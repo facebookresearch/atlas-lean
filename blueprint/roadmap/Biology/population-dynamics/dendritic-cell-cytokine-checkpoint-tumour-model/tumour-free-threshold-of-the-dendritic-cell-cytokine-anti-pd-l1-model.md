@@ -1,10 +1,12 @@
 # Tumour-free threshold of a dendritic-cell–cytokine–anti-PD-L1 tumour model
 
 **Model.** Let $T$ be tumour cells, $C$ CD8$^+$ T cells, $D$ dendritic cells, $I_2$ and $I_{12}$ the cytokines IL-2 and IL-12, and $Z$ an anti-PD-L1 inhibitor. With all parameters positive,
+
 $$\begin{aligned}
 \dot T&=\alpha T(1-\beta T)-\gamma T-\phi CT, &\dot C&=\phi CT+\rho CD-\kappa C, &\dot D&=\mu-\rho CD-(\omega+\lambda)D,\\
 \dot I_2&=\lambda D-dI_2, &\dot I_{12}&=dI_2-\psi I_{12}, &\dot Z&=\psi I_{12}-aZ .
 \end{aligned}$$
+
 Here $\alpha,\beta$ give logistic tumour growth, $\gamma$ and $\phi$ are killing by dendritic and T cells, $\mu$ is the dendritic-cell source, $\rho$ is T-cell expansion on contact with dendritic cells (which inactivates them), and $\kappa,\omega$ are natural death rates. IL-2 is produced from dendritic cells at rate $\lambda$, and the cascade $I_2\to I_{12}\to Z$ is linear.
 
 **Tumour-free equilibrium.** The model has the equilibrium with no tumour and no T cells

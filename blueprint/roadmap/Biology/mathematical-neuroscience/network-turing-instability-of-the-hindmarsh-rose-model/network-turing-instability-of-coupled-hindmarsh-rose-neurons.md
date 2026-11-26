@@ -1,11 +1,13 @@
 # Network Turing instability of coupled Hindmarsh-Rose neurons
 
 **Model.** Let $n$ Hindmarsh-Rose neurons with membrane potential $x_i$, recovery variable $y_i$ and slow bursting variable $z_i$ be coupled through a symmetric adjacency matrix $A$, with linearized diffusive coupling of strengths $d_1,d_2\ge 0$ and an optional delay $\tau\ge0$ in the slow feedback:
+
 $$\begin{aligned}
 \dot x_i&=y_i-ax_i^3+bx_i^2+I-z_i(t-\tau)+d_1\sum_j L_{ij}x_j,\\
 \dot y_i&=c-dx_i^2-y_i+d_2\sum_j L_{ij}y_j,\\
 \dot z_i&=r\big(s(x_i-x_r)-z_i\big),
 \end{aligned}$$
+
 where $L_{ij}=A_{ij}-q\,\delta_{ij}\sum_k A_{ik}$ is a (generalized) network Laplacian with real eigenvalues $\Lambda_k$ and orthonormal eigenvectors $v^k$. A homogeneous equilibrium $(x_0,y_0,z_0)$ solves $y_0-ax_0^3+bx_0^2+I-z_0=0$, $y_0=c-dx_0^2$, $z_0=s(x_0-x_r)$.
 
 **Modal characteristic equation.** Writing perturbations as $\sum_k c_k e^{\lambda t}v^k$ decouples the linearization into one $3\times3$ problem per Laplacian eigenvalue. With $u_k=3ax_0^2-2bx_0-d_1\Lambda_k$ and $w_k=1-d_2\Lambda_k$, the characteristic equation of mode $k$ is
