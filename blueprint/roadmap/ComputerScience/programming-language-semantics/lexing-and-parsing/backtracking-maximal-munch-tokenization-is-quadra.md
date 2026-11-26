@@ -12,4 +12,4 @@ The same holds whether the automaton is deterministic or nondeterministic, and w
 
 ## Sources
 
-- T. Reps, "‘Maximal-munch’ tokenization in linear time", *ACM Transactions on Programming Languages and Systems*, 1998; author's version at <https://research.cs.wisc.edu/wpis/papers/toplas98b.pdf>: Section 1 (the backtracking method recommended in compiler textbooks, the example with the token classes $abc$ and $(abc)^*d$ on the input $(abc)^m$ and its $\Theta(m^2)$ behavior, footnote 1 with the simpler example $a$ and $a^*b$) and the remark, with footnote 3, that both backtracking methods are quadratic in the worst case.
+- T. Reps, "‘Maximal-munch’ tokenization in linear time", *ACM Transactions on Programming Languages and Systems*, 1998; author's version at <https://research.cs.wisc.edu/wpis/papers/toplas98b.pdf>: Section 1 (the backtracking method recommended in compiler textbooks, the example with the token classes $abc$ and $(abc)^*d$ on the input $(abc)^m$ and its $\Theta(m^2)$ behavior, footnote 2 with the simpler example $a$ and $a^*b$) and the remark, with footnote 3, that both backtracking methods are quadratic in the worst case.
