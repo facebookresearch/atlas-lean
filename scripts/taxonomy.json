@@ -13493,6 +13493,7 @@
   "MathlibExt/NumberTheory/Recurrences/JacobsthalPolynomialSquareFamilySums": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Reciprocal sums of squares of gibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/KJacobsthal": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integral representations of k-Jacobsthal numbers"},
   "MathlibExt/NumberTheory/Recurrences/KFibonacciBrousseauSums": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Brousseau sums of k-Fibonacci numbers"},
+  "MathlibExt/NumberTheory/Recurrences/KFibonacciShiftedBrousseauSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Brousseau sums of k-Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/LucasAlternatingSquaredBinomialSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Binomial sums with second-order recurrences"},
   "MathlibExt/NumberTheory/Recurrences/LucasBinetFormula": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/Recurrences/LucasNumberGeneratingFunctionValues": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Integer values of Fibonacci polynomial generating functions"},
