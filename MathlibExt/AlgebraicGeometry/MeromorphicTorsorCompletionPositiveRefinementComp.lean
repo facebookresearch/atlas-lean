@@ -7,10 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.MeromorphicCompletionRefinements
-public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
-public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
 
 /-!
 # Composition of positive refinement maps
@@ -29,7 +26,7 @@ open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry
 open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModifications
 open AnalyticMeromorphicCoordinates MeromorphicHeckeModels AffinoidTorsorAlgebraizationModels
-open CompletedTorsorSourceFrames MeromorphicCompletionRefinements AnalyticProObjectSites
+open CompletedTorsorSourceFrames MeromorphicCompletionRefinements
 open MeromorphicCoefficientCompletion
 
 /-- Refinement maps of completed rings compose: for a prime $p$, a field $E$, a map $d : D \to X$ of
