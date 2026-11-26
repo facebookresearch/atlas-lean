@@ -15,7 +15,7 @@
 - [Distributional limits scaled by root n vanish in norm](tendsto-measure-le-norm-div-sqrt.md)
 - [Inverse-information image of a normal score limit](has-law-to-euclidean-lin-inv-multivariat.md)
 - [Vector Andersen–Gill conditions](andersen-gill-vector.md)
-- [The vector Cox estimator is eventually a root near the truth](tendsto-measure-not-cox-gradient-eq-zero.md)
+- [The outer probability that the vector Cox estimator is not a score root near the truth tends to zero](tendsto-measure-not-cox-gradient-eq-zero.md)
 - [Existence of the vector Cox estimator with probability tending to one](tendsto-measure-not-exists-is-max-on-vec.md)
 - [Consistency of the vector Cox estimator](tendsto-in-measure-cox-mple-vector.md)
 - [Asymptotic distribution of the vector Cox estimator](tendsto-in-distribution-cox-mple-vector.md)

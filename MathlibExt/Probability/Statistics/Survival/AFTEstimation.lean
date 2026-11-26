@@ -88,7 +88,8 @@ open scoped ENNReal
 
 noncomputable section
 
-/-- The law of `log T = η + σ ε` for an error `ε ~ μ₀`. -/
+/-- The pushforward of a measure `μ₀` along `e ↦ η + σ e`; when `μ₀` is the law of an error `ε`,
+it is the law of `log T = η + σ ε`. -/
 def logLinearLaw (μ₀ : Measure ℝ) (η σ : ℝ) : Measure ℝ :=
   μ₀.map fun e => η + σ * e
 
@@ -108,8 +109,9 @@ theorem measurable_obsMap : Measurable obsMap := by
   exact (measurable_fst.min measurable_snd).prodMk
     (measurable_to_bool (h ▸ measurableSet_le measurable_fst measurable_snd))
 
-/-- The law of the observed data `(Y, δ) = (min (log T) (log C), 1[T ≤ C])` when the log failure
-time has law `μT` and the independent log censoring time has law `μC`. -/
+/-- The observed-data measure of measures `μT` and `μC` on `ℝ`: the pushforward of `μT ⊗ μC`
+along `obsMap`. When `μT` is the law of the log failure time and `μC` the law of an independent
+log censoring time, it is the law of `(Y, δ) = (min (log T) (log C), 1[T ≤ C])`. -/
 def obsLaw (μT μC : Measure ℝ) : Measure (ℝ × Bool) :=
   (μT.prod μC).map obsMap
 
@@ -118,7 +120,9 @@ section ObservedLaw
 variable (μT μC : Measure ℝ) [SFinite μT] [SFinite μC]
 
 omit [SFinite μT] in
-/-- Under independent censoring `P(Y > y) = P(log T > y) P(log C > y)`. -/
+/-- For any measure `μT` and an s-finite `μC`, the mass of `(y, ∞) × univ` under the observed-data
+measure is `μT (y, ∞) * μC (y, ∞)` in `[0, ∞]` (with `0 * ∞ = 0`); for independent probability
+laws this is `P(Y > y) = P(log T > y) P(log C > y)`. -/
 theorem obsLaw_Ioi_prod_univ (y : ℝ) :
     obsLaw μT μC (Ioi y ×ˢ univ) = μT (Ioi y) * μC (Ioi y) := by
   rw [obsLaw, Measure.map_apply measurable_obsMap (measurableSet_Ioi.prod MeasurableSet.univ)]
@@ -127,8 +131,10 @@ theorem obsLaw_Ioi_prod_univ (y : ℝ) :
     simp only [obsMap, Set.mem_preimage, Set.mem_prod, mem_Ioi, mem_univ, and_true, lt_min_iff]
   rw [this, Measure.prod_prod]
 
-/-- **Censored observations**: `P(Y ∈ A, δ = 0) = ∫_A P(log T > c) dG(c)`, the survival of
-`log T` at the censoring time integrated against the censoring law `G = μC`. -/
+/-- **Censored observations**: for s-finite `μT`, `μC` and measurable `A`, the mass of
+`A × {false}` under the observed-data measure is `∫_A μT (c, ∞) dμC(c)` in `[0, ∞]`, the mass of
+`log T` above the censoring time integrated against `μC`. For independent probability laws this is
+`P(Y ∈ A, δ = 0) = ∫_A P(log T > c) dG(c)` with `G = μC`. -/
 theorem obsLaw_prod_false {A : Set ℝ} (hA : MeasurableSet A) :
     obsLaw μT μC (A ×ˢ {false}) = ∫⁻ c in A, μT (Ioi c) ∂μC := by
   have hs : obsMap ⁻¹' (A ×ˢ {false}) = {ω | ω.2 ∈ A ∧ ω.2 < ω.1} := by
@@ -150,8 +156,10 @@ theorem obsLaw_prod_false {A : Set ℝ} (hA : MeasurableSet A) :
   · simp [hc]
 
 omit [SFinite μT] in
-/-- **Observed failures**: `P(Y ∈ A, δ = 1) = ∫_A G[t, ∞) dμT(t)`, the censoring survival at the
-failure time integrated against the law `μT` of `log T` (ties count as failures). -/
+/-- **Observed failures**: for any measure `μT`, an s-finite `μC` and measurable `A`, the mass of
+`A × {true}` under the observed-data measure is `∫_A μC [t, ∞) dμT(t)` in `[0, ∞]`, the censoring
+mass at or after the failure time integrated against `μT` (ties count as failures). For
+independent probability laws this is `P(Y ∈ A, δ = 1) = ∫_A G[t, ∞) dμT(t)` with `G = μC`. -/
 theorem obsLaw_prod_true {A : Set ℝ} (hA : MeasurableSet A) :
     obsLaw μT μC (A ×ˢ {true}) = ∫⁻ t in A, μC (Ici t) ∂μT := by
   have hs : obsMap ⁻¹' (A ×ˢ {true}) = {ω | ω.1 ∈ A ∧ ω.1 ≤ ω.2} := by
@@ -173,7 +181,9 @@ theorem obsLaw_prod_true {A : Set ℝ} (hA : MeasurableSet A) :
 
 end ObservedLaw
 
-/-- **Survival of the log-linear law**: `P(log T > y) = P(ε > (y - η) / σ)` for `σ > 0`. -/
+/-- **Survival of the log-linear law**: for any measure `μ₀` and `σ > 0`, the mass of `(y, ∞)`
+under the log-linear measure is the mass of `((y - η) / σ, ∞)` under `μ₀`, in `[0, ∞]`; for an
+error `ε ~ μ₀` this is `P(log T > y) = P(ε > (y - η) / σ)`. -/
 theorem logLinearLaw_Ioi (μ₀ : Measure ℝ) (η : ℝ) {σ : ℝ} (hσ : 0 < σ) (y : ℝ) :
     logLinearLaw μ₀ η σ (Ioi y) = μ₀ (Ioi ((y - η) / σ)) := by
   have hm : Measurable fun e : ℝ => η + σ * e := (measurable_const_mul σ).const_add η
@@ -383,15 +393,18 @@ theorem score_eq_zero_and_scaleScore_eq_zero {f₀ f₀' S₀ : ℝ → ℝ} (y 
 
 /-! ### The likelihood factors of the observed-data law -/
 
-/-- **Censored factor.** If `S₀` is the survival function of the error law `μ₀`, the censored
-likelihood contribution at `y` is `P(log T > y)` under the log-linear law. -/
+/-- **Censored factor.** For any measure `μ₀`, `σ > 0` and `S₀ z` the real mass of `(z, ∞)` under
+`μ₀` (an infinite mass is read as `0`), the censored likelihood contribution at `y` is the real
+mass of `(y, ∞)` under the log-linear measure; for an error law `μ₀` this is `P(log T > y)`. -/
 theorem likContrib_false_eq (f₀ : ℝ → ℝ) (μ₀ : Measure ℝ) (η : ℝ) {σ : ℝ} (hσ : 0 < σ)
     (y : ℝ) :
     likContrib f₀ (fun z => μ₀.real (Ioi z)) σ η y false = (logLinearLaw μ₀ η σ).real (Ioi y) := by
   simp [likContrib, measureReal_def, logLinearLaw_Ioi μ₀ η hσ]
 
-/-- **The censored part of the observed-data law is the censored likelihood factor integrated
-against the censoring law**: `P(Y ∈ A, δ = 0) = ∫_A S₀((c - η) / σ) dG(c)`. -/
+/-- **The censored part of the observed-data measure is the censored likelihood factor integrated
+against the censoring measure**: for a finite error measure `μ₀`, an s-finite `μC`, `σ > 0` and
+measurable `A`, the mass of `A × {false}` is `∫_A S₀((c - η) / σ) dμC(c)` in `[0, ∞]`, with
+`S₀ z = μ₀ (z, ∞)`; for probability laws this is `P(Y ∈ A, δ = 0)`. -/
 theorem obsLaw_logLinearLaw_prod_false (f₀ : ℝ → ℝ) (μ₀ : Measure ℝ) [IsFiniteMeasure μ₀]
     (μC : Measure ℝ) [SFinite μC] (η : ℝ) {σ : ℝ} (hσ : 0 < σ) {A : Set ℝ}
     (hA : MeasurableSet A) :
@@ -409,8 +422,9 @@ private lemma map_volume_affine (η : ℝ) {σ : ℝ} (hσ : 0 < σ) :
     abs_of_pos (inv_pos.2 hσ)]
   exact (measurable_const_add η).aemeasurable
 
-/-- **Density of the log-linear law.** If the error law has Lebesgue density `g`, then
-`log T = η + σ ε` has density `t ↦ σ⁻¹ g((t - η) / σ)`. -/
+/-- **Density of the log-linear law.** For `σ > 0`, if the error measure has Lebesgue density `g`
+(any measurable `g : ℝ → ℝ≥0∞`), the log-linear measure has density `t ↦ σ⁻¹ g((t - η) / σ)`; for
+an error law this is the density of `log T = η + σ ε`. -/
 theorem logLinearLaw_withDensity {g : ℝ → ℝ≥0∞} (hg : Measurable g) (η : ℝ) {σ : ℝ}
     (hσ : 0 < σ) :
     logLinearLaw (volume.withDensity g) η σ =
@@ -434,9 +448,11 @@ theorem logLinearLaw_withDensity {g : ℝ → ℝ≥0∞} (hg : Measurable g) (�
     ring
   · rw [indicator_of_notMem he, indicator_of_notMem (mt hpre.1 he)]
 
-/-- **The event part of the observed-data law is the event likelihood factor times the censoring
-survival**: if the error law has density `f₀`, then
-`P(Y ∈ A, δ = 1) = ∫_A (f₀((t - η) / σ) / σ) G([t, ∞)) dt`. -/
+/-- **The event part of the observed-data measure is the event likelihood factor times the
+censoring mass**: if the error measure has Lebesgue density `max f₀ 0` for a measurable `f₀`, `μC`
+is s-finite, `σ > 0` and `A` is measurable, then the mass of `A × {true}` is
+`∫_A max (f₀((t - η) / σ) / σ) 0 · μC [t, ∞) dt` in `[0, ∞]` (`S₀` is unused). For an error law
+with density `f₀` and independent censoring this is `P(Y ∈ A, δ = 1)`. -/
 theorem obsLaw_logLinearLaw_prod_true {f₀ : ℝ → ℝ} (hf₀ : Measurable f₀) (S₀ : ℝ → ℝ)
     (μC : Measure ℝ) [SFinite μC] (η : ℝ) {σ : ℝ} (hσ : 0 < σ) {A : Set ℝ}
     (hA : MeasurableSet A) :
@@ -464,10 +480,11 @@ private lemma exists_Ioi_ne_zero (μC : Measure ℝ) (hC : μC ≠ 0) : ∃ y, �
   refine tendsto_const_nhds.congr fun t => ?_
   exact (measure_mono_null (Ici_subset_Ioi.2 (sub_one_lt t)) (hcon (t - 1))).symm
 
-/-- **Identifiability for one covariate value.** Let the error law `μ₀` be finite with strictly
-decreasing survival function (e.g. any law with an everywhere positive density), and let the log
-censoring time have a nonzero finite law `μC` not depending on the parameters. If the log-linear
-models `(η, σ)` and `(η', σ')` give the same observed-data law, then `η = η'` and `σ = σ'`. -/
+/-- **Identifiability for one covariate value.** Let the error measure `μ₀` be finite with
+strictly decreasing real survival mass `z ↦ μ₀.real (Ioi z)` (e.g. any finite measure with an
+everywhere positive density), and let the log censoring measure `μC` be nonzero, finite and not
+depend on the parameters; neither needs mass one. If the log-linear models `(η, σ)` and
+`(η', σ')` with `σ, σ' > 0` give the same observed-data measure, then `η = η'` and `σ = σ'`. -/
 theorem eq_of_obsLaw_eq (μ₀ : Measure ℝ) [IsFiniteMeasure μ₀]
     (hS : StrictAnti fun z => μ₀.real (Ioi z)) (μC : Measure ℝ) [IsFiniteMeasure μC]
     (hC : μC ≠ 0) {η η' σ σ' : ℝ} (hσ : 0 < σ) (hσ' : 0 < σ')
@@ -495,10 +512,11 @@ theorem eq_of_obsLaw_eq (μ₀ : Measure ℝ) [IsFiniteMeasure μ₀]
   linarith
 
 /-- **Identifiability of the regression coefficients and the scale.** In the log-linear AFT
-model `log Tᵢ = ⟪β, xᵢ⟫ + σ εᵢ` with independent censoring, suppose the error law has strictly
-decreasing survival, each subject's log censoring law is nonzero, finite and free of `(β, σ)`, and
-the design has full column rank (`β ↦ (⟪β, xᵢ⟫)ᵢ` is injective). If `(β, σ)` and `(β', σ')` give
-the same observed-data law for every subject, then `β = β'` and `σ = σ'`. -/
+model `log Tᵢ = ⟪β, xᵢ⟫ + σ εᵢ` with independent censoring and at least one subject (`NeZero n`),
+suppose the error measure is finite with strictly decreasing real survival mass, each subject's
+log censoring measure is nonzero, finite and free of `(β, σ)` (none needs mass one), and the
+design has full column rank (`β ↦ (⟪β, xᵢ⟫)ᵢ` is injective). If `(β, σ)` and `(β', σ')` with
+`σ, σ' > 0` give the same observed-data measure for every subject, then `β = β'` and `σ = σ'`. -/
 theorem identifiable {n p : ℕ} [NeZero n] (μ₀ : Measure ℝ) [IsFiniteMeasure μ₀]
     (hS : StrictAnti fun z => μ₀.real (Ioi z)) (x : Fin n → Fin p → ℝ)
     (hx : Function.Injective (Matrix.of x).mulVec) (μC : Fin n → Measure ℝ)
@@ -513,7 +531,8 @@ theorem identifiable {n p : ℕ} [NeZero n] (μ₀ : Measure ℝ) [IsFiniteMeasu
   rw [dotProduct_comm, (hi i).1, dotProduct_comm]
 
 /-- **Full column rank is necessary and sufficient** for the regression coefficients to be
-identified (at a common known scale `σ > 0`) from the observed-data laws. -/
+identified (at a common known scale `σ > 0`) from the observed-data measures, for a finite error
+measure with strictly decreasing real survival mass and nonzero finite censoring measures. -/
 theorem identifiable_iff {n p : ℕ} (μ₀ : Measure ℝ) [IsFiniteMeasure μ₀]
     (hS : StrictAnti fun z => μ₀.real (Ioi z)) (x : Fin n → Fin p → ℝ)
     (μC : Fin n → Measure ℝ) [∀ i, IsFiniteMeasure (μC i)] (hC : ∀ i, μC i ≠ 0) {σ : ℝ}

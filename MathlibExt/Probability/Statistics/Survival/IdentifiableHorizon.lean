@@ -152,7 +152,9 @@ theorem kmMeasure_ne_of_kmTail_ne_zero (h : D.kmTail ≠ 0) {τ τ' : ℝ} (hτ 
     zero_add] at h1 h2
   exact h (h1.symm.trans h2)
 
-/-- At or after the last observation time the Kaplan–Meier estimate is the residual mass. -/
+/-- If every observation time is at most `t`, the Kaplan–Meier estimate at `t` is the residual
+mass. On a nonempty grid this means `t` is at or after the last observation time; with no
+observations both sides are the empty product `1`. -/
 theorem kmSurvival_eq_kmTail {t : ℝ} (ht : ∀ j, D.time j ≤ t) : D.kmSurvival t = D.kmTail := by
   classical
   rw [kmSurvival, kmTail, filter_true_of_mem fun j _ => ht j]
@@ -196,8 +198,9 @@ variable {k : ℕ}
 events, as in `obsEventMass`). -/
 def censoredObsMap (ω : Fin k × Fin k) : Fin k × Bool := (min ω.1 ω.2, decide (ω.1 ≤ ω.2))
 
-/-- The **observed-data law** of right-censored data: the law of `censoredObsMap (T, C)` when
-`(T, C)` has joint law `μ`. -/
+/-- The **observed-data law** of right-censored data: the pushforward of a measure `μ` on grid
+pairs along `censoredObsMap`; when `μ` is the joint law of `(T, C)`, it is the law of
+`censoredObsMap (T, C)`. -/
 noncomputable def censoredObsLaw (μ : Measure (Fin k × Fin k)) : Measure (Fin k × Bool) :=
   μ.map censoredObsMap
 
@@ -276,9 +279,10 @@ private lemma toMeasure_Ici_eq_zero {pC : PMF (Fin k)} {h j : Fin k}
   rw [hs, PMF.toMeasure_apply_finset]
   exact sum_eq_zero fun c hc => hC c (hj.trans_le (mem_filter.1 hc).2)
 
-/-- **The tail beyond the censoring horizon is not identified.** If the censoring law puts no
-mass after `h`, two event-time laws that agree at every `t ≤ h` have the same observed-data law
-under independent censoring, however they distribute `P(T > h)` over the points after `h`. -/
+/-- **Redistributing mass beyond the censoring horizon preserves the observed law.** If the
+censoring law puts no mass after `h`, two event-time laws that agree at every `t ≤ h` have the
+same observed-data law under independent censoring, however they distribute `P(T > h)` over the
+grid points after `h`. This does not assert that two distinct such laws exist. -/
 theorem censoredObsLaw_indepLaw_eq_of_eqOn_Iic {pT pT' pC : PMF (Fin k)} {h : Fin k}
     (hC : ∀ c, h < c → pC c = 0) (hT : ∀ t ≤ h, pT t = pT' t) :
     censoredObsLaw (indepLaw pT pC) = censoredObsLaw (indepLaw pT' pC) := by

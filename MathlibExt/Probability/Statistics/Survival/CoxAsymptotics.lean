@@ -270,8 +270,8 @@ theorem tendsto_measure_not_exists_isMaxOn (hv : v ≠ 0)
     hv hscore hi hiv hinfo hr
 
 /-- **Consistency of the Cox estimator** (Andersen–Gill 1982, Theorem 3.2, scalar covariate).
-Let `βhat n` be a maximizer of the log partial likelihood of the first `n` subjects whenever one
-exists. Assume
+Let `βhat n` be a maximizer of the log partial likelihood of the `n` subjects in row `n` (rows
+need not be nested) whenever one exists. Assume
 
 * the normalized score at the true coefficient converges in distribution,
   `U_n(β₀) / √n ⟶ Z` (the Andersen–Gill martingale central limit theorem under the Lindeberg
@@ -296,9 +296,10 @@ theorem tendstoInMeasure_coxMPLE (hv : v ≠ 0)
     hv hβhat hscore hi hiv hinfo hr
 
 /-- **The Cox estimator is asymptotically `Z / v`.** Under the hypotheses of
-`tendstoInMeasure_coxMPLE` and measurability of the estimator, `√n (βhat n - β₀) ⟶ Z / v` in
-distribution, where `Z` is the limit of `Uₙ(β₀) / √n` and `v = i(β₀)` the limiting information.
-No Gaussianity is used; see `tendstoInDistribution_coxMPLE_gaussian` for the normal limit. -/
+`tendstoInMeasure_coxMPLE` and almost-everywhere measurability of the estimator,
+`√n (βhat n - β₀) ⟶ Z / v` in distribution, where `Z` is the limit of `Uₙ(β₀) / √n` and `v = i(β₀)`
+the limiting information. No Gaussianity is used; see `tendstoInDistribution_coxMPLE_gaussian` for
+the normal limit. -/
 theorem tendstoInDistribution_coxMPLE (hv : v ≠ 0)
     (hβhat : ∀ n ω, (∃ b, IsMaxOn (logPartialLikelihood₁ (T n ω) (δ n ω) (z n ω)) Set.univ b) →
       IsMaxOn (logPartialLikelihood₁ (T n ω) (δ n ω) (z n ω)) Set.univ (βhat n ω))
@@ -316,10 +317,10 @@ theorem tendstoInDistribution_coxMPLE (hv : v ≠ 0)
     hv hβhat hβhat_meas hscore hi hiv hinfo hr
 
 /-- **Asymptotic normality of the Cox estimator** (Andersen–Gill 1982, Theorem 3.3, scalar
-covariate). Let `βhat n` be a measurable maximizer of the log partial likelihood whenever one
-exists. If `Uₙ(β₀) / √n ⟶ Z ~ N(0, v)` and `Iₙ(b) / n → i(b)` uniformly in probability near `β₀`
-with `i` continuous at `β₀` and `i(β₀) = v ≠ 0`, then `√n (βhat n - β₀) ⟶ Z / v` in distribution
-and `Z / v ~ N(0, v⁻¹)`: the asymptotic variance is the inverse of the information. -/
+covariate). Let `βhat n` be an almost-everywhere measurable maximizer of the log partial likelihood
+whenever one exists. If `Uₙ(β₀) / √n ⟶ Z ~ N(0, v)` and `Iₙ(b) / n → i(b)` uniformly in probability
+near `β₀` with `i` continuous at `β₀` and `i(β₀) = v ≠ 0`, then `√n (βhat n - β₀) ⟶ Z / v` in
+distribution and `Z / v ~ N(0, v⁻¹)`: the asymptotic variance is the inverse of the information. -/
 theorem tendstoInDistribution_coxMPLE_gaussian (hv : v ≠ 0)
     (hβhat : ∀ n ω, (∃ b, IsMaxOn (logPartialLikelihood₁ (T n ω) (δ n ω) (z n ω)) Set.univ b) →
       IsMaxOn (logPartialLikelihood₁ (T n ω) (δ n ω) (z n ω)) Set.univ (βhat n ω))

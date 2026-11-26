@@ -5,7 +5,7 @@
 - [The compensator is stopped at exit](compensator-min-obs-time.md)
 - [Compensator paths are monotone](monotone-compensator.md)
 - [Compensator paths vanish at minus infinity](tendsto-compensator-at-bot.md)
-- [The hazard measure is locally finite](hazard-measure-iic-ne-top.md)
+- [Finite cumulative hazard at points with positive survival](hazard-measure-iic-ne-top.md)
 - [The hazard up to the observed time is finite](ae-hazard-measure-iic-obs-time-ne-top.md)
 - [The model compensator is the unique compensator](ae-forall-eq-compensator.md)
 - [The strict past determines a stopped random time](measurable-min-strict-past.md)

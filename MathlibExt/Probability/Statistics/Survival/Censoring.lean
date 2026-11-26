@@ -71,12 +71,14 @@ open MeasureTheory
 
 variable {k : ℕ}
 
-/-- The observed **event mass** at grid point `j` under the joint law `μ` of `(T, C)`:
-`P(min T C = j, T ≤ C)`, the probability that follow-up ends at `j` with an observed event. -/
+/-- The observed **event mass** at grid point `j` of a measure `μ` on grid pairs `(T, C)`: the real
+mass of `{min T C = j, T ≤ C}` (an infinite mass is read as `0`). For the joint law of `(T, C)` it
+is `P(min T C = j, T ≤ C)`, the probability that follow-up ends at `j` with an observed event. -/
 noncomputable def obsEventMass (μ : Measure (Fin k × Fin k)) (j : Fin k) : ℝ :=
   μ.real {ω | min ω.1 ω.2 = j ∧ ω.1 ≤ ω.2}
 
-/-- The observed **at-risk mass** at grid point `j` under the joint law `μ` of `(T, C)`:
+/-- The observed **at-risk mass** at grid point `j` of a measure `μ` on grid pairs `(T, C)`: the
+real mass of `{min T C ≥ j}` (an infinite mass is read as `0`). For the joint law of `(T, C)` it is
 `P(min T C ≥ j)`, the probability that a subject is still under observation at `j`. -/
 noncomputable def obsAtRiskMass (μ : Measure (Fin k × Fin k)) (j : Fin k) : ℝ :=
   μ.real {ω | j ≤ min ω.1 ω.2}

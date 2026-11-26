@@ -60,7 +60,8 @@ indicators, adapted event indicators, covariates known at time `0`, `|zᵢ| ≤ 
 baseline hazard increments `Δα`, the **Cox intensity**
 `E[ΔNᵢ(k + 1) | F_k] = Yᵢ(k + 1) exp (β₀ zᵢ) Δα(k + 1)` and **no ties** (almost surely at most one
 event per step). The data enter T145's statements as `T = (tᵢ : ℝ)`, `δ`, `z`; the hypothesis
-`hsupp` asks that every observed event lies on steps `1, …, K n`.
+`hsupp` asks that every observed event time satisfies `1 ≤ tᵢ ≤ K n`, i.e. lies in a step
+`k < K n`.
 
 ## Main results
 
@@ -151,12 +152,15 @@ scalar covariate `z`. -/
 noncomputable def wSum (Y z : Fin n → ℝ) (j : ℕ) (b : ℝ) : ℝ :=
   ∑ l, Y l * z l ^ j * exp (b * z l)
 
-/-- The `exp (b z)`-weighted mean of the covariate over the risk set, `S⁽¹⁾(b) / S⁽⁰⁾(b)`. -/
+/-- The weighted mean `S⁽¹⁾(b) / S⁽⁰⁾(b)` of the covariate with real weights `Yₗ exp (b zₗ)` (`0`
+when `S⁽⁰⁾(b) = 0`); for 0/1 at-risk indicators `Y` it is the `exp (b z)`-weighted mean over the
+risk set. -/
 noncomputable def wMean (Y z : Fin n → ℝ) (b : ℝ) : ℝ :=
   wSum Y z 1 b / wSum Y z 0 b
 
-/-- The `exp (b z)`-weighted variance of the covariate over the risk set,
-`S⁽²⁾(b) / S⁽⁰⁾(b) - (S⁽¹⁾(b) / S⁽⁰⁾(b))²`. -/
+/-- The weighted variance `S⁽²⁾(b) / S⁽⁰⁾(b) - (S⁽¹⁾(b) / S⁽⁰⁾(b))²` of the covariate with real
+weights `Yₗ exp (b zₗ)` (each quotient `0` when `S⁽⁰⁾(b) = 0`); for 0/1 at-risk indicators `Y` it
+is the `exp (b z)`-weighted variance over the risk set. -/
 noncomputable def wVar (Y z : Fin n → ℝ) (b : ℝ) : ℝ :=
   wSum Y z 2 b / wSum Y z 0 b - wMean Y z b ^ 2
 
@@ -412,8 +416,9 @@ theorem wVar_atRiskInd_eq_riskVar (t : Fin n → ℕ) (z : Fin n → ℝ) (b : �
     Nat.sub_add_cancel hi, riskSet_natCast]
   simp
 
-/-- **Pathwise bridge for the score.** If every observed event lies on the grid steps
-`1, …, K`, the summed score increments are the Cox score `coxScore` of the data. -/
+/-- **Pathwise bridge for the score.** If every observed event time satisfies `1 ≤ tᵢ ≤ K` (grid
+step `k` covers time `k + 1`), the summed score increments over `k < K` are the Cox score
+`coxScore` of the data. -/
 theorem sum_range_scoreIncr_eq_coxScore (t : Fin n → ℕ) (d : Fin n → Bool) (z : Fin n → ℝ)
     (b : ℝ) (K : ℕ) (h : ∀ i, d i = true → 1 ≤ t i ∧ t i ≤ K) :
     ∑ k ∈ range K, scoreIncr t d z b k = coxScore (fun l => (t l : ℝ)) d z b := by
@@ -422,8 +427,9 @@ theorem sum_range_scoreIncr_eq_coxScore (t : Fin n → ℕ) (d : Fin n → Bool)
   refine sum_congr rfl fun i hi => ?_
   rw [wMean_atRiskInd_eq_riskMean t z b i (h i (mem_filter.1 hi).2).1]
 
-/-- **Pathwise bridge for the information.** If every observed event lies on the grid steps
-`1, …, K`, the summed information increments are the observed information `coxInformation`. -/
+/-- **Pathwise bridge for the information.** If every observed event time satisfies
+`1 ≤ tᵢ ≤ K` (grid step `k` covers time `k + 1`), the summed information increments over `k < K`
+are the observed information `coxInformation`. -/
 theorem sum_range_infoIncr_eq_coxInformation (t : Fin n → ℕ) (d : Fin n → Bool) (z : Fin n → ℝ)
     (b : ℝ) (K : ℕ) (h : ∀ i, d i = true → 1 ≤ t i ∧ t i ≤ K) :
     ∑ k ∈ range K, infoIncr t d z b k = coxInformation (fun l => (t l : ℝ)) d z b := by
@@ -728,9 +734,10 @@ covariates `z n ω i`, observed through the filtration `F n`. Subject `i` is at 
   at time `0`;
 * the covariates are bounded, `|zᵢ| ≤ B`;
 * the baseline hazard increments `dα n k` are nonnegative;
-* **the Cox intensity**: `E[ΔNᵢ(k + 1) | F_k] = Yᵢ(k + 1) exp (β₀ zᵢ) Δα(k + 1)`, the discrete
-  form of Andersen–Gill's multiplicative intensity `Yᵢ(t) exp (β₀ zᵢ) λ₀(t)`;
-* **no ties**: almost surely at most one event per grid step. On a grid this forces
+* **the Cox intensity**: `P[ΔNᵢ(k + 1) | F_k] = Yᵢ(k + 1) exp (β₀ zᵢ) Δα(k + 1)` `P`-a.e., with
+  Mathlib's conditional expectation under the arbitrary measure `P`, the discrete form of
+  Andersen–Gill's multiplicative intensity `Yᵢ(t) exp (β₀ zᵢ) λ₀(t)`;
+* **no ties**: `P`-almost everywhere at most one event per grid step. On a grid this forces
   `Δα S⁽⁰⁾(β₀) ≤ 1` (`ae_compIncr_le_one`) and excludes conditionally independent subjects that
   share positive hazard in the same step, so the model covers one-event-per-step setups
   (`Δα = O(1/n)`, `K n` of order `n`), not ordinary discrete-time survival data with independent
@@ -1004,7 +1011,7 @@ theorem tendstoInDistribution_sum_scoreIncr (h : IsCoxCountingProcess P F t d z 
 
 /-- **The score hypothesis of Andersen–Gill (T145) from counting-process conditions and the
 convergence of the information compensator at `β₀`.** If every
-observed event lies on the grid steps `1, …, K n` and the information compensator at `β₀`
+observed event time satisfies `1 ≤ tᵢ ≤ K n` and the information compensator at `β₀`
 converges in probability to `v`, then the normalized Cox score `Uₙ(β₀) / √n` of the data
 converges in distribution to `N(0, v)`. -/
 theorem tendstoInDistribution_coxScore (h : IsCoxCountingProcess P F t d z dα β₀ B)
@@ -1341,7 +1348,8 @@ theorem measure_le_abs_sum_infoMartIncr_le (h : IsCoxCountingProcess P F t d z d
         field_simp
 
 /-- **Pointwise convergence of the information martingale** (Lenglart): for each coefficient
-`b`, `(I_n(b) - compensator) / n → 0` in probability. -/
+`b`, the information increments summed over `k < K n` minus the compensator at `K n`, divided by
+`n`, tend to `0` in probability. -/
 theorem tendsto_measure_le_abs_sum_infoMartIncr (h : IsCoxCountingProcess P F t d z dα β₀ B)
     (K : ℕ → ℕ) (b : ℝ) {ε : ℝ} (hε : 0 < ε) :
     Tendsto (fun n : ℕ => P {ω | ε ≤
@@ -1406,11 +1414,12 @@ theorem abs_sum_infoMartIncr_sub_le (h : IsCoxCountingProcess P F t d z dα β�
     _ = L * (1 + totalCompensator (t n ω) (z n ω) (dα n) β₀ K / n) := by
         field_simp
 
-/-- **Uniform convergence of the information martingale on a neighborhood.** For every
-`η > 0`, `P(∃ b ∈ [β₀ - r, β₀ + r], |I_n(b) - compensator| / n ≥ η) → 0`. Lenglart's inequality
-gives the convergence at each point of a finite net of mesh `h`; the Lipschitz bound
-`abs_sum_infoMartIncr_sub_le` and Markov's inequality for `Ā / n` control the oscillation
-between net points. -/
+/-- **Uniform convergence of the information martingale on a neighborhood.** For every `η > 0`,
+`P(∃ b ∈ [β₀ - r, β₀ + r], |Mₙ(b)| ≥ η) → 0`, where `Mₙ(b)` is the information increments summed
+over `k < K n` minus the compensator at `K n`, divided by `n`. Lenglart's inequality gives the
+convergence at each point of a finite net of mesh `h`; the Lipschitz bound
+`abs_sum_infoMartIncr_sub_le` and Markov's inequality for `Ā / n` control the oscillation between
+net points. -/
 theorem tendsto_measure_exists_abs_sum_infoMartIncr (h : IsCoxCountingProcess P F t d z dα β₀ B)
     (K : ℕ → ℕ) (r : ℝ) {η : ℝ} (hη : 0 < η) :
     Tendsto (fun n : ℕ => P {ω | ∃ b ∈ Set.Icc (β₀ - r) (β₀ + r), η ≤
@@ -1512,7 +1521,7 @@ variable {Ω : Type*} {m0 : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityM
 
 /-- **The uniform-information hypothesis of Andersen–Gill (T145) from counting-process conditions
 and the uniform information-compensator limit.** Under `IsCoxCountingProcess`, with every observed
-event on the grid steps `1, …, K n`, if the information compensator converges uniformly in
+event time `1 ≤ tᵢ ≤ K n`, if the information compensator converges uniformly in
 probability on `[β₀ - r, β₀ + r]` to `i`, then so does the observed information `Iₙ(b) / n`
 (`coxInformation`): the difference is the information martingale, which vanishes uniformly by
 `tendsto_measure_exists_abs_sum_infoMartIncr` (Lenglart's inequality on a Lipschitz net). The
@@ -1544,8 +1553,9 @@ theorem tendsto_measure_exists_coxInformation (h : IsCoxCountingProcess P F t d 
   · exact Or.inr ⟨b, hb, by linarith⟩
 
 omit [IsProbabilityMeasure P] in
-/-- Uniform convergence of the information compensator near `β₀` to `i` with `i β₀ = v`
-gives convergence in probability of the compensator at `β₀` to `v`. -/
+/-- For any measure `P`, uniform convergence in `P`-measure of the information compensator to `i`
+on `[β₀ - r, β₀ + r]` (`r ≥ 0`), with `i β₀ = v`, gives convergence in `P`-measure of the
+compensator at `β₀` to `v` (both in probability when `P` is a probability measure). -/
 theorem tendstoInMeasure_infoCompensator_of_uniform (K : ℕ → ℕ) {i : ℝ → ℝ} {r : ℝ}
     (hr : 0 ≤ r) {v : NNReal} (hiv : i β₀ = v)
     (hcomp : ∀ η > 0, Tendsto (fun n : ℕ => P {ω | ∃ b ∈ Set.Icc (β₀ - r) (β₀ + r),
@@ -1563,7 +1573,7 @@ theorem tendstoInMeasure_infoCompensator_of_uniform (K : ℕ → ℕ) {i : ℝ �
 /-- **Both Andersen–Gill limit hypotheses (T145) from counting-process conditions and the
 uniform information-compensator limit.** Under the
 discrete-time Cox counting-process conditions `IsCoxCountingProcess` (Cox intensity, bounded
-covariates, no ties), with every observed event on the grid steps `1, …, K n`, assume the
+covariates, no ties), with every observed event time `1 ≤ tᵢ ≤ K n`, assume the
 information compensator `(1/n) ∑_{k < K n} Δα V(b) S⁽⁰⁾(β₀)` converges uniformly in probability on
 `[β₀ - r, β₀ + r]` (`r ≥ 0`) to a function `i` with `i β₀ = v`. Then, for any `Z ~ N(0, v)`:
 

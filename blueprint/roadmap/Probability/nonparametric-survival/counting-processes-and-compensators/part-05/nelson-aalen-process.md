@@ -1,6 +1,6 @@
 # Nelson–Aalen process
 
-For a counting process $N$ and an at-risk process $Y$, the Nelson–Aalen process is $\hat A_n = \sum_{k<n}(N_{k+1} - N_k)/Y_{k+1}$, a step with nobody at risk contributing $0$.
+For real processes $N$ and $Y$ (in Aalen's model, a counting process and a number at risk), the Nelson–Aalen process is $\hat A_n = \sum_{k<n}(N_{k+1} - N_k)/Y_{k+1}$, a step with $Y_{k+1} = 0$ contributing $0$.
 
 ## Sources
 

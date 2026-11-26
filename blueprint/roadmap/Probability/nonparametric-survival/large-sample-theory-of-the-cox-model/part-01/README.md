@@ -11,7 +11,7 @@
 - [Normalized deterministic core of consistency](score-eq-zero-and-abs-sub-lt-of-div.md)
 - [Deterministic core of asymptotic normality](abs-sqrt-mul-sub-sub-le.md)
 - [Distributional limits scaled by root n vanish](tendsto-in-measure-div-sqrt.md)
-- [The maximizer is eventually a root near the truth](tendsto-measure-not-score-eq-zero-and-ab.md)
+- [The outer probability that the maximizer is not a root near the truth tends to zero](tendsto-measure-not-score-eq-zero-and-ab.md)
 - [Existence of a maximizer with probability tending to one](tendsto-measure-not-exists-is-max-on.md)
 - [Consistency of the maximizer of a random concave criterion](tendsto-in-measure-argmax.md)
 - [Asymptotic distribution of the maximizer of a random concave criterion](tendsto-in-distribution-argmax.md)

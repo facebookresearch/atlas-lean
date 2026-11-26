@@ -87,8 +87,9 @@ open scoped ENNReal
 
 /-! ### Observed-data law under a joint law of `(T, C)` -/
 
-/-- The **observed-data law under dependent censoring**: the law of `(T ∧ C, 1{T ≤ C})` when the
-pair `(T, C)` has the arbitrary joint law `μ`. -/
+/-- The **observed-data law under dependent censoring**: the pushforward of an arbitrary measure
+`μ` on `ℝ × ℝ` along `censoredObsMap`. When `μ` is the joint law of `(T, C)`, it is the law of
+`(T ∧ C, 1{T ≤ C})`. -/
 noncomputable def jointCensoredObsLaw (μ : Measure (ℝ × ℝ)) : Measure (ℝ × Bool) :=
   μ.map censoredObsMap
 
@@ -98,12 +99,14 @@ theorem censoredObsLaw_eq_jointCensoredObsLaw (F G : Measure ℝ) :
 
 /-! ### Peterson's bounds -/
 
-/-- **Peterson lower bound** `P(X ≤ t, δ = 1)`: the observed failures by time `t`. -/
+/-- **Peterson lower bound** `P((-∞, t] × {true})` of a measure `P` on `ℝ × Bool`: the observed
+failures by time `t`, `P(X ≤ t, δ = 1)` for an observed-data law. -/
 noncomputable def petersonLower (P : Measure (ℝ × Bool)) (t : ℝ) : ℝ≥0∞ :=
   P (Iic t ×ˢ {true})
 
-/-- **Peterson upper bound** `P(X ≤ t, δ = 1) + P(X < t, δ = 0)`: the observed failures by time
-`t` plus the subjects censored strictly before `t`. -/
+/-- **Peterson upper bound** `P((-∞, t] × {true}) + P((-∞, t) × {false})` of a measure `P` on
+`ℝ × Bool`: the observed failures by time `t` plus the subjects censored strictly before `t`,
+`P(X ≤ t, δ = 1) + P(X < t, δ = 0)` for an observed-data law. -/
 noncomputable def petersonUpper (P : Measure (ℝ × Bool)) (t : ℝ) : ℝ≥0∞ :=
   P (Iic t ×ˢ {true}) + P (Iio t ×ˢ {false})
 
@@ -149,14 +152,17 @@ theorem jointCensoredObsLaw_Iio_false (μ : Measure (ℝ × ℝ)) (t : ℝ) :
   · rintro ⟨h1, h2⟩
     exact ⟨(min_le_right _ _).trans_lt h1, h2⟩
 
-/-- **Peterson lower bound**: `P(X ≤ t, δ = 1) ≤ P(T ≤ t)` for every joint law `μ` of `(T, C)`. -/
+/-- **Peterson lower bound**: for every measure `μ` on `ℝ × ℝ` with observed-data measure `P`,
+`P((-∞, t] × {true}) ≤ μ((-∞, t] × univ)`; for a joint law of `(T, C)` this is
+`P(X ≤ t, δ = 1) ≤ P(T ≤ t)`. -/
 theorem petersonLower_le_fst_Iic (μ : Measure (ℝ × ℝ)) (t : ℝ) :
     petersonLower (jointCensoredObsLaw μ) t ≤ μ.fst (Iic t) := by
   rw [petersonLower, jointCensoredObsLaw_Iic_true, Measure.fst_apply measurableSet_Iic]
   exact measure_mono fun ω hω => hω.1
 
-/-- **Peterson upper bound**: `P(T ≤ t) ≤ P(X ≤ t, δ = 1) + P(X < t, δ = 0)` for every joint law
-`μ` of `(T, C)`. -/
+/-- **Peterson upper bound**: for every measure `μ` on `ℝ × ℝ` with observed-data measure `P`,
+`μ((-∞, t] × univ) ≤ P((-∞, t] × {true}) + P((-∞, t) × {false})`; for a joint law of `(T, C)`
+this is `P(T ≤ t) ≤ P(X ≤ t, δ = 1) + P(X < t, δ = 0)`. -/
 theorem fst_Iic_le_petersonUpper (μ : Measure (ℝ × ℝ)) (t : ℝ) :
     μ.fst (Iic t) ≤ petersonUpper (jointCensoredObsLaw μ) t := by
   rw [petersonUpper, jointCensoredObsLaw_Iic_true, jointCensoredObsLaw_Iio_false,
@@ -176,15 +182,17 @@ theorem petersonLower_le_petersonUpper (P : Measure (ℝ × Bool)) (t : ℝ) :
     petersonLower P t ≤ petersonUpper P t :=
   le_self_add
 
-/-- **Under independent censoring the Peterson bounds contain the identified value**:
-`P(X ≤ t, δ = 1) ≤ F(-∞, t]`. -/
+/-- **Under independent censoring the Peterson bounds contain the identified value**: for an
+s-finite `F` and a probability measure `G`, the observed-data measure `P` of `(F, G)` satisfies
+`P((-∞, t] × {true}) ≤ F(-∞, t]`. -/
 theorem petersonLower_le_censoredObsLaw (F G : Measure ℝ) [SFinite F] [IsProbabilityMeasure G]
     (t : ℝ) : petersonLower (censoredObsLaw F G) t ≤ F (Iic t) := by
   have h := petersonLower_le_fst_Iic (F.prod G) t
   rwa [Measure.fst_prod] at h
 
-/-- **Under independent censoring the Peterson bounds contain the identified value**:
-`F(-∞, t] ≤ P(X ≤ t, δ = 1) + P(X < t, δ = 0)`. -/
+/-- **Under independent censoring the Peterson bounds contain the identified value**: for an
+s-finite `F` and a probability measure `G`, the observed-data measure `P` of `(F, G)` satisfies
+`F(-∞, t] ≤ P((-∞, t] × {true}) + P((-∞, t) × {false})`. -/
 theorem le_petersonUpper_censoredObsLaw (F G : Measure ℝ) [SFinite F] [IsProbabilityMeasure G]
     (t : ℝ) : F (Iic t) ≤ petersonUpper (censoredObsLaw F G) t := by
   have h := fst_Iic_le_petersonUpper (F.prod G) t
@@ -378,8 +386,10 @@ theorem petersonLower_eq_petersonUpper_iff (P : Measure (ℝ × Bool)) [IsFinite
   rw [petersonLower, petersonUpper, eq_comm]
   exact h
 
-/-- **Point identification without early censoring.** If no subject is censored strictly before
-`t`, any two joint laws with the same observed-data law have the same `P(T ≤ t)`. -/
+/-- **Point identification without early censoring.** If two measures `μ`, `μ'` on `ℝ × ℝ` have
+the same observed-data measure `P` and `P((-∞, t) × {false}) = 0` (no subject is censored strictly
+before `t`), then `μ((-∞, t] × univ) = μ'((-∞, t] × univ)`: for joint laws, the same `P(T ≤ t)`.
+-/
 theorem fst_Iic_eq_of_jointCensoredObsLaw_eq {μ μ' : Measure (ℝ × ℝ)}
     (heq : jointCensoredObsLaw μ = jointCensoredObsLaw μ') {t : ℝ}
     (h0 : jointCensoredObsLaw μ (Iio t ×ˢ {false}) = 0) :

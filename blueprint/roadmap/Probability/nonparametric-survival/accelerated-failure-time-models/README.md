@@ -1,11 +1,9 @@
 # Accelerated failure time models
 
+The observation map of censored log times and its observed-data measure are those of right-censored times in general, applied to log failure and log censoring times: see [the observation map](../identifiability-under-censoring/censored-obs-map.md), [the observed-data measure](../identifiability-under-censoring/censored-obs-law.md), [its event part](../identifiability-under-censoring/censored-obs-law-apply-prod-true.md) and [its censoring part](../identifiability-under-censoring/censored-obs-law-apply-prod-false.md).
+
 - [Log-linear law of a failure time](log-linear-law.md)
-- [Observation map of censored log times](obs-map.md)
-- [Observed-data law under independent censoring](obs-law.md)
 - [Survival of the observed time under independent censoring](obs-law-ioi-prod-univ.md)
-- [Law of censored observations](obs-law-prod-false.md)
-- [Law of observed failures](obs-law-prod-true.md)
 - [Survival of the log-linear law](log-linear-law-ioi.md)
 - [Likelihood contribution of a censored observation](lik-contrib.md)
 - [Log-likelihood contribution of a censored observation](log-lik-contrib.md)

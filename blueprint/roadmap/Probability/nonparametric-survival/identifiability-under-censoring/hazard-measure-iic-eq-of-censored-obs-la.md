@@ -1,3 +1,3 @@
 # The cumulative hazard is identified up to the horizon
 
-Let the failure time $T \sim F$ and censoring time $C \sim G$ be independent, with observed data $(T \wedge C, \mathbf 1\{T \le C\})$; two failure-time probability laws $F, F'$ are compared under the same $G$. If $G$ is finite with $G[h, \infty) \ne 0$ and the observed-data laws agree, then $\Lambda(-\infty, t] = \Lambda'(-\infty, t]$ for every $t \le h$.
+For measures $F$ and $G$ on $\mathbb{R}$, the observed-data measure of $(F, G)$ is the image of $F \otimes G$ under $(t, c) \mapsto (t \wedge c, \mathbf 1\{t \le c\})$, the law of $(T \wedge C, \mathbf 1\{T \le C\})$ for independent $T \sim F$ and $C \sim G$ when $F$ and $G$ are probability laws. Let $F, F'$ be probability measures with hazard measures $\Lambda, \Lambda'$ and $G$ a finite measure with $G[h, \infty) \ne 0$. If the observed-data measures of $(F, G)$ and $(F', G)$ agree, then $\Lambda(-\infty, t] = \Lambda'(-\infty, t]$ for every $t \le h$.

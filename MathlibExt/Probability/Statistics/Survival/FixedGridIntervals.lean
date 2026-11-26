@@ -95,9 +95,9 @@ open MathlibExt.Probability.Statistics.SurvivalConsistency
 variable {k r : ℕ}
 
 /-- The **asymptotic variance** of the coordinate `a` of the joint Kaplan–Meier / Aalen–Johansen
-estimator at the horizon `m`: the variance, under the subject law `μ`, of the influence
-coordinate `influence μ m w a`. It is the variance of the coordinate `a` of the joint Gaussian
-limit (`exists_tendstoInDistribution_coord`). -/
+estimator at the horizon `m`: Mathlib's variance with respect to the measure `μ` of the influence
+coordinate `influence μ m w a`. When `μ` is the subject law, it is the variance of the coordinate
+`a` of the joint Gaussian limit (`exists_tendstoInDistribution_coord`). -/
 noncomputable def asymVar (μ : Measure ((Fin k × Fin r) × Fin k)) (m : Fin k)
     (a : Coord k r m) : ℝ :=
   Var[fun w => influence μ m w a; μ]
@@ -210,7 +210,8 @@ coordinates of the joint estimator (for instance the Kaplan–Meier survival at 
 time points, or a mix of survival and cumulative-incidence coordinates), all satisfying the
 nondegeneracy condition `0 < asymVar μ m (g i)`. Then there is a centered Gaussian vector `Y`
 with `Y i ∼ N(0, asymVar μ m (g i))` such that, for every critical value `z` and every
-consistent standard-error vector `se n → (√(asymVar μ m (g i)))_i`, the band
+standard-error vector `se n`, almost everywhere measurable for each `n` and converging in
+probability to `(√(asymVar μ m (g i)))_i`, the band
 `estimator (g i) ± z · se n i / √n` covers all `ajMap m (cellMean μ) (g i)` simultaneously with
 probability tending to `P(∀ i, |Y i| ≤ z √(asymVar μ m (g i)))`. That limit is at most the
 nominal level `nominalLevel z` (for nonempty `ι`) and at least the Bonferroni bound
@@ -330,7 +331,8 @@ theorem tendsto_coverage_cumulativeIncidence_waldInterval (pTJ : PMF (Fin k × F
     hse_meas
 
 /-- **Simultaneous fixed-grid Wald band for the estimand under independent censoring.** The
-band of `tendsto_coverage_gridBand_estimator` covers the estimand `target pTJ m (g i)` at all
+band of `tendsto_coverage_gridBand_estimator`, with almost everywhere measurable standard errors
+converging in probability, covers the estimand `target pTJ m (g i)` at all
 `i` simultaneously with probability tending to `P(∀ i, |Y i| ≤ z √(asymVar (g i)))`, which lies
 between `1 - card ι · (1 - nominalLevel z)` and `nominalLevel z`. -/
 theorem tendsto_coverage_gridBand_indepCauseLaw (pTJ : PMF (Fin k × Fin r))

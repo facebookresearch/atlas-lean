@@ -9,7 +9,7 @@
 - [Normalized deterministic core of consistency for the Cox estimator](cox-score-eq-zero-and-abs-sub-lt-of-div.md)
 - [Deterministic core of asymptotic normality for the Cox estimator](abs-sqrt-mul-sub-sub-le-2.md)
 - [Rescaling a centered normal by its variance](has-law-div-gaussian-real.md)
-- [The Cox estimator is eventually a root of the score near the truth](tendsto-measure-not-cox-score-eq-zero-an.md)
+- [The outer probability that the Cox estimator is not a score root near the truth tends to zero](tendsto-measure-not-cox-score-eq-zero-an.md)
 - [Existence of the Cox estimator with probability tending to one](tendsto-measure-not-exists-is-max-on-2.md)
 - [Consistency of the Cox estimator under Andersen–Gill conditions](tendsto-in-measure-cox-mple.md)
 - [Asymptotic distribution of the Cox estimator](tendsto-in-distribution-cox-mple.md)

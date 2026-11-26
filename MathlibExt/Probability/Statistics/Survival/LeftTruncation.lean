@@ -411,14 +411,16 @@ section Identification
 
 open MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics.Censoring
 
-/-- The **observed truncated event mass** at grid point `j` under a joint law `μ` of
-`((T, C), L)` on the grid: `P(min T C = j, T ≤ C, L < j)`, an observed event at `j` by a subject
-that entered before `j`. -/
+/-- The **observed truncated event mass** at grid point `j` of a measure `μ` on grid triples
+`((T, C), L)`: the real mass of `{min T C = j, T ≤ C, L < j}` (an infinite mass is read as `0`),
+an observed event at `j` by a subject that entered before `j`. For the joint law of `((T, C), L)`
+it is `P(min T C = j, T ≤ C, L < j)`. -/
 noncomputable def truncEventMass (μ : Measure ((Fin k × Fin k) × Fin k)) (j : Fin k) : ℝ :=
   μ.real {ω | min ω.1.1 ω.1.2 = j ∧ ω.1.1 ≤ ω.1.2 ∧ ω.2 < j}
 
-/-- The **observed delayed-entry at-risk mass** at grid point `j` under a joint law `μ` of
-`((T, C), L)`: `P(L < j ≤ min T C)`. -/
+/-- The **observed delayed-entry at-risk mass** at grid point `j` of a measure `μ` on grid triples
+`((T, C), L)`: the real mass of `{L < j ≤ min T C}` (an infinite mass is read as `0`). For the
+joint law of `((T, C), L)` it is `P(L < j ≤ min T C)`. -/
 noncomputable def truncAtRiskMass (μ : Measure ((Fin k × Fin k) × Fin k)) (j : Fin k) : ℝ :=
   μ.real {ω | ω.2 < j ∧ j ≤ min ω.1.1 ω.1.2}
 
@@ -479,8 +481,11 @@ theorem truncEventMass_div_truncAtRiskMass (pT pC pL : PMF (Fin k)) (j : Fin k)
   rw [truncEventMass_indepTruncLaw, truncAtRiskMass_indepTruncLaw,
     mul_div_mul_right _ _ hL, mul_div_mul_right _ _ hC, hazard]
 
-/-- Under the law of an included subject, `μ[· | L < X]`, the real mass of an event inside the
-inclusion event is its unconditional mass divided by `P(L < X)`. -/
+/-- For any measure `μ`, under the conditioned measure `μ[· | L < X] = μ(I)⁻¹ μ(· ∩ I)` (in
+`[0, ∞]`, `0⁻¹ = ∞`, `∞⁻¹ = 0`) with `I` the inclusion event, the real mass of an event `E ⊆ I`
+is `(μ.real I)⁻¹ * μ.real E`: real masses read an infinite mass as `0` and the real inverse has
+`0⁻¹ = 0`. For a probability measure with `μ(I) ≠ 0` this is `P(E) / P(L < X)`, the law of an
+included subject. -/
 theorem measureReal_cond_inclusion (μ : Measure ((Fin k × Fin k) × Fin k)) {E : Set _}
     (hE : E ⊆ inclusion) : (μ[|inclusion]).real E = (μ.real inclusion)⁻¹ * μ.real E := by
   rw [measureReal_def, cond_apply (Set.toFinite _).measurableSet, Set.inter_eq_right.2 hE,

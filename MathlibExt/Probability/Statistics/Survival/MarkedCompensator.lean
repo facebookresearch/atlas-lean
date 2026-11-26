@@ -293,10 +293,11 @@ theorem measurableSet_inter_le_singleJumpHistory
 variable {P : Measure Ω} [IsFiniteMeasure P]
 
 /-- **Marked compensator uniqueness for a single-jump history.** Let `Z` be a measurable process
-with `Z u = z₀` exactly when `u < X`, frozen from `X` on, and `ℱ = singleJumpHistory`. On a
-countably generated mark space, two compensating random measures `A`, `A'` of the same marked
-process `N` (finite measures; for every measurable `B`, `t ↦ A t ω B` predictable, càdlàg, of
-finite variation, normalized, and `N B - A(·, B)` a martingale) are indistinguishable. -/
+with values in a measurable space with measurable singletons, with `Z u = z₀` exactly when `u < X`,
+frozen from `X` on, and `ℱ = singleJumpHistory`. On a countably generated mark space, two
+compensating random measures `A`, `A'` of the same marked process `N` (finite measures; for every
+measurable `B`, `t ↦ A t ω B` predictable, càdlàg, of finite variation, normalized, and
+`N B - A(·, B)` a martingale) are indistinguishable. -/
 theorem ae_forall_eq_of_isMarkedCompensator_singleJump [MeasurableSingletonClass β]
     (hZ0 : ∀ u ω, Z u ω = z₀ ↔ u < X ω) (hfreeze : ∀ ω s u, X ω ≤ s → s ≤ u → Z u ω = Z s ω)
     {E : Type*} [MeasurableSpace E] [MeasurableSpace.CountablyGenerated E]

@@ -1,3 +1,3 @@
 # Agreement on the observable set gives the same observed law
 
-Let the failure time $T \sim F$ and censoring time $C \sim G$ be independent, with observed data $(T \wedge C, \mathbf 1\{T \le C\})$; two failure-time laws $F, F'$ are compared under the same $G$. If $F, F'$ are probability laws, $G$ is finite and $F, F'$ agree on the observable set of $G$, they give the same observed-data law.
+For measures $F$ and $G$ on $\mathbb{R}$, the observed-data measure of $(F, G)$ is the image of $F \otimes G$ under $(t, c) \mapsto (t \wedge c, \mathbf 1\{t \le c\})$, the law of $(T \wedge C, \mathbf 1\{T \le C\})$ for independent $T \sim F$ and $C \sim G$ when $F$ and $G$ are probability laws. If $F, F'$ are probability measures, $G$ is a finite measure and $F, F'$ agree on the observable set $\{s : G[s, \infty) \ne 0\}$ of $G$, then the observed-data measures of $(F, G)$ and $(F', G)$ agree.

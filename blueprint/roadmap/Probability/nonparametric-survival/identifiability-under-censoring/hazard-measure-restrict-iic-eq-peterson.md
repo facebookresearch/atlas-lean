@@ -1,3 +1,3 @@
 # Peterson representation of the hazard
 
-Let the failure time $T \sim F$ and censoring time $C \sim G$ be independent with observed-data law $P$ of $(X, \delta) = (T \wedge C, \mathbf 1\{T \le C\})$. If $F, G$ are finite and $P(X \ge h) \ne 0$, then on $(-\infty, h]$ the hazard of $F$ is $d\Lambda(s) = P(X \in ds, \delta = 1)/P(X \ge s)$.
+For finite measures $F$ and $G$ on $\mathbb{R}$, let $P$ be the observed-data measure of $(F, G)$, the image of $F \otimes G$ under $(t, c) \mapsto (t \wedge c, \mathbf 1\{t \le c\})$. If $P([h, \infty) \times \{0, 1\}) \ne 0$, then on $(-\infty, h]$ the hazard measure $dF(s)/F[s, \infty)$ of $F$ is $d\Lambda(s) = P(ds \times \{1\}) / P([s, \infty) \times \{0, 1\})$, a functional of $P$ alone. When $F$ and $G$ are the probability laws of independent $T$ and $C$, $P$ is the law of $(X, \delta) = (T \wedge C, \mathbf 1\{T \le C\})$ and this reads $d\Lambda(s) = P(X \in ds, \delta = 1)/P(X \ge s)$ under $P(X \ge h) \ne 0$.

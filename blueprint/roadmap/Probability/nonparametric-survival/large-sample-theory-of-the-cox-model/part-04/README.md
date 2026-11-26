@@ -12,7 +12,7 @@
 - [The Cox score is n times the score map at the sample mean](cox-score-eq-mul-score-map.md)
 - [Smoothness of the Cox score map](cont-diff-at-score-map.md)
 - [Implicit-function chart of the Cox root](exists-root-chart.md)
-- [The partial likelihood estimator is an isolated root](mple-eq-of-unique.md)
+- [An isolated score root equals the estimator](mple-eq-of-unique.md)
 - [The Cox estimator is the chart root of the sample mean](cox-mple-eq-of-chart.md)
 - [Boundedness of the indicator encoding](norm-obs-vec-le.md)
 - [Limits of encoded means have nonnegative at-risk coordinates](nonneg-of-tendsto.md)
