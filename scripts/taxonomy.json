@@ -9748,6 +9748,7 @@
   "MathlibExt/Analysis/HarmonicAnalysis/BoundedMeanOscillation": {"to": "Analysis/harmonic-analysis/real-variable-methods", "title": "Bounded mean oscillation"},
   "MathlibExt/Analysis/HarmonicAnalysis/DyadicMaximal": {"to": "Analysis/harmonic-analysis/real-variable-methods", "title": "Dyadic maximal function"},
   "MathlibExt/Analysis/HarmonicAnalysis/HardyBMOPairing": {"to": "Analysis/harmonic-analysis/real-variable-methods", "title": "Bounded mean oscillation"},
+  "MathlibExt/Analysis/HausdorffMoments": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Hausdorff moment problem"},
   "MathlibExt/Analysis/IharaConstantOf": {"to": "NumberTheory/function-fields", "title": "Ihara constant"},
   "MathlibExt/Analysis/InnerProductSpace/Arnoldi": {"to": "LinearAlgebra/matrix-decompositions", "title": "Arnoldi and Lanczos iterations"},
   "MathlibExt/Analysis/InnerProductSpace/AubinNitsche": {"to": "Analysis/numerical-analysis", "title": "Aubin–Nitsche lemma"},
