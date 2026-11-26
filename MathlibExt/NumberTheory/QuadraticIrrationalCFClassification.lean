@@ -38,6 +38,9 @@ For an even period length, the obstruction is exactly that the middle digit is e
   Given Sequence*, INTEGERS 26 (2026), Article A69, pp. 1–9, Theorem 6 and Corollary 1.
 - Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
   (1 + √D)/2*, INTEGERS 24 (2024), Article A50, pp. 1–7, Proposition 2 and Theorem 3 (ii).
+- Jun Ho Lee, *Existence of the Continued Fractions of √d and Its Applications*,
+  Bull. Korean Math. Soc. 59 (3) (2022), pp. 697–707. This is the source of the
+  realizability criterion cited as Proposition 2 in Lee's 2024 paper.
 -/
 
 namespace MetaMathlibExt.half_one_add_sqrt_hasPeriodicCF_exists_iff_parity
