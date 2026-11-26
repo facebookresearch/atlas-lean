@@ -12714,6 +12714,7 @@
   "MathlibExt/NumberTheory/EngelExpansion": {"to": "NumberTheory/continued-fractions-expansions", "title": "Engel expansions"},
   "MathlibExt/NumberTheory/ErdosGrahamCovering": {"to": "NumberTheory/congruences/covering-systems", "title": "Covering systems"},
   "MathlibExt/NumberTheory/ErdosMinimumOverlapConstant": {"to": "NumberTheory/additive-number-theory", "title": "Erdős minimum overlap problem"},
+  "MathlibExt/NumberTheory/ErdosMinimumOverlapHaugland": {"to": "NumberTheory/additive-number-theory", "title": "Erdős minimum overlap problem"},
   "MathlibExt/NumberTheory/ErdosMinimumOverlapMoser": {"to": "NumberTheory/additive-number-theory", "title": "Erdős minimum overlap problem"},
   "MathlibExt/NumberTheory/ErdosMinimumOverlapQuarter": {"to": "NumberTheory/additive-number-theory", "title": "Erdős minimum overlap problem"},
   "MathlibExt/NumberTheory/ErdosProblem650": {"to": "NumberTheory/additive-number-theory", "title": "Distinct multiples in an interval"},
