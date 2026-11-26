@@ -72442,6 +72442,7 @@
 "MathlibExt.Probability.Statistics.Measurement.one_sub_mul_sum_pow_of_topologicalOrder": "4f40c6a7b51c1b94",
 "MathlibExt.Probability.Statistics.Measurement.orderStatistic": "b36e86b2a89f43b9",
 "MathlibExt.Probability.Statistics.Measurement.orderStatistic_comp_of_monotone": "73065bf08c35b50d",
+"MathlibExt.Probability.Statistics.Measurement.positive_dof_factor_model_not_identified": "0a7f35daff78b5ea",
 "MathlibExt.Probability.Statistics.Measurement.pow_card_eq_zero_of_topologicalOrder": "9f5bfab37caa0b3d",
 "MathlibExt.Probability.Statistics.Measurement.pow_eq_zero_of_topologicalOrder": "422961827f358769",
 "MathlibExt.Probability.Statistics.Measurement.raschPMF": "a38fc1682ce09ce5",
