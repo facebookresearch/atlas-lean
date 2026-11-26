@@ -19,6 +19,5 @@
 ## Soundness of ID
 
 - [The effect as a marginal of a Q-factor](do-marginal-eq-marginal-q-factor.md)
-- [Soundness of the ID algorithm](id-sound.md)
 - [Soundness of the ID algorithm for a fixed causal diagram](id-sound-of-mem-tian-class.md)
 - [A successful run of ID identifies the effect](identified-on-do-marginal-of-id-eq-ok.md)
