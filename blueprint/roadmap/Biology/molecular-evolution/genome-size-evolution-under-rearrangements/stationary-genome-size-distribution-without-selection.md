@@ -8,7 +8,11 @@ $$\|\mu M^t - \pi\|_1 \le 2(1 - \varepsilon)^{\lfloor t/g \rfloor}, \qquad t \ge
 
 **Theorem 2.** If $(2\log 2 - 1)\,\mu_{\mathrm{dup}} < \mu_{\mathrm{ldel}}$, then $M_G$ has a unique stationary distribution $\nu_\infty$ and $\lim_{t \to \infty} \|\nu_0 M_G^t - \nu_\infty\|_1 = 0$ for every initial distribution $\nu_0$. Genome size therefore stays bounded in distribution, whatever the rates of small insertions such as transposable element activity.
 
-**Corollary 1 (general rearrangement laws).** The same conclusion holds for other size distributions of duplications and deletions, provided that after a suitable scaling $f$ of genome size the asymptotic mean jump of duplications times $\mu_{\mathrm{dup}}$ is strictly smaller than the asymptotic mean loss of deletions times $\mu_{\mathrm{ldel}}$; for uniform laws $f = \log$.
+**Corollary 1 (general rearrangement laws).** The same conclusion holds for other size distributions of the four mutation types, provided that for some positive increasing scaling $f$ of genome size the asymptotic mean jumps $\delta_{\mathrm{type}} = \lim_{s\to\infty}\mathbb E[f(S_{n+1}) - f(s) \mid S_n = s,\ \text{type}]$ exist, with $\delta_{\mathrm{ldel}} \le 0$, $\delta_{\mathrm{dup}} \ge 0$, $\delta_{\mathrm{ins}} \ge 0$, $\delta_{\mathrm{sdel}} \le 0$ and at least one of them nonzero, and satisfy
+
+$$\mu_{\mathrm{ldel}}\,\delta_{\mathrm{ldel}} + \mu_{\mathrm{dup}}\,\delta_{\mathrm{dup}} + \mu_{\mathrm{ins}}\,\delta_{\mathrm{ins}} + \mu_{\mathrm{sdel}}\,\delta_{\mathrm{sdel}} < 0 .$$
+
+For uniform rearrangement laws and $f = \log$, the indel terms vanish and this is the condition of Theorem 2; for other scalings, such as $f = \mathrm{id}$, the indel terms remain in the condition.
 
 ## Depends on
 

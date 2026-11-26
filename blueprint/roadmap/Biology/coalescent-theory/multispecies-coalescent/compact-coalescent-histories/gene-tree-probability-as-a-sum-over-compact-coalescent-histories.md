@@ -22,8 +22,8 @@ All histories in $H(ch)$ share the factors $p_{u_bv_b}(\lambda_b)/d_b$, which ca
 
 ## Depends on
 
-- [The multispecies coalescent](../multispecies-coalescent/gene-tree-prob.md)
-- [Tavaré's formula for the number of ancestral lineages](../ancestral-lineage-counting-and-tavar-s-formula/tavare-prob.md)
+- [The multispecies coalescent](../gene-tree-prob.md)
+- [Tavaré's formula for the number of ancestral lineages](../../ancestral-lineage-counting-and-tavar-s-formula/tavare-prob.md)
 
 ## Sources
 

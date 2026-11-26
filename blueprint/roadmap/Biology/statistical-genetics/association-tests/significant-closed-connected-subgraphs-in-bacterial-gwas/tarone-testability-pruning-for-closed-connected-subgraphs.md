@@ -4,7 +4,7 @@
 
 **Closed connected subgraphs.** A connected subgraph $S$ is *closed* if no edge $(v_1, v_2)$ with $v_1 \in S$, $v_2 \notin S$ satisfies $I(S \cup \{v_2\}) = I(S)$. Every connected subgraph $S$ has a unique closed connected subgraph $\mathrm{cl}(S) \supseteq S$ with $I(\mathrm{cl}(S)) = I(S)$. Let $\mathcal{C}$ be the set of closed connected subgraphs (CCSs). For each $S \in \mathcal{C}$ one tests $H_0(S) : I(S) \perp Y \mid C$ with the Cochran–Mantel–Haenszel (CMH) test, or with Fisher's exact test when $J = 1$, while controlling the family-wise error rate (FWER) at level $\alpha$.
 
-**Minimal attainable p-values and Tarone's procedure.** A discrete test conditional on its margins has a smallest attainable p-value $p^\star(S) > 0$, which depends only on the margins. If $p^\star_i > \delta$, then $P(p_i \le \delta) = 0$. Let $m(k)$ be the number of *testable* hypotheses, those with $p^\star < \alpha/k$. Then FWER$(\alpha/k) \le m(k)\,\alpha/k$, so rejecting at threshold $\delta = \alpha/k$ controls the FWER at level $\alpha$ whenever $m(k) \le k$. Taking $k_0$ to be the smallest such $k$ maximizes rejections, and $k_0 \le N$ always, so the procedure never rejects less than Bonferroni.
+**Minimal attainable p-values and Tarone's procedure.** A discrete test conditional on its margins has a smallest attainable p-value $p^\star(S) > 0$, which depends only on the margins. If $p^\star_i > \delta$, then $P(p_i \le \delta) = 0$. Let $m(k)$ be the number of *testable* hypotheses, those with $p^\star < \alpha/k$. Then FWER$(\alpha/k) \le m(k)\,\alpha/k$, so rejecting at threshold $\delta = \alpha/k$ controls the FWER at level $\alpha$ whenever $m(k) \le k$. Taking $k_0$ to be the smallest such $k$ maximizes rejections, and $k_0 \le N$ always, where $N = |\mathcal{C}|$ is the number of tested CCSs, so the procedure never rejects less than Bonferroni.
 
 **Monotone pruning.** For Fisher's test, $p^\star$ is strictly increasing in $|I(S)|$ once $|I(S)| \ge \max(n_1, n_2)$, and $S \subseteq S'$ implies $I(S) \subseteq I(S')$. So once such an $S$ is untestable at the current threshold, so is every CCS containing it, and the search below $S$ can be cut. The CMH minimal p-value (computable in $O(J)$ from the margins $x_{S,j} = |I(S) \cap \{c = j\}|$, $n_{1,j}$, $n_{2,j}$) is not monotone. One prunes instead with the envelope
 
@@ -20,7 +20,7 @@ where $n_j = n_{1,j} + n_{2,j}$. The envelope is therefore computable, and usabl
 
 ## Depends on
 
-- [De Bruijn multigraph of a string](../../bioinformatics/de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
+- [De Bruijn multigraph of a string](../../../bioinformatics/de-bruijn-graph-genome-assembly/de-bruijn-edges.md)
 
 ## Expansion
 

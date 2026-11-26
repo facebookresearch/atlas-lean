@@ -7,3 +7,4 @@
 - [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
 - [Shifting-balance theory](shifting-balance-theory.md)
 - [Reciprocal sign epistasis lower bound on the number of fitness peaks](reciprocal-sign-epistasis-lower-bound-on-the-number-of-fitness-peaks.md)
+- [Partial fitness orders and genetic interactions](partial-fitness-orders-and-genetic-interactions/README.md)

@@ -30,6 +30,11 @@ For $X, Y$ independent uniform bits and $Z = X \oplus Y$, both $II$ and $ID$ equ
 
 **Permutation nulls.** For a marker pair the significance of $ID$ is assessed by permutation. Permuting both markers tests "no marginal effects and no interaction". Permuting only the marker without a marginal effect tests "no interaction, one main effect". Permuting each marker within the strata of the phenotype leaves $H(Z \mid X)$ and $H(Z \mid Y)$ unchanged, so its null is "no interaction" whatever the marginal effects.
 
+## Depends on
+
+- [Mutual information of a finite joint law](../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
+- [Conditional mutual information of a finite joint law](../../../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-conditional-mutual-information.md)
+
 ## Expansion
 
 Property 1 holds because $ID$ is a difference of two quantities in $[0, 1]$. For property 2, $ID = 1$ forces $D(X, Y) = 1$, i.e. $I(X; Y) = 0$, and $D(X, Y \mid Z) = 0$, i.e. $I(X; Y \mid Z) = \max\{H(X \mid Z), H(Y \mid Z)\}$, so given $Z$ each marker determines the other. Independence of $X$ and $Y$ is compatible with this, as the XOR example shows. Property 3 is the mirror case. Normalizing by the larger entropy, rather than the smaller, ensures that zero distance means a two-way functional relation, not just that the lower-entropy variable is determined. On yeast and mouse crosses with near-50% allele frequencies, $II$ and $ID$ behave alike. On simulated human interaction models with heterogeneous minor allele frequencies, $ID$ separates true interactions from noise better.

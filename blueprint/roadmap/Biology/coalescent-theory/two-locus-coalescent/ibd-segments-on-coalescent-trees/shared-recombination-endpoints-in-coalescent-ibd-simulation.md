@@ -14,13 +14,22 @@ $$\mathbb E[T^+_{n:k}] = \sum_{l=k}^{n} \binom{l}{2}^{-1} = 2\Bigl(\frac{1}{k-1}
 
 $$\Pr\bigl(\min(R_{a,c}, R_{b,c}, R_{c,e}) = R_{c,e}\bigr) = \frac{v}{2u + v}.$$
 
-Setting $u/2 = \mathbb E[T^+_{n:(k+1)}]$ and $v/2 = \mathbb E[T^+_{n:(j+1)}] - \mathbb E[T^+_{n:(k+1)}]$ with $j < k \le n$, this probability equals $1 - \dfrac{j/k}{1 + j/k - 2j/n} \to 1$ whenever $j = o(k)$: haplotypes joined by a recent ancestor almost surely share their endpoints at much older coalescences, so they can be merged into one comparison.
+Setting $u/2 = \mathbb E[T^+_{n:(k+1)}]$ and $v/2 = \mathbb E[T^+_{n:(j+1)}] - \mathbb E[T^+_{n:(k+1)}]$ with $j < k \le n$, this probability equals $\dfrac{1 - j/k}{1 + j/k - 2j/n} = \dfrac{(k-j)n}{nk + nj - 2kj}$, which equals $1$ at $j = 1$, $k = n$ (where $u = 0$) and tends to $1$ whenever $j = o(k)$: haplotypes joined by a recent ancestor almost surely share their endpoints at much older coalescences, so they can be merged into one comparison.
 
 **Cost of deep coalescences.** If $B_0 = n$ and $B_j \sim \mathrm{Binomial}(B_{j-1}, 1/2)$ for a bounded index $j \ge 1$ (the subtree sizes under random halving), then $\mathbb E[B_j(B_{j-1} - B_j)] = n(n-1)\,2^{-2j}$ and
 
 $$\lim_{n \to \infty} \frac{\mathbb E[B_j(B_{j-1} - B_j)] + O(1)\cdot \operatorname{Cov}^{1/2}\bigl(B_j(B_{j-1} - B_j)\bigr)}{n^2/2^{2j}} = 1,$$
 
 so the number of pairwise endpoint comparisons at the oldest coalescences is, with high probability, of the same quadratic order as the worst case.
+
+## Depends on
+
+- [Holding times of Kingman's coalescent](../../kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)
+
+## Proof depends on
+
+- [Expected coalescent holding time](../../kingman-s-coalescent-and-watterson-s-estimator/integral-t.md)
+- [Sum of reciprocals of binomial coefficients $\binom{k}{2}$](../../kingman-s-coalescent-and-watterson-s-estimator/sum-inv-choose-two.md)
 
 ## Expansion
 

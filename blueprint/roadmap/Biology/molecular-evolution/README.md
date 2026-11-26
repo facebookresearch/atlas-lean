@@ -18,3 +18,4 @@
 - [Fitness–distance monotonicity and mutation-rate control](fitness-distance-monotonicity-and-mutation-rate-control/README.md)
 - [Gauge fixing of sequence-function maps](gauge-fixing-of-sequence-function-maps/README.md)
 - [Genome size evolution under rearrangements](genome-size-evolution-under-rearrangements/README.md)
+- [Unequal recombination in tandem gene arrays](unequal-recombination-in-tandem-gene-arrays/README.md)

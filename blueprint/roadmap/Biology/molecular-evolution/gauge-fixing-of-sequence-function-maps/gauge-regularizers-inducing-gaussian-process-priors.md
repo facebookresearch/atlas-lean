@@ -12,6 +12,14 @@ where $B$ is any matrix with nullspace exactly $\Theta$.
 
 **Orthogonalization criterion.** For complementary subspaces $V_1, V_2$, a positive-definite $\Lambda$ makes them $\Lambda$-orthogonal iff $\Lambda = A^{\mathsf T} A + B^{\mathsf T} B$ with $\operatorname{null}(A) = V_2$ and $\operatorname{null}(B) = V_1$; and any $\Lambda$ that orthogonalizes $\Theta$ and $G$ is a $\Theta$-regularizer.
 
+## Depends on
+
+- [Marginal law of the targets in Gaussian-process regression](../../../ComputerScience/machine-learning/supervised-learning/gaussian-process-regression/map-targets-eq.md)
+
+## Proof depends on
+
+- [Gaussian-process posterior mean is the kernel ridge fit](../../../Analysis/hilbert-spaces/gaussian-process-posterior-mean-is-the-kernel-ridge-fit.md)
+
 ## Expansion
 
 Write any $w = \theta + g$ with $\theta \in \Theta$, $g \in G$. If $\Theta$ and $G$ are $\Lambda$-orthogonal, then $w^{\mathsf T}\Lambda w = \theta^{\mathsf T}\Lambda\theta + g^{\mathsf T}\Lambda g$ while the data term depends only on $\theta$ (since $\Phi g = 0$), so the optimum has $g = 0$. With $A = K^{-1/2}\Phi$, whose nullspace is $G$, and $B$ with nullspace $\Theta$, the criterion shows $\Lambda = \Phi^{\mathsf T}K^{-1}\Phi + B^{\mathsf T}B$ is a $\Theta$-regularizer. On $\Theta$ the penalty $B^{\mathsf T}B$ vanishes, so the objective becomes $\|y - f_X\|^2 + \beta f^{\mathsf T}K^{-1}f$ in terms of $f = \Phi\theta$, which is exactly the negative log posterior of Gaussian process regression with $\beta = \sigma_n^2$. The gauge part and the prior part of a regularizer thus act independently: the same prior can be paired with any gauge (for example the $\lambda$–$\pi$ family, interpolating between the trivial gauge and hierarchical, zero-sum-type gauges), and the posterior of the gauge-fixed weights follows by pushing the function-space posterior through the projection onto $\Theta$ along $G$.

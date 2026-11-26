@@ -20,7 +20,8 @@ Thus natural selection acts through the arithmetic expectation of fitness over a
 
 ## Depends on
 
-- [Natural selection, Fisher's theorem and the Price equation](../natural-selection-fisher-s-theorem-and-the-price/README.md)
+- [Price equation](price.md)
+- [Fisher's fundamental theorem of natural selection](mean-fitness-select-sub.md)
 
 ## Expansion
 

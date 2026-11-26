@@ -26,8 +26,11 @@ Predicted gene diversities are expectations of quadratic functions of $X_t$ that
 
 ## Depends on
 
-- [Effective population size](../effective-population-size/README.md)
-- [Wright's island model](../wright-s-island-model/README.md)
+- [Inbreeding, variance and eigenvalue effective population sizes](../effective-population-size-definitions.md)
+
+## Proof depends on
+
+- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
 
 ## Sources
 

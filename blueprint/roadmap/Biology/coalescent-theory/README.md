@@ -27,6 +27,3 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Compact coalescent histories](compact-coalescent-histories/README.md)
-- [IBD segments on coalescent trees](ibd-segments-on-coalescent-trees/README.md)
-- [Ranked tree spaces](ranked-tree-spaces/README.md)

@@ -28,9 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [Diversity bounds from the most frequent allele](diversity-bounds-from-the-most-frequent-allele/README.md)
-- [Eigenvalue effective size of structured populations](eigenvalue-effective-size-of-structured-populations/README.md)
-- [Haldane's formula in Cannings models](haldane-s-formula-in-cannings-models/README.md)
-- [Heterozygote advantage on multicopy plasmids](heterozygote-advantage-on-multicopy-plasmids/README.md)
-- [Partial fitness orders and genetic interactions](partial-fitness-orders-and-genetic-interactions/README.md)
-- [Unequal recombination in tandem gene arrays](unequal-recombination-in-tandem-gene-arrays/README.md)

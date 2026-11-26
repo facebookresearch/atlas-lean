@@ -22,8 +22,8 @@ The case $Y \equiv$ const gives the Wright–Fisher model ($\rho^2 = 1$, fixatio
 
 ## Depends on
 
-- [Haldane's approximation for the survival probability of a branching mutant](../haldane-s-survival-probability-of-a-beneficial-m/tendsto-survival-prob-div.md)
-- [Cannings model of a haploid population](../../coalescent-theory/multiple-merger-coalescents/cannings-models/cannings-model.md)
+- [Haldane's approximation for the survival probability of a branching mutant](../tendsto-survival-prob-div.md)
+- [Cannings model of a haploid population](../../../coalescent-theory/multiple-merger-coalescents/cannings-models/cannings-model.md)
 
 ## Expansion
 

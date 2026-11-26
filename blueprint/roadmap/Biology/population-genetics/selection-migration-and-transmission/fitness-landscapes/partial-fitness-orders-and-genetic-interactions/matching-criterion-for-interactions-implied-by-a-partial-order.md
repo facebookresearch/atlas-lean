@@ -15,7 +15,7 @@ the landscape has positive $f$-interaction if $f(W) > 0$. This covers Fourier–
 
 ## Depends on
 
-- [Reciprocal sign epistasis, multiple peaks and the small-face limitation](../selection-migration-and-transmission/fitness-landscapes/epistasis-and-landscape-structure.md)
+- [Reciprocal sign epistasis, multiple peaks and the small-face limitation](../epistasis-and-landscape-structure.md)
 
 ## Expansion
 

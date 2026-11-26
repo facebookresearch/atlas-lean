@@ -8,3 +8,4 @@
 - [Forward](forward.md)
 - [The Kronecker form and stochasticity of the transition](transition-kronecker-stochastic.md)
 - [The Lander–Green forward recursion](likelihood-eq-forward.md)
+- [Chain reduction of pedigree selectors](chain-reduction-of-pedigree-selectors.md)

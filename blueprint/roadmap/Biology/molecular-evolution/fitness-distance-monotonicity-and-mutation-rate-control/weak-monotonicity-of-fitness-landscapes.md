@@ -20,10 +20,6 @@ $$\lim_{f(b) \to f(\top)} P\bigl\{ f(a) \le f(b) \implies -\mathbb E[d(\top, a)]
 
 Local monotonicity implies average local monotonicity, which implies weak monotonicity; the converses fail, and continuous landscapes may be nowhere monotonic in the strict sense while remaining weakly monotonic at every optimum.
 
-## Depends on
-
-- [Intersection of Hamming spheres](intersection-of-hamming-spheres.md)
-
 ## Expansion
 
 Continuity at $\top$ gives, for any increasing sequence of fitness levels $f(\top) - \varepsilon_n \uparrow f(\top)$, a decreasing sequence of radii $\delta_n \downarrow 0$ with $f > f(\top) - \varepsilon_n$ on $B[\top, \delta_n)$. Comparing a point $a$ farther out with a point $b$ inside a smaller ball, the event that the closer point has higher mean fitness has probability tending to $1$ as the balls shrink; openness gives the symmetric statement with the roles of fitness and distance exchanged. The theorem extends to quasi-pseudometrics, hence to essentially any topology used on sequence or structure spaces. Biologically, in any landscape continuous and open at an optimum, fitness becomes an increasingly reliable proxy for distance near the optimum, so fitness-based control of the mutation rate should mimic distance-based control, with the rate increasing as fitness decreases; this was observed in complete transcription-factor binding landscapes.

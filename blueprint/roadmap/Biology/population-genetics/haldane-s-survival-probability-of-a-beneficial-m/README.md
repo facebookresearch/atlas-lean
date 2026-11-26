@@ -8,3 +8,4 @@
 - [Survival probability is less than one](survival-prob-lt-one.md)
 - [Nonnegativity of the survival probability](survival-prob-nonneg.md)
 - [Haldane's approximation $\pi(s) \approx 2s$](tendsto-survival-prob-div.md)
+- [Haldane's formula in Cannings models](haldane-s-formula-in-cannings-models/README.md)

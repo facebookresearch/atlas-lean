@@ -9,3 +9,4 @@ These topics distinguish one-locus deterministic recurrences, spatial selection,
 - [Fitness landscapes](fitness-landscapes/README.md)
 - [Hybrid incompatibilities](hybrid-incompatibilities/README.md)
 - [Sexual selection and genetic conflict](sexual-selection-and-genetic-conflict/README.md)
+- [Heterozygote advantage on multicopy plasmids](heterozygote-advantage-on-multicopy-plasmids/README.md)

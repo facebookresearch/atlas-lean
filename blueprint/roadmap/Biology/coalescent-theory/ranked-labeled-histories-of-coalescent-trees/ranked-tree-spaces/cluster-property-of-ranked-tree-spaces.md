@@ -14,7 +14,22 @@ A **discrete coalescent tree** in $\mathrm{DCT}_m$ assigns its internal nodes di
 
 **Theorem 3 (caterpillar convexity).** Between any two caterpillar trees (every internal node has a leaf child) there is a shortest path, in RNNI and in $\mathrm{DCT}_m$, made entirely of caterpillar trees.
 
-**Theorem 4 and its corollary.** For caterpillar trees the RNNI distance equals the number of transpositions (leaf pairs whose parent ranks are in opposite order in $T$ and $R$, a Kendall-tau count) minus a correction term counting leaves that share a parent, and it is computable in $O(n \log n)$ time.
+**Theorem 4 (caterpillar distance).** Write $\mathrm{rank}(a)_T$ for the rank of the parent of leaf $a$ in $T$. Let $T$ and $R$ be caterpillar trees, with leaves labelled so that $1 = \mathrm{rank}(a_1)_R = \mathrm{rank}(a_2)_R < \mathrm{rank}(a_3)_R < \cdots < \mathrm{rank}(a_n)_R = n - 1$ (so $a_1, a_2$ form the cherry of $R$). Let
+
+$$P(T,R) = \bigl\{(a_i, a_j) : \mathrm{rank}(a_i)_T < \mathrm{rank}(a_j)_T \text{ and } \mathrm{rank}(a_i)_R > \mathrm{rank}(a_j)_R\bigr\}$$
+
+be the set of transpositions, and let $M(T,R)$ be the set of leaves $a_i$ such that
+
+- every other leaf $a_l$ ($l \ne i$) with $\mathrm{rank}(a_l)_T \le \mathrm{rank}(a_i)_T$ has $\mathrm{rank}(a_l)_R > \mathrm{rank}(a_i)_R$, and
+- $\mathrm{rank}(a_i)_T < \min\{\mathrm{rank}(a_1)_T, \mathrm{rank}(a_2)_T\}$.
+
+Then $d_{\mathrm{RNNI}}(T, R) = |P(T,R)| - |M(T,R)|$.
+
+**Corollary 2.** The RNNI distance between two caterpillar trees can be computed in $O(n \log n)$ time.
+
+## Depends on
+
+- [Ranked labeled history](../ranked-history.md)
 
 ## Expansion
 
@@ -22,4 +37,4 @@ The algorithm FINDPATH builds, for $i = 1, \dots, n-1$, the cluster of the rank-
 
 ## Sources
 
-- L. Collienne, K. Elmes, M. Fischer, D. Bryant, A. Gavryushkin, "Discrete coalescent trees", Journal of Mathematical Biology 83(5) (2021) 60, Lemma 1, Theorems 1-4, Corollary 1, <https://doi.org/10.1007/s00285-021-01685-0>, PMCID PMC8571255.
+- L. Collienne, K. Elmes, M. Fischer, D. Bryant, A. Gavryushkin, "Discrete coalescent trees", Journal of Mathematical Biology 83(5) (2021) 60, Lemma 1, Theorems 1-4, Corollaries 1-2, <https://doi.org/10.1007/s00285-021-01685-0>, PMCID PMC8571255.

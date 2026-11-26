@@ -20,7 +20,7 @@ Consequently the copy number of a diploid individual, the sum of two independent
 
 ## Expansion
 
-Stationarity does not depend on $r$ because the recombination step must map $p_{\mathrm{stat}}$ to itself; splitting the convolution with the trapezoidal kernel into the regions where $y'$ lies below, between or above $y'_1 \wedge y'_2$ and $y'_1 \vee y'_2$ and summing the geometric series gives back $y' e^{-a y'}$ times the normalizing constant. The mean of $y' e^{-a y'}$ is $(1 + e^{-a})/(1 - e^{-a}) = \coth(a/2)$. Selection on copy number shifts the mean and narrows the law; fitting the Gamma approximation to human copy-number data for tandemly arrayed genes gives estimates of recombination and selection.
+Stationarity does not depend on $r$ because the recombination step must map $p_{\mathrm{stat}}$ to itself; splitting the convolution with the trapezoidal kernel into the regions where $y'$ lies below, between or above $y'_1 \wedge y'_2$ and $y'_1 \vee y'_2$ and summing the geometric series gives back $y' e^{-a y'}$ times the normalizing constant. The mean of $y' e^{-a y'}$ is $(1 + e^{-a})/(1 - e^{-a}) = \coth(a/2)$. Otto et al.'s Proposition 1 states the large-array form, writing $a = 2/E[Y']$; the exact relation $\coth(a/2) = E[Y']$ holds for every $a > 0$, and $\coth(a/2) = 2/a + O(a)$ as $a \to 0$ recovers it. Selection on copy number shifts the mean and narrows the law; fitting the Gamma approximation to human copy-number data for tandemly arrayed genes gives estimates of recombination and selection.
 
 ## Sources
 
