@@ -30,7 +30,12 @@ separate garbling, encoding, decoding, garbled evaluation and clear evaluation. 
 for every supported garbling and every input; §3.2 describes projective encoding: for fixed
 encoding data the label at each position depends only on the bit at that position. `select` and
 `Scheme.Correct` express these functional conditions with typed data and fixed input and output
-counts, without the paper's requirements on string encodings.
+counts. They do not impose the separate length or nondegeneracy conditions of §3.1. In that
+section the lengths of the three garbling outputs may depend only on the security parameter,
+the input and output counts, and the clear description's length. Fixing these parameters and
+the garbler's coins must also fix the encoding and decoding data themselves. Here `fromCoins`
+reads the masks of the designated wires: with the same coins, two gate-free circuits that return
+different input wires can have different decoding data.
 
 The same full version introduces tweakable dual-key ciphers in §5. In Garble1 (§5.1, Fig. 7),
 the two incoming token types select the row, and an output token's type is its semantic bit,
@@ -40,9 +45,11 @@ mask at each designated output.
 
 Pass and shelat, *A Course in Cryptography* (2010), §§6.2.1–6.2.3, describe the wire keys,
 fan-in two with unbounded fan-out, and four encrypted rows; they shuffle and try the rows.
-The complementary pointers and direct row lookup here are the point-and-permute variant of
-Evans, Kolesnikov and Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation*
-(2018), §3.1.1. We decode with each designated output's zero-label pointer rather than an
+The row-selection technique now called point-and-permute originates with Beaver, Micali and
+Rogaway, *The Round Complexity of Secure Protocols* (STOC 1990, pp. 503–513). The
+complementary pointers and direct row lookup here follow the later presentation in Evans,
+Kolesnikov and Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation* (2018),
+§3.1.1. We decode with each designated output's zero-label pointer rather than an
 encrypted output table. We assume only right-key decryption, not privacy or wrong-key rejection.
 There is no time bound, key-transfer protocol or security assertion.
 -/
