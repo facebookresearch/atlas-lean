@@ -1,5 +1,3 @@
 # Feasible INEQUIVALENCE OF SIMPLE FUNCTIONS in terms of `w` only instances
 
-For INEQUIVALENCE OF SIMPLE FUNCTIONS in terms of `w` only: some assignment of non-negative
-integers to the variables gives `f` and `g` different values, exactly as in
-`InequivalenceOfSimpleFunctionsWanted`.
+An instance of INEQUIVALENCE OF SIMPLE FUNCTIONS in terms of `w` only is feasible when some assignment of nonnegative integers to the variables gives $f$ and $g$ different values, exactly as for [INEQUIVALENCE OF SIMPLE FUNCTIONS](../../inequivalence-of-simple-functions/README.md).

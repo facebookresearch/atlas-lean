@@ -1,6 +1,3 @@
 # Feasible GEOMETRIC CAPACITATED SPANNING TREE instances
 
-A GEOMETRIC CAPACITATED SPANNING TREE instance is feasible when some spanning tree `T` of the
-complete graph on the points has total discretized Euclidean length at most `B`, and for each
-edge `e` of `T` the requirements of the points whose path to `p₀` in `T` contains `e` sum to at
-most `c`.
+A GEOMETRIC CAPACITATED SPANNING TREE instance, with point list $p_0, \dots, p_{m-1}$, root position $r$, requirement list, capacity $c$ and bound $B$, is feasible when $r < m$ and some spanning tree $T$ on the positions $0, \dots, m-1$ has total discretized Euclidean length (the sum over its edges $\{a, b\}$ of $\lceil \|p_a - p_b\|_2 \rceil$) at most $B$, and for each edge $e$ of $T$ the requirements of the positions whose path to $r$ in $T$ uses $e$ sum to at most $c$. A requirement missing from the list is read as $0$; a [well-formed](well-formed.md) instance has distinct points and one requirement per point.

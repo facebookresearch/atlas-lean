@@ -1,4 +1,3 @@
 # Is Folding
 
-`f` is a folding of `s` in `ℤ^d`: a self-avoiding walk, i.e., `f` is one-to-one and maps
-consecutive residues to adjacent lattice sites.
+A map $f$ from the residues of a string $s$ (its positions) to the lattice $\mathbb{Z}^d$ is a folding of $s$ when it is a self-avoiding walk: $f$ is one-to-one and maps consecutive residues to adjacent lattice sites.

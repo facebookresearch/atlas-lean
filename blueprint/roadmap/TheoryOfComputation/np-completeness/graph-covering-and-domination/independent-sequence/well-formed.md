@@ -1,4 +1,3 @@
 # Well-formed INDEPENDENT SEQUENCE instances
 
-A INDEPENDENT SEQUENCE instance is well-formed when the edge list describes a simple graph on
-`Fin n`, and `0 < K ≤ |V|`.
+An INDEPENDENT SEQUENCE instance $(n, E, K)$ is well-formed when the edge list $E$ describes a simple graph on the vertices $0, \dots, n-1$ and $0 < K \le n$.

@@ -1,4 +1,3 @@
 # Feasible EVEN HOLE THROUGH A GIVEN VERTEX instances
 
-The graph has an even hole through `v`: an induced cycle `cycleGraph k ↪g G` of even length `k ≥
-4` one of whose vertices is mapped to `v`.
+An EVEN HOLE THROUGH A GIVEN VERTEX instance is feasible when its graph has an even hole through the given vertex $v$: for some even $k \ge 4$, an embedding of the cycle $C_k$ onto an induced subgraph of the graph, one of whose vertices is mapped to $v$.

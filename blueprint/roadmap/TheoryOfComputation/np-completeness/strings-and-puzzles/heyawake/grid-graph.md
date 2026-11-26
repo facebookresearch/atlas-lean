@@ -1,3 +1,3 @@
 # Grid Graph
 
-The grid graph on `Fin m × Fin n`: cells sharing a side are adjacent.
+The grid graph on the cells $(r, c)$ with $r < m$ and $c < n$: two cells are adjacent when they share a side.
