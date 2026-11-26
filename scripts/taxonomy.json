@@ -9562,6 +9562,7 @@
   "MathlibExt/Analysis/Complex/Wiman/TwoPowerBadSets": {"to": "Analysis/complex-analysis/entire-functions", "title": "Wiman–Valiron theory"},
   "MathlibExt/Analysis/Complex/ZerosOfSumZDivNPowN": {"to": "Analysis/complex-analysis/entire-functions", "title": "Zeros of the entire function 1 + Σ (z/n)ⁿ"},
   "MathlibExt/Analysis/ContinuousMap/KolmogorovSuperposition": {"to": "Analysis/approximation-theory", "title": "Kolmogorov superposition theorem"},
+  "MathlibExt/Analysis/Control/Brockett": {"to": "Analysis/control-theory", "title": "Nonlinear controllability and stabilisation"},
   "MathlibExt/Analysis/Control/Hautus": {"to": "Analysis/control-theory", "title": "Controllability of linear systems"},
   "MathlibExt/Analysis/Control/LinearControllability": {"to": "Analysis/control-theory", "title": "Controllability of linear systems"},
   "MathlibExt/Analysis/Control/LinearStabilization": {"to": "Analysis/control-theory", "title": "Pole placement"},
