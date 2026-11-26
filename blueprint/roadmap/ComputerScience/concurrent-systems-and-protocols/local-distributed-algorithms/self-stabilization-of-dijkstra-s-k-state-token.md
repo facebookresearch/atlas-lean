@@ -8,17 +8,26 @@ Consider $n$ processes $0, \dots, n - 1$ on a unidirectional ring. Each process 
 A process holds a token exactly when its command is enabled.
 
 1. **At least one token.** In every configuration some process holds a token. If no nonzero process has one, all states are equal, and then process $0$ has one.
-2. **Closure.** Call a configuration *legal* if, for some $j$, $\ell_i = \ell_j$ for all $i \le j$ and $\ell_i = \ell_j - 1 \pmod{n+1}$ for all $i > j$. Every legal configuration has exactly one token, and every step from a legal configuration leads to a legal configuration.
-3. **Convergence.** From an arbitrary configuration, every execution reaches a legal configuration within $O(n^2)$ steps.
+2. **Closure.** Call a configuration *legal* if, for some $j$, $\ell_i=\ell_0$ for all $i\le j$ and $\ell_i=\ell_0-1$ modulo $n+1$ for all $i>j$. A legal configuration has exactly one token and every step from it is legal. Unique privilege alone is weaker: it allows a constant configuration or two constant blocks of distinct colors, not necessarily consecutive colors.
+3. **Convergence.** From an arbitrary configuration of a nonempty ring, every execution of at least $2n^2$ actual steps visits a legal configuration within its first $2n^2$ steps. This bound does not require scheduler fairness. In particular the ring has exactly one token at the end of this prefix.
 
-**Proof of convergence.** Some value $c$ is missing from the initial configuration, by the pigeonhole principle. By induction, every non-legal reachable configuration has the form $\ell_i = c$ exactly for $i < j$, for some $0 \le j < n$: the value $c$ can only enter at process $0$ and then spread along the ring. A potential function combining $(c - \ell_0) \bmod (n + 1)$ with the positions of the processes out of step drops by at least $1$ at every step of a non-legal execution. It starts at $O(n^2)$.
+**Proof of convergence.** Some color $c$ is missing initially, since there are $n+1$ colors and $n$ processes. Until the first constant configuration, the processes of color $c$ form an initial segment of the order $0,\ldots,n-1$: the color can only be introduced by process $0$, and the copying rule propagates it to the right. If this segment reaches process $n-1$, the configuration is constant and hence legal.
 
-Dijkstra's paper also gives the general $K$-state version, with states in $\mathbb{Z}_K$, reported to stabilize under the central daemon when $K$ is at least the number of machines, together with variants using fewer states. That general condition is not proved here.
+Before a constant configuration is reached, use the potential
 
-## Proof depends on
+$$
+n\bigl((c-\ell_0)\bmod(n+1)\bigr)
+    + \sum_{\substack{1\le i<n\\ \ell_i\ne\ell_{i-1}}}(n-i),
+$$
+
+where the modular difference takes its least nonnegative representative. A copying step removes a disagreement of weight $n-i$ at process $i$ and can add one only at process $i+1$, of smaller weight. If process $0$ increments, its old color cannot equal $c$: the enabling equality would put color $c$ at the last process as well. The modular distance then drops by one without wrapping. The resulting decrease of $n$ outweighs any new disagreement, whose weight is at most $n-1$. The initial potential is at most $n^2+n(n-1)<2n^2$, so a prefix of $2n^2$ steps cannot avoid visiting a constant configuration.
+
+Dijkstra's paper also gives the general $K$-state version and variants using fewer states. The bound here is for the alphabet of size $n+1$ only.
+
+## Background
 
 - [Dijkstra's token ring never deadlocks](../dijkstra-s-self-stabilizing-token-ring/exists-privileged.md)
-- [Legitimate configurations of Dijkstra's token ring are closed](../dijkstra-s-self-stabilizing-token-ring/legit-closed.md)
+- [Configurations with one privilege are closed](../dijkstra-s-self-stabilizing-token-ring/legit-closed.md)
 
 ## Sources
 
