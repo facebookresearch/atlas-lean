@@ -1,9 +1,13 @@
 # Identifiability and consistency of the eight-group replicability mixture
 
 **Parameter space.** Let $\Xi=\bigl((\xi_{klr})_{(k,l,r)\in S},f_{11},f_{21},f_{31}\bigr)\in\Omega=\Delta\times\mathcal G^3$, where $\Delta$ is the probability simplex on the eight states $S=\{0,1\}^3$ and $\mathcal G$ the non-increasing densities on $(0,1)$. The model density of a triple of p-values is
+
 $$f_\Xi(x,y,z)=\sum_{(k,l,r)\in S}\xi_{klr}f_{1k}(x)f_{2l}(y)f_{3r}(z),\qquad f_{10}=f_{20}=f_{30}\equiv1 .$$
+
 Measure distance between parameters by
+
 $$\tau(\Xi,\Xi^*)=\sum_{(k,l,r)\in S}|\xi_{klr}-\xi^*_{klr}|+\|f_{11}-f^*_{11}\|_1+\|f_{21}-f^*_{21}\|_1+\|f_{31}-f^*_{31}\|_1,$$
+
 and between densities by the Hellinger distance $h(f_\Xi,f_{\Xi^*})=\bigl(\tfrac12\int_{(0,1)^3}(f_\Xi^{1/2}-f_{\Xi^*}^{1/2})^2\bigr)^{1/2}$.
 
 **Theorem 1 (identifiability).** If $\Xi,\Xi^*\in\Omega$ both satisfy the paper's identifiability condition (C1) and $f_\Xi=f_{\Xi^*}$, then $\xi_{klr}=\xi^*_{klr}$ for all $(k,l,r)\in S$ and $f_{j1}=f^*_{j1}$ almost everywhere for $j=1,2,3$.

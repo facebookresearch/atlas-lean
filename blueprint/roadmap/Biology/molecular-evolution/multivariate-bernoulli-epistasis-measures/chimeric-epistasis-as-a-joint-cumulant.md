@@ -1,10 +1,13 @@
 # Chimeric epistasis as a joint cumulant
 
 **Setting.** As for multiplicative epistasis, $f_T$ is the fitness of the genotype mutated exactly at $T \subseteq \{1,\dots,L\}$, normalised so that the wild type has $f_\emptyset = 1$. The *chimeric* epistasis formulae measure deviation from a multiplicative null model as a difference rather than a ratio; for two and three loci
+
 $$\epsilon^{C}_{ij} = f_{ij} - f_i f_j, \qquad \epsilon^{C}_{ijk} = f_{ijk} - f_{ij}f_k - f_{ik}f_j - f_{jk}f_i + 2 f_i f_j f_k .$$
 
 **Moment interpretation.** Suppose $f_T = E\big[\prod_{i \in T} X_i\big]$ are the moments of a multivariate Bernoulli vector $X = (X_1,\dots,X_L)$. Then the $K$-th order chimeric measure is the joint cumulant
+
 $$\epsilon^{C}_{i_1 \cdots i_K} = \kappa(X_{i_1},\dots,X_{i_K}) = \sum_{\pi} (|\pi| - 1)!\,(-1)^{|\pi|-1}\prod_{B \in \pi} E\Big[\prod_{i \in B} X_i\Big],$$
+
 the sum running over set partitions $\pi$ of $\{i_1,\dots,i_K\}$; for $K = 2, 3$ this reproduces the formulae above.
 
 **Consequences.**

@@ -1,14 +1,19 @@
 # Reverse two-stage least squares and its $R^2$ bias correction
 
 **Model.** Let $X \in \mathbb{R}$ be an exposure (e.g. gene expression), $Y \in \mathbb{R}$ an outcome and $Z \in \mathbb{R}^p$ genetic instruments (SNPs). Two independent samples are observed: $\mathbb{D}_1 = (x_1, Z_1)$ of size $n_1$ and $\mathbb{D}_2 = (y_2, Z_2)$ of size $n_2$, with $p$ fixed and typically $n_2 \gg n_1$, all variables standardised. The structural model is
+
 $$x = Z\beta + \varepsilon, \qquad y = x\,\theta + \xi,$$
+
 with mean-zero normal errors $\varepsilon, \xi$ independent of $Z$ (but possibly correlated with each other through confounding), the same model holding in both samples. The causal effect is $\theta$.
 
 **Reverse 2SLS (r2SLS).** Since $y_2 = Z_2\beta\theta + \varepsilon\theta + \xi$, regress $y_2$ on $Z_2$ by OLS to get $\widetilde{\beta\theta}$, predict the outcome in sample 1 as $\hat y_1 = Z_1\widetilde{\beta\theta}$, and regress the observed exposure-sample data on it through the working model $\hat y_1 = x_1\theta + \text{error}$:
+
 $$\hat\theta = \frac{x_1^{\top}\hat y_1}{x_1^{\top}x_1}.$$
 
 **Decomposition (Eq. 4).** Writing $x_1 = Z_1\beta + \varepsilon$,
+
 $$\hat\theta = \theta - \theta\,\frac{\varepsilon^{\top}\varepsilon}{x_1^{\top}x_1} - \theta\,\frac{(Z_1\beta)^{\top}\varepsilon}{x_1^{\top}x_1} + \frac{x_1^{\top}Z_1(\widetilde{\beta\theta} - \beta\theta)}{x_1^{\top}x_1}.$$
+
 Hence $\hat\theta$ is unbiased under $H_0 : \theta = 0$, and for $\theta \ne 0$ its bias comes from the factor $\kappa = \varepsilon^{\top}\varepsilon / x_1^{\top}x_1 = 1 - R^2$, where $R^2$ is the stage-1 coefficient of determination of $x$ on $Z$.
 
 **Corrected estimator.** $\tilde\theta = \hat\theta/(1 - \kappa)$, with $1 - \kappa$ estimated by the Olkin–Pratt or adjusted $R^2$ of the stage-1 regression; as $n_1 \to \infty$, $1 - \kappa$ converges to the population $R^2$, and Theorem 1 gives the asymptotic normal distribution of $\tilde\theta$ including the extra variance term $(Z_1\beta)^{\top}\varepsilon\,\theta/x_1^{\top}x_1$.

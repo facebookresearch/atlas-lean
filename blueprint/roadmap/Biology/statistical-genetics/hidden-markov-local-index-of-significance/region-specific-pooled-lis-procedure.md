@@ -3,14 +3,18 @@
 **Model.** Chromosome $c=1,\dots,C$ is split by change points $w_c$ into regions $r=1,\dots,R_c$ with $L_{cr}$ SNPs. Let $\theta^{(c)}_{rl}\in\{0,1\}$ indicate that SNP $l$ of region $r$ is disease-associated and $Z^{(c)}_{rl}$ its z-value (from a case–control $\chi^2$ p-value). Assume:
 
 - given the hidden states, the z-values are independent, with
+
 $$Z^{(c)}_{rl}\mid\theta^{(c)}_{rl}\sim(1-\theta^{(c)}_{rl})\,N(0,1)+\theta^{(c)}_{rl}\sum_{i=1}^{m_c}\xi_i\,N\bigl(\mu^{(c)}_{ri},\sigma^{(c)2}_{ri}\bigr),$$
+
 the number of mixture components $m_c$ being common to the regions of a chromosome;
 - the hidden states of different regions are independent, and within region $r$ they form a stationary two-state Markov chain with transition matrix $\Lambda_{cr}=(a^{(c)}_{rij})$ and stationary law $\pi^{(c)}_{r0}=a^{(c)}_{r10}/(a^{(c)}_{r10}+a^{(c)}_{r01})$.
 
 The parameters $\Psi_{cr}$ of each region are fitted by EM.
 
 **Model selection.** Change points and $m_c$ are chosen by minimizing the penalized criterion
+
 $$\mathrm{crit}_{\lambda_c}(m_c,w_c)=-\ln P\bigl(Z^{(c)}\mid\hat\Psi_c,m_c,w_c\bigr)+\lambda_c\,D(m_c,w_c),\qquad D(m_c,w_c)=(|w_c|+1)D_{m_c},$$
+
 over subsets of candidate haplotype-block boundaries, by dynamic programming. The choice $\lambda_c=\tfrac12\ln L_c$ ($L_c=\sum_rL_{cr}$) is BIC for the HMM; instead $\lambda_c$ is calibrated from the data by a sliding-window dimension-jump (slope-heuristic) method.
 
 **Procedure (RSPLIS).**

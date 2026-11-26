@@ -1,15 +1,21 @@
 # Dirichlet-multinomial law of prestige-biased role-model choice
 
 **Model.** A generation has $N$ role-models with trait values $A_1,\dots,A_N$ and $N$ copiers who choose a role-model one at a time. Let $K_{i,j}$ be the number of the first $i$ copiers who chose role-model $j$ ($K_{0,j}=0$). Copier $i$ chooses $j$ with probability
+
 $$G_{i,j}=\frac{\alpha\,\beta(A_j+e)+(1-\alpha)K_{i-1,j}}{\alpha\sum_{k=1}^N\beta(A_k+e)+(1-\alpha)(i-1)},$$
+
 where $\beta>0$ is a success-bias function (e.g. $\beta(a)=b\exp(-(a-\hat A)^2/2J)$), $e$ is the copier's estimation error, taken equal for all copiers, and $\alpha\in(0,1)$ weights success bias against prestige bias (the number of copiers a role-model already has). Each copier then adopts the trait of its chosen role-model.
 
 **Corollary 3.1 (expected number of copiers).** For every $j$,
+
 $$\mathbb E[K_{N,j}]=N\,G_{1,j}=N\,\frac{\beta(A_j+e)}{\sum_k\beta(A_k+e)}=\frac{\beta(A_j+e)}{\overline{\beta(A+e)}},$$
+
 so prestige bias does not change the expected share of each role-model, only the variability around it.
 
 **Corollary 3.2 (Dirichlet-multinomial law).** The vector of copier counts is Dirichlet-multinomial,
+
 $$K_N\sim\mathrm{DirMult}\big(N;\ \theta_1,\dots,\theta_N\big),\qquad \theta_j=\frac{\alpha}{1-\alpha}\,\beta(A_j+e),$$
+
 with mean $N\,\theta_j/\theta_0$ and variance $N\frac{\theta_j}{\theta_0}\big(1-\frac{\theta_j}{\theta_0}\big)\frac{N+\theta_0}{1+\theta_0}$, where $\theta_0=\sum_k\theta_k$. As $\alpha\to1$ (pure success bias) this tends to the multinomial law of independent choices; as $\alpha\to0$ (pure prestige bias) the overdispersion factor grows and a few role-models capture most copiers.
 
 ## Expansion

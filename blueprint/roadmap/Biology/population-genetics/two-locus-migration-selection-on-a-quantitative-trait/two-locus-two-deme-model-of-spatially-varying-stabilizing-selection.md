@@ -16,6 +16,7 @@ where $\eta_1 = \eta_4 = -\eta_2 = -\eta_3 = 1$ and $\gamma^*$ is the other deme
 2. there is at most one internal equilibrium $F_\gamma$, and it is unstable whenever it exists;
 3. $F_\gamma$ exists exactly when both $M_{2,\gamma}$ and $M_{3,\gamma}$ (fixation of $Ab$ and $aB$) are asymptotically stable, which requires in particular $r > \tilde r = \frac{4s(1-\kappa)P}{1+\kappa}$;
 4. for uniform selection ($P = 0$), $F_\gamma$ is $\hat p = \hat q = \tfrac12$ with
+
    $$\hat D = \frac{r}{s}\frac{(1+\kappa)^2}{16\kappa} - \sqrt{\frac{1}{16} + \left(\frac{r}{s}\frac{(1+\kappa)^2}{16\kappa}\right)^2}.$$
 
 So a single panmictic haploid deme maintains no stable polymorphism. In the diploid model with $P = 0$, by contrast, single-locus polymorphisms with the major locus polymorphic, $\hat p = \tfrac12 \pm \kappa$ with locus $B$ fixed, can be stable.

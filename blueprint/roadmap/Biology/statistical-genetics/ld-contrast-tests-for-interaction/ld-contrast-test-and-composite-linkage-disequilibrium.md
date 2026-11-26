@@ -1,13 +1,19 @@
 # LD contrast test and composite linkage disequilibrium
 
 **Composite LD.** For biallelic loci $A,B$ with allele frequencies $p=p(A)$, $q=p(B)$, gametic LD is $D=p(AB)-p(A)p(B)$. When phase is unknown, the composite LD
+
 $$\mathrm{CLD}=p_{AB}+p_{A/B}-2p(A)p(B)$$
+
 sums the frequency of $A$ and $B$ on the same gamete ($p_{AB}$) and on the two different gametes of an individual ($p_{A/B}$). With additive $0/1/2$ genotype codes, the sample correlation of genotypes satisfies
+
 $$\hat r_{\text{genotype}}=\frac{\mathrm{CLD}}{\sqrt{(p(1-p)+D_A)(q(1-q)+D_B)}}\approx\frac{\mathrm{CLD}}{\sqrt{p(1-p)q(1-q)}},$$
+
 where $D_A=p_{AA}-p^2$ and $D_B=p_{BB}-q^2$ are Hardy–Weinberg disequilibria (near $0$ after quality control). In particular, $\mathrm{CLD}$ is (up to scaling) the sample covariance of the two genotype codes, the analogue of $\hat r_{\text{allele}}=D/\sqrt{p(1-p)q(1-q)}$ for haplotypes.
 
 **LD contrast test.** For a pair of SNPs, with $\widehat{\mathrm{CLD}}$ estimated separately in independent case and control samples,
+
 $$\chi^2=\frac{\big(\widehat{\mathrm{CLD}}_{\text{case}}-\widehat{\mathrm{CLD}}_{\text{control}}\big)^2}{\operatorname{Var}\widehat{\mathrm{CLD}}_{\text{case}}+\operatorname{Var}\widehat{\mathrm{CLD}}_{\text{control}}}$$
+
 is asymptotically $\chi^2_1$ under the null hypothesis of equal LD in cases and controls.
 
 ## Expansion

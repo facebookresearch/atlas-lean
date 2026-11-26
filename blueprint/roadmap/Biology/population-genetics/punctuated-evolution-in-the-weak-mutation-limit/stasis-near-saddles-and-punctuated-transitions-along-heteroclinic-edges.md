@@ -7,7 +7,9 @@
 1. *Every vertex is a hyperbolic saddle.* At $e^{(k)}$ the linearization has, for each $i\ne k$, the eigenvalue $f_i-f_k$ with eigenvector $e^{(i)}-e^{(k)}$ along the simplex edge (plus the transversal eigenvalue $-f_k$, irrelevant on $\Delta_I$). So $e^{(k)}$ is attracting along every edge toward a less fit type and repelling along every edge toward a fitter type; its index (number of negative eigenvalues on $\Delta_I$) is the number of types less fit than $k$, and only the fittest vertex is a sink.
 2. *Heteroclinic network.* Each edge $[e^{(i)},e^{(k)}]$ is invariant and is a heteroclinic orbit between the two saddles, on which $\dot x_i=(f_i-f_k)x_i(1-x_i)$, a logistic sweep in time of order $\ln N/|f_i-f_k|$ from frequency $1/N$.
 3. *Weak-mutation regime.* Let $s$ be the selection coefficient of the current sweep, $M$ the number of beneficial mutations available and $L$ the number of deleterious ones. If
+
 $$r_N=\frac{\lambda N\ln N}{s}\ll1\qquad\text{and}\qquad \frac{\lambda L\ln N}{s}\ll1,$$
+
 then the probability that a further beneficial mutation arises during a sweep is at most $1-e^{-Mr_N}\le Mr_N$, and deleterious mutants produced during a sweep form an asymptotically negligible fraction of the population.
 
 Consequently the population waits near a monomorphic saddle for a time of order $(M\lambda N)^{-1}$ (stasis under purifying selection), then crosses to the next saddle along a heteroclinic edge in time of order $\ln N/s$: punctuated-equilibrium-like dynamics emerge without any criticality assumption.

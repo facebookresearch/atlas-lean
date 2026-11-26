@@ -1,10 +1,13 @@
 # Multiplicative epistasis equals the natural parameters of a multivariate Bernoulli distribution
 
 **Setting.** For $L$ biallelic loci, a genotype is $x \in \{0,1\}^L$ and has fitness $f_x > 0$; for $T \subseteq \{1,\dots,L\}$ write $f_T$ for the fitness of the genotype mutated exactly at $T$ ($f_\emptyset$ is the wild type). The *multiplicative epistasis measure* of a set $S$ of loci, $|S| \ge 1$, is defined through its logarithm, the alternating sum
+
 $$\log \epsilon_S^{M} = \sum_{T \subseteq S} (-1)^{|S| - |T|}\,\log f_T ,$$
+
 so that for a pair $\log \epsilon^M_{ij} = \log f_{ij} - \log f_i - \log f_j + \log f_\emptyset$, i.e. $\epsilon^M_{ij} = f_{ij}/(f_i f_j)$ when $f_\emptyset = 1$. The *additive measure* $\epsilon_S^{A}$ is the same alternating sum applied to $f$ itself.
 
 A random vector $X = (X_1,\dots,X_L) \in \{0,1\}^L$ with $p_x = \Pr(X = x) > 0$ is multivariate Bernoulli; its *natural parameters* $\beta = (\beta_S)_{S \subseteq \{1,\dots,L\}}$ are defined by the log-linear representation
+
 $$\log p_x = \sum_{S \subseteq \mathrm{supp}(x)} \beta_S .$$
 
 **Theorem 1.** If $f_x = c\,p_x$ for some constant $c > 0$ and some MVB distribution $p$, then for every non-empty $S$, $\log \epsilon_S^{M} = \beta_S$.

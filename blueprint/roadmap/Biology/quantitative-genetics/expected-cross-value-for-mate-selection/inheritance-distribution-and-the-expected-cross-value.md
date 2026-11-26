@@ -5,14 +5,19 @@
 **Inheritance distribution.** A random vector $J\in\{0,1\}^N$ follows $\mathcal I(r,\alpha_0)$, with recombination frequencies $r\in[0,0.5]^{N-1}$ between consecutive loci, if $\Pr(J_1=0)=\alpha_0$ and, for $i\ge2$, $\Pr(J_i=J_{i-1})=1-r_{i-1}$, $\Pr(J_i=1-J_{i-1})=r_{i-1}$. Here $J_i=0$ means locus $i$ of the gamete is copied from the first haplotype (column) and $J_i=1$ from the second. The gamete of an individual with genotype matrix $L$ is $g_i=L_{i,1}(1-J_i)+L_{i,2}J_i$.
 
 **Proposition 1 (marginal transmission).** Define $\phi_1(r)=0$, $\phi_2(r)=r_1$ and $\phi_i(r)=r_{i-1}+(1-2r_{i-1})\phi_{i-1}(r)$ for $i\ge3$. If $J\sim\mathcal I(r,\alpha_0)$ then
+
 $$\Pr(J_i=0)=\alpha_0+(1-2\alpha_0)\phi_i(r),\qquad \Pr(J_i=1)=1-\alpha_0+(2\alpha_0-1)\phi_i(r).$$
+
 **Corollary 1.** Under unbiased segregation ($\alpha_0=1/2$), $\Pr(J_i=0)=\Pr(J_i=1)=\mathbb E J_i=1/2$ for every locus, whatever $r$.
 
 **Expected cross value.** Cross parents $L^1,L^2$ with independent $J^1,J^2,J^3\sim\mathcal I(r,\alpha_0)$: the child is $[g^1,g^2]$ with $g^k=\mathrm{gam}(L^k,J^k)$, and its gamete is $g^3=\mathrm{gam}([g^1,g^2],J^3)$. The ECV is $\mathrm{ECV}(L^1,L^2,r,\alpha_0)=\mathbb E\sum_ig^3_i$, the expected number of desirable alleles in $g^3$ (in contrast to the predicted cross value $\Pr(g^3\equiv1)$).
 
 **Theorem 1.** Writing $q_i=1-\alpha_0+(2\alpha_0-1)\phi_i(r)$,
+
 $$\mathrm{ECV}=\sum_{i=1}^N\Big[L^1_{i,1}+q_i\big(L^1_{i,2}-2L^1_{i,1}+L^2_{i,1}\big)+q_i^2\big(L^2_{i,2}+L^1_{i,1}-L^1_{i,2}-L^2_{i,1}\big)\Big],$$
+
 and under unbiased segregation ($\alpha_0=1/2$)
+
 $$\mathrm{ECV}(L^1,L^2,r,1/2)=\frac14\sum_{i=1}^N\big(L^1_{i,1}+L^1_{i,2}+L^2_{i,1}+L^2_{i,2}\big).$$
 
 ## Expansion

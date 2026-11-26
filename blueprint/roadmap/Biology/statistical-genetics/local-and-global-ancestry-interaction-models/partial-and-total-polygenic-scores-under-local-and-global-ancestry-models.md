@@ -12,7 +12,9 @@ so $r^2$ is the variance explained and $\rho$ the cross-ancestry effect correlat
 The total score uses European effects on every allele, $\mathrm{TotPGS}_i=\sum_j\beta_j^{\mathrm{Eur}}(\hat x_{ij}^{(1)}+\hat x_{ij}^{(2)})$; the partial score uses only European-ancestry alleles, $\mathrm{ParPGS}_i=\sum_j\beta_j^{\mathrm{Eur}}\sum_h(1-a_{ij}^{(h)})\hat x_{ij}^{(h)}$.
 
 **Proposition 2.** Let $\bar a$ be the cohort mean African global ancestry. Assume (A) ancestry-specific allele frequencies are equal across markers, (B) local ancestry is identically distributed across individuals, (C) both haplotypes of an individual share ancestry assignment, (D) ancestry-specific allele-frequency differences are small, and (E) alleles on the two haplotypes are approximately uncorrelated. Then
+
 $$\mathbb E_{\mathrm{Glo}}[\mathrm{Cor}^2(\mathrm{TotPGS},y)]\approx r^2(1-\bar a+\rho\bar a)^2\approx\mathbb E_{\mathrm{Loc}}[\mathrm{Cor}^2(\mathrm{TotPGS},y)],$$
+
 $$\mathbb E_{\mathrm{Glo}}[\mathrm{Cor}^2(\mathrm{ParPGS},y)]\approx r^2(1-\bar a)(1-\bar a+\rho\bar a)^2,\qquad
 \mathbb E_{\mathrm{Loc}}[\mathrm{Cor}^2(\mathrm{ParPGS},y)]\approx r^2(1-\bar a).$$
 With causal variants known, the partial score thus separates the two models (cubic versus linear dependence on $\bar a$), while the total score does not.

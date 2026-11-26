@@ -1,15 +1,21 @@
 # Probability of a last-one-out gene distribution
 
 **Model.** Let $T$ be a rooted tree with positive edge lengths (not necessarily ultrametric). A gene present at a point of the tree is lost along each lineage according to a continuous-time Markov process with loss rate $\mu>0$; losses are irreversible and independent across lineages and across genes. Suppose $T$ has a stem edge of length $\ell$ whose lower end is the root of subtrees $T_1,\dots,T_k$ ($k\ge 2$), each with its own stem edge. For a gene present at the top of the stem of $T$, let
+
 $$\phi_T=\Pr(\text{present in exactly one leaf of }T),\qquad \pi_T=\Pr(\text{present in no leaf of }T),$$
+
 and write $\phi_i,\pi_i$ for the same quantities of $T_i$.
 
 **Recursion.** With $s=e^{-\mu\ell}$ the probability that the gene survives the stem edge,
+
 $$\pi_T=(1-s)+s\prod_{i=1}^{k}\pi_i,\qquad \phi_T=s\sum_{i=1}^{k}\phi_i\prod_{j\ne i}\pi_j .$$
+
 For a binary node ($k=2$), $\phi_T=s\,(\phi_1\pi_2+\phi_2\pi_1)$. A leaf edge of length $\ell$ is the base case, with $\phi=e^{-\mu\ell}$ and $\pi=1-e^{-\mu\ell}$. Both quantities are computed for all subtrees by dynamic programming from the leaves to the root in time linear in the number of edges. If $n$ genes are present at the top of the stem, the number of last-one-out genes is $\mathrm{Binomial}(n,\phi_T)$.
 
 **Star tree.** If $T$ consists of $N$ leaf edges of equal length $h$ attached to the root (stem length $0$), then with $x=e^{-\mu h}$,
+
 $$\phi_T=N\,x\,(1-x)^{N-1},\qquad \max_{\mu>0}\phi_T=\Big(1-\frac1N\Big)^{N-1}\xrightarrow[N\to\infty]{} e^{-1},$$
+
 attained at $x=1/N$, i.e. $\mu=(\ln N)/h$. So a gene can be seen in exactly one of arbitrarily many leaves with probability close to $1/e$ by $N-1$ independent losses alone, while the average of $\phi_T$ over a uniform loss rate tends to $0$ as $N$ grows.
 
 ## Expansion

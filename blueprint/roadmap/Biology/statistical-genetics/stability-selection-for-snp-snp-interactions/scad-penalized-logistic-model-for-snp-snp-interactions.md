@@ -1,11 +1,17 @@
 # SCAD-penalized logistic model for SNP-SNP interactions
 
 **Model.** For $n$ case-control subjects with disease status $y_i\in\{0,1\}$ and genotype codes $x_{i1},\dots,x_{im}$ at $m$ SNPs, the pairwise-interaction logistic model is
+
 $$y_i\sim\mathrm{Bernoulli}(\pi_i),\qquad \log\frac{\pi_i}{1-\pi_i}=\beta_0+\sum_{j=1}^m\beta_jx_{ij}+\sum_{j<k}\xi_{jk}\,x_{ij}x_{ik},$$
+
 with $p=m+m(m-1)/2$ candidate main-effect and interaction coefficients $\theta=(\beta,\xi)$, typically $p\gg n$. Sparse estimates minimize the penalized deviance
+
 $$l_p(\theta)=-2\log L(\theta)+\sum_{j=1}^p p_\lambda(|\theta_j|).$$
+
 The lasso uses $p_\lambda(t)=\lambda t$. The SCAD penalty is defined for $t>0$ by its derivative
+
 $$p'_\lambda(t)=\lambda\Big\{\mathbf 1(t\le\lambda)+\frac{(a\lambda-t)_+}{(a-1)\lambda}\,\mathbf 1(t>\lambda)\Big\},\qquad a>2,$$
+
 so it equals the lasso near zero, tapers linearly on $(\lambda,a\lambda]$ and is constant beyond $a\lambda$.
 
 **Property.** Because $p'_\lambda(t)=0$ for $t>a\lambda$, large coefficients are not shrunk, which removes the lasso's bias on strong effects, while the singularity at zero still sets small coefficients exactly to zero; this is the source of SCAD's oracle property (selection and estimation as if the true support were known, under regularity conditions) that motivates its use over the lasso for interaction screening.

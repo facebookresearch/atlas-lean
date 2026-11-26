@@ -1,7 +1,9 @@
 # Coding invariance of penalized whole-genome regression with interactions
 
 **Setting.** Fit a complete polynomial model of total degree $D$ in marker values to phenotypes $y\in\mathbb R^n$ by minimizing
+
 $$\sum_{i=1}^n\bigl(y_i-f(M_{i,\bullet})\bigr)^2+\mathrm{pen}(f),$$
+
 with penalty factors held fixed, and compare the fit on the coding $M$ with the fit on a translated coding $\tilde M=M-\mathbf 1_nP^{t}$.
 
 **Corollary 1 (OLS).** For a complete polynomial model of total degree $D$, the ordinary least-squares estimates of the coefficients of highest total degree and the fitted predictions $\hat y$ are invariant under translations of the marker coding.

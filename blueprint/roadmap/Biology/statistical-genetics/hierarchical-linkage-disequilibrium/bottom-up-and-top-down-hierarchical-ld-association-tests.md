@@ -5,11 +5,15 @@
 **Full test.** $H_0:\delta^{ca}=\delta^{co}$ against an unrestricted alternative in $\Delta^2$. The likelihood-ratio statistic is asymptotically $\chi^2_{2^M-1}$ under $H_0$; this is the standard global haplotype test rewritten in LD parameters.
 
 **Bottom-up tests.** For a set $P$ of orders (e.g. $P=\{1,2\}$),
+
 $$H_0^{BU,P}:\ \delta^{ca}_s=\delta^{co}_s\ \text{ for all } s\in S \text{ with } |s|\in P,\qquad H_1:\ \text{unrestricted}.$$
+
 Only the parameters of orders in $P$ are constrained, so the test has $\sum_{k\in P}\binom Mk$ degrees of freedom.
 
 **Top-down tests.** For a set $P$ of orders (e.g. $P=\{2,3\}$ when $M=3$),
+
 $$H_0:\ \delta^{ca}=\delta^{co},\qquad H_1^{TD,P}:\ \delta^{ca}_s=\delta^{co}_s\ \text{ for all } s \text{ with } |s|\notin P.$$
+
 Only parameters of orders in $P$ may differ under the alternative.
 
 Both families keep the order-by-order structure: lower-order parameters are estimated first and higher-order ones honour the constraints automatically, so maximum-likelihood fits under null and alternative use the same direct single-parameter optimizations. Constraining higher orders while freeing lower ones would instead require a joint optimization.

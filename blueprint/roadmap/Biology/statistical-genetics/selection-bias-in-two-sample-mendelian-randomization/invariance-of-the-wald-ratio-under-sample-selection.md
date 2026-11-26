@@ -1,10 +1,13 @@
 # Invariance of the Wald ratio under sample selection
 
 **Setting.** Two-sample Mendelian randomization estimates the causal effect of an exposure $X$ on an outcome $Y$ from genetic instruments $G_1,\dots,G_J$. SNP-exposure associations $\beta_{G_jX}$ are estimated in a sample from population I and SNP-outcome associations $\beta_{G_jY}$ in a sample from population II. Each $G_j$ is a valid instrument: it is associated with $X$, independent of the unmeasured confounders $U$ of $X$ and $Y$, and affects $Y$ only through $X$. Let $S_1,S_2\in\{0,1\}$ indicate selection into samples I and II, so that the analysis conditions on $S_1=1$ and $S_2=1$ and estimates the Wald ratio
+
 $$\frac{\beta_{G_jY\mid S_2=1}}{\beta_{G_jX\mid S_1=1}}\quad\text{in place of}\quad\frac{\beta_{G_jY}}{\beta_{G_jX}}.$$
 
 **Theorem 1 (sufficient conditions for invariance).** For linear (identity-link) association models, the selected-sample Wald ratio equals the population causal ratio,
+
 $$\frac{\beta_{G_jY\mid S_2=1}}{\beta_{G_jX\mid S_1=1}}=\frac{\beta_{G_jY}}{\beta_{G_jX}},$$
+
 if, for every valid instrument $G_j$, either
 
 - (a) $S_1\perp G_j$ or $S_1\perp X\mid G_j$ in population I, and $S_2\perp G_j$ or $S_2\perp Y\mid G_j$ in population II; or

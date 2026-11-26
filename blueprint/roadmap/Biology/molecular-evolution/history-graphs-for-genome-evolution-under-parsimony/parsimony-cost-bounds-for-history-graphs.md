@@ -8,11 +8,15 @@
 **Ambiguity and AVGs.** Labels and adjacencies of $G$ are *lifted* to their nearest labelled (respectively attached) ancestors. The substitution ambiguity $u_s(G)$ counts non-trivial lifted labels in excess of one per vertex, the rearrangement ambiguity $u_r(G)$ counts non-trivial lifted adjacency incidences in excess of one per side, and $G$ is an *ancestral variation graph* (AVG) if $u_s(G) + u_r(G) = 0$. Simple histories are AVGs.
 
 **Bounds.** Let $s_l(G)$ (lower-bound substitution cost) be the number of distinct non-trivial lifted labels over all vertices minus the number of unlabelled vertices carrying non-trivial lifted labels, and $s_u(G)$ the total number of non-trivial lifted labels minus, at each such unlabelled vertex, the maximum multiplicity of an identical lifted label. Group the sides carrying real or lifted adjacencies into connected *modules* $M$ of the module graph and set
+
 $$r_l(G) = \sum_{M} \left(\left\lceil \tfrac{|V_M|}{2} \right\rceil - 1\right),$$
+
 with $r_u(G)$ the corresponding upper bound.
 
 **Theorem 1.** For every history graph $G$ and every cost function $c$,
+
 $$c\big(s_l(G), r_l(G)\big) \;\le\; C(G, c) \;\le\; c\big(s_u(G), r_u(G)\big),$$
+
 with equality throughout when $G$ is an AVG (then $s_l = s_u$ and $r_l = r_u$).
 
 **Theorems 2–4 (finite search space).** An element of an extension $G'$ of $G$ is *$G$-reducible* if some reduction sequence from $G'$ back to $G$ deletes (or, for a branch, contracts) it, and the *$G$-unbridged graph* of $G'$ deletes all $G$-reducible bridge adjacencies. Call $G'$ *$G$-bounded* if it contains no $G$-reducible non-minimal element and its $G$-unbridged graph contains no $G$-reducible ping adjacency (one of a pair of adjacencies with hanging sides that point back to each other through their nearest attached ancestors). The $G$-bounded AVGs contain all $G$-optimal AVGs for every cost function. If $G$ has $n$ adjacencies and $m$ labelled vertices, a $G$-bounded history graph has at most $\max(0, 10n-8)$ $G$-reducible adjacencies and at most $\max(0, 2m-2, 20n-16, 20n+2m-18)$ additional vertices, and these bounds are tight. Consequently the $G$-bounded poset under reduction is finite, has $G$ as its unique least element, its maximal elements are AVGs, and its covering relation is a single bounded reduction operation, so the space of most-parsimonious interpretations can be explored by local moves.

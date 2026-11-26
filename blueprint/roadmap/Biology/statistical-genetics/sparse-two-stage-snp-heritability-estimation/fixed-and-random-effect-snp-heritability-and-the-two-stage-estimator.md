@@ -8,10 +8,15 @@
 **Proposition 1 (equivalence).** If the nonzero effects are independent draws from a distribution with mean $0$ and variance $\sigma_u^2$, each row $W_{i\cdot}$ is independent of $u^*$, and the fixed-effect total genetic variance is averaged over effects, $\tau^2=\mathbb E_{u^*}[u^{*\top}\Sigma u^*]$, then $\tau^2=s\sigma_u^2$ and $h^*_{\text{fixed}}=h^*_{\text{rand}}$.
 
 **Two-stage estimator.** Split the sample into halves $(y^{(1)},W^{(1)})$ and $(y^{(2)},W^{(2)})$. On the first half fit the elastic net
+
 $$\hat u=\arg\min_u\ \frac1{2m}\|y^{(1)}-W^{(1)}u\|_2^2+\alpha\lambda\|u\|_1+\frac{1-\alpha}{2}\lambda\|u\|_2^2,$$
+
 with $(\alpha,\lambda)$ chosen by 10-fold cross-validation (largest-sparsity $\lambda$ within one standard error of the minimum error), and let $\hat M=\{j:\hat u_j\ne0\}$, $\hat n=|\hat M|$. On the second half ($m'=m/2$ samples) estimate variance components with the selected columns only: either by REML (random effects), or by the method-of-moments estimators
+
 $$\hat\tau^2=-\frac{\hat n d_1^2}{m'(m'+1)d_2}\|y^{(2)}\|_2^2+\frac{d_1}{m'(m'+1)d_2}\|W^{(2)\top}_{\hat M}y^{(2)}\|_2^2,$$
+
 $$\hat\sigma_e^2=\Big(1+\frac{\hat n d_1^2}{(m'+1)d_2}\Big)\frac{\|y^{(2)}\|_2^2}{m'}-\frac{d_1}{m'(m'+1)d_2}\|W^{(2)\top}_{\hat M}y^{(2)}\|_2^2=\frac{\|y^{(2)}\|_2^2}{m'}-\hat\tau^2,$$
+
 with $d_1=\frac1{\hat n}\operatorname{tr}(\frac1{m'}W_{\hat M}^{(2)\top}W_{\hat M}^{(2)})$ and $d_2=\frac1{\hat n}\operatorname{tr}\big[(\frac1{m'}W_{\hat M}^{(2)\top}W_{\hat M}^{(2)})^2\big]-\frac1{\hat n m'}\big[\operatorname{tr}(\frac1{m'}W_{\hat M}^{(2)\top}W_{\hat M}^{(2)})\big]^2$, (the method-of-moments estimators of Dicker for high-dimensional regression with correlated predictors), and report $\hat h=\hat\tau^2/(\hat\tau^2+\hat\sigma_e^2)$.
 
 ## Expansion

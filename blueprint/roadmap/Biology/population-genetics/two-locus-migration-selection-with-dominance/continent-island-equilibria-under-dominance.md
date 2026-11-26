@@ -1,12 +1,17 @@
 # Continent–island equilibria under dominance
 
 **Model.** An island receives one-way migration at rate $\mu$ from a continent fixed for haplotype $A_2B_2$, while $A_1$ and $B_1$ are favoured on the island with selection rates $\alpha,\beta>0$ and dominance coefficients $\vartheta,\sigma\in[-1,1]$ (genotype fitness $1+\alpha,1+\vartheta\alpha,1-\alpha$ at locus $\mathsf A$, analogously at $\mathsf B$, additive across loci). With all forces weak and recombination rate $\rho$, the island allele frequencies $p,q$ of $A_1,B_1$ and linkage disequilibrium $D$ satisfy
+
 $$\dot p=\alpha p(1-p)\big(1+\vartheta(1-2p)\big)+\beta D\big(1+\sigma(1-2q)\big)-\mu p,$$
+
 $$\dot q=\beta q(1-q)\big(1+\sigma(1-2q)\big)+\alpha D\big(1+\vartheta(1-2p)\big)-\mu q,$$
+
 $$\dot D=D\big[\alpha(1-2p)(1+\vartheta(1-2p))+\beta(1-2q)(1+\sigma(1-2q))\big]-\rho D+\mu(pq-D).$$
 
 **Single-locus polymorphisms.** With $q=D=0$ the internal equilibria of locus $\mathsf A$ solve $\alpha(1-p)(1+\vartheta(1-2p))=\mu$, i.e.
+
 $$p_\pm=\frac{1+3\vartheta\pm\sqrt{(1-\vartheta)^2+8\mu\vartheta/\alpha}}{4\vartheta}\qquad(\vartheta\ne0),$$
+
 and analogously $q_\pm$; within the one-locus system the equilibrium at $p_-$ is asymptotically stable whenever admissible and the one at $p_+$ is always unstable. The continental fixation $p=0$ loses stability exactly when $\mu<\alpha(1+\vartheta)$, the invasion rate of a rare island-favoured allele, which appears in heterozygotes.
 
 **Theorem.**
