@@ -45,3 +45,13 @@ example : partitionMinPartExactCount 4 1 2 = 2 :=
 -- Both counts vanish when `n < k (ℓ + 1)`: four has no partition into two parts at least three.
 example : partitionMinPartExactCount 4 3 2 = 0 :=
   (partitionMinPartExactCount_eq_refined 4 2 2 (by decide) (by decide)).trans (by decide)
+
+-- At `n = ℓ + 1`, only the one-part partition contributes.
+example : partitionMinPartCount 2 2 = 1 := by
+  rw [partitionMinPartCount_eq_refined_add_one 2 1 (by decide)]
+  decide
+
+-- For `ℓ = 0`, the four refined sets have cardinalities 3, 3, 4 and 5.
+example : partitionMinPartCount 4 1 = 5 := by
+  rw [partitionMinPartCount_eq_refined_add_one 4 0 (by decide)]
+  decide
