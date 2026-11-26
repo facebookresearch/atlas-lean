@@ -4,7 +4,7 @@ Let $w$ be a weight function on $[a, b]$ and $f$ a continuous function on $[a, b
 
 $$\lim_{n \to \infty} \sum_{i=0}^{n} A_{n,i} f(x_{n,i}) = \int_a^b f(x)\, w(x)\, dx.$$
 
-The theorem gives no rate. Its standard proof approximates $f$ uniformly by a polynomial $p$ within $\varepsilon$: the rule is exact for $p$ once $2n + 1 \ge \deg p$, and since its weights are positive with sum $\int_a^b w$, both the integral and the rule change by at most $\varepsilon \int_a^b w$ when $p$ is replaced by $f$.
+The theorem gives no rate. Its standard proof approximates $f$ uniformly on $[a, b]$ by a polynomial $p$ within $\varepsilon$, which the Weierstrass theorem on $[0, 1]$ provides after the affine change of variable $x = a + (b - a)t$: the rule is exact for $p$ once $2n + 1 \ge \deg p$, and since its weights are positive with sum $\int_a^b w$, both the integral and the rule change by at most $\varepsilon \int_a^b w$ when $p$ is replaced by $f$.
 
 ## Depends on
 

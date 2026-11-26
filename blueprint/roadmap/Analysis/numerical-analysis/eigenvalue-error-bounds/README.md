@@ -10,5 +10,6 @@ A posteriori bounds for computed eigenvalues: for a Hermitian matrix, a unit vec
 
 ## Related topics
 
+- [Power iteration](../../../LinearAlgebra/eigenvalues-and-canonical-forms/power-iteration-and-the-rayleigh-quotient/README.md): the symmetric case of the power method, with linear convergence of the iterates and quadratic accuracy of the Rayleigh quotient.
 - [Bauer–Fike theorem](../../operator-theory/eigenvalue-inequalities/bauer-fike-theorem/README.md): perturbation bounds for the spectrum.
 - [Arnoldi and Lanczos iterations](../../../LinearAlgebra/matrix-decompositions/arnoldi-and-lanczos-iterations/README.md): Krylov methods, whose Ritz values these bounds assess.

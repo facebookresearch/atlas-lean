@@ -1,6 +1,6 @@
 # Veltkamp splitting of a floating-point number
 
-Work in binary floating-point arithmetic with $p$-bit significands, $p \ge 3$, an unbounded exponent range and rounding to nearest, writing $\mathrm{fl}$ for the rounded result of an operation. Let $a$ be a [floating-point number](is-float.md) and choose a splitting point $s$ with $p/2 \le s \le p - 1$. The algorithm
+Work in binary floating-point arithmetic with $p$-bit significands, $p \ge 3$, an unbounded exponent range and [rounding to nearest with ties to even](fl.md), writing $\mathrm{fl}$ for the rounded result of an operation. Let $a$ be a [floating-point number](is-float.md) and choose a splitting point $s$ with $p/2 \le s \le p - 1$. The algorithm
 
 $$c = \mathrm{fl}\bigl((2^s + 1)\, a\bigr), \quad a_{\mathrm{big}} = \mathrm{fl}(c - a), \quad a_{\mathrm{hi}} = \mathrm{fl}(c - a_{\mathrm{big}}), \quad a_{\mathrm{lo}} = \mathrm{fl}(a - a_{\mathrm{hi}})$$
 

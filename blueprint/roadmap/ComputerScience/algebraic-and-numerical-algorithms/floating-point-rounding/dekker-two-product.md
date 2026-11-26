@@ -1,6 +1,6 @@
 # Dekker's error-free product without a fused multiply-add
 
-Work in binary floating-point arithmetic with $p$-bit significands, $p \ge 6$, an unbounded exponent range and rounding to nearest, writing $\mathrm{fl}$ for the rounded result of an operation. Let $a$ and $b$ be [floating-point numbers](is-float.md), and let $(a_{\mathrm{hi}}, a_{\mathrm{lo}})$ and $(b_{\mathrm{hi}}, b_{\mathrm{lo}})$ be their [Veltkamp splittings](veltkamp-splitting.md) with splitting point $\lceil p/2 \rceil$. The algorithm
+Work in binary floating-point arithmetic with $p$-bit significands, $p \ge 6$, an unbounded exponent range and [rounding to nearest with ties to even](fl.md), writing $\mathrm{fl}$ for the rounded result of an operation. Let $a$ and $b$ be [floating-point numbers](is-float.md), and let $(a_{\mathrm{hi}}, a_{\mathrm{lo}})$ and $(b_{\mathrm{hi}}, b_{\mathrm{lo}})$ be their [Veltkamp splittings](veltkamp-splitting.md) with splitting point $\lceil p/2 \rceil$. The algorithm
 
 $$\begin{aligned} x &= \mathrm{fl}(ab), & e_1 &= \mathrm{fl}\bigl(x - \mathrm{fl}(a_{\mathrm{hi}} b_{\mathrm{hi}})\bigr), & e_2 &= \mathrm{fl}\bigl(e_1 - \mathrm{fl}(a_{\mathrm{lo}} b_{\mathrm{hi}})\bigr), \\ e_3 &= \mathrm{fl}\bigl(e_2 - \mathrm{fl}(a_{\mathrm{hi}} b_{\mathrm{lo}})\bigr), & y &= \mathrm{fl}\bigl(\mathrm{fl}(a_{\mathrm{lo}} b_{\mathrm{lo}}) - e_3\bigr) & & \end{aligned}$$
 
@@ -8,7 +8,7 @@ returns floating-point numbers $x$ and $y$ with
 
 $$ab = x + y$$
 
-exactly, where $x = \mathrm{fl}(ab)$ and $y = ab - \mathrm{fl}(ab)$ is its rounding error, and $x$ and $y$ are nonoverlapping. With ties broken to even, $x$ and $y$ are moreover nonadjacent. Every product and subtraction after the first is exact; the algorithm uses only additions and multiplications, in contrast with the [error-free product via a fused multiply-add](error-free-transformation-of-a-product-via-fused-multiply-ad.md), which computes $y = \mathrm{fl}(ab - x)$ in one operation.
+exactly, where $x = \mathrm{fl}(ab)$ and $y = ab - \mathrm{fl}(ab)$ is its rounding error, and $x$ and $y$ are nonoverlapping and moreover nonadjacent. (With any other rule for breaking ties between the two nearest floating-point numbers, the identity and nonoverlap still hold; nonadjacency uses ties to even.) Every product and subtraction after the first is exact; the algorithm uses only additions and multiplications, in contrast with the [error-free product via a fused multiply-add](error-free-transformation-of-a-product-via-fused-multiply-ad.md), which computes $y = \mathrm{fl}(ab - x)$ in one operation.
 
 ## Depends on
 

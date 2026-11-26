@@ -4,12 +4,13 @@ Let $A$ be an $n \times n$ Hermitian matrix, let $\tilde u \in \mathbb{C}^n$ wit
 
 $$|\tilde\lambda - \lambda| \le \frac{\|r\|_2^2}{\delta}.$$
 
-This is the [Kato–Temple inequality](kato-temple-inequality.md) for the interval $(\tilde\lambda - \delta, \tilde\lambda + \delta)$.
+When $|\tilde\lambda - \lambda| < \delta$ this is the [Kato–Temple inequality](kato-temple-inequality.md) for the interval $(\tilde\lambda - \delta, \tilde\lambda + \delta)$, which then contains $\lambda$ and no other eigenvalue. When $|\tilde\lambda - \lambda| = \delta$ (two eigenvalues at the same distance), that interval contains no eigenvalue, and the [residual bound on an eigenvalue-free interval](rayleigh-quotient-residual-lemma.md) gives $\delta^2 \le \|r\|_2^2$, which is the claim.
 
 ## Proof depends on
 
 - [Kato–Temple inequality](kato-temple-inequality.md)
+- [Residual bound on an eigenvalue-free interval around a Rayleigh quotient](rayleigh-quotient-residual-lemma.md)
 
 ## Sources
 
-- Y. Saad, *Numerical Methods for Large Eigenvalue Problems*, revised edition, SIAM, 2011, Section 3.2.2, Corollary 3.4 and its proof. <https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf>
+- Y. Saad, *Numerical Methods for Large Eigenvalue Problems*, revised edition, SIAM, 2011, Section 3.2.2, Corollary 3.4 and its proof, which takes $a = \tilde\lambda - \delta$ and $b = \tilde\lambda + \delta$ in Theorem 3.8; the equidistant case is covered by Lemma 3.2. <https://www-users.cse.umn.edu/~saad/eig_book_2ndEd.pdf>
