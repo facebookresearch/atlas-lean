@@ -9,8 +9,6 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Theorems/Thm_Padic_exists_ternary_isotropic_of_norm_eq_one_of_ne_two.lean`
-and
-`P2M/Sol/S_Padic_exists_ternary_isotropic_of_norm_eq_one_of_ne_two.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -37,8 +35,8 @@ import Mathlib.Tactic.LinearCombination
 # Ternary isotropy over `ℚ_[p]` at odd primes
 
 The form `z ^ 2 - a * x ^ 2 - b * y ^ 2` with `‖a‖ = ‖b‖ = 1` is the case `n = 3` of
-`HilbertSymbol.diagonal_unit_isotropic`, with the unit coefficients `1, -a, -b`. Of the upstream
-files named above, only the statement in `Theorems/` is used; the upstream proof is not.
+`HilbertSymbol.diagonal_unit_isotropic`, with the unit coefficients `1, -a, -b`. Only the
+statement comes from the upstream file named above; the upstream proof is not used.
 -/
 
 /-- **Ternary isotropy over `ℚ_[p]` for odd `p`.** If `p` is an odd prime and
