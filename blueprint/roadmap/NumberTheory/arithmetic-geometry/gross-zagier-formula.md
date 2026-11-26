@@ -1,0 +1,71 @@
+# Gross–Zagier formula for the Heegner point
+
+This node is still to be broken down. Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $f$ be its
+newform and $\varphi \colon X_0(N) \to E$ a
+[modular parametrization](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md)
+with $\varphi(\infty) = O$, and let $\omega$ be the Néron differential of $E$ with $\varphi^*(\omega) = c\,\omega_f$,
+$c > 0$, where $\omega_f = 2\pi i f(z)\,dz$. Let $K$ be an imaginary quadratic field as for
+[the Heegner point](heegner-point-of-an-elliptic-curve.md): its discriminant $D_K$ is not $-3$ or $-4$ and every prime
+factor of $N$ splits in $K$. Assume moreover that $D_K$ is odd. (For $D_K$ prime to $N$, the splitting condition is
+Gross and Zagier's condition that $D_K$ be a square modulo $4N$.) Let $y_K \in E(K)$ be the Heegner point.
+
+Let $\varepsilon_K$ be the quadratic Dirichlet character of $K$ and
+$L(E/K, s) = L(E, s) \, L(E, \varepsilon_K, s)$ the $L$-function of $E$ over $K$, where
+$L(E, \varepsilon_K, s) = \sum_{n \ge 1} \varepsilon_K(n) a_n n^{-s}$ for $L(E, s) = \sum_{n \ge 1} a_n n^{-s}$; it
+extends to an entire function and vanishes at $s = 1$. Then
+
+$$L'(E/K, 1) = \frac{\lVert\omega\rVert^2 \, \hat h(y_K)}{c^2 \, \lvert D_K \rvert^{1/2}}, \qquad
+\lVert\omega\rVert^2 = \iint_{E(\mathbb{C})} \lvert \omega \wedge \bar\omega \rvert,$$
+
+where $\hat h$ is the canonical height of $E$ over $K$, normalised as by Gross and Zagier (Chapter I, §4, and (6.4)): a
+positive definite quadratic form on $E(K) \otimes \mathbb{R}$, so that, like the
+[Néron–Tate height](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), it
+vanishes on $E(K)$ exactly at the torsion points. In particular, $y_K$ has infinite order in $E(K)$ if and only if
+$L'(E/K, 1) \ne 0$.
+
+## Expansion
+
+A good expansion follows the plan of Gross and Zagier (Chapter I, §9): Rankin's method for the continuation and
+functional equation of $L(f, \chi, s)$ and its vanishing at $s = 1$ (Chapter I, Proposition (5.5); Chapter IV); the
+decomposition of the height pairing of Heegner divisors on the Jacobian of $X_0(N)$ into local heights, computed at
+the archimedean places with Green's functions (Chapter II) and at the finite places by intersection theory on a model
+of $X_0(N)$ (Chapter III); the identity of Chapter I, Theorem (6.1), between the series
+$\sum_{m \ge 1} \langle c, T_m c^\sigma \rangle q^m$ and the holomorphic projection of a Rankin product, which gives
+Chapter I, Theorem (6.3); and the passage from the Jacobian to $E$ in Chapter V, §2, with
+$\hat h(P_K) = \hat h(c_{\mathbf{1}, f}) \deg(\pi)$ and $\lVert\omega\rVert^2 = c^2 \lVert\omega_f\rVert^2 / \deg(\pi)$.
+Gross and Zagier assume throughout that the discriminant is odd (Chapter I, §3, p. 227); Gross, p. 235, states the
+formula for any field as on the Heegner point page, with $\omega$ normalised by $\varphi^*(\omega) = \omega_f$, citing
+Chapter I, (6.5). An expansion that drops the parity assumption must cite a source that proves the formula without
+it.
+
+## Depends on
+
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md), for $y_K$
+- [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$, $f$ and the constant $c$
+- [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](../zeta-l-functions/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for the continuation of $L(E, s)$
+- [The Néron–Tate height of an abelian variety over a number field](../../AlgebraicGeometry/not-yet-classified/abelian-arithmetic-heights/neron-tate-height.md), for the canonical height of $E$ over $K$
+
+## Proof depends on
+
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](heegner-point-of-an-elliptic-curve.md), for the rationality of the Heegner points over the Hilbert class field
+
+The rest of its proof is that of the sources below, as the Expansion describes.
+
+## Sources
+
+- B. H. Gross and D. B. Zagier, *Heegner points and derivatives of $L$-series*, Invent. Math. 84 (1986), 225–320:
+  Chapter V, §2, Theorem (2.1), p. 311 ("$L'(E/K, 1) = \lVert\omega\rVert^2 \hat h(P_K)/c^2 u_K^2 \lvert D\rvert^{\frac12}$"),
+  with the notation of p. 310 ($\pi$, $\omega$, $c$, $P_K$ and "$\lVert\omega\rVert^2 \underset{\text{def}}{=} \iint_{E(\mathbb{C})} \lvert\omega \wedge \bar\omega\rvert$",
+  the heights taken over $K$); here $u_K = 1$ as $D_K \ne -3, -4$. Chapter I: §3, p. 227 (Heegner points; the
+  standing assumption that $D$ is odd); §4, p. 228 (the height is positive definite on $J(H) \otimes \mathbb{R}$);
+  §5, Proposition (5.5), p. 229; §6, Theorems (6.1) and (6.3), (6.4) and (6.5), p. 230; §9, the plan of proof.
+- J. Coates, *The work of Gross and Zagier on Heegner points and the derivatives of $L$-series*, Séminaire Bourbaki,
+  exp. 635 (1984/85), Astérisque 133–134 (1986), 57–72, <http://www.numdam.org/item?id=SB_1984-1985__27__57_0>:
+  Theorem 4, p. 64, and (7), p. 65 ("$L(E/K, s) = L(E, s)\,L(E^{(\varepsilon)}, s) = L(f, \chi_0, s)$").
+- B. H. Gross, *Kolyvagin's work on modular elliptic curves*, in *L-functions and arithmetic* (Durham, 1989),
+  London Math. Soc. Lecture Note Ser. 153, Cambridge Univ. Press, 1991, 235–256: (1.1), p. 235, and "In particular,
+  the point $y_K$ has infinite order if and only if $L'(E/K, 1) \neq 0$."
+- H. Darmon, *Rational points on modular elliptic curves*, CBMS Regional Conference Series in Mathematics 101,
+  American Mathematical Society, 2004; author's version,
+  <https://www.math.mcgill.ca/darmon/pub/Articles/Research/36.NSF-CBMS/chapter.pdf>, cited by the page numbers
+  printed in that version: Theorem 3.20 (1), p. 40, stated up to a nonzero factor, and (3.12), p. 37.

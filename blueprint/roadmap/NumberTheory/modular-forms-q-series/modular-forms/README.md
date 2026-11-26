@@ -20,3 +20,4 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Kronecker's limit formula for an imaginary quadratic field at $s = 0$](kronecker-limit-formula-imaginary-quadratic.md)
 - [Class average of logarithms of CM values of the eta function](eta-cm-values-class-average.md)
 - [Chowla–Selberg formula](chowla-selberg-formula.md)
+- [Modular parametrization of an elliptic curve over $\mathbb{Q}$](modular-parametrization-of-an-elliptic-curve.md)

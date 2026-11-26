@@ -1,0 +1,49 @@
+# Modularity of elliptic curves over $\mathbb{Q}$
+
+This node is still to be broken down. It is the modularity theorem of Wiles, Taylor–Wiles and Breuil–Conrad–Diamond–Taylor,
+in the form Darmon states it.
+
+Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, and let
+
+$$L(E, s) = \prod_{p \nmid N} (1 - a_p p^{-s} + p^{1-2s})^{-1} \prod_{p \mid N} (1 - a_p p^{-s})^{-1} = \sum_{n \ge 1} a_n n^{-s}$$
+
+be its $L$-function, where $a_p = p + 1 - \#\tilde E(\mathbb{F}_p)$ for the reduction $\tilde E$ of a minimal
+Weierstrass model of $E$ at $p$, all of whose points over $\mathbb{F}_p$ are counted, so that $a_p \in \{0, \pm 1\}$
+when $p \mid N$; the product converges for $\operatorname{Re}(s) > 3/2$. Then
+there is a newform $f = \sum_{n \ge 1} a_n(f) q^n$ of weight $2$ and level $N$, that is, a cusp form of weight $2$ on
+$\Gamma_0(N)$ in the new subspace that is an eigenvector of all the Hecke operators, normalised by $a_1(f) = 1$, such
+that
+
+$$L(E, s) = L(f, s) = \sum_{n \ge 1} a_n(f) n^{-s},$$
+
+that is, $a_n(f) = a_n$ for every $n \ge 1$. Furthermore, $E$ is isogenous over $\mathbb{Q}$ to the elliptic curve
+$E_f$ over $\mathbb{Q}$ that the Eichler–Shimura construction attaches to $f$, the curve with $L(E_f, s) = L(f, s)$.
+
+## Expansion
+
+A good expansion follows the proof as Darmon outlines it (Remark 2.13 and the paragraph after Remark 2.14): pages for
+newforms and Atkin–Lehner theory and for the Eichler–Shimura construction (Darmon, §§2.3 and 2.5); the
+$\ell$-adic representations attached to $E$ and to $f$; the modularity lifting theorems of Wiles and Taylor–Wiles for
+semistable curves and their extensions by Diamond, Conrad–Diamond–Taylor and Breuil–Conrad–Diamond–Taylor, which give
+$f$ with $L(E, s) = L(f, s)$; and Faltings' isogeny theorem, which turns the equality of $L$-functions into the isogeny
+$E \to E_f$. The [Taylor–Wiles patching](../../NumberTheory/modular-forms-q-series/modular-forms/taylor-wiles-patching/README.md)
+pages record definitions such an expansion uses.
+
+## Proof depends on
+
+Its proof is that of the sources below, as the Expansion describes.
+
+## Sources
+
+- H. Darmon, *Rational points on modular elliptic curves*, CBMS Regional Conference Series in Mathematics 101,
+  American Mathematical Society, 2004; author's version,
+  <https://www.math.mcgill.ca/darmon/pub/Articles/Research/36.NSF-CBMS/chapter.pdf>, cited by the page numbers
+  printed in that version: Theorem 2.12 ("Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$. Then there
+  exists a newform $f \in S_2(N)$ such that $L(E, s) = L(f, s)$. Furthermore, $E$ is isogenous to the elliptic curve
+  $E_f$ obtained from $f$ via the Eichler-Shimura construction."), Remarks 2.13 and 2.14, p. 20; (1.19), p. 8, for
+  $L(E, s)$ and its half-plane of convergence; Corollary 2.9, p. 17, for newforms; Theorem 2.10, p. 18, for $E_f$.
+- C. Breuil, B. Conrad, F. Diamond and R. Taylor, *On the modularity of elliptic curves over $\mathbb{Q}$: wild 3-adic
+  exercises*, J. Amer. Math. Soc. 14 (2001), no. 4, 843–939; A. Wiles, *Modular elliptic curves and Fermat's last
+  theorem*, Ann. of Math. (2) 141 (1995), no. 3, 443–551; R. Taylor and A. Wiles, *Ring-theoretic properties of
+  certain Hecke algebras*, Ann. of Math. (2) 141 (1995), no. 3, 553–572. Not read here; cited as Darmon cites them,
+  p. 9 and Remark 2.13, p. 20.
