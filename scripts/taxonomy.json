@@ -12092,7 +12092,6 @@
   "MathlibExt/GameTheory/PenultsOfTak/WeightedCrossBound": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
   "MathlibExt/GameTheory/PotentialGame": {"to": "GameTheory/noncooperative-games", "title": "Potential games"},
   "MathlibExt/GameTheory/PotentialGames": {"to": "GameTheory/noncooperative-games", "title": "Potential games"},
-  "MathlibExt/GameTheory/PrincessAndRosesImpartialGameEquivIffIsPGameSum": {"to": "GameTheory/combinatorial-games", "title": "Princess and the Roses game"},
   "MathlibExt/GameTheory/RegretMatching": {"to": "GameTheory/noncooperative-games", "title": "Adaptive heuristics"},
   "MathlibExt/GameTheory/SelfishRouting": {"to": "GameTheory/noncooperative-games", "title": "Selfish routing and the price of anarchy"},
   "MathlibExt/GameTheory/ShapleyValue": {"to": "GameTheory/cooperative-games", "title": "Shapley value"},

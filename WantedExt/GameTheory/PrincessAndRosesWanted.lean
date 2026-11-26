@@ -14,7 +14,6 @@ public import WantedExt.Combinatorics.SlowANimWanted
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
-public import MathlibExt.GameTheory.PrincessAndRosesImpartialGameEquivIffIsPGameSum
 
 /-!
 # Sprague–Grundy values for Friedman's 4-pile Princess and the Roses paper
@@ -24,7 +23,7 @@ Statement-only targets from the paper, stated over
 paper's definition: the `n` with `G` equivalent to the Nim heap `*n` (Theorem 3, proved in
 MathlibExt as `SpragueGrundy.sprague_grundy`). The criterion that two impartial games are
 equivalent if and only if their game sum is a P-position is proved in
-`MathlibExt.GameTheory.PrincessAndRosesImpartialGameEquivIffIsPGameSum` as
+`MathlibExt.GameTheory.SpragueGrundy` as
 `impartialGame_equiv_iff_isP_gameSum`. The game `{ G with start := q }` is the option
 of `G` reached by moving to `q`.
 

@@ -446,3 +446,26 @@ theorem sprague_grundy (G : ImpartialGame) :
   exact hG.trans hN.symm
 
 end MetaMathlibExt.SpragueGrundy
+
+namespace MetaMathlibExt
+
+open SpragueGrundy
+
+/-- **Equivalence of impartial games via their sum.** Two finite impartial games $G$ and $H$ are
+equivalent if and only if their sum $G + H$ is a P-position, that is, the position of $G + H$ in
+which both $G$ and $H$ are at their starting positions is a P-position.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Lemma 5 (`integers-2026-G4-lem-5`). -/
+theorem impartialGame_equiv_iff_isP_gameSum (G H : ImpartialGame) :
+    Equiv G H ↔ IsP (gameSum G H) ((G.start, H.start) : (gameSum G H).Pos) := by
+  constructor
+  · intro hEquiv
+    exact (hEquiv H).mpr ((isP_sum_iff H H _ _).mpr (Nat.xor_self _))
+  · intro hP
+    have hGH : grundy G G.start = grundy H H.start :=
+      Nat.xor_eq_zero_iff.mp ((isP_sum_iff G H _ _).mp hP)
+    intro K
+    rw [isP_sum_iff, isP_sum_iff, hGH]
+
+end MetaMathlibExt
