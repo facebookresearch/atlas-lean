@@ -5,11 +5,15 @@
 **Proposition (bias of the trunk).** Because $A_n(t) \le n$ with $A_n(t) < n$ for $t > 0$ almost surely, the constant trunk makes absorption too fast, so absorption events concentrate in the recent past; when $\lambda$ is estimated from the inferred distribution of absorption times, few events fall in the middle and ancient past and ancient population sizes are overestimated. Recent sizes are almost unaffected, since $A_n(t) \approx n$ for small $t$.
 
 **Wedding-cake correction.** Partition time into intervals $D_i = [t_{i-1}, t_i)$ and, on $D_i$, replace the absorption multiplicity $n$ by
+
 $$\bar n(t_{i-1}) = \mathbb E\big[A_n(t_{i-1})\big],$$
+
 computed under the coalescent with history $\lambda$, while keeping the haplotype weights $n_h/n$ unchanged, so that every trunk lineage can still absorb at all times and only the absorption rate varies with time. For $n = 1$ (two sequences) $\bar n \equiv 1$ and the model is unchanged.
 
 **Leave-one-out composite likelihood.** To use all haplotypes symmetrically, each is left out in turn and conditioned on the others:
+
 $$L_{\mathrm{LCL}}(\lambda; h_1, \dots, h_n) = \prod_{i=1}^n\hat\pi^{(\lambda)}_{\mathrm{SMC}}\big(h_i \mid h_1, \dots, h_{i-1}, h_{i+1}, \dots, h_n\big),$$
+
 maximized over a piecewise-constant $\lambda$ by expectation-maximization, with adjacent intervals tied to avoid over-fitting where few absorption events occur.
 
 ## Depends on

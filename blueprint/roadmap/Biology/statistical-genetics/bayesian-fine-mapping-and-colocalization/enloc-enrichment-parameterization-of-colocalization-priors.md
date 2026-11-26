@@ -1,15 +1,21 @@
 # ENLOC enrichment parameterization of colocalization priors
 
 For a variant let $d \in \{0,1\}$ indicate a causal effect on a molecular trait (for example expression of a gene) and $\gamma \in \{0,1\}$ a causal effect on a complex trait. SNP-level probabilistic colocalization computes
+
 $$\Pr(\gamma = 1, d = 1 \mid \text{eQTL data}, \text{GWAS data}) \propto \Pr(\gamma = 1, d = 1)\, P(\text{eQTL data}, \text{GWAS data} \mid d = 1, \gamma = 1),$$
+
 and with non-overlapping cohorts the likelihood factorizes as $P(\text{eQTL data} \mid d)\, P(\text{GWAS data} \mid \gamma)$.
 
 **Enrichment parameterization.** Write $\Pr(\gamma = 1, d = 1) = \Pr(\gamma = 1 \mid d = 1)\, p_d$ with $p_d = \Pr(d = 1)$, and
+
 $$\operatorname{logit} \Pr(\gamma = 1 \mid d) = \alpha_0 + \alpha_1 d,$$
+
 so $\alpha_1$ is the log odds ratio of molecular QTLs among complex-trait causal variants. The triple $(p_d, \alpha_0, \alpha_1)$ determines $p_\gamma = \Pr(\gamma = 1)$.
 
 **Equivalence with other methods.** With coloc's per-SNP priors $p_{12} = \Pr(\gamma=1, d=1)$, $p_{\mathrm{mol}} = \Pr(\gamma=0, d=1)$ and $p_{\mathrm{cx}} = \Pr(\gamma=1, d=0)$, and $p_{00} = 1 - p_{\mathrm{mol}} - p_{\mathrm{cx}} - p_{12}$,
+
 $$p_d = p_{\mathrm{mol}} + p_{12}, \qquad \alpha_0 = \log\frac{p_{\mathrm{cx}}}{p_{00}}, \qquad \alpha_1 = \log\frac{p_{12}\, p_{00}}{p_{\mathrm{mol}}\, p_{\mathrm{cx}}}.$$
+
 eCAVIAR's prior independence of $\gamma$ and $d$ is the case $\alpha_1 = 0$, that is $\Pr(\gamma=1, d=1) = p_\gamma p_d$.
 
 **Sensitivity.** For $\alpha_1$ in the empirically relevant range $[0, 5]$, colocalization probabilities of SNPs with strong or with weak marginal evidence in both studies are stable, while SNPs with moderate evidence in either study are highly sensitive to $\alpha_1$. Aggressive enrichment priors inflate false colocalizations, and $\alpha_1 = 0$ costs power, so the source recommends estimating $(p_d, \alpha_0, \alpha_1)$ from the data, as ENLOC/fastENLOC do by multiple imputation.

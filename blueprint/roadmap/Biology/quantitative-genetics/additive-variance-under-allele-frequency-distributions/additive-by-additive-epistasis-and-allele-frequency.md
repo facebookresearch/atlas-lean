@@ -1,13 +1,19 @@
 # Additive-by-additive epistasis and allele frequency
 
 **Model.** Two unlinked biallelic loci $B$ and $C$ in linkage equilibrium and Hardy–Weinberg proportions, with frequencies $p$ of $B$ and $q$ of $C$ and heterozygosities $H_p = 2p(1-p)$, $H_q = 2q(1-q)$. Code genotypes by $x_B, x_C \in \{+1, 0, -1\}$ (homozygote $BB$, heterozygote, homozygote $bb$, and likewise for $C$) and take genotypic values
+
 $$G = a\,(1 + x_Bx_C),$$
+
 so $BBCC$ and $bbcc$ have value $2a$, $BBcc$ and $bbCC$ have value $0$, and every genotype heterozygous at either locus has value $a$.
 
 **Proposition.**
+
 $$M = 2a\,[pq + (1-p)(1-q)],\qquad V_A = a^2(H_p + H_q - 4H_pH_q),\qquad V_{AA} = a^2H_pH_q,\qquad V_G = a^2(H_p + H_q - 3H_pH_q),$$
+
 so
+
 $$\frac{V_A}{V_G} = 1 - \frac{H_pH_q}{H_p + H_q - 3H_pH_q}.$$
+
 The additive fraction is $0$ at $p = q = 1/2$ (all variance epistatic) and tends to $1$ as either locus approaches fixation; with $p = q = 0.1, 0.2, 0.3, 0.4$ it is about $0.88, 0.69, 0.43, 0.14$. Averaged over allele frequencies, $\mathbb E V_A = 2a^2/9$, $\mathbb E V_{AA} = a^2/9$ and $\eta^2 = \mathbb E V_A/\mathbb E V_G = 2/3$ for independent uniform $p, q$, while for the neutral U-shaped distribution $\eta^2 = (2 - 4/K)/(2 - 3/K)$ with $K \approx \ln(2N)$, which tends to $1$ as $N$ grows.
 
 ## Depends on

@@ -5,7 +5,9 @@
 **Proposition.** Under this calibration:
 
 - The ACMG/AMP *pathogenic* rule "two strong items" has $e = 1$, $O_P = 350$ and
+
 $$\mathrm{Post}_P = \frac{35}{35.9} \approx 0.975,$$
+
 so it reaches only the likely-pathogenic band.
 - The *likely pathogenic* rule "one very strong and one moderate item" has $e = 5/4$, $O_P = 350^{5/4} \approx 1514$ and $\mathrm{Post}_P \approx 0.994$, so it reaches the pathogenic band.
 - The likely-pathogenic rules "one strong and one moderate", "one strong and two supporting", "three moderate" and "two moderate and two supporting" all have $e = 3/4$ and $\mathrm{Post}_P \approx 0.90$, at the lower edge of their band; the remaining pathogenic rules (for example one very strong plus one strong, $e = 3/2$) give $\mathrm{Post}_P \ge 0.994$.

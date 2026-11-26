@@ -1,6 +1,7 @@
 # Relative cross-coalescence rate
 
 **Definition.** Sample haplotypes from two populations $1$ and $2$, and let $\lambda_1(t)$ and $\lambda_2(t)$ be the coalescence rates of pairs within population $1$ and within population $2$, and $\lambda_{12}(t)$ the coalescence rate of a pair with one lineage from each, at time $t$ before the present. The **relative cross-coalescence rate** is
+
 $$\gamma(t) = \frac{2\lambda_{12}(t)}{\lambda_1(t) + \lambda_2(t)}.$$
 
 **Proposition (clean split).** Suppose the two populations descend from one panmictic ancestral population that split at time $T$ with no gene flow afterwards. Then $\gamma(t) = 0$ for $t < T$ and $\gamma(t) = 1$ for $t > T$. Gene flow after the split gives $0 < \gamma(t) < 1$ for $t < T$, and a gradual decline of $\gamma$ from $1$ to $0$ indicates a separation spread over time rather than a single split.

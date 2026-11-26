@@ -3,15 +3,21 @@
 Let $Y$ be a quantitative phenotype in a population whose members have both parents genotyped. Assume direct genetic effects are additive and there is no gene-by-environment interaction. Call the effect of an individual's own genome on its own phenotype **direct**, and the effect of relatives' genomes (for example parental genetic nurture) **indirect**; indirect effects are part of the environment of the proband.
 
 **Variance decomposition.**
+
 $$\operatorname{Var}(Y) = v_g + v_{e\sim g} + c_{g,e} + \operatorname{Var}(\epsilon),$$
+
 where $v_g$ is the variance explained by direct genetic effects and $h^2 = v_g / \operatorname{Var}(Y)$ is the (direct) heritability, $v_{e\sim g}$ is the variance of the environmental component correlated with parental genotype (including parental genetic nurture), $c_{g,e}$ is the covariance between direct genetic and environmental effects, and $\epsilon$ is uncorrelated with both proband and parental genotypes.
 
 **RDR covariance model.** For a vector $\mathbf Y$ of phenotypes,
+
 $$\operatorname{Cov}(\mathbf Y) = v_g R + v_{e\sim g} R_{\mathrm{par}} + c_{g,e} R_{o,\mathrm{par}} + \operatorname{Cov}(\epsilon),$$
+
 where $[R]_{ij}$ is the realized (identity-by-descent) relatedness of $i$ and $j$, $[R_{\mathrm{par}}]_{ij}$ the relatedness of the parents of $i$ with the parents of $j$, and $[R_{o,\mathrm{par}}]_{ij}$ the relatedness of each of $i, j$ with the parents of the other. RDR fits this model with the working assumption $\operatorname{Cov}(\epsilon) = \sigma^2 I$.
 
 **Relatedness disequilibrium.** For pairs in which neither is a direct ancestor of the other,
+
 $$\mathbb E\bigl([R]_{ij} \mid [R_{\mathrm{par}}]_{ij}\bigr) = \tfrac12 [R_{\mathrm{par}}]_{ij},$$
+
 and the deviation $[R]_{ij} - \tfrac12 [R_{\mathrm{par}}]_{ij}$, the relatedness disequilibrium, is produced by random segregation in the parents. Because it is independent of shared environment apart from indirect genetic effects between the pair, the RDR estimate of $h^2$ converges to the true direct heritability when the sample excludes pairs with indirect genetic effects on each other and ancestor-descendant pairs, even if $\operatorname{Cov}(\epsilon) \ne \sigma^2 I$.
 
 ## Depends on

@@ -3,11 +3,15 @@
 Consider two variants, one causal ($C$) and one non-causal ($N$), with population correlation $\rho$, standardized genotypes, small causal effect $\lambda_C$ and a GWAS of size $n$, so that the $z$-scores satisfy $\hat{\mathbf z} \approx \sqrt n\, R \boldsymbol\lambda$. Fine-mapping uses the FINEMAP-type Bayes factors with prior effect variance $s_\lambda^2$, equal prior probabilities $1/3$ on the configurations "only $C$ causal" ($\gamma_{10}$), "only $N$ causal" ($\gamma_{01}$) and "both causal" ($\gamma_{11}$), and an LD correlation $\tilde\rho = \rho + \varepsilon/\sqrt d$ estimated from a reference panel of $d$ individuals, where $\varepsilon \sim N(0, 1 - \rho^2)$.
 
 **Exact posterior odds.**
+
 $$\frac{\Pr(\gamma_{10} \mid D)}{\Pr(\gamma_{11} \mid D)} = \frac{N(\hat z_C \mid 0, 1 + n s_\lambda^2)\,/\,N(\hat z_C \mid 0, 1)}{N(\hat{\mathbf z} \mid \mathbf 0, \tilde R + n s_\lambda^2 \tilde R \tilde R)\,/\,N(\hat{\mathbf z} \mid \mathbf 0, \tilde R)},$$
+
 with $\tilde R$ the $2 \times 2$ correlation matrix built from $\tilde\rho$.
 
 **Asymptotics.** For large $n$ and $d$, dropping terms bounded independently of $n$ and $d$,
+
 $$\log \frac{\Pr(\gamma_{10} \mid D)}{\Pr(\gamma_{11} \mid D)} \approx \log n - \frac{n}{d}\, \frac{\lambda_C^2\, \varepsilon^2}{1 - \rho^2}, \qquad \mathbb E\Bigl[\log \frac{\Pr(\gamma_{10} \mid D)}{\Pr(\gamma_{11} \mid D)}\Bigr] \approx \log n - \frac{n}{d}\lambda_C^2 .$$
+
 Hence if $n \gg d$ the false configuration with two causal variants is on average favoured, while if $d$ grows proportionally to $n$ the evidence for the true configuration grows like $\log n$. The reference panel must scale with the GWAS sample size.
 
 ## Expansion

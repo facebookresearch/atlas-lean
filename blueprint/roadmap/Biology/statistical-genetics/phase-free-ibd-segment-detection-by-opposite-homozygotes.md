@@ -1,15 +1,21 @@
 # Phase-free detection of identity-by-descent segments from opposite homozygotes
 
 Let two diploid samples $s_1, s_2$ be genotyped at biallelic markers coded $0/1$ along a chromosome, partitioned into consecutive windows of $64$ markers. For sample $s$ and window $i$ let $H^{(a)}_{s,i}$ be the set of markers where $s$ is homozygous for allele $a \in \{0,1\}$, and $M_{s,i}$ the set of markers where $s$ is missing. Two samples that share at least one haplotype identically by descent (IBD) at a site carry a common allele there. The only genotype pair with no common allele is opposite homozygotes, since a heterozygote shares an allele with every genotype and missing data is treated as sharing. Hence the set of markers in window $i$ **inconsistent with IBD** is
+
 $$W_i = \big(H^{(0)}_{s_1,i} \cap H^{(1)}_{s_2,i}\big) \cup \big(H^{(1)}_{s_1,i} \cap H^{(0)}_{s_2,i}\big),$$
+
 and the set inconsistent with **IBD2** (both haplotypes shared, hence identical genotypes) is
+
 $$W^{(2)}_i = \big(M_{s_1,i} \cup M_{s_2,i}\big)^{c} \cap \Big(\big(H^{(0)}_{s_1,i} \oplus H^{(0)}_{s_2,i}\big) \cup \big(H^{(1)}_{s_1,i} \oplus H^{(1)}_{s_2,i}\big)\Big),$$
+
 with $\oplus$ the symmetric difference. Neither set requires phased haplotypes.
 
 **IBIS rule.** A putative IBD segment is a maximal run of windows that starts and ends with $W_i = \varnothing$, has $|W_i| \le 1$ in every window (tolerating genotyping error), and has an overall mismatch fraction below a threshold. It is kept if its genetic length and marker count exceed minimums (default $7$ cM). IBD2 segments are called similarly from $W^{(2)}_i$ with up to two mismatches per window and a shorter default minimum ($2$ cM), because identical genotypes over a stretch are much stronger evidence. The rest of an IBD region is IBD1.
 
 **Relationship classification.** With $k^{(1)}, k^{(2)}$ the fractions of the genome (in cM) covered by IBD1 and IBD2 segments, the kinship coefficient is estimated as
+
 $$\hat\varphi = \tfrac14 k^{(1)} + \tfrac12 k^{(2)},$$
+
 and a pair is assigned degree $d \ge 1$ when $\hat\varphi \in [2^{-d-3/2}, 2^{-d-1/2})$, using KING's bounds; $\hat\varphi \ge 2^{-3/2}$ indicates duplicates or monozygotic twins. To offset IBD segments shorter than the detection minimum, a constant $0.00138$ (one quarter of the width of KING's sixth-degree interval) is added to $\hat\varphi$.
 
 ## Depends on

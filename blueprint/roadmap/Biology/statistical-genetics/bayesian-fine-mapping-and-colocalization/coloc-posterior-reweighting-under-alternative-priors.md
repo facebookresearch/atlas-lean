@@ -1,10 +1,13 @@
 # Coloc posterior reweighting under alternative priors
 
 Let $D$ be the summary data of two traits on a region and $\pi = (p_1, p_2, p_{12})$ the prior parameters of the colocalization model with regional hypotheses $H_0, \dots, H_4$. By Bayes' rule
+
 $$P(H_i \mid D, \pi) \propto \mathrm{BF}_i \cdot P(H_i \mid \pi), \qquad \mathrm{BF}_i = \frac{P(D \mid H_i)}{P(D \mid H_0)},$$
+
 and the Bayes factors do not depend on $\pi$.
 
 **Proposition (prior sensitivity without refitting).** For any alternative prior $\pi^*$,
+
 $$P(H_i \mid D, \pi^*) = \frac{P(H_i \mid D, \pi)\, P(H_i \mid \pi^*)/P(H_i \mid \pi)}{\sum_{j=0}^{4} P(H_j \mid D, \pi)\, P(H_j \mid \pi^*)/P(H_j \mid \pi)}.$$
 
 A conclusion such as $P(H_4 \mid D, \pi) > 0.5$ is robust only if it holds over the plausible range of $p_{12}$; when it holds only for priors making $H_4$ at least as likely as $H_3$, the colocalization claim rests on the prior.

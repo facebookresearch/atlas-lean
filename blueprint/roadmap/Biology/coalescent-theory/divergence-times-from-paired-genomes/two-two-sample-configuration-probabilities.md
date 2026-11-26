@@ -10,7 +10,9 @@ p_{1,1} &= \tfrac29\alpha_1\alpha_2(2\tau_2 + 3\tau_3),\\
 p_{2,1} &= \tfrac19\alpha_2(1-\alpha_1)(2\tau_2 + 3\tau_3) + \tfrac13\alpha_2\tau_2,
 \end{aligned}$$
 and $p_{0,1}, p_{0,2}, p_{1,2}$ follow by exchanging the population labels. Moreover
+
 $$\mu(t_1 - t_2) = \tfrac12(p_{1,0} - p_{0,1}) + (p_{2,0} - p_{0,2}) + \tfrac12(p_{2,1} - p_{1,2}).$$
+
 The seven equations cannot separate $\tau_4$ from $\mu t_1$ and $\mu t_2$, and they have more unknowns than independent equations, so extra assumptions (a constant ancestral size, or an outgroup) are needed for estimation.
 
 ## Expansion

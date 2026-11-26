@@ -1,11 +1,15 @@
 # Deviation regression model for variance QTLs
 
 **Definition.** For a SNP with minor-allele count $i \in \{0,1,2\}$ and phenotypes $Y_{ij}$ of individuals $j$ with genotype $i$, let $\tilde Y_i$ be the median phenotype within genotype group $i$ and
+
 $$Z_{ij} = \big|Y_{ij} - \tilde Y_i\big| .$$
+
 The **deviation regression model** (DRM) fits the linear regression $Z_{ij} = \eta_0 + \eta_1 i + e_{ij}$ (allowing imputed dosages as the regressor) and tests $\eta_1 = 0$; a significant slope marks a **variance QTL** (vQTL). The Brown–Forsythe test uses the same $Z_{ij}$ in a one-way ANOVA on genotype groups, and Levene's test uses group means instead of medians.
 
 **Proposition (interactions create vQTLs).** Let $Y = \mu + \gamma X_1X_2 + \varepsilon$, where $X_1$ is a genotype, $X_2$ a second locus or environmental exposure independent of $X_1$ with mean $m$ and variance $\sigma_2^2$, and $\varepsilon$ independent noise with variance $\sigma^2$. Then
+
 $$\mathbb E[Y \mid X_1 = x] = \mu + \gamma m x,\qquad \operatorname{Var}(Y \mid X_1 = x) = \gamma^2\sigma_2^2\,x^2 + \sigma^2 .$$
+
 So an interaction with $\gamma \ne 0$ makes $X_1$ a vQTL even when it has no marginal mean effect ($m = 0$), and a variance test can nominate interacting SNPs without specifying the partner $X_2$, which removes the multiple-testing burden of an exhaustive interaction search.
 
 In simulations the DRM kept nominal false-positive rates under strong mean effects and non-normal (chi-square) noise, where tests based on squared residuals did not, and applying it to body mass index in a large biobank followed by targeted interaction tests found gene–environment interactions at loci such as FTO.

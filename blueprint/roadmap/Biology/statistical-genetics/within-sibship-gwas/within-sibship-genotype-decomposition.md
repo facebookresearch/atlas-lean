@@ -9,7 +9,9 @@ The **population model** regresses $X_{ij}$ on $G_{ij}$ and covariates (age, sex
 **Properties.**
 
 1. $\sum_{j} G^C_{ij} = 0$ in every sibship, so $G^C$ is orthogonal to every variable that is constant within sibships. By the Frisch–Waugh–Lovell theorem, without further covariates the least-squares estimate is the fixed-effects (sibling-difference) estimator
+
 $$\hat\beta_W = \frac{\sum_{i,j} G^C_{ij} X_{ij}}{\sum_{i,j} (G^C_{ij})^2}.$$
+
 2. Under Mendelian segregation every sibling has $\mathbb E[G_{ij} \mid G_{P,i}, G_{M,i}] = (G_{P,i} + G_{M,i})/2$, so $\mathbb E[G^C_{ij} \mid G_{P,i}, G_{M,i}] = 0$: the deviation reflects only the randomness of meiosis and is uncorrelated with any function of the parental genotypes and with family-level confounders.
 3. Consequently $\beta_W$ is free of bias from population stratification, assortative mating and indirect genetic effects of parents, which load on $G^F_i$; it can still absorb indirect genetic effects of the siblings themselves.
 

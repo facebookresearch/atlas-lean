@@ -3,7 +3,9 @@
 Let individuals $i$ and $j$ share a set $S$ of identity-by-descent (IBD) segments, inferred from phased genotypes, with IBD2 regions masked. For a segment $s$ let $l_s$ be its genetic length and $i_s \in \{0,1\}$ the index of the haplotype of $i$ on which it lies, and let $S_c \subseteq S$ be the segments on chromosome $c$.
 
 **Definition.** The haplotype score of $i$ in the pair $(i,j)$ is
+
 $$h_i(ij) = \frac{\sum_{c} \max\Bigl\{\sum_{s \in S_c} l_s\, \mathbf 1(i_s = 0),\ \sum_{s \in S_c} l_s\, \mathbf 1(i_s = 1)\Bigr\}}{\sum_{s \in S} l_s} \in \Bigl[\tfrac12, 1\Bigr],$$
+
 the length-weighted, per-chromosome fraction of shared IBD that lies on a single haplotype of $i$. The per-chromosome maximum is needed because haplotype labels are not coordinated across chromosomes.
 
 **Separation of second-degree relationships.** With error-free phasing:

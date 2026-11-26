@@ -3,6 +3,7 @@
 In the [neutral drift model of population genetic values](neutral-drift-model-of-population-genetic-values.md), let $\mathbf Z'$ be the centered vector of estimated genetic values of $M$ populations (one entry dropped), $\mathbf F$ the centered drift covariance and $V_A$ the ancestral additive variance contributed by the GWAS loci.
 
 **Definition.**
+
 $$Q_X = \mathbf X^\top \mathbf X = \frac{\mathbf Z'^{\top}\, \mathbf F^{-1}\, \mathbf Z'}{2 V_A}.$$
 
 **Null distribution.** Under neutral drift $Q_X \sim \chi^2_{M-1}$. Upper-tail values indicate excess among-population variance in genetic values, consistent with local adaptation; lower-tail values indicate a deficit, consistent with stabilizing selection toward a shared optimum. $Q_X$ is, up to constants, the negative log-likelihood of $\mathbf Z'$ under the neutral model.

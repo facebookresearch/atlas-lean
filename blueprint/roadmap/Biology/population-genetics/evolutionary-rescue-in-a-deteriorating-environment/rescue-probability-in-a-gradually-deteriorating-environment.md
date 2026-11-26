@@ -3,11 +3,17 @@
 In the model of [mutant fixation under time-varying rates](fixation-probability-under-time-varying-birth-death-rates.md), wild-type organisms mutate to $M$ with probability $\mu$ per division, without back mutation, and the wild type alone goes extinct ($f_W(t) \to 0$ while $g_W > 0$). Let $p_{af}(t)$ be the probability that a mutant destined for fixation appears in $[0, t]$.
 
 **Proposition.** Assume the population is essentially wild type when the rescuing mutant arises ($N_W \gg N_M$). Then $dp_{af} = (1 - p_{af})\, p_{\mathrm{fix}}(t)\, dN_M^{\mathrm{app}}(t)$ with $dN_M^{\mathrm{app}}(t) = \mu N_W(t) f_W(t)(1 - N_W(t)/K)\, dt$, hence $p_{af}(t) = 1 - e^{-\sigma(t)}$ with
+
 $$\sigma(t) = \mu \int_0^t p_{\mathrm{fix}}(s)\, N_W(s)\, f_W(s)\Bigl(1 - \frac{N_W(s)}{K}\Bigr) ds,$$
+
 and the **rescue probability** is
+
 $$p_r = \lim_{t \to \infty} p_{af}(t) = 1 - e^{-\Sigma}, \qquad \Sigma = \mu \int_0^\infty p_{\mathrm{fix}}(t)\, N_W(t)\, f_W(t)\Bigl(1 - \frac{N_W(t)}{K}\Bigr) dt .$$
+
 For $\Sigma \ll 1$, $p_r \approx \Sigma$. The appearance time $\hat\tau_{af}$ of the rescuing mutant, conditional on rescue, has density
+
 $$F(t) = \frac{\mu}{p_r}\, p_{\mathrm{fix}}(t)\, N_W(t) f_W(t)\Bigl(1 - \frac{N_W(t)}{K}\Bigr) e^{-\sigma(t)},$$
+
 and mean $\tau_{af} = \int_0^\infty t F(t)\, dt$.
 
 ## Depends on

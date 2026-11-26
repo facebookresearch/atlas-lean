@@ -1,8 +1,11 @@
 # Exact-weight IVW estimator and the generalized Cochran's Q beyond the NOME assumption
 
 Let $L \ge 2$ uncorrelated SNPs have true SNP–exposure associations $\gamma_j \ne 0$, exposure estimates $\hat\gamma_j$ with standard errors $\sigma_{Xj} > 0$, and outcome estimates $\hat\Gamma_j$ with standard errors $\sigma_{Yj} > 0$, the two sets of estimates coming from independent samples. Assume no pleiotropy and a common causal effect $\beta$:
+
 $$\hat\Gamma_j = \beta\gamma_j + \sigma_{Yj}\epsilon_j, \qquad \hat\gamma_j = \gamma_j + \sigma_{Xj}\eta_j, \qquad \epsilon_j, \eta_j \overset{\text{iid}}{\sim} N(0,1).$$
+
 With ratio estimates $\hat\beta_j = \hat\Gamma_j / \hat\gamma_j$ define the $\beta$-dependent weights and the generalized Q statistic
+
 $$w_j(\beta) = \frac{\hat\gamma_j^2}{\sigma_{Yj}^2 + \beta^2\sigma_{Xj}^2}, \qquad Q_m(\beta) = \sum_{j=1}^{L} w_j(\beta)\,(\hat\beta_j - \beta)^2 = \sum_{j=1}^{L} \frac{(\hat\Gamma_j - \beta\hat\gamma_j)^2}{\sigma_{Yj}^2 + \beta^2\sigma_{Xj}^2}.$$
 
 **Special cases.** First-order weights are $w_j(0) = \hat\gamma_j^2/\sigma_{Yj}^2$ (the NOME, "no measurement error", assumption), second-order weights are $w_j(\hat\beta_j)$, and the iterative estimator plugs $w_j(\hat\beta^{(i-1)})$ into the IVW formula $\sum_j w_j\hat\beta_j / \sum_j w_j$ starting from the first-order estimate.

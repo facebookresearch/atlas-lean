@@ -1,14 +1,19 @@
 # Haplotype-dosage QTL model and IBD relationships for polyploid diallel populations
 
 Consider a diallel (a set of connected F1, and possibly selfed S1, populations) derived from $p$ outbred parents of ploidy $\phi$, so that there are $\phi p$ **parental haplotypes**, indexed by $k$. At locus $j$ each offspring (clone) $i$ carries one of finitely many parental genotype states $abcd$ (a multiset of $\phi$ parental haplotypes; $100$ states in a biparental tetraploid F1, $35$ in a tetraploid S1), with posterior probability $P_{ij}(abcd)$ from a hidden Markov model of inheritance. Let $w_k(abcd)$ be the number of copies of haplotype $k$ in $abcd$, and $w_{kk'}(abcd)$ the number of the $\binom{\phi}{2}$ unordered pairs of homologs in $abcd$ that form the **diplotype** $kk'$. The expected dosages are
+
 $$W_{ijk} = \sum_{abcd} w_k(abcd)\, P_{ij}(abcd), \qquad W_{ijkk'} = \sum_{abcd} w_{kk'}(abcd)\, P_{ij}(abcd).$$
 
 **QTL model.** For measurement $t$ of clone $i$, with $m$ QTL,
+
 $$y_{it} = \mu + x_{it} c + \sum_{j=1}^{m} \sum_{k=1}^{\phi p} W_{ijk}\, \alpha_{jk} + \sum_{j} \sum_{k \le k'} W_{ijkk'}\, \beta_{jkk'} + \epsilon_{it},$$
+
 where $\alpha_{jk}$ are additive effects of parental haplotypes and $\beta_{jkk'}$ digenic dominance effects of parental diplotypes, both random with BayesC (point-mass–normal mixture) priors and constrained to sum to zero at each locus. Additive $\times$ additive epistasis uses two-locus dosages $W_{ijkj'k'} = \sum_{abcd}\sum_{a'b'c'd'} w_k(abcd)\, w_{k'}(a'b'c'd')\, P_{ij}(abcd)\, P_{ij'}(a'b'c'd')$. The average of a parent's haplotype effects is its general combining ability (GCA), so QTL are detected by comparing this model with a GCA-only null via $-\Delta\mathrm{DIC}$, with a stratified permutation threshold.
 
 **IBD relationship matrices.** Averaging over $m$ loci, the additive relationship ($\phi$ times the probability that random homologs of $i$ and $i'$ are IBD) and the digenic dominance relationship are
+
 $$A_{ii'} = \frac{1}{\phi m} \sum_{j=1}^{m} \sum_{k=1}^{\phi p} W_{ijk} W_{i'jk}, \qquad D_{ii'} = \binom{\phi}{2}^{-1} \frac{1}{m} \sum_{j=1}^{m} \sum_{k \le k'} W_{ijkk'} W_{i'jkk'},$$
+
 which supply covariances of polygenic random effects (computed leaving out the chromosome under test).
 
 ## Depends on

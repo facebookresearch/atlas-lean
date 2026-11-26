@@ -3,11 +3,15 @@
 Let $\mathbf p = (p_1, \dots, p_n)$ with $p_1 \ge \dots \ge p_n \ge 0$, $\sum p_j = 1$, and Shannon entropy $H(\mathbf p) = \sum_j h(p_j)$ with $h(x) = -x\log x$. Fix an index $2 \le i \le n$ and the value $p_i \in [0, 1/i]$ of the $i$-th largest entry.
 
 **Upper bound.** $H$ is maximized by
+
 $$\mathbf p' = \begin{cases} \bigl(\underbrace{p_i, \dots, p_i}_{i}, \underbrace{\tfrac{1 - i p_i}{n-i}, \dots, \tfrac{1 - i p_i}{n-i}}_{n-i}\bigr), & p_i \ge \tfrac1n,\\[4pt] \bigl(\underbrace{\tfrac{1 - (n-i+1)p_i}{i-1}, \dots, \tfrac{1 - (n-i+1)p_i}{i-1}}_{i-1}, \underbrace{p_i, \dots, p_i}_{n-i+1}\bigr), & p_i < \tfrac1n,\end{cases}$$
+
 so
+
 $$H_{\max}(p_i, n) = \begin{cases} i\, h(p_i) + (n-i)\, h\!\left(\dfrac{1 - i p_i}{n-i}\right), & p_i \ge \tfrac1n,\\[6pt] (i-1)\, h\!\left(\dfrac{1 - (n-i+1)p_i}{i-1}\right) + (n-i+1)\, h(p_i), & p_i < \tfrac1n.\end{cases}$$
 
 **Lower bound.** $H$ is minimized by $\mathbf p'' = (1 - (i-1)p_i, p_i, \dots, p_i, 0, \dots, 0)$ with $i-1$ entries equal to $p_i$, so
+
 $$H_{\min}(p_i, n) = h\bigl(1 - (i-1)p_i\bigr) + (i-1)\, h(p_i).$$
 
 As $p_i \to 1/i$ both bounds approach $\log i$. For $i = 2$ and $p_2 \to 1/2$ the entropy is forced to $\log 2$.

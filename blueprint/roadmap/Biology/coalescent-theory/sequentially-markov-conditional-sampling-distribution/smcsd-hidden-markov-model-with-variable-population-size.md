@@ -5,11 +5,16 @@
 **Hidden Markov model.** The hidden state at locus $\ell$ is $S_\ell = (T_\ell, H_\ell)$, the absorption time and the absorbing haplotype, and the emission is the allele $\alpha[\ell]$. With $n_h$ the multiplicity of haplotype $h$ in $O_n$:
 
 - *Initial density.*
+
 $$\zeta^{(\lambda)}(t,h) = \frac{n_h}{\lambda(t)}\exp\!\Big(-n\int_0^t\frac{d\tau}{\lambda(\tau)}\Big),$$
+
 so the absorbing haplotype is drawn in proportion to $n_h$, independently of the absorption time.
 - *Transition density* from $(t,h)$ to $(t',h')$, writing $\zeta^{(\lambda)}(\tau) = \sum_h\zeta^{(\lambda)}(\tau,h)$:
+
 $$\phi^{(\lambda)}(t',h' \mid t,h) = e^{-\rho_bt}\,\delta_{(t,h),(t',h')} + \int_0^{\min(t,t')}\rho_b e^{-\rho_bt_r}\,\frac{\zeta^{(\lambda)}(t',h')}{\int_{t_r}^\infty\zeta^{(\lambda)}(\tau)\,d\tau}\,dt_r .$$
+
 - *Emission probability.*
+
 $$\xi^{(\lambda)}(a \mid t,h) = e^{-\theta_\ell t}\sum_{m=0}^\infty\frac{(\theta_\ell t)^m}{m!}\big[(P^{(\ell)})^m\big]_{h[\ell],a}.$$
 
 The forward algorithm over these densities gives the sequentially Markov conditional sampling probability $\hat\pi^{(\lambda)}_{\mathrm{SMC}}(\alpha \mid O_n)$; discretizing time into intervals turns the densities into matrices whose entries depend on $\lambda$ only through interval integrals, at cost quadratic in $n$.

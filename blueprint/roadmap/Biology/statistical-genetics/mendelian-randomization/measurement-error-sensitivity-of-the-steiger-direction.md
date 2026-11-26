@@ -3,9 +3,13 @@
 **Setting.** As in the [MR Steiger test](mr-steiger-test-of-causal-direction.md), let $g$ be a valid instrument for $x$ with $x \to y$, so $\rho_{gy} = \rho_{gx}\rho_{xy}$, and take all correlations nonnegative. The traits are observed with non-differential measurement error, $x_o = \alpha_x + \beta_x x + \varepsilon_x$ and $y_o = \alpha_y + \beta_y y + \varepsilon_y$, with errors independent of $g$ and of the true traits and of each other.
 
 **Proposition.** The observed instrument correlations are attenuated by the reliabilities $\rho_{x,x_o}$ and $\rho_{y,y_o}$:
+
 $$\rho_{g,x_o} = \rho_{gx}\,\rho_{x,x_o}, \qquad \rho_{g,y_o} = \rho_{gx}\,\rho_{xy}\,\rho_{y,y_o}.$$
+
 Hence the population version of the Steiger comparison on observed traits orients the effect correctly ($\rho_{g,x_o} > \rho_{g,y_o}$) if and only if
+
 $$d = \rho_{x,x_o} - \rho_{xy}\,\rho_{y,y_o} > 0 .$$
+
 When $d < 0$ the test is consistent for the **wrong** direction, and larger samples make it more confident in that wrong answer.
 
 Consequences: with no measurement error in $x$ ($\rho_{x,x_o} = 1$) the inferred direction cannot be reversed by any error in $y$; reversal needs the exposure to be measured markedly worse than the outcome, more easily when the causal correlation $\rho_{xy}$ is large. Scanning plausible values of $(\rho_{x,x_o}, \rho_{y,y_o})$ and comparing how much of that space supports each direction gives a reliability score for an observed result.

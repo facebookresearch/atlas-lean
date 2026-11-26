@@ -3,7 +3,9 @@
 Consider a SNP with direct effect $\delta$ on the proband's phenotype and parental genetic nurture effect $\eta$ (the effect of the same allele carried by a parent, acting through the environment it provides). An allele transmitted to the proband is also carried by a parent, so its marginal effect on the proband's phenotype is $\delta + \eta$.
 
 **Claim.** GREML-SNP, which models phenotypic covariance by the SNP relationship matrix of the probands alone, cannot separate the direct variance, proportional to $\delta^2$, from the variance explained by direct plus nurture effects of transmitted alleles, proportional to $(\delta + \eta)^2$. If every SNP has $\eta = \lambda \delta$, the GREML-SNP estimate targets
+
 $$h^2_{\mathrm{GREML}} \approx (1 + \lambda)^2\, h^2$$
+
 instead of the direct heritability $h^2$, whereas [RDR-SNP](rdr-variance-decomposition-and-covariance-model.md), which also fits the parental relatedness matrices, targets $h^2$.
 
 ## Depends on

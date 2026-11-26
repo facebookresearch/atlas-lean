@@ -1,7 +1,9 @@
 # Exact multivariate mixed-model association by eigen-rotation and simultaneous diagonalization
 
 Let $Y \in \mathbb{R}^{n \times d}$ hold $d$ phenotypes of $n$ individuals, $W \in \mathbb{R}^{n \times c}$ covariates, $x \in \mathbb{R}^n$ the genotypes of the tested SNP and $K$ a known symmetric positive semidefinite relatedness matrix. The multivariate linear mixed model (mvLMM) with one variance component is
+
 $$Y = WA + x\beta^\top + G + E, \qquad \operatorname{vec}(G) \sim N(0, V_g \otimes K), \qquad \operatorname{vec}(E) \sim N(0, V_e \otimes I_n),$$
+
 with $A \in \mathbb{R}^{c\times d}$, $\beta \in \mathbb{R}^d$, $V_g$ positive semidefinite and $V_e$ positive definite $d \times d$ matrices. Write $K = U \operatorname{diag}(\lambda_1,\dots,\lambda_n) U^\top$ with $U$ orthogonal.
 
 **Proposition.**

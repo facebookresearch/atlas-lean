@@ -1,14 +1,19 @@
 # Coloc prior elicitation and region-size dependence
 
 In the single-causal-variant colocalization model for two traits on a region of $n$ SNPs, the per-SNP prior probabilities are $p_1$ (causal for trait 1 only), $p_2$ (trait 2 only) and $p_{12}$ (both traits). Write the marginal probabilities that a SNP is causal for each trait as
+
 $$q_1 = p_1 + p_{12}, \qquad q_2 = p_2 + p_{12}.$$
 
 **Region-size dependence.** The prior probabilities of the regional hypotheses are approximately $P(H_1) \approx n p_1$, $P(H_2) \approx n p_2$, $P(H_4) \approx n p_{12}$ (one shared causal variant) and $P(H_3) \approx n(n-1) p_1 p_2$ (two distinct causal variants). Hence the prior odds $H_4 : H_1$ equal $p_{12}/p_1$ for every $n$, while
+
 $$\frac{P(H_4)}{P(H_3)} \approx \frac{p_{12}}{(n-1)\, p_1 p_2}$$
+
 decreases in $n$: the same per-SNP priors favour distinct causal variants over colocalization as regions grow.
 
 **Bounds on $p_{12}$.** Let $f$ be the proportion of variants that are functional and $r_g$ the genetic correlation of the two traits. If shared causal variants do not differ systematically in allele frequency or effect size from non-shared ones, then $|r_g| \le n_{12}/\sqrt{(n_{12} + n_1)(n_{12} + n_2)}$, where $n_{12}, n_1, n_2$ count shared and trait-specific causal variants, and therefore
+
 $$\max\Bigl\{\frac{q_1 q_2}{f},\ |r_g| \sqrt{q_1 q_2}\Bigr\} < p_{12} < \min\{q_1, q_2\}.$$
+
 Equivalently $p_{12} = q_{1|2}\, q_2$, where $q_{1|2}$ is the probability that a SNP causal for trait 2 is also causal for trait 1.
 
 **Default values.** Empirical estimates from GTEx eQTL data and the GWAS Catalog, and the posterior obtained at $p < 5 \times 10^{-8}$, all support $q_1, q_2 \approx 10^{-4}$ for common SNPs; simulations indicate $p_{12} = 5 \times 10^{-6}$ is more robust than the older default $10^{-5}$, which can favour $H_4$ when $H_3$ is true.

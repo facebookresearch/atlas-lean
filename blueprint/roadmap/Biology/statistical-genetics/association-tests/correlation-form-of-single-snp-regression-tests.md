@@ -5,7 +5,9 @@
 **Proposition.**
 
 1. *Equivalent statistics.* For $H_0 : \beta = 0$,
+
 $$t = r\sqrt{\frac{n-2}{1-r^2}},\qquad F = t^2,\qquad R^2 = r^2,\qquad \mathrm{LR} = -n\ln(1-r^2),$$
+
 so all four tests are monotone in $|r|$ and reject on the same set; $t$ has a $t_{n-2}$ null distribution.
 2. *Matrix form.* If every row of the gene matrix $G$ (genes $\times$ samples) and of the genotype matrix $S$ (SNPs $\times$ samples) is centred and scaled to unit sum of squares, then all gene–SNP correlations are the entries of the single product $GS^{\top}$; thresholding $|r|$ (equivalently $|t|$) finds all significant pairs, and $p$-values need only be computed for those pairs.
 3. *Covariates.* With $k$ covariates $x_1, \dots, x_k$ in addition to the intercept, the $t$ statistic for $s$ in $g = \alpha\mathbf 1 + \sum_l\gamma_l x_l + \beta s + \varepsilon$ equals the correlation statistic of part 1 computed from the residuals of $g$ and $s$ after projecting out $(\mathbf 1, x_1, \dots, x_k)$, with $n-2$ replaced by $n-k-2$ degrees of freedom.

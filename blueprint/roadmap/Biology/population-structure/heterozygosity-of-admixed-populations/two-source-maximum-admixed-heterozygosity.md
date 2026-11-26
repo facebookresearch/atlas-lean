@@ -7,7 +7,9 @@ $$H_{\mathrm{adm}}(\gamma_1) = \gamma_1^2 H_1 + 2\gamma_1(1-\gamma_1)C_{12} + (1
 **Proposition 7.** The maximizer $\gamma_1^*$ is as follows.
 
 1. If $H_1 < C_{12}$ and $H_2 < C_{12}$, then $\gamma_1^* \in (0,1)$ with
+
 $$\gamma_1^* = \frac{C_{12} - H_2}{2(C_{12} - H_S)} = \frac12 + \frac{H_1 - H_2}{8(H_T - H_S)}, \qquad H_{\mathrm{adm}}(\gamma_1^*) = \frac{C_{12}^2 - H_1H_2}{2(C_{12} - H_S)} = H_T + \frac{(H_1 - H_2)^2}{16(H_T - H_S)}.$$
+
 2. If $H_1 < C_{12} \le H_2$, then $\gamma_1^* = 0$ and the maximum is $H_2$.
 3. If $H_2 < C_{12} \le H_1$, then $\gamma_1^* = 1$ and the maximum is $H_1$.
 

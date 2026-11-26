@@ -6,10 +6,14 @@
 
 1. *Autosomes.* $H_A(t) = \dfrac{s_f + s_m}{2}$ for every $t \ge 1$.
 2. *X chromosome.* With $\bar H_X = \dfrac{2s_f + s_m}{3}$, for every $t \ge 0$ (generation $0$ meaning the founders, $H_X^f(0) = s_f$, $H_X^m(0) = s_m$)
+
 $$H_X^f(t) - \bar H_X = \left(-\tfrac12\right)^{t}\,(s_f - \bar H_X),\qquad H_X^m(t+1) = H_X^f(t),$$
+
 so both sexes converge to $\bar H_X$, with damped oscillation.
 3. *Inversion.* In the long run, the sex-specific contributions are recovered from the two ancestry levels:
+
 $$s_f = 3\bar H_X - 2H_A,\qquad s_m = 4H_A - 3\bar H_X .$$
+
 In particular $\bar H_X > H_A$ iff $s_f > s_m$: X-chromosomal ancestry exceeding autosomal ancestry signals a female-biased contribution from that source.
 
 Applied to genotyped individuals across the Americas, comparing X and autosomal ancestry under a single pulse $1$ to $15$ generations ago gave African female-to-male contribution ratios $s_f/s_m > 1$ in every region, ranging from about $1.5$–$2$ in British-colonized regions to $4$–$17$ in Latin America, and European male bias in most regions.

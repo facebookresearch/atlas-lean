@@ -1,7 +1,9 @@
 # CAFEH: joint fine-mapping and colocalization across many traits under allelic heterogeneity
 
 Let $Y \in \mathbb{R}^{N \times T}$ hold $T$ traits (e.g. expression of one gene in $T$ tissues) for $N$ individuals and $X \in \mathbb{R}^{N \times G}$ their genotypes at $G$ variants in a locus. **CAFEH** (colocalization and fine-mapping in the presence of allelic heterogeneity) assumes the additive models $Y_{it} = X_i^\top b_t + \epsilon_{it}$, $\epsilon_{it} \sim \mathcal{N}(0, \tau_t^{-1})$ i.i.d., with effects built from $K$ shared single-variant components:
+
 $$b_t = \sum_{k=1}^{K} \varphi_k\, s_{tk}\, w_{tk}, \qquad \varphi_k \sim \mathrm{Categorical}(\pi_0), \quad s_{tk} \sim \mathrm{Bernoulli}(p_{0k}), \quad w_{tk} \sim \mathcal{N}(0, \alpha_{tk}^{-1}),$$
+
 with $\alpha_{tk} \sim \mathrm{Gamma}(a_0, b_0)$ and $\tau_t \sim \mathrm{Gamma}(c_0, d_0)$. Here $\varphi_k \in \{0,1\}^G$ is a one-hot vector selecting the causal variant of component $k$ (shared by all traits), $\pi_0$ is the prior over variants, and $s_{tk}$ switches component $k$ on or off in trait $t$, with a trait- and component-specific effect $w_{tk}$.
 
 - **Fine-mapping** is inference on $\varphi_1, \dots, \varphi_K$: the posterior of $\varphi_k$ concentrates on a group of linked variants carrying one association signal.
@@ -9,7 +11,9 @@ with $\alpha_{tk} \sim \mathrm{Gamma}(a_0, b_0)$ and $\tau_t \sim \mathrm{Gamma}
 - At most $K$ variants have nonzero effect in each trait. For $T = 1$ the model is the Sum of Single Effects (SuSiE) model with a spike-and-slab prior on each single effect.
 
 **Summary-statistic version (CAFEH-S).** With marginal estimates $\hat\beta_t$, standard errors $\hat\sigma_t$, LD matrix $\hat R$ and $\hat S = \operatorname{diag}(s_i)$, $s_i^2 = \hat\beta_{ti}^2/N + \hat\sigma_{ti}^2$, the likelihood of $Y_t$ given $b_t$ is, up to a constant, that of the RSS model
+
 $$\hat\beta_t \sim \mathcal{N}\big(\hat S \hat R \hat S^{-1} b_t,\ \hat S \hat R \hat S\big).$$
+
 The posterior is approximated by coordinate-ascent variational inference over the factorized family $\prod_{t,k} q(w_{tk} \mid \varphi_k, s_{tk})\, q(s_{tk})\, q(\alpha_{tk}) \prod_k q(\varphi_k) \prod_t q(\tau_t)$, all of whose updates are in closed form.
 
 ## Depends on

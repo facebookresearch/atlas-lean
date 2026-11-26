@@ -1,14 +1,19 @@
 # Exponentially scaled odds of pathogenicity
 
 **Setting.** A sequence variant has prior probability of pathogenicity $P_0 \in (0,1)$. Each evidence item is treated as an odds of pathogenicity (a likelihood ratio, $>1$ for pathogenic and $<1$ for benign evidence), and the items are assumed conditionally independent, so their odds multiply (a naive Bayes classifier). The four pathogenic strength levels, supporting (Su), moderate (M), strong (St) and very strong (VSt), are scaled exponentially with a common exponent $X > 1$:
+
 $$O_{\mathrm{Su}}^{X} = O_{\mathrm M},\qquad O_{\mathrm M}^{X} = O_{\mathrm{St}},\qquad O_{\mathrm{St}}^{X} = O_{\mathrm{VSt}},$$
+
 and each benign level has the reciprocal odds of the pathogenic level of the same strength.
 
 **Combined odds.** If a classification uses $N_{\mathrm{Su}}, N_{\mathrm M}, N_{\mathrm{St}}, N_{\mathrm{VSt}}$ pathogenic items and $N_{\mathrm{BSu}}, N_{\mathrm{BSt}}$ benign supporting and strong items, the combined odds of pathogenicity are
+
 $$O_P = O_{\mathrm{VSt}}^{\,N_{\mathrm{Su}}/X^3 + N_{\mathrm M}/X^2 + N_{\mathrm{St}}/X + N_{\mathrm{VSt}} \;-\; N_{\mathrm{BSu}}/X^3 - N_{\mathrm{BSt}}/X}.$$
 
 **Posterior.** By Bayes' rule in odds form,
+
 $$\mathrm{Post}_P = \frac{O_P\,P_0}{(O_P - 1)P_0 + 1}.$$
+
 Classification uses posterior thresholds: pathogenic if $\mathrm{Post}_P > 0.99$, likely pathogenic if $0.90 < \mathrm{Post}_P \le 0.99$, likely benign if $0.001 \le \mathrm{Post}_P < 0.10$, benign if $\mathrm{Post}_P < 0.001$, and uncertain significance otherwise.
 
 With the calibration $X = 2$, $O_{\mathrm{VSt}} = 350$ the four pathogenic levels have odds $350^{1/8} \approx 2.08$, $350^{1/4} \approx 4.33$, $350^{1/2} \approx 18.7$ and $350$.

@@ -4,10 +4,14 @@ Consider a haploid Wright–Fisher population of size $N$ with chromosome length
 
 - **Unsimplified:** the tables hold $NT$ nodes and $2NT$ edges, so storage grows like $O(N^2)$ over $T \asymp N$ generations.
 - **Simplified, $T$ large:** if all marginal trees have coalesced, the expected number of edges is heuristically at most
+
 $$2N + 8N\log N,$$
+
 so storage is $O(N\log N)$.
 - **Simplified, general $T$:** with $r(T) = 2N/(T+2)$ the expected number of roots of a marginal tree cut $T$ generations back, the expected number of edges is heuristically at most
+
 $$2N\Big(1 + 4\log\min\Big(N, \tfrac{T+2}{2}\Big)\Big),$$
+
 which grows like $O(N\log T)$.
 - **Mutations:** neutral mutations that survive simplification lie on the marginal trees, so their expected number is about $\mu$ times the total tree-sequence area, about $2\mu N\log N$, rather than the $\mu NT$ generated forward in time. A simulation with $M$ mutations is stored in $O(N\log N + M)$ space.
 

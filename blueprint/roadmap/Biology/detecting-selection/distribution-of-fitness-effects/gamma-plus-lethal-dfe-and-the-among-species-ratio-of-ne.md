@@ -5,7 +5,9 @@ Let $S = 4N_e s$ be the population-scaled selection coefficient of a new nonsyno
 **Gamma-plus-lethal model.** A fraction $p_{\mathrm{lth}} \in [0,1)$ of nonsynonymous mutations is lethal, so they never segregate and contribute nothing to the observed site-frequency spectrum. The remaining fraction $1 - p_{\mathrm{lth}}$ has deleterious effects $-S$ distributed as a [gamma distribution](gamma-dfe.md) with mean $\bar S$ and shape $\beta$. The expected nonsynonymous spectrum is therefore $(1 - p_{\mathrm{lth}})$ times the [spectrum under the gamma DFE](dfe-sfs-gamma-dfe.md), fitted jointly with the synonymous spectrum, which carries the demographic and sampling nuisance parameters. The pure gamma model is the case $p_{\mathrm{lth}} = 0$.
 
 **Ratio of drift power.** If two species share the distribution of unscaled effects $s$, in particular its mean $\bar s$, then
+
 $$\frac{N_e^{(1)}}{N_e^{(2)}} = \frac{\bar S^{(1)}}{\bar S^{(2)}},$$
+
 so the among-species ratio of effective size, the inverse ratio of the power of genetic drift, can be read off the fitted mean scaled selection coefficients. A shared shape $\beta$ across species is a necessary consistency check of the shared-DFE assumption.
 
 **Empirical result.** Fitted to synonymous and nonsynonymous spectra of primates and fruit flies, the pure gamma model gives strongly different shape estimates among taxa, contradicting a shared DFE, while adding the lethal class largely reconciles them: the log-likelihood gain of species-specific over shared shapes drops from $281.9$ to $191.0$, although a shared shape is still formally rejected. Under it, $N_e$ varies among animal species by a factor of at least $500$, an order of magnitude more than synonymous diversity $\pi_S$ varies. This narrows Lewontin's paradox, the limited range of genetic diversity across species.

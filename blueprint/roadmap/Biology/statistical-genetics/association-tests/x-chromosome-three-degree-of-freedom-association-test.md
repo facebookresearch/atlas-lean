@@ -1,9 +1,13 @@
 # Robust three-degree-of-freedom association test for an X-chromosomal SNP
 
 For a bi-allelic X-chromosomal SNP with alleles $r, R$, individuals fall into five genotype groups: females $rr, rR, RR$ and males $r, R$. Code sex $S = 0$ for females and $S = 1$ for males. The additive covariate $G_A$ depends on the baseline allele and on the assumed X-inactivation (XCI) status; over the groups $(rr, rR, RR, r, R)$:
+
 $$G_{A,R,I} = (0, \tfrac12, 1, 0, 1)^\top,\quad G_{A,r,I} = (1, \tfrac12, 0, 1, 0)^\top,\quad G_{A,R,N} = (0,1,2,0,1)^\top,\quad G_{A,r,N} = (2,1,0,1,0)^\top,$$
+
 where $I$ assumes XCI and $N$ no XCI. Let $G_D$ indicate female heterozygotes and $G_S = G_A \times S$. For a binary or continuous trait $Y$ with link $g$ fit
+
 $$g(E[Y]) = \beta_0 + \beta_S S + \beta_A G_A + \beta_D G_D + \beta_{GS} G_S$$
+
 and test $H_0 : \beta_A = \beta_D = \beta_{GS} = 0$ with 3 degrees of freedom.
 
 **Proposition.**
