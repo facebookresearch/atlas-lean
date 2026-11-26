@@ -71,6 +71,14 @@ example : Function.Injective (partitionsOf (n := 4)) := by
 example : Function.Injective (partitionsOf (n := 5)) := by
   decide +kernel
 
+/-- The general injectivity theorem at work: the 18 histories of four genes decode to 18
+distinct partition sequences. -/
+example : (Finset.univ.image (partitionsOf : RankedHistory 4 →
+    List (Finset (Finset (Fin 4))))).card = 18 := by
+  rw [Finset.card_image_of_injective _ partitionsOf_injective, Finset.card_univ,
+    card_rankedHistory]
+  decide
+
 /-- Every history of four genes starts from the singletons and ends at one block. -/
 example : ∀ h : RankedHistory 4,
     (partitionsOf h).head? = some (univ.image fun j : Fin 4 => {j}) ∧
