@@ -23,11 +23,14 @@ occurrences are reported, never filled with `0`.
 
 The raw outputs are path weights: `ES v` is the longest `s`-to-`v` path weight, so the makespan
 `ES t` is the longest source-to-sink path weight, and `LT v` is the longest `v`-to-`t` path
-weight. `ES` and the latest starts `LS = T - LT` are the earliest and latest feasible event
-times only on covered projects with nonnegative durations (`earliestSchedule_feasible`,
-`latestSchedule_feasible`). Without coverage `ES` and the makespan are still lower bounds on
-every feasible schedule (`feasible_dominates_earliest`, `makespan_le_completion`), but an
-occurrence off every source-to-sink path can force a later sink.
+weight. On covered projects with nonnegative durations, `ES` is pointwise earliest on model
+events among feasible schedules, and the latest starts `LS = T - LT` are pointwise latest on
+model events among feasible schedules finishing by the makespan `T`
+(`earliestSchedule_feasible`, `latestSchedule_feasible`). Feasibility constrains no vertex
+outside the model events, so when such a vertex exists no schedule is earliest or latest on every
+vertex. Without coverage `ES` and the makespan are still lower bounds on every feasible schedule
+(`feasible_dominates_earliest`, `makespan_le_completion`), but an occurrence off every
+source-to-sink path can force a later sink.
 
 The declarations live in the namespace `Cslib.Algorithms.Lean.Scheduling.CriticalPath`, so
 they load together with the list-scheduling API of
@@ -96,8 +99,9 @@ open BellmanFord
 
 /-- Raw output of the forward run at `v`, negated back to durations: the longest `s`-to-`v`
 path weight (`earliestStart_spec`), `none` off the forward reachable set. Every feasible
-schedule puts `v` no earlier (`feasible_dominates_earliest`); it is the earliest feasible event
-time only on covered projects with nonnegative durations (`earliestSchedule_feasible`). (`C3`) -/
+schedule puts `v` no earlier (`feasible_dominates_earliest`); it is the earliest time of `v` over
+feasible schedules only on covered projects with nonnegative durations
+(`earliestSchedule_feasible`). (`C3`) -/
 @[expose] public def earliestStart {n : Nat} (result : Distances n) (v : Fin n) :
     Option Int :=
   (result.distance.get v).map Neg.neg
@@ -135,8 +139,9 @@ list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan` measures. (`C5`) -/
   | _, _ => none
 
 /-- Latest-start time `T - LT v` of a vertex from a makespan `T` and the reversed run. With `T`
-the makespan it is the latest feasible event time of a model event only on covered projects with
-nonnegative durations (`latestSchedule_feasible`). (`C6`) -/
+the makespan and `v` a model event, it is the latest time of `v` over feasible schedules finishing
+by `T`, only on covered projects with nonnegative durations (`latestSchedule_feasible`); off the
+model events feasibility gives no latest time. (`C6`) -/
 @[expose] public def latestStartAt {n : Nat} (T : Option Int) (reverse : Distances n)
     (v : Fin n) : Option Int :=
   latestStart T (longestToSink reverse v)
@@ -1534,7 +1539,8 @@ public theorem raw_defined_on_modelEvents {n : Nat} {edges : List (Edge n)}
       (modelEvent_reachable_tgt hcover hst v hv)
 
 /-- On covered projects with nonnegative durations, the earliest-start schedule is feasible,
-starts at zero, and completes at `T`. (`C9`) -/
+starts at zero, completes at `T`, and agrees with `earliestStart` on model events, where it is
+pointwise earliest among feasible schedules (`feasible_dominates_earliest`). (`C9`) -/
 public theorem earliestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward : Distances n} {T : Int}
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
@@ -1642,8 +1648,11 @@ public theorem feasible_activity_finishes_by_sink {n : Nat}
   have hnn_p := pathWeight_nonneg hnn p hp.1
   omega
 
-/-- On covered projects with nonnegative durations, the latest-start schedule is the latest
-feasible schedule finishing by `T`. (`C9`) -/
+/-- On covered projects with nonnegative durations, the latest-start schedule is feasible,
+finishes at `T`, and is pointwise latest on model events among the feasible schedules finishing
+by `T`: each of them puts every model event no later. Feasibility constrains no vertex outside the
+model events (an isolated vertex can take any time), so when such a vertex exists no schedule is
+latest on every vertex. (`C9`) -/
 public theorem latestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward reverse : Distances n} {T : Int}
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
