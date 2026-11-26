@@ -385,7 +385,7 @@ Topics added since this subject's fields were last revised.
 - [Bounded left representation of the finite GNS core algebra](tomita-core-left-representation/README.md)
 - [Scalar Haar transformation-group representation](transformation-regular-model/README.md)
 - [Uniform and positive representative properties](uniform/README.md)
-- [Complex unit vector by coordinates](unit-vector.md)
+- [Coordinate criterion for the complex Euclidean unit sphere](unit-vector.md)
 - [Fredholm operator from a two-sided compact parametrix](of-compact-parametrix.md)
 - [Fredholm map compressed between idempotent ranges](range-compression.md)
 - [Approximate preimage with fixed error and norm constants](exists-controlled-approx-preimage-of-dua.md)

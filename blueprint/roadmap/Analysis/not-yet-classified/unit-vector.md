@@ -1,4 +1,6 @@
-# Complex unit vector by coordinates
+# Coordinate criterion for the complex Euclidean unit sphere
 
-For a finite index type I, UnitVector I consists of z:I→ℂ with ∑i conj(z_i)z_i=1, equivalently
-∑i|z_i|²=1.
+Let I be any finite
+index type and x : EuclideanSpace ℂ I. With the canonical Hermitian ℓ² norm,
+x∈Metric.sphere(0)1 if and only if ∑i star(x_i)*x_i=1 in ℂ. The empty-index case is
+included: the sum is zero and the unit sphere is empty.

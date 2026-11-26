@@ -15,8 +15,6 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.RadonProduct
 public import MathlibExt.Analysis.InnerProductSpace.TensorProduct.CyclicCompletion
 public import Mathlib.Analysis.Normed.Operator.Extend
 
-import Lean.Elab.Tactic.BuiltinTactic
-import Lean.Meta.Check
 
 /-!
 # Isometric extension from factor tensors into Borel Radon L²
@@ -125,7 +123,8 @@ theorem denseRange_compactSupportFactorTensorCompletion :
     apply Submodule.span_le.mpr
     rintro z ⟨x, ⟨f, rfl⟩, y, ⟨g, rfl⟩, rfl⟩
     refine ⟨f ⊗ₜ[ℂ] g, ?_⟩
-    rw [compactSupportFactorTensorCompletion_apply, compactSupportFactorTensor, TensorProduct.map_tmul]
+    rw [compactSupportFactorTensorCompletion_apply, compactSupportFactorTensor,
+      TensorProduct.map_tmul]
   intro z
   exact (closure_mono hSpan) (hP z)
 
@@ -167,7 +166,8 @@ Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
 `F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. the L² scalar action on `Lp ℂ 2 R` satisfies `‖c •
 f‖=|c|‖f‖`. -/
 @[instance_reducible]
-def stockRadonProductLpNormedSpace : NormedSpace ℂ (Lp ℂ 2 (Measure.radonProd μ ν)) := Lp.instNormedSpace
+def stockRadonProductLpNormedSpace : NormedSpace ℂ (Lp ℂ 2 (Measure.radonProd μ ν)) :=
+  Lp.instNormedSpace
 
 /-- **Hilbert tensor completion additive norm structure.** Let `X,Y` be measurable spaces with
 measures `μ,ν`, and `T=Completion(Lp ℂ 2 μ ⊗[ℂ] Lp ℂ 2 ν)` with its Hilbert tensor norm.
@@ -198,7 +198,8 @@ Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` o
 `borel(X×Y)`, `i_μ,i_ν,i_R` for compact-support L² inclusions, `T=Completion(Lp ℂ 2 μ ⊗[ℂ]
 Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
 `F(f⊗g)=i_R((x,y) ↦ f(x)g(y))`. the target's scalar action satisfies `‖c • f‖₂=|c|‖f‖₂`. -/
-local instance instNamedRadonProductLpNormedSpace : NormedSpace ℂ (Lp ℂ 2 (Measure.radonProd μ ν)) :=
+local instance instNamedRadonProductLpNormedSpace :
+    NormedSpace ℂ (Lp ℂ 2 (Measure.radonProd μ ν)) :=
   stockRadonProductLpNormedSpace μ ν
 
 /-- **Underlying seminorm structure of the completed Hilbert tensor.** Let `X,Y` be measurable
@@ -242,7 +243,8 @@ theorem stockCompletedFactorTensorNormTopology_eq :
     exact (@PseudoMetricSpace.uniformity_dist _ m).trans
       (UniformSpace.Completion.uniformity_dist (α := (Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))).symm
   exact congrArg (fun w : UniformSpace (UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) =>
-    @UniformSpace.toTopologicalSpace (UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) w) hUniform
+    @UniformSpace.toTopologicalSpace
+      (UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) w) hUniform
 
 /-- **Compact-support tensor density for the completion norm topology.** Let `X,Y` be locally
 compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
@@ -313,44 +315,16 @@ Lp ℂ 2 ν)`, `A(z)` for the algebraic factor tensor inclusion into `T`, and
 theorem radonProductTensorExtension_apply_core (z : C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ)) :
     radonProductTensorExtension μ ν (compactSupportFactorTensorCompletion μ ν z) =
       compactSupportTensorToLp μ ν z := by
-  -- Elaborate the stock specialization and its actual prerequisites separately.
-  -- The resulting stock lemma application is checked against this goal and by the kernel.
-  run_tac
-    Lean.Elab.Tactic.withMainContext do
-      let factorySyntax ← `(LinearMap.extendOfNorm_eq
-        (𝕜 := ℂ) (𝕜₂ := ℂ)
-        (E := C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ))
-        (Eₗ := UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν)))
-        (F := Lp ℂ 2 (Measure.radonProd μ ν))
-        (f := compactSupportTensorToLp μ ν)
-        (e := compactSupportFactorTensorCompletion μ ν))
-      let factory ← Lean.Elab.Term.elabTerm factorySyntax none
-      Lean.Elab.Term.synthesizeSyntheticMVarsNoPostponing
-      let factory ← Lean.instantiateMVars factory
-      let density ← Lean.Elab.Term.elabTerm
-        (← `(denseRange_compactSupportFactorTensorCompletion_normed μ ν)) none
-      Lean.Elab.Term.synthesizeSyntheticMVarsNoPostponing
-      let density ← Lean.instantiateMVars density
-      Lean.Meta.checkApp factory density
-      let proof := Lean.mkApp factory density
-      let bound ← Lean.Elab.Term.elabTerm
-        (← `(bound_compactSupportTensorToLp_completion μ ν)) none
-      Lean.Elab.Term.synthesizeSyntheticMVarsNoPostponing
-      let bound ← Lean.instantiateMVars bound
-      Lean.Meta.checkApp proof bound
-      let proof := Lean.mkApp proof bound
-      let some vector := (← Lean.getLCtx).findDeclRev? (fun decl =>
-        if decl.userName.eraseMacroScopes == `z then some (Lean.mkFVar decl.fvarId) else none)
-        | throwError "The original source tensor z must be present in the theorem context"
-      Lean.Meta.checkApp proof vector
-      let proof ← Lean.instantiateMVars (Lean.mkApp proof vector)
-      unless !proof.hasMVar && proof.getAppFn.isConstOf ``LinearMap.extendOfNorm_eq do
-        throwError "The core agreement must be the complete stock lemma application"
-      let goal ← Lean.Elab.Tactic.getMainGoal
-      unless (← Lean.Meta.isDefEq (← goal.getType) (← Lean.Meta.inferType proof)) do
-        throwError "The stock agreement proof must have the original constructor goal type"
-      goal.assign proof
-      Lean.Elab.Tactic.replaceMainGoal []
+  have hDense := denseRange_compactSupportFactorTensorCompletion_normed μ ν
+  have hBound := bound_compactSupportTensorToLp_completion μ ν
+  have hExtension := LinearMap.extendOfNorm_eq
+    (𝕜 := ℂ) (𝕜₂ := ℂ)
+    (E := C_c(X, ℂ) ⊗[ℂ] C_c(Y, ℂ))
+    (Eₗ := UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν)))
+    (F := Lp ℂ 2 (Measure.radonProd μ ν))
+    (f := compactSupportTensorToLp μ ν)
+    (e := compactSupportFactorTensorCompletion μ ν)
+  exact hExtension hDense hBound z
 
 /-- **Norm preservation of the full Radon tensor extension.** Let `X,Y` be locally compact
 Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
@@ -404,7 +378,8 @@ theorem radonProductTensorEmbedding_tmul (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) :
         (((compactSupportInclusion μ f) ⊗ₜ[ℂ] (compactSupportInclusion ν g) :
           (Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν)) :
             UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) =
-      compactSupportInclusion (Measure.radonProd μ ν) (CompactlySupportedContinuousMap.mulProd f g) := by
+      compactSupportInclusion (Measure.radonProd μ ν)
+        (CompactlySupportedContinuousMap.mulProd f g) := by
   simpa only [compactSupportFactorTensorCompletion_apply, compactSupportFactorTensor,
     TensorProduct.map_tmul, compactSupportTensorToLp_tmul] using
     radonProductTensorEmbedding_apply_core μ ν (f ⊗ₜ[ℂ] g)
@@ -422,7 +397,8 @@ theorem radonProductTensorEmbedding_tmul_ae (f : C_c(X, ℂ)) (g : C_c(Y, ℂ)) 
             UniformSpace.Completion ((Lp ℂ 2 μ) ⊗[ℂ] (Lp ℂ 2 ν))) =ᵐ[Measure.radonProd μ ν]
       fun z => f z.1 * g z.2 := by
   rw [radonProductTensorEmbedding_tmul]
-  exact compactSupportInclusion_ae_eq (Measure.radonProd μ ν) (CompactlySupportedContinuousMap.mulProd f g)
+  exact compactSupportInclusion_ae_eq (Measure.radonProd μ ν)
+    (CompactlySupportedContinuousMap.mulProd f g)
 
 /-- **Inner product preserved by the full Radon tensor embedding.** Let `X,Y` be locally
 compact Hausdorff Borel spaces and `μ,ν` regular measures. Write `R=radonProd μ ν` on
