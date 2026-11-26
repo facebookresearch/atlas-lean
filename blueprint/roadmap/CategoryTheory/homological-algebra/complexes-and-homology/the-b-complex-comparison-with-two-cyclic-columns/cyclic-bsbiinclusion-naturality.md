@@ -1,3 +1,6 @@
-# Cyclic BSBIInclusion naturality
+# Naturality of the left-unital Hochschild-to-cyclic inclusion
 
-Inclusion is natural under arbitrary original nonunital maps between the left-unital models.
+Naturality of the left-unital Hochschild-to-cyclic inclusion.
+
+For maps between algebras with left units, the regular Hochschild and cyclic homology maps
+commute with `I_n : H_n(b) → HC_n`.

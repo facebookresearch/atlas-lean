@@ -1,3 +1,6 @@
-# Canonical Native Cotangent Diagram
+# The polynomial cotangent simplicial module of the target algebra
 
-The original polynomial cotangent diagram, before coefficient tensoring or ground restriction.
+The polynomial cotangent simplicial module of the target algebra.
+
+At the identity augmentation of `B`, the polynomial cotangent simplicial functor gives the
+simplicial `B`-module used to define `L_{B/k}`.

@@ -1,4 +1,7 @@
-# Canonical Presented Data
+# Canonical data with the bracket presentation
 
-Canonical CE data, with both the pure-wedge formula and square-zero
-derived from the Lie algebra laws.
+Let R be a commutative ring and L a Lie algebra over R.
+Write E=ExteriorAlgebra_R(L), ι:L→E for its generator map,
+and β_n for the bracket boundary on ordered (n+1)-tuples.
+The canonical square-zero differential together with its wedge
+value β_n(v) gives PresentedData for the bracket prescription.

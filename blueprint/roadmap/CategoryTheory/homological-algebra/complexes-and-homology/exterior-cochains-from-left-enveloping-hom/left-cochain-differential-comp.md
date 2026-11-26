@@ -1,4 +1,5 @@
-# Left Cochain Differential comp
+# The square-zero equation for the exterior cochain differential
 
-The all-degree exterior cochain differential squares to zero by Hom transport, by transport
-through the Hom-complex comparison.
+The square-zero equation for the exterior cochain differential.
+
+For every `n ∈ ℕ`, the composite `δ_(n+1) ∘ δ_n` on `Hom_R(⋀ⁿ L,M)` is zero.

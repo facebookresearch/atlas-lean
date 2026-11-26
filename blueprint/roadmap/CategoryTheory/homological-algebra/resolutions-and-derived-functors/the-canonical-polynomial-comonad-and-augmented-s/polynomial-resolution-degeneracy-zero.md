@@ -1,3 +1,6 @@
-# Polynomial Resolution degeneracy zero
+# Variable insertion as the zeroth polynomial degeneracy
 
-The zeroth degeneracy applies actual comultiplication under the degree identification.
+Variable insertion as the zeroth polynomial degeneracy.
+
+Under the degreewise polynomial comparisons, `s_0` is the comultiplication on the preceding
+comonad power, followed by polynomial renaming through the inverse source comparison.

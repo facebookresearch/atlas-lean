@@ -1,3 +1,5 @@
-# Connes Trace Representative Map
+# The trace representative between cyclic-column terms
 
-The same projected trace with the cyclic degree objects as endpoints.
+For a k-algebra A and r,n ≥ 0, the map from the degree-n
+zeroth column of the matrix cyclic bicomplex to Cλ_n(A) is the
+k-module morphism x ↦ [T_n(x)], with T_n the generalized matrix trace.

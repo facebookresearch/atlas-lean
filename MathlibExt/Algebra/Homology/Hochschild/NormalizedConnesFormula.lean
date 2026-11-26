@@ -13,14 +13,15 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.NormalizedMixedBicomplex
 
 /-!
-# Normalized regular Connes formulas
+# The integral normalized regular Connes operator
 
-The regular normalized Connes B is
-head-unit insertion after the signed
-cyclic norm on the quotient factors.
-The formula uses the ground-unit quotient
-and does not require rational Eulerian
-projectors.
+Let `k` be a commutative ring and `A` a commutative `k`-algebra. Put `Ā = A / k·1` as a ground
+module. The normalized regular Hochschild term is `A ⊗[k] Ā^⊗n`.
+
+The Connes operator first projects the coefficient to `Ā`, joins it to the `n` tail factors,
+applies the signed cyclic norm `N_n = 1 + t_n + ⋯ + t_n^n`, and inserts `1 ∈ A` as the new
+coefficient. Thus `B_n(a₀ ⊗ ā₁ ⊗ ⋯ ⊗ āₙ) = 1 ⊗ N_n(ā₀ ⊗ ā₁ ⊗ ⋯ ⊗ āₙ)`. This formula is over
+the given commutative base ring and uses the ground-unit quotient.
 -/
 
 @[expose] public section
@@ -39,14 +40,20 @@ variable (k : Type u) [CommRing k]
 local notation "Q" => ModuleCat.Algebra.Hochschild.quotientCarrier k A
 local notation "q" => Submodule.mkQ (ModuleCat.Algebra.Hochschild.unitSubmodule k A)
 
-/-- The literal original regular normalized B coordinate, with head-unit and signed norm. -/
+/-- The signed-norm formula for normalized regular Connes boundary.
+
+On `A ⊗[k] Ā^⊗n`, project the coefficient to `Ā`, form the `(n+1)`-fold tail tensor, apply its
+signed cyclic norm, and insert the unit as the leading coefficient. -/
 def normalizedConnesFormula (n : ℕ) :
     A ⊗[k] TensorPower k n Q →ₗ[k] A ⊗[k] TensorPower k (n + 1) Q :=
   (TensorProduct.mk k A (TensorPower k (n + 1) Q) 1).comp
     ((TensorPower.norm k Q n).comp
       ((TensorPower.consEquiv k Q n).toLinearMap.comp (TensorProduct.map q LinearMap.id)))
 
-/-- The original normalized Connes map has exactly its literal signed norm formula. -/
+/-- The normalized Connes boundary as coefficient projection and cyclic norm.
+
+The normalized regular Connes map equals `a₀ ⊗ ā₁ ⊗ ⋯ ⊗ āₙ ↦ 1 ⊗ N_n(ā₀ ⊗ ā₁ ⊗ ⋯ ⊗ āₙ)` over
+an arbitrary commutative ground ring. -/
 theorem normalizedConnesBoundary_eq_formula (n : ℕ) :
     (NonUnital.normalizedBoundary k A n).hom = normalizedConnesFormula k A n := by
   let p : A ⊗[k] TensorPower k n A →ₗ[k] A ⊗[k] TensorPower k n Q :=

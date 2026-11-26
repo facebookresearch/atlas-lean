@@ -1,4 +1,6 @@
-# Polynomial Quotient Ring Equiv
+# The polynomial quotient by all variables is the coefficient ring
 
-The original generated-ideal quotient is the original coefficient ring,
-through native ideal equality and the native first isomorphism theorem.
+For a commutative ring R and arbitrary I, constant-coefficient
+evaluation induces the ring equivalence P/(X_i | i ∈ I) ≃ R,
+where P = MvPolynomial I R. It sends the quotient class of p to
+ε(p) and has inverse r ↦ [C(r)].

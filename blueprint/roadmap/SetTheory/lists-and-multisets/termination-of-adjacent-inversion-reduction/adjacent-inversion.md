@@ -1,4 +1,5 @@
-# Adjacent Inversion
+# Searching for an adjacent inversion
 
-Search from the left for an actual adjacent inversion. The returned
-data records its original prefix and suffix.
+Search a list from the left for adjacent entries `i, j` with `j < i`.
+Return their prefix, entries and suffix as `some (p,i,j,s)`, or `none` when
+no adjacent pair is strictly decreasing.

@@ -1,6 +1,6 @@
-# Coalgebra Functor Of Comonad Hom Id
+# The identity comparison of comonad coalgebra transport
 
-The identity comonad morphism induces the identity functor on coalgebras.
+The identity comparison of comonad coalgebra transport.
 
-Covariant dual of Mathlib `Monad.algebraFunctorOfMonadHomId`, with transparent
-identity carrier components.
+Transport along the identity comonad morphism is naturally isomorphic to the identity functor
+on its coalgebra category.

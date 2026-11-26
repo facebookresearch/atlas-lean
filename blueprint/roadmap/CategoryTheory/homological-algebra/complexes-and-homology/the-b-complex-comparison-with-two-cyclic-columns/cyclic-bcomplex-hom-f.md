@@ -1,3 +1,6 @@
-# Cyclic BComplex Hom f
+# The tensor component of a regular Hochschild algebra map
 
-The original b-map preserves both the coefficient and every tensor factor.
+The tensor component of a regular Hochschild algebra map.
+
+The degree-`n` component applies the underlying ground-linear map `f` to all `n+1` tensor
+entries.

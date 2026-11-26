@@ -1,3 +1,6 @@
-# Polynomial Coefficient Homogeneous Part zero differential
+# Coordinate boundaries have zero constant-coefficient part
 
-Polynomial coefficients do not acquire a constant term under the original differential.
+For a commutative ring R and linearly ordered I, the
+degree-zero homogeneous coefficient projection of ∂_n(c) is zero
+for every c ∈ F_(n+1). Each deletion term multiplies its coefficient
+by one variable X_i.

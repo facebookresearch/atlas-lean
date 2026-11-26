@@ -15,16 +15,19 @@ public import Mathlib.Algebra.Category.ModuleCat.Colimits
 public import Mathlib.CategoryTheory.GradedObject.Monoidal
 
 /-!
-# Native tensor degrees of the exterior grading
+# Tensor degrees of the exterior grading
 
-The fixed canonical UniverseTensor dictionaries put the native graded tensor
-at the working height `max u v`, preserving the original ring and module.
-Every degree has an actual realization in the ordinary tensor module and a
-finite projection lift. Realization is a split injection. The actual exterior
-coproduct is therefore assembled into the native graded tensor object.
+For a commutative ring R and an R-module M, write E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and
+Tₙ=⊕_{p+q=n}Eₚ⊗_RE_q. The homogeneous component inclusions induce a realization rₙ:Tₙ → E⊗_RE.
+The finite sum of bidegree projections defines Lₙ:E⊗E → Tₙ.
 
-No monoidal or coalgebra certificate is a parameter. The native tensor
-structure is always the existing canonical UniverseTensor implementation.
+The identity Lₙrₙ=id_{Tₙ} makes rₙ a split injection. The other composite rₙLₙ is total-degree-n
+reconstruction and fixes every tensor in that homogeneous total-degree submodule. These
+splittings require no flatness or freeness assumption.
+
+The exterior coproduct preserves total degree, so its restriction to Eₙ followed by Lₙ gives the
+graded coproduct Eₙ → Tₙ. Realizing it returns the exterior coproduct in E⊗E. The category of
+R-modules is placed in max(u,v), with R and M in their separate universes u,v.
 -/
 
 @[expose] public section
@@ -45,10 +48,14 @@ local notation "E" => ExteriorAlgebra R M
 local notation "P" => E ⊗[R] E
 local notation "π" => exteriorPower.projection R M
 
-/-- The original exterior grading in the canonical working module category. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). gradedExterior is the ℕ-graded
+R-module n ↦ Eₙ. It is placed in the module universe max(u,v) when R,M lie in universes u,v. -/
 def gradedExterior : GradedObject ℕ (ModuleCat.{max u v} R) := fun n => ModuleCat.of R (⋀[R]^n M)
 
-/-- Degree `n` of the actual native tensor of the exterior grading. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For n : ℕ, tensorDegree R M n is the
+convolution graded-tensor term Tₙ=⊕_{p+q=n}(Eₚ⊗_RE_q), in the common R-module category max(u,v). -/
 def tensorDegree (n : ℕ) : (ModuleCat.{max u v} R) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v} (R := R)
@@ -56,7 +63,9 @@ def tensorDegree (n : ℕ) : (ModuleCat.{max u v} R) := by
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.tensorObj (gradedExterior R M) (gradedExterior R M) n
 
-/-- The actual native antidiagonal summand inclusion, with its original tensor module. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For p,q,n : ℕ with p+q=n,
+tensorDegreeι is the coproduct inclusion Eₚ⊗_RE_q → Tₙ of that homogeneous bidegree summand. -/
 def tensorDegreeι (p q n : ℕ) (h : p + q = n) :
     ModuleCat.of R ((⋀[R]^p M) ⊗[R] (⋀[R]^q M)) ⟶ tensorDegree R M n := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
@@ -65,7 +74,10 @@ def tensorDegreeι (p q n : ℕ) (h : p + q = n) :
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.ιTensorObj (gradedExterior R M) (gradedExterior R M) p q n h
 
-/-- The actual native tensor descent, specialized to original exterior summands. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For an R-module A in the common
+universe and maps fₚq:Eₚ⊗_RE_q → A for every p+q=n, tensorDegreeDesc is the unique map Tₙ → A
+restricting to fₚq on each homogeneous summand. -/
 def tensorDegreeDesc (n : ℕ) {A : (ModuleCat.{max u v} R)}
     (f : ∀ p q (h : p + q = n), ModuleCat.of R ((⋀[R]^p M) ⊗[R] (⋀[R]^q M)) ⟶ A) :
     tensorDegree R M n ⟶ A := by
@@ -97,7 +109,10 @@ theorem tensorDegree_hom_ext (n : ℕ) {A : (ModuleCat.{max u v} R)}
   letI : MonoidalLinear R (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalLinear.{u,v} (R := R)
   exact GradedObject.Monoidal.tensorObj_ext f g hfg
 
-/-- Native realization includes each original homogeneous tensor summand in `E ⊗ E`. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). tensorDegreeRealize rₙ:Tₙ → E⊗_RE is
+induced by the exterior component inclusions: rₙ sends the (p,q)-summand tensor a⊗b to the same
+tensor of a,b in E, for p+q=n. -/
 def tensorDegreeRealize (n : ℕ) : tensorDegree R M n ⟶ ModuleCat.of R P :=
   tensorDegreeDesc R M n (fun p q _ =>
     ModuleCat.ofHom (TensorProduct.map (⋀[R]^p M).subtype (⋀[R]^q M).subtype))
@@ -108,12 +123,18 @@ theorem tensorDegreeι_realize (p q n : ℕ) (h : p + q = n) :
       ModuleCat.ofHom (TensorProduct.map (⋀[R]^p M).subtype (⋀[R]^q M).subtype) :=
   tensorDegreeι_desc R M n _ p q h
 
-/-- The finite antidiagonal projection lift into the actual native tensor degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). Let πₚ:E → Eₚ be the exterior
+projections. tensorDegreeLift Lₙ:E⊗E → Tₙ is ∑_{p=0}ⁿ ι_{p,n-p} ∘ (πₚ⊗π_{n-p}), the finite
+projection onto all bidegrees of total degree n. -/
 def tensorDegreeLift (n : ℕ) : ModuleCat.of R P ⟶ tensorDegree R M n :=
   ∑ p : Fin (n + 1), ModuleCat.ofHom (TensorProduct.map (π p.val) (π (n - p.val))) ≫
     tensorDegreeι R M p.val (n - p.val) n (Nat.add_sub_of_le (Nat.le_of_lt_succ p.isLt))
 
-/-- Realizing the native lift is the already constructed finite tensor reconstruction. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For n : ℕ, Lₙ followed by rₙ equals
+degreeTensorReconstruction R M n on E⊗E. It is the sum of the homogeneous bidegree projections
+πₚ⊗π_{n-p}, with their inclusions back into E⊗E. -/
 theorem tensorDegreeLift_realize (n : ℕ) :
     tensorDegreeLift R M n ≫ tensorDegreeRealize R M n =
       ModuleCat.ofHom (degreeTensorReconstruction R M n) := by
@@ -122,7 +143,9 @@ theorem tensorDegreeLift_realize (n : ℕ) :
     tensorDegreeι_realize, ModuleCat.hom_sum, ModuleCat.hom_comp, ModuleCat.hom_ofHom]
   rfl
 
-/-- Realization followed by the finite native lift is the identity in its actual degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For every n : ℕ, tensorDegreeRealize
+rₙ followed by tensorDegreeLift Lₙ is the identity on Tₙ. -/
 theorem tensorDegreeRealize_lift (n : ℕ) :
     tensorDegreeRealize R M n ≫ tensorDegreeLift R M n = 𝟙 (tensorDegree R M n) := by
   apply tensorDegree_hom_ext R M n
@@ -164,27 +187,41 @@ theorem tensorDegreeRealize_lift (n : ℕ) :
   · intro hp
     exact False.elim (hp (Finset.mem_univ p))
 
-/-- The native tensor degree realizes as a split injection, requiring no flatness. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For every n : ℕ, the underlying map of
+tensorDegreeRealize rₙ:Tₙ → E⊗E is injective, with left inverse Lₙ. No flatness assumption is
+needed because the homogeneous projections split the inclusions. -/
 theorem tensorDegreeRealize_injective (n : ℕ) :
     Function.Injective (tensorDegreeRealize R M n).hom := by
   apply Function.LeftInverse.injective
   intro x
   exact congrArg (fun f => f.hom x) (tensorDegreeRealize_lift R M n)
 
-/-- The native lift recovers every actual total-degree tensor. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). If t ∈ E⊗E belongs to coproductDegree
+R M n, the total-degree-n submodule, then realizing its lifted degree coordinate recovers t:
+rₙ(Lₙ(t))=t. -/
 theorem tensorDegreeRealize_lift_of_mem (n : ℕ) (t : P) (ht : t ∈ coproductDegree R M n) :
     (tensorDegreeRealize R M n).hom ((tensorDegreeLift R M n).hom t) = t := by
   have h := congrArg (fun f => f.hom t) (tensorDegreeLift_realize R M n)
   exact h.trans (degreeTensorReconstruction_of_mem R M n t ht)
 
-/-- The actual native tensor-square grading, with its canonical fixed dictionaries. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). gradedTensorSquare is the ℕ-graded
+R-module n ↦ Tₙ, the tensor product of the two exterior gradings in the common module category. -/
 def gradedTensorSquare : GradedObject ℕ (ModuleCat.{max u v} R) := tensorDegree R M
 
-/-- The actual exterior coproduct assembled into the native graded tensor object. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). In each degree n, restrict the
+exterior coproduct Δ:E → E⊗E to Eₙ and follow it by Lₙ. These maps define gradedCoproduct:E• →
+gradedTensorSquare, with degree-preserving target Tₙ. -/
 def gradedCoproduct : gradedExterior R M ⟶ gradedTensorSquare R M := fun n =>
   ModuleCat.ofHom ((coproduct R M).comp (⋀[R]^n M).subtype) ≫ tensorDegreeLift R M n
 
-/-- Its characteristic equation is the actual exterior coproduct in every degree. -/
+/-- Let R be a commutative ring and M an R-module with additive inverses. Write
+E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For every n : ℕ, gradedCoproduct R M n
+followed by rₙ equals the exterior coproduct restricted along Eₙ ↪ E. Thus rₙ(Δₙ(a))=Δ(a) for a
+∈ Eₙ. -/
 theorem gradedCoproduct_realize (n : ℕ) :
     gradedCoproduct R M n ≫ tensorDegreeRealize R M n =
       ModuleCat.ofHom ((coproduct R M).comp (⋀[R]^n M).subtype) := by

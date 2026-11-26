@@ -1,4 +1,6 @@
-# Moore Comp Map Iso inv f
+# The degreewise formula for inverse additive Moore comparison
 
-Every degree of the canonical inverse uses the original target
-inclusion and the original Moore projection mapped by the additive functor.
+The degreewise formula for inverse additive Moore comparison.
+
+In degree `n`, the inverse comparison is the target normalized inclusion followed by `F` of
+the source Moore projection.

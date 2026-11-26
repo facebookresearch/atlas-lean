@@ -1,3 +1,5 @@
-# Two Sided Cobar map σ
+# The codegeneracies of the two-sided cobar cosimplicial object
 
-Codegeneracies are the public cobar codegeneracies.
+The codegeneracies of the two-sided cobar cosimplicial object.
+
+A simplex-category codegeneracy maps to the corresponding counit cobar codegeneracy.

@@ -1,3 +1,5 @@
-# Is Zero cyclic Two Column Tail X
+# Vanishing of cyclic tail terms below degree two
 
-The tail complex has no terms before the two-column offset.
+Vanishing of cyclic tail terms below degree two.
+
+The two-column cokernel tail has a zero object in each degree `n<2`.

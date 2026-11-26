@@ -1,3 +1,6 @@
-# Polynomial Cotangent Alternating Functor
+# The alternating polynomial cotangent chain functor
 
-The alternating chain model with the actual signed sum of face maps.
+The alternating polynomial cotangent chain functor.
+
+For `P → A`, this is the chain complex of its polynomial cotangent simplicial module with
+differential `∑ᵢ (-1)^i dᵢ`.

@@ -1,3 +1,5 @@
-# Two Sided Cobar map σ app
+# The pointwise codegeneracy formula for two-sided cobar
 
-Codegeneracy components are counit insertions mapped by `R`.
+The pointwise codegeneracy formula for two-sided cobar.
+
+At `a`, codegeneracy `i` is `R` applied to the reversed-position counit insertion at `L(a)`.

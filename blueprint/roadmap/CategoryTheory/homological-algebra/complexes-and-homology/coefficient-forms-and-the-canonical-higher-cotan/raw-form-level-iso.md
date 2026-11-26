@@ -1,4 +1,7 @@
-# Raw Form Level Iso
+# The comparison from lifted forms to higher cotangent modules
 
-Original raw form coordinates agree with the higher cotangent
-level, including its separately constructed regular weight zero.
+The comparison from lifted forms to higher cotangent modules.
+
+For every weight `q`, the lifted coefficient-form module is `k`-linearly isomorphic to the
+ground restriction of the higher cotangent module. In positive weights the map removes the
+carrier lift; weight zero uses the regular tensor unitor.

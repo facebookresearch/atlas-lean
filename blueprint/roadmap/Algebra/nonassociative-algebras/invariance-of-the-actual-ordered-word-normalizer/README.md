@@ -1,5 +1,5 @@
 # Invariance of the actual ordered-word normalizer
 
-- [Normalize adjacent inversion](normalize-adjacent-inversion.md)
-- [Normalize basis relation](normalize-basis-relation.md)
-- [Normalization Pair commutator](normalization-pair-commutator.md)
+- [Any adjacent inversion satisfies the normal-form reduction relation](normalize-adjacent-inversion.md)
+- [Normal forms respect the basis Lie relation in every orientation](normalize-basis-relation.md)
+- [Bilinear normal forms respect arbitrary inserted Lie commutators](normalization-pair-commutator.md)

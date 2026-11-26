@@ -1,4 +1,5 @@
-# Hom condition app
+# The component equation of a right comodule morphism
 
-Compatibility of a right comodule morphism with the coactions, in
-components.
+The component equation of a right comodule morphism.
+
+At `X`, one has `coact_M(X) ≫ f(G(X)) = f(X) ≫ coact_N(X)`.

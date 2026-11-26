@@ -74,4 +74,4 @@ Multilinear and alternating maps, tensor products of modules and of families of 
 - [The neutral tensor action of the head-fixing permutation](permutation-representation-head-fixing-c.md)
 - [Missing-row support of an leading exterior coefficient](leading-coefficient-wedge-basis-zero-of.md)
 - [General exterior unshuffle in the existing ordered-shuffle index](unshuffle-apply-multi-shuffles.md)
-- [Ground-linear Hom cancellation of an algebra tensor factor](algebra-tensor-hom-equiv.md)
+- [Algebra tensor–Hom adjunction over a commutative ground semiring](algebra-tensor-hom-equiv.md)

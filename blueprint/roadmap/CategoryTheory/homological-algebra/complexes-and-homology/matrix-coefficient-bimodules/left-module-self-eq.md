@@ -1,3 +1,4 @@
-# Left Module self eq
+# The left action on regular matrix coefficients
 
-The computed left action on self coefficients is the regular matrix module.
+For a ring A and finite ι with decidable equality, the
+left matrix module on Mat_ι(A) is regular multiplication: B•X=BX.

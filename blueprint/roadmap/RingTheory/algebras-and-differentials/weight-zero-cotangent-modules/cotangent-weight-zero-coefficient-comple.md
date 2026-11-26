@@ -1,3 +1,6 @@
-# Cotangent Weight Zero Coefficient Complex Functor
+# The normalized weight-zero coefficient complex
 
-The coefficient zero-weight complex is the actual normalized constant M.
+The normalized weight-zero coefficient complex.
+
+For an `A`-module `M`, this is the normalized Moore complex of the constant simplicial module
+on `M`. Its construction retains the carrier universe of `M`.

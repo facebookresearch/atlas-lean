@@ -1,3 +1,6 @@
-# Map Quotient
+# The quotient homomorphism induced by an ideal-preserving map
 
-The original nonunital map descends through the actual ideal quotient maps.
+The quotient homomorphism induced by an ideal-preserving map.
+
+Let `f : A →ₙₐ[k] B` send `I` into a two-sided subalgebra `J`. The induced map `A/I →ₙₐ[k]
+B/J` sends the class of `a` to the class of `f(a)`.

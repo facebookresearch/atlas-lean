@@ -1,3 +1,6 @@
-# Scalar Extension To Tensor Equiv tmul
+# The pure-tensor formula for scalar extension
 
-The scalar transport retains both original entries of a native pure tensor.
+The pure-tensor formula for scalar extension.
+
+The scalar-extension equivalence sends the class represented by `s ⊗ m` in extension of
+scalars to the same pure tensor in `S ⊗[R] M`.

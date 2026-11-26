@@ -1,3 +1,5 @@
-# Cobar Coface codegeneracy succ
+# The successor coface–codegeneracy identity of cobar functors
 
-Bundled adjacent cancellation at `succ`.
+The successor coface–codegeneracy identity of cobar functors.
+
+The composite `δ_n^(i+1) ≫ σ_n^i` is the identity on degree `n`.

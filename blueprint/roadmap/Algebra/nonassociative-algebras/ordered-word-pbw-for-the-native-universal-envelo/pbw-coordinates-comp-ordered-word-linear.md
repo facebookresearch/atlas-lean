@@ -1,4 +1,7 @@
-# Pbw Coordinates comp ordered Word Linear
+# PBW coordinates retract ordered-word evaluation
 
-The original ordered-word evaluation has the constructed PBW coordinates
-as a left inverse.
+For a commutative ring R and an R-Lie algebra L with
+ordered basis b, evaluation of a finite coefficient family of
+weakly increasing words followed by PBW coordinates is the identity
+on OrderedWord(I) →₀ R. Thus coordinates are a left inverse to
+the R-linear ordered-word evaluation map.

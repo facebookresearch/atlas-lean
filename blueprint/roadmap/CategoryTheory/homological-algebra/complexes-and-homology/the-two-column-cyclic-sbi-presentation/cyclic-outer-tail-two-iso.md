@@ -1,3 +1,6 @@
-# Cyclic Outer Tail Two Iso
+# The cyclic bicomplex after removing two outer columns
 
-Native restriction drops two outer columns without introducing a parallel bicomplex.
+The cyclic bicomplex after removing two outer columns.
+
+Restricting the outer index to columns `p+2` is isomorphic to the cyclic bicomplex, through
+the period-two column isomorphisms and the alternating horizontal maps.

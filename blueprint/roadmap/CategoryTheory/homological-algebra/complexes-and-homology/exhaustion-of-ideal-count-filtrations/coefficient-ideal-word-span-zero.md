@@ -1,3 +1,4 @@
-# Coefficient Ideal Word Span zero
+# A zero ideal requirement spans every coefficient tensor
 
-Requiring no ideal entries spans every original arbitrary-coefficient word.
+Let k be commutative, A a nonunital k-module ring, I a k-subalgebra and V a k-module. For
+every n : ℕ, coefficientIdealWordSpan V n 0 = ⊤ in V ⊗[k] A^⊗n.

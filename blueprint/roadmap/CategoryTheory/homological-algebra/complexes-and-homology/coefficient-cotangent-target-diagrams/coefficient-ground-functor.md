@@ -1,4 +1,6 @@
-# Coefficient Ground Functor
+# The ground coefficient functor on target-algebra modules
 
-The original coefficient functor followed by the original ground restriction.
-The native tensor functor retains all three independent heights.
+The ground coefficient functor on target-algebra modules.
+
+Tensor a `B`-module with `M` on the left over `B`, then restrict scalars along `k → B`, with
+the joint ring, algebra, and coefficient carrier universe.

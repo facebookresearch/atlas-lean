@@ -1,3 +1,6 @@
-# Unitization Reduced Zero Linear Equiv
+# The reduced degree-zero kernel in nonunital tensor coordinates
 
-The degree-zero reduced kernel is the original nonunital coefficient tensor level.
+The reduced degree-zero kernel in nonunital tensor coordinates.
+
+The linear kernel of the degree-zero normalized scalar projector is equivalent to `C_0(A)`, by
+taking the coefficient's nonunital coordinate and the inverse empty-tail equivalence.

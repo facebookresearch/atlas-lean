@@ -20,14 +20,30 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Cyclic
 import Mathlib.Tactic.Abel
 
 /-!
-# Rational comparison with the Connes complex
+# Rational comparison of the cyclic total and the Connes quotient
 
-The signed cyclic operator, norm and first-column
-cokernel projection define the comparison. A rational
-ground algebra supplies the inverse order needed
-for the row contraction. The algebra may be nonunital.
+Let k be a commutative ring and A a nonunital k-algebra with k-bilinear
+multiplication. At vertical degree q, put
+t_q(a₀ ⊗ ⋯ ⊗ a_q) = (−1)^q a_q ⊗ a₀ ⊗ ⋯ ⊗ a_(q−1),
+N_q = ∑_(i=0)^q t_q^i and W_q = ∑_(i=0)^q i t_q^i.
+The horizontal cyclic row has differential 1−t_q into an even position
+and N_q into an odd position. It augments to the Connes quotient
+Cλ_q(A) = coker(1−t_q) in position zero.
 
-Reference: Loday, Cyclic Homology, Theorem 2.1.5,
+If q+1 is invertible in k and a = (q+1)⁻¹, the row homotopy component
+at position p is −a W_q for even p and a id for odd p. Together with
+the quotient section represented by a N_q, these maps make the row
+augmentation a homotopy equivalence, hence a quasi-isomorphism.
+
+The row augmentations assemble into a bicomplex map. After transposing
+and totalizing with the sign (−1)^(pq), its total augmentation is the
+cyclic-to-Connes chain map: project the column p = 0 and annihilate
+all p > 0 columns. If k is a ℚ-algebra, every q+1 is invertible, so
+this chain map induces HC_n(A) ≅ H_n(Cλ(A)) for every n ≥ 0.
+Both directions are natural for nonunital algebra maps in the common
+module category ModuleCat^max(u,v)(k).
+
+Reference: Loday, *Cyclic Homology*, Theorem 2.1.5 and
 equations 2.1.5.1–2.1.5.2.
 -/
 
@@ -73,8 +89,13 @@ private lemma weightedPowerSum_right {E : Type*} [Ring E] (T : E) (q : ℕ) :
 
 variable (k : Type u) (A : Type v) [CommRing k] [NonUnitalRing A] [Module k A]
 
-/-- The alternating row homotopy is the printed weighted map on even
-positions and reciprocal-order identity on odd positions. -/
+/-- Let k be a commutative ring, A a nonunital ring equipped
+with a k-module structure, q ≥ 0, and assume q+1 is invertible in k.
+With t_q the signed cyclic operator on A ⊗[k] A^⊗q and
+W_q = ∑_(i=0)^q i t_q^i, the row homotopy operator in position p is
+−(q+1)⁻¹ W_q when p is even and (q+1)⁻¹ id when p is odd.
+This operator uses the tensor structure and does not require a
+bilinearity assumption on the multiplication of A. -/
 def cyclicRowContractionOperator (q : ℕ) [Invertible ((q + 1 : ℕ) : k)] (p : ℕ) :
     chainLevel k A A q ⟶ chainLevel k A A q :=
   ModuleCat.ofHom
@@ -145,8 +166,11 @@ section Multiplication
 
 variable [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- Each horizontal row augments to its evaluated first-column
-cokernel. The degree-zero map is the original cokernel projection. -/
+/-- For a nonunital k-algebra A with k-bilinear multiplication
+and q ≥ 0, the qth horizontal cyclic row augments to the chain
+complex concentrated in position zero at Cλ_q(A) = coker(1−t_q).
+Its position-zero component is the quotient projection, and its
+positive-position components are zero. -/
 def cyclicRowAugmentation (q : ℕ) :
     (cyclicBicomplex k A).flip.X q ⟶
       (ChainComplex.single₀ (ModuleCat.{max u v} k)).obj ((connesComplex k A).X q) := by
@@ -159,14 +183,19 @@ def cyclicRowAugmentation (q : ℕ) :
   change (K.d 1 0).f q ≫ κ = 0 at h
   exact h
 
-/-- The augmented row retains the prescribed quotient at degree zero. -/
+/-- For a nonunital k-algebra A and vertical degree q ≥ 0, the
+position-zero component of the horizontal row augmentation is
+the projection A ⊗[k] A^⊗q → Cλ_q(A), the evaluated first-column
+cokernel projection of the cyclic bicomplex. -/
 theorem cyclicRowAugmentation_f_zero (q : ℕ) :
     (cyclicRowAugmentation k A q).f 0 =
       (cokernel.π ((cyclicBicomplex k A).d 1 0)).f q := by
   dsimp only [cyclicRowAugmentation]
   exact ChainComplex.toSingle₀Equiv_symm_apply_f_zero _ _
 
-/-- The augmentation has zero component in every positive row degree. -/
+/-- For a nonunital k-algebra A and q,p ≥ 0, the component of
+the qth row augmentation in horizontal position p+1 is zero.
+Its target is the single-position complex supported at zero. -/
 theorem cyclicRowAugmentation_f_succ (q p : ℕ) :
     (cyclicRowAugmentation k A q).f (p + 1) = 0 :=
   (HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0
@@ -366,16 +395,22 @@ private lemma cyclicRowAugmentation_homotopyEquivalent (q : ℕ)
       homotopyInvHomId := Homotopy.ofEq hβα }
   exact ⟨e, rfl⟩
 
-/-- A row with invertible order augments by a quasi-isomorphism to the
-Connes quotient. This local result does not require a Q-algebra. -/
+/-- For a nonunital k-algebra A with k-bilinear multiplication
+and q ≥ 0, if q+1 is invertible in k, the augmentation of the qth
+horizontal cyclic row to Cλ_q(A) concentrated in position zero
+is a quasi-isomorphism. Only this single integer q+1 is required
+to be invertible; k need not be a ℚ-algebra. -/
 theorem cyclicRowAugmentation_quasiIso (q : ℕ) [Invertible ((q + 1 : ℕ) : k)] :
     QuasiIso (cyclicRowAugmentation k A q) := by
   obtain ⟨e, he⟩ := cyclicRowAugmentation_homotopyEquivalent k A q
   rw [← he]
   infer_instance
 
-/-- The row augmentations form the bicomplex map to the
-componentwise single Connes complex. -/
+/-- For a nonunital k-algebra A with k-bilinear multiplication,
+the horizontal row augmentations form a map from the transposed cyclic
+bicomplex to the bicomplex whose row in outer degree q is concentrated
+at horizontal position zero with value Cλ_q(A).
+The outer differential is induced by the Connes quotient differential. -/
 def cyclicConnesAugmentation :
     (cyclicBicomplex k A).flip ⟶
       HomologicalComplex₂.singleMapBicomplexFunctorDownNat.obj (connesComplex k A) :=
@@ -393,12 +428,18 @@ def cyclicConnesAugmentation :
         (cokernel.π ((cyclicBicomplex k A).d 1 0)).f q
     exact (cokernel.π ((cyclicBicomplex k A).d 1 0)).comm (q + 1) q
 
-/-- Every augmentation component is the original row-to-cokernel map. -/
+/-- For a nonunital k-algebra A and q ≥ 0, the outer degree-q
+component of the bicomplex Connes augmentation is the horizontal
+row augmentation to Cλ_q(A) concentrated in position zero. -/
 theorem cyclicConnesAugmentation_f (q : ℕ) :
     (cyclicConnesAugmentation k A).f q = cyclicRowAugmentation k A q := rfl
 
-/-- Transposition and the native single-total comparison produce exactly
-the prescribed first-column cokernel projection. -/
+/-- For a nonunital k-algebra A with k-bilinear multiplication,
+the cyclic-to-Connes chain map equals the inverse total-transposition
+isomorphism followed by the total augmentation of the horizontal
+row map. The transposition carries sign (−1)^(pq).
+On an antidiagonal summand (p,q), the map is the quotient projection
+when p = 0 and zero when p > 0. -/
 theorem cyclicToConnes_eq_transposedAugmentation :
     cyclicToConnes k A =
       ((cyclicBicomplex k A).totalFlipIso (ComplexShape.down ℕ)).inv ≫
@@ -448,8 +489,11 @@ section Rational
 
 variable [Algebra ℚ k]
 
-/-- Theorem 2.1.5: over a commutative Q-algebra, the canonical
-cyclic-to-Connes map is a quasi-isomorphism for every nonunital algebra. -/
+/-- For a commutative ℚ-algebra k and a nonunital k-algebra A
+with k-bilinear multiplication, the chain map from the cyclic total
+to the Connes quotient complex is a quasi-isomorphism.
+It is the first-column quotient projection in column zero and
+vanishes on all positive columns. -/
 instance cyclicToConnesQuasiIso : QuasiIso (cyclicToConnes k A) := by
   let K := cyclicBicomplex k A
   let L := connesComplex k A
@@ -476,25 +520,38 @@ instance cyclicToConnesQuasiIso : QuasiIso (cyclicToConnes k A) := by
   rw [← cyclicToConnes_eq_transposedAugmentation k A] at hComp
   exact hComp
 
-/-- Every induced cyclic-to-Connes homology map is an isomorphism. -/
+/-- For a commutative ℚ-algebra k, a nonunital k-algebra A with
+k-bilinear multiplication and every n ≥ 0, the map
+HC_n(A) → H_n(Cλ(A)) induced by the first-column projection is an
+isomorphism of k-modules. -/
 instance cyclicToConnesHomologyIsIso (n : ℕ) :
     IsIso (cyclicToConnesHomology k A n) := by
   change IsIso (HomologicalComplex.homologyMap (cyclicToConnes k A) n)
   infer_instance
 
-/-- The rational comparison is the isomorphism of the prescribed native homology map. -/
+/-- For a commutative ℚ-algebra k and a nonunital k-algebra A
+with k-bilinear multiplication, the first-column projection induces
+the k-module isomorphism HC_n(A) ≅ H_n(Cλ(A)) for each n ≥ 0.
+Both homology objects lie in ModuleCat^max(u,v)(k), with independent
+carrier worlds u and v of k and A. -/
 def cyclicToConnesHomologyIso (n : ℕ) : cyclicHomology k A n ≅ connesHomology k A n :=
   asIso (cyclicToConnesHomology k A n)
 
-/-- The comparison isomorphism has the original first-column projection as its hom. -/
+/-- For a commutative ℚ-algebra k, a nonunital k-algebra A with
+k-bilinear multiplication and n ≥ 0, the forward morphism of
+HC_n(A) ≅ H_n(Cλ(A)) is precisely the homology map of the
+first-column cyclic-to-Connes projection. -/
 theorem cyclicToConnesHomologyIso_hom (n : ℕ) :
     (cyclicToConnesHomologyIso k A n).hom = cyclicToConnesHomology k A n := rfl
 
 variable {A} {B : Type v} [NonUnitalRing B] [Module k B]
   [IsScalarTower k B B] [SMulCommClass k B B]
 
-/-- The inverse rational comparison respects the nonunital algebra
-maps in their common native module category. -/
+/-- For nonunital k-algebras A and B in the same carrier world,
+a nonunital k-algebra map f : A → B, k a commutative ℚ-algebra and
+n ≥ 0, the inverse comparison maps χ_A⁻¹ and χ_B⁻¹ satisfy
+χ_B⁻¹ ∘ H_n(Cλ(f)) = HC_n(f) ∘ χ_A⁻¹.
+This is a square from H_n(Cλ(A)) to HC_n(B). -/
 theorem cyclicToConnesHomologyIso_inv_naturality (f : A →ₙₐ[k] B) (n : ℕ) :
     connesHomologyMap f n ≫ (cyclicToConnesHomologyIso k B n).inv =
       (cyclicToConnesHomologyIso k A n).inv ≫ cyclicHomologyMap f n := by

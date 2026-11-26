@@ -1,3 +1,5 @@
-# Cyclic Column Zero Iso
+# The zeroth cyclic column as the regular Hochschild complex
 
-The original zero cyclic column is the regular b-complex.
+The zeroth cyclic column as the regular Hochschild complex.
+
+For a nonunital ground algebra, cyclic column zero is isomorphic to the regular `b`-complex.

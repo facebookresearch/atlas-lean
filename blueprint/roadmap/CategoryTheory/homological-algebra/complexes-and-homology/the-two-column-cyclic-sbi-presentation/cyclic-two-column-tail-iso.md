@@ -1,3 +1,6 @@
-# Cyclic Two Column Tail Iso
+# The integer-graded period-two cyclic tail comparison
 
-The computed tail comparison in the integer degrees used by the native SBI engine.
+The integer-graded period-two cyclic tail comparison.
+
+After extension from `ℕ` to `ℤ`, the two-column tail is isomorphic to the full cyclic total
+extended by the degree-two embedding.

@@ -1,3 +1,5 @@
-# Cyclic Connes SBIPresentation Map ordinary Map
+# The ordinary component of a two-column presentation map
 
-The ordinary map retains both original raw columns.
+The ordinary component of a two-column presentation map.
+
+The ordinary chain map acts on the total of the retained two columns.

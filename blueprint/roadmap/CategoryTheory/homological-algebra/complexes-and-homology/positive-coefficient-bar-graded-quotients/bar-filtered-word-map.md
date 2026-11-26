@@ -1,3 +1,7 @@
-# Bar Filtered Word Map
+# Increasing the positive count index gives a filtered chain inclusion
 
-The original increasing stage inclusions commute with the native restricted differential.
+Let k be commutative, A a nonunital k-algebra ring with k-bilinear multiplication, I two-sided
+and V an arbitrary k-module. Let K_+ be the relative positive bar quotient kernel. For
+filtration index p, put G_p,0 = ⊥ and G_p,n+1 = barWordFiltration p n, and put H_p,N = ⊥ at p
+= 0 and G_(p−1),N otherwise. For p ≤ q, barFilteredWordMap maps barFilteredWordComplex p to
+barFilteredWordComplex q by the component inclusions G_p,N ≤ G_q,N.

@@ -13,42 +13,22 @@ public import MathlibExt.CategoryTheory.Comonad.Cobar
 public import MathlibExt.AlgebraicTopology.SimplicialObject.ToSimplicial
 
 /-!
-# Two-sided comonadic cobar construction — cosimplicial identities and bundling
+# The cosimplicial identities of two-sided comonadic cobar
 
-Mathematical source: J. P. May, *The Geometry of Iterated Loop Spaces*,
-Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
+Let `G` be a comonad on `C`, let `R : C ⥤ D` have right coaction `R → G ⋙ R`, and let `L : A ⥤
+C` have left coaction `L → L ⋙ G`. The cobar degree functor is `R(G^n(L(-)))`. Its cofaces use
+the two endpoint coactions and interior comultiplication, and its codegeneracies use counit
+insertion, counting from the right-comodule end.
+
+Coassociativity, the counit laws, and naturality give the coface, codegeneracy, and mixed
+cosimplicial identities in every degree. The resulting cosimplicial object takes values in `A
+⥤ D`. Coface zero is the right coaction, coface `n+1` is the left coaction, and interior
+insertion positions are reversed by `Fin.rev`. All category and morphism universes remain
+independent.
+
+Reference: the categorical dual of J. P. May's two-sided bar construction in *The Geometry of
+Iterated Loop Spaces*, Lecture Notes in Mathematics 271, Springer, 1972, Chapter 9,
 Construction 9.6 and Remark 9.12, <https://doi.org/10.1007/BFb0067491>.
-
-This file bundles the formal dual in `Comonad.Cobar` into a genuine
-`CosimplicialObject`: cofaces from endpoint coactions and interior
-comultiplication, codegeneracies from counit, all counted from the
-right-comodule end (`δ⁰` is the right coaction), dual to the bar convention
-(`d₀` is the right action).
-
-For a comonad `G` on `C` with a right
-comodule `R : C ⥤ D` and a left comodule `L : A ⥤ C`, cofaces come from the
-endpoint coactions and interior comultiplication insertions, and codegeneracies
-come from counit insertions, all counted from the right-comodule end dual to
-the bar convention (`δ⁰` is the right coaction).
-
-Contents: reusable comultiplication/counit position calculus (`deltaAtPos`,
-`epsilonAtPos`), iterated right-coaction laws, left-coaction laws, the six
-cosimplicial relations (coface-coface, codegeneracy-codegeneracy, and the four
-mixed families) in objectwise and bundled form, an explicit endpoint-index
-theorem showing that `δ⁰` is the right coaction, `δ^{n+1}` the left coaction,
-and interior `δ^{k+1}` inserts `δ` at raw position `k.rev` (so `δ¹` uses the
-raw-last position and `δ^n` the raw-zero position), and finally the packaging
-as `SimplicialObject.Data ((A ⥤ D)ᵒᵖ)` transported through the
-generator/relation infrastructure to a genuine `CosimplicialObject (A ⥤ D)`.
-
-Proofs mirror `Monad.BarSimplicial` case-for-case with composition order
-dualized; the `Fin.rev` translations reuse Mathlib's `Fin.rev_castSucc`,
-`Fin.rev_succ`, and `Fin.rev_le_rev`. Opposite-category duality is used only
-for the final transport (`Data` in `(A ⥤ D)ᵒᵖ` via `Functor.rightOp` and
-`unopUnop`), never to state operator formulas, so every computation lemma
-is a true definitional unfolding rather than an isomorphism in disguise.
-
-
 -/
 
 @[expose] public section
@@ -66,7 +46,10 @@ section CobarFaceHelpers
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Coface with public index `0` is the iterated right coaction. -/
+/-- The cobar coface component at a zero-valued index.
+
+If the coface index has value zero, its component is the iterated right-comodule coaction at
+`L(a)`. -/
 lemma cobarCofaceApp_of_val_zero {n : ℕ} {a : A} {i : Fin (n + 2)}
     (hi : i.val = 0) :
     cobarCofaceApp (G := G) (R := R) (L := L) n i a =
@@ -74,7 +57,10 @@ lemma cobarCofaceApp_of_val_zero {n : ℕ} {a : A} {i : Fin (n + 2)}
   unfold cobarCofaceApp
   rw [dite_eq_left hi]
 
-/-- Coface with public last index is the left coaction. -/
+/-- The cobar coface component at the final index.
+
+If the coface index has value `n+1`, its component is the left coaction mapped through `G^n`
+and `R`. -/
 lemma cobarCofaceApp_of_val_last {n : ℕ} {a : A} {i : Fin (n + 2)}
     (hi : i.val = n + 1) :
     cobarCofaceApp (G := G) (R := R) (L := L) n i a =
@@ -83,7 +69,10 @@ lemma cobarCofaceApp_of_val_last {n : ℕ} {a : A} {i : Fin (n + 2)}
   unfold cobarCofaceApp
   rw [dite_eq_right h0, dite_eq_left hi]
 
-/-- Interior coface at public index `k + 1` inserts comultiplication. -/
+/-- The cobar coface component at an interior index.
+
+For an index of value `k+1` with `k : Fin n`, its component is `R` applied to comultiplication
+insertion at reversed position `k.rev`. -/
 lemma cobarCofaceApp_of_middle {n : ℕ} {a : A} {i : Fin (n + 2)} {k : Fin n}
     (hk : i.val = k.val + 1) :
     cobarCofaceApp (G := G) (R := R) (L := L) n i a =
@@ -100,12 +89,16 @@ section DeltaCalculus
 
 variable (G : Comonad C)
 
-/-- Raw position zero applies `G.δ` under `G^n`. -/
+/-- The innermost comultiplication insertion formula.
+
+Insertion at position zero in `G^(n+1)(X)` is `G^n.map(δ_X)`. -/
 lemma deltaAtPos_zero_eq (n : ℕ) (X : C) :
     deltaAtPos G (n + 1) ⟨0, by omega⟩ X =
       (comonadPow G n).map (G.δ.app X) := rfl
 
-/-- Later raw positions recurse under `G`. -/
+/-- The successor-position comultiplication insertion formula.
+
+Insertion at position `k+1` is insertion at position `k` one power lower, evaluated at `G(X)`. -/
 lemma deltaAtPos_succ_eq (n : ℕ) (k : Fin n) (X : C) :
     deltaAtPos G (n + 1) ⟨k.val + 1, by omega⟩ X =
       deltaAtPos G n k (G.toFunctor.obj X) := by
@@ -116,9 +109,10 @@ lemma deltaAtPos_succ_eq (n : ℕ) (k : Fin n) (X : C) :
       = deltaAtPos G n ⟨k.val, by omega⟩ (G.toFunctor.obj X) := rfl
     _ = deltaAtPos G n k (G.toFunctor.obj X) := by rw [this]
 
-/-- Adjacent comultiplication insertions coassociate: two successive insertions
-at `k` and `k + 1` agree with the pair at `k` and `k`. Dual of
-`Monad.muAtPos_adjacent` with composition order dualized. -/
+/-- The coassociativity identity of adjacent comultiplication insertions.
+
+After inserting at `k`, inserting at the two positions of the resulting split factor gives the
+same composite. -/
 theorem deltaAtPos_adjacent (n : ℕ) (k : Fin n) (X : C) :
     deltaAtPos G n k X ≫ deltaAtPos G (n + 1) ⟨k.val + 1, by omega⟩ X =
       deltaAtPos G n k X ≫ deltaAtPos G (n + 1) ⟨k.val, by omega⟩ X := by
@@ -171,8 +165,10 @@ theorem deltaAtPos_adjacent (n : ℕ) (k : Fin n) (X : C) :
               deltaAtPos G (n + 1 + 1) ⟨k + 1, by omega⟩ X := by
           rw [← hB, ← hC]
 
-/-- Separated comultiplication insertions commute past each other up to the
-standard index shift. Dual of `Monad.muAtPos_separated`. -/
+/-- The interchange identity of separated comultiplication insertions.
+
+If `i+1<j`, insertion at `i` followed by insertion at `j` equals insertion at `j-1` followed
+by insertion at `i`, with the indicated power degrees. -/
 theorem deltaAtPos_separated (n : ℕ) (i : Fin n) (j : Fin (n + 1))
     (h : i.val + 1 < j.val) (X : C) :
     deltaAtPos G n i X ≫ deltaAtPos G (n + 1) j X =
@@ -281,9 +277,9 @@ theorem deltaAtPos_separated (n : ℕ) (i : Fin n) (j : Fin (n + 1))
       rw [h_eq2] at ih_eq
       exact ih_eq
 
-/-- Unified coface law for `deltaAtPos`: for `i ≤ j`, the two orders of
-successive insertions agree up to the `succ`/`castSucc` shift. Dual of
-`Monad.muAtPos_face_face`. -/
+/-- The ordered comultiplication insertion identity.
+
+For `i ≤ j`, `δ_n[i] ≫ δ_(n+1)[j+1] = δ_n[j] ≫ δ_(n+1)[i]` in left-end insertion coordinates. -/
 theorem deltaAtPos_face_face (n : ℕ) (i j : Fin n) (h : i ≤ j) (X : C) :
     deltaAtPos G n i X ≫ deltaAtPos G (n + 1) j.succ X =
       deltaAtPos G n j X ≫ deltaAtPos G (n + 1) i.castSucc X := by
@@ -337,19 +333,25 @@ section EpsilonCalculus
 
 variable (G : Comonad C)
 
-/-- Raw position zero maps `G.ε` under `G^{n+1}`. -/
+/-- The innermost counit insertion formula.
+
+Counit insertion at position zero from `G^(n+2)(X)` is `G^(n+1).map(ε_X)`. -/
 lemma epsilonAtPos_zero_eq (n : ℕ) (X : C) :
     epsilonAtPos G (n + 1) ⟨0, by omega⟩ X =
       (comonadPow G (n + 1)).map (G.ε.app X) := rfl
 
-/-- Later raw positions recurse under `G`. -/
+/-- The successor-position counit insertion formula.
+
+Counit insertion at position `k+1` is the preceding-degree insertion at `k`, evaluated at
+`G(X)`. -/
 lemma epsilonAtPos_succ_eq (n : ℕ) (k : Fin (n + 1)) (X : C) :
     epsilonAtPos G (n + 1) ⟨k.val + 1, by omega⟩ X =
       epsilonAtPos G n k (G.toFunctor.obj X) := rfl
 
-/-- Codegeneracy-codegeneracy law for `epsilonAtPos`: for `i ≤ j`, the two
-orders of successive counit insertions agree. Dual of
-`Monad.etaAtPos_deg_deg`. -/
+/-- The ordered counit insertion identity.
+
+For `i ≤ j`, contracting at `i` and then `j` equals contracting at `j+1` and then `i`, with
+the stated power degrees. -/
 theorem epsilonAtPos_deg_deg (n : ℕ) (i j : Fin (n + 1)) (h : i ≤ j) (X : C) :
     epsilonAtPos G (n + 1) i.castSucc X ≫ epsilonAtPos G n j X =
       epsilonAtPos G (n + 1) j.succ X ≫ epsilonAtPos G n i X := by
@@ -525,8 +527,10 @@ section DeltaEpsilon
 
 variable (G : Comonad C)
 
-/-- Counit cancels comultiplication at the `castSucc` position. Dual of
-`Monad.muAtPos_etaAtPos_castSucc`. -/
+/-- The first counit identity after a comultiplication insertion.
+
+Comultiplication at position `i` followed by counit contraction at `i.castSucc` is the
+identity. -/
 theorem deltaAtPos_epsilonAtPos_castSucc (n : ℕ) (i : Fin n) (X : C) :
     deltaAtPos G n i X ≫ epsilonAtPos G n i.castSucc X = 𝟙 _ := by
   induction n generalizing X with
@@ -601,8 +605,9 @@ theorem deltaAtPos_epsilonAtPos_castSucc (n : ℕ) (i : Fin n) (X : C) :
           rw [hε_cast, hδ_succ]
         _ = 𝟙 _ := ih i0 (G.toFunctor.obj X)
 
-/-- Counit cancels comultiplication at the `succ` position. Dual of
-`Monad.muAtPos_etaAtPos_succ`. -/
+/-- The second counit identity after a comultiplication insertion.
+
+Comultiplication at position `i` followed by counit contraction at `i.succ` is the identity. -/
 theorem deltaAtPos_epsilonAtPos_succ (n : ℕ) (i : Fin n) (X : C) :
     deltaAtPos G n i X ≫ epsilonAtPos G n i.succ X = 𝟙 _ := by
   induction n generalizing X with
@@ -696,8 +701,10 @@ section CoactionCalculus
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Iterated right coaction absorbs comultiplication at the raw-last position.
-Dual of `Monad.rightActionPow_assoc_last`. -/
+/-- The right-coaction coassociativity identity at the outer insertion.
+
+The iterated right coaction followed by comultiplication at the outermost left-end position
+equals two successive iterated right coactions. -/
 theorem rightCoactionPow_coassoc_last (n : ℕ) (X : C) :
     rightCoactionPow G R n X ≫
       R.functor.map (deltaAtPos G (n + 1) ⟨n, by omega⟩ X) =
@@ -719,8 +726,10 @@ theorem rightCoactionPow_coassoc_last (n : ℕ) (X : C) :
     rw [hδ, hρ, hρn]
     exact ih (G.toFunctor.obj X)
 
-/-- Iterated right coaction is cancelled by counit at the raw-last position.
-Dual of the counit half of the bar action calculus. -/
+/-- The right-coaction counit identity at the outer contraction.
+
+The iterated right coaction followed by counit contraction at the outermost left-end position
+is the identity. -/
 theorem rightCoactionPow_counit_last (n : ℕ) (X : C) :
     rightCoactionPow G R n X ≫
       R.functor.map (epsilonAtPos G n ⟨n, by omega⟩ X) = 𝟙 _ := by
@@ -738,8 +747,10 @@ theorem rightCoactionPow_counit_last (n : ℕ) (X : C) :
     rw [hε, hρ]
     exact ih (G.toFunctor.obj X)
 
-/-- Iterated right coaction commutes with interior comultiplication up to the
-`castSucc` shift. Dual of `Monad.rightActionPow_mu_castSucc`. -/
+/-- Interchange of right coaction and an interior comultiplication.
+
+The right coaction followed by comultiplication at a surviving insertion position equals that
+comultiplication followed by the next iterated right coaction. -/
 theorem rightCoactionPow_delta_castSucc (n : ℕ) (k : Fin n) (X : C) :
     rightCoactionPow G R n X ≫
       R.functor.map (deltaAtPos G (n + 1) k.castSucc X) =
@@ -805,8 +816,10 @@ theorem rightCoactionPow_delta_castSucc (n : ℕ) (k : Fin n) (X : C) :
       rw [hδ_cast, hδ_k, hρn, hρS]
       exact ih k0 (G.toFunctor.obj X)
 
-/-- Left coaction absorbs comultiplication at raw position zero. Follows from
-`LeftComodule.coassoc_app` lifted through the power and `R`. -/
+/-- The left-coaction coassociativity identity at the innermost insertion.
+
+The mapped left coaction followed by innermost comultiplication equals the two successive left
+coactions mapped through `G^n` and `R`. -/
 theorem leftCoaction_delta_zero (n : ℕ) (a : A) :
     R.functor.map ((comonadPow G n).map (L.coaction.app a)) ≫
       R.functor.map (deltaAtPos G (n + 1) ⟨0, by omega⟩
@@ -820,8 +833,10 @@ theorem leftCoaction_delta_zero (n : ℕ) (a : A) :
   rw [hδ, ← R.functor.map_comp, ← R.functor.map_comp,
     ← (comonadPow G n).map_comp, ← (comonadPow G n).map_comp, hL]
 
-/-- Left coaction is cancelled by counit at raw position zero. Follows from
-`LeftComodule.counit_app` lifted through the power and `R`. -/
+/-- The left-coaction counit identity at the innermost contraction.
+
+The mapped left coaction followed by innermost counit contraction is the identity on the cobar
+degree. -/
 theorem leftCoaction_epsilon_zero (n : ℕ) (a : A) :
     R.functor.map ((comonadPow G n).map (L.coaction.app a)) ≫
       R.functor.map (epsilonAtPos G n ⟨0, by omega⟩
@@ -835,8 +850,10 @@ theorem leftCoaction_epsilon_zero (n : ℕ) (a : A) :
   rw [hε, ← R.functor.map_comp, ← (comonadPow G n).map_comp, hL,
     (comonadPow G n).map_id, R.functor.map_id]
 
-/-- Left coaction commutes with interior comultiplication. Instance of
-`deltaAtPos_naturality`. -/
+/-- Naturality of comultiplication insertion along a left coaction.
+
+Applying a power of the left coaction commutes with the insertion maps at `L(a)` and
+`G(L(a))`. -/
 theorem leftCoaction_delta_naturality (n : ℕ) (k : Fin n) (a : A) :
     (comonadPow G n).map (L.coaction.app a) ≫
       deltaAtPos G n k (G.toFunctor.obj (L.functor.obj a)) =
@@ -844,8 +861,10 @@ theorem leftCoaction_delta_naturality (n : ℕ) (k : Fin n) (a : A) :
       (comonadPow G (n + 1)).map (L.coaction.app a) :=
   deltaAtPos_naturality G n k (L.coaction.app a)
 
-/-- Left coaction commutes with interior counit. Instance of
-`epsilonAtPos_naturality`. -/
+/-- Naturality of counit insertion along a left coaction.
+
+Applying a power of the left coaction commutes with the counit contraction maps at `L(a)` and
+`G(L(a))`. -/
 theorem leftCoaction_epsilon_naturality (n : ℕ) (i : Fin (n + 1)) (a : A) :
     (comonadPow G (n + 1)).map (L.coaction.app a) ≫
       epsilonAtPos G n i (G.toFunctor.obj (L.functor.obj a)) =
@@ -859,9 +878,10 @@ section CofaceCoface
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Objectwise coface-coface identity. Dual of `Monad.barFaceApp_face_face`
-with composition order dualized: interior insertions are read through `Fin.rev`
-so the raw `deltaAtPos_face_face` applies with the reversed inequality. -/
+/-- The componentwise cobar coface identity.
+
+For `i ≤ j`, the component composites satisfy `δ_n^i ≫ δ_(n+1)^(j+1) = δ_n^j ≫ δ_(n+1)^i` at
+every object `a`. -/
 theorem cobarCofaceApp_coface_coface (n : ℕ) (i j : Fin (n + 2)) (hij : i ≤ j)
     (a : A) :
     cobarCofaceApp (G := G) (R := R) (L := L) n i a ≫
@@ -1176,7 +1196,9 @@ theorem cobarCofaceApp_coface_coface (n : ℕ) (i j : Fin (n + 2)) (hij : i ≤ 
                     (L.functor.obj a)) := by
               rw [R.functor.map_comp]
 
-/-- Bundled coface-coface identity. -/
+/-- The natural-transformation cobar coface identity.
+
+For `i ≤ j`, the cofaces satisfy `δ_n^i ≫ δ_(n+1)^(j+1) = δ_n^j ≫ δ_(n+1)^i`. -/
 theorem cobarCoface_coface_coface (n : ℕ) (i j : Fin (n + 2)) (hij : i ≤ j) :
     cobarCoface (G := G) (R := R) (L := L) n i ≫
       cobarCoface (G := G) (R := R) (L := L) (n + 1) j.succ =
@@ -1191,9 +1213,10 @@ section CodegCodeg
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Objectwise codegeneracy-codegeneracy identity. Dual of
-`Monad.barDegeneracyApp_sigma_sigma`: the raw `epsilonAtPos_deg_deg` applies
-with the reversed inequality since `Fin.rev` swaps `succ` and `castSucc`. -/
+/-- The componentwise cobar codegeneracy identity.
+
+For `i ≤ j`, the component composites satisfy `σ_(n+1)^i ≫ σ_n^j = σ_(n+1)^(j+1) ≫ σ_n^i` at
+every object. -/
 theorem cobarCodegeneracyApp_deg_deg (n : ℕ) (i j : Fin (n + 1)) (hij : i ≤ j)
     (a : A) :
     (cobarCodegeneracy (G := G) (R := R) (L := L) (n + 1) i.castSucc).app a ≫
@@ -1211,7 +1234,9 @@ theorem cobarCodegeneracyApp_deg_deg (n : ℕ) (i j : Fin (n + 1)) (hij : i ≤ 
   simp only [cobarCodegeneracy_app, cobarEpsilonAtPos_rev]
   rw [h1, h2, ← R.functor.map_comp, ← R.functor.map_comp, hraw.symm]
 
-/-- Bundled codegeneracy-codegeneracy identity. -/
+/-- The natural-transformation cobar codegeneracy identity.
+
+For `i ≤ j`, the codegeneracies satisfy `σ_(n+1)^i ≫ σ_n^j = σ_(n+1)^(j+1) ≫ σ_n^i`. -/
 theorem cobarCodegeneracy_deg_deg (n : ℕ) (i j : Fin (n + 1)) (hij : i ≤ j) :
     cobarCodegeneracy (G := G) (R := R) (L := L) (n + 1) i.castSucc ≫
       cobarCodegeneracy (G := G) (R := R) (L := L) n j =
@@ -1226,7 +1251,10 @@ section RightCoactionEpsilon
 
 variable {G : Comonad C} {R : RightComodule G D}
 
-/-- Right-endpoint counit interchange (dual of `rightActionPow_eta_castSucc`). -/
+/-- Interchange of right coaction and an interior counit contraction.
+
+The next-degree right coaction followed by a surviving counit contraction equals that
+contraction one degree lower followed by the preceding right coaction. -/
 theorem rightCoactionPow_epsilon_castSucc (n : ℕ) (i : Fin (n + 1)) (X : C) :
     rightCoactionPow G R (n + 1) X ≫
       R.functor.map (epsilonAtPos G (n + 1) i.castSucc X) =
@@ -1326,7 +1354,10 @@ section DeltaEpsilonDistant
 
 variable (G : Comonad C)
 
-/-- Distant `δ`/`ε` interchange for `of_le` (dual of `etaAtPos` version). -/
+/-- The mixed insertion identity with counit before comultiplication.
+
+For left-end positions `j ≤ i`, comultiplication at `i.succ` followed by counit at
+`j.castSucc` equals counit at `j` followed by comultiplication at `i`. -/
 theorem deltaAtPos_epsilonAtPos_succ_castSucc_of_le (n : ℕ) (i : Fin n)
     (j : Fin (n + 1)) (h : j.val ≤ i.val) (X : C) :
     deltaAtPos G (n + 1) i.succ X ≫ epsilonAtPos G (n + 1) j.castSucc X =
@@ -1418,7 +1449,10 @@ theorem deltaAtPos_epsilonAtPos_succ_castSucc_of_le (n : ℕ) (i : Fin n)
               deltaAtPos G (n + 1) i X := by
                 rw [h_ε, h_δ]
 
-/-- Distant `δ`/`ε` interchange for `of_gt` (dual of `etaAtPos` version). -/
+/-- The mixed insertion identity with counit after comultiplication.
+
+For left-end positions `i<j`, comultiplication at `i.castSucc` followed by counit at `j.succ`
+equals counit at `j` followed by comultiplication at `i`. -/
 theorem deltaAtPos_epsilonAtPos_castSucc_succ_of_lt (n : ℕ) (i : Fin n)
     (j : Fin (n + 1)) (h : i.val < j.val) (X : C) :
     deltaAtPos G (n + 1) i.castSucc X ≫ epsilonAtPos G (n + 1) j.succ X =
@@ -1514,7 +1548,10 @@ section CofaceCodegSelf
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Adjacent cancellation at `castSucc` (dual of `barDegeneracyApp_self`). -/
+/-- The componentwise matching coface–codegeneracy identity.
+
+For `i : Fin (n+1)`, coface `i` followed by codegeneracy `i` is the identity at every carrier
+object. -/
 theorem cobarCofaceApp_codegeneracy_self (n : ℕ) (i : Fin (n + 1)) (a : A) :
     cobarCofaceApp (G := G) (R := R) (L := L) n i.castSucc a ≫
       (cobarCodegeneracy (G := G) (R := R) (L := L) n i).app a = 𝟙 _ := by
@@ -1559,7 +1596,9 @@ theorem cobarCofaceApp_codegeneracy_self (n : ℕ) (i : Fin (n + 1)) (a : A) :
       _ = 𝟙 _ := by
           rw [R.functor.map_id]
 
-/-- Bundled adjacent cancellation at `castSucc`. -/
+/-- The matching coface–codegeneracy identity of cobar functors.
+
+The composite `δ_n^i ≫ σ_n^i` is the identity on degree `n`. -/
 theorem cobarCoface_codegeneracy_self (n : ℕ) (i : Fin (n + 1)) :
     cobarCoface (G := G) (R := R) (L := L) n i.castSucc ≫
       cobarCodegeneracy (G := G) (R := R) (L := L) n i =
@@ -1572,7 +1611,10 @@ section CofaceCodegSucc
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Adjacent cancellation at `succ` (dual of `barDegeneracyApp_succ`). -/
+/-- The componentwise successor coface–codegeneracy identity.
+
+For `i : Fin (n+1)`, coface `i+1` followed by codegeneracy `i` is the identity at every
+carrier object. -/
 theorem cobarCofaceApp_codegeneracy_succ (n : ℕ) (i : Fin (n + 1)) (a : A) :
     cobarCofaceApp (G := G) (R := R) (L := L) n i.succ a ≫
       (cobarCodegeneracy (G := G) (R := R) (L := L) n i).app a = 𝟙 _ := by
@@ -1616,7 +1658,9 @@ theorem cobarCofaceApp_codegeneracy_succ (n : ℕ) (i : Fin (n + 1)) (a : A) :
       _ = 𝟙 _ := by
           rw [R.functor.map_id]
 
-/-- Bundled adjacent cancellation at `succ`. -/
+/-- The successor coface–codegeneracy identity of cobar functors.
+
+The composite `δ_n^(i+1) ≫ σ_n^i` is the identity on degree `n`. -/
 theorem cobarCoface_codegeneracy_succ (n : ℕ) (i : Fin (n + 1)) :
     cobarCoface (G := G) (R := R) (L := L) n i.succ ≫
       cobarCodegeneracy (G := G) (R := R) (L := L) n i =
@@ -1629,7 +1673,9 @@ section CofaceCodegOfLe
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Distant interchange for `i ≤ j.castSucc` (dual of `of_le`). -/
+/-- The componentwise mixed cobar identity for a preceding coface.
+
+For `i ≤ j`, the components satisfy `δ_(n+1)^i ≫ σ_(n+1)^(j+1) = σ_n^j ≫ δ_n^i`. -/
 theorem cobarCofaceApp_codegeneracy_of_le {n : ℕ} {i : Fin (n + 2)}
     {j : Fin (n + 1)} (h : i ≤ j.castSucc) (a : A) :
     cobarCofaceApp (G := G) (R := R) (L := L) (n + 1) i.castSucc a ≫
@@ -1743,7 +1789,9 @@ theorem cobarCofaceApp_codegeneracy_of_le {n : ℕ} {i : Fin (n + 2)}
           rw [h_face_n]
           rfl
 
-/-- Bundled distant interchange for `i ≤ j.castSucc`. -/
+/-- The mixed cobar identity for a preceding coface.
+
+For `i ≤ j`, the natural transformations satisfy `δ_(n+1)^i ≫ σ_(n+1)^(j+1) = σ_n^j ≫ δ_n^i`. -/
 theorem cobarCoface_codegeneracy_of_le {n : ℕ} {i : Fin (n + 2)}
     {j : Fin (n + 1)} (h : i ≤ j.castSucc) :
     cobarCoface (G := G) (R := R) (L := L) (n + 1) i.castSucc ≫
@@ -1758,7 +1806,9 @@ section CofaceCodegOfGt
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Distant interchange for `j.castSucc < i` (dual of `of_gt`). -/
+/-- The componentwise mixed cobar identity for a following coface.
+
+For `j<i`, the components satisfy `δ_(n+1)^(i+1) ≫ σ_(n+1)^j = σ_n^j ≫ δ_n^i`. -/
 theorem cobarCofaceApp_codegeneracy_of_gt {n : ℕ} {i : Fin (n + 2)}
     {j : Fin (n + 1)} (h : j.castSucc < i) (a : A) :
     cobarCofaceApp (G := G) (R := R) (L := L) (n + 1) i.succ a ≫
@@ -1883,7 +1933,9 @@ theorem cobarCofaceApp_codegeneracy_of_gt {n : ℕ} {i : Fin (n + 2)}
           rw [h_face_n]
           rfl
 
-/-- Bundled distant interchange for `j.castSucc < i`. -/
+/-- The mixed cobar identity for a following coface.
+
+For `j<i`, the natural transformations satisfy `δ_(n+1)^(i+1) ≫ σ_(n+1)^j = σ_n^j ≫ δ_n^i`. -/
 theorem cobarCoface_codegeneracy_of_gt {n : ℕ} {i : Fin (n + 2)}
     {j : Fin (n + 1)} (h : j.castSucc < i) :
     cobarCoface (G := G) (R := R) (L := L) (n + 1) i.succ ≫
@@ -1898,7 +1950,10 @@ section EndpointTrichotomy
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Endpoint trichotomy for public coface indices. -/
+/-- The endpoint and interior cases of a cobar coface index.
+
+Every `i : Fin (n+2)` has value zero, value `n+1`, or value `k+1` for an interior index `k :
+Fin n`. -/
 theorem cobarCofaceIndex_trichotomy (n : ℕ) (i : Fin (n + 2)) :
     i.val = 0 ∨ i.val = n + 1 ∨ ∃ k : Fin n, i.val = k.val + 1 := by
   by_cases h0 : i.val = 0; · exact Or.inl h0
@@ -1908,13 +1963,19 @@ theorem cobarCofaceIndex_trichotomy (n : ℕ) (i : Fin (n + 2)) :
       have hval : (⟨i.val - 1, hk⟩ : Fin n).val = i.val - 1 := rfl
       omega
 
-/-- `rev` sends public `0` to raw `n` (`δ¹` uses raw-last). -/
+/-- The reversed insertion position of the first interior cobar coface.
+
+The right-end insertion at zero is the left-end comultiplication insertion at the final
+position. -/
 @[simp] theorem cobarDeltaAtPos_rev_zero (n : ℕ) (X : C) :
     cobarDeltaAtPos G (n + 1) ⟨0, by omega⟩ X =
       deltaAtPos G (n + 1) ⟨n, by omega⟩ X := by
   simp only [cobarDeltaAtPos]; congr 1
 
-/-- `rev` sends public `n` to raw `0` (`δ^n` uses raw-zero). -/
+/-- The reversed insertion position of the last interior cobar coface.
+
+The right-end insertion at the final position is the left-end comultiplication insertion at
+zero. -/
 @[simp] theorem cobarDeltaAtPos_rev_last (n : ℕ) (X : C) :
     cobarDeltaAtPos G (n + 1) ⟨n, by omega⟩ X =
       deltaAtPos G (n + 1) ⟨0, by omega⟩ X := by
@@ -1926,7 +1987,10 @@ section CobarData
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Cosimplicial data in `(A ⥤ D)ᵒᵖ`; duality confined to this packaging. -/
+/-- The opposite simplicial data of a two-sided cobar construction.
+
+Take the opposite degree functors `R(G^n(L(-)))`, with the opposites of their cofaces and
+codegeneracies as simplicial operators. -/
 noncomputable def cobarDataOp (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) : SimplicialObject.Data ((A ⥤ D)ᵒᵖ) where
   obj n := Opposite.op (cobarObj G R L n)
@@ -1957,45 +2021,60 @@ noncomputable def cobarDataOp (G : Comonad C) (R : RightComodule G D)
     simp only [unop_comp, Quiver.Hom.unop_op]
     exact cobarCodegeneracy_deg_deg (G := G) (R := R) (L := L) n i j h
 
-/-- Objects of the opposite data are `op` of the cobar functors. -/
+/-- The degree-object family of opposite cobar data.
+
+The object family sends `n` to the opposite of the degree-`n` cobar functor. -/
 @[simp] theorem cobarDataOp_obj (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) :
     (cobarDataOp G R L).obj = fun n => Opposite.op (cobarObj G R L n) :=
   rfl
 
-/-- Objects of the opposite data at a degree. -/
+/-- The object in one degree of opposite cobar data.
+
+In degree `n`, the object is `op(cobarObj G R L n)`. -/
 @[simp] theorem cobarDataOp_obj_n (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) (n : ℕ) :
     (cobarDataOp G R L).obj n = Opposite.op (cobarObj G R L n) :=
   rfl
 
-/-- Faces of the opposite data are `op` of the public cofaces. -/
+/-- The face maps of opposite cobar data.
+
+The simplicial face at `i` is the opposite of cobar coface `i`. -/
 @[simp] theorem cobarDataOp_δ (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 2)) :
     (cobarDataOp G R L).δ i =
       (cobarCoface (G := G) (R := R) (L := L) n i).op :=
   rfl
 
-/-- Degeneracies of the opposite data are `op` of the codegeneracies. -/
+/-- The degeneracy maps of opposite cobar data.
+
+The simplicial degeneracy at `i` is the opposite of cobar codegeneracy `i`. -/
 @[simp] theorem cobarDataOp_σ (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 1)) :
     (cobarDataOp G R L).σ i =
       (cobarCodegeneracy (G := G) (R := R) (L := L) n i).op :=
   rfl
 
-/-- Generator/relation functor in the opposite category. -/
+/-- The opposite cobar functor on the generated simplex category.
+
+The cosimplicial identities extend the opposite cobar data to a functor from the opposite
+generator-and-relation simplex category. -/
 noncomputable def cobarGenRelOp (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) : SimplexCategoryGenRelᵒᵖ ⥤ (A ⥤ D)ᵒᵖ :=
   (cobarDataOp G R L).toGenRelFunctor
 
-/-- Generator objects are `op` of the cobar functors. -/
+/-- The finite-ordinal value of the generated opposite cobar functor.
+
+At the opposite ordinal of degree `n`, the value is the opposite degree-`n` cobar functor. -/
 @[simp] theorem cobarGenRelOp_obj_op_mk (G : Comonad C)
     (R : RightComodule G D) (L : LeftComodule A G) (n : ℕ) :
     (cobarGenRelOp G R L).obj (Opposite.op (SimplexCategoryGenRel.mk n)) =
       Opposite.op (cobarObj G R L n) :=
   rfl
 
-/-- Generator cofaces are `op` of the public cofaces. -/
+/-- The generated opposite cobar map of a coface generator.
+
+The opposite coface generator maps to the opposite of the corresponding cobar coface. -/
 theorem cobarGenRelOp_map_δ_op (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 2)) :
     (cobarGenRelOp G R L).map (SimplexCategoryGenRel.δ (n := n) i).op =
@@ -2003,7 +2082,10 @@ theorem cobarGenRelOp_map_δ_op (G : Comonad C) (R : RightComodule G D)
   SimplicialObject.Data.toGenRelFunctor_map_δ_op
     (cobarDataOp G R L) (n := n) i
 
-/-- Generator codegeneracies are `op` of the public codegeneracies. -/
+/-- The generated opposite cobar map of a codegeneracy generator.
+
+The opposite codegeneracy generator maps to the opposite of the corresponding cobar
+codegeneracy. -/
 theorem cobarGenRelOp_map_σ_op (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 1)) :
     (cobarGenRelOp G R L).map (SimplexCategoryGenRel.σ (n := n) i).op =
@@ -2017,13 +2099,17 @@ section TwoSidedCobar
 
 variable {G : Comonad C} {R : RightComodule G D} {L : LeftComodule A G}
 
-/-- Genuine Cat-valued two-sided cobar via opposite-data transport. -/
+/-- The two-sided comonadic cobar cosimplicial object.
+
+For a comonad `G` with right comodule `R : C ⥤ D` and left comodule `L : A ⥤ C`, this is the
+cosimplicial functor-valued object with degree `n` equal to `R(G^n(L(-)))`. -/
 noncomputable def twoSidedCobar (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) : CosimplicialObject (A ⥤ D) :=
   (cobarDataOp G R L).toSimplicialObject.rightOp ⋙ unopUnop (A ⥤ D)
 
-/-- Objects on simplex objects are the cobar functors, via the explicit
-`rightOp ⋙ unopUnop` transport. -/
+/-- The degree formula for the two-sided cobar cosimplicial object.
+
+At the simplex of degree `n`, the object is the degree-`n` cobar functor. -/
 @[simp] theorem twoSidedCobar_obj_mk (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) (n : ℕ) :
     (twoSidedCobar G R L).obj (SimplexCategory.mk n) = cobarObj G R L n := by
@@ -2033,7 +2119,10 @@ noncomputable def twoSidedCobar (G : Comonad C) (R : RightComodule G D)
   rw [h, cobarDataOp_obj_n]
   rfl
 
-/-- Objects at an arbitrary simplex. -/
+/-- The ordinal-length formula for a two-sided cobar object.
+
+At an ordinal `Δ` in the simplex category, the cobar value is the degree functor indexed by
+`Δ.len`. -/
 theorem twoSidedCobar_obj (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) (Δ : SimplexCategory) :
     (twoSidedCobar G R L).obj Δ = cobarObj G R L Δ.len := by
@@ -2043,7 +2132,9 @@ theorem twoSidedCobar_obj (G : Comonad C) (R : RightComodule G D)
   rw [h]
   rfl
 
-/-- Cofaces are the public cobar cofaces. -/
+/-- The cofaces of the two-sided cobar cosimplicial object.
+
+A simplex-category coface maps to the corresponding endpoint or comultiplication cobar coface. -/
 @[simp] theorem twoSidedCobar_map_δ (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 2)) :
     (twoSidedCobar G R L).map (SimplexCategory.δ i) =
@@ -2056,7 +2147,9 @@ theorem twoSidedCobar_obj (G : Comonad C) (R : RightComodule G D)
   rw [h, hδ]
   rfl
 
-/-- Codegeneracies are the public cobar codegeneracies. -/
+/-- The codegeneracies of the two-sided cobar cosimplicial object.
+
+A simplex-category codegeneracy maps to the corresponding counit cobar codegeneracy. -/
 @[simp] theorem twoSidedCobar_map_σ (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 1)) :
     (twoSidedCobar G R L).map (SimplexCategory.σ i) =
@@ -2069,7 +2162,9 @@ theorem twoSidedCobar_obj (G : Comonad C) (R : RightComodule G D)
   rw [h, hσ]
   rfl
 
-/-- Pointwise objects on simplex objects. -/
+/-- The pointwise object formula for two-sided cobar.
+
+In degree `n` and at `a ∈ A`, the value is `R(G^n(L(a)))`. -/
 @[simp] theorem twoSidedCobar_obj_obj (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) (n : ℕ) (a : A) :
     ((twoSidedCobar G R L).obj (SimplexCategory.mk n)).obj a =
@@ -2077,14 +2172,18 @@ theorem twoSidedCobar_obj (G : Comonad C) (R : RightComodule G D)
   rw [twoSidedCobar_obj_mk]
   rfl
 
-/-- Pointwise morphisms on simplex objects. -/
+/-- The pointwise carrier-map formula for two-sided cobar.
+
+A morphism `f : a → b` acts in degree `n` by `R.map(G^n.map(L.map(f)))`. -/
 @[simp] theorem twoSidedCobar_obj_map (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} {a b : A} (f : a ⟶ b) :
     ((twoSidedCobar G R L).obj (SimplexCategory.mk n)).map f =
       R.functor.map ((comonadPow G n).map (L.functor.map f)) := by
   congr 1
 
-/-- Coface components are the public coface components. -/
+/-- The pointwise coface formula for two-sided cobar.
+
+At a carrier object `a`, the coface component is the corresponding cobar coface component. -/
 @[simp] theorem twoSidedCobar_map_δ_app (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 2)) (a : A) :
     ((twoSidedCobar G R L).map (SimplexCategory.δ i)).app a =
@@ -2092,7 +2191,9 @@ theorem twoSidedCobar_obj (G : Comonad C) (R : RightComodule G D)
   rw [twoSidedCobar_map_δ]
   rfl
 
-/-- Codegeneracy components are counit insertions mapped by `R`. -/
+/-- The pointwise codegeneracy formula for two-sided cobar.
+
+At `a`, codegeneracy `i` is `R` applied to the reversed-position counit insertion at `L(a)`. -/
 @[simp] theorem twoSidedCobar_map_σ_app (G : Comonad C) (R : RightComodule G D)
     (L : LeftComodule A G) {n : ℕ} (i : Fin (n + 1)) (a : A) :
     ((twoSidedCobar G R L).map (SimplexCategory.σ i)).app a =

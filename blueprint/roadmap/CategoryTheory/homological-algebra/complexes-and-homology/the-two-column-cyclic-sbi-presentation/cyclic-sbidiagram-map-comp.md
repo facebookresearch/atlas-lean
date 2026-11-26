@@ -1,3 +1,6 @@
-# Cyclic SBIDiagram Map comp
+# Composition of two-column SBI homology diagram maps
 
-Actual diagram maps compose in the same order as the original nonunital maps.
+Composition of two-column SBI homology diagram maps.
+
+The SBI diagram map of a composite algebra homomorphism equals the composite of the two
+diagram maps.

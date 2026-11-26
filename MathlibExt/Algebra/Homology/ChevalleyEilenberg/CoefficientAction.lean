@@ -15,21 +15,20 @@ public import Mathlib.LinearAlgebra.TensorProduct.Associator
 public import MathlibExt.LinearAlgebra.ExteriorPower.Deletion
 
 /-!
-# The coefficient-action summand of the Chevalley–Eilenberg boundary
+# The left-coefficient action term in the exterior boundary
 
-For a left Lie module `M`, the action summand lowers exterior degree on
-`(⋀[R]^n L) ⊗[R] M`. Its decomposable-wedge formula is
+Let R be a commutative ring, L an R-Lie algebra and M a left Lie
+module compatible with the R-action. The action term on exterior-first
+tensors is
+A_n((x_0∧⋯∧x_n)⊗m)=
+∑_{i=0}^{n}(−1)^{i+1}(x with entry i deleted)⊗[x_i,m].
+The remaining generators retain their order.
 
-```text
-(x₀ ∧ ... ∧ xₙ) ⊗ m ↦ ∑ i, (-1)^(i+1)
-  (x₀ ∧ ... ∧ x̂ᵢ ∧ ... ∧ xₙ) ⊗ [xᵢ, m].
-```
-
-The degree-one value is `-[x, m]` in the degree-zero coordinates. This sign
-convention matches the bracket boundary `d(x ∧ y) = -[x, y]`. The module
-contains the action summand, its coefficient naturality, and its vanishing
-for trivial actions; square-zero concerns the combined bracket and action
-boundary.
+It is an R-linear map Λ_R^{n+1}L⊗M→Λ_R^nL⊗M.
+In degree one the target exterior word is empty; after Λ_R^0L⊗M≃M,
+the value is −[x,m]. The term is natural in Lie-module coefficient
+maps with independent carrier universes and is zero for a trivial
+Lie action. The full CE differential also includes the bracket term.
 -/
 
 @[expose] public section
@@ -47,16 +46,22 @@ variable (L : Type v) [LieRing L] [LieAlgebra R L]
 variable (M : Type w) [AddCommGroup M] [Module R M]
   [LieRingModule L M] [LieModule R L M]
 
-/-- The coefficient action summand of the Chevalley--Eilenberg boundary for a
-left Lie module, with the exterior power as the first tensor factor. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+The coefficient action term is the R-linear map
+A_n:Λ_R^{n+1}L⊗M→Λ_R^nL⊗M obtained by deleting one
+Lie generator and applying its left action with coefficient (−1)^{i+1}. -/
 def coefficientActionBoundary (n : ℕ) :
     ((⋀[R]^(n + 1) L) ⊗[R] M) →ₗ[R] ((⋀[R]^n L) ⊗[R] M) :=
   (-1 : R) • (((LieModule.toModuleHom R L M).toLinearMap.lTensor (⋀[R]^n L)).comp
     ((TensorProduct.assoc R (⋀[R]^n L) L M).toLinearMap.comp
       ((exteriorPower.deletion R L n).rTensor M)))
 
-/-- The coefficient action deletes each Lie generator in turn, preserving the
-order of the surviving generators and using zero-based signs `(-1)^(i+1)`. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+For x:Fin(n+1)→L and m∈M,
+A_n((x_0∧⋯∧x_n)⊗m)=∑_i(−1)^{i+1}
+(x with entry i deleted)⊗[x_i,m], with ordered deletion. -/
 theorem coefficientActionBoundary_apply_ιMulti_tmul (n : ℕ)
     (v : Fin (n + 1) → L) (m : M) :
     coefficientActionBoundary R L M n
@@ -73,8 +78,10 @@ theorem coefficientActionBoundary_apply_ιMulti_tmul (n : ℕ)
     LieModuleHom.coe_toLinearMap, LieModule.toModuleHom_apply]
   simp only [Finset.smul_sum, smul_smul, ← pow_succ']
 
-/-- In degree one the surviving exterior word is empty and the coefficient
-action is the negative Lie action. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+In degree one, the action term has value
+A_0(x⊗m)=−(1_{Λ^0L}⊗[x,m]), using the empty exterior word. -/
 @[simp]
 theorem coefficientActionBoundary_zero_apply_ιMulti_tmul
     (v : Fin 1 → L) (m : M) :
@@ -99,8 +106,10 @@ theorem coefficientActionBoundary_zero_apply_ιMulti_tmul
       exact neg_one_smul R
         (exteriorPower.ιMulti R 0 (fun i : Fin 0 ↦ Fin.elim0 i) ⊗ₜ[R] ⁅v 0, m⁆)
 
-/-- The canonical identification of degree-zero coefficients turns the
-degree-one action boundary into the negative of the native Lie action. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+Under Λ_R^0L⊗M≃R⊗M≃M, the first coefficient action
+boundary has value −[x,m]. -/
 theorem coefficientActionBoundary_zero_lid (v : Fin 1 → L) (m : M) :
     TensorProduct.lid R M
         ((exteriorPower.zeroEquiv R L).rTensor M
@@ -136,8 +145,11 @@ section Naturality
 variable {N : Type w'} [AddCommGroup N] [Module R N]
   [LieRingModule L N] [LieModule R L N]
 
-/-- The coefficient action boundary commutes with a morphism of left Lie modules
-over the same acting Lie algebra. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+For a homomorphism f:M→N of R-Lie modules over the same L,
+with N in an independent carrier universe,
+(id⊗f)A_n^M=A_n^N(id⊗f) on the corresponding exterior powers. -/
 theorem coefficientActionBoundary_naturality (n : ℕ) (f : M →ₗ⁅R,L⁆ N) :
     (f.toLinearMap.lTensor (⋀[R]^n L)).comp
         (coefficientActionBoundary R L M n) =
@@ -167,8 +179,10 @@ theorem coefficientActionBoundary_naturality (n : ℕ) (f : M →ₗ⁅R,L⁆ N)
 
 end Naturality
 
-/-- A trivial Lie-module action contributes zero to every positive-degree
-Chevalley--Eilenberg boundary. -/
+/-- Let R be commutative, L an R-Lie algebra and M a left
+L-module whose Lie action is compatible with its R-module structure.
+If the L-action on M is trivial, [x,m]=0 for every x,m,
+then A_n=0 as an R-linear map in every degree. -/
 @[simp]
 theorem coefficientActionBoundary_eq_zero [LieModule.IsTrivial L M] (n : ℕ) :
     coefficientActionBoundary R L M n = 0 := by

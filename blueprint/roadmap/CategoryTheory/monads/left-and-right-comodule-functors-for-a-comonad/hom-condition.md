@@ -1,3 +1,6 @@
-# Hom condition
+# The coaction equation of a right comodule morphism
 
-Compatibility of a right comodule morphism with the coactions.
+The coaction equation of a right comodule morphism.
+
+A transformation `f : M → N` satisfies the square from the source coaction and
+`G`-precomposition of `f` to `f` followed by the target coaction.

@@ -1,3 +1,6 @@
-# Original Module Iso
+# The counit comparison after lifting coefficient scalars
 
-The actual counit isomorphism of the original module representation.
+The counit comparison after lifting coefficient scalars.
+
+For a ground-scalar module `M`, lifting its scalar action and restricting back gives an
+`R`-module naturally isomorphic to `M`.

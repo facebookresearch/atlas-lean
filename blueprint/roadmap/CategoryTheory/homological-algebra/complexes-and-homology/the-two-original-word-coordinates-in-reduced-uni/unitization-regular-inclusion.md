@@ -1,3 +1,6 @@
-# Unitization Regular Inclusion
+# The regular Hochschild inclusion into a unitization
 
-The original ideal inclusion acts on the coefficient and every original tensor factor.
+The regular Hochschild inclusion into a unitization.
+
+The nonunital inclusion `A → A⁺` acts on the coefficient and every tail factor, giving a chain
+map `b(A) → b(A⁺)`.

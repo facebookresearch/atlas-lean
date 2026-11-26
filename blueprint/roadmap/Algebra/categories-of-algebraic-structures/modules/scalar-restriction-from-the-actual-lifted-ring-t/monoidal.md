@@ -1,4 +1,6 @@
-# Monoidal
+# The strong monoidal structure on lifted-scalar restriction
 
-The actual module scalar restriction is strong monoidal. Its tensor,
-unit and associator laws are checked on original pure tensors.
+The strong monoidal structure on lifted-scalar restriction.
+
+The unit and balanced-tensor comparisons make restriction from `ULift.{v} R` to `R` a monoidal
+functor between the specified module tensor categories.

@@ -13,12 +13,18 @@ public import MathlibExt.LinearAlgebra.ExteriorPower.BaseChange
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 
 /-!
-# Exterior powers as module functors
+# Exterior-power functors and scalar extension
 
-The exterior-power functor keeps the module universe and takes values in
-the joint ring/module universe. It commutes with scalar extension by the
-canonical exterior base-change equivalence, without a flatness or basis
-assumption.
+Let `R` be a commutative ring. The exterior-power functor sends an `R`-module `M` to `⋀ⁿ[R] M`
+and a linear map `f` to the map sending `m₁ ∧ ⋯ ∧ mₙ` to `f(m₁) ∧ ⋯ ∧ f(mₙ)`. Degree zero is
+naturally the regular module `R`, and degree one is naturally `M`.
+
+For a commutative `R`-algebra `S`, exterior base change gives a natural isomorphism `S ⊗[R]
+⋀ⁿ[R] M ≅ ⋀ⁿ[S] (S ⊗[R] M)`. It sends `s ⊗ (m₁ ∧ ⋯ ∧ mₙ)` to `s • ((1 ⊗ m₁) ∧ ⋯ ∧ (1 ⊗ mₙ))`.
+The scalar rings and module carrier have independent universes; the functor targets include
+their joint universe.
+
+Reference: Bourbaki, *Algebra*, Chapter III, for exterior powers and extension of scalars.
 -/
 
 @[expose] public section
@@ -34,7 +40,10 @@ namespace ModuleCat
 
 variable (R : Type u) [CommRing R]
 
-/-- The native exterior power, retaining an independently sized input module. -/
+/-- The exterior-power functor for an independently sized module category.
+
+For `n ∈ ℕ`, this functor sends `ModuleCat.{v} R` to `ModuleCat.{max u v} R` by taking the
+`n`th exterior power, where `R : Type u`. -/
 def exteriorPowerFunctorAt (n : ℕ) :
     ModuleCat.{v} R ⥤ ModuleCat.{max u v} R where
   obj M := ModuleCat.of R (⋀[R]^n M)
@@ -46,11 +55,18 @@ def exteriorPowerFunctorAt (n : ℕ) :
     apply ModuleCat.hom_ext
     exact exteriorPower.map_comp f.hom g.hom
 
-/-- A stable displayed height for repeated exterior and tensor constructions. -/
+/-- The exterior-power functor in a joint scalar-module universe.
+
+For modules with carrier universe `max u v`, the `n`th exterior-power functor has source and
+target in that same universe. -/
 abbrev exteriorPowerFunctor (n : ℕ) :
     ModuleCat.{max u v} R ⥤ ModuleCat.{max u v} R :=
   exteriorPowerFunctorAt R n
 
+/-- The exterior-power map on decomposable wedges.
+
+For `f : M → N` and `a : Fin n → M`, the induced exterior map sends the wedge of the `a_i` to
+the wedge of the `f(a_i)`. -/
 @[simp]
 theorem exteriorPowerFunctorAt_map_ιMulti (n : ℕ)
     {M N : ModuleCat.{v} R} (f : M ⟶ N) (a : Fin n → M) :
@@ -58,7 +74,10 @@ theorem exteriorPowerFunctorAt_map_ιMulti (n : ℕ)
       exteriorPower.ιMulti R n (fun i => f.hom (a i)) :=
   exteriorPower.map_apply_ιMulti f.hom a
 
-/-- Degree zero has the original regular-ring coordinate, across raw universes. -/
+/-- The scalar coordinate of an exterior-degree-zero map.
+
+Under the canonical identifications `⋀⁰[R] M ≃ₗ[R] R` and `⋀⁰[R] N ≃ₗ[R] R`, the exterior map
+induced by `f : M → N` has scalar coordinate the identity. -/
 theorem exteriorPowerFunctorAt_map_zero
     {M N : ModuleCat.{v} R} (f : M ⟶ N) :
     (exteriorPower.zeroEquiv R N).toLinearMap.comp
@@ -66,7 +85,10 @@ theorem exteriorPowerFunctorAt_map_zero
       (exteriorPower.zeroEquiv R M).toLinearMap :=
   exteriorPower.zeroEquiv_naturality f.hom
 
-/-- The actual native degree-one equivalence, at a stable displayed height. -/
+/-- The natural comparison in exterior degree one.
+
+The degree-one exterior-power functor on the joint-universe module category is naturally
+isomorphic to the identity functor. -/
 def exteriorPowerOneNatIso :
     exteriorPowerFunctor.{u, v} R 1 ≅ 𝟭 (ModuleCat.{max u v} R) :=
   NatIso.ofComponents
@@ -78,8 +100,10 @@ def exteriorPowerOneNatIso :
 
 variable (S : Type w) [CommRing S] [Algebra R S]
 
-/-- The native scalar extension has the original tensor carrier and scalar action.
-The transport uses actual identity maps on its two factors. -/
+/-- The tensor description of extension of scalars.
+
+For a commutative `R`-algebra `S` and an `R`-module `M`, extension along `algebraMap R S` is
+`S`-linearly equivalent to `S ⊗[R] M`, with both tensor-factor values retained. -/
 def scalarExtensionToTensorEquiv (M : ModuleCat.{v} R) :
     (ModuleCat.extendScalars (algebraMap R S)).obj M ≃ₗ[S] S ⊗[R] M := by
   let φ := algebraMap R S
@@ -111,19 +135,28 @@ def scalarExtensionToTensorEquiv (M : ModuleCat.{v} R) :
       map_add' := fun x y => e.map_add x y
       map_smul' := fun s x => e.map_smul s x }
 
-/-- The scalar transport retains both original entries of a native pure tensor. -/
+/-- The pure-tensor formula for scalar extension.
+
+The scalar-extension equivalence sends the class represented by `s ⊗ m` in extension of
+scalars to the same pure tensor in `S ⊗[R] M`. -/
 theorem scalarExtensionToTensorEquiv_tmul (M : ModuleCat.{v} R) (s : S) (m : M) :
     scalarExtensionToTensorEquiv R S M (s ⊗ₜ[R, algebraMap R S] m) = s ⊗ₜ[R] m := by
   rfl
 
-/-- The inverse scalar transport recovers the same native pure tensor. -/
+/-- The inverse pure-tensor formula for scalar extension.
+
+The inverse equivalence sends `s ⊗ m ∈ S ⊗[R] M` to the same representative in extension of
+scalars along `R → S`. -/
 theorem scalarExtensionToTensorEquiv_symm_tmul (M : ModuleCat.{v} R) (s : S) (m : M) :
     (scalarExtensionToTensorEquiv R S M).symm (s ⊗ₜ[R] m) =
       s ⊗ₜ[R, algebraMap R S] m := by
   rfl
 
-/-- The native scalar extension of one exterior degree has the canonical
-exterior base-change component, with its original scalar map and module. -/
+/-- The module component of exterior base change.
+
+For a commutative `R`-algebra `S`, this is the `S`-module isomorphism from extension of
+scalars of `⋀ⁿ[R] M` to `⋀ⁿ[S]` of the extended module. The common carrier universe includes
+both scalar rings and `M`. -/
 def exteriorPowerBaseChangeComponent (n : ℕ) (M : ModuleCat.{max u v w} R) :
     (ModuleCat.extendScalars (algebraMap R S)).obj
         ((exteriorPowerFunctorAt.{u, max u v w} R n).obj M) ≅
@@ -152,7 +185,10 @@ def exteriorPowerBaseChangeComponent (n : ℕ) (M : ModuleCat.{max u v w} R) :
     (scalarExtensionToTensorEquiv R S M).symm).trans ePower
   exact (eSource.trans ((exteriorPower.baseChangeEquiv R S M n).trans eTarget)).toModuleIso
 
-/-- The component sends an original native tensor word to its exterior word. -/
+/-- The component formula for exterior base change.
+
+The forward component sends `s ⊗ (a₀ ∧ ⋯ ∧ a_(n-1))` to `s • ((1 ⊗ a₀) ∧ ⋯ ∧ (1 ⊗ a_(n-1)))`
+in the exterior power over `S`. -/
 theorem exteriorPowerBaseChangeComponent_hom_tmul_ιMulti (n : ℕ)
     (M : ModuleCat.{max u v w} R) (s : S) (a : Fin n → M) :
     ((exteriorPowerBaseChangeComponent.{u, v, w} R S n M).hom).hom
@@ -209,7 +245,10 @@ theorem exteriorPowerBaseChangeComponent_hom_tmul_ιMulti (n : ℕ)
   exact (congrArg eTarget (congrArg (exteriorPower.baseChangeEquiv R S M n) hSource)).trans
     ((congrArg eTarget (exteriorPower.baseChangeEquiv_apply_tmul_ιMulti R S M n s a)).trans hTarget)
 
-/-- The component inverse recovers the original native tensor word. -/
+/-- The inverse component formula for exterior base change.
+
+The inverse component sends `s • ((1 ⊗ a₀) ∧ ⋯ ∧ (1 ⊗ a_(n-1)))` to `s ⊗ (a₀ ∧ ⋯ ∧ a_(n-1))`
+in the extended exterior power over `R`. -/
 theorem exteriorPowerBaseChangeComponent_inv_word (n : ℕ)
     (M : ModuleCat.{max u v w} R) (s : S) (a : Fin n → M) :
     ((exteriorPowerBaseChangeComponent.{u, v, w} R S n M).inv).hom
@@ -222,8 +261,10 @@ theorem exteriorPowerBaseChangeComponent_inv_word (n : ℕ)
   exact (congrArg e.inv.hom h).symm.trans
     (ModuleCat.inv_hom_apply e (s ⊗ₜ[R, algebraMap R S] exteriorPower.ιMulti R n a))
 
-/-- Actual extension of scalars commutes with every native exterior degree.
-The common category height includes both rings and the original module height. -/
+/-- The natural isomorphism of exterior powers and scalar extension.
+
+For every `n ∈ ℕ`, taking the `n`th exterior power over `R` and then extending to `S` is
+naturally isomorphic to extending first and taking the exterior power over `S`. -/
 def exteriorPowerBaseChangeNatIso (n : ℕ) :
     exteriorPowerFunctorAt.{u, max u v w} R n ⋙
         ModuleCat.extendScalars (algebraMap R S) ≅
@@ -318,6 +359,10 @@ def exteriorPowerBaseChangeNatIso (n : ℕ) :
     LinearEquiv.apply_symm_apply] at hx
   exact hx
 
+/-- The natural exterior base-change map on a pure wedge tensor.
+
+At a module `M`, the forward natural comparison sends `s ⊗ (a₀ ∧ ⋯ ∧ a_(n-1))` to `s • ((1 ⊗
+a₀) ∧ ⋯ ∧ (1 ⊗ a_(n-1)))`. -/
 @[simp]
 theorem exteriorPowerBaseChangeNatIso_hom_tmul_ιMulti (n : ℕ)
     (M : ModuleCat.{max u v w} R) (s : S) (a : Fin n → M) :
@@ -330,6 +375,10 @@ theorem exteriorPowerBaseChangeNatIso_hom_tmul_ιMulti (n : ℕ)
     dsimp only [exteriorPowerBaseChangeNatIso, NatIso.ofComponents]
     exact exteriorPowerBaseChangeComponent_hom_tmul_ιMulti.{u, v, w} R S n M s a
 
+/-- The inverse natural exterior base-change map on a wedge word.
+
+At a module `M`, the inverse natural comparison sends the scaled wedge of `1 ⊗ a_i` to the
+tensor of the wedge of the `a_i`. -/
 @[simp]
 theorem exteriorPowerBaseChangeNatIso_inv_word (n : ℕ)
     (M : ModuleCat.{max u v w} R) (s : S) (a : Fin n → M) :

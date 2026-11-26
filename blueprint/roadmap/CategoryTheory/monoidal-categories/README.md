@@ -4,5 +4,6 @@ Monoidal categories equip a category with a tensor product and unit object, with
 
 - [Tensor Cokernel](tensor-cokernel/README.md)
 - [Tensor inverses are unique up to isomorphism in braided categories](nonempty-iso-of-tensor-iso-tensor-unit.md)
-- [Descending comonoid laws along epimorphisms](of-epi.md)
-- [Transporting comonoid objects along isomorphisms](of-iso.md)
+- [The comonoid structure descended along an epimorphism](of-epi.md)
+- [Isomorphism to a transported comonoid is a comonoid map](is-comon-hom-of-iso.md)
+- [The comonoid structure transported by an isomorphism](of-iso.md)

@@ -1,4 +1,6 @@
-# Disjoint reductions commute
+# Commutation of disjoint additive tensor reductions
 
-Disjoint reductions commute by distributivity in the original tensor
-algebra. Their four finite summands agree without taking a quotient.
+Commutation of disjoint additive tensor reductions.
+
+The four terms obtained by distributing two independent two-term reductions can be grouped by
+either reduction order, giving the same tensor-algebra element.

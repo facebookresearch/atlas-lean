@@ -1,3 +1,6 @@
-# Cotangent Higher Exterior Iso
+# Exterior base change for augmented cotangent forms
 
-Native scalar extension gives the actual exterior comparison, including its unit.
+Exterior base change for augmented cotangent forms.
+
+For every `n`, the canonical `A`-module isomorphism identifies `A ⊗[P] ⋀ⁿ[P] Ω[P/k]` with
+`⋀ⁿ[A] (A ⊗[P] Ω[P/k])`.

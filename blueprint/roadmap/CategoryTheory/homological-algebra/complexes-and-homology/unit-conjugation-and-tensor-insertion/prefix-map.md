@@ -1,3 +1,6 @@
-# Prefix Map
+# The conjugation map before an insertion cut
 
-Transform the prefix before the insertion cut and retain its tail.
+The conjugation map before an insertion cut.
+
+For a cut `i` and tail index `j`, use the algebra conjugation map if `j < i` and the identity
+linear map otherwise.

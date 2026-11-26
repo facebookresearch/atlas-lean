@@ -1,3 +1,6 @@
-# Cyclic Two Column Sequence Map comp
+# Composition of cyclic two-column sequence maps
 
-The whole chain-level sequence map composes in the original nonunital-map order.
+Composition of cyclic two-column sequence maps.
+
+For composable nonunital algebra maps, the sequence map of their composite is the composite of
+their sequence maps.

@@ -1,3 +1,6 @@
-# Cyclic SBIConnecting
+# The two-column SBI connecting map
 
-The LES connecting morphism of the raw two-column sequence.
+The two-column SBI connecting map.
+
+The connecting morphism of the short exact sequence, with the period-two tail coordinate,
+gives `B_n : HC_n(A) → H_(n+1)(CC^{(2)}(A))`.

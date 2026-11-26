@@ -1,3 +1,6 @@
-# Ulift Functor Within Iso
+# The natural comparison for a module lift within its universe
 
-A lift already contained in the actual carrier universe has the native identity comparison.
+The natural comparison for a module lift within its universe.
+
+On `ModuleCat.{max v w} R`, lifting by `ULift.{w}` is naturally isomorphic to the identity
+functor through the module equivalence `up(x) ↦ x`.

@@ -15,12 +15,16 @@ public import MathlibExt.Algebra.Homology.KoszulComplexPolynomialCoordinates
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 /-!
-# Polynomial coordinates for enveloping Chevalley–Eilenberg terms
+# Polynomial coefficients for exterior-first enveloping CE terms
 
-A basis of the Lie module, the tensor basis equivalence, and the PBW
-coefficient map identify each exterior-first term with finitely supported
-polynomial coefficients on exterior basis elements. In these coordinates,
-the total filtration is the coefficient-degree bound plus exterior degree.
+Choose a basis b : I → L over a commutative ring R, with I linearly ordered. The exterior
+basis indexed by n-element subsets of I and the PBW linear coordinates U(L) ≃ₗ[R] MvPolynomial
+I R identify C_n = ⋀[R]^n L ⊗[R] U(L) with finitely supported polynomial coefficients on those
+subsets.
+
+This is a linear coordinate equivalence. The total filtration F_p C_n corresponds exactly to
+polynomial coefficients of degree at most p−n when n ≤ p, and to the zero submodule when p <
+n. Both directions of the membership comparison hold for arbitrary n and p.
 -/
 
 @[expose] public section
@@ -42,7 +46,12 @@ variable (R : Type u) [CommRing R]
 local notation "P" => MvPolynomial I R
 local notation "F" n => (Set.powersetCard I n →₀ P)
 
-/-- Coordinate equivalence on the original exterior-first regular coefficient carrier. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let I be a linearly
+ordered index type, b : Module.Basis I R L and P = MvPolynomial I R. For n : ℕ,
+envelopingCoefficientCoordinates gives an R-linear equivalence C_n ≃ₗ[R] (Set.powersetCard I n
+→₀ P). It first swaps tensor factors, takes coefficients in the exterior basis b.exteriorPower
+n, and applies the PBW polynomial coordinate map to each U-valued coefficient. -/
 def envelopingCoefficientCoordinates (b : Module.Basis I R L) (n : ℕ) :
     (⋀[R]^n L) ⊗[R] regularCoefficients R L ≃ₗ[R] F n := by
   classical
@@ -90,7 +99,12 @@ private theorem polynomialDegree_mono {p q : ℕ} (hpq : p ≤ q) :
   intro e he
   exact he.trans hpq
 
-/-- The original total CE filtration maps into its polynomial coefficient degree bound. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let I be a linearly
+ordered index type, b : Module.Basis I R L and P = MvPolynomial I R. For n, p : ℕ, if z : C_n
+belongs to envelopingFiltration R L p n, then its coordinate function belongs to
+polynomialCoefficientFiltration R n p. This means every polynomial coefficient has total
+degree at most p−n when n ≤ p, and the coordinate function is zero when p < n. -/
 theorem envelopingCoefficientCoordinates_mem_filtration (b : Module.Basis I R L)
     (n p : ℕ) {z : (⋀[R]^n L) ⊗[R] regularCoefficients R L}
     (hz : z ∈ envelopingFiltration R L p n) :
@@ -115,8 +129,12 @@ theorem envelopingCoefficientCoordinates_mem_filtration (b : Module.Basis I R L)
       rw [map_smul]
       exact (KoszulComplex.polynomialCoefficientFiltration R n p).smul_mem r ih
 
-/-- Polynomial coefficient bounds lift through the original coordinate
-equivalence into the enveloping CE filtration. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let I be a linearly
+ordered index type, b : Module.Basis I R L and P = MvPolynomial I R. For n, p : ℕ, a finitely
+supported coefficient function f in polynomialCoefficientFiltration R n p maps under the
+inverse coordinate equivalence to envelopingFiltration R L p n. The polynomial filtration is
+zero for p < n and otherwise bounds each coefficient degree by p−n. -/
 theorem envelopingCoefficientCoordinates_symm_mem_filtration (b : Module.Basis I R L)
     (n p : ℕ) {c : F n}
     (hc : c ∈ KoszulComplex.polynomialCoefficientFiltration R n p) :
@@ -139,8 +157,12 @@ theorem envelopingCoefficientCoordinates_symm_mem_filtration (b : Module.Basis I
     rw [hzero, map_zero]
     exact (envelopingFiltration R L p n).zero_mem
 
-/-- total-degree membership is equivalent to the polynomial
-coefficient-degree membership, over the original scalar ring. -/
+/-- Let R : Type u be a commutative ring, L : Type v an R-Lie algebra, U its enveloping algebra
+and C_n = ⋀[R]^n L ⊗[R] U with negative right-regular Lie coefficients. Let I be a linearly
+ordered index type, b : Module.Basis I R L and P = MvPolynomial I R. For n, p : ℕ and z : C_n,
+envelopingCoefficientCoordinates b n z ∈ polynomialCoefficientFiltration R n p if and only if
+z ∈ envelopingFiltration R L p n. The two filtrations count polynomial or enveloping
+coefficient degree plus exterior degree n. -/
 theorem envelopingCoefficientCoordinates_mem_filtration_iff (b : Module.Basis I R L)
     (n p : ℕ) (z : (⋀[R]^n L) ⊗[R] regularCoefficients R L) :
     envelopingCoefficientCoordinates R L b n z ∈

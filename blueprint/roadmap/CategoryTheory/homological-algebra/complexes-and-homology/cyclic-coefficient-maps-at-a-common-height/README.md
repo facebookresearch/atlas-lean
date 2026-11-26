@@ -1,7 +1,7 @@
 # Cyclic coefficient maps at a common height
 
-- [Cyclic Bicomplex Map At Height](cyclic-bicomplex-map-at-height.md)
-- [Cyclic Bicomplex Map At Height f f up](cyclic-bicomplex-map-at-height-f-f-up.md)
-- [Cyclic Total Map At Height](cyclic-total-map-at-height.md)
-- [Cyclic Homology Map At Height](cyclic-homology-map-at-height.md)
-- [Cyclic Homology Map At Height lift](cyclic-homology-map-at-height-lift.md)
+- [An algebra map gives a cyclic bicomplex map at the common universe](cyclic-bicomplex-map-at-height.md)
+- [The lifted cyclic cell map has the coefficientwise tensor value](cyclic-bicomplex-map-at-height-f-f-up.md)
+- [Totalization maps the common-height cyclic bicomplex morphism](cyclic-total-map-at-height.md)
+- [The total map induces a map between lifted cyclic homology objects](cyclic-homology-map-at-height.md)
+- [The cyclic homology map commutes with the lift comparison](cyclic-homology-map-at-height-lift.md)

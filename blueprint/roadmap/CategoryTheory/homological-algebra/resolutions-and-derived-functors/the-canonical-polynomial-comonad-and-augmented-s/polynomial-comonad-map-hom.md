@@ -1,3 +1,6 @@
-# Polynomial Comonad map hom
+# The renaming homomorphism of the polynomial comonad
 
-Comonad maps are the native renaming maps of the underlying algebra functions.
+The renaming homomorphism of the polynomial comonad.
+
+For `f : A → B`, the comonad map `T(f)` is polynomial variable renaming along the underlying
+function of `f`.

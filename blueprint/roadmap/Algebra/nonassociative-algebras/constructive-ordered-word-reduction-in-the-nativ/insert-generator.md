@@ -1,4 +1,5 @@
-# Insert Generator
+# Linear insertion of a Lie vector into a basis-word context
 
-Insert a vector between fixed basis words. This map is linear in that
-vector over the original commutative scalar ring.
+Linear insertion of a Lie vector into a basis-word context.
+
+For fixed prefix `p` and suffix `s`, send `x ∈ L` to `basisWord(p) * ι(x) * basisWord(s)`.

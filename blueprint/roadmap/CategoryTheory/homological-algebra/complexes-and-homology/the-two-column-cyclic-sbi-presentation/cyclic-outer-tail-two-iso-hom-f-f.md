@@ -1,3 +1,5 @@
-# Cyclic Outer Tail Two Iso hom f f
+# The forward cell formula for cyclic outer-tail periodicity
 
-The period-two bicomplex map preserves every literal tensor cell.
+The forward cell formula for cyclic outer-tail periodicity.
+
+The outer-tail comparison is the identity on every bidegree tensor cell.

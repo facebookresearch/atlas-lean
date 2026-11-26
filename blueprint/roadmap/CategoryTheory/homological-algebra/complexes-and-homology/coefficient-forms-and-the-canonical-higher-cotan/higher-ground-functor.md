@@ -1,4 +1,6 @@
-# Higher Ground Functor
+# The higher cotangent functor restricted to ground scalars
 
-The canonical higher-form functor, with the original ground
-scalars obtained by native exact restriction.
+The higher cotangent functor restricted to ground scalars.
+
+In weight `q`, this sends `P → B` to the `k`-module underlying the `B`-module `B ⊗[P] ⋀^q[P]
+Ω[P/k]`, and maps over `B` to their higher differential maps.

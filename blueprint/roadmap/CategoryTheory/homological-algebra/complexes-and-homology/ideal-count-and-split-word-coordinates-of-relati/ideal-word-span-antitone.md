@@ -1,3 +1,4 @@
-# Ideal Word Span antitone
+# Requiring more ideal entries gives a smaller word span
 
-Requiring fewer original ideal entries enlarges the span.
+Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. For n : ℕ and s ≤ r, idealWordSpan k A I n r ≤ idealWordSpan k A I n s.

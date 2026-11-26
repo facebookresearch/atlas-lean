@@ -1,3 +1,6 @@
-# Enveloping Ground Object
+# The ground module of an enveloping chain term
 
-The exact native scalar restriction of an original enveloping CE term.
+The ground module of an enveloping chain term.
+
+In degree `n`, this is the enveloping Chevalley–Eilenberg term restricted from `U_R(L)` to `R`
+along the scalar inclusion.

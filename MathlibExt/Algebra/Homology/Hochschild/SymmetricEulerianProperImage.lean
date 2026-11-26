@@ -13,21 +13,24 @@ public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianProperNorm
 public import MathlibExt.Algebra.Homology.Hochschild.SymmetricEulerianHodge
 
 /-!
-# Proper shuffle quotients and first Eulerian images
+# Proper shuffle quotients as zero-plus-first Eulerian images
 
-Over a rational ground algebra, the
-proper both-positive relation quotient
-and the image of the full
-zero-plus-first Eulerian projector
-are splittings of the same chain
-endomorphism. Their inclusion and
-factor maps give A-linear chain
-isomorphisms, retaining both
-weights zero and one and the
-degree-zero coefficient. This does
-not identify the full coefficient-ideal
-quotient or the ordinary Harrison–AQ
-functor.
+Let k be a commutative ℚ-algebra, A a commutative k-algebra and M an
+A-module with compatible ground action. On the raw coefficient complex C,
+put P = e^(0)+e^(1), and let P_N be its normalized counterpart on
+N_n = M ⊗[k] (A/(k·1))^⊗n. The proper both-positive shuffle relation
+modules are the kernels of these projectors.
+
+The quotient sections [x] ↦ P(x) identify the proper raw quotient with
+Im(P), and the normalized quotient with Im(P_N), as A-linear chain
+complexes. The inverse maps include an image element and take its
+quotient class. Both Eulerian weights zero and one are retained,
+including the coefficient term in degree zero.
+
+Normalization intertwines the quotient sections and gives a homotopy
+equivalence Im(P) ≃ Im(P_N), obtained by restricting and projecting
+the normalization maps and homotopies. The carrier height is max(u,v,w)
+for the independent worlds of k, A and M.
 -/
 
 @[expose] public section
@@ -45,7 +48,10 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k]
   (M : Type w) [AddCommGroup M] [Module k M] [Module A M]
   [SMulCommClass k A M] [IsScalarTower k A M]
 
-/-- The original full raw first chain projector is idempotent in the original A-module category. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A
+and a compatible A-module M, the full first raw Eulerian projector
+P = e_C^(0)+e_C^(1) satisfies P ∘ P = P as an A-linear chain map
+on the raw coefficient Hochschild complex. -/
 theorem algebraFirstEulerianChainMap_idempotent :
     algebraFirstEulerianChainMap k A M ≫ algebraFirstEulerianChainMap k A M =
       algebraFirstEulerianChainMap k A M := by
@@ -55,7 +61,10 @@ theorem algebraFirstEulerianChainMap_idempotent :
   simp only [HomologicalComplex.comp_f, ModuleCat.hom_comp, algebraFirstEulerianChainMap_f]
   exact algebraFirstEulerianOperator_idempotent k A M n
 
-/-- The original normalized full first chain projector is idempotent over A. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, the full first normalized Eulerian projector
+P_N = e_N^(0)+e_N^(1) satisfies P_N ∘ P_N = P_N on the normalized
+A-linear coefficient complex. -/
 theorem algebraNormalizedFirstEulerianChainMap_idempotent :
     algebraNormalizedFirstEulerianChainMap k A M ≫ algebraNormalizedFirstEulerianChainMap k A M =
       algebraNormalizedFirstEulerianChainMap k A M := by
@@ -65,15 +74,26 @@ theorem algebraNormalizedFirstEulerianChainMap_idempotent :
   simp only [HomologicalComplex.comp_f, ModuleCat.hom_comp, algebraNormalizedFirstEulerianChainMap_f]
   exact algebraNormalizedFirstEulerianOperator_idempotent k A M n
 
-/-- The native image of the original raw zero-plus-first Eulerian chain projector. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A
+and a compatible A-module M, the full first raw image complex is
+Im(e_C^(0)+e_C^(1)) in A-module chain complexes.
+It retains weight zero together with weight one. -/
 def algebraFirstEulerianImageComplex : ChainComplex (ModuleCat.{max u v w} A) ℕ :=
   image (algebraFirstEulerianChainMap k A M)
 
-/-- The native image of the original normalized zero-plus-first Eulerian chain projector. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, the full first normalized image is
+Im(e_N^(0)+e_N^(1)) on the complex
+N_n = M ⊗[k] (A/(k·1))^⊗n, with its coefficient A-action. -/
 def algebraNormalizedFirstEulerianImageComplex : ChainComplex (ModuleCat.{max u v w} A) ℕ :=
   image (algebraNormalizedFirstEulerianChainMap k A M)
 
-/-- The original raw proper-shuffle quotient is the raw full first Eulerian image complex. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A
+and a compatible A-module M, let C_+ be the raw quotient by the
+proper both-positive shuffle relations, which equal ker(P) for
+P = e_C^(0)+e_C^(1). There is an A-linear chain isomorphism
+C_+ ≅ Im(P), with forward value [x] ↦ P(x) and inverse value
+y ↦ [y]. -/
 def algebraFirstEulerianQuotientIso :
     algebraPositiveQuotientComplex k A M ≅ algebraFirstEulerianImageComplex k A M where
   hom := algebraPositiveEulerianSection k A M ≫ factorThruImage (algebraFirstEulerianChainMap k A M)
@@ -115,7 +135,11 @@ def algebraFirstEulerianQuotientIso :
         exact h
       _ = 𝟙 _ := by rw [hi, Category.id_comp]
 
-/-- The original normalized proper quotient is the normalized full first image complex. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, the normalized proper relation quotient
+N_+ is isomorphic as an A-linear chain complex to Im(P_N), where
+P_N = e_N^(0)+e_N^(1). The forward map sends [x] to P_N(x),
+and the inverse takes the quotient class of an image element. -/
 def algebraNormalizedFirstEulerianQuotientIso :
     algebraNormalizedPositiveQuotientComplex k A M ≅ algebraNormalizedFirstEulerianImageComplex k A M where
   hom := algebraNormalizedPositiveEulerianSection k A M ≫
@@ -162,18 +186,27 @@ def algebraNormalizedFirstEulerianQuotientIso :
         exact h
       _ = 𝟙 _ := by rw [hi, Category.id_comp]
 
-/-- The raw comparison maps a quotient through its first-projector
-section and native image factor. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A
+and a compatible A-module M, the forward map C_+ → Im(P) is
+C_+ → C → Im(P): first the section [x] ↦ P(x), then the
+factorization of the raw first Eulerian projector P = e^(0)+e^(1). -/
 theorem algebraFirstEulerianQuotientIso_hom :
     (algebraFirstEulerianQuotientIso k A M).hom =
       algebraPositiveEulerianSection k A M ≫ factorThruImage (algebraFirstEulerianChainMap k A M) := rfl
 
-/-- The image comparison returns by the original image inclusion and original quotient projection. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, the inverse Im(P) → C_+ is the raw
+image inclusion followed by the proper quotient projection.
+Thus an image element y is sent to its class [y]. -/
 theorem algebraFirstEulerianQuotientIso_inv :
     (algebraFirstEulerianQuotientIso k A M).inv =
       image.ι (algebraFirstEulerianChainMap k A M) ≫ algebraRawPositiveProjection k A M := rfl
 
-/-- Original normalization commutes with the two first-projector quotient sections. -/
+/-- For a commutative ℚ-algebra k, a commutative k-algebra A and
+a compatible A-module M, let q : C → N be normalization and
+q_+ : C_+ → N_+ its proper-quotient map. The sections satisfy
+q ∘ s_C = s_N ∘ q_+ from the raw proper quotient to N,
+where s_C([x]) = P(x) and s_N([y]) = P_N(y). -/
 @[reassoc]
 theorem algebraPositiveEulerianSection_normalization :
     algebraPositiveEulerianSection k A M ≫ algebraNormalizationProjection k A M =
@@ -186,7 +219,11 @@ theorem algebraPositiveEulerianSection_normalization :
   intro x
   exact DFunLike.congr_fun (algebraNormalizationLevelMap_firstEulerian k A M n) x
 
-/-- The raw and normalized full first image complexes inherit the original normalization homotopy equivalence. -/
+/-- For k a commutative ℚ-algebra, A a commutative k-algebra and
+M a compatible A-module, normalization induces the A-linear chain
+homotopy equivalence Im(e_C^(0)+e_C^(1)) ≃
+Im(e_N^(0)+e_N^(1)). Its inverse and homotopies are the restricted
+and projected normalization section and homotopies. -/
 def algebraFirstEulerianImageNormalizationHomotopyEquiv :
     HomotopyEquiv (algebraFirstEulerianImageComplex k A M)
       (algebraNormalizedFirstEulerianImageComplex k A M) :=

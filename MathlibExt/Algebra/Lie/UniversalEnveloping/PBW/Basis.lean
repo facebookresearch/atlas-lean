@@ -13,17 +13,28 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.PBW.TensorNormalization
 public import Mathlib.RingTheory.Congruence.Hom
 
 /-!
-# Ordered-word PBW for the native universal enveloping algebra
+# The ordered-word PBW basis and its coefficient maps
 
-The computed tensor normalizer defines a contextual ring congruence. Its
-quotient receives the original Lie algebra because the actual relation
-errors vanish. The native UEA universal property then gives coordinates on
-the original UEA. These coordinates recover each ordered word, and the
-already constructed spanning theorem gives an ordered-word basis.
+Let R be a commutative ring and L an R-Lie algebra with an R-module
+basis b indexed by a linearly ordered type I. An ordered word is a
+finite weakly increasing list in I, and its value in U = U_R(L) is
+the ordered product ι(b_(i₁)) ⋯ ι(b_(iₙ)).
 
-No PBW, confluence, injectivity, or freeness conclusion is supplied as data.
-The auxiliary quotient is used to construct coordinates; the resulting basis
-and injectivity theorems concern the original native UEA.
+The tensor normalizer takes values in the finitely supported module
+N = OrderedWord(I) →₀ R. Contextual equality of normal forms defines
+a ring congruence on T_R(L): a ∼ c if
+Norm(p a s) = Norm(p c s) for every p,s ∈ T_R(L).
+The defining Lie relation belongs to this congruence. Its quotient
+therefore receives a Lie map from L, and the enveloping universal
+property gives the R-linear PBW coordinates U → N.
+
+Coordinates of an ordered word are its single coordinate vector.
+Together with spanning, this gives N ≃ₗ[R] U and the ordered-word
+R-basis of U. In particular U is free whenever the underlying
+R-module L is free. Extracting the length-one ordered coordinates
+gives a map U →ₗ[R] L left inverse to ι, so ι is injective under the
+basis hypothesis. The worlds of R, L and I are independent, and I
+need not be finite.
 -/
 
 @[expose] public section
@@ -47,7 +58,11 @@ local notation "τ" => TensorAlgebra.ι R
 
 attribute [local instance] LieRing.ofAssociativeRing
 
-/-- The contextual congruence computed from the actual tensor normalizer. -/
+/-- For a commutative ring R, an R-Lie algebra L and an R-basis
+b indexed by linearly ordered I, let Norm : T_R(L) → (OrderedWord(I) →₀ R)
+be the tensor normalizer. The congruence relates a,c ∈ T_R(L) when
+Norm(p a s) = Norm(p c s) for every prefix and suffix p,s ∈ T_R(L).
+This contextual relation is compatible with addition and multiplication. -/
 @[implicit_reducible]
 def normalizationRingCon (b : Module.Basis I R L) : RingCon T where
   r a c := ∀ p s : T, tensorNormalizer b (p * a * s) = tensorNormalizer b (p * c * s)
@@ -69,8 +84,11 @@ def normalizationRingCon (b : Module.Basis I R L) : RingCon T where
       _ = tensorNormalizer b ((p * c) * e * s) := hde (p * c) s
       _ = tensorNormalizer b (p * (c * e) * s) := by simp only [mul_assoc]
 
-/-- The native defining Lie relation belongs to the constructed contextual
-congruence, by the actual normalizer's annihilation theorem. -/
+/-- For a commutative ring R, an R-Lie algebra L, an ordered
+R-basis b and x,y ∈ L, the tensor elements
+τ([x,y])+τ(y)τ(x) and τ(x)τ(y) are contextually congruent.
+Thus their normal forms agree after multiplication by every tensor
+prefix and suffix, where τ : L → T_R(L) is the tensor generator map. -/
 theorem normalizationRingCon_lie_compat (b : Module.Basis I R L) (x y : L) :
     normalizationRingCon b (τ ⁅x, y⁆ + τ y * τ x) (τ x * τ y) := by
   intro p s
@@ -79,11 +97,19 @@ theorem normalizationRingCon_lie_compat (b : Module.Basis I R L) (x y : L) :
   simp only [mul_add, add_mul, map_add]
   exact (sub_eq_iff_eq_add.mp (sub_eq_zero.mp hzero)).symm
 
-/-- An auxiliary ring quotient constructed from actual normalization. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b, the normalization quotient is T_R(L) modulo
+the ring congruence a ∼ c defined by
+Norm(p a s) = Norm(p c s) for every tensor prefix p and suffix s.
+It is an R-algebra quotient of the tensor algebra. -/
 abbrev NormalizationQuotient (b : Module.Basis I R L) :=
   (normalizationRingCon b).Quotient
 
-/-- The original tensor algebra maps to the auxiliary quotient. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b, the quotient projection
+q : T_R(L) →ₐ[R] Q sends a tensor element to its class under
+contextual normal-form equality. Here Q is the normalization
+ring quotient determined by b. -/
 @[implicit_reducible]
 def normalizationQuotientMap (b : Module.Basis I R L) : T →ₐ[R] NormalizationQuotient b :=
   RingCon.mkₐ R (normalizationRingCon b)
@@ -92,8 +118,11 @@ theorem normalizationQuotientMap_surjective (b : Module.Basis I R L) :
     Function.Surjective (normalizationQuotientMap b) :=
   RingCon.mkₐ_surjective (normalizationRingCon b)
 
-/-- The computed normal form is well-defined and linear on the auxiliary
-quotient, since its contextual congruence includes the empty context. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b indexed by I, the R-linear map
+Q → (OrderedWord(I) →₀ R) sends [a] to Norm(a).
+It is well-defined because contextual equality includes the
+prefix and suffix both equal to 1. -/
 def normalizationQuotientCoordinates (b : Module.Basis I R L) :
     NormalizationQuotient b →ₗ[R] N where
   toFun := Quotient.lift (tensorNormalizer b) (by
@@ -121,8 +150,11 @@ theorem normalizationQuotientCoordinates_mk (b : Module.Basis I R L) (a : T) :
     normalizationQuotientCoordinates b (normalizationQuotientMap b a) =
       tensorNormalizer b a := rfl
 
-/-- The original Lie generators map to the auxiliary quotient with their
-actual bracket relation, proved from normalization. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b, the map L →ₗ⁅R⁆ Q sends x to q(τ(x)).
+It preserves the Lie bracket because the tensor Lie relation
+τ([x,y])+τ(y)τ(x) ∼ τ(x)τ(y) holds in Q.
+The bracket on Q is its associative-ring commutator. -/
 def normalizationQuotientι (b : Module.Basis I R L) : L →ₗ⁅R⁆ NormalizationQuotient b where
   toLinearMap := (normalizationQuotientMap b).toLinearMap.comp τ
   map_lie' := by
@@ -140,8 +172,11 @@ def normalizationQuotientι (b : Module.Basis I R L) : L →ₗ⁅R⁆ Normaliza
 theorem normalizationQuotientι_apply (b : Module.Basis I R L) (x : L) :
     normalizationQuotientι b x = normalizationQuotientMap b (τ x) := rfl
 
-/-- Coordinates on the original native UEA, obtained by its native universal
-property from the actually constructed Lie map and normalizer quotient. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b indexed by I, the R-linear PBW coordinate map
+U_R(L) → (OrderedWord(I) →₀ R) is the normal-form coordinate map
+of Q composed with the enveloping lift of x ↦ q(τ(x)).
+Its values are finite coefficient families of weakly increasing words. -/
 def pbwCoordinates (b : Module.Basis I R L) : U →ₗ[R] N :=
   (normalizationQuotientCoordinates b).comp
     (UniversalEnvelopingAlgebra.lift R (normalizationQuotientι b)).toLinearMap
@@ -155,7 +190,10 @@ theorem lift_normalizationQuotientι_basisWord (b : Module.Basis I R L) (xs : Li
       simp only [basisWord_cons, tensorWord_cons, map_mul,
         UniversalEnvelopingAlgebra.lift_ι_apply, normalizationQuotientι_apply, ih]
 
-/-- The native UEA coordinates compute the actual word normalizer. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b, the PBW coordinates of
+ι(b_(i₁)) ⋯ ι(b_(iₙ)) equal the normal form of the list
+[i₁,…,iₙ]. The list may be unordered or contain repeated indices. -/
 @[simp]
 theorem pbwCoordinates_basisWord (b : Module.Basis I R L) (xs : List I) :
     pbwCoordinates b (basisWord b xs) = normalize b xs := by
@@ -164,8 +202,11 @@ theorem pbwCoordinates_basisWord (b : Module.Basis I R L) (xs : List I) :
   rw [lift_normalizationQuotientι_basisWord, normalizationQuotientCoordinates_mk,
     tensorNormalizer_tensorWord]
 
-/-- The original ordered-word evaluation has the constructed PBW coordinates
-as a left inverse. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b, evaluation of a finite coefficient family of
+weakly increasing words followed by PBW coordinates is the identity
+on OrderedWord(I) →₀ R. Thus coordinates are a left inverse to
+the R-linear ordered-word evaluation map. -/
 theorem pbwCoordinates_comp_orderedWordLinear (b : Module.Basis I R L) :
     (pbwCoordinates b).comp (orderedWordLinear b) = LinearMap.id := by
   apply Finsupp.lhom_ext
@@ -174,8 +215,11 @@ theorem pbwCoordinates_comp_orderedWordLinear (b : Module.Basis I R L) :
     orderedWordValue, pbwCoordinates_basisWord, normalize_ordered]
   simp only [Finsupp.smul_single, smul_eq_mul, mul_one, LinearMap.id_apply]
 
-/-- Actual ordered words are linearly independent and spanning in the original
-native UEA, giving its explicit coefficient equivalence. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b indexed by I, evaluation is the R-linear equivalence
+(OrderedWord(I) →₀ R) ≃ₗ[R] U_R(L).
+It sends δ_[i₁,…,iₙ] to ι(b_(i₁)) ⋯ ι(b_(iₙ)), with
+i₁ ≤ ⋯ ≤ iₙ; its inverse is the PBW coordinate map. -/
 def orderedWordEquiv (b : Module.Basis I R L) : N ≃ₗ[R] U :=
   LinearEquiv.ofBijective (orderedWordLinear b) ⟨
     (show Function.LeftInverse (pbwCoordinates b) (orderedWordLinear b) from
@@ -183,7 +227,10 @@ def orderedWordEquiv (b : Module.Basis I R L) : N ≃ₗ[R] U :=
     (LinearMap.range_eq_top.mp (by
       rw [orderedWordLinear, Finsupp.range_linearCombination, orderedWord_spanning]))⟩
 
-/-- The actual ordered-word PBW basis of the original native UEA. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b indexed by I, the R-basis of U_R(L) is indexed
+by finite weakly increasing words. Its vector at [i₁,…,iₙ] is
+ι(b_(i₁)) ⋯ ι(b_(iₙ)), and the empty-word vector is 1. -/
 def orderedBasis (b : Module.Basis I R L) : Module.Basis (OrderedWord I) R U :=
   (Finsupp.basisSingleOne (R := R)).map (orderedWordEquiv b)
 
@@ -200,17 +247,26 @@ theorem orderedWord_linearIndependent (b : Module.Basis I R L) :
   rw [← h]
   exact (orderedBasis b).linearIndependent
 
-/-- PBW freeness for the actual native UEA over an arbitrary free-basis ground module. -/
+/-- For a commutative ring R and an R-Lie algebra L with an
+R-basis b indexed by a linearly ordered type I, the underlying
+R-module of U_R(L) is free, with its ordered-word PBW basis.
+The index type I may be infinite. -/
 theorem free_of_basis (b : Module.Basis I R L) : Module.Free R U :=
   Module.Free.of_basis (orderedBasis b)
 
-/-- PBW freeness requires only freeness of the underlying Lie module. -/
+/-- For a commutative ring R and an R-Lie algebra L whose
+underlying R-module is free, the underlying R-module of U_R(L)
+is also free. No finite-rank hypothesis is imposed on L. -/
 theorem free_of_free [Module.Free R L] : Module.Free R U := by
   classical
   letI : LinearOrder (Module.Free.ChooseBasisIndex R L) := linearOrderOfSTO WellOrderingRel
   exact free_of_basis (Module.Free.chooseBasis R L)
 
-/-- The degree-one coefficient extractor obtained from the actual PBW coordinates. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered basis b, the degree-one projection U_R(L) →ₗ[R] L sends
+an element with PBW coefficients c to ∑_i c_[i] • b_i.
+Only singleton ordered words contribute; the empty word and ordered
+words of other lengths contribute zero. -/
 def degreeOneProjection (b : Module.Basis I R L) : U →ₗ[R] L :=
   (Finsupp.linearCombination R (fun xs : OrderedWord I =>
     match xs.val with
@@ -233,8 +289,10 @@ theorem degreeOneProjection_comp_ι (b : Module.Basis I R L) :
   change Finsupp.linearCombination R _ (normalize b xs.val) = b i
   rw [normalize_ordered b xs, Finsupp.linearCombination_single, one_smul]
 
-/-- The original Lie map into its native UEA is injective when an actual
-ground-module basis is given. -/
+/-- For a commutative ring R and an R-Lie algebra L with
+ordered R-basis b, the canonical Lie map ι : L → U_R(L) is
+injective. Its underlying R-linear map has the length-one PBW
+coordinate projection as a left inverse. -/
 theorem ι_injective_of_basis (b : Module.Basis I R L) :
     Function.Injective (UniversalEnvelopingAlgebra.ι R (L := L)) := by
   intro x y hxy

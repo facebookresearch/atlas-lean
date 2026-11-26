@@ -1,3 +1,6 @@
-# Cyclic First Two Column Cell naturality
+# Naturality of retained cyclic cell inclusions
 
-The two-column map acts by the original tensor map on each retained cell.
+Naturality of retained cyclic cell inclusions.
+
+For `f : A → B`, mapping a retained bidegree cell into `CC^{(2)}(A)` and then applying the
+partial-total map equals applying `f` to every tensor entry and including the target cell.

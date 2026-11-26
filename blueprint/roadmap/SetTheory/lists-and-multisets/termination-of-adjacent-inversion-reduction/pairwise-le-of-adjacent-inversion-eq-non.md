@@ -1,3 +1,5 @@
-# Pairwise le of adjacent Inversion eq none
+# An inversion-free search gives a weakly increasing list
 
-A word with no adjacent inversion is weakly increasing.
+If the adjacent-inversion search of a finite list returns `none`, its
+entries are pairwise weakly increasing: every earlier entry is at most
+every later entry.

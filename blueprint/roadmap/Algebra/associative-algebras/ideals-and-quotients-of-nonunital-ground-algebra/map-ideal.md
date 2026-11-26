@@ -1,3 +1,6 @@
-# Map Ideal
+# The ideal homomorphism induced by a preserving map
 
-The original ideal map preserves the original element value in its independent target carrier.
+The ideal homomorphism induced by a preserving map.
+
+For `f : A →ₙₐ[k] B` with `f(I) ⊆ J`, the induced map `I →ₙₐ[k] J` sends `x` to the element
+with value `f(x.val)`. The two carrier universes may be independent.

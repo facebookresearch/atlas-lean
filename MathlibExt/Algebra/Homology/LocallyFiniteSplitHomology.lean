@@ -16,14 +16,20 @@ public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.Algebra.Homology.HomologicalComplex
 
 /-!
-# Actual locally finite split-complex homology coproducts
+# Finite splitting formulas for coproducts of homology objects
 
-Original split image inclusions/projections and their original finite
-middle-degree projector sum give the actual homology coproduct inverse.
-Native homology depends only on the original middle component, so no
-global homology/coproduct preservation or AB5 certificate is needed. The
-inverse is the genuine finite native sum of the original projection
-homology maps followed by coproduct inclusions.
+Let C be an abelian category, K and F_j complexes of arbitrary common
+shape, and i_j : F_j → K, p_j : K → F_j chain maps with
+p_j i_j = id_(F_j) and p_k i_j = 0 for j ≠ k.
+Fix a degree n and a bound N ∈ ℕ such that (p_j)_n = 0 for j > N and
+∑_(j=0)^N (i_j)_n(p_j)_n = id_(K_n).
+
+If the coproduct of the selected objects H_n(F_j) exists, their homology
+inclusions give ⨁_j H_n(F_j) ≅ H_n(K). The inverse is the finite sum
+∑_(j=0)^N ι_j ∘ H_n(p_j), and the forward map has components H_n(i_j).
+The support and completeness conditions are needed only in the selected
+degree n. No preservation-of-coproducts assumption for homology is
+required, and all category and index universes remain independent.
 -/
 
 @[expose] public section
@@ -48,7 +54,11 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   [HasCoproduct (fun j : ℕ => (F j).homology n)]
 
 include hsum in
-/-- The actual finite middle-component sum gives the actual identity homology projector sum. -/
+/-- For complexes F_j,K of any common shape in an abelian
+category C, let i_j : F_j → K and p_j : K → F_j be chain maps.
+If ∑_(j=0)^N (i_j)_n(p_j)_n = id_(K_n), then
+∑_(j=0)^N H_n(i_j) ∘ H_n(p_j) = id_(H_n(K)).
+This conclusion uses only the finite sum identity in degree n. -/
 theorem finiteSplitHomology_projector_sum :
     (∑ j : Fin (N + 1), homologyMap (p j.val) n ≫ homologyMap (i j.val) n) = 𝟙 (K.homology n) := by
   classical
@@ -65,7 +75,12 @@ theorem finiteSplitHomology_projector_sum :
   exact hhom
 
 include hsplit hcross hsupport hsum in
-/-- The actual locally finite split-image homology inclusion descent has its genuine finite projection inverse. -/
+/-- In an abelian category C, let chain maps i_j : F_j → K
+and p_j : K → F_j split orthogonally. At a fixed degree n assume
+(p_j)_n = 0 for j > N and
+∑_(j=0)^N (i_j)_n(p_j)_n = id_(K_n), and assume the coproduct
+of H_n(F_j) exists. Then ⨁_j H_n(F_j) ≅ H_n(K), with forward
+components H_n(i_j) and inverse ∑_(j=0)^N ι_j ∘ H_n(p_j). -/
 def finiteSplitHomologyCoproductIso : (∐ (fun j : ℕ => (F j).homology n)) ≅ K.homology n :=
   finiteSplitCoproductIso (fun j : ℕ => (F j).homology n)
     (fun j => homologyMap (i j) n) (fun j => homologyMap (p j) n) N
@@ -81,7 +96,11 @@ def finiteSplitHomologyCoproductIso : (∐ (fun j : ℕ => (F j).homology n)) �
     (finiteSplitHomology_projector_sum K F i p n N hsum)
 
 include hsplit hcross hsupport hsum in
-/-- The actual forward map is the original native sum of the image homology inclusions. -/
+/-- For the finite splitting data on complexes F_j,K in an
+abelian category, with support bound N and complete projector sum
+in degree n, the forward map ⨁_j H_n(F_j) → H_n(K) has jth
+component H_n(i_j). The assumed coproduct is only that of the
+selected homology objects H_n(F_j). -/
 theorem finiteSplitHomologyCoproductIso_hom :
     (finiteSplitHomologyCoproductIso K F i p hsplit hcross n N hsupport hsum).hom =
       Sigma.desc (fun j => homologyMap (i j) n) := rfl

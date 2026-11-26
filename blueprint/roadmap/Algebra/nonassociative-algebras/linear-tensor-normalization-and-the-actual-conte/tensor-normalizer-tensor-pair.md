@@ -1,3 +1,6 @@
-# Tensor Normalizer tensor Pair
+# The normalized value of an adjacent tensor-vector pair
 
-Two-vector tensor insertion gives the same bilinear normalization context.
+The normalized value of an adjacent tensor-vector pair.
+
+Applying the linear tensor normalizer to two inserted Lie vectors equals the bilinear
+normalization pair in the same prefix and suffix.

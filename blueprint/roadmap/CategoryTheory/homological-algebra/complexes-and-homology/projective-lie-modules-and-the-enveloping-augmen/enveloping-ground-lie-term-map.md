@@ -1,6 +1,6 @@
-# Enveloping Ground Lie Term Map
+# The ground-linear chain-term map of a Lie homomorphism
 
-The existing semilinear CE map becomes ground linear using
-the original scalar-map law of the native UEA map. Its source and target
-carrier universes are independent; this is a linear map, without an
-assumption that its two bundled complexes belong to one category.
+The ground-linear chain-term map of a Lie homomorphism.
+
+For `f : L → L'`, the enveloping semilinear term map restricts to an `R`-linear map between
+the ground chain terms. The carrier universes of `L` and `L'` may differ.

@@ -1,5 +1,7 @@
-# Enveloping Ground Augmentation Retract
+# The enveloping augmentation as a free-cover arrow retract
 
-The original mapped augmentation is a native arrow retract
-of the free-cover augmentation. Every map is the previously constructed
-Lie/UEA/CE map, and the scalar maps are the original lifted identities.
+The enveloping augmentation as a free-cover arrow retract.
+
+For a projective underlying Lie module, the chain inclusion, chain projection, and trivial-
+coefficient comparison exhibit the ground augmentation for `L` as an arrow retract of the
+free-cover augmentation.

@@ -1,3 +1,6 @@
-# Cobar Coface App codegeneracy self
+# The componentwise matching coface–codegeneracy identity
 
-Adjacent cancellation at `castSucc` (dual of `barDegeneracyApp_self`).
+The componentwise matching coface–codegeneracy identity.
+
+For `i : Fin (n+1)`, coface `i` followed by codegeneracy `i` is the identity at every carrier
+object.

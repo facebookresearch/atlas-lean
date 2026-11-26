@@ -1,3 +1,6 @@
-# Cyclic BSBIDiagram Map id
+# The identity map of a left-unit SBI homology diagram
 
-The native diagram map preserves identities on the ordinary and cyclic models.
+The identity map of a left-unit SBI homology diagram.
+
+The identity algebra homomorphism induces the identity on the regular Hochschild and cyclic
+homology diagram.

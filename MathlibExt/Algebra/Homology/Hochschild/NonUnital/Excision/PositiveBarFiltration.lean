@@ -12,13 +12,16 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.CoefficientIdealCountFaces
 
 /-!
-# Positive coefficient-bar filtrations
+# Ideal-count filtrations for positive coefficient bar words
 
-The truncated face sum identifies the
-positive coefficient-bar boundary in word
-coordinates. Its ideal-count stages are
-preserved by that boundary and the quotient
-kernel inclusion.
+The bar b′ boundary in whole-word coordinates is the alternating sum of the non-wrapping
+adjacent faces, with signs (−1)^i. Tensoring it with identity on an arbitrary coefficient V
+gives the coefficient word boundary.
+
+Under the positive bar word isomorphisms, this is the differential from word length n + 2 in
+degree n + 2 to length n + 1 in degree n + 1. The relative quotient-kernel word maps commute
+with it, and the degree-zero relative object is zero. Because each face loses at most one
+ideal entry, every stage requiring n + 1 − p ideal entries is preserved.
 -/
 
 @[expose] public section
@@ -36,14 +39,18 @@ variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
   (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The b-prime boundary in the original full-word coordinates. -/
+/-- Let k be commutative and A a nonunital k-algebra ring with k-bilinear multiplication.
+regularWordTruncatedBoundary n : A^⊗(n+2) →ₗ[k] A^⊗(n+1) is the bPrimeComplex boundary
+transported by TensorPower.consEquiv. -/
 def regularWordTruncatedBoundary (n : ℕ) :
     TensorPower k (n + 2) A →ₗ[k] TensorPower k (n + 1) A :=
   (TensorPower.consEquiv k A n).toLinearMap.comp
     (((bPrimeComplex k A).d (n + 1) n).hom.comp
       (TensorPower.consEquiv k A (n + 1)).symm.toLinearMap)
 
-/-- The original truncated boundary retains exactly the non-wrapping faces and their signs. -/
+/-- For a nonunital k-algebra ring A over commutative k, regularWordTruncatedBoundary n = ∑ i :
+Fin(n+1), (−1 : ℤ)^i.val • regularWordFace n i.castSucc. Thus only the n + 1 adjacent
+non-wrapping faces occur. -/
 theorem regularWordTruncatedBoundary_eq_sum (n : ℕ) :
     regularWordTruncatedBoundary k A n =
       ∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val • regularWordFace k A n i.castSucc := by
@@ -69,12 +76,18 @@ theorem regularWordTruncatedBoundary_eq_sum (n : ℕ) :
       (M₂ := TensorPower k (n + 1) A) x)
     ((-1 : ℤ) ^ i.val) (regularWordFace k A n i.castSucc)).symm
 
-/-- The original coefficient identity is tensorized with the b-prime word boundary. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V an arbitrary k-module.
+Write K_+ for the relative positive bar quotient kernel, whose degree n + 1 has a word map
+W_n^V into V ⊗[k] A^⊗(n+1). coefficientWordBoundary n is id_V ⊗ regularWordTruncatedBoundary
+n, mapping V ⊗ A^⊗(n+2) to V ⊗ A^⊗(n+1). -/
 def coefficientWordBoundary (n : ℕ) :
     V ⊗[k] TensorPower k (n + 2) A →ₗ[k] V ⊗[k] TensorPower k (n + 1) A :=
   TensorProduct.map (LinearMap.id : V →ₗ[k] V) (regularWordTruncatedBoundary k A n)
 
-/-- Every original coefficient-bar face retains the same coefficient and its integer sign. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V an arbitrary k-module.
+Write K_+ for the relative positive bar quotient kernel, whose degree n + 1 has a word map
+W_n^V into V ⊗[k] A^⊗(n+1). coefficientWordBoundary n = ∑ i : Fin(n+1), (−1 : ℤ)^i.val • (id_V
+⊗ regularWordFace n i.castSucc). -/
 theorem coefficientWordBoundary_eq_sum (n : ℕ) :
     coefficientWordBoundary k A V n =
       ∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val •
@@ -91,7 +104,10 @@ theorem coefficientWordBoundary_eq_sum (n : ℕ) :
   intro i _
   rfl
 
-/-- The coefficient-bar word boundary loses at most one required original ideal entry. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V an arbitrary k-module.
+Write K_+ for the relative positive bar quotient kernel, whose degree n + 1 has a word map
+W_n^V into V ⊗[k] A^⊗(n+1). For n,r : ℕ, coefficientIdealWordSpan (n + 2) r mapped by
+coefficientWordBoundary n is contained in coefficientIdealWordSpan (n + 1) (r−1). -/
 theorem coefficientIdealWordSpan_boundary (n required : ℕ) :
     (coefficientIdealWordSpan k A I V (n + 2) required).map
         (coefficientWordBoundary k A V n) ≤
@@ -153,7 +169,10 @@ private theorem barWordCoordinates_d (n : ℕ) :
           (TensorPower.consEquiv k A (n + 1) x)))
   rw [LinearEquiv.symm_apply_apply]
 
-/-- The native positive-extension differential is the original coefficient-word boundary. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V an arbitrary k-module.
+Write K_+ for the relative positive bar quotient kernel, whose degree n + 1 has a word map
+W_n^V into V ⊗[k] A^⊗(n+1). For n : ℕ, d_positive(n+2,n+1) ≫ positiveBarWordIso n.hom =
+positiveBarWordIso (n+1).hom ≫ ModuleCat.ofHom (coefficientWordBoundary n). -/
 theorem positiveBarWordIso_d (n : ℕ) :
     (positiveBarComplex k A V).d (n + 2) (n + 1) ≫ (positiveBarWordIso k A V n).hom =
       (positiveBarWordIso k A V (n + 1)).hom ≫
@@ -185,7 +204,10 @@ theorem positiveBarWordIso_d (n : ℕ) :
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
   rw [hcoords]
 
-/-- The original positive quotient-kernel word map commutes with its coefficient-bar boundary. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V an arbitrary k-module.
+Write K_+ for the relative positive bar quotient kernel, whose degree n + 1 has a word map
+W_n^V into V ⊗[k] A^⊗(n+1). For x : K_+.X (n + 2), W_n^V(K_+.d (n+2)(n+1) x) =
+coefficientWordBoundary n (W_(n+1)^V(x)). -/
 theorem relativePositiveBarWordMap_d (n : ℕ)
     (x : (relativePositiveBarComplex k A I V).X (n + 2)) :
     relativePositiveBarWordMap k A I V n
@@ -202,14 +224,21 @@ theorem relativePositiveBarWordMap_d (n : ℕ)
   simp only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_ofHom] at hvalue
   exact hvalue.symm
 
-/-- The positive quotient-kernel has the source's zero augmentation object. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V an arbitrary k-module.
+Write K_+ for the relative positive bar quotient kernel, whose degree n + 1 has a word map
+W_n^V into V ⊗[k] A^⊗(n+1). The object K_+.X 0 is zero, since the positive bar source is zero
+in degree zero and the relative object is its quotient-map kernel. -/
 theorem relativePositiveBarComplex_isZero_zero :
     IsZero ((relativePositiveBarComplex k A I V).X 0) := by
   apply (IsZero.iff_id_eq_zero _).mpr
   rw [← cancel_mono ((kernel.ι (positiveBarQuotientMap k A I V)).f 0)]
   exact (positiveBarComplex_isZero_zero k A V).eq_of_tgt _ _
 
-/-- Every positive source ideal-count stage is preserved by the arbitrary-coefficient kernel boundary. -/
+/-- Let k be commutative, A a nonunital k-algebra ring, I two-sided and V an arbitrary k-module.
+Write K_+ for the relative positive bar quotient kernel, whose degree n + 1 has a word map
+W_n^V into V ⊗[k] A^⊗(n+1). For p,n : ℕ, the image of barWordFiltration p (n + 1) under K_+.d
+(n + 2) (n + 1) lies in barWordFiltration p n. These stages are in positive degrees n + 2 and
+n + 1, respectively. -/
 theorem barWordFiltration_d (p n : ℕ) :
     (barWordFiltration k A I V p (n + 1)).map
         ((relativePositiveBarComplex k A I V).d (n + 2) (n + 1)).hom ≤

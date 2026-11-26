@@ -12,13 +12,17 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.UnitizationHochschild
 
 /-!
-# The original scalar source of the unitization cokernel
+# The lifted scalar source of unitization Hochschild cokernels
 
-The scalar complex used in the common carrier world is canonically the
-native module-functor lift of the original regular Hochschild complex of k.
-The equivalence lifts each coefficient and tensor factor. Thus the
-source cokernel really compares the original scalar inclusion; the scalar
-carrier change is and visible.
+Let `k : Type u` be a commutative ring and let `A : Type v` be a nonunital ground algebra.
+Lifting the regular Hochschild complex of `k` by the module functor `ULift.{v}` gives a chain
+complex isomorphic to the regular Hochschild complex of the lifted scalar algebra `ULift.{v}
+k`.
+
+The component equivalence lifts the scalar coefficient and every tail factor. Composing it
+with the scalar section into `A⁺` gives the scalar chain inclusion in the common carrier
+universe. Its homology cokernel is isomorphic to the unitization Hochschild cokernel defined
+using the lifted scalar algebra.
 -/
 
 @[expose] public section
@@ -35,7 +39,10 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A]
 
-/-- Every original scalar coefficient and tail factor is lifted through its native module equivalence. -/
+/-- The tensor-level comparison for a lifted scalar Hochschild complex.
+
+The module-functor lift of a scalar degree-`n` tensor level is linearly equivalent to the
+tensor level with coefficient and all tail factors in `ULift.{v} k`. -/
 def scalarRegularLevelLiftEquiv (n : ℕ) :
     (ModuleCat.uliftFunctor.{v, u} k).obj (chainLevel k k k n) ≃ₗ[k]
       chainLevel k (ULift.{v} k) (ULift.{v} k) n :=
@@ -43,7 +50,10 @@ def scalarRegularLevelLiftEquiv (n : ℕ) :
     (ULift.moduleEquiv (R := k) (M := k)).symm
     (PiTensorProduct.congr (fun _ : Fin n => (ULift.moduleEquiv (R := k) (M := k)).symm))
 
-/-- The scalar carrier bridge is on the original Hochschild complexes, using native map naturality. -/
+/-- The scalar Hochschild chain comparison under a carrier lift.
+
+The lifted regular `b`-complex of `k` is chain-isomorphic to the regular `b`-complex of
+`ULift.{v} k`, by lifting each coefficient and tail value. -/
 def scalarRegularLiftIso :
     ((ModuleCat.uliftFunctor.{v, u} k).mapHomologicalComplex (ComplexShape.down ℕ)).obj
         (bComplex k k) ≅ bComplex k (ULift.{v} k) :=
@@ -61,13 +71,19 @@ def scalarRegularLiftIso :
       exact (DFunLike.congr_fun (bComplex_d_natural
         (ULift.algEquiv (R := k) (A := k)).symm.toAlgHom.toNonUnitalAlgHom j) x.down).symm)
 
-/-- The original ground scalar complex maps by precisely its native unitization scalar inclusion. -/
+/-- The unitization inclusion from a lifted scalar Hochschild complex.
+
+The scalar lift comparison followed by the lifted scalar section gives a chain map from the
+module-functor lift of `b(k)` into `b(A⁺)`. -/
 def unitizationOriginalScalarComplexInclusion :
     ((ModuleCat.uliftFunctor.{v, u} k).mapHomologicalComplex (ComplexShape.down ℕ)).obj
       (bComplex k k) ⟶ bComplex k (Unitization k A) :=
   (scalarRegularLiftIso.{u, v} k).hom ≫ unitizationScalarComplexInclusion k A
 
-/-- This inclusion retains the original scalar coefficient and each scalar tensor factor. -/
+/-- The scalar tensor formula for the lifted unitization inclusion.
+
+The inclusion sends `up(m ⊗ ⊗ᵢ aᵢ)` to `inl(m) ⊗ ⊗ᵢ inl(aᵢ)`, applying the scalar section to
+every entry. -/
 theorem unitizationOriginalScalarComplexInclusion_tprod (n : ℕ) (m : k) (a : Fin n → k) :
     ((unitizationOriginalScalarComplexInclusion k A).f n).hom
         (ULift.up (m ⊗ₜ[k] PiTensorProduct.tprod k a)) =
@@ -78,7 +94,10 @@ theorem unitizationOriginalScalarComplexInclusion_tprod (n : ℕ) (m : k) (a : F
   simp only [TensorPower.consLevelMap, TensorProduct.map_tmul, PiTensorProduct.map_tprod]
   rfl
 
-/-- The literal cokernel of the original scalar HH map agrees with the explicit common-carrier presentation. -/
+/-- The scalar-source comparison of unitization homology cokernels.
+
+The cokernel of the homology map from the functor-lifted scalar complex is isomorphic to the
+unitization Hochschild model defined using `b(ULift.{v} k)`. -/
 def unitizationOriginalScalarCokernelIso (n : ℕ) :
     cokernel (HomologicalComplex.homologyMap (unitizationOriginalScalarComplexInclusion k A) n) ≅
       unitizationHochschildHomology k A n :=

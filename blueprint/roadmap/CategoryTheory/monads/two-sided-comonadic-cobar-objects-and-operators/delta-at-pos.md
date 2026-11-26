@@ -1,5 +1,6 @@
-# Delta At Pos
+# Comultiplication insertion at a comonad-power position
 
-Comultiplication insertion at an arbitrary raw position:
-`(G^n).obj X ⟶ (G^{n+1}).obj X`. Position zero applies `G.δ` under `G^n`;
-later positions recurse under `G`. Counts from the left-comodule end.
+Comultiplication insertion at a comonad-power position.
+
+For `i : Fin n`, insert `δ` into `G^n(X)` to obtain `G^(n+1)(X)`. Position zero is the
+innermost insertion near the left-comodule object; later positions recurse at `G(X)`.

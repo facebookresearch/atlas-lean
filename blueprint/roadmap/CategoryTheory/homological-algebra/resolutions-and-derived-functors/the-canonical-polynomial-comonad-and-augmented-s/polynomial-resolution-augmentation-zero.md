@@ -1,3 +1,5 @@
-# Polynomial Resolution augmentation zero
+# The degree-zero polynomial augmentation
 
-The actual degree-zero augmentation is the polynomial evaluation counit.
+The degree-zero polynomial augmentation.
+
+The degree-zero augmentation `T(A) → A` is the polynomial evaluation counit.

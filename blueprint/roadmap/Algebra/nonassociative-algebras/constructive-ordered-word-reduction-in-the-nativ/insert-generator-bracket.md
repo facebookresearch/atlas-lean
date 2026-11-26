@@ -1,3 +1,6 @@
-# Insert Generator bracket
+# The coordinate expansion of a contextual bracket insertion
 
-Expanding a bracket uses the basis's finite, literal coordinate sum.
+The coordinate expansion of a contextual bracket insertion.
+
+The insertion of `[b_i,b_j]` is the finite sum of inserted basis vectors with coefficients
+from that bracket's basis coordinates.

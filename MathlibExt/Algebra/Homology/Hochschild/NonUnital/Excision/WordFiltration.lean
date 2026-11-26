@@ -14,13 +14,20 @@ public import MathlibExt.Algebra.Algebra.NonUnitalIdeal.KSplit
 public meta import Lean.Elab.Tactic.Omega
 
 /-!
-# Ideal-count and split-word coordinates of relative kernels
+# Ideal-entry count filtrations and relative word layers
 
-All spans are formed from original tensor words in the original algebra.
-Their pullbacks use the quotient-kernel inclusions. Associated
-quotients use the native module quotient projection. The arbitrary
-coefficient V remains explicit in the bar model. Split-word typing, counts
-and word-submodule images provide reusable coordinates for these quotients.
+For a tensor word a of length N, count the positions whose entries belong to I. The submodule
+S_(N,r) is spanned by pure words with at least r ideal entries; increasing r shrinks this
+span. Multiplying adjacent entries loses at most one ideal entry because I is two-sided.
+
+In degree n of the relative naive kernel, pull back S_(n+1,n+1−p) along the word inclusion to
+define F_p. Thus F_p is increasing in p. Its predecessor is zero at p = 0 and F_(p−1)
+otherwise, and the associated layer is the quotient by that predecessor inside F_p.
+
+With an arbitrary ground coefficient V, the same count ignores V and defines the stage in
+positive bar degree n + 1. A ground-linear quotient splitting also gives typed words: false
+positions lie in I, true positions lie in the section image, and the true-position count is
+the quotient-position count.
 -/
 
 @[expose] public section
@@ -39,13 +46,18 @@ open ModuleCat.Algebra.Hochschild
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
 
-/-- The number of original word entries in the original ideal. -/
+/-- Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. For a : Fin n → A, idealEntryCount k A I a is the number of i : Fin n with a_i ∈
+I.toSubmodule. -/
 def idealEntryCount {n : ℕ} (a : Fin n → A) : ℕ := by
   classical
   exact (Finset.univ.filter (fun i => a i ∈ I.toSubmodule)).card
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] in
-/-- Multiplying adjacent original entries loses at most one ideal entry. -/
+/-- Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Assume I is two-sided. For a : Fin (n + 1) → A and i : Fin n, idealEntryCount a
+− 1 ≤ idealEntryCount (hochschildMulAdjacent i a), with natural-number subtraction.
+Two-sidedness keeps the product in I whenever either multiplied entry is in I. -/
 theorem idealEntryCount_mulAdjacent {n : ℕ} (i : Fin n) (a : Fin (n + 1) → A) :
     idealEntryCount k A I a - 1 ≤ idealEntryCount k A I (hochschildMulAdjacent i a) := by
   classical
@@ -80,53 +92,82 @@ theorem idealEntryCount_mulAdjacent {n : ℕ} (i : Fin n) (a : Fin (n + 1) → A
   exact (Finset.pred_card_le_card_erase (s := S) (a := i.succ)).trans
     (Finset.card_le_card_of_injOn i.predAbove hMap hInj)
 
-/-- The literal original ideal-count word span. -/
+/-- Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. For n, r : ℕ, idealWordSpan k A I n r is the k-submodule of A^⊗n spanned by
+tprod a for tuples a : Fin n → A satisfying r ≤ idealEntryCount a. -/
 def idealWordSpan (n required : ℕ) : Submodule k (TensorPower k n A) :=
   Submodule.span k {x | ∃ a : Fin n → A,
     required ≤ idealEntryCount k A I a ∧ x = PiTensorProduct.tprod k a}
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Requiring fewer original ideal entries enlarges the span. -/
+/-- Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. For n : ℕ and s ≤ r, idealWordSpan k A I n r ≤ idealWordSpan k A I n s. -/
 theorem idealWordSpan_antitone (n : ℕ) {r s : ℕ} (h : s ≤ r) :
     idealWordSpan k A I n r ≤ idealWordSpan k A I n s := by
   apply Submodule.span_mono
   rintro x ⟨a, ha, rfl⟩
   exact ⟨a, h.trans ha, rfl⟩
 
-/-- Actual native ideal-count coordinates of the original naive quotient kernel. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Write K_b =
+ker(bComplex(A) → bComplex(Q)), and identify its degree-n inclusion with an injective word map
+W_n : (K_b)_n → A^⊗(n+1). relativeNaiveWordMap n is TensorPower.consEquiv after the degree-n
+kernel inclusion, giving W_n : (K_b)_n →ₗ[k] TensorPower k (n + 1) A. -/
 def relativeNaiveWordMap (n : ℕ) :
     (relativeNaiveComplex k A I).X n →ₗ[k] TensorPower k (n + 1) A :=
   (TensorPower.consEquiv k A n).toLinearMap.comp
     ((kernel.ι (cyclicBComplexHom I.quotientMap)).f n).hom
 
-/-- Source F_p M_n, with n+1 original entries and the original quotient kernel. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Write K_b =
+ker(bComplex(A) → bComplex(Q)), and identify its degree-n inclusion with an injective word map
+W_n : (K_b)_n → A^⊗(n+1). For p,n : ℕ, naiveWordFiltration p n is W_n⁻¹(idealWordSpan (n + 1)
+(n + 1 − p)). The count uses natural-number subtraction. -/
 def naiveWordFiltration (p n : ℕ) : Submodule k ((relativeNaiveComplex k A I).X n) :=
   (idealWordSpan k A I (n + 1) (n + 1 - p)).comap (relativeNaiveWordMap k A I n)
 
-/-- The written count formula is monotone in p; its direction is not changed by an assumption. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Write K_b =
+ker(bComplex(A) → bComplex(Q)), and identify its degree-n inclusion with an injective word map
+W_n : (K_b)_n → A^⊗(n+1). For p ≤ q and n : ℕ, naiveWordFiltration p n ≤ naiveWordFiltration q
+n. Increasing p lowers the required ideal-entry count. -/
 theorem naiveWordFiltration_mono {p q : ℕ} (h : p ≤ q) (n : ℕ) :
     naiveWordFiltration k A I p n ≤ naiveWordFiltration k A I q n := by
   apply Submodule.comap_mono
   apply idealWordSpan_antitone
   omega
 
-/-- The lower original filtration, with zero as the bottom predecessor. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Write K_b =
+ker(bComplex(A) → bComplex(Q)), and identify its degree-n inclusion with an injective word map
+W_n : (K_b)_n → A^⊗(n+1). naiveLowerFiltration p n is ⊥ when p = 0 and naiveWordFiltration (p
+− 1) n otherwise. -/
 def naiveLowerFiltration (p n : ℕ) : Submodule k ((relativeNaiveComplex k A I).X n) :=
   if p = 0 then ⊥ else naiveWordFiltration k A I (p - 1) n
 
-/-- The associated graded module is the native quotient by the original lower inclusion. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Write K_b =
+ker(bComplex(A) → bComplex(Q)), and identify its degree-n inclusion with an injective word map
+W_n : (K_b)_n → A^⊗(n+1). naiveWordLayer p n is F_p ⧸ (F_lower.comap F_p.subtype), where F_p =
+naiveWordFiltration p n and F_lower = naiveLowerFiltration p n. -/
 abbrev naiveWordLayer (p n : ℕ) :=
   naiveWordFiltration k A I p n ⧸
     (naiveLowerFiltration k A I p n).comap (naiveWordFiltration k A I p n).subtype
 
-/-- The original associated-graded projection is the module quotient map. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Write K_b =
+ker(bComplex(A) → bComplex(Q)), and identify its degree-n inclusion with an injective word map
+W_n : (K_b)_n → A^⊗(n+1). naiveWordLayerProjection p n is the quotient map F_p →ₗ[k]
+naiveWordLayer p n by the inverse image of the predecessor under F_p's inclusion. -/
 def naiveWordLayerProjection (p n : ℕ) :
     naiveWordFiltration k A I p n →ₗ[k] naiveWordLayer k A I p n :=
   ((naiveLowerFiltration k A I p n).comap (naiveWordFiltration k A I p n).subtype).mkQ
 
 variable (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- Original coefficient words with the source number of ideal entries. -/
+/-- Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let V be a k-module. coefficientIdealWordSpan n r is the span in V ⊗[k] A^⊗n of
+v ⊗ tprod a with at least r entries of a in I. The coefficient v is unrestricted. -/
 def coefficientIdealWordSpan (n required : ℕ) : Submodule k (V ⊗[k] TensorPower k n A) :=
   Submodule.span k {x | ∃ v : V, ∃ a : Fin n → A,
     required ≤ idealEntryCount k A I a ∧ x = v ⊗ₜ[k] PiTensorProduct.tprod k a}
@@ -138,7 +179,11 @@ theorem coefficientIdealWordSpan_antitone (n : ℕ) {r s : ℕ} (h : s ≤ r) :
   rintro x ⟨v, a, ha, rfl⟩
   exact ⟨v, a, h.trans ha, rfl⟩
 
-/-- Source F_p L_(n+1) in the positive word-length kernel, retaining arbitrary V. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Let V be an arbitrary
+k-module in a separate carrier universe. Write K_+ = ker(positiveBar(A,V) → positiveBar(Q,V));
+degree n + 1 maps into V ⊗[k] A^⊗(n+1) through W^V_n. For p,n : ℕ, barWordFiltration p n is
+(W^V_n)⁻¹(coefficientIdealWordSpan (n + 1) (n + 1 − p)), a submodule of positive degree n + 1. -/
 def barWordFiltration (p n : ℕ) :
     Submodule k ((relativePositiveBarComplex k A I V).X (n + 1)) :=
   (coefficientIdealWordSpan k A I V (n + 1) (n + 1 - p)).comap
@@ -150,17 +195,29 @@ theorem barWordFiltration_mono {p q : ℕ} (h : p ≤ q) (n : ℕ) :
   apply coefficientIdealWordSpan_antitone
   omega
 
-/-- The predecessor of the coefficient count stage, with bottom at filtration index zero. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Let V be an arbitrary
+k-module in a separate carrier universe. Write K_+ = ker(positiveBar(A,V) → positiveBar(Q,V));
+degree n + 1 maps into V ⊗[k] A^⊗(n+1) through W^V_n. barLowerFiltration p n is ⊥ at p = 0 and
+barWordFiltration (p − 1) n otherwise. -/
 def barLowerFiltration (p n : ℕ) :
     Submodule k ((relativePositiveBarComplex k A I V).X (n + 1)) :=
   if p = 0 then ⊥ else barWordFiltration k A I V (p - 1) n
 
-/-- The source bar associated quotient retains both original filtration inclusions. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Let V be an arbitrary
+k-module in a separate carrier universe. Write K_+ = ker(positiveBar(A,V) → positiveBar(Q,V));
+degree n + 1 maps into V ⊗[k] A^⊗(n+1) through W^V_n. barWordLayer p n is barWordFiltration p
+n modulo the inverse image of barLowerFiltration p n inside that current stage. -/
 abbrev barWordLayer (p n : ℕ) :=
   barWordFiltration k A I V p n ⧸
     (barLowerFiltration k A I V p n).comap (barWordFiltration k A I V p n).subtype
 
-/-- The native projection of the coefficient count stage to its original layer quotient. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Let V be an arbitrary
+k-module in a separate carrier universe. Write K_+ = ker(positiveBar(A,V) → positiveBar(Q,V));
+degree n + 1 maps into V ⊗[k] A^⊗(n+1) through W^V_n. barWordLayerProjection p n is the
+k-linear quotient map from barWordFiltration p n to barWordLayer p n. -/
 def barWordLayerProjection (p n : ℕ) :
     barWordFiltration k A I V p n →ₗ[k] barWordLayer k A I V p n :=
   ((barLowerFiltration k A I V p n).comap (barWordFiltration k A I V p n).subtype).mkQ
@@ -169,15 +226,24 @@ section SplitWordCoordinates
 
 variable (splitting : I.KSplit)
 
-/-- True positions are the original quotient-section entries; false positions are original ideal entries. -/
+/-- Let k be commutative, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let s : I.KSplit be a k-linear section of A → A/I. For colour : Fin n → Bool and
+a : Fin n → A, splitWordTyped means a_i belongs to the range of s.sectionMap when colour i is
+true, and to I.toSubmodule when colour i is false. -/
 def splitWordTyped {n : ℕ} (color : Fin n → Bool) (a : Fin n → A) : Prop :=
   ∀ i, if color i then a i ∈ splitting.sectionMap.range else a i ∈ I.toSubmodule
 
-/-- The quotient-position count of an original split word. -/
+/-- For a colour function colour : Fin n → Bool, quotientEntryCount colour is the number of i :
+Fin n with colour i = true. In split-word typing these are the quotient-section positions. -/
 def quotientEntryCount {n : ℕ} (color : Fin n → Bool) : ℕ :=
   (Finset.univ.filter (fun i => color i = true)).card
 
-/-- Project an original word submodule to its associated quotient. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and k-bilinear
+multiplication, and I a two-sided nonunital k-subalgebra. Put Q = A/I. Write K_b =
+ker(bComplex(A) → bComplex(Q)), and identify its degree-n inclusion with an injective word map
+W_n : (K_b)_n → A^⊗(n+1). For a submodule S ≤ A^⊗(n+1), naiveLayerImage p n S is obtained by
+pulling S back along W_n, restricting to naiveWordFiltration p n, then taking its image under
+naiveWordLayerProjection p n. -/
 def naiveLayerImage (p n : ℕ) (S : Submodule k (TensorPower k (n + 1) A)) :
     Submodule k (naiveWordLayer k A I p n) :=
   ((S.comap (relativeNaiveWordMap k A I n)).comap

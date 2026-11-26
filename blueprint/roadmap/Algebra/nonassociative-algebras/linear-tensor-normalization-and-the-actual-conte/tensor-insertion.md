@@ -1,3 +1,5 @@
-# Tensor Insertion
+# The tensor insertion of a Lie vector in a basis-word context
 
-Single-vector insertion in the actual tensor algebra.
+The tensor insertion of a Lie vector in a basis-word context.
+
+For fixed prefix and suffix words, insert `τ(x)` between their tensor-algebra products.

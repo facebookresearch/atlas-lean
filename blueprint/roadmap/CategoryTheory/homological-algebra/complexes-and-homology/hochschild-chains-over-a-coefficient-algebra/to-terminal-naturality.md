@@ -1,4 +1,6 @@
-# To Terminal naturality
+# Naturality of maps to the terminal augmented algebra
 
-The original augmentation maps form a natural transformation of
-algebras over `B`.
+Naturality of maps to the terminal augmented algebra.
+
+For `f : P → Q` over `B`, composing `f` with the terminal map of `Q` gives the terminal map of
+`P`.

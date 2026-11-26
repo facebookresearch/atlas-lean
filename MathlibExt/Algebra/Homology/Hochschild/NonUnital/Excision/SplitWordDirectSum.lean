@@ -13,13 +13,15 @@ public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Excision.SplitWor
 public import Mathlib.Algebra.DirectSum.Module
 
 /-!
-# Finite sums of split-word coordinates
+# Direct sums of split-word coordinates
 
-The finite direct-sum/product equivalence
-and split-word coordinates give coefficient
-coordinate equivalences. Their summand maps
-and inverse coordinates are the original
-ideal and quotient maps.
+For a ground-linear split quotient A → A/I, the word colours form a finite type. Composing the
+finite direct-sum/product equivalence with the split-word coordinate equivalence identifies ⨁
+c, W_c with A^⊗N.
+
+Each summand inclusion maps by the tensor of ideal inclusions and quotient sections, and the
+inverse coordinate is the tensor of ideal projections and quotient maps. The same construction
+with V ⊗ W_c gives a direct-sum equivalence to V ⊗ A^⊗N for any ground module V.
 -/
 
 @[expose] public section
@@ -35,7 +37,13 @@ namespace ModuleCat.Algebra.Hochschild.NonUnital
 variable (k : Type u) [CommRing k] (A : Type v) [NonUnitalRing A] [Module k A]
   [IsScalarTower k A A] [SMulCommClass k A A] (I : NonUnitalSubalgebra k A) [I.IsTwoSided]
 
-/-- The native finite direct sum of all original colour tensors reconstructs the ambient tensor. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let q : A → A/I and s : I.KSplit be a k-linear section with q ∘ s = id; write
+p(a) = a − s(q(a)) in I. For a colour c : Fin N → Bool, put E_false = I, E_true = A/I and W_c
+= ⊗[k] i : Fin N, E_(c i). Let J_c : W_c → A^⊗N tensor the inclusions I → A and sections s,
+and let P_c : A^⊗N → W_c tensor the projections p and quotient maps q. The finite
+direct-sum/product equivalence gives splitWordDirectSumEquiv : (⨁ c : Fin N → Bool, W_c) ≃ₗ[k]
+A^⊗N. Its forward map is the sum of J_c and its inverse has coordinate P_c. -/
 def splitWordDirectSumEquiv (splitting : I.KSplit) (N : ℕ) :
     (⨁ colour : Fin N → Bool, splitWordTensor k A I colour) ≃ₗ[k] TensorPower k N A :=
   (DirectSum.linearEquivFunOnFintype k (Fin N → Bool)
@@ -43,7 +51,12 @@ def splitWordDirectSumEquiv (splitting : I.KSplit) (N : ℕ) :
       (splitWordCoordinatesEquiv k A I splitting N)
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Each native direct-sum inclusion maps by precisely its original section/inclusion tensor map. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let q : A → A/I and s : I.KSplit be a k-linear section with q ∘ s = id; write
+p(a) = a − s(q(a)) in I. For a colour c : Fin N → Bool, put E_false = I, E_true = A/I and W_c
+= ⊗[k] i : Fin N, E_(c i). Let J_c : W_c → A^⊗N tensor the inclusions I → A and sections s,
+and let P_c : A^⊗N → W_c tensor the projections p and quotient maps q. For a colour c and x :
+W_c, splitWordDirectSumEquiv sends DirectSum.lof c x to J_c(x). -/
 theorem splitWordDirectSumEquiv_lof (splitting : I.KSplit) (N : ℕ)
     (colour : Fin N → Bool) (x : splitWordTensor k A I colour) :
     splitWordDirectSumEquiv k A I splitting N
@@ -57,7 +70,12 @@ theorem splitWordDirectSumEquiv_lof (splitting : I.KSplit) (N : ℕ)
   simp
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Each inverse native direct-sum coordinate is precisely the original quotient/projection tensor map. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let q : A → A/I and s : I.KSplit be a k-linear section with q ∘ s = id; write
+p(a) = a − s(q(a)) in I. For a colour c : Fin N → Bool, put E_false = I, E_true = A/I and W_c
+= ⊗[k] i : Fin N, E_(c i). Let J_c : W_c → A^⊗N tensor the inclusions I → A and sections s,
+and let P_c : A^⊗N → W_c tensor the projections p and quotient maps q. For x : A^⊗N and a
+colour c, (splitWordDirectSumEquiv.symm x) c = P_c(x). -/
 theorem splitWordDirectSumEquiv_symm_apply (splitting : I.KSplit) (N : ℕ)
     (x : TensorPower k N A) (colour : Fin N → Bool) :
     (splitWordDirectSumEquiv k A I splitting N).symm x colour =
@@ -72,7 +90,13 @@ theorem splitWordDirectSumEquiv_symm_apply (splitting : I.KSplit) (N : ℕ)
 
 variable (V : Type w) [AddCommGroup V] [Module k V]
 
-/-- The native finite coefficient direct sum reconstructs the original arbitrary-coefficient ambient tensor. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let q : A → A/I and s : I.KSplit be a k-linear section with q ∘ s = id; write
+p(a) = a − s(q(a)) in I. For a colour c : Fin N → Bool, put E_false = I, E_true = A/I and W_c
+= ⊗[k] i : Fin N, E_(c i). Let J_c : W_c → A^⊗N tensor the inclusions I → A and sections s,
+and let P_c : A^⊗N → W_c tensor the projections p and quotient maps q. Let V be any k-module,
+with J_c^V = id_V ⊗ J_c and P_c^V = id_V ⊗ P_c. coefficientSplitWordDirectSumEquiv : (⨁ c, V
+⊗[k] W_c) ≃ₗ[k] V ⊗[k] A^⊗N sums J_c^V and has inverse coordinates P_c^V. -/
 def coefficientSplitWordDirectSumEquiv (splitting : I.KSplit) (N : ℕ) :
     (⨁ colour : Fin N → Bool, V ⊗[k] splitWordTensor k A I colour) ≃ₗ[k]
       V ⊗[k] TensorPower k N A :=
@@ -81,7 +105,13 @@ def coefficientSplitWordDirectSumEquiv (splitting : I.KSplit) (N : ℕ) :
       (coefficientSplitWordCoordinatesEquiv k A I V splitting N)
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Each coefficient direct-sum inclusion retains precisely the original identity and position maps. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let q : A → A/I and s : I.KSplit be a k-linear section with q ∘ s = id; write
+p(a) = a − s(q(a)) in I. For a colour c : Fin N → Bool, put E_false = I, E_true = A/I and W_c
+= ⊗[k] i : Fin N, E_(c i). Let J_c : W_c → A^⊗N tensor the inclusions I → A and sections s,
+and let P_c : A^⊗N → W_c tensor the projections p and quotient maps q. Let V be any k-module,
+with J_c^V = id_V ⊗ J_c and P_c^V = id_V ⊗ P_c. For x : V ⊗ W_c,
+coefficientSplitWordDirectSumEquiv sends the c-th direct-sum inclusion of x to J_c^V(x). -/
 theorem coefficientSplitWordDirectSumEquiv_lof (splitting : I.KSplit) (N : ℕ)
     (colour : Fin N → Bool) (x : V ⊗[k] splitWordTensor k A I colour) :
     coefficientSplitWordDirectSumEquiv k A I V splitting N
@@ -95,7 +125,13 @@ theorem coefficientSplitWordDirectSumEquiv_lof (splitting : I.KSplit) (N : ℕ)
   simp
 
 omit [IsScalarTower k A A] [SMulCommClass k A A] [I.IsTwoSided] in
-/-- Each inverse coefficient direct-sum coordinate retains precisely the original identity and coordinates. -/
+/-- Let k be a commutative ring, A a nonunital ring with a k-module structure and I a nonunital
+k-subalgebra. Let q : A → A/I and s : I.KSplit be a k-linear section with q ∘ s = id; write
+p(a) = a − s(q(a)) in I. For a colour c : Fin N → Bool, put E_false = I, E_true = A/I and W_c
+= ⊗[k] i : Fin N, E_(c i). Let J_c : W_c → A^⊗N tensor the inclusions I → A and sections s,
+and let P_c : A^⊗N → W_c tensor the projections p and quotient maps q. Let V be any k-module,
+with J_c^V = id_V ⊗ J_c and P_c^V = id_V ⊗ P_c. For x : V ⊗ A^⊗N and a colour c, the c-th
+coordinate of coefficientSplitWordDirectSumEquiv.symm x is P_c^V(x). -/
 theorem coefficientSplitWordDirectSumEquiv_symm_apply (splitting : I.KSplit) (N : ℕ)
     (x : V ⊗[k] TensorPower k N A) (colour : Fin N → Bool) :
     (coefficientSplitWordDirectSumEquiv k A I V splitting N).symm x colour =

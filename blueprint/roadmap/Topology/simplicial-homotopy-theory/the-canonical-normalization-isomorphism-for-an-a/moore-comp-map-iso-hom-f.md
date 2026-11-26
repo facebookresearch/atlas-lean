@@ -1,4 +1,6 @@
-# Moore Comp Map Iso hom f
+# The degreewise formula for forward additive Moore comparison
 
-Every degree of the canonical forward map uses the original mapped
-Moore inclusion and original target Moore projection.
+The degreewise formula for forward additive Moore comparison.
+
+In degree `n`, the comparison is `F` of the source normalized inclusion followed by the target
+Moore projection.

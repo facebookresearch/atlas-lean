@@ -13,12 +13,15 @@ public import MathlibExt.Algebra.Homology.Hochschild.Matrix.GeneralizedTrace
 public import Mathlib.Data.Matrix.Block
 
 /-!
-# Generalized trace on lower matrix blocks
+# Generalized trace of a lower matrix block
 
-Every closed index cycle using an excluded block has
-a zero entry. Reindexing the surviving cycles by
-Sum.inr gives the generalized trace on the lower
-block, including the empty-index case.
+Let k be commutative, A,M k-modules and J a finite index type.
+Place the coefficient matrix and every tail matrix in the lower J×J
+block of matrices indexed by PUnit⊕J, with all other blocks zero.
+Their generalized tensor trace equals the generalized trace over J.
+
+Each closed cycle entering the added PUnit block contributes zero.
+The surviving ordered cycles have indices in J. This includes J empty.
 -/
 
 @[expose] public section
@@ -36,7 +39,10 @@ variable (k : Type u) [CommRing k]
   {M : Type w} [AddCommGroup M] [Module k M]
   (J : Type z) [Fintype J]
 
-/-- Native lower-block extension does not change the complete finite coefficient trace. -/
+/-- Let k be commutative, A,M k-modules and J finite. For a
+coefficient X and tail B_j indexed by J,
+Tr_{PUnit⊕J}(diag(0,X)⊗diag(0,B_1)⊗⋯⊗diag(0,B_n))
+=Tr_J(X⊗B_1⊗⋯⊗B_n). All off-lower-block entries are zero. -/
 theorem generalizedTrace_fromBlocks (n : ℕ) (X : Matrix J J M)
     (a : Fin n → Matrix J J A) :
     generalizedTrace k (PUnit ⊕ J) n

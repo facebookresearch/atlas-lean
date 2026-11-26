@@ -1,3 +1,6 @@
-# Unitization Reduced Zero Iso inv inclusion
+# The ideal-leading word as the reduced degree-zero inclusion
 
-The bottom inverse really is the original even word, without a scalar summand.
+The ideal-leading word as the reduced degree-zero inclusion.
+
+The inverse degree-zero comparison followed by the kernel inclusion is the even word with
+coefficient in `A` and empty tail.

@@ -1,3 +1,7 @@
-# Functor Comp Map Iso
+# The natural quotient-normalization comparison of additive functors
 
-The original quotient comparisons assemble into the actual functor isomorphism.
+The natural quotient-normalization comparison of additive functors.
+
+The objectwise comparisons assemble into a natural isomorphism from quotient normalization
+followed by the chain functor of `F` to simplicial application of `F` followed by quotient
+normalization.

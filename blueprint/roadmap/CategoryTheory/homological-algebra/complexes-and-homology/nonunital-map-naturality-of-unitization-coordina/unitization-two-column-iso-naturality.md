@@ -1,3 +1,6 @@
-# Unitization Two Column Iso naturality
+# Naturality of the unitization two-column chain comparison
 
-Original nonunital maps commute with the first-two-column unitization chain comparison.
+Naturality of the unitization two-column chain comparison.
+
+The retained two-column map induced by `f` commutes with the chain isomorphisms to the reduced
+normalized unitization complexes.

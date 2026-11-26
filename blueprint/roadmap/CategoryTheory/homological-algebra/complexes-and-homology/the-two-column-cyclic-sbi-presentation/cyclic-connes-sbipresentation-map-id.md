@@ -1,3 +1,5 @@
-# Cyclic Connes SBIPresentation Map id
+# The identity morphism of a two-column SBI presentation
 
-The computed presentation map preserves the original identity.
+The identity morphism of a two-column SBI presentation.
+
+The identity nonunital algebra homomorphism induces the identity presentation morphism.

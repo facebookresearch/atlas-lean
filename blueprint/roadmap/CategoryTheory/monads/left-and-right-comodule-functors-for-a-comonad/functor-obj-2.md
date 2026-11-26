@@ -1,3 +1,6 @@
-# Functor obj
+# The pointwise carrier of a left comodule functor
 
-The underlying functor is computed pointwise.
+The pointwise carrier of a left comodule functor.
+
+The underlying functor accessor retains the object values of the functor-category coalgebra
+carrier.

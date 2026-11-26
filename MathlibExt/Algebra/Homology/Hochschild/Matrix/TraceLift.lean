@@ -12,12 +12,21 @@ module
 public import MathlibExt.Algebra.Homology.Hochschild.Matrix.Trace
 
 /-!
-# The finite trace at a specified common coefficient lift height
+# Generalized trace at an arbitrary common coefficient height
 
-The trace and corner maps lift to a specified common coefficient
-height and compose with heterogeneous Morita maps. Their down
-maps are `coefficientUnliftEquiv`, with both original carrier
-universes retained.
+Let k be a commutative ring, A an associative unital k-algebra, M an
+A-bimodule with commuting k-linear left and right actions, and ι a finite
+matrix index type. The generalized trace has degree maps
+Mat_ι(M) ⊗[k] Mat_ι(A)^⊗n → M ⊗[k] A^⊗n given by summing matrix
+entries around all closed index cycles.
+
+For independent carrier universes u, v, w and z of k, A, M and ι, and
+an arbitrary additional height t, lift both coefficient modules to
+H = max(u,v,w,z,t). The resulting trace commutes with the signed
+Hochschild boundary and defines
+C_*(Mat_ι(A),ULift^H Mat_ι(M)) → C_*(A,ULift^H M).
+Removing the coefficient lifts recovers the closed-cycle trace in each
+degree. Taking t = 0 recovers the height max(u,v,w,z) chain map.
 -/
 
 @[expose] public section
@@ -42,7 +51,11 @@ attribute [local instance] Coefficients.leftModule Coefficients.rightModule
   Coefficients.commute Coefficients.leftTower Coefficients.rightTower
   ModuleCat.Algebra.Hochschild.uliftSMulCommClass
 
-/-- The same native finite trace with only the coefficient lifted to a requested upper height. -/
+/-- For k, A, M and finite ι as in the coefficient Hochschild
+complex, and H = max(u,v,w,z,t), the degree-n trace is the k-linear map
+ULift^H Mat_ι(M) ⊗[k] Mat_ι(A)^⊗n →
+ULift^H M ⊗[k] A^⊗n. It removes the source coefficient lift, takes the
+closed-cycle generalized trace, and lifts the target coefficient. -/
 def traceLinearLiftAt (n : ℕ) :
     ULift.{max u v w z t} (Matrix ι ι M) ⊗[k] TensorPower k n (Matrix ι ι A) →ₗ[k]
       ULift.{max u v w z t} M ⊗[k] TensorPower k n A :=
@@ -55,7 +68,11 @@ def traceLinearLiftAt (n : ℕ) :
             coefficientUnliftEquiv k (Matrix ι ι A) (Matrix ι ι M) n).toLinearMap)
 omit [SMulCommClass A Aᵐᵒᵖ M] [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M] [Module A M]
   [Module Aᵐᵒᵖ M] in
-/-- The target down map gives the original trace of the original source down map. -/
+/-- For k-modules M and A with A a k-algebra, a finite matrix
+index type ι and H = max(u,v,w,z,t), let d_S and d_T remove the source
+and target coefficient lifts. The degree-n lifted trace T_n^H satisfies
+d_T(T_n^H(x)) = T_n(d_S(x)) for every source tensor x. This value
+identity does not require coefficient left or right A-actions. -/
 theorem traceLinearLiftAt_down (n : ℕ)
     (x : ULift.{max u v w z t} (Matrix ι ι M) ⊗[k] TensorPower k n (Matrix ι ι A)) :
     (show ULift.{max u v w z t} M ⊗[k] TensorPower k n A ≃ₗ[k]
@@ -69,7 +86,11 @@ theorem traceLinearLiftAt_down (n : ℕ)
   simp only [traceLinearLiftAt, LinearMap.comp_apply, LinearEquiv.coe_coe,
     LinearEquiv.apply_symm_apply]
 
-/-- The original boundary square is transported through the two coefficient lifts. -/
+/-- Let M be an A-bimodule whose commuting left and right actions
+are k-linear, and let H = max(u,v,w,z,t). For every n ≥ 0, the lifted
+degree traces satisfy b_n^A ∘ T_(n+1)^H = T_n^H ∘ b_n^Mat from
+C_(n+1)(Mat_ι(A),ULift^H Mat_ι(M)) to C_n(A,ULift^H M).
+Both Hochschild boundaries are the alternating sums of their faces. -/
 theorem traceLinearLiftAt_boundary_comm (n : ℕ) :
     (boundary k A (ULift.{max u v w z t} M) n).hom.comp
         (traceLinearLiftAt.{t} k A M ι (n + 1)) =
@@ -111,7 +132,11 @@ theorem traceLinearLiftAt_boundary_comm (n : ℕ) :
       congrArg (generalizedTrace k ι n) (LinearMap.congr_fun hS x)
     _ = _ := (traceLinearLiftAt_down.{t} k A M ι n _).symm
 
-/-- The trace chain map at a common upper height, without a world equality premise. -/
+/-- For a k-algebra A, an A-bimodule M with commuting k-linear
+actions, a finite matrix index type ι and arbitrary extra height t,
+the closed-cycle trace defines the chain map
+C_*(Mat_ι(A),ULift^H Mat_ι(M)) → C_*(A,ULift^H M),
+where H = max(u,v,w,z,t) retains all independent carrier worlds. -/
 def traceChainMapAt :
     chainComplex k (Matrix ι ι A) (ULift.{max u v w z t} (Matrix ι ι M)) ⟶
       chainComplex k A (ULift.{max u v w z t} M) :=
@@ -122,7 +147,10 @@ def traceChainMapAt :
       apply ModuleCat.hom_ext
       exact traceLinearLiftAt_boundary_comm.{t} k A M ι n)
 
-/-- At zero additional height this is the original chosen trace chain map. -/
+/-- For a k-algebra A and an A-bimodule M with commuting k-linear
+actions, the trace chain map with t = 0 is equal to the trace chain map
+whose coefficient modules are lifted to max(u,v,w,z). The source and
+target Hochschild complexes and every degree map agree. -/
 theorem traceChainMapAt_zero : traceChainMapAt.{0} k A M ι =
     traceChainMap k A M ι := rfl
 

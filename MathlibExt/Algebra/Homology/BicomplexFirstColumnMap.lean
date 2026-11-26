@@ -14,12 +14,17 @@ public import MathlibExt.Algebra.Homology.TotalComplexMap
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Kernels
 
 /-!
-# Additive transport of the actual first-column total projection
+# Additive functors and first-column total projections
 
-The finite native total comparison and native preservation of the incoming
-cokernel intertwine the original first-column projection. The proof uses the
-actual summand inclusions and cokernel projection, with no compatibility
-equation or comparison isomorphism supplied by a caller.
+Let `F : C ⥤ D` be an additive functor between preadditive categories and let `K` be a
+bicomplex indexed by two copies of `ℕ`, with differentials decreasing each index. Suppose the
+total complexes of `K` and `F(K)` exist, the incoming map `K.d 1 0` has a cokernel, and the
+induced chain functor preserves that cokernel.
+
+The total-to-first-column-cokernel projection commutes with the total comparison and the
+preserved-cokernel comparison. On a diagonal summand with first index zero this is the
+cokernel projection; on a summand with positive first index it is zero. The category and
+morphism universes of `C` and `D` are independent.
 -/
 
 @[expose] public section
@@ -42,12 +47,20 @@ variable {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   [PreservesColimit (parallelPair (K.d 1 0) 0)
     (F.mapHomologicalComplex (ComplexShape.down ℕ))]
 
-/-- The mapped incoming cokernel exists by the actual native preservation instance. -/
+/-- The incoming cokernel after applying an additive chain functor.
+
+Preservation of the cokernel of `K.d 1 0` gives a cokernel of the corresponding
+incoming map in the mapped bicomplex. -/
 local instance : HasCokernel ((mapBicomplex F K).d 1 0) := by
   change HasCokernel ((F.mapHomologicalComplex (ComplexShape.down ℕ)).map (K.d 1 0))
   infer_instance
 
-/-- The original total projection is carried through the native total and cokernel comparisons. -/
+/-- Naturality of the first-column cokernel projection under an additive functor.
+
+For a first-quadrant bicomplex `K`, an additive functor `F` preserving the incoming cokernel
+identifies the mapped projection `F(Tot K) → F(coker(K.d 1 0))` with `Tot(F(K)) → coker(F(K.d
+1 0))` through the total and cokernel comparison isomorphisms. Both total complexes are
+assumed to exist, and only this cokernel preservation is required. -/
 @[reassoc]
 theorem firstColumnCokernelProjection_map :
     (F.mapHomologicalComplex (ComplexShape.down ℕ)).map

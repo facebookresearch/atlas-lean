@@ -1,3 +1,7 @@
-# Hom Equiv
+# The hom-set bijection between Lie maps and enveloping-linear maps
 
-The native Hom equivalence uses the original functions in both directions.
+The hom-set bijection between Lie maps and enveloping-linear maps.
+
+For Lie modules `M` and `N`, extending and restricting maps give a bijection between `M ⟶ N`
+and the `U_R(L)`-linear morphisms of their associated enveloping modules. Both directions
+retain coefficient values.

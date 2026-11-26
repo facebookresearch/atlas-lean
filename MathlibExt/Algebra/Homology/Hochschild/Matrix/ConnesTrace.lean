@@ -13,12 +13,25 @@ public import MathlibExt.Algebra.Homology.Hochschild.Matrix.CyclicTrace
 public import MathlibExt.Algebra.Homology.Hochschild.NonUnital.Cyclic
 
 /-!
-# Matrix trace on the Connes quotient
+# Generalized matrix trace on the signed cyclic quotient
 
-The integral generalized trace preserves the signed
-cyclic relations and descends through the first-column
-cokernel of the cyclic bicomplex. It retains the
-Hochschild boundary and its coefficient actions.
+Let k be a commutative ring and A an associative unital k-algebra. Put
+C_n(A) = A ⊗[k] A^⊗n and
+t_n(a₀ ⊗ ⋯ ⊗ aₙ) = (−1)^n aₙ ⊗ a₀ ⊗ ⋯ ⊗ a_(n−1).
+The Connes quotient complex Cλ(A) is the cokernel of the first-column
+map in the cyclic bicomplex. Its degree-n projection q_n annihilates
+1−t_n, so [x] = [t_n x], and its differential is induced by the full
+Hochschild boundary b = ∑ᵢ(−1)^i δᵢ.
+
+For r ≥ 0, the closed-cycle generalized trace from r×r matrices over A
+commutes with both b and t. It therefore gives a chain map
+T : Cλ(Mat_r(A)) → Cλ(A) with the representative formula
+T_n([X ⊗ a₁ ⊗ ⋯ ⊗ aₙ]) =
+∑_(i₀,…,iₙ) [X_(i₀,i₁) ⊗ (a₁)_(i₁,i₂) ⊗ ⋯ ⊗ (aₙ)_(iₙ,i₀)].
+Top-left zero extensions preserve this map, and unital k-algebra maps
+commute with it. The projection squares also hold for nonunital
+k-algebra maps. These statements hold over arbitrary k, with no
+inversion of integers.
 -/
 
 @[expose] public section
@@ -37,18 +50,28 @@ variable (k : Type u) [CommRing k] (A : Type v) [Ring A] [Algebra k A]
 local notation "Cλ" => ModuleCat.Algebra.Hochschild.NonUnital.connesComplex
 local notation "D" => ModuleCat.Algebra.Hochschild.NonUnital.cyclicBicomplex
 
-/-- The projection from the regular tensor term to its Connes cokernel. -/
+/-- For a commutative ring k and a k-algebra A, the projection
+q_n : C_n(A) → Cλ_n(A) is the degree-n component of the cokernel
+projection from the zeroth column of the cyclic bicomplex. Here
+C_n(A) = A ⊗[k] A^⊗n, and the cokernel relation is 1−t_n for the
+signed last-to-first cyclic operator t_n. -/
 abbrev connesProjection (n : ℕ) :
     ModuleCat.Algebra.Hochschild.chainLevel k A A n ⟶ (Cλ k A).X n :=
   (cokernel.π ((D k A).d 1 0)).f n
 
-/-- Evaluation of the original cokernel projection is an epimorphism. -/
+/-- For a commutative ring k, a k-algebra A and n ≥ 0, the
+projection q_n : C_n(A) → Cλ_n(A) is an epimorphism of k-modules.
+Thus every element of the degree-n Connes quotient has a tensor
+representative. -/
 instance connesProjection_epi (n : ℕ) : Epi (connesProjection k A n) := by
   let E := HomologicalComplex.eval (ModuleCat.{max u v} k) (ComplexShape.down ℕ) n
   change Epi (E.map (cokernel.π ((D k A).d 1 0)))
   infer_instance
 
-/-- The native Connes projection annihilates the original signed cyclic relation. -/
+/-- For a k-algebra A and every n ≥ 0, the degree projection
+q_n : C_n(A) → Cλ_n(A) satisfies q_n ∘ (1−t_n) = 0.
+Here t_n(a₀ ⊗ ⋯ ⊗ aₙ) =
+(−1)^n aₙ ⊗ a₀ ⊗ ⋯ ⊗ a_(n−1). -/
 theorem connesProjection_oneSubCyclic (n : ℕ) :
     ModuleCat.ofHom (1 - TensorPower.consCyclicOperator k A n) ≫
       connesProjection k A n = 0 := by
@@ -57,18 +80,26 @@ theorem connesProjection_oneSubCyclic (n : ℕ) :
   have hd := ModuleCat.Algebra.Hochschild.NonUnital.connesComplex_levelMap k A n
   exact (congrArg (fun d => ModuleCat.ofHom d ≫ connesProjection k A n) hd).symm.trans h
 
-/-- The cokernel projection commutes with the original full Hochschild boundary. -/
+/-- For a k-algebra A, the full Hochschild boundary
+b_n : C_(n+1)(A) → C_n(A) and the quotient differential
+d_n : Cλ_(n+1)(A) → Cλ_n(A) satisfy
+d_n ∘ q_(n+1) = q_n ∘ b_n for every n ≥ 0.
+The boundary b_n includes the cyclic last face. -/
 theorem connesProjection_boundary (n : ℕ) :
     connesProjection k A (n + 1) ≫ (Cλ k A).d (n + 1) n =
       (ModuleCat.Algebra.Hochschild.NonUnital.bComplex k A).d (n + 1) n ≫
         connesProjection k A n := by
   exact (cokernel.π ((D k A).d 1 0)).comm (n + 1) n
 
-/-- The projected original regular tensor representative. -/
+/-- For a k-algebra A, the k-linear representative map
+C_n(A) = A ⊗[k] A^⊗n → Cλ_n(A) sends a tensor x to its class [x]
+in the signed cyclic quotient, where [x−t_n x] = 0. -/
 def connesRepresentative (n : ℕ) : A ⊗[k] TensorPower k n A →ₗ[k] (Cλ k A).X n :=
   (connesProjection k A n).hom
 
-/-- The native representative agrees with its signed last-to-first rotation. -/
+/-- For a k-algebra A, n ≥ 0 and x ∈ A ⊗[k] A^⊗n, the Connes
+classes satisfy [t_n x] = [x], with t_n the last-to-first rotation
+multiplied by (−1)^n. -/
 theorem connesRepresentative_cyclic (n : ℕ) (x : A ⊗[k] TensorPower k n A) :
     connesRepresentative k A n (TensorPower.consCyclicOperator k A n x) =
       connesRepresentative k A n x := by
@@ -77,7 +108,9 @@ theorem connesRepresentative_cyclic (n : ℕ) (x : A ⊗[k] TensorPower k n A) :
   rw [map_sub, sub_eq_zero] at h
   exact h.symm
 
-/-- Every nonnegative signed cyclic power has the same Connes representative. -/
+/-- For a k-algebra A, n,j ≥ 0 and x ∈ A ⊗[k] A^⊗n, the
+Connes classes satisfy [t_n^j x] = [x]. The cyclic operator t_n
+includes the sign (−1)^n. -/
 theorem connesRepresentative_cyclic_pow (n j : ℕ) (x : A ⊗[k] TensorPower k n A) :
     connesRepresentative k A n ((TensorPower.consCyclicOperator k A n ^ j) x) =
       connesRepresentative k A n x := by
@@ -87,11 +120,17 @@ theorem connesRepresentative_cyclic_pow (n j : ℕ) (x : A ⊗[k] TensorPower k 
       rw [pow_succ', Module.End.mul_eq_comp, LinearMap.comp_apply,
         connesRepresentative_cyclic, ih]
 
-/-- A whole tensor-power representative uses the native cons equivalence. -/
+/-- For a k-algebra A and n ≥ 0, the k-linear map
+A^⊗(n+1) → Cλ_n(A) separates the first tensor factor and then takes
+the Connes class. On a pure tensor it sends
+a₀ ⊗ ⋯ ⊗ aₙ to [a₀ ⊗ (a₁ ⊗ ⋯ ⊗ aₙ)]. -/
 def connesTensorRepresentative (n : ℕ) : TensorPower k (n + 1) A →ₗ[k] (Cλ k A).X n :=
   (connesRepresentative k A n).comp (TensorPower.consEquiv k A n).symm.toLinearMap
 
-/-- The signed last-to-first rotation law on the original full tensor power. -/
+/-- For a k-algebra A and x ∈ A^⊗(n+1), taking its Connes
+representative after the signed last-to-first rotation gives the
+same class as taking the representative of x. The rotation sign
+is (−1)^n. -/
 theorem connesTensorRepresentative_cyclic (n : ℕ) (x : TensorPower k (n + 1) A) :
     connesTensorRepresentative k A n (TensorPower.cyclicOperator k A n x) =
       connesTensorRepresentative k A n x := by
@@ -104,7 +143,9 @@ theorem connesTensorRepresentative_cyclic (n : ℕ) (x : TensorPower k (n + 1) A
   simp only [LinearEquiv.symm_apply_apply] at hc'
   exact hc'.symm.trans h
 
-/-- Every full tensor representative is invariant under all signed cyclic powers. -/
+/-- For a k-algebra A, n,j ≥ 0 and x ∈ A^⊗(n+1), the Connes
+representative of t_n^j x equals that of x, where t_n rotates the
+full tensor power with sign (−1)^n. -/
 theorem connesTensorRepresentative_cyclic_pow (n j : ℕ)
     (x : TensorPower k (n + 1) A) :
     connesTensorRepresentative k A n ((TensorPower.cyclicOperator k A n ^ j) x) =
@@ -119,7 +160,11 @@ section Naturality
 
 variable {B : Type v} [Ring B] [Algebra k B]
 
-/-- The Connes map retains the original coefficient map before quotient projection. -/
+/-- For k-algebras A and B in the same carrier universe and a
+nonunital k-algebra map f : A → B, applying f to all n+1 factors
+and then projecting to Cλ_n(B) equals projecting to Cλ_n(A) and then
+applying the induced Connes map. Thus
+Cλ_n(f) ∘ q_n^A = q_n^B ∘ (f ⊗ f^⊗n). -/
 theorem connesProjection_natural (f : A →ₙₐ[k] B) (n : ℕ) :
     connesProjection k A n ≫
         (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHom f).f n =
@@ -137,7 +182,11 @@ theorem connesProjection_natural (f : A →ₙₐ[k] B) (n : ℕ) :
     rw [ModuleCat.Algebra.Hochschild.NonUnital.cyclicBicomplexHom_f_f]
     rfl)
 
-/-- Coefficient functoriality on every pure tensor representative. -/
+/-- For k-algebras A and B in the same carrier universe, a
+nonunital k-algebra map f : A → B and x ∈ A^⊗(n+1), the induced
+Connes map sends the representative of x to the representative of
+f^⊗(n+1)(x) in Cλ_n(B). The formula holds for every tensor-power
+element x. -/
 theorem connesTensorRepresentative_natural (f : A →ₙₐ[k] B) (n : ℕ)
     (x : TensorPower k (n + 1) A) :
     ((ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHom f).f n).hom
@@ -157,18 +206,26 @@ theorem connesTensorRepresentative_natural (f : A →ₙₐ[k] B) (n : ℕ)
 
 end Naturality
 
-/-- The full native trace followed by the target Connes projection. -/
+/-- For a k-algebra A and r,n ≥ 0, the k-linear map
+C_n(Mat_r(A)) → Cλ_n(A) sends x to [T_n(x)], where T_n is the
+closed-cycle generalized matrix trace. The coefficient module here
+is the regular module A. -/
 def connesTraceRepresentative (r n : ℕ) :
     Matrix (Fin r) (Fin r) A ⊗[k] TensorPower k n (Matrix (Fin r) (Fin r) A) →ₗ[k]
       (Cλ k A).X n :=
   (connesRepresentative k A n).comp (generalizedTrace k (Fin r) n)
 
-/-- The same projected trace with the cyclic degree objects as endpoints. -/
+/-- For a k-algebra A and r,n ≥ 0, the map from the degree-n
+zeroth column of the matrix cyclic bicomplex to Cλ_n(A) is the
+k-module morphism x ↦ [T_n(x)], with T_n the generalized matrix trace. -/
 def connesTraceRepresentativeMap (r n : ℕ) :
     ((D k (Matrix (Fin r) (Fin r) A)).X 0).X n ⟶ (Cλ k A).X n :=
   ModuleCat.ofHom (connesTraceRepresentative k A r n)
 
-/-- The original regular matrix and scalar faces retain the trace square. -/
+/-- For a k-algebra A, r,n ≥ 0 and i ∈ {0,…,n+1}, the regular
+Hochschild faces satisfy T_n ∘ δᵢ^Mat = δᵢ^A ∘ T_(n+1).
+The first face multiplies X a₁, the interior faces multiply adjacent
+matrices in their given order, and the last face multiplies a_(n+1) X. -/
 theorem trace_regularFace (r n : ℕ) (i : Fin (n + 2)) :
     (generalizedTrace k (Fin r) n).comp
         (ModuleCat.Algebra.Hochschild.NonUnital.regularFace k
@@ -222,7 +279,10 @@ theorem trace_regularFace (r n : ℕ) (i : Fin (n + 2)) :
     (trace_face_comm k A A (Fin r) n i)).trans
       (congrArg (fun f => f.comp (generalizedTrace k (Fin r) (n + 1))) htarget)
 
-/-- The full original signed regular boundary, including its cyclic last face, commutes with trace. -/
+/-- For a k-algebra A and r,n ≥ 0, the closed-cycle trace satisfies
+T_n ∘ b_n^Mat = b_n^A ∘ T_(n+1), where
+b_n = ∑_(i=0)^(n+1) (−1)^i δᵢ is the full regular Hochschild boundary,
+including the last product a_(n+1)a₀. -/
 theorem trace_regularBoundary (r n : ℕ) :
     (generalizedTrace k (Fin r) n).comp
         ((ModuleCat.Algebra.Hochschild.NonUnital.bComplex k
@@ -244,7 +304,9 @@ theorem trace_regularBoundary (r n : ℕ) :
   exact congrArg (fun z => (-1 : ℤ) ^ i.val • z)
     (LinearMap.congr_fun (trace_regularFace k A r n i) x)
 
-/-- The cyclic trace square kills the source Connes relation. -/
+/-- For a k-algebra A and r,n ≥ 0, the map x ↦ [T_n(x)] from
+C_n(Mat_r(A)) to Cλ_n(A) annihilates 1−t_n^Mat.
+Equivalently, [T_n(x−t_n^Mat x)] = 0 for every matrix tensor x. -/
 theorem connesTraceRepresentative_oneSub (r n : ℕ) :
     (connesTraceRepresentative k A r n).comp
       (1 - TensorPower.consCyclicOperator k (Matrix (Fin r) (Fin r) A) n) = 0 := by
@@ -258,7 +320,9 @@ theorem connesTraceRepresentative_oneSub (r n : ℕ) :
   simp only [LinearMap.comp_apply] at ht
   rw [← ht, connesRepresentative_cyclic, sub_self]
 
-/-- The degree trace between the Connes cokernels. -/
+/-- For a k-algebra A and r,n ≥ 0, the generalized trace induces
+Tλ_n : Cλ_n(Mat_r(A)) → Cλ_n(A). It is characterized by
+Tλ_n([x]) = [T_n(x)] for matrix tensor representatives x. -/
 def connesTraceComponent (r n : ℕ) : (Cλ k (Matrix (Fin r) (Fin r) A)).X n ⟶ (Cλ k A).X n :=
   (ModuleCat.Algebra.Hochschild.NonUnital.connesComplexXIsoCokernel
       k (Matrix (Fin r) (Fin r) A) n).hom ≫
@@ -270,7 +334,11 @@ def connesTraceComponent (r n : ℕ) : (Cλ k (Matrix (Fin r) (Fin r) A)).X n �
         exact (congrArg (fun d => (connesTraceRepresentative k A r n).comp d) h).trans
           (connesTraceRepresentative_oneSub k A r n))
 
-/-- The native source projection retains the exact original full trace representative. -/
+/-- For a k-algebra A and r,n ≥ 0, the matrix and scalar
+Connes projections satisfy
+Tλ_n ∘ q_n^Mat = q_n^A ∘ T_n.
+Thus the quotient trace of a projected matrix tensor is the scalar
+Connes class of its full generalized trace. -/
 theorem connesProjection_traceComponent (r n : ℕ) :
     connesProjection k (Matrix (Fin r) (Fin r) A) n ≫ connesTraceComponent k A r n =
       connesTraceRepresentativeMap k A r n := by
@@ -290,7 +358,11 @@ theorem connesProjection_traceComponent (r n : ℕ) :
         (connesTraceRepresentativeMap k A r n) _ = _
   exact cokernel.π_desc _ _ _
 
-/-- The native Connes trace has the regular tensor representative formula. -/
+/-- For a k-algebra A, X ∈ Mat_r(A) and aⱼ ∈ Mat_r(A), the
+degree-n quotient trace sends [X ⊗ a₁ ⊗ ⋯ ⊗ aₙ] to
+∑_(i₀,…,iₙ) [X_(i₀,i₁) ⊗ (a₁)_(i₁,i₂) ⊗ ⋯ ⊗ (aₙ)_(iₙ,i₀)].
+The finite sum ranges over Fin r-valued cycles with indices modulo
+n+1; for n = 0 it is the class of the additive matrix trace. -/
 theorem connesTraceComponent_tprod (r n : ℕ) (X : Matrix (Fin r) (Fin r) A)
     (a : Fin n → Matrix (Fin r) (Fin r) A) :
     (connesTraceComponent k A r n).hom
@@ -306,7 +378,10 @@ theorem connesTraceComponent_tprod (r n : ℕ) (X : Matrix (Fin r) (Fin r) A)
       (generalizedTrace k (Fin r) n (X ⊗ₜ[k] PiTensorProduct.tprod k a)) = _
     rw [generalizedTrace_tmul_tprod, map_sum])
 
-/-- The trace descends as a chain map of the Connes complexes. -/
+/-- For a k-algebra A and r ≥ 0, the degree quotient traces
+define a chain map Cλ(Mat_r(A)) → Cλ(A). Its differential is induced
+by the full regular Hochschild boundary, and its degree-n value is
+[x] ↦ [T_n(x)]. -/
 def connesTrace (r : ℕ) : Cλ k (Matrix (Fin r) (Fin r) A) ⟶ Cλ k A :=
   ChainComplex.ofHom (connesTraceComponent k A r) (by
     intro n
@@ -341,16 +416,25 @@ def connesTrace (r : ℕ) : Cλ k (Matrix (Fin r) (Fin r) A) ⟶ Cλ k A :=
     exact (LinearMap.congr_fun hp (generalizedTrace k (Fin r) (n + 1) x)).trans
       (congrArg (connesRepresentative k A n) (LinearMap.congr_fun ht x).symm))
 
-/-- The chain-map component is the constructed native Connes trace component. -/
+/-- For a k-algebra A and r,n ≥ 0, the degree-n component of the
+Connes quotient trace chain map is the induced quotient morphism
+Tλ_n : Cλ_n(Mat_r(A)) → Cλ_n(A), characterized by [x] ↦ [T_n(x)]. -/
 theorem connesTrace_f (r n : ℕ) : (connesTrace k A r).f n = connesTraceComponent k A r n := rfl
 
-/-- Actual zero corners induce the native Connes quotient map. -/
+/-- For a k-algebra A and r ≤ s, top-left extension by zero of
+r×r matrices to s×s matrices induces a chain map
+Cλ(Mat_r(A)) → Cλ(Mat_s(A)).
+It applies zero extension to each tensor factor before taking its class;
+the matrix algebra map is allowed to be nonunital. -/
 def connesZeroCorner {r s : ℕ} (h : r ≤ s) :
     Cλ k (Matrix (Fin r) (Fin r) A) ⟶ Cλ k (Matrix (Fin s) (Fin s) A) :=
   ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHom
     (Matrix.zeroExtendAlgHom (k := k) (A := A) h)
 
-/-- The native zero-corner projection square has the original tensor-coordinate map. -/
+/-- For a k-algebra A, r ≤ s and n ≥ 0, let Z_n apply top-left
+zero extension to every factor of C_n(Mat_r(A)). The induced quotient
+map Cλ_n(Z) satisfies Cλ_n(Z) ∘ q_n^r = q_n^s ∘ Z_n.
+This equality is a square of k-module maps. -/
 theorem connesProjection_zeroCorner {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     connesProjection k (Matrix (Fin r) (Fin r) A) n ≫ (connesZeroCorner k A h).f n =
       ModuleCat.ofHom (TensorPower.consLevelMap (Matrix.zeroExtendLinear (k := k) (A := A) h) n) ≫
@@ -368,7 +452,10 @@ theorem connesProjection_zeroCorner {r s : ℕ} (h : r ≤ s) (n : ℕ) :
     rw [ModuleCat.Algebra.Hochschild.NonUnital.cyclicBicomplexHom_f_f]
     rfl)
 
-/-- The full Connes trace is stable under every original finite zero corner. -/
+/-- For a k-algebra A and r ≤ s, the zero-extension chain map
+Cλ(Mat_r(A)) → Cλ(Mat_s(A)) followed by the size-s trace equals
+the size-r trace. Thus Tλ^s ∘ Cλ(Z) = Tλ^r as chain maps, including
+the empty stage r = 0. -/
 theorem connesZeroCorner_trace {r s : ℕ} (h : r ≤ s) :
     connesZeroCorner k A h ≫ connesTrace k A s = connesTrace k A r := by
   apply HomologicalComplex.hom_ext
@@ -389,13 +476,20 @@ section CoefficientNaturality
 
 variable {B : Type v} [Ring B] [Algebra k B]
 
-/-- The matrix coefficient map on native Connes complexes. -/
+/-- For k-algebras A and B in the same carrier universe, a
+unital k-algebra map f : A → B and r ≥ 0, entrywise application of f
+induces Cλ(Mat_r(A)) → Cλ(Mat_r(B)). Its tensor representatives are
+obtained by applying f to every matrix entry in every factor. -/
 def connesMatrixCoefficientMap (f : A →ₐ[k] B) (r : ℕ) :
     Cλ k (Matrix (Fin r) (Fin r) A) ⟶ Cλ k (Matrix (Fin r) (Fin r) B) :=
   ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHom
     (f.mapMatrix (m := Fin r)).toNonUnitalAlgHom
 
-/-- Every coefficient map commutes with the full native Connes trace. -/
+/-- For k-algebras A and B in the same carrier universe, a
+unital k-algebra map f : A → B and r ≥ 0, the chain-map square
+Tλ^B ∘ Cλ(Mat_r(f)) = Cλ(f) ∘ Tλ^A commutes from
+Cλ(Mat_r(A)) to Cλ(B). Both paths take a matrix tensor class to the
+class of its entrywise-f generalized trace. -/
 theorem connesTrace_natural (f : A →ₐ[k] B) (r : ℕ) :
     connesMatrixCoefficientMap k A f r ≫ connesTrace k B r =
       connesTrace k A r ≫ ModuleCat.Algebra.Hochschild.NonUnital.connesComplexHom f.toNonUnitalAlgHom := by

@@ -1,3 +1,5 @@
-# Quotient Map comp inclusion
+# The zero composite of ideal inclusion and quotient
 
-The entire original nonunital ideal/quotient composite is zero.
+The zero composite of ideal inclusion and quotient.
+
+The composite `I →ₙₐ[k] A →ₙₐ[k] A/I` is the zero nonunital algebra homomorphism.

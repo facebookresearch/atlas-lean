@@ -14,17 +14,16 @@ public import MathlibExt.Algebra.Homology.Hochschild.PolynomialAntisymmetrizatio
 public import MathlibExt.Algebra.Homology.Hochschild.DifferentialFormProjection
 
 /-!
-# Polynomial form projection and its factorial
+# The factorial in polynomial differential-form projection
 
-Composing the unscaled universal-form
-projection with signed polynomial
-antisymmetrization is multiplication
-by n! in degree n, on tensor
-representatives and homology classes.
-The signed polynomial comparison is
-an isomorphism over any ground ring;
-the unscaled projection has this
-additional factorial factor.
+Let `k` be a commutative ring, `A = k[X_s | s ∈ σ]`, and `M` a compatible symmetric
+`A`-module. The free cotangent generator is `dX_s`, and the polynomial exterior comparison
+identifies `M ⊗[k] ⋀ⁿ[k](σ →₀ k)` with `M ⊗[A] ⋀ⁿ[A] Ω[A/k]`.
+
+Signed polynomial antisymmetrization `ε_n` maps forms to Hochschild homology. The unscaled
+universal-form projection `π_n` satisfies `π_n ∘ ε_n = n! • id` over every commutative base
+ring. Equivalently, `π_n` is `n!` times the inverse polynomial exterior comparison. The same
+factorial identity holds on tensor representatives before taking homology.
 -/
 
 @[expose] public section
@@ -43,8 +42,10 @@ local notation "A" => MvPolynomial σ k
 local notation "V" => (σ →₀ k)
 local notation "Ω" => KaehlerDifferential k A
 
-/-- The original free cotangent generator is the universal differential
-of the original linear polynomial generator. -/
+/-- The universal differential of a linear polynomial generator.
+
+The linear polynomial map from `σ →₀ k` followed by the universal derivation is the free
+cotangent-generator map, sending a basis variable to `dX_s`. -/
 theorem polynomialGenerator_differential :
     (KaehlerDifferential.D k A).toLinearMap.comp (polynomialGeneratorLinear k σ) =
       KaehlerDifferential.mvPolynomialCotangentGenerator k σ := by
@@ -57,15 +58,20 @@ theorem polynomialGenerator_differential :
 variable (M : Type w) [AddCommGroup M] [Module k M] [Module (MvPolynomial σ k) M]
   [SMulCommClass k (MvPolynomial σ k) M] [IsScalarTower k (MvPolynomial σ k) M]
 
-/-- Project the raw signed polynomial exterior tensor into the original coefficient forms. -/
+/-- The form projection of a signed free exterior representative.
+
+For `x ∈ M ⊗[k] ⋀ⁿ[k](σ →₀ k)`, first form its signed polynomial tensor representative and
+then apply the coefficient differential-form projection. -/
 def freeExteriorFormProjection (n : ℕ) :
     M ⊗[k] (⋀[k]^n V) →ₗ[k] M ⊗[A] (⋀[A]^n Ω) :=
   (Symmetric.coefficientFormProjection k A M n).comp
     (TensorProduct.map LinearMap.id
       (AdjacentBar.exteriorAntisymmetrizationAlong k A V (polynomialGeneratorLinear k σ) n))
 
-/-- The raw form projection composed with signed antisymmetrization has
-the exact factorial factor, for every original coefficient and ground ring. -/
+/-- The integral factorial law for free exterior form projection.
+
+The projection of signed polynomial antisymmetrization equals `n!` times the coefficient
+exterior-form equivalence, as a ground-linear map. -/
 theorem freeExteriorFormProjection_factorial (n : ℕ) :
     freeExteriorFormProjection k σ M n =
       n.factorial •
@@ -164,15 +170,20 @@ theorem freeExteriorFormProjection_factorial (n : ℕ) :
       (congrArg (fun z : M ⊗[A] (⋀[A]^n Ω) => n.factorial • z) hforms)))
   exact hFval.trans ((hFstart.trans (hraw.trans hTvalue.symm)).trans hTval.symm)
 
-/-- The factorial law holds on every free exterior coefficient element. -/
+/-- The factorial value on a free exterior coefficient element.
+
+For every `x ∈ M ⊗[k] ⋀ⁿ[k](σ →₀ k)`, the projected signed representative is `n!` times its
+image in `M ⊗[A] ⋀ⁿ[A] Ω[A/k]`. -/
 theorem freeExteriorFormProjection_factorial_apply
     (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     freeExteriorFormProjection k σ M n x =
       n.factorial • KaehlerDifferential.mvPolynomialCoefficientExteriorEquiv k σ M n x :=
   DFunLike.congr_fun (freeExteriorFormProjection_factorial k σ M n) x
 
-/-- The induced form map evaluated on the signed class is the raw
-degree projection, by native homology naturality for the two zero-differential models. -/
+/-- The form projection of a signed polynomial homology class.
+
+Applying the coefficient-form homology map to the class of a signed polynomial exterior
+representative equals the form projection of that representative before taking homology. -/
 theorem coefficientFormHomologyMap_signed_class
     (n : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
     Symmetric.coefficientDifferentialFormHomologyLinearMap k A M n
@@ -255,7 +266,10 @@ theorem coefficientFormHomologyMap_signed_class
       (congrArg (fun a : H.homology n => U (p.hom a)) hclass)
   exact hraw.trans ((congrArg U hproj).trans htail)
 
-/-- The original Hochschild form projection composed with polynomial antisymmetrization is exactly `n!`, over every commutative ground ring. -/
+/-- The factorial value of polynomial antisymmetrization followed by form projection.
+
+For a coefficient form `ω` in degree `n`, the unscaled form homology map sends `ε_n(ω)` to `n!
+• ω`. -/
 theorem coefficientFormHomologyMap_antisymmetrization
     (n : ℕ) (ω : M ⊗[A] (⋀[A]^n Ω)) :
     Symmetric.coefficientDifferentialFormHomologyLinearMap k A M n
@@ -274,7 +288,10 @@ theorem coefficientFormHomologyMap_antisymmetrization
       ((freeExteriorFormProjection_factorial_apply k σ M n z).trans
         (congrArg (fun a : M ⊗[A] (⋀[A]^n Ω) => n.factorial • a) hz)))
 
-/-- The whole original homology-map composite has the exact factorial scalar. -/
+/-- The factorial composite of polynomial homology comparison maps.
+
+As ground-linear maps in degree `n`, `π_n ∘ ε_n = n! • id` on the coefficient differential-
+form module. -/
 theorem coefficientFormHomologyMap_comp_antisymmetrization (n : ℕ) :
     (Symmetric.coefficientDifferentialFormHomologyLinearMap k A M n).comp
         (polynomialAntisymmetrizationHomology k σ M n) =
@@ -282,8 +299,10 @@ theorem coefficientFormHomologyMap_comp_antisymmetrization (n : ℕ) :
   ext ω
   exact coefficientFormHomologyMap_antisymmetrization k σ M n ω
 
-/-- The original form projection is the exact factorial multiple of the native
-polynomial inverse comparison. It need not be an isomorphism when `n!` is not a unit. -/
+/-- The unscaled form map as a factorial multiple of the polynomial inverse.
+
+The coefficient-form homology map in degree `n` equals `n!` times the inverse polynomial
+exterior comparison, over every commutative base ring. -/
 theorem coefficientFormHomologyMap_eq_factorial_inverse (n : ℕ) :
     Symmetric.coefficientDifferentialFormHomologyLinearMap k A M n =
       n.factorial • (symmetricHochschildDifferentialFormEquiv k σ M n).toLinearMap := by

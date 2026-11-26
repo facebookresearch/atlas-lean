@@ -1,3 +1,3 @@
-# Normalized Row
+# One-row matrix of a coefficient family
 
-The actual one-row matrix of the normalized family.
+For a family u:J → A, normalizedRow u is the singleton-by-J matrix with entry (⋆,j)=u(j).

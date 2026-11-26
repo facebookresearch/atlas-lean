@@ -1,3 +1,5 @@
-# Cotangent Tensor
+# A differential generator of an augmented cotangent module
 
-An explicit differential tensor in the linearized object.
+A differential generator of an augmented cotangent module.
+
+For `a ∈ A` and `p ∈ P`, this denotes `a ⊗ dp` in `A ⊗[P] Ω[P/k]`.

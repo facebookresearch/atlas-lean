@@ -1,4 +1,6 @@
-# Enveloping Ground Augmentation quasi Iso of projective
+# The ground augmentation quasi-isomorphism for a projective Lie module
 
-Native stability under arrow retracts earns the original projective
-Lie algebra's ground augmentation quasi-isomorphism.
+The ground augmentation quasi-isomorphism for a projective Lie module.
+
+If `Module.Projective R L`, the ground enveloping augmentation for `L` is a quasi-isomorphism,
+as follows from its arrow retract of the free-cover augmentation.

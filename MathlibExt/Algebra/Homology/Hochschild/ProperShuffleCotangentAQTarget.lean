@@ -17,16 +17,19 @@ public import Mathlib.Algebra.Homology.QuasiIso
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 
 /-!
-# Coefficient cotangent target diagrams
+# Coefficient cotangent targets and André–Quillen chain models
 
-For P augmented into B, base-change
-cancellation identifies
-M ⊗[B] (B ⊗[P] Ω(P/k)) with
-M ⊗[P] Ω(P/k). These comparisons
-retain the universal differential and
-are natural under algebra maps over B.
-Additive normalization identifies the
-coefficient cotangent diagrams.
+Let `k` be a commutative `ℚ`-algebra, `B` a commutative `k`-algebra, and `M` a compatible
+`B`-module in an independent carrier universe. For `P → B`, scalar-tower cancellation
+identifies `M ⊗[B] (B ⊗[P] Ω[P/k])` with `M ⊗[P] Ω[P/k]`. On a differential tensor the map
+sends `m ⊗ (b ⊗ dp)` to `(b • m) ⊗ dp`, retaining the specified carrier lift in the
+coefficient cotangent target.
+
+The comparison is natural in algebra maps over `B` and identifies their simplicial coefficient
+cotangent diagrams. For the polynomial resolution of `B`, additive normalization identifies
+this diagram with the ground restriction of `M ⊗[B] L_{B/k}`. The Dold–Kan comparison gives a
+homotopy equivalence with its alternating-face complex, and scalar restriction identifies its
+homology with the ground module underlying André–Quillen homology.
 -/
 
 @[expose] public section
@@ -47,32 +50,49 @@ attribute [local instance] coefficientModule coefficientCommutes coefficientTowe
 attribute [local instance_reducible] CommAlgCat.cotangentAlgebra CommAlgCat.cotangentScalarTower
 attribute [local instance] CommAlgCat.cotangentAlgebra CommAlgCat.cotangentScalarTower
 
-/-- The given B-module acts through the stored augmentation, forming the source-target tower. -/
+/-- The scalar tower of a coefficient module along an augmentation.
+
+For `P → B`, the action on `M` restricted through the augmentation gives `IsScalarTower P B
+M`. -/
 local instance coefficientThroughTarget (P : Over B) : IsScalarTower P.left B M :=
   IsScalarTower.of_compHom P.left B M
 
-/-- The original pulled-back source action commutes with the original B-action. -/
+/-- Commutation of source and target coefficient actions.
+
+For `P → B`, the induced `P`-action on the `B`-module `M` commutes with the `B`-action. -/
 local instance coefficientSourceTargetCommutes (P : Over B) : SMulCommClass P.left B M where
   smul_comm p b m := by
     change P.hom.hom p • (b • m) = b • (P.hom.hom p • m)
     exact smul_comm (P.hom.hom p) b m
 
-/-- The native cotangent functor with the original arbitrary coefficient on the left. -/
+/-- The left-coefficient tensor functor on cotangent modules.
+
+For `P → B`, this is the `B`-module `M ⊗[B] (B ⊗[P] Ω[P/k])`, with `M` in the left tensor
+factor. -/
 def nativeCoefficientFunctor : Over B ⥤ ModuleCat.{max u v w} B :=
   CommAlgCat.cotangentFunctor k B ⋙
     (ModuleCat.tensorBifunctorAt.{max u v, w, max u v} B).obj (ModuleCat.of B M)
 
-/-- The coefficient cotangent functor with its original ground ring restriction. -/
+/-- The ground restriction of the coefficient cotangent functor.
+
+Apply the left-coefficient tensor functor over `B` and restrict its scalar action along `k →
+B`. -/
 def nativeGroundCoefficientFunctor : Over B ⥤ ModuleCat.{max u v w} k :=
   nativeCoefficientFunctor k B M ⋙ ModuleCat.restrictScalars (algebraMap k B)
 
-/-- The raw tensor cancellation, linear over the original ground ring. -/
+/-- The coefficient scalar-tower cancellation for cotangent modules.
+
+For `P → B`, the ground-linear equivalence `M ⊗[B] (B ⊗[P] Ω[P/k]) ≃ₗ[k] M ⊗[P] Ω[P/k]`
+multiplies the middle scalar into the coefficient. -/
 def coefficientTensorCancellation (P : Over B) :
     M ⊗[B] (B ⊗[P.left] KaehlerDifferential k P.left) ≃ₗ[k]
       M ⊗[P.left] KaehlerDifferential k P.left :=
   (TensorProduct.AlgebraTensorModule.cancelBaseChange P.left B B M (KaehlerDifferential k P.left)).restrictScalars k
 
-/-- Restriction of the native B-module retains the original ground action on the same raw tensor carrier. -/
+/-- The tensor coordinates of ground-restricted coefficient cotangents.
+
+The ground-restricted coefficient cotangent object is linearly equivalent to the same tensor
+carrier `M ⊗[B] (B ⊗[P] Ω[P/k])`, with its given compatible ground action. -/
 def nativeCoefficientRestrictionEquiv (P : Over B) :
     (nativeGroundCoefficientFunctor k B M).obj P ≃ₗ[k]
       M ⊗[B] (B ⊗[P.left] KaehlerDifferential k P.left) where
@@ -87,7 +107,10 @@ def nativeCoefficientRestrictionEquiv (P : Over B) :
     change (algebraMap k B r) • y = (RingHom.id k r) • y
     exact IsScalarTower.algebraMap_smul B r y
 
-/-- The native tensor cancellation and original coefficient lift give the original cotangent object. -/
+/-- The comparison with the lifted coefficient cotangent target.
+
+Scalar restriction, tensor cancellation, and the coefficient carrier lift identify the ground
+coefficient tensor object with the cotangent target `ULift.{u}(M ⊗[P] Ω[P/k])`. -/
 def nativeCoefficientLevelIso (P : Over B) :
     (nativeGroundCoefficientFunctor k B M).obj P ≅ cotangentModule k B M P :=
   ((nativeCoefficientRestrictionEquiv k B M P).trans
@@ -96,13 +119,18 @@ def nativeCoefficientLevelIso (P : Over B) :
         M ⊗[P.left] KaehlerDifferential k P.left).symm)).toModuleIso
 
 omit [Algebra ℚ k] [SMulCommClass k B M] in
-/-- The original nested differential tensor has its literal original coefficient action. -/
+/-- The differential-tensor value of the coefficient cotangent comparison.
+
+The comparison sends `m ⊗ (b ⊗ dp)` to `up((b • m) ⊗ dp)`. This coordinate formula is stated
+without a rational scalar assumption. -/
 theorem nativeCoefficientLevelIso_tmul_D (P : Over B) (m : M) (b : B) (p : P.left) :
     (nativeCoefficientLevelIso k B M P).hom.hom
       (m ⊗ₜ[B] (b ⊗ₜ[P.left] KaehlerDifferential.D k P.left p)) =
         ULift.up ((b • m) ⊗ₜ[P.left] KaehlerDifferential.D k P.left p) := rfl
 
-/-- The original tensor cancellation at head one has its literal original differential value. -/
+/-- The unit-middle value of the coefficient cotangent comparison.
+
+The comparison sends `m ⊗ (1 ⊗ dp)` to `up(m ⊗ dp)`. -/
 theorem nativeCoefficientLevelIso_one_D (P : Over B) (m : M) (p : P.left) :
     (nativeCoefficientLevelIso k B M P).hom.hom
       (m ⊗ₜ[B] ((1 : B) ⊗ₜ[P.left] KaehlerDifferential.D k P.left p)) =
@@ -113,7 +141,9 @@ theorem nativeCoefficientLevelIso_one_D (P : Over B) (m : M) (p : P.left) :
     congrArg (fun m' : M => m' ⊗ₜ[P.left] KaehlerDifferential.D k P.left p) h
   exact (nativeCoefficientLevelIso_tmul_D k B M P m 1 p).trans (congrArg ULift.up ht)
 
-/-- The inverse returns the original nested tensor with coefficient one. -/
+/-- The inverse differential-tensor value of the cotangent comparison.
+
+The inverse comparison sends `up(m ⊗ dp)` to `m ⊗ (1 ⊗ dp)`. -/
 theorem nativeCoefficientLevelIso_inv_D (P : Over B) (m : M) (p : P.left) :
     (nativeCoefficientLevelIso k B M P).inv.hom
       (ULift.up (m ⊗ₜ[P.left] KaehlerDifferential.D k P.left p)) =
@@ -126,7 +156,9 @@ theorem nativeCoefficientLevelIso_inv_D (P : Over B) (m : M) (p : P.left) :
   exact (congrArg e.inv.hom h.symm).trans (ModuleCat.inv_hom_apply e x)
 
 omit [Algebra ℚ k] [Module k M] [SMulCommClass k B M] [IsScalarTower k B M] in
-/-- Native cotangent maps retain the original differential image and original coefficient head. -/
+/-- The differential formula for a ground coefficient cotangent map.
+
+For `f : P → Q` over `B`, the map sends `m ⊗ (1 ⊗ dp)` to `m ⊗ (1 ⊗ d(f(p)))`. -/
 theorem nativeGroundCoefficientFunctor_map_D {P Q : Over B} (f : P ⟶ Q) (m : M) (p : P.left) :
     ((nativeGroundCoefficientFunctor k B M).map f).hom
       (m ⊗ₜ[B] ((1 : B) ⊗ₜ[P.left] KaehlerDifferential.D k P.left p)) =
@@ -135,17 +167,25 @@ theorem nativeGroundCoefficientFunctor_map_D {P Q : Over B} (f : P ⟶ Q) (m : M
       ((1 : B) ⊗ₜ[P.left] KaehlerDifferential.D k P.left p) = _
   exact congrArg (fun x => m ⊗ₜ[B] x) (CommAlgCat.cotangentMap_tensor k B f 1 p)
 
-/-- The original proper-quotient scalar augmentation identifies every original differential word. -/
+/-- The proper-quotient augmentation into a coefficient cotangent tensor.
+
+The degree-zero term of the positive-index proper quotient maps to `M ⊗[B] (B ⊗[P] Ω[P/k])` by
+its cotangent augmentation and inverse tensor comparison. -/
 def nativeScalarAugmentation (P : Over B) :
     (complex k B M P).X 0 ⟶ (nativeGroundCoefficientFunctor k B M).obj P :=
   scalarAugmentation k B M P ≫ (nativeCoefficientLevelIso k B M P).inv
 
-/-- This original tensor augmentation is epi by the universal-differential surjection. -/
+/-- Surjectivity of the coefficient cotangent tensor augmentation.
+
+The proper-quotient augmentation to the coefficient cotangent tensor object is epic, since the
+universal-differential augmentation is epic and the tensor comparison is an isomorphism. -/
 local instance nativeScalarAugmentation_epi (P : Over B) : Epi (nativeScalarAugmentation k B M P) := by
   unfold nativeScalarAugmentation
   infer_instance
 
-/-- The proper quotient tensor class returns its literal original nested cotangent tensor. -/
+/-- The representative formula for the coefficient cotangent augmentation.
+
+The proper quotient class of the degree-one word `m ⊗ p` maps to `m ⊗ (1 ⊗ dp)`. -/
 theorem nativeScalarAugmentation_tprod (P : Over B) (m : M) (a : Fin 1 → P.left) :
     (nativeScalarAugmentation k B M P).hom
       ((rawPositiveRelations k P.left M 1).mkQ (m ⊗ₜ[k] PiTensorProduct.tprod k a)) =
@@ -154,7 +194,9 @@ theorem nativeScalarAugmentation_tprod (P : Over B) (m : M) (a : Fin 1 → P.lef
     (properCotangentScalarAugmentation_tprod k P.left M m a)).trans
       (nativeCoefficientLevelIso_inv_D k B M P m (a 0))
 
-/-- The coefficient cotangent map retains each original differential word. -/
+/-- The differential formula for the lifted coefficient cotangent target map.
+
+For `f : P → Q` over `B`, the target map sends `up(m ⊗ dp)` to `up(m ⊗ d(f(p)))`. -/
 theorem cotangentMap_D {P Q : Over B} (f : P ⟶ Q) (m : M) (p : P.left) :
     (cotangentMap k B M f).hom (ULift.up (m ⊗ₜ[P.left] KaehlerDifferential.D k P.left p)) =
       ULift.up (m ⊗ₜ[Q.left] KaehlerDifferential.D k Q.left (f.left.hom p)) := by
@@ -173,7 +215,10 @@ theorem cotangentMap_D {P Q : Over B} (f : P ⟶ Q) (m : M) (p : P.left) :
   exact (congrArg (cotangentMap k B M f).hom hs.symm).trans
     (hn.symm.trans ((congrArg (scalarAugmentation k B M Q).hom hmap).trans ht))
 
-/-- Every original Over operator preserves the tensor-cancellation cotangent comparison. -/
+/-- Naturality of the coefficient cotangent tensor comparison.
+
+For an algebra map over `B`, the ground coefficient tensor map followed by the target
+comparison equals the source comparison followed by the lifted coefficient cotangent map. -/
 @[reassoc]
 theorem nativeCoefficientLevelIso_naturality {P Q : Over B} (f : P ⟶ Q) :
     (nativeGroundCoefficientFunctor k B M).map f ≫ (nativeCoefficientLevelIso k B M Q).hom =
@@ -214,34 +259,49 @@ theorem nativeCoefficientLevelIso_naturality {P Q : Over B} (f : P ⟶ Q) :
   obtain ⟨x, rfl⟩ := (rawPositiveRelations k P.left M 1).mkQ_surjective z
   exact LinearMap.congr_fun h x
 
-/-- The coefficient cotangent and proper-comparison target are
-the same functor up to the tensor isomorphism. -/
+/-- The natural coefficient cotangent target isomorphism.
+
+The degreewise tensor-cancellation comparisons give a natural isomorphism from the ground-
+restricted left-coefficient cotangent functor to the lifted cotangent target functor. -/
 def nativeCoefficientFunctorIso : nativeGroundCoefficientFunctor k B M ≅ cotangentFunctor k B M :=
   NatIso.ofComponents (nativeCoefficientLevelIso k B M) (nativeCoefficientLevelIso_naturality k B M)
 
-/-- The original simplicial proper-comparison target is the original coefficient cotangent diagram. -/
+/-- The coefficient cotangent comparison on a simplicial algebra diagram.
+
+For `P_• → B`, the natural coefficient cotangent comparison identifies the degreewise ground
+tensor diagram with the lifted simplicial cotangent target diagram. -/
 def simplicialNativeCotangentIso
     (P : Over ((SimplicialObject.const (CommAlgCat.{max u v} k)).obj B)) :
     Over.lift P.left P.hom ⋙ nativeGroundCoefficientFunctor k B M ≅ simplicialCotangentDiagram k B M P :=
   Functor.isoWhiskerLeft (Over.lift P.left P.hom) (nativeCoefficientFunctorIso k B M)
 
-/-- The original polynomial cotangent diagram, before coefficient tensoring or ground restriction. -/
+/-- The polynomial cotangent simplicial module of the target algebra.
+
+At the identity augmentation of `B`, the polynomial cotangent simplicial functor gives the
+simplicial `B`-module used to define `L_{B/k}`. -/
 abbrev canonicalNativeCotangentDiagram : SimplicialObject (ModuleCat.{max u v} B) :=
   (CommAlgCat.polynomialCotangentSimplicialFunctor k B).obj (Over.mk (𝟙 B))
 
-/-- The original coefficient functor followed by the original ground restriction.
-The native tensor functor retains all three independent heights. -/
+/-- The ground coefficient functor on target-algebra modules.
+
+Tensor a `B`-module with `M` on the left over `B`, then restrict scalars along `k → B`, with
+the joint ring, algebra, and coefficient carrier universe. -/
 abbrev coefficientGroundFunctor : ModuleCat.{max u v} B ⥤ ModuleCat.{max u v w} k :=
   (ModuleCat.tensorBifunctorAt.{max u v, w, max u v} B).obj (ModuleCat.of B M) ⋙
     ModuleCat.restrictScalars (algebraMap k B)
 
-/-- The coefficient cotangent complex, with the original k-action obtained by restriction. -/
+/-- The ground coefficient cotangent chain model.
+
+This is the ground restriction of `M ⊗[B] L_{B/k}`, where `L_{B/k}` is the normalized
+polynomial cotangent complex. -/
 abbrev canonicalGroundCoefficientComplex : ChainComplex (ModuleCat.{max u v w} k) ℕ :=
   ((ModuleCat.restrictScalars (algebraMap k B)).mapHomologicalComplex (.down ℕ)).obj
     ((CommAlgCat.cotangentCoefficientComplexFunctor k B).obj (ModuleCat.of B M))
 
-/-- Additive normalization identifies the original coefficient complex with the
-normalized original proper-comparison cotangent diagram. No exactness of M tensor is used. -/
+/-- The additive normalization comparison for coefficient cotangent chains.
+
+The ground coefficient chain model is isomorphic to normalized Moore chains of the coefficient
+cotangent diagram on the polynomial resolution of `B`. -/
 def canonicalCoefficientNormalizationIso : canonicalGroundCoefficientComplex k B M ≅
     (normalizedMooreComplex (ModuleCat.{max u v w} k)).obj
       (simplicialCotangentDiagram k B M
@@ -254,9 +314,11 @@ def canonicalCoefficientNormalizationIso : canonicalGroundCoefficientComplex k B
       (simplicialNativeCotangentIso k B M
         ((CommAlgCat.polynomialResolutionOverFunctor.{u, v} k B).obj (Over.mk (𝟙 B))))
 
-/-- The normalized native AQ coefficient model is homotopy equivalent to the
-alternating proper-comparison cotangent model. The maps are the native
-normalization inclusion/projection composed with the coefficient isomorphism. -/
+/-- The normalized-to-alternating homotopy comparison for coefficient cotangents.
+
+The coefficient normalization isomorphism followed by the Dold–Kan comparison gives a homotopy
+equivalence from the ground coefficient cotangent complex to the alternating-face cotangent
+complex. -/
 def canonicalCoefficientAlternatingHomotopyEquiv :
     HomotopyEquiv (canonicalGroundCoefficientComplex k B M)
       ((alternatingFaceMapComplex (ModuleCat.{max u v w} k)).obj
@@ -267,7 +329,10 @@ def canonicalCoefficientAlternatingHomotopyEquiv :
       (Y := simplicialCotangentDiagram k B M
         ((CommAlgCat.polynomialResolutionOverFunctor.{u, v} k B).obj (Over.mk (𝟙 B)))))
 
-/-- The forward map uses the original additive normalization and native Moore inclusion. -/
+/-- The forward map of the coefficient cotangent homotopy comparison.
+
+The forward chain map is the coefficient normalization isomorphism followed by the inclusion
+of normalized Moore chains into the alternating-face complex. -/
 theorem canonicalCoefficientAlternatingHomotopyEquiv_hom :
     (canonicalCoefficientAlternatingHomotopyEquiv k B M).hom =
       (canonicalCoefficientNormalizationIso k B M).hom ≫
@@ -275,7 +340,10 @@ theorem canonicalCoefficientAlternatingHomotopyEquiv_hom :
           (simplicialCotangentDiagram k B M
             ((CommAlgCat.polynomialResolutionOverFunctor.{u, v} k B).obj (Over.mk (𝟙 B)))) := rfl
 
-/-- Native homology of the computed homotopy-equivalence map identifies the AQ target. -/
+/-- The homology comparison for normalized and alternating coefficient cotangents.
+
+The coefficient cotangent homotopy equivalence induces an isomorphism on homology in every
+nonnegative degree. -/
 def canonicalCoefficientAlternatingHomologyIso (n : ℕ) :
     (canonicalGroundCoefficientComplex k B M).homology n ≅
       ((alternatingFaceMapComplex (ModuleCat.{max u v w} k)).obj
@@ -283,8 +351,10 @@ def canonicalCoefficientAlternatingHomologyIso (n : ℕ) :
           ((CommAlgCat.polynomialResolutionOverFunctor.{u, v} k B).obj (Over.mk (𝟙 B))))).homology n :=
   _root_.isoOfQuasiIsoAt (canonicalCoefficientAlternatingHomotopyEquiv k B M).hom n
 
-/-- Native short-complex homology preservation identifies ground-restricted AQ with
-homology of the ground-restricted coefficient complex. -/
+/-- The ground-scalar André–Quillen coefficient homology comparison.
+
+Homology of the ground-restricted complex `M ⊗[B] L_{B/k}` is isomorphic to restriction of the
+André–Quillen homology `D_n(B/k;M)` along `k → B`. -/
 def canonicalGroundAndreQuillenHomologyIso (n : ℕ) :
     (canonicalGroundCoefficientComplex k B M).homology n ≅
       (ModuleCat.restrictScalars (algebraMap k B)).obj

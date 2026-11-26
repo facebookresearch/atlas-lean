@@ -1,9 +1,9 @@
 # Eulerian weights of polynomial Hochschild homology
 
-- [Polynomial Signed Representative convolution](polynomial-signed-representative-convolu.md)
-- [Rational Convolution Homology polynomial Class](rational-convolution-homology-polynomial.md)
-- [Normalized Polynomial Signed Representative eulerian](normalized-polynomial-signed-representat.md)
-- [Eulerian Homology Projector polynomial Class](eulerian-homology-projector-polynomial-c.md)
-- [Polynomial Eulerian Homology Projector](polynomial-eulerian-homology-projector.md)
-- [Normalized Polynomial Eulerian Homology Projector](normalized-polynomial-eulerian-homology.md)
-- [Normalized Eulerian Homology Projector polynomial Class](normalized-eulerian-homology-projector-p.md)
+- [The convolution eigenvalue of a signed polynomial representative](polynomial-signed-representative-convolu.md)
+- [The convolution eigenvalue of a polynomial exterior homology class](rational-convolution-homology-polynomial.md)
+- [The top Eulerian weight of a normalized polynomial representative](normalized-polynomial-signed-representat.md)
+- [The Eulerian weight of a polynomial exterior homology class](eulerian-homology-projector-polynomial-c.md)
+- [The pure Eulerian weight of full polynomial Hochschild homology](polynomial-eulerian-homology-projector.md)
+- [The pure Eulerian weight of normalized polynomial Hochschild homology](normalized-polynomial-eulerian-homology.md)
+- [The Eulerian weight of a normalized polynomial exterior class](normalized-eulerian-homology-projector-p.md)

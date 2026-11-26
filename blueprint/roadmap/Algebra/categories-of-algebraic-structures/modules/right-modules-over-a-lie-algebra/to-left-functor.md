@@ -1,3 +1,6 @@
-# To Left Functor
+# The right-to-left Lie-module functor
 
-Negation of the right action is functorial in the coefficient morphisms.
+The right-to-left Lie-module functor.
+
+This functor negates each right Lie action to obtain a left action and retains the underlying
+coefficient maps.

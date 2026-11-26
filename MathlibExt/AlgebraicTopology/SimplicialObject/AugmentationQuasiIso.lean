@@ -12,12 +12,15 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialObject.RightExtraDegeneracyHomotopy
 
 /-!
-# Quasi-isomorphisms from simplicial extra degeneracies
+# Simplicial augmentations with right extra degeneracies
 
-The augmented constant simplicial object has an identity extra degeneracy.
-Naturality compares its alternating augmentation map with the single-zero
-augmentation. An extra degeneracy therefore makes the full alternating
-augmentation map a quasi-isomorphism.
+For an object `P` of any category, the constant augmented simplicial object has identity right
+extra-degeneracy maps. Every augmented simplicial object has its augmentation morphism to the
+constant object on its target.
+
+In an abelian category, a right extra degeneracy contracts the augmented alternating-face
+complex. Naturality with the constant augmentation then makes the alternating-face map to the
+entire constant simplicial object a quasi-isomorphism.
 -/
 
 @[expose] public section
@@ -32,7 +35,10 @@ namespace CategoryTheory.SimplicialObject.Augmented
 
 variable {C : Type u} [Category.{v} C]
 
-/-- The genuine constant augmented object has the identity extra degeneracy. -/
+/-- The right extra degeneracy of a constant augmented simplicial object.
+
+For any category object `P`, use identity maps for the augmentation section and each extra
+degeneracy of its constant augmented simplicial object. -/
 def constantRightExtraDegeneracy (P : C) :
     RightExtraDegeneracy ((SimplicialObject.Augmented.const (C := C)).obj P) where
   s' := 𝟙 P
@@ -43,7 +49,10 @@ def constantRightExtraDegeneracy (P : C) :
   s_comp_δ n i := by change (𝟙 P) ≫ (𝟙 P) = (𝟙 P) ≫ (𝟙 P); rfl
   s_comp_σ n i := by change (𝟙 P) ≫ (𝟙 P) = (𝟙 P) ≫ (𝟙 P); rfl
 
-/-- The augmentation itself as a morphism to the native constant augmented object. -/
+/-- The augmentation morphism to a constant simplicial target.
+
+An augmented simplicial object maps to the constant augmented object on its augmentation
+point, using its augmentation as the simplicial map and the identity at the point. -/
 def augmentationToConstant (X : SimplicialObject.Augmented C) :
     X ⟶ (SimplicialObject.Augmented.const (C := C)).obj X.right where
   left := X.hom
@@ -56,8 +65,10 @@ def augmentationToConstant (X : SimplicialObject.Augmented C) :
 
 variable [Abelian C]
 
-/-- A constructed right extra degeneracy proves the quasi-isomorphism of
-the actual augmentation into the whole constant simplicial object. -/
+/-- The alternating augmentation quasi-isomorphism from a right extra degeneracy.
+
+In an abelian category, a right extra degeneracy makes the alternating-face complex map of the
+augmentation to the constant simplicial target a quasi-isomorphism. -/
 theorem quasiIso_alternating_augmentation {X : SimplicialObject.Augmented C}
     (ed : RightExtraDegeneracy X) :
     QuasiIso ((alternatingFaceMapComplex C).map X.hom) := by

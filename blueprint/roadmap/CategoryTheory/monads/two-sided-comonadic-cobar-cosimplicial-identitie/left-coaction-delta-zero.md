@@ -1,4 +1,6 @@
-# Left Coaction delta zero
+# The left-coaction coassociativity identity at the innermost insertion
 
-Left coaction absorbs comultiplication at raw position zero. Follows from
-`LeftComodule.coassoc_app` lifted through the power and `R`.
+The left-coaction coassociativity identity at the innermost insertion.
+
+The mapped left coaction followed by innermost comultiplication equals the two successive left
+coactions mapped through `G^n` and `R`.

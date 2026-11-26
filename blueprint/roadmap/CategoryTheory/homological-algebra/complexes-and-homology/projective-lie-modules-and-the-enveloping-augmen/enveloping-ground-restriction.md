@@ -1,4 +1,6 @@
-# Enveloping Ground Restriction
+# Ground-scalar restriction of enveloping modules
 
-Exact native restriction from the original enveloping modules to the
-original ground ring. Its carrier universe is the original CE universe.
+Ground-scalar restriction of enveloping modules.
+
+Restricting along `R → U_R(L)` sends enveloping modules in carrier universe `max u v` to
+`R`-modules in the same universe.

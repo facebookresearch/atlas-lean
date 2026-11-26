@@ -1,3 +1,6 @@
-# Augmented Chain Total Augmentation retract
+# The total-augmentation arrow retract of an augmented diagram retract
 
-Native naturality sends an actual augmented-diagram retraction to the actual augmentation arrow retraction.
+The total-augmentation arrow retract of an augmented diagram retract.
+
+A retraction of augmented simplicial chain diagrams gives a retraction of their total-
+augmentation arrows by naturality.

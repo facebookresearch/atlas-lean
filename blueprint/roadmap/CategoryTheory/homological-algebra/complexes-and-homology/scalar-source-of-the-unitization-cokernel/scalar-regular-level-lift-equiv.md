@@ -1,3 +1,6 @@
-# Scalar Regular Level Lift Equiv
+# The tensor-level comparison for a lifted scalar Hochschild complex
 
-Every original scalar coefficient and tail factor is lifted through its native module equivalence.
+The tensor-level comparison for a lifted scalar Hochschild complex.
+
+The module-functor lift of a scalar degree-`n` tensor level is linearly equivalent to the
+tensor level with coefficient and all tail factors in `ULift.{v} k`.

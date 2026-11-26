@@ -1,3 +1,4 @@
-# Matrix Tensor Equiv tmul
+# The entries of the matrix tensor equivalence
 
-The matrix identification sends `U ⊗ m` to the entrywise matrix `U m`.
+For k commutative, M a k-module and finite ι, the finite
+matrix tensor equivalence satisfies (U⊗m)_\{ij\}↦U_\{ij\}•m.

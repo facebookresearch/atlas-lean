@@ -1,3 +1,5 @@
-# Delta At Pos zero eq
+# The innermost comultiplication insertion formula
 
-Raw position zero applies `G.δ` under `G^n`.
+The innermost comultiplication insertion formula.
+
+Insertion at position zero in `G^(n+1)(X)` is `G^n.map(δ_X)`.

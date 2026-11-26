@@ -1,3 +1,6 @@
-# Normalize mem degree Span
+# The length bound of a PBW normal form
 
-The actual recursive normalizer never increases word length.
+The length bound of a PBW normal form.
+
+Normalizing a basis word produces a finite combination of ordered words of length at most the
+input length.

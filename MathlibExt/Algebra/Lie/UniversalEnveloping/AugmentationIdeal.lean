@@ -14,12 +14,18 @@ public import MathlibExt.Algebra.Lie.UniversalEnveloping.Filtration
 public import Mathlib.Tactic.Abel
 
 /-!
-# The actual augmentation kernel of the native universal enveloping algebra
+# The augmentation kernel is the span of generator-ended products
 
-The ground-module span of `u * ι(x)` is stable under left multiplication.
-Induction on the original native quotient shows that
-`u - algebraMap (augmentation u)` lies in that span. Hence it is exactly the
-actual augmentation kernel. This endpoint uses no PBW or freeness input.
+Let R be a commutative ring, L an R-Lie algebra and U = U_R(L), with
+scalar augmentation ε : U → R. The R-submodule
+J = span_R{u ι(x) | u ∈ U, x ∈ L}
+is stable under left multiplication by U.
+
+Every u ∈ U satisfies u−algebraMap(ε(u)) ∈ J. Since ε kills
+generator-ended products, it follows that ker_R(ε) = J.
+This identifies the augmentation kernel inside U as an R-submodule
+and applies to arbitrary Lie algebras over R, with independent
+scalar and Lie-carrier worlds.
 -/
 
 @[expose] public section
@@ -33,7 +39,11 @@ variable (R : Type u) [CommRing R]
 
 local notation "U" => UniversalEnvelopingAlgebra R L
 
-/-- The actual right-generator augmentation relation submodule. -/
+/-- For a commutative ring R, an R-Lie algebra L and
+U = U_R(L), the augmentation submodule is
+span_R{u ι(x) | u ∈ U, x ∈ L}.
+It is an R-submodule of U, with the Lie generator on the right
+of each displayed product. -/
 def augmentationSubmodule : Submodule R U :=
   Submodule.span R (Set.range (fun ux : U × L => ux.1 * ι R ux.2))
 
@@ -63,7 +73,10 @@ theorem augmentationSubmodule_le_ker :
   change augmentation R L (v * ι R x) = 0
   rw [map_mul, augmentation_ι, mul_zero]
 
-/-- Removing the original scalar augmentation leaves an actual generator relation. -/
+/-- For a commutative ring R, an R-Lie algebra L and u ∈ U_R(L),
+the element u−algebraMap(ε_L(u)) belongs to
+span_R{v ι(x) | v ∈ U_R(L), x ∈ L}.
+Here ε_L is the scalar augmentation annihilating every Lie generator. -/
 theorem sub_algebraMap_augmentation_mem (u : U) :
     u - algebraMap R U (augmentation R L u) ∈ augmentationSubmodule R L := by
   induction u using UniversalEnvelopingAlgebra.induction R L with
@@ -91,7 +104,11 @@ theorem sub_algebraMap_augmentation_mem (u : U) :
       rw [map_add, map_add, add_sub_add_comm]
       exact (augmentationSubmodule R L).add_mem hu hv
 
-/-- The original augmentation kernel is precisely its actual right-generator relation span. -/
+/-- For a commutative ring R and an R-Lie algebra L, the kernel
+of ε_L : U_R(L) → R as an R-linear map is
+span_R{u ι(x) | u ∈ U_R(L), x ∈ L}.
+The statement concerns the enveloping algebra itself and does not
+require a basis of L. -/
 theorem augmentation_ker_eq_submodule :
     LinearMap.ker (augmentation R L).toLinearMap = augmentationSubmodule R L := by
   apply le_antisymm

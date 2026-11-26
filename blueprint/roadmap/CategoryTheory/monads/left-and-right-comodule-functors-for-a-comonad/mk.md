@@ -1,4 +1,6 @@
-# Mk
+# A right comodule from a functor and coaction laws
 
-Constructor for right comodules from a functor, a coaction, and the two
-component laws.
+A right comodule from a functor and coaction laws.
+
+A functor `R : C ⥤ D` and coaction `R → G ⋙ R` satisfying the component counit and
+coassociativity equations define a right comodule.

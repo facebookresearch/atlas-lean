@@ -2,12 +2,12 @@
 
 ## Chevalley Eilenberg
 
-- [Model](model.md)
+- [A Lie algebra with bracket-presented exterior differentials](model.md)
 
 ## Model
 
-- [Hom](hom.md)
-- [Of Lie Hom](of-lie-hom.md)
-- [Id](id.md)
-- [Comp](comp.md)
-- [Complex Functor](complex-functor.md)
+- [Differential-compatible morphisms of exterior models](hom.md)
+- [Model morphisms induced by Lie homomorphisms](of-lie-hom.md)
+- [The identity exterior-model morphism](id.md)
+- [Composition of exterior-model morphisms](comp.md)
+- [The exterior chain-complex functor on CE models](complex-functor.md)

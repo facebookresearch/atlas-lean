@@ -1,3 +1,6 @@
-# Coefficient Form Homology Map antisymmetrization
+# The factorial value of polynomial antisymmetrization followed by form projection
 
-The original Hochschild form projection composed with polynomial antisymmetrization is exactly `n!`, over every commutative ground ring.
+The factorial value of polynomial antisymmetrization followed by form projection.
+
+For a coefficient form `ω` in degree `n`, the unscaled form homology map sends `ε_n(ω)` to `n!
+• ω`.

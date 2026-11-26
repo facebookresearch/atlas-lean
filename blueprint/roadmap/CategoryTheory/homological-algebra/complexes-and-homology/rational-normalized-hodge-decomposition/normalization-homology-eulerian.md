@@ -1,3 +1,6 @@
-# Normalization Homology eulerian
+# The homology-level Eulerian naturality of normalization
 
-Native homology of the quotient map preserves the original Hodge weights.
+The homology-level Eulerian naturality of normalization.
+
+The normalization homology map intertwines the full and normalized Eulerian projectors of the
+same weight.

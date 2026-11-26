@@ -1,7 +1,7 @@
-# Associator hom f eq graded
+# The graded component formula for a complex associator
 
-A complex associator component is the graded-carrier associator component.
+The graded component formula for a complex associator.
 
-Rewrite direction: from `HomologicalComplex.associator … .hom.f j` to the
-graded-object associator at `j`.  The contract test then changes carriers
-with `GradedObject.Monoidal.associator_hom_apply_heq`.
+For three complexes with the stated tensor and iterated-comparison hypotheses, the degree-`j`
+component of the forward complex associator equals the associator component of their graded
+carriers.

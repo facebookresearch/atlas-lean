@@ -1,3 +1,6 @@
-# Normalized Eulerian Chain Map comp
+# Orthogonality of normalized Eulerian chain projectors
 
-Native normalized chain composition is the orthogonal projector law.
+Orthogonality of normalized Eulerian chain projectors.
+
+The composite of weight-`i` and weight-`j` chain maps is the weight-`i` map if `i=j`, and zero
+otherwise.

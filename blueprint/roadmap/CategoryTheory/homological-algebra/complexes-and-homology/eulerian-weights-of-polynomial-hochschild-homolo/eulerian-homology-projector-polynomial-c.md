@@ -1,3 +1,6 @@
-# Eulerian Homology Projector polynomial Class
+# The Eulerian weight of a polynomial exterior homology class
 
-The original homology projector has the exact top weight on every polynomial signed class.
+The Eulerian weight of a polynomial exterior homology class.
+
+The full degree-`n` homology projector fixes a signed polynomial exterior class at weight `n`
+and kills it at every other weight.

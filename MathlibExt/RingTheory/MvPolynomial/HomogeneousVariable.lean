@@ -12,11 +12,16 @@ module
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
 
 /-!
-# Homogeneous projection under multiplication by a polynomial variable
+# Homogeneous projections and multiplication by a polynomial variable
 
-Multiplication by a variable raises coefficient degree by exactly one.
-Projection to degree zero therefore annihilates its image. The proof uses
-the original monomial basis and works over an arbitrary commutative semiring.
+Let R be a commutative semiring and I an arbitrary variable set. Multiplication by Xᵢ shifts the
+homogeneous decomposition by one: the degree-(d+1) component of pXᵢ is the degree-d component of
+p multiplied by Xᵢ, and the degree-zero component is zero.
+
+Every degree-d component belongs to the total-degree≤d polynomial submodule. If p has total
+degree bounded by q+1 in this support sense, it belongs to the previous cutoff q exactly when
+its degree-(q+1) homogeneous component is zero. These statements include the zero polynomial and
+zero coefficient semiring, without a nontriviality assumption.
 -/
 
 @[expose] public section
@@ -27,8 +32,8 @@ universe u v
 
 variable {R : Type u} [CommSemiring R] {I : Type v}
 
-/-- Projection through multiplication by an actual polynomial variable shifts
-the homogeneous degree by one. -/
+/-- For a commutative semiring R, arbitrary variable set I, d : ℕ, p∈R[I] and i∈I,
+π_{d+1}(pXᵢ)=π_d(p)Xᵢ, where π_d is the total homogeneous-degree projection. -/
 theorem homogeneousComponent_mul_X (d : ℕ) (p : MvPolynomial I R) (i : I) :
     homogeneousComponent (d + 1) (p * X i) = homogeneousComponent d p * X i := by
   induction p using MvPolynomial.induction_on' with
@@ -50,8 +55,8 @@ theorem homogeneousComponent_mul_X (d : ℕ) (p : MvPolynomial I R) (i : I) :
   | add p q hp hq =>
       simp only [add_mul, map_add, hp, hq]
 
-/-- The coefficient-degree-zero projection kills the image of multiplication
-by every actual polynomial variable. -/
+/-- For a commutative semiring R, arbitrary I, p∈R[I] and i∈I, π₀(pXᵢ)=0. This includes p=0 and a
+trivial coefficient semiring. -/
 theorem homogeneousComponent_zero_mul_X (p : MvPolynomial I R) (i : I) :
     homogeneousComponent 0 (p * X i) = 0 := by
   induction p using MvPolynomial.induction_on' with
@@ -65,7 +70,8 @@ theorem homogeneousComponent_zero_mul_X (p : MvPolynomial I R) (i : I) :
   | add p q hp hq =>
       simp only [add_mul, map_add, hp, hq, add_zero]
 
-/-- An actual homogeneous projection lies in the native total-degree cutoff. -/
+/-- For a commutative semiring R, arbitrary I, d : ℕ and p∈R[I], π_d(p) belongs to
+restrictTotalDegree I R d: every monomial in its support has total degree at most d. -/
 theorem homogeneousComponent_mem_restrictTotalDegree (d : ℕ) (p : MvPolynomial I R) :
     homogeneousComponent d p ∈ restrictTotalDegree I R d := by
   rw [restrictTotalDegree, mem_restrictSupport_iff]
@@ -81,8 +87,9 @@ theorem IsHomogeneous.mem_restrictTotalDegree {d : ℕ} {p : MvPolynomial I R}
   rw [← homogeneousComponent_eq_self hp]
   exact homogeneousComponent_mem_restrictTotalDegree d p
 
-/-- On the native degree-`q+1` cutoff, the highest component vanishes exactly
-on the previous degree cutoff. This also covers the zero coefficient ring. -/
+/-- For a commutative semiring R, arbitrary I, q : ℕ and p whose support has total degree at most
+q+1, p has support degree at most q if and only if π_{q+1}(p)=0. The upper-cutoff hypothesis is
+required, and no nontriviality condition on R is imposed. -/
 theorem mem_restrictTotalDegree_iff_highestComponent_zero (q : ℕ) (p : MvPolynomial I R)
     (hp : p ∈ restrictTotalDegree I R (q + 1)) :
     p ∈ restrictTotalDegree I R q ↔ homogeneousComponent (q + 1) p = 0 := by

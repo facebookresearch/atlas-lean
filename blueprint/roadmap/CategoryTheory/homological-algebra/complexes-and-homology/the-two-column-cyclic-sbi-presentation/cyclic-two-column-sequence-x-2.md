@@ -1,3 +1,6 @@
-# Cyclic Two Column Sequence X₁
+# The retained-column term of the cyclic short complex
 
-Its first term retains both raw columns.
+The retained-column term of the cyclic short complex.
+
+The first term of the inclusion-and-quotient sequence is the total `CC^{(2)}(A)` of outer
+columns zero and one.
