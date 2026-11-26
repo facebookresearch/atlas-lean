@@ -923,8 +923,8 @@ private theorem logSqDiv_sum_bound (N : ℕ) (hN : 1 ≤ N) :
     constructor <;> nlinarith [hsum_nonneg, hsum_le, hmain_le, hlognonneg, hmain_nonneg,
       abs_nonneg ((Real.log 8) ^ 3 / 3 : ℝ)]
 
-/-- The harmonic sums satisfy $\sum_{d=1}^N 1/d = \log N + O(\log N)$, by Mathlib's bound
-$H_N \le 1 + \log N$ for the harmonic numbers. -/
+/-- For $N \ge 1$, the harmonic number bound $H_N \le 1 + \log N$ and $H_N \ge 0$ give
+$|H_N - \log N| \le 20 + \log N$. -/
 private theorem harmonic_sum_bound (N : ℕ) (hN : 1 ≤ N) :
     |∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ) - Real.log N| ≤ 20 + Real.log N := by
   have hsum : ∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ) = (harmonic N : ℝ) := by
