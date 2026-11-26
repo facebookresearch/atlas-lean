@@ -27,7 +27,8 @@ private theorem gib_rec (a b : ℝ) (j : ℤ) : gib a b (j + 2) = gib a b (j + 1
   ring
 
 -- Three distinct seed pairs, with indices `(k, r, s) = (-3, 2, 4)` of mixed sign; no factor
--- vanishes and both sides evaluate to `90`.
+-- vanishes. The theorem rewrites the product side to the seed side, and `norm_num` evaluates
+-- the seed side to `90`.
 example :
     gib 1 3 (4 + 1) * gib 2 1 (2 + 1) * gib (-1) 2 (-3 + 1) +
         gib 1 3 4 * gib 2 1 2 * gib (-1) 2 (-3) -
