@@ -35,6 +35,7 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Advanced composition](differentially-private-pi-advanced.md)
 - [The Gaussian mechanism](gaussian-mechanism-differentially-privat.md)
 - [Gaussian calibration tail estimate](gaussian-calibration-tail-le.md)
+- [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
 - [Transfer theorem for adaptive data analysis](differentially-private-transfer.md)
 
 ## Discrete pure differential privacy
@@ -57,6 +58,5 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Generalization bounds and concentration](../../machine-learning/generalization-bounds-and-concentration/README.md): differential privacy of an adaptive analyst gives generalization for adaptively chosen queries (Dwork, Feldman, Hardt, Pitassi, Reingold and Roth 2015), where union bounds over a fixed class do not apply.
 - [Blatant non-privacy and distortion of subset-sum mechanisms](blatant-non-privacy-and-distortion-of-subset.md)
 - [Dinur–Nissim reconstruction attack](dinurnissim-reconstruction-attack.md)
-- [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
 - [Rényi differential privacy of the Gaussian mechanism](renyi-differential-privacy-of-the-gaussian.md)
 - [Fingerprinting codes](fingerprinting-codes.md)
