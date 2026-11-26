@@ -3,8 +3,10 @@
 Let $G$ be a control-flow graph with $N$ nodes and $E$ edges, an entry node from which every node is reachable, and its dominator tree, and use the [dominance frontiers](dominance-frontiers.md) $\mathrm{DF}$, $\mathrm{DF}_{\mathrm{local}}$ and $\mathrm{DF}_{\mathrm{up}}$.
 
 1. **Decomposition.** For every node $X$,
-   $$\mathrm{DF}(X) = \mathrm{DF}_{\mathrm{local}}(X) \cup \bigcup_{Z \in \mathrm{Children}(X)} \mathrm{DF}_{\mathrm{up}}(Z),$$
-   where the children are taken in the dominator tree.
+
+    $$\mathrm{DF}(X) = \mathrm{DF}_{\mathrm{local}}(X) \cup \bigcup_{Z \in \mathrm{Children}(X)} \mathrm{DF}_{\mathrm{up}}(Z),$$
+
+    where the children are taken in the dominator tree.
 2. **Local tests.** $\mathrm{DF}_{\mathrm{local}}(X) = \{Y \in \mathrm{Succ}(X) \mid \mathrm{idom}(Y) \ne X\}$, and for each child $Z$ of $X$, $\mathrm{DF}_{\mathrm{up}}(Z) = \{Y \in \mathrm{DF}(Z) \mid \mathrm{idom}(Y) \ne X\}$.
 3. **Algorithm.** Visiting the nodes in a bottom-up traversal of the dominator tree and computing $\mathrm{DF}(X)$ from the successors of $X$ and the frontiers of its children with the tests of part 2 computes $\mathrm{DF}(X)$ for every node. It runs in time $O(E + \sum_X |\mathrm{DF}(X)|)$, which is $O(E + N^2)$ in the worst case.
 

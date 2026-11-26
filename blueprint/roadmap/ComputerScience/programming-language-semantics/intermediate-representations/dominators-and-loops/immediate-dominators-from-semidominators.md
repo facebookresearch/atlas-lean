@@ -5,7 +5,8 @@ In a flowgraph $G = (V, E, r)$ with a depth-first numbering, spanning tree $T$ a
 1. If every $u$ with $\mathrm{sdom}(w) \xrightarrow{+} u \xrightarrow{*} w$ satisfies $\mathrm{sdom}(u) \ge \mathrm{sdom}(w)$, then $\mathrm{idom}(w) = \mathrm{sdom}(w)$.
 2. Let $u$ be a vertex with $\mathrm{sdom}(w) \xrightarrow{+} u \xrightarrow{*} w$ whose semidominator is minimum among such vertices. Then $\mathrm{sdom}(u) \le \mathrm{sdom}(w)$ and $\mathrm{idom}(u) = \mathrm{idom}(w)$.
 3. Consequently, for such a $u$,
-   $$\mathrm{idom}(w) = \begin{cases} \mathrm{sdom}(w) & \text{if } \mathrm{sdom}(w) = \mathrm{sdom}(u),\\ \mathrm{idom}(u) & \text{otherwise.}\end{cases}$$
+
+    $$\mathrm{idom}(w) = \begin{cases} \mathrm{sdom}(w) & \text{if } \mathrm{sdom}(w) = \mathrm{sdom}(u),\\ \mathrm{idom}(u) & \text{otherwise.}\end{cases}$$
 
 Since $u \xrightarrow{*} w$, $u \le w$, and $u \ne w$ in the second case of part 3. So part 3 lets the immediate dominators be computed in increasing order of vertex number once all semidominators are known.
 
