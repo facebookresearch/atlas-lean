@@ -13,6 +13,7 @@ Let $G = (V, E, r)$ be a flowgraph with a depth-first numbering and spanning tre
 - [Paths lemma for depth-first search](paths-lemma-for-depth-first-search.md)
 - [The immediate dominator is an ancestor of the semidominator](the-immediate-dominator-is-an-ancestor-of-the.md)
 - [Immediate dominators along a tree path are nested](immediate-dominators-along-a-tree-path-are-ne.md)
+- [When the semidominator is the immediate dominator](the-semidominator-is-the-immediate-dominator.md)
 
 ## Sources
 

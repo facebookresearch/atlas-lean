@@ -20,6 +20,7 @@ Let $L_t(c, X)$ be the set of [truly live variables](true-liveness-of-an-imp-com
 - [Coincidence for IMP expressions](coincidence-for-imp-expressions.md)
 - [Dead-assignment elimination simulates the source program](dead-assignment-elimination-simulates-the-sour.md)
 - [The source program simulates dead-assignment elimination](the-source-program-simulates-dead-assignment-e.md)
+- [Correctness of live-variables analysis for IMP](correctness-of-live-variables-analysis-for-imp.md)
 
 ## Sources
 
