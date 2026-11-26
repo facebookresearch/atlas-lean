@@ -1,0 +1,3 @@
+# Due date of a job in TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, TOTAL TARDINESS
+
+An instance of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, TOTAL TARDINESS is a pair of an instance of TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS AND UNIT TIMES, which lists the jobs $0, \dots, n-1$ of a multi-purpose machine job shop together with precedence arcs, and a list $d$ of natural numbers. The due date $d_j$ of job $j$ is the entry of $d$ at position $j$, and $0$ when $d$ has no entry at that position. That $d$ has exactly one entry per job is a condition of a well-formed instance, not of this definition.
