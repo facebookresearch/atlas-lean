@@ -213,26 +213,31 @@ end FontaineTheta
 
 /-! ### Roots of an element of the tilt -/
 
-section Root
+namespace PreTilt
 
 variable {R : Type*} [CommRing R] {q : ℕ} [Fact q.Prime] [Fact ¬IsUnit (q : R)]
   [IsAdicComplete (span {(q : R)}) R]
 
 /-- The `n`-th `q`-power root `(F^{-n} x)♯` of `x♯`, for `x` in the tilt of `R`. -/
-private def root (x : PreTilt R q) (n : ℕ) : R :=
+def untiltRoot (x : PreTilt R q) (n : ℕ) : R :=
   PreTilt.untilt (((frobeniusEquiv (PreTilt R q) q).symm^[n]) x)
 
-private theorem root_pow (x : PreTilt R q) (n : ℕ) : root x n ^ q ^ n = x.untilt :=
+/-- `x.untiltRoot n` is a `q ^ n`-th root of `x♯`. -/
+theorem untiltRoot_pow (x : PreTilt R q) (n : ℕ) : x.untiltRoot n ^ q ^ n = x.untilt :=
   PreTilt.untilt_iterate_frobeniusEquiv_symm_pow x n
 
-private theorem root_succ_pow (x : PreTilt R q) (n : ℕ) : root x (n + 1) ^ q = root x n := by
-  rw [root, root, Function.iterate_succ_apply', ← map_pow, frobeniusEquiv_symm_pow_p]
+/-- `x.untiltRoot (n + 1)` is a `q`-th root of `x.untiltRoot n`. -/
+theorem untiltRoot_succ_pow (x : PreTilt R q) (n : ℕ) :
+    x.untiltRoot (n + 1) ^ q = x.untiltRoot n := by
+  rw [untiltRoot, untiltRoot, Function.iterate_succ_apply', ← map_pow, frobeniusEquiv_symm_pow_p]
 
-private theorem mk_root (x : PreTilt R q) (n : ℕ) :
-    Ideal.Quotient.mk (span {(q : R)}) (root x n) = PreTilt.coeff n x := by
-  rw [root, PreTilt.mk_untilt_eq_coeff_zero, PreTilt.coeff_iterate_frobeniusEquiv_symm, zero_add]
+/-- The class of `x.untiltRoot n` modulo `q` is the `n`-th component of `x`. -/
+theorem mk_untiltRoot (x : PreTilt R q) (n : ℕ) :
+    Ideal.Quotient.mk (span {(q : R)}) (x.untiltRoot n) = PreTilt.coeff n x := by
+  rw [untiltRoot, PreTilt.mk_untilt_eq_coeff_zero, PreTilt.coeff_iterate_frobeniusEquiv_symm,
+    zero_add]
 
-end Root
+end PreTilt
 
 /-! ### The kernel of `θ` for `𝓞_ℂ_[p]` -/
 
@@ -254,33 +259,35 @@ theorem dvd_of_coeff_zero_eq_zero (ϖ : PreTilt 𝓞_ℂ_[p] p) (hϖ : ϖ.untilt
     have : c.untilt ∈ span {(p : 𝓞_ℂ_[p])} ^ 1 := by
       rw [pow_one, ← Ideal.Quotient.eq_zero_iff_mem, PreTilt.mk_untilt_eq_coeff_zero, hc]
     simpa using (mem_span_pow_iff p _ 1).mp this
-  have hϖn : ∀ n, ‖((root ϖ n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n = ‖(p : ℂ_[p])‖ := fun n => by
-    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (root_pow ϖ n)
+  have hϖn : ∀ n, ‖((ϖ.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n = ‖(p : ℂ_[p])‖ := fun n => by
+    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (PreTilt.untiltRoot_pow ϖ n)
     rw [hϖ] at h
     simpa [norm_pow] using h
-  have hcn : ∀ n, ‖((root c n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n =
+  have hcn : ∀ n, ‖((c.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ^ p ^ n =
       ‖((c.untilt : 𝓞_ℂ_[p]) : ℂ_[p])‖ := fun n => by
-    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (root_pow c n)
+    have h := congrArg (fun z : 𝓞_ℂ_[p] => ‖(z : ℂ_[p])‖) (PreTilt.untiltRoot_pow c n)
     simpa [norm_pow] using h
-  have hne : ∀ n, ((root ϖ n : 𝓞_ℂ_[p]) : ℂ_[p]) ≠ 0 := fun n h0 => by
+  have hne : ∀ n, ((ϖ.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p]) ≠ 0 := fun n h0 => by
     have := hϖn n
     rw [h0, norm_zero, zero_pow (pow_ne_zero _ hp.out.ne_zero)] at this
     exact (ne_of_lt (norm_p_pos p)) this
-  have hle : ∀ n, ‖((root c n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ≤ ‖((root ϖ n : 𝓞_ℂ_[p]) : ℂ_[p])‖ :=
+  have hle : ∀ n, ‖((c.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ ≤
+      ‖((ϖ.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p])‖ :=
     fun n => by
       have hpn : p ^ n ≠ 0 := pow_ne_zero _ hp.out.ne_zero
       refine (pow_le_pow_iff_left₀ (norm_nonneg _) (norm_nonneg _) hpn).mp ?_
       rw [hcn, hϖn]
       exact hc0
-  let e : ℕ → 𝓞_ℂ_[p] := fun n => ⟨((root c n : 𝓞_ℂ_[p]) : ℂ_[p]) /
-      ((root ϖ n : 𝓞_ℂ_[p]) : ℂ_[p]),
+  let e : ℕ → 𝓞_ℂ_[p] := fun n => ⟨((c.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p]) /
+      ((ϖ.untiltRoot n : 𝓞_ℂ_[p]) : ℂ_[p]),
     (mem_iff_norm_le_one p _).mpr (by
       rw [norm_div]; exact div_le_one_of_le₀ (hle n) (norm_nonneg _))⟩
   have he : ∀ n, e (n + 1) ^ p = e n := fun n => by
     apply Subtype.ext
     simp only [e, SubmonoidClass.coe_pow, div_pow]
-    rw [← SubmonoidClass.coe_pow, ← SubmonoidClass.coe_pow, root_succ_pow, root_succ_pow]
-  have hce : ∀ n, root c n = root ϖ n * e n := fun n => by
+    rw [← SubmonoidClass.coe_pow, ← SubmonoidClass.coe_pow, PreTilt.untiltRoot_succ_pow,
+      PreTilt.untiltRoot_succ_pow]
+  have hce : ∀ n, c.untiltRoot n = ϖ.untiltRoot n * e n := fun n => by
     apply Subtype.ext
     simp only [e, MulMemClass.coe_mul]
     field_simp [hne n]
@@ -292,7 +299,7 @@ theorem dvd_of_coeff_zero_eq_zero (ϖ : PreTilt 𝓞_ℂ_[p] p) (hϖ : ϖ.untilt
   change PreTilt.coeff n c = PreTilt.coeff n (ϖ * d)
   rw [map_mul]
   change PreTilt.coeff n c = PreTilt.coeff n ϖ * Ideal.Quotient.mk _ (e n)
-  rw [← mk_root, ← mk_root, ← map_mul, hce]
+  rw [← PreTilt.mk_untiltRoot, ← PreTilt.mk_untiltRoot, ← map_mul, hce]
 
 /-- A compatible system of `p`-power roots of `p` in `ℂ_[p]`: `rootsOfP p 0 = p` and
 `rootsOfP p (n + 1)` is a chosen `p`-th root of `rootsOfP p n`. -/
@@ -334,12 +341,12 @@ theorem untilt_pFlat : (pFlat p).untilt = p := by
   rw [IsHausdorff.eq_iff_smodEq (I := span {(p : 𝓞_ℂ_[p])})]
   intro n
   rw [SModEq.sub_mem, mem_span_pow_iff']
-  have h1 : root (pFlat p) n -
+  have h1 : (pFlat p).untiltRoot n -
       ⟨rootsOfP p n, (mem_iff_norm_le_one p _).mpr (norm_rootsOfP_le p n)⟩ ∈
       span {(p : 𝓞_ℂ_[p])} := by
-    rw [← Ideal.Quotient.eq, mk_root]; rfl
+    rw [← Ideal.Quotient.eq, PreTilt.mk_untiltRoot]; rfl
   have h2 := dvd_sub_pow_of_dvd_sub (Ideal.mem_span_singleton.mp h1) n
-  rw [root_pow] at h2
+  rw [PreTilt.untiltRoot_pow] at h2
   have h3 : (⟨rootsOfP p n, (mem_iff_norm_le_one p _).mpr (norm_rootsOfP_le p n)⟩ :
       𝓞_ℂ_[p]) ^ p ^ n = p :=
     Subtype.ext (by simpa using rootsOfP_pow p n)
