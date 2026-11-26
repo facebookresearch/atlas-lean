@@ -1,10 +1,10 @@
 # Generic contextual equivalence
 
-- [Ctx Algebra](ctx-algebra.md)
+- [Typed context algebra](ctx-algebra.md)
 - [Ctx Obs](ctx-obs.md)
 - [Yields](yields.md)
-- [Ctx Approx](ctx-approx.md)
-- [Ctx Equiv](ctx-equiv.md)
+- [Contextual approximation](ctx-approx.md)
+- [Contextual equivalence](ctx-equiv.md)
 - [Rel Family](rel-family.md)
 - [Approx Adequate](approx-adequate.md)
 - [Adequate](adequate.md)

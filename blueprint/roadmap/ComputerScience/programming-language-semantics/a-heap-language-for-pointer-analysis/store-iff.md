@@ -1,3 +1,3 @@
-# Store iff
+# Steps from a store
 
-Steps from `store` reach exactly the store successor.
+From `store dst src` with store $s$ and heap $h$, the only step is to `skip` with the store unchanged and heap $h[s(\mathit{dst}) := s(\mathit{src})]$.

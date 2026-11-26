@@ -55,7 +55,7 @@ theorem star_wand_elim {R Q : HAssertion} :
     (wand R Q ⋆ R).Entails Q :=
   star_entails_iff_entails_wand.mpr (entails_refl _)
 
-/-- Extending by the empty heap leaves an assertion unchanged. -/
+/-- The wand with antecedent `emp` is the identity: `emp −∗ Q = Q`. -/
 theorem wand_emp {Q : HAssertion} : wand emp Q = Q := by
   funext s h
   apply propext
@@ -119,7 +119,7 @@ theorem skip (Q : HAssertion) : safePre .skip Q = Q := by
   funext s h
   exact propext ⟨fun hp => hp.2 .refl, fun hQ => SepValid.skip Q hQ⟩
 
-/-- The constantly true postcondition still requires safety. -/
+/-- For the constantly true postcondition, the safe precondition is exactly safety. -/
 theorem true_iff {c : HeapCmd} {s : State} {h : Heap} :
     safePre c (fun _ _ => True) s h ↔ Safe (c, s, h) :=
   ⟨And.left, fun hs => ⟨hs, fun {_t _k} _ => trivial⟩⟩

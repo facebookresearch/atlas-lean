@@ -23,7 +23,6 @@
 - [Operational semantics of IMP](imp.md)
 - [Imp step iff](imp-step-iff.md)
 - [Imp steps iff](imp-steps-iff.md)
-- [Imp deterministic](imp-deterministic.md)
 - [Imp safe](imp-safe.md)
 - [Operational semantics of the simply typed λ-calculus](stlc.md)
 - [Stlc step iff](stlc-step-iff.md)

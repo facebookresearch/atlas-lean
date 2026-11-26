@@ -5,7 +5,7 @@
 - [Wand](wand.md)
 - [Star entails iff entails wand](star-entails-iff-entails-wand.md)
 - [Star wand elim](star-wand-elim.md)
-- [Wand emp](wand-emp.md)
+- [Separating implication from the empty heap](wand-emp.md)
 - [Wand mono](wand-mono.md)
 
 ## IMP
@@ -19,6 +19,6 @@
 - [Mono](mono.md)
 - [Hand](hand.md)
 - [Skip](skip.md)
-- [True iff](true-iff.md)
+- [Safe precondition for the true postcondition](true-iff.md)
 - [Frame property of safe preconditions](frame.md)
 - [Frame property of safe preconditions with separating implication](frame-wand.md)

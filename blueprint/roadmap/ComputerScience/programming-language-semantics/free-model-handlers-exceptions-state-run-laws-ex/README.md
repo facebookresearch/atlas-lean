@@ -23,11 +23,11 @@
 
 - [Reading the state twice](run-get-get.md)
 - [Reading and writing back the state](run-get-set.md)
-- [Run get set pure](run-get-set-pure.md)
+- [Running get then set](run-get-set-pure.md)
 - [Reading right after writing](run-set-get.md)
-- [Run set get pure](run-set-get-pure.md)
+- [Running set then get](run-set-get-pure.md)
 - [Two writes in a row](run-set-set.md)
-- [Run set set pure](run-set-set-pure.md)
+- [Running set then set](run-set-set-pure.md)
 
 ## Free Nondet
 

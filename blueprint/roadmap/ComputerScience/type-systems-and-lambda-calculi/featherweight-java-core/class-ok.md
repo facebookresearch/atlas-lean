@@ -1,3 +1,3 @@
-# Class Ok
+# Class well-formedness
 
-Class well-formedness: ctor and methods (CLASS-OK).
+A class declaration is well formed (CLASS-OK) when field lookup for its superclass succeeds with some field list `fs`, its constructor parameters are exactly `fs` followed by its own fields, and every one of its methods is well formed (METHOD-OK).

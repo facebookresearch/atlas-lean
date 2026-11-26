@@ -1,12 +1,7 @@
 # Verified read cost of binary search
 
-For every array `xs` sorted in nondecreasing order, every key and every
-initial state `s`, running the binary-search program with fuel `xs.size + 7`
-succeeds in a state `t` such that: the run is a read-counting big-step
-execution; its read count equals the comparison count of the reference
-lower-bound search `lowerBound xs key` and is at most `⌈log₂ (xs.size + 1)⌉`;
-the weakest precondition and the Hoare triple with precondition `True` both
-guarantee that the final `lo` equals the result of the reference lower-bound
-search `lowerBound xs key`; and `t lo` satisfies the lower-bound specification
-(`t lo ≤ xs.size`, every earlier element is less than the key, every later
-element is at least the key).
+For every array `xs` of natural numbers sorted in nondecreasing order, every natural-number key and every initial state `s`, with fuel `xs.size + 7`, the read-counting interpreter and the ordinary interpreter of the binary-search program both succeed with the same final state `t`, and:
+
+- the run is a read-counting big-step execution, and its read count equals the comparison count of the reference lower-bound search `lowerBound xs key` and is at most `⌈log₂ (xs.size + 1)⌉`;
+- the generated sufficient precondition `wp` of the program for the postcondition "final `lo` equals the index returned by `lowerBound xs key`" holds at `s`, and so does the Hoare triple with precondition `True` and that postcondition;
+- `t lo ≤ xs.size`, `xs[j] < key` for every `j < t lo`, and `key ≤ xs[j]` for every `j` with `t lo ≤ j < xs.size`, which includes the returned index itself when it is in range.

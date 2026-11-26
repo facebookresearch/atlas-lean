@@ -10,5 +10,5 @@
 - [Loop Body](loop-body.md)
 - [Loop Body path iff](loop-body-path-iff.md)
 - [Command Rel while](command-rel-while.md)
-- [While valid iff invariant](while-valid-iff-invariant.md)
+- [While validity as a tensor triple with an invariant](while-valid-iff-invariant.md)
 - [A loop invariant gives the categorical loop-body specification](loop-body-invariant.md)

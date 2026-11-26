@@ -1,3 +1,3 @@
-# Copy iff
+# Steps from a copy
 
-Steps from `copy` reach exactly the copy successor.
+From `copy dst src` with store $s$ and heap $h$, the only step is to `skip` with store $s[\mathit{dst} := s(\mathit{src})]$ and the heap unchanged.

@@ -1,4 +1,3 @@
-# Invariant
+# Binary-search loop invariant
 
-Bounds plus a simulation equation. The equation is established at entry,
-not assumed.
+For an array `xs` of natural numbers and a natural-number key, a state `s` satisfies the binary-search invariant when `s lo ≤ s hi ≤ xs.size` and the reference lower-bound search restricted to the interval `[s lo, s hi)` returns the same index as the reference search `lowerBound xs key` on the full array. The program establishes this at loop entry; it is not assumed.

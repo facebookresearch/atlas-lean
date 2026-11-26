@@ -33,7 +33,7 @@ abbrev FName := Nat
 /-- Variable names (Lecture #30 variables). -/
 abbrev VName := Nat
 
-/-- Predeclared root Object, never a table entry (Lecture #30). -/
+/-- Root class Object, the name `0`; well-formed tables do not declare it (Lecture #30). -/
 def Object : CName := 0
 
 /-- The this variable (Lecture #30). -/
@@ -130,7 +130,8 @@ def supersAux (ct : ClassTable) : Nat → CName → List CName :=
     | none => [C]
     | some cd => C :: supersAux ct fuel cd.super
 
-/-- Chain from C up to Object on acyclic tables (helper). -/
+/-- Superclass chain from `C`, at most `ct.length + 1` names: it stops at Object, at an
+undeclared class, or at the fuel bound (helper). -/
 def supers (ct : ClassTable) (C : CName) : List CName :=
   supersAux ct (ct.length + 1) C
 
