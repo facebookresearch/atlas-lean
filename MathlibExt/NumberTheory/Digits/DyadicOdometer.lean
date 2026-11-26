@@ -639,7 +639,12 @@ interpolated odometer partial sums, the normalized fluctuations
 $(S_{q,\omega}(t l_n) - t S_{q,\omega}(l_n))/R_n$ converge uniformly on $[0, 1]$ to
 $-\mathcal{T}_a(t)$.
 
-This is Theorem 2 of the source, which quotes it from the author's earlier work.
+This is Theorem 2 of the source, which quotes it from the author's earlier work, with the
+normalizing sequence $(R_n)$ of the order of the maximal fluctuation $M_{q,\omega}(l_n)$, as in
+`IsStabilizingSeq`, not equal to it. Section 4 of the source normalizes by that maximum itself,
+but then every normalized fluctuation has supremum norm at most $1$, and so would the limit,
+while $-\mathcal{T}_a$ can exceed $1$ in absolute value: for $q = 2/3$, so $a = 3/4$,
+$\mathcal{T}_{3/4}(1/3) = 4/3$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Theorem 2 (`integers-2026-A61-thm-2`). -/
