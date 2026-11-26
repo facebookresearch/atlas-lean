@@ -1710,7 +1710,6 @@
   "CSLibExt/Languages/IMP/Syntax": {"to": "ComputerScience/programming-language-semantics", "title": "Operational semantics of IMP"},
   "CSLibExt/Languages/IMP/VCG": {"to": "ComputerScience/program-logics-and-verification", "title": "Verification-condition generation"},
   "CSLibExt/Languages/LambdaCalculus/CPS/CallByName": {"to": "ComputerScience/programming-language-semantics", "title": "Continuation-passing style translation"},
-  "CSLibExt/Languages/LambdaCalculus/CallByNeed": {"to": "ComputerScience/programming-language-semantics", "title": "Call-by-need evaluation"},
   "CSLibExt/Languages/LambdaCalculus/CPS/CallByNameSimulation": {"to": "ComputerScience/programming-language-semantics", "title": "Continuation-passing style translation"},
   "CSLibExt/Languages/LambdaCalculus/CPS/Simulation": {"to": "ComputerScience/programming-language-semantics", "title": "Continuation-passing style translation"},
   "CSLibExt/Languages/LambdaCalculus/CPS/Translation": {"to": "ComputerScience/programming-language-semantics", "title": "Continuation-passing style translation"},

@@ -4,7 +4,6 @@ Operational and denotational semantics of programming languages and correctness 
 
 - [An imperative language with arrays](an-imperative-language-with-arrays/README.md)
 - [Bounded symbolic execution for IMP](bounded-symbolic-execution-for-imp/README.md)
-- [Call-by-need evaluation](call-by-need-evaluation/README.md)
 - [Closure conversion](closure-conversion/README.md)
 - [Continuation-passing style translation](continuation-passing-style-translation/README.md)
 - [Dataflow analysis by Kleene iteration](dataflow-analysis-by-kleene-iteration/README.md)
