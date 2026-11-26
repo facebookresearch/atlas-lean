@@ -34500,6 +34500,7 @@
 "IsGHarmonic.intro": "40993e9c86992155",
 "IsGHarmonic.pos": "6f455de67cd05626",
 "IsGHarmonic.witnesses": "646f29e7d46a0660",
+"IsGalois.exists_basis_baseChange_forall_apply_eq_self": "21149e15d69d70fc",
 "IsGeneralPosition": "f3e9ebc66f795330",
 "IsGeneralPosition.mono": "0d819c95b30a8b7c",
 "IsIdempotentElem.exists_isStarProjection_isConj": "a9a1d3dd6efa9a66",
