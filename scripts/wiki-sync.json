@@ -89499,7 +89499,7 @@
 "MetaMathlibExt.exists_sum_card_divisors_div_sub_le": "4812882a8d73a1db",
 "MetaMathlibExt.exists_supports_exactSlowNimBasicValue": "3ea0cca1526d86bf",
 "MetaMathlibExt.exists_tail_eq_pseudoGreedyExpansion": "3b564f26f5620fba",
-"MetaMathlibExt.exists_tendsto_prod_one_sub_pow_and_cyclotomicHat_zeta": "82499587d410587e",
+"MetaMathlibExt.exists_tendsto_prod_one_sub_pow_and_cyclotomicHat_zeta": "c1005e9fa9237088",
 "MetaMathlibExt.exists_tetration_eq_iterate_Gamma": "75ffa8e6340ee1db",
 "MetaMathlibExt.exists_tetration_eq_iterate_rpow": "5dcd0b3ea6cd2c68",
 "MetaMathlibExt.exists_tetration_eq_iterate_rpow_eventually": "f50f6d10ab351fc5",
