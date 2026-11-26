@@ -4,4 +4,4 @@ Let $X_0, X_1, \dots$ be mutually independent observations with law $\mu$ on a p
 
 ## Sources
 
-- van der Vaart (1998), Theorem 5.41; Lehmann & Casella (1998), Theorem 6.5.1; multivariate form of `MLEAsymptoticNormality.tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation`.
+- van der Vaart (1998), Theorem 5.41; Lehmann & Casella (1998), Theorem 6.5.1.

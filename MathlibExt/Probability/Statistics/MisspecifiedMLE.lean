@@ -167,10 +167,10 @@ theorem llr_withDensity_densityModel_ae_eq [SigmaFinite ν] {θ : Θ} (hg : Meas
 
 /-- **The pseudo-true value is the Kullback–Leibler projection** (density form). Let the true
 law of `X 0` be `ν.withDensity g` with `g` measurable and `ν`-a.e. positive and `log g`
-integrable, and for `θ ∈ K` let `densityModel ν p θ` be a probability measure with `p θ`
-measurable, `ν`-a.e. positive and `log p θ` integrable under the true law. Then `θstar` uniquely
-maximizes the expected log-likelihood `θ ↦ E log p θ (X 0)` on `K` if and only if it uniquely
-minimizes `θ ↦ KL(ν.withDensity g ‖ densityModel ν p θ)` on `K`. -/
+integrable under the true law, and for `θ ∈ K` let `densityModel ν p θ` be a probability measure
+with `p θ` measurable, `ν`-a.e. positive and `log p θ` integrable under the true law. Then
+`θstar` uniquely maximizes the expected log-likelihood `θ ↦ E log p θ (X 0)` on `K` if and only
+if it uniquely minimizes `θ ↦ KL(ν.withDensity g ‖ densityModel ν p θ)` on `K`. -/
 theorem isIdentifiedOn_popCrit_iff_isKLProjectionOn_of_density [SigmaFinite ν]
     [IsProbabilityMeasure (ν.withDensity fun x => ENNReal.ofReal (g x))] {K : Set Θ}
     (hg : Measurable g) (hgpos : ∀ᵐ x ∂ν, 0 < g x)

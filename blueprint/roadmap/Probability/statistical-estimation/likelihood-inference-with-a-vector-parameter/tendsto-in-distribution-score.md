@@ -4,4 +4,4 @@ Let $E$ be a finite-dimensional real inner product space, $\nu$ a measure, $p_\t
 
 ## Sources
 
-- Lehmann & Casella (1998), §6.5; van der Vaart (1998), ch. 5; obtained from the multivariate CLT `ProbabilityTheory.tendstoInDistribution_inv_sqrt_smul_sum_sub` (Cramér–Wold reduction to the scalar CLT).
+- Lehmann & Casella (1998), §6.5; van der Vaart (1998), ch. 5.
