@@ -55,6 +55,9 @@ namespace ExteriorPower
 
 variable (n : ℕ) {M N : PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat)}
 
+/-- **Exterior powers of a morphism, on the underlying abelian presheaves.** For `φ : M ⟶ N`,
+the morphism `extPowAb n M ⟶ extPowAb n N` that is `exteriorPower.map n` of `φ.app X` on the
+sections over each `X`. -/
 noncomputable def mapAb (φ : M ⟶ N) : extPowAb n M ⟶ extPowAb n N where
   app X := AddCommGrpCat.ofHom (exteriorPower.map n (φ.app X).hom).toAddMonoidHom
   naturality {X Y} f := by
@@ -73,6 +76,9 @@ noncomputable def mapAb (φ : M ⟶ N) : extPowAb n M ⟶ extPowAb n N where
 
 end ExteriorPower
 
+/-- **Exterior powers of a morphism of presheaves of modules.** For `φ : M ⟶ N`, the morphism
+`extPow n M ⟶ extPow n N` of sectionwise `n`-th exterior powers that is
+`exteriorPower.map n (φ.app X)` on the sections over each `X`. -/
 noncomputable def exteriorPowerMap (n : ℕ)
     {M N : PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat)}
     (φ : M ⟶ N) : extPow n M ⟶ extPow n N :=
@@ -92,6 +98,10 @@ lemma exteriorPowerMap_app_ιMulti (n : ℕ)
   exteriorPower.map_apply_ιMulti _ _
 
 variable (R) in
+/-- **The exterior-power functor on presheaves of modules.** The functor sending a presheaf of
+modules `M` to its sectionwise `n`-th exterior power `extPow n M` and a morphism `φ` to
+`exteriorPowerMap n φ`. Modules and rings share the universe `u`, as for sheaves of modules on a
+scheme; `extPow` itself also allows a larger module universe. -/
 noncomputable def exteriorPowerFunctor (n : ℕ) :
     PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat) ⥤
       PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat) where

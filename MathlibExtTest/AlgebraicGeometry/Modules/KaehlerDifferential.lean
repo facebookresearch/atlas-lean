@@ -38,6 +38,30 @@ example {A : Type u} [CommRing A] {X : Scheme.{u}}
       f.kaehlerToSections U s + f.kaehlerToSections U t :=
   f.kaehlerToSections_add U s t
 
+-- The comparison functions are the linear maps, so there is one implementation of each.
+example {A : Type u} [CommRing A] {X : Scheme.{u}}
+    (f : X ⟶ Spec (CommRingCat.of A)) (U : X.Opens) :
+    f.kaehlerToSections U = ⇑(f.kaehlerToSectionsₗ U) := rfl
+
+example {A : Type u} [CommRing A] {X : Scheme.{u}}
+    (f : X ⟶ Spec (CommRingCat.of A)) (d : ℕ) (U : X.Opens) :
+    f.topToSections d U = ⇑(f.topToSectionsₗ d U) := rfl
+
+-- On a wedge `ω₁ ∧ ⋯ ∧ ω_d`, `topToSectionsₗ` sends each `ωᵢ` to the Kähler sheaf and then applies
+-- the sheafification unit of the exterior power of `kaehler`.
+example {A : Type u} [CommRing A] {X : Scheme.{u}}
+    (f : X ⟶ Spec (CommRingCat.of A)) (d : ℕ) (U : X.Opens)
+    (m : Fin d → f.kaehlerPresheaf.obj (op U)) :
+    f.topToSectionsₗ d U (exteriorPower.ιMulti _ d m) =
+      (((PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)).unit.app
+        ((Scheme.Modules.presheafExteriorPower X d).obj f.kaehler.val)).app (op U)).hom
+        (exteriorPower.ιMulti _ d fun i => f.kaehlerToSections U (m i)) := by
+  change (((PresheafOfModules.sheafificationAdjunction (𝟙 X.ringCatSheaf.obj)).unit.app
+      ((Scheme.Modules.presheafExteriorPower X d).obj f.kaehler.val)).app (op U)).hom
+      (exteriorPower.map d (f.kaehlerToSectionsₗ U) (exteriorPower.ιMulti _ d m)) = _
+  rw [exteriorPower.map_apply_ιMulti]
+  rfl
+
 -- The top power sheaf is the sheafified sectionwise exterior power of the Kähler sheaf.
 example {A : Type u} [CommRing A] {X : Scheme.{u}}
     (f : X ⟶ Spec (CommRingCat.of A)) (d : ℕ) :
