@@ -30,77 +30,6 @@ open IsCyclotomicExtension
 
 variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
 
-open Polynomial in
-private theorem trace_zeta_pow_eq_neg_one {p : ℕ} [NeZero p] {K : Type*} [Field K]
-    [CharZero K] [IsCyclotomicExtension {p} ℚ K] (hp : p.Prime) (k : ℕ) (hk1 : 1 ≤ k)
-    (hk2 : k ≤ p - 1) :
-    Algebra.trace ℚ K (zeta p ℚ K ^ k) = (-1 : ℚ) := by
-  have hζ := zeta_spec p ℚ K
-  have hirr := cyclotomic.irreducible_rat hp.pos
-  have hlt : k < p := by omega
-  have hn : ¬ p ∣ k := Nat.not_dvd_of_pos_of_lt (by omega) hlt
-  have hprim := hζ.pow_of_coprime k (hp.coprime_iff_not_dvd.mpr hn).symm
-  have hdeg : (cyclotomic p ℚ).natDegree = p - 1 := by
-    rw [natDegree_cyclotomic, Nat.totient_prime hp]
-  have htwo := hp.two_le
-  let : Fact p.Prime := ⟨hp⟩
-  rw [← hprim.powerBasis_gen ℚ,
-    PowerBasis.trace_gen_eq_nextCoeff_minpoly, hprim.powerBasis_gen ℚ,
-    ← hprim.minpoly_eq_cyclotomic_of_irreducible hirr,
-    nextCoeff_of_natDegree_pos (by omega), hdeg, cyclotomic_prime, finsetSum_coeff]
-  simp [coeff_X_pow, show p - 1 - 1 < p by omega]
-
-private theorem trace_latticePoint_eq_neg_sum {p : ℕ} [NeZero p] {K : Type*} [Field K]
-    [CharZero K] [IsCyclotomicExtension {p} ℚ K] (hp : p.Prime) (c : Fin (p - 1) → ℚ) :
-    Algebra.trace ℚ K (∑ i, (c i : K) * zeta p ℚ K ^ (i.val + 1)) = -∑ i, c i := by
-  have hterm : ∀ i : Fin (p - 1),
-      Algebra.trace ℚ K ((c i : K) * zeta p ℚ K ^ (i.val + 1)) = c i * (-1) := by
-    intro i
-    have h1 : Algebra.trace ℚ K ((c i : K) * zeta p ℚ K ^ (i.val + 1)) =
-        c i * Algebra.trace ℚ K (zeta p ℚ K ^ (i.val + 1)) := by
-      have hsm : Algebra.trace ℚ K (c i • zeta p ℚ K ^ (i.val + 1)) =
-          c i • Algebra.trace ℚ K (zeta p ℚ K ^ (i.val + 1)) :=
-        (Algebra.trace ℚ K).map_smul (c i) _
-      simpa [Rat.smul_def] using hsm
-    rw [h1]
-    have htr : Algebra.trace ℚ K (zeta p ℚ K ^ (i.val + 1)) = (-1 : ℚ) := by
-      apply trace_zeta_pow_eq_neg_one hp
-      · omega
-      · have hi := i.isLt
-        omega
-    rw [htr]
-  rw [map_sum]
-  simp only [hterm]
-  rw [← Finset.sum_mul]
-  ring
-
-private theorem even_sub_one_of_odd_prime (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) :
-    Even (p - 1) := by
-  have hodd : Odd p := hp.odd_of_ne_two hp2
-  obtain ⟨k, hk⟩ := hodd
-  exact ⟨k, by omega⟩
-
-private theorem alt_sum_eq_zero (p : ℕ) (heven : Even (p - 1)) :
-    ∑ i : Fin (p - 1), (-1 : ℚ) ^ i.val = 0 := by
-  have hrange : ∀ k : ℕ, ∑ i ∈ Finset.range (2 * k), (-1 : ℚ) ^ i = 0 := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih =>
-      have h2k : 2 * (k + 1) = (2 * k + 1) + 1 := by ring
-      rw [h2k, Finset.sum_range_succ, Finset.sum_range_succ, ih]
-      have hev : Even (2 * k) := ⟨k, by ring⟩
-      have hod : Odd (2 * k + 1) := ⟨k, rfl⟩
-      rw [hev.neg_one_pow, hod.neg_one_pow]
-      norm_num
-  obtain ⟨r, hr⟩ := heven
-  have h2r : p - 1 = 2 * r := by omega
-  have hfin : ∑ i : Fin (p - 1), (-1 : ℚ) ^ i.val
-      = ∑ i ∈ Finset.range (p - 1), (-1 : ℚ) ^ i := by
-    exact Fin.sum_univ_eq_sum_range (fun n => (-1 : ℚ) ^ n) (p - 1)
-  rw [hfin, h2r]
-  exact hrange r
-
 private theorem dist_le_of_mem_box {p : ℕ} [NeZero p] {K : Type*} [Field K] [CharZero K]
     [IsCyclotomicExtension {p} ℚ K] (hp : p.Prime) (N : ℕ) (a b : Fin (p - 1) → ℤ)
     (ha : a ∈ cyclotomicBox p N) (hb : b ∈ cyclotomicBox p N) :
@@ -228,8 +157,8 @@ private theorem dist_eq_alternating {p : ℕ} [NeZero p] {K : Type*} [Field K] [
     simp only [c₀, a₀, b₀]
     push_cast
     ring
-  have heven : Even (p - 1) := even_sub_one_of_odd_prime p hp hp2
-  have halt : ∑ i : Fin (p - 1), (-1 : ℚ) ^ i.val = 0 := alt_sum_eq_zero p heven
+  have halt : ∑ i : Fin (p - 1), (-1 : ℚ) ^ i.val = 0 := by
+    simpa [hp.even_sub_one hp2] using (Fin.sum_neg_one_pow ℚ (p - 1))
   have hsum0 : ∑ i, c₀ i = 0 := by
     have h1 : ∑ i, c₀ i = (2 * (N : ℚ)) * ∑ i : Fin (p - 1), (-1 : ℚ) ^ i.val := by
       simp only [hc]
@@ -237,7 +166,7 @@ private theorem dist_eq_alternating {p : ℕ} [NeZero p] {K : Type*} [Field K] [
     rw [h1, halt, mul_zero]
   have htr0 : Algebra.trace ℚ K
       (cyclotomicLatticePoint K a₀ - cyclotomicLatticePoint K b₀) = 0 := by
-    rw [hsub, trace_latticePoint_eq_neg_sum hp c₀, hsum0, neg_zero]
+    rw [hsub, trace_sum_mul_zeta_pow_succ hp c₀, hsum0, neg_zero]
   have hsq1 : ∀ i : Fin (p - 1), ((-1 : ℚ) ^ i.val) ^ 2 = 1 := by
     intro i
     rw [sq, ← pow_add]
