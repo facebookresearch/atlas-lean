@@ -1,0 +1,5 @@
+# Proportional lift preserves flow value
+
+Let $V$ and $E$ be finite sets and let each arc $e \in E$ run from its tail $t(e) \in V$ to its head $h(e) \in V$; parallel arcs and loops are allowed. Let $B$ be the signed incidence matrix of the network, $B_{ve} = [h(e) = v] - [t(e) = v]$, where $[P]$ is $1$ if $P$ holds and $0$ otherwise. For $f : E \to \mathbb{R}$ write $\bar f(p, q) = \sum_{e \,:\, t(e) = p,\ h(e) = q} f(e)$ for the total of $f$ over the arcs from $p$ to $q$. Let $u : E \to \mathbb{R}$ with $u(e) \ge 0$ for every arc, let $s, t \in V$, and let $F$ be a feasible $s$-$t$ flow for $\bar u$ in the endpoint-pair sense, that is, $F : V \times V \to \mathbb{R}$ with $0 \le F(p, q) \le \bar u(p, q)$ for all $p, q \in V$ and $\sum_{p \in V} F(p, v) = \sum_{q \in V} F(v, q)$ for every $v \ne s, t$. Then the proportional lift $\hat F : E \to \mathbb{R}$, $\hat F(e) = F(t(e), h(e))\, u(e) / \bar u(t(e), h(e))$ when $\bar u(t(e), h(e)) \ne 0$ and $\hat F(e) = 0$ otherwise, satisfies
+
+$$-(B\hat F)_s = \sum_{v \in V} F(s, v) - \sum_{p \in V} F(p, s).$$
