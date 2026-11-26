@@ -31,6 +31,7 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.RingTheory.Norm.Basic
+import Mathlib.LinearAlgebra.Matrix.SesquilinearForm
 
 /-!
 # Determinant of a scaled dual pairing
@@ -41,18 +42,13 @@ For a basis `b` of a commutative algebra `A` over `R`, a linear form
 norm of `c`. Column `i` of `Algebra.leftMulMatrix b c` holds the
 coordinates of `c * b i`, so the scaled matrix is
 `(Algebra.leftMulMatrix b c).transpose * U`, where `U` is the unscaled
-matrix, and transposing does not change the determinant.
+matrix (Mathlib's `LinearMap.toMatrix₂_comp` for the pairing
+`(x, y) ↦ τ (x * y)`), and transposing does not change the determinant.
 -/
 
 @[expose] public section
 
 open Module
-
-private theorem mul_basis_eq_sum {R : Type*} [CommRing R] {A : Type*} [CommRing A]
-    [Algebra R A] {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Basis ι R A) (c : A)
-    (j : ι) : c * b j = ∑ k, Algebra.leftMulMatrix b c k j • b k := by
-  conv_lhs => rw [← b.sum_repr (c * b j)]
-  simp only [Algebra.leftMulMatrix_eq_repr_mul]
 
 private theorem of_dual_mul_mul_eq {R : Type*} [CommRing R] {A : Type*} [CommRing A]
     [Algebra R A] {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Basis ι R A)
@@ -60,13 +56,20 @@ private theorem of_dual_mul_mul_eq {R : Type*} [CommRing R] {A : Type*} [CommRin
     (Matrix.of fun i j => τ (c * b i * b j)) =
       (Algebra.leftMulMatrix b c).transpose * Matrix.of fun i j => τ (b i * b j) := by
   ext i j
-  simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply]
-  rw [mul_basis_eq_sum b c i, Finset.sum_mul, map_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [smul_mul_assoc, map_smul, smul_eq_mul]
+  simpa [Matrix.mul_apply, Algebra.leftMulMatrix_apply] using
+    congrFun₂ (LinearMap.toMatrix₂_comp b b b ((LinearMap.mul R A).compr₂ τ)
+      (Algebra.lmul R A c)) i j
 
-/-- The determinant of the pairing `(i, j) ↦ τ (c * b i * b j)` is the
-norm of `c` times the determinant of the unscaled pairing. -/
+/-- **Determinant of a scaled dual pairing.** Let $R$ be a commutative ring, $A$ a
+commutative $R$-algebra with a basis $(b_i)_{i \in \iota}$ indexed by a finite type $\iota$,
+$\tau \colon A \to R$ an $R$-linear form, and $c \in A$. Then
+
+$$\det\bigl(\tau(c\, b_i b_j)\bigr)_{i,j} = N_{A/R}(c)\,\det\bigl(\tau(b_i b_j)\bigr)_{i,j},$$
+
+where $N_{A/R}(c)$, the norm of $c$, is the determinant of multiplication by $c$. Column $i$
+of the matrix $L_c$ of that multiplication in the basis $b$ holds the coordinates of
+$c\, b_i$, so the left-hand matrix is $L_c^{\top}$ times $\bigl(\tau(b_i b_j)\bigr)_{i,j}$,
+and $\det L_c^{\top} = \det L_c = N_{A/R}(c)$. -/
 theorem Algebra.det_dual_mul_mul_eq_norm_mul_det (R : Type*) [CommRing R]
     (A : Type*) [CommRing A] [Algebra R A] {ι : Type*} [Fintype ι] [DecidableEq ι]
     (b : Module.Basis ι R A) (τ : Module.Dual R A) (c : A) :

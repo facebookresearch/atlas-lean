@@ -79,6 +79,7 @@ import Mathlib.Tactic.Continuity
 import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 import MathlibExt.LinearAlgebra.ExteriorPower.Contraction
 import MathlibExt.RingTheory.MvPowerSeries.ArtinianLocalization
+import MathlibExt.RingTheory.NormTrace.DetDual
 import Mathlib.Algebra.Homology.HomologySequence
 import Mathlib.Algebra.Module.StablyFree.Basic
 import Mathlib.CategoryTheory.EffectiveEpi.Comp
@@ -4688,47 +4689,6 @@ private theorem solution
       JacobianSquarePresentation.LmulBezoutian.solution R f a ha]
 end JacobianSquarePresentation.DualJacobian
 
-namespace JacobianSquarePresentation.DetDualNorm
-
-open scoped TensorProduct
-
-section
-
-open Module
-
-variable (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-private theorem mul_basis_eq_sum (b : Basis ι R A) (c : A) (j : ι) :
-    c * b j = ∑ k, Algebra.leftMulMatrix b c k j • b k := by
-  conv_lhs => rw [← b.sum_repr (c * b j)]
-  simp only [Algebra.leftMulMatrix_eq_repr_mul]
-
-private theorem of_dual_mul_mul_eq (b : Basis ι R A) (τ : Dual R A) (c : A) :
-    (Matrix.of fun i j => τ (c * b i * b j)) =
-      (Algebra.leftMulMatrix b c).transpose * Matrix.of fun i j => τ (b i * b j) := by
-  ext i j
-  simp only [Matrix.of_apply, Matrix.mul_apply, Matrix.transpose_apply]
-  rw [mul_basis_eq_sum R A b c i, Finset.sum_mul, map_sum]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [smul_mul_assoc, map_smul, smul_eq_mul]
-
-private theorem main3 (b : Basis ι R A) (τ : Dual R A) (c : A) :
-    (Matrix.of fun i j => τ (c * b i * b j)).det = Algebra.norm R c *
-        (Matrix.of fun i j => τ (b i * b j)).det := by
-  rw [of_dual_mul_mul_eq R A b τ c, Matrix.det_mul, Matrix.det_transpose,
-      Algebra.norm_eq_matrix_det b]
-
-end
-
-private theorem solution
-    (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
-    {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι R A) (τ : Module.Dual R A) (c : A) :
-    (Matrix.of fun i j => τ (c * b i * b j)).det = Algebra.norm R c *
-        (Matrix.of fun i j => τ (b i * b j)).det :=
-  main3 R A b τ c
-end JacobianSquarePresentation.DetDualNorm
-
 namespace JacobianSquarePresentation.IsUnitDetDual
 
 open scoped TensorProduct
@@ -4806,7 +4766,7 @@ private theorem solution
     rw [Algebra.traceMatrix_apply, Algebra.traceForm_apply, Matrix.of_apply, htr, mul_assoc]
     simp only [Function.comp_apply, hb']
   have hnorm : Algebra.norm R (e J) = Algebra.norm R J := Algebra.norm_eq_of_algEquiv e J
-  rw [hdisc, JacobianSquarePresentation.DetDualNorm.solution R _ b' τ J]
+  rw [hdisc, Algebra.det_dual_mul_mul_eq_norm_mul_det R _ b' τ J]
   change Associated (Algebra.norm R J * (Matrix.of fun i j => τ (b' i * b' j)).det)
       (Algebra.norm R (e _))
   rw [hnorm]
