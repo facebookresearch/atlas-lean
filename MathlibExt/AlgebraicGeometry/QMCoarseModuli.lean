@@ -42,6 +42,12 @@ or both gives the variants with extra level, the fine moduli notion, and
 the notions with a twist action of a group on the fine moduli scheme.
 Each predicate is a structure of properties, with a characterization
 lemma restating it as the conjunction of its fields.
+
+As in `MathlibExt.AlgebraicGeometry.QMFakeEllipticCurve`, `Λ` is a
+subring of `ℍ[ℚ, a, b]` rather than the source's `ℤ`-submodule, and no
+order or lattice condition is imposed on it. The composites of the two
+maps of a level isogeny or of an Atkin--Lehner quotient are the actions
+of `ℓ` or `r` as elements of `Λ`, with no membership side condition.
 -/
 
 @[expose] public noncomputable section
@@ -56,7 +62,7 @@ namespace CerednikDrinfeld.QM
 
 namespace FakeEllipticCurve
 
-variable {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {N : ℕ}
+variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ}
   {S : Type u} [CommRing S]
 
 /-- An extra level-`ℓ` structure: a second finite flat closed level
@@ -80,8 +86,8 @@ structure ExtraLevel (E : FakeEllipticCurve Λ N S) (ℓ : ℕ) :
   /-- Extra level points are `ℓ`-torsion. -/
   levK_torsion : ∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
     (P : SchemeHomOver t E.f), FactorsThrough levK P →
-    nsmulPt E.L t ℓ P = E.L.one t
-  /-- Extra level points are stable under the order action. -/
+    E.L.nsmul t ℓ P = E.L.one t
+  /-- Extra level points are stable under the action of `Λ`. -/
   levK_stable : ∀ (x : ↥Λ) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of S)) (P : SchemeHomOver t E.f),
     FactorsThrough levK P →
@@ -109,7 +115,7 @@ structure ExtraLevel (E : FakeEllipticCurve Λ N S) (ℓ : ℕ) :
           E.L.mul (geomPoint k sk) (e x) (e y)
 
 /-- A fake elliptic curve with an extra level-`ℓ` structure. -/
-abbrev WithExtraLevel (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N ℓ : ℕ)
+abbrev WithExtraLevel (Λ : Subring ℍ[ℚ, a, b]) (N ℓ : ℕ)
     (S : Type u) [CommRing S] : Type (u + 1) :=
   Σ E : FakeEllipticCurve Λ N S, E.ExtraLevel ℓ
 
@@ -155,7 +161,11 @@ theorem isLevelRestrict_iff {ℓ : ℕ} (u : WithExtraLevel Λ N ℓ S)
     (d : FakeEllipticCurve Λ N S) :
     IsLevelRestrict u d ↔ FakeEllipticCurve.Iso u.1 d := Iff.rfl
 
-/-- The level isogeny from an extra-level object to `d`, of degree `ℓ`. -/
+/-- The level isogeny from an extra-level object to `d`: morphisms `φ` and
+`ψ` over the base that respect the group laws and the action of `Λ`, with
+`φ ≫ ψ` and `ψ ≫ φ` the action of `ℓ`, such that `φ` maps level points to
+level points and its kernel is the extra level subgroup, which is killed by
+`ℓ` and has rank `ℓ²`. -/
 def IsLevelIsogeny (ℓ : ℕ) (u : WithExtraLevel Λ N ℓ S)
     (d : FakeEllipticCurve Λ N S) : Prop :=
   ∃ (φ : u.1.A ⟶ d.A) (hφ : φ ≫ d.f = u.1.f) (ψ : d.A ⟶ u.1.A)
@@ -168,9 +178,7 @@ def IsLevelIsogeny (ℓ : ℕ) (u : WithExtraLevel Λ N ℓ S)
         u.1.L.mul t (mapPt ψ hψ P) (mapPt ψ hψ Q)) ∧
     (∀ x : ↥Λ, u.1.act x ≫ φ = φ ≫ d.act x) ∧
     (∀ x : ↥Λ, d.act x ≫ ψ = ψ ≫ u.1.act x) ∧
-    (∀ hℓ : ((ℓ : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-      φ ≫ ψ = u.1.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩ ∧
-        ψ ≫ φ = d.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩) ∧
+    (φ ≫ ψ = u.1.act (ℓ : ↥Λ) ∧ ψ ≫ φ = d.act (ℓ : ↥Λ)) ∧
     (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
       (P : SchemeHomOver t u.1.f), mapPt φ hφ P = d.L.one t ↔
         FactorsThrough u.2.levK P) ∧
@@ -191,9 +199,7 @@ def IsLevelIsogenyVia (ℓ : ℕ) (u : WithExtraLevel Λ N ℓ S)
       u.1.L.mul t (mapPt ψ hψ P) (mapPt ψ hψ Q)) ∧
   (∀ x : ↥Λ, u.1.act x ≫ φ = φ ≫ d.act x) ∧
   (∀ x : ↥Λ, d.act x ≫ ψ = ψ ≫ u.1.act x) ∧
-  (∀ hℓ : ((ℓ : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-    φ ≫ ψ = u.1.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩ ∧
-      ψ ≫ φ = d.act ⟨((ℓ : ℚ) : ℍ[ℚ, a, b]), hℓ⟩) ∧
+  (φ ≫ ψ = u.1.act (ℓ : ↥Λ) ∧ ψ ≫ φ = d.act (ℓ : ↥Λ)) ∧
   (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
     (P : SchemeHomOver t u.1.f), mapPt φ hφ P = d.L.one t ↔
       FactorsThrough u.2.levK P) ∧
@@ -220,9 +226,7 @@ def IsAtkinLehnerQuotient (r : ℕ) (E E' : FakeEllipticCurve Λ N S) :
         E.L.mul t (mapPt ψ hψ P) (mapPt ψ hψ Q)) ∧
     (∀ x : ↥Λ, E.act x ≫ φ = φ ≫ E'.act x) ∧
     (∀ x : ↥Λ, E'.act x ≫ ψ = ψ ≫ E.act x) ∧
-    (∀ hr : ((r : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-      φ ≫ ψ = E.act ⟨((r : ℚ) : ℍ[ℚ, a, b]), hr⟩ ∧
-        ψ ≫ φ = E'.act ⟨((r : ℚ) : ℍ[ℚ, a, b]), hr⟩) ∧
+    (φ ≫ ψ = E.act (r : ↥Λ) ∧ ψ ≫ φ = E'.act (r : ↥Λ)) ∧
     (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
       (P : SchemeHomOver t E.f), mapPt φ hφ P = E'.L.one t ↔
         ∀ (m : ↥Λ) (n : ℤ),
@@ -245,9 +249,7 @@ def IsAtkinLehnerQuotientVia (r : ℕ) (E E' : FakeEllipticCurve Λ N S)
       E.L.mul t (mapPt ψ hψ P) (mapPt ψ hψ Q)) ∧
   (∀ x : ↥Λ, E.act x ≫ φ = φ ≫ E'.act x) ∧
   (∀ x : ↥Λ, E'.act x ≫ ψ = ψ ≫ E.act x) ∧
-  (∀ hr : ((r : ℚ) : ℍ[ℚ, a, b]) ∈ Λ,
-    φ ≫ ψ = E.act ⟨((r : ℚ) : ℍ[ℚ, a, b]), hr⟩ ∧
-      ψ ≫ φ = E'.act ⟨((r : ℚ) : ℍ[ℚ, a, b]), hr⟩) ∧
+  (φ ≫ ψ = E.act (r : ↥Λ) ∧ ψ ≫ φ = E'.act (r : ↥Λ)) ∧
   (∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of S))
     (P : SchemeHomOver t E.f), mapPt φ hφ P = E'.L.one t ↔
       ∀ (m : ↥Λ) (n : ℤ),
@@ -277,12 +279,12 @@ structure FullLevel (E : FakeEllipticCurve Λ N S) (m : ℕ) : Type u where
   /-- The section. -/
   P : SchemeHomOver (𝟙 (Spec (CommRingCat.of S))) E.f
   /-- The section is `m`-torsion. -/
-  torsion : nsmulPt E.L (𝟙 (Spec (CommRingCat.of S))) m P =
+  torsion : E.L.nsmul (𝟙 (Spec (CommRingCat.of S))) m P =
     E.L.one (𝟙 (Spec (CommRingCat.of S)))
   /-- The orbit of the section is all geometric `m`-torsion. -/
   generates : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k)
     (Q : SchemeHomOver (geomPoint k sk) E.f),
-    nsmulPt E.L (geomPoint k sk) m Q = E.L.one (geomPoint k sk) →
+    E.L.nsmul (geomPoint k sk) m Q = E.L.one (geomPoint k sk) →
     ∃ x : ↥Λ, pushPt (E.act x) (E.act_over x) (sectionAt P k sk) = Q
   /-- The annihilator of the section is exactly `mΛ`. -/
   annihilator : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k)
@@ -291,7 +293,7 @@ structure FullLevel (E : FakeEllipticCurve Λ N S) (m : ℕ) : Type u where
       ∃ y : ↥Λ, (x : ℍ[ℚ, a, b]) = (m : ℚ) • (y : ℍ[ℚ, a, b])
 
 /-- A fake elliptic curve with a full level-`m` structure. -/
-abbrev WithFullLevel (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : ℕ)
+abbrev WithFullLevel (Λ : Subring ℍ[ℚ, a, b]) (N m : ℕ)
     (S : Type u) [CommRing S] : Type (u + 1) :=
   Σ E : FakeEllipticCurve Λ N S, E.FullLevel m
 
@@ -376,7 +378,7 @@ variable {a b : ℚ}
 
 /-- A coarse moduli scheme for fake elliptic curves: iso-invariant,
 pullback-natural, bijective on geometric points, and universal. -/
-structure IsCoarseModuli (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
+structure IsCoarseModuli (Λ : Subring ℍ[ℚ, a, b]) (N : ℕ)
     {B : Type} [CommRing B] (X : Scheme.{0})
     (πX : X ⟶ Spec (CommRingCat.of B))
     (pt : ∀ (S : Type) [CommRing S]
@@ -426,7 +428,7 @@ structure IsCoarseModuli (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ)
       (s : Spec (CommRingCat.of S) ⟶ Spec (CommRingCat.of B))
       (E : FakeEllipticCurve Λ N S), (pt' S s E).left = (pt S s E).left ≫ g
 
-theorem isCoarseModuli_iff {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b])
+theorem isCoarseModuli_iff {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b])
     (N : ℕ) {B : Type} [CommRing B] (X : Scheme.{0})
     (πX : X ⟶ Spec (CommRingCat.of B))
     (pt : ∀ (S : Type) [CommRing S]
@@ -479,7 +481,7 @@ theorem isCoarseModuli_iff {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b])
     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩⟩
 
 /-- A coarse moduli scheme for fake elliptic curves with extra level. -/
-structure IsCoarseModuliT (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N ℓ : ℕ)
+structure IsCoarseModuliT (Λ : Subring ℍ[ℚ, a, b]) (N ℓ : ℕ)
     {B : Type} [CommRing B] (Y : Scheme.{0})
     (πY : Y ⟶ Spec (CommRingCat.of B))
     (ptT : ∀ (S : Type) [CommRing S]
@@ -534,7 +536,7 @@ structure IsCoarseModuliT (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N ℓ : ℕ)
       (u : FakeEllipticCurve.WithExtraLevel Λ N ℓ S),
       (pt' S s u).left = (ptT S s u).left ≫ g
 
-theorem isCoarseModuliT_iff {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b])
+theorem isCoarseModuliT_iff {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b])
     (N ℓ : ℕ) {B : Type} [CommRing B] (Y : Scheme.{0})
     (πY : Y ⟶ Spec (CommRingCat.of B))
     (ptT : ∀ (S : Type) [CommRing S]
@@ -593,7 +595,7 @@ theorem isCoarseModuliT_iff {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b])
 
 /-- A fine moduli scheme for full-level objects: points over every ring
 (not only geometric points) are bijective with full-level objects. -/
-structure IsFineModuli (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : ℕ)
+structure IsFineModuli (Λ : Subring ℍ[ℚ, a, b]) (N m : ℕ)
     {B : Type} [CommRing B] (M : Scheme.{0})
     (πM : M ⟶ Spec (CommRingCat.of B))
     (ptF : ∀ (S : Type) [CommRing S]
@@ -626,7 +628,7 @@ structure IsFineModuli (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : ℕ)
     (u v : FakeEllipticCurve.WithFullLevel Λ N m S),
     ptF S s u = ptF S s v → FakeEllipticCurve.WithFullLevel.Iso u v
 
-theorem isFineModuli_iff {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : ℕ)
+theorem isFineModuli_iff {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b]) (N m : ℕ)
     {B : Type} [CommRing B] (M : Scheme.{0})
     (πM : M ⟶ Spec (CommRingCat.of B))
     (ptF : ∀ (S : Type) [CommRing S]
@@ -660,8 +662,8 @@ theorem isFineModuli_iff {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : 
     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2⟩⟩
 
 /-- An action of a group `G` on a fine moduli scheme by twists, labelled
-by elements of the order modulo `mΛ`. -/
-structure IsLevelTwistAction (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : ℕ)
+by elements of `Λ` modulo `mΛ`. -/
+structure IsLevelTwistAction (Λ : Subring ℍ[ℚ, a, b]) (N m : ℕ)
     {B : Type} [CommRing B] (M : Scheme.{0})
     (πM : M ⟶ Spec (CommRingCat.of B))
     (ptF : ∀ (S : Type) [CommRing S]
@@ -696,7 +698,7 @@ structure IsLevelTwistAction (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : ℕ)
       (m : ℚ) • (y : ℍ[ℚ, a, b])) → g = g'
 
 theorem isLevelTwistAction_iff {a b : ℚ}
-    (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N m : ℕ) {B : Type} [CommRing B]
+    (Λ : Subring ℍ[ℚ, a, b]) (N m : ℕ) {B : Type} [CommRing B]
     (M : Scheme.{0}) (πM : M ⟶ Spec (CommRingCat.of B))
     (ptF : ∀ (S : Type) [CommRing S]
       (s : Spec (CommRingCat.of S) ⟶ Spec (CommRingCat.of B)),
@@ -731,7 +733,7 @@ theorem isLevelTwistAction_iff {a b : ℚ}
     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩⟩
 
 /-- A fine moduli scheme for full-level objects with extra level. -/
-structure IsFineModuliT (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N n ℓ : ℕ)
+structure IsFineModuliT (Λ : Subring ℍ[ℚ, a, b]) (N n ℓ : ℕ)
     {B : Type u} [CommRing B] (Mℓ : Scheme.{u})
     (πMℓ : Mℓ ⟶ Spec (CommRingCat.of B))
     (ptFℓ : ∀ (S : Type u) [CommRing S]
@@ -778,7 +780,7 @@ structure IsFineModuliT (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N n ℓ : ℕ)
     ∃ (i : u.1.A ≅ v.1.A) (hi : i.hom ≫ v.1.f = u.1.f),
       FakeEllipticCurve.WithFullLevel.IsoTVia u v C C' i hi
 
-theorem isFineModuliT_iff {a b : ℚ} (Λ : Submodule ℤ ℍ[ℚ, a, b])
+theorem isFineModuliT_iff {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b])
     (N n ℓ : ℕ) {B : Type u} [CommRing B] (Mℓ : Scheme.{u})
     (πMℓ : Mℓ ⟶ Spec (CommRingCat.of B))
     (ptFℓ : ∀ (S : Type u) [CommRing S]
