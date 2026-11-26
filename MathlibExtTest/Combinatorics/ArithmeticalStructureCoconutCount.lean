@@ -46,4 +46,16 @@ example : Set.ncard {x : (Fin 2 ⊕ Fin 2 → ℕ) × (Fin 2 ⊕ Fin 2 → ℕ) 
   have hIcc : Finset.Icc 3 4 = ({3, 4} : Finset ℕ) := by decide
   simp [Finset.sum_range_succ, coconutCountTerm, ballotNumber, catalan_two, hIcc]
 
+-- The single edge has no structures whose designated leaf has label d ≠ 1.
+example : Set.ncard {x : (Fin 1 ⊕ Fin 1 → ℕ) × (Fin 1 ⊕ Fin 1 → ℕ) |
+    IsArithmeticalStructure (coconutTree 1 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1} = 0 := by
+  rw [ncard_arithmeticalStructure_coconutTree_one_leaf_ne_one (by decide)]
+  simp
+
+-- The three-vertex path has exactly one such structure.
+example : Set.ncard {x : (Fin 2 ⊕ Fin 1 → ℕ) × (Fin 2 ⊕ Fin 1 → ℕ) |
+    IsArithmeticalStructure (coconutTree 2 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1} = 1 := by
+  rw [ncard_arithmeticalStructure_coconutTree_one_leaf_ne_one (by decide)]
+  simp [catalan_two]
+
 end MetaMathlibExt.ncard_arithmeticalStructure_coconutTree
