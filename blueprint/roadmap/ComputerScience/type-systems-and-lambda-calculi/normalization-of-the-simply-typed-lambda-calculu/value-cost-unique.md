@@ -1,0 +1,3 @@
+# Reductions to values have a unique length and result
+
+Consider call-by-value reduction $t \to u$ on intrinsically typed terms of the simply typed lambda calculus (left-to-right and weak: an application first reduces its function position, then its argument once the function is a value, and $(\lambda b)\,a$ contracts to the instantiation $b[a]$ only when $a$ is a value, a value being a lambda abstraction; no step goes under a binder). Let $t, v, w$ be terms of type $A$ in any context $\Gamma$ and $n, m$ natural numbers. If $t \to^n v$ in exactly $n$ steps with $v$ a value, and $t \to^m w$ in exactly $m$ steps with $w$ a value, then $n = m$ and $v = w$.

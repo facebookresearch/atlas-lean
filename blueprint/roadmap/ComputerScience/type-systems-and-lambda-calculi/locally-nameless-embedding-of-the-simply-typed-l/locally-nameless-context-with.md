@@ -1,0 +1,3 @@
+# Locally nameless context from a list of names and a simply typed context
+
+For a list $\mathit{names}$ of natural numbers and a context $\Gamma$ (a list of simple types over base types $B$), the paired context is the locally nameless typing context defined by recursion: if $\mathit{names} = x :: \mathit{names}'$ and $\Gamma = A :: \Gamma'$, it is $(x, A^{\mathrm{LN}})$ followed by the paired context of $\mathit{names}'$ and $\Gamma'$; if either list is empty, it is the empty context. Here $A^{\mathrm{LN}}$ is the translation of simple types into the locally nameless simple types (base $b \mapsto$ base $b$, $A \Rightarrow C \mapsto A^{\mathrm{LN}} \rightsquigarrow  C^{\mathrm{LN}}$). The result pairs the lists in order and has the length of the shorter one.

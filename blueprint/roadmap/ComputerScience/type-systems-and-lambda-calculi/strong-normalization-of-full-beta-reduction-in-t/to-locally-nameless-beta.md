@@ -1,0 +1,5 @@
+# A canonically embedded beta redex takes one full beta step
+
+The embedding with names $\mathit{names}$ of an intrinsically typed term $t$ is $\mathrm{tr}_{0,\mathit{names}}$ applied to the erasure of $t$ (variables replaced by their de Bruijn positions in the context, lambdas keeping their parameter types); the canonical embedding $t^{\mathrm{LN}}$ uses $\mathit{names} = [0, 1, \dots, |\Gamma| - 1]$ for a term in context $\Gamma$. Full beta reduction on locally nameless terms is the compatible closure of beta contraction $\mathrm{app}\,(\mathrm{abs}\,M)\,N \to \mathrm{open}'\,M\,N$ (with $\mathrm{abs}\,M$ and $N$ locally closed), closed under reduction in either position of an application whose other side is locally closed and under abstraction (cofinitely many opened bodies reduce).
+
+For every term $b$ of type $B$ in $A :: \Gamma$ and every term $a$ of type $A$ in $\Gamma$, $((\lambda b)\,a)^{\mathrm{LN}}$ reduces in one locally nameless full beta step to $(b[a])^{\mathrm{LN}}$, where $b[a]$ replaces the newest variable of $b$ by $a$.

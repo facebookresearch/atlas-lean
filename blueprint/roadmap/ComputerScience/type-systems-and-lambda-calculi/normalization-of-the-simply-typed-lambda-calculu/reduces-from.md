@@ -1,0 +1,3 @@
+# Converse of one-step call-by-value reduction
+
+For terms $t'$ and $t$ of the same simple type $A$ in the same context $\Gamma$, $t'$ reduces from $t$ when $t \to t'$ in one step of call-by-value reduction $t \to u$ on intrinsically typed terms of the simply typed lambda calculus (left-to-right and weak: an application first reduces its function position, then its argument once the function is a value, and $(\lambda b)\,a$ contracts to the instantiation $b[a]$ only when $a$ is a value, a value being a lambda abstraction; no step goes under a binder). The relation is the converse of one-step reduction, oriented for accessibility arguments.

@@ -1,0 +1,7 @@
+# Opening a translated term at the next binder extends the name list
+
+Raw terms over a type $B$ of base types are de Bruijn variables $\mathrm{var}\,n$ ($n \in \mathbb{N}$), applications $\mathrm{app}\,f\,a$, and abstractions $\mathrm{lam}\,A\,t$ annotated with a simple type $A$. Locally nameless terms with natural-number names are bound variables $\mathrm{bvar}\,i$ ($i \in \mathbb{N}$, a de Bruijn index), free variables $\mathrm{fvar}\,x$ ($x \in \mathbb{N}$), unannotated abstractions $\mathrm{abs}\,t$ and applications $\mathrm{app}\,t\,u$. Opening $\mathrm{openRec}\,k\,u\,t$ replaces every bound variable $\mathrm{bvar}\,k$ of $t$ (with $k$ increased by one under each abstraction) by $u$, without shifting $u$; $\mathrm{open}'\,t\,u = \mathrm{openRec}\,0\,u\,t$. For $d \in \mathbb{N}$ and a list $\mathit{names}$ of natural numbers, the translation $\mathrm{tr}_{d,\mathit{names}}$ of raw terms to locally nameless terms sends $\mathrm{var}\,n$ to $\mathrm{bvar}\,n$ if $n < d$ and otherwise to $\mathrm{fvar}$ of the entry of $\mathit{names}$ at position $n - d$ (counting from $0$; the default $0$ when $n - d$ is at least the length of $\mathit{names}$), and is homomorphic on applications, with $\mathrm{lam}\,A\,t \mapsto \mathrm{abs}\,(\mathrm{tr}_{d+1,\mathit{names}}\,t)$.
+
+For every raw term $t$, every $d \in \mathbb{N}$, every list $\mathit{names}$ and every $x \in \mathbb{N}$,
+
+$$\mathrm{openRec}\,d\,(\mathrm{fvar}\,x)\,(\mathrm{tr}_{d+1,\mathit{names}}\,t) = \mathrm{tr}_{d,\,x :: \mathit{names}}\,t.$$

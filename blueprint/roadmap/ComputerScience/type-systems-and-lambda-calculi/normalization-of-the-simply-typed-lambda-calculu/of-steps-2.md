@@ -1,0 +1,3 @@
+# Every multi-step call-by-value reduction has an exact length
+
+Consider call-by-value reduction $t \to u$ on intrinsically typed terms of the simply typed lambda calculus (left-to-right and weak: an application first reduces its function position, then its argument once the function is a value, and $(\lambda b)\,a$ contracts to the instantiation $b[a]$ only when $a$ is a value, a value being a lambda abstraction; no step goes under a binder). For terms $t, u$ of type $A$ in context $\Gamma$, if $t \to^* u$ in the reflexive transitive closure of one-step reduction, then there is a natural number $n$ with $t \to^n u$ in exactly $n$ steps.
