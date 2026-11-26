@@ -13509,6 +13509,7 @@
   "MathlibExt/NumberTheory/RunLengthTransformLinearRecurrence": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomial coefficient sums modulo 2"},
   "MathlibExt/NumberTheory/SCullenNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Cullen numbers"},
   "MathlibExt/NumberTheory/SZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
+  "MathlibExt/NumberTheory/SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SanfordCoupledRecurrence": {"to": "Analysis/special-functions/bernoulli-polylog-clausen", "title": "Dilogarithm identities"},
   "MathlibExt/NumberTheory/SanfordSymmetricSeries": {"to": "Analysis/special-functions/bernoulli-polylog-clausen", "title": "Dilogarithm identities"},
   "MathlibExt/NumberTheory/SPerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Weighted perfect numbers"},
