@@ -1,3 +1,3 @@
-# Tree data
+# Data of a phylogenetic tree
 
-Tree data are a triple of a vertex count $n$, an edge list on $\{0, \dots, n-1\}$, and a list whose $x$-th entry is the vertex that is the leaf of taxon $x$.
+A tree on taxa $0, \dots, m - 1$ is given by a number $n$ of vertices, a list of edges between vertices below $n$, and a list whose $x$-th entry is the vertex that is the leaf of taxon $x$. That these data describe an unrooted binary phylogenetic tree is a separate condition.

@@ -1,6 +1,6 @@
 # Automata, grammars and regular expressions
 
-- [Automaton data](automaton-data.md)
+- [Data of a finite automaton](automaton-data.md)
 - [Feasible instances of FINITE STATE AUTOMATON INEQUIVALENCE OVER A UNARY ALPHABET](automaton-inequivalence-feasible.md)
 - [FINITE STATE AUTOMATON INEQUIVALENCE FOR FINITE LANGUAGES as a decision problem](automaton-inequivalence-finite-dec.md)
 - [FINITE STATE AUTOMATON INEQUIVALENCE FOR FINITE LANGUAGES is NP-complete](automaton-inequivalence-finite-np-comple.md)
@@ -125,8 +125,8 @@
 - [Derivation step with a table](table-step-2.md)
 - [Derivation step with a table (EDOL)](table-step.md)
 - [Tables of an L-system](table.md)
-- [Grammar data as an encoded CFG](to-encoded-cfg.md)
-- [Automaton as an encoded NFA](to-encoded-nfa.md)
+- [Context-free grammar given by grammar data](to-encoded-cfg.md)
+- [Nondeterministic automaton given by automaton data](to-encoded-nfa.md)
 - [Right-hand symbol as a sum](to-sum.md)
 - [Prefix token list of an integer expression](tokens.md)
 - [TOL grammars](tolgrammar.md)

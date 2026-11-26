@@ -1,3 +1,3 @@
-# Breakpoint distance
+# Breakpoint distance between signed strings
 
-The number of consecutive pairs $a\,b$ of $g$ such that neither $a$ precedes $b$ nor $-b$ precedes $-a$ in $h$, plus one unless $g$ and $h$ have the same first gene or are both empty, and one unless they have the same last gene or are both empty.
+For signed strings $g$ and $h$, lists of genes each carrying a sign, the breakpoint distance counts the consecutive pairs $a\,b$ of $g$ such that $h$ neither contains $a$ immediately followed by $b$ nor contains $-b$ immediately followed by $-a$, and adds one unless $g$ and $h$ have the same first gene or are both empty, and one unless they have the same last gene or are both empty.
