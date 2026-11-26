@@ -898,6 +898,7 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
 {"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
+{"statement": "af_a151da47d041132e76b05670", "page": "Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics", "replaced_by": "af_f94a233790a941a5f344136d"}
 {"folder": "GameTheory/not-yet-classified/part-01/backward-induction", "to": "GameTheory/noncooperative-games/backward-induction-and-subgame-perfection", "article_id": "af_4dc9cc920999a35a2e885432"}
 {"page": "GameTheory/not-yet-classified/part-01/backward-induction/exists-is-backward-induction-is-subgame", "to": "GameTheory/noncooperative-games/backward-induction-and-subgame-perfection/exists-is-backward-induction-is-subgame", "article_id": "af_6b66a7311697d095605c3840"}
 {"page": "GameTheory/not-yet-classified/part-01/backward-induction/is-nash-2", "to": "GameTheory/noncooperative-games/backward-induction-and-subgame-perfection/is-nash-2", "article_id": "af_05d6b371270bec23056f0242"}
