@@ -8,10 +8,12 @@ and the problem of deciding $\bar a \in \mathrm{cert}_*(q, I)$. Hardness is unde
    and it is coNP-hard for some fixed $q$) and PSPACE-complete in combined complexity.
 2. Under the open-world semantics the problem is undecidable in combined complexity.
 
-The closed-world lower bounds reduce from 3-colorability, for a fixed query, and from evaluation of first-order queries
-on databases without nulls, which is PSPACE-complete in combined complexity; the open-world lower bound takes the empty
-incomplete instance, on which a Boolean query is certain exactly when it is finitely valid, the negation of finite
-satisfiability.
+For the fixed-query lower bound, a graph maps to an incomplete instance on which a proper 3-coloring gives a valuation
+making a fixed Boolean query false, so 3-colorability reduces to non-certainty and non-3-colorability to certainty,
+which is coNP-hard. Combined-complexity hardness under the closed-world semantics reduces from evaluation of
+first-order queries on databases without nulls, which is PSPACE-complete. The open-world lower bound takes the empty
+incomplete instance, on which a Boolean query $\varphi$ is certain exactly when it is finitely valid, and $\varphi$ is
+finitely valid if and only if $\neg\varphi$ is not finitely satisfiable.
 
 ## Depends on
 

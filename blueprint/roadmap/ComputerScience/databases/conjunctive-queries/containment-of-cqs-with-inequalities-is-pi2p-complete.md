@@ -9,9 +9,9 @@ no homomorphism maps $q'$ to $h(q^+)$, with $H_{q,q'}$ and $h(q^+)$ as in the
 ## Expansion
 
 This node states a precise result. The cited source proves the upper bound and leaves the lower bound to its Exercise
-4.4. A good expansion adds a page for a checked reduction from the validity of quantified Boolean formulas
-$\forall \bar x\, \exists \bar y\, \psi$ (the complement of $\mathrm{QSAT}_2$) to containment of conjunctive queries with
-inequalities, and links it under `## Proof depends on`.
+4.4. A good expansion adds a page for a checked reduction from the truth of quantified Boolean formulas
+$\forall \bar x\, \exists \bar y\, \psi$ to containment of conjunctive queries with
+inequalities, and links it under `## Proof depends on`; the truth of $\forall \bar x\, \exists \bar y\, \psi$ is $\Pi_2^p$-hard because, for well-formed inputs, it holds exactly when the $\mathrm{QSAT}_2$ instance $\exists \bar x\, \forall \bar y\, \neg\psi$ is false, which gives the hardness premise.
 
 ## Depends on
 
