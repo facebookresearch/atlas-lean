@@ -360,4 +360,34 @@ private theorem exists_feasible_iff_of_unique {ι : Type*} [Fintype ι] [LinearO
   ⟨fun ⟨_, h⟩ => h.runTime_le_period default, fun h =>
     ⟨_, (feasible_produceSchedule_iff_of_unique tasks (fun _ _ => (0 : ℕ))).mpr h⟩⟩
 
+/-! ### Dropped requests and response times
+
+A request that is not fulfilled by its deadline is dropped, which can free processor time for
+lower-priority tasks. With the tasks `(C, T, phase) = (2, 5, 0)`, `(1, 2, 0)` and `(1, 5, 0)`, in
+decreasing priority, the first request of the second task overflows, and the request of the third
+task at time `0`, made together with requests of both higher-priority tasks, has a smaller
+response time than its request at time `5`. -/
+
+/-- Three tasks whose second task overflows under priorities in index order. -/
+private def droppingTasks : TaskSet (Fin 3) := fun i =>
+  match i.val with
+  | 0 => ⟨2, 5, 0, by decide, by decide⟩
+  | 1 => ⟨1, 2, 0, by decide, by decide⟩
+  | _ => ⟨1, 5, 0, by decide, by decide⟩
+
+/-- Fixed priorities in index order. -/
+private def indexOrder : PriorityRule (Fin 3) ℕ := fun i _ => i.val
+
+private theorem droppingTasks_second_overflows :
+    RequestOverflow droppingTasks (produceSchedule droppingTasks indexOrder) 1 0 := by
+  decide
+
+private theorem droppingTasks_response_time_at_0 :
+    responseTime droppingTasks (produceSchedule droppingTasks indexOrder) 2 0 = some 4 :=
+  (responseTime_of_fulfilled _ _ 2 0 4 (by decide) (by decide)).trans (by decide)
+
+private theorem droppingTasks_response_time_at_5 :
+    responseTime droppingTasks (produceSchedule droppingTasks indexOrder) 2 1 = some 5 :=
+  (responseTime_of_fulfilled _ _ 2 1 10 (by decide) (by decide)).trans (by decide)
+
 end Cslib.Scheduling.RealTime.Tests
