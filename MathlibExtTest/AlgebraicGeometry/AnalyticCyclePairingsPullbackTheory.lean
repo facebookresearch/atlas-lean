@@ -28,7 +28,7 @@ open scoped Manifold ContDiff
 example (p : ℕ) (a : GlobalForms ℝ (Coordinates 1) (Coordinates 1) p) :
     IsSmooth ℝ (Coordinates 1) (Coordinates 1)
       (pullbackRough 1 (Coordinates 1) 1 (Coordinates 1) id a.val) := by
-  exact (MathlibExt.AlgebraicGeometry.AnalyticCyclePairings.pullbackTheory
+  exact (WantedExt.AlgebraicGeometry.AnalyticCyclePairingsWanted.pullbackTheory
     1 (Coordinates 1) 1 (Coordinates 1) id contMDiff_id).smooth p a
 
 end MathlibExtTest.AlgebraicGeometry.AnalyticCyclePairingsPullbackTheory

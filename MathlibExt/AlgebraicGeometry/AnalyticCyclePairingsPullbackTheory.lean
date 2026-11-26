@@ -63,6 +63,15 @@ private theorem smoothPrecomp (n d p : ℕ)
     rw [← Nat.cast_smul_eq_nsmul ℝ, smul_smul]
     simp [inv_mul_cancel₀ (by positivity : (p : ℝ) + 1 ≠ 0)]
 
+end MathlibExt.AlgebraicGeometry.AnalyticCyclePairings
+
+namespace WantedExt.AlgebraicGeometry.AnalyticCyclePairingsWanted
+
+open MathlibExt.AlgebraicGeometry
+open KahlerClassGeometry ManifoldDifferentialForms AnalyticCyclePairings
+open Set Filter ContinuousAlternatingMap
+open scoped Manifold ContDiff Topology
+
 /-- The pullback of a smooth form along a smooth map is smooth. -/
 public theorem pullbackTheory (n : ℕ) (M : Type) [TopologicalSpace M]
     [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
@@ -142,22 +151,5 @@ public theorem pullbackTheory (n : ℕ) (M : Type) [TopologicalSpace M]
   exact (congrArg (fun L ↦ L (((mfderiv 𝓘(ℝ, Coordinates d) 𝓘(ℝ, Coordinates n)
     f (s w)).comp (mfderiv 𝓘(ℝ, Coordinates d) 𝓘(ℝ, Coordinates d) s w)) (v i)))
       hcancel).symm
-
-end MathlibExt.AlgebraicGeometry.AnalyticCyclePairings
-
-namespace WantedExt.AlgebraicGeometry.AnalyticCyclePairingsWanted
-
-open MathlibExt.AlgebraicGeometry
-open KahlerClassGeometry AnalyticCyclePairings
-open scoped Manifold ContDiff
-
-/-- The pullback of a smooth form along a smooth map is smooth. -/
-public theorem pullbackTheory (n : ℕ) (M : Type) [TopologicalSpace M]
-    [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
-    (d : ℕ) (Y : Type) [TopologicalSpace Y] [ChartedSpace (Coordinates d) Y]
-    [IsManifold 𝓘(ℝ, Coordinates d) ∞ Y] (f : Y → M)
-    (hf : ContMDiff 𝓘(ℝ, Coordinates d) 𝓘(ℝ, Coordinates n) ∞ f) :
-    PullbackTheory n M d Y f := by
-  exact MathlibExt.AlgebraicGeometry.AnalyticCyclePairings.pullbackTheory n M d Y f hf
 
 end WantedExt.AlgebraicGeometry.AnalyticCyclePairingsWanted
