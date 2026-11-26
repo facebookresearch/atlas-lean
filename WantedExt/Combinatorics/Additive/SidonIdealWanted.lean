@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Constructions
 public import MathlibExt.Combinatorics.Additive.SidonIdeal
+public import MathlibExt.Combinatorics.Additive.SidonIdealExistsMemVanDerWaerdenLacunaryDFinNotMemSidonIdeal
 public import MathlibExt.Combinatorics.Additive.SidonIdealNotSidonBlockSubsetIUnionIsSidon
 
 /-!
@@ -94,18 +95,6 @@ Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
 Proposition 1 (`integers-2025-A91-prop-1`). -/
 public theorem_wanted exists_isSidon_not_mem_almostThinIdeal :
     ∃ A : Set ℕ, A.IsSidon ∧ A ∉ generatedIdeal IsAlmostThinSet
-
-/-- **A set in the van der Waerden, lacunary and difference-set ideals outside the Sidon ideal.**
-There is a set $A \subseteq \mathbb{N}$ that belongs to the van der Waerden ideal, is contained in
-a finite union of gap-lacunary sets (infinite sets whose gaps between consecutive elements tend to
-infinity), and belongs to the ideal $D_{\mathrm{fin}}$ of sets avoiding large difference sets, but
-is not contained in any finite union of Sidon sets.
-
-Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
-Theorem 5 (`integers-2025-A91-thm-5`). -/
-public theorem_wanted exists_mem_vanDerWaerden_lacunary_dFin_not_mem_sidonIdeal :
-    ∃ A : Set ℕ, A ∈ vanDerWaerdenIdeal ∧ A ∈ generatedIdeal IsGapLacunarySet ∧
-      A ∈ dFinIdeal ∧ A ∉ sidonIdeal
 
 end
 

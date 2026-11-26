@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import MathlibExt.NumberTheory.IncompleteExponentialSum
 public import MathlibExt.NumberTheory.LogarithmicCompletion
+public import MathlibExt.NumberTheory.ReciprocalSineSum
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -29,7 +30,8 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 
 Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
 Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. The proof of Corollary 1.1 is in
-`MathlibExt.NumberTheory.LogarithmicCompletion`.
+`MathlibExt.NumberTheory.LogarithmicCompletion`. The reciprocal sine bound is proved in
+`MathlibExt.NumberTheory.ReciprocalSineSum`.
 -/
 
 namespace MetaMathlibExt
@@ -37,22 +39,6 @@ namespace MetaMathlibExt
 open Complex Finset
 
 @[expose] public section
-
-/-- **Bound for a sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer not
-divisible by $p$, let $B$ be an integer with $1 \le B < p/2$, and let $\gamma$ be the
-Euler–Mascheroni constant. Then
-$$
-\sum_{h=1}^{B} \frac{1}{|\sin(\pi a h / p)|} <
-\frac{p}{\pi}\left(\log B + \gamma + \frac{1}{2B}\right) + \frac{pB(B+1)}{\pi(p^2 - B^2)}.
-$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.2 (`integers-2025-A48-lem-3-2`). -/
-public theorem_wanted sum_one_div_abs_sin_lt (p : ℕ) (hp : p.Prime) (a : ℤ)
-    (ha : ¬ (p : ℤ) ∣ a) (B : ℕ) (hB₁ : 1 ≤ B) (hB : (B : ℝ) < p / 2) :
-    ∑ h ∈ Icc 1 B, 1 / |Real.sin (Real.pi * a * h / p)| <
-      (p / Real.pi) * (Real.log B + Real.eulerMascheroniConstant + 1 / (2 * B)) +
-        p * B * (B + 1) / (Real.pi * ((p : ℝ) ^ 2 - (B : ℝ) ^ 2))
 
 /-- **Bound for a weighted sum of absolute sines.** Let $K$ be a positive integer, let $\xi$ be a
 real number, and let $\gamma$ be the Euler–Mascheroni constant. Then
