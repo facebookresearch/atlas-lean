@@ -992,6 +992,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/OrderStatisticTree/Delete": {"to": "ComputerScience/data-structures/search-trees", "title": "Order statistic tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/OrderedInsert": {"to": "ComputerScience/data-structures/linear-structures", "title": "List operations"},
   "CSLibExt/Algorithms/Lean/DataStructures/PerfectHashing": {"to": "ComputerScience/data-structures/hashing", "title": "Perfect hashing"},
+  "CSLibExt/Algorithms/Lean/DataStructures/PerfectHashing/ExpectedSpace": {"to": "ComputerScience/data-structures/hashing", "title": "Hashing analysis"},
   "CSLibExt/Algorithms/Lean/DataStructures/PotentialMethod": {"to": "ComputerScience/data-structures", "title": "Amortized analysis"},
   "CSLibExt/Algorithms/Lean/DataStructures/Quadtree": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Region quadtree"},
   "CSLibExt/Algorithms/Lean/DataStructures/Queue/Amortized": {"to": "ComputerScience/data-structures/linear-structures", "title": "Two-list queue"},
