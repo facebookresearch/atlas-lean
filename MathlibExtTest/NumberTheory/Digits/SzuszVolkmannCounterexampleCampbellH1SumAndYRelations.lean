@@ -49,4 +49,13 @@ example : (campbellH2 100 : ℤ) - campbellH2 99 = 100 := by
   norm_num at h
   exact h
 
+-- At `ℓ = 3` the jump at `1000` is `10 ^ (2 * (3 / 2)) = 100`, not `10 ^ 3`.
+example : (campbellH2 1000 : ℤ) - campbellH2 999 = 100 := by
+  have h := (campbellH1_sum_and_y_relations.2 3 (by norm_num)).2
+  have e1 : (10 : ℕ) ^ 3 - 1 = 999 := by norm_num
+  have e2 : 2 * (3 / 2) = 2 := by norm_num
+  have e3 : (10 : ℕ) ^ 3 = 1000 := by norm_num
+  rw [e1, e3, e2] at h
+  exact h.trans (by norm_num)
+
 end MathlibExtTest.NumberTheory.Digits.SzuszVolkmannCounterexampleCampbellH1SumAndYRelations
