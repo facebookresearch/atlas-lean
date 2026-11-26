@@ -4,6 +4,8 @@ Let $\to$ be a binary relation on a type $\alpha$, an abstract reduction system 
 
 Assume $\to$ is confluent. For any two normalizers $N$ and $M$ for $\to$ and every state $a$, $N(a) = M(a)$.
 
+Equivalently, $N = M$: a normalizer is determined by its function, as its two other components are proofs, so under confluence any two normalizers for $\to$ are equal, proof components included.
+
 ## Sources
 
 - Terese, *Term Rewriting Systems*, Cambridge Tracts in Theoretical Computer Science 55, Cambridge University Press, 2003, Chapter 1 (abstract reduction systems). ISBN 978-0-521-39115-3.

@@ -4,6 +4,8 @@ Let $\to$ be a binary relation on a type $\alpha$, an abstract reduction system 
 
 For every normalizer $N$ for $\to$ and every normal state $a$, $N(a) = a$. No confluence is assumed.
 
+Equivalently, let $\mathrm{NF}$ be the set of normal states and regard $a \mapsto N(a)$ as a map from $\alpha$ to $\mathrm{NF}$, the *normalization result* of $N$. Then the normalization result of every $n \in \mathrm{NF}$ is $n$ itself, so normalization is a retraction of $\alpha$ onto $\mathrm{NF}$. An element of $\mathrm{NF}$ is a state together with a proof that it is normal, and two elements are equal exactly when their states are, so each form follows from the other.
+
 ## Sources
 
 - Terese, *Term Rewriting Systems*, Cambridge Tracts in Theoretical Computer Science 55, Cambridge University Press, 2003, Chapter 1 (abstract reduction systems). ISBN 978-0-521-39115-3.

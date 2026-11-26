@@ -1,4 +1,4 @@
-# Valid IMP Hoare triples transfer to translated commands
+# Valid IMP Hoare triples transfer to translated commands under an injective renaming
 
 Let $\rho$ be an injective renaming from natural numbers to strings, $P$ and $Q$ predicates on IMP states and $c$ an IMP command such that the partial-correctness triple $\lbrace P \rbrace\ c\ \lbrace Q \rbrace$ is valid for IMP. Then the partial-correctness triple
 
