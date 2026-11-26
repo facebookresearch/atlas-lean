@@ -37,10 +37,11 @@ Modification notice (Apache License 2.0, Section 4). Changes made: converted eac
 `MathlibExt.AlgebraicGeometry.BezoutWanted` namespace. Mathematical statements are unchanged,
 except for one correction recorded as a Lean variant: `intersectionMultiplicity` now takes
 `Module.length` over the local ring `localRingAt q` (the ring of the quotient module), not over
-`K`. Later change (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
+`K`. Later changes (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
 `WantedExt/AlgebraicGeometry/BezoutWanted.lean` to this `MathlibExt` module with unchanged names,
 statements and docstrings, and the imports were replaced by the Mathlib and `MathlibExt` imports
-the proof needs.
+the proof needs. The proof of `chartIndex_rep_ne_zero` now cites `Projectivization.rep_ne_zero`
+instead of its deprecated alias `Projectivization.rep_nonzero`.
 
 The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
 `bezout_multiplicity`, the private lemmas it uses and the module documentation.
@@ -156,7 +157,7 @@ noncomputable def chartIndex {n : ℕ} (p : ProjSpace K n) : Fin (n + 1) :=
 set_option linter.dupNamespace false in
 lemma chartIndex_rep_ne_zero {n : ℕ} (p : ProjSpace K n) :
     Projectivization.rep p (chartIndex p) ≠ 0 :=
-  Classical.choose_spec (Function.ne_iff.mp p.rep_nonzero)
+  Classical.choose_spec (Function.ne_iff.mp p.rep_ne_zero)
 
 set_option linter.dupNamespace false in
 /-- **Affine coordinates of a projective point.** For a field $K$ and a point

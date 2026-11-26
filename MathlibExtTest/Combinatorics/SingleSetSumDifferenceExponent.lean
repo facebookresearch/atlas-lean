@@ -33,3 +33,15 @@ example : ¬ IsAdmissibleExponent 0 := by
   have hc : A.card = 2 := by decide
   have hbound := h A hA
   norm_num [hs, hc, Real.rpow_eq_pow] at hbound
+
+-- A set with more sums than differences rules out exponent one: for
+-- `A = {0, 2, 3, 4, 7, 11, 12, 14}`, `|A + A| = 26` exceeds `|A - A| = 25`.
+example : ¬ IsAdmissibleExponent 1 := by
+  intro h
+  let A : Finset ℤ := {0, 2, 3, 4, 7, 11, 12, 14}
+  have hA : A.Nonempty := by decide
+  have hs : (A + A).card = 26 := by decide +kernel
+  have hd : (A - A).card = 25 := by decide +kernel
+  have hc : A.card = 8 := by decide
+  have hbound := h A hA
+  norm_num [hs, hd, hc, Real.rpow_eq_pow] at hbound
