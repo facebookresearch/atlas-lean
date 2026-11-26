@@ -25,3 +25,4 @@ Topics added since this subject's fields were last revised.
 - [Higher Units](higher-units-at.md)
 - [Adelic Lift Exists](exists-is-adelic-lift-of.md)
 - [Eleven Pid](eleven-pid.md)
+- [Galois representations attached to normalized eigenforms](exists-galois-rep-charpoly-frob.md)
