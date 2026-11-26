@@ -33,6 +33,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Recurrences.FibonacciStepSuryIdentity
 public import MathlibExt.NumberTheory.Recurrences.SuryIdentityExtensions
+public import MathlibExt.NumberTheory.Recurrences.SuryIdentityExtensionsFibStepOffsetSurySum
 
 set_option autoImplicit false
 
@@ -61,24 +62,6 @@ theorem_wanted second_order_recurrence_offset_sury_sum
       ((X 0 * X 2 - X 1 ^ 2) / X k) *
         ∑ i ∈ Finset.range (n + 1),
           (-c₂ * X (k - 1) / X k) ^ (n - i) * X ((i : ℤ) + k)
-
-/-- **Offset step extension of Sury's identity, Fibonacci form.** Let $F_n$ be the Fibonacci
-numbers at integer indices. For all natural numbers $j$ and $n$ and every integer $k$ with
-$0 < |k| < j$,
-$$F_{j(n+1)} = \frac{F_j}{F_k} \sum_{i=0}^{n}
-\left(\frac{(-1)^{k+1} F_{j-k}}{F_k}\right)^{n-i} F_{ji+k}.$$
-
-Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 5, formula
-(53). -/
-theorem_wanted fib_step_offset_sury_sum
-    (j : ℕ) (k : ℤ) (n : ℕ)
-    (hjk : |k| < (j : ℤ)) (hk : k ≠ 0) :
-    fibAtInt ((j : ℤ) * ((n : ℤ) + 1)) =
-      (fibAtInt (j : ℤ) / fibAtInt k) *
-        ∑ i ∈ Finset.range (n + 1),
-          ((-1 : ℚ) ^ (k + 1) * fibAtInt ((j : ℤ) - k) / fibAtInt k) ^
-              (n - i) *
-            fibAtInt ((j : ℤ) * (i : ℤ) + k)
 
 /-- **Offset step extension of Sury's identity, Lucas form.** Let $F_n$ and $L_n$ be the
 Fibonacci and Lucas numbers at integer indices. For all natural numbers $j$ and $n$ and every
