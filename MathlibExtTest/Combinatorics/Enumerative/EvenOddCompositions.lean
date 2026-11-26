@@ -77,4 +77,25 @@ example : compositionOddMinusEven 10 (fun c =>
     compositionOddMinusEven_huang_eq_sum 3 1 8 (by decide) (by decide)]
   decide
 
+-- With no small parts at the lower endpoint, there is one empty coloring.
+example : compositionOddMinusEven 2 (fun c =>
+    (c.blocks.filter fun a => a < 2).length = 0 ∧ IsHuangSmallPartPlacement 2 c.blocks) = 1 := by
+  rw [show 2 = 1 + 2 - 1 by decide,
+    compositionOddMinusEven_huang_eq_sum_monomial 2 0 1 (by decide) (by decide)]
+  decide
+
+-- For one small part and k = 3, both color 0 and color 1 contribute.
+example : compositionOddMinusEven 8 (fun c =>
+    (c.blocks.filter fun a => a < 3).length = 1 ∧ IsHuangSmallPartPlacement 3 c.blocks) = 3 := by
+  rw [show 8 = 6 + 3 - 1 by decide,
+    compositionOddMinusEven_huang_eq_sum_monomial 3 1 6 (by decide) (by decide)]
+  decide
+
+-- With one small part and k = 2, odd shifts outweigh the even shifts.
+example : compositionOddMinusEven 9 (fun c =>
+    (c.blocks.filter fun a => a < 2).length = 1 ∧ IsHuangSmallPartPlacement 2 c.blocks) = -3 := by
+  rw [show 9 = 8 + 2 - 1 by decide,
+    compositionOddMinusEven_huang_eq_sum_monomial 2 1 8 (by decide) (by decide)]
+  decide
+
 end MetaMathlibExt
