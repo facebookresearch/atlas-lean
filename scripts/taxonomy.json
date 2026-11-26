@@ -12841,6 +12841,7 @@
   "MathlibExt/NumberTheory/CatalanOddMultipleHarmonicDivTsum": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic Euler sums"},
   "MathlibExt/NumberTheory/CatlinConvergence": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Duffin–Schaeffer conjecture"},
   "MathlibExt/NumberTheory/CeilQuotientOddCount": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
+  "MathlibExt/NumberTheory/CeilingHermiteIdentityTverbergSumRoundBounds": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Floor and ceiling function sums"},
   "MathlibExt/NumberTheory/CentralBinomProductEquationLeTen": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
   "MathlibExt/NumberTheory/CentralBinomProductEquationOne": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
   "MathlibExt/NumberTheory/CentralBinomProductEquationSmall": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Equations in central binomial coefficients"},
