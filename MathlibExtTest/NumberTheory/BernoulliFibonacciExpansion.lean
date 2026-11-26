@@ -28,13 +28,21 @@ example : fibAlpha - fibBeta = sqrt5 :=
 example : fibAlpha * fibBeta = -1 :=
   Real.goldenRatio_mul_goldenConj
 
--- With `s = 0` no falling factorial is left: the identity is the expansion of `(x + β)^m`.
+-- The public expansion requires neither falling factorials nor a bound on the derivative order.
 example (m : ℕ) (x : ℝ) :
     (x + fibBeta) ^ m =
       ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
         (Real.sqrt 5) ^ k * (Nat.choose n k : ℝ) * (Nat.choose m n : ℝ) * (bernoulli k : ℝ) *
-          ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) * x ^ (m - n) := by
-  simpa using descFactorial_mul_add_fibBeta_pow m 0 (Nat.zero_le m) x
+          ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) * x ^ (m - n) :=
+  add_fibBeta_pow_eq_sum m x
+
+-- In degree one, the double sum evaluates to `x + (1 - √5) / 2`.
+example (x : ℝ) :
+    ∑ n ∈ Finset.range 2, ∑ k ∈ Finset.range (n + 1),
+        (Real.sqrt 5) ^ k * (Nat.choose n k : ℝ) * (Nat.choose 1 n : ℝ) * (bernoulli k : ℝ) *
+          ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) * x ^ (1 - n) =
+      x + (1 - Real.sqrt 5) / 2 := by
+  rw [← add_fibBeta_pow_eq_sum 1 x, pow_one, fibBeta]
 
 -- With `s = m` only the term `n = 0` survives, and the double sum is `m!` for every `x`.
 example (m : ℕ) (x : ℝ) :
