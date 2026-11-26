@@ -13144,6 +13144,7 @@
   "MathlibExt/NumberTheory/Harmonic/OddHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Odd harmonic numbers"},
   "MathlibExt/NumberTheory/HarmonicPartialSum": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Non-integrality of harmonic numbers"},
   "MathlibExt/NumberTheory/HataEulerMascheroniFarey": {"to": "NumberTheory/continued-fractions-expansions", "title": "Hata's Farey formula for Euler's constant"},
+  "MathlibExt/NumberTheory/HataEulerMascheroniFareyRiemannSum": {"to": "NumberTheory/continued-fractions-expansions", "title": "Hata's Farey formula for Euler's constant"},
   "MathlibExt/NumberTheory/Height/Absolute": {"to": "NumberTheory/heights-mahler-measure", "title": "Absolute height and Mahler measure"},
   "MathlibExt/NumberTheory/Height/AbsoluteLogHeightRoots": {"to": "NumberTheory/heights-mahler-measure", "title": "Absolute height and Mahler measure"},
   "MathlibExt/NumberTheory/Height/AsymptoticDobrowolski": {"to": "NumberTheory/heights-mahler-measure", "title": "Asymptotic Dobrowolski constant"},
