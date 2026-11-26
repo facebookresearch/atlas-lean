@@ -11,9 +11,12 @@ Their algorithm finds the sequence classically in time $O(\log^{\ln 3/\ln(3/2)} 
 when the output is a compressed representation with pointers to repeated subsequences, and in time
 $O(\log^{3.97}(1/\varepsilon))$ when the gate list is written out; both count arithmetic operations on exactly specified
 matrices, not the cost of finite-precision arithmetic. For a circuit of $N$ gates, each acting on at most a fixed number
-$m$ of qubits, approximating each gate within $\varepsilon/N$ by an instruction set for $SU(2^m)$ gives a circuit of
-$O(N \log^{c}(N/\varepsilon))$ instructions within $\varepsilon$ of the original, the constant depending on $m$ and the
-instruction set; no bound of this form holds uniformly in the gate width, since a single gate on $n$ qubits can be an
+$m$ of qubits, write each gate as a phase times a gate of determinant one, $G_i = e^{i\theta_i} G_i'$ with $G_i' \in SU(2^m)$,
+and approximate each $G_i'$ within $\varepsilon/N$ by an instruction set for $SU(2^m)$. This gives a circuit of
+$O(N \log^{c}(N/\varepsilon))$ instructions within $\varepsilon$ of the original up to the global phase
+$e^{i(\theta_1 + \cdots + \theta_N)}$, the constant depending on $m$ and the instruction set. The phases cannot be dropped:
+for $U = iI$ on one qubit, every product of elements of $SU(2)$ has eigenvalues $e^{\pm it}$ and so is at distance at
+least $\sqrt 2$ from $U$. No bound of this form holds uniformly in the gate width, since a single gate on $n$ qubits can be an
 arbitrary $n$-qubit unitary.
 
 ## Expansion

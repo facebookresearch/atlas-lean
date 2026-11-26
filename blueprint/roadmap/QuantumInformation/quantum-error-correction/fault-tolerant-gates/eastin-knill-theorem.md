@@ -18,6 +18,10 @@ through the finite group of its components, up to phase.
 - [Transversal gate](transversal-gate.md)
 - [Universal gate set](../universal-gate-sets/universal-gate-set.md)
 
+## Proof depends on
+
+- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../../RepresentationTheory/lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md): the closed subgroup theorem.
+
 ## Background
 
 - [Distance of a quantum code (lower bound)](../distance-of-a-quantum-code/has-distance-at-least.md)
