@@ -76,7 +76,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         # skip: the card and Mathlib pages jobs have no condition, and the two deployment jobs only the publication one.
         later = {"mathlib-pages": ["changes", "wiki", "mathlib"], "cards": "wiki",
                  "deploy": ["changes", "wiki"], "promote": ["changes", "deploy", "mathlib-pages"]}
-        self.assertEqual(set(jobs), {"changes", "tests", "wiki", "mathlib", *later})
+        self.assertEqual(set(jobs), {"changes", "scope", "tests", "wiki", "mathlib", *later})
         for name, needs in later.items():
             self.assertEqual(jobs[name]["needs"], needs)
         for name in ("mathlib-pages", "cards"):
@@ -123,7 +123,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "scripts/pack_pages_site.py", "scripts/pages_packing.js", "scripts/pages_size.sh", "scripts/cards.py",
             # Their tests.
             "scripts/test_generate_wiki_navigation.py", "scripts/test_generate_wiki_docstrings.py",
-            "scripts/test_sync_wiki.py", "scripts/test_import_mathgraph.py",
+            "scripts/test_sync_wiki.py", "scripts/test_graph_batch.py", "scripts/test_import_mathgraph.py",
             "scripts/test_extract_v2_lean_dependencies.py", "scripts/test_extract_mathlib_graph.py",
             "scripts/test_check_blueprint_site_navigation.py", "scripts/test_site_chrome.py",
             "scripts/test_blueprint_workflow.py", "scripts/test_blueprint_taxonomy.py",
@@ -361,8 +361,9 @@ class BlueprintWorkflowTests(unittest.TestCase):
         # their own, with the steps of the jobs that own them.
         jobs = self.workflow["jobs"]
         tests = jobs["tests"]
-        self.assertEqual((tests["name"], tests["needs"], tests["if"]),
-                         ("test the site scripts", "changes", "needs.changes.outputs.build == 'false'"))
+        self.assertEqual((tests["name"], tests["needs"], tests["if"]), (
+            "test the site scripts", ["changes", "scope"],
+            "${{ !cancelled() && needs.changes.outputs.build == 'false' && needs.scope.outputs.site_tests != 'false' }}"))
         self.assertNotIn("permissions", tests)
         # The wiki job's first three steps: its checkout, the Autoform pin and uv.
         self.assertEqual(tests["steps"][:3], jobs["wiki"]["steps"][:3])
