@@ -14,6 +14,7 @@ public import MathlibExt.NumberTheory.Recurrences.FibonacciBrousseauSums
 public import MathlibExt.NumberTheory.Recurrences.KFibonacciBrousseauSums
 public import MathlibExt.NumberTheory.Recurrences.KFibonacciShiftedBrousseauSum
 public import MathlibExt.NumberTheory.Recurrences.PellBrousseauOdd
+public import MathlibExt.NumberTheory.Recurrences.KFibonacciBrousseauSumsKFibonacciPowerConvolution
 
 /-!
 # Brousseau sums of k-Fibonacci numbers
@@ -32,26 +33,6 @@ The paper takes `k` a positive integer; the identities are stated for every nonz
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Power-weighted convolution of k-Fibonacci numbers.** Let $k$ be a nonzero integer and let
-$F_{k,n}$ be the $k$-Fibonacci numbers, the Lucas sequence $U(k, -1)$: $F_{k,0} = 0$,
-$F_{k,1} = 1$ and $F_{k,n+2} = k F_{k,n+1} + F_{k,n}$. Let $A_k^{(0)} = 1$ and
-$A_k^{(p)} = \frac{2}{k} \sum_{j=1}^{\lceil p/2 \rceil} \binom{p}{2j-1} A_k^{(p-2j+1)}$ for
-$p \ge 1$. Then for all natural numbers $n$ and $p$, with $0^0 = 1$,
-$$
-k \sum_{i=0}^{n} i^p F_{k,n-i} = A_k^{(p)} F_{k,n+1} +
-\sum_{r=0}^{p} A_k^{(r)} \binom{p}{r} \left((-1)^{p-r} F_{k,n} - n^{p-r}\right).
-$$
-
-The source takes $k$ to be a positive integer.
-
-Source: Prabha Sivaraman Nair and Rejikumar Karunakaran, *On k-Fibonacci Brousseau Sums*,
-Journal of Integer Sequences 27 (2024), Article 24.6.4, Theorem 4 (`jis-2024-24.6.4-thm-4`). -/
-public theorem_wanted kFibonacci_power_convolution (k : ℤ) (hk : k ≠ 0) (n p : ℕ) :
-    (k : ℚ) * ∑ i ∈ Finset.range (n + 1), (i : ℚ) ^ p * lucasU ⟨k, -1, by decide⟩ (n - i) =
-      brousseauA k p * lucasU ⟨k, -1, by decide⟩ (n + 1) +
-        ∑ r ∈ Finset.range (p + 1), brousseauA k r * (p.choose r : ℚ) *
-          ((-1) ^ (p - r) * lucasU ⟨k, -1, by decide⟩ n - (n : ℚ) ^ (p - r))
 
 /-- **Brousseau sums of $k$-Fibonacci numbers.** For an integer $k$, let $F_{k,n}$ be the
 $k$-Fibonacci numbers, the Lucas sequence $U(k, -1)$ ($F_{k,0} = 0$, $F_{k,1} = 1$,

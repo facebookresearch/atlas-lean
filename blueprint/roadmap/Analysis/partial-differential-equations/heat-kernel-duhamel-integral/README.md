@@ -11,6 +11,7 @@ Reference: Stanford Math 220B, [Heat Equation, §2.7.2](https://web.stanford.edu
 - [Heat Duhamel const mul](heat-duhamel-const-mul.md)
 - [Heat Duhamel nonneg](heat-duhamel-nonneg.md)
 - [Heat Duhamel rescaled](heat-duhamel-rescaled.md)
+- [Heat Solution family continuous On](heat-solution-family-continuous-on.md)
 - [Interval Integrable heat Duhamel](interval-integrable-heat-duhamel.md)
 - [Heat Duhamel continuous On](heat-duhamel-continuous-on.md)
 - [Abs heat Solution le exp bound](abs-heat-solution-le-exp-bound.md)
