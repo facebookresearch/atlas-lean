@@ -1,0 +1,10 @@
+# Symmetric group: the group of permutations of a set
+
+The symmetric group $S_n$, for $n \ge 1$, is the set of all permutations of $\{1, 2, \dots, n\}$, the bijections of this set to itself, with composition $(\sigma\tau)(i) = \sigma(\tau(i))$ as its operation, the identity map as its identity and the inverse function as inverse. Mathlib puts this group structure on the permutations of any type. For a type $\alpha$, finite or not and possibly empty, a permutation of $\alpha$ is a bijection $\alpha \to \alpha$ packaged with its inverse. Mathlib's group structure on the permutations of $\alpha$ has as product $fg$ the composite permutation $x \mapsto f(g(x))$, as identity the identity permutation, and as inverse of $f$ the inverse bijection $f^{-1}$. For $\alpha = \{0, 1, \dots, n - 1\}$, Mathlib's $\operatorname{Fin} n$, relabelling $i$ as $i + 1$ identifies the permutations of $\operatorname{Fin} n$ with those of $\{1, \dots, n\}$, compatibly with composition and inverses, which gives the familiar group $S_n$. For $n = 0$ the group has a single element.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for permutations: bijections of a type to itself, packaged with their inverses: `Equiv.Perm`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Logic/Equiv/Defs.lean#L93-L95.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the identity, product and inverse of permutations: `Equiv.Perm.instMul`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/End.lean#L66-L68.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the product of permutations acts by composition: `Equiv.Perm.mul_apply`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/End.lean#L101-L102.
