@@ -7,9 +7,11 @@ where $\Pi(D)$ is the least model of $\Pi$ containing $D$.
 
 The problem Datalog-Evaluation, which asks for a Datalog query $q = (\Pi, R)$, a database $D$ over the extensional
 relation names of $\Pi$ and a tuple $\bar a$ whether $\bar a \in q(D)$, with all three as input, is EXPTIME-complete.
-The upper bound comes from computing $\Pi(D)$, whose facts use only elements of $\mathrm{Dom}(D)$, by at most $\lvert \mathrm{sch}(\Pi) \rvert \cdot \lvert \mathrm{Dom}(D) \rvert^{\mathrm{ar}(\Pi)}$
-applications of the immediate-consequence operator, where $\mathrm{ar}(\Pi)$ is the largest arity of a relation name of
-$\Pi$; hardness is by a polynomial-time encoding of exponential-time deterministic Turing machines.
+The upper bound comes from computing $\Pi(D)$, whose facts use only elements of $\mathrm{Dom}(D)$, by at most $\sum_{T} \lvert \mathrm{Dom}(D) \rvert^{\mathrm{ar}(T)}$
+applications of the immediate-consequence operator, the sum ranging over the intensional relation names $T$ of $\Pi$
+with $\lvert \mathrm{Dom}(D) \rvert^0 = 1$, since each application before the last adds a fact; this is at most
+$\lvert \mathrm{sch}(\Pi) \rvert \cdot \max(1, \lvert \mathrm{Dom}(D) \rvert)^{\mathrm{ar}(\Pi)}$, where $\mathrm{ar}(\Pi)$ is the
+largest arity of a relation name of $\Pi$; hardness is by a polynomial-time encoding of exponential-time deterministic Turing machines.
 
 ## Depends on
 

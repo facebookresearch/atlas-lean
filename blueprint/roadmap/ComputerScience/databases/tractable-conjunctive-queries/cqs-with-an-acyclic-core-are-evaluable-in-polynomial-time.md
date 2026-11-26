@@ -28,4 +28,4 @@ example $R(x, y), R(y, z), R(z, x), R(u, u)$, whose core is $R(u, u)$.
 ## Sources
 
 - M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definition 16.2 (p. 124) and Corollary 16.9 (p. 129).
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Algorithm 7 (p. 164), Propositions 19.5 and 19.6 and Theorem 19.7 (p. 165), and Exercise 3.7 (p. 238).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Algorithm 7 (p. 164), Propositions 19.5 and 19.6 and Theorem 19.7 (p. 165), and Exercise 3.7 (p. 246).
