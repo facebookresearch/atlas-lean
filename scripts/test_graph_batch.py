@@ -67,6 +67,26 @@ class PlaceLines(unittest.TestCase):
                 self.assertEqual(batch.place_lines(hidden + "Place: MathlibExt/A/G -> Algebra/rings\n"),
                                  ["MathlibExt/A/G -> Algebra/rings"])
 
+    def test_the_lines_github_shows_as_plain_text(self) -> None:
+        # As GitHub renders descriptions: lines joined into a paragraph with <br>, entities escaped.
+        shown = ('<p dir="auto">Graph: new<br>\nPlace: MathlibExt/A/B -&gt; Algebra/groups | Rings &amp; fields</p>\n'
+                 '<p dir="auto">Place: MathlibExt/A/C -&gt; Algebra/groups</p>')
+        self.assertEqual(batch.visible_lines(shown), ["MathlibExt/A/B -> Algebra/groups | Rings & fields",
+                                                      "MathlibExt/A/C -> Algebra/groups"])
+        for hidden in ('<div class="highlight"><pre>Place: MathlibExt/A/B -&gt; Algebra/groups</pre></div>',
+                       '<pre><code>Place: MathlibExt/A/B -&gt; Algebra/groups\n</code></pre>',
+                       '<ul dir="auto">\n<li>Place: MathlibExt/A/B -&gt; Algebra/groups</li>\n</ul>',
+                       '<blockquote>\n<p dir="auto">Place: MathlibExt/A/B -&gt; Algebra/groups</p>\n</blockquote>',
+                       '<details><summary>More</summary>\n<p dir="auto">Place: MathlibExt/A/B -&gt; Algebra/groups</p>'
+                       '\n</details>',
+                       '<p dir="auto">Place: <code>MathlibExt/A/B</code> -&gt; Algebra/groups</p>',
+                       '<p dir="auto">Place: MathlibExt/A/B -&gt; Algebra/groups <em>now</em></p>',
+                       '<p dir="auto"><em>Note<br>\nPlace: MathlibExt/A/B -&gt; Algebra/groups</em></p>',
+                       '<p dir="auto">Text Place: MathlibExt/A/B -&gt; Algebra/groups</p>'):
+            with self.subTest(hidden=hidden):
+                self.assertEqual(batch.visible_lines(hidden + '\n<p dir="auto">Place: MathlibExt/A/G -&gt; '
+                                                     'Algebra/rings</p>'), ["MathlibExt/A/G -> Algebra/rings"])
+
     def test_a_module_a_field_and_maybe_a_topic(self) -> None:
         self.assertEqual(batch.parse_place("MathlibExt/Algebra/Rings -> Algebra/groups"),
                          ("MathlibExt/Algebra/Rings", "Algebra/groups", None))
@@ -565,7 +585,7 @@ class Batches(unittest.TestCase):
         self.assertIn("### Pages to check", result.stdout)
         self.assertIn("Ext.lagrange (Algebra/groups/group-basics/lagrange.md)", result.stdout)
         self.assertIn("- 1 new pages, for declarations of 1 modules; 1 folder pages written or extended", result.stdout)
-        # What it writes is what make wrote, but for the sync's own items, which only make lists.
+        # What it writes is exactly what make wrote.
         self.assertEqual(written.read_text(), made)
 
     def test_make_needs_a_clean_checkout_and_an_older_base(self) -> None:
@@ -788,9 +808,18 @@ class Batches(unittest.TestCase):
         # A description edited after the merge: its lines are left out.
         self.merge(9, lambda: self.module("MathlibExt/Algebra/Edited.lean", ["edited_one"]))
         self.bodies["9"] = {"body": "Place: MathlibExt/Algebra/Edited -> Algebra/rings\n", "edited": True}
+        # A line the Markdown reader would take but GitHub shows inside a code block, beside one it shows as text.
+        self.merge(10, lambda: (self.module("MathlibExt/Algebra/Coded.lean", ["coded_one"]),
+                                self.module("MathlibExt/Algebra/Shown.lean", ["shown_one"])))
+        self.bodies["10"] = {"body": "- item\n  ```\n  x\n```\nPlace: MathlibExt/Algebra/Coded -> Algebra/rings\n```\n\n"
+                                     "Place: MathlibExt/Algebra/Shown -> Algebra/rings\n",
+                             "html": '<ul dir="auto">\n<li>item\n<pre><code>x\n</code></pre>\n</li>\n</ul>\n<pre><code>'
+                                     'Place: MathlibExt/Algebra/Coded -&gt; Algebra/rings\n</code></pre>\n<p dir="auto">'
+                                     'Place: MathlibExt/Algebra/Shown -&gt; Algebra/rings</p>'}
         text = self.description("--base", self.base)
         placements = self.placements()
         self.assertEqual({key: value for key, value in placements.items() if key not in TAXONOMY["placements"]}, {
+            "MathlibExt/Algebra/Shown": {"to": "Algebra/rings", "title": "Shown"},
             "MathlibExt/Algebra/Rule5/Basic": {"to": "Algebra/rings", "title": "Rule5"},
             "MathlibExt/Algebra/Moved": {"to": "Algebra/rings", "title": "Folder topic"},
             "MathlibExt/Algebra/New": {"to": "Algebra/rings", "title": "Old topic"},
@@ -813,6 +842,8 @@ class Batches(unittest.TestCase):
                       "subject", text)
         self.assertIn("#9: its `Place:` lines are left out: its description was edited after the merge", text)
         self.assertIn("- `MathlibExt/Algebra/Edited`: in `Algebra/not-yet-classified/`", text)
+        self.assertIn("#10: 1 `Place:` line(s) left out: GitHub does not show them as lines of plain text", text)
+        self.assertIn("- `MathlibExt/Algebra/Coded`: in `Algebra/not-yet-classified/`", text)
         self.assertIn("- `MathlibExt/Algebra/Rule1`: in `Algebra/not-yet-classified/`", text)
         result = self.tool("verify")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
