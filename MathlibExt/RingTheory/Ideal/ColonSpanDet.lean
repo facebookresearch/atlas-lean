@@ -42,8 +42,6 @@ import Mathlib.Data.Finset.Preimage
 import Mathlib.Order.Sum.Order
 import Mathlib.Algebra.Homology.HomologySequence
 import Mathlib.Algebra.Homology.HomologicalComplexAbelian
-import Mathlib.LinearAlgebra.CliffordAlgebra.Contraction
-import MathlibExt.LinearAlgebra.ExteriorPower.Contraction
 import MathlibExt.Algebra.Homology.KoszulComplexFamily
 import Mathlib.LinearAlgebra.ExteriorPower.Basis
 import Mathlib.Algebra.Module.Torsion.Basic
@@ -2159,21 +2157,12 @@ open scoped ColonSpanDet.Koszul.HMap ColonSpanDet.Koszul.ChainMap ColonSpanDet.K
 
 namespace Koszul
 
-open Finset CliffordAlgebra ExteriorAlgebra Set.powersetCard
-open KoszulComplex (familyFunctional familyFunctional_single)
+open Finset ExteriorAlgebra Set.powersetCard
+open KoszulComplex (familyComplex familyFunctional familyFunctional_single)
 
 universe u v u' v'
 
 section Exterior
-
-variable {R : Type u'} [CommRing R] {M : Type v'} [AddCommGroup M] [Module R M]
-
-theorem contractLeft_ιMulti_of_forall_eq_zero (d : Module.Dual R M) {n : ℕ} (v : Fin n → M)
-    (hv : ∀ i, d (v i) = 0) :
-    contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R n v) = 0 := by
-  cases n with
-  | zero => rw [ιMulti_zero_apply, contractLeft_one]
-  | succ n => rw [ExteriorAlgebra.contractLeft_ιMulti]; simp [hv]
 
 variable {I : Type} [LinearOrder I] {n : ℕ}
 
@@ -2215,18 +2204,6 @@ theorem card_filter_lt_ofFinEmbEquiv_symm (s : Set.powersetCard I n) (k : Fin n)
       Finset.Iio k := by
     ext j; simp [(ofFinEmbEquiv.symm s).lt_iff_lt]
   rw [this, Fin.card_Iio]
-
-theorem contractLeft_basis (b : Module.Basis I R M) (d : Module.Dual R M)
-    (s : Set.powersetCard I (n + 1)) :
-    exteriorPower.contractLeft R M d n (b.exteriorPower (n + 1) s) =
-      ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (b (ofFinEmbEquiv.symm s k))) •
-        b.exteriorPower n (eraseNth s k) := by
-  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family,
-    exteriorPower.contractLeft_apply_ιMulti]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, mul_smul,
-    coe_ofFinEmbEquiv_symm_eraseNth]
-  rfl
 
 end Exterior
 open scoped ColonSpanDet.Koszul.HMap ColonSpanDet.Koszul.ChainMap ColonSpanDet.Koszul
@@ -2310,9 +2287,28 @@ theorem toExterior_symm_basis {p : ℕ} (s : Set.powersetCard I p) :
       ⟨Pi.single (s : Finset I) 1, single_mem_C P (s : Finset I) (mem_iff.mp s.prop) 1⟩ := by
   rw [LinearEquiv.symm_apply_eq, toExterior_single (s : Finset I) (mem_iff.mp s.prop)]
 
-theorem familyFunctional_basisFun (x : I → P) (i : I) :
-    familyFunctional P x (Pi.basisFun P I i) = x i := by
-  rw [Pi.basisFun_apply, familyFunctional_single]
+-- The differential of `familyComplex P x` from degree `p + 1` to degree `p`, as a linear map
+-- between the exterior powers that are its terms.
+abbrev familyComplexD (x : I → P) (p : ℕ) : ⋀[P]^(p + 1) (I → P) →ₗ[P] ⋀[P]^p (I → P) :=
+  ((familyComplex P x).d (p + 1) p).hom
+
+omit [LinearOrder I] in
+theorem familyComplexD_apply (x : I → P) (p : ℕ) (ω : ⋀[P]^(p + 1) (I → P)) :
+    familyComplexD x p ω = KoszulComplex.differential P (I → P) (familyFunctional P x) p ω :=
+  congrArg (fun φ => ModuleCat.Hom.hom φ ω)
+    (KoszulComplex.complex_d_succ P (I → P) (familyFunctional P x) p)
+
+theorem familyDifferential_basisFun (x : I → P) {p : ℕ} (s : Set.powersetCard I (p + 1)) :
+    KoszulComplex.differential P (I → P) (familyFunctional P x) p
+        ((Pi.basisFun P I).exteriorPower (p + 1) s) =
+      ∑ k : Fin (p + 1), ((-1 : P) ^ (k : ℕ) * x (ofFinEmbEquiv.symm s k)) •
+        (Pi.basisFun P I).exteriorPower p (eraseNth s k) := by
+  simp only [exteriorPower.basis_apply, exteriorPower.ιMulti_family, Function.comp_def,
+    Pi.basisFun_apply]
+  rw [KoszulComplex.familyDifferential_apply_basis P x p (ofFinEmbEquiv.symm s)]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [coe_ofFinEmbEquiv_symm_eraseNth]
+  rfl
 
 omit [Fintype I] in
 theorem ofFinEmbEquiv_symm_mem {p : ℕ} (s : Set.powersetCard I p) (k : Fin p) :
@@ -2384,21 +2380,19 @@ theorem d_single (x : I → P) {p : ℕ} (s : Set.powersetCard I (p + 1)) :
 theorem toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P)
     (hm : m ∈ C (P := P) (I := I) P (p + 1)) :
     toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ =
-      exteriorPower.contractLeft P (I → P) (familyFunctional P x) p
-        (toExterior P I (p + 1) ⟨m, hm⟩) := by
-  rw [← LinearEquiv.eq_symm_apply]
+      familyComplexD x p (toExterior P I (p + 1) ⟨m, hm⟩) := by
+  rw [familyComplexD_apply, ← LinearEquiv.eq_symm_apply]
   apply Subtype.ext
   change d x P m = _
   rw [toExterior_apply, map_sum, map_sum]
-  simp only [map_smul, contractLeft_basis, familyFunctional_basisFun, map_sum,
-    toExterior_symm_basis, Submodule.coe_sum, Submodule.coe_smul]
+  simp only [map_smul, familyDifferential_basisFun, map_sum, toExterior_symm_basis,
+    Submodule.coe_sum, Submodule.coe_smul]
   conv_lhs => rw [eq_sum_single hm, map_sum]
   simp only [map_smul, d_single]
 
 theorem d_toExterior_symm (x : I → P) {p : ℕ} (ω : ⋀[P]^(p + 1) (I → P)) :
     d x P ((toExterior P I (p + 1)).symm ω) =
-      (toExterior P I p).symm
-        (exteriorPower.contractLeft P (I → P) (familyFunctional P x) p ω) := by
+      (toExterior P I p).symm (familyComplexD x p ω) := by
   have h := toExterior_d x ((toExterior P I (p + 1)).symm ω) ((toExterior P I (p + 1)).symm ω).2
   rw [Subtype.coe_eta, LinearEquiv.apply_symm_apply, ← LinearEquiv.eq_symm_apply] at h
   exact congrArg Subtype.val h
@@ -2461,12 +2455,11 @@ theorem familyFunctional_concat_cycleVec (f x : Fin n → P) (g : Matrix (Fin n)
 noncomputable def tateCycle (g : Matrix (Fin n) (Fin n) P) : ⋀[P]^n (Fin n ⊕ₗ Fin n → P) :=
   exteriorPower.ιMulti P n (cycleVec g)
 
-theorem contractLeft_tateCycle (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
-    (hf : ∀ j, f j = ∑ i, g j i * x i) :
-    contractLeft (Q := (0 : QuadraticForm P (Fin n ⊕ₗ Fin n → P)))
-      (familyFunctional P (concat f x))
-      (tateCycle g : ExteriorAlgebra P (Fin n ⊕ₗ Fin n → P)) = 0 :=
-  contractLeft_ιMulti_of_forall_eq_zero _ _ (familyFunctional_concat_cycleVec f x g hf)
+theorem familyComplexD_tateCycle (f x : Fin (n + 1) → P)
+    (g : Matrix (Fin (n + 1)) (Fin (n + 1)) P) (hf : ∀ j, f j = ∑ i, g j i * x i) :
+    familyComplexD (concat f x) n (tateCycle g) = 0 := by
+  rw [familyComplexD_apply, tateCycle, KoszulComplex.differential_apply_ιMulti]
+  simp [familyFunctional_concat_cycleVec f x g hf]
 
 noncomputable def tateChain (g : Matrix (Fin n) (Fin n) P) : Finset (Fin n ⊕ₗ Fin n) → P :=
   (toExterior P (Fin n ⊕ₗ Fin n) n).symm (tateCycle g)
@@ -2483,10 +2476,7 @@ theorem d_tateChain (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P) (hf : ∀
     rw [d_apply]
     exact Finset.sum_eq_zero fun i _ => isEmptyElim (ofLex i : Fin 0 ⊕ Fin 0)
   | succ n =>
-    rw [tateChain, d_toExterior_symm]
-    have : exteriorPower.contractLeft P _ (familyFunctional P (concat f x)) n (tateCycle g) = 0 :=
-      Subtype.ext (contractLeft_tateCycle f x g hf)
-    rw [this, map_zero]
+    rw [tateChain, d_toExterior_symm, familyComplexD_tateCycle f x g hf, map_zero]
     rfl
 
 theorem tateChain_apply (g : Matrix (Fin n) (Fin n) P) (T : Finset (Fin n ⊕ₗ Fin n))
