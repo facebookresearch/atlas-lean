@@ -20,3 +20,4 @@ Topics added since this subject's fields were last revised.
 - [Plastic Work](plastic-work/README.md)
 - [Sinkhorn Margins](sinkhorn-margins/README.md)
 - [Two Level](two-level/README.md)
+- [Exactness of dual maps](exact-dual-map-of-exact.md)
