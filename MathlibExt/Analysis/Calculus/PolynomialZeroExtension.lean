@@ -18,9 +18,10 @@ public import Mathlib.Order.Filter.Defs
 /-!
 # Smooth zero extensions of real polynomials
 
-Let l < r be real numbers, P a real polynomial, and k ∈ ℕ. If
+Let l,r be arbitrary real numbers, P a real polynomial, and k ∈ ℕ. If
 (X-l)^(k+1) (X-r)^(k+1) divides P, the function equal to P(x) on [l,r]
 and zero outside that closed interval is C^k on ℝ, including both endpoints.
+For r<l the interval is empty; for r=l the endpoint vanishing makes the extension zero.
 -/
 
 @[expose] public section
@@ -47,18 +48,22 @@ private theorem hasDerivAt_indicator_zero (s : Set ℝ) (P : Polynomial ℝ) (c 
   filter_upwards [ho.bound hC] with x hx
   exact (norm_indicator_le_norm_self (s := s) (fun x => P.eval x) x).trans hx
 
-/-- Let l < r be real numbers and P a real polynomial with P(l) = P(r) = 0.
+/-- Let l,r be arbitrary real numbers and P a real polynomial with P(l) = P(r) = 0.
 The function equal to P on [l,r] and zero outside it is continuous on ℝ. -/
-private theorem continuous_indicator_Icc (l r : ℝ) (hlr : l < r) (P : Polynomial ℝ)
+private theorem continuous_indicator_Icc (l r : ℝ) (P : Polynomial ℝ)
     (h0 : P.eval l = 0) (h1 : P.eval r = 0) :
     Continuous ((Icc l r).indicator (fun x => P.eval x)) := by
-  apply P.differentiable.continuous.indicator
-  intro x hx
-  rw [frontier_Icc hlr.le] at hx
-  simp only [mem_insert_iff, mem_singleton_iff] at hx
-  rcases hx with rfl | rfl
-  · exact h0
-  · exact h1
+  by_cases hlr : l ≤ r
+  · apply P.differentiable.continuous.indicator
+    intro x hx
+    rw [frontier_Icc hlr] at hx
+    simp only [mem_insert_iff, mem_singleton_iff] at hx
+    rcases hx with rfl | rfl
+    · exact h0
+    · exact h1
+  · rw [Icc_eq_empty hlr]
+    simp only [Set.indicator_empty]
+    exact continuous_const
 
 /-- For real l,r and a real polynomial P divisible by ((X-l)(X-r))², the derivative
 of the function equal to P on [l,r] and zero outside it is P'(x) on [l,r]
@@ -99,10 +104,11 @@ private theorem hasDerivAt_indicator_Icc (l r : ℝ) (P : Polynomial ℝ)
     rw [indicator_of_notMem hx]
     exact (hasDerivAt_const x (0 : ℝ)).congr_of_eventuallyEq heq
 
-/-- Let l < r be real numbers, P a real polynomial and k ∈ ℕ.
+/-- Let l,r be arbitrary real numbers, P a real polynomial and k ∈ ℕ.
 If (X-l)^(k+1) (X-r)^(k+1) divides P, its closed-interval zero extension
-is C^k on ℝ, including through order k at both endpoints. -/
-theorem contDiff_indicator_Icc_of_factor (l r : ℝ) (hlr : l < r) (P : Polynomial ℝ) (k : ℕ)
+is C^k on ℝ, including through order k at both endpoints. Empty and degenerate
+intervals give the zero function and are included. -/
+theorem contDiff_indicator_Icc_of_factor (l r : ℝ) (P : Polynomial ℝ) (k : ℕ)
     (hP : (X - C l) ^ (k + 1) * (X - C r) ^ (k + 1) ∣ P) :
     ContDiff ℝ (k : WithTop ℕ∞) ((Icc l r).indicator (fun x => P.eval x)) := by
   have hpow : ((X - C l) * (X - C r)) ^ (k + 1) ∣ P := by simpa only [mul_pow] using hP
@@ -112,7 +118,7 @@ theorem contDiff_indicator_Icc_of_factor (l r : ℝ) (hlr : l < r) (P : Polynomi
     apply contDiff_zero.mpr
     have h0 : P.eval l = 0 := by obtain ⟨Q, hQ⟩ := hpow; rw [hQ]; simp
     have h1 : P.eval r = 0 := by obtain ⟨Q, hQ⟩ := hpow; rw [hQ]; simp
-    exact continuous_indicator_Icc l r hlr P h0 h1
+    exact continuous_indicator_Icc l r P h0 h1
   | succ k ih =>
     have hd : ((X - C l) * (X - C r)) ^ (k + 1) ∣ P.derivative := by
       simpa using pow_sub_one_dvd_derivative_of_pow_dvd hpow
@@ -123,7 +129,8 @@ theorem contDiff_indicator_Icc_of_factor (l r : ℝ) (hlr : l < r) (P : Polynomi
         (Icc l r).indicator (fun x => P.derivative.eval x) := by
       funext x
       exact (hder x).deriv
-    rw [show ((k + 1 : ℕ) : WithTop ℕ∞) = (k : WithTop ℕ∞) + 1 by norm_cast, contDiff_succ_iff_deriv]
+    rw [show ((k + 1 : ℕ) : WithTop ℕ∞) = (k : WithTop ℕ∞) + 1 by norm_cast,
+      contDiff_succ_iff_deriv]
     refine ⟨fun x => (hder x).differentiableAt, ?_, ?_⟩
     · intro hk
       simp at hk

@@ -27,7 +27,6 @@ Empty K, empty pieces and empty finite families are permitted.
 @[expose] public section
 
 set_option autoImplicit false
-set_option warningAsError true
 
 noncomputable section
 

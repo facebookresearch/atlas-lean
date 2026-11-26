@@ -84,4 +84,43 @@ example :
       Matrix.traceDist (0 : Matrix (Fin 0) (Fin 0) ℂ) 0 = 0 := by
   simp
 
+private def secondDiagonal : Matrix (Fin 2) (Fin 2) ℂ :=
+  Matrix.diagonal (fun i => if i = 0 then 3 else 1)
+
+private theorem difference_eq_one : secondDiagonal - diagonalMatrix = 1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> norm_num [secondDiagonal, diagonalMatrix, Matrix.diagonal]
+
+private theorem two_distinct_nonzero :
+    secondDiagonal ≠ 0 ∧ diagonalMatrix ≠ 0 ∧ secondDiagonal ≠ diagonalMatrix := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro h
+    have hentry := congrArg (fun M : Matrix (Fin 2) (Fin 2) ℂ => M 1 1) h
+    norm_num [secondDiagonal, Matrix.diagonal] at hentry
+  · intro h
+    have hentry := congrArg (fun M : Matrix (Fin 2) (Fin 2) ℂ => M 0 0) h
+    norm_num [diagonalMatrix, Matrix.diagonal] at hentry
+  · intro h
+    have hentry := congrArg (fun M : Matrix (Fin 2) (Fin 2) ℂ => M 1 1) h
+    norm_num [secondDiagonal, diagonalMatrix, Matrix.diagonal] at hentry
+
+private theorem identity_traceNorm : (1 : Matrix (Fin 2) (Fin 2) ℂ).traceNorm = 2 := by
+  have h := congrArg (RCLike.re : ℂ → ℝ)
+    (Matrix.PosSemidef.one (n := Fin 2) (R := ℂ)).traceNorm_eq_trace
+  simpa [Matrix.trace, Fin.sum_univ_two] using h
+
+example :
+    Matrix.traceNormDist secondDiagonal diagonalMatrix = 2 ∧
+      Matrix.traceDist secondDiagonal diagonalMatrix = 1 ∧
+        secondDiagonal ≠ 0 ∧ diagonalMatrix ≠ 0 ∧ secondDiagonal ≠ diagonalMatrix := by
+  rw [Matrix.traceNormDist_def, Matrix.traceDist_def, difference_eq_one, identity_traceNorm]
+  norm_num
+  exact two_distinct_nonzero
+
+example :
+    Matrix.traceDist ((Complex.I) • secondDiagonal) ((Complex.I) • diagonalMatrix) = 1 := by
+  rw [Matrix.traceDist_def, ← smul_sub, difference_eq_one, Matrix.traceNorm_smul,
+    identity_traceNorm]
+  norm_num
+
 end MathlibExtTest.CanonicalTraceDistance

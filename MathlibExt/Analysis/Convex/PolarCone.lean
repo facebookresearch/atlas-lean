@@ -16,7 +16,7 @@ public import Mathlib.Geometry.Convex.Cone.Dual
 
 Let E be a real inner-product space and K any subset of E. The inner dual
 cone uses ⟪x,z⟫ ≥ 0 for all x ∈ K. Thus -y belongs to that dual cone exactly
-when ⟪x,y⟫ ≤ 0 for all x ∈ K, the nonpositive polar convention used by Hazan.
+when ⟪x,y⟫ ≤ 0 for all x ∈ K, the nonpositive polar convention.
 -/
 
 @[expose] public section

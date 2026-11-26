@@ -13,7 +13,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Calculus/PolynomialZeroExtension.lean",
-      "exported_sha256": "881514082bf54c93e2f986d4889bc7b754b9c33c0366b3084a86253b71bd6585",
+      "exported_sha256": "11c07df39cb3d8f16868e8a70ff0236c0ee7a65413a1263528d1a495bdab2684",
       "original_sha256": "d99ab2991d6178ed7ce3428e73097db6e5158b325277839d8867555ea76adc18",
       "ledger": "provenance/functional-analysis/residual-analysis/files-01.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
@@ -31,7 +31,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Complex/AnalyticL2/Submodule.lean",
-      "exported_sha256": "169cf564eccdabbcaf98a63171b353119391a25475bdef19e35fd8ba528ed5e9",
+      "exported_sha256": "8e9d73698086fddf813f2ba1f61502f305c69da5533fd715427c201867a008dd",
       "original_sha256": "da9c564cf1115adc8e4c58d0e2a7099d59cf6e4a143faf25689a274b3eb7026d",
       "ledger": "provenance/functional-analysis/residual-analysis/files-01.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
@@ -49,7 +49,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Convex/CompactApproximation.lean",
-      "exported_sha256": "1d3a9fa927b81884e37231e9164024f98fdcd49e00b79591c6b8dcd3a4dc6bad",
+      "exported_sha256": "e5949e16ccae8118e9b0bd1c9ecd776a880d196c1d3d2fba1a1912477424bcd7",
       "original_sha256": "fabee218798745abde619e0a12d81024351c64640758a26f407f25f776b6700f",
       "ledger": "provenance/functional-analysis/residual-analysis/files-01.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
@@ -58,7 +58,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Convex/PolarCone.lean",
-      "exported_sha256": "e0adbc8935ba35c8f4460920b413fd75df4732541b461cd7ee63c6ae2e56b9ec",
+      "exported_sha256": "d3109ebb6a0e119405864b62bc020e85f9201347c59ed785ae7462cddea5de42",
       "original_sha256": "d4d79395a7eb782f63e62f3d9ce55c68e1ad672dc64f2a7a1924a2011722b5d7",
       "ledger": "provenance/functional-analysis/residual-analysis/files-01.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",

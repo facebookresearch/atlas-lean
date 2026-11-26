@@ -75,4 +75,49 @@ example (x : WithLp (1 : ℝ≥0) (Fin 0 →₀ ℂ)) : x = 0 ∧ ‖x‖ = 0 :=
     exact Fin.elim0 i
   exact ⟨hx, by rw [hx, norm_zero]⟩
 
+private def tailVector : Vector :=
+  WithLp.toLp (1 : ℝ≥0) (Finsupp.single 1 ((2 : ℝ) • Complex.I))
+
+private def multiVector : Vector := singleVector + tailVector
+
+private theorem tailVector_norm : ‖tailVector‖ = 2 := by
+  rw [Finsupp.l1_norm_eq_sum]
+  simp only [tailVector, WithLp.ofLp_toLp, Finsupp.sum_single_index, norm_zero]
+  simp
+
+private theorem multiVector_norm : ‖multiVector‖ = 7 := by
+  rw [Finsupp.l1_norm_eq_sum]
+  change (Finsupp.single (0 : Fin 2) (3 + 4 * Complex.I) +
+      Finsupp.single 1 ((2 : ℝ) • Complex.I)).sum (fun _ x => ‖x‖) = 7
+  rw [Finsupp.sum_single_add_single 0 1 _ _ _ (by decide)
+    (fun _ => norm_zero)]
+  have ha : ‖(3 + 4 * Complex.I : ℂ)‖ = 5 := by
+    have h := singleVector_norm
+    rw [Finsupp.l1_norm_eq_sum] at h
+    simpa only [singleVector, WithLp.ofLp_toLp, Finsupp.sum_single_index, norm_zero] using h
+  have hb : ‖(2 : ℝ) • Complex.I‖ = 2 := by simp
+  rw [ha, hb]
+  norm_num
+
+example : ‖multiVector‖ = 7 ∧ ‖singleVector‖ < ‖multiVector‖ := by
+  rw [multiVector_norm, singleVector_norm]
+  norm_num
+
+example : ‖Complex.I • multiVector‖ = 7 ∧ dist (Complex.I • multiVector) 0 = 7 := by
+  rw [Finsupp.l1_norm_smul, Complex.norm_I, one_mul, multiVector_norm, dist_zero_right,
+    norm_smul, Complex.norm_I, one_mul, multiVector_norm]
+  exact ⟨rfl, rfl⟩
+
+example : dist multiVector singleVector = 2 := by
+  rw [dist_eq_norm]
+  have hdiff : multiVector - singleVector = tailVector := by
+    change singleVector + tailVector - singleVector = tailVector
+    abel
+  rw [hdiff, tailVector_norm]
+
+example :
+    multiVector.ofLp (0 : Fin 2) = 3 + 4 * Complex.I ∧
+      multiVector.ofLp (1 : Fin 2) = (2 : ℝ) • Complex.I := by
+  simp [multiVector, singleVector, tailVector, WithLp.ofLp_add]
+
 end MathlibExtTest.FinsuppL1
