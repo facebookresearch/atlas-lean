@@ -41,7 +41,11 @@ open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.PadicNeronModels
 open MathlibExt.AlgebraicGeometry.SemistableAdicMonodromy
 
-/-- Illusie's geometric semistable all-inertia nilpotence bound. -/
+/-- Illusie's monodromy theorem over $ℤ_p$ (Illusie, Corollary 3.3): let $p$ and $ℓ$ be primes
+with $ℓ ≠ p$, and $X$ a proper scheme over $ℤ_p$ that is strictly semistable with respect to the
+uniformizer $p$. Then for every $n ∈ ℕ$ and every element $σ$ of the inertia subgroup of
+$\mathrm{Gal}(\bar{ℚ}_p/ℚ_p)$, the operator of $σ$ on the rational $ℓ$-adic cohomology $H^n$ of
+the geometric generic fibre $X_{\bar{ℚ}_p}$ satisfies $(σ - 1)^{n+1} = 0$. -/
 public theorem_wanted inertia_unipotent
     (p ell : ℕ) [Fact p.Prime] [Fact ell.Prime]
     (ellNeResidueCharacteristic : ell ≠ p)
@@ -70,7 +74,14 @@ extension `L`, for its geometric trait `T`, and the Weil–Deligne association. 
 characteristic is a prime `p`, as in Illusie's §3.
 -/
 
-/-- The all-inertia cohomological bound over a general henselian trait. -/
+/-- Illusie's monodromy theorem over a henselian trait: let $ℓ$ and $p$ be primes with $ℓ ≠ p$,
+$R$ a henselian discrete valuation ring whose residue field has characteristic $p$, $K$ its
+fraction field, $L$ an algebraic closure of $K$, $π ∈ R$ with geometric-trait data $T$
+(`GeometricTrait`: the integral closure of $R$ in $L$ is henselian local with algebraically closed
+residue field, and inverting $π$ in it gives $L$), and $X$ a proper $R$-scheme that is strictly
+semistable with respect to $π$ (in particular $π$ is a uniformizer). Then for every $n ∈ ℕ$ and
+every inertia element $σ$ (`Inertia π T`), the operator of $σ$ on the rational $ℓ$-adic
+cohomology $H^n$ of the geometric generic fibre $X_L$ satisfies $(σ - 1)^{n+1} = 0$. -/
 public theorem_wanted generalInertiaUnipotent
     (ell p : ℕ) [Fact ell.Prime] [Fact p.Prime]
     (R : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
@@ -84,8 +95,15 @@ public theorem_wanted generalInertiaUnipotent
     (n : ℕ) (σ : Inertia π T) :
     (operator ell R K L X σ.1.1 n - 1) ^ (n + 1) = 0
 
-/-- On the nearby object, `(σ - 1)^(d+1) = 0` for every inertia element, in relative dimension
-`d`. -/
+/-- Nilpotence of inertia on nearby cycles: let $ℓ$ and $p$ be primes with $ℓ ≠ p$, $R$ a
+henselian discrete valuation ring whose residue field has characteristic $p$, $K$ its fraction
+field, $L$ an algebraic closure of $K$, $π ∈ R$ with geometric-trait data $T$ (`GeometricTrait`),
+and $X$ a proper $R$-scheme, strictly semistable with respect to $π$, whose generic fibre is
+smooth of relative dimension $d$. Assume the given derived-functor data for $ℚ_ℓ$-coefficients
+(`DerivedFunctorTheory`), and that for every $σ ∈ \mathrm{Gal}(L/K)$ the comparison of continuous
+$ℚ_ℓ$-coefficient sheaves along the automorphism of the geometric generic fibre induced by $σ$ is
+an isomorphism. Then every inertia element $σ$ acts on the nearby-cycle object
+(`RapoportZinkContracts.inertiaOperator`) with $(σ - 1)^{d+1} = 0$. -/
 public theorem_wanted nearbyInertiaNilpotent
     (ell p : ℕ) [Fact ell.Prime] [Fact p.Prime]
     (R : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
@@ -104,7 +122,17 @@ public theorem_wanted nearbyInertiaNilpotent
     (σ : Inertia π T) :
     (RapoportZinkContracts.inertiaOperator ell R K L π T X σ - 1) ^ (d + 1) = 0
 
-/-- The Weil–Deligne association laws for the semistable cohomology. -/
+/-- Weil–Deligne structure of semistable cohomology: let $ℓ$ be a prime, $R$ a henselian discrete
+valuation ring whose residue field has characteristic $p ≠ ℓ$, $K$ its fraction field, $L$ an
+algebraic closure of $K$, $π ∈ R$ with geometric-trait data $T$ (`GeometricTrait`), $X$ a proper
+$R$-scheme that is strictly semistable with respect to $π$, and $n ∈ ℕ$. Assume that the Galois
+operators on the rational $ℓ$-adic cohomology $H^n$ of $X_L$ form an action
+(`CohomologyFunctoriality`), and fix an arithmetic Frobenius $A$ (`ArithmeticFrobenius`, which
+includes finiteness of the residue field) and a tame coordinate $B$ (`TameCoordinate`). Then, for
+$N$ the logarithm of the operator of the tame generator: $N^{n+1} = 0$, every inertia element $σ$
+acts by $\exp(t_B(σ) N)$, and $ρ(w) N = q^{\deg w} N ρ(w)$ for every $w$ in the Weil group, where
+$ρ(w)$ is the Frobenius operator to the power $\deg w$ and $q$ is the cardinality of the residue
+field (`SemistableWeilDeligneLaws`). -/
 public theorem_wanted semistableWeilDeligne
     (ell p : ℕ) [Fact ell.Prime]
     (R : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
