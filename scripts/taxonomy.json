@@ -11826,6 +11826,7 @@
   "MathlibExt/Combinatorics/WythoffTerminalOneMorphic": {"to": "GameTheory/combinatorial-games", "title": "Wythoff's game"},
   "MathlibExt/Combinatorics/WythoffTerminalOnePPositions": {"to": "GameTheory/combinatorial-games", "title": "Wythoff's game"},
   "MathlibExt/Combinatorics/WythoffTerminalPositions": {"to": "GameTheory/combinatorial-games", "title": "Wythoff's game"},
+  "MathlibExt/Combinatorics/WythoffTerminalPositionsBlockingWythoffNoRedundantMove": {"to": "GameTheory/combinatorial-games", "title": "Wythoff's game"},
   "MathlibExt/Combinatorics/YoungTableaux/HookLength": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Standard Young tableaux and the hook length formula"},
   "MathlibExt/Combinatorics/YoungTableaux/SumSYTCountSq": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Standard Young tableaux and the hook length formula"},
   "MathlibExt/Combinatorics/ZigZagExpanderFamily": {"to": "GraphTheory/graph-families-and-operations", "title": "Zig-zag product and explicit expanders"},
