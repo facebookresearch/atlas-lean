@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Field.Rat
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Fib.Basic
+public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Logic.Function.Iterate
 public import MathlibExt.NumberTheory.GibonacciNumber
 import Mathlib.Data.Int.Fib.Lemmas
@@ -27,11 +28,14 @@ import Mathlib.Tactic.Ring
 At the ratio of consecutive Fibonacci numbers, Cassini's identity reduces the denominator
 of the generating function to a sign divided by the square of a Fibonacci number.
 At $-G_{n+1}/G_n$, the generating function also takes an integer value whenever $G_n \ne 0$.
+For a fixed coprime seed, congruences characterize the pairs for which all defined consecutive
+ratios are good.
 
 ## References
 
 - Michael P. Knapp, [*Fibonacci Generating Functions*](https://cs.uwaterloo.ca/journals/JIS/VOL27/Knapp/knapp5.pdf),
-  Journal of Integer Sequences 27 (2024), Article 24.3.1, pp. 1–12, Lemma 6.
+  Journal of Integer Sequences 27 (2024), Article 24.3.1, pp. 1–12, Theorem 3 (which uses
+  Lemma 6 and Theorem 1). See also Corollary 2, Lemmas 5–8, and Sections 2–3.
 -/
 
 namespace MetaMathlibExt
@@ -297,6 +301,113 @@ private theorem gibonacci_seed_coefficients (G : ℕ → ℤ)
 private theorem gibonacci_denom_ne_zero (x : ℚ) : 1 - x - x ^ 2 ≠ 0 := by
   intro h
   exact (by norm_num : ¬ IsSquare (5 : ℚ)) ⟨2 * x + 1, by linear_combination 4 * h⟩
+
+/-- **Good consecutive ratios of a Gibonacci sequence.** Let $p$ and $q$ be coprime integers,
+let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = p$ and $H_1 = q$, and put
+$m = |q^2 - pq - p^2|$. Call a pair of integers $(a, b)$ admissible when $H_n / H_{n+1}$ is
+good for $(a, b)$ for every natural number $n$ with $H_{n+1} \ne 0$. Then there are infinitely
+many admissible pairs, and a pair $(a, b)$ is admissible if and only if there are integers $u$
+and $v$ with $(q - p) u \equiv 1$, $p v \equiv 1$, $a \equiv -b p u$ and
+$a \equiv -b q v \pmod{m}$.
+
+In the source's notation, with modular inverses, the condition reads
+$a \equiv -bp(q - p)^{-1} \equiv -bqp^{-1} \pmod{m}$. The source indexes $H$ by all integers.
+
+Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
+Sequences 27 (2024), Article 24.3.1, Theorem 3
+(`jis-2024-24.3.1-thm-3`). -/
+public theorem isGibonacciGood_ratios_infinite_iff (p q : ℤ)
+    (hcop : Int.gcd p q = 1) :
+    (Set.Infinite {ab : ℤ × ℤ | ∀ n : ℕ, gibonacciNumber p q (n + 1) ≠ 0 →
+        IsGibonacciGood ab.1 ab.2
+          ((gibonacciNumber p q n : ℚ) / (gibonacciNumber p q (n + 1) : ℚ))}) ∧
+    ∀ a b : ℤ, (∀ n : ℕ, gibonacciNumber p q (n + 1) ≠ 0 →
+        IsGibonacciGood a b
+          ((gibonacciNumber p q n : ℚ) / (gibonacciNumber p q (n + 1) : ℚ))) ↔
+      ∃ u v : ℤ, (q - p) * u ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
+        p * v ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
+        a ≡ -b * p * u [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
+        a ≡ -b * q * v [ZMOD |q ^ 2 - p * q - p ^ 2|] := by
+  let H := gibonacciNumber p q
+  let d := q ^ 2 - p * q - p ^ 2
+  have hunit (hq : q = 0) : |d| = 1 := by
+    have hp : IsUnit p := by
+      simpa only [hq, isCoprime_zero_right] using Int.isCoprime_iff_gcd_eq_one.mpr hcop
+    rcases Int.isUnit_iff.mp hp with rfl | rfl <;> norm_num [d, hq]
+  have hd : d ≠ 0 := by
+    by_cases hq : q = 0
+    · intro hd
+      simpa [hd] using hunit hq
+    · have hz : IsGibonacciGood 0 0 ((p : ℚ) / q) :=
+        ⟨gibonacci_denom_ne_zero _, 0, by simp [gibonacciGeneratingValue]⟩
+      exact ((isGibonacciGood_div_iff_dvd 0 0 p q hq).mp hz).1
+  have hrec (n : ℕ) : H (n + 2) = H (n + 1) + H n := rfl
+  -- The quadratic denominator changes sign at each step.
+  have hdet (n : ℕ) : H (n + 1) ^ 2 - H n * H (n + 1) - H n ^ 2 = (-1 : ℤ) ^ n * d := by
+    induction n with
+    | zero => simp [H, gibonacciNumber, d]
+    | succ n ih =>
+      change H (n + 2) ^ 2 - H (n + 1) * H (n + 2) - H (n + 1) ^ 2 = (-1) ^ (n + 1) * d
+      calc
+        _ = -(H (n + 1) ^ 2 - H n * H (n + 1) - H n ^ 2) := by rw [hrec n]; ring
+        _ = _ := by rw [ih, pow_succ]; ring
+  -- Divisibility of the linear numerator propagates even across a zero term of H.
+  have hall (a b : ℤ) (h₀ : d ∣ (b - a) * p + a * q) (h₁ : d ∣ a * p + b * q) :
+      ∀ n : ℕ, H (n + 1) ≠ 0 → IsGibonacciGood a b ((H n : ℚ) / H (n + 1)) := by
+    let u (n : ℕ) := (b - a) * H n + a * H (n + 1)
+    have hstep (n : ℕ) : u (n + 2) = u (n + 1) + u n := by
+      change (b - a) * H (n + 2) + a * H ((n + 1) + 2) =
+        ((b - a) * H (n + 1) + a * H (n + 2)) + ((b - a) * H n + a * H (n + 1))
+      rw [hrec (n + 1), hrec n]
+      ring
+    have hu (n : ℕ) : d ∣ u n ∧ d ∣ u (n + 1) := by
+      induction n with
+      | zero =>
+        refine ⟨h₀, ?_⟩
+        change d ∣ (b - a) * q + a * (q + p)
+        convert h₁ using 1; ring
+      | succ n ih =>
+        refine ⟨ih.2, ?_⟩
+        change d ∣ u (n + 2)
+        rw [hstep]
+        exact dvd_add ih.2 ih.1
+    intro n hn
+    apply (isGibonacciGood_div_iff_dvd a b (H n) (H (n + 1)) hn).mpr
+    rw [hdet]
+    have hsign : IsUnit ((-1 : ℤ) ^ n) := isUnit_one.neg.pow n
+    exact ⟨mul_ne_zero hsign.ne_zero hd, hsign.mul_left_dvd.mpr (dvd_mul_of_dvd_right (hu n).1 _)⟩
+  have hmultiple (t : ℤ) :
+      ∀ n : ℕ, H (n + 1) ≠ 0 → IsGibonacciGood (d * t) 0 ((H n : ℚ) / H (n + 1)) :=
+    hall (d * t) 0 ⟨t * (q - p), by ring⟩ ⟨t * p, by ring⟩
+  constructor
+  · refine Set.infinite_of_injective_forall_mem (f := fun t : ℤ => (d * t, (0 : ℤ))) ?_ hmultiple
+    intro x y h
+    exact mul_left_cancel₀ hd (congrArg Prod.fst h)
+  · intro a b
+    constructor
+    · intro h
+      by_cases hq : q = 0
+      · rw [hunit hq]
+        exact ⟨0, 0, Int.modEq_one, Int.modEq_one, Int.modEq_one, Int.modEq_one⟩
+      · by_cases hab : (a, b) = (0, 0)
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hab
+          -- Use the nonzero pair (d, 0) to get the same modular inverses.
+          obtain ⟨u, v, hu, hv, _, _⟩ := (isGibonacciGood_iff d 0 p q
+            (fun he => hd (congrArg Prod.fst he)) hcop hq).mp
+            (by simpa only [H, gibonacciNumber, mul_one] using hmultiple 1 0 hq)
+          exact ⟨u, v, hu, hv, by simp, by simp⟩
+        · exact (isGibonacciGood_iff a b p q hab hcop hq).mp (h 0 hq)
+    · rintro ⟨u, v, hu, hv, ha, hb⟩
+      simp only [Int.modEq_abs] at hu hv ha hb
+      have hcancel {c w k : ℤ} (hw : c * w ≡ 1 [ZMOD d]) (h : a ≡ k * w [ZMOD d]) :
+          d ∣ a * c - k := by
+        have hc : a * c ≡ k [ZMOD d] := calc
+          a * c ≡ (k * w) * c [ZMOD d] := h.mul_right c
+          _ ≡ k [ZMOD d] := by simpa only [mul_assoc, mul_comm w c, mul_one] using hw.mul_left k
+        exact hc.symm.dvd
+      apply hall a b
+      · convert hcancel hu ha using 1; ring
+      · convert hcancel hv hb using 1; ring
 
 /-- **Two standard families of good values.** Let $a$ and $b$ be integers and let $(G_n)_{n \ge 0}$
 be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. For every natural number $n$, the ratio
