@@ -16,7 +16,7 @@ compactness, the mesh bound $(n/(n+1))^k$ and closedness of the $F_i$.
 
 ## Background
 
-- [Brouwer's fixed-point theorem for the standard simplex](../../Topology/algebraic-topology/brouwer-fixed-point-theorem/exists-fixed-point.md): the consequence announced in the title of the KKM paper, derived from this lemma.
+- [Brouwer's fixed-point theorem for the standard simplex](../../Topology/algebraic-topology/fixed-points-antipodal-maps/brouwer-fixed-point-theorem/exists-fixed-point.md): the consequence announced in the title of the KKM paper, derived from this lemma.
 
 ## Sources
 

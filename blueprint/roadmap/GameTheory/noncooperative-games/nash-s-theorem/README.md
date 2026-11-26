@@ -20,6 +20,6 @@ Brouwer's fixed-point theorem for products of simplices, by Nash's 1951 argument
 - [No-regret dynamics](../no-regret-dynamics/README.md): coarse correlated equilibria, which contain the mixed Nash equilibria and are reached by learning.
 - [Correlated equilibria](../correlated-equilibria/README.md): mixed Nash equilibria are the product correlated equilibria.
 - [Adaptive heuristics](../adaptive-heuristics/README.md): uncoupled dynamics cannot guarantee convergence to Nash equilibria.
-- [Brouwer fixed-point theorem](../../../Topology/algebraic-topology/brouwer-fixed-point-theorem/README.md): the fixed-point theorem behind Nash's proof, used for products of simplices.
+- [Brouwer fixed-point theorem](../../../Topology/algebraic-topology/fixed-points-antipodal-maps/brouwer-fixed-point-theorem/README.md): the fixed-point theorem behind Nash's proof, used for products of simplices.
 - [Bimatrix games and the Lemke–Howson algorithm](../bimatrix-games-and-the-lemke-howson-algorithm/README.md): a combinatorial, path-following existence proof for two players.
 - [PPAD and the END-OF-THE-LINE problem](../../../TheoryOfComputation/completeness-other-classes/ppad-and-the-end-of-the-line-problem/README.md): the complexity of computing an equilibrium.

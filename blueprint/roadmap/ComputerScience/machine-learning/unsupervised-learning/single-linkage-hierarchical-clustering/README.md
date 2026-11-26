@@ -42,12 +42,12 @@ Thm. 1).
 
 ## Related topics
 
-- [Simplicial complexes from point clouds](../../../../Topology/algebraic-topology/simplicial-complexes-from-point-clouds/README.md):
+- [Simplicial complexes from point clouds](../../../../Topology/algebraic-topology/topological-data-analysis/simplicial-complexes-from-point-clouds/README.md):
   single-linkage clusters are the connected components of the Vietoris–Rips complex.
-- [Persistence modules and barcodes](../../../../Topology/algebraic-topology/persistence-modules-and-barcodes/README.md):
+- [Persistence modules and barcodes](../../../../Topology/algebraic-topology/topological-data-analysis/persistence-modules-and-barcodes/README.md):
   the zero-dimensional barcode of the Vietoris–Rips filtration records the merges of the
   dendrogram.
-- [Mapper](../../../../Topology/algebraic-topology/mapper/README.md): Mapper clusters the
+- [Mapper](../../../../Topology/algebraic-topology/topological-data-analysis/mapper/README.md): Mapper clusters the
   preimages of a cover by single linkage.
 - [Splits, compatibility, ultrametrics and UPGMA](../../../../Biology/phylogenetics/splits-compatibility-ultrametrics-and-upgma/README.md):
   ultrametrics and the average-linkage method UPGMA in phylogenetics.
