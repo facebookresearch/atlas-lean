@@ -18,4 +18,4 @@ union of conjunctive queries can be exponentially large.
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Theorem 29.2 (p. 254), Theorem 29.6 (p. 256) and Corollary 29.7 (p. 257).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Theorem 29.2 (p. 262), Theorem 29.6 (p. 264) and Corollary 29.7 (p. 265).

@@ -11,9 +11,6 @@ $\mathrm{sg}(y) = \{S, T\}$.
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
-
-## Informally uses
-
 - [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
 
 ## Sources

@@ -20,7 +20,7 @@ $\mathrm{naive}(q, I) = \mathrm{cert}_{\mathrm{cwa}}(q, I)$.
 
 - [Certain answers are contained in the naive evaluation](certain-answers-are-contained-in-the-naive-evaluation.md)
 
-## Informally uses
+## Related topics
 
 - [Conjunctive queries are preserved under homomorphisms](../conjunctive-queries/conjunctive-queries-are-preserved-under-homomorphisms.md)
 

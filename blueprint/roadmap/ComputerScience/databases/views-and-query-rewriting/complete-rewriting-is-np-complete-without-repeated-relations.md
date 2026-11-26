@@ -13,6 +13,7 @@ by reduction from exact cover by 3-sets.
 ## Proof depends on
 
 - [Finding small and complete rewritings of conjunctive queries is NP-complete](finding-small-and-complete-rewritings-is-np-complete.md)
+- [EXACT COVER BY 3-SETS is NP-complete](../../../TheoryOfComputation/np-completeness/set-systems-and-location/exact-cover-by-3-sets/exact-cover-by3-sets-np-complete.md)
 
 ## Sources
 

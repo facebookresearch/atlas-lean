@@ -2,9 +2,9 @@
 
 For every c-table $T$ over an attribute set $U$ and every relational algebra query $q$ over $U$, one can construct a
 c-table $q(T)$ with $\mathrm{rep}(q(T)) = q(\mathrm{rep}(T))$, where $q(\mathrm{rep}(T)) = \{q(I) : I \in \mathrm{rep}(T)\}$.
-Thus c-tables form a strong representation system for relational algebra. Codd tables do not: for a Codd table $T$
-with a variable in column $A$, the possible answers of $\sigma_{A=3}(T)$ include both the empty relation and a
-nonempty relation, and no Codd table represents exactly that set.
+Thus c-tables form a strong representation system for relational algebra. Codd tables do not: for the Codd table $T$
+over $\{A\}$ with the single row $(x)$, the possible answers of $\sigma_{A=3}(T)$ are the empty relation and $\{(3)\}$,
+and no Codd table represents exactly that set.
 
 ## Depends on
 

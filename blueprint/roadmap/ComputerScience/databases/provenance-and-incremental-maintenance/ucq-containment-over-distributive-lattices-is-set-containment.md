@@ -1,9 +1,11 @@
-# Containment of unions of conjunctive queries over distributive lattices is set containment
+# Containment of unions of conjunctive queries over nontrivial distributive lattices is set containment
 
 For a naturally ordered commutative semiring $K$ and queries $q_1, q_2$ on $K$-relations, write
 $q_1 \sqsubseteq_K q_2$ when $q_1(R)(t) \le q_2(R)(t)$ for every $K$-instance $R$ and every tuple $t$; for
-$K = \mathbb B$ and $K = \mathbb N$ this is set and bag containment. If $K$ is a distributive lattice, then for all
-unions of conjunctive queries $q_1, q_2$, $q_1 \sqsubseteq_K q_2$ if and only if $q_1 \sqsubseteq_{\mathbb B} q_2$.
+$K = \mathbb B$ and $K = \mathbb N$ this is set and bag containment. If $K$ is a nontrivial bounded distributive lattice
+($0 \ne 1$, with join as addition and meet as multiplication), then for all unions of conjunctive queries $q_1, q_2$,
+$q_1 \sqsubseteq_K q_2$ if and only if $q_1 \sqsubseteq_{\mathbb B} q_2$. Nontriviality is needed: over the one-element lattice
+$R(x)$ is contained in $S(x)$, which fails under set semantics.
 
 ## Depends on
 

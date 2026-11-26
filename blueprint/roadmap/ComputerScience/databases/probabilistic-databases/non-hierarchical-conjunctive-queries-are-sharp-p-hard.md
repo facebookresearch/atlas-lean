@@ -1,13 +1,17 @@
-# Non-hierarchical conjunctive queries are #P-hard on probabilistic databases
+# Conjunctive queries whose minimal equivalent query is not hierarchical are #P-hard on probabilistic databases
 
-If a Boolean conjunctive query $q$ (self-joins allowed) is not hierarchical, then computing its probability $p(q)$ on
-tuple-independent probabilistic databases is $\#P$-hard.
+Let $q$ be a Boolean conjunctive query (self-joins allowed) and $q_0$ a minimal conjunctive query equivalent to $q$.
+If $q_0$ is not hierarchical (equivalently, the Boolean conjunctive property defined by $q$ is not hierarchical), then
+computing $p(q)$ on tuple-independent probabilistic databases is $\#P$-hard. Testing $q$ itself is not enough: the
+query $R(x, x), R(x, y), R(y, y)$ is not hierarchical, but it is equivalent to $\exists z\, R(z, z)$, whose probability
+$1 - \prod_a \big(1 - p(R(a, a))\big)$ is computable in polynomial time.
 
 ## Depends on
 
 - [Tuple-independent probabilistic databases and query probability](tuple-independent-probabilistic-databases.md)
 - [Hierarchical conjunctive queries](hierarchical-conjunctive-queries.md)
 - [$\#P$-complete functions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
+- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
 
 ## Proof depends on
 
@@ -15,5 +19,5 @@ tuple-independent probabilistic databases is $\#P$-hard.
 
 ## Sources
 
-- N. Dalvi and D. Suciu, "The dichotomy of conjunctive queries on probabilistic structures", *Proceedings of the 26th ACM Symposium on Principles of Database Systems (PODS)*, 2007, pp. 293–302, Theorem 1.4 (p. 294).
+- N. Dalvi and D. Suciu, "The dichotomy of conjunctive queries on probabilistic structures", *Proceedings of the 26th ACM Symposium on Principles of Database Systems (PODS)*, 2007, pp. 293–302, Definition 1.2 and Theorem 1.4 (p. 294), which is stated for conjunctive properties.
 - N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM*, 2012; authors' manuscript <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>, Proposition 8.8 (every non-hierarchical forbidden query is $h_0$).

@@ -21,6 +21,8 @@ multivalued dependencies). A good expansion checks those original proofs and cit
 
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Inclusion dependencies and finite implication](inclusion-dependencies-and-finite-implication.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Informally uses
 

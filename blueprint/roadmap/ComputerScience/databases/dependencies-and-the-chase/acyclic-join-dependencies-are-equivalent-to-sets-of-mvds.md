@@ -2,10 +2,10 @@
 
 A join dependency $\bowtie[X_1, \dots, X_n]$ is acyclic when the hypergraph with hyperedges $X_1, \dots, X_n$ is
 acyclic. A join dependency $\sigma$ is acyclic if and only if some set $F$ of multivalued dependencies is equivalent
-to $\sigma$ (every relation satisfies $\sigma$ exactly when it satisfies $F$). If $X_1, \dots, X_n$ is the order in which
-the GYO algorithm removes the hyperedges as ears, one such set is
-$\{(P_i \cap Q_i) \twoheadrightarrow Q_i : 1 \le i < n\}$ with $P_i = X_1 \cup \cdots \cup X_i$ and
-$Q_i = X_{i+1} \cup \cdots \cup X_n$.
+to $\sigma$ (every relation satisfies $\sigma$ exactly when it satisfies $F$). Such a set cannot be read off an arbitrary
+order of ear removals: for the join path $AB, BC, CD$ the removal order $AB, CD, BC$ gives the cuts
+$AB \mid BCD$ and $ABCD \mid BC$, and the relation $\{0000, 0101\}$ over $ABCD$ satisfies both binary joins but not
+$\bowtie[AB, BC, CD]$, whose join of projections also contains $0001$.
 
 ## Depends on
 
@@ -18,4 +18,4 @@ $Q_i = X_{i+1} \cup \cdots \cup X_n$.
 
 ## Sources
 
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, the definition of acyclic join dependencies and Theorem 8.4.15 with its proof (pp. 182–183).
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, the definition of acyclic join dependencies and Theorem 8.4.15 (pp. 182–183).

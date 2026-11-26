@@ -1,9 +1,10 @@
-# Generalized hypertreewidth one is acyclicity
+# Generalized hypertreewidth at most one is acyclicity
 
-A conjunctive query has generalized hypertreewidth $1$ if and only if it is acyclic, that is, its hypergraph $H_q$
+A conjunctive query has generalized hypertreewidth at most $1$ if and only if it is acyclic, that is, its hypergraph $H_q$
 (variables as vertices, the variable sets of the atoms as hyperedges) has a join tree: a tree on the hyperedges in
 which, for every variable, the hyperedges containing it form a connected subtree. So $\mathrm{GHW}(1)$ is the class
-of acyclic conjunctive queries.
+of acyclic conjunctive queries. A query whose atoms have no variables, such as $\mathrm{Answer}() \mathrel{:-} R(a)$, has
+width $0$.
 
 ## Depends on
 

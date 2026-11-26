@@ -1,7 +1,10 @@
 # Complete rewriting of unions of conjunctive queries is NP-complete
 
-Let $Q$ and the views of $\mathcal V$ be unions of conjunctive queries without built-in comparison atoms. Deciding
-whether $Q$ has a complete rewriting using $\mathcal V$ is NP-complete.
+Let $Q$ and the views of $\mathcal V$ be unions of conjunctive queries without built-in comparison atoms. A complete rewriting of
+$Q$ using $\mathcal V$ is then a union of conjunctive queries over the view names alone whose expansion (the union of the
+expansions of its disjuncts) is equivalent to $Q$; for $Q(x) = R(x) \vee S(x)$ and the views $V_R(x) \mathrel{:-} R(x)$ and
+$V_S(x) \mathrel{:-} S(x)$ it is $V_R(x) \vee V_S(x)$, which no single conjunctive query expresses. Deciding whether $Q$ has a
+complete rewriting using $\mathcal V$ is NP-complete.
 
 ## Depends on
 
