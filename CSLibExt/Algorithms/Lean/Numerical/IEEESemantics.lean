@@ -16,16 +16,16 @@ public import Mathlib.Data.EReal.Basic
 # Total IEEE-style operation semantics with special values and exceptions
 
 A model of IEEE 754 binary floating-point arithmetic with signed zeros, infinities, NaN and the
-five status flags (IEEE Std 754-2019, Clauses 4.3, 5.11, 6 and 7; Goldberg, *What every computer
-scientist should know about floating-point arithmetic*, 1991, Sections 2.2 and 2.3; Boldo,
-Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Sections 5.1,
-5.2 and 6.3), built on the bounded format `IsFloatIn` of
-`CSLibExt.Algorithms.Lean.Numerical.FloatingPoint`.
+five status flags (IEEE Std 754-2019; Goldberg, *What every computer scientist should know about
+floating-point arithmetic*, 1991, Sections 2.1–2.3 and 3.2; Boldo, Jourdan, Leroy and Melquiond,
+*Verified compilation of floating-point computations*, Sections 5.1, 5.2 and 6.3), built on the
+bounded format `IsFloatIn` of `CSLibExt.Algorithms.Lean.Numerical.FloatingPoint`.
 
 * `BinaryFormat`: a precision `p ≥ 1` and last-place exponents in `[qmin, qmax]`, `qmin ≤ qmax`.
-* `RoundingMode`, `RoundingMode.roundInt`, `RoundingMode.round`: the four rounding directions of
-  binary formats, and rounding at the last-place exponent `max (ulpExp p x) qmin`, which gives
-  gradual underflow and leaves the exponent unbounded above, as Flocq's `round` does.
+* `RoundingMode`, `RoundingMode.roundInt`, `RoundingMode.round`: round to nearest, ties to even,
+  and the three directed rounding modes, and rounding at the last-place exponent
+  `max (ulpExp p x) qmin`, which gives gradual underflow and leaves the exponent unbounded above,
+  as Flocq's `round` does.
 * `Value`: the canonical NaN, `±∞`, and finite numbers `±m` with a sign bit, so `+0 ≠ -0`.
 * `Flags`, `roundResult`: the flags an operation raises, and the value an exact real result
   delivers: overflow by rounding mode, gradual underflow with tininess detected before rounding.
@@ -37,15 +37,15 @@ Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computatio
 * `not_le_nan_and_not_isPartialOrder`: `NaN ≤ NaN` fails, so `≤` is not a partial order.
 * `eval_add_comm`, `eval_mul_comm`: addition and multiplication are commutative, flags included.
 * `not_add_assoc`: addition is not associative, in every format and rounding mode.
-* `not_mul_assoc`: multiplication is not associative when `qmin ≤ -1` and `1 ≤ qmax`, as in the
-  IEEE binary interchange formats.
+* `not_mul_assoc`: multiplication is not associative when `qmin ≤ -1` and `1 ≤ qmax`, as in
+  binary32 and binary64.
 
 ## Scope
 
 The model is canonical-NaN: one quiet NaN, with no sign, no payload and no signalling NaN. It
-covers the four rounding directions binary formats require, not `roundTiesToAway`; tininess is
-detected before rounding; and comparison is the quiet one. Fused multiply-add, remainder,
-conversions and trapping are not modelled.
+covers round to nearest, ties to even, and the three directed rounding modes, not
+`roundTiesToAway`; tininess is detected before rounding; and comparison is the quiet one. Fused
+multiply-add, remainder, conversions and trapping are not modelled.
 
 ## Why a separate model
 
@@ -76,7 +76,8 @@ $|m| < 2^p$ and $q_{\min} \le e \le q_{\max}$, which are zero, the subnormal num
 normal numbers. In IEEE 754 terms, $q_{\min} = e_{\min} - p + 1$ and
 $q_{\max} = e_{\max} - p + 1$; binary64 has $p = 53$, $q_{\min} = -1074$ and $q_{\max} = 971$.
 
-Source: IEEE Std 754-2019, Clauses 3.3 and 3.6. -/
+Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
+arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.1 (Table 1). -/
 structure BinaryFormat where
   /-- The precision $p$, the number of significand bits. -/
   prec : ℕ
@@ -89,12 +90,12 @@ structure BinaryFormat where
   /-- The exponent range is not empty. -/
   qmin_le_qmax : qmin ≤ qmax
 
-/-- **Rounding modes.** The four rounding-direction attributes that IEEE 754 requires of binary
-formats: round to nearest with ties to even (the default), toward $+\infty$, toward $-\infty$, and
-toward zero.
+/-- **Rounding modes.** The four rounding modes of IEEE 754 binary arithmetic: round to nearest with
+ties to even, the default, and the three directed rounding modes the standard requires, toward
+$+\infty$, toward $-\infty$ and toward zero.
 
-Source: IEEE Std 754-2019, Clause 4.3; Goldberg, *What every computer scientist should know about
-floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3. -/
+Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
+arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.2. -/
 inductive RoundingMode where
   /-- Round to nearest, ties to even. -/
   | nearestEven
@@ -325,8 +326,10 @@ NaN), the infinities $+\infty$ and $-\infty$, and the finite numbers $\pm m$, gi
 and a magnitude $m \ge 0$ that is a number of the format. A sign bit `true` means negative, so the
 format has the two zeros $+0$ and $-0$.
 
-Source: IEEE Std 754-2019, Clauses 3.3 and 6.2; Boldo, Jourdan, Leroy and Melquiond, *Verified
-compilation of floating-point computations*, Journal of Automated Reasoning, Section 5.1. -/
+Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
+arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.2; Boldo, Jourdan, Leroy and Melquiond,
+*Verified compilation of floating-point computations*, Journal of Automated Reasoning, Section
+5.1. -/
 inductive Value (F : BinaryFormat) where
   /-- The canonical NaN. -/
   | nan
@@ -339,8 +342,8 @@ inductive Value (F : BinaryFormat) where
 operation, division by zero, overflow, underflow and inexact. Each operation returns the flags it
 raises; IEEE's status flags are sticky, so a computation accumulates them by disjunction.
 
-Source: IEEE Std 754-2019, Clause 7; Goldberg, *What every computer scientist should know about
-floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3. -/
+Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
+arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3. -/
 structure Flags where
   /-- Invalid operation. -/
   invalid : Bool := false
@@ -371,8 +374,10 @@ delivers, with the flags it raises, is:
   $|x| < 2^{q_{\min} + p - 1}$: tininess is detected before rounding, and an exact tiny result
   raises no flag.
 
-Source: IEEE Std 754-2019, Clauses 6.3 and 7.4–7.6; Boldo, Jourdan, Leroy and Melquiond, *Verified
-compilation of floating-point computations*, Journal of Automated Reasoning, Section 5.2. -/
+Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
+arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.2 (overflow by rounding mode); Boldo,
+Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Journal of
+Automated Reasoning, Section 5.2. -/
 noncomputable def roundResult (F : BinaryFormat) (r : RoundingMode) (x : ℝ) (z : Bool) :
     Value F × Flags :=
   if x = 0 then (.finite z 0 le_rfl F.isFloatIn_zero, {})
@@ -421,7 +426,7 @@ theorem roundResult_of_round_eq (F : BinaryFormat) (r : RoundingMode) (z : Bool)
 binary format $F$: the sum, difference, product and quotient of two values, and the square root of
 one.
 
-Source: IEEE Std 754-2019, Clause 5.4.1. -/
+Source: IEEE Std 754-2019. -/
 inductive Operation (F : BinaryFormat) where
   /-- The sum $a + b$. -/
   | add (a b : Value F)
@@ -461,9 +466,8 @@ Subtraction $a - b$ is the addition of $a$ and $b$ with its sign bit flipped, so
 $(+\infty) - (-\infty) = +\infty$ and $x - x = +0$ for finite $x$, or $-0$ when rounding toward
 $-\infty$.
 
-Source: IEEE Std 754-2019, Clauses 5.4.1, 6 and 7.2–7.6; Goldberg, *What every computer scientist
-should know about floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Sections 2.2 and
-2.3. -/
+Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
+arithmetic*, ACM Computing Surveys 23(1), 1991, Sections 2.2 and 2.3. -/
 noncomputable def Operation.eval {F : BinaryFormat} (r : RoundingMode) :
     Operation F → Value F × Flags
   | .add a b => sum a b
@@ -672,8 +676,8 @@ theorem not_add_assoc (F : BinaryFormat) (r : RoundingMode) :
       hM.ne] at h
 
 /-- **Multiplication is not associative.** Let $F$ be a binary format with $q_{\min} \le -1$ and
-$q_{\max} \ge 1$, as for the IEEE binary interchange formats, and let $r$ be a rounding mode. There
-are values $a$, $b$ and $c$ of $F$ with $(a \times b) \times c \ne a \times (b \times c)$. For
+$q_{\max} \ge 1$, as for binary32 and binary64, and let $r$ be a rounding mode. There are values
+$a$, $b$ and $c$ of $F$ with $(a \times b) \times c \ne a \times (b \times c)$. For
 instance, with $M$ the largest finite number, $(M \times 2) \times \frac{1}{2}$ is $+\infty$ when
 rounding to nearest or toward $+\infty$ and $M / 2$ when rounding toward zero or toward
 $-\infty$, as $M \times 2$ overflows, while $M \times (2 \times \frac{1}{2}) = M$. -/

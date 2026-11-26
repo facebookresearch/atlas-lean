@@ -19,4 +19,4 @@ delivers, with the flags it raises, is:
 
 ## Sources
 
-- IEEE Std 754-2019, Clauses 6.3 and 7.4–7.6; Boldo, Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Journal of Automated Reasoning, Section 5.2.
+- IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.2 (overflow by rounding mode); Boldo, Jourdan, Leroy and Melquiond, *Verified compilation of floating-point computations*, Journal of Automated Reasoning, Section 5.2.

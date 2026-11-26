@@ -6,4 +6,4 @@ one.
 
 ## Sources
 
-- IEEE Std 754-2019, Clause 5.4.1.
+- IEEE Std 754-2019.

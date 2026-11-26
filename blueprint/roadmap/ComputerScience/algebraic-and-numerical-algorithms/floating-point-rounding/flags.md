@@ -6,4 +6,4 @@ raises; IEEE's status flags are sticky, so a computation accumulates them by dis
 
 ## Sources
 
-- IEEE Std 754-2019, Clause 7; Goldberg, *What every computer scientist should know about floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.
+- IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.

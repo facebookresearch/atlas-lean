@@ -9,4 +9,4 @@ $q_{\max} = e_{\max} - p + 1$; binary64 has $p = 53$, $q_{\min} = -1074$ and $q_
 
 ## Sources
 
-- IEEE Std 754-2019, Clauses 3.3 and 3.6.
+- IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.1 (Table 1).
