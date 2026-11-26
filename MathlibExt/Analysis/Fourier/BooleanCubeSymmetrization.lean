@@ -42,7 +42,10 @@ noncomputable def symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) : MvPolyno
 
 
 
-/-- symmetrization averages p over permuted inputs (0/1 evaluation convention of merged eval_multilinearExtension) -/
+/-- For a real polynomial `p` in `n` variables and a point `x` of the Boolean cube, read with
+`true` as `1` and `false` as `0`, the symmetrization `symmetrize p`, the average of
+`p (X_{σ 1}, …, X_{σ n})` over the permutations `σ`, evaluates at `x` to
+`(n!)⁻¹ * ∑ σ, p (x_{σ 1}, …, x_{σ n})`. -/
 theorem eval_symmetrize {n : ℕ} (p : MvPolynomial (Fin n) ℝ) (x : BoolCube n) : MvPolynomial.eval (fun i => if x i then (1 : ℝ) else 0) (symmetrize p) = (n.factorial : ℝ)⁻¹ * ∑ σ : Equiv.Perm (Fin n), MvPolynomial.eval (fun i => if x (σ i) then (1 : ℝ) else 0) p := by
   have hterm : ∀ σ : Equiv.Perm (Fin n),
       MvPolynomial.eval (fun i => if x i then (1 : ℝ) else 0) (MvPolynomial.rename σ p)

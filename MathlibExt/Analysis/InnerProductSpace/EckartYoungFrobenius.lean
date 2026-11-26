@@ -405,14 +405,20 @@ theorem singularTailSq_le_frobSq_sub (A G : Matrix (Fin m) (Fin n) ℝ) {k : ℕ
   rw [singularTailSq_eq_sum_Ico, frobSq_eq_norm_sq]
   exact sum_sq_singularValues_le_frobenius_sub_sq A G hG
 
-/-- **Eckart–Young, attainment.** The singular tail is attained, by a truncated
-singular value decomposition. -/
+/-- **Eckart–Young, attainment.** For a real `m × n` matrix `A` and `k : ℕ`, some real
+`m × n` matrix `G` of rank at most `k` (a truncated singular value decomposition of `A`) has
+`frobSq (A - G) = singularTailSq A k = ∑_{j ≥ k} σ_j(A) ^ 2`, where `σ_0(A) ≥ σ_1(A) ≥ ⋯` are
+the singular values of `A`. -/
 theorem exists_rank_le_frobSq_sub_eq (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) :
     ∃ G : Matrix (Fin m) (Fin n) ℝ, G.rank ≤ k ∧ frobSq (A - G) = singularTailSq A k :=
   ⟨truncSVD A k, rank_truncSVD_le A k, by
     rw [frobSq_eq_norm_sq, frobenius_sub_truncSVD_sq, singularTailSq_eq_sum_Ico]⟩
 
-/-- **Eckart–Young, the tail is the minimum squared Frobenius error.** -/
+/-- **Eckart–Young, the tail is the minimum squared Frobenius error.** For a real `m × n`
+matrix `A` and `k : ℕ`, the least value of `frobSq (A - G)`, the squared Frobenius norm of
+`A - G`, over real `m × n` matrices `G` of rank at most `k` is
+`singularTailSq A k = ∑_{j ≥ k} σ_j(A) ^ 2`, where `σ_0(A) ≥ σ_1(A) ≥ ⋯` are the singular values
+of `A`. -/
 theorem isLeast_frobSq_sub (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) :
     IsLeast {x : ℝ | ∃ G : Matrix (Fin m) (Fin n) ℝ, G.rank ≤ k ∧ x = frobSq (A - G)}
       (singularTailSq A k) := by

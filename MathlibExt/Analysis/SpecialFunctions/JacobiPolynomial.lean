@@ -64,7 +64,9 @@ theorem gegenbauer_zero (ν : ℝ) : gegenbauer ν 0 = 1 := rfl
 @[simp]
 theorem gegenbauer_one (ν : ℝ) : gegenbauer ν 1 = C (2 * ν) * X := rfl
 
-/-- The three-term recurrence for `gegenbauer`, as an equation theorem. -/
+/-- The three-term recurrence for the Gegenbauer polynomials `C_n = gegenbauer ν n`: for
+real `ν` and `n : ℕ`,
+`C_{n+2} = (n + 2)⁻¹ * (2 * (n + 1 + ν) * X * C_{n+1} - (n + 2 * ν) * C_n)`. -/
 theorem gegenbauer_two_add (ν : ℝ) (n : ℕ) :
     gegenbauer ν (n + 2) = C ((n + 2 : ℝ)⁻¹) *
       (C (2 * (n + 1 + ν)) * X * gegenbauer ν (n + 1) - C (n + 2 * ν) * gegenbauer ν n) :=

@@ -180,7 +180,8 @@ theorem exponentialSolution_burgers_of_nonneg (hc : ∀ i ∈ s, 0 ≤ c i)
         ν * iteratedDeriv 2 (exponentialSolution s c k ν t) x :=
   exponentialSolution_burgers s c k ν t x (ne_of_gt (heatMoment_zero_pos s c k ν hc hp t x))
 
-/-- Initial data of the heat profile. -/
+/-- At time `0` the heat moment of order `0`, `∑ i ∈ s, c i * exp (ν * k i ^ 2 * t + k i * x)`,
+equals `∑ i ∈ s, c i * exp (k i * x)`. -/
 theorem heatMoment_zero_time (x : ℝ) :
     heatMoment s c k ν 0 0 x = ∑ i ∈ s, c i * Real.exp (k i * x) := by
   simp [heatMoment]
