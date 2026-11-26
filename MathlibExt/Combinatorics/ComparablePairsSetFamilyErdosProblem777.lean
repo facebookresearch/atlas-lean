@@ -27,7 +27,7 @@ SOLVED). UnsolvedMath record UM-30007028 (`EP-777`), dataset ulamai/UnsolvedMath
 
 The edges of `G_F` are the pairs `(A, B)` of members with `A ⊊ B`. Each question is stated as posed:
 (1) for all large `n`; (2) for every `c > 0` some constant `C` bounds `m ≤ C 2^{n/2}` for all `n`;
-(3) for all `n`. formal-conjectures has no statement of this problem.
+(3) for all `n`.
 
 We refute the second question of Erdős Problem 777 using a subfamily of the Alon–Frankl
 construction described in Section 2 of *Comparable pairs in families of sets* (arXiv:1411.4196).
