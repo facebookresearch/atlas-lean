@@ -1,9 +1,9 @@
-# de Rham comparison for $H^1$ of an abelian variety
+# $H^1$ of an abelian variety is de Rham with Hodge–Tate weights $0$ and $1$
 
-Let $F$ be a finite extension of
-$\mathbb{Q}_p$ inside $\overline{\mathbb{Q}}_p$ and let $A/F$ be an abelian variety of dimension
-$g$: a commutative group object over $\operatorname{Spec} F$ that is proper, geometrically
-connected and smooth of relative dimension $g$. Let
+Let $F$ be a
+finite extension of $\mathbb{Q}_p$ inside $\overline{\mathbb{Q}}_p$ and let $A/F$ be an abelian
+variety of dimension $g$: a commutative group object over $\operatorname{Spec} F$ that is proper,
+geometrically connected and smooth of relative dimension $g$. Let
 $V = H^1_{\mathrm{et}}(A_{\overline{\mathbb{Q}}_p}, \mathbb{Q}_p)$, on which
 $\sigma \in G_F = \operatorname{Gal}(\overline{\mathbb{Q}}_p/F)$ acts by inverse image along
 $\mathrm{id}_A \times \operatorname{Spec} \sigma$. Then $V$ is finite-dimensional and de Rham, the

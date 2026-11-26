@@ -15,7 +15,7 @@ public import MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison
 import all WantedExt.AlgebraicGeometry.PDivisibleHodgeTateRealizationWanted
 
 /-!
-# de Rham comparison for the first cohomology of an abelian variety over a p-adic field
+# The first cohomology of an abelian variety over a p-adic field is de Rham
 
 For a finite extension `F` of `ℚ_p` inside `\bar{ℚ}_p` and an abelian variety `A/F` of dimension
 `g`, the `Gal(\bar{ℚ}_p/F)`-representation `V = H¹_ét(A_{\bar{ℚ}_p}, ℚ_p)` is de Rham, the jumps of
@@ -69,10 +69,10 @@ public theorem_wanted thetaKer_le_comap_preDeRhamGalois (σ : Galois p) :
     thetaKer p ≤ (thetaKer p).comap (preDeRhamGalois p σ)
 
 set_option linter.concreteInstances false in
-/-- **de Rham comparison for $H^1$ of an abelian variety.** Let $F$ be a finite extension of
-$\mathbb{Q}_p$ inside $\overline{\mathbb{Q}}_p$ and let $A/F$ be an abelian variety of dimension
-$g$: a commutative group object over $\operatorname{Spec} F$ that is proper, geometrically
-connected and smooth of relative dimension $g$. Let
+/-- **$H^1$ of an abelian variety is de Rham with Hodge–Tate weights $0$ and $1$.** Let $F$ be a
+finite extension of $\mathbb{Q}_p$ inside $\overline{\mathbb{Q}}_p$ and let $A/F$ be an abelian
+variety of dimension $g$: a commutative group object over $\operatorname{Spec} F$ that is proper,
+geometrically connected and smooth of relative dimension $g$. Let
 $V = H^1_{\mathrm{et}}(A_{\overline{\mathbb{Q}}_p}, \mathbb{Q}_p)$, on which
 $\sigma \in G_F = \operatorname{Gal}(\overline{\mathbb{Q}}_p/F)$ acts by inverse image along
 $\mathrm{id}_A \times \operatorname{Spec} \sigma$. Then $V$ is finite-dimensional and de Rham, the
