@@ -36,4 +36,14 @@ example : pellShiftedNorm 0 3 2 (-4) 5 1 (-1) 1 = 6 := by
 example : pellShiftBound 3 (-2) 4 = 9 := by
   norm_num [pellShiftBound]
 
+-- At zero the norm meets the bound for no shift, even when both interpolation bases are zero.
+example : pellShiftedNorm 0 0 0 0 0 (-1) 1 0 = pellShiftBound 0 0 0 := by
+  apply le_antisymm (pellShiftedNorm_zero_le_pellShiftBound 0 0 0 0 0 (Or.inr rfl) (Or.inl rfl))
+  rw [pellShiftBound_zero_zero, pellShiftedNorm_zero]
+  norm_num
+
+-- The bound also holds for negative shifts and the other choice of signs.
+example : pellShiftedNorm 3 2 1 (-2) (-4) 1 (-1) 0 ≤ pellShiftBound 3 (-2) (-4) :=
+  pellShiftedNorm_zero_le_pellShiftBound 3 2 1 (-2) (-4) (Or.inl rfl) (Or.inr rfl)
+
 end MetaMathlibExt.pell_solutions_eq_signed_powers
