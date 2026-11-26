@@ -13,8 +13,8 @@ import CSLibExt.Computability.Distributed.SelfStabilization
 /-!
 # Tests for the self-stabilization criterion
 
-The Boolean examples separate closure from convergence and show that admitting a nonconvergent
-execution can change the result without changing the system or the legitimate states.
+The Boolean examples separate closure, coverage, and convergence. In particular, a scheduler
+can admit a convergent run while leaving an initial state with no admitted execution.
 -/
 
 namespace Cslib.LTS.SelfStabilizationTests
@@ -34,13 +34,6 @@ private theorem resetClosed : reset.TrInv legit := by
   change t = (s || a) at hstep
   simpa [legit, hs] using hstep
 
-private theorem resetStabilizes : reset.SelfStabilizing legit admitsReset := by
-  refine ⟨resetClosed, ?_⟩
-  intro ss labels hrun hadm
-  obtain ⟨i, hi⟩ := hadm
-  have hstep : ss (i + 1) = (ss i || labels i) := hrun i
-  exact ⟨i + 1, by simpa [legit, hi] using hstep⟩
-
 private def resetStates (s : Bool) : ωSequence Bool := ωSequence.cons s (.const true)
 
 private theorem resetExecution (s : Bool) :
@@ -49,22 +42,28 @@ private theorem resetExecution (s : Bool) :
   change true = (resetStates s i || true)
   simp
 
--- The restricted scheduler really admits a run from either starting state.
-example (s : Bool) : ∃ ss labels,
+private theorem resetCoverage (s : Bool) : ∃ ss labels,
     ss 0 = s ∧ reset.OmegaExecution ss labels ∧ admitsReset ss labels :=
   ⟨resetStates s, .const true, rfl, resetExecution s, ⟨0, rfl⟩⟩
+
+private theorem resetStabilizes : reset.SelfStabilizing legit admitsReset := by
+  refine ⟨resetClosed, resetCoverage, ?_⟩
+  intro ss labels hrun hadm
+  obtain ⟨i, hi⟩ := hadm
+  have hstep : ss (i + 1) = (ss i || labels i) := hrun i
+  exact ⟨i + 1, by simpa [legit, hi] using hstep⟩
 
 -- Apply the equivalence to the admitted execution that starts outside legitimacy.
 example : ¬ legit (resetStates false 0) ∧
     ∃ n, ∀ m ≥ n, legit (resetStates false m) := by
   refine ⟨Bool.false_ne_true, ?_⟩
-  exact (selfStabilizing_iff_eventually_always resetClosed).mp resetStabilizes
+  exact ((selfStabilizing_iff_eventually_always resetClosed).mp resetStabilizes).2
     (resetStates false) (.const true) (resetExecution false) ⟨0, rfl⟩
 
--- With all runs admitted, the all-false run witnesses failure of entry, despite closure.
+-- Admitting all runs preserves closure and coverage, but the all-false run never enters `legit`.
 example : ¬ reset.SelfStabilizing legit (fun _ _ ↦ True) := by
   intro h
-  obtain ⟨n, hn⟩ := h.2 (.const false) (.const false) (fun _ ↦ rfl) trivial
+  obtain ⟨n, hn⟩ := h.2.2 (.const false) (.const false) (fun _ ↦ rfl) trivial
   exact Bool.false_ne_true hn
 
 -- Overwriting the state with the label permits a step out of legitimacy.
@@ -74,14 +73,36 @@ private def overwrite : LTS Bool Bool where
 private def admitsTrueOnly (_ : ωSequence Bool) (labels : ωSequence Bool) : Prop :=
   ∀ i, labels i = true
 
--- All admitted runs reach legitimacy, so failure of closure is a separate obstruction.
-example : (∀ ss labels, overwrite.OmegaExecution ss labels → admitsTrueOnly ss labels →
-    ∃ n, legit (ss n)) ∧ ¬ overwrite.SelfStabilizing legit admitsTrueOnly := by
-  constructor
+-- Coverage and convergence both hold, but closure fails on a step the scheduler disallows.
+example : (∀ s, ∃ ss labels, ss 0 = s ∧ overwrite.OmegaExecution ss labels ∧
+    admitsTrueOnly ss labels) ∧
+    (∀ ss labels, overwrite.OmegaExecution ss labels → admitsTrueOnly ss labels →
+      ∃ n, legit (ss n)) ∧ ¬ overwrite.SelfStabilizing legit admitsTrueOnly := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro s
+    exact ⟨resetStates s, .const true, rfl, fun _ ↦ rfl, fun _ ↦ rfl⟩
   · intro ss labels hrun hadm
     have hstep : ss 1 = labels 0 := hrun 0
     exact ⟨1, hstep.trans (hadm 0)⟩
   · intro h
     exact Bool.false_ne_true (h.1 true false false rfl rfl)
+
+-- `true` loops and `false` has no outgoing transition.
+private def deadlock : LTS Bool Unit where
+  Tr s _ t := s = true ∧ t = true
+
+-- All runs are admitted. Closure and convergence hold, with a live legitimate run from `true`,
+-- but the old two-clause criterion misses the deadlocked initial state `false`.
+example : deadlock.TrInv legit ∧
+    (∀ ss labels, deadlock.OmegaExecution ss labels → ∃ n, legit (ss n)) ∧
+    (∃ ss labels, ss 0 = true ∧ deadlock.OmegaExecution ss labels) ∧
+    ¬ deadlock.SelfStabilizing legit (fun _ _ ↦ True) := by
+  refine ⟨fun _ _ _ hstep _ ↦ hstep.2, ?_, ?_, ?_⟩
+  · intro ss labels hrun
+    exact ⟨0, (hrun 0).1⟩
+  · exact ⟨.const true, .const (), rfl, fun _ ↦ ⟨rfl, rfl⟩⟩
+  · intro h
+    obtain ⟨ss, labels, hstart, hrun, _⟩ := h.2.1 false
+    exact Bool.false_ne_true (hstart.symm.trans (hrun 0).1)
 
 end Cslib.LTS.SelfStabilizationTests
