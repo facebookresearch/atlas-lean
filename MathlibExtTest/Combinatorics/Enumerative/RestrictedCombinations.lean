@@ -85,3 +85,9 @@ example : restrictedCombinationTotal {1, 4} 7 = 25 := by
   rw [h0, h1, h2, h3, h4, h6] at h
   change a 7 = 25
   omega
+
+-- At length five the gap five cannot occur. At length six it excludes three subsets:
+-- {1, 6}, {1, 3, 6}, and {1, 4, 6}.
+example : restrictedCombinationTotal {1, 5} 5 = 13 := by decide
+example : ({1, 6} : Finset ℕ) ∉ restrictedCombinations {1, 5} 6 2 := by decide
+example : restrictedCombinationTotal {1, 5} 6 = 18 := by decide
