@@ -174,69 +174,6 @@ private theorem bell_cons_mul_count' (m : Multiset ℕ) {a : ℕ} (ha : a ≠ 0)
     ring
   exact_mod_cast hQ
 
-/-- The add-one-element recurrence for `Multiset.bell`: the number of set
-partitions with block sizes given by `m` is the sum, over the distinct part
-sizes `a` of `m`, of the number of partitions obtained by decrementing one
-part of size `a` (or deleting it, when `a = 1`), counted with the multiplicity
-of the decremented size. -/
-private theorem bell_eq_sum_predecessors {m : Multiset ℕ} (h0 : 0 ∉ m) {n : ℕ}
-    (hn : m.sum = n + 1) :
-    m.bell = ∑ a ∈ m.toFinset,
-      (if a = 1 then (m.erase 1).bell
-       else ((a - 1) ::ₘ m.erase a).bell * ((a - 1) ::ₘ m.erase a).count (a - 1)) := by
-  have hsum : ∑ a ∈ m.toFinset, a * m.count a = m.sum := by
-    rw [Finset.sum_multiset_count]
-    exact Finset.sum_congr rfl fun a _ => by rw [smul_eq_mul, mul_comm]
-  have key : ∀ a ∈ m.toFinset, (n + 1) *
-      (if a = 1 then (m.erase 1).bell
-       else ((a - 1) ::ₘ m.erase a).bell * ((a - 1) ::ₘ m.erase a).count (a - 1))
-      = (a * m.count a) * m.bell := by
-    intro a ha
-    have ha_mem : a ∈ m := Multiset.mem_toFinset.mp ha
-    have ha0 : a ≠ 0 := fun h => h0 (by rw [← h]; exact ha_mem)
-    have hconsA : a ::ₘ m.erase a = m := Multiset.cons_erase ha_mem
-    have hsumA : (m.erase a).sum + a = m.sum := by
-      have h := congrArg Multiset.sum hconsA
-      rw [Multiset.sum_cons] at h
-      omega
-    split_ifs with ha1
-    · subst ha1
-      have h1 := bell_cons_mul_count' (m.erase 1) (show (1 : ℕ) ≠ 0 by norm_num)
-      have hsumE : (m.erase 1).sum + 1 = m.sum := by
-        have h := congrArg Multiset.sum (Multiset.cons_erase ha_mem)
-        rw [Multiset.sum_cons] at h
-        omega
-      rw [Multiset.cons_erase ha_mem, hsumE, Nat.choose_one_right] at h1
-      rw [← hn, one_mul, mul_comm (m.count 1) m.bell, h1]
-    · have hale : a ≤ m.sum := Multiset.le_sum_of_mem ha_mem
-      have h1 := bell_cons_mul_count' (m.erase a) ha0
-      rw [hconsA, hsumA, hn] at h1
-      have hsumA' : (m.erase a).sum + (a - 1) = n := by omega
-      have h2 := bell_cons_mul_count' (m.erase a) (show a - 1 ≠ 0 by omega)
-      rw [hsumA'] at h2
-      have hch := Nat.add_one_mul_choose_eq n (a - 1)
-      rw [show a - 1 + 1 = a by omega] at hch
-      calc (n + 1) * (((a - 1) ::ₘ m.erase a).bell
-            * ((a - 1) ::ₘ m.erase a).count (a - 1))
-          = (n + 1) * (n.choose (a - 1) * (m.erase a).bell) := by rw [h2]
-        _ = (a * (n + 1).choose a) * (m.erase a).bell := by
-            rw [← mul_assoc, hch]; ring
-        _ = (a * m.count a) * m.bell := by
-            rw [mul_assoc, ← h1]; ring
-  apply Nat.eq_of_mul_eq_mul_left (Nat.succ_pos n)
-  calc (n + 1) * m.bell = (∑ a ∈ m.toFinset, a * m.count a) * m.bell := by
-        rw [hsum, hn]
-    _ = ∑ a ∈ m.toFinset, (a * m.count a) * m.bell := by rw [Finset.sum_mul]
-    _ = ∑ a ∈ m.toFinset, (n + 1) *
-        (if a = 1 then (m.erase 1).bell
-         else ((a - 1) ::ₘ m.erase a).bell
-           * ((a - 1) ::ₘ m.erase a).count (a - 1)) :=
-        Finset.sum_congr rfl fun a ha => (key a ha).symm
-    _ = (n + 1) * ∑ a ∈ m.toFinset,
-        (if a = 1 then (m.erase 1).bell
-         else ((a - 1) ::ₘ m.erase a).bell
-           * ((a - 1) ::ₘ m.erase a).count (a - 1)) := by rw [Finset.mul_sum]
-
 /-- Extending on the left adds a singleton part. -/
 private theorem toPartition_extendLeft_parts {n : ℕ} (c : OrderedFinpartition n) :
     (toPartition (c.extendLeft)).parts = 1 ::ₘ (toPartition c).parts := by
@@ -684,49 +621,23 @@ private theorem fiber_card_eq_bell : ∀ (n : ℕ) (π : Nat.Partition n),
                     toPartition (c.extendMiddle j) = π)).card) :=
           Finset.sum_add_distrib
         _ = _ := by rw [hNone, hSome]
-    rw [htotal]
-    have h0 : 0 ∉ π.parts := fun h => Nat.lt_irrefl 0 (π.parts_pos h)
-    have hL3 := bell_eq_sum_predecessors h0 π.parts_sum
-    rw [hL3]
-    by_cases h1 : 1 ∈ π.parts
-    · have hsplit : ∑ a ∈ π.parts.toFinset,
-          (if a = 1 then (π.parts.erase 1).bell
-           else ((a - 1) ::ₘ π.parts.erase a).bell
-             * ((a - 1) ::ₘ π.parts.erase a).count (a - 1))
-          = (π.parts.erase 1).bell
-            + ∑ a ∈ π.parts.toFinset.erase 1,
-                (((a - 1) ::ₘ π.parts.erase a).bell
-                  * ((a - 1) ::ₘ π.parts.erase a).count (a - 1)) := by
-        rw [← Finset.add_sum_erase _ _
-          (Multiset.mem_toFinset.mpr h1 : 1 ∈ π.parts.toFinset)]
-        have hsumEq : ∑ a ∈ π.parts.toFinset.erase 1,
-            (if a = 1 then (π.parts.erase 1).bell
-             else ((a - 1) ::ₘ π.parts.erase a).bell
-               * ((a - 1) ::ₘ π.parts.erase a).count (a - 1))
-            = ∑ a ∈ π.parts.toFinset.erase 1,
-                (((a - 1) ::ₘ π.parts.erase a).bell
-                  * ((a - 1) ::ₘ π.parts.erase a).count (a - 1)) :=
-          Finset.sum_congr rfl fun a ha => by
-            have hne : a ≠ 1 := (Finset.mem_erase.mp ha).1
-            simp only [hne, ite_false]
-        rw [ite_eq_left rfl, hsumEq]
-      simp only [h1, ite_true]
-      rw [hsplit]
-    · have herase : π.parts.toFinset.erase 1 = π.parts.toFinset :=
-        Finset.erase_eq_of_notMem (by
-          simp only [Multiset.mem_toFinset]
-          exact h1)
-      simp only [h1, ite_false]
-      rw [zero_add, herase]
-      apply Finset.sum_congr rfl
+    rw [htotal, Nat.bell_eq_sum_erase π]
+    have hlarge : ∀ a ∈ π.parts.toFinset.erase 1,
+        ((a - 1) ::ₘ π.parts.erase a).bell * ((a - 1) ::ₘ π.parts.erase a).count (a - 1)
+          = n.choose (a - 1) * (π.parts.erase a).bell := by
       intro a ha
-      have hne : a ≠ 1 := by
-        intro h
-        apply h1
-        have hmem : a ∈ π.parts := Multiset.mem_toFinset.mp ha
-        rw [h] at hmem
-        exact hmem
-      simp only [hne, ite_false]
+      obtain ⟨ha1, ha⟩ := Finset.mem_erase.mp ha
+      have hmem := Multiset.mem_toFinset.mp ha
+      have hpos := π.parts_pos hmem
+      have hsum := Multiset.sum_erase hmem
+      rw [π.parts_sum] at hsum
+      rw [bell_cons_mul_count' _ (by omega : a - 1 ≠ 0),
+        show (π.parts.erase a).sum + (a - 1) = n by omega]
+    rw [Finset.sum_congr rfl hlarge]
+    by_cases h1 : 1 ∈ π.parts
+    · simpa [h1] using Finset.add_sum_erase π.parts.toFinset
+        (fun a => n.choose (a - 1) * (π.parts.erase a).bell) (Multiset.mem_toFinset.mpr h1)
+    · simp [h1]
 
 /-- The factorial product over the parts of a partition, as a product over
 `1 ≤ i ≤ n` of `(i !)` to the multiplicity of `i`. -/
