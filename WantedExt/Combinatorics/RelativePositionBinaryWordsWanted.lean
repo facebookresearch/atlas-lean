@@ -25,7 +25,9 @@ public import MathlibExt.Combinatorics.Words.EquilibriousWord
 public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.GoldenEigenvector
 public import MathlibExt.Combinatorics.Words.LetterPositionReconstruction
+public import MathlibExt.Combinatorics.Words.MonotoneRelativePosition
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
+public import MathlibExt.Combinatorics.Words.PisaRelativePosition
 public import MathlibExt.Combinatorics.Words.RelativePositionBinaryWords
 public import MathlibExt.Combinatorics.Words.RelativePositionFrequency
 public import MathlibExt.Combinatorics.Words.RelativePositionInjective
@@ -76,19 +78,6 @@ public theorem_wanted exists_word_letterPosition_eq_iff (p : ℕ → ℕ) :
     ((∃ w, BothLettersInfinite w ∧ w 0 = true ∧ ∀ n, 1 ≤ n → letterPosition w false n = p n) ↔
       (∀ n, 1 ≤ n → p n < p (n + 1)) ∧ 0 < p 1 ∧
         {n | 1 ≤ n ∧ 1 < p (n + 1) - p n}.Infinite)
-
-/-- **Non-decreasing functions as relative position functions.** Let $r$ be a function from the
-natural numbers to the natural numbers with $r(n) \ge 1$ and $r(n) \le r(n+1)$ for every
-$n \ge 1$. Then there is an infinite word $w$ over the letters $a$ and $b$ that starts with $a$,
-in which both letters occur infinitely often, and whose relative position function satisfies
-$r_w(n) = r(n)$ for every $n \ge 1$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 8
-(`jis-2025-25.1.5-lem-8`). -/
-public theorem_wanted exists_word_relativePosition_eq_of_monotone (r : ℕ → ℕ)
-    (hpos : ∀ n, 1 ≤ n → 1 ≤ r n) (hmono : ∀ n, 1 ≤ n → r n ≤ r (n + 1)) :
-    ∃ w, BothLettersInfinite w ∧ w 0 = true ∧ ∀ n, 1 ≤ n → relativePosition w n = r n
 
 /-- **Monotonicity of the relative position function and runs of letters.** Let $w$ be an
 infinite word over $\{a, b\}$ that starts with $a$ and in which both letters occur infinitely
@@ -668,25 +657,6 @@ public theorem_wanted pisa_letterPosition_identity (k l m : ℕ) (hk : 1 ≤ k) 
         (∀ n, 1 ≤ n → relativePosition w' n =
           (m - 1 : ℤ) * letterPosition w' true n + (k + l + 1 - m : ℤ) * n + m - l - 1) →
         w' = w
-
-/-- **Relative position of the extended Pisa fixed point via the positions of $b$.** Let
-$k \ge 1$, $l \ge 0$ and $m \ge 1$ be natural numbers, let $\sigma$ be the substitution
-$a \mapsto a^k b a^l$, $b \mapsto a^m$, and let $w$ be a one-sided fixed point of $\sigma$ (so
-$\sigma(w) = w$) that begins with $a$. Let $p_a(n)$ and $p_b(n)$ be the positions (counted from
-$0$) of the $n$-th $a$ and the $n$-th $b$ in $w$, and let $r(n) = p_b(n) - p_a(n)$. Then for
-every $n \ge 1$,
-$$r(n) = \frac{m - 1}{m}\,p_b(n) + \frac{k + l + 1 - m}{m}\,n + \frac{m - l - 1}{m}.$$
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 58
-(`jis-2025-25.1.5-cor-58`). -/
-public theorem_wanted pisa_relativePosition_of_letterPosition_b (k l m : ℕ) (hk : 1 ≤ k)
-    (hm : 1 ≤ m) {w : ℕ → Bool}
-        (hfix : IsSubstitutionImage (fun x : Bool => if x then List.replicate k true ++ [false] ++
-        List.replicate l true else List.replicate m true) w w)
-    (h₀ : w 0 = true) (n : ℕ) (hn : 1 ≤ n) :
-    (relativePosition w n : ℚ) = (m - 1) / m * letterPosition w false n +
-      (k + l + 1 - m) / m * n + (m - l - 1) / m
 
 open Filter Topology in
 /-- **Letter frequencies and mean positions of primitive fixed points.** Let $\varrho$ be a
