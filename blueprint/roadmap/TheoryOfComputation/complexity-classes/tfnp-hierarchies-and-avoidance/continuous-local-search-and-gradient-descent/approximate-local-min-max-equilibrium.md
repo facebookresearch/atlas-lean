@@ -10,7 +10,15 @@ $$
 f(x^*,y^*)>f(x^*,y)-\varepsilon\ \ \text{for all feasible }(x^*,y)\text{ with }\|y-y^*\|\le\delta .
 $$
 
-Regimes: **trivial** if $\delta<\varepsilon/G$ (every feasible point qualifies); **local** if $\delta<\sqrt{2\varepsilon/L}$, where such equilibria always exist and are computationally equivalent to approximate fixed points of the projected gradient descent-ascent map $(x,y)\mapsto(\Pi(x-\nabla_xf),\Pi(y+\nabla_yf))$; **global** if $\delta$ is comparable to the diameter of the feasible set, where existence is not guaranteed.
+Regimes: **trivial** if $\delta<\varepsilon/G$ (every feasible point qualifies); **local** if $\delta<\sqrt{2\varepsilon/L}$, where such equilibria always exist and are computationally equivalent to approximate fixed points of projected gradient descent-ascent; **global** if $\delta$ is comparable to the diameter of the feasible set, where existence is not guaranteed.
+
+Write $K$ for the feasible polytope, $\Pi_K$ for Euclidean projection onto it, and $K(y)=\{x:(x,y)\in K\}$, $K(x)=\{y:(x,y)\in K\}$ for its slices. The coordinate-slice map $(x,y)\mapsto\bigl(\Pi_{K(y)}(x-\nabla_xf(x,y)),\,\Pi_{K(x)}(y+\nabla_yf(x,y))\bigr)$ need not map $K$ into itself: for $K=\{(x,y)\in[0,1]^2:x+y\le1\}$ and $f=-x+y$ it sends $(0,0)$ to $(1,1)\notin K$. The joint map
+
+$$
+F(x,y)=\Pi_K\bigl(x-\nabla_xf(x,y),\ y+\nabla_yf(x,y)\bigr)
+$$
+
+is a continuous self-map of $K$, so it has fixed points by Brouwer; every fixed point of $F$ satisfies the coordinate-slice conditions $x=\Pi_{K(y)}(x-\nabla_xf(x,y))$ and $y=\Pi_{K(x)}(y+\nabla_yf(x,y))$, and computing approximate fixed points of the two maps is computationally equivalent (Daskalakis–Skoulakis–Zampetakis, Definition 3.8 and the proof of Theorem 5.2).
 
 ## Sources
 

@@ -1,19 +1,24 @@
 # Deferring the linear-time check of inner-product arguments
 
-In the inner-product-argument polynomial commitment over a group $\mathbb{G}$ with generators $G_0,\dots,G_{d-1}$ ($d=2^{k}$), after $k$ folding rounds with challenges $u_1,\dots,u_k\in\mathbb{F}^{\times}$ the verifier must check one equation involving $G'=\langle\mathbf{s},\mathbf{G}\rangle$, where $\mathbf{s}$ is the coefficient vector of
-$h(X)=\prod_{i=1}^{k}\bigl(u_i^{-1}+u_i X^{2^{i-1}}\bigr)$. All other verifier work is $O(k)$ group operations, and $h(z)$ can be evaluated in $O(k)$ field operations for any $z$. Hence the only linear-time check is "$G'$ is a commitment to $h$", an instance of a polynomial-evaluation claim that can be accumulated: given claims $(G'_j,h_j)$, a random point $z$ and a random linear combination reduce them to a single opening of $\sum_j\alpha^{j}G'_j$ at $z$.
+Let $\mathsf{PC}_{\mathrm{DL}}$ be the inner-product-argument polynomial commitment over a prime-order group $\mathbb{G}$ (order $q$) with Pedersen generators $G_0,\dots,G_d$, where $d+1=2^{k}$. For an evaluation claim with proof $\pi$, the *succinct check* recomputes the challenges $\xi_0,\xi_1,\dots,\xi_k\in\mathbb{F}_q$ from the random oracle, uses $O(k)$ scalar multiplications to check every equation except one, and outputs the polynomial
+
+$$
+h(X)=\prod_{i=0}^{k-1}\bigl(1+\xi_{k-i}\,X^{2^{i}}\bigr)\in\mathbb{F}_q[X],
+$$
+
+whose constant term is $1$, together with the group element $U$ contained in $\pi$. The full check additionally verifies that $U$ is the commitment to the coefficient vector of $h$, which takes $O(d)$ scalar multiplications; $h(z)$ itself can be evaluated with $O(k)$ field operations. Claims of the form "$U_i$ commits to $h_i$" can be accumulated: with $\alpha$ and then $z$ derived from the random oracle, set $h=\sum_i\alpha^{i}h_i$ and $C=\sum_i\alpha^{i}U_i$; the accumulation prover supplies an evaluation proof that $C$ opens to $v=h(z)$ at $z$, forming the new accumulator; the accumulation verifier recomputes $C$, $z$ and checks $h(z)=v$ with $O(\log d)$ scalar multiplications per claim; and the decider runs the full check of that one evaluation proof, with $O(d)$ scalar multiplications.
 
 ## Proof sketch
 
-Unrolling the folding recursion shows that the final generator is $\sum_i s_iG_i$ with $s_i=\prod_{\ell}u_\ell^{\pm1}$ determined by the binary expansion of $i$, which is exactly the coefficient vector of the product $h(X)$. Evaluating $h$ is a product of $k$ factors. Since commitments are linear in coefficients, several claims about the same generators combine linearly, and a polynomial identity checked at a random $z$ has soundness error at most $d/|\mathbb{F}|$ by Schwartz–Zippel.
+Unrolling the folding of the generators shows that the final generator $U$ is $\sum_i s_iG_i$ with $s_i$ a product of challenges selected by the binary expansion of $i$, which is the coefficient vector of $h$. Since commitments are linear in coefficients, $C$ commits to $h$ whenever every $U_i$ commits to $h_i$. Conversely, if some $U_i$ does not, then $\sum_i\alpha^{i}(U_i-\mathsf{Commit}(h_i))=0$ only for few $\alpha$, and if $C$ does not commit to $h$, an accepted opening at the random-oracle point $z$ to $h(z)$ is unlikely by the extractability of $\mathsf{PC}_{\mathrm{DL}}$; both events reduce to zero-finding games in the random oracle model.
 
 ## Depends on
 
 - [Accumulation scheme for a predicate](accumulation-scheme.md)
 - [Polynomial commitment schemes](../zero-knowledge-and-arguments/polynomial-commitment-schemes.md)
 - [Pedersen commitment scheme](../commitment-schemes/pedersen-commitments-perfect-hiding-and-binding/scheme.md)
+- [The random oracle model](../../public-key/random-oracle-constructions/the-random-oracle-model.md)
 
 ## Sources
 
-- Sean Bowe, Jack Grigg, Daira Hopwood, "Recursive Proof Composition without a Trusted Setup", IACR ePrint 2019/1021 (2019).
-- Benedikt Bünz, Alessandro Chiesa, Pratyush Mishra, Nicholas Spooner, "Proof-Carrying Data from Accumulation Schemes", TCC (2020), IACR ePrint 2020/499.
+- Benedikt Bünz, Alessandro Chiesa, Pratyush Mishra, Nicholas Spooner, "Proof-Carrying Data from Accumulation Schemes", TCC (2020), IACR ePrint 2020/499, Section 7.1 and Appendix A (Figure 2, the subroutine $\mathsf{PC}_{\mathrm{DL}}.\mathsf{SuccinctCheck}$).

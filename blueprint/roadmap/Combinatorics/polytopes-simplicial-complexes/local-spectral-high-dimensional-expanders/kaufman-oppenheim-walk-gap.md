@@ -6,7 +6,13 @@ $$
 \lambda_2\bigl(N_k^{\wedge}\bigr) \le 1 - \frac{1}{k+2} + O_k(\lambda),
 $$
 
-so that its spectral gap is at least $\frac{1}{k+2} - O_k(\lambda)$. For the complete complex the bound $1 - \frac{1}{k+2}$ is attained, so the theorem is tight up to the additive $O_k(\lambda)$ term.
+so that its spectral gap is at least $\frac{1}{k+2} - O_k(\lambda)$. The main term is asymptotically tight but not attained: for the complete $d$-dimensional complex on $N$ vertices the up-down walk on $X(k)$ is a Johnson-scheme walk with second eigenvalue
+
+$$
+\Bigl(1 - \frac{1}{k+2}\Bigr)\frac{N-k-2}{N-k-1} < 1 - \frac{1}{k+2},
+$$
+
+which tends to $1 - \frac{1}{k+2}$ as $N \to \infty$ for fixed $k$. For example, for $d = 2$, $k = 1$ and $N = 3$ the up-step from an edge must take the unique triangle and the down-step picks each of its edges uniformly, so the second eigenvalue is $0$.
 
 ## Proof sketch
 

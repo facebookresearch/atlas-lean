@@ -1,10 +1,16 @@
 # Chen-Cotler-Huang-Li: shadow tomography without quantum memory needs many samples
 
-Every protocol that measures the copies of an unknown $n$-qubit state one at a time (with arbitrary adaptivity but without quantum memory across copies) and solves shadow tomography for $M$ observables to constant accuracy requires $\Omega(\min(M, 2^n))$ copies in the worst case. In contrast, protocols with quantum memory need only $\mathrm{polylog}(M)\cdot n$ copies.
+For every $M$ there is a family of $M$ observables on $n$ qubits such that every protocol that measures the copies of an unknown state one at a time (with arbitrary adaptivity but without quantum memory across copies) and predicts all $M$ expectation values $\mathrm{tr}(O_x \rho)$ to error $\varepsilon$ with probability at least $2/3$ requires
+
+$$
+T = \Omega\Bigl( \frac{\min\{M/\log M,\ 2^n\}}{\varepsilon^2} \Bigr)
+$$
+
+copies. The family can be taken random: $O_i = U_i Z_n U_i^\dagger$ and $O_{i + M/2} = -O_i$ for $i \le M/2$, with $U_i$ independent Haar-random unitaries on $n$ qubits and $Z_n$ the Pauli-$Z$ operator on the last qubit, and the bound then holds with constant probability over the family. In contrast, protocols with quantum memory need only $\mathrm{poly}(n, \log M, 1/\varepsilon)$ copies.
 
 ## Proof sketch
 
-Model a memoryless adaptive protocol as a tree of single-copy POVMs and compare the induced distribution over leaves for the maximally mixed state with that for a random perturbation $\frac{1}{2^n}(I + 3\varepsilon P)$ with $P$ a random Pauli. A second-moment (likelihood ratio) bound shows each copy reveals at most $O(1/\min(M, 2^n))$ information about $P$ on average, so distinguishing requires $\Omega(\min(M, 2^n))$ copies; upper bounds with memory come from the Bădescu-O'Donnell algorithm.
+Reduce to distinguishing the maximally mixed state from $\rho_x = 2^{-n}(I + 3\varepsilon O_x)$ for a uniformly random index $x$. Model a memoryless adaptive protocol as a tree of single-copy POVMs; a likelihood-ratio bound shows that any such protocol needs $\Omega\bigl(1/(\varepsilon^2 \delta)\bigr)$ copies, where $\delta = \sup_{|\phi\rangle} \frac{2}{M}\sum_{i \le M/2} \langle \phi | O_i | \phi \rangle^2$. For the random family, an $\epsilon$-net over pure states, concentration for Haar-random states and a union bound give $\delta = O(\log M / M) + 1/(2^n + 1)$ with constant probability. The separate bound for Pauli observables comes from a different family. Upper bounds with memory come from the Bădescu-O'Donnell algorithm.
 
 ## Depends on
 
@@ -16,4 +22,4 @@ Model a memoryless adaptive protocol as a tree of single-copy POVMs and compare 
 
 ## Sources
 
-- Sitan Chen, Jordan Cotler, Hsin-Yuan Huang, Jerry Li, "Exponential separations between learning with and without quantum memory", FOCS (2021); arXiv:2111.05881.
+- Sitan Chen, Jordan Cotler, Hsin-Yuan Huang, Jerry Li, "Exponential separations between learning with and without quantum memory", FOCS (2021); arXiv:2111.05881, Theorem 5.5, Lemma 5.6 and Corollary 5.7 (equation (110)).

@@ -1,10 +1,10 @@
-# Extractor blow-up in recursive proof composition
+# Size bound for recursively composed knowledge extractors
 
-Suppose a proof system's knowledge extractor $\mathsf{E}$ for a prover of running time $t$ runs in time at most $c\cdot t^{k}$ for constants $c\ge 1$, $k\ge 1$. In recursive composition, where the statement at depth $j$ asserts the existence of an accepting proof at depth $j-1$, extracting a full transcript of depth $d$ requires applying $\mathsf{E}$ to provers that are themselves extractors, so the running time of the depth-$d$ extraction is bounded by $c^{(k^{d}-1)/(k-1)}\,t^{k^{d}}$ (and by $c^{d}\,t$ when $k=1$). Consequently, for $k>1$, extraction is polynomial-time only for $d=O(1)$, which is why knowledge-sound PCD from extractable SNARKs is proven for constant-depth transcripts and IVC for polynomially many steps is obtained via constant-depth trees.
+Suppose a proof system's knowledge extractor $\mathsf{E}$ for a prover of size $t$ has size at most $c\cdot t^{k}$ for constants $c\ge 1$, $k\ge 1$. In recursive composition, where the statement at depth $j$ asserts the existence of an accepting proof at depth $j-1$, extracting a full transcript of depth $d$ applies $\mathsf{E}$ to provers that are themselves extractors, and the size of the depth-$d$ extractor is at most $c^{(k^{d}-1)/(k-1)}\,t^{k^{d}}$ for $k>1$, and at most $c^{d}\,t$ for $k=1$. This upper bound is polynomial in $t$ when $d=O(1)$, and for $k=1$ also when $c^{d}$ is polynomial, for example $d=O(\log t)$ with $c$ constant. It is a guarantee for those depths, not a lower bound: it does not show that extraction fails at larger depths, only that this argument gives no polynomial bound there. This is why knowledge-sound PCD from extractable SNARKs is proven for constant-depth compliance predicates, and IVC for polynomially many steps is obtained via trees of constant depth.
 
 ## Proof sketch
 
-Let $T_j$ be the running time of the depth-$j$ extractor; then $T_0=t$ and $T_j\le c\,T_{j-1}^{k}$. Unrolling the recursion gives $T_d\le c^{1+k+\dots+k^{d-1}}t^{k^{d}}$, which is the stated bound. For $k=1$ the exponent of $t$ stays $1$ and the constant multiplies to $c^{d}$.
+Let $T_j$ bound the size of the depth-$j$ extractor; then $T_0=t$ and $T_j\le c\,T_{j-1}^{k}$. Unrolling the recurrence gives $T_d\le c^{1+k+\dots+k^{d-1}}t^{k^{d}}$, which is the stated bound. For $k=1$ the exponent of $t$ stays $1$ and the constant multiplies to $c^{d}$.
 
 ## Depends on
 
@@ -14,5 +14,5 @@ Let $T_j$ be the running time of the depth-$j$ extractor; then $T_0=t$ and $T_j\
 
 ## Sources
 
-- Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer, "Recursive Composition and Bootstrapping for SNARKs and Proof-Carrying Data", STOC (2013).
+- Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer, "Recursive Composition and Bootstrapping for SNARKs and Proof-Carrying Data", STOC (2013), Section 2.2 and Remark 6.3.
 - Paul Valiant, "Incrementally Verifiable Computation or Proofs of Knowledge Imply Time/Space Efficiency", TCC (2008).

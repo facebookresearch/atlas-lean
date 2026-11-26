@@ -1,10 +1,10 @@
 # ProtoStar: generic accumulation for special-sound protocols
 
-Let $\Pi$ be a $(2k-1)$-move special-sound protocol for $\mathcal{R}$ with an algebraic verifier of degree $d$ and output length $\ell$. Compiling $\Pi$ with a binding additively homomorphic commitment to the prover messages and the Fiat–Shamir transform yields a NARK, and this NARK admits an accumulation scheme in the random oracle model whose accumulation verifier performs a number of group scalar multiplications linear in $k$ (one per committed message) plus $O(1)$ for the committed error terms, $O(d)$ field operations and one hash, independently of $\ell$ when compressed verification is used. By the compiler from NARKs with accumulation, this gives IVC/PCD for any relation with such a protocol, in particular for high-degree Plonkish constraint systems.
+Let $\Pi$ be a $(2k-1)$-move special-sound protocol, with negligible knowledge error, whose verifier checks $\ell$ algebraic equations of degree $d$ over a field with $|\mathbb{F}|\ge2^{\lambda}$. Committing to the prover messages with a binding additively homomorphic commitment and applying the Fiat–Shamir transform yields a NARK, and this NARK has an accumulation scheme in the random oracle model, with perfect completeness and knowledge error $(Q+1)(d+1)/|\mathbb{F}|+\mathrm{negl}(\lambda)$ against $Q$-query adversaries ($(Q+1)(d+4)/|\mathbb{F}|+\mathrm{negl}(\lambda)$ for the compressed variant below). After all verification equations are compressed into one by a random linear combination, the accumulation verifier performs $k+2$ group scalar multiplications and $k+d+O(1)$ field and hash operations (without compression, $k+d-1$ group scalar multiplications). If $\Pi$ is a protocol for an NP-complete relation, applying the compiler from NARKs with accumulation to IVC, under the Fiat–Shamir heuristic for a concrete hash function, gives IVC schemes whose recursive circuit depends only on $k$ and $d$, not on the proof size or verifier time of $\Pi$; this covers high-degree Plonkish constraint systems with lookups.
 
 ## Proof sketch
 
-The accumulator is a relaxed transcript with committed messages, slack $\mu$ and a committed error. Folding uses the error polynomial: the prover commits to the $d-1$ intermediate coefficients and a random $\alpha$ combines everything linearly, so the verifier only combines commitments homomorphically. Soundness: from $d+1$ accepting folds with distinct $\alpha$ one interpolates the error polynomial, and special soundness of $\Pi$ together with binding yields witnesses for both inputs.
+The accumulator is a relaxed transcript with committed messages, a slack $\mu$ and a committed error. Folding uses the error polynomial: the prover commits to its $d-1$ intermediate coefficients and a random $\alpha$ combines accumulator and new proof linearly, so the verifier only combines commitments homomorphically. Soundness: from $d+1$ accepting folds with distinct $\alpha$ one interpolates the error polynomial, and binding together with knowledge soundness of the Fiat–Shamir NARK yields witnesses for both inputs.
 
 ## Depends on
 
@@ -22,4 +22,4 @@ The accumulator is a relaxed transcript with committed messages, slack $\mu$ and
 
 ## Sources
 
-- Benedikt Bünz, Binyi Chen, "Protostar: Generic Efficient Accumulation/Folding for Special-Sound Protocols", ASIACRYPT (2023), IACR ePrint 2023/620.
+- Benedikt Bünz, Binyi Chen, "Protostar: Generic Efficient Accumulation/Folding for Special-Sound Protocols", ASIACRYPT (2023), IACR ePrint 2023/620, abstract, Section 1, Theorem 2, Theorem 3 and Corollary 2.

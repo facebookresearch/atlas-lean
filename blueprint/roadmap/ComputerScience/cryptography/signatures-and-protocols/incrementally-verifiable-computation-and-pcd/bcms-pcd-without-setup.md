@@ -1,10 +1,10 @@
 # Transparent PCD from accumulation of discrete-log inner-product arguments
 
-In the random oracle model, assuming hardness of the discrete logarithm problem in a prime-order group, the inner-product-argument polynomial commitment scheme has an accumulation scheme whose accumulation verifier performs $O(\log d)$ group operations for degree-$d$ polynomials. Consequently there exists a SNARK with accumulation and hence (heuristically instantiating the random oracle inside recursion) PCD for every polynomial-time compliance predicate with a transparent (public-coin) setup.
+In the random oracle model, if the inner-product-argument polynomial commitment $\mathsf{PC}_{\mathrm{DL}}$ is a polynomial commitment scheme (as it is under the hardness of discrete logarithms in a prime-order group), then it has a zero-knowledge accumulation scheme in which, for $n$ evaluation claims and $m$ old accumulators about polynomials of degree at most $d$, the accumulation verifier performs $O((n+m)\log d)$ scalar multiplications, the decider performs $O(d)$, the accumulation prover $O(n+m+d)$, and the accumulator is one group element plus an evaluation proof of $O(\log d)$ group elements. Combined with a SNARK whose verifier is succinct given oracle access to $\mathsf{PC}_{\mathrm{DL}}$ checks, this gives a SNARK with an accumulation scheme in the random oracle model. Heuristically instantiating the random oracle with a hash function, and applying the compiler from SNARKs with accumulation to PCD, which holds in the standard model, yields PCD for polynomial-time compliance predicates in the uniform reference string model, without secret parameters; the PCD conclusion is heuristic because of that instantiation.
 
 ## Proof sketch
 
-Accumulation follows from the deferred check: each accumulator is a polynomial-evaluation claim about the generator commitment $G'$ to $h$, combined by random linear combination and opened once by the decider. Soundness reduces to the evaluation binding of the commitment, which reduces to discrete logarithms. The general compiler from SNARKs with accumulation to PCD then applies.
+Accumulators and inputs are both evaluation claims, so the scheme accumulates claims only. Each claim's succinct check outputs a pair $(h_i,U_i)$ whose remaining check "$U_i$ commits to $h_i$" is combined by a random linear combination and opened once at a random-oracle point; the accumulation verifier repeats the succinct checks and the combination, and the decider runs the full check of one evaluation proof. The general compiler from SNARKs with accumulation to PCD then applies to the instantiated scheme.
 
 ## Depends on
 
@@ -21,5 +21,4 @@ Accumulation follows from the deferred check: each accumulator is a polynomial-e
 
 ## Sources
 
-- Benedikt Bünz, Alessandro Chiesa, Pratyush Mishra, Nicholas Spooner, "Proof-Carrying Data from Accumulation Schemes", TCC (2020), IACR ePrint 2020/499.
-- Sean Bowe, Jack Grigg, Daira Hopwood, "Recursive Proof Composition without a Trusted Setup", IACR ePrint 2019/1021 (2019).
+- Benedikt Bünz, Alessandro Chiesa, Pratyush Mishra, Nicholas Spooner, "Proof-Carrying Data from Accumulation Schemes", TCC (2020), IACR ePrint 2020/499, Section 1.1 (Theorems 1 to 3 and the heuristic PCD constructions), Theorem 7.1, Section 7.1 and Appendix A.

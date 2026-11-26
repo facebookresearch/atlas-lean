@@ -2,7 +2,7 @@
 
 Each of the following explicit construction problems, with parameters matching those guaranteed by the probabilistic method, lies in $\mathrm{APEPP}$, that is, reduces in polynomial time to Avoid: truth tables of length $2^n$ and circuit complexity $2^n/(2n)$; pseudorandom generators against circuits of fixed polynomial size; $n\times n$ matrices over $\mathbb{F}_2$ of high rigidity; Ramsey graphs; two-source extractors; binary linear codes on the Gilbert–Varshamov bound; strings of maximum $\mathrm{K}^{\mathrm{poly}}$ (time-bounded Kolmogorov) complexity.
 
-For several of them (for instance rigid matrices) there are direct polynomial-time reductions to constructing hard truth tables; e.g. if $\mathrm{E}$ contains a language of circuit complexity $\Omega(2^n/n)$ then an $n\times n$ matrix over $\mathbb{F}_2$ that is $\Omega(n^2)$-far from every rank-$\Omega(n)$ matrix is constructible in polynomial time.
+For several of them (for instance rigid matrices) there are direct polynomial-time reductions to constructing hard truth tables; e.g. if $\mathrm{E}$ contains a language of circuit complexity $\Omega(2^n/n)$ then there are constants $c,d>0$ such that an $n\times n$ matrix over $\mathbb{F}_2$ differing in at least $dn^2$ entries from every matrix of rank at most $cn$ is constructible in polynomial time (Korten, Theorem 12).
 
 ## Proof sketch
 

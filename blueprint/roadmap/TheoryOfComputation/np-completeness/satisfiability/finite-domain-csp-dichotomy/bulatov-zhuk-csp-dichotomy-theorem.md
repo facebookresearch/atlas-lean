@@ -5,7 +5,7 @@ Let $\mathbb{A}$ be a finite relational structure with finite signature and let 
 1. $\mathbb{C}$ has a WNU polymorphism (equivalently a Siggers polymorphism; equivalently $\mathbb{A}$ itself has a WNU polymorphism), and $\mathrm{CSP}(\mathbb{A})\in\mathsf{P}$;
 2. otherwise, $\mathrm{CSP}(\mathbb{A})$ is NP-complete.
 
-In particular the Feder–Vardi Dichotomy Conjecture and the Algebraic Dichotomy Conjecture are true. Hardness is the Bulatov–Jeavons–Krokhin theorem combined with Maróti–McKenzie; tractability was proved independently by Bulatov (via congruence separation, centralizers and a "few subpowers"/bounded-width decomposition) and by Zhuk (via strong subuniverses and a recursive domain-reduction algorithm).
+In particular the Feder–Vardi Dichotomy Conjecture and the Algebraic Dichotomy Conjecture are true. Hardness is the Bulatov–Jeavons–Krokhin theorem combined with Maróti–McKenzie; tractability was proved independently by Bulatov (via congruence separation, centralizers and a "few subpowers"/bounded-width decomposition) and by Zhuk (via binary absorbing subuniverses, centers, and congruences with polynomially complete or linear quotients, and a recursive domain-reduction algorithm).
 
 ## Proof sketch
 

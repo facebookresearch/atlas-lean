@@ -12,5 +12,5 @@ Multiply $Aw=cC$ by $c'$ and $Aw'=c'C$ by $c$ and subtract. The norm bound follo
 
 ## Sources
 
-- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", IACR ePrint 2024/257 (2024).
+- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", ASIACRYPT (2025), IACR ePrint 2024/257.
 - Dan Boneh, Binyi Chen, "LatticeFold+: Faster, Simpler, Shorter Lattice-Based Folding for Succinct Proof Systems", CRYPTO (2025), IACR ePrint 2025/247.

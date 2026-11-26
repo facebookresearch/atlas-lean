@@ -2,7 +2,6 @@
 
 - [The dimension of shifted partial derivatives](shifted-partials-measure.md)
 - [Efremenko–Garg–Oliveira–Wigderson: barriers for rank methods](egow-rank-barrier.md)
-- [Kayal: sums of powers of low-degree polynomials cannot compute the product of variables](kayal-sum-of-powers.md)
 - [Projected shifted partials and the Nisan–Wigderson design polynomial](projected-shifted-partials.md)
 - [Shifted partials of a product of low-degree polynomials](spd-product-upper-bound.md)
 - [Shifted partials of design polynomials are near-maximal](spd-design-lower-bound.md)

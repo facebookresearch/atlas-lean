@@ -1,20 +1,20 @@
 # de Rezende–Fleming–Janett–Nordström–Pang: truly supercritical trade-offs for resolution and cutting planes
 
-There are explicit families of unsatisfiable CNF formulas with polynomial-size resolution refutations such that every resolution or cutting planes refutation of size at most a superpolynomial threshold must have depth superlinear (in some regimes superpolynomial) in the formula size, giving the first truly supercritical size-depth trade-offs for these systems. Moreover, there are truly supercritical trade-offs between width and size for tree-like resolution, and robust supercritical trade-offs between dimension and iteration number for the Weisfeiler-Leman algorithm, equivalently between the number of variables and quantifier depth in first-order logic with counting.
+There are two regimes of unsatisfiable $3$-CNF formulas $F_N$ over $N$ variables, of size $S(F_N)$, in which every small refutation must be deep:
+
+1. **Polynomial size.** Resolution refutes $F_N$ in size $s$ polynomial in $N$, but every cutting planes refutation of $F_N$ of size at most $s^{1.4}$ has depth at least $S(F_N)^{2.4}$.
+2. **Quasi-polynomial size.** Resolution refutes $F_N$ in size $s$ quasi-polynomial in $N$, but every cutting planes refutation of $F_N$ of size at most $s \cdot \exp\big((\log N)^{1.9}\big)$ has depth superpolynomial in $N$.
+
+Both lower bounds hold for semantic cutting planes, and since cutting planes is at least as strong as resolution they give truly supercritical size-depth trade-offs for resolution too. The precise version takes suitable integers $3 \le c < k$ (with $k$ small compared with the base number of variables $n$), a real $\delta \in (0, 0.9)$ and a lifting parameter $m \ge (50n/\delta)^{2/\delta}$: the formulas have resolution refutations of size $m^{O(k)} (4n)^{k}$, while every semantic cutting planes refutation of size at most $\tfrac{1}{2} m^{(1-\delta)(k+c)}$ has depth $\Omega(n^{k}/k)$; constant $k$ and $\delta$ give the first regime, and $k = \Theta(\sqrt{\log n})$ with $\delta = \Theta(1/\sqrt{k})$ the second.
 
 ## Proof sketch
 
-The base result is a supercritical width-depth trade-off for resolution obtained by refining and strengthening the compression scheme for the cops-and-robber game on suitable graphs. Improved dag-like and tree-like lifting theorems transfer it to cutting planes, tree-like resolution and monotone circuits, while the correspondence between the cops-and-robber game and the bijective pebble game gives the Weisfeiler-Leman statement.
+The base result is a supercritical width-depth trade-off for resolution: Tseitin formulas over compressed cylinder graphs have resolution refutations of width $k + 3$, but every refutation of width at most $k + c$ has depth $\Omega(n^{k}/(k + c))$, proved by refining the compression scheme for the cops-and-robber game. The formula is then composed with the indexing gadget on $m$ data bits and rewritten as a $3$-CNF. A cutting planes refutation of size $s$ and depth $d$ yields a triangle-DAG of size $s$ and depth $d$ for the falsified-clause search problem of the composed formula, and a tight width-depth lifting theorem for triangle-DAGs converts a triangle-DAG of size $\tfrac{1}{2} m^{(1-\delta)w}$ and depth $d$ into a resolution refutation of the base formula of width $w$ and depth $dw$. With $w = k + c$ the base trade-off forces large $d$. The resolution upper bound lifts the width-$(k+3)$ refutation through the gadget.
 
 ## Depends on
 
 - [Supercritical trade-offs in proof complexity](supercritical-tradeoff.md)
 
-## Proof depends on
-
-- [Cutting planes lower bounds for lifted formulas via real dag-like lifting](../stabbing-planes-and-semi-algebraic-branching/lifted-cp-lower-bounds.md)
-- [Truly supercritical depth trade-offs for monotone circuits](../../../TheoryOfComputation/circuit-complexity/monotone-separations-and-supercritical-depth/supercritical-monotone-depth.md)
-
 ## Sources
 
-- S. F. de Rezende, N. Fleming, D. Janett, J. Nordström, S. Pang, "Truly supercritical trade-offs for resolution, cutting planes, monotone circuits, and Weisfeiler-Leman", STOC (2025), arXiv:2411.14267.
+- S. F. de Rezende, N. Fleming, D. Janett, J. Nordström, S. Pang, "Truly supercritical trade-offs for resolution, cutting planes, monotone circuits, and Weisfeiler-Leman", STOC (2025), arXiv:2411.14267 (Theorems 1.2, 2.5, 2.13 and 2.15).

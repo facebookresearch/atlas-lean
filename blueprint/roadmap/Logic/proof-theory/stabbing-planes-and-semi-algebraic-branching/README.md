@@ -9,4 +9,4 @@
 - [Dadush–Tiwari: cutting planes refute Tseitin formulas in quasi-polynomial size](dadush-tiwari-cp-tseitin.md)
 - [Communication-based depth lower bounds for stabbing planes](sp-depth-lower-bound.md)
 - [Cutting planes lower bounds for lifted formulas via real dag-like lifting](lifted-cp-lower-bounds.md)
-- [Random CNFs are hard for cutting planes](random-cnf-cutting-planes.md)
+- [Random logarithmic-width CNFs are hard for cutting planes](random-cnf-cutting-planes.md)

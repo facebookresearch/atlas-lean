@@ -4,5 +4,5 @@ Let $d$ be a power of two, $R=\mathbb{Z}[X]/(X^{d}+1)$ and $R_q=R/qR$. For $a\in
 
 ## Sources
 
-- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", IACR ePrint 2024/257 (2024).
+- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", ASIACRYPT (2025), IACR ePrint 2024/257.
 - Vadim Lyubashevsky, Gregor Seiler, "Short, Invertible Elements in Partially Splitting Cyclotomic Rings and Applications to Lattice-Based Zero-Knowledge Proofs", EUROCRYPT (2018).

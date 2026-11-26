@@ -4,7 +4,7 @@ Let $f : (\{0,1\}^n, \mu_p) \to \mathbb{R}$ and $r \ge 1$. If $f$ is $(r, \varep
 
 ## Proof sketch
 
-The generalized derivative $D_S f$ is a signed combination of the $2^{|S|}$ restrictions $f_{S \to x}$ with coefficients bounded by $1$ after normalization, so the triangle inequality bounds $I_S(f)$ by restriction norms. Conversely, a restriction is recovered from derivatives by the inverse Möbius-type expansion over subsets of $S$, again with $2^{O(|S|)}$ terms.
+Write $E_S f = \sum_{x \in \{0,1\}^S} (-1)^{|S|-|x|} f_{S \to x}$, so that $I_S(f) = \|E_S f\|_2^2$. Its $2^{|S|}$ coefficients are $\pm 1$, so the triangle inequality gives $\sqrt{I_S(f)} \le \sum_x \|f_{S \to x}\|_2 \le 2^{|S|}\varepsilon$. Conversely, for $i \notin S$ write $g = E_S f$; then $E_S(f_{i \to a}) = g_{i \to a}$ and $g_{i \to a}$ is the $\mu_p$-average of $g$ over coordinate $i$ plus $\pm(1-p)$ or $\pm p$ times $E_{S \cup \{i\}} f$, so $\|E_S(f_{i \to a})\|_2 \le \|E_S f\|_2 + \|E_{S \cup \{i\}} f\|_2$ by Jensen. Inducting on the restricted coordinates bounds $\|f_{S \to x}\|_2$ by a sum of $2^{|S|}$ terms $\sqrt{I_U(f)}$ with $U \subseteq S$ (and $\|f\|_2$ for $U = \emptyset$).
 
 ## Depends on
 

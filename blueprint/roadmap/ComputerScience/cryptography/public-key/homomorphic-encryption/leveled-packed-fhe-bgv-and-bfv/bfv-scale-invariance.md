@@ -1,10 +1,10 @@
 # Scale-invariant BFV: leveled FHE without modulus switching
 
-In the BFV scheme, multiplication computes $\lfloor\frac{t}{q}(\mathbf{c}\otimes\mathbf{c}')\rceil$ followed by relinearization. If the inputs have noise norms $V_1,V_2$ with respect to the scale $\Delta$, the output noise is bounded by $O(\delta_Rt\|s\|_1)\cdot(V_1+V_2)$ plus lower-order terms, i.e., noise grows by a fixed multiplicative factor per level independent of $q$. Hence, with a single modulus $q$, BFV evaluates circuits of multiplicative depth $L$ provided $\log q\gtrsim L\log(\delta_Rt\|s\|_1)+\log V_0+\log t$, and its security (for appropriately chosen parameters, including a variant based on standard LWE) relies on Ring-LWE together with circular security of the relinearization key.
+BFV keeps a single ciphertext modulus $q$ throughout evaluation: a homomorphic product is $\mathrm{MultFV}$, which lifts both ciphertexts to centered representatives in $R$, tensors them over the integers, scales by $t/q$ and rounds, reduces modulo $q$, and relinearizes with $\mathrm{RelinFV}$; no modulus switching is applied between levels. This follows Brakerski's scale-invariance principle for LWE-based FHE, in which the plaintext sits in the most significant bits and the tensored ciphertext is scaled down by the plaintext-to-ciphertext modulus ratio ($2/q$ for Brakerski's binary plaintexts, $t/q$ in BFV) before rounding: in Brakerski's scheme the noise grows only linearly in each multiplication ($B\mapsto B\cdot\mathrm{poly}(n)$, rather than $B\mapsto B^{2}\cdot\mathrm{poly}(n)$), and the scheme's properties depend only on the ratio between $q$ and the initial noise level $B$, not on their absolute values.
 
 ## Proof sketch
 
-Write $c_0+c_1s=\Delta m+v+qk$ for an integer polynomial $k$ of small norm. The scaled tensor product evaluates to $\Delta mm'$ plus error terms in which the large multiples $qk$ are divided by $q$ and multiplied by $t$, producing contributions proportional to $t\cdot(\|v\|+\|v'\|)\cdot\delta_R\|s\|_1$, while the term $vv'/\Delta$ is lower order. Rounding adds noise proportional to $\delta_R\|s\|_1^{2}$.
+In Brakerski's analysis, write the decryption equation of each input as $\lfloor q/2\rfloor m+v+qk$ for an integer vector $k$ whose norm is bounded in terms of the secret and the dimension. After scaling the tensor product by $2/q$, the large multiples $qk$ contribute terms proportional to $k\,v'$ and $k'\,v$, linear in the input noise, while the term of order $vv'/q$ and the rounding errors are lower order. No term is proportional to $q$, so the growth factor is independent of $q$.
 
 ## Depends on
 
@@ -17,5 +17,5 @@ Write $c_0+c_1s=\Delta m+v+qk$ for an integer polynomial $k$ of small norm. The 
 
 ## Sources
 
-- Junfeng Fan, Frederik Vercauteren, "Somewhat Practical Fully Homomorphic Encryption", IACR ePrint 2012/144 (2012).
+- Jean-Claude Bajard, Julien Eynard, M. Anwar Hasan, Vincent Zucca, "A Full RNS Variant of FV Like Somewhat Homomorphic Encryption Schemes", SAC 2016, LNCS 10532 (2017), §§2–4 (`DecFV`, `MultFV`, `RelinFV`), DOI 10.1007/978-3-319-69453-5_23.
 - Zvika Brakerski, "Fully Homomorphic Encryption without Modulus Switching from Classical GapSVP", CRYPTO (2012).

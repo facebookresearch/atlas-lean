@@ -1,10 +1,10 @@
 # CycleFold: delegating non-native scalar multiplications to a secondary folded instance
 
-In folding-based IVC over a 2-cycle $(E_1,E_2)$, the only non-native operations of the primary augmented circuit are the scalar multiplications $\overline{W}_1+r\overline{W}_2$ and $\overline{E}_1+r\overline{T}+r^{2}\overline{E}_2$ in $E_1$. CycleFold replaces them by a minimal circuit over the other field that performs one such scalar multiplication and is itself expressed as a committed relaxed R1CS instance; these instances are folded into a separate running instance at each step. The primary circuit then only checks hashes and native field arithmetic, and soundness of the resulting IVC follows from knowledge soundness of both folding schemes.
+In folding-based IVC over a 2-cycle $(E_1,E_2)$, the folding verifier circuit $C_V$ over the scalar field of $E_1$ performs its field and hash operations natively, but its few elliptic-curve scalar multiplications on $E_1$ (one scalar multiplication followed by a point addition in HyperNova's verifier, two in Nova's) would need arithmetic over the base field of $E_1$. CycleFold delegates each such operation to one invocation of a small circuit $C_{\mathrm{EC}}$ over the scalar field of $E_2$, which equals the base field of $E_1$, so $C_{\mathrm{EC}}$ computes the operation without field emulation and exposes its inputs and output as public IO. At each step $C_V$ takes as advice a committed instance $u_{\mathrm{EC}}$ of $C_{\mathrm{EC}}$ for each delegated operation, checks that its inputs are the ones the verifier needs, uses its output in place of the scalar multiplication, and folds $u_{\mathrm{EC}}$ into a running committed relaxed R1CS instance $U_{\mathrm{EC}}$ with Nova's folding scheme, alongside the folding of the main computation. For HyperNova this gives a public-coin multi-folding scheme for $\mathcal{R}_1=\mathrm{LCCCS}\times\mathrm{CRR1CS}$ and $\mathcal{R}_2=\mathrm{CCCS}$ with perfect completeness and knowledge soundness, whose verifier performs $O(d\log m)$ field operations and $O(1)$ group operations; the circuit on the second curve consists only of $C_{\mathrm{EC}}$.
 
 ## Proof sketch
 
-Each step produces a secondary instance certifying one scalar multiplication; the primary circuit takes its public output as the claimed result and folds the secondary instance into a running secondary accumulator, whose final validity is checked by the decider. Extraction proceeds as for Nova on both chains simultaneously, using that each folded secondary instance certifies the group operation used by the primary step.
+Completeness holds because each honest $u_{\mathrm{EC}}$ certifies the group operation the verifier uses, and both foldings are complete. Knowledge soundness combines the extractors of the CCS multi-folding scheme and of Nova's folding scheme for the running secondary instance: an accepting final pair yields witnesses for every folded $u_{\mathrm{EC}}$, so each claimed output of $C_{\mathrm{EC}}$ is the correct group operation, and the extraction for the main computation then proceeds as without delegation.
 
 ## Depends on
 
@@ -17,8 +17,8 @@ Each step produces a secondary instance certifying one scalar multiplication; th
 ## Proof depends on
 
 - [Nova's folding scheme for committed relaxed R1CS](nova-folding-theorem.md)
+- [HyperNova multi-folding scheme for CCS](../customizable-constraint-systems-and-multi-folding/hypernova-multifolding.md)
 
 ## Sources
 
-- Abhiram Kothapalli, Srinath Setty, "CycleFold: Folding-scheme-based Recursive Arguments over a Cycle of Elliptic Curves", IACR ePrint 2023/1192 (2023).
-- Wilson Nguyen, Dan Boneh, Srinath Setty, "Revisiting the Nova Proof System on a Cycle of Curves", AFT (2023).
+- Abhiram Kothapalli, Srinath Setty, "HyperNova: Recursive Arguments for Customizable Constraint Systems", CRYPTO (2024), IACR ePrint 2023/573, Section 8 (Section 8.2, Theorem 4, Theorem 2) and Appendix E.

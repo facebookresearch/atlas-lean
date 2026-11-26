@@ -6,4 +6,4 @@
 - [Logarithmic-derivative lookups as a degree-two special-sound protocol](protostar-lookup-special-sound.md)
 - [Split accumulation for an R1CS NARK from homomorphic commitments](bclms-r1cs-split-accumulation.md)
 - [ProtoStar: generic accumulation for special-sound protocols](protostar-accumulation.md)
-- [Non-uniform IVC with cost independent of the number of instructions](protostar-nivc.md)
+- [ProtoStar: non-uniform IVC with one accumulator and a one-hot circuit selector](protostar-nivc.md)

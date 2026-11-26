@@ -6,7 +6,7 @@ $$
 \Pr_r\bigl[A(x,r)=s(x)\bigr]\ge 2/3 .
 $$
 
-By running $A$ several times and taking the plurality output, the probability can be raised to $1-2^{-|x|}$, so independent runs agree with each other with high probability. **Pseudodeterministic polynomial time** asks for $A$ running in polynomial time. A zero-error variant asks that $A$ output $s(x)$ or a failure symbol $\bot$, never another string.
+Thus, on each input, independent runs of $A$ return the same solution with high probability. **Pseudodeterministic polynomial time** asks for $A$ running in polynomial time. A **pseudodeterministic construction** of a property $Q\subseteq\{0,1\}^*$ is the special case of the search problem with input $1^n$ and solutions the $n$-bit strings in $Q$, typically required only for infinitely many $n$: on input $1^n$ the algorithm outputs a canonical $n$-bit string of $Q$ with probability at least $2/3$.
 
 ## Depends on
 
@@ -15,4 +15,6 @@ By running $A$ several times and taking the plurality output, the probability ca
 
 ## Sources
 
-- Eran Gat and Shafi Goldwasser, "Probabilistic Search Algorithms with Unique Answers and Their Cryptographic Applications", ECCC TR11-136 (2011).
+- Oded Goldreich, Shafi Goldwasser and Dana Ron, "On the Possibilities and Limitations of Pseudodeterministic Algorithms", ITCS (2013), doi:10.1145/2422436.2422453 (the notion is credited there to Gat and Goldwasser).
+- Igor C. Oliveira and Rahul Santhanam, "Pseudodeterministic Constructions in Subexponential Time", STOC (2017), doi:10.1145/3055399.3055500.
+- Lijie Chen, Zhenjian Lu, Igor C. Oliveira, Hanlin Ren and Rahul Santhanam, "Polynomial-Time Pseudodeterministic Construction of Primes", FOCS (2023), arXiv:2305.15140.

@@ -1,16 +1,16 @@
-# R1CS, Plonkish and AIR constraint systems embed into CCS
+# R1CS is a degree-two CCS
 
-(i) An R1CS structure $(A,B,C)$ is the CCS with $t=3$, $q=2$, $d=2$, $M_1=A$, $M_2=B$, $M_3=C$, $S_1=\{1,2\}$, $S_2=\{3\}$, $c_1=1$, $c_2=-1$. (ii) A Plonkish circuit whose gate is a fixed multivariate polynomial $g$ of total degree $d$ in $t$ wire values, applied row-wise with selector constants, embeds into a CCS with one matrix $M_j$ per wire column (selecting, for each row, the referenced entry of $z$) and one multiset $S_i$ per monomial of $g$, with the monomial coefficient as $c_i$. (iii) An AIR with transition constraints of degree $d$ over two consecutive rows embeds similarly with matrices selecting the current and next rows. In all cases the CCS has the same number of constraints and witness entries as the source system, so the embeddings incur no asymptotic overhead.
+Let an R1CS structure consist of matrices $A,B,C\in\mathbb{F}^{m\times m}$, each with at most $n=\Omega(m)$ nonzero entries, and let an instance $x\in\mathbb{F}^{\ell}$ ($m>\ell$) be satisfied by a witness $W\in\mathbb{F}^{m-\ell-1}$ iff $AZ\circ BZ=CZ$ for $Z=(W,x,1)$. Let $M_1,M_2,M_3\in\mathbb{F}^{m\times m}$ be $A,B,C$ with their columns permuted so that $M_jz$ equals the corresponding product with $Z$ for $z=(W,1,x)$. Then the CCS structure with these $m$ rows and $m$ columns, $t=3$, $q=2$, $d=2$, matrices $M_1,M_2,M_3$, multisets $S_1=\{1,2\}$, $S_2=\{3\}$ and constants $c_1=1$, $c_2=-1$ has at most $3n$ nonzero entries, and for every $x$ and $W$, $W$ satisfies the R1CS instance $x$ iff it satisfies the CCS instance $x$ in the matrix form $\sum_ic_i\cdot\bigcirc_{j\in S_i}M_jz=\mathbf{0}$. The CCS therefore has the same $m$ constraints and the same witness vector $W$ as the R1CS; for the arithmetized (multilinear) form of CCS the dimensions are padded to powers of two.
 
 ## Proof sketch
 
-For R1CS, $c_1(M_1z\circ M_2z)+c_2M_3z=Az\circ Bz-Cz$. For a Plonkish gate $g=\sum_i c_i\prod_{j\in S_i}w_j$, setting $M_jz$ to the vector of $j$-th wire values over all rows makes the CCS equation the row-wise evaluation of $g$; copy constraints become shared indices of $z$. AIR rows are handled by the same selection, with row shifts encoded in the matrices.
+Permuting columns of a matrix together with the entries of the vector it multiplies does not change the product, so $M_1z=AZ$, $M_2z=BZ$ and $M_3z=CZ$. Hence $c_1(M_1z\circ M_2z)+c_2M_3z=AZ\circ BZ-CZ$, which is zero exactly when the R1CS equation holds.
 
 ## Depends on
 
 - [Customizable constraint systems](customizable-constraint-system.md)
-- [PLONK gate equations with copy constraints](../plonkish-polynomial-iops/plonk-constraint-system.md)
+- [Rank-1 constraint systems](../relaxed-r1cs-folding-schemes/rank-one-constraint-system.md)
 
 ## Sources
 
-- Srinath Setty, Justin Thaler, Riad Wahby, "Customizable Constraint Systems for Succinct Arguments", IACR ePrint 2023/552 (2023).
+- Abhiram Kothapalli, Srinath Setty, "HyperNova: Recursive Arguments for Customizable Constraint Systems", CRYPTO (2024), IACR ePrint 2023/573, Definition 1 (CCS), Definition 22 (R1CS), and the proof of Lemma 3, which reduces R1CS to CCS.

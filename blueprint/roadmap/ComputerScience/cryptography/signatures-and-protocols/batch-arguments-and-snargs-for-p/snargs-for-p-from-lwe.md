@@ -1,10 +1,10 @@
 # SNARGs for all polynomial-time computations from LWE
 
-Assuming the polynomial hardness of LWE, for every polynomial $T$ there is a publicly verifiable succinct non-interactive argument for all deterministic computations of $T$ steps (the language $\{(M,x,y,T):M(x)=y\text{ within }T\text{ steps}\}$) in which the common reference string size, the proof size and the verification time are $\mathrm{poly}(\lambda,\log T)$ (plus the time to read $M,x,y$). Soundness is non-adaptive with respect to the statement.
+Assuming the polynomial hardness of LWE, for every polynomial $T=T(\lambda)$ there is a publicly verifiable non-interactive delegation scheme, in the common random string model, for every Turing machine $M$ running in time $T$: for the language $\{(x,T):M\text{ accepts }x\text{ within }T\text{ steps}\}$, the reference string size, the proof size and the verifier's running time beyond reading the input are $\mathrm{poly}(\lambda,\log T)$, the verifier reads the input in time $|x|\cdot\mathrm{poly}(\lambda)$, and the prover runs in time $\mathrm{poly}(\lambda,T)$. Soundness is adaptive: no efficient prover that chooses $x$ after seeing the keys can make the verifier accept $x$ outside the language, except with negligible probability. The result extends with the same parameters to RAM computations.
 
 ## Proof sketch
 
-Instantiate the delegation-from-BARG template with the LWE-based somewhere extractable BARG and SSB hashes, compressing configurations by Merkle-hashing the memory so that each local step statement has size $\mathrm{poly}(\lambda,\log T)$. Soundness follows by the step-by-step hybrid argument.
+Instantiate the delegation-from-BARG template with the LWE-based BARG for index languages, which is semi-adaptively somewhere sound, and with LWE-based somewhere extractable commitments made no-signaling, hashing the memory into a tree so that each local step statement has size $\mathrm{poly}(\lambda,\log T)$. Adaptive soundness of the delegation scheme follows from the step-by-step hybrid argument, since the index each hybrid fixes in advance does not depend on the prover's choice of input.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ Instantiate the delegation-from-BARG template with the LWE-based somewhere extra
 
 ## Sources
 
-- Arka Rai Choudhuri, Abhishek Jain, Zhengzhong Jin, "SNARGs for P from LWE", FOCS (2021), IACR ePrint 2021/808.
+- Arka Rai Choudhuri, Abhishek Jain, Zhengzhong Jin, "SNARGs for P from LWE", FOCS (2021), IACR ePrint 2021/808, Theorem 1, Definition 8 and Theorem 11.

@@ -23,4 +23,5 @@ The distance distribution of an optimal code is feasible by the Delsarte inequal
 
 ## Sources
 
-- Philippe Delsarte, "An algebraic approach to the association schemes of coding theory", Philips Research Reports Supplements 10 (1973).
+- Philippe Delsarte, "An algebraic approach to the association schemes of coding theory", Philips Research Reports Supplements 10 (1973) (historical attribution).
+- Robert J. McEliece, Eugene R. Rodemich, Howard Rumsey Jr., Lloyd R. Welch, "New upper bounds on the rate of a code via the Delsarte-MacWilliams inequalities", IEEE Transactions on Information Theory 23(2) (1977) 157-166, https://doi.org/10.1109/TIT.1977.1055688.

@@ -1,25 +1,27 @@
 # Park-Pham fragment lemma
 
-There is an absolute constant $L$ such that the following holds. Let $\mathcal{H}$ be an $\ell$-bounded family on $X$, $|X| = n$, and let $W$ be a uniformly random subset of size $w$. For each $W$ and each $S \in \mathcal{H}$ choose $T(S, W) = S' \setminus W$ where $S' \in \mathcal{H}$, $S' \subseteq S \cup W$ minimizes $|S' \setminus W|$ (a *minimum fragment*). Let $\mathcal{T}(W) = \{T(S, W) : S \in \mathcal{H},\ |T(S,W)| \ge k\}$ be the family of large minimum fragments and $p = w/(Ln)$. Then
+There is an absolute constant $L_0$ such that the following holds for every $L \ge L_0$. Let $\ell \ge 1$, let $\mathcal{H}$ be an $\ell$-bounded family on $X$ with $|X| = n$, let $p > 0$ be such that $w = Lpn$ is an integer at most $n$, and let $W$ be a uniformly random $w$-subset of $X$. For $S \in \mathcal{H}$, a *minimum $(S, W)$-fragment* $T(S, W)$ is a smallest set of the form $S' \setminus W$ with $S' \in \mathcal{H}$ and $S' \subseteq S \cup W$ (ties broken arbitrarily). Let
 
 $$
-\mathbb{E}_W \Big[\sum_{T \in \mathcal{T}(W)} p^{|T|}\Big] \le L^{-k},
+\mathcal{G}(W) = \{S \in \mathcal{H} : |T(S, W)| \ge 0.9\,\ell\}, \qquad \mathcal{U}(W) = \{T(S, W) : S \in \mathcal{G}(W)\}.
 $$
 
-so by Markov's inequality, with probability at least $1 - 2L^{-k}$ the family of large minimum fragments is $p$-small.
+Then $\mathcal{U}(W)$ covers $\mathcal{G}(W)$, since $T(S, W) \subseteq S$, and
+
+$$
+\mathbb{E}_W \Big[\sum_{U \in \mathcal{U}(W)} p^{|U|}\Big] < L^{-0.8\,\ell} .
+$$
+
+By Markov's inequality, with probability greater than $1 - 2L^{-0.8\ell}$ the cover $\mathcal{U}(W)$ of $\mathcal{G}(W)$ has cost $\sum_{U \in \mathcal{U}(W)} p^{|U|} < 1/2$, so $\mathcal{G}(W)$ is $p$-small. The remaining members are handled by their fragments: $\mathcal{H}'(W) = \{T(S, W) : S \in \mathcal{H} \setminus \mathcal{G}(W)\}$ is $0.9\ell$-bounded, and every member of $\mathcal{H} \setminus \mathcal{G}(W)$ contains a member of $\mathcal{H}'(W)$.
 
 ## Proof sketch
 
-Encode a pair $(W, T)$ with $T$ a large minimum fragment by $W \cup T$ (a set of size about $w + |T|$), together with the identity of $T$ inside $W \cup T$, specified using the minimality of $T$ and a member of $\mathcal{H}$ via at most $\ell$-bounded choices. Counting such encodings and comparing with $\binom{n}{w}$ shows that the $p$-weighted number of large fragments is exponentially small in $k$.
+Fix $m \ge 0.9\ell$ and count the pairs $(W, T(S, W))$ with $|T(S, W)| = m$. First choose $Z = W \cup T$, a set of size $w + m$; there are at most $\binom{n}{w}(Lp)^{-m}$ choices. Then fix a member $\hat S \subseteq Z$ of $\mathcal{H}$ depending only on $Z$ (one exists by the definition of a fragment). Minimality of $T$ forces $T \subseteq \hat S$, so $T$ is one of at most $2^\ell$ subsets of $\hat S$, and $W = Z \setminus T$. Hence the $p$-weighted count is at most $\binom{n}{w} L^{-m} 2^{\ell}$, and summing over $m \ge 0.9\ell$ gives less than $\binom{n}{w} L^{-0.8\ell}$ once $L$ is large.
 
 ## Depends on
 
 - [The Kahn-Kalai expectation threshold q(F)](kahn-kalai-expectation-threshold.md)
 
-## Proof depends on
-
-- [Spread lemma: random sets of moderate density contain members of spread families](../../extremal-set-theory/spread-families-and-robust-sunflowers/spread-lemma-random-sets-contain-members-of-spread-families.md)
-
 ## Sources
 
-- Jinyoung Park, Huy Tuan Pham, "A proof of the Kahn-Kalai conjecture", Journal of the AMS 37(1) (2024); arXiv:2203.17207.
+- Jinyoung Park, Huy Tuan Pham, "A proof of the Kahn-Kalai conjecture", Journal of the AMS 37(1) (2024); arXiv:2203.17207, Section 2.1, Lemma 2.1.

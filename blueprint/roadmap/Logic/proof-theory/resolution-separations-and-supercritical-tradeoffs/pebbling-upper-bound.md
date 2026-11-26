@@ -1,10 +1,10 @@
 # Pebbling formulas have linear-size resolution refutations
 
-For every DAG $G$ with $n$ vertices of in-degree at most $2$, the pebbling formula $\mathrm{Peb}_G$ has a resolution refutation of size $O(n)$ and width $3$, and $\mathrm{Peb}_G[\oplus_\ell]$ has a resolution refutation of size $O(2^{3\ell} n)$ for every constant $\ell$.
+Let $G$ be a DAG with $n$ vertices and a unique sink in which every vertex has in-degree at most $2$. The pebbling formula $\mathrm{Peb}_G$ has a resolution refutation of size $O(n)$ and width at most $3$, and for every non-constant Boolean function $f$ of arity $\ell$ the substituted formula $\mathrm{Peb}_G[f]$ has a resolution refutation of size $2^{O(\ell)}\, n$ and width $O(\ell)$.
 
 ## Proof sketch
 
-Derive the unit clauses $x_v$ in a topological order of $G$: sources are axioms, and from $x_u$, $x_w$ and $\neg x_u \vee \neg x_w \vee x_v$ two resolution steps give $x_v$; finally resolve $x_z$ with $\neg x_z$. For substituted formulas, derive the CNF encoding of $\oplus_\ell(x_{v,\cdot})$ in the same order, each step costing $2^{O(\ell)}$ clauses.
+Derive the unit clauses $x_v$ in a topological order of $G$: sources are axioms, and from the units $x_u$ for $u \in \mathrm{pred}(v)$ and the clause $\bigvee_{u \in \mathrm{pred}(v)} \neg x_u \vee x_v$ at most two resolution steps give $x_v$; finally resolve $x_z$ with $\neg x_z$. For $\mathrm{Peb}_G[f]$, derive in the same order the canonical CNF of $f(x_{v,1}, \dots, x_{v,\ell})$. Each of its at most $2^{\ell}$ clauses is implied by the already derived CNFs of the predecessors together with the substituted clause for $v$, all over at most $3\ell$ variables, so it has a derivation of size $2^{O(\ell)}$ within those variables; at the sink the CNFs of $f(x_{z,\cdot})$ and $\neg f(x_{z,\cdot})$ are refuted in size $2^{O(\ell)}$.
 
 ## Depends on
 

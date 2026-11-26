@@ -19,7 +19,6 @@ Lamport one-time signatures, Schnorr identification and Sigma protocols, and zer
 - [Foldable Codes and Binary-Tower Polynomial Commitments](foldable-codes-and-binary-tower-commitments/README.md)
 - [Incrementally Verifiable Computation and Proof-Carrying Data](incrementally-verifiable-computation-and-pcd/README.md)
 - [Lattice-Based Folding Schemes](lattice-based-folding-schemes/README.md)
-- [Logarithmic-Derivative and Grand-Product Lookup Arguments](logarithmic-derivative-lookup-arguments/README.md)
 - [Offline Memory Checking, Lasso and Jolt](offline-memory-checking-and-lasso/README.md)
 - [Plonkish Arithmetization and Polynomial IOPs](plonkish-polynomial-iops/README.md)
 - [Rate-Shifting Reed–Solomon Proximity Tests](rate-shifting-reed-solomon-proximity-tests/README.md)

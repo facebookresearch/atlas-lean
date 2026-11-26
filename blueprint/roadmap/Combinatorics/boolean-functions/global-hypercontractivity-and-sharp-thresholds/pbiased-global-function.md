@@ -6,7 +6,13 @@ $$
 \bigl\| f_{S \to x} \bigr\|_{L^2(\mu_p)} \le \varepsilon \quad \text{for every } S \text{ with } |S| \le r \text{ and every } x \in \{0,1\}^S.
 $$
 
-For a Boolean $f$ (the indicator of a set $\mathcal{A}$) this says that no restriction of at most $r$ coordinates increases the measure of $\mathcal{A}$ beyond $\varepsilon^2$. The **generalized $S$-influence** is $I_S(f) = \mathbb{E}\bigl[(D_S f)^2\bigr]$, where $D_S$ is the composition of the normalized discrete derivatives $D_i f = \sqrt{p(1-p)}\,(f_{i \to 1} - f_{i \to 0})$ for $i \in S$, divided by $(p(1-p))^{|S|}$.
+For a Boolean $f$ (the indicator of a set $\mathcal{A}$) this says that no restriction of at most $r$ coordinates increases the measure of $\mathcal{A}$ beyond $\varepsilon^2$. Let $D_S$ be the composition, over $i \in S$, of the normalized discrete derivatives $D_i f = \sqrt{p(1-p)}\,(f_{i \to 1} - f_{i \to 0})$, so that $D_S f = (p(1-p))^{|S|/2} \sum_{x \in \{0,1\}^S} (-1)^{|S| - |x|} f_{S \to x}$, where $|x|$ is the number of ones in $x$. The **generalized $S$-influence** is
+
+$$
+I_S(f) = \frac{\mathbb{E}\bigl[(D_S f)^2\bigr]}{(p(1-p))^{|S|}} = \Bigl\| \sum_{x \in \{0,1\}^S} (-1)^{|S| - |x|} f_{S \to x} \Bigr\|_{L^2(\mu_p)}^2 ,
+$$
+
+the squared norm of the unnormalized alternating difference. For $f(x) = x_i$ and $S = \{i\}$ this gives $I_S(f) = 1$, the ordinary influence $\|f_{i \to 1} - f_{i \to 0}\|_2^2$.
 
 ## Depends on
 

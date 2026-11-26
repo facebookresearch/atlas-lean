@@ -15,7 +15,7 @@ Each vertex runs $\mathsf{AS.P}$ on the incoming NARK instances and accumulators
 
 ## Proof depends on
 
-- [Extractor blow-up in recursive proof composition](recursive-extraction-blowup.md)
+- [Size bound for recursively composed knowledge extractors](recursive-extraction-blowup.md)
 
 ## Sources
 

@@ -15,4 +15,3 @@
 - [Barto–Kozik: finite idempotent Taylor algebras have cyclic terms of every prime arity above the domain size](barto-kozik-cyclic-terms-prime-arity.md)
 - [Bulatov and Zhuk: the CSP dichotomy theorem for finite templates](bulatov-zhuk-csp-dichotomy-theorem.md)
 - [The CSP tractability meta-problem is decidable via a single height-1 Siggers check](csp-tractability-meta-problem-decidable.md)
-- [Zhuk: CSP tractability is equivalent to infinitely many polymorphisms symmetric on all two-element sets](zhuk-xy-symmetric-polymorphisms.md)

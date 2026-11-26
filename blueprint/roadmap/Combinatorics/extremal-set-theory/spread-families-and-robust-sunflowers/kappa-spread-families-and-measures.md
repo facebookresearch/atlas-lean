@@ -6,7 +6,7 @@ $$
 \big|\{F \in \mathcal{F} : S \subseteq F\}\big| \le \kappa^{-|S|}\, |\mathcal{F}| .
 $$
 
-More generally a probability measure $\nu$ on $2^X$ is $\kappa$-spread if $\nu(\{F : F \supseteq S\}) \le \kappa^{-|S|}$ for all $S$. A family is *$\ell$-bounded* if all members have size at most $\ell$.
+More generally a probability measure $\nu$ on $2^X$ is $\kappa$-spread if $\nu(\{F : F \supseteq S\}) \le \kappa^{-|S|}$ for all $S$. A family is *$\ell$-bounded* if all members have size at most $\ell$. The counting condition is vacuous for the empty family, which is $\kappa$-spread for every $\kappa$, and the family $\{\emptyset\}$ is $\kappa$-spread as well; results that produce members of a spread family therefore assume $\mathcal{F}$ nonempty, and results that produce disjoint members assume in addition that its members are nonempty.
 
 ## Sources
 

@@ -1,10 +1,10 @@
 # Sum-check range proof via a vanishing product
 
-An integer $a$ satisfies $|a|< b$ iff $P_b(a)=\prod_{j=-(b-1)}^{b-1}(a-j)=0$. For a vector $\mathbf{f}\in\mathbb{Z}_q^{2^{s}}$ of coefficients with $q>2b$, all entries satisfy $|f_i|< b$ iff the function $i\mapsto P_b(f_i)$ vanishes on $\{0,1\}^{s}$; by the zero-check reduction this holds, except with probability $s/q$, iff $\sum_{x\in\{0,1\}^{s}}\widetilde{\mathrm{eq}}(\tau,x)P_b(\widetilde{f}(x))=0$ for random $\tau$, which is proved by a sum-check of degree $2b$ per variable ending in one evaluation claim about $\widetilde{f}$.
+Let $q$ be a prime with $q>2b$, and represent elements of $\mathbb{F}_q=\mathbb{Z}_q$ by centered representatives in $(-q/2,q/2)$, so that $|a|$ is defined for $a\in\mathbb{F}_q$. Then $|a|<b$ iff $P_b(a)=\prod_{j=-(b-1)}^{b-1}(a-j)=0$ in $\mathbb{F}_q$. For a vector $\mathbf{f}\in\mathbb{F}_q^{2^{s}}$ with multilinear extension $\widetilde{f}$, all entries satisfy $|f_i|<b$ iff the function $x\mapsto P_b(\widetilde{f}(x))$ vanishes on $\{0,1\}^{s}$. If it does not vanish, then $\sum_{x\in\{0,1\}^{s}}\widetilde{\mathrm{eq}}(\tau,x)P_b(\widetilde{f}(x))=0$ for a uniformly random $\tau\in\mathbb{F}_q^{s}$ with probability at most $s/q$; the sum is proved by a sum-check of degree at most $2b$ per variable, with soundness error at most $2bs/q$, ending in one evaluation claim about $\widetilde{f}$. Both steps use that $\mathbb{F}_q$ is a field: over $\mathbb{Z}_6$ with $b=2$, $a=2$ one has $(a+1)a(a-1)=0$ although $|a|\not<2$.
 
 ## Proof sketch
 
-The polynomial $P_b$ has exactly the roots $-(b-1),\dots,b-1$ in $\mathbb{Z}_q$ when $q>2b$, as these are distinct residues. Apply the zero-check lemma to the function $P_b\circ f$ on the hypercube and run sum-check on its $\widetilde{\mathrm{eq}}$-weighted sum.
+Since $q$ is prime and $q>2b$, the $2b-1$ values $-(b-1),\dots,b-1$ are distinct elements of the field $\mathbb{F}_q$, which are exactly the elements of absolute value less than $b$, and a product of field elements vanishes iff some factor does. The weighted sum is a multilinear polynomial in $\tau$ whose coefficients on the hypercube basis are the values $P_b(\widetilde{f}(x))$, so it is the zero polynomial iff all of them vanish, and otherwise has at most an $s/q$ fraction of zeros by the Schwartz–Zippel lemma. Sum-check soundness over the field bounds the remaining error.
 
 ## Depends on
 
@@ -17,4 +17,4 @@ The polynomial $P_b$ has exactly the roots $-(b-1),\dots,b-1$ in $\mathbb{Z}_q$ 
 
 ## Sources
 
-- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", IACR ePrint 2024/257 (2024).
+- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", ASIACRYPT (2025), IACR ePrint 2024/257, Sections 1 and 3 (the range check through the vanishing polynomial over a prime modulus, with coefficients lifted to centered representatives).

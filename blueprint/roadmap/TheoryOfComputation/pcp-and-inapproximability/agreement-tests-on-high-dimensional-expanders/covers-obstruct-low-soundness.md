@@ -1,10 +1,16 @@
 # Connected covers obstruct low-soundness agreement on high-dimensional expanders
 
-Let $X$ be a $d$-dimensional complex and suppose $X$ has a connected $m$-sheeted cover $\rho : Y \to X$ with $m \ge 2$. Then for every $k$ there is an ensemble $\{f_s\}_{s \in X(k)}$ over the alphabet $\Sigma = [m] \times \{0,1\}$ that passes the $\sqrt{k}$-intersection agreement test on $X$ with probability at least $1/m$ while no global function $G : X(0) \to \Sigma$ agrees with $f_s$ on more than half of the coordinates for more than a $o(1)$-fraction of $s$ as $|X(0)| \to \infty$ (when $Y$ is an expander). Hence the low-acceptance agreement theorem fails on every complex with a small connected cover.
+Let $0<\zeta<1/2$, $k\in\mathbb{N}$ and $\lambda\le 0.99/k$. Let $X$ be a $k$-dimensional $\lambda$-two-sided high-dimensional expander that has a connected $\ell$-cover $\rho:Y\to X$ for some $\ell>1$. Then there is an ensemble $\mathcal{F}=\{f_r:r\to\{0,1\}\}_{r\in X(k)}$ whose acceptance probability $\mathrm{Agree}(\mathcal{F})$ in the two-query agreement test (any test distribution on pairs of $k$-faces whose marginal is the face distribution) is at least $1/\ell$, and yet for every global function $G:X(0)\to\{0,1\}$,
+
+$$
+\Pr_{r\in X(k)}\bigl[f_r \text{ agrees with } G|_r \text{ on at least a } (1-\zeta)\text{-fraction of } r\bigr]\ \le\ \exp(-\Omega_\zeta(k)).
+$$
+
+The bound depends on the face dimension $k$, not on the number of vertices: with fixed face size and alphabet a uniformly random $G$ matches any given face exactly with constant probability, so no vanishing bound in $|X(0)|$ is possible. Hence the low-acceptance agreement theorem fails on every such complex with a connected cover.
 
 ## Proof sketch
 
-Choose an independent uniformly random function $g : Y(0) \to \{0,1\}$ and for each face $s$ of $X$ pick a uniformly random lift $\tilde{s} \subset Y$, setting $f_s = (\text{sheet}, g)|_{\tilde{s}}$. Two faces whose lifts lie in the same sheet over the intersection agree, which happens with probability $1/m$. Any global function would induce a section of the cover over most of $X$, impossible for a connected expanding cover.
+For $\ell=2$ (the case written out in the source), write $Y(0)=X(0)\times\{0,1\}$ with $\rho(v,i)=v$ and $H(v,i)=i$. For each face $r\in X(k)$ choose one of its two preimages $\tilde r$ independently and uniformly at random and set $f_r=H|_{\tilde r}$, read through $\rho$. For a pair $(r,r')$ drawn by the test, whose marginal on each face is the face distribution, the lifts contain the same preimage of a common vertex with probability $1/2$, and then, since $\rho$ is a local isomorphism, the same preimage of every common vertex, so $f_r$ and $f_{r'}$ agree on $r\cap r'$; hence the expected, and so some, acceptance is at least $1/2$. For a global $G$, let $\tilde G(v,i)=G(v)$; if $f_r$ agrees with $G|_r$ on a $(1-\zeta)$-fraction of $r$, then $\tilde G$ agrees with $H$ on that fraction of $\tilde r$. The labellings $H$ and $\tilde G$ disagree on exactly half of $Y(0)$, and $Y$ inherits two-sided spectral expansion from $X$, so the sampling property of high-dimensional expanders bounds the fraction of $k$-faces of $Y$ meeting that set in less than a $\zeta$-fraction by $\exp(-\Omega(\zeta^2k))$.
 
 ## Depends on
 
@@ -14,5 +20,5 @@ Choose an independent uniformly random function $g : Y(0) \to \{0,1\}$ and for e
 
 ## Sources
 
-- Y. Dikstein, I. Dinur, "Agreement theorems for high dimensional expanders in the small soundness regime: the role of covers", arXiv:2308.09582 (2023), ECCC TR23-119.
+- Y. Dikstein, I. Dinur, "Agreement theorems for high dimensional expanders in the small soundness regime: the role of covers", arXiv:2308.09582v2 (2023), ECCC TR23-119 (Lemma 1.2 and §7.1).
 - M. Bafna, D. Minzer, "Characterizing direct product testing via coboundary expansion", STOC (2024), arXiv:2308.09668.

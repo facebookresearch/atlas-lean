@@ -4,17 +4,12 @@ For a lookup of $\mathbf{w}\in\mathbb{F}^{n}$ into a table $\mathbf{t}\in\mathbb
 
 ## Proof sketch
 
-All checks are polynomial equations of degree at most $2$ in the transcript. If $\mathbf{w}$ contains an element outside the table, the rational identity $\sum_i 1/(X+w_i)=\sum_j m_j/(X+t_j)$ fails, so it fails at all but at most $n+T-1$ values of $r$; with $n+T$ distinct accepting challenges the identity holds as rational functions, which by the logarithmic-derivative lemma yields membership.
+All checks are polynomial equations of degree at most $2$ in the transcript. If $\mathbf{w}$ contains an element outside the table, the rational identity $\sum_i 1/(X+w_i)=\sum_j m_j/(X+t_j)$ fails, so it fails at all but at most $n+T-1$ values of $r$; with $n+T$ distinct accepting challenges the identity holds as rational functions. By the logarithmic-derivative lemma, over a field of characteristic greater than $\max(n,T)$ the set $\{w_i\}$ is contained in $\{t_j\}$ iff there are field elements $m_j$ with $\sum_i 1/(X+w_i)=\sum_j m_j/(X+t_j)$, which yields membership.
 
 ## Depends on
 
 - [Special-sound protocols with algebraic degree-d verifiers](special-sound-algebraic-verifier.md)
-- [Lookup relations with multiplicities](../logarithmic-derivative-lookup-arguments/lookup-relation.md)
-
-## Proof depends on
-
-- [Logarithmic-derivative characterization of set inclusion](../logarithmic-derivative-lookup-arguments/logup-lemma.md)
 
 ## Sources
 
-- Benedikt Bünz, Binyi Chen, "Protostar: Generic Efficient Accumulation/Folding for Special-Sound Protocols", ASIACRYPT (2023), IACR ePrint 2023/620.
+- Benedikt Bünz, Binyi Chen, "Protostar: Generic Efficient Accumulation/Folding for Special-Sound Protocols", ASIACRYPT (2023), IACR ePrint 2023/620, Section 4.3 (Lemma 4, restating the logarithmic-derivative lemma, and the protocol $\Pi_{\mathrm{LK}}$).

@@ -6,7 +6,7 @@
 - [Short elements are invertible in partially splitting cyclotomic rings](short-invertible-elements.md)
 - [Sum-check range proof via a vanishing product](sumcheck-range-check.md)
 - [Base-b decomposition commutes with Ajtai commitments](gadget-decomposition-commitments.md)
-- [Unbounded norm growth obstructs naive lattice folding](lattice-folding-norm-growth.md)
+- [Worst-case norm bounds for folding lattice witnesses without norm reduction](lattice-folding-norm-growth.md)
 - [Binding of double commitments under Module-SIS](double-commitments.md)
 - [LatticeFold: post-quantum folding for CCS from Module-SIS](latticefold-theorem.md)
 - [LatticeFold+: algebraic range proofs and double commitments for lattice folding](latticefold-plus-theorem.md)

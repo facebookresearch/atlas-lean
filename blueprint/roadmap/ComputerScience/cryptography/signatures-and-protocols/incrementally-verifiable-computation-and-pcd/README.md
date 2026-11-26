@@ -8,7 +8,7 @@
 - [Split accumulation and NARKs with accumulation](split-accumulation.md)
 - [Proof-carrying data for a compliance predicate](pcd-scheme.md)
 - [IVC is proof-carrying data on path-shaped transcripts](ivc-from-pcd-on-paths.md)
-- [Extractor blow-up in recursive proof composition](recursive-extraction-blowup.md)
+- [Size bound for recursively composed knowledge extractors](recursive-extraction-blowup.md)
 - [IVC and constant-depth PCD from knowledge-extractable SNARKs](ivc-from-snarks.md)
 - [Proof-carrying data from NARKs with split accumulation](pcd-from-accumulation.md)
 - [Transparent PCD from accumulation of discrete-log inner-product arguments](bcms-pcd-without-setup.md)

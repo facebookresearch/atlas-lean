@@ -1,12 +1,18 @@
 # Agreement testability and robustness of tensor codes
 
-Let $C_1 \subseteq \mathbb{F}_2^{n_1}$ and $C_2 \subseteq \mathbb{F}_2^{n_2}$ be linear codes. For a pair $(c, r)$ consisting of a matrix $c$ whose columns lie in $C_1$ and a matrix $r$ whose rows lie in $C_2$, both in $\mathbb{F}_2^{n_1 \times n_2}$, the tensor code $C_1 \otimes C_2$ is **$\kappa$-agreement testable** if
+Let $C_1 \subseteq \mathbb{F}_2^{n_1}$ and $C_2 \subseteq \mathbb{F}_2^{n_2}$ be linear codes, and view words of length $n_1 n_2$ as $n_1 \times n_2$ matrices, so that $C_1 \otimes C_2$ consists of the matrices whose columns lie in $C_1$ and whose rows lie in $C_2$. The tensor code $C_1 \otimes C_2$ is **$\kappa$-agreement testable** if for every matrix $c$ whose columns lie in $C_1$ and every matrix $r$ whose rows lie in $C_2$ there is $w \in C_1 \otimes C_2$ with
 
 $$
-\frac{|c - r|}{n_1 n_2} \ge \kappa \cdot \min_{w \in C_1 \otimes C_2} \Bigl( \frac{|c - w|}{n_1 n_2} + \frac{|r - w|}{n_1 n_2} \Bigr),
+\kappa \left( \frac{\#\{j : c_{\cdot j} \ne w_{\cdot j}\}}{n_2} + \frac{\#\{i : r_{i \cdot} \ne w_{i \cdot}\}}{n_1} \right) \le \frac{|c - r|}{n_1 n_2},
 $$
 
-where $|\cdot|$ is Hamming weight. Agreement testability is equivalent, up to constants, to **robust testability** of the tensor code: the expected distance of a random row or column view from $C_2$ or $C_1$ bounds the distance of the word from $C_1 \otimes C_2$. A pair is **two-sided robust** if, in addition, the same holds for the dual tensor code $C_1^{\perp} \otimes \mathbb{F}_2^{n_2} + \mathbb{F}_2^{n_1} \otimes C_2^{\perp}$.
+where $|\cdot|$ is Hamming weight. The left side counts the columns of $c$ and the rows of $r$ that must be changed; multiplied by $n_1 n_2$ it weights each changed column by its length $n_1$ and each changed row by its length $n_2$. The tensor code is **$\tau$-robustly testable** if for every $f \in \mathbb{F}_2^{n_1 \times n_2}$,
+
+$$
+\tfrac12 \bigl( \mathrm{dist}(f, C_1 \otimes \mathbb{F}_2^{n_2}) + \mathrm{dist}(f, \mathbb{F}_2^{n_1} \otimes C_2) \bigr) \ge \tau \cdot \mathrm{dist}(f, C_1 \otimes C_2)
+$$
+
+in relative Hamming distance. When $C_1$ and $C_2$ have positive relative distance the two notions are equivalent up to constants depending on $\kappa$ or $\tau$ and the distances. The pair is **two-sided robust** if, in addition, the tensor product of the duals $C_1^{\perp} \otimes C_2^{\perp}$ is agreement testable.
 
 ## Depends on
 
@@ -15,5 +21,5 @@ where $|\cdot|$ is Hamming weight. Agreement testability is equivalent, up to co
 ## Sources
 
 - E. Ben-Sasson, M. Sudan, "Robust locally testable codes and products of codes", Random Structures & Algorithms 28 (2006) 387-402.
-- I. Dinur, S. Evra, R. Livne, A. Lubotzky, S. Mozes, "Locally testable codes with constant rate, distance, and locality", STOC (2022), arXiv:2111.04808.
-- G. Kalachev, P. Panteleev, "Two-sided robustly testable codes", arXiv:2206.09973 (2022).
+- I. Dinur, S. Evra, R. Livne, A. Lubotzky, S. Mozes, "Locally testable codes with constant rate, distance, and locality", STOC (2022), arXiv:2111.04808, Definitions 2.5 and 2.8 and Lemma 2.9.
+- I. Dinur, M.-H. Hsieh, T.-C. Lin, T. Vidick, "Good quantum LDPC codes with linear time decoders", STOC (2023), arXiv:2206.07750, Section 2.6.

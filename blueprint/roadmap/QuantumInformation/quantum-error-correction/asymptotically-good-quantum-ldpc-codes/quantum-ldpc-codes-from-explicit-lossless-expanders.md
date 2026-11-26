@@ -1,10 +1,10 @@
 # Explicit lossless vertex expanders yield linear-time decodable quantum LDPC codes
 
-For every $\varepsilon > 0$ and sufficiently large $d$, there are $\gamma=\gamma(\varepsilon,d)>0$ and explicit $d$-regular graphs in which every vertex set $S$ of size at most $\gamma |V|$ has at least $(1 - \varepsilon) d |S|$ neighbours (hence at least $(1 - 2\varepsilon) d |S|$ unique neighbours), admitting a free group action. Plugged into the Lin-Hsieh construction, which requires two-sided lossless expansion with a free group action, they give explicit quantum LDPC codes of constant rate and linear distance with a linear-time decoder.
+For every $\varepsilon, \beta \in (0, 1]$ there are $k = k(\varepsilon)$ and $d_0 = d_0(\varepsilon, \beta)$ such that for all $d_L, d_R \ge d_0$ with $\beta \le d_L/d_R \le \beta + \varepsilon$ there is an infinite family of $(k d_L, k d_R)$-biregular bipartite graphs $Z_n = (L_n, R_n, E_n)$ on $\Theta(n)$ vertices, output in time polynomial in $n$, that are two-sided $(1-\varepsilon)$-vertex expanders: for some $\eta > 0$, every $S \subseteq L_n$ with $|S| \le \eta |L_n|$ has at least $(1-\varepsilon) k d_L |S|$ neighbours in $R_n$, and every $T \subseteq R_n$ with $|T| \le \eta |R_n|$ has at least $(1-\varepsilon) k d_R |T|$ neighbours in $L_n$. Each $Z_n$ admits a free action of a group of size $O(|V(Z_n)|)$. Consequently, for every $r \in (0, 1)$ there are $\delta > 0$, $w \in \mathbb{N}$ and an explicit infinite family of quantum codes with parameters $[[n_i, k_i, d_i]]$ such that $k_i/n_i > r$, $d_i/n_i > \delta$, all stabilizers have weight $w$, and the family has a linear-time decoding algorithm.
 
 ## Proof sketch
 
-Hsieh, Lubotzky, Mohanty, Reiner and Zhang take an appropriate product of a constant-size lossless expander gadget with a base graph derived from Ramanujan Cayley cubical complexes; the cubical structure provides strong local expansion of links, so small sets expand losslessly. The resulting graph inherits the free action of the underlying group, as required by the balanced-product construction of Lin and Hsieh, whose small-set-flip decoder works under lossless expansion.
+The expander statement is Theorem 2.2 of the cited paper: the graphs are tripartite line products of a constant-size lossless gadget with bipartite graphs read off from Cayley cubical complexes over $\mathrm{PSL}(2, \mathbb{F}_q)$, whose strong local expansion makes small sets expand losslessly on both sides. The left action of $\mathrm{PSL}(2, \mathbb{F}_q)$ on the cubical complex is free and respects the gadget placement (Proposition A.3). Appendix A records the conditional code construction as Theorem A.2: two-sided lossless expanders of appropriately imbalanced degrees with a compatible free group action of linear size give a balanced-product family with the stated rate, distance, stabilizer weight and linear-time decoding; the graphs above satisfy its two hypotheses.
 
 ## Depends on
 
@@ -13,10 +13,7 @@ Hsieh, Lubotzky, Mohanty, Reiner and Zhang take an appropriate product of a cons
 ## Proof depends on
 
 - [Balanced products of chain complexes over a group](../homological-quantum-ldpc-codes/balanced-product-of-chain-complexes.md)
-- [Sipser-Spielman expander codes](../../../InformationTheory/error-correcting-codes/sipser-spielman-expander-codes.md)
-- [Expander code distance](../../../InformationTheory/error-correcting-codes/expander-code-distance.md)
 
 ## Sources
 
 - Jun-Ting Hsieh, Alexander Lubotzky, Sidhanth Mohanty, Assaf Reiner, Rachel Yun Zhang, "Explicit lossless vertex expanders", FOCS (2025); arXiv:2504.15087.
-- Ting-Chun Lin, Min-Hsiu Hsieh, "Good quantum LDPC codes with linear time decoder from lossless expanders", arXiv:2203.03581 (2022).

@@ -1,6 +1,6 @@
 # Spread lemma: random sets of moderate density contain members of spread families
 
-There is an absolute constant $C$ such that the following holds. Let $\mathcal{F}$ be an $\ell$-bounded $\kappa$-spread family on $X$, let $\varepsilon \in (0, 1/2)$, and let $W \subseteq X$ be a uniformly random subset of size $\delta |X|$ with $\delta \ge C \log(\ell/\varepsilon)/\kappa$. Then
+There is an absolute constant $C$ such that the following holds. Let $\mathcal{F}$ be a nonempty $\ell$-bounded $\kappa$-spread family on $X$, let $\varepsilon \in (0, 1/2)$, and let $W \subseteq X$ be a uniformly random subset of size $\delta |X|$ with $\delta \ge C \log(\ell/\varepsilon)/\kappa$. Then
 
 $$
 \Pr\big[\exists F \in \mathcal{F} : F \subseteq W\big] \ge 1 - \varepsilon .

@@ -1,10 +1,10 @@
 # Golowich: explicit constant-degree lossless expanders via gadget products
 
-For every $\varepsilon > 0$ and every constant ratio $\beta > 0$ there are explicit infinite families of one-sided bipartite graphs with left degree $D = O_{\varepsilon, \beta}(1)$ and right-to-left size ratio $\beta$ and a constant $\gamma=\gamma(\varepsilon,\beta)>0$ such that, with $n$ the number of left vertices, every left set $S$ of size at most $\gamma n$ has at least $(1 - \varepsilon)D|S|$ neighbours (lossless expansion), constructed by placing a constant-size lossless expander gadget inside the neighbourhoods of a large bipartite spectral expander.
+A bipartite graph $G$ with left vertex set $L(G)$, right vertex set $R(G)$ and left degree $D$ is a (one-sided) $(\mu, \varepsilon)$-lossless expander if every $S \subseteq L(G)$ with $|S| \le \mu |L(G)|$ has at least $(1 - \varepsilon) D |S|$ neighbours. For every open interval $(\beta_1, \beta_2) \subseteq (0, \infty)$ and every $\varepsilon > 0$ there are $D = D(\beta_1, \beta_2, \varepsilon) \in \mathbb{N}$, $\mu = \mu(\beta_1, \beta_2, \varepsilon) > 0$ and an infinite explicit family of $(\mu, \varepsilon)$-lossless expanders with left degree $D$ whose size ratios satisfy $|R(G)|/|L(G)| \in (\beta_1, \beta_2)$. The ratio is prescribed only up to such an interval: it is a rational number for every finite graph.
 
 ## Proof sketch
 
-Each left vertex's $D$ edges are distributed according to a gadget on its neighbourhood in a base spectral expander. Elementary counting shows that small sets either expand losslessly within gadgets or create many collisions, and collisions across gadgets are bounded by the expander mixing lemma of the base graph, giving $(1-\varepsilon)D|S|$ neighbours.
+Start from a large $(k, D_0)$-biregular bipartite graph $X$ whose non-lazy square on the right is a good spectral expander, and a constant-size $(\mu_0, \varepsilon_0)$-lossless expander $G_0$ with $D_0$ left vertices and left degree $d_0$. Set $L(G) = L(X)$ and $R(G) = R(X) \times R(G_0)$, and for every $v \in R(X)$ place a copy of $G_0$ between the neighbourhood $N_X(v)$ and $\{v\} \times R(G_0)$; the left degree is $D = k d_0$. The right sides of different gadgets are disjoint, so the neighbourhood of $S$ is the disjoint union of its neighbourhoods inside the gadgets, and nothing collides across gadgets. Call $v \in R(X)$ heavy if $|N_X(v) \cap S| \ge \mu_0 D_0$; inside a non-heavy gadget, $N_X(v) \cap S$ expands losslessly by $(1 - \varepsilon_0) d_0$. The expander mixing lemma for the square of $X$ bounds the incidences between $S$ and heavy vertices: all but a $1/(5k)$ fraction of $S$ is adjacent to at most one heavy vertex, hence to at least $k - 1$ non-heavy gadgets, and summing gives $(1 - \varepsilon) D |S|$ neighbours for suitable parameters.
 
 ## Depends on
 
@@ -16,5 +16,5 @@ Each left vertex's $D$ edges are distributed according to a gadget on its neighb
 
 ## Sources
 
-- Louis Golowich, "New explicit constant-degree lossless expanders", SODA (2024); arXiv:2306.07551.
+- Louis Golowich, "New explicit constant-degree lossless expanders", SODA (2024); arXiv:2306.07551 (Definition 1, Theorem 2, Proposition 16).
 - Michael Capalbo, Omer Reingold, Salil Vadhan, Avi Wigderson, "Randomness conductors and constant-degree lossless expanders", STOC (2002).

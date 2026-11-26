@@ -11,10 +11,6 @@ Encode a one-way permutation-based bit commitment or key-agreement protocol as a
 - [Automatability implies feasible interpolation for systems closed under restriction](automatability-implies-interpolation.md)
 - [Automatable proof systems](automatable-proof-system.md)
 
-## Proof depends on
-
-- [Superpolynomial lower bounds for Frege proofs](../superpolynomial-lower-bounds-for-frege-proofs.md)
-
 ## Sources
 
 - M. L. Bonet, T. Pitassi, R. Raz, "On interpolation and automatization for Frege systems", SIAM Journal on Computing 29 (2000) 1939-1967.

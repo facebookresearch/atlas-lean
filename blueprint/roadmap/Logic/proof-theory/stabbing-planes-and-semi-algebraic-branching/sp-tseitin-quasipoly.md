@@ -1,19 +1,15 @@
 # Stabbing planes refute Tseitin formulas in quasi-polynomial size
 
-For every connected graph $H$ of maximum degree $\Delta$ on $n$ vertices and every odd charge function, the Tseitin formula of $H$ has stabbing planes refutations of size $n^{O(\log n)} 2^{O(\Delta)}$ and depth $O(\log^2 n + \Delta)$. In contrast, Tseitin formulas on bounded-degree expanders require resolution size $2^{\Omega(n)}$ and polynomial calculus degree $\Omega(n)$ in characteristic other than $2$.
+Let $H = (V, E)$ be a connected graph with $n$ vertices and maximum degree $\Delta$, and let $\ell : V \to \{0,1\}$ be a charge function of odd total weight. The **Tseitin formula** $\mathrm{Tseitin}(H, \ell)$ has one variable $x_e$ per edge and, for every vertex $v$, the parity constraint $\sum_{e \ni v} x_e \equiv \ell(v) \pmod 2$, written as the at most $2^{\deg(v) - 1}$ clauses of width $\deg(v)$ that rule out the assignments to the edges at $v$ violating it. Summing all vertex constraints counts each edge twice but the charges once, so the formula is unsatisfiable. (This is the graph parity formula, not the Tseitin transformation of a Boolean formula into a CNF with gate variables.) $\mathrm{Tseitin}(H, \ell)$ has stabbing planes refutations of size $n^{O(\log n + \Delta/\log n)} = n^{O(\log n)}\, 2^{O(\Delta)}$ and depth $O(\Delta + \log^2 n)$.
 
 ## Proof sketch
 
-Query the sum of the variables on the edges crossing a balanced cut of $H$, splitting on its value; a balanced-separator recursion halves the number of vertices on each branch, and on each side the parity constraint of the charges combined with the fixed cut value is violated on one side. The integer-free slabs dispose of the parity-violating branches, and a recursion of depth $O(\log n)$ with $O(n)$ possible values per level gives quasi-polynomial size.
+For $U \subseteq V$ let $\mathrm{Cut}(U)$ be the edges with exactly one endpoint in $U$. The refutation maintains a set $U$ of vertices, initially $V$, together with queried inequalities that fix $\sum_{e \in \mathrm{Cut}(U)} x_e = k$ for some $k \not\equiv \sum_{v \in U} \ell(v) \pmod 2$; the constraints inside $U$ then contradict each other. Split $U$ into halves $U_1, U_2$. Threshold queries $\sum_{e \in \mathrm{Cut}(U_1, U_2)} x_e \ge \beta$ and $\sum_{e \in \mathrm{Cut}(U_1)} x_e \ge \gamma$ determine both values in two binary-search trees, and the identity $|\mathrm{Cut}(U_1)| + |\mathrm{Cut}(U_2)| = |\mathrm{Cut}(U)| + 2|\mathrm{Cut}(U_1, U_2)|$ then fixes the value $\delta$ on $\mathrm{Cut}(U_2)$, with $\delta + \gamma = k + 2\beta$. Leaves with $\delta$ out of range are refuted by the bounds $0 \le x_e \le 1$; otherwise one of $U_1, U_2$ has boundary value of the wrong parity, and the refutation recurses there. After $\log n$ halvings $U$ is a single vertex $v$ with its boundary sum fixed to a value of the wrong parity; querying $x_e \ge 1$ or $x_e \le 0$ for each of its at most $\Delta$ incident edges forces Boolean values, and each leaf then contradicts either the fixed sum or a clause of the constraint at $v$.
 
 ## Depends on
 
 - [The stabbing planes proof system](stabbing-planes-system.md)
 
-## Proof depends on
-
-- [Tseitin CNF](../../propositional-logic/tseitin-transformation/tseitin.md)
-
 ## Sources
 
-- P. Beame, N. Fleming, R. Impagliazzo, A. Kolokolova, D. Pankratov, T. Pitassi, R. Robere, "Stabbing planes", ITCS (2018), arXiv:1710.03219.
+- P. Beame, N. Fleming, R. Impagliazzo, A. Kolokolova, D. Pankratov, T. Pitassi, R. Robere, "Stabbing planes", ITCS (2018), LIPIcs 94, Art. 10, doi:10.4230/LIPIcs.ITCS.2018.10, arXiv:1710.03219 (Theorem 6).

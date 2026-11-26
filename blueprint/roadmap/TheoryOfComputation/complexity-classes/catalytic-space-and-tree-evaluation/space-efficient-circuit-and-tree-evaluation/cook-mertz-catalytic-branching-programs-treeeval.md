@@ -5,8 +5,8 @@ Recall that an instance of Tree Evaluation $\mathrm{TreeEval}_{k,h}$ (binary ver
 As layered branching programs, the pebbling algorithm has $2^h-1$ layers of width up to $k^h$. Cook and Mertz give three deterministic branching programs for $\mathrm{TreeEval}_{k,h}$:
 
 1. $2^{4h}\mathrm{poly}(k)$ layers of width $2^{3k}$, which beats the pebbling bound when $h=\omega(k/\log k)$;
-2. $k^{2h}\mathrm{poly}(k)$ layers of width $k^3$, of total size comparable to pebbling but built in the catalytic framework;
-3. for every constant $\epsilon\gt 0$, $(O(k/h))^{2h}\mathrm{poly}(k)$ layers of width $(O(k/h))^{\epsilon h}$, which beats pebbling for all $h\ge k^{1/2+\mathrm{poly}(\epsilon)}$.
+2. $(2k)^{2h}\mathrm{poly}(k)$ layers of width $k^3$, of total size comparable to pebbling but built in the catalytic framework;
+3. for every constant $\epsilon\gt 0$ and some $C=O(1/\epsilon)$, $(1+Ck/h)^{2h}\mathrm{poly}(k)$ layers of width $(1+Ck/h)^{\epsilon h}$, which beats pebbling for all $h\ge k^{1/2+\mathrm{poly}(\epsilon)}$.
 
 These are the first deterministic upper bounds for Tree Evaluation better than the pebbling algorithm.
 
@@ -20,4 +20,4 @@ The programs evaluate the tree by register programs in the style of Buhrman–Cl
 
 ## Sources
 
-- James Cook and Ian Mertz, "Catalytic Approaches to the Tree Evaluation Problem", STOC (2020), ECCC TR20-056.
+- James Cook and Ian Mertz, "Catalytic Approaches to the Tree Evaluation Problem", STOC (2020), doi:10.1145/3357713.3384316; ECCC TR20-056 (Theorems 1–3).

@@ -14,7 +14,7 @@ At each vertex the prover proves, with the SNARK, the statement "the local predi
 
 ## Proof depends on
 
-- [Extractor blow-up in recursive proof composition](recursive-extraction-blowup.md)
+- [Size bound for recursively composed knowledge extractors](recursive-extraction-blowup.md)
 
 ## Sources
 

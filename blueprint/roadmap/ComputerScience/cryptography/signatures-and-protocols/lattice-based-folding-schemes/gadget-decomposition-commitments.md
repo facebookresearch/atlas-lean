@@ -16,4 +16,4 @@ Balanced base-$b$ digit expansion of each integer coefficient in $(-b^{k}/2,b^{k
 
 ## Sources
 
-- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", IACR ePrint 2024/257 (2024).
+- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", ASIACRYPT (2025), IACR ePrint 2024/257.

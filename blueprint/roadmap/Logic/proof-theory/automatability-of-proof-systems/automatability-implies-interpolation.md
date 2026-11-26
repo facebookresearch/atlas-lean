@@ -1,21 +1,17 @@
 # Automatability implies feasible interpolation for systems closed under restriction
 
-Let $P$ be a proof system closed under restrictions (a refutation of $F$ restricted by a partial assignment is a refutation of the restricted formula of no larger size). If $P$ is automatable in time $t$, then $P$ has **feasible interpolation** in time $\operatorname{poly}(t)$: given a $P$-refutation of size $s$ of a split formula $A(x, y) \wedge B(x, z)$ and an assignment $a$ to the shared variables $x$, one can decide in time $\operatorname{poly}(t(s))$ a side $C \in \{A, B\}$ such that $C(a, \cdot)$ is unsatisfiable.
+Let $P$ be a proof system closed under restrictions: if $\pi$ is a $P$-refutation of $F$ and $\rho$ is a partial assignment, then $\pi$ restricted by $\rho$ yields a $P$-refutation of the restricted formula $F|_\rho$ of no larger size. Say that $P$ is automatable in time $t$ if some algorithm, given an unsatisfiable formula $F$, outputs a $P$-refutation of $F$ within time $t(|F| + s_P(F))$, where $s_P(F)$ is the minimum size of a $P$-refutation of $F$. If $P$ is automatable in time $t$, then $P$ has **feasible interpolation** in time $\operatorname{poly}(t)$: given a $P$-refutation of size $s$ of a split formula $A(x, y) \wedge B(x, z)$, whose two parts share only the variables $x$, and an assignment $a$ to $x$, one can choose in time $t(|A| + s) + \operatorname{poly}(|A| + |B| + s)$ a side $C \in \{A, B\}$ such that $C(a, \cdot)$ is unsatisfiable.
 
 ## Proof sketch
 
-Run the automating algorithm on $A(a, y)$ for $t(c \cdot s)$ steps, where the restriction of the given refutation to $x = a$ splits into refutations of $A(a,y)$ or of $B(a,z)$ of size at most $s$. If the algorithm finds a refutation of $A(a, y)$ within the time bound, answer $A$; otherwise $A(a, y)$ has no refutation of size $s$, so the restriction must refute $B(a, z)$, and answer $B$.
+Run the automating algorithm on $A(a, y)$ for $t(|A| + s)$ steps and check its output with the polynomial-time verifier of $P$. If it returns a valid refutation of $A(a, y)$, answer $A$; this is correct. Otherwise (a timeout or an invalid output) answer $B$. To see that $B(a, \cdot)$ is then unsatisfiable, suppose it had a satisfying assignment $b$. Restricting the given refutation by $x = a$ and $z = b$ satisfies every clause of $B$ and leaves a $P$-refutation of $A(a, y)$ of size at most $s$, so $s_P(A(a, y)) \le s$ and the automating algorithm would have produced a valid refutation within the time bound. The argument uses only closure under restrictions and automatability; it needs no interpolation theorem and no proof-length lower bound.
 
 ## Depends on
 
 - [Automatable proof systems](automatable-proof-system.md)
 
-## Proof depends on
-
-- [Craig interpolation for first-order logic](../craig-interpolation-for-first-order-logic.md)
-
 ## Sources
 
-- M. L. Bonet, T. Pitassi, R. Raz, "On interpolation and automatization for Frege systems", SIAM Journal on Computing 29 (2000) 1939-1967.
+- M. L. Bonet, T. Pitassi, R. Raz, "On interpolation and automatization for Frege systems", SIAM Journal on Computing 29 (2000) 1939-1967, doi:10.1137/S0097539798353230.
 - R. Impagliazzo, comment recorded in M. L. Bonet, T. Pitassi, R. Raz (2000); see also J. Krajíček, "Proof complexity", Cambridge University Press (2019).
 - J. Krajíček, "Proof complexity", Encyclopedia of Mathematics and its Applications 170, Cambridge University Press (2019).

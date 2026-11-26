@@ -15,10 +15,10 @@ Decomposition keeps norms small; the range proof certifies that the decomposed d
 
 - [Base-b decomposition commutes with Ajtai commitments](gadget-decomposition-commitments.md)
 - [Sum-check range proof via a vanishing product](sumcheck-range-check.md)
-- [Unbounded norm growth obstructs naive lattice folding](lattice-folding-norm-growth.md)
+- [Worst-case norm bounds for folding lattice witnesses without norm reduction](lattice-folding-norm-growth.md)
 - [HyperNova multi-folding scheme for CCS](../customizable-constraint-systems-and-multi-folding/hypernova-multifolding.md)
 - [Relaxed binding of Ajtai commitments with challenge-difference openings](ajtai-relaxed-binding.md)
 
 ## Sources
 
-- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", IACR ePrint 2024/257 (2024).
+- Dan Boneh, Binyi Chen, "LatticeFold: A Lattice-based Folding Scheme and its Applications to Succinct Proof Systems", ASIACRYPT (2025), IACR ePrint 2024/257.

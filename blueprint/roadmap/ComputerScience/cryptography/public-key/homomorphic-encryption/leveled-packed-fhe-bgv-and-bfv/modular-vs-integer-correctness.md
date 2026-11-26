@@ -4,7 +4,7 @@ BGV and BFV evaluation is correct modulo $t$: decryption of $\mathrm{Eval}(f,\ma
 
 ## Proof sketch
 
-Reduction modulo $t$ is a ring homomorphism from $\mathbb{Z}$, so the computation commutes with it. The centered representative of a residue modulo $t$ is the unique integer in $(-t/2,t/2]$ in its class, which equals the integer result exactly when the latter lies in that range.
+Reduction modulo $t$ is a ring homomorphism from $\mathbb{Z}$, so the computation commutes with it. The centered representative $[x]_t$ of a residue modulo $t$, as output by BFV decryption, is the unique integer in $[-t/2,t/2)$ in its class, which equals the integer result exactly when the latter lies in that range; in particular it does so when the integer result lies in $(-t/2,t/2)$.
 
 ## Depends on
 
@@ -13,4 +13,4 @@ Reduction modulo $t$ is a ring homomorphism from $\mathbb{Z}$, so the computatio
 ## Sources
 
 - Zvika Brakerski, Craig Gentry, Vinod Vaikuntanathan, "(Leveled) Fully Homomorphic Encryption without Bootstrapping", ITCS (2012), IACR ePrint 2011/277.
-- Junfeng Fan, Frederik Vercauteren, "Somewhat Practical Fully Homomorphic Encryption", IACR ePrint 2012/144 (2012).
+- Jean-Claude Bajard, Julien Eynard, M. Anwar Hasan, Vincent Zucca, "A Full RNS Variant of FV Like Somewhat Homomorphic Encryption Schemes", SAC 2016, LNCS 10532 (2017), §§2–4 (`DecFV`, `MultFV`, `RelinFV`), DOI 10.1007/978-3-319-69453-5_23.

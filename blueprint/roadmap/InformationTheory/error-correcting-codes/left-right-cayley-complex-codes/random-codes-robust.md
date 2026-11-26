@@ -1,10 +1,10 @@
 # Random pairs of codes are two-sided robustly testable
 
-For every rate pair $0 < \rho_1, \rho_2 < 1$ there exist $\kappa, \delta > 0$ such that for all sufficiently large $\Delta$, a uniformly random pair of linear codes $C_1, C_2 \subseteq \mathbb{F}_2^{\Delta}$ with $\dim C_i = \lceil \rho_i \Delta \rceil$ satisfies with probability $1 - o(1)$: both $C_i$ and $C_i^{\perp}$ have relative distance at least $\delta$, and both $C_1 \otimes C_2$ and its dual tensor code are $\kappa$-agreement testable.
+For all $\rho_a, \rho_b \in (0, 1)$ there are $\delta_1, \delta_2 > 0$ such that the following holds. Let $C_A, C_B \subseteq \mathbb{F}_2^{\Delta}$ be independent uniformly random linear codes of dimensions $\rho_a \Delta$ and $\rho_b \Delta$. Then, with probability tending to $1$ as $\Delta \to \infty$, the four codes $C_A, C_B, C_A^{\perp}, C_B^{\perp}$ have minimum distance at least $\delta_1 \Delta$, and both $C_A \otimes C_B$ and the tensor product of the duals $C_A^{\perp} \otimes C_B^{\perp}$ are $\delta_2$-agreement testable. Equivalently, both pairs $(C_A, C_B)$ and $(C_A^{\perp}, C_B^{\perp})$ are $\delta_2 \Delta$-robust: every $c \in C_A \otimes \mathbb{F}_2^{\Delta} + \mathbb{F}_2^{\Delta} \otimes C_B$ splits as $c = c_a + c_b$ with $c_a \in C_A \otimes \mathbb{F}_2^{\Delta}$, $c_b \in \mathbb{F}_2^{\Delta} \otimes C_B$ and $|c| \ge \delta_2 \Delta \,(\#\text{nonzero columns of } c_a + \#\text{nonzero rows of } c_b)$.
 
 ## Proof sketch
 
-Agreement testability of $C_1 \otimes C_2$ fails only if some low-weight pattern of row and column disagreements is not explained by a tensor codeword. One shows a combinatorial characterization in terms of distance of the codes restricted to large subsets of coordinates and then a union bound over subsets and a first-moment computation over random generator matrices; the dual statement is symmetric because the duals of random codes are random codes.
+For one pair this is Theorem 2.10 of Dinur, Hsieh, Lin and Vidick, with explicit admissible $\delta_1, \delta_2$: a counting argument in the style of the Gilbert-Varshamov bound declares certain low-weight words bad and shows by a union bound that with high probability no bad word is a codeword, organizing the words by rank. The dual of a uniformly random code of dimension $\rho \Delta$ is a uniformly random code of dimension $(1-\rho)\Delta$, so the same theorem applies to $(C_A^{\perp}, C_B^{\perp})$, and a union bound gives both conclusions at once (Corollary 2.11). Robustness and agreement testability coincide in this normalization because the associated chain complex is exact (Definitions 2.8 and 2.9).
 
 ## Depends on
 
@@ -12,6 +12,4 @@ Agreement testability of $C_1 \otimes C_2$ fails only if some low-weight pattern
 
 ## Sources
 
-- I. Dinur, S. Evra, R. Livne, A. Lubotzky, S. Mozes, "Locally testable codes with constant rate, distance, and locality", STOC (2022), arXiv:2111.04808.
-- P. Panteleev, G. Kalachev, "Asymptotically good quantum and locally testable classical LDPC codes", STOC (2022), arXiv:2111.03654.
-- G. Kalachev, P. Panteleev, "Two-sided robustly testable codes", arXiv:2206.09973 (2022).
+- I. Dinur, M.-H. Hsieh, T.-C. Lin, T. Vidick, "Good quantum LDPC codes with linear time decoders", STOC (2023), arXiv:2206.07750, Theorem 2.10 and Corollary 2.11.

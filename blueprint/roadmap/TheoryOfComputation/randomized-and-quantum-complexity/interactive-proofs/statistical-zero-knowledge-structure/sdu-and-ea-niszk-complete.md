@@ -4,7 +4,7 @@
 
 ## Proof sketch
 
-For membership, the common random string is a candidate output $y$ and the prover sends a uniformly random preimage of $y$ under $X$; when $X$ is close to uniform this is simulable by sampling an input and outputting it with its image, and when $X$ is far from uniform a random $y$ has no preimage with high probability (after polarizing the gap). For hardness, the simulator of an arbitrary $\mathsf{NISZK}$ proof, restricted to its common-random-string component, is close to uniform on YES instances and far from uniform on NO instances, by soundness.
+For membership, $\mathrm{SDU}$ Karp-reduces to $\mathrm{EA}$ (the map $X\mapsto(X,n-3)$), and $\mathrm{EA}$ has an $\mathsf{NISZK}$ proof; a preimage of the reference string is not by itself a soundness certificate, since a sampler arbitrarily far from uniform can still have full support. For hardness, given an $\mathsf{NISZK}$ proof with completeness and soundness errors at most $2^{-n}$ and a simulator $S$, map $x$ to the circuit $M_x$ that runs $S(x)$ on its input to get a transcript $(\sigma,p)$ and outputs $\sigma$ if the verifier accepts $(x,\sigma,p)$ and a fixed string $0^{r}$ otherwise. On YES instances $M_x$ is within $1/r$ of uniform by simulation and completeness; on NO instances soundness leaves at most a $2^{-n}$ fraction of reference strings with an accepting transcript, so $M_x$ is at distance more than $1-1/r$ from uniform.
 
 ## Depends on
 
@@ -14,4 +14,4 @@ For membership, the common random string is a candidate output $y$ and the prove
 
 ## Sources
 
-- Oded Goldreich, Amit Sahai and Salil Vadhan, "Can Statistical Zero Knowledge be made Non-Interactive? or On the Relationship of SZK and NISZK", CRYPTO (1999), ECCC TR99-013.
+- Oded Goldreich, Amit Sahai and Salil Vadhan, "Can Statistical Zero Knowledge be made Non-Interactive? or On the Relationship of SZK and NISZK", CRYPTO (1999), ECCC TR99-013 (Lemmas 4.1–4.2).
