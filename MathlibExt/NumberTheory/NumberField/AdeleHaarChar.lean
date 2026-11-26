@@ -43,19 +43,13 @@ the measure-theoretic arguments need.
 
 @[expose] public section
 
-section S4Base
-
-set_option autoImplicit false
+noncomputable section
 
 open MeasureTheory Complex NumberField NumberField.InfinitePlace IsDedekindDomain
 open IsDedekindDomain.HeightOneSpectrum TopologicalSpace Filter
 open scoped Pointwise ENNReal NNReal
 
-noncomputable section
-
-namespace NumberField
-namespace AdelicCountability
-open NumberField
+namespace NumberField.AdelicCountability
 
 scoped instance instCountableNumberField (K : Type*) [Field K] [NumberField K] :
     Countable K := by
@@ -79,9 +73,9 @@ scoped instance instCountableHeightOneSpectrum (R : Type*) [CommRing R] [IsDedek
     exact HeightOneSpectrum.ext h
   exact hinj.countable
 
-scoped instance instCountableValueGroup₀ {R Γ₀ : Type*} [CommRing R] [LinearOrderedCommGroupWithZero
-    Γ₀]
-    [Countable Γ₀] (v : R →*₀ Γ₀) : Countable (MonoidWithZeroHom.ValueGroup₀ v) :=
+scoped instance instCountableValueGroup₀ {R Γ₀ : Type*} [CommRing R]
+    [LinearOrderedCommGroupWithZero Γ₀] [Countable Γ₀] (v : R →*₀ Γ₀) :
+    Countable (MonoidWithZeroHom.ValueGroup₀ v) :=
   MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.injective.countable
 
 scoped instance instCountableUnits {M : Type*} [Monoid M] [Countable M] : Countable Mˣ :=
@@ -112,8 +106,8 @@ scoped instance instSecondCountableAdicCompletion (R K : Type*) [CommRing R] [Is
   have hcg : (uniformity (v.adicCompletion K)).IsCountablyGenerated :=
     isCountablyGenerated_uniformity_of_valued _ (WithZero (Multiplicative ℤ))
   have hsep : SeparableSpace (v.adicCompletion K) :=
-    ⟨_, Set.countable_range _, IsDedekindDomain.HeightOneSpectrum.denseRange_algebraMap (K := K) (v
-        := v)⟩
+    ⟨_, Set.countable_range _, IsDedekindDomain.HeightOneSpectrum.denseRange_algebraMap (K := K)
+        (v := v)⟩
   exact UniformSpace.secondCountable_of_separable _
 
 open RestrictedProduct Topology in
@@ -122,21 +116,18 @@ private theorem secondCountableTopology_restrictedProduct {ι : Type*} [Countabl
     [∀ i, TopologicalSpace (R i)] [∀ i, SecondCountableTopology (R i)]
     (hBo : ∀ i, IsOpen (B i)) :
     SecondCountableTopology (Πʳ i, [R i, B i]_[Filter.cofinite]) := by
-
   have hprin : ∀ t : Finset ι, Filter.cofinite ≤ Filter.principal ((↑t : Set ι)ᶜ) := fun t =>
     Filter.le_principal_iff.mpr (Filter.mem_cofinite.mpr (by simp))
-
   have hpiece : ∀ t : Finset ι,
       SecondCountableTopology (Πʳ i, [R i, B i]_[Filter.principal ((↑t : Set ι)ᶜ)]) := fun t =>
     (isEmbedding_coe_of_principal).secondCountableTopology
-
   set U : Finset ι → Set (Πʳ i, [R i, B i]_[Filter.cofinite]) :=
     fun t => Set.range (inclusion R B (hprin t)) with hU
   have hUopen : ∀ t, IsOpen (U t) := fun t =>
     (isOpenEmbedding_inclusion_principal hBo (hprin t)).isOpen_range
   have hUsc : ∀ t, SecondCountableTopology (U t) := by
     intro t
-    haveI := hpiece t
+    have := hpiece t
     exact (((isOpenEmbedding_inclusion_principal hBo (hprin
         t)).isEmbedding.toHomeomorph).symm).isEmbedding.secondCountableTopology
   have hcover : ⋃ t : Finset ι, U t = Set.univ := by
@@ -152,27 +143,27 @@ private theorem secondCountableTopology_restrictedProduct {ι : Type*} [Countabl
 
 open IsDedekindDomain in
 open scoped RestrictedProduct in
-
 scoped instance instSecondCountableFiniteAdeleRing (R K : Type*) [CommRing R] [IsDedekindDomain R]
     [Field K] [Algebra R K] [IsFractionRing R K] [Countable R] [Countable K] :
     SecondCountableTopology (FiniteAdeleRing R K) := by
-  haveI : SecondCountableTopology
+  have : SecondCountableTopology
       (Πʳ v : HeightOneSpectrum R, [v.adicCompletion K, v.adicCompletionIntegers K]) :=
     secondCountableTopology_restrictedProduct fun v => Valued.isOpen_valuationSubring _
   exact inferInstanceAs <| SecondCountableTopology <|
     Πʳ v : HeightOneSpectrum R, [v.adicCompletion K, v.adicCompletionIntegers K]
 
+scoped instance instSecondCountableCompletion {K : Type*} [Field K] [NumberField K]
+    (v : InfinitePlace K) : SecondCountableTopology v.Completion := by
+  have : Countable (WithAbs v.1) := (WithAbs.equiv v.1).toEquiv.injective.countable
+  have : SeparableSpace v.Completion :=
+    ⟨_, Set.countable_range _, AbsoluteValue.Completion.denseRange_coe (v := v.1)⟩
+  have : (uniformity v.Completion).IsCountablyGenerated :=
+    EMetric.instIsCountablyGeneratedUniformity
+  exact UniformSpace.secondCountable_of_separable _
+
 scoped instance instSecondCountableInfiniteAdeleRing (K : Type*) [Field K] [NumberField K] :
-    SecondCountableTopology (InfiniteAdeleRing K) := by
-  haveI : ∀ v : InfinitePlace K, SecondCountableTopology v.Completion := by
-    intro v
-    haveI : Countable (WithAbs v.1) := (WithAbs.equiv v.1).toEquiv.injective.countable
-    haveI : SeparableSpace v.Completion :=
-      ⟨_, Set.countable_range _, AbsoluteValue.Completion.denseRange_coe (v := v.1)⟩
-    haveI : (uniformity v.Completion).IsCountablyGenerated :=
-      EMetric.instIsCountablyGeneratedUniformity
-    exact UniformSpace.secondCountable_of_separable _
-  exact inferInstanceAs <| SecondCountableTopology <| (v : InfinitePlace K) → v.Completion
+    SecondCountableTopology (InfiniteAdeleRing K) :=
+  inferInstanceAs <| SecondCountableTopology <| (v : InfinitePlace K) → v.Completion
 
 scoped instance instSecondCountableAdeleRing (R K : Type*) [CommRing R] [IsDedekindDomain R]
     [Field K] [NumberField K] [Algebra R K] [IsFractionRing R K] [Countable R] :
@@ -235,9 +226,8 @@ private theorem volume_image_mul_left_real {c : ℝ} (hc : c ≠ 0) {S : Set ℝ
     map_mul_left_volume_real (inv_ne_zero hc)]
   simp [_root_.smul_apply, smul_eq_mul, eNorm_inv, hc]
 
-private theorem volume_image_mul_left_complex {c : ℂ} (hc : c ≠ 0) {S : Set ℂ} (hS : MeasurableSet
-    S) :
-    volume ((fun x => c * x) '' S) = ‖c‖ₑ ^ 2 * volume S := by
+private theorem volume_image_mul_left_complex {c : ℂ} (hc : c ≠ 0) {S : Set ℂ}
+    (hS : MeasurableSet S) : volume ((fun x => c * x) '' S) = ‖c‖ₑ ^ 2 * volume S := by
   have himg : (fun x => c * x) '' S = (fun x => c⁻¹ * x) ⁻¹' S := by
     ext y
     constructor
@@ -252,7 +242,8 @@ private theorem volume_image_mul_left_complex {c : ℂ} (hc : c ≠ 0) {S : Set 
 
 variable (F : Type*) [Field F] [NumberField F]
 
-/-- The Borel σ-algebra on the completion at an infinite place. -/
+/-- **Borel σ-algebra at an infinite place.** The Borel σ-algebra on the completion at an
+infinite place. -/
 @[reducible] def placeBorel (w : InfinitePlace F) : MeasurableSpace (w.Completion) := borel _
 
 attribute [local instance] placeBorel
@@ -261,17 +252,20 @@ scoped instance placeBorelSpace (w : InfinitePlace F) : BorelSpace (w.Completion
 
 variable {F}
 
-/-- Lebesgue measure transported to the completion at a real place. -/
+/-- **Lebesgue measure at a real place.** Lebesgue measure on `ℝ`, transported to the completion
+at a real place. -/
 def placeMeasureReal {w : InfinitePlace F} (hw : w.IsReal) : Measure (w.Completion) :=
   (volume : Measure ℝ).map (Completion.ringEquivRealOfIsReal hw).symm
 
-/-- Lebesgue measure transported to the completion at a complex place. -/
+/-- **Lebesgue measure at a complex place.** Lebesgue measure on `ℂ`, transported to the
+completion at a complex place. -/
 def placeMeasureComplex {w : InfinitePlace F} (hw : w.IsComplex) : Measure (w.Completion) :=
   (volume : Measure ℂ).map (Completion.ringEquivComplexOfIsComplex hw).symm
 
 variable (F) in
 open Classical in
-/-- The standard additive Haar measure on the completion at an infinite place. -/
+/-- **Haar measure at an infinite place.** The standard additive Haar measure on the completion
+at an infinite place: transported Lebesgue measure on `ℝ` or on `ℂ`. -/
 def placeMeasure (w : InfinitePlace F) : Measure (w.Completion) :=
   if hw : w.IsReal then placeMeasureReal hw
   else placeMeasureComplex (not_isReal_iff_isComplex.mp hw)
@@ -291,13 +285,6 @@ scoped instance isAddHaarMeasure_placeMeasureComplex {w : InfinitePlace F} (hw :
     ((Completion.ringEquivComplexOfIsComplex hw).symm : ℂ ≃+* w.Completion).toAddEquiv
     (Completion.isometryEquivComplexOfIsComplex hw).symm.continuous
     (Completion.isometryEquivComplexOfIsComplex hw).continuous
-
-scoped instance secondCountable_completion (w : InfinitePlace F) :
-    SecondCountableTopology (w.Completion) := by
-  rcases w.isReal_or_isComplex with hw | hw
-  · exact (Completion.isometryEquivRealOfIsReal hw).toHomeomorph.isEmbedding.secondCountableTopology
-  · exact (Completion.isometryEquivComplexOfIsComplex
-        hw).toHomeomorph.isEmbedding.secondCountableTopology
 
 omit [NumberField F] in
 private theorem placeMeasureReal_image_mul {w : InfinitePlace F} (hw : w.IsReal)
@@ -383,19 +370,14 @@ scoped instance isAddHaarMeasure_placeMeasure (w : InfinitePlace F) :
   · exact isAddHaarMeasure_placeMeasureReal _
   · exact isAddHaarMeasure_placeMeasureComplex _
 
-scoped instance sigmaCompact_completion (w : InfinitePlace F) : SigmaCompactSpace (w.Completion) :=
-  inferInstance
-
-scoped instance sigmaFinite_placeMeasure (w : InfinitePlace F) : SigmaFinite (placeMeasure F w) :=
-  inferInstance
-
 variable (F) in
-/-- The product of the standard Haar measures over the infinite places. -/
+/-- **Product Haar measure over the infinite places.** The product of the standard Haar measures
+on the completions at the infinite places. -/
 def archMeasure : Measure ((w : InfinitePlace F) → w.Completion) :=
   Measure.pi (fun w => placeMeasure F w)
 
-scoped instance isFiniteMeasureOnCompacts_archMeasure : IsFiniteMeasureOnCompacts (archMeasure F)
-    := by
+scoped instance isFiniteMeasureOnCompacts_archMeasure :
+    IsFiniteMeasureOnCompacts (archMeasure F) := by
   unfold archMeasure; infer_instance
 
 scoped instance isOpenPosMeasure_archMeasure : (archMeasure F).IsOpenPosMeasure := by
@@ -470,7 +452,8 @@ private theorem placeMeasure_closedBall_lt_top (w : InfinitePlace F) :
   (isCompact_closedBall (0 : w.Completion) 1).measure_lt_top
 
 variable (F) in
-/-- The Borel σ-algebra on the infinite adeles. -/
+/-- **Borel σ-algebra on the infinite adeles.** The product σ-algebra on the infinite adeles,
+which is their Borel σ-algebra. -/
 @[reducible] def infMS : MeasurableSpace (InfiniteAdeleRing F) :=
   inferInstanceAs (MeasurableSpace ((w : InfinitePlace F) → w.Completion))
 
@@ -481,31 +464,25 @@ scoped instance infBorelSpace : BorelSpace (InfiniteAdeleRing F) :=
 
 variable (F) in
 /-- The Borel σ-algebra on the finite adeles. -/
-@[reducible] def finBorel : MeasurableSpace (FiniteAdeleRing (𝓞 F) F) := borel _
+@[reducible] private def finBorel : MeasurableSpace (FiniteAdeleRing (𝓞 F) F) := borel _
 
 attribute [local instance] finBorel
 
-scoped instance finBorelSpace : BorelSpace (FiniteAdeleRing (𝓞 F) F) := ⟨rfl⟩
+private local instance finBorelSpace : BorelSpace (FiniteAdeleRing (𝓞 F) F) := ⟨rfl⟩
 
 variable (F) in
 /-- The product σ-algebra on the adeles, viewed as infinite times finite adeles. -/
-@[reducible] def adeleMS : MeasurableSpace (AdeleRing (𝓞 F) F) :=
+@[reducible] private def adeleMS : MeasurableSpace (AdeleRing (𝓞 F) F) :=
   inferInstanceAs (MeasurableSpace (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F))
 
 attribute [local instance] adeleMS
 
-scoped instance adeleBorelSpaceProd : BorelSpace (AdeleRing (𝓞 F) F) :=
+private local instance adeleBorelSpaceProd : BorelSpace (AdeleRing (𝓞 F) F) :=
   inferInstanceAs (BorelSpace (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F))
-
-scoped instance secondCountable_infiniteAdeles : SecondCountableTopology (InfiniteAdeleRing F) :=
-  inferInstanceAs (SecondCountableTopology ((w : InfinitePlace F) → w.Completion))
-
-scoped instance secondCountable_adeleRing : SecondCountableTopology (AdeleRing (𝓞 F) F) :=
-  inferInstanceAs (SecondCountableTopology (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F))
 
 variable (F) in
 /-- The integral finite adeles, as a compact set with nonempty interior. -/
-def zhatCompacts : TopologicalSpace.PositiveCompacts (FiniteAdeleRing (𝓞 F) F) where
+private def zhatCompacts : TopologicalSpace.PositiveCompacts (FiniteAdeleRing (𝓞 F) F) where
   carrier := AdelicBox.integralFiniteAdeles (𝓞 F) F
   isCompact' := AdelicBox.isCompact_integralFiniteAdeles F
   interior_nonempty' := by
@@ -514,17 +491,18 @@ def zhatCompacts : TopologicalSpace.PositiveCompacts (FiniteAdeleRing (𝓞 F) F
 
 variable (F) in
 /-- The additive Haar measure on the finite adeles normalized on the integral adeles. -/
-def finMeasure : Measure (FiniteAdeleRing (𝓞 F) F) :=
+private def finMeasure : Measure (FiniteAdeleRing (𝓞 F) F) :=
   Measure.addHaarMeasure (zhatCompacts F)
 
-scoped instance isAddHaarMeasure_finMeasure : (finMeasure F).IsAddHaarMeasure := by
+private local instance isAddHaarMeasure_finMeasure : (finMeasure F).IsAddHaarMeasure := by
   unfold finMeasure; infer_instance
 
-scoped instance sigmaFinite_finMeasure : SigmaFinite (finMeasure F) := by
+private local instance sigmaFinite_finMeasure : SigmaFinite (finMeasure F) := by
   unfold finMeasure; infer_instance
 
 variable (F) in
-/-- The standard additive Haar measure on the infinite adeles. -/
+/-- **Haar measure on the infinite adeles.** The product of the standard Haar measures on the
+completions at the infinite places, as a measure on the infinite adeles. -/
 def infMeasure : Measure (InfiniteAdeleRing F) := archMeasure F
 
 scoped instance isAddHaarMeasure_infMeasure : (infMeasure F).IsAddHaarMeasure :=
@@ -535,22 +513,22 @@ scoped instance sigmaFinite_infMeasure : SigmaFinite (infMeasure F) :=
 
 variable (F) in
 /-- The product of the infinite and finite Haar measures on the adeles. -/
-def adelicMeasure : Measure (AdeleRing (𝓞 F) F) :=
+private def adelicMeasure : Measure (AdeleRing (𝓞 F) F) :=
   (infMeasure F).prod (finMeasure F)
 
-scoped instance isAddHaarMeasure_adelicMeasure : (adelicMeasure F).IsAddHaarMeasure :=
+private local instance isAddHaarMeasure_adelicMeasure : (adelicMeasure F).IsAddHaarMeasure :=
   inferInstanceAs
     ((((infMeasure F).prod (finMeasure F)) :
       Measure (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F)).IsAddHaarMeasure)
 
-scoped instance sigmaFinite_adelicMeasure : SigmaFinite (adelicMeasure F) :=
+private local instance sigmaFinite_adelicMeasure : SigmaFinite (adelicMeasure F) :=
   inferInstanceAs (SigmaFinite
     (((infMeasure F).prod (finMeasure F)) :
       Measure (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F)))
 
 variable (F) in
 /-- A compact reference set with nonempty interior: closed unit balls times integral adeles. -/
-def refSet : Set (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F) :=
+private def refSet : Set (InfiniteAdeleRing F × FiniteAdeleRing (𝓞 F) F) :=
   (Set.univ.pi fun w : InfinitePlace F => Metric.closedBall (0 : w.Completion) 1) ×ˢ
     (AdelicBox.integralFiniteAdeles (𝓞 F) F)
 
@@ -588,8 +566,7 @@ private theorem adelicMeasure_refSet_ne_top :
       exact (ENNReal.prod_lt_top fun w _ => placeMeasure_closedBall_lt_top w).ne)
     ((AdelicBox.isCompact_integralFiniteAdeles F).measure_lt_top).ne
 
-set_option synthInstance.maxHeartbeats 640000 in
-scoped instance regular_adelicMeasure : (adelicMeasure F).Regular :=
+private local instance regular_adelicMeasure : (adelicMeasure F).Regular :=
   Measure.regular_of_isAddLeftInvariant (μ := adelicMeasure F)
     (K := refSet F) (isCompact_refSet F) (interior_refSet_nonempty F)
     (adelicMeasure_refSet_ne_top F)
@@ -625,7 +602,6 @@ private theorem distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one
     (distribHaarChar (AdeleRing (𝓞 F) F) a : ℝ)
       = ∏ w : InfinitePlace F, ‖(a : AdeleRing (𝓞 F) F).1 w‖ ^ w.mult := by
   classical
-
   set aArch : (w : InfinitePlace F) → w.Completion :=
     (show (w : InfinitePlace F) → w.Completion from (a : AdeleRing (𝓞 F) F).1) with haArch
   have haw : ∀ w, aArch w ≠ 0 := fun w => arch_component_ne_zero a w
@@ -633,7 +609,6 @@ private theorem distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one
     adelicMeasure_refSet_ne_zero F
   have hsfin : adelicMeasure F (show Set (AdeleRing (𝓞 F) F) from refSet F) ≠ ⊤ :=
     adelicMeasure_refSet_ne_top F
-
   have hsplit : (a • (show Set (AdeleRing (𝓞 F) F) from refSet F))
       = (show Set (AdeleRing (𝓞 F) F) from
           (((fun x => aArch * x) ''
@@ -654,7 +629,6 @@ private theorem distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one
         exact hxy1
       · change (a : AdeleRing (𝓞 F) F).2 * x.2 = x.2
         rw [ha, one_mul]
-
   have harch : archMeasure F ((fun x => aArch * x) ''
         (Set.univ.pi fun w : InfinitePlace F => Metric.closedBall (0 : w.Completion) 1))
       = (∏ w, ‖aArch w‖ₑ ^ w.mult) * archMeasure F
@@ -673,7 +647,6 @@ private theorem distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one
     rw [ENNReal.ofNNReal_finsetProd]
     refine Finset.prod_congr rfl fun w _ => ?_
     rw [ENNReal.coe_pow, eNorm_eq_nnNorm]
-
   have hμgs : adelicMeasure F (a • (show Set (AdeleRing (𝓞 F) F) from refSet F))
       = ((∏ w : InfinitePlace F, ‖aArch w‖₊ ^ w.mult : ℝ≥0) : ℝ≥0∞)
         * adelicMeasure F (show Set (AdeleRing (𝓞 F) F) from refSet F) := by
@@ -686,12 +659,13 @@ private theorem distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one
   rfl
 
 end NumberField.AdeleHaarChar
-open scoped NumberField.AdelicCountability NumberField.AdeleHaarChar
 
-namespace NumberField
-namespace AdeleRing
-open NumberField.AdeleRing NumberField
+namespace NumberField.AdeleRing
 
+/-- **Haar modulus of an idele with trivial finite part.** Let `F` be a number field and `a` an
+idele of `F` whose finite component is `1`. Multiplication by `a` scales every additive Haar
+measure on the adele ring by `∏_w ‖a_w‖ ^ mult w`, the product over the infinite places `w` of
+`F`; that is, the distributive Haar character of the adele ring takes this value at `a`. -/
 theorem distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one
     (F : Type*) [Field F] [NumberField F]
     (a : (NumberField.AdeleRing (NumberField.RingOfIntegers F) F)ˣ)
@@ -702,9 +676,3 @@ theorem distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one
   NumberField.AdeleHaarChar.distribHaarChar_eq_prod_norm_pow_mult_of_snd_eq_one a ha
 
 end NumberField.AdeleRing
-open scoped NumberField.AdelicCountability NumberField.AdeleHaarChar
-
-end
-open scoped NumberField.AdelicCountability NumberField.AdeleHaarChar
-
-end S4Base

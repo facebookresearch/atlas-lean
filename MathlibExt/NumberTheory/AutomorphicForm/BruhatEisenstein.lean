@@ -109,7 +109,7 @@ private theorem constantTerm_cond_adelicBox_eq (μ : Measure 𝔸) [μ.IsAddHaar
     simp only [mul_assoc]
   have hpos : 0 < μ (adelicBox F) := measure_adelicBox_pos F μ
   have hlt : μ (adelicBox F) < ∞ := measure_adelicBox_lt_top F μ
-  haveI : IsFiniteMeasure (μ.restrict (adelicBox F)) :=
+  have : IsFiniteMeasure (μ.restrict (adelicBox F)) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hlt⟩
   have hm : ((μ (adelicBox F)).toReal : ℂ) ≠ 0 :=
     Complex.ofReal_ne_zero.mpr (ENNReal.toReal_ne_zero.mpr ⟨hpos.ne', hlt.ne⟩)
@@ -121,27 +121,29 @@ private theorem constantTerm_cond_adelicBox_eq (μ : Measure 𝔸) [μ.IsAddHaar
   simp only [Complex.real_smul, Complex.ofReal_inv]
   rw [mul_add, ← mul_assoc, inv_mul_cancel₀ hm, one_mul]
 
-/-- For unitary idele characters `μ, ν`, a continuous section `φ` induced from
-`(μ |·|^(s+1/2), ν |·|^(-(s+1/2)))` and `Re s > 1/2`, the constant term of the Bruhat
-Eisenstein series of `φ`, taken against the normalised Haar measure on the adelic fundamental
-box, is `φ g` plus the reciprocal volume of the box times the Weyl intertwining integral. -/
+/-- **Constant term of the Bruhat Eisenstein series.** For unitary idele characters `μ, ν`, a
+continuous section `φ` induced from `(μ |·|^(s+1/2), ν |·|^(-(s+1/2)))` and `Re s > 1/2`, the
+constant term of the Bruhat Eisenstein series of `φ`, taken against the normalised Haar measure on
+the adelic fundamental box, is `φ g` plus the reciprocal volume of the box times the Weyl
+intertwining integral. -/
 theorem constantTerm_bruhatEisenstein_eq_section_add_weylIntertwiningIntegral
     (μ ν : (AdeleRing (𝓞 F) F)ˣ →* ℂˣ)
-    (hα : ∀ x, 0 < (distribHaarChar (AdeleRing (𝓞 F) F) x : ℝ))
     (hμ : IsUnitaryChar (𝓞 F) F μ) (hν : IsUnitaryChar (𝓞 F) F ν)
     {s : ℂ} (hs : 1 / 2 < s.re) {φ : AdelicGL2 (𝓞 F) F → ℂ}
     (hφ : IsInducedSection (𝓞 F) F
       (etaFst μ ((NNReal.toRealHom : ℝ≥0 →+* ℝ).toMonoidHom.comp
-        (distribHaarChar (AdeleRing (𝓞 F) F))).toHomUnits hα s)
+        (distribHaarChar (AdeleRing (𝓞 F) F))).toHomUnits
+        (fun _ => NNReal.coe_pos.mpr distribHaarChar_pos) s)
       (etaSnd ν ((NNReal.toRealHom : ℝ≥0 →+* ℝ).toMonoidHom.comp
-        (distribHaarChar (AdeleRing (𝓞 F) F))).toHomUnits hα s) φ)
+        (distribHaarChar (AdeleRing (𝓞 F) F))).toHomUnits
+        (fun _ => NNReal.coe_pos.mpr distribHaarChar_pos) s) φ)
     (hφc : Continuous φ) (g : AdelicGL2 (𝓞 F) F) :
     constantTerm (ProbabilityTheory.cond (adelicAddHaar (𝓞 F) F) (adelicBox F))
         unipotentGL2 (bruhatEisenstein (𝓞 F) F φ) g
       = φ g + (((adelicAddHaar (𝓞 F) F) (adelicBox F)).toReal : ℂ)⁻¹ *
           weylIntertwiningIntegral (𝓞 F) F (adelicAddHaar (𝓞 F) F) φ g := by
-  haveI := isAddHaarMeasure_adelicAddHaar (𝓞 F) F
-  have hint := weylIntertwiningIntegrand_integrable_of_re_gt_half F hα μ ν hμ hν hs hφ hφc g
+  have := isAddHaarMeasure_adelicAddHaar (𝓞 F) F
+  have hint := weylIntertwiningIntegrand_integrable_of_re_gt_half F μ ν hμ hν hs hφ hφc g
   rw [adelicWeyl_inv] at hint
   unfold weylIntertwiningIntegral
   rw [adelicWeyl_inv]
