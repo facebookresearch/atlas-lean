@@ -21,9 +21,19 @@ For an irrational `α` with `1/(k + 1) < α < 1/k`, the main result
 
 The proof is direct. The positive integers `n` with `⌊nα⌋ = t` are those in `(t/α, (t + 1)/α)`,
 so there are `⌊(t + 1)/α⌋ - ⌊t/α⌋ = k + ⌊(t + 1)φ⌋ - ⌊tφ⌋` of them, where `φ = α⁻¹ - k` lies in
-`(0, 1)`. The last difference is `1` when some integer `m ≥ 1` lies in `(tφ, (t + 1)φ)`, that is,
-when `t = ⌊m/φ⌋`, and `0` otherwise. Polanco instead iterates the map `α ↦ α/(1 - α)`
-(INTEGERS 25 (2025), Article A104, Lemmas 2 and 3 and Corollary 2).
+`(0, 1)`. The last difference is the indicator of the Beatty set of `φ⁻¹`: it is `1` exactly when
+some integer `m ≥ 1` lies in `(tφ, (t + 1)φ)`, or equivalently when `t = ⌊m/φ⌋`. We prove this
+floor-increment identity directly rather than iterating Polanco's map `α ↦ α/(1 - α)`.
+
+## References
+
+* Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*, INTEGERS **25**
+  (2025), Article A104, pp. 1–19, Lemmas 2 and 3 and Corollary 2. The floor-increment identity
+  on p. 9 credits the next two references.
+* Geremias Polanco, *The logarithm of irrational numbers and Beatty sequences*, Acta Arithmetica
+  **179** (2017), pp. 101–123.
+* Jean-Paul Allouche and Jeffrey Shallit, *Automatic Sequences: Theory, Applications,
+  Generalizations*, Cambridge University Press (2003), Chapter 9, pp. 283–297, Lemma 9.1.3.
 -/
 
 namespace MetaMathlibExt
@@ -107,8 +117,9 @@ private theorem mem_beattySeq_iff {φ : ℝ} (hφ : 0 < φ) (hirr : Irrational �
 
 end beatty_floor_fiber_card_eq_add_indicator
 
-/-- **Explicit Beatty slope for floor-fiber multiplicities.** For irrational `α` with
-`1 / (k + 1) < α < 1 / k`, the slope `γ = (α⁻¹ - k)⁻¹` is irrational and greater than one.
+/-- **Explicit Beatty slope for floor-fiber multiplicities.**
+Let `k` be a positive integer and let `α` be irrational with `1 / (k + 1) < α < 1 / k`.
+The slope `γ = (α⁻¹ - k)⁻¹` is irrational and greater than one.
 For every natural number `t`, the number of positive indices `n` with `⌊nα⌋ = t` equals `k + 1`
 if `t` lies in the positive-index Beatty set of `γ`, and `k` otherwise. -/
 public theorem beatty_floor_fiber_card_eq_add_indicator_explicit {α : ℝ} {k : ℕ}

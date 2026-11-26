@@ -13,13 +13,20 @@ public import MathlibExt.NumberTheory.Beatty.FloorFiberIndicator
 /-!
 # Beatty sets of floor-fiber multiplicities
 
-The explicit indicator formula identifies the larger multiplicity. Rayleigh's theorem then
-identifies the smaller multiplicity with the complementary Beatty set.
+The explicit indicator formula identifies the larger multiplicity using the floor-increment identity
+for Beatty membership. It proves that identity directly and does not need to iterate Polanco's
+slope map. Rayleigh's theorem then identifies the smaller multiplicity with the complementary
+Beatty set.
 
 ## References
 
 * Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*, INTEGERS **25**
   (2025), Article A104, pp. 1–19, Corollaries 1 and 2 and Theorem 1 (Beatty–Rayleigh).
+  For the floor-increment identity used by the indicator formula, p. 9 credits:
+  * Geremias Polanco, *The logarithm of irrational numbers and Beatty sequences*, Acta Arithmetica
+    **179** (2017), pp. 101–123.
+  * Jean-Paul Allouche and Jeffrey Shallit, *Automatic Sequences: Theory, Applications,
+    Generalizations*, Cambridge University Press (2003), Chapter 9, pp. 283–297, Lemma 9.1.3.
 * Samuel Beatty, Problem 3173, *American Mathematical Monthly* **33** (1926), p. 159.
 -/
 
