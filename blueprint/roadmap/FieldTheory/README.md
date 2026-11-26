@@ -17,3 +17,4 @@ for $K$ algebraically closed of characteristic zero.
 - [Galois theory](galois-theory/README.md)
 - [Finite fields](finite-fields/README.md)
 - [Field extensions and algebraic closure](extensions-and-closure/README.md)
+- [Not yet classified](not-yet-classified/README.md)
