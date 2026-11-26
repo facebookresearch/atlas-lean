@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Matching.ShortAugmentingPath
+public import MathlibExt.Combinatorics.HopcroftKarpAugmentingPathsLengthAddCardInterLe
 
 /-!
 # Hopcroft and Karp's augmenting-path lemmas in general graphs
@@ -58,18 +59,5 @@ theorem_wanted exists_disjoint_augmentingWalks {V : Type*} [Fintype V]
     ∃ P : Fin (N.card - M.card) → (u : V) × (v : V) × G.Walk u v,
       (∀ i, IsAugmentingWalk M (P i).2.2 ∧ ∀ e ∈ (P i).2.2.edges, e ∈ M ∆ N) ∧
         ∀ i j, i ≠ j → List.Disjoint (P i).2.2.support (P j).2.2.support
-
-/-- **Augmenting after a shortest augmentation (Hopcroft–Karp, Theorem 2).** Let `M` be a matching
-of a finite simple graph `G`, `p` a shortest `M`-augmenting walk, and `q` a walk augmenting for
-the matching `M ⊕ E(p)` obtained by augmenting along `p`. Then
-`|q| ≥ |p| + |E(p) ∩ E(q)|` (Hopcroft and Karp, SIAM J. Comput. 2 (1973), §2, Theorem 2). -/
-theorem_wanted IsAugmentingWalk.length_add_card_inter_le {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) (M : Finset (Sym2 V))
-    (hMG : ∀ e ∈ M, e ∈ G.edgeSet)
-    (hM : ∀ e₁ ∈ M, ∀ e₂ ∈ M, e₁ ≠ e₂ → ∀ v : V, v ∈ e₁ → v ∉ e₂)
-    {u v : V} (p : G.Walk u v) (hp : IsAugmentingWalk M p)
-    (hshort : ∀ (u' v' : V) (p' : G.Walk u' v'), IsAugmentingWalk M p' → p.length ≤ p'.length)
-    {u' v' : V} (q : G.Walk u' v') (hq : IsAugmentingWalk (M ∆ p.edges.toFinset) q) :
-    p.length + (p.edges.toFinset ∩ q.edges.toFinset).card ≤ q.length
 
 end MetaMathlibExt

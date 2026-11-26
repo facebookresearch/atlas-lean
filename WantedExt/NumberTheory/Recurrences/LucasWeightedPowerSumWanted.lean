@@ -19,7 +19,9 @@ Fibonacci Quarterly 62 (2024), no. 3 (primary text: arXiv:2607.09105).
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.Recurrences.LucasAdditionCompanion
 public import MathlibExt.NumberTheory.Recurrences.LucasBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.LucasCompanionIdentity
 public import MathlibExt.NumberTheory.Recurrences.LucasCompanionSquare
 public import MathlibExt.NumberTheory.Recurrences.LucasRatioLowerBound
 public import MathlibExt.NumberTheory.Recurrences.LucasRootPower
@@ -29,29 +31,6 @@ public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The companion Lucas sequence in terms of the fundamental one.** Let $x$ and $y \neq 0$ be
-integers and let $(U_n)$ and $(V_n)$ be the Lucas sequences with parameters $(x, y)$, given by
-$U_0 = 0$, $U_1 = 1$, $V_0 = 2$, $V_1 = x$ and $W_{n+2} = x W_{n+1} - y W_n$ for $W = U, V$.
-Then $V_n = U_{n+1} - y U_{n-1}$ for every $n \geq 1$.
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 2.1 (iii) (`fq-2024-earplynch07182024-lem-2.1`). -/
-public theorem_wanted lucasV_eq_lucasU_succ_sub (P : LucasSequenceParams) {n : ℕ} (hn : 1 ≤ n) :
-    lucasV P n = lucasU P (n + 1) - P.q * lucasU P (n - 1)
-
-/-- **Addition formula for the Lucas sequence $U$.** Let $x$ and $y \neq 0$ be integers and let
-$(U_n)$ and $(V_n)$ be the Lucas sequences with parameters $(x, y)$, given by $U_0 = 0$, $U_1 = 1$,
-$V_0 = 2$, $V_1 = x$ and $W_{n+2} = x W_{n+1} - y W_n$ for $W = U, V$. Then for all natural
-numbers $n \leq m$, $U_{m+n} = U_m V_n - y^n U_{m-n}$.
-
-Source: Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
-Equation ∑ j F_j^p = F_n^q to a Family of Lucas Sequences*, The Fibonacci Quarterly 62 (2024),
-no. 3, Lemma 2.1 (iv) (`fq-2024-earplynch07182024-lem-2.1`). -/
-public theorem_wanted lucasU_add_eq_mul_lucasV_sub (P : LucasSequenceParams) {m n : ℕ}
-    (hnm : n ≤ m) :
-    lucasU P (m + n) = lucasU P m * lucasV P n - P.q ^ n * lucasU P (m - n)
 
 /-- **Bounds on Lucas sequences by powers of the dominant root.** Let $x$ and $y \neq 0$ be
 integers with $x \geq 1$, $|y + 1| \leq x$ and $D = x^2 - 4y > 0$, let $(U_n)$ and $(V_n)$ be the
