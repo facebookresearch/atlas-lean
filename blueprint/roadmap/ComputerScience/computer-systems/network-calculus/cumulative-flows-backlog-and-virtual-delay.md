@@ -1,6 +1,6 @@
 # Cumulative flows, backlog and virtual delay
 
-A data *flow* is described by its cumulative function $R$, where $R(t)$ is the amount of data (for example, bits) seen on the flow in the interval $[0, t]$, with $R(0) = 0$ and $R(t) = 0$ for $t < 0$ unless said otherwise. $R$ is wide-sense increasing, so it belongs to the set $\mathcal F$ of [min-plus convolution](min-plus-algebra/min-plus-convolution-and-deconvolution.md). Time is continuous, $t \ge 0$, and $R$ may be continuous (a fluid model), left-continuous or right-continuous, or neither, since $\mathcal F$ assumes no continuity.
+A data *flow* is described by its cumulative function $R$, where $R(t)$ is the amount of data (for example, bits) seen on the flow in the interval $[0, t]$, a finite number, with $R(0) = 0$ and $R(t) = 0$ for $t < 0$ unless said otherwise. $R$ is wide-sense increasing, so it belongs to the set $\mathcal F$ of [min-plus convolution](min-plus-algebra/min-plus-convolution-and-deconvolution.md). Time is continuous, $t \ge 0$, and $R$ may be continuous (a fluid model), left-continuous or right-continuous, or neither, since $\mathcal F$ assumes no continuity.
 
 A *system* (a buffer, a node, a network) takes an input flow $R$ and produces an output flow $R^*$; it is *lossless* when all input data eventually leaves, and $R^* \le R$ (it is causal). For a lossless system:
 

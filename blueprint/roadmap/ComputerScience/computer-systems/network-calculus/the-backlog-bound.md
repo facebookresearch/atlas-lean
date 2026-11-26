@@ -1,6 +1,6 @@
 # The backlog bound
 
-Assume a flow constrained by an [arrival curve](arrival-curves.md) $\alpha$ traverses a system that offers a [service curve](service-curves.md) $\beta$. Then for all $t$ the backlog satisfies
+Assume a flow constrained by a finite [arrival curve](arrival-curves.md) $\alpha$ ($\alpha(t) < \infty$ for every $t$) traverses a system that offers a [service curve](service-curves.md) $\beta$. Then for all $t$ the backlog satisfies
 
 $$
 R(t) - R^*(t) \le \sup_{s \ge 0} \{ \alpha(s) - \beta(s) \} = v(\alpha, \beta),

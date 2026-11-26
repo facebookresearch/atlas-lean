@@ -7,6 +7,7 @@ Assume a flow with [arrival curve](arrival-curves.md) $\alpha$ is input to a [gr
 ## Depends on
 
 - [Greedy shapers](greedy-shapers.md)
+- [Sub-additive closure](min-plus-algebra/sub-additive-closure.md): the good curves.
 
 ## Proof depends on
 

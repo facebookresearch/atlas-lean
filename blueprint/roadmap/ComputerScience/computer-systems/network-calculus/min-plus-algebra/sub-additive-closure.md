@@ -6,7 +6,7 @@ $$
 \bar f = \delta_0 \wedge f \wedge (f \otimes f) \wedge (f \otimes f \otimes f) \wedge \dots = \inf_{n \ge 0} f^{(n)} .
 $$
 
-A function $f \in \mathcal F$ is called *good* if $f$ is sub-additive and $f(0) = 0$; equivalently $f = f \otimes f$, or $f = \bar f$.
+A function $f \in \mathcal F$ is called *good* if $f$ is sub-additive and $f(0) = 0$; equivalently $f(0) = 0$ and $f = f \otimes f$, or $f = \bar f$. The condition $f(0) = 0$ cannot be dropped from the second form: the absorbing zero $\varepsilon$ ($+\infty$ for $t \ge 0$) satisfies $\varepsilon \otimes \varepsilon = \varepsilon$ but is not good, and its closure is $\delta_0$.
 
 ## Depends on
 

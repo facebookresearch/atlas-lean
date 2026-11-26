@@ -8,7 +8,7 @@ For [working sets](the-working-set-of-a-process.md) of a process and all times $
 
 Statement 2 says that the working set at a slightly later time consists of the pages referenced since $t$ together with a part of the current working set, which is why the current working set predicts the near future.
 
-These identities hold up to the pages referenced exactly at the dividing instant ($t - \tau$ in statement 1, $t$ in statement 2), since the windows are open intervals; when no page is referenced at those instants, or when references occur at integer times and windows are taken as the corresponding sets of integer times, they hold exactly.
+These identities are exact because the windows are half-open: $(t - 2\tau, t] = (t - 2\tau, t - \tau] \cup (t - \tau, t]$ and $(t + \alpha - \tau, t + \alpha] = (t + \alpha - \tau, t] \cup (t, t + \alpha]$. With Denning's open windows they would fail at the dividing instants: for $t = 2$, $\tau = 1$ and one page referenced only at time $1$, the interval $(0, 2)$ contains the reference but neither $(0, 1)$ nor $(1, 2)$ does.
 
 ## Depends on
 

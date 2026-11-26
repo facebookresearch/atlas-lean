@@ -1,6 +1,6 @@
 # The output arrival curve
 
-Assume a flow constrained by an [arrival curve](arrival-curves.md) $\alpha$ traverses a system that offers a [service curve](service-curves.md) $\beta$. Then the output flow is constrained by the arrival curve $\alpha^* = \alpha \oslash \beta$, the [min-plus deconvolution](min-plus-algebra/min-plus-convolution-and-deconvolution.md) of $\alpha$ by $\beta$.
+Assume a flow constrained by a finite [arrival curve](arrival-curves.md) $\alpha$ ($\alpha(t) < \infty$ for every $t$, so that the deconvolution below is defined) traverses a system that offers a [service curve](service-curves.md) $\beta$. Then the output flow is constrained by the arrival curve $\alpha^* = \alpha \oslash \beta$, the [min-plus deconvolution](min-plus-algebra/min-plus-convolution-and-deconvolution.md) of $\alpha$ by $\beta$.
 
 ## Depends on
 

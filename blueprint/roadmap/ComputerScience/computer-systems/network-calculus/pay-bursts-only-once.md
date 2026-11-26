@@ -1,6 +1,6 @@
 # Pay bursts only once
 
-Assume a flow with the affine [arrival curve](arrival-curves.md) $\gamma_{r,b}$ traverses two nodes in sequence that offer the rate-latency [service curves](service-curves.md) $\beta_{R_1,T_1}$ and $\beta_{R_2,T_2}$, with $r < R_1$ and $r < R_2$. With $R = \min(R_1, R_2)$, the end-to-end delay is at most
+Assume a flow with the affine [arrival curve](arrival-curves.md) $\gamma_{r,b}$ traverses two nodes in sequence that offer the rate-latency [service curves](service-curves.md) $\beta_{R_1,T_1}$ and $\beta_{R_2,T_2}$, with $r < R_1$ and $r < R_2$. With $R = \min(R_1, R_2)$, the end-to-end virtual delay (the delay of every bit when both nodes are first in, first out for the flow) is at most
 
 $$
 D_0 = \frac{b}{R} + T_1 + T_2,

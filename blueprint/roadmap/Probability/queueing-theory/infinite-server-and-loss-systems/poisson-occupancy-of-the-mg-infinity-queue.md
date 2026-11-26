@@ -12,6 +12,10 @@ whatever the distribution of $B$; the waiting time is $0$ and $E[L] = \rho$ by L
 
 - [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 
+## Proof depends on
+
+- [Little's law](../littles-law/littles-law.md): $E[L] = \rho$.
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:

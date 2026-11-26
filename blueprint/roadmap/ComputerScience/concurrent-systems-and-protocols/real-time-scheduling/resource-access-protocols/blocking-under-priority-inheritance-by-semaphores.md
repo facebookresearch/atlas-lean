@@ -6,6 +6,10 @@ Under [the basic priority inheritance protocol](the-basic-priority-inheritance-p
 
 - [The basic priority inheritance protocol](the-basic-priority-inheritance-protocol.md)
 
+## Proof depends on
+
+- [Blocking under priority inheritance by lower-priority jobs](blocking-under-priority-inheritance-by-lower-priority-jobs.md): the bound by $n$ in $\min(n, m)$.
+
 ## Sources
 
 - L. Sha, R. Rajkumar and J. P. Lehoczky, "Priority inheritance protocols: an approach to real-time synchronization", *IEEE Transactions on Computers* 39(9):1175–1185, 1990, Section III.B, Lemmas 4 and 5 and Theorem 6, and the bound $\min(n, m)$ stated in Section IV.B.
