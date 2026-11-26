@@ -13,6 +13,7 @@ public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Algebra.Ring.NegOnePow
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ExtendedContinuant
+public import MathlibExt.NumberTheory.ExtendedContinuantSilentTermsTableOneModSix
 
 /-!
 # Extended continuants and bi-infinite periodic continued fractions
@@ -138,31 +139,6 @@ public theorem_wanted oddSilent_terms (x y z : ℤ → ℤ) (σ : ℤ) (hσ : Od
         z 0 * extendedContinuant x (σ - 4) (-σ + 3) ∧
       x (-σ) = -extendedContinuant x (σ - 3) (-σ + 2) - z 1 ∧
       ∀ n : ℤ, σ + 1 ≤ n → x (-n) = -z (n - σ + 1)
-
-/-- **Silent-term formulas on table (33), case $\sigma \equiv 1 \pmod 6$.** Let $\sigma \ge 7$ be
-an integer with $\sigma \equiv 1 \pmod 6$, let $c_1 \ne c_2$ be integers, and let
-$x : \mathbb{Z} \to \mathbb{Z}$ be a bi-infinite integer sequence with $x_{-3} = x_0 + c_1$,
-$x_{-2} = 1$, $x_{-1} = -1$ and, for all integers $4 \le m \le \sigma - 3$, $x_{-m} = -1$ if
-$m \equiv 1 \pmod 3$ and $x_{-m} = 1$ otherwise. Write $K_a(x)_b$ for the extended continuant of
-order $a$ with start index $b$, and put $z_0 = x_0 + c_2$ and
-$w = -K_{\sigma-5}(x)_{-\sigma+3} - z_0 K_{\sigma-4}(x)_{-\sigma+3}$. Then $w \ne 0$ and
-$-1 + K_{\sigma-6}(x)_{-\sigma+4} + z_0 K_{\sigma-5}(x)_{-\sigma+4} = w$.
-
-So formula (29) of Theorem 7, with $z_0 = x_0 + c_2$, gives $x_{-\sigma+1} = w \ne 0$ and
-$x_{-\sigma+2} = 1$.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Proposition 3 (case `σ ≡ 1 mod 6`). -/
-public theorem_wanted silentTerms_table_one_mod_six (x : ℤ → ℤ) (σ : ℤ) (hσ : σ % 6 = 1)
-    (h7 : 7 ≤ σ) (c₁ c₂ : ℤ) (hc : c₁ ≠ c₂) (h3 : x (-3) = x 0 + c₁) (h2 : x (-2) = 1)
-    (h1 : x (-1) = -1)
-    (htab : ∀ m : ℤ, 4 ≤ m → m ≤ σ - 3 → x (-m) = if m % 3 = 1 then -1 else 1) :
-    -extendedContinuant x (σ - 5) (-σ + 3) - (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3)
-        ≠ 0 ∧
-      -1 + extendedContinuant x (σ - 6) (-σ + 4) +
-          (x 0 + c₂) * extendedContinuant x (σ - 5) (-σ + 4) =
-        1 * (-extendedContinuant x (σ - 5) (-σ + 3) -
-          (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3))
 
 /-- **The conjugate continued fraction is not purely periodic.** Let $P$, $Q$ and $D$ be integers
 with $D > 0$ not a perfect square and $Q > 0$, and let $\bar\alpha = (P - \sqrt{D})/Q$. Then the
