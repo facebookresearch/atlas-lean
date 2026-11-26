@@ -9699,6 +9699,7 @@
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook167": {"to": "Topology/continua-infinite-dimensional", "title": "Topology of infinite-dimensional Banach and Hilbert spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook173": {"to": "Analysis/operator-theory/bounded-operators", "title": "Density of invertible operators"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook176": {"to": "Analysis/operator-algebras", "title": "Inverses as limits of polynomials in Banach algebras"},
+  "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook24": {"to": "Analysis/banach-spaces/duality-and-weak-topologies", "title": "Automatic continuity of additive functionals"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook36": {"to": "Topology/continua-infinite-dimensional", "title": "Topology of infinite-dimensional Banach and Hilbert spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook35": {"to": "Topology/continua-infinite-dimensional", "title": "Topology of infinite-dimensional Banach and Hilbert spaces"},
   "MathlibExt/Analysis/FunctionalAnalysis/ScottishBook51": {"to": "Analysis/hilbert-spaces", "title": "Orthogonal systems and general orthogonal series"},
