@@ -1,5 +1,7 @@
 # Factor analysis and structural equation models
 
+- [Marginal success probability of a binary item](item-success-marginal.md)
+- [The marginal success probability is a latent average](item-success-marginal-eq-sum.md)
 - [Differential item functioning and group impact are logically independent](differential-item-functioning-versus-impact.md)
 - [Identification of a one-factor model from three indicators](identification-of-the-one-factor-model.md)
 - [Orthogonal rotations of factor loadings leave the covariance unchanged](rotation-indeterminacy-of-factor-loadings.md)
