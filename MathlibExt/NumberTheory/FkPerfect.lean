@@ -12,6 +12,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Nat.ModEq
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.NumberTheory.Divisors
@@ -24,15 +25,26 @@ Article A86 (<https://math.colgate.edu/~integers/z86/z86.pdf>).
 
 ## Main statements
 
+* `isKLDeficientPerfect_prime_pow_two_iff`: for a prime `p`, the prime power `p ^ a` is
+  `[2,ℓ]`-deficient-perfect exactly when `p = 2`, `a = 1` and `ℓ = 1`. Reducing the
+  divisor-sum equation modulo `p ^ 2` excludes every exponent `a ≥ 2`, and at `a = 1` the
+  equation gives `ℓ * p = 2`. The weaker form that also allows `a = 2` is
+  `isKLDeficientPerfect_prime_pow_two_imp` (Theorem 3, corrected by the solution `2` of
+  Corollary 1).
 * `klDeficientPerfectWith_one_prime_pow_iff`: the prime power `p ^ a` is
   `[1,ℓ]`-deficient-perfect with divisor `d` if and only if `p = 2`, `ℓ = 1`, `d = 1` and
   `a ≥ 1`. This is the `k = 1` part of Theorem 5.
+* `not_isKLNearPerfect_of_prime`: for `1 ≤ ℓ`, no prime is `[k,ℓ]`-near-perfect: its only
+  proper divisor is `1`, which leaves `ℓ * p = 0` (Proposition 2).
 * `not_isNearFPerfect_two_pow_mul_prime_pow`: for a prime `p` and even `b`, the number
   `2 ^ a * p ^ b` is not near `F`-perfect: no proper divisor `d` satisfies
   `σ₂(n) = n ^ 2 + d ^ 2 + 3 * n` (Theorem 15). Prime powers are excluded by reducing the
   divisor-sum equation modulo `p ^ 2`. For odd `p` with both exponents positive, the four
   divisors `1`, `n / 2`, `n / p` and `n` force `n < 3 * p ^ 2`, leaving only `n = 2 * p ^ 2`,
   which is excluded by squeezing `d` between consecutive squares.
+* `not_isNearFkPerfect_prime_pow_mul`: for `k > 1` and distinct odd primes `p₁` and `p₂`, no
+  number `p₁ ^ a * p₂` is near `F_k`-perfect (Theorem 17). Multiplicativity gives
+  `σₖ(n) = σₖ(p₁ ^ a) * (1 + p₂ ^ k)`, which is even, while `n ^ k + d ^ k + 3 * n` is odd.
 -/
 
 set_option autoImplicit false
@@ -135,11 +147,137 @@ theorem klDeficientPerfectWith_one_prime_pow_iff
       rw [hsigma, Finset.sum_range_succ]
       omega
 
+private theorem geom_two_modEq (p a : ℕ) :
+    (∑ i ∈ Finset.range (a + 1), p ^ (i * 2)) ≡ 1 [MOD p ^ 2] := by
+  rw [Finset.sum_range_succ', Nat.zero_mul, pow_zero]
+  have htail : p ^ 2 ∣ ∑ i ∈ Finset.range a, p ^ ((i + 1) * 2) := by
+    apply Finset.dvd_sum
+    intro i _
+    exact Nat.pow_dvd_pow p (show 2 ≤ (i + 1) * 2 by omega)
+  simpa only [zero_add] using
+    (Nat.modEq_zero_iff_dvd.mpr htail).add (Nat.ModEq.refl 1)
+
+private theorem range_one_add_one_sum (p : ℕ) :
+    (∑ i ∈ Finset.range (1 + 1), p ^ (i * 2)) = 1 + p ^ 2 := by
+  rw [Finset.sum_range_succ, Finset.sum_range_one]
+  simp
+
+/-- **$[2,\ell]$-deficient-perfect prime powers (corrected).** Let $p$ be a prime and let $a$ and
+$\ell$ be natural numbers. If $p^a$ is $[2,\ell]$-deficient-perfect, then $\ell = 1$, and either
+$a = 2$, or $p = 2$ and $a = 1$.
+
+The printed statement allows only the exception $a = 2$, $\ell = 1$, and so omits the solution
+$p = 2$, $a = 1$, $\ell = 1$, $d = 1$ (the number $2$ of Corollary 1).
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 3. -/
+theorem isKLDeficientPerfect_prime_pow_two_imp
+    (p a l : ℕ) (hp : p.Prime) :
+    IsKLDeficientPerfect 2 l (p ^ a) →
+      l = 1 ∧ (a = 2 ∨ (p = 2 ∧ a = 1)) := by
+  rintro ⟨d, hd, hlt, hsum⟩
+  have hS : (∑ e ∈ (p ^ a).divisors, e ^ 2)
+      = ∑ i ∈ Finset.range (a + 1), p ^ (i * 2) := by
+    rw [← ArithmeticFunction.sigma_apply,
+      ArithmeticFunction.sigma_apply_prime_pow hp]
+  rw [hS] at hsum
+  obtain ⟨b, _, rfl⟩ := (Nat.dvd_prime_pow hp).mp hd
+  have hba_lt : b < a := (Nat.pow_lt_pow_iff_right hp.one_lt).mp hlt
+  have ha1 : 1 ≤ a := by omega
+  by_cases ha2 : 2 ≤ a
+  · exfalso
+    have hgeom : (∑ i ∈ Finset.range (a + 1), p ^ (i * 2)) ≡ 1 [MOD p ^ 2] :=
+      geom_two_modEq p a
+    have hpow1 : p ^ 2 ∣ (p ^ a) ^ 2 := by
+      rw [← pow_mul]
+      exact Nat.pow_dvd_pow p (show 2 ≤ a * 2 by omega)
+    have hpow2 : p ^ 2 ∣ l * p ^ a :=
+      (Nat.pow_dvd_pow p ha2).trans (dvd_mul_left _ _)
+    have hmod : (∑ i ∈ Finset.range (a + 1), p ^ (i * 2)) + (p ^ b) ^ 2
+        ≡ 0 [MOD p ^ 2] := by
+      rw [hsum]
+      simpa only [add_zero] using
+        (Nat.modEq_zero_iff_dvd.mpr hpow1).add (Nat.modEq_zero_iff_dvd.mpr hpow2)
+    have h1 : (1 : ℕ) + (p ^ b) ^ 2 ≡ 0 [MOD p ^ 2] :=
+      (hgeom.add (Nat.ModEq.refl ((p ^ b) ^ 2))).symm.trans hmod
+    have hdvd : p ^ 2 ∣ 1 + (p ^ b) ^ 2 := Nat.modEq_zero_iff_dvd.mp h1
+    rw [← pow_mul] at hdvd
+    have h4 : (4 : ℕ) ≤ p ^ 2 := by
+      have h := Nat.pow_le_pow_left hp.two_le 2
+      rwa [show (2 : ℕ) ^ 2 = 4 by decide] at h
+    by_cases hb0 : b = 0
+    · subst hb0
+      rw [zero_mul, pow_zero] at hdvd
+      have hle := Nat.le_of_dvd (by decide : 0 < 1 + 1) hdvd
+      omega
+    · have hpb : p ^ 2 ∣ p ^ (b * 2) :=
+        Nat.pow_dvd_pow p (show 2 ≤ b * 2 by omega)
+      have h1dvd : p ^ 2 ∣ 1 := by
+        have hsub := Nat.dvd_sub hdvd hpb
+        rwa [Nat.add_sub_cancel] at hsub
+      have hle := Nat.le_of_dvd (by decide : 0 < 1) h1dvd
+      omega
+  · have ha1' : a = 1 := by omega
+    subst ha1'
+    rw [range_one_add_one_sum] at hsum
+    have hb0 : b = 0 := by omega
+    subst hb0
+    simp only [pow_zero, pow_one, one_pow] at hsum
+    have hlp : l * p = 2 := by omega
+    have hdiv : p ∣ 2 := ⟨l, hlp.symm.trans (Nat.mul_comm l p)⟩
+    have hp2 : p = 2 :=
+      ((Nat.dvd_prime Nat.prime_two).mp hdiv).resolve_left hp.ne_one
+    subst hp2
+    have hl1 : l = 1 := by omega
+    exact ⟨hl1, Or.inr ⟨rfl, rfl⟩⟩
+
+/-- **$[2,\ell]$-deficient-perfect prime powers, classified.** Let $p$ be a prime and let $a$ and
+$\ell$ be natural numbers. Then $p^a$ is $[2,\ell]$-deficient-perfect if and only if $p = 2$,
+$a = 1$ and $\ell = 1$.
+
+The printed statement allows the exception $a = 2$, $\ell = 1$ and omits the number $2$. The
+exception does not occur, and $2$ is $[2,1]$-deficient-perfect by Corollary 1.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 3 and Corollary 1. -/
+theorem isKLDeficientPerfect_prime_pow_two_iff (p a l : ℕ) (hp : p.Prime) :
+    IsKLDeficientPerfect 2 l (p ^ a) ↔ p = 2 ∧ a = 1 ∧ l = 1 := by
+  constructor
+  · intro h
+    obtain ⟨rfl, ha⟩ := isKLDeficientPerfect_prime_pow_two_imp p a l hp h
+    rcases ha with rfl | ⟨rfl, rfl⟩
+    · exfalso
+      obtain ⟨d, -, -, hsum⟩ := h
+      rw [← ArithmeticFunction.sigma_apply, ArithmeticFunction.sigma_apply_prime_pow hp] at hsum
+      simp only [Finset.sum_range_succ, Finset.sum_range_zero] at hsum
+      ring_nf at hsum
+      omega
+    · exact ⟨rfl, rfl, rfl⟩
+  · rintro ⟨rfl, rfl, rfl⟩
+    simpa using isKLDeficientPerfect_two 2
+
 /-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
 divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
 def IsKLNearPerfect (k l n : ℕ) : Prop :=
   ∃ d, KLNearPerfectWith k l n d
+
+/-- **Primes are not $[k,\ell]$-near-perfect.** Let $k$ and $\ell$ be natural numbers with
+$\ell \ge 1$ and let $p$ be a prime. Then $p$ is not $[k,\ell]$-near-perfect.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Proposition 2. -/
+theorem not_isKLNearPerfect_of_prime (k l p : ℕ)
+    (hl : 1 ≤ l) (hp : p.Prime) :
+    ¬ IsKLNearPerfect k l p := by
+  rintro ⟨d, hd, hlt, hsum⟩
+  have hd1 : d = 1 := (Nat.dvd_prime hp).mp hd |>.resolve_right (Nat.ne_of_lt hlt)
+  rw [hp.sum_divisors, hd1, one_pow] at hsum
+  have hzero : l * p = 0 := Nat.add_left_cancel (hsum.symm.trans (Nat.add_zero _).symm)
+  exact (Nat.ne_of_gt (Nat.mul_pos (Nat.succ_le_iff.mp hl) hp.pos)) hzero
 
 /-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
 $[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
@@ -472,5 +610,58 @@ theorem not_isNearFPerfect_two_pow_mul_prime_pow
       have hle := Nat.pow_le_pow_left h 2
       omega
     omega
+
+/-- **Near $F_k$-perfect numbers.** For natural numbers $k$ and $n$, the number $n$ is near
+$F_k$-perfect when it is $[k,3]$-near-perfect, that is, when some proper divisor $d$ of $n$
+($d \mid n$ and $d < n$) satisfies $\sigma_k(n) = n^k + d^k + 3n$, where
+$\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divisors of $n$.
+
+No condition $k > 1$ is imposed here; the results that need it assume it. -/
+def IsNearFkPerfect (k n : ℕ) : Prop :=
+  IsKLNearPerfect k 3 n
+
+/-- **No near $F_k$-perfect number of the form $p_1^a p_2$.** Let $k > 1$, let $p_1$ and $p_2$ be
+distinct odd primes and let $a$ be a natural number. Then $p_1^a p_2$ is not near $F_k$-perfect.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 17. -/
+theorem not_isNearFkPerfect_prime_pow_mul
+    (k p₁ p₂ a : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
+    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
+    (hne : p₁ ≠ p₂) :
+    ¬ IsNearFkPerfect k (p₁ ^ a * p₂) := by
+  have _hk0 : k ≠ 0 := by omega
+  rintro ⟨d, hd, hlt, hsum⟩
+  have hn_odd : Odd (p₁ ^ a * p₂) := Odd.mul ho₁.pow ho₂
+  have hd_odd : Odd d := by
+    by_contra hcon
+    rw [Nat.not_odd_iff_even] at hcon
+    have h2d : 2 ∣ d := even_iff_two_dvd.mp hcon
+    have h2n : 2 ∣ p₁ ^ a * p₂ := h2d.trans hd
+    exact (Odd.not_two_dvd_nat hn_odd) h2n
+  have hcop : Nat.Coprime (p₁ ^ a) p₂ :=
+    Nat.Coprime.pow_left a ((Nat.coprime_primes hp₁ hp₂).mpr hne)
+  have h1mem : (1 : ℕ) ∉ ({p₂} : Finset ℕ) := by
+    simpa only [Finset.mem_singleton] using hp₂.ne_one.symm
+  have hsig2 : ArithmeticFunction.sigma k p₂ = 1 + p₂ ^ k := by
+    simp only [ArithmeticFunction.sigma_apply, hp₂.divisors, Finset.sum_insert h1mem,
+      Finset.sum_singleton, one_pow]
+  have hsig : (∑ e ∈ (p₁ ^ a * p₂).divisors, e ^ k) =
+      (ArithmeticFunction.sigma k (p₁ ^ a)) * (1 + p₂ ^ k) := by
+    rw [← ArithmeticFunction.sigma_apply,
+      ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime hcop, hsig2]
+  have hbase_even : Even (1 + p₂ ^ k) := Odd.add_odd odd_one ho₂.pow
+  have hLHS_even : Even (∑ e ∈ (p₁ ^ a * p₂).divisors, e ^ k) := by
+    rw [hsig]
+    exact Even.mul_left hbase_even _
+  have hn_pow_odd : Odd ((p₁ ^ a * p₂) ^ k) := hn_odd.pow
+  have hd_pow_odd : Odd (d ^ k) := hd_odd.pow
+  have h3n_odd : Odd (3 * (p₁ ^ a * p₂)) :=
+    Odd.mul (⟨1, rfl⟩ : Odd (3 : ℕ)) hn_odd
+  have hRHS_odd : Odd ((p₁ ^ a * p₂) ^ k + d ^ k + 3 * (p₁ ^ a * p₂)) :=
+    Even.add_odd (Odd.add_odd hn_pow_odd hd_pow_odd) h3n_odd
+  rw [hsum] at hLHS_even
+  exact (Nat.not_even_iff_odd.mpr hRHS_odd) hLHS_even
 
 end MathlibExt.NumberTheory.FkPerfectWanted
