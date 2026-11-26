@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinCompanion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinExpansion
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
 public import MathlibExt.NumberTheory.PadovanPerrinFundamentalProduct
+public import MathlibExt.NumberTheory.PadovanPerrinShiftWindow
 
 namespace MetaMathlibExt
 
@@ -239,22 +240,6 @@ Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machad
 (2024), Article A49, equation (14) and Table 1. -/
 theorem padovanPerrinRho_one_one_one_two_twelve : padovanPerrinRho (1 : ℤ) 1 1 2 12 = 5 := by
   decide
-
-/-- **Solutions agreeing on a window agree afterwards.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$, let $p, s$ be natural numbers and let $v, w \colon \mathbb{N} \to R$ be solutions
-of the Padovan–Perrin recurrence with parameters $k_1, k_2, p, s$. Let $n_0, m_0, N$ be natural
-numbers such that $v(j + n_0) = w(j + m_0)$ for every $j$ with $N \le j < N + s + p$. Then
-$v(n + n_0) = w(n + m_0)$ for every $n \ge N$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 1 (`integers-2024-A49-lem-1`). -/
-public theorem_wanted padovanPerrin_shift_eq_of_window [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    {v w : ℕ → R}
-    (hv : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution v)
-    (hw : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution w) (n₀ m₀ N : ℕ)
-    (h : ∀ j, N ≤ j → j < N + (s + p) → v (j + n₀) = w (j + m₀)) :
-    ∀ n, N ≤ n → v (n + n₀) = w (n + m₀)
 
 /-- **The Fibonacci fundamental system spans the solutions.** Let $R$ be a commutative ring, let
 $k_1, k_2 \in R$ and let $p, s$ be natural numbers. For $1 \le j \le s + p$ let $v^{(j)}$ be the
