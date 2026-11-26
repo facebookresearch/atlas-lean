@@ -124,58 +124,6 @@ theorem_wanted sum_neg_two_pow_bernoulli_fib (m : ℕ) :
           ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) =
       (Real.sqrt 5) ^ m
 
-/-- **Euler–Lucas expansion of $(x + 1/2)^m$.** Let $E_k$ be the Euler (secant) numbers, which
-vanish at odd $k$ and begin $E_0 = 1$, $E_2 = -1$, $E_4 = 5$, and let $L_k$ be the Lucas numbers.
-Then for every natural number $m$ and every real number $x$,
-$$
-\left(x + \frac{1}{2}\right)^m = \frac{1}{2} \sum_{n=0}^{m} \sum_{k=0}^{n}
-\left(\frac{\sqrt{5}}{2}\right)^{k} \binom{n}{k} \binom{m}{n} x^{m-n} E_k L_{n-k}.
-$$
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Theorem 5. -/
-theorem_wanted add_half_pow_eq_sum (m : ℕ) (x : ℝ) :
-    (x + 1 / 2) ^ m =
-      (1 / 2) * ∑ n ∈ Finset.range (m + 1),
-        ∑ k ∈ Finset.range (n + 1),
-          ((Real.sqrt 5) / 2) ^ k * (Nat.choose n k : ℝ) *
-            (Nat.choose m n : ℝ) * x ^ (m - n) *
-            (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ)
-
-/-- **The alternating Euler–Lucas double sum vanishes.** Let $E_k$ be the Euler (secant)
-numbers, with exponential generating function $2/(e^t + e^{-t})$, and let $L_k$ be the Lucas
-numbers ($L_0 = 2$, $L_1 = 1$, $L_{k+2} = L_{k+1} + L_k$). For every natural number $m \ge 1$,
-$$\sum_{n=0}^{m} \sum_{k=0}^{n} (-1)^n \frac{(\sqrt{5})^k}{2^{k+m-n}} \binom{n}{k} \binom{m}{n}
-E_k L_{n-k} = 0.$$
-
-The hypothesis $m \ge 1$ is needed: for $m = 0$ the sum is $2$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 6. -/
-theorem_wanted sum_neg_one_pow_eulerSec_lucas (m : ℕ)
-    (hm : 1 ≤ m) :
-    ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
-        (-1 : ℝ) ^ n * (Real.sqrt 5) ^ k / 2 ^ (k + m - n) *
-          (Nat.choose n k : ℝ) * (Nat.choose m n : ℝ) *
-          (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) = 0
-
-/-- **A double sum of Euler and Lucas numbers equal to two.** Let $L_n$ be the Lucas numbers and
-let $E_k$ be the Euler (secant) numbers, given by $2/(e^t + e^{-t}) = \sum_{k \ge 0} E_k t^k / k!$.
-For every natural number $m$,
-$$\sum_{n=0}^{m} \sum_{k=0}^{n} \frac{\sqrt{5}^{\,k}}{2^{k+m-n}} \binom{n}{k} \binom{m}{n}
-E_k L_{n-k} = 2.$$
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 7. -/
-theorem_wanted sum_eulerSec_lucas (m : ℕ) :
-    ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
-        (Real.sqrt 5) ^ k / 2 ^ (k + m - n) *
-          (Nat.choose n k : ℝ) * (Nat.choose m n : ℝ) *
-          (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) = 2
-
 /-- **Powers of the golden ratio from Euler and Lucas numbers.** Let $\alpha = (1 + \sqrt{5})/2$,
 let $L_n$ be the Lucas numbers, and let $E_k$ be the Euler (secant) numbers, given by
 $2/(e^t + e^{-t}) = \sum_{k \ge 0} E_k t^k / k!$. For every natural number $m$,
