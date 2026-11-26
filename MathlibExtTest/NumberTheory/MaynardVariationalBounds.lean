@@ -13,13 +13,28 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 
 /-!
-# Tests for `M₁₀₅ > 4`
+# Tests for `M₅ > 2` and `M₁₀₅ > 4`
 -/
 
 namespace MathlibExtTest.NumberTheory.MaynardVariationalBounds
 
 open Filter Topology MathlibExt.NumberTheory.GPYMaynard
 open WantedExt.NumberTheory.MaynardVariationalBounds
+
+example : 2 < maynardM 5 := two_lt_maynardM_five
+
+/-- Maynard's strict bound leaves room for a level `θ = 1 - ε` below `1`, as required when
+applying the Elliott–Halberstam conjecture. The threshold `ρ = 1` is still satisfied. -/
+example : ∃ ε : ℝ, 0 < ε ∧ ε < 1 ∧ 1 < (1 - ε) * maynardM 5 / 2 := by
+  have hM : 0 < maynardM 5 := lt_trans (by norm_num) two_lt_maynardM_five
+  have h : (2 : ℝ) / maynardM 5 < 1 :=
+    (div_lt_iff₀ hM).2 (by simpa using two_lt_maynardM_five)
+  obtain ⟨θ, hθ, hθ1⟩ := exists_between h
+  have hθ0 : 0 < θ := (div_pos (by norm_num) hM).trans hθ
+  have hprod : (2 : ℝ) < θ * maynardM 5 := (div_lt_iff₀ hM).1 hθ
+  refine ⟨1 - θ, sub_pos.mpr hθ1, sub_lt_self _ hθ0, ?_⟩
+  rw [sub_sub_cancel]
+  linarith
 
 example : 4 < maynardM 105 := four_lt_maynardM_105
 

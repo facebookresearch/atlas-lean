@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.FkPerfect
+import Mathlib.Tactic.NormNum
 
 /-! # Tests for `MathlibExt.NumberTheory.FkPerfect` -/
 
@@ -37,6 +38,24 @@ example (l d : ℕ) : ¬ KLDeficientPerfectWith 1 l (2 ^ 0) d := by
   intro h
   have h2 := (klDeficientPerfectWith_one_prime_pow_iff 2 0 l d Nat.prime_two).mp h
   exact absurd h2.2.2.2 (by decide)
+
+-- `2 = 2 ^ 1` is `[2,1]`-deficient-perfect, so the theorem recovers `ℓ = 1`.
+example : (1 : ℕ) = 1 ∧ (1 = 2 ∨ (2 = 2 ∧ 1 = 1)) :=
+  isKLDeficientPerfect_prime_pow_two_imp 2 1 1 Nat.prime_two
+    (by simpa using isKLDeficientPerfect_two 2)
+
+-- Every `[2,ℓ]`-deficient-perfect prime power has `ℓ = 1`.
+example (p a l : ℕ) (hp : p.Prime) (h : IsKLDeficientPerfect 2 l (p ^ a)) : l = 1 :=
+  (isKLDeficientPerfect_prime_pow_two_imp p a l hp h).1
+
+-- `2 = 2 ^ 1` is the only `[2,ℓ]`-deficient-perfect prime power.
+example : IsKLDeficientPerfect 2 1 (2 ^ 1) :=
+  (isKLDeficientPerfect_prime_pow_two_iff 2 1 1 Nat.prime_two).mpr ⟨rfl, rfl, rfl⟩
+
+-- The exception `a = 2` of the printed statement does not occur: no prime square is
+-- `[2,ℓ]`-deficient-perfect.
+example (p l : ℕ) (hp : p.Prime) : ¬ IsKLDeficientPerfect 2 l (p ^ 2) := fun h =>
+  absurd ((isKLDeficientPerfect_prime_pow_two_iff p 2 l hp).mp h).2.1 (by decide)
 
 -- `18 = 2 ^ 1 * 3 ^ 2` is not near `F`-perfect.
 example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 18 := by
@@ -67,5 +86,57 @@ example : ¬ IsNearFkPerfect 3 (5 ^ 2 * 7) :=
 example (k a : ℕ) (hk : 1 < k) : ¬ IsNearFkPerfect k (3 ^ a * 5) :=
   not_isNearFkPerfect_prime_pow_mul k 3 5 a hk (by decide) (by decide)
     (⟨1, rfl⟩ : Odd (3 : ℕ)) (⟨2, rfl⟩ : Odd (5 : ℕ)) (by decide)
+
+-- `15 = 3 * 5` is not deficient `F₂`-perfect.
+example : ¬ IsDeficientFkPerfect 2 15 := by
+  have h15 : ∏ p ∈ ({3, 5} : Finset ℕ), p = 15 := by decide
+  rw [← h15]
+  exact not_isDeficientFkPerfect_prod_primes 2 (by decide) {3, 5} (by decide)
+
+-- `105 = 3 * 5 * 7` is not deficient `F₃`-perfect.
+example : ¬ IsDeficientFkPerfect 3 105 := by
+  have h105 : ∏ p ∈ ({3, 5, 7} : Finset ℕ), p = 105 := by decide
+  rw [← h105]
+  exact not_isDeficientFkPerfect_prod_primes 3 (by decide) {3, 5, 7} (by decide)
+
+-- Primes are not `[k, ℓ]`-near-perfect for `1 ≤ ℓ`, at zero and positive exponents.
+example : ¬ IsKLNearPerfect 0 1 2 :=
+  not_isKLNearPerfect_of_prime 0 1 2 (by decide) (by decide)
+
+example : ¬ IsKLNearPerfect 2 3 5 :=
+  not_isKLNearPerfect_of_prime 2 3 5 (by decide) (by decide)
+
+-- At `ℓ = 0` every prime is `[k, 0]`-near-perfect with divisor `1`.
+example (k p : ℕ) (hp : p.Prime) : IsKLNearPerfect k 0 p := by
+  refine ⟨1, one_dvd p, hp.one_lt, ?_⟩
+  simp only [hp.sum_divisors, one_pow, zero_mul, add_zero]
+
+-- `18` is `[1, 1]`-near-perfect, and twice a power of `5` is never `[1, ℓ]`-near-perfect.
+example : IsKLNearPerfect 1 1 18 :=
+  (isKLNearPerfect_one_two_mul_prime_pow 3 2 1 (by decide) (by decide) (by decide)).1
+
+example (a l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect 1 l (2 * 5 ^ a) := by
+  intro h
+  have heq :=
+    (isKLNearPerfect_one_two_mul_prime_pow 5 a l (by decide) (by decide) hl).2 h
+  have hpow : (5 : ℕ) ^ a = 9 := by omega
+  cases a with
+  | zero => norm_num at hpow
+  | succ a =>
+    have hdiv : 5 ∣ (9 : ℕ) := by
+      rw [← hpow]
+      exact dvd_pow_self 5 (by omega)
+    norm_num at hdiv
+
+-- `3 ^ 1 * 5 ^ 2` is not deficient `F₂`-perfect: `1 + 2` is odd.
+example : ¬ IsDeficientFkPerfect 2 (3 ^ 1 * 5 ^ 2) :=
+  not_isDeficientFkPerfect_pow_mul_pow 2 3 5 1 2 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (Or.inl (by decide))
+
+-- `3 ^ 1 * 5 ^ 1` is not deficient `F₃`-perfect: both exponents are odd.
+example : ¬ IsDeficientFkPerfect 3 (3 ^ 1 * 5 ^ 1) :=
+  not_isDeficientFkPerfect_pow_mul_pow 3 3 5 1 1 (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+    (Or.inr ⟨by decide, by decide⟩)
 
 end MathlibExtTest.NumberTheory.FkPerfect
