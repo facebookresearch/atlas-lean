@@ -28,4 +28,4 @@ Each $L_a$ is the Lagrange basis polynomial of degree $|H| - 1$ that is $1$ at $
 - O. Goldreich, "Computational Complexity: A Conceptual Perspective", Chapters 7-8, public draft (March 2007), 2007.
 - L. Babai, L. Fortnow, L. A. Levin, M. Szegedy, "Checking Computations in Polylogarithmic Time", Proceedings of the 23rd Annual ACM Symposium on Theory of Computing, 1991.
 - S. Arora, B. Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009.
-- R. Williams, "Simulating Time With Square-Root Space", preprint, 2025.
+- R. Williams, "Simulating Time With Square-Root Space", Proceedings of the 57th Annual ACM Symposium on Theory of Computing (STOC 2025), 2025.

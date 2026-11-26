@@ -6,7 +6,7 @@ $$
 |z| \le d^{\ell} \cdot W^{f},
 $$
 
-so all binary encodings have length $O(\ell \log d + f \log W)$; analogous bounds hold for numerator and denominator sizes over $\mathbb{Q}$, and over $\mathbb{Z}/p\mathbb{Z}$ entries stay below $p$. In particular bucket elimination runs in time polynomial in the input size and $d^{w^*}$, with no doubly exponential bit growth.
+so all binary encodings have length $O(\ell \log d + f \log W)$; over $\mathbb{Z}/p\mathbb{Z}$ entries stay below $p$. In particular bucket elimination runs in time polynomial in the input size and $d^{w^*}$, with no doubly exponential bit growth.
 
 ## Proof sketch
 

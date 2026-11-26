@@ -10,10 +10,6 @@ $$
 
 Fix $s$ and choose at each position the bit that accepted runs open more often, defining a table $\pi_s$. An accepted run disagreeing with $\pi_s$ opens some position $j$ to its less likely bit, an event of probability $\min(p_j(0), p_j(1)) \le \sqrt{p_j(0)p_j(1)}$, where $p_j(0)p_j(1)$ is at most the probability that two independent runs open $j$ to both bits. A union bound over $j < M$ and Jensen's inequality over $s$ give the claim.
 
-## Depends on
-
-- [A Sigma protocol](../../../ComputerScience/cryptography/signatures-and-protocols/zero-knowledge-proofs/sigma-protocol.md)
-
 ## Sources
 
-- B. Barak and O. Goldreich, "Universal Arguments and their Applications", 2001.
+- B. Barak and O. Goldreich, "Universal Arguments and their Applications", 17th IEEE Conference on Computational Complexity (CCC 2002), and SIAM Journal on Computing 38(5), 2008.

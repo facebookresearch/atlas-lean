@@ -21,3 +21,4 @@ Pass to the discrete Fourier transform $F$ of $f$, so $F(0) = 0$ and squared cha
 - O. Gabber, Z. Galil, "Explicit Constructions of Linear-Sized Superconcentrators", Journal of Computer and System Sciences, 1981.
 - S. Jimbo, A. Maruoka, "Expanders Obtained from Affine Transformations", Combinatorica, 1987.
 - S. Hoory, N. Linial, A. Wigderson, "Expander Graphs and Their Applications", Bulletin of the American Mathematical Society, 2006.
+- L. Trevisan, "Spectral Methods and Expanders", U.C. Berkeley CS294 Lecture Notes, Lecture 18 (following J. R. Lee), Theorems 1-4, 2016.
