@@ -1,18 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`Definitions/Def_WeierstrassCurve_LevelThreeModulus.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source files at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -20,9 +6,20 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
+-/
+
+/-
+Adapted from:
+
+`Definitions/Def_WeierstrassCurve_LevelThreeModulus.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source files at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -43,20 +40,25 @@ the Deuring normal form `y² + αxy + βy = x³` (`WeierstrassCurve.deuringCurve
 defines the quantities of that normalization (`deuringA₃`, `tangentSlopeNum`, `tangentSlope`,
 `deuringA₁`, `flexForm`, `deuringVariableChange`) and the level-three coordinates
 `levelThreeModulus`, `levelThreeAbscissa` and `levelThreeOrdinate` of the flex together with a
-second point `(x₂, y₂)`: the Deuring coefficients and the coordinates of the second point after
-the scaling that sends its abscissa to the Deuring coefficient `β`.
+second point `(x₂, y₂)`. When `x₂ ≠ x₁`, they are the Deuring coefficient `α` and the coordinates
+of the second point after the scaling `u = deuringA₃ x₁ y₁ / (x₂ - x₁)`, the one that sends its
+abscissa to the Deuring coefficient `β`. When `x₂ = x₁` no scaling does that: the second abscissa
+stays `0` while `β` is not `0`, as for the flex `(0, 0)` of `y² + y = x³` and the point
+`(0, -1)`. The formulas still return values then (all three are `0`), but not coordinates of that
+normalization.
 
 ## Main results
 
 * `WeierstrassCurve.deuringVariableChange_smul`: a flex can be moved to Deuring form.
 * `WeierstrassCurve.deuringVariableChange_smul_eq_deuringCurve_levelThreeModulus`: the Deuring
-  form in terms of the level-three coordinates.
+  form in terms of the level-three coordinates, for `x₂ ≠ x₁`.
 * `WeierstrassCurve.levelThreeModulus_variableChange` and its abscissa and ordinate versions:
   the level-three coordinates do not depend on the Weierstrass model.
 * `WeierstrassCurve.levelThreeModulus_map` and `WeierstrassCurve.levelThreeModulus_map_of_isUnit`,
   with their abscissa and ordinate versions: compatibility with base change.
 * `WeierstrassCurve.levelThreeModulus_deuringCurve` and its abscissa and ordinate versions: on a
-  Deuring form the level-three coordinates recover its coefficients.
+  Deuring form with `β ≠ 0`, the level-three coordinates at the origin and the abscissa `β`
+  recover its coefficients.
 
 ## Implementation notes
 
@@ -64,9 +66,17 @@ Quotients by `deuringA₃ x₁ y₁ = 2y₁ + a₁x₁ + a₃` use `Ring.inverse
 `tangentSlope`, `levelThreeModulus`, `levelThreeAbscissa` and `levelThreeOrdinate` are `0` and
 `deuringA₁` is `a₁`. Over a field this happens exactly when `deuringA₃ x₁ y₁ = 0`, that is, when
 `y₁ = negY x₁ y₁` (`deuringA₃_eq_sub_negY`); for a nonsingular point of the curve this means that
-the point is its own negative. The variable-change laws and the
-base-change laws along field homomorphisms hold without hypotheses; along a ring homomorphism the
-base-change laws need `deuringA₃ x₁ y₁` to be a unit.
+the point is its own negative.
+
+The variable-change laws of `levelThreeModulus`, `levelThreeAbscissa` and `levelThreeOrdinate`
+hold without hypotheses: the two denominators differ by a power of `u`, so when one is `0` both
+sides are `0`. So do those of `deuringA₃`, `tangentSlopeNum` and `flexForm`, which are polynomial
+identities. The laws of `tangentSlope` and `deuringA₁` (`tangentSlope_variableChange` and
+`deuringA₁_variableChange`) need `deuringA₃` to be nonzero at the point: on `y² = x³ - x` at
+`(0, 0)`, the variable change `(u, r, s, t) = (1, 0, 1, 0)` fixes the point and leaves both
+denominators `0`, so both totalized slopes are `0`, and the two laws would read `0 = 0 + 1` and
+`0 = 2`. The base-change laws along field homomorphisms hold without hypotheses; along a ring
+homomorphism, those of the quotients need `deuringA₃ x₁ y₁` to be a unit.
 -/
 
 namespace WeierstrassCurve

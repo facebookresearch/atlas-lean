@@ -120,6 +120,32 @@ example {F : Type*} [Field F] (τ x₂ y₂ : F) :
 example : (deuringCurve (1 : ℚ) 0).levelThreeModulus 0 0 0 = 0 := by
   simp [levelThreeModulus_def, deuringA₃_deuringCurve_zero]
 
+-- Equal abscissas: no scaling sends the second abscissa to `β`, and the three level-three
+-- formulas are all `0`.
+example {R : Type*} [CommRing R] (W : WeierstrassCurve R) (x₁ y₁ y₂ : R) :
+    W.levelThreeModulus x₁ y₁ x₁ = 0 ∧ W.levelThreeAbscissa x₁ y₁ x₁ = 0 ∧
+      W.levelThreeOrdinate x₁ y₁ x₁ y₂ = 0 := by
+  simp [levelThreeModulus_def, levelThreeAbscissa_def, levelThreeOrdinate_def]
+
+private abbrev cubicMinusX : WeierstrassCurve ℚ := ⟨0, 0, 0, -1, 0⟩
+
+private abbrev shear : VariableChange ℚ := ⟨1, 0, 1, 0⟩
+
+-- The variable-change laws of `tangentSlope` and `deuringA₁` need a nonzero denominator: on
+-- `y² = x³ - x` at `(0, 0)`, the variable change `(1, 0, 1, 0)` fixes the point and leaves the
+-- denominator `0`, and the conclusions of `tangentSlope_variableChange` and
+-- `deuringA₁_variableChange` fail there (`0 ≠ 0 + 1` and `0 ≠ 2`).
+example : (shear • cubicMinusX).deuringA₃ 0 0 = 0 ∧
+    cubicMinusX.tangentSlope ((shear.u : ℚ) ^ 2 * 0 + shear.r)
+        ((shear.u : ℚ) ^ 3 * 0 + (shear.u : ℚ) ^ 2 * shear.s * 0 + shear.t) ≠
+      (shear.u : ℚ) * (shear • cubicMinusX).tangentSlope 0 0 + shear.s ∧
+    cubicMinusX.deuringA₁ ((shear.u : ℚ) ^ 2 * 0 + shear.r)
+        ((shear.u : ℚ) ^ 3 * 0 + (shear.u : ℚ) ^ 2 * shear.s * 0 + shear.t) ≠
+      (shear.u : ℚ) * (shear • cubicMinusX).deuringA₁ 0 0 := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    norm_num [deuringA₃_def, deuringA₁_def, tangentSlope_eq_div, tangentSlopeNum_def,
+      variableChange_a₁, variableChange_a₂, variableChange_a₃, variableChange_a₄]
+
 -- Over `ℤ` the denominator `2` is not a unit, so the modulus is `0`; over `ℚ` it is `2`. This is
 -- why `levelThreeModulus_map_of_isUnit` needs its unit hypothesis.
 example : (deuringCurve (1 : ℤ) 2).levelThreeModulus 0 0 4 = 0 := by
