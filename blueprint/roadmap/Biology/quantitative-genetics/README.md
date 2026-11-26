@@ -16,3 +16,5 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
+- [Heritability from relatedness classes](heritability-from-relatedness-classes/README.md)
+- [Haley–Knott regression with additive and dominance effects](haley-knott-regression-with-additive-and-dominance-effects.md)

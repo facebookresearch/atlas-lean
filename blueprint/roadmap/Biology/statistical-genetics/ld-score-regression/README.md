@@ -132,3 +132,4 @@
 - [Consistency of LD-score regression along the replicated designs](tendsto-in-measure-ols-h2-hat-replicate.md)
 
 - [Residual stratification produces covariance between a polygenic score and ancestry](residual-stratification-produces-prs-ancestry-co.md)
+- [Covariate-adjusted LD score regression (cov-LDSC)](covariate-adjusted-ld-score-regression.md)

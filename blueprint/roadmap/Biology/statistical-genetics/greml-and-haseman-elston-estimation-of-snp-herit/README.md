@@ -73,3 +73,5 @@
 - [Closed form maximizes the spectral criterion for positive class means](is-max-on-spectral-log-lik-two-level-rem.md)
 - [Closed form is the unique REML maximizer for positive class means](is-max-on-reml-log-lik-two-level-reml.md)
 - [The closed-form REML estimator is unbiased when both eigenvalues occur](integral-two-level-reml.md)
+- [LD-weighted genetic relationship matrix (LDAK)](ld-weighted-relationship-matrix-ldak.md)
+- [Thresholded-GRM model for joint SNP and pedigree heritability](thresholded-grm-model-for-snp-and-pedigree-heritability.md)

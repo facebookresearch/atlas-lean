@@ -47,3 +47,4 @@
 - [Tract-count versus genomic-position weighting in an exponential mixture](migrant-tract-lengths-under-continuous-migration.md)
 - [Identifiability and near-coincident rates in finite exponential mixtures](multi-pulse-ld-curves-as-laplace-transforms-uniq.md)
 - [Variance of a single-chromosome ancestry fraction](variance-of-genome-wide-ancestry-fraction-in-the.md)
+- [DATES ancestry covariance for dating admixture](dates-ancestry-covariance.md)

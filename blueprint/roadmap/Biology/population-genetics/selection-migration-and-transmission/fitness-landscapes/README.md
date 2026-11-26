@@ -6,3 +6,5 @@
 - [Fitness landscapes as mathematical objects](fitness-landscapes-as-explicit-mathematical-obje.md)
 - [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
 - [Shifting-balance theory](shifting-balance-theory.md)
+- [Connectedness fitness landscape model](connectedness-fitness-landscape-model.md)
+- [Global epistasis from widespread epistasis](global-epistasis-from-widespread-epistasis.md)

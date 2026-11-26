@@ -12,3 +12,5 @@ Probability.
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+- [C-alpha test for rare-variant overdispersion](c-alpha-test-for-rare-variant-overdispersion.md)
+- [Cross-phenotype meta-analysis (CPMA) statistic](cross-phenotype-meta-analysis-statistic.md)

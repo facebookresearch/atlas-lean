@@ -14,3 +14,6 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Phylogenetic convergence test](phylogenetic-convergence-test/README.md)
+- [Selection scan against an ancestral admixture model](selection-scan-against-an-ancestral-admixture-model/README.md)
+- [Soft sweeps from recurrent mutation](soft-sweeps-from-recurrent-mutation/README.md)

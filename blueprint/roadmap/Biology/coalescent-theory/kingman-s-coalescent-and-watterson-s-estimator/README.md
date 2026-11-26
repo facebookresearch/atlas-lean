@@ -43,3 +43,4 @@
 - [Wright–Fisher coalescence times converge to exponential laws](tendsto-no-coal-prob-pow-floor.md)
 
 - [Wright–Fisher pair coalescence time against its exponential limit](n-2-wright-fisher-vs-kingman-tmrca-total-variati.md)
+- [Mutation-rate ratio from segregating-site counts](mutation-rate-ratio-from-segregating-site-counts.md)
