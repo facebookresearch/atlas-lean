@@ -100,21 +100,6 @@ public theorem_wanted inclExclLikeSum_floor_extrema {n : ℕ} (hn : 2 ≤ n) :
       inclExclLikeSum Int.floor (fun _ : Fin n => (1 / 2 : ℝ)) = -2 ^ (n - 2) ∧
       inclExclLikeSum Int.floor (fun _ : Fin n => 1 / 2 - 1 / (n : ℝ) ^ 2) = 2 ^ (n - 2) - 1
 
-/-- **Extrema of the ceiling inclusion-exclusion-like sum.** Let $n \ge 2$ and let $g_2$ be the
-inclusion-exclusion-like sum $g^{(F)}$ in $n$ real variables with $F$ the ceiling function. Then
-$-2^{n-2} + 1 \le g_2(x) \le 2^{n-2}$ for every $x \in \mathbb{R}^n$; the minimum $-2^{n-2} + 1$
-is attained at the point with all coordinates $1/2 + 1/n^2$, and the maximum $2^{n-2}$ at the
-point with all coordinates $1/2$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Theorem 1. -/
-public theorem_wanted inclExclLikeSum_ceil_extrema {n : ℕ} (hn : 2 ≤ n) :
-    (∀ x : Fin n → ℝ, -2 ^ (n - 2) + 1 ≤ inclExclLikeSum Int.ceil x ∧
-      inclExclLikeSum Int.ceil x ≤ 2 ^ (n - 2)) ∧
-      inclExclLikeSum Int.ceil (fun _ : Fin n => 1 / 2 + 1 / (n : ℝ) ^ 2) = -2 ^ (n - 2) + 1 ∧
-      inclExclLikeSum Int.ceil (fun _ : Fin n => (1 / 2 : ℝ)) = 2 ^ (n - 2)
-
 /-- **Extrema of the round-half-up inclusion-exclusion-like sum.** Let $n \ge 2$ and let $g_3$ be
 the inclusion-exclusion-like sum $g^{(F)}$ in $n$ real variables with
 $F(y) = \lfloor y + 1/2 \rfloor$, the nearest integer to $y$ with ties rounded up. Then
