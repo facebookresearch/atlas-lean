@@ -126,8 +126,9 @@ noncomputable def cayley [Fintype Sp] (j : V) : Sp ⊕ G.undirected.ConnectedCom
   (Finsupp.equivFunOnFinite.symm (G.Y j)).mapDomain Sum.inl +
     Finsupp.single (Sum.inr (G.undirected.connectedComponentMk j)) 1
 
-/-- The deficiency `δ = n - σ - l`: the number of nodes, minus the dimension of the span of the
-edge vectors `y_j - y_i`, minus the number of connected components. -/
+/-- For a finite vertex set `V` (`[Fintype V]`), the deficiency `δ = n - σ - l`: the number of
+nodes `|V|`, minus the `ℚ`-dimension of the span of the edge vectors `y_j - y_i`, minus the number
+of connected components. -/
 noncomputable def deficiency [Fintype V] : ℤ :=
   (Fintype.card V : ℤ) -
     Module.finrank ℚ (Submodule.span ℚ

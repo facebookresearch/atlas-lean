@@ -34,8 +34,9 @@ chemical networks with integer stoichiometry.
 * `Reacts y y'`: some reaction has source `y` and product `y'`;
 * `IsWeaklyReversible`: every reaction `y → y'` has a directed path of reactions back from `y'`
   to `y`;
-* `massActionField k x`: `∑_r k r (∏_s x_s ^ (src r s)) (prod r - src r)` with real powers,
-  meant for positive states `x`.
+* `massActionField k x`: for finite species (`[Fintype S]`) and finite reactions (`[Fintype ρ]`),
+  `∑_{r : ρ} k r (∏_{s : S} x_s ^ (src r s)) (prod r - src r)` with real powers, meant for
+  positive states `x`.
 
 ## References
 
