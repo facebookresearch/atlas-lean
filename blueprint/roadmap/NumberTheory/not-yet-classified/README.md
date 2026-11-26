@@ -8,6 +8,7 @@ Topics added since this subject's fields were last revised.
 - [Cyclotomic Eigenspace Vanishing](cyclotomic-eigenspace-vanishing/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Fundamental Domain Exact Volume](fundamental-domain-exact-volume/README.md)
+- [Gamma0 Index](gamma0-index/README.md)
 - [Hecke Operator](hecke-operator/README.md)
 - [Hecke Torsion Cayley Hamilton](hecke-torsion-cayley-hamilton/README.md)
 - [Hecke UGamma H](hecke-ugamma-h/README.md)

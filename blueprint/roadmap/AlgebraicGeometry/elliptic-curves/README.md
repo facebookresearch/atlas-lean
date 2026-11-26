@@ -8,6 +8,7 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [Point counts and Frobenius traces](point-counts-and-frobenius-traces/README.md)
 - [Rubin–Silverberg families](rubin-silverberg-families/README.md)
 - [Supersingular elliptic curves](supersingular-elliptic-curves/README.md)
+- [Transport of affine Weierstrass points](transport-of-affine-weierstrass-points/README.md)
 - [Weierstrass curves](weierstrass-curves/README.md)
 - [Hasse bound](hasse-bound/README.md)
 - [Néron–Ogg–Shafarevich criterion, easy direction](good-reduction-torsion-unramified.md)

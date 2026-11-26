@@ -1207,3 +1207,6 @@ Topics added since this subject's fields were last revised.
 - [Segre](segre/README.md)
 - [Semistable Model](semistable-model/README.md)
 - [QMIsogeny](qmisogeny/README.md)
+- [Formal Group](formal-group/README.md)
+- [Formal Group Law](formal-group-law/README.md)
+- [QMCoarse Moduli](qmcoarse-moduli/README.md)

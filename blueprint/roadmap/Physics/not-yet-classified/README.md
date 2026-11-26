@@ -150,6 +150,7 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 10 of 10](part-10/README.md)
 
+- [Index One Euler Bridge](part-10/index-one-euler-bridge/README.md)
 - [Porous Storage](part-10/porous-storage/README.md)
 - [Zone Quadratic Dissipation](part-10/zone-quadratic-dissipation/README.md)
 - [Zone Thermal Plant](part-10/zone-thermal-plant/README.md)

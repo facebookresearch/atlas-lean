@@ -1,0 +1,15 @@
+# The local Hecke algebra at a residual Hecke character
+
+- [Lattice Restrict](lattice-restrict.md)
+- [Lattice Action Hom](lattice-action-hom.md)
+- [Hecke Lattice Algebra](hecke-lattice-algebra.md)
+- [Lattice Restrict Hom](lattice-restrict-hom.md)
+- [Residual Character](residual-character.md)
+- [Hecke Char Kernel](hecke-char-kernel.md)
+- [Hecke Base Algebra](hecke-base-algebra.md)
+- [Lattice Base Change](lattice-base-change.md)
+- [Hecke Local Submonoid](hecke-local-submonoid.md)
+- [Hecke Local](hecke-local.md)
+- [Π](untitled.md)
+- [Hecke Local Ideal](hecke-local-ideal.md)
+- [Residue pi](residue-pi.md)

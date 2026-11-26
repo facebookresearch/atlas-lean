@@ -74,3 +74,4 @@ Topics added since this subject's fields were last revised.
 - [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
 - [Complex Coordinates](exists-bij-on-eval-differentiable-on-pi.md)
 - [Henselian valuation rings of inertia fixed fields](henselian-local-ring-inf-fixed-field-of.md)
+- [A complete DVR with maximal ideal $(q)$ has a cyclotomic DVR extension](exists-cyclotomic-dvr-of-maximal-ideal-e.md)
