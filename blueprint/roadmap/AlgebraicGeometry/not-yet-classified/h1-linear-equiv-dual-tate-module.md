@@ -20,6 +20,9 @@ acts through the induced map of Tate modules (`TateModule.map`) of any additive 
 $A(K)$ with $g(P) = \operatorname{Spec} \sigma \gg P$ for all $P$; exactly one such $g$ exists,
 the action of $\sigma$ on points.
 
-This is Milne, *Abelian Varieties* (v2.0, 2008), Theorem 12.1(a), p. 55, with the Galois
-compatibility of Remark 12.5, p. 56, in degree one; with $K = k$ separably closed it is
-Theorem 12.1(a), stated through the existence of an isomorphism rather than the canonical one.
+This is the degree-one case of Milne, *Abelian Varieties* (v2.0, 2008), Remark 12.5, p. 56,
+the Galois compatibility of the isomorphism of Theorem 12.1(a), p. 55, stated through the
+existence of a compatible isomorphism rather than for the canonical one; for $k$ separably closed
+it is Theorem 12.1(a) in that existence form. The étale cohomology
+$H^1(A_K, \mathbb{Z}_\ell) = \varprojlim_n H^1(A_K, \mathbb{Z}/\ell^n)$ of the source is read
+through pro-étale cohomology, which computes it here.

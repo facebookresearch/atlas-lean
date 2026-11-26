@@ -29,9 +29,11 @@ Here `A` is an abelian scheme over `Spec k`
 (`_root_.TateModule`) of the group `A(K)` of `K`-points of `A`, the morphisms `Spec K ⟶ A` over
 `Spec k` with the group law of `A`. The cohomology `H¹(A_K, ℤ_ℓ)` is the cohomology of the
 pro-étale sheaf `C(-, ℤ_ℓ)` of `ℤ_ℓ`-modules on `A_K = A ×_k Spec K`
-(`MathlibExt.AlgebraicGeometry.ProEtaleCohomologyFunctoriality.Cohomology`), which computes the
-`ℓ`-adic étale cohomology `lim H¹(A_K, ℤ/ℓⁿ)` of the source for such `A`. An automorphism `σ` of
-`K` over `k` acts on it by inverse image along `id_A × Spec σ`
+(`MathlibExt.AlgebraicGeometry.ProEtaleCohomologyFunctoriality.Cohomology`). By Bhatt–Scholze
+this is Jannsen's continuous étale cohomology `H¹_cont(A_K, (ℤ/ℓⁿ)ₙ)`, and it is the `ℓ`-adic
+étale cohomology `lim H¹(A_K, ℤ/ℓⁿ)` of the source: the derived-limit exact sequence has no `lim¹`
+term, as the groups `H⁰(A_K, ℤ/ℓⁿ) = ℤ/ℓⁿ` (`A_K` is connected) have surjective transition maps.
+An automorphism `σ` of `K` over `k` acts on it by inverse image along `id_A × Spec σ`
 (`MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators.galoisSchemeOperator`), and on `A(K)`
 by `P ↦ Spec σ ≫ P`, which on coordinates applies `σ`.
 
@@ -39,8 +41,14 @@ by `P ↦ Spec σ ≫ P`, which on coordinates applies `σ`.
 
 * J. S. Milne, *Abelian Varieties* (v2.0, 2008), Part I, Theorem 12.1(a), p. 55, and
   Remark 12.5, p. 56, <https://www.jmilne.org/math/CourseNotes/AV.pdf>.
-* B. Bhatt and P. Scholze, *The pro-étale topology for schemes* (2015), §5.6 and §6.8, for the
-  comparison of pro-étale cohomology with `C(-, ℤ_ℓ)` coefficients and `ℓ`-adic étale cohomology.
+* B. Bhatt and P. Scholze, *The pro-étale topology for schemes*, arXiv:1309.1198v2 (2014),
+  Proposition 5.6.2 with Lemma 4.2.12 and Lemma 6.8.2(1): pro-étale cohomology with `C(-, ℤ_ℓ)`
+  coefficients is Jannsen's continuous étale cohomology, which the proof of Proposition 5.6.2
+  writes as `R lim` of étale cohomology with `ℤ/ℓⁿ` coefficients,
+  <https://arxiv.org/abs/1309.1198v2>.
+* The Stacks Project, Tag 07KY, for the exact sequences
+  `0 → lim¹ Hⁱ⁻¹ → Hⁱ(R lim) → lim Hⁱ → 0`, and Tag 07KW, for the vanishing of `lim¹` on
+  Mittag-Leffler systems, <https://stacks.math.columbia.edu/tag/07KY>.
 -/
 
 namespace WantedExt.AlgebraicGeometry.AbelianVarietyTateDualityWanted
@@ -73,9 +81,12 @@ acts through the induced map of Tate modules (`TateModule.map`) of any additive 
 $A(K)$ with $g(P) = \operatorname{Spec} \sigma \gg P$ for all $P$; exactly one such $g$ exists,
 the action of $\sigma$ on points.
 
-This is Milne, *Abelian Varieties* (v2.0, 2008), Theorem 12.1(a), p. 55, with the Galois
-compatibility of Remark 12.5, p. 56, in degree one; with $K = k$ separably closed it is
-Theorem 12.1(a), stated through the existence of an isomorphism rather than the canonical one. -/
+This is the degree-one case of Milne, *Abelian Varieties* (v2.0, 2008), Remark 12.5, p. 56,
+the Galois compatibility of the isomorphism of Theorem 12.1(a), p. 55, stated through the
+existence of a compatible isomorphism rather than for the canonical one; for $k$ separably closed
+it is Theorem 12.1(a) in that existence form. The étale cohomology
+$H^1(A_K, \mathbb{Z}_\ell) = \varprojlim_n H^1(A_K, \mathbb{Z}/\ell^n)$ of the source is read
+through pro-étale cohomology, which computes it here. -/
 public theorem_wanted h1_linearEquiv_dual_tateModule
     (ℓ : ℕ) [Fact ℓ.Prime] (k K : Type u) [Field k] [Field K] [Algebra k K]
     [IsSepClosure k K] (A : AbelianScheme (Spec (.of k))) (hℓ : ℓ ≠ ringChar k) :
