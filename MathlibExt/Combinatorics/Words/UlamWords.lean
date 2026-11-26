@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.ZMod.Defs
 
+import Mathlib.Data.Nat.Choose.Lucas
 import Mathlib.Logic.Equiv.Bool
 
 /-!
@@ -725,6 +726,83 @@ public theorem isUlamWord_zeros_one_zeros_iff (a b : ℕ) :
       by_cases hl : Odd ((a + (b + 1)).choose a) <;>
         by_cases hr : Odd ((a + 1 + b).choose (a + 1)) <;> simp [hl, hr]
 termination_by a + b
+
+namespace card_ulam_zeros_one_zeros
+
+private theorem odd_choose_digit (m a : ℕ) :
+    Odd (m.choose a) ↔ a % 2 ≤ m % 2 ∧ Odd ((m / 2).choose (a / 2)) := by
+  let : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  have h := Choose.choose_modEq_choose_mod_mul_choose_div_nat (n := m) (k := a) (p := 2)
+  have hbit : Odd ((m % 2).choose (a % 2)) ↔ a % 2 ≤ m % 2 := by
+    rcases (show m % 2 = 0 ∨ m % 2 = 1 by omega) with hm | hm <;>
+      rcases (show a % 2 = 0 ∨ a % 2 = 1 by omega) with ha | ha <;>
+      rw [hm, ha] <;> decide
+  rw [Nat.odd_iff, h, ← Nat.odd_iff, Nat.odd_mul, hbit]
+
+-- Lucas's theorem makes the admissible low bit independent of the higher bits.
+private theorem card_odd_choose_step (m : ℕ) :
+    ((Finset.range (m + 1)).filter (fun a => Odd (m.choose a))).card =
+      ((Finset.range (m / 2 + 1)).filter (fun a => Odd ((m / 2).choose a))).card *
+        (m % 2 + 1) := by
+  rw [← Finset.card_range (n := m % 2 + 1), ← Finset.card_product]
+  refine Finset.card_nbij' (fun a => (a / 2, a % 2)) (fun p => 2 * p.1 + p.2) ?_ ?_ ?_ ?_
+  · intro a ha
+    simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_range] at ha
+    rw [odd_choose_digit] at ha
+    simp only [Finset.mem_coe, Finset.mem_product, Finset.mem_filter, Finset.mem_range]
+    exact ⟨⟨by omega, ha.2.2⟩, by omega⟩
+  · rintro ⟨q, r⟩ hp
+    simp only [Finset.mem_coe, Finset.mem_product, Finset.mem_filter, Finset.mem_range] at hp
+    simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_range]
+    have hdiv : (2 * q + r) / 2 = q := by omega
+    rw [odd_choose_digit, hdiv]
+    exact ⟨by omega, by omega, hp.1.2⟩
+  · intro a _
+    change 2 * (a / 2) + a % 2 = a
+    omega
+  · rintro ⟨q, r⟩ hp
+    simp only [Finset.mem_coe, Finset.mem_product, Finset.mem_range] at hp
+    change ((2 * q + r) / 2, (2 * q + r) % 2) = (q, r)
+    exact Prod.ext (by omega) (by omega)
+
+private theorem card_odd_choose (m : ℕ) :
+    ((Finset.range (m + 1)).filter (fun a => Odd (m.choose a))).card =
+      2 ^ (Nat.digits 2 m).sum := by
+  by_cases hm : m = 0
+  · subst m
+    decide
+  · rw [card_odd_choose_step, card_odd_choose (m / 2),
+      Nat.digits_eq_cons_digits_div (by decide : 1 < 2) hm, List.sum_cons, pow_add, mul_comm]
+    rcases (show m % 2 = 0 ∨ m % 2 = 1 by omega) with h | h <;> simp [h]
+termination_by m
+decreasing_by omega
+
+end card_ulam_zeros_one_zeros
+
+open card_ulam_zeros_one_zeros in
+/-- **Counting Ulam words with a single one.** For every $n \ge 1$, the number of
+$a \in \{0, \dots, n - 1\}$ for which the word $0^a 1 0^{n-1-a}$ ($a$ zeros, then a one, then
+$n - 1 - a$ zeros) is an Ulam word equals $2^{s_2(n-1)}$, where $s_2(m)$ is the sum of the binary
+digits of $m$. This number is the term $G(n - 1)$ of Gould's sequence.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 5
+(Corollary 3.4 of Bade, Cui, Labelle, and Li). -/
+public theorem card_ulam_zeros_one_zeros (n : ℕ) (hn : 1 ≤ n) :
+    ((Finset.range n).filter fun a =>
+        IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (n - 1 - a) false)).card =
+      2 ^ (Nat.digits 2 (n - 1)).sum := by
+  have hfilter :
+      ((Finset.range n).filter fun a =>
+        IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (n - 1 - a) false)) =
+      (Finset.range n).filter fun a => Odd ((n - 1).choose a) := by
+    apply Finset.filter_congr
+    intro a ha
+    rw [isUlamWord_zeros_one_zeros_iff, show a + (n - 1 - a) = n - 1 by
+      have := Finset.mem_range.mp ha
+      omega]
+  rw [hfilter]
+  simpa only [Nat.sub_add_cancel hn] using card_odd_choose (n - 1)
 
 end
 
