@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasures
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesLeadingIntegral
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresLocalMass
 public import MathlibExt.NumberTheory.Digits.OrdinaryMomentRecurrence
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIrwinSumZeroLowerBounds
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIrwinMeasureHalfOpenLocalMass
 
 namespace MetaMathlibExt
@@ -133,20 +134,6 @@ public theorem_wanted irwinSum_strictAnti_and_tendsto
     (d ≠ 0 → StrictAntiOn (irwinSum b d) (Set.Ici 1)) ∧
     (d = 0 → StrictAnti (irwinSum b d)) ∧
     Tendsto (irwinSum b d) atTop (nhds ((b : ℝ) * Real.log b))
-
-/-- **Lower bounds for the Irwin sum without the digit.** Let $b > 2$ be a base and let $d$ be a
-nonzero digit, $0 < d < b$. Let $H^{(0)}$ be the Irwin sum of $1/n$ over the positive integers $n$
-whose base-$b$ expansion does not contain $d$. Then
-$b \log b - b \log(1 + 1/d) < H^{(0)}$ and $b \log(b/2) < H^{(0)}$.
-
-Source:
-Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26
-(2026), Article A11, Proposition 2. -/
-public theorem_wanted irwinSum_zero_lowerBounds
-    (b d : ℕ) (hb : 2 < b) (hd : d < b) (hd0 : d ≠ 0) :
-    (b : ℝ) * Real.log b - (b : ℝ) * Real.log (1 + 1 / (d : ℝ)) <
-      irwinSum b d 0 ∧
-    (b : ℝ) * Real.log ((b : ℝ) / 2) < irwinSum b d 0
 
 /-- **Prefix sums as alternating ordinary-moment series.** Let $b > 1$, let $d < b$ be a digit, let
 $n$ be a positive integer, let $k(n)$ be the number of occurrences of $d$ in the base-$b$
