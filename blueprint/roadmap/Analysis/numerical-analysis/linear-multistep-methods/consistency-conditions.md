@@ -10,6 +10,7 @@ In particular the first characteristic polynomial of a consistent method has the
 
 - [Truncation error and consistency of a linear multistep method](truncation-error-and-consistency.md)
 - [Order of accuracy and error constants of a linear multistep method](order-of-accuracy-and-error-constants.md)
+- [Linear multistep method](linear-multistep-method.md)
 
 ## Sources
 

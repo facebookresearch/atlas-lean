@@ -6,7 +6,7 @@ In particular a [splitting iteration](splitting-iteration.md) for $Ax = b$ conve
 
 ## Depends on
 
-- [Powers of a matrix tend to zero exactly when its spectral radius is less than one](matrix-powers-tend-to-zero.md)
+- [Splitting iteration](splitting-iteration.md)
 
 ## Proof depends on
 

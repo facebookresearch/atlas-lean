@@ -1,10 +1,10 @@
 # Optimal SOR parameter
 
-Let $A = \begin{pmatrix} D_1 & A_{12} \\ A_{21} & D_2 \end{pmatrix}$ be an $n \times n$ matrix whose diagonal blocks $D_1$ and $D_2$ are nonsingular diagonal matrices. Suppose that all eigenvalues of its Jacobi iteration matrix $G_J$ are real and that $\mu = \rho(G_J) < 1$. Then among real parameters $\omega$ the spectral radius of the [SOR iteration matrix](sor-iteration.md) $G_\omega$ is smallest for
+Let $A = \begin{pmatrix} D_1 & A_{12} \\ A_{21} & D_2 \end{pmatrix}$ be an $n \times n$ matrix whose diagonal blocks $D_1$ and $D_2$ are nonsingular diagonal matrices. Suppose that all eigenvalues of its Jacobi iteration matrix $G_J$ are real and that $\mu = \rho(G_J) < 1$. Then among nonzero real parameters $\omega$ the spectral radius of the [SOR iteration matrix](sor-iteration.md) $G_\omega$ is smallest for
 
 $$\omega_{\mathrm{opt}} = \frac{2}{1 + \sqrt{1 - \mu^2}}, \qquad \text{with} \qquad \rho(G_{\omega_{\mathrm{opt}}}) = \omega_{\mathrm{opt}} - 1 = \frac{\mu^2}{\bigl(1 + \sqrt{1 - \mu^2}\bigr)^2}.$$
 
-For the five-point discretization of Poisson's equation on an $n \times n$ grid in red-black order, $\mu = \cos(\pi/(n+1))$, and $\rho(G_{\omega_{\mathrm{opt}}}) \approx 1 - 2\pi/(n+1)$, against $\rho(G_J) \approx 1 - \pi^2/(2(n+1)^2)$.
+For the five-point discretization of Poisson's equation with Dirichlet boundary data on the uniform square grid with $n$ interior points in each direction, in red-black order, $\mu = \cos(\pi/(n+1))$, and $\rho(G_{\omega_{\mathrm{opt}}}) \approx 1 - 2\pi/(n+1)$, against $\rho(G_J) \approx 1 - \pi^2/(2(n+1)^2)$.
 
 ## Depends on
 

@@ -6,7 +6,7 @@ $$(\lambda + \omega - 1)^2 = \lambda\, \omega^2 \mu^2$$
 
 is an eigenvalue of $B$. Conversely, if $\mu$ is an eigenvalue of $B$ and $\lambda$ satisfies this equation, then $\lambda$ is an eigenvalue of $G_\omega$.
 
-The key property is that, with $L$ and $U$ the strictly lower and upper parts of $B$, the eigenvalues of $\alpha L + \alpha^{-1} U$ do not depend on $\alpha \ne 0$; for $\omega = 1$ the relation gives $\lambda = \mu^2$.
+The key property is that, with $L$ and $U$ the strictly lower and upper parts of $B$, the eigenvalues of $\alpha L + \alpha^{-1} U$ do not depend on $\alpha \ne 0$; for $\omega = 1$ the relation reads $\lambda(\lambda - \mu^2) = 0$, so a nonzero eigenvalue $\lambda$ of the Gauss–Seidel matrix satisfies $\lambda = \mu^2$. The Gauss–Seidel matrix can also have the eigenvalue $0$: for $A = \begin{pmatrix} 2 & -1 \\ -1 & 2 \end{pmatrix}$ its eigenvalues are $0$ and $1/4$, while those of the Jacobi matrix are $\pm 1/2$.
 
 ## Depends on
 

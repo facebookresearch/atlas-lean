@@ -9,6 +9,7 @@ This mirrors the exponential growth of the solutions of $y' = \lambda y$ for $\l
 - [Absolute stability of a linear multistep method](absolute-stability.md)
 - [Truncation error and consistency of a linear multistep method](../truncation-error-and-consistency.md)
 - [Zero-stability](../zero-stability.md)
+- [Linear multistep method](../linear-multistep-method.md)
 
 ## Proof depends on
 

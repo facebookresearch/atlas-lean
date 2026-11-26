@@ -1,6 +1,6 @@
 # Stationary iterative methods
 
-A splitting $A = M - N$ turns $Ax = b$ into the fixed-point iteration $x_{k+1} = M^{-1}N x_k + M^{-1}b$, which converges from every starting vector exactly when the spectral radius of $M^{-1}N$ is less than $1$. The Jacobi, Gauss–Seidel and SOR iterations take $M$ to be the diagonal or the lower triangle of $A$; diagonal dominance, irreducibility, positive definiteness and consistent ordering give their convergence and, for SOR, the optimal relaxation parameter.
+A splitting $A = M - N$ turns $Ax = b$ into the fixed-point iteration $x_{k+1} = M^{-1}N x_k + M^{-1}b$, which converges for every right-hand side and every starting vector exactly when the spectral radius of $M^{-1}N$ is less than $1$. For a matrix $A = D - E - F$ with nonzero diagonal $D$ and strictly lower and upper parts $-E$ and $-F$, the Jacobi, Gauss–Seidel and SOR iterations take $M = D$, $M = D - E$ and $M = D/\omega - E$; diagonal dominance, irreducibility, positive definiteness and consistent ordering give their convergence and, for SOR, the optimal relaxation parameter.
 
 ## Splittings and convergence
 
@@ -23,7 +23,7 @@ A splitting $A = M - N$ turns $Ax = b$ into the fixed-point iteration $x_{k+1} =
 - [Ostrowski–Reich theorem](ostrowski-reich-theorem.md)
 - [Consistently ordered matrix](consistently-ordered-matrix.md)
 - [Young's relation between SOR and Jacobi eigenvalues](young-sor-jacobi-eigenvalue-relation.md)
-- [For two-cyclic matrices Gauss–Seidel converges twice as fast as Jacobi](gauss-seidel-spectral-radius-is-the-square-of-jacobi.md)
+- [For two-cyclic matrices the Gauss–Seidel spectral radius is the square of the Jacobi one](gauss-seidel-spectral-radius-is-the-square-of-jacobi.md)
 - [Optimal SOR parameter](optimal-sor-parameter.md)
 
 ## Related topics

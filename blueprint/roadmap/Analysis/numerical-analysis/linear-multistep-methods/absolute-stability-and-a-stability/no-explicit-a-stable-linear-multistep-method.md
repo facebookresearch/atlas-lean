@@ -1,10 +1,14 @@
 # No explicit linear multistep method is A-stable
 
-No explicit [linear multistep method](../linear-multistep-method.md), that is, none with $\beta_k = 0$, is [A-stable](a-stability.md).
+No explicit [consistent](../truncation-error-and-consistency.md) [linear multistep method](../linear-multistep-method.md), that is, none with $\beta_k = 0$, $\rho(1) = 0$ and $\rho'(1) = \sigma(1) \ne 0$, is [A-stable](a-stability.md).
+
+Consistency is needed: $\rho(z) = z - \tfrac12$, $\sigma = 0$ defines an explicit method whose stability polynomial has the root $\tfrac12$ for every $\bar h$.
 
 ## Depends on
 
 - [A-stability](a-stability.md)
+- [Linear multistep method](../linear-multistep-method.md)
+- [Truncation error and consistency of a linear multistep method](../truncation-error-and-consistency.md)
 
 ## Sources
 

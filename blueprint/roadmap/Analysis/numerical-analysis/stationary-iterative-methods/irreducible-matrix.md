@@ -6,7 +6,7 @@ $$P A P^{\mathsf T} = \begin{pmatrix} A_{11} & A_{12} \\ 0 & A_{22} \end{pmatrix
 
 with square diagonal blocks $A_{11}$ and $A_{22}$ of positive size. Equivalently, its directed adjacency graph, with vertices $1, \dots, n$ and an edge from $i$ to $j \ne i$ whenever $a_{ij} \ne 0$, is strongly connected: there is a path from every vertex to every other vertex. A $1 \times 1$ matrix is irreducible.
 
-The matrices of finite-difference discretizations on a connected mesh, such as the five-point Laplacian, are irreducible. For nonnegative matrices the Perron–Frobenius pages use a variant that also requires paths of positive length from each vertex to itself.
+A finite-difference matrix whose couplings go in both directions along the edges of a connected mesh, such as the five-point Laplacian, is irreducible; a one-sided stencil need not be, for example $\begin{pmatrix} 1 & 0 \\ -1 & 1 \end{pmatrix}$ on a path of two points. For nonnegative matrices the Perron–Frobenius pages use a variant that also requires paths of positive length from each vertex to itself.
 
 ## Sources
 

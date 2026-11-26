@@ -8,7 +8,7 @@ returns floating-point numbers $x$ and $y$ with
 
 $$ab = x + y$$
 
-exactly, where $x = \mathrm{fl}(ab)$ and $y = ab - \mathrm{fl}(ab)$ is its rounding error, and $x$ and $y$ are nonoverlapping and moreover nonadjacent. (With any other rule for breaking ties between the two nearest floating-point numbers, the identity and nonoverlap still hold; nonadjacency uses ties to even.) Every product and subtraction after the first is exact; the algorithm uses only additions and multiplications, in contrast with the [error-free product via a fused multiply-add](error-free-transformation-of-a-product-via-fused-multiply-ad.md), which computes $y = \mathrm{fl}(ab - x)$ in one operation.
+exactly, where $x = \mathrm{fl}(ab)$ and $y = ab - \mathrm{fl}(ab)$ is its rounding error, and $x$ and $y$ are nonoverlapping and moreover nonadjacent, in the sense of the [Veltkamp splitting](veltkamp-splitting.md) page (zero overlaps no number; for $a = b = 1$, $(x, y) = (1, 0)$). (With any other rule for breaking ties between the two nearest floating-point numbers, the identity and nonoverlap still hold; nonadjacency uses ties to even.) Every product and subtraction after the first is exact; the algorithm uses only additions and multiplications, in contrast with the [error-free product via a fused multiply-add](error-free-transformation-of-a-product-via-fused-multiply-ad.md), which computes $y = \mathrm{fl}(ab - x)$ in one operation.
 
 ## Depends on
 
@@ -20,6 +20,11 @@ exactly, where $x = \mathrm{fl}(ab)$ and $y = ab - \mathrm{fl}(ab)$ is its round
 
 - [Sterbenz's lemma](is-float-sub.md)
 - [The relative error bound](abs-fl-sub-le.md)
+- [Ties to even for floating-point rounding](even-of-abs-fl-sub-eq.md)
+
+## Related topics
+
+- [Error-free transformation of a product via fused multiply-add](error-free-transformation-of-a-product-via-fused-multiply-ad.md)
 
 ## Sources
 

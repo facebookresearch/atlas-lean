@@ -10,6 +10,10 @@ For $x$ not a node, the function $F(y) = f(y) - Q_n(y) - \lambda \prod_j (y - x_
 
 - [Lagrange interpolant](../../approximation-theory/lagrange-interpolation/eval-interpolant.md)
 
+## Proof depends on
+
+- [Rolle's theorem](../../real-functions/differential-calculus/rolle-theorem.md)
+
 ## Sources
 
 - D. Levy, *Introduction to Numerical Analysis*, lecture notes, Department of Mathematics, University of Maryland, version of 4 January 2021, Section 3.7, Theorem 3.9 and its proof. <https://www.math.umd.edu/~dlevy/resources/notes.pdf>
