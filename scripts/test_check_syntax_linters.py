@@ -17,7 +17,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import check_syntax_linters as check
-from lean_changes import ROOT, ChangedFile
+from lean_changes import ROOT, AggregatorError, ChangedFile
 
 A = f"{ROOT}/MathlibExt/A.lean"
 B = f"{ROOT}/MathlibExt/B.lean"
@@ -32,6 +32,9 @@ Note: This linter can be disabled with `set_option linter.style.longLine false`
 {A}:67:2: warning: This central dot `·` is isolated; please merge it with the next line.
 
 Note: This linter can be disabled with `set_option linter.style.cdot false`
+{A}:70:4: warning: 'this : Fintype ι' is a Type and not a Prop. Consider using 'let' instead of 'have'.
+
+Note: This linter can be disabled with `set_option linter.haveLet 0`
 -- Text linter diagnostics in MathlibExt.B:
 {B}:207:6: warning: The `show` tactic should only be used to indicate intermediate goal states for readability.
 However, this tactic invocation changed the goal. Please use `change` instead for these purposes.
@@ -48,9 +51,12 @@ FILES = [ChangedFile("MathlibExt/A.lean", "M", frozenset({65})),
          ChangedFile("MathlibExt/B.lean", "M", frozenset({205}))]
 
 
-def run_main(output: str, returncode: int, files=FILES) -> tuple[int, str]:
+def run_main(output: str, returncode: int, files=FILES, extra=(), aggregator_error=False
+             ) -> tuple[int, str]:
     @contextlib.contextmanager
     def fake_aggregators(changed):
+        if aggregator_error:
+            raise AggregatorError("MathlibExt/LintChanged.lean exists")
         yield ["MathlibExt.LintChanged"]
 
     result = subprocess.CompletedProcess([], returncode, stdout=output, stderr="")
@@ -59,10 +65,10 @@ def run_main(output: str, returncode: int, files=FILES) -> tuple[int, str]:
             patch.object(check, "aggregators", fake_aggregators), \
             patch.object(check.subprocess, "run", return_value=result) as run, \
             patch.dict("os.environ", {"GITHUB_ACTIONS": "true"}), \
-            patch.object(sys, "argv", ["check_syntax_linters.py", "--base", "HEAD^1"]), \
+            patch.object(sys, "argv", ["check_syntax_linters.py", "--base", "HEAD^1", *extra]), \
             contextlib.redirect_stdout(out), contextlib.redirect_stderr(io.StringIO()):
         code = check.main()
-    if files:
+    if files and not aggregator_error:
         args = run.call_args.args[0]
         assert args[:4] == ["lake", "lint", "--builtin-only",
                             "--lint-only=linter.mathlibStandardSet"], args
@@ -75,31 +81,42 @@ class ParseTests(unittest.TestCase):
         self.assertEqual([(w.path, w.line, w.col, w.linter) for w in warnings], [
             ("MathlibExt/A.lean", 65, 100, "linter.style.longLine"),
             ("MathlibExt/A.lean", 67, 2, "linter.style.cdot"),
+            ("MathlibExt/A.lean", 70, 4, "linter.haveLet"),
             ("MathlibExt/B.lean", 207, 6, "linter.style.show"),
         ])
-        self.assertTrue(warnings[2].message.endswith("instead for these purposes."))
-        self.assertNotIn("Note:", warnings[2].message)
+        self.assertTrue(warnings[3].message.endswith("instead for these purposes."))
+        self.assertNotIn("Note:", warnings[3].message)
 
 
 class MainTests(unittest.TestCase):
     def test_keeps_only_warnings_on_added_lines(self):
         code, out = run_main(OUTPUT, 1)
         self.assertEqual(code, 1)
-        self.assertIn("::warning file=MathlibExt/A.lean,line=65,col=100,"
+        # Lean's column 100 is GitHub's column 101.
+        self.assertIn("::error file=MathlibExt/A.lean,line=65,col=101,"
                       "title=linter.style.longLine::", out)
         self.assertNotIn("A.lean,line=67", out)
         self.assertNotIn("B.lean", out)
+
+    def test_report_only_annotates_and_passes(self):
+        code, out = run_main(OUTPUT, 1, extra=["--report-only"])
+        self.assertEqual(code, 0)
+        self.assertIn("::warning file=MathlibExt/A.lean,line=65,col=101,", out)
 
     def test_passes_when_no_warning_is_on_an_added_line(self):
         files = [ChangedFile("MathlibExt/A.lean", "M", frozenset({1})),
                  ChangedFile("MathlibExt/B.lean", "M", frozenset({2}))]
         code, out = run_main(OUTPUT, 1, files)
         self.assertEqual(code, 0)
-        self.assertNotIn("::warning", out)
+        self.assertNotIn("::", out)
 
     def test_fails_when_lake_lint_does_not_reach_the_lint(self):
         code, _ = run_main("error: MathlibExt/A.lean:3:0: unknown identifier\nerror: build failed\n",
-                           1)
+                           1, extra=["--report-only"])
+        self.assertEqual(code, 2)
+
+    def test_an_existing_aggregator_name_is_a_failure_to_run(self):
+        code, _ = run_main(OUTPUT, 0, aggregator_error=True)
         self.assertEqual(code, 2)
 
     def test_nothing_to_check(self):
