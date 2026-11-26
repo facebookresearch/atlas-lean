@@ -16,3 +16,8 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
+- [Dynamical BLUP reaction-norm evolution](dynamical-blup-reaction-norm-evolution/README.md)
+- [Expected cross value for mate selection](expected-cross-value-for-mate-selection/README.md)
+- [Information-theoretic quantitative genetics](information-theoretic-quantitative-genetics/README.md)
+- [Informative trait selection for multitrait QTL mapping](informative-trait-selection-for-multitrait-qtl-mapping/README.md)
+- [Translation invariance of marker coding](translation-invariance-of-marker-coding/README.md)
