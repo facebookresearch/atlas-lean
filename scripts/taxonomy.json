@@ -11953,6 +11953,7 @@
   "MathlibExt/GameTheory/ChocolateBarNSProperty": {"to": "GameTheory/combinatorial-games", "title": "Chocolate bar games"},
   "MathlibExt/GameTheory/CorrelatedEquilibrium": {"to": "GameTheory/noncooperative-games", "title": "Correlated equilibria"},
   "MathlibExt/GameTheory/EuclidGameCalkinWilf": {"to": "GameTheory/combinatorial-games", "title": "Game of Euclid"},
+  "MathlibExt/GameTheory/EuclidGameCalkinWilfCountArchTopsCalkinWilfRow": {"to": "GameTheory/combinatorial-games", "title": "Game of Euclid"},
   "MathlibExt/GameTheory/ExactSlowNimRemoteness": {"to": "GameTheory/combinatorial-games", "title": "Slow Nim"},
   "MathlibExt/GameTheory/FastVanDerWaerdenGame": {"to": "GameTheory/combinatorial-games", "title": "Fast van der Waerden game"},
   "MathlibExt/GameTheory/ImpartialAcyclicGame": {"to": "GameTheory/combinatorial-games", "title": "Sprague–Grundy theorem"},

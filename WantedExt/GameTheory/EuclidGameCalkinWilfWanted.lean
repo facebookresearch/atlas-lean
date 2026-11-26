@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Ring.Int.Defs
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.GameTheory.EuclidGameCalkinWilf
 public import MathlibExt.GameTheory.SmithRemoteness
+public import MathlibExt.GameTheory.EuclidGameCalkinWilfCountArchTopsCalkinWilfRow
 
 namespace MetaMathlibExt
 
@@ -33,22 +34,6 @@ public theorem_wanted count_euclidPPosition_calkinWilfRow :
           2 * (calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2)) ∧
       ∀ k, 3 * ((calkinWilfRow k).countP (fun p => euclidPPosition p.1 p.2) : ℤ) =
         2 ^ k + 2 * (-1) ^ k
-
-/-- **Number of arch tops in a row of the Calkin–Wilf tree.** For $k \ge 2$ let $T_k$ be the
-number of vertices of row $k$ of the Calkin–Wilf tree of the form $(2m+n)/(m+n)$ with $m/n$ a
-P-position of Euclid in row $k - 2$. Then $3T_k = 2^{k-2} + 2(-1)^k$, that is,
-$T_k = 2^{k-2}/3 + 2(-1)^k/3$.
-
-The vertex $(2m+n)/(m+n)$ is the son's daughter of $m/n$, the left top of the arch below $m/n$;
-the daughter's son $(m+n)/(m+2n)$ is the right top, so $T_k$ counts the arches whose tops lie in
-row $k$.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Corollary 4.7. -/
-public theorem_wanted count_arch_tops_calkinWilfRow (k : ℕ) (hk : 2 ≤ k) :
-    3 * (((calkinWilfRow k).countP fun p => (calkinWilfRow (k - 2)).any fun V =>
-        euclidPPosition V.1 V.2 && p == (2 * V.1 + V.2, V.1 + V.2)) : ℤ) =
-      2 ^ (k - 2) + 2 * (-1) ^ k
 
 /-- **The Fibonacci arches.** Let $F_j$ be the Fibonacci numbers with $F_0 = F_1 = 1$ and
 $F_{j+2} = F_{j+1} + F_j$. Call a pair $(a, b)$ of natural numbers a P-position when the Euclid
