@@ -22493,6 +22493,7 @@
 "Cslib.Crypto.PublicKey.DHSecurity.IsUniformKDF": "81b131e282b21765",
 "Cslib.Crypto.PublicKey.DHSecurity.advantage_keReal_keRand": "186ed0e4815d599b",
 "Cslib.Crypto.PublicKey.DHSecurity.aliceKey": "e045887ae2c2febf",
+"Cslib.Crypto.PublicKey.DHSecurity.aliceKey_bobKey_man_in_the_middle": "36a83d4b79ebf7e6",
 "Cslib.Crypto.PublicKey.DHSecurity.aliceKey_eq_bobKey": "3a7187869ee810f2",
 "Cslib.Crypto.PublicKey.DHSecurity.bobKey": "f7fd67545511df12",
 "Cslib.Crypto.PublicKey.DHSecurity.isUniformKDF_of_bijective": "436326d5d5345a5a",

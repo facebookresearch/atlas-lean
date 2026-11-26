@@ -1646,6 +1646,7 @@
   "CSLibExt/Crypto/Protocols/Commitment": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Commitment schemes"},
   "CSLibExt/Crypto/Protocols/PerfectSecrecy/GroupOneTimePad": {"to": "ComputerScience/cryptography/symmetric-key", "title": "One-time pad over a finite group"},
   "CSLibExt/Crypto/PublicKey/Assumptions": {"to": "ComputerScience/cryptography/public-key", "title": "Hardness assumptions"},
+  "CSLibExt/Crypto/PublicKey/DHManInTheMiddle": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Protocol analysis"},
   "CSLibExt/Crypto/PublicKey/DHSecurity": {"to": "ComputerScience/cryptography/public-key", "title": "Security of Diffie–Hellman key exchange"},
   "CSLibExt/Crypto/PublicKey/DeterministicEav": {"to": "ComputerScience/cryptography/public-key", "title": "Deterministic public-key encryption"},
   "CSLibExt/Crypto/PublicKey/DiffieHellman": {"to": "ComputerScience/cryptography/public-key", "title": "Diffie–Hellman key exchange"},
