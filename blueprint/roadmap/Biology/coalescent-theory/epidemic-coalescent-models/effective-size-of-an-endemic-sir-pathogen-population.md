@@ -7,7 +7,9 @@ Consider an SIR infection at endemic equilibrium with $I$ infected hosts, recove
 1. the individual mean offspring $\beta S^* D = \gamma D$ is exponentially distributed with mean $1$, hence variance $1$;
 2. the offspring variance is $\sigma^2 = 1 + 1 = 2$, so $N_e = I/2$;
 3. with generation time $\tau = 1/\gamma$, the coalescence rate is
+
 $$\binom{A}{2} \frac{1}{N_e \tau} = \binom{A}{2} \frac{2\gamma}{I},$$
+
 which coincides with the SIR epidemic coalescent rate $\binom{A}{2}\, 2\beta S^*/I$ at equilibrium.
 
 ## Depends on

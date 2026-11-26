@@ -3,11 +3,15 @@
 **Data and partitions.** Let $n$ aligned sequences be observed at $L$ sites, site $j$ having $r_j$ possible variants. A clustering is a partition $S = \{s_1, \dots, s_k\}$ of the $n$ sequences into $k$ nonempty clusters, with $1 \le k \le K$ for a fixed upper bound $K \le n$. Write $n_{cja}$ for the number of sequences in cluster $s_c$ carrying variant $a$ at site $j$, and $n_{cj} = \sum_a n_{cja}$.
 
 **Prior on partitions (hierBAPS).** The number of clusters is uniform on $\{1, \dots, K\}$ and, given $k$, all partitions into $k$ blocks are equally likely:
+
 $$p(S) = \frac{1}{K}\cdot\frac{1}{\mathcal S(n, k)} \propto \frac{1}{\mathcal S(n, k)}, \qquad k = |S|,$$
+
 where $\mathcal S(n, k)$ is the Stirling number of the second kind (the number of partitions of an $n$-set into $k$ nonempty blocks), $\mathcal S(n,k) = \frac{1}{k!}\sum_{i=0}^{k} (-1)^i \binom{k}{i} (k - i)^n$.
 
 **Likelihood.** Within cluster $c$, the variants at site $j$ are i.i.d. multinomial with frequencies $p_{cj} = (p_{cj1}, \dots, p_{cjr_j})$, independently across sites and clusters, and $p_{cj} \sim \mathrm{Dirichlet}(\alpha_{j1}, \dots, \alpha_{jr_j})$. Integrating out the frequencies gives the marginal likelihood
+
 $$p(x \mid S) = \prod_{c=1}^{k} \prod_{j=1}^{L} \frac{\Gamma\big(\sum_a \alpha_{ja}\big)}{\Gamma\big(\sum_a \alpha_{ja} + n_{cj}\big)} \prod_{a=1}^{r_j} \frac{\Gamma(\alpha_{ja} + n_{cja})}{\Gamma(\alpha_{ja})},$$
+
 and the posterior over partitions is $p(S \mid x) \propto p(x \mid S)\, p(S)$, maximized over $S$ by stochastic search.
 
 **Properties.**

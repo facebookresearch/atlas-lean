@@ -1,9 +1,11 @@
 # Coalescent rate under SIR epidemic dynamics
 
 Let a pathogen spread in a large host population with prevalence $I(t)$ (number of infected hosts) and incidence $f(t)$ (new infections per unit time), and let $A(t) \ge 2$ sampled lineages be ancestral to a sample at time $t$, with time running backwards from sampling. Each transmission event links an infector and an infectee; it merges two sampled lineages exactly when both hosts involved carry sampled lineages. Choosing the pair uniformly among infected hosts gives the coalescence rate
+
 $$\lambda_A(t) = f(t)\, \frac{\binom{A}{2}}{\binom{I(t)}{2}} \approx \binom{A}{2} \frac{2 f(t)}{I(t)^2} \qquad (I(t) \gg 1).$$
 
 For the SIR model with susceptible fraction $S(t)$, transmission rate $\beta$ per infected host and recovery rate $\gamma$, the incidence is $f = \beta S I$ and
+
 $$\lambda_A(t) = \binom{A}{2} \frac{2\beta S(t)}{I(t)}.$$
 
 Properties:

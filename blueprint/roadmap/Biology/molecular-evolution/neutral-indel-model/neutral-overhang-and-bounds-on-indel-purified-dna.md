@@ -6,7 +6,9 @@
 
 1. *Isolated functional segments.* The expected number of neutral sites in the ungapped segment containing an isolated functional segment is $2K$ ($K$ on each side).
 2. *Densely clustered functional segments.* In a region of length $T \gg K$ from which a proportion $q$ of indels has been purified and which consists of $N$ ungapped segments of mean length $L > K$, in expectation $L = K/(1 - q)$, the amount of indel-purified DNA is
+
 $$qT = N(L - K),$$
+
 so each ungapped segment contains on average exactly $K$ neutral sites.
 3. Hence the expected number of neutral sites per ungapped segment that contains functional material lies between $K$ and $2K$, depending on clustering. Combining this with the excess $\sigma$ of long ungapped segments over the neutral geometric law gives an upper bound on indel-purified DNA (attribute all excess to selection, assume high clustering, overhang $K$) and a lower bound (subtract the excess seen in neutrally evolving ancestral repeats, assume isolation, overhang $2K$).
 

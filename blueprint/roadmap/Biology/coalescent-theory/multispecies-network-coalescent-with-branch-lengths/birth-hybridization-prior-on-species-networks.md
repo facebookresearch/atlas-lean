@@ -4,7 +4,9 @@ The **birth–hybridization process** with speciation rate $\lambda > 0$, hybrid
 
 - start with a single lineage at time $t_0$;
 - when $k$ lineages are present, the next event occurs after an exponential waiting time with total rate
+
 $$r_{\mathrm{tot}}(k) = k \lambda + \binom{k}{2} \nu ;$$
+
 - the event is a speciation with probability $k\lambda / r_{\mathrm{tot}}(k)$, in which case a uniformly chosen lineage splits into two, and otherwise a hybridization, in which case a uniformly chosen pair of lineages merges into one hybrid lineage, creating a reticulation node with inheritance probability $\gamma \sim \mathrm{U}(0, 1)$ (or another law on $[0, 1]$);
 - the process stops at time $0$; the extant lineages are the tips.
 

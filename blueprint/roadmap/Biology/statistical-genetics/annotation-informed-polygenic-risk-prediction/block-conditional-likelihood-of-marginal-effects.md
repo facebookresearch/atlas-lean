@@ -3,9 +3,13 @@
 **Setting.** Let the phenotype $Y \in \mathbb{R}^N$ and genotypes $X \in \mathbb{R}^{N \times M}$ be standardized (columns mean zero, variance one) and $Y = X\beta + \varepsilon$ with $\beta$ a random effect independent of $X$ and $\varepsilon$. The marginal effect estimates are $\hat\beta = X^{\top}Y/N$ and the sample LD matrix is $\hat D = X^{\top}X/N$. Partition SNPs into blocks (approximately independent LD blocks); for block $b$ write $\hat\beta_b$, $\hat D_b = X_b^{\top}X_b/N$, $\beta_b$, and let $h_b^2 = \sum_{i \in b} \sigma_i^2$ be the heritability carried by SNPs in $b$, where $\sigma_i^2 = \mathrm{Var}(\beta_i)$.
 
 **Proposition.** Conditional on $\beta_b$ and $\hat D_b$, and treating the genotypes of SNPs outside $b$ as uncorrelated with $X_b$,
+
 $$\mathbb{E}(\hat\beta_b \mid \beta_b, \hat D_b) = \hat D_b\, \beta_b, \qquad \mathrm{Var}(\hat\beta_b \mid \beta_b, \hat D_b) = \frac{1 - h_b^2}{N}\, \hat D_b,$$
+
 and, asymptotically, $\hat\beta_b \mid \beta_b \sim \mathcal{N}\big(\hat D_b\beta_b,\ \tfrac{1 - h_b^2}{N}\hat D_b\big)$. For a prior $\prod_{i \in b} f(\beta_i)$, the block posterior is
+
 $$f(\beta_b \mid \hat\beta_b, \hat D_b) \propto \mathcal{N}\!\Big(\hat\beta_b;\ \hat D_b\beta_b,\ \tfrac{1 - h_b^2}{N}\hat D_b\Big) \prod_{i \in b} f(\beta_i),$$
+
 and a polygenic risk score is $\mathrm{PRS} = \sum_j X_j\, \mathbb{E}(\beta_j \mid \hat\beta, \hat D)$, with $\hat D$ replaced by a reference-panel LD matrix when individual genotypes are unavailable.
 
 ## Depends on

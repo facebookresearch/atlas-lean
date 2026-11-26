@@ -3,11 +3,15 @@
 **Model.** Align two genomes and walk along the alignment. Under the **neutral indel model**, distinct insertion–deletion events are independent and occur uniformly along the sequence, so, conditional on the survival of its left neighbour as a homologous aligned nucleotide, each site survives with the same probability $p = 1 - \rho$; $\rho$ is the indel probability per site (the indel rate).
 
 **Proposition.** The number $L$ of homologous nucleotides between successive indels (the length of an intergap segment, IGS) is geometric:
+
 $$\Pr(L = \ell) = \rho\,(1 - \rho)^{\ell}, \qquad \ell = 0, 1, 2, \dots,$$
+
 irrespective of the distribution of indel lengths and of the relative frequency of insertions and deletions. Consequently the IGS-length histogram $H_\ell$ is a straight line in log-linear coordinates, $\log H_\ell = \log C + \ell \log(1 - \rho)$, and the expected distance between indels is $K = 1/\rho$ (up to an $O(1)$ convention-dependent offset).
 
 **Excess statistic.** Fitting $C(1 - \rho)^{\ell}$ to the histogram over a length range where the neutral model holds, the fraction of nucleotides in ungapped segments that is over-represented relative to the neutral prediction is
+
 $$\sigma = \frac{\sum_{\ell \ge \ell_{\min}} \ell\,\big(H_\ell - C(1 - \rho)^{\ell}\big)}{\sum_{\ell \ge \ell_{\min}} \ell\, H_\ell},$$
+
 with short segments ($\ell < \ell_{\min}$, about 20 bp for human–mouse alignments) excluded because nearby indels are merged into single alignment gaps (gap attraction).
 
 **Properties.**

@@ -3,8 +3,11 @@
 **Setting.** Consider five taxa with assumed species tree $(((P_1, P_2), (P_{3_1}, P_{3_2})), O)$, where $P_{3_1}$ and $P_{3_2}$ are two lineages of the $P_3$ clade assumed not to exchange genes with each other, and $O$ is an outgroup carrying the ancestral allele $A$ at every biallelic site used. Write a site pattern as the states of $(P_1, P_2, P_{3_1}, P_{3_2}, O)$ with $B$ the derived allele, and let $n(\cdot)$ be the genome-wide count of sites with that pattern.
 
 **Definition.** The partitioned D-statistics are
+
 $$D_1 = \frac{n(ABBAA) - n(BABAA)}{n(ABBAA) + n(BABAA)}, \qquad D_2 = \frac{n(ABABA) - n(BAABA)}{n(ABABA) + n(BAABA)},$$
+
 $$D_{12} = \frac{n(ABBBA) - n(BABBA)}{n(ABBBA) + n(BABBA)} .$$
+
 $D_1$ uses derived alleles present in $P_{3_1}$ but not $P_{3_2}$, $D_2$ those present in $P_{3_2}$ but not $P_{3_1}$, and $D_{12}$ those shared by both.
 
 **Properties.**
