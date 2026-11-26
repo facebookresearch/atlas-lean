@@ -14,6 +14,7 @@ Topics added since this subject's fields were last revised.
 - [Local Level One](local-level-one/README.md)
 - [Period Map Hecke](period-map-hecke/README.md)
 - [Projective Northcott](projective-northcott/README.md)
+- [Root Height Bound](root-height-bound/README.md)
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
 - [Degree of a singular modulus](finrank-adjoin-j-function-eq-gauss-class.md)
