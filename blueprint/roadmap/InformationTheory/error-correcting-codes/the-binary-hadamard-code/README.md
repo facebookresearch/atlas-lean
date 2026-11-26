@@ -12,7 +12,6 @@
 - [Finrank code](finrank-code.md)
 - [Rank generator](rank-generator.md)
 - [Every nonzero codeword has weight exactly `2^(m-1)`](hamming-norm-encode.md)
-- [Hamming Norm of mem code](hamming-norm-of-mem-code.md)
 - [Distinct codewords are at distance exactly `2^(m-1)`](hamming-dist-encode.md)
 - [Min Weight code](min-weight-code.md)
 - [Minimum distance of the positive-order Hadamard code](min-dist-code.md)

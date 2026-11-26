@@ -1,4 +1,3 @@
-# To Leaf Symbols? map val
+# Lifting the symbols of a leaf-symbol message
 
-Lifting the underlying symbols of a leaf-symbol message recovers the
-message.
+For a Huffman tree $T$ and a message over its leaf symbols, [lifting](to-leaf-symbols.md) the underlying symbols of the message back to leaf symbols succeeds and returns the message.

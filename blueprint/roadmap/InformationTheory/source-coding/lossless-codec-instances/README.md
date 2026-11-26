@@ -2,12 +2,11 @@
 
 ## Lean
 
-- [To Leaf Symbols?](to-leaf-symbols.md)
-- [To Leaf Symbols? map val](to-leaf-symbols-map-val.md)
+- [Lifting symbols to leaf symbols](to-leaf-symbols.md)
+- [Lifting the symbols of a leaf-symbol message](to-leaf-symbols-map-val.md)
 - [Huffman codec](encoding.md)
-- [Encoding encode length](encoding-encode-length.md)
+- [Length of a Huffman encoding](encoding-encode-length.md)
 
 ## Run Length
 
-- [Encoding](encoding-2.md)
-- [Encoding encode le](encoding-encode-le.md)
+- [Run-length codec](encoding-2.md)

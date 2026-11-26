@@ -1,4 +1,3 @@
-# Encoding encode length
+# Length of a Huffman encoding
 
-The encoded length of a Huffman message is the sum of its codeword
-lengths.
+For a Huffman tree $T$ and a message over its leaf symbols, the [Huffman codec](encoding.md) encodes the message to a bit string whose length is the sum of the lengths of the codewords of its symbols.

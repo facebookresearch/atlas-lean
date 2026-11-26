@@ -1,4 +1,3 @@
-# Not cnf Sat of up Conflict
+# Soundness of unit-propagation conflicts
 
-Soundness of unit propagation: a formula from which unit propagation derives a
-conflict is unsatisfiable.
+If unit propagation derives a [conflict](upconflict.md) from a CNF formula, then the formula is unsatisfiable: no assignment satisfies it.
