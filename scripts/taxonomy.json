@@ -13320,7 +13320,6 @@
   "MathlibExt/NumberTheory/KPerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Multiperfect numbers"},
   "MathlibExt/NumberTheory/KamanoLandenPolyBernoulli": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Landen connection formula and poly-Bernoulli numbers"},
   "MathlibExt/NumberTheory/KeithNumber": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Keith numbers"},
-  "MathlibExt/NumberTheory/KleinCoveringSystems": {"to": "NumberTheory/congruences/covering-systems", "title": "Minimum modulus of covering systems"},
   "MathlibExt/NumberTheory/LSeries/AbelContinuation": {"to": "NumberTheory/zeta-l-functions/dirichlet-l-functions", "title": "Analytic continuation of Dirichlet series"},
   "MathlibExt/NumberTheory/LSeries/Artin": {"to": "NumberTheory/zeta-l-functions/dirichlet-l-functions", "title": "Artin L-functions"},
   "MathlibExt/NumberTheory/LSeries/AsymptoticContinuation": {"to": "NumberTheory/zeta-l-functions/dirichlet-l-functions", "title": "Analytic continuation of Dirichlet series"},
