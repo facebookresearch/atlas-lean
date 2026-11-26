@@ -1,8 +1,10 @@
 # Equivalence test of Hardy-Weinberg equilibrium for X-chromosomal SNPs
 
 **Setting.** At a diallelic X-chromosomal locus with alleles $A$ and $a$, females carry genotypes $AA, Aa, aa$ with probabilities $(\pi_1,\pi_2,\pi_3)$ and males carry allele $A$ with probability $p_Y$. Hardy-Weinberg equilibrium (HWE) on the X chromosome requires both $\pi_2^2=4\pi_1\pi_3$ in females and equal allele frequencies in the sexes, $p_1:=\pi_1+\pi_2/2=p_Y$. Define the signed disequilibrium components
+
 $$\Delta_f^{\pm}=\log\pi_2-\tfrac12(\log\pi_1+\log\pi_3)-\log 2,\qquad
 \Delta_m^{\pm}=\operatorname{logit}(p_1)-\operatorname{logit}(p_Y),$$
+
 the log relative excess heterozygosity in females and the log odds ratio of $A$ between the sexes, and the aggregate distance $\Delta=\big((\Delta_f^{\pm})^2+(\Delta_m^{\pm})^2\big)^{1/2}$. The goodness-of-fit problem is the equivalence problem
 
 $$H_0:\ \Delta\ge\varepsilon\qquad\text{versus}\qquad H_1:\ \Delta<\varepsilon,$$
@@ -10,6 +12,7 @@ $$H_0:\ \Delta\ge\varepsilon\qquad\text{versus}\qquad H_1:\ \Delta<\varepsilon,$
 so that rejecting $H_0$ establishes approximate compatibility with HWE; the proposed margin is $\varepsilon=\sqrt2\log1.4\approx0.48$.
 
 **Proposition 1 (joint asymptotics).** Let $(X_1,X_2,X_3)\sim\mathrm{Mult}(n_1;\pi)$ (females) and $Y\sim\mathrm{Bin}(n_2,p_Y)$ (males) be independent, $N=n_1+n_2$, $n_1/N\to\lambda\in(0,1)$, and let $\hat\Delta_f^{\pm},\hat\Delta_m^{\pm}$ be the plug-in estimators. Then $\sqrt N(\hat\Delta_f^{\pm}-\Delta_f^{\pm},\ \hat\Delta_m^{\pm}-\Delta_m^{\pm})$ converges to a pair of independent centered normals with variances
+
 $$\sigma_f^2=\frac1\lambda\Big(\frac{1-\pi_2}{4\pi_1\pi_3}+\frac1{\pi_2}\Big),\qquad
 \sigma_m^2=\frac{\pi_1+\pi_2/4-p_1^2}{\lambda\,p_1^2(1-p_1)^2}+\frac{1}{(1-\lambda)\,p_Y(1-p_Y)} .$$
 
