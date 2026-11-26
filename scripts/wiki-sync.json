@@ -34103,6 +34103,7 @@
 "HopfAlgebra.canMap_surjective_of_surjective": "9d05625ebbfc7177",
 "HopfAlgebra.coaction": "28257b07f8d0822b",
 "HopfAlgebra.comul_antipode": "9038630aa8b2ce8c",
+"HopfAlgebra.convPow_finrank_eq_one_of_isCocomm": "9f194710c7d8dcea",
 "HopfAlgebra.exists_comp_antipode_convMul_eq_one": "152bac8b776d35cc",
 "HopfAlgebra.exists_leftIntegral_sum_apply_mul_eq_counit": "923a961661d6bb3b",
 "HopfAlgebra.finite_projective_hopfKer_of_surjective": "9d77782ea3c030da",
