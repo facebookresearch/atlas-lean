@@ -37,7 +37,8 @@ example :
         (n.divisors.card : ℝ)) =O[atTop] fun n : ℕ => 1 / (Real.exp n - 1) := by
   exact divisorCountApprox_sub_isBigO _ inv_sin_sq_weight_bound
 
--- With this weight, every nondivisor weight is exactly `e^{-nk}`, so the bound is attained.
+-- With this weight, the hypothesis holds with equality at every nondivisor, and each nondivisor
+-- weight is exactly `e^{-nk}`.
 example (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) :
     |Real.exp (-(n * k * (Real.sin (n * Real.pi / k) ^ 2)⁻¹ * Real.sin (n * Real.pi / k) ^ 2)) -
         (if k ∣ n then 1 else 0)| ≤ Real.exp (-(n * k : ℝ)) :=
