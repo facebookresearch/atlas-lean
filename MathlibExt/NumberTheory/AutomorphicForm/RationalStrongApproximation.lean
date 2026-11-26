@@ -35,7 +35,9 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.NumberTheory.AutomorphicForm.ProductionPinsCompact
+public import MathlibExt.NumberTheory.ModularForms.AdelicLift
 public import MathlibExt.NumberTheory.NumberField.AdelicGL2LocalFiniteness
+import MathlibExt.NumberTheory.ModularForms.FrickeFunctions.SLTwoZModSurjective
 
 @[expose] public section
 
@@ -165,43 +167,32 @@ section General
 variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
   [IsFractionRing R K]
 
-/-- The matrices over the finite adeles that are integral together with their inverses. -/
-private def intGL2 : Subgroup (GL (Fin 2) (FiniteAdeleRing R K)) where
-  carrier := {g | (∀ i j, (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j ∈
-      AdelicBox.integralFiniteAdeles R K) ∧
-    ∀ i j, ((g⁻¹ : GL (Fin 2) (FiniteAdeleRing R K)) : Matrix (Fin 2) (Fin 2) _) i j ∈
-      AdelicBox.integralFiniteAdeles R K}
-  one_mem' := by
-    have h : ∀ i j, (1 : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j ∈
-        AdelicBox.integralFiniteAdeles R K := fun i j => by
-      rw [Matrix.one_apply]
-      split_ifs
-      · exact one_mem_integralFiniteAdeles
-      · exact zero_mem_integralFiniteAdeles
-    exact ⟨by rw [Units.val_one]; exact h, by rw [inv_one, Units.val_one]; exact h⟩
-  mul_mem' {a b} ha hb := by
-    have hmul : ∀ {m m' : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)},
-        (∀ i j, m i j ∈ AdelicBox.integralFiniteAdeles R K) →
-        (∀ i j, m' i j ∈ AdelicBox.integralFiniteAdeles R K) →
-        ∀ i j, (m * m') i j ∈ AdelicBox.integralFiniteAdeles R K := fun hm hm' i j => by
-      rw [Matrix.mul_apply, Fin.sum_univ_two]
-      exact add_mem_integralFiniteAdeles (mul_mem_integralFiniteAdeles (hm i 0) (hm' 0 j))
-        (mul_mem_integralFiniteAdeles (hm i 1) (hm' 1 j))
-    exact ⟨by rw [Units.val_mul]; exact hmul ha.1 hb.1,
-      by rw [_root_.mul_inv_rev, Units.val_mul]; exact hmul hb.2 ha.2⟩
-  inv_mem' ha := ⟨ha.2, by rw [inv_inv]; exact ha.1⟩
+omit [Field K] [Algebra R K] [IsFractionRing R K] in
+private theorem idealBound_top (v : HeightOneSpectrum R) : idealBound R ⊤ v = 1 := by
+  rw [idealBound_of_ne_bot top_ne_bot, ← Ideal.one_eq_top, Associates.mk_one,
+    Associates.factors_one, Associates.count_zero (Associates.irreducible_mk.mpr v.irreducible)]
+  simp
 
 variable {R K} in
-private theorem mem_intGL2_iff {g : GL (Fin 2) (FiniteAdeleRing R K)} :
-    g ∈ intGL2 R K ↔
+private theorem isLevelOneMatrix_top_iff {m : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)} :
+    IsLevelOneMatrix R K ⊤ m ↔ ∀ i j, m i j ∈ AdelicBox.integralFiniteAdeles R K := by
+  have hball : ∀ {x : FiniteAdeleRing R K}, x ∈ AdelicBox.integralFiniteAdeles R K →
+      x ∈ idealBall R K ⊤ := fun hx v => by
+    rw [idealBound_top]
+    exact (mem_adicCompletionIntegers R K v).mp (hx v)
+  exact ⟨fun h => h.integral, fun h =>
+    { integral := h
+      lowerLeft := hball (h 1 0)
+      lowerRight := hball fun v => sub_mem (h 1 1 v) (one_mem _) }⟩
+
+variable {R K} in
+private theorem mem_finiteLevelOne_top_iff {g : GL (Fin 2) (FiniteAdeleRing R K)} :
+    g ∈ finiteLevelOne R K ⊤ ↔
       (∀ i j, (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j ∈
         AdelicBox.integralFiniteAdeles R K) ∧
       ∀ i j, ((g⁻¹ : GL (Fin 2) (FiniteAdeleRing R K)) : Matrix (Fin 2) (Fin 2) _) i j ∈
-        AdelicBox.integralFiniteAdeles R K :=
-  Iff.rfl
-
-private theorem algebraMap_finiteAdeleRing_apply (x : K) (v : HeightOneSpectrum R) :
-    (algebraMap K (FiniteAdeleRing R K) x) v = algebraMap K (v.adicCompletion K) x := rfl
+        AdelicBox.integralFiniteAdeles R K := by
+  rw [mem_finiteLevelOne_iff, isLevelOneMatrix_top_iff, isLevelOneMatrix_top_iff]
 
 private theorem valued_algebraMap_finiteAdeleRing_apply (k : K) (v : HeightOneSpectrum R) :
     Valued.v ((algebraMap K (FiniteAdeleRing R K) k) v) = v.valuation K k := by
@@ -219,8 +210,8 @@ private theorem one_matrix_apply_mem (i j : Fin 2) (v : HeightOneSpectrum R) :
 
 private theorem lowerUnip_mem {a : FiniteAdeleRing R K}
     (ha : ∀ v : HeightOneSpectrum R, a v ∈ v.adicCompletionIntegers K) :
-    lowerUnip a ∈ intGL2 R K := by
-  rw [mem_intGL2_iff]
+    lowerUnip a ∈ finiteLevelOne R K ⊤ := by
+  rw [mem_finiteLevelOne_top_iff]
   constructor
   · intro i j v
     fin_cases i <;> fin_cases j
@@ -240,8 +231,8 @@ private theorem diagTorus_mem {u : (FiniteAdeleRing R K)ˣ}
     (hu : ∀ v : HeightOneSpectrum R, (u : FiniteAdeleRing R K) v ∈ v.adicCompletionIntegers K)
     (hu' : ∀ v : HeightOneSpectrum R,
       ((u⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K) v ∈ v.adicCompletionIntegers K) :
-    diagTorus u ∈ intGL2 R K := by
-  rw [mem_intGL2_iff]
+    diagTorus u ∈ finiteLevelOne R K ⊤ := by
+  rw [mem_finiteLevelOne_top_iff]
   constructor
   · intro i j v
     fin_cases i <;> fin_cases j
@@ -377,7 +368,7 @@ private theorem conj_entry_mem (γ : GL (Fin 2) K) (d : R)
 
 private theorem exists_conj_upperRightHom_mem (γ : GL (Fin 2) K) (a : FiniteAdeleRing R K) :
     ∃ q : K, (ratGL R K γ)⁻¹ * upperRightHom (a - algebraMap K (FiniteAdeleRing R K) q) *
-      ratGL R K γ ∈ intGL2 R K := by
+      ratGL R K γ ∈ finiteLevelOne R K ⊤ := by
   obtain ⟨d, hd0, hd⟩ := exists_common_denominator R K γ
   have hdK : algebraMap R K d ≠ 0 := fun hcontra ↦
     hd0 (IsFractionRing.injective R K (by rw [hcontra, map_zero]))
@@ -402,7 +393,7 @@ private theorem exists_conj_upperRightHom_mem (γ : GL (Fin 2) K) (a : FiniteAde
             Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) := by
     rw [_root_.mul_inv_rev, _root_.mul_inv_rev, inv_inv, upperRightHom_inv, ← mul_assoc,
       Units.val_mul, Units.val_mul, upperRightHom_coe]
-  rw [mem_intGL2_iff]
+  rw [mem_finiteLevelOne_top_iff]
   constructor
   · intro i j v
     rw [hval, conj_upperUnip_entry hAB b i j]
@@ -413,7 +404,7 @@ private theorem exists_conj_upperRightHom_mem (γ : GL (Fin 2) K) (a : FiniteAde
 
 private theorem exists_conj_lowerUnip_mem (γ : GL (Fin 2) K) (a : FiniteAdeleRing R K) :
     ∃ q : K, (ratGL R K γ)⁻¹ * lowerUnip (a - algebraMap K (FiniteAdeleRing R K) q) *
-      ratGL R K γ ∈ intGL2 R K := by
+      ratGL R K γ ∈ finiteLevelOne R K ⊤ := by
   obtain ⟨d, hd0, hd⟩ := exists_common_denominator R K γ
   have hdK : algebraMap R K d ≠ 0 := fun hcontra ↦
     hd0 (IsFractionRing.injective R K (by rw [hcontra, map_zero]))
@@ -438,7 +429,7 @@ private theorem exists_conj_lowerUnip_mem (γ : GL (Fin 2) K) (a : FiniteAdeleRi
             Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) := by
     rw [_root_.mul_inv_rev, _root_.mul_inv_rev, inv_inv, lowerUnip_inv, ← mul_assoc,
       Units.val_mul, Units.val_mul, lowerUnip_coe]
-  rw [mem_intGL2_iff]
+  rw [mem_finiteLevelOne_top_iff]
   constructor
   · intro i j v
     rw [hval, conj_lowerUnip_entry hAB b i j]
@@ -448,8 +439,9 @@ private theorem exists_conj_lowerUnip_mem (γ : GL (Fin 2) K) (a : FiniteAdeleRi
     exact conj_entry_mem R K γ d hd b hbv (-b) (Or.inr rfl) i 1 0 j v
 
 private theorem absorb_upperRightHom_left {X : GL (Fin 2) (FiniteAdeleRing R K)} {γ : GL (Fin 2) K}
-    (hX : (ratGL R K γ)⁻¹ * X ∈ intGL2 R K) (a : FiniteAdeleRing R K) :
-    ∃ q : K, (ratGL R K (upperRightHom q * γ))⁻¹ * (upperRightHom a * X) ∈ intGL2 R K := by
+    (hX : (ratGL R K γ)⁻¹ * X ∈ finiteLevelOne R K ⊤) (a : FiniteAdeleRing R K) :
+    ∃ q : K, (ratGL R K (upperRightHom q * γ))⁻¹ * (upperRightHom a * X) ∈
+      finiteLevelOne R K ⊤ := by
   obtain ⟨q, hq⟩ := exists_conj_upperRightHom_mem R K γ a
   refine ⟨q, ?_⟩
   have hsplit : upperRightHom (a - algebraMap K (FiniteAdeleRing R K) q)
@@ -466,8 +458,8 @@ private theorem absorb_upperRightHom_left {X : GL (Fin 2) (FiniteAdeleRing R K)}
   exact mul_mem hq hX
 
 private theorem absorb_lowerUnip_left {X : GL (Fin 2) (FiniteAdeleRing R K)} {γ : GL (Fin 2) K}
-    (hX : (ratGL R K γ)⁻¹ * X ∈ intGL2 R K) (a : FiniteAdeleRing R K) :
-    ∃ q : K, (ratGL R K (lowerUnip q * γ))⁻¹ * (lowerUnip a * X) ∈ intGL2 R K := by
+    (hX : (ratGL R K γ)⁻¹ * X ∈ finiteLevelOne R K ⊤) (a : FiniteAdeleRing R K) :
+    ∃ q : K, (ratGL R K (lowerUnip q * γ))⁻¹ * (lowerUnip a * X) ∈ finiteLevelOne R K ⊤ := by
   obtain ⟨q, hq⟩ := exists_conj_lowerUnip_mem R K γ a
   refine ⟨q, ?_⟩
   have hsplit : lowerUnip (a - algebraMap K (FiniteAdeleRing R K) q)
@@ -624,43 +616,13 @@ private theorem exists_lowerUnip_translate_isUnit (g : GL (Fin 2) (FiniteAdeleRi
       refine le_antisymm h10 ?_
       rw [hmaxeq] at hmax
       exact hmax
-  set cinvfun : (v : HeightOneSpectrum R) → v.adicCompletion K := fun v ↦ (c v)⁻¹
-    with hcinvfun
-  have hcinv_ev : ∀ᶠ v in Filter.cofinite,
-      cinvfun v ∈ (v.adicCompletionIntegers K : Set (v.adicCompletion K)) := by
-    filter_upwards [hcunit] with v hv
-    change (c v)⁻¹ ∈ (v.adicCompletionIntegers K : Set (v.adicCompletion K))
-    rw [SetLike.mem_coe, mem_adicCompletionIntegers, Valuation.map_inv, hv]
-    exact le_of_eq inv_one
-  set cinv : FiniteAdeleRing R K := ⟨cinvfun, hcinv_ev⟩ with hcinv
-  have hcinvv : ∀ v, cinv v = (c v)⁻¹ := fun v ↦ rfl
-  have hmul : c * cinv = 1 := by
-    have hkey : ∀ w : HeightOneSpectrum R, (c * cinv) w = (1 : FiniteAdeleRing R K) w := by
-      intro w
-      rw [show (c * cinv) w = c w * cinv w from rfl, hcinvv w, mul_inv_cancel₀ (hcne w)]
-      rfl
-    exact Subtype.ext (funext fun w ↦ hkey w)
-  exact ⟨⟨c, cinv, hmul, by rw [mul_comm]; exact hmul⟩, rfl⟩
-
-/-- The determinant of a matrix over the finite adeles, as a unit. -/
-private def detUnit (g : GL (Fin 2) (FiniteAdeleRing R K)) : (FiniteAdeleRing R K)ˣ where
-  val := ((g : GL (Fin 2) (FiniteAdeleRing R K)) : Matrix (Fin 2) (Fin 2) _).det
-  inv := ((g⁻¹ : GL (Fin 2) (FiniteAdeleRing R K)) : Matrix (Fin 2) (Fin 2) _).det
-  val_inv := by
-    rw [← Matrix.det_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.det_one]
-  inv_val := by
-    rw [← Matrix.det_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one, Matrix.det_one]
-
-private theorem detUnit_coe (g : GL (Fin 2) (FiniteAdeleRing R K)) :
-    (detUnit R K g : FiniteAdeleRing R K)
-      = ((g : GL (Fin 2) (FiniteAdeleRing R K)) :
-          Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)).det := rfl
+  exact FiniteAdeleRing.isUnit_iff.mpr ⟨hcne, hcunit⟩
 
 private theorem exists_gauss_decomposition (g : GL (Fin 2) (FiniteAdeleRing R K)) :
     ∃ (t : FiniteAdeleRing R K) (x z : FiniteAdeleRing R K) (cu : (FiniteAdeleRing R K)ˣ),
       (∀ v : HeightOneSpectrum R, t v ∈ v.adicCompletionIntegers K) ∧
       g = upperRightHom x * (lowerUnip (cu : FiniteAdeleRing R K)
-        * (upperRightHom z * (diagTorus (detUnit R K g) * lowerUnip (-t)))) := by
+        * (upperRightHom z * (diagTorus (GeneralLinearGroup.det g) * lowerUnip (-t)))) := by
   obtain ⟨t, htint, hunit⟩ := exists_lowerUnip_translate_isUnit R K g
   set h : GL (Fin 2) (FiniteAdeleRing R K) := g * lowerUnip t with hh
   set M : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K) :=
@@ -671,22 +633,22 @@ private theorem exists_gauss_decomposition (g : GL (Fin 2) (FiniteAdeleRing R K)
     simp [Matrix.mul_apply, Fin.sum_univ_two]
   set cu : (FiniteAdeleRing R K)ˣ := hunit.unit with hcu
   have hc : M 1 0 = (cu : FiniteAdeleRing R K) := by rw [hM10, hcu, hunit.unit_spec]
-  have hdet : M.det = (detUnit R K g : FiniteAdeleRing R K) := by
+  have hdet : M.det = (GeneralLinearGroup.det g : FiniteAdeleRing R K) := by
     rw [hM, hh, Units.val_mul, Matrix.det_mul, lowerUnip_coe, Matrix.det_fin_two_of,
-      detUnit_coe]
+      GeneralLinearGroup.val_det_apply]
     ring
   have hfact := gauss_factorization M (cu : FiniteAdeleRing R K)
     ((cu⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K)
-    (detUnit R K g : FiniteAdeleRing R K)
-    (((detUnit R K g)⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K)
-    hc cu.mul_inv hdet (detUnit R K g).mul_inv
+    (GeneralLinearGroup.det g : FiniteAdeleRing R K)
+    (((GeneralLinearGroup.det g)⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K)
+    hc cu.mul_inv hdet (GeneralLinearGroup.det g).mul_inv
   set x : FiniteAdeleRing R K :=
     (M 0 0 - 1) * ((cu⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K) with hx
   set z : FiniteAdeleRing R K :=
-    (M 1 1 * (((detUnit R K g)⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K) - 1)
+    (M 1 1 * (((GeneralLinearGroup.det g)⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K) - 1)
       * ((cu⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K) with hz
   have hgroup : upperRightHom x * lowerUnip (cu : FiniteAdeleRing R K)
-      * upperRightHom z * diagTorus (detUnit R K g) = h := by
+      * upperRightHom z * diagTorus (GeneralLinearGroup.det g) = h := by
     apply Units.ext
     rw [Units.val_mul, Units.val_mul, Units.val_mul, upperRightHom_coe, lowerUnip_coe,
       upperRightHom_coe, diagTorus_coe, hx, hz]
@@ -695,7 +657,7 @@ private theorem exists_gauss_decomposition (g : GL (Fin 2) (FiniteAdeleRing R K)
   have hgh : g = h * (lowerUnip t)⁻¹ := by
     rw [hh, mul_assoc, mul_inv_cancel, mul_one]
   have hassoc : upperRightHom x * (lowerUnip (cu : FiniteAdeleRing R K)
-      * (upperRightHom z * (diagTorus (detUnit R K g) * lowerUnip (-t))))
+      * (upperRightHom z * (diagTorus (GeneralLinearGroup.det g) * lowerUnip (-t))))
       = h * (lowerUnip t)⁻¹ := by
     rw [← hgroup, lowerUnip_inv]
     group
@@ -790,12 +752,12 @@ private theorem finiteIdele_exists_global_profile [IsPrincipalIdealRing R]
 
 private theorem exists_ratGL_inv_mul_mem [IsPrincipalIdealRing R]
     (g : GL (Fin 2) (FiniteAdeleRing R K)) :
-    ∃ γ : GL (Fin 2) K, (ratGL R K γ)⁻¹ * g ∈ intGL2 R K := by
+    ∃ γ : GL (Fin 2) K, (ratGL R K γ)⁻¹ * g ∈ finiteLevelOne R K ⊤ := by
   obtain ⟨t, x, z, cu, htint, hg⟩ := exists_gauss_decomposition R K g
-  obtain ⟨α, hα₁, hα₂⟩ := finiteIdele_exists_global_profile R K (detUnit R K g)
+  obtain ⟨α, hα₁, hα₂⟩ := finiteIdele_exists_global_profile R K (GeneralLinearGroup.det g)
   set w : (FiniteAdeleRing R K)ˣ :=
     (Units.map (algebraMap K (FiniteAdeleRing R K) : K →* FiniteAdeleRing R K) α)⁻¹
-      * detUnit R K g with hw
+      * GeneralLinearGroup.det g with hw
   have hmapinv :
       (Units.map (algebraMap K (FiniteAdeleRing R K) : K →* FiniteAdeleRing R K) α)⁻¹
         = Units.map (algebraMap K (FiniteAdeleRing R K) : K →* FiniteAdeleRing R K) α⁻¹ :=
@@ -803,23 +765,24 @@ private theorem exists_ratGL_inv_mul_mem [IsPrincipalIdealRing R]
       α).symm
   have hwval : (w : FiniteAdeleRing R K)
       = algebraMap K (FiniteAdeleRing R K) ((α⁻¹ : Kˣ) : K)
-        * (detUnit R K g : FiniteAdeleRing R K) := by
+        * (GeneralLinearGroup.det g : FiniteAdeleRing R K) := by
     rw [hw, hmapinv, Units.val_mul, Units.coe_map]; rfl
   have hwinvval : ((w⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K)
       = algebraMap K (FiniteAdeleRing R K) ((α : Kˣ) : K)
-        * (((detUnit R K g)⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K) := by
+        * (((GeneralLinearGroup.det g)⁻¹ : (FiniteAdeleRing R K)ˣ) : FiniteAdeleRing R K) := by
     rw [hw, _root_.mul_inv_rev, inv_inv, Units.val_mul, mul_comm, Units.coe_map]; rfl
-  have hwmem : diagTorus w ∈ intGL2 R K :=
+  have hwmem : diagTorus w ∈ finiteLevelOne R K ⊤ :=
     diagTorus_mem R K (fun v ↦ by rw [hwval]; exact hα₁ v)
       (fun v ↦ by rw [hwinvval]; exact hα₂ v)
-  have hδsplit : diagTorus (detUnit R K g) = ratGL R K (diagTorus α) * diagTorus w := by
+  have hδsplit : diagTorus (GeneralLinearGroup.det g) = ratGL R K (diagTorus α) * diagTorus w := by
     rw [ratGL, map_diagTorus, ← diagTorus_mul, hw]
     congr 1
     group
   have hbase : (ratGL R K (diagTorus α))⁻¹
-      * (diagTorus (detUnit R K g) * lowerUnip (-t)) ∈ intGL2 R K := by
+      * (diagTorus (GeneralLinearGroup.det g) * lowerUnip (-t)) ∈ finiteLevelOne R K ⊤ := by
     have heq : (ratGL R K (diagTorus α))⁻¹
-        * (diagTorus (detUnit R K g) * lowerUnip (-t)) = diagTorus w * lowerUnip (-t) := by
+        * (diagTorus (GeneralLinearGroup.det g) * lowerUnip (-t))
+        = diagTorus w * lowerUnip (-t) := by
       rw [hδsplit]; group
     rw [heq]
     exact mul_mem hwmem (lowerUnip_mem R K fun v ↦ neg_mem (htint v))
@@ -890,72 +853,37 @@ end Level
 
 section Unimodular
 
-private theorem triple_of_modEq {n c d d' : ℤ} (h : ∃ x y z : ℤ, x * c + y * d + z * n = 1)
-    (hd : d' ≡ d [ZMOD n]) : ∃ x y z : ℤ, x * c + y * d' + z * n = 1 := by
-  obtain ⟨x, y, z, hxyz⟩ := h
-  obtain ⟨t, ht⟩ := Int.modEq_iff_dvd.mp hd.symm
-  exact ⟨x, y, z - y * t, by linear_combination hxyz + y * ht⟩
-
-private theorem not_dvd_of_dvd_of_dvd {n c d p : ℤ} (hp : Prime p)
-    (h : ∃ x y z : ℤ, x * c + y * d + z * n = 1) (hpc : p ∣ c) (hpd : p ∣ d) : ¬ p ∣ n := by
-  rintro hpn
-  obtain ⟨x, y, z, hxyz⟩ := h
-  have h1 : p ∣ (1 : ℤ) := by
-    rw [← hxyz]
-    exact dvd_add (dvd_add (dvd_mul_of_dvd_right hpc x) (dvd_mul_of_dvd_right hpd y))
-      (dvd_mul_of_dvd_right hpn z)
-  exact hp.not_isUnit (isUnit_of_dvd_one h1)
-
-private theorem exists_modEq_isCoprime_of_ne_zero {n c d : ℤ} (hd : d ≠ 0)
-    (h : ∃ x y z : ℤ, x * c + y * d + z * n = 1) :
-    ∃ c' : ℤ, c' ≡ c [ZMOD n] ∧ IsCoprime c' d := by
-  classical
-  set S : Finset ℕ := d.natAbs.primeFactors.filter (fun p => ¬ (p : ℤ) ∣ c) with hS
-  set m : ℤ := ∏ p ∈ S, (p : ℤ) with hm
-  refine ⟨c + n * m, Int.modEq_iff_dvd.mpr ⟨-m, by ring⟩, ?_⟩
-  rw [Int.isCoprime_iff_gcd_eq_one, Int.gcd_comm]
-  change Nat.Coprime d.natAbs (c + n * m).natAbs
-  refine Nat.Coprime.symm (Nat.coprime_of_dvd fun p hp hpc' hpd => ?_)
-  have hpZ : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hp
-  have hpd' : (p : ℤ) ∣ d := Int.natCast_dvd.mpr hpd
-  have hpc'Z : (p : ℤ) ∣ c + n * m := Int.natCast_dvd.mpr hpc'
-  by_cases hpc : (p : ℤ) ∣ c
-  · have hpn : ¬ (p : ℤ) ∣ n := not_dvd_of_dvd_of_dvd hpZ h hpc hpd'
-    have hpm : ¬ (p : ℤ) ∣ m := by
-      rw [hm, hpZ.dvd_finsetProd_iff]
-      rintro ⟨q, hq, hpq⟩
-      rw [hS, Finset.mem_filter] at hq
-      have hqprime : q.Prime := Nat.prime_of_mem_primeFactors hq.1
-      have hpq' : p = q :=
-        (Nat.prime_dvd_prime_iff_eq hp hqprime).mp (Int.natCast_dvd_natCast.mp hpq)
-      exact hq.2 (hpq' ▸ hpc)
-    have hnm : (p : ℤ) ∣ n * m := by
-      have h2 := dvd_sub hpc'Z hpc
-      rwa [add_sub_cancel_left] at h2
-    exact (hpZ.dvd_or_dvd hnm).elim hpn hpm
-  · have hpS : p ∈ S := by
-      rw [hS, Finset.mem_filter, Nat.mem_primeFactors]
-      exact ⟨⟨hp, hpd, Int.natAbs_ne_zero.mpr hd⟩, hpc⟩
-    have hpm : (p : ℤ) ∣ m := hm ▸ Finset.dvd_prod_of_mem _ hpS
-    have h3 := dvd_sub hpc'Z (dvd_mul_of_dvd_right hpm n)
-    rw [add_sub_cancel_right] at h3
-    exact hpc h3
-
 /-- Residues `c, d` modulo `n` generating the unit ideal together with `n` lift to coprime
 integers. -/
 private theorem exists_modEq_and_modEq_and_isCoprime {n c d : ℤ}
     (h : ∃ x y z : ℤ, x * c + y * d + z * n = 1) :
     ∃ c' d' : ℤ, c' ≡ c [ZMOD n] ∧ d' ≡ d [ZMOD n] ∧ IsCoprime c' d' := by
+  obtain ⟨x, y, z, hxyz⟩ := h
   by_cases hn : n = 0
   · subst hn
-    obtain ⟨x, y, z, hxyz⟩ := h
     exact ⟨c, d, Int.ModEq.refl c, Int.ModEq.refl d, x, y, by linear_combination hxyz⟩
-  obtain ⟨d', hd'd, hd'0⟩ : ∃ d' : ℤ, d' ≡ d [ZMOD n] ∧ d' ≠ 0 := by
-    by_cases hd : d = 0
-    · exact ⟨n, by rw [hd]; exact Int.modEq_iff_dvd.mpr ⟨-1, by ring⟩, hn⟩
-    · exact ⟨d, Int.ModEq.refl d, hd⟩
-  obtain ⟨c', hc'c, hcop⟩ := exists_modEq_isCoprime_of_ne_zero hd'0 (triple_of_modEq h hd'd)
-  exact ⟨c', d', hc'c, hd'd, hcop⟩
+  have : NeZero n.natAbs := ⟨Int.natAbs_ne_zero.mpr hn⟩
+  have hn0 : ((n : ℤ) : ZMod n.natAbs) = 0 :=
+    (ZMod.intCast_zmod_eq_zero_iff_dvd n n.natAbs).mpr (Int.natAbs_dvd.mpr dvd_rfl)
+  have hdet : (!![(y : ZMod n.natAbs), -(x : ZMod n.natAbs); (c : ZMod n.natAbs),
+      (d : ZMod n.natAbs)]).det = 1 := by
+    have h' := congrArg (Int.cast : ℤ → ZMod n.natAbs) hxyz
+    push_cast at h'
+    rw [Matrix.det_fin_two_of]
+    linear_combination h' - (z : ZMod n.natAbs) * hn0
+  obtain ⟨A, hA⟩ :=
+    Matrix.SpecialLinearGroup.map_intCastRingHom_zmod_surjective n.natAbs ⟨_, hdet⟩
+  have hrow : ∀ j : Fin 2, ((A 1 j : ℤ) : ZMod n.natAbs) = ![(c : ZMod n.natAbs), d] j :=
+    fun j => congrArg (fun M : Matrix.SpecialLinearGroup (Fin 2) (ZMod n.natAbs) =>
+      (M : Matrix (Fin 2) (Fin 2) (ZMod n.natAbs)) 1 j) hA
+  have hmod : ∀ {a b : ℤ}, (a : ZMod n.natAbs) = b → a ≡ b [ZMOD n] := fun hab =>
+    Int.modEq_iff_dvd.mpr (Int.natAbs_dvd.mp
+      (Int.modEq_iff_dvd.mp ((ZMod.intCast_eq_intCast_iff _ _ _).mp hab)))
+  have hdetA : A 0 0 * A 1 1 - A 0 1 * A 1 0 = 1 := by
+    rw [← Matrix.det_fin_two]
+    exact A.2
+  exact ⟨A 1 0, A 1 1, hmod (hrow 0), hmod (hrow 1), -A 0 1, A 0 0,
+    by linear_combination hdetA⟩
 
 private def bezoutGL2 {A : Type*} [CommRing A] (a b s t : A) (h : a * s + b * t = 1) :
     GL (Fin 2) A where
@@ -998,11 +926,11 @@ private theorem intAdele_mem (r : 𝓞 ℚ) : intAdele r ∈ AdelicBox.integralF
   algebraMap_mem_integralFiniteAdeles r
 
 private theorem exists_map_mul_mem_finiteLevelOne {N : Ideal (𝓞 ℚ)} (hN : N ≠ ⊥)
-    {k : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)} (hk : k ∈ intGL2 (𝓞 ℚ) ℚ) :
+    {k : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)} (hk : k ∈ finiteLevelOne (𝓞 ℚ) ℚ ⊤) :
     ∃ γ : GL (Fin 2) ℚ,
       GeneralLinearGroup.map (algebraMap ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ)) γ * k
         ∈ finiteLevelOne (𝓞 ℚ) ℚ N := by
-  rw [mem_intGL2_iff] at hk
+  rw [mem_finiteLevelOne_top_iff] at hk
   obtain ⟨hkint, hkinvint⟩ := hk
   obtain ⟨n₀, hnN, hn0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hN
   set P : Ideal (𝓞 ℚ) := Ideal.span {n₀} with hP_def
@@ -1153,7 +1081,7 @@ private theorem exists_map_mul_mem_finiteLevelOne {N : Ideal (𝓞 ℚ)} (hN : N
               + B * (k : Matrix (Fin 2) (Fin 2) _) 1 0) := by
         ring
       rw [h1, hrow0, add_zero]
-      exact idealBall_mono hP hPN (add_mem_idealBall
+      exact idealBall_mono hPN (add_mem_idealBall
         (mul_mem_idealBall_right hsA (hkint 0 0)) (mul_mem_idealBall_right htB (hkint 1 0)))
     · rw [hM, Matrix.mul_apply, Fin.sum_univ_two, hSA10, hSA11]
       have h1 : intAdele s₀ * (k : Matrix (Fin 2) (Fin 2) _) 0 1
@@ -1164,7 +1092,7 @@ private theorem exists_map_mul_mem_finiteLevelOne {N : Ideal (𝓞 ℚ)} (hN : N
               + B * (k : Matrix (Fin 2) (Fin 2) _) 1 1 - 1) := by
         ring
       rw [h1, hrow1, sub_self, add_zero]
-      exact idealBall_mono hP hPN (add_mem_idealBall
+      exact idealBall_mono hPN (add_mem_idealBall
         (mul_mem_idealBall_right hsA (hkint 0 1)) (mul_mem_idealBall_right htB (hkint 1 1)))
   · refine { integral := ?_, lowerLeft := ?_, lowerRight := ?_ }
     · intro i j
@@ -1177,7 +1105,7 @@ private theorem exists_map_mul_mem_finiteLevelOne {N : Ideal (𝓞 ℚ)} (hN : N
           = A * (intAdele t₀ - B) - B * (intAdele s₀ - A) := by
         simp only [intAdele, map_neg]; ring
       rw [h1]
-      exact idealBall_mono hP hPN (sub_mem_idealBall (mul_mem_idealBall_left hAint htB)
+      exact idealBall_mono hPN (sub_mem_idealBall (mul_mem_idealBall_left hAint htB)
         (mul_mem_idealBall_left hBint hsA))
     · rw [hMi, Matrix.mul_apply, Fin.sum_univ_two, hSAi01, hSAi11, ← hA, ← hB]
       have hone : intAdele a₀ * intAdele s₀ + intAdele b₀ * intAdele t₀ = 1 := by
@@ -1187,7 +1115,7 @@ private theorem exists_map_mul_mem_finiteLevelOne {N : Ideal (𝓞 ℚ)} (hN : N
             + (intAdele a₀ * intAdele s₀ + intAdele b₀ * intAdele t₀ - 1) := by
         ring
       rw [h1, hone, sub_self, add_zero]
-      exact idealBall_mono hP hPN (add_mem_idealBall
+      exact idealBall_mono hPN (add_mem_idealBall
         (mul_mem_idealBall_left (intAdele_mem _) hAs)
         (mul_mem_idealBall_left (intAdele_mem _) hBt))
 
@@ -1227,32 +1155,31 @@ private theorem det_realProj_globalPoints (w : InfinitePlace ℚ) (hw : w.IsReal
   push_cast
   ring
 
-/-- The rational matrix `diag(-1, 1)`. -/
-private def negOneDiag : GL (Fin 2) ℚ where
-  val := !![-1, 0; 0, 1]
-  inv := !![-1, 0; 0, 1]
-  val_inv := by ext i j; fin_cases i <;> fin_cases j <;> simp
-  inv_val := by ext i j; fin_cases i <;> fin_cases j <;> simp
+private theorem diagOne_neg_one_coe :
+    ((diagOne (-1 : ℚˣ) : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) = !![-1, 0; 0, 1] := by
+  change Matrix.diagonal ![((-1 : ℚˣ) : ℚ), 1] = _
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp
 
-private theorem negOneDiag_inv : negOneDiag⁻¹ = negOneDiag := Units.ext rfl
+private theorem diagOne_neg_one_inv : (diagOne (-1 : ℚˣ))⁻¹ = diagOne (-1 : ℚˣ) := by
+  rw [← map_inv, inv_neg_one]
 
-private theorem det_negOneDiag :
-    ((negOneDiag : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = -1 := by
-  rw [show ((negOneDiag : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) = !![-1, 0; 0, 1] from rfl,
-    Matrix.det_fin_two]
+private theorem det_diagOne_neg_one :
+    ((diagOne (-1 : ℚˣ) : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = -1 := by
+  rw [diagOne_neg_one_coe, Matrix.det_fin_two]
   simp
 
-private theorem isLevelOneMatrix_negOneDiag (N : Ideal (𝓞 ℚ)) :
+private theorem isLevelOneMatrix_diagOne_neg_one (N : Ideal (𝓞 ℚ)) :
     IsLevelOneMatrix (𝓞 ℚ) ℚ N
-      ((glFin (𝓞 ℚ) ℚ (globalPoints (𝓞 ℚ) ℚ negOneDiag) :
+      ((glFin (𝓞 ℚ) ℚ (globalPoints (𝓞 ℚ) ℚ (diagOne (-1 : ℚˣ))) :
         GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) :
           Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) := by
-  have hentry : ∀ i j, ((glFin (𝓞 ℚ) ℚ (globalPoints (𝓞 ℚ) ℚ negOneDiag) :
+  have hentry : ∀ i j, ((glFin (𝓞 ℚ) ℚ (globalPoints (𝓞 ℚ) ℚ (diagOne (-1 : ℚˣ))) :
       GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) :
         Matrix (Fin 2) (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) i j
         = algebraMap ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ)
           ((!![-1, 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℚ) i j) :=
-    fun _ _ => rfl
+    fun i j => by rw [← diagOne_neg_one_coe]; rfl
   have hneg1 : (-1 : FiniteAdeleRing (𝓞 ℚ) ℚ) ∈ AdelicBox.integralFiniteAdeles (𝓞 ℚ) ℚ :=
     fun v => neg_mem (one_mem _)
   refine { integral := ?_, lowerLeft := ?_, lowerRight := ?_ }
@@ -1273,12 +1200,12 @@ private theorem isLevelOneMatrix_negOneDiag (N : Ideal (𝓞 ℚ)) :
   · rw [hentry]; simpa using zero_mem_idealBall N
   · rw [hentry]; simpa using zero_mem_idealBall N
 
-private theorem globalPoints_negOneDiag_mem_levelOne (N : Ideal (𝓞 ℚ)) :
-    globalPoints (𝓞 ℚ) ℚ negOneDiag ∈ levelOne (𝓞 ℚ) ℚ N := by
+private theorem globalPoints_diagOne_neg_one_mem_levelOne (N : Ideal (𝓞 ℚ)) :
+    globalPoints (𝓞 ℚ) ℚ (diagOne (-1 : ℚˣ)) ∈ levelOne (𝓞 ℚ) ℚ N := by
   rw [mem_levelOne_iff, mem_finiteLevelOne_iff]
-  refine ⟨isLevelOneMatrix_negOneDiag N, ?_⟩
-  rw [← map_inv, ← map_inv, negOneDiag_inv]
-  exact isLevelOneMatrix_negOneDiag N
+  refine ⟨isLevelOneMatrix_diagOne_neg_one N, ?_⟩
+  rw [← map_inv, ← map_inv, diagOne_neg_one_inv]
+  exact isLevelOneMatrix_diagOne_neg_one N
 
 open NumberField.InfinitePlace in
 /-- Strong approximation for adelic `GL₂` over `ℚ`: for every nonzero ideal `N`, every adelic
@@ -1313,17 +1240,17 @@ theorem exists_globalPoints_mul_mem_levelOne_rat {N : Ideal (𝓞 ℚ)} (hN : N 
   by_cases hsign :
       0 < ((proj (globalPoints (𝓞 ℚ) ℚ γ₁ * g) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ).det
   · exact ⟨γ₁, hg₁, key γ₁ hsign⟩
-  · refine ⟨negOneDiag * γ₁, ?_, key (negOneDiag * γ₁) ?_⟩
+  · refine ⟨diagOne (-1 : ℚˣ) * γ₁, ?_, key (diagOne (-1 : ℚˣ) * γ₁) ?_⟩
     · rw [map_mul, mul_assoc]
-      exact mul_mem (globalPoints_negOneDiag_mem_levelOne N) hg₁
+      exact mul_mem (globalPoints_diagOne_neg_one_mem_levelOne N) hg₁
     · have hne : ((proj (globalPoints (𝓞 ℚ) ℚ γ₁ * g) : GL (Fin 2) ℝ) :
           Matrix (Fin 2) (Fin 2) ℝ).det ≠ 0 := by
         rw [← GeneralLinearGroup.val_det_apply]; exact Units.ne_zero _
       have hlt : ((proj (globalPoints (𝓞 ℚ) ℚ γ₁ * g) : GL (Fin 2) ℝ) :
           Matrix (Fin 2) (Fin 2) ℝ).det < 0 := lt_of_le_of_ne (not_lt.mp hsign) hne
-      rw [map_mul (globalPoints (𝓞 ℚ) ℚ) negOneDiag γ₁, mul_assoc, map_mul proj,
+      rw [map_mul (globalPoints (𝓞 ℚ) ℚ) (diagOne (-1 : ℚˣ)) γ₁, mul_assoc, map_mul proj,
         Units.val_mul, Matrix.det_mul, hproj, MonoidHom.comp_apply, MonoidHom.comp_apply,
-        det_realProj_globalPoints, det_negOneDiag]
+        det_realProj_globalPoints, det_diagOne_neg_one]
       rw [hproj] at hlt
       push_cast
       linarith
@@ -1335,22 +1262,6 @@ end NumberField.AdelicLevel
 namespace AutomorphicForm
 
 open NumberField.AdelicLevel
-
-/-- The matrix over the adeles of `ℚ` with identity infinite part and a given finite part. -/
-private def finEmbed : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ) →* AdelicGL2 (𝓞 ℚ) ℚ :=
-  (Units.mapEquiv (adelicMatrixProdEquiv ℚ).symm.toMulEquiv).toMonoidHom.comp <|
-    (MulEquiv.prodUnits.symm : _ ≃* (_ × _)ˣ).toMonoidHom.comp <|
-      MonoidHom.prod (1 : _ →* GL (Fin 2) _) (MonoidHom.id _)
-
-private theorem glFin_finEmbed (k : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) :
-    glFin (𝓞 ℚ) ℚ (finEmbed k) = k := by
-  ext i j
-  rfl
-
-private theorem glArch_finEmbed (k : GL (Fin 2) (FiniteAdeleRing (𝓞 ℚ) ℚ)) :
-    glArch (𝓞 ℚ) ℚ (finEmbed k) = 1 := by
-  ext i j
-  rfl
 
 open NumberField.InfinitePlace in
 /-- Strong approximation for `GL₂` over `ℚ` at the compact production pins: for every
@@ -1367,7 +1278,7 @@ theorem exists_mem_productionPinsCompact_U_mul_eq_rat (D : Set (AdelicGL2 (𝓞 
         g = globalPoints (𝓞 ℚ) ℚ γ * h * u := by
   obtain ⟨γ, hmem, hpos⟩ := exists_globalPoints_mul_mem_levelOne_rat hN g
   set g' : AdelicGL2 (𝓞 ℚ) ℚ := globalPoints (𝓞 ℚ) ℚ γ * g with hg'
-  set u : AdelicGL2 (𝓞 ℚ) ℚ := finEmbed (glFin (𝓞 ℚ) ℚ g') with hu
+  set u : AdelicGL2 (𝓞 ℚ) ℚ := finEmbed (𝓞 ℚ) ℚ (glFin (𝓞 ℚ) ℚ g') with hu
   refine ⟨γ⁻¹, g' * u⁻¹, u, ?_, ?_, ?_, ?_⟩
   · rw [mem_productionPinsCompact_U_iff, hu, glFin_finEmbed, glArch_finEmbed]
     exact ⟨mem_levelOne_iff.mp hmem, rfl⟩

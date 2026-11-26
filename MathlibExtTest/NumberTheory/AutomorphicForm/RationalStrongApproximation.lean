@@ -74,4 +74,14 @@ example (D : Set (AutomorphicForm.AdelicGL2 (𝓞 ℚ) ℚ)) (g : AutomorphicFor
     exists_mem_productionPinsCompact_U_mul_eq_rat D (N := Ideal.span {2}) (by simp) g
   exact ⟨γ, h, u, glFin_mem_finiteLevelOne_of_mem_productionPinsCompact_U ℚ D _ hu, hh, hg⟩
 
+/-- At the unique infinite place of `ℚ`, the positivity clause is `ratArchGL2 h ∈ GLPos`, the
+hypothesis of `CuspForm.IsAdelicLiftOf.apply_eq`. -/
+example (D : Set (AutomorphicForm.AdelicGL2 (𝓞 ℚ) ℚ)) {N : Ideal (𝓞 ℚ)} (hN : N ≠ ⊥)
+    (g : AutomorphicForm.AdelicGL2 (𝓞 ℚ) ℚ) :
+    ∃ (γ : GL (Fin 2) ℚ) (h u : AutomorphicForm.AdelicGL2 (𝓞 ℚ) ℚ),
+      glFin (𝓞 ℚ) ℚ h = 1 ∧ LanglandsTunnell.ratArchGL2 h ∈ Matrix.GLPos (Fin 2) ℝ ∧
+        g = globalPoints (𝓞 ℚ) ℚ γ * h * u := by
+  obtain ⟨γ, h, u, -, hh, hpos, hg⟩ := exists_mem_productionPinsCompact_U_mul_eq_rat D hN g
+  exact ⟨γ, h, u, hh, hpos default Rat.isReal_infinitePlace, hg⟩
+
 end RationalStrongApproximationTest
