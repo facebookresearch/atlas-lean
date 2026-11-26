@@ -489,8 +489,11 @@ some PRs. CI's `decide which checks to run` job (`scripts/ci_scope.py`) skips
 `scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`,
 `scripts/mathgraph-map.jsonl`) or documentation (Markdown outside `scripts/`
 and `.github/`, and `.agents/` and `.claude/`), and a skipped required check
-counts as passed. Merge groups and pushes to `main` always run every required
-check.
+counts as passed. On a PR whose every changed path is graph data, documentation,
+a Lean file of the nine libraries or under `provenance/`, `repository integrity`
+skips the nine tool test suites of `scripts/test_scripts.sh`, whose tests read
+only scripts, workflows and the pins (`ATLAS_TOOL_TESTS`). Merge groups and
+pushes to `main` always run every required check, and all of its tests.
 
 The other checks are advisory. Codex does not run on merge groups, but a formal
 Codex change request can cancel the PR's CI run while it is still queued or
@@ -508,7 +511,8 @@ map, the card move ledger, the tooling that builds and checks the site, the
 toolchain pins, a path where the build writes or fetches its outputs, Git
 attributes, or a file named like an Autoform output marker; PRs that change
 only Lean library files, `scripts/taxonomy.json` or `scripts/wiki-sync.json`
-run only its unit tests, in a few minutes
+run only its unit tests, in a few minutes, and PRs that change only Lean library
+files those tests do not read, provenance and documentation run neither
 ([GitHub Actions and publication](docs/BLUEPRINT.md#github-actions-and-publication)).
 With write access, `gh workflow run blueprint-pages.yml --ref <branch>` builds
 and checks a branch on demand; only `main` publishes.

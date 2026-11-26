@@ -897,5 +897,6 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/cassels-tate-pairing", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing", "article_id": "af_16ad33e0fae74766f1934edc"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
+{"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
 {"statement": "af_f043360fc726d23a4c826b96", "page": "ComputerScience/computational-geometry/polygons-and-triangulations/triangulations-of-simple-polygons-and-the-art", "replaced_by": "af_6d1901b4a6ff65859a35e8e7"}
 {"statement": "af_cbd7650684e403c307d5bfee", "page": "ComputerScience/computational-geometry/polygons-and-triangulations/delaunay-triangulations", "replaced_by": "af_f15ce7a6a79500e4f684d555"}
