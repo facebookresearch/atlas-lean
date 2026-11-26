@@ -20,13 +20,14 @@ maximal commuting set and choose $\bar X_i$ by symplectic Gram–Schmidt, so tha
 ## Depends on
 
 - [Order of the normalizer of a stabilizer group](order-of-the-normalizer-of-a-stabilizer-group.md)
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
 - [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
 
 ## Proof depends on
 
 - [Pauli operators commute exactly when their symplectic product vanishes](pauli-operators-commute-iff-symplectic-product-vanishes.md)
 - [Order of the normalizer of a stabilizer group](order-of-the-normalizer-of-a-stabilizer-group.md)
+- [Symplectic Gram–Schmidt over $\mathbb{F}_2$](symplectic-gram-schmidt-over-f2.md)
 
 ## Sources
 

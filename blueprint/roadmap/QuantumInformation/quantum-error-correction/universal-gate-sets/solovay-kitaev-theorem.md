@@ -11,14 +11,6 @@ and their algorithm finds the sequence classically in time $O(\log^{\ln 3/\ln(3/
 Combined with a universal gate set closed under inverses, a circuit of $N$ arbitrary gates is approximated to accuracy
 $\varepsilon$ by $O(N \log^{c}(N/\varepsilon))$ gates from the set.
 
-## Expansion
-
-A good expansion adds pages for the remaining steps of the Dawson–Nielsen proof: the balanced group commutator
-decomposition (every $U$ with $\|I - U\| < \varepsilon$ is $V W V^{*} W^{*}$ with $\|I - V\|, \|I - W\| \le c_{gc}\sqrt{\varepsilon}$,
-proved there only approximately for $SU(2)$ in Section 4.1 and sketched for $SU(d)$ in Section 5); the existence of an
-$\varepsilon_0$-net of $SU(d)$ by products of bounded length (the base case, from density); and the recursion analysis
-giving the exponents. The [commutator approximation lemma](approximating-a-group-commutator.md) is already a page.
-
 ## Depends on
 
 - [Instruction set for $SU(d)$](instruction-set.md)
@@ -26,6 +18,9 @@ giving the exponents. The [commutator approximation lemma](approximating-a-group
 ## Proof depends on
 
 - [Approximating a group commutator](approximating-a-group-commutator.md)
+- [Finite nets from an instruction set](epsilon-nets-from-an-instruction-set.md)
+- [The Solovay–Kitaev recursion step](solovay-kitaev-recursion-step.md)
+- [Approximate balanced group commutators in $SU(d)$](approximate-balanced-group-commutators-in-sud.md)
 
 ## Background
 

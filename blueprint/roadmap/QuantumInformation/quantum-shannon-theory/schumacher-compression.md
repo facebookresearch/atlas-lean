@@ -10,12 +10,15 @@ a scheme exists for only finitely many $n$.
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: Von Neumann entropy.
 - Proof prerequisite: AEP and typical sets (finite iid).
-- Statement prerequisite: Fidelity of quantum states.
-- Statement prerequisite: Quantum channels (CPTP maps).
 - Proof prerequisite: Typical subspace.
 - Proof prerequisite: Small-projector converse lemma.
+
+## Depends on
+
+- [Quantum channel](../quantum-operations/quantum-channel.md)
+- [Von Neumann entropy](../quantum-states-distances-and-entropy/von-neumann-entropy.md)
+- [Fidelity of quantum states](../quantum-states-distances-and-entropy/fidelity-of-quantum-states.md)
 
 ## Sources
 

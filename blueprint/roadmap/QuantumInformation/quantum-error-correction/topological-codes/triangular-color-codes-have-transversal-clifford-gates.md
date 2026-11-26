@@ -1,0 +1,24 @@
+# Triangular color codes have transversal Clifford gates
+
+On every [triangular color code](color-code.md), the transversal Hadamard $H^{\otimes n}$ preserves the code and acts as
+the logical Hadamard, and the transversal CNOT between two identical code blocks acts as the logical CNOT; these hold
+because the stabilizer has the same $X$- and $Z$-type generators and $\bar X$, $\bar Z$ are transversal. If moreover every
+plaquette has a number of qubits divisible by $4$ (which a suitable lattice achieves for triangular codes of every size),
+then the transversal phase gate $K^{\otimes n}$, $K = \operatorname{diag}(1, i)$, also preserves the code, since
+$K^{\otimes n} B_p^X (K^{\otimes n})^{*} = (-1)^{v/2} B_p^X B_p^Z$ for a plaquette with $v$ qubits; it acts as the logical
+$K$, or as $K^{*}$ when $n \equiv 3 \pmod 4$. Such triangular codes therefore implement the whole Clifford group
+transversally, without addressing individual qubits.
+
+## Depends on
+
+- [Color code](color-code.md)
+- [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
+
+## Proof depends on
+
+- [Transversal gates are fault tolerant](../fault-tolerant-gates/transversal-gates-are-fault-tolerant.md)
+- [Conjugation of Pauli operators by $H$, $S$ and CNOT](../clifford-group/conjugation-of-pauli-operators-by-h-s-and-cnot.md)
+
+## Sources
+
+- H. Bombin and M. A. Martin-Delgado, *Topological quantum distillation*, Phys. Rev. Lett. 97 (2006), 180501, arXiv:quant-ph/0605138, equations (9)–(12), the discussion of $\hat K$ and Figure 4(b).

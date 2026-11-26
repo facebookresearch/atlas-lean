@@ -1,0 +1,33 @@
+# The threshold theorem from fault-tolerant gadgets
+
+Fix an $[[n, 1, 2t + 1]]$ stabilizer code and a finite set of location types (preparations, measurements, waits and gates
+of a gate set) such that every type has a fault-tolerant gadget for the code ([preparation](fault-tolerant-preparation-gadget.md),
+[measurement](fault-tolerant-measurement-gadget.md), [gate](fault-tolerant-gate-gadget.md)), there is a
+[fault-tolerant EC gadget](fault-tolerant-error-correction-gadget.md), and all these gadgets use only location types of the
+set. Let $A$ be the largest number of sets of $t + 1$ locations in one extended rectangle and $p_T = A^{-1/t}$. Then for
+a [local stochastic error model](local-stochastic-error-model.md) with $p_i \le p < p_T$, every circuit $C$ over the
+location types and every $\varepsilon > 0$, the $L$-fold concatenated simulation $C' = C^{(L)}$ with
+$L = \lceil \log_{t+1} [\log(\varepsilon / (|C| p_T)) / \log(p / p_T)] \rceil$ produces an output within statistical
+distance $\varepsilon$ of that of $C$, and its numbers of qubits and time steps are at most $G^L$, a polylogarithmic
+function of $|C| / \varepsilon$, times those of $C$, where $G$ bounds the qubits and time steps of a gadget. The proof
+applies [level reduction](level-reduction.md) $L$ times: the bounds satisfy $p^{(j)} \le A (p^{(j-1)})^{t+1}$, so
+$p^{(L)} / p_T \le (p / p_T)^{(t+1)^L}$.
+
+## Depends on
+
+- [Local stochastic error model](local-stochastic-error-model.md)
+- [Concatenated quantum code](concatenated-quantum-code.md)
+- [Fault-tolerant preparation gadget](fault-tolerant-preparation-gadget.md)
+- [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
+- [Fault-tolerant gate gadget](fault-tolerant-gate-gadget.md)
+- [Fault-tolerant error-correction gadget](fault-tolerant-error-correction-gadget.md)
+
+## Proof depends on
+
+- [Level reduction](level-reduction.md)
+- [Error recursion for concatenated fault-tolerant codes](../error-recursion-for-concatenated-fault-tolerant-codes.md)
+
+## Sources
+
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 5.2, Theorem 10 and its proof, equations (86)–(89).
+- P. Aliferis, D. Gottesman and J. Preskill, *Quantum accuracy threshold for concatenated distance-3 codes*, Quantum Inf. Comput. 6 (2006), 97–165, arXiv:quant-ph/0504218.

@@ -11,7 +11,10 @@ This node states a precise result. A good expansion adds a page for each of the 
 prerequisites and links it under the dependency sections below:
 
 - Statement prerequisite: Trace distance and contractivity.
-- Statement prerequisite: Fidelity of quantum states.
+
+## Depends on
+
+- [Fidelity of quantum states](fidelity-of-quantum-states.md)
 
 ## Proof depends on
 

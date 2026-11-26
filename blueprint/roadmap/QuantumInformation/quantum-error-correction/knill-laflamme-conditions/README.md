@@ -7,6 +7,7 @@ A quantum code is a subspace $C$ of a finite-dimensional Hilbert space; here it 
 - [Necessity of the Knill–Laflamme conditions](knill-laflamme-of-is-correctable.md)
 - [Sufficiency of the Knill–Laflamme conditions](is-correctable-of-knill-laflamme.md)
 - [The Knill–Laflamme conditions](is-correctable-iff-knill-laflamme.md)
+- [Conditions for approximate quantum error correction](conditions-for-approximate-quantum-error-correction.md)
 
 ## Related topics
 

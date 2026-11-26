@@ -6,12 +6,9 @@ $\rho^{\otimes n}$ whose eigenvalue strings $(i_1, \dots, i_n)$ have $p_{i_j} > 
 $\lvert -\frac1n \log_2 (p_{i_1} \cdots p_{i_n}) - S(\rho) \rvert \le \delta$. Then $\mathrm{Tr}(\Pi_n \rho^{\otimes n}) \to 1$ as
 $n \to \infty$ and $\mathrm{rank}(\Pi_n) \le 2^{n(S(\rho) + \delta)}$ for every $n$.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each pending prerequisite below and links it under
-the dependency sections.
-
-- Statement prerequisite: Von Neumann entropy.
+- [Von Neumann entropy](../quantum-states-distances-and-entropy/von-neumann-entropy.md)
 
 ## Proof depends on
 

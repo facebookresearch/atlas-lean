@@ -11,18 +11,16 @@ The CSS code $Q_{C^{\perp}, C}$ then encodes $n - 2\dim C$ qubits into $n$ and
 $C_2^{\perp} = C^{\perp}$ have minimum distance at least $\delta n$. So there are families of quantum codes whose rate and
 relative number of correctable errors both stay bounded away from $0$.
 
-## Expansion
-
-A good expansion adds pages for the two counting steps of Calderbank and Shor's proof: the greedy lemma (their Lemma 3):
-a family of $[n_i, k_i]$ codes with $k_i/n_i > R$ in which every nonzero word lies in the same number of codes contains
-codes meeting the Gilbert–Varshamov bound; and the fact, from MacWilliams, Sloane and Thompson (Theorem 2.1 there), that
-the number of $k$-dimensional weakly self-dual codes containing a given even-weight word does not depend on the word.
-
 ## Depends on
 
 - [CSS codes correct $\lfloor (d - 1) / 2 \rfloor$ errors](../css-codes/is-correctable-css.md)
 - [Linear code](../../../InformationTheory/error-correcting-codes/linear-codes/linear-code.md)
 - [Dual code](../../../InformationTheory/error-correcting-codes/linear-codes/dual.md)
+
+## Proof depends on
+
+- [The greedy Gilbert–Varshamov lemma for code families](greedy-gilbert-varshamov-lemma-for-code-families.md)
+- [Counting weakly self-dual codes](counting-weakly-self-dual-codes.md)
 
 ## Sources
 

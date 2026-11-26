@@ -8,15 +8,10 @@ for every outcome sequence of positive probability, the same conditional state o
 original circuit reuses $A$ after the measurement, the outcome is first copied by CNOT into a fresh record register that
 is never touched again, and the record register plays the role of $A$.
 
-## Expansion
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
-
 ## Depends on
 
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
+- [Measurements: POVMs, projective measurements and the Born rule](measurements-povms-projective-measurements-and-the-born-rule.md)
 
 ## Sources
 

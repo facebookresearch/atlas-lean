@@ -12,11 +12,11 @@ This node states a precise result. A good expansion adds a page for each of the 
 prerequisites and links it under the dependency sections below:
 
 - Proof prerequisite: Monotonicity of relative entropy and strong subadditivity.
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
 
 ## Depends on
 
 - [Mutual information of a finite joint law](../../InformationTheory/entropy-and-mutual-information/conditional-mutual-information/finite-mutual-information.md)
+- [Measurements: POVMs, projective measurements and the Born rule](../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
 
 ## Sources
 

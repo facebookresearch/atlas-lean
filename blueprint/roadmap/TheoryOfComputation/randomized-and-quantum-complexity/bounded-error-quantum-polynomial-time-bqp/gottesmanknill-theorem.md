@@ -5,13 +5,15 @@ gates and computational-basis measurements, where measurement outcomes may class
 of the same kind, applied to $|0^n\rangle$, samples exactly from the joint distribution of its measurement
 outcomes.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
+- [Measurements: POVMs, projective measurements and the Born rule](../../../QuantumInformation/quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
+- [The Clifford group on $n$ qubits](clifford-group-on-n-qubits.md)
 
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
-- Proof prerequisite: Stabilizer measurement rule.
+## Proof depends on
+
+- [Stabilizer measurement rule](stabilizer-measurement-rule.md)
+- [Tableau simulation of Clifford circuits](../../../QuantumInformation/quantum-error-correction/clifford-group/tableau-simulation-of-clifford-circuits.md)
 
 ## Sources
 

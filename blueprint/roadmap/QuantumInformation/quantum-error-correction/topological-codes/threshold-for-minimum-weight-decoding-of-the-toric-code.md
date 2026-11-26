@@ -11,17 +11,16 @@ measurements, repeated over time with error probability $q$ per measurement, the
 Dennis, Kitaev, Landahl and Preskill relate the threshold of the optimal decoder to a phase transition of the
 random-bond Ising model and quote the numerical value $p_c \approx 0.1094$; that value is not a theorem.
 
-## Expansion
-
-A good expansion adds pages for the two steps of the proof: the bound on the probability that a given closed path of
-length $\ell$ lies in $e + e'$ (Section V.B: at least half of its edges carry errors, giving $(4p(1 - p))^{\ell/2}$ up to
-counting), and the count of self-avoiding closed walks of length $\ell$ on the square lattice, at most a polynomial times
-$\mu^{\ell}$, together with the fact that a failure needs a homologically nontrivial path of length at least $L$.
-
 ## Depends on
 
 - [Toric code](toric-code.md)
 - [Minimum-weight decoding of the toric code](minimum-weight-decoding-of-the-toric-code.md)
+
+## Proof depends on
+
+- [The probability that a fixed cycle lies in the error plus the correction](probability-that-a-fixed-cycle-lies-in-the-error-plus-the-correction.md)
+- [Minimum-weight decoding fails only on a homologically nontrivial cycle](minimum-weight-decoding-fails-only-on-a-nontrivial-cycle.md)
+- [Counting self-avoiding polygons on the square lattice](counting-self-avoiding-polygons-on-the-square-lattice.md)
 
 ## Sources
 

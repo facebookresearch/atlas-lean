@@ -9,12 +9,10 @@ of the winning probability, a supremum over unbounded dimensions rather than a m
 states with POVMs give the same supremum. The commuting-operator value is a different notion.
 The classical value is at most the entangled value, which is at most $1$.
 
-## Expansion
+## Depends on
 
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Finite-dimensional quantum state (pure and mixed).
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
+- [Quantum states: pure states and density operators](quantum-states-pure-states-and-density-operators.md)
+- [Measurements: POVMs, projective measurements and the Born rule](measurements-povms-projective-measurements-and-the-born-rule.md)
 
 ## Sources
 

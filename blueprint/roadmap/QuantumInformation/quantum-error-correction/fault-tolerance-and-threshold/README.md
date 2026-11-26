@@ -11,6 +11,19 @@ stochastic noise. The arithmetic of the recursion is the
 - [Locations of a quantum circuit](locations-of-a-quantum-circuit.md)
 - [Local stochastic error model](local-stochastic-error-model.md)
 - [The threshold theorem](threshold-theorem.md)
+- [The $r$-filter and the ideal decoder](r-filter-and-ideal-decoder.md)
+- [Fault-tolerant measurement gadget](fault-tolerant-measurement-gadget.md)
+- [Fault-tolerant preparation gadget](fault-tolerant-preparation-gadget.md)
+- [Fault-tolerant gate gadget](fault-tolerant-gate-gadget.md)
+- [Fault-tolerant error-correction gadget](fault-tolerant-error-correction-gadget.md)
+- [Fault-tolerant simulation of a circuit and extended rectangles](fault-tolerant-simulation-and-extended-rectangles.md)
+- [Correct, good and bad extended rectangles](correct-good-and-bad-extended-rectangles.md)
+- [Good extended rectangles are correct](good-extended-rectangles-are-correct.md)
+- [A fault-tolerant simulation with only good extended rectangles is exact](simulation-with-only-good-extended-rectangles-is-exact.md)
+- [Bad extended rectangles simulate faulty locations](bad-extended-rectangles-simulate-faulty-locations.md)
+- [Level reduction](level-reduction.md)
+- [The threshold theorem from fault-tolerant gadgets](threshold-theorem-from-fault-tolerant-gadgets.md)
+- [Steane error correction](steane-error-correction.md)
 
 ## Related topics
 

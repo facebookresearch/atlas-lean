@@ -12,13 +12,16 @@ $$F(\rho, \sigma) = \max\{ |\langle u, v\rangle| : v \in \mathcal{X} \otimes \ma
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: Fidelity of quantum states.
 - Proof prerequisite: Purification and unitary equivalence of purifications.
 - Proof prerequisite: the trace-norm identity $\|X\|_1 = \max_U |\langle U, X\rangle|$ over unitary $U$, and the
   unitary invariance of the trace norm.
 - Proof prerequisite: the identity $F(AA^*, BB^*) = \|A^*B\|_1$, proved from a polar decomposition of the block
   operator $\begin{pmatrix} 0 & A \\ 0 & 0 \end{pmatrix}$ (Watrous, Lemma 3.21); the polar decomposition below is
   applied to the adjoint to obtain the form $PU$ with $P$ positive semidefinite on the left.
+
+## Depends on
+
+- [Fidelity of quantum states](fidelity-of-quantum-states.md)
 
 ## Proof depends on
 

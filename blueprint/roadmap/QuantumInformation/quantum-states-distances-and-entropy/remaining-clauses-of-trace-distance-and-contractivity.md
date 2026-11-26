@@ -14,13 +14,13 @@ A sound expansion has separate pages for:
 3. **Contractivity.** $T(\Phi(\rho), \Phi(\sigma)) \le T(\rho, \sigma)$ for every channel $\Phi$, and more generally for every
    positive trace-preserving map.
 
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Quantum channels (CPTP maps).
-
 ## Related topics
 
 - [Holevo–Helstrom theorem](../quantum-operations/holevohelstrom-theorem.md)
+
+## Depends on
+
+- [Quantum channel](../quantum-operations/quantum-channel.md)
 
 ## Sources
 

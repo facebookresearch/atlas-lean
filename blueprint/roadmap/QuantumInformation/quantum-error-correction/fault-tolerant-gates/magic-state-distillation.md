@@ -17,18 +17,22 @@ $F_T^{*} = \big(\tfrac12(1 + \sqrt{1/3})\big)^{1/2} \approx 0.888$.
 
 ## Expansion
 
-This node is a family. A good expansion adds pages for: the five-qubit distillation subroutine for $T$-type states (Bravyi
-and Kitaev, Section V), with its success probability and output error; the fifteen-qubit subroutine for $H$-type states
-(Section VI), with the weight-enumerator formulas $p_s = W_{L_1^{\perp}}(\varepsilon, 1 - \varepsilon)$ and
-$\varepsilon_{\mathrm{out}} = W_{L_2}(\varepsilon, 1 - \varepsilon) / p_s$ and the expansion $35\varepsilon^3 + O(\varepsilon^4)$;
-the recursion and its threshold; and the error analysis of Section IV, which combines distilled states with
-[magic-state injection](magic-state-injection.md).
+This node is a family. The five-qubit and fifteen-qubit subroutines, with their success probabilities, output errors and
+thresholds, are pages; a good expansion adds a page for the error analysis of Bravyi and Kitaev's Section IV, which
+iterates a subroutine, counts the raw magic states used (on the order of $(\log(1/\varepsilon_{\mathrm{out}}))^{\gamma}$
+with $\gamma = \log_3 15$ for the fifteen-qubit scheme) and combines the distilled states with
+[magic-state injection](magic-state-injection.md) to simulate a universal circuit.
 
 ## Depends on
 
 - [Magic states](magic-state.md)
 - [The fifteen-qubit quantum Reed–Muller code](../small-stabilizer-codes/fifteen-qubit-quantum-reed-muller-code.md)
 - [Transversal $T$ preserves the fifteen-qubit code](../small-stabilizer-codes/transversal-t-preserves-the-fifteen-qubit-code.md)
+
+## Proof depends on
+
+- [Five-to-one distillation of $T$-type magic states](five-to-one-distillation-of-t-type-magic-states.md)
+- [Fifteen-to-one distillation of $H$-type magic states](fifteen-to-one-distillation-of-h-type-magic-states.md)
 
 ## Background
 

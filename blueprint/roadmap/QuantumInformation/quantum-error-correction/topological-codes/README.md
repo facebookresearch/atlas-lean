@@ -16,6 +16,13 @@ threshold error rate below which decoding succeeds with probability tending to o
 - [Surface codes on closed surfaces](surface-codes-on-closed-surfaces.md)
 - [Minimum-weight decoding of the toric code](minimum-weight-decoding-of-the-toric-code.md)
 - [Threshold for minimum-weight decoding of the toric code](threshold-for-minimum-weight-decoding-of-the-toric-code.md)
+- [Homologically nontrivial cycles on the $L \times L$ torus have length at least $L$](homologically-nontrivial-cycles-on-the-torus-have-length-at-least-l.md)
+- [The probability that a fixed cycle lies in the error plus the correction](probability-that-a-fixed-cycle-lies-in-the-error-plus-the-correction.md)
+- [Counting self-avoiding polygons on the square lattice](counting-self-avoiding-polygons-on-the-square-lattice.md)
+- [Minimum-weight decoding fails only on a homologically nontrivial cycle](minimum-weight-decoding-fails-only-on-a-nontrivial-cycle.md)
+- [Color code](color-code.md)
+- [Triangular color codes have transversal Clifford gates](triangular-color-codes-have-transversal-clifford-gates.md)
+- [Lattice surgery](lattice-surgery.md)
 
 ## Related topics
 

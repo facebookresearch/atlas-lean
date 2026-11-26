@@ -10,11 +10,9 @@ dimensions), of the probability of acceptance. A classical-message protocol embe
 completely dephasing channel to the message register before and after each use, so that the prover's messages are
 effectively computational-basis states.
 
-## Expansion
+## Depends on
 
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Quantum channels (CPTP maps).
+- [Quantum channel](../../QuantumInformation/quantum-operations/quantum-channel.md)
 
 ## Sources
 
