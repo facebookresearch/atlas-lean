@@ -8,4 +8,6 @@ Elementary theory of semirings, rings, division rings and fields: homomorphisms 
 - [Commutative ring, not necessarily with an identity element](commutative-ring.md)
 - [Ring, not necessarily with an identity element](ring.md)
 - [Triangular integer signs](triangular-integer-signs/README.md)
+- [Subrings not required to contain 1](subring.md)
+- [Subfield](subfield.md)
 - [Mapping sums of squares](map.md)
