@@ -32,6 +32,7 @@ module
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import MathlibExt.RingTheory.Valuation.LiesOverPrime
+public import MathlibExt.RingTheory.Valuation.InertiaSubgroupIn
 import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Data.Int.GCD
 
@@ -46,19 +47,6 @@ group of the field, fixes every root of unity whose order is prime to `q`.
 @[expose] public section
 
 open scoped Pointwise
-
-namespace ValuationSubring
-
-variable {L : Type*} [Field L]
-
-variable (K : Type*) [Field K] [Algebra K L]
-
-/-- The inertia subgroup of a valuation subring, viewed as a subgroup of
-the full `K`-algebra automorphism group of `L`. -/
-noncomputable def inertiaSubgroupIn (A : ValuationSubring L) : Subgroup (L ≃ₐ[K] L) :=
-  (A.inertiaSubgroup K).map (A.decompositionSubgroup K).subtype
-
-end ValuationSubring
 
 namespace InertiaRootsOfUnity
 

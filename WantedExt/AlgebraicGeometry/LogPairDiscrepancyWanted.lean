@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.LogPairs
+public import MathlibExt.AlgebraicGeometry.LogPairDiscrepancyCanonicalFrameIndependence
 
 /-!
 # General canonical and discrepancy proof contracts
@@ -45,14 +46,6 @@ the top Kähler forms of the local ring at $p$ and its image basis of the ration
 that the orders of the form in these bases are nonzero at only finitely many points. -/
 public def_wanted canonical_data (k : Type u) [Field k] [CharZero k]
     (n : ℕ) (V : NormalVariety k n) : CanonicalData V
-
-/-- The canonical divisor does not depend on the chosen frames: for a field $k$ of characteristic
-zero and a normal variety $V$ of dimension $n$ over $k$ (integral, Noetherian, separated, locally of
-finite type and quasi-compact, with integrally closed local rings), two canonical data on $V$ with
-the same rational top form have the same canonical divisor. -/
-public theorem_wanted canonical_frame_independence (k : Type u) [Field k] [CharZero k]
-    (n : ℕ) (V : NormalVariety k n) (C D : CanonicalData V) (same : C.form = D.form) :
-    canonicalDivisor C = canonicalDivisor D
 
 /-- Every proper birational model of a log pair carries the canonical comparison data: for a field
 $k$ of characteristic zero and a log pair $P$ over $k$, every proper birational morphism
