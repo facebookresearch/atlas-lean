@@ -12,10 +12,10 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 import MathlibExt.NumberTheory.MultiplicativeAdditiveEightSquares
 import MathlibExt.NumberTheory.MultiplicativeAdditiveThreePairedSquares
+import MathlibExt.NumberTheory.SixAndEightNonzeroSquares
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.Fin.VecNotation
-import Mathlib.NumberTheory.SumFourSquares
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
@@ -27,7 +27,8 @@ A complex-valued multiplicative function that is additive on three or four sums 
 positive squares, and nonzero at two, is the identity on positive integers. The four-pair
 case is `multiplicative_additive_eight_squares_eq_id`; the three-pair case follows by strong
 induction from the base values in `multiplicative_three_additive_two_squares_base`, using
-that every integer `n ≥ 20` is a sum of six squares of positive integers.
+that every integer `n ≥ 20` is a sum of six squares of positive integers
+(`sum_six_and_eight_nonzero_squares`).
 
 Source: Jewel Mahajan, *Multiplicative Functions Additive on Partitions of 2k Nonzero
 Squares*, INTEGERS 26 (2026), Article A121, Theorem 1 (`integers-2026-A121-thm-1`).
@@ -40,143 +41,15 @@ open ArithmeticFunction
 namespace multiplicative_additive_paired_squares_eq_id_of_three_or_four
 
 -- Every integer `n ≥ 20` is a sum of three weights `x j ^ 2 + y j ^ 2` with positive roots:
--- explicitly for `20 ≤ n ≤ 25`, and for `n ≥ 26` from four squares for `n - 26`, where the
--- fixed budget `26` supplies two to six positive squares depending on how many roots vanish.
+-- split the six positive squares of `sum_six_and_eight_nonzero_squares` into two halves.
 private theorem six_squares {n : ℕ} (hn : 20 ≤ n) :
     ∃ x y : Fin 3 → ℕ, (∀ j, 0 < x j) ∧ (∀ j, 0 < y j) ∧
       ∑ j, (x j ^ 2 + y j ^ 2) = n := by
-  by_cases h26 : 26 ≤ n
-  · obtain ⟨a, b, c, d, habcd⟩ := Nat.sum_four_squares (n - 26)
-    have h1 : (0 : ℕ) < 1 := by decide
-    have h2 : (0 : ℕ) < 2 := by decide
-    have h3 : (0 : ℕ) < 3 := by decide
-    have h4 : (0 : ℕ) < 4 := by decide
-    have h5 : (0 : ℕ) < 5 := by decide
-    have z : (0 : ℕ) ^ 2 = 0 := rfl
-    rcases Nat.eq_zero_or_pos a with rfl | ha <;>
-      rcases Nat.eq_zero_or_pos b with rfl | hb <;>
-      rcases Nat.eq_zero_or_pos c with rfl | hc <;>
-      rcases Nat.eq_zero_or_pos d with rfl | hd
-    · -- All four roots vanish.
-      have hsum : ∑ j, (![3, 2, 2] j ^ 2 + ![2, 2, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((9 + 4) + (4 + 4)) + (4 + 1) = n
-        omega
-      exact ⟨![3, 2, 2], ![2, 2, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `d` survives.
-      have hsum : ∑ j, (![d, 4, 2] j ^ 2 + ![2, 1, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((d ^ 2 + 4) + (16 + 1)) + (4 + 1) = n
-        omega
-      exact ⟨![d, 4, 2], ![2, 1, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `c` survives.
-      have hsum : ∑ j, (![c, 4, 2] j ^ 2 + ![2, 1, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((c ^ 2 + 4) + (16 + 1)) + (4 + 1) = n
-        omega
-      exact ⟨![c, 4, 2], ![2, 1, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `c` and `d` survive.
-      have hsum : ∑ j, (![c, d, 3] j ^ 2 + ![3, 2, 2] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((c ^ 2 + 9) + (d ^ 2 + 4)) + (9 + 4) = n
-        omega
-      exact ⟨![c, d, 3], ![3, 2, 2], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `b` survives.
-      have hsum : ∑ j, (![b, 4, 2] j ^ 2 + ![2, 1, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((b ^ 2 + 4) + (16 + 1)) + (4 + 1) = n
-        omega
-      exact ⟨![b, 4, 2], ![2, 1, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `b` and `d` survive.
-      have hsum : ∑ j, (![b, d, 3] j ^ 2 + ![3, 2, 2] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((b ^ 2 + 9) + (d ^ 2 + 4)) + (9 + 4) = n
-        omega
-      exact ⟨![b, d, 3], ![3, 2, 2], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `b` and `c` survive.
-      have hsum : ∑ j, (![b, c, 3] j ^ 2 + ![3, 2, 2] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((b ^ 2 + 9) + (c ^ 2 + 4)) + (9 + 4) = n
-        omega
-      exact ⟨![b, c, 3], ![3, 2, 2], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `a` vanishes.
-      have hsum : ∑ j, (![b, c, d] j ^ 2 + ![4, 3, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((b ^ 2 + 16) + (c ^ 2 + 9)) + (d ^ 2 + 1) = n
-        omega
-      exact ⟨![b, c, d], ![4, 3, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `a` survives.
-      have hsum : ∑ j, (![a, 4, 2] j ^ 2 + ![2, 1, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + 4) + (16 + 1)) + (4 + 1) = n
-        omega
-      exact ⟨![a, 4, 2], ![2, 1, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `a` and `d` survive.
-      have hsum : ∑ j, (![a, d, 3] j ^ 2 + ![3, 2, 2] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + 9) + (d ^ 2 + 4)) + (9 + 4) = n
-        omega
-      exact ⟨![a, d, 3], ![3, 2, 2], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `a` and `c` survive.
-      have hsum : ∑ j, (![a, c, 3] j ^ 2 + ![3, 2, 2] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + 9) + (c ^ 2 + 4)) + (9 + 4) = n
-        omega
-      exact ⟨![a, c, 3], ![3, 2, 2], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `b` vanishes.
-      have hsum : ∑ j, (![a, c, d] j ^ 2 + ![4, 3, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + 16) + (c ^ 2 + 9)) + (d ^ 2 + 1) = n
-        omega
-      exact ⟨![a, c, d], ![4, 3, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `a` and `b` survive.
-      have hsum : ∑ j, (![a, b, 3] j ^ 2 + ![3, 2, 2] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + 9) + (b ^ 2 + 4)) + (9 + 4) = n
-        omega
-      exact ⟨![a, b, 3], ![3, 2, 2], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `c` vanishes.
-      have hsum : ∑ j, (![a, b, d] j ^ 2 + ![4, 3, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + 16) + (b ^ 2 + 9)) + (d ^ 2 + 1) = n
-        omega
-      exact ⟨![a, b, d], ![4, 3, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- Only `d` vanishes.
-      have hsum : ∑ j, (![a, b, c] j ^ 2 + ![4, 3, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + 16) + (b ^ 2 + 9)) + (c ^ 2 + 1) = n
-        omega
-      exact ⟨![a, b, c], ![4, 3, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-    · -- No root vanishes.
-      have hsum : ∑ j, (![a, b, c] j ^ 2 + ![d, 5, 1] j ^ 2) = n := by
-        rw [Fin.sum_univ_three]
-        change ((a ^ 2 + d ^ 2) + (b ^ 2 + 25)) + (c ^ 2 + 1) = n
-        omega
-      exact ⟨![a, b, c], ![d, 5, 1], by intro j; fin_cases j <;> assumption,
-        by intro j; fin_cases j <;> assumption, hsum⟩
-  · have hlt : n < 26 := by omega
-    interval_cases n
-    · exact ⟨![1, 1, 2], ![1, 3, 2], by decide, by decide, by decide⟩
-    · exact ⟨![1, 1, 1], ![1, 1, 4], by decide, by decide, by decide⟩
-    · exact ⟨![1, 1, 3], ![1, 1, 3], by decide, by decide, by decide⟩
-    · exact ⟨![1, 2, 1], ![2, 2, 3], by decide, by decide, by decide⟩
-    · exact ⟨![1, 1, 2], ![1, 1, 4], by decide, by decide, by decide⟩
-    · exact ⟨![1, 1, 1], ![2, 3, 3], by decide, by decide, by decide⟩
+  obtain ⟨a, ha, hsum⟩ := sum_six_and_eight_nonzero_squares.1 n hn
+  refine ⟨fun j ↦ a (Fin.castAdd 3 j), fun j ↦ a (Fin.natAdd 3 j),
+    fun j ↦ Nat.pos_of_ne_zero (ha _), fun j ↦ Nat.pos_of_ne_zero (ha _), ?_⟩
+  rw [Finset.sum_add_distrib]
+  exact (Fin.sum_univ_add (fun i : Fin (3 + 3) ↦ a i ^ 2)).symm.trans hsum
 
 -- A multiplicative function that is 3-additive on sums of two positive squares and nonzero
 -- at two fixes every positive integer below 20.
