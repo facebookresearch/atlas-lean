@@ -13,6 +13,7 @@ public import Mathlib.Data.Finset.Range
 import Mathlib.Data.Nat.Find
 public import Mathlib.Logic.Function.Iterate
 import Mathlib.Order.Iterate
+import Mathlib.Order.WellFounded
 
 /-!
 # Prefix counts of generalized Hofstadter words
@@ -773,6 +774,38 @@ private theorem count_partition (k n : ℕ) :
     by_cases h : hofWord k n = 1 <;> simp [hofCount, prefix_succ, h] at ih ⊢ <;> omega
 
 end hofCount_one_succ_le
+
+open hofCount_one_succ_le in
+/-- **Bracketing by the iterates of $L_k$.** For $k \ge 1$, let $\tau_k$ be the substitution
+sending the letter $k$ to $k\,1$ and every other letter $i$ to $i + 1$, let $x_k$ be its fixed
+point starting with $k$, and let $L_k(n)$ be the length of the image under $\tau_k$ of the first
+$n$ letters of $x_k$; write $L_k^j$ for the $j$-fold iterate of $L_k$. For all $j \ge 0$ and
+$m \ge 1$ there is a unique $n \ge 1$ with $L_k^j(n - 1) < m \le L_k^j(n)$.
+
+Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
+Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
+Proposition 2.4 (`jis-2026-26.3.3-prop-5`). -/
+theorem existsUnique_hofL_iterate_bracket {k m : ℕ} (hk : 1 ≤ k) (hm : 1 ≤ m)
+    (j : ℕ) :
+    ∃! n, 1 ≤ n ∧ (hofL k)^[j] (n - 1) < m ∧ m ≤ (hofL k)^[j] n := by
+  let f := (hofL k)^[j]
+  have hL : StrictMono (hofL k) := image_strictMono (j := 1) hk hk
+  have hmono : StrictMono f := hL.iterate j
+  have hzero : f 0 = 0 := Function.iterate_fixed (show hofL k 0 = 0 from image_zero k 1) j
+  have hex : ∃ n, m ≤ f n := ⟨m, hmono.le_apply⟩
+  let n := Nat.find hex
+  have hn : m ≤ f n := Nat.find_spec hex
+  have hnpos : 1 ≤ n := by
+    by_contra! h
+    rw [show n = 0 by omega, hzero] at hn
+    omega
+  have hlo : f (n - 1) < m := lt_of_not_ge (Nat.find_min hex (by omega : n - 1 < n))
+  refine ⟨n, ⟨hnpos, hlo, hn⟩, ?_⟩
+  intro a ha
+  have hna : n ≤ a := Nat.find_min' hex ha.2.2
+  refine le_antisymm ?_ hna
+  by_contra! h
+  exact (not_lt_of_ge (hn.trans (hmono.monotone (by omega : n ≤ a - 1)))) ha.2.1
 
 open hofCount_one_succ_le in
 /-- **Iterates of the Hofstadter substitution on the letter $k$.** Let $k \ge 1$, let $\tau_k$ be
