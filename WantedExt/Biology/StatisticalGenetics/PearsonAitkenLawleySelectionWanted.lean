@@ -17,8 +17,11 @@ covariance blocks are `Cov*(X, Y) = Cov*(X) Bᵀ` and `Cov*(Y) = B Cov*(X) Bᵀ 
 `B = Σ_YX Σ_XX⁻¹` and `Cov(E) = Σ_YY - Σ_YX Σ_XX⁻¹ Σ_XY` these are Aitken's blocks (7),
 `Σ*_XY = Σ*_XX Σ_XX⁻¹ Σ_XY` and `Σ*_YY = Σ_YY - Σ_YX (Σ_XX⁻¹ - Σ_XX⁻¹ Σ*_XX Σ_XX⁻¹) Σ_XY`.
 
-A jointly Gaussian `(X, Y)` with nonsingular `Σ_XX` has such a representation; that is the
-conditioning theorem of `MathlibExt.Probability.Distributions.GaussianConditioning` and is
+This module records the residual-preservation prerequisite (`indepFun_and_map_residual_selected`)
+and the algebraic block identity (`aitken_blocks`) as `theorem_wanted`; the downstream selected
+mean and covariance theorems are tracked as planned roadmap pages depending on residual
+preservation. A jointly Gaussian `(X, Y)` with nonsingular `Σ_XX` has such a representation; that
+is the conditioning theorem of `MathlibExt.Probability.Distributions.GaussianConditioning` and is
 not restated here. Pearson's scalar formulas (1903) are the one-variable case.
 
 Sources: A. C. Aitken, "Note on selection from a multivariate normal population", Proc.
@@ -69,53 +72,13 @@ public theorem_wanted indepFun_and_map_residual_selected (μ : Measure Ω) [IsPr
     (hnorm : ∫⁻ ω, w (X ω) ∂μ = 1) :
     IndepFun X E (selectedMeasure μ X w) ∧ (selectedMeasure μ X w).map E = μ.map E
 
-/-- **Selected means** (Aitken 1934, (5)). Let `μ` be a probability measure on `Ω`, let
-`X : Ω → ℝ^p` and `E : Ω → ℝ^q` be measurable and independent under `μ`, let every coordinate
-of `E` be `μ`-integrable with mean `0`, and let `Y = a + B X + E` for a vector `a : ℝ^q` and a
-matrix `B : ℝ^{q×p}`. Let the selection density `w : ℝ^p → [0, ∞]` be measurable with
-`∫⁻ w(X) dμ = 1`, and let every coordinate of `X` be integrable under the selected measure
-`ν = w(X) · μ`. Then for every coordinate `j`, `∫ Y_j dν = a_j + ∑_k B_{jk} ∫ X_k dν`.
-
-Source: Aitken (1934), p. 109, equation (5). -/
-public theorem_wanted integral_response_selected (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (X : Ω → Fin p → ℝ) (E : Ω → Fin q → ℝ) (a : Fin q → ℝ) (B : Matrix (Fin q) (Fin p) ℝ)
-    (w : (Fin p → ℝ) → ℝ≥0∞) (hX : Measurable X) (hE : Measurable E) (hw : Measurable w)
-    (hind : IndepFun X E μ) (hnorm : ∫⁻ ω, w (X ω) ∂μ = 1)
-    (hXint : ∀ i, Integrable (fun ω => X ω i) (selectedMeasure μ X w))
-    (hEint : ∀ j, Integrable (fun ω => E ω j) μ) (hEmean : ∀ j, ∫ ω, E ω j ∂μ = 0) (j : Fin q) :
-    ∫ ω, response a B X E ω j ∂(selectedMeasure μ X w) =
-      a j + ∑ k, B j k * ∫ ω, X ω k ∂(selectedMeasure μ X w)
-
-/-- **Selected covariance blocks** (Aitken 1934, (7), in regression form). Let `μ` be a
-probability measure on `Ω`, let `X : Ω → ℝ^p` and `E : Ω → ℝ^q` be measurable and independent
-under `μ`, let every coordinate of `E` be square-integrable under `μ`, and let
-`Y = a + B X + E` for a vector `a : ℝ^q` and a matrix `B : ℝ^{q×p}`. Let the selection density
-`w : ℝ^p → [0, ∞]` be measurable with `∫⁻ w(X) dμ = 1`, and let every coordinate of `X` be
-square-integrable under the selected measure `ν = w(X) · μ`. Then for all coordinates `i`, `j`,
-* `Cov_ν(X_i, Y_j) = ∑_k Cov_ν(X_i, X_k) B_{jk}`, and
-* `Cov_ν(Y_i, Y_j) = ∑_k ∑_l B_{ik} Cov_ν(X_k, X_l) B_{jl} + Cov_μ(E_i, E_j)`.
-
-Source: Aitken (1934), p. 109, equation (7); Lawley (1943). -/
-public theorem_wanted covariance_selected (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (X : Ω → Fin p → ℝ) (E : Ω → Fin q → ℝ) (a : Fin q → ℝ) (B : Matrix (Fin q) (Fin p) ℝ)
-    (w : (Fin p → ℝ) → ℝ≥0∞) (hX : Measurable X) (hE : Measurable E) (hw : Measurable w)
-    (hind : IndepFun X E μ) (hnorm : ∫⁻ ω, w (X ω) ∂μ = 1)
-    (hX2 : ∀ i, MemLp (fun ω => X ω i) 2 (selectedMeasure μ X w))
-    (hE2 : ∀ j, MemLp (fun ω => E ω j) 2 μ) :
-    (∀ i j, cov[fun ω => X ω i, fun ω => response a B X E ω j; selectedMeasure μ X w] =
-        ∑ k, cov[fun ω => X ω i, fun ω => X ω k; selectedMeasure μ X w] * B j k) ∧
-      ∀ i j, cov[fun ω => response a B X E ω i, fun ω => response a B X E ω j;
-          selectedMeasure μ X w] =
-        (∑ k, ∑ l, B i k * cov[fun ω => X ω k, fun ω => X ω l; selectedMeasure μ X w] * B j l) +
-          cov[fun ω => E ω i, fun ω => E ω j; μ]
-
 /-- **Aitken's block identity** (Aitken 1934, (7)). Let `Σ_XX` be a symmetric `p × p` real
 matrix with nonzero determinant, let `Σ_XY` be a `p × q` and `Σ_YY` a `q × q` real matrix, and
 let `V` be any `p × p` real matrix (the selected covariance of `X`). Put `B = Σ_XYᵀ Σ_XX⁻¹`.
 Then `V Bᵀ = V Σ_XX⁻¹ Σ_XY`, and
 `B V Bᵀ + (Σ_YY - Σ_XYᵀ Σ_XX⁻¹ Σ_XY) = Σ_YY - Σ_XYᵀ (Σ_XX⁻¹ - Σ_XX⁻¹ V Σ_XX⁻¹) Σ_XY`.
-So the regression-form blocks of `covariance_selected`, with the population regression
-coefficient `B` and residual covariance `Σ_YY - Σ_XYᵀ Σ_XX⁻¹ Σ_XY`, are Aitken's blocks.
+So the regression-form selected covariance blocks, with the population regression coefficient `B`
+and residual covariance `Σ_YY - Σ_XYᵀ Σ_XX⁻¹ Σ_XY`, are Aitken's blocks.
 
 Source: Aitken (1934), p. 109, equation (7). -/
 public theorem_wanted aitken_block_identity (Sxx : Matrix (Fin p) (Fin p) ℝ)

@@ -6,7 +6,7 @@
 - [Crude Risk](crude-risk.md)
 - [Stratum Risk](stratum-risk.md)
 - [Odds](odds.md)
-- [Mixture identity without confounding](crude-risk-eq-mixture.md)
+- [Common-weight mixture identity under `X ⊥ Z`](crude-risk-eq-mixture.md)
 - [Constant risk differences and risk ratios collapse](risk-difference-risk-ratio-collapse.md)
 - [Noncollapsibility of the odds ratio](marginal-odds-ratio-strictly-between.md)
 - [No association, no change](marginal-odds-ratio-eq-of-no-assoc.md)

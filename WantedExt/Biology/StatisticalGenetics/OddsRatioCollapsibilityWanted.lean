@@ -9,14 +9,16 @@ LICENSE file in the root directory of this source tree.
 /-
 # Collapsibility and the noncollapsibility of the odds ratio
 
-Let `X` (treatment), `Y` (response) and `Z` (covariate) be binary, with `X` independent of `Z`,
-so that `Z` does not confound the effect of `X`. The marginal risk given `X = x` is then the
-`P(Z)`-mixture of the stratum risks `r(x, z)`. A risk difference or risk ratio that is constant
-across the strata of `Z` is therefore strictly collapsible: its marginal value equals the common
-stratum value. The risk ratio standardized to the distribution of `Z` equals the crude risk
-ratio. The odds ratio is not collapsible: if the odds ratio `ψ ≠ 1` is constant across strata
-and `Z` is associated with the response given treatment, the marginal odds ratio lies strictly
-between `1` and `ψ`; it equals `ψ` when `Z` is not associated with the response.
+Let `X` (treatment), `Y` (response) and `Z` (covariate) be binary, with observed independence
+`X ⊥ Z` (`P(X = x, Z = z) = P(X = x) P(Z = z)`). Under this observed-data independence, the
+marginal risk given `X = x` is the common-weight `P(Z)`-mixture of the stratum risks `r(x, z)`,
+and the risk ratio standardized to `P(Z)` equals the crude risk ratio (an observed-data identity;
+causal non-confounding requires exchangeability assumptions not stated here). A risk difference or
+risk ratio that is constant across the strata of `Z` is therefore strictly collapsible: its
+marginal value equals the common stratum value. The odds ratio is not collapsible: if the odds
+ratio `ψ ≠ 1` is constant across strata and `Z` is associated with the response given treatment,
+the marginal odds ratio lies strictly between `1` and `ψ`; it equals `ψ` when `Z` is not
+associated with the response.
 
 Sources: S. Greenland, J. M. Robins and J. Pearl, "Confounding and collapsibility in causal
 inference", Statist. Sci. 14 (1999) 29–46, pp. 37–39 and Tables 1–2, crediting M. H. Gail
@@ -59,15 +61,17 @@ noncomputable def stratumRisk (p : Bool → Bool → Bool → ℝ) (x z : Bool) 
 noncomputable def odds (t : ℝ) : ℝ :=
   t / (1 - t)
 
-/-- **Mixture identity without confounding** (Greenland, Robins and Pearl 1999, p. 38). Let
-`p x y z ≥ 0` be a joint mass function of binary `X, Y, Z` with total mass `1`, with `X`
-independent of `Z` (`P(X = x, Z = z) = P(X = x) P(Z = z)` for all `x, z`) and
-`P(X = x, Z = z) > 0` for all `x, z`, and suppose the crude risk of the unexposed is positive,
+/-- **Common-weight mixture identity under `X ⊥ Z`** (Greenland, Robins and Pearl 1999, p. 38).
+Let `p x y z ≥ 0` be a joint mass function of binary `X, Y, Z` with total mass `1`, with observed
+independence `X ⊥ Z` (`P(X = x, Z = z) = P(X = x) P(Z = z)` for all `x, z`) and
+`P(X = x, Z = z) > 0` for all `x, z`, and suppose the crude risk for `X = 0` is positive,
 `P(Y = 1 | X = 0) > 0`. Then for each `x`,
-`P(Y = 1 | X = x) = ∑_z P(Z = z) P(Y = 1 | X = x, Z = z)`, and the risk ratio standardized to
-the distribution of `Z`, `∑_z P(z) P(Y = 1 | 1, z) / ∑_z P(z) P(Y = 1 | 0, z)`, equals the crude
-risk ratio `P(Y = 1 | X = 1) / P(Y = 1 | X = 0)`; by the mixture identity both denominators equal
-`P(Y = 1 | X = 0)`, so neither is zero.
+`P(Y = 1 | X = x) = ∑_z P(Z = z) P(Y = 1 | X = x, Z = z)` (a common-weight mixture over `Z`), and
+the risk ratio standardized to `P(Z)`,
+`∑_z P(z) P(Y = 1 | 1, z) / ∑_z P(z) P(Y = 1 | 0, z)`, equals the crude risk ratio
+`P(Y = 1 | X = 1) / P(Y = 1 | X = 0)` (an observed-data identity; causal exchangeability is not
+assumed or implied). By the mixture identity both denominators equal `P(Y = 1 | X = 0)`, so
+neither is zero.
 
 Source: Greenland, Robins and Pearl (1999), pp. 37–38. -/
 public theorem_wanted crudeRisk_eq_mixture (p : Bool → Bool → Bool → ℝ) (hp : ∀ x y z, 0 ≤ p x y z)
