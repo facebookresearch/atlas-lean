@@ -8,6 +8,10 @@ Let $F$ be a closed formula over a signature $\Sigma$, let $F \Rightarrow_P^* G$
 2. $H \models G$, but in general $G \not\models H$;
 3. $G$ is satisfiable over $\Sigma$ if and only if $H$ is satisfiable over $\Sigma'$.
 
+## Proof depends on
+
+- [Prenex transformation preserves equivalence](prenex-transformation-preserves-equivalence.md)
+
 ## Sources
 
 - U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 3.5, prenex normal form, Skolemization and Theorem 3.9, p. 56.

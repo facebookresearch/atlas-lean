@@ -11,6 +11,11 @@ Polynomial orderings, which interpret symbols over $\{n \in \mathbb N \mid n \ge
 
 - [Reduction ordering](reduction-ordering.md)
 
+## Proof depends on
+
+- [Interpretation orderings are stable under substitutions](termination/interpretation-orderings-are-stable-under-substitutions.md)
+- [Monotone interpretation orderings are compatible with operations](termination/monotone-interpretation-orderings-are-compatible-with-operations.md)
+
 ## Sources
 
 - U. Waldmann, *Automated Reasoning*, lecture notes, Max Planck Institute for Informatics, winter semester 2019/20, <https://rg1-teaching.mpi-inf.mpg.de/autrea-ws19/script.pdf>, Section 4.5, the interpretation method, Lemmas 4.20 and 4.21 and Theorem 4.22, pp. 115–116, and polynomial orderings, p. 116.

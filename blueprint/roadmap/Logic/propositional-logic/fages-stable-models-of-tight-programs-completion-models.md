@@ -7,17 +7,16 @@ the program $p \leftarrow p$ has the completion $p \leftrightarrow p$, with mode
 but its only stable model is $\emptyset$. This example shows that the conclusion can fail for non-tight
 programs, not that every non-tight program is a counterexample.
 
-## Expansion
+## Depends on
 
-This node states a precise result.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: the Gelfond–Lifschitz reduct, stable models and the Clark completion of a finite ground normal program.
+- [Stable models of a normal logic program](../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md)
+- [Clark completion of a normal program](logic-programs/clark-completion-of-a-normal-program.md)
+- [Tight normal program](logic-programs/tight-normal-program.md)
 
 ## Proof depends on
 
-- [Basic properties of stable models](basic-properties-of-stable-models.md)
+- [Stable models of tight programs are the supported models](logic-programs/stable-models-of-tight-programs-are-the-supported-models.md)
+- [Models of the completion are the supported models](logic-programs/models-of-the-completion-are-the-supported-models.md)
 
 ## Sources
 

@@ -1,0 +1,20 @@
+# Proving termination with dependency pairs
+
+A term rewriting system $R$ terminates if and only if there is a well-founded weakly monotonic quasi-ordering $\succsim$, with strict part $>$, both closed under substitution, such that $l \succsim r$ for every rule $l \to r$ of $R$ and $s > t$ for every [dependency pair](dependency-pairs.md) $\langle s, t\rangle$.
+
+It suffices to require $s \succsim t$ for the dependency pairs on each cycle of the [dependency graph](dependency-pair-chains.md), with $s > t$ for at least one dependency pair on each cycle.
+
+**Proof idea.** Rewrite steps are contained in $\succsim$, so an infinite chain would give $s_1\sigma > t_1\sigma \succsim s_2\sigma > \cdots$, contradicting well-foundedness; the [criterion](termination-criterion-via-dependency-pairs.md) gives termination. For the refinement, an infinite chain traverses some cycle of the finite dependency graph infinitely often. The source proves necessity from the rewrite relation of $R$.
+
+## Depends on
+
+- [Dependency pairs](dependency-pairs.md)
+- [Dependency pair chains](dependency-pair-chains.md)
+
+## Proof depends on
+
+- [Termination criterion via dependency pairs](termination-criterion-via-dependency-pairs.md)
+
+## Sources
+
+- T. Arts and J. Giesl, "Termination of term rewriting using dependency pairs", *Theoretical Computer Science* 236(1–2):133–178, 2000, <https://verify.rwth-aachen.de/giesl/papers/TCS-distribute.pdf>, Section 2.2, Theorem 7 (proving termination) and its proof; Section 2.4, Theorem 18 (dependency graph refinement) and its proof.

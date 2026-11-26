@@ -11,12 +11,7 @@ The resulting formula of equality logic with uninterpreted functions is satisfia
 ## Proof depends on
 
 - [Congruence closure decides conjunctions of ground equalities](congruence-closure-decides-conjunctions-of.md)
-
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- Flattening and purification of formulas (proof prerequisite)
+- [Purification into separate form](purification-into-separate-form.md)
 
 ## Sources
 

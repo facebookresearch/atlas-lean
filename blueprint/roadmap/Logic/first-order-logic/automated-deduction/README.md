@@ -4,6 +4,7 @@
 - [Critical pairs of a term rewriting system](critical-pairs-of-a-term-rewriting-system.md)
 - [Term rewriting systems](term-rewriting-systems.md)
 - [Soundness of first-order binary resolution and factoring](soundness-of-first-order-binary-resolution-and.md)
+- [Prenex transformation preserves equivalence](prenex-transformation-preserves-equivalence.md)
 - [Skolemization preserves satisfiability](skolemization-preserves-satisfiability.md)
 - [Clausal normal form preserves satisfiability](clausal-normal-form-preserves-satisfiability.md)
 - [Herbrand models suffice for clause sets](herbrand-models-suffice-for-clause-sets.md)

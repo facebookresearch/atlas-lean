@@ -65,7 +65,7 @@ Computer-science developments, including algorithms applied to other domains.
 
 **Related mathematical topics**, whose links do not assign library membership:
 
-- [Intuitionistic propositional logic](../roadmap/Logic/propositional-logic/kripke-semantics-for-intuitionistic-propositional-logic.md)
+- [Intuitionistic propositional logic](../roadmap/Logic/propositional-logic/intuitionistic-propositional-logic/README.md)
 - [Proof theory](../roadmap/Logic/proof-theory/README.md)
 - [Type-theoretic foundations](../roadmap/Logic/type-theoretic-foundations/README.md)
 - [Propositional dynamic logic](../roadmap/Logic/modal-logic/propositional-dynamic-logic/README.md)

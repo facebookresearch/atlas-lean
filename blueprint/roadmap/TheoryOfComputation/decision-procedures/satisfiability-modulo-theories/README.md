@@ -1,16 +1,23 @@
 # Satisfiability modulo theories
 
+Decision procedures for satisfiability of quantifier-free formulas modulo background theories, and their combination with propositional search. In the abstract DPLL(T) transition system of Nieuwenhuis, Oliveras and Tinelli, the theory rules are sound for any sound theory solver, termination needs side conditions on learning, forgetting and restarts, and reaching a state to which the final-state theorem applies needs a theory solver that decides consistency of conjunctions of literals.
+
 - [Ackermann's reduction from uninterpreted functions to equality logic](ackermann-s-reduction-from-uninterpreted.md)
 - [Read-over-write reduction for the theory of arrays](read-over-write-reduction-for-the-theory-of.md)
 - [Bit-blasting fixed-width bit-vector formulas](bit-blasting-fixed-width-bit-vector-formulas.md)
 - [Congruence closure by union-find](congruence-closure-by-union-find.md)
-- [Abstract DPLL modulo theories](abstract-dpll-modulo-theories.md)
 - [Congruence closure decides conjunctions of ground equalities](congruence-closure-decides-conjunctions-of.md)
 - [Congruence closure as ground completion](congruence-closure-as-ground-completion.md)
 - [Fourier–Motzkin elimination](fouriermotzkin-elimination.md)
 - [Farkas certificates for linear rational arithmetic](farkas-certificates-for-linear-rational.md)
 - [Difference logic and negative cycles](difference-logic-and-negative-cycles.md)
 - [Theory solvers for DPLL(T)](theory-solvers-for-dpll-t.md)
+- [DPLL modulo theories transition system](dpll-modulo-theories-transition-system.md)
+- [Invariants of DPLL modulo theories](invariants-of-dpll-modulo-theories.md)
+- [Termination of DPLL modulo theories](termination-of-dpll-modulo-theories.md)
+- [Conflicting clauses enable Fail or T-Backjump](conflicting-clauses-enable-fail-or-t-backjump.md)
+- [Final states of DPLL modulo theories](final-states-of-dpll-modulo-theories.md)
+- [Quantifier instantiation](quantifier-instantiation/README.md)
 - [Purification into separate form](purification-into-separate-form.md)
 - [Arrangements of shared variables in theory combination](arrangements-of-shared-variables-in-theory.md)
 - [Convex theories](convex-theories.md)
