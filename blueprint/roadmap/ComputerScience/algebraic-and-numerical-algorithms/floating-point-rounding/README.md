@@ -45,6 +45,17 @@
 ## IEEE arithmetic, double rounding and compilation
 
 - [Total IEEE-style operation semantics with special values and exceptions](total-ieee-style-operation-semantics-with-special-values-and.md)
+- [Double rounding is innocuous away from midpoints](fl-fl-eq-of-near.md)
+- [Innocuous double rounding of sums](fl-fl-add.md)
+- [Innocuous double rounding of products](fl-fl-mul.md)
+- [Innocuous double rounding of quotients](fl-fl-div.md)
+- [Innocuous double rounding of square roots](fl-fl-sqrt.md)
+- [Round to nearest, ties to even, with gradual underflow](fl-in.md)
+- [Innocuous double rounding of sums with gradual underflow](fl-in-fl-in-add.md)
+- [Innocuous double rounding of products with gradual underflow](fl-in-fl-in-mul.md)
+- [Innocuous double rounding of quotients with gradual underflow](fl-in-fl-in-div.md)
+- [Innocuous double rounding of square roots with gradual underflow](fl-in-fl-in-sqrt.md)
+- [Binary32 arithmetic evaluated in binary64](binary32-via-binary64.md)
 - [Double rounding through an extended precision](double-rounding-through-an-extended-precision.md)
 - [Semantics preservation of floating-point compilation](semantics-preservation-of-floating-point-compilation.md)
 - [IEEE operations agree with rounding in the normal range](ieee-operations-agree-with-rounding-in-the-normal-range.md)
