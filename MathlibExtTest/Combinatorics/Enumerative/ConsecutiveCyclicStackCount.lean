@@ -27,3 +27,34 @@ example : sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 4 =
     decide
   · rw [card_sortedPermutations_consecutiveCyclicStackSort_321 (by decide)]
     decide
+
+-- The smallest admissible size gives a sorted permutation with a singleton tail.
+example : ([2, 1] : List ℕ).head? = some 2 ∧ IsGoodSeq [1] :=
+  head_tail_of_mem_sortedPermutations_consecutiveCyclicStackSort_321
+    (n := 2) (π := [2, 1]) (by decide) (by
+      simp only [sortedPermutations, Finset.mem_filter, List.mem_toFinset, List.mem_permutations]
+      decide)
+
+-- At the minimum length the theorem also gives the converse.
+example : [2, 1] ∈ sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 2 :=
+  (mem_sortedPermutations_consecutiveCyclicStackSort_321_iff (by decide) (by decide)).mpr
+    (by decide)
+
+-- After the first entry, the tail chooses the minimum, then the maximum, then the minimum.
+example : [5, 1, 4, 2, 3] ∈ sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 5 :=
+  (mem_sortedPermutations_consecutiveCyclicStackSort_321_iff (by decide) (by decide)).mpr
+    (by decide)
+
+-- A good tail is not enough when the maximum does not come first.
+example : [1, 2] ∉ sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 2 := by
+  intro h
+  have hh := (mem_sortedPermutations_consecutiveCyclicStackSort_321_iff (by decide)
+    (by decide)).mp h |>.1
+  exact (by decide : ([1, 2] : List ℕ).head? ≠ some 2) hh
+
+-- The maximum comes first, but 2 lies strictly between the two later entries.
+example : [4, 2, 1, 3] ∉ sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 4 := by
+  intro h
+  have hg := (mem_sortedPermutations_consecutiveCyclicStackSort_321_iff (by decide)
+    (by decide)).mp h |>.2
+  exact (by decide : ¬ IsGoodSeq [2, 1, 3]) hg
