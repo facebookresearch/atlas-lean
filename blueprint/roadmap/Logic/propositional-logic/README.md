@@ -12,6 +12,7 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Model-count-preserving CNF transformations](model-count-preserving-cnf-transformations/README.md)
 - [Resolution](resolution/README.md)
 - [Resolution size and width](resolution-size-and-width/README.md)
+- [Semantic tableaux](semantic-tableaux/README.md)
 - [2-satisfiability](2-satisfiability/README.md)
 - [Davis–Putnam algorithm](davis-putnam-algorithm/README.md)
 - [Tseitin transformation](tseitin-transformation/README.md)

@@ -22,6 +22,7 @@ public import MathlibExt.NumberTheory.Recurrences.LucasSequenceNegation
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceDivisibilityGcdLucasUTwoMulDivPEqOne
 
 /-! # Divisibility and parity lemmas for Lucas sequences
 
@@ -92,18 +93,6 @@ public theorem_wanted prime_pow_succ_dvd_lucasU_two_mul_iff
     (hpi : (p : ℤ) ^ i ∣ L.p) (hpi' : ¬ (p : ℤ) ^ (i + 1) ∣ L.p)
     (n : ℕ) (hn : 0 < n) :
     (p : ℤ) ^ (i + 1) ∣ lucasU L (2 * n) ↔ p ∣ n
-
-/-- **Coprimality of $U_{2n}/P$ and $P$.** Let $P$ and $Q$ be integers with $Q \ne 0$, $P \ne 0$
-and $\gcd(P, Q) = 1$, and let $(U_n)$ be the Lucas sequence $U(P, Q)$. If $n$ is a positive
-integer with $\gcd(n, P) = 1$, then $\gcd(U_{2n}/P, P) = 1$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Lemma 2.6, "in particular" claim
-(`integers-2025-A107-lem-2-6`). -/
-public theorem_wanted gcd_lucasU_two_mul_div_p_eq_one
-    (L : LucasSequenceParams) (hcop : Int.gcd L.p L.q = 1) (hP : L.p ≠ 0)
-    (n : ℕ) (hn : 0 < n) (hnP : Int.gcd n L.p = 1) :
-    Int.gcd (lucasU L (2 * n) / L.p) L.p = 1
 
 /-- **Lucas sequences modulo 2.** Let $U = U(P, Q)$ be the Lucas sequence with integer parameters
 $P$ and $Q \ne 0$, let $D = P^2 - 4Q$, and suppose $2 \nmid \gcd(P, Q)$. Then $U$ is periodic
