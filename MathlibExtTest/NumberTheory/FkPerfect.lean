@@ -98,4 +98,16 @@ example : ¬ IsDeficientFkPerfect 3 105 := by
   rw [← h105]
   exact not_isDeficientFkPerfect_prod_primes 3 (by decide) {3, 5, 7} (by decide)
 
+-- Primes are not `[k, ℓ]`-near-perfect for `1 ≤ ℓ`, at zero and positive exponents.
+example : ¬ IsKLNearPerfect 0 1 2 :=
+  not_isKLNearPerfect_of_prime 0 1 2 (by decide) (by decide)
+
+example : ¬ IsKLNearPerfect 2 3 5 :=
+  not_isKLNearPerfect_of_prime 2 3 5 (by decide) (by decide)
+
+-- At `ℓ = 0` every prime is `[k, 0]`-near-perfect with divisor `1`.
+example (k p : ℕ) (hp : p.Prime) : IsKLNearPerfect k 0 p := by
+  refine ⟨1, one_dvd p, hp.one_lt, ?_⟩
+  simp only [hp.sum_divisors, one_pow, zero_mul, add_zero]
+
 end MathlibExtTest.NumberTheory.FkPerfect
