@@ -65,6 +65,7 @@ public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.Ring
 
 import MathlibExt.AlgebraicGeometry.EllipticCurve.DivisionPolynomialZSMul
+import MathlibExt.AlgebraicGeometry.EllipticCurve.XYIdeal
 import MathlibExt.AlgebraicGeometry.EllipticCurve.TorsionCardinality
 
 @[expose] public noncomputable section
@@ -284,9 +285,6 @@ variable {K : Type*} [Field K] {W : Affine K}
 
 instance moduleFinite : Module.Finite K[X] W.CoordinateRing :=
   Module.Finite.of_basis (CoordinateRing.basis W)
-
-instance isIntegral : Algebra.IsIntegral K[X] W.CoordinateRing :=
-  Algebra.IsIntegral.of_finite K[X] W.CoordinateRing
 
 theorem algebraMap_eq_mk_C (p : K[X]) : algebraMap K[X] W.CoordinateRing p = mk W (C p) := rfl
 
@@ -1154,23 +1152,8 @@ theorem CoordinateRing.evalAt_XYIdeal {a b : K} (h : (W⁄K).Equation a b) :
 omit [DecidableEq K] in
 theorem placeOf_injective {P Q : (W⁄K).Point} (hP : P ≠ 0) (hQ : Q ≠ 0)
     (h : placeOf W K P hP = placeOf W K Q hQ) : P = Q := by
-  have hI : CoordinateRing.XYIdeal (W⁄K) P.xc (C P.yc) = CoordinateRing.XYIdeal (W⁄K) Q.xc (C Q.yc)
-      :=
-    congrArg IsDedekindDomain.HeightOneSpectrum.asIdeal h
-  have hev := CoordinateRing.evalAt_XYIdeal W K (Point.nonsingular_xc_yc hP).left
-  rw [hI] at hev
-  have hx : P.xc = Q.xc := by
-    have := hev _ (Ideal.subset_span (Set.mem_insert _ _))
-    rw [CoordinateRing.XClass, CoordinateRing.evalAt_mk, evalEval_C, eval_sub, eval_X, eval_C,
-      sub_eq_zero] at this
-    exact this
-  have hy : P.yc = Q.yc := by
-    have := hev _ (Ideal.subset_span (Set.mem_insert_of_mem _ rfl))
-    rw
-        [CoordinateRing.YClass, CoordinateRing.evalAt_mk, evalEval_sub, evalEval_X, evalEval_C,
-          eval_C,
-      sub_eq_zero] at this
-    exact this
+  obtain ⟨hx, hy⟩ := (CoordinateRing.XYIdeal_eq_XYIdeal_iff (Point.nonsingular_xc_yc hP).left
+    Q.xc Q.yc).mp (congrArg IsDedekindDomain.HeightOneSpectrum.asIdeal h)
   rw [Point.eq_some_xc_yc hP, Point.eq_some_xc_yc hQ]
   congr 1
 
