@@ -16,6 +16,9 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
+- [Bayesian-alphabet priors for marker effects](bayesian-alphabet-marker-effect-priors/README.md)
+- [Homozygosity-by-descent hidden Markov models](homozygosity-by-descent-hidden-markov-models/README.md)
+- [Predicting cross means and variances](predicting-cross-means-and-variances/README.md)
 - [General and specific combining ability](general-and-specific-combining-ability/README.md)
 - [Genotype-by-environment reaction-norm models](genotype-by-environment-reaction-norm-models/README.md)
 - [Pure-pleiotropy model of mutation–selection balance](pure-pleiotropy-model-of-mutation-selection-balance/README.md)

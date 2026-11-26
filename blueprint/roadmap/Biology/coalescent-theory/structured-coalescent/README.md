@@ -42,6 +42,7 @@
 - [Coalescing random walks dual to the voter model on a finite graph](coalescing-random-walks-dual-to-the-voter-moran.md)
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 - [Isolation by distance](isolation-by-distance.md)
+- [Structured coalescent at a neutral site linked to a cyclically fluctuating balanced polymorphism](structured-coalescent-linked-to-cyclic-balanced-polymorphism.md)
 - [Structured coalescent for background selection with recombination](structured-coalescent-for-background-selection-with-recombination.md)
 - [Time-dependent isolation–migration model fitted to coalescence rates](time-dependent-isolation-migration-fit-to-coalescence-rates.md)
 - [IBD block sharing under spatial diffusion](ibd-block-sharing-under-spatial-diffusion/README.md)

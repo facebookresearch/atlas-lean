@@ -49,6 +49,7 @@
 - [Almost-sure repeated clicking of a finite mutation ratchet](muller-s-ratchet-model-and-almost-sure-clicking.md)
 
 - [Fates of a duplicated gene in a finite duplication–degeneration–complementation model](gene-duplicate-fates-in-a-finite-ddc-style-model.md)
+- [Background selection with recombination and a distribution of selection strengths](background-selection-with-recombination-and-a-distribution-of-effects.md)
 - [Background selection on a uniformly recombining chromosome](background-selection-on-a-uniformly-recombining-chromosome.md)
 - [Joint background selection and hitchhiking model of neutral diversity](joint-background-selection-and-hitchhiking-model-of-neutral-diversity.md)
 - [Recombination fraction with crossing over and gene conversion](recombination-fraction-with-crossing-over-and-gene-conversion.md)
