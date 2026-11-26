@@ -13,6 +13,7 @@ public import MathlibExt.Algebra.ContinuedFractions.RationalFunctionFareyPath
 public import Mathlib.FieldTheory.RatFunc.Valuation
 public import Mathlib.Data.Set.Card
 public import Mathlib.Algebra.Field.ZMod
+public import MathlibExt.Algebra.RationalFunctionFareyPathPolyContFractOfFareyPathDetNegOne
 
 namespace MetaMathlibExt
 
@@ -161,32 +162,6 @@ public theorem_wanted polyContFract_of_farey_path_det_neg_one_pow
     (∀ i, 1 ≤ i → i ≤ n → 0 < (a i).natDegree) ∧
       ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * u i) ∧
         (polyContFract a n).dens i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * v i)
-
-/-- **Farey paths of polynomials with all determinants −1.** Let $F$ be a field, let
-$n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$ and that
-for $1 \le i \le n$ we have $\deg v_{i-1} < \deg v_i$ and $u_i v_{i-1} - u_{i-1} v_i = -1$. Let
-$a_0, a_1, \ldots \in F[X]$ satisfy $a_0 = u_0$, $a_1 = -v_1$ and
-$a_i = (-1)^{i+1} (u_i v_{i-2} - u_{i-2} v_i)$ for $2 \le i \le n$. Then $a_i$ is nonconstant
-for $1 \le i \le n$, and for every $i \le n$ the numerator $A_i$ and denominator $B_i$ of the
-$i$th convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ are
-$A_i = \varepsilon_i u_i$ and $B_i = \varepsilon_i v_i$, where $\varepsilon_i = 1$ if
-$i \equiv 0, 3 \pmod 4$ and $\varepsilon_i = -1$ if $i \equiv 1, 2 \pmod 4$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Corollary 4. -/
-public theorem_wanted polyContFract_of_farey_path_det_neg_one
-    (u v : ℕ → F[X]) (n : ℕ) (hv0 : v 0 = 1)
-    (hdeg : ∀ i, 1 ≤ i → i ≤ n → (v (i - 1)).degree < (v i).degree)
-    (hdet : ∀ i, 1 ≤ i → i ≤ n → u i * v (i - 1) - u (i - 1) * v i = -1)
-    (a : ℕ → F[X]) (ha0 : a 0 = u 0) (ha1 : a 1 = -v 1)
-    (ha : ∀ i, 2 ≤ i → i ≤ n →
-      a i = C ((-1) ^ (i + 1)) * (u i * v (i - 2) - u (i - 2) * v i)) :
-    (∀ i, 1 ≤ i → i ≤ n → 0 < (a i).natDegree) ∧
-      ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F)
-          (C (if i % 4 = 0 ∨ i % 4 = 3 then 1 else -1) * u i) ∧
-        (polyContFract a n).dens i = algebraMap F[X] (RatFunc F)
-          (C (if i % 4 = 0 ∨ i % 4 = 3 then 1 else -1) * v i)
 
 /-- **Farey series over a field.** Let $F$ be a field and $n$ a natural number. The Farey series
 $\mathcal{F}_n$ of order $n$ over $F$ is the set of pairs $(u, v)$ of polynomials in $F[x]$, read
