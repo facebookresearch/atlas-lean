@@ -12,7 +12,7 @@ whether $Q$ has a complete rewriting using $\mathcal V$ is NP-complete.
 ## Proof depends on
 
 - [Finding small and complete rewritings of conjunctive queries is NP-complete](finding-small-and-complete-rewritings-is-np-complete.md)
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Containment of unions of conjunctive queries](../conjunctive-queries/cores-and-minimization/containment-of-unions-of-conjunctive-queries.md)
 
 ## Sources
 

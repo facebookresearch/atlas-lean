@@ -11,18 +11,12 @@ certain answers of $q$ on $I$ are the null-free tuples of $q(J)$. Hence, for the
 deciding solution existence and computing certain answers take time polynomial in $\lvert I \rvert$ (data
 complexity); this is not a combined-complexity bound.
 
-## Expansion
-
-This node states a precise result.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases (with unions of conjunctive queries).
-
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Weakly acyclic dependencies have polynomially bounded chase](weakly-acyclic-dependencies-have-polynomially-bounded-chase.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Containment of unions of conjunctive queries](../conjunctive-queries/cores-and-minimization/containment-of-unions-of-conjunctive-queries.md)
 
 ## Proof depends on
 

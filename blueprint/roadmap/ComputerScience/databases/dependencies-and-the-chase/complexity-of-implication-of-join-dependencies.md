@@ -12,7 +12,7 @@ proofs credited in that book's bibliographic notes for Chapter 8 and cites them 
 
 ## Depends on
 
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Join dependencies and multivalued dependencies](multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 
 ## Proof depends on

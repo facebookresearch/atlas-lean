@@ -15,12 +15,9 @@ For infinite sequences, fairness must be required separately: an arbitrary infin
 need not apply every trigger. Example (added here for illustration): from $R(a)$ with $R(x) \to \exists y\, S(x,y)$,
 $S(x,y) \to R(y)$ and $R(x) \to T(x)$, a run can extend the $R$/$S$ chain forever and never add $T(a)$.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases.
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Sources
 

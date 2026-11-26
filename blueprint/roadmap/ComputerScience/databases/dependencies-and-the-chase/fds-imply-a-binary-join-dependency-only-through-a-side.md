@@ -6,7 +6,7 @@ $X \twoheadrightarrow Y$) if and only if $F$ implies $X \to Y$ or $F$ implies $X
 
 ## Depends on
 
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Join dependencies and multivalued dependencies](multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
 - [Entailment of functional dependencies](../functional-dependencies/entails.md)
 
 ## Proof depends on

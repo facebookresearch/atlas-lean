@@ -1,0 +1,14 @@
+# A map of annotations commutes with positive relational algebra exactly when it is a semiring homomorphism
+
+Let $K$ and $K'$ be commutative semirings and $h : K \to K'$ a map, applied to $K$-relations pointwise: $h(R)(t) = h(R(t))$.
+Then $q(h(R)) = h(q(R))$ for every positive relational algebra query $q$ of one argument and every
+[$K$-relation](k-relations-and-positive-relational-algebra-over-a-semiring.md) $R$ if and only if $h$ is a semiring homomorphism,
+that is, $h(0) = 0$, $h(1) = 1$, $h(a + b) = h(a) + h(b)$ and $h(a b) = h(a) h(b)$.
+
+## Depends on
+
+- [K-relations and positive relational algebra over a semiring](k-relations-and-positive-relational-algebra-over-a-semiring.md)
+
+## Sources
+
+- T. J. Green, G. Karvounarakis and V. Tannen, *Provenance semirings*, PODS 2007, <http://www.cs.ucdavis.edu/~green/papers/pods07.pdf>, Proposition 3.5.

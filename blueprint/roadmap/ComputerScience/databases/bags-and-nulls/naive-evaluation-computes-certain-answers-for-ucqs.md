@@ -10,18 +10,17 @@ valuation makes the query true. The theorem is distinct from Libkin's Propositio
 SQL's three-valued evaluation, in which every comparison involving a null is unknown, returns only
 certain answers on such queries.
 
-## Expansion
-
-This node states a precise result.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases.
-- Proof prerequisite: Chandra-Merlin homomorphism theorem.
-
 ## Depends on
 
 - [Incomplete databases, possible worlds and certain answers](incomplete-databases-possible-worlds-and-certain-answers.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Containment of unions of conjunctive queries](../conjunctive-queries/cores-and-minimization/containment-of-unions-of-conjunctive-queries.md)
+
+## Proof depends on
+
+- [Homomorphism theorem for conjunctive queries with constants](../conjunctive-queries/cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
+- [Unions of conjunctive queries are preserved under homomorphisms](../conjunctive-queries/cores-and-minimization/unions-of-conjunctive-queries-are-preserved-under-homomorphisms.md)
+- [Naive evaluation is exact for homomorphism-preserved queries](naive-evaluation-is-exact-for-homomorphism-preserved-queries.md)
 
 ## Sources
 

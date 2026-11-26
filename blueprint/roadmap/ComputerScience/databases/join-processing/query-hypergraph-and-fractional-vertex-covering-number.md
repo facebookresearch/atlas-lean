@@ -9,13 +9,9 @@ edge packing (weights $u_S \ge 0$ on atoms with $\sum_{S \ni x} u_S \le 1$ for e
 covering problem is the one in the MPC lower bound; it is not the fractional edge cover of the AGM
 bound.
 
-## Expansion
+## Depends on
 
-This node states a precise definition.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases.
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Sources
 

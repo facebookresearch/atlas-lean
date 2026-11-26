@@ -14,7 +14,7 @@ $\mathrm{sg}(y) = \{S, T\}$.
 
 ## Informally uses
 
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 
 ## Sources
 

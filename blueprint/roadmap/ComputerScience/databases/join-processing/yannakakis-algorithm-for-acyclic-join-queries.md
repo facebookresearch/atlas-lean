@@ -7,16 +7,15 @@ attributes $X$, the expression $\pi_X(\bowtie I)$ can be computed in time polyno
 input instance and the output. For a Boolean acyclic conjunctive query $q$, a bottom-up semijoin pass decides
 whether $q$ holds on a database $D$ in time $O(\|D\| \log \|D\| \cdot \|q\|)$.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases.
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Proof depends on
 
 - [Characterizations of acyclic database schemas](characterizations-of-acyclic-database-schemas.md)
+- [Join trees of acyclic conjunctive queries can be computed in linear time](join-trees-of-acyclic-cqs-in-linear-time.md)
+- [Semijoin recurrence along a join tree for Boolean acyclic queries](semijoin-recurrence-along-a-join-tree.md)
 
 ## Sources
 

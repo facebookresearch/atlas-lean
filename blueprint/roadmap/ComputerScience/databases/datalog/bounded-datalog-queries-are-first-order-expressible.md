@@ -30,7 +30,8 @@ of conjunctive queries (the source's Proposition 36.2) used for (1) implies (2).
 
 ## Proof depends on
 
-- [Datalog queries are monotone and homomorphism-preserved; CQ-in-Datalog containment](datalog-queries-are-monotone-and-homomorphism-preserved-cq-i.md)
+- [Datalog queries are equivalent to infinitary unions of conjunctive queries](homomorphism-preservation-and-containment/datalog-queries-are-equivalent-to-infinitary-ucqs.md)
+- [Datalog queries are preserved under homomorphisms](homomorphism-preservation-and-containment/datalog-queries-are-preserved-under-homomorphisms.md)
 - [Positive relational algebra = unions of conjunctive queries = positive existential calculus](../relational-calculus/positive-relational-algebra-unions-of-conjunctive-queries-po.md)
 
 ## Sources

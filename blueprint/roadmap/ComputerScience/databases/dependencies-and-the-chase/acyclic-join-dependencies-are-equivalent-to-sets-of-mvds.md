@@ -9,7 +9,7 @@ $Q_i = X_{i+1} \cup \cdots \cup X_n$.
 
 ## Depends on
 
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Join dependencies and multivalued dependencies](multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
 - [Characterizations of acyclic database schemas](../join-processing/characterizations-of-acyclic-database-schemas.md)
 
 ## Proof depends on

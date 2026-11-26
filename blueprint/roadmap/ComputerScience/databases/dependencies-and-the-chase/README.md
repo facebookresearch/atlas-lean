@@ -1,6 +1,7 @@
 # Dependencies and the chase
 
 - [Chasing tableau queries with functional and join dependencies](chasing-tableau-queries-with-functional-and-join-dependencie.md)
+- [The chase for functional and inclusion dependencies](chase-for-functional-and-inclusion-dependencies/README.md)
 - [Containment of tableau queries under functional and join dependencies via the chase](containment-under-fds-and-jds-via-the-chase.md)
 - [Inference rules for functional and multivalued dependencies are sound and complete](fd-and-mvd-inference-rules-are-sound-and-complete.md)
 - [Inference rules for multivalued dependencies alone are sound and complete](mvd-inference-rules-are-sound-and-complete.md)
@@ -10,6 +11,7 @@
 - [Inclusion dependencies and finite implication](inclusion-dependencies-and-finite-implication.md)
 - [Implication of inclusion dependencies is PSPACE-complete](implication-of-inclusion-dependencies-is-pspace-complete.md)
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Guarded tuple-generating dependencies](guarded-tgds/README.md)
 - [Implication of full dependencies is decidable](implication-of-full-dependencies-is-decidable.md)
 - [Implication of embedded dependencies is undecidable](implication-of-embedded-dependencies-is-undecidable.md)
 - [Weakly acyclic dependencies have polynomially bounded chase](weakly-acyclic-dependencies-have-polynomially-bounded-chase.md)
@@ -19,4 +21,4 @@
 - [The core of the universal solutions in data exchange](core-of-the-universal-solutions.md)
 - [The core of the universal solutions is computable in polynomial time for target egds](core-of-universal-solutions-in-polynomial-time.md)
 - [Certain answers on universal solutions are the null-free answers on the core](certain-answers-on-universal-solutions-via-the-core.md)
-- [Multivalued and join dependencies; 4NF](multivalued-and-join-dependencies-4nf.md)
+- [Multivalued and join dependencies](multivalued-and-join-dependencies/README.md)

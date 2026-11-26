@@ -6,13 +6,10 @@ variables (the chase is Church–Rosser). Moreover, $F$ logically implies a depe
 chasing the tableau associated with $\sigma$ by $F$ produces the conclusion of $\sigma$. This yields the
 tableau test for lossless joins.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Multivalued and join dependencies; 4NF.
-- Statement prerequisite: Conjunctive queries, answers and canonical databases.
+- [Join dependencies and multivalued dependencies](multivalued-and-join-dependencies/join-dependencies-and-multivalued-dependencies.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Sources
 

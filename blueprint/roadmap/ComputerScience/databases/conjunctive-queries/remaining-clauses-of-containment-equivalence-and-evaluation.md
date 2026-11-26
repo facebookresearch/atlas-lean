@@ -6,15 +6,15 @@ two queries as the input; it remains NP-complete for single-relation typed table
 $q \equiv q'$ means containment in both directions, and $q \subseteq q'$ holds iff the summary of $q$ is an answer of
 $q'$ on the tableau of $q$; hardness is by reduction from exact cover.
 
-## Expansion
+## Depends on
 
-This node states a precise result.
+- [Containment, equivalence and homomorphisms of conjunctive queries](cores-and-minimization/containment-equivalence-and-homomorphisms-of-conjunctive-queries.md)
+- [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
 
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
+## Proof depends on
 
-- Statement prerequisite: conjunctive (tableau) queries and their containment and equivalence.
-- Proof prerequisites: NP-completeness of containment of conjunctive queries; the homomorphism theorem for tableau
-  queries.
+- [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
+- [Homomorphism theorem for conjunctive queries with constants](cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
 
 ## Sources
 
