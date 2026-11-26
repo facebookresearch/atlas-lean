@@ -65,7 +65,7 @@ private noncomputable def trivialAction (M : Type*) [AddCommGroup M] : OpenActio
     exact isOpen_univ
 
 /-- Every step is trivial for the trivial action. -/
-example {M : Type*} [AddCommGroup M] (A B : AddSubgroup M) :
+private theorem isTrivialStep_trivialAction {M : Type*} [AddCommGroup M] (A B : AddSubgroup M) :
     IsTrivialStep (trivialAction M) A B := by
   intro σ x _
   simp [trivialAction]
@@ -82,25 +82,56 @@ example {M : Type*} [AddCommGroup M]
     ((⟨DistribMulAction.toAddAut _ M, h⟩ : OpenAction M).φ σ).toAdd x = σ • x :=
   rfl
 
-/-- `ZMod p` with the trivial action has the one-step chain `⊥ ≤ ⊤` with its step tagged
-trivial, so it is Mazur admissible at `p`, and `filtAlpha` counts that step. -/
+/-- The one-step chain `⊥ ≤ ⊤` of `ZMod p` has quotient of `Nat.card` `p`, for every `p`. -/
+private theorem natCard_top_quotient_bot (p : ℕ) :
+    Nat.card (↥(⊤ : AddSubgroup (ZMod p)) ⧸ (⊥ : AddSubgroup (ZMod p)).addSubgroupOf ⊤) = p := by
+  rw [AddSubgroup.bot_addSubgroupOf, Nat.card_congr QuotientAddGroup.quotientBot.toEquiv,
+    AddSubgroup.card_top, Nat.card_zmod]
+
+/-- The one-step chain `⊥ ≤ ⊤` of `ZMod p` with the trivial action, its step tagged `b`, given
+the condition the tag names. -/
+private noncomputable def zmodChain (p : ℕ) (b : Bool)
+    (h : if b then IsTrivialStep (trivialAction (ZMod p)) ⊥ ⊤
+      else IsCyclotomicStep p (trivialAction (ZMod p)) ⊥ ⊤) :
+    AdmissibleChain p (trivialAction (ZMod p)) where
+  n := 1
+  step := ![⊥, ⊤]
+  hbot := rfl
+  htop := rfl
+  hmono i := by fin_cases i; exact bot_le
+  tag _ := b
+  hcard i := by fin_cases i; exact natCard_top_quotient_bot p
+  hact i := by fin_cases i; exact h
+
+/-- `ZMod p` with the trivial action has the one-step chain `⊥ ≤ ⊤` with its step tagged `true`,
+and `filtAlpha` counts that step. This holds for every `p`, `p = 0` included. -/
 example (p : ℕ) :
-    ∃ c : AdmissibleChain p (trivialAction (ZMod p)), filtLength c = 1 ∧ filtAlpha c = 1 := by
-  refine ⟨
-    { n := 1
-      step := ![⊥, ⊤]
-      hbot := rfl
-      htop := rfl
-      hmono := fun i => by fin_cases i; exact bot_le
-      tag := fun _ => true
-      hcard := fun i => ?_
-      hact := fun i => ?_ }, rfl, rfl⟩
-  · fin_cases i
-    show Nat.card (↥(⊤ : AddSubgroup (ZMod p)) ⧸ (⊥ : AddSubgroup (ZMod p)).addSubgroupOf ⊤) = p
-    rw [AddSubgroup.bot_addSubgroupOf, Nat.card_congr QuotientAddGroup.quotientBot.toEquiv,
-      AddSubgroup.card_top, Nat.card_zmod]
-  · intro σ x _
-    simp [trivialAction]
+    filtLength (zmodChain p true (isTrivialStep_trivialAction ⊥ ⊤)) = 1 ∧
+      filtAlpha (zmodChain p true (isTrivialStep_trivialAction ⊥ ⊤)) = 1 :=
+  ⟨rfl, rfl⟩
+
+/-- For a prime `p`, `ZMod p` with the trivial action is Mazur admissible at `p`. -/
+example {p : ℕ} (hp : p.Prime) : IsMazurAdmissible p (trivialAction (ZMod p)) :=
+  ⟨hp, ⟨zmodChain p true (isTrivialStep_trivialAction ⊥ ⊤)⟩⟩
+
+/-- Level zero is rejected. `ZMod 0` is `ℤ`, so the quotient of its one-step chain is infinite and
+has `Nat.card` equal to `0`: the chain exists at `p = 0`, but `IsMazurAdmissible` asks for a
+prime. -/
+example : Nonempty (AdmissibleChain 0 (trivialAction (ZMod 0))) ∧
+    ¬ IsMazurAdmissible 0 (trivialAction (ZMod 0)) :=
+  ⟨⟨zmodChain 0 true (isTrivialStep_trivialAction ⊥ ⊤)⟩, fun h => Nat.not_prime_zero h.1⟩
+
+/-- A prime alone is not enough: an admissible chain for `2` would make the order of `ZMod 3` a
+power of `2`, so `ZMod 3` with the trivial action is not Mazur admissible at `2`. -/
+example : ¬ IsMazurAdmissible 2 (trivialAction (ZMod 3)) := by
+  rintro ⟨hp, ⟨c⟩⟩
+  have h := c.natCard_eq_pow_filtLength hp
+  rw [Nat.card_zmod, filtLength_eq] at h
+  generalize c.n = k at h
+  rcases k with _ | k
+  · simp at h
+  · rw [pow_succ] at h
+    omega
 
 /-- For a prime `p`, each subgroup of an admissible chain is stable under the action, so the
 chain is a filtration by Galois submodules. -/
@@ -127,7 +158,8 @@ example {M : Type*} [AddCommGroup M] {p : ℕ} (hp : p.Prime) {Φ : OpenAction M
 /-- For `p = 2` a step of order `2` is trivial exactly when it is cyclotomic: `-1` is the only
 primitive square root of unity, and every Galois element fixes it. So for `p = 2` the tags of a
 chain, and with them `filtAlpha`, are a free choice. -/
-example {M : Type*} [AddCommGroup M] (Φ : OpenAction M) {A B : AddSubgroup M}
+private theorem isTrivialStep_iff_isCyclotomicStep_two {M : Type*} [AddCommGroup M]
+    (Φ : OpenAction M) {A B : AddSubgroup M}
     (hcard : Nat.card (↥B ⧸ A.addSubgroupOf B) = 2) :
     IsTrivialStep Φ A B ↔ IsCyclotomicStep 2 Φ A B := by
   have h2 : ∀ x ∈ B, 2 • x ∈ A := by
@@ -149,3 +181,12 @@ example {M : Type*} [AddCommGroup M] (Φ : OpenAction M) {A B : AddSubgroup M}
     abel
   · intro h σ x hx
     simpa using h σ (-1) (IsPrimitiveRoot.neg_one 0 (by norm_num)) 1 (by simp) x hx
+
+/-- Only tags count: `ZMod 2` with the trivial action also has the one-step chain with its step
+tagged `false` (cyclotomic). Its quotient has trivial action, yet `filtAlpha` is `0`. -/
+example :
+    let c := zmodChain 2 false ((isTrivialStep_iff_isCyclotomicStep_two (trivialAction (ZMod 2))
+      (natCard_top_quotient_bot 2)).mp (isTrivialStep_trivialAction ⊥ ⊤))
+    filtAlpha c = 0 ∧
+      ∀ i : Fin c.n, IsTrivialStep (trivialAction (ZMod 2)) (c.step i.castSucc) (c.step i.succ) :=
+  ⟨rfl, fun _ => isTrivialStep_trivialAction _ _⟩

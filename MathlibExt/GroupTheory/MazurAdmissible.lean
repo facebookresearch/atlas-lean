@@ -50,16 +50,19 @@ with its Krull topology, and `M` is an additive commutative group with an action
 group of a finite extension of `ℚ`.
 
 * `AdmissibleChain p Φ` is a chain of subgroups `⊥ = M₀ ≤ M₁ ≤ ⋯ ≤ Mₙ = ⊤` of `M` in which each
-  quotient `Mᵢ₊₁ / Mᵢ` has `p` elements, with a tag for each step saying whether the Galois group
-  acts on that quotient trivially (`IsTrivialStep`) or through the mod-`p` cyclotomic character
-  (`IsCyclotomicStep`). For a prime `p` either condition makes `Mᵢ₊₁` stable under the action,
-  so the chain is a filtration of `M` by Galois submodules whose successive quotients are
-  isomorphic to the Galois modules `ℤ/p` or `μ_p`.
-* `IsMazurAdmissible p Φ` says that such a chain exists. For a prime `p` this is Mazur's
-  condition that the Galois module `M` has an admissible filtration.
+  quotient `Mᵢ₊₁ / Mᵢ` has `Nat.card` equal to `p`, with a tag for each step naming the condition
+  it satisfies: `true` for trivial action of the Galois group on the quotient (`IsTrivialStep`),
+  `false` for action through the mod-`p` cyclotomic character (`IsCyclotomicStep`). For a prime
+  `p` either condition makes `Mᵢ₊₁` stable under the action, so the chain is a filtration of `M`
+  by Galois submodules whose successive quotients are isomorphic to the Galois modules `ℤ/p` or
+  `μ_p`.
+* `IsMazurAdmissible p Φ` says that `p` is prime and that such a chain exists: Mazur's condition
+  that the Galois module `M` has an admissible filtration. Primality is part of the definition
+  because `Nat.card` of an infinite type is `0`, so at `p = 0` the group `ℤ` with the trivial
+  action has a one-step chain.
 * `filtLength c` is the length `n` of a chain `c`, and `filtAlpha c` is the number of its steps
-  tagged trivial. They are the Galois-module counterparts of Mazur's invariants `ℓ` (the length)
-  and `α` (the number of quotients `ℤ/p` in an admissible filtration).
+  whose tag is `true`. They are the Galois-module counterparts of Mazur's invariants `ℓ` (the
+  length) and `α` (the number of quotients `ℤ/p` in an admissible filtration).
 
 ## Main results
 
@@ -76,11 +79,13 @@ subgroup schemes whose successive quotients are the group schemes `ℤ/p` or `μ
 such a filtration exists exactly when the Galois module of its points has an admissible
 filtration. `IsMazurAdmissible` is this Galois-module condition only. It involves no group
 scheme, so a module satisfying it need not be the Galois module of an admissible group; it may,
-for instance, be ramified at a prime other than `p` and `N`. The definitions also allow any
-natural number `p`; the description above is for prime `p`. Mazur defines `α` on the group
-scheme and notes that for odd `p` it is determined by the Galois module, but not for `p = 2`.
-Here, for `p = 2`, a step is trivial exactly when it is cyclotomic, so `filtAlpha` depends on the
-tags.
+for instance, be ramified at a prime other than `p` and `N`. The chain API (`IsCyclotomicStep`,
+`AdmissibleChain`, `filtLength`, `filtAlpha`) allows any natural number `p`, as the upstream
+definitions do; `IsMazurAdmissible` adds the primality of `p`, which the upstream definition
+leaves out. Mazur defines `α` on the group scheme and notes that for odd `p` it is determined by
+the Galois module, but not for `p = 2`. Here, for `p = 2`, a step is trivial exactly when it is
+cyclotomic, so every quotient has trivial action while `filtAlpha` counts only the steps tagged
+`true`.
 
 ## References
 
@@ -139,8 +144,9 @@ def IsCyclotomicStep (p : ℕ) (Φ : OpenAction M) (A B : AddSubgroup M) : Prop 
       ∀ x ∈ B, (Φ.φ σ).toAdd x - a • x ∈ A
 
 /-- An admissible chain of length `n` in `M`: a chain of subgroups from
-`⊥` to `⊤` in which each successive quotient has cardinality `p` and
-each step is either trivial or cyclotomic for `Φ`. -/
+`⊥` to `⊤` in which each successive quotient has `Nat.card` equal to `p`
+(so for `p = 0` the quotients are infinite) and each step is trivial or
+cyclotomic for `Φ`, as its tag records. -/
 structure AdmissibleChain (p : ℕ) (Φ : OpenAction M) where
   /-- The length of the chain. -/
   n : ℕ
@@ -152,9 +158,9 @@ structure AdmissibleChain (p : ℕ) (Φ : OpenAction M) where
   htop : step (Fin.last n) = ⊤
   /-- The chain is monotone. -/
   hmono : ∀ i : Fin n, step i.castSucc ≤ step i.succ
-  /-- Whether each step is trivial (`true`) or cyclotomic (`false`). -/
+  /-- The condition each step is recorded to satisfy: trivial (`true`) or cyclotomic (`false`). -/
   tag : Fin n → Bool
-  /-- Each successive quotient has cardinality `p`. -/
+  /-- Each successive quotient has `Nat.card` equal to `p`. -/
   hcard : ∀ i : Fin n,
     Nat.card (↥(step i.succ) ⧸ (step i.castSucc).addSubgroupOf (step i.succ)) = p
   /-- Each step is trivial or cyclotomic according to its tag. -/
@@ -168,11 +174,11 @@ variable {p : ℕ} {Φ : OpenAction M}
 def filtLength (c : AdmissibleChain p Φ) : ℕ :=
   c.n
 
-/-- The number of steps of an admissible chain tagged trivial (`tag i = true`), the steps on
-whose quotient the Galois group acts trivially. It is the Galois-module counterpart of Mazur's
-invariant `α`, the number of quotients `ℤ/p` in an admissible filtration. It counts the tags of
-the chain `c`: for `p = 2` a step is trivial exactly when it is cyclotomic, so there the tags,
-and with them `filtAlpha c`, are a free choice. -/
+/-- The number of steps of an admissible chain whose tag is `true`. Only tags are counted: a step
+tagged `false` is cyclotomic, and for `p = 2` its quotient also has trivial action (the mod-`2`
+cyclotomic character is trivial), but it is not counted. So `filtAlpha c` depends on the tags
+chosen in `c`. It is the Galois-module counterpart of Mazur's invariant `α`, the number of
+quotients `ℤ/p` in an admissible filtration. -/
 def filtAlpha (c : AdmissibleChain p Φ) : ℕ :=
   (Finset.univ.filter fun i => c.tag i = true).card
 
@@ -206,12 +212,15 @@ public theorem natCard_eq_pow_filtLength {q : ℕ} (_hq : q.Prime)
 
 end AdmissibleChain
 
-/-- `M` is Mazur admissible at `p` for `Φ` if it admits an admissible chain. For a prime `p`
-this says that the Galois module `M` has an admissible filtration in Mazur's sense: a filtration
-by Galois submodules whose successive quotients are isomorphic to the Galois modules `ℤ/p`
-(trivial action) or `μ_p` (action through the mod-`p` cyclotomic character). It is a condition
-on the Galois module only, not Mazur's notion of an admissible group scheme. -/
+/-- `M` is Mazur admissible at `p` for `Φ` if `p` is prime and `M` admits an admissible chain for
+`p`: the Galois module `M` has an admissible filtration in Mazur's sense, a filtration by Galois
+submodules whose successive quotients are isomorphic to the Galois modules `ℤ/p` (trivial
+action) or `μ_p` (action through the mod-`p` cyclotomic character). Primality is part of the
+definition because a chain only asks each quotient to have `Nat.card` equal to `p`, and
+`Nat.card` of an infinite type is `0`, so at `p = 0` the group `ℤ` with the trivial action has a
+chain. It is a condition on the Galois module only, not Mazur's notion of an admissible group
+scheme. -/
 def IsMazurAdmissible (p : ℕ) (Φ : OpenAction M) : Prop :=
-  Nonempty (AdmissibleChain p Φ)
+  p.Prime ∧ Nonempty (AdmissibleChain p Φ)
 
 end MazurAdmissible
