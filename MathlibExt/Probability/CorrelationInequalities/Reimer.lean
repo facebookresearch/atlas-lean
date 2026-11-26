@@ -16,8 +16,9 @@ public import MathlibExt.Probability.CorrelationInequalities.DisjointOccurrence
 # Reimer's inequality: statement, reductions, and the monotone cases
 
 Reimer's inequality (the van den Berg–Kesten conjecture) states that `P(A □ B) ≤ P(A) P(B)` for
-**all** events `A, B` under a product measure on `{0, 1}^n`. This file does **not** prove it. It
-states it as the proposition `StatMech.ReimerWprobCore` and proves:
+**all** events `A, B` under a product measure on `{0, 1}^n`. This file does **not** prove it
+(`MathlibExt.Probability.CorrelationInequalities.ReimerInequality` does). It states it as the
+proposition `StatMech.ReimerWprobCore` and proves:
 
 * the reduction from `Fin n` to an arbitrary finite coordinate set and to the product Bernoulli
   measure, assuming `ReimerWprobCore`;
@@ -56,7 +57,8 @@ variable {E F : Type*}
 /-- **Reimer's inequality** (the van den Berg–Kesten conjecture, proved by Reimer 2000) for
 product probability weights on `Fin n`: for every `n`, every weight `φ` with `φ ≥ 0` and
 `φ i false + φ i true = 1`, and all events `A, B`, `wprob φ (A □ B) ≤ wprob φ A * wprob φ B`.
-This is a proposition; it is not proved in this library. -/
+This is a proposition; `MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core` proves
+it. -/
 def ReimerWprobCore : Prop :=
   ∀ (n : ℕ) (φ : Fin n → Bool → ℝ),
     (∀ i b, 0 ≤ φ i b) → (∀ i, φ i false + φ i true = 1) →
