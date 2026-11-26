@@ -24,6 +24,9 @@ open Set MeasureTheory in
 set $P \subseteq \mathbb{R}^d$ and all real numbers $m \le n$,
 $\mathrm{opx}(m, P, d) \le \mathrm{opx}(n, P, d)$.
 
+The source defines $\mathrm{opx}(n, P, d)$ only for positive side lengths $n$; under the definition
+used here, the inequality also holds when either side length is nonpositive.
+
 Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.2
 (`integers-2024-A1-lem-5-2`). -/
 public theorem opxD_mono_left {d : ℕ} (P : Set (Fin d → ℝ)) {m n : ℝ} (hmn : m ≤ n) :
