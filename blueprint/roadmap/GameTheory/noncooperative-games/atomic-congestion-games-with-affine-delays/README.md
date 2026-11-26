@@ -8,6 +8,7 @@ In an atomic congestion game each player is a unit of traffic. With affine delay
 - [Affine congestion games are (5/3, 1/3)-smooth](is-smooth-of-affine.md)
 - [Price of anarchy 5/2 for affine congestion games](social-cost-le-of-is-pure-nash-of-affine.md)
 - [Price of anarchy 5/2 for no-regret play in affine congestion games](average-social-cost-le-of-affine.md)
+- [Efficiency of Atomic Congestion Games](atomic-congestion-efficiency/README.md)
 
 ## Related topics
 
