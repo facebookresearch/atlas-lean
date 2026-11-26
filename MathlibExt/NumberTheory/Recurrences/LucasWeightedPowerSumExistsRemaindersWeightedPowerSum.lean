@@ -19,6 +19,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.Recurrences.LucasBinetFormula
 
 /-!
 # Remainders for weighted Lucas power sums
@@ -32,20 +33,6 @@ Fibonacci Quarterly 62 (2024), no. 3 (primary text: arXiv:2607.09105), Propositi
 -/
 
 namespace MetaMathlibExt
-
-private theorem lucasU_binet (P : LucasSequenceParams) (α β : ℝ)
-    (hsum : α + β = (P.p : ℝ)) (hprod : α * β = (P.q : ℝ)) (hne : α ≠ β) (n : ℕ) :
-    (lucasU P n : ℝ) = (α ^ n - β ^ n) / (α - β) := by
-  have hd : α - β ≠ 0 := sub_ne_zero.mpr hne
-  induction n using Nat.twoStepInduction with
-  | zero => simp [lucasU]
-  | one => simp [lucasU, hd]
-  | more n ih₀ ih₁ =>
-    rw [lucasU_add_two, Int.cast_sub, Int.cast_mul, Int.cast_mul, ih₀, ih₁,
-      ← hsum, ← hprod]
-    field_simp
-    simp only [pow_succ]
-    ring
 
 private theorem ag_identity (x : ℝ) (k : ℕ) :
     (∑ j ∈ Finset.Icc 1 k, (j : ℝ) * x ^ j) * (x - 1) ^ 2 =
@@ -327,7 +314,8 @@ private theorem linear_solution_index (P : LucasSequenceParams)
       nlinarith [abs_nonneg β]
     have hh : β ^ m ≤ α ^ m := by
       exact (le_abs_self _).trans (by rw [abs_pow]; exact pow_le_pow_left₀ (abs_nonneg _) hβabs _)
-    have hbin := lucasU_binet P α β hsum hprod (by change α - β = s at hdiff; linarith) m
+    have hbin := ((lucas_binet_formulas_of_field P α β hsum hprod).1
+      (by change α - β = s at hdiff; linarith) m).1
     have hnon : (0 : ℝ) ≤ lucasU P m := by
       rw [hbin, hdiff]
       exact div_nonneg (sub_nonneg.mpr hh) (by linarith)
@@ -398,7 +386,7 @@ private theorem linear_solution_cancels (P : LucasSequenceParams) (α β s : ℝ
     have hhi : z < (1 : ℤ) := by exact_mod_cast hh.2
     omega
   have hbin (m : ℕ) : α ^ m - β ^ m = s * (lucasU P m : ℝ) := by
-    have hh := lucasU_binet P α β hsum hprod (by linarith) m
+    have hh := ((lucas_binet_formulas_of_field P α β hsum hprod).1 (by linarith) m).1
     rw [hdiff] at hh
     exact (div_eq_iff (by linarith : s ≠ 0)).1 hh.symm |>.trans (by ring)
   have hsol' : (∑ j ∈ Finset.Icc 1 k, (j : ℝ) * (lucasU P j : ℝ)) = lucasU P n := by
@@ -490,7 +478,7 @@ private theorem exists_auxiliary_remainders (P : LucasSequenceParams) (α β s :
   have hα0 : 0 < α := by linarith
   have hs0 : 0 < s := by linarith
   have hu (m : ℕ) : (lucasU P m : ℝ) = (α ^ m - β ^ m) / s := by
-    have hh := lucasU_binet P α β hsum hprod (by linarith) m
+    have hh := ((lucas_binet_formulas_of_field P α β hsum hprod).1 (by linarith) m).1
     simpa only [hdiff] using hh
   let E₁ := ∑ j ∈ Finset.Icc 1 k, (j : ℝ) * ((lucasU P j : ℝ) ^ p - α ^ (j * p) / s ^ p)
   let E₂ := (lucasU P n : ℝ) ^ q - α ^ (n * q) / s ^ q
@@ -564,12 +552,6 @@ private theorem equation_of_diff (R₁ R₂ S A B C E α : ℝ) (k p q n : ℕ)
     _ = A * S - A * α ^ p / E - α ^ (q * n) := by rw [hS]; ring
     _ = _ := by nlinarith only [hb]
 
-private theorem sqrt_pow_eq_rpow (D : ℝ) (hD : 0 < D) (t : ℕ) :
-    (Real.sqrt D) ^ t = D ^ ((t : ℝ) / 2) := by
-  rw [Real.sqrt_eq_rpow, ← Real.rpow_natCast, ← Real.rpow_mul hD.le]
-  congr 1
-  ring
-
 @[expose] public section
 
 /-- **Remainder form of the weighted power-sum equation for Lucas sequences.** Let $x$ be a
@@ -622,7 +604,8 @@ public theorem exists_remainders_weighted_power_sum (P : LucasSequenceParams)
   obtain ⟨R₁, R₂, hR₁, hR₂, hd⟩ := exists_auxiliary_remainders P α β s hy hx hD n k p q
     hn hp hq hk hsol hα hs hs2 hsum hprod hdiff hab hβ
   refine ⟨R₁, R₂, hR₁, hR₂, ?_⟩
-  have hsp (t : ℕ) : s ^ t = D ^ ((t : ℝ) / 2) := sqrt_pow_eq_rpow D hD0 t
+  have hsp (t : ℕ) : s ^ t = D ^ ((t : ℝ) / 2) := by
+    rw [Real.rpow_div_two_eq_sqrt (t : ℝ) hD0.le, Real.rpow_natCast]
   have hsplit : D ^ (((q : ℝ) - p) / 2) = s ^ q / s ^ p := by
     rw [show ((q : ℝ) - p) / 2 = (q : ℝ) / 2 - (p : ℝ) / 2 by ring,
       Real.rpow_sub hD0, hsp, hsp]
