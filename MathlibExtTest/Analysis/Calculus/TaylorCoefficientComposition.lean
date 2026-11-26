@@ -12,13 +12,16 @@ public import MathlibExt.Analysis.Calculus.TaylorCoefficientComposition
 import Mathlib.Analysis.Calculus.ContDiff.Operations
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 
 /-!
 # Tests for Faà di Bruno's formula for Taylor coefficients
 
 The first-order case is the chain rule, and the second-order case is checked
 numerically for `f x = x ^ 3` and `g x = x ^ 2` at `1`, where the two
-partitions of `2` contribute `3` and `12`.
+partitions of `2` contribute `3` and `12`. A direct computation of the second
+derivative of the composite `x ^ 6`, which does not use the formula, gives the
+same Taylor coefficient `15`.
 -/
 
 @[expose] public section
@@ -152,5 +155,16 @@ example : iteratedDeriv 2 ((fun x : ℝ => x ^ 3) ∘ (fun x : ℝ => x ^ 2)) 1
   simp only [Multiset.count_singleton, Multiset.card_singleton, iteratedDeriv_one, one_pow,
     e2, e3, e4]
   norm_num [e1]
+
+/-- A cross-check of the previous example that does not use the formula: the
+composite is `x ^ 6`, whose second derivative at `1` is `6 * 5 = 30`, so the
+left-hand side is `15` as well. -/
+example : iteratedDeriv 2 ((fun x : ℝ => x ^ 3) ∘ (fun x : ℝ => x ^ 2)) 1
+      / (Nat.factorial 2 : ℝ) = 15 := by
+  have hcomp : (fun x : ℝ => x ^ 3) ∘ (fun x : ℝ => x ^ 2) = fun x : ℝ => x ^ 6 := by
+    funext x
+    simp only [Function.comp_apply, ← pow_mul]
+  rw [hcomp, iteratedDeriv_pow]
+  norm_num [Nat.descFactorial, Nat.factorial]
 
 end MetaMathlibExt.TaylorCoefficientCompositionTests
