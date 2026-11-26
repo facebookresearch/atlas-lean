@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import MathlibExt.NumberTheory.ModularForms.HeckeEigenform
+import MathlibExt.LinearAlgebra.Eigenspace.CommonEigenvector
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
 @[expose] public section
@@ -90,12 +92,15 @@ example (k : ℤ) (N : ℕ) (c : ℕ → ℂ) : ∀ n : ℕ, n ≠ 0 → (fun _ 
     (fun _ _ _ n ↦ by simp [ModularForm.coeffHeckeT_apply])
     (fun _ _ _ n ↦ by simp [ModularForm.coeffHeckeU_apply]) rfl
 
-/-- exactSource consumer: the original binders apply verbatim. -/
+/-- exactSource restatement, from `Module.End.exists_common_eigenvector_of_commute` on `main`:
+the source's pairwise hypothesis and per-member eigenvalues are that theorem's form. -/
 example {K V : Type*} [Field K] [IsAlgClosed K] [AddCommGroup V] [Module K V]
     [FiniteDimensional K V] [Nontrivial V]
     {ι : Type*} (T : ι → Module.End K V) (hT : Pairwise fun i j ↦ Commute (T i) (T j)) :
-    ∃ v : V, v ≠ 0 ∧ ∀ i, ∃ c : K, T i v = c • v :=
-  Module.End.exists_forall_apply_eq_smul_of_pairwise_commute T hT
+    ∃ v : V, v ≠ 0 ∧ ∀ i, ∃ c : K, T i v = c • v := by
+  obtain ⟨χ, v, hv0, hv⟩ := Module.End.exists_common_eigenvector_of_commute T fun i j =>
+    (eq_or_ne i j).elim (fun h => h ▸ Commute.refl (T i)) fun h => hT h
+  exact ⟨v, hv0, fun i => ⟨χ i, hv i⟩⟩
 
 /-- exactSource consumer: the original binders apply verbatim. -/
 example {N : ℕ} [NeZero N]
