@@ -17,13 +17,21 @@ import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt Polynomial
 
--- The zeroth dilate of a nonempty set contains just the origin.
-example : ehrhart ({0} : Set (Fin 1 → ℝ)) 0 = 1 := by
-  have h : {x : Fin 1 → ℤ | IsLatticePoint (polytopeDilate 0 ({0} : Set (Fin 1 → ℝ))) x} =
-      {0} := by
+-- The zeroth dilate of any nonempty set contains just the origin.
+example {d : ℕ} (P : Set (Fin d → ℝ)) (hP : P.Nonempty) : ehrhart P 0 = 1 := by
+  obtain ⟨y, hy⟩ := hP
+  have h : {x : Fin d → ℤ | IsLatticePoint (polytopeDilate 0 P) x} = {0} := by
     ext x
-    simp [IsLatticePoint, polytopeDilate, funext_iff]
-    exact fun _ => ⟨0, by simp⟩
+    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, IsLatticePoint, polytopeDilate,
+      Nat.cast_zero, zero_mul]
+    constructor
+    · rintro ⟨_, _, hx⟩
+      funext i
+      change x i = 0
+      have hi : (x i : ℝ) = 0 := congrFun hx i
+      exact_mod_cast hi
+    · rintro rfl
+      exact ⟨y, hy, by simp⟩
   rw [ehrhart, h, Set.ncard_singleton]
 
 -- Infinite lattice-point sets are assigned the count zero.
