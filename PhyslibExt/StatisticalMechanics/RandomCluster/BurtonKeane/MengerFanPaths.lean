@@ -532,7 +532,7 @@ set_option linter.unusedFintypeInType false in
 /-- **Menger's theorem** (set version) for finite graphs: if every `A`–`B` separator has at least
 `k` vertices, there are `k` pairwise disjoint `A`–`B` paths (K. Menger, *Zur allgemeinen
 Kurventheorie*, 1927). See also `MathlibExt.menger_vertex` for the two-vertex form. -/
-theorem bc19_menger_minmax [Fintype V] (G : SimpleGraph V) (A B : Set V) {k : ℕ}
+lemma bc19_menger_minmax [Fintype V] (G : SimpleGraph V) (A B : Set V) {k : ℕ}
     (hmin : ∀ C, bc16_IsSeparator G A B C → k ≤ C.ncard) :
     ∃ _F : bc16_DisjointPathFamily G A B (Fin k),
       ∀ C, bc16_IsSeparator G A B C → Fintype.card (Fin k) ≤ C.ncard := by

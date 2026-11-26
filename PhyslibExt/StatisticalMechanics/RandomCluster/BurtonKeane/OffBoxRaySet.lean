@@ -86,7 +86,8 @@ lemma bc6_origin_notMem_rayInterior {a : Fin d} {R : ℕ} :
   omega
 
 /-- The cluster of `R e_a` in `removeSite 0 ω` within the complement of `B_N`. -/
-def bc6_offBoxCluster (N : ℕ) (a : Fin d) (R : ℕ) (ω : ConfigSpace (Sym2 (Site d))) :
+noncomputable def bc6_offBoxCluster (N : ℕ) (a : Fin d) (R : ℕ)
+    (ω : ConfigSpace (Sym2 (Site d))) :
     Set (Site d) :=
   clusterWithin d (removeSite 0 ω) (box d N)ᶜ (hrHD_rayPt a (R : ℤ))
 
@@ -116,7 +117,8 @@ lemma bc6_farEnd_mem_offBoxCluster {N : ℕ} {a : Fin d} {R : ℕ} (hNR : N < R)
   exact ⟨hoff, hoff, connectedWithin_refl _ _ _⟩
 
 /-- The ray interior together with the off-box cluster of its far end. -/
-def bc6_armRegion (N : ℕ) (a : Fin d) (R : ℕ) (ω : ConfigSpace (Sym2 (Site d))) :
+noncomputable def bc6_armRegion (N : ℕ) (a : Fin d) (R : ℕ)
+    (ω : ConfigSpace (Sym2 (Site d))) :
     Set (Site d) :=
   bc6_rayInterior a R ∪ bc6_offBoxCluster N a R ω
 

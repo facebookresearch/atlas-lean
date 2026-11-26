@@ -64,7 +64,8 @@ variable {d : ℕ}
 /-! ## A. Cluster neighbourhoods -/
 
 /-- The union of the cut clusters of the corridor cells `t e_j`, `1 ≤ t ≤ L`. -/
-def bc3_clusterNbhd (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ) : Set (Site d) :=
+noncomputable def bc3_clusterNbhd (ω : ConfigSpace (Sym2 (Site d))) (j : Fin d) (L : ℕ) :
+    Set (Site d) :=
   ⋃ (t : ℕ) (_ : 1 ≤ t ∧ t ≤ L), cluster d (removeSite 0 ω) (hrHD_rayPt j (t : ℤ))
 
 lemma bc3_mem_clusterNbhd {ω : ConfigSpace (Sym2 (Site d))} {j : Fin d} {L : ℕ} {x : Site d} :

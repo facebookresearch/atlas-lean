@@ -381,7 +381,6 @@ lemma bcor_corridors_RTL (n : ℕ) (hn : 1 ≤ n) (s t r : ℤ)
       have hrn : r = (n : ℤ) := by omega
       exact h23 (by rw [htn, hrn])
 
--- The `simp` calls over the explicit corridor paths need more than the default heartbeats.
 lemma bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
     (y₁ y₂ x y : ℤ)
     (hy₁ : y₁.natAbs ≤ n) (hy₂ : y₂.natAbs ≤ n)
@@ -470,7 +469,7 @@ lemma bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       rcases houter with htop | hleft <;>
       rw [bcor_origin_eq] <;>
       ext i <;> fin_cases i <;>
-      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] at * <;> omega
+      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] <;> omega
   · intro z h2 h3
     have h2' := (hW2supp z).mp (W₂.support_bypass_subset_support h2)
     have h3' := (hW3supp z).mp (W₃.support_bypass_subset_support h3)
@@ -482,7 +481,7 @@ lemma bcor_corridors_two_right_upper (n : ℕ) (hn : 1 ≤ n)
       rcases houter with htop | hleft <;>
       rw [bcor_origin_eq] <;>
       ext i <;> fin_cases i <;>
-      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] at * <;> omega
+      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one] <;> omega
 
 lemma bcor_corridors_two_right_lower (n : ℕ) (hn : 1 ≤ n)
     (y₁ y₂ x y : ℤ)

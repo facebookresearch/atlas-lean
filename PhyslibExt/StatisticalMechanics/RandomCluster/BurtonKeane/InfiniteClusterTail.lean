@@ -117,7 +117,7 @@ lemma infiniteCluster_component_after_finset
     (tailClusterGraph omega x) e (Opposite.op (tailClusterCut omega x K))⟩
 
 /-- The sites of a component of the cluster graph minus `K`. -/
-def tailComponentSites (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
+noncomputable def tailComponentSites (omega : ConfigSpace (Sym2 (Site d))) (x : Site d)
     (K : Finset (Site d))
     (D : (tailClusterGraph omega x).ComponentCompl (tailClusterCut omega x K)) :
     Set (Site d) := Subtype.val '' (D : Set (tailClusterVertex omega x))

@@ -929,7 +929,7 @@ say exactly what is proved.
 
 The third round ports the physics remainder in parts: the random-cluster (FK), Ising, sharpness,
 Onsager, Beffara–Duminil-Copin, percolation, OSSS and wall modules that the physics results need.
-This table lists the sources ported so far (94 of 635); the others are listed under "Physics
+This table lists the sources ported so far (209 of 635); the others are listed under "Physics
 remainder, not yet ported" below. Duplicate and vacuous declarations were removed during the port.
 Several ported modules state conditional results or record refutations; their module docs say
 exactly what is proved.
@@ -975,6 +975,78 @@ exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Ising/DualWalkBoundsClose.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkLeftRegion` |
 | `Atlas/StatisticalMechanics/Code/Ising/HdomNativeWeight.lean` | `PhyslibExt.CondensedMatter.IsingModel.ThreePointSplitMass` |
 | `Atlas/StatisticalMechanics/Code/Ising/KWGeometricDual.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.GeometricDual` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ArmEndDisjointClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndDisjoint` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ArmReachComponentClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmReachComponent` |
+| `Atlas/StatisticalMechanics/Code/Percolation/AvoidingAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AvoidingAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/AvoidingRoutingResidue.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginAvoidingResidues` |
+| `Atlas/StatisticalMechanics/Code/Percolation/AxisAssignmentClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.AxisAssignment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKArmSelectorClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedTreeArmSelection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKForestLib.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPeel` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKHallSDRClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HallArmEnds` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BKSpanningTreeClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxOpenForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BoundaryPruningClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryPruning` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BoxMengerAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMengerAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BoxMergeFreeMenger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoxMergeFreeMenger` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BernoulliErgodicFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneClose2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmEndsDistinct` |
+| `Atlas/StatisticalMechanics/Code/Percolation/BurtonKeaneMergeGeom.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BurtonKeaneMergeGeom` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonBurtonKeane.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonBurtonKeane` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonForestCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonForestCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonTrifProb.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonTrifProb` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonicalCountFinal.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCountBound` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CanonicalTrifCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalTrifCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterAttachment.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterAttachment` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterMeetsCorridorProof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterMeetsCorridor` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterReachesRay.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterReachesRay` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ClusterRunsAxisFE.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterRunsAxisFE` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CorridorConfinement.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorConfinement` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CorridorConnectProof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorConnect` |
+| `Atlas/StatisticalMechanics/Code/Percolation/CorridorSidesFromClusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorSidesFromClusters` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DecoupledForestCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DecoupledForestCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafInjectionBound` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsFinal.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PrivateArmTwoTrif` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsProve.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GlobalCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/DisjointArmEndsProve2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SingleCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/FacPairwiseClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DirectionalDivergence` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestAcyclicityClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PairwiseCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestColouringClose2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedSingleCutSeparation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestLeafCountClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanningTreeLeafCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestLeafDisjointClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OutwardArm` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestLeafInjection.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafInjection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestPathStructure.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestPathStructure` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestRootingClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TwoSidedPrivateFar` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ForestSelectorProve.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DivergentArmOrder` |
+| `Atlas/StatisticalMechanics/Code/Percolation/GridBoxConnected.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.GridBoxConnected` |
+| `Atlas/StatisticalMechanics/Code/Percolation/HrouteDisjointPaths.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCoverRouting` |
+| `Atlas/StatisticalMechanics/Code/Percolation/HrouteHighDim.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.HighDimRouting` |
+| `Atlas/StatisticalMechanics/Code/Percolation/InfiniteClusterTail.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InfiniteClusterTail` |
+| `Atlas/StatisticalMechanics/Code/Percolation/LatticeMengerAttach.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttach` |
+| `Atlas/StatisticalMechanics/Code/Percolation/LatticeMengerClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LatticeMengerAttachData` |
+| `Atlas/StatisticalMechanics/Code/Percolation/LeafHallClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryArmInjection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/MengerCorridors.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerCorridors` |
+| `Atlas/StatisticalMechanics/Code/Percolation/MengerRouting.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRouting` |
+| `Atlas/StatisticalMechanics/Code/Percolation/OpenSpanningForestClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.PeeledBoxForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/OutwardArmForestClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OutwardArmForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/PrivateArmProve.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoherentArmSelector` |
+| `Atlas/StatisticalMechanics/Code/Percolation/RootedForestPeelClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CoverArmDivergence` |
+| `Atlas/StatisticalMechanics/Code/Percolation/RootedTreeSelectorClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedColoredForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/RunsAlongAxisProof.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RunsAlongAxis` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SecondPeelingClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.SpanForestArms` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SingleLeafHallClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TreeForestData` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanForestArmsClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmForestReaching` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanningTreeArmClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClawDivergentArmOrder` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanningTreeRealiseClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForestLeafSelection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/SpanningTreeTrifClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedSpanningForest` |
+| `Atlas/StatisticalMechanics/Code/Percolation/ThreeArmCoverClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeArmCover` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationConstruct.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MergeFreeTrifurcation` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationConstruction.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationConstruction` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationCount.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationCount` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationExistence.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationExistence` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationExistence2.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClusterAttachData` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TrifurcationFiniteEnergy.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TrifurcationFiniteEnergy` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TwoFoldForestArmsClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.LeafDisjointSelection` |
+| `Atlas/StatisticalMechanics/Code/Percolation/TwoFoldHallClose.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.TwoFoldForestArms` |
 | `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryLimit.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryLimit` |
 | `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryPhi.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryPhi` |
 | `Atlas/StatisticalMechanics/Code/Sharpness/ABBoundaryProfile.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.ABBoundaryProfile` |
@@ -1024,6 +1096,49 @@ exactly what is proved.
 | `Atlas/StatisticalMechanics/Code/Sharpness/PercoSusceptibility.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PercoSusceptibility` |
 | `Atlas/StatisticalMechanics/Code/Sharpness/PivotalFactorComplete.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.PivotalSurfaceFactor` |
 | `Atlas/StatisticalMechanics/Code/Sharpness/SharpnessAssembly.lean` | `PhyslibExt.CondensedMatter.IsingModel.Sharpness.SharpnessAssembly` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc113boundaryforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.BoundaryForestDegree` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc114haschild.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InternalArmChild` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc16menger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerSeparatorPath` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc17menger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerEdgeRestriction` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc18mengerhard.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerRestrictedReach` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc19menger.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerFanPaths` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc20mengerroute.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MengerOriginRoute` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc28forestroot.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ArmDivergenceRank` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc29armdiv.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RootedArmDivergence` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedCorridorRouting` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_cutunbounded.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorCutUnbounded` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_forcedpathconn.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForcedPathChain` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_forcemono.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ForceMonotone` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_raydisjoint.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorRayDisjoint` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc2_threewitnesses.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ThreeDisjointWitnesses` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc30armforest.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DownArmForest` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_anchordecomp.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorAnchorDecomposition` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_barrierblocks.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ClosedBarrierBlocks` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorDisjointClusters` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_distinctwitnessclusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutDistinctWitnesses` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc3_rhoedgecases.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RhoEdgeCases` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_avoidingsurvives.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutAvoidingSurvives` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginCutNeighbour` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_nbrfinite.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OriginNeighbourFinite` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc4_pigeonhole.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.InfiniteUnionPigeonhole` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc6raysetdef.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.OffBoxRaySet` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc7distinctwitnessclusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutDistinctWitnessClusters` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc7nocrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterNoCrossing` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8core.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CanonicalOriginRewiring` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8cutleavesinfinite.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutLeavesInfinite` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8distinctcutclusters.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DistinctCutClusters` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8nocrossing.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.DisjointCutNoCrossing` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc8removeforcecomm.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.RemoveForceCommute` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc9cutsurvives.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutClusterSurvives` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc9nbrcutcluster.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.NeighbourCutCluster` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc_cutunbounded.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CutUnboundedCoordinate` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc_mouthcorridor.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorMouth` |
+| `Atlas/StatisticalMechanics/Code/Walls/bc_wiringforcesopen.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.WiringForcesOpen` |
+| `Atlas/StatisticalMechanics/Code/Walls/bcorcorridors.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.ReflectedCorridors` |
+| `Atlas/StatisticalMechanics/Code/Walls/bfc2indep.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.MeasurableDependence` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkm_dccstepopen.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorStepOpen` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkm_dccthreeaxes.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorThreeAxes` |
+| `Atlas/StatisticalMechanics/Code/Walls/bkm_dccwitnessnezero.lean` | `PhyslibExt.StatisticalMechanics.RandomCluster.BurtonKeane.CorridorWitnessRemoveSite` |
 | `Atlas/StatisticalMechanics/Code/Walls/ceosimplecycle.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.ShiftSquareCycle` |
 | `Atlas/StatisticalMechanics/Code/Walls/dowdartwinding.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.CrossEdgeMatchingForms` |
 | `Atlas/StatisticalMechanics/Code/Walls/fwrfaceregion.lean` | `PhyslibExt.CondensedMatter.IsingModel.KramersWannier.FaceRegion` |
@@ -1034,17 +1149,17 @@ exactly what is proved.
 ## Not ported
 
 The following stays in `Atlas/StatisticalMechanics/Code` and outside the root build. Counts are
-modules (`.lean` files) and lines (`wc -l`) with 94 of the 635 third-round sources ported. Each
+modules (`.lean` files) and lines (`wc -l`) with 209 of the 635 third-round sources ported. Each
 module is counted once, under the first category that applies in the order below. All 6,970 `.lean`
 files under `Code/` are accounted for: 655 first-round rows (654 map to a module; the
 `Code/Percolation/ClusterDualContour.lean` row records its removal), 235 second-round rows (199
-MathlibExt and 36 CSLibExt), 94 third-round rows, 4 ported-then-deleted modules, and 5,983 modules
+MathlibExt and 36 CSLibExt), 209 third-round rows, 4 ported-then-deleted modules, and 5,868 modules
 in the categories below. `Code/Percolation/ClusterDualContour.lean` occurs in both the first- and
 second-round tables (removed in the first round, its definition ported in the second):
-655 + 235 + 94 - 1 + 4 + 5,983 = 6,970. The root import file `Atlas/StatisticalMechanics/Code.lean`
+655 + 235 + 209 - 1 + 4 + 5,868 = 6,970. The root import file `Atlas/StatisticalMechanics/Code.lean`
 is not a counted source.
 
-### Physics remainder, not yet ported (541 modules, 262,692 lines)
+### Physics remainder, not yet ported (426 modules, 218,332 lines)
 
 These are the modules that the physics results (random-cluster/FK, Ising, sharpness, Onsager,
 Beffara–Duminil-Copin, and the physics-facing percolation, OSSS and wall modules) need, minus
@@ -1058,11 +1173,11 @@ categories further down.
 | `FK` | 148 | 86,360 |
 | `FrontierA` | 3 | 583 |
 | `OSSS` | 81 | 40,089 |
-| `Percolation` | 76 | 31,562 |
+| `Percolation` | 4 | 908 |
 | `Probability` | 1 | 362 |
 | `TwoDim` | 4 | 3,138 |
 | `Universality` | 4 | 13,226 |
-| `Walls` | 186 | 75,716 |
+| `Walls` | 143 | 62,010 |
 
 ### Excluded from the physics port (1 module, 293 lines)
 
@@ -1125,8 +1240,8 @@ at all: superseded routes, conditional "close" files, and obstruction notes.
   in its ported copy was a wrapper around Mathlib's `MeasureTheory.Measure.infinitePi` API with no
   users, so the declarations were deleted and the empty module was removed. Use Mathlib's
   `Measure.infinitePi` instead.
-- Third round (94 of 635 sources ported so far): no ported module was deleted or merged; each ported
-  source has its own module.
+- Third round (209 of 635 sources ported so far): no ported module was deleted or merged; each
+  ported source has its own module.
   Three ported declarations were retired inside their modules as duplicates of first-round
   declarations with the same full type (definitions and instances with a definitionally equal
   value); their users call the canonical declaration, and the pull-request description lists them
