@@ -413,3 +413,11 @@ Files:
   MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
   MathlibExt/CategoryTheory/Monad/Module.lean
   MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+
+Filtration layer exactness
+-------------------------
+
+File:
+  MathlibExt/LinearAlgebra/Filtration/Exactness.lean
+
+Author: @toskua
