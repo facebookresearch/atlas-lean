@@ -17,7 +17,6 @@ public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import MathlibExt.NumberTheory.IncompleteExponentialSum
 public import MathlibExt.NumberTheory.LogarithmicCompletion
 public import MathlibExt.NumberTheory.ReciprocalSineSum
-public import MathlibExt.NumberTheory.IncompleteExponentialSumSumMinOneDivAbsSinLt
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -32,8 +31,8 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
 Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. Lemma 2.1 and Corollary 1.1
 are proved in `MathlibExt.NumberTheory.LogarithmicCompletion`. The reciprocal sine bound is
-proved in `MathlibExt.NumberTheory.ReciprocalSineSum`. The bound `sum_min_one_div_abs_sin_lt`
-is proved in `MathlibExt.NumberTheory.IncompleteExponentialSumSumMinOneDivAbsSinLt`.
+proved in `MathlibExt.NumberTheory.ReciprocalSineSum`, together with the bound
+`sum_min_one_div_abs_sin_lt` for the sum with each term capped at the length.
 -/
 
 namespace MetaMathlibExt
