@@ -16,26 +16,56 @@ import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt
 
--- A half-served initial job at each station can finish in a half-unit window.
+-- The two initial jobs both start at −1/2 and finish at 1/2, so the downstream
+-- station uses half a unit of initial credit and half a unit of in-window service.
 example : (1 : ℝ) ≤ 1 / 2 + 1 * (1 / 2) := by
+  let source : Fin 1 ↪ Fin 1 ⊕ Fin 1 := ⟨Sum.inl, Sum.inl_injective⟩
   have h := two_station_throughput_bound (t := 1 / 2) (by norm_num)
-    (fun _ => 1) (fun _ => 1 / 2) (fun _ => 1 / 2) (fun _ => 1) (fun _ => 1)
-    (fun _ _ => 1) (by intro i; norm_num) (by intro i; norm_num) (by intro i j; norm_num)
-    (by intro i; norm_num [Fin.sum_univ_succ]) (fun _ => le_rfl) (by decide)
-  simpa only [Nat.cast_one] using h.1 1
+    (fun _ => 1) (fun _ => 1) (fun _ => 1) (fun _ _ => -(1 / 2)) (fun _ _ => 1 / 2)
+    source (by intro i; norm_num) (by intro i j; norm_num) (by intro i j; norm_num)
+    (by intro i j k hjk; fin_cases j; fin_cases k; exact absurd hjk (lt_irrefl _))
+    (fun _ _ => ⟨0⟩) (by intro j k h; cases h)
+  convert h.1 1 using 1 <;> norm_num [Fin.sum_univ_succ]
 
--- The aggregate accounting hypotheses permit equality with the upstream rate.
--- These counts do not describe a realizable serial-line service history.
-example : (2 : ℝ) / 2 ≤ min 1 2 := by
-  let μ (i : Fin 2) : ℝ := if i = 0 then 1 else 2
-  have hp : ∀ i, 0 < μ i := by
-    intro i
-    fin_cases i <;> norm_num [μ]
-  have hb : ∀ i : Fin 2, (∑ j : Fin 2, (if j.val = 0 then 1 - (0 : ℝ) else 1) * (1 / μ i)) ≤ 2 := by
-    intro i
-    fin_cases i <;> norm_num [μ, Fin.sum_univ_succ]
-  have h := two_station_throughput_bound (t := 2) (by norm_num)
-    μ (fun _ => 0) (fun _ => 2) (fun _ => 0) (fun _ => 2) (fun i _ => 1 / μ i)
-    hp (by intro i; norm_num) (fun _ _ => le_rfl) hb (fun _ => le_rfl) (by decide)
-  simpa only [μ, ite_eq_left rfl, ite_eq_right (by decide : (1 : Fin 2) ≠ 0), Nat.cast_ofNat,
-    Nat.cast_zero, add_zero, zero_div] using h.2
+private noncomputable def transferRate (i : Fin 2) : ℝ := if i = 0 then 1 / 2 else 1
+
+private def transferStart (i j : Fin 2) : ℝ :=
+  if i = 0 then (if j = 0 then 1 else 4) else (if j = 0 then 3 else 7)
+
+private def transferFinish (i j : Fin 2) : ℝ :=
+  if i = 0 then (if j = 0 then 3 else 6) else (if j = 0 then 4 else 8)
+
+-- With no initial jobs, the jobs receive upstream service over [1, 3] and [4, 6],
+-- then downstream service over [3, 4] and [7, 8]. The second job waits for one unit.
+example : (2 : ℝ) / 8 ≤ min (1 / 2) 1 ∧ (2 : ℝ) ≤ (1 / 2) * 4 ∧ (2 : ℝ) ≤ 1 * 2 := by
+  let source : Fin 2 ↪ Fin 0 ⊕ Fin 2 := ⟨Sum.inr, Sum.inr_injective⟩
+  have h := two_station_throughput_bound (t := 8) (by norm_num)
+    transferRate (fun _ => 0) (fun _ => 2) transferStart transferFinish source
+    (by intro i; fin_cases i <;> norm_num [transferRate])
+    (by intro i j; fin_cases i <;> fin_cases j <;>
+        norm_num [transferRate, transferStart, transferFinish])
+    (by intro i j; fin_cases i <;> fin_cases j <;> norm_num [transferFinish])
+    (by
+      intro i j k hjk
+      fin_cases i <;> fin_cases j <;> fin_cases k <;> norm_num at hjk <;>
+        norm_num [transferStart, transferFinish])
+    (by intro j hj; fin_cases j <;> norm_num [transferStart] at hj)
+    (by
+      intro j k hjk
+      change Sum.inr j = Sum.inr k at hjk
+      obtain rfl := Sum.inr_injective hjk
+      fin_cases j <;> norm_num [transferStart, transferFinish])
+  refine ⟨?_, ?_, ?_⟩
+  · convert h.2 using 1; norm_num [transferRate, show (1 : Fin 2) ≠ 0 by decide]
+  · convert h.1 0 using 1; norm_num [transferRate, transferStart, transferFinish, Fin.sum_univ_succ]
+  · convert h.1 1 using 1; norm_num [transferRate, transferStart, transferFinish, Fin.sum_univ_succ]
+
+-- An empty completion list contributes neither busy time nor initial credit.
+example : (0 : ℝ) / 1 ≤ min 2 1 := by
+  let source : Fin 0 ↪ Fin 0 ⊕ Fin 0 := ⟨Fin.elim0, fun {j} => j.elim0⟩
+  have h := two_station_throughput_bound (t := 1) (by norm_num)
+    (fun i => if i = 0 then 2 else 1) (fun _ => 0) (fun _ => 0)
+    (fun _ => Fin.elim0) (fun _ => Fin.elim0) source
+    (by intro i; split <;> norm_num) (fun _ j => j.elim0) (fun _ j => j.elim0)
+    (fun _ {j} => j.elim0) (fun j => j.elim0) (fun j => j.elim0)
+  convert h.2 using 1 <;> norm_num [show (1 : Fin 2) ≠ 0 by decide]
