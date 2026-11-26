@@ -19,14 +19,20 @@ pulse of their own at that event), and a group fires with a single pulse of nonn
 strength. Their main result (Section 3, Theorems 3.1–3.2): for every `N ≥ 2` and almost every
 initial configuration of phases (Lebesgue measure), the population becomes fully synchronized
 after finitely many firings. The pulse strength of a merged group need not be additive. The
-proof first shows (Theorem 3.1, through the return map of the firing dynamics, whose Jacobian
-determinant exceeds `1`) that the set of initial configurations that never undergo an absorption
-has measure zero, and then (Theorem 3.2) inducts on the number of groups, a merged group acting
-as a single oscillator.
+proof rests on a local expansion step (Section 2.2): for two oscillators, the firing map
+`h(φ) = g(f(1 - φ) + ε)`, which sends the phase of one oscillator just before the other fires to
+its phase just after (when no absorption occurs), has `h'(φ) < -1`, because `f'` is strictly
+decreasing. Theorem 3.1 then shows, through the return map of the firing dynamics (injective,
+with Jacobian determinant exceeding `1`), that the set of initial configurations that never
+undergo an absorption has measure zero, and Theorem 3.2 inducts on the number of groups, a
+merged group acting as a single oscillator.
 
-This module states that measure-zero prerequisite, `volume_never_absorbed_eq_zero`. Full
-synchronization almost everywhere (`Synchronized` after finitely many firings, Theorem 3.2) is
-tracked as a planned result whose proof depends on it, and is not stated here as a `theorem_wanted`.
+This module states the expansion step, `hasDerivAt_firingMap_lt_neg_one`. The measure-zero statement
+for never-absorbed configurations (Theorem 3.1, with return-map injectivity and volume expansion)
+and full synchronization almost everywhere (`Synchronized` after finitely many firings, Theorem 3.2,
+by induction on the number of groups with null sets pulled back through mergers; `IsAbsorbed`
+records a merger) are tracked as planned results depending on it, and are not stated here as
+`theorem_wanted`.
 
 Here the system is observed at firing events (`fire`): all phases advance until the largest
 reaches `1`, the oscillators at `1` (a group of size `k`) fire with strength `s k`, and each other
@@ -46,14 +52,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Finset
 
 @[expose] public section
 
 namespace WantedExt.Biology.Neuroscience.PulseCoupledSynchronyWanted
 
-open MeasureTheory Finset
+open Finset
 open scoped ContDiff
 
 variable {N : ℕ}
@@ -91,19 +96,23 @@ started together). -/
 def IsAbsorbed (φ : Fin N → ℝ) : Prop :=
   ¬ Function.Injective φ
 
-/-- **Absorptions occur almost surely** (Mirollo and Strogatz 1990, Section 3, Theorem 3.1). Let
-`N ≥ 2`, let `f` and `g` satisfy the hypotheses of Section 2.1 (`StateFunction`: `f` smooth on
-`[0, 1]` with `f(0) = 0`, `f(1) = 1`, `f' > 0`, `f'' < 0`, and `g` its inverse), and let the
-group strengths satisfy `s k > 0` for every group size `k ≥ 1` (before any absorption every group
-has size `1`, so only `s 1 = ε > 0` acts). Then the set of initial configurations
-`φ ∈ [0, 1)^N` whose phases stay pairwise distinct after every number `n` of firing events
-(`fire`), that is, that never undergo an absorption, has Lebesgue measure zero.
+/-- The firing map of two oscillators (Mirollo and Strogatz 1990, Section 2.2):
+`h(φ) = g(f(1 - φ) + ε)`. If one oscillator has just fired and the other is at phase `φ`, then
+when the second reaches threshold the first is at phase `1 - φ`, and after the pulse of strength
+`ε` it is at phase `h(φ)`, provided `f(1 - φ) + ε < 1` (no absorption). -/
+noncomputable def firingMap (f g : ℝ → ℝ) (ε φ : ℝ) : ℝ :=
+  g (f (1 - φ) + ε)
+
+/-- **The firing map expands** (Mirollo and Strogatz 1990, Section 2.2). Let `f` and `g` satisfy
+the hypotheses of Section 2.1 (`StateFunction`: `f` smooth on `[0, 1]` with `f(0) = 0`,
+`f(1) = 1`, `f' > 0`, `f'' < 0`, and `g` its inverse), let `ε > 0` and `0 < φ < 1`, and assume
+no absorption, `f(1 - φ) + ε < 1`. Then the firing map `h = firingMap f g ε` has a derivative
+`d` at `φ` with `d < -1` (namely `d = -f'(1 - φ) / f'(h(φ))`, where `h(φ) ∈ (1 - φ, 1)`).
 
 Source: R. E. Mirollo and S. H. Strogatz, "Synchronization of pulse-coupled biological
-oscillators", SIAM J. Appl. Math. 50 (1990) 1645–1662, Sections 3.3–3.5, Theorem 3.1. -/
-theorem_wanted volume_never_absorbed_eq_zero (hN : 2 ≤ N) (f g : ℝ → ℝ)
-    (hfg : StateFunction f g) (s : ℕ → ℝ) (hs : ∀ k, 1 ≤ k → 0 < s k) :
-    volume {φ : Fin N → ℝ | (∀ i, φ i ∈ Set.Ico (0 : ℝ) 1) ∧
-      ∀ n : ℕ, ¬ IsAbsorbed ((fire f g s)^[n] φ)} = 0
+oscillators", SIAM J. Appl. Math. 50 (1990) 1645–1662, Section 2.2. -/
+theorem_wanted hasDerivAt_firingMap_lt_neg_one (f g : ℝ → ℝ) (hfg : StateFunction f g)
+    (ε φ : ℝ) (hε : 0 < ε) (hφ0 : 0 < φ) (hφ1 : φ < 1) (hnoabs : f (1 - φ) + ε < 1) :
+    ∃ d : ℝ, HasDerivAt (firingMap f g ε) d φ ∧ d < -1
 
 end WantedExt.Biology.Neuroscience.PulseCoupledSynchronyWanted

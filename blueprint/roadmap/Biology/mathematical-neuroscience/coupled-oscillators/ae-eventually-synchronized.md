@@ -2,7 +2,12 @@
 
 Let $N \ge 2$, let $f, g : [0, 1] \to [0, 1]$ satisfy the [state-function](state-function.md) hypotheses ($f$ smooth, $f(0) = 0$, $f(1) = 1$, $f' > 0$, $f'' < 0$, inverse $g$), and let the group pulse strengths satisfy $s(k) > 0$ for every group size $k \ge 1$. Then for almost every initial phase configuration $\phi \in [0, 1)^N$ (with respect to Lebesgue measure on the cube), some finite number $n$ of [firing events](fire.md) produces a [fully synchronized](synchronized.md) population: all phases of $\operatorname{fire}^{[n]}(\phi)$ are equal.
 
-The proof proceeds by induction on the number of distinct phase groups using the [measure-zero non-absorption theorem](volume-never-absorbed-eq-zero.md).
+## Expansion
+
+The inductive proof on the number of distinct phase groups requires both:
+
+1. The [measure-zero non-absorption theorem](volume-never-absorbed-eq-zero.md) (first merger occurs a.e.).
+2. Null-set pullback through each merger: showing that after an absorption merges oscillators into a smaller number of groups, the preimage under the finite-step firing map of the reduced-dimension exceptional null set still has Lebesgue measure zero in $[0, 1)^N$.
 
 ## Depends on
 
@@ -12,7 +17,7 @@ The proof proceeds by induction on the number of distinct phase groups using the
 
 ## Proof depends on
 
-- [Volume Never Absorbed Eq Zero](volume-never-absorbed-eq-zero.md)
+- [Non-absorbing trajectories have Lebesgue measure zero](volume-never-absorbed-eq-zero.md)
 
 ## Sources
 
