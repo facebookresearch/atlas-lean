@@ -17,8 +17,9 @@ import Mathlib.Data.Int.Cast.Lemmas
 /-!
 # Sumset sizes between `hk - h + 1` and `hk`
 
-`sumsetSizes_inter_Icc_of_isAddTorsionFree` shows that the attainable sumset sizes in
-`[h * k - h + 1, h * k]` are exactly the two endpoints in a nontrivial torsion-free group.
+`sumsetSizes_inter_Icc_of_isAddTorsionFree` shows that, in a nontrivial torsion-free group and
+for `h ≥ 1` and `k ≥ 4`, the sizes of `h`-fold sumsets of `k`-element sets that lie in
+`[h * k - h + 1, h * k]` are exactly the two endpoints.
 
 Source: Vincent Schinina, *On the Sumset of Sets of Size k*, INTEGERS 26 (2026),
 Article A31, Corollary 1.
