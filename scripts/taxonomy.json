@@ -11326,7 +11326,6 @@
   "MathlibExt/Combinatorics/NeggersStanley": {"to": "Combinatorics/partially-ordered-sets", "title": "Neggers–Stanley conjecture"},
   "MathlibExt/Combinatorics/MonochromaticLinearEquations/OneTwo": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
   "MathlibExt/Combinatorics/MonochromaticLinearEquations/Recolouring": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
-  "MathlibExt/Combinatorics/MonochromaticLinearEquations/SolutionCounting": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic solutions of linear equations"},
   "MathlibExt/Combinatorics/MonochromaticPairSumsRealsErdosProblem965": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Monochromatic pairwise sums in the reals"},
   "MathlibExt/Combinatorics/MonochromaticSumsLinearErdosProblem484": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic sums"},
   "MathlibExt/Combinatorics/MonotoneColumnPermanent": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Monotone column permanent conjecture"},

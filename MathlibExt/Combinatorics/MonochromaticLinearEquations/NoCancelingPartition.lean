@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.MonochromaticLinearEquations.Recolouring
-import MathlibExt.Combinatorics.MonochromaticLinearEquations.SolutionCounting
+import all MathlibExt.Combinatorics.MonochromaticLinearEquations.Recolouring
 import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.GCongr
@@ -30,6 +30,24 @@ satisfying no second independent equation from the finite spectrum, averaging ov
 leaves only the zero vector and the two signs of the coefficient vector. The exceptional tuples
 and the tuples with repeated coordinates have density tending to zero among the solutions.
 Independent colour choices then give a deterministic colouring with a fixed deficit.
+
+This two-colour construction adapts the Fourier-analytic proofs that such equations are not
+common over finite fields (Fox, Pham and Zhao) and over finite abelian groups whose order is
+coprime to the coefficients (Versteegen). As in Versteegen's proof, the frequencies are the
+coefficients and their negatives (there multiplied by an element of maximal order), and the
+phases are chosen using a value whose multiplicity among the coefficients differs from that of
+its negative, which exists because there is no canceling partition. Wijaya's paper takes the
+two-colour case over the integers from Versteegen's theorem (arXiv:2501.17136, Section 1.2,
+through its Lemma 3.1).
+
+## References
+
+* J. Fox, H. T. Pham and Y. Zhao, *Common and Sidorenko linear equations*, Q. J. Math. 72
+  (2021), 1223–1234 (arXiv:1910.06436, Theorem 1.4(b)).
+* L. Versteegen, *Common and Sidorenko equations in Abelian groups*, J. Comb. 14 (2023),
+  53–67 (arXiv:2109.04445, Theorem 1.4(iv)).
+* L. P. Wijaya, *On Monochromatic Solutions of Linear Equations Using at Least Three Colors*,
+  INTEGERS 25 (2025), Article A88 (arXiv:2501.17136).
 -/
 
 namespace MetaMathlibExt
