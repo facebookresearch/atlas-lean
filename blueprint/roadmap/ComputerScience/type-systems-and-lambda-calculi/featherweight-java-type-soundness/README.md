@@ -38,7 +38,7 @@
 
 ## Progress
 
-- [Progress for the call-by-value `Step`, modulo failed downcasts](progress.md)
+- [Progress for the call-by-value `Step`, modulo failed casts](progress.md)
 - [Progress for argument lists under the call-by-value `ArgsStep`](progress-2.md)
 
 ## Type soundness (TOPLAS Theorem 2.4.3)

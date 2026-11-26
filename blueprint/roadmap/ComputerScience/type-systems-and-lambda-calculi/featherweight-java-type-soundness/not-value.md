@@ -1,3 +1,3 @@
 # Not value
 
-An expression stuck at a failed downcast is not a value.
+An expression stuck at a failed cast is not a value.

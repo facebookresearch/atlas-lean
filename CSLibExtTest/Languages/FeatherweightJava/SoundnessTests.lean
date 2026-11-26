@@ -177,7 +177,7 @@ theorem typing_subject_reduction_steps_pin : ∀ {ct : ClassTable}, ValidTable c
       ∃ C', Typing ct Γ e' C' ∧ Subtype ct C' C :=
   @Typing.subject_reduction_steps
 
-/-- Pin: progress modulo failed downcasts, with no class-table hypothesis. -/
+/-- Pin: progress modulo failed casts, with no class-table hypothesis. -/
 theorem typing_progress_pin : ∀ {ct : ClassTable} {e : Expr} {C : CName},
     Typing ct (fun _ => none) e C → Value e ∨ CastStuck ct e ∨ ∃ e', Step ct e e' :=
   @Typing.progress
@@ -313,7 +313,7 @@ theorem stupid_subject_reduction :
     ∃ C', Typing pairTable (fun _ => none) stupidTgt C' ∧ Subtype pairTable C' classPair :=
   Typing.subject_reduction pairTable_valid stupidSrc_typing stupid_step
 
-/-- `(Pair) (new A())` is stuck at a failed downcast. -/
+/-- `(Pair) (new A())` is stuck at a failed cast. -/
 theorem stupidTgt_castStuck : CastStuck pairTable stupidTgt :=
   CastStuck.cast ArgsValue.nil not_subtype_A_Pair
 
@@ -454,7 +454,7 @@ theorem badInTail_progress :
 /-! ### Negative controls -/
 
 /-- Progress and soundness need the empty context: a variable typed in another context is
-neither a value, nor stuck at a failed downcast, nor steps. -/
+neither a value, nor stuck at a failed cast, nor steps. -/
 theorem open_var_neither :
     Typing pairTable (fun _ => some classA) (.var 1) classA ∧
     ¬ (Value (.var 1) ∨ CastStuck pairTable (.var 1) ∨ ∃ e', Step pairTable (.var 1) e') := by
@@ -462,7 +462,7 @@ theorem open_var_neither :
   rintro (h | h | ⟨_, h⟩) <;> cases h
 
 /-- Progress needs its typing hypothesis: `new A().fst` is neither a value, nor stuck at a
-failed downcast, nor steps, and has no typing. -/
+failed cast, nor steps, and has no typing. -/
 theorem untyped_fld_neither :
     ¬ (Value (.fld newA fstF) ∨ CastStuck pairTable (.fld newA fstF) ∨
       ∃ e', Step pairTable (.fld newA fstF) e') ∧
@@ -560,7 +560,7 @@ theorem badBodyTable_not_tableOk : ¬ TableOk badBodyTable := by
 
 /-- Subject reduction and soundness need `TableOk`: in the well-formed `badBodyTable`,
 `new A().swap()` types at A and steps to the value `new Object()`, which is normal, has no
-typing at a subtype of A, and is not stuck at a failed downcast. -/
+typing at a subtype of A, and is not stuck at a failed cast. -/
 theorem tableOk_needed :
     WellFormed badBodyTable ∧ ¬ TableOk badBodyTable ∧
     Typing badBodyTable (fun _ => none) (.invk newA swapM .nil) classA ∧

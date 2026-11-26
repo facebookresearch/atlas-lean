@@ -19,20 +19,21 @@ Type soundness of Featherweight Java for the call-by-value, left-to-right relati
 `CSLibExt.Languages.FeatherweightJava.Basic`, after Igarashi, Pierce and Wadler (TOPLAS 2001),
 Section 2.4.
 
-* `CastStuck` and `ArgsCastStuck`: an expression stuck at a failed downcast
-  `(D) (new C(v̄))` with `¬ C <: D`, in evaluation position. The constructors mirror the
-  congruence rules of `Step` one for one; `CastStuck.not_step` and `CastStuck.not_value` show
-  that such an expression neither steps nor is a value.
+* `CastStuck` and `ArgsCastStuck`: an expression, respectively an argument list, stuck at a
+  failed cast in evaluation position: a cast `(T) (new K(v̄))` of a value for some classes `K`
+  and `T` with `K ≮: T`. The constructors mirror the congruence rules of `Step` one for one;
+  `CastStuck.not_step` and `CastStuck.not_value` show that such an expression neither steps nor
+  is a value.
 * `Typing.subject_reduction`: a step preserves typing up to subtyping (Theorem 2.4.1 for the
   call-by-value `Step`), with the argument-list companion `ArgsTyping.subject_reduction` and the
   multi-step form `Typing.subject_reduction_steps`.
-* `Typing.progress`: a closed well-typed expression is a value, is stuck at a failed downcast,
-  or steps under the call-by-value `Step`, with the companion `ArgsTyping.progress`. It holds for
-  every class table.
+* `Typing.progress`: a closed well-typed expression is a value, is stuck at a failed cast in
+  evaluation position, or steps under the call-by-value `Step`, with the companion
+  `ArgsTyping.progress`. It holds for every class table.
 * `Typing.fields_of_fld_new` and `Typing.mbody_of_invk_new`: the redex facts of Theorem 2.4.2.
 * `Typing.soundness`: a closed well-typed expression that reaches a normal form by `Steps` ends
-  at a value typed at a subtype of the original type, or stuck at a failed downcast
-  (Theorem 2.4.3 for the call-by-value `Step`). It applies the schema
+  at a value typed at a subtype of the original type, or stuck at a failed cast in evaluation
+  position (Theorem 2.4.3 for the call-by-value `Step`). It applies the schema
   `Cslib.Languages.TypeSafety.final_or_step_of_reflTransGen` with typing at a subtype.
 
 TOPLAS states Theorems 2.4.1-2.4.3 for a nondeterministic relation closed under every
@@ -40,7 +41,8 @@ congruence; its footnote 2 points to a call-by-value variant in Pierce (2002). E
 is about the repository's call-by-value `Step`, whose evaluation contexts are those of Cornell
 CS 4110 Lecture #30. The two soundness statements are not comparable: the call-by-value relation
 reaches fewer expressions but has more normal forms. The last clause of Theorem 2.4.3 reads
-`C ≮: D`, as in the prose of TOPLAS p. 406 and rule E-CastNew.
+`C ≮: D` for the stuck cast `(D) new C(ē)`, as in the prose of TOPLAS p. 406 and rule
+E-CastNew; there `C` is the class of the object, not the type of the original expression.
 
 ## References
 
@@ -48,7 +50,9 @@ reaches fewer expressions but has more normal forms. The last clause of Theorem 
   and GJ*, ACM TOPLAS 23(3):396-450, 2001: Section 2.4 (Theorems 2.4.1-2.4.3, footnote 2) and
   Appendix A.1 (Lemmas A.1.1-A.1.4, proof of Theorem 2.4.1).
 * *A Theory of Featherweight Java in Isabelle/HOL*, Archive of Formal Proofs, Sections 3.6-3.9;
-  Section 3.8 strengthens the TOPLAS progress lemmas to the value-or-redex form proved here.
+  Section 3.8 strengthens the TOPLAS progress lemmas by a decomposition: a well-typed expression
+  is a value or contains a potential redex. `Typing.progress` refines it to a three-way
+  classification for the evaluation contexts of Lecture #30.
 * Cornell CS 4110, Lecture #30 (Featherweight Java): evaluation contexts
   `E ::= [·] | E.f | E.m(ē) | v.m(v̄, E, ē) | new C(v̄, E, ē) | (C) E`.
 -/
@@ -60,8 +64,8 @@ namespace Cslib.FeatherweightJava
 /-! ### Stuck casts -/
 
 mutual
-  /-- An expression stuck at a failed downcast in evaluation position: the cast
-  `(D) (new C(v̄))` of a value with `¬ C <: D`, under the evaluation contexts of the
+  /-- An expression stuck at a failed cast in evaluation position: a cast `(T) (new K(v̄))` of a
+  value for some classes `K` and `T` with `K ≮: T`, under the evaluation contexts of the
   call-by-value `Step` (Lecture #30). The congruence constructors mirror those of `Step` one for
   one. This is the cast-failure case of TOPLAS Theorem 2.4.3, refined from "contains" to "in
   evaluation position". -/
@@ -79,7 +83,7 @@ mutual
   | castCongr {C : CName} {e : Expr} :
     CastStuck ct e → CastStuck ct (.cast C e)
 
-  /-- An argument list stuck at a failed downcast in its leftmost non-value argument, as
+  /-- An argument list stuck at a failed cast in its leftmost non-value argument, as
   `ArgsStep` evaluates argument lists left to right under the call-by-value `Step`. -/
   inductive ArgsCastStuck (ct : ClassTable) : Expr.Args → Prop where
   | head {e : Expr} {args : Expr.Args} :
@@ -110,7 +114,7 @@ mutual
 end
 
 mutual
-  /-- An expression stuck at a failed downcast is not a value. -/
+  /-- An expression stuck at a failed cast is not a value. -/
   theorem CastStuck.not_value {ct : ClassTable} {e : Expr} (h : CastStuck ct e) : ¬ Value e :=
     match h with
     | .cast _ _ => fun hv => by cases hv
@@ -122,7 +126,7 @@ mutual
       | new _ _ hav => exact ArgsCastStuck.not_argsValue ha hav
     | .castCongr _ => fun hv => by cases hv
 
-  /-- An argument list stuck at a failed downcast is not a value list. -/
+  /-- An argument list stuck at a failed cast is not a value list. -/
   theorem ArgsCastStuck.not_argsValue {ct : ClassTable} {args : Expr.Args}
       (h : ArgsCastStuck ct args) : ¬ ArgsValue args :=
     match h with
@@ -135,7 +139,7 @@ mutual
 end
 
 mutual
-  /-- An expression stuck at a failed downcast does not step under the call-by-value `Step`. -/
+  /-- An expression stuck at a failed cast does not step under the call-by-value `Step`. -/
   theorem CastStuck.not_step {ct : ClassTable} {e e' : Expr} (h : CastStuck ct e) :
       ¬ Step ct e e' :=
     match h with
@@ -165,7 +169,7 @@ mutual
       | cast hvs _ => exact CastStuck.not_value hc (.new _ _ hvs)
       | castCongr hs => exact CastStuck.not_step hc hs
 
-  /-- An argument list stuck at a failed downcast does not step under the call-by-value
+  /-- An argument list stuck at a failed cast does not step under the call-by-value
   `ArgsStep`. -/
   theorem ArgsCastStuck.not_argsStep {ct : ClassTable} {args args' : Expr.Args}
       (h : ArgsCastStuck ct args) : ¬ ArgsStep ct args args' :=
@@ -231,9 +235,10 @@ theorem Typing.cast_inv {ct : ClassTable} {Γ : Ctx} {C D : CName} {e : Expr}
     | dcast he _ _ => exact ⟨rfl, _, he⟩
     | scast he _ _ => exact ⟨rfl, _, he⟩
 
-/-- The value E-Proj selects for a field of a typed object types at a subtype of the field's
-declared type, when field names are distinct (rule R-Field of the proof of TOPLAS
-Theorem 2.4.1). -/
+/-- If field names are distinct and the arguments are typed against the declared field types,
+the argument expression that `fieldValue` selects for a field `f` declared at type `Ci` types at
+a subtype of `Ci` (the R-Field case of the proof of TOPLAS Theorem 2.4.1). The selected argument
+need not be a value; `ArgsValue` is a premise of the step E-Proj, not of this lemma. -/
 theorem fieldValue_typing {ct : ClassTable} {Γ : Ctx} {fs : List (CName × FName)}
     {args : Expr.Args} {Ci : CName} {f : FName} {v : Expr} (hnd : (fs.map Prod.snd).Nodup)
     (hmem : (Ci, f) ∈ fs) (hargs : ArgsTyping ct Γ args (fs.map Prod.fst))
@@ -264,7 +269,8 @@ theorem fieldValue_typing {ct : ClassTable} {Γ : Ctx} {fs : List (CName × FNam
             exact absurd rfl hg
           · exact ih hnd.2 htl hrest hv
 
-/-- E-Proj finds a value for every declared field when there is one argument per field. -/
+/-- When a field occurs in the field list and there is one argument per field, `fieldValue`
+returns an argument expression for it, not necessarily a value. -/
 theorem exists_fieldValue {fs : List (CName × FName)} {args : Expr.Args} {Ci : CName}
     {f : FName} (hmem : (Ci, f) ∈ fs) (hlen : args.length = fs.length) :
     ∃ v, fieldValue fs args f = some v :=
@@ -414,10 +420,13 @@ private theorem progress_cast {ct : ClassTable} {C : CName} {e : Expr}
   · exact Or.inr (Or.inr ⟨_, .castCongr hs⟩)
 
 mutual
-  /-- **Progress for the call-by-value `Step`, modulo failed downcasts.** A closed well-typed
-  expression is a value, is stuck at a failed downcast in evaluation position, or steps. No
-  class-table property is assumed. This is the value-or-redex strengthening of the TOPLAS
-  progress lemmas (Theorem 2.4.2) that the Isabelle/HOL theory proves in its Section 3.8. -/
+  /-- **Progress for the call-by-value `Step`, modulo failed casts.** A closed well-typed
+  expression is a value, is stuck at a failed cast in evaluation position, or steps. No
+  class-table property is assumed. The Isabelle/HOL theory (Section 3.8) strengthens the TOPLAS
+  progress lemmas (Theorem 2.4.2) by a decomposition: a well-typed expression is a value or
+  contains a potential redex. This three-way classification refines it for the evaluation
+  contexts of Lecture #30: the redex is in evaluation position, and a cast redex
+  `(T) (new K(v̄))` steps when `K <: T` and is a failed cast otherwise. -/
   theorem Typing.progress {ct : ClassTable} {e : Expr} {C : CName}
       (h : Typing ct (fun _ => none) e C) : Value e ∨ CastStuck ct e ∨ ∃ e', Step ct e e' :=
     match h with
@@ -455,7 +464,7 @@ mutual
     | .scast he _ _ => progress_cast (Typing.progress he)
 
   /-- **Progress for argument lists under the call-by-value `ArgsStep`.** A closed typed
-  argument list is all values, is stuck at a failed downcast in its leftmost non-value
+  argument list is all values, is stuck at a failed cast in its leftmost non-value
   argument, or steps. No class-table property is assumed. -/
   theorem ArgsTyping.progress {ct : ClassTable} {args : Expr.Args} {Bs : List CName}
       (h : ArgsTyping ct (fun _ => none) args Bs) :
@@ -477,8 +486,9 @@ end
 /-- **Type soundness for the call-by-value `Step`** (TOPLAS Theorem 2.4.3, whose relation is
 nondeterministic). In a valid class table, if a closed expression of type `C` reaches a normal
 form `e'` by `Steps`, then `e'` is a value typed at some `D <: C`, or `e'` is stuck at a failed
-downcast `(D) (new C(v̄))` with `C ≮: D` in evaluation position, which refines TOPLAS's "an
-expression containing" such a cast. The proof applies
+cast in evaluation position: a cast `(T) (new K(v̄))` of a value for some classes `K` and `T`
+with `K ≮: T`, independent of `C`. This refines TOPLAS's "an expression containing" such a
+cast. The proof applies
 `Cslib.Languages.TypeSafety.final_or_step_of_reflTransGen` with final states `Value` or
 `CastStuck` and the typing predicate "typed at a subtype". -/
 theorem Typing.soundness {ct : ClassTable} (hct : ValidTable ct) {e e' : Expr} {C : CName}
