@@ -7,7 +7,6 @@
 - [Field delimit](field-delimit.md)
 - [Poly Append](poly-append.md)
 - [Poly Delimit](poly-delimit.md)
-- [Poly Combine Pair](poly-combine-pair.md)
 
 ## Streaming over delimited frames
 
@@ -17,6 +16,10 @@
 - [Blocks frame](blocks-frame.md)
 - [Marks](marks.md)
 - [Marks frames](marks-frames.md)
+
+## Conjoining tests on canonical pairs
+
+- [Poly Combine Pair](poly-combine-pair.md)
 
 ## Checking raw framing
 
