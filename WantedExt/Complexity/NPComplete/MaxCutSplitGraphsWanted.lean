@@ -21,7 +21,7 @@ public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DominatingSetSplitGraphsWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -40,7 +40,7 @@ and one endpoint in `V₂`? This is SIMPLE MAX CUT restricted to split graphs; B
 Jansen show it NP-complete for split graphs (hence for chordal graphs).
 
 The instance, the simple-edge-list conditions, and the question are those of MAXIMUM CUT
-(`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question counts edges), reused here as
+(`CSLibExt.Complexity.NPComplete.MaxCutDefs`, whose question counts edges), reused here as
 in `SimpleMaxCutDegreeThreeWanted`. The restriction is the repository's split-graph predicate
 `DominatingSetSplitGraphs.IsSplitGraph` (from `DominatingSetSplitGraphsWanted`: some finite set of
 vertices is a clique and its complement an independent set, with Mathlib's
