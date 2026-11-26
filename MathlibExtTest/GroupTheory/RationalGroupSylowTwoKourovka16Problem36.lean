@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.GroupTheory.RationalGroupSylowTwoKourovka16Problem36
+import MathlibExt.GroupTheory.SylowTwoSymmetricRationalKourovka15Problem25
 import Mathlib.Data.ZMod.Basic
 
 open MathlibExt.GroupTheory.RationalGroupSylowTwoKourovka16Problem36Wanted
@@ -34,3 +35,9 @@ example : IsRationalGroup (Multiplicative (ZMod 2)) := by
   · rw [ho] at hk
     rw [← pow_mod_orderOf, ho, Nat.odd_iff.mp hk.odd_of_right, pow_one]
     exact IsConj.refl _
+
+-- This module's rationality predicate is, by definition, the one of Kourovka 15.25.
+example (G : Type*) [Group G] :
+    IsRationalGroup G ↔
+      MathlibExt.GroupTheory.SylowTwoSymmetricRationalKourovka15Problem25Wanted.IsRationalGroup G :=
+  Iff.rfl

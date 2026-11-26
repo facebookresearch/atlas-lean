@@ -38,12 +38,13 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.122 (V. I. Zenkov). 
 UM-00701780 (`KOU-20.122`), dataset ulamai/UnsolvedMath v1.8.0.
 
 The intersections `A ∩ Bˣ ∩ Cʸ` are taken over all `x, y ∈ G`, with the conjugates written `B.map
-(MulAut.conj x)` (the same family as `x⁻¹ B x`); `Min_G` is the join of the members of this family
-that are minimal by inclusion in it, `min_G` the join of those of least order (`Nat.card`); `F(G)`
-is `fittingSubgroup` of the Kourovka 17.40 entry, reused here, the join of all nilpotent normal
-subgroups, the largest nilpotent normal subgroup of a finite group. Both targets are stated for
-finite soluble groups, part (c), whose refutation also refutes parts (a) and (b) for all finite
-groups.
+(MulAut.conj x)` (the same family as `x⁻¹ B x`); `min_G` is the join of the members of this family
+of least order (`Nat.card`); `F(G)` is `fittingSubgroup` of the Kourovka 17.40 entry, reused here,
+the join of all nilpotent normal subgroups, the largest nilpotent normal subgroup of a finite group.
+The target is stated for finite soluble groups, part (c), whose refutation also refutes part (a)
+for all finite groups. The refutation for `Min_G`, the join of the members of this family that are
+minimal by inclusion (parts (b) and (c)), is `inclusionMinimalIntersectionsInFitting_refuted` in
+`MathlibExt.GroupTheory.MinimalIntersectionsFittingKourovka20Problem122`.
 -/
 
 open MathlibExt.GroupTheory.NilpotentThreeConjugatesFittingKourovka17Problem40Wanted

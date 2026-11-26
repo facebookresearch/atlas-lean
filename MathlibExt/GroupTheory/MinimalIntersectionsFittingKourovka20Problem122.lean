@@ -18,7 +18,9 @@ import Mathlib.GroupTheory.SpecificGroups.Alternating.Simple
 
 `inclusionMinimalIntersectionsInFitting_refuted` answers Kourovka Notebook Problem 20.122(b)
 for finite soluble groups. The counterexample uses two copies of the permutation module
-of the symmetric group on three letters over the field of two elements.
+of the symmetric group on three letters over the field of two elements. The soluble group of
+Kinyon and Urban described in the theorem's docstring has order `36864`; the proof here uses
+instead this group of order `384`.
 
 Take `A` to be the preimage of the stabilizer of letter 0. Its subgroups `B` and `C`
 fix the bit at 0 in the first and second copies respectively. Conjugating either subgroup

@@ -9,4 +9,4 @@ together is part of the definition of a legal step.
 
 ## Sources
 
-- Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6, Section 4, Definition 25.
+- Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6, Definition (the star model), Section 5 (journal version).

@@ -13,7 +13,7 @@ Statements from Thang Pang Ern and Gerard Sayson, "Some Generalizations of the
 Bridge and Torch Problem", *Journal of Integer Sequences* 29 (2026),
 Article 26.5.6 (<https://cs.uwaterloo.ca/journals/JIS/VOL29/Ern/ern6.html>).
 
-The schedule model is the one of the paper (Theorem 1 proof, Section 3): the
+The schedule model is the one of the paper (Theorem 1 proof, Section 2): the
 people are `1, …, n`, person `i` has crossing time `i`, crossings alternate
 between forward moves (left to right) and returns (right to left) starting with
 a forward move, every crossing carries between `1` and `c` people who are on
@@ -22,7 +22,7 @@ and a schedule ends when everyone is on the right bank with the torch.
 `bridgeTime c n` is the optimal total time (`T(n) = bridgeTime 2 n`,
 `T₃(n) = bridgeTime 3 n`). The model and the capacity-2 and capacity-3 records
 were checked against the arXiv version (arXiv:2608.05190v1) of the paper; the
-admissible bags of Section 3.3 and the star model of Section 4, Definition 25,
+admissible bags of Section 3.2, Definition 13, and the star model of Section 4, Definition 25,
 are taken from the journal version (JIS TeX source `ern6.tex`).
 -/
 module
@@ -214,7 +214,7 @@ member of $F$ with its multiplicity and $n - 1$ is read as $0$ when $n = 0$.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (admissible bag), Section 3 (journal version). -/
+Definition 13 (admissible bag), Section 3.2 (journal version). -/
 def IsAdmissibleBag (n : ℕ) (F : Multiset (Finset ℕ)) : Prop :=
   (∀ T ∈ F, T.Nonempty ∧ T ⊆ Icc 1 n ∧ T.card ≤ 3) ∧
     (∀ i ∈ Icc 1 n, ∃ T ∈ F, i ∈ T) ∧ (F.map fun T => T.card - 1).sum = n - 1
@@ -226,7 +226,7 @@ set counts with its multiplicity in $F$ and $\max \emptyset = 0$.
 
 Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
 and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Definition (admissible bag), Section 3 (journal version). -/
+Definition 13 (admissible bag), Section 3.2 (journal version). -/
 noncomputable def bagWeight (n : ℕ) (F : Multiset (Finset ℕ)) : ℝ :=
   (((F.map fun T => T.sup id + ∑ i ∈ T, i).sum : ℕ) : ℝ) - n * (n + 1) / 2
 

@@ -22,3 +22,15 @@ example : ∃ (G : Type) (_ : Group G),
   intro G inst hc α
   obtain ⟨k, hk⟩ := h G inst hc α
   exact ⟨k, MulEquiv.ext hk⟩
+
+-- Boundary probe: in a commutative group conjugate elements are equal, so an automorphism that
+-- preserves every conjugacy class is the identity.
+example (G : Type) [CommGroup G] (hc : ∀ (α : MulAut G) (g : G), IsConj (α g) g)
+    (α : MulAut G) : α = 1 :=
+  MulEquiv.ext fun g => isConj_iff_eq.mp (hc α g)
+
+-- Hence the claim holds for every commutative group, with conjugation by `1`, and a
+-- counterexample must be nonabelian.
+example (G : Type) [CommGroup G] :
+    (∀ (α : MulAut G) (g : G), IsConj (α g) g) → ∀ α : MulAut G, ∃ h : G, α = MulAut.conj h :=
+  fun hc α => ⟨1, MulEquiv.ext fun g => by simpa [isConj_iff_eq] using hc α g⟩

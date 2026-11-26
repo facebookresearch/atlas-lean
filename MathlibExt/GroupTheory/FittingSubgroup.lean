@@ -9,7 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.GroupTheory.Nilpotent
--- Keep the supremum instance used in the original definitions of both subgroup joins.
+-- With this import, `⨆` and `sSup` on subgroups elaborate through `CompletePartialOrder.toSupSet`
+-- rather than the definitionally equal `ConditionallyCompleteLattice.toSupSet`, as in the
+-- Kourovka 17.40 and 20.122 wanted modules, which import it too. This keeps the bodies of
+-- `fittingSubgroup` and `inclusionMinimalIntersectionJoin` (whose module imports this one) the
+-- terms those statements were written with.
 public import Mathlib.Order.CompletePartialOrder
 
 /-!
