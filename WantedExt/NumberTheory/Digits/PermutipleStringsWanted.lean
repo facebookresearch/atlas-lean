@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.PermutipleStrings
 public import WantedExt.NumberTheory.Digits.PermutipleWanted
+public import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsIsPermutipleStringOfHasEulerianCircuitFromZero
 public import MathlibExt.NumberTheory.Digits.PermutipleStringsPermutipleEdgeResidueLe
 
 /-!
@@ -52,19 +53,6 @@ INTEGERS 25 (2025), Article A111, Theorem 6 (`integers-2025-A111-thm-6`). -/
 public theorem_wanted exists_carries_of_isMotherGraphEdge (n b d₁ d₂ : ℕ)
     (h : IsMotherGraphEdge n b d₁ d₂) :
     ∃ c₁ c₂ : ℕ, c₁ ≤ n - 1 ∧ c₂ ≤ n - 1 ∧ (b : ℤ) * c₂ - c₁ = (n : ℤ) * d₂ - d₁
-
-/-- **Eulerian circuits through zero yield permutiple strings.** Let $1 < n < b$ and let $I$
-be a multiset of cycles of the $(n, b)$-mother graph, with multiset union of cycle edges
-$C_I$ and multi-image union $\Delta_I$. If $\Delta_I$ has an Eulerian circuit beginning
-and ending at the zero state, then there is an $(n, b)$-permutiple string $s$ whose
-multiset of entries is $C_I$.
-
-Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
-INTEGERS 25 (2025), Article A111, Theorem 7 (`integers-2025-A111-thm-7`). -/
-public theorem_wanted exists_isPermutipleString_of_hasEulerianCircuitFromZero (n b : ℕ) (hn : 1 < n)
-    (hnb : n < b) (cs : Multiset (List ℕ)) (hcs : ∀ vs ∈ cs, IsMotherGraphCycle n b vs)
-    (h : HasEulerianCircuitFromZero (multiImageUnion n b cs)) :
-    ∃ s : List (ℕ × ℕ), (s : Multiset (ℕ × ℕ)) = cycleUnion cs ∧ IsPermutipleString n b s
 
 /-- **$L$-Eulerian criterion for permutiple strings.** Let $1 < n < b$ and let $I$ be a
 multiset of cycles of the $(n, b)$-mother graph, with multiset union of cycle edges $C_I$
