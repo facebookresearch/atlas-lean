@@ -526,9 +526,9 @@ Tiep), On block identities and block inclusions, in Representations of Finite Gr
 Reports 3 (2006), no. 15, p. 912 ff., section 2 (Block identities), DOI 10.4171/OWR/2006/15;
 resolution: M. Fayers, The t-core of an s-core, J. Combin. Theory Ser. A 118 (2011), 1525-1539, DOI
 10.1016/j.jcta.2011.01.004, arXiv:1007.1071, Section 5, Theorem 5.1 ("Suppose s and t are coprime
-positive integers, and λ is an (s, t)-core. Then [λ] ⊆ [κ_{s,t}]"), proved in Proposition 5.5;
-Fayers cites the first proof as J. Vandehey, Containment in (s, t)-core partitions, arXiv:0809.2134,
-Theorem 2.4, https://arxiv.org/abs/1007.1071.
+positive integers, and λ is an (s, t)-core. Then [λ] ⊆ [κ_{s,t}]"), proved in Proposition 5.5,
+https://arxiv.org/abs/1007.1071; Fayers cites the first proof as J. Vandehey, Containment in
+(s, t)-core partitions, arXiv:0809.2134, Theorem 2.4, https://arxiv.org/abs/0809.2134.
 -/
 theorem simultaneousCoreContainment_holds : simultaneousCoreContainment := by
   intro s t hs _ hc κ hκs hκt hmax μ hμs hμt
