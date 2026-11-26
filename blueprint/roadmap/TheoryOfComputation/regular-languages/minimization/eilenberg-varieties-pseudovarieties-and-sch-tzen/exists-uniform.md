@@ -1,6 +1,6 @@
-# Exists uniform
+# Aperiodicity of a finite monoid is uniform
 
-Over a finite monoid, aperiodicity is uniform: one exponent works for every element.
+If a finite monoid is aperiodic, then a single exponent $k$ works for every element: $x^{k+1} = x^k$ for all $x$.
 
 ## Sources
 

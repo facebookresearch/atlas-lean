@@ -1,7 +1,6 @@
-# Counter-machine configurations are CSLib URM configurations
+# Counter-machine configurations are register-machine configurations
 
-Both are a
-program counter and a register file `ℕ → ℕ` (`Cslib.URM.State`).
+Counter-machine states correspond one to one with unlimited register machine states: both consist of a program counter and a register file assigning a natural number to each register $0, 1, 2, \dots$, and the correspondence keeps both components.
 
 ## Sources
 

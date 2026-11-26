@@ -1,4 +1,3 @@
-# Bernoulli distribution
+# The Bernoulli distribution with parameter q
 
-The distribution on `Bool` with `P(true) = q`, for `q` clamped to
-`[0, 1]`.
+For a rational number $q$, the Bernoulli distribution on $\{\text{true}, \text{false}\}$ gives true the probability $\bar q = \max(0, \min(1, q))$ and false the probability $1 - \bar q$; so $q$ is clamped to $[0, 1]$.

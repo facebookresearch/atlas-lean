@@ -1,8 +1,6 @@
-# Costed Lex Gt Trunc cost le
+# Cost bound for the costed strict truncated comparison
 
-The costed strict truncated order costs at most `(d + 1) * (2 + (d + 1) * 2)`:
-for each of the `d + 1` candidate first-differing components, two atomic
-comparisons plus one inner scan of `d + 1` pairs of atomic comparisons.
+For a threshold $p$ and tuples $a, b$ of $d + 1$ natural numbers, the costed strict truncated comparison costs at most $(d + 1)(2 + 2(d + 1))$: for each of the $d + 1$ candidate indices $j$, two atomic comparisons plus one scan of $d + 1$ indices with two atomic comparisons each.
 
 ## Sources
 

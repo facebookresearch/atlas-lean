@@ -1,6 +1,3 @@
-# Syntactic Monoid Equiv Transport morphism
+# Transporting the isomorphism keeps its values on words
 
-The transported equivalence sends the syntactic class of a word to the same
-transition monoid element as the original equivalence. Stated in simp-normal form,
-at the coercion `(x : SyntacticMonoid L₂)`, since `simp` rewrites
-`syntacticMorphism L₂ x` to that coercion (`syntacticMorphism_apply`).
+For languages $L_1 = L_2$, a deterministic finite automaton $M$ and a monoid isomorphism $e$ from the syntactic monoid of $L_1$ to the transition monoid of $M$, the isomorphism obtained by transporting $e$ along the equality sends the syntactic class of a word $x$ for $L_2$ to $e$ of the syntactic class of $x$ for $L_1$.

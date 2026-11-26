@@ -1,3 +1,3 @@
-# Nodup two distinct of length
+# A duplicate-free list of length at least two has two distinct elements
 
-A duplicate-free block of length at least two contains two distinct states.
+If a list has no repeated elements and its length is at least $2$, then it contains two distinct elements.

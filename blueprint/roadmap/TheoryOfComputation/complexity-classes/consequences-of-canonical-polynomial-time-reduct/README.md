@@ -1,6 +1,6 @@
 # Consequences of canonical polynomial-time reductions
 
-- [P subset NP](p-subset-np.md)
-- [Mem P](mem-p.md)
-- [NP subset P](np-subset-p.md)
-- [P eq NP](p-eq-np.md)
+- [P is contained in NP](p-subset-np.md)
+- [Membership in P transfers back along a polynomial-time reduction](mem-p.md)
+- [An NP-hard problem in P puts all of NP in P](np-subset-p.md)
+- [An NP-complete problem in P gives P = NP](p-eq-np.md)

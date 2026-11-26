@@ -1,9 +1,6 @@
-# Aperiodic syntactic Monoid
+# Star-free languages have aperiodic syntactic monoids
 
-Schützenberger's theorem, forward direction: every star-free language has an aperiodic
-syntactic monoid. The induction follows the star-free construction: empty by triviality,
-singletons by the dead-word case analysis, complement and union by the corresponding
-preservation lemmas, concatenation by the one-copy shift argument.
+Every star-free language (built from the empty language and the one-letter languages by complement, finite union and concatenation) has an aperiodic syntactic monoid. This is the forward direction of Schützenberger's theorem; the proof is by induction on the construction of the language.
 
 ## Sources
 

@@ -1,6 +1,3 @@
-# Go C cost le
+# Cost bound for the costed preorder split
 
-Assume that `V` carries a Boolean equality test `==` and a hash function.
-
-The costed split accumulator's cost is at most two tests per preorder
-vertex plus the final test.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. Splitting a preorder at a set of roots walks the preorder while accumulating a current block: a vertex that is a root, met while the current block is nonempty, closes the current block and starts a new one with itself; every other vertex is appended to the current block; at the end a nonempty current block is closed. Each closed block keeps the order of the preorder. The costed split charges one test per vertex for root membership, one more when the vertex is a root, and one final test at the end. For every set of roots, every remaining preorder $x$ and every current block, its cost is at most $2|x| + 1$.

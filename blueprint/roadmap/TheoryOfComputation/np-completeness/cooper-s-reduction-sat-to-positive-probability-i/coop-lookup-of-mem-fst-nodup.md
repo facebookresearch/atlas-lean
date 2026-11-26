@@ -1,3 +1,3 @@
-# Coop lookup of mem fst nodup
+# Looking up a registered variable
 
-Lookup finds the unique entry for a registered variable.
+For a list of pairs $(v, k)$ of a variable and a node index whose variables are pairwise distinct, if $(v, k)$ is in the list, then looking up $v$ in the list returns $k$.

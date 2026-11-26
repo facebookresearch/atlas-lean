@@ -1,3 +1,3 @@
-# Is Poly Time singleton
+# Wrapping a bit in a list takes polynomial time
 
-Wrapping a Bool in a singleton list is polynomial-time for the canonical encodings.
+The map sending a bit $b$ to the one-element list $[b]$ is polynomial-time computable for the canonical encodings.

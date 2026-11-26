@@ -1,6 +1,6 @@
-# Costed All fst
+# The result of a costed conjunction
 
-The result of `costedAll` is the `List.all` of the component results.
+For a list $l$ and a map $f$ assigning to each element a Boolean result and a cost, the result of the costed conjunction of $f$ over $l$ is true exactly when the result of $f$ is true at every element of $l$.
 
 ## Sources
 

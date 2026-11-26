@@ -1,3 +1,3 @@
-# Accepts From to DFA
+# Continuation languages of the residual automaton
 
-The continuation language of a residual state of `L.toDFA` is the residual itself.
+For a language $L$ and a residual $q$ of $L$ (a left quotient $w^{-1}L$), the language accepted from $q$ in the residual automaton of $L$ is $q$ itself.

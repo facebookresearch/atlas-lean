@@ -1,7 +1,6 @@
 # Evaluation results are halted outputs
 
-`y` is the result of a counter
-machine exactly when some bounded run has halted with `y` in register `0`.
+For a counter-machine program, a list of inputs and a natural number $y$, $y$ is the result of evaluating the program on the inputs if and only if, for some number of steps $t$, the run of $t$ steps from the initial state has halted (its program counter is at or past the end of the program) with $y$ in register $0$.
 
 ## Sources
 

@@ -1,4 +1,3 @@
-# Luby Key
+# The key of a vertex in Luby's algorithm
 
-The key of vertex `v`: its priority, with the vertex index as tie-breaker. Keys compare
-lexicographically by `(prio v, v)` (`lubyKey_lt_iff`).
+For a graph on the vertices $0, \dots, n-1$ with priorities $p(v) \in \mathbb{N}$, the key of a vertex $v$ is the natural number $p(v) \cdot n + v$. Comparing keys compares priorities first and breaks ties between equal priorities by vertex index.

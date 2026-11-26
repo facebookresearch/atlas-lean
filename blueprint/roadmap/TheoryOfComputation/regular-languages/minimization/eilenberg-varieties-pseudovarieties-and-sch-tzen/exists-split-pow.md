@@ -1,8 +1,6 @@
-# Exists split pow
+# A split of a repeated word cuts inside one copy
 
-A split of a repeated block `w ^ (N + 1)` cuts inside one copy: there are `i` full
-copies before the cut, a prefix `p` of `w`, the complementary suffix `s` of `w`, and `j`
-full copies after, with `i + j + 1 = N + 1`.
+For a word $w$, a natural number $N$ and words $X_1, X_2$ with $X_1 X_2 = w^{N+1}$, there are natural numbers $i, j$ with $i + j + 1 = N + 1$ and words $p, s$ with $w = ps$, $X_1 = w^i p$ and $X_2 = s\, w^j$.
 
 ## Sources
 

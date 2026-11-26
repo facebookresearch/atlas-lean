@@ -1,11 +1,3 @@
-# Block Cyclic B
+# Boolean cyclicity test for a block
 
-Assume that equality on `V` is decidable.
-
-Boolean cyclic test for a block: `true` iff the block's length is at
-least two, or it contains a state with a self-loop in `graph`. Computable
-with no edge oracle: a self-loop is adjacency-list membership, tested by
-`DirectedAdjacency.hasEdge`. The length test is only a valid test for
-two distinct states under `block.Nodup` (carried explicitly in
-`blockCyclicB_eq_true`): without it, `[s, s]` would pass the length test
-with no self-loop.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has decidable equality. The Boolean cyclicity test of a block returns true exactly when the block has length at least $2$ or some vertex of the block occurs in its own adjacency list. The length test detects two distinct vertices only for duplicate-free blocks: a block listing the same vertex twice passes it without having a self-loop.

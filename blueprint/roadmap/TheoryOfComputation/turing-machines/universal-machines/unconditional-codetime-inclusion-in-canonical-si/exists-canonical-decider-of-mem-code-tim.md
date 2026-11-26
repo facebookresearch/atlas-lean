@@ -1,6 +1,3 @@
 # Unconditional canonical decision-time inclusion
 
-Every problem in `CodeTime t` is
-computed on every binary word by a CSLib single-tape machine over a finite alphabet,
-with an injective bit embedding, a blank left and right half-tape, and the answer under the
-halting head, within `4 * t n + 2 * n + 10` steps.
+A code is a finite transition table of a single-tape Turing machine whose states and symbols are natural numbers below fixed bounds. For a time bound $t : \mathbb{N} \to \mathbb{N}$, a code decides a decision problem $L$ on bit strings within $t$ when, on every bit string $x$ written on its tape, it halts within $t(|x|)$ steps with the answer of $L$ on $x$. The class of problems decided within $t$ by some code is called code time $t$. Each code is simulated step for step by a single-tape Turing machine over a finite alphabet of non-blank symbols, with an injective embedding of the two bits. If a decision problem $L$ is decided by some code within $t$, then there are a finite, nonempty alphabet $\Gamma$, an injective embedding $\iota$ of the two bits into $\Gamma$ and a single-tape Turing machine over $\Gamma$ such that, for every bit string $w$, the machine started on the encoded word $\iota(w)$ halts within $4\,t(|w|) + 2|w| + 10$ steps with the one-symbol output $\iota$ of the answer of $L$ on $w$, on an otherwise blank tape under the halting head.

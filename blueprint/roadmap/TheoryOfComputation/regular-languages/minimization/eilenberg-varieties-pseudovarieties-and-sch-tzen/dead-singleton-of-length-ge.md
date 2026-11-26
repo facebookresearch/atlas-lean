@@ -1,7 +1,6 @@
-# Dead singleton of length ge
+# Long words are dead in a one-letter language
 
-A word of length at least two never occurs in a one-letter language in any context: every
-contextual extension has length at least two, while `[a]` has length one.
+For a letter $a$ and a word $x$ of length at least $2$, no word $uxv$, for any words $u$ and $v$, equals the one-letter word $a$: every such word has length at least $2$.
 
 ## Sources
 

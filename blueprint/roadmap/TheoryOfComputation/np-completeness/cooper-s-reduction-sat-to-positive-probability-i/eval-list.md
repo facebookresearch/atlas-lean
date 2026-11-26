@@ -1,5 +1,3 @@
-# Evaluation of a construction state
+# Evaluating a construction state
 
-**Evaluation of a construction state** under a variable assignment `σ`: node values
-in emission order. A recorded root node takes its variable's value under `σ`; every
-other node takes its forced value from the earlier values.
+For a state of Cooper's construction and an assignment $\sigma$ of Booleans to variables, the node values are computed in the order the nodes were emitted: a node recorded as the root of a variable $x$ takes the value $\sigma(x)$, and every other node takes its forced value given the values of the earlier nodes.

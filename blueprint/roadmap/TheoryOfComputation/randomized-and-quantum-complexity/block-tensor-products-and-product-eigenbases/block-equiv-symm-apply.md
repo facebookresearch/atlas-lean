@@ -1,3 +1,3 @@
-# Block Equiv symm apply
+# Reading block indices off a global index
 
-Reading the digits of a global index gives its block indices.
+For $k$ blocks of $m$ bits, the inverse of the digit bijection sends a global index $s < 2^{km}$ to the tuple whose $i$-th entry is the $i$-th block digit of $s$.

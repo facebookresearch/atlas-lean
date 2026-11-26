@@ -1,3 +1,3 @@
-# Coop St acc
+# The construction keeps the accumulator last
 
-The construction leaves the accumulator as the last node.
+For every CNF formula, in the state produced by Cooper's construction the accumulator (the output of the AND chain) is the last node: its index is the number of nodes minus one.

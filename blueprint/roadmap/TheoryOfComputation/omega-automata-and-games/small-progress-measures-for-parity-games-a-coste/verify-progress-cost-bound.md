@@ -1,7 +1,7 @@
-# Verify Progress Cost Bound
+# Cost bound for the verifier
 
-The total cost bound for the costed verifier: at most `n` positions,
-each with at most `n` successors, each edge costing one move test plus at
-most `progCheckCostBound d`. Source: M. Jurdziński, "Small progress
-measures for solving parity games", *Proceedings of STACS 2000*,
-LNCS 1770, 290-301.
+For $n$ positions and tuples of $d + 1$ numbers, the cost bound for the costed verifier is $n \cdot n \cdot (1 + B_d)$, where $B_d = (d+1)(2 + 2(d+1)) + 2(d+1)$: $n$ positions, each with at most $n$ successors, each pair costing one move test plus at most $B_d$ for the edge check.
+
+## Sources
+
+- M. Jurdziński, "Small progress measures for solving parity games", Proceedings of STACS 2000, LNCS 1770, 290-301.

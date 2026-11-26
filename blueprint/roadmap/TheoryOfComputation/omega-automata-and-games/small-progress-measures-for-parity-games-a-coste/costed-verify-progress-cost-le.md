@@ -1,7 +1,7 @@
-# Costed Verify Progress cost le
+# Cost bound for the costed progress-measure verifier
 
-The costed verifier costs at most `verifyProgressCostBound n d`,
-a polynomial in `n + d`; on the priority-compressed game (`d = 2 * n`)
-this is `O(n ^ 4)` in `n` alone. Source: M. Jurdziński, "Small progress
-measures for solving parity games", *Proceedings of STACS 2000*,
-LNCS 1770, 290-301.
+For a parity game on $n$ positions and a partial assignment $\mu$ of tuples of $d + 1$ natural numbers to positions, the costed progress-measure verifier costs at most $n \cdot n \cdot (1 + B_d)$, where $B_d = (d+1)(2 + 2(d+1)) + 2(d+1)$ bounds the cost of one edge check. This is a polynomial in $n + d$; on a game whose priorities are compressed to $d = 2n$ it is of order $n^4$.
+
+## Sources
+
+- M. Jurdziński, "Small progress measures for solving parity games", Proceedings of STACS 2000, LNCS 1770, 290-301.

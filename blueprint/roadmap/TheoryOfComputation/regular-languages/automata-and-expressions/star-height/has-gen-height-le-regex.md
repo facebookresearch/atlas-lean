@@ -1,4 +1,3 @@
-# Has Gen Height Le regex
+# A regular expression bounds the generalized star height
 
-An ordinary regular expression bounds the generalized star height of its language by its
-own star height.
+For every regular expression $e$, the language of $e$ has generalized star height at most the star height of $e$, where the empty set, the empty word and single letters have star height $0$, unions and concatenations take the larger star height of their parts, and a star adds one.

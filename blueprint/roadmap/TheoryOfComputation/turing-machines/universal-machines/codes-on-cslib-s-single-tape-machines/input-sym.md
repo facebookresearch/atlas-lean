@@ -1,4 +1,3 @@
-# Input Sym
+# The input symbol of a bit
 
-The symbol of the input bit `b` in the alphabet of `c`: the symbol `bitSym b`, which is not
-blank.
+For a machine code $c$ and a bit $b$, the input symbol of $b$ is the symbol of the finite alphabet of $c$ whose value is the code of the bit ($1$ for false, $2$ for true), which is not the blank.

@@ -1,3 +1,3 @@
-# PTy
+# The type of predicates
 
-Semantic type `P = e => t` (predicates).
+In the seven-rule fragment, the semantic type $P$ of predicates is the function type $e \Rightarrow t$ from entities to truth values.

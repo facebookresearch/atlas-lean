@@ -1,3 +1,3 @@
-# Code of a row
+# Code of a table row
 
-The number of parent values, the values as bits, then `num` and `den`.
+A row of a node's table, consisting of a list $u$ of parent values and a probability $\mathit{num}/\mathit{den}$, is encoded as the unary code of the length of $u$, then the bits of $u$, then the unary codes of $\mathit{num}$ and of $\mathit{den}$, where the unary code of $k$ is $k$ ones followed by a zero.

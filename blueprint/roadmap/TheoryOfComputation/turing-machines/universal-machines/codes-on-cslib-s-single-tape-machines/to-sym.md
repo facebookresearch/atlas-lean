@@ -1,4 +1,3 @@
-# To Sym
+# A number as a symbol
 
-A number as a symbol of the alphabet of `c`, taken modulo `c.symBound`; below `c.symBound` it
-is the symbol with that value.
+For a machine code $c$ with alphabet bound $B$, a natural number $a$ is read as the symbol of the finite alphabet with value $a \bmod B$; below $B$ this is the symbol with value $a$, and $0$ is the blank.

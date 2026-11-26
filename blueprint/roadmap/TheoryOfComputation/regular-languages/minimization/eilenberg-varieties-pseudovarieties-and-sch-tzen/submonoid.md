@@ -1,6 +1,6 @@
-# Submonoid
+# Submonoids of aperiodic monoids are aperiodic
 
-A submonoid of an aperiodic monoid is aperiodic.
+Every submonoid of an aperiodic monoid is aperiodic.
 
 ## Sources
 

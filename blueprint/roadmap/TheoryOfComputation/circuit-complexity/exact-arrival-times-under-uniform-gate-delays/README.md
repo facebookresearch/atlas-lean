@@ -1,8 +1,8 @@
 # Exact arrival times under uniform gate delays
 
-- [No Constant Gates](no-constant-gates.md)
-- [No Constant Gates of arity pos](no-constant-gates-of-arity-pos.md)
-- [Arrivals uniform](arrivals-uniform.md)
-- [Exists output Depths eq depth](exists-output-depths-eq-depth.md)
-- [Output Arrivals uniform of no Constant Gates](output-arrivals-uniform-of-no-constant-g.md)
-- [Output Arrivals uniform](output-arrivals-uniform.md)
+- [Programs without constant gates](no-constant-gates.md)
+- [Over a signature without constants, no gate is constant](no-constant-gates-of-arity-pos.md)
+- [Exact gate arrival times under a uniform delay](arrivals-uniform.md)
+- [Some output of a circuit attains its depth](exists-output-depths-eq-depth.md)
+- [Exact output arrival times under a uniform delay, for circuits without constant gates](output-arrivals-uniform-of-no-constant-g.md)
+- [Exact output arrival times under a uniform delay, over a signature without constants](output-arrivals-uniform.md)

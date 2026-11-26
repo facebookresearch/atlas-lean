@@ -1,3 +1,3 @@
-# Canonical Input Sym injective
+# The canonical bit embedding is injective
 
-Distinct input and answer bits remain distinct in the canonical machine.
+A code is a finite transition table of a single-tape Turing machine whose states and symbols are natural numbers below fixed bounds. For a time bound $t : \mathbb{N} \to \mathbb{N}$, a code decides a decision problem $L$ on bit strings within $t$ when, on every bit string $x$ written on its tape, it halts within $t(|x|)$ steps with the answer of $L$ on $x$. The class of problems decided within $t$ by some code is called code time $t$. Each code is simulated step for step by a single-tape Turing machine over a finite alphabet of non-blank symbols, with an injective embedding of the two bits. The canonical machine of a code runs this simulation on an alphabet with visited-cell markers and then erases the cells it visited, leaving only the answer, written on an otherwise blank tape under the halting head. For every code, its canonical machine's embedding of the two bits into the marked alphabet is injective: the bits $0$ and $1$ get different symbols.

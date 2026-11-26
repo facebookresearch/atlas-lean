@@ -1,6 +1,6 @@
-# Costed Any fst
+# The result of a costed disjunction
 
-The result of `costedAny` is the `List.any` of the component results.
+For a list $l$ and a map $f$ assigning to each element a Boolean result and a cost, the result of the costed disjunction of $f$ over $l$ is true exactly when the result of $f$ is true at some element of $l$.
 
 ## Sources
 

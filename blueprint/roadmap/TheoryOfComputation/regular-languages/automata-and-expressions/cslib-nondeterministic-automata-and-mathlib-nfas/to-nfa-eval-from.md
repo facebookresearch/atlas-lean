@@ -1,4 +1,3 @@
-# To NFA eval From
+# Runs of the set-valued-transition form of an automaton
 
-Running the Mathlib form of a CSLib automaton from a set of states `S` on a word `xs`
-gives the CSLib multistep image of `S` under `xs`.
+For a finite-word nondeterministic automaton with relation-valued transitions, a set of states $S$ and a word $w$, running its set-valued-transition form from $S$ on $w$ gives the set of states reachable from some state of $S$ by a run labelled $w$.

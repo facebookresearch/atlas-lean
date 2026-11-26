@@ -1,4 +1,3 @@
-# Is Poly Time fst
+# The first projection takes polynomial time
 
-First projection of bitstring pairs is polynomial-time for the actual canonical encodings,
-not just for raw bitstrings.
+The first projection $(x, w) \mapsto x$ on pairs of bit lists is polynomial-time computable for the canonical encodings of pairs and of bit lists, not only for raw bit strings.

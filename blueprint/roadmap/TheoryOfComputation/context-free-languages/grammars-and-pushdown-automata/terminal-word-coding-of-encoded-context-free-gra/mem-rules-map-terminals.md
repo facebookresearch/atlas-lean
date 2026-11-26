@@ -1,6 +1,3 @@
-# Mem rules map Terminals
+# The rules of a coded grammar
 
-Assume that equality on `T` is decidable and that equality on `T'` is decidable.
-
-The rules of the transformed grammar are exactly the images of source rule values.
-This statement uses Finset membership, so duplicate encoded occurrences are not new choices.
+For terminal alphabets $T$ and $T'$ with decidable equality, a map $\varphi$ from $T$ to words over $T'$ and an encoded context-free grammar $g$ over $T$, a rule belongs to the set of rules of the coded grammar if and only if it is the coded form of some rule of $g$. Rules are compared as members of a set, so repeated encoded productions give no new rules.

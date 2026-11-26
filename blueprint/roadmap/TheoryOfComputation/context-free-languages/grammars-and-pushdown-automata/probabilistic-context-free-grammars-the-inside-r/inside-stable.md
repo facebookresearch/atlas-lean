@@ -1,8 +1,3 @@
-# Inside stable
+# The inside recurrence stabilizes at the length of the word
 
-Assume that equality on `T` is decidable and that equality on `g.NT` is decidable.
-
-The inside recurrence stabilizes once `d >= |w|`: depth `|w|` already
-sums the weights of every valid `PDerivTree` for `w`. Only terminal rules
-`A -> a` and binary rules `A -> B C` have trees; rules of other shapes add
-nothing to `inside`.
+Consider a context-free grammar whose terminals and nonterminals have decidable equality. Given real rule weights $q$, the inside value $I_d(A, w)$ is defined by recursion on $d$: $I_0(A, w) = 0$, and $I_{d+1}(A, w)$ is the leaf weight of $A$ on $w$ (which is $q(A \to a)$ if $w$ is a single terminal $a$ and $A \to a$ is a rule, and $0$ otherwise) plus the sum, over all rules $A \to B\,C$ of the grammar and all split points $0 \le k \le |w|$ for which the prefix $w_{<k}$ and the suffix $w_{\ge k}$ are both nonempty, of $q(A \to B\,C)\, I_d(B, w_{<k})\, I_d(C, w_{\ge k})$. Rules of other shapes contribute nothing. For every nonterminal $A$, every word $w$ and every $d \ge |w|$, $I_d(A, w) = I_{|w|}(A, w)$: depth $|w|$ already sums the weights of all derivation trees for $w$, since a tree of yield $w$ has depth at most $|w|$.

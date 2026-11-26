@@ -1,3 +1,3 @@
-# Le of halted
+# The halting step comes no later than any halted step
 
-The halting step is the first step at which the machine is halted.
+A multi-tape Turing machine with $k$ tapes moves deterministically from configuration to configuration, and a halted configuration stays unchanged under further steps. For a configuration $c$ and $t \ge 0$, the run from $c$ for $t$ steps is the configuration reached after $t$ steps. The machine started in $c$ halts at step $t$ when the run for $t$ steps is halted but the run for every $s < t$ steps is not. If the machine started in $c$ halts at step $t$ and the run from $c$ for $s$ steps is halted, then $t \le s$.

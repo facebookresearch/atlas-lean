@@ -1,7 +1,3 @@
-# To List pow
+# The letters of a power of a word
 
-The powers of a word in the free monoid list out as repetitions of its letter list.
-
-## Sources
-
-- Mathlib, `FreeMonoid.toList_prod`.
+For a word $w$ and $k \in \mathbb{N}$, the letter list of $w^k$ is the concatenation of $k$ copies of the letter list of $w$.

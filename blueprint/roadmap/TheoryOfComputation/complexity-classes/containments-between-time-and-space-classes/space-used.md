@@ -1,4 +1,3 @@
-# Space Used
+# Space used by a computation
 
-The number of work tape cells visited by a computation starting from configuration
-`cfg` up to step `t`.
+For a multi-tape Turing machine with $k$ work tapes, a configuration $c$ and a number of steps $t$, the space used is the sum over the $k$ work tapes of the number of distinct positions their heads visit in the configurations reached from $c$ after $0, 1, \dots, t$ steps.

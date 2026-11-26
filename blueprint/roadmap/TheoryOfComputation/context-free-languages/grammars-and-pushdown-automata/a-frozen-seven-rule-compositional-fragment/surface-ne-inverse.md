@@ -1,3 +1,3 @@
-# Surface ne inverse
+# The two parses are distinct
 
-The two parses of the same token string are distinct trees.
+The surface parse and the inverse parse of the token string "everybody admires someone" in the seven-rule fragment are different derivation trees.

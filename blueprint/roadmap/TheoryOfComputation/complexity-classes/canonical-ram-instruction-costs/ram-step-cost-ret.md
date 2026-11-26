@@ -1,3 +1,3 @@
-# Ram Step Cost ret
+# Erasing the cost annotation of one RAM step
 
-Erasing the annotation gives exactly the canonical step.
+For every program and state of the canonical random-access machine, the state returned by the cost-annotated step is exactly the state returned by the plain step.

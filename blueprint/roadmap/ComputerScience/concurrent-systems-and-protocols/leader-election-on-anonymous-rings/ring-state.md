@@ -1,4 +1,3 @@
-# Ring State
+# State of an anonymous ring after k synchronous rounds
 
-The state after `k` synchronous rounds from initial state
-`s₀`.
+Let $S$ be a set of local states, $n$ a natural number, and $\delta : S \times S \times S \to S$ a local transition. The processes of the ring are indexed by the integers modulo $n$. For an initial configuration $s_0$ assigning a state to every process, the configuration after $k$ rounds is defined by recursion on $k$: after $0$ rounds it is $s_0$, and after $k + 1$ rounds it is the result of one synchronous round (every process applies $\delta$ to its left neighbour's, its own and its right neighbour's state) applied to the configuration after $k$ rounds.

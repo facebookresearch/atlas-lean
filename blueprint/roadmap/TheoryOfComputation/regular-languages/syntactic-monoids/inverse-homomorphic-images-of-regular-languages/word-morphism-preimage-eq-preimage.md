@@ -1,5 +1,3 @@
-# Word Morphism Preimage eq preimage
+# Free-monoid preimage is the list preimage
 
-The free-monoid preimage is the CSLib language preimage under the same morphism.
-Use this equality to rewrite the representation explicitly; membership and identity
-simplification are provided by the word-morphism-preimage lemmas.
+Words over an alphabet are finite lists of letters, and a language is a set of words. A word homomorphism from words over $\Sigma$ to words over $\Gamma$ is a map $h$ with $h(\varepsilon) = \varepsilon$ and $h(xy) = h(x)h(y)$; the same maps can be presented either as monoid homomorphisms between free monoids or as maps on lists preserving the empty list and concatenation. For a monoid homomorphism $h$ between the free monoids over $\Sigma$ and $\Gamma$ and a language $L$ over $\Gamma$, the preimage of $L$ under $h$, the set of words $x$ over $\Sigma$ with $h(x) \in L$, equals the preimage of $L$ under the corresponding word homomorphism on lists.

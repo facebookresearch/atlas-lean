@@ -1,3 +1,3 @@
-# Eval From to DFA val
+# Running the residual automaton takes left quotients
 
-Evaluation from a residual state of `L.toDFA` takes the left quotient of the residual.
+For a language $L$, a residual $q$ of $L$ and a word $w$, running the residual automaton of $L$ from $q$ on $w$ ends in the residual $w^{-1} q$, the left quotient of $q$ by $w$.

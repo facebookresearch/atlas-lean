@@ -1,8 +1,3 @@
-# Any Self Loop C
+# Self-loop scan with entry counting
 
-Assume that equality on `V` is decidable.
-
-Costed self-loop scan: the same `Bool` as
-`block.any fun s => graph.hasEdge s s`, plus the adjacency-entry scans.
-`List.any` stops at the first `true` state; `listMemC` stops at the first
-matching entry.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has decidable equality. The costed self-loop scan of a block returns a Boolean and a count of examined adjacency entries, by recursion on the block: the empty block gives false with count $0$; for a block starting with $s$, it searches the adjacency list of $s$ for $s$ itself, stopping at the first match and counting the entries examined; if $s$ is found the result is true with that count, and otherwise the result is that of the rest of the block with the count added.

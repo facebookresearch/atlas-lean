@@ -1,4 +1,3 @@
-# Max Action
+# The largest action number of a code
 
-The largest action number in the table of `c`, and `0` if the table has no transition.
-Writing the symbol `a` has the action number `a + 2`.
+For a machine code $c$, the largest action number is the maximum of the action numbers of all transitions in its table, and $0$ if the table has no transition; writing the symbol $a$ has action number $a + 2$.

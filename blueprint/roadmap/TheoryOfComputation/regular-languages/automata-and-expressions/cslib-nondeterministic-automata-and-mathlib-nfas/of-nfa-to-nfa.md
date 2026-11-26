@@ -1,3 +1,3 @@
-# Of NFA to NFA
+# Converting a relation-valued-transition automaton and back
 
-Converting a CSLib automaton to a Mathlib `NFA` and back gives the same automaton.
+Converting a finite-word nondeterministic automaton from a relation-valued-transition automaton to its set-valued-transition form and back gives the same automaton.

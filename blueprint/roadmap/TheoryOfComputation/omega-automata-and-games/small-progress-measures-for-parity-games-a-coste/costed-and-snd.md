@@ -1,5 +1,7 @@
-# Costed And snd
+# The cost of a costed AND
 
-The cost of `costedAnd` is the sum of the costs. Source:
-M. Jurdziński, "Small progress measures for solving parity games",
-*Proceedings of STACS 2000*, LNCS 1770, 290-301.
+The cost of the costed AND of two costed results is the sum of their costs.
+
+## Sources
+
+- M. Jurdziński, "Small progress measures for solving parity games", Proceedings of STACS 2000, LNCS 1770, 290-301.

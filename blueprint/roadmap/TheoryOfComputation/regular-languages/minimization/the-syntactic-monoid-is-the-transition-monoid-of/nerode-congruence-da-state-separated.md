@@ -1,4 +1,3 @@
-# Nerode Congruence DA state Separated
+# The Nerode automaton is state-separated
 
-The CSLib canonical automaton, as a Mathlib DFA, is state-separated: it is a
-reindexing of `L.toDFA`.
+For every language $L$, the Nerode automaton of $L$ is state-separated: distinct states accept distinct languages. It is the residual automaton of $L$ with its states renamed.

@@ -1,10 +1,3 @@
-# Scan Blocks C
+# Block scan with cost counting
 
-Assume that `V` carries a Boolean equality test `==` and a hash function; that equality on `V` is decidable; and that `accept` is a decidable predicate.
-
-Costed block scan: the same `Bool` as
-`blocks.any fun block => blockCyclicB graph block &&
-block.any fun s => decide (accept s) && reachSet.contains s`, plus the
-total cost. Per block: the cyclic test's cost, plus the
-accept-and-reachable cost only when the block is cyclic (short-circuit
-`&&`); the scan stops at the first `true` block.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. The vertex type also has decidable equality. The accept-and-reachable test of a block, for a decidable accepting predicate and a set $R$ of vertices, asks whether some vertex of the block is accepting and belongs to $R$. The costed scan of a list of blocks returns a Boolean and a cost, by recursion on the list: the empty list gives false with cost $0$; for a list starting with a block, it runs the costed cyclicity test; if the block is cyclic it runs the costed accept-and-reachable scan, returning true if that succeeds, and otherwise continuing with the remaining blocks; if the block is not cyclic it continues with the remaining blocks. Costs of all tests run are added, and the scan stops at the first block that succeeds.

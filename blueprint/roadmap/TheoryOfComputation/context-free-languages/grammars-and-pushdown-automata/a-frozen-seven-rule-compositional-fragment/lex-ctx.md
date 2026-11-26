@@ -1,4 +1,3 @@
-# Lex Ctx
+# The lexical context
 
-Lexical context `[Q, Q, R]`, head-first de Bruijn order: slot 0 is
-`everybody : Q`, slot 1 is `someone : Q`, slot 2 is `admires : R`.
+The lexical context of the seven-rule fragment lists three typed variables in order: position 0 is "everybody" of the quantifier type $Q$, position 1 is "someone" of type $Q$, and position 2 is "admires" of the relation type $R$, with positions counted from the head of the list.

@@ -1,3 +1,3 @@
-# Reachable init
+# Initial states are reachable
 
-Every initial state is reachable.
+For each $t \in \{0, 1\}$, the initial state of Peterson's algorithm with turn $t$ is reachable.

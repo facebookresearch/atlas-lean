@@ -1,6 +1,7 @@
-# Costed Or
+# Costed OR
 
-Boolean OR on costed results: the result is the OR of the results
-and the cost is the sum of the costs. Source: M. Jurdziński, "Small
-progress measures for solving parity games", *Proceedings of STACS 2000*,
-LNCS 1770, 290-301.
+The costed OR of two pairs, each a Boolean result with a natural-number cost, has as result the disjunction of the two results and as cost the sum of the two costs.
+
+## Sources
+
+- M. Jurdziński, "Small progress measures for solving parity games", Proceedings of STACS 2000, LNCS 1770, 290-301.

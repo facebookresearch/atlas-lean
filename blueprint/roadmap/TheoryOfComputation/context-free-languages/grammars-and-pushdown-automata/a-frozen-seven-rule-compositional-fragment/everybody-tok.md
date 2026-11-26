@@ -1,3 +1,3 @@
-# Everybody Tok
+# The token "everybody"
 
-Token `everybody` (index 0).
+In the seven-rule compositional grammar fragment, the token "everybody" is the token with index 0.

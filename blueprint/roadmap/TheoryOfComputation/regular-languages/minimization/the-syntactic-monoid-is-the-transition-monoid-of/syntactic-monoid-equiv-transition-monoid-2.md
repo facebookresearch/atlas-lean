@@ -1,6 +1,3 @@
-# Syntactic Monoid Equiv Transition Monoid To DFA morphism
+# The isomorphism for the residual automaton on words
 
-The canonical isomorphism for `L.toDFA` sends the syntactic class of a word to the
-transition monoid element of that word. Stated in simp-normal form: `simp` rewrites
-`syntacticMorphism L x` to the coercion `(x : SyntacticMonoid L)`
-(`syntacticMorphism_apply`), so the lemma is stated at the coercion.
+For a language $L$, the canonical isomorphism from the syntactic monoid of $L$ to the transition monoid of the residual automaton of $L$ sends the syntactic class of each word $x$ to the transition of the automaton induced by $x$.

@@ -1,7 +1,3 @@
-# Split Preorder C
+# Splitting a preorder at roots, with cost counting
 
-Assume that `V` carries a Boolean equality test `==`.
-
-Costed split: the same blocks as `splitPreorder`, plus the cost. The
-cost counts one hash-table insertion per root for the `Std.HashSet.ofList`
-construction plus the accumulator's tests (`splitPreorder.goC`).
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. Splitting a preorder at a set of roots walks the preorder while accumulating a current block: a vertex that is a root, met while the current block is nonempty, closes the current block and starts a new one with itself; every other vertex is appended to the current block; at the end a nonempty current block is closed. Each closed block keeps the order of the preorder. The costed split stores the roots in a hash set and runs the costed split accumulator from an empty current block; it returns the same blocks, with cost equal to the number of roots (one insertion each) plus the tests counted by the accumulator.

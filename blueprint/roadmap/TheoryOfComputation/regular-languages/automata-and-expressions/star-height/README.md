@@ -10,13 +10,13 @@
 - [Language of a generalized regular expression](denote.md)
 - [Generalized star height](star-height.md)
 - [Generalized regular expressions denote regular languages](denote-is-regular.md)
-- [Top](top.md)
+- [All words, written without a star](top.md)
 
 ## Language
 
 - [Bounded generalized star height](has-gen-height-le.md)
-- [Is Regular](is-regular.md)
-- [Kstar](kstar.md)
-- [Has Gen Height Le regex](has-gen-height-le-regex.md)
-- [Has Gen Height Le zero singleton](has-gen-height-le-zero-singleton.md)
-- [`true*` is star-free in the generalized sense](has-gen-height-le-zero-kstar-true.md)
+- [Languages of bounded generalized star height are regular](is-regular.md)
+- [A star raises the generalized star height by at most one](kstar.md)
+- [A regular expression bounds the generalized star height](has-gen-height-le-regex.md)
+- [Single words have generalized star height zero](has-gen-height-le-zero-singleton.md)
+- [The language of all-true words is star-free in the generalized sense](has-gen-height-le-zero-kstar-true.md)

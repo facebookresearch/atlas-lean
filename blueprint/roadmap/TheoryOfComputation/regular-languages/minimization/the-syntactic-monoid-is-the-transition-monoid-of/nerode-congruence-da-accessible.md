@@ -1,4 +1,3 @@
-# Nerode Congruence DA accessible
+# The Nerode automaton is accessible
 
-The CSLib canonical automaton, as a Mathlib DFA, is accessible: it is a reindexing
-of `L.toDFA`.
+For every language $L$, the Nerode automaton of $L$ is accessible: every state is reachable from the start. It is the residual automaton of $L$ with its states renamed.

@@ -1,5 +1,3 @@
-# List Mem C fst
+# The costed membership test gives list membership
 
-Assume that equality on `V` is decidable.
-
-The costed membership test returns the same `Bool` as `decide (t ∈ l)`.
+For a type with decidable equality, an element $t$ and a list $\ell$, the costed membership test returns true exactly when $t$ occurs in $\ell$.

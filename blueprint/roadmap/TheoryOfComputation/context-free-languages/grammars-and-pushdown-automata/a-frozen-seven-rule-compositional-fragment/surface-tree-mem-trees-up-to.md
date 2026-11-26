@@ -1,4 +1,3 @@
-# Surface Tree mem trees Up To
+# The surface parse is among the valid trees of depth at most 3
 
-Both designated trees occur in the bounded valid-tree set at
-depth 3 (via the `mem_treesUpTo_iff` interface).
+The surface parse belongs to the set of valid derivation trees of the seven-rule fragment of depth at most 3 with root S and yield "everybody admires someone".

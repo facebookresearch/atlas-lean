@@ -1,6 +1,3 @@
-# Block Cyclic BC cost le
+# Cost bound for the costed cyclicity test
 
-Assume that equality on `V` is decidable.
-
-The costed cyclic test costs at most one length test plus the block's
-adjacency-entry scans.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has decidable equality. The costed cyclicity test of a block costs at most $1$ plus the sum, over the vertices of the block, of the lengths of their adjacency lists.

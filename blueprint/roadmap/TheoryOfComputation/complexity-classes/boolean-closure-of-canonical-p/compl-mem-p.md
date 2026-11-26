@@ -1,3 +1,3 @@
-# Compl mem P
+# Polynomial time is closed under complement
 
-Canonical P is closed under pointwise complement.
+If a decision problem $L$ on bit strings is in P, then so is its complement, which accepts exactly the strings $L$ rejects.

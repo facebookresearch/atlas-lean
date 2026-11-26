@@ -1,3 +1,3 @@
-# Syntactic To Transition Monoid
+# From the syntactic monoid to the transition monoid of a minimal automaton
 
-Restrict the syntactic action of a minimal DFA to its transition monoid.
+A deterministic finite automaton $M$ over an alphabet $\Sigma$ has states, a start state, a transition function and a set of accepting states; it accepts the language $L(M)$. It is accessible when every state is reached from the start state by some word, and state-separated when two states accepting exactly the same words from them are equal. The transition monoid of $M$ is the monoid, under composition, of the state transformations $q \mapsto$ (the state reached from $q$ after reading $x$), over all words $x$. The syntactic monoid of a language $L$ is the monoid of words modulo the syntactic congruence, which identifies $u$ and $v$ when $xuy \in L \iff xvy \in L$ for all words $x, y$. If $M$ is accessible and state-separated, two syntactically congruent words induce the same state transformation of $M$, so sending the class of a word to its state transformation is a well-defined monoid homomorphism from the syntactic monoid of $L(M)$ to the transition monoid of $M$.

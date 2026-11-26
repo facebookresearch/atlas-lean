@@ -1,3 +1,3 @@
-# Is Poly Time dup
+# Duplicating a bit list takes polynomial time
 
-Duplicating a bit list into a canonical pair is polynomial-time.
+The map $x \mapsto (x, x)$ from bit lists to pairs of bit lists is polynomial-time computable for the canonical encodings.

@@ -1,7 +1,6 @@
-# Syntactic Rel singleton of dead
+# Dead words are syntactically equivalent for a one-letter language
 
-Two words that never occur in a singleton language in any context are syntactically
-equivalent for that singleton language: both sides of the defining biconditional are false.
+For a letter $a$ and words $x$ and $y$ such that no word $uxv$ and no word $uyv$, for any words $u, v$, equals the one-letter word $a$, the words $x$ and $y$ are syntactically equivalent for the language consisting of $a$ alone: both sides of each defining equivalence are false.
 
 ## Sources
 

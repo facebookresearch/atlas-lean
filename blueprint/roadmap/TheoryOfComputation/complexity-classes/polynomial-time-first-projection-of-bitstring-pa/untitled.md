@@ -1,3 +1,3 @@
-# Γ
+# Stack alphabets of the projection machine
 
-Tagged input symbols and Boolean output/work symbols.
+The input stack of the projection machine holds symbols of the tagged pair encoding; the output stack and the stash hold bits.

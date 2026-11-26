@@ -1,3 +1,3 @@
-# Np Hard iff
+# Characterizing NP-hardness
 
-Canonical NP-hardness is reduction from every language in canonical NP.
+A decision problem $L$ on bit strings is NP-hard if and only if every problem in NP reduces to $L$ by a polynomial-time many-one reduction.

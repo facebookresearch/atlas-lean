@@ -1,6 +1,6 @@
-# Of punit
+# The trivial monoid is aperiodic
 
-The trivial monoid is aperiodic: it has only one element, so every power is `1`.
+The one-element monoid is aperiodic: its only element $x = 1$ satisfies $x^1 = x^0$.
 
 ## Sources
 

@@ -1,5 +1,3 @@
-# Arrivals uniform
+# Exact gate arrival times under a uniform delay
 
-For a program without constant gates, uniform delay `D ≥ 0` and every
-input arriving at `a0 ≥ 0`, every gate arrives exactly at `a0` plus `D` times
-its depth.
+A straight-line circuit program has input wires and a sequence of gates, each applying an operation of a gate signature to wires that are inputs or earlier gates. The depth of an input wire is $0$, and the depth of a gate is one more than the largest depth among the wires it reads. A gate arrives at its delay plus the maximum of $0$ and the arrival times of the wires it reads. Let a program have no constant gates (every gate reads at least one wire), let $a_0 \ge 0$ and $D \ge 0$ be reals, give every gate the delay $D$ and every input the arrival time $a_0$. Then every gate arrives at exactly $a_0 + D \cdot \delta$, where $\delta$ is the depth of the gate.

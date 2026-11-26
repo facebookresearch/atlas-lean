@@ -1,9 +1,6 @@
-# Pow stabilize
+# Powers stabilize at every later index
 
-Assume that `M` is a monoid.
-
-Powers of an aperiodic element stabilize at every later index: once
-`x ^ (n + 1) = x ^ n`, all later consecutive powers agree.
+In a monoid, if an element $x$ satisfies $x^{n+1} = x^n$, then $x^{k+1} = x^k$ for every $k \ge n$.
 
 ## Sources
 

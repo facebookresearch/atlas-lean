@@ -1,3 +1,3 @@
-# Finite syntactic Monoid compl iff
+# Complement preserves finiteness of the syntactic monoid
 
-Finite syntactic monoids are closed under language complement.
+Words over an alphabet $\Sigma$ form the free monoid under concatenation, and a language is a set of words. Two words $u, v$ are syntactically equivalent for a language $L$ when $xuy \in L \iff xvy \in L$ for all words $x, y$; this is a congruence, the syntactic congruence of $L$, and the quotient is the syntactic monoid of $L$. For every language $L$, the syntactic monoid of the complement of $L$ is finite if and only if the syntactic monoid of $L$ is finite.

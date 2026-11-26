@@ -1,3 +1,3 @@
-# Is Poly Time swap
+# Swapping a pair takes polynomial time
 
-Swapping the components of a canonical bit-list pair is polynomial-time.
+The map $(x, y) \mapsto (y, x)$ on pairs of bit lists is polynomial-time computable for the canonical encodings.

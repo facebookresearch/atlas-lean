@@ -1,3 +1,3 @@
-# Code Time polynomial subset single Tape P
+# Polynomial code time is contained in single-tape P
 
-In particular, CodeTime at any natural-coefficient polynomial is contained in SingleTapeP.
+A code is a finite transition table of a single-tape Turing machine whose states and symbols are natural numbers below fixed bounds. For a time bound $t : \mathbb{N} \to \mathbb{N}$, a code decides a decision problem $L$ on bit strings within $t$ when, on every bit string $x$ written on its tape, it halts within $t(|x|)$ steps with the answer of $L$ on $x$. The class of problems decided within $t$ by some code is called code time $t$. Each code is simulated step for step by a single-tape Turing machine over a finite alphabet of non-blank symbols, with an injective embedding of the two bits. For every polynomial $p$ with natural-number coefficients, every decision problem decided by some code within time $n \mapsto p(n)$ belongs to single-tape P: it is decided by a single-tape Turing machine over a finite alphabet in polynomial time, with the answer written as one symbol.

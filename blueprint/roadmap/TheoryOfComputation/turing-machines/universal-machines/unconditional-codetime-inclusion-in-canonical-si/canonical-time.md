@@ -1,3 +1,3 @@
-# Canonical Time
+# Time bound of the canonical simulation
 
-The proved overhead of canonical simulation and cleanup for the time bound `t`.
+For a time bound $t : \mathbb{N} \to \mathbb{N}$, the canonical time bound is the function $n \mapsto 4\,t(n) + 2n + 10$: the proved number of steps that the canonical simulation, including the final cleanup of the tape, needs on inputs of length $n$.

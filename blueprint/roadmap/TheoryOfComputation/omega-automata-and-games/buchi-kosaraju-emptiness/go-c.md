@@ -1,11 +1,3 @@
-# Go C
+# Splitting a preorder at roots, with test counting
 
-Assume that `V` carries a Boolean equality test `==` and a hash function.
-
-Costed split accumulator: the same walk as `splitPreorder.go`, returning
-`(blocks, cost)` where `cost` counts the Boolean tests the walk performs,
-with short-circuit accounting: each step charges `1` for the
-`rootsSet.contains` test, plus `1` more for the `cur.isEmpty` test only
-when `contains` is true (short-circuit `&&`); the empty-input case charges
-`1` for the final `cur.isEmpty` test. The cost is produced by the same
-recursive evaluation that produces the blocks, not by a separate formula.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. Splitting a preorder at a set of roots walks the preorder while accumulating a current block: a vertex that is a root, met while the current block is nonempty, closes the current block and starts a new one with itself; every other vertex is appended to the current block; at the end a nonempty current block is closed. Each closed block keeps the order of the preorder. The costed split returns the blocks together with a count of Boolean tests, computed by the same recursion: at the end of the preorder it charges $1$ for testing whether the current block is empty; at a vertex that is not a root it charges $1$; and at a root it charges $2$, for the root test and the emptiness test of the current block.

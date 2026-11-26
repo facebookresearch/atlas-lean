@@ -2,17 +2,17 @@
 
 ## Universal
 
-- [Canonical Time](canonical-time.md)
+- [Time bound of the canonical simulation](canonical-time.md)
 
 ## Code
 
-- [Canonical Single Tape TM](canonical-single-tape-tm.md)
-- [Canonical Input Sym](canonical-input-sym.md)
-- [Canonical Input Sym injective](canonical-input-sym-injective.md)
-- [Outputs Within Time canonical Single Tape TM](outputs-within-time-canonical-single-tap.md)
+- [Canonical single-tape machine of a code](canonical-single-tape-tm.md)
+- [Bit embedding of the canonical machine](canonical-input-sym.md)
+- [The canonical bit embedding is injective](canonical-input-sym-injective.md)
+- [The canonical machine of a deciding code outputs its answer in time](outputs-within-time-canonical-single-tap.md)
 
 ## Universal
 
 - [Unconditional canonical decision-time inclusion](exists-canonical-decider-of-mem-code-tim.md)
 - [Polynomially bounded time classes of machine codes lie in single-tape polynomial time](code-time-subset-single-tape-p-of-le-pol.md)
-- [Code Time polynomial subset single Tape P](code-time-polynomial-subset-single-tape.md)
+- [Polynomial code time is contained in single-tape P](code-time-polynomial-subset-single-tape.md)

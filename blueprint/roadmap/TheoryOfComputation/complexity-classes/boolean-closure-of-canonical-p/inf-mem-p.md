@@ -1,3 +1,3 @@
-# Inf mem P
+# Polynomial time is closed under intersection
 
-Canonical P is closed under pointwise intersection.
+If decision problems $L_1$ and $L_2$ on bit strings are in P, then so is their intersection, which accepts a string exactly when both accept it.

@@ -1,4 +1,3 @@
-# Accepts From minimized DFA
+# Continuation languages of the minimized automaton
 
-The continuation language of a state of the minimized presentation is the residual it
-represents.
+For a deterministic finite automaton $M$ and a state $q$ of its minimized presentation, whose states are the residuals of the accepted language reachable from the start, the language accepted from $q$ is the residual $q$ itself.

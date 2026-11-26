@@ -1,7 +1,3 @@
-# Scan Blocks C cost le
+# Cost bound for the costed block scan
 
-Assume that `V` carries a Boolean equality test `==` and a hash function; that equality on `V` is decidable; and that `accept` is a decidable predicate.
-
-The costed block scan's cost is bounded by the per-block budget: one
-length test plus the block's adjacency-entry scans plus two tests per
-block state.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. The vertex type also has decidable equality. A block (a list of vertices) is cyclic when it contains two distinct vertices or a vertex with an edge to itself. The accept-and-reachable test of a block, for a decidable accepting predicate and a set $R$ of vertices, asks whether some vertex of the block is accepting and belongs to $R$. For every list of blocks, the cost of the costed block scan is at most the sum, over the blocks, of $1$ plus the total length of the adjacency lists of the block's vertices plus twice the length of the block.

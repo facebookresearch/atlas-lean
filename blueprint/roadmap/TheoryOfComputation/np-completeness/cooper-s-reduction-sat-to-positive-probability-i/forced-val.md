@@ -1,4 +1,3 @@
 # Forced value of a deterministic node
 
-**Forced value of a deterministic node** given the values of earlier nodes: `true`
-exactly when the table gives probability `1` to `true` at those parent values.
+Given the values of the earlier nodes, the forced value of a node is true exactly when its table gives probability $1$ to true for the values of its parents, a parent whose index has no earlier value reading as false.

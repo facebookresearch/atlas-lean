@@ -1,3 +1,3 @@
-# Stk
+# Stacks of the projection machine
 
-Input, output, and the temporary stack used to restore the first component's order.
+The projection machine has three stacks: the input stack, the output stack, and a stash, a temporary stack used to restore the order of the first component.

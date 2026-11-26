@@ -1,5 +1,3 @@
-# Mem split Trees node
+# Split trees are nodes with the given labels
 
-Assume that equality on `T` is decidable and that equality on `g.NT` is decidable.
-
-Every tree in `splitTrees` is a node with the given labels.
+For a context-free grammar with nonterminals $N$ and terminals $\Sigma$, a derivation tree is either a leaf labelled by a nonterminal $A$ and a terminal $a$ (standing for the rule $A \to a$), or a node labelled by nonterminals $A, B, C$ with a left and a right subtree (standing for the rule $A \to B\,C$). The root of a tree is $A$ in both cases, and its yield is the word $a$ for a leaf and the concatenation of the yields of the left and right subtrees for a node. A tree is valid for the grammar when every leaf's rule $A \to a$ and every node's rule $A \to B\,C$ is a rule of the grammar and, at every node, the left subtree has root $B$ and the right subtree has root $C$. The depth of a leaf is $1$, and the depth of a node is one more than the larger depth of its subtrees. For a depth bound $d$, a nonterminal $A$ and a word $w$, the bounded tree set is the finite set of valid trees of depth at most $d$ with root $A$ and yield $w$. The split trees for nonterminals $A, B, C$, a depth bound $d$ and a word $w$ are the trees for $A \to B\,C$ obtained from a split of $w$ into nonempty prefix and suffix and trees from the bounded tree sets of $B$ on the prefix and $C$ on the suffix. Every split tree is a node labelled $A, B, C$ with some left and right subtrees.

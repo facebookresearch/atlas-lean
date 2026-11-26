@@ -1,8 +1,3 @@
-# Start Reachable
+# Vertices reachable from a start vertex
 
-Assume that `V` carries a Boolean equality test `==` that agrees with equality and a hash function and that `start` is a decidable predicate.
-
-The vertices reachable from a start state, computed by *one* DFS from
-the start states — not by a per-state reachability oracle and not by an
-`O(n³)` closure. This is the visited set the emptiness scanner tests SCC
-blocks against.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. The start-reachable list is the preorder of one depth-first search of the graph whose roots are the vertices satisfying a decidable start predicate, taken in vertex-list order. It is computed by a single depth-first search from all start vertices, not by a separate reachability test for each state.

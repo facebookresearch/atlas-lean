@@ -1,4 +1,3 @@
-# Nerode Congruence DA accepts
+# The Nerode automaton accepts its language
 
-The CSLib canonical automaton, as a Mathlib DFA, accepts the language it is built
-from.
+For every language $L$, the Nerode automaton of $L$, the deterministic automaton whose states are the classes of words under the Nerode congruence of $L$, accepts exactly $L$.

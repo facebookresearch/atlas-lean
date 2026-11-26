@@ -1,14 +1,6 @@
-# Of syntactic Monoid concat
+# Concatenation preserves aperiodic syntactic monoids
 
-Aperiodicity of syntactic monoids is preserved under language concatenation. For a word
-`x`, let `kL`, `kK` be the stabilization exponents of its classes in the two syntactic
-monoids, and put `N = kL + kK + 1`. A split of `u * x ^ (N + 1) * v` in `L * K` either
-cuts in `u` or `v`, where one side stabilizes by `N ≥ kL, kK`, or cuts inside the repeated
-block, where the cut can be shifted by one copy: if the left part already contains more
-than `kL` full copies, delete a copy on the left; otherwise the right part contains more
-than `kK` full copies, so delete a copy on the right. The reverse direction inserts a
-copy by the same case split. This is the syntactic form of the Schützenberger product
-argument.
+If the syntactic monoids of languages $L$ and $K$ are aperiodic, then so is the syntactic monoid of their concatenation $LK$. For a word $x$ whose classes satisfy $x^{k_L+1} \equiv x^{k_L}$ in the syntactic monoid of $L$ and $x^{k_K+1} \equiv x^{k_K}$ in that of $K$, the exponent $N = k_L + k_K + 1$ works for $LK$: a cut of $u\, x^{N+1} v$ into a word of $L$ followed by a word of $K$ either falls in $u$ or $v$, where one side stabilizes, or falls inside the repeated block, where one copy can be removed on whichever side holds more than $k_L$, respectively $k_K$, full copies; the converse inserts a copy by the same case split.
 
 ## Sources
 

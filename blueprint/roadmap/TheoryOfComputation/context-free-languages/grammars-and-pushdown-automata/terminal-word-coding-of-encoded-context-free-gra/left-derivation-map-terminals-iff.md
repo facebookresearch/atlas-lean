@@ -1,6 +1,3 @@
-# Left Derivation map Terminals iff
+# Coded leftmost derivations come from source derivations
 
-Assume that equality on `T` is decidable and that equality on `T'` is decidable.
-
-Every coded leftmost derivation is the image of a source derivation, including its
-exact rule list. This existential reflection also holds for noninjective or erasing maps.
+Let $T$ and $T'$ have decidable equality, let $\varphi$ send terminals of $T$ to words over $T'$ with induced word homomorphism $h$, and let $g$ be an encoded context-free grammar over $T$. For a sentential form $u$ over $g$, a word $w$ over $T'$ and a list $\rho$ of rules of the coded grammar, the coded grammar has a leftmost derivation from the coded form of $u$ to $w$ with rule list $\rho$ if and only if there are a word $w_0$ over $T$ and a rule list $\rho_0$ such that $g$ has a leftmost derivation from $u$ to $w_0$ with rule list $\rho_0$, $h(w_0) = w$, and the coded rules of $\rho_0$ form $\rho$. This holds even when $h$ is not injective or erases letters.

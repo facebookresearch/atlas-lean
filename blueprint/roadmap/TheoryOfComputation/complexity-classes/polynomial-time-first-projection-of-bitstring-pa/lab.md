@@ -1,3 +1,3 @@
-# Lab
+# Control labels of the projection machine
 
-Two transfer phases, input cleanup, and the final halt.
+The projection machine has four control labels: reading the first component onto a stash, emitting it to the output, cleaning up the remaining input, and done.

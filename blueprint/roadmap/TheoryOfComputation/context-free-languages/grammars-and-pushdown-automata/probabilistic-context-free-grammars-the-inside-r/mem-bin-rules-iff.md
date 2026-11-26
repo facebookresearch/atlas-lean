@@ -1,5 +1,3 @@
-# Mem bin Rules iff
+# Binary rule bodies are exactly the binary rules
 
-Assume that equality on `T` is decidable and that equality on `g.NT` is decidable.
-
-Reading a rule back out of `binRules` membership.
+For a context-free grammar whose terminals and nonterminals have decidable equality and nonterminals $A, B, C$, the pair $(B, C)$ is a binary rule body of $A$ if and only if $A \to B\,C$ is a rule of the grammar.

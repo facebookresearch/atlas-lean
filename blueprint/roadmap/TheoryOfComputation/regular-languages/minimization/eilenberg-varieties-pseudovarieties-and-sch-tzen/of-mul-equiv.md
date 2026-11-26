@@ -1,6 +1,6 @@
-# Of mul Equiv
+# Aperiodicity is preserved by isomorphism
 
-Aperiodicity is preserved under monoid isomorphism.
+If a monoid $M$ is aperiodic and $N$ is isomorphic to $M$ as a monoid, then $N$ is aperiodic.
 
 ## Sources
 

@@ -1,4 +1,3 @@
-# To DFA state Separated
+# The residual automaton is state-separated
 
-Mathlib's residual-language DFA is state-separated: distinct residuals have distinct
-continuation languages.
+For every language $L$, the residual automaton of $L$ is state-separated: distinct residuals, as states, accept distinct languages, since the language accepted from a residual is the residual itself.

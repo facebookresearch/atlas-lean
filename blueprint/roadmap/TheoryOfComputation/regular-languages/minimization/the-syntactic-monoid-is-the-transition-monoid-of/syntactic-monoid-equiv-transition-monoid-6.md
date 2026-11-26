@@ -1,5 +1,3 @@
-# Syntactic Monoid Equiv Transition Monoid Nerode Congruence DA morphism
+# The isomorphism for the Nerode automaton on words
 
-The canonical isomorphism for the CSLib canonical automaton sends the syntactic
-class of a word to the transition monoid element of that word. Stated in simp-normal
-form, as in the `toDFA` case.
+For a language $L$, the canonical isomorphism from the syntactic monoid of $L$ to the transition monoid of the Nerode automaton of $L$ sends the syntactic class of each word $x$ to the transition of the automaton induced by $x$.

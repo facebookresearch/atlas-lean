@@ -1,6 +1,6 @@
-# Of syntactic Monoid empty
+# The empty language has an aperiodic syntactic monoid
 
-The syntactic monoid of the empty language is trivial: every class is `1`.
+The syntactic monoid of the empty language is trivial, every class being the identity, so it is aperiodic.
 
 ## Sources
 

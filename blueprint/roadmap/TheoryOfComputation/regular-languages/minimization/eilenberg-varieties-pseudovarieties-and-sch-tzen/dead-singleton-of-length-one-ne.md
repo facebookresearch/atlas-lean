@@ -1,8 +1,6 @@
-# Dead singleton of length one ne
+# Other one-letter words are dead in a one-letter language
 
-A word of length one, different from `[a]`, never occurs in the singleton language in any
-context: a contextual extension of length one forces both contexts empty, hence the word
-itself would have to be `[a]`.
+For a letter $a$ and a word $x$ of length $1$ different from the word $a$, no word $uxv$, for any words $u$ and $v$, equals the one-letter word $a$: such a word of length $1$ forces $u$ and $v$ to be empty, and then it is $x$.
 
 ## Sources
 

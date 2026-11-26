@@ -1,5 +1,3 @@
-# Buchi Graph reachable
+# Reachability in the transition graph is reachability in the automaton
 
-Assume that `State` carries a Boolean equality test `==` that agrees with equality and a hash function; that equality on `State` is decidable; that each proposition `na.Tr s x t` is decidable; and that `Symbol` is finite.
-
-Reachability in `buchiGraph` is exactly `ReflTransGen Buchi.Step`.
+Let a Büchi automaton have a finite alphabet, a state type with decidable equality, a Boolean equality test agreeing with equality and a hash function, and decidable transitions, and let a duplicate-free list enumerate all its states. Its transition graph is the directed graph on the enumerated states in which the successors of $s$ are the enumerated states $t$ such that some letter takes $s$ to $t$, in enumeration order. For all states $s, t$, $t$ is reachable from $s$ in the transition graph (by a path of zero or more edges) if and only if $t$ is reachable from $s$ by zero or more steps of the automaton, each step reading some letter.

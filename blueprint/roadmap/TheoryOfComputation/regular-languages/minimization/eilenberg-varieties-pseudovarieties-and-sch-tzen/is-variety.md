@@ -1,13 +1,7 @@
-# Is Variety
+# Varieties of regular languages
 
-A variety of regular languages is a family of classes of languages, one per finite
-alphabet, such that every member is regular, every component contains the empty language
-(hence, by complement closure, the universal language: each component is a Boolean
-algebra), and the family is closed under Boolean operations, left and right quotients,
-and inverse images under word morphisms (free-monoid morphisms) between finite
-alphabets. The finite-alphabet indexing, the regularity requirement, and the empty-language
-clause are part of Eilenberg's definition: without regularity, the constant family
-`V L := True` would satisfy every closure property while containing nonregular
-languages, and without the empty-language clause, the constantly-false family would
-vacuously satisfy every closure property. Source: Eilenberg, "Automata, Languages, and
-Machines" Vol. B, Chapter IV, Definition 2.1.
+A variety of regular languages assigns to each finite alphabet a class of languages over it such that every member is regular, every class contains the empty language, and the classes are closed under complement, finite union, left and right quotients by words, and inverse images under monoid morphisms between the free monoids of two finite alphabets. By complement, each class also contains the language of all words. Requiring regularity excludes the family of all languages, and requiring the empty language excludes the empty family.
+
+## Sources
+
+- Eilenberg, "Automata, Languages, and Machines" Vol. B, Chapter IV, Definition 2.1.

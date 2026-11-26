@@ -1,3 +1,3 @@
-# State Equivalent iff accepts From eq
+# Equivalent states are those with the same continuation language
 
-Two states are equivalent exactly when their continuation languages agree.
+In a deterministic finite automaton, two states $p$ and $q$ are equivalent (for every word $w$, running $w$ from $p$ ends in an accepting state exactly when running $w$ from $q$ does) if and only if the languages accepted from $p$ and from $q$ are equal.

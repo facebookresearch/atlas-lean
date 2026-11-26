@@ -1,3 +1,3 @@
-# ToεNFA ofεNFA
+# Converting a set-valued-transition automaton with empty moves and back
 
-Converting a Mathlib `εNFA` to a CSLib automaton and back gives the same `εNFA`.
+Converting a set-valued-transition automaton with empty moves to a relation-valued-transition automaton and back gives the same automaton.

@@ -1,5 +1,3 @@
-# Buchi Graph edge
+# Edges of the transition graph are automaton steps
 
-Assume that `State` carries a Boolean equality test `==` that agrees with equality and a hash function; that equality on `State` is decidable; that each proposition `na.Tr s x t` is decidable; and that `Symbol` is finite.
-
-Edges of `buchiGraph` are exactly `Buchi.Step` transitions.
+Let a Büchi automaton have a finite alphabet, a state type with decidable equality, a Boolean equality test agreeing with equality and a hash function, and decidable transitions, and let a duplicate-free list enumerate all its states. Its transition graph is the directed graph on the enumerated states in which the successors of $s$ are the enumerated states $t$ such that some letter takes $s$ to $t$, in enumeration order. For all states $s, t$, there is an edge from $s$ to $t$ in the transition graph if and only if some letter takes $s$ to $t$ in the automaton.

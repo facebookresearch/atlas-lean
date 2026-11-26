@@ -1,8 +1,3 @@
-# Split Preorder go length sum
+# Splitting preserves total length
 
-Assume that `V` carries a Boolean equality test `==` and a hash function.
-
-The split preserves total length: the blocks' lengths sum to the preorder
-length plus the pending block's length. The scanner's per-block work is
-bounded by the blocks' total length, so this lemma is what turns the
-second-preorder length into a scanner work bound.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. Splitting a preorder at a set of roots walks the preorder while accumulating a current block: a vertex that is a root, met while the current block is nonempty, closes the current block and starts a new one with itself; every other vertex is appended to the current block; at the end a nonempty current block is closed. Each closed block keeps the order of the preorder. For every set of roots, every remaining preorder $x$ and every current block $c$, the lengths of the blocks returned by the split sum to $|x| + |c|$.

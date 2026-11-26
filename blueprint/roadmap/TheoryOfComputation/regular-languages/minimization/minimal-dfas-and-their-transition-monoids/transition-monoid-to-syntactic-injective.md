@@ -1,3 +1,3 @@
-# Transition Monoid To Syntactic injective of minimal
+# On a minimal automaton the quotient map to the syntactic monoid is injective
 
-Consequently, on a minimal DFA the transition-monoid quotient map is injective.
+A deterministic finite automaton $M$ over an alphabet $\Sigma$ has states, a start state, a transition function and a set of accepting states; it accepts the language $L(M)$. It is accessible when every state is reached from the start state by some word, and state-separated when two states accepting exactly the same words from them are equal. The transition monoid of $M$ is the monoid, under composition, of the state transformations $q \mapsto$ (the state reached from $q$ after reading $x$), over all words $x$. The syntactic monoid of a language $L$ is the monoid of words modulo the syntactic congruence, which identifies $u$ and $v$ when $xuy \in L \iff xvy \in L$ for all words $x, y$. For any automaton $M$, the map from its transition monoid to the syntactic monoid of $L(M)$ sends the transformation of a word $x$ to the syntactic class of $x$. If $M$ is accessible and state-separated, this map is injective.

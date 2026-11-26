@@ -1,3 +1,3 @@
-# Depth
+# Depth of a one-nonterminal tree
 
-Depth of a one-nonterminal tree; leaves have depth one.
+For a one-nonterminal binary tree, the depth is $1$ for a leaf, and one more than the larger of the depths of its two subtrees for a node.

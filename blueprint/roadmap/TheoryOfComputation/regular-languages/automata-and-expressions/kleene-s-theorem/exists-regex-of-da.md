@@ -1,4 +1,3 @@
-# Exists regex of da
+# Deterministic automata have regular expressions
 
-A CSLib deterministic finite-word automaton has a matching regular expression.
-Its conversion `toDFA` to a Mathlib DFA preserves the accepted language.
+For a finite alphabet and a deterministic finite-word automaton with finitely many states, there is a regular expression whose language is exactly the language the automaton accepts.

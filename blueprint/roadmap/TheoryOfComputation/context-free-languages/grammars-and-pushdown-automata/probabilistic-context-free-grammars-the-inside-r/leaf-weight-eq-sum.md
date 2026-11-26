@@ -1,5 +1,3 @@
-# Leaf Weight eq sum
+# The leaf weight is the total weight of the leaf trees
 
-Assume that equality on `T` is decidable and that equality on `g.NT` is decidable.
-
-The leaf summand equals the leaf tree sum.
+For a context-free grammar with nonterminals $N$ and terminals $\Sigma$, a derivation tree is either a leaf labelled by a nonterminal $A$ and a terminal $a$ (standing for the rule $A \to a$), or a node labelled by nonterminals $A, B, C$ with a left and a right subtree (standing for the rule $A \to B\,C$). The root of a tree is $A$ in both cases, and its yield is the word $a$ for a leaf and the concatenation of the yields of the left and right subtrees for a node. For a real weight $q(r)$ on each rule $r$, the weight of a leaf $A \to a$ is $q(A \to a)$, and the weight of a node is $q(A \to B\,C)$ times the weights of its two subtrees. The leaf weight of $A$ on $w$ is $q(A \to a)$ if $w$ is a single terminal $a$ and $A \to a$ is a rule, and $0$ otherwise. For all real rule weights, nonterminals $A$ and words $w$, the leaf weight equals the sum of the weights of the leaf trees of $A$ on $w$.

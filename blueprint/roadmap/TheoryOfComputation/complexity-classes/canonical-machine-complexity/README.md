@@ -2,12 +2,12 @@
 
 ## Poly Many One Red
 
-- [Refl](refl.md)
-- [Trans](trans.md)
+- [Every decision problem reduces to itself](refl.md)
+- [Polynomial-time many-one reductions compose](trans.md)
 
 ## Complexity
 
-- [Of poly Many One Red](of-poly-many-one-red.md)
-- [Mk](mk.md)
-- [Mem NP](mem-np.md)
-- [Np Hard](np-hard.md)
+- [NP-hardness transfers along polynomial-time reductions](of-poly-many-one-red.md)
+- [NP membership and NP-hardness give NP-completeness](mk.md)
+- [NP-complete problems belong to NP](mem-np.md)
+- [NP-complete problems are NP-hard](np-hard.md)

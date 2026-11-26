@@ -1,12 +1,3 @@
-# Kosaraju Is Empty BC
+# Büchi emptiness scanner with cost counting
 
-Assume that `State` carries a Boolean equality test `==` that agrees with equality; that equality on `State` is decidable; that membership in `na.start` is decidable; that membership in `na.accept` is decidable; that each proposition `na.Tr s x t` is decidable; and that `Symbol` is finite.
-
-Costed Büchi emptiness scanner: the same `Bool` as `kosarajuIsEmptyB`,
-plus the cost. The reachable preorder is bound once (`reachPre`); the
-hash set is built from that binding and its length is reused for the
-cost — so the start-reachability DFS runs once, not twice (calling
-`startReachable` again for the length would be a second DFS). The cost
-counts one hash-table insertion per start-reachable vertex for the
-visited-set construction plus the block scan's cost (`scanBlocksC`);
-the visited set is built once and shared across the scan.
+Let a Büchi automaton have a finite alphabet, a state type with decidable equality, a Boolean equality test agreeing with equality and a hash function, and decidable transitions, and let a duplicate-free list enumerate all its states. Its transition graph is the directed graph on the enumerated states in which the successors of $s$ are the enumerated states $t$ such that some letter takes $s$ to $t$, in enumeration order. Assume membership in the start and accepting sets is decidable. The Kosaraju–Sharir blocks of a graph are obtained by a first depth-first pass over all vertices, giving the vertices in decreasing finishing order, and a second depth-first pass on the transpose graph with roots taken in that order; the blocks are the trees of the second pass, each listed in preorder. The start-reachable list is the preorder of one depth-first search of the graph whose roots are the vertices satisfying a decidable start predicate, taken in vertex-list order. The costed scanner computes the start-reachable list once, stores it in a hash set, and scans the Kosaraju–Sharir blocks with cost counting, looking for a block that passes the cyclicity test and contains an accepting state of the set. It returns the negation of what the scan found, with cost equal to the length of the start-reachable list (one insertion per reachable state) plus the cost of the scan.

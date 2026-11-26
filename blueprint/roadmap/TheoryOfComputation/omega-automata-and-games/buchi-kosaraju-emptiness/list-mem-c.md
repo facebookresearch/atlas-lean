@@ -1,8 +1,3 @@
-# List Mem C
+# List membership with entry counting
 
-Assume that equality on `V` is decidable.
-
-Costed list-membership test: the same `Bool` as `decide (t ∈ l)`, plus
-the number of entries examined. It stops at the first matching entry
-(short-circuit), so the cost is the index of the first match plus one,
-or the full length when `t` is absent.
+For a type with decidable equality and an element $t$, the costed membership test of a list returns a Boolean and a count, by recursion: the empty list gives false with count $0$; a list starting with $x$ gives true with count $1$ if $t = x$, and otherwise the result for the rest of the list with $1$ added to its count. So the count is the position of the first occurrence of $t$, counted from $1$, or the length of the list when $t$ is absent.

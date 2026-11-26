@@ -1,5 +1,3 @@
 # OR node for a literal
 
-The parents are the chain output `o` and the root `v` of the
-literal's variable; the node is true iff `o` is true or the root has the literal's polarity
-`b`.
+For a chain output $o$, the root $v$ of a literal's variable and the literal's polarity $b$, the OR node is the deterministic gate with parents $o$ and $v$ that is true exactly when $o$ is true or the value of $v$ equals $b$.

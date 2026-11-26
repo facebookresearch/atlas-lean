@@ -1,3 +1,3 @@
-# Val input Sym
+# The value of an input symbol
 
-The value of an input symbol is the symbol of the bit.
+For a machine code and a bit $b$, the input symbol of $b$ has as its value the code of $b$: $1$ if $b$ is false and $2$ if $b$ is true.

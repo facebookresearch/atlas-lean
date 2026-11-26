@@ -1,3 +1,3 @@
-# Of accepts From eq
+# Injective continuation languages give state separation
 
-A DFA is state-separated when the continuation-language map is injective.
+A deterministic finite automaton is state-separated (any two equivalent states are equal) when there is an injective map $f$ from states to languages with $f(q)$ equal to the language accepted from $q$, for every state $q$.

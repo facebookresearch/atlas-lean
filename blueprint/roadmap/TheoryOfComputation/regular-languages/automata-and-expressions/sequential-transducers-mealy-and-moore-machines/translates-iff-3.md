@@ -1,4 +1,3 @@
-# Translates iff
+# A Moore machine translates a word to its output word
 
-CSLib's translation by a Moore machine is equality with its output word,
-including the output of the starting state.
+A transducer, in the general sense, is anything that relates input words to output words; its translation relation says which output word it produces from which input word. A Moore machine has states, a start state, a transition function on states and input letters, and an output letter for each state; its output word on an input word $x$ is the output of the start state followed by the outputs of the states reached after each letter of $x$, so it has length $|x| + 1$. Viewed as a general transducer, a Moore machine relates an input word $x$ to an output word $y$ if and only if $y$ is its output word on $x$, including the output of the start state.

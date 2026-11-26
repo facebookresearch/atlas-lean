@@ -1,8 +1,6 @@
-# Of syntactic Monoid union
+# Union preserves aperiodic syntactic monoids
 
-Aperiodicity of syntactic monoids is preserved under language union: take the maximum
-of the stabilization exponents for the two operands, and combine the two syntactic power
-identities with the union case of syntactic equivalence.
+If the syntactic monoids of languages $L$ and $K$ are aperiodic, then so is the syntactic monoid of their union: the larger of the two stabilization exponents of a word works for $L \cup K$.
 
 ## Sources
 

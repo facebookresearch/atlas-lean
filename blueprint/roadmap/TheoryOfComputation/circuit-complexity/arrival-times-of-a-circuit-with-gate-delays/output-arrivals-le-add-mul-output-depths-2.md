@@ -1,4 +1,3 @@
-# Output Arrivals le add mul output Depths
+# Output arrival times are bounded by depth under nonnegative bounded delays
 
-Under delays in `[0, D]` and input arrivals at most `a0 ≥ 0`, every
-designated output arrives no later than `a0 + D` times its depth.
+A straight-line circuit program over a gate signature has a fixed number of input wires and a sequence of gates; each gate applies an operation of the signature to a list of wires (inputs or earlier gates), one for each argument position of the operation. A circuit is such a program with a list of designated output wires. The depth of an input wire is $0$, and the depth of a gate is one more than the largest depth among the wires it reads. Let $a_0 \ge 0$ and $D$ be reals, suppose every input arrives at time at most $a_0$, and every gate delay lies in $[0, D]$. Then every designated output arrives at time at most $a_0 + D \cdot \delta$, where $\delta$ is the depth of that output.

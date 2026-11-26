@@ -1,3 +1,3 @@
-# The output convention is CSLib's
+# Counter machines and register machines output alike
 
-Register `0` is `URM.Regs.output`.
+For every counter-machine state, the output of the corresponding unlimited register machine state, its register $0$, equals the counter machine's register $0$.

@@ -1,5 +1,7 @@
-# Costed Lex Ge Trunc cost le
+# Cost bound for the costed non-strict truncated comparison
 
-The costed non-strict truncated order costs at most
-`progCheckCostBound d`. Source: M. Jurdziński, "Small progress measures
-for solving parity games", *Proceedings of STACS 2000*, LNCS 1770, 290-301.
+For $d \in \mathbb{N}$, a threshold $p$ and tuples $a, b$ of $d + 1$ natural numbers, the costed non-strict truncated comparison of $a$ and $b$ costs at most $(d+1)(2 + 2(d+1)) + 2(d+1)$.
+
+## Sources
+
+- M. Jurdziński, "Small progress measures for solving parity games", Proceedings of STACS 2000, LNCS 1770, 290-301.

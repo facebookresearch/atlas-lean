@@ -1,4 +1,3 @@
-# Syntactic Monoid Equiv Transition Monoid
+# The syntactic monoid is the transition monoid of the minimal automaton
 
-The syntactic monoid is canonically isomorphic to the transition monoid of every accessible,
-state-separated DFA recognizing the language.
+A deterministic finite automaton $M$ over an alphabet $\Sigma$ has states, a start state, a transition function and a set of accepting states; it accepts the language $L(M)$. It is accessible when every state is reached from the start state by some word, and state-separated when two states accepting exactly the same words from them are equal. The transition monoid of $M$ is the monoid, under composition, of the state transformations $q \mapsto$ (the state reached from $q$ after reading $x$), over all words $x$. The syntactic monoid of a language $L$ is the monoid of words modulo the syntactic congruence, which identifies $u$ and $v$ when $xuy \in L \iff xvy \in L$ for all words $x, y$. If $M$ is accessible and state-separated, then the syntactic monoid of $L(M)$ is isomorphic, as a monoid, to the transition monoid of $M$, by the map sending the class of a word $x$ to the state transformation of $x$. No finiteness of the states is assumed.

@@ -1,7 +1,3 @@
-# Mem start Reachable iff
+# The start-reachable list contains exactly the reachable vertices
 
-Assume that `V` carries a Boolean equality test `==` that agrees with equality and a hash function and that `start` is a decidable predicate.
-
-DFS preorder from the start states enumerates exactly the vertices
-reachable from a start state (`mem_preorder_iff_reachable`, with the roots
-being the filtered start vertices).
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. The start-reachable list is the preorder of one depth-first search of the graph whose roots are the vertices satisfying a decidable start predicate, taken in vertex-list order. A vertex $s$ belongs to the start-reachable list if and only if there is a vertex $s_0$ satisfying the start predicate from which $s$ is reachable by a path of zero or more edges.

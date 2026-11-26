@@ -1,3 +1,3 @@
-# E Ty
+# The type of entities
 
-Semantic type `e` (entities): `Ty.base false`.
+In the seven-rule fragment, the semantic type $e$ of entities is one of the two base types of the simple type system over two base types (the other being the type $t$ of truth values).

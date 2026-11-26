@@ -1,3 +1,3 @@
-# Init
+# Initial states of Peterson's algorithm
 
-The initial state with turn `t`: both processes idle, both flags down.
+For each process $t \in \{0, 1\}$, the initial state with turn $t$ has both processes idle, both flags down, and the shared turn variable equal to $t$.

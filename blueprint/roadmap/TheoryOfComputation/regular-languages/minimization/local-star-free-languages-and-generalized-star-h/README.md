@@ -1,4 +1,4 @@
 # Local star-free languages and generalized star height
 
-- [Has Gen Height Le zero](has-gen-height-le-zero.md)
-- [Not is Star Free one](not-is-star-free-one.md)
+- [Locally star-free languages have generalized star height zero](has-gen-height-le-zero.md)
+- [Over an infinite alphabet the empty-word language is not locally star-free](not-is-star-free-one.md)

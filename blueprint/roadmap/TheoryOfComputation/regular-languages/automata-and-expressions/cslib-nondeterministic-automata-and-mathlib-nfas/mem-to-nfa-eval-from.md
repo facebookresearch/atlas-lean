@@ -1,5 +1,3 @@
-# Mem toεNFA eval From
+# Runs of the set-valued-transition form of an automaton with empty moves
 
-Running the Mathlib form of a CSLib automaton from a set of states `S` on a word `xs`
-reaches exactly the states that a CSLib saturated multistep transition labelled
-`xs.map some` reaches from a state of `S`.
+For a finite-word automaton with empty moves with relation-valued transitions, a set of states $S$, a word $w$ and a state $t$, running the set-valued-transition form of the automaton from $S$ on $w$, taking closures under empty moves, reaches $t$ if and only if some state of $S$ reaches $t$ by a run whose letters, with any number of empty moves before, between and after them, spell $w$.

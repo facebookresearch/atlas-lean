@@ -1,5 +1,3 @@
-# Syntactic Monoid Equiv Transition Monoid Minimized DFA morphism
+# The isomorphism for the minimized automaton on words
 
-The canonical isomorphism for `minimizedDFA M` sends the syntactic class of a word
-to the transition monoid element of that word. Stated in simp-normal form, as in the
-`toDFA` case.
+For a deterministic finite automaton $M$, the canonical isomorphism from the syntactic monoid of the language of $M$ to the transition monoid of its minimized presentation sends the syntactic class of each word $x$ to the transition of the minimized automaton induced by $x$.

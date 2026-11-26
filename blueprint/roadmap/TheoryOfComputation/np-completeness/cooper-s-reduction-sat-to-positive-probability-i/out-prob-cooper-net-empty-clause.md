@@ -1,3 +1,3 @@
-# Out Prob cooper Net empty Clause
+# The formula with one empty clause has output probability zero
 
-The empty clause gives a constant-false clause output.
+For the CNF formula consisting of one empty clause, the network Cooper's construction builds has nodes constant true, constant false and their AND, and its output probability is $0$.

@@ -1,3 +1,3 @@
-# Admires Tok
+# The token "admires"
 
-Token `admires` (index 1).
+In the seven-rule compositional grammar fragment, the token "admires" is the token with index 1.

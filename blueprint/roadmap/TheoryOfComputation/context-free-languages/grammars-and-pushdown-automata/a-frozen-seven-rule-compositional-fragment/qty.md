@@ -1,3 +1,3 @@
-# QTy
+# The type of generalized quantifiers
 
-Semantic type `Q = (e => t) => t` (generalized quantifiers).
+In the seven-rule fragment, the semantic type $Q$ of generalized quantifiers is $(e \Rightarrow t) \Rightarrow t$, from predicates to truth values.

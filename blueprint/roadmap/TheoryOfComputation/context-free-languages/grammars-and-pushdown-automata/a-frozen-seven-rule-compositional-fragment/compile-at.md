@@ -1,4 +1,3 @@
-# Compile At
+# Compiling a tree with a known root
 
-Compile a tree known to have root `B`, at `B`'s semantic type;
-the root equality transports the dependent result type of `compile`.
+For a category $B$ and a valid derivation tree of the seven-rule fragment whose root is $B$, the compiled meaning at $B$ is the term of $B$'s semantic type, in the lexical context, obtained by compiling the tree; the equality of the root with $B$ identifies the type of the compiled term with $B$'s semantic type.

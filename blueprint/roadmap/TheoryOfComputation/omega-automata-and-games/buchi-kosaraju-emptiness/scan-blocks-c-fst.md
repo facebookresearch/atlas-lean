@@ -1,5 +1,3 @@
-# Scan Blocks C fst
+# The costed block scan gives the right answer
 
-Assume that `V` carries a Boolean equality test `==` and a hash function; that equality on `V` is decidable; and that `accept` is a decidable predicate.
-
-The costed block scan returns the same `Bool` as the uncosted `any`.
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. The vertex type also has decidable equality. A block (a list of vertices) is cyclic when it contains two distinct vertices or a vertex with an edge to itself. The accept-and-reachable test of a block, for a decidable accepting predicate and a set $R$ of vertices, asks whether some vertex of the block is accepting and belongs to $R$. The costed scan of a list of blocks returns true exactly when some block passes the Boolean cyclicity test (length at least $2$ or a vertex with a self-loop) and contains a vertex that is accepting and lies in $R$.

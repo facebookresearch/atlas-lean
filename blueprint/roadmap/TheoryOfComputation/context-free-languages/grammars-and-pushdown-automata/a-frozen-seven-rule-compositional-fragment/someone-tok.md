@@ -1,3 +1,3 @@
-# Someone Tok
+# The token "someone"
 
-Token `someone` (index 2).
+In the seven-rule compositional grammar fragment, the token "someone" is the token with index 2.

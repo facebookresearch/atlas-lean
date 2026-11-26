@@ -1,4 +1,3 @@
-# Cooper's example `3SAT_ex`
+# Cooper's example formula
 
-**Cooper's example `3SAT_ex`** (p. 397), with `u_i` as variable `i`:
-`(u₁ ∨ u₂ ∨ u₃) ∧ (¬u₁ ∨ ¬u₂ ∨ u₃) ∧ (u₂ ∨ ¬u₃ ∨ u₄)`.
+Cooper's example formula (Cooper 1990, p. 397), with the variable $u_i$ numbered $i$, is the 3-CNF formula $(u_1 \lor u_2 \lor u_3) \land (\lnot u_1 \lor \lnot u_2 \lor u_3) \land (u_2 \lor \lnot u_3 \lor u_4)$.

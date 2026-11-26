@@ -1,6 +1,6 @@
-# Costed Lex Ge Trunc fst
+# The costed non-strict truncated comparison gives the right answer
 
-The costed non-strict truncated order has the same result as `lexGeTrunc`.
+For a threshold $p$ and tuples $a, b$ of $d + 1$ natural numbers, the result of the costed non-strict truncated comparison equals the non-strict truncated comparison: $a$ is greater than $b$ in the order truncated at $p$, or $a_i = b_i$ for every index $i \ge p$.
 
 ## Sources
 

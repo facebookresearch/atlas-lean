@@ -1,7 +1,6 @@
-# Costed Lex Ge Trunc
+# Costed non-strict truncated comparison
 
-The costed non-strict truncated lexicographic order: the same
-comparisons as `lexGeTrunc`, with each atomic comparison costing `1`.
+For a threshold $p$ and tuples $a, b$ of $d + 1$ natural numbers, the costed non-strict truncated comparison is the costed disjunction of the costed strict truncated comparison of $a$ and $b$ with the costed check, over all indices $i$, that $i < p$ or $a_i = b_i$, each atomic comparison costing $1$.
 
 ## Sources
 

@@ -1,4 +1,3 @@
-# Wire Earliests add
+# Delaying the inputs delays every wire
 
-Delaying every input's earliest change by `a` delays every wire's by `a`
-(a never-changing wire stays `⊤`).
+For a straight-line program with contamination delays, earliest changes $e_i$ of the inputs and $a \in \mathbb{R}$, computing earliest changes from the shifted input times $a + e_i$ gives, for every wire, $a$ plus its earliest change computed from $e_i$ (a wire that never changes keeps the value $\infty$).

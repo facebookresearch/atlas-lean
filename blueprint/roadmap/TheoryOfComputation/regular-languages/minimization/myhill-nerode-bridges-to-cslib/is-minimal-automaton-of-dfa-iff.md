@@ -1,4 +1,3 @@
-# Is Minimal Automaton of DFA iff
+# Minimality of a finite automaton means its Nerode representatives reach every state
 
-For a finite recognizing DFA, CSLib minimality is equivalent to the local equality
-criterion: the chosen Nerode representatives reach every state.
+Let $\Sigma$ be an alphabet and $L$ a language over it. Two words $x, y$ are Nerode equivalent for $L$ when $xz \in L \iff yz \in L$ for every word $z$; the Nerode classes of $L$ are the equivalence classes. Two constructions of these classes are compared here: the quotient of words by the Nerode relation built directly, and the Nerode quotient of the general automata framework; both have the same classes. A deterministic automaton given by a transition function, a start state and a set of accepting states can also be viewed as a deterministic automaton of the general framework, with the same states, start state, transitions and acceptance. In that framework an automaton is minimal for $L$ when it recognizes $L$ and its states are in bijection with the Nerode classes of $L$. Let $M$ be a deterministic automaton with finitely many states that accepts exactly $L$. Fix a representative word of each Nerode class. Then $M$, viewed in the general framework, is minimal for $L$ if and only if every state of $M$ is reached from the start state by the representative of some Nerode class.

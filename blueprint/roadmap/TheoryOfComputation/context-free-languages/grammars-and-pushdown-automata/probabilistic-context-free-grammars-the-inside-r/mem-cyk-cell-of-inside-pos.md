@@ -1,6 +1,3 @@
-# Mem cyk Cell of inside pos
+# A positive inside value implies acceptance by the CYK table
 
-Assume that equality on `T` is decidable and that equality on `g.NT` is decidable.
-
-Positive inside weight implies CYK acceptance: a tree witnesses the
-derivation, and `mem_cykCell_iff` turns it into a cell entry.
+Let a context-free grammar in Chomsky normal form have terminals and nonterminals with decidable equality, and let $q$ be any real rule weights. Given real rule weights $q$, the inside value $I_d(A, w)$ is defined by recursion on $d$: $I_0(A, w) = 0$, and $I_{d+1}(A, w)$ is the leaf weight of $A$ on $w$ (which is $q(A \to a)$ if $w$ is a single terminal $a$ and $A \to a$ is a rule, and $0$ otherwise) plus the sum, over all rules $A \to B\,C$ of the grammar and all split points $0 \le k \le |w|$ for which the prefix $w_{<k}$ and the suffix $w_{\ge k}$ are both nonempty, of $q(A \to B\,C)\, I_d(B, w_{<k})\, I_d(C, w_{\ge k})$. Rules of other shapes contribute nothing. If $w$ is a nonempty word and $I_d(A, w) > 0$ for some $d$, then $A$ belongs to the cell of the CYK table for the whole word $w$, that is, $A$ derives $w$.

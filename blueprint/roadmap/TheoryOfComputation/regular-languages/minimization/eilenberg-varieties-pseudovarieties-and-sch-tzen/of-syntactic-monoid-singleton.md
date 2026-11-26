@@ -1,9 +1,6 @@
-# Of syntactic Monoid singleton
+# A one-letter language has an aperiodic syntactic monoid
 
-The syntactic monoid of a singleton language is aperiodic. The case analysis is on the
-length of a representative word `x`: length zero gives `x = 1`; length one either equals
-`[a]` (then `x ^ 3` and `x ^ 2` are both dead) or differs from `[a]` (then `x` and `x ^ 2`
-are both dead); length at least two makes `x` and `x ^ 2` both dead.
+For a letter $a$, the syntactic monoid of the language consisting of the one-letter word $a$ alone is aperiodic. For a word $x$: if $x$ is empty its class is the identity; if $x = a$, then $x^3$ and $x^2$ occur in no word of the language in any context; if $x$ is another word of length one, or has length at least two, then $x$ and $x^2$ occur in no word of the language in any context, so in each case consecutive powers are syntactically equivalent.
 
 ## Sources
 

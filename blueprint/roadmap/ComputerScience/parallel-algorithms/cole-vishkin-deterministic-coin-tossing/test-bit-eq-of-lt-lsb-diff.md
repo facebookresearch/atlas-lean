@@ -1,3 +1,3 @@
-# Test Bit eq of lt lsb Diff
+# Bits below the lowest differing position agree
 
-Below the least differing bit, the bits agree.
+Let $x \ne y$ be natural numbers and let $k$ be their lowest differing bit position. For every $i < k$, the $i$-th binary digits of $x$ and $y$ are equal.

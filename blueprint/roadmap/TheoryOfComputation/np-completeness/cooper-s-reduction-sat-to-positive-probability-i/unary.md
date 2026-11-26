@@ -1,3 +1,3 @@
 # Unary code
 
-`k` ones followed by a zero.
+The unary code of a natural number $k$ is the bit string of $k$ ones followed by one zero.

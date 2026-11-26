@@ -1,6 +1,3 @@
 # Capture check at the receiving register
 
-The register is clocked at time
-`0`; its data input `s` holds its value at the edge from the setup time `setup`
-plus the clock uncertainty `u` before the edge until the hold time `hold` plus
-`u` after it, that is on `[-(setup + u), hold + u)`.
+For a register clocked at time $0$ with nonnegative setup time $\mathit{setup}$, hold time $\mathit{hold}$ and clock uncertainty $u$, the capture check holds for a data signal $s : \mathbb{R} \to U$ when $s(t) = s(0)$ for every $t$ with $-(\mathit{setup} + u) \le t < \mathit{hold} + u$.

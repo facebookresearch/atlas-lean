@@ -1,4 +1,3 @@
 # No change before launch
 
-With nonnegative contamination delays and no
-input changing before `a`, no wire changes before `a`.
+For a straight-line program with nonnegative contamination delays, if every input's earliest change is at least $a \in \mathbb{R}$, then every wire's computed earliest change is at least $a$.

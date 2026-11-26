@@ -1,7 +1,6 @@
-# Of syntactic Monoid compl
+# Complement preserves aperiodic syntactic monoids
 
-Aperiodicity of syntactic monoids is preserved under language complement, via the
-canonical multiplicative equivalence between the two syntactic monoids.
+If the syntactic monoid of a language $L$ is aperiodic, then so is the syntactic monoid of its complement; the two syntactic monoids are isomorphic.
 
 ## Sources
 

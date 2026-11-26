@@ -1,4 +1,7 @@
-# Of surjective
+# Quotients of aperiodic monoids are aperiodic
 
-A surjective image of an aperiodic monoid is aperiodic: quotients of aperiodic monoids
-are aperiodic. Source: Pin, "Mathematical Foundations of Automata Theory", Proposition IV.3.4.
+If a monoid $M$ is aperiodic and $f : M \to N$ is a surjective monoid homomorphism, then $N$ is aperiodic.
+
+## Sources
+
+- Pin, "Mathematical Foundations of Automata Theory", Proposition IV.3.4.
