@@ -64,7 +64,7 @@ private instance dvr_integers (k : Type) [Field k] : IsDiscreteValuationRing (In
   IsDiscreteValuationRing.RingEquivClass.isDiscreteValuationRing (integerEquiv k)
 
 -- The residue field is finite: it is isomorphic to the finite coefficient field.
-private theorem finite_residue (k : Type) [Field k] [Fintype k] :
+private theorem finite_residue (k : Type) [Field k] [Finite k] :
     Finite (Valued.ResidueField (CoefficientField k)) :=
   let e := (IsLocalRing.ResidueField.mapEquiv (integerEquiv k)).symm.trans
     PowerSeries.residueFieldOfPowerSeries
@@ -76,7 +76,7 @@ private instance completeSpace_integers (k : Type) [Field k] : CompleteSpace (In
   exact IsClosed.completeSpace_coe
 
 -- The integer ring is compact: complete DVR with finite residue field.
-private instance compactSpace_integers (k : Type) [Field k] [Fintype k] :
+private instance compactSpace_integers (k : Type) [Field k] [Finite k] :
     CompactSpace (Integers k) :=
   compactSpace_iff_completeSpace_and_isDiscreteValuationRing_and_finite_residueField.mpr
     ⟨inferInstance, inferInstance, finite_residue k⟩
@@ -95,7 +95,7 @@ private theorem integers_mem_nhds_zero (k : Type) [Field k] :
   simpa using hlt.le
 
 -- The Laurent-series field is locally compact.
-private theorem locallyCompact (k : Type) [Field k] [Fintype k] :
+private theorem locallyCompact (k : Type) [Field k] [Finite k] :
     LocallyCompactSpace (CoefficientField k) := by
   have hmem := integers_mem_nhds_zero k
   have hcomp : IsCompact (↑(Valued.integer (CoefficientField k)) : Set (CoefficientField k)) :=
@@ -116,6 +116,8 @@ private theorem nontrivial_rel (k : Type) [Field k] :
   exact (ValuativeRel.isNontrivial_iff_isNontrivial
     (Valued.v : Valuation (CoefficientField k) ℤᵐ⁰)).mpr (nontrivial_valued k)
 
+-- The statement keeps the `[Fintype k]` binder of the wanted statement; only `Finite k` is used.
+set_option linter.unusedFintypeInType false in
 /-- For a prime $p$ and a finite field $k$ of characteristic $p$, the Laurent-series field $k((t))$,
 with the valuative relation of its $t$-adic valuation, is a nonarchimedean local field. -/
 public theorem laurentSeriesLocalField
