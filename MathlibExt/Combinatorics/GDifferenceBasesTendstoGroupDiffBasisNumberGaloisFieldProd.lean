@@ -25,8 +25,9 @@ import Mathlib.Tactic
 /-!
 # Difference bases of squares of finite fields
 
-The normalized $1$-difference basis numbers of $\mathbb{F}_{p^t} \times \mathbb{F}_{p^t}$
-converge to $1$: a counting lower bound and the parabola construction give the squeeze.
+For each fixed odd prime $p$, as $t\to\infty$, the normalized $1$-difference basis numbers of
+$\mathbb{F}_{p^t} \times \mathbb{F}_{p^t}$ converge to $1$: a counting lower bound and the
+parabola construction give the squeeze.
 -/
 
 namespace MetaMathlibExt
@@ -118,8 +119,9 @@ private theorem groupDiffBasisNumber_le_of_addEquiv (G H : Type*) [AddCommGroup 
                   (e.injective (congrArg Prod.snd hpr))
     _ ≤ B.card := Finset.card_image_le
 
-/-- The additive group of `GaloisField p t` is a `t`-dimensional vector space over `ZMod p`,
-hence additively equivalent to a product of two function spaces whose dimensions add to `t`. -/
+/-- For $t \ge 1$, the additive group of `GaloisField p t` is a `t`-dimensional vector space over
+`ZMod p`, hence additively equivalent to a product of two function spaces whose dimensions add
+to `t`. -/
 private noncomputable def addEquiv_pi_fin_galoisField (p t : ℕ) [Fact p.Prime] (ht : t ≠ 0) :
     ((Fin (t / 2) → ZMod p) × (Fin (t - t / 2) → ZMod p)) ≃+ GaloisField p t := by
   have hfr : Module.finrank (ZMod p) ((Fin (t / 2) → ZMod p) × (Fin (t - t / 2) → ZMod p))
@@ -130,8 +132,8 @@ private noncomputable def addEquiv_pi_fin_galoisField (p t : ℕ) [Fact p.Prime]
   exact (LinearEquiv.ofFinrankEq _ _ hfr).toAddEquiv
 
 open Classical in
-/-- A difference basis of `GaloisField p t` from the two-axes construction on an equivalent
-product: at most $p^{t/2} + p^{t - t/2}$ elements. -/
+/-- For $t \ge 1$, a difference basis of `GaloisField p t` from the two-axes construction on an
+equivalent product: at most $p^{\lfloor t/2\rfloor} + p^{\lceil t/2\rceil}$ elements. -/
 private theorem groupDiffBasisNumber_galoisField_le (p t : ℕ) [Fact p.Prime] (ht : t ≠ 0) :
     groupDiffBasisNumber 1 (GaloisField p t) ≤ p ^ (t / 2) + p ^ (t - t / 2) := by
   calc groupDiffBasisNumber 1 (GaloisField p t)
@@ -142,7 +144,8 @@ private theorem groupDiffBasisNumber_galoisField_le (p t : ℕ) [Fact p.Prime] (
     _ = p ^ (t / 2) + p ^ (t - t / 2) := by
         congr 1 <;> simp [Fintype.card_pi, ZMod.card, Finset.prod_const]
 
-/-- The error terms $p^{t/2}/p^t$ and $p^{t-t/2}/p^t$ both tend to zero. -/
+/-- The error terms $p^{\lfloor t/2\rfloor}/p^t$ and $p^{\lceil t/2\rceil}/p^t$ both tend to
+zero. -/
 private theorem tendsto_err (p : ℕ) (hp1 : (1 : ℝ) < p) :
     Tendsto (fun t : ℕ => ((p ^ (t / 2) + p ^ (t - t / 2) : ℕ) : ℝ) / (p : ℝ) ^ t)
       atTop (𝓝 0) := by
