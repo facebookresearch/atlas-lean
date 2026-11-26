@@ -15,3 +15,4 @@ Construction and uniqueness of measures, atomless and vector measures, measures 
 - [Uniqueness of measures on R^d from their values on boxes](uniqueness-of-measures-on-euclidean-space/README.md)
 - [Szpilrajn's Problem 170](universally-measurable-sets/README.md)
 - [Vitali's theorem](vitali-set/README.md)
+- [Mixed moments on the unit interval](mixed-moments-on-the-unit-interval/README.md)

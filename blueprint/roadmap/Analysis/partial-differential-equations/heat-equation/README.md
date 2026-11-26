@@ -11,6 +11,7 @@ The pages below give the properties of $\Phi$ in every finite dimension, the wea
 subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy problem.
 
 - [Heat-kernel solution](heat-solution.md)
+- [The one-dimensional heat solution as a heat-kernel convolution](heat-solution-eq-kernel.md)
 - [The Gaussian heat kernel solves the heat equation](heat-kernel-solves-heat-equation.md)
 - [Fundamental solution of the heat equation](heat-kernel.md)
 - [The heat kernel is positive](heat-kernel-pos.md)
