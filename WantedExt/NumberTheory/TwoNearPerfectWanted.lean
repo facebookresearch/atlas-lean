@@ -32,6 +32,7 @@ public import MathlibExt.NumberTheory.TwoNearPerfectEquationSix
 public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
 public import MathlibExt.NumberTheory.TwoNearPerfectOmittedDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
+public import MathlibExt.NumberTheory.TwoNearPerfect
 
 namespace MetaMathlibExt
 
@@ -86,21 +87,6 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 public theorem_wanted eq_one_of_isSquare_discriminant {a k : ℕ} (ha : 0 < a) (hak : a ≤ k)
     (hD : IsSquare ((2 : ℤ) ^ (2 * k + 2) + 2 ^ (k + 2) - 2 ^ (a + 2) - 7)) :
     k = 1 ∧ a = 1
-
-/-- **Strongly $2$-near perfect numbers of the form $2^k p$.** Let $p$ be an odd prime, let $k$
-be a natural number and let $n = 2^k p$. Suppose that $n$ is strongly $2$-near perfect, that is,
-$\sigma(n) = 2n + d + n/d$ for some divisor $d$ of $n$, where $\sigma$ is the sum-of-divisors
-function. Then there is a natural number $a \le k$ with $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$,
-that is, $p = (2^{k+1} - 2^a - 1)/(1 + 2^{k-a})$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 8
-(`integers-2024-A61-lem-8`). -/
-public theorem_wanted strong_two_near_perfect_two_pow_mul_prime_form {k p : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2)
-    (hstrong : ∃ d, d ∣ 2 ^ k * p ∧
-      ArithmeticFunction.sigma 1 (2 ^ k * p) = 2 * (2 ^ k * p) + d + 2 ^ k * p / d) :
-    ∃ a ≤ k, (p : ℤ) * (1 + 2 ^ (k - a)) = 2 ^ (k + 1) - 2 ^ a - 1
 
 /-- **No $2$-near perfect $2^k p^2$ with omitted divisors $2^i$ and $p$ or $p^2$.** Let $p$ be an
 odd prime, let $k$ and $i$ be natural numbers with $i \le k$, let $m$ be $1$ or $2$, and let
