@@ -37,8 +37,8 @@ $K$-rational points of order dividing $n$ and $t_x$ for translation by $x$. The 
    diagonal matrices with entries in $\mu_{r^4}(K)$, which Pazuki writes
    $\mathfrak{S}_{r^{2g}} \vartriangleleft \mu_{r^4}(K)$; and a second symmetric ample line bundle
    defining the same polarization gives the same embedding up to $G$.
-5. (Analytic description.) Over $\mathbb{C}$, if $A(\mathbb{C}) \cong \mathbb{C}^g / (\mathbb{Z}^g
-   + \tau \mathbb{Z}^g)$ as principally polarized complex abelian varieties, with $\tau$ in the
+5. (Analytic description.) Over $\mathbb{C}$, if $A(\mathbb{C}) \cong \mathbb{C}^g / (\mathbb{Z}^g +
+   \tau \mathbb{Z}^g)$ as principally polarized complex abelian varieties, with $\tau$ in the
    Siegel upper half space, then $\Theta(0)$ has projective coordinates the theta constants
    $\theta_{(m_1, m_2)}(\tau, 0)$, $m_1, m_2 \in \{0, \frac{1}{r}, \dots, \frac{r - 1}{r}\}^g$,
    where $\theta_{(m_1, m_2)}(\tau, z) = \sum_{n \in \mathbb{Z}^g} \exp\bigl(i\pi \,

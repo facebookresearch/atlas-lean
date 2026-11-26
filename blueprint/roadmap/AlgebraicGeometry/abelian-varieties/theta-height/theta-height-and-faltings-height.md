@@ -1,7 +1,7 @@
 # Pazuki's comparison of the theta height and the Faltings height
 
-This node is still to be broken down: its statement is exact, but its proof, which is most of
-Pazuki's article, is not yet split into pages.
+This node is still to be broken down: its statement is exact, and its proof is most of Pazuki's
+article.
 
 Let $g \ge 1$ be an integer and $r \ge 2$ an even integer. Let $K$ be a number field, $A$ an
 [abelian variety](../abelian-scheme.md) of dimension $g$ over $K$, and $L$ an ample line bundle on
