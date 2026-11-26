@@ -28,7 +28,7 @@ module
 public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.Cartier.GradedPiece
 public import MathlibExt.RingTheory.MvFormalGroup.Cartier.BaseChange
 public import MathlibExt.RingTheory.MvFormalGroup.Cartier.IntVerschiebung
-public import MathlibExt.RingTheory.WittVector.CartierLift
+public import MathlibExt.RingTheory.WittVector.GradedCartierModuleData
 
 /-!
 # Structure constants of Cartier modules
@@ -36,8 +36,7 @@ public import MathlibExt.RingTheory.WittVector.CartierLift
 Base change compatibilities of the integral Verschiebung and of `V`-adic expansions and, for a
 formal `O_D`-module, homogeneous `V`-bases (`FormalODModule.IsHomogeneousVBasis`) and structure
 constants of `ϖ` in such a basis (`FormalODModule.HasStructureConstants`), with their behavior
-under base change. Under `CartierLift.liftHom`, the lifts `CartierLift.liftConstants` of structure
-constants map back to them (`FormalODModule.liftHom_comp_liftConstants`).
+under base change.
 
 ## References
 
@@ -192,6 +191,11 @@ theorem baseChange_mem_gradedPiece (φ : B →+* B') (X : FormalODModule p B) (j
   rw [← baseChange_endAct_actEnd, hf c, baseChangeEq_homothety, RingHom.comp_apply, map_pow]
   rfl
 
+/-- **Homogeneous `V`-basis of the Cartier module.** For a formal `O_D`-module `X` over `B` and
+`j : Zp2 p →+* B`, a pair `γ` of elements of the Cartier module of `X` with `γ i` in the graded
+piece `i` (`X.gradedPiece j i`) for `i = 0, 1`, such that the matrix `(tangent (γ i) k)` of their
+tangent vectors has unit determinant. Unlike `GradedCartierModuleData.IsHomogeneousVBasis`, it
+does not ask that every element be `∑ [b i] • γ i + V y` for exactly one `b` and `y`. -/
 def IsHomogeneousVBasis (X : FormalODModule p B) (j : Zp2 p →+* B)
     (γ : Fin 2 → CartierModule p X.F) :
     Prop :=
@@ -202,23 +206,27 @@ theorem IsHomogeneousVBasis.map (φ : B →+* B') {X : FormalODModule p B} {j : 
     (X.map φ).IsHomogeneousVBasis (φ.comp j) fun i => baseChange φ (γ i) :=
   ⟨fun i => baseChange_mem_gradedPiece φ X j i (h.1 i), isUnit_det_tangent_baseChangeEq φ rfl γ h.2⟩
 
-def piIndex (m : ℕ) (i : Fin 2) : Fin 2 := ⟨(m + i + 1) % 2, Nat.mod_lt _ two_pos⟩
-
-@[simp] theorem piIndex_val (m : ℕ) (i : Fin 2) : (piIndex m i : ℕ) = (m + i + 1) % 2 := rfl
-
+/-- **Structure constants of `ϖ` on the Cartier module.** For a formal `O_D`-module `X` over `B`,
+`γ : Fin 2 → M` in the Cartier module `M` of `X` and `a : ℕ → Fin 2 → B`: for every `i` and every
+`N`, `ϖ (γ i) = ∑_{m < N} V^m (homothety (a m i) (γ (piIndex m i))) + V^N h` for some `h`, where
+`ϖ` acts by `endAct X.varpiEnd`, `V` is `verschiebungInt` and `piIndex` is
+`GradedCartierModuleData.piIndex`. This is the expansion of
+`GradedCartierModuleData.HasStructureConstants`, with `homothety (a m i)` for the action of the
+Teichmüller representative `[a m i]`, stated on the Cartier module, so it needs no complementary
+graded pieces. -/
 def HasStructureConstants (X : FormalODModule p B) (γ : Fin 2 → CartierModule p X.F)
     (a : ℕ → Fin 2 → B) : Prop :=
   ∀ (i : Fin 2) (N : ℕ), ∃ h : CartierModule p X.F,
     endAct X.varpiEnd (γ i) =
       (∑ m : Fin N, (⇑(verschiebungInt (p := p) (Φ := X.F)))^[m]
-        (homothety (a m i) (γ (piIndex m i)))) +
+        (homothety (a m i) (γ (GradedCartierModuleData.piIndex m i)))) +
         (⇑(verschiebungInt (p := p) (Φ := X.F)))^[N] h
 
 theorem HasStructureConstants.exists_eq {X : FormalODModule p B} {γ : Fin 2 → CartierModule p X.F}
     {a : ℕ → Fin 2 → B} (h : X.HasStructureConstants γ a) (i : Fin 2) (N : ℕ) :
     ∃ r : CartierModule p X.F, endAct X.varpiEnd (γ i) =
       (∑ m : Fin N, (⇑(verschiebungInt (p := p) (Φ := X.F)))^[m]
-        (homothety (a m i) (γ (piIndex m i)))) +
+        (homothety (a m i) (γ (GradedCartierModuleData.piIndex m i)))) +
         (⇑(verschiebungInt (p := p) (Φ := X.F)))^[N] r :=
   h i N
 
@@ -226,7 +234,7 @@ theorem hasStructureConstants_order_zero (X : FormalODModule p B) (γ : Fin 2 �
     (a : ℕ → Fin 2 → B) (i : Fin 2) :
     ∃ h : CartierModule p X.F, endAct X.varpiEnd (γ i) =
       (∑ m : Fin 0, (⇑(verschiebungInt (p := p) (Φ := X.F)))^[m]
-        (homothety (a m i) (γ (piIndex m i)))) +
+        (homothety (a m i) (γ (GradedCartierModuleData.piIndex m i)))) +
         (⇑(verschiebungInt (p := p) (Φ := X.F)))^[0] h :=
   ⟨endAct X.varpiEnd (γ i), by simp⟩
 
@@ -252,17 +260,11 @@ theorem HasStructureConstants.exists_eq_verschiebung [CharP B p] {X : FormalODMo
     (i : Fin 2) (N : ℕ) :
     ∃ r : CartierModule p X.F, endAct X.varpiEnd (γ i) =
       (∑ m : Fin N, (⇑(verschiebung (p := p) (Φ := X.F)))^[m]
-        (homothety (a m i) (γ (piIndex m i)))) +
+        (homothety (a m i) (γ (GradedCartierModuleData.piIndex m i)))) +
         (⇑(verschiebung (p := p) (Φ := X.F)))^[N] r := by
   obtain ⟨r, hr⟩ := h i N
   refine ⟨r, ?_⟩
   rw [hr, verschiebungInt_eq_verschiebung]
-
-theorem liftHom_comp_liftConstants (j : Zp2 p →+* B) (a : ℕ → Fin 2 → B) (h : a 0 0 * a 0 1 = p) :
-    (fun m i => CartierLift.liftHom j (a 0 0) (a 0 1) h
-      (CartierLift.liftConstants (p := p) (R := Zp2 p) a m i)) = a := by
-  funext m i
-  exact CartierLift.liftHom_liftConstants j a h m i
 
 end FormalODModule
 

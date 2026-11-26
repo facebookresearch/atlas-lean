@@ -37,6 +37,11 @@ For commuting additive endomorphisms `V` and `Π` of an abelian group `M`,
 `m ↦ (V m, -Π m)`. It carries the map `lambda` to `M` (`(m, m') ↦ Π m + V m'`), the map `toLie`
 to `M ⧸ V.range`, the graded pieces `piece`, and, for a map `L : M →+ NMod V Π` compatible with
 `V`, the endomorphism `phi`, its fixed subgroup `eta` and the map `u`.
+
+`GradedCartierModuleData.NMod`, `lambda`, `phi`, `eta` and `u`
+(`MathlibExt/RingTheory/WittVector/GradedCartierNModule.lean`) are given by the same formulas for
+graded Cartier module data, where the quotient is a `WittVector p B`-module whose second factor
+is the Frobenius twist `Sigma` of `M`. The construction here needs only the two maps.
 -/
 
 @[expose] public section

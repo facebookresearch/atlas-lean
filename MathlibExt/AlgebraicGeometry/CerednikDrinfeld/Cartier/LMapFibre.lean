@@ -39,6 +39,12 @@ compatibility with Verschiebung and the grading, and prescribed values in critic
 For such `L`, `IsLMap.phi`, `IsLMap.eta` and `IsLMap.u` are the induced operator, its fixed
 points and their image in the Lie algebra.
 
+These need no complementary graded pieces. When the pieces `0` and `1` are complementary,
+`GradedCartierModuleData.NMod` of `toGradedCartierModuleData` is, as an additive group, the
+quotient of `M × M` by the same pairs `(V m, -Π m)`: its `ϖ` acts as `piOp`, and its `V` is
+`verschiebungInt`, which is `verschiebung` in characteristic `p`
+(`verschiebungInt_eq_verschiebung`).
+
 ## References
 
 * J.-F. Boutot and H. Carayol, *Uniformisation p-adique des courbes de Shimura : les théorèmes
