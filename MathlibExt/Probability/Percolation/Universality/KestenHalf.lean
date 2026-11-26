@@ -221,8 +221,8 @@ theorem criticalProbability_eq_half_of_selfDualAssembly
   linarith
 
 /-- Abstract assembly lemma together with `θ(p_c) = 0`: under the hypotheses of
-`criticalProbability_eq_half_of_selfDualAssembly`, `p_c = 1/2` and `θ(1/2) = 0`. The second conjunct is
-`hCorLowerBound hbxp`, i.e. it is assumed (Harris 1960), not derived. -/
+`criticalProbability_eq_half_of_selfDualAssembly`, `p_c = 1/2` and `θ(1/2) = 0`. The second
+conjunct is `hCorLowerBound hbxp`, i.e. it is assumed (Harris 1960), not derived. -/
 theorem no_percolation_at_pc_of_selfDualAssembly
     {ρ : ℝ} {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     {boxFam : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}
@@ -236,7 +236,8 @@ theorem no_percolation_at_pc_of_selfDualAssembly
         Tendsto (fun n => (bernoulliProductMeasure p hp).real (boxFam n)) atTop (𝓝 0)) :
     criticalProbability 2 = 1 / 2 ∧
       percolationProbability 2 (2⁻¹ : ℝ≥0) half_le_one = 0 :=
-  ⟨criticalProbability_eq_half_of_selfDualAssembly hbxp hCorLowerBound hHm hRmeas hRpres hdich hSharpThreshold,
+  ⟨criticalProbability_eq_half_of_selfDualAssembly hbxp hCorLowerBound hHm hRmeas hRpres hdich
+      hSharpThreshold,
     hCorLowerBound hbxp⟩
 
 end Universality

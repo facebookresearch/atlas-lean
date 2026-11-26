@@ -45,7 +45,6 @@ open StatMech.OSSS.DecisionTree
 open StatMech.OSSS.Revealment
 open StatMech.OSSS.RevealmentConstruction
 open StatMech.OSSS.TreeComplete
-open scoped Classical
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 variable {V : Type*} [DecidableEq V]
@@ -586,6 +585,7 @@ theorem xbPass_fixpoint (endU endV : E → V) (o : V) (ω : ConfigSpace E)
 def xbCount (endU endV : E → V) (o : V) (l : List E) (disc₀ : Finset V) : ℕ :=
   2 * (xbUniverse endU endV o l disc₀).card
 
+open scoped Classical in
 noncomputable def crossTree (endU endV : E → V) (o : V) (C : Set V)
     (l : List E) (disc₀ : Finset V) : DecisionTree E :=
   buildTree (xbGuard endU endV) (xbStep endU endV o)
@@ -593,6 +593,7 @@ noncomputable def crossTree (endU endV : E → V) (o : V) (C : Set V)
     (repeatList l (xbCount endU endV o l disc₀)) (disc₀, ∅)
 
 omit [Fintype E] in
+open scoped Classical in
 theorem eval_crossTree (endU endV : E → V) (o : V) (C : Set V)
     (l : List E) (disc₀ : Finset V) (ω : ConfigSpace E) :
     (crossTree endU endV o C l disc₀).eval ω
@@ -605,6 +606,7 @@ theorem eval_crossTree (endU endV : E → V) (o : V) (C : Set V)
   exact (runState_repeatList_xb endU endV o ω l _ (disc₀, ∅)).symm ▸ rfl
 
 omit [Fintype E] in
+open scoped Classical in
 theorem eval_crossTree_iff (endU endV : E → V) (o : V) (B C : Set V)
     (l : List E) (hl : ∀ e, e ∈ l) (disc₀ : Finset V)
     (hBdisc : ∀ b ∈ B, b ∈ disc₀) (hoB : o ∉ disc₀)
@@ -667,6 +669,7 @@ theorem evalR_crossTree (endU endV : E → V) (o : V) (B C : Set V)
     rw [ite_eq_right heval, ite_eq_right hconn]
 
 omit [Fintype E] in
+open scoped Classical in
 theorem queried_crossTree_imp (endU endV : E → V) (o : V) (B C : Set V)
     (l : List E) (disc₀ : Finset V) (hdisc₀ : ∀ x ∈ disc₀, x ∈ B) (ω : ConfigSpace E) (i : E)
     (hi : i ∈ (crossTree endU endV o C l disc₀).queried ω) :
@@ -688,6 +691,7 @@ theorem queried_crossTree_imp (endU endV : E → V) (o : V) (B C : Set V)
   · exact Or.inl (hτInv _ hU)
   · exact Or.inr (hτInv _ hV)
 
+open scoped Classical in
 theorem reveal_crossTree_le {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     (endU endV : E → V) (o : V) (B C : Set V) (l : List E) (disc₀ : Finset V)
     (hdisc₀ : ∀ x ∈ disc₀, x ∈ B) (i : E) :
@@ -732,6 +736,7 @@ theorem evalR_crossTree_connected
       exact hconn (connOpenSet_imp_connectedToSet hinj hcoh hadj hopenconn)
     rw [ite_eq_right heval, ite_eq_right hconn]
 
+open scoped Classical in
 theorem reveal_crossTree_le_connected {ν : E → Bool → ℝ} (hν : IsProbWeight ν)
     {edge : E → Sym2 (Site d)} (hinj : Function.Injective edge)
     {endU endV : E → Site d} (hcoh : ∀ e, edge e = s(endU e, endV e))

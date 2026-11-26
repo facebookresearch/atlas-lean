@@ -117,7 +117,8 @@ theorem nhb_var_le_damped_add [Nonempty E] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
 
 /-- The near-half KKL inequality: `2 · var · log(1/maxInfl) ≤
 (1 + correction) · totalInfl`, with the correction vanishing at `p = 1/2`, where this
-is the Kahn–Kalai–Linial inequality with constant `2` (Bourgain–Kahn–Kalai–Katznelson–Linial 1992). -/
+is the Kahn–Kalai–Linial inequality with constant `2` (Bourgain–Kahn–Kalai–Katznelson–Linial
+1992). -/
 theorem nhb_nearHalf_kkl [Nonempty E] {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
     (φ : ConfigSpace E → Bool) :
     2 * OSSS.var (OSSS.bernoulliWeight p) (fun ω => if φ ω then (1 : ℝ) else 0)

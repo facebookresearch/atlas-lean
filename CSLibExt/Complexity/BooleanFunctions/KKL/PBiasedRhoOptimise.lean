@@ -37,8 +37,6 @@ open Finset
 open Real Filter Topology
 open StatMech StatMech.OSSS
 
-set_option linter.style.longLine false
-
 namespace StatMech.Probability
 
 /-- The uniform p-biased master estimate over a window `(1/2, q)`. False for

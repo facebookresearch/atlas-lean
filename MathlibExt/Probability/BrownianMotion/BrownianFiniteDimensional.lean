@@ -84,7 +84,8 @@ theorem brownianCovariance_eq (s t : ℝ) :
   rcases le_total 0 s with hs | hs <;>
     rcases le_total 0 t with ht | ht <;>
       rcases le_total s t with hst | hst
-  all_goals (simp [hs, ht, hst, abs_of_nonneg, abs_of_nonpos]; try linarith)
+  all_goals simp [hs, ht, hst, abs_of_nonneg, abs_of_nonpos]
+  all_goals linarith
 
 /-- For nonnegative times the covariance is `min s t`, the covariance of Mathlib's
 `ProbabilityTheory.BrownianReal.covMatrix`. -/

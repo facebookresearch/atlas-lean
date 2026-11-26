@@ -38,7 +38,8 @@ open DecisionTree
 
 variable {I E : Type*}
 
-/-- Pull a configuration on `E` back to `I` along `iota`: `(restrictConfig iota ω) i = ω (iota i)`. -/
+/-- Pull a configuration on `E` back to `I` along `iota`:
+`(restrictConfig iota ω) i = ω (iota i)`. -/
 def restrictConfig (iota : I -> E) (omega : ConfigSpace E) : ConfigSpace I :=
   fun i => omega (iota i)
 

@@ -29,8 +29,6 @@ open scoped BigOperators
 open Finset
 open Real Filter Topology
 
-set_option linter.style.longLine false
-
 namespace StatMech.Probability
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]

@@ -246,9 +246,9 @@ theorem zhg_union_of_geometricData {E : Type*} (μ : Measure (ConfigSpace E))
   exact zhg_union_tendsto_one_of_merge μ (A := A) (B := B) (Err := hgeo.Err)
     (Cap := fun n => S₀ n ∩ S₁ n) hgeo.merge hinter hgeo.errTendsto
 
-/-- The hypotheses of a `ZhangGeometricData`-based corollary are contradictory: `ZhangGeometricData` gives
-`ℙ(A n ∪ B n) → 1`, hence `ℙ(A n) → 1` by the square-root trick, while the self-dual dichotomy
-`hdich` gives `ℙ(A n) = 1/2` for every `n`. -/
+/-- The hypotheses of a `ZhangGeometricData`-based corollary are contradictory:
+`ZhangGeometricData` gives `ℙ(A n ∪ B n) → 1`, hence `ℙ(A n) → 1` by the square-root trick, while
+the self-dual dichotomy `hdich` gives `ℙ(A n) = 1/2` for every `n`. -/
 theorem zhg_corLowerBound_hypotheses_false
     {R : ConfigSpace (Sym2 (Site 2)) → ConfigSpace (Sym2 (Site 2))}
     {A B : ℕ → Set (ConfigSpace (Sym2 (Site 2)))}

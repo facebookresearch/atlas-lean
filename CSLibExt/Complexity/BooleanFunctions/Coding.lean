@@ -43,8 +43,6 @@ determined by the queried coordinates.
 open scoped BigOperators
 open Finset MeasureTheory
 
-set_option linter.style.longLine false
-
 namespace StatMech
 namespace OSSS.Coding
 

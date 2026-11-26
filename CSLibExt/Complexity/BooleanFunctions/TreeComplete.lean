@@ -51,7 +51,6 @@ open StatMech.OSSS
 open StatMech.OSSS.DecisionTree
 open StatMech.OSSS.Revealment
 open StatMech.OSSS.RevealmentConstruction
-open scoped Classical
 
 variable {E : Type*} [Fintype E] [DecidableEq E]
 variable {V : Type*} [DecidableEq V]

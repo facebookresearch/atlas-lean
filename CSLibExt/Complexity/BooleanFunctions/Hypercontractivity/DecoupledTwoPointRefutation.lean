@@ -37,8 +37,6 @@ open Real Set
 
 namespace StatMech.Probability
 
-set_option linter.style.longLine false
-
 theorem dtpc_witness_lhs :
     ((1 - (9 / 10 : ℝ)) * 1 + (9 / 10) * 0) ^ 2
         + (1 / 2 : ℝ) ^ 2 * ((9 / 10) * (1 - 9 / 10)) * (1 - 0) ^ 2 = 13 / 400 := by
