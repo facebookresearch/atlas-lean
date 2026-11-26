@@ -1,6 +1,6 @@
 # Half-plane intersection in $O(n \log n)$ time
 
-The common intersection of $n$ closed half-planes in $\mathbb{R}^2$ is empty or a convex polygon, possibly unbounded, with at most $n$ edges, and it can be computed in $O(n \log n)$ time.
+The common intersection of $n \ge 1$ closed half-planes in $\mathbb{R}^2$ is a possibly empty or unbounded convex polyhedron of dimension at most two: it may be a point, a segment, a ray or a line (for example $\{x \le 0\} \cap \{x \ge 0\}$ is the $y$-axis), and when it is two-dimensional it is a convex polygon, possibly unbounded, with at most $n$ edges. It can be computed in $O(n \log n)$ time.
 
 ## Sources
 

@@ -10,7 +10,7 @@ Let $\alpha$ be the inverse Ackermann function. Then $\lambda_3(n) = \Theta(n \,
 
 This page becomes ready once:
 
-- Statement prerequisite: the inverse Ackermann function $\alpha(n) = \min\{k : \alpha_k(n) \le 3\}$ with $\alpha_1(n) = \lceil n/2 \rceil$ and $\alpha_k(n) = 1 + \alpha_k(\alpha_{k-1}(n))$ for $n > 1$, as a page of its own.
+- Statement prerequisite: the inverse Ackermann function $\alpha(n) = \min\{k : \alpha_k(n) \le 3\}$ with $\alpha_1(n) = \lceil n/2 \rceil$ and, for $k \ge 2$, $\alpha_k(n) = 0$ for $n \le 1$ and $\alpha_k(n) = 1 + \alpha_k(\alpha_{k-1}(n))$ for $n > 1$, as a page of its own.
 - Source check: S. Hart and M. Sharir, "Nonlinearity of Davenport–Schinzel sequences and of generalized path compression schemes" (1986), has not been opened. A good expansion separates the upper bound, the lower bound, and the realization of $\Omega(n\alpha(n))$ as the lower envelope of $n$ segments.
 
 ## Sources

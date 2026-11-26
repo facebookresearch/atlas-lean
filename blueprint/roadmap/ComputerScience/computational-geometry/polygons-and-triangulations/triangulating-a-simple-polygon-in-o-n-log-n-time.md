@@ -1,6 +1,6 @@
 # Triangulating a simple polygon in $O(n \log n)$ time
 
-Every simple polygon with $n$ vertices can be triangulated in $O(n \log n)$ time, by partitioning it into monotone pieces and triangulating each piece in time linear in its size.
+Every simple polygon with $n$ vertices can be triangulated in $O(n \log n)$ time, by partitioning it into monotone pieces and triangulating each piece in time linear in its size. Both steps assume that no two vertices have the same $x$-coordinate. A general polygon is first sheared by $(x, y) \mapsto (x + \varepsilon y, y)$ with $0 < \varepsilon < g/H$, where $g$ is the least positive difference between two vertex $x$-coordinates and $H$ the difference between the largest and smallest vertex $y$-coordinates, both found in $O(n \log n)$ time by sorting. Afterwards no two vertices share an $x$-coordinate, and since the shear is an affine bijection it maps the polygon, its diagonals and its triangulations to those of the sheared polygon.
 
 ## Depends on
 

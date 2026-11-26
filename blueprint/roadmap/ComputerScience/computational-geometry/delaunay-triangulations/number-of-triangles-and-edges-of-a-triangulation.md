@@ -14,5 +14,5 @@ If $k$ points of $P$ lie on the boundary of $\operatorname{conv}(P)$, then every
 
 ## Sources
 
-- *Geometric Algorithms*, course slides, Utrecht University, 2023, "Delaunay triangulations", <https://ics-websites.science.uu.nl/docs/vakken/ga/2023/slides/slides9.pdf>: slide 5, the definition of a triangulation of a point set as a maximal planar subdivision and its complexity, $2n - 2 - k$ triangles and $3n - 3 - k$ edges
+- *Geometric Algorithms*, course slides, Utrecht University, 2023, "Delaunay triangulations", <https://ics-websites.science.uu.nl/docs/vakken/ga/2023/slides/slides9.pdf>: slide 6, the definition of a triangulation of a point set as a maximal planar subdivision and its complexity, $2n - 2 - k$ triangles and $3n - 3 - k$ edges
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 12, the counts $2n - 2 - h$ triangles and $3n - 3 - h$ edges for the Delaunay triangulation

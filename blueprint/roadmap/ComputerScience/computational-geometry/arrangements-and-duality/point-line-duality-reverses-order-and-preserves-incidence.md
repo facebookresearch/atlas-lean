@@ -1,6 +1,6 @@
 # Point–line duality reverses order and preserves incidence
 
-For every point $p$ and non-vertical line $\ell$ of the plane, $p$ lies above, on or below $\ell$ if and only if the dual line $p^*$ passes below, through or above the dual point $\ell^*$, respectively. Consequently two non-parallel lines $\ell_1$ and $\ell_2$ meet in $p$ if and only if $p^*$ passes through $\ell_1^*$ and $\ell_2^*$, and three points lie on a common non-vertical line if and only if their dual lines pass through a common point.
+For every point $p$ and non-vertical line $\ell$ of the plane, $p$ lies above, on or below $\ell$ if and only if the dual line $p^*$ passes below, through or above the dual point $\ell^*$, respectively. Consequently two non-vertical lines $\ell_1$ and $\ell_2$ of distinct slopes meet in $p$ if and only if $p^*$ passes through $\ell_1^*$ and $\ell_2^*$, and three points lie on a common non-vertical line if and only if their dual lines pass through a common point.
 
 ## Depends on
 

@@ -10,5 +10,5 @@ A triangulation $T$ of $P$ is a *Delaunay triangulation* if for every triangle o
 
 ## Sources
 
-- *Geometric Algorithms*, course slides, Utrecht University, 2023, "Delaunay triangulations", <https://ics-websites.science.uu.nl/docs/vakken/ga/2023/slides/slides9.pdf>: slide 21, the empty circle property characterizing Delaunay triangulations
+- *Geometric Algorithms*, course slides, Utrecht University, 2023, "Delaunay triangulations", <https://ics-websites.science.uu.nl/docs/vakken/ga/2023/slides/slides9.pdf>: slide 22, the empty circle property characterizing Delaunay triangulations
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 12, the circumcircle property
