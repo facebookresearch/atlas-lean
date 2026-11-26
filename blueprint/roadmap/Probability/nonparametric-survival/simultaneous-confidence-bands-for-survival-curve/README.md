@@ -4,6 +4,7 @@
 - [Simultaneous confidence band on a grid](simultaneous-band.md)
 - [Pointwise confidence interval on a grid](pointwise-interval.md)
 - [Continuity of the weighted sup statistic](continuous-weighted-sup.md)
+- [Weighted sup statistic as a sup norm of a pointwise product](weighted-sup-eq-norm-mul-inv.md)
 - [Band coverage as a weighted sup event](mem-simultaneous-band-iff.md)
 
 ## Simultaneous versus pointwise coverage at a fixed sample size
@@ -17,6 +18,7 @@
 ## Asymptotic coverage
 
 - [Asymptotic coverage of a simultaneous band](tendsto-coverage-simultaneous-band.md)
+- [Convergence in measure of a constant sequence](tendsto-in-measure-const-self.md)
 - [Asymptotic coverage of a band with known weights](tendsto-coverage-simultaneous-band-const.md)
 - [Asymptotic pointwise coverage](tendsto-coverage-pointwise-interval.md)
 - [Simultaneous limit coverage is at most pointwise limit coverage](measure-weighted-sup-le-le.md)

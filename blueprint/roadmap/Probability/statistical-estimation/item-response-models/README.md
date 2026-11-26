@@ -1,5 +1,7 @@
 # Item response models
 
+- [Fisher information of the two-parameter logistic model](item-information/README.md)
+- [Score and response law of the two-parameter logistic model](item-score/README.md)
 - [Existence and uniqueness of maximum-likelihood item difficulties in the Rasch model](rasch-maximum-likelihood-existence.md)
 - [Existence of the maximum-likelihood ability estimate in the two-parameter logistic model](ability-estimation.md)
 - [Item response models with a continuous latent trait](continuous-latent-trait-models.md)

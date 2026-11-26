@@ -1,0 +1,13 @@
+# The subdistribution hazard equals the limit whenever the limit exists
+
+Let $(\Omega, \mathcal{F})$ be a measurable space with a measure $P$ (not assumed finite), $\iota$ a set, $T : \Omega \to \mathbb{R}$, $J : \Omega \to \iota$, $c \in \iota$ and $t, l \in \mathbb{R}$. Suppose the [subdistribution hazard exists at $t$ with value $l$](../part-04/has-subdist-hazard-at.md), that is,
+
+$$
+\lim_{h \to 0^+} \frac{1}{h} P\left(t \le T < t+h,\ J = c \mid T \ge t \text{ or } (T < t,\ J \ne c)\right) = l,
+$$
+
+with the conditional measure and quotient as defined there. Then the [subdistribution hazard](../part-07/subdist-hazard.md) $\lambda^*_c(t)$, defined as this right limit (and as an arbitrary fixed value when the limit does not exist), equals $l$.
+
+## Sources
+
+- J. P. Fine and R. J. Gray, "A proportional hazards model for the subdistribution of a competing risk", J. Amer. Statist. Assoc. 94 (1999), 496–509.
