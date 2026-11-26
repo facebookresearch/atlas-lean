@@ -64,3 +64,4 @@ Topics added since this subject's fields were last revised.
 - [Trdeg Quotient Bound](exists-not-mem-under-forall-trdeg-quotie.md)
 - [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
 - [Complex Coordinates](exists-bij-on-eval-differentiable-on-pi.md)
+- [Finite presentation lifts along a nilpotent thickening of flat algebras](of-surjective-of-is-nilpotent-ker-of-fla.md)

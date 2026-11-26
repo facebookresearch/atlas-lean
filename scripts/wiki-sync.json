@@ -318,6 +318,7 @@
 "Algebra.Etale.isDomain_and_isIntegrallyClosed_of_isLocalization_atPrime": "b78eb2c1651464de",
 "Algebra.Etale.natCard_algHom_eq_finrank_of_isAlgClosed": "15537d725d50bbc2",
 "Algebra.Etale.of_isSemisimpleRing_tensorProduct": "9cbce5e20731c7dc",
+"Algebra.FinitePresentation.of_surjective_of_isNilpotent_ker_of_flat_of_finitePresentation": "611ab0888c0cc2ea",
 "Algebra.FiniteType.exists_notMem_under_forall_trdeg_quotient_le": "3f1b72d6d1b092c0",
 "Algebra.FormallyUnramified.of_isUnit_aeval_derivative_of_adjoin_eq_top": "6f48816beec2cf71",
 "Algebra.IsInvariant.isIntegrallyClosed_of_isIntegrallyClosed": "aa1ed6464dd6bacb",
