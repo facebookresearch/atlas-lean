@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Fin.VecNotation
 import MathlibExt.GameTheory.ChocolateBarNSProperty
 
 open MetaMathlibExt
@@ -60,3 +61,23 @@ example : HasNSProperty (fun x : ℕ ↦ if x ≤ 2 then x / 2 else 1) := by
   have hh := hasNSProperty_div_two_pow (m := 1) (by decide)
   exact hasNSProperty_extend_const 2 (fun x ↦ x / 2)
     (fun _ _ hab _ ↦ hh.1 hab) (fun a b i _ _ ↦ hh.2 a b i)
+
+-- The cutoff nine lies strictly between the two values of the halving function.
+example : min (23 / 2) 9 / 4 = min (16 / 2) 9 / 4 :=
+  (hasNSProperty_div_two_pow (m := 1) (by decide)).min_div_two_pow_eq
+    (z := 16) (z' := 23) (k := 3) (by decide) (by decide) 9
+
+-- At k = 1 the output divisor is one, so the truncated values themselves agree.
+example {h : ℕ → ℕ} (hh : HasNSProperty h) {z z' : ℕ} (hz : z' / 2 = z / 2) (y : ℕ) :
+    min (h z') y = min (h z) y := by
+  simpa only [Nat.sub_self, pow_zero, Nat.div_one] using
+    hh.min_div_two_pow_eq (k := 1) Nat.one_pos hz y
+
+-- At width three, clamping the first coordinate swaps the witnesses zero and one.
+example : {c : ℕ | ∃ w < 3, c = 3 ^^^ w} =
+    {c | ∃ w < 3, c = min 1 (w / 2) ^^^ 2 ^^^ w} := by
+  let f : Fin 2 → ℕ → ℕ := ![fun w ↦ w / 2, fun _ ↦ 2]
+  have hf : ∀ t, HasNSProperty (f t) := Fin.forall_fin_two.mpr
+    ⟨hasNSProperty_div_two_pow (m := 1) (by decide), hasNSProperty_const 2⟩
+  have hx : ∀ t, (![1, 2] : Fin 2 → ℕ) t ≤ f t 3 := by decide
+  simpa [f, List.ofFn_succ] using image_foldl_xor_eq_image_min hf hx
