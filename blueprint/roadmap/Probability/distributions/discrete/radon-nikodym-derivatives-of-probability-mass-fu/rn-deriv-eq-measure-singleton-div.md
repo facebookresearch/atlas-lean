@@ -5,4 +5,5 @@ Lebesgue decomposition with respect to `ν`, then at every point `x` with `ν {x
 `ν {x} ≠ ∞` the derivative is `μ.rnDeriv ν x = μ {x} / ν {x}`. The singular part of `μ`
 vanishes at `x` because it is carried by a `ν`-null set, so `μ` is not assumed absolutely
 continuous with respect to `ν`. The finiteness hypothesis `ν {x} ≠ ∞` cannot be dropped:
-`∞ • Measure.dirac x` at its own point `x` is a counterexample (see the tests).
+for `μ = ν = ∞ • Measure.dirac x`, `μ.rnDeriv ν x` is nonzero, while
+`μ {x} / ν {x} = ∞ / ∞ = 0`.

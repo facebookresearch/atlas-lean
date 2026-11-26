@@ -1,4 +1,4 @@
-# Probability mass functions
+# Radon–Nikodym derivatives of probability mass functions
 
 ## Measure
 
@@ -6,5 +6,5 @@
 
 ## PMF
 
-- [To Measure absolutely Continuous iff](to-measure-absolutely-continuous-iff.md)
+- [Absolute continuity of PMF measures](to-measure-absolutely-continuous-iff.md)
 - [Radon–Nikodym derivative of PMF measures](rn-deriv-to-measure-apply.md)
