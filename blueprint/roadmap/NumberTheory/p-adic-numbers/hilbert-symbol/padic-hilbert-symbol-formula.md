@@ -6,13 +6,18 @@ $p$-adic Hilbert symbol: $1$ if $a x^2 + b y^2 = 1$ has a solution in $\mathbb{Q
 otherwise.
 
 - If $p$ is odd, then
-  $$(a, b)_p = (-1)^{\alpha \beta (p-1)/2} \left(\frac{\bar u}{p}\right)^{\beta} \left(\frac{\bar v}{p}\right)^{\alpha},$$
-  where $\bar u, \bar v$ are the residues of $u, v$ modulo $p$ and
-  $\left(\frac{\cdot}{p}\right)$ is the Legendre symbol.
+
+    $$(a, b)_p = (-1)^{\alpha \beta (p-1)/2} \left(\frac{\bar u}{p}\right)^{\beta} \left(\frac{\bar v}{p}\right)^{\alpha},$$
+
+    where $\bar u, \bar v$ are the residues of $u, v$ modulo $p$ and
+    $\left(\frac{\cdot}{p}\right)$ is the Legendre symbol.
+
 - If $p = 2$, then
-  $$(a, b)_2 = (-1)^{\varepsilon(u)\varepsilon(v) + \alpha\,\omega(v) + \beta\,\omega(u)},$$
-  where, for a unit $z$ of $\mathbb{Z}_2$, $\varepsilon(z)$ and $\omega(z)$ are the classes modulo
-  $2$ of $(z - 1)/2$ and $(z^2 - 1)/8$; both depend only on $z$ modulo $8$.
+
+    $$(a, b)_2 = (-1)^{\varepsilon(u)\varepsilon(v) + \alpha\,\omega(v) + \beta\,\omega(u)},$$
+
+    where, for a unit $z$ of $\mathbb{Z}_2$, $\varepsilon(z)$ and $\omega(z)$ are the classes modulo
+    $2$ of $(z - 1)/2$ and $(z^2 - 1)/8$; both depend only on $z$ modulo $8$.
 
 For nonzero $a, b$ the symbol defined by $a x^2 + b y^2 = 1$ is $1$ exactly when $z^2 - a x^2 - b y^2$ has a nonzero zero in $\mathbb{Q}_p^3$: a solution $(x, y)$ gives
 the zero $(x, y, 1)$, and a nonzero zero with $z = 0$ makes $a x^2 + b y^2$ a hyperbolic plane, which
