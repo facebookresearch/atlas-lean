@@ -70,3 +70,4 @@
 - [Determinant of the Gierer–Meinhardt Jacobian](det-gierer-meinhardt-jacobian.md)
 - [Trace condition for the Gierer–Meinhardt steady state](trace-gierer-meinhardt-jacobian-neg-iff.md)
 - [Turing instability of the Gierer–Meinhardt kinetics](gierer-meinhardt-turing-iff.md)
+- [Reaction–diffusion on an anisotropically growing manifold pulled back to a fixed domain](reaction-diffusion-on-anisotropically-growing-manifolds.md)
