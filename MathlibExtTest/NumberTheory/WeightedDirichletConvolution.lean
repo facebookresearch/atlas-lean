@@ -152,21 +152,6 @@ example : ∑ j ∈ Finset.Icc 1 3, (idFun * idFun) (2 * j) = 40 := by
     rw [conv 3, Nat.prime_three.divisors, Finset.sum_pair (by decide : (1 : ℕ) ≠ 3)]
     simp only [idFun, ArithmeticFunction.coe_mk]
     norm_num
-  have e4 : (idFun * idFun) 4 = 12 := by
-    rw [conv 4, show (4 : ℕ).divisors = {1, 2, 4} from by decide,
-      Finset.sum_insert (show (1 : ℕ) ∉ ({2, 4} : Finset ℕ) from by decide),
-      Finset.sum_insert (show (2 : ℕ) ∉ ({4} : Finset ℕ) from by decide),
-      Finset.sum_singleton]
-    simp only [idFun, ArithmeticFunction.coe_mk]
-    norm_num
-  have e6 : (idFun * idFun) 6 = 24 := by
-    rw [conv 6, show (6 : ℕ).divisors = {1, 2, 3, 6} from by decide,
-      Finset.sum_insert (show (1 : ℕ) ∉ ({2, 3, 6} : Finset ℕ) from by decide),
-      Finset.sum_insert (show (2 : ℕ) ∉ ({3, 6} : Finset ℕ) from by decide),
-      Finset.sum_insert (show (3 : ℕ) ∉ ({6} : Finset ℕ) from by decide),
-      Finset.sum_singleton]
-    simp only [idFun, ArithmeticFunction.coe_mk]
-    norm_num
   have f1 : idFun 1 = 1 := by simp [idFun]
   have f2 : idFun 2 = 2 := by simp [idFun]
   have hIcc3 : Finset.Icc 1 3 = ({1, 2, 3} : Finset ℕ) := by decide
