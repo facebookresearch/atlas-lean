@@ -21,7 +21,8 @@ import Mathlib.Tactic.Ring
 
 The quadratic invasion fitness `s x y = (y - x) * (y - 2 * x)` has singular strategy
 `x* = 0` with `s_xy = -3` and `s_yy = 2`: convergence-stable but not ESS-stable. The tests
-apply `branchingPoint` to this instance and derive mutual invasibility in simplified form.
+use the diagonal identity to recover `s_xx = 4`, check that the fitness gradient has derivative
+`-1` at `x*`, and apply `branchingPoint` to obtain mutual invasibility.
 -/
 
 namespace DomainsTest.Biology.Ecology.SingularStrategyClassificationBranchingPoint
@@ -81,6 +82,18 @@ private theorem test_syy :
     funext deriv_slice_test_zero
   rw [hinner]
   exact (hasDerivAt_const_mul 2).deriv
+
+-- The two nonzero off-diagonal terms in the Hessian contribute to the resident curvature.
+example : sxx (fun x y => (y - x) * (y - 2 * x)) 0 0 = 4 := by
+  have h := (diagonal_identity_and_hasDerivAt test_isSingular).1
+  rw [test_sxy, test_syy] at h
+  linarith only [h]
+
+-- The mixed and mutant curvatures contribute to the slope of the fitness gradient.
+example : HasDerivAt (fitnessGradient (fun x y => (y - x) * (y - 2 * x))) (-1) 0 := by
+  have h := (diagonal_identity_and_hasDerivAt test_isSingular).2
+  have hs : (-3 : ℝ) + 2 = -1 := by ring
+  rwa [test_sxy, test_syy, hs] at h
 
 /-- The test fitness is convergence-stable (`-3 + 2 < 0`) but not ESS-stable (`0 < 2`), so
 `branchingPoint` applies to it. -/

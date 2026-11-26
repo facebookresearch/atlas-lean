@@ -18,9 +18,9 @@ equivalently `s_xx > s_yy` because `s_xx + 2 s_xy + s_yy = 0` on the diagonal; i
 nearby residents when `s_xx > 0`; and nearby strategies on opposite sides are mutually invasible
 when `s_xx + s_yy > 0`. A continuously stable strategy (Eshel and Motro 1981; Eshel 1983) is
 both ESS-stable and convergence-stable; an evolutionary branching point is convergence-stable
-but not ESS-stable. The branching-point theorem `branchingPoint` is proved in
+but not ESS-stable. The diagonal identity and `branchingPoint` are proved in
 `Domains.Biology.Ecology.SingularStrategyClassificationBranchingPoint`, where `fitnessGradient`,
-`sxy`, `syy` and `IsSingular` are also defined. The statements below are the local, generic
+`sxx`, `sxy`, `syy` and `IsSingular` are also defined. The statements below are the local, generic
 (strict-inequality) cases, for invasion fitness of class `C²`.
 
 Sources: S. A. H. Geritz, É. Kisdi, G. Meszéna and J. A. J. Metz, "Evolutionarily singular
@@ -39,21 +39,6 @@ public import Domains.Biology.Ecology.SingularStrategyClassificationBranchingPoi
 @[expose] public section
 
 namespace WantedExt.Biology.Ecology.SingularStrategyClassificationWanted
-
-/-- The second partial derivative `∂²s/∂x²` (resident variable) at `(a, b)`. -/
-noncomputable def sxx (s : ℝ → ℝ → ℝ) (a b : ℝ) : ℝ :=
-  deriv (fun x => deriv (fun x' => s x' b) x) a
-
-/-- **Diagonal identity and the derivative of the fitness gradient** (Geritz et al. 1998,
-eq. (7)). For an invasion fitness `s` with singular strategy `x*` (`s` is `C²`, `s x x = 0`,
-`D(x*) = 0`): `s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`, and `D` has derivative `s_xy + s_yy` at
-`x*`.
-
-Source: Geritz et al. (1998), eq. (7). -/
-public theorem_wanted diagonal_identity_and_hasDerivAt {s : ℝ → ℝ → ℝ} {xs : ℝ}
-    (h : IsSingular s xs) :
-    sxx s xs xs + 2 * sxy s xs xs + syy s xs xs = 0 ∧
-      HasDerivAt (fitnessGradient s) (sxy s xs xs + syy s xs xs) xs
 
 /-- **Convergence stability** (Eshel 1983; Geritz et al. 1998, eq. (8)). For an invasion
 fitness `s` with singular strategy `x*`: `s_xy + s_yy < 0` iff `s_yy < s_xx` (all at
