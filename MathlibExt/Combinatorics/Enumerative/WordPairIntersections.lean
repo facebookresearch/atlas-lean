@@ -20,6 +20,13 @@ import Mathlib.Tactic.Ring
 
 The number of pairs of nonempty words with disjoint alphabets is expressed using Stirling
 numbers of the second kind and coefficients of rational generating functions.
+
+## References
+
+* Aubrey Blecher and Arnold Knopfmacher, [*Intersections in Pairs of Words*][bk2024],
+  INTEGERS 24 (2024), Article A107, pp. 1–12, Theorem 1 and Corollaries 1–2.
+
+[bk2024]: https://math.colgate.edu/~integers/y107/y107.pdf
 -/
 
 open Finset PowerSeries
@@ -178,5 +185,38 @@ public theorem nonIntersectingWordPairs_sameLength_card (k n : ℕ) (hn : 1 ≤ 
       Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
       ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * j.factorial * Nat.stirlingSecond n j * (k - j) ^ n :=
   count_pairs k n n hn hn
+
+/-- **Generating function of non-intersecting pairs of words of equal length.** Let $k$ be a
+natural number, let $S(n, j)$ denote the Stirling numbers of the second kind, and for $n \ge 1$ let
+$h(n)$ be the number of pairs $(u, v)$ of words of length $n$ over an alphabet of $k$ letters such
+that no letter occurs in both. Then, as formal power series over $\mathbb{Q}$,
+$\sum_{n \ge 1} h(n) x^n = \sum_{n \ge 0} \sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \,
+(k-j)^n x^n$.
+
+The constant term on the right is $0$ because $S(0, j) = 0$ for $j \ge 1$: the empty pair is not
+counted.
+
+Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24
+(2024), Article A107, Corollary 1 (`integers-2024-A107-cor-1`). -/
+public theorem nonIntersectingWordPairs_sameLength_generatingFunction (k : ℕ) :
+    (PowerSeries.mk fun n => if n = 0 then (0 : ℚ) else
+        (((Finset.univ : Finset ((Fin n → Fin k) × (Fin n → Fin k))).filter fun p =>
+          Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ)) =
+      PowerSeries.mk fun n => ∑ j ∈ Finset.Icc 1 (k - 1),
+        (k.choose j : ℚ) * j.factorial * Nat.stirlingSecond n j * ((k - j : ℕ) : ℚ) ^ n := by
+  apply PowerSeries.ext
+  intro n
+  simp only [PowerSeries.coeff_mk]
+  cases n with
+  | zero =>
+    change (0 : ℚ) = _
+    symm
+    apply Finset.sum_eq_zero
+    intro j hj
+    obtain ⟨i, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt (Finset.mem_Icc.mp hj).1)
+    simp [Nat.stirlingSecond_zero_succ]
+  | succ n =>
+    rw [ite_eq_right (Nat.succ_ne_zero n)]
+    exact_mod_cast nonIntersectingWordPairs_sameLength_card k (n + 1) (Nat.succ_pos n)
 
 end MetaMathlibExt
