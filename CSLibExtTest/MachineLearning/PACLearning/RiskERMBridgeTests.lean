@@ -15,16 +15,18 @@ import CSLibExt.MachineLearning.PACLearning.RiskERMBridge
 
 Closed checks over the two-point domain `Bool`: on the realizable sample `id` is a 0-1 empirical
 risk minimizer while `not` is not, a finite class has a consistent ERM learner, the finite-family
-selector lands in the version space, both 0-1 bridges evaluate exactly, plus boundary cases
-(single-point samples, one-member and duplicate families, empty classes) and negative cases (an
-ERM outside the version space on a non-realizable sample, a consistent learner that is not an ERM
-learner, and an infinite class with no minimizer).
+selector lands in the version space, both 0-1 bridges evaluate exactly (the empirical error is
+derived from the empirical 0-1 risk through the bridge), plus boundary cases (single-point samples,
+one-member and duplicate families, empty classes, and empty domains or label sets, where every
+learner is vacuously an ERM learner) and negative cases (an ERM outside the version space on a
+non-realizable sample, a consistent learner that is not an ERM learner, and an infinite class with
+no minimizer).
 -/
 
 namespace Cslib.MachineLearning.PACLearning
 
 open MeasureTheory
-open CSLibExt.MachineLearning.GeneralizationBounds (risk empiricalRisk)
+open CSLibExt.MachineLearning.GeneralizationBounds (risk empiricalRisk empiricalRisk_eq_inv_mul_sum)
 
 /-! ### Two-point domain: `id` minimizes, `not` does not -/
 
@@ -94,19 +96,15 @@ example : empiricalRisk zeroOneLoss
     decide
   have hR : (empiricalError not
       (![(true, true), (true, false)] : LabeledSample Bool Bool 2)).toReal = 1 / 2 := by
-    have e : empiricalMiscount not
-        (![(true, true), (true, false)] : LabeledSample Bool Bool 2) = 1 := by
-      decide
-    have hm2 : (0 : ℕ) < 2 := by decide
-    rw [empiricalError_eq_div hm2, e, ENNReal.toReal_div, ENNReal.toReal_natCast,
-      ENNReal.toReal_natCast]
-    norm_num
+    have hb := empiricalRisk_zeroOneLoss_eq_toReal_empiricalError
+      (![(true, true), (true, false)] : LabeledSample Bool Bool 2) not
+    linarith
   exact ⟨hL, hR⟩
 
 example : risk zeroOneLoss (Measure.dirac ((true, true) : Bool × Bool)) not = 1 := by
   have hmem : ((true, true) : Bool × Bool) ∈ {p : Bool × Bool | not p.1 ≠ p.2} := by
     decide
-  rw [risk_eq_integral, integral_dirac]
+  rw [risk, integral_dirac]
   unfold zeroOneLoss
   rw [Set.indicator_of_mem hmem]
 
@@ -125,16 +123,15 @@ example : empiricalRisk zeroOneLoss
       (![(true, false)] : LabeledSample Bool Bool 1)).toReal = 0 := by
   have e : empiricalMiscount not (![(true, false)] : LabeledSample Bool Bool 1) = 0 := by
     decide
-  have hm1 : (0 : ℕ) < 1 := by decide
   have hL : empiricalRisk zeroOneLoss
       (![(true, false)] : LabeledSample Bool Bool 1) not = 0 := by
     rw [empiricalRisk_zeroOneLoss_eq_miscount_div, e]
     norm_num
   have hR : (empiricalError not
       (![(true, false)] : LabeledSample Bool Bool 1)).toReal = 0 := by
-    rw [empiricalError_eq_div hm1, e, ENNReal.toReal_div, ENNReal.toReal_natCast,
-      ENNReal.toReal_natCast]
-    norm_num
+    have hb := empiricalRisk_zeroOneLoss_eq_toReal_empiricalError
+      (![(true, false)] : LabeledSample Bool Bool 1) not
+    linarith
   exact ⟨hL, hR⟩
 
 example : ∃ h, IsERM zeroOneLoss ({id, not} : ConceptClass Bool Bool)
@@ -353,6 +350,14 @@ example (A : Learner Bool Bool 1) :
   intro hA
   exact (hA (![(true, true)] : LabeledSample Bool Bool 1)).1
 
+-- With an empty domain or an empty label set there is no labelled sample, so even the empty class
+-- has an ERM learner.
+example : ∃ A : Learner Empty Bool 1, IsERMLearner zeroOneLoss (∅ : ConceptClass Empty Bool) A :=
+  ⟨fun _ => Empty.elim, fun S => (S 0).1.elim⟩
+
+example : ∃ A : Learner Bool Empty 1, IsERMLearner zeroOneLoss (∅ : ConceptClass Bool Empty) A :=
+  ⟨fun S => (S 0).2.elim, fun S => (S 0).2.elim⟩
+
 -- Samples of size `m = 0` are outside the API: `IsERMLearner` requires `[NeZero m]`.
 
 /-! ### Negative: ERM without realizability, outside the version space -/
@@ -524,6 +529,5 @@ end Cslib.MachineLearning.PACLearning
 #print axioms Cslib.MachineLearning.PACLearning.isERM_zeroOneLoss_iff_mem_versionSpace
 #print axioms Cslib.MachineLearning.PACLearning.isConsistent_iff_forall_realizable_isERM
 #print axioms Cslib.MachineLearning.PACLearning.IsERMLearner.isConsistent
-#print axioms Cslib.MachineLearning.PACLearning.risk_eq_integral
-#print axioms Cslib.MachineLearning.PACLearning.empiricalRisk_eq_inv_mul_sum
+#print axioms CSLibExt.MachineLearning.GeneralizationBounds.empiricalRisk_eq_inv_mul_sum
 #print axioms Cslib.MachineLearning.PACLearning.isERM_ermIdx

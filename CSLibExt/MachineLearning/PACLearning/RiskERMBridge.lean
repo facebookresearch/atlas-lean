@@ -19,14 +19,14 @@ The generalization-bound files measure a predictor by the loss-generic expected 
 (F. Bach, *Learning Theory from First Principles*, MIT Press (2024), Definitions 2.1 and 2.2).
 CSLib's PAC library measures a hypothesis by the 0-1 `error` and `empiricalError`. This file adds
 the empirical risk minimization rule over a class (S. Shalev-Shwartz and S. Ben-David,
-*Understanding Machine Learning*, Cambridge University Press (2014), Section 2.2) and connects it
+*Understanding Machine Learning*, Cambridge University Press (2014), Section 2.3) and connects it
 to both sides.
 
 ## Main definitions
 
 - `IsERM L C S h`: `h ∈ C` minimizes the empirical risk `empiricalRisk L S` over `C`.
 - `IsERMLearner L C A`: the learner `A` returns an empirical risk minimizer over `C` on every
-  labelled sample (the rule `ERM_H` of Shalev-Shwartz and Ben-David, Section 2.2.1).
+  labelled sample (the rule `ERM_H` of Shalev-Shwartz and Ben-David, Section 2.3).
 
 ## Main results
 
@@ -39,18 +39,29 @@ to both sides.
 - `isConsistent_iff_forall_realizable_isERM`, `IsERMLearner.isConsistent`: a learner is consistent
   exactly when it is a 0-1 empirical risk minimizer on every realizable sample; in particular
   every 0-1 ERM learner is consistent (Shalev-Shwartz and Ben-David, Section 2.3.1).
-- `risk_eq_integral`, `empiricalRisk_eq_inv_mul_sum`, `isERM_ermIdx`: for a finite family
-  `h : Fin M → H`, the risks of `h j` are the integral and the empirical mean of `L (h j)` used by
-  `ProbabilityTheory.ermIdx`, and `h (ermIdx (fun j => L (h j)) S)` is an empirical risk
-  minimizer over `Set.range h`.
+- `empiricalRisk_eq_inv_mul_sum`, `isERM_ermIdx`: the empirical risk is the inverse-size sample
+  sum that `ProbabilityTheory.ermIdx` minimizes, so for a finite family `h : Fin M → H` the member
+  `h (ermIdx (fun j => L (h j)) S)` is an empirical risk minimizer over `Set.range h`.
 -/
 
 @[expose] public section
 
+namespace CSLibExt.MachineLearning.GeneralizationBounds
+
+/-- **The empirical risk is the inverse-size sample sum.** On a nonempty sample `S`, the empirical
+risk of `h` is `(n : ℝ)⁻¹ * ∑ i, L h (S i)`, the form of the empirical means that
+`ProbabilityTheory.ermIdx_spec` compares. -/
+theorem empiricalRisk_eq_inv_mul_sum {H Z : Type*} {n : ℕ} [NeZero n] (L : H → Z → ℝ)
+    (S : Fin n → Z) (h : H) :
+    empiricalRisk L S h = (n : ℝ)⁻¹ * ∑ i, L h (S i) := by
+  unfold empiricalRisk
+  rw [one_div]
+
+end CSLibExt.MachineLearning.GeneralizationBounds
+
 namespace Cslib.MachineLearning.PACLearning
 
-open MeasureTheory
-open CSLibExt.MachineLearning.GeneralizationBounds (risk empiricalRisk)
+open CSLibExt.MachineLearning.GeneralizationBounds (empiricalRisk empiricalRisk_eq_inv_mul_sum)
 
 /-! ### The empirical 0-1 risk is CSLib's empirical error -/
 
@@ -72,7 +83,7 @@ theorem empiricalRisk_zeroOneLoss_eq_toReal_empiricalError {X Y : Type*}
 /-- **Empirical risk minimizer.** For a loss `L h z`, a class `C` and a nonempty sample `S`, the
 predictor `h` is an empirical risk minimizer over `C` on `S` if `h ∈ C` and no member of `C` has
 smaller empirical risk on `S` (Shalev-Shwartz and Ben-David, *Understanding Machine Learning*,
-2014, Section 2.2.1: `ERM_H(S) ∈ argmin_{h ∈ H} L_S(h)`). Ties are allowed, so a sample can have
+2014, Section 2.3: `ERM_H(S) ∈ argmin_{h ∈ H} L_S(h)`). Ties are allowed, so a sample can have
 several minimizers; over an empty class there is none. -/
 def IsERM {H Z : Type*} {n : ℕ} [NeZero n] (L : H → Z → ℝ) (C : Set H) (S : Fin n → Z)
     (h : H) : Prop :=
@@ -81,8 +92,9 @@ def IsERM {H Z : Type*} {n : ℕ} [NeZero n] (L : H → Z → ℝ) (C : Set H) (
 /-- **ERM learner.** A learner `A` on samples of size `m ≥ 1` follows the empirical risk
 minimization rule for the loss `L` over the class `C` if, on every labelled sample `S`, its output
 `A S` is an empirical risk minimizer over `C` (the rule `ERM_H` of Shalev-Shwartz and Ben-David,
-*Understanding Machine Learning*, 2014, Section 2.2.1). No ERM learner exists over an empty class,
-or over a class on which some sample has no minimizer. -/
+*Understanding Machine Learning*, 2014, Section 2.3). No ERM learner exists over a class on which
+some sample has no minimizer; when `X` and `Y` are nonempty, that includes the empty class. When
+`X` or `Y` is empty there is no labelled sample, so every learner is vacuously an ERM learner. -/
 def IsERMLearner {X Y : Type*} {m : ℕ} [NeZero m] (L : (X → Y) → X × Y → ℝ)
     (C : ConceptClass X Y) (A : Learner X Y m) : Prop :=
   ∀ S : LabeledSample X Y m, IsERM L C S (A S)
@@ -169,21 +181,6 @@ theorem IsERMLearner.isConsistent {X Y : Type*} {m : ℕ} [NeZero m] {C : Concep
   exact fun S _ => hA S
 
 /-! ### Finite families: identification with `ProbabilityTheory.ermIdx` -/
-
-/-- **The expected risk is the integral of the loss**, the population risk `∫ z, f j z ∂ν` of the
-finite-family file at `f j := L (h j)`. -/
-theorem risk_eq_integral {H Z : Type*} [MeasurableSpace Z] (L : H → Z → ℝ) (ν : Measure Z)
-    [IsProbabilityMeasure ν] (h : H) :
-    risk L ν h = ∫ z, L h z ∂ν := by
-  rfl
-
-/-- **The empirical risk is the inverse-size sample sum**, the empirical mean
-`(n : ℝ)⁻¹ * ∑ i, f j (S i)` minimized by `ProbabilityTheory.ermIdx` at `f j := L (h j)`. -/
-theorem empiricalRisk_eq_inv_mul_sum {H Z : Type*} {n : ℕ} [NeZero n] (L : H → Z → ℝ)
-    (S : Fin n → Z) (h : H) :
-    empiricalRisk L S h = (n : ℝ)⁻¹ * ∑ i, L h (S i) := by
-  unfold empiricalRisk
-  rw [one_div]
 
 /-- **The finite-family minimizer is an empirical risk minimizer.** For a nonempty finite family
 `h : Fin M → H` and a nonempty sample `S`, the member selected by `ProbabilityTheory.ermIdx` for the
