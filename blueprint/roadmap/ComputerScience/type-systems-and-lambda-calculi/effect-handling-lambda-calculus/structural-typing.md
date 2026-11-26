@@ -9,6 +9,6 @@ content: binding at a value type `A` adds an innermost variable `x : A`, and ins
 value `v` is the substitution `[v/x]` into a value or a computation, so the substitution field
 is `HasVTy.inst` and `HasCTy.inst`. Binding at a computation type binds nothing and
 instantiating by a computation is the identity; these branches hold trivially and only make the
-operations total. A context `Γ` extends to `Θ ++ Γ` for a block `Θ` of new innermost variables,
-and weakening shifts every free variable by the length of `Θ` (`HasVTy.weaken`,
-`HasCTy.weaken`).
+operations total. A context `Γ` extends to `Θ ++ Γ` for a block `Θ` of new innermost variables;
+for such an extension the shift `(Θ ++ Γ).length - Γ.length` of `wkT` is the length of `Θ`, and
+weakening is `HasVTy.weaken` and `HasCTy.weaken`.

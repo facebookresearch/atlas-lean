@@ -30,8 +30,12 @@ Concrete checks, on local operation signatures:
 * handler-delimited contexts: of two nested handlers for an operation only the inner one fires,
   and an operation the inner handler does not handle is caught by the outer one in one step, with
   no forwarding step;
-* answers: returned values and uncaught calls are answers and normal forms, and a caught call is
-  not an answer;
+* handler frames are handler literals: under a handler given by a variable no step is taken and
+  no outer handler catches the call, and substituting a handler literal for the variable then
+  lets the inner handler catch it;
+* answers: returned values and uncaught calls are answers and normal forms, a caught call is not
+  an answer, and neither is a call under a variable or under `()` in handler position, while an
+  uncaught call under a handler literal is;
 * Pretnar's typing rule for `op(v; y. c)` is derivable for `do y ← op o v in c`.
 -/
 
@@ -97,15 +101,17 @@ def compTag : Comp Op → ℕ
   | .app _ _ => 4
   | .handle _ _ => 5
 
-/-- Pin: the evaluation contexts and their constructors. -/
-example : ECtx Op × (ECtx Op → Comp Op → ECtx Op) × (Val Op → ECtx Op → ECtx Op) :=
+/-- Pin: the evaluation contexts and their constructors; a handler frame holds a handler literal,
+given by its return clause and its operation clauses. -/
+example : ECtx Op × (ECtx Op → Comp Op → ECtx Op) ×
+    (Comp Op → List (Op × Comp Op) → ECtx Op → ECtx Op) :=
   (.hole, .bindF, .handleF)
 
 /-- Pin: `ECtx` has exactly these constructors. -/
 def ectxTag : ECtx Op → ℕ
   | .hole => 0
   | .bindF _ _ => 1
-  | .handleF _ _ => 2
+  | .handleF _ _ _ => 2
 
 end SyntaxPins
 
@@ -115,24 +121,22 @@ section OperationPins
 
 variable {Op : Type u}
 
-/-- Pin: lifting a renaming. -/
-theorem liftRen_pin (ρ : ℕ → ℕ) (i : ℕ) : liftRen ρ 0 = 0 ∧ liftRen ρ (i + 1) = ρ i + 1 :=
-  ⟨rfl, rfl⟩
-
-/-- Pin: renaming values, computations and clauses. -/
+/-- Pin: renaming values, computations and clauses; under a binder the renaming is lifted by
+`References.Term.liftRen`. -/
 theorem ren_pin (ρ : ℕ → ℕ) (i : ℕ) (o : Op) (v w : Val Op) (c c₁ c₂ : Comp Op)
     (cls : List (Op × Comp Op)) :
     (Val.var i : Val Op).ren ρ = .var (ρ i) ∧ (Val.unit : Val Op).ren ρ = .unit ∧
     (Val.tt : Val Op).ren ρ = .tt ∧ (Val.ff : Val Op).ren ρ = .ff ∧
-    (Val.lam c).ren ρ = .lam (c.ren (liftRen ρ)) ∧
-    (Val.hdl c cls).ren ρ = .hdl (c.ren (liftRen ρ)) (Clauses.ren ρ cls) ∧
+    (Val.lam c).ren ρ = .lam (c.ren (References.Term.liftRen ρ)) ∧
+    (Val.hdl c cls).ren ρ = .hdl (c.ren (References.Term.liftRen ρ)) (Clauses.ren ρ cls) ∧
     (Comp.ret v).ren ρ = .ret (v.ren ρ) ∧ (Comp.op o v).ren ρ = .op o (v.ren ρ) ∧
-    (Comp.bind c₁ c₂).ren ρ = .bind (c₁.ren ρ) (c₂.ren (liftRen ρ)) ∧
+    (Comp.bind c₁ c₂).ren ρ = .bind (c₁.ren ρ) (c₂.ren (References.Term.liftRen ρ)) ∧
     (Comp.ite v c₁ c₂).ren ρ = .ite (v.ren ρ) (c₁.ren ρ) (c₂.ren ρ) ∧
     (Comp.app v w).ren ρ = .app (v.ren ρ) (w.ren ρ) ∧
     (Comp.handle v c).ren ρ = .handle (v.ren ρ) (c.ren ρ) ∧
     Clauses.ren ρ ([] : List (Op × Comp Op)) = [] ∧
-    Clauses.ren ρ ((o, c) :: cls) = (o, c.ren (liftRen (liftRen ρ))) :: Clauses.ren ρ cls := by
+    Clauses.ren ρ ((o, c) :: cls) =
+      (o, c.ren (References.Term.liftRen (References.Term.liftRen ρ))) :: Clauses.ren ρ cls := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     simp only [Val.ren, Comp.ren, Clauses.ren]
 
@@ -171,26 +175,30 @@ theorem inst_pin (w v x k : Val Op) (c : Comp Op) :
     c.inst₂ x k = c.subst (doubleSub x k) :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Pin: plugging a context. -/
-theorem plug_pin (E : ECtx Op) (c c₂ : Comp Op) (h : Val Op) :
+/-- Pin: plugging a context; a handler frame plugs as the handler literal `.hdl cr cls`. -/
+theorem plug_pin (E : ECtx Op) (c c₂ cr : Comp Op) (cls : List (Op × Comp Op)) :
     ECtx.hole.plug c = c ∧ (ECtx.bindF E c₂).plug c = .bind (E.plug c) c₂ ∧
-    (ECtx.handleF h E).plug c = .handle h (E.plug c) :=
+    (ECtx.handleF cr cls E).plug c = .handle (.hdl cr cls) (E.plug c) :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Pin: renaming a context lifts the renaming over the computation of a `do` frame. -/
-theorem ectx_ren_pin (ρ : ℕ → ℕ) (E : ECtx Op) (c₂ : Comp Op) (h : Val Op) :
+/-- Pin: renaming a context lifts the renaming over the computation of a `do` frame and renames
+the handler literal of a handler frame as `Val.ren` does. -/
+theorem ectx_ren_pin (ρ : ℕ → ℕ) (E : ECtx Op) (c c₂ cr : Comp Op)
+    (cls : List (Op × Comp Op)) :
     ECtx.hole.ren ρ = (.hole : ECtx Op) ∧
-    (ECtx.bindF E c₂).ren ρ = .bindF (E.ren ρ) (c₂.ren (liftRen ρ)) ∧
-    (ECtx.handleF h E).ren ρ = .handleF (h.ren ρ) (E.ren ρ) :=
-  ⟨rfl, rfl, rfl⟩
+    (ECtx.bindF E c₂).ren ρ = .bindF (E.ren ρ) (c₂.ren (References.Term.liftRen ρ)) ∧
+    (ECtx.handleF cr cls E).ren ρ =
+      .handleF (cr.ren (References.Term.liftRen ρ)) (Clauses.ren ρ cls) (E.ren ρ) ∧
+    ((ECtx.handleF cr cls E).ren ρ).plug c = .handle ((Val.hdl cr cls).ren ρ) ((E.ren ρ).plug c) :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 variable [DecidableEq Op]
 
-/-- Pin: first-match clause lookup. -/
-theorem lookupClause_pin (o o' : Op) (c : Comp Op) (cls : List (Op × Comp Op)) :
-    lookupClause ([] : List (Op × Comp Op)) o = none ∧
-    lookupClause ((o', c) :: cls) o = if o' = o then some c else lookupClause cls o :=
-  ⟨rfl, rfl⟩
+/-- Pin: clauses are looked up with `List.lookup`, which takes the first clause for an
+operation. -/
+theorem lookup_first_match_pin (o : Op) (c₁ c₂ : Comp Op) (cls : List (Op × Comp Op)) :
+    ((o, c₁) :: (o, c₂) :: cls).lookup o = some c₁ := by
+  simp [List.lookup]
 
 /-- Pin: the operations handled by a value. -/
 theorem ops_pin (c : Comp Op) (cls : List (Op × Comp Op)) (i : ℕ) :
@@ -200,9 +208,9 @@ theorem ops_pin (c : Comp Op) (cls : List (Op × Comp Op)) (i : ℕ) :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Pin: the operations handled by a context. -/
-theorem handled_pin (E : ECtx Op) (c₂ : Comp Op) (h : Val Op) :
+theorem handled_pin (E : ECtx Op) (c₂ cr : Comp Op) (cls : List (Op × Comp Op)) :
     ECtx.hole.handled = (∅ : Finset Op) ∧ (ECtx.bindF E c₂).handled = E.handled ∧
-    (ECtx.handleF h E).handled = h.ops ∪ E.handled :=
+    (ECtx.handleF cr cls E).handled = (Val.hdl cr cls).ops ∪ E.handled :=
   ⟨rfl, rfl, rfl⟩
 
 /-- Pin: answers. -/
@@ -291,14 +299,15 @@ theorem Step.handleRet_pin (cr : Comp Op) (cls : List (Op × Comp Op)) (v : Val 
   .handleRet
 
 theorem Step.handleOp_pin {cr : Comp Op} {cls : List (Op × Comp Op)} {E : ECtx Op} {o : Op}
-    {v : Val Op} {c : Comp Op} (hc : lookupClause cls o = some c) (hE : o ∉ E.handled) :
+    {v : Val Op} {c : Comp Op} (hc : cls.lookup o = some c) (hE : o ∉ E.handled) :
     Step (.handle (.hdl cr cls) (E.plug (.op o v)))
       (c.inst₂ v (.lam (.handle ((Val.hdl cr cls).ren (· + 1))
         ((E.ren (· + 1)).plug (.ret (.var 0)))))) :=
   .handleOp hc hE
 
-theorem Step.cong_pin {c₁ c₁' c₂ : Comp Op} {h : Val Op} (hs : Step c₁ c₁') :
-    Step (.bind c₁ c₂) (.bind c₁' c₂) ∧ Step (.handle h c₁) (.handle h c₁') :=
+theorem Step.cong_pin {c₁ c₁' c₂ cr : Comp Op} {cls : List (Op × Comp Op)} (hs : Step c₁ c₁') :
+    Step (.bind c₁ c₂) (.bind c₁' c₂) ∧
+      Step (.handle (.hdl cr cls) c₁) (.handle (.hdl cr cls) c₁') :=
   ⟨.bindCong hs, .handleCong hs⟩
 
 end StepPins
@@ -315,7 +324,7 @@ theorem plug_eq_op {E : ECtx Op} {c : Comp Op} {o : Op} {v : Val Op}
   cases E with
   | hole => exact ⟨rfl, h⟩
   | bindF E c₂ => simp [ECtx.plug] at h
-  | handleF h' E => simp [ECtx.plug] at h
+  | handleF cr cls E => simp [ECtx.plug] at h
 
 /-- An operation call does not step. -/
 theorem op_normal [DecidableEq Op] (o : Op) (v : Val Op) : Relation.Normal Step (Comp.op o v) := by
@@ -496,8 +505,10 @@ def outer : Val Two :=
 def inner : Val Two :=
   .hdl (.ret (.var 0)) [(.a, .ret .ff)]
 
-/-- The outer handler's rule is blocked for `a`: the inner frame handles it. -/
-theorem a_mem_handled : Two.a ∈ (ECtx.handleF inner .hole).handled := by
+/-- The outer handler's rule is blocked for `a`: the frame of the handler literal `inner`
+handles it. -/
+theorem a_mem_handled :
+    Two.a ∈ (ECtx.handleF (.ret (.var 0)) [(Two.a, .ret .ff)] .hole).handled := by
   decide
 
 /-- **T6.** Of two nested handlers for `a`, only the inner one fires. -/
@@ -519,16 +530,17 @@ theorem nested_step_iff (c' : Comp Two) :
       cases E with
       | hole => cases hE'
       | bindF E c₂ => cases hE'
-      | handleF h E =>
+      | handleF cr' cls' E =>
         injection hE' with hh hp
-        subst hh
         obtain ⟨rfl, hop⟩ := plug_eq_op hp.symm
         injection hop with ho _
         subst ho
+        cases hh
         exact absurd a_mem_handled hE
-    | @handleCong h c c'' hc =>
+    | @handleCong cr cls c c'' hc =>
       injection ht with hh hc'
-      subst hh hc'
+      subst hc'
+      rw [← hh]
       generalize ht' : Comp.handle inner (.op .a .unit) = t' at hc
       cases hc with
       | appLam => cases ht'
@@ -537,14 +549,13 @@ theorem nested_step_iff (c' : Comp Two) :
       | bindRet => cases ht'
       | handleRet => injection ht' with _ h'; cases h'
       | bindCong _ => cases ht'
-      | @handleOp cr cls E o v c hc hE =>
-        injection ht' with hh hp
+      | @handleOp cr₁ cls₁ E o v c hc hE =>
+        injection ht' with hh₁ hp
         obtain ⟨rfl, hop⟩ := plug_eq_op hp.symm
         injection hop with ho hv
         subst ho hv
-        injection hh with _ hcls
-        subst hcls
-        simp [lookupClause] at hc
+        cases hh₁
+        simp [List.lookup] at hc
         subst hc
         rfl
       | handleCong hs => injection ht' with _ h'; subst h'; exact absurd ⟨_, hs⟩ (op_normal _ _)
@@ -555,7 +566,8 @@ theorem nested_step_iff (c' : Comp Two) :
 one step. -/
 theorem outer_catches_b :
     Step (.handle outer (.handle inner (.op .b .unit))) (.ret .tt) :=
-  .handleOp (E := .handleF inner .hole) (c := .ret .tt) rfl (by decide)
+  .handleOp (E := .handleF (.ret (.var 0)) [(Two.a, .ret .ff)] .hole) (c := .ret .tt) rfl
+    (by decide)
 
 /-- **T6.** There is no forwarding step: the inner handler alone leaves the call to `b` as it
 is. -/
@@ -574,10 +586,58 @@ theorem inner_b_normal : Relation.Normal Step (.handle inner (.op .b .unit)) := 
     obtain ⟨rfl, hop⟩ := plug_eq_op hp.symm
     injection hop with ho _
     subst ho
-    injection hh with _ hcls
-    subst hcls
-    simp [lookupClause] at hc
+    cases hh
+    simp [List.lookup, show (Two.b == Two.a) = false from rfl] at hc
   | handleCong hs => injection ht with _ h'; subst h'; exact op_normal _ _ ⟨_, hs⟩
+
+/-- **T6, variable handler.** In `with outer handle (with x handle a ())`, where the inner
+handler is the variable `x`, nothing steps: a variable forms no handler frame, so the outer
+handler does not catch the call to `a`, and no step is taken under the variable. -/
+theorem var_handler_normal :
+    Relation.Normal Step (.handle outer (.handle (.var 0) (.op Two.a .unit))) := by
+  rintro ⟨c', hs⟩
+  generalize ht : Comp.handle outer (.handle (.var 0) (.op Two.a .unit)) = t at hs
+  cases hs with
+  | appLam => cases ht
+  | iteTrue => cases ht
+  | iteFalse => cases ht
+  | bindRet => cases ht
+  | handleRet => cases ht
+  | bindCong _ => cases ht
+  | @handleOp cr cls E o v c hc hE =>
+    injection ht with _ hE'
+    cases E with
+    | hole => cases hE'
+    | bindF E c₂ => cases hE'
+    | handleF cr' cls' E => cases hE'
+  | @handleCong cr cls c c'' hc =>
+    injection ht with _ hc'
+    subst hc'
+    generalize ht' : Comp.handle (.var 0) (.op Two.a .unit) = t' at hc
+    cases hc <;> cases ht'
+
+/-- **T6, variable handler, after substitution.** Substituting the handler literal `inner` for
+the variable gives the nested literal handlers of `nested_step_iff`, where the inner handler
+catches `a`. Before the substitution no handler caught the call (`var_handler_normal`), so the
+substitution does not change which handler catches it. -/
+theorem var_handler_inst_step_iff (c' : Comp Two) :
+    Step ((Comp.handle outer (.handle (.var 0) (.op Two.a .unit))).inst inner) c' ↔
+      c' = .handle outer (.ret .ff) := by
+  have h : (Comp.handle outer (.handle (.var 0) (.op Two.a .unit))).inst inner =
+      .handle outer (.handle inner (.op .a .unit)) := rfl
+  rw [h]
+  exact nested_step_iff c'
+
+/-- **T6, variable handler, congruence.** No step is taken under a handler given by a variable,
+while the same computation steps under the handler literal `inner`. -/
+theorem var_handler_no_cong :
+    Relation.Normal Step (Comp.handle (.var 0) (.bind (.ret .unit) (.op Two.a .unit))) ∧
+      Step (Comp.handle inner (.bind (.ret .unit) (.op Two.a .unit)))
+        (.handle inner (.op .a .unit)) := by
+  refine ⟨?_, .handleCong .bindRet⟩
+  rintro ⟨c', hs⟩
+  generalize ht : Comp.handle (.var 0) (.bind (.ret .unit) (.op Two.a .unit)) = t at hs
+  cases hs <;> cases ht
 
 /-! ### T7: answers -/
 
@@ -614,13 +674,47 @@ theorem caught_not_answer : ¬ (Comp.handle inner (.op .a .unit)).Answer := by
   · cases E with
     | hole => cases h
     | bindF E c₂ => cases h
-    | handleF h' E =>
+    | handleF cr cls E =>
       injection h with hh hp
-      subst hh
       obtain ⟨rfl, hop⟩ := plug_eq_op hp.symm
       injection hop with ho _
       subst ho
+      cases hh
       exact hE (by decide)
+
+/-- **T7, handler literal.** A call that the handler literal `inner` does not handle is an
+answer, with `inner` as a handler frame. -/
+theorem literal_uncaught_answer : (Comp.handle inner (.op .b .unit)).Answer :=
+  .inr ⟨.handleF (.ret (.var 0)) [(Two.a, .ret .ff)] .hole, .b, .unit, rfl, by decide⟩
+
+/-- **T7, variable handler.** The call in `with outer handle (with x handle a ())`, where the
+inner handler is the variable `x`, is not an answer. -/
+theorem var_handler_not_answer :
+    ¬ (Comp.handle outer (.handle (.var 0) (.op Two.a .unit))).Answer := by
+  rintro (⟨v, h⟩ | ⟨E, o, v, h, hE⟩)
+  · cases h
+  · cases E with
+    | hole => cases h
+    | bindF E c₂ => cases h
+    | handleF cr cls E =>
+      injection h with _ hp
+      cases E with
+      | hole => cases hp
+      | bindF E c₂ => cases hp
+      | handleF cr' cls' E => cases hp
+
+/-- **T7, non-handler values.** For every operation `o` and value `v`, a call to `o` under a
+variable or under `()` in handler position is not an answer: neither value forms a handler
+frame. -/
+theorem nonhandler_not_answer {Op : Type u} [DecidableEq Op] (o : Op) (v : Val Op) :
+    ¬ (Comp.handle (.var 0) (.op o v)).Answer ∧ ¬ (Comp.handle .unit (.op o v)).Answer := by
+  constructor <;>
+  · rintro (⟨w, h⟩ | ⟨E, o', w, h, hE⟩)
+    · cases h
+    · cases E with
+      | hole => cases h
+      | bindF E c₂ => cases h
+      | handleF cr cls E => cases h
 
 /-! ### T8: Pretnar's operation rule is derivable -/
 

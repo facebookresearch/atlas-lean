@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import CSLibExt.Languages.LambdaCalculus.References.Syntax
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Dedup
 
@@ -15,23 +16,29 @@ public import Mathlib.Data.Finset.Dedup
 
 The core calculus of algebraic effects and handlers of Pretnar's tutorial: fine-grain
 call-by-value syntax with values and computations, operation calls, first-class deep handlers,
-computation types `A ! Δ` carrying the finite set `Δ` of operations a computation may call, and
-a small-step semantics. Operations come from one global signature `sig`, which assigns to each
+computation types `A ! Δ` carrying the finite set `Δ` of operations that may escape a
+computation, that is, operations it may call that no handler inside it catches, and a small-step
+semantics. Operations come from one global signature `sig`, which assigns to each
 operation `o` a parameter type and a result type, `o : A_o → B_o`.
 
 Terms use de Bruijn indices. A variable stands for a value. The body of a function and the
 return clause of a handler bind one variable (index `0`), the second computation of
 `do x ← c₁ in c₂` binds one variable, and an operation clause `o(x; k) ↦ c` binds two: the
 parameter `x` is index `1` and the continuation `k` is index `0`. Renaming and substitution are
-parallel operations given by functions on indices.
+parallel operations given by functions on indices; under a binder a renaming is lifted by
+`References.Term.liftRen`.
 
 An operation is called through its generic effect `op o v`, which returns the operation's
-result; Pretnar's `op(v; y. c)` is `do y ← op o v in c`. Handler clauses form a list and lookup
-takes the first clause for an operation. Following Hillerström and Lindley, the semantics uses
-evaluation contexts made of `do` frames and handler frames: an operation call is caught by the
-innermost enclosing handler with a clause for it, and the continuation passed to the clause
-re-installs that handler (deep handlers). A computation is an answer when it returns a value or
-calls an operation that no enclosing handler catches; this predicate does not mention types.
+result; Pretnar's `op(v; y. c)` is `do y ← op o v in c`. Handler clauses form a list, and a
+handler finds the clause for an operation with `List.lookup`, which takes the first clause for
+it. Following Hillerström and Lindley, the semantics uses evaluation contexts made of `do` frames
+and handler frames: an operation call is caught by the innermost enclosing handler with a clause
+for it, and the continuation passed to the clause re-installs that handler (deep handlers). Only
+handler literals form handler frames, as in the reduction rules of both sources: a handler given
+by a variable catches nothing and does not let steps or calls through until a handler literal is
+substituted for it, so substitution never changes which handler catches a call. A computation is
+an answer when it returns a value or calls an operation that no enclosing handler catches; this
+predicate does not mention types.
 
 Effect sets are closed finite sets of operations: there is no effect polymorphism, subtyping or
 subsumption, the calculus has no recursion and no shallow handlers, and every clause, the
@@ -45,9 +52,9 @@ answer-type modification.
 * `Val.ren`, `Comp.ren`, `Val.subst`, `Comp.subst`: parallel renaming and substitution, with
   `Val.inst`, `Comp.inst` (instantiate index `0`) and `Comp.inst₂` (instantiate the two
   variables of an operation clause).
-* `lookupClause`, `Val.ops`: first-match clause lookup and the operations a handler handles.
-* `ECtx`, `ECtx.plug`, `ECtx.handled`, `ECtx.ren`: evaluation contexts, plugging, the operations
-  their handlers handle, and renaming.
+* `Val.ops`: the operations a handler handles.
+* `ECtx`, `ECtx.plug`, `ECtx.handled`, `ECtx.ren`: evaluation contexts, whose handler frames are
+  handler literals, plugging, the operations their handlers handle, and renaming.
 * `Comp.Answer`: returned values and uncaught operation calls.
 * `HasVTy`, `HasCTy`, `HasClauses`: the typing judgments.
 * `Step`: the small-step semantics.
@@ -91,11 +98,12 @@ inductive VTy (Op : Type u) : Type u where
   | hand (A : VTy Op) (Δ : Finset Op) (B : VTy Op) (Δ' : Finset Op) : VTy Op
 
 /-- **Computation types.** A computation type `A ! Δ` pairs the type `A` of the values a
-computation returns with the finite set `Δ` of operations it may call (Pretnar 2015, Fig. 5). -/
+computation returns with the finite set `Δ` of operations that may escape it: the operations it
+may call that no handler inside it catches (Pretnar 2015, Fig. 5). -/
 structure CTy (Op : Type u) : Type u where
   /-- The type of returned values. -/
   res : VTy Op
-  /-- The operations the computation may call. -/
+  /-- The operations that may escape the computation. -/
   eff : Finset Op
 
 /-! ### Terms -/
@@ -146,30 +154,24 @@ variable {Op : Type u}
 
 /-! ### Renaming and substitution -/
 
-/-- **Lifting a renaming under a binder.** The lift of a renaming `ρ` of de Bruijn indices sends
-`0` to `0` and each `i + 1` to `ρ i + 1`. -/
-def liftRen (ρ : ℕ → ℕ) : ℕ → ℕ
-  | 0 => 0
-  | i + 1 => ρ i + 1
-
 mutual
 
 /-- **Renaming a value.** Replaces each free variable `i` by `ρ i`; the renaming is lifted once
-under a function body and a return clause. -/
+(`References.Term.liftRen`) under a function body and a return clause. -/
 def Val.ren (ρ : ℕ → ℕ) : Val Op → Val Op
   | .var i => .var (ρ i)
   | .unit => .unit
   | .tt => .tt
   | .ff => .ff
-  | .lam c => .lam (c.ren (liftRen ρ))
-  | .hdl cr cls => .hdl (cr.ren (liftRen ρ)) (Clauses.ren ρ cls)
+  | .lam c => .lam (c.ren (References.Term.liftRen ρ))
+  | .hdl cr cls => .hdl (cr.ren (References.Term.liftRen ρ)) (Clauses.ren ρ cls)
 
 /-- **Renaming a computation.** Replaces each free variable `i` by `ρ i`; the renaming is lifted
-once under the second computation of `do`. -/
+once (`References.Term.liftRen`) under the second computation of `do`. -/
 def Comp.ren (ρ : ℕ → ℕ) : Comp Op → Comp Op
   | .ret v => .ret (v.ren ρ)
   | .op o v => .op o (v.ren ρ)
-  | .bind c₁ c₂ => .bind (c₁.ren ρ) (c₂.ren (liftRen ρ))
+  | .bind c₁ c₂ => .bind (c₁.ren ρ) (c₂.ren (References.Term.liftRen ρ))
   | .ite v c₁ c₂ => .ite (v.ren ρ) (c₁.ren ρ) (c₂.ren ρ)
   | .app v w => .app (v.ren ρ) (w.ren ρ)
   | .handle h c => .handle (h.ren ρ) (c.ren ρ)
@@ -178,7 +180,8 @@ def Comp.ren (ρ : ℕ → ℕ) : Comp Op → Comp Op
 twice, past the parameter and the continuation, keeping the labels. -/
 def Clauses.ren (ρ : ℕ → ℕ) : List (Op × Comp Op) → List (Op × Comp Op)
   | [] => []
-  | (o, c) :: cls => (o, c.ren (liftRen (liftRen ρ))) :: Clauses.ren ρ cls
+  | (o, c) :: cls =>
+      (o, c.ren (References.Term.liftRen (References.Term.liftRen ρ))) :: Clauses.ren ρ cls
 
 end
 
@@ -252,13 +255,7 @@ section Decidable
 
 variable [DecidableEq Op]
 
-/-! ### Clause lookup and evaluation contexts -/
-
-/-- **First-match clause lookup.** The body of the first clause of `cls` for the operation `o`,
-if any. -/
-def lookupClause : List (Op × Comp Op) → Op → Option (Comp Op)
-  | [], _ => none
-  | (o', c) :: cls, o => if o' = o then some c else lookupClause cls o
+/-! ### Handled operations and evaluation contexts -/
 
 /-- **Operations handled by a value.** The labels of the clauses of a handler; the empty set
 for every other value. -/
@@ -269,39 +266,47 @@ def Val.ops : Val Op → Finset Op
 end Decidable
 
 /-- **Evaluation contexts.** The hole, a `do` frame `do x ← E in c₂`, and a handler frame
-`with h handle E` (Hillerström-Lindley 2016, §3.4). The hole is never under a binder. -/
+`with h handle E` whose handler `h` is a handler literal `.hdl cr cls`
+(Hillerström-Lindley 2016, §3.4, Fig. 7; Pretnar 2015, Fig. 3). A handler given by any other
+value, such as a variable, never forms a frame. The hole is never under a binder. -/
 inductive ECtx (Op : Type u) : Type u where
   /-- The hole `[ ]`. -/
   | hole : ECtx Op
   /-- `do x ← E in c₂`; `c₂` binds index `0`. -/
   | bindF (E : ECtx Op) (c₂ : Comp Op) : ECtx Op
-  /-- `with h handle E`. -/
-  | handleF (h : Val Op) (E : ECtx Op) : ECtx Op
+  /-- `with h handle E` for the handler literal `h = .hdl cr cls`, with return clause `cr` and
+  operation clauses `cls`. -/
+  | handleF (cr : Comp Op) (cls : List (Op × Comp Op)) (E : ECtx Op) : ECtx Op
 
 /-- **Plugging a context.** `E.plug c` fills the hole of `E` with `c`. -/
 def ECtx.plug : ECtx Op → Comp Op → Comp Op
   | .hole, c => c
   | .bindF E c₂, c => .bind (E.plug c) c₂
-  | .handleF h E, c => .handle h (E.plug c)
+  | .handleF cr cls E, c => .handle (.hdl cr cls) (E.plug c)
 
-/-- **Operations handled by a context.** The union of the operations handled by the handlers
-of the handler frames of `E`, written `BL(E)` by Hillerström and Lindley (2016, §3.4). -/
+/-- **Operations handled by a context.** The union of the operations handled by the handler
+literals of the handler frames of `E`, written `BL(E)` by Hillerström and Lindley (2016,
+§3.4). -/
 def ECtx.handled [DecidableEq Op] : ECtx Op → Finset Op
   | .hole => ∅
   | .bindF E _ => E.handled
-  | .handleF h E => h.ops ∪ E.handled
+  | .handleF cr cls E => (Val.hdl cr cls).ops ∪ E.handled
 
 /-- **Renaming a context.** Renames the computation of a `do` frame by the renaming lifted past
-its bound variable, the handler of a handler frame by `ρ`, and the inner context by `ρ`. -/
+its bound variable (`References.Term.liftRen`), the handler literal of a handler frame as
+`Val.ren ρ` renames it (the return clause by the lifted renaming, the operation clauses by
+`Clauses.ren ρ`), and the inner context by `ρ`. -/
 def ECtx.ren (ρ : ℕ → ℕ) : ECtx Op → ECtx Op
   | .hole => .hole
-  | .bindF E c₂ => .bindF (E.ren ρ) (c₂.ren (liftRen ρ))
-  | .handleF h E => .handleF (h.ren ρ) (E.ren ρ)
+  | .bindF E c₂ => .bindF (E.ren ρ) (c₂.ren (References.Term.liftRen ρ))
+  | .handleF cr cls E =>
+      .handleF (cr.ren (References.Term.liftRen ρ)) (Clauses.ren ρ cls) (E.ren ρ)
 
 /-- **Answers.** A computation is an answer when it returns a value, or when it is an operation
-call `op o v` in an evaluation context none of whose handlers handles `o`. This is
-Hillerström-Lindley 2016, Definition 3.2, without the condition that the operation lies in an
-effect set, so the predicate does not depend on types. -/
+call `op o v` in an evaluation context none of whose handlers handles `o`. Handler frames are
+handler literals, so a call under `with h handle …` with `h` a variable or any other non-handler
+value is not an answer. This is Hillerström-Lindley 2016, Definition 3.2, without the condition
+that the operation lies in an effect set, so the predicate does not depend on types. -/
 def Comp.Answer [DecidableEq Op] (c : Comp Op) : Prop :=
   (∃ v, c = .ret v) ∨
     ∃ (E : ECtx Op) (o : Op) (v : Val Op), c = E.plug (.op o v) ∧ o ∉ E.handled
@@ -317,10 +322,12 @@ mutual
 /-- **Typing of values.** `HasVTy sig Γ v A` is the judgment `Γ ⊢ v : A` of Pretnar 2015,
 Fig. 6, for the global signature `sig`, which assigns to each operation `o` its parameter type
 `(sig o).1` and result type `(sig o).2`. The context `Γ` lists the types of the free variables,
-index `0` first. A function `fun x ↦ c` has type `A → B ! Δ` when `c` has type `B ! Δ` under
-`x : A`. A handler has type `A ! Δ ⇒ B ! Δ'` when its return clause has type `B ! Δ'` under
-`x : A`, every operation clause `o(x; k) ↦ c` has type `B ! Δ'` under `x : A_o` and
-`k : B_o → B ! Δ'`, and every operation of `Δ` that it does not handle lies in `Δ'`. -/
+index `0` first, and `A_o`, `B_o` abbreviate `(sig o).1`, `(sig o).2`. A variable has the type
+that `Γ` assigns to it; `()` has type `unit`; `true` and `false` have type `bool`. A function
+`fun x ↦ c` has type `A → B ! Δ` when `c` has type `B ! Δ` under `x : A`. A handler has type
+`A ! Δ ⇒ B ! Δ'` when its return clause has type `B ! Δ'` under `x : A`, every operation clause
+`o(x; k) ↦ c` has type `B ! Δ'` under `x : A_o` and `k : B_o → B ! Δ'`, and every operation of
+`Δ` that it does not handle lies in `Δ'`. -/
 inductive HasVTy (sig : Op → VTy Op × VTy Op) : List (VTy Op) → Val Op → VTy Op → Prop
   /-- A variable has the type the context assigns to it. -/
   | var {Γ : List (VTy Op)} {i : ℕ} {A : VTy Op} (h : Γ[i]? = some A) :
@@ -341,10 +348,13 @@ inductive HasVTy (sig : Op → VTy Op × VTy Op) : List (VTy Op) → Val Op → 
       HasVTy sig Γ (.hdl cr cls) (.hand A Δ B Δ')
 
 /-- **Typing of computations.** `HasCTy sig Γ c C` is the judgment `Γ ⊢ c : C` of Pretnar 2015,
-Fig. 6, with the generic effect `op o v` in place of `op(v; y. c)`: `return v` has type
-`A ! Δ` for every `Δ`; `op o v` has type `B_o ! Δ` when `o ∈ Δ` and `v : A_o`; both
-computations of `do` share the effect set; an application takes its effect set from the
-function type; and `with h handle c` has the output type of the handler `h`. -/
+Fig. 6, for the global signature `sig`, with the generic effect `op o v` in place of
+`op(v; y. c)`; `A_o` and `B_o` abbreviate `(sig o).1` and `(sig o).2`. It is the least relation
+closed under the following rules. If `v : A`, then `return v` has type `A ! Δ` for every `Δ`. If
+`o ∈ Δ` and `v : A_o`, then `op o v` has type `B_o ! Δ`. If `c₁ : A ! Δ` and `c₂ : B ! Δ` under
+`x : A`, then `do x ← c₁ in c₂` has type `B ! Δ`. If `v : bool`, `c₁ : C` and `c₂ : C`, then
+`if v then c₁ else c₂` has type `C`. If `v : A → B ! Δ` and `w : A`, then `v w` has type `B ! Δ`.
+If `h : A ! Δ ⇒ B ! Δ'` and `c : A ! Δ`, then `with h handle c` has type `B ! Δ'`. -/
 inductive HasCTy (sig : Op → VTy Op × VTy Op) : List (VTy Op) → Comp Op → CTy Op → Prop
   /-- `return v`. -/
   | ret {Γ : List (VTy Op)} {v : Val Op} {A : VTy Op} {Δ : Finset Op} (h : HasVTy sig Γ v A) :
@@ -388,11 +398,14 @@ end Typing
 /-! ### Semantics -/
 
 /-- **Small-step semantics.** β-reduction of applications, conditionals, `do` after `return`,
-the return clause of a handler, and the handler rule: in `with h handle E[op o v]`, where `h`
-has a first clause `c` for `o` and no handler of `E` handles `o`, the step goes to
-`c[v/x, κ/k]` with the continuation `κ = fun y ↦ with h handle E[return y]`, which re-installs
-the handler (Hillerström-Lindley 2016, Fig. 7). Inside `κ` the handler and the context are
-shifted past the bound `y`. Steps are closed under `do` frames and handler frames. -/
+the return clause of a handler, and the handler rule: in `with h handle E[op o v]`, where `h` is
+a handler literal whose first clause for `o` (found by `List.lookup`) is `c`, and no handler of
+`E` handles `o`, the step goes to `c[v/x, κ/k]` with the continuation
+`κ = fun y ↦ with h handle E[return y]`, which re-installs the handler (Hillerström-Lindley
+2016, Fig. 7). Inside `κ` the handler and the context are shifted past the bound `y`. Steps are
+closed under `do` frames and under handler frames with a handler literal; under
+`with h handle …` for any other value `h`, such as a variable, nothing steps
+(Pretnar 2015, Fig. 3). -/
 inductive Step [DecidableEq Op] : Comp Op → Comp Op → Prop
   /-- `(fun x ↦ c) v ⇝ c[v/x]`. -/
   | appLam {c : Comp Op} {v : Val Op} : Step (.app (.lam c) v) (c.inst v)
@@ -408,14 +421,14 @@ inductive Step [DecidableEq Op] : Comp Op → Comp Op → Prop
   /-- `with h handle E[op o v] ⇝ c[v/x, (fun y ↦ with h handle E[return y])/k]` when `c` is
   the first clause of `h` for `o` and no handler of `E` handles `o`. -/
   | handleOp {cr : Comp Op} {cls : List (Op × Comp Op)} {E : ECtx Op} {o : Op} {v : Val Op}
-      {c : Comp Op} (hc : lookupClause cls o = some c) (hE : o ∉ E.handled) :
+      {c : Comp Op} (hc : cls.lookup o = some c) (hE : o ∉ E.handled) :
       Step (.handle (.hdl cr cls) (E.plug (.op o v)))
         (c.inst₂ v (.lam (.handle ((Val.hdl cr cls).ren (· + 1))
           ((E.ren (· + 1)).plug (.ret (.var 0))))))
   /-- Steps under a `do` frame. -/
   | bindCong {c₁ c₁' c₂ : Comp Op} (h : Step c₁ c₁') : Step (.bind c₁ c₂) (.bind c₁' c₂)
-  /-- Steps under a handler frame. -/
-  | handleCong {h : Val Op} {c c' : Comp Op} (hc : Step c c') :
-      Step (.handle h c) (.handle h c')
+  /-- Steps under a handler frame, whose handler is a handler literal. -/
+  | handleCong {cr : Comp Op} {cls : List (Op × Comp Op)} {c c' : Comp Op} (hc : Step c c') :
+      Step (.handle (.hdl cr cls) c) (.handle (.hdl cr cls) c')
 
 end Cslib.Languages.LambdaCalculus.EffectHandlers

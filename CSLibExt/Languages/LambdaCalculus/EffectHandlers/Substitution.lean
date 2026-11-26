@@ -46,7 +46,7 @@ omit [DecidableEq Op] in
 renaming. -/
 private theorem liftRen_getElem? {Γ Γ' : List (VTy Op)} {ρ : ℕ → ℕ}
     (hρ : ∀ i T, Γ[i]? = some T → Γ'[ρ i]? = some T) (A : VTy Op) :
-    ∀ i T, (A :: Γ)[i]? = some T → (A :: Γ')[liftRen ρ i]? = some T := by
+    ∀ i T, (A :: Γ)[i]? = some T → (A :: Γ')[References.Term.liftRen ρ i]? = some T := by
   intro i T h
   cases i with
   | zero => exact h
@@ -279,9 +279,11 @@ def instT : Val Op ⊕ Comp Op → Unit → Val Op ⊕ Comp Op → Val Op ⊕ Co
   | .inr c, _, .inl v => .inr (c.inst v)
   | e, _, .inr _ => e
 
-/-- **Weakening a packaged term.** Shifts every free variable of the value or computation by
-the difference of the lengths of the two contexts. Part of the packaging of the two sorts for
-`structuralTyping`. -/
+/-- **Weakening a packaged term.** For any two contexts `Γ` and `Γ'`, `wkT Γ Γ' t` shifts every
+free variable of the value or computation `t` up by `Γ'.length - Γ.length`, the length of the
+target context minus the length of the source context in truncated subtraction of natural
+numbers: the shift is `0` when `Γ'` is not longer than `Γ`. Part of the packaging of the two
+sorts for `structuralTyping`. -/
 def wkT (Γ Γ' : List (VTy Op)) : Val Op ⊕ Comp Op → Val Op ⊕ Comp Op
   | .inl v => .inl (v.ren (· + (Γ'.length - Γ.length)))
   | .inr c => .inr (c.ren (· + (Γ'.length - Γ.length)))
@@ -295,9 +297,9 @@ content: binding at a value type `A` adds an innermost variable `x : A`, and ins
 value `v` is the substitution `[v/x]` into a value or a computation, so the substitution field
 is `HasVTy.inst` and `HasCTy.inst`. Binding at a computation type binds nothing and
 instantiating by a computation is the identity; these branches hold trivially and only make the
-operations total. A context `Γ` extends to `Θ ++ Γ` for a block `Θ` of new innermost variables,
-and weakening shifts every free variable by the length of `Θ` (`HasVTy.weaken`,
-`HasCTy.weaken`). -/
+operations total. A context `Γ` extends to `Θ ++ Γ` for a block `Θ` of new innermost variables;
+for such an extension the shift `(Θ ++ Γ).length - Γ.length` of `wkT` is the length of `Θ`, and
+weakening is `HasVTy.weaken` and `HasCTy.weaken`. -/
 theorem structuralTyping :
     TypeSafety.StructuralTyping (HasT sig) bindT instT (fun Γ Γ' => ∃ Θ, Γ' = Θ ++ Γ) wkT := by
   refine ⟨?_, ?_⟩
