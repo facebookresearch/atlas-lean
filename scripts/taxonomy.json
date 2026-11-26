@@ -1637,6 +1637,7 @@
   "CSLibExt/Crypto/Privacy/Laplace": {"to": "ComputerScience/cryptography", "title": "Laplace and exponential mechanisms"},
   "CSLibExt/Crypto/Protocols/Commitment": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Commitment schemes"},
   "CSLibExt/Crypto/Protocols/PerfectSecrecy/GroupOneTimePad": {"to": "ComputerScience/cryptography/symmetric-key", "title": "One-time pad over a finite group"},
+  "CSLibExt/Crypto/Protocols/ProjectiveGarbling": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Secure multiparty computation"},
   "CSLibExt/Crypto/PublicKey/Assumptions": {"to": "ComputerScience/cryptography/public-key", "title": "Hardness assumptions"},
   "CSLibExt/Crypto/PublicKey/DHSecurity": {"to": "ComputerScience/cryptography/public-key", "title": "Security of Diffie–Hellman key exchange"},
   "CSLibExt/Crypto/PublicKey/DeterministicEav": {"to": "ComputerScience/cryptography/public-key", "title": "Deterministic public-key encryption"},
