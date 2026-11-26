@@ -13,13 +13,14 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 import Mathlib.Data.Nat.Factorization.Induction
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
+import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniqueness
 
 /-!
 # Parallelogram induction: the values at `k ^ 2 + 1` and `4 * k ^ 2 + 1`
 
 A complex-valued multiplicative arithmetic function satisfying the parallelogram identity on
 squares takes square values at `k ^ 2 + 1` and `4 * k ^ 2 + 1` when it takes square values at
-all prime powers below the prime `4 * k - 1`.
+every positive power of every prime less than `4 * k - 1`.
 
 Statement from Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for
 Multiplicative Functions*, INTEGERS 24 (2024), Article A108, Lemma 3. Multiplicative functions
@@ -86,75 +87,12 @@ public theorem parallelogram_multiplicative_k_sq_add_one (f : ArithmeticFunction
       have e1 : (1 : ℕ) ^ 2 + 1 = 2 := by norm_num
       have e2 : 4 * (1 : ℕ) ^ 2 + 1 = 5 := by norm_num
       rw [e1, e2]
-      have h1 : f 1 = 1 := hf.map_one
       have hf2 : f 2 = (2 : ℂ) ^ 2 := by
         simpa using hind 2 1 Nat.prime_two (by decide) (by decide)
-      have h4r : f 4 = (2 : ℂ) ^ 4 := by
-        simpa using hind 2 2 Nat.prime_two (by decide) (by decide)
-      have h8r : f 8 = (2 : ℂ) ^ 6 := by
-        simpa using hind 2 3 Nat.prime_two (by decide) (by decide)
-      have h16r : f 16 = (2 : ℂ) ^ 8 := by
-        simpa using hind 2 4 Nat.prime_two (by decide) (by decide)
-      have hf10 : f 10 = f 2 * f 5 := hf.map_mul_of_coprime (m := 2) (n := 5) (by decide)
-      have hf15 : f 15 = f 3 * f 5 := hf.map_mul_of_coprime (m := 3) (n := 5) (by decide)
-      have hf26 : f 26 = f 2 * f 13 := hf.map_mul_of_coprime (m := 2) (n := 13) (by decide)
-      have hf24 : f 24 = f 8 * f 3 := hf.map_mul_of_coprime (m := 8) (n := 3) (by decide)
-      have hf34 : f 34 = f 2 * f 17 := hf.map_mul_of_coprime (m := 2) (n := 17) (by decide)
-      have hf21 : f 21 = f 3 * f 7 := hf.map_mul_of_coprime (m := 3) (n := 7) (by decide)
-      have hf50 : f 50 = f 2 * f 25 := hf.map_mul_of_coprime (m := 2) (n := 25) (by decide)
-      have hf48 : f 48 = f 16 * f 3 := hf.map_mul_of_coprime (m := 16) (n := 3) (by decide)
-      have hf58 : f 58 = f 2 * f 29 := hf.map_mul_of_coprime (m := 2) (n := 29) (by decide)
-      have hf40 : f 40 = f 8 * f 5 := hf.map_mul_of_coprime (m := 8) (n := 5) (by decide)
-      have eA : f 5 + f 3 = 2 * f 4 + 2 * f 1 := by
-        simpa using hpar 2 1 (by decide) (by decide)
-      rw [h1, h4r] at eA
-      have h3 : f 3 = 34 - f 5 := by linear_combination eA
-      have eB : f 10 + f 8 = 2 * f 9 + 2 * f 1 := by
-        simpa using hpar 3 1 (by decide) (by decide)
-      rw [hf10, hf2, h8r, h1] at eB
-      have h9 : f 9 = 2 * f 5 + 31 := by linear_combination -eB / 2
-      have e32 : f 13 + f 5 = 2 * f 9 + 2 * f 4 := by
-        simpa using hpar 3 2 (by decide) (by decide)
-      rw [h9, h4r] at e32
-      have h13 : f 13 = 3 * f 5 + 94 := by linear_combination e32
-      have eC : f 17 + f 15 = 2 * f 16 + 2 * f 1 := by
-        simpa using hpar 4 1 (by decide) (by decide)
-      rw [hf15, h3, h16r, h1] at eC
-      have h17 : f 17 = 514 - 34 * f 5 + (f 5) ^ 2 := by linear_combination eC
-      have eH : f 34 + f 16 = 2 * f 25 + 2 * f 9 := by
-        simpa using hpar 5 3 (by decide) (by decide)
-      rw [hf34, hf2, h16r, h9, h17] at eH
-      have h25 : f 25 = 1125 - 70 * f 5 + 2 * (f 5) ^ 2 := by linear_combination -eH / 2
-      have eF : f 26 + f 24 = 2 * f 25 + 2 * f 1 := by
-        simpa using hpar 5 1 (by decide) (by decide)
-      rw [hf26, hf24, hf2, h8r, h3, h13, h25, h1] at eF
-      have hquad : (f 5) ^ 2 - 22 * f 5 - 75 = 0 := by linear_combination -eF / 4
-      have eD : f 25 + f 7 = 2 * f 16 + 2 * f 9 := by
-        simpa using hpar 4 3 (by decide) (by decide)
-      rw [h25, h16r, h9] at eD
-      have h7 : f 7 = -551 + 74 * f 5 - 2 * (f 5) ^ 2 := by linear_combination eD
-      have eG : f 29 + f 21 = 2 * f 25 + 2 * f 4 := by
-        simpa using hpar 5 2 (by decide) (by decide)
-      rw [hf21, h3, h25, h7, h4r] at eG
-      have h29 : f 29 = 21016 - 3207 * f 5 + 146 * (f 5) ^ 2 - 2 * (f 5) ^ 3 := by
-        linear_combination eG
-      have e71 : f 50 + f 48 = 2 * f 49 + 2 * f 1 := by
-        simpa using hpar 7 1 (by decide) (by decide)
-      rw [hf50, hf48, hf2, h16r, h3, h25, h1] at e71
-      have h49 : f 49 = 6601 - 268 * f 5 + 4 * (f 5) ^ 2 := by linear_combination -e71 / 2
-      have e73 : f 58 + f 40 = 2 * f 49 + 2 * f 9 := by
-        simpa using hpar 7 3 (by decide) (by decide)
-      rw [hf58, hf40, hf2, h8r, h29, h49, h9] at e73
-      have hcub : (f 5) ^ 3 - 72 * (f 5) ^ 2 + 1529 * f 5 - 8850 = 0 := by
-        linear_combination -e73 / 8
-      have hfin : 504 * (f 5 - 25) = 0 := by linear_combination hcub - (f 5 - 50) * hquad
-      have hne : (504 : ℂ) ≠ 0 := by norm_num
-      have h5sub : f 5 - 25 = 0 := (mul_eq_zero.mp hfin).resolve_left hne
-      have h5eq : f 5 = 25 := sub_eq_zero.mp h5sub
+      have hf5 := (parallelogram_multiplicative_add_two f hf hpar hp hind (by decide)).1
       refine ⟨?_, ?_⟩
       · simpa using hf2
-      · rw [h5eq]
-        norm_num
+      · simpa using hf5
   · obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le (show 1 ≤ k by omega)
     have h1k : 1 < 1 + j := by omega
     have hsum1 := hpar (1 + j) 1 zero_lt_one h1k
