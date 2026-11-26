@@ -14,8 +14,8 @@ import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-! # Near-perfect prime powers
 
-A prime power is `[2,ell]`-near-perfect with a specified divisor precisely when its
-exponent is two, `ell = 1`, and the divisor is one.
+For `1 ≤ ell`, a prime power is `[2,ell]`-near-perfect with a specified divisor precisely
+when its exponent is two, `ell = 1`, and the divisor is one.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P. Saikia,
 "On Near `F_k`-Perfect and Deficient `F_k`-Perfect Numbers", *INTEGERS* 25 (2025),
