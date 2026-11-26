@@ -16,13 +16,16 @@ public import Mathlib.Data.ZMod.Defs
 
 * The construction follows the bits of the input from the key, first bit first, and on the empty
   input it is the key.
-* The lazy simulation answers a repeated query from its table, without reading the tape, and
-  stops with its default output at a fresh query past the end of the tape.
-* The equality of `prfAdvantage_ggm` on an example. With the generator `G s = (s, s)` and
-  `ℓ = 1`, the GGM function is `F k x = k`. The adversary that compares the answers at `0` and `1`
-  has PRF advantage `1/2` and makes `Q = 2` queries, so the hybrid distinguisher has PRG advantage
-  `1/4`: with hybrid index `0` its challenge labels both children of the root, which the
-  adversary compares, and with hybrid index `1` the challenge is never used.
+* The lazy table answers a repeated query from the table, without reading the tape, and stops
+  with its default output at a fresh query past the end of the tape.
+* An adversary that makes no queries has PRF advantage `0`, whatever the keyed function: the case
+  `Q = 0` that `prfAdvantage_ggm` leaves out.
+* The equality of `prfAdvantage_ggm` on an example, with both sides computed by counting. With the
+  generator `G s = (s, s)` and `ℓ = 1`, the GGM function is `F k x = k`. The adversary that
+  compares the answers at `0` and `1` has PRF advantage `1/2` and makes `Q = 2` queries. The
+  hybrid distinguisher has PRG advantage `1/4`: with hybrid index `0` its challenge labels both
+  children of the root, which the adversary compares, and with hybrid index `1` the challenge is
+  never used.
 -/
 
 @[expose] public section
@@ -30,6 +33,8 @@ public import Mathlib.Data.ZMod.Defs
 namespace Cslib.Crypto.GGMTests
 
 open Cslib.Crypto.Framework Cslib.Crypto.GGM
+open Cslib.Crypto.Framework.OracleComp (runLazy)
+open Cslib.Crypto.Framework.LazySampling (Table)
 
 /-- An affine generator on `ZMod 7`. -/
 def affineG (s : ZMod 7) : ZMod 7 × ZMod 7 := (s + 1, 2 * s)
@@ -47,17 +52,38 @@ def askTwice : OracleComp Bool Bool Bool :=
   .liftBind false fun a => .liftBind false fun b => .pure (a == b)
 
 /-- The repeated query is answered from the table, so the second tape entry is never read. -/
-example : simLazy ![true, false] false 0 LazySampling.Table.empty askTwice = true := by decide
+example : runLazy ![true, false] false 0 Table.empty askTwice = true := by decide
 
 /-- Query `false`, then `true`, and output whether the answers agree. -/
 def askBoth : OracleComp Bool Bool Bool :=
   .liftBind false fun a => .liftBind true fun b => .pure (a == b)
 
 /-- A tape of two answers serves two fresh queries. -/
-example : simLazy ![true, false] false 0 LazySampling.Table.empty askBoth = false := by decide
+example : runLazy ![true, false] false 0 Table.empty askBoth = false := by decide
 
 /-- With a tape of one answer, the second fresh query stops the run with the default output. -/
-example : simLazy ![true] true 0 LazySampling.Table.empty askBoth = true := by decide
+example : runLazy ![true] true 0 Table.empty askBoth = true := by decide
+
+/-- An adversary that makes no queries has PRF advantage `0`. -/
+theorem prfAdvantage_eq_zero_of_isQueryBounded_zero {K X Y R : Type*} [Fintype K] [Nonempty K]
+    [Fintype X] [DecidableEq X] [Fintype Y] [Nonempty Y] [Fintype R] [Nonempty R]
+    (F : K → X → Y) (A : R → OracleComp X Y Bool) (hA : ∀ r, FreeM.IsQueryBounded 0 (A r)) :
+    PRF.prfAdvantage F A = 0 := by
+  let c : R → Bool := fun r => (A r).run fun _ => Classical.arbitrary Y
+  have hrun : ∀ r O, (A r).run O = c r := by
+    intro r O
+    obtain ⟨x, hx, -⟩ := FreeM.eq_pure_of_isQueryBoundedWith_zero (hA r)
+    simp only [c, hx]
+    rfl
+  have hreal : PRF.prfReal F A = (Cslib.Probability.PMF.uniformOfFintype R).map c := by
+    rw [PRF.prfReal, ← Cslib.Probability.PMF.uniformOfFintype_prod, PMF.map_bind]
+    simp only [PMF.map_comp, Function.comp_def, hrun]
+    exact PMF.bind_const _ _
+  have hrand : PRF.prfRand A = (Cslib.Probability.PMF.uniformOfFintype R).map c := by
+    rw [PRF.prfRand, ← Cslib.Probability.PMF.uniformOfFintype_prod, PMF.map_bind]
+    simp only [PMF.map_comp, Function.comp_def, hrun]
+    exact PMF.bind_const _ _
+  rw [PRF.prfAdvantage, hreal, hrand, sub_self, abs_zero]
 
 /-- The generator that copies its seed. -/
 def copyG (s : Bool) : Bool × Bool := (s, s)
@@ -92,11 +118,55 @@ theorem prfAdvantage_compare : PRF.prfAdvantage (ggm copyG) compare = 1 / 2 := b
   rw [h1, h2]
   norm_num
 
-/-- `prfAdvantage_ggm` with `ℓ = 1` and `Q = 2`: the hybrid distinguisher has advantage `1/4`. -/
-example : PRG.prgAdvantage copyG (ggmReduction copyG 2 compare) = 1 / 4 := by
-  have h := prfAdvantage_ggm copyG 2 compare compare_queryBounded
-  rw [prfAdvantage_compare] at h
-  norm_num at h
-  linarith
+/-- Two independent uniform samples, as one uniform pair. -/
+theorem bind_map_eq_map_prod {α β γ : Type*} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
+    (g : α → β → γ) :
+    ((Cslib.Probability.PMF.uniformOfFintype α).bind fun a =>
+      (Cslib.Probability.PMF.uniformOfFintype β).map (g a)) =
+      (Cslib.Probability.PMF.uniformOfFintype (α × β)).map fun p => g p.1 p.2 := by
+  rw [← Cslib.Probability.PMF.uniformOfFintype_prod, PMF.map_bind]
+  simp only [PMF.map_comp]
+  rfl
+
+/-- The coins of the hybrid distinguisher for `ℓ = 1`, `Q = 2` and seeds in `Bool`, with the tapes
+written as pairs. -/
+def coinsEquiv : (Fin 1 × Fin 2 × (Fin 2 → Bool × Bool) × (Fin 2 → Bool) × Unit) ≃
+    (Fin 1 × Fin 2 × ((Bool × Bool) × (Bool × Bool)) × (Bool × Bool) × Unit) :=
+  (Equiv.refl _).prodCongr ((Equiv.refl _).prodCongr
+    ((finTwoArrowEquiv _).prodCongr ((finTwoArrowEquiv _).prodCongr (Equiv.refl _))))
+
+/-- The hybrid distinguisher built from `compare` has PRG advantage `1/4`, by counting: it outputs
+`1` with probability `3/4` on `copyG` of a uniform seed and `1/2` on a uniform pair. -/
+theorem prgAdvantage_ggmReduction_compare :
+    PRG.prgAdvantage copyG (ggmReduction copyG 2 compare) = 1 / 4 := by
+  have hcoins : (ggmReduction copyG 2 compare).coins =
+      (Cslib.Probability.PMF.uniformOfFintype _).map coinsEquiv.symm :=
+    (Cslib.Probability.PMF.uniformOfFintype_map_equiv coinsEquiv.symm).symm
+  rw [PRG.prgAdvantage, advantage, PRG.prgReal, PRG.prgRand, hcoins]
+  simp only [PMF.map_comp]
+  rw [bind_map_eq_map_prod, bind_map_eq_map_prod]
+  rw [winProb_map_uniform, winProb_map_uniform]
+  have h1 : (Finset.univ.filter fun p : Bool × (Fin 1 × Fin 2 × ((Bool × Bool) × (Bool × Bool)) ×
+      (Bool × Bool) × Unit) =>
+      ((ggmReduction copyG 2 compare).guess (copyG p.1) ∘ coinsEquiv.symm) p.2 = true).card =
+      192 := by decide +kernel
+  have h2 : (Finset.univ.filter fun p : (Bool × Bool) × (Fin 1 × Fin 2 ×
+      ((Bool × Bool) × (Bool × Bool)) × (Bool × Bool) × Unit) =>
+      ((ggmReduction copyG 2 compare).guess p.1 ∘ coinsEquiv.symm) p.2 = true).card =
+      256 := by decide +kernel
+  rw [h1, h2]
+  simp only [Fintype.card_prod, Fintype.card_bool, Fintype.card_fin, Fintype.card_unit]
+  norm_num
+
+/-- So the two sides of `prfAdvantage_ggm` agree on the example: `1/2 = 1 * 2 * (1/4)`. -/
+example : PRF.prfAdvantage (ggm copyG) compare =
+    (1 : ℕ) * (2 : ℕ) * PRG.prgAdvantage copyG (ggmReduction copyG 2 compare) := by
+  rw [prfAdvantage_compare, prgAdvantage_ggmReduction_compare]
+  norm_num
+
+/-- The same equality, from `prfAdvantage_ggm`. -/
+example : PRF.prfAdvantage (ggm copyG) compare =
+    (1 : ℕ) * (2 : ℕ) * PRG.prgAdvantage copyG (ggmReduction copyG 2 compare) :=
+  prfAdvantage_ggm copyG 2 compare compare_queryBounded
 
 end Cslib.Crypto.GGMTests
