@@ -21,7 +21,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fin.VecNotation
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ the plane with integer coordinates in which two points are adjacent when their d
 (Itai, Papadimitriou and Szwarcfiter 1982). The infinite grid is MathlibExt's
 `StatMech.Lattice.hypercubicLattice 2` on `StatMech.Lattice.Site 2 = (Fin 2 → ℤ)`, whose
 adjacency is `ℓ¹`-distance one; for integer points this is Euclidean distance one. The question
-is HAMILTONIAN CIRCUIT (`HamiltonianCycleUndirectedWanted`) restricted to grid graphs, given by
+is HAMILTONIAN CIRCUIT (`HamiltonianCycleUndirectedDefs`) restricted to grid graphs, given by
 their points.
 
 The instance lists the points of `V`, without repetition; an integer coordinate is a pair

@@ -25,7 +25,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GraphSquareRootWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ QUESTION: does `G` contain a Hamiltonian circuit?
 
 This is restriction (3) of [GT37] HAMILTONIAN CIRCUIT in Garey and Johnson's comment. The
 instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` (a simple graph on `Fin n`,
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` (a simple graph on `Fin n`,
 `n > 0`, given by an edge list; a Hamiltonian circuit needs at least three vertices). The
 restriction adds that the graph has a square root,
 `GraphSquareRoot.GraphSquareRootFeasible` of

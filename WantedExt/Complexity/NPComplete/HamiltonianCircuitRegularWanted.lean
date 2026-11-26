@@ -28,7 +28,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -44,7 +44,7 @@ For a fixed `k ≥ 4`: INSTANCE: a finite simple undirected graph `G = (V, E)` t
 `k`-regular (every vertex has degree `k`). QUESTION: does `G` contain a Hamiltonian circuit?
 
 This is HAMILTONIAN CIRCUIT ([GT37], stated on `main` as
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted`) restricted to `k`-regular
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs`) restricted to `k`-regular
 graphs, one decision problem for each fixed `k`. The instance type, the graph, the parent's
 well-formedness (at least one vertex, simple edge list on `Fin n`) and the question (`3 ≤ n` and
 Mathlib's `SimpleGraph.IsHamiltonian`) are the parent's; the restriction adds to `WellFormed` that

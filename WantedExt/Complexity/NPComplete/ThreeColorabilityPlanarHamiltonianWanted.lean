@@ -55,7 +55,7 @@ well-formedness `K = 3`, planarity, the shared MathlibExt predicate `SimpleGraph
 crossing-free straight-line drawing; by Fáry's theorem this is planarity for finite simple
 graphs, as in `PlanarDegreeFourThreeColorabilityWanted`), and Hamiltonicity: at least 3
 vertices and Mathlib's `SimpleGraph.IsHamiltonian` (a Hamiltonian cycle exists), as in
-`HamiltonianCycleUndirectedWanted`; the bound excludes the one-vertex graph, which Mathlib counts
+`HamiltonianCycleUndirectedDefs`; the bound excludes the one-vertex graph, which Mathlib counts
 as Hamiltonian although it has no cycle. The Hamiltonian cycle is not part of the instance;
 membership in NP takes a 3-coloring together with a Hamiltonian cycle as the certificate, and
 planarity is checked in polynomial time.

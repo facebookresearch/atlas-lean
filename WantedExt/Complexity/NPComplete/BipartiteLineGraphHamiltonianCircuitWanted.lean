@@ -27,7 +27,7 @@ public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.LineGraph
 public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -60,7 +60,7 @@ recognized and a root found in linear time (P. G. H. Lehot, Journal of the ACM 2
 isomorphism (H. Whitney, 1932), the triangle being `L(K_{1,3})` with a bipartite root.
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n`, `n > 0`, given by an edge list; a Hamiltonian circuit needs at least three vertices).
 The restriction adds that the graph is isomorphic to Mathlib's `SimpleGraph.lineGraph` of a
 graph `H` on some `Fin k` with `H.IsBipartite` (Mathlib's `Colorable 2`); this is

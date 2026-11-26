@@ -24,7 +24,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.FeedbackVertexSetStarConvexWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ INSTANCE: a star convex bipartite graph `G = (V, E)`. QUESTION: does `G` contain
 circuit?
 
 This is HAMILTONIAN CIRCUIT ([GT37], stated on `main` as
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted`) on the ISGCI class
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs`) on the ISGCI class
 `gc_1151`: a bipartite graph `B = (X, Y, E)` is star convex if a tree `T = (X, F)` can be
 defined such that `T` is a star and for every vertex `y ∈ Y` the neighbourhood of `y` induces a
 subtree of `T`. The class predicate is `FeedbackVertexSetStarConvex.IsStarConvex` (from

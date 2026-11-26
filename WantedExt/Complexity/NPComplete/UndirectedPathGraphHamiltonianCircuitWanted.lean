@@ -24,7 +24,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -40,12 +40,12 @@ INSTANCE: an undirected path graph `G = (V, E)`, that is, the vertex intersectio
 family of paths in an undirected tree.
 QUESTION: does `G` have a Hamiltonian circuit, that is, a simple cycle through every vertex?
 
-This is HAMILTONIAN CIRCUIT (`HamiltonianCycleUndirectedWanted`, Garey and Johnson [GT37])
+This is HAMILTONIAN CIRCUIT (`HamiltonianCycleUndirectedDefs`, Garey and Johnson [GT37])
 restricted to undirected path graphs. Bertossi and Bonuccelli show that finding a Hamiltonian
 circuit is NP-complete for undirected path graphs (and hence chordal graphs), double interval
 graphs and rectangle graphs.
 
-The instance, the graph and the question are those of `HamiltonianCycleUndirectedWanted`, reused
+The instance, the graph and the question are those of `HamiltonianCycleUndirectedDefs`, reused
 unchanged: vertex count and edge list on `Fin n`, with `HamiltonianCycleUndirected.WellFormed`
 (at least one vertex, simple edge list), `HamiltonianCycleUndirected.Graph` and
 `HamiltonianCycleUndirectedFeasible` (at least three vertices and Mathlib's

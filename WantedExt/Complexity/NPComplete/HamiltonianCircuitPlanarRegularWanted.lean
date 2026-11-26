@@ -30,7 +30,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ planar and `k`-regular (every vertex has degree `k`). QUESTION: does `G` contain
 circuit?
 
 This is HAMILTONIAN CIRCUIT ([GT37], stated on `main` as
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted`) restricted to planar
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs`) restricted to planar
 `k`-regular graphs, one decision problem for each `k`. The instance type, the graph, the parent's
 well-formedness (at least one vertex, simple edge list on `Fin n`) and the question (`3 ≤ n` and
 Mathlib's `SimpleGraph.IsHamiltonian`) are the parent's; the restriction adds to `WellFormed`

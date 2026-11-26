@@ -21,7 +21,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 public import WantedExt.Complexity.NPComplete.StronglyChordalSplitHamiltonianPathWanted
 
 @[expose] public section
@@ -44,7 +44,7 @@ corollary, for strongly chordal split graphs; every strongly chordal split graph
 chordal, so the problem is NP-complete on strongly chordal graphs.
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n` given by an edge list; a Hamiltonian circuit needs at least three vertices), as in
 `ChordalBipartiteHamiltonianCircuitWanted`. The restriction adds the strong-chordality predicate
 `StronglyChordalSplitHamiltonianPath.IsStronglyChordal` of

@@ -24,7 +24,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -49,7 +49,7 @@ circuit exactly when `G` has a Hamiltonian path ([GT39]); a graph with one verte
 Hamiltonian path and is mapped to a fixed yes-instance instead.
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n`, `n > 0`, given by an edge list). The restriction adds that every neighbourhood induces a
 connected graph: `G.induce (G.neighborSet v)` is `SimpleGraph.Connected`, as in
 `LocallyConnectedHamiltonianCircuitWanted`. Mathlib's `Connected` includes nonemptiness, so a
