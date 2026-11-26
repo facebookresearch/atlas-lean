@@ -28,6 +28,15 @@ example : (MathlibExt.NumberTheory.LeonardoPWanted.companionQ 2 ^ 0)
   rw [hth]
   decide
 
+-- Identity on the first `B_p` row at `p = 3` uses the corrected index: the entry is
+-- `B_3(-2) = 1`, where the printed index direction would give `B_3(0) = 0`.
+example : (MathlibExt.NumberTheory.LeonardoPWanted.companionQ 3 ^ 0)
+    ⟨1, by decide⟩ ⟨1, by decide⟩ = 1 := by
+  have hth := MathlibExt.NumberTheory.LeonardoPWanted.companionQ_pow_apply 3 0
+    (by decide) ⟨1, by decide⟩ ⟨1, by decide⟩
+  rw [hth]
+  decide
+
 -- The first power entry in the top-left corner is `A_p(2) = 1`.
 example : (MathlibExt.NumberTheory.LeonardoPWanted.companionQ 2 ^ 1)
     ⟨0, by decide⟩ ⟨0, by decide⟩ = 1 := by

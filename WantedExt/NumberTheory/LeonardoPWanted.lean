@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 Statements from Kantaphon Kuhapatanakul and Pongpol Ruankong
 as presented in "On Generalized Leonardo `p`-Numbers",
 *Journal of Integer Sequences* 27 (2024), Article 24.4.6
-(<https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.tex>).
+(<https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.pdf>).
 
 The Fibonacci `p`-numbers `F_p` (`F_p(0) = 0`,
 `F_p(1) = ⋯ = F_p(p) = 1`, `F_p(n) = F_p(n-1) +
@@ -28,7 +28,11 @@ matrix `Q_p` (for `p ≥ 2`) is `companionQ`, from the
 paper's displayed examples; Theorem 9's entry formula for
 `Q_p^n` is `qPowEntry` (the paper's display of the `B`
 rows has the index direction after the first entry
-reversed relative to the actual powers; the formula in
+reversed relative to the actual powers, and its display
+of rows `p` to `2p` omits the minus sign on the `A`
+terms: it prints the bottom-right entry as `A_p(n-2p)`,
+which is `A_2(-4) = -1` at `p = 2`, `n = 0`, where the
+identity matrix has `1`; the formula in
 `MathlibExt.NumberTheory.LeonardoPCompanionQPowApply`
 is the one matching `Q_p^n`, verified entrywise there). `R_{p,m}`
 for `ℋ ∈ H(p)` is `rMatrix`. Proposition 7 and the matrix

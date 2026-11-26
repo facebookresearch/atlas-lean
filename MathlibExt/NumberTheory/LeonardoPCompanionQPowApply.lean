@@ -25,10 +25,10 @@ extension `hSeqZ`, the sequences `seqAZ` and `seqBZ`, the companion matrix `comp
 its power entry formula `qPowEntry`, and the proof `companionQ_pow_apply` that the formula
 gives the entries of `Q_p ^ n`.
 
-Statements from Kusrini, A. Putra, and K. Kuhapatanakul
+Statements from Kantaphon Kuhapatanakul and Pongpol Ruankong
 as presented in "On Generalized Leonardo `p`-Numbers",
 *Journal of Integer Sequences* 27 (2024), Article 24.4.6
-(<https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.tex>),
+(<https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.pdf>),
 Theorem 9.
 -/
 
@@ -100,9 +100,9 @@ def seqBZ (p : ℕ) (z : ℤ) : ℤ :=
     else 1) p z
 
 /-- **The companion matrix $Q_p$.** For a natural number $p$, $Q_p$ is the $(2p+1) \times (2p+1)$
-integer matrix with rows and columns indexed by $0, 1, \dots, 2p$ whose entry $(2p, 0)$ is $-1$,
-whose other entries $(0, 0)$, $(p-1, 0)$ and $(i, i+1)$ for $0 \le i < 2p$ are $1$, and whose
-remaining entries are $0$. -/
+integer matrix with rows and columns indexed by $0, 1, \dots, 2p$. For $p = 0$ it is the
+$1 \times 1$ matrix $[-1]$. For $p \ge 1$ its entry $(2p, 0)$ is $-1$, its entries $(0, 0)$,
+$(p-1, 0)$ and $(i, i+1)$ for $0 \le i < 2p$ are $1$, and its remaining entries are $0$. -/
 def companionQ (p : ℕ) : Matrix (Fin (2 * p + 1)) (Fin (2 * p + 1)) ℤ :=
   Matrix.of fun i j =>
     if j.val = 0 ∧ i.val = 2 * p then -1
@@ -117,8 +117,11 @@ where $A_p$ and $B_p$ are the two-sided auxiliary sequences of the generalized L
 $p$-numbers.
 
 This is the formula of Theorem 9 of the source for the $(a, b)$ entry of $Q_p^n$, where $p \ge 2$
-and $Q_p$ is the $(2p+1) \times (2p+1)$ companion matrix of the source, with the index direction
-along the $B_p$ rows corrected (the source's display reverses it after the first entry). -/
+and $Q_p$ is the $(2p+1) \times (2p+1)$ companion matrix of the source, with two corrections to
+the source's display: the index direction along the $B_p$ rows (the display reverses it after the
+first entry), and the minus sign on the $A_p$ terms of rows $p$ to $2p$ (the display omits it; for
+example it prints the bottom-right entry as $A_p(n-2p)$, which at $p = 2$, $n = 0$ is
+$A_2(-4) = -1$, whereas the identity matrix has entry $1$). -/
 def qPowEntry (p n : ℕ) (a b : Fin (2 * p + 1)) : ℤ :=
   if a.val = 0 then seqAZ p ((n : ℤ) + 1 - b.val)
   else if a.val ≤ p - 1 then seqBZ p ((n : ℤ) - p + 1 + a.val - b.val)
@@ -1012,6 +1015,11 @@ $-A_p(n - (2p - a) - b)$ if $p \le a \le 2p$. Here $A_p, B_p : \mathbb{Z} \to \m
 sequences satisfying $S(t) = S(t-1) + S(t-p) - S(t-2p-1)$ for every integer $t$, with
 $A_p(t) = 1$ for $1 \le t \le p$ and $A_p(t) = 0$ for $-p \le t \le 0$, and with $B_p(t) = 1$ for
 $1 \le t \le p$ and for $t = -p+1$ and $B_p(t) = 0$ for the other $-p \le t \le 0$.
+
+This corrects two misprints in the source's display of Theorem 9: there the index direction along
+the $B_p$ rows is reversed after the first entry, and the $A_p$ terms of rows $p$ to $2p$ lack
+their minus sign (the printed bottom-right entry $A_p(n-2p)$ is $A_2(-4) = -1$ at $p = 2$,
+$n = 0$, whereas the identity matrix has entry $1$).
 
 Source: "On Generalized Leonardo `p`-Numbers", Journal
 of Integer Sequences 27 (2024), Article 24.4.6, Theorem 9. -/
