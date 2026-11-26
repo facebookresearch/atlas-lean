@@ -5,3 +5,4 @@
 - [Identifiability of demographic histories](identifiability-of-demographic-histories/README.md)
 - [Coalescent likelihoods and sampling recursions](coalescent-likelihood-and-computation/README.md)
 - [Genealogies under selection](genealogies-under-selection/README.md)
+- [Species-tree inference](species-tree-inference/README.md)
