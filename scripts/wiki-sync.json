@@ -68306,6 +68306,7 @@
 "MathlibExt.Probability.Finance.BinomialOneStepPricing.riskNeutralPrice": "4f0c2509467d9a5b",
 "MathlibExt.Probability.Finance.BinomialOneStepPricing.riskNeutralPrice_eq_replicationCost": "c4a61915b5530150",
 "MathlibExt.Probability.Finance.BinomialReplication.claimValue": "32e229d0d8dbd699",
+"MathlibExt.Probability.Finance.BinomialReplication.claimValue_call_eq_binomialTails": "dff2125c48ba22af",
 "MathlibExt.Probability.Finance.BinomialReplication.hedgeRatio": "bd634a654e04d8f8",
 "MathlibExt.Probability.Finance.BinomialReplication.price": "fe033d8b5dce73e1",
 "MathlibExt.Probability.Finance.BinomialReplication.price_ne_zero": "6f41136fab77272e",
