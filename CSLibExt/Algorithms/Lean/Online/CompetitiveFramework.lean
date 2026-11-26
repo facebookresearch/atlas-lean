@@ -17,12 +17,12 @@ import Mathlib.Tactic
 
 namespace Cslib.Algorithms.Lean.Online.CompetitiveFramework
 
-/-- An online problem: requests arrive one at a time and must be answered
-without knowledge of future requests. `legal` is the prefix-closed domain
-of finite request sequences; `feasible` is the prefix-closed set of
-request/answer traces, nonempty-extendable along legal inputs
-(nonblocking); `cost` is finite and nonnegative on every trace. No
-optimality or competitiveness assumption is part of the data. -/
+/-- An online problem: requests arrive one at a time and must be answered without knowledge of
+future requests. `legal` is the prefix-closed domain of finite request sequences and contains
+the empty input; `feasible` is the prefix-closed set of request/answer traces, contains the
+empty trace, projects to legal request sequences, and is nonempty-extendable along legal inputs
+(nonblocking); `cost` is finite and nonnegative on every trace. No optimality or competitiveness
+assumption is part of the data. -/
 structure OnlineProblem (Req Ans : Type*) where
   legal : List Req → Prop
   legal_nil : legal []
@@ -205,10 +205,9 @@ def StrictLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans
       ∃ σ : List Req, P.legal σ ∧
         ENNReal.ofReal c * optCost P σ < ENNReal.ofReal (algCost P A σ)
 
-/-- Additive lower-bound predicate: no strategy beats the factor `cstar`
-even with an arbitrary uniform additive constant. Distinct from the strict
-predicate: a bounded-cost strategy refutes every positive additive lower
-bound. -/
+/-- Additive lower-bound predicate: no feasible strategy beats the factor `cstar` even with an
+arbitrary uniform additive constant. Distinct from the strict predicate: a feasible strategy
+with uniformly bounded cost on legal inputs refutes every positive additive lower bound. -/
 def AdditiveLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans)
     (cstar : ℝ) : Prop :=
   ∀ (A : Strategy Req Ans), StrategyFeasible P A →

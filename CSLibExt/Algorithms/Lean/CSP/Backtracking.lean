@@ -55,8 +55,8 @@ open Cslib.Algorithms.Lean.ArcConsistency
 
 variable {X D : Type*} [DecidableEq X] (P : BinaryCSP X D)
 
-/-- The arcs between `x` and `y`, in either orientation. Compatibility and forward checking
-only inspect these arcs. -/
+/-- The arcs between `x` and `y`, in either orientation, filtered from the whole arc list. Only
+these arcs constrain `x` and `y`; unrelated arcs are still inspected when locating them. -/
 def incidentArcs (x y : X) : List (X × X) :=
   P.arcs.filter fun e => e = (x, y) ∨ e = (y, x)
 

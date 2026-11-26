@@ -70,13 +70,19 @@ inductive Uniform (k : ℕ) : ℕ → GameTree α → Prop
   | node {d : ℕ} {ts : List (GameTree α)} (hlen : ts.length = k) (hts : ∀ t ∈ ts, Uniform k d t) :
       Uniform k (d + 1) (.node ts)
 
-/-- Leaves alpha-beta evaluates at a cut node of height `d`: `k ^ ⌊d / 2⌋`. -/
+/-- The function `k ^ ⌊d / 2⌋` of `k` and `d`: the leaves alpha-beta evaluates at a cut node of
+height `d` of a uniform, perfectly ordered `k`-ary tree under a strict window `a < b`
+(`alphaBeta_time_cut_all`). -/
 def cutLeaves (k d : ℕ) : ℕ := k ^ (d / 2)
 
-/-- Leaves alpha-beta evaluates at an all node of height `d`: `k ^ ⌈d / 2⌉`. -/
+/-- The function `k ^ ⌈d / 2⌉` of `k` and `d`: the leaves alpha-beta evaluates at an all node of
+height `d` of a uniform, perfectly ordered `k`-ary tree under a strict window `a < b`
+(`alphaBeta_time_cut_all`). -/
 def allLeaves (k d : ℕ) : ℕ := k ^ ((d + 1) / 2)
 
-/-- The Knuth–Moore count at a principal node of height `d`: `k ^ ⌈d / 2⌉ + k ^ ⌊d / 2⌋ - 1`. -/
+/-- The Knuth–Moore function `k ^ ⌈d / 2⌉ + k ^ ⌊d / 2⌋ - 1` of `k` and `d`: the leaves
+alpha-beta evaluates at a principal node of height `d` of a uniform, perfectly ordered `k`-ary
+tree whose value is strictly inside the window. -/
 def pvLeaves (k d : ℕ) : ℕ := k ^ ((d + 1) / 2) + k ^ (d / 2) - 1
 
 theorem cutLeaves_zero (k : ℕ) : cutLeaves k 0 = 1 := by simp [cutLeaves]
