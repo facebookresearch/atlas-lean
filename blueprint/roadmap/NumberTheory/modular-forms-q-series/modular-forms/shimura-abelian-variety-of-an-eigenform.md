@@ -6,7 +6,9 @@ $\Gamma_1(N) \subset \Gamma \subset \Gamma_0(N)$. Let $J$ be the Jacobian of the
 $\xi_n \in \mathrm{End}(J)$ be the [Hecke endomorphisms](hecke-endomorphisms-of-the-modular-jacobian.md)
 and $T_n$ the [Hecke operators](hecke-operators-of-level-n.md) on the space $S_2(\Gamma)$ of
 [cusp forms](cusp-form.md) of weight $2$ for $\Gamma$. Let
+
 $$f(z) = \sum_{n = 1}^{\infty} a_n e^{2 \pi i n z}, \qquad a_1 = 1,$$
+
 be an element of $S_2(\Gamma)$ that is a common eigenfunction of the $T_n$ for all $n$, that is,
 $f \mid T_n = a_n f$ for all $n \ge 1$, and let $K$ be the subfield of $\mathbb{C}$ generated over
 $\mathbb{Q}$ by the $a_n$ for all $n$.
@@ -14,17 +16,19 @@ $\mathbb{Q}$ by the $a_n$ for all $n$.
 Then there is a triple $(A, \nu, \theta)$ with the following properties.
 
 - (i) $(A, \nu)$ is a [quotient](../../../AlgebraicGeometry/abelian-varieties/quotient-by-an-abelian-subvariety.md)
-   of $J$ by an abelian subvariety rational over $\mathbb{Q}$: $A$ is an abelian variety over
-   $\mathbb{Q}$ and $\nu \colon J \to A$ is a surjective homomorphism over $\mathbb{Q}$ whose kernel is
-   an abelian subvariety of $J$ defined over $\mathbb{Q}$.
+    of $J$ by an abelian subvariety rational over $\mathbb{Q}$: $A$ is an abelian variety over
+    $\mathbb{Q}$ and $\nu \colon J \to A$ is a surjective homomorphism over $\mathbb{Q}$ whose kernel is
+    an abelian subvariety of $J$ defined over $\mathbb{Q}$.
 - (ii) $\theta$ is an isomorphism of $K$ into $\mathrm{End}(A) \otimes \mathbb{Q}$, that is, an injective map
-   preserving sums and products, with
-   $$\nu \circ \xi_n = \theta(a_n) \circ \nu \quad \text{in } \mathrm{Hom}(J, A) \otimes \mathbb{Q}
-   \qquad \text{for all } n \ge 1,$$
-   where $\mathrm{End}(A)$ and $\mathrm{Hom}(J, A)$ are the endomorphisms and homomorphisms defined
-   over $\mathbb{C}$, that is, of $A_{\mathbb{C}}$ and from $J_{\mathbb{C}}$ to $A_{\mathbb{C}}$. Since
-   $a_1 = 1$ and $\xi_1$ is the identity, this gives $\theta(1) = \mathrm{id}_A$. (The proof shows that
-   the elements of $\theta(K) \cap \mathrm{End}(A)$ are then rational over $\mathbb{Q}$.)
+    preserving sums and products, with
+
+    $$\nu \circ \xi_n = \theta(a_n) \circ \nu \quad \text{in } \mathrm{Hom}(J, A) \otimes \mathbb{Q}
+    \qquad \text{for all } n \ge 1,$$
+
+    where $\mathrm{End}(A)$ and $\mathrm{Hom}(J, A)$ are the endomorphisms and homomorphisms defined
+    over $\mathbb{C}$, that is, of $A_{\mathbb{C}}$ and from $J_{\mathbb{C}}$ to $A_{\mathbb{C}}$. Since
+    $a_1 = 1$ and $\xi_1$ is the identity, this gives $\theta(1) = \mathrm{id}_A$. (The proof shows that
+    the elements of $\theta(K) \cap \mathrm{End}(A)$ are then rational over $\mathbb{Q}$.)
 - (iii) $\dim A = [K : \mathbb{Q}]$; in particular $K$ is a finite extension of $\mathbb{Q}$.
 
 Under the conditions (i) and (ii) the triple is unique up to isomorphism over $\mathbb{Q}$: if
@@ -63,8 +67,7 @@ $\prod_\sigma \sum_n a_n^\sigma n^{-s}$ up to finitely many Euler factors; neith
 
 ## Expansion
 
-This node is still to be broken down: Shimura's proof uses results with no page yet. A good
-expansion states and links:
+This node is still to be broken down. A good expansion states and links:
 
 - the isomorphism $\mu \colon S_2(\Gamma) \to D_J$ onto the holomorphic $1$-forms on $J$, defined by
   $\delta\psi(\mu(f)) = f(z)\,dz$ for the map $\psi \colon \mathfrak{H}^* \to J$, Shimura's relation (1.3),

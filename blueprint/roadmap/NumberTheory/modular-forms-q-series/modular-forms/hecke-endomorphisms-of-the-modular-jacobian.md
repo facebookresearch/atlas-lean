@@ -11,7 +11,9 @@ For $\alpha \in \mathrm{GL}_2(\mathbb{Q})$ with $\det \alpha > 0$, let $\Gamma_\
 image of $(\pi_1, \pi_2)$ is Shimura's correspondence $X(\Gamma \alpha \Gamma)$ on
 $\mathfrak{H}^*/\Gamma \times \mathfrak{H}^*/\Gamma$, the locus of $z \times \alpha(z)$ modulo
 $\Gamma \times \Gamma$, and the endomorphism of $J$ it defines is
+
 $$\{\Gamma \alpha \Gamma\} = (\pi_2)_* \circ \pi_1^* \colon J \to J,$$
+
 with $\pi_1^*$ the [pullback](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pullback.md)
 and $(\pi_2)_*$ the [pushforward](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-compact-riemann-surfaces/pushforward.md)
 on Jacobians. On divisors, it sends the point $[z]$ of $\mathfrak{H}^*/\Gamma$, for $z \in \mathfrak{H}$
@@ -20,7 +22,9 @@ $\Gamma \alpha \Gamma = \bigsqcup_\nu \Gamma \alpha_\nu$.
 
 For a positive integer $n$, let $q$ be the largest divisor of $n$ prime to $N$ and $m = n / q$. The
 **Hecke endomorphism** $\xi_n$ of $J$ is
+
 $$\xi_n = \xi_m \xi_q, \qquad \xi_m = \{\Gamma \alpha \Gamma\} \text{ with } \alpha = \begin{pmatrix} 1 & 0 \\ 0 & m \end{pmatrix}, \qquad \xi_q = \sum_\beta \{\Gamma \beta \Gamma\},$$
+
 the last sum over the same double cosets $\Gamma \beta \Gamma$ as in the definition of the
 [Hecke operators $T_n$](hecke-operators-of-level-n.md): $\beta \in M_2(\mathbb{Z})$ with $\det \beta = q$ and
 $\beta \equiv \begin{pmatrix} 1 & 0 \\ 0 & q \end{pmatrix} \pmod N$. The $\xi_n$ are endomorphisms of

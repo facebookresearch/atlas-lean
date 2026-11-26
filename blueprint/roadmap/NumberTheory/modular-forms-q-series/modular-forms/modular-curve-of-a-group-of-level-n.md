@@ -10,8 +10,10 @@ The **modular curve** $X_\Gamma$ is Shimura's **standard model** of $\mathfrak{H
 the curve $V_S$ over $\mathbb{Q}$ of his *Introduction to the arithmetic theory of automorphic
 functions*, §7.3 (p. 155), for the subgroup $S = \mathbb{Q}^\times U_N \Gamma$ of the adelic group
 $\mathrm{GL}_2(\mathbb{A})$ (Shimura's $G_{\mathbb{A}}$), where
+
 $$U_N = \Bigl\{x \in \prod_p \mathrm{GL}_2(\mathbb{Z}_p) \times \mathrm{GL}_2(\mathbb{R})^+ \;\Bigm|\;
 x_p \equiv \begin{pmatrix} * & * \\ 0 & 1 \end{pmatrix} \pmod N \text{ for every } p\Bigr\},$$
+
 together with its identification of the compact Riemann surface $V_S(\mathbb{C})$ with
 $\mathfrak{H}^*/\Gamma$. This $U_N$ meets $\mathrm{SL}_2(\mathbb{Z})$ in $\Gamma_1(N)$, and
 $\mathrm{GL}_2(\mathbb{Q}) \cap S = \mathbb{Q}^\times \Gamma$. It is a curve over $\mathbb{Q}$, that is, a $\mathbb{Q}$-scheme that is proper,

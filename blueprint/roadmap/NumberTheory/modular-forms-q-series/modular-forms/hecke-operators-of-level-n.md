@@ -10,7 +10,9 @@ where $\alpha z = (a z + b)/(c z + d)$: Shimura's $f \mid [\alpha]_2$, and the w
 
 For such an $\alpha$, the double coset $\Gamma \alpha \Gamma$ is a finite disjoint union
 $\Gamma \alpha \Gamma = \bigsqcup_\nu \Gamma \alpha_\nu$ of right cosets, and
+
 $$f \mid [\Gamma \alpha \Gamma]_2 = \sum_\nu f \mid_2 \alpha_\nu \qquad (f \in S_2(\Gamma)),$$
+
 which does not depend on the choice of the $\alpha_\nu$ and lies in $S_2(\Gamma)$. This is the
 [Hecke operator](hecke-operators/hecke-operator.md) $T(g)$ for $U = V = \Gamma$, $g = \alpha^{-1}$ and the
 left action $\gamma \cdot f = f \mid_2 \gamma^{-1}$, restricted to $S_2(\Gamma)$: if
@@ -18,7 +20,9 @@ $\Gamma \alpha^{-1} \Gamma = \bigsqcup_i g_i \Gamma$, then $\Gamma \alpha \Gamma
 
 For a positive integer $n$, let $q$ be the largest divisor of $n$ prime to $N$ and $m = n / q$. Shimura's
 **Hecke operator** $T_n$ on $S_2(\Gamma)$ is
+
 $$T_n = T_m T_q, \qquad T_m = [\Gamma \alpha \Gamma]_2 \text{ with } \alpha = \begin{pmatrix} 1 & 0 \\ 0 & m \end{pmatrix}, \qquad T_q = \sum_\beta [\Gamma \beta \Gamma]_2,$$
+
 the last sum over the distinct double cosets $\Gamma \beta \Gamma$ of matrices $\beta \in M_2(\mathbb{Z})$ with
 $\det \beta = q$ and $\beta \equiv \begin{pmatrix} 1 & 0 \\ 0 & q \end{pmatrix} \pmod N$. In particular $T_1$
 is the identity. A **normalized common eigenfunction** of the $T_n$ is an
