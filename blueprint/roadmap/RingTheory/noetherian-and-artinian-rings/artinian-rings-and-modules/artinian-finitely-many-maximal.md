@@ -1,0 +1,10 @@
+# A commutative Artinian ring has finitely many maximal ideals
+
+A commutative Artinian ring has only finitely many maximal ideals. Mathlib proves this for commutative semirings. Let $R$ be a commutative semiring that is Artinian in Mathlib's sense: strict inclusion of ideals of $R$ is well founded, so every nonempty set of ideals has a minimal member and there is no infinite strictly decreasing chain of ideals. Then the set of maximal ideals of $R$, the proper ideals contained in no larger proper ideal, is finite. It may be empty, as it is for the zero ring. The statement concerns the maximal ideals only, not all ideals. It is not a statement about the maximal left ideals of noncommutative Artinian rings: the ring of $2 \times 2$ matrices over an infinite field is left Artinian and has infinitely many maximal left ideals. A commutative Artinian ring is a commutative semiring that is Artinian in this sense, which gives the familiar statement.
+
+## Sources
+
+- David Eisenbud, Commutative Algebra with a View Toward Algebraic Geometry, Graduate Texts in Mathematics 150, Springer-Verlag, 1995.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for Artinian rings, which are the rings that are Artinian as modules over themselves: `IsArtinianRing`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/Artinian/Defs.lean#L63-L67.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for Artinian modules, defined by the well-foundedness `WellFoundedLT` of strict inclusion of submodules: `IsArtinian`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/Artinian/Defs.lean#L40-L43.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for maximal ideals: `Ideal.IsMaximal`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/Ideal/Maximal.lean#L44-L49.
