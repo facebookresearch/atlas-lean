@@ -337,7 +337,7 @@ S. Roy, An upper bound on the size of Sidon sets, Amer. Math. Monthly 130 (2023)
 doi:10.1080/00029890.2023.2176667; arXiv:2103.15850, abstract: the maximum size of a Sidon set of
 {1, ..., n} is at most √n + 0.998 n^{1/4} for sufficiently large n; Green, Problem 31, 'Update 2021'
 records this bound and its 2023 improvement to 0.98183 (D. Carter, Z. Hunter and K. O'Bryant, Acta
-Math. Hungar. 175 (2025), 108-126), https://arxiv.org/abs/2310.20032.
+Math. Hungar. 175 (2025), 108-126), https://doi.org/10.1080/00029890.2023.2176667.
 -/
 public theorem sidonUpperBoundImproved_holds : sidonUpperBoundImproved := by
   refine ⟨99999 / 100000, by norm_num, 100000 ^ 4, ?_⟩
