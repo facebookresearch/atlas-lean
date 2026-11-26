@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionMaps
 public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
+public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsLocalPositionIffPeriod
 public import MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodBoundFrameIndependence
 
 /-!
@@ -21,6 +22,8 @@ Its bridge uses the actual chart model/global-ring dictionary and every
 finite completion stage. The Cartier/period parameter unit is explicit.
 Position and lattice requests concern the actual completed global
 comparison, with every representation and every original frame retained.
+The local position comparison `localPosition_iff_period` is proved in
+`MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsLocalPositionIffPeriod`.
 Frame independence of the period bound (`periodBound_frame_independence`)
 is proved in
 `MathlibExt.AlgebraicGeometry.MeromorphicPeriodPositionsPeriodBoundFrameIndependence`.
@@ -123,13 +126,6 @@ variable (G : Over (Spec (.of E.field))) [GrpObj G]
   (M : Hecke p E.field G H P d U)
   (left : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).left)
   (right : IntegralFrame p E.field G H d U Q (originalModification p E.field G H P d U M).right)
-
-/-- Exact source position agrees with the actual period double orbit, retaining its unit. -/
-public theorem_wanted localPosition_iff_period
-    [ReductiveGroupSchemeModels.IsReductive (Spec (.of E.field)) G]
-    (μ : Cocharacter E.field G) :
-    HasLocalPosition p E.field G H P d U Q Aq Bq F h C M left right μ ↔
-      HasPeriodPosition p K R I A T D V d U Q B G H P Aq Bq F h C M left right μ
 
 /-- Every original representation gives the actual computed period lattice image. -/
 public def_wanted representedPeriodLattice
