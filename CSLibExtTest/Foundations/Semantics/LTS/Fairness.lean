@@ -96,4 +96,28 @@ example : choosingExecution.StronglyFair both := by
   intro _ cutoff
   exact ⟨cutoff, le_rfl, states cutoff, rfl⟩
 
+-- The same label marks both the self-loop at `false` and the exit to `true`.
+private def stutterOrExitAction (s _t : Bool) : Prop := s = false
+
+private def stutterOrExit : LTS Bool Unit := ⟨fun s _ t ↦ stutterOrExitAction s t⟩
+
+private def stutteringStates : ωSequence Bool := ωSequence.const false
+
+private theorem stutteringExecution : stutterOrExit.OmegaExecution stutteringStates
+    (ωSequence.const ()) := fun _ ↦ rfl
+
+example : stutteringExecution.WeaklyFair ({()} : Set Unit) ∧
+    stutteringExecution.StronglyFair ({()} : Set Unit) := by
+  have h : stutteringExecution.StronglyFair ({()} : Set Unit) :=
+    fun _ cutoff ↦ ⟨cutoff, le_rfl, rfl⟩
+  exact ⟨h.weaklyFair, h⟩
+
+-- For `f := id`, only the exit is a nonstuttering action step.
+private def nonstutteringStep (s t : Bool) : Prop := stutterOrExitAction s t ∧ t ≠ s
+
+-- Always enabled, never taken: neither of Lamport's fairness conditions holds.
+example : (∀ n, ∃ t, nonstutteringStep (stutteringStates n) t) ∧
+    (∀ n, ¬ nonstutteringStep (stutteringStates n) (stutteringStates (n + 1))) := by
+  exact ⟨fun _ ↦ ⟨true, rfl, show true ≠ false by decide⟩, fun _ h ↦ h.2 rfl⟩
+
 end Cslib.LTS.FairnessTests

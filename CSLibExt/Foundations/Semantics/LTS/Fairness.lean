@@ -16,9 +16,16 @@ public import Cslib.Foundations.Semantics.LTS.OmegaExecution
 Enabledness concerns all outgoing transitions from the current state, while occurrence
 concerns the label actually taken at the corresponding step of an infinite execution.
 
+Lamport's `WF_f(A)` and `SF_f(A)` use `⟨A⟩_f`, the `A` steps that change the value of `f`.
+The label-based predicates agree with them when a taken label is in the class exactly when
+its step is an `⟨A⟩_f` step, and at each state of the execution a class-labeled transition is
+available exactly when some target state in the TLA state space makes `⟨A⟩_f` true from that
+state. A class-labeled step that leaves `f` unchanged can count as an occurrence or a witness
+of enabledness here, but not in Lamport's conditions.
+
 ## References
 
-* L. Lamport, *The temporal logic of actions*, 1994, Section 5.3.
+* L. Lamport, *The temporal logic of actions*, 1994, Section 5.3, equations (17) and (18).
 -/
 
 @[expose] public section
