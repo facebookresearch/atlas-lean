@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionModels
 public import MathlibExt.AlgebraicGeometry.CoefficientSheafDimensionModels
 public import Mathlib.Topology.Compactness.SigmaCompact
+public import MathlibExt.AlgebraicGeometry.EnhancedConvolutionSourceRequestsActualBoundedProperImageOfFiniteAmplitude
 
 import Mathlib.Algebra.Homology.DerivedCategory.TStructure
 
@@ -44,8 +45,7 @@ open MathlibExt.AlgebraicGeometry.BoundedIndOperationSources
 open MathlibExt.AlgebraicGeometry.EnhancedConvolutionModels
 open MathlibExt.AlgebraicGeometry.CoefficientSheafDimensionModels
 
-local instance requestAbelianPreadditive (k : Type) [Field k] (X : TopCat.{0})
-    [CompactSheafSource k X] : Preadditive (IndSheaf k X) := Abelian.toPreadditive
+attribute [local instance] requestAbelianPreadditive
 
 attribute [local instance] HasDerivedCategory.standard
 
