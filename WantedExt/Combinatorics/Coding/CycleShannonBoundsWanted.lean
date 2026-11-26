@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
 public import MathlibExt.Combinatorics.Coding.PolakSchrijver
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsLovasz1979UpperBound
 
 /-!
 # Known cycle-capacity construction and rate requests
@@ -35,23 +36,6 @@ Approximate decimal displays are not asserted as equalities or rational bounds.
 namespace MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted
 
 open MathlibExt.Combinatorics.Coding.CycleGraphCode
-
-/-- **Lovász's theta value for the 7-cycle.** This is the real number
-$\frac{7 \cos(\pi/7)}{1 + \cos(\pi/7)}$, Lovász's closed form for the theta number of the
-$7$-cycle, viewed as an element of $[0, \infty]$.
-
-Approximate decimal displays of this number in the source are not asserted as equalities.
-
-Source: Lovász (1979), as printed in BPZ, arXiv:2607.29681. -/
-noncomputable def lovaszThetaCycleSeven : ENNReal :=
-  ENNReal.ofReal (7 * Real.cos (Real.pi / 7) / (1 + Real.cos (Real.pi / 7)))
-
-/-- **Lovász's upper bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at most $\frac{7 \cos(\pi/7)}{1 + \cos(\pi/7)}$, as an inequality in $[0, \infty]$.
-
-Source: Lovász (1979); the closed form is also printed in the retained BPZ primary. -/
-theorem_wanted lovasz1979UpperBound :
-  shannonCapacityCycle 7 ≤ lovaszThetaCycleSeven
 
 /-- **Vesel–Žerovnik lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
 $7$-cycle is at least $108^{1/4}$.
