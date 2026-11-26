@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
 public import MathlibExt.NumberTheory.ContinuedFractions.Folding
 public import MathlibExt.NumberTheory.ContinuedFractions.Paperfolding
+public import MathlibExt.NumberTheory.ContinuedFractionFolding
 
 /-!
 # The folding lemma for finite continued fractions
@@ -23,7 +24,8 @@ fraction `[a₀; a₁, …, aₜ]` with arbitrary integer entries is `finiteCont
 Theorem 14, Corollary 15 and Theorem 17 of the same paper: the simple continued fraction of
 `S = ∑ sₖ` with `s₀ = 1`, `sₖ₊₁ = sₖ² / xₖ`, `x₀ = 2`, `xₖ ≥ 2` interleaves Cloitre's
 self-describing sequence (`cloitreApprox`, OEIS A157196) with the terms `xₖ - 1` in ruler order,
-and the digit `1` has density `2/3` in the Cloitre stages.
+and the digit `1` has density `2/3` in the Cloitre stages (proved in
+`MathlibExt.NumberTheory.ContinuedFractionFolding`).
 -/
 
 namespace MetaMathlibExt
@@ -64,19 +66,6 @@ public theorem_wanted paperfoldingSum_contFrac_recursion (x : ℕ → ℕ) (hx0 
       ∀ i (hi : i < (paperfoldingContFracWord x k).length),
         (GenContFract.of (∑' n, paperfoldingSumTerm x n)).partDens.get? i =
           some ((paperfoldingContFracWord x k)[i] : ℝ)
-
-/-- **Digit frequencies in Cloitre's approximants.** Let $A_k$ be the $k$-th approximant of
-Cloitre's sequence. As $k \to \infty$, the proportion of entries of $A_k$ equal to $1$ tends to
-$2/3$, and the proportion of entries equal to $2$ tends to $1/3$.
-
-Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
-Journal of Integer Sequences 29 (2026), Article 26.3.6, Theorem 17
-(`jis-2026-26.3.6-thm-17`). -/
-public theorem_wanted tendsto_cloitreApprox_count_div_length :
-    Filter.Tendsto (fun k => ((cloitreApprox k).count 1 : ℝ) / (cloitreApprox k).length)
-        Filter.atTop (nhds (2 / 3)) ∧
-      Filter.Tendsto (fun k => ((cloitreApprox k).count 2 : ℝ) / (cloitreApprox k).length)
-        Filter.atTop (nhds (1 / 3))
 
 end
 
