@@ -21,6 +21,14 @@ sink `LT`). Derived latest starts `LS`, vertex slack, and activity float are
 `Option`-valued and defined exactly where their prerequisites are; orphan
 occurrences are reported, never filled with `0`.
 
+The raw outputs are path weights: `ES v` is the longest `s`-to-`v` path weight, so the makespan
+`ES t` is the longest source-to-sink path weight, and `LT v` is the longest `v`-to-`t` path
+weight. `ES` and the latest starts `LS = T - LT` are the earliest and latest feasible event
+times only on covered projects with nonnegative durations (`earliestSchedule_feasible`,
+`latestSchedule_feasible`). Without coverage `ES` and the makespan are still lower bounds on
+every feasible schedule (`feasible_dominates_earliest`, `makespan_le_completion`), but an
+occurrence off every source-to-sink path can force a later sink.
+
 The declarations live in the namespace `Cslib.Algorithms.Lean.Scheduling.CriticalPath`, so
 they load together with the list-scheduling API of
 `CSLibExt.Algorithms.Lean.Approximation.ListScheduling`, whose `makespan` is a different
@@ -86,7 +94,10 @@ open BellmanFord
 @[expose] public def revNegEdges {n : Nat} (edges : List (Edge n)) : List (Edge n) :=
   edges.map fun e => { source := e.target, target := e.source, weight := -e.weight }
 
-/-- Raw earliest-start output of a successful forward run, negated back to durations. (`C3`) -/
+/-- Raw output of the forward run at `v`, negated back to durations: the longest `s`-to-`v`
+path weight (`earliestStart_spec`), `none` off the forward reachable set. Every feasible
+schedule puts `v` no earlier (`feasible_dominates_earliest`); it is the earliest feasible event
+time only on covered projects with nonnegative durations (`earliestSchedule_feasible`). (`C3`) -/
 @[expose] public def earliestStart {n : Nat} (result : Distances n) (v : Fin n) :
     Option Int :=
   (result.distance.get v).map Neg.neg
@@ -96,9 +107,12 @@ open BellmanFord
     Option Int :=
   (result.distance.get v).map Neg.neg
 
-/-- Project makespan read from the forward run at the sink; absent when unreachable. It is the
-earliest sink event time, the longest source-to-sink duration, not the largest machine load
-that the list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan` measures. (`C5`) -/
+/-- Project makespan read from the forward run at the sink: the longest source-to-sink path
+weight (`makespan_exists`), `none` when the sink is unreachable. It lower-bounds the sink time of
+every feasible schedule (`makespan_le_completion`) and is the earliest feasible sink time only on
+covered projects with nonnegative durations (`earliestSchedule_feasible`): an occurrence off
+every source-to-sink path can force a later sink. It is not the largest machine load that the
+list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan` measures. (`C5`) -/
 @[expose] public def makespan {n : Nat} (result : Distances n) (t : Fin n) : Option Int :=
   earliestStart result t
 
@@ -120,7 +134,9 @@ that the list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan` measures. (
   | some a, some l => some (l - a - w)
   | _, _ => none
 
-/-- Latest-start time of a vertex from makespan and the reversed run. (`C6`) -/
+/-- Latest-start time `T - LT v` of a vertex from a makespan `T` and the reversed run. With `T`
+the makespan it is the latest feasible event time of a model event only on covered projects with
+nonnegative durations (`latestSchedule_feasible`). (`C6`) -/
 @[expose] public def latestStartAt {n : Nat} (T : Option Int) (reverse : Distances n)
     (v : Fin n) : Option Int :=
   latestStart T (longestToSink reverse v)
@@ -1504,8 +1520,6 @@ private theorem longestToSink_at_sink {n : Nat} {edges : List (Edge n)}
 /-- On covered projects both raw outputs are defined on every model event. (`C9`) -/
 public theorem raw_defined_on_modelEvents {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward reverse : Distances n}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
-    (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t)
     (hf : (DAGShortestPaths.dagShortestPaths (negEdges edges) s).ret = .ok forward)
@@ -1513,18 +1527,16 @@ public theorem raw_defined_on_modelEvents {n : Nat} {edges : List (Edge n)}
     (v : Fin n) (hv : IsModelEvent edges s t v) :
     (∃ a, earliestStart forward v = some a) ∧
       ∃ b, longestToSink reverse v = some b := by
-  have _ := hacyc
-  have _ := hnn
   refine ⟨?_, ?_⟩
   · exact (earliestStart_defined_iff hf v).mpr
       (modelEvent_reachable_src hcover hst v hv)
   · exact (longestToSink_defined_iff hr v).mpr
       (modelEvent_reachable_tgt hcover hst v hv)
 
-/-- The earliest-start schedule is feasible, starts at zero, and completes at `T`. (`C9`) -/
+/-- On covered projects with nonnegative durations, the earliest-start schedule is feasible,
+starts at zero, and completes at `T`. (`C9`) -/
 public theorem earliestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward : Distances n} {T : Int}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t)
@@ -1533,7 +1545,6 @@ public theorem earliestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     ∃ τ : Fin n → Int,
       (∀ v, IsModelEvent edges s t v → earliestStart forward v = some (τ v)) ∧
         IsFeasibleSchedule edges s t τ ∧ τ s = 0 ∧ τ t = T := by
-  have _hacyc_used := hacyc
   refine ⟨fun v => (earliestStart forward v).getD 0, ?_, ?_, ?_, ?_⟩
   · intro v hv
     obtain ⟨a, ha⟩ := (earliestStart_defined_iff hf v).mpr
@@ -1587,56 +1598,43 @@ public theorem earliestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     rw [htT]
     rfl
 
-/-- Every feasible schedule dominates earliest starts on model events. (`C9`) -/
+/-- Every feasible schedule dominates the raw earliest starts: `a ≤ τ v` wherever
+`earliestStart forward v = some a`. Only the successful forward run and feasibility are needed;
+no acyclicity, coverage, reachability, nonnegative durations or model-event membership. (`C9`) -/
 public theorem feasible_dominates_earliest {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward : Distances n}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
-    (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
-    (hcover : IsCovered edges s t)
-    (hst : (toDirectedAdjacency edges).Reachable s t)
     (hf : (DAGShortestPaths.dagShortestPaths (negEdges edges) s).ret = .ok forward)
     (τ : Fin n → Int) (hτ : IsFeasibleSchedule edges s t τ)
-    (v : Fin n) (hv : IsModelEvent edges s t v) (a : Int)
+    (v : Fin n) (a : Int)
     (hes : earliestStart forward v = some a) :
     a ≤ τ v := by
-  have _ := hacyc
-  have _ := hnn
-  have _ := hcover
-  have _ := hst
-  have _ := hv
   obtain ⟨⟨p, hp, hwp⟩, _⟩ := (earliestStart_spec hf v a).mp hes
   have hle : ∀ e ∈ edges, τ e.source + e.weight ≤ τ e.target := hτ.2
   have hpath := pathWeight_le_tau_sub hle p hp
   have hs0 : 0 ≤ τ s := hτ.1 s (Or.inl rfl)
   omega
 
-/-- The makespan lower-bounds every feasible completion time. (`C9`) -/
+/-- The makespan lower-bounds the sink time of every feasible schedule. Only the successful
+forward run, a defined makespan and feasibility are needed; on a project that is not covered the
+bound can be strict. (`C9`) -/
 public theorem makespan_le_completion {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward : Distances n} {T : Int}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
-    (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
-    (hcover : IsCovered edges s t)
-    (hst : (toDirectedAdjacency edges).Reachable s t)
     (hf : (DAGShortestPaths.dagShortestPaths (negEdges edges) s).ret = .ok forward)
     (hT : makespan forward t = some T)
     (τ : Fin n → Int) (hτ : IsFeasibleSchedule edges s t τ) :
     T ≤ τ t := by
   have hes : earliestStart forward t = some T := hT
-  have hvt : IsModelEvent edges s t t := Or.inr (Or.inl rfl)
-  exact feasible_dominates_earliest hacyc hnn hcover hst hf τ hτ t hvt T hes
+  exact feasible_dominates_earliest hf τ hτ t T hes
 
-/-- Every feasible schedule finishes every activity by the sink event time. (`C9`) -/
+/-- On covered projects with nonnegative durations, every feasible schedule finishes every
+activity by the sink event time. (`C9`) -/
 public theorem feasible_activity_finishes_by_sink {n : Nat}
     {edges : List (Edge n)} {s t : Fin n}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
-    (hst : (toDirectedAdjacency edges).Reachable s t)
     (τ : Fin n → Int) (hτ : IsFeasibleSchedule edges s t τ)
     (e : Edge n) (hem : e ∈ edges) :
     τ e.target ≤ τ t := by
-  have _ := hacyc
-  have _ := hst
   obtain ⟨_, hvt⟩ := hcover e hem
   obtain ⟨p, hp⟩ := reachable_iff_exists_isWeightedPath.mp hvt
   have hle : ∀ e ∈ edges, τ e.source + e.weight ≤ τ e.target := hτ.2
@@ -1644,10 +1642,10 @@ public theorem feasible_activity_finishes_by_sink {n : Nat}
   have hnn_p := pathWeight_nonneg hnn p hp.1
   omega
 
-/-- The latest-start schedule is the latest feasible schedule finishing by `T`. (`C9`) -/
+/-- On covered projects with nonnegative durations, the latest-start schedule is the latest
+feasible schedule finishing by `T`. (`C9`) -/
 public theorem latestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     {s t : Fin n} {forward reverse : Distances n} {T : Int}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t)
@@ -1660,7 +1658,6 @@ public theorem latestSchedule_feasible {n : Nat} {edges : List (Edge n)}
         IsFeasibleSchedule edges s t τ ∧ τ t = T ∧
         ∀ τ' : Fin n → Int, IsFeasibleSchedule edges s t τ' → τ' t ≤ T →
           ∀ v, IsModelEvent edges s t v → τ' v ≤ τ v := by
-  have _hacyc_used := hacyc
   refine ⟨fun v => (latestStartAt (some T) reverse v).getD 0, ?_, ?_, ?_, ?_⟩
   · intro v hv
     obtain ⟨b, hb⟩ := (longestToSink_defined_iff hr v).mpr

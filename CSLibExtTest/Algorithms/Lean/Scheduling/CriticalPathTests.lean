@@ -24,7 +24,7 @@ Kernel-elaborated contract checks over the frozen production definitions:
   `longestToSink_spec` and the none-iff lemmas, never invented;
 * an integration check that this module imports the list-scheduling API too, whose
   `makespan` (largest machine load) is a different declaration from
-  `CriticalPath.makespan` (earliest sink event time).
+  `CriticalPath.makespan` (longest source-to-sink path weight).
 
 Each fixture uses explicit tiny `IsWeightedPath` witnesses for attainment, a
 potential upper bound proved by path induction for maximality, and a closed
@@ -571,9 +571,9 @@ example (forward reverse : Distances 3)
   have hst2 : (toDirectedAdjacency f2_edges).Reachable f2_v0 f2_v2 :=
     (reachable_iff_exists_isWeightedPath (edges := f2_edges) (source := f2_v0) (target := f2_v2)).mpr ⟨[f2_e0, f2_e1], isWeightedPath_pair_of_mem (edges := f2_edges) (e1 := f2_e0) (e2 := f2_e1) (by simp [f2_edges]) (by simp [f2_edges]) rfl⟩
   obtain ⟨τ, hτdef, hτfeas, hτs0, hτtT⟩ :=
-    earliestSchedule_feasible f2_hacyc hnn2 hcover2 hst2 hf hT
+    earliestSchedule_feasible hnn2 hcover2 hst2 hf hT
   obtain ⟨σ, hσdef, hσfeas, hσtT, _hle⟩ :=
-    latestSchedule_feasible f2_hacyc hnn2 hcover2 hst2 hf hr hT
+    latestSchedule_feasible hnn2 hcover2 hst2 hf hr hT
   have hmem0 : f2_e0 ∈ f2_edges := by simp [f2_edges]
   have hv1 : IsModelEvent f2_edges f2_v0 f2_v2 f2_v1 :=
     Or.inr (Or.inr ⟨f2_e0, hmem0, Or.inr rfl⟩)
@@ -585,11 +585,11 @@ example (forward reverse : Distances 3)
     have h1 := hσdef f2_v1 hv1; rw [hLS1] at h1; exact (Option.some_inj.mp h1).symm
   have hσ2 : σ f2_v2 = 10 := hσtT
   have hdom : 5 ≤ τ f2_v1 :=
-    feasible_dominates_earliest f2_hacyc hnn2 hcover2 hst2 hf τ hτfeas f2_v1 hv1 5 hES1
+    feasible_dominates_earliest hf τ hτfeas f2_v1 5 hES1
   have hml : 10 ≤ τ f2_v2 :=
-    makespan_le_completion f2_hacyc hnn2 hcover2 hst2 hf hT τ hτfeas
+    makespan_le_completion hf hT τ hτfeas
   have hfin : τ f2_v1 ≤ τ f2_v2 :=
-    feasible_activity_finishes_by_sink f2_hacyc hnn2 hcover2 hst2 τ hτfeas f2_e0 hmem0
+    feasible_activity_finishes_by_sink hnn2 hcover2 τ hτfeas f2_e0 hmem0
   exact ⟨τ, σ, hτs0, hτ1, hτtT, hσ0, hσ1, hσ2, hτfeas, hσfeas, hdom, hml, hfin⟩
 
 -- Fixture 3: ties and zero dummies, n = 5,
@@ -890,8 +890,8 @@ example (forward reverse : Distances 5) (hn : earliestStart forward f4_e3.source
 -- The uncovered fixture needs sink time 9, above the makespan 4.
 def f4_sched : Fin 5 → Int := fun v => if v.val = 0 then 0 else if v.val = 1 then 2 else if v.val = 2 then 9 else if v.val = 3 then 7 else 0
 
-example : IsFeasibleSchedule f4_edges f4_v0 f4_v2 f4_sched ∧ f4_sched f4_v2 = 9 := by
-  refine ⟨?_, rfl⟩; unfold IsFeasibleSchedule; refine ⟨?_, ?_⟩
+private theorem f4_sched_feasible : IsFeasibleSchedule f4_edges f4_v0 f4_v2 f4_sched := by
+  unfold IsFeasibleSchedule; refine ⟨?_, ?_⟩
   · intro v hv; unfold IsModelEvent at hv
     obtain rfl | rfl | ⟨e, hem, he⟩ := hv
     · decide
@@ -917,6 +917,9 @@ example : IsFeasibleSchedule f4_edges f4_v0 f4_v2 f4_sched ∧ f4_sched f4_v2 = 
     · decide
     · decide
 
+example : IsFeasibleSchedule f4_edges f4_v0 f4_v2 f4_sched ∧ f4_sched f4_v2 = 9 :=
+  ⟨f4_sched_feasible, rfl⟩
+
 example (τ : Fin 5 → Int) (hτ : IsFeasibleSchedule f4_edges f4_v0 f4_v2 τ) : 9 ≤ τ f4_v2 := by
   have hmem : f4_e3 ∈ f4_edges := by simp [f4_edges]
   have h4nn : 0 ≤ τ f4_v4 := hτ.1 f4_v4 (Or.inr (Or.inr ⟨f4_e3, hmem, Or.inl rfl⟩))
@@ -926,6 +929,19 @@ example (τ : Fin 5 → Int) (hτ : IsFeasibleSchedule f4_edges f4_v0 f4_v2 τ) 
 example (forward : Distances 5) (hT : makespan forward f4_v2 = some 4) :
     ∃ T, makespan forward f4_v2 = some T ∧ T < f4_sched f4_v2 := by
   refine ⟨4, hT, ?_⟩; have hsched : f4_sched f4_v2 = 9 := rfl; omega
+
+-- The lower bounds need no coverage: on the uncovered fixture the makespan 4 still bounds
+-- the feasible sink time 9 from below, and the raw earliest start 7 of the dangling event
+-- bounds every feasible schedule there.
+example (forward : Distances 5)
+    (hf : (DAGShortestPaths.dagShortestPaths (negEdges f4_edges) f4_v0).ret = .ok forward)
+    (hT : makespan forward f4_v2 = some 4) : 4 ≤ f4_sched f4_v2 :=
+  makespan_le_completion hf hT f4_sched f4_sched_feasible
+example (forward : Distances 5)
+    (hf : (DAGShortestPaths.dagShortestPaths (negEdges f4_edges) f4_v0).ret = .ok forward)
+    (hES : earliestStart forward f4_v3 = some 7) (τ : Fin 5 → Int)
+    (hτ : IsFeasibleSchedule f4_edges f4_v0 f4_v2 τ) : 7 ≤ τ f4_v3 :=
+  feasible_dominates_earliest hf τ hτ f4_v3 7 hES
 
 -- Fixture 5: cyclic input, n = 2, [0 → 1 (1), 1 → 0 (1)]; both runs fail.
 
@@ -1056,12 +1072,32 @@ example : ¬∀ e ∈ f7_edges, 0 ≤ e.weight := by
   intro h; have h0 : (0 : Int) ≤ f7_e0.weight := h f7_e0 (by simp [f7_edges])
   have hw : f7_e0.weight = -3 := rfl; omega
 
+-- Nor nonnegative durations: with sink `2` the makespan is the longest path weight `2`, a
+-- lower bound on every feasible sink time, while every feasible schedule puts the sink at `5`
+-- or later, since the negative arc cannot pull event `1` below time `0`.
+example (forward : Distances 3)
+    (hf : (DAGShortestPaths.dagShortestPaths (negEdges f7_edges) f7_v0).ret = .ok forward) :
+    earliestStart forward f7_v2 = some 2 := by
+  apply (earliestStart_spec hf f7_v2 2).mpr
+  refine ⟨⟨[f7_e0, f7_e1], isWeightedPath_pair_of_mem (edges := f7_edges) (e1 := f7_e0)
+    (e2 := f7_e1) (by simp [f7_edges]) (by simp [f7_edges]) rfl, rfl⟩, ?_⟩
+  intro p hp; have hle := pathWeight_le_pot f7_hedge hp
+  have hred : f7_pot f7_v2 - f7_pot f7_v0 = 2 := rfl; omega
+example (forward : Distances 3)
+    (hf : (DAGShortestPaths.dagShortestPaths (negEdges f7_edges) f7_v0).ret = .ok forward)
+    (hT : makespan forward f7_v2 = some 2) (τ : Fin 3 → Int)
+    (hτ : IsFeasibleSchedule f7_edges f7_v0 f7_v2 τ) : 2 ≤ τ f7_v2 :=
+  makespan_le_completion hf hT τ hτ
+example (τ : Fin 3 → Int) (hτ : IsFeasibleSchedule f7_edges f7_v0 f7_v2 τ) : 5 ≤ τ f7_v2 := by
+  have hmem : f7_e1 ∈ f7_edges := by simp [f7_edges]
+  have h1nn : 0 ≤ τ f7_v1 := hτ.1 f7_v1 (Or.inr (Or.inr ⟨f7_e1, hmem, Or.inl rfl⟩))
+  have hc : τ f7_e1.source + f7_e1.weight ≤ τ f7_e1.target := hτ.2 f7_e1 hmem
+  have hc' : τ f7_v1 + 5 ≤ τ f7_v2 := hc; omega
+
 -- C9 signature checks: each proof term is exactly a production theorem.
 
 example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     {forward reverse : Distances n}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
-    (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t)
     (hf : (DAGShortestPaths.dagShortestPaths (negEdges edges) s).ret = .ok forward)
@@ -1069,10 +1105,9 @@ example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     (v : Fin n) (hv : IsModelEvent edges s t v) :
     (∃ a, earliestStart forward v = some a) ∧
       ∃ b, longestToSink reverse v = some b :=
-  raw_defined_on_modelEvents hacyc hnn hcover hst hf hr v hv
+  raw_defined_on_modelEvents hcover hst hf hr v hv
 example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     {forward : Distances n} {T : Int}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t)
@@ -1081,41 +1116,30 @@ example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     ∃ τ : Fin n → Int,
       (∀ v, IsModelEvent edges s t v → earliestStart forward v = some (τ v)) ∧
         IsFeasibleSchedule edges s t τ ∧ τ s = 0 ∧ τ t = T :=
-  earliestSchedule_feasible hacyc hnn hcover hst hf hT
+  earliestSchedule_feasible hnn hcover hst hf hT
 example {n : Nat} {edges : List (Edge n)} {s t : Fin n} {forward : Distances n}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
-    (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
-    (hcover : IsCovered edges s t)
-    (hst : (toDirectedAdjacency edges).Reachable s t)
     (hf : (DAGShortestPaths.dagShortestPaths (negEdges edges) s).ret = .ok forward)
     (τ : Fin n → Int) (hτ : IsFeasibleSchedule edges s t τ)
-    (v : Fin n) (hv : IsModelEvent edges s t v) (a : Int)
+    (v : Fin n) (a : Int)
     (hes : earliestStart forward v = some a) :
     a ≤ τ v :=
-  feasible_dominates_earliest hacyc hnn hcover hst hf τ hτ v hv a hes
+  feasible_dominates_earliest hf τ hτ v a hes
 example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     {forward : Distances n} {T : Int}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
-    (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
-    (hcover : IsCovered edges s t)
-    (hst : (toDirectedAdjacency edges).Reachable s t)
     (hf : (DAGShortestPaths.dagShortestPaths (negEdges edges) s).ret = .ok forward)
     (hT : makespan forward t = some T)
     (τ : Fin n → Int) (hτ : IsFeasibleSchedule edges s t τ) :
     T ≤ τ t :=
-  makespan_le_completion hacyc hnn hcover hst hf hT τ hτ
+  makespan_le_completion hf hT τ hτ
 example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
-    (hst : (toDirectedAdjacency edges).Reachable s t)
     (τ : Fin n → Int) (hτ : IsFeasibleSchedule edges s t τ)
     (e : Edge n) (hem : e ∈ edges) :
     τ e.target ≤ τ t :=
-  feasible_activity_finishes_by_sink hacyc hnn hcover hst τ hτ e hem
+  feasible_activity_finishes_by_sink hnn hcover τ hτ e hem
 example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
     {forward reverse : Distances n} {T : Int}
-    (hacyc : TopologicalSort.IsAcyclic (toDirectedAdjacency edges))
     (hnn : ∀ e ∈ edges, 0 ≤ e.weight)
     (hcover : IsCovered edges s t)
     (hst : (toDirectedAdjacency edges).Reachable s t)
@@ -1128,11 +1152,11 @@ example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
         IsFeasibleSchedule edges s t τ ∧ τ t = T ∧
         ∀ τ' : Fin n → Int, IsFeasibleSchedule edges s t τ' → τ' t ≤ T →
           ∀ v, IsModelEvent edges s t v → τ' v ≤ τ v :=
-  latestSchedule_feasible hacyc hnn hcover hst hf hr hT
+  latestSchedule_feasible hnn hcover hst hf hr hT
 
 -- Integration: the list-scheduling and critical-path APIs load into one environment, and
 -- their makespans are different declarations: the largest machine load of a machine
--- assignment, and the earliest sink event time of the forward run.
+-- assignment, and the longest source-to-sink path weight read from the forward run.
 
 example : (Cslib.Algorithms.Lean.Scheduling.makespan : (Fin 2 → List ℕ) → ℕ) =
     fun σ => Finset.univ.sup fun i => (σ i).sum := rfl
