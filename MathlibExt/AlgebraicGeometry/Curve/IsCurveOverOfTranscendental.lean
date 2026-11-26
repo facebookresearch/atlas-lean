@@ -18,6 +18,7 @@ Portions of this file are adapted from:
 `Theorems/Thm_AlgebraicCurve_finite_setOf_ord_ne_zero_of_finiteDimensional.lean`,
 `P2M/Sol/S_AlgebraicCurve_finite_setOf_ord_ne_zero_of_finiteDimensional.lean`,
 `P2M/Sol/S_AlgebraicCurve_kaehlerRankOne_of_transcendental.lean`,
+`Theorems/Thm_AlgebraicCurve_instIsCurveOverRatFunc.lean`,
 `Theorems/Thm_AlgebraicCurve_isCurveOver_of_transcendental.lean`,
 `P2M/Sol/S_AlgebraicCurve_isCurveOver_of_transcendental.lean`,
 `Theorems/Thm_AlgebraicCurve_exists_separating_transcendental_of_perfectField.lean`,
