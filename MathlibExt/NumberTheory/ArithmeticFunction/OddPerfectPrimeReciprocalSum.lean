@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficient
@@ -22,9 +23,7 @@ import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.GCD.Basic
-import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.Data.Rat.BigOperators
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
@@ -35,23 +34,31 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
 import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
+import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 
-/-! # Prime reciprocal sums of odd perfect and primitive non-deficient numbers
+/-!
+# Prime reciprocal sums of odd perfect and primitive non-deficient numbers
 
-The main results are:
+## Main statements
 
-- `eulerianForm_exponent_eq_one_or_pow_five_lt`: if `(n, q, e, m)` is in Eulerian form then
+* `eulerianForm_exponent_eq_one_or_pow_five_lt`: if `(n, q, e, m)` is in Eulerian form then
   `e = 1` or `q ^ 5 < 2 * m ^ 2` (Proposition 11).
-- `oddPerfect_abundancySup_le`: an upper bound on `H(n) = ∏_{p ∣ n} p/(p-1)` for an odd perfect
+* `oddPerfect_abundancySup_le`: an upper bound on `H(n) = ∏_{p ∣ n} p/(p-1)` for an odd perfect
   number `n` in terms of its least prime factor `n.minFac` (Proposition 5).
-- `exists_abundancySup_le_two_add_div_minFac`: there is a real constant `C` such that every
+* `exists_abundancySup_le_two_add_div_minFac`: there is a real constant `C` such that every
   primitive non-deficient number `n` with least prime factor `p₁` satisfies `H(n) ≤ 2 + C/p₁`,
   where `H(n)` is `abundancySup` (Proposition 8).
+* `not_abundancySup_oddPart_succ_lt_two_and_two_lt`: there is no odd prime `q` with
+  `H(odd(q+1)) < 2` and `H(q * odd(q+1)) > 2`, where `odd` is the largest odd divisor
+  (Proposition 10, corrected to odd primes). The proof combines the prime bound
+  `le_two_mul_prod_sub_one_sub_one_of_two_lt` with the factorization `q + 1 = 2 ^ a * m`.
 
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59
-(arXiv:2402.14234v5). The paper writes `H(n) = ∏_{p ∣ n} p/(p-1)` for `abundancySup` and `p₁`
-for `n.minFac`.
+## References
+
+* Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd Perfect or Odd
+  Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59 (arXiv:2402.14234v5),
+  Propositions 5, 8, 10 (corrected to odd primes) and 11. The paper writes
+  `H(n) = ∏_{p ∣ n} p/(p-1)` for `abundancySup` and `p₁` for `n.minFac`.
 -/
 
 open MathlibExt.NumberTheory.PrimitiveNondeficientWanted
@@ -1337,5 +1344,127 @@ public theorem exists_abundancySup_le_two_add_div_minFac :
       nlinarith [hR_le7]
     have h27 : (27 : ℝ) ≤ 2 + 200 / (n.minFac : ℝ) := by linarith
     exact le_of_lt (lt_of_lt_of_le h_unif h27)
+
+section OddPart
+
+open MathlibExt.NumberTheory.PrimitiveNondeficientWanted
+
+private theorem prod_sub_one_lt_prod_of_nonempty (s : Finset ℕ) :
+    (∀ p ∈ s, 2 ≤ p) → s.Nonempty → ∏ p ∈ s, (p - 1) < ∏ p ∈ s, p := fun h2 hne =>
+  Finset.prod_lt_prod_of_nonempty₀ (fun p hp => by have := h2 p hp; omega)
+    (fun p hp => by have := h2 p hp; omega) hne
+
+private theorem prod_primeFactors_le_self (m : ℕ) (hm : m ≠ 0) :
+    ∏ p ∈ m.primeFactors, p ≤ m :=
+  Nat.le_of_dvd (Nat.pos_of_ne_zero hm) (Nat.prod_primeFactors_dvd m)
+
+private theorem prime_not_dvd_ordCompl_succ_self (q : ℕ) (hq : q.Prime) :
+    ¬ q ∣ ordCompl[2] (q + 1) := by
+  intro hdvd
+  have h1 : q ∣ q + 1 := hdvd.trans (Nat.ordCompl_dvd (q + 1) 2)
+  have h2 : q ∣ 1 := by
+    have hsub := Nat.dvd_sub h1 (dvd_refl q)
+    simpa using hsub
+  exact hq.ne_one (Nat.dvd_one.mp h2)
+
+/-- **No odd prime $q$ lifts $H$ of the odd part of $q + 1$ across $2$.** For a positive integer
+$m$ write $H(m) = \prod_{p \mid m} p/(p-1)$, the product over the prime divisors of $m$, and
+$\operatorname{odd}(m)$ for the largest odd divisor of $m$. There is no odd prime $q$ with
+$H(\operatorname{odd}(q+1)) < 2$ and $H(q \cdot \operatorname{odd}(q+1)) > 2$.
+
+For $q = 2$ the conclusion fails: $H(3) = 3/2 < 2$ and $H(6) = 3 > 2$.
+
+Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
+Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
+Proposition 10, corrected to odd primes (`integers-2025-A59-prop-10`). -/
+public theorem not_abundancySup_oddPart_succ_lt_two_and_two_lt
+    (q : ℕ) (hq : q.Prime) (hodd : Odd q) :
+    ¬ (abundancySup (ordCompl[2] (q + 1)) < 2 ∧
+      2 < abundancySup (q * ordCompl[2] (q + 1))) := by
+  rintro ⟨hlt, hgt⟩
+  have hq1_ne : q + 1 ≠ 0 := by omega
+  have hm_pos : 0 < ordCompl[2] (q + 1) := Nat.ordCompl_pos 2 hq1_ne
+  have hm_ne : ordCompl[2] (q + 1) ≠ 0 := hm_pos.ne'
+  have hqdvd : ¬ q ∣ ordCompl[2] (q + 1) := prime_not_dvd_ordCompl_succ_self q hq
+  have h2dvd : ¬ 2 ∣ ordCompl[2] (q + 1) := Nat.not_dvd_ordCompl Nat.prime_two hq1_ne
+  have hodd_s : ∀ p ∈ (ordCompl[2] (q + 1)).primeFactors, p.Prime ∧ Odd p := by
+    intro p hp
+    have hpp := Nat.prime_of_mem_primeFactors hp
+    refine ⟨hpp, hpp.odd_of_ne_two ?_⟩
+    rintro rfl
+    exact h2dvd (Nat.dvd_of_mem_primeFactors hp)
+  have hqmem : q ∉ (ordCompl[2] (q + 1)).primeFactors := by
+    intro hmem
+    exact hqdvd (Nat.mem_primeFactors.mp hmem).2.1
+  have hqs : (q * ordCompl[2] (q + 1)).primeFactors =
+      insert q (ordCompl[2] (q + 1)).primeFactors := by
+    rw [Nat.primeFactors_mul hq.ne_zero hm_ne, hq.primeFactors,
+      Finset.singleton_union]
+  have hH : abundancySup (q * ordCompl[2] (q + 1)) =
+      abundancySup (ordCompl[2] (q + 1)) * ((q : ℚ) / ((q : ℚ) - 1)) := by
+    change (∏ p ∈ (q * ordCompl[2] (q + 1)).primeFactors, (p : ℚ) / ((p : ℚ) - 1)) =
+      (∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p : ℚ) / ((p : ℚ) - 1)) *
+        ((q : ℚ) / ((q : ℚ) - 1))
+    rw [hqs, Finset.prod_insert hqmem, mul_comm]
+  have hle2 :
+      (∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p : ℚ) / ((p : ℚ) - 1)) ≤ 2 :=
+    hlt.le
+  have hgt2 : 2 <
+      (∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p : ℚ) / ((p : ℚ) - 1)) *
+        ((q : ℚ) / ((q : ℚ) - 1)) := by
+    change 2 < abundancySup (ordCompl[2] (q + 1)) * ((q : ℚ) / ((q : ℚ) - 1))
+    rw [← hH]
+    exact hgt
+  have hbound := le_two_mul_prod_sub_one_sub_one_of_two_lt
+    _ hodd_s hle2 q hq hodd hgt2
+  have hP1 : 1 ≤ ∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p - 1) := by
+    have hpos : 0 < ∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p - 1) :=
+      Finset.prod_pos (fun p hp =>
+        Nat.sub_pos_of_lt (Nat.prime_of_mem_primeFactors hp).one_lt)
+    omega
+  have hq1 : q + 1 ≤ 2 * ∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p - 1) := by
+    omega
+  have hfac : ordCompl[2] (q + 1) * 2 ^ (q + 1).factorization 2 = q + 1 :=
+    (Nat.mul_comm _ _).trans (Nat.ordProj_mul_ordCompl_eq_self (q + 1) 2)
+  have h2ddvd : 2 ∣ q + 1 := even_iff_two_dvd.mp hodd.add_one
+  have ha : 1 ≤ (q + 1).factorization 2 :=
+    Nat.Prime.factorization_pos_of_dvd Nat.prime_two hq1_ne h2ddvd
+  obtain ⟨b, hb⟩ : ∃ b, (q + 1).factorization 2 = b + 1 :=
+    ⟨_, (Nat.sub_add_cancel ha).symm⟩
+  have hle : ordCompl[2] (q + 1) * (2 ^ b * 2) ≤
+      2 * ∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p - 1) := by
+    have h2a : 2 ^ (q + 1).factorization 2 = 2 ^ b * 2 := by
+      rw [hb, pow_succ]
+    rw [← h2a, hfac]
+    exact hq1
+  have hstep : ordCompl[2] (q + 1) * 2 ^ b ≤
+      ∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p - 1) := by
+    have h'' : 2 * (ordCompl[2] (q + 1) * 2 ^ b) ≤
+        2 * ∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p - 1) := by
+      have heq : 2 * (ordCompl[2] (q + 1) * 2 ^ b) =
+          ordCompl[2] (q + 1) * (2 ^ b * 2) := by ac_rfl
+      rw [heq]
+      exact hle
+    exact le_of_mul_le_mul_left h'' (by omega)
+  have hm1le : ordCompl[2] (q + 1) ≤ ordCompl[2] (q + 1) * 2 ^ b :=
+    calc ordCompl[2] (q + 1) = ordCompl[2] (q + 1) * 1 := (mul_one _).symm
+      _ ≤ ordCompl[2] (q + 1) * 2 ^ b :=
+        Nat.mul_le_mul_left _ (one_le_pow₀ (by omega : (1 : ℕ) ≤ 2))
+  by_cases hm1 : ordCompl[2] (q + 1) = 1
+  · have hP : ∏ p ∈ (ordCompl[2] (q + 1)).primeFactors, (p - 1) = 1 := by
+      rw [hm1, Nat.primeFactors_one, Finset.prod_empty]
+    have hq2 := hq.two_le
+    omega
+  · have hsne : (ordCompl[2] (q + 1)).primeFactors.Nonempty := by
+      obtain ⟨p, hpp, hdvd⟩ := Nat.exists_prime_and_dvd hm1
+      exact ⟨p, Nat.mem_primeFactors.mpr ⟨hpp, hdvd, hm_ne⟩⟩
+    have hstrict := prod_sub_one_lt_prod_of_nonempty _
+      (fun p hp => (Nat.prime_of_mem_primeFactors hp).two_le) hsne
+    have hrad := prod_primeFactors_le_self _ hm_ne
+    have hcontra : ordCompl[2] (q + 1) < ordCompl[2] (q + 1) :=
+      lt_of_le_of_lt (hm1le.trans hstep) (lt_of_lt_of_le hstrict hrad)
+    exact absurd hcontra (lt_irrefl _)
+
+end OddPart
 
 end MetaMathlibExt
