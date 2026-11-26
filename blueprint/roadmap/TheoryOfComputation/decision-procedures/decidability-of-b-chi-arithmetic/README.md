@@ -9,4 +9,4 @@
 - [Gödel number of the Büchi relation symbol](code-rel.md)
 - [Gödel numbers of Büchi formulas](code-formula.md)
 - [Gödel numbers of Büchi sentences](code-sentence.md)
-- [Buchi arithmetic decidable](buchi-arithmetic-decidable.md)
+- [Büchi arithmetic is decidable](buchi-arithmetic-decidable.md)

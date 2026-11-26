@@ -10,7 +10,7 @@ The statement (a question of S. Miller and H. Cohn, phrased as a claim about the
 
 $$\Delta(8) = \frac{\pi^4}{384} \quad\text{and}\quad \Delta(24) = \frac{\pi^{12}}{12!},$$
 
-the densities of the $E_8$ lattice packing and of the Leech lattice packing, respectively.
+the densities of the $E_8$ lattice packing and of the Leech lattice packing, respectively. It holds; the resolution is [Sphere packing in dimensions 8 and 24: optimal densities hold](sphere-packing-density-eight-twenty-four-2.md).
 
 ## Sources
 

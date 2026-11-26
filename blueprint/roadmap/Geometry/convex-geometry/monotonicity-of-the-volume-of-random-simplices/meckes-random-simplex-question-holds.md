@@ -1,6 +1,6 @@
 # Random simplex volume is monotone up to an exponential factor
 
-The following holds: there are constants $c(d) > 0$, $d \in \mathbb{N}$, such that $c(d)^{1/d}$ converges to a real number as $d \to \infty$ and, for every $d$ and all convex bodies $K \subseteq L \subseteq \mathbb{R}^d$,
+This result proves the proposition stated as [Meckes's question on monotonicity of random simplex volume](meckes-random-simplex-question.md). Precisely, there are constants $c(d) > 0$, $d \in \mathbb{N}$, such that $c(d)^{1/d}$ converges to a real number as $d \to \infty$ and, for every $d$ and all convex bodies $K \subseteq L \subseteq \mathbb{R}^d$,
 
 $$\mathbb{E} V_d(P^K_{d+1}) \le c(d)\, \mathbb{E} V_d(P^L_{d+1}).$$
 

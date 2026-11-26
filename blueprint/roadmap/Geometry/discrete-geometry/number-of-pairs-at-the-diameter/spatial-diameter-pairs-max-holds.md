@@ -1,6 +1,6 @@
 # Erdős problem 223 in space
 
-The following holds: for every $n \ge 4$, every set of exactly $n$ points in $\mathbb{R}^3$ with diameter $1$ has at most $2n - 2$ unordered pairs of points at distance $1$, and some set of exactly $n$ points in $\mathbb{R}^3$ with diameter $1$ has exactly $2n - 2$ such pairs.
+This result proves the proposition stated as [Erdős problem 223 in space: $2n - 2$ diameter pairs](spatial-diameter-pairs-max.md). Precisely, for every $n \ge 4$, every set of exactly $n$ points in $\mathbb{R}^3$ with diameter $1$ has at most $2n - 2$ unordered pairs of points at distance $1$, and some set of exactly $n$ points in $\mathbb{R}^3$ with diameter $1$ has exactly $2n - 2$ such pairs.
 
 ## Sources
 

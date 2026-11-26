@@ -1,6 +1,6 @@
 # Covariance determinant bound for a convex body and its polar
 
-The following holds: there is a constant $C > 0$ such that for every $n \ge 1$ and every convex body $K \subseteq \mathbb{R}^n$ with barycenter at the origin,
+This result proves the proposition stated as [Klartag's covariance determinant bound for polar bodies](polar-covariance-determinant-bound.md). Precisely, there is a constant $C > 0$ such that for every $n \ge 1$ and every convex body $K \subseteq \mathbb{R}^n$ with barycenter at the origin,
 
 $$\det\bigl(\operatorname{Cov}(K)\, \operatorname{Cov}(K^\circ)\bigr) \le \left(\frac{C}{n}\right)^{2n},$$
 

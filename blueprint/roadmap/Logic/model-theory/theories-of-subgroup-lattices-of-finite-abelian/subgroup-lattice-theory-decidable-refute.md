@@ -1,6 +1,6 @@
 # Undecidability of the subgroup-lattice theory of finite abelian groups
 
-The statement is false: the elementary theory of the subgroup lattices of finite abelian groups is not decidable. Precisely, the set of coded prenex sentences $s$ of the lattice language $\{\le\}$ such that $s$ holds in the subgroup lattice of every finite abelian group is not a computable set of codes.
+This result refutes the proposition stated as [Kourovka Problem 3.13: decidability of subgroup-lattice theory of finite abelian groups](subgroup-lattice-theory-decidable.md). The statement is false: the elementary theory of the subgroup lattices of finite abelian groups is not decidable. Precisely, the set of coded prenex sentences $s$ of the lattice language $\{\le\}$ such that $s$ holds in the subgroup lattice of every finite abelian group is not a computable set of codes.
 
 ## Sources
 

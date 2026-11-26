@@ -1,6 +1,6 @@
 # Squarelike groups are elementarily equivalent to discriminating groups
 
-The following holds: every squarelike group is elementarily equivalent to a discriminating group. That is, for every group $G$ that is universally equivalent to some discriminating group, there is a discriminating group $D$ such that $G$ and $D$ satisfy the same first-order sentences of the language of groups.
+This result proves the proposition stated as [Kourovka Problem 15.86: squarelike and discriminating groups](squarelike-elementarily-equivalent-to-di.md). Precisely, every squarelike group is elementarily equivalent to a discriminating group. That is, for every group $G$ that is universally equivalent to some discriminating group, there is a discriminating group $D$ such that $G$ and $D$ satisfy the same first-order sentences of the language of groups.
 
 A group $D$ is discriminating if for every finite set $S$ of nontrivial elements of $D \times D$ there is a homomorphism $f : D \times D \to D$ with $f(x) \neq 1$ for all $x \in S$. A group is squarelike if it satisfies the same universal sentences of the first-order language of groups (multiplication, inversion and the identity) as some discriminating group; a universal sentence is a block of universal quantifiers followed by a quantifier-free formula.
 

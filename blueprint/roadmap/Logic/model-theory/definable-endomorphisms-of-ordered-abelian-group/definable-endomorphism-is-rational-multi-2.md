@@ -1,6 +1,6 @@
 # Kourovka 18.16: definable endomorphisms are rational multiples
 
-The following holds. For every ordered abelian group $G$ and every group endomorphism $f : G \to G$ whose graph is definable with parameters from $G$ in the pure language of ordered abelian groups ($0$, $-$, $+$, $\le$), there are $m \in \mathbb{Z}$ and an integer $n > 0$ such that $n\, f(x) = m\, x$ for all $x \in G$.
+This result proves the proposition stated as [Kourovka 18.16: definable endomorphisms of ordered abelian groups](definable-endomorphism-is-rational-multi.md). For every ordered abelian group $G$ and every group endomorphism $f : G \to G$ whose graph is definable with parameters from $G$ in the pure language of ordered abelian groups ($0$, $-$, $+$, $\le$), there are $m \in \mathbb{Z}$ and an integer $n > 0$ such that $n\, f(x) = m\, x$ for all $x \in G$.
 
 ## Sources
 

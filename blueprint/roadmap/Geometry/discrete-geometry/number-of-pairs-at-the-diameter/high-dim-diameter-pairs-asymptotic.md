@@ -5,7 +5,7 @@ Erdős Problem 223 for $d \ge 4$ (Erdős) asks for the following statement: for 
 - every set $A \subset \mathbb{R}^d$ of exactly $n$ points with diameter $1$ has at most $\left(\frac{p - 1}{2p} + \varepsilon\right) n^2$ unordered pairs of points at distance $1$; and
 - some set $A \subset \mathbb{R}^d$ of exactly $n$ points with diameter $1$ has at least $\left(\frac{p - 1}{2p} - \varepsilon\right) n^2$ such pairs.
 
-That is, the largest number of pairs at distance $1$ among $n$ points of diameter $1$ in $\mathbb{R}^d$ is $\left(\frac{p-1}{2p} + o(1)\right) n^2$ as $n \to \infty$.
+That is, the largest number of pairs at distance $1$ among $n$ points of diameter $1$ in $\mathbb{R}^d$ is $\left(\frac{p-1}{2p} + o(1)\right) n^2$ as $n \to \infty$. It holds; the resolution is [Erdős problem 223 in dimension $d \ge 4$](high-dim-diameter-pairs-asymptotic-holds.md).
 
 ## Sources
 

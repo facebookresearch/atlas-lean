@@ -1,6 +1,6 @@
 # Erdős problem 209 fails: line arrangements without Gallai triangles
 
-The statement is false: for every $d \ge 4$ there is a family of exactly $d$ pairwise non-parallel lines in $\mathbb{R}^2$ with no point on four or more of them that has no Gallai triangle, that is, no three distinct lines $L_1, L_2, L_3$ of the family and distinct points $p_1 \in L_2 \cap L_3$, $p_2 \in L_1 \cap L_3$, $p_3 \in L_1 \cap L_2$ each lying on exactly two lines of the family.
+This result refutes the proposition stated as [Erdős problem 209: Gallai triangles](line-arrangement-has-gallai-triangle.md). The statement is false: for every $d \ge 4$ there is a family of exactly $d$ pairwise non-parallel lines in $\mathbb{R}^2$ with no point on four or more of them that has no Gallai triangle, that is, no three distinct lines $L_1, L_2, L_3$ of the family and distinct points $p_1 \in L_2 \cap L_3$, $p_2 \in L_1 \cap L_3$, $p_3 \in L_1 \cap L_2$ each lying on exactly two lines of the family.
 
 ## Sources
 

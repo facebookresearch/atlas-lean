@@ -1,6 +1,6 @@
 # Not every Riemannian metric admits a dually flat structure
 
-The answer is negative: it is not the case that for every $n \in \mathbb{N}$, every open set $U \subseteq \mathbb{R}^n$ and every matrix-valued function $g = (g_{ij})$ on $\mathbb{R}^n$ whose entries are $C^\infty$ on $U$ and with $g(x)$ positive definite for every $x \in U$, there is a $(0,3)$-tensor field $T = (T_{ijk})$ on $\mathbb{R}^n$ such that
+This result refutes the proposition stated as [Amari's question: does every metric admit a dually flat structure?](every-metric-admits-dually-flat-structur.md). The answer is negative: it is not the case that for every $n \in \mathbb{N}$, every open set $U \subseteq \mathbb{R}^n$ and every matrix-valued function $g = (g_{ij})$ on $\mathbb{R}^n$ whose entries are $C^\infty$ on $U$ and with $g(x)$ positive definite for every $x \in U$, there is a $(0,3)$-tensor field $T = (T_{ijk})$ on $\mathbb{R}^n$ such that
 
 - every entry $T_{ijk}$ is $C^\infty$ on $U$;
 - $T$ is totally symmetric at every point: $T_{ijk} = T_{jik} = T_{ikj}$;

@@ -4,7 +4,7 @@ Statement (AIM workshop Extensions of Hilbert's tenth problem, Question 8, T. Ph
 
 $$P(2^{n_1}, \dots, 2^{n_m}) = 0.$$
 
-Precisely, the set of list-of-monomials encodings of integer polynomials that have a zero at powers of two is a computable set.
+Precisely, the set of list-of-monomials encodings of integer polynomials that have a zero at powers of two is a computable set. It holds; the resolution is [Zeros of integer polynomials at powers of two are decidable](powers-of-two-zeros-decidable-holds.md).
 
 ## Sources
 

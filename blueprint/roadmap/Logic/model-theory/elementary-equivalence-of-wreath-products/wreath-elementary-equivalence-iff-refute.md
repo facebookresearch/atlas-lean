@@ -1,6 +1,6 @@
 # Elementary equivalence of wreath products is not determined by the factors
 
-The statement is false: there are nontrivial groups $A$, $B$, $A_1$, $B_1$ for which the equivalence
+This result refutes the proposition stated as [Kourovka Problem 2.20: elementary equivalence of wreath products](wreath-elementary-equivalence-iff.md). The statement is false: there are nontrivial groups $A$, $B$, $A_1$, $B_1$ for which the equivalence
 
 $$A \wr B \equiv A_1 \wr B_1 \iff A \equiv A_1 \text{ and } B \equiv B_1$$
 

@@ -1,6 +1,6 @@
 # Green-Tao: at least $n/2$ ordinary lines for large $n$
 
-The following holds: there is $N \in \mathbb{N}$ such that every finite set $s \subseteq \mathbb{R}^2$ with $|s| \ge N$, not contained in a line, satisfies $|s| \le 2\, o(s)$.
+This result proves the proposition stated as [Erdős problem 210: at least $n/2$ ordinary lines](ordinary-lines-at-least-half.md). Precisely, there is $N \in \mathbb{N}$ such that every finite set $s \subseteq \mathbb{R}^2$ with $|s| \ge N$, not contained in a line, satisfies $|s| \le 2\, o(s)$.
 
 An ordinary line of a finite set $s \subseteq \mathbb{R}^2$ is a line through two distinct points of $s$ that contains no other point of $s$, and $o(s)$ denotes the number of ordinary lines of $s$.
 

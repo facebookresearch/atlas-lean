@@ -1,6 +1,6 @@
 # Erdős problem 223 in the plane
 
-The following holds: for every $n \ge 3$, every set of exactly $n$ points in $\mathbb{R}^2$ with diameter $1$ has at most $n$ unordered pairs of points at distance $1$, and some set of exactly $n$ points in $\mathbb{R}^2$ with diameter $1$ has exactly $n$ such pairs.
+This result proves the proposition stated as [Erdős problem 223 in the plane: $n$ diameter pairs](planar-diameter-pairs-max.md). Precisely, for every $n \ge 3$, every set of exactly $n$ points in $\mathbb{R}^2$ with diameter $1$ has at most $n$ unordered pairs of points at distance $1$, and some set of exactly $n$ points in $\mathbb{R}^2$ with diameter $1$ has exactly $n$ such pairs.
 
 ## Sources
 

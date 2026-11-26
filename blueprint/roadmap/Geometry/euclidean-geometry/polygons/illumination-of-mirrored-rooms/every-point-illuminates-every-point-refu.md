@@ -1,6 +1,6 @@
 # Tokarsky: mirrored rooms not illuminable from every point
 
-The conjecture is false: there are a polygonal room $R$ and two points $s, t$ of its open floor $R^\circ$ with $s \ne t$ such that no light path in $R$ leads from $s$ to $t$.
+This result refutes the proposition stated as [Mirrored room illumination: every point lights every point](every-point-illuminates-every-point.md). The conjecture is false: there are a polygonal room $R$ and two points $s, t$ of its open floor $R^\circ$ with $s \ne t$ such that no light path in $R$ leads from $s$ to $t$.
 
 A polygonal room $R$ has vertices $v_0, \dots, v_{k-1}$ ($k \ge 3$, pairwise distinct) in cyclic order and an open floor $R^\circ \subseteq \mathbb{R}^2$ that is nonempty, open, connected and bounded, equal to the interior of its closure, and whose frontier is the union of the closed walls $[v_i, v_{i+1}]$ (indices mod $k$), any two of which meet only in common endpoints.
 

@@ -1,6 +1,6 @@
 # Pach's cover-decomposability conjecture
 
-Pach's conjecture: every convex set $P \subseteq \mathbb{R}^2$ is cover-decomposable. That is, for every convex $P$ there is $k \in \mathbb{N}$ such that for every family of translates $P + t_i$ ($i \in I$, arbitrary index set) covering every point of the plane at least $k$ times, counted by index, the index set splits as $I = s \cup (I \setminus s)$ with both subfamilies covering the plane.
+Pach's conjecture: every convex set $P \subseteq \mathbb{R}^2$ is cover-decomposable. That is, for every convex $P$ there is $k \in \mathbb{N}$ such that for every family of translates $P + t_i$ ($i \in I$, arbitrary index set) covering every point of the plane at least $k$ times, counted by index, the index set splits as $I = s \cup (I \setminus s)$ with both subfamilies covering the plane. It is false; the refutation is [Pach's cover-decomposability conjecture is false](convex-cover-decomposable-refuted.md).
 
 ## Sources
 

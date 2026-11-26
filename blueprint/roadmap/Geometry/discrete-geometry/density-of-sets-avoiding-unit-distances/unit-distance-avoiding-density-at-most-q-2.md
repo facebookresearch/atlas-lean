@@ -1,6 +1,6 @@
 # Erdős problem 232: the density bound $1/4$
 
-The following holds: every Lebesgue-measurable set $A \subseteq \mathbb{R}^2$ with no two points at distance exactly $1$ satisfies
+This result proves the proposition stated as [Erdős problem 232: unit-distance-avoiding sets have density at most $1/4$](unit-distance-avoiding-density-at-most-q.md). Precisely, every Lebesgue-measurable set $A \subseteq \mathbb{R}^2$ with no two points at distance exactly $1$ satisfies
 
 $$\limsup_{R \to \infty} \frac{\lambda(A \cap B_R)}{\lambda(B_R)} \le \frac{1}{4},$$
 

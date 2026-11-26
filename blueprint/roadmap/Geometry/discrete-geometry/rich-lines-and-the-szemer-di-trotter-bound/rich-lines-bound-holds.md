@@ -1,6 +1,6 @@
 # Szemerédi-Trotter bound on $k$-rich lines
 
-The following holds: there is a constant $C$ such that for every finite set $P \subseteq \mathbb{R}^2$ with $n = |P|$ and every integer $k$ with $2 \le k \le \sqrt{n}$,
+This result proves the proposition stated as [Erdős problem 1069: few $k$-rich lines](rich-lines-bound.md). Precisely, there is a constant $C$ such that for every finite set $P \subseteq \mathbb{R}^2$ with $n = |P|$ and every integer $k$ with $2 \le k \le \sqrt{n}$,
 
 $$r_k(P) \le \frac{C n^2}{k^3}.$$
 

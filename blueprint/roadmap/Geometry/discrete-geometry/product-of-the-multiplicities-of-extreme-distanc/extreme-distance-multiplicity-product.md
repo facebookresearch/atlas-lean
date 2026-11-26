@@ -4,7 +4,7 @@ Erdős Problem 957 asks for the following statement: for every $\varepsilon > 0$
 
 $$f_A(d_1)\, f_A(d_k) \le \left(\tfrac{9}{8} + \varepsilon\right) n^2,$$
 
-where $d_1$ and $d_k$ are the smallest and the largest of the distances $\lVert x - y \rVert$ with $x, y \in A$, $x \ne y$, and $f_A(d)$ is the number of unordered pairs $\{x, y\}$ of distinct points of $A$ with $\lVert x - y \rVert = d$. That is, $f(d_1) f(d_k) \le (9/8 + o(1))\, n^2$.
+where $d_1$ and $d_k$ are the smallest and the largest of the distances $\lVert x - y \rVert$ with $x, y \in A$, $x \ne y$, and $f_A(d)$ is the number of unordered pairs $\{x, y\}$ of distinct points of $A$ with $\lVert x - y \rVert = d$. That is, $f(d_1) f(d_k) \le (9/8 + o(1))\, n^2$. It holds; the resolution is [Erdős problem 957: product of extreme distance multiplicities](extreme-distance-multiplicity-product-ho.md).
 
 ## Sources
 

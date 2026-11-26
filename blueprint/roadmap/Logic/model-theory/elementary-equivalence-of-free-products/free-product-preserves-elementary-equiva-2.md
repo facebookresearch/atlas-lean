@@ -1,6 +1,6 @@
 # Free products preserve elementary equivalence of groups
 
-The following holds: for all groups $G_1, G_2, H_1, H_2$, if $G_1 \equiv G_2$ and $H_1 \equiv H_2$, then $G_1 * H_1 \equiv G_2 * H_2$, where $\equiv$ is elementary equivalence in the first-order language of groups (multiplication, inversion and the identity) and $*$ is the free product.
+This result proves the proposition stated as [Kourovka Problem 9.66(a): Jónsson's conjecture on free products](free-product-preserves-elementary-equiva.md). Precisely, for all groups $G_1, G_2, H_1, H_2$, if $G_1 \equiv G_2$ and $H_1 \equiv H_2$, then $G_1 * H_1 \equiv G_2 * H_2$, where $\equiv$ is elementary equivalence in the first-order language of groups (multiplication, inversion and the identity) and $*$ is the free product.
 
 ## Sources
 

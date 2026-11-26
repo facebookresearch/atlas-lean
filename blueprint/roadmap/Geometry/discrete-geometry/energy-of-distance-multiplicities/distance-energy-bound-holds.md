@@ -1,6 +1,6 @@
 # Erdős problem 95: energy of distance multiplicities
 
-The following holds: for every $\varepsilon > 0$ there is a constant $C$ such that for every finite set $A \subset \mathbb{R}^2$ of $n$ points,
+This result proves the proposition stated as [Statement of Erdős problem 95: energy of distance multiplicities](distance-energy-bound.md). Precisely, for every $\varepsilon > 0$ there is a constant $C$ such that for every finite set $A \subset \mathbb{R}^2$ of $n$ points,
 
 $$\sum_{u \in D(A)} f_A(u)^2 \le C\, n^{3 + \varepsilon},$$
 

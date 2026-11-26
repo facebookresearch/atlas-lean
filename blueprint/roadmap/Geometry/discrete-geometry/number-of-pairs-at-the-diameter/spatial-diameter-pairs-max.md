@@ -5,7 +5,7 @@ Erdős Problem 223 for $d = 3$ (Grünbaum, Heppes, Straszewicz) asks for the fol
 - every set $A \subset \mathbb{R}^3$ of exactly $n$ points with diameter $1$ has at most $2n - 2$ unordered pairs of points at distance $1$; and
 - some set $A \subset \mathbb{R}^3$ of exactly $n$ points with diameter $1$ has exactly $2n - 2$ such pairs.
 
-So the largest number of pairs at distance $1$ among $n \ge 4$ points of diameter $1$ in $\mathbb{R}^3$ is $2n - 2$.
+So the largest number of pairs at distance $1$ among $n \ge 4$ points of diameter $1$ in $\mathbb{R}^3$ is $2n - 2$. It holds; the resolution is [Erdős problem 223 in space](spatial-diameter-pairs-max-holds.md).
 
 ## Sources
 

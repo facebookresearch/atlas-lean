@@ -1,6 +1,6 @@
 # Real parts of roots of Steiner polynomials: the conjectured bounds fail
 
-The conjecture is false: there are $n \ge 1$ and a convex body $K \subseteq \mathbb{R}^n$ (compact, convex, with nonempty interior), with inradius $r$, circumradius $R$ and Steiner polynomial $f$ (so $f(\lambda) = \operatorname{vol}(K + \lambda B^n)$ for $\lambda \ge 0$), such that at least one of the following fails: some complex root of $f$ has real part at most $-R$; some complex root of $f$ has real part at least $-r$; every complex root of $f$ has nonpositive real part.
+This result refutes the proposition stated as [Real parts of roots of Steiner polynomials](steiner-root-bounds.md). The conjecture is false: there are $n \ge 1$ and a convex body $K \subseteq \mathbb{R}^n$ (compact, convex, with nonempty interior), with inradius $r$, circumradius $R$ and Steiner polynomial $f$ (so $f(\lambda) = \operatorname{vol}(K + \lambda B^n)$ for $\lambda \ge 0$), such that at least one of the following fails: some complex root of $f$ has real part at most $-R$; some complex root of $f$ has real part at least $-r$; every complex root of $f$ has nonpositive real part.
 
 ## Sources
 

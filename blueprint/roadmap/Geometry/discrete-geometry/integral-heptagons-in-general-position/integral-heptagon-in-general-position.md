@@ -6,7 +6,7 @@ Question: is the following true? there are seven points $P_1, \dots, P_7 \in \ma
 - no four of them with distinct indices lie on a common circle; and
 - every distance $\lVert P_i - P_j \rVert$ is a nonnegative integer.
 
-The first condition forces the seven points to be distinct.
+The first condition forces the seven points to be distinct. It holds; the resolution is [Integral heptagons in general position exist](integral-heptagon-in-general-position-ho.md).
 
 ## Sources
 

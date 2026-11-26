@@ -1,6 +1,6 @@
 # Erdős problem 353: right triangles of area one
 
-The following holds: for every Lebesgue measurable set $A \subseteq \mathbb{R}^2$ of infinite Lebesgue measure, there are pairwise distinct points $a, b, c \in A$ such that one of the angles $\angle bac$, $\angle abc$, $\angle bca$ equals $\pi/2$ and the convex hull of $\{a, b, c\}$ (the triangle $abc$) has area $1$.
+This result proves the proposition stated as [Statement of Erdős problem 353: right triangles of area one](right-angled-triangle.md). Precisely, for every Lebesgue measurable set $A \subseteq \mathbb{R}^2$ of infinite Lebesgue measure, there are pairwise distinct points $a, b, c \in A$ such that one of the angles $\angle bac$, $\angle abc$, $\angle bca$ equals $\pi/2$ and the convex hull of $\{a, b, c\}$ (the triangle $abc$) has area $1$.
 
 ## Sources
 

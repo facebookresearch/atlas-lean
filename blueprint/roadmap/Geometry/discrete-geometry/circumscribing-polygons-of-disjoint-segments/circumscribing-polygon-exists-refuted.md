@@ -1,6 +1,6 @@
 # Mirzaian's circumscribing polygon conjecture is false
 
-The conjecture is false: it is not the case that the following holds for all $m$ and all endpoint families.
+This result refutes the proposition stated as [Mirzaian's circumscribing polygon conjecture](circumscribing-polygon-exists.md). The conjecture is false: it is not the case that the following holds for all $m$ and all endpoint families.
 
 Let $m \in \mathbb{N}$ and let $e_0, \dots, e_{2m-1} \in \mathbb{R}^2$ be endpoints of $m$ closed segments $s_k = [e_{2k}, e_{2k+1}]$, $k = 0, \dots, m - 1$, which are nondegenerate ($e_{2k} \ne e_{2k+1}$) and pairwise disjoint. In the segment visibility graph, two distinct endpoints $e_i, e_j$ are adjacent when they are the two endpoints of the same segment, or when the open segment $(e_i, e_j)$ meets no segment $s_k$. Assume moreover that the $2m$ endpoints are not all collinear. Then there is a cyclic ordering $e_{\pi(0)}, \dots, e_{\pi(2m-1)}$ of all the endpoints ($\pi$ a permutation, indices mod $2m$) such that
 

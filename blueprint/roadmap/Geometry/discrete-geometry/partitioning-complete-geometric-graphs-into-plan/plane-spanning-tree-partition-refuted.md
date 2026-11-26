@@ -1,6 +1,6 @@
 # Complete geometric graphs not partitionable into plane spanning trees
 
-The conjecture is false: there are $n \ge 1$ and $2n$ points $p_1, \dots, p_{2n} \in \mathbb{R}^2$ in general position whose complete geometric graph admits no partition of its edge set into $n$ plane spanning trees.
+This result refutes the proposition stated as [Partitioning complete geometric graphs into plane spanning trees](plane-spanning-tree-partition.md). The conjecture is false: there are $n \ge 1$ and $2n$ points $p_1, \dots, p_{2n} \in \mathbb{R}^2$ in general position whose complete geometric graph admits no partition of its edge set into $n$ plane spanning trees.
 
 Here the vertices are $2n$ points $p_1, \dots, p_{2n} \in \mathbb{R}^2$ in general position (pairwise distinct, no three collinear), the edges are all pairs $\{i, j\}$ with $i \ne j$, and a partition into $n$ plane spanning trees is a symmetric colouring $c(i, j) = c(j, i) \in \{1, \dots, n\}$ of the edges such that each colour class is a spanning tree on all $2n$ vertices and any two edges $\{i, j\}, \{i', j'\}$ of the same colour with four distinct endpoints have disjoint segments $[p_i, p_j] \cap [p_{i'}, p_{j'}] = \emptyset$.
 

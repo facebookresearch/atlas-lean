@@ -1,14 +1,14 @@
 # Reactive synthesis for deterministic parity specifications (Church's problem)
 
-## Reactive Synthesis Wanted
+## Specifications
 
 - [Deterministic parity specifications](det-parity-spec.md)
 
-## Det Parity Spec
+## Runs
 
 - [Run of a deterministic parity specification](run.md)
 
-## Reactive Synthesis Wanted
+## Realizability and synthesis games
 
 - [Realizing a parity specification by a transducer](realizes.md)
 - [The synthesis parity game of a specification](synthesis-game.md)

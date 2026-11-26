@@ -1,6 +1,6 @@
 # Erdős problem 214: the complement contains a unit square
 
-The following holds: for every set $S \subseteq \mathbb{R}^2$ with no two points at distance exactly $1$, there are points $a, b, c, d \in \mathbb{R}^2 \setminus S$ with $\langle b - a, d - a \rangle = 0$, $\lvert b - a \rvert = \lvert d - a \rvert = 1$ and $c = b + (d - a)$; that is, the complement of $S$ contains the four vertices of a unit square in some position and orientation.
+This result proves the proposition stated as [Erdős problem 214: unit squares in the complement](unit-distance-avoiding-complement-has-un.md). Precisely, for every set $S \subseteq \mathbb{R}^2$ with no two points at distance exactly $1$, there are points $a, b, c, d \in \mathbb{R}^2 \setminus S$ with $\langle b - a, d - a \rangle = 0$, $\lvert b - a \rvert = \lvert d - a \rvert = 1$ and $c = b + (d - a)$; that is, the complement of $S$ contains the four vertices of a unit square in some position and orientation.
 
 ## Sources
 

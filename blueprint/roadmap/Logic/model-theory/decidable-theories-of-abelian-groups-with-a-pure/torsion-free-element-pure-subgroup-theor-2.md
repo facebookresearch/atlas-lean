@@ -1,6 +1,6 @@
 # Undecidability of the pure-subgroup theory of torsion-free abelian groups
 
-The statement is false: the element-pure-subgroup theory of torsion-free abelian groups is not decidable. Precisely, the set of coded two-sorted prenex sentences that hold in $(A, \text{pure subgroups of } A)$ for every torsion-free abelian group $A$ (for $n \neq 0$, $na = 0$ implies $a = 0$), with element quantifiers over $A$, subgroup quantifiers over the pure subgroups of $A$, and atoms $t = 0$, $t \in X$, $X \subseteq Y$ for integer linear terms $t$, is not a computable set of codes.
+This result refutes the proposition stated as [Kourovka Problem 3.21(b): pure-subgroup theory of torsion-free abelian groups](torsion-free-element-pure-subgroup-theor.md). The statement is false: the element-pure-subgroup theory of torsion-free abelian groups is not decidable. Precisely, the set of coded two-sorted prenex sentences that hold in $(A, \text{pure subgroups of } A)$ for every torsion-free abelian group $A$ (for $n \neq 0$, $na = 0$ implies $a = 0$), with element quantifiers over $A$, subgroup quantifiers over the pure subgroups of $A$, and atoms $t = 0$, $t \in X$, $X \subseteq Y$ for integer linear terms $t$, is not a computable set of codes.
 
 A subgroup $B$ of an abelian group $A$ is pure if $nA \cap B = nB$ for every integer $n$, that is, whenever $na \in B$ with $n \in \mathbb{Z}$ and $a \in A$, there is $b \in B$ with $nb = na$.
 

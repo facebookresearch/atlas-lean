@@ -1,6 +1,6 @@
 # Kourovka 1.26: elementarily equivalent f.g. nilpotent groups
 
-Question (M. I. Kargapolov, Kourovka Notebook 1.26). Statement: if $G$ and $H$ are finitely generated nilpotent groups that are elementarily equivalent in the first-order language of groups ($1$, ${}^{-1}$, $\cdot$), that is, satisfy the same first-order sentences, then $G \cong H$.
+Question (M. I. Kargapolov, Kourovka Notebook 1.26). Statement: if $G$ and $H$ are finitely generated nilpotent groups that are elementarily equivalent in the first-order language of groups ($1$, ${}^{-1}$, $\cdot$), that is, satisfy the same first-order sentences, then $G \cong H$. It is false; the refutation is [Kourovka 1.26: elementary equivalence does not imply isomorphism](elem-equiv-fgnilpotent-groups-isomorphic-2.md).
 
 ## Sources
 

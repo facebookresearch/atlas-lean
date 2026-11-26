@@ -2,9 +2,7 @@
 
 Let $g$ be a context-free grammar with terminal alphabet $T$, nonterminals $N$ and start symbol $S$; sentential forms are words over $T \cup N$. Here $\Rightarrow_{\mathrm{rm}}^*$ denotes rightmost derivation (the reflexive-transitive closure of rightmost steps, each rewriting the rightmost nonterminal).
 
-A sentential form $\pi$ is a viable prefix of $g$ when there are a sentential form $\alpha$, a nonterminal $A$, a production $A \to \beta$ of $g$ and a terminal word $w$ with $S \Rightarrow_{\mathrm{rm}}^* \alpha A w$ such that $\pi$ is a suffix of $\alpha\beta$ (that is, $\alpha\beta = \rho\pi$ for some $\rho$).
-
-The defining condition requires $\pi$ to be a suffix of $\alpha\beta$, as written above; it is not the textbook prefix condition.
+A sentential form $\pi$ is a viable prefix of $g$ when there are a sentential form $\alpha$, a nonterminal $A$, a production $A \to \beta$ of $g$ and a terminal word $w$ with $S \Rightarrow_{\mathrm{rm}}^* \alpha A w$ such that $\pi$ is a prefix of $\alpha\beta$ (that is, $\alpha\beta = \pi\rho$ for some $\rho$).
 
 ## Sources
 

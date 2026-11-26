@@ -1,6 +1,6 @@
 # Statement of two or infinitely many closed geodesics on Finsler spheres
 
-Conjecture (Burns–Matveev Conjecture 2.2.1, after Long and Bangert): every irreversible Finsler metric $F$ on the two-sphere $S^2$ (a Finsler metric with $F(-v) \ne F(v)$ for some tangent vector $v$) has either exactly two or infinitely many distinct prime closed geodesics. Here a prime closed geodesic is a class of unit-speed closed geodesics $\gamma : \mathbb{R} \to S^2$ of $F$ (non-constant, periodic, realizing the forward Finsler distance at unit speed locally in time) modulo time shifts $t \mapsto t + s$; oppositely oriented traversals count separately.
+Conjecture (Burns–Matveev Conjecture 2.2.1, after Long and Bangert): every irreversible Finsler metric $F$ on the two-sphere $S^2$ (a Finsler metric with $F(-v) \ne F(v)$ for some tangent vector $v$) has either exactly two or infinitely many distinct prime closed geodesics. Here a prime closed geodesic is a class of unit-speed closed geodesics $\gamma : \mathbb{R} \to S^2$ of $F$ (non-constant, periodic, realizing the forward Finsler distance at unit speed locally in time) modulo time shifts $t \mapsto t + s$; oppositely oriented traversals count separately. It holds; the resolution is [Two or infinitely many closed geodesics on Finsler spheres](irreversible-two-or-infinitely-many-hold.md).
 
 ## Sources
 

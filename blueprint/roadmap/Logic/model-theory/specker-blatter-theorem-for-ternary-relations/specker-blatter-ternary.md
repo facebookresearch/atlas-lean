@@ -6,7 +6,7 @@ For a first-order sentence $\varphi$ in the language with one ternary relation s
 
 $$f_\varphi(n) = \#\{A \subseteq [n]^3 : ([n], A) \models \varphi\},$$
 
-the number of labelled structures on $[n]$ satisfying $\varphi$, where $R$ is interpreted by $A$. A sequence $s : \mathbb{N} \to \mathbb{N}$ is ultimately periodic modulo $m$ if there are $p \ge 1$ and $N$ with $s(n + p) \equiv s(n) \pmod m$ for all $n \ge N$.
+the number of labelled structures on $[n]$ satisfying $\varphi$, where $R$ is interpreted by $A$. A sequence $s : \mathbb{N} \to \mathbb{N}$ is ultimately periodic modulo $m$ if there are $p \ge 1$ and $N$ with $s(n + p) \equiv s(n) \pmod m$ for all $n \ge N$. It is false; the refutation is [The Specker-Blatter theorem fails for a ternary relation](specker-blatter-ternary-refuted.md).
 
 ## Sources
 

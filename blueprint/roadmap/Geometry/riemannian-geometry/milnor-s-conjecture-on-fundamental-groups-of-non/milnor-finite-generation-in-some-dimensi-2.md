@@ -1,6 +1,6 @@
 # Milnor's conjecture fails in every dimension at least six
 
-The statement is false in every dimension at least six: for every $n \ge 6$ there are a connected smooth ($C^\infty$) manifold $M$ without boundary, modeled on $\mathbb{R}^n$, with a $C^\infty$ Riemannian metric whose Riemannian distance is the metric of $M$, complete for that distance, and with nonnegative Ricci curvature $\operatorname{Ric} \ge 0$, and a point $x \in M$ such that $\pi_1(M, x)$ is not finitely generated. In particular Milnor's conjecture, the positive answer to the question whether every complete Riemannian manifold of nonnegative Ricci curvature has finitely generated fundamental group, fails.
+This result refutes the proposition stated as [Milnor's conjecture in some dimension at least six](milnor-finite-generation-in-some-dimensi.md). The statement is false in every dimension at least six: for every $n \ge 6$ there are a connected smooth ($C^\infty$) manifold $M$ without boundary, modeled on $\mathbb{R}^n$, with a $C^\infty$ Riemannian metric whose Riemannian distance is the metric of $M$, complete for that distance, and with nonnegative Ricci curvature $\operatorname{Ric} \ge 0$, and a point $x \in M$ such that $\pi_1(M, x)$ is not finitely generated. In particular Milnor's conjecture, the positive answer to the question whether every complete Riemannian manifold of nonnegative Ricci curvature has finitely generated fundamental group, fails.
 
 ## Sources
 

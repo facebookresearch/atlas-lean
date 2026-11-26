@@ -1,6 +1,6 @@
 # Erdős problem 991: cap discrepancy of Fekete points
 
-The following holds: for every $\varepsilon > 0$ there is $N$ such that for every $n \ge N$ and every set $A \subset S^2$ of exactly $n$ points maximizing the product $\prod_{i<j} \lVert w_i - w_j \rVert$ among all $n$-point subsets of the unit sphere $S^2 \subset \mathbb{R}^3$, every spherical cap $C$ satisfies
+This result proves the proposition stated as [Statement of Erdős problem 991: cap discrepancy of Fekete points](fekete-points-cap-discrepancy-small.md). Precisely, for every $\varepsilon > 0$ there is $N$ such that for every $n \ge N$ and every set $A \subset S^2$ of exactly $n$ points maximizing the product $\prod_{i<j} \lVert w_i - w_j \rVert$ among all $n$-point subsets of the unit sphere $S^2 \subset \mathbb{R}^3$, every spherical cap $C$ satisfies
 
 $$\bigl\lvert\, \#(A \cap C) - \alpha_C\, n \,\bigr\rvert \le \varepsilon n.$$
 

@@ -1,6 +1,6 @@
 # Entailment equals finite entailment for equality-free positive Horn logic
 
-The following holds: for every relational first-order language $L$ and all equality-free positive Horn sentences $\varphi$ and $\psi$ of $L$ (built from relational atoms by $\wedge$, $\forall$ and $\exists$), if $\varphi \wedge \neg \psi$ holds in some nonempty $L$-structure, then it holds in some finite nonempty $L$-structure. Equivalently, entailment and finite entailment coincide for equality-free positive Horn sentences.
+This result proves the proposition stated as [Finite model property for equality-free positive Horn logic](positive-horn-finite-model-property.md). Precisely, for every relational first-order language $L$ and all equality-free positive Horn sentences $\varphi$ and $\psi$ of $L$ (built from relational atoms by $\wedge$, $\forall$ and $\exists$), if $\varphi \wedge \neg \psi$ holds in some nonempty $L$-structure, then it holds in some finite nonempty $L$-structure. Equivalently, entailment and finite entailment coincide for equality-free positive Horn sentences.
 
 ## Sources
 

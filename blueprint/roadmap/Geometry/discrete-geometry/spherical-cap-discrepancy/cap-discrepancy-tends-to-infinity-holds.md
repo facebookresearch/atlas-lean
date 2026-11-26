@@ -1,6 +1,6 @@
 # Erdős problem 988: cap discrepancy tends to infinity
 
-The following holds. For every real $M$ there is $N$ such that for every $n \ge N$ and every set $P$ of $n$ points on the unit sphere $S^2 \subseteq \mathbb{R}^3$ there is a closed spherical cap $C = \{x \in S^2 : \langle x, v \rangle \ge t\}$, with $v \in S^2$ and $t \in \mathbb{R}$, such that
+This result proves the proposition stated as [Erdős problem 988: spherical cap discrepancy tends to infinity](cap-discrepancy-tends-to-infinity.md). For every real $M$ there is $N$ such that for every $n \ge N$ and every set $P$ of $n$ points on the unit sphere $S^2 \subseteq \mathbb{R}^3$ there is a closed spherical cap $C = \{x \in S^2 : \langle x, v \rangle \ge t\}$, with $v \in S^2$ and $t \in \mathbb{R}$, such that
 
 $$\bigl\lvert\, |P \cap C| - \alpha(C)\, n \,\bigr\rvert > M,$$
 

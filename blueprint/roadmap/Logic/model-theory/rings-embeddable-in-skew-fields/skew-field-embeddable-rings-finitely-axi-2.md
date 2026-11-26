@@ -1,6 +1,6 @@
 # Rings embeddable in skew fields are not finitely axiomatizable
 
-The statement is false: the class of associative rings with $1$ that embed in a division ring is not finitely axiomatizable. That is, for every finite set $T$ of first-order sentences in the language of rings $\{+, \cdot, -, 0, 1\}$, there is a ring $R$ such that $R \models T$ fails to be equivalent to the existence of an injective unital ring homomorphism from $R$ into a division ring.
+This result refutes the proposition stated as [Kourovka Problem 2.38: finite axiomatizability of rings embeddable in skew fields](skew-field-embeddable-rings-finitely-axi.md). The statement is false: the class of associative rings with $1$ that embed in a division ring is not finitely axiomatizable. That is, for every finite set $T$ of first-order sentences in the language of rings $\{+, \cdot, -, 0, 1\}$, there is a ring $R$ such that $R \models T$ fails to be equivalent to the existence of an injective unital ring homomorphism from $R$ into a division ring.
 
 ## Sources
 

@@ -6,7 +6,7 @@ Statement: let $n \in \mathbb{N}$ and $L > 0$. Let $(M_i)_{i \in \mathbb{N}}$ be
 
 $$d_{GH}\bigl(M_i, [0, L]\bigr) \not\to 0 \quad (i \to \infty),$$
 
-where $d_{GH}$ is the Gromov-Hausdorff distance and $[0, L]$ carries its standard metric.
+where $d_{GH}$ is the Gromov-Hausdorff distance and $[0, L]$ carries its standard metric. It holds; the resolution is [Tori cannot collapse to an interval](tori-cannot-collapse-to-interval-holds.md).
 
 ## Sources
 

@@ -6,7 +6,7 @@ Conjecture (Hernández Cifre and Henk): for every $n \ge 1$ and every convex bod
 
 $$a_1 \le -R \le -r \le a_n \le 0.$$
 
-Precisely: some complex root of $f$ has real part at most $-R$, some complex root has real part at least $-r$, and every complex root has nonpositive real part.
+Precisely: some complex root of $f$ has real part at most $-R$, some complex root has real part at least $-r$, and every complex root has nonpositive real part. It is false; the refutation is [Real parts of roots of Steiner polynomials: the conjectured bounds fail](steiner-root-bounds-refuted.md).
 
 ## Sources
 

@@ -6,7 +6,7 @@ Statement: for every prime $p$, the set $\mathcal{A}_p$ of additive polynomials 
 
 $$f \in \mathcal{A}_p \iff \exists\, y_1, \dots, y_n \in \mathbb{F}_p[Z] :\ P_j(f, y_1, \dots, y_n) = 0 \text{ for all } j.$$
 
-Since the coefficients range over $\mathbb{F}_p[Z]$, the constant $Z$ may be used.
+Since the coefficients range over $\mathbb{F}_p[Z]$, the constant $Z$ may be used. It holds; the resolution is [Additive polynomials are Diophantine over $\mathbb{F}_p[Z]$](additive-polynomials-diophantine-holds.md).
 
 ## Sources
 

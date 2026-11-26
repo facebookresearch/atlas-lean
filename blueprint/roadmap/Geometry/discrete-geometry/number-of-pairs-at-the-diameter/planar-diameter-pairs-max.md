@@ -5,7 +5,7 @@ Erdős Problem 223 for $d = 2$ (Hopf and Pannwitz) asks for the following statem
 - every set $A \subset \mathbb{R}^2$ of exactly $n$ points with diameter $1$ has at most $n$ unordered pairs of points at distance $1$; and
 - some set $A \subset \mathbb{R}^2$ of exactly $n$ points with diameter $1$ has exactly $n$ such pairs.
 
-So the largest number of pairs at distance $1$ among $n \ge 3$ points of diameter $1$ in the plane is $n$.
+So the largest number of pairs at distance $1$ among $n \ge 3$ points of diameter $1$ in the plane is $n$. It holds; the resolution is [Erdős problem 223 in the plane](planar-diameter-pairs-max-holds.md).
 
 ## Sources
 

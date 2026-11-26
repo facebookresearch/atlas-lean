@@ -1,4 +1,4 @@
-# Buchi arithmetic decidable
+# Büchi arithmetic is decidable
 
 Statement: Büchi arithmetic is decidable. Consider the first-order language with function symbols $0$, $S$, $+$ and the binary relation symbol $V_2$, interpreted in $\mathbb{N}$ by zero, successor, addition and $V_2(x, y) \iff$ $y$ is the largest power of $2$ dividing $x$ (false for $x = 0$). Then the set
 

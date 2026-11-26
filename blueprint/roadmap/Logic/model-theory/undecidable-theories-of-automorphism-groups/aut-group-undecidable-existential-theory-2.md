@@ -1,6 +1,6 @@
 # Kourovka 12.14: automorphism groups with undecidable theory exist
 
-The following holds. For every first-order language $L$ with countably many symbols and every $L$-theory $T$ with an infinite model, there is a model $A$ of $T$ such that solvability in $\mathrm{Aut}(A)$ of finite systems of group equations $u = 1$ and inequations $v \ne 1$ is not a computable predicate; that is, $\mathrm{Aut}(A)$ has undecidable existential theory, and hence undecidable theory.
+This result proves the proposition stated as [Kourovka 12.14: automorphism groups with undecidable theory](aut-group-undecidable-existential-theory.md). For every first-order language $L$ with countably many symbols and every $L$-theory $T$ with an infinite model, there is a model $A$ of $T$ such that solvability in $\mathrm{Aut}(A)$ of finite systems of group equations $u = 1$ and inequations $v \ne 1$ is not a computable predicate; that is, $\mathrm{Aut}(A)$ has undecidable existential theory, and hence undecidable theory.
 
 ## Sources
 

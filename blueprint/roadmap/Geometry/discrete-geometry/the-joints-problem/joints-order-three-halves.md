@@ -5,7 +5,7 @@ Tao's joints question asks for the following statement: both of the following ho
 1. There is a constant $C$ such that every finite family $\mathcal{L}$ of lines in $\mathbb{R}^3$ (affine subspaces with one-dimensional direction) has at most $C\, \lvert \mathcal{L} \rvert^{3/2}$ joints, where a joint is a point lying on three lines of $\mathcal{L}$ whose directions span $\mathbb{R}^3$.
 2. For every $k \in \mathbb{N}$ there is a family of exactly $3k^2$ lines in $\mathbb{R}^3$ with at least $k^3$ joints.
 
-So the maximum number of joints of $N$ lines has order $N^{3/2}$.
+So the maximum number of joints of $N$ lines has order $N^{3/2}$. It holds; the resolution is [The joints problem: order $N^{3/2}$](joints-order-three-halves-holds.md).
 
 ## Sources
 

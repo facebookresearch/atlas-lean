@@ -1,6 +1,6 @@
 # Erdős problem 223 in dimension $d \ge 4$
 
-The following holds: for every $d \ge 4$, with $p = \lfloor d/2 \rfloor$, and every $\varepsilon > 0$, there is $N$ such that for every $n \ge N$:
+This result proves the proposition stated as [Erdős problem 223 in dimension $d \ge 4$: asymptotic count](high-dim-diameter-pairs-asymptotic.md). Precisely, for every $d \ge 4$, with $p = \lfloor d/2 \rfloor$, and every $\varepsilon > 0$, there is $N$ such that for every $n \ge N$:
 
 - every set $A \subset \mathbb{R}^d$ of exactly $n$ points with diameter $1$ has at most $\left(\frac{p - 1}{2p} + \varepsilon\right) n^2$ unordered pairs of points at distance $1$; and
 - some set $A \subset \mathbb{R}^d$ of exactly $n$ points with diameter $1$ has at least $\left(\frac{p - 1}{2p} - \varepsilon\right) n^2$ such pairs.

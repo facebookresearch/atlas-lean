@@ -4,7 +4,7 @@ Conjecture (Erdős, Croft and Purdy): there is a constant $C$ such that for ever
 
 $$r_k(P) \le \frac{C n^2}{k^3}.$$
 
-For a finite set $P \subseteq \mathbb{R}^2$ and $k \in \mathbb{N}$, $r_k(P)$ is the number of lines through two distinct points of $P$ that contain at least $k$ points of $P$.
+For a finite set $P \subseteq \mathbb{R}^2$ and $k \in \mathbb{N}$, $r_k(P)$ is the number of lines through two distinct points of $P$ that contain at least $k$ points of $P$. It holds; the resolution is [Szemerédi-Trotter bound on $k$-rich lines](rich-lines-bound-holds.md).
 
 ## Sources
 

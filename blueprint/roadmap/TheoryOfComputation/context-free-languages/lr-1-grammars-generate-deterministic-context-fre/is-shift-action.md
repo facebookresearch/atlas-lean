@@ -1,6 +1,6 @@
 # Shift actions of an LR(1) parser
 
-Let $g$ be a context-free grammar with terminal alphabet $T$, nonterminals $N$ and start symbol $S$; sentential forms are words over $T \cup N$. Here $\Rightarrow_{\mathrm{rm}}^*$ denotes rightmost derivation (the reflexive-transitive closure of rightmost steps, each rewriting the rightmost nonterminal). A sentential form $\pi$ is a viable prefix of $g$ when there are a sentential form $\alpha$, a nonterminal $A$, a production $A \to \beta$ of $g$ and a terminal word $w$ with $S \Rightarrow_{\mathrm{rm}}^* \alpha A w$ such that $\pi$ is a suffix of $\alpha\beta$ (that is, $\alpha\beta = \rho\pi$ for some $\rho$).
+Let $g$ be a context-free grammar with terminal alphabet $T$, nonterminals $N$ and start symbol $S$; sentential forms are words over $T \cup N$. Here $\Rightarrow_{\mathrm{rm}}^*$ denotes rightmost derivation (the reflexive-transitive closure of rightmost steps, each rewriting the rightmost nonterminal). A sentential form $\pi$ is a viable prefix of $g$ when there are a sentential form $\alpha$, a nonterminal $A$, a production $A \to \beta$ of $g$ and a terminal word $w$ with $S \Rightarrow_{\mathrm{rm}}^* \alpha A w$ such that $\pi$ is a prefix of $\alpha\beta$ (that is, $\alpha\beta = \pi\rho$ for some $\rho$).
 
 For a sentential form $\pi$ and a lookahead $\ell$, there is a shift action at $\pi$ with lookahead $\ell$ when $\ell$ is a terminal $a$ (not the end of input) and $\pi a$ is a viable prefix.
 

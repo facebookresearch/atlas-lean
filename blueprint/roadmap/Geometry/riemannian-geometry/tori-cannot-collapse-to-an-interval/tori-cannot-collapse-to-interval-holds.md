@@ -1,6 +1,6 @@
 # Tori cannot collapse to an interval
 
-The following holds. Let $n \in \mathbb{N}$ and $L > 0$, and let $(M_i)_{i \in \mathbb{N}}$ be nonempty compact $C^\infty$ Riemannian $n$-manifolds with their Riemannian distances, each diffeomorphic to the standard torus $\mathbb{R}^n / \mathbb{Z}^n$ and each with sectional curvature at least $-1$. Then the Gromov-Hausdorff distance from $M_i$ to the interval $[0, L]$ does not tend to $0$ as $i \to \infty$.
+This result proves the proposition stated as [Statement of tori cannot collapse to an interval](tori-cannot-collapse-to-interval.md). Let $n \in \mathbb{N}$ and $L > 0$, and let $(M_i)_{i \in \mathbb{N}}$ be nonempty compact $C^\infty$ Riemannian $n$-manifolds with their Riemannian distances, each diffeomorphic to the standard torus $\mathbb{R}^n / \mathbb{Z}^n$ and each with sectional curvature at least $-1$. Then the Gromov-Hausdorff distance from $M_i$ to the interval $[0, L]$ does not tend to $0$ as $i \to \infty$.
 
 ## Sources
 

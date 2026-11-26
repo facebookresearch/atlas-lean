@@ -8,7 +8,7 @@ Then there is a map $L : \mathbb{R}^2 \to \mathbb{R}^2$ and constants $K_1' > 0$
 
 $$\lVert x - y \rVert \le K_1' \lVert L(x) - L(y) \rVert \quad\text{and}\quad \lVert L(x) - L(y) \rVert \le K_2' \lVert x - y \rVert \qquad (x, y \in \mathbb{R}^2),$$
 
-such that $L(D) = \mathbb{Z}^2$. Surjectivity of $L$ onto $\mathbb{R}^2$ is not required.
+such that $L(D) = \mathbb{Z}^2$. Surjectivity of $L$ onto $\mathbb{R}^2$ is not required. It holds; the resolution is [Navas' problem: Delone sets bi-Lipschitz to $\mathbb{Z}^2$](delone-bilipschitz-rectification-holds.md).
 
 ## Sources
 

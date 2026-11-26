@@ -4,7 +4,7 @@ Mirzaian's conjecture, for segments that are not all collinear. Let $m \in \math
 
 - consecutive endpoints $e_{\pi(t)}$ and $e_{\pi(t+1)}$ are adjacent in the segment visibility graph, so the ordering is a Hamiltonian cycle;
 - the polygon $e_{\pi(0)} \cdots e_{\pi(2m-1)}$ is simple: it has at least $3$ vertices, nondegenerate edges, and its edges meet only at the common vertex of consecutive edges;
-- the polygon is circumscribing: with $K$ a compact region with nonempty interior whose frontier is the polygon, every segment is either an edge of the polygon or has its relative interior inside the interior of $K$.
+- the polygon is circumscribing: with $K$ a compact region with nonempty interior whose frontier is the polygon, every segment is either an edge of the polygon or has its relative interior inside the interior of $K$. It is false; the refutation is [Mirzaian's circumscribing polygon conjecture is false](circumscribing-polygon-exists-refuted.md).
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Erdős problem 216 for $3 \le k \le 6$
 
-The following holds: for every $k$ with $3 \le k \le 6$, there is $N \in \mathbb{N}$ such that every finite set $S \subset \mathbb{R}^2$ with at least $N$ points and no three distinct points collinear contains an empty convex $k$-gon: a subset $T \subseteq S$ of exactly $k$ points, none of which lies in the convex hull of the other points of $T$, such that no point of $S$ lies in the interior of the convex hull of $T$.
+This result proves the proposition stated as [Erdős problem 216: empty convex $k$-gons for $3 \le k \le 6$](empty-convex-polygon-number-exists-up-to.md). Precisely, for every $k$ with $3 \le k \le 6$, there is $N \in \mathbb{N}$ such that every finite set $S \subset \mathbb{R}^2$ with at least $N$ points and no three distinct points collinear contains an empty convex $k$-gon: a subset $T \subseteq S$ of exactly $k$ points, none of which lies in the convex hull of the other points of $T$, such that no point of $S$ lies in the interior of the convex hull of $T$.
 
 ## Sources
 

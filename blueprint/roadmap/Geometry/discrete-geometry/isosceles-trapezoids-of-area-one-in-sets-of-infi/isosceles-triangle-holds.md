@@ -1,6 +1,6 @@
 # Erdős problem 353: isosceles triangles of area one
 
-The following holds: for every Lebesgue measurable set $A \subseteq \mathbb{R}^2$ of infinite Lebesgue measure, there are points $a, b, c \in A$ such that two of the distances $\lVert a - b \rVert$, $\lVert b - c \rVert$, $\lVert c - a \rVert$ are equal and the convex hull of $\{a, b, c\}$ (the triangle $abc$) has area $1$.
+This result proves the proposition stated as [Statement of Erdős problem 353: isosceles triangles of area one](isosceles-triangle.md). Precisely, for every Lebesgue measurable set $A \subseteq \mathbb{R}^2$ of infinite Lebesgue measure, there are points $a, b, c \in A$ such that two of the distances $\lVert a - b \rVert$, $\lVert b - c \rVert$, $\lVert c - a \rVert$ are equal and the convex hull of $\{a, b, c\}$ (the triangle $abc$) has area $1$.
 
 ## Sources
 

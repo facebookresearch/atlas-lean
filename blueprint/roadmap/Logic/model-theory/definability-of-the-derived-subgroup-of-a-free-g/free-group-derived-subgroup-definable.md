@@ -4,7 +4,7 @@ Statement (Kourovka Notebook Problem 1.19, A. I. Mal'cev; Yu. L. Ershov, the que
 
 $$[F_r, F_r] = \{ g \in F_r : F_r \models \phi(g) \}.$$
 
-Rank $1$ is excluded because $[F_1, F_1]$ is trivial and hence definable.
+Rank $1$ is excluded because $[F_1, F_1]$ is trivial and hence definable. It is false; the refutation is [The derived subgroup of a free group of rank at least 2 is not definable](free-group-derived-subgroup-definable-re.md).
 
 ## Sources
 

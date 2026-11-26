@@ -1,6 +1,6 @@
 # Erdős problem 957: product of extreme distance multiplicities
 
-The following holds: for every $\varepsilon > 0$ there is $N$ such that for every $n \ge N$ and every set $A \subset \mathbb{R}^2$ of exactly $n$ points that determines at least one distance (equivalently $n \ge 2$),
+This result proves the proposition stated as [Statement of Erdős problem 957: product of extreme distance multiplicities](extreme-distance-multiplicity-product.md). Precisely, for every $\varepsilon > 0$ there is $N$ such that for every $n \ge N$ and every set $A \subset \mathbb{R}^2$ of exactly $n$ points that determines at least one distance (equivalently $n \ge 2$),
 
 $$f_A(d_1)\, f_A(d_k) \le \left(\tfrac{9}{8} + \varepsilon\right) n^2,$$
 

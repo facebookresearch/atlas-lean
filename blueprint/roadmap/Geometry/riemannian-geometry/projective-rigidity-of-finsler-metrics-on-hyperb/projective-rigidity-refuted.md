@@ -1,6 +1,6 @@
 # Projective rigidity of Finsler metrics fails on hyperbolic surfaces
 
-The answer is negative: it is not the case that for every compact connected Hausdorff smooth surface $M$ without boundary that carries a $C^\infty$ Riemannian metric of constant sectional curvature $-1$, and for all Finsler metrics $F_1, F_2$ on $M$ such that every geodesic of $F_1$ becomes a geodesic of $F_2$ after an orientation-preserving reparametrization, there are a constant $c > 0$ and a closed $1$-form $\beta$ on $M$ with
+This result refutes the proposition stated as [Projective rigidity of Finsler metrics on hyperbolic surfaces](projective-rigidity.md). The answer is negative: it is not the case that for every compact connected Hausdorff smooth surface $M$ without boundary that carries a $C^\infty$ Riemannian metric of constant sectional curvature $-1$, and for all Finsler metrics $F_1, F_2$ on $M$ such that every geodesic of $F_1$ becomes a geodesic of $F_2$ after an orientation-preserving reparametrization, there are a constant $c > 0$ and a closed $1$-form $\beta$ on $M$ with
 
 $$F_1(v) = c\, F_2(v) + \beta(v) \qquad \text{for every } v \in TM.$$
 

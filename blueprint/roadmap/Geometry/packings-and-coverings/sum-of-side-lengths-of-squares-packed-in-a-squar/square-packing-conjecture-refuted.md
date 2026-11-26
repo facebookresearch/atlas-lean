@@ -1,6 +1,6 @@
 # Erdős problem 106: the $k^2 + 1$ squares conjecture is false
 
-The conjecture is false: there are an integer $k \ge 1$ and closed squares $Q_1, \dots, Q_{k^2+1} \subseteq [0,1]^2$, each the image of $[0, s_i]^2$ with $s_i > 0$ under a rotation followed by a translation, with pairwise disjoint interiors, such that
+This result refutes the proposition stated as [Erdős problem 106: $k^2 + 1$ squares in a unit square](square-packing-conjecture.md). The conjecture is false: there are an integer $k \ge 1$ and closed squares $Q_1, \dots, Q_{k^2+1} \subseteq [0,1]^2$, each the image of $[0, s_i]^2$ with $s_i > 0$ under a rotation followed by a translation, with pairwise disjoint interiors, such that
 
 $$\sum_{i=1}^{k^2+1} s_i > k.$$
 

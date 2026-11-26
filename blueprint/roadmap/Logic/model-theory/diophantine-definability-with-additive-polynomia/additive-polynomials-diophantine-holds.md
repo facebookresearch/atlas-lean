@@ -1,6 +1,6 @@
 # Additive polynomials are Diophantine over $\mathbb{F}_p[Z]$
 
-The following holds: for every prime $p$, the set of additive polynomials $\alpha_0 Z + \alpha_1 Z^p + \cdots + \alpha_n Z^{p^n}$ ($\alpha_i \in \mathbb{F}_p$) is a Diophantine subset of $\mathbb{F}_p[Z]$ with coefficients in $\mathbb{F}_p[Z]$. That is, there are finitely many polynomials $P_1, \dots, P_m$ in $x, y_1, \dots, y_n$ with coefficients in $\mathbb{F}_p[Z]$ such that $f \in \mathbb{F}_p[Z]$ is additive exactly when $P_j(f, y_1, \dots, y_n) = 0$ for all $j$ has a solution $y_1, \dots, y_n \in \mathbb{F}_p[Z]$.
+This result proves the proposition stated as [Pheidas' question: additive polynomials are Diophantine over $\mathbb{F}_p[Z]$](additive-polynomials-diophantine.md). Precisely, for every prime $p$, the set of additive polynomials $\alpha_0 Z + \alpha_1 Z^p + \cdots + \alpha_n Z^{p^n}$ ($\alpha_i \in \mathbb{F}_p$) is a Diophantine subset of $\mathbb{F}_p[Z]$ with coefficients in $\mathbb{F}_p[Z]$. That is, there are finitely many polynomials $P_1, \dots, P_m$ in $x, y_1, \dots, y_n$ with coefficients in $\mathbb{F}_p[Z]$ such that $f \in \mathbb{F}_p[Z]$ is additive exactly when $P_j(f, y_1, \dots, y_n) = 0$ for all $j$ has a solution $y_1, \dots, y_n \in \mathbb{F}_p[Z]$.
 
 ## Sources
 

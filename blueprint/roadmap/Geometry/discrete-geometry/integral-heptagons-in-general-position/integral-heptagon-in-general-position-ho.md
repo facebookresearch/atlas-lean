@@ -1,6 +1,6 @@
 # Integral heptagons in general position exist
 
-The following holds: there are seven points $P_1, \dots, P_7 \in \mathbb{R}^2$ such that
+This result proves the proposition stated as [Seven points in general position with integer distances](integral-heptagon-in-general-position.md). Precisely, there are seven points $P_1, \dots, P_7 \in \mathbb{R}^2$ such that
 
 - no three of them with distinct indices are collinear;
 - no four of them with distinct indices lie on a common circle; and

@@ -4,7 +4,7 @@ Let $f(n)$ be the largest possible sum of the side lengths of $n$ squares, in an
 
 Conjecture: for every integer $k \ge 1$ and all closed squares $Q_1, \dots, Q_{k^2+1} \subseteq [0,1]^2$, where $Q_i$ is the image of $[0, s_i]^2$ with $s_i > 0$ under some rotation followed by some translation, if the interiors of $Q_i$ and $Q_j$ are disjoint whenever $i \ne j$, then
 
-$$\sum_{i=1}^{k^2+1} s_i \le k.$$
+$$\sum_{i=1}^{k^2+1} s_i \le k.$$ It is false; the refutation is [Erdős problem 106: the $k^2 + 1$ squares conjecture is false](square-packing-conjecture-refuted.md).
 
 ## Sources
 

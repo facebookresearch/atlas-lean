@@ -1,6 +1,6 @@
 # Kourovka 18.18: the theory of almost all finite groups is not c.e.
 
-The following holds. Let $T_{\mathrm{cof}}$ be the set of first-order sentences of the language of groups, coded in prenex conjunctive normal form, that hold in every finite group of sufficiently large order. Then $T_{\mathrm{cof}}$ is not computably enumerable, and its complement in the set of all coded sentences is not computably enumerable either.
+This result proves the proposition stated as [Kourovka 18.18: the theory of almost all finite groups](almost-all-finite-groups-theory-not-ce.md). Let $T_{\mathrm{cof}}$ be the set of first-order sentences of the language of groups, coded in prenex conjunctive normal form, that hold in every finite group of sufficiently large order. Then $T_{\mathrm{cof}}$ is not computably enumerable, and its complement in the set of all coded sentences is not computably enumerable either.
 
 ## Sources
 

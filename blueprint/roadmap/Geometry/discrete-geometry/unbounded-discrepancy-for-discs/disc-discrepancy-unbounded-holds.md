@@ -1,6 +1,6 @@
 # Erdős problem 989: unbounded disc discrepancy
 
-The following holds: for every infinite set $A \subseteq \mathbb{R}^2$ such that every closed disc $\overline{B}(c, r)$ contains only finitely many points of $A$, and for every real $M$, there are a radius $r > 0$ and a center $c \in \mathbb{R}^2$ with
+This result proves the proposition stated as [Statement of Erdős problem 989: unbounded disc discrepancy](disc-discrepancy-unbounded.md). Precisely, for every infinite set $A \subseteq \mathbb{R}^2$ such that every closed disc $\overline{B}(c, r)$ contains only finitely many points of $A$, and for every real $M$, there are a radius $r > 0$ and a center $c \in \mathbb{R}^2$ with
 
 $$\left\lvert\, \#\bigl(A \cap \overline{B}(c, r)\bigr) - \pi r^2 \,\right\rvert > M.$$
 

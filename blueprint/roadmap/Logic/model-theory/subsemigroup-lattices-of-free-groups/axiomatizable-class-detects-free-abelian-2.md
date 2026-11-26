@@ -1,6 +1,6 @@
 # Free abelian groups are recognized by an elementary class of subsemigroup lattices
 
-The following holds: there is a first-order theory $T$ in the language of orders such that for every nonempty semigroup $S$, the lattice of all subsemigroups of $S$ (the empty one included, ordered by inclusion) satisfies $T$ if and only if $S$ is a free abelian group of some rank, $0$ included. A single lattice sentence suffices.
+This result proves the proposition stated as [Kourovka Problem 2.81(b): recognizing free abelian groups by subsemigroup lattices](axiomatizable-class-detects-free-abelian.md). Precisely, there is a first-order theory $T$ in the language of orders such that for every nonempty semigroup $S$, the lattice of all subsemigroups of $S$ (the empty one included, ordered by inclusion) satisfies $T$ if and only if $S$ is a free abelian group of some rank, $0$ included. A single lattice sentence suffices.
 
 ## Sources
 

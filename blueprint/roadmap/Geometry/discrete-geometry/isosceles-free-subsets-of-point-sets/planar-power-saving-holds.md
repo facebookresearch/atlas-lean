@@ -1,6 +1,6 @@
 # Erdős problem 1207: planar isosceles-free power saving
 
-The following holds: there is $c > 0$ such that for all sufficiently large $n$,
+This result proves the proposition stated as [Erdős problem 1207: power saving for planar isosceles-free subsets](planar-power-saving.md). Precisely, there is $c > 0$ such that for all sufficiently large $n$,
 
 $$P_2(n) < n^{1 - c},$$
 

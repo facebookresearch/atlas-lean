@@ -1,6 +1,6 @@
 # Pach's cover-decomposability conjecture is false
 
-The conjecture is false: not every convex set $P \subseteq \mathbb{R}^2$ is cover-decomposable. Equivalently, there is a convex set $P \subseteq \mathbb{R}^2$ such that for every $k \in \mathbb{N}$ some family of translates $P + t_i$ ($i \in I$) covers every point of the plane at least $k$ times, counted by index, but for no $s \subseteq I$ do both $\{P + t_i : i \in s\}$ and $\{P + t_i : i \notin s\}$ cover the plane. The example of Pach and Pálvölgyi, the open unit disc, is the one meant.
+This result refutes the proposition stated as [Pach's cover-decomposability conjecture](convex-cover-decomposable.md). The conjecture is false: not every convex set $P \subseteq \mathbb{R}^2$ is cover-decomposable. Equivalently, there is a convex set $P \subseteq \mathbb{R}^2$ such that for every $k \in \mathbb{N}$ some family of translates $P + t_i$ ($i \in I$) covers every point of the plane at least $k$ times, counted by index, but for no $s \subseteq I$ do both $\{P + t_i : i \in s\}$ and $\{P + t_i : i \notin s\}$ cover the plane. The example of Pach and Pálvölgyi, the open unit disc, is the one meant.
 
 ## Sources
 

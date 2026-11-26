@@ -1,6 +1,6 @@
 # Sphere packing in dimensions 8 and 24: optimal densities hold
 
-The following holds. Let $\Delta(d)$ be the supremum of the densities of all unit sphere packings in $\mathbb{R}^d$ (sets of centres whose open unit balls are pairwise disjoint, with density the limit superior as $R \to \infty$ of the fraction of the open ball $B_R(0)$ covered by the unit balls). Then
+This result proves the proposition stated as [Optimal sphere packing densities in dimensions 8 and 24](sphere-packing-density-eight-twenty-four.md). Let $\Delta(d)$ be the supremum of the densities of all unit sphere packings in $\mathbb{R}^d$ (sets of centres whose open unit balls are pairwise disjoint, with density the limit superior as $R \to \infty$ of the fraction of the open ball $B_R(0)$ covered by the unit balls). Then
 
 $$\Delta(8) = \frac{\pi^4}{384} \quad\text{and}\quad \Delta(24) = \frac{\pi^{12}}{12!},$$
 

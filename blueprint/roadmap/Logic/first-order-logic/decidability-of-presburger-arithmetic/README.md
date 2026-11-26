@@ -1,12 +1,12 @@
 # Decidability of Presburger arithmetic
 
-## Presburger Wanted
+## The language of Presburger arithmetic
 
 - [Function symbols of Presburger arithmetic](presburger-functions.md)
 - [Relation symbols of Presburger arithmetic](presburger-relations.md)
 - [The language of Presburger arithmetic](presburger-language.md)
 
-## Presburger
+## Terms, formulas and axioms
 
 - [The term $S x$ for a bound variable $x$](succ-bvar.md)
 - [Bound variables as Presburger terms](bvar.md)
@@ -26,7 +26,7 @@
 - [The induction axiom of Presburger arithmetic](induction-axiom.md)
 - [The axioms of Presburger arithmetic](presburger-theory.md)
 
-## Presburger Wanted
+## Gödel numbering and decidability
 
 - [Gödel numbers of Presburger function symbols](code-fun.md)
 - [Gödel numbers of finite tuples](code-tuple.md)

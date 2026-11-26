@@ -4,7 +4,7 @@ Question (Wente's shadow problem, in $\mathbb{R}^3$). Let $M$ be a compact, conn
 
 $$S_u = \{p \in M : \langle n(p), u \rangle > 0\}.$$
 
-Statement: if every shadow $S_u$, $u \in S^2$, is connected (in particular nonempty), then $f$ is a convex embedding, that is, $f$ is injective and $f(M)$ is the boundary of a compact convex set with nonempty interior.
+Statement: if every shadow $S_u$, $u \in S^2$, is connected (in particular nonempty), then $f$ is a convex embedding, that is, $f$ is injective and $f(M)$ is the boundary of a compact convex set with nonempty interior. It is false; the refutation is [Wente's shadow problem: connected shadows do not imply convexity](connected-shadows-imply-convex-refuted.md).
 
 ## Sources
 

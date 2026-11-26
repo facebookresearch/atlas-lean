@@ -1,6 +1,6 @@
 # Erdős problem 215: a Steinhaus lattice set exists
 
-The following holds: there is a set $S \subseteq \mathbb{R}^2 = \mathbb{C}$ such that every image of $S$ under a rotation followed by a translation, $w \mapsto u w + t$ with $u, t \in \mathbb{C}$ and $|u| = 1$, contains exactly one point of the lattice $\mathbb{Z}^2 = \{a + b i : a, b \in \mathbb{Z}\}$.
+This result proves the proposition stated as [Erdős problem 215: Steinhaus' lattice point problem](steinhaus-lattice-set-exists.md). Precisely, there is a set $S \subseteq \mathbb{R}^2 = \mathbb{C}$ such that every image of $S$ under a rotation followed by a translation, $w \mapsto u w + t$ with $u, t \in \mathbb{C}$ and $|u| = 1$, contains exactly one point of the lattice $\mathbb{Z}^2 = \{a + b i : a, b \in \mathbb{Z}\}$.
 
 ## Sources
 

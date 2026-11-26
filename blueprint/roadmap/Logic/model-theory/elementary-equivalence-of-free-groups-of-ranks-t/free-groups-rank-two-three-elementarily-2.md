@@ -1,6 +1,6 @@
 # Elementary equivalence of $F_2$ and $F_3$
 
-The following holds: the free groups $F_2$ and $F_3$ of ranks $2$ and $3$ are elementarily equivalent in the first-order language of groups (multiplication, inversion and the identity),
+This result proves the proposition stated as [Kourovka Problem 9.67: Tarski's problem for $F_2$ and $F_3$](free-groups-rank-two-three-elementarily.md). Precisely, the free groups $F_2$ and $F_3$ of ranks $2$ and $3$ are elementarily equivalent in the first-order language of groups (multiplication, inversion and the identity),
 
 $$\mathrm{Th}(F_2) = \mathrm{Th}(F_3).$$
 

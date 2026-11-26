@@ -10,7 +10,7 @@ $$\nabla:\ \Gamma^k_{ij} - \tfrac{1}{2} \sum_l g^{kl} T_{ijl}, \qquad \nabla^*:\
 
 have vanishing curvature $R^l_{\ kij}(x) = 0$. Here $\Gamma^k_{ij}$ are the Christoffel symbols of the Levi-Civita connection of $g$ and $g^{kl}$ are the entries of $g^{-1}$.
 
-That is, every Riemannian metric on an open subset of $\mathbb{R}^n$ admits a dually flat structure $(g, \nabla, \nabla^*)$ built from a symmetric cubic tensor.
+That is, every Riemannian metric on an open subset of $\mathbb{R}^n$ admits a dually flat structure $(g, \nabla, \nabla^*)$ built from a symmetric cubic tensor. It is false; the refutation is [Not every Riemannian metric admits a dually flat structure](every-metric-admits-dually-flat-structur-2.md).
 
 ## Sources
 

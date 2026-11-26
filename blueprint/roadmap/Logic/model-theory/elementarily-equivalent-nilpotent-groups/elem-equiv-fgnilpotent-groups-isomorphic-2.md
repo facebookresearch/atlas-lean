@@ -1,6 +1,6 @@
 # Kourovka 1.26: elementary equivalence does not imply isomorphism
 
-The statement is false: there are finitely generated nilpotent groups $G$ and $H$ that are elementarily equivalent in the first-order language of groups but not isomorphic.
+This result refutes the proposition stated as [Kourovka 1.26: elementarily equivalent f.g. nilpotent groups](elem-equiv-fgnilpotent-groups-isomorphic.md). The statement is false: there are finitely generated nilpotent groups $G$ and $H$ that are elementarily equivalent in the first-order language of groups but not isomorphic.
 
 ## Sources
 

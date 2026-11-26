@@ -1,6 +1,6 @@
 # Kuperberg's inner product variance conjecture is false
 
-The conjecture is false: there exist $n \in \mathbb{N}$ and an origin-symmetric convex body $K \subseteq \mathbb{R}^n$ (compact, convex, with nonempty interior, and $-x \in K$ for all $x \in K$) such that
+This result refutes the proposition stated as [Kuperberg's conjecture: inner product variance is maximal for ellipsoids](inner-product-variance-maximal-for-ellip.md). The conjecture is false: there exist $n \in \mathbb{N}$ and an origin-symmetric convex body $K \subseteq \mathbb{R}^n$ (compact, convex, with nonempty interior, and $-x \in K$ for all $x \in K$) such that
 
 $$\operatorname{Var}(K) > \operatorname{Var}(B^n),$$
 

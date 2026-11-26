@@ -9,7 +9,7 @@ then
 
 $$\lvert S \rvert \ge c\, n^3.$$
 
-Here lines and planes are affine subspaces of dimension $1$ and $2$.
+Here lines and planes are affine subspaces of dimension $1$ and $2$. It holds; the resolution is [Guth–Katz bound for Bourgain's lines problem](bourgain-lines-incidence-cube-bound-hold.md).
 
 ## Sources
 

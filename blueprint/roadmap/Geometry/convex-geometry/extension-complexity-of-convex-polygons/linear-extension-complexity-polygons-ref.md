@@ -1,6 +1,6 @@
 # Convex polygons have sublinear extension complexity
 
-The conjecture is false: for every $\varepsilon > 0$ there is $N$ such that for every $n \ge N$ and all points $v_1, \dots, v_n \in \mathbb{R}^2$ in convex position,
+This result refutes the proposition stated as [Extension complexity of convex $n$-gons: is it $\Omega(n)$?](linear-extension-complexity-polygons.md). The conjecture is false: for every $\varepsilon > 0$ there is $N$ such that for every $n \ge N$ and all points $v_1, \dots, v_n \in \mathbb{R}^2$ in convex position,
 
 $$\operatorname{xc}\bigl(\operatorname{conv}\{v_1, \dots, v_n\}\bigr) < \varepsilon\, n.$$
 

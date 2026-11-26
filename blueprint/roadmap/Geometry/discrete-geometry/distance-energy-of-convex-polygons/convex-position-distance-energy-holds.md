@@ -1,6 +1,6 @@
 # Erdős problem 94: distance energy of convex polygons
 
-The following holds: there is a constant $C$ such that for every finite set $A \subset \mathbb{R}^2$ of $n$ points in convex position (no point of $A$ lies in the convex hull of the others),
+This result proves the proposition stated as [Statement of Erdős problem 94: distance energy of convex polygons](convex-position-distance-energy.md). Precisely, there is a constant $C$ such that for every finite set $A \subset \mathbb{R}^2$ of $n$ points in convex position (no point of $A$ lies in the convex hull of the others),
 
 $$\sum_{u \in D(A)} f_A(u)^2 \le C\, n^3,$$
 

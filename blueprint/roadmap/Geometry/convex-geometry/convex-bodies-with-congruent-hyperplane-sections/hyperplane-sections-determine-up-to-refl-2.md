@@ -1,6 +1,6 @@
 # Congruent hyperplane sections do not determine a body up to $\pm$
 
-The conjecture is false: for every $n \ge 3$ the following fails. Let $K, L \subseteq \mathbb{R}^n$ be convex bodies (compact, convex, with nonempty interior), each containing the origin in its interior. If for every linear hyperplane $H \subseteq \mathbb{R}^n$ (a linear subspace of dimension $n - 1$) there is a linear isometry $\varphi_H$ of $H$ with $\varphi_H(K \cap H) = L \cap H$, then $K = L$ or $K = -L$.
+This result refutes the proposition stated as [Do congruent hyperplane sections determine a body up to $\pm$?](hyperplane-sections-determine-up-to-refl.md). The conjecture is false: for every $n \ge 3$ the following fails. Let $K, L \subseteq \mathbb{R}^n$ be convex bodies (compact, convex, with nonempty interior), each containing the origin in its interior. If for every linear hyperplane $H \subseteq \mathbb{R}^n$ (a linear subspace of dimension $n - 1$) there is a linear isometry $\varphi_H$ of $H$ with $\varphi_H(K \cap H) = L \cap H$, then $K = L$ or $K = -L$.
 
 Equivalently, for every $n \ge 3$ there are convex bodies $K, L \subseteq \mathbb{R}^n$ with the origin in their interiors, $K \ne L$ and $K \ne -L$, such that for every linear hyperplane $H$ some orthogonal transformation of $H$ maps $K \cap H$ onto $L \cap H$. The construction of Zhang is the one meant.
 

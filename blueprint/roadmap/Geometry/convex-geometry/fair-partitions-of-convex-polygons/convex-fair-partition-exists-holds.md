@@ -1,6 +1,6 @@
 # Every convex polygon has convex fair partitions
 
-The following holds: for every integer $n \ge 1$ and every convex polygon $P \subseteq \mathbb{R}^2$ (the convex hull of finitely many points, with nonempty interior) there are closed convex sets $Q_1, \dots, Q_n$ with nonempty interiors and pairwise disjoint interiors, with $Q_1 \cup \cdots \cup Q_n = P$, all of the same area (Lebesgue measure) and all of the same perimeter (one-dimensional Hausdorff measure of the boundary).
+This result proves the proposition stated as [Convex fair partitions of convex polygons](convex-fair-partition-exists.md). Precisely, for every integer $n \ge 1$ and every convex polygon $P \subseteq \mathbb{R}^2$ (the convex hull of finitely many points, with nonempty interior) there are closed convex sets $Q_1, \dots, Q_n$ with nonempty interiors and pairwise disjoint interiors, with $Q_1 \cup \cdots \cup Q_n = P$, all of the same area (Lebesgue measure) and all of the same perimeter (one-dimensional Hausdorff measure of the boundary).
 
 The theorem of Akopyan, Avvakumov and Karasev, for convex bodies in the plane and every number of pieces, is the result meant; the case $n = 1$ is the trivial partition.
 

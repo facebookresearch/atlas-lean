@@ -1,6 +1,6 @@
 # Schur's diameter-simplex bound in every dimension
 
-The following holds: for every $d \ge 1$ and every $n \ge d + 1$:
+This result proves the proposition stated as [Schur's conjecture on simplices in diameter graphs](schur-diameter-simplex-max.md). Precisely, for every $d \ge 1$ and every $n \ge d + 1$:
 
 - every set $S \subseteq \mathbb{R}^d$ of $n$ points with diameter $1$ satisfies $s(S) \le n$, and
 - some set $S \subseteq \mathbb{R}^d$ of $n$ points with diameter $1$ has $s(S) = n$.

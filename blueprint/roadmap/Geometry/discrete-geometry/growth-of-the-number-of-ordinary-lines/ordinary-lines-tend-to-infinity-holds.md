@@ -1,6 +1,6 @@
 # Motzkin: the number of ordinary lines tends to infinity
 
-The following holds: for every $M \in \mathbb{N}$ there is $N \in \mathbb{N}$ such that every finite set $s \subseteq \mathbb{R}^2$ with $|s| \ge N$, not contained in a line, satisfies $o(s) \ge M$.
+This result proves the proposition stated as [Erdős problem 210: the number of ordinary lines tends to infinity](ordinary-lines-tend-to-infinity.md). Precisely, for every $M \in \mathbb{N}$ there is $N \in \mathbb{N}$ such that every finite set $s \subseteq \mathbb{R}^2$ with $|s| \ge N$, not contained in a line, satisfies $o(s) \ge M$.
 
 An ordinary line of a finite set $s \subseteq \mathbb{R}^2$ is a line through two distinct points of $s$ that contains no other point of $s$, and $o(s)$ denotes the number of ordinary lines of $s$.
 
