@@ -48,8 +48,16 @@ Equations (2), (11), (12). -/
 public noncomputable def bFreeIndicator (κ : ℕ → ℕ) : ArithmeticFunction ℤ :=
   ⟨fun n => if n ≠ 0 ∧ ∀ p : ℕ, p.Prime → ¬ p ^ κ p ∣ n then 1 else 0, by simp⟩
 
-private theorem indicator_one {κ : ℕ → ℕ}
-    (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) : bFreeIndicator κ 1 = 1 := by
+open scoped Classical in
+/-- **The integer $1$ is $B_\kappa$-free.** Let $\kappa$ be a function from the natural numbers
+to the natural numbers with $\kappa(p) \ge 1$ for every prime $p$. Then the indicator
+$q_{B_\kappa}$ of $B_\kappa$-free integers satisfies $q_{B_\kappa}(1) = 1$.
+
+Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
+to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
+Equation (12). -/
+public theorem bFreeIndicator_one {κ : ℕ → ℕ} (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) :
+    bFreeIndicator κ 1 = 1 := by
   classical
   have h (p : ℕ) (hp : p.Prime) : ¬ p ^ κ p ∣ 1 := by
     intro hd
@@ -111,7 +119,7 @@ private theorem twistedIndicator_mult {κ : ℕ → ℕ}
     (twistedIndicator κ ξ).IsMultiplicative := by
   classical
   apply IsMultiplicative.iff_ne_zero.mpr
-  refine ⟨by simp [twistedIndicator, indicator_one hκ], ?_⟩
+  refine ⟨by simp [twistedIndicator, bFreeIndicator_one hκ], ?_⟩
   intro m n hm hn hmn
   simp only [twistedIndicator, coe_mk, Nat.coprime_mul_iff_left,
     indicator_mul hκ hm hn hmn]
@@ -157,7 +165,7 @@ private theorem twistedConvolution_prime_pow {κ : ℕ → ℕ}
   by_cases hd : p ∣ ξ
   · have hc : ¬ p.Coprime ξ := (hp.coprime_iff_not_dvd).not.mpr (not_not.mpr hd)
     by_cases hb : b = 0
-    · simp [hb, twistedIndicator, hc, indicator_one hκ, hd]
+    · simp [hb, twistedIndicator, hc, bFreeIndicator_one hκ, hd]
     · have hb' : 0 < b := Nat.pos_of_ne_zero hb
       simp [twistedIndicator, Nat.coprime_pow_left_iff (Nat.succ_pos b),
         Nat.coprime_pow_left_iff hb', hc, hd, hb]
@@ -207,16 +215,9 @@ private theorem kappaPower_prod (κ : ℕ → ℕ) {s : Finset ℕ} (hs : ∀ p 
     simpa only [pow_one, mul_one] using kappaPower_prime_pow κ hpp 1
 
 private theorem prime_prod_dvd {s : Finset ℕ} (hs : ∀ p ∈ s, p.Prime) (ξ : ℕ)
-    (hd : ∀ p ∈ s, p ∣ ξ) : (∏ p ∈ s, p) ∣ ξ := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert p s hp ih =>
-    have hpp := hs p (mem_insert_self p s)
-    have hsp : ∀ q ∈ s, q.Prime := fun q hq => hs q (mem_insert_of_mem hq)
-    rw [prod_insert hp]
-    exact (prime_coprime_prod hsp hpp hp).mul_dvd_of_dvd_of_dvd
-      (hd p (mem_insert_self p s)) (ih hsp fun q hq => hd q (mem_insert_of_mem hq))
+    (hd : ∀ p ∈ s, p ∣ ξ) : (∏ p ∈ s, p) ∣ ξ :=
+  Finset.prod_dvd_of_isRelPrime (s := id) (fun p hp q hq hpq =>
+    Nat.coprime_iff_isRelPrime.mp ((Nat.coprime_primes (hs p hp) (hs q hq)).mpr hpq)) hd
 
 private theorem twistedConvolution_of_dvd {κ : ℕ → ℕ}
     (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) {ℓ ξ : ℕ} (hℓ : ℓ ∣ ξ) :

@@ -40,27 +40,6 @@ public theorem bFreeIndicator_apply (κ : ℕ → ℕ) (n : ℕ) :
   rfl
 
 open scoped Classical in
-/-- **The integer $1$ is $B_\kappa$-free.** Let $\kappa$ be a function from the natural numbers
-to the natural numbers with $\kappa(p) \ge 1$ for every prime $p$. Then the indicator
-$q_{B_\kappa}$ of $B_\kappa$-free integers satisfies $q_{B_\kappa}(1) = 1$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Equation (12). -/
-public theorem bFreeIndicator_one {κ : ℕ → ℕ} (hκ : ∀ p : ℕ, p.Prime → 1 ≤ κ p) :
-    bFreeIndicator κ 1 = 1 := by
-  have h : ∀ p : ℕ, p.Prime → ¬ p ^ κ p ∣ 1 := by
-    intro p hp hdvd
-    have h1 : p ^ κ p = 1 := Nat.dvd_one.mp hdvd
-    have h2 : p ^ 1 ≤ p ^ κ p := Nat.pow_le_pow_right hp.pos (hκ p hp)
-    rw [pow_one] at h2
-    have h3 := hp.two_le
-    omega
-  rw [bFreeIndicator_apply, ite_eq_left_iff]
-  intro hc
-  exact absurd ⟨one_ne_zero, h⟩ hc
-
-open scoped Classical in
 /-- **The prime power $p^{\kappa(p)}$ is not $B_\kappa$-free.** Let $\kappa$ be a function from
 the natural numbers to the natural numbers and let $p$ be a prime. Then the indicator
 $q_{B_\kappa}$ of $B_\kappa$-free integers satisfies $q_{B_\kappa}(p^{\kappa(p)}) = 0$.
