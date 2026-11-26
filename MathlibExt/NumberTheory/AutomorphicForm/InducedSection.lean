@@ -60,7 +60,7 @@ section Borel
 
 variable (A : Type*) [CommRing A]
 
-/-- The upper-triangular (Borel) subgroup of `GL(2, A)`. -/
+/-- **Borel subgroup of `GL(2)`.** The upper-triangular (Borel) subgroup of `GL(2, A)`. -/
 def borelSubgroup : Subgroup (GL (Fin 2) A) where
   carrier := {x | (x : Matrix (Fin 2) (Fin 2) A) 1 0 = 0}
   mul_mem' := by
@@ -86,8 +86,8 @@ def borelSubgroup : Subgroup (GL (Fin 2) A) where
 
 variable {A}
 
-/-- The diagonal entries of a Borel element are units, with inverses the diagonal entries of
-its inverse. -/
+/-- **Diagonal entries of a Borel element.** The diagonal entries of an element of
+`borelSubgroup A` are units, with inverses the diagonal entries of its inverse. -/
 theorem borelSubgroup_diag_mul_inv (b : ↥(borelSubgroup A)) (i : Fin 2) :
     ((b : GL (Fin 2) A) : Matrix (Fin 2) (Fin 2) A) i i *
         (((b⁻¹ : ↥(borelSubgroup A)) : GL (Fin 2) A) : Matrix (Fin 2) (Fin 2) A) i i = 1 ∧
@@ -125,7 +125,8 @@ theorem borelSubgroup_diag_mul (b c : ↥(borelSubgroup A)) (i : Fin 2) :
   rw [Subgroup.coe_mul, Matrix.GeneralLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two]
   fin_cases i <;> simp [hb, hc]
 
-/-- The diagonal character of `borelSubgroup A` given by the upper-left entry. -/
+/-- **First diagonal character of the Borel subgroup.** The character of `borelSubgroup A` given
+by the upper-left entry. -/
 def borelDiagFst : ↥(borelSubgroup A) →* Aˣ where
   toFun b :=
     { val := ((b : GL (Fin 2) A) : Matrix (Fin 2) (Fin 2) A) 0 0
@@ -137,7 +138,8 @@ def borelDiagFst : ↥(borelSubgroup A) →* Aˣ where
     simp
   map_mul' b c := Units.ext (borelSubgroup_diag_mul b c 0)
 
-/-- The diagonal character of `borelSubgroup A` given by the lower-right entry. -/
+/-- **Second diagonal character of the Borel subgroup.** The character of `borelSubgroup A`
+given by the lower-right entry. -/
 def borelDiagSnd : ↥(borelSubgroup A) →* Aˣ where
   toFun b :=
     { val := ((b : GL (Fin 2) A) : Matrix (Fin 2) (Fin 2) A) 1 1
@@ -175,18 +177,19 @@ section InducedSection
 variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
   [IsFractionRing R K]
 
-/-- The adelic Borel subgroup of `GL(2, 𝔸_K)`. -/
+/-- **Adelic Borel subgroup.** The upper-triangular (Borel) subgroup of `GL(2, 𝔸_K)`. -/
 abbrev adelicBorel : Subgroup (AdelicGL2 R K) := borelSubgroup (AdeleRing R K)
 
-/-- A function on `GL(2, 𝔸_K)` is an induced section for the pair of idele characters
-`(χ₁, χ₂)` if it transforms on the left under the Borel subgroup by `χ₁ ⊠ χ₂`. -/
+/-- **Induced section.** A function on `GL(2, 𝔸_K)` is an induced section for the pair of idele
+characters `(χ₁, χ₂)` if it transforms on the left under the Borel subgroup by `χ₁ ⊠ χ₂`. -/
 def IsInducedSection (χ₁ χ₂ : (AdeleRing R K)ˣ →* ℂˣ) (φ : AdelicGL2 R K → ℂ) : Prop :=
   ∀ (b : AdelicGL2 R K) (hb : b ∈ adelicBorel R K) (g : AdelicGL2 R K),
     φ (b * g)
       = ((χ₁ (borelDiagFst (⟨b, hb⟩ : ↥(adelicBorel R K))) : ℂˣ) : ℂ)
         * ((χ₂ (borelDiagSnd (⟨b, hb⟩ : ↥(adelicBorel R K))) : ℂˣ) : ℂ) * φ g
 
-/-- An idele character is unitary if all its values have absolute value one. -/
+/-- **Unitary idele character.** An idele character is unitary if all its values have absolute
+value one. -/
 def IsUnitaryChar (χ : (AdeleRing R K)ˣ →* ℂˣ) : Prop :=
   ∀ x : (AdeleRing R K)ˣ, ‖((χ x : ℂˣ) : ℂ)‖ = 1
 
@@ -200,7 +203,8 @@ theorem isInducedSection_unipotent_mul {χ₁ χ₂ : (AdeleRing R K)ˣ →* ℂ
     borelDiagSnd_unipotentGL2]
   simp
 
-/-- The complex power `x ↦ α(x) ^ s` of a positive real-valued idele character `α`. -/
+/-- **Complex power of a positive idele character.** The character `x ↦ α(x) ^ s` for a
+positive real-valued idele character `α` and `s : ℂ`. -/
 def cpowChar (α : (AdeleRing R K)ˣ →* ℝˣ) (hα : ∀ x, 0 < ((α x : ℝˣ) : ℝ)) (s : ℂ) :
     (AdeleRing R K)ˣ →* ℂˣ where
   toFun x := Units.mk0 ((((α x : ℝˣ) : ℝ) : ℂ) ^ s)
@@ -226,12 +230,14 @@ theorem norm_cpowChar_apply (α : (AdeleRing R K)ˣ →* ℝˣ)
     ‖((cpowChar α hα s x : ℂˣ) : ℂ)‖ = ((α x : ℝˣ) : ℝ) ^ s.re :=
   Complex.norm_cpow_eq_rpow_re_of_pos (hα x) s
 
-/-- The first character `μ · α ^ (s + 1/2)` of the principal series attached to `μ`. -/
+/-- **First character of the principal series.** The character `μ · α ^ (s + 1/2)` of the
+principal series attached to `μ`. -/
 def etaFst (μ : (AdeleRing R K)ˣ →* ℂˣ) (α : (AdeleRing R K)ˣ →* ℝˣ)
     (hα : ∀ x, 0 < ((α x : ℝˣ) : ℝ)) (s : ℂ) : (AdeleRing R K)ˣ →* ℂˣ :=
   μ * cpowChar α hα (s + 1 / 2)
 
-/-- The second character `ν · α ^ (-(s + 1/2))` of the principal series attached to `ν`. -/
+/-- **Second character of the principal series.** The character `ν · α ^ (-(s + 1/2))` of the
+principal series attached to `ν`. -/
 def etaSnd (ν : (AdeleRing R K)ˣ →* ℂˣ) (α : (AdeleRing R K)ˣ →* ℝˣ)
     (hα : ∀ x, 0 < ((α x : ℝˣ) : ℝ)) (s : ℂ) : (AdeleRing R K)ˣ →* ℂˣ :=
   ν * cpowChar α hα (-(s + 1 / 2))
@@ -250,7 +256,7 @@ section Weyl
 
 variable {K : Type*} [Field K]
 
-/-- The Weyl element `!![0, 1; 1, 0]` of `GL(2, K)`. -/
+/-- **Weyl element of `GL(2)`.** The Weyl element `!![0, 1; 1, 0]` of `GL(2, K)`. -/
 def gl2Weyl : GL (Fin 2) K :=
   ⟨!![0, 1; 1, 0], !![0, 1; 1, 0], by
     ext i j
@@ -268,7 +274,7 @@ theorem gl2Weyl_inv : (gl2Weyl : GL (Fin 2) K)⁻¹ = gl2Weyl := Units.ext rfl
 variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
   [IsFractionRing R K]
 
-/-- The Weyl element as a rational point of `GL(2, 𝔸_K)`. -/
+/-- **Adelic Weyl element.** The Weyl element as a rational point of `GL(2, 𝔸_K)`. -/
 def adelicWeyl : AdelicGL2 R K :=
   globalPoints R K gl2Weyl
 
@@ -277,7 +283,7 @@ theorem adelicWeyl_inv : (adelicWeyl R K)⁻¹ = adelicWeyl R K := by
 
 variable [MeasurableSpace (AdeleRing R K)]
 
-/-- The Weyl intertwining integral `∫ f (w⁻¹ n(x) g) dν(x)` of `f` at `g`. -/
+/-- **Weyl intertwining integral.** The integral `∫ f (w⁻¹ n(x) g) dν(x)` of `f` at `g`. -/
 def weylIntertwiningIntegral (ν : Measure (AdeleRing R K))
     (f : AdelicGL2 R K → ℂ) (g : AdelicGL2 R K) : ℂ :=
   ∫ x, f ((adelicWeyl R K)⁻¹ * unipotentGL2 x * g) ∂ν

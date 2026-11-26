@@ -61,13 +61,13 @@ open scoped NNReal ENNReal
 
 namespace AutomorphicForm
 
-section Def
+section BruhatSum
 
 variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
   [IsFractionRing R K]
 
-/-- The Bruhat form of the Eisenstein series of `φ`: the identity coset contributes `φ g` and
-the big-cell cosets `w n(ξ)`, `ξ ∈ K`, contribute `φ (w n(ξ) g)`. -/
+/-- **Bruhat form of the Eisenstein series.** For a function `φ` on `GL(2, 𝔸_K)`, the identity
+coset contributes `φ g` and the big-cell cosets `w n(ξ)`, `ξ ∈ K`, contribute `φ (w n(ξ) g)`. -/
 def bruhatEisenstein (φ : AdelicGL2 R K → ℂ) (g : AdelicGL2 R K) : ℂ :=
   φ g + ∑' ξ : K, φ (adelicWeyl R K * unipotentGL2 (algebraMap K (AdeleRing R K) ξ) * g)
 
@@ -76,9 +76,9 @@ theorem bruhatEisenstein_apply (φ : AdelicGL2 R K → ℂ) (g : AdelicGL2 R K) 
       φ g + ∑' ξ : K, φ (adelicWeyl R K * unipotentGL2 (algebraMap K (AdeleRing R K) ξ) * g) :=
   rfl
 
-end Def
+end BruhatSum
 
-section Proof
+section ConstantTerm
 
 variable (F : Type*) [Field F] [NumberField F]
 
@@ -150,6 +150,6 @@ theorem constantTerm_bruhatEisenstein_eq_section_add_weylIntertwiningIntegral
   exact constantTerm_cond_adelicBox_eq F (adelicAddHaar (𝓞 F) F) φ
     (fun x g => isInducedSection_unipotent_mul hφ x g) (adelicWeyl (𝓞 F) F) g hint
 
-end Proof
+end ConstantTerm
 
 end AutomorphicForm
