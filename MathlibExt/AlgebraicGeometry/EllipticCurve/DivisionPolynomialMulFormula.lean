@@ -32,7 +32,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 
 /-!
@@ -90,7 +89,8 @@ namespace Affine
 variable {F : Type v} [Field F] {W : WeierstrassCurve F}
 
 /-- The `x`-coordinate of an affine point, or `0` for the point at
-infinity. -/
+infinity. Unlike Mathlib's projective `Point.xRep`, it is a single field
+element, as in the source's multiplication-formula predicate. -/
 def Point.xCoordOrZero (P : W.toAffine.Point) : F :=
   match P with
   | .zero => 0
@@ -127,24 +127,24 @@ lemma LowTorsionFree.mono [DecidableEq F] {m n : ℕ} (hmn : m ≤ n) {x y : F}
 
 section EvalLemmas
 
-lemma eval_Ψ₂Sq (x : F) :
-    (W.Ψ₂Sq).eval x = 4 * x ^ 3 + W.b₂ * x ^ 2 + 2 * W.b₄ * x + W.b₆ := by
-  simp [Ψ₂Sq]
-
 lemma eval_Φ_two (x : F) :
     (W.Φ 2).eval x = x ^ 4 - W.b₄ * x ^ 2 - 2 * W.b₆ * x - W.b₈ := by
   simp [Φ_two]
 
+/-- At a point `(x, y)` of `W`, `(y - negY x y) ^ 2 = (Ψ₂Sq).eval x`. This is
+Mathlib's `Affine.den_duplication_eq` stated with `Ψ₂Sq` and `negY`. -/
 lemma sq_sub_negY_eq_eval_Ψ₂Sq {x y : F} (h : W.toAffine.Equation x y) :
     (y - W.toAffine.negY x y) ^ 2 = (W.Ψ₂Sq).eval x := by
-  rw [Affine.equation_iff] at h
-  rw [eval_Ψ₂Sq, Affine.negY, b₂, b₄, b₆]
-  linear_combination 4 * h
+  rw [Ψ₂Sq_eq, eval_toPoly_twoTorsionPolynomial, Affine.den_duplication_eq h, Affine.negY]
+  ring
 
+/-- At a point `(x, y)` of `W` with `y ≠ negY x y`, `(Ψ₂Sq).eval x ≠ 0`. This is
+one direction of Mathlib's `Affine.den_duplication_eq_zero_iff`, stated with
+`Ψ₂Sq`. -/
 lemma Ψ₂Sq_eval_ne_zero {x y : F} (h : W.toAffine.Equation x y)
     (hy : y ≠ W.toAffine.negY x y) : (W.Ψ₂Sq).eval x ≠ 0 := by
-  rw [← sq_sub_negY_eq_eval_Ψ₂Sq h]
-  exact pow_ne_zero 2 (sub_ne_zero.mpr hy)
+  rw [Ψ₂Sq_eq, eval_toPoly_twoTorsionPolynomial]
+  exact (Affine.den_duplication_eq_zero_iff h).not.mpr hy
 
 lemma Ψ₂Sq_eval_eq_zero_iff_two_smul [DecidableEq F] {x y : F}
     (h : W.toAffine.Nonsingular x y) :
@@ -170,15 +170,6 @@ section Slope
 
 variable [DecidableEq F]
 
-lemma addX_mul_sq_of_X_ne {x₁ x₂ : F} (y₁ y₂ : F) (hx : x₁ ≠ x₂) :
-    W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) * (x₁ - x₂) ^ 2 =
-      (y₁ - y₂) ^ 2 + W.a₁ * (y₁ - y₂) * (x₁ - x₂) -
-        (W.a₂ + x₁ + x₂) * (x₁ - x₂) ^ 2 := by
-  have hd : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hx
-  rw [Affine.slope_of_X_ne hx, Affine.addX]
-  field_simp
-  ring
-
 theorem addX_add_addX_negY_mul_sq {x₁ x₂ y₁ y₂ : F}
     (h₁ : W.toAffine.Equation x₁ y₁) (h₂ : W.toAffine.Equation x₂ y₂)
     (hx : x₁ ≠ x₂) :
@@ -188,8 +179,11 @@ theorem addX_add_addX_negY_mul_sq {x₁ x₂ y₁ y₂ : F}
         (x₁ - x₂) ^ 2 =
       2 * (x₁ * x₂) * (x₁ + x₂) + W.b₂ * (x₁ * x₂) + W.b₄ * (x₁ + x₂) +
         W.b₆ := by
-  have e₁ := addX_mul_sq_of_X_ne (W := W) y₁ y₂ hx
-  have e₂ := addX_mul_sq_of_X_ne (W := W) y₁ (W.toAffine.negY x₂ y₂) hx
+  have hd2 : (x₁ - x₂) ^ 2 ≠ 0 := pow_ne_zero 2 (sub_ne_zero.mpr hx)
+  have e₁ := (eq_div_iff hd2).mp
+    (Affine.addX_of_X_ne (W := W.toAffine) (y₁ := y₁) (y₂ := y₂) hx)
+  have e₂ := (eq_div_iff hd2).mp
+    (Affine.addX_of_X_ne (W := W.toAffine) (y₁ := y₁) (y₂ := W.toAffine.negY x₂ y₂) hx)
   rw [Affine.equation_iff] at h₁ h₂
   rw [add_mul, e₁, e₂, Affine.negY, b₂, b₄, b₆]
   linear_combination 2 * h₁ + 2 * h₂
@@ -204,8 +198,10 @@ theorem addX_mul_addX_negY_mul_sq {x₁ x₂ y₁ y₂ : F}
       (x₁ * x₂) ^ 2 - W.b₄ * (x₁ * x₂) - W.b₆ * (x₁ + x₂) - W.b₈ := by
   have hd : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hx
   have hd2 : (x₁ - x₂) ^ 2 ≠ 0 := pow_ne_zero 2 hd
-  have e₁ := addX_mul_sq_of_X_ne (W := W) y₁ y₂ hx
-  have e₂ := addX_mul_sq_of_X_ne (W := W) y₁ (W.toAffine.negY x₂ y₂) hx
+  have e₁ := (eq_div_iff hd2).mp
+    (Affine.addX_of_X_ne (W := W.toAffine) (y₁ := y₁) (y₂ := y₂) hx)
+  have e₂ := (eq_div_iff hd2).mp
+    (Affine.addX_of_X_ne (W := W.toAffine) (y₁ := y₁) (y₂ := W.toAffine.negY x₂ y₂) hx)
   have key : ((y₁ - y₂) ^ 2 + W.a₁ * (y₁ - y₂) * (x₁ - x₂) -
         (W.a₂ + x₁ + x₂) * (x₁ - x₂) ^ 2) *
       ((y₁ - W.toAffine.negY x₂ y₂) ^ 2 +
@@ -249,38 +245,18 @@ theorem addX_mul_addX_negY_mul_sq {x₁ x₂ y₁ y₂ : F}
           ((x₁ * x₂) ^ 2 - W.b₄ * (x₁ * x₂) - W.b₆ * (x₁ + x₂) -
             W.b₈) := by ring
 
-lemma addX_self_mul_sq_of_Y_ne {x₁ y₁ : F}
-    (hy : y₁ ≠ W.toAffine.negY x₁ y₁) :
-    W.toAffine.addX x₁ x₁ (W.toAffine.slope x₁ x₁ y₁ y₁) *
-        (y₁ - W.toAffine.negY x₁ y₁) ^ 2 =
-      (3 * x₁ ^ 2 + 2 * W.a₂ * x₁ + W.a₄ - W.a₁ * y₁) ^ 2 +
-        W.a₁ * (3 * x₁ ^ 2 + 2 * W.a₂ * x₁ + W.a₄ - W.a₁ * y₁) *
-          (y₁ - W.toAffine.negY x₁ y₁) -
-        (W.a₂ + x₁ + x₁) * (y₁ - W.toAffine.negY x₁ y₁) ^ 2 := by
-  have hψ : y₁ - W.toAffine.negY x₁ y₁ ≠ 0 := sub_ne_zero.mpr hy
-  rw [Affine.slope_of_Y_ne rfl hy, Affine.addX]
-  field_simp
-  ring
-
+/-- The doubling formula: at a point `(x₁, y₁)` of `W` with
+`y₁ ≠ negY x₁ y₁`, the `x`-coordinate of `(x₁, y₁) + (x₁, y₁)` times
+`(Ψ₂Sq).eval x₁` is `(Φ 2).eval x₁`. This is Mathlib's
+`Affine.addX_self_of_Y_ne` with the denominator cleared, stated with `Ψ₂Sq`
+and `Φ 2`. -/
 theorem addX_self_mul_Ψ₂Sq {x₁ y₁ : F} (h₁ : W.toAffine.Equation x₁ y₁)
     (hy : y₁ ≠ W.toAffine.negY x₁ y₁) :
     W.toAffine.addX x₁ x₁ (W.toAffine.slope x₁ x₁ y₁ y₁) *
         (W.Ψ₂Sq).eval x₁ =
       (W.Φ 2).eval x₁ := by
-  rw [← sq_sub_negY_eq_eval_Ψ₂Sq h₁, addX_self_mul_sq_of_Y_ne hy,
-    eval_Φ_two]
-  rw [Affine.equation_iff] at h₁
-  rw [Affine.negY, b₄, b₆, b₈]
-  linear_combination (-W.a₁ ^ 2 - 4 * W.a₂ - 8 * x₁) * h₁
-
-theorem addX_self_mul_ΨSq_two {x₁ y₁ : F}
-    (h₁ : W.toAffine.Equation x₁ y₁)
-    (hy : y₁ ≠ W.toAffine.negY x₁ y₁) :
-    W.toAffine.addX x₁ x₁ (W.toAffine.slope x₁ x₁ y₁ y₁) *
-        (W.ΨSq 2).eval x₁ =
-      (W.Φ 2).eval x₁ := by
-  rw [ΨSq_two]
-  exact addX_self_mul_Ψ₂Sq h₁ hy
+  rw [Affine.addX_self_of_Y_ne h₁ hy, eval_Φ_two, Ψ₂Sq_eq, eval_toPoly_twoTorsionPolynomial]
+  exact div_mul_cancel₀ _ ((Affine.den_duplication_eq_zero_iff h₁).not.mpr hy)
 
 end Slope
 

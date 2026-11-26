@@ -83,12 +83,41 @@ example {R : Type u} [CommRing R] (W : WeierstrassCurve R) : W.StarIdentity 2 :=
   simp only [b₂, b₄, b₆, b₈, map_ofNat, C_add, C_sub, C_mul, C_pow]
   ring
 
-/-- An addition-formula instance: the secant-slope identity for two
-points with distinct `x`-coordinates, with all hypotheses supplied. -/
-example {x₁ x₂ y₁ y₂ : F} (hx : x₁ ≠ x₂) :
-    W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) * (x₁ - x₂) ^ 2 =
-      (y₁ - y₂) ^ 2 + W.a₁ * (y₁ - y₂) * (x₁ - x₂) -
-        (W.a₂ + x₁ + x₂) * (x₁ - x₂) ^ 2 :=
-  WeierstrassCurve.Affine.addX_mul_sq_of_X_ne y₁ y₂ hx
+/-- The curve `y ^ 2 = x ^ 3 + 1` over `ℚ`, with the points `P = (2, 3)` and
+`Q = (0, 1)`. Here `x (P + Q) = -1`, `x (P - Q) = 2` and `x (2 • P) = 0`. -/
+private abbrev E : WeierstrassCurve ℚ := { a₁ := 0, a₂ := 0, a₃ := 0, a₄ := 0, a₆ := 1 }
+
+private theorem equation_P : E.toAffine.Equation 2 3 := by
+  rw [WeierstrassCurve.Affine.equation_iff]
+  norm_num
+
+private theorem equation_Q : E.toAffine.Equation 0 1 := by
+  rw [WeierstrassCurve.Affine.equation_iff]
+  norm_num
+
+/-- The sum identity at `P` and `Q`: `(x (P + Q) + x (P - Q)) * (2 - 0) ^ 2`
+is `(-1 + 2) * 4 = 4`. -/
+example :
+    (E.toAffine.addX 2 0 (E.toAffine.slope 2 0 3 1) +
+        E.toAffine.addX 2 0 (E.toAffine.slope 2 0 3 (E.toAffine.negY 0 1))) *
+        (2 - 0) ^ 2 = 4 :=
+  (WeierstrassCurve.Affine.addX_add_addX_negY_mul_sq equation_P equation_Q
+    (by norm_num)).trans (by norm_num [b₂, b₄, b₆])
+
+/-- The product identity at `P` and `Q`: `x (P + Q) * x (P - Q) * (2 - 0) ^ 2`
+is `-1 * 2 * 4 = -8`. -/
+example :
+    E.toAffine.addX 2 0 (E.toAffine.slope 2 0 3 1) *
+        E.toAffine.addX 2 0 (E.toAffine.slope 2 0 3 (E.toAffine.negY 0 1)) *
+        (2 - 0) ^ 2 = -8 :=
+  (WeierstrassCurve.Affine.addX_mul_addX_negY_mul_sq equation_P equation_Q
+    (by norm_num)).trans (by norm_num [b₄, b₆, b₈])
+
+/-- The doubling identity at `P`: `x (2 • P) * (Ψ₂Sq).eval 2 = (Φ 2).eval 2 = 0`. -/
+example :
+    E.toAffine.addX 2 2 (E.toAffine.slope 2 2 3 3) * (E.Ψ₂Sq).eval 2 = 0 :=
+  (WeierstrassCurve.Affine.addX_self_mul_Ψ₂Sq equation_P
+    (by norm_num [WeierstrassCurve.Affine.negY])).trans
+    (by rw [WeierstrassCurve.Affine.eval_Φ_two]; norm_num [b₄, b₆, b₈])
 
 end MathlibExtTest.AlgebraicGeometry.EllipticCurve.DivisionPolynomialMulFormula
