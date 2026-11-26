@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.DivisorCountBound
 public import MathlibExt.NumberTheory.FloorDivisionCounts
 public import MathlibExt.NumberTheory.FloorQuotientDivisorSummatory
 public import MathlibExt.NumberTheory.FloorQuotientOddCount
+public import MathlibExt.NumberTheory.Harmonic.EulerMascheroniBounds
 public import MathlibExt.NumberTheory.RoundQuotientOddCount
 public import MathlibExt.NumberTheory.RoundedQuotientThresholdCounts
 public import MathlibExt.NumberTheory.ShiftedFloorThresholdCounts
@@ -41,36 +42,6 @@ namespace MetaMathlibExt
 
 open Filter Topology
 
-private theorem floor_nat_div_real (n d : ℕ) (hd : 0 < d) :
-    ⌊(n : ℝ) / (d : ℝ)⌋ = (n / d : ℕ) := by
-  have hdpos : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
-  rw [Int.floor_eq_iff]
-  constructor
-  · have h : (n / d * d : ℕ) ≤ n := Nat.div_mul_le_self n d
-    have hcast : (((n / d * d : ℕ)) : ℝ) ≤ (n : ℝ) := by exact_mod_cast h
-    rw [Nat.cast_mul] at hcast
-    have hle : ((n / d : ℕ) : ℝ) ≤ (n : ℝ) / (d : ℝ) := by
-      rw [le_div_iff₀ hdpos]
-      linarith [hcast]
-    exact_mod_cast hle
-  · have hmod : n % d < d := Nat.mod_lt n hd
-    have hdiv : d * (n / d) + n % d = n := Nat.div_add_mod n d
-    have hcomm : (n / d + 1) * d = d * (n / d) + d := by ring
-    have hlt : n < (n / d + 1) * d := by omega
-    have hcast : (n : ℝ) < (((n / d + 1) * d : ℕ) : ℝ) := by exact_mod_cast hlt
-    rw [Nat.cast_mul, Nat.cast_add, Nat.cast_one] at hcast
-    have hlt2 : (n : ℝ) / (d : ℝ) < ((n / d : ℕ) : ℝ) + 1 := by
-      rw [div_lt_iff₀ hdpos]
-      linarith [hcast]
-    exact_mod_cast hlt2
-
-private theorem sum_Icc_one_eq_sum_range (n : ℕ) (f : ℕ → ℝ) :
-    ∑ d ∈ Finset.Icc 1 n, f d = ∑ k ∈ Finset.range n, f (k + 1) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), Finset.sum_range_succ, ih]
-
 private theorem filter_range_eq_self (n : ℕ) :
     (Finset.range (n + 1)).filter (fun k : ℕ => (k : ℝ) ≤ (n : ℝ) - 0) =
       Finset.range (n + 1) := by
@@ -90,9 +61,10 @@ private theorem floorQuotientOddCount_real_eq_sum_range (n : ℕ) :
     have h := congrArg (fun z : ℤ => (z : ℝ)) h2
     simpa only [Int.cast_natCast, Int.cast_sum, Int.cast_mul, Int.cast_pow,
       Int.cast_neg, Int.cast_one] using h
-  rw [hcast, sum_Icc_one_eq_sum_range]
+  rw [hcast, ← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel]
   apply Finset.sum_congr rfl
   intro k _
+  rw [add_comm 1 k]
   congr 1
   have hkk : k + 1 + 1 = k + 2 := by ring
   rw [hkk, pow_add]
@@ -132,8 +104,9 @@ private theorem prop32LHS_eq_sum_range (n : ℕ) :
     ring
   have hsub : ((n : ℝ) - 0) = (n : ℝ) := sub_zero _
   rw [hsub, hbk]
-  have hfl : ⌊(n : ℝ) / (((k + 1 : ℕ)) : ℝ)⌋ = ((n / (k + 1) : ℕ) : ℤ) :=
-    floor_nat_div_real n (k + 1) (Nat.succ_pos k)
+  have hfl : ⌊(n : ℝ) / (((k + 1 : ℕ)) : ℝ)⌋ = ((n / (k + 1) : ℕ) : ℤ) := by
+    rw [Int.floor_div_natCast, Int.floor_natCast]
+    rfl
   rw [hfl]
   norm_cast
 
@@ -185,26 +158,6 @@ private theorem altHarmonic_two_mul (m : ℕ) :
     simp only [div_eq_mul_inv, one_mul] at hinv ⊢
     linarith [hinv]
 
-private theorem harmonic_rate (n : ℕ) (hn : 1 ≤ n) :
-    |(harmonic n : ℝ) - Real.log n - Real.eulerMascheroniConstant| ≤ 1 / n := by
-  have hn0 : n ≠ 0 := by omega
-  have hlow := Real.eulerMascheroniSeq_lt_eulerMascheroniConstant n
-  have hup := Real.eulerMascheroniConstant_lt_eulerMascheroniSeq' n
-  simp only [Real.eulerMascheroniSeq, Real.eulerMascheroniSeq', hn0, ↓reduceIte] at hlow hup
-  have hlog_le : Real.log ((n : ℝ) + 1) - Real.log n ≤ 1 / n := by
-    have h : Real.log (((n : ℝ) + 1) / n) ≤ (((n : ℝ) + 1) / n) - 1 := by
-      apply Real.log_le_sub_one_of_pos
-      positivity
-    rw [Real.log_div (by positivity) (by positivity)] at h
-    have heq : (((n : ℝ) + 1) / n) - 1 = 1 / n := by field_simp; ring
-    linarith
-  have hnonneg : 0 ≤ (harmonic n : ℝ) - Real.log n - Real.eulerMascheroniConstant := by
-    linarith
-  rw [abs_of_nonneg hnonneg]
-  have hdiff : (harmonic n : ℝ) - Real.log n - Real.eulerMascheroniConstant ≤
-      Real.log ((n : ℝ) + 1) - Real.log n := by linarith
-  linarith
-
 private theorem log_two_mul_sub_log (m : ℕ) (hm : 1 ≤ m) :
     Real.log ((2 * m : ℕ) : ℝ) - Real.log (m : ℝ) = Real.log 2 := by
   have h2m : ((2 * m : ℕ) : ℝ) = 2 * (m : ℝ) := by push_cast; ring
@@ -215,8 +168,8 @@ private theorem altHarmonic_even_bound (m : ℕ) (hm : 1 ≤ m) :
     |altHarmonic (2 * m) - Real.log 2| ≤ 3 / (m : ℝ) := by
   rw [altHarmonic_two_mul]
   have h2m1 : 1 ≤ 2 * m := by omega
-  have e1 := harmonic_rate (2 * m) h2m1
-  have e2 := harmonic_rate m hm
+  have e1 := Real.abs_harmonic_sub_log_sub_eulerMascheroniConstant_le h2m1
+  have e2 := Real.abs_harmonic_sub_log_sub_eulerMascheroniConstant_le hm
   have hlog := log_two_mul_sub_log m hm
   have hdecomp : ((harmonic (2 * m) : ℝ) - (harmonic m : ℝ)) - Real.log 2 =
       ((harmonic (2 * m) : ℝ) - Real.log ((2 * m : ℕ) : ℝ) - Real.eulerMascheroniConstant) -
