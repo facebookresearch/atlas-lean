@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
 
-/-! # Tests for reflection-fixed tilings of rectangular grids -/
+/-! # Tests for reflection-fixed tilings of rectangular and square grids -/
 
 namespace MetaMathlibExt
 
@@ -36,6 +36,16 @@ example : fixedTilingCount (cellF 3 2) (Equiv.swap (0 : Fin 4) 1) = 64 := by
 
 -- A swap with no fixed tile cannot fill the center cell, even with tiles for the outer pair.
 example : fixedTilingCount (cellF 3 1) (Equiv.swap (0 : Fin 2) 1) = 0 := by
+  decide
+
+-- On the one-cell square the tile must be fixed by the permutation.
+example {T : Type*} [Fintype T] [DecidableEq T] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) :
+    fixedTilingCount (cellF 1 1) σ = tileFixedCount σ 1 := by
+  simpa using squareGrid_f_odd 1 σ hσ odd_one
+
+-- The three reflected pairs have four choices each; the three center cells have two each.
+example : fixedTilingCount (cellF 3 3) (Equiv.swap (0 : Fin 4) 1) = 512 := by
+  rw [squareGrid_f_odd 3 _ (by simp [sq]) (by decide)]
   decide
 
 end MetaMathlibExt
