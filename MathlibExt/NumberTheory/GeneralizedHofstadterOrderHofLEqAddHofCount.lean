@@ -6,6 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`WordGrowth.v` (hofstadter_g, https://github.com/letouzey/hofstadter_g):
+the definitions `LBound` and `SteinerThm` and the lemmas `steiner_thm_disj`,
+`steiner_thm_corestep`, `steiner_thm` and `LBound_unique`, adapted here as `LBound_aux`,
+`SteinerThm_aux`, `steiner_disj_aux`, `steiner_corestep_aux` with its case lemmas,
+`steiner_all_aux` and `lbound_unique_aux`.
+Public-domain dedication (https://github.com/letouzey/hofstadter_g/blob/main/LICENSE):
+"I, Pierre Letouzey, waive my copyright over this Coq development,
+and place it into the Public Domain".
+Authors: Pierre Letouzey
+-/
+
 module
 
 public import MathlibExt.NumberTheory.GeneralizedHofstadterOrder
@@ -29,51 +43,16 @@ Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), 
 
 namespace MetaMathlibExt
 
-private theorem length_hofTauList_eq (k : ℕ) (w : List ℕ) :
-    (hofTauList k w).length = w.length + w.countP fun a => decide (a = k) := by
-  induction w with
-  | nil => simp [hofTauList]
-  | cons a w ih =>
-    have hcons : hofTauList k (a :: w) = hofTau k a ++ hofTauList k w := by
-      simp [hofTauList, List.flatMap_cons]
-    rw [hcons, List.length_append, ih]
-    by_cases h : a = k <;> simp [hofTau, h] <;> omega
-
-private theorem length_hofPrefix_eq (k n : ℕ) : (hofPrefix k n).length = n := by
-  simp [hofPrefix_eq_map]
-
-private theorem hofL_eq_add_hofCount_aux (k n : ℕ) :
-    hofL k n = n + hofCount k (· = k) n := by
-  have h := length_hofTauList_eq k (hofPrefix k n)
-  simp only [hofL, hofCount, length_hofPrefix_eq] at h ⊢
-  omega
-
-private theorem letter_bounds_aux {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
-    1 ≤ hofWord k n ∧ hofWord k n ≤ k := by
-  have bounds (j : ℕ) : ∀ a ∈ (hofTauList k)^[j] [k], 1 ≤ a ∧ a ≤ k := by
-    induction j with
-    | zero => simpa using And.intro hk (le_refl k)
-    | succ j ih =>
-      intro a ha
-      rw [Function.iterate_succ_apply'] at ha
-      obtain ⟨b, hb, hab⟩ := List.mem_flatMap.mp ha
-      obtain ⟨hb₁, hb₂⟩ := ih b hb
-      by_cases h : b = k
-      · simp [hofTau, h] at hab
-        omega
-      · simp [hofTau, h] at hab
-        omega
-  rw [hofWord_eq_getElem_self]
-  exact bounds _ _ (List.getElem_mem ..)
+open hofCount_one_succ_le
 
 private theorem hofCount_one_eq (n : ℕ) : hofCount 1 (· = 1) n = n := by
   rw [hofCount]
-  refine Eq.trans ?_ (length_hofPrefix_eq 1 n)
+  refine Eq.trans ?_ (prefix_length 1 n)
   apply List.countP_eq_length.mpr
   intro a ha
   rw [hofPrefix_eq_map] at ha
   obtain ⟨i, _, rfl⟩ := List.mem_map.mp ha
-  have hmem := letter_bounds_aux (k := 1) le_rfl i
+  have hmem := letter_bounds (k := 1) le_rfl i
   simp only [decide_eq_true_eq]
   omega
 
@@ -234,174 +213,6 @@ private theorem hofstadterF_lt_aux (k n : ℕ) (hn : 1 < n) :
   have hle := hofstadterF_le_aux k n
   have hfix := hofstadterF_fix_aux k n
   omega
-
-private theorem iterate_append (k j : ℕ) (u v : List ℕ) :
-    (hofTauList k)^[j] (u ++ v) = (hofTauList k)^[j] u ++ (hofTauList k)^[j] v := by
-  induction j with
-  | zero => rfl
-  | succ j ih => simp only [Function.iterate_succ_apply', ih, hofTauList, List.flatMap_append]
-
-private theorem iterate_before_top {k a : ℕ} (j : ℕ) (h : a + j ≤ k) :
-    (hofTauList k)^[j] [a] = [a + j] := by
-  induction j with
-  | zero => rfl
-  | succ j ih =>
-    rw [Function.iterate_succ_apply', ih (by omega)]
-    simp [hofTauList, hofTau, show a + j ≠ k by omega, Nat.add_assoc]
-
-private theorem iterate_top {k : ℕ} (j : ℕ) (hj : j ≤ k) :
-    (hofTauList k)^[j] [k] = k :: List.range' 1 j := by
-  induction j with
-  | zero => rfl
-  | succ j ih =>
-    rw [Function.iterate_succ_apply]
-    rw [show hofTauList k [k] = [k] ++ [1] by simp [hofTauList, hofTau],
-      iterate_append, ih (by omega), iterate_before_top j (by omega), List.range'_concat]
-    simp
-
-private theorem iterate_letter {k a j : ℕ} (ha : a ≤ k) (hj : j ≤ k) (h : k ≤ a + j) :
-    (hofTauList k)^[j] [a] = k :: List.range' 1 (a + j - k) := by
-  have e : a + (k - a) = k := by omega
-  calc
-    _ = (hofTauList k)^[a + j - k] ((hofTauList k)^[k - a] [a]) := by
-      rw [← Function.iterate_add_apply, show a + j - k + (k - a) = j by omega]
-    _ = _ := by rw [iterate_before_top _ e.le, e, iterate_top _ (by omega)]
-
-private theorem block_length {k a j : ℕ} (ha : a ≤ k) (hj : j ≤ k) :
-    ((hofTauList k)^[j] [a]).length = 1 + (a + j - k) := by
-  rcases le_total (a + j) k with h | h
-  · rw [iterate_before_top _ h]
-    simp [Nat.sub_eq_zero_of_le h]
-  · simp [iterate_letter ha hj h, Nat.add_comm]
-
-private theorem letter_bounds {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
-    1 ≤ hofWord k n ∧ hofWord k n ≤ k := by
-  have bounds (j : ℕ) : ∀ a ∈ (hofTauList k)^[j] [k], 1 ≤ a ∧ a ≤ k := by
-    induction j with
-    | zero => simpa using And.intro hk (le_refl k)
-    | succ j ih =>
-      intro a ha
-      rw [Function.iterate_succ_apply'] at ha
-      obtain ⟨b, hb, hab⟩ := List.mem_flatMap.mp ha
-      obtain ⟨hb₁, hb₂⟩ := ih b hb
-      by_cases h : b = k
-      · simp [hofTau, h] at hab
-        omega
-      · simp [hofTau, h] at hab
-        omega
-  rw [hofWord_eq_getElem_self]
-  exact bounds _ _ (List.getElem_mem ..)
-
-private theorem prefix_succ (k n : ℕ) :
-    hofPrefix k (n + 1) = hofPrefix k n ++ [hofWord k n] := by
-  simp [hofPrefix_eq_map, List.range_succ]
-
-private theorem prefix_length (k n : ℕ) : (hofPrefix k n).length = n := by
-  simp [hofPrefix_eq_map]
-
-/-- The length of the image of the first `n` letters under `j` substitutions. -/
-private def imageLength (k j n : ℕ) := ((hofTauList k)^[j] (hofPrefix k n)).length
-
-private theorem image_succ (k j n : ℕ) :
-    imageLength k j (n + 1) = imageLength k j n + ((hofTauList k)^[j] [hofWord k n]).length := by
-  simp only [imageLength, prefix_succ, iterate_append, List.length_append]
-
-private theorem image_zero (k j : ℕ) : imageLength k j 0 = 0 := by
-  have h : (hofTauList k)^[j] [] = [] := Function.iterate_fixed (show hofTauList k [] = [] by rfl) j
-  simpa [imageLength, hofPrefix_eq_map] using congrArg List.length h
-
-private theorem image_one {k j : ℕ} (hj : j ≤ k) : imageLength k j 1 = j + 1 := by
-  have h : hofPrefix k 1 = [k] := by simp [hofPrefix_eq_map, hofWord, hofGrow, hofGrowAux]
-  rw [imageLength, h, iterate_top _ hj, List.length_cons, List.length_range']
-
-private theorem image_strictMono {k j : ℕ} (hk : 1 ≤ k) (hj : j ≤ k) :
-    StrictMono (imageLength k j) := by
-  apply strictMono_nat_of_lt_succ
-  intro n
-  rw [image_succ, block_length (letter_bounds hk n).2 hj]
-  omega
-
-private theorem iterate_prefix {k j n : ℕ} :
-    (hofTauList k)^[j] (hofPrefix k n) = hofPrefix k (imageLength k j n) := by
-  obtain ⟨r, hr, _⟩ := exists_hofGrow_eq k n
-  have h : hofPrefix k n <+: (hofTauList k)^[r] [k] := by
-    rw [hofPrefix, hr]
-    apply List.take_prefix
-  have h' : (hofTauList k)^[j] (hofPrefix k n) <+: (hofTauList k)^[j + r] [k] := by
-    rw [Function.iterate_add_apply]
-    induction j with
-    | zero => exact h
-    | succ j ih => simpa only [Function.iterate_succ_apply'] using hofTauList_isPrefix ih
-  conv_rhs => rw [hofPrefix_eq_map]
-  apply List.ext_getElem
-  · simp [imageLength]
-  · intro i hi hi'
-    simp only [List.getElem_map, List.getElem_range]
-    rw [hofWord_eq_getElem k i (j + r) (lt_of_lt_of_le hi h'.length_le)]
-    exact h'.getElem hi
-
-private theorem image_comp (k j n : ℕ) :
-    imageLength k j (imageLength k 1 n) = imageLength k (j + 1) n := by
-  change ((hofTauList k)^[j] (hofPrefix k (imageLength k 1 n))).length = _
-  rw [← iterate_prefix]
-  rfl
-
-private theorem prefix_image_succ (k j n : ℕ) :
-    hofPrefix k (imageLength k j (n + 1)) =
-      hofPrefix k (imageLength k j n) ++ (hofTauList k)^[j] [hofWord k n] := by
-  rw [← iterate_prefix, prefix_succ, iterate_append, iterate_prefix (n := n)]
-
-private theorem word_at_image {k j n a : ℕ} {t : List ℕ}
-    (h : (hofTauList k)^[j] [hofWord k n] = a :: t) : hofWord k (imageLength k j n) = a := by
-  have he := prefix_image_succ k j n
-  rw [h] at he
-  have hl := congrArg List.length he
-  simp only [prefix_length, List.length_append, List.length_cons] at hl
-  have he' := congrArg (fun w : List ℕ => w[imageLength k j n]?) he
-  simpa [hofPrefix_eq_map, List.getElem?_append_right, show
-    imageLength k j n < imageLength k j (n + 1) by omega] using he'
-
-private theorem count_mono (k : ℕ) (P : ℕ → Prop) [DecidablePred P] :
-    Monotone (hofCount k P) := by
-  apply monotone_nat_of_le_succ
-  intro n
-  simp [hofCount, prefix_succ]
-
-/-- If each image block starts with its only marked letter, the count at a block boundary
-is the number of complete blocks, and it increases at the next position. -/
-private theorem count_boundary {k j : ℕ} (P : ℕ → Prop) [DecidablePred P]
-    (h : ∀ n, ∃ a t, (hofTauList k)^[j] [hofWord k n] = a :: t ∧ P a ∧ ∀ b ∈ t, ¬ P b)
-    (n : ℕ) :
-    hofCount k P (imageLength k j n) = n ∧ hofCount k P (imageLength k j n + 1) = n + 1 := by
-  have count (m : ℕ) : hofCount k P (imageLength k j m) = m := by
-    induction m with
-    | zero => simp [image_zero, hofCount, hofPrefix_eq_map]
-    | succ m ih =>
-      obtain ⟨a, t, ht, ha, hbs⟩ := h m
-      have hc : t.countP (fun b => decide (P b)) = 0 := List.countP_eq_zero.mpr (by simpa using hbs)
-      simpa [hofCount, prefix_image_succ, ht, ha, hc, List.countP_cons] using ih
-  obtain ⟨a, t, ht, ha, _⟩ := h n
-  exact ⟨count n, by simpa [hofCount, prefix_succ, word_at_image ht, ha] using count n⟩
-
-private theorem count_covers {k j : ℕ} (P : ℕ → Prop) [DecidablePred P]
-    (h : ∀ c, hofCount k P (imageLength k j c + 1) = c + 1) (n : ℕ) :
-    n ≤ imageLength k j (hofCount k P n) := by
-  by_contra! hlt
-  have := count_mono k P (Nat.succ_le_of_lt hlt)
-  rw [h] at this
-  omega
-
-private theorem top_boundary {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
-    hofCount k (· = k) (imageLength k (k - 1) n) = n ∧
-      hofCount k (· = k) (imageLength k (k - 1) n + 1) = n + 1 := by
-  apply count_boundary
-  intro m
-  obtain ⟨ha, ha'⟩ := letter_bounds hk m
-  refine ⟨k, _, iterate_letter ha' (by omega) (by omega), rfl, ?_⟩
-  intro b hb
-  have := List.mem_range'_1.mp hb
-  omega
-
 
 private theorem image_add_aux (k a b n : ℕ) :
     imageLength k (a + b) n = imageLength k a (imageLength k b n) := by
@@ -907,11 +718,11 @@ $L_k(n) = n + F_k^{k-1}(n)$.
 
 Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
 Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Proposition 9 (`jis-2026-26.3.3-prop-9`). -/
+Proposition 4.2 (`jis-2026-26.3.3-prop-9`). -/
 public theorem hofL_eq_add_hofCount {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
     hofL k n = n + hofCount k (· = k) n ∧ hofL k n = n + (hofstadterF k)^[k - 1] n := by
-  refine ⟨hofL_eq_add_hofCount_aux k n, ?_⟩
-  rw [hofL_eq_add_hofCount_aux k n, hofCount_eq_iterate k hk n]
+  have h : hofL k n = n + hofCount k (· = k) n := image_eq_add_count k n
+  exact ⟨h, by rw [h, hofCount_eq_iterate k hk n]⟩
 
 end
 
