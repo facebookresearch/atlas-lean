@@ -1,6 +1,7 @@
 # Multi-purpose parallel machine scheduling
 
 - [Instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, WEIGHTED COMPLETION TIME](mpmparallel-two-machines-unit-chains-wei.md)
+- [Weight of a job in TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, WEIGHTED COMPLETION TIME](weight.md)
 - [Well-formed instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, WEIGHTED COMPLETION TIME](well-formed.md)
 - [Feasible instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, WEIGHTED COMPLETION TIME](mpmparallel-two-machines-unit-chains-wei-2.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, WEIGHTED COMPLETION TIME as a decision problem](mpm-parallel-two-machines-unit-chains-we.md)
@@ -34,10 +35,12 @@
 - [TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS AND UNIT TIMES as a decision problem](multipurpose-parallel-two-machines-unit-7.md)
 - [TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS AND UNIT TIMES is NP-complete](multipurpose-parallel-two-machines-unit-8.md)
 - [Instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, TOTAL TARDINESS](multipurpose-parallel-two-machines-unit-9.md)
+- [Due date of a job in TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, TOTAL TARDINESS](due-date.md)
 - [Feasible instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, TOTAL TARDINESS](multipurpose-parallel-two-machines-unit-10.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, TOTAL TARDINESS as a decision problem](multipurpose-parallel-two-machines-unit-11.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, TOTAL TARDINESS is NP-complete](multipurpose-parallel-two-machines-unit-12.md)
 - [Instances of TWO MULTI-PURPOSE PARALLEL MACHINES, WEIGHTED COMPLETION TIME](multipurpose-parallel-two-machines-weigh.md)
+- [Weight of a job in TWO MULTI-PURPOSE PARALLEL MACHINES, WEIGHTED COMPLETION TIME](weight-2.md)
 - [Well-formed instances of TWO MULTI-PURPOSE PARALLEL MACHINES, WEIGHTED COMPLETION TIME](well-formed-10.md)
 - [Feasible instances of TWO MULTI-PURPOSE PARALLEL MACHINES, WEIGHTED COMPLETION TIME](multipurpose-parallel-two-machines-weigh-2.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES, WEIGHTED COMPLETION TIME as a decision problem](multipurpose-parallel-two-machines-weigh-3.md)
