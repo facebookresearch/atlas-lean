@@ -10656,6 +10656,7 @@
   "MathlibExt/Combinatorics/Additive/Sidon": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets"},
   "MathlibExt/Combinatorics/Additive/SidonComplementProgression": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets meeting every infinite progression"},
   "MathlibExt/Combinatorics/Additive/SidonIdealExistsMemVanDerWaerdenLacunaryDFinNotMemSidonIdeal": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon ideal"},
+  "MathlibExt/Combinatorics/Additive/SidonIdealSidonIdealIsFSigma": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon ideal"},
   "MathlibExt/Combinatorics/Additive/SidonSubsetCount": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Number of Sidon sets"},
   "MathlibExt/Combinatorics/Additive/SidonIdeal": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon ideal"},
   "MathlibExt/Combinatorics/Additive/SidonIsolatedSums": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Sidon sets"},
