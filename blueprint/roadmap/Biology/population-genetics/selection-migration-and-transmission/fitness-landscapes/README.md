@@ -6,3 +6,4 @@
 - [Fitness landscapes as mathematical objects](fitness-landscapes-as-explicit-mathematical-obje.md)
 - [Fitness-valley crossing and stochastic tunneling](fitness-valley-crossing-and-stochastic-tunneling.md)
 - [Shifting-balance theory](shifting-balance-theory.md)
+- [Rectangular order perturbations of fitness landscapes](rectangular-order-perturbations-of-fitness-landscapes/README.md)

@@ -14,6 +14,10 @@ $$\operatorname{Var}\Big[1 - \sum_{i=1}^I \breve p_i^{\,2}\Big] \approx 4\rho_2\
 
 The sample-proportion estimator $\tilde H$ and the BLUE-based estimator $\tilde H_{\mathrm{BLUE}}$ are the cases $w_k = m_k/\sum_j m_j$ and $w = K^{-1}\mathbf 1/(\mathbf 1^{\mathsf T}K^{-1}\mathbf 1)$.
 
+## Depends on
+
+- [Unbiased gene diversity estimator from linear allele-frequency estimators](unbiased-gene-diversity-estimator-from-linear-allele-frequency-estimators.md)
+
 ## Expansion
 
 The variance requires $\mathbb{E}[\breve p_i^4]$ and $\mathbb{E}[\breve p_i^2 \breve p_{i'}^2]$, i.e. joint probabilities that four allele draws carry given types. Conditioning on the 15 identity-by-descent states of four alleles (Gillois, Cockerham) writes each such probability as a polynomial in $p_i$, $p_{i'}$ whose coefficients are linear in the pair, trio, quartet and pair-of-pairs kinship coefficients; weighting by $w_j w_k w_{j'} w_{k'}$ and summing turns these into $\rho_2, \rho_3, \rho_4, \rho_{2,2}$. The same structure, with two sets of weights, yields an approximate (delta-method) variance for the $F_{ST}$ estimator $(\breve H_{12} - \tfrac12(\breve H_1 + \breve H_2))/\breve H_{12}$, and the smaller variance of the BLUE-based within-population diversities carries over to $F_{ST}$.

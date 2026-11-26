@@ -10,7 +10,16 @@ $$\mathrm{sFDR} = \mathbb E\!\left[\frac{1}{\max\{|\mathcal S(\mathbf p)|, 1\}} 
 
 together with $\mathrm{gFWER} = \Pr(V > 0)$ and $\mathrm{vFWER} = \Pr(V_v > 0)$.
 
-**Non-equivalence.** These rates differ on the same rejections. In the five-family, eight-trait example of the source (Table 1), ten rejections include two true nulls, so the global false discovery proportion is $2/10$; three families are discovered and one of them contains only true nulls, so the variant-level proportion is $1/3$; the average within-family proportion is $(0 + 1 + 1/6 + 0 + 0)/5 = 0.2\overline{3}$ over all families but $(0 + 1 + 1/6)/3 = 0.3\overline{8}$ over the selected ones. Consequently, Benjamini–Hochberg (BH) applied to the pooled $MP$ P-values controls gFDR but neither vFDR nor sFDR, and BH applied separately in each family controls aFDR but neither gFDR, vFDR nor sFDR.
+**Non-equivalence.** These rates differ on the same rejections. In the five-family, eight-trait example of the source (Table 1), ten rejections include two true nulls, so the global false discovery proportion is $2/10$; three families are discovered and one of them contains only true nulls, so the variant-level proportion is $1/3$; the average within-family proportion is $(0 + 1 + 1/6 + 0 + 0)/5 = 0.2\overline{3}$ over all families but $(0 + 1 + 1/6)/3 = 0.3\overline{8}$ over the selected ones. So a bound on one of these rates does not by itself bound another. For instance, when the $MP$ P-values are independent and the true-null ones are valid, the [Benjamini–Hochberg (BH) procedure](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md) at level $q$ applied to the pooled $MP$ P-values has gFDR at most $q$, and applied separately in each family it has aFDR at most $q$, by [BH FDR control](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/integral-false-discovery-proportion-bh-r.md); neither bound extends to vFDR or sFDR, which in the source's simulations exceed $q$ under both strategies (Figure 1).
+
+## Depends on
+
+- [False discovery proportion](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/false-discovery-proportion.md)
+- [Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+
+## Proof depends on
+
+- [Benjamini–Hochberg FDR control](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/integral-false-discovery-proportion-bh-r.md)
 
 ## Expansion
 

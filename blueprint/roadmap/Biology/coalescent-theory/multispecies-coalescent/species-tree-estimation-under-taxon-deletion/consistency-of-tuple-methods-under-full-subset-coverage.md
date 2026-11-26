@@ -1,6 +1,6 @@
 # Consistency of Type 1 tuple methods under full subset coverage
 
-**Setting.** A species tree $\mathcal{T}=(T,\Theta)$ on a taxon set $X$ (topology $T$, branch lengths $\Theta$ in coalescent units) generates i.i.d. gene trees under the multispecies coalescent (MSC). For gene $i$ and taxon $j$ let $Y_{ij}\in\{0,1\}$ indicate that taxon $j$ is present in the data for gene $i$; the observed gene tree is the true gene tree restricted to the present taxa.
+**Setting.** A species tree $\mathcal{T}=(T,\Theta)$ on a taxon set $X$ (topology $T$, branch lengths $\Theta$ in coalescent units, every internal branch of positive length, each taxon labelling exactly one leaf) generates i.i.d. gene trees under the multispecies coalescent (MSC). For gene $i$ and taxon $j$ let $Y_{ij}\in\{0,1\}$ indicate that taxon $j$ is present in the data for gene $i$; the observed gene tree is the true gene tree restricted to the present taxa.
 - **$M_{\mathrm{iid}}(p)$:** the $Y_{ij}$ are i.i.d. Bernoulli$(p)$, $0<p<1$, independent of the gene trees.
 - **$M_{\mathrm{fsc}}(k)$ (full subset coverage):** deletion is i.i.d. across genes and independent of the gene trees, and every set $B$ of at most $k$ taxa satisfies $\Pr[B\subseteq\text{taxa of a random gene}]=p_B>0$. $M_{\mathrm{iid}}$ is a special case.
 
@@ -8,11 +8,15 @@
 
 **Theorem 4.** Let $A$ be a Type 1 $\ell$-tuple method such that, with no missing data, (i) $F(I_m)\to F_0$ in probability as the number $m$ of genes grows, for a constant vector $F_0$ determined by $\mathcal{T}$, and (ii) there is $\delta>0$ with $\alpha(F_1)=\alpha(F_0)=T$ whenever $\|F_1-F_0\|_\infty<\delta$. If $|X|\ge\ell$, the natural extension of $A$ is statistically consistent under the MSC with $M_{\mathrm{fsc}}(k)$ deletion for every $k\ge\ell$, and hence under every $M_{\mathrm{iid}}(p)$.
 
-**Corollary 5.** ASTRAL, METAL, MP-EST and STEM, run in exact mode, remain statistically consistent under the MSC with $M_{\mathrm{fsc}}$ taxon deletion whenever they are consistent without missing data.
+**Corollary 5.** ASTRAL, METAL, MP-EST and STEM, run in exact mode, remain statistically consistent under the MSC with $M_{\mathrm{fsc}}(k)$ taxon deletion, for every $k$ at least the size $\ell$ of the taxon tuples on which the method computes its statistics, whenever they are consistent without missing data.
 
 ## Depends on
 
-- [Species tree](../multispecies-coalescent/species-tree.md)
+- [Species tree](../species-tree.md)
+- [The multispecies coalescent](../gene-tree-prob.md)
+
+## Proof depends on
+
 - [Topology-dependent taxon deletion destroys identifiability](topology-dependent-taxon-deletion-destroys-identifiability.md)
 
 ## Expansion

@@ -7,10 +7,12 @@ $$\chi(i) := \frac{\lambda_{i-1}}{\delta_i} = i^{s}\,\theta\left(1 + \frac{a}{i}
 Call the model **non-balanced** if $s \ne 0$; **first-order balanced** if $s = 0$, $\theta \ne 1$; **second-order balanced** if $s = 0$, $\theta = 1$, $a \ne 0$; and **high-order balanced** if $s = 0$, $\theta = 1$, $a = 0$. Write $q_i \sim r_i$ when $q_i / r_i$ tends to a constant in $(0, \infty)$.
 
 **Theorem.** As $i \to \infty$ (for $N$ large),
-1. non-balanced: $p_i \sim \Gamma(i)^{s}\,\theta^{i}\, i^{a}$ (hyper-exponential growth or decay);
+1. non-balanced: $p_i \sim \Gamma(i+1)^{s}\,\theta^{i}\, i^{a}$ (hyper-exponential growth or decay);
 2. first-order balanced: $p_i \sim \theta^{i}\, i^{a}$;
 3. second-order balanced: $p_i \sim i^{a}$;
 4. high-order balanced: $p_i \sim 1$.
+
+The source's Theorem 1(i) and its proof write $\Gamma(i)^{s}$, an off-by-one misprint: for $\chi(i) = i$ the product is $f_i = f_1\, i!$, whose ratio to $\Gamma(i)$ is $i \to \infty$.
 
 **Corollary.** The equilibrium frequencies have power-law asymptotics if and only if the BDIM is second-order balanced, i.e. per-family duplication and loss rates agree to first order and differ at order $1/i$. A first-order balanced model with $\theta < 1$ gives a Pascal (negative binomial) tail with parameters $(a+1, \theta)$ if $a > -1$, and the truncated logarithmic law if $a = -1$.
 

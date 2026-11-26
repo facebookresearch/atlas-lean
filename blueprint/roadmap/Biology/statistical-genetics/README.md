@@ -25,5 +25,4 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Stratified LD-score regression](stratified-ld-score-regression/README.md)
 - [Testing LD consistency of association statistics](testing-ld-consistency-of-association-statistics/README.md)
 - [Transmission disequilibrium test](transmission-disequilibrium-test/README.md)
-- [Hierarchical error control for multitrait association](hierarchical-error-control-for-multitrait-association/README.md)
 - [Rare variant discovery probability in population sequencing](rare-variant-discovery-probability-in-population-sequencing/README.md)

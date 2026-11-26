@@ -12,3 +12,4 @@ Probability.
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+- [Hierarchical error control for multitrait association](hierarchical-error-control-for-multitrait-association/README.md)

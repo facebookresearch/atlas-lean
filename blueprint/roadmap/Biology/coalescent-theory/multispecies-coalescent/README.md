@@ -118,3 +118,4 @@
 - [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
 - [One species-tree branch: exit law and merge order of the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
+- [Species tree estimation under taxon deletion](species-tree-estimation-under-taxon-deletion/README.md)

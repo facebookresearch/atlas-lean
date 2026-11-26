@@ -20,15 +20,15 @@ $$\tilde H_{\mathrm{BLUE}} = \frac{1}{1 - \kappa_2}\Big(1 - \sum_{i=1}^I \tilde 
 
 is unbiased.
 
-**Proposition 5 (bias of the uncorrected estimator).** For an integer $n \ge 2$ let $\hat H(\breve p) = \frac{n}{n-1}\big(1 - \sum_i \breve p_i^{\,2}\big)$ (the Nei–Roychoudhury form). Then
+**Proposition 5 (bias of the uncorrected estimator).** For an integer $M \ge 2$ (in practice the number of sampled allele copies, which need not be the number $n$ of individuals) let $\hat H(\breve p) = \frac{M}{M-1}\big(1 - \sum_i \breve p_i^{\,2}\big)$ (the Nei–Roychoudhury form). Then
 
-$$\operatorname{Bias}\big[\hat H(\breve p)\big] = \frac{1 - n\rho_2}{n-1}\,H .$$
+$$\operatorname{Bias}\big[\hat H(\breve p)\big] = \frac{1 - M\rho_2}{M-1}\,H .$$
 
-It vanishes iff $\rho_2 = 1/n$, as for $n$ allele copies from unrelated, non-inbred individuals weighted by copy number; relatives and inbreeding raise $\rho_2$ and make $\hat H$ biased downwards in proportion to $H$.
+When $H > 0$ the bias vanishes iff $\rho_2 = 1/M$. This holds when $M = \sum_k m_k$ is the number of sampled allele copies, the individuals are unrelated and non-inbred, and $w_k = m_k/M$: then $\Phi_{kk} = 1/m_k$ and $\Phi_{jk} = 0$ for $j \ne k$, so $\rho_2 = \sum_k m_k/M^2 = 1/M$. Relatives and inbreeding raise $\rho_2$ and make $\hat H$ biased downwards in proportion to $H$.
 
 ## Expansion
 
-Expanding $\breve p_i^2$ and using the second-moment identity gives $\mathbb{E}[\breve p_i^2] = \rho_2 p_i + (1-\rho_2)p_i^2$, so $\mathbb{E}[1 - \sum_i \breve p_i^2] = (1 - \rho_2)(1 - \sum_i p_i^2) = (1 - \rho_2) H$; dividing by $1 - \rho_2$ gives Proposition 1, and the bias in Proposition 5 is $\frac{n(1-\rho_2)}{n-1}H - H$. The same identity gives $\operatorname{Var}(\breve p_i) = \rho_2\,p_i(1-p_i)$, so among linear unbiased estimators the variance is minimized by minimizing $w^{\mathsf T}Kw$ subject to $\mathbf 1^{\mathsf T}w = 1$, whose Lagrange solution is the BLUE weight vector of Corollary 3; this is why the BLUE-based estimator tends to have the smaller variance. In simulations and on 645 human microsatellite loci (5795 individuals, 267 populations) the BLUE-based estimator has mean squared error at most that of $\tilde H$ and often below that of the biased $\hat H$, with the largest gains for mixed-ploidy relatives such as male–female sibling pairs at X-linked loci.
+Expanding $\breve p_i^2$ and using the second-moment identity gives $\mathbb{E}[\breve p_i^2] = \rho_2 p_i + (1-\rho_2)p_i^2$, so $\mathbb{E}[1 - \sum_i \breve p_i^2] = (1 - \rho_2)(1 - \sum_i p_i^2) = (1 - \rho_2) H$; dividing by $1 - \rho_2$ gives Proposition 1, and the bias in Proposition 5 is $\frac{M(1-\rho_2)}{M-1}H - H$. The same identity gives $\operatorname{Var}(\breve p_i) = \rho_2\,p_i(1-p_i)$, so among linear unbiased estimators the variance is minimized by minimizing $w^{\mathsf T}Kw$ subject to $\mathbf 1^{\mathsf T}w = 1$, whose Lagrange solution is the BLUE weight vector of Corollary 3; this is why the BLUE-based estimator tends to have the smaller variance. In simulations and on 645 human microsatellite loci (5795 individuals, 267 populations) the BLUE-based estimator has mean squared error at most that of $\tilde H$ and often below that of the biased $\hat H$, with the largest gains for mixed-ploidy relatives such as male–female sibling pairs at X-linked loci.
 
 ## Sources
 
