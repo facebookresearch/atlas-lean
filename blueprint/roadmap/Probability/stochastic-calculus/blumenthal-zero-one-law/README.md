@@ -11,4 +11,3 @@
 - [Blumenthal zero-one law](zero-one-natural-germ.md)
 - [Brownian motion oscillates immediately after time zero](ae-exists-pos-and-neg.md)
 - [Half-line mass of a centered Gaussian](../../distributions/continuous/gaussian-real-ioi-zero.md)
-- [Standard-normal upper-tail bound](../../distributions/continuous/gaussian-real-ioi-le-half-exp.md)
