@@ -18,7 +18,8 @@ Naturality of the native coefficient mapping cones identifies the mod-ℓ Bockst
 with reduction of the integral Bockstein on reduced motivic cohomology.
 
 Source: Vladimir Voevodsky, *Reduced power operations in motivic cohomology*,
-arXiv:math/0107109v1, Construction 5.3 and Sections 6/9.
+arXiv:math/0107109v1, §6 and §8 for the integral and mod-ℓ connecting maps; the comparison
+is the naturality of these connecting maps along reduction modulo ℓ.
 -/
 
 set_option autoImplicit false
@@ -35,19 +36,6 @@ open MotivicBocksteinModels PointedMotivicModels ReducedMotivicCohomologyModels
 open NisnevichTransferModels EffectiveMotivicComplexModels MotivicTorusClassModels
 
 open CochainComplex.HomComplex
-
-private theorem coneComparison_natural {C : Type*} [Category* C]
-    [Preadditive C] [HasBinaryBiproducts C]
-    (s t : ShortComplex (CochainComplex C ℤ)) (a : s ⟶ t) :
-    CochainComplex.mappingCone.map s.f t.f a.τ₁ a.τ₂ a.comm₁₂.symm ≫
-        CochainComplex.mappingCone.desc t.f 0 t.g
-          (by simp only [δ_zero, t.zero, Cochain.ofHom_zero]) =
-      CochainComplex.mappingCone.desc s.f 0 s.g
-          (by simp only [δ_zero, s.zero, Cochain.ofHom_zero]) ≫ a.τ₃ := by
-  ext n
-  simp [CochainComplex.mappingCone.ext_from_iff _ (n + 1) n rfl,
-    CochainComplex.mappingCone.map, HomologicalComplex.comp_f]
-  simpa only [HomologicalComplex.comp_f] using congrArg (fun f => f.f n) a.comm₂₃
 
 private theorem coneBoundary_natural {C : Type*} [Category* C] [Abelian C]
     [HasDerivedCategory C]
@@ -69,7 +57,9 @@ private theorem coneBoundary_natural {C : Type*} [Category* C] [Abelian C]
   have hc : e₁.hom ≫ DerivedCategory.Q.map a.τ₃ =
       DerivedCategory.Q.map
           (CochainComplex.mappingCone.map s.f t.f a.τ₁ a.τ₂ a.comm₁₂.symm) ≫ e₂.hom := by
-    rw [h₁, h₂, ← Functor.map_comp, ← Functor.map_comp, coneComparison_natural]
+    rw [h₁, h₂, ← Functor.map_comp, ← Functor.map_comp]
+    exact congrArg DerivedCategory.Q.map
+      (CochainComplex.mappingCone.descShortComplex_naturality a).symm
   have ht := (DerivedCategory.Q.mapTriangle.map
     (CochainComplex.mappingCone.triangleMap s.f t.f a.τ₁ a.τ₂ a.comm₁₂.symm)).comm₃
   dsimp [Functor.mapTriangle, CochainComplex.mappingCone.triangleMap] at ht
