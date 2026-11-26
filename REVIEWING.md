@@ -110,8 +110,9 @@ physics literature (`lemma` otherwise).
 A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 `blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`,
 `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`, or
-`scripts/mathgraph-map.jsonl`. Hold it against the
-[graph rules](docs/BLUEPRINT.md#graph-rules) and the
+`scripts/mathgraph-map.jsonl`, except for a Lean PR's edits for the
+declarations it renames, moves or removes, and a graph-sync batch (below).
+Hold it against the [graph rules](docs/BLUEPRINT.md#graph-rules) and the
 [graph PR requirements](CONTRIBUTING.md#graph-prs). Beyond the required
 `check the graph` job
 ([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)), check what it
@@ -126,6 +127,34 @@ only warns about, what `autoform audit` reports, and what only a reader can:
 | **Prose and citations** | Will the page stay true, and are its sources real? | No prose about the library's state ("the Lean proof", "not formalized"). Each citation is checked against the cited edition, including theorem numbers. |
 | **Cards** | Is each card one idea a reader would look for? | Its main statement is that idea stated exactly, its opening states it faithfully, its `## Idea` helps a learner, and its importance and level are right. A stronger, weaker or special form of the main statement belongs in the card only with a reason in its `## Statements` item. Links to other cards are teaching links under `## Background` ([Cards](docs/BLUEPRINT.md#cards)); a card never carries dependency sections. |
 | **Held pages** | Is the hold still justified? | Don't ask to relink a page whose annotation records a `held` declaration; check that the reason holds and, unless the declaration is private by design, that its issue is linked. |
+
+A Lean pull request leaves pages, placements and docstring digests to the next
+graph-sync batch: don't ask it for them
+([Lean pull requests and graph pull requests](CONTRIBUTING.md#lean-pull-requests-and-graph-pull-requests)).
+Check instead:
+
+- that its only wiki changes are for the declarations it renames, moves or
+  removes: links pointed at their successors, keeping their article ids, or
+  reference links removed, and the `held` markers and `duplicates` entries that
+  name them updated as well, which `check the graph` does not check. Removing a
+  page's own declaration with no successor is a graph change;
+- that each `Place:` line names a field that fits its module, and that a new
+  module in a folder that is no subject has one;
+- for each page `graph sync` lists as its declaration's docstring changed, that
+  the page still says what the declaration states, or that the PR opens a
+  page-problem issue for it.
+
+Review a graph-sync batch by running `python3 scripts/graph_batch.py verify`
+on its exact head, from an up-to-date checkout of `main`, then reading what it
+prints, not the PR's description, which its opener can edit: its placements,
+the notes it leaves for an editor and the pages to check
+([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)). A PR whose
+commits carry `Graph-sync-base:` or `Graph-sync-through:` trailers is a batch,
+whatever its description says: review it as one. Its pages are the sync's,
+made from docstrings reviewed with their Lean: a docstring that misstates its
+declaration is a finding on the Lean, for an issue. Compare each page under
+"Pages to check" with its new docstring, and open a page-problem issue for one
+that no longer matches.
 
 ## Findings and verdict
 

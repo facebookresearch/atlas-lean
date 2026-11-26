@@ -5,6 +5,7 @@ Topics added since this subject's fields were last revised.
 - [Center Star](center-star/README.md)
 - [Chao Lower Bound](chao-lower-bound/README.md)
 - [Berkson Bias](berkson-bias/README.md)
+- [Capture Recapture](capture-recapture/README.md)
 - [Case Only Interaction](case-only-interaction/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
