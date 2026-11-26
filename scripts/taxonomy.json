@@ -12762,6 +12762,7 @@
   "MathlibExt/NumberTheory/Cyclotomic/Embedding": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Embeddings of cyclotomic fields"},
   "MathlibExt/NumberTheory/Cyclotomic/HomogenizedCyclotomic": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Homogenized cyclotomic polynomials"},
   "MathlibExt/NumberTheory/Cyclotomic/HomogenizedCyclotomicPrimeMul": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Large Zsigmondy primes"},
+  "MathlibExt/NumberTheory/Cyclotomic/HomogenizedCyclotomicPrimitiveDivisor": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Large Zsigmondy primes"},
   "MathlibExt/NumberTheory/Cyclotomic/HomogenizedCyclotomicProduct": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Large Zsigmondy primes"},
   "MathlibExt/NumberTheory/Cyclotomic/IntermediateField": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Subfields of cyclotomic fields"},
   "MathlibExt/NumberTheory/Cyclotomic/LehmerCoprimeIndexMinpoly": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Real cyclotomic polynomials and 2cos(2πk/n)"},
