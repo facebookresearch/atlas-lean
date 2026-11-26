@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Topology.UniformSpace.UniformConvergence
+public import MathlibExt.NumberTheory.DiophantineApproximation.DistRoundPowFourierExpansion
 public import MathlibExt.NumberTheory.DiophantineApproximation.SquarePyramidalEquidistribution
 
 /-! # Square roots of cubic polynomials modulo one
@@ -125,33 +126,6 @@ public theorem_wanted squarePyramidalSquareDistance_moment_asymptotic (k : ℕ) 
           x ^ (3 / 2 * (k : ℝ) + 1) /
             ((3 : ℝ) ^ ((k : ℝ) / 2) * (3 / 2 * (k : ℝ) + 1) * ((k : ℝ) + 1))| ≤
         C * x ^ (3 / 2 * (k : ℝ) + 3 / 4)
-
-/-- **Fourier expansion of a power of the distance to the nearest integer.** Let $k$ be a
-positive integer, let $g(u) = |u - \operatorname{round}(u)|^k$ be the $k$-th power of the
-distance from a real $u$ to the nearest integer, let $e(x) = e^{2\pi i x}$, and for every
-integer $m$ let $c(m) = \int_0^1 g(u)\, e(-mu)\, du$. Then $c(0) = 1/(2^k (k + 1))$, the mean of
-$g$ over a period; there is a real constant $C$ with $|c(m)| \le C / m^2$ for every integer
-$m \ne 0$; the series $\sum_{m \in \mathbb{Z}} |c(m)|$ converges; the symmetric partial sums
-$\sum_{|m| \le H} c(m)\, e(mu)$ converge to $g(u)$ uniformly in real $u$ as $H \to \infty$; and
-there is a real constant $C'$ such that for every integer $H \ge 1$ and every real $u$,
-$$\Bigl|g(u) - c(0) - \sum_{0 < |m| \le H} c(m)\, e(mu)\Bigr| \le \frac{C'}{H}.$$
-
-Source: Anji Dong, Katerina Saettone, Kendra Song and Alexandru Zaharescu, *An Equidistribution
-Result for Differences Associated with Square Pyramidal Numbers*, Journal of Integer Sequences 29
-(2026), Article 26.5.5, Lemma 10 (`jis-2026-26.5.5-lem-10`). -/
-public theorem_wanted dist_round_pow_fourier_expansion (k : ℕ) (hk : 1 ≤ k) :
-    let g : ℝ → ℝ := fun u => |u - round u| ^ k
-    let c : ℤ → ℂ := fun m => ∫ u in (0 : ℝ)..1,
-      (g u : ℂ) * Complex.exp (-(2 * Real.pi * Complex.I * (m : ℂ) * (u : ℂ)))
-    c 0 = ((1 / (2 ^ k * ((k : ℝ) + 1)) : ℝ) : ℂ) ∧
-      (∃ C : ℝ, ∀ m : ℤ, m ≠ 0 → ‖c m‖ ≤ C / (m : ℝ) ^ 2) ∧
-      Summable (fun m : ℤ => ‖c m‖) ∧
-      TendstoUniformly (fun (H : ℕ) (u : ℝ) => ∑ m ∈ Finset.Icc (-(H : ℤ)) H,
-          c m * Complex.exp (2 * Real.pi * Complex.I * (m : ℂ) * (u : ℂ)))
-        (fun u => (g u : ℂ)) atTop ∧
-      ∃ C : ℝ, ∀ H : ℕ, 1 ≤ H → ∀ u : ℝ,
-        ‖(g u : ℂ) - c 0 - ∑ m ∈ (Finset.Icc (-(H : ℤ)) H).erase 0,
-            c m * Complex.exp (2 * Real.pi * Complex.I * (m : ℂ) * (u : ℂ))‖ ≤ C / H
 
 /-- **Power sums of the distance from the square root of a square pyramidal number to the nearest
 integer.** Let $P_n$ be the $n$-th square pyramidal number and write
