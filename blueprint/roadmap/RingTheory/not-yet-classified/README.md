@@ -59,4 +59,5 @@ Topics added since this subject's fields were last revised.
 - [Left integrals on a finite free Hopf algebra](exists-left-integral-sum-apply-mul-eq-co.md)
 - [Nested Hopf orders with the same kernel and image agree](eq-of-le-of-comap-hopf-ker-eq-of-map-eq.md)
 - [Trdeg Quotient Bound](exists-not-mem-under-forall-trdeg-quotie.md)
+- [Adjoin Maximality](is-maximal-of-lies-over-adjoin-of-forall.md)
 - [Amitsur exactness in degree zero](exists-algebra-map-eq-of-tmul-one-eq-one.md)
