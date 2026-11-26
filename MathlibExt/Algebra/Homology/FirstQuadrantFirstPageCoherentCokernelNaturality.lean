@@ -157,10 +157,7 @@ theorem horizontalCompleteFiltrationCochainUpperIso_hom_eq_finite
     horizontalCompleteFiltrationCochainMonoUpperIso,
     horizontalCompleteFilteredTotalMonoOverUpperIso,
     horizontalCompleteFilteredTotalComplexFiniteIso]
-  exact HomologicalComplex.extendMap_id_f
-    ((horizontalCompleteFilteredTotalMonoOver K
-      (horizontalFirstPageUpperIndex p)).obj.left)
-    ComplexShape.embeddingDownNat i
+  rfl
 
 /-- The complete-stage projection is the finite-stage projection transported
 through the complete-to-finite comparison. -/
