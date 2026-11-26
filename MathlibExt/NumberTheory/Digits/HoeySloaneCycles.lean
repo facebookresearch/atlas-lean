@@ -13,10 +13,18 @@ public import MathlibExt.NumberTheory.Digits.Permutiple
 import Mathlib.GroupTheory.OrderOfElement
 
 /-!
-# Cycles of Hoey–Sloane word inputs
+# Cycles of Hoey–Sloane word inputs and of permutiple graphs
 
 Every input pair of a Hoey–Sloane word with permuted digits lies on a directed cycle of
-distinct digits using only input pairs of the word.
+distinct digits using only input pairs of the word (`hoeySloaneWord_inputs_union_cycles`).
+
+The graph of an `(n, b, σ)`-permutiple has edge set `permutipleGraphEdges`; every edge is an
+edge of the `(n, b)`-mother graph, and every edge lies on a directed cycle of distinct digits
+whose edges are all in the edge set (`permutipleGraphEdges_union_cycles`). Both cycle
+conclusions come from one private lemma that follows the permutation orbit of an edge's index.
+
+Sources: B. V. Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGERS 25 (2025),
+Article A13, Corollary 1 and Theorem 6.
 -/
 
 namespace MetaMathlibExt
@@ -76,6 +84,26 @@ private theorem cycle_of_return_walk {E : Finset (ℕ × ℕ)} {x y : ℕ} (he :
     · simpa only [coe_finRotate_of_ne_last hi] using hstep i (Fin.val_lt_last hi)
   · simp only [finRotate_last, Fin.val_last, Fin.val_zero, hend, hstart]
 
+/-- Every edge of the graph `permutipleGraphEdges d σ` lies on a directed cycle of distinct
+digits whose edges are all in the graph: following the permutation orbit of the edge's index
+gives a walk from the head of the edge back to its tail. -/
+private theorem cycle_of_mem_permutipleGraphEdges {k : ℕ} (d : Fin (k + 1) → ℕ)
+    (σ : Equiv.Perm (Fin (k + 1))) :
+    ∀ e ∈ permutipleGraphEdges d σ, ∃ (m : ℕ) (v : Fin (m + 1) → ℕ), Function.Injective v ∧
+      (∀ i, (v i, v (finRotate (m + 1) i)) ∈ permutipleGraphEdges d σ) ∧
+        ∃ i, e = (v i, v (finRotate (m + 1) i)) := by
+  intro e he
+  obtain ⟨j, -, rfl⟩ := Finset.mem_image.mp he
+  apply cycle_of_return_walk he
+  -- Follow the permutation orbit of the index of the edge.
+  obtain ⟨p, hp, hpow⟩ := (isOfFinOrder_of_finite σ).exists_pow_eq_one
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hp.ne'
+  refine ⟨m, fun t ↦ d ((σ ^ (t + 1)) j), by simp, by simp [hpow], ?_⟩
+  intro t _
+  have hnext : (σ ^ (t + 1 + 1)) j = σ ((σ ^ (t + 1)) j) := by
+    rw [pow_succ', Equiv.Perm.mul_apply]
+  exact Finset.mem_image.mpr ⟨(σ ^ (t + 1)) j, Finset.mem_univ _, by simp only [hnext]⟩
+
 end hoeySloaneWord_inputs_union_cycles
 
 set_option linter.unusedVariables false in
@@ -103,15 +131,31 @@ public theorem hoeySloaneWord_inputs_union_cycles (n b : ℕ) (hn : 1 ≤ n) (hb
   change ∃ (m : ℕ) (v : Fin (m + 1) → ℕ), Function.Injective v ∧
     (∀ i, (v i, v (finRotate (m + 1) i)) ∈ permutipleGraphEdges d σ) ∧
       ∃ i, e = (v i, v (finRotate (m + 1) i))
+  exact hoeySloaneWord_inputs_union_cycles.cycle_of_mem_permutipleGraphEdges d σ e he
+
+/-- **Permutiple graphs are unions of simple cycles of the mother graph.** Let $n \ge 1$
+and $b \ge 2$ be natural numbers, let $\sigma$ be a permutation of $\{0, \dots, k\}$, and
+let $(d_k, \dots, d_0)_b$ be an $(n, b, \sigma)$-permutiple, where $(e_k, \dots, e_0)_b$
+denotes the base-$b$ numeral $\sum_{j=0}^{k} e_j b^j$. Let
+$E = \{(d_j, d_{\sigma(j)}) : 0 \le j \le k\}$ be the edge set of its graph. Then every
+pair in $E$ is an edge of the $(n, b)$-mother graph, and every $e \in E$ lies on a directed
+cycle with distinct vertices all of whose edges are in $E$: there are $m \ge 0$ and pairwise
+distinct natural numbers $v_0, \dots, v_m$ such that, with indices taken modulo $m + 1$,
+$(v_i, v_{i+1}) \in E$ for every $0 \le i \le m$ and $e = (v_i, v_{i+1})$ for some $i$.
+
+Source: B. V. Holt, *Finding Permutiples of a Known Base and Multiplier*, INTEGERS 25
+(2025), Article A13, Theorem 6 (`integers-2025-A13-thm-6`), with Definition 6
+(permutiple classes and their graphs). -/
+public theorem permutipleGraphEdges_union_cycles (n b : ℕ) (hn : 1 ≤ n) (hb : 2 ≤ b)
+    {k : ℕ} (d : Fin (k + 1) → ℕ) (σ : Equiv.Perm (Fin (k + 1))) (hp : IsPermutiple n b d σ) :
+    (∀ e ∈ permutipleGraphEdges d σ, IsMotherGraphEdge n b e.1 e.2) ∧
+      ∀ e ∈ permutipleGraphEdges d σ, ∃ (m : ℕ) (v : Fin (m + 1) → ℕ), Function.Injective v ∧
+        (∀ i, (v i, v (finRotate (m + 1) i)) ∈ permutipleGraphEdges d σ) ∧
+          ∃ i, e = (v i, v (finRotate (m + 1) i)) := by
+  refine ⟨?_, hoeySloaneWord_inputs_union_cycles.cycle_of_mem_permutipleGraphEdges d σ⟩
+  intro e he
   obtain ⟨j, -, rfl⟩ := Finset.mem_image.mp he
-  apply hoeySloaneWord_inputs_union_cycles.cycle_of_return_walk he
-  -- Follow the permutation orbit of the index of the edge.
-  obtain ⟨p, hp, hpow⟩ := (isOfFinOrder_of_finite σ).exists_pow_eq_one
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hp.ne'
-  refine ⟨m, fun t ↦ d ((σ ^ (t + 1)) j), by simp, by simp [hpow], ?_⟩
-  intro t _
-  have hnext : (σ ^ (t + 1 + 1)) j = σ ((σ ^ (t + 1)) j) := by
-    rw [pow_succ', Equiv.Perm.mul_apply]
-  exact Finset.mem_image.mpr ⟨(σ ^ (t + 1)) j, Finset.mem_univ _, by simp only [hnext]⟩
+  refine ⟨hp.1 j, hp.1 (σ j), ?_⟩
+  simpa using permutiple_basePerm_residue_le n b hn hb d σ 1 σ hp hp j
 
 end MetaMathlibExt
