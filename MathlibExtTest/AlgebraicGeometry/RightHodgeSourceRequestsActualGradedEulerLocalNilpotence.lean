@@ -13,8 +13,8 @@ import MathlibExt.AlgebraicGeometry.RightHodgeSourceRequestsActualGradedEulerLoc
 # Tests for actual graded Euler local nilpotence
 
 Corollaries of graded Euler local nilpotence: the killing exponent gives the zero
-endomorphism on every open below the nilpotence neighborhood, and all higher
-iterates vanish on graded sections there.
+endomorphism on every open below the nilpotence neighborhood, and the next iterate
+(index `r + 1`) also vanishes on graded sections there.
 -/
 
 set_option autoImplicit false
@@ -46,7 +46,7 @@ theorem eulerIterate_eq_zero (k : Type) [CommRing k] [Algebra ℚ k]
     actual_graded_euler_local_nilpotence k M O C N V A a x
   exact ⟨U, hxU, r, hrpos, fun W hWU => funext (hvanish W hWU)⟩
 
-/-- Higher iterates of the graded Euler map vanish on graded sections below `U`. -/
+/-- The graded Euler iterate of index `r + 1` also vanishes on graded sections below `U`. -/
 theorem eulerIterate_succ_eq_zero (k : Type) [CommRing k] [Algebra ℚ k]
     (M : Type) [TopologicalSpace M] (O : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} k)
     [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]

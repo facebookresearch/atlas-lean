@@ -6,13 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-The proof of `epi_toSheaf_map_of_epi` below is adapted from
-`MathlibExt.AlgebraicGeometry.SchemeModulesEpi` (which records its own upstream source).
--/
 module
 
 public import MathlibExt.AlgebraicGeometry.RightVFiltrationModels
+import MathlibExt.AlgebraicGeometry.SchemeModulesEpi
 import Mathlib.Algebra.Category.Grp.Abelian
 import Mathlib.Algebra.Category.Grp.EpiMono
 import Mathlib.Algebra.Category.ModuleCat.Presheaf
@@ -198,83 +195,6 @@ private theorem projection_of_termAbove_eq_zero (k : Type) [CommRing k]
       rw [h0]
       rfl
 
-private theorem epi_toSheaf_map_of_epi (k : Type) [CommRing k] (M : Type)
-    [TopologicalSpace M] (O : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} k)
-    [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
-    [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
-    [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-    {M1 N1 : SheafOfModules.{0} (coefficientSheaf k M O)} (φ : M1 ⟶ N1)
-    [Epi φ] :
-    Epi ((SheafOfModules.toSheaf (coefficientSheaf k M O)).map φ) := by
-  let adj :=
-    PresheafOfModules.sheafificationAdjunction.{0} (𝟙 (coefficientSheaf k M O).obj)
-  let G := SheafOfModules.forget.{0} (coefficientSheaf k M O) ⋙
-    PresheafOfModules.restrictScalars (𝟙 (coefficientSheaf k M O).obj)
-  let S := PresheafOfModules.sheafification.{0} (𝟙 (coefficientSheaf k M O).obj)
-  let ψ := G.map φ
-  have hcounit : IsIso adj.counit :=
-    inferInstanceAs (IsIso (PresheafOfModules.sheafificationAdjunction.{0}
-      (𝟙 (coefficientSheaf k M O).obj)).counit)
-  let εM : S.obj (G.obj M1) ≅ M1 :=
-    @asIso _ _ _ _ (adj.counit.app M1) (NatIso.isIso_app_of_isIso adj.counit M1)
-  let εN : S.obj (G.obj N1) ≅ N1 :=
-    @asIso _ _ _ _ (adj.counit.app N1) (NatIso.isIso_app_of_isIso adj.counit N1)
-  have hnat : S.map ψ ≫ εN.hom = εM.hom ≫ φ := adj.counit.naturality φ
-  have : Epi (S.map ψ) := by
-    have hthis : S.map ψ = (εM.hom ≫ φ) ≫ εN.inv := (Iso.eq_comp_inv εN).2 hnat
-    rw [hthis]
-    infer_instance
-  have h0 : S.map (cokernel.π ψ) = 0 := by
-    apply zero_of_epi_comp (S.map ψ)
-    rw [← S.map_comp, cokernel.condition]
-    exact S.map_zero _ _
-  let T := PresheafOfModules.toPresheaf (coefficientSheaf k M O).obj ⋙
-    presheafToSheaf (Opens.grothendieckTopology M) AddCommGrpCat.{0}
-  have hT : ∀ {P Q : PresheafOfModules.{0} (coefficientSheaf k M O).obj}
-      (f : P ⟶ Q),
-      T.map f = (SheafOfModules.toSheaf (coefficientSheaf k M O)).map (S.map f) :=
-    fun f => rfl
-  have h0' : T.map (cokernel.π ψ) = 0 := by
-    rw [hT, h0]
-    exact Functor.map_zero _ _ _
-  have hc := isColimitOfHasCokernelOfPreservesColimit T ψ
-  have hTψ : Epi (T.map ψ) := by
-    refine Preadditive.epi_of_cancel_zero _ (fun g hg => ?_)
-    obtain ⟨d, hd⟩ := CokernelCofork.IsColimit.desc' hc g hg
-    rw [← hd]
-    change T.map (cokernel.π ψ) ≫ d = 0
-    rw [h0', zero_comp]
-  have h2 : T.map ψ ≫
-        ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εN).hom =
-      ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εM).hom ≫
-        (SheafOfModules.toSheaf (coefficientSheaf k M O)).map φ := by
-    change (SheafOfModules.toSheaf (coefficientSheaf k M O)).map (S.map ψ) ≫
-        (SheafOfModules.toSheaf (coefficientSheaf k M O)).map εN.hom =
-      (SheafOfModules.toSheaf (coefficientSheaf k M O)).map εM.hom ≫
-        (SheafOfModules.toSheaf (coefficientSheaf k M O)).map φ
-    rw [← Functor.map_comp, ← Functor.map_comp, hnat]
-  have hthis : (SheafOfModules.toSheaf (coefficientSheaf k M O)).map φ =
-      ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εM).inv ≫
-        T.map ψ ≫
-        ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εN).hom :=
-    (Iso.eq_inv_comp _).2 h2.symm
-  rw [hthis]
-  have : IsIso
-      ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εM).inv :=
-    ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εM).isIso_inv
-  have : IsIso
-      ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εN).hom :=
-    ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εN).isIso_hom
-  have h1 : Epi (T.map ψ ≫
-      ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εN).hom) :=
-    epi_comp' hTψ (@IsIso.epi_of_iso _ _ _ _
-      ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εN).hom
-      ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εN).isIso_hom)
-  exact epi_comp' (@IsIso.epi_of_iso _ _ _ _
-    ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εM).inv
-    ((SheafOfModules.toSheaf (coefficientSheaf k M O)).mapIso εM).isIso_inv)
-    h1
-
 /-- The Euler nilpotence on original V lifts gives actual local nilpotence on the native grade. -/
 theorem actual_graded_euler_local_nilpotence (k : Type) [CommRing k] [Algebra ℚ k]
     (M : Type) [TopologicalSpace M] (O : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} k)
@@ -297,7 +217,7 @@ theorem actual_graded_euler_local_nilpotence (k : Type) [CommRing k] [Algebra �
   have hepi : Epi (gradedProjection k M O C N V a) := by
     change Epi (cokernel.π _)
     infer_instance
-  have hepiS := epi_toSheaf_map_of_epi k M O
+  have hepiS := SheafOfModules.epi_toSheaf_map_of_epi (R := coefficientSheaf k M O)
     (gradedProjection k M O C N V a)
   have : ConcreteCategory.HasFunctorialSurjectiveInjectiveFactorization
       AddCommGrpCat.{0} :=
