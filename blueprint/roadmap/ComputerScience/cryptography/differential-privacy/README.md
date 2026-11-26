@@ -1,6 +1,6 @@
 # Differential privacy
 
-A randomized algorithm (a *mechanism*) is differentially private when changing one individual's data changes the probability of every output event by at most a factor $e^\varepsilon$, up to an additive slack $\delta$ (Dwork, McSherry, Nissim and Smith 2006; Dwork and Roth 2014, Chapter 2). The definition applies to an arbitrary neighbouring relation on databases, with the histogram relation $\|x - y\|_1 \le 1$ of Dwork and Roth and the row (Hamming) relation as instances. Its basic properties are immunity to post-processing, graceful degradation for groups, and composition; further results are the advanced composition theorem, the Gaussian mechanism, and the link with generalization in adaptive data analysis.
+A randomized algorithm (a *mechanism*) is differentially private when changing one individual's data changes the probability of every output event by at most a factor $e^\varepsilon$, up to an additive slack $\delta$ (Dwork, McSherry, Nissim and Smith 2006; Dwork and Roth 2014, Chapter 2). The definition applies to an arbitrary neighbouring relation on databases, with the histogram relation $\|x - y\|_1 \le 1$ of Dwork and Roth and the row (Hamming) relation as instances. Its basic properties are immunity to post-processing, graceful degradation for groups, and composition; further results are the advanced composition theorem, the Gaussian mechanism, and the link with generalization in adaptive data analysis. Rényi differential privacy (Mironov 2017) bounds instead the Rényi divergence between the output laws on neighbouring databases.
 
 ## Definition
 
@@ -36,14 +36,19 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [The Gaussian mechanism](gaussian-mechanism-differentially-privat.md)
 - [Transfer theorem for adaptive data analysis](differentially-private-transfer.md)
 
+## Rényi differential privacy
+
+- [Rényi differential privacy](renyi-differentially-private.md)
+- [Rényi differential privacy of the Gaussian mechanism](renyi-differential-privacy-of-the-gaussian.md)
+
 ## Related topics
 
 - [Laplace and exponential mechanisms](../laplace-and-exponential-mechanisms/README.md): the basic mechanisms that achieve pure differential privacy, built on this definition.
 - [Total variation distance](../../../Probability/convergence-of-measures/total-variation-distance/README.md): for a symmetric neighbouring relation and probability measures, $(0, \delta)$-differential privacy says exactly that the output laws on neighbouring databases are at total variation distance at most $\delta$ (Dwork and Roth 2014, Section 3.5.1, statistical distance).
 - [Data-processing inequality](../../../InformationTheory/information-inequalities/data-processing-inequality/README.md): the information-theoretic counterpart of post-processing; processing an output cannot make two inputs easier to distinguish.
+- [Rényi divergence](../../../InformationTheory/information-inequalities/r-nyi-divergence/README.md): the divergence that Rényi differential privacy bounds, and its closed form for Gaussians with a common variance.
 - [Generalization bounds and concentration](../../machine-learning/generalization-bounds-and-concentration/README.md): differential privacy of an adaptive analyst gives generalization for adaptively chosen queries (Dwork, Feldman, Hardt, Pitassi, Reingold and Roth 2015), where union bounds over a fixed class do not apply.
 - [Blatant non-privacy and distortion of subset-sum mechanisms](blatant-non-privacy-and-distortion-of-subset.md)
 - [Dinur–Nissim reconstruction attack](dinurnissim-reconstruction-attack.md)
 - [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
-- [Rényi differential privacy of the Gaussian mechanism](renyi-differential-privacy-of-the-gaussian.md)
 - [Fingerprinting codes](fingerprinting-codes.md)

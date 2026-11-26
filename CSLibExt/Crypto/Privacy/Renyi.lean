@@ -1,0 +1,54 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import CSLibExt.Crypto.Privacy.Basic
+public import MathlibExt.InformationTheory.RenyiDivergence
+
+/-!
+# Rényi differential privacy
+
+A mechanism `M : X → Measure Ω` is `(α, ε)`-Rényi differentially private for a neighbouring
+relation `Adj` when `D_α(M x ‖ M y) ≤ ε` for all neighbours `x, y`, where `D_α` is the Rényi
+divergence `renyiDiv · · α` (Mironov, *Rényi differential privacy*, 2017, Definition 4).
+
+`gaussianMechanism_renyiDifferentiallyPrivate`: adding `N(0, v)` noise to a real-valued query
+whose values on neighbours differ by at most `Δ` is `(α, α Δ² / (2 v))`-Rényi differentially
+private for every `α > 1` (Mironov, Corollary 3, the case `Δ = 1`).
+-/
+
+@[expose] public section
+
+open MeasureTheory ProbabilityTheory MathlibExt.InformationTheory.RenyiDivergence
+open scoped NNReal
+
+namespace Cslib.Crypto.Privacy
+
+variable {X Ω : Type*} [MeasurableSpace Ω]
+
+/-- **Rényi differential privacy.** A mechanism `M : X → Measure Ω` is `(α, ε)`-Rényi
+differentially private for the neighbouring relation `Adj` if `D_α(M x ‖ M y) ≤ ε` for all
+`x, y` with `Adj x y`, where `D_α(μ ‖ ν)` is the Rényi divergence `renyiDiv μ ν α` (Mironov,
+*Rényi differential privacy*, 2017, Definition 4, for orders `α > 1`). As `renyiDiv` is `⊤` at
+orders `α ≤ 1`, at those orders the condition holds only when no two inputs are neighbours. -/
+def RenyiDifferentiallyPrivate (Adj : X → X → Prop) (M : X → Measure Ω) (α ε : ℝ) : Prop :=
+  ∀ ⦃x y : X⦄, Adj x y → renyiDiv (M x) (M y) α ≤ ε
+
+/-- **Rényi differential privacy of the Gaussian mechanism.** Let `f : X → ℝ` satisfy
+`|f x - f y| ≤ Δ` whenever `Adj x y`, and let `v ≠ 0` be a variance. The Gaussian mechanism,
+which releases `f x + Z` with `Z ∼ N(0, v)` and so has output law `gaussianReal (f x) v`, is
+`(α, α Δ² / (2 v))`-Rényi differentially private for every `α > 1`. With `Δ = 1` and `v = σ²`
+this is `(α, α / (2 σ²))`-Rényi differential privacy (Mironov, *Rényi differential privacy*,
+2017, Corollary 3). -/
+theorem gaussianMechanism_renyiDifferentiallyPrivate {Adj : X → X → Prop} {f : X → ℝ} {Δ : ℝ}
+    (hf : ∀ ⦃x y⦄, Adj x y → |f x - f y| ≤ Δ) {v : ℝ≥0} (hv : v ≠ 0) {α : ℝ} (hα : 1 < α) :
+    RenyiDifferentiallyPrivate Adj (fun x ↦ gaussianReal (f x) v) α (α * Δ ^ 2 / (2 * v)) :=
+  fun _ _ hxy ↦ renyiDiv_gaussianReal_le _ _ hv hα (hf hxy)
+
+end Cslib.Crypto.Privacy
