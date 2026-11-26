@@ -63,8 +63,8 @@ noncomputable def density (rho0 cfl p0 p : ℝ) : ℝ :=
 `p`: initial inventory minus current inventory. In the physical regime
 `0 < Vp`, `0 < rho0` and `0 < cfl` it is positive on depletion
 (`p < p0`) and negative on injection (`p > p0`); outside that regime no
-sign is claimed (zero pore volume gives zero, and negative parameters
-reverse the sign). -/
+sign is claimed (`Vp = 0`, `rho0 = 0`, `cfl = 0` or `p = p0` gives zero,
+and a negative value of one of `Vp`, `rho0`, `cfl` reverses the sign). -/
 noncomputable def producedMass (Vp rho0 cfl p0 p : ℝ) : ℝ :=
   Vp * (density rho0 cfl p0 p0 - density rho0 cfl p0 p)
 
@@ -91,7 +91,8 @@ lemma produced_mass_eq (Vp rho0 cfl p0 p : ℝ) :
   unfold density
   ring
 
-/-- Depletion produces positive mass. -/
+/-- Depletion (`p < p0`) produces positive mass, for positive `Vp`, `rho0`
+and `cfl`. -/
 lemma produced_mass_pos {Vp rho0 cfl p0 p : ℝ} (hVp : 0 < Vp)
     (hrho : 0 < rho0) (hcfl : 0 < cfl) (hp : p < p0) :
     0 < producedMass Vp rho0 cfl p0 p := by
@@ -104,7 +105,8 @@ lemma produced_mass_pos {Vp rho0 cfl p0 p : ℝ} (hVp : 0 < Vp)
   have hVR : 0 < Vp * rho0 := mul_pos hVp hrho
   exact mul_pos hVR h1
 
-/-- Injection (pressure increase) gives negative produced mass: the sign
+/-- For positive `Vp`, `rho0` and `cfl`, injection (pressure increase,
+`p0 < p`) gives negative produced mass: the sign
 convention distinguishes production from injection. -/
 lemma produced_mass_neg_of_pressure_increase {Vp rho0 cfl p0 p : ℝ}
     (hVp : 0 < Vp) (hrho : 0 < rho0) (hcfl : 0 < cfl) (hp : p0 < p) :
@@ -123,8 +125,8 @@ lemma produced_mass_zero_at_initial (Vp rho0 cfl p0 : ℝ) :
   unfold producedMass
   simp
 
-/-- **Pore-volume identification.** With known `rho0` and `cfl` and a
-nonzero pressure excursion, produced mass determines the pore volume:
+/-- **Pore-volume identification.** With known positive `rho0` and `cfl`
+and a nonzero pressure excursion, produced mass determines the pore volume:
 `Vp = ΔM / (rho0 * (1 - exp (cfl * (p - p0))))`. -/
 lemma porevolume_identified {Vp rho0 cfl p0 p ΔM : ℝ} (hrho : 0 < rho0)
     (hcfl : 0 < cfl) (hp : p ≠ p0)

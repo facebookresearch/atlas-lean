@@ -1,3 +1,6 @@
-# Composition of a stream with positive flow
+# With positive total flow, the composition is the mole fractions
 
-For a stream with nonnegative species flow rates $\dot n_i$ and positive total flow $\sum_j \dot n_j > 0$, the composition is defined and equals the vector of mole fractions $\dot n_i / \sum_j \dot n_j$.
+For a [process stream](stream-flow.md) with species flow rates `ṅ i` and positive
+[total flow](total.md), `0 < ∑ j, ṅ j`, the [composition](composition.md) is defined and is the
+vector of [mole fractions](../amount-of-substance-and-molar-mass/mole-fraction.md) of the flows,
+`x i = ṅ i / ∑ j, ṅ j`.

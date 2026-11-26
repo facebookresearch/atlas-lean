@@ -50,19 +50,19 @@ linear/remainder cross term.
   `a₁ ε₁ + a₂ ε₂` the variance keeps the cross term `2 a₁ a₂ C_V 0 1 / (g 0 g 1)`. Nonnegative
   weights make every strain variance nonnegative; the signed weights `(2, -1)` also sum to one
   and give a negative value, so they are not a probability model.
-* Measure bridge (D). For a probability mass function `q` on the scenarios, Mathlib's covariance
-  of two strain channels under `q.toMeasure` is the propagated finite covariance with the weights
-  `(q ω).toReal`, which are nonnegative and sum to one.
+* Measure bridge (D). For a probability mass function `q` on the scenarios, whose singletons are
+  measurable, Mathlib's covariance of two strain channels under `q.toMeasure` is the propagated
+  finite covariance with the weights `(q ω).toReal`, which are nonnegative and sum to one.
 * Quadratic calibration (E). On a voltage interval `[a, b]` with Taylor base `v₀ ∈ [a, b]`, the
   calibration `f v = c0 + c1 v + c2 v ^ 2` is exactly its first-order part
   `f v₀ + f' v₀ (v - v₀)`, with the actual derivative `f' v₀ = c1 + 2 c2 v₀`, plus the remainder
   `c2 (v - v₀) ^ 2`. With output dimension `d` the coefficients have dimensions `d`,
   `d / voltageDim` and `d / voltageDim ^ 2`. The output variance is the variance of the
   first-order part plus the variance of the remainder plus twice their covariance; with total
-  mass one these are `f' v₀ ^ 2 Var V`, `c2 ^ 2 Var (V - v₀) ^ 2` and
+  mass one these are `f' v₀ ^ 2 Var V`, `c2 ^ 2 Var ((V - v₀) ^ 2)` and
   `f' v₀ c2 Cov(V, (V - v₀) ^ 2)`. The existing Hessian theorem gives only the pointwise bound
-  `|c2| (v - v₀) ^ 2` on the box, from which no moment conclusion follows, and the raw quadratic
-  is not globally Lipschitz.
+  `|c2| (v - v₀) ^ 2` on the box, not a statement about moments, and for `c2 ≠ 0` the raw
+  quadratic is not globally Lipschitz.
 
 Model inputs (hypotheses):
 
@@ -105,7 +105,7 @@ empirical adequacy or system safety claim.
 - `quadCalibrationVec_hessian_le`, `quadCalibrationVec_jacobianRemainder`,
   `quadCalibrationVec_remainder_le` : the Hessian bound, the exact remainder in the Jacobian
   carrier and the pointwise bound of the Hessian theorem.
-- `quadCalibration_not_lipschitzWith` : the raw quadratic is not globally Lipschitz.
+- `quadCalibration_not_lipschitzWith` : for `c2 ≠ 0` the raw quadratic is not globally Lipschitz.
 - `variance_quadCalibration_expansion`, `variance_quadLinearPart`,
   `covariance_quadLinearPart_quadRemainder`, `variance_quadCalibration_of_scenarioLaw` : the
   output variance with the remainder variance and the cross term.
@@ -151,7 +151,9 @@ def voltageDim : Dimension ISQDimensionBase := toISQHom Units.ElectricalDimensio
 
 /-- The strain `ε = (V - b) / g` bound by the affine calibration `V = g ε + b`, on real
 coordinates, for a nonzero gain `g`. The proof of `g ≠ 0` is part of the definition, so a
-zero-gain calibration cannot be formed. -/
+zero-gain calibration cannot be formed. Physically `V`, `b` and `g` are voltages (`g` in volts
+per unit strain) and `ε` is dimensionless; only `g ≠ 0` is used, so the sign of `g` is
+unrestricted. -/
 noncomputable def gaugeStrain (g b V : ℝ) (_hg : g ≠ 0) : ℝ := (V - b) / g
 
 /-- The strain of `WithDim` voltage inputs: the quotient `(V - b) / g`, restored to
@@ -219,8 +221,10 @@ lemma gaugeStrain_gaugeVoltage {g : ℝ} (hg : g ≠ 0) (b ε : ℝ) :
   field_simp
   ring
 
-/-- **Identifiability of the gains.** The forward calibration `ε ↦ diag(g) ε` of `n` gauges is
-identifiable exactly when every gain is nonzero. -/
+/-- **Identifiability of the strains.** The forward calibration `ε ↦ diag(g) ε` of `n` gauges,
+without offset, is identifiable, that is injective (`diag(g) ε = diag(g) ε'` forces `ε = ε'`),
+exactly when every gain is nonzero. This is linear-algebraic identifiability of the strain vector
+for given gains, not statistical identifiability. -/
 lemma identifiable_diagonal_iff {n : ℕ} (g : Fin n → ℝ) :
     Identifiable (diagonal g) ↔ ∀ i, g i ≠ 0 := by
   rw [identifiable_iff_trivial_ker]
@@ -243,7 +247,8 @@ lemma identifiable_diagonal_iff {n : ℕ} (g : Fin n → ℝ) :
 /-! ## C. Finite-scenario mean and covariance -/
 
 /-- **Mean strain**: for weights of total mass one, the mean strain vector is the calibrated
-mean voltage vector. -/
+mean voltage vector. The weights may be signed; for nonnegative weights this is the mean under
+the scenario distribution. -/
 lemma meanVec_gaugeStrainVec {Ω : Type*} [Fintype Ω] {n : ℕ} {p : Ω → ℝ}
     (hp1 : ∑ ω, p ω = 1) (g b : Fin n → ℝ) (hg : ∀ i, g i ≠ 0) (V : Ω → Fin n → ℝ) :
     meanVec p (fun ω => gaugeStrainVec g b (V ω) hg) = gaugeStrainVec g b (meanVec p V) hg := by
@@ -253,7 +258,9 @@ lemma meanVec_gaugeStrainVec {Ω : Type*} [Fintype Ω] {n : ℕ} {p : Ω → ℝ
   rw [h, meanVec_affine p V _ _ hp1, gaugeStrainVec_eq_affine]
 
 /-- **Strain covariance**: for weights of total mass one, the strain covariance matrix is
-`diag(g)⁻¹ C_V diag(g)⁻¹ᵀ`, an instance of the exact affine covariance law. -/
+`diag(g)⁻¹ C_V diag(g)⁻¹ᵀ`, an instance of the exact affine covariance law; `diag(g)⁻¹` is the
+diagonal matrix of the reciprocals `1 / g i`. The weights may be signed; for nonnegative weights
+these are covariance matrices under the scenario distribution. -/
 lemma covMatrix_gaugeStrainVec {Ω : Type*} [Fintype Ω] {n : ℕ} {p : Ω → ℝ}
     (hp1 : ∑ ω, p ω = 1) (g b : Fin n → ℝ) (hg : ∀ i, g i ≠ 0) (V : Ω → Fin n → ℝ) :
     covMatrix p (fun ω => gaugeStrainVec g b (V ω) hg) =
@@ -263,8 +270,9 @@ lemma covMatrix_gaugeStrainVec {Ω : Type*} [Fintype Ω] {n : ℕ} {p : Ω → �
     funext fun ω => gaugeStrainVec_eq_affine g b (V ω) hg
   rw [h, covMatrix_affine p V _ _ hp1]
 
-/-- **Cross-channel covariance is kept**: entrywise,
-`Cov(ε i, ε j) = Cov(V i, V j) / (g i g j)`, including `i ≠ j`. -/
+/-- **Cross-channel covariance is kept**: for weights of total mass one, entrywise
+`Cov(ε i, ε j) = Cov(V i, V j) / (g i g j)`, including `i ≠ j`. The weights may be signed; for
+nonnegative weights these are covariances under the scenario distribution. -/
 lemma covMatrix_gaugeStrainVec_apply {Ω : Type*} [Fintype Ω] {n : ℕ} {p : Ω → ℝ}
     (hp1 : ∑ ω, p ω = 1) (g b : Fin n → ℝ) (hg : ∀ i, g i ≠ 0) (V : Ω → Fin n → ℝ) (i j : Fin n) :
     covMatrix p (fun ω => gaugeStrainVec g b (V ω) hg) i j = covMatrix p V i j / (g i * g j) := by
@@ -273,8 +281,11 @@ lemma covMatrix_gaugeStrainVec_apply {Ω : Type*} [Fintype Ω] {n : ℕ} {p : Ω
   rw [div_eq_mul_inv, mul_inv]
   ring
 
-/-- **Two correlated gauges**: the variance of the combination `a₁ ε₁ + a₂ ε₂` of two calibrated
-strains keeps the cross term `2 a₁ a₂ Cov(V₁, V₂) / (g₁ g₂)`. -/
+/-- **Two correlated gauges**: for weights of total mass one, the variance of the combination
+`a₁ ε₁ + a₂ ε₂` of two calibrated strains is
+`a₁ ^ 2 Var V₁ / g₁ ^ 2 + a₂ ^ 2 Var V₂ / g₂ ^ 2 + 2 a₁ a₂ Cov(V₁, V₂) / (g₁ g₂)`: it keeps the
+cross term. The weights may be signed; for nonnegative weights these are moments under the
+scenario distribution. -/
 lemma covMatrix_two_gauges {Ω : Type*} [Fintype Ω] {p : Ω → ℝ} (hp1 : ∑ ω, p ω = 1)
     (g b : Fin 2 → ℝ) (hg : ∀ i, g i ≠ 0) (V : Ω → Fin 2 → ℝ) (a₁ a₂ : ℝ) :
     covMatrix p (fun ω => Matrix.of ![![a₁, a₂]] *ᵥ gaugeStrainVec g b (V ω) hg) 0 0 =
@@ -285,8 +296,8 @@ lemma covMatrix_two_gauges {Ω : Type*} [Fintype Ω] {p : Ω → ℝ} (hp1 : ∑
     covMatrix_gaugeStrainVec_apply hp1 g b hg]
   ring
 
-/-- **Physical weights give nonnegative strain variances**: with nonnegative weights, each
-diagonal entry of the strain covariance matrix is nonnegative. -/
+/-- **Nonnegative weights give nonnegative strain variances**: with nonnegative weights, of any
+total mass, each diagonal entry of the strain covariance matrix is nonnegative. -/
 lemma covMatrix_gaugeStrainVec_self_nonneg {Ω : Type*} [Fintype Ω] {n : ℕ} {p : Ω → ℝ}
     (hp0 : ∀ ω, 0 ≤ p ω) (g b : Fin n → ℝ) (hg : ∀ i, g i ≠ 0) (V : Ω → Fin n → ℝ) (i : Fin n) :
     0 ≤ covMatrix p (fun ω => gaugeStrainVec g b (V ω) hg) i i := by
@@ -301,9 +312,9 @@ lemma toReal_weights_isDistribution {Ω : Type*} [Fintype Ω] (q : PMF Ω) :
     (∀ ω, 0 ≤ (q ω).toReal) ∧ ∑ ω, (q ω).toReal = 1 := by
   exact ⟨fun ω => ENNReal.toReal_nonneg, sum_toReal_eq_one q⟩
 
-/-- **Measure bridge**: for a probability mass function `q` on a finite scenario space, Mathlib's
-covariance of two strain channels under `q.toMeasure` is the propagated finite covariance with the
-nonnegative weights `(q ω).toReal`. -/
+/-- **Measure bridge**: for a probability mass function `q` on a finite scenario space whose
+singletons are measurable, Mathlib's covariance of two strain channels under `q.toMeasure` is the
+propagated finite covariance with the nonnegative weights `(q ω).toReal`. -/
 lemma covariance_gaugeStrain_toMeasure {Ω : Type*} [Fintype Ω] [MeasurableSpace Ω]
     [MeasurableSingletonClass Ω] {n : ℕ} (q : PMF Ω) (g b : Fin n → ℝ) (hg : ∀ i, g i ≠ 0)
     (V : Ω → Fin n → ℝ) (i j : Fin n) :
@@ -391,7 +402,8 @@ noncomputable def quadCalibrationVec (c0 c1 c2 : ℝ) : (Fin 1 → ℝ) → (Fin
   fun y _ => quadCalibration c0 c1 c2 (y 0)
 
 /-- Explicit Hessian bound: everywhere, the second Fréchet derivative of the calibration has
-operator norm at most `2 |c2|` for the sup norm on `Fin 1 → ℝ`. -/
+operator norm at most `2 |c2|` for the sup norm on `Fin 1 → ℝ`. The map is a polynomial, so both
+Fréchet derivatives exist everywhere. -/
 lemma quadCalibrationVec_hessian_le (c0 c1 c2 : ℝ) (y : Fin 1 → ℝ) :
     ‖fderiv ℝ (fderiv ℝ (fun y => quadCalibrationVec c0 c1 c2 y 0)) y‖ ≤ 2 * |c2| := by
   set π := ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 1 => ℝ) 0 with hπdef
@@ -421,7 +433,8 @@ lemma quadCalibrationVec_hessian_le (c0 c1 c2 : ℝ) (y : Fin 1 → ℝ) :
     _ = 2 * |c2| := by ring
 
 /-- In the Jacobian carrier the first-order remainder of the calibration at `x` is exactly the
-quadratic remainder at the base `x 0`. -/
+quadratic remainder at the base `x 0`, that is `c2 (δ 0) ^ 2`. The map is differentiable
+everywhere, so `fderiv` here is its actual derivative. -/
 lemma quadCalibrationVec_jacobianRemainder (c0 c1 c2 : ℝ) (x δ : Fin 1 → ℝ) :
     jacobianRemainder (quadCalibrationVec c0 c1 c2) x δ 0 =
       quadRemainder c2 (x 0) (x 0 + δ 0) := by
@@ -504,7 +517,9 @@ def ScenarioLawIn {Ω : Type*} [Fintype Ω] (a b : ℝ) (p V : Ω → ℝ) : Pro
   (∀ ω, 0 ≤ p ω) ∧ ∑ ω, p ω = 1 ∧ ∀ ω, V ω ∈ Set.Icc a b
 
 /-- The output variance with the cross term kept: for every weight it is the variance of the
-first-order part plus the variance of the remainder plus twice their covariance. -/
+first-order part plus the variance of the remainder plus twice their covariance. The identity is
+algebraic, for signed weights of any total too; for nonnegative weights of total mass one these
+are moments under the scenario distribution. -/
 lemma variance_quadCalibration_expansion {Ω : Type*} [Fintype Ω] (p V : Ω → ℝ)
     (c0 c1 c2 v₀ : ℝ) :
     variance p (fun ω => quadCalibration c0 c1 c2 (V ω)) =
@@ -523,7 +538,8 @@ lemma variance_quadCalibration_expansion {Ω : Type*} [Fintype Ω] (p V : Ω →
   ring
 
 /-- The first-order part is affine in the voltage, so by the exact affine covariance law its
-variance is `f' v₀ ^ 2 Var V` for weights of total mass one. -/
+variance is `f' v₀ ^ 2 Var V` for weights of total mass one. The weights may be signed; for
+nonnegative weights this is the variance under the scenario distribution. -/
 lemma variance_quadLinearPart {Ω : Type*} [Fintype Ω] {p : Ω → ℝ} (hp1 : ∑ ω, p ω = 1)
     (V : Ω → ℝ) (c0 c1 c2 v₀ : ℝ) :
     variance p (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω)) =
@@ -537,7 +553,9 @@ lemma variance_quadLinearPart {Ω : Type*} [Fintype Ω] {p : Ω → ℝ} (hp1 : 
   rw [h, variance_affine hp1]
 
 /-- The cross covariance of the first-order part and the remainder is
-`f' v₀ c2 Cov(V, (V - v₀) ^ 2)` for weights of total mass one; it is not zero in general. -/
+`f' v₀ c2 Cov(V, (V - v₀) ^ 2)` for weights of total mass one; it is not zero in general. The
+weights may be signed; for nonnegative weights this is the covariance under the scenario
+distribution. -/
 lemma covariance_quadLinearPart_quadRemainder {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
     (hp1 : ∑ ω, p ω = 1) (V : Ω → ℝ) (c0 c1 c2 v₀ : ℝ) :
     covariance p (fun ω => quadLinearPart c0 c1 c2 v₀ (V ω))
@@ -561,11 +579,12 @@ lemma covariance_quadLinearPart_quadRemainder {Ω : Type*} [Fintype Ω] {p : Ω 
   rw [hL, covariance_linear_left, hR, covariance_linear_right, h1]
   ring
 
-/-- Output covariance under a finite scenario law entirely in `[a, b]` (nonnegative weights of
+/-- Output variance under a finite scenario law entirely in `[a, b]` (nonnegative weights of
 total mass one), with Taylor base `v₀ ∈ [a, b]`: the output variance keeps the remainder
 variance and the linear/remainder cross term,
-`Var f(V) = f' v₀ ^ 2 Var V + c2 ^ 2 Var (V - v₀) ^ 2 + 2 f' v₀ c2 Cov(V, (V - v₀) ^ 2)`,
-while the Hessian theorem bounds the remainder only pointwise, scenario by scenario. -/
+`Var f(V) = f' v₀ ^ 2 Var V + c2 ^ 2 Var ((V - v₀) ^ 2) + 2 f' v₀ c2 Cov(V, (V - v₀) ^ 2)`,
+while the Hessian theorem bounds the remainder only pointwise, scenario by scenario:
+`|c2 (V ω - v₀) ^ 2| ≤ (2 |c2| / 2) (V ω - v₀) ^ 2` for every scenario `ω`. -/
 lemma variance_quadCalibration_of_scenarioLaw {Ω : Type*} [Fintype Ω] {a b : ℝ} {p V : Ω → ℝ}
     (hlaw : ScenarioLawIn a b p V) {v₀ : ℝ} (hv₀ : v₀ ∈ Set.Icc a b) (c0 c1 c2 : ℝ) :
     variance p (fun ω => quadCalibration c0 c1 c2 (V ω)) =
@@ -596,10 +615,10 @@ lemma variance_quadCalibration_of_scenarioLaw {Ω : Type*} [Fintype Ω] {a b : �
     simpa using h
 
 set_option linter.unusedFintypeInType false in
-/-- Bridge to measure-theoretic variance: for a probability mass function `q` on the scenarios,
-`ProbabilityTheory.variance_add` splits Mathlib's variance of the output under `q.toMeasure`
-into the variance of the first-order part, twice the cross covariance and the variance of the
-remainder. -/
+/-- Bridge to measure-theoretic variance: for a probability mass function `q` on a finite
+scenario space whose singletons are measurable, `ProbabilityTheory.variance_add` splits Mathlib's
+variance of the output under `q.toMeasure` into the variance of the first-order part, twice the
+cross covariance and the variance of the remainder. -/
 lemma variance_quadCalibration_toMeasure {Ω : Type*} [Fintype Ω] [MeasurableSpace Ω]
     [MeasurableSingletonClass Ω] (q : PMF Ω) (V : Ω → ℝ) (c0 c1 c2 v₀ : ℝ) :
     ProbabilityTheory.variance (fun ω => quadCalibration c0 c1 c2 (V ω)) q.toMeasure =

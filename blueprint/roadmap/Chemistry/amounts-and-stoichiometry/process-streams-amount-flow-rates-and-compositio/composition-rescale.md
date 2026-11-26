@@ -1,3 +1,7 @@
-# Composition invariance
+# Positive rescaling preserves a stream's composition
 
-Let a stream over a finite set of species have flows $\dot n_i \ge 0$ with positive total $\sum_i \dot n_i > 0$, and let $\alpha > 0$. Then the rescaled stream with flows $\alpha \dot n_i$ has the same mole fractions as the original: $\alpha \dot n_i / \sum_j \alpha \dot n_j = \dot n_i / \sum_j \dot n_j$.
+For a [process stream](stream-flow.md) with species flow rates `ṅ i`, positive
+[total flow](total.md), `0 < ∑ j, ṅ j`, and a factor `0 < α`, the [rescaled stream](rescale.md) with
+flow rates `α * ṅ i` has the same [composition](composition.md) as the original: both are defined
+and equal to the mole fractions `ṅ i / ∑ j, ṅ j`. For `α = 0` the rescaled flows are all `0` and the
+rescaled stream has no composition.

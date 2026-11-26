@@ -177,9 +177,11 @@ lemma solution_zero_flow_zero_rate (V cin c0 t : ℝ) :
   simp
 
 set_option linter.style.show false in
-/-- **CSTR IVP uniqueness.** Any solution of the linear CSTR equation on
-`[a, b]` with the same value as the explicit solution at the initial time
-`a` equals the explicit solution on the whole interval. One application
+/-- **CSTR IVP uniqueness.** For `V > 0`, `Q > 0` and `k ≥ 0`, any `f`
+continuous on `[a, b]` whose right derivative at each `t ∈ [a, b)` is
+`(Q / V) * (cin - f t) - k * f t`, and whose value at the initial time `a`
+is that of the explicit solution (`c0` when `a = 0`), equals the explicit
+solution on the whole interval. One application
 of Mathlib's `ODE_solution_unique_of_mem_Icc_right` with Lipschitz
 constant `Q / V + k`; the explicit side is supplied by
 `solution_hasDerivAt`. -/

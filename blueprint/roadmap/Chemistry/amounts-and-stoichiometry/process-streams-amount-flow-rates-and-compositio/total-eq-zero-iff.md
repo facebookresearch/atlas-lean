@@ -1,3 +1,5 @@
-# Zero total flow iff all species flows vanish
+# Total flow is zero exactly when every species flow is zero
 
-For a stream over a finite set of species with nonnegative molar flows $\dot n_i \ge 0$, the total flow $\sum_i \dot n_i$ is zero if and only if every $\dot n_i = 0$.
+For every [process stream](stream-flow.md) with species flow rates `ṅ i`, the [total flow](total.md)
+`∑ i, ṅ i` is `0` if and only if `ṅ i = 0` for every species `i`. The direction from a zero total to
+zero flows uses the stream's constraint `0 ≤ ṅ i`. Over an empty species type both conditions hold.

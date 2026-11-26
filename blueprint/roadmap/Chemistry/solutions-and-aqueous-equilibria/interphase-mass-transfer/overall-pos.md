@@ -1,3 +1,5 @@
-# Positivity of overall mass-transfer coefficients
+# For positive $H$, $k_G$, $k_L$ both overall coefficients are positive
 
-For a Henry constant $H > 0$ and film coefficients $k_G > 0$, $k_L > 0$, the overall coefficients $K_L = 1/(1/k_L + H/k_G)$ and $K_G = 1/(1/k_G + 1/(H k_L))$ are both positive.
+If $H > 0$, $k_G > 0$ and $k_L > 0$, then the [overall liquid-side coefficient](overall-kl.md)
+$K_L = 1 / (1 / k_L + H / k_G)$ and the [overall gas-side coefficient](overall-kg.md)
+$K_G = 1 / (1 / k_G + 1 / (H k_L))$ are both positive.

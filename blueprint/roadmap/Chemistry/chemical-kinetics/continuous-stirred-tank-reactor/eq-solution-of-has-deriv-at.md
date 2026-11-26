@@ -1,3 +1,12 @@
-# Uniqueness for the CSTR initial value problem
+# A solution equal to the explicit one at $a$ stays equal through $b$
 
-Let $V > 0$, $Q > 0$, $k \ge 0$, and let $c^\ast = Qc_{in}/(Q + kV)$ and $c(t) = c^\ast + (c_0 - c^\ast)e^{-(Q/V + k)t}$ be the explicit solution. If $f$ is continuous on $[a, b]$, has right derivative $f'(t) = \frac{Q}{V}(c_{in} - f(t)) - k f(t)$ at every $t \in [a, b)$, and $f(a) = c(a)$, then $f = c$ on $[a, b]$.
+Let $V > 0$, $Q > 0$ and $k \ge 0$, let $c_{\mathrm{in}}$, $c_0$, $a$ and $b$ be real, and let
+$c(t) = c_{\mathrm{ss}} + (c_0 - c_{\mathrm{ss}})\, e^{-(Q / V + k) t}$ be the explicit
+[reactor concentration](solution.md), with $c_{\mathrm{ss}} = Q c_{\mathrm{in}} / (Q + kV)$. Let
+$f$ be continuous on $[a, b]$ and have, at every $t \in [a, b)$, the derivative from the right
+
+$$f'(t) = \frac{Q}{V} \bigl(c_{\mathrm{in}} - f(t)\bigr) - k\, f(t) ,$$
+
+the reactor equation $V f' = Q (c_{\mathrm{in}} - f) - k V f$ divided by $V$. If $f(a) = c(a)$,
+then $f(t) = c(t)$ for every $t \in [a, b]$. The initial condition is the value of the explicit
+concentration at $a$; at $a = 0$ it reads $f(0) = c_0$. For $b < a$ the interval is empty.

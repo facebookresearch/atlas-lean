@@ -1,11 +1,13 @@
 # Elasticity and structural mechanics
 
-Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.
+Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, rigid footings on elastic foundations, the compliance of an end-loaded bar and its design sensitivity, and fracture under linear elastic fracture mechanics, with fatigue crack growth, Palmgren–Miner damage, margins of safety, damage lifetimes and shaft sizing.
 
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
 - [Euler–Bernoulli beam under uniform load](euler-bernoulli-beam-under-uniform-load/README.md)
 - [Column buckling](column-buckling/README.md)
 - [Hertzian contact](hertzian-contact/README.md)
+- [Compliance sensitivity of an end-loaded bar](compliance-sensitivity-of-an-end-loaded-bar/README.md)
+- [Fracture, fatigue damage and failure margins](fracture-fatigue-damage-and-failure-margins/README.md)
 - [Isotropic elastic energy](isotropic-elastic-energy/README.md)
 - [Linear elastostatics](linear-elastostatics/README.md)
 - [Pin-jointed trusses](pin-jointed-trusses/README.md)

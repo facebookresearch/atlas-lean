@@ -16,6 +16,7 @@ Rates of chemical reactions and reactors: integrated rate laws and half-lives, t
 - [Regeneration of stochastic reaction networks](regeneration-of-stochastic-reaction-networks/README.md)
 - [Electrode kinetics](electrode-kinetics/README.md)
 - [Reaction-diffusion systems and flame fronts](reaction-diffusion-and-flame-fronts/README.md)
+- [Species balances of variable-volume reactors](species-balances-of-variable-volume-reactors/README.md)
 - [Thermal runaway and combustion acoustics](thermal-runaway-and-combustion-acoustics/README.md)
 - [Particle population balances](particle-population-balances/README.md)
 - [Bioreactor balances](bioreactor-balances/README.md)

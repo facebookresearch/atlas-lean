@@ -93,7 +93,9 @@ variable {Ω : Type*}
 def linearDamage (d0 r : Ω → ℝ) : Ω → ℝ≥0 → ℝ := fun ω t => d0 ω + r ω * t
 
 /-- **Linear lifetime.** A component with rate `r ω > 0` below threshold at time zero
-(`d0 ω < D ω`) has the damage lifetime `(D ω - d0 ω) / r ω`. -/
+(`d0 ω < D ω`) has the damage lifetime `(D ω - d0 ω) / r ω`. The rate must be positive: for
+`r ω = 0` the threshold is never reached and the lifetime is `⊤`, while the formula would give `0`
+by `x / 0 = 0`. -/
 lemma damageLifetime_linearDamage {d0 r D : Ω → ℝ} {ω : Ω} (hr : 0 < r ω) (hd : d0 ω < D ω) :
     damageLifetime (linearDamage d0 r) D ω = ENNReal.ofReal ((D ω - d0 ω) / r ω) := by
   have hcont : Continuous (linearDamage d0 r ω) :=
@@ -126,7 +128,8 @@ lemma damageLifetime_linearDamage {d0 r D : Ω → ℝ} {ω : Ω} (hr : 0 < r ω
     linarith
 
 /-- **Failure at a fixed time, equality included.** For a rate `r ω ≥ 0`, the linear damage
-lifetime is at most `t` exactly when `D ω ≤ d0 ω + r ω t`. -/
+lifetime is at most `t` exactly when `D ω ≤ d0 ω + r ω t`. A zero rate is allowed: the lifetime is
+then `0` if `D ω ≤ d0 ω` and `⊤` otherwise. -/
 lemma damageLifetime_linearDamage_le_iff {d0 r D : Ω → ℝ} {ω : Ω} (hr : 0 ≤ r ω) (t : ℝ≥0) :
     damageLifetime (linearDamage d0 r) D ω ≤ t ↔ D ω ≤ d0 ω + r ω * t := by
   have hcont : Continuous (linearDamage d0 r ω) :=
@@ -138,8 +141,11 @@ lemma damageLifetime_linearDamage_le_iff {d0 r D : Ω → ℝ} {ω : Ω} (hr : 0
     nlinarith
   exact damageLifetime_le_iff (d := linearDamage d0 r) (D := D) (ω := ω) hcont hmono t
 
-/-- The scenarios in which the monotone system with event `S` and linear component damage has
-failed by time `t`: its system lifetime is at most `t`. -/
+/-- The scenarios in which the system with event `S` and linear component damage has failed by
+time `t`: its system lifetime is at most `t`. Any set `S` and rates of any sign are allowed: for
+`S = ∅` the system lifetime is `0` and every scenario is in the event; a minimum over no component
+is `⊤`, so if `S` contains the all-down configuration (as `Set.univ` does) the system lifetime is
+`⊤` and no scenario is in the event; the monotone-system reading needs `S` increasing. -/
 noncomputable def systemFailureEvent [Fintype Ω] {E : Type*} [Fintype E]
     (S : Set (StatMech.ConfigSpace E)) (d0 r D : E → Ω → ℝ) (t : ℝ≥0) : Finset Ω :=
   Finset.univ.filter fun ω =>
@@ -173,19 +179,20 @@ lemma mem_systemFailureEvent_iff [Fintype Ω] {E : Type*} [Fintype E]
 the strain-gauge calibration, so a zero-gain sensor cannot be formed. -/
 def sensorReading (g b : ℝ) (_hg : g ≠ 0) (d ε : ℝ) : ℝ := g * d + b + ε
 
-/-- The calibration recovers the damage up to the scaled error: `(z - b) / g = d + ε / g`. -/
+/-- For a gain `g ≠ 0`, the calibration recovers the damage up to the scaled error:
+`(z - b) / g = d + ε / g`. -/
 lemma gaugeStrain_sensorReading {g : ℝ} (hg : g ≠ 0) (b d ε : ℝ) :
     Statistics.CalibrationPorts.gaugeStrain g b (sensorReading g b hg d ε) hg = d + ε / g := by
   unfold Statistics.CalibrationPorts.gaugeStrain sensorReading
   field_simp
   ring
 
-/-- The scenarios whose reading `z ω` lies in the bin `[zlo, zhi]`. -/
+/-- The scenarios whose reading `z ω` lies in the bin `[zlo, zhi]`; it is empty when `zlo > zhi`. -/
 noncomputable def binEvent [Fintype Ω] (z : Ω → ℝ) (zlo zhi : ℝ) : Finset Ω :=
   Finset.univ.filter fun ω => zlo ≤ z ω ∧ z ω ≤ zhi
 
-/-- **The bin preimage.** A scenario is in the bin event of the sensor on component `i₀` at time
-`t` exactly when `zlo ≤ g (d0 + r t) + b + ε ≤ zhi`. -/
+/-- **The bin preimage.** For a gain `g ≠ 0`, a scenario is in the bin event of the sensor on
+component `i₀` at time `t` exactly when `zlo ≤ g (d0 + r t) + b + ε ≤ zhi`. -/
 lemma mem_binEvent_sensorReading_iff [Fintype Ω] {E : Type*} {g b : ℝ} (hg : g ≠ 0) (i₀ : E)
     (d0 r : E → Ω → ℝ) (ε : Ω → ℝ) (t : ℝ≥0) (zlo zhi : ℝ) (ω : Ω) :
     ω ∈ binEvent (fun ω => sensorReading g b hg (d0 i₀ ω + r i₀ ω * t) (ε ω)) zlo zhi ↔
@@ -201,7 +208,9 @@ increasing system event `S`, nonnegative rates, a sensor with gain `g ≠ 0` on 
 bin event `A` at time `t` with `P(A) > 0`, and the system failure event `F` at `t`: the weights
 normalized on `A` are a finite distribution, they give `F` the probability `P(A ∩ F) / P(A)`, which
 lies in `[0, 1]`, and `A ∩ F` is the set of scenarios whose reading is in the bin and whose
-configuration of components still below threshold at `t` is not in `S`. -/
+configuration of components still below threshold at `t` is not in `S`. The weights need not sum
+to one. The proof of `P(A) > 0` is an argument of the normalized weights, so a bin of zero weight
+has none, and no conditional value is assigned to it. -/
 lemma prob_condWeights_systemFailureEvent [Fintype Ω] [DecidableEq Ω] {E : Type*} [Fintype E]
     {S : Set (StatMech.ConfigSpace E)} (hS : StatMech.IsIncreasing S) {d0 r D : E → Ω → ℝ}
     (hr : ∀ i ω, 0 ≤ r i ω) {g b zlo zhi : ℝ} (hg : g ≠ 0) (i₀ : E) (ε p : Ω → ℝ)

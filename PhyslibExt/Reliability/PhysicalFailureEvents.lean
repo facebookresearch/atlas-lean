@@ -48,7 +48,7 @@ intensity) against a positive allowable `A` has the dimensional margin
 event `A ≤ s`; the crack event above is this event with demand `K_I`
 and allowable `K_IC`. For a positive demand the margin of safety
 `A / s - 1` has the sign of `A - s`; it takes a proof of `0 < s`, since
-at zero demand Lean's `A / 0 = 0` would report a false failure. One
+at zero demand the convention `A / 0 = 0` would report a false failure. One
 axial load path is instantiated: the fixed-fixed bar of
 `PhyslibExt.Elasticity.PrismaticMembers` (`0 < L`, axial rigidity
 `0 < EA`, cross-section area `0 < A_cs`) under a uniform load `q` has
@@ -109,10 +109,11 @@ for `c ≤ 0` the square root would give a pure torque zero demand, and the
 sizing results would accept every diameter. Against a positive allowable
 `A` the demand stays within `A` exactly when
 `d ≥ (16 √(4 M ^ 2 + c T ^ 2) / (π A)) ^ (1 / 3)`, and the shaft does not
-fail exactly when `d` exceeds this minimum. At `d = 0` Lean's `x / 0 = 0`
-would report zero demand, so `0 < d` is a hypothesis; at the nominal
-minimum diameter a bending stress-concentration factor `K > 1` pushes the
-demand above the allowable, so the nominal sizing covers a plain shaft
+fail exactly when `d` exceeds this minimum, which is positive for a nonzero
+load. At `d = 0` the convention `x / 0 = 0` would report zero demand, so
+`0 < d` is a hypothesis; at the nominal minimum diameter a bending
+stress-concentration factor `K > 1` pushes the demand above the allowable,
+so the nominal sizing covers a plain shaft
 only. Fasteners, preload, fatigue and transverse shear are not modeled.
 
 ## ii. Key results
@@ -120,16 +121,17 @@ only. Fasteners, preload, fatigue and transverse shear are not modeled.
 - `Reliability.criticalCrackLength_pos`: the critical crack length is
   positive for positive toughness, geometry factor, and stress.
 - `Reliability.modeIStressIntensity_criticalCrackLength`: `K_I` equals
-  `K_IC` exactly at the critical crack length.
+  `K_IC` at the critical crack length, for positive `K_IC`, `Y` and `σ`.
 - `Reliability.modeIStressIntensity_lt_iff_lt_criticalCrackLength`:
   subcriticality `K_I(a) < K_IC` is equivalent to `a < a_c`.
 - `Reliability.crackFailure_iff_criticalCrackLength_le`: the
   equality-inclusive failure event is equivalent to `a_c ≤ a`.
 - `Reliability.parisCrackPow_at_life` and
   `Reliability.parisCrackExp_at_life`: Paris-law crack-growth solutions
-  in the power (`m ≠ 2`) and logarithmic (`m = 2`) branches reach the
-  critical length exactly at their Paris lives, with first-crossing
-  characterizations `parisCrackPow_lt_iff` and `parisCrackExp_lt_iff`.
+  in the power (`m ≠ 2`) and logarithmic (`m = 2`) branches reach a
+  target length `ac > 0` at their Paris lives (for `K > 0` and `a0 > 0`),
+  with first-crossing characterizations `parisCrackPow_lt_iff` (where the
+  base is positive) and `parisCrackExp_lt_iff`, for `0 < a0 < ac`.
 - `Reliability.dimensionalMargin`, `Reliability.demandFailure` and
   `Reliability.marginOfSafety`: the margin, the event and the ratio,
   with `Reliability.sign_marginOfSafety`,
@@ -235,18 +237,20 @@ mechanics (LEFM) model `K_I(a) = Y * σ * √(π * a)`, where `Y` is a constant
 geometry factor, `σ` is the peak tensile stress, and `a` is the crack length.
 This formula is a model input with a small-scale-yielding validity regime;
 the theorems below are its algebraic consequences, not an experimental
-validation of the model. The formula is intended for `0 ≤ a`. -/
+validation of the model. The formula is intended for `0 ≤ a`; with the convention `√x = 0` for
+`x < 0`, it is `0` for every `a < 0`. -/
 noncomputable def modeIStressIntensity (Y σ a : ℝ) : ℝ :=
   Y * σ * Real.sqrt (Real.pi * a)
 
 /-- Critical crack length `a_c = (K_IC / (Y * σ)) ^ 2 / π` in the same LEFM
-model: the crack length at which `modeIStressIntensity` reaches the fracture
-toughness `K_IC`. -/
+model: for positive `K_IC`, `Y` and `σ`, the crack length at which `modeIStressIntensity` reaches
+the fracture toughness `K_IC`. With the convention `x / 0 = 0` it is `0` when `Y * σ = 0`. -/
 noncomputable def criticalCrackLength (KIC Y σ : ℝ) : ℝ :=
   (KIC / (Y * σ)) ^ 2 / Real.pi
 
 /-- Equality-inclusive crack failure in this model: the mode-I stress
-intensity demand reaches the fracture toughness. -/
+intensity demand reaches the fracture toughness. Since the stress intensity is `0` for `a < 0`
+(`√x = 0` for `x < 0`), at a negative crack length it holds exactly when `K_IC ≤ 0`. -/
 def crackFailure (KIC Y σ a : ℝ) : Prop :=
   KIC ≤ modeIStressIntensity Y σ a
 
@@ -263,8 +267,8 @@ lemma criticalCrackLength_pos {KIC Y σ : ℝ} (hKIC : 0 < KIC) (hY : 0 < Y)
   unfold criticalCrackLength
   exact div_pos (pow_pos (div_pos hKIC (mul_pos hY hσ)) 2) Real.pi_pos
 
-/-- The LEFM critical condition: at the critical crack length, the mode-I
-stress intensity equals the fracture toughness `K_IC`. This is the standard
+/-- The LEFM critical condition: for positive `K_IC`, `Y` and `σ`, at the critical crack length,
+the mode-I stress intensity equals the fracture toughness `K_IC`. This is the standard
 critical-crack criterion of linear-elastic fracture mechanics (see, for
 example, Dowling, *Mechanical Behavior of Materials*, 4th ed.), stated here
 for the adopted intensity model `K_I(a) = Y * σ * √(π * a)`. -/
@@ -279,8 +283,8 @@ theorem modeIStressIntensity_criticalCrackLength {KIC Y σ : ℝ}
   rw [mul_comm Real.pi _, div_mul_cancel₀ _ hπ, Real.sqrt_sq (le_of_lt hK),
     mul_comm (Y * σ) _, div_mul_cancel₀ _ hYσ']
 
-/-- Subcriticality characterization: for nonnegative crack length, the
-mode-I stress intensity is strictly below the fracture toughness exactly
+/-- Subcriticality characterization: for positive `K_IC`, `Y` and `σ` and nonnegative crack
+length, the mode-I stress intensity is strictly below the fracture toughness exactly
 below the critical crack length. -/
 lemma modeIStressIntensity_lt_iff_lt_criticalCrackLength {KIC Y σ a : ℝ}
     (hKIC : 0 < KIC) (hY : 0 < Y) (hσ : 0 < σ) (ha : 0 ≤ a) :
@@ -292,8 +296,8 @@ lemma modeIStressIntensity_lt_iff_lt_criticalCrackLength {KIC Y σ a : ℝ}
     Real.sqrt_lt (mul_nonneg (le_of_lt Real.pi_pos) ha) (le_of_lt hK),
     mul_comm Real.pi a, lt_div_iff₀ Real.pi_pos]
 
-/-- The equality-inclusive crack-failure event holds exactly from the
-critical crack length on. -/
+/-- For positive `K_IC`, `Y` and `σ` and nonnegative crack length, the equality-inclusive
+crack-failure event holds exactly from the critical crack length on. -/
 lemma crackFailure_iff_criticalCrackLength_le {KIC Y σ a : ℝ}
     (hKIC : 0 < KIC) (hY : 0 < Y) (hσ : 0 < σ) (ha : 0 ≤ a) :
     crackFailure KIC Y σ a ↔ criticalCrackLength KIC Y σ ≤ a := by
@@ -315,20 +319,23 @@ small-scale-yielding LEFM regime; no load spectrum, crack closure, or
 empirical calibration is modeled. -/
 
 /-- Paris-law crack-growth solution, power branch. With growth exponent
-`m ≠ 2` and coefficient `K > 0` in `da/dN = K * a ^ (m / 2)`, writing
+`m ≠ 2`, coefficient `K > 0` in `da/dN = K * a ^ (m / 2)` and `a0 > 0`, writing
 `r = 1 - m / 2 ≠ 0`, the solution with `a(0) = a0` is
 `a(N) = (a0 ^ r + r * K * N) ^ (1 / r)`. It is valid only while the base
 `a0 ^ r + r * K * N` stays positive; for `r < 0` (that is, `m > 2`) that
-is a finite cycle interval. Real powers are `Real.rpow`. -/
+is a finite cycle interval. With real powers (`0 ^ t = 0` for `t ≠ 0`,
+`s ^ t = |s| ^ t * cos (π * t)` for `s < 0`), the formula is `0` where the base is `0` and
+`r ≠ 0` (for `r < 0` instead of the blow-up limit), and for `r = 0` (with `0⁻¹ = 0`) it is `1`. -/
 noncomputable def parisCrackPow (r K a0 N : ℝ) : ℝ :=
   (a0 ^ r + r * K * N) ^ r⁻¹
 
-/-- Cycles to grow a crack from `a0` to `ac` in the power branch:
-`Nf = (ac ^ r - a0 ^ r) / (r * K)`. -/
+/-- Cycles to grow a crack from `a0` to `ac` in the power branch, for `K > 0`, `r ≠ 0` and
+`a0, ac > 0`: `Nf = (ac ^ r - a0 ^ r) / (r * K)`. With the convention `x / 0 = 0` it is `0`
+when `r = 0` or `K = 0`. -/
 noncomputable def parisLifePow (r K a0 ac : ℝ) : ℝ :=
   (ac ^ r - a0 ^ r) / (r * K)
 
-/-- The power-branch solution starts at `a0`. -/
+/-- For `r ≠ 0` and `a0 > 0`, the power-branch solution starts at `a0`. -/
 lemma parisCrackPow_zero {r K a0 : ℝ} (hr : r ≠ 0) (ha0 : 0 < a0) :
     parisCrackPow r K a0 0 = a0 := by
   have h : (a0 ^ r + r * K * 0) ^ r⁻¹ = a0 := by
@@ -336,8 +343,8 @@ lemma parisCrackPow_zero {r K a0 : ℝ} (hr : r ≠ 0) (ha0 : 0 < a0) :
     exact Real.rpow_rpow_inv (le_of_lt ha0) hr
   exact h
 
-/-- The power-branch solution solves `da/dN = K * a ^ (1 - r)` (with
-`1 - r = m / 2`) wherever its base is positive. -/
+/-- For `r ≠ 0`, the power-branch solution solves `da/dN = K * a ^ (1 - r)` (with
+`1 - r = m / 2`) wherever its base is positive, for any real `K` and `a0`. -/
 lemma hasDerivAt_parisCrackPow {r K a0 N : ℝ} (hr : r ≠ 0)
     (hbase : 0 < a0 ^ r + r * K * N) :
     HasDerivAt (parisCrackPow r K a0)
@@ -371,7 +378,7 @@ lemma hasDerivAt_parisCrackPow {r K a0 N : ℝ} (hr : r ≠ 0)
   rw [hderiv] at hcomp
   exact hcomp
 
-/-- Raising the power-branch solution to `r` recovers the affine base,
+/-- For `r ≠ 0`, raising the power-branch solution to `r` recovers the affine base,
 wherever the base is nonnegative. -/
 lemma parisCrackPow_pow {r K a0 N : ℝ} (hr : r ≠ 0)
     (hbase : 0 ≤ a0 ^ r + r * K * N) :
@@ -380,7 +387,8 @@ lemma parisCrackPow_pow {r K a0 N : ℝ} (hr : r ≠ 0)
     Real.rpow_inv_rpow hbase hr
   exact h
 
-/-- Positive Paris life in the power branch, for either sign of `r`. -/
+/-- Positive Paris life in the power branch for `K > 0`, `r ≠ 0` and `0 < a0 < ac`, for either
+sign of `r`. -/
 lemma parisLifePow_pos {r K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     (hac : a0 < ac) (hr : r ≠ 0) :
     0 < parisLifePow r K a0 ac := by
@@ -397,7 +405,8 @@ lemma parisLifePow_pos {r K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     have hden : 0 < r * K := mul_pos hpos hK
     exact div_pos hnum hden
 
-/-- At the Paris life, the power-branch crack reaches `ac`. -/
+/-- For `K > 0`, `r ≠ 0`, `a0 > 0` and `ac > 0` (not necessarily above `a0`), at the Paris
+life the power-branch crack reaches `ac`. -/
 lemma parisCrackPow_at_life {r K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     (hac : 0 < ac) (hr : r ≠ 0) :
     parisCrackPow r K a0 (parisLifePow r K a0 ac) = ac := by
@@ -414,7 +423,8 @@ lemma parisCrackPow_at_life {r K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     exact Real.rpow_rpow_inv (le_of_lt hac) hr
   exact h
 
-/-- First-crossing characterization in the power branch: on the
+/-- First-crossing characterization in the power branch, for `K > 0`, `r ≠ 0` and
+`0 < a0 < ac`: on the
 solution's strict domain (positive base `a0 ^ r + r * K * N`; at base
 zero with `r < 0` the real-power formula has the junk value `0` instead
 of the blow-up limit, so the crossing statement needs the strict
@@ -459,7 +469,7 @@ lemma parisCrackPow_lt_iff {r K a0 ac N : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
       rw [hpow]
     exact c1.trans (c2.trans hN.symm)
 
-/-- For `r < 0` (growth exponent `m > 2`), the Paris life is strictly
+/-- For `r < 0` (growth exponent `m > 2`), `K > 0` and `0 < a0 < ac`, the Paris life is strictly
 before the blow-up cycle count `a0 ^ r / (-(r * K))` at which the
 power-branch base would reach zero. -/
 lemma parisLifePow_lt_blowup {r K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
@@ -487,8 +497,9 @@ lemma parisLifePow_lt_blowup {r K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
 noncomputable def parisCrackExp (K a0 N : ℝ) : ℝ :=
   a0 * Real.exp (K * N)
 
-/-- Cycles to grow a crack from `a0` to `ac` in the logarithmic branch:
-`Nf = log (ac / a0) / K`. -/
+/-- Cycles to grow a crack from `a0` to `ac` in the logarithmic branch, for `K > 0` and
+`a0, ac > 0`: `Nf = log (ac / a0) / K`. With the conventions `x / 0 = 0`, `log 0 = 0` and
+`log x = log |x|`, it is `0` when `K = 0`, `a0 = 0` or `ac = 0`. -/
 noncomputable def parisLifeExp (K a0 ac : ℝ) : ℝ :=
   Real.log (ac / a0) / K
 
@@ -514,7 +525,7 @@ lemma hasDerivAt_parisCrackExp (K a0 N : ℝ) :
   rw [hderiv] at h3
   exact h3
 
-/-- Positive Paris life in the logarithmic branch. -/
+/-- Positive Paris life in the logarithmic branch, for `K > 0` and `0 < a0 < ac`. -/
 lemma parisLifeExp_pos {K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     (hac : a0 < ac) :
     0 < parisLifeExp K a0 ac := by
@@ -524,7 +535,8 @@ lemma parisLifeExp_pos {K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
   show 0 < Real.log (ac / a0) / K
   exact div_pos (Real.log_pos h1) hK
 
-/-- At the Paris life, the logarithmic-branch crack reaches `ac`. -/
+/-- For `K > 0`, `a0 > 0` and `ac > 0` (not necessarily above `a0`), at the Paris life the
+logarithmic-branch crack reaches `ac`. -/
 lemma parisCrackExp_at_life {K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     (hac : 0 < ac) :
     parisCrackExp K a0 (parisLifeExp K a0 ac) = ac := by
@@ -537,8 +549,8 @@ lemma parisCrackExp_at_life {K a0 ac : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
   rw [hexp, Real.exp_log hdiv]
   field_simp
 
-/-- First-crossing characterization in the logarithmic branch, for all
-real cycle counts. -/
+/-- First-crossing characterization in the logarithmic branch, for `K > 0` and `0 < a0 < ac`
+and all real cycle counts. -/
 lemma parisCrackExp_lt_iff {K a0 ac N : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     (hac : a0 < ac) :
     parisCrackExp K a0 N < ac ↔ N < parisLifeExp K a0 ac := by
@@ -565,7 +577,8 @@ def dimensionalMargin (A s : ℝ) : ℝ := A - s
 /-- The equality-inclusive failure event: the demand `s` reaches the allowable `A`. -/
 def demandFailure (A s : ℝ) : Prop := A ≤ s
 
-/-- The margin of safety `A / s - 1`, defined only for a positive demand `s`. -/
+/-- The margin of safety `A / s - 1`, defined only for a positive demand `s`. At `s = 0` the
+convention `x / 0 = 0` would give `A / 0 - 1 = -1`, a false failure signal for `A > 0`. -/
 noncomputable def marginOfSafety (A s : ℝ) (_hs : 0 < s) : ℝ := A / s - 1
 
 /-- Failure is a nonpositive dimensional margin. -/
@@ -601,8 +614,8 @@ lemma demandFailure_iff_marginOfSafety_nonpos {A s : ℝ} (hs : 0 < s) :
   · intro h
     exact mul_nonpos_of_nonneg_of_nonpos hs.le h
 
-/-- A change of the stress unit by a factor `c > 0` rescales the dimensional margin by `c` and
-changes neither the failure event nor the margin of safety. -/
+/-- For a positive demand `s`, a change of the stress unit by a factor `c > 0` rescales the
+dimensional margin by `c` and changes neither the failure event nor the margin of safety. -/
 lemma margin_unit_change {c A s : ℝ} (hc : 0 < c) (hs : 0 < s) :
     dimensionalMargin (c * A) (c * s) = c * dimensionalMargin A s ∧
       (demandFailure (c * A) (c * s) ↔ demandFailure A s) ∧
@@ -612,14 +625,16 @@ lemma margin_unit_change {c A s : ℝ} (hc : 0 < c) (hs : 0 < s) :
     ⟨fun h => le_of_mul_le_mul_left h hc, fun h => mul_le_mul_of_nonneg_left h hc.le⟩, ?_⟩
   rw [mul_div_mul_left _ _ hc.ne']
 
-/-- At zero demand the dimensional margin is the allowable, and there is no failure. -/
+/-- For a positive allowable `A`, at zero demand the dimensional margin is `A`, and there is no
+failure. -/
 lemma dimensionalMargin_zero_demand {A : ℝ} (hA : 0 < A) :
     dimensionalMargin A 0 = A ∧ ¬ demandFailure A 0 := by
   unfold dimensionalMargin demandFailure
   exact ⟨sub_zero A, fun h => absurd h (not_le.mpr hA)⟩
 
-/-- The ratio formula must not be used at zero demand: Lean's `A / 0 = 0` makes `A / 0 - 1`
-negative, a false failure signal, while the demand `0` does not fail. -/
+/-- The ratio formula must not be used at zero demand: for a positive allowable `A`, the
+convention `A / 0 = 0` makes `A / 0 - 1 = -1` negative, a false failure signal, while the demand
+`0` does not fail. -/
 lemma ratio_at_zero_demand_misreports {A : ℝ} (hA : 0 < A) :
     A / 0 - 1 < 0 ∧ ¬ demandFailure A 0 := by
   unfold demandFailure
@@ -641,7 +656,9 @@ def UniaxialCalibrated (Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ) : Prop :=
 
 /-- The axial normal stress `EA u'(x) / A_cs` at the section `x` of cross-section area `A_cs` for
 the closed-form uniform-load displacement `u = axialDisplacement EA L q`, which for `0 < L` and
-`0 < EA` solves the fixed-fixed bar problem (`isFixedFixedSolution_axialDisplacement`). -/
+`0 < EA` solves the fixed-fixed bar problem (`isFixedFixedSolution_axialDisplacement`). For
+`EA ≠ 0` it is `q (L - 2 x) / (2 A_cs)` (`0` when `A_cs = 0`, by `x / 0 = 0`); for `EA = 0` the
+displacement and the stress are `0` by the same convention. -/
 noncomputable def axialStress (EA L q Acs x : ℝ) : ℝ :=
   EA * deriv (Elasticity.PrismaticMembers.axialDisplacement EA L q) x / Acs
 
@@ -679,8 +696,9 @@ lemma axialDemand_eq {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCa
   unfold UniaxialCalibrated at hΦ
   rw [hΦ, axialStress_eq hEA hAcs, abs_div, abs_of_pos (by positivity : (0 : ℝ) < 2 * Acs)]
 
-/-- The fixed-fixed bar (`0 < L`, `0 < EA`, `0 < A_cs`) fails at some section of `[0, L]` exactly
-when the end-section demand reaches the allowable: `2 A_cs A ≤ |q| L`. -/
+/-- Through a yield functional calibrated by the tensile test, the fixed-fixed bar (`0 < L`,
+`0 < EA`, `0 < A_cs`) fails at some section of `[0, L]` exactly when the end-section demand
+reaches the allowable: `2 A_cs A ≤ |q| L`. -/
 lemma axialBar_failure_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} (hΦ : UniaxialCalibrated Φ)
     {EA Acs L : ℝ} (hEA : 0 < EA) (hAcs : 0 < Acs) (hL : 0 < L) (q A : ℝ) :
     (∃ x ∈ Set.Icc 0 L, demandFailure A (Φ (Matrix.diagonal ![axialStress EA L q Acs x, 0, 0]))) ↔
@@ -707,7 +725,8 @@ open MeasureTheory
 open scoped NNReal ENNReal
 
 /-- The lifetime of a component with damage path `d ω` and threshold `D ω`: the hitting time of
-`d - D` into `Ici 0` from time zero, `⊤` when the threshold is never reached. -/
+`d - D` into `Ici 0` from time zero, the infimum of the times `t` with `D ω ≤ d ω t`, and `⊤`
+when the threshold is never reached. For a discontinuous path the infimum need not be attained. -/
 noncomputable def damageLifetime {Ω : Type*} (d : Ω → ℝ≥0 → ℝ) (D : Ω → ℝ) (ω : Ω) : ℝ≥0∞ :=
   hittingAfter (fun t ω => d ω t - D ω) (Set.Ici 0) 0 ω
 
@@ -827,8 +846,9 @@ lemma measurable_damageLifetime [MeasurableSpace Ω] {d : Ω → ℝ≥0 → ℝ
     exact measurableSet_lt (hmeas t) hD
 
 /-- The monotone-system event: for an increasing event `A` (a monotone system, not necessarily
-coherent), the system with the damage lifetimes is up at a finite time `t` exactly when the
-configuration of components whose damage is still below threshold at `t` lies in `A`. -/
+coherent) and continuous nondecreasing damage paths, the system with the damage lifetimes is up
+at a finite time `t` exactly when the configuration of components whose damage is still below
+threshold at `t` lies in `A`. -/
 lemma lt_systemLifetime_damage_iff {E : Type*} [Fintype E] (A : Set (StatMech.ConfigSpace E))
     (hA : StatMech.IsIncreasing A) {d : E → Ω → ℝ≥0 → ℝ} {D : E → Ω → ℝ}
     (hcont : ∀ i ω, Continuous (d i ω)) (hmono : ∀ i ω, Monotone (d i ω)) (ω : Ω) (t : ℝ≥0) :
@@ -842,7 +862,9 @@ lemma lt_systemLifetime_damage_iff {E : Type*} [Fintype E] (A : Set (StatMech.Co
     exact lt_damageLifetime_iff (hcont i ω) (hmono i ω) t
   rw [hcfg]
 
-/-- The system lifetime with the damage lifetimes is measurable. -/
+/-- For any event `A`, the system lifetime with the damage lifetimes is measurable when the
+fixed-time damage maps and the thresholds are measurable and the paths are continuous and
+nondecreasing. -/
 lemma measurable_systemLifetime_damage [MeasurableSpace Ω] {E : Type*} [Fintype E]
     (A : Set (StatMech.ConfigSpace E)) {d : E → Ω → ℝ≥0 → ℝ} {D : E → Ω → ℝ}
     (hmeas : ∀ i t, Measurable fun ω => d i ω t) (hD : ∀ i, Measurable (D i))
@@ -860,7 +882,7 @@ model, not continued crack growth. -/
 noncomputable def saturatedCrackPath (a : ℝ → ℝ) (f Nf : ℝ) (t : ℝ≥0) : ℝ :=
   a (min (f * t) Nf)
 
-/-- Saturation: from the time `Nf / f` on, the event path stays at `a Nf`. -/
+/-- Saturation: for `f > 0`, from the time `Nf / f` on, the event path stays at `a Nf`. -/
 lemma saturatedCrackPath_of_le (a : ℝ → ℝ) {f Nf : ℝ} (hf : 0 < f) {t : ℝ≥0}
     (ht : Nf / f ≤ t) : saturatedCrackPath a f Nf t = a Nf := by
   change a (min (f * (t : ℝ)) Nf) = a Nf
@@ -902,9 +924,9 @@ lemma saturatedCrackPath_pow_base_pos {r K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha
   exact pow_base_pos_of_mem hK ha0 hac hr
     (le_min (mul_nonneg hf t.coe_nonneg) (le_of_lt hNf)) (min_le_right _ _)
 
-/-- **A continuous nondecreasing event path.** Under the hypotheses of
-`saturatedCrackPath_pow_base_pos`, the event path of the power-branch crack is continuous and
-nondecreasing. -/
+/-- **A continuous nondecreasing event path.** For `K > 0`, `0 < a0 < a_c` with `a_c` the
+critical crack length, `r ≠ 0` and `f ≥ 0`, the event path of the power-branch crack is continuous
+and nondecreasing. -/
 lemma continuous_monotone_saturatedCrackPath_pow {r K a0 KIC Y σ f : ℝ} (hK : 0 < K)
     (ha0 : 0 < a0) (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (hf : 0 ≤ f) :
     Continuous (saturatedCrackPath (parisCrackPow r K a0) f
@@ -970,10 +992,10 @@ lemma continuous_monotone_saturatedCrackPath_pow {r K a0 KIC Y σ f : ℝ} (hK :
     intro s t hst
     exact hcrack_mono (hinner_mem s) (hinner_mem t) (hinner_mono hst)
 
-/-- **Before failure the event path is the crack in real time.** Under the hypotheses of
-`saturatedCrackPath_pow_base_pos` with `f > 0`, up to the failure time `Nf / f` the event path is
-the crack after `f t` cycles, and `s ↦ a (f s)` solves the Paris law in time,
-`da/dt = f K a ^ (1 - r)`, on the solution's domain. -/
+/-- **Before failure the event path is the crack in real time.** For `K > 0`, `0 < a0 < a_c`
+with `a_c` the critical crack length, `r ≠ 0` and `f > 0`, at every time `t ≤ Nf / f` (the failure
+time included) the event path is the crack after `f t` cycles, and `s ↦ a (f s)` has at `t` the
+derivative of the Paris law in time, `da/dt = f K a ^ (1 - r)`. -/
 lemma hasDerivAt_parisCrackPow_time {r K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (hf : 0 < f) {t : ℝ≥0}
     (ht : (t : ℝ) ≤ parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f) :
@@ -1121,8 +1143,8 @@ lemma damageLifetime_saturatedCrackPath_pow {r K a0 KIC Y σ f : ℝ} (hK : 0 < 
     rw [hLcoe] at hmem
     exact lt_irrefl _ hmem
 
-/-- **No load, power branch.** At frequency `0` the event path is the constant `a0`, and below
-the critical crack length its lifetime is `⊤`. -/
+/-- **No load, power branch.** For `K > 0`, `0 < a0 < a_c` and `r ≠ 0`, at frequency `0` the
+event path is the constant `a0`, and below the critical crack length its lifetime is `⊤`. -/
 lemma damageLifetime_saturatedCrackPath_pow_zero {r K a0 KIC Y σ : ℝ} (hK : 0 < K)
     (ha0 : 0 < a0) (hac : a0 < criticalCrackLength KIC Y σ) (hr : r ≠ 0) (ω : Ω) :
     (∀ t, saturatedCrackPath (parisCrackPow r K a0) 0
@@ -1153,9 +1175,9 @@ lemma damageLifetime_saturatedCrackPath_pow_zero {r K a0 KIC Y σ : ℝ} (hK : 0
     rw [hconst t]
     exact hac
 
-/-- **Failure strictly before blow-up (`m > 2`).** For `r < 0` and `f > 0`, the failure time
-`Nf / f` is strictly before the time `a0 ^ r / (-(r K)) / f` at which the power-branch base would
-reach zero. -/
+/-- **Failure strictly before blow-up (`m > 2`).** For `K > 0`, `0 < a0 < a_c`, `r < 0` and
+`f > 0`, the failure time `Nf / f` is strictly before the time `a0 ^ r / (-(r K)) / f` at which the
+power-branch base would reach zero. -/
 lemma failureTime_lt_blowupTime {r K a0 KIC Y σ f : ℝ} (hK : 0 < K) (ha0 : 0 < a0)
     (hac : a0 < criticalCrackLength KIC Y σ) (hr : r < 0) (hf : 0 < f) :
     parisLifePow r K a0 (criticalCrackLength KIC Y σ) / f < a0 ^ r / (-(r * K)) / f := by
@@ -1338,8 +1360,8 @@ lemma damageLifetime_saturatedCrackPath_exp {K a0 KIC Y σ f : ℝ} (hK : 0 < K)
     rw [hLcoe] at hmem
     exact lt_irrefl _ hmem
 
-/-- **No load, logarithmic branch.** At frequency `0` the event path is the constant `a0`, and
-below the critical crack length its lifetime is `⊤`. -/
+/-- **No load, logarithmic branch.** For `K > 0` and `0 < a0 < a_c`, at frequency `0` the event
+path is the constant `a0`, and below the critical crack length its lifetime is `⊤`. -/
 lemma damageLifetime_saturatedCrackPath_exp_zero {K a0 KIC Y σ : ℝ} (hK : 0 < K)
     (ha0 : 0 < a0) (hac : a0 < criticalCrackLength KIC Y σ) (ω : Ω) :
     (∀ t, saturatedCrackPath (parisCrackExp K a0) 0
@@ -1387,11 +1409,12 @@ noncomputable def circleSecondMoment (d : ℝ) : ℝ := Real.pi * d ^ 4 / 64
 noncomputable def circlePolarMoment (d : ℝ) : ℝ := Real.pi * d ^ 4 / 32
 
 /-- Flexure formula at the outer fiber `y = d / 2` of a solid circular shaft under the bending
-moment `M`: `σ = M (d / 2) / I`, tension positive on the fiber that `M` stretches. -/
+moment `M`: `σ = M (d / 2) / I`, tension positive on the fiber that `M` stretches. With the
+convention `x / 0 = 0` it is `0` at `d = 0`. -/
 noncomputable def shaftBendingStress (M d : ℝ) : ℝ := M * (d / 2) / circleSecondMoment d
 
 /-- Torsion formula at the surface `r = d / 2` of a solid circular shaft under the torque `T`:
-`τ = T (d / 2) / J`. -/
+`τ = T (d / 2) / J`. With the convention `x / 0 = 0` it is `0` at `d = 0`. -/
 noncomputable def shaftShearStress (T d : ℝ) : ℝ := T * (d / 2) / circlePolarMoment d
 
 /-- For a nonzero diameter the two formulas are `σ = 32 M / (π d ³)` and `τ = 16 T / (π d ³)`. -/
@@ -1433,7 +1456,8 @@ lemma BendingTorsionCalibrated.uniaxialCalibrated {Φ : Matrix (Fin 3) (Fin 3) �
   rw [h, hΦ.eq_sqrt]
   simp [Real.sqrt_sq_eq_abs]
 
-/-- The demand at the critical point of a shaft of diameter `d > 0` under `M` and `T`:
+/-- The demand, through a functional calibrated on the bending-torsion states with shear factor
+`c`, at the critical point of a shaft of diameter `d > 0` under `M` and `T`:
 `16 √(4 M ^ 2 + c T ^ 2) / (π d ³)`. -/
 lemma shaftDemand_eq {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
     (hΦ : BendingTorsionCalibrated Φ c) {d : ℝ} (hd : 0 < d) (M T : ℝ) :
@@ -1449,12 +1473,15 @@ lemma shaftDemand_eq {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
   rw [key, Real.sqrt_mul (by positivity), Real.sqrt_sq (by positivity)]
   field_simp
 
-/-- Minimum diameter for the allowable `A`: `(16 √(4 M ^ 2 + c T ^ 2) / (π A)) ^ (1 / 3)`. -/
+/-- Minimum diameter for the allowable `A`: `(16 √(4 M ^ 2 + c T ^ 2) / (π A)) ^ (1 / 3)`,
+intended for `c > 0`, `A > 0` and a nonzero load. With `x / 0 = 0` and `√x = 0` for `x < 0`, it is
+`0` when `A = 0` or `4 M ^ 2 + c T ^ 2 ≤ 0`; for `A < 0` and `4 M ^ 2 + c T ^ 2 > 0` the base `b`
+is negative and the real power gives `|b| ^ (1 / 3) / 2`. -/
 noncomputable def shaftMinDiameter (c M T A : ℝ) : ℝ :=
   (16 * Real.sqrt (4 * M ^ 2 + c * T ^ 2) / (Real.pi * A)) ^ (1 / 3 : ℝ)
 
-/-- The sizing inequality: for `d > 0` and a positive allowable `A`, the demand stays within `A`
-exactly when `d` is at least the minimum diameter. -/
+/-- The sizing inequality: for a calibrated functional, `d > 0` and a positive allowable `A`, the
+demand stays within `A` exactly when `d` is at least the minimum diameter. -/
 lemma shaftDemand_le_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
     (hΦ : BendingTorsionCalibrated Φ c) {d A : ℝ} (hd : 0 < d) (hA : 0 < A) (M T : ℝ) :
     Φ (bendingTorsionState (shaftBendingStress M d) (shaftShearStress T d)) ≤ A ↔
@@ -1471,8 +1498,8 @@ lemma shaftDemand_le_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
     div_le_iff₀ hD, div_le_iff₀ hπA]
   constructor <;> intro h <;> linarith
 
-/-- With the equality-inclusive failure event, the shaft does not fail exactly when `d` exceeds
-the minimum diameter. -/
+/-- With the equality-inclusive failure event, a calibrated functional, `d > 0` and a positive
+allowable `A`, the shaft does not fail exactly when `d` exceeds the minimum diameter. -/
 lemma not_demandFailure_iff {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
     (hΦ : BendingTorsionCalibrated Φ c) {d A : ℝ} (hd : 0 < d) (hA : 0 < A) (M T : ℝ) :
     ¬ Reliability.demandFailure A
@@ -1509,9 +1536,10 @@ lemma shaftMinDiameter_pos {c M T A : ℝ} (hc : 0 < c) (hA : 0 < A) (hMT : M �
 
 /-! ## K. Shaft sizing: boundary examples -/
 
-/-- The zero diameter is rejected, not covered: at `d = 0` Lean's `x / 0 = 0` makes both stress
-formulas vanish, so every calibrated functional reports zero demand and no failure for every
-load. The hypothesis `0 < d` of the sizing results cannot be dropped. -/
+/-- The zero diameter is rejected, not covered: at `d = 0` the convention `x / 0 = 0` makes both
+stress formulas vanish, so every calibrated functional reports zero demand and, against a positive
+allowable, no failure for every load. The hypothesis `0 < d` of the sizing results cannot be
+dropped. -/
 lemma zero_diameter_misreports {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
     (hΦ : BendingTorsionCalibrated Φ c) {A : ℝ} (hA : 0 < A) (M T : ℝ) :
     Φ (bendingTorsionState (shaftBendingStress M 0) (shaftShearStress T 0)) = 0 ∧
@@ -1524,10 +1552,11 @@ lemma zero_diameter_misreports {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : �
     Real.sqrt_zero, Reliability.demandFailure, not_le, true_and]
   exact hA
 
-/-- An unsupported stress-concentration assumption is rejected: at the nominal minimum diameter
-the nominal demand equals the allowable, and a bending stress-concentration factor `K > 1`
-(with `M ≠ 0`) raises the demand strictly above it. The nominal sizing inequality covers a plain
-shaft only; a notch or shoulder needs its factor as a supplied input. -/
+/-- An unsupported stress-concentration assumption is rejected: for a positive allowable, at the
+nominal minimum diameter the nominal demand equals the allowable, and a bending
+stress-concentration factor `K > 1` (with `M ≠ 0`) raises the demand strictly above it. The
+nominal sizing inequality covers a plain shaft only; a notch or shoulder needs its factor as a
+supplied input. -/
 lemma stressConcentration_exceeds_at_minDiameter {Φ : Matrix (Fin 3) (Fin 3) ℝ → ℝ} {c : ℝ}
     (hΦ : BendingTorsionCalibrated Φ c) {M A K : ℝ} (hM : M ≠ 0) (hA : 0 < A) (hK : 1 < K)
     (T : ℝ) :

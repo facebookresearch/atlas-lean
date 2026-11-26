@@ -25,7 +25,10 @@ stream over a duration `Δt` gives amounts `Δt * ṅ i`.
 Composition is produced only under a positive total flow, by applying the
 existing `Chemistry.Amounts.moleFraction` and `Chemistry.Amounts.massFraction`
 to the flow vector. A zero-flow stream has no composition: `composition`
-returns `none`, and no lemma divides by a zero total. The mass-flow view is
+returns `none`. Three lemmas stated directly on these fractions
+(`moleFraction_nonneg`, `moleFraction_rescale`,
+`massFraction_eq_moleFraction_massFlow`) assume no positive total and cover a zero
+denominator, where the convention `x / 0 = 0` makes every fraction `0`. The mass-flow view is
 `ṁ i = ṅ i * M i` for molar masses `M`. Generic mole/mass fraction algebra,
 including normalization and the mutually inverse conversions, is imported
 from `Chemistry.Amounts`, not reproved here.
@@ -37,10 +40,11 @@ from `Chemistry.Amounts`, not reproved here.
 - `StreamFlow.composition_eq_none_iff`: there is no composition exactly when
   the total flow is zero.
 - `StreamFlow.composition_of_integrate`: time-unit erasure. The amount
-  fractions of a constant stream integrated over `Δt > 0` equal its flow
-  fractions.
+  fractions of a constant stream with a positive total flow, integrated over
+  `Δt > 0`, equal its flow fractions.
 - `StreamFlow.mass_mole_round_trip` and `StreamFlow.mole_mass_round_trip`:
-  the mass/mole flow-composition conversions are the imported inverse pair.
+  for positive molar masses and a positive total flow, the mass/mole
+  flow-composition conversions are the imported inverse pair.
 
 ## iii. Table of contents
 
@@ -81,7 +85,8 @@ namespace StreamFlow
 def zero (ι : Type*) [Fintype ι] : StreamFlow ι :=
   ⟨fun _ => 0, fun _ => le_refl 0⟩
 
-/-- The total amount-flow rate `∑ i, ṅ i` of a stream. -/
+/-- The total amount-flow rate `∑ i, ṅ i` of a stream (`0` for an empty
+species type). -/
 def total {ι : Type*} [Fintype ι] (s : StreamFlow ι) : ℝ :=
   ∑ i, s.flow i
 
@@ -132,7 +137,9 @@ lemma composition_eq_none_iff {ι : Type*} [Fintype ι] (s : StreamFlow ι) :
 lemma zero_composition (ι : Type*) [Fintype ι] : (zero ι).composition = none := by
   exact (composition_eq_none_iff _).mpr (zero_total _)
 
-/-- The mole fractions of a positive-total stream are nonnegative. -/
+/-- The mole fractions `ṅ i / ∑ j, ṅ j` of every stream are nonnegative. No
+positive total is needed: with the convention `x / 0 = 0`, every mole fraction
+of a zero-total stream is `0`. -/
 lemma moleFraction_nonneg {ι : Type*} [Fintype ι] (s : StreamFlow ι) (i : ι) :
     0 ≤ Chemistry.Amounts.moleFraction s.flow i := by
   exact Chemistry.Amounts.moleFraction_nonneg s.nonneg i
@@ -153,7 +160,8 @@ lemma sum_composition {ι : Type*} [Fintype ι] (s : StreamFlow ι) {x : ι → 
 /-! ## C. Integrated amounts -/
 
 /-- The amounts obtained by running a constant stream for a duration `Δt`:
-species `i` accumulates `Δt * ṅ i`. -/
+species `i` accumulates `Δt * ṅ i`. Defined for every real `Δt`; a negative
+`Δt` gives entries `≤ 0`, and the physical reading needs `0 ≤ Δt`. -/
 def integrate {ι : Type*} [Fintype ι] (s : StreamFlow ι) (Δt : ℝ) : ι → ℝ :=
   fun i => Δt * s.flow i
 
@@ -163,15 +171,18 @@ lemma integrate_zero {ι : Type*} [Fintype ι] (s : StreamFlow ι) :
   funext i
   simp [integrate]
 
-/-- The total integrated amount is the duration times the total flow. -/
+/-- The total integrated amount is the duration times the total flow, for every
+real `Δt`; the physical reading has `0 ≤ Δt`. -/
 lemma sum_integrate {ι : Type*} [Fintype ι] (s : StreamFlow ι) (Δt : ℝ) :
     ∑ i, s.integrate Δt i = Δt * s.total := by
   simp only [integrate, total, Finset.mul_sum]
 
 set_option linter.unusedVariables false in
-/-- **Time-unit erasure.** For a positive duration `Δt > 0`, the amount
-fractions of the integrated batch equal the flow fractions of the stream:
-integrating a constant stream does not change its composition. -/
+/-- **Time-unit erasure.** For a positive duration `Δt > 0` and a stream with a
+positive total flow, the amount fractions of the integrated batch equal the
+flow fractions of the stream: integrating a constant stream does not change its
+composition. It is the case `α = Δt` of `moleFraction_rescale`, which needs only
+`Δt ≠ 0` and no positive total. -/
 lemma composition_of_integrate {ι : Type*} [Fintype ι] (s : StreamFlow ι)
     {Δt : ℝ} (hΔt : 0 < Δt) (hs : 0 < s.total) :
     Chemistry.Amounts.moleFraction (s.integrate Δt) =
@@ -183,12 +194,15 @@ lemma composition_of_integrate {ι : Type*} [Fintype ι] (s : StreamFlow ι)
 /-! ## D. Mass-flow view and mass composition -/
 
 /-- The mass-flow view of a stream: species `i` carries mass at rate
-`ṁ i = ṅ i * M i` for molar masses `M`. -/
+`ṁ i = ṅ i * M i` for molar masses `M`. Defined for every real `M`; molar
+masses are positive in the physical reading, and a negative `M i` gives
+`ṁ i ≤ 0`. -/
 def massFlow {ι : Type*} [Fintype ι] (s : StreamFlow ι) (M : ι → ℝ) : ι → ℝ :=
   fun i => s.flow i * M i
 
 /-- Mass fractions of the flow vector are mole fractions of the mass-flow
-vector. -/
+vector, for every real `M`: both are `ṅ i * M i / ∑ j, ṅ j * M j`. With the
+convention `x / 0 = 0`, both are `0` when the total mass flow is `0`. -/
 lemma massFraction_eq_moleFraction_massFlow {ι : Type*} [Fintype ι]
     (s : StreamFlow ι) (M : ι → ℝ) :
     Chemistry.Amounts.massFraction M s.flow =
@@ -253,8 +267,9 @@ lemma sum_massComposition {ι : Type*} [Fintype ι] (s : StreamFlow ι)
   · rw [ite_eq_right h] at hw
     cases hw
 
-/-- **Mole to mass and back.** Converting a stream's mole composition to mass
-fractions and back returns the mole composition. This is the imported
+/-- **Mole to mass and back.** For positive molar masses `M` and a stream with a
+positive total flow, converting the stream's mole composition to mass fractions
+and back returns the mole composition. This is the imported
 `Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one`
 applied to the flow fractions, which lie on the simplex by
 `Chemistry.Amounts.sum_moleFraction`. -/
@@ -268,8 +283,9 @@ lemma mass_mole_round_trip {ι : Type*} [Fintype ι] (s : StreamFlow ι)
     (Chemistry.Amounts.moleFraction_nonneg s.nonneg)
     (Chemistry.Amounts.sum_moleFraction hs') hM
 
-/-- **Mass to mole and back.** Converting a stream's mass composition to mole
-fractions and back returns the mass composition. This is the imported
+/-- **Mass to mole and back.** For positive molar masses `M` and a stream with a
+positive total flow, converting the stream's mass composition to mole fractions
+and back returns the mass composition. This is the imported
 `Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one`
 applied to the mass-flow fractions, which lie on the simplex by
 `Chemistry.Amounts.sum_massFraction`. -/
@@ -306,8 +322,9 @@ def IsBalance {ι : Type*} [Fintype ι] (sIn sOut : StreamFlow ι)
     (gen acc : ι → ℝ) : Prop :=
   ∀ i, sIn.flow i - sOut.flow i + gen i = acc i
 
-/-- **Balance rescaling.** For a positive scale, the rescaled streams form
-a balance exactly when the original streams do. -/
+/-- **Balance rescaling.** For a positive scale `α`, scaling both streams, the
+net generation and the accumulation by `α` gives a balance exactly when the
+original streams, generation and accumulation form one. -/
 lemma balance_rescale_iff {ι : Type*} [Fintype ι] {α : ℝ} (hα : 0 < α)
     (sIn sOut : StreamFlow ι) (gen acc : ι → ℝ) :
     IsBalance (sIn.rescale hα.le) (sOut.rescale hα.le)
@@ -325,8 +342,10 @@ lemma balance_rescale_iff {ι : Type*} [Fintype ι] {α : ℝ} (hα : 0 < α)
     have hi := h i
     linear_combination α * hi
 
-/-- Mole fractions are invariant under a common positive rescaling of the
-flow vector (the algebraic core of composition invariance). -/
+/-- Mole fractions are invariant under multiplying the flow vector by a common
+nonzero factor `α`, positive or negative (the algebraic core of composition
+invariance). No condition on the total flow is needed: with the convention
+`x / 0 = 0`, both sides are `0` when it is `0`. -/
 lemma moleFraction_rescale {ι : Type*} [Fintype ι] (s : StreamFlow ι)
     {α : ℝ} (hα : α ≠ 0) :
     Chemistry.Amounts.moleFraction (fun i => α * s.flow i) =

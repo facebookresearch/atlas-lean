@@ -1,3 +1,4 @@
-# Rescaling a stream scales its total flow
+# Rescaling a stream multiplies its total flow by the factor
 
-For a stream with nonnegative species flows $\dot n_i$ over a finite set of species and a factor $\alpha \ge 0$, the stream with flows $\alpha\dot n_i$ has total flow $\alpha\sum_i \dot n_i$.
+For a [process stream](stream-flow.md) with species flow rates `ṅ i` and a factor `0 ≤ α`, the
+[rescaled stream](rescale.md) has [total flow](total.md) `∑ i, α * ṅ i = α * ∑ i, ṅ i`.

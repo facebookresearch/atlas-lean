@@ -1,3 +1,4 @@
-# Zero process stream
+# Zero stream
 
-For a finite set of species, the zero stream has every species amount-flow rate equal to zero.
+The zero stream over a finite species type `ι` is the [process stream](stream-flow.md) whose species
+flow rates are all zero: `ṅ i = 0` for every species `i`.

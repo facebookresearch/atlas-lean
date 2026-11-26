@@ -1,7 +1,6 @@
 # Part 9 of 10
 
 - [Traveling Wave](traveling-wave/README.md)
-- [Uncertainty Propagation](uncertainty-propagation/README.md)
 - [Uniform Ohmic Bar](uniform-ohmic-bar/README.md)
 - [Vacuum TE10 Evanescent](vacuum-te10-evanescent/README.md)
 - [Vacuum TE10 Mode](vacuum-te10-mode/README.md)

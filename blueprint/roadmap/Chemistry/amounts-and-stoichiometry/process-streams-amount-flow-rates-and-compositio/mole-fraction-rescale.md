@@ -1,9 +1,11 @@
-# Mole fractions are invariant under rescaling
+# Mole fractions of a stream are unchanged by a nonzero common factor
 
-Let a process stream over a finite set of species have flow rates $\dot n_i$, and let $\alpha \ne 0$ be real. Write $x(v)_i = v_i / \sum_j v_j$ for the mole-fraction formula applied to any real vector $v$, with $x(v)_i = 0$ when $\sum_j v_j = 0$. Then
+For every [process stream](stream-flow.md) with species flow rates `ṅ i` and every real `α ≠ 0`,
+positive or negative, multiplying every flow rate by `α` leaves the
+[mole fractions](../amount-of-substance-and-molar-mass/mole-fraction.md) unchanged:
 
-$$x\big((\alpha\,\dot n_i)_i\big) = x\big((\dot n_i)_i\big),$$
+`(α * ṅ i) / ∑ j, α * ṅ j = ṅ i / ∑ j, ṅ j` for every species `i`.
 
-because the common factor $\alpha$ cancels from each ratio (and both sides are $0$ when the total flow is $0$).
-
-This is an identity of raw vectors: for $\alpha < 0$ the vector $(\alpha\,\dot n_i)_i$ has negative entries whenever some $\dot n_i > 0$, so it is not a process stream. Read as a statement about streams, it applies only to $\alpha > 0$, where $(\alpha\,\dot n_i)_i$ is the [rescaled stream](rescale.md); then it says that rescaling preserves the mole fractions, as in [composition invariance](composition-rescale.md).
+No condition on the total flow is needed: when it is `0`, both sides are `0` by the convention
+`x / 0 = 0`. For `α < 0` the scaled vector has nonpositive entries, so it is not a stream unless
+every flow is `0`; the identity concerns the mole-fraction formula.

@@ -8,10 +8,9 @@
 - [Arc Port Signs](arc-port-signs/README.md)
 - [Balanced Fault Current](balanced-fault-current/README.md)
 - [Balanced Three Phase](balanced-three-phase/README.md)
-- [Batch Reactor](batch-reactor/README.md)
+- [Batch Reactor](batch-reactor/README.md): the pages of this module are now under First-order decay kinetics.
 - [Beam Modes](beam-modes/README.md)
 - [Box Terminal Flux](box-terminal-flux/README.md)
 - [Building Envelope](building-envelope/README.md)
-- [Calibration Ports](calibration-ports/README.md)
 - [Canonical Diode Port](canonical-diode-port/README.md)
 - [Cell Transmission](cell-transmission/README.md)

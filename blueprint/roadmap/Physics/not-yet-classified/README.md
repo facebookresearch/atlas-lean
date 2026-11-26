@@ -16,7 +16,6 @@ Topics added since this subject's fields were last revised.
 - [Beam Modes](part-01/beam-modes/README.md)
 - [Box Terminal Flux](part-01/box-terminal-flux/README.md)
 - [Building Envelope](part-01/building-envelope/README.md)
-- [Calibration Ports](part-01/calibration-ports/README.md)
 - [Canonical Diode Port](part-01/canonical-diode-port/README.md)
 - [Cell Transmission](part-01/cell-transmission/README.md)
 
@@ -40,9 +39,7 @@ Topics added since this subject's fields were last revised.
 ## [Part 3 of 10](part-03/README.md)
 
 - [Declared Friis Link](part-03/declared-friis-link/README.md)
-- [Design Sensitivity](part-03/design-sensitivity/README.md)
 - [Distributed Line Energy](part-03/distributed-line-energy/README.md)
-- [Drying](part-03/drying/README.md)
 - [Ebers Moll Terminal Balance](part-03/ebers-moll-terminal-balance/README.md)
 - [Electrical Dimensions](part-03/electrical-dimensions/README.md)
 - [Engineering Quantities](part-03/engineering-quantities/README.md)
@@ -99,7 +96,6 @@ Topics added since this subject's fields were last revised.
 - [Prismatic Members](part-07/prismatic-members/README.md)
 - [RMSAverage Power](part-07/rmsaverage-power/README.md)
 - [Rail Limited Feedback](part-07/rail-limited-feedback/README.md)
-- [Reactive Balance](part-07/reactive-balance/README.md)
 - [Rectangular PECTraces](part-07/rectangular-pectraces/README.md)
 - [Reservoir Balance](part-07/reservoir-balance/README.md)
 
@@ -125,7 +121,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 9 of 10](part-09/README.md)
 
 - [Traveling Wave](part-09/traveling-wave/README.md)
-- [Uncertainty Propagation](part-09/uncertainty-propagation/README.md)
 - [Uniform Ohmic Bar](part-09/uniform-ohmic-bar/README.md)
 - [Vacuum TE10 Evanescent](part-09/vacuum-te10-evanescent/README.md)
 - [Vacuum TE10 Mode](part-09/vacuum-te10-mode/README.md)

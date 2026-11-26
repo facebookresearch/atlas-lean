@@ -1,3 +1,7 @@
-# Mass composition of a stream
+# Mass composition is mass fractions for positive masses and total flow
 
-For a stream with finitely many species, positive molar masses $M_i$ and positive total amount flow, the mass composition is defined and equals the mass fractions $M_i n_i / \sum_j M_j n_j$ of the amount flows $n_i$.
+For a [process stream](stream-flow.md) with species flow rates `ṅ i`, molar masses `0 < M i` for
+every species `i` and positive [total flow](total.md), `0 < ∑ j, ṅ j`, the
+[mass composition](mass-composition.md) is defined and is the vector of
+[mass fractions](../amount-of-substance-and-molar-mass/mass-fraction.md) of the flows,
+`w i = ṅ i * M i / ∑ j, ṅ j * M j`, whose denominator is positive since `0 ≤ ṅ i`.
