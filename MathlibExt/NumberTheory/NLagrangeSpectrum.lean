@@ -12,9 +12,8 @@ public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.NumberTheory.DiophantineApproximation.Basic
 public import Mathlib.Order.LiminfLimsup
-import Mathlib.Algebra.ContinuedFractions.Computation.Approximations
+import Mathlib.Algebra.ContinuedFractions.Computation.ApproximationCorollaries
 import Mathlib.Algebra.ContinuedFractions.Computation.TerminatesIffRat
-import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.NumberTheory.DiophantineApproximation.ContinuedFractions
 import Mathlib.RingTheory.Int.Basic
 import Mathlib.Tactic.LinearCombination
@@ -891,41 +890,9 @@ private theorem exists_pos_forall_den_ge {ξ : ℝ} (hξ : Irrational ξ) (N : �
 
 private theorem tendsto_convergent {ξ : ℝ} (hξ : Irrational ξ) :
     Filter.Tendsto (fun k : ℕ => ((ξ.convergent k : ℚ) : ℝ)) Filter.atTop (𝓝[≠] ξ) := by
-  have hne : ∀ k : ℕ, ((ξ.convergent k : ℚ) : ℝ) ≠ ξ := by
-    intro k h
-    apply hξ
-    exact ⟨ξ.convergent k, h⟩
-  have hbound : ∀ᶠ k : ℕ in Filter.atTop,
-      dist ((ξ.convergent k : ℚ) : ℝ) ξ ≤ 1 / (k : ℝ) := by
-    rw [Filter.eventually_atTop]
-    refine ⟨1, fun k hk => ?_⟩
-    have h1 := GenContFract.abs_sub_convs_le (v := ξ) (n := k) (hinf hξ k)
-    rw [Real.dist_eq, ← Real.convs_eq_convergent]
-    calc |(of ξ).convs k - ξ| ≤ 1 / ((of ξ).dens k * (of ξ).dens (k + 1)) := by
-            rw [abs_sub_comm]; exact h1
-      _ ≤ 1 / (k : ℝ) := by
-            apply one_div_le_one_div_of_le (by exact_mod_cast hk)
-            have hk1 : (k : ℝ) ≤ (of ξ).dens k := by
-              have h := dens_ge hξ (k - 1)
-              rw [show k - 1 + 1 = k by omega] at h
-              have hcast : ((k - 1 : ℕ) : ℝ) = (k : ℝ) - 1 := by
-                rw [Nat.cast_sub (by omega : 1 ≤ k)]
-                norm_num
-              rw [hcast] at h
-              linarith [h]
-            have h2 : 1 ≤ (of ξ).dens (k + 1) := dens_ge_one hξ (k + 1)
-            calc (k : ℝ) = (k : ℝ) * 1 := by ring
-              _ ≤ (of ξ).dens k * (of ξ).dens (k + 1) :=
-                mul_le_mul hk1 h2 (by norm_num) (dens_pos hξ k).le
-  have hg : Filter.Tendsto (fun k : ℕ => 1 / (k : ℝ)) Filter.atTop (𝓝 0) := by
-    simpa only [one_div] using tendsto_inv_atTop_nhds_zero_nat (𝕜 := ℝ)
-  have hto : Filter.Tendsto (fun k : ℕ => ((ξ.convergent k : ℚ) : ℝ)) Filter.atTop (𝓝 ξ) := by
-    rw [tendsto_iff_dist_tendsto_zero]
-    exact squeeze_zero' (Filter.Eventually.of_forall fun _ => dist_nonneg) hbound hg
-  exact tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ hto
-    (Filter.Eventually.of_forall fun k => hne k)
-
-
+  apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+  · exact (GenContFract.of_convergence ξ).congr (Real.convs_eq_convergent ξ)
+  · exact Filter.Eventually.of_forall fun k heq => hξ ⟨ξ.convergent k, heq⟩
 
 private theorem coe_max_ereal (a b : ℝ) :
     ((max a b : ℝ) : EReal) = max (a : EReal) (b : EReal) := by

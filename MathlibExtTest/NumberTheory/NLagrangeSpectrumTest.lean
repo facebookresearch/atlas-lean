@@ -52,3 +52,46 @@ example : (-1 : ℝ) ^ 1 / (((Real.sqrt 2).convergent 0).den ^ 2 *
   simp at h
   rw [hfloor, hfract] at h
   linear_combination h
+
+-- At √3 the first three digits are 1, 1, 2. The reversed prefix [0; 2, 1] contributes 1/3.
+example :
+    let x := Real.sqrt 3
+    let q := x.convergent 2
+    q = 5 / 3 ∧ (-1 : ℝ) ^ 3 / ((q.den : ℝ) ^ 2 * ((q : ℝ) - x)) = (3 * x + 5) / 6 := by
+  let x := Real.sqrt 3
+  let y := (x + 1) / 2
+  have hirr : Irrational x := Nat.prime_three.irrational_sqrt
+  have hsq : x ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+  have hlo : 1 < x := by norm_num [x, Real.lt_sqrt]
+  have hhi : x < 2 := by norm_num [x, Real.sqrt_lt']
+  have hx : ⌊x⌋ = 1 := Int.floor_eq_iff.mpr (by norm_num; exact ⟨hlo.le, hhi⟩)
+  have hy : ⌊y⌋ = 1 := Int.floor_eq_iff.mpr (by dsimp [y]; constructor <;> linarith)
+  have hxy : (Int.fract x)⁻¹ = y := by
+    apply inv_eq_of_mul_eq_one_left
+    rw [← Int.self_sub_floor, hx]
+    dsimp [y]
+    push_cast
+    nlinarith
+  have hyx : (Int.fract y)⁻¹ = x + 1 := by
+    apply inv_eq_of_mul_eq_one_left
+    rw [← Int.self_sub_floor, hy]
+    dsimp [y]
+    push_cast
+    nlinarith
+  constructor
+  · change x.convergent 2 = 5 / 3
+    rw [Real.convergent_succ, hx, hxy, Real.convergent_succ, hy, hyx, Real.convergent_zero,
+      Int.floor_add_one, hx]
+    norm_num
+  · let step := fun z : ℝ => (Int.fract z)⁻¹
+    calc
+      _ = (⌊step (step (step x))⌋ : ℝ) +
+          1 / ((⌊step (step x)⌋ : ℝ) + 1 / ((⌊step x⌋ : ℝ) + 0)) +
+          Int.fract (step (step (step x))) :=
+        (MetaMathlibExt.convergent_quality_and_lagrange_limsup x hirr).1 3 (by decide)
+      _ = y + 1 / 3 := by
+        simp only [step, hxy, hyx, Int.fract_add_one, Int.floor_add_one, hx, hy]
+        rw [← Int.self_sub_floor, hy]
+        push_cast
+        ring
+      _ = (3 * x + 5) / 6 := by dsimp [y]; ring
