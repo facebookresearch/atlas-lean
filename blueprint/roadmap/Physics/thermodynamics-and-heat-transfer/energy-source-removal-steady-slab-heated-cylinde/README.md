@@ -1,14 +1,12 @@
 # Energy source removal: steady slab, heated cylinder and coolant channel
 
+- [Heated-slab temperature profile](slab-temperature.md)
 - [Temperature gradient of a heated slab](slab-gradient.md)
 - [Slab temperature at the first face](slab-temperature-zero.md)
 - [Slab temperature at the second face](slab-temperature-length.md)
 - [Midplane temperature of a symmetrically cooled slab](slab-temperature-midplane.md)
-
-## Derivatives of the slab profile
-
-- [Derivative of the slab temperature](slab-temperature-has-deriv-at.md)
-- [The slab profile satisfies the steady heat equation](slab-gradient-has-deriv-at.md)
+- [Outward heat removal from a heated slab](outward-flux-sum.md)
+- [Midplane maximum of a heated slab](slab-temperature-le-midplane.md)
 
 ## Regular heated cylinder
 
@@ -44,7 +42,4 @@
 ## Clad-temperature envelope
 
 - [The coolant stays at or below its outlet temperature](le-outlet.md)
-- [Heated-slab temperature profile](slab-temperature.md)
-- [Outward heat removal from a heated slab](outward-flux-sum.md)
-- [Midplane maximum of a heated slab](slab-temperature-le-midplane.md)
 - [Clad-temperature envelope for a cosine-heated coolant channel](clad-le.md)

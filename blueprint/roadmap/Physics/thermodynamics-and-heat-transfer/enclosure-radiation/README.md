@@ -4,6 +4,7 @@
 - [Net radiative power of a black surface](net-power.md)
 - [Net radiative flux of a black surface](net-flux.md)
 - [Net radiative flux as a sum over view factors](net-flux-eq.md)
+- [Net radiative power is emission minus absorption](net-power-eq-emitted-sub-absorbed.md)
 
 ## Conservation and sign results
 
@@ -42,7 +43,6 @@
 - [The hotter parallel plate loses power](parallel-plate-power-pos.md)
 - [Plates at different temperatures exchange power](parallel-plate-power-ne-zero.md)
 - [Net radiative flux between parallel gray plates](parallel-plate-power-div-area.md)
-- [Net radiative power is emission minus absorption](net-power-eq-emitted-sub-absorbed.md)
 - [Net power between two gray parallel plates (formula)](parallel-plate-power.md)
 - [Equal-area parallel plates form an enclosure](is-black-enclosure-parallel-plates.md)
 - [Net power between two gray parallel plates](gray-net-power-parallel-plates.md)

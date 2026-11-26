@@ -11,7 +11,6 @@
 
 ## Mole composition of a stream
 
-- [Mole fractions of a process stream are nonnegative](mole-fraction-nonneg.md)
 - [Composition](composition.md)
 - [Composition of a stream with positive flow](composition-eq-mole-fraction.md)
 - [Composition eq none iff](composition-eq-none-iff.md)
