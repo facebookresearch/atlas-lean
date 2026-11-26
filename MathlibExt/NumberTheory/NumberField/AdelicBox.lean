@@ -9,7 +9,10 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Definitions/Def_NumberField_AdelicBox.lean`
+`Definitions/Def_NumberField_AdelicBox.lean`,
+`Definitions/Def_NumberField_AdelicCentre.lean`
+and
+`Definitions/Def_NumberField_AdelicHaar.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -27,7 +30,51 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
 public import MathlibExt.NumberTheory.NumberField.AdelicHaar
+
+/-!
+# A fundamental domain for `K` in the adeles, and adelic `PGL(2)`
+
+For a number field `K` with adele ring `AdeleRing (𝓞 K) K`, the first part of this file builds a
+fundamental domain for the principal adeles `K`, acting on the adele ring by translation. The
+second part, for a Dedekind domain `R` with fraction field `K`, defines adelic `PGL(2)` as the
+quotient of adelic `GL(2)` by its centre and equips it with a Haar measure.
+
+## Main definitions
+
+* `NumberField.AdelicBox.integralFiniteAdeles R K`: the finite adeles that are integral at every
+  finite place.
+* `NumberField.AdelicBox.infiniteBox K`: the preimage, under the isomorphism of the infinite
+  adeles with the mixed space, of the half-open parallelepiped (`ZSpan.fundamentalDomain`)
+  spanned by `mixedEmbedding.latticeBasis K`, a `ℤ`-basis of the image of `𝓞 K`.
+* `NumberField.AdelicBox.adelicBox K`: the adeles whose infinite component lies in
+  `infiniteBox K` and whose finite component is integral.
+* `NumberField.AdelicCentre.AdelicPGL2 R K`: adelic `PGL(2)`, the quotient of
+  `GL (Fin 2) (AdeleRing R K)` by its centre.
+* `NumberField.AdelicCentre.pglBorel R K`: the Borel measurable space on adelic `PGL(2)`. Like
+  `NumberField.AdelicHaar.adeleBorel`, it is a reducible definition rather than an instance.
+* `NumberField.AdelicCentre.adelicPGLHaar R K`: a Haar measure on adelic `PGL(2)` for
+  `pglBorel R K`, when adelic `PGL(2)` is a locally compact topological group.
+
+## Main results
+
+* `NumberField.AdelicBox.existsUnique_algebraMap_add_mem_adelicBox`: every adele has exactly one
+  translate by an element of `K` in the adelic box.
+* `NumberField.AdelicBox.isAddFundamentalDomain_adelicBox`: the adelic box is a fundamental
+  domain for the principal adeles, for every measure.
+* `NumberField.AdelicBox.adelicAddHaar_adelicBox_pos` and
+  `NumberField.AdelicBox.adelicAddHaar_adelicBox_lt_top`: the adelic box has positive, finite
+  additive Haar measure.
+* `NumberField.AdelicCentre.scalar_injective`: the scalar map from the units of the adele ring to
+  adelic `GL(2)` is injective; by `Matrix.GeneralLinearGroup.center_eq_range_scalar` its range is
+  the centre.
+* `NumberField.AdelicCentre.adelicPGLHaar_image_pos` and
+  `NumberField.AdelicCentre.adelicPGLHaar_image_lt_top_of_subset`: for a number field `K` and `R`
+  a free `ℤ`-module of finite rank, the image in adelic `PGL(2)` of a set containing a nonempty
+  open set has positive Haar measure, and the image of a set contained in a compact set times the
+  centre has finite Haar measure.
+-/
 
 @[expose] public section
 
@@ -581,5 +628,177 @@ theorem isProbabilityMeasure_cond_adelicBox :
 end Box
 
 end NumberField.AdelicBox
+
+open scoped Pointwise
+
+/-! ### Adelic `PGL(2)`
+
+For a Dedekind domain `R` with fraction field `K`, adelic `PGL(2)` is the quotient of
+`GL (Fin 2) (AdeleRing R K)` by its centre, with the quotient group structure and the quotient
+topology. The centre is the range of the scalar map from the units of the adele ring
+(`Matrix.GeneralLinearGroup.center_eq_range_scalar`), and that map is injective
+(`scalar_injective`). Since `AdelicPGL2` is an abbreviation, it inherits Mathlib's quotient-group
+instances: it is a topological group (`QuotientGroup.instIsTopologicalGroup`), regular and
+Hausdorff because the centre is closed (`isClosed_center`, `QuotientGroup.instT3Space`), and
+locally compact when `AdeleRing R K` is (`QuotientGroup.instLocallyCompactSpace`), as for
+`R = 𝓞 K` over a number field `K` (`NumberField.AdeleRing.locallyCompactSpace`). Given those two
+instances, `adelicPGLHaar` is a Haar measure on it; the results about it in the section
+`NumberFieldCase` also assume that `K` is a number field and that `R` is a free `ℤ`-module of
+finite rank. The generic measure bounds before that section need neither.
+-/
+
+namespace NumberField.AdelicCentre
+
+variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
+  [IsFractionRing R K]
+
+/-- **Injectivity of the adelic scalar map.** For a Dedekind domain `R` with fraction field `K`,
+the scalar map from the units of `AdeleRing R K` to adelic `GL(2)`, sending `a` to the scalar
+matrix with diagonal entries `a`, is injective. With
+`Matrix.GeneralLinearGroup.center_eq_range_scalar`, it identifies these units with the centre
+of adelic `GL(2)`. -/
+theorem scalar_injective :
+    Function.Injective (Matrix.GeneralLinearGroup.scalar (Fin 2) : (AdeleRing R K)ˣ →* _) :=
+  fun a b h => by
+    have := congrArg (fun g : GL (Fin 2) (AdeleRing R K) => (g : Matrix (Fin 2) (Fin 2) (AdeleRing
+      R K)) 0 0) h
+    exact Units.ext (by simpa using this)
+
+/-- **Adelic `PGL(2)`.** For a Dedekind domain `R` with fraction field `K`, the quotient of
+`GL (Fin 2) (AdeleRing R K)` by its centre, the scalar matrices. As an abbreviation, it carries
+the quotient group structure, the quotient topology and Mathlib's instances for quotient groups.
+Mathlib's `Matrix.ProjGenLinGroup (Fin 2) (AdeleRing R K)` is the same group, but it is a `def`
+with no topology. -/
+abbrev AdelicPGL2 : Type _ :=
+  GL (Fin 2) (AdeleRing R K) ⧸ Subgroup.center (GL (Fin 2) (AdeleRing R K))
+
+/-- **Open images in adelic `PGL(2)` have positive measure.** Let `R` be a Dedekind domain with
+fraction field `K`, and let `μ` be an open-positive measure on adelic `PGL(2)`, for any measurable
+space `m`; no number-field hypothesis is needed. The image of a set `D` of adelic `GL(2)` that
+contains a nonempty open set has positive `μ`-measure, since the quotient map is open. -/
+theorem measure_image_mk_pos {m : MeasurableSpace (AdelicPGL2 R K)} (μ : Measure (AdelicPGL2 R K))
+    [μ.IsOpenPosMeasure] {D : Set (GL (Fin 2) (AdeleRing R K))}
+    (h : ∃ U : Set (GL (Fin 2) (AdeleRing R K)), IsOpen U ∧ U.Nonempty ∧ U ⊆ D) :
+    0 < μ ((QuotientGroup.mk : GL (Fin 2) (AdeleRing R K) → AdelicPGL2 R K) '' D) := by
+  obtain ⟨U, hU, hne, hsub⟩ := h
+  exact ((QuotientGroup.isOpenMap_coe U hU).measure_pos μ (hne.image _)).trans_le
+    (measure_mono (Set.image_mono hsub))
+
+/-- **Compact images in adelic `PGL(2)` have finite measure.** Let `R` be a Dedekind domain with
+fraction field `K`, and let `μ` be a measure on adelic `PGL(2)`, for any measurable space `m`,
+that is finite on compact sets; no number-field hypothesis is needed. The image of a compact set
+of adelic `GL(2)` has finite `μ`-measure. -/
+theorem measure_image_mk_lt_top {m : MeasurableSpace (AdelicPGL2 R K)} (μ : Measure (AdelicPGL2 R
+  K))
+    [IsFiniteMeasureOnCompacts μ] {C : Set (GL (Fin 2) (AdeleRing R K))} (hC : IsCompact C) :
+    μ ((QuotientGroup.mk : GL (Fin 2) (AdeleRing R K) → AdelicPGL2 R K) '' C) < ⊤ :=
+  (hC.image QuotientGroup.continuous_mk).measure_lt_top
+
+/-- **Images modulo the centre.** Let `R` be a Dedekind domain with fraction field `K`. If
+`D ⊆ C * Z`, where `Z` is the centre of adelic `GL(2)`, then the image of `D` in adelic `PGL(2)`
+lies in the image of `C`. -/
+theorem image_mk_subset_of_subset_mul_center {D C : Set (GL (Fin 2) (AdeleRing R K))}
+    (h : D ⊆ C * ((Subgroup.center (GL (Fin 2) (AdeleRing R K)) : Set (GL (Fin 2) (AdeleRing R
+      K))))) :
+    (QuotientGroup.mk : _ → AdelicPGL2 R K) '' D ⊆ (QuotientGroup.mk : _ → AdelicPGL2 R K) '' C :=
+      by
+  rintro _ ⟨d, hd, rfl⟩
+  obtain ⟨c, hc, z, hz, rfl⟩ := h hd
+  refine ⟨c, hc, ?_⟩
+  rw [QuotientGroup.eq]
+  simpa using hz
+
+/-- **Borel measurable space on adelic `PGL(2)`.** For a Dedekind domain `R` with fraction field
+`K`, the Borel σ-algebra of the quotient topology on adelic `PGL(2)`. Like
+`NumberField.AdelicHaar.adeleBorel` and `NumberField.AdelicHaar.glBorel`, it is a reducible
+definition rather than an instance: statements about `adelicPGLHaar` name it, and proofs install
+it with `letI` together with `borelSpace_pglBorel`. -/
+@[reducible] def pglBorel : MeasurableSpace (AdelicPGL2 R K) := borel _
+
+/-- **`pglBorel` is Borel.** For a Dedekind domain `R` with fraction field `K`, `pglBorel R K`
+is the Borel σ-algebra of the quotient topology on adelic `PGL(2)`. -/
+theorem borelSpace_pglBorel : @BorelSpace (AdelicPGL2 R K) _ (pglBorel R K) :=
+  @BorelSpace.mk _ _ (pglBorel R K) rfl
+
+section NumberFieldCase
+
+variable [Module.Free ℤ R] [Module.Finite ℤ R] [NumberField K]
+
+/-- **The centre of adelic `GL(2)` is closed.** For a Dedekind domain `R` with fraction field `K`
+(this instance takes no number-field hypothesis), the centre is the intersection, over all `g`,
+of the closed sets `{z | g * z = z * g}`. With Mathlib's `QuotientGroup.instT3Space`, this makes
+adelic `PGL(2)` regular and Hausdorff. -/
+instance isClosed_center :
+    IsClosed ((Subgroup.center (GL (Fin 2) (AdeleRing R K)) : Set (GL (Fin 2) (AdeleRing R K)))) :=
+      by
+  have : ((Subgroup.center (GL (Fin 2) (AdeleRing R K)) : Set (GL (Fin 2) (AdeleRing R K))))
+      = ⋂ g : GL (Fin 2) (AdeleRing R K), {z | g * z = z * g} := by
+    ext z
+    simp only [SetLike.mem_coe, Subgroup.mem_center_iff, Set.mem_iInter, Set.mem_setOf_eq]
+  rw [this]
+  exact isClosed_iInter fun g =>
+    isClosed_eq (continuous_const.mul continuous_id) (continuous_id.mul continuous_const)
+
+/-- **Haar measure on adelic `PGL(2)`.** Let `R` be a Dedekind domain with fraction field `K`, and
+assume that adelic `PGL(2)` is a topological group and locally compact (the instance arguments
+`IsTopologicalGroup (AdelicPGL2 R K)` and `LocallyCompactSpace (AdelicPGL2 R K)`). Then
+`adelicPGLHaar R K` is a Haar measure for the Borel measurable space `pglBorel R K`: Mathlib's
+`MeasureTheory.Measure.haar`, which gives measure `1` to an arbitrarily chosen positive compact
+set. Mathlib's quotient-group instances supply the first assumption for every such `R`, and the
+second when `AdeleRing R K` is locally compact, as for `R = 𝓞 K` over a number field `K`. The
+results about `adelicPGLHaar` (`isHaarMeasure_adelicPGLHaar`, `adelicPGLHaar_image_pos`,
+`adelicPGLHaar_image_lt_top_of_subset`) also assume that `K` is a number field and that `R` is a
+free `ℤ`-module of finite rank. -/
+def adelicPGLHaar [IsTopologicalGroup (AdelicPGL2 R K)]
+    [LocallyCompactSpace (AdelicPGL2 R K)] :
+    @Measure (AdelicPGL2 R K) (pglBorel R K) := by
+  letI := pglBorel R K
+  haveI := borelSpace_pglBorel R K
+  exact Measure.haar
+
+/-- **`adelicPGLHaar` is a Haar measure.** In the setting of `adelicPGLHaar` (`R` a Dedekind domain
+with fraction field `K`, and adelic `PGL(2)` a locally compact topological group), with `K` a
+number field and `R` a free `ℤ`-module of finite rank, `adelicPGLHaar R K` is a Haar measure on
+adelic `PGL(2)`. -/
+theorem isHaarMeasure_adelicPGLHaar [IsTopologicalGroup (AdelicPGL2 R K)]
+    [LocallyCompactSpace (AdelicPGL2 R K)] :
+    @Measure.IsHaarMeasure (AdelicPGL2 R K) _ _ (pglBorel R K) (adelicPGLHaar R K) := by
+  letI := pglBorel R K
+  haveI := borelSpace_pglBorel R K
+  exact Measure.isHaarMeasure_haarMeasure _
+
+/-- **Positivity of `adelicPGLHaar` on open images.** In the setting of `adelicPGLHaar` (`R` a
+Dedekind domain with fraction field `K`, and adelic `PGL(2)` a locally compact topological group),
+with `K` a number field and `R` a free `ℤ`-module of finite rank, the image in adelic `PGL(2)` of a
+set of adelic `GL(2)` that contains a nonempty open set has positive `adelicPGLHaar` measure. -/
+theorem adelicPGLHaar_image_pos [IsTopologicalGroup (AdelicPGL2 R K)]
+    [LocallyCompactSpace (AdelicPGL2 R K)] {D : Set (GL (Fin 2) (AdeleRing R K))}
+    (h : ∃ U : Set (GL (Fin 2) (AdeleRing R K)), IsOpen U ∧ U.Nonempty ∧ U ⊆ D) :
+    0 < adelicPGLHaar R K ((QuotientGroup.mk : _ → AdelicPGL2 R K) '' D) := by
+  letI := pglBorel R K
+  haveI := borelSpace_pglBorel R K
+  haveI := isHaarMeasure_adelicPGLHaar R K
+  exact measure_image_mk_pos R K _ h
+
+/-- **Finite `adelicPGLHaar` measure modulo the centre.** In the setting of `adelicPGLHaar` (`R` a
+Dedekind domain with fraction field `K`, and adelic `PGL(2)` a locally compact topological group),
+with `K` a number field and `R` a free `ℤ`-module of finite rank: if `D ⊆ C * Z` for a compact set
+`C` and the centre `Z` of adelic `GL(2)`, then the image of `D` in adelic `PGL(2)` has finite
+`adelicPGLHaar` measure. -/
+theorem adelicPGLHaar_image_lt_top_of_subset [IsTopologicalGroup (AdelicPGL2 R K)]
+    [LocallyCompactSpace (AdelicPGL2 R K)] {D C : Set (GL (Fin 2) (AdeleRing R K))} (hC :
+  IsCompact C)
+    (h : D ⊆ C * ((Subgroup.center (GL (Fin 2) (AdeleRing R K)) : Set (GL (Fin 2) (AdeleRing R
+      K))))) :
+    adelicPGLHaar R K ((QuotientGroup.mk : _ → AdelicPGL2 R K) '' D) < ⊤ := by
+  letI := pglBorel R K
+  haveI := borelSpace_pglBorel R K
+  haveI := isHaarMeasure_adelicPGLHaar R K
+  exact lt_of_le_of_lt (measure_mono (image_mk_subset_of_subset_mul_center R K h))
+    (measure_image_mk_lt_top R K _ hC)
+
+end NumberFieldCase
+
+end NumberField.AdelicCentre
 
 end
