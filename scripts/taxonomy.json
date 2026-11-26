@@ -13347,6 +13347,7 @@
   "MathlibExt/NumberTheory/MultipleZeta/WordAlgebra": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Hoffman algebra and its bases"},
   "MathlibExt/NumberTheory/MultiplicativeAdditiveEightSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/MultiplicativeAdditivePairedSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
+  "MathlibExt/NumberTheory/MultiplicativeAdditivePairedSquaresMultiplicativeAdditivePairedSquaresEqIdOfThreeOrFour": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/MultiplicativeAdditivePairedSquaresRigidity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/MultiplicativeAdditiveThreePairedSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/NStepFibonacciSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
