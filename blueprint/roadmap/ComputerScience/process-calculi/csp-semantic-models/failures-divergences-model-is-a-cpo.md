@@ -1,6 +1,7 @@
 # The failures-divergences model is a complete partial order
 
 If the alphabet $\Sigma$ is finite, then the [failures-divergences model](the-failures-divergences-model.md) $\mathcal{N}$, ordered by failures-divergences refinement $\sqsubseteq_{FD}$, is a complete partial order: it has the least element $\bot_{\mathcal{N}}$, and every directed set $\Delta \subseteq \mathcal{N}$ has a least upper bound, the componentwise intersection
+
 $$\bigsqcup \Delta = \Big( \bigcap \{ F \mid (F, D) \in \Delta \},\ \bigcap \{ D \mid (F, D) \in \Delta \} \Big).$$
 
 ## Depends on

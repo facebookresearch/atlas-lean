@@ -1,7 +1,9 @@
 # The Hennessy–Milner theorem
 
 Let $P$ be a set of processes and $(R_i)_{i \in I}$ a family of binary relations on $P$, the observation relations; $(p, p') \in R_i$ is an $i$-experiment on $p$. If every $R_i$ is image-finite, then two processes are [observationally equivalent](observational-equivalence-by-stratification.md) if and only if they satisfy the same formulas of [Hennessy–Milner logic](hennessy-milner-logic.md):
+
 $$p \sim q \iff \mathcal{L}(p) = \mathcal{L}(q).$$
+
 By the [maximal fixed point characterization](observational-equivalence-is-the-maximal-fixed-point.md), for image-finite systems the left-hand side is strong bisimilarity.
 
 ## Depends on

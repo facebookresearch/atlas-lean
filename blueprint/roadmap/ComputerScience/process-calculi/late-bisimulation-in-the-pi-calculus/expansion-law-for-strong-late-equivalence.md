@@ -1,7 +1,9 @@
 # Expansion law for strong late equivalence
 
 Let $P = \sum_i \alpha_i . P_i$ and $Q = \sum_j \beta_j . Q_j$, where no $\alpha_i$ binds a name free in $Q$ and no $\beta_j$ binds a name free in $P$. Then, for [strong late equivalence](strong-late-equivalence.md),
+
 $$P \mid Q \sim \sum_i \alpha_i . (P_i \mid Q) + \sum_j \beta_j . (P \mid Q_j) + \sum_{\alpha_i \text{ opp } \beta_j} [x_i = y_j] \tau . R_{ij},$$
+
 where $\alpha_i$ *opposes* $\beta_j$ in four cases, with $x_i$ and $y_j$ the subjects of $\alpha_i$ and $\beta_j$:
 
 1. $\alpha_i = \bar x_i u$ and $\beta_j = y_j(v)$; then $R_{ij} = P_i \mid Q_j\{u/v\}$;
