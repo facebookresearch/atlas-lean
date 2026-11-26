@@ -2,6 +2,14 @@
 
 Optimization problems solved by tabulated recurrences: knapsack variants, subset sum, rod cutting, matrix-chain ordering, optimal binary search trees, longest common and longest increasing subsequences (including patience sorting) and maximum subarray (Kadane and divide-and-conquer); string edit distance goes to String algorithms.
 
+- [Deterministic finite-horizon control problem](control-problem.md)
+- [Admissible sequence of a deterministic control problem](is-admissible-sequence.md)
+- [Total cost of a control sequence from a stage](total-cost.md)
+- [Backward-induction values](backward-value.md)
+- [Vertices of the stage-indexed graph](stage-vertex.md)
+- [Arcs of the stage-indexed graph](stage-arc.md)
+- [Arc lengths of the stage-indexed graph](stage-arc-length.md)
+- [The stage-indexed graph is acyclic](stage-graph-acyclic.md)
 - [Longest common subsequence](longest-common-subsequence/README.md)
 - [Longest increasing subsequence](longest-increasing-subsequence/README.md)
 - [Matrix chain multiplication](matrix-chain-multiplication/README.md)
