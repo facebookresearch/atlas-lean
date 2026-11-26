@@ -32,6 +32,10 @@ set to $0$ if any allele is missing. An IBD segment is reported for a pair on ev
 
 Without error, opposite homozygotes $(AA, BB)$ are impossible under IBD, so a single error would veto a true segment; the error model replaces that zero by a term of order $\varepsilon$, so discordant homozygotes give strong but finite evidence against IBD. Each observed-pair probability sums the true-pair probabilities times the probabilities of the error patterns that map one to the other; for example $(AA, AA)$ is observed from true $(AA, AA)$ with no error, from $(AA, AB)$ or $(AB, AA)$ with one error, and from $(AB, AB)$ with two. Markers removed by LD thinning still contribute negative evidence: their LOD is used only when the genotypes are discordant homozygotes, which lowers false positives without double-counting positive evidence. In IBDseq the analysis error rate is frequency-dependent, $\varepsilon = \min\{\sigma, \rho f_B\}$ with $\rho = 0.25$ and $\sigma$ between $0.001$ and $0.005$; performance was insensitive to $\sigma$ as long as $\sigma > 0$. The same construction with a homozygosity-by-descent model gives a detector of autozygous segments.
 
+## Depends on
+
+- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+
 ## Sources
 
 - B. L. Browning and S. R. Browning, "Detecting identity by descent and estimating genotype error rates in sequence data", The American Journal of Human Genetics 93 (2013), 840–851, Material and Methods ("IBD LOD Score", "Analysis Allele Error Rate"), Table 1 and Appendix A, <https://doi.org/10.1016/j.ajhg.2013.09.014> (PMC3824133).

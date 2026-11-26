@@ -12,7 +12,11 @@ As $n\to\infty$, $a_1/\sqrt{a^2/n}\to\mathcal N(0,1)$ in distribution, so for hi
 
 $$a_1\mid s\;\approx\;\mathcal N\!\Big(0,\frac{w^2}{n}\,s\Big),$$
 
-already a good approximation for $n\approx10$. The same normal limit holds without isotropy, provided the focal trait is a small part of the selected trait space.
+already a good approximation for $n\approx10$. These statements are for isotropic mutation directions; the scale $w^2 s/n$ uses the ordinary trait count $n$ and is not claimed here for anisotropic models.
+
+## Remarks
+
+Simons et al. (after their Equation 11) extend the normal approximation to anisotropic mutation and selection, with $n$ replaced by an effective number of traits defined for the focal coordinate and with pathological cases excluded; that extension has a different scale from the isotropic $w^2 s/n$ and is not part of the statement above.
 
 ## Proof sketch
 

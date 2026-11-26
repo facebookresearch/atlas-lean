@@ -14,6 +14,10 @@ No independence between p-values is required. With all $w_j = 1$ it is the ordin
 
 The union bound gives $P(\bigcup_{j\in\mathcal H_0}\{p_j \le \alpha w_j/m\}) \le \sum_{j\in\mathcal H_0} P(p_j \le \alpha w_j/m) \le \sum_{j\in\mathcal H_0}\alpha w_j/m$, and the last sum is at most $\frac{\alpha}{m}\sum_{j=1}^m w_j = \alpha$ because the weights are non-negative with mean one. Weights shift the rejection budget toward hypotheses believed more likely to be non-null; good weights raise power while the mean-one constraint keeps the error guarantee. The theorem needs the weights fixed, or independent of the null p-values; a small number of distinct data-dependent weights does not by itself control the family-wise error rate. For example, split $m$ independent uniform null p-values into two fixed bins of equal size, and give weight $2$ to the bin containing the smallest p-value and $0$ to the other: there are only two bin weights and their mean is one, but the probability of at least one rejection is $1 - (1 - 2\alpha/m)^m$, which exceeds $\alpha$ (about $0.095$ at $\alpha = 0.05$ and large $m$). Weights estimated from the same statistics need the extra hypotheses of a method-specific result, or empirical calibration.
 
+## Depends on
+
+- [Valid p-value](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md)
+
 ## Sources
 
 - C. R. Genovese, K. Roeder and L. Wasserman, "False discovery control with p-value weighting", Biometrika 93 (2006), 509–524, <https://doi.org/10.1093/biomet/93.3.509>.

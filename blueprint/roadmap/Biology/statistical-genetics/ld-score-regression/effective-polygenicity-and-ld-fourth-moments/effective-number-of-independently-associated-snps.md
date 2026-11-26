@@ -22,7 +22,7 @@ which reduces to the definition above when $R = I$. Properties:
 $$P_{h^2}(\alpha^2 > T) \le \frac{\mathbb E_{h^2}(\alpha^2)}{T} = \frac{h^2}{M_e\, T}.$$
 
 3. **Prediction accuracy at small sample size.** The optimal polygenic predictor has $\mathbb E(r^2) = h^2\, \mathbb E_{h^2}\!\big(\alpha^2/(\alpha^2 + 1/N)\big)$, which tends to $h^2$ as $N \to \infty$ and is approximately $N h^4 / M_e$ for small $N$.
-4. **Infinitesimal limit.** If every SNP is causal with normally distributed effects, $M_e$ equals the effective number of independent SNPs $M_{\mathrm{indep}}$ (the number of SNPs divided by the mean LD score).
+4. **Infinitesimal limit.** In the homogeneous infinitesimal model, where every SNP is causal with independent normal effects of a common variance ($\beta \sim \mathcal N(0, \sigma^2 I_M)$), $M_e$ equals the effective number of independent SNPs $M_{\mathrm{indep}}$ (the number of SNPs divided by the mean LD score). Normality alone is not enough: with $R = I$ and two independent normal effects with variances proportional to $1$ and $4$, the random-effects formula gives $M_e = 25/17$, while $M_{\mathrm{indep}} = 2$.
 
 ## Remarks
 
@@ -34,4 +34,4 @@ Property 2 is Markov's inequality applied to the heritability-weighted distribut
 
 ## Sources
 
-- L. J. O'Connor, A. P. Schoech, F. Hormozdiari, S. Gazal, N. Patterson and A. L. Price, "Extreme polygenicity of complex traits is explained by negative selection", The American Journal of Human Genetics 105 (2019), 456–476, Material and Methods (Equation 1) and Appendix A ("Definitions of $M_e$", "Properties of $M_e$", Equations A7–A9), <https://doi.org/10.1016/j.ajhg.2019.07.003> (PMC6732528).
+- L. J. O'Connor, A. P. Schoech, F. Hormozdiari, S. Gazal, N. Patterson and A. L. Price, "Extreme polygenicity of complex traits is explained by negative selection", The American Journal of Human Genetics 105 (2019), 456–476, Material and Methods (Equation 1) and Appendix A ("Definitions of $M_e$", "Properties of $M_e$", Equations A3–A10, with Equations A3–A6 and A10 for the infinitesimal limit), <https://doi.org/10.1016/j.ajhg.2019.07.003> (PMC6732528).

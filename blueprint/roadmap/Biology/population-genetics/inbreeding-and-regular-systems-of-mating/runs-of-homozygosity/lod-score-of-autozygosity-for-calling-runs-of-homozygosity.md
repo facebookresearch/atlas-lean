@@ -19,6 +19,7 @@ Within a truly autozygous segment the two haplotypes are identical by descent, s
 ## Depends on
 
 - [Hardy–Weinberg frequency $p^2$ of the AA homozygote](../../hardy-weinberg-law/offspring-true-true.md)
+- [Hardy–Weinberg proportions](../../hardy-weinberg-law/offspring-apply.md)
 - [Genotype frequencies of an inbred individual](../genotype-frequencies-under-inbreeding.md)
 
 ## Sources

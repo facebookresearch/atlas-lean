@@ -20,6 +20,10 @@ If the two GWAS use independent samples, $\operatorname{Var}(\hat\beta_f^{\mathr
 
 The least-squares slope of $Y$ on $G_{\mathrm{own}}$ is $\operatorname{Cov}(Y, G_{\mathrm{own}})/\operatorname{Var}(G_{\mathrm{own}}) = \beta_f + \beta_m\operatorname{Cov}(G_{\mathrm{mother}}, G_{\mathrm{own}})/\operatorname{Var}(G) = \beta_f + \beta_m/2$, because a child inherits one of the mother's two alleles. Applying the same model to the offspring of a mother gives $\beta_m + \beta_f/2$. The $2 \times 2$ system has determinant $3/4$, whose inverse gives the coefficients $4/3$ and $-2/3$. Warrington et al. call this the weighted linear model (WLM) and use it as a genome-wide approximation to a structural equation model fitted jointly to individuals with own, offspring, or both birth weights; the WLM reproduced the structural-equation estimates at the lead SNPs and lowered the genetic correlation between maternal and fetal effects from $0.82$ (unadjusted) to $0.10$. Paternal genotype enters only through the child's genotype and needs no separate term under random mating.
 
+## Depends on
+
+- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+
 ## Sources
 
 - N. M. Warrington, R. N. Beaumont, M. Horikoshi et al., "Maternal and fetal genetic effects on birth weight and their relevance to cardio-metabolic risk factors", Nature Genetics 51 (2019), 804–814, Results and Methods section "Approximation of the SEM for genome-wide analyses", <https://doi.org/10.1038/s41588-019-0403-1> (PMCID: PMC6522365).

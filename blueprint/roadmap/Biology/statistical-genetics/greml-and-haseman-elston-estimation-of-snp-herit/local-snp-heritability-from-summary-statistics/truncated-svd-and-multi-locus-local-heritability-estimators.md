@@ -4,13 +4,19 @@ In the setting of [the single-locus estimator](unbiased-local-snp-heritability-f
 
 $$g(\hat\beta, k) = \sum_{i=1}^{k} \frac{(\hat u_i^\top \hat\beta)^2}{\hat w_i} .$$
 
-**Single locus.** Under $\hat\beta \sim N(V\beta, V(1 - h^2_{g,\mathrm{local}})/n)$ with the leading eigenvectors of $\hat V$ and $V$ equal,
+**Single locus.** Suppose $\hat\beta \sim N(V\beta, V(1 - h^2_{g,\mathrm{local}})/n)$ and the $k$ leading eigenvectors of $\hat V$ are eigenvectors of $V$, $V\hat u_i = w_i\hat u_i$ for $i \le k$. Then each retained term has the exact expectation
 
-$$E[g(\hat\beta, k)] = \frac{k(1 - h^2_{g,\mathrm{local}})}{n} + \sum_{i=1}^{k} \hat w_i (\hat u_i^\top\beta)^2,$$
+$$E\!\left[\frac{(\hat u_i^\top\hat\beta)^2}{\hat w_i}\right] = \frac{(1 - h^2_{g,\mathrm{local}})\, w_i/n + w_i^2 (\hat u_i^\top\beta)^2}{\hat w_i}, \qquad i \le k,$$
 
-and since $h^2_{g,\mathrm{local}} = \sum_i w_i (u_i^\top\beta)^2$ is dominated by its leading terms, the bias-corrected truncated estimator is
+so matching eigenvectors alone does not give a noise term of $1/n$ per direction: with zero signal the contribution is $w_i/(n\hat w_i)$. For example, the $2\times 2$ correlation matrices with off-diagonal entries $\tfrac12$ ($V$) and $\tfrac14$ ($\hat V$) share their top eigenvector, but $w_1/\hat w_1 = 1.5/1.25 = 1.2$. If in addition the retained eigenvalues match, $\hat w_i = w_i$ for $i \le k$, then
+
+$$E[g(\hat\beta, k)] = \frac{k(1 - h^2_{g,\mathrm{local}})}{n} + \sum_{i=1}^{k} w_i (\hat u_i^\top\beta)^2,$$
+
+and since $h^2_{g,\mathrm{local}} = \sum_i w_i (u_i^\top\beta)^2$ is dominated by its leading terms, this motivates the bias-corrected truncated estimator
 
 $$\tilde h^2_{g,\mathrm{local}} = \frac{n\, g(\hat\beta, k) - k}{n - k}.$$
+
+With a reference-panel $\hat V$ whose eigenpairs only approximate those of $V$, the expectation display and the estimator's correction are approximations, which is how Shi et al. use them (their Equations 7–8).
 
 **Many independent loci.** If the genome splits into $m$ independent loci, $y = \sum_{i=1}^m X_i\beta_i + \epsilon$, then $\operatorname{Var}(y) = \sum_i h^2_{g,\mathrm{local},i} + \sigma_e^2$ with $\sigma_e^2 = 1 - \sum_j h^2_{g,\mathrm{local},j}$, and the local estimates solve the linear system
 
@@ -26,7 +32,7 @@ $$\hat h^2_{g,\mathrm{local},i} = g(\hat\beta_i, k) - \frac{k}{n}(1 - h_g^2), \q
 
 ## Remarks
 
-Noise in $\hat V$ mostly corrupts its small eigenvalues, whose reciprocals blow up in the full quadratic form, while the leading projections carry most of the signal. Truncation keeps only $k$ terms, each contributing $(1 - h^2)/n$ of pure noise in expectation, which the $-k$ and $n - k$ correct. Ridge regularization ($\hat w_i \mapsto \hat w_i + \lambda$) instead shrinks every term and biases the estimate downwards. With several loci the residual variance depends on all local heritabilities, which couples the corrections into an $m \times m$ linear system; summing the equations with equal $k$ gives the closed form for $\hat h_g^2$.
+Noise in $\hat V$ mostly corrupts its small eigenvalues, whose reciprocals blow up in the full quadratic form, while the leading projections carry most of the signal. Truncation keeps only $k$ terms, each contributing $(1 - h^2)/n$ of pure noise in expectation when the retained eigenpairs match, which the $-k$ and $n - k$ correct; a mismatch $\hat w_i \ne w_i$ rescales both the noise and the signal of term $i$ by $w_i/\hat w_i$. Ridge regularization ($\hat w_i \mapsto \hat w_i + \lambda$) instead shrinks every term and biases the estimate downwards. With several loci the residual variance depends on all local heritabilities, which couples the corrections into an $m \times m$ linear system; summing the equations with equal $k$ gives the closed form for $\hat h_g^2$.
 
 ## Depends on
 

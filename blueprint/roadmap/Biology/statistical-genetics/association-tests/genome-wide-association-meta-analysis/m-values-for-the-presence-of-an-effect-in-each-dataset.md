@@ -1,6 +1,6 @@
 # m-values for the presence of an effect in each dataset
 
-**Setting.** Datasets $i = 1, \dots, T$ report independent effect estimates $\beta_i$ with variances $V_i$ (correlated estimates can first be transformed as in [fixed-effects meta-analysis of correlated estimates](fixed-effects-meta-analysis-of-correlated-effect-estimates.md)).
+**Setting.** Datasets $i = 1, \dots, T$ report independent effect estimates $\beta_i$ with variances $V_i$ (for correlated estimates whose inverse covariance has positive row sums, the working variances of [fixed-effects meta-analysis of correlated estimates](fixed-effects-meta-analysis-of-correlated-effect-estimates.md) can be substituted, but the estimates stay correlated, so the resulting m-values are approximations, not exact posterior probabilities).
 
 These datasets are first screened for an effect present in any of them with the [Han–Eskin random-effects statistic](han-eskin-random-effects-meta-analysis.md) (with $X_i = \beta_i$ and $C = T$).
 

@@ -18,6 +18,10 @@ and the two forms agree, since $T_k = \hat\beta_k^2 / V_k$ for the effect estima
 
 If at most a small fraction of markers is truly associated, the median of $T_1, \dots, T_M$ is a robust estimate of the median of the null law $\lambda\chi^2_1$, which is $\lambda m_1$; dividing by $\hat\lambda$ restores the nominal null distribution; flooring the factor at $1$ means the correction never makes statistics larger. The floor is the convention of Devlin and Roeder; the GWAMA description inflates each variance by the raw median factor without stating a floor, which with $\hat\lambda < 1$ would shrink the variances and enlarge the statistics, so an implementation must fix one convention for both the statistic and the variance. The median is preferred to the mean because a polygenic or strongly associated minority of markers moves it little. The correction assumes the inflation is uniform across markers; it over-corrects when inflation is due to true polygenic signal, the distinction that LD-score regression later addressed.
 
+## Depends on
+
+- [Common-inflation model of Gaussian null scores](../genomic-control/common-inflation-model.md)
+
 ## Sources
 
 - R. Mägi and A. P. Morris, "GWAMA: software for genome-wide association meta-analysis", BMC Bioinformatics 11 (2010), 288, Implementation ("Correcting for population structure"), <https://doi.org/10.1186/1471-2105-11-288>, PMCID PMC2893603.

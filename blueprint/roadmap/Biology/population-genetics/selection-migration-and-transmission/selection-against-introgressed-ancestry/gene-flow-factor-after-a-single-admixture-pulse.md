@@ -1,6 +1,6 @@
 # Gene flow factor after a single admixture pulse
 
-A recipient population is fixed for alleles $S_2$ (selected locus) and $N_2$ (linked neutral locus); a donor population is fixed for $S_1$ and $N_1$. A single admixture pulse at time $0$ introduces the haplotype $N_1S_1$ at frequency $p_0$. In the recipient, carriers of $S_1$ have viability $1-s$ ($0 \le s < 1$; carriers are heterozygous, since $S_1S_1$ homozygotes are rare and ignored), and the recombination fraction between the loci is $r \in [0, \tfrac12]$. To first order in $p_0$ the expected frequency of $N_1$ after $t$ generations is $p_t = p_0\,f(r,s,t)$, where, writing $c = (1-s)(1-r)$,
+A recipient population is fixed for alleles $S_2$ (selected locus) and $N_2$ (linked neutral locus); a donor population is fixed for $S_1$ and $N_1$. A single admixture pulse at time $0$ introduces the haplotype $N_1S_1$ at frequency $p_0$. In the recipient, carriers of $S_1$ have viability $1-s$ ($0 \le s < 1$; carriers are heterozygous, since $S_1S_1$ homozygotes are rare and ignored), and the recombination fraction between the loci is $r \in [0, \tfrac12]$. To first order in $p_0$ the expected frequency of $N_1$ after $t$ generations is $p_t = p_0\,f(r,s,t)$. If $r = s = 0$ the recursions below preserve $p_0$, so $f_a = f_X = 1$ for every $t$. Otherwise $r + s > 0$, so $c = (1-s)(1-r) < 1$ and $(1 - \tfrac23 r)(1-s) < 1$, and
 
 **Autosome.**
 

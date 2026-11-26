@@ -22,6 +22,10 @@ If $A = 0$, then $V_B = V_W = 0$ and $Q_{ST}$ is undefined.
 
 The mean trait value of a population is $\sum_\ell 2a_\ell p_\ell$ up to a constant, so by independence across loci $V_B = \sum_\ell 4a_\ell^2 F_{ST}\, \bar p_\ell(1-\bar p_\ell)$. The additive variance within a population is $\sum_\ell 2a_\ell^2 p_\ell(1-p_\ell)$, and $\mathbb{E}[p_\ell(1-p_\ell)] = \bar p_\ell - \bar p_\ell^2 - \operatorname{Var}(p_\ell) = (1 - F_{ST})\bar p_\ell(1-\bar p_\ell)$, so $V_W = \sum_\ell 2a_\ell^2 (1-F_{ST})\, \bar p_\ell(1-\bar p_\ell)$. Hence $V_B = F_{ST} A$ and $2V_W = (1 - F_{ST})A$, and when $A > 0$ dividing gives $Q_{ST} = F_{ST}$, independently of the number of loci and of their effect sizes. Because drift moves every locus by the same random process regardless of the size and sign of its trait contribution, phenotypic differences among populations are expected under neutrality to be of the same order as typical single-locus differences. A trait with $Q_{ST}$ well above $F_{ST}$ suggests divergent selection, and one well below suggests uniform stabilizing selection; for polygenic scores the corresponding null is the neutral drift model of population genetic values.
 
+## Depends on
+
+- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+
 ## Sources
 
 - N. A. Rosenberg, M. D. Edge, J. K. Pritchard and M. W. Feldman, Interpreting polygenic scores, polygenic adaptation, and human phenotypic differences, *Evol. Med. Public Health* 2019 (2019), 26–34, <https://doi.org/10.1093/emph/eoy036>, PMCID PMC6393779 (section "Polygenic adaptation: the null expectation").
