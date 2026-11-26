@@ -24,7 +24,10 @@ Recorded here: the four cases for solutions on `[0, ∞)` with positive initial 
 (ii) the saddle is stated as Lyapunov instability, and the separatrix is not formalized. The four
 cases follow S.-B. Hsu, lecture notes §3.12 "Competition models, Mutualism or Symbiosis" (National
 Tsing Hua University); the global convergence of all interior orbits (ruling out periodic orbits
-in the open quadrant) is derived from that phase-plane analysis.
+in the open quadrant) is derived from that phase-plane analysis. In `Fin 2 → ℝ` coordinates the
+competition equations are the Lotka–Volterra system `IsLVSolution` (with the library's field
+`lvField`) for growth rates `(r₁, r₂)` and the interaction matrix `C` with entries `-r₁ / K₁`,
+`-r₁ α₁₂ / K₁`, `-r₂ α₂₁ / K₂`, `-r₂ / K₂`: `isSolution_iff_isLVSolution` states the equivalence.
 
 Sources: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (National
 Tsing Hua University); background references (not directly consulted): A. J. Lotka (1925),
@@ -33,14 +36,19 @@ V. Volterra (1926), B. S. Goh (1976), J. Hofbauer and K. Sigmund (1998).
 module
 
 public import Batteries.Util.ProofWanted
+public import WantedExt.Biology.Ecology.LotkaVolterraNoInteriorEquilibriumWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Analysis.Calculus.Deriv.Prod
 
 @[expose] public section
 
 namespace WantedExt.Biology.Ecology.LotkaVolterraCompetitionWanted
 
 open Filter Topology
+open LotkaVolterraNoInteriorEquilibriumWanted (IsLVSolution)
+open MathlibExt.Biology.Dynamics.ReplicatorLotkaVolterra (lvField)
 
 /-- Parameters of the two-species competition model: growth rates `rᵢ`, carrying capacities
 `Kᵢ` and competition coefficients `α₁₂`, `α₂₁`, all positive. -/
@@ -83,8 +91,35 @@ every time `t ≥ 0`: `z'(t) = field (z t)`. The derivative is two-sided (`HasDe
 too, so a trajectory given only on `[0, ∞)` must be extended to negative times with that
 derivative at `0`; one that is only right-differentiable at `0` does not qualify. A solution on an
 open interval containing `[0, ∞)` qualifies, and negative times matter only through the
-derivative at `0`. -/
+derivative at `0`. Equivalently, `t ↦ ![(z t).1, (z t).2]` solves the Lotka–Volterra system
+`IsLVSolution` (`isSolution_iff_isLVSolution`). -/
 def IsSolution (z : ℝ → ℝ × ℝ) : Prop := ∀ t : ℝ, 0 ≤ t → HasDerivAt z (p.field (z t)) t
+
+/-- **The competition equations as a Lotka–Volterra system.** `z` solves the competition
+equations (`IsSolution`) exactly when the curve `t ↦ ![(z t).1, (z t).2]` in `Fin 2 → ℝ` solves
+the Lotka–Volterra system `yᵢ' = yᵢ (rᵢ + ∑ⱼ Cᵢⱼ yⱼ)` (`IsLVSolution`, with the library's field
+`lvField`) for growth rates `(r₁, r₂)` and the interaction matrix `C` with rows
+`(-r₁ / K₁, -r₁ α₁₂ / K₁)` and `(-r₂ α₂₁ / K₂, -r₂ / K₂)`. Both predicates ask for two-sided
+derivatives at every time `t ≥ 0`, so results stated for `IsLVSolution` apply to the competition
+model. -/
+theorem isSolution_iff_isLVSolution (z : ℝ → ℝ × ℝ) :
+    p.IsSolution z ↔
+      IsLVSolution ![p.r₁, p.r₂]
+        !![-p.r₁ / p.K₁, -(p.r₁ * p.α₁₂) / p.K₁; -(p.r₂ * p.α₂₁) / p.K₂, -p.r₂ / p.K₂]
+        (fun t => ![(z t).1, (z t).2]) := by
+  have hfield (w : ℝ × ℝ) :
+      lvField ![p.r₁, p.r₂]
+          !![-p.r₁ / p.K₁, -(p.r₁ * p.α₁₂) / p.K₁; -(p.r₂ * p.α₂₁) / p.K₂, -p.r₂ / p.K₂]
+          ![w.1, w.2] = ![(p.field w).1, (p.field w).2] := by
+    ext i
+    fin_cases i <;> simp [lvField, field, Fin.sum_univ_two] <;> ring
+  have hderiv (v : ℝ × ℝ) (t : ℝ) :
+      HasDerivAt z v t ↔ HasDerivAt (fun s => ![(z s).1, (z s).2]) ![v.1, v.2] t := by
+    rw [hasDerivAt_pi, Fin.forall_fin_two]
+    simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one]
+    exact ⟨fun h => ⟨h.fst, h.snd⟩, fun h => h.1.prodMk h.2⟩
+  refine forall₂_congr fun t _ => ?_
+  rw [hfield, ← hderiv]
 
 /-- The candidate algebraic formula
 `((K₁ - α₁₂ K₂) / (1 - α₁₂ α₂₁), (K₂ - α₂₁ K₁) / (1 - α₁₂ α₂₁))` for a coexistence equilibrium.

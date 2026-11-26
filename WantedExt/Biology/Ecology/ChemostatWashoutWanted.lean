@@ -23,6 +23,11 @@ tracked on the existing chemostat roadmap node
 `blueprint/roadmap/Biology/population-dynamics/chemostat/global-convergence-of-the-chemostat.md`.
 The monograph of Smith and Waltman (1995) was not read; the statement follows Hsu, Hubbell and
 Waltman (1977) with one species and Rapaport (2017, Lemma 1, with the yield rescaled to `1`).
+The chemostat model `Domains.Biology.Dynamics.Chemostat` writes the same balances for the state
+`![x, S]` (biomass first, then substrate) with the growth rate `μ = mmRate m a`:
+`isSolution_iff_hasDerivAt_vectorField` states that the two notions of solution agree, and
+`breakEven_eq_steadyConc` identifies `λ` with that model's steady substrate level
+`steadyConc m a D`.
 
 Sources: H. L. Smith and P. Waltman, *The Theory of the Chemostat: Dynamics of Microbial
 Competition*, Cambridge Univ. Press (1995), doi:10.1017/CBO9780511530043; S. B. Hsu, S. Hubbell
@@ -33,14 +38,19 @@ new proof of the competitive exclusion principle in the chemostat", arXiv:1711.0
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Dynamics.Chemostat
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Analysis.Calculus.Deriv.Prod
 
 @[expose] public section
 
 namespace WantedExt.Biology.Ecology.ChemostatWashoutWanted
 
 open Filter Topology
+open Domains.Biology.Dynamics.Chemostat (vectorField)
+open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate)
+open MathlibExt.Biology.Biophysics.SaturableElimination (steadyConc)
 
 /-- **Forward solutions of the single-species chemostat.** `(S, x)` solves the chemostat with
 input concentration `S⁰`, dilution rate `D`, maximal growth rate `m`, half-saturation constant `a`
@@ -49,14 +59,41 @@ and yield `y` at every time `t ≥ 0`: `S'(t) = (S⁰ - S(t)) D - (1/y) m S(t) x
 too, so a trajectory given only on `[0, ∞)` must be extended to negative times with these
 derivatives at `0`; one that is only right-differentiable at `0` does not qualify. A solution on
 an open interval containing `[0, ∞)` qualifies, and negative times matter only through the
-derivatives at `0`. -/
+derivatives at `0`. Equivalently, `t ↦ ![x t, S t]` has the derivative given by the chemostat
+model's vector field `vectorField (mmRate m a) D S⁰ y` at every `t ≥ 0`
+(`isSolution_iff_hasDerivAt_vectorField`). -/
 def IsSolution (S₀ D m a y : ℝ) (S x : ℝ → ℝ) : Prop :=
   ∀ t : ℝ, 0 ≤ t →
     HasDerivAt S ((S₀ - S t) * D - 1 / y * m * S t * x t / (a + S t)) t ∧
       HasDerivAt x (x t * (m * S t / (a + S t) - D)) t
 
-/-- The **break-even concentration** `λ = a / (m / D - 1)`, meaningful when `m > D`. -/
+/-- **The single-species chemostat in the chemostat model's coordinates.** `(S, x)` solves the
+single-species chemostat (`IsSolution`) exactly when, at every time `t ≥ 0`, the curve
+`t ↦ ![x t, S t]` in `Fin 2 → ℝ` (biomass first, then substrate) has the two-sided derivative
+`vectorField (mmRate m a) D S⁰ y` of the chemostat model `Domains.Biology.Dynamics.Chemostat`,
+whose Monod growth rate is `μ(S) = m S / (a + S)`. -/
+theorem isSolution_iff_hasDerivAt_vectorField (S₀ D m a y : ℝ) (S x : ℝ → ℝ) :
+    IsSolution S₀ D m a y S x ↔ ∀ t : ℝ, 0 ≤ t →
+      HasDerivAt (fun s => ![x s, S s]) (vectorField (mmRate m a) D S₀ y ![x t, S t]) t := by
+  refine forall₂_congr fun t _ => ?_
+  rw [hasDerivAt_pi, Fin.forall_fin_two, and_comm]
+  simp only [Fin.isValue, vectorField, mmRate, Matrix.cons_val_zero, Matrix.cons_val_one]
+  exact and_congr ⟨fun h => h.congr_deriv (by ring), fun h => h.congr_deriv (by ring)⟩
+    ⟨fun h => h.congr_deriv (by ring), fun h => h.congr_deriv (by ring)⟩
+
+/-- The **break-even concentration** `λ = a / (m / D - 1)`, meaningful when `m > D`. For `D ≠ 0`
+it is the chemostat model's steady substrate level `steadyConc m a D = D a / (m - D)`
+(`breakEven_eq_steadyConc`). -/
 noncomputable def breakEven (D m a : ℝ) : ℝ := a / (m / D - 1)
+
+/-- **The break-even concentration is the chemostat model's steady substrate level.** For
+`D ≠ 0`, the break-even concentration `λ = a / (m / D - 1)` equals
+`steadyConc m a D = D a / (m - D)`, the substrate level of the interior steady state
+`interiorState` of the chemostat model `Domains.Biology.Dynamics.Chemostat`; for `m > 0`, `a > 0`
+and `D < m`, the Monod growth rate `m S / (a + S)` equals `D` there. -/
+theorem breakEven_eq_steadyConc {D : ℝ} (hD : D ≠ 0) (m a : ℝ) :
+    breakEven D m a = steadyConc m a D := by
+  rw [breakEven, steadyConc, div_sub_one hD, div_div_eq_mul_div, mul_comm a D]
 
 /-- **Washout** (Hsu–Hubbell–Waltman 1977 with one species; Rapaport 2017, Lemma 1): let
 `S⁰, D, m, a, y > 0`, and suppose `m ≤ D`, or `m > D` and `λ = a / (m / D - 1) ≥ S⁰`. Then every

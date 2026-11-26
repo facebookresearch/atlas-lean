@@ -20,7 +20,9 @@ enveloping function with `h(h(x)) = x` forces global stability. The endpoint `r 
 Recorded here: global attractivity and Lyapunov stability of `x* = 1` for `0 < r ≤ 2`, and the
 two enveloping inequalities for `h(x) = 2 - x`. Cull (1981) was not read; the statement follows
 the later restatement of Cull's enveloping theorem by Luís and Rodrigues (2016, Theorem 1.4 and
-§4.1 with period `1`). Lyapunov stability is derived.
+§4.1 with period `1`). Their Theorem 1.4 assumes the enveloping inequalities and gives
+convergence; their §4.1 states that `h(x) = 2 - x` envelops the Ricker map for `0 < r ≤ 2`, so
+the inequalities are cited to §4.1. Lyapunov stability is derived.
 
 Sources: W. E. Ricker, "Stock and recruitment", J. Fish. Res. Board Can. 11 (1954) 559–623,
 doi:10.1139/f54-039; P. Cull, "Global stability of population models", Bull. Math. Biol. 43
@@ -62,7 +64,7 @@ public theorem_wanted ricker_globally_asymptotically_stable (r : ℝ) (hr₀ : 0
 `0 < r` and `r ≤ 2`. Then the Ricker map `f(x) = x e^{r(1 - x)}` satisfies `f(x) < 2 - x` for
 every `x` with `0 < x < 1`, and `2 - x < f(x)` for every `x` with `1 < x < 2`.
 
-Sources: Cull (1981); Luís and Rodrigues (2016), Theorem 1.4. -/
+Sources: Cull (1981); Luís and Rodrigues (2016), §4.1. -/
 public theorem_wanted ricker_enveloped (r : ℝ) (hr₀ : 0 < r) (hr₂ : r ≤ 2) :
     (∀ x : ℝ, 0 < x → x < 1 → ricker r x < 2 - x) ∧
       ∀ x : ℝ, 1 < x → x < 2 → 2 - x < ricker r x
