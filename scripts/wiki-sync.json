@@ -30667,6 +30667,7 @@
 "Domains.Biology.Dynamics.ComplexBalancedStability.stable": "66bb4bdfe6d1149f",
 "Domains.Biology.Dynamics.ComplexBalancedStability.stable_all_classes": "75699c8f303eb82b",
 "Domains.Biology.Dynamics.DeficiencyZero.localAsymptoticStability": "2cc41d2de04dfd09",
+"Domains.Biology.Dynamics.DeficiencyZero.localAsymptoticStability_of_stability": "79207b5faa4f0759",
 "Domains.Biology.Dynamics.LotkaVolterra.eq_of_initial": "65f25cfd338735be",
 "Domains.Biology.Dynamics.LotkaVolterra.exists_global_solution": "ae4bb5194519dd38",
 "Domains.Biology.Dynamics.LotkaVolterra.exists_minimal_period": "5337387b5a4aa3a7",

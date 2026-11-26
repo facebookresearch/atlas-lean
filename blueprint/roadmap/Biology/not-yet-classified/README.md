@@ -20,6 +20,6 @@ Topics added since this subject's fields were last revised.
 - [Smith Hazel Index](smith-hazel-index/README.md)
 - [Spearman Karber](spearman-karber/README.md)
 - [Split Decomposition](split-decomposition/README.md)
+- [Stability Composition](stability-composition/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [String Overlap](string-overlap/README.md)
-- [Deficiency-zero theorem, local asymptotic stability](local-asymptotic-stability.md)
