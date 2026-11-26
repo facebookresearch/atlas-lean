@@ -43,6 +43,8 @@ import Mathlib.Order.Sum.Order
 import Mathlib.Algebra.Homology.HomologySequence
 import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 import Mathlib.LinearAlgebra.CliffordAlgebra.Contraction
+import MathlibExt.LinearAlgebra.ExteriorPower.Contraction
+import MathlibExt.Algebra.Homology.KoszulComplexFamily
 import Mathlib.LinearAlgebra.ExteriorPower.Basis
 import Mathlib.Algebra.Module.Torsion.Basic
 import Mathlib.LinearAlgebra.Matrix.Adjugate
@@ -65,6 +67,12 @@ import Mathlib.Tactic.Ring
 Let `x f : Fin n → P` with `f = g • x` for a square matrix `g`, and suppose the ideal
 `(f)` contains a weakly regular sequence of length `n`. Using Koszul homology we show
 `(f) : (x) = (f) + (det g)` and `(f) : (det g) = (x)`.
+
+## References
+
+* A.-M. Simon and J. R. Strooker, *Complete intersections of dimension zero: variations on a theme
+  of Wiebe*, arXiv:math/0703880, Proposition 1.2.
+* H. Wiebe, *Über homologische Invarianten lokaler Ringe*, Math. Ann. 179 (1969), 257–274.
 -/
 
 
@@ -1398,9 +1406,6 @@ theorem coneProjH_mk (p : ℕ) (z : Z (snoc U x t) M (p + 1)) :
     coneProjH x t M p (Submodule.Quotient.mk z) =
       Submodule.Quotient.mk ⟨coneProj P U M z, coneProj_mem_Z x t M z.2⟩ := rfl
 
-private theorem neg_one_pow_mul_self' (p : ℕ) : ((-1 : P) ^ p) * (-1) ^ p = 1 := by
-  rw [← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow]
-
 @[scoped simp] theorem coneIncl_coe_mapZ {p : ℕ} (z : Z x M p) :
     ((coneIncl x t M (U := U)).toHMap.mapZ p z : Finset (I ⊕ₗ U) → M) = coneInclLin P U M z := rfl
 
@@ -1435,7 +1440,7 @@ theorem cone_exact₁ (p : ℕ) :
     refine ⟨((-1 : P) ^ p) • coneCoprojLin P U M z₀,
       Submodule.smul_mem _ _ (coneCoprojLin_mem_C M z₀.2.1), ?_⟩
     rw [map_smul, d_coneCoprojLin, LinearMap.mem_ker.mp z₀.2.2, map_zero, add_zero,
-      coneTw_of_mem_C t M z₀.2.1, map_smul, smul_smul, ← mul_assoc, neg_one_pow_mul_self', one_mul,
+      coneTw_of_mem_C t M z₀.2.1, map_smul, smul_smul, ← mul_assoc, neg_one_pow_mul_self, one_mul,
       map_smul]
 
 theorem cone_exact₂ (p : ℕ) :
@@ -1534,7 +1539,7 @@ theorem cone_exact₃ (p : ℕ) :
     refine ⟨(-((-1 : P) ^ p)) • coneRes P U M m, Submodule.smul_mem _ _ (coneRes_mem_C M m.2.1), ?_⟩
     rw [map_smul, eq_neg_of_add_eq_zero_left h1.symm, smul_neg, neg_smul, neg_neg, smul_smul,
         ← mul_assoc,
-      neg_one_pow_mul_self', one_mul]
+      neg_one_pow_mul_self, one_mul]
 
 variable (P) in
 def homog (p : ℕ) : (Finset I → M) →ₗ[P] (Finset I → M) where
@@ -2155,6 +2160,7 @@ open scoped ColonSpanDet.Koszul.HMap ColonSpanDet.Koszul.ChainMap ColonSpanDet.K
 namespace Koszul
 
 open Finset CliffordAlgebra ExteriorAlgebra Set.powersetCard
+open KoszulComplex (familyFunctional familyFunctional_single)
 
 universe u v u' v'
 
@@ -2162,89 +2168,12 @@ section Exterior
 
 variable {R : Type u'} [CommRing R] {M : Type v'} [AddCommGroup M] [Module R M]
 
-theorem removeNth_succ_eq_cons {α : Type*} {n : ℕ} (k : Fin (n + 1)) (v : Fin (n + 2) → α) :
-    Fin.removeNth k.succ v = Fin.cons (v 0) (Fin.removeNth k (Fin.tail v)) := by
-  ext j
-  refine Fin.cases ?_ (fun j => ?_) j
-  · simp [Fin.removeNth_apply]
-  · simp [Fin.removeNth_apply, Fin.tail]
-
-theorem contractLeft_ιMulti_succ (d : Module.Dual R M) :
-    ∀ {n : ℕ} (v : Fin (n + 1) → M),
-      contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R (n + 1) v) =
-        ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (v k)) • ιMulti R n (Fin.removeNth k v)
-  | 0, v => by
-    rw [ιMulti_succ_apply, ExteriorAlgebra.ι, contractLeft_ι_mul, ιMulti_zero_apply,
-      contractLeft_one, mul_zero, sub_zero, Fin.sum_univ_one]
-    simp
-  | n + 1, v => by
-    rw [ιMulti_succ_apply, ExteriorAlgebra.ι, contractLeft_ι_mul,
-        contractLeft_ιMulti_succ d (Matrix.vecTail v)]
-    conv_rhs => rw [Fin.sum_univ_succ]
-    rw [Fin.val_zero, pow_zero, one_mul, Fin.removeNth_zero,
-        show Fin.tail v = Matrix.vecTail v from rfl,
-      sub_eq_add_neg, Finset.mul_sum, ← Finset.sum_neg_distrib]
-    congr 1
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [removeNth_succ_eq_cons, ιMulti_succ_apply, Fin.cons_zero,
-      show Matrix.vecTail (Fin.cons (v 0) (Fin.removeNth k (Fin.tail v)) : Fin (n + 1) → M) =
-        Fin.removeNth k (Matrix.vecTail v) from Fin.tail_cons _ _,
-      mul_smul_comm, ← neg_smul, Fin.val_succ, pow_succ]
-    congr 1
-    rw [show Matrix.vecTail v k = v k.succ from rfl]
-    ring
-
 theorem contractLeft_ιMulti_of_forall_eq_zero (d : Module.Dual R M) {n : ℕ} (v : Fin n → M)
     (hv : ∀ i, d (v i) = 0) :
     contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R n v) = 0 := by
   cases n with
   | zero => rw [ιMulti_zero_apply, contractLeft_one]
-  | succ n => rw [contractLeft_ιMulti_succ]; simp [hv]
-
-theorem contractLeft_mem_exteriorPower (d : Module.Dual R M) {n : ℕ} {x : ExteriorAlgebra R M}
-    (hx : x ∈ ⋀[R]^(n + 1) M) : contractLeft (Q := (0 : QuadraticForm R M)) d x ∈ ⋀[R]^n M := by
-  rw [← ιMulti_span_fixedDegree] at hx
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨v, rfl⟩ := hy
-    rw [contractLeft_ιMulti_succ]
-    exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (ιMulti_range R n ⟨_, rfl⟩)
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
-  | smul r y _ hy => rw [map_smul]; exact Submodule.smul_mem _ r hy
-
-theorem contractLeft_eq_zero_of_mem_exteriorPower_zero (d : Module.Dual R M)
-    {x : ExteriorAlgebra R M}
-    (hx : x ∈ ⋀[R]^0 M) : contractLeft (Q := (0 : QuadraticForm R M)) d x = 0 := by
-  rw [← ιMulti_span_fixedDegree] at hx
-  induction hx using Submodule.span_induction with
-  | mem y hy => obtain ⟨v, rfl⟩ := hy; rw [ιMulti_zero_apply, contractLeft_one]
-  | zero => rw [map_zero]
-  | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
-  | smul r y _ hy => rw [map_smul, hy, smul_zero]
-
-noncomputable def koszulD (d : Module.Dual R M) (n : ℕ) : ⋀[R]^(n + 1) M →ₗ[R] ⋀[R]^n M :=
-  ((contractLeft (Q := (0 : QuadraticForm R M)) d).domRestrict (⋀[R]^(n + 1) M)).codRestrict _
-    fun x => contractLeft_mem_exteriorPower d x.2
-
-theorem koszulD_apply_coe (d : Module.Dual R M) (n : ℕ) (x : ⋀[R]^(n + 1) M) :
-    (koszulD d n x : ExteriorAlgebra R M) = contractLeft (Q := (0 : QuadraticForm R M)) d x := rfl
-
-theorem koszulD_comp_koszulD (d : Module.Dual R M) (n : ℕ) :
-    koszulD d n ∘ₗ koszulD d (n + 1) = 0 := by
-  refine LinearMap.ext fun x => Subtype.ext ?_
-  rw [LinearMap.comp_apply, koszulD_apply_coe, koszulD_apply_coe, LinearMap.zero_apply,
-    ZeroMemClass.coe_zero]
-  exact contractLeft_contractLeft d _
-
-theorem koszulD_ιMulti (d : Module.Dual R M) {n : ℕ} (v : Fin (n + 1) → M) :
-    koszulD d n (exteriorPower.ιMulti R (n + 1) v) =
-      ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (v k)) • exteriorPower.ιMulti R n
-          (Fin.removeNth k v) := by
-  apply Subtype.ext
-  simp only [koszulD_apply_coe, exteriorPower.ιMulti_apply_coe, contractLeft_ιMulti_succ]
-  rw [AddSubmonoidClass.coe_finsetSum]
-  simp
+  | succ n => rw [ExteriorAlgebra.contractLeft_ιMulti]; simp [hv]
 
 variable {I : Type} [LinearOrder I] {n : ℕ}
 
@@ -2287,35 +2216,19 @@ theorem card_filter_lt_ofFinEmbEquiv_symm (s : Set.powersetCard I n) (k : Fin n)
     ext j; simp [(ofFinEmbEquiv.symm s).lt_iff_lt]
   rw [this, Fin.card_Iio]
 
-theorem koszulD_basis (b : Module.Basis I R M) (d : Module.Dual R M)
+theorem contractLeft_basis (b : Module.Basis I R M) (d : Module.Dual R M)
     (s : Set.powersetCard I (n + 1)) :
-    koszulD d n (b.exteriorPower (n + 1) s) =
+    exteriorPower.contractLeft R M d n (b.exteriorPower (n + 1) s) =
       ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (b (ofFinEmbEquiv.symm s k))) •
         b.exteriorPower n (eraseNth s k) := by
-  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, koszulD_ιMulti]
+  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family,
+    exteriorPower.contractLeft_apply_ιMulti]
   refine Finset.sum_congr rfl fun k _ => ?_
-  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, Function.comp_apply,
+  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, mul_smul,
     coe_ofFinEmbEquiv_symm_eraseNth]
   rfl
 
 end Exterior
-open scoped ColonSpanDet.Koszul.HMap ColonSpanDet.Koszul.ChainMap ColonSpanDet.Koszul
-
-section DualVec
-
-variable {P : Type u} [CommRing P] {I : Type} [Fintype I]
-
-def dualVec (x : I → P) : Module.Dual P (I → P) := ∑ i, x i • LinearMap.proj i
-
-theorem dualVec_apply (x v : I → P) : dualVec x v = ∑ i, x i * v i := by
-  simp only [dualVec, LinearMap.coe_sum, Finset.sum_apply, LinearMap.smul_apply, LinearMap.coe_proj,
-    Function.eval, smul_eq_mul]
-
-theorem dualVec_single [DecidableEq I] (x : I → P) (i : I) : dualVec x (Pi.single i 1) = x i := by
-  rw [dualVec_apply, Finset.sum_eq_single i (fun j _ hj => by rw [Pi.single_eq_of_ne hj, mul_zero])
-    (fun h => (h (Finset.mem_univ i)).elim), Pi.single_eq_same, mul_one]
-
-end DualVec
 open scoped ColonSpanDet.Koszul.HMap ColonSpanDet.Koszul.ChainMap ColonSpanDet.Koszul
 
 section Chains
@@ -2397,8 +2310,9 @@ theorem toExterior_symm_basis {p : ℕ} (s : Set.powersetCard I p) :
       ⟨Pi.single (s : Finset I) 1, single_mem_C P (s : Finset I) (mem_iff.mp s.prop) 1⟩ := by
   rw [LinearEquiv.symm_apply_eq, toExterior_single (s : Finset I) (mem_iff.mp s.prop)]
 
-theorem dualVec_basisFun (x : I → P) (i : I) : dualVec x (Pi.basisFun P I i) = x i := by
-  rw [Pi.basisFun_apply, dualVec_single]
+theorem familyFunctional_basisFun (x : I → P) (i : I) :
+    familyFunctional P x (Pi.basisFun P I i) = x i := by
+  rw [Pi.basisFun_apply, familyFunctional_single]
 
 omit [Fintype I] in
 theorem ofFinEmbEquiv_symm_mem {p : ℕ} (s : Set.powersetCard I p) (k : Fin p) :
@@ -2469,28 +2383,22 @@ theorem d_single (x : I → P) {p : ℕ} (s : Set.powersetCard I (p + 1)) :
 
 theorem toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P)
     (hm : m ∈ C (P := P) (I := I) P (p + 1)) :
-    toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ = koszulD (dualVec x) p (toExterior P I (p + 1) ⟨m,
-        hm⟩) := by
+    toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ =
+      exteriorPower.contractLeft P (I → P) (familyFunctional P x) p
+        (toExterior P I (p + 1) ⟨m, hm⟩) := by
   rw [← LinearEquiv.eq_symm_apply]
   apply Subtype.ext
   change d x P m = _
   rw [toExterior_apply, map_sum, map_sum]
-  simp only [map_smul, koszulD_basis, dualVec_basisFun, map_sum, toExterior_symm_basis,
-      Submodule.coe_sum,
-    Submodule.coe_smul]
+  simp only [map_smul, contractLeft_basis, familyFunctional_basisFun, map_sum,
+    toExterior_symm_basis, Submodule.coe_sum, Submodule.coe_smul]
   conv_lhs => rw [eq_sum_single hm, map_sum]
   simp only [map_smul, d_single]
 
-theorem coe_toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P)
-    (hm : m ∈ C (P := P) (I := I) P (p + 1)) :
-    ((toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ : ⋀[P]^p (I → P)) : ExteriorAlgebra P (I → P)) =
-      contractLeft (Q := (0 : QuadraticForm P (I → P))) (dualVec x) (toExterior P I (p + 1) ⟨m,
-          hm⟩) := by
-  rw [toExterior_d]; rfl
-
 theorem d_toExterior_symm (x : I → P) {p : ℕ} (ω : ⋀[P]^(p + 1) (I → P)) :
     d x P ((toExterior P I (p + 1)).symm ω) =
-      (toExterior P I p).symm (koszulD (dualVec x) p ω) := by
+      (toExterior P I p).symm
+        (exteriorPower.contractLeft P (I → P) (familyFunctional P x) p ω) := by
   have h := toExterior_d x ((toExterior P I (p + 1)).symm ω) ((toExterior P I (p + 1)).symm ω).2
   rw [Subtype.coe_eta, LinearEquiv.apply_symm_apply, ← LinearEquiv.eq_symm_apply] at h
   exact congrArg Subtype.val h
@@ -2543,20 +2451,22 @@ theorem ofFinEmbEquiv_symm_inrBlock :
 def cycleVec (g : Matrix (Fin n) (Fin n) P) (j : Fin n) : Fin n ⊕ₗ Fin n → P :=
   Pi.single (toLex (Sum.inl j)) 1 - ∑ i, g j i • Pi.single (toLex (Sum.inr i)) 1
 
-theorem dualVec_concat_cycleVec (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
-    (hf : ∀ j, f j = ∑ i, g j i * x i) (j : Fin n) : dualVec (concat f x) (cycleVec g j) = 0 := by
-  rw [cycleVec, map_sub, map_sum, dualVec_single, concat_inl, hf, sub_eq_zero]
+theorem familyFunctional_concat_cycleVec (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
+    (hf : ∀ j, f j = ∑ i, g j i * x i) (j : Fin n) :
+    familyFunctional P (concat f x) (cycleVec g j) = 0 := by
+  rw [cycleVec, map_sub, map_sum, familyFunctional_single, concat_inl, hf, sub_eq_zero]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [map_smul, dualVec_single, concat_inr, smul_eq_mul]
+  rw [map_smul, familyFunctional_single, concat_inr, smul_eq_mul]
 
 noncomputable def tateCycle (g : Matrix (Fin n) (Fin n) P) : ⋀[P]^n (Fin n ⊕ₗ Fin n → P) :=
   exteriorPower.ιMulti P n (cycleVec g)
 
 theorem contractLeft_tateCycle (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
     (hf : ∀ j, f j = ∑ i, g j i * x i) :
-    contractLeft (Q := (0 : QuadraticForm P (Fin n ⊕ₗ Fin n → P))) (dualVec (concat f x))
+    contractLeft (Q := (0 : QuadraticForm P (Fin n ⊕ₗ Fin n → P)))
+      (familyFunctional P (concat f x))
       (tateCycle g : ExteriorAlgebra P (Fin n ⊕ₗ Fin n → P)) = 0 :=
-  contractLeft_ιMulti_of_forall_eq_zero _ _ (dualVec_concat_cycleVec f x g hf)
+  contractLeft_ιMulti_of_forall_eq_zero _ _ (familyFunctional_concat_cycleVec f x g hf)
 
 noncomputable def tateChain (g : Matrix (Fin n) (Fin n) P) : Finset (Fin n ⊕ₗ Fin n) → P :=
   (toExterior P (Fin n ⊕ₗ Fin n) n).symm (tateCycle g)
@@ -2574,7 +2484,7 @@ theorem d_tateChain (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P) (hf : ∀
     exact Finset.sum_eq_zero fun i _ => isEmptyElim (ofLex i : Fin 0 ⊕ Fin 0)
   | succ n =>
     rw [tateChain, d_toExterior_symm]
-    have : koszulD (dualVec (concat f x)) n (tateCycle g) = 0 :=
+    have : exteriorPower.contractLeft P _ (familyFunctional P (concat f x)) n (tateCycle g) = 0 :=
       Subtype.ext (contractLeft_tateCycle f x g hf)
     rw [this, map_zero]
     rfl
@@ -2986,22 +2896,6 @@ theorem wiebeMap_bijective (hf : ∀ i, f i = ∑ j, g i j * x j)
         show b * (-1) ^ n * g.det - s = -(s - b * ((-1) ^ n * g.det)) by ring]
     exact neg_mem hb'
 
-theorem colon_span_eq_sup_span_det_of_isWeaklyRegular
-    (x f : Fin n → P) (g : Matrix (Fin n) (Fin n) P) (hf : ∀ i, f i = ∑ j, g i j * x j)
-    (hy : ∃ y : Fin n → P, RingTheory.Sequence.IsWeaklyRegular P (List.ofFn y) ∧
-      ∀ i, y i ∈ Ideal.span (Set.range f)) :
-    (Ideal.span (Set.range f)).colon (Ideal.span (Set.range x)) =
-        Ideal.span (Set.range f) ⊔ Ideal.span {g.det} ∧
-      (Ideal.span (Set.range f)).colon (Ideal.span {g.det}) = Ideal.span (Set.range x) := by
-  obtain ⟨y, hy, hyf⟩ := hy
-  have hfK : ∀ p, 0 < p → Subsingleton (H f P p) :=
-    subsingleton_H_of_isWeaklyRegular_of_card_eq f P y hy hyf (Fintype.card_fin n).symm
-  have hxK : ∀ p, 0 < p → Subsingleton (H x P p) :=
-    subsingleton_H_of_isWeaklyRegular_of_card_eq x P y hy
-      (fun k => span_le_span_of_eq x f g hf (hyf k)) (Fintype.card_fin n).symm
-  have hb := wiebeMap_bijective x f g hf hxK hfK
-  exact ⟨colon_span_eq_of_surjective x f g hf hb.2, colon_det_eq_of_injective x f g hf hb.1⟩
-
 end WiebeAssembly
 open scoped ColonSpanDet.Koszul.HMap ColonSpanDet.Koszul.ChainMap ColonSpanDet.Koszul
 
@@ -3012,8 +2906,13 @@ end ColonSpanDet
 
 @[expose] public section
 
-/-- Let `f = g • x` and suppose `(f)` contains a weakly regular sequence of length `n`.
-Then `(f) : (x) = (f) + (det g)` and `(f) : (det g) = (x)`. -/
+/-- **Wiebe's colon-ideal lemma.** Let `f = g • x` and suppose `(f)` contains a weakly regular
+sequence of length `n`. Then `(f) : (x) = (f) + (det g)` and `(f) : (det g) = (x)`.
+
+Source: A.-M. Simon and J. R. Strooker, *Complete intersections of dimension zero: variations on a
+theme of Wiebe*, arXiv:math/0703880, Proposition 1.2, stated there for every `f` whose Koszul
+homology vanishes in positive degrees; they find part of it in H. Wiebe, *Über homologische
+Invarianten lokaler Ringe*, Math. Ann. 179 (1969), 257–274, Satz 2. -/
 public theorem Ideal.colon_span_eq_sup_span_det_of_isWeaklyRegular
     {P : Type*} [CommRing P] {n : ℕ} (x f : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
     (hf : ∀ i, f i = ∑ j, g i j * x j)
@@ -3021,7 +2920,16 @@ public theorem Ideal.colon_span_eq_sup_span_det_of_isWeaklyRegular
       ∀ i, y i ∈ Ideal.span (Set.range f)) :
     (Ideal.span (Set.range f)).colon (Ideal.span (Set.range x)) =
         Ideal.span (Set.range f) ⊔ Ideal.span {g.det} ∧
-      (Ideal.span (Set.range f)).colon (Ideal.span {g.det}) = Ideal.span (Set.range x) :=
-  ColonSpanDet.Koszul.colon_span_eq_sup_span_det_of_isWeaklyRegular x f g hf hy
+      (Ideal.span (Set.range f)).colon (Ideal.span {g.det}) = Ideal.span (Set.range x) := by
+  obtain ⟨y, hy, hyf⟩ := hy
+  have hfK : ∀ p, 0 < p → Subsingleton (ColonSpanDet.Koszul.H f P p) :=
+    ColonSpanDet.Koszul.subsingleton_H_of_isWeaklyRegular_of_card_eq f P y hy hyf
+      (Fintype.card_fin n).symm
+  have hxK : ∀ p, 0 < p → Subsingleton (ColonSpanDet.Koszul.H x P p) :=
+    ColonSpanDet.Koszul.subsingleton_H_of_isWeaklyRegular_of_card_eq x P y hy
+      (fun k => ColonSpanDet.Koszul.span_le_span_of_eq x f g hf (hyf k)) (Fintype.card_fin n).symm
+  have hb := ColonSpanDet.Koszul.wiebeMap_bijective x f g hf hxK hfK
+  exact ⟨ColonSpanDet.Koszul.colon_span_eq_of_surjective x f g hf hb.2,
+    ColonSpanDet.Koszul.colon_det_eq_of_injective x f g hf hb.1⟩
 
 end

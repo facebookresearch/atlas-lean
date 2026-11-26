@@ -41,7 +41,7 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.Noetherian.Defs
 public import Mathlib.Algebra.Algebra.Bilinear
 import MathlibExt.RingTheory.Ideal.ColonSpanDet
-import MathlibExt.RingTheory.MvPowerSeries.VariableIdealPower
+import MathlibExt.RingTheory.MvPowerSeries.Span
 import Mathlib.RingTheory.MvPowerSeries.Equiv
 import Mathlib.RingTheory.AdicCompletion.AsTensorProduct
 import Mathlib.RingTheory.Regular.RegularSequence
@@ -66,6 +66,12 @@ linear form makes the multiplication pairing perfect.
 
 The proofs reduce to `Ideal.colon_span_eq_sup_span_det_of_isWeaklyRegular`, using a weakly
 regular sequence of characteristic polynomials (resp. powers of the variables) inside `(f)`.
+
+## References
+
+* B. de Smit, K. Rubin and R. Schoof, *Criteria for complete intersections*, in *Modular Forms and
+  Fermat's Last Theorem*, Springer, 1997, pp. 343–355, Section 2.
+* J. Tate, *Homology of Noetherian rings and local rings*, Illinois J. Math. 1 (1957), 14–27.
 -/
 
 universe u v w x
@@ -191,27 +197,6 @@ end CayleyHamilton
 
 section Main
 
-variable {𝒪 : Type u} [CommRing 𝒪] [IsNoetherianRing 𝒪]
-
-
-omit [IsNoetherianRing 𝒪] in
-theorem mem_span_X_iff {n : ℕ} (q : MvPowerSeries (Fin n) 𝒪) :
-    q ∈ Ideal.span (Set.range (MvPowerSeries.X : Fin n → MvPowerSeries (Fin n) 𝒪)) ↔
-      MvPowerSeries.constantCoeff q = 0 := by
-  constructor
-  · intro hq
-    have hle : Ideal.span (Set.range (MvPowerSeries.X : Fin n → MvPowerSeries (Fin n) 𝒪)) ≤
-        RingHom.ker MvPowerSeries.constantCoeff :=
-      Ideal.span_le.mpr (by rintro _ ⟨i, rfl⟩; exact MvPowerSeries.constantCoeff_X i)
-    exact hle hq
-  · intro hq
-    have h := MvPowerSeries.mem_pow_span_X_of_coeff_eq_zero 1 q (fun m hm => by
-      have hm0 : m = 0 := (Finsupp.degree_eq_zero_iff m).mp (by omega)
-      subst hm0
-      rwa [MvPowerSeries.coeff_zero_eq_constantCoeff_apply])
-    rwa [pow_one] at h
-
-omit [IsNoetherianRing 𝒪] in
 theorem annihilator_map_mk_eq {A : Type v} [CommRing A] (J I : Ideal A) :
     ((I.map (Ideal.Quotient.mk J)).annihilator : Ideal (A ⧸ J)) =
       (J.colon (I : Set A)).map (Ideal.Quotient.mk J) := by
@@ -227,50 +212,6 @@ theorem annihilator_map_mk_eq {A : Type v} [CommRing A] (J I : Ideal A) :
     obtain ⟨r, hr, rfl⟩ := (Ideal.mem_map_iff_of_surjective _ Ideal.Quotient.mk_surjective).mp hs
     rw [smul_eq_mul, ← map_mul, Ideal.Quotient.eq_zero_iff_mem]
     exact h r hr
-
-theorem annihilator_main (n : ℕ) (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) 𝒪))
-    (f : Fin n → MvPowerSeries (Fin n) 𝒪) (hf : ∀ i, f i = ∑ j, g i j * MvPowerSeries.X j)
-    [Module.Finite 𝒪 (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f))]
-    [Module.Free 𝒪 (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f))]
-    (π : (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f)) →ₐ[𝒪] 𝒪)
-    (hπ : (π : _ →+* 𝒪).comp (Ideal.Quotient.mk (Ideal.span (Set.range f))) =
-      MvPowerSeries.constantCoeff) :
-    (RingHom.ker π).annihilator =
-        Ideal.span {Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det} ∧
-      (RingHom.ker π).annihilator.map π =
-        Ideal.span {(g.map MvPowerSeries.constantCoeff).det} := by
-  classical
-  have hπ' : ∀ q, π (Ideal.Quotient.mk _ q) = MvPowerSeries.constantCoeff q := fun q => by
-    have := RingHom.congr_fun hπ q
-    simpa using this
-  have hJI : Ideal.span (Set.range f) ≤
-      Ideal.span (Set.range (MvPowerSeries.X : Fin n → MvPowerSeries (Fin n) 𝒪)) := by
-    rw [Ideal.span_le]
-    rintro _ ⟨i, rfl⟩
-    rw [hf i]
-    exact Ideal.sum_mem _ fun j _ => Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨j, rfl⟩)
-  have hker : RingHom.ker π =
-      (Ideal.span (Set.range (MvPowerSeries.X : Fin n → MvPowerSeries (Fin n) 𝒪))).map
-      (Ideal.Quotient.mk (Ideal.span (Set.range f))) := by
-    ext t
-    obtain ⟨q, rfl⟩ := Ideal.Quotient.mk_surjective t
-    rw [RingHom.mem_ker, hπ', ← mem_span_X_iff, Ideal.mem_quotient_iff_mem_sup, sup_eq_left.mpr hJI]
-  let p : Fin n → 𝒪[X] := fun i =>
-    (Algebra.lmul 𝒪 _ (Ideal.Quotient.mk (Ideal.span (Set.range f)) (MvPowerSeries.X i))).charpoly
-  have hy : ∃ y : Fin n → MvPowerSeries (Fin n) 𝒪, IsWeaklyRegular (MvPowerSeries (Fin n) 𝒪)
-      (List.ofFn y) ∧
-      ∀ i, y i ∈ Ideal.span (Set.range f) :=
-    ⟨fun i => aeval (MvPowerSeries.X i) (p i), isWeaklyRegular_mvPowerSeries n p fun i =>
-      LinearMap.charpoly_monic _, fun i => aeval_X_charpoly_mem _ i⟩
-  obtain ⟨hcolon,
-      -⟩ := Ideal.colon_span_eq_sup_span_det_of_isWeaklyRegular MvPowerSeries.X f g hf hy
-  have hann : (RingHom.ker π).annihilator =
-      Ideal.span {Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det} := by
-    rw [hker, annihilator_map_mk_eq, hcolon, Ideal.map_sup, Ideal.map_quotient_self, bot_sup_eq,
-        Ideal.map_span,
-      Set.image_singleton]
-  refine ⟨hann, ?_⟩
-  rw [hann, Ideal.map_span, Set.image_singleton, hπ', RingHom.map_det, RingHom.mapMatrix_apply]
 
 end Main
 
@@ -359,21 +300,6 @@ theorem mem_span_X_pow_iff (S : Finset σ) (N : σ → ℕ) (h : MvPowerSeries �
           · exact hm j hj
     have := add_mem h2 h1
     rwa [sub_add_cancel] at this
-
-theorem mem_span_range_X_iff [Finite σ] (h : MvPowerSeries σ R) :
-    h ∈ Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ↔ constantCoeff h = 0 := by
-  cases nonempty_fintype σ
-  have hset : Set.range (X : σ → MvPowerSeries σ R) =
-      (fun i => (X i : MvPowerSeries σ R) ^ (fun _ => 1) i) ''
-        (↑(Finset.univ : Finset σ) : Set σ) := by
-    rw [Finset.coe_univ, Set.image_univ]
-    exact congrArg Set.range (funext fun i => (pow_one _).symm)
-  rw [hset, mem_span_X_pow_iff, ← coeff_zero_eq_constantCoeff_apply]
-  constructor
-  · intro H; exact H 0 fun i _ => Nat.one_pos
-  · intro H m hm
-    have : m = 0 := Finsupp.ext fun i => Nat.lt_one_iff.mp (hm i (Finset.mem_univ i))
-    rw [this, H]
 
 end Support
 
@@ -496,31 +422,89 @@ theorem exists_mul_ne_zero_and_forall_mul_eq_zero (𝔪 : Ideal B) (h𝔪 : IsNi
 
 end Socle
 
-section Main
+end TateDetSocle
 
-variable {k : Type u} [Field k] {n : ℕ}
+@[expose] public section
 
-theorem span_range_X_ne_top : Ideal.span (Set.range (X : Fin n → MvPowerSeries (Fin n) k)) ≠ ⊤ := by
-  intro h
-  have h1 : (1 : MvPowerSeries (Fin n) k) ∈ Ideal.span
-      (Set.range (X : Fin n → MvPowerSeries (Fin n) k)) := by
-    rw [h]; trivial
-  rw [mem_span_range_X_iff, map_one] at h1
-  exact one_ne_zero h1
+namespace MvPowerSeries
 
-theorem socle_main (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
-    (f : Fin n → MvPowerSeries (Fin n) k) (hf : ∀ i, f i = ∑ j, g i j * MvPowerSeries.X j)
+/-- **Tate's determinant formula.** Let `f = g • X` in `𝒪⟦X₁, …, Xₙ⟧` with `𝒪` Noetherian,
+suppose `T = 𝒪⟦X⟧ ⧸ (f)` is finite free over `𝒪`, and let `π : T →ₐ[𝒪] 𝒪` be the augmentation
+induced by the constant coefficient. Then the annihilator of `ker π` is generated by the class of
+`det g`, and its image under `π` is generated by `det g(0)`.
+
+Source: B. de Smit, K. Rubin and R. Schoof, *Criteria for complete intersections*, in *Modular
+Forms and Fermat's Last Theorem* (G. Cornell, J. H. Silverman and G. Stevens, eds.), Springer,
+1997, pp. 343–355, Proposition 2.1 (i), stated there over a complete Noetherian local ring and
+traced back to J. Tate, *Homology of Noetherian rings and local rings*, Illinois J. Math. 1
+(1957), 14–27. -/
+public theorem annihilator_ker_eq_span_det
+    {𝒪 : Type*} [CommRing 𝒪] [IsNoetherianRing 𝒪]
+    (n : ℕ) (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) 𝒪))
+    (f : Fin n → MvPowerSeries (Fin n) 𝒪) (hf : ∀ i, f i = ∑ j, g i j * X j)
+    [Module.Finite 𝒪 (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f))]
+    [Module.Free 𝒪 (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f))]
+    (π : (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f)) →ₐ[𝒪] 𝒪)
+    (hπ : (π : _ →+* 𝒪).comp (Ideal.Quotient.mk (Ideal.span (Set.range f))) =
+      constantCoeff) :
+    (RingHom.ker π).annihilator =
+        Ideal.span {Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det} ∧
+      (RingHom.ker π).annihilator.map π =
+        Ideal.span {(g.map constantCoeff).det} := by
+  classical
+  have hπ' : ∀ q, π (Ideal.Quotient.mk _ q) = constantCoeff q := fun q => by
+    have := RingHom.congr_fun hπ q
+    simpa using this
+  have hJI : Ideal.span (Set.range f) ≤
+      Ideal.span (Set.range (X : Fin n → MvPowerSeries (Fin n) 𝒪)) := by
+    rw [Ideal.span_le]
+    rintro _ ⟨i, rfl⟩
+    rw [hf i]
+    exact Ideal.sum_mem _ fun j _ => Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨j, rfl⟩)
+  have hker : RingHom.ker π =
+      (Ideal.span (Set.range (X : Fin n → MvPowerSeries (Fin n) 𝒪))).map
+      (Ideal.Quotient.mk (Ideal.span (Set.range f))) := by
+    ext t
+    obtain ⟨q, rfl⟩ := Ideal.Quotient.mk_surjective t
+    rw [RingHom.mem_ker, hπ', ← RingHom.mem_ker, ← span_range_X_eq_ker_constantCoeff,
+      Ideal.mem_quotient_iff_mem_sup, sup_eq_left.mpr hJI]
+  let p : Fin n → Polynomial 𝒪 := fun i =>
+    (Algebra.lmul 𝒪 _ (Ideal.Quotient.mk (Ideal.span (Set.range f)) (X i))).charpoly
+  have hy : ∃ y : Fin n → MvPowerSeries (Fin n) 𝒪,
+      RingTheory.Sequence.IsWeaklyRegular (MvPowerSeries (Fin n) 𝒪) (List.ofFn y) ∧
+        ∀ i, y i ∈ Ideal.span (Set.range f) :=
+    ⟨fun i => Polynomial.aeval (X i) (p i),
+      TateDetAnnihilator.isWeaklyRegular_mvPowerSeries n p fun i => LinearMap.charpoly_monic _,
+      fun i => TateDetAnnihilator.aeval_X_charpoly_mem _ i⟩
+  obtain ⟨hcolon, -⟩ := Ideal.colon_span_eq_sup_span_det_of_isWeaklyRegular X f g hf hy
+  have hann : (RingHom.ker π).annihilator =
+      Ideal.span {Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det} := by
+    rw [hker, TateDetAnnihilator.annihilator_map_mk_eq, hcolon, Ideal.map_sup,
+      Ideal.map_quotient_self, bot_sup_eq, Ideal.map_span, Set.image_singleton]
+  refine ⟨hann, ?_⟩
+  rw [hann, Ideal.map_span, Set.image_singleton, hπ', RingHom.map_det, RingHom.mapMatrix_apply]
+
+/-- **The determinant lies in every nonzero ideal.** Over a field `k`, if `f = g • X` and
+`k⟦X⟧ ⧸ (f)` is finite-dimensional, then the class of `det g` is nonzero and lies in every nonzero
+ideal of `k⟦X⟧ ⧸ (f)`.
+
+Source: B. de Smit, K. Rubin and R. Schoof, *Criteria for complete intersections*, in *Modular
+Forms and Fermat's Last Theorem*, Springer, 1997, pp. 343–355, Corollary 2.2. -/
+public theorem quotient_mk_det_mem_of_ne_bot
+    {k : Type*} [Field k] {n : ℕ} (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
+    (f : Fin n → MvPowerSeries (Fin n) k) (hf : ∀ i, f i = ∑ j, g i j * X j)
     [Module.Finite k (MvPowerSeries (Fin n) k ⧸ Ideal.span (Set.range f))] :
     Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det ≠ 0 ∧
       ∀ J : Ideal (MvPowerSeries (Fin n) k ⧸ Ideal.span (Set.range f)), J ≠ ⊥ →
         Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det ∈ J := by
   classical
-  choose N hN using fun i : Fin n => exists_X_pow_mem (Ideal.span (Set.range f)) i
+  choose N hN using fun i : Fin n => TateDetSocle.exists_X_pow_mem (Ideal.span (Set.range f)) i
   obtain ⟨hcol₁, hcol₂⟩ := Ideal.colon_span_eq_sup_span_det_of_isWeaklyRegular
     (fun j : Fin n => (X j : MvPowerSeries (Fin n) k)) f g hf ⟨fun i => X i ^ N i,
-        isWeaklyRegular_X_pow N, hN⟩
-  have hXtop : Ideal.span (Set.range fun j : Fin n => (X j : MvPowerSeries (Fin n) k)) ≠ ⊤ :=
-    span_range_X_ne_top
+        TateDetSocle.isWeaklyRegular_X_pow N, hN⟩
+  have hXtop : Ideal.span (Set.range fun j : Fin n => (X j : MvPowerSeries (Fin n) k)) ≠ ⊤ := by
+    rw [span_range_X_eq_ker_constantCoeff]
+    exact RingHom.ker_ne_top _
   have hdet : g.det ∉ Ideal.span (Set.range f) := fun hmem => hXtop <| by
     rw [← hcol₂]
     exact Submodule.colon_eq_top_iff_subset.mpr ((Ideal.span_singleton_le_iff_mem _).mpr hmem)
@@ -549,7 +533,7 @@ theorem socle_main (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
     rintro v ⟨j, rfl⟩
     exact mem_nilradical.mpr ⟨N j, by rw [← map_pow, Ideal.Quotient.eq_zero_iff_mem]; exact hN j⟩
   obtain ⟨y, hyJ, hy0⟩ := (Submodule.ne_bot_iff J).mp hJ
-  obtain ⟨w, hz0, hz𝔪⟩ := exists_mul_ne_zero_and_forall_mul_eq_zero 𝔪 h𝔪nil hy0
+  obtain ⟨w, hz0, hz𝔪⟩ := TateDetSocle.exists_mul_ne_zero_and_forall_mul_eq_zero 𝔪 h𝔪nil hy0
   have hzJ : w * y ∈ J := J.mul_mem_left w hyJ
   obtain ⟨zt, hzt⟩ := Ideal.Quotient.mk_surjective (w * y)
   have hzt_col : zt ∈ (Ideal.span (Set.range f)).colon
@@ -566,7 +550,7 @@ theorem socle_main (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
   have hb𝔪 : Ideal.Quotient.mk (Ideal.span (Set.range f)) (b - C (constantCoeff b)) ∈ 𝔪 := by
     have hmem : b - C (constantCoeff b) ∈ Ideal.span
         (Set.range (X : Fin n → MvPowerSeries (Fin n) k)) := by
-      rw [mem_span_range_X_iff, map_sub, constantCoeff_C, sub_self]
+      rw [span_range_X_eq_ker_constantCoeff, RingHom.mem_ker, map_sub, constantCoeff_C, sub_self]
     have := Ideal.mem_map_of_mem (Ideal.Quotient.mk (Ideal.span (Set.range f))) hmem
     rwa [Ideal.map_span, ← Set.range_comp] at this
   have hz' : w * y = Ideal.Quotient.mk (Ideal.span (Set.range f)) (C (constantCoeff b)) * d := by
@@ -586,46 +570,13 @@ theorem socle_main (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
   rw [this]
   exact J.mul_mem_left _ hzJ
 
-end Main
+/-- **Perfect multiplication pairing.** Over a field `k`, if `f = g • X` and `k⟦X⟧ ⧸ (f)` is
+finite-dimensional, then some linear form `l` makes the multiplication pairing
+`(a, b) ↦ l (a * b)` perfect.
 
-end TateDetSocle
-
-@[expose] public section
-
-namespace MvPowerSeries
-
-/-- **Tate's determinant formula.** Let `f = g • X` in `𝒪⟦X₁, …, Xₙ⟧` with `𝒪` Noetherian,
-suppose `T = 𝒪⟦X⟧ ⧸ (f)` is finite free over `𝒪`, and let `π : T →ₐ[𝒪] 𝒪` be the augmentation
-induced by the constant coefficient. Then the annihilator of `ker π` is generated by the class of
-`det g`, and its image under `π` is generated by `det g(0)`. -/
-public theorem annihilator_ker_eq_span_det
-    {𝒪 : Type*} [CommRing 𝒪] [IsNoetherianRing 𝒪]
-    (n : ℕ) (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) 𝒪))
-    (f : Fin n → MvPowerSeries (Fin n) 𝒪) (hf : ∀ i, f i = ∑ j, g i j * X j)
-    [Module.Finite 𝒪 (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f))]
-    [Module.Free 𝒪 (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f))]
-    (π : (MvPowerSeries (Fin n) 𝒪 ⧸ Ideal.span (Set.range f)) →ₐ[𝒪] 𝒪)
-    (hπ : (π : _ →+* 𝒪).comp (Ideal.Quotient.mk (Ideal.span (Set.range f))) =
-      constantCoeff) :
-    (RingHom.ker π).annihilator =
-        Ideal.span {Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det} ∧
-      (RingHom.ker π).annihilator.map π =
-        Ideal.span {(g.map constantCoeff).det} :=
-  TateDetAnnihilator.annihilator_main n g f hf π hπ
-
-/-- Over a field `k`, if `f = g • X` and `k⟦X⟧ ⧸ (f)` is finite-dimensional, then the class of
-`det g` is nonzero and lies in every nonzero ideal of `k⟦X⟧ ⧸ (f)`. -/
-public theorem quotient_mk_det_mem_of_ne_bot
-    {k : Type*} [Field k] {n : ℕ} (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
-    (f : Fin n → MvPowerSeries (Fin n) k) (hf : ∀ i, f i = ∑ j, g i j * X j)
-    [Module.Finite k (MvPowerSeries (Fin n) k ⧸ Ideal.span (Set.range f))] :
-    Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det ≠ 0 ∧
-      ∀ J : Ideal (MvPowerSeries (Fin n) k ⧸ Ideal.span (Set.range f)), J ≠ ⊥ →
-        Ideal.Quotient.mk (Ideal.span (Set.range f)) g.det ∈ J :=
-  TateDetSocle.socle_main g f hf
-
-/-- Over a field `k`, if `f = g • X` and `k⟦X⟧ ⧸ (f)` is finite-dimensional, then some linear
-form `l` makes the multiplication pairing `(a, b) ↦ l (a * b)` perfect. -/
+Source: B. de Smit, K. Rubin and R. Schoof, *Criteria for complete intersections*, in *Modular
+Forms and Fermat's Last Theorem*, Springer, 1997, pp. 343–355, Section 2, remark on the Gorenstein
+condition. -/
 public theorem exists_bijective_compr₂_mul_of_finite {k : Type*} [Field k] {n : ℕ}
     (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k)) (f : Fin n → MvPowerSeries (Fin n) k)
     (hf : ∀ i, f i = ∑ j, g i j * X j)
