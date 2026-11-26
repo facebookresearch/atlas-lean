@@ -11,9 +11,8 @@ module
 public import MathlibExt.NumberTheory.PolygonalNumber
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Nat.Prime.Defs
+import MathlibExt.NumberTheory.PracticalPolygonalSumsExistsSqAddSqModEqPrimePow
 import Mathlib.Data.ZMod.Basic
-import Mathlib.FieldTheory.Finite.Basic
-import Mathlib.NumberTheory.LegendreSymbol.Basic
 import Mathlib.NumberTheory.PrimesCongruentOne
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
@@ -26,123 +25,10 @@ For a natural number $s > 3$, there is a prime $p \equiv 1 \pmod{4}$ with
 $p \nmid s - 2$ such that every positive integer is congruent modulo every
 positive prime power $p^k$ to a sum of two positive $s$-gonal numbers. The main
 result is `MetaMathlibExt.exists_prime_polygonal_add_polygonal_modEq_prime_pow`,
-proved by completing the square and lifting sums of two squares modulo prime powers. -/
+proved by completing the square and representing residues modulo prime powers as
+sums of two squares (`MetaMathlibExt.exists_sq_add_sq_modEq_prime_pow`). -/
 
 namespace MetaMathlibExt
-
-/-- **Sums of two squares modulo prime powers.** Let $p$ be a prime with $p \equiv 1 \pmod{4}$.
-For all natural numbers $n > 0$ and $k > 0$ there are natural numbers $x, y > 0$ with
-$x^2 + y^2 \equiv n \pmod{p^k}$ and $p \nmid y$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 8
-(arXiv Lemma 4.3; `jis-2024-24.5.1-lem-8`). -/
-private theorem exists_prime_polygonal_add_polygonal_modEq_prime_pow.lift_two_squares
-    (p n k : ℕ) (hp : p.Prime)
-    (hp4 : p % 4 = 1) (hn : 0 < n) (hk : 0 < k) :
-    ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ^ 2 + y ^ 2 ≡ n [MOD p ^ k] ∧ ¬ p ∣ y := by
-  have : Fact p.Prime := ⟨hp⟩
-  have : NeZero p := ⟨hp.ne_zero⟩
-  have hnot2 : ¬ p ∣ 2 := by
-    intro h
-    have hle := Nat.le_of_dvd (by norm_num : 0 < 2) h
-    have h2le := hp.two_le
-    omega
-  have lift (k : ℕ) : ∃ x y : ℕ, x ^ 2 + y ^ 2 ≡ n [MOD p ^ (k + 1)] ∧ ¬ p ∣ y := by
-    induction k with
-    | zero =>
-      have hpow : p ^ (0 + 1) = p := by simp
-      rw [hpow]
-      have toNat : ∀ a b : ZMod p, a ^ 2 + b ^ 2 = (n : ZMod p) →
-          a.val ^ 2 + b.val ^ 2 ≡ n [MOD p] := by
-        intro a b hab
-        rw [← ZMod.natCast_eq_natCast_iff]
-        push_cast
-        rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val]
-        exact hab
-      have notdvd : ∀ b : ZMod p, b ≠ 0 → ¬ p ∣ b.val := by
-        intro b hb hdvd
-        apply hb
-        rw [← ZMod.val_eq_zero]
-        exact Nat.eq_zero_of_dvd_of_lt hdvd (ZMod.val_lt b)
-      obtain ⟨a, b, hab⟩ := ZMod.sq_add_sq p (n : ZMod p)
-      by_cases hb : b = 0
-      · subst hb
-        have hab' : a ^ 2 = (n : ZMod p) := by simpa using hab
-        by_cases ha : a = 0
-        · subst ha
-          have hN : (n : ZMod p) = 0 := by rw [← hab']; simp
-          obtain ⟨i, hi⟩ := (ZMod.exists_sq_eq_neg_one_iff.mpr (by omega : p % 4 ≠ 3))
-          refine ⟨i.val, 1, ?_, fun hdvd => hp.not_dvd_one hdvd⟩
-          rw [← ZMod.natCast_eq_natCast_iff]
-          push_cast
-          rw [ZMod.natCast_zmod_val]
-          have hi2 : i ^ 2 = -1 := by rw [pow_two, ← hi]
-          rw [hi2, hN]
-          simp
-        · refine ⟨0, a.val, ?_, notdvd a ha⟩
-          simpa using toNat 0 a (by simpa using hab')
-      · exact ⟨a.val, b.val, toNat a b hab, notdvd b hb⟩
-    | succ k ih =>
-      obtain ⟨x, y, hxy, hy⟩ := ih
-      have hdvd : ((p ^ (k + 1) : ℕ) : ℤ) ∣ (n : ℤ) - (x : ℤ) ^ 2 - (y : ℤ) ^ 2 := by
-        have h := (Nat.modEq_iff_dvd).mp hxy
-        push_cast at h ⊢
-        rw [sub_sub]
-        exact h
-      obtain ⟨q, hq⟩ := hdvd
-      push_cast at hq
-      have h2y : (2 * (y : ZMod p)) ≠ 0 := by
-        apply mul_ne_zero
-        · have h2 : ((2 : ℕ) : ZMod p) ≠ 0 := by
-            rw [Ne, ZMod.natCast_eq_zero_iff]
-            exact hnot2
-          exact_mod_cast h2
-        · rw [Ne, ZMod.natCast_eq_zero_iff]
-          exact hy
-      let lz : ZMod p := (q : ZMod p) / (2 * (y : ZMod p))
-      let l : ℕ := lz.val
-      have hlz : ((l : ℕ) : ZMod p) = lz := ZMod.natCast_zmod_val lz
-      have hqz : ((2 * (y : ℤ) * (l : ℤ) : ℤ) : ZMod p) = (q : ZMod p) := by
-        have e1 : ((2 * (y : ℤ) * (l : ℤ) : ℤ) : ZMod p) = 2 * (y : ZMod p) * lz := by
-          push_cast
-          rw [hlz]
-        rw [e1]
-        change 2 * (y : ZMod p) * ((q : ZMod p) / (2 * (y : ZMod p))) = (q : ZMod p)
-        exact mul_div_cancel₀ _ h2y
-      have h1 : ((p : ℤ)) ∣ (q - 2 * (y : ℤ) * (l : ℤ)) := by
-        have h := (ZMod.intCast_eq_intCast_iff_dvd_sub q (2 * (y : ℤ) * (l : ℤ)) p).mp hqz.symm
-        obtain ⟨c, hc⟩ := h
-        exact ⟨-c, by linear_combination -hc⟩
-      have hM : ((p : ℤ)) ∣ ((p : ℤ) ^ (k + 1)) := dvd_pow_self (p : ℤ) (by omega : k + 1 ≠ 0)
-      have h2 : ((p : ℤ)) ∣ ((q - 2 * (y : ℤ) * (l : ℤ)) - ((p : ℤ) ^ (k + 1)) * (l : ℤ) ^ 2) :=
-        dvd_sub h1 (dvd_mul_of_dvd_left hM _)
-      obtain ⟨t, ht⟩ := h2
-      refine ⟨x, y + p ^ (k + 1) * l, ?_, ?_⟩
-      · rw [Nat.modEq_iff_dvd]
-        have hP : ((p ^ (k + 1 + 1) : ℕ) : ℤ) = (p : ℤ) ^ (k + 1) * (p : ℤ) := by
-          push_cast
-          rw [pow_succ]
-        refine ⟨t, ?_⟩
-        rw [hP]
-        push_cast
-        linear_combination hq + (p : ℤ) ^ (k + 1) * ht
-      · intro hdvd'
-        apply hy
-        have hdivM : p ∣ p ^ (k + 1) * l :=
-          dvd_mul_of_dvd_left (dvd_pow_self p (by omega : k + 1 ≠ 0)) l
-        obtain ⟨c1, hc1⟩ := hdvd'
-        obtain ⟨c2, hc2⟩ := hdivM
-        have hyeq : y = p * (c1 - c2) := by
-          rw [show y = (y + p ^ (k + 1) * l) - p ^ (k + 1) * l from by omega, hc1, hc2]
-          exact (Nat.mul_sub p c1 c2).symm
-        exact ⟨c1 - c2, hyeq⟩
-  obtain ⟨e, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk.ne'
-  obtain ⟨x, y, hxy, hy⟩ := lift e
-  have hx : x + n * p ^ (e + 1) ≡ x [MOD p ^ (e + 1)] := Nat.add_mul_modulus_modEq_iff.mpr .rfl
-  refine ⟨x + n * p ^ (e + 1), y, ?_, ?_, ((hx.pow 2).add_right _).trans hxy, hy⟩
-  · exact Nat.add_pos_right _ (Nat.mul_pos hn (pow_pos hp.pos _))
-  · exact Nat.pos_of_ne_zero (fun h => hy (h ▸ dvd_zero p))
 
 /-- **Sums of two polygonal numbers modulo prime powers.** For a natural number $s > 3$ and a
 natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th $s$-gonal number. There
@@ -179,8 +65,8 @@ public theorem exists_prime_polygonal_add_polygonal_modEq_prime_pow (s : ℕ)
   have : NeZero m := ⟨hmpos.ne'⟩
   have hs2 : 0 < s - 2 := by omega
   obtain ⟨x0, y0, _, _, hxy0, _⟩ :=
-    exists_prime_polygonal_add_polygonal_modEq_prime_pow.lift_two_squares p
-      (8 * (s - 2) * n + 2 * (s - 4) ^ 2) k hp hp4 (by positivity) hk
+    exists_sq_add_sq_modEq_prime_pow p (8 * (s - 2) * n + 2 * (s - 4) ^ 2) k hp hp4
+      (by positivity) hk
   have hcop2 : Nat.Coprime 2 p := ((Nat.Prime.coprime_iff_not_dvd hp).mpr hnot2).symm
   have hcopd : Nat.Coprime (s - 2) p := ((Nat.Prime.coprime_iff_not_dvd hp).mpr hpdvd).symm
   have hcop : Nat.Coprime (2 * (s - 2)) m :=
