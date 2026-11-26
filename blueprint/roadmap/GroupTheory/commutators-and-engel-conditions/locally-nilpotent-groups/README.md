@@ -14,6 +14,5 @@
 - [Binary nilpotent groups](is-binary-nilpotent.md)
 - [Kourovka Problem 1.39 (products of normal binary nilpotent subgroups)](product-of-normal-binary-nilpotent-is-bi.md)
 - [A product of two normal binary nilpotent subgroups need not be binary nilpotent](product-of-normal-binary-nilpotent-is-bi-2.md)
-- [Nil-elements (left Engel elements)](is-nil-element.md)
 - [Kourovka Problem 2.64 (nil-elements and the locally nilpotent radical)](nil-elements-equal-locally-nilpotent-rad.md)
 - [Nil-elements of a linear group need not form its locally nilpotent radical](nil-elements-equal-locally-nilpotent-rad-2.md)

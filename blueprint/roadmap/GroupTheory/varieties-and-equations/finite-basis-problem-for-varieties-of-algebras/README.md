@@ -23,7 +23,6 @@
 - [Some variety of associative rings is not finitely based](non-finitely-based-ring-variety-exists-h.md)
 - [Some variety of Lie rings is not finitely based](non-finitely-based-lie-ring-variety-exis-2.md)
 - [Law of a group](is-group-law.md)
-- [Group in the variety defined by a set of laws](in-variety.md)
 - [Finitely based laws of a group](group-laws-finitely-based.md)
 - [Words for identities of associative rings](ring-word.md)
 - [Identity of an associative ring](is-ring-identity.md)

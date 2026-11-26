@@ -17769,7 +17769,6 @@
   "WantedExt/GroupTheory/NonAbelianVarietyAbelianFiniteGroupsKourovka4Problem73Wanted": {"to": "GroupTheory/varieties-and-equations", "title": "Generation of varieties of groups"},
   "WantedExt/GroupTheory/NonAbelianVarietyElementaryTheoryKourovka4Problem63Wanted": {"to": "GroupTheory/varieties-and-equations", "title": "Elementary theories of groups and varieties"},
   "WantedExt/GroupTheory/NonClosedMaximalSubgroupSLKourovka2Problem54Wanted": {"to": "GroupTheory/linear-groups", "title": "Maximal subgroups of linear groups"},
-  "WantedExt/GroupTheory/NonFinitelyBasedLawSetKourovka1Problem82Wanted": {"to": "GroupTheory/varieties-and-equations", "title": "Bases of identities and quasi-identities"},
   "WantedExt/GroupTheory/NonLocalFormationsLocalProductKourovka9Problem58Wanted": {"to": "GroupTheory/soluble-finite-groups/formations", "title": "Local formations"},
   "WantedExt/GroupTheory/NonPassableVarietyKourovka8Problem26Wanted": {"to": "GroupTheory/varieties-and-equations", "title": "Lattices of varieties of groups"},
   "WantedExt/GroupTheory/OddDegreeCharacterFieldsOWR17472Problem006Wanted": {"to": "GroupTheory/characters-of-finite-groups", "title": "Fields of values of characters"},
