@@ -2,7 +2,9 @@
 
 A 3-valued instance assigns to each ground fact over the schema of a Datalog program with negation $P$ a truth value
 in $\{0, \tfrac12, 1\}$; instances are compared pointwise in the truth order $0 < \tfrac12 < 1$, so the least instance
-$\bot$ makes every fact false. Ground instances of rules range over the constants of $P$ and of the input. A 3-valued
+$\bot$ makes every fact false. For an input instance $I$, all constructions below use the program $P_I$ obtained from $P$ by adding a
+unit rule $A \leftarrow$ for each fact $A$ of $I$, so that input facts are supported; ground instances of rules range
+over the constants of $P$ and of $I$, and $P^{\mathrm{wf}}(I)$ denotes the well-founded semantics of $P_I$. A 3-valued
 instance $I$ gives a value $\hat I$ to literals and bodies: $\hat I(A) = I(A)$, $\hat I(\neg A) = 1 - I(A)$, a truth
 value is its own value, and a conjunction takes the minimum of the values of its members. A 3-extended program is a
 program without negation whose rule bodies may also contain truth values; its 3-valued immediate-consequence operator
@@ -25,4 +27,4 @@ $\tfrac12$, is a stable model of $P$.
 
 ## Sources
 
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, the value $\hat I$ of literals and bodies and the 3-valued immediate consequence operator (pp. 387–388), Lemma 15.3.4 (pp. 388–389), Definitions 15.3.5 and 15.3.7 (pp. 389–390), and the bibliographic notes to Chapter 15 relating total 3-stable models to stable models (p. 408).
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, the program $P_I$ (p. 387), the value $\hat I$ of literals and bodies and the 3-valued immediate consequence operator (pp. 387–388), Lemma 15.3.4 (pp. 388–389), Definitions 15.3.5 and 15.3.7 (pp. 389–390), and the bibliographic notes to Chapter 15 relating total 3-stable models to stable models (p. 408).

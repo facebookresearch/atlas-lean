@@ -6,7 +6,7 @@ a database $D$ over the extensional relation names of $\Pi$ it returns $q(D) = \
 where $\Pi(D)$ is the least model of $\Pi$ containing $D$.
 
 Datalog evaluation is PTIME-complete in data complexity: for every fixed Datalog query $q$, deciding for a database $D$
-and a tuple $\bar a$ whether $\bar a \in q(D)$ takes time $O(\lvert \mathrm{Dom}(D) \rvert^k)$ for some $k$ depending
+and a tuple $\bar a$ whether $\bar a \in q(D)$ takes time $O((1 + \lvert \mathrm{Dom}(D) \rvert)^k)$ for some $k$ depending
 only on $q$; and for some fixed Datalog query this problem is PTIME-hard, by a reduction from the monotone circuit
 value problem.
 

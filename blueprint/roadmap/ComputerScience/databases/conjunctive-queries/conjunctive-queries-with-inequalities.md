@@ -16,4 +16,4 @@ $q(D) \subseteq q'(D)$ for every database $D$.
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definitions 30.1 and 30.2 (pp. 271–272) and Definition 30.13 (p. 279).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definitions 30.1 and 30.2 (pp. 272–273) and Definition 30.13 (p. 279).

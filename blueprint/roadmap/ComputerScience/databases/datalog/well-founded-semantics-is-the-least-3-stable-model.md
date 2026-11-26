@@ -1,6 +1,7 @@
 # The well-founded semantics is the least 3-stable model in the information order
 
-Let $P$ be a Datalog program with negation and let $\bot$ be the 3-valued instance in which every fact is false.
+Let $P$ be a Datalog program with negation, with any input facts already added as unit rules as on the page of
+[3-stable models](three-valued-stable-models.md), and let $\bot$ be the 3-valued instance in which every fact is false.
 Define $I_0 = \bot$ and $I_{i+1} = \mathrm{conseq}_P(I_i)$. In the pointwise truth order $0 < \tfrac12 < 1$, the even-indexed instances form an
 increasing and the odd-indexed instances a decreasing sequence; let $I_*$ and $I^*$ be their limits, and $I_{**}$
 the 3-valued instance whose true facts are those true in $I_*$ and whose false facts are those false in $I^*$. Then
