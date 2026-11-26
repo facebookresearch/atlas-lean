@@ -48,18 +48,6 @@ Article cookbacon061124, Corollary 4.4 (`fq-2024-cookbacon061124-cor-4.4`). -/
 public theorem_wanted two_pow_mul_lucasNumber_succ_modEq_five (n : ℕ) :
     2 ^ n * lucasNumber (n + 1) ≡ 1 [MOD 5]
 
-/-- **Pell–Oresme convolution.** Let $P_m$ denote the Pell numbers and let $O_m = m/2^m$ denote
-the Oresme numbers. For every natural number $n$,
-$\sum_{k=0}^{n} P_k O_{n-k} = \frac{2}{49}(5 P_{n+1} - 4 P_n) - \frac{2(7n + 5)}{49 \cdot 2^n}$.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Proposition 5.2 (`fq-2024-cookbacon061124-prop-5.2`). -/
-public theorem_wanted pellNumber_oresme_convolution (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), (pellNumber k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
-      2 / 49 * (5 * (pellNumber (n + 1) : ℚ) - 4 * pellNumber n) -
-        2 / 49 * ((7 * (n : ℚ) + 5) / 2 ^ n)
-
 /-- **Pell–Lucas–Oresme convolution.** Let $Q_m$ denote the Pell–Lucas numbers, with
 $Q_0 = Q_1 = 1$ and $Q_{m+2} = 2Q_{m+1} + Q_m$, and let $O_m = m/2^m$ denote the Oresme numbers.
 For every natural number $n$,
