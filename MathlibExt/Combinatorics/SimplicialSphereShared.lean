@@ -7,7 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Shared finite simplicial sphere API
+Portions of this file are adapted from:
+
+`LeanEval/Combinatorics/DehnSommerville.lean` and
+`LeanEval/Combinatorics/UpperBoundSimplicialSpheres.lean` (leanprover/lean-eval,
+revision 38361be884302c7edce1908c4aef8296eb2cb27e), for the sphere and face-vector definitions.
+Copyright 2026 Lean FRO, LLC.
+Authors: Kim Morrison (lean-eval submissions).
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,20 +26,21 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-This neutral helper module is shared by the Dehn–Sommerville and
-upper-bound simplicial-sphere wanted entries, so both theorems speak
-about the same sphere type and face-vector API. The definitions are the
-trusted (non-hole) helpers from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, modules
-`LeanEval.Combinatorics.DehnSommerville` and
-`LeanEval.Combinatorics.UpperBoundSimplicialSpheres`, distributed under
-the Apache License, Version 2.0; they are unchanged apart from the
-namespace.
 -/
+
 module
 
-public import Mathlib
+public import Mathlib.Analysis.Convex.SimplicialComplex.Basic
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Data.Set.Card
+
+/-!
+# Face numbers of finite simplicial spheres
+
+A finite simplicial sphere has a geometric realization homeomorphic to a unit sphere.
+Its face numbers count simplices by dimension and determine its h-vector.
+-/
 
 @[expose] public section
 
