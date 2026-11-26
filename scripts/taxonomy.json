@@ -9951,6 +9951,7 @@
   "MathlibExt/Analysis/PDE/LaplaceMeanValue": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
   "MathlibExt/Analysis/PDE/LaplaceStrongMaximumPrinciple": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
   "MathlibExt/Analysis/PDE/PlanarHarmonicMaximumPrinciple": {"to": "Analysis/potential-theory", "title": "Maximum principle for harmonic functions"},
+  "MathlibExt/Analysis/PDE/PoissonDirichlet": {"to": "Analysis/partial-differential-equations", "title": "Weak solutions of elliptic equations"},
   "MathlibExt/Analysis/PDE/RadialSymmetry": {"to": "Analysis/partial-differential-equations", "title": "Radial symmetry of semilinear elliptic equations"},
   "MathlibExt/Analysis/PDE/WeakSolutions": {"to": "Analysis/partial-differential-equations", "title": "Weak solutions of elliptic equations"},
   "MathlibExt/Analysis/PathSignature/Basic": {"to": "Analysis/rough-paths-and-path-signatures", "title": "Signature of a path"},
