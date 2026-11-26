@@ -49,3 +49,4 @@
 - [Almost-sure repeated clicking of a finite mutation ratchet](muller-s-ratchet-model-and-almost-sure-clicking.md)
 
 - [Fates of a duplicated gene in a finite duplication–degeneration–complementation model](gene-duplicate-fates-in-a-finite-ddc-style-model.md)
+- [Expected extinction time of the best class in the tournament ratchet](expected-extinction-time-of-the-best-class-in-the-tournament-ratchet.md)

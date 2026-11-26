@@ -14,3 +14,5 @@
 
 - [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
 - [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
+- [Quasispecies with time lags and periodic replication](quasispecies-with-time-lags-and-periodic-replication/README.md)
+- [Toroidal diffusions for protein evolution](toroidal-diffusions-for-protein-evolution/README.md)
