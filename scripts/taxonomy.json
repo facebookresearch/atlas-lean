@@ -10562,6 +10562,7 @@
   "MathlibExt/CategoryTheory/SmallObject/CoherentRetracts/Limits": {"title": "Limits of coherent retract prefixes", "to": "CategoryTheory/not-yet-classified"},
   "MathlibExt/Combinatorics/AP/Basic": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Arithmetic progressions and progression-free sets"},
   "MathlibExt/Combinatorics/AcceleratedZeckendorfGame": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
+  "MathlibExt/Combinatorics/AcceleratedZeckendorfGameAccelZeckGameLowerBound": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
   "MathlibExt/Combinatorics/AccessibleSets": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/Combinatorics/AccessibleSetsGrowth": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/Combinatorics/AccessibleSetsRecurrence": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
