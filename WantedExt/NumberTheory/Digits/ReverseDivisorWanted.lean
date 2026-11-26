@@ -46,23 +46,13 @@ public import MathlibExt.NumberTheory.Digits.ReverseDivisorQuotientFour
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarIffDvd
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorHasPropertyPStarOfDvd
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorExistsDvdReverseDigitsMul
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorPalindromeHasPropertyPStar
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Digits.ReverseDivisorWanted
-
-/-- **Palindromes with property $P^*$.** Let $n \ge 1$ be a natural number that is a decimal
-palindrome, that is, whose decimal reversal equals $n$. If $n$ has the property $P^*$, then $n$
-is one of $1$, $3$, $9$, $11$, $33$ and $99$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 3. -/
-theorem_wanted palindrome_hasPropertyPStar (n : ℕ) (hn : 1 ≤ n)
-    (hpal : Nat.reverseDigits 10 n = n) (h : HasPropertyPStar n) :
-    n = 1 ∨ n = 3 ∨ n = 9 ∨ n = 11 ∨ n = 33 ∨ n = 99
 
 /-- **Reverse divisors have quotient $4$ or $9$.** If $n$ is a reverse divisor, then the decimal
 reversal of $n$ equals $4n$ or $9n$.
