@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.InitialRepetitionsC3
 public import MathlibExt.NumberTheory.InitialRepetitionsC8
 public import MathlibExt.NumberTheory.InitialRepetitionsC8Prime
 public import MathlibExt.NumberTheory.SquaresModTwoPow
+public import MathlibExt.NumberTheory.GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne
 
 namespace MetaMathlibExt
 
@@ -40,25 +41,6 @@ public theorem_wanted card_not_isSquare_sixteen_mul_add_one_eight_mul_add_one (p
     ((Finset.Icc 1 (p - 1)).filter fun r =>
         ¬IsSquare ((16 * r + 1 : ℕ) : ZMod p) ∧ ¬IsSquare ((8 * r + 1 : ℕ) : ZMod p)).card =
       p / 4
-
-open scoped Classical in
-/-- **Residues $r$ with $12r + 1$ and $8r + 1$ both non-squares modulo $p$.** For every prime $p$,
-let $N$ be the number of integers $r$ with $1 \le r \le p - 1$ such that neither $12r + 1$ nor
-$8r + 1$ is a square modulo $p$. Then $N = \lfloor p/4 \rfloor - 1$ if $p \equiv 5 \pmod{24}$,
-$N = \lfloor p/4 \rfloor + 1$ if $p \equiv 11 \pmod{24}$, and $N = \lfloor p/4 \rfloor$ otherwise.
-
-Here $0$ counts as a square modulo $p$, so "not a square" means "quadratic nonresidue". The paper
-assumes $p \ge 5$; for $p = 2$ and $p = 3$ both sides are $0$. If $0$ were counted as a non-square,
-the count at $p = 5$ would be $2$ instead of $0$.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 8 (`integers-2025-A32-thm-8`). -/
-public theorem_wanted card_not_isSquare_twelve_mul_add_one_eight_mul_add_one (p : ℕ)
-    (hp : p.Prime) :
-    ((Finset.Icc 1 (p - 1)).filter fun r =>
-        ¬IsSquare ((12 * r + 1 : ℕ) : ZMod p) ∧ ¬IsSquare ((8 * r + 1 : ℕ) : ZMod p)).card =
-      if p % 24 = 5 then p / 4 - 1 else if p % 24 = 11 then p / 4 + 1 else p / 4
 
 /-- **Counting $r$ with $mr + 1$ and $nr + 1$ both quadratic nonresidues.** Let $p$ be an odd
 prime, write $\left(\frac{a}{p}\right)$ for the Legendre symbol of an integer $a$, and let $m$ and

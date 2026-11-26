@@ -13216,6 +13216,7 @@
   "MathlibExt/NumberTheory/GoormaghtighPrimes": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Goormaghtigh equation"},
   "MathlibExt/NumberTheory/GouldReciprocalBinomial": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's binomial–harmonic identity"},
   "MathlibExt/NumberTheory/GreedyOddFibonacciFloor": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Numeration by Fibonacci and Pell numbers"},
+  "MathlibExt/NumberTheory/GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Partitions with initial repetitions"},
   "MathlibExt/NumberTheory/HankelTransform": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Hankel transforms and Jacobi continued fractions"},
   "MathlibExt/NumberTheory/HardyLittlewoodPrimeTuple": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Hardy–Littlewood prime tuples conjecture"},
   "MathlibExt/NumberTheory/Harmonic/EulerMascheroniBounds": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Harmonic numbers and the Euler–Mascheroni constant"},
