@@ -6,7 +6,7 @@ $$
 W_i(r) = C_i + \sum_{j \in hp(i)} \left\lceil \frac{r}{T_j} \right\rceil C_j .
 $$
 
-Then no request of $\tau_i$ overflows, for any phasing of the tasks, if and only if $W_i(r) = r$ for some $r \in (0, T_i]$; in that case the largest response time of a request of $\tau_i$ is the least $r > 0$ with $W_i(r) = r$. The priority assignment is feasible exactly when this holds for every task.
+Then no request of $\tau_i$ overflows, for every phasing of the tasks, if and only if $W_i(r) = r$ for some $r \in (0, T_i]$; in that case the largest response time of a request of $\tau_i$ is the least $r > 0$ with $W_i(r) = r$. The priority assignment is feasible exactly when this holds for every task.
 
 The fixed-point equation describes a request of $\tau_i$ made at a critical instant: in a window of length $r$ starting at that instant, each higher-priority task $\tau_j$ makes $\lceil r/T_j \rceil$ requests, each of which preempts $\tau_i$ for $C_j$, and the request of $\tau_i$ completes at the first time $r$ by which all this work, together with its own $C_i$, has been done.
 
