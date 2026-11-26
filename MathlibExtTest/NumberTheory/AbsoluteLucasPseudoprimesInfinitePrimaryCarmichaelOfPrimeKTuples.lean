@@ -16,7 +16,7 @@ namespace MathlibExtTest.NumberTheory.AbsoluteLucasPseudoprimesInfinitePrimaryCa
 
 /-- Assuming the prime k-tuples conjecture as stated in
 `MetaMathlibExt.infinite_primary_carmichael_of_primeKTuples`, for every bound `B` there is a
-primary Carmichael number with three prime factors exceeding `B`. -/
+primary Carmichael number `n > B` with exactly three distinct prime factors. -/
 theorem exists_primary_carmichael_gt
     (hk : ∀ l : List (ℤ × ℤ), (∀ ab ∈ l, 1 ≤ ab.1) →
       (∀ ℓ : ℕ, ℓ.Prime → ∃ x : ℤ, ¬ (ℓ : ℤ) ∣ (l.map fun ab => ab.1 * x + ab.2).prod) →
