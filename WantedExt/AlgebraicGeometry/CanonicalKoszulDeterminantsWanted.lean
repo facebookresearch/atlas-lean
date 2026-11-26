@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminants
+public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminantsTorsionIndependent
 public import MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminantsEvaluationIndependent
 
 /-!
@@ -30,11 +31,6 @@ open CategoryTheory CategoryTheory.Limits _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry
 open BoundedProjectiveDeterminants GlobalBoundedDeterminantModels
 open MathlibExt.AlgebraicGeometry.CanonicalKoszulDeterminants
-
-/-- Independence of the literal kernel-basis/lift torsion in the original degree order. -/
-public theorem_wanted torsion_independent (R : Type) [CommRing R]
-    (C : BoundedProjectiveDeterminants.Complex R) (A B : AdaptedBases R C) :
-    acyclicTorsion R C A = acyclicTorsion R C B
 
 variable [FourierMukai.HasDerivedPullbacks.{0}]
   [AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
