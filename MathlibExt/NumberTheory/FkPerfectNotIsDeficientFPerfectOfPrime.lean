@@ -43,6 +43,7 @@ theorem not_isDeficientFPerfect_of_prime (p : ℕ)
     (hp : p.Prime) :
     ¬ IsDeficientFPerfect p
     := by
+  -- Divisor argument from `not_isKLDeficientPerfect_of_prime_odd` (OddPrimeDeficientPerfect.lean).
   rintro ⟨d, hd, hlt, hsum⟩
   have hdmem := Nat.mem_divisors.mpr ⟨hd, hp.ne_zero⟩
   rw [hp.divisors] at hdmem
