@@ -170,7 +170,8 @@ theorem Preserves2.trans {Config : Type u} {Label : Type v} {S T U : OpSem Confi
   have hsub2 := h2 hsafeT
   exact hsub2.trans hsub1
 
-/-- Configurations of the nondeterminism counterexample toy semantics. -/
+/-- Configurations of the nondeterminism counterexample toy semantics: exactly `a`, `b1` and
+`b2`. -/
 inductive NondetToyCfg where
   | a
   | b1

@@ -1,6 +1,6 @@
 # The this variable
 
-The this variable.
+The variable $\mathtt{this}$ is the variable name $0$.
 
 ## Sources
 

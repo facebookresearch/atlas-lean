@@ -1,6 +1,6 @@
 # Argument lists
 
-Argument lists for invocations and new.
+An argument list is either empty or an [expression](expr.md) consed onto an argument list. Argument lists are the arguments of method invocations and object constructions.
 
 ## Sources
 

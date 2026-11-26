@@ -1,6 +1,6 @@
 # Method names
 
-Method names.
+Method names are natural numbers.
 
 ## Sources
 

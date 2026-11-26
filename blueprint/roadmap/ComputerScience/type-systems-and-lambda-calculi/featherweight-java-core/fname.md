@@ -1,6 +1,6 @@
 # Field names
 
-Field names.
+Field names are natural numbers.
 
 ## Sources
 

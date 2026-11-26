@@ -1,6 +1,6 @@
 # Well-formed methods
 
-Let $cd$ be a class declaration of a class table and $m$ a method of $cd$ with parameters $(C_1, x_1), \dots, (C_n, x_n)$, result class $C_0$ and body $e$. The method is well formed (METHOD-OK) when:
+Fix a class table, a class declaration $cd$ and a named method declaration $(m, md)$, where $md$ has parameters $(C_1, x_1), \dots, (C_n, x_n)$, result class $C_0$ and body $e$. The method need not belong to $cd$ or $cd$ to the table; membership is tested by [class well-formedness](class-ok.md). The method is well formed (METHOD-OK) for $cd$ when:
 
 1. the body $e$ has some type $A$ under the [typing context of the method](context-of.md), with $A$ a subtype of $C_0$; and
 2. $m$ passes the [override check](override.md) against the superclass of $cd$ with parameter classes $C_1, \dots, C_n$ and result class $C_0$.

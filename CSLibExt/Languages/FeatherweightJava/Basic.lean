@@ -21,22 +21,22 @@ assignment, overloading, exceptions, generics; no soundness claim.
 set_option autoImplicit false
 namespace Cslib.FeatherweightJava
 
-/-- Class names (Lecture #30 classes). -/
+/-- Class names, as natural numbers (Lecture #30 classes). -/
 abbrev CName := Nat
 
-/-- Method names (Lecture #30 methods). -/
+/-- Method names, as natural numbers (Lecture #30 methods). -/
 abbrev MName := Nat
 
-/-- Field names (Lecture #30 fields). -/
+/-- Field names, as natural numbers (Lecture #30 fields). -/
 abbrev FName := Nat
 
-/-- Variable names (Lecture #30 variables). -/
+/-- Variable names, as natural numbers (Lecture #30 variables). -/
 abbrev VName := Nat
 
 /-- Root class Object, the name `0`; well-formed tables do not declare it (Lecture #30). -/
 def Object : CName := 0
 
-/-- The this variable (Lecture #30). -/
+/-- The this variable, the variable name `0` (Lecture #30). -/
 def thisVar : VName := 0
 
 mutual
@@ -67,7 +67,8 @@ def Expr.Args.length : Expr.Args -> Nat
   | .cons _ tail => tail.length + 1
 
 mutual
-  /-- Class names referenced by an expression (helper for WellFormed). -/
+  /-- Class names referenced by an expression, as a list with repeats kept: receiver first, then
+  arguments; `new` and casts prepend their class (helper for WellFormed). -/
   def Expr.classRefs : Expr → List CName :=
     fun e => match e with
     | .var _ => []
@@ -76,7 +77,8 @@ mutual
     | .new cls args => cls :: Expr.Args.classRefs args
     | .cast cls expr => cls :: Expr.classRefs expr
 
-  /-- Class names referenced by an argument list (helper for WellFormed). -/
+  /-- Class names referenced by an argument list, concatenated left to right with repeats kept
+  (helper for WellFormed). -/
   def Expr.Args.classRefs : Expr.Args → List CName :=
     fun args => match args with
     | .nil => []
@@ -90,7 +92,8 @@ structure MethodDecl where
   body : Expr
 deriving DecidableEq
 
-/-- Class declaration (Lecture #30 classes). -/
+/-- Class declaration: name, superclass, typed fields, constructor parameters and named methods;
+no constructor body is stored (Lecture #30 classes). -/
 structure ClassDecl where
   name : CName
   super : CName
@@ -99,7 +102,9 @@ structure ClassDecl where
   methods : List (MName × MethodDecl)
 deriving DecidableEq
 
-/-- Class names a class declaration references (helper for WellFormed). -/
+/-- Class names a class declaration references, as a list with repeats kept: superclass, field
+classes, constructor parameter classes, then each method's return, parameter and body classes
+(helper for WellFormed). -/
 def ClassDecl.classRefs (cd : ClassDecl) : List CName :=
   cd.super :: (cd.fields.map Prod.fst ++ cd.ctorParams.map Prod.fst ++
     cd.methods.flatMap fun p =>
@@ -161,12 +166,14 @@ def lookupMethod (ct : ClassTable) (m : MName) (C : CName) :
       (lookupClass ct D).bind fun cd =>
         (cd.methods.find? fun p => p.1 == m).map Prod.snd
 
-/-- Method type lookup (MT-CLASS/MT-SUPER). -/
+/-- Method type lookup: the parameter classes and return class of the method found by
+`lookupMethod`, or `none` (MT-CLASS/MT-SUPER). -/
 def mtype (ct : ClassTable) (m : MName) (C : CName) :
     Option (List CName × CName) :=
   (lookupMethod ct m C).map fun md => (md.params.map Prod.fst, md.ret)
 
-/-- Method body lookup (MB-CLASS/MB-SUPER via lookupMethod). -/
+/-- Method body lookup: the parameter names and body of the method found by `lookupMethod`, or
+`none` (MB-CLASS/MB-SUPER). -/
 def mbody (ct : ClassTable) (m : MName) (C : CName) :
     Option (List VName × Expr) :=
   (lookupMethod ct m C).map fun md => (md.params.map Prod.snd, md.body)
@@ -241,7 +248,7 @@ def zipArgs : List VName → Expr.Args → List (VName × Expr) :=
   | _, .nil => []
   | x :: xtl, .cons h ttl => (x, h) :: zipArgs xtl ttl
 
-/-- Typing context mapping variables to types (Lecture #30). -/
+/-- Typing context mapping each variable to an optional class (Lecture #30). -/
 abbrev Ctx := VName → Option CName
 
 mutual
@@ -285,7 +292,8 @@ def contextOf (C : CName) (params : List (CName × VName)) : Ctx :=
   fun x => if x = thisVar then some C
     else (params.find? (fun p => p.2 == x)).map Prod.fst
 
-/-- Method well-formedness: body typing and override (METHOD-OK). -/
+/-- Method well-formedness for an arbitrary class declaration and named method: body typing and
+override (METHOD-OK); membership of the method in the class is checked by `ClassOk`. -/
 def MethodOk (ct : ClassTable) (cd : ClassDecl) (p : MName × MethodDecl) :
     Prop :=
   (∃ A, Typing ct (contextOf cd.name p.2.params) p.2.body A ∧
@@ -335,7 +343,8 @@ mutual
   | castCongr {C : CName} {e e' : Expr} :
     Step ct e e' → Step ct (.cast C e) (.cast C e')
 
-  /-- Argument-list stepping, left-to-right (E-CONTEXT). -/
+  /-- Argument-list stepping (E-CONTEXT): the head steps with the tail unchanged, or the head is a
+  value and the tail steps. -/
   inductive ArgsStep (ct : ClassTable) : Expr.Args → Expr.Args → Prop where
   | head {e e' : Expr} {args : Expr.Args} :
     Step ct e e' → ArgsStep ct (.cons e args) (.cons e' args)

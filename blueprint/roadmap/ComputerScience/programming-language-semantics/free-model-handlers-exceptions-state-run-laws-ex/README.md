@@ -5,7 +5,7 @@
 - [Signature of exceptions](except-f.md)
 - [Free model of exceptions](free-except.md)
 - [Signature of explicit nondeterminism](nondet-f.md)
-- [Free model of nondeterminism](free-nondet.md)
+- [Raw failure-and-choice trees](free-nondet.md)
 
 ## Exceptions
 

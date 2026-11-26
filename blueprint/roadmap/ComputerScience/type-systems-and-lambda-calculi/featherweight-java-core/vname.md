@@ -1,6 +1,6 @@
 # Variable names
 
-Variable names.
+Variable names are natural numbers; the name $0$ is the [this variable](this-var.md).
 
 ## Sources
 

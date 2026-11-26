@@ -1,6 +1,6 @@
 # Class names
 
-Class names.
+Class names are natural numbers; the name $0$ is the [root class](object.md).
 
 ## Sources
 

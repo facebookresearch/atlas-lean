@@ -1,6 +1,6 @@
 # Typing contexts
 
-Typing context mapping variables to types.
+A typing context is a function from variable names to optional class names: it gives a variable either a class or nothing, in which case the variable is unbound.
 
 ## Sources
 
