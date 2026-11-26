@@ -13,8 +13,8 @@ import MathlibExt.AlgebraicGeometry.AbelianDeRhamComparison
 # Tests for the Galois action on the de Rham period ring of `ℂ_p`
 
 `p` is not a unit of `𝓞_ℂ_p`, by instance; the action on `𝓞_ℂ_p` is the completed action on `ℂ_p`
-and preserves the norm; the action on `W(𝓞_ℂ_p^♭)[1/p]` fixes `ℚ_p`; the completeness of `𝓞_C`
-for `C = ℂ_p` gives the instance that `B_dR^+` needs; the filtration starts at `Fil^0 = B_dR^+` and
+and preserves the norm; the action on `W(𝓞_ℂ_p^♭)[1/p]` fixes `ℚ_p`; `𝓞_ℂ_p` is `p`-adically
+complete, by instance, as `B_dR^+` needs; the filtration starts at `Fil^0 = B_dR^+` and
 decreases; the action on `B_dR^+` extends the action on `W(𝓞_ℂ_p^♭)[1/p]`; `σ ∈ Gal(\bar{ℚ}_p/F)`
 acts on `H¹` by inverse image along `id_A × Spec σ`, so the identity element acts by inverse image
 along the identity morphism; and `Fil^j D_dR` is the whole fixed submodule of `B_dR^+ ⊗ H¹` for
@@ -58,16 +58,19 @@ example (σ : Galois p) (c : ℚ_[p]) :
 example (x : integers p (padicComplexFieldTest p)) :
     ((integersEquivPadicComplexInt p x : 𝓞_ℂ_[p]) : PadicComplex p) = x.1 := rfl
 
-/-- The completeness of `𝓞_C` for `C = ℂ_p` gives the instance that `B_dR^+` needs. -/
+/-- `𝓞_ℂ_p` is `p`-adically complete; instance search finds this, so `B_dR^+` needs no
+completeness hypothesis. -/
+example : IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p] := inferInstance
+
+example : ofPreDeRham p 1 = 1 := map_one _
+
+/-- The completeness of `𝓞_C` for `C = ℂ_p` gives that of `𝓞_ℂ_p`. -/
 example (h : IsAdicComplete (Ideal.span {(p : integers p (padicComplexFieldTest p))})
     (integers p (padicComplexFieldTest p))) :
-    haveI := isAdicComplete_padicComplexInt p h
-    ofPreDeRham p 1 = 1 :=
-  map_one _
+    IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p] :=
+  isAdicComplete_padicComplexInt p h
 
 section Completion
-
-variable [IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p]]
 
 /-- `Fil^0 B_dR^+ = B_dR^+`. -/
 example : fil p 0 = ⊤ := by
@@ -100,7 +103,6 @@ end Completion
 
 section Cohomology
 
-variable [IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p]]
 variable (F : IntermediateField ℚ_[p] (PadicAlgCl p)) (A : Over (Spec (CommRingCat.of F)))
 
 /-- `σ ∈ Gal(\bar{ℚ}_p/F)` acts on `H¹` by inverse image along `id_A × Spec σ`, and the identity

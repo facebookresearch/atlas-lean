@@ -12,6 +12,7 @@ public import Mathlib.RingTheory.Perfectoid.BDeRham
 public import Mathlib.RingTheory.WittVector.Compare
 public import MathlibExt.AlgebraicGeometry.AlgebraicallyClosedPadicTests
 public import MathlibExt.AlgebraicGeometry.HodgeTateComparison
+public import MathlibExt.AlgebraicGeometry.PDivisibleHodgeTateRealization
 public import MathlibExt.RingTheory.AdicCompletion.Localization
 
 /-!
@@ -23,19 +24,20 @@ The Galois group `Gal(\bar{ℚ}_p/ℚ_p)` acts on `𝓞_ℂ_p` by the completed 
 action fixes the image of `ℚ_p`, which comes from `ℤ_p = W(𝔽_p) → W(𝓞_ℂ_p^♭)`
 (`preDeRhamGalois_comp_padicToPreDeRham`).
 
-Given the `p`-adic completeness of `𝓞_ℂ_p`, Mathlib's `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`, the
-`(ker θ)`-adic completion of `W(𝓞_ℂ_p^♭)[1/p]`, is a `ℚ_p`-algebra (`BdRPlus`) with the filtration
-`Fil^j B_dR^+`, the kernel of the projection to `W(𝓞_ℂ_p^♭)[1/p] ⧸ (ker θ)^j` (`fil`). An element of
-the Galois group whose action on `W(𝓞_ℂ_p^♭)[1/p]` preserves `ker θ` acts on `B_dR^+` by
-continuity, `ℚ_p`-linearly (`bdRPlusGaloisLinear`). For a scheme `A` over a subfield `F` of
-`\bar{ℚ}_p` and `V = H¹_ét(A_{\bar{ℚ}_p}, ℚ_p)`, `filDeRham` is
-`Fil^j D_dR(V) = (Fil^j B_dR^+ ⊗ V)^{G_F}` for `j ≥ 0`, given that every Galois element preserves
-`ker θ`.
+Mathlib's `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`, the `(ker θ)`-adic completion of `W(𝓞_ℂ_p^♭)[1/p]`,
+is a `ℚ_p`-algebra (`BdRPlus`) with the filtration `Fil^j B_dR^+`, the kernel of the projection to
+`W(𝓞_ℂ_p^♭)[1/p] ⧸ (ker θ)^j` (`fil`). An element of the Galois group whose action on
+`W(𝓞_ℂ_p^♭)[1/p]` preserves `ker θ` acts on `B_dR^+` by continuity, `ℚ_p`-linearly
+(`bdRPlusGaloisLinear`). For a scheme `A` over a subfield `F` of `\bar{ℚ}_p` and
+`V = H¹_ét(A_{\bar{ℚ}_p}, ℚ_p)`, `filDeRham` is `Fil^j D_dR(V) = (Fil^j B_dR^+ ⊗ V)^{G_F}` for
+`j ≥ 0`, given that every Galois element preserves `ker θ`.
 
-The `p`-adic completeness of `𝓞_ℂ_p` follows from that of the ring of integers `𝓞_C` of
-`AlgebraicallyClosedPadicTests` for `C = ℂ_p` (`padicComplexFieldTest`): the two rings have the
-same elements (`integersEquivPadicComplexInt`), and Mathlib's `IsAdicComplete.congr_ringEquiv`
-carries completeness along this ring isomorphism (`isAdicComplete_padicComplexInt`).
+`B_dR^+` needs the `p`-adic completeness of `𝓞_ℂ_p`, an instance here
+(`padicComplexInt_isAdicComplete`). It is the case `C = ℂ_p` (`padicComplexFieldTest`) of the
+`p`-adic completeness of the ring of integers `𝓞_C` of `AlgebraicallyClosedPadicTests`
+(`integers_adic_complete`): the two rings have the same elements (`integersEquivPadicComplexInt`),
+and Mathlib's `IsAdicComplete.congr_ringEquiv` carries completeness along this ring isomorphism
+(`isAdicComplete_padicComplexInt`).
 -/
 
 @[expose] public noncomputable section
@@ -104,6 +106,14 @@ theorem isAdicComplete_padicComplexInt
     IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p] := by
   have := (IsAdicComplete.congr_ringEquiv _ (integersEquivPadicComplexInt p)).2 h
   rwa [Ideal.map_span, Set.image_singleton, map_natCast] at this
+
+/-- $\mathcal{O}_{\mathbb{C}_p}$ is $p$-adically complete: the case $C = \mathbb{C}_p$ of the
+$p$-adic completeness of $\mathcal{O}_C$ (`integers_adic_complete`), through
+`isAdicComplete_padicComplexInt`. -/
+instance padicComplexInt_isAdicComplete : IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p] :=
+  isAdicComplete_padicComplexInt p
+    (WantedExt.AlgebraicGeometry.PDivisibleHodgeTateRealization.integers_adic_complete p
+      (padicComplexFieldTest p))
 
 /-- The action of $\sigma \in \operatorname{Gal}(\overline{\mathbb{Q}}_p/\mathbb{Q}_p)$ on
 $\mathcal{O}_{\mathbb{C}_p}$, the restriction of its continuous extension to $\mathbb{C}_p$. -/
@@ -175,8 +185,6 @@ theorem preDeRhamGalois_comp_padicToPreDeRham (σ : Galois p) :
     (RingHom.ext_zmod ((tiltGalois p σ).comp (ZMod.castHom dvd_rfl _)) (ZMod.castHom dvd_rfl _))
 
 section Completion
-
-variable [IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p]]
 
 /-- The kernel of Fontaine's map
 $\theta \colon W(\mathcal{O}_{\mathbb{C}_p}^\flat)[1/p] \to \mathcal{O}_{\mathbb{C}_p}[1/p]$. -/
@@ -265,7 +273,6 @@ end Completion
 
 section Cohomology
 
-variable [IsAdicComplete (Ideal.span {(p : 𝓞_ℂ_[p])}) 𝓞_ℂ_[p]]
 variable (F : IntermediateField ℚ_[p] (PadicAlgCl p)) (A : Over (Spec (CommRingCat.of F)))
 
 /-- $H^1_{\mathrm{et}}(A_{\overline{\mathbb{Q}}_p}, \mathbb{Q}_p)$ for a scheme $A$ over $F$: the
