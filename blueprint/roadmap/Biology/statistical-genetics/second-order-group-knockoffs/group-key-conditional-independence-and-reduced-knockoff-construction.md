@@ -1,7 +1,9 @@
 # Group-key conditional independence and reduced knockoff construction
 
 **Definition (group-key conditional independence).** Let $X = (X_1, \dots, X_p)$ be partitioned into groups $A_1, \dots, A_g$. The law of $X$ has the group-key conditional independence property if each group splits into disjoint *key* and *non-key* parts, $A_\gamma = A_\gamma^\star \cup A_\gamma^\dagger$, such that
+
 $$X_\gamma^\dagger \perp\!\!\!\perp X_{-\gamma} \mid X_\gamma^\star, \qquad \gamma = 1, \dots, g .$$
+
 The key variables carry all dependence across groups. Unlike a hidden Markov structure, the sizes of $A_\gamma^\star$ and $A_\gamma^\dagger$ are arbitrary, and the non-key variables within a group need not be conditionally independent of each other.
 
 **Construction.** Write $X^\star = (X_1^\star, \dots, X_g^\star)$.

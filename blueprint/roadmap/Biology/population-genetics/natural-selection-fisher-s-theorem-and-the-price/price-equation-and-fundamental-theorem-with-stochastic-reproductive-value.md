@@ -1,9 +1,13 @@
 # Price equation and fundamental theorem with stochastic reproductive value
 
 **Setting.** A finite class-structured population (classes $x \in X$ may differ in ploidy $L_x$, sex, age or condition) lives in a randomly fluctuating environment $e$, and its class composition $\mathbf x$ fluctuates as well. Under the *neutral* process (all individuals share a background phenotype) reproductive value is the fixed point $\phi^*$ of the operator that maps a candidate function on classes to its expected value one year later, normalized so that total reproductive value sums to one; write $\phi_i = \phi(x_i, e, \mathbf x) = L_{x_i}\phi^*(x_i, e, \mathbf x)$. Expected genetic shares of an individual's descendants, weighted by $\phi$,
+
 $$R_x(t) = \sum_z c_{x,z}^{0,t}\, L_z\,\phi^*(z, e(t), \mathbf x(t)),$$
+
 form a martingale for each $x$ under the neutral process. In a single *Taylor year* genotype is allowed to affect phenotype. The **fitness** of individual $i$ is the proportional change in the expected reproductive value it contributes,
+
 $$F_i = \frac{L_i\sum_{y'}\phi(y', e', \mathbf x')\,w_{y',+i} - \phi_i}{\phi_i},$$
+
 where $w_{y',+i}$ counts $i$'s share of offspring (or survival) in class $y'$ next year. For a p-score $p$ (a linear combination of allele frequencies), write $\mathrm{ave}_\phi$, $\mathrm{cov}_\phi$ and $\mathrm{var}_\phi$ for $\phi$-weighted moments and $\Delta^*\mathrm{ave}_\phi p$ for the change in the reproductive-value-weighted mean over the Taylor year before mutation.
 
 **Theorem.**

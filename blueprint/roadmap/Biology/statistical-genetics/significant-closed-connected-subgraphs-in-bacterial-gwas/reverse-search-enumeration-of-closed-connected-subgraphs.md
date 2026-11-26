@@ -3,7 +3,9 @@
 **Setting.** Let $G = (V, E)$ be a connected graph whose vertices are binary covariates over $n$ samples, with $I(v) \subseteq [n]$ the samples containing $v$. For a connected subgraph $S$ put $I(S) = \bigcup_{v \in S} I(v)$ and $J(S) = \bigcap_{v \in S} I(v)$. Let $V_i = \{v : i \in I(v)\}$, let $\mathrm{Ne}(S)$ be the vertices outside $S$ adjacent to $S$, and let $\mathcal{C}$ be the set of closed connected subgraphs (CCSs): connected $S$ such that adding any neighbour changes $I(S)$. Fix arbitrary numberings of samples and vertices.
 
 **Reduction (parent map).** For $S \in \mathcal{C}$: if $I(S) = J(S)$, then $P(S) = \emptyset$. Otherwise let
+
 $$i_S = \max\{i : i \in I(S) \setminus J(S)\},$$
+
 the largest sample containing some but not all units of $S$. Define $P(S)$ as the connected component of $S \setminus V_{i_S}$ that contains the largest vertex $\max\{v : v \in S \setminus V_{i_S}\}$.
 
 **Lemma (valid reduction).** $P$ maps $\mathcal{C}$ to $\mathcal{C} \cup \{\emptyset\}$ with $P(S) \subsetneq S$, so iterating $P$ reaches $\emptyset$. Hence $P$ defines a tree on $\mathcal{C}$ rooted at the empty subgraph, in which every CCS strictly contains its parent.

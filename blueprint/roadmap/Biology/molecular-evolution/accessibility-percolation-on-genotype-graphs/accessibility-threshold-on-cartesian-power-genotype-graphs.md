@@ -3,11 +3,15 @@
 Let $\mathcal A$ be a finite directed **allele graph** with adjacency matrix $A$ (vertices are alleles of one locus, arrows are allowed mutations). The genotype space with $L$ loci is the Cartesian power $\mathcal A^{\square L}$: genotypes are $L$-tuples of alleles, and an arrow changes exactly one locus along an arrow of $\mathcal A$. In the **House-of-Cards (HoC)** model every genotype $g$ gets an i.i.d. fitness $F_g \sim U(0,1)$. A walk is **accessible** if fitness strictly increases along it, and $Z_{gh}$ counts accessible walks from $g$ to $h$. For $0 \le \beta \le 1$, **$\beta$-accessibility** of $h$ from $g$ is $P(Z_{gh} \ge 1 \mid F_h - F_g = \beta)$.
 
 Consider genotype pairs $(a_L, b_L)$ whose allele-pair counts $M_{vw}^{(L)} = \#\{l : a_l = v,\ b_l = w\}$ satisfy $M^{(L)}_{vw}/L \to p_{vw}$, with some off-diagonal $p_{vw} > 0$ (so the distance is linear in $L$) and every locus pair joined by a nonzero-length walk. Define
+
 $$\Gamma_{vw}(t) = \ln\bigl(e^{tA}\bigr)_{vw}, \qquad \boldsymbol\Gamma_{a_L b_L}(t) = \frac1L\sum_{l=1}^L \Gamma_{a_l b_l}(t),$$
+
 so that $e^{L\boldsymbol\Gamma(t)}$ is the expected number of quasi-accessible walks spanning fitness range $t$. $\boldsymbol\Gamma$ is strictly increasing from $-\infty$ to $\infty$. Let $\hat\beta$ be its unique zero and $\beta^* = \lim_L \hat\beta$, which solves $\sum_{v,w} p_{vw}\Gamma_{vw}(\beta^*) = 0$.
 
 **Theorem 1 (threshold).** With
+
 $$c_L = \hat\beta - \frac{1}{\boldsymbol\Gamma'_{a_L b_L}(\hat\beta)}\,\frac{\ln L}{L},$$
+
 $\beta$-accessibility tends to $0$ whenever $\beta \le c_L - g(L)$ with $g(L)\,L \to \infty$. If the setup is **regular** (a refined Martinsson function is strictly negative inside its domain with non-vanishing slope at the boundary), $\beta$-accessibility has a positive $\liminf$ whenever $\beta \ge c_L + g(L)$, so $c_L$ is a $1/L$-threshold and the critical value is $\beta_c = \beta^*$.
 
 **Theorem 2.** In irregular setups, $\beta_c > \beta^*$ whenever $\beta_c$ exists.

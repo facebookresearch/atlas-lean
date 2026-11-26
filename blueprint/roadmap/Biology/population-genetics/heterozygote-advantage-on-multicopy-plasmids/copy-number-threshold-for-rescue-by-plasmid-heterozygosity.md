@@ -11,6 +11,7 @@ Under the *dominant* fitness function (heterozygote advantage), both homozygotes
 - with random replication: $\displaystyle s_{\max} > \frac{4n}{2n^2 - 3n - 1}$, and in the long run all heterozygote types are equally abundant among surviving cells.
 
 Both thresholds decrease to $0$ as $n \to \infty$; for $n = 2$ they are $s_{\max} > 2$ and $s_{\max} > 8$. With a homozygous wild-type population of initial size $N_0$ declining at rate $|s_{\min}|$, per-copy mutation rate $u$ and establishment probability $P_{\rm est}$ of a single-mutant cell, independent rare mutations give
+
 $$P_{\rm rescue} = 1 - \exp\!\Big(-\,u\,n\,N_0\,\frac{1 + s_{\min}}{|s_{\min}|}\,P_{\rm est}\Big).$$
 
 ## Expansion

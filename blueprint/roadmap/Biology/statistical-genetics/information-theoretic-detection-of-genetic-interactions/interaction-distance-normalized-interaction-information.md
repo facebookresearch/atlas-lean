@@ -3,15 +3,21 @@
 **Setting.** Let $X, Y$ be finite random variables encoding genotypes at two markers and $Z$ a finite (binned) phenotype. Write $H$ for Shannon entropy and $I$ for mutual information.
 
 **Interaction information.** With the sign convention that synergy is positive,
+
 $$II(X; Y; Z) = I(X; Y \mid Z) - I(X; Y),$$
+
 the change in shared information between the markers when the phenotype is conditioned on. $II > 0$ indicates synergy: the pair carries more information about $Z$ jointly than singly. $II < 0$ indicates redundancy. The measure is symmetric in all three variables but unnormalized, so when a marker has low entropy (small minor allele frequency) even a deterministic interaction has $II$ close to $0$.
 
 **Information distance.** Normalize mutual information by the larger entropy,
+
 $$D(X, Y) = 1 - \frac{I(X; Y)}{\max\{H(X), H(Y)\}} \in [0, 1],$$
+
 which is a metric and vanishes iff each variable is a function of the other. The conditional distance $D(X, Y \mid Z)$ is defined with every quantity conditioned on $Z$. $D$ decreases as dependence grows.
 
 **Interaction distance.**
+
 $$ID(X, Y; Z) = D(X, Y) - D(X, Y \mid Z).$$
+
 It is symmetric in the markers $X, Y$ but not in the phenotype $Z$, and positive values again mean synergy.
 
 **Theorem (properties of ID).** For finite random variables $X, Y, Z$:

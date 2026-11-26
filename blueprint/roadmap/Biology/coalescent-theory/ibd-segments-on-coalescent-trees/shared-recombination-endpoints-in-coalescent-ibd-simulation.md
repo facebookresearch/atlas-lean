@@ -3,17 +3,23 @@
 Work at a focal position on a chromosome with crossovers forming a Poisson process along genetic distance (in Morgans) in each meiosis, in a population of constant haploid size scaled by $N$, with Kingman coalescent times measured in units of $N$ generations.
 
 **Segment lengths.** If a lineage descends from an ancestor $Nt$ generations ago, the distance $R$ from the focal position to the first crossover on its right, and the length $W$ of the segment overlapping the focal position, satisfy
+
 $$\Pr(R > w \mid t) = e^{-Ntw}, \qquad \Pr(W > w \mid t) = e^{-Ntw}\,(1 + Ntw), \qquad w \ge 0.$$
 
 **Coalescent times.** With $n$ sampled haploids, the expected time until only $k-1$ lineages remain is
+
 $$\mathbb E[T^+_{n:k}] = \sum_{l=k}^{n} \binom{l}{2}^{-1} = 2\Bigl(\frac{1}{k-1} - \frac1n\Bigr).$$
 
 **Merging of endpoints.** Let haplotypes $a, b$ coalesce into ancestor $c$ at time $u$ and $c$ coalesce with another lineage into $e$ at time $u + v$. The right endpoints accumulated on the branches satisfy $R_{a,c}, R_{b,c} \sim \mathrm{Exp}(u)$ and $R_{c,e} \sim \mathrm{Exp}(v)$, independent. Then $a$ and $b$ carry the same endpoint above $c$ (the shared branch has the first crossover) with probability
+
 $$\Pr\bigl(\min(R_{a,c}, R_{b,c}, R_{c,e}) = R_{c,e}\bigr) = \frac{v}{2u + v}.$$
+
 Setting $u/2 = \mathbb E[T^+_{n:(k+1)}]$ and $v/2 = \mathbb E[T^+_{n:(j+1)}] - \mathbb E[T^+_{n:(k+1)}]$ with $j < k \le n$, this probability equals $1 - \dfrac{j/k}{1 + j/k - 2j/n} \to 1$ whenever $j = o(k)$: haplotypes joined by a recent ancestor almost surely share their endpoints at much older coalescences, so they can be merged into one comparison.
 
 **Cost of deep coalescences.** If $B_0 = n$ and $B_j \sim \mathrm{Binomial}(B_{j-1}, 1/2)$ for a bounded index $j \ge 1$ (the subtree sizes under random halving), then $\mathbb E[B_j(B_{j-1} - B_j)] = n(n-1)\,2^{-2j}$ and
+
 $$\lim_{n \to \infty} \frac{\mathbb E[B_j(B_{j-1} - B_j)] + O(1)\cdot \operatorname{Cov}^{1/2}\bigl(B_j(B_{j-1} - B_j)\bigr)}{n^2/2^{2j}} = 1,$$
+
 so the number of pairwise endpoint comparisons at the oldest coalescences is, with high probability, of the same quadratic order as the worst case.
 
 ## Expansion

@@ -1,14 +1,20 @@
 # Function-space priors of diagonal weight regularizers
 
 Use the subsequence weight space of sequences of length $\ell$ over an alphabet of size $\alpha$: weights $w_{(S,s)}$ for position sets $S \subseteq [\ell]$ and characters $s \in \mathcal A^S$, with landscape $f(x) = \sum_{S} w_{(S, x[S])}$. A positive diagonal regularizer $\Lambda$ corresponds to independent priors $w_{(S,s)} \sim \mathcal N(0, \Lambda_{(S,s),(S,s)}^{-1})$, and it induces the Gaussian process prior on $f$ with kernel $K = \Phi \Lambda^{-1} \Phi^{\mathsf T}$, i.e.
+
 $$K(x,y) = \sum_{S \subseteq \{p\,:\,x_p = y_p\}} \Lambda_{(S, x[S]),(S, x[S])}^{-1}.$$
+
 Let $d(x,y)$ be the Hamming distance and $\mathcal K_k(d) = \sum_{i=0}^{k} (-1)^i (\alpha - 1)^{k-i}\binom{d}{i}\binom{\ell - d}{k - i}$ the Krawtchouk polynomials.
 
 1. **Product-weighted regularizer.** For finite $\lambda > 0$ and a product distribution $\pi(x) = \prod_p \pi^p_{x_p}$ with full support, the regularizer $\Lambda_{(S,s),(S,s)} = \lambda^{|S|}\prod_{p \in S}\pi^p_{s_p}$ induces
+
 $$K(x,y) = \prod_{p\,:\,x_p = y_p}\Bigl(1 + \frac{1}{\pi^p_{x_p}\lambda}\Bigr).$$
+
 For uniform $\pi$ this is the geometric decay kernel $K(x,y) = (1 + \alpha/\lambda)^{\ell - d(x,y)}$, whose correlations decay faster with Hamming distance when $\lambda$ is small.
 2. **Order-dependent regularizer.** If $\Lambda_{(S,s),(S,s)} = a_{|S|}$ with $a_j > 0$, then $\Lambda$ induces the variance-component kernel
+
 $$K(x,y) = \sum_{k=0}^{\ell}\Bigl(\sum_{j=k}^{\ell}\frac{1}{\alpha^{j} a_j}\binom{\ell - k}{j - k}\Bigr)\mathcal K_k\bigl(d(x,y)\bigr).$$
+
 Not every variance-component kernel arises this way; one does iff a certain triangular linear system for the $1/a_j$ has an entrywise positive solution.
 
 ## Depends on

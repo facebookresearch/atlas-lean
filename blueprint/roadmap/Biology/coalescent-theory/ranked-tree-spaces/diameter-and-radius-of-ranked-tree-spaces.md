@@ -3,10 +3,13 @@
 Let RNNI be the graph of ranked trees on $n$ leaves under rank and NNI moves, and $\mathrm{DCT}_m$ the graph of discrete coalescent trees with internal-node times in $\{1, \dots, m\}$ under length, rank and NNI moves (see the cluster property of ranked tree spaces).
 
 **Theorem 5.** The diameter of RNNI is
+
 $$\max_{T, R} d_{\mathrm{RNNI}}(T, R) = \frac{(n-1)(n-2)}{2},$$
+
 attained by the two opposite caterpillars $[\{a_1,a_2\}, \{a_1,a_2,a_3\}, \dots]$ and $[\{a_n, a_{n-1}\}, \{a_n,a_{n-1},a_{n-2}\}, \dots]$.
 
 **Theorem 6.** The diameter of $\mathrm{DCT}_m$ is
+
 $$\frac{(n-1)(n-2)}{2} + (m - n + 1)(n - 1).$$
 
 **Theorem 7.** The radius of RNNI equals its diameter: every ranked tree has a caterpillar tree at distance $(n-1)(n-2)/2$. In contrast, the radius of $\mathrm{DCT}_m$ does not equal its diameter in general (an explicit counterexample exists).

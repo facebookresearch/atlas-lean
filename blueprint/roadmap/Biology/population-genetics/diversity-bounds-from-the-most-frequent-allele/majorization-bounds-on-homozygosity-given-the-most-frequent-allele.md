@@ -3,13 +3,19 @@
 Let $p = (p_1, p_2, \dots)$ be allele frequencies at a locus, nonnegative, summing to $1$, finitely many nonzero, ordered $p_1 \ge p_2 \ge \cdots$, with largest frequency $M = p_1 \in (0,1]$. Write $\lfloor \cdot \rfloor$, $\lceil \cdot \rceil$ for floor and ceiling, $\{x\} = x - \lfloor x \rfloor$, and $K = \lceil 1/M \rceil$. For $f : [0,\infty) \to \mathbb R$ continuous and convex with $f(0) = 0$ and $f \ge 0$ on $[0,1]$, set $F(p) = \sum_i f(p_i)$.
 
 1. **Unrestricted number of alleles.** If $M < 1$ and $F$ is bounded on frequency vectors, then
+
 $$f(M) \le F(p) \le \lfloor 1/M \rfloor\, f(M) + f\bigl(\{1/M\}\, M\bigr),$$
+
 with equality in the upper bound for $p = (M, \dots, M, 1 - (K-1)M, 0, \dots)$ ($K - 1$ entries equal to $M$).
 2. **At most $I$ alleles.** If $p$ has length $I \ge 2$ and $1/I \le M \le 1$, then
+
 $$f(M) + (I-1)\, f\Bigl(\frac{1 - M}{I - 1}\Bigr) \le F(p) \le \lfloor 1/M \rfloor\, f(M) + f\bigl(\{1/M\}\, M\bigr),$$
+
 the lower bound attained at $p = \bigl(M, \tfrac{1-M}{I-1}, \dots, \tfrac{1-M}{I-1}\bigr)$.
 3. **$\alpha$-homozygosity.** For $J_\alpha(p) = \sum_i p_i^\alpha$ with $\alpha > 1$,
+
 $$M^\alpha \le J_\alpha(p) \le \lfloor 1/M \rfloor M^\alpha + \bigl(\{1/M\}\, M\bigr)^\alpha,$$
+
 with equality above iff $p = (M,\dots,M, 1 - \lfloor 1/M \rfloor M, 0, \dots)$ and below iff $M = 1$. For $\alpha = 2$ (homozygosity $J$) the upper bound equals $1 - M(K - 1)(2 - KM)$, and with $I$ alleles the lower bound is $J \ge \dfrac{IM^2 - 2M + 1}{I - 1}$, attained iff $p_i = (1-M)/(I-1)$ for $i \ge 2$.
 
 ## Expansion

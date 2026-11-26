@@ -1,14 +1,19 @@
 # Neutral copy-number distribution under unequal recombination
 
 **Model.** In an infinite population, each chromosome carries $y' \ge 1$ tandem copies of a gene; $p_t(y')$ is the frequency of chromosomes with $y'$ copies. Each generation a pair of chromosomes with $y'_m$, $y'_p$ copies is drawn (by fitness; at random under neutrality). With probability $1 - r$ one parental chromosome is transmitted unchanged; with probability $r$ unequal recombination marks a uniformly random copy on each and fuses the head of one with the tail of the other, so the offspring copy number is
+
 $$Y' = B_1 + B_2 - 1, \qquad B_1 \sim \mathrm{Unif}\{1,\dots,y'_m\},\ B_2 \sim \mathrm{Unif}\{1,\dots,y'_p\},$$
+
 a trapezoidal law $T(\,\cdot\,; y'_m, y'_p)$ on $\{1, \dots, y'_m + y'_p - 1\}$. Under neutrality
+
 $$p_{t+1}(y') = (1 - r)\,p_t(y') + r\sum_{y'_1, y'_2} p_t(y'_1)p_t(y'_2)\,T(y'; y'_1, y'_2).$$
 
 **Theorem.** Under neutrality:
 1. the mean copy number per chromosome $E[Y']$ is conserved, since $E[B_1 + B_2 - 1] = (y'_m + y'_p)/2$;
 2. for every $a > 0$ the distribution
+
 $$p_{\mathrm{stat}}(y') = \frac{(e^{a} - 1)^2}{e^{a}}\; y'\, e^{-a y'}, \qquad y' = 1, 2, \dots,$$
+
 the discrete kernel of a Gamma law with shape $2$, is stationary for every $r > 0$, and $a$ is pinned by the conserved mean, $\coth(a/2) = E[Y']$, so $a \approx 2/E[Y']$ for large arrays.
 
 Consequently the copy number of a diploid individual, the sum of two independent chromosomes, has stationary law proportional to $(y^3 - y)\,e^{-a y}/6$, $y \ge 2$, a discrete Gamma kernel of shape $4$.

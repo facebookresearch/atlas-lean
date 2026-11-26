@@ -3,9 +3,13 @@
 Let $(\Omega, d)$ be a metric space with a Borel probability measure $P$, $f : \Omega \to \mathbb R$ a $P$-measurable fitness function, and $\top$ a local optimum: $f(\top) = \sup\{f(\omega) : \omega \in E\}$ for some neighbourhood $E$. For a point $a$, let $\mathbb E[f(a)]$ be the mean fitness over the sphere of points at distance $d(\top, a)$ from $\top$ and $\mathbb E[d(\top, a)]$ the mean distance to $\top$ over the level set $\{f = f(a)\}$ (conditional expectations under $P$).
 
 - $f$ is **weakly monotonic relative to $d$ at $\top$** if, for points $a, b$ taken from any sequence with $d(\top, \omega_n) \to 0$,
+
 $$\lim_{d(\top, b) \to 0} P\bigl\{ -d(\top, a) \le -d(\top, b) \implies \mathbb E[f(a)] \le \mathbb E[f(b)] \bigr\} = 1 .$$
+
 - $d$ is **weakly monotonic relative to $f$ at $\top$** if, along sequences with $f(\omega_n) \to f(\top)$,
+
 $$\lim_{f(b) \to f(\top)} P\bigl\{ f(a) \le f(b) \implies -\mathbb E[d(\top, a)] \le -\mathbb E[d(\top, b)] \bigr\} = 1 .$$
+
 - $f$ and $d$ are **weakly isomorphic** at $\top$ if both hold.
 
 **Theorem.**

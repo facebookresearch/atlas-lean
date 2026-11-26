@@ -1,7 +1,9 @@
 # Intersection of Hamming spheres
 
 Let $H^l_\alpha = \{1,\dots,\alpha\}^l$ be the space of sequences of length $l$ over an alphabet of $\alpha \ge 2$ letters with Hamming distance $d_H$, and let $S(a,r) = \{b : d_H(a,b) = r\}$. Let $a, c \in H^l_\alpha$ with $d_H(a,c) = n$ and let $r \le m$ (the other case is symmetric). Then
+
 $$\bigl|S(a,r) \cap S(c,m)\bigr| = \sum_{\substack{r_+ + r_- + r_0 = r\\ r_+ - r_- = n - m\\ r_+, r_-, r_0 \ge 0}} \binom{n}{r_+}\binom{n - r_+}{r_0}(\alpha - 2)^{r_0}\binom{l - n}{r_-}(\alpha - 1)^{r_-}.$$
+
 In particular, if $a$ is a current sequence at distance $n$ from an optimum $c$, the probability that a uniformly random sequence with exactly $r$ substitutions from $a$ lies at distance $m$ from the optimum is this count divided by $|S(a,r)| = \binom{l}{r}(\alpha - 1)^r$.
 
 ## Expansion

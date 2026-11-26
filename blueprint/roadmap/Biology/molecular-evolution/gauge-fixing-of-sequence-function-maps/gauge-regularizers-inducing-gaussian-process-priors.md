@@ -5,7 +5,9 @@ Let $\mathcal A$ be an alphabet with $\alpha$ characters and consider sequences 
 For training sequences $X$ with measurements $y$, a positive-definite $\Lambda$ gives the penalized estimate $w_{\mathrm{OPT}}(\Lambda, \beta) = \arg\min_w \|y - \Phi_X w\|_2^2 + \beta\, w^{\mathsf T}\Lambda w$. $\Lambda$ is a **$\Theta$-regularizer** if $w_{\mathrm{OPT}} \in \Theta$ for all $\beta > 0$, $X$ and $y$. $\Lambda$ **induces** the Gaussian process prior $f \sim \mathcal N(0, K)$ (positive-definite $K$) if $\Phi\, w_{\mathrm{OPT}}(\Lambda, \sigma_n^2)$ equals the MAP (posterior-mean) estimate of $f$ under $y = f_X + \varepsilon$, $\varepsilon \sim \mathcal N(0, \sigma_n^2 I)$, for every $\sigma_n^2 > 0$.
 
 **Theorem.** For every linear gauge $\Theta$ and every positive-definite kernel $K$ on sequence space there is a $\Theta$-regularizer inducing $K$; one is
+
 $$\Lambda = \Phi^{\mathsf T} K^{-1} \Phi + B^{\mathsf T} B,$$
+
 where $B$ is any matrix with nullspace exactly $\Theta$.
 
 **Orthogonalization criterion.** For complementary subspaces $V_1, V_2$, a positive-definite $\Lambda$ makes them $\Lambda$-orthogonal iff $\Lambda = A^{\mathsf T} A + B^{\mathsf T} B$ with $\operatorname{null}(A) = V_2$ and $\operatorname{null}(B) = V_1$; and any $\Lambda$ that orthogonalizes $\Theta$ and $G$ is a $\Theta$-regularizer.

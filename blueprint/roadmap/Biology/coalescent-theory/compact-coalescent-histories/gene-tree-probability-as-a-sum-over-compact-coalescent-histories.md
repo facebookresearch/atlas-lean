@@ -1,7 +1,9 @@
 # Gene tree probability as a sum over compact coalescent histories
 
 Let $T_s$ be a rooted species tree with branches $b=1,\dots,m$ of lengths $\lambda_b$ in coalescent units, and $T_g$ a rooted bifurcating gene tree topology on $n$ sampled lineages, each assigned to a leaf population. A **coalescent history** $h$ assigns each internal node of $T_g$ to a species-tree branch compatibly with ancestry; it determines the lower and upper lineage counts $u_b(h)\ge v_b(h)$ of every branch and the set $C_b(h)$ of $c_b(h)=u_b(h)-v_b(h)$ coalescences on $b$. Degnan and Salter's formula is
+
 $$P(T_g\mid T_s)=\sum_{h}\prod_{b=1}^{m}\frac{w_b(h)}{d_b(h)}\,p_{u_b(h)v_b(h)}(\lambda_b),\qquad d_b=\prod_{i=v_b+1}^{u_b}\binom i2,\qquad w_b(h)=c_b(h)!\prod_{x\in C_b(h)}\frac1{n_x(h,b)},$$
+
 where $p_{uv}(T)$ is Tavaré's probability that $u$ lineages coalesce to $v$ within time $T$, $d_b$ counts all orders of pairwise mergers from $u_b$ to $v_b$ lineages, and $n_x(h,b)$ is the number of coalescences on $b$ in the subtree of $T_g$ below and including $x$ (so $w_b$ counts the merger orders consistent with $T_g$).
 
 **Compact histories.** A **compact coalescent history** $ch$ records only the upper lineage counts $v_b$ of the non-root branches.
@@ -9,7 +11,9 @@ where $p_{uv}(T)$ is Tavaré's probability that $u$ lineages coalesce to $v$ wit
 **Lemma.** A compact history determines all lower and upper lineage counts and all numbers of coalescences: leaf branches have $u_b$ equal to the sample size, $u_b=\sum_{x\in\mathrm{Desc}(b)}v_x$ for internal branches, $v_{\mathrm{root}}=1$, and $c_b=u_b-v_b$.
 
 **Theorem.** With $H(ch)$ the histories mapping to $ch$,
+
 $$P(T_g\mid T_s)=\sum_{ch}\prod_{b=1}^{m}\frac{p_{u_b(ch)v_b(ch)}(\lambda_b)}{d_b(ch)}\;C(ch),\qquad C(ch)=\prod_{b=1}^m c_b(ch)!\sum_{h\in H(ch)}\prod_{b}\prod_{x\in C_b(h)}\frac1{n_x(h)},$$
+
 and the coalescent coefficient $C(ch)$ is computed by a recurrence over the nodes of $T_g$. The resulting CompactCH algorithm runs in $O(m^3n^{2m+1})$ time for bifurcating $T_g$, polynomial in $n$ when the number of species is fixed.
 
 ## Expansion

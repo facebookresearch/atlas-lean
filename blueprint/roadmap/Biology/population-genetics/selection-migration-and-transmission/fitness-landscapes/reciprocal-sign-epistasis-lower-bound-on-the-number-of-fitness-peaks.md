@@ -1,10 +1,13 @@
 # Reciprocal sign epistasis lower bound on the number of fitness peaks
 
 Let $W : \{0,1\}^n \to \mathbb R$ be a fitness landscape on binary genotypes with no strictly neutral mutations (every genotype differs in fitness from each of its one-mutation neighbours). A **peak** is a genotype fitter than all its neighbours. An **instance of reciprocal sign epistasis** (RSE) is a set of four distinct genotypes $s_1, s_2, s_3, s_4$ such that $s_1$ and $s_4$ are each one mutation away from both $s_2$ and $s_3$ (a two-dimensional face of the hypercube with $s_1, s_4$ opposite) and
+
 $$\max\big(W(s_2), W(s_3)\big) < \min\big(W(s_1), W(s_4)\big).$$
 
 **Theorem.**
+
 $$\#\{\text{RSE instances}\} \ \ge\ \#\{\text{peaks}\} - 1.$$
+
 In particular two peaks force at least one RSE instance (the qualitative necessity result), and three peaks force at least two.
 
 ## Depends on

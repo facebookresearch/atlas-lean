@@ -1,7 +1,9 @@
 # Matching criterion for genetic interactions implied by a partial fitness order
 
 Let $G = \{p_1, \dots, p_t, n_1, \dots, n_s\}$ be a set of $k = t + s$ genotypes with fitnesses $W = (w_g)_{g \in G}$. A **genetic interaction** is an integer linear form (a contrast)
+
 $$f(W) = \sum_{i=1}^{t} c_i\, w_{p_i} - \sum_{j=1}^{s} d_j\, w_{n_j}, \qquad c_i, d_j \in \mathbb{Z}_{>0}, \quad \sum_i c_i = \sum_j d_j;$$
+
 the landscape has positive $f$-interaction if $f(W) > 0$. This covers Fourier–Walsh coefficients, interaction coordinates and circuit interactions. A partial order $P = (G, \prec)$ **implies positive $f$-interaction** if $f(W) > 0$ for every $W$ with $w_g < w_h$ whenever $g \prec h$.
 
 **Theorem.** $P$ implies positive $f$-interaction if and only if the multiset in which each $p_i$ appears $c_i$ times and each $n_j$ appears $d_j$ times can be partitioned into pairs $(p_i, n_j)$ with $p_i \succ n_j$; equivalently, the bipartite graph with these copies as vertices and an edge whenever $p_i \succ n_j$ has a perfect matching.

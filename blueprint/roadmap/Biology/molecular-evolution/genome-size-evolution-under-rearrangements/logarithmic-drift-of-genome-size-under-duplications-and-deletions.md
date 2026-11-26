@@ -7,13 +7,17 @@
 - large deletion: new size uniform on $\{0, \dots, s-1\}$,
 
 with $l_{\mathrm{ins}}, l_{\mathrm{sdel}} < \infty$. Let $S_n$ be the size after $n$ mutations and
+
 $$\Delta(s) = \mathbb E[\log S_{n+1} \mid S_n = s] - \log s .$$
 
 **Property 1.** As $s \to \infty$, conditional on the type of the next mutation,
+
 $$\Delta(s) \to -1 \ \text{(large deletion)}, \qquad \Delta(s) \to 2\log 2 - 1 \ \text{(duplication)}, \qquad \Delta(s) \to 0 \ \text{(small indel)}.$$
 
 **Lemma 2 (shrinking of large genomes).** If mutations of each type occur at per-base rates $\mu_{\mathrm{ins}}, \mu_{\mathrm{sdel}}, \mu_{\mathrm{dup}}, \mu_{\mathrm{ldel}}$ and
+
 $$(2\log 2 - 1)\,\mu_{\mathrm{dup}} < \mu_{\mathrm{ldel}},$$
+
 there are $\delta > 0$ and a threshold $\tilde s$ with $\mathbb E[\log S_{n+1} \mid S_n = s] \le \log s - \delta$ for all $s \ge \tilde s$, and the chain started anywhere enters $\{s \le \tilde s\}$ with probability bounded below in terms of $\log s_0 / \log \tilde s$.
 
 Note that the condition holds even when duplications are up to $1/(2\log 2 - 1) \approx 2.59$ times as frequent as large deletions, and regardless of the indel rates.
