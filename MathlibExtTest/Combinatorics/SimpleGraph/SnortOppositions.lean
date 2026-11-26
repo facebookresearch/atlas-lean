@@ -94,3 +94,14 @@ example : IsAlmostOpposable (strongProd (⊥ : SimpleGraph (Fin 3)) (pathGraph 3
     have hval : (flip x).val = x.val := congrArg Subtype.val heq
     rcases hcases x with hx | hx <;> simp [flip, hx] at hval
   · exact ⟨1, by decide⟩
+
+-- The half-turn of the four-cycle gives an opposition of its homomorphic product with a path.
+example : IsOpposable
+    (formulaProduct (fun eG eH qG _ => qG || (eG && !eH)) (cycleGraph 4) (pathGraph 3)) := by
+  have hmap : ∀ x y : Fin 4,
+      (cycleGraph 4).Adj (x + 2) (y + 2) ↔ (cycleGraph 4).Adj x y := by decide
+  have hcycle : IsOpposable (cycleGraph 4) := by
+    refine ⟨⟨Equiv.addRight 2, hmap _ _⟩, ?_⟩
+    change ∀ x : Fin 4, x + 2 + 2 = x ∧ x + 2 ≠ x ∧ ¬ (cycleGraph 4).Adj x (x + 2)
+    decide
+  exact (isOpposable_products (cycleGraph 4) (pathGraph 3) hcycle).2.2.2.2.2

@@ -1,0 +1,3 @@
+# Feasible instances of TWO-PROCESSOR OPEN-SHOP SCHEDULING WITH CHAINS
+
+An instance is feasible when there is an open-shop schedule meeting the bound: start times $\sigma_p(j)$ of job $j$'s task on processor $p$, pairwise different on each processor, such that a task starting after another task $k$ on the same processor starts no earlier than $k$ finishes, the tasks of each job occupy pairwise disjoint time intervals, and every task finishes by $K$, in which, for every arc $(a, b)$, every task of $b$ starts after every task of $a$ finishes. A task length missing from job $j$'s list counts as $0$.

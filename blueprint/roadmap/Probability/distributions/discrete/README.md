@@ -27,3 +27,5 @@ Laws on countable sets, with their mass functions, moments and tails: discrete u
 - [Poisson Measure injective](poisson-measure-injective.md)
 - [Pi poisson Measure injective](pi-poisson-measure-injective.md)
 - [Pi Poisson Kernel injective](pi-poisson-kernel-injective.md)
+
+- [Finite probability distributions as probability measures](finite-distributions-as-probability-measures/README.md)
