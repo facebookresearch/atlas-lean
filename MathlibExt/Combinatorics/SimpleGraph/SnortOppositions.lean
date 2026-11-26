@@ -9,12 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Matching
+public import Mathlib.Combinatorics.SimpleGraph.Prod
 
 /-!
 # Oppositions and opposition matchings
 
 An opposition pairs each vertex with a non-neighbor. These pairs form an opposition matching
 in the complement, and swapping the ends of such a matching recovers an opposition.
+An opposition in the first factor also gives an opposition in six standard graph products.
 -/
 
 namespace MetaMathlibExt
@@ -145,6 +147,46 @@ theorem strongProd_adj [DecidableEq V] [DecidableEq W]
   · exact fun e => h.ne (congrArg Prod.snd e)
   · exact fun e => h.ne (congrArg Prod.fst e)
   · exact fun e => h.ne (congrArg Prod.fst e)
+
+/-- **Standard products with an opposable first factor.** If $G$ is an opposable graph, then for
+every graph $H$ the Cartesian product $G \mathbin{\square} H$, the strong product $G \boxtimes H$,
+and the tensor, lexicographic, co-normal and homomorphic products of $G$ with $H$ are opposable.
+Here distinct pairs $(g_1, h_1)$ and $(g_2, h_2)$ are adjacent in the tensor product when
+$g_1g_2 \in E(G)$ and $h_1h_2 \in E(H)$; in the lexicographic product when $g_1g_2 \in E(G)$,
+or $g_1 = g_2$ and $h_1h_2 \in E(H)$; in the co-normal product when $g_1g_2 \in E(G)$ or
+$h_1h_2 \in E(H)$; and in the homomorphic product when $g_1 = g_2$, or $g_1g_2 \in E(G)$ and
+$h_1h_2 \notin E(H)$.
+
+Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
+Related to SNORT*, INTEGERS 26 (2026), Article G2, Corollary 1. -/
+theorem isOpposable_products [DecidableEq V] [DecidableEq W]
+    (G : SimpleGraph V) (H : SimpleGraph W) [DecidableRel G.Adj] [DecidableRel H.Adj]
+    (hG : IsOpposable G) :
+    IsOpposable (G □ H) ∧ IsOpposable (strongProd G H) ∧
+      IsOpposable (formulaProduct (fun eG eH _ _ => eG && eH) G H) ∧
+      IsOpposable (formulaProduct (fun eG eH qG _ => eG || (qG && eH)) G H) ∧
+      IsOpposable (formulaProduct (fun eG eH _ _ => eG || eH) G H) ∧
+      IsOpposable (formulaProduct (fun eG eH qG _ => qG || (eG && !eH)) G H) := by
+  obtain ⟨f, hf⟩ := hG
+  let e := f.toEquiv.prodCongr (Equiv.refl W)
+  have lift (P : SimpleGraph (V × W)) (hmap : ∀ x y, P.Adj (e x) (e y) ↔ P.Adj x y)
+      (hfar : ∀ x, ¬ P.Adj x (e x)) : IsOpposable P :=
+    ⟨⟨e, hmap _ _⟩, fun x => ⟨Prod.ext (hf x.1).1 rfl,
+      fun h => (hf x.1).2.1 (congrArg Prod.fst h), hfar x⟩⟩
+  -- On a vertex and its image, the four atoms always have the same values.
+  have formula (φ : Bool → Bool → Bool → Bool → Bool) (hφ : φ false false false true = false) :
+      IsOpposable (formulaProduct φ G H) := by
+    apply lift
+    · intro x y
+      simp [formulaProduct, e, Prod.ext_iff, f.map_adj_iff, f.injective.eq_iff]
+    · intro x
+      obtain ⟨_, hne, hnonadj⟩ := hf x.1
+      simp [formulaProduct, e, hne, hne.symm, hnonadj, mt G.adj_symm hnonadj, hφ]
+  refine ⟨lift _ ?_ ?_, formula _ rfl, formula _ rfl, formula _ rfl, formula _ rfl, formula _ rfl⟩
+  · intro x y
+    simp [SimpleGraph.boxProd_adj, e, f.map_adj_iff, f.injective.eq_iff]
+  · intro x
+    exact fun h => (hf x.1).2.2 (SimpleGraph.boxProd_adj_left.mp h)
 
 /-- **Strong products with a graph that has a universal vertex.** Let $G$ and $H$ be graphs. If
 $G$ is almost opposable and $H$ has a universal vertex, that is, a vertex adjacent to every other
