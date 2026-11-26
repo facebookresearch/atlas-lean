@@ -1,4 +1,4 @@
-# Simple groups have no Sylow 2-subgroup with a nontrivial abelian direct factor
+# Nonabelian Sylow 2-subgroups of finite simple groups have no nontrivial abelian direct factor
 
 If a finite group $G$ has a non-abelian Sylow $2$-subgroup $P$ that is an internal direct product $P = A \times B$ (with $\langle A, B \rangle = P$, $A \cap B = 1$ and $A$, $B$ commuting elementwise) with $A$ nontrivial and abelian, then $G$ is not simple. This is the positive answer to Kourovka Problem 6.13, using the classification of finite simple groups.
 

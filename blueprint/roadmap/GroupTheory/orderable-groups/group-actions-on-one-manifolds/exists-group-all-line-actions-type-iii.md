@@ -1,4 +1,4 @@
-# Navas's Question 4 (groups all of whose line actions are globally contracting)
+# Navas's Question 4 (groups all of whose fixed-point-free orientation-preserving line actions are globally contracting)
 
 The proposition that there is an infinite finitely generated group $G$ that has an action on $\mathbb{R}$ by orientation-preserving (non-decreasing) homeomorphisms without a global fixed point (every $x$ is moved by some element), and all of whose actions on $\mathbb{R}$ by orientation-preserving homeomorphisms without a global fixed point are of type (iii).
 

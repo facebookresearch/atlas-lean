@@ -1,8 +1,8 @@
 # Group actions on one-manifolds
 
 - [Globally contracting actions on the line (type (iii))](is-type-iii.md)
-- [Navas's Question 4 (groups all of whose line actions are globally contracting)](exists-group-all-line-actions-type-iii.md)
-- [Finitely generated groups whose line actions are all globally contracting](exists-group-all-line-actions-type-iii-h.md)
+- [Navas's Question 4 (groups all of whose fixed-point-free orientation-preserving line actions are globally contracting)](exists-group-all-line-actions-type-iii.md)
+- [Finitely generated groups whose fixed-point-free orientation-preserving line actions are all globally contracting](exists-group-all-line-actions-type-iii-h.md)
 - [C^(1+α) diffeomorphisms of the interval](is-interval-diff-one-alpha.md)
 - [C^(1+α) diffeomorphisms of the circle](is-circle-diff-one-alpha.md)
 - [Navas's Question 13 for the interval (critical regularity)](interval-not-smoothable.md)

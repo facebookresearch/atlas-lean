@@ -25,7 +25,7 @@
 - [Overgroups of Hall subgroups in $C_\pi$-groups are $C_\pi$-groups](hall-overgroup-cpi-holds.md)
 - [Overgroups of Hall subgroups in $D_\pi$-groups are $D_\pi$-groups](hall-overgroup-dpi-holds.md)
 - [Kourovka Problem 3.61 (Hall subgroups of centralizers of automorphisms)](automorphism-centralizer-has-hall-subgro.md)
-- [Centralizers of prime-order automorphisms have Hall π-subgroups](automorphism-centralizer-has-hall-subgro-2.md)
+- [A Hall-subgroup criterion for centralizers of automorphisms](automorphism-centralizer-has-hall-subgro-2.md)
 - [π-numbers](is-pi-number-4.md)
 - [Hall π-subgroups](is-hall-pi-subgroup-4.md)
 - [The class $E_\pi$ of groups with a Hall π-subgroup](has-hall-pi-subgroup.md)

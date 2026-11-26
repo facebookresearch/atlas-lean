@@ -1,4 +1,4 @@
-# Finitely generated groups whose line actions are all globally contracting
+# Finitely generated groups whose fixed-point-free orientation-preserving line actions are all globally contracting
 
 There is an infinite finitely generated group $G$ that acts on $\mathbb{R}$ by orientation-preserving homeomorphisms without a global fixed point, and every action of $G$ on $\mathbb{R}$ by orientation-preserving homeomorphisms without a global fixed point is of type (iii). This answers Navas's Question 4 positively; examples are the finitely generated infinite simple left-orderable groups of Hyde and Lodha attached to a quasi-periodic labelling, for which simplicity makes every action without a global fixed point faithful.
 

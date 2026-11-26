@@ -1,4 +1,4 @@
-# A finite group in a join of varieties that is no section of a product
+# A finite group in a join of varieties that is no section of a product of finite groups from the two varieties
 
 There are varieties $\mathfrak A$, $\mathfrak B$ of groups and a finite non-abelian group in $\mathfrak A \vee \mathfrak B$ that is not a section of $A \times B$ for any finite $A \in \mathfrak A$ and $B \in \mathfrak B$. Storozhev's varieties are pseudoabelian (non-abelian, each defined by one law in two variables, with only abelian finite groups), so every such $A \times B$ is abelian. Kourovka Problem 8.22 has a negative answer. It is the negation of the proposition on [Kourovka Problem 8.22 (finite groups in a join of two varieties)](finite-group-in-join-is-section-of-produ.md).
 

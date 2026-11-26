@@ -1,4 +1,4 @@
-# A group with exactly two maximal locally soluble normal subgroups
+# Finitely many, but more than one, maximal locally soluble normal subgroups
 
 There is a group with more than one but finitely many maximal locally soluble normal subgroups; van Doorn, Judin, Monticone and Morrison construct one with exactly two (a semidirect product of groups of unitriangular $\mathbb Z^2$-indexed matrices with $\mathbb Z^2$). The Notebook marks Problem 3.46 solved ("Yes, such groups exist").
 

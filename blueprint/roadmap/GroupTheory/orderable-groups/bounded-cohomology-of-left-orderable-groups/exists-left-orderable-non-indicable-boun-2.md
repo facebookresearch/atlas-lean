@@ -1,4 +1,4 @@
-# Left-orderable groups without maps to ℤ and with vanishing second bounded cohomology
+# Left-orderable groups without nontrivial maps to ℤ and with vanishing second bounded cohomology
 
 There is a nontrivial finitely generated left-orderable group with no nontrivial homomorphism to $\mathbb{Z}$ and with $H^2_b(G; \mathbb{R}) = 0$. $G$ is left-orderable if it carries a linear order with $a \le b \Rightarrow ca \le cb$ for all $a, b, c$. A bounded real $2$-cocycle of $G$ (trivial coefficients, inhomogeneous form) is a bounded function $c : G \times G \to \mathbb{R}$ with $c(h, k) - c(gh, k) + c(g, hk) - c(g, h) = 0$ for all $g, h, k$; $H^2_b(G; \mathbb{R}) = 0$ means that every such $c$ has the form $c(g, h) = f(h) - f(gh) + f(g)$ for a bounded $f : G \to \mathbb{R}$. Fournier-Facio and Lodha show that the finitely generated simple left-orderable groups of Hyde and Lodha have vanishing second bounded cohomology; being infinite and simple, they admit no nontrivial homomorphism to $\mathbb{Z}$. This answers Navas's Question 8 positively.
 

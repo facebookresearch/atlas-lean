@@ -2,7 +2,7 @@
 
 - [Orientable closed surface groups](orientable-surface-group.md)
 - [Non-orientable closed surface groups](nonorientable-surface-group.md)
-- [Kourovka Problem 7.36 (groups all of whose finite-index subgroups are one-relator)](one-relator-finite-index-free-or-surface.md)
+- [Kourovka Problem 7.36, infinite-group case (groups all of whose finite-index subgroups are one-relator)](one-relator-finite-index-free-or-surface.md)
 - [Groups all of whose finite-index subgroups are one-relator need not be free or surface groups](one-relator-finite-index-free-or-surface-2.md)
 - [Groups locally embeddable into finite groups](is-locally-embeddable-into-finite.md)
 - [Kourovka Problem 3.15(a) (local embeddability of one-relator groups into finite groups)](one-relator-groups-locally-embeddable.md)
