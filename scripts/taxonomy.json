@@ -10874,6 +10874,7 @@
   "MathlibExt/Combinatorics/Enumerative/HeilermannFormula": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Heilermann's formula"},
   "MathlibExt/Combinatorics/Enumerative/HeilermannWeightedMotzkin": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Heilermann's formula"},
   "MathlibExt/Combinatorics/Enumerative/HeilermannWeightedMotzkinDeterminant": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Heilermann's formula"},
+  "MathlibExt/Combinatorics/Enumerative/HessenbergToeplitzRecurrence": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "α-Stirling matrices"},
   "MathlibExt/Combinatorics/Enumerative/HsuShiueGeneralizedStirlingNumber": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Hsu–Shiue generalized Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/HyperbolicPascalAlternatingSums": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Generalized hyperbolic Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/Hypersequence": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
