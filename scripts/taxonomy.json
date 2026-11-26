@@ -14004,7 +14004,6 @@
   "MathlibExt/NumberTheory/SCullenNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Cullen numbers"},
   "MathlibExt/NumberTheory/SDiophantineSystemFour": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "S-Diophantine tuples"},
   "MathlibExt/NumberTheory/SZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
-  "MathlibExt/NumberTheory/SZumkellerEightLeCardPrimeFactorsOfIsSZumkellerOdd": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerHarmonicMeanSqLeOfIsSZumkeller": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerNotIsUnitarySZumkellerOfOdd": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
   "MathlibExt/NumberTheory/SZumkellerIsUnitarySZumkellerBounds": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Zumkeller numbers"},
