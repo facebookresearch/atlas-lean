@@ -1,0 +1,3 @@
+# Kourovka 4.4: square relators and unsolvable word problem
+
+For a surjective homomorphism $\varphi : F_n \to G$ from the free group on $n$ generators, the word problem of $G$ with respect to $\varphi$ is solvable when the set of words $w \in F_n$ with $\varphi(w) = 1$ is computable (decidable). Kourovka problem 4.4 (S. I. Adian) asks for a finitely presented group $\langle x_1, \dots, x_n \mid R\rangle = F_n/\langle\langle R\rangle\rangle$, with $R$ a finite set of words each of which is a square $w^2$ of a word $w \in F_n$, whose word problem with respect to the quotient map is not solvable.
