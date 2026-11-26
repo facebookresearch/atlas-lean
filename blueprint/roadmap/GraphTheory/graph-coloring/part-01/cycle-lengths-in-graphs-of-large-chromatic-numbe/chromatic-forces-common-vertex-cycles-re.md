@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 641
 
-It is not the case that there is a function $f : \mathbb{N} \to \mathbb{N}$ such that for every $k \ge 1$, every simple graph on $\{0, \dots, n-1\}$, for every $n$, with chromatic number at least $f(k)$ has $k$ pairwise edge-disjoint cycles all having the same vertex set.
+It is not the case that there is a function $f : \mathbb{N} \to \mathbb{N}$ such that for every $k \ge 1$, every simple graph on $\{0, \dots, n-1\}$, for every $n$, with chromatic number at least $f(k)$ has $k$ pairwise edge-disjoint cycles all having the same vertex set. That is, the proposition [Erdős Problem 641 (edge-disjoint cycles on the same vertices)](chromatic-forces-common-vertex-cycles.md) is false.
 
 ## Sources
 

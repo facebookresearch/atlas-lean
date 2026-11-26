@@ -1,6 +1,6 @@
 # Even-hole-free graphs satisfy $\chi \le 2\omega - 1$
 
-Every simple graph $G$ on a finite nonempty vertex set that is even-hole-free, even-hole-free meaning that for no $k \ge 2$ does it contain the cycle of length $2k$ as an induced subgraph, satisfies $\chi(G) \le 2\omega(G) - 1$, where $\chi$ is the chromatic number and $\omega$ the clique number.
+Every simple graph $G$ on a finite nonempty vertex set that is even-hole-free, even-hole-free meaning that for no $k \ge 2$ does it contain the cycle of length $2k$ as an induced subgraph, satisfies $\chi(G) \le 2\omega(G) - 1$, where $\chi$ is the chromatic number and $\omega$ the clique number. That is, the proposition [Hoàng's conjecture on even-hole-free graphs](hoang-even-hole-free-chromatic-bound.md) holds.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Asymptotic formula for $\mathrm{ex}(n; C_4)$
 
-$\mathrm{ex}(n; C_4) \sim n^{3/2}/2$ as $n \to \infty$: the ratio of $\mathrm{ex}(n; C_4)$ to $n^{3/2}/2$ tends to $1$. Here $\mathrm{ex}(n; C_4)$ is the largest number of edges of a simple graph on $n$ vertices containing no cycle of length $4$ (not necessarily induced).
+$\mathrm{ex}(n; C_4) \sim n^{3/2}/2$ as $n \to \infty$: the ratio of $\mathrm{ex}(n; C_4)$ to $n^{3/2}/2$ tends to $1$. Here $\mathrm{ex}(n; C_4)$ is the largest number of edges of a simple graph on $n$ vertices containing no cycle of length $4$ (not necessarily induced). That is, the proposition [Erdős Problem 765 (asymptotics of $\mathrm{ex}(n; C_4)$)](four-cycle-extremal-asymptotic.md) holds.
 
 ## Sources
 

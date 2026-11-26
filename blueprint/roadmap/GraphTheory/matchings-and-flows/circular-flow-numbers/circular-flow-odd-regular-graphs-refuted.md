@@ -1,6 +1,6 @@
 # Steffen's circular flow conjecture is false
 
-It is not the case that for every natural number $t > 1$, every $(2t+1)$-graph $M$ on finite vertex and edge sets (loopless, parallel edges allowed; every vertex on exactly $2t + 1$ edges and at least $2t + 1$ edges leaving every vertex set of odd size) has a nowhere-zero $r$-flow for some real $r$, and its circular flow number, the infimum of the real $r$ for which it has a nowhere-zero $r$-flow, is at most $2 + 2/t$. A nowhere-zero $r$-flow is an orientation of the edges with real values $\varphi(e)$, $1 \le |\varphi(e)| \le r - 1$, whose sums into and out of every vertex agree.
+It is not the case that for every natural number $t > 1$, every $(2t+1)$-graph $M$ on finite vertex and edge sets (loopless, parallel edges allowed; every vertex on exactly $2t + 1$ edges and at least $2t + 1$ edges leaving every vertex set of odd size) has a nowhere-zero $r$-flow for some real $r$, and its circular flow number, the infimum of the real $r$ for which it has a nowhere-zero $r$-flow, is at most $2 + 2/t$. A nowhere-zero $r$-flow is an orientation of the edges with real values $\varphi(e)$, $1 \le |\varphi(e)| \le r - 1$, whose sums into and out of every vertex agree. That is, the proposition [Steffen's conjecture on circular flow numbers of $(2t+1)$-graphs](circular-flow-odd-regular-graphs.md) is false.
 
 ## Sources
 

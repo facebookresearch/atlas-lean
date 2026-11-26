@@ -1,6 +1,6 @@
 # A locally finite universal highly arc transitive digraph exists
 
-There is a digraph $D$ on a nonempty vertex set, with $u \to v$ never holding together with $v \to u$ (so no loops and no $2$-cycles), with every vertex on some arc, finitely many out-neighbours and in-neighbours at every vertex, highly arc transitive (for every $s \ge 0$ the automorphisms act transitively on $s$-arcs, sequences $x_0 \to x_1 \to \dots \to x_s$ with $x_i \ne x_{i+2}$) and universal (any two arcs are the first and last arcs of an alternating walk, one using arcs alternately forwards and backwards).
+There is a digraph $D$ on a nonempty vertex set, with $u \to v$ never holding together with $v \to u$ (so no loops and no $2$-cycles), with every vertex on some arc, finitely many out-neighbours and in-neighbours at every vertex, highly arc transitive (for every $s \ge 0$ the automorphisms act transitively on $s$-arcs, sequences $x_0 \to x_1 \to \dots \to x_s$ with $x_i \ne x_{i+2}$) and universal (any two arcs are the first and last arcs of an alternating walk, one using arcs alternately forwards and backwards). That is, the proposition [Cameron–Praeger–Wormald question on universal highly arc transitive digraphs](universal-highly-arc-transitive-exists.md) holds.
 
 ## Sources
 

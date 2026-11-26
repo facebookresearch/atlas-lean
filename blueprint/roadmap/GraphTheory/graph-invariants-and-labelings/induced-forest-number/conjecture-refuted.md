@@ -1,6 +1,6 @@
 # The Albertson–Berman conjecture is false
 
-It is not the case that every planar simple graph on a finite vertex set with $n$ vertices has a set $S$ of vertices with $2|S| \ge n$ whose induced subgraph is a forest (has no cycle), planarity meaning a straight-line drawing in the plane with distinct points for distinct vertices and no two edges meeting except at common endpoints (for finite graphs equivalent to planarity by Fáry's theorem). Equivalently, some planar graph on $n$ vertices has no induced forest with at least $n/2$ vertices.
+It is not the case that every planar simple graph on a finite vertex set with $n$ vertices has a set $S$ of vertices with $2|S| \ge n$ whose induced subgraph is a forest (has no cycle), planarity meaning a straight-line drawing in the plane with distinct points for distinct vertices and no two edges meeting except at common endpoints (for finite graphs equivalent to planarity by Fáry's theorem). Equivalently, some planar graph on $n$ vertices has no induced forest with at least $n/2$ vertices. That is, the proposition [Albertson–Berman conjecture](conjecture.md) is false.
 
 ## Sources
 

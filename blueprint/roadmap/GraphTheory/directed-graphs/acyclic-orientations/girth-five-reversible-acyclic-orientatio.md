@@ -1,6 +1,6 @@
 # Erdős Problem 1006 (acyclic orientations robust under one reversal)
 
-The statement that every simple graph $G$ on a finite vertex set with girth greater than $4$ (no cycle of length at most $4$; forests included) has an orientation with no directed cycle such that reversing any single arc $u \to v$ of it again gives a relation with no directed cycle.
+The statement that every simple graph $G$ on a finite vertex set with girth greater than $4$ (no cycle of length at most $4$; forests included) has an orientation with no directed cycle such that reversing any single arc $u \to v$ of it again gives a relation with no directed cycle. Stated here as a proposition; its resolution: [Resolution of Erdős Problem 1006](girth-five-reversible-acyclic-orientatio-2.md).
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Resolution of Kourovka Problem 10.28
 
-It is not the case that every strongly regular simple graph on a finite vertex set with $\lambda = 1$ has rank $3$, where strongly regular with parameters $(n, k, 1, \mu)$ means $n$ vertices, every vertex of degree $k$, every two adjacent vertices with exactly $1$ common neighbour and every two distinct non-adjacent vertices with exactly $\mu$ common neighbours, and rank $3$ means that the automorphism group is transitive on the vertices, on the ordered pairs of adjacent vertices and on the ordered pairs of distinct non-adjacent vertices. Equivalently, some finite strongly regular graph with $\lambda = 1$ does not have rank $3$.
+It is not the case that every strongly regular simple graph on a finite vertex set with $\lambda = 1$ has rank $3$, where strongly regular with parameters $(n, k, 1, \mu)$ means $n$ vertices, every vertex of degree $k$, every two adjacent vertices with exactly $1$ common neighbour and every two distinct non-adjacent vertices with exactly $\mu$ common neighbours, and rank $3$ means that the automorphism group is transitive on the vertices, on the ordered pairs of adjacent vertices and on the ordered pairs of distinct non-adjacent vertices. Equivalently, some finite strongly regular graph with $\lambda = 1$ does not have rank $3$. That is, the proposition [Kourovka Problem 10.28 (Makhnëv)](lambda-one-strongly-regular-is-rank-thre.md) is false.
 
 ## Sources
 

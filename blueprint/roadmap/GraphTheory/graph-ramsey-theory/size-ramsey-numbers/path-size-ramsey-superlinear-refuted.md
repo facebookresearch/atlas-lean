@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 720 (a)
 
-It is not the case that for every real $C$ and all sufficiently large $n$, every simple graph $H$ on $\{0, \dots, N-1\}$, for any $N$, such that every red/blue colouring of its edges (a red subgraph $R \le H$, with blue graph $H \setminus R$) has a monochromatic copy of the path $P_n$ of length $n$ (with $n + 1$ vertices), a copy, not necessarily induced, in $R$ or in $H \setminus R$, has more than $C n$ edges. Equivalently, for some real $C$ there are infinitely many $n$ for which some such graph $H$ has at most $C n$ edges.
+It is not the case that for every real $C$ and all sufficiently large $n$, every simple graph $H$ on $\{0, \dots, N-1\}$, for any $N$, such that every red/blue colouring of its edges (a red subgraph $R \le H$, with blue graph $H \setminus R$) has a monochromatic copy of the path $P_n$ of length $n$ (with $n + 1$ vertices), a copy, not necessarily induced, in $R$ or in $H \setminus R$, has more than $C n$ edges. Equivalently, for some real $C$ there are infinitely many $n$ for which some such graph $H$ has at most $C n$ edges. That is, the proposition [Erdős Problem 720 (a): superlinear size Ramsey numbers of paths](path-size-ramsey-superlinear.md) is false.
 
 ## Sources
 

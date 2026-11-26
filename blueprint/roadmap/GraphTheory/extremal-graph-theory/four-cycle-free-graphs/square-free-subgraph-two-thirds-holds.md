@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 1008
 
-There is a real $c > 0$ such that every simple graph $G$ on a finite vertex set, with $m$ edges, has a subgraph $H \le G$ containing no cycle of length $4$ with at least $c\, m^{2/3}$ edges.
+There is a real $c > 0$ such that every simple graph $G$ on a finite vertex set, with $m$ edges, has a subgraph $H \le G$ containing no cycle of length $4$ with at least $c\, m^{2/3}$ edges. That is, the proposition [Erdős Problem 1008 (large four-cycle-free subgraphs)](square-free-subgraph-two-thirds.md) holds.
 
 ## Sources
 

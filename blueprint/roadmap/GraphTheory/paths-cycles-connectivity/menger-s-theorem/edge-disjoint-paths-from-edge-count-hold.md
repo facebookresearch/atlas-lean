@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 915, edge-disjoint reading
 
-For all natural numbers $m \ge 2$ and $n \ge 1$, every simple graph on $\{0, \dots, n(m-1)\}$ (that is, with $1 + n(m-1)$ vertices) with exactly $1 + n\binom{m}{2}$ edges has two distinct vertices $u, v$ joined by $m$ paths, no two of which share an edge.
+For all natural numbers $m \ge 2$ and $n \ge 1$, every simple graph on $\{0, \dots, n(m-1)\}$ (that is, with $1 + n(m-1)$ vertices) with exactly $1 + n\binom{m}{2}$ edges has two distinct vertices $u, v$ joined by $m$ paths, no two of which share an edge. That is, the proposition [Erdős Problem 915, edge-disjoint reading](edge-disjoint-paths-from-edge-count.md) holds.
 
 ## Sources
 

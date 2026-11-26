@@ -1,6 +1,6 @@
 # Hedetniemi's conjecture is false
 
-It is not the case that $\chi(G \times H) = \min(\chi(G), \chi(H))$ for all simple graphs $G$ and $H$ on finite vertex sets, where $G \times H$ is the tensor product (adjacent when adjacent in both coordinates) and $\chi$ is the chromatic number. Equivalently, some finite simple graphs $G$ and $H$ have $\chi(G \times H) \ne \min(\chi(G), \chi(H))$.
+It is not the case that $\chi(G \times H) = \min(\chi(G), \chi(H))$ for all simple graphs $G$ and $H$ on finite vertex sets, where $G \times H$ is the tensor product (adjacent when adjacent in both coordinates) and $\chi$ is the chromatic number. Equivalently, some finite simple graphs $G$ and $H$ have $\chi(G \times H) \ne \min(\chi(G), \chi(H))$. That is, the proposition [Hedetniemi's conjecture](hedetniemi-conjecture.md) is false.
 
 ## Sources
 

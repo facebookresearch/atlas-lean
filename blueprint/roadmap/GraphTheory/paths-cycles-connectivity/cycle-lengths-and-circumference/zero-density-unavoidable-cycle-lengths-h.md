@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 72
 
-There are a set $A$ of natural numbers of natural density $0$ and a real $c > 0$ such that for all sufficiently large $n$, every simple graph $G$ on $\{0, \dots, n-1\}$ with average degree at least $c$, that is $c\, n \le 2|E(G)|$, contains a cycle whose length lies in $A$.
+There are a set $A$ of natural numbers of natural density $0$ and a real $c > 0$ such that for all sufficiently large $n$, every simple graph $G$ on $\{0, \dots, n-1\}$ with average degree at least $c$, that is $c\, n \le 2|E(G)|$, contains a cycle whose length lies in $A$. That is, the proposition [Erdős Problem 72 (a density-zero set of unavoidable cycle lengths)](zero-density-unavoidable-cycle-lengths.md) holds.
 
 ## Sources
 

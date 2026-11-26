@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 133, second question
 
-It is not the case that for every real $K$ and all sufficiently large $n$, every triangle-free simple graph on $\{0, \dots, n-1\}$ in which any two distinct vertices are adjacent or have a common neighbour (diameter at most $2$) has a vertex of degree at least $K\sqrt{n}$. Equivalently, for some real $K$ there are infinitely many $n$ with a triangle-free graph on $\{0, \dots, n-1\}$ of diameter at most $2$ whose degrees are all below $K\sqrt{n}$.
+It is not the case that for every real $K$ and all sufficiently large $n$, every triangle-free simple graph on $\{0, \dots, n-1\}$ in which any two distinct vertices are adjacent or have a common neighbour (diameter at most $2$) has a vertex of degree at least $K\sqrt{n}$. Equivalently, for some real $K$ there are infinitely many $n$ with a triangle-free graph on $\{0, \dots, n-1\}$ of diameter at most $2$ whose degrees are all below $K\sqrt{n}$. That is, the proposition [Erdős Problem 133, second question](triangle-free-diameter-two-degree-super.md) is false.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Thomassé's path bound fails for every girth at least four
 
-It is not the case that Thomassé's path bound holds for some girth $g \ge 4$: for some $g \ge 4$, every digraph on a finite vertex set of girth $g$ (shortest directed cycle with $g$ vertices) has a directed path with $\delta^+ (g - 1)$ arcs, $\delta^+$ being its minimum out-degree. Equivalently, for every $g \ge 4$ some digraph of girth $g$ on a finite vertex set has no directed path with $\delta^+ (g - 1)$ arcs.
+It is not the case that Thomassé's path bound holds for some girth $g \ge 4$: for some $g \ge 4$, every digraph on a finite vertex set of girth $g$ (shortest directed cycle with $g$ vertices) has a directed path with $\delta^+ (g - 1)$ arcs, $\delta^+$ being its minimum out-degree. Equivalently, for every $g \ge 4$ some digraph of girth $g$ on a finite vertex set has no directed path with $\delta^+ (g - 1)$ arcs. That is, the proposition [Thomassé's path bound for some girth at least four](thomasse-path-bound-for-some-girth-at-le.md) is false.
 
 ## Sources
 

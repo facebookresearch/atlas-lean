@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 621
 
-For every natural number $n$ and every simple graph $G$ on $\{0, \dots, n-1\}$, $\alpha_1(G) + \tau_1(G) \le n^2/4$, where $\alpha_1(G)$ is the largest size of a set of edges containing at most one edge of every triangle and $\tau_1(G)$ the least size of a set of edges containing at least one edge of every triangle.
+For every natural number $n$ and every simple graph $G$ on $\{0, \dots, n-1\}$, $\alpha_1(G) + \tau_1(G) \le n^2/4$, where $\alpha_1(G)$ is the largest size of a set of edges containing at most one edge of every triangle and $\tau_1(G)$ the least size of a set of edges containing at least one edge of every triangle. That is, the proposition [Erdős Problem 621 (triangle-independent sets and triangle transversals)](triangle-independent-plus-transversal.md) holds.
 
 ## Sources
 

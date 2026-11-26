@@ -1,6 +1,6 @@
 # Size Ramsey numbers of paths do not grow superlinearly
 
-It is not the case that for every real $C$ and all sufficiently large $n$, every simple graph $G$ on $\{0, \dots, m-1\}$, for any $m$, that arrows $P_n$ has more than $C n$ edges. Here a simple graph $G$ arrows $P_n$, the path on $n$ vertices, when for every colouring of the unordered pairs of its vertices with two colours, the edges of $G$ of some colour form a graph containing a copy of $P_n$, not necessarily induced. Equivalently, for some real $C$ there are infinitely many $n$ for which some graph arrowing $P_n$ has at most $C n$ edges.
+It is not the case that for every real $C$ and all sufficiently large $n$, every simple graph $G$ on $\{0, \dots, m-1\}$, for any $m$, that arrows $P_n$ has more than $C n$ edges. Here a simple graph $G$ arrows $P_n$, the path on $n$ vertices, when for every colouring of the unordered pairs of its vertices with two colours, the edges of $G$ of some colour form a graph containing a copy of $P_n$, not necessarily induced. Equivalently, for some real $C$ there are infinitely many $n$ for which some graph arrowing $P_n$ has at most $C n$ edges. That is, the proposition [Size Ramsey numbers of paths grow superlinearly (Oberwolfach question, part (a))](size-ramsey-path-superlinear.md) is false.
 
 ## Sources
 

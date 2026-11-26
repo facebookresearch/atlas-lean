@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 720 (c)
 
-For every real $\varepsilon > 0$ and all sufficiently large $n$, some simple graph $H$ on $\{0, \dots, N-1\}$, for some $N$, has at most $\varepsilon n^2$ edges and is such that every red/blue colouring of its edges (a red subgraph $R \le H$, with blue graph $H \setminus R$) has a monochromatic copy of the cycle $C_n$ on $n$ vertices, a copy, not necessarily induced, in $R$ or in $H \setminus R$.
+For every real $\varepsilon > 0$ and all sufficiently large $n$, some simple graph $H$ on $\{0, \dots, N-1\}$, for some $N$, has at most $\varepsilon n^2$ edges and is such that every red/blue colouring of its edges (a red subgraph $R \le H$, with blue graph $H \setminus R$) has a monochromatic copy of the cycle $C_n$ on $n$ vertices, a copy, not necessarily induced, in $R$ or in $H \setminus R$. That is, the proposition [Erdős Problem 720 (c): subquadratic size Ramsey numbers of cycles](cycle-size-ramsey-subquadratic.md) holds.
 
 ## Sources
 

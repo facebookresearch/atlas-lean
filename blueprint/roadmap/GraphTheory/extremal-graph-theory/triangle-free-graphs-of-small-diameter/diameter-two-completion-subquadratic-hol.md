@@ -1,6 +1,6 @@
 # Resolution of Erdős Problem 618
 
-For every real $\varepsilon > 0$ there is a real $\delta > 0$ such that for all sufficiently large $n$, every triangle-free simple graph $G$ on $\{0, \dots, n-1\}$ with maximum degree at most $\delta\sqrt{n}$ satisfies $h_2(G) \le \varepsilon n^2$, where $h_2(G)$ is the least number of edges whose addition to $G$ gives a triangle-free graph in which any two distinct vertices are adjacent or have a common neighbour (diameter at most $2$).
+For every real $\varepsilon > 0$ there is a real $\delta > 0$ such that for all sufficiently large $n$, every triangle-free simple graph $G$ on $\{0, \dots, n-1\}$ with maximum degree at most $\delta\sqrt{n}$ satisfies $h_2(G) \le \varepsilon n^2$, where $h_2(G)$ is the least number of edges whose addition to $G$ gives a triangle-free graph in which any two distinct vertices are adjacent or have a common neighbour (diameter at most $2$). That is, the proposition [Erdős Problem 618 (subquadratic completion cost)](diameter-two-completion-subquadratic.md) holds.
 
 ## Sources
 

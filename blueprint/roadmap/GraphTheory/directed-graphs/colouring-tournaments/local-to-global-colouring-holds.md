@@ -1,6 +1,6 @@
 # Tournaments with colourable out-neighbourhoods have bounded chromatic number
 
-For every natural number $k$ there is a natural number $c$ such that every tournament $G$ on a finite vertex set in which the out-neighbourhood $\{u : v \to u\}$ of every vertex $v$ is $k$-colourable is itself $c$-colourable, where a set is $k$-colourable when it splits into at most $k$ transitive sets (sets inducing no directed cycle).
+For every natural number $k$ there is a natural number $c$ such that every tournament $G$ on a finite vertex set in which the out-neighbourhood $\{u : v \to u\}$ of every vertex $v$ is $k$-colourable is itself $c$-colourable, where a set is $k$-colourable when it splits into at most $k$ transitive sets (sets inducing no directed cycle). That is, the proposition [Seymour's statement 7 (local-to-global colouring of tournaments)](local-to-global-colouring.md) holds.
 
 ## Sources
 

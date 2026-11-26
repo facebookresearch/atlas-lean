@@ -1,6 +1,6 @@
 # Even-hole-free graphs have bisimplicial vertices
 
-Every simple graph $G$ on a finite nonempty vertex set that is even-hole-free, even-hole-free meaning that for no $k \ge 2$ does it contain the cycle of length $2k$ as an induced subgraph, has a vertex $v$ whose neighbourhood is the union of two disjoint cliques $C_1, C_2$ of $G$ (either may be empty).
+Every simple graph $G$ on a finite nonempty vertex set that is even-hole-free, even-hole-free meaning that for no $k \ge 2$ does it contain the cycle of length $2k$ as an induced subgraph, has a vertex $v$ whose neighbourhood is the union of two disjoint cliques $C_1, C_2$ of $G$ (either may be empty). That is, the proposition [Hayward–Reed conjecture on bisimplicial vertices](even-hole-free-has-bisimplicial-vertex.md) holds.
 
 ## Sources
 

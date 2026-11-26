@@ -1,6 +1,6 @@
 # Seymour's statement 7 (local-to-global colouring of tournaments)
 
-The statement that for every natural number $k$ there is a natural number $c$ such that every tournament $G$ on a finite vertex set in which the out-neighbourhood $\{u : v \to u\}$ of every vertex $v$ is $k$-colourable is itself $c$-colourable, where a set is $k$-colourable when it splits into at most $k$ transitive sets (sets inducing no directed cycle).
+The statement that for every natural number $k$ there is a natural number $c$ such that every tournament $G$ on a finite vertex set in which the out-neighbourhood $\{u : v \to u\}$ of every vertex $v$ is $k$-colourable is itself $c$-colourable, where a set is $k$-colourable when it splits into at most $k$ transitive sets (sets inducing no directed cycle). Stated here as a proposition; its resolution: [Tournaments with colourable out-neighbourhoods have bounded chromatic number](local-to-global-colouring-holds.md).
 
 ## Sources
 
