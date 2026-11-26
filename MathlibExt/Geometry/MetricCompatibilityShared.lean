@@ -29,6 +29,7 @@ Levi-Civita theorem that uses it was proved.
 module
 
 public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.Basic
+public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.Metric
 public import Mathlib.Geometry.Manifold.VectorBundle.Riemannian
 
 /-!
@@ -40,7 +41,8 @@ Riemannian manifold is compatible with the metric when it satisfies the product 
 
 The definition is shared by the statements on the Koszul formula, the Levi-Civita connection
 and the sphere theorem. Mathlib's `CovariantDerivative.IsMetricCompatible` asks for the same
-identity for all vector fields that are differentiable at the point, so it implies this one.
+identity for all vector fields that are differentiable at the point, so it implies this one:
+this is `IsMetricCompatible.of_isMetricCompatible`.
 -/
 
 @[expose] public section
@@ -74,5 +76,31 @@ def IsMetricCompatible
     ∀ (x : M) (v : TangentSpace I x),
       mvfderiv I (fun y : M => inner ℝ (Y y) (Z y)) x v =
         inner ℝ (cov Y x v) (Z x) + inner ℝ (Y x) (cov Z x v)
+
+/-- **Mathlib's metric compatibility implies `IsMetricCompatible`.** Let $\nabla$ be a covariant
+derivative on the tangent bundle of a smooth manifold $M$ (possibly with corners) modelled on a
+finite-dimensional real normed space, with a smooth Riemannian metric on its tangent bundle.
+Suppose $\nabla$ is compatible with the metric in the sense of Mathlib's
+`CovariantDerivative.IsMetricCompatible`: at every point $x \in M$,
+$X \langle Y, Z \rangle = \langle \nabla_X Y, Z \rangle + \langle Y, \nabla_X Z \rangle$ for all
+vector fields $X, Y, Z$ differentiable at $x$. Then $\nabla$ satisfies `IsMetricCompatible`, the
+same product rule for all smooth vector fields $Y, Z$ and every tangent vector.
+
+Source: direct from the two definitions, original to this formalization: Mathlib's product rule
+is applied to a vector field that extends the given tangent vector. -/
+theorem IsMetricCompatible.of_isMetricCompatible
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+      [FiniteDimensional ℝ E] [CompleteSpace E]
+    {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H}
+    {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
+      [IsManifold I ∞ M]
+    [RiemannianBundle (fun (x : M) ↦ TangentSpace I x)]
+    [IsContMDiffRiemannianBundle I ∞ E (fun (x : M) ↦ TangentSpace I x)]
+    {cov : CovariantDerivative I E (TangentSpace I (M := M))}
+    (hcov : cov.IsMetricCompatible (M := M) (V := TangentSpace I)) :
+    IsMetricCompatible cov := by
+  intro Y Z hY hZ x v
+  simpa using hcov.mvfderiv_inner_eq (FiberBundle.extend E v) (x := x)
+    ((hY x).mdifferentiableAt (by simp)) ((hZ x).mdifferentiableAt (by simp))
 
 end MathlibExt.Geometry.MetricCompatibilityShared

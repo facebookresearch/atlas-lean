@@ -17,3 +17,16 @@ example : ¬ ∀ (G : Type) [Group G],
     (∀ φ : G ≃* G, ∃ H : Subgroup G, (H : Set G) = Set.range (fun g : G ↦ g⁻¹ * φ g)) →
     Group.IsNilpotent G :=
   twistedUnitClassesSubgroupsImpliesNilpotent_refuted
+
+-- Extract the counterexample: a nontrivial group that is not nilpotent although every twisted
+-- conjugacy class of the identity is a subgroup.
+example : ∃ (G : Type) (_ : Group G),
+    AllTwistedUnitClassesSubgroups G ∧ Nontrivial G ∧ ¬ Group.IsNilpotent G := by
+  by_contra h
+  refine twistedUnitClassesSubgroupsImpliesNilpotent_refuted fun G _ hG ↦ ?_
+  by_contra hn
+  have : Nontrivial G := by
+    by_contra hG'
+    have : Subsingleton G := not_nontrivial_iff_subsingleton.mp hG'
+    exact hn inferInstance
+  exact h ⟨G, inferInstance, hG, inferInstance, hn⟩

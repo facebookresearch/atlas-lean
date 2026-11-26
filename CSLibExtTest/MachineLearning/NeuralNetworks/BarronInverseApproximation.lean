@@ -10,6 +10,14 @@ module
 
 import CSLibExt.MachineLearning.NeuralNetworks.BarronInverseApproximation
 
+/-!
+# Tests for the inverse approximation theorem for the Barron space
+
+Two edge cases of `barron_inverse_approximation`: networks with a nonzero output coefficient whose
+path norm is zero at every width, and networks whose output coefficients are unbounded while their
+path norms stay at most one and their outputs converge to a nonzero limit.
+-/
+
 namespace CSLibExt.MachineLearning.NeuralNetworks
 
 open Filter Topology

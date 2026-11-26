@@ -52,4 +52,21 @@ example {X H : Type*} [MeasurableSpace X] [NormedAddCommGroup H] [InnerProductSp
   simpa using measureReal_abs_mmdBiased_sub_mmd_gt_le (m := m) (n := n) (K := 0)
     hφ (fun x y => by simp [hk]) μ ν hε
 
+/-- At the zero kernel every feature vector vanishes, so both discrepancies are `0` and the event
+is empty: its probability is `0`, far below the bound `2` of the previous example. -/
+example {X H : Type*} [MeasurableSpace X] [NormedAddCommGroup H] [InnerProductSpace ℝ H]
+    [CompleteSpace H] [RKHS ℝ H X ℝ] (hk : ∀ x y, kernelValue H x y = 0) (μ ν : Measure X)
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] {m n : ℕ} [NeZero m] [NeZero n]
+    {ε : ℝ} (hε : 0 < ε) :
+    ((Measure.pi fun _ : Fin m => μ).prod (Measure.pi fun _ : Fin n => ν)).real
+        {z | ε < |mmdBiased H z.1 z.2 - mmd H μ ν|} = 0 := by
+  have hφ : featureMap H = fun _ : X => (0 : H) :=
+    funext fun x => norm_eq_zero.mp (by rw [norm_featureMap, hk, Real.sqrt_zero])
+  have hint (ρ : Measure X) : Integrable (featureMap H) ρ := hφ ▸ integrable_zero X H ρ
+  have hempty : {z : (Fin m → X) × (Fin n → X) | ε < |mmdBiased H z.1 z.2 - mmd H μ ν|} = ∅ := by
+    ext z
+    simp [mmdBiased_eq, mmd_eq_norm_sub (hint μ) (hint ν), empiricalEmbedding, meanEmbedding, hφ,
+      hε.le]
+  rw [hempty, measureReal_empty]
+
 end MathlibExtTest.Probability.KernelTwoSampleTest

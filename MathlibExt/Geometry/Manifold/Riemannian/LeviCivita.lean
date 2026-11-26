@@ -24,7 +24,9 @@ The adapted portions are the definition `SameOnSmooth`, the statement of
 `levi_civita_exists_unique` and the module documentation, as recorded in the former wanted module
 `WantedExt/Geometry/LeviCivitaWanted.lean`. ATLAS converted the `@[eval_problem]` theorem into a
 Batteries `theorem_wanted` and placed the declarations in the namespace below; it then moved the
-declarations to this module and supplied the proof. Mathematical statements are unchanged.
+declarations to this module, supplied the proof, and removed from the module documentation the
+paragraph on what mathlib lacked when the problem was written. Mathematical statements are
+unchanged.
 -/
 module
 
@@ -50,17 +52,6 @@ finite-dimensional Riemannian manifold `(M, g)`, there exists a unique
 smooth torsion-free covariant derivative on `TM` that is compatible with
 the metric — the **Levi-Civita connection**.
 
-mathlib has `CovariantDerivative` on a tangent bundle,
-`CovariantDerivative.torsion`, `ContMDiffCovariantDerivative`,
-`RiemannianBundle`, `IsContMDiffRiemannianBundle`, and `mvfderiv` — but
-no metric-compatibility predicate, no Levi-Civita existence/uniqueness, and
-no Koszul formula (`grep -ri LeviCivita\|metric.compatible`: no relevant
-hits). One helper definition (`IsMetricCompatible`, ~½ page) and an
-"agreement on smooth sections" predicate (`SameOnSmooth`, mathlib's
-`CovariantDerivative` is bundled over all sections including non-smooth
-ones, so uniqueness is stated on the smooth-section subspace) are added
-here.
-
 A `[T2Space M]` hypothesis was added on 2026-06-14. We are not certain the
 statement is wrong without it, but it looks suspicious: uniqueness on
 smooth sections reduces to global smooth vector fields spanning every
@@ -73,11 +64,12 @@ Aristotle, flagged the missing hypothesis. Thanks to both.
 
 ## Proof
 
-The paragraph on mathlib above describes the library when the statement was written. The pinned
-Mathlib now constructs `CovariantDerivative.leviCivitaConnection` from the Koszul formula and
-proves that it is torsion-free and metric-compatible, and that such a connection is unique on
+The pinned Mathlib constructs `CovariantDerivative.leviCivitaConnection` from the Koszul formula
+and proves that it is torsion-free and metric-compatible, and that such a connection is unique on
 differentiable vector fields; it does not yet prove that the connection is smooth. The predicate
-`IsMetricCompatible` lives in `MathlibExt.Geometry.MetricCompatibilityShared`.
+`IsMetricCompatible` lives in `MathlibExt.Geometry.MetricCompatibilityShared`, which also shows
+that Mathlib's notion of metric compatibility implies it
+(`IsMetricCompatible.of_isMetricCompatible`).
 
 * Smoothness. Fix `x₀` and the trivialization of the tangent bundle at `x₀`, with its local
   frame `s_b` (`b` in the model space). For a smooth vector field `Y`, the Koszul formula
@@ -391,11 +383,8 @@ private theorem inner_eq_koszul (cov : CovariantDerivative I E (TangentSpace I (
 
 /-- Mathlib's Levi-Civita connection satisfies `IsMetricCompatible`. -/
 private theorem isMetricCompatible_leviCivitaConnection' :
-    IsMetricCompatible (leviCivitaConnection I M) := by
-  intro Y Z hY hZ x v
-  simpa using (isMetricCompatible_leviCivitaConnection I (M := M)).mvfderiv_inner_eq
-    (FiberBundle.extend E v) (x := x) ((hY x).mdifferentiableAt (by simp))
-    ((hZ x).mdifferentiableAt (by simp))
+    IsMetricCompatible (leviCivitaConnection I M) :=
+  .of_isMetricCompatible (isMetricCompatible_leviCivitaConnection I)
 
 end Uniqueness
 

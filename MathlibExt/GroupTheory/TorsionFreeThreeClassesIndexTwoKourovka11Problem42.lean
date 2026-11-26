@@ -24,10 +24,12 @@ import Mathlib.Tactic.Group
 Kourovka Notebook, Archive of Solved Problems, Problem 11.42 (A. V. Izosov): does there exist a
 torsion-free group having exactly three conjugacy classes and containing a subgroup of index 2?
 
-Minasyan's theorem answers the question affirmatively. Starting from the integers with their
-parity homomorphism, we form a chain of HNN extensions that conjugate pairs of nonidentity
-elements with the same parity. In the direct limit these pairs exhaust the two nonidentity
-conjugacy classes, and the kernel of parity has index two.
+Minasyan's theorem answers the question affirmatively, with a finitely generated group. This
+file answers the question as posed, which does not ask for finite generation, with a simpler
+construction that is not shown to give a finitely generated group. Starting from the integers
+with their parity homomorphism, we form a chain of HNN extensions that conjugate pairs of
+nonidentity elements with the same parity. In the direct limit these pairs exhaust the two
+nonidentity conjugacy classes, and the kernel of parity has index two.
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.42 (A. V.

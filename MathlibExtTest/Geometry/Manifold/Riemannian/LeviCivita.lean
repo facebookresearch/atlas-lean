@@ -35,15 +35,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   [RiemannianBundle (fun (x : M) ↦ TangentSpace I x)]
   [IsContMDiffRiemannianBundle I ∞ E (fun (x : M) ↦ TangentSpace I x)]
 
-/-- Mathlib's Levi-Civita connection satisfies `IsMetricCompatible`. -/
-private theorem isMetricCompatible_leviCivitaConnection_test :
-    IsMetricCompatible (leviCivitaConnection I M) := by
-  intro Y Z hY hZ x v
-  simpa using
-    (CovariantDerivative.isMetricCompatible_leviCivitaConnection I (M := M)).mvfderiv_inner_eq
-    (FiberBundle.extend E v) (x := x) ((hY x).mdifferentiableAt (by simp))
-    ((hZ x).mdifferentiableAt (by simp))
-
 /-- Mathlib's Levi-Civita connection is smooth, torsion-free and compatible with the metric. -/
 private theorem leviCivitaConnection_spec :
     ContMDiffCovariantDerivative (leviCivitaConnection I M) ∞ ∧
@@ -51,7 +42,7 @@ private theorem leviCivitaConnection_spec :
       IsMetricCompatible (leviCivitaConnection I M) :=
   ⟨contMDiffCovariantDerivative_leviCivitaConnection,
     CovariantDerivative.torsion_leviCivitaConnection_eq_zero I,
-    isMetricCompatible_leviCivitaConnection_test⟩
+    .of_isMetricCompatible (CovariantDerivative.isMetricCompatible_leviCivitaConnection I)⟩
 
 variable [T2Space M]
 

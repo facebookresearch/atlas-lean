@@ -361,7 +361,8 @@ selection `Ŝ = {j : W_j ≥ T}` (offset `0`) satisfies `E[|Ŝ ∩ H0| / (|Ŝ| +
 
 Source: R. F. Barber and E. J. Candès, *Controlling the false discovery rate via knockoffs*,
 Ann. Statist. 43 (2015), arXiv:1404.5609, Theorem 1 (stated for `q ∈ [0, 1]`; at `q = 0` the
-selection is empty and the bound is trivial, so only `0 < q` is kept here), through Lemma 1;
+source's bound is trivial if `q⁻¹` is read as `+∞`, but Lean's convention `0⁻¹ = 0` can make it
+fail, so only `0 < q` is kept here), through Lemma 1;
 E. Candès, Y. Fan, L. Janson and J. Lv, J. R. Statist. Soc. B 80 (2018), arXiv:1610.02351,
 Theorem 3.4 (knockoff part) with Lemma 3.3. -/
 theorem integral_card_inter_div_knockoffSelection_zero_le {Ω : Type*}

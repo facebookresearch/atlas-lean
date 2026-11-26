@@ -221,6 +221,10 @@ private lemma representation_of_measure (μ : FiniteMeasure (unitParams d))
 
 end barron_inverse_approximation
 
+-- The hypotheses `hf` (continuity of `f`) and `hw` (positive widths) belong to the wanted
+-- statement and are kept, but the proof does not use them: a pointwise limit of networks with
+-- path norm at most `Q` is `Q`-Lipschitz on the cube for the sup norm, hence continuous, and a
+-- network of width zero is the zero function. The unused-variables linter is off for this reason.
 open barron_inverse_approximation in
 set_option linter.unusedVariables false in
 /-- **Inverse approximation theorem for the Barron space** (W. E, C. Ma and L. Wu, *The Barron

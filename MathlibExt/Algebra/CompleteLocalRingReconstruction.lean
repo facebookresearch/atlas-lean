@@ -47,6 +47,8 @@ function field in variables `xᵢ` over `𝔽₂`, an automorphism of each trunc
 carries the vector with coordinates `xᵢ` to the one with coordinates `x₂ᵢ`.
 No field automorphism sends every `xᵢ` to `x₂ᵢ`.
 A finite algebra with cube-zero nilradical encodes the marked element in its multiplication.
+The two rings are finite algebras over the ring of Witt vectors of that field, so they have mixed
+characteristic: characteristic zero and residue characteristic two.
 -/
 
 @[expose] public section
