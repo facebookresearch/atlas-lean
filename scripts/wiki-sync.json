@@ -110142,6 +110142,7 @@
 "WeierstrassCurve.Affine.IsSupersingular": "dd63b0049746aaa2",
 "WeierstrassCurve.Affine.IsSupersingular.of_pow_torsion": "b550bf1a97103244",
 "WeierstrassCurve.Affine.IsSupersingular.pow_torsion": "559c58b8f133b195",
+"WeierstrassCurve.Affine.Point.eq_zero_of_prime_smul_eq_zero_of_isNode": "9b6d91db989a4b34",
 "WeierstrassCurve.Affine.Point.variableChangeAddEquiv": "389e418aed4cfd77",
 "WeierstrassCurve.Affine.frobeniusTrace": "1f317e37db41a741",
 "WeierstrassCurve.Affine.natCard_point_add_frobeniusTrace_eq": "2f6e4536c1180404",
