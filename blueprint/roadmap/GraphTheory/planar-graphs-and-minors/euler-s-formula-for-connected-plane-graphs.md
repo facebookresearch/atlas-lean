@@ -1,6 +1,7 @@
 # Euler's formula for connected plane graphs
 
 Let $G$ be a connected simple graph with $v \ge 1$ vertices and $e$ edges, drawn in $\mathbb{R}^2$ as a straight-line plane graph: distinct vertices are distinct points, each edge is the closed segment between its endpoints, and two edges meet only in common endpoints. The *faces* of the drawing are the connected components of the complement in $\mathbb{R}^2$ of the union of its vertices and edges, the unbounded component included. If $f$ is the number of faces, then
+
 $$v - e + f = 2.$$
 
 ## Depends on
