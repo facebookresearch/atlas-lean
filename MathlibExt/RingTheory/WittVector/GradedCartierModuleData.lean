@@ -53,11 +53,17 @@ universe u v
 
 namespace CerednikDrinfeld
 
-/-- Graded Cartier module data: a Witt-vector module with Frobenius,
-Verschiebung, and uniformizer operators and two complementary pieces.
-No field involves the coefficient map `j`: with the pieces it determines how
-the Teichmüller representatives of `Zp2 p` act (`teichmullerAct`), and base
-change carries it along (`IsBaseChangeAlong`). -/
+/-- **Graded Cartier module data.** For a prime `p`, a commutative ring `B` and
+a ring map `j : Zp2 p →+* B`: a module `M` over `WittVector p B` with additive
+maps `F` (`frobenius`) and `V` (`verschiebung`), a `WittVector p B`-linear map
+`ϖ` (`varpi`) and submodules `piece 0` and `piece 1`, such that, writing `σ`
+for the Frobenius of `WittVector p B`, `F (w • x) = σ w • F x`,
+`w • V x = V (σ w • x)`, `V (w • F x) = WittVector.verschiebung w • x`,
+`F (V x) = p • x`, `ϖ (V x) = V (ϖ x)`, `ϖ (F x) = F (ϖ x)` and
+`ϖ (ϖ x) = p • x`; the two pieces are complementary, and `F`, `V` and `ϖ` each
+map `piece i` into `piece (i + 1)`. No field involves `j`: with the pieces it
+determines how the Teichmüller representatives of `Zp2 p` act
+(`teichmullerAct`), and base change carries it along (`IsBaseChangeAlong`). -/
 structure GradedCartierModuleData (p : ℕ) [Fact p.Prime] {B : Type u} [CommRing B]
     (j : Zp2 p →+* B) : Type (max u (v + 1)) where
   /-- The underlying module. -/
@@ -106,7 +112,8 @@ attribute [instance] GradedCartierModuleData.addCommGroup
 
 variable {p : ℕ} [Fact p.Prime] {B : Type u} [CommRing B] {j : Zp2 p →+* B}
 
-/-- The scalar action of `b : B` on `M` through the Teichmüller lift. -/
+/-- **Homothety.** The action of `b : B` on `M` through its Teichmüller
+representative: `x ↦ [b] • x`. -/
 noncomputable def homothety (D : GradedCartierModuleData p j) (b : B) : D.M →+ D.M :=
   DistribSMul.toAddMonoidHom D.M (WittVector.teichmuller p b)
 
@@ -114,9 +121,10 @@ noncomputable def homothety (D : GradedCartierModuleData p j) (b : B) : D.M →+
     D.homothety b x = WittVector.teichmuller p b • x :=
   rfl
 
-/-- The action of the Teichmüller representative `[c]` of `Zp2 p`, for `c` in
-the field with `p ^ 2` elements, that the pieces and `j` determine: the
-homothety by `j [c]` on piece `0` and by `j [c] ^ p` on piece `1`. -/
+/-- **Teichmüller action.** The action of the Teichmüller representative `[c]`
+of `Zp2 p`, for `c` in the field with `p ^ 2` elements, that the pieces and `j`
+determine: the homothety by `j [c]` on piece `0` and by `j [c] ^ p` on piece
+`1`, extended additively along the decomposition of `M` into the two pieces. -/
 noncomputable def teichmullerAct (D : GradedCartierModuleData p j) (c : GaloisField p 2) :
     D.M →+ D.M :=
   (D.homothety (j (WittVector.teichmuller p c))).comp
@@ -139,13 +147,15 @@ theorem teichmullerAct_of_mem (D : GradedCartierModuleData p j) (c : GaloisField
       Submodule.projection_apply_of_mem_left D.isCompl_piece.symm hx, map_zero, zero_add]
     simp
 
-/-- The graded piece reached from piece `i` after `m + 1` shifts. -/
+/-- **Piece after `m + 1` shifts.** The graded piece reached from piece `i`
+after `m + 1` shifts: `(m + i + 1) mod 2`. -/
 def piIndex (m : ℕ) (i : Fin 2) : Fin 2 :=
   ⟨(m + i + 1) % 2, Nat.mod_lt _ two_pos⟩
 
-/-- A homogeneous `V`-basis: homogeneous elements `γ i` in piece `i` such
-that every element has a unique expansion in Teichmüller multiples of the
-`γ i` plus a Verschiebung term. -/
+/-- **Homogeneous `V`-basis.** Elements `γ 0 ∈ piece 0` and `γ 1 ∈ piece 1`
+such that every `x : M` is `[b 0] • γ 0 + [b 1] • γ 1 + V y` for exactly one
+pair of `b : Fin 2 → B` and `y : M`, where `[b i]` is the Teichmüller
+representative of `b i`. -/
 def IsHomogeneousVBasis (D : GradedCartierModuleData p j) (γ : Fin 2 → D.M) :
     Prop :=
   (∀ i : Fin 2, γ i ∈ D.piece i) ∧
@@ -153,20 +163,24 @@ def IsHomogeneousVBasis (D : GradedCartierModuleData p j) (γ : Fin 2 → D.M) :
       x = (∑ i : Fin 2, WittVector.teichmuller p (cy.1 i) • γ i) +
         D.verschiebung cy.2
 
-/-- `V`-adic completeness, stated through unique limits of Verschiebung
-series. -/
+/-- **`V`-adic completeness.** Every series `∑ V^m (x m)` has exactly one sum:
+for each `x : ℕ → M` there is a unique `s : M` such that, for every `N`,
+`s - ∑_{m < N} V^m (x m)` lies in the image of `V^N`. -/
 def IsVAdicallyComplete (D : GradedCartierModuleData p j) : Prop :=
   ∀ x : ℕ → D.M, ∃! s : D.M, ∀ N : ℕ, ∃ t : D.M,
     s = (∑ m ∈ Finset.range N, (⇑D.verschiebung)^[m] (x m)) +
       (⇑D.verschiebung)^[N] t
 
-/-- A special Cartier module: one with a homogeneous `V`-basis that is
-`V`-adically complete. -/
+/-- **Special Cartier module.** Graded Cartier module data that has a
+homogeneous `V`-basis and is `V`-adically complete. -/
 def IsSpecialCartierModule (D : GradedCartierModuleData p j) : Prop :=
   (∃ γ : Fin 2 → D.M, D.IsHomogeneousVBasis γ) ∧ D.IsVAdicallyComplete
 
-/-- Structure constants for `varpi`: its values on the basis elements `γ i`
-admit Verschiebung expansions with Teichmüller coefficients `a m i`. -/
+/-- **Structure constants of `ϖ`.** For `γ : Fin 2 → M` and
+`a : ℕ → Fin 2 → B`: for every `i` and every `N`,
+`ϖ (γ i) = ∑_{m < N} V^m ([a m i] • γ (piIndex m i)) + V^N h` for some `h`,
+so `ϖ (γ i)` expands in powers of `V` with Teichmüller coefficients `[a m i]`,
+the `m`-th term on the element of the piece reached after `m + 1` shifts. -/
 def HasStructureConstants (D : GradedCartierModuleData p j) (γ : Fin 2 → D.M)
     (a : ℕ → Fin 2 → B) : Prop :=
   ∀ (i : Fin 2) (N : ℕ), ∃ h : D.M,
@@ -175,10 +189,13 @@ def HasStructureConstants (D : GradedCartierModuleData p j) (γ : Fin 2 → D.M)
         (WittVector.teichmuller p (a m i) • γ (piIndex m i))) +
         (⇑D.verschiebung)^[N] h
 
-/-- Base change of graded Cartier module data along a ring homomorphism,
-witnessed by an additive map `f` compatible with all structure. The target is
-indexed by `φ.comp j`, so `f` intertwines the Teichmüller actions
-(`IsBaseChangeAlong.map_teichmullerAct`). -/
+/-- **Base change along a ring map.** For `φ : B →+* B'`, data `D` over `B`
+with coefficient map `j` and `D'` over `B'` with coefficient map `φ.comp j`:
+an additive map `f : D.M →+ D'.M` with `f (w • x) = WittVector.map φ w • f x`
+that commutes with `F`, `V` and `ϖ`, maps `piece i` of `D` into `piece i` of
+`D'`, and sends some homogeneous `V`-basis of `D` to a homogeneous `V`-basis of
+`D'`. As the target is indexed by `φ.comp j`, `f` intertwines the Teichmüller
+actions (`IsBaseChangeAlong.map_teichmullerAct`). -/
 def IsBaseChangeAlong {B' : Type u} [CommRing B'] (φ : B →+* B')
     (D : GradedCartierModuleData p j) (D' : GradedCartierModuleData p (φ.comp j))
     (f : D.M →+ D'.M) : Prop :=
@@ -190,27 +207,28 @@ def IsBaseChangeAlong {B' : Type u} [CommRing B'] (φ : B →+* B')
   (∃ γ : Fin 2 → D.M, D.IsHomogeneousVBasis γ ∧
     D'.IsHomogeneousVBasis (fun i => f (γ i)))
 
-/-- The uniformizer is Witt-linear, hence commutes with scalar
-multiplication. -/
+/-- **The uniformizer commutes with scalars.** `ϖ (w • x) = w • ϖ x`, as `ϖ`
+is `WittVector p B`-linear. -/
 theorem varpi_smul (D : GradedCartierModuleData p j) (w : WittVector p B)
     (x : D.M) :
     D.varpi (w • x) = w • D.varpi x :=
   map_smul _ _ _
 
-/-- Verschiebung after Frobenius is scalar multiplication by the
-Verschiebung of `1`. -/
+/-- **Verschiebung after Frobenius.** `V (F x) = V 1 • x`, where `V 1` is the
+Verschiebung of `1` in `WittVector p B`. -/
 theorem verschiebung_frobenius (D : GradedCartierModuleData p j) (x : D.M) :
     D.verschiebung (D.frobenius x) =
       WittVector.verschiebung (1 : WittVector p B) • x := by
   rw [← D.verschiebung_smul_frobenius 1 x, one_smul]
 
-/-- Multiplication by `p` agrees with Frobenius after Verschiebung. -/
+/-- **Multiplication by `p`.** `p • x = F (V x)`. -/
 theorem natCast_smul_eq_frobenius_verschiebung (D : GradedCartierModuleData p j)
     (x : D.M) :
     (p : ℕ) • x = D.frobenius (D.verschiebung x) :=
   (D.frobenius_verschiebung x).symm
 
-/-- Structure constants at order zero: the expansion is vacuous. -/
+/-- **Structure constants at order zero.** The expansion of `ϖ (γ i)` to
+order `0` holds with `h = ϖ (γ i)`, the sum being empty. -/
 theorem hasStructureConstants_order_zero (D : GradedCartierModuleData p j)
     (γ : Fin 2 → D.M) (a : ℕ → Fin 2 → B) (i : Fin 2) :
     ∃ h : D.M, D.varpi (γ i) =
@@ -219,8 +237,8 @@ theorem hasStructureConstants_order_zero (D : GradedCartierModuleData p j)
         (⇑D.verschiebung)^[0] h :=
   ⟨D.varpi (γ i), by simp⟩
 
-/-- Verschiebung is injective on a graded Cartier module with a homogeneous
-`V`-basis. -/
+/-- **A homogeneous `V`-basis makes `V` injective.** If `D` has a homogeneous
+`V`-basis, then `V` is injective. -/
 theorem IsHomogeneousVBasis.verschiebung_injective
     {D : GradedCartierModuleData p j} {γ : Fin 2 → D.M}
     (h : D.IsHomogeneousVBasis γ) : Function.Injective D.verschiebung := by

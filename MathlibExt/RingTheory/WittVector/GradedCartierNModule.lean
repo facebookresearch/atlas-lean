@@ -50,8 +50,8 @@ namespace GradedCartierModuleData
 variable {p : ℕ} [Fact p.Prime] {B : Type u} [CommRing B] {j : Zp2 p →+* B}
 variable (D : GradedCartierModuleData.{u, v} p j)
 
-/-- The Frobenius twist of `M`: the same additive group with the Witt
-action precomposed with Frobenius. -/
+/-- **Frobenius twist.** The additive group of `M` with the action of
+`WittVector p B` precomposed with its Frobenius `σ`: `w` acts as `σ w`. -/
 noncomputable def Sigma (D : GradedCartierModuleData p j) : Type v :=
   D.M
 
@@ -61,11 +61,13 @@ noncomputable instance : AddCommGroup D.Sigma :=
 noncomputable instance : Module (WittVector p B) D.Sigma :=
   Module.compHom D.M (WittVector.frobenius : WittVector p B →+* WittVector p B)
 
-/-- The identity map from `M` to its Frobenius twist. -/
+/-- **Into the Frobenius twist.** The identity map from `M` to its Frobenius
+twist, as an additive equivalence. -/
 noncomputable def toSigma : D.M ≃+ D.Sigma :=
   AddEquiv.refl _
 
-/-- The identity map from the Frobenius twist back to `M`. -/
+/-- **Out of the Frobenius twist.** The identity map from the Frobenius twist
+back to `M`, as an additive equivalence. -/
 noncomputable def ofSigma : D.Sigma ≃+ D.M :=
   AddEquiv.refl _
 
@@ -83,7 +85,8 @@ theorem ofSigma_smul (w : WittVector p B) (m : D.Sigma) :
     D.ofSigma (w • m) = WittVector.frobenius w • D.ofSigma m :=
   rfl
 
-/-- The relation map whose range identifies `(V x, -varpi x)` with zero. -/
+/-- **Relation map.** The `WittVector p B`-linear map from the Frobenius twist
+to `M × Sigma` sending `m` to `(V m, -ϖ m)`; its range is `nRel`. -/
 noncomputable def nRelMap : D.Sigma →ₗ[WittVector p B] D.M × D.Sigma where
   toFun m := (D.verschiebung (D.ofSigma m), D.toSigma (-D.varpi (D.ofSigma m)))
   map_add' m m' := by
@@ -100,15 +103,19 @@ noncomputable def nRelMap : D.Sigma →ₗ[WittVector p B] D.M × D.Sigma where
       (D.verschiebung (D.ofSigma m), D.toSigma (-D.varpi (D.ofSigma m))) :=
   rfl
 
-/-- The relation submodule of `M × Sigma`. -/
+/-- **Relation submodule.** The submodule of `M × Sigma` of the pairs
+`(V m, -ϖ m)`, the range of `nRelMap`. -/
 noncomputable def nRel : Submodule (WittVector p B) (D.M × D.Sigma) :=
   LinearMap.range D.nRelMap
 
-/-- The graded `N`-module: `(M × Sigma)` modulo the relation submodule. -/
+/-- **Graded `N`-module.** `M × Sigma` modulo the relation submodule: the
+class of `(V m, -ϖ m)` is zero for every `m` (`nMk_verschiebung_neg_varpi`). -/
 abbrev NMod : Type v :=
   (D.M × D.Sigma) ⧸ D.nRel
 
-/-- The quotient map from pairs of elements of `M` to the `N`-module. -/
+/-- **Classes in the `N`-module.** The additive map sending `(m, m')`, a pair
+of elements of `M`, to the class of `(m, m')`, with `m'` read in the Frobenius
+twist. -/
 noncomputable def nMk : D.M × D.M →+ D.NMod :=
   (D.nRel.mkQ.toAddMonoidHom).comp
     (AddMonoidHom.prodMap (AddMonoidHom.id D.M) D.toSigma.toAddMonoidHom)
@@ -131,8 +138,9 @@ theorem smul_nMk (w : WittVector p B) (m m' : D.M) :
     w • D.nMk (m, m') = D.nMk (w • m, WittVector.frobenius w • m') :=
   rfl
 
-/-- The map `lambda : NMod → M` given by `varpi` on the first factor and
-Verschiebung on the second. -/
+/-- **The map `lambda`.** The `WittVector p B`-linear map from the `N`-module
+to `M` sending the class of `(m, m')` to `ϖ m + V m'` (`lambda_nMk`); it
+vanishes on the relations because `ϖ` commutes with `V`. -/
 noncomputable def lambda : D.NMod →ₗ[WittVector p B] D.M :=
   D.nRel.liftQ
     { toFun := fun x => D.varpi x.1 + D.verschiebung (D.ofSigma x.2)
@@ -151,7 +159,8 @@ noncomputable def lambda : D.NMod →ₗ[WittVector p B] D.M :=
     D.lambda (D.nMk (m, m')) = D.varpi m + D.verschiebung m' :=
   rfl
 
-/-- The range of Verschiebung as a submodule. -/
+/-- **Image of Verschiebung.** The image `V M` of Verschiebung, as a
+`WittVector p B`-submodule of `M`. -/
 noncomputable def vRange : Submodule (WittVector p B) D.M where
   carrier := Set.range D.verschiebung
   zero_mem' := ⟨0, map_zero _⟩
@@ -166,11 +175,13 @@ theorem mem_vRange_iff (x : D.M) :
     x ∈ D.vRange ↔ ∃ y, D.verschiebung y = x :=
   Iff.rfl
 
-/-- The Lie quotient `M / V M`. -/
+/-- **Lie quotient.** The quotient `M / V M`. -/
 abbrev LieQuot : Type v :=
   D.M ⧸ D.vRange
 
-/-- The projection from the `N`-module to the Lie quotient. -/
+/-- **Projection to the Lie quotient.** The `WittVector p B`-linear map from
+the `N`-module to `M / V M` sending the class of `(m, m')` to the class of
+`m`. -/
 noncomputable def toLieQuot : D.NMod →ₗ[WittVector p B] D.LieQuot :=
   D.nRel.liftQ (D.vRange.mkQ.comp (LinearMap.fst _ _ _)) (by
     rintro x ⟨m, rfl⟩
@@ -178,11 +189,14 @@ noncomputable def toLieQuot : D.NMod →ₗ[WittVector p B] D.LieQuot :=
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
     exact ⟨D.ofSigma m, rfl⟩)
 
-/-- The inclusion of the Frobenius twist into the `N`-module. -/
+/-- **Inclusion of the Frobenius twist.** The `WittVector p B`-linear map from
+the Frobenius twist to the `N`-module sending `m'` to the class of
+`(0, m')`. -/
 noncomputable def inrSigma : D.Sigma →ₗ[WittVector p B] D.NMod :=
   D.nRel.mkQ.comp (LinearMap.inr _ _ _)
 
-/-- The uniformizer acting on the `N`-module. -/
+/-- **The uniformizer on the `N`-module.** The `WittVector p B`-linear map
+sending the class of `(m, m')` to the class of `(ϖ m, ϖ m')`. -/
 noncomputable def nVarpi : D.NMod →ₗ[WittVector p B] D.NMod :=
   D.nRel.mapQ D.nRel
     (LinearMap.prodMap D.varpi
@@ -201,12 +215,15 @@ noncomputable def nVarpi : D.NMod →ₗ[WittVector p B] D.NMod :=
             (D.ofSigma (D.toSigma (-D.varpi (D.ofSigma m))))))
       simp only [ofSigma_toSigma, D.varpi_verschiebung, map_neg])
 
-/-- The graded pieces of the `N`-module. -/
+/-- **Graded pieces of the `N`-module.** The image of `piece i × piece i`
+under `nMk`. -/
 noncomputable def nPiece (i : Fin 2) : AddSubgroup D.NMod :=
   (((D.piece i).toAddSubgroup).prod ((D.piece i).toAddSubgroup)).map D.nMk
 
-/-- The map on `N`-modules induced by a map of graded Cartier module data
-compatible with Verschiebung and the uniformizer. -/
+/-- **Induced map of `N`-modules.** For data `D'` over a ring `B'` and an
+additive map `f : D.M →+ D'.M` that commutes with `V` and `ϖ`, the additive map
+from the `N`-module of `D` to that of `D'` sending the class of `(m, m')` to the
+class of `(f m, f m')` (`nMap_nMk`). -/
 noncomputable def nMap {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
     (D' : GradedCartierModuleData p j') (f : D.M →+ D'.M)
     (hV : ∀ x, f (D.verschiebung x) = D'.verschiebung (f x))
@@ -230,9 +247,10 @@ theorem nMap_nMk {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
     D.nMap D' f hV hPi (D.nMk (m, m')) = D'.nMk (f m, f m') :=
   rfl
 
-/-- Base change of graded Cartier module data along `φ` into a target over
-an arbitrary coefficient map `j'`: the first clause requires
-`j' = φ.comp j`, and the others are the clauses of `IsBaseChangeAlong`. The
+/-- **Base change along a ring map, any target coefficient map.** For
+`φ : B →+* B'`, data `D` over `B` with coefficient map `j`, data `D'` over `B'`
+with a coefficient map `j'`, and an additive map `f : D.M →+ D'.M`:
+`j' = φ.comp j`, and `f` satisfies the clauses of `IsBaseChangeAlong`. The
 equation is about the coefficient maps alone; with the clause on pieces it
 makes `f` intertwine the Teichmüller actions
 (`IsBaseChangeAlong'.map_teichmullerAct`). -/
@@ -254,8 +272,9 @@ theorem isBaseChangeAlong'_iff {B' : Type u} [CommRing B'] (φ : B →+* B')
     IsBaseChangeAlong' φ D D' f ↔ IsBaseChangeAlong φ D D' f :=
   ⟨fun h => h.2, fun h => ⟨rfl, h⟩⟩
 
-/-- A base change intertwines the actions of the Teichmüller representatives
-of `Zp2 p` that the pieces and the coefficient maps `j` and `j' = φ.comp j`
+/-- **Base change intertwines the Teichmüller actions.** A base change `f`
+along `φ` satisfies `f (D.teichmullerAct c x) = D'.teichmullerAct c (f x)`, for
+the actions that the pieces and the coefficient maps `j` and `j' = φ.comp j`
 determine. -/
 theorem IsBaseChangeAlong'.map_teichmullerAct {B' : Type u} [CommRing B']
     {j' : Zp2 p →+* B'} {φ : B →+* B'} {D : GradedCartierModuleData p j}
@@ -280,26 +299,37 @@ theorem IsBaseChangeAlong.map_teichmullerAct {B' : Type u} [CommRing B']
     f (D.teichmullerAct c x) = D'.teichmullerAct c (f x) :=
   ((isBaseChangeAlong'_iff φ D D' f).mpr h).map_teichmullerAct c x
 
-/-- A Cartier `L`-map: a Frobenius-semilinear map to the `N`-module that
-sends Verschiebung to the uniformizer and lifts Frobenius through
-`lambda`. -/
+/-- **Cartier `L`-map.** An additive map `L` from `M` to the `N`-module such
+that, for all `w` and `x`, `L (w • x) = σ w • L x` with `σ` the Frobenius of
+`WittVector p B`, `L (V x)` is the class of `(ϖ x, 0)`, and
+`lambda (L x) = F x`. -/
 structure IsCartierLMap (L : D.M →+ D.NMod) : Prop where
   /-- `L` is Frobenius-semilinear. -/
   map_smul : ∀ (w : WittVector p B) (x : D.M),
     L (w • x) = WittVector.frobenius w • L x
-  /-- `L` sends Verschiebung to the uniformizer term. -/
+  /-- `L (V x)` is the class of `(ϖ x, 0)`. -/
   map_verschiebung : ∀ x : D.M, L (D.verschiebung x) = D.nMk (D.varpi x, 0)
   /-- `lambda` after `L` is Frobenius. -/
   lambda_comp : ∀ x : D.M, D.lambda (L x) = D.frobenius x
 
-/-- A canonical `L`-map: a Cartier `L`-map that lifts from a special
-Cartier module over a `p`-torsion-free base change. -/
+/-- **Canonical `L`-map.** A Cartier `L`-map `L` on `D`, over `B` with
+coefficient map `j`, that is the base change of a Cartier `L`-map over a
+`p`-torsion-free ring mapping onto `B`. That is, there are a commutative ring
+`S` on which multiplication by `p` is injective, a ring map `jS : Zp2 p →+* S`,
+a surjective ring map `φ : S →+* B`, a special Cartier module `Dl` over `S`
+with coefficient map `jS`, an additive map `f : Dl.M →+ D.M` that is a base
+change along `φ` (`IsBaseChangeAlong' φ Dl D f`, so `j = φ.comp jS`), and a
+Cartier `L`-map `Ll` on `Dl`, such that `L (f x) = nMap f (Ll x)` for every `x`
+in `Dl.M`, where `nMap f` is the map of `N`-modules that `f` induces. A special
+Cartier module over such an `S` is not enough: `L` itself must satisfy this
+equation. -/
 structure IsCanonicalLMap (L : D.M →+ D.NMod) : Prop where
   /-- The map is a Cartier `L`-map. -/
   isCartierLMap : D.IsCartierLMap L
-  /-- The map lifts from a special Cartier module over a surjectively
-  `p`-torsion-free presented base, whose coefficient map `jS` satisfies
-  `j = φ.comp jS` (the first clause of `IsBaseChangeAlong'`). -/
+  /-- `L` is the base change of a Cartier `L`-map `Ll` on a special Cartier
+  module `Dl` over a `p`-torsion-free ring `S` with a surjection
+  `φ : S →+* B`, along a base change `f : Dl.M →+ D.M` (so `j = φ.comp jS`):
+  `L (f x) = nMap f (Ll x)` for every `x`. -/
   exists_lift : ∃ (S : Type u) (_ : CommRing S) (jS : Zp2 p →+* S) (φ : S →+* B)
     (_ : Function.Surjective φ) (_ : ∀ s : S, (p : S) * s = 0 → s = 0)
     (Dl : GradedCartierModuleData.{u, v} p jS) (_ : Dl.IsSpecialCartierModule)
@@ -307,7 +337,8 @@ structure IsCanonicalLMap (L : D.M →+ D.NMod) : Prop where
     (Ll : Dl.M →+ Dl.NMod) (_ : Dl.IsCartierLMap Ll),
     ∀ x : Dl.M, L (f x) = Dl.nMap D f hf.2.2.2.1 hf.2.2.2.2.1 (Ll x)
 
-/-- The canonical `L`-map chosen from a proof of its existence. -/
+/-- **The canonical `L`-map.** A canonical `L`-map, chosen from a proof that
+one exists. -/
 noncomputable def cartierL (h : ∃ L : D.M →+ D.NMod, D.IsCanonicalLMap L) : D.M →+ D.NMod :=
   h.choose
 
@@ -315,7 +346,10 @@ theorem cartierL_spec (h : ∃ L : D.M →+ D.NMod, D.IsCanonicalLMap L) :
     D.IsCanonicalLMap (D.cartierL h) :=
   h.choose_spec
 
-/-- The operator `phi` on the `N`-module built from an `L`-map. -/
+/-- **The operator `phi`.** For an additive map `L` from `M` to the `N`-module
+with `L (V x)` the class of `(ϖ x, 0)`, the additive endomorphism of the
+`N`-module sending the class of `(x, x')` to `L x` plus the class of `(x', 0)`
+(`phi_nMk`). -/
 noncomputable def phi (L : D.M →+ D.NMod)
     (hL : ∀ x : D.M, L (D.verschiebung x) = D.nMk (D.varpi x, 0)) :
     D.NMod →+ D.NMod :=
@@ -336,7 +370,8 @@ theorem phi_nMk (L : D.M →+ D.NMod)
     D.phi L hL (D.nMk (x, x')) = L x + D.nMk (x', 0) :=
   rfl
 
-/-- The subgroup `eta` of fixed points of `phi`. -/
+/-- **Fixed points of `phi`.** The additive subgroup `eta` of the `N`-module
+of the `z` with `phi z = z` (`mem_eta_iff`). -/
 noncomputable def eta (L : D.M →+ D.NMod)
     (hL : ∀ x : D.M, L (D.verschiebung x) = D.nMk (D.varpi x, 0)) :
     AddSubgroup D.NMod :=
@@ -349,13 +384,15 @@ theorem mem_eta_iff (L : D.M →+ D.NMod)
   rw [eta, AddMonoidHom.mem_ker, AddMonoidHom.sub_apply, sub_eq_zero]
   rfl
 
-/-- The graded pieces of `eta`. -/
+/-- **Graded pieces of `eta`.** The intersection of `eta` with the `i`-th
+graded piece of the `N`-module. -/
 noncomputable def etaPiece (L : D.M →+ D.NMod)
     (hL : ∀ x : D.M, L (D.verschiebung x) = D.nMk (D.varpi x, 0))
     (i : Fin 2) : AddSubgroup D.NMod :=
   D.eta L hL ⊓ D.nPiece i
 
-/-- The map from `eta` to the Lie quotient. -/
+/-- **From `eta` to the Lie quotient.** The restriction to `eta` of the
+projection from the `N`-module to `M / V M`. -/
 noncomputable def u (L : D.M →+ D.NMod)
     (hL : ∀ x : D.M, L (D.verschiebung x) = D.nMk (D.varpi x, 0)) :
     D.eta L hL →+ D.LieQuot :=
