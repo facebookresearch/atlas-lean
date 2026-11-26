@@ -185,16 +185,21 @@ with $P$ a partial isometry, $H$ symmetric positive semidefinite and the row spa
 to the range of $H$, in which $H = (G^{\mathsf T} G)^{1/2}$. If $G$ has full rank $\min(m, n)$,
 $P$ is semi-orthogonal ($P P^{\mathsf T} = I_m$ or $P^{\mathsf T} P = I_n$) and is the unique
 polar factor of $G$ with orthonormal columns (or, when $m < n$, the transpose of that of
-$G^{\mathsf T}$), a semi-orthogonal matrix nearest to $G$ in every unitarily invariant norm. If
-the rank of $G$ is less than $\min(m, n)$, $P$ is not semi-orthogonal.
+$G^{\mathsf T}$). It is also a semi-orthogonal matrix nearest to $G$ in every unitarily invariant
+norm, and the unique nearest one in the Frobenius norm. In the spectral norm a nearest
+semi-orthogonal matrix need not be unique: for $G = \operatorname{diag}(3, 1)$, both $I$ and
+$\operatorname{diag}(1, -1)$ attain the least distance, $2$. If the rank of $G$ is less than
+$\min(m, n)$, $P$ is not semi-orthogonal.
 
 Sources: Amsel, Persson, Musco and Gower, *The Polar Express*, ICLR 2026, arXiv:2505.16932 v5,
 Section 1.1, equation (1), and the Notation paragraph at the end of Section 1 (polynomials of a
-matrix through its rank-reduced SVD); their description of the factor as the closest
-semi-orthogonal matrix characterizes this definition only at full rank. Higham, *Functions of
-Matrices: Theory and Computation*, SIAM, 2008, Chapter 8, Theorem 8.3 (the canonical polar
-decomposition) and Theorems 8.1 and 8.4 (the polar decomposition with orthonormal columns and its
-best-approximation property). -/
+matrix through its rank-reduced SVD); they describe the factor as the closest semi-orthogonal
+matrix without naming a norm, and this definition gives a nearest semi-orthogonal matrix only at
+full rank. Higham, *Functions of Matrices: Theory and Computation*, SIAM, 2008, Chapter 8,
+Theorem 8.1 (the polar decomposition with orthonormal columns, unique at full rank), Theorem 8.3
+(the canonical polar decomposition) and Theorem 8.4 (the polar factor as a nearest matrix with
+orthonormal columns in every unitarily invariant norm, and the unique nearest one in the Frobenius
+norm at full rank). -/
 noncomputable def polarFactor {m n : ℕ} (G : Matrix (Fin m) (Fin n) ℝ) :
     Matrix (Fin m) (Fin n) ℝ :=
   let h := real_singular_value_decomposition m n G
