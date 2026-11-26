@@ -15,13 +15,16 @@ transitions. Choose a spanning tree `T` of that graph; every remaining edge `l` 
 chosen orientation `a_l → b_l`) closes a fundamental cycle `C_l` with the tree path from `b_l`
 back to `a_l` (Schnakenberg 1976). The affinity of the cycle is
 `𝒜_l = ln ∏_{e ∈ C_l} W(e) / W(-e)`. Let `G_l(t)` be the integrated current along chord `l` (the
-number of jumps `a_l → b_l` minus the number of jumps `b_l → a_l` up to time `t`). Then
-(equations (39) and (73) of arXiv:cond-mat/0512254)
+number of jumps `a_l → b_l` minus the number of jumps `b_l → a_l` up to time `t`). Then the
+generating function `Q(λ) = lim_{t → ∞} -(1/t) ln E[exp(-∑_l λ_l G_l(t))]` exists for every real
+`λ`, does not depend on the initial state, and satisfies `Q(λ) = Q(𝒜 - λ)` (equation (39) of
+arXiv:cond-mat/0512254).
 
-* the generating function `Q(λ) = lim_{t → ∞} -(1/t) ln E[exp(-∑_l λ_l G_l(t))]` exists for every
-  real `λ`, does not depend on the initial state, and satisfies `Q(λ) = Q(𝒜 - λ)`;
-* the rate function `H(α) = sup_λ [Q(λ) - λ·α]` satisfies `H(-α) - H(α) = 𝒜·α`, which is the
-  fluctuation theorem `P(G(t)/t ≈ α) / P(G(t)/t ≈ -α) ≈ exp(t 𝒜·α)`.
+Applying the Legendre transform of equation (72), `H(α) = sup_λ [Q(λ) - λ·α]`, to this symmetry
+gives `H(-α) - H(α) = 𝒜·α`, the chord-current analogue of equation (73), which the source states
+for grouped currents. This is an identity for the transform of `Q`, not a statement about
+probabilities. Since it follows from `Q_symm` by the transform alone, it is not stated here as a
+separate wanted declaration.
 
 The expectation is written through the tilted generator, as in the source's proof: with
 `L_λ(ω', ω) = W(ω → ω') exp(-∑_l λ_l s_l(ω, ω'))` for `ω' ≠ ω`, where `s_l(ω, ω')` is `+1` for the
@@ -29,13 +32,13 @@ jump `a_l → b_l`, `-1` for `b_l → a_l` and `0` otherwise, and `L_λ(ω, ω) 
 the expectation from the initial state `ω₀` is `∑_{ω'} (exp(t L_λ))(ω', ω₀)` (the Feynman–Kac
 representation), which is taken as the definition. `H` takes values in `[-∞, ∞]`. Not recorded here:
 the version for macroscopic currents with several mechanisms (equation (69)) and the large-deviation
-statement about probabilities, which needs the Gärtner–Ellis theorem.
+statement about probabilities (equations (71) and (74)), which needs the Gärtner–Ellis theorem.
 
 Sources: D. Andrieux and P. Gaspard, "Fluctuation theorem for currents and Schnakenberg network
 theory", Journal of Statistical Physics 127 (2007) 107–131, arXiv:cond-mat/0512254; equation numbers
-are those of the arXiv version: equations (39) and (73); J. Schnakenberg, "Network theory of
-microscopic and macroscopic behavior of master equation systems", Reviews of Modern Physics 48
-(1976) 571–585.
+are those of the arXiv version (v3): equations (39), (72) and (73); J. Schnakenberg, "Network
+theory of microscopic and macroscopic behavior of master equation systems", Reviews of Modern
+Physics 48 (1976) 571–585.
 -/
 module
 
@@ -122,7 +125,7 @@ noncomputable def SchnakenbergNetwork.Q (M : SchnakenbergNetwork Ω ι) (ω₀ :
     ℝ :=
   limUnder atTop fun t : ℝ => -(1 / t) * Real.log (M.genFun lam t ω₀)
 
-/-- The rate function `H(α) = sup_λ [Q(λ) - λ·α]`, in `[-∞, ∞]`. -/
+/-- **Legendre transform of `Q`.** `H(α) = sup_λ [Q(λ) - λ·α]`, in `[-∞, ∞]`. -/
 noncomputable def SchnakenbergNetwork.H (M : SchnakenbergNetwork Ω ι) (ω₀ : Ω) (α : ι → ℝ) :
     EReal :=
   ⨆ lam : ι → ℝ, ((M.Q ω₀ lam - ∑ l, lam l * α l : ℝ) : EReal)
@@ -140,15 +143,5 @@ public theorem_wanted Q_symm [Nonempty Ω] (M : SchnakenbergNetwork Ω ι) (hM :
     (∃ q : ℝ, ∀ ω₀, Tendsto (fun t : ℝ => -(1 / t) * Real.log (M.genFun lam t ω₀)) atTop
         (𝓝 q)) ∧
       ∀ ω₀, M.Q ω₀ lam = M.Q ω₀ (fun l => M.affinity hM.isTree l - lam l)
-
-/-- **The fluctuation theorem for currents** (Andrieux and Gaspard 2007, equation (73) of
-arXiv:cond-mat/0512254): for a valid Schnakenberg network on a finite nonempty state space (as in
-`Q_symm`), every initial state `ω₀` and every `α`, the rate function satisfies `H(-α) = H(α) + 𝒜·α`
-in `[-∞, ∞]`, i.e. `H(-α) - H(α) = ∑_l 𝒜_l α_l` where finite.
-
-Source: Andrieux and Gaspard (2007), arXiv:cond-mat/0512254, equation (73). -/
-public theorem_wanted H_neg [Nonempty Ω] (M : SchnakenbergNetwork Ω ι) (hM : M.Valid) (ω₀ : Ω)
-    (α : ι → ℝ) :
-    M.H ω₀ (-α) = M.H ω₀ α + ((∑ l, M.affinity hM.isTree l * α l : ℝ) : EReal)
 
 end WantedExt.Biology.Biophysics.CurrentFluctuationTheoremWanted

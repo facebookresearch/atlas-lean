@@ -21,6 +21,9 @@ the binomial and monomial ideals in `ℚ[c_1, …, c_s]`
 Theorem 3.1 states: the minimal siphons of `G` are the inclusion-minimal sets
 `{i : c_i ∈ P}` as `P` runs over the minimal primes of `I_G`; if each connected component of `G` is
 strongly connected, `I_G` can be replaced by `J_G`; and if `G` is strongly connected, by `M_G`.
+The source proves the second clause from the first: when each connected component is strongly
+connected, `I_G` and `J_G` have the same radical, hence the same minimal primes. That clause is
+therefore not stated here as a separate wanted declaration.
 
 The ideals are read in `R = ℚ[c_1, …, c_s] / ⟨c_1 ⋯ c_s⟩`, the ring the source fixes for the whole
 of Section 3 ("All our ideals will live in this ring"; its Example 1.3 decomposes
@@ -112,16 +115,6 @@ Source: Shiu and Sturmfels (2010), Theorem 3.1. -/
 public theorem_wanted isMinimalSiphon_iff_idealI (N : ReactionNetwork S ρ)
     (hocc : AllSpeciesOccur N) (Z : Finset S) :
     IsMinimalSiphon N Z ↔ IsMinimalVarSet (idealI N) Z
-
-/-- **Minimal siphons from `J_G`** (Shiu and Sturmfels 2010, Theorem 3.1, second clause): for a
-weakly reversible network (each connected component strongly connected) on finitely many species,
-each of which occurs in some complex, a finite set `Z` of species is a minimal siphon iff it is
-inclusion-minimal among the sets `{i : c_i ∈ P}` for `P` a minimal prime of `J_G + ⟨c_1 ⋯ c_s⟩`.
-
-Source: Shiu and Sturmfels (2010), Theorem 3.1. -/
-public theorem_wanted isMinimalSiphon_iff_idealJ (N : ReactionNetwork S ρ)
-    (hocc : AllSpeciesOccur N) (hwr : N.IsWeaklyReversible) (Z : Finset S) :
-    IsMinimalSiphon N Z ↔ IsMinimalVarSet (idealJ N) Z
 
 /-- **Minimal siphons from the monomial ideal `M_G`** (Shiu and Sturmfels 2010, Theorem 3.1, third
 clause): for a strongly connected network on finitely many species, each of which occurs in some

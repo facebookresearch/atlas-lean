@@ -1,3 +1,3 @@
-# H
+# Legendre transform of `Q`
 
-The rate function `H(α) = sup_λ [Q(λ) - λ·α]`, in `[-∞, ∞]`.
+`H(α) = sup_λ [Q(λ) - λ·α]`, in `[-∞, ∞]`.

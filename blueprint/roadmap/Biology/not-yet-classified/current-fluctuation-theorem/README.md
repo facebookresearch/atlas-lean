@@ -8,6 +8,6 @@
 - [Tilted](tilted.md)
 - [Gen Fun](gen-fun.md)
 - [Q](q.md)
-- [H](h.md)
+- [Legendre transform of `Q`](h.md)
 - [Existence and symmetry of the current generating function](q-symm.md)
-- [The fluctuation theorem for currents](h-neg.md)
+- [Legendre-transform symmetry for chord currents](h-neg.md)
