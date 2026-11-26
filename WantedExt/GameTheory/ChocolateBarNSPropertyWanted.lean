@@ -14,6 +14,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Data.Nat.DyadicBlock
 public import MathlibExt.GameTheory.ChocolateBarNSProperty
+public import MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXor
 public import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorEq
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
@@ -37,18 +38,6 @@ a position of Grundy number `0` (Theorem 1 (i), the classical Sprague-Grundy the
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Mex step for chocolate bars with one function.** Let $g : \mathbb{N} \to \mathbb{N}$ have
-the NS property, and let $x, z, c$ be natural numbers with $x \le g(z)$ and $c < x \oplus z$,
-where $\oplus$ is nim-sum (bitwise exclusive or). Then $c = u \oplus z$ for some $u < x$, or
-$c = \min(g(w), x) \oplus w$ for some $w < z$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 3 (a) (`integers-2025-G3-lem-3`). -/
-public theorem_wanted HasNSProperty.exists_of_lt_xor {g : ℕ → ℕ} (hg : HasNSProperty g)
-    {x z c : ℕ} (hx : x ≤ g z) (hc : c < x ^^^ z) :
-    (∃ u < x, c = u ^^^ z) ∨ ∃ w < z, c = min (g w) x ^^^ w
 
 /-- **Mex step for chocolate bars with two functions.** Let $g, h : \mathbb{N} \to \mathbb{N}$
 have the NS property, and let $x, y, z, c$ be natural numbers with $x \le g(z)$, $y \le h(z)$

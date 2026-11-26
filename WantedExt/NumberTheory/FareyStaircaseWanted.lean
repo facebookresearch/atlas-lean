@@ -20,6 +20,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.FareyStaircase
+public import MathlibExt.NumberTheory.FareyStaircaseFareyStaircaseLeFloorDiv
 
 namespace MetaMathlibExt
 
@@ -73,17 +74,6 @@ Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases
 public theorem_wanted floor_gaps_inter_Iic_finite {ε : ℝ} (hε : 0 < ε) :
     ({y : ℝ | ∃ n : ℕ, 1 ≤ n ∧ ∃ x : ℝ, y = ⌊(n : ℝ) * x⌋ - n * fareyStaircase n x} ∩
       Set.Iic (1 - Real.log 2 - ε)).Finite
-
-/-- **Bounds comparing the Farey staircase with $\lfloor nx \rfloor / n$.** For every natural
-number $n \ge 1$ and every real number $x$, the Farey staircase $A_n$ of order $n$ satisfies
-$A_n(x) \le \lfloor nx \rfloor / n \le A_n(x) + (\log n)/n$, where $\log$ is the natural
-logarithm.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Lemma 8 (a) (`integers-2024-A37-lem-8`). -/
-public theorem_wanted fareyStaircase_le_floor_div {n : ℕ} (hn : 1 ≤ n) (x : ℝ) :
-    fareyStaircase n x ≤ ⌊(n : ℝ) * x⌋ / n ∧
-      (⌊(n : ℝ) * x⌋ : ℝ) / n ≤ fareyStaircase n x + Real.log n / n
 
 /-- **Bounds on the increment of the Farey staircase.** Let $n \ge 2$ be a natural number and $x$
 a real number, and write $A_m$ for the Farey staircase of order $m$. Then
