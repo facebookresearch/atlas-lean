@@ -14,7 +14,7 @@ import MathlibExt.AlgebraicGeometry.LogarithmicGeometryFineCharacteristic
 # Sharpness from fine saturated charts
 
 The fine-characteristic theorem implies sharpness for log structures
-admitting fine saturated charts.
+admitting fine saturated charts, and fineness from fine charts alone.
 -/
 
 namespace MathlibExtTest.AlgebraicGeometry.LogarithmicGeometryFineCharacteristic
@@ -36,5 +36,11 @@ example {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)
     exact ⟨P, hP.1, hchart⟩
   exact (WantedExt.AlgebraicGeometry.LogarithmicGeometryWanted.fine_characteristic
     J O L fine p).2
+
+example {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)
+    (O : RingSheaf J) (L : LogStructure J O) (fine : HasFineCharts J L)
+    (p : J.Point.{max u v}) : IsFineMonoid (characteristicAt J L p) :=
+  (WantedExt.AlgebraicGeometry.LogarithmicGeometryWanted.fine_characteristic
+    J O L fine p).1
 
 end MathlibExtTest.AlgebraicGeometry.LogarithmicGeometryFineCharacteristic
