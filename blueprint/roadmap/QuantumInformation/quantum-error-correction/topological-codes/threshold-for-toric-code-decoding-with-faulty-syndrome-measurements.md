@@ -8,7 +8,7 @@ set of detection events, with weights $\log((1 - p)/p)$ for space-like and $\log
 type whose rate is $0$ not being used. Decoding fails when the residual chain $E + E'$ has a nonzero total spatial
 homology class. If $0 \le p, q < 1/2$ and $p(1 - p), q(1 - q) < (4\mu_3^2)^{-1}$, where $\mu_3$ is the connective constant of
 self-avoiding walks on the cubic lattice, the probability of failure is at most
-$L^2 (T + 2) \cdot e^{o(L)} \cdot (4\mu_3^2\, p(1 - p))^{L/2}$; for $T$ at most polynomial in $L$ this falls exponentially in
+$L^2 (T + 1) \cdot e^{o(L)} \cdot (4\mu_3^2\, p(1 - p))^{L/2}$; for $T$ at most polynomial in $L$ this falls exponentially in
 $L$. The bound is in fact for the larger event that $E + E'$ contains a self-avoiding closed path that is homologically
 nontrivial in the spatial directions; such a path alone is not a failure, since two parallel winding paths together
 bound a strip. With the estimate $\mu_3 \approx 4.684$ that Dennis, Kitaev, Landahl and Preskill quote, the conditions
@@ -24,7 +24,7 @@ $E + E'$, needs a self-avoiding closed path in the spacetime slab of length at l
 nontrivial in the spatial directions; such a fixed path with $H$ space-like and $V$ time-like edges lies in
 the error plus the correction with probability at most $(4p(1 - p))^{H/2} (4q(1 - q))^{V/2}$, because the minimality is
 for the weighted length, so the error edges on the path carry at least half of its weight; and the count of
-self-avoiding walks from a fixed vertex of the cubic lattice, at most $\mu_3^{\ell} e^{o(\ell)}$, with the $L^2 (T + 2)$
+self-avoiding walks from a fixed vertex of the cubic lattice, at most $\mu_3^{\ell} e^{o(\ell)}$, with the $L^2 (T + 1)$
 vertices of the slab as starting points. Dennis, Kitaev, Landahl and Preskill state the argument for the complete
 history, counting walks between two time slices; the expansion checks that it applies unchanged in the finite slab.
 
