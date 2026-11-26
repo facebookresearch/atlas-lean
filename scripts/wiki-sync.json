@@ -98260,6 +98260,7 @@
 "MvPowerSeries.constantCoeff_linearForm": "fd8fbc5f2e29ac6f",
 "MvPowerSeries.eq_rescale_map_of_weight_iff": "595cef4feeaff78d",
 "MvPowerSeries.existsUnique_eq_sum_subst_mul_of_basis_residueField_tensor_quotient": "b68c49da9493f348",
+"MvPowerSeries.exists_algHom_apply_X_eq": "9fb40d1a89ad58f7",
 "MvPowerSeries.exists_basis_subst_of_finite_quotient_of_isLocalRing": "340a559783aa0667",
 "MvPowerSeries.expOfConstantCoeffZero": "0d921dcddf363302",
 "MvPowerSeries.expOfConstantCoeffZero_X": "d74fe3ff878fc2fa",
