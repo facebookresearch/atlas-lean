@@ -13681,7 +13681,6 @@
   "MathlibExt/NumberTheory/RationalRightTriangleReciprocalSums": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pythagorean triples"},
   "MathlibExt/NumberTheory/RearickLogarithm": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Rearick logarithm"},
   "MathlibExt/NumberTheory/Recurrences/ABFibonacciIdentities": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "(a, b)-Fibonacci and (a, b)-Lucas numbers"},
-  "MathlibExt/NumberTheory/Recurrences/ABFibonacciIdentitiesConvolutionLucasABFibAB": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "(a, b)-Fibonacci and (a, b)-Lucas numbers"},
   "MathlibExt/NumberTheory/Recurrences/AlfredFibonacciDeterminant": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Determinants of Fibonacci powers"},
   "MathlibExt/NumberTheory/Recurrences/BinaryRecurrenceQuadraticForm": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Decomposable forms on linear recurrences"},
   "MathlibExt/NumberTheory/Recurrences/BrousseauFibonacciReciprocal": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Reciprocal Fibonacci series"},
