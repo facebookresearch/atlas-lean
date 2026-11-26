@@ -10429,6 +10429,7 @@
   "Domains/Economics/Finance/ForwardPriceBounds": {"to": "Economics/asset-pricing-and-financial-risk", "title": "Forward price bounds under trading frictions"},
   "Domains/Economics/Finance/FundedFTAP": {"to": "Economics/asset-pricing-and-financial-risk", "title": "Fundamental theorem of asset pricing and state prices"},
   "Domains/Economics/Finance/FuturesMarginAccount": {"to": "Economics/asset-pricing-and-financial-risk", "title": "Futures margin accounts"},
+  "Domains/Economics/Finance/GlostenMilgrom": {"to": "Economics/asset-pricing-and-financial-risk", "title": "Glosten–Milgrom model"},
   "Domains/Economics/Finance/GrowingPerpetuity": {"to": "Economics/interest-theory-and-fixed-income", "title": "Growing perpetuities"},
   "Domains/Economics/Finance/HansenJagannathanBound": {"to": "Economics/asset-pricing-and-financial-risk", "title": "Hansen–Jagannathan bound"},
   "Domains/Economics/Finance/Immunization": {"to": "Economics/interest-theory-and-fixed-income", "title": "Redington immunization"},

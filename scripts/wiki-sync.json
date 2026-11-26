@@ -67997,6 +67997,7 @@
 "MathlibExt.Probability.Finance.FuturesMarginAccount.futuresMarginGain": "ab84394a9e55ffaf",
 "MathlibExt.Probability.Finance.FuturesMarginAccount.futuresMarginGain_eq": "4f01a88a6531d9e5",
 "MathlibExt.Probability.Finance.FuturesMarginAccount.futuresMarginGain_example": "e9c73dc5651b3796",
+"MathlibExt.Probability.Finance.GlostenMilgrom.sequential_quotes_and_martingale": "e6ed71959c93a7df",
 "MathlibExt.Probability.Finance.HansenJagannathanBound.hansenJagannathan_bound": "a014363b676b93d2",
 "MathlibExt.Probability.Finance.LawOfOnePrice.law_of_one_price": "084623b96510273f",
 "MathlibExt.Probability.Finance.LawOfOnePrice.law_of_one_price_of_no_arbitrage": "ee6d269ee42ed448",
