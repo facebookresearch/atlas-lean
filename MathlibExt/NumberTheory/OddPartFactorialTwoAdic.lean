@@ -533,6 +533,54 @@ public theorem oddSet_product_congr (e : ℕ) (he : 3 ≤ e) :
   simpa only [pow_succ, mul_one, hexact, sub_add_cancel] using
     (hparity.mul_left' (c := 2 ^ e)).add_right 1
 
+namespace oddSet_product_congr_shift
+
+open Finset oddDoubleFactorial_normalized_congr
+
+/-- The odd numbers below `2^(k+1)`, each translated by `x`, form the block of length `2^k`. -/
+private theorem prod_oddBelowTwoPow_eq_block (x : ℤ) (k : ℕ) :
+    ∏ i ∈ oddBelowTwoPow (k + 1), (x + (i : ℤ)) = block x (2 ^ k) := by
+  simp only [oddBelowTwoPow, block, pow_succ]
+  symm
+  refine prod_nbij' (fun i ↦ 2 * i + 1) (fun j ↦ j / 2) ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [mem_filter, mem_Ico, mem_range, Nat.odd_iff, Nat.cast_add, Nat.cast_mul,
+      Nat.cast_one, Nat.cast_ofNat, implies_true] <;> omega
+
+end oddSet_product_congr_shift
+
+open oddDoubleFactorial_normalized_congr oddSet_product_congr_shift in
+/--
+**Shifting the odd numbers below $2^e$ by $2^e$.** For every natural number $e \ge 2$, let $S_e$ be
+the set of odd integers $i$ with $1 \le i < 2^e$. Then
+$$
+\prod_{i \in S_e} i \equiv \prod_{i \in S_e} (2^e + i) \pmod{2^{2e}}.
+$$
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Proposition 9.
+-/
+public theorem oddSet_product_congr_shift (e : ℕ) (he : 2 ≤ e) :
+    (2 : ℤ) ^ (2 * e) ∣
+      ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) -
+        (∏ i ∈ oddBelowTwoPow e, ((2 ^ e + i : ℕ) : ℤ)) := by
+  obtain ⟨k, rfl⟩ : ∃ k, e = k + 2 := ⟨e - 2, by omega⟩
+  -- Pair `i` with `2^e - i`: shifting both by `2^e` changes their product by `2^(2e+1)`.
+  let m := 2 ^ k
+  have hlen : 2 ^ (k + 1) = m + m := by simp [m, pow_succ, mul_two]
+  have hmod : (2 : ℤ) ^ (2 * (k + 2)) = (4 * (m : ℤ)) ^ 2 := by
+    push_cast [m]
+    ring
+  have h₀ : ((∏ i ∈ oddBelowTwoPow (k + 2), i : ℕ) : ℤ) = block 0 (m + m) := by
+    rw [← hlen, ← prod_oddBelowTwoPow_eq_block]
+    simp
+  have h₁ : ∏ i ∈ oddBelowTwoPow (k + 2), ((2 ^ (k + 2) + i : ℕ) : ℤ) = block (4 * m) (m + m) := by
+    rw [← hlen, ← prod_oddBelowTwoPow_eq_block]
+    refine Finset.prod_congr rfl fun i _ ↦ ?_
+    push_cast [m]
+    ring
+  rw [h₀, h₁, hmod]
+  exact (block_shift m).symm.dvd
+
 namespace square_mod_twoPower_fiber_card
 
 /-- In either odd class modulo four, the root parameter runs through exactly two lifts

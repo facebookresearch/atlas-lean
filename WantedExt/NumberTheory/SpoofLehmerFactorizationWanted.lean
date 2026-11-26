@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.LehmerBoundsFormula
 public import MathlibExt.NumberTheory.LehmerBoundsMonotonicity
 public import MathlibExt.NumberTheory.SpoofLehmerFactorization
 public import MathlibExt.NumberTheory.SpoofLehmerResidues
+public import MathlibExt.NumberTheory.SpoofLehmerFactorizationSpoofLehmerBaseNotModEqOnePrime
 
 /-!
 # Spoof Lehmer factorizations (wanted statements)
@@ -50,21 +51,6 @@ public theorem_wanted spoofLehmer_base_not_modEq_one_base (x : Multiset ℕ) (k 
     (hL : IsSpoofLehmer k (spoofOfBases x))
     (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
     ∀ a ∈ x, ∀ b ∈ x, ¬ a ≡ 1 [MOD b]
-
-/-- **Primes dividing the evaluation of a spoof Lehmer factorization.** Let $x_1, \dots, x_r$ be
-natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with these bases, all with
-exponent $1$. Suppose $F$ is a nontrivial spoof $k$-Lehmer factorization for some integer $k$. If
-$p$ is a prime dividing the spoof evaluation $\tilde e(F)$, then $x_i \not\equiv 1 \pmod p$ for
-every $i$. Moreover, if $F$ is even (not every base is odd), then every base $x_i$ is even.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Corollary 2 (`integers-2026-A33-cor-2`). -/
-public theorem_wanted spoofLehmer_base_not_modEq_one_prime (x : Multiset ℕ) (k : ℤ)
-    (hL : IsSpoofLehmer k (spoofOfBases x))
-    (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
-    (∀ p : ℕ, p.Prime → (p : ℤ) ∣ spoofEval (spoofOfBases x) →
-      ∀ a ∈ x, ¬ a ≡ 1 [MOD p]) ∧
-    (¬ IsOddSpoof (spoofOfBases x) → ∀ a ∈ x, Even a)
 
 /-- **Lehmer bounds at the initial segments of a spoof Lehmer factorization.** Let
 $x_1 \le \dots \le x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization
