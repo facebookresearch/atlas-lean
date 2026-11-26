@@ -12100,6 +12100,7 @@
   "MathlibExt/GameTheory/NashCorrelatedBridge": {"to": "GameTheory/noncooperative-games", "title": "Correlated equilibria"},
   "MathlibExt/GameTheory/NimSumLastPile": {"to": "GameTheory/combinatorial-games", "title": "Nim"},
   "MathlibExt/GameTheory/NoRegretDynamics": {"to": "GameTheory/noncooperative-games", "title": "No-regret dynamics"},
+  "MathlibExt/GameTheory/PebblingCompleteEven": {"to": "GameTheory/combinatorial-games", "title": "Impartial pebbling games"},
   "MathlibExt/GameTheory/PebblingCompleteThree": {"to": "GameTheory/combinatorial-games", "title": "Impartial pebbling games"},
   "MathlibExt/GameTheory/PebblingCompleteTwo": {"to": "GameTheory/combinatorial-games", "title": "Impartial pebbling games"},
   "MathlibExt/GameTheory/PenultsOfTak": {"to": "GameTheory/combinatorial-games", "title": "Impartial placement games"},
