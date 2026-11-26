@@ -1,0 +1,3 @@
+# Cells sharing a point coincide
+
+Let $F \subseteq \mathbb{R}^2$ have a trapezoidal decomposition: open vertical trapezoids $T_1, \dots, T_m$ (each $T$ given by reals $x_1 < x_2$ and affine lower and upper side lines $b, u$ with $b(x_1) \le u(x_1)$, $b(x_2) \le u(x_2)$, and $b(x_1) < u(x_1)$ or $b(x_2) < u(x_2)$; its carrier is $\{ (x,y) : x_1 < x < x_2,\ b(x) < y < u(x) \}$) and walls $S_1, \dots, S_k$ (open vertical segments $\{ x_S \} \times (y_1, y_2)$), such that the carriers of distinct cells are disjoint and their union is $F$. If a point $p \in F$ lies in the carriers of two cells $c_1$ and $c_2$, then $c_1 = c_2$.

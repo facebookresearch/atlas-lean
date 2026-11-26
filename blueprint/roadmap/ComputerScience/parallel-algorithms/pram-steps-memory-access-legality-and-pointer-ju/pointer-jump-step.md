@@ -5,3 +5,4 @@ One round of Wyllie pointer jumping as a PRAM step with $n$ processors on memory
 ## Sources
 
 - J. C. Wyllie, *The Complexity of Parallel Computations*, PhD thesis, Cornell University, 1979.
+- J. JáJá, *An Introduction to Parallel Algorithms*, Addison-Wesley, 1992, Section 2.2 (pointer jumping).

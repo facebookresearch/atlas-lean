@@ -17,6 +17,8 @@ Mistake and regret bounds for sequential prediction: perceptron, weighted majori
 - [Online Newton Step for exp-concave losses](online-newton-step-for-exp-concave-losses.md)
 - [Quadratic lower bound for exp-concave functions](quadratic-lower-bound-for-exp-concave-functions.md)
 - [Log-determinant potential of Online Newton Step](log-determinant-potential-of-online-newton-step.md)
+- [Anytime online gradient descent](anytime-online-gradient-descent/README.md)
+- [Lower bound for online convex optimization](lower-bound-for-online-convex-optimization/README.md)
 
 ## Related topics
 

@@ -8,3 +8,4 @@
 - [Assigning a high variable preserves low equivalence](update-high.md)
 - [Matched assignments preserve low equivalence](update.md)
 - [Confinement under a high program counter](big-step-confinement.md)
+- [Low equivalence of stores](low-equiv.md)

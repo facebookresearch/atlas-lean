@@ -9,6 +9,9 @@
 - [Convexity of the residual sum of squares](convex-on-rss.md)
 - [Leave-one-out least squares: leverage and deleted residual](leave-one-out-leverage-residual.md)
 - [The set of least-squares minimizers](the-set-of-least-squares-minimizers.md)
+- [Intercept column of a design matrix](has-intercept-column.md)
+- [Residuals sum to zero at a normal-equation solution with an intercept](sum-residual-eq-zero-of-normal.md)
+- [Least-squares residuals sum to zero with an intercept](sum-residual-eq-zero-of-rss-le.md)
 
 ## Gaussian noise: least squares is maximum likelihood
 

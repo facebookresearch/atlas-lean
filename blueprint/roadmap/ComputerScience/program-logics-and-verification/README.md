@@ -28,4 +28,3 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Program synthesis](program-synthesis/README.md)
 - [Crash safety](crash-safety/README.md)
 - [Refinement](refinement/README.md)
-- [Low equivalence of stores](low-equiv.md)

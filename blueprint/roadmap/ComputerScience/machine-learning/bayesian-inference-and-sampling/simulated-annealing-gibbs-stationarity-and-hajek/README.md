@@ -1,5 +1,7 @@
 # Simulated annealing: Gibbs stationarity and Hajek's depth apparatus
 
+The fixed-temperature Gibbs law, zero-temperature concentration and Hajek's cooling-schedule theorem are stated under [simulated annealing](../../../heuristic-search-and-planning/simulated-annealing/README.md) in heuristic search and planning.
+
 - [Proposal arc](arc.md)
 - [Reachability at a height](reachable-at.md)
 - [Strong irreducibility](strongly-irreducible.md)

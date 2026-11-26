@@ -4,7 +4,7 @@
 
 - [Step](part-01/step.md)
 
-## [Args Step to Task](part-06/README.md)
+## [Softmax to Attn perm](part-06/README.md)
 
 - [Softmax](part-06/softmax.md)
 - [Attention Weights](part-06/attention-weights.md)
