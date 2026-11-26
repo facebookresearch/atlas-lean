@@ -13,6 +13,7 @@ States with these properties are exactly the
 
 ## Depends on
 
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
 - [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Measurements: POVMs, projective measurements and the Born rule](../../quantum-foundations/measurements-povms-projective-measurements-and-the-born-rule.md)
 

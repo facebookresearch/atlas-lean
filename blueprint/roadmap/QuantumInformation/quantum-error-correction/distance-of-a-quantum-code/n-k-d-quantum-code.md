@@ -16,7 +16,7 @@ admit $k = 0$ by a separate convention (a single state, required to be nondegene
 - [Distance of a quantum code (lower bound)](has-distance-at-least.md)
 - [Weight of a Pauli operator](pauli-weight.md)
 
-## Background
+## Proof depends on
 
 - [The quantum Singleton bound](quantum-singleton-bound.md)
 

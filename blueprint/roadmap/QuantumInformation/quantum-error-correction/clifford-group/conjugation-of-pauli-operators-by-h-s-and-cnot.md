@@ -6,6 +6,7 @@ CNOT act on two qubits by $|x, y\rangle \mapsto |x, x \oplus y\rangle$ (first qu
 $$H X H^{*} = Z, \quad H Z H^{*} = X, \quad H Y H^{*} = -Y; \qquad S X S^{*} = Y, \quad S Z S^{*} = Z, \quad S Y S^{*} = -X;$$
 
 $$\mathrm{CNOT}\,(X \otimes I)\,\mathrm{CNOT} = X \otimes X, \quad \mathrm{CNOT}\,(I \otimes X)\,\mathrm{CNOT} = I \otimes X,$$
+
 $$\mathrm{CNOT}\,(Z \otimes I)\,\mathrm{CNOT} = Z \otimes I, \quad \mathrm{CNOT}\,(I \otimes Z)\,\mathrm{CNOT} = Z \otimes Z.$$
 
 So $H$, $S$ and CNOT map Pauli operators to Pauli operators under conjugation: they lie in the Clifford group. Under

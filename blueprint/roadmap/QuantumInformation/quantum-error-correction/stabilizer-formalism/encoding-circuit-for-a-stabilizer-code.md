@@ -14,7 +14,7 @@ Then the encoding
 $$|0 \dots 0\rangle |c_1 \dots c_k\rangle \;\longmapsto\; \lambda\, \bar X_1^{c_1} \cdots \bar X_k^{c_k} \sum_{M \in S} M\, |x_0\rangle
 \qquad (c \in \mathbb{F}_2^k),$$
 
-with the data on the last $k$ qubits and $\lambda > 0$ a constant, is unitary on its domain, its image is an orthonormal basis
+with the data on the last $k$ qubits and $\lambda = 2^{-(n - k - r) - r/2}$, is unitary on its domain, its image is an orthonormal basis
 of the code space on which $\bar X_j$ acts as the bit flip of $c_j$, and it is performed by a circuit of at most $n - k$
 single-qubit gates and at most
 
@@ -31,8 +31,11 @@ Proof: before step (3) qubit $i$ is still $|0\rangle$, since earlier steps act o
 state $|\varphi\rangle$ of the other qubits, step (3) for $i$ maps $|0\rangle_i |\varphi\rangle$ to
 $2^{-1/2}(I + M_i)\, |0\rangle_i |\varphi\rangle$, because $X Z^{b} |0\rangle = |1\rangle$. The $\bar X_j$ commute with every
 $M \in S$, and $X^{x_0}$ commutes with $M_1, \dots, M_r$ (their $Z$ parts vanish on qubits $r + 1, \dots, n - k$) and makes
-$|x_0\rangle$ a $+1$ eigenvector of every $M_{r+j}$, so $\sum_{M \in S} M \bar X^c |x_0\rangle = 2^{n-k-r} \prod_{i \le r} (I + M_i) \bar X^c |x_0\rangle$,
-which the circuit produces up to the factor $2^{r/2}$; a unitary circuit maps the $2^k$ orthonormal inputs to $2^k$
+$|x_0\rangle$ a $+1$ eigenvector of every $M_{r+j}$, so the sum over the whole group, whose $2^{n-k}$ elements are the products of the generators,
+factors as $\sum_{M \in S} M \bar X^c |x_0\rangle = \prod_{j} (I + M_{r+j}) \prod_{i \le r} (I + M_i) \bar X^c |x_0\rangle
+= 2^{n-k-r} \prod_{i \le r} (I + M_i) \bar X^c |x_0\rangle$. The circuit produces
+$\prod_{i \le r} 2^{-1/2}(I + M_i) \bar X^c |x_0\rangle$, which is $\lambda$ times the group sum. In the example
+$S = \langle -Z_1 \rangle$, $n - k - r = 1$ and $r = 0$, the group sum is $2|10\rangle$ and $\lambda = 1/2$; a unitary circuit maps the $2^k$ orthonormal inputs to $2^k$
 orthonormal vectors of the $2^k$-dimensional code space.
 
 ## Depends on

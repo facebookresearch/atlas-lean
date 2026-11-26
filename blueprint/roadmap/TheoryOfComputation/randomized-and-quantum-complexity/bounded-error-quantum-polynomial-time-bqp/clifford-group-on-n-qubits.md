@@ -6,14 +6,17 @@ The $n$-qubit Clifford group is the group of unitaries $U$ on $(\mathbb{C}^2)^{\
 $$\mathcal{C}_n = \{\, U : U \mathcal{P}_n U^* = \mathcal{P}_n \,\}.$$
 
 It contains every scalar unitary $e^{i\theta} I$ and the Pauli group itself, and it is often taken modulo the scalars,
-since $U$ and $e^{i\theta} U$ act identically by conjugation. The Hadamard gate $H$, the phase gate
-$S = \operatorname{diag}(1, i)$ and CNOT, on any qubits and tensored with the identity elsewhere, lie in $\mathcal{C}_n$
-by the [conjugation rules](../../../QuantumInformation/quantum-error-correction/clifford-group/conjugation-of-pauli-operators-by-h-s-and-cnot.md);
-circuits of these gates are Clifford circuits.
+since $U$ and $e^{i\theta} U$ act identically by conjugation. Circuits of the Hadamard gate $H$, the phase gate
+$S = \operatorname{diag}(1, i)$ and CNOT, on any qubits and tensored with the identity elsewhere, are called Clifford
+circuits; that these gates lie in $\mathcal{C}_n$ is a separate result (see Related topics).
 
 ## Depends on
 
 - [The Pauli group on $n$ qubits](pauli-group-on-n-qubits.md)
+
+## Related topics
+
+- [Conjugation of Pauli operators by $H$, $S$ and CNOT](../../../QuantumInformation/quantum-error-correction/clifford-group/conjugation-of-pauli-operators-by-h-s-and-cnot.md): $H$, $S$ and CNOT lie in the Clifford group.
 
 ## Sources
 

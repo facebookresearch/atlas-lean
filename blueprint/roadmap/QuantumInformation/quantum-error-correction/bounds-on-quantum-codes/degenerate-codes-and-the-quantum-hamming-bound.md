@@ -1,13 +1,13 @@
 # Degenerate codes and the quantum Hamming bound
 
-Open problem: is there a degenerate $[[n, k, 2t + 1]]$ code with
+Gottesman asked in 1997 whether there is a degenerate $[[n, k, 2t + 1]]$ code with
 
-$$\sum_{j=0}^{t} 3^j \binom{n}{j} \;>\; 2^{n-k} \,?$$
+$$\sum_{j=0}^{t} 3^j \binom{n}{j} \;>\; 2^{n-k} .$$
 
 The [quantum Hamming bound](quantum-hamming-bound.md) forbids this for codes
 [nondegenerate](../distance-of-a-quantum-code/degenerate-quantum-code.md) for the errors of weight at most $t$; its
-counting argument fails for degenerate codes, where distinct errors may act identically on the code. The question was
-posed in 1997: Gottesman showed that no degenerate stabilizer code correcting one or two errors violates the bound, and
+counting argument fails for degenerate codes, where distinct errors may act identically on the code. Gottesman also
+showed that no degenerate stabilizer code correcting one or two errors violates the bound, and
 reported that the linear programming bounds exclude violations on fewer than $30$ qubits. Dallas, Andreadakis and Lidar
 (2022) showed that no qubit code of distance below $127$ violates it, degenerate or not. This page records the question as
 it was posed and these published partial answers; it does not assert its present status.

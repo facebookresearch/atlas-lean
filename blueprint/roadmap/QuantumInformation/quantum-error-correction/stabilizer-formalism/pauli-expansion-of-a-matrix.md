@@ -1,16 +1,12 @@
 # Every matrix is a combination of Pauli operators
 
-For $k \ge 0$ and $a, b \in \mathbb{F}_2^k$ let $\sigma_{a, b} = i^{|a \wedge b|} X^a Z^b$ be the Hermitian Pauli operator on $k$
+For $k \ge 0$ and $a, b \in \mathbb{F}_2^k$ let $\sigma_{a, b} = i^{|a \wedge b|} X^a Z^b$, with $X^a Z^b$ the [Pauli operator](../css-codes/pauli.md), be the Hermitian Pauli operator on $k$
 qubits, where $|a \wedge b|$ is the number of positions $j$ with $a_j = b_j = 1$. Every complex $2^k \times 2^k$ matrix $A$
 satisfies
 
 $$A = \sum_{a, b \in \mathbb{F}_2^k} c_{a, b}(A)\, \sigma_{a, b}, \qquad c_{a, b}(A) = 2^{-k} \operatorname{Tr}(\sigma_{a, b} A).$$
 
 So the $4^k$ Pauli operators span, and hence form a basis of, the space of $2^k \times 2^k$ matrices.
-
-## Depends on
-
-- [Pauli operator $X^a Z^b$ on $n$ qubits](../css-codes/pauli.md)
 
 ## Sources
 
