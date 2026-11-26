@@ -28,7 +28,8 @@ public import Mathlib.Topology.Algebra.MvPolynomial
 /-!
 # Whole-space heat smoothing
 
-For bounded measurable `g` on `EuclideanSpace ℝ (Fin n)`, the heat convolution
+For `g` on `EuclideanSpace ℝ (Fin n)` that is a.e. strongly measurable with `|g y| ≤ M` for
+almost every `y`, the heat convolution
 `u(t, x) = ∫ y, g y * heatKernel (EuclideanSpace ℝ (Fin n)) t (x - y)`, where
 `heatKernel E t z = (4πt)^(-n/2) * exp(-‖z‖² / (4t))` is the heat kernel of
 `MathlibExt.Analysis.PDE.HeatKernel`, is smooth (`ContDiffOn ℝ ∞`, i.e. `C^∞`, not analytic) at
@@ -43,15 +44,15 @@ vanishes there (`0 ^ (-n / 2) = 0`), so `heatConvolution n g 0 = 0` for every `g
 ## Main definitions
 
 - `heatConvolution n g t x`: the heat convolution `∫ y, g y * heatKernel _ t (x - y)`, for
-  `t > 0`.
+  `t > 0`. It accepts any `g`; the results take bounded data.
 
 ## Main results
 
-- `heat_convolution_smooth`: the heat convolution is `ContDiffOn ℝ ∞` at positive time. The
-  target is `∞` (`C^∞`), not `⊤`: under current Mathlib `ContDiffOn ⊤` means analytic (`ω`),
-  while `∞` means `C^∞` (all finite orders). Analyticity is a separate follow-up, not proved
-  here.
-- `heat_convolution_satisfies_heat_equation`: at positive time, `u_t = Δu`.
+- `heat_convolution_smooth`: for a.e. strongly measurable `g` with `|g| ≤ M` a.e., the heat
+  convolution is `ContDiffOn ℝ ∞` at positive time. The target is `∞` (`C^∞`), not `⊤`: under
+  current Mathlib `ContDiffOn ⊤` means analytic (`ω`), while `∞` means `C^∞` (all finite
+  orders). Analyticity is a separate follow-up, not proved here.
+- `heat_convolution_satisfies_heat_equation`: for the same `g`, `u_t = Δu` at positive time.
 - `heat_convolution_const_one`: the convolution of `1` is `1` at positive time.
 - `heat_semigroup_generator_eq_laplacian`: for finite `p ≥ 1` and compactly supported `C²` `φ`,
   `‖heatConvolution n φ t - φ - t * Δφ‖_p / t → 0` as `t → 0⁺`, i.e. the right-hand difference
@@ -110,10 +111,15 @@ open Filter
 `Φ n t x = (4πt)^(-n/2) exp(-‖x‖² / (4t))`. -/
 local notation:max "Φ" n:max => heatKernel (EuclideanSpace ℝ (Fin n))
 
-/-- Gaussian heat convolution of bounded measurable data `g` at time `t`: the convolution of `g`
-with the heat kernel `heatKernel (EuclideanSpace ℝ (Fin n)) t`. It is meant for `t > 0`. The
-formula is not set to `g` at `t = 0`: for `n > 0` the kernel vanishes there
-(`0 ^ (-n / 2) = 0`), so `heatConvolution n g 0 = 0` for every `g`, the constant `1` included. -/
+/-- **Heat convolution.** For `g : EuclideanSpace ℝ (Fin n) → ℝ` and a time `t`,
+`heatConvolution n g t x = ∫ y, g y * heatKernel (EuclideanSpace ℝ (Fin n)) t (x - y)`, the
+convolution of `g` with the heat kernel at time `t`. The definition accepts any `g`: where
+`y ↦ g y * heatKernel _ t (x - y)` is not integrable, the Bochner integral is `0`. The results of
+this file take bounded data: `heat_convolution_smooth` and
+`heat_convolution_satisfies_heat_equation` assume `g` a.e. strongly measurable with `|g y| ≤ M`
+for almost every `y`, and the generator results take compactly supported `C²` data. It is meant
+for `t > 0`: for `n > 0` the kernel vanishes at `t = 0` (`0 ^ (-n / 2) = 0`), so
+`heatConvolution n g 0 = 0` for every `g`, the constant `1` included. -/
 noncomputable def heatConvolution (n : ℕ) (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) : ℝ :=
   ∫ (y : EuclideanSpace ℝ (Fin n)), g y * heatKernel (EuclideanSpace ℝ (Fin n)) t (x - y)
@@ -3814,8 +3820,10 @@ section FinalGlueH3
 
 open scoped ContDiff
 
-/-- Whole-space heat smoothing: the Gaussian heat convolution of bounded
-measurable data is `ContDiffOn ℝ ∞` (`C^∞`) at positive time. -/
+/-- **The heat convolution is smooth at positive time.** Let `g` be a.e. strongly measurable on
+`EuclideanSpace ℝ (Fin n)` with `|g y| ≤ M` for almost every `y`, for some `M`. Then
+`(t, x) ↦ heatConvolution n g t x` is `ContDiffOn ℝ ∞` (`C^∞`, not analytic) on
+`(0, ∞) × EuclideanSpace ℝ (Fin n)`. -/
 theorem heat_convolution_smooth (n : ℕ) {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M) :
@@ -5639,7 +5647,10 @@ end H4cFinal
 
 section FinalGlueH4
 
-/-- At positive time the heat convolution satisfies `u_t = Δu`. -/
+/-- **The heat convolution solves the heat equation.** Let `g` be a.e. strongly measurable on
+`EuclideanSpace ℝ (Fin n)` with `|g y| ≤ M` for almost every `y`, for some `M`, and let
+`u t x = heatConvolution n g t x`. Then at every time `t > 0` and point `x`, `u_t = Δu`: the
+derivative of `s ↦ u s x` at `t` equals the Laplacian of `u t` at `x`. -/
 theorem heat_convolution_satisfies_heat_equation (n : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
@@ -5670,8 +5681,9 @@ open scoped Topology
 open Filter
 
 
-/-- Mass preservation on constant data: at positive time the convolution of `1` is `1`. After the
-translation `y ↦ x - y`, this is the total mass `integral_heatKernel` of the heat kernel. -/
+/-- **The heat convolution preserves the constant one.** For `t > 0` and every `x`,
+`heatConvolution n (fun _ => 1) t x = 1`. After the translation `y ↦ x - y`, this is the total
+mass `integral_heatKernel` of the heat kernel. -/
 theorem heat_convolution_const_one (n : ℕ) {t : ℝ} (ht : 0 < t)
     (x : EuclideanSpace ℝ (Fin n)) :
     heatConvolution n (fun _ => 1) t x = 1 := by
@@ -12229,12 +12241,12 @@ end P1Ennreal
 
 section FinalGlueH5
 
-/-- The `L^p` heat-semigroup generator equals the Laplacian on compactly supported `C²` data:
-for finite `p ≥ 1`, the right-hand difference quotient `(heatConvolution n φ t - φ) / t`
-converges to `Δφ` in `L^p` as `t → 0⁺`, i.e. `‖heatConvolution n φ t - φ - t * Δφ‖_p / t → 0`.
-This is stated directly with `eLpNorm` in `ENNReal` (the `ENNReal`-valued form is the genuine
-`L^p` statement: `ENNReal.toReal` sends `⊤` to `0`, so a real-valued limit alone could report
-convergence even when the remainder is not in `L^p`). -/
+/-- **The heat semigroup's generator is the Laplacian, in `ENNReal`.** Let `1 ≤ p < ∞` and let
+`φ` be a compactly supported `C²` function on `EuclideanSpace ℝ (Fin n)`. Then
+`eLpNorm (heatConvolution n φ t - φ - t * Δφ) p volume / t → 0` as `t → 0⁺`: the right-hand
+difference quotient `(heatConvolution n φ t - φ) / t` converges to `Δφ` in `L^p`. This
+`ENNReal`-valued form is the genuine `L^p` statement: `ENNReal.toReal` sends `⊤` to `0`, so a
+real-valued limit alone could report convergence even when the remainder is not in `L^p`. -/
 theorem heat_semigroup_generator_eq_laplacian_ennreal (n : ℕ) {p : ENNReal}
     (hp1 : 1 ≤ p) (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) :
@@ -12413,10 +12425,11 @@ theorem heat_semigroup_generator_eq_laplacian_ennreal (n : ℕ) {p : ENNReal}
         smallBall_integral_bound largeCompl_integral_bound)
       (eLpNorm_generator_eventually_ne_top n hp1 hp hφ hφ_supp)
 
-/-- The `L^p` heat-semigroup generator equals the Laplacian on compactly supported `C²` data:
-for finite `p ≥ 1`, `‖heatConvolution n φ t - φ - t * Δφ‖_p / t → 0` as `t → 0⁺`, the
-right-hand difference quotient converging to `Δφ` in `L^p` (real-valued corollary of the
-`ENNReal` form). -/
+/-- **The heat semigroup's generator is the Laplacian.** Let `1 ≤ p < ∞` and let `φ` be a
+compactly supported `C²` function on `EuclideanSpace ℝ (Fin n)`. Then
+`‖heatConvolution n φ t - φ - t * Δφ‖_p / t → 0` as `t → 0⁺`: the right-hand difference quotient
+`(heatConvolution n φ t - φ) / t` converges to `Δφ` in `L^p`. This is the real-valued corollary
+of `heat_semigroup_generator_eq_laplacian_ennreal`. -/
 theorem heat_semigroup_generator_eq_laplacian (n : ℕ) {p : ENNReal}
     (hp1 : 1 ≤ p) (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) :
