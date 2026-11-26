@@ -47,6 +47,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Factors
 public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.SuperMZumkeller
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerFourNotKmPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff
 
@@ -103,13 +104,5 @@ theorem_wanted isSuperMZumkeller_two_pow_mul_prod_primes (k : ℕ)
     (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime) (hs2 : 2 ∉ s)
     (hcard : 3 ≤ s.card) :
     IsSuperMZumkeller ((2 : ℕ) ^ k * ∏ p ∈ s, p)
-
-/-- **$4$ is super-m-Zumkeller but not $k$-m-perfect for $k \ge 2$.** The number $4$ is
-super-m-Zumkeller, and for no natural number $k \ge 2$ is $4$ a $k$-m-perfect number. This is the
-paper's counterexample to the converse of Theorem 6.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 6. -/
-theorem_wanted isSuperMZumkeller_four_not_kmPerfect :
-    IsSuperMZumkeller 4 ∧ ∀ k : ℕ, 2 ≤ k → ¬ IsKMPerfect k 4
 
 end MathlibExt.NumberTheory.SuperMZumkellerWanted
