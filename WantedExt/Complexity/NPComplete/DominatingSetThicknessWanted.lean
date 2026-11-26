@@ -27,7 +27,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 public import WantedExt.Complexity.NPComplete.GraphThicknessWanted
 
 @[expose] public section
@@ -55,7 +55,7 @@ fixed `k ≥ 1`. Membership in NP: the certificate is `V'` together with the par
 `E₁, …, E_k`; domination is checked directly and each `Gᵢ` by a polynomial-time planarity test.
 
 The instance, the graph and the question are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]: a simple graph on `Fin n` given by
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]: a simple graph on `Fin n` given by
 an edge list, and the bound `K`). The restriction adds `0 < K ≤ |V|` as in [GT2], and that the
 graph has thickness at most `k`: the question of GRAPH THICKNESS
 (`GraphThickness.GraphThicknessFeasible` from

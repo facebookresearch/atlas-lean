@@ -14,6 +14,7 @@ public import MathlibExt.NumberTheory.SymmetricPowerSums
 public import MathlibExt.NumberTheory.CyclotomicTraceMetricCyclotomicDistMomentTwo
 public import MathlibExt.NumberTheory.CyclotomicTraceMetricEventuallyAdjoinAddNsmulEq
 public import MathlibExt.NumberTheory.CyclotomicTraceMetricAdjoinLeAdjoinOfCyclotomicTraceDistLt
+public import MathlibExt.NumberTheory.CyclotomicTraceMetricCyclotomicBoxDiam
 
 /-!
 # A trace metric on the `p`-th cyclotomic field
@@ -40,28 +41,6 @@ namespace MetaMathlibExt
 open IsCyclotomicExtension
 
 variable {p : ℕ} [NeZero p] {K : Type*} [Field K] [CharZero K] [IsCyclotomicExtension {p} ℚ K]
-
-/-- **Diameter of the cyclotomic box.** Let $p$ be an odd prime, let $N$ be a natural number, and
-let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with fixed
-primitive $p$-th root of unity $\omega \in K$. Let $d(\alpha, \beta) = \lVert \alpha - \beta \rVert$
-be the trace metric on $K$, where $\lVert \gamma \rVert \ge 0$ and
-$\lVert \gamma \rVert^2 = \sum_{j=1}^{p-1} \operatorname{Tr}_{K/\mathbb{Q}}(\gamma \omega^j)^2$.
-Let $B(p, N)$ be the set of integer vectors $a = (a_1, \dots, a_{p-1})$ with $-N \le a_i \le N$
-for all $i$, and write $\alpha_a = a_1 \omega + \dots + a_{p-1} \omega^{p-1}$. Then
-$d(\alpha_a, \alpha_b) \le 2 N p \sqrt{p - 1}$ for all $a, b \in B(p, N)$, and this bound is
-attained: $d(\alpha, -\alpha) = 2 N p \sqrt{p - 1}$ for
-$\alpha = N \omega - N \omega^2 + \dots + N \omega^{p-2} - N \omega^{p-1}$, the point whose
-coefficient of $\omega^i$ is $(-1)^{i-1} N$.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Lemma 2 (`integers-2025-A10-lem-2`). -/
-public theorem_wanted cyclotomicBox_diam (hp : p.Prime) (hp2 : p ≠ 2) (N : ℕ) :
-    (∀ a ∈ cyclotomicBox p N, ∀ b ∈ cyclotomicBox p N,
-      cyclotomicTraceDist p (cyclotomicLatticePoint K a) (cyclotomicLatticePoint K b) ≤
-        2 * N * p * √(p - 1 : ℝ)) ∧
-    cyclotomicTraceDist p (cyclotomicLatticePoint K fun i : Fin (p - 1) => (N : ℤ) * (-1) ^ i.val)
-        (cyclotomicLatticePoint K fun i : Fin (p - 1) => -((N : ℤ) * (-1) ^ i.val)) =
-      2 * N * p * √(p - 1 : ℝ)
 
 /-- **Fourth-power sum of coordinate differences over a box.** Let $p$ be a prime and $N$ a
 natural number, and let $B(p, N)$ be the set of integer vectors $a = (a_1, \dots, a_{p-1})$
