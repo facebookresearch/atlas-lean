@@ -3,7 +3,6 @@
 ## Scheme
 
 - [Branch ideal of a specialization](branch-ideal.md)
-- [Membership in the branch ideal](mem-branch-ideal-iff.md)
 
 ## Ideal Sheaf Data
 

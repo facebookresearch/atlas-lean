@@ -3,7 +3,6 @@
 - [Pullback two-square of a commutative square of schemes](pullback-two-square.md)
 - [Base-change natural transformation for sheaves of modules](base-change-nat-trans.md)
 - [Base-change morphism for sheaves of modules](base-change-hom.md)
-- [Components of the base-change transformation](base-change-nat-trans-app.md)
 - [Naturality of the base-change morphism](base-change-hom-naturality.md)
 - [Base-change morphism and the counit](base-change-hom-counit.md)
 - [Base-change morphism and the unit](unit-base-change-hom.md)
