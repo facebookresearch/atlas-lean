@@ -1,12 +1,14 @@
 # Equilibria and harmless delay in the two-strain cross-immunity model
 
 **Model.** Let $S$ be individuals susceptible to both strains, $I_1$ and $I_2$ those infectious with the established strain 1 and the emerging strain 2, and $R_l$ those recovered from strain 1, immune to it, and susceptible to strain 2 once a cross-immunity period $\tau \ge 0$ has elapsed. With positive parameters (recruitment $a$, natural death $d$, death rates $d_1, d_2$ of infected individuals, recovery rates $\gamma_1, \gamma_2$, transmission rates $\beta_1, \beta_2$),
+
 $$\begin{aligned}
 S' &= a - dS - \beta_1 S I_1 - \beta_2 S I_2,\\
 I_1' &= \beta_1 S I_1 - (\gamma_1 + d_1) I_1,\\
 I_2' &= \beta_2 S I_2 + \beta_2 R_l I_2 - (\gamma_2 + d_2) I_2,\\
 R_l' &= \gamma_1 I_1(t - \tau) - \beta_2 R_l I_2 - d R_l .
 \end{aligned}$$
+
 Nonnegative initial data give nonnegative, bounded solutions.
 
 **Reproduction numbers and equilibria.** The next-generation method gives $R_i = a\beta_i/(d(d_i + \gamma_i))$, $i = 1, 2$. The equilibria are

@@ -1,6 +1,7 @@
 # SIR model with imperfect testing and quarantine
 
 A population of constant size $N$ is split into susceptible $S$, infectious $I$ and recovered $R$ individuals, each with a quarantined counterpart $Q_S, Q_I, Q_R$. Individuals are tested for active infection at per-capita rate $\rho$ with sensitivity $\sigma_A$ and specificity $\tau_A$ (so false positives move $S$ and $R$ into quarantine at rate $\rho(1-\tau_A)$), quarantined individuals are tested for antibodies at rate $\phi$ with sensitivity $\sigma_B$ and specificity $\tau_B$ (releasing $Q_R$ at rate $\phi\sigma_B$ and, by false positives, $Q_S$ at rate $\phi(1-\tau_B)$), immunity wanes at rate $\alpha$, recovery occurs at rate $\gamma$ and transmission at rate $\beta$ among non-quarantined individuals:
+
 $$\begin{aligned}
 S' &= -\frac{\beta S I}{N - Q_S - Q_I - Q_R} + \alpha R + \phi(1-\tau_B)Q_S - \rho(1-\tau_A)S,\\
 Q_S' &= \rho(1-\tau_A)S - \phi(1-\tau_B)Q_S,\\
