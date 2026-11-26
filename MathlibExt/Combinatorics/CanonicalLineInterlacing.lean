@@ -24,7 +24,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Interlacing on the canonical line
 
-The symmetric basis polynomial `pBasis d 0` interlaces a perturbation of `pBasis (d + 1) 0`.
+The symmetric basis polynomial `pBasis d 0` interlaces `pBasis (d + 1) 0` and its positive
+perturbations by multiples of `(2 * X + 1) * pBasis d 0`.
 -/
 
 namespace MetaMathlibExt
@@ -318,6 +319,19 @@ private lemma paired_interlaces {n : ℕ} (a : Fin n → Width) (b : Width) (c :
   · simp [rootList, deg, natDegree_C_mul hc]
 
 end pBasis_zero_interlaces_perturbation
+
+open pBasis_zero_interlaces_perturbation in
+/-- **$p^d_0$ CL-interlaces $p^{d+1}_0$.** For every natural number $d \ge 1$, the symmetric
+basis polynomial $p^d_0$ CL-interlaces $p^{d+1}_0$.
+
+Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
+INTEGERS 25 (2025), Article A68, Lemma 4.
+-/
+public theorem pBasis_zero_interlaces_succ (d : ℕ) (hd : 0 < d) :
+    CLInterlaces (pBasis d 0) (pBasis (d + 1) 0) := by
+  rw [basis_eq_paired d hd, basis_eq_paired (d + 1) (Nat.succ_pos d)]
+  simpa only [widths, C_1, one_mul] using
+    paired_interlaces (widths d) (halfWidth d) 1 one_ne_zero
 
 open pBasis_zero_interlaces_perturbation in
 /-- **CL-interlacing of $p^d_0$ with a perturbation of $p^{d+1}_0$.** For every natural number

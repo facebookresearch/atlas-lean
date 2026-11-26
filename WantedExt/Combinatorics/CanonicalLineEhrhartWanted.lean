@@ -46,7 +46,10 @@ Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Ca
 INTEGERS 25 (2025), Article A68, characteristic case of the `pᵈⱼ` definition.
 -/
 public theorem pBasis_two_zero : pBasis 2 0 = 2 * (X ^ 2 + X + 1) := by
-  simp [pBasis, bBasis, Finset.prod_range_succ]
+  simp only [pBasis, mul_zero, OfNat.zero_ne_ofNat, ↓reduceIte, bBasis, Nat.cast_ofNat,
+    CharP.cast_eq_zero, sub_zero, Int.cast_sub, Int.cast_ofNat, Int.cast_natCast, map_sub,
+    map_natCast, Finset.prod_range_succ, Finset.range_one, Finset.prod_singleton, Nat.cast_one,
+    tsub_zero, sub_self, zero_sub, Int.cast_neg, map_neg, neg_zero, add_zero]
   have hC2 : (C (2 : ℂ) : Polynomial ℂ) = 2 := by
     rw [show (2 : ℂ) = 1 + 1 by ring, map_add, C_1]
     ring
@@ -215,15 +218,6 @@ public def canonicalLineRootSet (d : ℕ) : Set ℂ :=
   {z | z ∈ canonicalLine ∧
     ∃ f : Polynomial ℂ, f.natDegree = d ∧ IsCL f ∧ HasDiamond f ∧ f.IsRoot z}
 
-/-- **$p^d_0$ CL-interlaces $p^{d+1}_0$.** For every natural number $d \ge 1$, the symmetric
-basis polynomial $p^d_0$ CL-interlaces $p^{d+1}_0$.
-
-Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
-INTEGERS 25 (2025), Article A68, Lemma 4.
--/
-public theorem_wanted pBasis_zero_interlaces_succ (d : ℕ) (hd : 0 < d) :
-    CLInterlaces (pBasis d 0) (pBasis (d + 1) 0)
-
 /-- **Fisk's Leibniz rule for interlacing.** Let $f, f_1, g, g_1$ be real polynomials with
 positive leading coefficients, each having only real roots, such that $f$ and $g$ have no common
 real root, $f_1$ interlaces $f$, and $g_1$ interlaces $g$. Then $f_1 g_1$ interlaces
@@ -378,7 +372,8 @@ $(\diamondsuit)$ is a nonempty connected subset of $\mathbb{C}$.
 Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Canonical Line*,
 INTEGERS 25 (2025), Article A68, Theorem 6.
 -/
-public theorem_wanted canonicalLineRootSet_isConnected (d : ℕ) (hd : 0 < d) : IsConnected (canonicalLineRootSet d)
+public theorem_wanted canonicalLineRootSet_isConnected (d : ℕ) (hd : 0 < d) :
+    IsConnected (canonicalLineRootSet d)
 
 /-- **Parameter bound for SNN CL-polynomials.** Let $f$ be a complex polynomial of degree $d$
 that is a CL-polynomial with real scale $a$ and list of real parameters $c_1, \dots, c_m$, and
@@ -491,7 +486,8 @@ Source: Max Kölbl, *Properties of Ehrhart Polynomials Whose Roots Lie on the Ca
 INTEGERS 25 (2025), Article A68, Proposition 4.
 -/
 public theorem_wanted clspan_ehrhart_subset_standardReflexiveSimplex {d : ℕ} (hd : d ≤ 9)
-    (vertices : Finset (Fin d → ℤ)) (hP : IsReflexive (latticePolytope vertices)) (E E' : Polynomial ℂ)
+    (vertices : Finset (Fin d → ℤ)) (hP : IsReflexive (latticePolytope vertices))
+    (E E' : Polynomial ℂ)
     (hE : EhrhartCounts vertices E) (hE' : EhrhartCounts (standardReflexiveSimplexVertices d) E') :
     clspan E ⊆ clspan E'
 

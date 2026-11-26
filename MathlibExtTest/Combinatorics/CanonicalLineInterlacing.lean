@@ -18,6 +18,18 @@ open MetaMathlibExt Polynomial
 
 noncomputable section
 
+-- The first admissible pair is the linear basis polynomial and its unperturbed quadratic successor.
+example : CLInterlaces (2 * X + 1) (2 * (X ^ 2 + X + 1)) := by
+  convert pBasis_zero_interlaces_succ 1 (by decide) using 1 <;>
+    apply Polynomial.funext <;> intro z <;>
+    norm_num [pBasis, bBasis, Finset.prod_range_succ] <;> ring
+
+-- The next pair checks interlacing from even degree to odd degree.
+example : CLInterlaces (2 * (X ^ 2 + X + 1)) (2 * X ^ 3 + 3 * X ^ 2 + 13 * X + 6) := by
+  convert pBasis_zero_interlaces_succ 2 (by decide) using 1 <;>
+    apply Polynomial.funext <;> intro z <;>
+    norm_num [pBasis, bBasis, Finset.prod_range_succ] <;> ring
+
 -- At the first admissible degree, w = 1 gives a quadratic with roots (-1 ± i)/2.
 example : CLInterlaces (2 * X + 1) (6 * X ^ 2 + 6 * X + 3) := by
   convert pBasis_zero_interlaces_perturbation 1 (by decide) 1 (by norm_num) using 1 <;>
