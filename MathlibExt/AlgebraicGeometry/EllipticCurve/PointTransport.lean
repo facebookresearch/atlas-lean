@@ -47,7 +47,12 @@ coordinate formula).
 
 `mapPoint` is Mathlib's `Affine.Point.map` for the `F`-algebra structure
 that `f` puts on `k`, applied to `W₀.toAffine.Point`, which is the
-self-base-change `(W₀.toAffine⁄F).Point` by definition.
+self-base-change `(W₀.toAffine⁄F).Point` by definition. It takes the ring
+homomorphism itself, so it also applies to an endomorphism `F →+* F`, where
+installing `f.toAlgebra` next to `Algebra.id F` does not elaborate. Zero,
+addition, negation, scalar multiples and additive order go through Mathlib's
+generic lemmas: `map_zero`, `map_add`, `map_neg`, `map_nsmul`, `map_zsmul`, and
+`addOrderOf_injective` with `mapPoint_injective`.
 `Point.equivOfVariableChangeEq` transports
 `Affine.Point.variableChangeAddEquiv` along the equality of curves.
 -/
@@ -58,20 +63,17 @@ namespace WeierstrassCurve
 
 universe u v w
 
-variable {F : Type u} {k : Type v} [Field F] [Field k] (f : F →+* k)
-  {W₀ : WeierstrassCurve F}
+variable {F : Type u} {k : Type v} [Field F] [Field k] [DecidableEq F] [DecidableEq k]
+  (f : F →+* k) {W₀ : WeierstrassCurve F}
 
 /-- **Affine points under a ring homomorphism.** For a Weierstrass curve $W$ over a field $F$
-and a ring homomorphism $f \colon F \to k$ into a field $k$, the map from the nonsingular points
-of $W$ to those of the curve obtained by applying $f$ to the coefficients of $W$; it sends the
-point at infinity to the point at infinity and an affine point $(x, y)$ to $(f(x), f(y))$. -/
-noncomputable def mapPoint : W₀.toAffine.Point → (W₀.map f).toAffine.Point :=
+and a ring homomorphism $f \colon F \to k$ into a field $k$, the homomorphism from the group of
+nonsingular points of $W$ to the group of nonsingular points of the curve obtained by applying $f$
+to the coefficients of $W$; it sends the point at infinity to the point at infinity and an affine
+point $(x, y)$ to $(f(x), f(y))$. -/
+noncomputable def mapPoint : W₀.toAffine.Point →+ (W₀.map f).toAffine.Point :=
   letI := f.toAlgebra
-  open scoped Classical in Affine.Point.map (W' := W₀.toAffine) (Algebra.ofId F k)
-
-@[simp]
-lemma mapPoint_zero : mapPoint f (0 : W₀.toAffine.Point) = 0 :=
-  rfl
+  Affine.Point.map (W' := W₀.toAffine) (Algebra.ofId F k)
 
 lemma mapPoint_some {x y : F} (h : W₀.toAffine.Nonsingular x y) :
     mapPoint f (.some x y h) =
@@ -80,44 +82,7 @@ lemma mapPoint_some {x y : F} (h : W₀.toAffine.Nonsingular x y) :
 
 lemma mapPoint_injective : Function.Injective (mapPoint f (W₀ := W₀)) :=
   letI := f.toAlgebra
-  open scoped Classical in Affine.Point.map_injective (W' := W₀.toAffine) (Algebra.ofId F k)
-
-theorem mapPoint_add [DecidableEq F] [DecidableEq k]
-    (P Q : W₀.toAffine.Point) :
-    mapPoint f (P + Q) = mapPoint f P + mapPoint f Q :=
-  letI := f.toAlgebra
-  map_add (Affine.Point.map (W' := W₀.toAffine) (Algebra.ofId F k)) P Q
-
-/-- **Ring homomorphisms induce homomorphisms of point groups.** For a Weierstrass curve $W$ over
-a field $F$ and a ring homomorphism $f \colon F \to k$ into a field $k$, the map of nonsingular
-points that sends the point at infinity to the point at infinity and $(x, y)$ to $(f(x), f(y))$
-is a homomorphism from the group of points of $W$ to the group of points of the curve obtained by
-applying $f$ to the coefficients of $W$. -/
-@[simps]
-noncomputable def mapPointHom [DecidableEq F] [DecidableEq k] :
-    W₀.toAffine.Point →+ (W₀.map f).toAffine.Point where
-  toFun := mapPoint f
-  map_zero' := rfl
-  map_add' := mapPoint_add f
-
-lemma mapPointHom_injective [DecidableEq F] [DecidableEq k] :
-    Function.Injective (mapPointHom f (W₀ := W₀)) :=
-  mapPoint_injective f
-
-theorem addOrderOf_mapPoint [DecidableEq F] [DecidableEq k]
-    (P : W₀.toAffine.Point) :
-    addOrderOf (mapPoint f P) = addOrderOf P :=
-  addOrderOf_injective (mapPointHom f (W₀ := W₀)) (mapPoint_injective f) P
-
-theorem mapPoint_nsmul [DecidableEq F] [DecidableEq k] (n : ℕ)
-    (P : W₀.toAffine.Point) :
-    mapPoint f (n • P) = n • mapPoint f P :=
-  map_nsmul (mapPointHom f (W₀ := W₀)) n P
-
-theorem mapPoint_neg [DecidableEq F] [DecidableEq k]
-    (P : W₀.toAffine.Point) :
-    mapPoint f (-P) = -mapPoint f P :=
-  map_neg (mapPointHom f (W₀ := W₀)) P
+  Affine.Point.map_injective (W' := W₀.toAffine) (Algebra.ofId F k)
 
 /-- **Points of equal Weierstrass curves.** For Weierstrass curves $W_1 = W_2$ over a field $L$,
 the additive equivalence between their groups of nonsingular points induced by the equality; it

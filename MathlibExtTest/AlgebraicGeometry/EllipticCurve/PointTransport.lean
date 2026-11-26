@@ -29,21 +29,36 @@ example {x y : F} (h : W₀.toAffine.Nonsingular x y) :
         ((W₀.toAffine.map_nonsingular f.injective x y).mpr h) :=
   mapPoint_some f h
 
-/-- `mapPointHom` is Mathlib's `Affine.Point.map` for the `F`-algebra structure `f.toAlgebra`
+/-- `mapPoint` is Mathlib's `Affine.Point.map` for the `F`-algebra structure `f.toAlgebra`
 on `k`, read on `W₀.toAffine.Point`, the self-base-change `(W₀.toAffine⁄F).Point`. -/
 example :
     letI := f.toAlgebra
-    (mapPointHom f : W₀.toAffine.Point →+ (W₀.map f).toAffine.Point) =
+    (mapPoint f : W₀.toAffine.Point →+ (W₀.map f).toAffine.Point) =
       Affine.Point.map (W' := W₀.toAffine) (Algebra.ofId F k) :=
   rfl
 
-/-- The induced group homomorphism preserves addition, scalar
-multiplication, and additive order, with all hypotheses instantiated. -/
-example (P Q : W₀.toAffine.Point) (n : ℕ) :
-    mapPoint f (P + Q) = mapPoint f P + mapPoint f Q ∧
-      mapPoint f (n • P) = n • mapPoint f P ∧
-        addOrderOf (mapPoint f P) = addOrderOf P :=
-  ⟨mapPoint_add f P Q, mapPoint_nsmul f n P, addOrderOf_mapPoint f P⟩
+/-- Mathlib's generic lemmas for additive homomorphisms give the laws of `mapPoint`: it
+preserves zero, addition, negation and natural and integer scalar multiples, and, being
+injective, additive order. -/
+example (P Q : W₀.toAffine.Point) (n : ℕ) (m : ℤ) :
+    mapPoint f (0 : W₀.toAffine.Point) = 0 ∧ mapPoint f (P + Q) = mapPoint f P + mapPoint f Q ∧
+      mapPoint f (-P) = -mapPoint f P ∧ mapPoint f (n • P) = n • mapPoint f P ∧
+        mapPoint f (m • P) = m • mapPoint f P ∧ addOrderOf (mapPoint f P) = addOrderOf P :=
+  ⟨map_zero (mapPoint f), map_add (mapPoint f) P Q, map_neg (mapPoint f) P,
+    map_nsmul (mapPoint f) n P, map_zsmul (mapPoint f) m P,
+    addOrderOf_injective (mapPoint f) (mapPoint_injective f) P⟩
+
+/-- `simp` normalizes `mapPoint` of zero, sums and negatives with the generic lemmas. -/
+example (P Q : W₀.toAffine.Point) :
+    mapPoint f (P + -Q + 0) = mapPoint f P + -mapPoint f Q := by
+  simp
+
+/-- `mapPoint` also takes an endomorphism `σ : F →+* F`, where `σ.toAlgebra` would clash with
+`Algebra.id F`; the generic lemmas apply to it unchanged. -/
+example (σ : F →+* F) (P Q : W₀.toAffine.Point) :
+    mapPoint σ (P + Q) = mapPoint σ P + mapPoint σ Q ∧
+      Function.Injective (mapPoint σ (W₀ := W₀)) :=
+  ⟨map_add (mapPoint σ) P Q, mapPoint_injective σ⟩
 
 /-- The additive equivalence from an equality of curves is the
 identity on the diagonal. -/
