@@ -15,3 +15,4 @@
 - [Truncated and penalized objectives agree when every event survives](truncated-q-eq-penalized-q.md)
 - [GPS M-step formula when every event survives](m-step-of-forall-lt.md)
 - [The M-step of the restructured model](penalized-q-le-m-step.md)
+- [GEM M-step with a k-mer positional prior](gem-positional-prior-m-step.md)

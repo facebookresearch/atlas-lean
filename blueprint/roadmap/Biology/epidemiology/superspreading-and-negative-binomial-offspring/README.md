@@ -13,3 +13,4 @@
 - [Comparison principle for Galton–Watson extinction](extinction-prob-le-of-pgf-le.md)
 - [Negative-binomial extinction probability is the least fixed point](is-least-extinction-prob-nb-offspring.md)
 - [Superspreading raises the extinction probability](extinction-prob-nb-offspring-antitone.md)
+- [Outbreak size distribution under negative-binomial offspring](outbreak-size-distribution-under-negative-binomial-offspring.md)

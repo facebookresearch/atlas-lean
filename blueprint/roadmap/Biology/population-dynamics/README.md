@@ -24,3 +24,8 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
 - [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
+- [Costly punishment in indirect reciprocity](costly-punishment-in-indirect-reciprocity/README.md)
+- [Diffusible public goods on graphs](diffusible-public-goods-on-graphs/README.md)
+- [Multilevel selection in group-structured Moran processes](multilevel-selection-in-group-structured-moran-processes/README.md)
+- [Sigma rule for games in structured populations](sigma-rule-for-games-in-structured-populations/README.md)
+- [Redox threshold model of the Great Oxidation Event](redox-threshold-model-of-the-great-oxidation-event.md)

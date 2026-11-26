@@ -30,3 +30,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
+- [Differential geometry of single-cell vector fields](differential-geometry-of-single-cell-vector-fields/README.md)
+- [Potential-landscape models of cell differentiation](potential-landscape-models-of-cell-differentiation/README.md)
+- [RNA velocity and transcription kinetics](rna-velocity-and-transcription-kinetics/README.md)

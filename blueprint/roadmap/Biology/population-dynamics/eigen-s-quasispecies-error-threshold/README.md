@@ -13,3 +13,4 @@
 - [Eigen's error threshold](master-equilibrium-exp-pos-iff.md)
 - [Convergence above the threshold](tendsto-master-of-one-lt.md)
 - [Loss of the master at or below the threshold](tendsto-master-zero-of-le-one.md)
+- [Error threshold with stalling after mismatches](error-threshold-with-stalling-after-mismatches.md)

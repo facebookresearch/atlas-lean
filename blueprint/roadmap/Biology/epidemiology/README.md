@@ -20,3 +20,8 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
+- [Complexity of infection](complexity-of-infection/README.md)
+- [Instantaneous reproduction number estimation](instantaneous-reproduction-number-estimation/README.md)
+- [Lineage fitness from genomic surveillance](lineage-fitness-from-genomic-surveillance/README.md)
+- [Number needed to vaccinate](number-needed-to-vaccinate/README.md)
+- [Pathogen emergence on contact networks](pathogen-emergence-on-contact-networks/README.md)

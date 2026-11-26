@@ -21,3 +21,4 @@
 - [Timing of a single-copy gain](single-gain-timing.md)
 - [Timing of a copy-neutral loss of heterozygosity](cn-loh-timing.md)
 - [Timing of a whole-genome doubling](wgd-timing.md)
+- [Chronological time from molecular time under a mutation-rate acceleration](chronological-time-from-molecular-time-under-rate-acceleration.md)
