@@ -23,29 +23,6 @@ namespace MetaMathlibExt
 
 open Polynomial UniqueFactorizationMonoid
 
-private theorem scaled_coeff_integral_iff (q : ℚ) (n : ℕ) :
-    ((n : ℚ) * q).den = 1 ↔ q.den ∣ n := by
-  have h := Rat.den_mul_den_eq_den_mul_gcd (n : ℚ) q
-  simp only [Rat.den_natCast, one_mul, Rat.num_natCast, Int.natAbs_mul, Int.natAbs_natCast,
-    Nat.gcd_comm (n * _) _, q.reduced.gcd_mul_right_cancel_right] at h
-  constructor
-  · intro h₁
-    rw [h₁, one_mul] at h
-    exact (dvd_of_eq h).trans (Nat.gcd_dvd_right _ _)
-  · intro hd
-    rw [Nat.gcd_eq_left hd] at h
-    exact Nat.eq_of_mul_eq_mul_right q.den_pos (by simpa using h.symm)
-
-private theorem succ_mem_integral_iff (m : ℕ) :
-    m + 1 ∈ bernoulliIntegralDerivativeIndices 1 ↔
-      polynomialDenominator (Polynomial.bernoulli m) ∣ m + 1 := by
-  simp only [bernoulliIntegralDerivativeIndices, Set.mem_ofPred_eq, Nat.le_add_left,
-    true_and, Function.iterate_one, polynomialDenominator_eq_one_iff,
-    derivative_bernoulli_add_one, ← Nat.cast_add_one, coeff_natCast_mul, scaled_coeff_integral_iff]
-  constructor
-  · exact fun h => Finset.lcm_dvd fun i _ => h i
-  · exact fun h i => (coeff_den_dvd_polynomialDenominator _ i).trans h
-
 /-- If the base-`p` digit sum of an integral derivative's index reaches `p`, then `p` divides it. -/
 private theorem dvd_index_of_digit_sum {m p : ℕ} (hm : 1 ≤ m)
     (hd : polynomialDenominator (Polynomial.bernoulli m) ∣ m + 1)
@@ -59,8 +36,9 @@ private theorem dvd_index_of_digit_sum {m p : ℕ} (hm : 1 ≤ m)
   apply Finset.dvd_prod_of_mem (fun i : ℕ => i)
   exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by omega), hp, hn, hs⟩
 
-/-- If the units digit is maximal and a higher digit is nonzero, their sum reaches the base. -/
-private theorem le_digit_sum_of_last_digit {p m : ℕ} (hp : 1 < p) (hle : p ≤ m)
+/-- If `1 < p`, `p ≤ m` and `m % p + 1 = p`, then the sum of the base-`p` digits of `m` is at
+least `p`. -/
+public theorem le_digit_sum_of_last_digit {p m : ℕ} (hp : 1 < p) (hle : p ≤ m)
     (hmod : m % p + 1 = p) : p ≤ (p.digits m).sum := by
   have hdiv : m / p ≠ 0 := by
     have := (Nat.one_le_div_iff (by omega : 0 < p)).mpr hle
@@ -143,7 +121,8 @@ public theorem odd_radical_conjecture_implies_bernoulli_integral_derivative_conj
     rcases lt_or_ge m 2 with hsmall | hm
     · simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
       omega
-    · obtain ⟨hrad, hodd⟩ := odd_radical_predecessor hm ((succ_mem_integral_iff m).mp hn)
+    · obtain ⟨hrad, hodd⟩ :=
+        odd_radical_predecessor hm ((succ_mem_bernoulliIntegralDerivativeIndices_one_iff m).mp hn)
       have hmem : m ∈ {n : ℕ | 1 ≤ n ∧ bernoulliDiffDenominator n = radical (n + 1) ∧ Odd n} :=
         ⟨by omega, hrad, hodd⟩
       rw [h] at hmem
@@ -154,7 +133,7 @@ public theorem odd_radical_conjecture_implies_bernoulli_integral_derivative_conj
     rcases hn with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact one_mem_bernoulliIntegralDerivativeIndices_one
     all_goals
-      apply (succ_mem_integral_iff _).mpr
+      apply (succ_mem_bernoulliIntegralDerivativeIndices_one_iff _).mpr
       rw [polynomialDenominator, kellner_sondow_bernoulli_denom _ (by decide)]
       decide +kernel
 

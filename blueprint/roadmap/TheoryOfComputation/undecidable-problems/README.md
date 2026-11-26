@@ -8,6 +8,7 @@ Specific undecidable problems and the reductions proving them undecidable: the P
 - [Intersection problem for context-free languages](intersection-problem-for-context-free-languages/README.md)
 - [Ambiguity problem for context-free grammars](ambiguity-problem-for-context-free-grammars/README.md)
 - [String rewriting systems](string-rewriting-systems/README.md)
+- [Wang tiles](wang-tiles/README.md)
 - [Universality problem for context-free grammars](universality-problem-for-context-free-grammars/README.md)
 - [Undecidable problems for context-free grammars](undecidable-problems-for-context-free-grammars/README.md)
 - [Regularity problem for context-free languages](regularity-problem-for-context-free-languages/README.md)
