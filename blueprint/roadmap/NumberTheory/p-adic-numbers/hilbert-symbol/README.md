@@ -7,6 +7,7 @@
 - [When the $p$-adic Hilbert symbol is $1$](eq-one-iff.md)
 - [When the $p$-adic Hilbert symbol is $-1$](eq-neg-one-iff.md)
 - [The $p$-adic Hilbert symbol is $\pm 1$](eq-one-or-neg-one-2.md)
+- [Formula for the $p$-adic Hilbert symbol](padic-hilbert-symbol-formula.md)
 - [Unit diagonal forms in at least three variables over $\mathbb{Q}_p$ are isotropic for odd $p$](diagonal-unit-isotropic.md)
 - [Real Hilbert symbol](real-hilbert-symbol.md)
 - [Real Hilbert symbol equal to $1$](eq-one-iff-2.md)
