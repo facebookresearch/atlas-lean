@@ -4,8 +4,8 @@ Let $C_1$ be a [channel](information-theoretic-channels.md) from $\mathcal X$ to
 by $C_2$, written $C_1 \sqsubseteq_\circ C_2$, if there is a channel $C_3$ from $\mathcal Y$ to $\mathcal Z$ with $C_1 = C_2 C_3$: $C_1$ can be obtained by post-processing the
 output of $C_2$.
 
-For a set $\mathcal G$ of gain functions write $C_1 \le_{\mathcal G} C_2$ if $V_g(\pi, C_1) \le V_g(\pi, C_2)$ for every prior $\pi$ and every $g \in \mathcal G$, which is
-equivalent to $L_g(\pi, C_1) \le L_g(\pi, C_2)$ whenever the [g-leakages](g-leakage-and-g-capacity.md) are defined; $\le_G$ denotes this order for the set $G$ of all
+For a set $\mathcal G$ of gain functions write $C_1 \le_{\mathcal G} C_2$ if $V_g(\pi, C_1) \le V_g(\pi, C_2)$ for every prior $\pi$ and every $g \in \mathcal G$, which for a
+positive gain function $g$ is equivalent to $L_g(\pi, C_1) \le L_g(\pi, C_2)$ for every prior, in terms of the [g-leakages](g-leakage-and-g-capacity.md); $\le_G$ denotes this order for the set $G$ of all
 gain functions, the *strong g-leakage order*.
 
 ## Depends on

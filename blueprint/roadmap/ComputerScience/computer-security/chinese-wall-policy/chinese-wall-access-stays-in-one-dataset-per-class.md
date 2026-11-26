@@ -1,10 +1,11 @@
-# Chinese Wall access stays within a dataset or across classes
+# After an access, a request is granted only within the dataset or across classes
 
 **Theorem 1.** In the [Chinese Wall model](chinese-wall-model.md), once a subject has accessed an object, the only other objects accessible by that subject lie
-within the same company dataset or within a different conflict of interest class: in every access matrix $N$ reached from the initial state of Axiom 3 by
-granting requests according to Axioms 2 and 4, if $N(u, a)$ and $N(u, b)$ are both true, then $x_a \ne x_b$ or $y_a = y_b$.
+within the same company dataset or within a different conflict of interest class. Prospectively: if a subject $s_u$ has accessed $o_a$ (that is, $N(u, a)$ is true in
+the current matrix $N$, reached from the initial state of Axiom 3 by granting requests according to Axioms 2 and 4), then a request $R(u, b)$ for an object $o_b$ can
+be granted only if $x_a \ne x_b$ or $y_a = y_b$.
 
-If access to $o_a$ was granted first, the later grant of $o_b$ required $x_a \ne x_b$ or $y_a = y_b$ by Axiom 2.
+This is immediate from Axiom 2 applied to the request $R(u, b)$ and the earlier access to $o_a$.
 
 ## Depends on
 

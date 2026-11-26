@@ -4,7 +4,8 @@ Let the security levels form a product lattice $\mathcal L = \mathcal L_C \times
 $A$ describe the attacker: it reads data at or below $(C(A), \top_I)$ and modifies data at or above $(\bot_C, I(A))$. Programs are commands of a while language with
 $v := \mathrm{declassify}(e, \ell)$ over variables typed by $\Gamma$; memories are *indistinguishable at* $\ell$, $M_1 =_\ell M_2$, when they agree on the variables of level
 at most $\ell$, and traces $t_1, t_2$ of configurations are *high-stutter equivalent up to* $\ell$, $t_1 \sim_\ell t_2$, when their sequences of $\ell$-restricted memories
-agree after collapsing steps invisible at $\ell$. Configurations are *weakly indistinguishable* up to $\ell$, $\langle M_1, c_1\rangle \approx_\ell \langle M_2, c_2\rangle$, if their
+agree after collapsing the steps that are invisible at $\ell$, where invisibility is a property of the transition label: a step is collapsed
+only if it is not an assignment to a variable of level at most $\ell$, so a visible assignment counts even when it rewrites the old value. Configurations are *weakly indistinguishable* up to $\ell$, $\langle M_1, c_1\rangle \approx_\ell \langle M_2, c_2\rangle$, if their
 traces are $\sim_\ell$-equivalent whenever both terminate, and *strongly indistinguishable*, $\langle M_1, c_1\rangle \cong_\ell \langle M_2, c_2\rangle$, if moreover both terminate.
 
 A *fair attack* is a declassify-free command built from $\mathbf{skip}$, sequencing, assignments $v := e$, conditionals and loops whose variables all have one level

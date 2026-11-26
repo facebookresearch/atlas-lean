@@ -1,7 +1,8 @@
 # Composition refinement implies the strong g-leakage order
 
-**Theorem.** If $C_1 \sqsubseteq_\circ C_2$, then $C_1 \le_G C_2$: whenever $C_1$ is a [composition refinement](composition-refinement-of-channels.md) of $C_2$, the
-g-leakage of $C_1$ never exceeds that of $C_2$, for every prior and every gain function. This is a generalized data-processing inequality.
+**Theorem.** If $C_1 \sqsubseteq_\circ C_2$, then $C_1 \le_G C_2$: whenever $C_1$ is a [composition refinement](composition-refinement-of-channels.md) of $C_2$, then
+$V_g(\pi, C_1) \le V_g(\pi, C_2)$ for every prior $\pi$ and every gain function $g$, so the g-leakage of $C_1$ never exceeds that of $C_2$ for every positive gain function.
+This is a generalized data-processing inequality.
 
 If $C_1 = C_2 C_3$, any guessing strategy $S$ for $C_1$ yields the strategy $C_3 S$ for $C_2$ with the same expected gain, so $V_g(\pi, C_1) \le V_g(\pi, C_2)$.
 

@@ -1,6 +1,6 @@
 # Deduction and static equivalence are polynomial for convergent subterm theories
 
-**Theorem (Abadi and Cortier).** Let $E$ be a [convergent subterm theory](equational-theories-and-convergent-subterm-theories.md). For all frames $\varphi$ and $\varphi'$ and every
+**Theorem (Abadi and Cortier).** Let $E$ be a [convergent subterm theory](equational-theories-and-convergent-subterm-theories.md). For all closed frames $\varphi$ and $\varphi'$ (frames whose substituted terms are closed) and every
 closed term $M$, it is decidable in time polynomial in the sizes of $\varphi$, $\varphi'$ and $M$ whether $M$ is deducible from $\varphi$ and whether
 $\varphi \approx_s \varphi'$ ([static equivalence](frames-and-static-equivalence.md)).
 

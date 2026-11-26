@@ -3,8 +3,12 @@
 The applied pi calculus extends the pi calculus with terms over a signature $\Sigma$ equipped with an
 [equational theory](equational-theories-and-convergent-subterm-theories.md). Plain processes are built from $0$, parallel composition $P \mid Q$, replication $!P$, name
 restriction $\nu n.P$, conditionals $\mathbf{if}\ M = N\ \mathbf{then}\ P\ \mathbf{else}\ Q$ (testing equality in the theory), input $N(x).P$ and output $\overline{N}\langle M\rangle.P$.
-*Extended processes* $A ::= P \mid A \mid B \mid \nu n.A \mid \nu x.A \mid \{M/x\}$ add *active substitutions* $\{M/x\}$, which record messages output to the environment. The *frame* of
-an extended process is obtained by replacing every plain process in it by $0$, and its domain is that of its frame. An evaluation context is an extended process
+*Extended processes* $A ::= P \mid A \mid B \mid \nu n.A \mid \nu x.A \mid \{M/x\}$ add *active substitutions* $\{M/x\}$, which record messages output to the environment.
+Expressions are well sorted, and only extended processes satisfying the following conditions are considered: $\mathrm{dom}(A) \cap \mathrm{dom}(B) = \emptyset$ in every $A \mid B$, where
+the *domain* $\mathrm{dom}(A)$ is the set of variables $x$ that $A$ *exports*, those with an active substitution $\{M/x\}$ not under a restriction on $x$; in every $\nu x.A$
+the variable $x$ has exactly one active substitution in $A$; and the substitution obtained by ignoring restrictions is cycle-free. Thus $\{M/x\} \mid \{N/x\}$ and
+$\{f(y)/x\} \mid \{f(x)/y\}$ are excluded. $A$ is *closed* if $\mathrm{fv}(A) = \mathrm{dom}(A)$. The *frame* of an extended process is obtained by replacing every plain process in it
+by $0$. An evaluation context is an extended process
 with a hole not under input, output, conditional or replication. Structural equivalence $\equiv$ and internal reduction $\to$ (communication on a channel and the two
 branches of the conditional) give the operational semantics, and a labelled semantics $A \xrightarrow{\alpha} A'$ adds input transitions $N(M)$ and output transitions that
 export messages through fresh variables.
