@@ -47,6 +47,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquares
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily34
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily331
 
 set_option autoImplicit false
 
@@ -125,21 +126,6 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family330_and_entries_squar
     let b := 4 * m ^ 2 * n ^ 2 * (m ^ 2 + n ^ 2) ^ 2
       * (shiftedQuartic m n) ^ 2
     let c := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 4
-    HasSquareElementarySymmetricFunctions a b c ∧
-      IsSquare a ∧ IsSquare b ∧ IsSquare c
-
-/-- **Choudhry's family (3.31) of square triples with square symmetric functions.** For all
-integers $m$ and $n$, let $a = 64 m^4 n^4 (m^2 - n^2)^2$, $b = 16 m^2 n^2 (m^2 - n^2)^4$ and
-$c = (m^2 + n^2)^2 (m^4 - 6 m^2 n^2 + n^4)^2$. Then $a + b + c$, $ab + bc + ca$ and $abc$ are
-squares of integers, and $a$, $b$ and $c$ are themselves squares of integers.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.31). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family331_and_entries_square
-    (m n : ℤ) :
-    let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
-    let b := 16 * m ^ 2 * n ^ 2 * (m ^ 2 - n ^ 2) ^ 4
-    let c := (m ^ 2 + n ^ 2) ^ 2 * (shiftedQuartic m n) ^ 2
     HasSquareElementarySymmetricFunctions a b c ∧
       IsSquare a ∧ IsSquare b ∧ IsSquare c
 
