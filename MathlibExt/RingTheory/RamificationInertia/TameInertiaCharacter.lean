@@ -265,17 +265,19 @@ private theorem isCyclic_range_tameChar [Finite (B ⧸ 𝔓)] :
     ((Units.coeHom (B ⧸ 𝔓)).comp (tameChar (G := G) 𝔓 hϖP hgen hreg).range.subtype)
     (Units.val_injective.comp Subtype.val_injective)
 
-/-- The tame character of the inertia group at a maximal ideal.
-
-For a group `G` acting on a commutative ring `B`, a maximal ideal `𝔓`
-with finite residue field, and an element `ϖ ∈ 𝔓` generating `𝔓`
-modulo `𝔓 ^ 2` in the sense that every `x ∈ 𝔓` differs from a multiple
-of `ϖ` by an element of `𝔓 ^ 2`, with multiples of `ϖ` in `𝔓 ^ 2`
-only for coefficients in `𝔓`, there is a homomorphism from the inertia
-group of `𝔓` to the units of the residue field, characterized by
-`σ • ϖ ≡ ϖ * t` modulo `𝔓 ^ 2`, whose kernel consists of the elements
-acting trivially modulo `𝔓 ^ 2` on all of `B`, and whose range is
-cyclic. -/
+/-- **Tame character of the inertia group at a maximal ideal.** Let a group $G$ act on a
+commutative ring $B$ by ring automorphisms, let $\mathfrak{P}$ be a maximal ideal of $B$ whose
+residue field $B/\mathfrak{P}$ is finite, and let $\varpi \in \mathfrak{P}$ satisfy two
+conditions: every $x \in \mathfrak{P}$ satisfies $x \equiv \varpi y \pmod{\mathfrak{P}^2}$ for
+some $y \in B$, and $c \varpi \in \mathfrak{P}^2$ implies $c \in \mathfrak{P}$ for every
+$c \in B$. Let $I$ be the inertia group of $\mathfrak{P}$, the subgroup of the $\sigma \in G$
+with $\sigma(x) - x \in \mathfrak{P}$ for every $x \in B$. Then there is a group homomorphism
+$\theta \colon I \to (B/\mathfrak{P})^\times$ with the following properties.
+- Coefficient characterization: for $\sigma \in I$ and $t \in B$, $\theta(\sigma)$ is the
+  residue class of $t$ if and only if $\sigma(\varpi) \equiv \varpi t \pmod{\mathfrak{P}^2}$.
+- Kernel: $\theta(\sigma) = 1$ if and only if $\sigma(x) \equiv x \pmod{\mathfrak{P}^2}$ for
+  every $x \in B$, not only for $x = \varpi$.
+- The image of $\theta$ is cyclic. -/
 public theorem exists_monoidHom_inertia_residueFieldUnits_ker_iff_of_uniformizer
     (𝔓 : Ideal B) [𝔓.IsMaximal] [Finite (B ⧸ 𝔓)] {ϖ : B} (hϖP : ϖ ∈ 𝔓)
     (hgen : ∀ x ∈ 𝔓, ∃ y : B, x - ϖ * y ∈ 𝔓 ^ 2)

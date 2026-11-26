@@ -34161,6 +34161,7 @@
 "Ideal.eq_iInf_localizedAt_prime": "a1c0096ef610b094",
 "Ideal.exists_isCoprime_mul_isPrincipal": "ee8e3bd44c2192a0",
 "Ideal.exists_mem_forall_smul_notMem": "f0bdd2b4f723962d",
+"Ideal.exists_monoidHom_inertia_residueFieldUnits_ker_iff_of_uniformizer": "4805fa9b718eca17",
 "Ideal.exists_notMem_dvd_of_forall_smul_notMem": "d76ab3609d683eea",
 "Ideal.exists_smul_eq_of_under_eq": "efa1aa6873ec297c",
 "Ideal.finite_ramified_primes": "3f35a54216529a50",
