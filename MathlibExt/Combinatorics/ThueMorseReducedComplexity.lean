@@ -12,12 +12,16 @@ public import MathlibExt.Combinatorics.ReducedComplexities
 import Mathlib.Order.Interval.Set.Nat
 
 /-!
-# Reduced complexity of the Thue–Morse word at even lengths
+# Reduced complexity and alternations of the Thue–Morse word
 
-`rhoRed_thueMorse_even` gives the recurrences for lengths congruent to zero and two modulo
-four. We count changes of letter in a sliding window. In every aligned block of four adjacent
-pairs, the first three change indicators are 1, 0, 1, and the fourth is the indicator at the
-corresponding position of the original sequence.
+`rhoRed_thueMorse_even` gives the reduced-complexity recurrences for lengths congruent to zero
+and two modulo four. In every aligned block of four adjacent pairs, the change indicators are
+1, 0, 1, and the indicator at the corresponding position of the original sequence.
+
+`minAlt_maxAlt_four_mul` gives the quadrupling recurrences for alternation extrema.
+`minAlt_maxAlt_two_mul` gives the doubling recurrences for alternation extrema: adjacent pairs
+at even positions always alternate, and those at odd positions complement the corresponding
+change indicator in the original sequence.
 -/
 
 namespace MathlibExt.Combinatorics.ReducedComplexitiesWanted
@@ -283,6 +287,147 @@ private theorem bounds_four_sub_one {n lo hi : ℕ} (hn : 0 < n) (h : ChangeBoun
     rw [show 4 * i + 2 + (4 * n - 1) = 4 * (i + n) + 1 by omega,
       (edge_four (i + n)).2.1, hi, Nat.add_zero] at hc
     exact hc
+
+private theorem alternations_factor (n i : ℕ) :
+    alternations (factorList thueMorse (n + 1) i) = changes n i := by
+  induction n generalizing i with
+  | zero => simp [factorList, alternations, changes]
+  | succ n ih =>
+    rw [factorList_succ (n + 1) i, changes, ← ih (i + 1), factorList_succ n (i + 1)]
+    simp [alternations, List.countP_cons, edge]
+
+private theorem extrema_of_bounds {n lo hi : ℕ} (h : ChangeBounds n lo hi) :
+    minAlt (n + 1) = lo ∧ maxAlt (n + 1) = hi := by
+  have counts : (fun v => alternations (List.ofFn v)) '' factorSet thueMorse (n + 1) =
+      Set.Icc lo hi := by
+    rw [factorSet, ← Set.range_comp', ← changes_range h]
+    exact congrArg Set.range (funext (alternations_factor n))
+  have hlohi := (h.bounds 0).1.trans (h.bounds 0).2
+  rw [minAlt, maxAlt, counts]
+  exact ⟨csInf_Icc hlohi, csSup_Icc hlohi⟩
+
+-- Each pair of edges contributes one mandatory change and the complement of an old edge.
+-- State the counts additively so that no subtraction of an edge count is needed.
+private theorem changes_two_mul (n i : ℕ) :
+    changes (2 * n) (2 * i) + changes n i = 2 * n ∧
+      changes (2 * n) (2 * i + 1) + changes n i = 2 * n := by
+  induction n with
+  | zero => exact ⟨rfl, rfl⟩
+  | succ n ih =>
+    have he := edge_le_one (i + n)
+    rw [show 2 * (n + 1) = 2 * n + 1 + 1 by omega]
+    simp only [changes_snoc, show 2 * i + 2 * n = 2 * (i + n) by omega,
+      show 2 * i + (2 * n + 1) = 2 * (i + n) + 1 by omega,
+      show 2 * i + 1 + 2 * n = 2 * (i + n) + 1 by omega,
+      show 2 * i + 1 + (2 * n + 1) = 2 * (i + n + 1) by omega,
+      edge_double, edge_double_add_one]
+    omega
+
+private theorem changes_two_mul_add_one (n i : ℕ) :
+    changes (2 * n + 1) (2 * i) + changes n i = 2 * n + 1 ∧
+      changes (2 * n + 1) (2 * i + 1) + changes (n + 1) i = 2 * n + 1 := by
+  have h := changes_two_mul n i
+  have he := edge_le_one (i + n)
+  simp only [changes_snoc, show 2 * i + 2 * n = 2 * (i + n) by omega,
+    show 2 * i + 1 + 2 * n = 2 * (i + n) + 1 by omega, edge_double, edge_double_add_one]
+  omega
+
+-- The witnesses rule out truncation when converting the attained bounds to signed differences.
+private theorem extrema_of_add_bounds {n lo hi : ℕ}
+    (bounds : ∀ i, n ≤ changes n i + hi ∧ changes n i + lo ≤ n)
+    (reachesMin : ∃ i, changes n i + hi = n) (reachesMax : ∃ i, changes n i + lo = n) :
+    (minAlt (n + 1) : ℤ) = (n : ℤ) - hi ∧ (maxAlt (n + 1) : ℤ) = (n : ℤ) - lo := by
+  obtain ⟨i, hMin⟩ := reachesMin
+  obtain ⟨j, hMax⟩ := reachesMax
+  have h : ChangeBounds n (n - hi) (n - lo) := by
+    refine ⟨fun k => ?_, ⟨i, by omega⟩, ⟨j, by omega⟩⟩
+    have := bounds k
+    omega
+  have := extrema_of_bounds h
+  omega
+
+/-- **Doubling recurrences for Thue–Morse alternation extrema.** For a natural number $k$, let
+$m_k$ and $M_k$ be the least and the largest number of alternations (positions where two adjacent
+letters differ) among the length-$k$ factors of the Thue–Morse sequence. Then for every $n \ge 2$,
+$m_{2n} = 2n - 1 - M_{n+1}$, $M_{2n} = 2n - 1 - m_n$, $m_{2n+1} = 2n - M_{n+1}$ and
+$M_{2n+1} = 2n - m_{n+1}$.
+
+Source: John M. Campbell, James D. Currie, and Narad
+Rampersad, "Reduced Complexities for Sequences Over Finite
+Alphabets", Lemma 2. -/
+public theorem minAlt_maxAlt_two_mul (n : ℕ) (hn : 2 ≤ n) :
+    (minAlt (2 * n) : ℤ) = 2 * n - 1 - maxAlt (n + 1) ∧
+      (maxAlt (2 * n) : ℤ) = 2 * n - 1 - minAlt n ∧
+      (minAlt (2 * n + 1) : ℤ) = 2 * n - maxAlt (n + 1) ∧
+      (maxAlt (2 * n + 1) : ℤ) = 2 * n - minAlt (n + 1) := by
+  have hn' : n - 1 + 1 = n := by omega
+  obtain ⟨lo, hi, h⟩ := exists_changeBounds n
+  obtain ⟨lo', hi', h'⟩ := exists_changeBounds (n - 1)
+  obtain ⟨hmin, hmax⟩ := extrema_of_bounds h
+  have hmin' := (extrema_of_bounds h').1
+  rw [hn'] at hmin'
+  rw [hmin, hmax, hmin']
+  obtain ⟨iLo, hiLo⟩ := h.reachesLo
+  obtain ⟨iHi, hiHi⟩ := h.reachesHi
+  obtain ⟨iLo', hiLo'⟩ := h'.reachesLo
+  -- A factor of even length has one fewer edge than a factor of odd length.
+  have evenCount (i : ℕ) := changes_two_mul_add_one (n - 1) i
+  simp only [hn', show 2 * (n - 1) + 1 = 2 * n - 1 by omega] at evenCount
+  -- Extending the short window by an edge cannot decrease its count. The even-start
+  -- factors attain the maximum using the short window; the odd-start factors attain
+  -- the minimum using the long window.
+  have evenBounds (i : ℕ) :
+      2 * n - 1 ≤ changes (2 * n - 1) i + hi ∧ changes (2 * n - 1) i + lo' ≤ 2 * n - 1 := by
+    obtain ⟨j, hj⟩ : ∃ j, i = 2 * j ∨ i = 2 * j + 1 := ⟨i / 2, by omega⟩
+    have hs := changes_snoc (n - 1) j
+    rw [hn'] at hs
+    have hlo := (h'.bounds j).1
+    have hhi := (h.bounds j).2
+    rcases hj with rfl | rfl
+    · have := (evenCount j).1
+      omega
+    · have := (evenCount j).2
+      omega
+  have heven := extrema_of_add_bounds evenBounds
+    ⟨2 * iHi + 1, by rw [← hiHi]; exact (evenCount iHi).2⟩
+    ⟨2 * iLo', by rw [← hiLo']; exact (evenCount iLo').1⟩
+  rw [show 2 * n - 1 + 1 = 2 * n by omega] at heven
+  -- For odd length both start parities use the same smaller window.
+  have oddBounds (i : ℕ) :
+      2 * n ≤ changes (2 * n) i + hi ∧ changes (2 * n) i + lo ≤ 2 * n := by
+    obtain ⟨j, hj⟩ : ∃ j, i = 2 * j ∨ i = 2 * j + 1 := ⟨i / 2, by omega⟩
+    have hb := h.bounds j
+    rcases hj with rfl | rfl
+    · have := (changes_two_mul n j).1
+      omega
+    · have := (changes_two_mul n j).2
+      omega
+  obtain ⟨hoddMin, hoddMax⟩ := extrema_of_add_bounds oddBounds
+    ⟨2 * iHi, by rw [← hiHi]; exact (changes_two_mul n iHi).1⟩
+    ⟨2 * iLo, by rw [← hiLo]; exact (changes_two_mul n iLo).1⟩
+  exact ⟨by omega, by omega, by omega, by omega⟩
+
+/-- **Quadrupling recurrences for Thue–Morse alternation extrema.** For a natural number $k$, let
+$m_k$ and $M_k$ be the least and the largest number of alternations (positions where two adjacent
+letters differ) among the length-$k$ factors of the Thue–Morse sequence. Then for every $n \ge 1$,
+$m_{4n} = 2n - 1 + m_{n+1}$, $M_{4n} = 2n + M_{n+1}$, $m_{4n+2} = 2n + m_{n+1}$ and
+$M_{4n+2} = 2n + 1 + M_{n+1}$.
+
+Source: John M. Campbell, James D. Currie, and Narad
+Rampersad, "Reduced Complexities for Sequences Over Finite
+Alphabets", Lemma 3. -/
+public theorem minAlt_maxAlt_four_mul (n : ℕ) (hn : 1 ≤ n) :
+    (minAlt (4 * n) : ℤ) = 2 * n - 1 + minAlt (n + 1) ∧
+      (maxAlt (4 * n) : ℤ) = 2 * n + maxAlt (n + 1) ∧
+      (minAlt (4 * n + 2) : ℤ) = 2 * n + minAlt (n + 1) ∧
+      (maxAlt (4 * n + 2) : ℤ) = 2 * n + 1 + maxAlt (n + 1) := by
+  obtain ⟨lo, hi, h⟩ := exists_changeBounds n
+  obtain ⟨hmin, hmax⟩ := extrema_of_bounds h
+  obtain ⟨hmin₄, hmax₄⟩ := extrema_of_bounds (bounds_four_sub_one hn h)
+  obtain ⟨hmin₂, hmax₂⟩ := extrema_of_bounds (bounds_four_add_one h)
+  rw [show 4 * n - 1 + 1 = 4 * n by omega] at hmin₄ hmax₄
+  rw [show 4 * n + 1 + 1 = 4 * n + 2 by rfl] at hmin₂ hmax₂
+  omega
 
 /-- **Reduced complexity of the Thue–Morse word at even lengths.** Let $t$ be the Thue–Morse
 sequence and $\rho^{\mathrm{red}}_t$ its reduced factor complexity. For every natural number

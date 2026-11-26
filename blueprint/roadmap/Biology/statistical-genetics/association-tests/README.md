@@ -8,15 +8,15 @@ test and SKAT-O, multiple testing across genes, and genomic control with an esti
 factor are under [Hypothesis testing](../../../Probability/hypothesis-testing/README.md) in
 Probability.
 
-The later folders collect genome-wide methods built on such tests: rare-variant and interaction
-(epistasis and gene–environment) tests, screens and their pruning, permutation, local-index,
-e-value and knockoff procedures for multiple testing and replicability, haplotype and
-linkage-disequilibrium tests, two-stage designs and differentially private release.
-
 - [Cochran–Armitage trend test](cochran-armitage-trend-test/README.md)
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+- [Phenome-wide association scans](phenome-wide-association-scans/README.md)
+The later folders collect genome-wide methods built on such tests: rare-variant and interaction
+(epistasis and gene–environment) tests, screens and their pruning, permutation, local-index,
+e-value and knockoff procedures for multiple testing and replicability, haplotype and
+linkage-disequilibrium tests, two-stage designs and differentially private release.
 - [Bayesian rare-variant detection](bayesian-rare-variant-detection/README.md)
 - [Convex bounding for two-locus epistasis screens](convex-bounding-for-two-locus-epistasis-screens/README.md)
 - [Covariate-assisted composite null testing](covariate-assisted-composite-null-testing/README.md)
