@@ -1,7 +1,9 @@
 # Rate rescalings that preserve the BDIM stationary distribution
 
 **Statement.** Let a [birth–death–innovation model](stationary-family-size-distribution-of-a-bdim.md) on $\{0,\dots,N\}$ have birth rates $\lambda_i$ and death rates $\delta_i$, and let $g:\{0,\dots,N\}\to(0,\infty)$ with $g(0) = 1$. The transformed model
+
 $$\lambda^*_i = \lambda_i\,g(i),\qquad \delta^*_i = \delta_i\,g(i-1)$$
+
 has the same stationary family-size distribution as the original, although its transient dynamics, including mean extinction and formation times, can be very different. In particular, starting from a linear BDIM, $g(i) = (i+1)^{d-1}$ gives rational BDIMs of degree $d$ and $g(i) = (i+1)^{d-1}\big(1 - i/(N+c)\big)$ gives logistic-type BDIMs, all with the linear model's stationary distribution.
 
 ## Expansion

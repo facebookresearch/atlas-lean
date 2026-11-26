@@ -4,16 +4,23 @@
 
 - A **rectangle** of the $n$-cube is a 4-set $\{s, s^{S_1}, s^{S_2}, s^{S_1 \cup S_2}\}$ with $S_1, S_2$ disjoint and nonempty.
 - The system has a **rectangular perturbation of size $k$** if for some rectangle with $|S_1| = k$ the effect of replacing $S_1$ has opposite signs on the two parallel sides:
+
 $$(w_s - w_{s^{S_1}})\,(w_{s^{S_2}} - w_{s^{S_1 \cup S_2}}) < 0 .$$
+
 A size-1 perturbation is exactly **sign epistasis**. Each rectangle has two pairs of parallel sides, so it carries two potential perturbations; it also corresponds to the circuit $w_s + w_{s^{S_1\cup S_2}} - w_{s^{S_1}} - w_{s^{S_2}}$ with four nonzero coefficients, which vanishes for additive fitness.
 
 **Lemma.** For $n \ge 2$ the $n$-cube contains exactly
+
 $$\frac{6^n}{8} - 4^{n-1} + 2^{n-3}$$
+
 rectangles.
 
 **Theorem.** For $n \ge 2$ (stated for $n \ge 3$ in the source) the number of potential rectangular perturbations is
+
 $$2\left(\frac{6^n}{8} - 4^{n-1} + 2^{n-3}\right),$$
+
 and the number of potential perturbations of size $k$ ($1 \le k \le n-1$) is
+
 $$2^{k-1}\binom{n}{k}\binom{2^{n-k}}{2}.$$
 
 **Corollary.** A complete check of sign epistasis in an $n$-locus system requires the signs of $n\binom{2^{n-1}}{2}$ expressions.

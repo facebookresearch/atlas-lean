@@ -1,7 +1,9 @@
 # Order of balance determines family-size asymptotics
 
 Consider the master birth, death and innovation model (BDIM) with birth rates $\lambda_i$ and death rates $\delta_i$ and its equilibrium frequencies $p_i$, as in [equilibrium of the BDIM](equilibrium-of-the-birth-death-and-innovation-model.md). Assume that for large $i$
+
 $$\chi(i) := \frac{\lambda_{i-1}}{\delta_i} = i^{s}\,\theta\left(1 + \frac{a}{i} + O\!\left(\frac{1}{i^2}\right)\right), \qquad s, a \in \mathbb{R},\ \theta > 0.$$
+
 Call the model **non-balanced** if $s \ne 0$; **first-order balanced** if $s = 0$, $\theta \ne 1$; **second-order balanced** if $s = 0$, $\theta = 1$, $a \ne 0$; and **high-order balanced** if $s = 0$, $\theta = 1$, $a = 0$. Write $q_i \sim r_i$ when $q_i / r_i$ tends to a constant in $(0, \infty)$.
 
 **Theorem.** As $i \to \infty$ (for $N$ large),
@@ -13,7 +15,9 @@ Call the model **non-balanced** if $s \ne 0$; **first-order balanced** if $s = 0
 **Corollary.** The equilibrium frequencies have power-law asymptotics if and only if the BDIM is second-order balanced, i.e. per-family duplication and loss rates agree to first order and differ at order $1/i$. A first-order balanced model with $\theta < 1$ gives a Pascal (negative binomial) tail with parameters $(a+1, \theta)$ if $a > -1$, and the truncated logarithmic law if $a = -1$.
 
 **Linear BDIM.** For $\lambda_i = \lambda(i + a)$ and $\delta_i = \delta(i + b)$ with $\theta = \lambda/\delta$,
+
 $$f_i = c\,\frac{\nu}{\delta}\,\theta^{i-1}\,\frac{\Gamma(i + a)}{\Gamma(i + 1 + b)}, \qquad c = \frac{\Gamma(1+b)}{\Gamma(1+a)},$$
+
 so $p_i \sim \theta^{i} i^{a - b - 1}$; when $\lambda = \delta$ (second-order balanced) the family-size distribution is a generalized Pareto law with tail exponent $a - b - 1$, steeper than $-1$ exactly when $a < b$ (loss per member falls faster with family size than duplication).
 
 ## Depends on

@@ -9,11 +9,15 @@ $$\begin{aligned}
 and the total number of families $F = \sum_i f_i$ obeys $\dot F = \nu - \delta_1 f_1$. The **simple BDIM** is the special case $\lambda_i = \lambda i$, $\delta_i = \delta i$ (each member duplicates and is lost independently at per-member rates $\lambda, \delta$).
 
 **Proposition (unique equilibrium).** The master BDIM has a unique equilibrium,
+
 $$f_1 = \frac{\nu}{\delta_1}, \qquad f_i = \frac{\nu}{\delta_i} \prod_{j=1}^{i-1} \frac{\lambda_j}{\delta_j} \quad (2 \le i \le N), \qquad F_{\mathrm{eq}} = \nu \sum_{i=1}^{N} \frac{1}{\delta_i} \prod_{j=1}^{i-1} \frac{\lambda_j}{\delta_j},$$
+
 and it is globally asymptotically stable: every solution converges to it exponentially fast. The equilibrium frequencies are $p_i = f_i / F_{\mathrm{eq}}$.
 
 **Proposition (simple BDIM).** For the simple BDIM with $\theta = \lambda/\delta$,
+
 $$f_i = \frac{\nu}{\lambda}\,\frac{\theta^i}{i}, \qquad p_i = \frac{\theta^i / i}{\sum_{j=1}^{N} \theta^j / j},$$
+
 so the equilibrium frequencies follow the truncated logarithmic distribution; in the balanced case $\theta = 1$ they are $p_i = \big(i \sum_{j=1}^N 1/j\big)^{-1}$, a power law of exponent $-1$. Consequently no simple BDIM produces a power-law family-size distribution with exponent different from $-1$.
 
 ## Expansion

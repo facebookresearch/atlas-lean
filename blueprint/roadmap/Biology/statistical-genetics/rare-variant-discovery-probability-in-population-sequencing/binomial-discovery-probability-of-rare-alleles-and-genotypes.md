@@ -3,8 +3,11 @@
 **Setting.** A rare variant has population frequency $\phi$ (minor allele frequency, or rare homozygous genotype frequency). Each of $\sigma$ independently sampled diploid genomes is sequenced separately to the same haploid redundancy $\rho$, so the project-wide redundancy is $R=\sigma\rho$. Let $c=c(\rho,\tau)$ be the probability that the variant's position on a given chromosome is spanned by at least $\tau$ reads (the read-covering threshold used to control sequencing error), the same for both chromosomes and independent of the variant's presence. The variant is *discovered* if it is detected in at least $N$ samples.
 
 **Theorem 1 (rare alleles).** Let $A_j$ be the event that chromosome $j\in\{1,2\}$ of a sample carries the allele, with $\Pr[A_j]=\phi$ independently, and $C_j$ the event that its position on chromosome $j$ is covered at least $\tau$ times. The detection event $D_A=(A_1\cap C_1)\cup(A_2\cap C_2)$ has
+
 $$\Pr[D_A]=2\phi c-\phi^2c^2.$$
+
 With $K$ the number of samples in which the variant is detected, $K\sim\mathrm{Binomial}(\sigma,\Pr[D_A])$ and the discovery probability is
+
 $$P_v=\Pr[K\ge N]=\sum_{k=N}^{\sigma}\binom{\sigma}{k}\Pr[D_A]^k\bigl(1-\Pr[D_A]\bigr)^{\sigma-k}.$$
 
 **Theorem 2 (rare genotypes).** A rare genotype $G$ (frequency $\phi$) is detected only if both chromosomes are covered, $D_G=G\cap C_1\cap C_2$, so $\Pr[D_G]=\phi c^2$, and its discovery probability is the same binomial tail with $\Pr[D_G]$ in place of $\Pr[D_A]$.

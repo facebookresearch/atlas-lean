@@ -1,21 +1,29 @@
 # Unbiased gene diversity estimator from linear allele-frequency estimators
 
 **Setting.** A locus has $I$ alleles with population frequencies $p_1, \dots, p_I \in [0,1]$, $\sum_i p_i = 1$, and gene diversity $H = 1 - \sum_{i=1}^I p_i^2$. A sample has $n$ individuals; individual $k$ has ploidy $m_k$ and $X_k(i)$ is the fraction of its $m_k$ allele copies that are of type $i$. For individuals $j, k$ the kinship coefficient $\Phi_{jk}$ is the probability that an allele copy drawn uniformly from $j$ and one drawn uniformly and independently from $k$ (with replacement when $j = k$) are identical by descent (IBD). Alleles that are IBD are of the same type; alleles that are not IBD are independent draws from $(p_i)$. Hence $\mathbb{E}[X_j(i)] = p_i$ and
+
 $$\mathbb{E}[X_j(i)X_k(i)] = \Phi_{jk}\,p_i + (1 - \Phi_{jk})\,p_i^2 .$$
+
 Let $K = (\Phi_{jk})$ be the $n \times n$ kinship matrix. A linear estimator of $p_i$ is $\breve p_i = \sum_{k=1}^n w_k X_k(i)$ with weights summing to one, $\sum_k w_k = 1$ (the source takes $0 \le w_k \le 1$); it is unbiased.
 
 **Proposition 1 (general estimator).** Let $\rho_2 = \sum_{j=1}^n \sum_{k=1}^n w_j w_k \Phi_{jk} = w^{\mathsf T} K w$ and suppose $\rho_2 < 1$. Then
+
 $$\breve H = \frac{1}{1 - \rho_2}\Big(1 - \sum_{i=1}^I \breve p_i^{\,2}\Big)$$
+
 is an unbiased estimator of $H$, for any ploidies, inbreeding and relatedness.
 
 **Corollary 2 (sample proportions).** With $w_k = m_k / \sum_j m_j$, $\breve p_i$ is the sample proportion $\hat p_i$ and $\tilde H = (1 - \sum_i \hat p_i^2)/(1 - \bar\Phi_2)$, $\bar\Phi_2 = \sum_{j,k} \frac{m_j m_k}{(\sum_x m_x)^2}\Phi_{jk}$, is unbiased.
 
 **Corollary 3 (BLUE).** With $w = K^{-1}\mathbf 1 / (\mathbf 1^{\mathsf T} K^{-1} \mathbf 1)$, $\breve p_i$ is the best linear unbiased estimator $\tilde p_i$ of $p_i$ and
+
 $$\tilde H_{\mathrm{BLUE}} = \frac{1}{1 - \kappa_2}\Big(1 - \sum_{i=1}^I \tilde p_i^{\,2}\Big), \qquad \kappa_2 = w^{\mathsf T} K w = \frac{1}{\mathbf 1^{\mathsf T} K^{-1}\mathbf 1},$$
+
 is unbiased.
 
 **Proposition 5 (bias of the uncorrected estimator).** For an integer $n \ge 2$ let $\hat H(\breve p) = \frac{n}{n-1}\big(1 - \sum_i \breve p_i^{\,2}\big)$ (the Nei–Roychoudhury form). Then
+
 $$\operatorname{Bias}\big[\hat H(\breve p)\big] = \frac{1 - n\rho_2}{n-1}\,H .$$
+
 It vanishes iff $\rho_2 = 1/n$, as for $n$ allele copies from unrelated, non-inbred individuals weighted by copy number; relatives and inbreeding raise $\rho_2$ and make $\hat H$ biased downwards in proportion to $H$.
 
 ## Expansion
