@@ -9,3 +9,4 @@
 - [The (k-1)-mer walk of a string is an Eulerian trail](zip-tail-kmers-perm.md)
 - [The (k-1)-mer walk of a string spells the string](spell-kmers.md)
 - [Every Eulerian trail spells a string with the same k-mer multiset](kmers-spell-perm.md)
+- [Compacted de Bruijn graph and unitigs](compacted-de-bruijn-graph-and-unitigs.md)

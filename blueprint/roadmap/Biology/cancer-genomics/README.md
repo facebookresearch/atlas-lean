@@ -15,3 +15,7 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Allelic copy-number states in aneuploid genomes](allelic-copy-number-states-in-aneuploid-genomes/README.md)
+- [Beta-binomial timing of precursor lesions](beta-binomial-timing-of-precursor-lesions/README.md)
+- [Binomial-mixture calling of single nucleotide variants](binomial-mixture-snv-calling/README.md)
+- [Multi-region mutational heterogeneity](multi-region-mutational-heterogeneity/README.md)
