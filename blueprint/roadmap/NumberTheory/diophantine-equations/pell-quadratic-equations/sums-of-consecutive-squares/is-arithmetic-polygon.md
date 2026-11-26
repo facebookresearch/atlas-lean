@@ -1,6 +1,6 @@
 # Arithmetic polygons
 
-An arithmetic polygon with side lengths $a + 1, \dots, a + N$ is an $N$-periodic sequence of points
+Let $a$ be a nonnegative integer and $N$ a natural number. An arithmetic polygon with side lengths $a + 1, \dots, a + N$, all integers, is an $N$-periodic sequence of points
 $v_0, v_1, \dots$ in the plane $\mathbb{C}$, side $k$ joining $v_k$ to $v_{k+1}$ and $O = v_0$ being the
 special vertex, such that
 

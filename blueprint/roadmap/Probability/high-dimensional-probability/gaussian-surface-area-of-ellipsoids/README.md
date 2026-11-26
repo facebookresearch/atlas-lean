@@ -1,6 +1,5 @@
 # Gaussian surface area of ellipsoids
 
-- [Euclidean space $\mathbb{R}^n$](en.md)
 - [Gaussian surface area](gaussian-surface-area.md)
 - [Ellipsoid in $\mathbb{R}^n$](is-ellipsoid.md)
 - [Gaussian surface area of ellipsoids](ellipsoid-gaussian-surface-area-bounded.md)

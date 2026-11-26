@@ -1,3 +1,3 @@
-# Processing time `p_ij` of job `j` on machine `k` in UNRELATED PARALLEL MACHINES WITH MAKESPAN 2
+# Processing time $p_{kj}$ of job $j$ on machine $k$ in UNRELATED PARALLEL MACHINES WITH MAKESPAN 2
 
-For an instance `i` of UNRELATED PARALLEL MACHINES WITH MAKESPAN 2, the processing time `p_ij` of job `j` on machine `k`: entry `k` of row `j`. A position beyond the end of a list reads as the default entry `0`.
+For an instance of UNRELATED PARALLEL MACHINES WITH MAKESPAN 2 with $m$ machines and one row of processing times per job, the processing time $p_{kj}$ of job $j$ on machine $k$, written machine first, is entry $k$ of row $j$, and $0$ when that row has no entry $k$. Every job has a row, since the jobs are indexed by the rows.

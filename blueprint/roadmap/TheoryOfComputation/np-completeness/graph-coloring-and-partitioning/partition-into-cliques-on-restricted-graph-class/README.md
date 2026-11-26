@@ -2,7 +2,6 @@
 
 - [Doubling a grid point on the refined grid](double.md)
 - [Interior points of a grid segment on the refined grid](interior-points.md)
-- [B₀-CPG graphs](is-bzero-cpg.md)
 - [Well-formed instances of PARTITION INTO CLIQUES ON B_0-CPG GRAPHS](well-formed.md)
 - [PARTITION INTO CLIQUES ON B_0-CPG GRAPHS as a decision problem](partition-into-cliques-bzero-cpgdec.md)
 - [PARTITION INTO CLIQUES ON B_0-CPG GRAPHS is NP-complete](partition-into-cliques-bzero-cpg-np-comp.md)

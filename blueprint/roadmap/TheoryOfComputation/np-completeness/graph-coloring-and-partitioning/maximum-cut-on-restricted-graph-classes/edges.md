@@ -1,4 +1,3 @@
-# Unweighted edge list of a max-cut instance on cographs
+# Unweighted edge list of a weighted edge list
 
-The unweighted edge list of an instance: the pair $(u, v)$ of each entry $(u, v, w)$ of its
-weighted edge list, in order.
+For an instance $(n, E, K)$ with a weighted edge list $E$, the unweighted edge list consists of the pair $(u, v)$ of each entry $(u, v, w)$ of $E$, in order. The same construction serves WEIGHTED MAXIMUM CUT ON COGRAPHS WITH WEIGHTS 1 AND 2 and EDGE DELETION k-PARTITION.

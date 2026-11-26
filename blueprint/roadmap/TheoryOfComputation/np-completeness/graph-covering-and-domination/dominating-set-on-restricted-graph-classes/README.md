@@ -65,7 +65,6 @@
 - [Well-formed instances of DOMINATING SET ON SPLIT GRAPHS](well-formed-19.md)
 - [DOMINATING SET ON SPLIT GRAPHS as a decision problem](dominating-set-split-graphs-dec.md)
 - [DOMINATING SET ON SPLIT GRAPHS is NP-complete](dominating-set-split-graphs-np-complete.md)
-- [Dominating set as a graph thickness instance](with-thickness.md)
 - [Well-formed instances of DOMINATING SET ON GRAPHS OF THICKNESS AT MOST k](well-formed-20.md)
 - [DOMINATING SET ON GRAPHS OF THICKNESS AT MOST k as a decision problem](dominating-set-thickness-dec.md)
 - [DOMINATING SET ON GRAPHS OF THICKNESS AT MOST k is NP-complete](dominating-set-thickness-np-complete.md)

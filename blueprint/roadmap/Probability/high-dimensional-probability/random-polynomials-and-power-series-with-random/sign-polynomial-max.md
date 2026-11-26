@@ -1,5 +1,7 @@
-# Maximum modulus of a random sign polynomial
+# Maximum modulus of a polynomial with random coefficients
 
-Let $\varepsilon_0, \varepsilon_1, \dots$ be real random variables on $\Omega$, let $\omega \in \Omega$ and $n \in \mathbb{N}$. The maximum of the random sign polynomial of degree $n$ on the unit circle is
+Let $\varepsilon_0, \varepsilon_1, \dots$ be real random variables on $\Omega$, let $\omega \in \Omega$ and $n \in \mathbb{N}$. The maximum on the unit circle of the polynomial of degree at most $n$ with coefficients $\varepsilon_k(\omega)$ is
 
 $$M_n(\omega) = \sup_{z \in \mathbb{C},\ |z| = 1} \Big| \sum_{k=0}^{n} \varepsilon_k(\omega) z^k \Big|.$$
+
+The coefficients are arbitrary real numbers: with $n = 1$, $\varepsilon_0 = 2$ and $\varepsilon_1 = 0$ the polynomial is the constant $2$. When the $\varepsilon_k$ are independent uniform random signs, as in Erdős's problem on its growth, it is a random sign polynomial of degree exactly $n$.

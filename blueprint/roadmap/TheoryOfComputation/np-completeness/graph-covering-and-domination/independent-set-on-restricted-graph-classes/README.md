@@ -24,7 +24,6 @@
 - [Well-formed instances of INDEPENDENT SET ON PURE-3-DIR GRAPHS](well-formed-7.md)
 - [INDEPENDENT SET ON PURE-3-DIR GRAPHS as a decision problem](independent-set-pure-three-dir-dec.md)
 - [INDEPENDENT SET ON PURE-3-DIR GRAPHS is NP-complete](independent-set-pure-three-dir-np-comple.md)
-- [Independent set as a graph thickness instance](with-thickness.md)
 - [Well-formed instances of INDEPENDENT SET ON GRAPHS OF THICKNESS AT MOST k](well-formed-8.md)
 - [INDEPENDENT SET ON GRAPHS OF THICKNESS AT MOST k as a decision problem](independent-set-thickness-dec.md)
 - [INDEPENDENT SET ON GRAPHS OF THICKNESS AT MOST k is NP-complete](independent-set-thickness-np-complete.md)

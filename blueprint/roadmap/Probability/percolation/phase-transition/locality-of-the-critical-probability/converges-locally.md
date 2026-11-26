@@ -4,4 +4,4 @@ Let $(G_n)_{n \in \mathbb{N}}$ be graphs with vertex sets $V_n$ and $G$ a graph 
 
 $$B_{G_n}(v_n, r) \cong B_G(v, r)$$
 
-sending $v_n$ to $v$, where $B_H(u, r)$ is the induced subgraph of $H$ on the vertices at graph distance at most $r$ from $u$. This is the form of convergence in Benjamini's local metric that Hutchcroft uses for transitive graphs.
+sending $v_n$ to $v$, where $B_H(u, r)$ is the [ball](ball.md) of radius $r$: the induced subgraph of $H$ on the vertices $w$ with $d_H(u, w) \le r$, where an unreachable vertex has distance $0$. On disconnected graphs these balls differ from the usual ones: two isolated vertices and a single isolated vertex have isomorphic ordinary balls of radius $0$, but the balls here have two and one vertices. For connected graphs this is the form of convergence in Benjamini's local metric that Hutchcroft uses for transitive graphs.

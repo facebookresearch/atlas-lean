@@ -26,8 +26,6 @@
 - [TREEWIDTH ON PERFECT ELIMINATION BIPARTITE GRAPHS is NP-complete](treewidth-perfect-elimination-bipartite-2.md)
 - [Instances of TREEWIDTH](treewidth-instance.md)
 - [Well-formed instances of TREEWIDTH](well-formed.md)
-- [TREEWIDTH: `(T, β)` is a tree decomposition of the finite graph `G`](is-tree-decomposition.md)
-- [TREEWIDTH: Finite graph `G` has treewidth at most `K`](treewidth-at-most.md)
 - [Feasible TREEWIDTH instances](treewidth-feasible.md)
 - [TREEWIDTH as a decision problem](treewidth-dec.md)
 - [TREEWIDTH is NP-complete](treewidth-np-complete.md)

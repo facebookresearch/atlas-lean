@@ -16,8 +16,6 @@
 - [COUPLED TASK SCHEDULING as a decision problem](coupled-task-scheduling-dec.md)
 - [COUPLED TASK SCHEDULING is NP-complete](coupled-task-scheduling-np-complete.md)
 - [Instances of EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE](earliness-tardiness-restrictive-common-d.md)
-- [Jobs of an earliness-tardiness instance](job.md)
-- [Processing times of jobs](processing-time.md)
 - [Single-machine schedules by real completion times](is-schedule.md)
 - [Well-formed instances of EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE](well-formed-3.md)
 - [Feasible instances of EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE](earliness-tardiness-restrictive-common-d-2.md)

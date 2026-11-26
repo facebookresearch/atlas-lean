@@ -1,3 +1,3 @@
-# Jobs of a single-machine instance with precedence time lags
+# Jobs of a single-machine instance with listed lengths and precedence pairs
 
-In `SINGLE-MACHINE SCHEDULING WITH PRECEDENCE TIME LAGS (1|prec(l); pᵢ = 1|C_max)`: the jobs of the instance, `Fin n` for `n` listed jobs.
+For a single-machine instance given by a list of $n$ natural numbers (one per job), a list of precedence pairs and two further natural numbers, the jobs, or tasks, are $0, \dots, n - 1$, one for each entry of the first list. The same indexing serves SINGLE-MACHINE UNIT JOBS WITH PRECEDENCE AND A COMMON TIME LAG, MAKESPAN and PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS.

@@ -33,7 +33,7 @@
 - [Instances of SCHEDULING WITH INDIVIDUAL DEADLINES](scheduling-with-individual-deadlines-ins.md)
 - [Tasks of the instance in SCHEDULING WITH INDIVIDUAL DEADLINES](task-2.md)
 - [Precedence relation in SCHEDULING WITH INDIVIDUAL DEADLINES](prec-2.md)
-- [Deadline `d(t)` of task `t` in SCHEDULING WITH INDIVIDUAL DEADLINES](deadline.md)
+- [Deadline $d(t)$ of a task in SCHEDULING WITH INDIVIDUAL DEADLINES](deadline.md)
 - [Unit tasks running at a time (individual deadlines)](running-2.md)
 - [Well-formed instances of SCHEDULING WITH INDIVIDUAL DEADLINES](well-formed-5.md)
 - [Feasible instances of SCHEDULING WITH INDIVIDUAL DEADLINES](scheduling-with-individual-deadlines-fea.md)
