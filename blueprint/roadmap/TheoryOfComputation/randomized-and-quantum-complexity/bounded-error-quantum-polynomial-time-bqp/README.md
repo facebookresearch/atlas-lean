@@ -17,7 +17,7 @@
 - [Gate entries times the gate denominator](gate-matrix-mul-gate-denom.md)
 - [Cleared and path-sum amplitudes](amp-num-eq-amp-sum-mul.md)
 - [Integer path expansion](amp-num-eq-sum-path-num.md)
-- [Gap as a signed sum of amplitude norms](path-pair-gap-eq-sum-out-sign-norm.md)
+- [Gap as a signed sum of squared moduli](path-pair-gap-eq-sum-out-sign-norm.md)
 - [Explicit scaled acceptance](accept-prob-scaled-eq-acc-weight.md)
 - [Integer gap identity](path-pair-gap-eq-two-mul-acc-weight-sub.md)
 - [Gap and acceptance probability](path-pair-gap-eq.md)
