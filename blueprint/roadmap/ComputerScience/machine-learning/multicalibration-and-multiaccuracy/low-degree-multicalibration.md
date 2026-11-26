@@ -6,7 +6,7 @@ $$
 \big| \mathbb{E}\big[c(x)\, w(p(x))\, (y - p(x))\big] \big| \le \alpha \quad \text{for all } c \in \mathcal{C} \text{ and all polynomials } w \text{ of degree at most } k \text{ with } \sup_{[0,1]} |w| \le 1 .
 $$
 
-Degree $0$ is multiaccuracy, and letting the weight class range over all bounded functions $w$ of $p(x)$ recovers (an $\ell_\infty$-weighted form of) full multicalibration, so the degrees interpolate between the two notions; for $\ell$ classes the definition uses vector-valued predictions and multivariate polynomials.
+Degree $0$ is multiaccuracy (note that Gopalan, Kim, Singhal and Zhao index one higher, calling weights of degree $k - 1$ degree-$k$ multicalibration so multiaccuracy is their degree $1$), and letting the weight class range over all bounded functions $w$ of $p(x)$ recovers (an $\ell_\infty$-weighted form of) full multicalibration, so the degrees interpolate between the two notions; for $\ell$ classes the definition uses vector-valued predictions and multivariate polynomials.
 
 ## Depends on
 
