@@ -13,6 +13,21 @@ import Mathlib.Data.List.Permutation
 
 open MetaMathlibExt
 
+-- The public theorem applies at the minimum size in its statement.
+example : (sortedPermutations (consecutiveCyclicStackSort [1, 2, 3]) 4).card = 0 :=
+  sortedPermutations_consecutiveCyclicStackSort_123 (n := 4) (by decide)
+
+-- With only two entries, the reversed input still sorts.
+example : [2, 1] ∈ sortedPermutations (consecutiveCyclicStackSort [1, 2, 3]) 2 := by
+  simp only [sortedPermutations, Finset.mem_filter, List.mem_toFinset, List.mem_permutations]
+  decide
+
+-- With a third entry, a smaller or larger entry causes a pop, but an intermediate entry pushes.
+example : consecutiveCyclicStackSort [1, 2, 3] [3, 2, 1] = [2, 1, 3] ∧
+    consecutiveCyclicStackSort [1, 2, 3] [2, 1, 3] = [1, 3, 2] ∧
+    consecutiveCyclicStackSort [1, 2, 3] [3, 1, 2] = [2, 1, 3] := by
+  decide
+
 -- At length two the tail is a singleton, so it gives only one choice.
 example : (sortedPermutations (consecutiveCyclicStackSort [3, 2, 1]) 2).card = 1 :=
   card_sortedPermutations_consecutiveCyclicStackSort_321 (n := 2) (by decide)
