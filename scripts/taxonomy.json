@@ -12391,7 +12391,7 @@
   "MathlibExt/MeasureTheory/Measure/CircleMeasureFourierDecayIntegrable": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Fourier coefficients of measures on the circle"},
   "MathlibExt/MeasureTheory/Measure/CoordinateCrossPolytope": {"to": "MeasureTheory/lebesgue-measure", "title": "Volumes of polytopes"},
   "MathlibExt/MeasureTheory/Measure/CoordinateCube": {"to": "MeasureTheory/lebesgue-measure", "title": "Volumes of polytopes"},
-  "MathlibExt/MeasureTheory/Measure/ExistsEqProd": {"to": "MeasureTheory/haar-measure", "title": "Invariant measures on product groups"},
+  "MathlibExt/MeasureTheory/Measure/ExistsEqProd": {"to": "MeasureTheory/haar-measure", "title": "Translation-invariant measures on products"},
   "MathlibExt/MeasureTheory/Measure/GraphMeasurableNull": {"to": "MeasureTheory/lebesgue-measure", "title": "Null sets"},
   "MathlibExt/MeasureTheory/Measure/HaarQuotient": {"to": "MeasureTheory/haar-measure", "title": "Integration over quotients by closed subgroups"},
   "MathlibExt/MeasureTheory/Measure/ImageNull": {"to": "MeasureTheory/lebesgue-measure", "title": "Null sets"},
