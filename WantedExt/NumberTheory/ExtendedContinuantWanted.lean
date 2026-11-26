@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Ring.NegOnePow
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ExtendedContinuant
 public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantEuler
+public import MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms
 
 /-!
 # Extended continuants and bi-infinite periodic continued fractions
@@ -35,6 +36,8 @@ Strict equivalence of raw rationals is equality of numerators and of denominator
 statements below keep only the strict-equivalence hypotheses on the convergents; the
 periodicity and limit conditions of a BpCF (Definition 5) are not used by the paper's proofs
 and are dropped, so each statement applies to every bi-infinite integer sequence.
+The same applies to `MetaMathlibExt.oddSilent_terms`, which is in
+`MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms`.
 -/
 
 namespace MetaMathlibExt
@@ -97,34 +100,6 @@ public theorem_wanted oneSilent_terms (x y z : ℤ → ℤ)
     (hwest : ∀ i : ℕ, extendedContinuant x (-(i : ℤ) - 2) 0 = extendedContinuant z i 0 ∧
       extendedContinuant x (-(i : ℤ) - 3) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
     (∀ n : ℕ, x n = y n) ∧ (∀ n : ℕ, 1 ≤ n → x (-(n : ℤ)) = -z n) ∧ z 0 = 0
-
-/-- **Terms of a $\sigma$-silent sequence for odd $\sigma \ge 5$.** Let $\sigma \ge 5$ be an odd
-integer, let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite integer sequences, and write
-$K_a(x)_b$ for the extended continuant of order $a$ with start index $b$. Suppose that for every
-natural number $i$, $K_i(x)_0 = K_i(y)_0$, $K_{i-1}(x)_1 = K_{i-1}(y)_1$,
-$K_{-i-\sigma-1}(x)_0 = K_i(z)_0$ and $K_{-i-\sigma-2}(x)_1 = K_{i-1}(z)_1$. Then $x_n = y_n$ for
-every $n \ge 0$,
-$x_{-\sigma+2} x_{-\sigma+1} = -1 + K_{\sigma-6}(x)_{-\sigma+4} + z_0 K_{\sigma-5}(x)_{-\sigma+4}$,
-$x_{-\sigma+1} = -K_{\sigma-5}(x)_{-\sigma+3} - z_0 K_{\sigma-4}(x)_{-\sigma+3}$,
-$x_{-\sigma} = -K_{\sigma-3}(x)_{-\sigma+2} - z_1$, and $x_{-n} = -z_{n-\sigma+1}$ for every integer
-$n \ge \sigma + 1$.
-
-The paper states the second formula as a quotient for $x_{-\sigma+2}$; here it is multiplied out.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 7. -/
-public theorem_wanted oddSilent_terms (x y z : ℤ → ℤ) (σ : ℤ) (hσ : Odd σ) (h5 : 5 ≤ σ)
-    (heast : ∀ i : ℕ, extendedContinuant x i 0 = extendedContinuant y i 0 ∧
-      extendedContinuant x ((i : ℤ) - 1) 1 = extendedContinuant y ((i : ℤ) - 1) 1)
-    (hwest : ∀ i : ℕ, extendedContinuant x (-(i : ℤ) - σ - 1) 0 = extendedContinuant z i 0 ∧
-      extendedContinuant x (-(i : ℤ) - σ - 2) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
-    (∀ n : ℕ, x n = y n) ∧
-      x (-σ + 2) * x (-σ + 1) = -1 + extendedContinuant x (σ - 6) (-σ + 4) +
-        z 0 * extendedContinuant x (σ - 5) (-σ + 4) ∧
-      x (-σ + 1) = -extendedContinuant x (σ - 5) (-σ + 3) -
-        z 0 * extendedContinuant x (σ - 4) (-σ + 3) ∧
-      x (-σ) = -extendedContinuant x (σ - 3) (-σ + 2) - z 1 ∧
-      ∀ n : ℤ, σ + 1 ≤ n → x (-n) = -z (n - σ + 1)
 
 /-- **Silent-term formulas on table (33), case $\sigma \equiv 1 \pmod 6$.** Let $\sigma \ge 7$ be
 an integer with $\sigma \equiv 1 \pmod 6$, let $c_1 \ne c_2$ be integers, and let
