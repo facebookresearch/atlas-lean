@@ -14,6 +14,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Logic.Function.Iterate
 public import MathlibExt.NumberTheory.Digits.NegativeBaseDigitSquareCongruence
+public import MathlibExt.NumberTheory.Digits.NegativeBaseHappyNumbers
 
 /-!
 # Negative base happy numbers
@@ -153,18 +154,6 @@ Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.2. -/
 public theorem_wanted isNegBaseHappy_consecutive_runs_even (b : ℤ) (hb : b ≤ -4) (heven : Even b)
     (N : ℕ) :
     ∃ n : ℤ, ∀ i < N, IsNegBaseHappy b (n + i)
-
-/-- **A common iterate of the negative-base digit-square map falls below twice the squared base.**
-Let $b \le -7$ be an integer, let $S_{2,b}$ be the map sending an integer to the sum of the
-squares of its base-$b$ digits, and write $S_{2,b}^k$ for its $k$-fold iterate. For every finite
-set $A$ of positive integers there is an integer $k \ge 1$ such that $S_{2,b}^k(a) < 2b^2$ for
-every $a \in A$.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 2.2. -/
-public theorem_wanted exists_iterate_negBaseSqDigitSum_lt (b : ℤ) (hb : b ≤ -7) (A : Finset ℤ)
-    (hA : ∀ a ∈ A, 0 < a) :
-    ∃ k : ℕ, 0 < k ∧ ∀ a ∈ A, (negBaseSqDigitSum b)^[k] a < 2 * b ^ 2
 
 /-- **Even bases at most $-4$ make every finite set of positive integers good.** Let $b \le -4$
 be an even integer. Then every finite set of positive integers is $(2, b)$-good.
