@@ -18,9 +18,9 @@ import Mathlib.Tactic.NormNum.Prime
 /-!
 # The arithmetic derivative, the accelerated Collatz map and compatible semiprimes
 
-Every positive solution `n` of the arithmetic differential equation `D(C(n)) = C(D(n))` is odd,
-where `D` is the arithmetic derivative and `C` the accelerated Collatz map. For compatible
-semiprimes, the equations for the sums and products of the prime factors determine their
+Every positive solution `n` of the arithmetic differential equation `D(C(n)) = C(D(n))` is odd and
+composite, where `D` is the arithmetic derivative and `C` the accelerated Collatz map. For
+compatible semiprimes, the equations for the sums and products of the prime factors determine their
 residues modulo three up to the order of each pair. The factors of the first semiprime have
 opposite odd residues modulo four. A semiprime solution `pq` with `q < p` satisfies the prime gap
 bound `p - q ≥ 2 √(30 p² + 2) - 10 p`; its proof uses `D(m)² ≥ 4m` for composite `m`.
@@ -80,6 +80,36 @@ theorem odd_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
     unfold collatzAccelerated at h
     split_ifs at h <;> omega
   · exact odd_two_mul_add_one m
+
+/-- **Positive solutions of the Collatz arithmetic differential equation are composite.** Let
+$D$ be the arithmetic derivative and $C$ the accelerated Collatz map. Every positive integer $n$
+with $D(C(n)) = C(D(n))$ is composite, that is, $n > 1$ and $n$ is not prime.
+
+Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
+Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8,
+Proposition 3 (`jis-2025-25.1.8-prop-3`). -/
+theorem composite_of_arithmeticDerivative_collatz_comm (n : ℕ) (hn : 0 < n)
+    (h : arithmeticDerivative (collatzAccelerated n) =
+      collatzAccelerated (arithmeticDerivative n)) :
+    1 < n ∧ ¬ n.Prime := by
+  have hn₁ : n ≠ 1 := by
+    rintro rfl
+    rw [show collatzAccelerated 1 = 2 from rfl, arithmeticDerivative_prime Nat.prime_two,
+      arithmeticDerivative_one] at h
+    exact (by decide : 1 ≠ collatzAccelerated 0) h
+  refine ⟨by omega, fun hp => ?_⟩
+  rw [arithmeticDerivative_prime hp, show collatzAccelerated 1 = 2 from rfl] at h
+  -- If D(p * k) = 2 for a prime p, the product rule forces k ≤ 2.
+  generalize collatzAccelerated n = m at h
+  have hm : m ≠ 1 := by
+    rintro rfl
+    simp [arithmeticDerivative_one] at h
+  obtain ⟨p, hprime, k, rfl⟩ := Nat.exists_prime_and_dvd hm
+  rw [arithmeticDerivative_mul, arithmeticDerivative_prime hprime, one_mul] at h
+  have hk : k = 0 ∨ k = 1 ∨ k = 2 := by omega
+  rcases hk with rfl | rfl | rfl <;>
+    simp [arithmeticDerivative_zero, arithmeticDerivative_one,
+      arithmeticDerivative_prime Nat.prime_two, hprime.ne_zero] at h
 
 /-- **Compatible semiprimes.** Natural numbers $p, q, r, s$ form a compatible semiprime pair,
 and the semiprimes $pq$ and $rs$ are called compatible, when $p, q, r, s$ are primes with
