@@ -562,3 +562,5 @@ Topics added since this subject's fields were last revised.
 - [Range vector with strictly dominating diagonal coefficient](projection-vector-dominator.md)
 - [Continuous inclusion from ultraweak topology to WOT](ultraweak-to-wot-continuous.md)
 - [Semifinite square domain is ultraweakly dense](weight-finite-square-ultraweak-dense.md)
+- [Arch Datum RDerivative](exists-w-eq-fderiv-within-mul.md)
+- [Arch Datum RLinear Combination](exists-lincomb.md)

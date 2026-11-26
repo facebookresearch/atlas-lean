@@ -114,3 +114,8 @@ Topics added since this subject's fields were last revised.
 - [Zero Extension](zero-extension/README.md)
 - [Factor maps commute with the residue tensor equivalence](zmod-restrict-int-equiv-naturality.md)
 - [Residue-ring tensors and integer tensors](zmod-restrict/README.md)
+- [Block Solution Equiv](block-solution-equiv/README.md)
+- [Gaussian Channel Diagonal Reduction](gaussian-channel-diagonal-reduction/README.md)
+- [Matched SNRQuotient](matched-snrquotient/README.md)
+- [Schur Source Energy](schur-source-energy/README.md)
+- [Schur Strict Positivity](schur-strict-positivity/README.md)
