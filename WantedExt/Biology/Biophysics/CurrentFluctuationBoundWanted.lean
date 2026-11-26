@@ -65,11 +65,13 @@ noncomputable def psi (j jbar a : ℝ) : ℝ :=
   j * (Real.arsinh (j / a) - Real.arsinh (jbar / a)) -
     (Real.sqrt (a ^ 2 + j ^ 2) - Real.sqrt (a ^ 2 + jbar ^ 2))
 
-/-- The mean current `j^p(y, z) = p(y) r(y, z) - p(z) r(z, y)` of the density `p`. -/
+/-- The current `j^p(y, z) = p(y) r(y, z) - p(z) r(z, y)` of a function `p` on the states, for
+arbitrary real `p` and `r`; when `p` is a probability density it is the mean current of `p`. -/
 def meanCurrent (r : Fin N → Fin N → ℝ) (p : Fin N → ℝ) (y z : Fin N) : ℝ :=
   p y * r y z - p z * r z y
 
-/-- The traffic `a^p(y, z) = 2 √(p(y) p(z) r(y, z) r(z, y))` of the density `p`. -/
+/-- The traffic `a^p(y, z) = 2 √(p(y) p(z) r(y, z) r(z, y))` of a function `p` on the states,
+for arbitrary real `p` and `r` (the source takes `p` a probability density). -/
 noncomputable def traffic (r : Fin N → Fin N → ℝ) (p : Fin N → ℝ) (y z : Fin N) : ℝ :=
   2 * Real.sqrt (p y * p z * r y z * r z y)
 
@@ -97,9 +99,11 @@ noncomputable def levelTwoFiveRate (r : Fin N → Fin N → ℝ) (p : Fin N → 
 
 open Classical in
 /-- The contracted current rate function `I(j) = inf_p I(p, j)`, with values in `[0, ∞]`: for a
-conservative current `j` it is the infimum of `I(p, j)` over positive probability densities `p`
-(each `I(p, j)` is a sum of values of the convex function `Ψ`, which is nonnegative), and for a
-non-conservative current it is `+∞`, as in the source. -/
+conservative current `j` it is the infimum of `I(p, j)` over positive probability densities `p`,
+and for a non-conservative current it is `+∞`, as in the source. Each `I(p, j)` is a sum of terms
+`Ψ(j, j^p, a^p)` over the edges; for nonnegative rates (as in `Setting`), a positive `p` and a
+conservative `j`, every term is nonnegative, since `Ψ(·, j̄, a)` is convex and nonnegative for
+`a > 0`, and an edge with `a^p = 0` has zero reverse rate, where a conservative `j` vanishes. -/
 noncomputable def currentRate (r : Fin N → Fin N → ℝ) (j : Fin N → Fin N → ℝ) : ℝ≥0∞ :=
   if Conservative r j then
     ⨅ (p : Fin N → ℝ) (_ : (∀ y, 0 < p y) ∧ ∑ y, p y = 1), ENNReal.ofReal (levelTwoFiveRate r p j)
@@ -112,8 +116,11 @@ noncomputable def generalizedCurrent (r : Fin N → Fin N → ℝ) (d j : Fin N 
 /-- The rate function of a generalized current, `I(j_d = x) = inf {I(j) | j conservative with
 ∑_{y<z} d(y, z) j(y, z) = x}`, with values in `[0, ∞]`. On an infeasible value `x`, attained by no
 conservative current (for example `d = 0` and `x ≠ 0`), the infimum is over the empty set and the
-rate is `+∞`. When `j_d^π ≠ 0` every real `x` is feasible (scale the stationary current `j^π`,
-which is conservative), and the rate is finite by `generalizedRate_le`. -/
+rate is `+∞`. In the setting `Setting r π`, where `π` is stationary, `j_d^π ≠ 0` makes every real
+`x` feasible (scale the stationary current `j^π`, which stationarity makes conservative), and the
+rate is then finite by `generalizedRate_le`. A nonzero `j_d^p` for a law `p` that is not
+stationary gives neither: with two states, unit rates both ways, `d = 1` and `p = (3/4, 1/4)`,
+`j^p ≠ 0`, yet the only conservative current is `0`, so the rate at `x = 1` is `+∞`. -/
 noncomputable def generalizedRate (r : Fin N → Fin N → ℝ) (d : Fin N → Fin N → ℝ) (x : ℝ) :
     ℝ≥0∞ :=
   ⨅ (j : Fin N → Fin N → ℝ) (_ : Conservative r j ∧ generalizedCurrent r d j = x), currentRate r j

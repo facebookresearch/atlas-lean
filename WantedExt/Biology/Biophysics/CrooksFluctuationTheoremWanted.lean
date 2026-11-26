@@ -68,13 +68,16 @@ abbrev Path (σ : Type*) (n : ℕ) : Type _ := Fin (n + 1) → σ
 def reversePath (bar : σ → σ) (x : Path σ n) : Path σ n :=
   fun j => bar (x (Fin.rev j))
 
-/-- The conditional probability `∏_i M_i(x_i, x_{i+1})` of following the path `x` under the
-transition matrices `M_0, …, M_{n-1}` of a protocol. -/
+/-- The path weight `∏_i M_i(x_i, x_{i+1})` of the path `x` under the matrices `M_0, …, M_{n-1}`
+of a protocol, for arbitrary real entries. When every `M_i` is stochastic (nonnegative entries,
+each row summing to `1`), it is the conditional probability of following `x` from `x_0`. -/
 def condPathProb (M : Fin n → σ → σ → ℝ) (x : Path σ n) : ℝ :=
   ∏ i : Fin n, M i (x i.castSucc) (x i.succ)
 
-/-- The probability `ρ(x_0) ∏_i M_i(x_i, x_{i+1})` of the path `x` for the process with initial
-density `ρ` and transition matrices `M`. -/
+/-- The path weight `ρ(x_0) ∏_i M_i(x_i, x_{i+1})` of the path `x` for the initial weights `ρ`
+and the matrices `M`, for arbitrary real entries. When `ρ` is a probability vector and every `M_i`
+is stochastic, it is the probability of `x` for the process with initial law `ρ` and transition
+matrices `M`. -/
 def pathProb (ρ : σ → ℝ) (M : Fin n → σ → σ → ℝ) (x : Path σ n) : ℝ :=
   ρ (x 0) * condPathProb M x
 
