@@ -11,8 +11,6 @@ module
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import MathlibExt.RingTheory.MvPolynomial.BernsteinBounds
-import Mathlib.Analysis.Convex.Segment
-import Mathlib.Tactic.Linarith
 
 /-!
 # Bernstein bounds for polynomial matrices
@@ -138,13 +136,6 @@ theorem posDef_map_eval_of_bernsteinCoeff [DecidableEq m]
     (posSemidef_map_eval_sub_of_bernsteinCoeff hp hx hc)
   simpa only [← add_sub_assoc, add_sub_cancel_left] using h
 
-private theorem exists_cube_parameter {a b x : ℝ} (hab : a ≤ b)
-    (hx : x ∈ Set.Icc a b) : ∃ t ∈ Set.Icc (0 : ℝ) 1, a + (b - a) * t = x := by
-  obtain ⟨u, v, hu, hv, huv, heq⟩ := (Convex.mem_Icc hab).mp hx
-  refine ⟨v, ⟨hv, by linarith⟩, ?_⟩
-  rw [show u = 1 - v by linarith] at heq
-  nlinarith [heq]
-
 /-- Suppose every entry of a real polynomial matrix has coordinate degrees
 bounded by the same vector `n`. On an ordered closed box `[a,b]`, a fixed
 matrix lower bound for all valid Bernstein coefficient matrices of the
@@ -159,7 +150,7 @@ theorem posSemidef_map_eval_sub_of_bernsteinCoeff_box {n : ι → ℕ}
       (bernsteinCoeff n (P.map (boxPullback a b)) (fun i => k i) - L).PosSemidef) :
     (P.map (eval x) - L).PosSemidef := by
   classical
-  choose t ht heq using fun i => exists_cube_parameter (hab i) (hx i)
+  choose t ht heq using fun i => exists_unit_parameter (hab i) (hx i)
   have h := posSemidef_map_eval_sub_of_bernsteinCoeff
     (P := P.map (boxPullback a b))
     (fun r c i => (degreeOf_boxPullback_le a b (P r c) i).trans (hp r c i)) ht hc
