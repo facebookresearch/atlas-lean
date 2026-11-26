@@ -1,7 +1,7 @@
 # Varieties and algebraic characterizations
 
 Classes of regular languages characterized by their syntactic monoids. Eilenberg's variety theorem matches varieties of
-finite monoids with varieties of languages, and Reiterman's theorem describes varieties of finite semigroups by profinite
+finite monoids with varieties of languages, and Reiterman's theorem describes varieties of finite monoids by profinite
 identities. Simon's theorem characterizes the piecewise testable languages by $\mathcal{J}$-trivial monoids, the locally
 testable languages are those whose syntactic semigroup is locally idempotent and commutative, and the Krohn–Rhodes theorem
 shows that every finite monoid divides a wreath product of groups and copies of a three-element aperiodic monoid. The star-free languages, characterized by aperiodic monoids,
