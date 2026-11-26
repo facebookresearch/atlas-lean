@@ -23,4 +23,13 @@ example : (1 : ℕ) = 1 ∧ (1 = 2 ∨ (2 = 2 ∧ 1 = 1)) :=
 example (p a l : ℕ) (hp : p.Prime) (h : IsKLDeficientPerfect 2 l (p ^ a)) : l = 1 :=
   (isKLDeficientPerfect_prime_pow_two_imp p a l hp h).1
 
+-- `2 = 2 ^ 1` is the only `[2,ℓ]`-deficient-perfect prime power.
+example : IsKLDeficientPerfect 2 1 (2 ^ 1) :=
+  (isKLDeficientPerfect_prime_pow_two_iff 2 1 1 Nat.prime_two).mpr ⟨rfl, rfl, rfl⟩
+
+-- The exception `a = 2` of the printed statement does not occur: no prime square is
+-- `[2,ℓ]`-deficient-perfect.
+example (p l : ℕ) (hp : p.Prime) : ¬ IsKLDeficientPerfect 2 l (p ^ 2) := fun h =>
+  absurd ((isKLDeficientPerfect_prime_pow_two_iff p 2 l hp).mp h).2.1 (by decide)
+
 end MathlibExtTest.NumberTheory.FkPerfect

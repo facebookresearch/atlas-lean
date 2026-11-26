@@ -17,12 +17,13 @@ import Mathlib.NumberTheory.Divisors
 
 /-! # `[2,ℓ]`-deficient-perfect prime powers
 
-A prime power `p ^ a` that is `[2,ℓ]`-deficient-perfect satisfies `ℓ = 1` and either `a = 2`
-or `p = 2` with `a = 1`: reducing the divisor-sum equation modulo `p ^ 2` excludes every
-exponent `a ≥ 2`, and at `a = 1` the equation gives `ℓ * p = 2`.
+A prime power `p ^ a` is `[2,ℓ]`-deficient-perfect exactly when `p = 2`, `a = 1` and `ℓ = 1`:
+reducing the divisor-sum equation modulo `p ^ 2` excludes every exponent `a ≥ 2`, and at `a = 1`
+the equation gives `ℓ * p = 2` (`isKLDeficientPerfect_prime_pow_two_iff`). The weaker form that
+also allows `a = 2` is `isKLDeficientPerfect_prime_pow_two_imp`.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P. Saikia, "On Near
-`F_k`-Perfect and Deficient `F_k`-Perfect Numbers", Theorem 3.
+`F_k`-Perfect and Deficient `F_k`-Perfect Numbers", Theorem 3 and Corollary 1.
 -/
 
 set_option autoImplicit false
@@ -115,5 +116,31 @@ theorem isKLDeficientPerfect_prime_pow_two_imp
     subst hp2
     have hl1 : l = 1 := by omega
     exact ⟨hl1, Or.inr ⟨rfl, rfl⟩⟩
+
+/-- **$[2,\ell]$-deficient-perfect prime powers, classified.** Let $p$ be a prime and let $a$ and
+$\ell$ be natural numbers. Then $p^a$ is $[2,\ell]$-deficient-perfect if and only if $p = 2$,
+$a = 1$ and $\ell = 1$.
+
+The printed statement allows the exception $a = 2$, $\ell = 1$ and omits the number $2$. The
+exception does not occur, and $2$ is $[2,1]$-deficient-perfect by Corollary 1.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 3 and Corollary 1. -/
+theorem isKLDeficientPerfect_prime_pow_two_iff (p a l : ℕ) (hp : p.Prime) :
+    IsKLDeficientPerfect 2 l (p ^ a) ↔ p = 2 ∧ a = 1 ∧ l = 1 := by
+  constructor
+  · intro h
+    obtain ⟨rfl, ha⟩ := isKLDeficientPerfect_prime_pow_two_imp p a l hp h
+    rcases ha with rfl | ⟨rfl, rfl⟩
+    · exfalso
+      obtain ⟨d, -, -, hsum⟩ := h
+      rw [← ArithmeticFunction.sigma_apply, ArithmeticFunction.sigma_apply_prime_pow hp] at hsum
+      simp only [Finset.sum_range_succ, Finset.sum_range_zero] at hsum
+      ring_nf at hsum
+      omega
+    · exact ⟨rfl, rfl, rfl⟩
+  · rintro ⟨rfl, rfl, rfl⟩
+    simpa using isKLDeficientPerfect_two 2
 
 end MathlibExt.NumberTheory.FkPerfectWanted
