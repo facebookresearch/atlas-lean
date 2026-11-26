@@ -1,0 +1,110 @@
+{
+  "schema": "atlas.mathlibext-source-snapshot.v1",
+  "library": "MathlibExt",
+  "encoding": "UTF-8 JSON Lines with literal source_text strings; standard JSON escaping only",
+  "source_version": "This immutable pre-adaptation source version is identified by the listed file and chunk SHA256 hashes.",
+  "file_count": 10,
+  "original_source_lines": 2444,
+  "original_bytes": 111320,
+  "chunks": [
+    {
+      "file": "part-0001.jsonl",
+      "sha256": "b91261c5eac99dba24d2d2b1a8a46c136032a0beb49c1d7f641afb38a562427b",
+      "bytes": 115721,
+      "rows": 10
+    }
+  ],
+  "files": [
+    {
+      "original_path": "MathlibExt/Analysis/Distribution/Scaling.lean",
+      "original_sha256": "3fdfff7dfc8ee783c4997f90411c35c391aee26b7e3a2c8098d52f46fc7e46be",
+      "original_bytes": 7339,
+      "original_lines": 165,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejer.lean",
+      "original_sha256": "435ba9837a411b4f87ab6cba1d0f47027fd9f4e66b28fd1030362b0cf9dc4419",
+      "original_bytes": 5982,
+      "original_lines": 117,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejerCoefficients.lean",
+      "original_sha256": "3f00130069a13d01af2ae54df3abf1723700ba25ad32cf57c1c39d9b43bf099b",
+      "original_bytes": 9563,
+      "original_lines": 196,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejerPairing.lean",
+      "original_sha256": "fdcc460882fc1bfaccf545c0de1595902060e7e729a8ad610109b969d055caaf",
+      "original_bytes": 12065,
+      "original_lines": 203,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/CircleFejerPolynomial.lean",
+      "original_sha256": "a5bc64fbe06e5f618e6392de73cf5ad8f7f47b6be701252dcadc5a090a7f2eb0",
+      "original_bytes": 8406,
+      "original_lines": 164,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/DFTMatrix.lean",
+      "original_sha256": "0bcd3335a009eddb37174b5691acb18122719ba24118c71bd0b7b0c4276e608f",
+      "original_bytes": 26524,
+      "original_lines": 621,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/Pontryagin/IntegralData.lean",
+      "original_sha256": "f6e97866b9309d5228ecd4d2f0d27a1cc18aedc258def1739f33b5249a8eafdb",
+      "original_bytes": 1918,
+      "original_lines": 50,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/PontryaginDualIntegral.lean",
+      "original_sha256": "40d758cc9f8a4e94182c99cced3a6659032aedd6732a5d46d733d1ec179aa48d",
+      "original_bytes": 3726,
+      "original_lines": 90,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/Fourier/RegularTwoFrame.lean",
+      "original_sha256": "96bf1650c5ce2a30b8658b2ff671cfafc6f10585c2a12b4609d9c8cff4a4e21d",
+      "original_bytes": 20955,
+      "original_lines": 515,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/SchwartzSpace/RapidSequence.lean",
+      "original_sha256": "2ef3a2f432141d694d46e3f1653d10b6fd8d9855dc22afbc04f23bd47533c48c",
+      "original_bytes": 14842,
+      "original_lines": 323,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    }
+  ],
+  "adaptation_scope": "snapshot_adaptations concerns the archive bytes only; production adaptations are recorded separately in the batch provenance manifest."
+}

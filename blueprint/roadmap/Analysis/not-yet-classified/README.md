@@ -387,3 +387,13 @@ Topics added since this subject's fields were last revised.
 - [Uniform and positive representative properties](uniform/README.md)
 - [Arch Datum RDerivative](exists-w-eq-fderiv-within-mul.md)
 - [Arch Datum RLinear Combination](exists-lincomb.md)
+
+- [Integrability of a compact-support character Fourier kernel](integrable-haar-fourier-kernel.md)
+- [Regular real frame from half-circle directions](regular-two-frame/README.md)
+- [Rapidly decreasing sequences and weighted supremum seminorms](rapid-sequence/README.md)
+- [Fourier integral with the inverse continuous character](pontryagin-dual-integral/README.md)
+- [Normalized discrete Fourier matrices with both signs](dftmatrix/README.md)
+- [Fejér polynomials and their uniform norm bound](circle-fejer-polynomial/README.md)
+- [Fejér convergence against L¹ test functions](circle-fejer-pairing/README.md)
+- [Fourier coefficients of Fejér polynomials](circle-fejer-coefficients/README.md)
+- [Fejér kernels on the unit circle](circle-fejer/README.md)
