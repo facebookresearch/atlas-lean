@@ -1,7 +1,9 @@
 # Variance of the inner product on a convex body and its polar
 
 For $n \in \mathbb{N}$ and a set $K \subseteq \mathbb{R}^n$ (with the Euclidean inner product), let
+
 $$K^\circ = \{y \in \mathbb{R}^n : \langle x, y\rangle \le 1 \text{ for all } x \in K\}$$
+
 be the polar of $K$, and let $m = |K|\,|K^\circ|$ be the product of their Lebesgue measures, each taken as a real number (an infinite measure counts as $0$). The inner product variance of $K$ is
 
 $$\operatorname{Var}(K) = \frac{1}{m}\int_K \int_{K^\circ} \langle x, y\rangle^2 \, dy\, dx - \left(\frac{1}{m}\int_K \int_{K^\circ} \langle x, y\rangle \, dy\, dx\right)^2,$$

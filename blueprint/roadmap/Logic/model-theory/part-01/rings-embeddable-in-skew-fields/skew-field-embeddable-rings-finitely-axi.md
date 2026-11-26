@@ -2,7 +2,9 @@
 
 Statement (Kourovka Notebook Problem 2.38, A. I. Mal'cev): the class of associative rings with $1$ that embed in a division ring is finitely axiomatizable. Precisely, there is a finite set $T$ of first-order sentences in the language of rings $\{+, \cdot, -, 0, 1\}$ such that for every ring $R$,
 
-$$R \models T \iff \text{there are a division ring } D \text{ and an injective unital ring homomorphism } R \to D.$$ It is false; the refutation is [Rings embeddable in skew fields are not finitely axiomatizable](skew-field-embeddable-rings-finitely-axi-2.md).
+$$R \models T \iff \text{there are a division ring } D \text{ and an injective unital ring homomorphism } R \to D.$$
+
+It is false; the refutation is [Rings embeddable in skew fields are not finitely axiomatizable](skew-field-embeddable-rings-finitely-axi-2.md).
 
 ## Sources
 

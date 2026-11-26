@@ -5,7 +5,9 @@ This result proves the proposition stated as [Meckes's question on monotonicity 
 $$\mathbb{E} V_d(P^K_{d+1}) \le c(d)\, \mathbb{E} V_d(P^L_{d+1}).$$
 
 Here $\mathbb{E} V_d(P^K_{d+1})$ is the expected volume of the convex hull of $d + 1$ independent points uniform in $K$:
+
 $$\mathbb{E} V_d(P^K_{d+1}) = \frac{1}{|K|^{d+1}} \int_{K^{d+1}} \bigl|\operatorname{conv}\{x_0, \dots, x_d\}\bigr| \, dx_0 \cdots dx_d,$$
+
 with $|\cdot|$ Lebesgue measure on $\mathbb{R}^d$, and a convex body is a compact convex set with nonempty interior.
 
 The source states that this is equivalent to a positive solution of Bourgain's slicing problem.

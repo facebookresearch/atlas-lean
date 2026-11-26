@@ -2,7 +2,9 @@
 
 Statement (Kourovka Notebook Problem 9.67, A. D. Taimanov; Tarski's problem): the free groups $F_2$ and $F_3$ of ranks $2$ and $3$ are elementarily equivalent in the first-order language of groups (multiplication, inversion and the identity), that is, they satisfy the same first-order sentences:
 
-$$\mathrm{Th}(F_2) = \mathrm{Th}(F_3).$$ It holds; the resolution is [Elementary equivalence of $F_2$ and $F_3$](free-groups-rank-two-three-elementarily-2.md).
+$$\mathrm{Th}(F_2) = \mathrm{Th}(F_3).$$
+
+It holds; the resolution is [Elementary equivalence of $F_2$ and $F_3$](free-groups-rank-two-three-elementarily-2.md).
 
 ## Sources
 

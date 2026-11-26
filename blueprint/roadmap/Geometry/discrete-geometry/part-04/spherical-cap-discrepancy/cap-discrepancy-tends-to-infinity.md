@@ -8,7 +8,9 @@ where $C$ ranges over the closed spherical caps $C(v, t) = \{x \in S^2 : \langle
 
 Conjecture (Erdős): $\min_{|P| = n} D(P) \to \infty$ as $n \to \infty$. Precisely, for every real $M$ there is $N$ such that for every $n \ge N$ and every set $P \subseteq S^2$ of $n$ points there are $v \in S^2$ and $t \in \mathbb{R}$ with
 
-$$\bigl\lvert\, |P \cap C(v, t)| - \alpha(C(v, t))\, n \,\bigr\rvert > M.$$ It holds; the resolution is [Erdős problem 988: cap discrepancy tends to infinity](cap-discrepancy-tends-to-infinity-holds.md).
+$$\bigl\lvert\, |P \cap C(v, t)| - \alpha(C(v, t))\, n \,\bigr\rvert > M.$$
+
+It holds; the resolution is [Erdős problem 988: cap discrepancy tends to infinity](cap-discrepancy-tends-to-infinity-holds.md).
 
 ## Sources
 

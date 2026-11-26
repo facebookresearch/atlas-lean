@@ -5,7 +5,9 @@ Question (E. Meckes), stated as a conjecture: there are constants $c(d) > 0$, $d
 $$\mathbb{E} V_d(P^K_{d+1}) \le c(d)\, \mathbb{E} V_d(P^L_{d+1}).$$
 
 Here $\mathbb{E} V_d(P^K_{d+1})$ is the expected volume of the convex hull of $d + 1$ independent points uniform in $K$:
+
 $$\mathbb{E} V_d(P^K_{d+1}) = \frac{1}{|K|^{d+1}} \int_{K^{d+1}} \bigl|\operatorname{conv}\{x_0, \dots, x_d\}\bigr| \, dx_0 \cdots dx_d,$$
+
 with $|\cdot|$ Lebesgue measure on $\mathbb{R}^d$, and a convex body is a compact convex set with nonempty interior. It holds; the resolution is [Random simplex volume is monotone up to an exponential factor](meckes-random-simplex-question-holds.md).
 
 ## Sources
