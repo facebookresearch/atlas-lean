@@ -4,7 +4,7 @@ The statement that for every natural number $s$ there are infinitely many $n \ge
 
 The prime may differ from one coefficient to the next; no prime power need divide all of them. In row $6$, for instance, every interior coefficient has a prime factor, yet $\gcd(6, 15, 20) = 1$.
 
-This page records the statement as a proposition. Its resolution: [Resolution of Erdős Problem 379](binomial-prime-power-exponent-unbounded-2.md).
+This page records the statement as a proposition.
 
 ## Sources
 
