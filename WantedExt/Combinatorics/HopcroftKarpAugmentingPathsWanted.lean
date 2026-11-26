@@ -36,28 +36,3 @@ instead of Theorem 1.
 Matchings are finite edge sets as in `MetaMathlibExt.Berge`, and paths are walks satisfying
 `MetaMathlibExt.IsAugmentingWalk`; path lengths count edges.
 -/
-
-@[expose] public section
-
-set_option autoImplicit false
-
-namespace MetaMathlibExt
-
-open scoped symmDiff
-
-/-- **Disjoint augmenting paths in a symmetric difference (Hopcroft–Karp, Theorem 1).** Let `M`
-and `N` be matchings of a finite simple graph `G`. Then there are `|N| - |M|` pairwise
-vertex-disjoint `M`-augmenting walks whose edges all lie in `M ⊕ N` (Hopcroft and Karp, SIAM J.
-Comput. 2 (1973), §2, Theorem 1, stated there for `|N| > |M|`; when `|N| ≤ |M|` the truncated
-difference is `0` and the statement is empty). -/
-theorem_wanted exists_disjoint_augmentingWalks {V : Type*} [Fintype V]
-    [DecidableEq V] (G : SimpleGraph V) (M N : Finset (Sym2 V))
-    (hMG : ∀ e ∈ M, e ∈ G.edgeSet)
-    (hM : ∀ e₁ ∈ M, ∀ e₂ ∈ M, e₁ ≠ e₂ → ∀ v : V, v ∈ e₁ → v ∉ e₂)
-    (hNG : ∀ e ∈ N, e ∈ G.edgeSet)
-    (hN : ∀ e₁ ∈ N, ∀ e₂ ∈ N, e₁ ≠ e₂ → ∀ v : V, v ∈ e₁ → v ∉ e₂) :
-    ∃ P : Fin (N.card - M.card) → (u : V) × (v : V) × G.Walk u v,
-      (∀ i, IsAugmentingWalk M (P i).2.2 ∧ ∀ e ∈ (P i).2.2.edges, e ∈ M ∆ N) ∧
-        ∀ i j, i ≠ j → List.Disjoint (P i).2.2.support (P j).2.2.support
-
-end MetaMathlibExt
