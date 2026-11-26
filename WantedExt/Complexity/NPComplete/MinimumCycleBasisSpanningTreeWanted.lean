@@ -70,9 +70,10 @@ reduction from every language in `NP`
 -/
 
 open Classical in
-/-- The total length of the fundamental cycles of `G` with respect to `T`: the sum of
-`T.dist u v + 1` over the edges `{u, v}` of `G` that are not edges of `T` (each once, as
-`u < v`). -/
+/-- The sum of `T.dist u v + 1` over the edges `{u, v}` of `G` that are not edges of `T` (each
+once, as `u < v`); `T.dist` is `0` between vertices `T` does not connect. When `T` is a
+spanning tree of `G`, this is the total length of the fundamental cycles of `G` with respect
+to `T`. -/
 noncomputable def fundamentalCycleLength {n : ℕ} (G T : SimpleGraph (Fin n)) : ℕ :=
   ∑ u : Fin n, ∑ v ∈ Finset.univ.filter (fun v => u < v ∧ G.Adj u v ∧ ¬ T.Adj u v),
     (T.dist u v + 1)

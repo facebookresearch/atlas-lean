@@ -66,8 +66,9 @@ reduction from every language in `NP`
 -/
 
 open Classical in
-/-- The flow on the edge `{u, v}` of `T`: the number of unordered pairs `{x, y}` of vertices
-(each counted once, as `x < y`) that are disconnected when the edge is removed from `T`. -/
+/-- The number of unordered pairs `{x, y}` of vertices (each counted once, as `x < y`) that are
+not connected in `T` after the edge `{u, v}` is removed, including pairs already disconnected.
+When `T` is a spanning tree and `{u, v}` is one of its edges, this is the flow on that edge. -/
 noncomputable def edgeFlow {n : ℕ} (T : SimpleGraph (Fin n)) (u v : Fin n) : ℕ :=
   (Finset.univ.filter fun p : Fin n × Fin n =>
     p.1 < p.2 ∧ ¬ (T.deleteEdges {s(u, v)}).Reachable p.1 p.2).card

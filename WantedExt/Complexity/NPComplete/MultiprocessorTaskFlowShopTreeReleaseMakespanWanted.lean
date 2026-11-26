@@ -88,7 +88,8 @@ def releaseDate (i : MultiprocessorTaskFlowShopTreeReleaseMakespanInstance)
 (`StagesWellFormed`), every stage needs at least one processor (each stage's processor list is
 nonempty), every job has `r` unit processing times (`UnitJobs`), the listed arcs
 describe an acyclic precedence digraph on the jobs (`PrecWellFormed`), and its
-precedence relation is a tree (`IsTreePrecedence`). -/
+precedence relation is an in-forest or an out-forest, not necessarily connected
+(`IsTreePrecedence`). -/
 def WellFormed (i : MultiprocessorTaskFlowShopTreeReleaseMakespanInstance) : Prop :=
   StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
     UnitJobs i.2.1.length (i.2.2.1.map Prod.fst) ∧

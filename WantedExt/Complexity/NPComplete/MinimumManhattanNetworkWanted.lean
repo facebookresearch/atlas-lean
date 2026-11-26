@@ -93,7 +93,8 @@ def WellFormed (i : MinimumManhattanNetworkInstance) : Prop :=
 /-- Some list `N` of axis-parallel segments of total length at most `L` has, for all points
 `p, q` of `T`, a rectilinear path from `p` to `q` in the union of its segments whose length is
 the `L₁` distance of `p` and `q`. For `p = q` the one-point path qualifies whether or not `p`
-lies on a segment of `N`. -/
+lies on a segment of `N`; the network graph is read with every terminal as a vertex, isolated
+ones included, so it may differ from the union of its segments. -/
 def MinimumManhattanNetworkFeasible (i : MinimumManhattanNetworkInstance) : Prop :=
   ∃ N : List ((ℝ × ℝ) × (ℝ × ℝ)),
     (∀ s ∈ N, s.1.1 = s.2.1 ∨ s.1.2 = s.2.2) ∧

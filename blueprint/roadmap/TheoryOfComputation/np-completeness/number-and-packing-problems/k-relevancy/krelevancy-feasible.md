@@ -1,4 +1,3 @@
 # Feasible K-RELEVANCY instances
 
-A set `X'` of at most `K` constraints whose solutions over `ℚ^m` all satisfy every constraint of
-`X`.
+A subset $X' \subseteq X$ of at most $K$ of the listed constraints (chosen by position in the list) whose solutions over $\mathbb{Q}^m$ all satisfy every constraint of $X$. The constraints of $X'$ come from the input; an arbitrary inequality that implies $X$ does not count.

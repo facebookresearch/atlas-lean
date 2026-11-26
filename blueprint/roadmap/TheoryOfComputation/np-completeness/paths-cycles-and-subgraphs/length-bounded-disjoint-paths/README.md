@@ -17,7 +17,6 @@
 - [The decision problem MAXIMUM LENGTH-BOUNDED DISJOINT PATHS with a fixed length bound](fixed-bound-dec.md)
 - [MAXIMUM LENGTH-BOUNDED DISJOINT PATHS with fixed `K ≥ 5` is NP-complete](maximum-length-bounded-disjoint-paths-fi.md)
 - [Instances of MAXIMUM LENGTH-BOUNDED DISJOINT PATHS](maximum-length-bounded-disjoint-paths-in.md)
-- [Well-formed MAXIMUM LENGTH-BOUNDED DISJOINT PATHS instances](well-formed-2.md)
 - [Feasible MAXIMUM LENGTH-BOUNDED DISJOINT PATHS instances](maximum-length-bounded-disjoint-paths-fe.md)
 - [The decision problem MAXIMUM LENGTH-BOUNDED DISJOINT PATHS](maximum-length-bounded-disjoint-paths-de.md)
 - [MAXIMUM LENGTH-BOUNDED DISJOINT PATHS is NP-complete](maximum-length-bounded-disjoint-paths-np.md)

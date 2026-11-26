@@ -71,8 +71,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The test `p = (u, v)` fails when the link `(a, b)` fails: the link lies on a directed path
-from `u` to `v`, i.e. `u` reaches `a` and `b` reaches `v`. -/
+/-- The test `p = (u, v)` fails when the link `(a, b)` fails: `u` reaches `a` and `b` reaches
+`v`. This does not test that `a → b` is an arc; when it is, as for the links of the well-formed
+DAG, the condition says the link lies on a directed path from `u` to `v`. -/
 def TestFails (i : FaultDetectionDirectedGraphsInstance) (p : Fin i.1 × Fin i.1)
     (a b : Fin i.1) : Prop :=
   Relation.ReflTransGen (Graph i).Adj p.1 a ∧ Relation.ReflTransGen (Graph i).Adj b p.2

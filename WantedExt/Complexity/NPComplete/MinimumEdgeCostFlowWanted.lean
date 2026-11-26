@@ -63,11 +63,13 @@ abbrev MinimumEdgeCostFlowInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ) × 
 def arcs (i : MinimumEdgeCostFlowInstance) : List (ℕ × ℕ) :=
   i.2.1.map fun a => (a.1, a.2.1)
 
-/-- The capacity `c(u, v)` of the arc from `u` to `v`, and `0` when there is no such arc. -/
+/-- The capacity of the first arc record from `u` to `v`, and `0` when there is no such record;
+for a well-formed instance this is the capacity `c(u, v)` of the arc. -/
 def capacity (i : MinimumEdgeCostFlowInstance) (u v : ℕ) : ℕ :=
   ((i.2.1.find? fun a => a.1 = u ∧ a.2.1 = v).map fun a => a.2.2.1).getD 0
 
-/-- The price `p(u, v)` of the arc from `u` to `v`, and `0` when there is no such arc. -/
+/-- The price of the first arc record from `u` to `v`, and `0` when there is no such record;
+for a well-formed instance this is the price `p(u, v)` of the arc. -/
 def price (i : MinimumEdgeCostFlowInstance) (u v : ℕ) : ℕ :=
   ((i.2.1.find? fun a => a.1 = u ∧ a.2.1 = v).map fun a => a.2.2.2).getD 0
 

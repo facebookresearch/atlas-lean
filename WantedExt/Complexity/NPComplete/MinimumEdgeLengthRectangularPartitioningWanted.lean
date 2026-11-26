@@ -102,8 +102,11 @@ rectangles of the list have no common cell, and every cell of `P` lies in a rect
 def IsRectPartition (P : List (ℕ × ℕ)) (rs : List (ℕ × ℕ × ℕ × ℕ)) : Prop :=
   (∀ r ∈ rs, ∀ c, inRect r c → c ∈ P) ∧ rs.Pairwise RectDisjoint ∧ ∀ c ∈ P, ∃ r ∈ rs, inRect r c
 
-/-- The edge length of the partition `rs` of `P`: the number of unit segments between a cell of `P`
-and its right or upper neighbor in `P` when no rectangle contains both. -/
+/-- The edge length of the partition `rs` of `P`: the number of occurrences in the list `P` of a
+cell whose right neighbor is in `P` with no rectangle of `rs` containing both, plus the same
+count for upper neighbors. A cell listed twice counts twice; for a duplicate-free `P`, as
+well-formedness requires, this is the number of unit segments between neighboring cells that no
+rectangle contains together. -/
 def edgeLength (P : List (ℕ × ℕ)) (rs : List (ℕ × ℕ × ℕ × ℕ)) : ℕ :=
   (P.filter fun c => decide ((c.1 + 1, c.2) ∈ P) &&
     !rs.any fun r => inRect r c && inRect r (c.1 + 1, c.2)).length +
