@@ -9358,6 +9358,7 @@
   "MathlibExt/AlgebraicGeometry/SmoothReducedSource": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Smooth morphisms"},
   "MathlibExt/AlgebraicGeometry/SmoothRelDim": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Smooth morphisms"},
   "MathlibExt/AlgebraicGeometry/TangentSpace": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Tangent spaces of algebraic sets"},
+  "MathlibExt/AlgebraicGeometry/TropicalVariety": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Tropical varieties"},
   "MathlibExt/AlgebraicGeometry/VanishingIdeal": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Reduced induced closed subschemes"},
   "MathlibExt/AlgebraicGeometry/Variety": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Varieties over a field"},
   "MathlibExt/AlgebraicTopology/Barcodes/Basic": {"to": "Topology/algebraic-topology", "title": "Persistence modules and barcodes"},
