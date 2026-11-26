@@ -1,3 +1,4 @@
-# Has Principal Divisors of finite Dimensional of is Separable
+# Principal divisors in finite separable extensions of the rational function field
 
-A finite separable extension of `RatFunc K` has principal divisors of degree zero.
+A
+finite separable extension of `RatFunc K` has principal divisors of degree zero.

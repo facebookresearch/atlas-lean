@@ -1,6 +1,7 @@
 # Curve function fields from a transcendental element
 
-- [Finite residue Field restrict](finite-residue-field-restrict.md)
-- [Has Principal Divisors of finite Dimensional of is Separable](has-principal-divisors-of-finite-dimensi.md)
-- [Is Curve Over of transcendental](is-curve-over-of-transcendental.md)
-- [Is Curve Over of transcendental of perfect Field](is-curve-over-of-transcendental-of-perfe.md)
+- [Residue fields in a finite extension](finite-residue-field-restrict.md)
+- [Principal divisors in finite separable extensions of the rational function field](has-principal-divisors-of-finite-dimensi.md)
+- [Function fields as finite separable extensions of the rational function field](exists-rat-func-algebra-of-transcendenta.md)
+- [Curve function fields from a separating transcendental element](is-curve-over-of-transcendental.md)
+- [Curve function fields over a perfect field](is-curve-over-of-transcendental-of-perfe.md)
