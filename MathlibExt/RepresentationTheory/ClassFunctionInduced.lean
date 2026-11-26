@@ -74,8 +74,10 @@ representation of `H`, it is the character of the induced representation of `G`.
 def induced (H : Subgroup G) [NeZero (Nat.card H : K)] (φ : G → K) : G → K :=
   fun g => (Nat.card H : K)⁻¹ * ∑ x : G, if x⁻¹ * g * x ∈ H then φ (x⁻¹ * g * x) else 0
 
-/-- **Frobenius formula for induced class functions.** For every decidability instance for
-membership in `H`, `induced H φ g = |H|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H] * φ (x⁻¹ * g * x)`. -/
+/-- **Frobenius formula for induced class functions.** For a field `K` in which the order of
+`H` is invertible (the instance argument `[NeZero (Nat.card H : K)]`) and every decidability
+instance for membership in `H`,
+`induced H φ g = |H|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H] * φ (x⁻¹ * g * x)`. -/
 theorem induced_apply (H : Subgroup G) [DecidablePred (· ∈ H)] [NeZero (Nat.card H : K)]
     (φ : G → K) (g : G) :
     induced H φ g =
@@ -84,8 +86,9 @@ theorem induced_apply (H : Subgroup G) [DecidablePred (· ∈ H)] [NeZero (Nat.c
   congr 1
   exact Finset.sum_congr rfl fun x _ => by congr
 
-/-- **Induction depends only on the values on the subgroup.** If `φ ψ : G → K` agree on `H`,
-then `induced H φ = induced H ψ`. -/
+/-- **Induction depends only on the values on the subgroup.** For a field `K` in which the
+order of `H` is invertible (the instance argument `[NeZero (Nat.card H : K)]`), if
+`φ ψ : G → K` agree on `H`, then `induced H φ = induced H ψ`. -/
 theorem induced_congr (H : Subgroup G) [NeZero (Nat.card H : K)] {φ ψ : G → K}
     (h : ∀ x ∈ H, φ x = ψ x) :
     induced H φ = induced H ψ := by
@@ -98,8 +101,9 @@ theorem induced_congr (H : Subgroup G) [NeZero (Nat.card H : K)] {φ ψ : G → 
   · exact h _ hx
   · rfl
 
-/-- **Induced functions are class functions.** For all `y g : G`,
-`induced H φ (y⁻¹ * g * y) = induced H φ g`. -/
+/-- **Induced functions are class functions.** For a field `K` in which the order of `H` is
+invertible (the instance argument `[NeZero (Nat.card H : K)]`),
+`induced H φ (y⁻¹ * g * y) = induced H φ g` for all `y g : G`. -/
 theorem induced_conj (H : Subgroup G) [NeZero (Nat.card H : K)] (φ : G → K) (y g : G) :
     induced H φ (y⁻¹ * g * y) = induced H φ g := by
   classical
@@ -154,8 +158,9 @@ theorem induced_sum {ι : Type*} (H : Subgroup G) [NeZero (Nat.card H : K)] (s :
       funext x; simp
     rw [this, induced_add, Pi.add_apply, ih]
 
-/-- **Projection formula for induction.** If `f : G → K` is a class function, that is,
-`f (x⁻¹ * g * x) = f g` for all `x g : G`, then
+/-- **Projection formula for induction.** For a field `K` in which the order of `H` is
+invertible (the instance argument `[NeZero (Nat.card H : K)]`), if `f : G → K` is a class
+function, that is, `f (x⁻¹ * g * x) = f g` for all `x g : G`, then
 `induced H φ g * f g = induced H (fun y => φ y * f y) g` for every `g : G`. -/
 theorem induced_mul_of_conj_invariant (H : Subgroup G) [NeZero (Nat.card H : K)] (φ f : G → K)
     (hf : ∀ x g : G, f (x⁻¹ * g * x) = f g) (g : G) :

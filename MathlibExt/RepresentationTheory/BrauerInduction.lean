@@ -222,7 +222,10 @@ open scoped Classical in
 complex representation `ρ : G →* GL (Fin n) ℂ`, there are finitely many subgroups `H i`, linear
 characters `ψ i : H i →* ℂˣ` and integers `a i : ℤ` such that the character `g ↦ trace (ρ g)`
 is `∑ i, a i * induced (H i) (ψ i)`, each `ψ i` extended by zero off `H i` and induced over
-`ℂ`. The subgroups `H i` need not be elementary. -/
+`ℂ`. Written out by the Frobenius formula, this says that for all `g : G`,
+`trace (ρ g) = ∑ i, a i * (|H i|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H i] * ψ i (x⁻¹ * g * x))`,
+which is `BrauerInduction.exists_trace_eq_sum_zsmul_induced_linearCharacter`. The subgroups
+`H i` need not be elementary. -/
 public theorem exists_trace_eq_sum_zsmul_induced
     {G : Type u} [Group G] [Fintype G] {n : ℕ} (ρ : G →* GL (Fin n) ℂ) :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (ψ : (i : Fin k) → (H i →* ℂˣ)) (a : Fin k → ℤ),
@@ -231,13 +234,10 @@ public theorem exists_trace_eq_sum_zsmul_induced
           (fun x => if hx : x ∈ H i then (((ψ i) ⟨x, hx⟩ : ℂˣ) : ℂ) else 0) g :=
   BrauerProof.main ρ
 
+/- The statement of `BrauerInduction.exists_trace_eq_sum_zsmul_induced` with
+`ClassFunction.induced` written out by the Frobenius formula, as the cited source states
+Brauer's induction theorem: the same hypotheses and the same witnesses. -/
 open scoped Classical in
-/-- **Brauer's induction theorem for arbitrary subgroups, Frobenius form.** For a finite group
-`G` and a complex representation `ρ : G →* GL (Fin n) ℂ`, there are finitely many subgroups
-`H i`, not necessarily elementary, linear characters `ψ i : H i →* ℂˣ` and integers `a i : ℤ`
-such that, for all `g`, the induced characters written out by the Frobenius formula over `ℂ`
-give `trace (ρ g) = ∑ i, a i * (|H i|⁻¹ * ∑ x : G, [x⁻¹ * g * x ∈ H i] * ψ i (x⁻¹ * g * x))`.
--/
 public theorem exists_trace_eq_sum_zsmul_induced_linearCharacter
     {G : Type u} [Group G] [Fintype G] {n : ℕ} (ρ : G →* GL (Fin n) ℂ) :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (ψ : (i : Fin k) → (H i →* ℂˣ)) (a : Fin k → ℤ),
