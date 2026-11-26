@@ -42,6 +42,7 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 public import MathlibExt.NumberTheory.FkPerfect
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFkPerfectPrimePowMul
 
 set_option autoImplicit false
 
@@ -54,13 +55,6 @@ $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect w
 divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
 def IsKLNearPerfect (k l n : ℕ) : Prop :=
   ∃ d, KLNearPerfectWith k l n d
-
-/-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
-$[k,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_k(n) + d^k = n^k + 3n$. -/
-def IsDeficientFkPerfect (k n : ℕ) : Prop :=
-  IsKLDeficientPerfect k 3 n
 
 /-- **Near $F_k$-perfect numbers.** For natural numbers $k$ and $n$, the number $n$ is near
 $F_k$-perfect when it is $[k,3]$-near-perfect, that is, when some proper divisor $d$ of $n$
@@ -306,19 +300,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isNearFPerfect_two_pow_mul_prime_pow
     (p a b : ℕ) (hp : p.Prime) (hb : Even b) :
     ¬ IsNearFPerfect (2 ^ a * p ^ b)
-
-/-- **No deficient $F_k$-perfect number $p_1^a p_2$ with distinct odd primes.** Let $k > 1$ be
-a natural number, let $p_1 \ne p_2$ be odd primes and let $a$ be a natural number. Then
-$p_1^a p_2$ is not deficient $F_k$-perfect.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 16. -/
-theorem_wanted not_isDeficientFkPerfect_prime_pow_mul
-    (k p₁ p₂ a : ℕ) (hk : 1 < k) (hp₁ : p₁.Prime)
-    (hp₂ : p₂.Prime) (ho₁ : Odd p₁) (ho₂ : Odd p₂)
-    (hne : p₁ ≠ p₂) :
-    ¬ IsDeficientFkPerfect k (p₁ ^ a * p₂)
 
 /-- **No near $F_k$-perfect number of the form $p_1^a p_2$.** Let $k > 1$, let $p_1$ and $p_2$ be
 distinct odd primes and let $a$ be a natural number. Then $p_1^a p_2$ is not near $F_k$-perfect.
