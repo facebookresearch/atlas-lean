@@ -12943,6 +12943,7 @@
   "MathlibExt/NumberTheory/IntegerComplexityBounds": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/IntegerComplexityLogBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/IntegerComplexityRecurrence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
+  "MathlibExt/NumberTheory/IntegerComplexitySubadditive": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/IntegerComplexityTwoPowMulThreePow": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/IntegerPolynomialMap": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Integer polynomial maps modulo primes"},
   "MathlibExt/NumberTheory/IsobaricPolynomial": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Isobaric polynomials"},
