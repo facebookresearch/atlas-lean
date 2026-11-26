@@ -46,6 +46,15 @@ example {f : F} (hf : f ≠ 0) :
     ∃ D : Divisor K F, (∀ v : Place K F, D v = v.ord f) ∧ Divisor.degree D = 0 :=
   HasPrincipalDivisors.exists_divisor f hf
 
+-- The rank-one Kähler condition alone rules out a separable algebraic extension.
+example : ¬ Algebra.IsSeparable K F := IsCurveOver.not_isSeparable
+
+-- Over a perfect field, instance search finds `Algebra.Transcendental K F`, which feeds Mathlib's
+-- lemmas for transcendental extensions.
+example [PerfectField K] : Algebra.Transcendental K F := inferInstance
+
+example [PerfectField K] : 0 < Algebra.trdeg K F := trdeg_pos K F
+
 end AlgebraicCurve
 
 open IntermediateField KaehlerDifferential
@@ -66,8 +75,8 @@ example {K : Type 1} {F : Type 2} [Field K] [Field F] [Algebra K F]
       Algebra.IsSeparable K⟮t⟯ F :=
   AlgebraicCurve.IsCurveOver.exists_separating_transcendental
 
--- The Kähler-rank hypothesis matters: for an algebraic extension the
--- conclusion would give a transcendental element, which cannot exist.
+-- A curve function field over a perfect field, essentially of finite type, has transcendence
+-- degree one.
 example {K F : Type*} [Field K] [Field F] [Algebra K F]
     [PerfectField K] [Algebra.EssFiniteType K F]
     [AlgebraicCurve.IsCurveOver K F] :

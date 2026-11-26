@@ -31,10 +31,8 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.RingTheory.Kaehler.Basic
 public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
-public import MathlibExt.AlgebraicGeometry.Curve.Place
 
 import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 import Mathlib.FieldTheory.SeparablyGenerated
@@ -54,9 +52,10 @@ import Mathlib.RingTheory.Etale.Field
 nonzero element of `F` has a degree-zero principal divisor, residue fields of places are finite
 over `K`, and the Kähler differentials of `F / K` are free of rank one. This file derives the
 instances `HasPrincipalDivisors K F`, `Module.Finite K v.ResidueField` and the Kähler instances from
-it, and shows that every place has degree one over an algebraically closed field. Over a perfect
-field it shows that `F` is transcendental over `K` and, when `F` is essentially of finite type
-over `K`, that `F` has transcendence degree one.
+it, and shows that every place has degree one over an algebraically closed field. From the rank-one
+Kähler condition alone it shows that `F` is not separable over `K`. Over a perfect field it shows
+that `F` is transcendental over `K` and, when `F` is also essentially of finite type over `K`, that
+`F` has transcendence degree one.
 -/
 
 @[expose] public section
@@ -66,8 +65,6 @@ noncomputable section
 open KaehlerDifferential
 
 namespace AlgebraicCurve
-
-universe u v
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
@@ -125,48 +122,41 @@ theorem forall_deg_eq_one_of_isAlgClosed [IsAlgClosed K] [IsCurveOver K F] :
     ∀ w : Place K F, w.deg = 1 :=
   deg_eq_one_of_isAlgClosed
 
+/-- **A curve function field is not separable over its base.** If `F` is the function field of a
+curve over `K`, then `F` is not a separable algebraic extension of `K`. Only the rank-one Kähler
+condition is used, with no hypothesis on `K`: a separable algebraic extension is formally
+unramified, so its module of Kähler differentials is zero, while `Ω[F⁄K]` has rank one. -/
 theorem not_isSeparable [IsCurveOver K F] : ¬ Algebra.IsSeparable K F := by
   intro hsep
-  haveI : Algebra.FormallyUnramified K F :=
+  have : Algebra.FormallyUnramified K F :=
     Algebra.FormallyUnramified.of_isSeparable K F
   exact false_of_nontrivial_of_subsingleton Ω[F⁄K]
 
+/-- **A curve function field over a perfect field is not algebraic.** If `K` is a perfect field
+and `F` is the function field of a curve over `K`, then `F` is not algebraic over `K`. The
+perfect-field hypothesis makes every algebraic extension of `K` separable, which
+`not_isSeparable` rules out. -/
 theorem not_isAlgebraic [PerfectField K] [IsCurveOver K F] :
     ¬ Algebra.IsAlgebraic K F := by
   intro halg
   exact not_isSeparable (K := K) (F := F)
     Algebra.IsAlgebraic.isSeparable_of_perfectField
 
+/-- **A curve function field over a perfect field is transcendental.** If `K` is a perfect field
+and `F` is the function field of a curve over `K`, then `F` is transcendental over `K`: some
+element of `F` is transcendental over `K`. -/
 instance instTranscendental [PerfectField K] [IsCurveOver K F] :
     Algebra.Transcendental K F :=
   Algebra.transcendental_iff_not_isAlgebraic.mpr not_isAlgebraic
-
-theorem exists_transcendental [PerfectField K] [IsCurveOver K F] :
-    ∃ t : F, Transcendental K t :=
-  Algebra.Transcendental.transcendental
-
-theorem trdeg_pos [PerfectField K] [IsCurveOver K F] :
-    0 < Algebra.trdeg K F :=
-  _root_.trdeg_pos K F
-
-theorem trdeg_ne_zero [PerfectField K] [IsCurveOver K F] :
-    Algebra.trdeg K F ≠ 0 :=
-  trdeg_pos.ne'
-
-theorem one_le_trdeg [PerfectField K] [IsCurveOver K F] :
-    1 ≤ Algebra.trdeg K F :=
-  Cardinal.one_le_iff_pos.mpr trdeg_pos
-
-theorem trdeg_eq_one [PerfectField K] [IsCurveOver K F]
-    (htrdeg : Algebra.trdeg K F ≤ 1) : Algebra.trdeg K F = 1 :=
-  le_antisymm htrdeg IsCurveOver.one_le_trdeg
 
 end IsCurveOver
 
 open IntermediateField Algebra
 open scoped IntermediateField.algebraAdjoinAdjoin
 
-variable {K : Type u} {F : Type v} [Field K] [Field F] [Algebra K F]
+section KaehlerBasis
+
+variable {K F}
 variable {ι : Type*} {v : ι → F}
 
 private noncomputable def kaehlerAdjoinBasis (hv : AlgebraicIndependent K v) :
@@ -178,7 +168,7 @@ private noncomputable def kaehlerAdjoinBasis (hv : AlgebraicIndependent K v) :
       (hv.aevalEquiv : MvPolynomial ι K →+* Algebra.adjoin K (Set.range v))).toAlgebra
   haveI : IsScalarTower K (MvPolynomial ι K) Kv :=
     IsScalarTower.of_algebraMap_eq fun a => by
-      show algebraMap K Kv a
+      change algebraMap K Kv a
         = algebraMap (Algebra.adjoin K (Set.range v)) Kv
           (hv.aevalEquiv (algebraMap K _ a))
       rw [AlgEquiv.commutes]; rfl
@@ -216,21 +206,28 @@ private theorem finrank_kaehler_eq_card_of_separating' {s : Finset F}
   let e : (IntermediateField.adjoin K (s : Set F)) ≃ₐ[K]
       (IntermediateField.adjoin K (Set.range ((↑) : s → F))) :=
     IntermediateField.equivOfEq heq
-  haveI : Algebra.IsSeparable
+  have : Algebra.IsSeparable
       (IntermediateField.adjoin K (Set.range ((↑) : s → F))) F :=
     Algebra.IsSeparable.of_equiv_equiv e.toRingEquiv (RingEquiv.refl F)
       (RingHom.ext fun x => rfl)
   exact finrank_kaehler_eq_card_of_separating hs
 
+end KaehlerBasis
+
 namespace IsCurveOver
 
-variable {K : Type u} {F : Type v} [Field K] [Field F] [Algebra K F]
+variable {K F}
 
+/-- **A curve function field has transcendence degree at most one.** If `K` is a perfect field,
+`F` is essentially of finite type over `K`, and `F` is the function field of a curve over `K`, then
+the transcendence degree of `F` over `K` is at most one. The first two hypotheses give `F` a
+separating transcendence basis over `K`, which indexes a basis of `Ω[F⁄K]`, a module of rank
+one. -/
 theorem trdeg_le_one [PerfectField K] [Algebra.EssFiniteType K F]
     [IsCurveOver K F] : Algebra.trdeg K F ≤ 1 := by
   obtain ⟨s, hs, hsep⟩ :=
     exists_isTranscendenceBasis_and_isSeparable_of_perfectField K F
-  haveI := hsep
+  have := hsep
   have hcard : s.card = 1 := by
     rw [← finrank_kaehler_eq_card_of_separating' hs.1,
       IsCurveOver.finrank_kaehler]
@@ -238,10 +235,14 @@ theorem trdeg_le_one [PerfectField K] [Algebra.EssFiniteType K F]
   rw [Cardinal.mk_coe_finset, hcard, Nat.cast_one] at htr
   exact htr.symm.le
 
+/-- **A curve function field has transcendence degree one.** If `K` is a perfect field, `F` is
+essentially of finite type over `K`, and `F` is the function field of a curve over `K`, then `F`
+has transcendence degree one over `K`. The upper bound is `trdeg_le_one`, and the lower bound
+holds because `F` is transcendental over `K`. -/
 theorem trdeg_eq_one_of_perfectField [PerfectField K]
     [Algebra.EssFiniteType K F] [IsCurveOver K F] :
     Algebra.trdeg K F = 1 :=
-  IsCurveOver.trdeg_eq_one trdeg_le_one
+  le_antisymm trdeg_le_one (Cardinal.one_le_iff_pos.mpr (trdeg_pos K F))
 
 end IsCurveOver
 
