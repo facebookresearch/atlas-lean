@@ -220,3 +220,4 @@ Topics added since this subject's fields were last revised.
 - [Zero At Infty Reflection](zero-at-infty-reflection/README.md)
 - [Arch Datum RDerivative](exists-w-eq-fderiv-within-mul.md)
 - [Arch Datum RLinear Combination](exists-lincomb.md)
+- [Mellin Hermite Sum Nonvanishing](mellin-hermite-sum-nonvanishing/README.md)
