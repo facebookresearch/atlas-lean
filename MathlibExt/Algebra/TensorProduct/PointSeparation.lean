@@ -43,9 +43,12 @@ namespace Algebra.TensorProduct
 variable {K L A P : Type*} [Field K] [Field L] [Algebra K L]
   [CommRing A] [Algebra K A] (pt : P → A →ₐ[K] L)
 
-/-- If the scalar-extended evaluation map is injective, an element of `A` at which every
-selected point vanishes is zero. The algebra and the point index may be infinite, and the
-evaluation map need not be surjective. -/
+/-- **A separating family of points detects zero.** Let `K` be a field, `L` a field extension
+of `K`, `A` a commutative `K`-algebra, and `pt : P → (A →ₐ[K] L)` any family of `K`-algebra
+maps into `L`, not necessarily all of them. If the scalar-extended evaluation map
+`L ⊗[K] A → (P → L)` is injective, an element of `A` at which every map of the family vanishes
+is zero. The index `P` and the algebra may be infinite, and the evaluation map need not be
+surjective. -/
 theorem eq_zero_of_forall_point_eq_zero
     (hinj : Function.Injective
       (lift (Algebra.ofId L (P → L)) (AlgHom.pi pt)
@@ -56,9 +59,11 @@ theorem eq_zero_of_forall_point_eq_zero
   ext p
   simpa using ha p
 
-/-- Extensionality through points: if the scalar-extended evaluation map is injective, two
-`K`-algebra maps into `A` that agree after composition with every selected point are
-equal. -/
+/-- **A separating family of points detects algebra maps.** Let `K` be a field, `L` a field
+extension of `K`, `A` a commutative `K`-algebra, and `pt : P → (A →ₐ[K] L)` any family of
+`K`-algebra maps into `L`, not necessarily all of them. If the scalar-extended evaluation map
+`L ⊗[K] A → (P → L)` is injective, two `K`-algebra maps from a `K`-algebra `B` into `A` that
+agree after composition with every map of the family are equal. -/
 theorem algHom_eq_of_forall_point_comp_eq {B : Type*} [Semiring B] [Algebra K B]
     (hinj : Function.Injective
       (lift (Algebra.ofId L (P → L)) (AlgHom.pi pt)

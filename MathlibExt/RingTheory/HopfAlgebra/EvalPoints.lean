@@ -45,9 +45,12 @@ open scoped TensorProduct
 
 namespace HopfAlgebra
 
-/-- The evaluation algebra homomorphism from the base change of `A` to
-functions on the points of `A`, sending a pure tensor to its values at
-all algebra homomorphisms into the algebraic closure. -/
+/-- **Evaluation at all points in the algebraic closure.** Let `D` be a subgroup of the
+absolute Galois group of `ℚ`, `K` its fixed field in `AlgebraicClosure ℚ`, and `A` a
+commutative Hopf algebra over `K`. This is the `AlgebraicClosure ℚ`-algebra map from
+`AlgebraicClosure ℚ ⊗[K] A` to functions on the set of all `K`-algebra maps
+`A → AlgebraicClosure ℚ` (the points of `A`, under convolution), sending `c ⊗ a` to
+`ν ↦ c * ν a`. -/
 public noncomputable def evalPointsAlgHom
     (D : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ))
     (A : Type u) [CommRing A]
@@ -65,8 +68,9 @@ public noncomputable def evalPointsAlgHom
           A →ₐ[↥(IntermediateField.fixedField D)] AlgebraicClosure ℚ))
     (fun _ _ => Commute.all _ _)
 
-/-- The evaluation homomorphism evaluates a right tensor factor at the
-given point. -/
+/-- **Evaluation of a right tensor factor.** With `K` the fixed field of `D`, the evaluation
+map `evalPointsAlgHom D A` sends `1 ⊗ a` to the function that evaluates `a` at each point
+`ν : A →ₐ[K] AlgebraicClosure ℚ`. -/
 public theorem evalPointsAlgHom_includeRight
     (D : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ))
     (A : Type u) [CommRing A]
@@ -78,20 +82,22 @@ public theorem evalPointsAlgHom_includeRight
   simp [evalPointsAlgHom, Algebra.TensorProduct.includeRight_apply,
     Algebra.TensorProduct.lift_tmul]
 
-/-- Two algebra endomorphisms of a Hopf algebra that agree after
-composition with every point into the algebraic closure are equal,
-provided the evaluation map from the base change is bijective. Only
-injectivity is used; `Algebra.TensorProduct.algHom_eq_of_forall_point_comp_eq`
-is the general form. -/
-public theorem algHom_eq_of_forall_comp_eq_of_bijective_evalPoints
+/-- **Points in the algebraic closure detect Hopf algebra endomorphisms.** Let `D` be a
+subgroup of the absolute Galois group of `ℚ`, `K` its fixed field in `AlgebraicClosure ℚ`, and
+`A` a commutative Hopf algebra over `K` whose evaluation map `evalPointsAlgHom D A`, at all
+`K`-algebra maps `A → AlgebraicClosure ℚ`, is injective. Two `K`-algebra endomorphisms of `A`
+that agree after composition with every `K`-algebra map `A → AlgebraicClosure ℚ` are equal.
+This is `Algebra.TensorProduct.algHom_eq_of_forall_point_comp_eq` applied to the family of all
+points of `A` in `AlgebraicClosure ℚ`. -/
+public theorem algHom_eq_of_forall_comp_eq_of_injective_evalPoints
     (D : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ))
     (A : Type u) [CommRing A] [HopfAlgebra ↥(IntermediateField.fixedField D) A]
-    (hev : Function.Bijective (evalPointsAlgHom D A))
+    (hev : Function.Injective (evalPointsAlgHom D A))
     (u u' : A →ₐ[↥(IntermediateField.fixedField D)] A)
     (h : ∀ ν : A →ₐ[↥(IntermediateField.fixedField D)] AlgebraicClosure ℚ,
       ν.comp u = ν.comp u') :
     u = u' :=
   Algebra.TensorProduct.algHom_eq_of_forall_point_comp_eq (fun ν => WithConv.ofConv ν)
-    hev.1 fun ν => h (WithConv.ofConv ν)
+    hev fun ν => h (WithConv.ofConv ν)
 
 end HopfAlgebra
