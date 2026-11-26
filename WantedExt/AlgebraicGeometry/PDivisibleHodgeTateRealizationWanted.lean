@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.PDivisibleHodgeTateRealizationModels
 public import Mathlib.RingTheory.AdicCompletion.Basic
+public import MathlibExt.AlgebraicGeometry.PDivisibleHodgeTateRealization
 
 /-!
 # Integral finite points and actual formal Hodge--Tate comparison
@@ -35,24 +36,40 @@ open MathlibExt.AlgebraicGeometry.PDivisibleLieModels
 open MathlibExt.AlgebraicGeometry.PDivisibleFormalCartierCotangentModels
 open MathlibExt.AlgebraicGeometry.PDivisibleHodgeTateRealizationModels
 
-/-- The original norm-at-most-one ring of a complete p-adic field is p-adically complete. -/
-public theorem_wanted integers_adic_complete
-    (p : ℕ) [Fact p.Prime] (C : FieldTest p) :
-    IsAdicComplete (Ideal.span {(p : integers p C)}) (integers p C)
-
-/-- Compare finite Cartier cotangents with their original formal tangent inclusions. -/
+/-- The formal cotangent module of a $p$-divisible group and its finite Cartier cotangents: let $p$
+be a prime, $R$ a $p$-adically complete ring, $G$ a $p$-divisible group over $R$ with a Cartier dual
+tower $D$, and $L$ a Lie model of $D$: a finite projective module $\omega$ representing the tangent
+functor of $D$ on square-zero $p$-nilpotent tests (`LieModel`). Then for every $n$ there are an
+identification, normalized on coordinates, of the tangent functor of the $n$-th level of $D$ with
+the functor represented by $\omega_n$, the augmentation ideal modulo its square of the Cartier dual
+of the $n$-th level of $G$, and maps $\omega \to \omega_n$ compatible with the tangent inclusions
+and with the transition maps (`CotangentBridge`). -/
 public def_wanted formalCartierCotangentBridge
     (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R]
     [IsAdicComplete (Ideal.span {(p : R)}) R]
     (G : PDivisibleGroup (Spec (.of R)) p) (D : CartierDualTower p R G)
     (L : LieModel p R D.group) : CotangentBridge p R G D L
 
-/-- Extend the original finite generic Tate points over the actual valuation ring O_C. -/
+/-- Finite projections of Tate points extend over $\mathcal{O}_C$: let $p$ be a prime and $C$ an
+algebraically closed complete non-archimedean normed field extension of $\mathbb{Q}_p$ whose norm
+extends that of $\mathbb{Q}_p$, and $G$ a $p$-divisible group over $\mathcal{O}_C$. Then each point
+$x$ of the Tate module of $G$ over $C$ has, for every $n$, an $\mathcal{O}_C$-point of $G[p^n]$
+extending its $n$-th projection, compatibly with the maps $G[p^{n+m}] \to G[p^m]$, with zero and
+with addition (`IntegralProjectionSystem`). -/
 public def_wanted integralTateFiniteProjections
     (p : ℕ) [Fact p.Prime] (C : FieldTest p)
     (G : PDivisibleGroup (IntegralScheme p C) p) : IntegralProjectionSystem p C G
 
-/-- Construct the source-normalized integral and rational formal Hodge--Tate maps. -/
+/-- The Hodge–Tate map of a $p$-divisible group over $\mathcal{O}_C$: let $p$ be a prime and $C$ an
+algebraically closed complete non-archimedean normed field extension of $\mathbb{Q}_p$ whose norm
+extends that of $\mathbb{Q}_p$, $G$ a $p$-divisible group over $\mathcal{O}_C$ with a Cartier dual
+tower $D$, $L$ a Lie model of $D$ with cotangent module $\omega$, $P$ a system of integral finite
+projections of the Tate points of $G$ (`IntegralProjectionSystem`), and $B$ a comparison of $\omega$
+with the finite Cartier cotangents (`CotangentBridge`). Then there is a $\mathbb{Z}_p$-linear map
+$T_p G \to \omega$ sending each $x$ to an element whose projection at every level $n$ is the finite
+dlog of the integral point $P_n(x)$, together with a $C$-linear map
+$T_p G \otimes_{\mathbb{Z}_p} C \to \omega \otimes_{\mathcal{O}_C} C$ sending $c \otimes x$ to $c$
+times the image of $x$ (`HodgeTateMap`). -/
 public def_wanted geometricHodgeTateMap
     (p : ℕ) [Fact p.Prime] (C : FieldTest p)
     (G : PDivisibleGroup (IntegralScheme p C) p)
