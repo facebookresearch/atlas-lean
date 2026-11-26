@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.RightVFiltrationModels
-public import MathlibExt.AlgebraicGeometry.RightDifferentialCoefficientModels
-public import MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
 
 /-!
 # The nearby Euler composition for actual right V-operators
@@ -33,8 +31,6 @@ open _root_.CategoryTheory _root_.Opposite TopologicalSpace
 open MathlibExt.AlgebraicGeometry.RightDifferentialModules
 open MathlibExt.AlgebraicGeometry.RightCoordinateDifferentials
 open MathlibExt.AlgebraicGeometry.RightVFiltrationModels
-open MathlibExt.AlgebraicGeometry.RightDifferentialCoefficientModels
-open MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
 open MathlibExt.AlgebraicGeometry.DifferentialOperatorSheaves
 open MathlibExt.AlgebraicGeometry.DifferentialOperatorScalars
 
