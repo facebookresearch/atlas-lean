@@ -14442,6 +14442,7 @@
   "MathlibExt/Probability/TailIntegralRV": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Truncated moments of regularly varying tails"},
   "MathlibExt/Probability/TalagrandConcentration": {"to": "Probability/concentration-inequalities", "title": "Talagrand's concentration inequality"},
   "MathlibExt/Probability/TalagrandConcentrationTalagrandConcentrationMean": {"to": "Probability/concentration-inequalities", "title": "Talagrand's concentration inequality"},
+  "MathlibExt/Probability/ThinShellBoundsUniformCubeIsotropicVariance": {"to": "Probability/high-dimensional-probability", "title": "Thin-shell conjecture"},
   "MathlibExt/Probability/ThreeSeriesNecessity": {"to": "Probability/laws-of-large-numbers", "title": "Kolmogorov's three-series theorem"},
   "MathlibExt/Probability/ThreeSeriesTailProb": {"to": "Probability/laws-of-large-numbers", "title": "Kolmogorov's three-series theorem"},
   "MathlibExt/Probability/TightnessFamily": {"to": "Probability/convergence-of-measures", "title": "Tightness of probability measures"},
