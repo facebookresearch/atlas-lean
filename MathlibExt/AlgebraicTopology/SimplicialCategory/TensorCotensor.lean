@@ -58,7 +58,6 @@ noncomputable abbrev simplicialSpaceTensor :
     tensoringLeft (SimplicialObject SSet.{u})
 
 /-- Bidegree carrier of the external tensor. -/
-@[simp]
 theorem simplicialSpaceTensor_obj_obj
     (K : SSet.{u}) (X : SimplicialObject SSet.{u})
     (n a : SimplexCategoryᵒᵖ) :
@@ -67,7 +66,6 @@ theorem simplicialSpaceTensor_obj_obj
   rfl
 
 /-- A map in the simplicial-set variable acts on the first tensor factor. -/
-@[simp]
 theorem simplicialSpaceTensor_map_left_apply
     {K L : SSet.{u}} (f : K ⟶ L) (X : SimplicialObject SSet.{u})
     (n a : SimplexCategoryᵒᵖ) (k : K.obj n)
@@ -77,7 +75,6 @@ theorem simplicialSpaceTensor_map_left_apply
   rfl
 
 /-- A map in the simplicial-space variable acts on the second tensor factor. -/
-@[simp]
 theorem simplicialSpaceTensor_map_right_apply
     (K : SSet.{u}) {X Y : SimplicialObject SSet.{u}} (g : X ⟶ Y)
     (n a : SimplexCategoryᵒᵖ) (k : K.obj n)

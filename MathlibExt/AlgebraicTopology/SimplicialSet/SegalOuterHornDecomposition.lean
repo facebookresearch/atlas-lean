@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 module
 
+import all MathlibExt.AlgebraicTopology.SimplicialSet.GeneralizedHorn
 public import Mathlib.AlgebraicTopology.SimplicialSet.Horn
 public import Mathlib.AlgebraicTopology.SimplicialSet.SubcomplexColimits
 public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex

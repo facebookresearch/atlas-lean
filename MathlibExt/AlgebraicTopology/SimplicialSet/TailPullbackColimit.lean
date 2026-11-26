@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 -- Original tail pullback-colimit geometry, including non-mono Y diagrams.
 module
+import all MathlibExt.AlgebraicTopology.SimplicialSet.OverPullbackFilteredColimits
 public import Mathlib.AlgebraicTopology.SimplicialSet.Basic
 public import Mathlib.CategoryTheory.Limits.Final
 public import Mathlib.CategoryTheory.Limits.Connected

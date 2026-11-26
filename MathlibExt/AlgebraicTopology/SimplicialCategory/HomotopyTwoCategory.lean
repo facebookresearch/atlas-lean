@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import Mathlib.AlgebraicTopology.SimplicialSet.HoFunctorMonoidal
 import Mathlib.CategoryTheory.Bicategory.CatEnriched
+import Mathlib.CategoryTheory.Enriched.EnrichedCat
 
 /-!
 # The homotopy two-category of a simplicially enriched category
@@ -33,9 +34,9 @@ open scoped Simplicial
 namespace SSet
 
 /-- The strict homotopy two-category, on the unchanged original object labels. -/
-@[nolint unusedArguments]
 abbrev HomotopyTwoCategory (C : Type v) [EnrichedCategory SSet.{u} C] :=
-  CatEnriched (TransportEnrichment SSet.hoFunctor.{u} C)
+  CatEnriched (TransportEnrichment SSet.hoFunctor.{u}
+    (EnrichedCat.of SSet.{u} C : Type v))
 
 namespace HomotopyTwoCategory
 

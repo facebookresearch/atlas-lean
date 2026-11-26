@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 -- Author: @toskua
+import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentOutsideFaceAlgebra
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCommonIntervalMaps
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornOutsideIntervals
 

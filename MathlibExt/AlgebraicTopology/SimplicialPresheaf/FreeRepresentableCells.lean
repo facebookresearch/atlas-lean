@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 -- Author: @toskua
 
+import MathlibExt.AlgebraicTopology.SimplicialPresheaf.DiagramScalarAdjunctions
 import MathlibExt.AlgebraicTopology.SimplicialPresheaf.InnerMapping
 import Mathlib.CategoryTheory.Adjunction.Evaluation
 
