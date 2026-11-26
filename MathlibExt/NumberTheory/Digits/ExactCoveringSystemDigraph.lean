@@ -18,7 +18,9 @@ import Mathlib.Tactic.Ring
 /-!
 # Exact covering system digraphs
 
-The edge rules are affine maps on the integers. Reflecting the vertices by `n ↦ -(n + k)`
+The edge rules are affine maps on the integers. Translating the vertices by `n ↦ n + k`
+preserves the slope of each rule and changes its offset from `a` to `a - (d - 1) * k`.
+Reflecting the vertices by `n ↦ -(n + k)`
 preserves the slope of each rule and changes its offset from `a` to `-a + (d - 1) * k`.
 -/
 
@@ -117,6 +119,27 @@ Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 2
 theorem isDigraphCycle_pair (R : ℤ → ℤ → Prop) (x y : ℤ) :
     IsDigraphCycle R [x, y] ↔ x ≠ y ∧ R x y ∧ R y x := by
   simp [IsDigraphCycle]
+
+/-- **Translation isomorphism of exact covering system digraphs.** Let $r \in \mathbb{N}$, let
+$d_1, \dots, d_r$, $a_1, \dots, a_r$ and $k$ be integers, and put $a_i' = a_i - (d_i - 1)k$.
+Then the map $x \mapsto x + k$ is a digraph isomorphism from
+$G(d_1 n + a_1, \dots, d_r n + a_r)$ onto $G(d_1 n + a_1', \dots, d_r n + a_r')$.
+
+The paper's exact-covering hypothesis on the rules is not needed.
+
+Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
+Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 1
+(`integers-2026-A107-thm-1`). -/
+theorem ecsdAdj_shift_relIso {r : ℕ} (d a : Fin r → ℤ) (k : ℤ) :
+    ∃ e : ecsdAdj d a ≃r ecsdAdj d (fun i => a i - (d i - 1) * k), ∀ n, e n = n + k := by
+  let e := Equiv.addRight k
+  refine ⟨⟨e, ?_⟩, fun _ => rfl⟩
+  intro m n
+  refine exists_congr fun i => ?_
+  have h : d i * e m + (a i - (d i - 1) * k) = e (d i * m + a i) := by
+    change d i * (m + k) + (a i - (d i - 1) * k) = d i * m + a i + k
+    ring
+  exact h.symm ▸ e.injective.eq_iff
 
 /-- **Reflection isomorphism of exact covering system digraphs.** Let $r \in \mathbb{N}$, let
 $d_1, \dots, d_r$, $a_1, \dots, a_r$ and $k$ be integers, and put $a_i' = -a_i + (d_i - 1)k$.
