@@ -1,3 +1,3 @@
 # Uncovered density of a system of congruences
 
-For a finite set $S$ of positive integers and integers $a_n$ ($n \in S$), the uncovered density is the proportion of the integers $x \in \{0, 1, \dots, M - 1\}$, $M = \prod_{n \in S} n$, that satisfy none of the congruences $x \equiv a_n \pmod n$; since the uncovered set is periodic modulo $M$, this is its density.
+For a finite set $S$ of natural numbers and integers $a_n$ ($n \in S$), the uncovered density is the ratio of the number of integers $x \in \{0, 1, \dots, M - 1\}$, $M = \prod_{n \in S} n$, that satisfy none of the congruences $x \equiv a_n \pmod n$, to $M$. When every modulus is positive the uncovered set is periodic modulo $M$, and this is its density. When $0 \in S$, $M = 0$ and the value is $0/0 = 0$, which is not the density of the uncovered set: for $S = \{0\}$ the congruence modulo $0$ is equality, and every integer other than $a_0$ is uncovered.
