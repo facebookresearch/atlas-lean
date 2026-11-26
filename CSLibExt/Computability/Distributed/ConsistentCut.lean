@@ -43,7 +43,9 @@ message sent by another event, and causality is acyclic can be listed so.
 ## References
 
 * F. Mattern, *Virtual time and global states of distributed systems*, in M. Cosnard et al.
-  (eds.), *Parallel and Distributed Algorithms*, North-Holland, 1989: Sections 3, 7 and 8.
+  (eds.), *Parallel and Distributed Algorithms*, North-Holland, 1989; edited version at
+  <https://www.vs.inf.ethz.ch/publ/papers/VirtTimeGlobStates.pdf>, whose numbering this follows:
+  Sections 3, 7 and 8.
 -/
 
 @[expose] public section
