@@ -3,12 +3,14 @@
 An inclusion dependency over a schema has the form $R[i_1, \dots, i_k] \subseteq P[j_1, \dots, j_k]$ and holds in a
 database when the projection of $R$ on positions $i_1, \dots, i_k$ is contained in the projection of $P$ on positions
 $j_1, \dots, j_k$. The problem of deciding, for a set $\Sigma$ of inclusion dependencies and an inclusion dependency
-$\sigma$, whether every finite database satisfying $\Sigma$ satisfies $\sigma$ is PSPACE-complete.
+$\sigma$, whether every finite database satisfying $\Sigma$ satisfies $\sigma$ is PSPACE-complete: it is in PSPACE, and every
+problem in PSPACE has a polynomial-time many-one reduction to it.
 
 ## Depends on
 
 - [Inclusion dependencies and finite implication](inclusion-dependencies-and-finite-implication.md)
 - [Polynomial space for decision problems](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pspace.md)
+- [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 
 ## Proof depends on
 

@@ -12,6 +12,10 @@ is $\#P$-complete.
 - [Tuple-independent probabilistic databases and query probability](tuple-independent-probabilistic-databases.md)
 - [$\#P$-complete functions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
 
+## Proof depends on
+
+- [Counting satisfying assignments of positive partitioned 2-CNF formulas is #P-complete](counting-assignments-of-positive-partitioned-2-cnf-is-sharp-p-complete.md)
+
 ## Sources
 
 - N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM*, 2012; authors' manuscript <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>, Theorem 5.1 (credited there to Provan and Ball, 1983) and Proposition 5.2.

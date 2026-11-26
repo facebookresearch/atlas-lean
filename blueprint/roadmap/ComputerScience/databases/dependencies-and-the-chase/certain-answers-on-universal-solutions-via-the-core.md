@@ -5,7 +5,8 @@ a target instance $J$ such that $I$ and $J$ together satisfy the source-to-targe
 satisfies the target dependencies $\Sigma_t$; a universal solution is a solution with a homomorphism (fixing
 constants) to every solution. A core of an instance $J$ is a subinstance $C$ of $J$ such that some homomorphism maps
 $J$ to $C$ and none maps $J$ to a proper subinstance of $C$; all cores of $J$ are isomorphic. An existential query over $\mathbf T$ is a formula $\exists \bar y\,\varphi(\bar x, \bar y)$
-with $\varphi$ quantifier-free; for a target instance $J$, $q(J){\downarrow}$ is the set of null-free tuples of $q(J)$.
+with $\varphi$ a disjunction of conjunctions of atoms, negated atoms, equalities and negated equalities, subject to the
+safety condition that every variable occurring in a conjunction occurs in a relational atom of that conjunction; for a target instance $J$, $q(J){\downarrow}$ is the set of null-free tuples of $q(J)$.
 The certain answers of $q$ on universal solutions, $\text{u-certain}(q, I)$, are the tuples in $q(J)$ for every
 universal solution $J$ for $I$.
 
@@ -20,6 +21,7 @@ coNP-complete.
 ## Depends on
 
 - [The core of the universal solutions in data exchange](core-of-the-universal-solutions.md)
+- [Conjunctive queries with inequalities](../conjunctive-queries/conjunctive-queries-with-inequalities.md)
 
 ## Proof depends on
 
@@ -27,4 +29,4 @@ coNP-complete.
 
 ## Sources
 
-- R. Fagin, P. G. Kolaitis and L. Popa, "Data exchange: getting to the core", *ACM Transactions on Database Systems* 30(1):174–208, 2005, Definition 6.3, Proposition 6.4 and the two results numbered Theorem 6.5, the first credited to Abiteboul and Duschka (pp. 204–207).
+- R. Fagin, P. G. Kolaitis and L. Popa, "Data exchange: getting to the core", *ACM Transactions on Database Systems* 30(1):174–208, 2005, the definition of existential queries with its safety condition, Definition 6.3, Proposition 6.4 and the two results numbered Theorem 6.5, the first credited to Abiteboul and Duschka (pp. 204–207).

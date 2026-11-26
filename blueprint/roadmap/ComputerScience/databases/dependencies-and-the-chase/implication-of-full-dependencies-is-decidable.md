@@ -7,9 +7,9 @@ $\psi$ not in $\bar x$, and no equality atom involves a variable of $\bar z$; ev
 set of tuple- and equality-generating dependencies. It is full when $\bar z$ is empty, and typed when its variables can
 be assigned to columns so that each occurs only in its column and equalities relate variables of the same column.
 
-For sets of full dependencies, finite and unrestricted implication coincide, and implication is decidable: a set
-$\Sigma$ of full dependencies implies a dependency $\tau$ if and only if chasing $\tau$ by $\Sigma$, which always
-terminates with a unique result, yields a trivial dependency.
+For sets of full dependencies, finite and unrestricted implication coincide, and implication is decidable. For typed
+dependencies the test is the chase: a set $\Sigma$ of typed full dependencies implies a typed dependency $\tau$ if and
+only if chasing $\tau$ by $\Sigma$, which always terminates with a unique result, yields a trivial dependency.
 
 ## Depends on
 
@@ -22,4 +22,4 @@ terminates with a unique result, yields a trivial dependency.
 
 ## Sources
 
-- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Section 10.1 (pp. 217–219), Theorem 10.1.2(1) (p. 220), Theorems 10.2.1 and 10.2.2 (pp. 220–221).
+- S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Section 10.1 (pp. 217–219), Theorem 10.1.2(1) (p. 220), Theorems 10.2.1 and 10.2.2 for typed dependencies (pp. 220–221).

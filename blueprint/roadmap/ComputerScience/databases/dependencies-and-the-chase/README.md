@@ -5,7 +5,6 @@
 - [Containment of tableau queries under functional and join dependencies via the chase](containment-under-fds-and-jds-via-the-chase.md)
 - [Inference rules for functional and multivalued dependencies are sound and complete](fd-and-mvd-inference-rules-are-sound-and-complete.md)
 - [Inference rules for multivalued dependencies alone are sound and complete](mvd-inference-rules-are-sound-and-complete.md)
-- [Functional dependencies imply a binary join dependency only through one of its sides](fds-imply-a-binary-join-dependency-only-through-a-side.md)
 - [Complexity of implication of join dependencies](complexity-of-implication-of-join-dependencies.md)
 - [A join dependency is acyclic if and only if it is equivalent to a set of multivalued dependencies](acyclic-join-dependencies-are-equivalent-to-sets-of-mvds.md)
 - [Inclusion dependencies and finite implication](inclusion-dependencies-and-finite-implication.md)

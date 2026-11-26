@@ -10,7 +10,9 @@ $$p(B) = \prod_{t \in B} p(t) \prod_{t \in A \setminus B} \big(1 - p(t)\big),$$
 so tuples are present independently. The probability of a Boolean query $q$ is
 $p(q) = \sum_{B \subseteq A,\ B \models q} p(B)$. For a fixed Boolean query $q$, the evaluation problem asks, given
 $(A, p)$, to compute $p(q)$; its complexity is measured in the size of $A$ and of the binary representations of the
-numbers $p(t)$, and for conjunctive queries it lies in $\#P$ (in the sense of computing $p(q)$ with a $\#P$ oracle).
+numbers $p(t)$. For conjunctive queries $p(q)$ is computable in polynomial time with a $\#P$ oracle (the class
+$\mathrm{FP}^{\#P}$). Since $p(q)$ is a rational number, the problem is not itself a $\#P$ function; the lower bounds for
+it are $\#P$-hardness results.
 
 ## Depends on
 

@@ -1,9 +1,9 @@
 # Magic-set rewriting of Datalog queries is correct
 
-Given a Datalog query $(P, q)$ whose goal binds some arguments to constants, the magic-set rewriting (generalized
+Given a Datalog query $(P, q)$ whose goal binds any set of its arguments to constants, possibly none, the magic-set rewriting (generalized
 supplementary magic) produces a Datalog query $(P^m, q^m)$ from the adorned version of $(P, q)$: for each adorned rule
 it adds supplementary relations that carry bindings from left to right through the body, input (magic) relations that
-collect the bindings passed to intensional subgoals, a seed fact for the bindings of the goal, and a query rule. Then
+collect the bindings passed to intensional subgoals, a seed fact for the bindings of the goal (a nullary seed fact when no argument is bound), and a query rule. Then
 (a) on every input instance $I$, $(P^m, q^m)$ computes the same answer as $(P, q)$; and (b) the set of facts produced
 by the improved semi-naive evaluation of $(P^m, q^m)$ on $I$ equals the set of facts produced by query-subquery (QSQ)
 evaluation of $(P, q)$ on $I$.

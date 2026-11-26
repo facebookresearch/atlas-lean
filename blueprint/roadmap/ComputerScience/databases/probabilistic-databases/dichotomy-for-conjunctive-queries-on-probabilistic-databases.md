@@ -1,15 +1,11 @@
 # Dichotomy for conjunctive queries on tuple-independent probabilistic databases
 
 For every Boolean conjunctive query $q$ (self-joins allowed), computing $p(q)$ on tuple-independent probabilistic
-databases is either in polynomial time or $\#P$-complete. Every non-hierarchical query is $\#P$-hard; a hierarchical
-query is $\#P$-hard if it has an inversion without erasers, and is in polynomial time if all its inversions have
-erasers.
-
-## Expansion
-
-This node states the dichotomy precisely; the boundary inside hierarchical queries uses the source's notions of
-unifiers, inversions and erasers (its Section 2), which need pages of their own before the second sentence can be
-checked clause by clause.
+databases either takes polynomial time or is $\#P$-hard. This is the case of a single disjunct in the
+[dichotomy for unions of conjunctive queries on tuple-independent probabilistic databases](dichotomy-for-ucqs-on-probabilistic-databases.md), whose safety test decides the side; in
+particular $q$ is on the hard side whenever its minimal equivalent query is not hierarchical. A finer criterion for
+hierarchical queries announced in the 2007 conference version, based on inversions and erasers, was later withdrawn as
+unsound (Appendix A of the journal manuscript) and is not used here.
 
 ## Depends on
 
@@ -17,11 +13,14 @@ checked clause by clause.
 - [Hierarchical conjunctive queries](hierarchical-conjunctive-queries.md)
 - [$\#P$-complete functions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 
 ## Proof depends on
 
-- [Non-hierarchical conjunctive queries are #P-hard on probabilistic databases](non-hierarchical-conjunctive-queries-are-sharp-p-hard.md)
+- [Conjunctive queries whose minimal equivalent query is not hierarchical are #P-hard on probabilistic databases](non-hierarchical-conjunctive-queries-are-sharp-p-hard.md)
+- [Dichotomy for unions of conjunctive queries on tuple-independent probabilistic databases](dichotomy-for-ucqs-on-probabilistic-databases.md)
 
 ## Sources
 
-- N. Dalvi and D. Suciu, "The dichotomy of conjunctive queries on probabilistic structures", *Proceedings of the 26th ACM Symposium on Principles of Database Systems (PODS)*, 2007, pp. 293–302, Theorem 1.1 (p. 293) and Theorem 1.8.
+- N. Dalvi and D. Suciu, "The dichotomy of probabilistic inference for unions of conjunctive queries", *Journal of the ACM*, 2012; authors' manuscript <https://homes.cs.washington.edu/~suciu/jacm-dichotomy.pdf>, Theorem 4.21 (applied to a single conjunctive query) and Appendix A.
+- N. Dalvi and D. Suciu, "The dichotomy of conjunctive queries on probabilistic structures", *Proceedings of the 26th ACM Symposium on Principles of Database Systems (PODS)*, 2007, pp. 293–302, Definition 1.2 and Theorem 1.4 (p. 294).

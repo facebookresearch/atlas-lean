@@ -1,6 +1,7 @@
 # Satisfiability of Datalog queries is decidable
 
-A Datalog query $q = (\Pi, R)$ consists of a Datalog program $\Pi$ and an intensional relation name $R$ of $\Pi$; on
+A Datalog query $q = (\Pi, R)$ consists of a Datalog program $\Pi$ whose rule heads contain only variables, each
+occurring in the rule body (the cited source's Definition 35.1), and an intensional relation name $R$ of $\Pi$; on
 a database $D$ over the extensional relation names of $\Pi$ it returns $q(D) = \{\bar a : R(\bar a) \in \Pi(D)\}$,
 where $\Pi(D)$ is the least model of $\Pi$ containing $D$. The query is satisfiable if $q(D) \ne \emptyset$ for some database $D$.
 
@@ -22,5 +23,5 @@ polynomial time for Datalog queries whose programs mention no constants.
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definition 35.16 and Proposition 35.17 (p. 319), Theorem 38.1 and Lemma 38.2 (pp. 337–338).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definition 35.1 (p. 319), Definition 35.16 and Proposition 35.17 (p. 327), Theorem 38.1 and Lemma 38.2 (pp. 345–346).
 - S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, Theorem 12.5.2 (p. 301).

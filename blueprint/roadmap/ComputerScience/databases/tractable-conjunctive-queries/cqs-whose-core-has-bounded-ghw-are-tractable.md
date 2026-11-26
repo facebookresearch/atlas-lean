@@ -13,6 +13,7 @@ only if the $k$-consistency procedure on $q$ and $D$ does not fail.
 - [Generalized hypertree decompositions and generalized hypertreewidth](generalized-hypertree-decompositions-and-width.md)
 - [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [The k-consistency procedure for Boolean conjunctive queries](k-consistency-procedure.md)
 
 ## Proof depends on
 

@@ -4,8 +4,11 @@ An SPJ query is a relational algebra expression built from relation names with s
 projection, product and renaming; an SPJU query may also use union. Every SPJU query $e$ is equivalent to the union of
 the set $\mathrm{SPJ}(e)$ of SPJ queries obtained by resolving each union node of $e$ to one of its two arguments.
 Deciding, for an SPJ query $e$ and an SPJU query $e'$, whether $e \subseteq e'$ (that is, $e(D) \subseteq e'(D)$ on
-every database $D$) is in NP: guess a member $e''$ of $\mathrm{SPJ}(e')$ and a homomorphism from the conjunctive query
-of $e''$ to that of $e$.
+every database $D$) is in NP. An SPJ query whose selections force two
+distinct constants to be equal is empty on every database: if $e$ is such a query, $e \subseteq e'$ holds, and such
+members of $\mathrm{SPJ}(e')$ can be discarded. Otherwise $e \subseteq e'$ if and only if some remaining member $e''$ of
+$\mathrm{SPJ}(e')$ has a homomorphism from its conjunctive query to that of $e$ mapping head tuple to head tuple; guess
+$e''$ and the homomorphism.
 
 ## Depends on
 
@@ -19,4 +22,4 @@ of $e''$ to that of $e$.
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Proposition 29.4 (p. 255) and Proposition 29.5 (p. 256).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Proposition 29.4 (p. 263) and Proposition 29.5 (p. 264).

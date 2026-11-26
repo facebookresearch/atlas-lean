@@ -12,6 +12,10 @@ databases, possible-answer membership over c-tables is in NP.
 - [Relational calculus and domain independence](../relational-calculus/relational-calculus-and-domain-independence.md)
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
 
+## Proof depends on
+
+- [3-COLOR is NP-hard](../../../TheoryOfComputation/np-completeness/graph-coloring-and-partitioning/graph-3-coloring/part-09/col3-dec-np-hard.md)
+
 ## Sources
 
 - S. Abiteboul, R. Hull and V. Vianu, *Foundations of Databases*, Addison-Wesley, 1995; authors' web edition <http://webdam.inria.fr/Alice/pdfs/all.pdf>, the problems of Section 19.4 and Proposition 19.4.1 with its proof (pp. 499–500).

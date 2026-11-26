@@ -1,9 +1,14 @@
-# Datalog provenance series have finite coefficients exactly when no unit-rule cycle passes through the tuple
+# A unit-rule cycle in a derivation makes a Datalog provenance coefficient infinite
 
 In the setting of [Universality of provenance series for Datalog](universality-of-provenance-series-for-datalog.md),
-let $q$ be a Datalog query and $t$ a tuple in its result. The provenance series of $t$ lies in $\mathbb N[[X]]$ (every
-coefficient finite) if and only if the instantiation of $q$ has no cycle of unit rules, rules whose body is a single
-intensional atom, that passes through $t$ (with $t$ in the head of one of those unit rules and in the body of another).
+let $q$ be a Datalog query and $t$ a tuple in its result, and call a rule of the instantiation of $q$ a unit rule when
+its body is a single intensional atom. If some derivation tree of $t$ contains a ground atom $s$ that lies on a cycle of
+unit rules ($s$ is the head of one rule of the cycle and the body of another), then some coefficient of the provenance
+series of $t$ is infinite, so the series is not in $\mathbb N[[X]]$: repeating the cycle at $s$ gives infinitely many
+derivation trees of $t$ with the same leaves. This holds in particular when $t$ itself lies on such a cycle. The atom
+on the cycle need not be $t$: with $E(a)$ tagged $X$, $M(a, b)$ tagged $Y$ and the rules $P(x) \mathrel{:-} E(x)$,
+$P(x) \mathrel{:-} P(x)$ and $Q(y) \mathrel{:-} P(x), M(x, y)$, the tuple $Q(b)$ lies on no cycle of unit rules, yet the
+coefficient of $XY$ in its series is infinite.
 
 ## Depends on
 
@@ -11,4 +16,4 @@ intensional atom, that passes through $t$ (with $t$ in the head of one of those 
 
 ## Sources
 
-- T. J. Green, G. Karvounarakis and V. Tannen, *Provenance semirings*, PODS 2007, Theorem 6.5. <http://www.cs.ucdavis.edu/~green/papers/pods07.pdf>
+- T. J. Green, G. Karvounarakis and V. Tannen, *Provenance semirings*, PODS 2007, Definition 5.1 and Theorem 6.5 (whose stated equivalence holds only in the direction given here). <http://www.cs.ucdavis.edu/~green/papers/pods07.pdf>

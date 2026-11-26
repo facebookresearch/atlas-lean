@@ -4,7 +4,7 @@ Views $V_1, \dots, V_m$ are conjunctive queries over the database relation names
 A rewriting of a conjunctive query $Q$ using views $\mathcal V = \{V_1, \dots, V_m\}$ is a conjunctive query $Q'$
 over the database relation names and the view names that is equivalent to $Q$ (when each view atom is interpreted by
 the view's answer, $Q'$ returns the same answer as $Q$ on every database) and contains at least one atom of a view. The expansion of $Q'$ replaces each view atom by the view's body with fresh existential
-variables, so $Q'$ is a rewriting exactly when its expansion is equivalent to $Q$. A rewriting is locally minimal if
+variables, so a query $Q'$ that contains at least one view atom is a rewriting exactly when its expansion is equivalent to $Q$. A rewriting is locally minimal if
 no atom can be removed from it while keeping equivalence with $Q$, and globally minimal if no rewriting has fewer
 atoms (built-in comparison atoms $=, \ne, <, \le$ are not counted); it is complete if it contains only view atoms and
 built-in atoms. For example, $q(X, U) \mathrel{:-} v(X, Z), p_1(X, W), p_2(W, U)$ rewrites

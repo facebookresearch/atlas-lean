@@ -6,8 +6,9 @@ such a homomorphism from $q'$; a core of $q$ is equivalent to $q$ and unique up 
 
 Let ACoreCQ be the class of conjunctive queries that have an acyclic core (a core whose hypergraph has a join tree).
 ACoreCQ-Evaluation, the problem of deciding for $q \in$ ACoreCQ, a database $D$ and a tuple $\bar a$ whether
-$\bar a \in q(D)$, is in polynomial time; the consistency (semijoin) procedure that decides Boolean acyclic queries
-also decides Boolean queries whose core is acyclic, without computing the core. Some conjunctive queries are not
+$\bar a \in q(D)$, is in polynomial time: for a Boolean query $q$ whose core is acyclic, $q(D)$ is true if and only if the
+[$1$-consistency procedure](k-consistency-procedure.md) on $q$ and $D$ does not fail, so neither the core nor a join
+tree is computed. Some conjunctive queries are not
 acyclic although their core is.
 
 ## Depends on
@@ -16,12 +17,14 @@ acyclic although their core is.
 - [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 - [Characterizations of acyclic database schemas](../join-processing/characterizations-of-acyclic-database-schemas.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [The k-consistency procedure for Boolean conjunctive queries](k-consistency-procedure.md)
 
 ## Proof depends on
 
-- [Yannakakis' algorithm for acyclic join queries](../join-processing/yannakakis-algorithm-for-acyclic-join-queries.md)
+- [Conjunctive queries of bounded generalized hypertreewidth are evaluable in polynomial time](bounded-ghw-cqs-are-evaluable-in-polynomial-time.md)
+- [Generalized hypertreewidth at most one is acyclicity](generalized-hypertreewidth-one-is-acyclicity.md)
 
 ## Sources
 
 - M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definition 16.2 (p. 124) and Corollary 16.9 (p. 129).
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Propositions 19.5 and 19.6 and Theorem 19.7 (p. 165), and Exercise 3.7 (p. 238).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Algorithm 7 (p. 164), Propositions 19.5 and 19.6 and Theorem 19.7 (p. 165), and Exercise 3.7 (p. 238).

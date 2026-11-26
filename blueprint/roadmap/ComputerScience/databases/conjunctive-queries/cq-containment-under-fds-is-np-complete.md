@@ -2,10 +2,10 @@
 
 For a set $\Sigma$ of integrity constraints and conjunctive queries $q, q'$, write $q \subseteq_\Sigma q'$ when
 $q(D) \subseteq q'(D)$ for every (finite) database $D$ that satisfies $\Sigma$. The problem of deciding, for conjunctive queries $q, q'$ and a set $\Sigma$ of
-functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. A witness is a homomorphism from $q'$ to the
-result of chasing the atoms of $q$ with $\Sigma$, which identifies terms as the dependencies dictate, computes in
-polynomial time and either fails (then $q \subseteq_\Sigma q'$ holds trivially) or yields a set of atoms satisfying
-$\Sigma$.
+functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$ identifies terms as the
+dependencies dictate, computes in polynomial time and either fails (then $q \subseteq_\Sigma q'$ holds trivially) or
+yields a query whose atoms satisfy $\Sigma$; in that case a witness is a homomorphism from $q'$ to the chased query that
+maps the head tuple of $q'$ to the head tuple of $q$ as rewritten by the chase.
 
 ## Depends on
 

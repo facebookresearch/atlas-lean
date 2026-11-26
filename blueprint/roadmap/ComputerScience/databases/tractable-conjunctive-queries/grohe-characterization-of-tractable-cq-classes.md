@@ -31,7 +31,7 @@ equivalence (Grohe, Theorem 3.1, credited there to Dalmau, Kolaitis and Vardi).
 ## Proof depends on
 
 - [Conjunctive queries whose core has bounded generalized hypertreewidth](cqs-whose-core-has-bounded-ghw-are-tractable.md)
-- [Bounded arity makes treewidth and generalized hypertreewidth equivalent](bounded-arity-treewidth-and-generalized-hypertreewidth.md)
+- [Bounded arity makes treewidth and generalized hypertreewidth equivalent for Boolean queries](bounded-arity-treewidth-and-generalized-hypertreewidth.md)
 - [Conjunctive-query evaluation parameterized by query size is W[1]-complete](../conjunctive-queries/cq-evaluation-parameterized-by-query-size-is-w1-complete.md)
 - [Grid theorem (Robertson–Seymour)](../../../GraphTheory/planar-graphs-and-minors/tree-width/exists-grid-minor-of-not-has-treewidth-a.md)
 
