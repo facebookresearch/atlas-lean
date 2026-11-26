@@ -143,8 +143,9 @@ Check instead:
   page-problem issue for it.
 
 Review a graph-sync batch by running `python3 scripts/graph_batch.py verify`
-on its exact head, from an up-to-date checkout of `main`, then reading its
-placements and the notes it leaves for an editor
+on its exact head, from an up-to-date checkout of `main`, then reading what it
+prints, not the PR's description, which its opener can edit: its placements,
+the notes it leaves for an editor and the pages to check
 ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)). A PR whose
 commits carry `Graph-sync-base:` or `Graph-sync-through:` trailers is a batch,
 whatever its description says: review it as one. Its pages are the sync's,

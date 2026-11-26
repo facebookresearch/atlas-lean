@@ -245,10 +245,12 @@ under [Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
   its field, and always to a module in a folder that is no subject, one that
   neither the taxonomy nor `generate_wiki.LIBRARIES` maps to one: it gets no
   pages without one. The batch reads the line once the pull request has merged
-  ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)), and leaves out,
-  with a note, one for a module whose pages are already outside the topic it
-  names: moving them is a graph pull request's. Leave `scripts/taxonomy.json`
-  as it is.
+  ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)), so write it
+  before then and don't edit the description afterwards: the batch leaves out
+  every `Place:` line of a description edited after the merge. It also leaves
+  out, with a note, one for a module whose pages are already outside the topic
+  it names: moving them is a graph pull request's. Leave
+  `scripts/taxonomy.json` as it is.
 - **A renamed, moved or removed declaration keeps its pages.** In the same pull
   request, point each link to it at its successor, keeping every article id. A
   link that is only a reference may instead be removed: the page keeps its own
