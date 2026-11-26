@@ -29,9 +29,9 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 `f` in `(ZMod p)[X]`.
 
 Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
-Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. The proof of Corollary 1.1 is in
-`MathlibExt.NumberTheory.LogarithmicCompletion`. The reciprocal sine bound is proved in
-`MathlibExt.NumberTheory.ReciprocalSineSum`.
+Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`. Lemma 2.1 and Corollary 1.1
+are proved in `MathlibExt.NumberTheory.LogarithmicCompletion`. The reciprocal sine bound is
+proved in `MathlibExt.NumberTheory.ReciprocalSineSum`.
 -/
 
 namespace MetaMathlibExt
@@ -118,27 +118,6 @@ public theorem_wanted norm_incomplete_monic_cubic_sum_lt (p : ℕ) (hp : p.Prime
           Real.log ((B : ℝ) * p) ^ ((1 : ℝ) / 4) ∧
       ‖∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((x ^ 3 + b * x ^ 2 + c * x : ℤ) : ℂ) / p)‖ <
         ((B : ℝ) * p) ^ ((1 : ℝ) / 4) * Real.log p ^ ((1 : ℝ) / 2)
-
-/-- **Completing an incomplete exponential sum.** Let $p$ be a prime, write
-$e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients, and let $B$ be an
-integer with $1 \le B \le p$. Put
-$T_p(B) = \frac{1}{p} \sum_{y=1}^{p-1} \left|\frac{\sin(\pi B y/p)}{\sin(\pi y/p)}\right|$ and
-$M = \max_{1 \le y \le p-1} \left|\sum_{x=1}^{p} e_p(f(x) + yx)\right|$. Then there is a complex
-number $\theta$ with $|\theta| \le 1$ such that
-$\sum_{x=1}^{B} e_p(f(x)) = \frac{B}{p} \sum_{x=1}^{p} e_p(f(x)) + \theta \, T_p(B) \, M$.
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 2.1 (`integers-2025-A48-lem-2-1`). -/
-public theorem_wanted exists_incompleteSum_eq_completeSum_add (p : ℕ) (hp : p.Prime)
-    (f : Polynomial ℤ) (B : ℕ) (hB₁ : 1 ≤ B) (hB₂ : B ≤ p) :
-    ∃ θ : ℂ, ‖θ‖ ≤ 1 ∧
-      ∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) =
-        ((B : ℂ) / p) * ∑ x ∈ Icc 1 p, exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) +
-          θ * (((1 / p : ℝ) * ∑ y ∈ Icc 1 (p - 1),
-              |Real.sin (Real.pi * B * y / p) / Real.sin (Real.pi * y / p)| : ℝ) : ℂ) *
-            ((((Icc 1 (p - 1)).sup fun y : ℕ =>
-              ‖∑ x ∈ Icc 1 p,
-                exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) : ℂ)
 
 /-- **Explicit completion bound for incomplete exponential sums.** Let $p$ be a prime, write
 $e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction
