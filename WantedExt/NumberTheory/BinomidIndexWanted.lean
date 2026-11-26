@@ -22,6 +22,7 @@ public import MathlibExt.NumberTheory.BinomidPrimeDivisibility
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
 public import MathlibExt.NumberTheory.BinomidIndexAdd
+public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
 
 namespace MetaMathlibExt
 
@@ -129,18 +130,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_nomid_eq_one {η : ℕ → 
     (hn : m < n) :
     ∃ k, 1 ≤ k ∧ k < n ∧
       generalizedBinomialCoefficient (fun i => p ^ η (i - 1)) k (n - k) = 1
-
-/-- **The upper average of a binomid index is the supremum of its averages.** Let $\eta$ be a
-binomid index, let $s_i$ be the sum of its first $i$ entries, let $A_{i,0}(\eta) = s_i / i$ for
-$i \ge 1$, and let $A_0(\eta) = \limsup_{i \to \infty} A_{i,0}(\eta)$ be its upper average.
-Then, in the extended real numbers, $A_0(\eta) = \sup_{i \ge 1} A_{i,0}(\eta)$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 2
-(`integers-2024-A53-lem-2`). -/
-public theorem_wanted IsBinomidIndex.binomidUpperAverage_eq_iSup {η : ℕ → ℕ}
-    (hη : IsBinomidIndex η) :
-    binomidUpperAverage η = ⨆ i : ℕ, ⨆ (_ : 1 ≤ i), ((binomidAverage η i : ℝ) : EReal)
 
 /-- **Lex-minimal extensions satisfy the Average Condition.** Every lex-minimal extension
 satisfies the Average Condition.
