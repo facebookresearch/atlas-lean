@@ -243,13 +243,14 @@ private theorem det_updateCol_single {k : ℕ} (p : Fin (k + 1) → ℕ) :
     have hj : Fin.castSucc j ≠ Fin.last k := Fin.castSucc_ne_last j
     rw [Matrix.updateCol_ne hj]
     simp only [hMdef, Fin.castSucc_inj, Function.comp_apply]
-  have hsign : (-1 : ℤ) ^ ((Fin.last k : Fin (k + 1)).val + (Fin.last k : Fin (k + 1)).val) = 1 := by
+  have hsign :
+      (-1 : ℤ) ^ ((Fin.last k : Fin (k + 1)).val + (Fin.last k : Fin (k + 1)).val) = 1 := by
     simp only [Fin.val_last]
     exact neg_one_pow_add_self k
   have hlast : M.updateCol (Fin.last k) (Pi.single (Fin.last k) 1)
       (Fin.last k) (Fin.last k) = 1 := by
     simp
-  show (M.updateCol (Fin.last k) (Pi.single (Fin.last k) 1)).det = _
+  change (M.updateCol (Fin.last k) (Pi.single (Fin.last k) 1)).det = _
   rw [Matrix.det_succ_column _ (Fin.last k)]
   rw [Finset.sum_eq_single (Fin.last k)]
   · simp only [hsub, hsign, hlast, onesDiagDet, one_mul]
@@ -270,7 +271,7 @@ private theorem stepMatrix_zero {k : ℕ} (p : Fin (k + 1) → ℕ) :
       (Fin.last k) (fun _ => 1) := by
   set M : Matrix (Fin (k + 1)) (Fin (k + 1)) ℤ :=
     fun i j => if i = j then (p i : ℤ) else 1 with hMdef
-  show stepMatrix p 0 = M.updateCol (Fin.last k) (fun _ => 1)
+  change stepMatrix p 0 = M.updateCol (Fin.last k) (fun _ => 1)
   ext i j
   simp only [stepMatrix, Matrix.updateCol_apply]
   by_cases hj : j = Fin.last k
@@ -338,7 +339,8 @@ private theorem det_stepMatrix_last {k : ℕ} (p : Fin (k + 1) → ℕ) :
       simp [hij', Function.comp_apply]
     · have hij' : i ≠ j := fun h => hij (congrArg Fin.castSucc h)
       simp [hij, hij']
-  have hsign : (-1 : ℤ) ^ ((Fin.last k : Fin (k + 1)).val + (Fin.last k : Fin (k + 1)).val) = 1 := by
+  have hsign :
+      (-1 : ℤ) ^ ((Fin.last k : Fin (k + 1)).val + (Fin.last k : Fin (k + 1)).val) = 1 := by
     simp only [Fin.val_last]
     exact neg_one_pow_add_self k
   have hlast : stepMatrix p k (Fin.last k) (Fin.last k) = 1 := by
