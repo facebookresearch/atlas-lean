@@ -1,6 +1,7 @@
 # Parity condition on infinite sequences
 
 - [Largest infinitely occurring value](is-max-inf-occ.md)
+- [Is Max Inf Occ iff is Greatest inf Occ](is-max-inf-occ-iff-is-greatest-inf-occ.md)
 - [Even max-parity condition](parity-even.md)
 - [Odd max-parity condition](parity-odd.md)
 - [Bounded sequences have a largest infinitely occurring value](exists-is-max-inf-occ.md)
