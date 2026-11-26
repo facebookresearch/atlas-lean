@@ -19,7 +19,7 @@ on `{0, 1}^Bool` (influences `1/2` at `p = 1/2`):
 
 * `mfp2_noiseGap_pos` at `p = 3/4`, `u = 1/2`;
 * `mfp2_perCoordHighNoise_half` at `AND`: `(2 - u)/4 ≤ (1/2)^{2/(2-u)}` for `u ∈ (0, 1)`;
-* `mfp2_master_half_via_perCoord` at `AND`;
+* the summed estimate at `p = 1/2` (`hcq_smallDelta_p_half`) at `AND`;
 * `mfp2_singleBit_q_in_12_false`;
 * the window predicate `mfp2_PerCoordHighNoise q` holds for `q ≤ 1/2` (empty window) and fails for
   every `q > 9/10` (`ctp_perCoordHighNoise_false`, from the two-bit `OR` function at `p = 9/10`);
@@ -56,11 +56,11 @@ example {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (e : Bool) :
   convert h using 1
   ring
 
-/-- `mfp2_master_half_via_perCoord` at `AND`. -/
+/-- `hcq_smallDelta_p_half` at `AND`. -/
 example {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) :
     8 * (1 / 2 : ℝ) ^ 3 * (1 - 1 / 2) + 8 * (1 - u) * (1 / 2) ^ 2 * (1 - 1 / 2) ^ 2
       ≤ (1 / 2 : ℝ) ^ (u / (2 - u)) * 1 := by
-  have h := mfp2_master_half_via_perCoord andFun hu0 hu1
+  have h := hcq_smallDelta_p_half andFun hu0 hu1
   rwa [cappedSum_andInd (by norm_num) (by norm_num), maxInfl_andInd, totalInfl_andInd] at h
 
 example : ¬ mfp_SingleBitQIn12 (9 / 10) := mfp2_singleBit_q_in_12_false

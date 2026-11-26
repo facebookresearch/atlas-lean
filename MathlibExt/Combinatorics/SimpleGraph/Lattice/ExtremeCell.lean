@@ -55,10 +55,9 @@ namespace StatMech
 
 namespace Lattice
 
-theorem unitWt_negx : unitWt (![-1, 0] : Site 2) = 1 := by simp [unitWt, Fin.sum_univ_two]
 
 /-- The dart from `c` to its left neighbour `c + (-1, 0)`. -/
-noncomputable def leftDart (c : Site 2) : Dart := mkDart c ![-1, 0] unitWt_negx
+noncomputable def leftDart (c : Site 2) : Dart := mkDart c ![-1, 0] unitWt_mx
 
 @[simp] theorem leftDart_tail (c : Site 2) : (leftDart c).tail = c := rfl
 

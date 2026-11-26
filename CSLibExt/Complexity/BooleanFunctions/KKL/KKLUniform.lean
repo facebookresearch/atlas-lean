@@ -10,6 +10,7 @@ module
 public import CSLibExt.Complexity.BooleanFunctions.KKL.BourgainPerCoord
 
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import MathlibExt.Probability.Hypercontractivity.RhoOptimiseEngine
 
 /-!
 # The KKL inequality on the uniform cube with constant 2
@@ -50,9 +51,8 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- `∫_a^b exp (c x) dx = (exp (c b) - exp (c a)) / c` for `c ≠ 0`. -/
 theorem cro2_integral_exp_mul (c : ℝ) (hc : c ≠ 0) (a b : ℝ) :
-    ∫ x in a..b, Real.exp (c * x) = (Real.exp (c * b) - Real.exp (c * a)) / c := by
-  rw [intervalIntegral.integral_comp_mul_left (fun x => Real.exp x) hc, integral_exp]
-  rw [smul_eq_mul]; field_simp
+    ∫ x in a..b, Real.exp (c * x) = (Real.exp (c * b) - Real.exp (c * a)) / c :=
+  roe_integral_exp_mul c hc a b
 
 /-- `∫₀¹ exp (-(t/2) u) du ≤ 2 / t` for `t > 0`. -/
 theorem cro2_integral_exp_le (t : ℝ) (ht : 0 < t) :
@@ -115,18 +115,8 @@ theorem cro2_integral_lhs (cf : Finset ι → ℝ) :
   rw [ite_eq_right (Finset.ne_of_mem_erase hS)]
 
 theorem cro2_rpow_integrable (δ : ℝ) (hδ0 : 0 < δ) :
-    IntervalIntegrable (fun u => δ ^ (u / (2 - u))) MeasureTheory.volume 0 1 := by
-  apply ContinuousOn.intervalIntegrable
-  rw [Set.uIcc_of_le (by norm_num)]
-  apply ContinuousOn.congr (f := fun u => Real.exp (Real.log δ * (u / (2 - u))))
-  · apply ContinuousOn.comp (g := Real.exp) Real.continuous_exp.continuousOn
-    · apply ContinuousOn.mul continuousOn_const
-      apply ContinuousOn.div continuousOn_id (by fun_prop)
-      intro x hx
-      simp only [Set.mem_Icc] at hx
-      intro h; linarith [hx.2]
-    · exact Set.mapsTo_univ _ _
-  · intro u _; simp only; rw [Real.rpow_def_of_pos hδ0]
+    IntervalIntegrable (fun u => δ ^ (u / (2 - u))) MeasureTheory.volume 0 1 :=
+  roe_rpow_integrable δ hδ0
 
 /-- `∫₀¹ δ^{u/(2-u)} du ≤ 2 / log (1/δ)` for `0 < δ < 1`. -/
 theorem cro2_integral_rhs_le (δ : ℝ) (hδ0 : 0 < δ) (hδ1 : δ < 1) :

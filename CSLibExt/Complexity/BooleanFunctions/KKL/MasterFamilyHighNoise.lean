@@ -212,16 +212,6 @@ theorem mfp2_perCoordHighNoise_half [Nonempty ι] (φ : ConfigSpace ι → Bool)
   congr 1
   rw [← pow_mul, mul_comm, pow_mul, Real.sq_sqrt hu1']
 
-theorem mfp2_master_half_via_perCoord [Nonempty ι] (φ : ConfigSpace ι → Bool)
-    {u : ℝ} (hu0 : 0 < u) (hu1 : u < 1) :
-    (∑ S : Finset ι, 4 * (S.card : ℝ) * (1 - u) ^ (S.card - 1)
-        * (ptn_coeff (1 / 2 : ℝ) (fun ω => if φ ω then (1 : ℝ) else 0) S) ^ 2)
-      ≤ (maxInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0))
-          ^ (u / (2 - u))
-        * totalInfl (OSSS.bernoulliWeight (1 / 2 : ℝ)) (fun ω => if φ ω then (1 : ℝ) else 0) :=
-  mfp2_master_of_perCoordHighNoise (by norm_num) (by norm_num) φ hu0 hu1
-    (fun e => mfp2_perCoordHighNoise_half φ hu0 hu1 e)
-
 /-- The right-hand side `infl_e^{2/(2-u)}` of the per-coordinate high-noise estimate is
 nonnegative (bounds the empty sum). -/
 theorem mfp2_perCoordHighNoise_rhs_nonneg {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1)
