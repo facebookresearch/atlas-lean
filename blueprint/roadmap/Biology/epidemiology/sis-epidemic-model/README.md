@@ -72,3 +72,4 @@
 - [For $R_0 > 1$, global asymptotic stability of the endemic equilibrium on the open segment](endemic-globally-asymptotically-stable.md)
 
 - [Extinction time of the stochastic logistic SIS epidemic](extinction-time-of-the-stochastic-logistic-epidemic.md)
+- [Markov chain approximation of optimal treatment in the switching stochastic SIS model](markov-chain-approximation-of-optimal-treatment-in-the-switching-stochastic-sis-model.md)

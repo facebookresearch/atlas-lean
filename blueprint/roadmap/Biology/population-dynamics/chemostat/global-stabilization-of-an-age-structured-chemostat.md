@@ -1,0 +1,33 @@
+# Global stabilization of an age-structured chemostat
+
+Consider the age-structured chemostat with cell density $f(t,a)$, substrate $S(t)$ and dilution $D(t) > 0$,
+
+$$ \partial_t f + \partial_a f = -(\beta(a) + D) f, \qquad f(t,0) = \mu(S)\int_0^\infty k(a) f(t,a)\, da, \qquad \dot S = D(S_{\mathrm{in}} - S) - \mu(S)\int_0^\infty q(a) f(t,a)\, da , $$
+
+with bounded $C^1$ functions $\mu, \beta, k, q \ge 0$. Assume (B): there are constants $b, \gamma \ge 0$ and $p_0, q_0 > 0$ with $\beta \le b$ and
+
+$$ q(a) = q_0\, e^{\int_0^a \beta(s)\,ds - b a}, \qquad k(a) = (p_0 + \gamma q_0 a)\, e^{\int_0^a \beta(s)\,ds - b a} . $$
+
+Then the feed activity $X = \int q f\,da$ and birth activity $Y = \int k f\,da$ obey the closed system
+
+$$ \dot S = D(S_{\mathrm{in}}-S) - \mu(S) X, \qquad \dot X = q_0\mu(S) Y - (b + D) X, \qquad \dot Y = p_0 \mu(S) Y + \gamma X - (b+D) Y , $$
+
+whose equilibria for $D \equiv D^*$ satisfy $\mu(S^*) = (b+D^*)^2/(p_0(b+D^*) + \gamma q_0)$. Let $\lambda = 1 - p_0\mu(S^*)/(b + D^*) \in [0,1)$.
+
+**Theorem.** Under an explicit inequality (C) bounding $\mu(S^*)/\mu(S) - 1$ on $[S^*, S_{\mathrm{in}}]$ in terms of $b$, $D^*$ and $\lambda$ (which reduces to $p_0\mu(S) > b$ on $[S^*, S_{\mathrm{in}}]$ when $\gamma = 0$), for every $\delta > 0$ and $\alpha \in [0,1)$ the feedback
+
+$$ D(X,S) = \frac{D^*\mu(S)X}{\mu(S^*)X^*} + \frac{\delta}{\mu(S^*)^{1+\alpha}}\, \big|\mu(S)-\mu(S^*)\big|^{1+\alpha}\, \mathbf{1}_{\{S\le S^*\}} $$
+
+globally asymptotically stabilizes $(X^*, Y^*, S^*)$ on $(0,\infty)^2\times(0,S_{\mathrm{in}})$, and locally exponentially if $\alpha > 0$ and $\lambda > 0$. The feedback does not use the birth activity $Y$.
+
+## Depends on
+
+- [Global feedback stabilization of the chemostat with mortality](global-feedback-stabilization-of-the-chemostat-with-mortality.md)
+
+## Expansion
+
+Differentiating $X$ and $Y$ along the McKendrick equation and using the boundary condition produces terms $\int (q' - \beta q) f$ and $\int(k' - \beta k) f$; the exponential forms in (B) make these equal to $-bX$ and $\gamma X - bY$, which closes the moments into a three-dimensional ODE. Logarithmic coordinates map the open state space onto $\mathbb{R}^3$, and a control Lyapunov function analogous to the lumped case, with an extra term for the ratio $Y/X$, yields global attractivity under (C).
+
+## Sources
+
+- I. Karafyllis, E. Loko, M. Krstic, A. Chaillet, "Global Stabilization of Chemostats with Nonzero Mortality and Substrate Dynamics", arXiv:2502.09310 (2025), Section 3 (age-structured chemostat; assumptions (B) and (C), equilibria and Theorem 3) and Section 5.3 (proof of Theorem 3). <https://doi.org/10.48550/arXiv.2502.09310>
