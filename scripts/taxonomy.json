@@ -11695,6 +11695,7 @@
   "MathlibExt/Combinatorics/Words/FibonacciFactorization": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Fibonacci word"},
   "MathlibExt/Combinatorics/Words/FibonacciIccanobiF": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Relative position in binary words"},
   "MathlibExt/Combinatorics/Words/FirstDifference": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "First differences of binary words"},
+  "MathlibExt/Combinatorics/Words/KeywordClassCount": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Keyword substitutions on binary words"},
   "MathlibExt/Combinatorics/Words/GoldenEigenvector": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Relative position in binary words"},
   "MathlibExt/Combinatorics/Words/KeywordGraphDistance": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Keyword substitutions on binary words"},
   "MathlibExt/Combinatorics/Words/KeywordGraphSymmetries": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Keyword substitutions on binary words"},
