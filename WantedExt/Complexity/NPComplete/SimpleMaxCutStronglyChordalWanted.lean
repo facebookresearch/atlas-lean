@@ -30,7 +30,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.StronglyChordalSplitHamiltonianPathWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -51,7 +51,7 @@ follows from Adhikary, Bose, Mukherjee and Roy, who prove SIMPLE MAX CUT NP-comp
 graphs: interval graphs are directed path graphs, which are strongly chordal (both inclusions
 are stated in Johnson's column).
 The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`MaxCutWanted`, whose question counts edges), reused as in
+(`MaxCutDefs`, whose question counts edges), reused as in
 `SimpleMaxCutUndirectedPathGraphsWanted`; the restriction adds to `WellFormed` that
 `Cslib.Complexity.Karp.edgeGraph` is strongly chordal, and `0 < K`.
 

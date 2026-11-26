@@ -32,7 +32,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DomaticNumberCircularArcWanted
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -53,7 +53,7 @@ NP-complete by Adhikary, Bose, Mukherjee and Roy: they prove SIMPLE MAX CUT NP-c
 interval graphs, and every interval graph is a circular-arc graph (replace the interval
 endpoints by their ranks `0, …, 2|V| - 1` and use the intervals as arcs that do not wrap).
 The instance, the simple-edge-list conditions and the question are those of MAXIMUM CUT
-(`MaxCutWanted`, whose question counts edges), reused as in
+(`MaxCutDefs`, whose question counts edges), reused as in
 `SimpleMaxCutUndirectedPathGraphsWanted`; the restriction adds to `WellFormed` that
 `Cslib.Complexity.Karp.edgeGraph` is a circular-arc graph, and `0 < K`.
 
