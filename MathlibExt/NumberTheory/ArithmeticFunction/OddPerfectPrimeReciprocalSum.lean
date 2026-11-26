@@ -36,7 +36,8 @@ import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 ## References
 
 * Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd Perfect or Odd
-  Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59, Propositions 10 and 11.
+  Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59, Proposition 10, corrected to
+  odd primes, and Proposition 11.
 -/
 
 namespace MetaMathlibExt
@@ -111,43 +112,13 @@ section OddPart
 open MathlibExt.NumberTheory.PrimitiveNondeficientWanted
 
 private theorem prod_sub_one_lt_prod_of_nonempty (s : Finset ℕ) :
-    (∀ p ∈ s, 2 ≤ p) → s.Nonempty → ∏ p ∈ s, (p - 1) < ∏ p ∈ s, p := by
-  induction s using Finset.induction with
-  | empty =>
-    intro _ hne
-    obtain ⟨x, hx⟩ := hne
-    simp at hx
-  | insert a t hat ih =>
-    intro h2 _
-    rw [Finset.prod_insert hat, Finset.prod_insert hat]
-    have ha2 : 2 ≤ a := h2 a (Finset.mem_insert_self a t)
-    by_cases ht : t.Nonempty
-    · have hlt := ih (fun p hp => h2 p (Finset.mem_insert_of_mem hp)) ht
-      have hTpos : 0 < ∏ p ∈ t, p :=
-        Finset.prod_pos (fun p hp => by
-          have hp2 := h2 p (Finset.mem_insert_of_mem hp)
-          omega)
-      have hsub_pos : 0 < a - 1 := by omega
-      have hsub_lt : a - 1 < a := by omega
-      calc (a - 1) * ∏ p ∈ t, (p - 1) < (a - 1) * ∏ p ∈ t, p :=
-            mul_lt_mul_of_pos_left hlt hsub_pos
-        _ < a * ∏ p ∈ t, p := mul_lt_mul_of_pos_right hsub_lt hTpos
-    · rw [Finset.not_nonempty_iff_eq_empty.mp ht, Finset.prod_empty,
-        Finset.prod_empty, mul_one, mul_one]
-      omega
+    (∀ p ∈ s, 2 ≤ p) → s.Nonempty → ∏ p ∈ s, (p - 1) < ∏ p ∈ s, p := fun h2 hne =>
+  Finset.prod_lt_prod_of_nonempty₀ (fun p hp => by have := h2 p hp; omega)
+    (fun p hp => by have := h2 p hp; omega) hne
 
 private theorem prod_primeFactors_le_self (m : ℕ) (hm : m ≠ 0) :
-    ∏ p ∈ m.primeFactors, p ≤ m := by
-  have hdiv : ∏ p ∈ m.primeFactors, p ∣ m := by
-    have h := Finset.prod_dvd_prod_of_dvd (fun p => p)
-      (fun p => p ^ m.factorization p) (fun p hp => by
-        change p ∣ p ^ m.factorization p
-        have hpos := (Nat.prime_of_mem_primeFactors hp).factorization_pos_of_dvd hm
-          (Nat.dvd_of_mem_primeFactors hp)
-        calc p = p ^ 1 := (pow_one p).symm
-          _ ∣ p ^ m.factorization p := pow_dvd_pow p hpos)
-    rwa [← Nat.prod_primeFactors_pow_factorization hm] at h
-  exact Nat.le_of_dvd (Nat.pos_of_ne_zero hm) hdiv
+    ∏ p ∈ m.primeFactors, p ≤ m :=
+  Nat.le_of_dvd (Nat.pos_of_ne_zero hm) (Nat.prod_primeFactors_dvd m)
 
 private theorem prime_not_dvd_ordCompl_succ_self (q : ℕ) (hq : q.Prime) :
     ¬ q ∣ ordCompl[2] (q + 1) := by
@@ -167,7 +138,7 @@ For $q = 2$ the conclusion fails: $H(3) = 3/2 < 2$ and $H(6) = 3 > 2$.
 
 Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
 Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 10 (`integers-2025-A59-prop-10`). -/
+Proposition 10, corrected to odd primes (`integers-2025-A59-prop-10`). -/
 public theorem not_abundancySup_oddPart_succ_lt_two_and_two_lt
     (q : ℕ) (hq : q.Prime) (hodd : Odd q) :
     ¬ (abundancySup (ordCompl[2] (q + 1)) < 2 ∧
