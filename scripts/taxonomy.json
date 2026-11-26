@@ -13017,6 +13017,7 @@
   "MathlibExt/NumberTheory/GeneralizedTribonacciBasis": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Divisibility runs between recurrence sequences"},
   "MathlibExt/NumberTheory/GenocchiBernoulli": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Genocchi numbers"},
   "MathlibExt/NumberTheory/GenocchiExplicit": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Genocchi numbers"},
+  "MathlibExt/NumberTheory/GenocchiExplicitGenocchiNumberEqSum": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Genocchi numbers"},
   "MathlibExt/NumberTheory/GenocchiNumber": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Genocchi numbers"},
   "MathlibExt/NumberTheory/GeometricSumsTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Geometric sums as sums of two squares"},
   "MathlibExt/NumberTheory/GesselWord": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Gessel words"},
