@@ -22,8 +22,8 @@ $x^2 + ny^2$*, 2nd ed., Wiley (2013), Theorems 2.8 and 7.7).
 
 ## Informally uses
 
-- [Form classes and proper ideal classes of an imaginary quadratic order](../../quadratic-forms-sums-of-squares/binary-quaternary-forms/binary-quadratic-forms/form-classes-proper-ideal-classes.md): after replacing $(a, b, c)$ by $(-a, -b, -c)$ if needed so that $a > 0$, the lattice $\mathbb{Z} + \mathbb{Z}\tau$ is homothetic to the proper ideal $\mathbb{Z}a + \mathbb{Z}\frac{-b + \sqrt{\Delta}}{2}$ of the order $\mathcal{O}$ of discriminant $\Delta$, so $j(\tau)$ is the $j$-invariant of a proper $\mathcal{O}$-ideal, and the class number $h(\mathcal{O})$ is the Gauss class number $h(\Delta)$
-- [The class equation of an imaginary quadratic order](../adeles-class-field-theory/ring-class-fields/class-equation.md), whose irreducibility over $\mathbb{Q}$ gives $[\mathbb{Q}(j(\tau)) : \mathbb{Q}] = h(\mathcal{O})$
+- [Form classes and proper ideal classes of an imaginary quadratic order](../../quadratic-forms-sums-of-squares/binary-quaternary-forms/binary-quadratic-forms/form-classes-proper-ideal-classes.md): after replacing $(a, b, c)$ by $(-a, -b, -c)$ if needed so that $a > 0$, $\tau = \frac{-b + \sqrt{\Delta}}{2a}$ with $\sqrt{\Delta} = i\sqrt{|\Delta|}$, and the lattice $\mathbb{Z} + \mathbb{Z}\tau$ is homothetic to the proper ideal $\mathbb{Z}a + \mathbb{Z}\frac{-b + \sqrt{\Delta}}{2}$ of the order $\mathcal{O}$ of discriminant $\Delta$, so $j(\tau)$ is the $j$-invariant of a proper $\mathcal{O}$-ideal, and the class number $h(\mathcal{O})$ is the Gauss class number $h(\Delta)$
+- [Irreducibility of the class equation of an imaginary quadratic order](../adeles-class-field-theory/ring-class-fields/class-equation.md), whose irreducibility over $\mathbb{Q}$ gives $[\mathbb{Q}(j(\tau)) : \mathbb{Q}] = h(\mathcal{O})$
 
 ## Sources
 
