@@ -20,7 +20,9 @@ import Mathlib.Data.Nat.Choose.Cast
 
 At `p = (log n + c)/n` the number of isolated vertices of `G(n, p)` is asymptotically Poisson with
 mean `e^{-c}`, and with high probability `G(n, p)` has no component of order between `2` and
-`n/2`, so `G(n, p)` is connected exactly when it has no isolated vertex and
+`⌊n/2⌋`. For `n ≥ 2`, on the event that it has no such component, `G(n, p)` is connected exactly
+when it has no isolated vertex. The probabilities of the two events therefore differ by at most
+the probability that such a component exists, which tends to `0`, and
 `P(G(n, p) is connected) → e^{-e^{-c}}` (P. Erdős and A. Rényi, "On random graphs I", *Publ.
 Math. Debrecen* 6 (1959); A. Frieze and M. Karoński, *Introduction to Random Graphs*, Cambridge
 University Press 2016, Theorem 3.1 (ii) for the Poisson limit, and Theorem 4.1 with its proof,
