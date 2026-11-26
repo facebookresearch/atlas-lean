@@ -164,11 +164,11 @@ theorem IsFunctionScheme.card_domain_dvd {S : Family} (h : S.IsFunctionScheme) :
     linarith
   exact ⟨k, by exact_mod_cast heq⟩
 
-/-- **Key-indexed trapdoor permutation scheme.** A trapdoor function scheme in the exact
+/-- **Bounded-coin trapdoor permutation scheme.** A trapdoor function scheme in the exact
 bounded-coin model whose codomain equals its domain at every generated public context. The
 left inverse therefore makes the public map a permutation of that finite set. One-wayness is
 a separate property of the keyed experiment, not a consequence of correctness. -/
-def IsPermutationScheme : Prop :=
+def IsBoundedCoinPermutationScheme : Prop :=
   S.IsFunctionScheme ∧ ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk →
     S.codomain (index n pp pk) = S.domain (index n pp pk)
 

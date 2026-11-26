@@ -45,6 +45,7 @@
 - [Efficient key-indexed trapdoor function scheme, exact bounded-coin convention](is-function-scheme.md)
 - [Domain nonempty](domain-nonempty.md)
 - [A restriction of exact bounded-coin sampling](card-domain-dvd.md)
+- [Bounded-coin trapdoor permutation scheme](is-bounded-coin-permutation-scheme.md)
 - [Trapdoor permutations](trapdoor-permutations.md)
 - [The one-way experiment](one-way-game.md)
 - [Computational one-wayness of a trapdoor function scheme](is-one-way.md)
