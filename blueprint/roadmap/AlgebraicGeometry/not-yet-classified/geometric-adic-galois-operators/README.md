@@ -10,3 +10,4 @@
 - [Adic Cohomology](adic-cohomology.md)
 - [Galois Cohomology Operator](galois-cohomology-operator.md)
 - [Geometric Frobenius Cohomology Operator](geometric-frobenius-cohomology-operator.md)
+- [Continuity of the Galois action on ℓ-adic cohomology](galois-cohomology-operator-coordinate-co.md)

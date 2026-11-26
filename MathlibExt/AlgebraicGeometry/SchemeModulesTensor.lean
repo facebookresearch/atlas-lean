@@ -22,8 +22,11 @@ sheafification of the tensor product of their underlying presheaves of
 modules. Tensor powers iterate it, starting from the structure sheaf:
 `L^{⊗ 0} = 𝒪_X` and `L^{⊗ (n + 1)} = L^{⊗ n} ⊗ L`.
 
-These are the single definitions of the sheaf tensor product and tensor
-powers used by the line-bundle interfaces of `MathlibExt.AlgebraicGeometry`.
+These are the definitions of the sheaf tensor product and tensor powers
+used by the line-bundle interfaces of `MathlibExt.AlgebraicGeometry`. The
+monoidal structure on `X.Modules` (`MathlibExt.AlgebraicGeometry.Modules.Monoidal`)
+has an isomorphic tensor product: `Scheme.Modules.moduleTensorIso` identifies
+`moduleTensor X L M` with `L ⊗ M`.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.SchemeModulesTensor
