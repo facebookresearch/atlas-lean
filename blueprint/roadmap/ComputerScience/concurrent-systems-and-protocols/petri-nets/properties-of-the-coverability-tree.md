@@ -18,7 +18,7 @@ Because $\omega$ forgets how a place grows, the coverability tree does not decid
 
 ## Proof depends on
 
-- [Kőnig's lemma for inverse systems](../../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md)
+- [Kőnig's lemma for inverse systems](../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md)
 
 ## Expansion
 

@@ -8,7 +8,7 @@ A finite sequence $w_1, \dots, w_m$ of vectors in $\mathbb{Z}^k$, $m > 1$, is *s
 
 ## Proof depends on
 
-- [Kőnig's lemma for inverse systems](../../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md)
+- [Kőnig's lemma for inverse systems](../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md)
 
 ## Expansion
 
