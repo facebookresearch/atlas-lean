@@ -11148,6 +11148,7 @@
   "MathlibExt/Combinatorics/Enumerative/SymmetricPeaksCompositions": {"to": "Combinatorics/integer-compositions", "title": "Symmetric peaks and valleys in compositions"},
   "MathlibExt/Combinatorics/Enumerative/SymmetricValleyDepthClosedForm": {"to": "Combinatorics/integer-compositions", "title": "Symmetric peaks and valleys in compositions"},
   "MathlibExt/Combinatorics/Enumerative/SymmetricValleyDepthGeneratingFunction": {"to": "Combinatorics/integer-compositions", "title": "Symmetric peaks and valleys in compositions"},
+  "MathlibExt/Combinatorics/Enumerative/SytHookCountGeneratingFunction": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Humps and peaks in Motzkin paths"},
   "MathlibExt/Combinatorics/Enumerative/TangentNumberDivisibility": {"to": "Combinatorics/stirling-bell-eulerian/bernoulli-euler-genocchi", "title": "Tangent numbers"},
   "MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetFussCatalanSpecial": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Toeplitz–Hessenberg determinants of Fuss–Catalan numbers"},
   "MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetGenFun": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Toeplitz–Hessenberg determinants of Fuss–Catalan numbers"},
