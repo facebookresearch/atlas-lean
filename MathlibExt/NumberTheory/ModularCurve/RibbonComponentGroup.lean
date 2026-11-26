@@ -33,6 +33,7 @@ module
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.PNat.Defs
 public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import MathlibExt.Combinatorics.SimpleGraph.SchottkyTreeAction
 public import MathlibExt.NumberTheory.ModularCurve.ComponentGroup
 
 @[expose] public section
@@ -42,15 +43,6 @@ namespace CerednikDrinfeld
 open ModularCurve
 
 variable {E V : Type*}
-
-/-- **Degeneracy data.** Two maps from edges to vertices, with a positive width at each edge. -/
-structure DegeneracyData (E V : Type*) where
-  /-- The first vertex map. -/
-  a : E → V
-  /-- The second vertex map. -/
-  b : E → V
-  /-- The edge widths. -/
-  w : E → ℕ+
 
 /-- **Incidence matrix.** The incidence matrix of a vertex map `f`: entry `1` where `f e = v`, and
 `0` elsewhere. -/
