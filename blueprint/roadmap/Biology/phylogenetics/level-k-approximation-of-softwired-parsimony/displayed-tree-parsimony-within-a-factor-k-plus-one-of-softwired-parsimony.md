@@ -1,9 +1,13 @@
 # Displayed-tree parsimony is within a factor $k+1$ of softwired parsimony
 
 Let $N$ be a rooted binary phylogenetic network on a leaf set $X$. Its level $k$ is the maximum number of reticulations (in-degree-two vertices) in a biconnected component, and $D(N)$ is its display set: the phylogenetic $X$-trees $T$ for which some subgraph of $N$ containing the root is a subdivision of $T$. For an alignment $A = (f_1,\dots,f_n)$ of characters $f_i : X \to C$, let $PS(A,T) = \sum_i PS(f_i,T)$ be the Fitch parsimony score on a tree $T$, and define the softwired parsimony scores
+
 $$PS_{\mathrm{sw}}(A,N) = \sum_{i=1}^n \min_{T\in D(N)} PS(f_i,T), \qquad PS_{\mathrm{sw}'}(A,N) = \min_{T\in D(N)} \sum_{i=1}^n PS(f_i,T),$$
+
 so that $PS_{\mathrm{sw}} \le PS_{\mathrm{sw}'}$. Then for **every** $T \in D(N)$,
+
 $$PS(A,T) \le (k+1)\, PS_{\mathrm{sw}}(A,N) \qquad\text{and}\qquad PS(A,T) \le (k+1)\, PS_{\mathrm{sw}'}(A,N),$$
+
 and the factor $k+1$ is sharp.
 
 **Approximation.** For fixed $k$, computing any displayed tree of a level-$k$ network and running Fitch's algorithm on it is a polynomial-time $(k+1)$-approximation of both softwired parsimony scores, even though computing them exactly is NP-hard already for level-$1$ networks and two binary characters.

@@ -1,7 +1,9 @@
 # Parallel Lévy walk search and the optimal exponent
 
 **Model.** A *Lévy walk* on $\mathbb{Z}^2$ with exponent $\alpha\in(1,\infty)$ moves in jump-phases. At the start of each phase, at node $u$, it draws a jump length $d$ with
+
 $$\Pr(d=0)=\tfrac12,\qquad \Pr(d=i)=c_\alpha\, i^{-\alpha}\quad(i\ge1),$$
+
 so that $\Pr(d\ge i)=\Theta(i^{1-\alpha})$. It then picks a node $v$ uniformly among the nodes at $\ell_1$-distance $d$ from $u$, and travels to $v$ in $d$ unit steps along a uniformly random monotone (direct) lattice path. If $d=0$ it stays put for one step. Unlike a Lévy flight, which jumps directly to $v$, the walk visits every node on its path. For a target $z\in\mathbb{Z}^2$ with $\ell=\|z\|_1$, let $\tau_\alpha(z)$ be the hitting time of one walk started at the origin. For $k$ independent walks started together at the origin, let $\tau^k_\alpha(z)$ be the first step at which some walk visits $z$. This models central-place foraging by $k$ animals around a nest, motivated by the Lévy foraging hypothesis.
 
 **Theorem (single walk, constant $\alpha$, $\ell\to\infty$).**
@@ -17,7 +19,9 @@ so that $\Pr(d\ge i)=\Theta(i^{1-\alpha})$. It then picks a node $v$ uniformly a
 For $\mathrm{polylog}\,\ell\le k\le\ell\,\mathrm{polylog}\,\ell$, the optimal exponent is unique and equals $\alpha_{k,\ell}=3-\frac{\log k}{\log\ell}+O\!\big(\frac{\log\log\ell}{\log\ell}\big)\in(2,3)$. Shifting $\alpha$ by any constant either multiplies the hitting time by a polynomial factor in $\ell$ or makes all walks miss $z$ with probability $1-o(1)$.
 
 **Theorem (random exponents).** Suppose each of $k\ge\log^8\ell$ walks draws its exponent independently and uniformly from $(2,3)$, with no knowledge of $k$ or $\ell$. Then
+
 $$\Pr\Big(\tau^k_{\mathrm{rand}}(z)=O\big((\ell^2/k)\log^7\ell+\ell\log^3\ell\big)\Big)=1-e^{-\omega(\log\ell)}.$$
+
 This matches, up to polylogarithmic factors, the universal lower bound $\Omega(\ell^2/k+\ell)$ for any search strategy that does not know $\ell$.
 
 ## Expansion

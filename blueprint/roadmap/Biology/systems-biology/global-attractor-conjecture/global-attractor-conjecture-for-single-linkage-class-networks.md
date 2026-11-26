@@ -1,7 +1,9 @@
 # Global attractor conjecture for single linkage class networks
 
 **Setting.** A chemical reaction network has species $S_1,\dots,S_N$, complexes $y\in\mathbb Z_{\ge0}^N$ and reactions $y_k\to y_k'$; its *linkage classes* are the connected components of the reaction graph on complexes, and it is *weakly reversible* if each linkage class is strongly connected. Under mass-action kinetics with rate constants $\kappa_k>0$,
+
 $$\dot x(t)=\sum_k\kappa_k\,x(t)^{y_k}\,(y_k'-y_k),\qquad x^{y}=\prod_ix_i^{y_i},$$
+
 and trajectories stay in the positive stoichiometric compatibility class $(x_0+S)\cap\mathbb R^N_{>0}$, $S=\mathrm{span}\{y_k'-y_k\}$. An equilibrium $c$ is *complex-balanced* if for every complex $y$, $\sum_{k:y_k=y}\kappa_kc^{y_k}=\sum_{k:y_k'=y}\kappa_kc^{y_k}$; Horn and Jackson showed that then every positive compatibility class contains exactly one positive equilibrium, which is complex-balanced and locally asymptotically stable.
 
 **Theorem (persistence).** Let the network be weakly reversible with a single linkage class, under mass-action kinetics, or more generally *bounded* mass-action kinetics $R_k(x,t)=\kappa_k(t)x^{y_k}$ with $\eta<\kappa_k(t)<1/\eta$. If a trajectory $\phi(t,x_0)$ with $x_0\in\mathbb R^N_{>0}$ is bounded and its $\omega$-limit set lies either entirely in $\partial\mathbb R^N_{\ge0}$ or entirely in $\mathbb R^N_{>0}$, then $\omega(\phi(\cdot,x_0))\cap\partial\mathbb R^N_{\ge0}=\emptyset$, i.e. $\liminf_{t\to\infty}\phi_i(t,x_0)>0$ for all $i$.

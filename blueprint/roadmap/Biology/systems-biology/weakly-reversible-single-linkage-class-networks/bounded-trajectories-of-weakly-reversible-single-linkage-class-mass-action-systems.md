@@ -1,7 +1,9 @@
 # Bounded trajectories of weakly reversible single-linkage-class mass action systems
 
 **Setting.** A mass action system $\{\mathscr{S},\mathscr{C},\mathscr{R},\mathscr{K}(t)\}$ with species $S_1,\dots,S_N$ evolves by
+
 $$\dot\phi(t)=\sum_{y\to y'\in\mathscr{R}}\kappa_{y\to y'}(t)\,\phi(t)^{y}\,(y'-y),\qquad \phi(0)=x_0\in\mathbb{R}^N_{>0}.$$
+
 It is *weakly reversible* if every reaction lies on a directed cycle of the reaction graph, has a *single linkage class* if the reaction graph is connected, and has *bounded kinetics* if there is $\eta>0$ with $\eta<\kappa_{y\to y'}(t)<1/\eta$ for all reactions and all $t$ (the non-autonomous case includes constant rates).
 
 **Statements.**

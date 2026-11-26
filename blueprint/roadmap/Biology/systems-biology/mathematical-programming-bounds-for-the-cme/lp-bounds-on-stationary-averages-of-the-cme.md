@@ -5,6 +5,7 @@ Let $Q$ be the totally stable, conservative rate matrix of a stochastic reaction
 **Assumption 13.** $\mathcal{P} \ne \emptyset$ and every $\pi \in \mathcal{P}$ satisfies the moment bound $\langle w\rangle_\pi \le c$ for a known constant $c$ (for rational propensities, computable by the semidefinite moment bounds).
 
 Then $\pi(\mathcal{S}_r^c) \le c/r =: \varepsilon_r$. Let $\mathcal{N}_r = \{x \in \mathcal{S}_r : q(z,x) = 0\ \forall z \notin \mathcal{S}_r\}$ and define the finite-dimensional polytope
+
 $$\mathcal{P}^r = \Big\{\pi^r : \pi^r Q(x) = 0\ (x \in \mathcal{N}_r),\ \ \pi^r(\mathcal{S}_r^c) = 0,\ \ \pi^r \ge 0,\ \ 1 - \varepsilon_r \le \pi^r(\mathcal{S}) \le 1,\ \ \langle w\rangle_{\pi^r} \le c\Big\}.$$
 
 **Lemma 14.** If $\pi \in \mathcal{P}$, its restriction $\pi_{|r}$ to $\mathcal{S}_r$ lies in $\mathcal{P}^r$.

@@ -1,9 +1,13 @@
 # Replacement-number dynamics and absence of periodic orbits in the SSISS model
 
 **Model.** A population is split into two susceptible compartments $S_1, S_2$ (e.g. naive and recovered/vaccinated, with possibly reduced susceptibility) and an infectious compartment $I$, written as fractions with $S_1 + S_2 + I = 1$. With transfer rates $\alpha_1$ ($S_1 \to S_2$) and $\alpha_2$ ($S_2 \to S_1$), behaviour-induced transfers $\theta_i I$, incidence rates $\beta_i$, recovery rates $\gamma_i$ ($I \to S_i$), and constant per-capita birth rates $\delta_\bullet$ and death rates $\mu_\bullet$ (newborns entering $S_1$ or $S_2$ in proportions $q_1, q_2$), the fractional dynamics is
+
 $$\dot{\mathbf S} = -\big[E(\tilde{\boldsymbol\alpha}) + I\,E(\boldsymbol\theta) + I\,D(\tilde{\boldsymbol\beta})\big]\mathbf S + I\tilde{\boldsymbol\gamma} + S_1S_2\begin{pmatrix}\nu_1-\nu_2\\ \nu_2-\nu_1\end{pmatrix},\qquad \dot I = \tilde\gamma\,(R_{\mathrm{eff}} - 1)\,I,$$
+
 where $\mathbf S = (S_1,S_2)^\top$, $D(\boldsymbol\beta) = \operatorname{diag}(\beta_1,\beta_2)$, $E(\boldsymbol\alpha) = \begin{pmatrix}\alpha_1 & -\alpha_2\\ -\alpha_1 & \alpha_2\end{pmatrix}$, $\nu_\bullet = \delta_\bullet - \mu_\bullet$ is the net growth rate of each compartment, $\tilde\alpha_i, \tilde\gamma_i$ absorb the birth flows, $\tilde\beta_i = \beta_i + \nu_I - \nu_i$, $\tilde\gamma = \tilde\gamma_1 + \tilde\gamma_2$, and
+
 $$R_{\mathrm{eff}} = \frac{\tilde\beta_1 S_1 + \tilde\beta_2 S_2}{\tilde\gamma}$$
+
 is the replacement (effective reproduction) number.
 
 **Proposition (redundancy of vital dynamics).** If $\nu_1 = \nu_2$, the fractional system has exactly the form of the constant-population model, so all birth and death parameters can be absorbed into $\tilde\alpha_i, \tilde\beta_i, \tilde\gamma_i$; the only price is that $\tilde\beta_i = \beta_i - \Delta\nu_I$, with $\Delta\nu_I = \nu_1 - \nu_I$ (the excess mortality of infectives under equal birth rates), may become negative. In particular, if $\Delta\nu_I \le \min\{\beta_1,\beta_2\}$ the variable-population model maps to a constant-population one.

@@ -4,12 +4,18 @@
 
 **Statements.**
 1. *(Unbiasedness.)* $\mathbb{E}S_n^2=\big(\tfrac{n+1}{n-1}H_n-\tfrac{2n}{n-1}\big)\rho^2$, so
+
 $$R_n^2=\Big(\frac{n+1}{n-1}H_n-\frac{2n}{n-1}\Big)^{-1}S_n^2$$
+
 is an unbiased estimator of $\rho^2$.
 2. *(Variance of the sample variance.)* As $n\to\infty$,
+
 $$\mathrm{Var}(S_n^2/\rho^2)=1+\frac{\pi^2}{6}+O(n^{-1}\log^2n).$$
+
 3. *(Consistency and standard error.)* Consequently $\mathrm{Var}(R_n^2/\rho^2)=\frac{1+\pi^2/6}{(\log n+\gamma-2)^2}+O(n^{-1})$ with $\gamma$ Euler's constant, so $R_n^2$ is consistent, and
+
 $$\mathrm{SE}(R_n^2)\approx\sqrt{1+\pi^2/6}\;\frac{R_n^2}{\log n+\gamma-2}\approx\frac{1.626}{\log n-1.423}\,R_n^2 .$$
+
 4. *(Coalescent indices.)* For four tips $i,j,k,l$ sampled without replacement from the standard ($\lambda=1$) Yule $n$-tree, let $\tau^{(n)}_1,\tau^{(n)}_2,\tau^{(n)}_3$ be the times back to the most recent common ancestors of the pairs $(i,j)$, $(i,k)$ and $(l,k)$ (two pairs sharing a tip, and two disjoint pairs). Then $\mathrm{Var}\,\tau^{(n)}_1=\pi^2/6+O(n^{-1}\log^2n)$, $\mathrm{Cov}(\tau^{(n)}_1,\tau^{(n)}_2)=2-\pi^2/6+O(n^{-1}\log^2n)$ and $\mathrm{Cov}(\tau^{(n)}_1,\tau^{(n)}_3)=3-5\pi^2/18+O(n^{-1}\log^2n)$.
 
 ## Expansion

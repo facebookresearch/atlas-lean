@@ -3,9 +3,12 @@
 Consider the three-stage gene expression model with a constitutively active gene ($k_- = 0$): mRNAs are produced at rate $k_M$ and degraded at rate $\gamma_M$, each mRNA produces proteins at rate $k_P$, and proteins are degraded at rate $\gamma_P$. Let $P$ be the equilibrium protein number.
 
 1. **Negative binomial limit (short-lived mRNAs).** Fix $a > 0$ and let $\gamma_M \to \infty$ with $k_P/\gamma_M = a$. Then $P$ converges in distribution to $N(a)$ with
+
 $$\mathbb{P}(N(a) = n) = \frac{\Gamma(\kappa + n)}{n!\,\Gamma(\kappa)}\Bigl(\frac{1}{1+a}\Bigr)^{\kappa}\Bigl(\frac{a}{1+a}\Bigr)^{n}, \qquad n \in \mathbb{N},\quad \kappa = \frac{k_M}{\gamma_P},$$
+
 the negative binomial law with generating function $\mathbb{E}(z^{N(a)}) = (1 + a - a z)^{-\kappa}$.
 2. **Gaussian limit (long-lived proteins).** As $\gamma_P \to 0$ with the other parameters fixed,
+
 $$\frac{P - \mathbb{E}(P)}{\sqrt{\mathbb{E}(P)}} \Longrightarrow \mathcal{N}\bigl(0, \sigma^2\bigr), \qquad \sigma^2 = 1 + \frac{k_P}{\gamma_M}.$$
 
 With general lifetime and elongation-time distributions the same scaling still gives a Gaussian limit for $\sqrt{\gamma_P}\,(P - \mathbb{E}(P))$, but the limiting variance then depends on the distribution of protein elongation times.

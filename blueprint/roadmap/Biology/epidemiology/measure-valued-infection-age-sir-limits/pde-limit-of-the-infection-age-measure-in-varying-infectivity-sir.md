@@ -5,13 +5,21 @@
 **Assumption.** $\bar\mu_0(\{0\}) = 0$, $\bar\mu_0$ has compact support in $[0, \bar{\mathfrak a}]$, and $\bar\mu_0(1) < 1$. The initial fractions are $\bar S(0), \bar I(0) = \bar\mu_0(1), \bar R(0)$, summing to one.
 
 **Theorem (functional law of large numbers).** If $h$ is locally bounded, then $(\bar S^N, \bar{\mathfrak F}^N) = N^{-1}(S^N, \mathfrak F^N)$ converges in probability in $D^2$ to the unique solution of the Volterra system
+
 $$\bar S(t) = \bar S(0) - \int_0^t \bar\Upsilon(s)\,ds, \qquad \bar{\mathfrak F}(t) = \int_0^\infty \bar\lambda(\mathfrak a + t)\,\bar\mu_0(d\mathfrak a) + \int_0^t \bar\lambda(t-s)\,\bar\Upsilon(s)\,ds, \qquad \bar\Upsilon = \bar S\,\bar{\mathfrak F}.$$
+
 Moreover $\bar\mu^N = N^{-1}\mu^N \Rightarrow \bar\mu$ in $D(\mathbb R_+, \mathcal M_F(\mathbb R_+))$. The limit $\bar\mu$ is the unique solution of the linear transport PDE with boundary input $\bar\Upsilon$,
+
 $$\partial_t\bar\mu + \partial_{\mathfrak a}\bar\mu = -h\,\bar\mu, \qquad \bar\mu(t, 0) = \bar\Upsilon(t), \qquad \bar\mu(0,\cdot) = \bar\mu_0,$$
+
 understood weakly against $\varphi \in C^1_c(\mathbb R_+)$, and it is given explicitly by
+
 $$\bar\mu(t, d\mathfrak a) = \mathbf 1_{\mathfrak a < t}\,F^c(\mathfrak a)\,\bar\Upsilon(t - \mathfrak a)\,d\mathfrak a + \mathbf 1_{\mathfrak a \ge t}\,\frac{F^c(\mathfrak a)}{F^c(\mathfrak a - t)}\,\bar\mu_0(d\mathfrak a - t).$$
+
 Consequently
+
 $$\bar I(t) = \int_0^\infty \frac{F^c(t + \mathfrak a)}{F^c(\mathfrak a)}\,\bar\mu_0(d\mathfrak a) + \int_0^t F^c(t-s)\,\bar\Upsilon(s)\,ds,$$
+
 and $\bar R = 1 - \bar S - \bar I$.
 
 ## Expansion

@@ -8,7 +8,9 @@
 3. $B_2(G_n)$ converges in distribution, and in all moments, to a random variable $B$ with finite moments of all orders.
 
 **Construction behind the limit.** Let $\theta = (5-\sqrt{17})/4$ and let $T_n$ be a Galton–Watson tree conditioned to have $n$ leaves with offspring law
+
 $$\eta_0 = \frac{(2-\theta)(\theta^2-3\theta+1)}{2(\theta-1)^2},\quad \eta_1 = 0,\quad \eta_2 = \tfrac32\theta,\quad \eta_k = \tfrac{k}{2}\theta^{k-1}\ (k\ge3).$$
+
 This law is critical. Replacing each internal vertex with $k$ children by a uniform *head* (a gall or cherry gadget with $k$ outgoing attachment points) yields a uniform galled tree with $n$ labeled leaves, and $B$ is the $B_2$ index of the same blow-up of Kesten's infinite size-biased tree $T_*$.
 
 **Tree comparison.** For any fixed tree $\mathbf{t}$ and any random blow-up $G$ of it, $\mathbb{E}[B_2(G)] \le B_2(\mathbf{t})$, and $B_2(\mathbf{t})$ dominates $B_2(G)$ in second-order stochastic order.

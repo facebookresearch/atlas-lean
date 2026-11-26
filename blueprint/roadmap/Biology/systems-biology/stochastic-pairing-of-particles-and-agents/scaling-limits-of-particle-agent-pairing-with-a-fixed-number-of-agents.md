@@ -4,10 +4,14 @@
 
 **Theorem.**
 1. *(Overloaded case, $C^N_Z/N \to r < 1$.)* If $F^N(0)/N \to \bar f_0$ with $\sum_j \bar f_{0,j} = 1 - r$ and the initial number of free agents is fixed, then $F^N(t)/N$ converges to the solution of
+
 $$\dot f_j = \lambda_j f_j\,\frac{\langle \eta, c - f\rangle}{\langle \lambda, f\rangle} - \eta_j(c_j - f_j),$$
+
 whose equilibrium is $f_{j,\infty} = \dfrac{\eta_j c_j}{\eta_j + \lambda_j h_\infty}$, where $h_\infty = \phi(1 - r)$ and $\phi(y)$ is the unique solution of $\sum_j \frac{\rho_j c_j}{\rho_j + \phi(y)} = y$. The number of free agents stays of order one, and $h_\infty$ is its effective mean level.
 2. *(Critical case, $C^N_Z = N$.)* If $F^N(0)/\sqrt N \to \bar f_0$, then $F^N(t/\sqrt N)/\sqrt N$ converges to the solution of
+
 $$\dot{\bar f}_j = c_j\eta_j - \lambda_j \bar f_j\,\|\bar f\|, \qquad \bar f_{j,\infty} = \frac{c_j\rho_j}{\sqrt{c_1\rho_1 + \cdots + c_J\rho_J}},$$
+
 so only $O(\sqrt N)$ particles are free, the relaxation time is of order $1/\sqrt N$, and fluctuations around this limit are of order $N^{1/4}$ (a functional CLT). The chain is reversible with explicit product-form invariant law $\pi_N(x) \propto \frac{1}{\|x\|!}\prod_j \rho_j^{x_j}\binom{C^N_j}{x_j}$.
 
 ## Expansion

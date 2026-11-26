@@ -1,14 +1,19 @@
 # Gaussian density bounds for a self-regulating gene expression BSDE
 
 **Model.** One active gene synthesizes one protein, and the protein concentration $Y_t$ is reconstructed backward from an observed terminal concentration $\xi$ at time $T$. On a Brownian filtration with Brownian motion $W$, consider the backward stochastic differential equation
+
 $$Y_t = \xi + \int_t^T \big(f(Y_s) - \rho Y_s\big)\,ds - \int_t^T Z_s\,dW_s, \qquad f(y) = R\,\frac{a y^2}{1 + a y^2},$$
+
 where $R$ is the polymerase activation rate, $\rho$ the mRNA degradation rate, $a > 0$, and $f$ is a Hill function with coefficient $2$.
 
 **Proposition (sign preservation).** If $\xi \ge 0$ almost surely (resp. $\xi \le 0$), then $Y_t \ge 0$ (resp. $Y_t \le 0$) almost surely for every $t \in [0, T]$.
 
 **Proposition (Gaussian tails).** Let $R, \rho$ be real constants and let $\xi$ be Gaussian and Malliavin differentiable, $\xi \in \mathbb D^{1,2}$, with $0 < \underline k \le D_r\xi \le \overline k$ for all $r \in [0, T]$. Set
+
 $$\overline C = \tfrac98 R\sqrt{a/3} - \rho, \qquad \underline C = -\tfrac98 R\sqrt{a/3} - \rho, \qquad C_{Y_t} = \tfrac12\,\mathbb E\big|Y_t - \mathbb E Y_t\big| .$$
+
 Then for every $t \in (0, T]$ the law of $Y_t$ has a density $\rho_{Y_t}$, and for all $x \in \mathbb R$, with $\sigma_-^2 = \underline k^2\,t\,e^{2\underline C(T-t)}$ and $\sigma_+^2 = \overline k^2\,t\,e^{2\overline C(T-t)}$,
+
 $$\frac{C_{Y_t}}{\sigma_+^2}\exp\Big(-\frac{(x - \mathbb E Y_t)^2}{2\sigma_-^2}\Big) \le \rho_{Y_t}(x) \le \frac{C_{Y_t}}{\sigma_-^2}\exp\Big(-\frac{(x - \mathbb E Y_t)^2}{2\sigma_+^2}\Big).$$
 
 ## Expansion

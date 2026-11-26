@@ -1,7 +1,9 @@
 # Density phase transition for an SIS infection on the zero-range process
 
 **Model.** Particles on $\mathbb{Z}^d$ ($d \ge 1$) move as a zero-range process: a site with $n$ particles emits one particle at rate $g(n)$ to a uniformly chosen nearest neighbour, where $g(0) = 0$ and
+
 $$\Gamma_- \le g(n) - g(n-1) \le \Gamma_+, \qquad n \ge 1,$$
+
 for constants $0 < \Gamma_- \le 1 \le \Gamma_+$. The process starts from its product invariant measure $\mu_\rho$ of density $\rho > 0$. Each particle is healthy or infected; a healthy particle sharing a site with an infected one is infected instantaneously, and an infected particle that is alone (among infected particles) at its site recovers at rate $\delta \in (0, \infty]$. Initially only the particles at the origin are infected. The infection *survives* if at all times some particle is infected.
 
 **Theorem.**

@@ -1,7 +1,9 @@
 # Final-size dichotomy for SIR on the stochastic block model
 
 **Setting.** Consider the SIR epidemic of rate $\beta$ (transmission per edge) and $\gamma$ (recovery) on $G \sim \mathrm{SBM}(V,W)$ with $W$ irreducible, started from $o(n)$ infected vertices and susceptible densities $\frac1n S_k(0) \to s_k(0) > 0$. Define the forward and backward offspring matrices
+
 $$M = W \operatorname{diag}(\vec s(0)), \qquad M^{\mathrm{SIR}} = \frac{\beta}{\beta+\gamma}\, W \operatorname{diag}(\vec s(0)),$$
+
 the basic reproduction number $R_0 = \lambda_{\max}(M^{\mathrm{SIR}})$, the survival probability $\pi_k$ of the epidemic run on a multi-type Poisson branching process with offspring matrix $M$ started from type $k$, and the survival probability $\theta_k$ of the multi-type Poisson Galton–Watson process with mean matrix $M^{\mathrm{SIR}}$ started from type $k$ (the *backward* branching process). Then $\pi_k > 0$ iff $R_0 > 1$.
 
 **Theorem.** Assume $\frac1n \vec I(0) \to 0$ and $1 - \prod_k (1-\pi_k)^{I_k(0)} \to \pi \in [0,1]$ in probability. Then the vector of final outbreak fractions $\frac1n\big(\vec I(0) + \vec S(0) - \vec S(\infty)\big)$ converges in probability to a random vector equal to $\operatorname{diag}(\vec\theta)\, \vec s(0)$ with probability $\pi$ and to $0$ with probability $1-\pi$.

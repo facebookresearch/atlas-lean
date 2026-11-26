@@ -1,7 +1,9 @@
 # Slow and fast environmental switching limits of population growth rates
 
 **Model.** A structured population $x(t) \in \mathbb{R}^d_+$ (stages, patches or physiological states) follows
+
 $$x'(t) = A_{\sigma(\omega t)}\, x(t),$$
+
 where $A_1, \dots, A_N$ are $d \times d$ Metzler matrices (nonnegative off-diagonal entries) with $\sum_i A_i$ irreducible, and the environment $\sigma$ is either *periodic* (period $1$, spending the fraction $\alpha_i$ of each period in state $i$, visiting $1, \dots, N$ in order) or *Markovian* (a continuous-time chain with irreducible rates $\xi_{ij}$ and stationary law $\alpha$, rescaled so that $\max_j \sum_{i \ne j}\xi_{ij} = 1$, with jump matrix $Q$: $q_{ij} = \xi_{ij}$ for $i \ne j$, $q_{ii} = 1 - \sum_{j\ne i} q_{ij}$). The parameter $\omega$ is the switching frequency. The stochastic growth rate is the Lyapunov exponent $\Lambda(\omega) = \lim_t \frac1t \log\|x(t)\|$ ($\Lambda_p$ periodic, $\Lambda_M$ Markovian); in the periodic case $\Lambda_p(\omega) = \omega \log \lambda(M(\omega))$ with monodromy matrix $M(\omega) = e^{\omega^{-1}\alpha_N A_N}\cdots e^{\omega^{-1}\alpha_1 A_1}$. Let $\lambda(A)$ be the spectral abscissa, $\bar A = \sum_i \alpha_i A_i$, and $x_i, y_i$ (resp. $\bar x, \bar y$) the right and left Perron eigenvectors of $A_i$ (resp. $\bar A$), normalized by $y_i^{\mathsf T}x_i = 1$ and $\mathbf 1^{\mathsf T}x_i = 1$.
 
 **Theorem.**

@@ -1,13 +1,19 @@
 # Equilibria of the two-patch Allee model with nonlinear dispersal
 
 **Model.** A population occupies two patches with densities $u$ (patch with an Allee effect) and $v$ (logistic patch), coupled by density-dependent (nonlinear) dispersal $\delta u(v-u)$ and $\delta v(u-v)$. After nondimensionalization,
+
 $$\dot u = u\left(\frac{u}{m+u} - e - hu\right) + \delta u(v - u), \qquad \dot v = s v(1-v) + \delta v(u - v),$$
+
 with $0 < e < 1$ and $m, h, \delta, s > 0$; $m$ measures the strength of the Allee effect and $e$ the mortality in the Allee patch. Set
+
 $$B = \frac{s\delta}{s+\delta}.$$
+
 The equilibria $E_0 = (0,0)$ and $E_v = \big(0, \tfrac{s}{s+\delta}\big)$ always exist.
 
 **Theorem.** Positive equilibria $(u,v)$ satisfy $v = (s + \delta u)/(s+\delta)$ and
+
 $$(h+B)u^2 + \big[m(h+B) + e - 1 - B\big]u + m(e - B) = 0.$$
+
 1. If $e < B$, there is a unique positive equilibrium.
 2. If $e = B$, there is a unique positive equilibrium when $m < 1/(h+B)$ and none when $m \ge 1/(h+B)$.
 3. If $B < e < 1$, there is a critical Allee strength $m^*$ (where the two positive roots of the quadratic collide) such that there are two positive equilibria for $m < m^*$, exactly one for $m = m^*$, and none for $m > m^*$; the transition at $m = m^*$ is a saddle-node bifurcation.

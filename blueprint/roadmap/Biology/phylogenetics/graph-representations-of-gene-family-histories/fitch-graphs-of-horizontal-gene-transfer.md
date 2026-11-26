@@ -1,7 +1,9 @@
 # Fitch graphs of horizontal gene transfer and their neighborhood characterization
 
 **Setting.** Let $T$ be a rooted gene tree with leaf set $L$ and $H \subseteq E(T)$ a set of edges marked as horizontal gene transfers (HGT). The directed **Fitch graph** $\mathcal F(T,H)$ has vertex set $L$ and an arc $(x,y)$ whenever the path from $\mathrm{lca}_T(x,y)$ down to $y$ contains an edge of $H$: $y$ is "xenologous" to $x$ because its lineage passed through a transfer since they diverged. A directed graph is a Fitch graph if it equals $\mathcal F(T,H)$ for some $(T,H)$. For a vertex $x$, the closed complementary neighborhood is
+
 $$\overline N[x] = \{y \in L : (x,y) \notin E(G)\}$$
+
 (so $x \in \overline N[x]$), and $\overline{\mathcal N}(G) = \{\overline N[y] : y \in L\}$.
 
 **Theorem.** A directed graph $G$ is a Fitch graph if and only if

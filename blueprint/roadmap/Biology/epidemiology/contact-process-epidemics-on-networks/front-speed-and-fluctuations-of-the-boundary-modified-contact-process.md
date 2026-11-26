@@ -1,7 +1,9 @@
 # Front speed and fluctuations of the boundary-modified contact process at criticality
 
 **Model.** The boundary-modified contact process $\xi_t \subset \mathbb{Z}$ is a one-dimensional epidemic in which infected sites recover at rate $1$ (becoming susceptible again), every infected site infects each nearest neighbor at the interior rate $\lambda_i$, except that the rightmost infected site $\mathcal R(\xi_t)$ infects $\mathcal R(\xi_t) + 1$ and the leftmost $\mathcal L(\xi_t)$ infects $\mathcal L(\xi_t) - 1$ at the edge rate $\lambda_e$. The *right-edge-modified* process $\eta_t$ changes only the rightmost outward rate. Let $\lambda_c$ be the critical rate of the ordinary contact process on $\mathbb{Z}$, and take
+
 $$\lambda_i = \lambda_c, \qquad \lambda_e = \lambda_c + \varepsilon, \quad \varepsilon > 0,$$
+
 so the bulk is exactly critical and only the invasion front is boosted. Let $\Sigma^\ominus$ be the configurations with infinitely many infected sites to the left of the origin and finitely many to the right, and $\tilde\mu$ the invariant law of $\eta$ seen from its right edge (supported on $\Sigma^\ominus$).
 
 **Theorem.** With these rates:

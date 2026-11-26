@@ -6,7 +6,9 @@
 1. *(Index formula.)* $R(B) = \prod_{j=1}^n \mu(I_j)$, where the index $\mu(I_j)$ is the number of other bars of $B$, the infinite bar included, that contain $I_j = [b_j, d_j)$.
 2. *(Left inversion vector.)* $R(B) = \prod_{i=1}^n l_i(\sigma(B))$, so $R$ depends only on the permutation type and is constant on combinatorial equivalence classes of barcodes.
 3. *(Total count.)* Combinatorial equivalence classes of merge trees with $n+1$ leaves are in bijection with maximal chains in the lattice of set partitions of an $(n+1)$-element set; consequently
+
 $$\sum_{\sigma \in S_n} R(\sigma) = \sum_{\sigma \in S_n} \prod_{i=1}^n l_i(\sigma) = \frac{(n+1)!\,n!}{2^n}.$$
+
 4. *(Random barcodes.)* If $\sigma$ is uniform on $S_n$, the law $\pi_n$ of $R(\sigma)$ satisfies $\pi_1 = U_1$ and $\pi_k = U_k * \pi_{k-1}$, where $U_k$ is uniform on $\{1, \dots, k\}$ and $*$ is Dirichlet convolution, $\pi_k(c) = \sum_{ab = c} U_k(a)\,\pi_{k-1}(b)$; that is, $R(\sigma)$ is distributed as a product of independent uniform variables on $\{1\}, \{1,2\}, \dots, \{1, \dots, n\}$.
 5. *(Merge trees versus phylogenetic trees.)* For a combinatorial phylogenetic tree $T$ whose root has unique child $c$, with $A_i$ the internal nodes at distance $i$ from $c$, the number $\eta(T)$ of combinatorial classes of merge trees with underlying phylogenetic tree $T$ satisfies $\eta(T) \ge \prod_{j \ge 0} |A_j|!$.
 

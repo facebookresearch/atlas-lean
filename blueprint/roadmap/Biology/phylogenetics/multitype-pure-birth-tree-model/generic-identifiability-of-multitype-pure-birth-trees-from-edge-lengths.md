@@ -9,7 +9,9 @@
 **Type frequencies.** If moreover all $s_{ij} > 0$ ($i \neq j$), the vector $R_t$ of type proportions among lineages alive at time $t$ satisfies $R_t \to \mathbf{u}$ a.s., where $\mathbf{u}$ is the positive normalized leading left eigenvector of $A$.
 
 **Asymptotic node distribution.** As $T \to \infty$, the joint law of the lengths $(\tau_0,\tau_1,\tau_2)$ of the parent edge and two daughter edges at a uniformly chosen internal node converges to
+
 $$G_\infty = \sum_{j=1}^m w_j\, \mu_j^1(\tau_0)\, F_j(\tau_1)\, F_j(\tau_2), \qquad w_j = \sum_i u_i P_{i_-,j_+},\quad \mu_j^1(\tau_0) = \frac{\sum_i u_i P_{i_-,j_+}(\tau_0)}{w_j},$$
+
 an $m$-component mixture of products of three univariate distributions (the hidden mixture label is the node type $j$).
 
 **Theorem.** Assume $\lambda_i > 0$ for all $i$, $s_{ij} > 0$ for all $i \neq j$, $\lambda_i \neq \lambda_j$ for $i \neq j$, and the $m \times m$ matrix $\big(\mathbf{1}\ \ U\mathbf{1}\ \ U^2\mathbf{1}\ \cdots\ U^{m-1}\mathbf{1}\big)$ is non-singular (all generic conditions). Then $(\boldsymbol\lambda, S)$ is identifiable up to permutation of type labels from $G_\infty$.

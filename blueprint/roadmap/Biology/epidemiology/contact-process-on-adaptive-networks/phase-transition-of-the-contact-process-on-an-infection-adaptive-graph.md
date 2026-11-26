@@ -11,9 +11,11 @@ With $|\xi_0| = 1$ and $I_\infty^{(N)}$ the set of vertices ever infected, the f
 
 1. If $\lambda\beta < 0.21$ or $(2\beta - 1)\lambda < \kappa$, then $(|I_\infty^{(N)}|)_N$ is tight; in particular the process is subcritical.
 2. If
+
 $$
 \frac{\lambda\beta}{1 + 2\kappa + \lambda} > \sqrt{1 - \frac{\kappa(\lambda + \kappa)\bigl(1 - e^{-\beta\lambda/(\kappa + \lambda)}\bigr)}{(1+\kappa)(1 + 2\kappa + \lambda)}},
 $$
+
 the process is supercritical; in particular $\lambda\beta > 1 + 2\kappa + \lambda$ suffices.
 
 **Statement (non-adaptive).** For $\kappa$ large enough, the process is subcritical (with tight $|I_\infty^{(N)}|$) if $\lambda\beta < 1$ and supercritical if $\lambda\beta > 1$.

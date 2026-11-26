@@ -1,13 +1,19 @@
 # Structured nuclear-norm decomposition of bidimensionally linked omics matrices
 
 **Model.** Data blocks $\mathbf X_{ij}$ ($M_i\times N_j$) are indexed by row sets $i=1,\dots,I$ (omics platforms, features) and column sets $j=1,\dots,J$ (cancer types, samples), forming $\mathbf X_{\cdot\cdot}$ of size $M\times N$, $M=\sum M_i$, $N=\sum N_j$. The BIDIFAC+ model writes
+
 $$\mathbf X_{\cdot\cdot}=\sum_{k=1}^K\mathbf S^{(k)}_{\cdot\cdot}+\mathbf E_{\cdot\cdot},\qquad \mathbf S^{(k)}_{ij}=\begin{cases}\mathbf U^{(k)}_i\mathbf V^{(k)T}_j&\text{if }\mathbf R[i,k]=\mathbf C[j,k]=1,\\ \mathbf 0&\text{otherwise,}\end{cases}$$
+
 where binary indicators $\mathbf R$ ($I\times K$) and $\mathbf C$ ($J\times K$) say which platforms and which cancer types module $k$ spans (by default all $(2^I-1)(2^J-1)$ contiguous combinations), each module is low rank, and $\mathbf E$ has independent unit-variance sub-Gaussian entries after scaling. Modules are estimated by
+
 $$\min_{\{\mathbf S^{(k)}\}}\ \tfrac12\Big\|\mathbf X_{\cdot\cdot}-\sum_k\mathbf S^{(k)}_{\cdot\cdot}\Big\|_F^2+\sum_k\lambda_k\|\mathbf S^{(k)}_{\cdot\cdot}\|_*$$
+
 subject to the zero pattern.
 
 **Propositions (penalties).** For every module to be estimable as non-zero it is necessary that $\lambda_k>\lambda_{k'}$ whenever module $k'$ is nested in module $k$, and $\lambda_k<\sum_{j\in\mathcal I_k}\lambda_j$ whenever modules $\mathcal I_k$ cover the rows and columns of $k$ an integer number of times. The choice
+
 $$\lambda_k=\sqrt{\textstyle\sum_iM_i\mathbf R[i,k]}+\sqrt{\textstyle\sum_jN_j\mathbf C[j,k]},$$
+
 the order of the largest singular value of the noise restricted to module $k$, satisfies both conditions.
 
 **Theorem (uniqueness).** A decomposition $\{\hat{\mathbf S}^{(k)}\}$ with SVDs $\hat{\mathbf S}^{(k)}=\mathbf U^{(k)}\hat{\mathbf D}^{(k)}\mathbf V^{(k)T}$ is uniquely identified among all decompositions of the same total signal by: (1) it minimizes the structured penalty $\sum_k\lambda_k\|\mathbf S^{(k)}\|_*$; (2) for each row set $i$, the left singular vectors $\{\hat{\mathbf U}^{(k)}_i[\cdot,r]:\mathbf R[i,k]=1,\ \hat D^{(k)}[r,r]>0\}$ are linearly independent; (3) for each column set $j$, the right singular vectors $\{\hat{\mathbf V}^{(k)}_j[\cdot,r]:\mathbf C[j,k]=1,\ \hat D^{(k)}[r,r]>0\}$ are linearly independent.

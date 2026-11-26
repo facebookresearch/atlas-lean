@@ -4,7 +4,9 @@
 
 **Theorem.**
 1. *(Rate conditions for RNDB.)* The network has RNDB iff (i) for every reaction vector $\mathbf u$,
+
 $$\frac{k_1(\mathbf u)}{k_1(-\mathbf u)} = \cdots = \frac{k_{r(\mathbf u)}(\mathbf u)}{k_{r(\mathbf u)}(-\mathbf u)},$$
+
 and (ii) for every reaction cycle $(\mathbf u_1, \dots, \mathbf u_c)$ (reaction vectors with $\sum_i \mathbf u_i = \mathbf 0$) and every choice of indices $q(\mathbf u_i) \in \{1, \dots, r(\mathbf u_i)\}$, $\prod_{i=1}^c k_{q(\mathbf u_i)}(\mathbf u_i)/k_{q(\mathbf u_i)}(-\mathbf u_i) = 1$.
 2. *(Sufficiency.)* If a reversible network has RNDB, its stochastic mass-action model has MCDB.
 3. *(Coincidence.)* If $r(\mathbf u) = 1$ for every reaction vector, RNDB and MCDB are equivalent.

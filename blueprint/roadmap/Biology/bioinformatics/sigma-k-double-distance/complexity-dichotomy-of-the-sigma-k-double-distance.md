@@ -1,11 +1,15 @@
 # Complexity dichotomy of the σ_k double distance
 
 **Setting.** A genome is a multiset of linear or circular chromosomes, each a sequence of oriented genes; an *adjacency* joins neighboring gene extremities and a *telomere* is a free end of a linear chromosome. For two genomes $\mathbb{S}_1,\mathbb{S}_2$ on the same $n_\ast$ distinct genes, the **breakpoint graph** has the $2n_\ast$ gene extremities as vertices and one edge per adjacency of each genome; its components are alternating cycles and paths. Let $c_i$ be the number of cycles of length $i$ and $p_j$ the number of paths of length $j$. For even $k\in\{2,4,6,\dots\}\cup\{\infty\}$ set
+
 $$\sigma_k=c_2+c_4+\dots+c_k+\tfrac12\,(p_0+p_2+\dots+p_{k-2}),\qquad d_k(\mathbb{S}_1,\mathbb{S}_2)=n_\ast-\sigma_k .$$
+
 Then $d_2$ is the breakpoint distance, $d_\infty$ is the double-cut-and-join (DCJ) distance $n_\ast-(c+p_{\mathrm{even}}/2)$, and $d_k$ decreases monotonically in $k$.
 
 A **whole genome duplication** turns a singular genome $\mathbb{S}$ (each gene once) into the set $2\mathbb{S}$ of doubled genomes (every adjacency and telomere twice). Given a duplicated genome $\mathbb{D}$ (each gene exactly twice) with the same gene families, fix a labeling $\check{\mathbb{D}}$ of the two copies of each gene by indices $a,b$. The **σ_k double distance** is
+
 $$dd_k(\mathbb{S},\mathbb{D})=\min_{\mathbb{B}}\ d_k(\mathbb{B},\check{\mathbb{D}}),$$
+
 over all $a/b$-labelings $\mathbb{B}$ of genomes in $2\mathbb{S}$. Equivalently, in the *ambiguous breakpoint graph* each adjacency $\beta\gamma$ of $\mathbb{S}$ becomes a square with the two choices $\{\beta_a\gamma_a,\beta_b\gamma_b\}$ or $\{\beta_a\gamma_b,\beta_b\gamma_a\}$, and computing $dd_k$ is the same as choosing one pair in every square to maximize $\sigma_k$ (the *σ_k disambiguation*).
 
 **Theorem.**

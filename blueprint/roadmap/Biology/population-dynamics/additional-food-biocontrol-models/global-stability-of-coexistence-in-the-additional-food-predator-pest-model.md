@@ -1,13 +1,19 @@
 # Global stability of coexistence in the additional-food predator–pest model
 
 **Model.** A predator $y(t)$ with a Holling type II response hunts a pest $x(t)$ and is also supplied with additional food (AF) of quantity $\xi \ge 0$ and quality $1/\alpha > 0$:
+
 $$\frac{dx}{dt} = x\left(1 - \frac{x}{\gamma}\right) - \frac{xy}{1 + \alpha\xi + x}, \qquad \frac{dy}{dt} = \frac{\beta (x + \xi)\, y}{1 + \alpha\xi + x} - \delta y,$$
+
 with pest carrying capacity $\gamma > 0$, conversion rate $\beta > 0$ and predator death rate $\delta > 0$. Set
+
 $$\hat\delta = \delta - \frac{\beta\xi}{1 + \alpha\xi},$$
+
 the predator's effective death rate once the AF is accounted for at zero pest density.
 
 **Theorem.** Suppose a positive coexistence equilibrium exists (so $\hat\delta > 0$) and $\beta > \hat\delta$. If
+
 $$\gamma < \frac{(1 + \alpha\xi)(\beta + \hat\delta)}{\beta - \hat\delta},$$
+
 then the coexistence equilibrium is globally asymptotically stable for positive initial data.
 
 Because $(\beta + \hat\delta)/(\beta - \hat\delta) > 1$, this strictly improves the classical sufficient condition $\gamma < 1 + \alpha\xi$, which tied the admissible pest carrying capacity to the amount of AF supplied.

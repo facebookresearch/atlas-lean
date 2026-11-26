@@ -4,7 +4,9 @@
 
 **Theorem.**
 1. *(Convergence.)* Suppose the relevant closed class $E$ is finite and no fast walk is blocked or leaks (the summed walk intensities $\Lambda_w(z)$ equal the slow intensities leaving through $\mathcal U$, for all core states $z$). Then for initial laws $\pi$ supported on states with no $\mathcal U$-molecules and every $T > 0$,
+
 $$\sup_{t \in [0, T]}\bigl|P_\pi(X_\varepsilon(t) \in B) - P_{\pi_0}(X_0(t) \in B_0)\bigr| = O(\varepsilon) \quad (\varepsilon \to 0),$$
+
 where $X_0$ is the reduced network's chain and $\pi_0, B_0$ are projections to core coordinates.
 2. *(Intermediates preserve recurrence.)* If $\mathcal U$ consists of intermediate species, all reactions involving them are fast, and the network is sub-conservative, then a state $(z, 0)$ is transient (resp. positive recurrent) for the full network iff $z$ is transient (resp. positive recurrent) for the reduced network, and irreducible components project onto irreducible components.
 

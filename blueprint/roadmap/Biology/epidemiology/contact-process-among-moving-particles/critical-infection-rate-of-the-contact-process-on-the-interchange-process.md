@@ -1,9 +1,11 @@
 # Critical infection rate of the contact process on the interchange process
 
 **Model.** On $\mathbb{Z}^d$ each vertex is empty, occupied by a healthy particle, or occupied by an infected particle. Infected particles recover at rate $1$; an infected particle infects a healthy particle at each neighboring vertex at rate $\lambda > 0$; and, independently, the states of every pair of adjacent vertices are swapped at rate $\mathsf{v} > 0$ (the interchange process), so particles move and carry the infection with them. Start from a single infected particle at the origin, with every other vertex independently occupied by a healthy particle with probability $p \in (0,1]$ and empty otherwise. Let
+
 $$\lambda_c(\mathsf{v}, p) = \inf\{\lambda > 0 : \text{the infection survives forever with positive probability}\}.$$
 
 **Theorem.** For every $d \ge 1$ and every $p \in (0,1]$,
+
 $$\lim_{\mathsf{v} \to \infty} \lambda_c(\mathsf{v}, p) = \frac{1}{2dp}.$$
 
 ## Expansion

@@ -1,7 +1,9 @@
 # At most two periodic orbits of the periodically forced Wolbachia infection-frequency map
 
 **Model.** Let $x_n \in [0,1]$ be the frequency of Wolbachia-infected mosquitoes in generation $n$. With maternal transmission failure rate $\mu_n$, fecundity cost $s_{f_n}$ of infection and cytoplasmic-incompatibility strength $s_{h_n}$,
+
 $$x_{n+1} = f_n(x_n) = \frac{(1-\mu_n)(1-s_{f_n})\,x_n}{s_{h_n}x_n^2 - (s_{h_n}+s_{f_n})x_n + 1}.$$
+
 For constant parameters with $0 \le s_f < s_h \le 1$ and $\mu < \mu^* = \frac{(s_h - s_f)^2}{4s_h(1-s_f)}$, the map has the attracting fixed point $0$ and two further fixed points in $(0,1]$; for $\mu = 0$ they are $s_f/s_h$ (unstable threshold) and $1$. Now let $(\mu_n, s_{f_n}, s_{h_n})$ be $T$-periodic, so the dynamics is driven by the periodic sequence of maps $[f_1,\ldots,f_T]$, and $T$-periodic solutions correspond to fixed points of $F = f_T\circ\cdots\circ f_1$.
 
 **Conjecture (Zheng et al.).** If $0 \le s_{f_n} < s_{h_n} \le 1$ and $\mu_n \le \mu^*_n$ for all $n$, the model has at most two $T$-periodic solutions: exactly two (one stable, one unstable) if $\mu_n \ne 0$, and a unique unstable one if $\mu_n = 0$.

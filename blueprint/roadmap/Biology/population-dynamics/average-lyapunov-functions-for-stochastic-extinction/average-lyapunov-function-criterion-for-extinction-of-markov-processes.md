@@ -5,12 +5,16 @@
 **Hypotheses.**
 1. *(Dissipativity.)* There are proper functions $W,W':\mathcal{M}\to[1,\infty)$ and $K>0$ with $W$ in the domain of $\mathcal{L}$ and $\mathcal{L}W\le K-W'$.
 2. *(Average Lyapunov function.)* There is $V:\mathcal{M}_+\to\mathbb{R}$ in the domain of $\mathcal{L}$ such that $V(x_n)\to\infty$ forces $d(x_n,\mathcal{M}_0)\to 0$; $\mathcal{L}V$ is negligible relative to $W'$ at infinity; and $\mathcal{L}V$ extends to a continuous $H:\mathcal{M}\to\mathbb{R}$ with
+
 $$\mu H=\int H\,d\mu\ \ge\ \alpha>0\qquad\text{for all }\mu\in P_{\mathrm{inv}}(\mathcal{M}_0).$$
+
 3. *(Controlled fluctuations.)* There are continuous $U,U'\ge 0$ with $\mathcal{L}U\le K-U'$, $\Gamma W\le KU'$ and $\Gamma V\le KU'$.
 
 **Statement.**
 - *(Local extinction.)* If $x\in\mathcal{M}_0$ and $V(y)\to\infty$ as $y\to x$, then
+
 $$\lim_{y\to x,\ y\in\mathcal{M}_+}\mathbb{P}\Big(\liminf_{t\to\infty}\tfrac{V(X_t^y)}{t}\ge\alpha\Big)=1 .$$
+
 - *(Global extinction.)* If moreover $\mathcal{M}=\mathcal{M}_+\cup\mathcal{M}_0$ and from every $x\in\mathcal{M}_+$ there is $M$ such that $\{V>D\}\cap\{W<M\}$ is accessible for every $D$, then $\liminf_t V(X_t^x)/t\ge\alpha$ almost surely for every $x\in\mathcal{M}_+$. With $V=-\log(\text{distance to }\mathcal{M}_0)$ this is almost-sure exponential extinction at rate at least $\alpha$.
 - *(Change of variables.)* The conclusions persist when $\mathcal{L}V$ only extends continuously after lifting through a quadruple map $\pi:\mathcal{N}\to\mathcal{M}$ (e.g. polar coordinates near $\mathcal{M}_0$), with the condition $\mu H\ge\alpha$ imposed on invariant measures of the lifted boundary $\mathcal{N}_0$.
 

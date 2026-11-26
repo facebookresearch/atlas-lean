@@ -5,7 +5,9 @@
 - (uniform integrability) $\big(\frac1n\int_0^{nt}b(X^{\mathrm{o}}_s)\,ds\big)_{n\ge1}$ is uniformly integrable.
 
 **Theorem.** Let $\mathbf{I}$ be the pure jump (semi-Markov) process on $I$ that, in state $i$, waits a time with cdf $t \mapsto G(t\,\mu_i(b))$ and then jumps to $j$ with law
+
 $$K(i, dj) = \int_{E_i}\frac{\mu_i(dx)\,b(x)}{\mu_i(b)}\,\pi(x, E_{dj}).$$
+
 1. For every $T > 0$ and bounded $f$, $\mathbf{E}^n_{x_i}\big[f(\mathbf{X}^n_{\tau_1^n})\mathbf{1}\{\tau_1^n \le T\}\big] \to G(T\mu_i(b))\int\frac{\mu_i(dx)}{\mu_i(b)}\,b(x)\,\pi(x,f)$; more generally the jump times and post-jump positions converge jointly in law, and the index chain $(\mathbf{I}^n_{\tau^n_k})_k$ with its holding times converges to that of $\mathbf{I}$.
 2. The finite-dimensional laws of $\mathbf{I}^n$ before the $k$-th jump converge to those of $\mathbf{I}$, and $\liminf_n \mathbf{E}[f(\mathbf{I}^n_T)\mathbf{1}\{T < \tau^n_\infty\}] \ge \mathbf{E}[f(\mathbf{I}_T)\mathbf{1}\{T < \tau_\infty\}]$ for $f \ge 0$, with equality in the limit if $\mathbf{I}$ does not explode.
 3. If $\mathbf{I}$ is non-explosive on $[0,T]$ and its marginals are tight, $\mathbf{I}^n \to \mathbf{I}$ in law in the Skorokhod space $D([0,T], I)$.

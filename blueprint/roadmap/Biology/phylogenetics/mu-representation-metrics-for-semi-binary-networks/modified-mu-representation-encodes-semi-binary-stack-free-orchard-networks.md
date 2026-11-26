@@ -5,9 +5,13 @@
 For a node $v$, the **μ-vector** $\mu(v)\in\mathbb{Z}_{\ge0}^X$ has $a$-coordinate equal to the number of directed paths from $v$ to leaf $a$; the **μ-representation** $\mu(N)$ is the multiset $\{\mu(v):v\in V(N)\}$. The **modified μ-vector** prepends the in-degree, $\mu^\ast(v)=\delta^-(v)\oplus\mu(v)\in\mathbb{Z}^{1+|X|}$, and $\mu^\ast(N)$ is the multiset of modified μ-vectors.
 
 **Theorem (encoding).** Let $N_1$ be a semi-binary stack-free orchard network and $N_2$ a semi-binary stack-free network on the same leaf set. Then
+
 $$\mu^\ast(N_1)=\mu^\ast(N_2)\iff N_1\cong N_2 .$$
+
 Consequently the **μ\*-distance**
+
 $$d_{\mu^\ast}(N_1,N_2)=\bigl|\mu^\ast(N_1)\,\triangle\,\mu^\ast(N_2)\bigr|,$$
+
 the cardinality of the multiset symmetric difference (each element counted with the absolute difference of its multiplicities), is a metric on the class of semi-binary stack-free orchard networks.
 
 **Theorem (non-binary failure).** Non-binary stack-free orchard networks are *not* encoded by their modified μ-representation: there exist two non-isomorphic stack-free orchard networks with equal $\mu^\ast$-representations (and equal out-degrees at corresponding nodes), differing only at a tree-node of out-degree $3$.

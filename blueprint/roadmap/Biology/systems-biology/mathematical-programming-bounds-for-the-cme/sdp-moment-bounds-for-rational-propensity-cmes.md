@@ -7,10 +7,13 @@ Consider a stochastic reaction network with $n$ species and $m$ reactions with n
 **Lemma 3 (moment equations).** Under Assumption 1, every $\pi \in \mathcal{P}$ satisfies $z^T\mathbf{g}_\alpha = 0$ for all $|\alpha| \le d - d_b + 1$, where $z = (z_\beta)_{|\beta| \le d}$.
 
 **Lemma 5 (outer approximation).** Under Assumption 1, for every $\pi \in \mathcal{P}$ the vector $z$ lies in the spectrahedron
+
 $$\mathcal{E}^d = \Big\{ y : y^T\mathbf{g}_\alpha = 0\ (|\alpha| \le d - d_b + 1),\ \ y^T\mathbf{s} = 1,\ \ M_d^i(y) \succeq 0\ (i = 0, 1, \dots, n)\Big\},$$
+
 where $\mathbf{s}$ is the coefficient vector of $s$, $[M_d^0(y)]_{\alpha\beta} = y_{\alpha+\beta}$ and $[M_d^i(y)]_{\alpha\beta} = y_{\alpha+\beta+e_i}$ are moment and localizing matrices.
 
 **Corollary 6 (monotone moment bounds).** If $f$ is a polynomial of degree $d_f \le d$ with coefficient vector $\mathbf{f}$, and $L_f^{d'} = \inf\{\mathbf{f}^Ty : y \in \mathcal{E}^{d'}\}$, $U_f^{d'} = \sup\{\mathbf{f}^Ty : y \in \mathcal{E}^{d'}\}$ (semidefinite programs), then
+
 $$L_f^{d_f} \le L_f^{d_f+1} \le \dots \le L_f^{d} \le \Big\langle \frac{f}{s}\Big\rangle_\pi \le U_f^{d} \le \dots \le U_f^{d_f+1} \le U_f^{d_f} .$$
 
 The bounds tighten as the order grows but need not converge to the true moment; they hold for every stationary solution, including networks with several.

@@ -5,13 +5,17 @@
 **Homogeneous flow stream network.** $(G, f, L)$ is a homogeneous flow stream network if the connection matrix $L$ is irreducible, every edge $i \to j$ has a reverse edge $j \to i$, and the movement weight on an edge is $\ell_{ji} = d + q$ when it goes one level downstream and $d$ when it goes one level upstream, with constants $d, q > 0$ (random movement $d$, drift $q$). Write $L = dD + qQ$, with diagonal entries $\ell_{ii} = -\sum_{j \ne i} \ell_{ji}$.
 
 **Single-species model.** With growth rates $\mathbf r = (r_1, \dots, r_n) > \mathbf 0$ and a common carrying capacity $k > 0$,
+
 $$\frac{du_i}{dt} = \sum_{j=1}^n (dD_{ij} + qQ_{ij})\,u_j + r_i u_i\Big(1 - \frac{u_i}{k}\Big), \qquad i = 1, \dots, n .$$
+
 Because $L$ is irreducible and essentially nonnegative, this model has a unique positive equilibrium $\mathbf u^*$, which is globally asymptotically stable. Its total biomass is $\mathcal K = \sum_i u_i^*$.
 
 **Lemma (null vector).** The positive solution of $L\mathbf v = 0$ is, up to a constant multiple, $v_i = \big((d+q)/d\big)^{f(i)}$.
 
 **Theorem (biomass upper bound).** If $\sum_i r_i = r > 0$, then
+
 $$\mathcal K \le k \sum_{i=1}^n \Big(1 + \frac{q}{d}\Big)^{f(i)} .$$
+
 The bound is attained when $r_i = 0$ at every node with positive level, i.e. when all resources sit at the upstream ends ($f(i) = 0$). In that case $u_i^* = k\big((d+q)/d\big)^{f(i)}$.
 
 ## Expansion

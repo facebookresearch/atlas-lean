@@ -1,6 +1,7 @@
 # Fluctuation SPDE for the SIR model on a refining spatial grid
 
 **Model.** On the grid $D_\varepsilon=\{x_1,\dots,x_\ell\}$, $\ell=\varepsilon^{-1}$, of the circle $\mathbb{T}=[0,1)$, a stochastic SIR model with total population of order $\mathbf{N}$ tracks the rescaled numbers $S_{\mathbf{N},\varepsilon},I_{\mathbf{N},\varepsilon},R_{\mathbf{N},\varepsilon}$ at each site: infections occur at rate $\mathbf{N}\beta(x_i)SI/(S+I+R)$, recoveries at rate $\mathbf{N}\alpha(x_i)I$, and each compartment $J\in\{S,I,R\}$ migrates to each neighbour at rate $\mathbf{N}\mu_J\varepsilon^{-2}J$, all driven by independent Poisson processes; $\beta,\alpha$ are continuous, periodic and nonnegative. As $\mathbf{N}\to\infty$ the model converges to the lattice ODE $\dot Z_\varepsilon=b_\varepsilon(Z_\varepsilon)$ with discrete Laplacian $\Delta_\varepsilon$, and as $\varepsilon\to 0$ that ODE converges uniformly to the reaction-diffusion system
+
 $$\partial_t\mathbf{s}=\mu_S\Delta\mathbf{s}-\frac{\beta\,\mathbf{s}\mathbf{i}}{\mathbf{a}},\quad \partial_t\mathbf{i}=\mu_I\Delta\mathbf{i}+\frac{\beta\,\mathbf{s}\mathbf{i}}{\mathbf{a}}-\alpha\mathbf{i},\quad \partial_t\mathbf{r}=\mu_R\Delta\mathbf{r}+\alpha\mathbf{i},\qquad \mathbf{a}=\mathbf{s}+\mathbf{i}+\mathbf{r}.$$
 
 **Statements.**

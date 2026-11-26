@@ -1,13 +1,17 @@
 # Expected number of internal equilibria in random multi-player games
 
 **Setting.** An infinite population plays a symmetric $d$-player game with $n$ strategies under replicator dynamics. With frequencies $x_1,\dots,x_n$ and $y_i=x_i/x_n$, the internal rest points ($0<x_i<1$) are the positive solutions $(y_1,\dots,y_{n-1})\in\mathbb R^{n-1}_{+}$ of the $n-1$ polynomial equations of degree $d-1$
+
 $$\sum_{\substack{k_1+\dots+k_{n-1}\le d-1}}\beta^i_{k_1,\dots,k_{n-1}}\binom{d-1}{k_1,\dots,k_n}\prod_{j=1}^{n-1}y_j^{k_j}=0,\qquad i=1,\dots,n-1,$$
+
 where $\beta^i$ are differences between the payoffs of strategy $i$ and strategy $n$ against each composition of co-players. Let the coefficient vectors $A^i=(\beta^i_{k_1,\dots,k_{n-1}})$, $i=1,\dots,n-1$, be independent centred Gaussian vectors (for the explicit two-strategy and two-player results, with independent standard normal entries), and let $E(n,d)$ be the expected number of internal equilibria.
 
 **Theorem.**
 1. $E(n,d)$ is given by the Edelman–Kostlan formula: for coefficients that are i.i.d. Gaussian vectors with covariance $C$ and monomial vector $v(y)$, the expected number of roots in $U\subseteq\mathbb R^{n-1}$ is $\pi^{-n/2}\Gamma(n/2)\int_U\big(\det[\partial_{x_i}\partial_{y_j}\log v(x)^TCv(y)]_{x=y=t}\big)^{1/2}dt$.
 2. *Two strategies.* $E(2,d)=\int_0^\infty f(t)\,dt$ with an explicit density $f$, and
+
 $$\frac{d-1}{\pi\sqrt{2d-3}}\le E(2,d)\le\frac1\pi\sqrt{d-1}\sqrt{1+\frac\pi2\sqrt{d-1}};$$
+
 hence $E(2,d)\to\infty$, and the probability of the maximal number $d-1$ of internal equilibria is at most $\frac1\pi\sqrt{1+\frac\pi2\sqrt{d-1}}/\sqrt{d-1}\to0$. The expected number of stable internal equilibria is $E(2,d)/2$.
 3. *Two players.* $E(n,2)=2^{1-n}$, so the probability of the maximal number of internal equilibria tends to $0$ as $n\to\infty$.
 

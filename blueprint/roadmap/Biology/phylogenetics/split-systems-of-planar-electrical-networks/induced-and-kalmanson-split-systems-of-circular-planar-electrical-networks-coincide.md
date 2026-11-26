@@ -1,6 +1,7 @@
 # Induced and Kalmanson split systems of circular planar electrical networks coincide
 
 **Setting.** A circular planar electrical network $N$ is a connected planar graph with positive edge conductances, embedded in a disk with $n$ boundary nodes labelled $1, \dots, n$ in circular order. Its resistance matrix $W(N)$ records effective resistances between boundary nodes; it is a Kalmanson metric for this circular order, hence equals the split metric $W_{ij} = \sum_{S \text{ separates } i, j} w(S)$ of a unique weighted circular split system, the *Kalmanson split system* $\mathcal R(N)$. Separately, a *grove* of $N$ is a spanning forest each of whose trees contains a boundary node; a 2-grove *respects* a split $A \mid B$ displayed by $N$ if its two trees span $A$ and $B$. The *induced split system* $\Sigma(N)$ assigns to each split displayed by $N$ the weight
+
 $$w(A \mid B) = \frac{\sum_{\text{2-groves } F \text{ respecting } A \mid B} \prod_{e \in F} c_e}{\sum_{\text{spanning trees } T} \prod_{e \in T} c_e}.$$
 
 **Theorem.**

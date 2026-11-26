@@ -8,7 +8,9 @@ $$\begin{aligned}
 with all parameters positive.
 
 **Theorem.** The basic reproduction number is
+
 $$\mathfrak R_0 = \left(\frac{\alpha\gamma + \sigma}{\delta + \sigma}\right)\frac{\beta}{\gamma}.$$
+
 If $\mathfrak R_0 < 1$, the disease-free equilibrium $(n,0,0,0)$ is locally asymptotically stable and no endemic equilibrium exists in the feasible region. If $\mathfrak R_0 > 1$, the disease-free equilibrium is unstable and the unique endemic equilibrium is locally asymptotically stable.
 
 ## Expansion

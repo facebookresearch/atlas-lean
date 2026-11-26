@@ -9,7 +9,9 @@ u_3' &= (d_1+q_1)u_2 - d_1u_3 + r_3u_3\left(1 - \tfrac{u_3+v_3}{k_3}\right),
 and the same equations for $\boldsymbol v$ with $(d_2, q_2)$, where $r_i > 0$ and the carrying capacities decrease downstream: $k_1 > k_2 > k_3 > 0$. Each species alone has a unique globally stable positive equilibrium, giving semitrivial equilibria $(\boldsymbol u^*, \boldsymbol 0)$ and $(\boldsymbol 0, \boldsymbol v^*)$.
 
 **Theorem.** Define
+
 $$G_{11} = \left\{(d,q) : d \ge d_1,\ q \ge \tfrac{q_1}{d_1}d\right\}\setminus\{(d_1,q_1)\}, \qquad G_{21} = \left\{(d,q) : 0 < d \le d_1,\ 0 < q \le \tfrac{q_1}{d_1}d\right\}\setminus\{(d_1,q_1)\}.$$
+
 1. If $(d_2, q_2) \in G_{11}$ (species $\boldsymbol v$ disperses more and drifts proportionally more), then $(\boldsymbol u^*, \boldsymbol 0)$ is globally asymptotically stable: $\boldsymbol u$ wins.
 2. If $(d_2, q_2) \in G_{21}$, then $(\boldsymbol 0, \boldsymbol v^*)$ is globally asymptotically stable: $\boldsymbol v$ wins.
 

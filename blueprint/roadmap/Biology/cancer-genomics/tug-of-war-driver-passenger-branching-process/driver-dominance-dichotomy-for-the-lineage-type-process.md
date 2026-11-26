@@ -7,6 +7,7 @@
 - dies at rate $d$.
 
 The process starts from one type-$0$ cell and is non-explosive when $\nu+d>\mu L$. Let $q_i$ be the probability of global extinction from one type-$i$ cell and $\delta(i)=b(i)+\mu+\nu+d$; then
+
 $$q_i=\frac{d}{\delta(i)}+\frac{\nu}{\delta(i)}q_{i-1}+\frac{b(i)}{\delta(i)}q_i^2+\frac{\mu}{\delta(i)}q_{i+L}.$$
 
 **Lineage type process.** Following one infinite (surviving) line of descent, the type evolves as a Markov chain with transition probabilities obtained by conditioning on survival; its jump chain $(Y_n)$ moves $i\to i-1$ and $i\to i+L$ with probabilities proportional to $\nu(1-q_{i-1})/(1-q_i)$ and $\mu(1-q_{i+L})/(1-q_i)$, and $(X_t)$ is the corresponding continuous-time process with $X_0=Y_0=0$.

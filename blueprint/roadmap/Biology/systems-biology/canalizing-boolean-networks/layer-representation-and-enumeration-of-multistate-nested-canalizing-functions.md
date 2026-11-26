@@ -1,18 +1,25 @@
 # Layer representation and enumeration of multistate nested canalizing functions
 
 **Setting.** Let $\mathbb{F}_p=\{0,1,\dots,p-1\}$ with its natural order, $p$ prime. A proper subset $S\subsetneq\mathbb{F}_p$ is an *interval* if $S=\{0,\dots,j\}$ or $S^c=\{0,\dots,j\}$ for some $0\le j<p-1$, so there are $2(p-1)$ intervals. Fix a permutation $\sigma$ of $\{1,\dots,n\}$, intervals $S_1,\dots,S_n$, and outputs $b_1,\dots,b_{n+1}\in\mathbb{F}_p$ with $b_n\ne b_{n+1}$. A function $f:\mathbb{F}_p^n\to\mathbb{F}_p$ is **nested canalizing** (NCF) in the order $x_{\sigma(1)},\dots,x_{\sigma(n)}$ if
+
 $$f(x)=b_k\quad\text{when } x_{\sigma(1)}\notin S_1,\dots,x_{\sigma(k-1)}\notin S_{k-1},\ x_{\sigma(k)}\in S_k\qquad(1\le k\le n),$$
+
 and $f(x)=b_{n+1}$ when $x_{\sigma(j)}\notin S_j$ for all $j$. Such functions are the multistate analogue of the nested canalizing Boolean rules found in published gene regulatory network models. Let $Q_S(x)=0$ for $x\in S$ and $Q_S(x)=1$ for $x\in S^c$.
 
 **Theorem (layer representation).** For $n\ge2$, $f$ is nested canalizing iff it can be written uniquely as
+
 $$f=M_1\Big(M_2\big(\cdots\big(M_{r-1}(B_{r+1}M_r+B_r)+B_{r-1}\big)\cdots\big)+B_2\Big)+B_1,$$
+
 where $M_i=\prod_{j=1}^{k_i}Q_{S_{i_j}}(x_{i_j})$ are products of indicators over disjoint variable sets that partition $\{1,\dots,n\}$ ($k_i\ge1$, $k_1+\cdots+k_r=n$), $B_1\in\mathbb{F}_p$, $B_2,\dots,B_{r+1}\ne0$, and $B_{r+1}+B_r\ne0$ whenever $k_r=1$. The *layer number* $r$ is therefore an invariant of $f$. Variables can be reordered only within a layer, and $r$ can be read off the canalized outputs $\beta=(b_1,\dots,b_{n+1})$ as the number of maximal constant blocks of $(b_1,\dots,b_n)$.
 
 **Corollary (closed-form count).** For $n\ge2$ the number of NCFs over $\mathbb{F}_p$ in $n$ variables is
+
 $$|\mathrm{NCF}(n)|=2^{n-1}p(p-2)\sum_{r=2}^{n}(p-1)^{n+r-1}\!\!\sum_{\substack{k_1+\cdots+k_{r-1}=n-1\\k_i\ge1}}\!\!\binom{n}{k_1,\dots,k_{r-1}}+2^np\sum_{r=1}^{n-1}(p-1)^{n+r}\!\!\sum_{\substack{k_1+\cdots+k_r=n\\k_i\ge1,\ k_r\ge2}}\!\!\binom{n}{k_1,\dots,k_r}.$$
+
 For $p=2$ this reduces to the Boolean counts $8,64,736$ for $n=2,3,4$. For $p=3$ it gives $192,5568,219648$, and for $p=5$ it gives $5120,547840,78561280$. It also solves in closed form the nonlinear recursion $a_2=4(p-1)^4$, $a_n=\sum_{r=2}^{n-1}\binom{n}{r-1}2^{r-1}(p-1)^ra_{n-r+1}+2^{n-1}(p-1)^{n+1}(2+n(p-2))$, via $|\mathrm{NCF}(n)|=p\,a_n$.
 
 **Generalization and permutation classes.** Over any finite field $\mathbb{F}_q$, allow the canalizing input sets to be arbitrary proper subsets. The same unique layer representation holds, and the count is obtained by replacing $p\to q$ and the $2(p-1)$ intervals by the $2^q-2$ proper subsets. Call two functions permutation equivalent if they differ by a permutation of the variables. The number of permutation-equivalence classes of generalized NCFs in $n$ variables is
+
 $$N=2^{n-1}(q-1)\,q^n\,(2^{q-1}-1)^n.$$
 
 ## Depends on

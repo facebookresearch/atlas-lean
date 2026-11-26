@@ -5,9 +5,13 @@
 **Theorem (extinction of the stochastic model).** If $\mathbb{E}\langle \nu_v(0),1\rangle < \infty$, then under bounded rates the total virus population of the individual-based process goes extinct almost surely.
 
 **Theorem (large-population limit, $\lambda = 1$).** If the initial masses have finite third moments and converge, then $\nu^{(K)} \to \xi$ in law, where $\xi$ has densities $(g_v, g_u, g_c)$ forming the unique solution of
+
 $$\partial_t g_v = (1-\mu)b\,g_v + \mu\!\int_{\mathcal{X}}\! b(x,z')m(z',z)g_v(z')\,dz' - \Big[d(z) + c\!\int_{\mathcal{X}}\! g_v\,dz'\Big]g_v - \Big[\int_D \beta\big(y,x,\textstyle\int g_v,z\big) g_u(y)\,dy\Big] g_v + \int_D \eta(y,x,z)\,g_c(y,z)\,dy,$$
+
 $$\partial_t g_u = \Delta g_u - \Big[\sum_{x\in E}\int_{\mathcal{X}} \beta\big(y,x,\textstyle\int g_v,z\big)g_v(x,z)\,dz\Big]g_u + \sum_{x\in E}\int_{\mathcal{X}} \eta(y,x,z)\,g_c(y,z)\,dz,$$
+
 $$\partial_t g_c = \Delta_y g_c + \Big[\sum_{x\in E}\beta\big(y,x,\textstyle\int g_v,z\big)g_v(x,z)\Big]g_u - \Big[\sum_{x\in E}\eta(y,x,z)\Big]g_c,$$
+
 with Neumann boundary conditions on $\partial D$. For $\lambda \in (0,1)$ the vectors homogenize and the virus density satisfies a closed integro-differential equation with averaged acquisition and deposition rates.
 
 **Proposition (local persistence).** Let $R(x,z) = (1-\mu)b(x,z) - d(z) - \int_D \beta(y,x,z)\,dy$. If $g_v(0,x,z) > 0$ and $R(x,z) > 0$, then $\liminf_{t\to\infty} g_v(t,x,z) > 0$: trait $z$ persists on plant $x$ in the deterministic limit.

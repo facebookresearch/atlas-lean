@@ -3,7 +3,9 @@
 **Setting.** For a phylogenetic network $\mathcal{N}$ on $X$, an arc is non-essential if every rooted phylogenetic $X$-tree displayed by $\mathcal{N}$ has an embedding avoiding it. Deleting non-essential reticulation arcs shrinks the network, and with it the multiset of $2^k$ candidate embeddings ($k$ reticulations) that tree-based algorithms enumerate, without losing any displayed tree.
 
 **Theorem (reduction count).** Let $\mathcal{N}$ be a tree-child network on $X$ and let
+
 $$\mathcal{N} = \mathcal{N}_0, \mathcal{N}_1, \dots, \mathcal{N}_m = \mathcal{N}'$$
+
 be tree-child networks with each $\mathcal{N}_{i+1}$ obtained from $\mathcal{N}_i$ by deleting a non-essential reticulation arc. If $\mathcal{N}'$ has no non-essential reticulation arc, then $\mathcal{N}$ has exactly $m$ tight caterpillar ladders, and $\mathcal{N}'$ is obtained from $\mathcal{N}$ by deleting either the first or the last rung of each tight caterpillar ladder of $\mathcal{N}$. In particular, every maximal reduction sequence has the same length.
 
 **Theorem (algorithm).** From a tree-child network $\mathcal{N}$ on $X$ one can compute, in time $O(|X|^3)$, a tree-child network on $X$ with no non-essential arcs that displays exactly the same set of rooted phylogenetic $X$-trees as $\mathcal{N}$.

@@ -1,17 +1,25 @@
 # Abundance distribution at the equilibrium of large random Lotka–Volterra systems
 
 **Model.** The abundances $\mathbf x_N(t)\in(0,\infty)^N$ of $N$ interacting species follow
+
 $$\frac{d\mathbf x_N}{dt}=\mathbf x_N\odot\big(\mathbf r_N-(I_N-\Sigma_N)\mathbf x_N\big),$$
+
 with intrinsic growth rates $\mathbf r_N\ge0$ independent of the random interaction matrix $\Sigma_N$, and empirical law of $\mathbf r_N$ converging (in Wasserstein-2) to $\bar\mu\neq\delta_0$. When $\|\Sigma_N\|<1$ there is a unique globally stable equilibrium $\mathbf x^\star_N$, the solution of the linear complementarity problem $\mathbf x\ge0$, $(I-\Sigma_N)\mathbf x-\mathbf r_N\ge0$, $\mathbf x\odot((I-\Sigma_N)\mathbf x-\mathbf r_N)=0$; some species vanish ($x^\star_i=0$).
 
 **Theorem (GOE interactions).** Let $\Sigma_N=A_N/(\kappa\sqrt N)$ with $A_N$ from the Gaussian Orthogonal Ensemble and $\kappa>2$. Let $\bar r\sim\bar\mu$ and $\bar Z\sim\mathcal N(0,1)$ be independent. The system
+
 $$\kappa=\delta+\frac\gamma\delta,\qquad \sigma^2=\frac1{\delta^2}\mathbb E\big(\sigma\bar Z+\bar r\big)_+^2,\qquad \gamma=\mathbb P\big[\sigma\bar Z+\bar r>0\big]$$
+
 has a unique solution $(\delta,\sigma,\gamma)\in(1/\sqrt2,\infty)\times(0,\infty)\times(0,1)$ (for any $\kappa>\sqrt2$), and almost surely the empirical distribution of the equilibrium abundances converges in Wasserstein-2:
+
 $$\frac1N\sum_{i=1}^N\delta_{x^\star_i}\ \longrightarrow\ \mathcal L\Big(\big(1+\gamma/\delta^2\big)\big(\sigma\bar Z+\bar r\big)_+\Big).$$
+
 In particular the fraction of surviving species tends to $\gamma$, and surviving abundances follow a truncated, shifted Gaussian mixture.
 
 **Theorem (Wishart interactions).** Let $\Sigma_N=B_N^TB_N/(\kappa P)$ with $B_N$ a $P\times N$ standard Gaussian matrix, $N/P\to c\in(0,\infty)$ and $\kappa>(1+\sqrt c)^2$. With $(\delta,\tau,\gamma)$ the unique solution of
+
 $$\kappa=(\delta+c\gamma)\Big(1+\frac1\delta\Big),\qquad \tau^2=\frac c{\delta^2}\mathbb E\big(\tau\bar Z+\bar r\big)_+^2,\qquad \gamma=\mathbb P\big[\tau\bar Z+\bar r>0\big],$$
+
 the empirical law of $\mathbf x^\star_N$ converges almost surely to $\mathcal L\big((1+1/\delta)(\tau\bar Z+\bar r)_+\big)$.
 
 ## Expansion

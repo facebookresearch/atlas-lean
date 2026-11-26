@@ -1,7 +1,9 @@
 # Möbius fold circles and odd cusp counts in two-parameter fate landscapes
 
 **Setting.** Let $X_\theta$ be a smooth family of vector fields on $\mathbb{R}^n$ (a gene-regulatory model) depending on a parameter $\theta\in\mathbb{R}^2$ (e.g. two morphogen levels), generic in the sense of singularity theory. The *catastrophe manifold*
+
 $$\mathcal{M}=\{(x,\theta): X_\theta(x)=0\}\subset\mathbb{R}^n\times\mathbb{R}^2$$
+
 is generically a smooth surface, and $\chi:\mathcal{M}\to\mathbb{R}^2$, $(x,\theta)\mapsto\theta$, has as its only local singularities folds (locally $(x_1,x_2)\mapsto(x_1^2,x_2)$) and cusps (normal form $\dot x=\pm x^3+\theta_1x+\theta_2$). Fold points form smooth curves in $\mathcal{M}$; a closed one is a *fold circle* $C$, and its image $\chi(C)$ is the bifurcation set $B_C$.
 
 **Bundles.** At a fold point the one-dimensional centre manifold carries a definite flow direction, giving an orientation of its tangent line $\ell(\mathbf{x})$; along a closed curve $\Gamma\subset\mathcal{M}$ consisting of index-$1$ saddles or pseudo-hyperbolic attractors, the centre tangent lines form a line bundle $E^c_\Gamma\to\Gamma$, which is either a cylinder or a Möbius band. For a fold circle this is the *fold circle bundle* $\mathcal{C}_C$, and $C$ is called a *Möbius fold circle* if $\mathcal{C}_C$ is a Möbius band.

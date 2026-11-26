@@ -1,9 +1,13 @@
 # Well-posedness and absorbing sets of the Liley mean field EEG model
 
 **Model.** The Liley et al. mean field model of the neocortex describes, on a periodic spatial domain $\Omega$, mean soma membrane potentials $v = (h_e, h_i)$ of excitatory and inhibitory populations, synaptic activities $i$ (four components, $ee, ei, ie, ii$) and long-range cortico-cortical pulse densities $w$:
+
 $$\Phi\,\partial_t v + v - J_1 i + J_2 v\, i^{\mathsf T}\Psi J_4 + J_3 v\, i^{\mathsf T}\Psi J_5 = 0,$$
+
 $$\partial_t^2 i + 2\Gamma\partial_t i + \Gamma^2 i - e\Upsilon\Gamma J_6 w - e\Upsilon\Gamma N J_7 f(v) = e\Upsilon\Gamma g,$$
+
 $$\partial_t^2 w + 2\nu\Lambda\partial_t w - \tfrac32\nu^2\Delta w + \nu^2\Lambda^2 w - \nu^2\Lambda^2 M J_8 f(v) = 0,$$
+
 where $f$ is the sigmoidal firing-rate function, $g$ the subcortical input, the $J_k$ are constant selection matrices, and the remaining symbols are diagonal matrices of positive biophysical constants (membrane time constants, synaptic rate constants, conduction speed $\nu$, axonal decay $\Lambda$). The first equation is an ODE with bilinear (reversal-potential) coupling, the second a damped linear oscillator, and the third a damped telegraph-type wave equation.
 
 **Theorem.**

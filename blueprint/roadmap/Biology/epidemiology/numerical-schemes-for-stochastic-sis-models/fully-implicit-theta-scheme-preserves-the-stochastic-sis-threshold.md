@@ -1,14 +1,21 @@
 # A fully implicit θ-scheme preserves positivity and the extinction–persistence threshold of the stochastic SIS model
 
 **Model.** In the stochastic SIS model of Gray et al., with population size $N$, transmission $\beta$, recovery $\gamma$, death rate $\mu$ and noise intensity $\sigma$ on the transmission rate, the number of infectives solves
+
 $$dI = I\big[(\beta N - \mu - \gamma - \beta I)\,dt + \sigma(N - I)\,dW\big],\qquad I(0) \in (0,N),$$
+
 and has the stochastic threshold
+
 $$R_0^S = \frac{\beta N}{\mu+\gamma} - \frac{\sigma^2N^2}{2(\mu+\gamma)}:$$
+
 the disease dies out if $R_0^S<1$ and persists if $R_0^S > 1$.
 
 **Scheme.** With step $h$, a truncated Gaussian increment $\xi^h_n$ (bounded so the iterates stay in $[0,N]$) and weights $\theta, \vartheta \in [0,1]$, the fully implicit split-step method is
+
 $$I^*_{n+1} = I_n + \theta h(\beta N-\mu-\gamma-\beta I_n)I^*_{n+1} + (1-\theta)h(\beta N-\mu-\gamma-\beta I_n)I_n,$$
+
 $$I_{n+1} = I^*_{n+1} + \sqrt h\,\sigma\big[\vartheta I_n(N - I^*_{n+1}) + (1-\vartheta)I_n(N-I_n)\big]\xi^h_n ,$$
+
 which is linear in the unknowns at each step ($\theta=\vartheta=0$: truncated forward Euler; $\theta=\vartheta=1$: truncated backward Euler).
 
 **Theorems.**

@@ -5,7 +5,9 @@
 **Influence specifications.** An influence specification is an $m\times n$ sign matrix $Z = (z_{j,i}) \in \{+,-,0\}^{m\times n}$ recording whether species $i$ increases, decreases or does not affect the rate of reaction $j$. A kinetics $K$ is strictly monotonic with respect to $Z$ if $K_j(c) > 0$ exactly when all species in $z_j^+ = \{i : z_{j,i} = +\}$ are present, and on that set $K_j$ is strictly increasing in $c_i$ for $z_{j,i} = +$, strictly decreasing for $z_{j,i} = -$ and constant for $z_{j,i} = 0$. Write $\mathcal{K}(Z)$ for these kinetics, $\mathcal{K}^d(Z)$ for those differentiable with partial derivatives of constant sign $z_{j,i}$, and $\mathcal{K}^g(Z)$ for the power-law kinetics whose kinetic order $V$ has $\operatorname{sign}(V) = Z$. Hill-type, Michaelis–Menten and Lotka–Volterra rates are typical members of $\mathcal{K}(Z)$.
 
 **A-sign-nonsingularity.** Let $\Sigma(Z) = \{V \in \mathbb{R}^{m\times n} : \operatorname{sign}(V) = Z\}$. $Z$ is $A$-sign-nonsingular (A-SNS) if $V \mapsto \operatorname{sign}\det(\widetilde{AV})$ is constant and nonzero on $\Sigma(Z)$. Equivalently, with a symbolic matrix $X$ and $Z_X = Z * X$ (entrywise sign times symbol), the polynomial
+
 $$p_Z(X) = \det(\widetilde{AZ_X}) = \sum_{|I| = |J| = s}\det(A_{I,J})\det\big((Z_X)_{J,I}\big)$$
+
 is nonzero and all its monomials have coefficients of one sign.
 
 **Theorem.** The following are equivalent:

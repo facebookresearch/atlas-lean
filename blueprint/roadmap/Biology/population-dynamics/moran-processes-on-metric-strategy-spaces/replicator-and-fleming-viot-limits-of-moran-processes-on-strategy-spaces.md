@@ -4,7 +4,9 @@
 
 **Theorem.** Let $N_k \to \infty$, $w_k \to 0$, with time steps $\tau_k$.
 1. If $w_k/(\tau_kN_k) \to \gamma \ge 0$ and $1/(\tau_kN_k^2) \to \nu > 0$, then along a subsequence $\Lambda^{N_k}_t \to \Lambda_t$ in $W_1$ for every $t \in [0,T]$, where $\Lambda$ is a very weak solution of the *replicator equation with genetic drift*: for every $\psi \in C^2([0,T]\times\mathcal P(\mathcal V))$,
+
 $$\frac{d}{dt}\int\psi\,d\Lambda_t = \int\Big(\partial_t\psi + \gamma\,D_\lambda\psi[b(\lambda)] + \frac{\nu}{2}\iint D^2_\lambda\psi\big[\delta_\sigma - \delta_{\bar\sigma},\, \delta_\sigma - \delta_{\bar\sigma}\big]\,d\lambda(\sigma)\,d\lambda(\bar\sigma)\Big)d\Lambda_t(\lambda).$$
+
 The second-order term is the Fleming–Viot (resampling) operator; for two strategies it reduces to the Kimura diffusion. With $\gamma = 0$ (including neutrality, $w = 0$) one obtains pure genetic drift.
 2. If $w_k/(\tau_kN_k) \to \gamma > 0$ and $1/(\tau_kN_k^2) \to 0$, the limit is a weak solution of the deterministic *replicator equation* $\partial_t\Lambda_t + \operatorname{div}_\lambda\big(\gamma\, b(\lambda)\Lambda_t\big) = 0$, Lipschitz in $W_1$.
 3. Under strong selection ($w \in (0,1]$ fixed) and $1/(\tau_kN_k) \to \gamma > 0$, the same holds with the field $b(\lambda) = \dfrac{w(\pi_\lambda - \bar\pi_\lambda)\lambda}{1 + w(\bar\pi_\lambda - 1)}$.

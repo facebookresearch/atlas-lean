@@ -1,17 +1,23 @@
 # Expected number of internal equilibria in random multi-player two-strategy games
 
 **Setting.** In a $d$-player game with two strategies, let $\beta_k$ be the payoff to strategy 1 minus the payoff to strategy 2 for a focal player whose $d-1$ co-players include $k$ strategists of type 1. Under replicator dynamics in a well-mixed population with frequency $y \in (0,1)$ of strategy 1, the internal equilibria are the roots in $(0,1)$ of the random Bernstein polynomial
+
 $$\sum_{k=0}^{d-1}\beta_k\binom{d-1}{k}y^k(1-y)^{d-1-k} = 0, \qquad\text{equivalently}\qquad \sum_{k=0}^{d-1}\beta_k\binom{d-1}{k}t^k = 0,\ \ t = \frac{y}{1-y} \in (0,\infty).$$
+
 Take the payoff differences $\beta_k$ i.i.d. centered Gaussian. Let $f_d(t)$ be the expected density of positive real roots (Kac–Rice) and $E(2,d) = \int_0^\infty f_d(t)\,dt$ the expected number of internal equilibria.
 
 **Properties of the density.** With $M_d(t) = \sum_{k=0}^{d-1}\binom{d-1}{k}^2 t^{2k}$:
+
 $$f_d(t) = \frac{1}{2\pi}\Big[\frac1t\frac{d}{dt}\Big(t\frac{d}{dt}\log M_d(t)\Big)\Big]^{1/2}, \qquad f_d(0) = \frac{d-1}{\pi}, \qquad f_d(1) = \frac{d-1}{2\pi\sqrt{2d-3}},$$
+
 $f_d$ is decreasing, $f_d(1/t) = t^2 f_d(t)$, and $E(2,d) = 2\int_0^1 f_d$. In the frequency variable the density $g_d(y) = f_d\big(\frac{y}{1-y}\big)(1-y)^{-2}$ is symmetric, $g_d(y) = g_d(1-y)$.
 
 **Theorem.**
 1. $f_d(t) \le \min\Big\{\dfrac{\sqrt{d-1}}{2\pi t},\ \dfrac{d-1}{\pi}\Big\}$ for $t \ge 0$.
 2. $\sqrt{d-1} \lesssim E(2,d) \lesssim \sqrt{d-1}\,\ln(d-1)$; explicitly $\frac{d-1}{\pi\sqrt{2d-3}} \le E(2,d) \le \frac{\sqrt{d-1}}{\pi}\big(1 + \ln 2 + \tfrac12\ln(d-1)\big)$, so
+
 $$\lim_{d\to\infty}\frac{\ln E(2,d)}{\ln(d-1)} = \frac12.$$
+
 3. Since each internal equilibrium of a random two-strategy game is stable with probability $1/2$, the expected number of stable internal equilibria is $SE(2,d) = E(2,d)/2$, with the same $\sqrt{d-1}$ growth up to the logarithm.
 
 So, although a $d$-player game can have up to $d-1$ internal equilibria, a random one has only of order $\sqrt d$ of them; the same bound counts real zeros in $(0,1)$ of a random Bernstein polynomial of degree $d-1$.

@@ -11,7 +11,9 @@ $$G(\pi)=\begin{cases}G(\pi_1)G(\pi_2)-\tfrac12\,G(\pi_1\wedge\pi_2)\bigl(G(\pi_
 $$G^R(\pi)=\begin{cases}\binom{2n_1-2}{n_1-1}\Bigl(G^R(\pi_1)G^R(\pi_2)-\tfrac12\,G^R(\pi_1\wedge\pi_2)^2\Bigr)&\pi_1\wedge\pi_2\ne\emptyset,\\ \binom{n_1+n_2-2}{n_1-1}G^R(\pi_1)G^R(\pi_2)&\pi_1\wedge\pi_2=\emptyset,\end{cases}$$
 
 and for labeled perfect phylogenies (whose two root subtrees carry disjoint sets of sequences)
+
 $$G^L(\pi)=\binom{n_1+n_2-2}{n_1-1}G^L(\pi_1)G^L(\pi_2),\qquad G^X(\pi)=G^X(\pi_1)G^X(\pi_2).$$
+
 In particular, for a cherry $(n_1,n_2)$: $G=S_{n_1}S_{n_2}$ and $G^R=\binom{n_1+n_2-2}{n_1-1}R_{n_1}R_{n_2}$ if $n_1\ne n_2$, and $G=\tfrac12S_{n_1}(S_{n_1}+1)$, $G^R=\tfrac12\binom{2n_1-2}{n_1-1}R_{n_1}^2$ if $n_1=n_2$.
 
 ## Expansion

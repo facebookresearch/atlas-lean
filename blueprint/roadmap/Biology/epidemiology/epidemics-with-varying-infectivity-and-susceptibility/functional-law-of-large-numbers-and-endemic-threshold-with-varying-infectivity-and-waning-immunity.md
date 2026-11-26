@@ -11,7 +11,9 @@ y(t) &= \bar I(0)\bar\lambda_0(t) + \int_0^t \bar\lambda(t-s)x(s)y(s)\,ds,
 ($\gamma_0, \lambda_0$ describe the initially infected and initial susceptibilities).
 2. *(Disease-free threshold.)* If $\gamma$ is a.s. nondecreasing and $R_0 < \mathbb E[1/\gamma_*]$, then $(x(t), y(t)) \to (\overline{\mathfrak S}_*, 0)$: the epidemic dies out.
 3. *(Endemic equilibrium.)* If $R_0 > \mathbb E[1/\gamma_*]$, susceptibility reaches $\gamma_*/2$ after an integrable time, and $(x, y)$ converges, then either the limit is disease-free or $x_* = 1/R_0$ and $y_* > 0$ is the unique positive solution of
+
 $$\int_0^\infty \mathbb E\Bigl[\exp\Bigl(-\int_0^s\gamma(r/y_*)\,dr\Bigr)\Bigr]ds = R_0,$$
+
 in which case the infected proportion converges to $\bar I_* = \mathbb E[\eta]\,y_*/R_0$. At $R_0 = \mathbb E[1/\gamma_*]$ only the disease-free limit is possible.
 
 ## Expansion

@@ -6,9 +6,13 @@ A graph has *density* $\delta \in (0,1]$ and is *perfectly mixed* if the edge de
 
 **Theorem (threshold).** Let $\varrho_1, \varrho_2 > 0$ be constants, $\lambda_j^e = c_j/n$ with constants $c_j > 0$, and let $c > 0$ be a constant.
 1. (Long survival.) On a perfectly mixed graph, or more generally on a $(p, pn/k)$-jumbled graph with $k = \omega(\ln n)$, if
+
 $$\frac{\varrho_1}{\lambda_1^e} + \frac{\varrho_2}{\lambda_2^e} < (1-c)\,n$$
+
 and both infections start with at least $\varepsilon_h n$ infected vertices for a small enough constant $\varepsilon_h > 0$, then there is a constant $c_T > 0$ with
+
 $$\Pr\left[T \le \exp\!\Big(\frac{c_T n}{8\ln n}\Big)\right] \le 2\exp\!\Big(-\frac{c_T n}{2\ln n}\Big)$$
+
 for all large $n$; the survival time is super-polynomial with high probability.
 2. (Fast extinction.) On a perfectly mixed graph, if $\dfrac{\varrho_1}{\lambda_1^e} + \dfrac{\varrho_2}{\lambda_2^e} > (1+c)\,n$, then $\mathbb{E}[T] = O(n\ln n)$.
 

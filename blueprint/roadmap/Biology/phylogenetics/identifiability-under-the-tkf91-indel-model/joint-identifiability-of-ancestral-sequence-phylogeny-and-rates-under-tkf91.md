@@ -8,7 +8,9 @@
 3. If $\pi_0$ is known, the ancestral sequence $\vec x$ itself and $\nu t_u$ are identifiable from the law of $\mathcal{I}_u$ at any single leaf.
 
 **Distance formula.** For leaves $u,v$ with lengths $L^u = |\mathcal{I}_u|$, $L^v = |\mathcal{I}_v|$ and path distance $t_{uv}$,
+
 $$e^{-\frac{\mu-\lambda}{2}t_{uv}} = \frac{\mu-\lambda}{M(\lambda+\mu)}\,e^{\frac{\mu-\lambda}{2}(t_u+t_v)}\operatorname{Cov}_M(L^u,L^v) + e^{-\frac{\mu-\lambda}{2}(t_u+t_v)},$$
+
 and the most recent common ancestor $w$ of $u,v$ has depth $t_w = (t_u + t_v - t_{uv})/2$.
 
 **Special case $\lambda = \mu$.** If it is known that $\lambda = \mu$, then $M = \mathbb{E}_M|\mathcal{I}_t|$ and $\mu t = \log\dfrac{\mathbb{E}_M|\mathcal{I}_t|^2 + 4M + 1}{M^2 + 4M + 1}$.

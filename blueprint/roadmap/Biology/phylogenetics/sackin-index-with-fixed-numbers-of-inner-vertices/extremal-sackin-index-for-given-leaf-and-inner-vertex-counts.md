@@ -1,11 +1,15 @@
 # Minimal and maximal Sackin index for given numbers of leaves and inner vertices
 
 **Setting.** Let $T$ be a rooted tree (no vertex of out-degree $1$) with $n$ leaves and $m$ inner vertices; necessarily $m\le n-1$, with $m=n-1$ exactly for binary trees, and $(n,m)=(1,0)$ for the one-vertex tree. The depth $\delta_T(v)$ is the number of edges from the root $\rho$ to $v$, $n_v$ is the number of leaves below $v$, and the **Sackin index** is
+
 $$S(T)=\sum_{x\in V_L(T)}\delta_T(x)=\sum_{v\in\mathring V(T)} n_v .$$
+
 Write $T^{star}_k$ for the star tree with $k$ leaves and $T^{fb}_h$ for the fully balanced binary tree of height $h$.
 
 **Theorem (maximum).** For $n\ge2$ and $1\le m\le n-1$ there is exactly one tree with $n$ leaves, $m$ inner vertices and maximal Sackin index: the caterpillar on $m+1$ leaves with $n-m-1$ further leaves attached to its deepest inner vertex. Consequently every such $T$ satisfies
+
 $$S(T)\le nm-\frac{(m-1)m}{2}\le \frac{n(n+1)}{2}-1=S(T^{cat}_n),$$
+
 and the first bound is attained for every admissible $(n,m)$.
 
 **Theorem (minimum).** Let $k=n-m+1$ and $(n,m)\ne(1,0)$. The following are equivalent:
@@ -15,7 +19,9 @@ and the first bound is attained for every admissible $(n,m)$.
 3. $$S(T)=\left\lfloor\log_2\frac{n}{k}\right\rfloor n+3n-k\,2^{\lfloor\log_2(n/k)\rfloor+1}.$$
 
 Equivalently, the minimizers are exactly the trees whose root has $k$ children, all of whose non-root inner vertices are binary, and whose leaf depths differ pairwise by at most $1$. Unlike the maximizer, the minimizer need not be unique; the number $s(n,m)$ of minimizers satisfies
+
 $$s(n,m)=\sum_{\{(a_1,\tilde n_1),\dots,(a_l,\tilde n_l)\}\in\mathcal P_k(n)}\ \prod_{i=1}^{l}\binom{s(\tilde n_i,\tilde n_i-1)+a_i-1}{a_i},$$
+
 where $\mathcal P_k(n)$ is the set of partitions $n=\sum_i a_i\tilde n_i$ into $k=\sum_i a_i$ parts with $2^{\delta-1}\le\tilde n_i\le2^{\delta}$, and $s(n',n'-1)$ counts Sackin-minimal binary trees. Dividing by $n$ gives the same statements for the average leaf depth $\overline N(T)=S(T)/n$.
 
 ## Expansion

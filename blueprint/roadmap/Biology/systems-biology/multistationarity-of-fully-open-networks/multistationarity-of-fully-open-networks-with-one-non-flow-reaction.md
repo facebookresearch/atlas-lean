@@ -4,16 +4,22 @@
 
 **Theorem.**
 1. A fully open network whose only non-flow reaction is the irreversible reaction
+
 $$a_1X_1 + \cdots + a_sX_s \ \longrightarrow\ b_1X_1 + \cdots + b_sX_s \qquad (a_i, b_i \ge 0)$$
+
 admits MSS if and only if
+
 $$\sum_{i:\ b_i > a_i} a_i > 1,$$
+
 i.e. the species whose net amount increases are consumed with total molecularity more than one (an autocatalytic reaction of order exceeding one).
 2. If the non-flow reaction is reversible, $a\cdot X \rightleftarrows b\cdot X$, the network admits MSS iff $\sum_{i: b_i > a_i} a_i > 1$ or $\sum_{i: a_i > b_i} b_i > 1$.
 
 In both cases the multistationary networks admit nondegenerate steady states.
 
 **Atoms of multistationarity.** A one-reaction fully open network is a minimal multistationary network with respect to the embedding order (a CFSTR atom of multistationarity) if and only if its non-flow reaction is irreversible and of one of the two forms
+
 $$a_1X \to a_2X \ \ (a_2 > a_1 > 1), \qquad X + Y \to b_1X + b_2Y \ \ (b_1 > 1,\ b_2 > 1).$$
+
 A one-reaction fully open network has such an atom as an embedded network iff it admits nondegenerate MSS. Consequently, any fully open network, with any number of non-flow reactions, that contains one of these two reactions as an embedded network admits MSS.
 
 ## Expansion

@@ -8,8 +8,11 @@ $$\begin{aligned}
 with vaccination rate $\lambda$, recovery rate $\gamma$ and immunity loss rate $\alpha$.
 
 **Result.** The strain-specific basic reproduction numbers and the competitive (invasion) reproduction numbers are
+
 $$\mathcal R_1 = \frac{\beta_1}{\gamma}\cdot\frac{\alpha}{\alpha + \lambda}, \qquad \mathcal R_2 = \frac{\beta_2}{\gamma}, \qquad \mathcal R_0 = \max\{\mathcal R_1, \mathcal R_2\},$$
+
 $$\mathcal R_{12} = \frac{\beta_1}{\beta_2}\cdot\frac{\alpha}{\alpha + \beta_2 + \lambda - \gamma}, \qquad \mathcal R_{21} = \frac{\beta_2}{\beta_1}\cdot\frac{\beta_1 + \alpha + \lambda}{\gamma + \alpha},$$
+
 where $\mathcal R_{12}$ is the reproduction number of strain 1 invading the strain-2-only equilibrium and $\mathcal R_{21}$ that of strain 2 invading the strain-1-only equilibrium. The model shows disease-free behaviour if $\mathcal R_0 < 1$; strain-1-only behaviour if $\mathcal R_1 > 1 > \mathcal R_2$, or $\mathcal R_1, \mathcal R_2, \mathcal R_{12} > 1 > \mathcal R_{21}$; strain-2-only behaviour symmetrically; and coexistence if all four exceed $1$. Vaccination lowers $\mathcal R_1$ and $\mathcal R_{12}$ and raises $\mathcal R_{21}$, so increasing $\lambda$ shifts the competitive advantage to the immune-resistant strain.
 
 With waning immunity of Erlang ($\mathrm{Gamma}(k, k\alpha)$) duration and partial resistance, the distributed-delay versions of the model are equivalent, by the linear chain trick, to ODE systems with $k$ chained immune classes.

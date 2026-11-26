@@ -1,11 +1,15 @@
 # Final size equation for trait-structured epidemics
 
 **Model.** Hosts carry a static trait $x$ in a measurable space $\Omega$, distributed according to a probability measure $\Phi$ in a population of size $N$. $A(\tau, x, \xi) \ge 0$ is the expected contribution to the force of infection on a host with trait $x$ from a host with trait $\xi$ infected $\tau$ time units ago. The fraction $s(t, x)$ of trait-$x$ hosts still susceptible satisfies the nonlinear renewal equation
+
 $$s(t, x) = \exp\Big(-N\int_0^\infty\!\!\int_\Omega A(\tau, x, \xi)\,\big[1 - s(t - \tau, \xi)\big]\,\Phi(d\xi)\,d\tau\Big).$$
+
 **Next-generation operator.** With $k_0(x, \xi) = \int_0^\infty A(\tau, x, \xi)\,d\tau$ bounded, the next-generation operator in terms of fractions is $(\mathcal K_0\psi)(x) = N\int_\Omega k_0(x, \xi)\psi(\xi)\,\Phi(d\xi)$, and $R_0$ is its spectral radius.
 
 **Final size equation.** Since $s(\cdot, x)$ is nonincreasing, $s(\infty, x)$ exists. Writing $y = 1 - s(\infty, \cdot)$ for the attack-rate profile, it satisfies
+
 $$y = F(y), \qquad F(y)(x) = 1 - e^{-(\mathcal K_0 y)(x)}.$$
+
 $F$ is order preserving, and every solution $y \ge 0$ satisfies $y < 1$ pointwise.
 
 **Hypotheses.** (H1) For every $\epsilon > 0$ there is $\delta > 0$ with $\int_\Omega|k_0(x_1, \xi) - k_0(x_2, \xi)|\,\Phi(d\xi) < \epsilon$ whenever $|x_1 - x_2| < \delta$. (H2) Some iterated kernel is uniformly positive: $\inf_{x,\xi}k^n(x, \xi) > 0$ for all $n \ge m$, where $k^1 = k_0$ and $k^{n+1}(x, \xi) = \int_\Omega k_0(x, \eta)k^n(\eta, \xi)\,\Phi(d\eta)$.

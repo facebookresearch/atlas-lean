@@ -2,9 +2,13 @@
 
 **Statement.** In the model $dX^\varepsilon_t = b(X^\varepsilon_t)dt + \sigma(X^\varepsilon_t)dB_t + \varepsilon\sqrt{a(X^\varepsilon_t)}dW_t$ under assumption (H), with stochastic growth rate $\Lambda_0 = b'(0) - \tfrac12|\sigma'(0)|^2$ and extinction time $T^\varepsilon_0 = \inf\{t : X^\varepsilon_t = 0\}$, let the initial law $\mu$ have compact support in $(0,\infty)$. As $\varepsilon \to 0$:
 1. If $\Lambda_0 < 0$, there are $C_1, C_2 > 0$ with
+
 $$C_1|\ln\varepsilon| \lesssim \mathbb E_\mu[T^\varepsilon_0] \lesssim C_2|\ln\varepsilon|.$$
+
 2. If $\Lambda_0 > 0$, then for each small $\gamma > 0$,
+
 $$\varepsilon^{\,2 - (1-\gamma)\frac{4b'(0)}{|\sigma'(0)|^2}} \lesssim \mathbb E_\mu[T^\varepsilon_0] \lesssim \varepsilon^{\,2 - (1+\gamma)\frac{4b'(0)}{|\sigma'(0)|^2}},$$
+
 so the mean extinction time grows like a power of the population size, with exponent governed by $2b'(0)/|\sigma'(0)|^2 > 1$. Moreover, when $\Lambda_0 > 0$, $T^\varepsilon_0/\mathbb E_\mu[T^\varepsilon_0]$ converges in law to a standard exponential, and the law of $X^\varepsilon_t$ is within $Ce^{-\lambda_{\varepsilon,2}t}$ in total variation of the mixture $e^{-\lambda_{\varepsilon,1}t}\langle\mu,\alpha_{\varepsilon,1}\rangle\,\mu_\varepsilon + (1 - e^{-\lambda_{\varepsilon,1}t}\langle\mu,\alpha_{\varepsilon,1}\rangle)\,\delta_0$, with $\liminf_{\varepsilon\to0}\lambda_{\varepsilon,2} > 0$.
 
 ## Expansion

@@ -7,7 +7,9 @@
 A network is *fully open* if every species has a degradation reaction $s \to 0$. A kinetics $\mathscr{K}$ is *weakly monotonic* if, whenever both compositions contain $\mathrm{supp}\,y$, $\mathscr{K}_{y\to y'}(c^{**}) > \mathscr{K}_{y \to y'}(c^*)$ forces $c^{**}_s > c^*_s$ for some $s \in \mathrm{supp}\,y$, and equality of rates forces either $c^{**} = c^*$ on $\mathrm{supp}\,y$ or two reactant species moving in opposite directions (mass action is weakly monotonic).
 
 **Species-Reaction (SR) Graph.** The bipartite graph with species and reaction vertices, an edge between $s$ and $y \to y'$ when $s$ occurs in $y$ or $y'$, labeled by that complex and its stoichiometric coefficient (degradation and synthesis reactions omitted). A *c-pair* is a pair of edges at a common reaction vertex carrying the same complex label; a cycle is *even* if it contains an even number of c-pairs. For a cycle $s_1 - R_1 - s_2 - \dots - s_n - R_n - s_1$ traversed in a fixed direction, with $f_{R_i \to s_{i+1}}$ and $e_{s_i \to R_i}$ the coefficients on the edges, it is an *s-cycle* if
+
 $$\frac{f_{R_1 \to s_2} f_{R_2 \to s_3} \cdots f_{R_n \to s_1}}{e_{s_1 \to R_1} e_{s_2 \to R_2} \cdots e_{s_n \to R_n}} = 1.$$
+
 Two cycles have a *species-to-reaction intersection* if their intersection is nonempty and every connected component of it is a path with a species at one end and a reaction at the other.
 
 **Theorem.** If in the SR Graph of a fully open network (i) every even cycle is an s-cycle and (ii) no two even cycles have a species-to-reaction intersection, then the network is concordant, and in fact strongly concordant. The conclusion extends to every *nondegenerate* network with these SR Graph properties (all weakly reversible networks included), and then:

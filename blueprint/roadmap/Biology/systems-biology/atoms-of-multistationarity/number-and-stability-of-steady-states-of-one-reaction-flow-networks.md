@@ -1,9 +1,13 @@
 # Number and stability of steady states of one-reaction flow networks
 
 **Setting.** Consider the fully open network on species $X_1,\dots,X_n$
+
 $$a_1X_1 + \dots + a_nX_n \xrightarrow{\ \ell\ } b_1X_1 + \dots + b_nX_n, \qquad X_i \underset{\kappa_i}{\overset{c_i}{\rightleftarrows}} 0 \quad (i = 1,\dots,n),$$
+
 with mass-action steady-state equations $(b_i - a_i)\ell x^a - c_i x_i + \kappa_i = 0$. Let $\operatorname{sgn}(i) = \operatorname{sign}(b_i - a_i)$ and
+
 $$a_+ = \sum_{\operatorname{sgn}(i) = 1} a_i, \qquad a_- = \sum_{\operatorname{sgn}(i) = -1} a_i.$$
+
 After rescaling, the positive steady states correspond, with multiplicity, to the roots in an interval $(0,k_-)$ of the one-variable Gale dual equation $g(y) = h(y) - \kappa y$, where $h(y) = \prod_i (\operatorname{sgn}(i)\,y + k_i)^{a_i}$ for positive parameters $k_i, \kappa$.
 
 **Theorem (number of steady states, irreversible case).** For all positive rate constants:

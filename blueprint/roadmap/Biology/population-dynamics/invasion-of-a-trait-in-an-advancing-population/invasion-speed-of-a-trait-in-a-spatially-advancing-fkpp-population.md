@@ -1,16 +1,25 @@
 # Invasion speed of a trait in a spatially advancing F-KPP population
 
 **Model.** Two types $A$ and $B$ with densities $N_A, N_B$ on $\mathbb R$ share logistic growth with carrying capacity $K$; $A$ reverts to $B$ at rate $\beta$ and converts $B$ into $A$ at rate $\gamma$ per encounter:
+
 $$\partial_t N_A = \tfrac12 \partial_{xx}N_A + \alpha N_A(K - N_A - N_B) - \beta N_A + \gamma N_A N_B,$$
+
 $$\partial_t N_B = \tfrac12 \partial_{xx}N_B + \alpha N_B(K - N_A - N_B) + \beta N_A - \gamma N_A N_B.$$
+
 After rescaling, the total $v = (N_A + N_B)/K$ and the trait density $w = N_A/K$ solve
+
 $$\partial_t v = \tfrac12\partial_{xx} v + v(1 - v), \qquad \partial_t w = \tfrac12\partial_{xx} w + \bigl(1 - \tilde\beta - (1 - \tilde\gamma)v - \tilde\gamma w\bigr)w,$$
+
 with $\tilde\beta = \beta/(\alpha K)$, $\tilde\gamma = \gamma/\alpha$ and $1 > \tilde\gamma > \tilde\beta > 0$. Take the advancing population to be the travelling wave $v(t, x) = \omega(x + a - \sqrt2\, t)$ of speed $\sqrt 2$ and $w(0, x) = (1 - \tilde\beta/\tilde\gamma)\mathbf 1_{x \le 0}$.
 
 **Theorem.** Let $a \ge 0$ and
+
 $$u_c = \max\left(\sqrt2 - \frac{\tilde\beta}{\sqrt2\,\tilde\gamma}\Bigl(1 + \sqrt{1 - \tilde\gamma}\Bigr),\; \sqrt{2(\tilde\gamma - \tilde\beta)}\right).$$
+
 For all sufficiently small $\delta > 0$ there are constants $C_1, C_2 > 0$ such that for all large $t$,
+
 $$w(t, u_c t - C_1\log t) > \delta \quad\text{and}\quad w(t, u_c t + C_2\log t + z) < 1/t \ \ \text{for all } z > 0.$$
+
 So the trait invades at speed $u_c$, which for small $\tilde\beta$ strictly exceeds the speed $\sqrt{2(\tilde\gamma - \tilde\beta)}$ it would have in a resident population already at carrying capacity.
 
 ## Depends on

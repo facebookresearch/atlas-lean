@@ -1,13 +1,19 @@
 # Positivity, boundedness and characteristic roots of the logistic delay epidemic equation
 
 **Model.** Let $F(t)$ be the infected fraction ("level of infectiousness") with infection rate $\beta>0$ and a recovery term proportional to the infected level a fixed infectious period $\tau$ earlier, with rate $\gamma>0$:
+
 $$F'(t) = F(t)\big\{\beta[1-F(t)] - \gamma F(t-\tau)\big\}, \qquad F = \Phi \text{ on } [-\tau,0].$$
+
 Any nonzero limit must be $F_\infty = \beta/(\beta+\gamma)$. In units of $\tau$ and with $f = F/F_\infty$,
+
 $$f'(t) = \tilde\beta f(t)\big\{1 - \beta^* f(t) - \gamma^* f(t-1)\big\},\qquad \tilde\beta = \beta\tau,\ \beta^* = \tfrac{\beta}{\beta+\gamma},\ \gamma^* = \tfrac{\gamma}{\beta+\gamma},$$
+
 with continuous, positive initial history $\phi$ on $[-1,0]$.
 
 **Theorem (well-posedness and bounds).** The solution exists for all $t \ge 0$, is positive, and satisfies
+
 $$0 < f(t) < \frac{f_0}{\beta^* f_0 + (1-\beta^* f_0)e^{-\tilde\beta t}},\qquad t > 0,$$
+
 so it is bounded (by about $1/\beta^*$ for large $t$); if $\lim_{t\to\infty} f(t)$ exists it equals $1$.
 
 **Theorem (characteristic roots).** Linearizing at $f = 1$ gives the characteristic function $h(s) = s + b\,[1 + \rho e^{-s}]$ with $b = \tilde\beta\beta^*$ and $\rho = \gamma/\beta$; let $B = \rho b e^{b}$. Then:

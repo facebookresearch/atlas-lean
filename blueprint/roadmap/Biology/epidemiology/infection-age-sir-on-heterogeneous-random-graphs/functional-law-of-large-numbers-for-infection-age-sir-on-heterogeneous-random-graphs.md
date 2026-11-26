@@ -5,10 +5,15 @@
 **Assumptions.** The initial empirical measures converge to $\bar\mu^S_0,\bar\mu^I_0,\bar\mu^R_0$; the effective kernel $\bar\omega^N=N\kappa^N\gamma^N$ converges uniformly to a bounded, a.e. continuous $\bar\omega$ and is bounded by $\omega^*$; and the variance terms $\bar\gamma^N=N^{-2}\sum_{i,j}\gamma^N(X_i^N,X_j^N)$ and $\Upsilon^N$ (the normalized second moments of the edge weights) tend to $0$. The graph may be dense or sparse as long as these hold; $\bar\omega$ need not be symmetric.
 
 **Statement.** $(\bar\mu^{S,N},\bar\mu^{I,N},\bar\mu^{R,N})\to(\bar\mu^S,\bar\mu^I,\bar\mu^R)$ in probability in the Skorokhod spaces of measure-valued paths, where $(\bar\mu^S,\overline{\mathfrak{F}})$ is the unique solution of
+
 $$\bar\mu^S_t(dx)=\bar\mu^S_0(dx)-\int_0^t\overline{\mathfrak{F}}(s,x)\,\bar\mu^S_s(dx)\,ds,$$
+
 $$\overline{\mathfrak{F}}(t,x)=\int_0^\infty\!\!\int_{\mathbb{X}}\bar\omega(x,x')\frac{\bar\lambda(x',a'+t)}{F^c_{x'}(a')}\bar\mu^I_0(dx',da')+\int_0^t\!\!\int_{\mathbb{X}}\bar\omega(x,x')\,\bar\lambda(x',t-s)\,\overline{\mathfrak{F}}(s,x')\,\bar\mu^S_s(dx')\,ds,$$
+
 and $\bar\mu^I,\bar\mu^R$ are explicit: for test functions $\psi$,
+
 $$\langle\bar\mu^I_t,\psi\rangle=\int\!\!\int\psi(x,a+t)\frac{F^c_x(a+t)}{F^c_x(a)}\bar\mu^I_0(dx,da)+\int_0^t\!\!\int\psi(x,t-s)F^c_x(t-s)\,\overline{\mathfrak{F}}(s,x)\,\bar\mu^S_s(dx)\,ds .$$
+
 If $F_x$ has a bounded continuous hazard rate $h_x$, then $\bar\mu^I$ is the unique weak solution of the transport equation $\partial_t\bar\mu^I+\partial_a\bar\mu^I=-h\,\bar\mu^I$ with boundary influx $\overline{\mathfrak{F}}(t,x)\bar\mu^S_t(dx)$ at age $0$.
 
 ## Depends on

@@ -5,7 +5,9 @@
 - $\delta^*(N)$: the minimum number of leaves that must be attached to make $N$ tree-based.
 
 A *zig-zag trail* is a connected subgraph whose edges can be ordered so that consecutive edges share a head or share a tail; the maximal ones partition the edge set uniquely (the maximal zig-zag trail decomposition). Writing $u > v$ for an arc $u \to v$, a maximal trail is a *crown* ($v_1 < v_2 > \cdots < v_{2k} > v_1$), an *M-fence* ($v_1 < v_2 > \cdots < v_{2k} > v_{2k+1}$, even length), an *N-fence* (odd length) or a *W-fence* ($v_1 > v_2 < \cdots > v_{2k} < v_{2k+1}$, even length). With $V_u(Z)$ and $V_\ell(Z)$ the tails and heads of $Z$,
+
 $$|V_\ell(Z)| - |V_u(Z)| = 1,\ 0,\ -1 \quad\text{for M-fences, crowns/N-fences, W-fences respectively.}$$
+
 Let $\mathcal{M}_N$ and $\mathcal{W}_N$ be the sets of maximal M- and W-fences. Trail $Z_i$ is *above* $Z_j$ if $V_\ell(Z_i) \cap V_u(Z_j) \neq \emptyset$. An *M-W pair* is $(Z_i, Z_j) \in \mathcal{M}_N \times \mathcal{W}_N$ with $Z_i$ above $Z_j$; an *M-W matching* is a non-empty set of M-W pairs using each M-fence and each W-fence at most once, and it is *$\mathcal{W}_N$-saturated* if it has $|\mathcal{W}_N|$ pairs.
 
 **Theorem.** For every rooted almost-binary phylogenetic $X$-network $N$:

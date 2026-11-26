@@ -5,9 +5,13 @@
 **Theorem (functional law of large numbers).** Under convergence of the initial conditions and bounded infectivity, $(\bar S^N_\ell, \bar{\mathfrak I}^N_\ell, \bar R^N_\ell)_\ell$ converges in probability, locally uniformly in $t$ and $\mathfrak a$, to the unique continuous solution of a system of Volterra-type integral equations in which new infections in patch $\ell'$ at time $s$ contribute total infectivity $\bar\lambda(t-s)p_{\ell',\ell}(t-s)$ in patch $\ell$ at time $t$.
 
 **Theorem (PDE representation).** If $\bar{\mathfrak I}_\ell(0,\cdot)$ and $F$ have densities, then $\bar{\mathfrak I}_\ell(t,\cdot)$ has a density $\bar{\mathfrak i}_\ell(t,\mathfrak a)$, and the row vector $\bar{\mathfrak i} = (\bar{\mathfrak i}_\ell)_\ell$ is the unique solution of
+
 $$\partial_t \bar{\mathfrak i}(t,\mathfrak a) + \partial_{\mathfrak a}\bar{\mathfrak i}(t,\mathfrak a) = -\mu(\mathfrak a)\,\bar{\mathfrak i}(t,\mathfrak a) + \bar{\mathfrak i}(t,\mathfrak a)\,Q,$$
+
 with boundary condition
+
 $$\bar{\mathfrak i}_\ell(t,0) = \frac{\bar S_\ell(t)}{\bar B_\ell(t)^\gamma}\sum_{\ell'}\beta_{\ell,\ell'}\int_0^\infty \bar\lambda(\mathfrak a)\,\bar{\mathfrak i}_{\ell'}(t,\mathfrak a)\,\frac{F^c((\mathfrak a-t)^+)}{F^c(\mathfrak a)}\,d\mathfrak a .$$
+
 Explicitly, $\bar{\mathfrak i}(t,\mathfrak a) = \frac{F^c(\mathfrak a)}{F^c(\mathfrak a-t)}\bar{\mathfrak i}(0,\mathfrak a - t)e^{Qt}$ for $t \le \mathfrak a$ and $\bar{\mathfrak i}(t,\mathfrak a) = F^c(\mathfrak a)\,\bar{\mathfrak i}(t-\mathfrak a,0)\,e^{Q\mathfrak a}$ for $t > \mathfrak a$, where the incidence $\bar{\mathfrak i}(\cdot,0)$ solves a closed system of integral equations together with $\bar S_\ell$, $\bar I_\ell$, $\bar R_\ell$.
 
 ## Depends on

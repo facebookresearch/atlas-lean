@@ -1,7 +1,9 @@
 # Spectrum and stationary law of hierarchical Markov models of modal gating
 
 **Setting.** Many ion channels switch spontaneously between *modes* of different activity, and within each mode open and close with mode-specific kinetics. A continuous-time hierarchical Markov model combines: a top-level generator $M$ on $\sum_i m_i$ states, block-partitioned into modes $M^{i,j}$ ($i,j = 1,\dots,n_M$), and for each mode $i$ a generator $Q^i$ on $n_i$ gating states with an entry distribution $p^i$ (a row vector). With the Kronecker product $\otimes$ and Kronecker sum $A \oplus B = A \otimes I + I \otimes B$, the full generator has blocks
+
 $$\mathcal M^{i,i} = M^{i,i} \oplus Q^i, \qquad \mathcal M^{i,j} = M^{i,j} \otimes P^{i,j}, \quad P^{i,j} = \mathbf 1_{n_i}\,p^j \ (i \ne j),$$
+
 so that within a mode both levels evolve independently, and on switching from mode $i$ to mode $j$ the gating chain restarts from $p^j$. Initial laws are pure tensors $v^i \otimes w^i$ on each mode block.
 
 **Theorem.**

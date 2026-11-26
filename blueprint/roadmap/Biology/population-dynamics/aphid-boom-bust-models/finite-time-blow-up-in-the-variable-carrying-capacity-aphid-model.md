@@ -1,15 +1,21 @@
 # Finite-time blow-up in the variable carrying capacity aphid model
 
 **Boom-bust model.** Let $x(t)\ge0$ be aphid density and $h(t)=a\int_0^t x(s)\,ds$ its scaled cumulative density, with constants $a,r>0$. The cumulative-density model
+
 $$\frac{dh}{dt}=ax,\qquad \frac{dx}{dt}=(r-h)x,\qquad h(0)=0,\ x(0)=x_0>0,$$
+
 gives a single-peak (boom-bust) season. The population grows while $h<r$ and declines after $h$ passes $r$.
 
 **Variable carrying capacity model (VCM).** Field data often show several peaks in one season. To model this, the growth term is multiplied by a logistic factor with a periodically varying carrying capacity:
+
 $$\frac{dh}{dt}=ax,\qquad \frac{dx}{dt}=(r-h)\,x\left(1-\frac{x}{k(t)}\right),\qquad k(t)=(k_{\max}-k_{\min})\,\frac{\cos(d\pi t)+1}{2}+k_{\min},$$
+
 with $0<k_{\min}<k_{\max}$ and $d>0$.
 
 **Theorem (finite-time blow-up).** Solutions of the VCM with $x_0>0$ stay nonnegative. If
+
 $$x_0>k_{\max}\left(\frac{r}{a\,k_{\min}}+1\right),$$
+
 then there is $T^*<\infty$ with $\limsup_{t\to T^*}x(t)=+\infty$, and the cumulative density $h$ also blows up at a finite time.
 
 **Proposition (transient multi-peak dynamics without periodic orbits).** In the non-autonomous boom-bust model $\dot h=a(t)x$, $\dot x=(r(t)-h)x$ with positive $T$-periodic $a,r$, there is no positive $T$-periodic solution. There is a finite $T^*$ such that $h(t)>\sup r$ for $t>T^*$, so $x(t)\to0$. Any oscillations of $x$ that follow the periodic forcing occur only on $[0,T^*]$.

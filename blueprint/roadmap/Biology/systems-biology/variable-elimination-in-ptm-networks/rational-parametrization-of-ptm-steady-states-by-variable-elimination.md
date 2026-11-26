@@ -4,7 +4,9 @@
 
 **Theorem.**
 1. *(Intermediates.)* $\dot Y_k = 0$ for all $k$ if and only if
+
 $$Y_k = \sum_{i \le j}\mu^k_{i,j}\,S_iS_j$$
+
 with each $\mu^k_{i,j} \in \mathbb R(\mathcal K)$ zero or S-positive; when the intermediate graph is strongly connected, $\mu^k_{i,j} \ne 0$ exactly when $S_i + S_j$ ultimately reacts to $Y_k$.
 2. *(Substrates.)* Suppose there is a *cut* $\mathcal S_\alpha \subseteq \mathcal S$, a set of substrates whose steady-state equations, after eliminating intermediates, are linear in $\mathcal S_\alpha$ with coefficients depending on the remaining substrates $\mathcal S_\alpha^c$, and that each connected component of the associated graph has a rooted spanning tree. Then at steady state every $S_j \in \mathcal S_\alpha$ is a zero or S-positive rational function of $\mathcal S_\alpha^c$, and the non-negative steady states with prescribed total amounts and positive values on $\mathcal S_\alpha^c$ are in one-to-one correspondence with the positive solutions of a reduced polynomial system in the variables $\mathcal S_\alpha^c$ alone.
 3. If the intermediate graph and, for every substrate, some cut graph containing it are strongly connected, then no steady state has a vanishing substrate or intermediate concentration.

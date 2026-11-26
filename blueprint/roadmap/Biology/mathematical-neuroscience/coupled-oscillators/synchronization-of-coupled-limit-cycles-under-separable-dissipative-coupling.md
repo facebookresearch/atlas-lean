@@ -1,7 +1,9 @@
 # Synchronization of coupled limit cycles under separable dissipative coupling
 
 **Local dynamics.** Let $\dot x=f(x)$, $x\in\mathbb{R}^n$, with $f\in C^2$, have a $1$-periodic orbit $x=u(t)$ with $\dot u\ne0$. Take an orthonormal moving frame $\{v(\theta),z_1(\theta),\dots,z_{n-1}(\theta)\}$ with $v=\dot u/|\dot u|$, and write $Z=(z_1,\dots,z_{n-1})$. Near the orbit, $x=u(\theta)+Z(\theta)\rho$ transforms the system to
+
 $$\dot\theta=1+a(\theta)^{T}\rho+O(|\rho|^2),\qquad \dot\rho=A(\theta)\rho+O(|\rho|^2),\qquad A=Z^TDf(u)Z-Z^TZ'.$$
+
 **Stability assumption.** If $\mu_1(\theta)$ is the largest eigenvalue of the symmetric part $A^s=\tfrac12(A+A^T)$, assume $\int_0^1\mu_1(\theta)\,d\theta=-\mu<0$. This makes $\dot\rho=A(t)\rho$ exponentially stable: $|R(t)R(s)^{-1}|\le C\,e^{-(\mu-\varepsilon)(t-s)}$ for $t\ge s$ and any $0<\varepsilon<\mu$.
 
 **Coupled system.** Couple $N$ copies by $\dot x=f(x)+g\,(\mathbf{D}\otimes L)\,x$, where $x\in\mathbb{R}^{Nn}$, the coupling strength is $g\ge0$, $\mathbf{D}\in\mathbb{R}^{N\times N}$ describes the network, and $L\in\mathbb{R}^{n\times n}$ says which local variables are coupled.
@@ -10,7 +12,9 @@ $$\dot\theta=1+a(\theta)^{T}\rho+O(|\rho|^2),\qquad \dot\rho=A(\theta)\rho+O(|\r
 - $L$ is symmetric positive semidefinite. The coupling is *full* if $L$ is positive definite and *partial* otherwise.
 
 **Partial-coupling condition.** Let $p_1,\dots,p_l$ be an orthonormal basis of $\ker L$, $O=(v,z_1,\dots,z_{n-1})$, and $c=v^TDf(u)v$. Set
+
 $$L_1^s=\begin{pmatrix}\tfrac12c & v^T(Df)^sZ\\ Z^T(Df)^sv & A^s-\tfrac12c\,I_{n-1}\end{pmatrix},\qquad G_{ij}(t)=\big(L_1^s(t)O^T(t)p_i,\ O^T(t)p_j\big),$$
+
 and let $\lambda_1(t)$ be the largest eigenvalue of $G(t)$. The condition is $\int_0^1\lambda_1(t)\,dt<0$.
 
 **Theorem (synchronization).** Assume the local cycle satisfies the stability assumption, $\mathbf{D}$ is dissipative, and $L$ is positive semidefinite. For partial coupling, also assume the partial-coupling condition. Then for all sufficiently large $g>0$ the coupled system has an exponentially stable synchronous limit cycle.

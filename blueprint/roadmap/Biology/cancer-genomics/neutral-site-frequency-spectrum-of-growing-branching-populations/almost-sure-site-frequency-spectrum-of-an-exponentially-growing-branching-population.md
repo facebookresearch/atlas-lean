@@ -8,11 +8,15 @@
 3. the same holds for $M$ with $p_j(s)$ replaced by $1 - p_0(s)$.
 
 **Birth–death case.** If $u_0 + u_2 = 1$ with $u_2 > u_0$, then $p = u_0/u_2$, $Y \mid \Omega_\infty \sim \mathrm{Exp}$ with mean $1/q$, and
+
 $$\lim_{N\to\infty} N^{-1}S_j(\tau_N) = \frac{\nu q}{\lambda}\int_0^1 \frac{(1-y)\,y^{j-1}}{1-py}\,dy = \frac{\nu q}{\lambda}\sum_{k=0}^\infty \frac{p^k}{(j+k)(j+k+1)}, \qquad \lim_{N\to\infty} N^{-1}M(\tau_N) = -\frac{\nu q \log q}{\lambda p}\ (0 < p < 1),$$
+
 with the fixed-time versions obtained by multiplying by $Y$. For the pure-birth (Yule) process ($p = 0$) the limit is $\frac{\nu}{\lambda}\cdot\frac{1}{j(j+1)}$, and $M(\tau_N)/N \to \nu/\lambda$.
 
 **Estimators.** In the birth–death case the long-run proportion of mutations carried by exactly one individual is the same at fixed time and fixed size and equals
+
 $$\varphi_1(p) = \frac12 \ (p = 0), \qquad \varphi_1(p) = -\frac{p + q\log q}{p\log q} \ (0 < p < 1),$$
+
 a strictly decreasing function with values in $(0, 1/2]$. Hence $\hat p = \varphi_1^{-1}(\text{observed singleton proportion})$ is a strongly consistent estimator of the extinction probability, and the total mutation count per individual, $M(\tau_N)/N$, then yields a consistent estimator of the effective mutation rate $\nu/\lambda$.
 
 ## Expansion

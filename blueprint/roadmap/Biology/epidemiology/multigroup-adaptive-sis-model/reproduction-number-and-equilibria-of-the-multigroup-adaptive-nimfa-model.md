@@ -1,11 +1,15 @@
 # Reproduction number and equilibria of the multigroup adaptive NIMFA model
 
 **Model.** Consider $n$ communities with normalized populations. Let $y_i \in [0,1]$ be the prevalence in community $i$ and $z_{ij} \in [0,1]$ the density of active links from community $j$ to community $i$. The multigroup adaptive N-intertwined mean-field approximation (aNIMFA) is
+
 $$\begin{aligned} \dot y_i &= -\delta_i y_i + (1-y_i)\sum_{j=1}^n \beta_{ij}\,y_j\,z_{ij},\\ \dot z_{ij} &= -\zeta_{ij}\,z_{ij}\,f^{br}_{ij}(y_i,y_j,\bar y) + \xi_{ij}(1-z_{ij})\,f^{cr}_{ij}(y_i,y_j,\bar y), \qquad \bar y = \frac1n\sum_j y_j, \end{aligned}$$
+
 with curing rates $\delta_i > 0$, infection rates $\beta_{ij} \ge 0$ forming an irreducible matrix, link-breaking and link-creation rates $\zeta_{ij}, \xi_{ij} > 0$, and awareness functions $f^{br}_{ij}$ (link breaking) and $f^{cr}_{ij}$ (link creation) that depend on local prevalences and the global mean prevalence.
 
 **Disease-free equilibrium and $R_0$.** At $y = 0$ the link densities are $z_{ij}^{\mathrm{DFE}} = \dfrac{\xi_{ij}f^{cr}_{ij}(\mathbf{0})}{\zeta_{ij}f^{br}_{ij}(\mathbf{0}) + \xi_{ij}f^{cr}_{ij}(\mathbf{0})}$. The next-generation matrix and basic reproduction number are
+
 $$F = \left(\frac{\beta_{ij}}{\delta_i}\,z^{\mathrm{DFE}}_{ij}\right)_{i,j=1}^n, \qquad R_0 = \rho(F).$$
+
 - With fully homogeneous parameters, $R_0 = n\dfrac{\beta}{\delta}\dfrac{\xi f^{cr}(\mathbf{0})}{\zeta f^{br}(\mathbf{0}) + \xi f^{cr}(\mathbf{0})}$.
 - If no links are broken at zero prevalence ($f^{br}_{ij}(\mathbf{0}) = 0$), then $z^{\mathrm{DFE}}_{ij} = 1$ and $R_0 = \rho\big((\beta_{ij}/\delta_i)\big)$, the reproduction number of NIMFA on the static network: adaptivity does not change the epidemic threshold.
 

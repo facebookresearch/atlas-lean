@@ -1,13 +1,17 @@
 # Maximal total population and origin instability in the two-patch logistic model
 
 **Model.** After rescaling patch 1 to unit growth rate and carrying capacity, two logistic subpopulations coupled by symmetric dispersal at rate $D\ge0$ satisfy
+
 $$\dot x_1=x_1(1-x_1)+D(x_2-x_1),\qquad \dot x_2=rx_2\Big(1-\frac{x_2}k\Big)+D(x_1-x_2),$$
+
 with relative growth rate $r>0$ and relative carrying capacity $k>0$ of patch 2.
 
 **Theorem (global dynamics).** There are no periodic orbits, and a coexistence equilibrium $P_3=(\bar x_1(D),\bar x_2(D))$ in the open first quadrant is globally asymptotically stable there. If $D<r/(1+r)$ the origin is a repeller and infinitely many heteroclinic orbits join it to $P_3$; if $D>r/(1+r)$ the origin is a saddle and there is a unique heteroclinic connection (its unstable manifold) from the origin to $P_3$.
 
 **Theorem (optimal dispersal).** The total equilibrium population $\Omega(D)=\bar x_1(D)+\bar x_2(D)$ satisfies the sharp bound
+
 $$\Omega(D)\le\Omega^*=\frac12\Big(\sqrt{1+\tfrac{r^2+1}{r}k+k^2}+(1+k)\Big),$$
+
 attained at some $D^*$. With $k^*(r)=\dfrac{r(3+r)}{1+3r}$, the maximum $\Omega^*$ is attained at a positive dispersal rate $D^*$ if $r>1$ and $k>k^*(r)$, or $r<1$ and $k<k^*(r)$; if $r<1$ and $k^*(r)<k<1$ then $\Omega'(D)>0$ for all $D>0$; in all other cases dispersal reduces the total population, $\Omega(D)<1+k$ for $D>0$.
 
 ## Expansion

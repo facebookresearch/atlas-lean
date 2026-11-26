@@ -1,7 +1,9 @@
 # Well-posedness and stability of stochastic jump kinetics
 
 **Setting.** A reaction network on $D$ species has $R$ reactions; reaction $r$ fires at propensity $w_r(x) \ge 0$ in state $x \in \mathbb{Z}_+^D$ and changes the state by $-\mathbb{N}_r$, where $\mathbb{N} \in \mathbb{Z}^{D \times R}$ is the stoichiometric matrix (sign convention as in the source). The copy-number process $X_t$ is the solution of the jump SDE driven by a Poisson random measure with state-dependent thinning,
+
 $$dX_t = -\int \mathbb{N}\, \hat w(X_{t-}; z)\, \mu(dt \times dz),$$
+
 which is the pathwise version of the chemical master equation; write $F(x) = -\mathbb{N} w(x)$ for the drift of the reaction-rate ODE $\dot x = F(x)$. Fix a weight vector $l > 0$ with $\min_i l_i = 1$ and $\|x\|_l = l^{\mathsf T} x$.
 
 **Assumptions.** For $x, y \in \mathbb{Z}_+^D$, with $A, B, \beta_1, L > 0$, $\beta_2 \ge 0$ and $\alpha, M, \mu$ of any sign:

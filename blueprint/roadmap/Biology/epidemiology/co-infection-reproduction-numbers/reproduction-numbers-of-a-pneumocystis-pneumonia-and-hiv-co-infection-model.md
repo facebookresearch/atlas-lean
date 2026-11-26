@@ -1,15 +1,23 @@
 # Reproduction numbers of a Pneumocystis pneumonia and HIV co-infection model
 
 **Model.** A population with recruitment $\Lambda$ and natural mortality $\mu$ is split into susceptibles $S$; Pneumocystis pneumonia (PCP) carriers $C$, PCP infected $I_P$ and PCP-recovered $R$; HIV-infected $I_H$, AIDS $I_A$ and HIV-treated $I_T$; co-infected $I_{HP}$, $I_{AP}$ and co-infection-treated $T$. The forces of infection are
+
 $$\alpha_P=\frac{\rho c(\omega C+I_P+\theta_1I_{HP}+\theta_2I_{AP})}{N},\qquad \alpha_H=\frac{\eta k(I_H+a_1I_{HP}+a_2I_A+a_3I_{AP})}{N},$$
+
 with contact rates $c,k$, transmission probabilities $\rho,\eta$, relative infectiousness $\omega$ of carriers and $a_1<a_2<a_3$, $\theta_1<\theta_2$ of the HIV and co-infected classes. A fraction $\xi$ of new PCP infections become carriers, who develop symptoms at rate $\beta$ or clear at rate $\pi$; PCP infecteds recover at rate $\epsilon$ or die at rate $\nu_P$; recovered individuals lose immunity at rate $\gamma$; HIV progresses to AIDS at rate $\lambda_1$, AIDS kills at rate $\nu_A$, and HIV and AIDS patients are treated at rates $\tau_1,\tau_2$. Set $k_1=\beta+\pi+\mu$, $k_2=\epsilon+\mu+\nu_P$, $q_1=\tau_1+\lambda_1+\mu$, $q_2=\tau_2+\nu_A+\mu$.
 
 **Theorem (sub-model thresholds).** The HIV/AIDS sub-model ($C=I_P=R=I_{HP}=I_{AP}=T=0$) has
+
 $$\mathcal R_{0H}=\frac{\eta k}{q_1q_2}\big(q_2+a_2\lambda_1\big);$$
+
 its disease-free equilibrium is globally asymptotically stable (and the only equilibrium) when $\mathcal R_{0H}\le1$, and its endemic equilibrium is globally asymptotically stable when $\mathcal R_{0H}>1$ (Lyapunov functions with LaSalle's principle). The PCP sub-model has
+
 $$\mathcal R_{0P}=\frac{\rho c}{k_1k_2}\Big(\xi(k_2\omega+\beta)+(1-\xi)k_1\Big),$$
+
 with locally asymptotically stable disease-free equilibrium when $\mathcal R_{0P}<1$ (globally under the Castillo-Chavez conditions) and globally stable endemic equilibrium when $\mathcal R_{0P}>1$. For the full co-infection model the next-generation reproduction number is
+
 $$\mathcal R_0=\max\{\mathcal R_{0P},\mathcal R_{0H}\},$$
+
 and the disease-free equilibrium is locally asymptotically stable when $\mathcal R_0<1$.
 
 ## Expansion

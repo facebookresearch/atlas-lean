@@ -5,10 +5,14 @@
 **Theorem.**
 1. *(Minimum over all level-1 networks.)* For $n \ge 2$, a level-1 network $N$ minimizes $\Phi^{**}$ among level-1 networks on $n$ leaves iff $\Phi^{**}(N) = \binom{n}{2}$. If $\epsilon > 0$, the unique minimizer is the star tree; if $\epsilon = 0$ it is the star tree or the network obtained from it by placing the root on a triangle.
 2. *(Minimum over binary level-1 networks.)* For $N \in \mathcal{BN}_n$, $n \ge 2$,
+
 $$\Phi^{**}(N) \ge \sum_{k=1}^{n-1} a(k) + \binom{n}{2},$$
+
 where $a(k)$ is the exponent of the highest power of $2$ dividing $k!$. Equality holds exactly for networks obtained from a maximally balanced tree by expanding inner vertices into triangles; if $\epsilon > 0$, the minimizer is a maximally balanced tree.
 3. *(Maximum.)* For $N \in \mathcal{BN}_n$ (resp. $\mathcal{N}^{\le 2}_n$) with $n \ge 3$,
+
 $$\Phi^{**}(N) \le \left(\binom{n+1}{3} + \epsilon\right)\binom{n}{2},$$
+
 with equality iff $N$ is the network $N^{\mathrm{cres}}_n$ consisting of a single crescent block on $n + 1$ vertices with the $n$ leaves attached.
 
 ## Depends on

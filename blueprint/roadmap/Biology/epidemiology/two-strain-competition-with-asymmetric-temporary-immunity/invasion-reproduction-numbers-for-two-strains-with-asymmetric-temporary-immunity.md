@@ -8,7 +8,9 @@ $$\begin{aligned}
 \end{aligned}$$
 
 **Reproduction numbers.** $\mathscr{R}_j=\beta_j/\gamma_j$, $\mathscr{R}_0=\max\{\mathscr{R}_1,\mathscr{R}_2\}$, and the invasion numbers
+
 $$\mathscr{R}_{21}=\frac{\mathscr{R}_2}{\mathscr{R}_1}\cdot\frac{\beta_1+\sigma_1}{\gamma_1+\sigma_1},\qquad \mathscr{R}_{12}=\frac{\mathscr{R}_1}{\mathscr{R}_2}\cdot\frac{(1-\epsilon)\beta_2+\epsilon\gamma_2+\sigma_2}{\gamma_2+\sigma_2},$$
+
 the expected secondary cases of strain 2 (resp. 1) introduced into a population at the endemic equilibrium of strain 1 (resp. 2) alone.
 
 **Statements.**

@@ -1,13 +1,17 @@
 # Equilibria and bifurcations of the Lotka–Volterra competition model with Allee and fear effects
 
 **Model.** Two competitors $x$ (subject to a strong Allee effect and to fear of its competitor) and $y$ (logistic) evolve, after nondimensionalization, by
+
 $$\frac{dx}{dt} = x\Big[(1-x)(x-p)\frac{1}{1+qy} - a y\Big],\qquad \frac{dy}{dt} = b\,y\,(1 - y - c x),$$
+
 with all parameters positive, Allee threshold $0 < p < 1$, fear coefficient $q > 0$, and initial data $x(0) > 0$, $y(0) > 0$.
 
 **Basic properties.** Solutions stay positive and bounded, with $\limsup_{t\to\infty} y(t) \le 1$ and $x(t) \le \max\{x(0), 1\}$. If $0 < x(0) \le p$, $y(0) \ge 0$ and $(x(0), y(0)) \ne (p, 0)$, then $(x(t), y(t)) \to (0,0)$: below the Allee threshold the first species collapses.
 
 **Equilibria.** Besides $E_0 = (0,0)$, the boundary equilibria are $E_1 = (1,0)$, $E_2 = (p,0)$ and $E_3 = (0,1)$. Interior equilibria $(x_*, 1 - c x_*)$ have $x_*$ a root of
+
 $$A_1 x^2 + A_2 x + A_3 = 0,\qquad A_1 = a c^2 q + 1,\quad A_2 = -(2acq + ac + p + 1),\quad A_3 = a + aq + p,$$
+
 with discriminant $\Delta = A_2^2 - 4A_1A_3$. When $\Delta > 0$, $2A_1 + A_2 > 0$ and $0 < c < 1$ there are two interior equilibria $E_{1*}$ (smaller $x$) and $E_{2*}$; when $\Delta = 0$, $2A_1 + A_2 > 0$ and $0 < c < 1$ they merge into a single $E_{3*}$; in the remaining listed cases ($c = 1$, or $1 < c \le 1 + 1/q$ with $0 < p < 1/c$) there is exactly one interior equilibrium $E_{1*}$.
 
 **Stability.**
@@ -16,7 +20,9 @@ with discriminant $\Delta = A_2^2 - 4A_1A_3$. When $\Delta > 0$, $2A_1 + A_2 > 0
 - Interior equilibria: $E_{1*}$ is a saddle, $E_{2*}$ a stable node, $E_{3*}$ a saddle-node.
 
 **Bifurcations.** At $c_{TR} = 1$ (with $p \ne 1 - a$) the system undergoes a transcritical bifurcation at $E_1$. With the fear coefficient as parameter, under $2A_1 + A_2 > 0$ and $0 < c < 1$, a saddle-node bifurcation occurs at $E_{3*}$ when
+
 $$q = q_* = \frac{a^2c^2 + 2acp + 2ac + p^2 - 4a - 2p + 1}{4a\,(c^2p - cp - c + 1)},$$
+
 the value where $\Delta = 0$: as $q$ crosses $q_*$ the number of interior equilibria changes between $0$ and $2$.
 
 ## Depends on

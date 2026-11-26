@@ -1,7 +1,9 @@
 # Sign-vector criterion for unique complex balancing equilibria of generalized mass action systems
 
 **Setting.** A *generalized mass action system* $(\mathscr{S},\mathscr{C},\tilde{\mathscr{C}},\mathscr{R},k)$ has species $\mathscr{S}=\{1,\dots,n\}$, a reaction graph $\mathscr{R}$ on stoichiometric complexes $y\in\mathscr{C}\subset\mathbb{R}^n_{\ge0}$, a *kinetic-order complex* $\tilde y\in\mathbb{R}^n$ attached to each source complex $y$, and rate constants $k_{y\to y'}>0$. The dynamics is
+
 $$\dot c=\sum_{y\to y'\in\mathscr{R}}k_{y\to y'}\,c^{\tilde y}\,(y'-y),\qquad c\in\mathbb{R}^n_{>0},$$
+
 with $c^{\tilde y}=\prod_ic_i^{\tilde y_i}$; classical mass action is $\tilde y=y$. The *stoichiometric subspace* is $S=\mathrm{span}\{y'-y\}$ and the *kinetic-order subspace* is $\tilde S=\mathrm{span}\{\tilde y'-\tilde y\}$ (over reactions within linkage classes). A *complex balancing equilibrium* $c$ balances inflow and outflow at every complex. For a subspace $U$, $\sigma(U)=\{\mathrm{sign}(u):u\in U\}\subseteq\{-,0,+\}^n$ is its set of sign vectors.
 
 **Statements.**

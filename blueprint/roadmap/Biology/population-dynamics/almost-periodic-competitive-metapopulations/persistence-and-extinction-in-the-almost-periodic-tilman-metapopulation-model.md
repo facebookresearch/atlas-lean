@@ -1,11 +1,17 @@
 # Persistence and extinction in the almost periodic Tilman metapopulation model with habitat destruction
 
 **Model.** In the Tilman–Nee–May generalization of the Levins metapopulation model, a fraction $h \in (0,1]$ of patches is habitable (the rest destroyed), species are ranked by competitive ability, and a superior competitor can colonize patches held by inferior ones. For two species with fractions $p_1$ (superior) and $p_2$ of occupied patches,
+
 $$p_1' = p_1\big\{c_1(t)(h - p_1) - m_1(t)\big\}, \qquad p_2' = p_2\big\{c_2(t)(h - p_1 - p_2) - m_2(t) - c_1(t)p_1\big\},$$
+
 with $0 < p_1(t_0) + p_2(t_0) < h$, where colonization rates $c_i$ and extinction rates $m_i$ are positive almost periodic functions with means $\mathcal{M}[\cdot]$. Define
+
 $$\mathcal{R}_0 = \frac{\mathcal{M}[m_1]}{\mathcal{M}[c_1]},\qquad \mathcal{R}_1 = \frac{\mathcal{M}[m_2]}{\mathcal{M}[c_2]},\qquad \mathcal{R}^*_{1,1} = \mathcal{R}_1 + \ell_{1,1},\quad \ell_{1,1} = \frac{\mathcal{M}[(c_1+c_2)p^*_{1,1}]}{\mathcal{M}[c_2]},$$
+
 where, when $\mathcal{R}_0 < h$,
+
 $$p^*_{1,1}(t) = \Big(\int_{-\infty}^t c_1(s)\,e^{\int_s^t a_{11}(r)\,dr}\,ds\Big)^{-1},\qquad a_{11}(t) = -[c_1(t)h - m_1(t)],$$
+
 is the unique positive almost periodic solution of the first equation. The interval $(\mathcal{R}_1, \mathcal{R}^*_{1,1})$ is the *exclusion interval* (niche shadow) cast by the superior competitor.
 
 **Theorem (one species).** If $\mathcal{R}_0 < h$, then $p_1$ is strongly persistent and $|p_1(t) - p^*_{1,1}(t)| \to 0$ exponentially fast; if $\mathcal{R}_0 > h$ the species goes extinct exponentially fast.

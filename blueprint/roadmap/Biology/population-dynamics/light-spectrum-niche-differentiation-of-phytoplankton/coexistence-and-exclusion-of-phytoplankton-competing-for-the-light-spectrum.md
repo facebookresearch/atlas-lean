@@ -1,8 +1,11 @@
 # Coexistence and exclusion of phytoplankton competing for the light spectrum
 
 **Model.** In a water column $0 < x < L$ (depth $x$) with sufficient nutrients, two phytoplankton species with densities $u_1, u_2$ satisfy
+
 $$\partial_t u_i = D_i\,\partial_x^2 u_i - \alpha_i\,\partial_x u_i + \big[g_i(\gamma_i(x,t)) - d_i(x)\big]u_i,\qquad D_i\partial_x u_i - \alpha_i u_i = 0 \text{ at } x = 0, L,$$
+
 with turbulent diffusion $D_i > 0$, sinking/buoyancy velocity $\alpha_i \in \mathbb{R}$, death rate $d_i \in C([0,L])$, and increasing saturating growth $g_i$ ($g_i(0) = 0$, $g_i' > 0$, $g_i(\infty) < \infty$, e.g. Monod). Light is a continuum of resources over wavelengths $\lambda \in [400, 700]$ nm: with absorption spectra $k_i(\lambda)$, incident spectrum $I_{\rm in}(\lambda)$ and background attenuation $K_{BG}(\lambda)$, Lambert–Beer's law gives
+
 $$I(\lambda,x,t) = I_{\rm in}(\lambda)\exp\Big[-K_{BG}(\lambda)x - \sum_j k_j(\lambda)\int_0^x u_j(y,t)\,dy\Big],\qquad \gamma_i(x,t) = \int_{400}^{700}k_i(\lambda)I(\lambda,x,t)\,d\lambda.$$
 
 **Persistence threshold.** Let $f_i(x,p_1,p_2) = g_i\big(\int k_i I_{\rm in}e^{-K_{BG}x - k_1p_1 - k_2p_2}\,d\lambda\big) - d_i(x)$ and let $\mu(D,\alpha,h)$ be the principal eigenvalue of $D\phi'' - \alpha\phi' + h\phi + \mu\phi = 0$ with $D\phi' - \alpha\phi = 0$ at $0, L$. If $\mu(D_i,\alpha_i,f_i(\cdot,0,0)) < 0$ for $i = 1,2$ (condition (P); sufficient: $\int_0^L e^{\alpha_i x/D_i}f_i(x,0,0)\,dx > 0$), there are exactly two exclusion equilibria $E_1 = (\tilde{u}_1, 0)$ and $E_2 = (0, \tilde{u}_2)$, each attracting the solutions in which only its species is initially present.

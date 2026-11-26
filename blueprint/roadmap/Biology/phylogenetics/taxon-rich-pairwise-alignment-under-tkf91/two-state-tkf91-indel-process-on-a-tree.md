@@ -1,7 +1,9 @@
 # Two-state TKF91 insertion–deletion process on a tree
 
 **Definition.** Fix rates $\eta,\lambda,\mu\in(0,\infty)$ and letter frequencies $(\pi_0,\pi_1)$ with $\pi_0+\pi_1=1$. The (two-state) **TKF91 process** is the continuous-time Markov chain on
+
 $$\mathcal{S}=\{\bullet\}\otimes\bigcup_{M\ge1}\{0,1\}^M$$
+
 (binary sequences preceded by an *immortal link* $\bullet$; the empty sequence is allowed) in which, independently:
 
 - each site is *substituted* at rate $\eta$, its new digit being $0$ or $1$ with probabilities $\pi_0,\pi_1$;
@@ -9,9 +11,13 @@ $$\mathcal{S}=\{\bullet\}\otimes\bigcup_{M\ge1}\{0,1\}^M$$
 - each site and the immortal link give birth at rate $\lambda$ to a new site placed immediately to its right, with digit drawn from $(\pi_0,\pi_1)$ (an *insertion*).
 
 **Proposition.** If $\mu>\lambda$, the sequence length $|\sigma|$ has stationary distribution
+
 $$\gamma_M=\Bigl(1-\frac{\lambda}{\mu}\Bigr)\Bigl(\frac{\lambda}{\mu}\Bigr)^{M},\qquad M\in\mathbb{Z}_{\ge0},$$
+
 and the stationary sequence has i.i.d. sites with law $(\pi_0,\pi_1)$ given its length. The total rate of leaving a state $\sigma$ (to sequences one substitution, insertion or deletion away) is
+
 $$\lambda^\ast(\sigma)=\lambda\,(|\sigma|+1)+\mu\,|\sigma|+\eta\pi_1|\sigma|_0+\eta\pi_0|\sigma|_1 ,$$
+
 where $|\sigma|_b$ counts digits equal to $b$. In particular $\mathbb{P}(|\sigma|>L)=(\lambda/\mu)^{L+1}$ under stationarity.
 
 On a rooted ultrametric tree with edge lengths $t_e$, the root sequence is drawn from stationarity and the process runs independently along each edge from the parent's sequence; stationarity then holds at every point of the tree. Two sites in different sequences are *homologous* if they descend from a common ancestral site through substitutions only, and a *true alignment* puts exactly the homologous pairs in common columns.

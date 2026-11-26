@@ -6,7 +6,9 @@
 - a uniformly random new bit is inserted to its right with probability $p_I(e)$.
 
 The data are the (unaligned) bitstrings at the leaves. Define the edge length
+
 $$\lambda(e) = -\Big[\ln\big(1 - 2p_S(e)\big) + \ln\big(1 - p_D(e)\big) - \tfrac12\ln\big(1 + p_I(e) - p_D(e)\big)\Big] \ge 0,$$
+
 and assume the $\Delta$-branch model: $\lambda(e)$ is an integer multiple of $\lambda_{\min}$, with $\lambda_{\min} \le \lambda(e) < \lambda_{\max}$.
 
 **Theorem (symmetric case).** Suppose $T$ is balanced, $p_I(e) = p_D(e)$ for all $e$, $\lambda_{\max} \le \ln\sqrt2$ (below the Kesten–Stigum threshold) and $\lambda_{\min} = \Omega(1/\mathrm{polylog}\,n)$. Then for a sufficiently large constant $\kappa$, root sequence length $k = O(\log^\kappa n)$ suffices for an algorithm (TreeReconstruct) to recover $T$ with high probability. In particular the substitution and indel probabilities may all be constants.

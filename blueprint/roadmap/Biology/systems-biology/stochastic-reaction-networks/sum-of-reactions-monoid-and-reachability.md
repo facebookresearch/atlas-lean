@@ -1,7 +1,9 @@
 # Sum of reactions monoid and reachability in stochastic reaction networks
 
 **Setting.** Represent a reaction $y\to y'$ on $n$ species by the pair $r=(y,y')\in\mathbb{N}_0^n\times\mathbb{N}_0^n$ (reactant, product). For $x,y\in\mathbb{Z}^n$ write $x\le y$ componentwise and $x\vee y$ for the componentwise maximum. The **sum** of $r_1=(y_1,y_1')$ and $r_2=(y_2,y_2')$ is
+
 $$r_1\oplus r_2=(y,y'),\qquad y=y_1+0\vee(y_2-y_1'),\qquad y'=y_2'+0\vee(y_1'-y_2),$$
+
 the overall reaction obtained by firing $r_1$ and then $r_2$: species produced by $r_1$ and consumed by $r_2$ cancel, and only the deficit must be supplied in advance.
 
 **Algebraic structure.**

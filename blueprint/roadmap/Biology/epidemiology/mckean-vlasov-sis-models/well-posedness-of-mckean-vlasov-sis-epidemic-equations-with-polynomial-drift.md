@@ -1,9 +1,13 @@
 # Well-posedness of McKean–Vlasov SIS epidemic equations with polynomial drift
 
 **Equation.** Let $N(t) > 0$ be a locally absolutely continuous population size and $W$ a $d$-dimensional Brownian motion. The number of infected individuals $I_t \in [0, N(t)]$ solves the McKean–Vlasov SDE
+
 $$dI_t = \sum_{i=0}^k b_i\bigl(t, N(t), \mathcal L(I_t)\bigr) I_t^i\,dt + f\bigl(t, I_t, N(t) - I_t\bigr)\,dW_t, \qquad I_0 = \xi_0 \in [0, N(0)],$$
+
 whose drift is polynomial in $I_t$ with coefficients depending on the law $\mathcal L(I_t)$. It contains, for example,
+
 $$dI_t = \Bigl[\Bigl(\beta_0\mathbb E[I_t] + \bigl(\beta + \beta_1\tfrac{\mathbb E[I_t]}{N}\bigr) I_t\Bigr)(N - I_t) - (\mu + \gamma) I_t\Bigr]dt + I_t\, g\,(N - I_t)^{\eta}\,dW_t + \cdots,$$
+
 where infection pressure depends on the mean prevalence, and the classical stochastic SIS models with environmental noise in the transmission rate are special cases.
 
 **Theorem.** Assume, for $p = 1$:

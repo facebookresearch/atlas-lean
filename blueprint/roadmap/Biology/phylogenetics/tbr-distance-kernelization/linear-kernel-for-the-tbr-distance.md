@@ -3,7 +3,9 @@
 **Setting.** Let $T, T'$ be unrooted binary phylogenetic trees on a leaf set $X$. A tree bisection and reconnection (TBR) move deletes an edge and reconnects the two resulting subtrees by a new edge between (subdivisions of) any of their edges; $d_{\mathrm{TBR}}(T,T')$ is the minimum number of TBR moves turning $T$ into $T'$. An agreement forest is a partition of $X$ whose blocks induce vertex-disjoint subtrees in both $T$ and $T'$ with matching topologies; a maximum agreement forest (MAF) has the fewest blocks, $d_{\mathrm{MAF}}$, and $d_{\mathrm{TBR}}(T,T') = d_{\mathrm{MAF}}(T,T') - 1$. Computing $d_{\mathrm{TBR}}$ is NP-hard.
 
 **Theorem.** There is a set of ten polynomial-time reduction rules (the classical subtree and chain reductions, three parameter-reducing rules that delete a leaf known to be a singleton in some MAF, and three new rules) such that, if $T$ and $T'$ are irreducible under all of them and $d_{\mathrm{TBR}}(T,T') \ge 2$, then
+
 $$|X| \le 9\,d_{\mathrm{TBR}}(T,T') - 8.$$
+
 Each rule preserves $d_{\mathrm{TBR}}$ or lowers it by exactly one together with the removal of one leaf, so exhaustive application yields a kernel with at most $9k - 8$ leaves for the decision problem "$d_{\mathrm{TBR}}(T,T') \le k$?", and the same kernel applies to unrooted MAF. The bound is tight up to an additive term; earlier kernels had sizes $15k - 9$ and $11k - 9$.
 
 ## Expansion

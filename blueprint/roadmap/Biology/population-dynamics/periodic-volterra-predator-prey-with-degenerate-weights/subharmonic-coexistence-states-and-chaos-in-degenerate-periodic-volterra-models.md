@@ -1,7 +1,9 @@
 # Subharmonic coexistence states and chaos in degenerate periodic Volterra predator-prey models
 
 **Model.** Consider the non-autonomous Volterra predator-prey system
+
 $$u' = \lambda\alpha(t)\,u(1 - v), \qquad v' = \lambda\beta(t)\,v(-1 + u),$$
+
 with $\lambda > 0$ and $T$-periodic continuous weights $\alpha, \beta \ge 0$, $\int_0^T\alpha > 0$, $\int_0^T\beta > 0$, which are *degenerate*: $\operatorname{supp}\alpha \cap \operatorname{supp}\beta$ has measure zero, so prey growth and predation act in alternating seasons. Within a period, an $\alpha$-interval (resp. $\beta$-interval) is a maximal interval where $\beta \equiv 0$ (resp. $\alpha \equiv 0$); let $k$ and $\ell$ be their numbers, $\alpha_i, \beta_j$ the restrictions of the weights to them, and $A_i = \int_0^T\alpha_i$, $B_j = \int_0^T\beta_j$. An $nT$-periodic coexistence state is a positive $nT$-periodic solution other than $(1,1)$ (a subharmonic of order $n$).
 
 **Theorem (one season of each).** If $k = \ell = 1$ (one prey season followed by one predation season), then $(1,1)$ is the only $T$-periodic coexistence state, and there are exactly two non-trivial $2T$-periodic coexistence states for every $\lambda > 2/\sqrt{A_1B_1}$. If moreover $A_1 = B_1$, then for $\lambda > 2/A_1$ and every $n \ge 2$ there are at least $n$ (if $n$ is even) or $n-1$ (if $n$ is odd) non-trivial $nT$-periodic coexistence states with $u(0) = v(0)$.

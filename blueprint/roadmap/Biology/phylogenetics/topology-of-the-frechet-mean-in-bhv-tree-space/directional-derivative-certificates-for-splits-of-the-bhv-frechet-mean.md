@@ -6,7 +6,9 @@
 1. *(Optimality.)* For every direction $\sigma$ in the space of directions $\Sigma_T$ at $T$, $\nabla_\sigma F_P(T)=-\int d(T,T')\cos\angle_T(\sigma,T')\,dP(T')$, and $T$ is the Fréchet mean if and only if $\nabla_\sigma F_P(T)\ge 0$ for all $\sigma\in\Sigma_T$.
 2. *(Split certificate.)* Let $T$ lie in an orthant of codimension $0\le l<N-2$ with $E(T)\subset E(\mu)$ and $\mu$ not in that orthant, and let $s\in C(T)\setminus E(T)$ with direction $\sigma_s$ (growing the edge $s$). If $\nabla_{\sigma_s}F_P(T)<0$, then $s\in E(\mu)$. Equivalently, an angle $\angle_T(\mu,\sigma_s)\ge\pi/2$ forces $\nabla_{\sigma_s}F_P(T)\ge 0$.
 3. *(Sample criterion.)* For a finite sample $\mathcal{T}$ with Fréchet mean $\hat\mu$, a split $s$ belongs to $E(\hat\mu)$ whenever
+
 $$\sum_{T\in\mathcal{T}}\sqrt{\sum_{x\in E(T),\,x\notin C(s)}|x|_T^2}\;<\;\sum_{T\in\mathcal{T}}|s|_T ,$$
+
 i.e. the total length of $s$ across the sample exceeds the summed root-square lengths of the splits incompatible with it.
 4. *(Oscillation of Sturm's algorithm.)* If the sample mean lies in a stratum $\mathcal{O}$ of codimension $l\ge 1$ and some sample tree has a split in $C(\hat\mu)\setminus E(\hat\mu)$, then the iterates of Sturm's algorithm (move toward a uniformly drawn sample tree by step $1/(j+1)$) leave $\mathcal{O}$ infinitely often with probability $1$.
 

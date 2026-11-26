@@ -1,7 +1,9 @@
 # Quasi-best match graphs and their triple characterization
 
 **Definitions.** Let $(T, \sigma)$ be a rooted tree with leaf set $L$ and leaf coloring $\sigma \colon L \to S$ (genes colored by their species), with ancestor order $\preceq_T$ and last common ancestor $\mathrm{lca}_T$. A leaf $y$ is a *best match* of $x$ if $\sigma(x) \ne \sigma(y)$ and $\mathrm{lca}_T(x, y) \preceq_T \mathrm{lca}_T(x, y')$ for every leaf $y'$ with $\sigma(y') = \sigma(y)$. A *truncation map* $u_T \colon L \times S \to V(T)$ assigns to each leaf $x$ and color $s$ a vertex on the path from the root to $x$, with $u_T(x, \sigma(x)) = x$. A leaf $y$ is a *quasi-best match* of $x$ if $y$ is a best match of $x$ and $\mathrm{lca}_T(x, y) \preceq_T u_T(x, \sigma(y))$. The digraph on $L$ with an arc $xy$ for each quasi-best match is the *quasi-best match graph* (qBMG) $G(T, \sigma, u_T)$; with the trivial truncation map (always the root) it is the best match graph (BMG). For a properly colored digraph $(G, \sigma)$, write $N(x, s)$ for the out-neighbors of $x$ of color $s$, and define the *informative* and *forbidden* triples
+
 $$\mathscr{R}(G,\sigma) = \{ab|b' : \sigma(a) \ne \sigma(b) = \sigma(b'),\ ab \in E(G),\ ab' \notin E(G)\},$$
+
 $$\mathscr{F}(G,\sigma) = \{ab|b' : \sigma(a) \ne \sigma(b) = \sigma(b'),\ b \ne b',\ ab, ab' \in E(G)\}.$$
 
 **Theorem.**

@@ -5,7 +5,9 @@
 **Theorem.** Assume in addition that the flux cone $\ker N \cap \mathbb{R}^r_{\ge 0}$ is not contained in any coordinate hyperplane. Then some rate constant vector makes $G$ multistationary with respect to $\ker Z^t$ if and only if there is an orthant of $\mathbb{R}^s$ that both $\operatorname{im}(A^t)$ and $\ker(Z^t)$ meet nontrivially, i.e. there exist nonzero $\alpha \in \operatorname{im}(A^t)$ and $\sigma \in \ker(Z^t)$ with $\operatorname{sign}(\alpha) = \operatorname{sign}(\sigma)$.
 
 Given such $\alpha, \sigma$, explicit witnesses are
+
 $$x^1_i = \frac{\sigma_i}{e^{\alpha_i} - 1}\ (\alpha_i \neq 0), \qquad x^2 = x^1 \cdot e^{\alpha} \ (\text{coordinatewise}),$$
+
 with arbitrary positive $x^1_i = x^2_i$ where $\alpha_i = 0$, and a rate vector $k = \operatorname{diag}(\phi(x^1))^{-1} M \lambda$ obtained from a generator matrix $M$ of the flux cone, where $\phi(x)$ is the vector of reactant monomials.
 
 ## Depends on

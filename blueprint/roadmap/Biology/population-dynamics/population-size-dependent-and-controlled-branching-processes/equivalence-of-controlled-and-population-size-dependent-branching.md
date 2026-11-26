@@ -1,9 +1,13 @@
 # Equivalence of controlled and population-size-dependent branching processes
 
 **Two models.** A *population-size-dependent branching process* (PSDBP) is a Markov chain on $\mathbb N_0$ with
+
 $$Z_n=\sum_{i=1}^{Z_{n-1}}\xi_{n,i}(Z_{n-1}),$$
+
 where, given $Z_{n-1}=z$, the $\xi_{n,i}(z)$ are i.i.d. copies of an offspring law $\xi(z)$ that depends on the current size. A *controlled branching process* (CBP) is a Markov chain with
+
 $$\widetilde Z_n=\sum_{i=1}^{\widetilde\phi_n(\widetilde Z_{n-1})}\widetilde\xi_{n,i},$$
+
 where a random number $\widetilde\phi_n(z)\stackrel d=\widetilde\phi(z)$ of individuals (the control function) reproduce with a fixed offspring law $\widetilde\xi$. Both describe density-regulated populations, for example Beverton–Holt or Ricker models with carrying capacity $K$. Two processes started from the same $z_0\ge1$ are *equivalent* if they have the same law, which for Markov chains means the same one-step law from every attainable state.
 
 **Statement.**

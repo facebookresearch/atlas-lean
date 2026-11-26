@@ -1,11 +1,15 @@
 # Law of large numbers for the SI model with varying infectivity on a refining grid
 
 **Model.** Let $D_\varepsilon=[0,1)^d\cap\varepsilon\mathbb{Z}^d$ be a grid on the torus $\mathbb{T}^d=(0,1]^d$ with $\varepsilon^{-d}$ nodes, carrying about $N$ individuals per node. Susceptible (resp. infected) individuals jump to each of the $2d$ neighbouring nodes at rate $\nu_S/\varepsilon^2$ (resp. $\nu_I/\varepsilon^2$), independently. Each infected individual $j$ carries an i.i.d. random infectivity function $\lambda_j(\cdot)$ of its infection age, with mean $\bar\lambda(t)=\mathbb{E}\lambda_1(t)$ (and $\bar\lambda_0$ for the initially infected), uniformly bounded by $\lambda^*$. The force of infection at node $x$ is the total current infectivity $\mathfrak{F}^{N,\varepsilon}(t,x)$ of the infected individuals present there, and a susceptible at $y$ is infected at rate
+
 $$\overline{\Gamma}^{N,\varepsilon}(t,y)=\frac{1}{N^{1-\gamma}B^{N,\varepsilon}(t,y)^{\gamma}}\sum_{x}\beta_\varepsilon^{y,x}(t)\,\mathfrak{F}^{N,\varepsilon}(t,x),\qquad\gamma\in[0,1],$$
+
 where $B^{N,\varepsilon}(t,y)$ is the local population size and $\beta_\varepsilon^{y,x}(t)=\beta_t(y,V_x)$ comes from a transition kernel $\beta_t(y,dx)$ with $\beta_t(y,\mathbb{T}^d)\le\beta^*$ ($\gamma=0$: mass action, $\gamma=1$: frequency dependence; non-local contacts are allowed).
 
 **Statement.** Let $\bar S^{N,\varepsilon},\bar{\mathfrak{F}}^{N,\varepsilon},\bar I^{N,\varepsilon}$ be the node values divided by $N$, extended as step functions on $\mathbb{T}^d$, and assume the initial densities converge uniformly to continuous $\mathbf{s}(0,\cdot)\ge c>0$ and $\mathbf{i}(0,\cdot)$. If $(N,\varepsilon)\to(\infty,0)$ with
+
 $$N\varepsilon^d\to\infty,$$
+
 then for every $T>0$, $\sup_{0\le t\le T}\big(\|\bar S^{N,\varepsilon}(t)-\mathbf{s}(t)\|_\infty+\|\bar I^{N,\varepsilon}(t)-\mathbf{i}(t)\|_\infty\big)\to 0$ and $\|\bar{\mathfrak{F}}^{N,\varepsilon}(t)-\mathbf{f}(t)\|_\infty\to0$ in probability, where $(\mathbf{s},\mathbf{f},\mathbf{i})$ is the unique solution of
 $$\begin{aligned}
 \partial_t\mathbf{s}&=\nu_S\Delta\mathbf{s}-\mathbf{s}\,\overline{\Gamma},\qquad \partial_t\mathbf{i}=\nu_I\Delta\mathbf{i}+\mathbf{s}\,\overline{\Gamma},\\

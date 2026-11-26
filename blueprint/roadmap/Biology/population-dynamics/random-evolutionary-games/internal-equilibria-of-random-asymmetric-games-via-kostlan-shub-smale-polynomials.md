@@ -1,7 +1,9 @@
 # Number of internal equilibria of random asymmetric multiplayer games via Kostlan–Shub–Smale polynomials
 
 **Setting.** An infinite population plays $d$-player games with $n$ strategies at frequencies $x_1,\dots,x_n$. The focal player using strategy $i_0$ against the ordered group $(i_1,\dots,i_{d-1})$ receives payoff $\alpha^{i_0}_{i_1,\dots,i_{d-1}}$, so its fitness is $\pi_{i_0} = \sum \alpha^{i_0}_{i_1,\dots,i_{d-1}}x_{i_1}\cdots x_{i_{d-1}}$, and the replicator dynamics are $\dot x_i = x_i(\pi_i - \langle\pi\rangle)$. The game is *asymmetric* when payoffs depend on the order of co-players, so that the aggregated payoff differences $\beta^i_{k_1,\dots,k_{n-1}}$ (between strategy $i$ and strategy $n$, for co-player compositions $(k_1,\dots,k_{n-1})$) are independent. An internal equilibrium is a rest point with all $x_i \in (0,1)$; after the substitution $y_i = x_i/x_n$, internal equilibria are the positive common roots of
+
 $$\sum_{k_1+\dots+k_{n-1}\le d-1}\beta^i_{k_1,\dots,k_{n-1}}\binom{d-1}{k_1,\dots,k_{n-1}}y_1^{k_1}\cdots y_{n-1}^{k_{n-1}} = 0,\qquad i = 1,\dots,n-1.$$
+
 With i.i.d. Gaussian $\beta$'s these form exactly a Kostlan–Shub–Smale (elliptic) system of random polynomials of degree $d-1$ in $n-1$ variables. Let $\mathcal{N}_{d,n}$ be the number of internal equilibria.
 
 **Theorem.** Let the $\beta^i_{k}$ be i.i.d. standard Gaussian.

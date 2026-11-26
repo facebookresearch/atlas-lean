@@ -5,7 +5,9 @@
 **Rooting invariance.** If $v$ lies in the directed part of $N$ (reachable by directed edges), the set of directed paths from $v$, hence $\mu(v,N)$, is the same in every rooted partner. If $uv$ is an undirected edge, the directed paths starting with $u \to v$ are the same in every rooted partner that orients $uv$ as $(u,v)$, and such a partner always exists; this defines the directional $\mu$-vector $\mu_d(u,v)$. Each root component $T$ has a root $\mu$-vector $\mu_r(T)$ independent of where in $T$ the root is placed.
 
 **Edge-based $\mu$-representation.** For a complete $\mathcal L$-network $N$, let
+
 $$\mu_E(N) = \big\{\!\!\big\{\, \{(\mu(v), t_e)\} : e = (u,v) \text{ directed} \,\big\}\!\!\big\} + \big\{\!\!\big\{\, \{(\mu_d(u,v), \mathrm{tree}), (\mu_d(v,u), \mathrm{tree})\} : e = uv \text{ undirected} \,\big\}\!\!\big\} + \big\{\!\!\big\{\, \{(\mu_r(T), \mathrm{root})\} : T \text{ root component} \,\big\}\!\!\big\},$$
+
 a multiset of tagged vector sets ($t_e$ records whether a directed edge is a tree or hybrid edge), and $d_{\mu_E}(N_1,N_2) = |\mu_E(N_1)\,\triangle\,\mu_E(N_2)|$ the size of the multiset symmetric difference.
 
 **Theorem.** Let $N_1, N_2$ be strongly tree-child $\mathcal L$-networks. Then $\mu_E(N_1) = \mu_E(N_2)$ if and only if $N_1$ and $N_2$ are phylogenetically isomorphic (isomorphic after completion, preserving leaf labels and edge directions up to rootings). Consequently $d_{\mu_E}$ is a metric on the class of complete strongly tree-child $\mathcal L$-networks.

@@ -1,7 +1,9 @@
 # Layerwise-Wasserstein barycenters of root-system measures
 
 **Setting.** A plant root system is encoded as a finite measure $\mu$ on $\mathbb R^d \times \mathbb R_{\ge 0}$, the last coordinate being depth. Let $\mu^V$ be its depth (vertical) marginal, $F_\mu(y) = \mu^V([0, y])/|\mu|$ its depth distribution function, and $\tilde\mu = |\mu|^{-1}(\mathrm{id} \times F_\mu)_\#\mu$ the vertically rescaled measure on $\mathbb R^d \times [0, 1]$, disintegrated as $\tilde\mu(dx, dl) = \tilde\mu_l(dx)\,dl$ into horizontal layers. The *layerwise-Wasserstein distance* is
+
 $$d_{LW}^2(\mu, \nu) = W_2^2\Bigl(\frac{\mu^V}{|\mu^V|}, \frac{\nu^V}{|\nu^V|}\Bigr) + \int_0^1 W_2^2(\tilde\mu_l, \tilde\nu_l)\,dl,$$
+
 and a layerwise-Wasserstein barycenter of a distribution $\Omega$ on such measures minimizes $\mu \mapsto \int d_{LW}^2(\mu, \nu)\,d\Omega(\nu)$ over probability measures.
 
 **Theorem.**

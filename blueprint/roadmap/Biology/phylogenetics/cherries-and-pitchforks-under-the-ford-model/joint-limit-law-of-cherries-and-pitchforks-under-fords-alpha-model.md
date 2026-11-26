@@ -3,8 +3,11 @@
 **Model.** Fix $\alpha \in [0,1]$. Ford's alpha model grows a rooted binary phylogenetic tree one leaf at a time from a two-leaf tree $T_2$: given $T_m$, choose an edge with weight $1-\alpha$ for each pendant edge and $\alpha$ for each other edge (including the root edge), i.e. a pendant edge with probability $(1-\alpha)/(m-\alpha)$ and an internal edge with probability $\alpha/(m-\alpha)$, and attach the new leaf at its midpoint. The cases $\alpha = 0$, $\alpha = 1/2$ and $\alpha = 1$ are the Yule, uniform (PDA) and comb models. A *cherry* is a fringe subtree with exactly two leaves and a *pitchfork* a fringe subtree with exactly three leaves; let $C_n$ and $A_n$ be their numbers in $T_n$.
 
 **Theorem.** For every $\alpha \in [0,1]$,
+
 $$\frac{1}{n}(A_n, C_n) \xrightarrow{\text{a.s.}} (\nu,\mu) = \frac{1-\alpha}{2(3-2\alpha)}\,(1, 2),$$
+
 and
+
 $$\frac{(A_n, C_n) - n(\nu,\mu)}{\sqrt n} \xrightarrow{d} \mathcal{N}\big((0,0), S\big), \qquad S = \frac{1-\alpha}{(3-2\alpha)^2(5-4\alpha)}\begin{pmatrix} \dfrac{-24\alpha^3 + 96\alpha^2 - 135\alpha + 69}{4(7-4\alpha)} & -\dfrac{(2-\alpha)(1-2\alpha)}{2} \\[1ex] -\dfrac{(2-\alpha)(1-2\alpha)}{2} & 2-\alpha \end{pmatrix}.$$
 
 **Corollary.**

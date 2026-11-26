@@ -1,7 +1,9 @@
 # Extinction of the asymptomatic contact process at small asymptomatic infection rate
 
 The **asymptomatic contact process** on $\mathbb{Z}^d$ has site states $0$ (healthy), $1$ (infected, asymptomatic) and $2$ (infected, symptomatic). With $f_i(x,\xi)$ the fraction of the $2d$ nearest neighbours of $x$ in state $i$, the transitions at $x$ are
+
 $$0 \to 1 \text{ at rate } \lambda_1 f_1(x,\xi) + \lambda_2 f_2(x,\xi), \qquad 1 \to 2 \text{ at rate } \gamma, \qquad 1 \to 0 \text{ and } 2 \to 0 \text{ at rate } 1 .$$
+
 New infections are always asymptomatic. The process goes **extinct** if, from any initial configuration, the density of infected sites tends to $0$.
 
 **Theorem.** For every $\gamma < 1/(4d-1)$ there is $\lambda_1(\gamma) > 0$ such that the process goes extinct whenever $\lambda_1 < \lambda_1(\gamma)$, even in the limit $\lambda_2 = \infty$.

@@ -1,11 +1,15 @@
 # At most two limit cycles under seasonal constant-yield harvesting
 
 **Model.** A single species with density $x \ge 0$ grows at rate $g(x)$ and is harvested at a constant yield $h > 0$ only during the open season of each period $T$:
+
 $$\frac{dx}{dt} = \begin{cases} g(x), & t \in [kT, kT+T_1),\\ g(x) - h, & t \in [kT+T_1, (k+1)T),\end{cases}\qquad 0 < T_1 < T,\ k \in \mathbb{Z}.$$
+
 **Hypothesis (H).** $g \in C^1(\mathbb{R})$ and there are $0 < k_0 < K$ with $g(0) = g(K) = g'(k_0) = 0$, $g' > 0$ on $[0,k_0)$ and $g' < 0$ on $(k_0,\infty)$ (logistic-type growth with maximum $h^* = g(k_0)$). Periodic solutions of period $T$ are limit cycles of the time-periodic equation.
 
 **Theorem.** Under (H), the equation has at most two limit cycles counted with multiplicity. Moreover there is a threshold (the maximum sustainable yield)
+
 $$h_{\mathrm{MSY}} \in \Big(h^*,\ \frac{T}{T-T_1}\,h^*\Big)$$
+
 such that
 1. for $0 < h < h_{\mathrm{MSY}}$ there are exactly two limit cycles, the lower unstable and the upper stable;
 2. for $h = h_{\mathrm{MSY}}$ there is a unique, semi-stable limit cycle;

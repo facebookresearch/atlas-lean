@@ -3,11 +3,15 @@
 **Definitions.** Let $\mathcal T$ be an unrooted binary phylogenetic tree with $n$ labelled leaves (taxa). A *character* is a partition of the taxa into states; it is *convex* if the minimal subtrees spanning the different states are vertex-disjoint (the character evolves on $\mathcal T$ with no homoplasy). For $k\ge1$ let $g_k(\mathcal T)$ be the number of convex characters in which every state contains at least $k$ taxa. It is known that $g_1(\mathcal T)$ and $g_2(\mathcal T)$ do not depend on the topology: they are the $(2n-1)$-th and $(n-1)$-th Fibonacci numbers. A *caterpillar* $\mathrm{Cat}_n$ is a tree with exactly two cherries. A tree is *fully $k$-loaded* if it is obtained from a scaffold tree on $\lceil n/(k-1)\rceil$ taxa by replacing each leaf by a subtree on $k-1$ taxa, except possibly one leaf replaced by a subtree on $n\bmod(k-1)$ taxa.
 
 **Theorem (maximum).** For all $k\ge1$ and every tree $\mathcal T$ on $n$ taxa, $g_k(\mathcal T)\le g_k(\mathrm{Cat}_n)$. For $n>k\ge2$,
+
 $$g_k(\mathrm{Cat}_n)=g_k(\mathrm{Cat}_{n-1})+g_k(\mathrm{Cat}_{n-k}),$$
+
 so the maximum is $\Theta(\alpha^n)$ with $\alpha$ the positive real root of $x^k-x^{k-1}-1$.
 
 **Theorem (minimum).** For $n\ge k$, every fully $k$-loaded tree minimizes $g_k$, and for $n\ge k\ge2$
+
 $$\min_{\mathcal T}g_k(\mathcal T)=\Big\lfloor\frac{\phi^{\lceil n/(k-1)\rceil-1}}{\sqrt5}+\frac12\Big\rfloor,\qquad\phi=\tfrac{1+\sqrt5}2,$$
+
 the $(\lceil n/(k-1)\rceil-1)$-th Fibonacci number, which grows as $\Theta(\phi^{n/(k-1)})$.
 
 ## Expansion

@@ -7,10 +7,13 @@
 Let $\alpha(t)$ be the number of susceptible individuals at time $t$, and $p'(t)$ the probability that an infected individual escapes detection at time $t$. A testing policy is *symmetric* if the marginal state law is the same for all individuals and *converging* if $\mathbb{P}(U_i(t) = 1) = o(1/n)$ as $t \to \infty$.
 
 **Theorem (general approximation).** For a symmetric converging policy, under vanishing-covariance conditions on the infection indicators,
+
 $$\mathbb{E}[\alpha(t)] \approx n(1-p)\,(1-q)^{\,np\sum_{i=0}^{t-1}\left((1 + nq(1-p))^i\prod_{j=1}^{i} p'(j)\right)}.$$
 
 **Theorem (individual and Dorfman testing).** For the weak version of dynamic individual testing ($T$ uniformly chosen untested individuals per step), if $(1 - \frac{T}{n})(1 + nq(1-p)) < 1$ then
+
 $$\lim_{t\to\infty}\mathbb{E}[\alpha_{\mathrm{weak}}(t)] \approx n(1-p)\,(1-q)^{\frac{np}{1 - (1 - T/n)(1 + nq(1-p))}},$$
+
 a lower bound for the final expected number of never-infected individuals under the original individual-testing algorithm. For dynamic Dorfman-type pooling (pairs tested together, positives retested) the same holds with $T/n$ replaced by $T/(2n)$ under $(1 - \frac{T}{2n})(1 + nq(1-p)) < 1$.
 
 The stability conditions say that testing must remove infected individuals faster than the per-step reproduction factor $1 + nq(1-p)$ creates them; otherwise the epidemic is not brought under control.

@@ -1,7 +1,9 @@
 # Lyapunov-like functions and boundedness of spatially discretized reaction-diffusion systems
 
 **Setting.** Divide $[0,1]$ into $n$ compartments of width $h=1/n$. Two species with concentrations $\mathbf{u}=(u_1,\dots,u_n)$ and $\mathbf{v}=(v_1,\dots,v_n)$ react within each compartment and diffuse between neighbors:
+
 $$\dot{\mathbf{u}}=\gamma\,\mathbf{f}(\mathbf{u},\mathbf{v})+\frac{1}{h^2}D\mathbf{u},\qquad \dot{\mathbf{v}}=\gamma\,\mathbf{g}(\mathbf{u},\mathbf{v})+\frac{d}{h^2}D\mathbf{v},$$
+
 where $(\mathbf{f})_i=f(u_i,v_i)$ and $(\mathbf{g})_i=g(u_i,v_i)$, and $D$ is the tridiagonal second-difference matrix with homogeneous Neumann ends (rows $(-1,1)$, $(1,-2,1)$, $(1,-1)$). The constants are $\gamma,d>0$, the functions $f,g$ are $C^1$, $f(0,v)\ge0$ and $g(u,0)\ge0$, and the initial data are nonnegative. Write $\|(u,v)\|=u+v$ for the total concentration.
 
 **Lyapunov-like function (LLF).** A $C^2$ function $W:\mathbb{R}_{\ge0}^2\to\mathbb{R}_{\ge0}$ is an LLF for the reactions if:
@@ -29,7 +31,9 @@ where $(\mathbf{f})_i=f(u_i,v_i)$ and $(\mathbf{g})_i=g(u_i,v_i)$, and $D$ is th
 ## Expansion
 
 The usual Lyapunov argument fails because diffusion moves mass between compartments and can push an individual compartment uphill in $W$. Instead, fix a level $K\ge\max\{\underline{K},\underline{u},\underline{v}\}$ such that $\max_{\|(u,v)\|=L}W<\max_{\|(u,v)\|=K}W=:M^{(K)}$ for every $L<K$. Then track
+
 $$\mathcal{W}(t)=n_tM^{(K)}+\sum_{i\notin\Omega_K(t)}W(u_i,v_i),$$
+
 where $n_t$ counts the compartments inside $\Omega_K=\{\|(u,v)\|<K\}$. Convexity (P2) makes the diffusion contribution to $\frac{d}{dt}\sum W$ nonpositive up to boundary-flux terms. Properties (P4) and (P5) bound those terms through the slopes of the level sets. While some compartment exceeds a threshold $\underline{C}$, (P1) then makes $\mathcal{W}$ nonincreasing across every interval between crossings of $\partial\Omega_K$. As a result, $\sum_iW(u_i,v_i)\le n\max_{\|(u,v)\|=\underline{C}}W$ for all time, and (P3) turns this into a uniform bound $B$. The obstruction corollary works because a reaction field that points outward in $u$ with vanishing relative $v$-component cannot satisfy (P1) and (P4) together. A continuous reaction-diffusion system can blow up even when the discretized one stays bounded, so the discrete system must be analyzed on its own terms.
 
 ## Sources

@@ -1,13 +1,19 @@
 # Extinction threshold for the switching stochastic SIS model on a network
 
 **Model.** Consider $N$ nodes with infection probabilities $x=(x_1,\dots,x_N)\in[0,1]^N$, and an environment $s(t)$ that is an irreducible continuous-time Markov chain on $S=\{1,\dots,m\}$ with stationary distribution $(\rho_1,\dots,\rho_m)$, independent of the Brownian motions $W_i$. In regime $s$ the network has nonnegative adjacency matrix $A(s)=(a_{ij}(s))$ with largest eigenvalue $\lambda_1(s)$, infection rate $\beta(s)>0$ and recovery rate $\delta(s)>0$. With $b_i(x,s)=\sum_j a_{ij}(s)x_j$,
+
 $$dx_i=\big[\beta(s)\,b_i(x,s)(1-x_i)-\delta(s)x_i\big]dt+\sigma_i(x_i,s)\,b_i(x,s)(1-x_i)\,dW_i(t),$$
+
 where $\sigma_i(\cdot,s)$ is continuously differentiable, $\sigma_i(0,s)=0$ and $\sigma_i>0$ on $(0,1)$.
 
 **Statement.** If
+
 $$\Lambda:=\sum_{s=1}^m\rho_s\big(\beta(s)\lambda_1(s)-\delta(s)\big)<0,$$
+
 then for every initial condition, almost surely
+
 $$\limsup_{t\to\infty}\frac{\log\|x(t)\|}{t}\le\Lambda<0,$$
+
 so the infection dies out exponentially fast. The threshold involves only the regime-averaged spectral growth rate, with no extra condition on the noise intensities.
 
 ## Depends on

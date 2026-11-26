@@ -10,7 +10,9 @@ Disease-free equilibria are $(\rho N, (1-\rho)N, 0, 0, 0)$, $\rho \in (0,1)$ bei
 
 **Theorem.**
 1. The basic reproduction number at such an equilibrium is
+
 $$R_0 = \frac{\rho\beta_1 + (1-\rho)\beta_2}{\kappa},$$
+
 and the disease-free equilibrium is asymptotically stable if and only if $\rho\beta_1 + (1-\rho)\beta_2 < \kappa$.
 2. If $\beta_2 \ge \kappa$, the disease-free equilibrium is unstable for every $\rho$. If $\beta_2 < \min\{\beta_1, \kappa\}$, it is stable exactly when $\rho < (\kappa - \beta_2)/(\beta_1 - \beta_2)$; in particular, if $\beta_1 < \kappa$ it is stable for every $\rho \in (0,1)$.
 3. The normalized sensitivity indices of $R_0$ are ordered by $\rho$: $\Upsilon^{R_0}_\rho < \Upsilon^{R_0}_{\beta_1} < \Upsilon^{R_0}_{\beta_2}$ if $\rho < \frac{\beta_2}{\beta_1+\beta_2}$; $\Upsilon^{R_0}_\rho < \Upsilon^{R_0}_{\beta_2} < \Upsilon^{R_0}_{\beta_1}$ if $\frac{\beta_2}{\beta_1+\beta_2} < \rho < \frac{\beta_2}{\beta_1}$; and $\Upsilon^{R_0}_{\beta_2} < \Upsilon^{R_0}_\rho < \Upsilon^{R_0}_{\beta_1}$ if $\rho > \frac{\beta_2}{\beta_1}$.

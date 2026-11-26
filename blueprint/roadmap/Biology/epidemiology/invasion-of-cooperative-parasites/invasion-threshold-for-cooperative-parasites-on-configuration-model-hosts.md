@@ -5,7 +5,9 @@
 **Theorem.** Assume $d_N = \Theta(N^\beta)$ for some $0 < \beta < 1$ and $\rho_N v_N \to x \in [0,1]$.
 1. If $v_N = o(\sqrt{d_N})$, then $\mathbb{P}(E_u^{(N)}) \to 0$ for every $u \in (0,1]$.
 2. If $v_N \sim c\sqrt{d_N}$ with $c > 0$, then for every $u \in (0,1]$
+
 $$\lim_{N\to\infty}\mathbb{P}(E_u^{(N)}) = \pi(c,x),$$
+
 the survival probability of a Galton–Watson process with $\mathrm{Poisson}(c^2/2 + x)$ offspring; in particular invasion fails with high probability when $c^2/2 + x \le 1$.
 3. If $\sqrt{d_N} = o(v_N)$, then $\mathbb{P}(E_1^{(N)}) \to 1$: all hosts are eventually infected with high probability.
 

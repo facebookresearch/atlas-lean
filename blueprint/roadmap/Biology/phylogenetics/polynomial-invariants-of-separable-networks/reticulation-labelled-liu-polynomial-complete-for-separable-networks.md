@@ -3,7 +3,9 @@
 **Setting.** A rooted binary phylogenetic network $N$ on $X = \{x_1,\dots,x_n\}$ is a rooted DAG without parallel arcs whose leaves are bijectively labelled by $X$, whose root has out-degree $2$, and whose other inner nodes are *tree nodes* (in-degree $1$, out-degree $2$) or *reticulations* (in-degree $2$, out-degree $1$). It is *internally labelled* when its $r$ reticulations are bijectively labelled by $\lambda_1,\dots,\lambda_r$. More generally, an *internally multi-labelled network* (IMLN) allows several leaves with the same label and nodes of in- and out-degree $1$ (elementary nodes) carrying reticulation labels.
 
 Define $p : V(N) \to \mathbb{Z}[x_1,\dots,x_n,\lambda_1,\dots,\lambda_r,y]$ recursively:
+
 $$p(u) = \begin{cases} \varphi(u) & u \text{ a leaf with label } \varphi(u),\\ y + p(v_1)\,p(v_2) & u \text{ a tree node with children } v_1, v_2,\\ \lambda_i\,p(v) & u \text{ has a single child } v \text{ and label } \lambda_i, \end{cases}$$
+
 and $p(N) = p(\rho_N)$ at the root. On phylogenetic trees this is the Liu polynomial.
 
 A node $v$ is a *strong descendant* of $u$ if some directed path from $u$ to $v$ passes only through reticulation or elementary nodes. A tree node $u$ with children $v^{(1)}, v^{(2)}$ is *separable* if both children are tree nodes, or some tree node $u_1 \neq u$ is a strong ancestor of $v^{(1)}$ (or $v^{(2)}$) and either of no other strong descendant of $u$ or of one of the strong descendants of that child. The network is *separable* if all its tree nodes are separable.

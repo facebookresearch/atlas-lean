@@ -1,9 +1,13 @@
 # Projection and embedding tropical Wasserstein distances coincide
 
 **Setting.** The max-plus *tropical semiring* is $\overline{\mathbb{R}}=\mathbb{R}\cup\{-\infty\}$ with $a\boxplus b=\max\{a,b\}$ and $a\odot b=a+b$. The *tropical projective torus* $\mathbb{R}^{n}/\mathbb{R}\mathbf{1}$ identifies $\mathbf{x}\sim\mathbf{x}+a\mathbf{1}$ and carries the *tropical metric*
+
 $$d_{\mathrm{tr}}(\mathbf{x},\mathbf{y})=\max_i(x_i-y_i)-\min_i(x_i-y_i).$$
+
 Spaces of phylogenetic trees with $N$ leaves embed in $\mathbb{R}^{N(N-1)/2}/\mathbb{R}\mathbf{1}$ as the vectors of pairwise leaf distances satisfying the four-point condition, so distributions of trees on *different* leaf sets live in tori of different dimensions. A tropical matrix $M\in\overline{\mathbb{R}}^{m\times n}$ (each row with a real entry) acts by $(M\mathbf{x})_i=\max_j(M_{ij}+x_j)$. For $n>m$, $M$ is a **simple projection** if each column has at most one real entry, so that $(M\mathbf{x})_i=\max_{j\in J_i}(M_{ij}+x_j)$ over disjoint non-empty index sets $J_i$. For probability measures $\mu$ on the $m$-torus and $\nu$ on the $n$-torus with finite $p$-th moments, let $W_{\mathrm{tr},p}$ be the $p$-Wasserstein distance for $d_{\mathrm{tr}}$ and define
+
 $$W^-_{\mathrm{tr},p}(\mu,\nu)=\inf_{M}W_{\mathrm{tr},p}(\mu,M_\ast\nu),\qquad W^+_{\mathrm{tr},p}(\mu,\nu)=\inf\{W_{\mathrm{tr},p}(\alpha,\nu): M_\ast\alpha=\mu\},$$
+
 infima over simple projections $M$ (projection versus embedding).
 
 **Theorem.**

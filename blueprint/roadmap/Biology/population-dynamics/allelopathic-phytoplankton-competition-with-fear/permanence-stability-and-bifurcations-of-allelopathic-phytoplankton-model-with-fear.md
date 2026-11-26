@@ -1,7 +1,9 @@
 # Permanence, global stability and bifurcations of an allelopathic phytoplankton model with a fear effect
 
 **Model.** A toxin-producing phytoplankton species $x$ competes with a non-toxic species $y$. The non-toxic species' growth is reduced by fear of the toxic one (factor $1/(1+kx)$) and by allelopathic toxin release (term $mxy$). In nondimensional form, with all parameters positive,
+
 $$\frac{dx}{dt} = bx(1 - x - cy), \qquad \frac{dy}{dt} = y\Big(\frac{1}{1+kx} - y - ax - mxy\Big),$$
+
 where $c$ and $a$ are interspecific competition coefficients, $k$ the fear level and $m$ the toxin release rate. Boundary equilibria are $E_0 = (0,0)$, $E_1 = (1,0)$ and $E_2 = (0,1)$. Let $k^* = 1/a - 1$ (so $y$ can invade $E_1$ iff $k < k^*$, i.e. $\frac{1}{1+k} > a$) and note $x$ can invade $E_2$ iff $c < 1$.
 
 **Theorem.**

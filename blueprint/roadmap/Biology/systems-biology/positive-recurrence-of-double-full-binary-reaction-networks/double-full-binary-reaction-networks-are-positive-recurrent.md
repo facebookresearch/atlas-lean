@@ -1,7 +1,9 @@
 # Positive recurrence of double-full binary reaction networks
 
 **Setting.** A reaction network $(\mathcal S,\mathcal C,\mathcal R)$ has species $\mathcal S=\{S_1,\dots,S_d\}$, complexes $\mathcal C\subset\mathbb Z^d_{\ge0}$ and reactions $\mathcal R\subset\mathcal C\times\mathcal C$. Its stochastic mass-action model is the continuous-time Markov chain on $\mathbb Z^d_{\ge0}$ that jumps by $y'-y$ at rate
+
 $$\lambda_{y\to y'}(x)=\kappa_{y\to y'}\prod_{i=1}^d\frac{x_i!}{(x_i-y_i)!}\mathbf 1_{\{x_i\ge y_i\}}.$$
+
 The network is *binary* if every complex has total molecularity at most $2$. A *double complex* is one of the form $2S_i$, a *unary complex* one of the form $S_i$, and the network is *double-full* if $2S_i\in\mathcal C$ for every $i$.
 
 **Statement.** Let $(\mathcal S,\mathcal C,\mathcal R)$ be a binary, double-full network in which, for every double complex $2S_i$, the reaction graph contains a directed path from $2S_i$ to a unary complex or to the zero complex $\emptyset$. Then, for every choice of rate constants, every state in a closed irreducible component of the state space is positive recurrent, and from every initial state $x_0$ the time $\tau_{x_0}$ to enter the union of the closed irreducible components has $\mathbb E[\tau_{x_0}]<\infty$.

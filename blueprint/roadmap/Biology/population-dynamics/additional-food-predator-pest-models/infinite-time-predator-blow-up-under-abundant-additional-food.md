@@ -1,11 +1,15 @@
 # Infinite-time predator blow-up under abundant additional food
 
 **Model.** A pest population $x(t)$ with logistic growth (carrying capacity $\gamma$) is consumed by an introduced predator $y(t)$ with a Holling type II response, while the predator is also supplied with additional food of quantity $\xi>0$ and quality parameter $\alpha$ (handling-time ratio). In nondimensional form
+
 $$\frac{dx}{dt}=x\Big(1-\frac x\gamma\Big)-\frac{xy}{1+\alpha\xi+x},\qquad \frac{dy}{dt}=\frac{\beta xy}{1+\alpha\xi+x}+\frac{\beta\xi y}{1+\alpha\xi+x}-\delta y,$$
+
 with conversion efficiency $\beta>0$ and predator death rate $\delta>0$.
 
 **Theorem.** Assume the additional food is of high quality, $\beta-\delta\alpha>0$, and abundant, $\xi>\dfrac{\delta}{\beta-\delta\alpha}$. Then every solution with positive initial condition satisfies
+
 $$(x(t),y(t))\to(0,\infty)\qquad(t\to\infty),$$
+
 so the pest is driven to extinction only asymptotically (never in finite time) while the predator population grows without bound.
 
 ## Expansion

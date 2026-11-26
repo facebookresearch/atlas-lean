@@ -10,11 +10,15 @@
 Without virus the host settles at the rescaled density $\bar n_{1a} = (\lambda_1 - \mu_1)/C$.
 
 **Coexistence condition.** The large-$K$ limiting ODE has a positive coexistence equilibrium iff
+
 $$\big(mv - (r+v)\big)(1-q)D\,\bar n_{1a} > \mu_2(r+v),$$
+
 in which case it is unique with active coordinate $n^*_{1a} = \dfrac{\mu_2(r+v)}{(1-q)D(mv - (r+v))} < \bar n_{1a}$. This holds iff the multitype branching process approximating the initial phase is supercritical, with Malthusian growth rate $\tilde\lambda > 0$.
 
 **Extinction probability.** Starting from one virion, the branching approximation goes extinct with probability $s_2$, the smallest nonnegative root of
+
 $$(1-q)D\bar n_{1a}\frac{v}{r+v}x^m - \big((1-q)D\bar n_{1a} + \mu_2\big)x + \mu_2 + (1-q)D\bar n_{1a}\frac{r}{r+v} = 0,$$
+
 and $s_2 < 1$ exactly under the coexistence condition.
 
 **Theorem.** Suppose $\tilde\lambda \ne 0$, $N^K_{1a}(0) \to \bar n_{1a}$, and a single virion is introduced. Let $T_{S_\beta}$ be the hitting time of a $\beta$-neighborhood of the coexistence region and $T^2_0$ the extinction time of the virus-related types. For all small $\beta > 0$:

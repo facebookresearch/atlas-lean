@@ -6,9 +6,12 @@ A *discrete-time branching process with cooperation* has $Z_g=\sum_{i\le Z_{g-1}
 
 **Theorem.**
 1. *Invasion probability.* If $v_N=o(\sqrt{d_N})$ then $\mathbb P(E_u)\to0$. If $v_N\sim a\sqrt{d_N}$ with $0<a<\infty$ then
+
 $$\pi\big(a/\sqrt{2^n}\big)\le\liminf_{N}\mathbb P(E_u)\le\limsup_N\mathbb P(E_u)\le\pi(a).$$
+
 If $\sqrt{d_N}=o(v_N)$ then $\mathbb P(E_u)\to1$.
 2. *Invasion time.* If $v_N\sim a\sqrt{d_N}$ and $T=\inf\{g:\bar I_g=\#\text{hosts}\}$, then conditionally on $T<\infty$, with probability tending to one,
+
 $$\Big\lfloor\frac1{2r_N}\Big\rfloor\le T\le\Big\lceil\frac1{2r_N}\Big\rceil+O\big(\max(\log\log N,\ \varepsilon_N/r_N^2)\big),\qquad \varepsilon_N=N^{\frac{\beta/2-1}{n}+\delta}.$$
 
 ## Expansion

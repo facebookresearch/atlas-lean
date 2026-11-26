@@ -1,7 +1,9 @@
 # Block diagonalization and logarithms of centrosymmetric Markov matrices
 
 **Setting.** Let $J_m$ be the $m\times m$ exchange matrix (ones on the anti-diagonal) and $I_m$ the identity. A real $n\times n$ matrix $A$ is *centrosymmetric* (CS) if $J_nAJ_n=A$, i.e. $a_{ij}=a_{n+1-i,n+1-j}$. CS Markov matrices generalize the strand-symmetric nucleotide model to genetic alphabets of any size $n$ in which letters come in complementary pairs (for even $n$; one self-complementary letter for odd $n$), as in synthetic expanded DNA alphabets. Define
+
 $$S_n=\begin{pmatrix}I_{n/2}&J_{n/2}\\ J_{n/2}&-I_{n/2}\end{pmatrix}\ (n\text{ even}),\qquad S_n=\begin{pmatrix}I_{\lfloor n/2\rfloor}&0&J_{\lfloor n/2\rfloor}\\0&1&0\\ J_{\lfloor n/2\rfloor}&0&-I_{\lfloor n/2\rfloor}\end{pmatrix}\ (n\text{ odd}),$$
+
 and the generalized Fourier transform $F_n(A)=S_n^{-1}AS_n$.
 
 **Lemma (block diagonalization).** For every CS matrix $A$ of order $n\ge2$, $F_n(A)=\mathrm{diag}(A_1,A_2)$ with $A_1$ of size $\lceil n/2\rceil$; if $A$ is a Markov (respectively rate) matrix then so is $A_1$.
@@ -12,6 +14,7 @@ and the generalized Fourier transform $F_n(A)=S_n^{-1}AS_n$.
 2. If $A$ is invertible, it has infinitely many CS logarithms; if its principal logarithm $\mathrm{Log}(A)$ is defined, then $\mathrm{Log}(A)$ is CS.
 3. If $A$ is an invertible CS Markov matrix with Jordan decompositions $A_i=N_iD_iN_i^{-1}$, then $S_n\,\mathrm{diag}(N_1,N_2)\,\mathrm{diag}(D_1',D_2')\,\mathrm{diag}(N_1,N_2)^{-1}S_n^{-1}$, with $D_i'$ any logarithm of $D_i$, gives countably many (primary, CS) logarithms of $A$.
 4. **(Necessary condition.)** If $A=(a_{ij})$ is an embeddable CS Markov matrix with a CS Markov generator, then
+
 $$\sum_{j=1}^{n/2}\bigl(a_{jj}+a_{j,n-j+1}\bigr)>1\quad(n\text{ even}),\qquad \sum_{j=1}^{\lfloor n/2\rfloor}\bigl(a_{jj}+a_{j,n-j+1}\bigr)+a_{\lceil n/2\rceil,\lceil n/2\rceil}>1\quad(n\text{ odd}).$$
 
 ## Depends on

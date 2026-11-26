@@ -11,7 +11,9 @@ with positive parameters: prey birth rate $b_0$, carrying capacity $K$, death ra
 **Statements.**
 1. *(Well-posedness.)* Solutions with nonnegative initial data stay nonnegative; if $d_2<d_0$ and $d_3<d_1$, solutions with positive initial data are uniformly bounded.
 2. *(Susceptible-only equilibrium.)* $E_1=(S_1,0,0)$ with $S_1=K(1-a_0/b_0)$ exists when $b_0>a_0$ and is locally asymptotically stable when
+
 $$a_1>e_0K\Big(1-\frac{a_0}{b_0}\Big)\quad\text{and}\quad a_2>d_2\Big(K-\frac{a_0K}{b_0}\Big)^{r},$$
+
 i.e. when neither the infection nor the predator can invade the disease-free, predator-free prey population. The predator-free state $E_2$, the infection-free state $E_3$ and the coexistence state $E_4$ are stable under Routh-Hurwitz conditions on their Jacobians; the extinction state $E_0$ is non-hyperbolic because the aggregation term $S^r$ is not differentiable at $S=0$.
 3. *(Fear-driven bifurcations.)* At the coexistence equilibrium $E_4$, with characteristic polynomial $\lambda^3+\Psi_1\lambda^2+\Psi_2\lambda+\Psi_3$:
    - as $k_1$ or $k_2$ crosses a critical value $k^*$ with $\det J(E_4)=0$ and $\mathrm{tr}\,J(E_4)<0$, a saddle-node bifurcation occurs;

@@ -8,6 +8,7 @@ dI&=\Big[-b_2I+I\!\int_0^1\! f(x,S,I)\,\Pi_t(dx)+I\!\int_0^1\! x\,h(x,S,I)\,\Pi_
 where $f,h\ge0$ are Lipschitz incidence functions covering bilinear, Beddington-DeAngelis and Holling II forms ($h$ is the extra transmission by hidden infecteds). Let $\hat\mu$ be the stationary law of the disease-free equation $d\varphi=(a_1-b_1\varphi)dt+\sigma_1\varphi\,dB_1$ and $c_2=b_2+\sigma_2^2/2$.
 
 **Threshold.**
+
 $$\lambda:=-c_2+\int_0^\infty\!\!\int_0^1 f(x,y,0)\,\mu^*(dx)\,\hat\mu(dy)+\int_0^\infty\!\!\int_0^1 x\,h(x,y,0)\,\mu^*(dx)\,\hat\mu(dy).$$
 
 **Statements.**

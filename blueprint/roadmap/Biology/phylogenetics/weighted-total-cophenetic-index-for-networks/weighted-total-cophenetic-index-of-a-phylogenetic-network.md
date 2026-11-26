@@ -1,11 +1,15 @@
 # Weighted total cophenetic index of a phylogenetic network
 
 **Setting.** Let $N$ be a rooted phylogenetic network on $n$ leaves with root $\rho_N$. A vertex is *relevant* if it has more than one child after contracting the non-trivial blocks hanging below it, and $\mathring V_N$ is the set of relevant vertices. For a non-trivial block $B$ (a biconnected component with a cycle) with root $\rho_B$, let $\kappa_v$ be the number of vertices of $B$ below or equal to $v$ and define the block weight
+
 $$\omega(B) = \sum_{v \in V(B) \setminus \{\rho_B\}} \binom{\kappa_v}{2}.$$
+
 Fix $0 \le \epsilon \le 2$. Each vertex $v$ gets weight $\phi(v) = 1$ if $v$ roots no non-trivial block and $\phi(v) = \epsilon + \sum_{B : \rho_B = v} \omega(B)$ otherwise.
 
 **Definition.** The weighted partial cophenetic index and the weighted total cophenetic index are
+
 $$\Phi^*(N) = \sum_{v \in \mathring V_N \setminus \{\rho_N\}} \phi(v) \binom{|L_N(v)|}{2}, \qquad \Phi^{**}(N) = \Phi^*(N) + \phi(\rho_N)\binom{n}{2},$$
+
 where $L_N(v)$ is the set of leaves below $v$. On trees $\Phi^{**}(T) - \binom{n}{2}$ is the classical total cophenetic index.
 
 **Properties.**

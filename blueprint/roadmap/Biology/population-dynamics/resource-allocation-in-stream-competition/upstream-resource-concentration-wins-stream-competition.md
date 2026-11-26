@@ -1,7 +1,9 @@
 # Upstream resource concentration wins two-species stream competition
 
 **Model.** Two species with densities $\mathbf u, \mathbf v$ share a homogeneous flow stream network $(G, f, L)$, $L = dD + qQ$, with a common carrying capacity $k > 0$:
+
 $$\frac{du_i}{dt} = \sum_{j} (dD_{ij} + qQ_{ij})\,u_j + r_i u_i\Big(1 - \frac{u_i + v_i}{k}\Big), \qquad \frac{dv_i}{dt} = \sum_{j} (dD_{ij} + qQ_{ij})\,v_j + s_i v_i\Big(1 - \frac{u_i + v_i}{k}\Big),$$
+
 with nonnegative, nonzero initial data. The two species move identically and differ only in their resource (growth-rate) distributions $\mathbf r, \mathbf s > \mathbf 0$. The model has semitrivial equilibria $E_1 = (\mathbf u^*, \mathbf 0)$ and $E_2 = (\mathbf 0, \mathbf v^*)$.
 
 **Theorem.** Let $\sum_i r_i = \sum_i s_i = r > 0$ (equal total resources). Suppose $r_i = 0$ at every node with $f(i) > 0$ (species $\mathbf u$ puts all its resources at the upstream ends), and $s_{i_0} > 0$ at some node with $f(i_0) > 0$. Then $E_1 = (\mathbf u^*, \mathbf 0)$ is globally asymptotically stable: species $\mathbf u$ excludes species $\mathbf v$.

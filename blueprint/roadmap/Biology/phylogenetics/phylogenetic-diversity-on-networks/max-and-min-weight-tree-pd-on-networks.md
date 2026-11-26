@@ -9,7 +9,9 @@ Let $\mathcal{N}$ be a rooted binary phylogenetic network on taxa $X$ with nonne
 The optimization problems ask for the maximum score over all $S \subseteq X$ with $|S| = k$.
 
 **Theorem 5.3 (Network-PD envelope).** Let $P$ be the set of inheritance proportions with $p(e_1) + p(e_2) = 1$ at each reticulation with incoming arcs $e_1, e_2$. For every $S \subseteq X$,
+
 $$\max_{p\in P}\mathrm{Network\text{-}PD}_{\mathcal{N},p}(S) = \mathrm{MaxWeightTree\text{-}PD}_{\mathcal{N}}(S), \qquad \min_{p\in P}\mathrm{Network\text{-}PD}_{\mathcal{N},p}(S) = \mathrm{MinWeightTree\text{-}PD}_{\mathcal{N}}(S),$$
+
 and (Corollary 5.4) the same identities hold for the $k$-subset maximization problems.
 
 **Theorem 6.1.** Max-MaxWeightTree-PD is solvable in polynomial time on every phylogenetic network.

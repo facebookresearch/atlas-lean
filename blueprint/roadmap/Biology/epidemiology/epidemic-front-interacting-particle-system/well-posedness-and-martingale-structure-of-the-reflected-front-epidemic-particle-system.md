@@ -1,11 +1,15 @@
 # Well-posedness and martingale structure of the reflected-front epidemic particle system
 
 **Model.** Each of $n$ individuals carries a one-dimensional *shielding level* $X^{i,n}_t$ that lives above an advancing epidemic front $A^n_t$ and is reflected there. With independent Brownian motions $B^i$, local times $\ell^{i,n}$ of $X^{i,n}$ along the front, and infection times $\tau^i$ (after which $X^{i,n} = \dagger$),
+
 $$\begin{aligned} dX^{i,n}_t &= b(t, X^{i,n}_0, X^{i,n}_t)\,dt + \sigma(t, X^{i,n}_0, X^{i,n}_t)\,dB^i_t + \tfrac12\,d\ell^{i,n}_t, \qquad t < \tau^i,\\ A^n_t &= a_0 + \alpha\int_{t-\bar d}^t \varrho(t-s)\,I^n_s\,ds, \qquad I^n_t = \frac1n\sum_{j=1}^n \mathbf{1}\{\tau^j \le t\}. \end{aligned}$$
+
 The front is pushed forward by cumulative infections $I^n$ (infection kernel $\varrho$, infectious window $\bar d$). Contacts with the front are at-risk situations; infection happens at a rate per unit of local time given by an intrinsic transmissibility $\gamma(t, C^n_t)$ that depends on the *current contagiousness* $C^n_t = \int_{t-\bar d}^t \varrho(t-s)(I^n_s - I^n_{s-\bar d})\,ds$.
 
 **Theorem (well-posedness).** Under Lipschitz-type and growth assumptions on $b, \sigma, \gamma, \varrho$ and integrable initial conditions, there is an adapted solution of the system with values in $([A^n_t,\infty) \cup \{\dagger\})^n$ in which each $\ell^{i,n}$ increases only when $X^{i,n}_t = A^n_t$ and
+
 $$\mathbb{P}\big(\tau^i \le t \,\big|\, \hat{\mathcal{F}}^{i,n}_t\big) = 1 - \exp\left\{-\int_0^t \gamma\big(s, \hat C^{n,(-i)}_s\big)\,d\hat\ell^{i,n}_s\right\},$$
+
 where the hats refer to the auxiliary system in which particle $i$ is reflected forever without affecting the others. Almost surely no two individuals are infected at the same time.
 
 **Theorem (generalized elastic Brownian motion).** Conditionally on the other particles, each $X^{i,n}$ is a random, time-dependent bijective transformation of a process $Z^{i,n}$ on $\mathbb{R}_+$ solving $dZ = \tilde b\,dt + dB + \tfrac12 d\ell^0(Z)$, which is killed when its weighted local time at $0$ exceeds an independent exponential clock.

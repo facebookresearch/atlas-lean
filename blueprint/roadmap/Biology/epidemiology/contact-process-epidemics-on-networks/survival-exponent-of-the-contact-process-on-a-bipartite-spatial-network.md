@@ -5,11 +5,17 @@
 **Epidemic.** Infected vertices recover at rate $1$; an infected type-1 vertex infects each neighbor at rate $\lambda_1 = \lambda$ and an infected type-2 vertex at rate $\lambda_2 = \lambda^a$, $a > 0$. Let $\theta(\lambda)$ be the annealed probability of survival forever from the root alone.
 
 **Theorem.** Define the exponents of three strategies, star (S), bridge (B) and direct spreading (D),
+
 $$\mu_{\mathsf S} = \frac{1+a}{\gamma_1}, \quad \mu_{\mathsf B} = \frac{1 + \bar\gamma_2 a}{\gamma_1\gamma_2}, \quad \mu_{\mathsf D} = \frac{\gamma_2 + \bar\gamma_2 a}{\Delta}, \qquad \nu_{\mathsf S} = \frac{1+a}{\gamma_2}, \quad \nu_{\mathsf B} = \frac{\bar\gamma_1 + a}{\gamma_1\gamma_2}, \quad \nu_{\mathsf D} = \frac{\bar\gamma_1 + \gamma_1 a}{\Delta},$$
+
 $\mu_\star = \mu_{\mathsf S}\wedge\mu_{\mathsf B}\wedge\mu_{\mathsf D}$, $\nu_\star = \nu_{\mathsf S}\wedge\nu_{\mathsf B}\wedge\nu_{\mathsf D}$, and
+
 $$A_\star = \mu_\star \wedge \big(1 + \bar\gamma_2\nu_\star\big) \wedge \big(1 + a - \Delta_2\nu_\star + \bar\gamma_1\mu_\star\big).$$
+
 Then there is $C > 0$ such that for all small $\lambda$
+
 $$\Big(\log\tfrac1\lambda\Big)^{-C}\lambda^{A_\star} \le \theta(\lambda) \le \Big(\log\tfrac1\lambda\Big)^{C}\lambda^{A_\star}.$$
+
 In particular the critical value is $0$ throughout $\mathcal S$, and $A_\star$ is an explicit piecewise-rational function of $(\gamma_1,\gamma_2,a)$: for instance if $\gamma_2 \le \frac12$ then $(\mu_\star,\nu_\star) = (\mu_{\mathsf S}, \nu_{\mathsf B})$ for $a \le \bar\gamma_2/\Delta_2$ and $(\mu_{\mathsf S},\nu_{\mathsf S})$ otherwise, with analogous case splits when $\gamma_1 \le \frac12$ or both exceed $\frac12$.
 
 ## Expansion

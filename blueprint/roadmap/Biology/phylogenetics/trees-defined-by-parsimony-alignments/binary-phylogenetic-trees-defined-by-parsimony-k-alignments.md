@@ -1,7 +1,9 @@
 # Binary phylogenetic trees defined by their parsimony-k alignments
 
 **Setting.** Let $T$ be a binary phylogenetic $X$-tree with $|X| = n$ leaves. A *binary character* is a map $f \colon X \to \{a, b\}$; an extension of $f$ labels all vertices of $T$, and the parsimony score $l(f, T)$ is the minimum number of edges whose endpoints get different labels. The *$A_k$-alignment* of $T$ is
+
 $$A_k(T) = \{f \colon X \to \{a,b\} : l(f, T) = k\},$$
+
 the set of all binary characters requiring exactly $k$ state changes on $T$. $A_k(T)$ *defines* $T$ if $A_k(T) = A_k(\widetilde T)$ forces $T \cong \widetilde T$ for every binary phylogenetic $X$-tree $\widetilde T$.
 
 **Theorem.**

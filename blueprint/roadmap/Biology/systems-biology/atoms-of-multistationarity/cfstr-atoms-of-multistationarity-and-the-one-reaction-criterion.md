@@ -4,7 +4,9 @@
 
 **Theorem (one non-flow reaction).**
 1. A CFSTR whose only non-flow reaction is $a_1X_1 + \dots + a_sX_s \to b_1X_1 + \dots + b_sX_s$ admits multiple positive mass-action steady states if and only if
+
 $$\sum_{i:\ b_i > a_i} a_i > 1,$$
+
 and then it admits multiple nondegenerate ones.
 2. If the only non-flow reactions are the reversible pair $a \cdot X \rightleftarrows b \cdot X$, it is multistationary if and only if $\sum_{b_i > a_i} a_i > 1$ or $\sum_{a_i > b_i} b_i > 1$.
 

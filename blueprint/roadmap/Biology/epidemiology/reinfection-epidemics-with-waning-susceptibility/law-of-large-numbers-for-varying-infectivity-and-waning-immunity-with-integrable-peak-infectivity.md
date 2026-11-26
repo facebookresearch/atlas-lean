@@ -1,11 +1,15 @@
 # Law of large numbers for varying infectivity and waning immunity with integrable peak infectivity
 
 **Model.** In a population of size $N$, individual $k$ carries, after its $i$-th infection, an i.i.d. pair of random càdlàg functions $(\lambda_{k,i},\gamma_{k,i})$ of the time since that infection: $\lambda\ge0$ is its infectivity and $\gamma\in[0,1]$ its susceptibility (a different pair $(\lambda_{k,0},\gamma_{k,0})$ describes the initial state, e.g. infected with probability $\bar I(0)$, otherwise fully susceptible). Infectivity and susceptibility do not overlap: $\inf\{t:\gamma(t)>0\}\ge\sup\{t:\lambda(t)>0\}$ a.s. With $\mathcal{A}^N_k(t)$ the age of the current infection and $B^N_k(t)$ the number of infections so far, the normalized force of infection and susceptibility are
+
 $$\bar{\mathfrak{F}}^N(t)=\frac1N\sum_k\lambda_{k,B^N_k(t)}(\mathcal{A}^N_k(t)),\qquad \bar{\mathfrak{S}}^N(t)=\frac1N\sum_k\gamma_{k,B^N_k(t)}(\mathcal{A}^N_k(t)),$$
+
 and individual $k$ is (re)infected at rate $\gamma_{k,B^N_k(t)}(\mathcal{A}^N_k(t))\,\bar{\mathfrak{F}}^N(t)$.
 
 **Assumption.** Only an integrable peak infectivity is required: with $\lambda^*=\sup_t\lambda(t)$ and $\lambda^*_0=\sup_t\lambda_0(t)$,
+
 $$\mathbb{E}[\lambda^*]<\infty,\qquad\mathbb{E}[\lambda_0^*]<\infty$$
+
 (earlier proofs assumed a deterministic bound $\lambda\le\lambda^*$).
 
 **Statement.** As $N\to\infty$, $(\bar{\mathfrak{S}}^N,\bar{\mathfrak{F}}^N)$ converges in probability, locally uniformly in time, to the unique solution of

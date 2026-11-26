@@ -6,7 +6,9 @@
 1. *(Duality.)* The phase spaces of a disjunctive network $f$ and the conjunctive network $g$ with the same variable sets ($\vee$ replaced by $\wedge$) are isomorphic directed graphs.
 2. *(Matrix powers.)* $A^s$ is the adjacency matrix of the dependency graph of $f^s$. If the loop number of $A$ is $c$ and its exponent is $k$ (the least $k$ with $A^{k+c} = A^k$), then $h(f) = k$ and $p(f)$ divides $c$.
 3. *(Strongly connected case.)* Suppose the dependency graph is strongly connected with loop number $c$. If $c = 1$, the only limit cycles are the two fixed points $(0, \dots, 0)$ and $(1, \dots, 1)$. If $c > 1$ and $m \mid c$ with $m = \prod_{i=1}^r p_i^{k_i}$ (distinct primes, $k_i \ge 1$), then
+
 $$|A(m)| = \sum_{i_1 = 0}^{1} \cdots \sum_{i_r = 0}^{1} (-1)^{i_1 + \dots + i_r}\, 2^{p_1^{k_1 - i_1} \cdots p_r^{k_r - i_r}},$$
+
 and the number of limit cycles of length $m$ is $|A(m)|/m$.
 4. *(Height bounds.)* In the strongly connected case, $h(f) \le (n-1)^2 + 1$ if $c = 1$ and $h(f) \le \max\{n - 1,\ \frac{n^2-1}{2} + \frac{n^2}{c} - 3n + 2c\}$ if $c > 1$; for any conjunctive network on $n$ nodes, $h(f) \le 2n^2 - 3n + 2$.
 5. *(Typical behavior.)* The fraction of the $2^{n^2}$ conjunctive networks on $n$ nodes whose dependency graph is strongly connected with loop number $1$ tends to $1$, so almost all conjunctive networks have only the two fixed points as limit cycles.

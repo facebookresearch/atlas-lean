@@ -1,14 +1,20 @@
 # Inmate population model with sentence-length structure and SIS prevalence
 
 **Model.** Prisoners enter at rate $\lambda_t$ with initial sentence lengths drawn from a probability measure $q_t$ on $\mathbb{R}_+$ and leave either when their remaining sentence $r$ reaches $0$ or by death/removal at rate $d_t$. The density $\rho^r_t$ of prisoners by remaining sentence satisfies the McKendrick transport equation
+
 $$\frac{\partial\rho^r_t}{\partial t} + d_t\rho^r_t = \frac{\partial\rho^r_t}{\partial r} + \lambda_t q'_t(r),$$
+
 and the population $N_t = \int_0^\infty \rho^r_t\,dr$ obeys $\dot N_t = \lambda_t - \rho^0_t - d_tN_t$, with $\rho^0_t$ the release rate. Write $T_q$ for the mean of $q$, $\hat q(d) = \int e^{-d\alpha}q(d\alpha)$ for its Laplace transform, and $\mu^{\mathrm{in}} = \lambda/N$, $\mu^{\mathrm{out}} = \rho^0/N$ for the relative entry and exit rates.
 
 **Theorem (time-independent parameters).**
 1. *(Equilibrium density.)* Every finite-mass solution converges, and the limiting (unique finite-mass stationary) density is
+
 $$\rho^r = \lambda\int_{(r,\infty)} e^{-d(\alpha - r)}\,q(d\alpha) \quad \text{for a.e. } r \ge 0.$$
+
 2. *(Equilibrium size and turnover.)* $\mu^{\mathrm{out}} = \mu^{\mathrm{in}} - d$, and for $d > 0$
+
 $$N = \lambda\,\frac{1 - \hat q(d)}{d}, \qquad \mu^{\mathrm{in}} = \frac{d}{1 - \hat q(d)}, \qquad \mu^{\mathrm{out}} = \mu^{\mathrm{in}}\,\hat q(d);$$
+
 these are right-continuous at $d = 0$, where $N = \lambda T_q$ and $\mu^{\mathrm{in}} = \mu^{\mathrm{out}} = 1/T_q$.
 3. *(Remaining sentence.)* For $d > 0$ the mean remaining sentence of the current inmates is $R_\rho = \frac{T_q}{1 - \hat q(d)} - \frac1d$.
 4. *(Two sentence classes.)* With short and long sentence classes entering in proportions $p^1, p^2$ and common removal rate $d > 0$, $1/\mu^{\mathrm{in}} = p^1/\mu^{\mathrm{in},1} + p^2/\mu^{\mathrm{in},2}$; the equilibrium share $\pi^1$ of short-sentence inmates satisfies $\pi^1 \le p^1$, and $\mu^{\mathrm{in},2} \le \mu^{\mathrm{in}} \le \mu^{\mathrm{in},1}$.

@@ -10,6 +10,7 @@ $\rho = \infty$ gives SIS (the contact process) and $\rho = 0$ gives SIR. Let $T
 **Theorem.** Fix $\lambda, \rho > 0$, $\delta \in (0,1)$ and $\tau > 2$.
 1. Starting from all vertices infected, $\mathbb{P}\big(T \ge \exp(n^{1-\delta})\big) \to 1$ as $n \to \infty$, under the joint law of the graph and the epidemic.
 2. There is $p = p(\lambda, \rho, \tau, \delta) > 0$ such that, if an arbitrary initial configuration (any law $\mu_n$ on $\{S,I,R\}^V$) is modified by infecting one uniformly chosen vertex, then for all large $n$
+
 $$\inf_{\mu_n} \mathbb{P}^*_{\mu_n}\big(T \ge \exp(n^{1-\delta})\big) \ge p.$$
 
 So, as for SIS (Chatterjee–Durrett), the critical infection rate separating polynomial from stretched-exponential survival is $0$ for every waning rate $\rho > 0$, contradicting mean-field predictions of a positive SIRS threshold on scale-free networks.

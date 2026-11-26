@@ -10,6 +10,7 @@
 3. for $n \ge 5$, $R(T_1,T_2,T_3) \le 2n - 5$.
 
 **Theorem (many trees).** For a set $\mathcal{T}$ of $m$ trees on $n$ taxa,
+
 $$R(\mathcal{T}) \le (m-1)(n-2) - \begin{cases} \Theta(m\sqrt m), & m \le n(n-1) + \tfrac16,\\ \Theta(n^3), & \text{otherwise.} \end{cases}$$
 
 ## Expansion

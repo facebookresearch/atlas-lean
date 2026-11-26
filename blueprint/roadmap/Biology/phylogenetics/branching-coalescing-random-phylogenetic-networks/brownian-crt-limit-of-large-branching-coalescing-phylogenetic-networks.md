@@ -3,9 +3,13 @@
 **Setting.** Let $\mathscr G$ be the random phylogenetic network generated from one lineage in which lineages branch at rate $1$, die at rate $\alpha$, change to a new color at rate $\mu$, and pairs of lineages of the same color coalesce (hybridize) at rate $2\beta$. View $\mathscr G$ as a rooted metric measure space: the union of lineage segments with the shortest-path metric $d_{\mathscr G}$ and Lebesgue (length) measure $\lambda_{\mathscr G}$; let $\mathscr G_n$ be $\mathscr G$ conditioned to have $n$ colors, and $|\mathscr G_n|=\lambda_{\mathscr G_n}(\mathscr G_n)$ its total branch length. Let $M$ be the number of colors created by one color, and $\zeta>0$ the exponential tilt with $\mathbb E[M\zeta^M]=\mathbb E[\zeta^M]$.
 
 **Theorem.** As $n\to\infty$,
+
 $$\Big(\mathscr G_n,\ r_n,\ \tfrac{C}{\sqrt n}\,d_{\mathscr G_n},\ \tfrac1{|\mathscr G_n|}\lambda_{\mathscr G_n}\Big)\ \xrightarrow{d}\ \mathscr C$$
+
 in the rooted Gromov–Hausdorff–Prokhorov topology, where $\mathscr C$ is Aldous' Brownian continuum random tree and
+
 $$C=\frac{\sqrt{\mathbb E[\zeta^M]\big(\mathbb E[M^2\zeta^M]-\mathbb E[\zeta^M]\big)}}{2\,\mathbb E\big[\sum_{t\in\mathcal M}t\,\zeta^M\big]},$$
+
 with $\mathcal M$ the set of mutation (new-color) times of the founding color. Moreover the uniformly rooted $\mathscr G_n$ has an explicit local weak limit.
 
 ## Depends on

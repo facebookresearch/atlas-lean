@@ -3,11 +3,17 @@
 **Setting.** Use the multivariate Hawkes process of the companion entry: type-$i$ intensity $\lambda^0_i(t)+\sum_j\int_{[0,t)}\phi^j_i(t-u)N_j(\mathrm du)$, with $\widetilde N^{j'}$ the descendants of one type-$j'$ case born at time $0$ and $\widetilde N^0=N$. Let $M^{j'}_l(t)=\mathbb E\,\widetilde N^{j'}_l(t)$, $\Phi^{j'}_l(t)=\int_0^t\phi^{j'}_l(s)\,\mathrm ds$ and $\Lambda^0_l(t)=\int_0^t\lambda^0_l(s)\,\mathrm ds$.
 
 **Statement.** For $1\le j',l\le d$ the mean functions solve the linear Volterra (renewal) system
+
 $$M^{j'}_l(t)=\Phi^{j'}_l(t)+\sum_{j=1}^d\int_0^tM^j_l(t-s)\,\phi^{j'}_j(s)\,\mathrm ds,$$
+
 and the mean of the full epidemic is
+
 $$\mathbb E N_l(t)=\Lambda^0_l(t)+\sum_{j=1}^d\int_0^tM^j_l(t-s)\,\lambda^0_j(s)\,\mathrm ds.$$
+
 The solution, finite or infinite, is the generation series: $M^{j'}_l$ has density
+
 $$m^{j'}_l(t)=\sum_{r\ge1}\ \sum_{k_1,\dots,k_{r-1}}\bigl(\phi^{j'}_{k_1}*\phi^{k_1}_{k_2}*\cdots*\phi^{k_{r-1}}_{l}\bigr)(t),$$
+
 where the $r$-th term is the expected rate of type-$l$ cases in generation $r$ of the outbreak started by one type-$j'$ case. In particular, the expected final size of an outbreak started by one type-$j'$ case is $\sum_{r\ge1}(G^r)_{j'l}$ with $G_{jk}=\int_0^\infty\phi^j_k$, finite for every pair of types when the spectral radius of the next-generation matrix $G$ is below $1$.
 
 ## Depends on

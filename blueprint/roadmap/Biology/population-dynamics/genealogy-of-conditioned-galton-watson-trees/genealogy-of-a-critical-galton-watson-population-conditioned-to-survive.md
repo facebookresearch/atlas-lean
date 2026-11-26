@@ -5,10 +5,14 @@
 **Theorem.** As $n \to \infty$, for fixed $0 < t < 1$ and $x \ge 0$:
 1. $\mathbb{P}(\tilde Z^r_{nt}/n \ge x) \to \exp\!\big(-\tfrac{2x}{t\sigma^2}\big)$ and $\mathbb{P}(\tilde Z^l_{nt}/n \ge x) \to \exp\!\big(-\tfrac{2x}{t(1-t)\sigma^2}\big)$, and the two parts are asymptotically independent.
 2. *(Spitzer–Lamperti–Ney limit.)* Conditionally on $Z_n > 0$,
+
 $$\frac{Z_{\lfloor nt \rfloor}}{n} \Rightarrow U_t + V_t,$$
+
 with $U_t, V_t$ independent exponentials of rates $2/(t(1-t)\sigma^2)$ and $2/(t\sigma^2)$.
 3. *(Most recent common ancestor.)* Let $G_{nt}$ be the generation of the most recent common ancestor of all individuals at generation $\lfloor nt\rfloor$. For $0 \le x \le t$,
+
 $$\lim_{n\to\infty}\mathbb{P}\Big(\frac{G_{nt}}{n} \le x \,\Big|\, Z_n > 0\Big) = 1 - \frac{(t-x)^2}{t^2(1-x)}.$$
+
 4. *(Successive branch points.)* Rescaled by $nt$, the depths of the successive branch points of the right subtree along the spine converge to nested uniforms $U_1 > U_2 > \cdots$ ($U_k$ uniform on $[0, U_{k-1}]$), and each branch point carries asymptotically exactly one surviving side lineage; for the left subtree the same holds after the change of variable $g_t(x) = x/(tx + 1 - t)$.
 
 At $t = 1$ the right part is the whole population and part 1 is Yaglom's exponential limit with mean $\sigma^2/2$.

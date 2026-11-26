@@ -1,7 +1,9 @@
 # Trees with identical A_k-alignments are linked by k-problematic NNI moves
 
 **Setting.** Let $T, \widetilde T$ be binary phylogenetic $X$-trees and $k \ge 2$, with $A_k(T)$ the set of binary characters of parsimony score exactly $k$ on $T$. Call a nearest-neighbour interchange from $T$ to $\widetilde T$ across an inner edge with pending subtrees of sizes $n_1,\ldots,n_4$ a *$k$-problematic move* if
+
 $$s(T,\widetilde T) = \sum_{i=1}^4 \Big\lfloor \frac{n_i-1}{2}\Big\rfloor < k-2,$$
+
 which is exactly the condition under which an NNI preserves the $A_k$-alignment.
 
 **Theorem.** $A_k(T) = A_k(\widetilde T)$ if and only if $\widetilde T$ can be obtained from $T$ (up to isomorphism) by a finite series of $k$-problematic moves.
