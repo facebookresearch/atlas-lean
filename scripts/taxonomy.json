@@ -13135,6 +13135,7 @@
   "MathlibExt/NumberTheory/ExistsUniqueRadicalExpansionCoeffs": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/ExponentialPascalMatrix": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Exponential Riordan arrays of Pascal type"},
   "MathlibExt/NumberTheory/ExtendedContinuant": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
+  "MathlibExt/NumberTheory/ExtendedContinuantExtendedContinuantBennettNat": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtendedContinuantExtendedContinuantEuler": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtendedContinuantOddSilentTerms": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},
   "MathlibExt/NumberTheory/ExtendedContinuantSilentTermsTableOneModSix": {"to": "NumberTheory/continued-fractions-expansions", "title": "Extended continuants and bi-infinite continued fractions"},

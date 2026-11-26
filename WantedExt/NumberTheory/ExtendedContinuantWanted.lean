@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantEuler
 public import MathlibExt.NumberTheory.ExtendedContinuantOddSilentTerms
 public import MathlibExt.NumberTheory.ExtendedContinuantSilentTermsTableOneModSix
 public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantBennett
+public import MathlibExt.NumberTheory.ExtendedContinuantExtendedContinuantBennettNat
 
 /-!
 # Extended continuants and bi-infinite periodic continued fractions
@@ -45,23 +46,6 @@ The same applies to `MetaMathlibExt.oddSilent_terms`, which is in
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Bennett's continuant identity for nonnegative indices.** Let $x : \mathbb{Z} \to \mathbb{Z}$
-be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
-index $b$. For all nonnegative integers $k$, $\ell$, $m$, $n$,
-$$(-1)^{k+\ell} K_{n-k-2}(x)_k K_{m-\ell-2}(x)_\ell +
-(-1)^{\ell+m} K_{n-\ell-2}(x)_\ell K_{k-m-2}(x)_m +
-(-1)^{m+k} K_{n-m-2}(x)_m K_{\ell-k-2}(x)_k = 0.$$
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 2 (after G. T. Bennett, 1939). -/
-public theorem_wanted extendedContinuant_bennett_nat (x : ℤ → ℤ) (k ℓ m n : ℕ) :
-    ((k + ℓ : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - k - 2) k *
-        extendedContinuant x ((m : ℤ) - ℓ - 2) ℓ +
-      ((ℓ + m : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - ℓ - 2) ℓ *
-        extendedContinuant x ((k : ℤ) - m - 2) m +
-      ((m + k : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - m - 2) m *
-        extendedContinuant x ((ℓ : ℤ) - k - 2) k = 0
 
 /-- **Terms of a $1$-silent sequence.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
 integer sequences and write $K_a(x)_b$ for the extended continuant of order $a$ with start index
