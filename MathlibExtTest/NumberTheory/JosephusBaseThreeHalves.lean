@@ -32,3 +32,20 @@ example : (baseThreeHalvesDigits 2).length = (baseThreeHalvesDigits 1).length + 
 example : (baseThreeHalvesDigits 13).length = (baseThreeHalvesDigits 2).length + 4 := by
   simpa only [Nat.reduceAdd, josephusThreeFixedPoint_one, josephusThreeFixedPoint_two,
     josephusThreeGap_one, Nat.add_assoc] using josephusThreeFixedPoint_digits_length 1
+
+-- Between the fixed points 20 and 46, only 30 is pure high extremal.
+example : baseThreeHalvesDigits 46 = [2, 0] ++ baseThreeHalvesDigits 20 := by
+  have h20 : josephusThreeFixedPoint 3 = 20 := by
+    have hp : 1 ≤ 20 ∧ josephus 3 20 = 20 := by decide
+    have hc : Nat.count (fun n => 1 ≤ n ∧ josephus 3 n = n) 20 = 3 := by decide
+    rw [← hc]
+    exact Nat.nth_count hp
+  have h46 : josephusThreeFixedPoint 4 = 46 := by
+    have hp : 1 ≤ 46 ∧ josephus 3 46 = 46 := by decide +kernel
+    have hc : Nat.count (fun n => 1 ≤ n ∧ josephus 3 n = n) 46 = 4 := by decide
+    rw [← hc]
+    exact Nat.nth_count hp
+  have hgap : josephusThreeGap 3 = 1 := by
+    simp only [josephusThreeGap, Nat.reduceAdd, h20, h46]
+    decide
+  simpa only [Nat.reduceAdd, h20, h46] using josephusThreeFixedPoint_digits_of_gap_one 3 hgap
