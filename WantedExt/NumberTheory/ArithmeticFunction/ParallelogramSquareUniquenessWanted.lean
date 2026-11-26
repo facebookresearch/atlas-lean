@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniqueness
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativeSixKAddOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeThreeModFour
+public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeOneModFour
 
 /-!
 # Parallelogram uniqueness of square numbers for multiplicative functions
@@ -143,25 +144,6 @@ public theorem_wanted parallelogram_multiplicative_prime_pow (f : ArithmeticFunc
     (hind : ∀ q s : ℕ, q.Prime → q < p → 1 ≤ s → f (q ^ s) = (q : ℂ) ^ (2 * s))
     (hp2 : p ≠ 2) (hfp : f p = (p : ℂ) ^ 2) :
     ∀ r : ℕ, 2 ≤ r → f (p ^ r) = (p : ℂ) ^ (2 * r)
-
-/-- **Parallelogram induction: primes congruent to 1 mod 4.**
-Let $f$ be a complex-valued multiplicative arithmetic function
-(so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
-$m > n \ge 1$.
-Let $p$ be a prime such that $f(q^s) = q^{2s}$ for every prime $q < p$ and every integer
-$s \ge 1$.
-If $p \equiv 1 \pmod 4$, then $f(p) = p^2$.
-
-Source: Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative
-Functions*, INTEGERS 24 (2024), Article A108, Theorem 5 (`integers-2024-A108-thm-5`). -/
-public theorem_wanted parallelogram_multiplicative_prime_one_mod_four (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hpar : ∀ m n : ℕ, 0 < n → n < m →
-      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
-    {p : ℕ} (hp : p.Prime)
-    (hind : ∀ q s : ℕ, q.Prime → q < p → 1 ≤ s → f (q ^ s) = (q : ℂ) ^ (2 * s))
-    (hp4 : p % 4 = 1) :
-    f p = (p : ℂ) ^ 2
 
 end
 
