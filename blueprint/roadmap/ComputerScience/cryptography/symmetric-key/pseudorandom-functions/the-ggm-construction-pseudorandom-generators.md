@@ -6,10 +6,10 @@ $$\mathrm{Adv}^{\mathrm{PRF}}[A, F] = \ell\, Q \cdot \mathrm{Adv}^{\mathrm{PRG}}
 
 for the distinguisher $B$ built from $A$ by the hybrid construction. $B$ draws a level $i < \ell$ and a query index $j < Q$ uniformly and runs $A$ once, answering its queries from a lazily filled table of pairs of labels for the children of the nodes at level $i$ of the evaluation tree: a node that enters the table at query $m$ gets a uniform pair if $m < j$, the challenge pair if $m = j$, and $G(s)$ for a uniform seed $s$ if $m > j$.
 
-Adversaries are measured here by their number of queries alone. The source's requirement that $B$ have about the same running time as $A$ (an "elementary wrapper around $A$") is expressed by the explicit construction of $B$: it runs $A$ once, keeps a table of at most $Q$ entries and evaluates $G$ at most $\ell$ times per query of $A$.
+$B$ is explicit and is an elementary wrapper around $A$ in the sense of Boneh and Shoup (Definition 2.12): it runs $A$ once, keeps at most $Q$ table entries and evaluates $G$ at most $\ell - i$ times per query. For $Q = 0$ the adversary makes no queries and its advantage is $0$; the assumption $Q \ge 1$ only makes the coin set of $B$ nonempty.
 
 ## Sources
 
-- D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017, [Section 4.6, Theorem 4.10](https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_4.pdf)
+- D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017, [Section 4.6, Theorem 4.10, and Section 2.4.3, Definition 2.12](https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_4.pdf)
 - Original construction: O. Goldreich, S. Goldwasser and S. Micali, "How to construct random functions", *Journal of the ACM* 33(4):792–807, 1986. The statement above follows Boneh and Shoup, Theorem 4.10; the attribution follows Vadhan, *Pseudorandomness*, chapter notes to Chapter 7.
 - S. Vadhan, *Pseudorandomness*, Foundations and Trends in Theoretical Computer Science 7(1–3), 2012, chapter notes to Chapter 7
