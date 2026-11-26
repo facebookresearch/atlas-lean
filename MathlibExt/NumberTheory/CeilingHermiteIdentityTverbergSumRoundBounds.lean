@@ -20,8 +20,12 @@ import Mathlib.Algebra.Ring.Parity
 # Sharp bounds for Tverberg's sum with rounding half up
 
 Fixing two indices groups the subsets into blocks of four. Each block contributes a signed
-second difference of the rounding function, bounded by one in absolute value. For constant
-coordinates the signed contribution of each block is constant, giving the sharpness cases.
+second difference of the rounding function, bounded by one in absolute value. When all
+coordinates are `r > 0`, `m = 2r`, and `k` is either `0` or `r`, all blocks have the same signed
+contribution for that `k`.
+
+The private helpers `split_univ`, `secondDiff` and `secondDiff_bounds` are copied verbatim from
+the private helpers of the same names in `MathlibExt.NumberTheory.InclExclLikeSumBounds`.
 
 Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
 *Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
