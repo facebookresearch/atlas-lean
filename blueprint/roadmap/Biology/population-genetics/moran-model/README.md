@@ -30,4 +30,4 @@
 - [Finite neutral Moran sampling duality on the pair-coalescence clock](finite-moran-forward-backward-sampling-duality.md)
 
 - [Moran and Cannings models: generator limits and effective size](moran-and-cannings-models-generator-limits-and-e.md)
-- [Fixation probability on isothermal graphs](isothermal-theorem-for-evolutionary-graphs.md)
+- [Converse of the isothermal theorem and circulations](isothermal-theorem-for-evolutionary-graphs.md)

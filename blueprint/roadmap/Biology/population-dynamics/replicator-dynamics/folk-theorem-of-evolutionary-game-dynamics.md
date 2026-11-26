@@ -1,23 +1,17 @@
-# The folk theorem of evolutionary game dynamics
+# Nash equilibria among the rest points of the replicator equation
 
-For a symmetric game with payoff matrix $A$ and the replicator equation $\dot x_i = x_i((Ax)_i - x\cdot Ax)$ on $S_n$, call $z$ a Nash equilibrium if $y\cdot Az \le z\cdot Az$ for all $y \in S_n$, and strict if equality holds only for $y = z$. Then (a) every Nash equilibrium is a rest point; (b) every strict Nash equilibrium is asymptotically stable, which is a case of the [Lyapunov characterization of evolutionarily stable states](../../../Biology/population-dynamics/replicator-dynamics/ess-lyapunov-function-for-the-replicator-equation.md) because a strict Nash equilibrium is an evolutionarily stable strategy; (c) if a rest point is the limit of an interior orbit as $t \to \infty$, it is a Nash equilibrium; (d) every stable rest point is a Nash equilibrium. None of the converse statements holds, and every interior rest point is a Nash equilibrium (Hofbauer and Sigmund 2003, Sec. 2.3, the folk theorem of evolutionary game theory). At a boundary rest point $z$, $(Az)_i - z\cdot Az$ is the eigenvalue of the Jacobian transversal to the face $x_i = 0$, so $z$ is a Nash equilibrium if and only if all its transversal eigenvalues are nonpositive.
+For a symmetric game with payoff matrix $A$ and the replicator equation $\dot x_i = x_i((Ax)_i - x\cdot Ax)$ on $S_n$, call $z$ a Nash equilibrium if $y\cdot Az \le z\cdot Az$ for all $y \in S_n$. The four parts of the folk theorem of evolutionary game theory are stated as [Folk theorem (a)](../folk-theorem-of-evolutionary-game-theory/replicator-field-eq-zero.md), [(b)](../folk-theorem-of-evolutionary-game-theory/asymptotically-stable.md), [(c)](../folk-theorem-of-evolutionary-game-theory/is-nash-of-tendsto.md) and [(d)](../folk-theorem-of-evolutionary-game-theory/is-nash-of-is-lyapunov-stable.md) (Hofbauer and Sigmund 2003, Sec. 2.3). Two further facts from the same section characterize Nash equilibria among the rest points: every interior rest point is a Nash equilibrium, since all $(Az)_i$ are then equal to $z\cdot Az$; and at a boundary rest point $z$, $(Az)_i - z\cdot Az$ for $z_i = 0$ is the eigenvalue of the Jacobian transversal to the face $x_i = 0$, so $z$ is a Nash equilibrium if and only if all its transversal eigenvalues are nonpositive.
 
 ## Depends on
 
-- [Solution of the replicator equation](../../../Biology/population-dynamics/replicator-dynamics/is-solution.md)
 - [Rest point of the replicator equation](../../../Biology/population-dynamics/replicator-dynamics/is-rest-point.md)
-
-## Proof depends on
-
-- [Lyapunov characterization of evolutionarily stable states for the replicator equation](../../../Biology/population-dynamics/replicator-dynamics/ess-lyapunov-function-for-the-replicator-equation.md)
 
 ## Expansion
 
-1. Rest points of the replicator equation as the points with $(Ax)_i = x\cdot Ax$ on the support; Nash equilibria of symmetric games.
-2. (a) from the equal-payoff property on the support.
-3. (b) as a corollary: a strict Nash equilibrium is a pure evolutionarily stable strategy, and every evolutionarily stable strategy is asymptotically stable.
-4. (c) and (d) by contradiction: a strategy $i$ with $(Az)_i > z\cdot Az$ would grow near $z$; the transversal eigenvalues.
-5. Counterexamples to the converses (for instance the rock–paper–scissors game with $\det A < 0$, whose interior Nash equilibrium is not stable).
+1. Rest points of the replicator equation as the points with $(Ax)_i = x\cdot Ax$ on the support.
+2. Interior rest points as Nash equilibria.
+3. The Jacobian at a boundary rest point, its transversal eigenvalues $(Az)_i - z\cdot Az$, and the characterization of Nash equilibria by their signs.
+4. Counterexamples to the converses of the folk theorem (for instance the rock–paper–scissors game with $\det A < 0$, whose interior Nash equilibrium is not stable).
 
 ## Sources
 

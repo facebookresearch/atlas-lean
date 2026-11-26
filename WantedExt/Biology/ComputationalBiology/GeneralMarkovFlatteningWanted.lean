@@ -27,7 +27,8 @@ of a tensor of indeterminates. For four taxa, a flattening along a split that is
 the tree has rank larger than `κ` outside a proper algebraic subset of the parameter space
 (Allman and Rhodes 2006, Theorem 2 with `λ = κ`); since the parameter space is an affine space and
 the locus where all `(κ + 1)`-minors vanish is algebraic, that subset is proper exactly when one
-parameter value gives rank larger than `κ`, which is the form recorded here.
+parameter value gives rank larger than `κ`, the form in which
+`exists_card_lt_rank_flatten_nonEdge` states it.
 
 Trees are the repository's unrooted binary phylogenetic trees (`UnrootedBinaryTree`) with their
 edge splits and quartets (`CSLibExt.Bioinformatics.Phylogenetics.Splits`); the root may be any
@@ -55,29 +56,7 @@ namespace WantedExt.Biology.ComputationalBiology.GeneralMarkovFlatteningWanted
 open MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
 open Cslib.Bioinformatics.Phylogenetics.Splits
 
-section Model
-
-variable {V K X R : Type} [Fintype V] [Fintype K] [CommSemiring R]
-  (G : SimpleGraph V) [DecidableRel G.Adj] (ℓ : X → V)
-
-open Classical in
-
-open Classical in
-
-/-- Complex parameters for the root `r` satisfying the stochastic linear constraints: the root
-vector sums to one and every edge matrix directed away from `r` has rows summing to one. -/
-def IsComplexStochastic (r : V) (π : K → ℂ) (M : V → V → Matrix K K ℂ) : Prop :=
-  ∑ i, π i = 1 ∧ ∀ a b, IsAwayFrom G r a b → ∀ i, ∑ j, M a b i j = 1
-
-end Model
-
-section Flattening
-
-variable {X K R : Type} [DecidableEq X]
-
-end Flattening
-
-variable {X K : Type} [Fintype X] [DecidableEq X] [Fintype K] [DecidableEq K]
+variable {X : Type} [Fintype X] [DecidableEq X]
 
 /-- The **phylogenetic ideal** `𝔞_T` of the two-state general Markov model on `T`: the
 polynomials in the indeterminates `p_u`, `u : X → Fin 2`, that vanish at every scalar multiple of
@@ -111,21 +90,5 @@ flattenings of a `2 × ⋯ × 2` tensor of indeterminates.
 Source: Allman and Rhodes (2008), Theorem 4. -/
 public theorem_wanted phylogeneticIdeal_eq_span_edgeMinors (T : UnrootedBinaryTree X) :
     phylogeneticIdeal T = Ideal.span (edgeMinors T)
-
-/-- **Non-edge flattenings of four-taxon trees have rank larger than `κ` for generic parameters**
-(Allman and Rhodes 2006, Theorem 2 with `λ = κ`): for an unrooted binary phylogenetic tree `T` on
-four taxa displaying the quartet `01|23`, and each of the two splits `{0, 2} | {1, 3}` and
-`{0, 3} | {1, 2}` that are not edges of `T`, some complex stochastic parameters give a leaf
-distribution whose flattening along that split has rank larger than `κ`, the number of states
-(`2 ≤ κ`). Since the rank-at-most-`κ` locus is algebraic in the parameters, it is then a proper
-algebraic subset of the parameter space, and the tree is identified from generic parameters by
-the vanishing of the `(κ + 1)`-minors of its own flattening.
-
-Source: Allman and Rhodes (2006), Theorem 2. -/
-public theorem_wanted exists_card_lt_rank_flatten_nonEdge (hK : 2 ≤ Fintype.card K)
-    (T : UnrootedBinaryTree (Fin 4)) (hT : DisplaysQuartet T 0 1 2 3)
-    (A : Finset (Fin 4)) (hA : A = {0, 2} ∨ A = {0, 3}) :
-    ∃ (r : T.V) (π : K → ℂ) (M : T.V → T.V → Matrix K K ℂ), IsComplexStochastic T.G r π M ∧
-      Fintype.card K < (flatten A (leafDist T.G (leafOf T) r π M)).rank
 
 end WantedExt.Biology.ComputationalBiology.GeneralMarkovFlatteningWanted
