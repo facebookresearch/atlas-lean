@@ -41,3 +41,5 @@
 - [Preimage of a branch event under a shift](shift-preimage-branch-at.md)
 - [Preimage of a cylinder under a shift](shift-preimage-cylinder.md)
 - [Shifts preserve the branch-choice law](map-shift-law.md)
+- [Branch-choice law is a product of Bernoulli laws](law-eq-infinite-pi.md)
+- [Probability of a cylinder under the binary-tree address law](law-cylinder.md)

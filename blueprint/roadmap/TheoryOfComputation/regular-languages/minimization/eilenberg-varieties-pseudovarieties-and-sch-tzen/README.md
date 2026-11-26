@@ -27,3 +27,4 @@
 - [Exists split pow](exists-split-pow.md)
 - [Of syntactic Monoid concat](of-syntactic-monoid-concat.md)
 - [Aperiodic syntactic Monoid](aperiodic-syntactic-monoid.md)
+- [Is Star Free](is-star-free.md)

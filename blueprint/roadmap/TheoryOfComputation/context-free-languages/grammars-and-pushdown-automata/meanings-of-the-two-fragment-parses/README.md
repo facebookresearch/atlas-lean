@@ -7,3 +7,4 @@
 - [Admires Den](admires-den.md)
 - [Lex Env](lex-env.md)
 - [Meaning](meaning.md)
+- [Meanings of the surface and inverse scope parses](surface-inverse-meanings.md)

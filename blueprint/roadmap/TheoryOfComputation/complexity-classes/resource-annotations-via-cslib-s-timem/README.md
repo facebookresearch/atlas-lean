@@ -13,3 +13,4 @@
 - [Zero-cost computation](pure.md)
 - [Sequential composition of costed computations](bind.md)
 - [Charge](charge.md)
+- [Cost-annotated computation](cost-m.md)
