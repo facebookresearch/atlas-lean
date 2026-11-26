@@ -99,7 +99,7 @@
 - [Bending-torsion calibration implies tensile calibration](uniaxial-calibrated-2.md)
 - [Shaft demand under bending and torsion](shaft-demand-eq.md)
 - [Shaft sizing threshold diameter](shaft-min-diameter.md)
-- [Shaft does not fail exactly above the minimum diameter](not-demand-failure-iff.md)
+- [Shaft does not fail exactly above the sizing threshold](not-demand-failure-iff.md)
 - [Shaft bending stress](shaft-bending-stress.md)
 - [Shaft sizing inequality](shaft-demand-le-iff.md)
 - [Positivity of the minimum shaft diameter](shaft-min-diameter-pos.md)

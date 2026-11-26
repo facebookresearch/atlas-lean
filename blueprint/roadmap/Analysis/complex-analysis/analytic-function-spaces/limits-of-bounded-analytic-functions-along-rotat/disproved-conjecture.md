@@ -4,4 +4,4 @@ The statement, negating the [original formulation](conjecture.md) of Problem 5.7
 
 ## Sources
 
-W. K. Hayman and E. F. Lingham, *Research Problems in Function Theory*, Fiftieth Anniversary Edition (2019), arXiv:1809.07200, Update 5.76, which says that the original formulation of Problem 5.76 erroneously assumed a non-tangential arc (in that edition Problem 5.76 assumes an arc that fails to be non-tangential); E. F. Collingwood and A. J. Lohwater, *The Theory of Cluster Sets*, Cambridge Univ. Press (1966).
+W. K. Hayman and E. F. Lingham, *Research Problems in Function Theory*, Fiftieth Anniversary Edition, Springer (2019), Update 5.76, which says that the original formulation of Problem 5.76 erroneously assumed a non-tangential arc (in that edition Problem 5.76 assumes an arc that fails to be non-tangential); E. F. Collingwood and A. J. Lohwater, *The Theory of Cluster Sets*, Cambridge Univ. Press (1966).

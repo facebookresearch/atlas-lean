@@ -59,6 +59,7 @@
 - [Molar energy rescales by its own factor](molar-energy-dim-scale.md)
 
 ## Temperature and dimensionless arguments of log and exp
+
 - [Scaling a Celsius reading does not scale its kelvin value](celsius-to-kelvin-mul-ne.md)
 - [Doubling 20 degrees Celsius does not double its kelvin value](celsius-to-kelvin-two-mul-twenty-ne.md)
 - [Inverse temperature is positive](inverse-temperature-pos.md)
