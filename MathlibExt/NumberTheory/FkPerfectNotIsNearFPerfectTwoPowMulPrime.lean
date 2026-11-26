@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.NumberTheory.FkPerfect
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
@@ -16,8 +17,8 @@ import Mathlib.Tactic.Ring
 
 /-! # No near `F`-perfect number of the form `2 ^ a * p`
 
-This module defines $[k,\ell]$-near-perfect and near $F$-perfect numbers and proves that no
-number of the form $2^a p$ with $p$ prime is near $F$-perfect.
+This module proves that no number of the form $2^a p$ with $p$ prime is near $F$-perfect.
+Near $F$-perfect numbers are defined in `MathlibExt.NumberTheory.FkPerfect`.
 
 Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
 and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
@@ -30,19 +31,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
-divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
-def IsKLNearPerfect (k l n : ℕ) : Prop :=
-  ∃ d, KLNearPerfectWith k l n d
-
-/-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
-$[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
-satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e^2$ is the sum
-of the squares of the divisors of $n$. -/
-def IsNearFPerfect (n : ℕ) : Prop :=
-  IsKLNearPerfect 2 3 n
 
 private theorem sq_mod_four_ne_two (d : ℕ) : d ^ 2 % 4 ≠ 2 := by
   rcases Nat.even_or_odd d with hev | hodd
