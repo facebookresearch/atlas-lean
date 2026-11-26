@@ -29,9 +29,8 @@ Fibonacci-valued FiboCatalan generalization: Fibonacci factorial `F_n! `,
 Jordan-type quotient `J_{r,F} = F_{2r+1}! / F_r! `, and the generalized
 FiboCatalan number `J_{r,F} * F_{2n}! / (F_n! * F_{n+r+1}!)`.
 
-Atomic scope here is the Fibonacci-valued case only. The Lucas-polynomial
-analogue and the super FiboCatalan numbers are separate senses and out of
-scope for this file.
+This file treats the Fibonacci-valued case and supplies a divisibility criterion for
+products of Fibonacci factorials, also used for the super FiboCatalan numbers.
 -/
 
 namespace MetaMathlibExt
@@ -337,127 +336,43 @@ private theorem floor_ineq (d r n : ℕ) (hd : 0 < d) :
       · omega
     · omega
 
-/-- The key divisibility: denominator product divides numerator product. -/
-private theorem main_dvd (r n : ℕ) :
-    fibFactNat r * fibFactNat n * fibFactNat (n + r + 1)
-      ∣ fibFactNat (2 * r + 1) * fibFactNat (2 * n) := by
-  have hAne := fibFactNat_ne_zero r
-  have hBne := fibFactNat_ne_zero n
-  have hCne := fibFactNat_ne_zero (n + r + 1)
-  have hDne := fibFactNat_ne_zero (2 * r + 1)
-  have hEne := fibFactNat_ne_zero (2 * n)
-  have hABne := mul_ne_zero hAne hBne
-  have hneL : fibFactNat r * fibFactNat n * fibFactNat (n + r + 1) ≠ 0 :=
-    mul_ne_zero hABne hCne
-  have hneR : fibFactNat (2 * r + 1) * fibFactNat (2 * n) ≠ 0 :=
-    mul_ne_zero hDne hEne
-  apply (Nat.factorization_le_iff_dvd hneL hneR).mp
+/-- A floor inequality at every positive index implies divisibility of Fibonacci factorials. -/
+private theorem fibFactNat_mul_mul_dvd_mul (a b c u v : ℕ)
+    (h : ∀ d : ℕ, 0 < d → a / d + b / d + c / d ≤ u / d + v / d) :
+    fibFactNat a * fibFactNat b * fibFactNat c ∣ fibFactNat u * fibFactNat v := by
+  have ha := fibFactNat_ne_zero a
+  have hb := fibFactNat_ne_zero b
+  have hc := fibFactNat_ne_zero c
+  have hu := fibFactNat_ne_zero u
+  have hv := fibFactNat_ne_zero v
+  have hab := mul_ne_zero ha hb
+  apply (Nat.factorization_le_iff_dvd (mul_ne_zero hab hc) (mul_ne_zero hu hv)).mp
   intro p
   by_cases hp : p.Prime
-  · set M := (fibFactNat r * fibFactNat n * fibFactNat (n + r + 1) *
-      (fibFactNat (2 * r + 1) * fibFactNat (2 * n))).factorization p + 1 with hMdef
-    have hGRANDne : (fibFactNat r * fibFactNat n * fibFactNat (n + r + 1) *
-        (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) ≠ 0 :=
-      mul_ne_zero hneL hneR
-    have hAr : fibFactNat r ∣ (fibFactNat r * fibFactNat n * fibFactNat (n + r + 1) *
-        (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) :=
-      dvd_mul_of_dvd_left
-        (dvd_mul_of_dvd_left (dvd_mul_of_dvd_left dvd_rfl _) _) _
-    have hBr : fibFactNat n ∣ (fibFactNat r * fibFactNat n * fibFactNat (n + r + 1) *
-        (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) :=
-      dvd_mul_of_dvd_left
-        (dvd_mul_of_dvd_left (dvd_mul_of_dvd_right dvd_rfl _) _) _
-    have hCr : fibFactNat (n + r + 1) ∣ (fibFactNat r * fibFactNat n *
-        fibFactNat (n + r + 1) *
-        (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) :=
-      dvd_mul_of_dvd_left (dvd_mul_of_dvd_right dvd_rfl _) _
-    have hDr : fibFactNat (2 * r + 1) ∣ (fibFactNat r * fibFactNat n *
-        fibFactNat (n + r + 1) *
-        (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) :=
-      dvd_mul_of_dvd_right (dvd_mul_of_dvd_left dvd_rfl _) _
-    have hEr : fibFactNat (2 * n) ∣ (fibFactNat r * fibFactNat n *
-        fibFactNat (n + r + 1) *
-        (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) :=
-      dvd_mul_of_dvd_right (dvd_mul_of_dvd_right dvd_rfl _) _
-    have hbound : ∀ (N : ℕ),
-        fibFactNat N ∣ (fibFactNat r * fibFactNat n * fibFactNat (n + r + 1) *
-          (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) →
-        ∀ i ∈ Finset.range N, (Nat.fib (i + 1)).factorization p < M := by
-      intro N hN i hi
-      have hdvd : Nat.fib (i + 1) ∣ (fibFactNat r * fibFactNat n *
-          fibFactNat (n + r + 1) * (fibFactNat (2 * r + 1) * fibFactNat (2 * n))) :=
-        (fibFactNat_mem_dvd N i hi).trans hN
-      have hle := factorization_le_of_dvd _ _ p hdvd hGRANDne
-      omega
-    have eA : (fibFactNat r).factorization p
-        = ∑ t ∈ Finset.range M, ((Finset.range r).filter
-          (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card :=
-      fibFactNat_factorization p r M hp (hbound r hAr)
-    have eB : (fibFactNat n).factorization p
-        = ∑ t ∈ Finset.range M, ((Finset.range n).filter
-          (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card :=
-      fibFactNat_factorization p n M hp (hbound n hBr)
-    have eC : (fibFactNat (n + r + 1)).factorization p
-        = ∑ t ∈ Finset.range M, ((Finset.range (n + r + 1)).filter
-          (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card :=
-      fibFactNat_factorization p (n + r + 1) M hp (hbound (n + r + 1) hCr)
-    have eD : (fibFactNat (2 * r + 1)).factorization p
-        = ∑ t ∈ Finset.range M, ((Finset.range (2 * r + 1)).filter
-          (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card :=
-      fibFactNat_factorization p (2 * r + 1) M hp (hbound (2 * r + 1) hDr)
-    have eE : (fibFactNat (2 * n)).factorization p
-        = ∑ t ∈ Finset.range M, ((Finset.range (2 * n)).filter
-          (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card :=
-      fibFactNat_factorization p (2 * n) M hp (hbound (2 * n) hEr)
-    have hLHS : (fibFactNat r * fibFactNat n * fibFactNat (n + r + 1)).factorization p
-        = ∑ t ∈ Finset.range M, (((Finset.range r).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card +
-          ((Finset.range n).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card +
-          ((Finset.range (n + r + 1)).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card) := by
-      rw [Nat.factorization_mul hABne hCne, Nat.factorization_mul hAne hBne]
-      simp only [Finsupp.add_apply]
-      rw [eA, eB, eC, Finset.sum_add_distrib, Finset.sum_add_distrib]
-    have hRHS : (fibFactNat (2 * r + 1) * fibFactNat (2 * n)).factorization p
-        = ∑ t ∈ Finset.range M, (((Finset.range (2 * r + 1)).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card +
-          ((Finset.range (2 * n)).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card) := by
-      rw [Nat.factorization_mul hDne hEne]
-      simp only [Finsupp.add_apply]
-      rw [eD, eE, Finset.sum_add_distrib]
-    have hlevel : ∀ t ∈ Finset.range M,
-        (((Finset.range r).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card +
-          ((Finset.range n).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card +
-          ((Finset.range (n + r + 1)).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card) ≤
-        (((Finset.range (2 * r + 1)).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card +
-          ((Finset.range (2 * n)).filter
-            (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card) := by
+  · -- Use a common cutoff for the five prime-power level sums.
+    let N := a + b + c + u + v
+    let M := (fibFactNat N).factorization p + 1
+    let count (x t : ℕ) :=
+      ((Finset.range x).filter (fun i => p ^ (t + 1) ∣ Nat.fib (i + 1))).card
+    have hf (x : ℕ) (hx : x ≤ N) :
+        (fibFactNat x).factorization p = ∑ t ∈ Finset.range M, count x t := by
+      apply fibFactNat_factorization p x M hp
+      intro i hi
+      have hmem : i ∈ Finset.range N :=
+        Finset.mem_range.mpr ((Finset.mem_range.mp hi).trans_le hx)
+      exact Nat.lt_succ_of_le (factorization_le_of_dvd _ _ p (fibFactNat_mem_dvd N i hmem)
+        (fibFactNat_ne_zero N))
+    have hsum : (∑ t ∈ Finset.range M, (count a t + count b t + count c t)) ≤
+        ∑ t ∈ Finset.range M, (count u t + count v t) := by
+      apply Finset.sum_le_sum
       intro t _
-      by_cases ht : ∃ m : ℕ, 1 ≤ m ∧ p ^ (t + 1) ∣ Nat.fib m
-      · have q1 := level_count p t r ht
-        have q2 := level_count p t n ht
-        have q3 := level_count p t (n + r + 1) ht
-        have q4 := level_count p t (2 * r + 1) ht
-        have q5 := level_count p t (2 * n) ht
-        have hd0 : 0 < Nat.find ht := by
-          have h1 := (Nat.find_spec ht).1
-          omega
-        have hfl := floor_ineq (Nat.find ht) r n hd0
-        omega
-      · have z1 := level_count_zero p t r ht
-        have z2 := level_count_zero p t n ht
-        have z3 := level_count_zero p t (n + r + 1) ht
-        have z4 := level_count_zero p t (2 * r + 1) ht
-        have z5 := level_count_zero p t (2 * n) ht
-        omega
-    rw [hLHS, hRHS]
-    exact Finset.sum_le_sum hlevel
+      by_cases ht : ∃ i : ℕ, 1 ≤ i ∧ p ^ (t + 1) ∣ Nat.fib i
+      · simpa only [count, level_count p t _ ht] using h (Nat.find ht) (Nat.find_spec ht).1
+      · simp only [count, level_count_zero p t _ ht, add_zero, le_refl]
+    simpa only [Nat.factorization_mul hab hc, Nat.factorization_mul ha hb,
+      Nat.factorization_mul hu hv, Finsupp.add_apply, hf a (by dsimp [N]; omega),
+      hf b (by dsimp [N]; omega), hf c (by dsimp [N]; omega), hf u (by dsimp [N]; omega),
+      hf v (by dsimp [N]; omega), Finset.sum_add_distrib] using hsum
   · rw [Nat.factorization_eq_zero_of_not_prime _ hp]
     exact Nat.zero_le _
 
@@ -475,6 +390,25 @@ private theorem fibonacciFactorial_eq_cast (N : ℕ) :
       rw [Finset.prod_range_succ]
     rw [h2, Nat.cast_mul]
 
+-- Shared integrality criterion for the generalized and super FiboCatalan quotients.
+lemma fibonacciFactorial_ratio_isPosInt_of_floor_le (a b c u v : ℕ)
+    (h : ∀ d : ℕ, 0 < d → a / d + b / d + c / d ≤ u / d + v / d) :
+    ∃ k : ℕ, 0 < k ∧ (k : ℚ) = fibonacciFactorial u * fibonacciFactorial v /
+      (fibonacciFactorial a * fibonacciFactorial b * fibonacciFactorial c) := by
+  obtain ⟨k, hk⟩ := fibFactNat_mul_mul_dvd_mul a b c u v h
+  have hden := mul_pos (mul_pos (fibonacciFactorial_pos a) (fibonacciFactorial_pos b))
+    (fibonacciFactorial_pos c)
+  have hquot : (k : ℚ) = fibonacciFactorial u * fibonacciFactorial v /
+      (fibonacciFactorial a * fibonacciFactorial b * fibonacciFactorial c) := by
+    apply (eq_div_iff (ne_of_gt hden)).2
+    rw [mul_comm (k : ℚ)]
+    simp only [fibonacciFactorial_eq_cast]
+    exact_mod_cast hk.symm
+  refine ⟨k, ?_, hquot⟩
+  have hpos := div_pos (mul_pos (fibonacciFactorial_pos u) (fibonacciFactorial_pos v)) hden
+  rw [← hquot] at hpos
+  exact Nat.cast_pos.mp hpos
+
 /-- **Generalized FiboCatalan numbers are positive integers.** For all natural numbers $r$ and
 $n$, the generalized FiboCatalan number with parameters $r$ and $n$ is a positive integer: it
 equals $k$ for some natural number $k \ge 1$.
@@ -483,29 +417,12 @@ Proves `Wanted` entry `generalizedFibonacciCatalan_isPosInt`.
 -/
 theorem generalizedFibonacciCatalan_isPosInt (r n : ℕ) :
     ∃ k : ℕ, 0 < k ∧ (k : ℚ) = generalizedFibonacciCatalan r n := by
-  obtain ⟨k, hk⟩ := main_dvd r n
-  have hk0 : k ≠ 0 := by
-    rintro rfl
-    rw [mul_zero] at hk
-    exact (mul_ne_zero (fibFactNat_ne_zero _) (fibFactNat_ne_zero _)) hk
-  have hkpos : 0 < k := Nat.pos_of_ne_zero hk0
-  refine ⟨k, hkpos, ?_⟩
-  unfold generalizedFibonacciCatalan fibonacciJordanQuotient
-  rw [fibonacciFactorial_eq_cast, fibonacciFactorial_eq_cast,
-    fibonacciFactorial_eq_cast, fibonacciFactorial_eq_cast,
-    fibonacciFactorial_eq_cast]
-  have hkQ : (fibFactNat (2 * r + 1) : ℚ) * (fibFactNat (2 * n) : ℚ)
-      = ((fibFactNat r : ℚ) * (fibFactNat n : ℚ) *
-        (fibFactNat (n + r + 1) : ℚ)) * (k : ℚ) := by
-    exact_mod_cast hk
-  have hB : (fibFactNat r : ℚ) ≠ 0 := by
-    exact_mod_cast fibFactNat_ne_zero r
-  have hD : (fibFactNat n : ℚ) ≠ 0 := by
-    exact_mod_cast fibFactNat_ne_zero n
-  have hE : (fibFactNat (n + r + 1) : ℚ) ≠ 0 := by
-    exact_mod_cast fibFactNat_ne_zero (n + r + 1)
-  field_simp
-  linear_combination -hkQ
+  obtain ⟨k, hk, h⟩ :=
+    fibonacciFactorial_ratio_isPosInt_of_floor_le r n (n + r + 1) (2 * r + 1) (2 * n)
+      (fun d hd => floor_ineq d r n hd)
+  refine ⟨k, hk, h.trans ?_⟩
+  simp only [generalizedFibonacciCatalan, fibonacciJordanQuotient, div_eq_mul_inv, mul_inv_rev]
+  ring
 
 /-- **Generalized FiboCatalan numbers at r = 0.** For every natural number $n$, the generalized
 FiboCatalan number with parameters $r = 0$ and $n$ equals the FiboCatalan number

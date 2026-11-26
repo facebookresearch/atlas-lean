@@ -30,8 +30,8 @@ of denominators, as in the paper's proofs.
 Of the paper's thirteen numbered statements, ten are
 available here (including the super FiboCatalan half of
 Corollary 5). The product identities, FiboCatalan numbers and their identity,
-fibonomial coefficients and the integral fibonomial quotient, Lucas factorial and
-Lucas Catalan identity are imported from
+super FiboCatalan integrality, fibonomial coefficients and the integral fibonomial quotient,
+Lucas factorial and Lucas Catalan identity are imported from
 `MathlibExt.NumberTheory.SuperFibocatalan`. One further statement is already covered in
 MathlibExt and is not restated: Corollary 9, via
 `MetaMathlibExt.generalizedFibonacciCatalan_isPosInt` (with
@@ -65,22 +65,6 @@ set_option autoImplicit false
 namespace MathlibExt.NumberTheory.SuperFibocatalanWanted
 
 open MetaMathlibExt
-
-/-- **Super FiboCatalan numbers are positive integers.** For all natural numbers $m$ and $n$, the
-super FiboCatalan number
-
-$$S(m, n)_F = \frac{F_{2m}!\, F_{2n}!}{F_m!\, F_n!\, F_{m+n}!},$$
-
-where $F_j!$ denotes the Fibonacci factorial, is a positive integer: it equals $k$ for some
-natural number $k \ge 1$.
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Corollary 5. -/
-theorem_wanted superFibonacciCatalan_isPosInt (m n : ℕ) :
-    ∃ k : ℕ, 0 < k ∧ (k : ℚ) =
-      fibonacciFactorial (2 * m) * fibonacciFactorial (2 * n) /
-        (fibonacciFactorial m * fibonacciFactorial n *
-          fibonacciFactorial (m + n))
 
 /-- **$k$-divisible Lucas factorial.** For natural numbers $k$ and $n$, the $k$-divisible Lucas
 factorial $\{n : k\}!$ is the product $\{n : k\}! = \{k\}\{2k\} \cdots \{nk\}$ of the Lucas
