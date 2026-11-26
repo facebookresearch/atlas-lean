@@ -97669,6 +97669,7 @@
 "Module.End.wordKer_eq_bot_of_iInf_ker_eq_bot": "e752c7286b941235",
 "Module.End.wordKer_succ": "d47466de44f9fc66",
 "Module.End.wordKer_zero": "b045b0189a1e12bb",
+"Module.FaithfullyFlat.exists_algebraMap_eq_of_tmul_one_eq_one_tmul": "f96210a75a052ad1",
 "Module.Flat.kernel_of_surjective": "e4c99bf051aa8109",
 "Module.Grassmannian.adjoin_eq_top_of_isOpenImmersion_of_opensRange_eq": "152d413234d38440",
 "Module.Invertible.of_projective_of_forall_finrank_eq_one": "363424a36afccfee",
