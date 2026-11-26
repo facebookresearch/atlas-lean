@@ -6,9 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+The exact-source consumer reproduces the theorem type from
+`Theorems/Thm_ModularCurve_cayleyHamilton_forall_of_frobeniusQuadratic_of_dense.lean`
+in https://github.com/anthropics/fermats-last-theorem at commit
+6e837e75355538c7f80bab5b956861e86c4eacc2.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+-/
+
 module
 
 public import MathlibExt.NumberTheory.ModularForms.HeckeTorsionCayleyHamilton
+import MathlibExt.RingTheory.Valuation.FrobeniusExists
 
 @[expose] public section
 
@@ -97,6 +107,14 @@ theorem frobeniusPowerDense_mono {S S' : Finset ℕ}
   intro σ
   obtain ⟨ℓ, A, τ, g, n, hℓ, hℓS, hA, hτ, hmem⟩ := h σ
   exact ⟨ℓ, A, τ, g, n, hℓ, fun h' => hℓS (hS h'), hA, hτ, hH hmem⟩
+
+/-- Modulo the whole group, density holds for every finite exceptional set: some prime
+lies outside `S`, and `ValuationSubring.exists_isFrobeniusAt_rat` gives a Frobenius
+element there. -/
+theorem frobeniusPowerDense_top (S : Finset ℕ) : FrobeniusPowerDense S ⊤ := by
+  obtain ⟨ℓ, hℓ, hℓS⟩ := Nat.infinite_setOfPred_prime.exists_notMem_finset S
+  obtain ⟨A, hA, τ, hτ⟩ := ValuationSubring.exists_isFrobeniusAt_rat ℓ hℓ
+  exact (frobeniusPowerDense_top_iff S).mpr ⟨ℓ, A, τ, hℓ, hℓS, hA, hτ⟩
 
 /-- Density is never vacuous: it produces a Frobenius element at a prime
 outside `S`. -/
@@ -276,17 +294,16 @@ theorem frobeniusPowerDense_eisModel_iff :
   rw [htop, frobeniusPowerDense_top_iff]
 
 /-- The theorem applied to the model: `N = 1`, `p = 2`, `S = {2}` and the trivial
-representation, with every hypothesis but density checked. -/
+representation, with every hypothesis checked, density included. -/
 theorem eisModel_cayleyHamilton
-    (hFrob : ∃ (ℓ : ℕ) (A : ValuationSubring (AlgebraicClosure ℚ))
-      (τ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ),
-      ℓ.Prime ∧ ℓ ∉ ({2} : Finset ℕ) ∧ A.LiesOverPrime ℓ ∧ A.IsFrobeniusAt τ ℓ)
     (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (x : ZMod 4)
     (hx : x ∈ heckeTorsion (ZMod 4) eisIdeal) (t d : HeckeAlg)
     (ht : Ideal.Quotient.mk eisIdeal t = 2) (hd : Ideal.Quotient.mk eisIdeal d = 1) :
     σ • σ • x - t • (σ • x) + d • x = 0 := by
   refine cayleyHamilton_forall_of_frobeniusQuadratic_of_dense 1 2 eisIdeal ?_ trivRep
-    frobeniusQuadratic_eisModel (S := {2}) ?_ ?_ (frobeniusPowerDense_eisModel_iff.mpr hFrob)
+    frobeniusQuadratic_eisModel (S := {2}) ?_ ?_
+    (frobeniusPowerDense_eisModel_iff.mpr ((frobeniusPowerDense_top_iff _).mp
+      (frobeniusPowerDense_top _)))
     σ x hx t d (by rw [ht, trace_trivRep]) (by rw [hd, det_trivRep])
   · rw [RingHom.mem_ker, map_natCast]
     decide
@@ -300,14 +317,10 @@ theorem eisModel_cayleyHamilton
 
 /-- Values: on the torsion element `2`, with the lifts `t = 2 + T₃` of the trace
 and `d = 3` of the determinant, the relation reads `2 - 6 * 2 + 3 * 2 = 0`. -/
-example
-    (hFrob : ∃ (ℓ : ℕ) (A : ValuationSubring (AlgebraicClosure ℚ))
-      (τ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ),
-      ℓ.Prime ∧ ℓ ∉ ({2} : Finset ℕ) ∧ A.LiesOverPrime ℓ ∧ A.IsFrobeniusAt τ ℓ)
-    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
+example (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
     σ • σ • (2 : ZMod 4) - (2 + heckeGen ⟨3, Nat.prime_three⟩) • (σ • (2 : ZMod 4)) +
       (3 : HeckeAlg) • (2 : ZMod 4) = 0 := by
-  refine eisModel_cayleyHamilton hFrob σ 2 two_mem_heckeTorsion _ _ ?_ ?_
+  refine eisModel_cayleyHamilton σ 2 two_mem_heckeTorsion _ _ ?_ ?_
   · rw [← map_ofNat (Ideal.Quotient.mk eisIdeal) 2, Ideal.Quotient.eq, RingHom.mem_ker,
       add_sub_cancel_left, eisMod_heckeGen]
     decide

@@ -1,20 +1,4 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`Theorems/Thm_ModularCurve_cayleyHamilton_forall_of_frobeniusQuadratic_of_dense.lean`
-and
-`P2M/Sol/S_ModularCurve_cayleyHamilton_forall_of_frobeniusQuadratic_of_dense.lean`
-(https://github.com/anthropics/fermats-last-theorem):
-Compared with the source files at commit
-`6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 The upstream NOTICE also credits:
@@ -22,9 +6,26 @@ Mathlib — https://github.com/leanprover-community/mathlib4
 Copyright (c) the respective Mathlib authors, as recorded in the headers of the
 Mathlib source files.
 Released under the Apache License, Version 2.0.
+-/
+
+/-
+Adapted from https://github.com/anthropics/fermats-last-theorem, compared with the
+source files at commit `6e837e75355538c7f80bab5b956861e86c4eacc2`:
+`Definitions/Def_GaloisRep_FrobeniusPowerDense.lean` (`FrobeniusPowerDense`);
+`Definitions/Def_HeckeGalois_EichlerShimura.lean` (`HeckeAlg`, `heckeGen`,
+`heckeTorsion` and its two lemmas, `FrobeniusQuadratic`);
+`Theorems/Thm_Representation_cayleyHamilton_of_frobeniusPowerDense.lean` and
+`P2M/Sol/S_Representation_cayleyHamilton_of_frobeniusPowerDense.lean` (the
+propagation argument in `HeckeTorsionDensity`);
+`Theorems/Thm_ModularCurve_cayleyHamilton_forall_of_frobeniusQuadratic_of_dense.lean`
+and
+`P2M/Sol/S_ModularCurve_cayleyHamilton_forall_of_frobeniusQuadratic_of_dense.lean`
+(the torsion representation and the main theorem).
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -39,12 +40,16 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.RepresentationTheory.Basic
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.FrobeniusTrace
 public import MathlibExt.RingTheory.Valuation.LiesOverPrime
+import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 
 @[expose] public section
 
-/-- Frobenius powers are dense modulo `H`: every `σ` agrees, up to
-conjugation and a power of a Frobenius element, with an element of `H`
-modulo the exceptional set `S`. -/
+/-- Every `σ` has the same image modulo `H` as a conjugate of a power of a Frobenius
+element at a prime outside `S`: there are a prime `ℓ ∉ S`, a valuation subring `A`
+lying over `ℓ`, a Frobenius element `τ` for `A` at `ℓ`, an element `g` and an exponent
+`n` with `g * τ ^ n * g⁻¹ * σ⁻¹ ∈ H`. For `H` the kernel of a representation, this says
+that every image `ρ σ` is the image of a conjugated Frobenius power. Despite the name,
+this is not topological density: no closure is taken. -/
 def FrobeniusPowerDense (S : Finset ℕ)
     (H : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)) : Prop :=
   ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ,
@@ -101,10 +106,13 @@ open Matrix
 private theorem sq_eq_trace_smul_sub_det_smul_one {R : Type*} [CommRing R]
     (M : Matrix (Fin 2) (Fin 2) R) :
     M ^ 2 = M.trace • M - M.det • (1 : Matrix (Fin 2) (Fin 2) R) := by
-  ext i j
-  simp only [pow_two, Matrix.mul_apply, Fin.sum_univ_two, Matrix.trace_fin_two,
-    Matrix.det_fin_two, Matrix.sub_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
-  fin_cases i <;> fin_cases j <;> simp <;> ring
+  cases subsingleton_or_nontrivial R
+  · exact Subsingleton.elim _ _
+  · have h := M.aeval_self_charpoly
+    rw [Matrix.charpoly_fin_two] at h
+    simp only [map_add, map_sub, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C,
+      Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul] at h
+    exact sub_eq_zero.mp (by rw [← h]; abel)
 
 private theorem pow_add_two_eq_trace_smul_sub_det_smul {R : Type*} [CommRing R]
     (M : Matrix (Fin 2) (Fin 2) R) (k : ℕ) :
@@ -212,25 +220,6 @@ private theorem quadRel_conj {k : Type*} [CommRing k] {B : Type*} [Ring B]
     rw [mul_add, add_mul, mul_sub, sub_mul, ← e1, ← e2, ← e3]
   rw [key, h, mul_zero, zero_mul]
 
-private theorem trace_matrix_conj {k : Type*} [CommRing k]
-    {P Q : Matrix (Fin 2) (Fin 2) k} (hQP : Q * P = 1)
-    (N : Matrix (Fin 2) (Fin 2) k) : (P * N * Q).trace = N.trace := by
-  rw [Matrix.trace_mul_comm, ← mul_assoc, hQP, one_mul]
-
-private theorem det_matrix_conj {k : Type*} [CommRing k]
-    {P Q : Matrix (Fin 2) (Fin 2) k} (hPQ : P * Q = 1)
-    (N : Matrix (Fin 2) (Fin 2) k) : (P * N * Q).det = N.det := by
-  rw [Matrix.det_mul, Matrix.det_mul, mul_comm P.det, mul_assoc, ← Matrix.det_mul, hPQ,
-    Matrix.det_one, mul_one]
-
-private theorem apply_eq_of_mul_inv_mem_ker {G M : Type*} [Group G] [Monoid M]
-    (f : G →* M) {x σ : G} (h : x * σ⁻¹ ∈ f.ker) : f σ = f x := by
-  have h1 : f x * f σ⁻¹ = 1 := by rw [← map_mul]; exact h
-  have h2 : f σ⁻¹ * f σ = 1 := by rw [← map_mul, inv_mul_cancel, map_one]
-  calc f σ = (f x * f σ⁻¹) * f σ := by rw [h1, one_mul]
-    _ = f x * (f σ⁻¹ * f σ) := mul_assoc _ _ _
-    _ = f x := by rw [h2, mul_one]
-
 private theorem cayleyHamilton_of_frobeniusPowerDense {k : Type*} [CommRing k]
     {V : Type*} [AddCommGroup V] [Module k V]
     (ρV : Representation k (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) V)
@@ -244,16 +233,17 @@ private theorem cayleyHamilton_of_frobeniusPowerDense {k : Type*} [CommRing k]
     (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
     ρV σ * ρV σ - (ρ σ).trace • ρV σ + (ρ σ).det • (1 : Module.End k V) = 0 := by
   obtain ⟨ℓ, A, τ, g, n, hℓ, hS, hA, hτ, hmem⟩ := hdense σ
+  rw [← div_eq_mul_inv] at hmem
   have keyρ : ρ σ = ρ g * (ρ τ) ^ n * ρ g⁻¹ := by
-    rw [apply_eq_of_mul_inv_mem_ker ρ (Subgroup.mem_inf.mp hmem).1, map_mul, map_mul,
-      map_pow]
+    rw [← ρ.div_mem_ker_iff.mp (Subgroup.mem_inf.mp hmem).1, map_mul, map_mul, map_pow]
   have keyρV : ρV σ = ρV g * (ρV τ) ^ n * ρV g⁻¹ := by
-    rw [apply_eq_of_mul_inv_mem_ker ρV (Subgroup.mem_inf.mp hmem).2, map_mul, map_mul,
-      map_pow]
+    rw [← ρV.div_mem_ker_iff.mp (Subgroup.mem_inf.mp hmem).2, map_mul, map_mul, map_pow]
   have htr : (ρ σ).trace = ((ρ τ) ^ n).trace := by
-    rw [keyρ, trace_matrix_conj (by rw [← map_mul, inv_mul_cancel, map_one])]
+    rw [keyρ]
+    exact Matrix.trace_units_conj (ρ.toHomUnits g) _
   have hdet : (ρ σ).det = ((ρ τ) ^ n).det := by
-    rw [keyρ, det_matrix_conj (by rw [← map_mul, mul_inv_cancel, map_one])]
+    rw [keyρ]
+    exact Matrix.det_units_conj (ρ.toHomUnits g) _
   have hpow : (ρV τ) ^ n * (ρV τ) ^ n - ((ρ τ) ^ n).trace • (ρV τ) ^ n
       + ((ρ τ) ^ n).det • (1 : Module.End k V) = 0 :=
     quadRel_pow (hCH ℓ hℓ hS A hA τ hτ) n
@@ -374,14 +364,16 @@ private theorem fixingSubgroup_heckeTorsion_eq_ker {G : Type*} [Group G]
       (LinearMap.congr_fun h (⟨y, hy⟩ : heckeTorsion J 𝔪))
     exact this
 
-/-- Cayley–Hamilton for every Galois element, from the quadratic Frobenius
-relation on Hecke torsion plus density of Frobenius powers.
+/-- Cayley–Hamilton on Hecke torsion for every Galois element.
 
-If Frobenius elements satisfy the quadratic relation with Hecke eigenvalue
-`heckeGen ℓ` and determinant `ℓ`, and Frobenius powers are dense modulo the
-kernel of `ρ` together with the subgroup fixing the `𝔪`-torsion, then every
-`σ` satisfies the same quadratic relation on `𝔪`-torsion, with trace and
-determinant read off from `ρ σ`. -/
+Assume that `p ∈ 𝔪`, that Frobenius elements satisfy the quadratic relation
+`FrobeniusQuadratic N p J` on `p`-power torsion, and that every prime outside `S`
+is prime to `N * p`. Assume separately that `ρ` matches the Hecke data at Frobenius
+elements: for every Frobenius element `σ` at a prime `ℓ ∉ S`, the trace and
+determinant of `ρ σ` are the images of `heckeGen ℓ` and `ℓ` in `HeckeAlg ⧸ 𝔪`.
+Finally assume `FrobeniusPowerDense S` modulo the kernel of `ρ` intersected with the
+subgroup fixing the `𝔪`-torsion. Then every `σ` satisfies `σ² - t σ + d = 0` on the
+`𝔪`-torsion, for all lifts `t` and `d` of the trace and determinant of `ρ σ`. -/
 public theorem cayleyHamilton_forall_of_frobeniusQuadratic_of_dense {J : Type*}
     [AddCommGroup J] [Module HeckeAlg J]
     [DistribMulAction (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) J]
