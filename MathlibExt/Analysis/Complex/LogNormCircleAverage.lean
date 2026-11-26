@@ -39,11 +39,12 @@ import Mathlib.Analysis.Meromorphic.Divisor
 
 open Real MeasureTheory Metric
 
-/-- Jensen's inequality for the logarithm of the norm: for a function
-analytic on a neighbourhood of a closed ball and nonzero at its centre,
-`log ‖F c‖` is at most the circle average of `log ‖F‖`. This is the
-inequality form of `AnalyticOnNhd.circleAverage_log_norm`, obtained by
-dropping the nonnegative divisor correction term. -/
+/-- **Jensen's inequality for the logarithm of an analytic function.** Let $c \in \mathbb{C}$, let
+$R$ be any real number, and let $F : \mathbb{C} \to \mathbb{C}$ be analytic on a neighbourhood of
+the closed disc $|z - c| \le |R|$, with $F(c) \ne 0$; $F$ may vanish elsewhere in the disc. Then
+$$\log |F(c)| \le \frac{1}{2\pi} \int_0^{2\pi} \log |F(c + R e^{i\theta})| \, d\theta.$$
+The two sides differ by the zero-counting term of Jensen's formula, a nonnegative sum over the
+zeros of $F$ in the disc. -/
 public theorem AnalyticOnNhd.log_norm_le_circleAverage_log_norm
     {F : ℂ → ℂ} {c : ℂ} {R : ℝ}
     (hF : AnalyticOnNhd ℂ F (Metric.closedBall c |R|)) (hc : F c ≠ 0) :
