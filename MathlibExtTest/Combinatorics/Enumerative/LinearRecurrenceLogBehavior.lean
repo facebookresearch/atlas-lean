@@ -91,4 +91,25 @@ example :
   refine ⟨?_, h.1 3 (by decide), h.2 4 (by decide)⟩
   norm_num [a005773Seq]
 
+-- First and second differences at the first admissible index: their neighboring values
+-- are 8, 22, 61 and 14, 39, 110, so both log-convexity and weighted log-concavity hold at
+-- `n = 4`.
+example :
+    let d₁ (m : ℕ) := a005773Seq (m + 1) - a005773Seq m
+    let d₂ (m : ℕ) := a005773Seq (m + 2) - 2 * a005773Seq (m + 1) + a005773Seq m
+    d₁ 4 ^ 2 ≤ d₁ 3 * d₁ 5 ∧
+      d₁ 3 / (Nat.factorial 3) * (d₁ 5 / (Nat.factorial 5)) ≤ (d₁ 4 / (Nat.factorial 4)) ^ 2 ∧
+      d₂ 4 ^ 2 ≤ d₂ 3 * d₂ 5 ∧
+      d₂ 3 / (Nat.factorial 3) * (d₂ 5 / (Nat.factorial 5)) ≤ (d₂ 4 / (Nat.factorial 4)) ^ 2 := by
+  have h := a005773Recurrence_diff_logBalanced a005773Seq rfl rfl a005773Seq_rec 4 (by decide)
+  obtain ⟨⟨h₁, hw₁⟩, h₂, hw₂⟩ := h
+  refine ⟨h₁, hw₁, h₂, hw₂⟩
+
+-- Log-convexity of the second differences fails at `n = 3`: their values there are
+-- 2, 14, 39, and `14 ^ 2 > 2 * 39`, so the bound `n ≥ 4` cannot be lowered for `Δ²A`.
+example :
+    let d₂ (m : ℕ) := a005773Seq (m + 2) - 2 * a005773Seq (m + 1) + a005773Seq m
+    ¬ d₂ 3 ^ 2 ≤ d₂ 2 * d₂ 4 := by
+  norm_num [a005773Seq]
+
 end MetaMathlibExt
