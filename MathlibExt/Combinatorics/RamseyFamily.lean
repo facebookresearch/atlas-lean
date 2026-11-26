@@ -16,7 +16,17 @@ public import Mathlib.Combinatorics.Hindman
 A Ramsey family is the union of the ultrafilters it contains. These ultrafilters form a
 closed set, and every nonempty closed set of ultrafilters arises this way.
 A Ramsey family of sets is invariant under left translation exactly when its ultrafilters
-form a left ideal under the ultrafilter product.
+form a left ideal under the ultrafilter product. Closure under the ultrafilter product has
+a weaker criterion in terms of finite intersections of inverse left translates.
+
+## References
+
+* Dibyendu De and Pintu Debnath, *Abundance of Arithmetic Progressions in CR-Sets*,
+  INTEGERS 25 (2025), Article A4, pp. 1–8, Theorem 5 (p. 4).
+* Cory Christopherson, *Closed Ideals in the Stone–Čech Compactification of a Countable
+  Semigroup and Some Applications to Ergodic Theory and Topological Dynamics*, PhD thesis,
+  The Ohio State University, 2014, Theorem 5.1.10 (p. 74), gives the compactness proof
+  of the subsemigroup criterion.
 -/
 
 namespace MetaMathlibExt
@@ -173,6 +183,48 @@ theorem betaFamily_isLeftIdeal_iff [Semigroup S] {F : Set (Set S)}
   · intro hshift p q hq A hA
     obtain ⟨s, hs⟩ := ((Ultrafilter.eventually_mul p q (· ∈ A)).mp hA).exists
     exact hF.2.2.1 _ _ (hshift s _ (hq _ hs)) (Set.image_preimage_subset _ _)
+
+/-- **Subsemigroup criterion for β(F).** Let $S$ be a semigroup and $\mathcal F$ a family of
+subsets of $S$ with the Ramsey property. For $x \in S$ and $E \subseteq S$ write
+$x^{-1}E = \{y \in S : xy \in E\}$, and multiply ultrafilters on $S$ by $E \in pq$ iff
+$\{x \in S : x^{-1}E \in q\} \in p$. Then $pq \in \beta(\mathcal F)$ for all
+$p, q \in \beta(\mathcal F)$ if and only if every $E \subseteq S$ has the following property: if
+there is $A \in \mathcal F$ such that $\bigcap_{x \in H} x^{-1}E \in \mathcal F$ for every finite
+$H \subseteq A$, then $E \in \mathcal F$.
+
+The source's intersection $\bigcap_{q \in H} x^{-1}E$ is read as $\bigcap_{x \in H} x^{-1}E$.
+
+Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
+25 (2025), Article A4, Theorem 5 (`integers-2025-A4-thm-5`). -/
+theorem betaFamily_isSubsemigroup_iff [Semigroup S] {F : Set (Set S)}
+    (hF : IsRamseyFamily F) :
+    (∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F) ↔
+      ∀ E : Set S, (∃ A ∈ F, ∀ H : Finset S, ↑H ⊆ A →
+        (⋂ x ∈ H, {y : S | x * y ∈ E}) ∈ F) → E ∈ F := by
+  classical
+  constructor
+  · rintro hmul E ⟨A, hA, hfinite⟩
+    obtain ⟨p, hp, hAp⟩ := (mem_iff_exists_mem_betaFamily hF A).mp hA
+    let C (x : A) : Set (Ultrafilter S) := {q | {y : S | x.val * y ∈ E} ∈ q}
+    have hC (x : A) : IsClosed (C x) := ultrafilter_isClosed_basic _
+    -- A finite intersection of translate-membership conditions is witnessed by one ultrafilter.
+    have hCfinite (H : Finset A) : (betaFamily F ∩ ⋂ x ∈ H, C x).Nonempty := by
+      have hHA : ↑(H.image Subtype.val) ⊆ A := by
+        intro x hx
+        obtain ⟨a, _, rfl⟩ := Finset.mem_image.mp hx
+        exact a.property
+      obtain ⟨q, hq, hHq⟩ := (mem_iff_exists_mem_betaFamily hF _).mp (hfinite _ hHA)
+      refine ⟨q, hq, Set.mem_iInter₂.mpr fun x hx => ?_⟩
+      exact Filter.mem_of_superset hHq (Set.biInter_subset_of_mem (Finset.mem_image_of_mem _ hx))
+    obtain ⟨q, hq, hqC⟩ := (isClosed_betaFamily hF).isCompact.inter_iInter_nonempty C hC hCfinite
+    apply hmul p hp q hq E
+    apply (Ultrafilter.eventually_mul p q (· ∈ E)).mpr
+    exact Filter.mem_of_superset hAp fun x hx => Set.mem_iInter.mp hqC ⟨x, hx⟩
+  · intro hcriterion p hp q hq E hE
+    have hA : {x : S | {y : S | x * y ∈ E} ∈ q} ∈ p :=
+      (Ultrafilter.eventually_mul p q (· ∈ E)).mp hE
+    refine hcriterion E ⟨_, hp _ hA, fun H hH => hq _ ?_⟩
+    exact (Filter.biInter_finset_mem H).mpr fun x hx => hH hx
 
 end
 

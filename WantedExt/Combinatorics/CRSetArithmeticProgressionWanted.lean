@@ -176,24 +176,6 @@ public theorem_wanted exists_idempotent_mem_betaFamily [Semigroup S] {F : Set (S
     (hF : IsRamseyFamily F) (hsub : ∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F) :
     ∃ p ∈ betaFamily F, p * p = p
 
-/-- **Subsemigroup criterion for β(F).** Let $S$ be a semigroup and $\mathcal F$ a family of
-subsets of $S$ with the Ramsey property. For $x \in S$ and $E \subseteq S$ write
-$x^{-1}E = \{y \in S : xy \in E\}$, and multiply ultrafilters on $S$ by $E \in pq$ iff
-$\{x \in S : x^{-1}E \in q\} \in p$. Then $pq \in \beta(\mathcal F)$ for all
-$p, q \in \beta(\mathcal F)$ if and only if every $E \subseteq S$ has the following property: if
-there is $A \in \mathcal F$ such that $\bigcap_{x \in H} x^{-1}E \in \mathcal F$ for every finite
-$H \subseteq A$, then $E \in \mathcal F$.
-
-The source's intersection $\bigcap_{q \in H} x^{-1}E$ is read as $\bigcap_{x \in H} x^{-1}E$.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Theorem 5 (`integers-2025-A4-thm-5`). -/
-public theorem_wanted betaFamily_isSubsemigroup_iff [Semigroup S] {F : Set (Set S)}
-    (hF : IsRamseyFamily F) :
-    (∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F) ↔
-      ∀ E : Set S, (∃ A ∈ F, ∀ H : Finset S, ↑H ⊆ A →
-        (⋂ x ∈ H, {y : S | x * y ∈ E}) ∈ F) → E ∈ F
-
 /-- **Decreasing shift-closed sequences give essential sets.** Let $S$ be a semigroup and let $F$
 be a family of subsets of $S$ with the Ramsey property, and write $\beta(F)$ for the set of
 ultrafilters on $S$ all of whose members lie in $F$. For $x \in S$ and $E \subseteq S$ write

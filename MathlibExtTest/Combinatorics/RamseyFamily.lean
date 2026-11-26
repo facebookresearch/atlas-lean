@@ -84,3 +84,42 @@ example {A : Set ℕ} (hA : A.Infinite) :
   exact ⟨p, hAp, fun n hn => hp {n} hn (Set.finite_singleton n)⟩
 
 end MetaMathlibExt.mem_iff_exists_mem_betaFamily.Tests
+
+namespace MetaMathlibExt.betaFamily_isSubsemigroup_iff.Tests
+
+attribute [local instance] Ultrafilter.semigroup
+
+section
+
+local instance rightZero : Semigroup Bool where
+  mul _ y := y
+  mul_assoc _ _ _ := rfl
+
+-- In the right-zero semigroup, the singleton test recovers E itself.
+example {F : Set (Set Bool)} (hF : IsRamseyFamily F) :
+    ∀ p ∈ betaFamily F, ∀ q ∈ betaFamily F, p * q ∈ betaFamily F := by
+  apply (betaFamily_isSubsemigroup_iff hF).2
+  rintro E ⟨A, hA, hfinite⟩
+  obtain ⟨p, _, hp⟩ := (mem_iff_exists_mem_betaFamily hF A).mp hA
+  obtain ⟨x, hx⟩ := Ultrafilter.nonempty_of_mem hp
+  have h := hfinite {x} (by simpa using hx)
+  simp at h
+  exact h
+
+end
+
+-- The principal ultrafilter at 2 is not idempotent: the criterion fails with A = {2}, E = {4}.
+example : ¬ ∀ p ∈ betaFamily {A : Set ℕ | 2 ∈ A},
+    ∀ q ∈ betaFamily {A : Set ℕ | 2 ∈ A}, p * q ∈ betaFamily {A : Set ℕ | 2 ∈ A} := by
+  have hF : IsRamseyFamily {A : Set ℕ | 2 ∈ A} := by
+    simpa using (isRamseyFamily_and_betaFamily_eq_of_isClosed
+      (isClosed_singleton (x := (pure 2 : Ultrafilter ℕ))) (Set.singleton_nonempty _)).1
+  intro hmul
+  have h4 := (betaFamily_isSubsemigroup_iff hF).1 hmul {4}
+    ⟨{2}, Set.mem_singleton 2, fun H hH => Set.mem_iInter₂.mpr fun x hx => by
+      have hx2 : x = 2 := hH hx
+      subst x
+      exact Set.mem_singleton 4⟩
+  exact (by decide : (2 : ℕ) ∉ ({4} : Set ℕ)) h4
+
+end MetaMathlibExt.betaFamily_isSubsemigroup_iff.Tests
