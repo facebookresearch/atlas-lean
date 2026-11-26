@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.NumberTheory.Padics.HeightOneSpectrum
 public import MathlibExt.Algebra.Quaternion.ClassSetHecke
 
 @[expose] public section
@@ -43,10 +44,10 @@ example (Λ : Submodule ℤ ℍ[ℚ, a, b]) (ℓ : ℕ)
         Submodule.finiteAdeleBox Λ :=
   mem_primeHeckeSet_iff Λ ℓ h
 
-example (α : ℍ[ℚ, a, b]) :
+example {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d : EmbeddingDatum Λ t n) :
     (1 : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∈
-      finiteIdeleQuadUnits α := by
-  show (1 : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∈ finiteIdeleQuadUnits α
+      finiteIdeleQuadUnits d := by
+  show (1 : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ∈ finiteIdeleQuadUnits d
   exact one_mem _
 
 /-! ### The norm ideal of the Lipschitz order -/
@@ -294,6 +295,65 @@ example (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ
   obtain ⟨x, rfl⟩ := ClassSet.mk_surjective x
   rw [heckeKernel_mk]
   exact (ENat.card_eq_zero_iff_empty _).mpr ⟨fun ⟨_, _, h, _⟩ => Set.notMem_empty _ h⟩
+
+/-! ### The idelic embedding constructions take a non-scalar element
+
+They take an embedding datum, whose element `α` is never a scalar. So the adelic quadratic subring
+contains `α ⊗ 1`, which is not a central scalar `1 ⊗ r`; for a scalar such as `α = 1` the subring
+would be `1 ⊗ 𝔸_f`, and every finite idele would lie in the embedding set. -/
+
+/-- The element of an embedding datum lies outside the `ℚ`-span of `1`. -/
+private theorem val_notMem_span_one {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ}
+    (d : EmbeddingDatum Λ t n) : d.1 ∉ Submodule.span ℚ {(1 : ℍ[ℚ, a, b])} := by
+  intro h
+  obtain ⟨c, hc⟩ := Submodule.mem_span_singleton.mp h
+  have h1 := (LinearIndependent.pair_iff.mp d.2.2.2 c (-1)
+    (by rw [← hc, neg_one_smul, add_neg_cancel])).2
+  norm_num at h1
+
+/-- No embedding datum has the element `1`. -/
+example {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d : EmbeddingDatum Λ t n) : d.1 ≠ 1 :=
+  fun h => val_notMem_span_one d (by rw [h]; exact Submodule.mem_span_singleton_self 1)
+
+private theorem one_ne_zero_finiteAdeleRing : (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) ≠ 0 := fun h =>
+  one_ne_zero (congrArg (fun x : FiniteAdeleRing (𝓞 ℚ) ℚ =>
+    x (Rat.HeightOneSpectrum.primesEquiv.symm ⟨2, Nat.prime_two⟩)) h)
+
+/-- The adelic quadratic subring of an embedding datum contains `α ⊗ 1`, which is not a central
+scalar `1 ⊗ r`. -/
+example {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d : EmbeddingDatum Λ t n) :
+    d.1 ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) ∈ finiteAdeleQuadSubring d ∧
+      d.1 ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) ∉
+        Set.range (fun r : FiniteAdeleRing (𝓞 ℚ) ℚ => (1 : ℍ[ℚ, a, b]) ⊗ₜ[ℚ] r) := by
+  refine ⟨Subring.subset_closure (Or.inl rfl), ?_⟩
+  rintro ⟨r, hr⟩
+  obtain ⟨f, hfα, hf⟩ := Submodule.exists_dual_map_eq_bot_of_notMem (val_notMem_span_one d)
+    inferInstance
+  have hf1 : f 1 = 0 := by
+    have h := Submodule.mem_map_of_mem (f := f) (Submodule.mem_span_singleton_self (1 : ℍ[ℚ, a, b]))
+    rwa [hf, Submodule.mem_bot] at h
+  have h := congrArg (fun x => TensorProduct.lid ℚ (FiniteAdeleRing (𝓞 ℚ) ℚ)
+    (f.rTensor (FiniteAdeleRing (𝓞 ℚ) ℚ) x)) hr
+  simp only [LinearMap.rTensor_tmul, TensorProduct.lid_tmul, hf1, zero_smul] at h
+  have h2 : (f d.1)⁻¹ • (f d.1 • (1 : FiniteAdeleRing (𝓞 ℚ) ℚ)) = 0 := by rw [← h, smul_zero]
+  rw [smul_smul, inv_mul_cancel₀ hfα, one_smul] at h2
+  exact one_ne_zero_finiteAdeleRing h2
+
+/-- `i` is an embedding datum of the Lipschitz order, with `i² - 0 i + 1 = 0`. -/
+private def lipschitzI : EmbeddingDatum lipschitzOrder 0 1 :=
+  ⟨⟨0, 1, 0, 0⟩, by simpa using mem_lipschitzOrder_mk 0 1 0 0,
+    by ext <;> simp [QuaternionAlgebra.mk_mul_mk],
+    by
+      refine LinearIndependent.pair_iff.mpr fun s u h => ?_
+      have h0 := congrArg QuaternionAlgebra.re h
+      have h1 := congrArg QuaternionAlgebra.imI h
+      simp at h0 h1
+      exact ⟨h0, h1⟩⟩
+
+/-- For the Lipschitz order and `i`, the identity idele lies in the idelic embedding set, so the
+idelic embedding class set is nonempty. -/
+example : Nonempty (IdelicEmbeddingClassSet lipschitzOrder lipschitzI) :=
+  ⟨⟨DoubleCoset.mk _ _ 1, 1, fun y _ => by simp, rfl⟩⟩
 
 end QuaternionAlgebra
 
