@@ -76,7 +76,8 @@ def extend {n : ℕ} (v : Fin n → Bool) : ℕ → Bool :=
   fun x => if h : x < n then v ⟨x, h⟩ else false
 
 open Classical in
-/-- `P_π(C)`: the total probability of the assignments that satisfy the clause `C`. -/
+/-- `P_π(C)`: the total weight `π` gives the assignments that satisfy the clause `C`; it is their
+probability when `π` is nonnegative with total `1`, as in the feasibility predicate. -/
 noncomputable def prob {n : ℕ} (π : (Fin n → Bool) → ℝ) (C : Cslib.Logic.LegacyPL.CNFClause) : ℝ :=
   ∑ v ∈ Finset.univ.filter (fun v => Cslib.Logic.LegacyPL.CNFClause.Satisfies (extend v) C), π v
 

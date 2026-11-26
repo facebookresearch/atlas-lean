@@ -67,21 +67,21 @@ reduction from every language in `NP`
 /-- `|Σ^(n)|` for an alphabet of `m` letters: the number of strings of length at most `n`. -/
 def stringsUpTo (m n : ℕ) : ℕ := ∑ k ∈ Finset.range (n + 1), m ^ k
 
-/-- The sample is nearly complete for `ε = p / q`: for some `n`, every string of `S` and `T`
-has length at most `n`, and `|Σ^(n) - (S ∪ T)|^q ≤ |Σ^(n)|^p`. -/
+/-- The sample is nearly complete for `(p, q)` (for `ε = p / q` when `q > 0`): for some `n`,
+every string of `S` and `T` has length at most `n`, and `|Σ^(n) - (S ∪ T)|^q ≤ |Σ^(n)|^p`. -/
 def NearlyComplete (p q : ℕ) (i : MinimumInferredFiniteStateAutomatonInstance) : Prop :=
   ∃ n, (∀ w ∈ i.2.1 ++ i.2.2.1, w.length ≤ n) ∧
     (stringsUpTo i.1 n - (i.2.1 ++ i.2.2.1).toFinset.card) ^ q ≤ stringsUpTo i.1 n ^ p
 
 /-- Well-formedness of an instance: it is a well-formed MINIMUM INFERRED FINITE STATE
 AUTOMATON instance (letters below `m`, `K` positive), and the sample is nearly complete for
-`ε = p / q`. -/
+`(p, q)` (for `ε = p / q` when `q > 0`). -/
 def WellFormed (p q : ℕ) (i : MinimumInferredFiniteStateAutomatonInstance) : Prop :=
   MinimumInferredFiniteStateAutomaton.WellFormed i ∧ NearlyComplete p q i
 
 open Classical in
 /-- MINIMUM INFERRED FINITE STATE AUTOMATON restricted to nearly complete samples for
-`ε = p / q`, as a decision problem over bitstrings. -/
+`(p, q)`, as a decision problem over bitstrings. -/
 noncomputable def minimumInferredFiniteStateAutomatonNearlyCompleteDec (p q : ℕ) :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode

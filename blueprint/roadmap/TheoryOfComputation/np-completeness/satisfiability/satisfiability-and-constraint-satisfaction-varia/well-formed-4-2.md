@@ -1,3 +1,3 @@
 # Well-formed instances of PROBABILISTIC SATISFIABILITY
 
-An instance is well-formed when every clause uses the variables below $n$ and every probability has $b_i > 0$ and lies in $[0, 1]$.
+An instance is well-formed when every clause uses only the variables below $n$ and every pair $(a_i, b_i)$ has $0 < b_i$ and $a_i \le b_i$, so that $a_i / b_i \in [0, 1]$.

@@ -78,7 +78,7 @@
 - [Expression spelled by a postfix token list](parse.md)
 - [POSITIVE ONE-IN-THREE 3SAT as a decision problem](positive-one-in-three-sat-dec.md)
 - [POSITIVE ONE-IN-THREE 3SAT is NP-complete](positive-one-in-three-sat-np-complete.md)
-- [Probability of a clause](prob.md)
+- [Weight of the assignments satisfying a clause](prob.md)
 - [PROBABILISTIC SATISFIABILITY as a decision problem](probabilistic-satisfiability-dec.md)
 - [Feasible instances of PROBABILISTIC SATISFIABILITY](probabilistic-satisfiability-feasible.md)
 - [Instances of PROBABILISTIC SATISFIABILITY](probabilistic-satisfiability-instance.md)
