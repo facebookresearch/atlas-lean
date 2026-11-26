@@ -1175,6 +1175,7 @@
   "CSLibExt/Algorithms/Lean/NumberTheory/ModularLinearEquation": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Solving linear congruences"},
   "CSLibExt/Algorithms/Lean/Numerical/DotProductError": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Rounding error analysis"},
   "CSLibExt/Algorithms/Lean/Numerical/FloatingPoint": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Floating-point rounding"},
+  "CSLibExt/Algorithms/Lean/Numerical/FusedProductResidual": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Floating-point rounding"},
   "CSLibExt/Algorithms/Lean/Numerical/GaussianEliminationBackwardError": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Rounding error analysis"},
   "CSLibExt/Algorithms/Lean/Numerical/Horner": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Horner's method"},
   "CSLibExt/Algorithms/Lean/Numerical/IterativeRefinement": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Rounding error analysis"},
