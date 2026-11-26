@@ -21,7 +21,9 @@ public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
 public import MathlibExt.NumberTheory.RepetendTable.DigitDifference
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InverseColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
+public import MathlibExt.NumberTheory.RepetendTable.LastDigit
 public import MathlibExt.NumberTheory.RepetendTable.OrderCount
 public import MathlibExt.NumberTheory.RepetendTable.OrderSix
 public import MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation
@@ -46,8 +48,14 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
 
+`MetaMathlibExt.repetend_column_eq_column_of_mul_modEq_one` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InverseColumns`.
+
 `MetaMathlibExt.even_card_small_bases_orderOf` is proved in
 `MathlibExt.NumberTheory.RepetendTable.InversePairs`.
+
+`MetaMathlibExt.repetend_last_digit_ne_zero` is proved in
+`MathlibExt.NumberTheory.RepetendTable.LastDigit`.
 
 `MetaMathlibExt.totient_dvd_card_orderOf_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.OrderCount`.
@@ -127,19 +135,6 @@ public theorem_wanted repetend_block_sum_eq (B N x d k : ℕ) (hB : 2 ≤ B) (hx
     let R := ∑ j ∈ Finset.range d, x * B ^ (j * k) % N
     S * N = R * (B ^ k - 1) ∧ (Nat.Coprime (B ^ k - 1) N → B ^ k - 1 ∣ S)
 
-/-- **The last repetend digit is nonzero.** Let $n \ge 2$ and let $b \ge 2$ be prime to $n$,
-with multiplicative order $L$ modulo $n$ (the repetend length of $1/n$ in base $b$). Then the
-digit $\lfloor b^{(L-1)+1}/n \rfloor \bmod b$ of $1/n$ at position $L - 1$ is not $0$.
-
-This holds for every such base, not only for the small bases $b < n$ that form the rows of the
-paper's table.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 25 (`integers-2025-A26-lem-25`). -/
-public theorem_wanted repetend_last_digit_ne_zero (n b : ℕ) (hn : 2 ≤ n) (hb : 2 ≤ b)
-    (hcop : Nat.Coprime b n) :
-    b ^ (orderOf (b : ZMod n) - 1 + 1) / n % b ≠ 0
-
 /-- **A constraint on $b^2 + un$ between $2$ and $n - 2$.** Let $n$ and $b$ be natural numbers and
 $u$ an integer, and put $b_2 = b^2 + un$. If $2 \le b_2 \le n - 2$, then $b \ne u + 1$.
 
@@ -176,20 +171,6 @@ Article A26, Lemma 6 (`integers-2025-A26-lem-6`). -/
 public theorem_wanted repetend_digit_pow_mul_eq_of_mul_modEq_one (n b L x j j' : ℕ) (hL : 0 < L)
     (hb : orderOf (b : ZMod n) = L) (hj : Nat.Coprime j L) (hjj : j * j' ≡ 1 [MOD L]) :
     (b ^ (x * j) % n) ^ (j' + 1) / n % (b ^ (x * j) % n) = (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
-
-/-- **Columns $j$ and $j^{-1}$ of a repetend table match.** Let $n$ and $L \ge 1$ be natural
-numbers, and consider the repetend table of $1/n$ whose rows are the natural numbers $1 \le b < n$
-coprime to $n$ of multiplicative order $L$ modulo $n$, and whose column $j$ holds the digits
-$\lfloor b^{j+1}/n \rfloor \bmod b$. If $j$ and $j'$ are natural numbers with $j$ coprime to $L$,
-$j^2 \not\equiv 1 \pmod L$ and $jj' \equiv 1 \pmod L$, then columns $j$ and $j'$ are equal as
-multisets.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Theorem 2 (`integers-2025-A26-thm-2`). -/
-public theorem_wanted repetend_column_eq_column_of_mul_modEq_one (n L j j' : ℕ) (hL : 0 < L)
-    (hj : Nat.Coprime j L) (hjsq : ¬ j ^ 2 ≡ 1 [MOD L]) (hjj : j * j' ≡ 1 [MOD L]) :
-    let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
-    (B.val.map fun b => b ^ (j + 1) / n % b) = B.val.map fun b => b ^ (j' + 1) / n % b
 
 /-- **Units modulo $L$ whose square is not $1$.** Let $L \ge 1$, let $e$ be the exponent of $2$
 in $L$ and let $f$ be the number of distinct odd prime factors of $L$. Then the number of
