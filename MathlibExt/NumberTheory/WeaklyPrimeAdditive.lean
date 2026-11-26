@@ -617,23 +617,18 @@ private theorem not_eight_dvd_sum_three {n : ℕ} (hsum : IsPrimeDivisorPowerSum
     (hq.1.odd_of_ne_two (Ne.symm hne.2)).pow (symbol_of_prime_dvd_sum hb hp.2)
     (symbol_of_prime_dvd_sum hc (by simpa [add_right_comm] using hq.2)) h₈
 
-/-- A sum of three powers witnessing weak prime-additivity already has minimum length. -/
-private theorem length_three {n : ℕ} (hn : 0 < n) (h : IsPrimeDivisorPowerSum n 3) :
-    IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3 := by
-  have hcard : 3 ≤ n.primeFactors.card := by
-    obtain ⟨s, hs, primes, _⟩ := h
-    rw [← hs]
-    exact Finset.card_le_card fun p hp =>
-      (primes p hp).1.mem_primeFactors (primes p hp).2 hn.ne'
-  refine ⟨⟨by omega, 3, h⟩, le_antisymm (weaklyPrimeAdditiveLength_le h) ?_⟩
+/-- Every weakly prime-additive number has length at least three. -/
+private theorem three_le_length {n : ℕ} (hw : IsWeaklyPrimeAdditive n) :
+    3 ≤ weaklyPrimeAdditiveLength n := by
+  have hcard := hw.1
   obtain ⟨t, ht, htprimes, e, pos, he⟩ :=
-    Nat.sInf_mem (s := {k | IsPrimeDivisorPowerSum n k}) ⟨3, h⟩
+    Nat.sInf_mem (s := {k | IsPrimeDivisorPowerSum n k}) hw.2
   change t.card = weaklyPrimeAdditiveLength n at ht
   by_contra! hlt
   have cases : t.card = 0 ∨ t.card = 1 ∨ t.card = 2 := by omega
   rcases cases with h₀ | h₁ | h₂
   · simp [Finset.card_eq_zero.mp h₀] at he
-    omega
+    simp [he] at hcard
   · obtain ⟨p, rfl⟩ := Finset.card_eq_one.mp h₁
     simp only [Finset.sum_singleton] at he
     rw [he, Nat.primeFactors_prime_pow (pos p (by simp)).ne' (htprimes p (by simp)).1] at hcard
@@ -646,6 +641,17 @@ private theorem length_three {n : ℕ} (hn : 0 < n) (h : IsPrimeDivisorPowerSum 
     rw [he] at hpn
     have hd := (Nat.dvd_add_right (dvd_pow_self p (pos p (by simp)).ne')).mp hpn
     exact hpq ((Nat.prime_dvd_prime_iff_eq hp hq).mp (hp.dvd_of_dvd_pow hd))
+
+/-- A sum of three powers witnessing weak prime-additivity already has minimum length. -/
+private theorem length_three {n : ℕ} (hn : 0 < n) (h : IsPrimeDivisorPowerSum n 3) :
+    IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3 := by
+  have hcard : 3 ≤ n.primeFactors.card := by
+    obtain ⟨s, hs, primes, _⟩ := h
+    rw [← hs]
+    exact Finset.card_le_card fun p hp =>
+      (primes p hp).1.mem_primeFactors (primes p hp).2 hn.ne'
+  have hw : IsWeaklyPrimeAdditive n := ⟨by omega, 3, h⟩
+  exact ⟨hw, le_antisymm (weaklyPrimeAdditiveLength_le h) (three_le_length hw)⟩
 
 /-- Choose the two odd primes so that the half period of the second is coprime to both
 periods needed for the power of two. -/
@@ -793,6 +799,35 @@ public theorem infinite_shortest_weaklyPrimeAdditive_dvd_iff (m : ℕ) (hm : 0 <
     obtain ⟨n, hB, hdiv, hlen⟩ := WeaklyPrimeAdditive.shortest_multiple M B hM
     have hd : 2 ^ k * M ∣ 4 * M := mul_dvd_mul_right (pow_dvd_pow 2 hk) M
     exact ⟨n, ⟨hd.trans hdiv, hlen⟩, hB⟩
+
+/-- **Weakly prime-additive multiples of length four.** Assume $(\ast)$: for all natural numbers
+$a$, $f$, $g$ with $1 \le a \le f$, $\gcd(a, f) = 1$ and $4 \mid f$, and $g$ an odd prime dividing
+$f$ with Jacobi symbol $\left(\frac{g}{a}\right) = -1$, there is a prime $\ell \equiv a \pmod f$
+such that $g$ is a primitive root modulo $\ell$. Then for every positive integer $m$ there are
+infinitely many weakly prime-additive numbers $n$ with $m \mid n$ and length $\kappa_n = 4$.
+
+The paper states $(\ast)$ with the Kronecker symbol; since $a$ is coprime to $f$ and $4 \mid f$,
+$a$ is odd, so it is the Jacobi symbol.
+
+Source: Wing Hong Leung, *On the Weakly Prime-Additive Numbers with Length 4*, INTEGERS 24
+(2024), Article A9, Theorem 1. -/
+public theorem infinite_weaklyPrimeAdditive_length_four_dvd
+    (hstar : ∀ a f g : ℕ, 1 ≤ a → a ≤ f → Nat.Coprime a f → 4 ∣ f → g.Prime → Odd g →
+      g ∣ f → jacobiSym g a = -1 →
+      ∃ p : ℕ, p.Prime ∧ p ≡ a [MOD f] ∧ IsPrimitiveRoot (g : ZMod p) (p - 1))
+    (m : ℕ) (hm : 0 < m) :
+    {n : ℕ | m ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 4}.Infinite := by
+  refine (infinite_weaklyPrimeAdditive_length_le_four_dvd hstar (8 * m)
+    (Nat.mul_pos (by decide) hm)).mono ?_
+  rintro n ⟨hd, hw, hl⟩
+  refine ⟨(dvd_mul_left m 8).trans hd, hw, le_antisymm hl ?_⟩
+  have h₃ := WeaklyPrimeAdditive.three_le_length hw
+  by_contra! hlt
+  have he : weaklyPrimeAdditiveLength n = 3 := by omega
+  have hsum : IsPrimeDivisorPowerSum n (weaklyPrimeAdditiveLength n) :=
+    Nat.sInf_mem (s := {k | IsPrimeDivisorPowerSum n k}) hw.2
+  rw [he] at hsum
+  exact WeaklyPrimeAdditive.not_eight_dvd_sum_three hsum ((dvd_mul_right 8 m).trans hd)
 
 end
 
