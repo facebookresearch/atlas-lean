@@ -1,12 +1,19 @@
 # The computed convex hull equals the convex hull
 
-Let $P$ be a finite set of points in the plane, not all on one line. Andrew's monotone chain algorithm, which sorts $P$ lexicographically and builds the lower and upper chains keeping only strict left turns, returns a polygon whose vertex set is exactly the set of extreme points of the convex hull $\mathrm{conv}(P)$, and the closed region bounded by that polygon equals $\mathrm{conv}(P)$.
+Let $P$ be a list of real plane points in strictly increasing lexicographic order, containing
+three noncollinear points. Andrew's monotone chain algorithm builds the lower and upper chains
+by keeping only strict left turns. Its output list $V$ has at least three vertices and lists each
+extreme point of the convex hull $\operatorname{conv}(P)$ exactly once, with no other points.
 
-## Proof depends on
+For each consecutive pair $a,b$ in $V$, including the last-to-first edge, take the closed
+half-plane defined by $(b-a)\times(x-a)\ge 0$, where $\times$ is the planar cross product.
+The intersection of these half-planes equals $\operatorname{conv}(P)$. Non-strict inequalities
+include the boundary edges and vertices.
 
-- [The monotone chain hull of non-collinear points turns strictly left at every vertex](convex-hull-turns-left.md)
-- [The hull's vertices are input points](convex-hull-subset.md)
-- [The hull polygon contains every input point](convex-hull-left-of-edges.md)
+The edge inequalities contain every input point. Conversely, if a point lay in the region
+but outside the convex hull of the returned vertices, a separating linear functional would
+attain its maximum over the vertices at a strict corner. The two incident edges constrain the
+point to directions from that corner in which the functional cannot increase.
 
 ## Sources
 
