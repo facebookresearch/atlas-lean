@@ -66,16 +66,6 @@ public theorem_wanted hyperLeonardo_recurrence (r : ℕ) :
         ∑ j ∈ Finset.Ico 1 r, (j * (n + r - j).choose (r - j) : ℕ)) ∧
     hyperLeonardo r 0 = 1 ∧ hyperLeonardo r 1 = r + 1
 
-/-- **Recurrence across consecutive orders of hyper-Leonardo numbers.** For all natural numbers
-$r \ge 1$ and $n \ge 1$, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy
-$Le^{(r)}_n = Le^{(r)}_{n-1} + Le^{(r-1)}_n$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 3, Equation (4)
-(`integers-2026-A48-prop-3`). -/
-public theorem_wanted hyperLeonardo_succ_succ (r n : ℕ) :
-    hyperLeonardo (r + 1) (n + 1) = hyperLeonardo (r + 1) n + hyperLeonardo r (n + 1)
-
 /-- **Consecutive hyper-Leonardo numbers of order one.** For every natural number $n$, the
 hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
 $Le^{(1)}_{n+1} = Le^{(1)}_n + L_{1,n+1}$, where $L_{1,n}$ is the generalized Leonardo number

@@ -20,6 +20,17 @@ example (r : ℕ) : hyperLeonardo r 0 = 1 := by
   | zero => rfl
   | succ r ih => simpa [hyperLeonardo_succ] using ih
 
+-- At the first index step, the added term is the lower order's value at index one.
+example (r : ℕ) :
+    hyperLeonardo (r + 1) 1 = hyperLeonardo (r + 1) 0 + hyperLeonardo r 1 :=
+  hyperLeonardo_succ_succ r 0
+
+-- At order two and index two, the lower-order endpoint contributes five.
+example : hyperLeonardo 2 2 = 8 := by
+  calc
+    hyperLeonardo 2 2 = hyperLeonardo 2 1 + hyperLeonardo 1 2 := hyperLeonardo_succ_succ 1 1
+    _ = 8 := by simp [hyperLeonardo, Finset.sum_range_succ, genLeonardo]
+
 -- At degree three the first two iterated sums already have distinct coefficients.
 example : coeff 3 (PowerSeries.mk (hyperLeonardo 1)) = 10 ∧
     coeff 3 (PowerSeries.mk (hyperLeonardo 2)) = 18 := by
