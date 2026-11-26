@@ -1,7 +1,9 @@
 # ε-sample theorem
 
 There is a constant $c > 0$ such that the following holds. Let $(X, R)$ be a range space of VC dimension at most $\delta$, let $x \subseteq X$ be finite, and let $\varepsilon, \varphi > 0$. Then a random subset $C \subseteq x$ of cardinality
+
 $$s = \frac{c}{\varepsilon^2} \left( \delta \log \frac{\delta}{\varepsilon} + \log \frac{1}{\varphi} \right)$$
+
 (all of $x$ if $s > |x|$) is an $\varepsilon$-sample for $x$ with probability at least $1 - \varphi$ (Vapnik and Chervonenkis).
 
 ## Depends on

@@ -1,7 +1,9 @@
 # ε-net theorem
 
 Let $(X, R)$ be a range space of finite VC dimension $\delta$, let $x$ be a finite subset of $X$, and let $0 < \varepsilon \le 1$ and $0 < \varphi < 1$. Let $N$ be obtained by $m$ independent uniform random draws from $x$, where
+
 $$m \ge \max\left( \frac{4}{\varepsilon} \log_2 \frac{4}{\varphi}, \; \frac{8\delta}{\varepsilon} \log_2 \frac{16}{\varepsilon} \right).$$
+
 Then $N$ is an $\varepsilon$-net for $x$ with probability at least $1 - \varphi$ (Haussler and Welzl).
 
 ## Depends on
