@@ -26,3 +26,7 @@ example (h : {n : ℕ | 1 ≤ n ∧ bernoulliDiffDenominator n = radical (n + 1)
       60 ∈ bernoulliIntegralDerivativeIndices 1 := by
   rw [odd_radical_conjecture_implies_bernoulli_integral_derivative_conjecture h]
   decide
+
+-- In base 10, 19 has last digit 9 = 10 - 1, so its digit sum 1 + 9 reaches the base.
+example : 10 ≤ (Nat.digits 10 19).sum :=
+  le_digit_sum_of_last_digit (by decide) (by decide) (by decide)

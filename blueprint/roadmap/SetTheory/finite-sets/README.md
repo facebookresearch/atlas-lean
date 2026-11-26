@@ -7,3 +7,4 @@ Finite subsets and finite types: cardinality, lattice operations, products, powe
 - [The Cartesian product of two finite sets is finite](finite-product-finite.md)
 - [An injective map from a finite set to itself is surjective](injective-self-map-finite-set-surjective.md)
 - [Number of elements of a type, with ∞ for infinite types](group-order.md)
+- [Overwriting a function on a finite set of indices](update-finset.md)
