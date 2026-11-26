@@ -27,6 +27,7 @@
 - [Agent 1 knows that agent 0 knows whether the coin is heads](muddy-know-one-knows-whether.md)
 
 - [Computing common knowledge on finite models](computing-common-knowledge-on-finite-models/README.md)
+- [Public announcement logic](public-announcement-logic/README.md)
 
 ## Related topics
 

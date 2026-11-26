@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCCalibrating
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCFirstElementBounds
+public import MathlibExt.NumberTheory.ArithmeticFunction.HBCHalfPrimeProductBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectMinFac
 
 namespace MetaMathlibExt
@@ -188,31 +189,6 @@ public theorem_wanted hbcAdmissible_seven_tenths_prod_le (k : ℕ) (hk : 3 ≤ k
     (hlt : 7 / 10 < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ))) :
     ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
       2 / 7 * (Real.sqrt 15 ^ 2 ^ k - Real.sqrt 15 ^ 2 ^ (k - 1))
-
-/-- **Product bounds for prime tuples at $1/2$ by size of the first prime.** Let
-$p_1 < p_2 < \dots < p_k$ be primes with
-$\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 \ge 5$, and let
-$F_k(x) = x^{2^k} - x^{2^{k-1}}$ and $P = \prod_{i=1}^{k} p_i$. Then $P \le F_k(\sqrt{8/3^{7/8}})$.
-Moreover, if $6 \le p_1 < 18$, then $P \le F_k(\sqrt{12/5^{15/16}})$; if $18 \le p_1 < 258$, then
-$P \le F_k(\sqrt{512/255^{31/32}})$; and if $p_1 \ge 258$, then
-$P \le F_k\bigl(\sqrt{2^{5/4} (2^{16} + 1)/2^{16}}\bigr)$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 7. -/
-public theorem_wanted hbcAdmissible_half_prime_prod_le_of_five_le (k : ℕ) (y : ℕ → ℕ) (hmono : ∀ i, 1 ≤ i → i < k → y i < y (i + 1))
-    (hprime : ∀ i ∈ Finset.Icc 1 k, (y i).Prime)
-    (hle : ∏ i ∈ Finset.Icc 1 k, (1 - 1 / (y i : ℝ)) ≤ 1 / 2)
-    (hlt : 1 / 2 < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ)))
-    (h5 : 5 ≤ y 1) :
-    let F : ℝ → ℝ := fun x => x ^ 2 ^ k - x ^ 2 ^ (k - 1)
-    ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤ F (Real.sqrt (8 / (3 : ℝ) ^ ((7 : ℝ) / 8))) ∧
-      (6 ≤ y 1 → y 1 < 18 →
-        ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤ F (Real.sqrt (12 / (5 : ℝ) ^ ((15 : ℝ) / 16)))) ∧
-      (18 ≤ y 1 → y 1 < 258 →
-        ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤ F (Real.sqrt (512 / (255 : ℝ) ^ ((31 : ℝ) / 32)))) ∧
-      (258 ≤ y 1 →
-        ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
-          F (Real.sqrt ((2 : ℝ) ^ ((5 : ℝ) / 4) * (2 ^ 16 + 1) / 2 ^ 16)))
 
 /-- **Product bound for prime tuples at $1/2$ starting at $5$.** Let $p_1 < p_2 < \dots < p_k$ be
 primes with $\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 = 5$.
