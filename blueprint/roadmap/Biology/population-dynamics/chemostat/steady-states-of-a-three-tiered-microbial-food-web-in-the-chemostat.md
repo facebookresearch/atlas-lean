@@ -1,6 +1,8 @@
 # Steady states of a three-tiered microbial food web in the chemostat
 
-**Model.** In a chemostat with dilution rate $D > 0$ and a single fed substrate, a first organism $x_0$ degrades substrate $s_0$ (inflow concentration $s_0^{\mathrm{in}} > 0$) into an intermediate $s_1$ while consuming hydrogen $s_2$; a second organism $x_1$ converts $s_1$ into hydrogen and is inhibited by it; a hydrogenotroph $x_2$ consumes hydrogen. After rescaling so that all yields equal one except
+**Model.** In a chemostat with dilution rate $D > 0$ and a single fed substrate, a first organism $x_0$ degrades substrate $s_0$ (inflow concentration $s_0^{\mathrm{in}} > 0$) into an intermediate $s_1$ while consuming hydrogen $s_2$; a second organism $x_1$ converts $s_1$ into hydrogen and is inhibited by it; a hydrogenotroph $x_2$ consumes hydrogen.
+
+After rescaling so that all yields equal one except
 
 $$\omega = \frac{1}{2(1 - Y_0)(1 - Y_1)},$$ where $Y_0, Y_1$ are the biomass yields of $x_0, x_1$ ($\omega$ measures the hydrogen demand of $x_0$ relative to the hydrogen supply from $x_1$),
 the model is
