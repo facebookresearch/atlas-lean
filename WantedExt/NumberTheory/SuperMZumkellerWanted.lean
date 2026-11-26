@@ -20,7 +20,10 @@ divisors of `n` and `τ(n)` is their number.  The integer `n` is
 into two disjoint subsets with equal products (encoded by one
 subset `A` whose product equals the product of its complement),
 and *`k`-m-perfect* if `T(n) = n^k`.  Only the seven records of
-this paper that are correct as printed are formalized here.
+this paper that are correct as printed are formalized, here or in
+the modules this file imports;
+`isSuperMZumkeller_prime_pow_iff` is proved in
+`MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff`.
 
 **The paper's Theorems 4, 5, and 7 are false as printed** and
 are deliberately not stated: Theorem 4 fails at `60 = 12·5`
