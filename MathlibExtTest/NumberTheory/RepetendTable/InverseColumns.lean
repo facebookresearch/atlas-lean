@@ -48,7 +48,12 @@ example :
   rw [show B = {3, 4, 5, 9} from rows_eleven]
   decide
 
--- For `n ≤ 1` the table has no rows, and both columns are empty.
+-- For `n ≤ 1` the table has no rows, and both columns are empty: first `n = 0`, then `n = 1`.
+example (L j : ℕ) :
+    let B := (Finset.Ico 1 0).filter fun b => Nat.Coprime b 0 ∧ orderOf (b : ZMod 0) = L
+    (B.val.map fun b => b ^ (j + 1) / 0 % b) = 0 := by
+  simp
+
 example (L j : ℕ) :
     let B := (Finset.Ico 1 1).filter fun b => Nat.Coprime b 1 ∧ orderOf (b : ZMod 1) = L
     (B.val.map fun b => b ^ (j + 1) / 1 % b) = 0 := by
