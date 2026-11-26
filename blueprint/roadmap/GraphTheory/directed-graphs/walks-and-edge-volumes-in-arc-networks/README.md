@@ -6,7 +6,6 @@
 - [Node balance of a walk's traversal counts](incidence-matrix-mul-vec-count.md)
 - [The empty walk](walk-nil.md)
 - [One-arc walks](walk-singleton.md)
-- [Prepending an arc that meets the walk](walk-cons.md)
 - [Appending an arc to a walk](walk-snoc.md)
 - [Dropping the first arc of a walk](walk-tail.md)
 - [Decomposing a walk at its first arc](walk-cons-pair.md)

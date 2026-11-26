@@ -4,7 +4,6 @@
 - [Book embedding](has-book-embedding.md)
 - [Once-subdivided graph](is-edge-subdivision.md)
 - [Book thickness of once-subdivided graphs](conjecture.md)
-- [Book thickness is not bounded by that of the once-subdivided graph](conjecture-refuted.md)
 - [Integer points as real points](to-real.md)
 - [Three-dimensional grid drawing](is-grid-drawing3.md)
 - [Volume of a grid drawing](has-volume-at-most.md)

@@ -9,7 +9,7 @@
 - [Proper colorings of unordered pairs pass to subgraphs](mono.md)
 - [Vizing's theorem](vizing.md)
 - [Simple loopless triangulation as an oriented map](is-simple-triangulation.md)
-- [3-edge-colourable dual of an oriented map](dual-three-edge-colorable.md)
+- [Dual 3-edge-colouring test for an oriented map](dual-three-edge-colorable.md)
 - [Grünbaum's conjecture](grunbaum-conjecture.md)
 - [Grünbaum's conjecture is false](grunbaum-conjecture-refuted.md)
 - [$r$-graphs](is-rgraph.md)

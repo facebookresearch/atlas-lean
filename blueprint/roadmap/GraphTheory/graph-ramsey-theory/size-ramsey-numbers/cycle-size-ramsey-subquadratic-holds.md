@@ -6,3 +6,4 @@ For every real $\varepsilon > 0$ and all sufficiently large $n$, some simple gra
 
 - T. F. Bloom, Erdős Problems, Problem #720, https://www.erdosproblems.com/720.
 - J. Beck, On size Ramsey number of paths, trees, and circuits. I, J. Graph Theory 7 (1983), 115–129, https://doi.org/10.1002/jgt.3190070115.
+- P. E. Haxell, Y. Kohayakawa and T. Łuczak, The induced size-Ramsey number of cycles, Combin. Probab. Comput. 4 (1995), 217–239, https://doi.org/10.1017/S0963548300001619. Its linear bound on the induced size-Ramsey number of cycles implies the same bound for the ordinary size-Ramsey number.

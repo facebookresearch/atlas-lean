@@ -4,5 +4,5 @@ Every simple graph $G$ on a finite nonempty vertex set that is even-hole-free, e
 
 ## Sources
 
-- AIM workshop The perfect graph conjecture, problem list, section G.4 Even-hole-free graphs, https://aimath.org/WWN/perfectgraph/perfectgraph.pdf.
+- AIM workshop The perfect graph conjecture, problem list, section G.4 Even-hole-free graphs, https://aimath.org/WWN/perfectgraph/.
 - M. Chudnovsky and P. Seymour, Even-hole-free graphs still have bisimplicial vertices, J. Combin. Theory Ser. B 161 (2023), 331–381, arXiv:1909.10967, https://doi.org/10.1016/j.jctb.2023.02.009.

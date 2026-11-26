@@ -76,7 +76,6 @@
 - [Buys–Polak–Zuiddam lower bound for the capacity of the 23-cycle](bpz2026-cycle-twenty-three-lower-bound.md)
 - [Finite simple graphs as labelled graphs](fin-graph.md)
 - [Disjoint union of finite graphs](disjoint-union.md)
-- [Strong product of finite graphs](strong-product.md)
 - [Zuiddam's preorder on graphs](cohom-le.md)
 - [The one-vertex graph](one-vertex.md)
 - [Asymptotic spectrum of graphs](asymptotic-spectrum.md)

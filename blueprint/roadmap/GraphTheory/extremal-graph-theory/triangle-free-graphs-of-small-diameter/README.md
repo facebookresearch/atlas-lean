@@ -2,7 +2,6 @@
 
 - [Cost of completing a graph to a triangle-free graph of diameter r](diameter-completion-cost.md)
 - [Erdős Problem 619 (completing connected triangle-free graphs to diameter four)](diameter-four-completion-linear-saving.md)
-- [Resolution of Erdős Problem 619](diameter-four-completion-linear-saving-r.md)
 - [Erdős Problem 134 (completing sparse triangle-free graphs to diameter two)](triangle-free-diameter-two-completion.md)
 - [Resolution of Erdős Problem 134](triangle-free-diameter-two-completion-ho.md)
 - [Cost of completing a graph to a triangle-free graph of diameter two](diameter-two-completion-cost.md)

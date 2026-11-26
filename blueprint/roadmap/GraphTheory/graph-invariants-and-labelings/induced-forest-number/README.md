@@ -5,4 +5,3 @@
 - [The induced forest number is at most the number of vertices](induced-forest-number-le-card.md)
 - [The induced forest number is attained](exists-is-acyclic-card-eq-induced-forest.md)
 - [Albertson–Berman conjecture](conjecture.md)
-- [The Albertson–Berman conjecture is false](conjecture-refuted.md)

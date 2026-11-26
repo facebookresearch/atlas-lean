@@ -1,8 +1,6 @@
 # Flows on arc networks
 
-- [Signed incidence matrix of an arc network](incidence-matrix.md)
 - [Incidence matrix times an arc vector is net inflow](incidence-mul-vec.md)
-- [Loop columns of the signed incidence matrix vanish](incidence-loop-eq-zero.md)
 - [Node sum of an incidence transfer is zero](sum-incidence-matrix-mul-vec-eq-zero.md)
 - [Endpoint-pair aggregation of an arc function](aggregate.md)
 - [Feasible flow on an arc network](is-arc-feasible.md)

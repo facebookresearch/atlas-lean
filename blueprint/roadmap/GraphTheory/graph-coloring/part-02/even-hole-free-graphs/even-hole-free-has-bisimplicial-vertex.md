@@ -4,4 +4,4 @@ The statement that every simple graph $G$ on a finite nonempty vertex set that i
 
 ## Sources
 
-- AIM workshop The perfect graph conjecture, problem list, section G.4 Even-hole-free graphs, https://aimath.org/WWN/perfectgraph/perfectgraph.pdf.
+- AIM workshop The perfect graph conjecture, problem list, section G.4 Even-hole-free graphs, https://aimath.org/WWN/perfectgraph/.

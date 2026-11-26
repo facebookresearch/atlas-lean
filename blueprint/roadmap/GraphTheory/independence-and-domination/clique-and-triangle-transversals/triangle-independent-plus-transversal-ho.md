@@ -5,4 +5,4 @@ For every natural number $n$ and every simple graph $G$ on $\{0, \dots, n-1\}$, 
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #621, https://www.erdosproblems.com/621.
-- S. Norin and Y.-R. Sun, Triangle-independent sets vs. cuts, arXiv:1602.04370 (2016), https://arxiv.org/abs/1602.04370.
+- S. Norin and Y.-R. Sun, Triangle-independent sets vs. cuts, Graphs Combin. (2018), Theorem 1.1, https://doi.org/10.1007/s00373-018-1902-z; arXiv:1602.04370.

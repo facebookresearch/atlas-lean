@@ -1,6 +1,6 @@
 # Erdős Problem 895 (independent Schur triples)
 
-The statement that for all sufficiently large $n$, every triangle-free simple graph on the natural numbers has positive integers $a \ne b$ with $a + b \le n$ such that $a$, $b$ and $a + b$ are pairwise non-adjacent. Only the vertices $1, \dots, n$ matter, so this is the same as asking it of every triangle-free graph on $\{1, \dots, n\}$. Stated here as a proposition; its resolution: [Resolution of Erdős Problem 895](triangle-free-independent-schur-triple-h.md).
+The statement that for all sufficiently large $n$, every triangle-free simple graph on the natural numbers has positive integers $a \ne b$ with $a + b \le n$ such that $a$, $b$ and $a + b$ are pairwise non-adjacent. Only the vertices $1, \dots, n$ matter, so this is the same as asking it of every triangle-free graph on $\{1, \dots, n\}$. Stated here as a proposition.
 
 ## Sources
 

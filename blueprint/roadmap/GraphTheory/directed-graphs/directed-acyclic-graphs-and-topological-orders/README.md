@@ -4,7 +4,6 @@
 - [Topological order of a finite digraph](is-topological-order.md)
 - [Roots of a finite digraph](roots.md)
 - [Leaves of a finite digraph](leaves.md)
-- [Set of directed paths of a digraph](paths.md)
 - [Parents of a vertex in a finite digraph](parents-of.md)
 - [Rooted tree (arborescence) in a digraph](is-rooted-tree.md)
 - [Acyclic digraphs have no loops](irrefl.md)

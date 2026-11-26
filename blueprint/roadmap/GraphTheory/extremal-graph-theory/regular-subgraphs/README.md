@@ -1,7 +1,7 @@
 # Regular subgraphs
 
 - [Erdős Problem 715, first question (Berge)](four-regular-contains-cubic-subgraph.md)
-- [Erdős Problem 715, second question](regular-degree-at-least-four-contains-cu.md)
+- [A stronger form of Erdős Problem 715, second question](regular-degree-at-least-four-contains-cu.md)
 - [Every 4-regular graph contains a 3-regular subgraph](four-regular-contains-cubic-subgraph-hol.md)
 - [Every r-regular graph with r at least 4 contains a 3-regular subgraph](regular-degree-at-least-four-contains-cu-2.md)
 - [Graph with a k-regular subgraph](has-regular-subgraph.md)

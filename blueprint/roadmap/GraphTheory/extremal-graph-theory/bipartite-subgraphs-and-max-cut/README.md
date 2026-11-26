@@ -5,7 +5,6 @@
 - [Erdős Problem 127 (excess over Edwards' bound)](edwards-excess-unbounded.md)
 - [Resolution of Erdős Problem 127](edwards-excess-unbounded-holds.md)
 - [Max-cut surplus of $K_r$-free graphs with an absolute exponent (Oberwolfach question)](absolute-epsilon-max-cut-surplus.md)
-- [$K_r$-free graphs have max-cut surplus $\Omega_r(m^{1/2+\varepsilon})$](absolute-epsilon-max-cut-surplus-holds.md)
 - [Largest bipartite subgraph guaranteed in triangle-free graphs](triangle-free-max-cut.md)
 - [Erdős Problem 581 (bipartite subgraphs of triangle-free graphs)](triangle-free-max-cut-asymptotics.md)
 - [Resolution of Erdős Problem 581](triangle-free-max-cut-asymptotics-holds.md)

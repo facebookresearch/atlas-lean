@@ -4,5 +4,5 @@ The asymptotic spectrum of graphs is connected (nonempty and not a union of two 
 
 ## Sources
 
-- A. Schrijver (with S. Polak), in Combinatorial Optimization, Oberwolfach Reports 15 (2018), no. 50, p. 3005, DOI 10.4171/OWR/2018/50.
+- A. Schrijver (with S. Polak), in Combinatorial Optimization, Oberwolfach Reports 15 (2018), issue 4, workshop report 50/2018, p. 3005, DOI 10.4171/OWR/2018/50.
 - P. Vrana, Probabilistic refinement of the asymptotic spectrum of graphs, Combinatorica 41 (2021), arXiv:1903.01857, https://doi.org/10.1007/s00493-020-4324-5.

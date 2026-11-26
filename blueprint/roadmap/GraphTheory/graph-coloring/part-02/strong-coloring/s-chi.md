@@ -1,8 +1,12 @@
 # Strong chromatic number
 
-Let $G$ be a simple graph on a finite vertex set $V$. The strong chromatic number $\chi_s(G)$ is the least natural number $k$ such that $G$ is strongly $k$-colorable: for every partition of $V$ into nonempty parts of size at most $k$ there is a proper coloring of $G$ with colors $\{0, \dots, k-1\}$ that is injective on each part.
+Let $G$ be a simple graph on a finite vertex set $V$. The strong chromatic number $\chi_s(G)$ is the least **positive** integer $k$ such that $G$ is [strongly $k$-colorable](is-strongly-colorable.md): for every partition of $V$ into nonempty parts of size at most $k$ there is a proper coloring of $G$ with colors $\{0, \dots, k-1\}$ that is injective on each part. Such a $k$ exists: for $V$ nonempty, $k = |V|$ works, using a coloring that is injective on all of $V$. For $V$ empty, every positive $k$ works, so by this convention $\chi_s(G) = 1$.
 
-Such a $k$ exists, since a coloring with $|V|$ colors that is injective on all of $V$ works for $k = |V|$. When $V$ is nonempty no coloring with $0$ colors exists, so $\chi_s(G) \ge 1$; when $V$ is empty, $\chi_s(G) = 0$.
+The restriction to positive $k$ is essential. For $k = 0$ no partition of a nonempty set into nonempty parts has all parts of size at most $0$, so every graph is strongly $0$-colorable vacuously, and an infimum over all natural numbers would be $0$ for every graph. The Lean declaration takes that infimum over all natural numbers, so it is identically zero; it is held back until its definition is corrected.
+
+## Depends on
+
+- [Strongly k-colorable graph](is-strongly-colorable.md)
 
 ## Sources
 

@@ -17,7 +17,6 @@
 - [Rainbow homomorphisms](is-rainbow.md)
 - [Anti-Ramsey number](anti-ramsey-num.md)
 - [Edge-critical graphs of given chromatic number](is-critical-2.md)
-- [Monochromatic adjacent pairs of a 2-colouring](monochromatic-pairs.md)
 - [Erdős Problem 744 (distance of critical graphs from bipartite)](critical-bipartite-distance-tends-to-inf.md)
 - [Erdős Problem 744 for 4-critical graphs](four-critical-bipartite-distance-log-low.md)
 - [Rödl–Tuza value of the bipartite distance of critical graphs](critical-bipartite-distance-eventually-b.md)
