@@ -13078,6 +13078,7 @@
   "MathlibExt/NumberTheory/HurwitzContinuedFractionFourSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of four squares via Hurwitz continued fractions"},
   "MathlibExt/NumberTheory/HurwitzQuaternionGreedy": {"to": "NumberTheory/additive-number-theory", "title": "Geometric-progression-free sets of Hurwitz quaternions"},
   "MathlibExt/NumberTheory/HurwitzQuaternionWaring": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Waring's problem for Hurwitz quaternions"},
+  "MathlibExt/NumberTheory/HybridPrimeDivisorBoundsHybridBoundPrimeDivisors": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Prime divisor bounds for cyclotomic values"},
   "MathlibExt/NumberTheory/HyperLeonardo": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
   "MathlibExt/NumberTheory/HyperLeonardoLogConvex": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Hyper-Leonardo numbers"},
   "MathlibExt/NumberTheory/HyperLeonardoPRec": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
