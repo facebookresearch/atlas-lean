@@ -1,7 +1,7 @@
 # Random walks on infinite graphs
 
 - [Degree of a vertex](vertex-degree.md)
-- [Return probability of simple random walk](return-prob.md)
+- [Weighted return sum of a walk](return-prob.md)
 - [Transient graph](is-transient.md)
 - [Graph of bounded degree](has-bounded-degree.md)
 - [Gromov product in a graph](gromov-product.md)
