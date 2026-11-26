@@ -13,6 +13,11 @@ and each of them is a theorem of KAT. Hence every rule derivable in propositiona
 
 - [Kleene algebras with tests](kleene-algebras-with-tests.md)
 
+## Related topics
+
+- [Partial correctness as unreachability of the negated postcondition](../../kleene-algebra-with-tests/test-mul-test-compl-eq-bot-iff.md)
+- [Postcondition absorption characterizes partial correctness](../../kleene-algebra-with-tests/test-mul-eq-test-mul-test-iff.md)
+
 ## Sources
 
 - D. Kozen, "On Hoare logic and Kleene algebra with tests", *ACM Transactions on Computational Logic* 1(1), 2000, author copy <https://www.cs.cornell.edu/~kozen/Papers/Hoare.pdf>, Section 3, Theorem 3.1.

@@ -13,6 +13,10 @@ This page becomes ready once these prerequisites are stated:
 
 - [Algol-like programs with procedure parameters](algol-like-programs-with-procedure-parameters.md)
 
+## Related topics
+
+- [Clarke's incompleteness theorem](clarke-s-incompleteness-theorem.md)
+
 ## Sources
 
 - E. M. Clarke, "Programming language constructs for which it is impossible to obtain good Hoare axiom systems", *Journal of the ACM* 26(1):129–147, 1979, <http://www.cs.cmu.edu/afs/cs.cmu.edu/user/emc/www/papers/Papers%20In%20Refereed%20Journals/79_impossible_hoareaxiom.pdf>, Section 8, Theorem 8.1.

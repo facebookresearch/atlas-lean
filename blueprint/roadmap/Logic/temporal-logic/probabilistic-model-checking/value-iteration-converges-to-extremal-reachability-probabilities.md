@@ -9,6 +9,7 @@ for all other $s$. Then $\lim_{n \to \infty} x^n_s = \Pr^{\min}_s(\mathit{reach}
 ## Depends on
 
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Proof depends on
 

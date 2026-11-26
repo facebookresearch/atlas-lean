@@ -6,4 +6,4 @@ $A$ is *deterministic* if it has one start state and, for every state $s'$ and f
 
 ## Sources
 
-- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2), 1995; author version of October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Sections 2.1 and 2.2.
+- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2):214–233, 1995; author version of the journal paper, October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Sections 2.1 and 2.2.

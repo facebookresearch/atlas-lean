@@ -14,4 +14,4 @@ If $A \le_{\ast T} B$, then there is an automaton $C$ with a [forward simulation
 
 ## Sources
 
-- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2), 1995; author version of October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Section 2.3 (canonical automata, Lemma 2.9) and Section 3.4, Theorem 3.22.
+- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2):214–233, 1995; author version of the journal paper, October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Section 2.3 (canonical automata, Lemma 2.9) and Section 3.4, Theorem 3.22.

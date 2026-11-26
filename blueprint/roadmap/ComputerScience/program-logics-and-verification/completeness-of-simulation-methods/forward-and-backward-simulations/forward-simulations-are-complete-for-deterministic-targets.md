@@ -8,4 +8,4 @@ If $B$ is a deterministic automaton and $A \le_{\ast T} B$, then there is a [for
 
 ## Sources
 
-- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2), 1995; author version of October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Section 3.2, Theorem 3.11.
+- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2):214–233, 1995; author version of the journal paper, October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Section 3.2, Theorem 3.11.

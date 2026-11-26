@@ -6,6 +6,7 @@ The problem $\mathrm{LinRF}(\mathbb{Z})$, whether an integer multipath [linear-c
 
 - [Linear ranking functions](linear-ranking-functions.md)
 - [The class coNP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/co-np.md)
+- [Linear-constraint loops](linear-constraint-loops.md)
 
 ## Proof depends on
 
@@ -14,4 +15,4 @@ The problem $\mathrm{LinRF}(\mathbb{Z})$, whether an integer multipath [linear-c
 
 ## Sources
 
-- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", arXiv:1208.4041v4, 2025, <https://arxiv.org/abs/1208.4041v4>, Section 3, Theorem 3.1 (strong coNP-hardness), Theorem 3.12 (membership for SLC loops) and Theorem 3.17 (membership for MLC loops).
+- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", *Journal of the ACM* 61(4), Article 26, 2014, <https://doi.org/10.1145/2629488>, numbered as in the journal version (the revised arXiv:1208.4041v4, <https://arxiv.org/abs/1208.4041v4>, keeps this numbering and adds Lemma 5.31), Section 3, Theorem 3.1 (strong coNP-hardness), Theorem 3.12 (membership for SLC loops) and Theorem 3.17 (membership for MLC loops).

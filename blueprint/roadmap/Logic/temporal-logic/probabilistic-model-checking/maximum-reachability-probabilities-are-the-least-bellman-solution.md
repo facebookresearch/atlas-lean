@@ -9,6 +9,7 @@ and they are the least solution of these equations, with the [qualitative sets](
 ## Depends on
 
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Proof depends on
 

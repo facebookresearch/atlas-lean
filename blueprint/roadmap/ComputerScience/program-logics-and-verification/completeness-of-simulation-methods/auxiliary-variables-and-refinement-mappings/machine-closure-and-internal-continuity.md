@@ -14,4 +14,4 @@ Every safety property has a fin specification, every specification of a safety p
 
 ## Sources
 
-- M. Abadi and L. Lamport, *The Existence of Refinement Mappings*, SRC Research Report 29, Digital Equipment Corporation, 1988, <https://lamport.azurewebsites.net/pubs/abadi-existence.pdf>; journal version in *Theoretical Computer Science* 82(2):253–284, 1991, Section 2 (machine closure), Section 3 (Definition 1 and Proposition 2) and Section 6 (Definition 2); the introduction states the three facts about safety properties.
+- M. Abadi and L. Lamport, "The existence of refinement mappings", *Theoretical Computer Science* 82(2):253–284, 1991, <https://doi.org/10.1016/0304-3975(91)90224-P>; the numbered locators refer to the research report version, SRC Research Report 29, Digital Equipment Corporation, 1988, <https://lamport.azurewebsites.net/pubs/abadi-existence.pdf>, Section 2 (machine closure), Section 3 (Definition 1 and Proposition 2) and Section 6 (Definition 2); the introduction states the three facts about safety properties.

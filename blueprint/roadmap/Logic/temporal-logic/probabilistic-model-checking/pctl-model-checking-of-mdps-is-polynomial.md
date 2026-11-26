@@ -6,6 +6,7 @@ Model checking a [PCTL](pctl.md) formula $\phi$ on a finite [Markov decision pro
 
 - [PCTL](pctl.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Proof depends on
 

@@ -9,6 +9,8 @@ Let $M$ be a finite [Markov decision process](markov-decision-processes-and-adve
 
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
 - [Linear program](../../../Geometry/convex-geometry/linear-programming/linear-program.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
+- [Qualitative reachability by graph analysis](qualitative-reachability-by-graph-analysis.md)
 
 ## Proof depends on
 
