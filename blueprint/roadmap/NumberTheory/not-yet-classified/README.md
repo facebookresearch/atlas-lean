@@ -3,6 +3,7 @@
 Topics added since this subject's fields were last revised.
 
 - [Adelic Lift](adelic-lift/README.md)
+- [Adelic Periodization](adelic-periodization/README.md)
 - [Eisenstein Congruence](eisenstein-congruence/README.md)
 - [Eisenstein Two Gamma0](eisenstein-two-gamma0/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
