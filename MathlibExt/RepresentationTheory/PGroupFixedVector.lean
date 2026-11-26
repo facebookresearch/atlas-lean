@@ -41,7 +41,6 @@ import Mathlib.LinearAlgebra.Dimension.Finite
 import Mathlib.LinearAlgebra.Span.Basic
 import Mathlib.RingTheory.Finiteness.Basic
 import Mathlib.RingTheory.Finiteness.Cardinality
-import Mathlib.SetTheory.Cardinal.NatCard
 
 @[expose] public section
 
@@ -84,28 +83,16 @@ public theorem exists_ne_zero_forall_apply_eq_of_isPGroup
       mul_smul := fun g h w => Subtype.ext (by
         change ρ (g * h) (w : V) = ρ g (ρ h w); rw [map_mul]; rfl) }
   have hact : ∀ (g : G) (w : W), ((g • w : W) : V) = ρ g w := fun _ _ => rfl
-  have hmod := hG.card_modEq_card_fixedPoints W
   have hvW : (⟨v, Submodule.subset_span ⟨1, by simp⟩⟩ : W) ≠ 0 :=
     fun h => hv (congrArg Subtype.val h)
   have hpW : p ∣ Nat.card W := by
     rw [Module.natCard_eq_pow_finrank (K := ZMod p) (V := W), Nat.card_zmod]
     refine dvd_pow_self p
       (Module.finrank_pos_iff.mpr ⟨⟨_, 0, hvW⟩⟩).ne'
-  have hpF : p ∣ Nat.card (MulAction.fixedPoints G W) := by
-    apply Nat.dvd_of_mod_eq_zero
-    have h1 : Nat.card W % p = 0 := Nat.mod_eq_zero_of_dvd hpW
-    have h2 : Nat.card W % p = Nat.card (MulAction.fixedPoints G W) % p := hmod
-    omega
   have h0 : (0 : W) ∈ MulAction.fixedPoints G W :=
     fun g => Subtype.ext (by rw [hact]; exact map_zero _)
-  have : Finite (MulAction.fixedPoints G W) := inferInstance
-  have hcard : 1 < Nat.card (MulAction.fixedPoints G W) := by
-    have hpos : 0 < Nat.card (MulAction.fixedPoints G W) :=
-      Nat.card_pos_iff.mpr ⟨⟨⟨0, h0⟩⟩, inferInstance⟩
-    exact lt_of_lt_of_le (Fact.out : p.Prime).one_lt (Nat.le_of_dvd hpos hpF)
-  rw [Finite.one_lt_card_iff_nontrivial] at hcard
-  obtain ⟨⟨y, hy⟩, hy0⟩ := exists_ne (⟨0, h0⟩ : MulAction.fixedPoints G W)
-  refine ⟨(y : V), fun h => hy0 (Subtype.ext (Subtype.ext h)), fun g => ?_⟩
+  obtain ⟨y, hy, hy0⟩ := hG.exists_fixed_point_of_prime_dvd_card_of_fixed_point W hpW h0
+  refine ⟨(y : V), fun h => hy0 (Subtype.ext h.symm), fun g => ?_⟩
   have hgy := hy g
   rw [Subtype.ext_iff, hact] at hgy
   exact hgy
