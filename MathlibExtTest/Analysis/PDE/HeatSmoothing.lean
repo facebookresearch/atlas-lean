@@ -24,7 +24,8 @@ These are elaboration and non-vacuity checks, not new results: the Gaussian is b
 measurable and the bump is a nonzero compactly supported `C²` function, so the module's theorems
 apply to them non-trivially. The private definitions `gaussian`, `gaussian_meas`, and
 `gaussian_bdd` are the test function `exp(-‖y‖²)` and its side conditions. The first check pins
-`heatConvolution` to the shared heat kernel `MathlibExt.Analysis.PDE.HeatKernel.heatKernel`.
+`heatConvolution` to the shared heat kernel `MathlibExt.Analysis.PDE.HeatKernel.heatKernel`, and
+a time-zero check records that the convolution is `0`, not the identity, at `t = 0`.
 -/
 
 open MeasureTheory
@@ -70,6 +71,16 @@ is a point) is `1`. -/
 example : heatConvolution 0 (fun _ => (1 : ℝ)) 1
     (0 : EuclideanSpace ℝ (Fin 0)) = 1 :=
   heat_convolution_const_one 0 one_pos 0
+
+/-- The positive-time contract: at `t = 0` the heat convolution in dimension `1` is `0` for every
+`g`, the constant `1` included, not the identity. -/
+example (g : EuclideanSpace ℝ (Fin 1) → ℝ) (x : EuclideanSpace ℝ (Fin 1)) :
+    heatConvolution 1 g 0 x = 0 := by
+  have hk : ∀ y : EuclideanSpace ℝ (Fin 1), heatKernel (EuclideanSpace ℝ (Fin 1)) 0 y = 0 := by
+    intro y
+    simp only [heatKernel, mul_zero, finrank_euclideanSpace_fin]
+    rw [Real.zero_rpow (by norm_num), zero_mul]
+  simp [heatConvolution, hk]
 
 /-! ## C. Smoothing and the heat equation for the Gaussian -/
 
