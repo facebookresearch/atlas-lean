@@ -1,0 +1,76 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Grading
+public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.ModelComparison.Left
+import Mathlib.Tactic.FinCases
+
+/-!
+# The actual graded left internal-tensor homomorphism
+
+This bundles the computed ordinary left End homomorphism with its grading
+covariance. The proof evaluates it on the model's dense pure span. It does not
+supply or choose a left operator, grading, norm, model or equivalence.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace CStarModule.InternalTensorProduct.IsModel
+
+universe uD uB uE1 uE2 uX
+
+variable {D : Type uD} [NonUnitalCStarAlgebra D]
+  [PartialOrder Dᵐᵒᵖ] [StarOrderedRing Dᵐᵒᵖ]
+variable {B : Type uB} [NonUnitalCStarAlgebra B]
+  [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+variable {E1 : Type uE1} [NormedAddCommGroup E1] [NormedSpace ℂ E1]
+  [SMul Dᵐᵒᵖ E1] [CStarModule Dᵐᵒᵖ E1] [CompleteSpace E1]
+variable {E2 : Type uE2} [NormedAddCommGroup E2] [NormedSpace ℂ E2]
+  [SMul Bᵐᵒᵖ E2] [CStarModule Bᵐᵒᵖ E2] [CompleteSpace E2]
+variable {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
+  [SMul Bᵐᵒᵖ X] [CStarModule Bᵐᵒᵖ X] [CompleteSpace X]
+variable {γD : CStarGrading D} {γB : CStarGrading B}
+variable {φ : D →⋆ₙₐ[ℂ] CStarModule.AdjointableOperator.End B E2}
+variable {pure : E1 → E2 → X}
+
+/-- The computed left End map respects any compatible factor/model gradings.
+Compatibility is the actual unsigned pure-generator equation. -/
+def gradedLeftHom
+    (hX : CStarModule.InternalTensorProduct.IsModel φ pure)
+    (δ1 : CStarModuleGrading γD E1) (δ2 : CStarModuleGrading γB E2)
+    (δX : CStarModuleGrading γB X)
+    (hGrading : ∀ x y, δX.generator (pure x y) =
+      pure (δ1.generator x) (δ2.generator y)) :
+    CStarGrading.Hom δ1.operatorGrading δX.operatorGrading where
+  toNonUnitalStarAlgHom := hX.mapLeftStarAlgHom.toNonUnitalStarAlgHom
+  equivariant' := by
+    intro n T
+    change hX.mapLeftStarAlgHom (PointNormCStarAddAction.aut δ1.operatorGrading n.toAdd T) =
+      PointNormCStarAddAction.aut δX.operatorGrading n.toAdd (hX.mapLeftStarAlgHom T)
+    have hn (k : ZMod 2) : k = 0 ∨ k = 1 := by
+      fin_cases k
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+    rcases hn n.toAdd with h0 | h1
+    · rw [h0]
+      simp only [PointNormCStarAddAction.aut_zero, StarAlgEquiv.one_apply]
+    · rw [h1]
+      apply CStarModule.AdjointableOperator.toContinuousLinearMap_injective
+      apply ContinuousLinearMap.ext_on hX.2.2.2.2.2.2.2
+      rintro _ ⟨⟨x, y⟩, rfl⟩
+      change hX.mapLeftStarAlgHom (δ1.operatorGrading.generatorAut T) (pure x y) =
+        δX.operatorGrading.generatorAut (hX.mapLeftStarAlgHom T) (pure x y)
+      rw [CStarModuleGrading.operatorGrading_generatorAut,
+        CStarModuleGrading.operatorGrading_generatorAut,
+        mapLeftStarAlgHom_pure, CStarModuleGrading.operatorGenerator_apply,
+        CStarModuleGrading.operatorGenerator_apply, hGrading,
+        mapLeftStarAlgHom_pure, hGrading, δ2.generator_involutive]
+
+end CStarModule.InternalTensorProduct.IsModel
