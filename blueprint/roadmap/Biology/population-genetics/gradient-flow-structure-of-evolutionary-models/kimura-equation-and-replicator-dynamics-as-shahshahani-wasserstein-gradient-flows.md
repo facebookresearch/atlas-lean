@@ -1,15 +1,21 @@
 # Kimura equation and replicator dynamics as Shahshahani–Wasserstein gradient flows
 
 **Setting.** For two types with frequency $x \in [0,1]$, let $\Theta(x) = x(1-x)$ (more generally a coefficient vanishing linearly at $0$ and $1$) and let $V$ be the fitness potential. The **Kimura equation**, the diffusion limit of the Moran process with diffusion coefficient $\kappa > 0$, is
+
 $$ \partial_t p = \frac{\kappa}{2}\partial^2_{xx}\big(\Theta p\big) + \partial_x\big(\Theta\,\partial_xV\,p\big), \qquad t > 0,\ x \in [0,1], $$
+
 and the **replicator equation** is its deterministic limit $\dot X = -\Theta(X)\,V'(X)$. Equip $(0,1)$ with the Riemannian metric $|\zeta|^2_{T_x} = |\zeta|^2/\Theta(x)$. Its geodesic distance $\mathsf{d}$ is the (generalized) Shahshahani distance, and it induces a quadratic Wasserstein distance $W_{\mathsf d}$ on $\mathcal{P}([0,1])$.
 
 **Theorem (Kimura equation).** Let $p = a\,\delta_0 + \widetilde p + b\,\delta_1$, where $\widetilde p$ is the absolutely continuous (non-fixed) part. Let $w$ be the principal eigenfunction of the backward operator with Dirichlet conditions, $\mathcal{L}^\dagger w = -\lambda w$, $w(0) = w(1) = 0$, so that $\langle w,\widetilde p(t)\rangle = e^{-\lambda t}\langle w,\widetilde p(0)\rangle$. For non-absorbed initial data, the conditioned density $q = w\widetilde p/\langle w,\widetilde p\rangle$ (the law of the Q-process) solves
+
 $$ \partial_t q = \partial_x\Big(\Theta\,q\,\partial_x\Big(\frac{\kappa}{2}\log\frac{q}{\pi}\Big)\Big), \qquad \pi = \frac{1}{C}\frac{w^2e^{-2V/\kappa}}{\Theta}, $$
+
 that is, $q$ is the $W_{\mathsf d}$-gradient flow of the relative entropy $\frac{\kappa}{2}\int q\log(q/\pi)$. The no-flux condition for $q$ is equivalent to the Dirichlet condition $q(0) = q(1) = 0$, and $p$ is recovered from $q$.
 
 **Theorem (replicator dynamics).** The minimizing-movement (JKO) scheme
+
 $$ X^{n+1} \in \operatorname*{arg\,min}_{X \in [0,1]}\Big\{ \frac{1}{2h}\mathsf{d}(X,X^n)^2 + V(X) \Big\}, \qquad X^0 = X^I, $$
+
 has piecewise-constant interpolants $X_h$ that converge uniformly on every $[0,T]$, as $h \to 0$, to the unique solution of $\dot X = -\Theta(X)V'(X)$, $X(0) = X^I$. The replicator equation is thus the gradient flow of $V$ for the Shahshahani metric.
 
 The paper also gives conditions under which these structures fit together: the discrete Wasserstein gradient structure of the Moran Q-process Γ-converges to that of the Kimura equation as $N \to \infty$, and the Kimura structure Γ-converges to the Shahshahani gradient flow of the replicator equation as $\kappa \to 0$.

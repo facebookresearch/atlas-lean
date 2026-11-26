@@ -1,15 +1,21 @@
 # Gradient-flow structure of absorbing evolutionary Markov chains via the Q-process
 
 **Setting.** Evolutionary chains such as the Moran process with $N$ individuals are reducible: the monomorphic states are absorbing. Call an $(N+1)\times(N+1)$ stochastic matrix $\mathbf{M}$ *admissible* (in $\mathcal{A}_{N+1,k}$, $1 \le k < N-1$) if, after a permutation,
+
 $$ \mathbf{M} \simeq \begin{pmatrix} \widetilde{\mathbf{M}} & \mathbf{0}\\ \mathbf{A} & \mathbf{I}_k \end{pmatrix}, $$
+
 with $\widetilde{\mathbf{M}}$ (the core, acting on transient states) irreducible and no row of $\mathbf{A}$ identically zero. The continuous-time chain evolves as $\dot{\mathbf{p}} = (\mathbf{M} - \mathbf{I})\mathbf{p}$. Let $\mu = \rho(\widetilde{\mathbf{M}})$, with positive left and right Perron eigenvectors $\widetilde{\mathbf{w}}, \widetilde{\mathbf{z}}$ normalized by $\langle\widetilde{\mathbf{w}},\mathbf{1}\rangle = \langle\widetilde{\mathbf{w}},\widetilde{\mathbf{z}}\rangle = 1$ (the *characteristic triple*).
 
 **Q-process.** The kernel $\mathbf{K} = \mu^{-1}\operatorname{diag}(\widetilde{\mathbf{w}})^{-1}\widetilde{\mathbf{M}}^{\dagger}\operatorname{diag}(\widetilde{\mathbf{w}})$ is irreducible and row-stochastic, with unique stationary law $\boldsymbol{\pi} = \widetilde{\mathbf{w}}\circ\widetilde{\mathbf{z}}$. It is the chain conditioned never to be absorbed. If $\mathbf{M}$ is *micro-reversible*, meaning $\operatorname{diag}(\widetilde{\mathbf{w}})\widetilde{\mathbf{M}}\operatorname{diag}(\widetilde{\mathbf{z}})$ is symmetric, then $\mathbf{K}$ is reversible. Every admissible matrix with $k = 2$ absorbing states and tridiagonal core (birth–death chains such as the Moran process) is micro-reversible.
 
 **Theorem.** Let $\mathbf{M}$ be admissible, with Q-process kernel $\mathbf{K}$ reversible (for instance, $\mathbf{M}$ micro-reversible). For a non-absorbed initial state, define the rescaled transient law
+
 $$ \mathbf{q}(t) = \frac{\widetilde{\mathbf{w}}\circ\widetilde{\mathbf{p}}(t/\mu)}{\langle\widetilde{\mathbf{w}},\widetilde{\mathbf{p}}(t/\mu)\rangle}. $$
+
 Then $\mathbf{q}$ is the gradient flow
+
 $$ \frac{d\mathbf{q}}{dt} = -\operatorname{grad}_{\mathcal{W}_N} H(\mathbf{q}\,|\,\boldsymbol{\pi}) $$
+
 of the relative entropy $H(\mathbf{q}|\boldsymbol{\pi}) = \sum_i q_i\log(q_i/\pi_i)$ with respect to Maas's discrete Wasserstein distance $\mathcal{W}_N$ built on $\mathbf{K}$. The full dynamics of $\mathbf{p}$, including the absorbed mass, is uniquely recovered from $\mathbf{q}$, since $\langle\widetilde{\mathbf{w}},\widetilde{\mathbf{p}}(t)\rangle$ decays exactly like $e^{-(1-\mu)t}$.
 
 The Moran process is therefore a time-rescaled entropy-dissipating gradient flow after factoring out fixation, although the chain itself is irreversible and has no positive stationary distribution.

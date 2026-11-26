@@ -1,11 +1,15 @@
 # Aitchison diffusion: Brownian motion on the simplex as neutral stochastic replicator dynamics
 
 **Aitchison geometry.** On the open simplex $\Delta = \{p \in \mathbb{R}^n : p_i > 0, \sum_i p_i = 1\}$ of type frequencies, with closure $\mathcal{C}(x) = x/\sum_i x_i$, define perturbation $p \oplus q = \mathcal{C}(p_1q_1,\dots,p_nq_n)$, powering $\alpha \odot p = \mathcal{C}(p_1^\alpha,\dots,p_n^\alpha)$, and the inner product
+
 $$ \langle p,q\rangle_A = \frac{1}{2n}\sum_{i,j=1}^n \ln\frac{p_i}{p_j}\ln\frac{q_i}{q_j} . $$
+
 Then $(\Delta,\oplus,\odot,\langle\cdot,\cdot\rangle_A)$ is an $(n-1)$-dimensional Hilbert space, isometric to $\mathbb{R}^{n-1}$ through the isometric log-ratio map, and its metric $d_A$ induces the Euclidean topology on $\Delta$. Let $\lambda_A$ denote the Aitchison (Lebesgue) measure.
 
 **Theorem (Brownian motion on $\Delta$).** For every $T > 0$ the Stratonovich SDE
+
 $$ dX^i_t = X^i_t\Big(\circ dB^i_t - \sum_{j=1}^n X^j_t\circ dB^j_t\Big), \qquad i = 1,\dots,n, \qquad X_0 = p \in \Delta, $$
+
 driven by independent Brownian motions $B^1,\dots,B^n$, has a unique $\Delta$-valued solution, and $X$ is a Brownian motion of the Hilbert space $(\Delta,\oplus)$: it has $\oplus$-independent stationary increments, continuous paths, and Gaussian increments with identity covariance in Aitchison coordinates. Consequently:
 1. $\lambda_A$ is invariant and reversible, and the transition density with respect to $\lambda_A$ is the Gaussian kernel $p_t(p,q) = (2\pi t)^{-(n-1)/2}\exp\big(-\|p\ominus q\|_A^2/2t\big)$; $d_A$ is the intrinsic metric and $\lim_{t\downarrow 0} t\ln p_t(p,q) = -d_A^2(p,q)/2$.
 2. (Wong–Zakai type) For $\lambda > 0$, the replicator equation $\dot p_i = \lambda^{-1}p_i(y^i_t - \bar y_t)$ in a fluctuating Gaussian fitness landscape $y_t$, with mean fitness $\bar y_t = \sum_i p_iy^i_t$, has a unique solution $p^\lambda$, and $p^\lambda \Rightarrow X$ weakly as $\lambda \to 0$.

@@ -1,15 +1,21 @@
 # Genealogical solution of the migration–recombination equation
 
 **Model.** Individuals carry types at sites $[n]=\{1,\dots,n\}$ and live in demes $\alpha\in L$ (a finite set). Let $\mu_t(\alpha)$ be the type distribution in deme $\alpha$ and $M(\alpha,\beta)$ the backward migration matrix (the probability that an individual in $\alpha$ had its parent in $\beta$). Recombination according to a partition $\delta$ of $[n]$ occurs with probability $r_\delta$ ($\sum_\delta r_\delta=1$) and assembles the offspring from independent parents, one per block. The discrete-time *migration–recombination equation* (MRE) is
+
 $$\mu_{t+1}(\alpha)=\sum_{\delta}r_\delta\bigotimes_{d\in\delta}\sum_{\beta\in L}M(\alpha,\beta)\,\mu^d_t(\beta),$$
+
 where $\mu^d$ is the marginal on the sites in block $d$.
 
 **Theorem (duality and explicit solution).** Let $(\Sigma_t)$ be the *labelled partitioning process*: a Markov chain on partitions of $[n]$ whose blocks carry deme labels, run backward in time; in each step every block is split according to the recombination distribution marginalised to that block, and each resulting piece independently picks a parent deme by $M$ from its current label. With $\mathcal R_{\boldsymbol\delta}(\mu)=\bigotimes_{(d,\lambda)\in\boldsymbol\delta}\mu^d(\lambda)$,
+
 $$\mathbb E\bigl[\mathcal R_{\Sigma_t}(\mu_0)\,\big|\,\Sigma_0=\boldsymbol\delta\bigr]=\mathcal R_{\boldsymbol\delta}(\mu_t),\qquad\text{so}\qquad \mu_t(\alpha)=\mathbb E\bigl[\mathcal R_{\Sigma_t}(\mu_0)\,\big|\,\Sigma_0=\{([n],\alpha)\}\bigr].$$
+
 Equivalently, the vector $(\mathcal R_{\boldsymbol\delta}(\mu_t))_{\boldsymbol\delta}$ evolves linearly by the stochastic transition matrix $T$ of this chain, so the nonlinear MRE is solved by powers $T^t$.
 
 **Theorem (asymptotics).** If $M$ is primitive with stationary distribution $q$ ($q^\top=q^\top M$) and the recombination distribution can eventually separate all sites, then
+
 $$\mu_t(\alpha)\to\mu_\infty(\alpha)=\bigotimes_{i=1}^n\ \sum_{\beta\in L}q(\beta)\,\mu^{\{i\}}_0(\beta)\qquad\text{for every deme }\alpha,$$
+
 geometrically fast and uniformly in $\mu_0$: all demes approach the same linkage-equilibrium state built from the $q$-weighted initial single-site marginals.
 
 ## Expansion

@@ -3,11 +3,15 @@
 **Process.** A Moran population of constant size $n$ undergoes events at rate $\mu$: at each event an ordered pair of distinct individuals is chosen uniformly, the first reproduces and the second dies. The *Moran genealogy process* (MGP) tracks the genealogy of the $n$ living individuals, represented by a discrete tree topology $\mathbf{w}\in\mathcal{W}^n$ together with the durations $\mathbf{s}=(s_1,\dots,s_{n-1})$ of the coalescent intervals, $s_j$ being the time during which the genealogy has $j+1$ lineages.
 
 **Theorem.** The MGP is uniformly and exponentially ergodic: there are $D<\infty$ and $0\le\rho<1$ with $\|\nu K^t-\pi_n\|_{TV}<D\rho^t$ for every initial law $\nu$. Its unique invariant probability measure is
+
 $$\pi_n(d\mathbf{w}\,d\mathbf{s})=\Bigl(\frac{\mu}{\binom n2}\Bigr)^{n-1}\exp\Bigl(-\sum_{j=1}^{n-1}\frac{\binom{j+1}{2}}{\binom n2}\,\mu\,s_j\Bigr)\,d\mathbf{w}\,d\mathbf{s},$$
+
 with counting measure $d\mathbf{w}$ on topologies and Lebesgue measure $d\mathbf{s}$. Equivalently, under stationarity the topology is uniform on $\mathcal{W}^n$ (each with probability $2^{n-1}/(n!(n-1)!)$) and independent of the interval lengths, which are independent exponentials with rates $\binom{j+1}{2}\mu/\binom n2$.
 
 **Theorem (sampling consistency).** For $k\le n$, the genealogy of $k$ individuals sampled from the stationary MGP has marginal law
+
 $$\Bigl(\frac{\mu}{\binom n2}\Bigr)^{k-1}\exp\Bigl(-\sum_{j=1}^{k-1}\frac{\binom{j+1}{2}}{\binom n2}\,\mu\,s_j\Bigr)\,d\mathbf{w}\,d\mathbf{s},$$
+
 i.e. Kingman's coalescent with time scaled by $\mu/\binom n2$, exactly for every finite $n$.
 
 ## Expansion

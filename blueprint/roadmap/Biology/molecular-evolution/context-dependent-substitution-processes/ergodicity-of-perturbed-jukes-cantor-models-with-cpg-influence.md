@@ -1,7 +1,9 @@
 # Ergodicity of perturbed Jukes–Cantor models with CpG influence
 
 **Model.** A DNA sequence indexed by $\mathbb{Z}$ evolves in continuous time as follows: every nucleotide $x$ mutates to each $y\ne x$ at rate $1+\varepsilon(x,y)$ with $\varepsilon(x,y)\ge0$ (a perturbed Jukes–Cantor model), and in addition every dinucleotide CpG mutates to CpA and to TpG, each at rate $\tau\ge0$ (CpG hypermutability, a neighbour-dependent rule). Let $|\varepsilon|=\sum_{x\ne y}\varepsilon(x,y)$. Put
+
 $$\varepsilon_{\mathrm{sens}}(\tau)=\frac{64}{3(40+10\tau+\tau^2)},$$
+
 and let $\varepsilon_{\mathrm{ins}}$ be the unique positive root of $3\varepsilon(64+12\varepsilon+\varepsilon^2)=64$.
 
 **Theorem.** If $|\varepsilon|<\max\{\varepsilon_{\mathrm{ins}},\varepsilon_{\mathrm{sens}}(\tau)\}$, the process is ergodic, every finite marginal converges exponentially fast to that of the unique stationary distribution, and correlations of the stationary distribution decay exponentially in the distance between sites.

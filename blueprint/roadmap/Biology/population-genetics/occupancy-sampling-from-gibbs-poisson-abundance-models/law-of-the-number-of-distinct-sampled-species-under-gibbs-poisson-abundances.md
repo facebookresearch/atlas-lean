@@ -6,7 +6,9 @@
 $$\mathbb{E}\big[u^{P_{n,k}}\big]=\sum_{p=0}^{n-1}\binom{n}{p}u^{n-p}(1-u)^p\,\frac{\sigma_k\big((n-p)\theta\big)}{\sigma_k(n\theta)},\qquad
 \mathbb{P}(P_{n,k}=p)=\binom{n}{p}\sum_{q=1}^{p}(-1)^{p-q}\binom{p}{q}\frac{\sigma_k(q\theta)}{\sigma_k(n\theta)},$$
 for $p\in\{1,\dots,n\wedge k\}$. In particular
+
 $$\mathbb{E}[P_{n,k}]=n\Big(1-\frac{\sigma_k((n-1)\theta)}{\sigma_k(n\theta)}\Big),\qquad \mathrm{Var}(P_{n,k})=n\Big(\frac{\sigma_k((n-1)\theta)}{\sigma_k(n\theta)}+(n-1)\frac{\sigma_k((n-2)\theta)}{\sigma_k(n\theta)}-n\Big(\frac{\sigma_k((n-1)\theta)}{\sigma_k(n\theta)}\Big)^2\Big).$$
+
 Equivalently $\mathbb{P}(P_{n,k}=p)=\dfrac{n!}{(n-p)!}\,\dfrac{B_{k,p}(\sigma_\bullet(\theta))}{\sigma_k(n\theta)}$ with $B_{k,p}(\sigma_\bullet(\theta))=\sum_{l=p}^{k}B_{k,l}(\phi_\bullet)S_{l,p}\theta^l$, where $S_{l,p}$ are Stirling numbers of the second kind.
 
 **Infinitely many species.** Letting $n\to\infty$ and $\theta\to0$ with $n\theta\to\gamma>0$ gives well-defined sampling formulae for a population with infinitely many species, in which $\gamma$ is the species-richness (diversity) parameter; for negative binomial abundances these are the Ewens sampling formulae.

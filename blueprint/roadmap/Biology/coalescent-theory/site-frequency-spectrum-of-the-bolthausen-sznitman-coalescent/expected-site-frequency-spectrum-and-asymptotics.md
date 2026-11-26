@@ -1,6 +1,7 @@
 # Site frequency spectrum of the Bolthausen–Sznitman coalescent
 
 **Setting.** The Bolthausen–Sznitman coalescent is the $\Lambda$-coalescent with $\Lambda$ uniform on $[0,1]$: when there are $m$ blocks, each particular group of $k\ge2$ of them merges at rate $\lambda_{m,k}=\frac{(k-2)!(m-k)!}{(m-1)!}$. It arises as the genealogy of populations under rapid selection, such as pathogens and tumors, and of Derrida-type random-energy models. For a sample of size $n$, let $\ell_{n,b}$ be the total length of the branches that support exactly $b$ of the $n$ leaves. Under the infinite-sites model with mutations at rate $\theta$ along branches, $SFS_{n,b}$ (the number of mutations carried by exactly $b$ individuals) is mixed Poisson with mean $\theta\,\ell_{n,b}$ given the tree. Set
+
 $$L_1(n,b)=\int_0^1\frac{\Gamma(b-p)}{\Gamma(b+1)}\,\frac{\Gamma(n-b+p)}{\Gamma(n-b+1)}\,\frac{dp}{\Gamma(1-p)\Gamma(1+p)} .$$
 
 **Theorem.**
@@ -13,7 +14,9 @@ $$L_1(n,b)=\int_0^1\frac{\Gamma(b-p)}{\Gamma(b+1)}\,\frac{\Gamma(n-b+p)}{\Gamma(
 3. (Infinite-population frequency spectrum) For $I\subset(0,1)$, the expected total length of branches whose asymptotic frequency lies in $I$ is $\int_If_1(u)\,du$, so $\mathbb E[SFS_I]=\theta\int_If_1(u)\,du$.
 4. (Law of large numbers) If $b=o(\sqrt n/\log n)$, then $SFS_{n,b}/\mathbb E[SFS_{n,b}]\to\theta$ in $L^2$.
 5. (High-frequency classes) For $n/2<b<n$ the law of $\ell_{n,b}$ is explicit. If $b/n\to u\in[\tfrac12,1)$ and $\alpha=\log\frac{1-u}{u}$, then
+
 $$\frac n{\log n}\,\mathbb P(\ell_{n,b}>0)\to\frac{G(\alpha)}{u(1-u)},\qquad G(x)=\frac{1+e^x}{\pi^2+x^2},$$
+
 and conditionally on $\ell_{n,b}>0$, $(\log n)\ell_{n,b}$ has the limiting tail $G(\alpha-s)/G(\alpha)$.
 
 ## Expansion

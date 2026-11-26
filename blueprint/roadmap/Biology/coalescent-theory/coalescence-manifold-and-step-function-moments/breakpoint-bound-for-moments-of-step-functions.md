@@ -1,7 +1,9 @@
 # Breakpoint bound for moments of nonnegative step functions
 
 **Setting.** For a finite set $A\subset\mathbb N$ let
+
 $$M(A)=\overline{\Big\{\big(\textstyle\int_0^1x^a\,d\mu\big)_{a\in A}:\mu\text{ a nonnegative Borel measure on }[0,1]\Big\}}$$
+
 be the moment cone, and for $k\in\mathbb N$ let $M_k(A)$ be the closure of the set of moment vectors $\big(\int_0^1x^af(x)\,dx\big)_{a\in A}$ of nonnegative step functions $f$ on $[0,1]$ with at most $k$ breakpoints (at most $k+1$ constant pieces). Let $M^{\uparrow}_k(A),M^{\downarrow}_k(A)$ and $M^{\uparrow}(A),M^{\downarrow}(A)$ be the analogues for nondecreasing, respectively nonincreasing, densities.
 
 **Theorem.**

@@ -5,7 +5,9 @@
 **Trees.** A *caterpillar* has a single cherry. A *generalized pseudocaterpillar* has exactly two cherries and every internal node has a child with at most two descendant leaves; labeling leaves left to right with the caterpillar's cherry on the left, it is a *$p$-pseudocaterpillar* ($4 \le p \le n$) when the second leaf of its second cherry has label $p$. With the Catalan triangle entries $C(n,k) = \binom{n+k}{k} - \binom{n+k}{k-1}$ for $1 \le k \le n$, $C(n,0) = 1$ and $C(n,k) = 0$ for $k>n$:
 
 **Theorem.** Let $S$ be a caterpillar species tree with $n \ge 4$ leaves and $G$ an identically labeled $p$-pseudocaterpillar gene tree, $4 \le p \le n$. The number of coalescent histories of $(G,S)$ is
+
 $$h(n,p) = \sum_{k=p-1}^{n-1} C(k,p-3)\,(k-p+2)\,C(n-p,\,n-k-1).$$
+
 Among all labelings of a $p$-pseudocaterpillar gene tree, $h(n,p)$ is the maximum, attained exactly when $G$ and $S$ are identically labeled. Extending the formula to $p=3$ gives $h(n,3) = \dfrac{3\,(2n-4)!}{n!\,(n-3)!}$.
 
 **Theorem (symmetry and maximum).** For $3 \le p \le n$, $h(n,p) = h(n,n-p+3)$. The maximizing position is $p_m = (n+3)/2$ for odd $n$, and the two adjacent positions $(n+2)/2$ and $(n+4)/2$ for even $n$. The maximum exceeds the caterpillar–caterpillar count $\mathcal C_{n-1}$ (the Catalan number) for odd $n \ge 7$ and even $n \ge 8$, and $h(n,p_m)$ has exponential order $4$, the same as $\mathcal C_n$.

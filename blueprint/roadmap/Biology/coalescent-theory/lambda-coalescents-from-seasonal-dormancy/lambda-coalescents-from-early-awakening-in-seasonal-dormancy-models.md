@@ -6,7 +6,9 @@
 1. (Two-point waking) Let $\mathbb{P}(\tau_{i,N} = 0) = \omega_N = 1 - \mathbb{P}(\tau_{i,N} = T_N)$ with $N\omega_N \to 0$, and $\lambda_N T_N = \beta\log(\kappa N)$ for constants $\kappa, \beta > 0$. Then $\Psi_{n,N}(\lfloor t/c_N\rfloor)$ converges to the star-shaped coalescent if $\beta > 1$, to Kingman's coalescent if $\beta < 1$, and if $\beta = 1$ to the $\Lambda$-coalescent with $y^{-2}\Lambda_\kappa(dy) = \mathbb{P}(Y_\kappa\in dy)/\mathbb{E}[Y_\kappa^2]$, where $\mathbb{P}(Y_\kappa > x) = e^{-x/(\kappa(1-x))}$, $x\in[0,1]$.
 2. (Exponentially increasing waking rate) Let $\lambda_N = \lambda$, $T_N - \tau_{i,N} = \zeta_i \wedge T_N$ with $\zeta_i$ i.i.d., $\mathbb{P}(\zeta_1 > y) \sim ce^{-\gamma y}$, and $\log N / T_N \to 0$. With $a = \gamma/\lambda$: if $a \ge 2$ the limit is Kingman's coalescent; if $1 \le a < 2$ it is the Beta$(2-a,a)$-coalescent; if $0 < a < 1$, without time rescaling, it is a discrete-time $\Xi$-coalescent.
 3. (Characterization) A $\Lambda$-coalescent arises as a limit of rescaled ancestral processes in this family of models if and only if $\Lambda = a_1\delta_0 + a_2\delta_1 + \Lambda'$ with $a_1,a_2 \ge 0$ and $\Lambda'$ on $(0,1)$ with density
+
 $$h(y) = \int_0^\infty \frac{1}{\kappa}\Big(\frac{y}{1-y}\Big)^2 e^{-\frac{y}{\kappa(1-y)}}\,\eta(d\kappa), \qquad \int_0^\infty (1\wedge\kappa^2)\,\eta(d\kappa) < \infty.$$
+
 Equivalently, $h(y) = \frac{y^2}{(1-y)^2}g\big(\frac{y}{1-y}\big)$ for a completely monotone $g$ with $\int_0^\infty g(v)(1\wedge v^2)\,dv < \infty$.
 
 ## Expansion

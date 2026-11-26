@@ -1,7 +1,9 @@
 # Coalescent limits of Pareto sampling with size-biasing
 
 **Pareto sampling.** Let $X_1,\dots,X_N$ be i.i.d. Pareto$(\alpha)$, $\mathbf{P}(X_1 > x) = x^{-\alpha}$ for $x \ge 1$, $\alpha > 0$, with sum $\Sigma_N$, and set $S_n = X_n/\Sigma_N$. The pieces $S_n$ partition $[0,1]$ into the parents' shares of the next generation. A sample of $i$ individuals picks uniform points; individuals whose points hit the same piece share a parent. Size-biasing the whole generation by $\Sigma_N^\beta$ (for $\beta < \alpha$ such that $\mathbf{E}\Sigma_N^\beta < \infty$) gives the $i \to 1$ merger probability
+
 $$ P^{(N)}_{i,1} = \frac{N\,\mathbf{E}\big(\Sigma_N^\beta S_1^i\big)}{\mathbf{E}\big(\Sigma_N^\beta\big)} = N\alpha\,\frac{\mathbf{E}\big(\Sigma_{N-1}^{\beta-\alpha}\big)}{\mathbf{E}\big(\Sigma_N^{\beta}\big)}\,\frac{\Gamma(i-\alpha)\Gamma(\alpha-\beta)}{\Gamma(i-\beta)}, \qquad i \ge 2,\ \beta < \alpha < 2, $$
+
 and analogous $i \to j$ transition probabilities define a discrete-time exchangeable coalescent. Let $c_N = P^{(N)}_{2,1}$ be the coalescence probability, and use the effective population size $N_e = c_N^{-1}$ as the time unit.
 
 **Theorem (large-$N$ limits).**

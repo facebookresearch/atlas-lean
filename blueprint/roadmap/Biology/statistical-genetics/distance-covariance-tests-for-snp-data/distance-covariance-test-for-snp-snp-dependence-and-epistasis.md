@@ -5,7 +5,9 @@
 **Epistasis test.** Epistasis between SNPs $i$ and $j$ appears as a difference in their dependence structure between cases and controls. In each group one tests $H_0 : \mathrm{dCov}(Z_i,Z_j) = 0$ against $H_1 : \mathrm{dCov}(Z_i,Z_j) \ne 0$, then compares the groups within a large-scale multiple-testing framework.
 
 **Theorem (asymptotic null law).** Let $(X_k,Y_k)_{k\le n}$ be i.i.d. pairs of genotypes in $\{0,1,2\}^2$ with marginal probabilities $p_j = \Pr(X = j)$ and $q_j = \Pr(Y = j)$. If $X$ and $Y$ are independent then, as $n \to \infty$,
+
 $$ n\,\widehat{\mathrm{dCov}}^2(X,Y) \xrightarrow{d} \sum_{a,b\in\{1,2\}}\lambda_a\mu_b\,Z_{ab}^2, \qquad Z_{ab}^2 \overset{\text{iid}}{\sim} \chi^2_1, $$
+
 with the following eigenvalues:
 - discrete metric: $\lambda_{1,2} = \dfrac{1 - \sum_j p_j^2}{2} \pm \sqrt{\dfrac{(1 - \sum_j p_j^2)^2}{4} - 3\,p_0p_1p_2}$, and $\mu_{1,2}$ the same expression in $q$;
 - Euclidean metric: $\lambda_{1,2} = s_p \pm \sqrt{s_p^2 - 4\,p_0p_1p_2}$ with $s_p = p_0(1-p_0) + p_2(1-p_2)$, and $\mu_{1,2}$ the same expression in $q$.
