@@ -83,11 +83,11 @@ private theorem mem_squareSplitDivisors_prime_pow (p k d : ℕ) (hp : p.Prime) :
     have he2 : e = 0 ∨ e = 1 := by omega
     have hsq : (p ^ j) ^ 2 = p ^ (2 * j) := by rw [← pow_mul, mul_comm]
     rcases he2 with rfl | rfl
-    · exact Or.inl ⟨j, hj, by show p ^ 0 * (p ^ j) ^ 2 = _; rw [pow_zero, one_mul, hsq]⟩
+    · exact Or.inl ⟨j, hj, by change p ^ 0 * (p ^ j) ^ 2 = _; rw [pow_zero, one_mul, hsq]⟩
     · have hmod1 : k % 2 = 1 := by omega
       have hodd : Odd k := ⟨k / 2, by omega⟩
       exact Or.inr ⟨hodd, j, hj,
-        by show p ^ 1 * (p ^ j) ^ 2 = _; rw [pow_one, hsq, pow_succ', mul_comm p (p ^ (2 * j))]⟩
+        by change p ^ 1 * (p ^ j) ^ 2 = _; rw [pow_one, hsq, pow_succ', mul_comm p (p ^ (2 * j))]⟩
   · intro h
     have hsq : ∀ j, (p ^ j) ^ 2 = p ^ (2 * j) := fun j => by rw [← pow_mul, mul_comm]
     rcases h with ⟨j, hj, rfl⟩ | ⟨hodd, j, hj, rfl⟩
@@ -96,7 +96,7 @@ private theorem mem_squareSplitDivisors_prime_pow (p k d : ℕ) (hp : p.Prime) :
       have hjmem : p ^ j ∈ (p ^ (k / 2)).divisors :=
         (Nat.mem_divisors_prime_pow hp (k / 2)).mpr ⟨j, hj, rfl⟩
       exact Finset.mem_image.mpr ⟨(1, p ^ j), Finset.mem_product.mpr ⟨h1mem, hjmem⟩,
-        by show 1 * (p ^ j) ^ 2 = _; rw [one_mul, hsq]⟩
+        by change 1 * (p ^ j) ^ 2 = _; rw [one_mul, hsq]⟩
     · obtain ⟨m, hm⟩ := hodd
       have hk1 : k % 2 = 1 := by omega
       have hpmem : p ∈ (p ^ (k % 2)).divisors := by
@@ -105,7 +105,7 @@ private theorem mem_squareSplitDivisors_prime_pow (p k d : ℕ) (hp : p.Prime) :
       have hjmem : p ^ j ∈ (p ^ (k / 2)).divisors :=
         (Nat.mem_divisors_prime_pow hp (k / 2)).mpr ⟨j, hj, rfl⟩
       exact Finset.mem_image.mpr ⟨(p, p ^ j), Finset.mem_product.mpr ⟨hpmem, hjmem⟩,
-        by show p * (p ^ j) ^ 2 = _; rw [hsq, pow_succ', mul_comm p (p ^ (2 * j))]⟩
+        by change p * (p ^ j) ^ 2 = _; rw [hsq, pow_succ', mul_comm p (p ^ (2 * j))]⟩
 
 -- The square-splitting divisors of an even prime power.
 private theorem squareSplitDivisors_prime_pow_even (p b : ℕ) (hp : p.Prime) :
