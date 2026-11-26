@@ -1,11 +1,13 @@
 # Endemic equilibrium of an SVIR model with a vaccine-unwilling fraction
 
 **Setting.** A constant population (normalized to $1$) with birth and death rate $\mu$ is born willing to be vaccinated with probability $W$ and unwilling with probability $U=1-W$. Susceptibles $S=S_W+S_U$ (willing and unwilling), vaccinated $V$, unvaccinated infectives $I$, vaccinated infectives $I_V$ and removed $R$ evolve by
+
 $$\begin{aligned}
 \dot I&=-(\gamma+\mu)I+\beta S\hat I, & \dot I_V&=-(\alpha\gamma+\mu)I_V+\sigma\beta V\hat I,\\
 \dot S&=\mu-\mu S-\phi S_W-\beta S\hat I, & \dot V&=\phi S_W-\mu V-\sigma\beta V\hat I,\\
 \dot S_W&=\mu W-(\phi+\mu)S_W-\beta S_W\hat I, & \hat I&=I+\eta I_V,
 \end{aligned}$$
+
 where vaccination (rate $\phi$) acts only on willing susceptibles, and the imperfect vaccine multiplies infection risk by $\sigma\le1$ and infectiousness by $\eta\le1$ and speeds recovery by $\alpha\ge1$. Let
 
 $$\mathcal R_0=\frac{\beta}{\gamma+\mu},\qquad \xi=\frac{\sigma\eta}{\alpha},\qquad \epsilon=\frac{\mu}{\gamma+\mu}\ll1,\qquad \theta=\frac{\phi}{\gamma+\mu},$$

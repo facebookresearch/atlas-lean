@@ -1,12 +1,14 @@
 # Allee bistability in a stage-structured mosquito model with Holling type-II mating
 
 **Model.** A sex- and stage-structured mosquito model tracks eggs $E$, larvae $L$, pupae $P$, unmated females $F_u$, females mated with wild males $F_{mw}$ or with sterile males $F_{ms}$, wild males $M_w$ and sterile males $M_s$:
+
 $$\begin{aligned}
 \dot E &= \phi\Big(1-\tfrac{E}{K_E}\Big)F_{mw} - (\sigma_E+\mu_E)E, &\quad \dot L &= \sigma_E E - (\sigma_L+\mu_L+\delta_L L)L,\\
 \dot P &= \sigma_L L - (\sigma_P+\mu_P)P, &\quad \dot F_u &= r\sigma_P P - \frac{M_w+\eta M_s}{\gamma+\zeta(M_w+\eta M_s)}F_u - \mu_F F_u,\\
 \dot F_{mw} &= \frac{M_w}{\gamma+\zeta(M_w+\eta M_s)}F_u - \mu_F F_{mw}, &\quad \dot F_{ms} &= \frac{\eta M_s}{\gamma+\zeta(M_w+\eta M_s)}F_u - \mu_F F_{ms},\\
 \dot M_w &= (1-r)\sigma_P P - \mu_M M_w, &\quad \dot M_s &= S(t) - \mu_M M_s,
 \end{aligned}$$
+
 with nonnegative parameters, positive mortalities, egg capacity $K_E$, larval competition $\delta_L$, mate-search constant $\gamma>0$, refractory period $\zeta$, and sterile-male release rate $S(t)\ge 0$. The Holling type-II mating term vanishes linearly as $M_w\to 0$, producing a mate-finding Allee effect. $\mathcal{R}_0^{q}$ denotes the basic reproduction number of the quick-mate-search model obtained by setting $\gamma=0$.
 
 **Theorem (no releases, $S\equiv 0$).**

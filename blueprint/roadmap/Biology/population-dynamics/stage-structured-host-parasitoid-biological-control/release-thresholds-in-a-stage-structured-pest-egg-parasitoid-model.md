@@ -1,11 +1,13 @@
 # Release thresholds in a stage-structured pest–egg-parasitoid model
 
 **Model.** A holometabolous pest with eggs $E$, larvae $Q$, pupae $P$ and adults $A$ is attacked by an egg parasitoid $L$:
+
 $$\begin{aligned}
 \dot E &= bA - (\alpha_1 + \mu_1)E - \beta E L, & \dot Q &= \alpha_1 E - (\alpha_2 + \mu_2) Q - \eta Q^2,\\
 \dot P &= \alpha_2 Q - (\alpha_3 + \mu_3) P, & \dot A &= \alpha_3 P - \mu_4 A,\\
 \dot L &= c\beta E L - (\mu_L + \omega) L + u(t),
 \end{aligned}$$
+
 with maturation rates $\alpha_i$, mortalities $\mu_i$, larval competition $\eta$, parasitism rate $\beta$, conversion $c$ and release term $u(t) \ge 0$.
 
 **Theorem.**

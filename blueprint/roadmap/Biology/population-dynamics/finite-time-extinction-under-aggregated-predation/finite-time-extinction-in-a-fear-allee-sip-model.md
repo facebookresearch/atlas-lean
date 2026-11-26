@@ -1,11 +1,13 @@
 # Finite-time extinction of prey in a fear–Allee SIP model with sublinear predation
 
 **Model.** Susceptible prey $S$, infectious prey $I$ and predators $P$ satisfy
+
 $$\begin{aligned}
 \dot S &= \frac{b_0 S}{1 + k_1 P}\Bigl(1 - \frac{S + I}{K}\Bigr)(S - L) - d_0 S^r P - \frac{e_0 S I}{1 + k_2 P},\\
 \dot I &= \frac{e_0 S I}{1 + k_2 P} - d_1 I P - a_1 I,\\
 \dot P &= d_2 S^r P + d_3 I P - a_2 P,
 \end{aligned}$$
+
 with positive parameters, fear factors $1/(1 + k_i P)$ on prey birth and transmission, an Allee threshold $L$ ($L > 0$ strong, $L < 0$ weak), and aggregation exponent $0 < r < 1$ in the predation term $d_0 S^r P$ (herd defence: only prey on the herd boundary are exposed).
 
 **Theorem.** Solutions with nonnegative data stay nonnegative, and if $d_0 \ge d_2$ and $d_1 \ge d_3$ they are uniformly bounded. Suppose $0 < r < 1$ and on $[0, t_{ext})$

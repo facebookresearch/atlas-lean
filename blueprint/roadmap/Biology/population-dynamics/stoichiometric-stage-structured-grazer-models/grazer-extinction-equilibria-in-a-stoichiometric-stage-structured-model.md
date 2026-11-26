@@ -1,11 +1,13 @@
 # Grazer extinction equilibria in a stoichiometric stage-structured model
 
 **Model.** Producer carbon $x$, juvenile grazers $J$ and adult grazers $A$, with total phosphorus $P$, minimal producer P:C quota $q$, producer quota $Q = (P - \theta_j J - \theta_a A)/x$ and grazer P:C requirements $\theta_j$ (for producing juvenile biomass) and $\theta_a$ (for maturation growth):
+
 $$\begin{aligned}
 \dot x &= b x\Bigl(1 - \frac{x}{K}\Bigr)\Bigl(1 - \frac{q}{Q}\Bigr) - f_j(x) J - f_a(x) A,\\
 \dot J &= e_a h_j(Q) f_a(x) A - e_j h_a(Q) f_j(x) J - \delta_j J,\\
 \dot A &= e_j h_a(Q) f_j(x) J - \delta_a A,
 \end{aligned}$$
+
 with Holling type II ingestion $f_i(x) = c_i x/(a_i + x)$, stoichiometric co-limitation $h_i(Q) = \tanh(Q/\theta_i)$, conversion efficiencies $e_i$ and death rates $\delta_i$.
 
 **Theorem.**

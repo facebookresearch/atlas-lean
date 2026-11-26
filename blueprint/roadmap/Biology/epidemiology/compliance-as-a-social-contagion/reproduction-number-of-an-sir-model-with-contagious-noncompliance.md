@@ -1,11 +1,13 @@
 # Reproduction number of an SIR model with contagious noncompliance
 
 **Model.** Compliant classes $S, I, R$ and noncompliant classes $S^*, I^*, R^*$, with $N^* = S^* + I^* + R^*$ and actively mixing infectives $I^{(M)} = (1 - \alpha) I + I^*$, where $\alpha \in [0,1]$ is the efficacy of the protocol:
+
 $$\begin{aligned}
 \dot S &= (1-\xi) b - \beta(1-\alpha) S I^{(M)} - \mu S N^* + \nu S^* - \delta S, & \dot S^* &= \xi b - \beta S^* I^{(M)} + \mu S N^* - \nu S^* - \delta S^*,\\
 \dot I &= \beta(1-\alpha) S I^{(M)} - \gamma I - \mu I N^* + \nu I^* - \delta I, & \dot I^* &= \beta S^* I^{(M)} - \gamma I^* + \mu I N^* - \nu I^* - \delta I^*,\\
 \dot R &= \gamma I - \mu R N^* + \nu R^* - \delta R, & \dot R^* &= \gamma I^* + \mu R N^* - \nu R^* - \delta R^*.
 \end{aligned}$$
+
 Noncompliance spreads by contact at rate $\mu$ and is abandoned at rate $\nu$; recruits ($b$) are noncompliant with probability $\xi$; $\delta$ is the death rate.
 
 **Theorem.** At a disease-free state with susceptible densities $(s, s^*)$, the next-generation matrix has rank one and

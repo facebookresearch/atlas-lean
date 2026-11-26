@@ -1,6 +1,7 @@
 # Positivity-preserving nonstandard finite differences for a reaction–diffusion SEIQR model
 
 **Model.** On a bounded domain $\Omega \subset \mathbb{R}^2$ with homogeneous Neumann boundary conditions, susceptible, exposed, infected, quarantined and recovered densities evolve by
+
 $$\begin{aligned}
 \partial_tS &= \lambda_S\Delta S + \Lambda + \rho Q - \beta_1SE - \beta_2SI - \mu S,\\
 \partial_tE &= \lambda_E\Delta E + \beta_1SE - (\delta + \mu)E,\\
@@ -8,6 +9,7 @@ $$\begin{aligned}
 \partial_tQ &= \lambda_Q\Delta Q + \gamma I - (\alpha + \rho + \mu)Q,\\
 \partial_tR &= \lambda_R\Delta R + \alpha Q - \mu R,
 \end{aligned}$$
+
 with recruitment $\Lambda$, natural death $\mu$, transmission from exposed ($\beta_1$) and infected ($\beta_2$) individuals, progression $\delta$, quarantine $\gamma$, recovery $\alpha$ from quarantine and return $\rho$ of quarantined individuals to the susceptible class.
 
 **Theorem (well-posedness).** For positive initial data the system has a unique global solution $\psi = (S,E,I,Q,R)$ on $\mathcal{U} = (0,T)\times\Omega$ that stays positive and bounded, with

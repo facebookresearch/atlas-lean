@@ -1,12 +1,14 @@
 # Threshold dynamics of the SIRC model with infection-driven immune escape
 
 **Model.** Population fractions of susceptible $S$, infectious $I$, recovered (fully immune) $R$ and cross-immune $C$ individuals satisfy
+
 $$\begin{aligned}
 \dot S &= \mu(1-S) - \beta SI + (1+\varepsilon_2 g(x))\gamma C,\\
 \dot I &= \beta SI + \sigma\beta CI - (\mu+\alpha)I,\\
 \dot R &= (1-\sigma)\beta CI + \alpha I - \mu R - (1+\varepsilon_1 g(x))\delta R,\\
 \dot C &= (1+\varepsilon_1 g(x))\delta R - \beta CI - \mu C - (1+\varepsilon_2 g(x))\gamma C,
 \end{aligned}$$
+
 with $\mu,\beta,\alpha,\delta,\gamma>0$, $\sigma\in[0,1]$ and $\varepsilon_1,\varepsilon_2\ge 0$. The smooth function $g\ge 0$ depends only on $(S,I)$, vanishes when $I=0$, and $g=0$ implies $SI=0$; it accelerates waning of immunity ($R\to C\to S$) while infection circulates, modelling infection-driven immune escape. The state space is the simplex $\Omega=\{S,I,R,C\ge0,\ S+I+R+C=1\}$, which is forward invariant. Let $\mathcal{R}_0 = \beta/(\mu+\alpha)$.
 
 **Theorem.**

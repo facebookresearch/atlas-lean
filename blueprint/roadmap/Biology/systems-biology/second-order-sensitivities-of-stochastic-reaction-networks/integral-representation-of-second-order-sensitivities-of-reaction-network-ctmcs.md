@@ -5,10 +5,12 @@
 $$S^{(i)}_\theta(x,f,t) = \frac{\partial\Psi_\theta(x,f,t)}{\partial\theta_i}, \qquad S^{(i,j)}_\theta(x,f,t) = \frac{\partial^2\Psi_\theta(x,f,t)}{\partial\theta_i\,\partial\theta_j}.$$
 
 **Theorem.** Assume the propensities satisfy growth and regularity conditions at $\theta$ allowing Dynkin's formula and twice differentiability in $(\theta_i, \theta_j)$, and that $f$ has polynomial growth. Then for every initial state $x_0$ and $T > 0$, $S^{(i,j)}_\theta(x_0,f,T)$ exists and equals $\mathbb{E}_{x_0}[s^{(i,j)}_\theta(f,T)]$ with
+
 $$\begin{aligned}
 s^{(i,j)}_\theta(f,T) = \sum_{k=1}^M\Bigg[&\int_0^T\frac{\partial^2\lambda_k}{\partial\theta_i\partial\theta_j}(X_\theta(s),\theta)\,\Delta_{\zeta_k}\Psi_\theta(X_\theta(s),f,T-s)\,ds\\
 &+ \int_0^T\frac{\partial\lambda_k}{\partial\theta_i}(X_\theta(s),\theta)\,\Delta_{\zeta_k}S^{(j)}_\theta(X_\theta(s),f,T-s)\,ds + \int_0^T\frac{\partial\lambda_k}{\partial\theta_j}(X_\theta(s),\theta)\,\Delta_{\zeta_k}S^{(i)}_\theta(X_\theta(s),f,T-s)\,ds\Bigg].
 \end{aligned}$$
+
 Each term is an expectation along a single path of differences of conditional expectations (and first-order sensitivities) between the state and its neighbor after one reaction; estimating these differences with coupled auxiliary paths gives the unbiased *Double Bernoulli Path Algorithm*, an alternative to Girsanov (likelihood-ratio) estimators with typically much smaller variance.
 
 ## Depends on

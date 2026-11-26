@@ -1,11 +1,13 @@
 # Invasion-rate threshold for a switching stochastic flocculation model
 
 **Model.** Nutrient $S$, microorganisms $X$ and flocculant $P$ in a chemostat-type reactor evolve as
+
 $$\begin{aligned}
 dS &= \big[D(\xi_t)(S_0-S) - \mu_1(\xi_t)SX\big]dt + \sigma_1 S\,dW_1,\\
 dX &= \big[\mu_2(\xi_t)SX - D(\xi_t)X - h_2(\xi_t)XP\big]dt + \sigma_2 X\,dW_2,\\
 dP &= \big[D(\xi_t)(P_0-P) - h_3(\xi_t)XP\big]dt + \sigma_3 P\,dW_3,
 \end{aligned}$$
+
 where $W_1,W_2,W_3$ are independent Brownian motions and $\xi_t$ is an irreducible Markov chain on a finite set $\mathcal{M}$ of environmental regimes (dilution rate $D$, inputs $S_0,P_0$, uptake $\mu_1$, growth $\mu_2$, flocculation rates $h_2,h_3$). For every positive initial condition there is a unique global positive solution, and $X\equiv0$ is invariant. On $\{X=0\}$ the process $(S,P,\xi)$ has a unique invariant probability measure $\mu_b$ on $\mathbb{R}^2_{>0}\times\mathcal{M}$.
 
 **Theorem.** Let $\Lambda$ be the invasion rate of the microorganisms, i.e. the long-run average of the per-capita growth rate of $\log X$ near $X=0$,

@@ -1,11 +1,13 @@
 # Viral reproduction thresholds in a two-virus oncolytic virotherapy model
 
 **Model.** In dimensionless form, uninfected tumor cells $y_u$, tumor cells infected by Vaccinia virus (VV) $y_1$ or by vesicular stomatitis virus (VSV) $y_2$, and free virions $x_1$ (VV) and $x_2$ (VSV) evolve by
+
 $$\begin{aligned}
 \dot y_u &= y_u(1 - y_u - y_1 - y_2) - \beta_1\frac{y_ux_1}{\kappa_1 + Y} - \beta_2^{\mathrm{eff}}\frac{y_ux_2}{\kappa_2 + Y},\\
 \dot y_1 &= \beta_1\frac{y_ux_1}{\kappa_1 + Y} - a_1y_1, \qquad \dot y_2 = \beta_2^{\mathrm{eff}}\frac{y_ux_2}{\kappa_2 + Y} - a_2y_2,\\
 \dot x_1 &= b_1y_1 - \beta_1\frac{y_ux_1}{\kappa_1 + Y} - \delta_1x_1, \qquad \dot x_2 = b_2y_2 - \beta_2^{\mathrm{eff}}\frac{y_ux_2}{\kappa_2 + Y} - \delta_2x_2,
 \end{aligned}$$
+
 where $Y = y_u + y_1 + y_2$, $a_i$ are infected-cell lysis rates, $b_i$ burst sizes, $\delta_i$ virion clearance rates, and
 
 $$\beta_2^{\mathrm{eff}} = \frac{\beta_2}{1 + \frac{\theta_1}{\theta_2 + y_1}\,y_2}$$

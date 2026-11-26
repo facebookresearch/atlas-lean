@@ -1,10 +1,12 @@
 # Endemic equilibria of an SIR model with Holling-type testing
 
 **Model.** Susceptible $S$, untested infectious $I$, test-confirmed $C$, monitored $M$ and recovered $R$ (dimensionless):
+
 $$\begin{aligned}
 S' &= \alpha - cSI - \mu S, & I' &= cSI - \frac{pC}{\varepsilon + I + aM} I - \gamma I - \mu I,\\
 C' &= \frac{pC}{\varepsilon + I + aM} I - (m + d + \mu) C, & M' &= mC - (q + \mu) M, \qquad R' = qM + \gamma I - \mu R,
 \end{aligned}$$
+
 where the daily test-positive rate $pCI/(\varepsilon + I + aM)$ is of Holling type II (testing acts like a predator that needs handling time), $m$ is the monitoring rate, $d$ the disease death rate of confirmed cases and $q$ the monitored recovery rate. The basic reproduction number is $\mathcal R_0 = c\alpha/(\mu(\mu + \gamma))$.
 
 **Theorem.**

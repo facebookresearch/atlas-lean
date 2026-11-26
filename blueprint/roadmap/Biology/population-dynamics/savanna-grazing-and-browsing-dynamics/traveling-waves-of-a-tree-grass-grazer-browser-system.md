@@ -1,10 +1,12 @@
 # Traveling waves of a tree–grass–grazer–browser savanna system
 
 **Model.** Dimensionless biomasses of woody plants $W$, grass $H$, grazers $G$ and browsers $B$ on the line satisfy
+
 $$\begin{aligned}
 W_t &= d_W W_{xx} + r_W W(1-W-\kappa_1 H) - c_W BW, & H_t &= d_H H_{xx} + r_H H(1-H-\kappa_2 W) - c_H GH,\\
 G_t &= d_G G_{xx} + e_H G(H-G), & B_t &= d_B B_{xx} + e_W B(W-B),
 \end{aligned}$$
+
 with diffusion (migration) rates $d_\bullet>0$, plant growth rates $r_W, r_H$, tree–grass competition coefficients $\kappa_1,\kappa_2$, consumption coefficients $c_W, c_H$ and herbivore conversion rates $e_W, e_H$. It has a unique positive coexistence state $(W^*,H^*,G^*,B^*)$. Set
 
 $$s_m = \max\{2\sqrt{d_Wr_W},\,2\sqrt{d_Hr_H}\},\quad s_{M_1} = \min\Big\{d_B\sqrt{\tfrac{r_W}{d_B-d_W}},\,2\sqrt{d_Be_W\big(1-\kappa_1-\tfrac{c_W}{r_W}\big)}\Big\},\quad s_{M_2} = \min\Big\{d_G\sqrt{\tfrac{r_H}{d_G-d_H}},\,2\sqrt{d_Ge_H\big(1-\kappa_2-\tfrac{c_H}{r_H}\big)}\Big\}.$$

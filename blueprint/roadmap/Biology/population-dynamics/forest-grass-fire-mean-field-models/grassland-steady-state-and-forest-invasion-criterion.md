@@ -1,12 +1,14 @@
 # Grassland steady state and forest invasion criterion
 
 **Model.** Land cover fractions of forest $F$, grass $G$, burning $B$ and ash $A$, with $F+G+B+A=1$, follow the nonspatial mean-field limit of a spatial stochastic forest-fire (FGBA) model:
+
 $$\begin{aligned}
 \dot F&=(\varphi_GG+\varphi_AA)F-\beta_FBF-\Phi_F(G)F-\mu F,\\
 \dot G&=\gamma A+\mu F-\varphi_GFG-\Phi_G(G)G-\beta_GBG,\\
 \dot B&=\Phi_G(G)G+\Phi_F(G)F+(\beta_GG+\beta_FF)B-qB,\\
 \dot A&=qB-\gamma A-\varphi_AFA.
 \end{aligned}$$
+
 Here $\varphi_G,\varphi_A$ are forest seeding rates into grass and ash, $\mu$ is non-fire forest mortality (forest reverting to grass), $\beta_G,\beta_F$ are fire-spread rates, $q$ is the fire quenching rate, $\gamma$ the ash-to-grass recovery rate, and $\Phi_G,\Phi_F\ge0$ are smooth nondecreasing sigmoidal flammability functions of grass cover (spontaneous ignitions). All rates are positive.
 
 **Grassland subsystem.** On $F=0$, eliminating $A=1-G-B$ gives $\dot G=\gamma(1-G-B)-\Phi_G(G)G-\beta_GBG$, $\dot B=\Phi_G(G)G+\beta_GGB-qB$; the simplex $\{G,B\ge0,\ G+B\le1\}$ is forward invariant, and steady states solve

@@ -1,11 +1,13 @@
 # Equilibria and delay-induced tipping in a two-polymerase quasispecies model
 
 **Model.** Master genomes $x_0$ and mutant genomes $x_1$ encode polymerases $p_0$ and $p_1$, which become functional after delays $\tau_0, \tau_1$:
+
 $$\begin{aligned}
 \dot x_0 &= (1-\mu)\gamma\, x_0\, \bigl[r_0 p_0(t-\tau_0) + r_1 p_1(t-\tau_1)\bigr]\,(1 - x_0 - x_1) - \varepsilon x_0,\\
 \dot x_1 &= \bigl(\mu\gamma\, x_0 + (1-\gamma) x_1\bigr)\bigl[r_0 p_0(t-\tau_0) + r_1 p_1(t-\tau_1)\bigr]\,(1 - x_0 - x_1) - \varepsilon x_1,\\
 \dot p_0 &= k_0 x_0 (1 - p_0 - p_1) - \varepsilon_p p_0, \qquad \dot p_1 = k_1 x_1 (1 - p_0 - p_1) - \varepsilon_p p_1,
 \end{aligned}$$
+
 with mutation rate $\mu$ (no back mutation), polymerase affinity fraction $\gamma$ for master genomes, replication rates $r_i$, polymerase synthesis rates $k_i$ and degradation rates $\varepsilon, \varepsilon_p$, on a bounded region $\mathcal D$ of densities.
 
 **Theorem.**

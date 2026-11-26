@@ -1,11 +1,13 @@
 # Hopf oscillations from imitation dynamics of household breeding-site control
 
 **Model.** Aquatic mosquitoes $L_v$, adult mosquitoes $A_v$ and the fraction $w \in [0,1]$ of households removing breeding sites evolve by
+
 $$\begin{aligned}
 \dot L_v &= rbA_v\Big(1 - \frac{L_v}{K_v(w)}\Big) - (\nu_L + \mu_L)L_v, \qquad K_v(w) = K_{v_{\max}} - w\,(K_{v_{\max}} - K_{v_{\min}}),\\
 \dot A_v &= \nu_L L_v - \mu_A A_v,\\
 \dot w &= k\,w(1-w)\big(-r_c + r_d\,m\,A_v\big),
 \end{aligned}$$
+
 where control lowers the aquatic carrying capacity from $K_{v_{\max}}$ to $K_{v_{\min}}$, $r_c$ is the perceived cost of control and $r_d m A_v$ the perceived risk of not controlling, which grows with mosquito abundance (imitation dynamics with rate $k$). Let
 
 $$N = \frac{\nu_L\, r b}{(\nu_L + \mu_L)\mu_A}, \qquad \alpha = \frac{m\nu_L}{\mu_A}.$$

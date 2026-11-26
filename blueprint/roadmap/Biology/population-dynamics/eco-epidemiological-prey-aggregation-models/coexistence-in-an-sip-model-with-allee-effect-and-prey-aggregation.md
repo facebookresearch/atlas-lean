@@ -1,11 +1,13 @@
 # Coexistence window in an eco-epidemiological model with Allee effect and prey aggregation
 
 **Model.** Susceptible prey $S$, infected prey $I$ and predators $P$ evolve by
+
 $$\begin{aligned}
 \dot S &= a_0 S\Big(1 - \frac{S+I}{K}\Big)(S - L) - d_0 S^r P - e_0 SI,\\
 \dot I &= -a_1 I + e_0 SI - d_1 IP,\\
 \dot P &= -a_2 P + d_2 S^r P + d_3 IP,
 \end{aligned}$$
+
 with all parameters positive, a strong Allee threshold $0 < L < K$, and an aggregation exponent $0 < r < 1$: susceptible prey form herds, so only a sublinear amount $S^r$ is exposed to predation. Infected prey do not reproduce and are caught at rate $d_1 P$.
 
 **Theorem.**

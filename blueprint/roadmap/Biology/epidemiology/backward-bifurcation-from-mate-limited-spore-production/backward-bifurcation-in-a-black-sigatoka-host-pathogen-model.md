@@ -1,11 +1,13 @@
 # Backward bifurcation in a Black Sigatoka host–pathogen model
 
 **Model.** Healthy leaf biomass $H$ and partially resistant biomass $R$ (fraction $1-\kappa$ of new biomass, susceptibility reduced by $\delta$), exposed $E$ and infected $I$ biomass, asexual spores (conidia) $A$ and sexual spores (ascospores) $S$:
+
 $$\begin{aligned}
 \dot H &= \kappa\Lambda - \beta\bigl(\theta S + \psi \tfrac{A}{N}\bigr) H - \mu H, & \dot R &= (1-\kappa)\Lambda - (1-\delta)\beta\bigl(\theta S + \psi\tfrac{A}{N}\bigr) R - \mu R,\\
 \dot E &= \beta\bigl(\theta S + \psi\tfrac{A}{N}\bigr)\bigl(H + (1-\delta) R\bigr) - (\gamma + \mu) E, & \dot I &= \gamma E - (\mu + \rho) I,\\
 \dot A &= \eta I - (\mu_P + \rho) A, & \dot S &= \alpha\, g(I)\, I - (\mu_P + \rho) S,
 \end{aligned}$$
+
 where $\beta = \beta(h, T)$ depends on humidity and temperature, $\rho$ is the removal (sanitation) rate, and the mating function $g$ satisfies $g(I) \sim \lambda I$ as $I \to 0$ (mate limitation of sexual reproduction).
 
 **Theorem.**
