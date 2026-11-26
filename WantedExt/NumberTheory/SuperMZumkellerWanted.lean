@@ -23,7 +23,9 @@ and *`k`-m-perfect* if `T(n) = n^k`.  Only the seven records of
 this paper that are correct as printed are formalized, here or in
 the modules this file imports;
 `isSuperMZumkeller_prime_pow_iff` is proved in
-`MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff`.
+`MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff`,
+and `isSuperMZumkeller_prod_primes` is proved in
+`MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerProdPrimes`.
 
 **The paper's Theorems 4, 5, and 7 are false as printed** and
 are deliberately not stated: Theorem 4 fails at `60 = 12·5`
@@ -50,6 +52,7 @@ public import MathlibExt.NumberTheory.SuperMZumkeller
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerFourNotKmPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerProdPrimes
 
 set_option autoImplicit false
 
@@ -68,15 +71,6 @@ theorem_wanted isSuperMZumkeller_iff (n : ℕ) (hn : 2 ≤ n) :
       ∀ p ∈ n.primeFactors,
         8 ∣ (n.factorization p) * n.divisors.card *
           (divisorProd n).divisors.card
-
-/-- **Products of at least three distinct primes are super-m-Zumkeller.** For every finite set
-$S$ of at least three primes, the product $\prod_{p \in S} p$ is super-m-Zumkeller.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers",
-Corollary 1. -/
-theorem_wanted isSuperMZumkeller_prod_primes (s : Finset ℕ)
-    (hs : ∀ p ∈ s, p.Prime) (hcard : 3 ≤ s.card) :
-    IsSuperMZumkeller (∏ p ∈ s, p)
 
 /-- **Odd powers of $2$ times two distinct odd primes are super-m-Zumkeller.** Let $k$ be an odd
 natural number and let $p$ and $q$ be distinct odd primes. Then $2^k p q$ is super-m-Zumkeller.

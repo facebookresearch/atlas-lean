@@ -11,7 +11,7 @@ If $\gamma \subseteq E + E_{\min}$, each edge of $\gamma$ lies in exactly one of
 $\gamma \cap E$ and of $\gamma \cap E_{\min}$ have the same boundary, so minimality of $E_{\min}$ forces
 $|\gamma \cap E| \ge \ell / 2$. There are at most $2^{\ell}$ ways to split $\gamma$, and each split with $e \ge \ell/2$
 error edges on $\gamma$ has probability at most $p^{e} (1 - p)^{\ell - e} \le (p(1 - p))^{\ell/2}$ of being realized.
-With noisy syndrome measurements and the weighted minimal chain of the decoding page, the same argument on the
+With noisy syndrome measurements, on the finite record and with the weighted minimal chain of the decoding page, the same argument on the
 three-dimensional spacetime lattice applies to the weighted length: the error edges on a fixed path with $H$ space-like
 and $V$ time-like edges carry at least half of its weight, which gives $2^{H + V} \tilde p^{H/2} \tilde q^{V/2}$ with
 $\tilde p = p(1 - p)$, $\tilde q = q(1 - q)$ (equations (47)–(52)).

@@ -15,8 +15,11 @@ normalizer consists, up to phase, of the $X^a Z^b$ with $a \in C_1$ and $b \in C
 outside the stabilizer times phases exactly when $a \notin C_2$ or $b \notin C_1^{\perp}$; its weight is at least
 $\max(\operatorname{wt} a, \operatorname{wt} b)$, with equality for $b = 0$ or $a = 0$. Since
 $C_1 \setminus C_2 \subseteq C_1 \setminus \{0\}$ and $C_2^{\perp} \setminus C_1^{\perp} \subseteq C_2^{\perp} \setminus \{0\}$,
-$d$ is at least the bound used in [CSS codes correct $\lfloor (d - 1)/2 \rfloor$ errors](is-correctable-css.md), and
-larger when $C_2$ or $C_1^{\perp}$ has words of small weight (the code is then degenerate).
+$d$ is at least the bound $\min\{\operatorname{wt}(C_1 \setminus \{0\}), \operatorname{wt}(C_2^{\perp} \setminus \{0\})\}$
+used in [CSS codes correct $\lfloor (d - 1)/2 \rfloor$ errors](is-correctable-css.md). It is strictly larger exactly when
+every word attaining that classical minimum lies in $C_2$ or $C_1^{\perp}$, respectively, so that it is excluded from the
+set differences; for $C_1 = \mathbb{F}_2^2$ and $C_2 = \langle 10 \rangle$ the stabilizer word $10$ has weight $1$, but so
+does the logical word $01$, and both $d$ and the bound equal $1$.
 
 Calderbank, Rains, Shor and Sloane state the result with the roles of the two codes named the other way round
 ($C_1 \subseteq C_2$ there).
