@@ -35,6 +35,9 @@ public import MathlibExt.NumberTheory.SZumkeller
 public import MathlibExt.NumberTheory.SumSquaredDivisorsProduct
 public import MathlibExt.NumberTheory.UnitaryDivisorCount
 public import MathlibExt.NumberTheory.SZumkellerHarmonicMeanSqLeOfIsSZumkeller
+public import MathlibExt.NumberTheory.SZumkellerSixDvdOfIsSZumkeller
+public import MathlibExt.NumberTheory.SZumkellerThreeLeCardPrimeFactorsOfIsSZumkellerEven
+public import MathlibExt.NumberTheory.SZumkellerNotIsUnitarySZumkellerOfOdd
 
 namespace MetaMathlibExt
 
@@ -71,14 +74,6 @@ Numbers*, INTEGERS 24 (2024), Article A95, Proposition 3. -/
 public theorem_wanted twelve_le_card_divisors_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n)
     (he : Even n) : 12 ≤ n.divisors.card
 
-/-- **Even s-Zumkeller numbers are divisible by 6.** Every even s-Zumkeller number is divisible
-by $6$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Corollary 1. -/
-public theorem_wanted six_dvd_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
-    6 ∣ n
-
 /-- **A prime-factor product bound for s-Zumkeller numbers.** Let $n$ be an s-Zumkeller number
 and let $p_1$ be its least prime factor. Then
 $$\frac{2}{p_1^2} + 1 < \prod_{p} \frac{p^2}{p^2 - 1},$$
@@ -88,14 +83,6 @@ Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 5. -/
 public theorem_wanted two_div_minFac_sq_add_one_lt_prod (n : ℕ) (h : IsSZumkeller n) :
     2 / (n.minFac : ℚ) ^ 2 + 1 < ∏ p ∈ n.primeFactors, (p : ℚ) ^ 2 / (p ^ 2 - 1)
-
-/-- **Even s-Zumkeller numbers have at least three prime factors.** If $n$ is an even
-s-Zumkeller number, then $n$ has at least $3$ distinct prime factors.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 6(i). -/
-public theorem_wanted three_le_card_primeFactors_of_isSZumkeller_even (n : ℕ)
-    (h : IsSZumkeller n) (he : Even n) : 3 ≤ n.primeFactors.card
 
 /-- **Odd s-Zumkeller numbers divisible by $3$ have at least eight prime factors.** Every odd
 s-Zumkeller number divisible by $3$ has at least $8$ distinct prime factors.
@@ -153,13 +140,6 @@ public theorem_wanted card_unitaryDivisors_of_isUnitarySZumkeller (n q : ℕ)
     (q = 2 → 2 ^ 6 < (Nat.unitaryDivisors n).card) ∧
       (q = 3 → 2 ^ 2 < (Nat.unitaryDivisors n).card) ∧
       (q = 4 → 2 ^ 2 < (Nat.unitaryDivisors n).card)
-
-/-- There is no odd unitary s-Zumkeller number.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Proposition 13. -/
-public theorem_wanted not_isUnitarySZumkeller_of_odd (n : ℕ) (ho : Odd n) :
-    ¬ IsUnitarySZumkeller n
 
 end
 

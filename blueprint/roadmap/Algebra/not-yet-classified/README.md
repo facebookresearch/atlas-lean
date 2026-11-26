@@ -26,7 +26,6 @@ Topics added since this subject's fields were last revised.
 - [DGCyclic Hodge Models](dgcyclic-hodge-models/README.md)
 - [DGCyclic Mixed Models](dgcyclic-mixed-models/README.md)
 - [Dold Kan Normalized Coefficients](dold-kan-normalized-coefficients/README.md)
-- [Double Complex](double-complex/README.md)
 - [End Scalar Restriction](end-scalar-restriction/README.md)
 - [Equivalence](equivalence/README.md)
 - [Exact Functor Connecting](exact-functor-connecting/README.md)

@@ -18,7 +18,7 @@ not exceed 2^n. Is it then true that |P| ≤ 2^(2n)?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.RadicalHereditaryFormationKourovka12Problem7Wanted
+public import MathlibExt.GroupTheory.RadicalHereditaryFormation
 
 @[expose] public section
 
