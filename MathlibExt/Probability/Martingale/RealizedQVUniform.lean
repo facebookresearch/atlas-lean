@@ -50,8 +50,8 @@ truncated sum `∑_{i < j} a i` passes `C`: the indicator `𝟙{∑_{i < j} a i 
 `𝓕 n j`-measurable, so `E ∑_j 𝟙{…} E[a j | 𝓕 n j] = E ∑_j 𝟙{…} a j ≤ C + 1`, and Markov's
 inequality bounds the stopped predictable sum. The large parts have
 `E ∑_j E[b j | 𝓕 n j]` equal to the Lindeberg sum at level `1`. Off `{∑_{j<K} ξ j² > C}` the
-stopping never triggers. This Lenglart-type bound gives the tightness transfer; T123's
-Chapter 2 then gives the uniform closeness of `U` and `V`.
+stopping never triggers. This Lenglart-type bound gives the tightness transfer;
+`tendstoInMeasure_sup_abs_sum_sq_sub_condExp` then gives the uniform closeness of `U` and `V`.
 
 ## Scope and what is not proved
 
@@ -66,10 +66,10 @@ Chapter 2 then gives the uniform closeness of `U` and `V`.
 P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press (1980),
 Chapter 2: under the conditional Lindeberg condition, if either
 `U²_{n k_n} = ∑_{i ≤ k_n} X_{ni}²` or `V²_{n k_n} = ∑_{i ≤ k_n} E[X_{ni}² | 𝓕_{n,i-1}]` is
-tight, then `max_{i ≤ k_n} |U²_{ni} - V²_{ni}| → 0` in probability. T123 proves the `V`-tight
-case; this file supplies the `U`-tight case by reducing it to the `V`-tight one.
-(Statement paraphrased; theorem number matches a secondary citation (arXiv:2506.22354 §3);
-book not consulted.)
+tight, then `max_{i ≤ k_n} |U²_{ni} - V²_{ni}| → 0` in probability.
+`tendstoInMeasure_sup_abs_sum_sq_sub_condExp` proves the `V`-tight case; this file supplies the
+`U`-tight case by reducing it to the `V`-tight one. (Statement paraphrased, following the
+secondary citation arXiv:2506.22354 §3.)
 The uniform-in-`t` step is the monotone-function argument behind Pólya's theorem (pointwise
 convergence of monotone functions to a continuous limit is uniform).
 

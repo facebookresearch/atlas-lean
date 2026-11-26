@@ -2,4 +2,3 @@
 
 - [The logistic loss with zero design does not depend on the coefficients](logistic-nll-eq-of-x-eq-zero.md)
 - [Gradient of the logistic loss with zero design](gradient-logistic-nll-of-x-eq-zero.md)
-- [Objective gaps of the logistic loss with zero design vanish](logistic-nll-gap-eq-zero-of-x-eq-zero.md)

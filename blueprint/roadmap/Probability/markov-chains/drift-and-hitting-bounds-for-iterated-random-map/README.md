@@ -22,7 +22,6 @@
 - [A state below the level moves by the step map](stopped-of-not-le.md)
 - [The stopped chain stays at a level once reached](le-run-stopped-of-le.md)
 - [The stopped chain agrees with the free chain before the first breach](run-stopped-eq-run.md)
-- [Reaching a level by a horizon, via the stopped chain](exists-le-iff-le-run-stopped.md)
 - [Breach event of a level by a horizon](breach-set.md)
 - [Breach event of the free chain as a terminal event of the stopped chain](breach-set-eq.md)
 

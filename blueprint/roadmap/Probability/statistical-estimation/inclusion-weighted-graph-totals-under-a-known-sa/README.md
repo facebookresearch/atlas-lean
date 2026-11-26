@@ -11,7 +11,4 @@
 - [Inclusion probability in the subtype design](inclusion-probability-sub-design.md)
 - [Order-one inclusion probabilities are first-order inclusion probabilities](graph-inclusion-singleton.md)
 - [Inclusion probability of a vertex pair](graph-inclusion-pair.md)
-- [The order-one Horvitz–Thompson graph estimator is unbiased](integral-graph-ht-order1.md)
-- [The order-two Horvitz–Thompson graph estimator is unbiased](integral-graph-ht-order2.md)
-- [The order-three Horvitz–Thompson graph estimator is unbiased](integral-graph-ht-order3.md)
 - [Unbiasedness of the Horvitz-Thompson graph-total estimator](integral-graph-ht.md)

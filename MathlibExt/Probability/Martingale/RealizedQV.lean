@@ -62,7 +62,7 @@ P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic
 Chapter 2: under the conditional Lindeberg condition and tightness of
 `V²_{n k_n} = ∑_{i ≤ k_n} E[X_{ni}² | 𝓕_{n,i-1}]`,
 `max_{i ≤ k_n} |U²_{ni} - V²_{ni}| → 0` in probability, where `U²_{ni} = ∑_{j ≤ i} X_{nj}²`.
-(Statement paraphrased; theorem number from the task spec, not checked against the text.)
+(Statement paraphrased.)
 -/
 
 @[expose] public section
