@@ -13990,6 +13990,7 @@
   "MathlibExt/NumberTheory/Wolstenholme": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeBinomialCongruence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeBinomialExtension": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
+  "MathlibExt/NumberTheory/WolstenholmeBinomialExtensionNormSubTaylorLeOfNormLe": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmeCongruenceEquivalence": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmePolynomialParts": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
   "MathlibExt/NumberTheory/WolstenholmePowerSums": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
