@@ -10,7 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Geometry.Polytope.Faces
-public import WantedExt.Combinatorics.SimplicialSphereShared
+public import MathlibExt.Combinatorics.SimplicialSphereShared
 public import WantedExt.Combinatorics.UpperBoundSimplicialSpheresWanted
 
 /-!
