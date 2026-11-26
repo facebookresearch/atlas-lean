@@ -23,9 +23,13 @@ A sound expansion has separate pages for:
 
 ## Depends on
 
-- [MPC(eps) model](mpc-model.md)
+- [MPC(ε) communication for database queries](mpc-model.md)
 - [Matching databases](matching-databases.md)
 - [Query hypergraph and fractional vertex covering number](query-hypergraph-and-fractional-vertex-covering-number.md)
+
+## Proof depends on
+
+- [Simulating the first round with relation input servers](input-server-simulation.md) — the lower bound is derived using separate relation inputs; its application to distributed inputs requires the placement and cost-preserving simulation for the source's parameter regime.
 
 ## Sources
 

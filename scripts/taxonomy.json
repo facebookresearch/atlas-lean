@@ -1656,6 +1656,7 @@
   "CSLibExt/Crypto/SymmetricKey/PRP": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Pseudorandom permutations"},
   "CSLibExt/Databases/FunctionalDependencies": {"to": "ComputerScience/databases", "title": "Functional dependencies"},
   "CSLibExt/Databases/NormalForms": {"to": "ComputerScience/databases", "title": "Lossless decomposition and normal forms"},
+  "CSLibExt/Databases/QueryMPC": {"to": "ComputerScience/databases", "title": "Join processing"},
   "CSLibExt/Databases/RelationalAlgebra": {"to": "ComputerScience/databases", "title": "Relational algebra"},
   "CSLibExt/Databases/Serializability": {"to": "ComputerScience/databases", "title": "Conflict serializability"},
   "CSLibExt/Databases/TwoPhaseLocking": {"to": "ComputerScience/databases", "title": "Two-phase locking"},
