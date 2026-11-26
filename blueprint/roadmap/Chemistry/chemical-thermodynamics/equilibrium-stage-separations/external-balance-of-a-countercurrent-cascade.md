@@ -6,10 +6,9 @@ $L_{n-1} x_{n-1} + V_{n+1} y_{n+1} = L_n x_n + V_n y_n$, add up to the balance o
 $L_0 x_0 + V_{N+1} y_{N+1} = L_N x_N + V_1 y_1$, because every interstage stream enters one balance and leaves another. No
 equilibrium relation is used.
 
-## Depends on
-
-## Proof depends on
+Equivalently, the net flow $L_k x_k - V_{k+1} y_{k+1}$ has the same value on either side of each
+stage $k+1$, so its values at the two ends agree.
 
 ## Sources
 
-- L. Lamm and L. Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts, Section 1.4, the stage balances and operating line, Equation 9.1, <https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Chemical_Engineering_Separations%3A_A_Handbook_for_Students_(Lamm_and_Jarboe)/01%3A_Chapters/1.04%3A_Absorption_and_Stripping>.
+- Monica Lamm and Laura Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts, [Section 1.4, Equation 9.1](https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Chemical_Engineering_Separations%3A_A_Handbook_for_Students_(Lamm_and_Jarboe)/01%3A_Chapters/1.04%3A_Absorption_and_Stripping), gives the absorber operating line for constant solute-free carrier rates. Subtracting that line at adjacent cuts gives the constant-carrier special case of the stage balance assumed above.
