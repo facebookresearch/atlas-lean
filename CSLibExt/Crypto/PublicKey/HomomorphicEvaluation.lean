@@ -21,8 +21,10 @@ public import Mathlib.Data.PNat.Basic
 Gentry, *A Fully Homomorphic Encryption Scheme* (Stanford, 2009), §2.1, printed pp. 27–29
 (PDF pp. 37–39), Definitions 2.1.1–2.1.5. The objects are distributions and single-output
 straight-line circuits; these are functionality properties, not security games. Correctness fixes
-fresh ciphertexts *before* it measures error. Compactness is a size bound on a Boolean circuit
-computing the actual decryption function in the specified representations.
+an arity and circuit before choosing its negligible error bound, then fixes the generated keys
+and supported ciphertexts before sampling the evaluator. Definition 5.2.4 (printed p. 60,
+PDF p. 70) also treats the arity as depending on the circuit. Compactness bounds a Boolean
+circuit computing the actual decryption function in the specified representations.
 
 Gentry allows the public key to determine the message and ciphertext spaces. We specialize to
 spaces and encodings common to all legal keys at a given parameter, as in `PKEScheme`. The
@@ -63,14 +65,15 @@ structure Scheme {σ : Signature} (A : Spaces σ) where
 
 variable {σ : Signature} {A : ℕ → Spaces σ}
 
-/-- Correctness on a circuit class (Gentry, Definition 2.1.1). One negligible bound in the
-security parameter works for every generated key pair, input arity, permitted circuit, message
-tuple and tuple of supported fresh ciphertexts. With these fixed, the probability that evaluation
-decrypts to anything other than the circuit output (including rejection) is at most the bound. -/
+/-- Correctness on a circuit class (circuit-wise reading of Gentry, Definition 2.1.1). Fix the
+arity and circuit first. There is a negligible bound in the security parameter that, whenever the
+circuit is permitted, works for every generated key pair, message tuple and tuple of supported
+fresh ciphertexts. Only evaluation is sampled: the probability of rejection or a plaintext other
+than the circuit output is at most this bound. -/
 def Correct (E : (n : ℕ) → Scheme (A n)) (allowed : ℕ → (t : ℕ) → Set (Circuit σ t 1)) : Prop := by
   classical
-  exact ∃ ε : ℕ → ℝ, NegligibleAdv ε ∧ ∀ n kp, kp ∈ (E n).pke.gen.support →
-    ∀ t (c : Circuit σ t 1), c ∈ allowed n t →
+  exact ∀ t (c : Circuit σ t 1), ∃ ε : ℕ → ℝ, NegligibleAdv ε ∧ ∀ n, c ∈ allowed n t →
+    ∀ kp, kp ∈ (E n).pke.gen.support →
     ∀ (m : Fin t → (A n).Message) (x : Fin t → (A n).Ciphertext),
       (∀ i, x i ∈ ((E n).pke.enc kp.1 (m i)).support) →
       winProb (((E n).evaluate kp.1 c x).map fun y =>
@@ -141,8 +144,8 @@ where
     | _, .gate p l => program p ++ frame (tag.encode l.op) ++
         (List.ofFn fun i => wire (l.wires i)).flatten
 
-/-- A finite-state machine realizes a specified law on output words with a fair tape of `coins`
-bits and at most `steps` transitions on **every** tape. Its input is the framed argument followed
+/-- A single-tape Turing machine realizes a law on words using a fair tape of `coins` bits
+and at most `steps` transitions on **every** tape. Its input is the framed argument followed
 by the coin bits. The pushforward of the uniform tape law must equal the specified distribution. -/
 def SamplesWithin (T : Turing.SingleTapeTM Bool) (coins steps : ℕ)
     (arg : List Bool) (law : PMF (List Bool)) : Prop :=
@@ -150,11 +153,13 @@ def SamplesWithin (T : Turing.SingleTapeTM Bool) (coins steps : ℕ)
     (Probability.PMF.uniformOfFintype (BitString coins)).map draw = law ∧
     ∀ r, T.OutputsWithinTime (frame arg ++ List.ofFn r) (draw r) steps
 
-/-- Polynomial-time realization of the four algorithms by fixed machines, with a single pair of
-polynomials bounding fair-tape length and worst-case steps. An index specifies either no level
-(no depth cutoff) or a positive depth level. The budget parameter is the security parameter plus
-the level when present. Only evaluation adds the input arity and gate count; long operation codes
-do not increase its budget. The evaluator receives the public key and actual circuit syntax. -/
+/-- Four fixed single-tape Turing machines realize the algorithms with one pair of polynomials
+for fair-tape length and worst-case steps. Encryption runs on every declared public key and
+message; evaluation on every public key and ciphertext tuple for each admitted circuit;
+decryption on every secret key and ciphertext, not only generated or fresh inputs. Decryption
+receives the security parameter but no level. The budget parameter for all four is the security
+parameter plus the positive level if present. A level imposes its depth cutoff; no level admits
+all depths. Only evaluation adds the input arity and gate count, not the gate-code lengths. -/
 def PolynomialTime {ι : Type} (level : ι → Option ℕ+) (E : ι → (n : ℕ) → Scheme (A n))
     (tag : Encoding σ.Op Bool) : Prop :=
   ∃ (q p : Polynomial ℕ) (gen enc dec ev : Turing.SingleTapeTM Bool), ∀ i n,

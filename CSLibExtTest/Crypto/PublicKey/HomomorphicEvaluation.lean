@@ -59,14 +59,17 @@ private noncomputable def fixture : Scheme bits where
   evaluate _ c x := PMF.pure (c.eval productGates x 0)
 
 -- Every circuit, not just a projection: projection from the product algebra commutes with gates.
-private theorem correct : Correct (A := fun _ => bits) (fun _ => fixture) (fun _ _ => Set.univ) := by
-  refine ⟨_, negligibleAdv_zero, ?_⟩
-  intro n kp hk t c hc m x hx
+private theorem eval_first {t : ℕ} (c : Circuit Boolean.signature t 1)
+    (m : Fin t → Bool) (x : Fin t → Bool × Bool) (hx : ∀ i, x i ∈ (tags (m i)).support) :
+    (c.eval productGates x 0).1 = c.eval bits.gates m 0 := by
   have h : Prod.fst ∘ x = m := funext fun i => first_of_tag (hx i)
-  have e := congrFun (c.map_eval project x) 0
-  change (c.eval productGates x 0).1 = c.eval bits.gates (Prod.fst ∘ x) 0 at e
-  rw [h] at e
-  simp [fixture, PMF.pure_map, e]
+  exact (congrFun (c.map_eval project x) 0).trans (congrArg (fun y => c.eval bits.gates y 0) h)
+
+private theorem correct : Correct (A := fun _ => bits) (fun _ => fixture) (fun _ _ => Set.univ) := by
+  intro t c
+  refine ⟨_, negligibleAdv_zero, ?_⟩
+  intro n hc kp hk m x hx
+  simp [fixture, PMF.pure_map, eval_first c m x hx]
 
 -- A Boolean wiring circuit really computes the tagged result, including the framing bits.
 private def decoder : DecryptionCircuit :=
@@ -81,6 +84,42 @@ private theorem implements : decoder.Implements fixture := by
 -- This proves functionality on the basis, not a polynomial-time implementation of the fixture.
 example : EvaluatesBasis (A := fun _ => bits) (fun _ => fixture) :=
   ⟨correct, 13, fun _ => ⟨decoder, by simp [decoder], implements⟩⟩
+
+-- At parameter n this evaluator discards the answer only on arity n + 1. Each fixed
+-- circuit therefore has at most one exceptional parameter, independently of its inputs.
+private noncomputable def diagonal (n : ℕ) : Scheme bits :=
+  { fixture with evaluate := fun {t} pk c x =>
+      if t = n + 1 then PMF.pure (false, false) else fixture.evaluate pk c x }
+
+example : Correct (A := fun _ => bits) diagonal (fun _ _ => Set.univ) := by
+  intro t c
+  refine ⟨fun n => if t = n + 1 then 1 else 0, ?_, ?_⟩
+  · refine ⟨fun n => if t = n + 1 then 1 else 0, fun k => ⟨t, fun n hn => ?_⟩, fun n => ?_⟩
+    · simp only [show t ≠ n + 1 by omega, ↓reduceIte]
+      positivity
+    · by_cases h : t = n + 1 <;> simp [h]
+  · intro n hc kp hk m x hx
+    by_cases h : t = n + 1
+    · simp only [h, ↓reduceIte]
+      exact winProb_le_one _
+    · simp [diagonal, h, fixture, PMF.pure_map, eval_first c m x hx]
+
+-- No negligible bound works simultaneously for all circuits of this same family: project
+-- the first input at arity n + 1 on a supported all-true tuple at every n.
+example : ¬ ∃ ε : ℕ → ℝ, NegligibleAdv ε ∧ ∀ n t (c : Circuit Boolean.signature t 1),
+    ∀ kp ∈ (diagonal n).pke.gen.support, ∀ (m : Fin t → Bool) (x : Fin t → Bool × Bool),
+      (∀ i, x i ∈ ((diagonal n).pke.enc kp.1 (m i)).support) →
+      winProb (((diagonal n).evaluate kp.1 c x).map fun y =>
+        decide ((diagonal n).pke.dec kp.2 y ≠ some (c.eval bits.gates m 0))) ≤ ε n := by
+  rintro ⟨ε, hε, hb⟩
+  apply not_negligibleAdv_const (δ := 1) (by norm_num) (hε.mono ?_)
+  intro n
+  have hx : (true, true) ∈ (tags true).support := by
+    apply (PMF.mem_support_map_iff ..).mpr
+    exact ⟨true, by simp [PMF.mem_support_iff], rfl⟩
+  have bound := hb n (n + 1) (Circuit.wiring _ (fun _ => 0)) (true, false)
+    ((PMF.mem_support_pure_iff ..).mpr rfl) (fun _ => true) (fun _ => (true, true)) (fun _ => hx)
+  simpa [diagonal, fixture, PMF.pure_map] using bound
 
 -- The second coordinate can be true on a single fair tape out of all length-n tapes. Evaluation
 -- that fails just on that tag still violates correctness: the ciphertext tuple is fixed first.
@@ -101,15 +140,15 @@ private noncomputable def broken (n : ℕ) : Scheme bits := by
 
 example : ¬ Correct (A := fun _ => bits) broken (fun _ _ => Set.univ) := by
   classical
-  rintro ⟨ε, hε, h⟩
+  intro hcorrect
+  obtain ⟨ε, hε, h⟩ := hcorrect 1 (Circuit.id Boolean.signature 1)
   apply not_negligibleAdv_const (δ := 1) (by norm_num) (hε.mono ?_)
   intro n
   have hx : (true, true) ∈ (rare n true).support := by
     apply (PMF.mem_support_map_iff ..).mpr
     refine ⟨fun _ => true, ?_, by simp⟩
     simp [PMF.mem_support_iff]
-  have bound := h n (true, false) ((PMF.mem_support_pure_iff ..).mpr rfl) 1
-    (Circuit.id Boolean.signature 1) (Set.mem_univ _)
+  have bound := h n (Set.mem_univ _) (true, false) ((PMF.mem_support_pure_iff ..).mpr rfl)
     (fun _ => true) (fun _ => (true, true)) (fun _ => hx)
   simpa [broken, fixture, PMF.pure_map, Circuit.id] using bound
 
