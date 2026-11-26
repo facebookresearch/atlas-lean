@@ -54,7 +54,7 @@ implies solvability of `2 + A B (M + 1)² + B Z² = X² + A Y²`, then
 `2 + A B N² + B Z² = X² + A Y²` has a rational solution `X, Y, Z`.
 
 This is the formula of J. Robinson, "Definability and decision problems in arithmetic",
-J. Symbolic Logic 14 (1949), Theorem 3.1(i), p. 107, transcribed clause by clause; part (ii)
+J. Symbolic Logic 14 (1949), Theorem 3.1(i), pp. 106–107, transcribed clause by clause; part (ii)
 of that theorem draws the consequence that `ℤ` is first-order definable in the field `ℚ`. -/
 theorem_wanted mem_range_intCast_iff_robinson (N : ℚ) :
     N ∈ Set.range ((↑) : ℤ → ℚ) ↔
