@@ -29,4 +29,21 @@ example : ∃ a : ℕ → ℤ, IsGobelASequence 5 2 a ∧ a 1 = 1 ∧ a 0 = 0 �
   rw [h41] at hsym
   refine ⟨a, ha, ha.2.2.1, ha.2.1 0 (Or.inl rfl), hsym.symm.trans ha.2.2.1⟩
 
+-- The admissible case `l = 0`: the period is one, so every index takes the zero-residue
+-- branch of the periodic extension.
+example (a a' : ℕ → ℤ) (ha : IsGobelASequence 5 0 a) (ha' : IsGobelASequence 5 0 a') :
+    a = a' :=
+  (existsUnique_gobelASequence 5 0 (by decide) (by decide) ⟨0, rfl⟩ (by decide)).unique ha ha'
+
+-- For `p = 5`, `l = 0` the unique sequence is `1` on `1..4` and `0` at `5`.
+example : ∃ a : ℕ → ℤ, IsGobelASequence 5 0 a ∧
+    a 1 = 1 ∧ a 2 = 1 ∧ a 3 = 1 ∧ a 4 = 1 ∧ a 5 = 0 := by
+  obtain ⟨a, ha, -⟩ :=
+    existsUnique_gobelASequence 5 0 (by decide) (by decide) ⟨0, rfl⟩ (by decide)
+  have h2 : a 1 = a 2 := ha.2.2.2.2.2 1 (by decide) (by decide)
+  have h3 : a 2 = a 3 := ha.2.2.2.2.2 2 (by decide) (by decide)
+  have h4 : a 3 = a 4 := ha.2.2.2.2.2 3 (by decide) (by decide)
+  have h1 : a 1 = 1 := ha.2.2.1
+  refine ⟨a, ha, h1, h2 ▸ h1, h3 ▸ h2 ▸ h1, h4 ▸ h3 ▸ h2 ▸ h1, ha.2.1 5 (Or.inr le_rfl)⟩
+
 end MathlibExtTest.NumberTheory.GobelNonIntegralityExistsUniqueGobelASequence

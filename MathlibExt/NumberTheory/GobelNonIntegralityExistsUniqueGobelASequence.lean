@@ -71,7 +71,7 @@ private theorem exists_a_of_b (p l s : ℕ) (hp : p.Prime) (hmod : p % 4 = 1)
     (hl : l ≤ p - 3)
     (hcong : (2 * s + 1) % (l + 1) = p % (l + 1))
     (b : ℤ → ℤ) (hb : IsGobelBSequence l s b) :
-    ∃ a : ℕ → ℤ, IsGobelASequence p l a := by
+    ∃ a : ℕ → ℤ, IsGobelASequence p l a ∧ ∀ n, 1 ≤ n → n ≤ p - 1 → a n = b (n : ℤ) := by
   have hp2 := hp.two_le
   have h5 : 5 ≤ p := by omega
   let a : ℕ → ℤ := fun n => if n = 0 ∨ p ≤ n then 0 else b (n : ℤ)
@@ -79,7 +79,7 @@ private theorem exists_a_of_b (p l s : ℕ) (hp : p.Prime) (hmod : p % 4 = 1)
     simp only [a, h, ↓reduceIte]
   have ha_zero (n : ℕ) (h : n = 0 ∨ p ≤ n) : a n = 0 := by
     simp only [a, h, ↓reduceIte]
-  refine ⟨a, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨a, ⟨?_, ?_, ?_, ?_, ?_, ?_⟩, fun n h1 hle => ha_eq n (by omega)⟩
   · intro n h1 hle
     have hneg : ¬(n = 0 ∨ p ≤ n) := by omega
     rw [ha_eq n hneg]
@@ -555,20 +555,14 @@ public theorem existsUnique_gobelASequence
     existsUnique_gobelASequence.s_facts p l hp hmod hl
   obtain ⟨b0, hb0, huniq⟩ :=
     existsUnique_gobelBSequence l (((p - 1) / 2) % (l + 1)) hleven hs_le hcop
-  obtain ⟨a0, ha0⟩ := existsUnique_gobelASequence.exists_a_of_b p l (((p - 1) / 2) % (l + 1))
-    hp hmod hl hcong b0 hb0
+  obtain ⟨a0, ha0, ha0b⟩ := existsUnique_gobelASequence.exists_a_of_b p l
+    (((p - 1) / 2) % (l + 1)) hp hmod hl hcong b0 hb0
   refine ⟨a0, ha0, fun a ha => ?_⟩
   have step_a := existsUnique_gobelASequence.step_helper p l a ha
   have red_a : ∀ n, 1 ≤ n → n ≤ p - 1 → a n = a (if n % (l + 1) = 0 then l + 1 else n % (l + 1)) :=
     fun n h1 hle => existsUnique_gobelASequence.reduction p l a step_a n h1 hle
   have symm_a : ∀ m, 1 ≤ m → m ≤ p - 1 → a m = a (p - m) :=
     fun m h1 hle => existsUnique_gobelASequence.symm_all p l hp hmod a ha m h1 hle
-  have step_0 := existsUnique_gobelASequence.step_helper p l a0 ha0
-  have red_0 : ∀ n, 1 ≤ n → n ≤ p - 1 →
-      a0 n = a0 (if n % (l + 1) = 0 then l + 1 else n % (l + 1)) :=
-    fun n h1 hle => existsUnique_gobelASequence.reduction p l a0 step_0 n h1 hle
-  have symm_0 : ∀ m, 1 ≤ m → m ≤ p - 1 → a0 m = a0 (p - m) :=
-    fun m h1 hle => existsUnique_gobelASequence.symm_all p l hp hmod a0 ha0 m h1 hle
   have hb1 : IsGobelBSequence l (((p - 1) / 2) % (l + 1))
       (existsUnique_gobelASequence.extendA l a) := by
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -584,25 +578,7 @@ public theorem existsUnique_gobelASequence
     · intro t
       exact existsUnique_gobelASequence.extendA_reflect p l (((p - 1) / 2) % (l + 1))
         hp hmod hl a hcong red_a symm_a t
-  have hb0' : IsGobelBSequence l (((p - 1) / 2) % (l + 1))
-      (existsUnique_gobelASequence.extendA l a0) := by
-    refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · intro n
-      exact (existsUnique_gobelASequence.extendA_mem_pm1_periodic p l
-        hp hmod hl a0 ha0 n).1
-    · intro n
-      exact (existsUnique_gobelASequence.extendA_mem_pm1_periodic p l
-        hp hmod hl a0 ha0 n).2
-    · exact existsUnique_gobelASequence.extendA_one p l hp a0 ha0
-    · intro n hn
-      exact existsUnique_gobelASequence.extendA_neg p l hp hleven a0 ha0 n hn
-    · intro t
-      exact existsUnique_gobelASequence.extendA_reflect p l (((p - 1) / 2) % (l + 1))
-        hp hmod hl a0 hcong red_0 symm_0 t
-  have heq1 := huniq _ hb1
-  have heq0 := huniq _ hb0'
-  have heq : existsUnique_gobelASequence.extendA l a
-      = existsUnique_gobelASequence.extendA l a0 := heq1.trans heq0.symm
+  have heq := huniq _ hb1
   funext n
   by_cases h : n = 0 ∨ p ≤ n
   · have h1 := ha.2.1 n h
@@ -611,8 +587,7 @@ public theorem existsUnique_gobelASequence
   · have h1 : 1 ≤ n := by omega
     have hle : n ≤ p - 1 := by omega
     have ha_mem := existsUnique_gobelASequence.extendA_agree p l a red_a n h1 hle
-    have ha0_mem := existsUnique_gobelASequence.extendA_agree p l a0 red_0 n h1 hle
     have hcongr := congrFun heq ((n : ℕ) : ℤ)
-    exact ha_mem.symm.trans (hcongr.trans ha0_mem)
+    exact ha_mem.symm.trans (hcongr.trans (ha0b n h1 hle).symm)
 
 end MetaMathlibExt
