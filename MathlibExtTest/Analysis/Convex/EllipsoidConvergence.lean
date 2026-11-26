@@ -31,16 +31,16 @@ single point `a₁ = (-1/3, 0)`, the first centre `a₀ = 0` misses `P`, and the
 volume bound `vol E₁ ≤ e^{-1/6} vol E₀`. -/
 
 /- The centre after one cut of the unit disc by `x₀ ≤ 0`. -/
-noncomputable def cutRunA1 : Fin 2 → ℝ := nextCenter 0 1 (Pi.single 0 1)
+private noncomputable def cutRunA1 : Fin 2 → ℝ := nextCenter 0 1 (Pi.single 0 1)
 
 /- The one-cut run: centres `0, a₁, a₁, …`, matrices `I, A₁, A₁, …`, cut vector `e₀`. -/
-noncomputable def cutRunCentre (k : ℕ) : Fin 2 → ℝ := if k = 0 then 0 else cutRunA1
+private noncomputable def cutRunCentre (k : ℕ) : Fin 2 → ℝ := if k = 0 then 0 else cutRunA1
 
 /- Matrices of the one-cut run. -/
-noncomputable def cutRunMatrix (k : ℕ) : Matrix (Fin 2) (Fin 2) ℝ :=
+private noncomputable def cutRunMatrix (k : ℕ) : Matrix (Fin 2) (Fin 2) ℝ :=
   if k = 0 then 1 else nextMatrix 1 (Pi.single 0 1)
 
-theorem cutRunA1_eq : cutRunA1 = ![-(1 / 3), 0] := by
+private theorem cutRunA1_eq : cutRunA1 = ![-(1 / 3), 0] := by
   ext i
   fin_cases i <;> norm_num [cutRunA1, nextCenter, cutDirection]
 
