@@ -1543,13 +1543,50 @@ class GitTests(unittest.TestCase):
         left = r.pull(241, {"MathlibExt/A.lean": "namespace Foo\ndef a := 1\nend Foo\n-- left\n"})
         right = r.pull(242, {"MathlibExt/A.lean": "-- right\nnamespace Foo\ndef a := 1\nend Foo\n"})
         self.fetch(241, 242)
-        self.git.size_oracle = lambda wanted: {o: preflight.MAX_BLOB_BYTES + 1 for o in wanted}
+        self.git.size_oracle = lambda wanted: {o: preflight.MAX_MERGE_BLOB_BYTES + 1 for o in wanted}
         with self.assertRaises(preflight.Failure):  # its inputs are too large: no merge, and nothing downloaded
             self.git.merge_tree(left, right)
         sides = {self.git.out("rev-parse", f"{c}:MathlibExt/A.lean") for c in (left, right)}
         self.assertFalse(any(self.git.present(o) for o in sides))
         self.git.size_oracle = lambda wanted: {o: 50 for o in wanted}
         self.assertTrue(self.git.merge_tree(left, right)["clean"])  # admitted by size, then merged
+
+    @NEEDS_GIT_245
+    def test_a_merge_of_a_file_larger_than_preflight_reads(self):
+        """Git merges a graph data file that both sides change, however much larger than the files that
+        preflight parses it is (a 9 MB links file): only MAX_MERGE_BLOB_BYTES bounds its download. A
+        .gitattributes stays within MAX_BLOB_BYTES, even when both sides change it."""
+        r = self.remote
+        lines = [f'{{"n": {i}}}' for i in range(40)]
+        r.write({"blueprint/links/Combinatorics.jsonl": "\n".join(lines) + "\n"})
+        base = r.commit("Merge pull request #384 from x")
+        left = r.pull(385, {"blueprint/links/Combinatorics.jsonl": "\n".join(["{\"left\": 1}"] + lines) + "\n"}, base=base)
+        right = r.pull(386, {"blueprint/links/Combinatorics.jsonl": "\n".join(lines + ["{\"right\": 1}"]) + "\n"}, base=base)
+        self.fetch(385, 386)
+        sizes = lambda oids: {o: int(git(r.path, "cat-file", "-s", o)) for o in oids}  # noqa: E731  as GitHub reports
+        self.git.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_BLOB_BYTES", 100):  # each side is over what preflight reads
+            merged = self.git.merge_tree(left, right)
+            self.assertTrue(merged["clean"], merged)  # but git merges it
+            with self.assertRaisesRegex(preflight.Failure, "more than"):  # and preflight still does not read it
+                self.git.blobs({self.git.out("rev-parse", f"{left}:blueprint/links/Combinatorics.jsonl")})
+        fresh = preflight.Git(Path(self.tmp.name) / "fresh" / "repo.git", self.git.url)  # nothing downloaded yet
+        fresh.ensure()
+        fresh.fetch(["+refs/pull/385/head:refs/preflight/pr/385", "+refs/pull/386/head:refs/preflight/pr/386"])
+        fresh.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_MERGE_BLOB_BYTES", 100), \
+                self.assertRaisesRegex(preflight.Failure, "merge-tree"):
+            fresh.merge_tree(left, right)  # over the merge limit too: no merge, closed
+        attributes = "*.jsonl merge=union\n" + "# " * 70 + "\n"
+        ours = r.pull(387, {".gitattributes": attributes + "# ours\n"}, base=base)
+        theirs = r.pull(388, {".gitattributes": "# theirs\n" + attributes}, base=base)
+        cold = preflight.Git(Path(self.tmp.name) / "cold" / "repo.git", self.git.url)
+        cold.ensure()
+        cold.fetch(["+refs/pull/387/head:refs/preflight/pr/387", "+refs/pull/388/head:refs/preflight/pr/388"])
+        cold.size_oracle = sizes
+        with mock.patch.object(preflight, "MAX_BLOB_BYTES", 100), mock.patch.object(preflight, "MAX_MERGE_BLOB_BYTES", 1000), \
+                self.assertRaisesRegex(preflight.Failure, "gitattributes"):
+            cold.merge_tree(ours, theirs)  # an attribute file both sides change is a side too: still refused
 
     def test_files_the_checks_read(self):
         r = self.remote
