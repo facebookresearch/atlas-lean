@@ -30304,6 +30304,7 @@
 "CurveDivisor.eval_zsmul": "c9098334840269a7",
 "CuspForm.IsAdelicLiftOf": "420b04ae9f52320e",
 "CuspForm.coe_norm_eq_coe_modularFormNorm": "316a19f7058c2801",
+"CuspForm.exists_isAdelicLiftOf": "c999e39aed578720",
 "CuspForm.heckeTLin": "5106d4f5aebd2720",
 "CuspForm.heckeULin": "d57e80f7a55fe4ba",
 "CuspForm.norm": "004a492afcc1a02c",
