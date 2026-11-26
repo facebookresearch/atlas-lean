@@ -1,6 +1,5 @@
 # Automorphic forms on adelic GL₂
 
-- [Adelic GL₂ for automorphic forms](adelic-gl2.md)
 - [Determinant characters on adelic GL₂](chi-det.md)
 - [Twisting functions on adelic GL₂ by a determinant character](fn-twist.md)
 - [Row isometries in GL₂](is-row-isometry.md)

@@ -8,7 +8,6 @@
 - [n-bit primes in an open dyadic interval](n-bit-primes-eq-filter-ioo.md)
 - [Bertrand's postulate on a dyadic interval](exists-prime-ioo-two-pow.md)
 - [n-bit primes exist](n-bit-primes-nonempty.md)
-- [The number of n-bit primes is positive](card-n-bit-primes-pos.md)
 - [Uniformly random n-bit primes](uniform-nbit-prime.md)
 - [Probabilities of uniformly random n-bit primes](uniform-nbit-prime-apply.md)
 - [Probability of an n-bit prime](uniform-nbit-prime-apply-of-mem.md)

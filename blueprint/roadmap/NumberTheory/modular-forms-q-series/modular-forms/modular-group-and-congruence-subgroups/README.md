@@ -14,7 +14,6 @@
 - [The matrix diag(1, q) over Z\[1/q\]](w-mat.md)
 - [The matrix diag(1, 1/q) over Z\[1/q\]](w-mat-inv.md)
 - [Conjugation by diag(1, q)](w-conj.md)
-- [Lower-right entry character of Γ₀(N)](gamma0-units-hom.md)
 - [Base change from SL₂(Z) to SL₂(Z\[1/q\])](sl-to-away.md)
 - [First vertex map for Ihara's amalgam](vertex-zero.md)
 - [Second vertex map for Ihara's amalgam](vertex-one.md)

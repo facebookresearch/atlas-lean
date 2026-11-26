@@ -8,7 +8,6 @@
 - [Integral lattice of cusp forms](int-lattice.md)
 - [Membership in the integral lattice of cusp forms](mem-int-lattice-iff.md)
 - [The integral lattice of cusp forms is finitely generated](int-lattice-fg.md)
-- [Unfolding q-expansion coefficients](q-coeff-def.md)
 - [q-coefficients of a modular form composed with τ ↦ dτ](q-coeff-comp-hecke-diag-matrix-smul.md)
 - [q-coefficients of a rescaled cusp form](q-coeff-rescale-lin.md)
 - [Nonzero modular forms have a nonzero leading coefficient at each cusp](exists-tendsto-slash-div-q-param-pow-of.md)
