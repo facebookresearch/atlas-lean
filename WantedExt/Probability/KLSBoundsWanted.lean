@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Probability.Geometry.KLS
+public import MathlibExt.Probability.Geometry.KLSLowerBound
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 
 @[expose] public section
@@ -108,15 +108,6 @@ public theorem_wanted stdGaussian_inverseCheeger (n : ℕ) (hn : 0 < n) :
     inverseCheegerConstant
       (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin n))) =
         ENNReal.ofReal (Real.sqrt (Real.pi / 2))
-
-/-- **A lower bound for the KLS constant.** The KLS constant is at least $\sqrt{\pi/2}$.
-
-The bound comes from the standard Gaussian measure in any dimension $n \ge 1$, whose inverse Cheeger
-constant is $\sqrt{\pi/2}$.
-
-Source: optimizationproblems `constants/20c.md`, classical Gaussian lower-bound row. -/
-public theorem_wanted sqrtPiDivTwo_le_klsConstant :
-    ENNReal.ofReal (Real.sqrt (Real.pi / 2)) ≤ klsConstant
 
 /-- **Lower Poincaré–Cheeger comparison with coefficient 1/π.** Let $n \ge 1$ and let $\mu$ be an
 isotropic log-concave probability measure on $\mathbb{R}^n$, with inverse Cheeger constant
