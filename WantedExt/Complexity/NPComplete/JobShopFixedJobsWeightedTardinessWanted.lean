@@ -27,7 +27,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
 
 @[expose] public section
@@ -64,7 +64,7 @@ while the schedule stays feasible increases no completion time, so every start t
 taken at most `max_j r_j + ∑ (p_jl + 1)` (the `+ 1` separates operations of length `0`), and
 the start times are checked in polynomial time.
 
-Encoding. The machines and jobs are a JOB-SHOP SCHEDULING instance (`JobShopSchedulingWanted`,
+Encoding. The machines and jobs are a JOB-SHOP SCHEDULING instance (`JobShopSchedulingDefs`,
 Garey and Johnson's [SS18]: `m`, each job's operations listed as pairs `(p_jl, μ_jl)` with
 machines numbered `1, …, m`), whose last component is the bound `K` here, and whose tasks, task
 lengths and task processors are reused; its well-formedness asks for a positive deadline, so

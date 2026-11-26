@@ -27,7 +27,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ the overall deadline (makespan `C_max ≤ D`), in which every task of a job star
 the previous task of that job finishes (no wait), and in which, whenever `j` precedes `j'`,
 the first task of `j'` starts no earlier than the last task of `j` finishes?
 
-This is `J2|chains; pᵢⱼ = 1; no-wait|C_max`: JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`)
+This is `J2|chains; pᵢⱼ = 1; no-wait|C_max`: JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`)
 with `m = 2`, unit task lengths, the no-wait condition and chain precedence constraints between
 jobs. Timkovsky (1998) proves it NP-hard in the strong sense with his job-shopping theorem, a
 reduction of nonpreemptive identical parallel machines to no-wait unit-time job shops. The instance
@@ -75,7 +75,7 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the [SS18] instance of `JobShopSchedulingWanted` (the number of processors,
+/-- An instance: the [SS18] instance of `JobShopSchedulingDefs` (the number of processors,
 the jobs as lists of `(l(t), p(t))` pairs, and the deadline `D`), and the arcs `(j, j')` of the
 chains, `j` the immediate predecessor of `j'`. -/
 abbrev TwoProcessorUnitNoWaitJobShopChainsInstance := JobShopSchedulingInstance × List (ℕ × ℕ)

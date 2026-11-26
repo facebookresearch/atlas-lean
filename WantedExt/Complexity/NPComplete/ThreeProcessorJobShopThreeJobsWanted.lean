@@ -25,7 +25,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ deadline `D ∈ ℤ⁺`. QUESTION: is there a job-shop schedule for `J` on the `
 that meets the overall deadline `D`, i.e. whose makespan `max_j C_j` is at most `D`?
 
 This is `J3|n=3|C_max` in the Brucker-Knust classification: the restriction of JOB-SHOP
-SCHEDULING (`WantedExt.Complexity.NPComplete.JobShopSchedulingWanted`) to instances with `m = 3`
+SCHEDULING (`CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs`) to instances with `m = 3`
 processors and exactly three jobs. The number `n_j` of tasks of a job is not bounded. The
 instance type, its `WellFormed` and `JobShopSchedulingFeasible` are reused unchanged; the
 restriction is added to well-formedness. Lengths and the deadline use the canonical binary

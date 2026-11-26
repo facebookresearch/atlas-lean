@@ -25,7 +25,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -43,7 +43,7 @@ deadline `D ∈ ℤ⁺`. QUESTION: is there a (nonpreemptive) job-shop schedule 
 `m = 3` processors that meets the overall deadline `D`?
 
 This is the restriction of JOB-SHOP SCHEDULING
-(`WantedExt.Complexity.NPComplete.JobShopSchedulingWanted`), whose schedules are nonpreemptive,
+(`CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs`), whose schedules are nonpreemptive,
 to instances with `m = 3` processors in which all tasks have the same length. The instance
 type, its `WellFormed` and `JobShopSchedulingFeasible` are reused unchanged; the restriction
 is added to well-formedness. The common length is part of the instance; the unit-length

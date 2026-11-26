@@ -23,7 +23,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -42,7 +42,7 @@ QUESTION: is there a feasible schedule with the total weighted completion time `
 `K`, where `Cⱼ` is the completion time
 of job `j` (of its last operation)?
 
-This is JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`) with `m = 2` processors, every
+This is JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`) with `m = 2` processors, every
 task of length `1`, release dates added (on the first task of each job), and the deadline replaced
 by a bound on the total weighted completion time `Σⱼ wⱼ Cⱼ`. The instance pairs the
 parent's instance `(m, tasks per job as (l(t), p(t)), K)` (its last component is the bound `K`)
