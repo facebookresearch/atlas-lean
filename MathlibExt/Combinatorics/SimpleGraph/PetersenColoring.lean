@@ -44,6 +44,9 @@ multigraph (tail/head edges, `Sum (ZMod 5) (ZMod 5)` vertices), while a
 Petersen coloring maps edges between simple graphs, so this entry uses a
 `SimpleGraph` on `ZMod 5 × Bool` with incidence via `SimpleGraph.incidenceSet`.
 Bridgelessness uses the canonical `SimpleGraph.IsBridgeless` predicate.
+
+Historical references: the registry adequacy gaps and the `PetersenMinorFourFlow.PetersenAdj` entry
+named above came from Formal-Math with the retired wanted module and do not resolve in ATLAS.
 -/
 
 @[expose] public section

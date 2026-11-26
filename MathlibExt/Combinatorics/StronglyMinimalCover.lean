@@ -35,6 +35,12 @@ colourings, refuted by their Theorem 1.5) is not formalized. The hypergraph is e
 module: a set `E` of finite edges `Finset V`, with `V` and `E` possibly infinite; cardinalities are
 compared as cardinals. Edges are required to be nonempty: an empty edge meets no set, so a
 hypergraph with an empty edge has no cover at all.
+
+Current location: `WantedExt/Combinatorics/StronglyMaximalMatchingAMR29Problem0084Wanted.lean` has
+since been retired. The matching statement `boundedEdgesStronglyMaximalMatching`, with the
+hypergraph encoding it uses (`IsMatching`, `IsStronglyMaximal`), is now in
+`MathlibExt/Combinatorics/StronglyMaximalMatchingAMR29Problem0084.lean`, where
+`boundedEdgesStronglyMaximalMatching_refuted` refutes it.
 -/
 
 @[expose] public section
