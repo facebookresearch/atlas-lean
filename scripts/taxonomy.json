@@ -13661,6 +13661,7 @@
   "MathlibExt/NumberTheory/PracticalNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Practical numbers"},
   "MathlibExt/NumberTheory/PracticalPolygonalSums": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
   "MathlibExt/NumberTheory/PracticalPolygonalSumsPracticalAddPolygonalExceptions": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
+  "MathlibExt/NumberTheory/PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne": {"to": "NumberTheory/additive-number-theory", "title": "Sums of practical and polygonal numbers"},
   "MathlibExt/NumberTheory/PrimeCounting/ArithmeticLargeSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
   "MathlibExt/NumberTheory/PrimeCounting/AverageOmegaHFree": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Prime factors of h-free integers"},
   "MathlibExt/NumberTheory/PrimeCounting/AxlerEffectivePrimeEstimates": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Explicit bounds for the prime-counting function"},
