@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Crypto.Framework.Asymptotic
+public import CSLibExt.Crypto.PublicKey.Trapdoor.FairSampling
 public import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -21,11 +21,10 @@ unless the two spaces coincide. Neither inverse law asserts computational one-wa
 Boneh and Shoup, *A Graduate Course in Applied Cryptography*, v0.4 (2017), §§10.2–10.3:
 Definition 10.4 indexes the spaces by a security parameter and a **system** parameter generated
 before the keys. Allowing them also to depend on the public key is the extension discussed on
-p. 399. This file uses a strict bounded-coin model: the challenge is exactly uniform, and an
-exact polynomial-time sampler is a condition on a scheme, not a consequence of finiteness.
-Definitions 2.8–2.9 also allow exact samplers with a negligible probability of exceeding their
-polynomial time bound. The two sampling conventions are not identical. The adversaries below
-also use strict polynomial time; no identification of machine models is needed.
+p. 399. The broad model uses exact output laws with a negligible polynomial-time overrun
+(Definitions 2.8–2.9); the bounded-coin model requires an exact sampler with a strict coin
+budget. The two sampling conventions are not identical. Both public-transcript games here are
+noninteractive; neither identifies this interface with arbitrary interactive environments.
 -/
 
 @[expose] public section
@@ -91,26 +90,12 @@ theorem CorrectAt.bijOn_and_rightInvOn {S : Family} {n : ℕ+} {pp pk sk : Bits}
 
 local notation "coins" => (fun m : ℕ => _root_.PMF.map List.ofFn (uniformOfFintype (Fin m → Bool)))
 
-/-- **Efficient key-indexed trapdoor function scheme, exact bounded-coin convention.** There
-are uniform polynomial-time algorithms for setup, key generation and sampling, each applied
-to a fresh uniform bitstring whose length is a fixed polynomial in the positive security
-parameter. They realise the specified setup and conditional key laws and the exact uniform
-law of the nonempty domain at every generated public context. Both spaces have uniform
-polynomial-time membership tests at those contexts; enumeration is not required. The public
-and secret maps are polynomial-time. One polynomial bounds the lengths of every generated
-system parameter, both keys and all words in either space. Correctness holds at every generated
-pair. The spaces may also depend on the public key, not just on the system parameter. -/
-structure IsFunctionScheme : Prop where
-  setup_law : ∃ (q : Polynomial ℕ) (P : Bits × Bits → Bits), IsPolyTime P ∧ ∀ n : ℕ+,
-    (coins (q.eval n.val)).map (fun r => P (List.replicate n.val true, r)) = S.setup n
-  key_law : ∃ (q : Polynomial ℕ) (G : Index → Bits × Bits), IsPolyTime G ∧
-    ∀ (n : ℕ+) (pp), pp ∈ (S.setup n).support →
-      (coins (q.eval n.val)).map (fun r => G (index n pp r)) = S.keys n pp
-  sample_law : ∃ (q : Polynomial ℕ) (sample : Index × Bits → Bits), IsPolyTime sample ∧
-    ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk →
-      let pub := index n pp pk
-      ∃ hx : (S.domain pub).Nonempty,
-        (coins (q.eval n.val)).map (fun r => sample (pub, r)) = uniformOfFinset (S.domain pub) hx
+/-- **Deterministic operations of a trapdoor family.** Both public spaces have polynomial-time
+membership tests. The deterministic public and secret maps run in polynomial time. One
+polynomial bounds the system parameter, both keys and every word of both spaces at all generated
+contexts. Correctness holds at every matching pair. These conditions do not select a sampling
+model or imply one-wayness. -/
+structure DeterministicCore : Prop where
   recognize : ∃ (X Y : Index × Bits → Bool), IsPolyTime X ∧ IsPolyTime Y ∧
     ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk → ∀ z : Bits,
       let pub := index n pp pk
@@ -121,6 +106,27 @@ structure IsFunctionScheme : Prop where
     pp.length ≤ p.eval n.val ∧ pk.length ≤ p.eval n.val ∧ sk.length ≤ p.eval n.val ∧
     ∀ z ∈ S.domain (index n pp pk) ∪ S.codomain (index n pp pk), z.length ≤ p.eval n.val
   correct : ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk → S.CorrectAt n pp pk sk
+
+/-- **Efficient key-indexed trapdoor function scheme, exact bounded-coin convention.** There
+are uniform polynomial-time algorithms for setup, key generation and sampling, each applied
+to a fresh uniform bitstring whose length is a fixed polynomial in the positive security
+parameter. They realise the specified setup and conditional key laws and the exact uniform
+law of the nonempty domain at every generated public context. Both spaces have uniform
+polynomial-time membership tests at those contexts; enumeration is not required. The public
+and secret maps are polynomial-time. One polynomial bounds the lengths of every generated
+system parameter, both keys and all words in either space. Correctness holds at every generated
+pair. The spaces may also depend on the public key, not just on the system parameter. -/
+structure IsFunctionScheme : Prop extends S.DeterministicCore where
+  setup_law : ∃ (q : Polynomial ℕ) (P : Bits × Bits → Bits), IsPolyTime P ∧ ∀ n : ℕ+,
+    (coins (q.eval n.val)).map (fun r => P (List.replicate n.val true, r)) = S.setup n
+  key_law : ∃ (q : Polynomial ℕ) (G : Index → Bits × Bits), IsPolyTime G ∧
+    ∀ (n : ℕ+) (pp), pp ∈ (S.setup n).support →
+      (coins (q.eval n.val)).map (fun r => G (index n pp r)) = S.keys n pp
+  sample_law : ∃ (q : Polynomial ℕ) (sample : Index × Bits → Bits), IsPolyTime sample ∧
+    ∀ (n : ℕ+) (pp pk sk), S.Generated n pp pk sk →
+      let pub := index n pp pk
+      ∃ hx : (S.domain pub).Nonempty,
+        (coins (q.eval n.val)).map (fun r => sample (pub, r)) = uniformOfFinset (S.domain pub) hx
 
 /-- Exact uniform sampling requires a nonempty domain at each generated public context. -/
 theorem IsFunctionScheme.domain_nonempty {S : Family} (h : S.IsFunctionScheme)
@@ -193,6 +199,91 @@ zero is extended by zero for the natural-number negligibility predicate. -/
 def IsOneWay (h : S.IsFunctionScheme) : Prop :=
   ∀ (q : Polynomial ℕ) (A : Index × Bits × Bits → Bits), IsPolyTime A → NegligibleAdv fun n =>
     if hn : 0 < n then winProb (S.oneWayGame h.domain_nonempty A ⟨n, hn⟩ (q.eval n)) else 0
+
+end Family
+
+/-- **A sampler with a uniform time guarantee.** One fair-bit table is fixed for all security
+parameters and all auxiliary words up to its polynomial length envelope. It halts almost surely
+and has a uniform negligible running-time tail on that entire envelope. -/
+structure TailAlgorithm where
+  machine : FairSampler
+  bound : Polynomial ℕ
+  efficient : machine.Efficient bound
+
+/-- The given argument must fit the algorithm's envelope, and the mass of every output of the
+actual local computation must equal that of the specified PMF, including zero off its support. -/
+def TailAlgorithm.Realizes (A : TailAlgorithm) (n : ℕ+) (aux : Bits) (μ : PMF Bits) : Prop :=
+  aux.length ≤ A.bound.eval n.val ∧ A.machine.mass (FairSampler.input n aux) = ⇑μ
+
+namespace Family
+
+open MetaMathlibExt.BitstringEncoding
+variable (S : Family)
+
+/-- **Variable-time trapdoor function scheme.** In addition to the deterministic operations,
+size bounds and matching-key inverse law, three fixed, almost-surely terminating efficient
+fair-bit algorithms realize the specified distributions exactly. Setup receives an empty
+auxiliary word. Conditional on any possible system parameter, key generation outputs the
+canonical, injective bitstring encoding of the pair of keys, with the prescribed joint law.
+Given the encoding of the system parameter and the public key, domain sampling is uniform on
+the nonempty finite domain. All three machines also receive the unary security parameter.
+The running-time guarantees cover all auxiliary inputs up to each algorithm's polynomial
+envelope, not merely typical generated keys. -/
+structure IsTailFunctionScheme : Prop extends S.DeterministicCore where
+  setup_law : ∃ P : TailAlgorithm, ∀ n, P.Realizes n [] (S.setup n)
+  key_law : ∃ G : TailAlgorithm, ∀ n pp, pp ∈ (S.setup n).support →
+    G.Realizes n pp ((S.keys n pp).map bitEncode)
+  sample_law : ∃ D : TailAlgorithm, ∀ n pp pk sk, S.Generated n pp pk sk →
+    ∃ hx : (S.domain (index n pp pk)).Nonempty,
+      D.Realizes n (bitEncode (pp, pk)) (uniformOfFinset (S.domain (index n pp pk)) hx)
+
+theorem IsTailFunctionScheme.domain_nonempty {S : Family} (h : S.IsTailFunctionScheme)
+    (n : ℕ+) (pp pk sk : Bits) (hg : S.Generated n pp pk sk) :
+    (S.domain (index n pp pk)).Nonempty := (h.sample_law.choose_spec n pp pk sk hg).choose
+
+/-- **Key-indexed trapdoor permutation scheme.** A variable-time trapdoor function scheme in
+which the finite codomain equals the domain for every generated public context. Correctness
+then gives a permutation and its matching inverse. The domain sampler is exactly uniform and
+may have a negligible probability of running beyond its polynomial deadline. No one-wayness
+assumption or worst-case bound on the number of random bits is part of the permutation law. -/
+def IsPermutationScheme : Prop :=
+  S.IsTailFunctionScheme ∧ ∀ n pp pk sk, S.Generated n pp pk sk →
+    S.codomain (index n pp pk) = S.domain (index n pp pk)
+
+abbrev TranscriptFits (A : TailAlgorithm) : Prop :=
+  ∀ (n : ℕ+) (pp pk sk : Bits), S.Generated n pp pk sk → ∀ y ∈ S.codomain (index n pp pk),
+    (bitEncode (pp, pk, y)).length ≤ A.bound.eval n.val
+
+/-- **One-way experiment on a public transcript.** With exact variable-time samplers, draw the
+public parameter, a matching pair under its conditional law, and a uniform element of the
+selected domain. Run a fresh efficient fair-bit algorithm on the unary security parameter and
+the framed tuple of public parameter, public key and public image. Assuming its envelope covers
+the public transcripts, its own halting law gives the guess, which must equal the original word.
+No secret key or challenger randomness is part of the transcript. -/
+noncomputable def transcriptGame (h : S.IsTailFunctionScheme) (A : TailAlgorithm)
+    (ha : S.TranscriptFits A) (n : ℕ+) : PMF Bool :=
+  (S.setup n).bindOnSupport fun pp hp => (S.keys n pp).bindOnSupport fun (pk, sk) hk =>
+    let hg : S.Generated n pp pk sk := ⟨hp, hk⟩
+    let pub := index n pp pk
+    let hd := h.domain_nonempty n pp pk sk hg
+    (uniformOfFinset (S.domain pub) hd).bindOnSupport fun x hx =>
+      let y := S.eval (pub, x)
+      let hy := (h.correct n pp pk sk hg).1
+        ((Cslib.Probability.PMF.mem_support_uniformOfFinset_iff hd x).mp hx)
+      let aux := bitEncode (pp, pk, y)
+      let hfit := ha n pp pk sk hg y hy
+      (A.machine.law (FairSampler.input n aux) (A.efficient.halts n aux hfit)).map
+        fun guess => decide (guess = x)
+
+/-- **One-wayness against variable-time public-transcript algorithms.** Every single efficient
+fair-bit algorithm whose envelope covers the public transcripts has negligible probability of
+recovering the exact input. Negligibility is in the positive security parameter, extended by
+zero at zero. This is the noninteractive input/output experiment of Game 10.2: its timing model
+is Definition 2.8 on the whole bounded auxiliary input, not a theorem about communication costs
+or the all-environment interactive machines of Definition 2.11. -/
+def IsTranscriptOneWay (h : S.IsTailFunctionScheme) : Prop :=
+  ∀ (A : TailAlgorithm) (ha : S.TranscriptFits A), NegligibleAdv fun n =>
+    if hn : 0 < n then winProb (S.transcriptGame h A ha ⟨n, hn⟩) else 0
 
 end Family
 

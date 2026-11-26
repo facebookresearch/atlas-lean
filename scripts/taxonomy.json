@@ -1645,6 +1645,7 @@
   "CSLibExt/Crypto/PublicKey/Rabin": {"to": "ComputerScience/cryptography/public-key", "title": "Rabin cryptosystem"},
   "CSLibExt/Crypto/PublicKey/SemanticSecurity": {"to": "ComputerScience/cryptography/security-games", "title": "Semantic security and indistinguishability"},
   "CSLibExt/Crypto/PublicKey/Trapdoor": {"to": "ComputerScience/cryptography/public-key", "title": "Hardness assumptions"},
+  "CSLibExt/Crypto/PublicKey/Trapdoor/FairSampling": {"to": "ComputerScience/cryptography/security-games", "title": "Fair-bit sampling with a running-time tail"},
   "CSLibExt/Crypto/Signatures/Lamport": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Lamport signature"},
   "CSLibExt/Crypto/Signatures/MerkleSignatures": {"to": "ComputerScience/cryptography/signatures-and-protocols", "title": "Merkle signature scheme"},
   "CSLibExt/Crypto/SymmetricKey/EncryptThenMac": {"to": "ComputerScience/cryptography/symmetric-key", "title": "Encrypt-then-MAC"},
