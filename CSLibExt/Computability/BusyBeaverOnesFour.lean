@@ -21,9 +21,13 @@ attains this score of 13.
 
 ## References
 
+* Allen H. Brady, *The Conjectured Highest Scoring Machines for Rado's $\Sigma(k)$ for the
+  Value $k = 4$*, IEEE Transactions on Electronic Computers **EC-15** (1966), no. 5, 802–803.
+  This is the original source of the 107-step machine used for the lower bound.
 * Allen H. Brady, *The Determination of the Value of Rado's Noncomputable Function $\Sigma(k)$
   for Four-State Turing Machines*, Mathematics of Computation **40** (1983), no. 162, 647–665.
-  Section 1, p. 649, gives the 107-step machine and states both exact values.
+  Section 1, p. 649, states both exact values and explains the final-write convention: the
+  halting transition writes a one and moves before entering the halt state.
 -/
 
 namespace Cslib.BusyBeaverWanted
