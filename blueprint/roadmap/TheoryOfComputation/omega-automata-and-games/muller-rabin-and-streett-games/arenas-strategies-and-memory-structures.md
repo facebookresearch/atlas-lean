@@ -25,4 +25,4 @@ has a winning strategy.
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 1 (N. Fijalkow, "Introduction"): Definitions 1.1 and 1.2 (graphs and arenas), the paragraphs on playing and strategies, Definitions 1.3–1.7 (conditions, games, winning regions, determinacy and positionality), and Section 1.8 (memory structures and finite-memory determinacy).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 1 (N. Fijalkow, "Introduction"): Definitions 1.1 and 1.2 (graphs and arenas), the paragraphs on playing and strategies, Definitions 1.3–1.7 (conditions, games, winning regions, determinacy and positionality), and Section 1.8 (memory structures and finite-memory determinacy).

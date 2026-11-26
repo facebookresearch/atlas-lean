@@ -1,0 +1,3 @@
+# Hadamard differentiability of the grid product integral
+
+On a grid of $k$ points, let $\mathcal P(x)_j = \prod_{i\le j}(1 + x_i)$ be the product integral of increments $x \in \mathbb{R}^k$. Then $\mathcal P$ is Hadamard differentiable at every $x$, along every domain and tangentially to every set, with the Duhamel derivative.

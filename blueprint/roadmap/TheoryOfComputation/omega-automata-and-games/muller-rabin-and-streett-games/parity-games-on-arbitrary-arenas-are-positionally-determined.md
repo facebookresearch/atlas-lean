@@ -8,9 +8,9 @@ the determinacy result that complementation of tree automata on infinite trees u
 
 The source states the result for the Rabin chain condition given by a chain $E_1 \subset F_1 \subset \dots \subset E_n \subset F_n$
 of sets of vertices, under which a play is won when for some $k$ it visits $F_k$ infinitely often and $E_k$ only finitely
-often; indexing the vertices in $E_i \setminus F_{i-1}$ by $2i - 1$ and those in $F_i \setminus E_i$ by $2i$ makes this the parity
-condition with the least priority seen infinitely often deciding the winner, which reversing the priorities turns into the
-largest-priority convention used here.
+often; with $F_0 = \emptyset$, indexing the vertices in $E_i \setminus F_{i-1}$ by $2i - 1$, those in $F_i \setminus E_i$ by $2i$ and those outside
+$F_n$ by $2n + 1$ makes this the parity condition with the least priority seen infinitely often deciding the winner, and replacing each
+priority $p$ by $2n + 2 - p$, which reverses the order and keeps the parity, turns it into the largest-priority convention used here.
 
 ## Depends on
 

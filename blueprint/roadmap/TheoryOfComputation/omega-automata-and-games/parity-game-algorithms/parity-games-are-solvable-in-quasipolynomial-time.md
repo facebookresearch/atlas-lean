@@ -21,4 +21,4 @@ $(n, d)$-separating safety automaton with $n^{O(\log d)}$ states.
 ## Sources
 
 - C. S. Calude, S. Jain, B. Khoussainov, W. Li and F. Stephan, "Deciding parity games in quasipolynomial time", *Proceedings of the 49th ACM STOC*, 2017 (numbering of the authors' preprint, <http://www.cmap.polytechnique.fr/~gaubert/COURSM2/PARITYGAMES/paritygame.pdf>): Theorem 7, with Theorem 1 (the alternating polylogarithmic-space algorithm) and Theorem 5 ($O(n^{c \log m})$); the source writes $m$ for the number of priorities and states $\log(m)$ in the exponent.
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Theorem 2.5 (the original separating automaton, of size $n^{O(\log d)}$) and the proofs following it.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 2 (J. Fearnley and N. Fijalkow, "Parity games"): Theorem 2.5 (the original separating automaton, of size $n^{O(\log d)}$) and the proofs following it.

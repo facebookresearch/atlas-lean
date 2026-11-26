@@ -1,10 +1,9 @@
 # The value-1 problem for probabilistic automata is undecidable
 
 There is no algorithm that decides, given a [probabilistic automaton](probabilistic-automata-and-cut-point-languages.md) $\mathcal{A}$, whether its value
-$\sup_w P_{\mathcal{A}}(w)$ equals $1$, that is, whether some words are accepted with probability arbitrarily close to $1$ (Gimbert and Oualhadj). This settles a
-special case of the isolation problem, whether a given cut-point is isolated, which is undecidable in general (Bertoni). The problem is decidable for
-$\sharp$-acyclic probabilistic automata, those whose support graph, on the nonempty sets of states with edges given by the action of a letter or by
-keeping only the recurrent states of a set stable under a letter, has no cycles other than self-loops.
+$\sup_w P_{\mathcal{A}}(w)$ equals $1$, that is, whether some words are accepted with probability arbitrarily close to $1$ (Gimbert and Oualhadj); equivalently,
+whether the cut-point $1$ is not isolated. The proof turns any automaton $\mathcal{A}$ into an automaton $\mathcal{B}$ that has value $1$ if some word is accepted by
+$\mathcal{A}$ with probability above $1/2$, and accepts every word with probability at most $1/2$ otherwise, so emptiness reduces to the value $1$ problem.
 
 ## Depends on
 
@@ -16,4 +15,5 @@ keeping only the recurrent states of a set stable under a letter, has no cycles 
 
 ## Sources
 
-- H. Gimbert and Y. Oualhadj, "Probabilistic automata on finite words: decidable and undecidable problems", *Proceedings of ICALP 2010*, Lecture Notes in Computer Science 6199, Springer, 2010 (version <https://hal.science/hal-00456538v2>): Section 3, Theorem 3 (Bertoni), Theorem 4 with Proposition 6, and Section 4, Definitions 4 and 5 and Theorem 5 (acyclic automata).
+- G. Rote, "Probabilistic finite automaton emptiness is undecidable for a fixed automaton", *50th International Symposium on Mathematical Foundations of Computer Science (MFCS 2025)*, LIPIcs 345, 2025, paper 86, doi:10.4230/LIPIcs.MFCS.2025.86: Theorem 7 (the gap amplification of Gimbert and Oualhadj) and the paragraph after it (its use to show that the value 1 problem is undecidable).
+- N. Fijalkow, H. Gimbert, E. Kelmendi and Y. Oualhadj, "Deciding the value 1 problem for probabilistic leaktight automata", *Logical Methods in Computer Science* 11(2), 2015, arXiv:1504.04136v2: Section 1 (the undecidability of the value 1 problem, crediting Gimbert and Oualhadj, and the conjecture of Bertoni) and Section 1.2, Problem 1.3 and the reformulation by isolated cut-points.

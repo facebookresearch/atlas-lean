@@ -8,6 +8,7 @@ coefficients $r_{ij}$, solved by eliminating unknowns with $s = r^* r'$. Over th
 
 ## Depends on
 
+- [Semirings and formal power series on a free monoid](semirings-and-formal-power-series.md)
 - [Weighted automata over a semiring](weighted-automata-over-a-semiring.md)
 - [Rational series](rational-series.md)
 

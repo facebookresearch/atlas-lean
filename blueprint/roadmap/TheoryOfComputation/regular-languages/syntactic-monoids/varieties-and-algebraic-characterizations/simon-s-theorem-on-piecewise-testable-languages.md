@@ -1,9 +1,9 @@
 # Simon's theorem on piecewise testable languages
 
-A language is [piecewise testable](piecewise-testable-languages.md) if and only if its [syntactic monoid](../syntactic-monoid/syntactic-monoid.md) is finite and
-[$\mathcal{J}$-trivial](green-s-relations-and-j-trivial-monoids.md) (Simon). More precisely, if $M$ is a finite $\mathcal{J}$-trivial monoid in which the strict
-$<_{\mathcal{J}}$-chains have length at most $n$ and $\varphi : A^* \to M$ is a surjective morphism, then $M$ is a quotient of $A^* / {\sim_{2n-1}}$. Since
-$\mathcal{J}$-triviality of a finite monoid can be checked, piecewise testability of a regular language is decidable.
+A language of $A^*$ is [piecewise testable](piecewise-testable-languages.md) if and only if its [syntactic monoid](../syntactic-monoid/syntactic-monoid.md) is finite and
+[$\mathcal{J}$-trivial](green-s-relations-and-j-trivial-monoids.md) (Simon), equivalently satisfies the identities $x^\omega = x^{\omega + 1}$ and $(xy)^\omega = (yx)^\omega$. Thus the
+piecewise testable languages form the $*$-variety associated with the variety $\mathbf{J}$ of finite $\mathcal{J}$-trivial monoids, and it can be decided in
+polynomial time whether the language of a given deterministic automaton is piecewise testable.
 
 ## Depends on
 
@@ -13,4 +13,4 @@ $\mathcal{J}$-triviality of a finite monoid can be checked, piecewise testabilit
 
 ## Sources
 
-- J.-É. Pin, *Mathematical Foundations of Automata Theory*, lecture notes, version of March 24, 2025, <https://www.irif.fr/~jep/PDF/MPRI/MPRI.pdf>: Proposition VII.3.12, Theorem VII.3.13 and Theorem VII.3.14 (Simon), with their proofs.
+- J.-É. Pin, "Syntactic semigroups", in G. Rozenberg and A. Salomaa (eds.), *Handbook of Formal Languages*, vol. 1, Springer, 1997, pp. 679–746, author's copy <https://www.irif.fr/~jep/PDF/HandBook.pdf>: the introduction (Simon's theorem), and Section 8.1, Theorem 8.6 and Corollary 8.7.

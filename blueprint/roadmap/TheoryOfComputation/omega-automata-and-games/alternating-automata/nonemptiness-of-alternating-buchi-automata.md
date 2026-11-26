@@ -1,8 +1,10 @@
 # Nonemptiness of alternating Büchi automata is PSPACE-complete
 
 Deciding whether an [alternating Büchi automaton](alternating-buchi-automata.md) accepts some infinite word is PSPACE-complete, and it is decidable
-in exponential time. Membership follows from the Miyano–Hayashi translation and the emptiness test for Büchi automata; hardness, by reducing the
-nonemptiness of alternating automata on finite words, making every accepting state a $\mathrm{true}$ transition and leaving no accepting state.
+in exponential time. Membership follows from the Miyano–Hayashi translation and the emptiness test for Büchi automata; hardness, by a synchronized
+reduction from the nonemptiness of alternating automata on finite words: add a fresh end letter on which exactly the accepting states move
+to $\mathrm{true}$ and the others to $\mathrm{false}$, keep all other transitions, and use no Büchi accepting state; then every branch must reach the end
+letter at the same position, so the new automaton accepts some infinite word exactly when the given automaton accepts some finite word.
 
 ## Depends on
 

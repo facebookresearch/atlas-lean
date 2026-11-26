@@ -16,3 +16,4 @@ two rules with the same left-hand side.
 ## Sources
 
 - H. Comon, M. Dauchet, R. Gilleron, F. Jacquemard, D. Lugiez, C. Löding, S. Tison and M. Tommasi, *Tree Automata Techniques and Applications*, 2008, <https://inria.hal.science/hal-03367725>: Section 1.6, the definition of top-down NFTAs and, in Proposition 1.6.2, of top-down DFTAs.
+- F. Gécseg and M. Steinby, *Tree Automata*, Akadémiai Kiadó, Budapest, 1984; reissued with a preface to the second edition as arXiv:1509.06233, 2015, with the original numbering: Section 2.2, the nondeterministic root-to-frontier (NDR) recognizers, and Section 2.11 (deterministic root-to-frontier recognizers).

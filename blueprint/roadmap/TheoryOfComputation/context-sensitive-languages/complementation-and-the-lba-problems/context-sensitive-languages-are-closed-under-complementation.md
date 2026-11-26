@@ -3,8 +3,8 @@
 If $L \subseteq T^*$ is the language of a [context-sensitive grammar](../context-sensitive-grammars/is-context-sensitive.md) over a finite
 terminal alphabet $T$, then so is $T^+ \setminus L$, the set of nonempty words over $T$ not in $L$; context-sensitive grammars in this sense never
 generate the empty word. This settles
-the second of Kuroda's problems on linear bounded automata. The context-sensitive languages are the languages accepted by nondeterministic linear
-bounded automata, that is, nondeterministic Turing machines in linear space (Kuroda), and nondeterministic space $s(n) \ge \log n$ is closed under
+the second of Kuroda's problems on linear bounded automata. A language of nonempty words is context-sensitive exactly when it is accepted by a nondeterministic linear
+bounded automaton, that is, nondeterministic Turing machines in linear space (Kuroda), and nondeterministic space $s(n) \ge \log n$ is closed under
 complementation (Immerman; Szelepcsényi).
 
 ## Depends on

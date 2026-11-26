@@ -3,8 +3,8 @@
 Algorithms for computing the winning regions of finite parity games, and the limits of the known approaches. Parity
 games are solvable in quasipolynomial time, by play summaries that yield a separating automaton of quasipolynomial size, by
 progress measures over quasipolynomial universal trees, and by a quasipolynomial variant of the recursive attractor
-algorithm; every safety automaton separating the plays won by the two players contains a universal tree, which bounds that
-approach from below. Whether parity games can be solved in polynomial time is open. The games themselves, attractors and
+algorithm; every strong separating safety automaton contains a universal tree, which bounds that use of separating automata from
+below. Whether parity games can be solved in polynomial time is open. The games themselves, attractors and
 positional determinacy are in [parity games](../parity-games/README.md).
 
 - [Separating automata for parity games](separating-automata-for-parity-games.md)

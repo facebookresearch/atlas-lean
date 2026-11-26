@@ -12,6 +12,10 @@ polynomial factor (Czerwiński, Daviaud, Fijalkow, Jurdziński, Lazić and Parys
 
 - [Universal trees](universal-trees.md)
 
+## Proof depends on
+
+- [Quasipolynomial universal trees](quasipolynomial-universal-trees.md)
+
 ## Sources
 
 - W. Czerwiński, L. Daviaud, N. Fijalkow, M. Jurdziński, R. Lazić and P. Parys, "Universal trees grow inside separating automata: quasi-polynomial lower bounds for parity games", *Proceedings of the 30th ACM-SIAM SODA*, 2019, arXiv:1807.10546v2: Theorem 2.3 and its proof.

@@ -21,5 +21,5 @@ $\mathrm{Muller}(\mathcal{F})$ is a Rabin objective if and only if $2^C \setminu
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 3 (N. Fijalkow and F. Horn, "Regular games"): Section 3.1, the definitions of Muller, Streett and Rabin objectives and Lemma 3.1 (Streett objectives as the Muller objectives with $\mathcal{F}$ closed under union).
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 1 (N. Fijalkow, "Introduction"): the definition of the parity objective in Section 1.3.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 3 (N. Fijalkow and F. Horn, "Regular games"): Section 3.1, the definitions of Muller, Streett and Rabin objectives and Lemma 3.1 (Streett objectives as the Muller objectives with $\mathcal{F}$ closed under union).
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 1 (N. Fijalkow, "Introduction"): the definition of the parity objective in Section 1.3.

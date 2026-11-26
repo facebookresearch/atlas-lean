@@ -2,7 +2,8 @@
 
 A cellular automaton updates every cell of the lattice $\mathbb{Z}^d$ synchronously by one local rule applied to a
 finite neighborhood. Its global map is injective exactly when it is bijective, and then its inverse is again a cellular
-automaton; by the Garden-of-Eden theorem it is surjective exactly when it is injective on finite configurations.
+automaton; by the Garden-of-Eden theorem a cellular automaton with a quiescent state is surjective exactly when it is injective on
+finite configurations.
 Injectivity and surjectivity are decidable in dimension one and undecidable in dimension two, nilpotency is undecidable in
 every dimension, and the elementary rule 110 and the Game of Life are computationally universal. One-dimensional cellular
 automata as continuous shift-commuting maps are in

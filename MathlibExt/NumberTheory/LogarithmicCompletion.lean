@@ -21,6 +21,8 @@ import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 /-!
 # Logarithmic completion of incomplete exponential sums
 
+`MetaMathlibExt.exists_incompleteSum_eq_completeSum_add` separates the zero frequency
+from the remaining complete twists, with the exact sine ratios for the interval kernel.
 `MetaMathlibExt.norm_incompleteSum_lt_sup_mul_log` bounds an interval sum by the largest
 complete additive twist times the logarithm of the modulus.
 
@@ -34,7 +36,9 @@ namespace MetaMathlibExt
 
 open Complex Finset
 
-namespace norm_incompleteSum_lt_sup_mul_log
+open scoped ComplexConjugate
+
+namespace ExponentialSumCompletion
 
 variable {p : ℕ} [NeZero p]
 
@@ -54,31 +58,63 @@ private lemma sum_representatives (F : ZMod p → ℂ) :
 private noncomputable def kernel (B : ℕ) (y : ZMod p) : ℂ :=
   ∑ x ∈ Icc 1 B, ZMod.stdAddChar ((x : ZMod p) * y)
 
-private lemma norm_kernel_le (B y : ℕ) (hy : 0 < y) (hyp : y < p) :
-    ‖kernel B (y : ZMod p)‖ ≤ 1 / Real.sin (Real.pi * (y / (p : ℝ))) := by
+private lemma kernel_zero (B : ℕ) : kernel B (0 : ZMod p) = B := by
+  simp [kernel, Nat.card_Icc]
+
+private lemma norm_kernel_neg (B : ℕ) (y : ZMod p) : ‖kernel B (-y)‖ = ‖kernel B y‖ := by
+  have hchar (a : ZMod p) : conj (ZMod.stdAddChar a) = ZMod.stdAddChar (-a) := by
+    rw [AddChar.map_neg_eq_inv, Complex.inv_def, ← Complex.sq_norm, AddChar.norm_apply]
+    simp
+  rw [← Complex.norm_conj (kernel B y)]
+  simp [kernel, map_sum, hchar, mul_neg]
+
+private lemma norm_char_sub_one (y : ℕ) :
+    ‖ZMod.stdAddChar (y : ZMod p) - 1‖ = 2 * |Real.sin (Real.pi * y / p)| := by
+  have he : ZMod.stdAddChar (y : ZMod p) =
+      exp (I * ((2 * (Real.pi * y / (p : ℝ)) : ℝ) : ℂ)) := by
+    rw [show (y : ZMod p) = ((y : ℤ) : ZMod p) by simp, ZMod.stdAddChar_coe]
+    push_cast
+    congr 1
+    ring
+  rw [he, norm_exp_I_mul_ofReal_sub_one, Real.norm_eq_abs, abs_mul, abs_of_nonneg (by norm_num),
+    show 2 * (Real.pi * y / (p : ℝ)) / 2 = Real.pi * y / p by ring]
+
+private lemma sin_pos_frequency (y : ℕ) (hy : 0 < y) (hyp : y < p) :
+    0 < Real.sin (Real.pi * y / (p : ℝ)) := by
+  have hp₀ : 0 < (p : ℝ) := Nat.cast_pos.mpr (NeZero.pos p)
+  have hy₀ : 0 < (y : ℝ) := Nat.cast_pos.mpr hy
+  apply Real.sin_pos_of_pos_of_lt_pi (by positivity)
+  rw [mul_div_assoc, mul_lt_iff_lt_one_right Real.pi_pos, div_lt_one hp₀]
+  exact_mod_cast hyp
+
+private lemma norm_kernel_eq (B y : ℕ) (hy : 0 < y) (hyp : y < p) :
+    ‖kernel B (y : ZMod p)‖ = |Real.sin (Real.pi * B * y / p) / Real.sin (Real.pi * y / p)| := by
   let z := ZMod.stdAddChar (y : ZMod p)
   have hz : ‖z‖ = 1 := AddChar.norm_apply ..
   have hgeom : kernel B (y : ZMod p) = z * ∑ i ∈ range B, z ^ i := by
     simp only [kernel, ← Ico_add_one_right_eq_Icc, sum_Ico_eq_sum_range, Nat.add_sub_cancel,
       mul_sum, ← AddChar.map_nsmul_eq_pow, nsmul_eq_mul, z, Nat.cast_add, Nat.cast_one,
       add_mul, one_mul, AddChar.map_add_eq_mul]
-  have hp₀ : 0 < (p : ℝ) := Nat.cast_pos.mpr (NeZero.pos p)
-  have hr : (y : ℝ) / p < 1 := (div_lt_one hp₀).mpr (by exact_mod_cast hyp)
-  have hs := Real.sin_pos_of_pos_of_lt_pi (show 0 < Real.pi * ((y : ℝ) / p) by positivity)
-    (by simpa using mul_lt_mul_of_pos_left hr Real.pi_pos)
-  have hchord : ‖z - 1‖ = 2 * Real.sin (Real.pi * ((y : ℝ) / p)) := by
-    have he : z = exp (I * ((2 * Real.pi * (y / (p : ℝ)) : ℝ) : ℂ)) := by
-      calc
-        z = exp (2 * Real.pi * I * (y : ℂ) / p) := by
-          simpa [z] using ZMod.stdAddChar_coe (N := p) (y : ℤ)
-        _ = _ := by push_cast; congr 1; ring
-    rw [he, norm_exp_I_mul_ofReal_sub_one, Real.norm_eq_abs,
-      show 2 * Real.pi * ((y : ℝ) / p) / 2 = Real.pi * (y / (p : ℝ)) by ring,
-      abs_of_pos (by positivity)]
-  have hb := norm_sub_le (z ^ B) (1 : ℂ)
-  rw [norm_pow, hz, one_pow, norm_one, ← geom_sum_mul z B, norm_mul, hchord] at hb
-  rw [hgeom, norm_mul, hz, one_mul, le_div_iff₀ hs]
-  linarith
+  have hpow : z ^ B = ZMod.stdAddChar ((B * y : ℕ) : ZMod p) := by
+    rw [Nat.cast_mul, ← nsmul_eq_mul, AddChar.map_nsmul_eq_pow]
+  have hden : ‖z - 1‖ ≠ 0 := by
+    rw [show ‖z - 1‖ = _ from norm_char_sub_one (p := p) y,
+      abs_of_pos (sin_pos_frequency (p := p) y hy hyp)]
+    exact mul_ne_zero two_ne_zero (sin_pos_frequency (p := p) y hy hyp).ne'
+  calc
+    ‖kernel B (y : ZMod p)‖ = ‖∑ i ∈ range B, z ^ i‖ := by rw [hgeom, norm_mul, hz, one_mul]
+    _ = ‖z ^ B - 1‖ / ‖z - 1‖ := by
+      rw [← geom_sum_mul, norm_mul, mul_div_cancel_right₀ _ hden]
+    _ = _ := by
+      rw [hpow, norm_char_sub_one, show ‖z - 1‖ = _ from norm_char_sub_one (p := p) y,
+        mul_div_mul_left _ _ (by norm_num), abs_div, Nat.cast_mul, ← mul_assoc]
+
+private lemma norm_kernel_le (B y : ℕ) (hy : 0 < y) (hyp : y < p) :
+    ‖kernel B (y : ZMod p)‖ ≤ 1 / Real.sin (Real.pi * (y / (p : ℝ))) := by
+  rw [← mul_div_assoc, norm_kernel_eq B y hy hyp, abs_div,
+    abs_of_pos (sin_pos_frequency (p := p) y hy hyp)]
+  exact div_le_div_of_nonneg_right (abs_le.mpr ⟨Real.neg_one_le_sin _, Real.sin_le_one _⟩)
+    (sin_pos_frequency (p := p) y hy hyp).le
 
 /-- Pair frequencies `y` and `p - y` in the sum of reciprocal sines. -/
 private lemma sum_cosec_eq_twice {m : ℕ} (hm : p = 2 * m + 1) :
@@ -167,8 +203,7 @@ private lemma kernel_sum_lt {m : ℕ} (hm : p = 2 * m + 1) (hp32 : 32 ≤ p)
     nlinarith [Real.log_two_gt_d9]
   rw [sum_residues, sum_range_eq_add_Ico _ (NeZero.pos p)]
   simp only [Nat.cast_zero]
-  have hzero : ‖kernel B (0 : ZMod p)‖ = B := by simp [kernel, Nat.card_Icc]
-  rw [hzero]
+  rw [kernel_zero, Complex.norm_natCast]
   calc
     _ ≤ p + ∑ y ∈ Ico 1 p, 1 / Real.sin (Real.pi * (y / (p : ℝ))) := by
       exact add_le_add (by exact_mod_cast hB) (sum_le_sum fun y hy =>
@@ -182,21 +217,24 @@ private lemma kernel_sum_lt {m : ℕ} (hm : p = 2 * m + 1) (hp32 : 32 ≤ p)
         _ = _ := by ring
     _ < _ := mul_lt_mul_of_pos_left hcoeff hp₀
 
-/-- Fourier inversion followed by the triangle inequality for the interval kernel. -/
-private lemma large_modulus_bound {m : ℕ} (hm : p = 2 * m + 1) (hp32 : 32 ≤ p)
-    (g : ZMod p → ℂ) (B : ℕ) (hB : B ≤ p) {M : ℝ} (hM : 0 < M)
-    (hcoeff : ∀ y, ‖ZMod.dft g y‖ ≤ M) :
-    ‖∑ x ∈ Icc 1 B, g x‖ < M * Real.log p := by
+/-- Fourier inversion summed over the interval. -/
+private lemma mul_sum_eq_sum_kernel_mul_dft (g : ZMod p → ℂ) (B : ℕ) :
+    (p : ℂ) * ∑ x ∈ Icc 1 B, g x = ∑ y : ZMod p, kernel B y * ZMod.dft g y := by
   have hinv (x : ℕ) : (p : ℂ) * g x =
       ∑ y : ZMod p, ZMod.stdAddChar ((x : ZMod p) * y) * ZMod.dft g y := by
     have h := ZMod.invDFT_apply (ZMod.dft g) (x : ZMod p)
     rw [LinearEquiv.symm_apply_apply, smul_eq_mul] at h
     rw [h, ← mul_assoc, mul_inv_cancel₀ (NeZero.ne _), one_mul]
     simp [mul_comm]
-  have hcomplete : (p : ℂ) * ∑ x ∈ Icc 1 B, g x =
-      ∑ y : ZMod p, kernel B y * ZMod.dft g y := by
-    simp_rw [mul_sum, hinv, kernel, sum_mul]
-    rw [sum_comm]
+  simp_rw [mul_sum, hinv, kernel, sum_mul]
+  rw [sum_comm]
+
+/-- Fourier inversion followed by the triangle inequality for the interval kernel. -/
+private lemma large_modulus_bound {m : ℕ} (hm : p = 2 * m + 1) (hp32 : 32 ≤ p)
+    (g : ZMod p → ℂ) (B : ℕ) (hB : B ≤ p) {M : ℝ} (hM : 0 < M)
+    (hcoeff : ∀ y, ‖ZMod.dft g y‖ ≤ M) :
+    ‖∑ x ∈ Icc 1 B, g x‖ < M * Real.log p := by
+  have hcomplete := mul_sum_eq_sum_kernel_mul_dft g B
   have hp₀ : 0 < (p : ℝ) := Nat.cast_pos.mpr (NeZero.pos p)
   apply (mul_lt_mul_iff_of_pos_left hp₀).mp
   calc
@@ -269,9 +307,28 @@ private lemma small_modulus_bound (hp : p.Prime) (hp5 : 5 ≤ p) (hp32 : p < 32)
     have hsq := Real.sq_sqrt hp₀.le
     nlinarith [mul_le_mul_of_nonneg_right hM (Real.sqrt_nonneg p)]
 
-end norm_incompleteSum_lt_sup_mul_log
+private noncomputable def phase (f : Polynomial ℤ) (x : ZMod p) : ℂ :=
+  ZMod.stdAddChar ((f.map (Int.castRingHom (ZMod p))).eval x)
 
-open norm_incompleteSum_lt_sup_mul_log
+private noncomputable def completeTwist (p : ℕ) (f : Polynomial ℤ) (y : ℕ) : ℂ :=
+  ∑ x ∈ Icc 1 p, exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)
+
+private lemma dft_phase_neg (f : Polynomial ℤ) (y : ZMod p) :
+    ZMod.dft (phase f) (-y) = completeTwist p f y.val := by
+  rw [ZMod.dft_apply, sum_representatives]
+  apply sum_congr rfl
+  intro x _
+  rw [← ZMod.stdAddChar_coe (N := p), Int.cast_add, AddChar.map_add_eq_mul]
+  simp [phase, mul_comm]
+
+private lemma exp_eval_eq_phase (f : Polynomial ℤ) (x : ℕ) :
+    exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) = phase f (x : ZMod p) := by
+  rw [← ZMod.stdAddChar_coe (N := p)]
+  simp [phase]
+
+end ExponentialSumCompletion
+
+open ExponentialSumCompletion
 
 set_option linter.unusedVariables false in
 /-- **Logarithmic completion bound for incomplete exponential sums.** Let $p \ge 5$ be a prime,
@@ -292,28 +349,103 @@ public theorem norm_incompleteSum_lt_sup_mul_log (p : ℕ) (hp : p.Prime) (hp5 :
         Real.log p := by
   classical
   let : NeZero p := ⟨hp.ne_zero⟩
-  let g (x : ZMod p) := ZMod.stdAddChar ((f.map (Int.castRingHom (ZMod p))).eval x)
-  let S (y : ℕ) := ∑ x ∈ Icc 1 p,
-    exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)
-  let M : ℝ := ((range p).sup fun y => ‖S y‖₊ : NNReal)
+  let g := phase (p := p) f
+  let M : ℝ := ((range p).sup fun y => ‖completeTwist p f y‖₊ : NNReal)
   have hM : Real.sqrt p ≤ M := sqrt_le_sup_norm_completeSum p hp f
-  have htwist (y : ZMod p) : ZMod.dft g (-y) = S y.val := by
-    rw [ZMod.dft_apply, sum_representatives]
-    apply sum_congr rfl
-    intro x _
-    rw [← ZMod.stdAddChar_coe (N := p), Int.cast_add, AddChar.map_add_eq_mul]
-    simp [g, mul_comm]
   have hcoeff (y : ZMod p) : ‖ZMod.dft g y‖ ≤ M := by
-    rw [← neg_neg y, htwist]
-    exact NNReal.coe_le_coe.mpr (le_sup (f := fun k => ‖S k‖₊) (mem_range.mpr (ZMod.val_lt _)))
-  have hphase (x : ℕ) : exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) = g x := by
-    rw [← ZMod.stdAddChar_coe (N := p)]
-    simp [g]
-  simp_rw [hphase]
+    rw [← neg_neg y, dft_phase_neg f (-y)]
+    exact NNReal.coe_le_coe.mpr (le_sup (f := fun k => ‖completeTwist p f k‖₊)
+      (mem_range.mpr (ZMod.val_lt _)))
+  simp_rw [exp_eval_eq_phase (p := p) f]
   by_cases hp32 : 32 ≤ p
   · obtain ⟨m, hm⟩ := hp.odd_of_ne_two (by omega)
     exact large_modulus_bound hm hp32 g B hB₂ ((Real.sqrt_pos.2 (by positivity)).trans_le hM) hcoeff
   · apply small_modulus_bound hp hp5 (by omega) g (fun x => AddChar.norm_apply ..) B hB₁ hB₂ hM
     simpa [ZMod.dft_apply_zero, sum_representatives] using hcoeff 0
+
+-- The interval bounds are retained as in the source; Fourier completion holds for any length.
+set_option linter.unusedVariables false in
+/-- **Completing an incomplete exponential sum.** Let $p$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients, and let $B$ be an
+integer with $1 \le B \le p$. Put
+$T_p(B) = \frac{1}{p} \sum_{y=1}^{p-1} \left|\frac{\sin(\pi B y/p)}{\sin(\pi y/p)}\right|$ and
+$M = \max_{1 \le y \le p-1} \left|\sum_{x=1}^{p} e_p(f(x) + yx)\right|$. Then there is a complex
+number $\theta$ with $|\theta| \le 1$ such that
+$\sum_{x=1}^{B} e_p(f(x)) = \frac{B}{p} \sum_{x=1}^{p} e_p(f(x)) + \theta \, T_p(B) \, M$.
+
+Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
+(2025), Article A48, Lemma 2.1 (`integers-2025-A48-lem-2-1`). -/
+public theorem exists_incompleteSum_eq_completeSum_add (p : ℕ) (hp : p.Prime)
+    (f : Polynomial ℤ) (B : ℕ) (hB₁ : 1 ≤ B) (hB₂ : B ≤ p) :
+    ∃ θ : ℂ, ‖θ‖ ≤ 1 ∧
+      ∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) =
+        ((B : ℂ) / p) * ∑ x ∈ Icc 1 p, exp (2 * Real.pi * I * ((f.eval (x : ℤ) : ℤ) : ℂ) / p) +
+          θ * (((1 / p : ℝ) * ∑ y ∈ Icc 1 (p - 1),
+              |Real.sin (Real.pi * B * y / p) / Real.sin (Real.pi * y / p)| : ℝ) : ℂ) *
+            ((((Icc 1 (p - 1)).sup fun y : ℕ =>
+              ‖∑ x ∈ Icc 1 p,
+                exp (2 * Real.pi * I *
+                  ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) : ℂ) := by
+  let : NeZero p := ⟨hp.ne_zero⟩
+  let g := phase (p := p) f
+  let S := completeTwist p f
+  let k (y : ℕ) := |Real.sin (Real.pi * B * y / p) / Real.sin (Real.pi * y / p)|
+  let T : ℝ := (1 / p) * ∑ y ∈ Icc 1 (p - 1), k y
+  let M : ℝ := ((Icc 1 (p - 1)).sup fun y => ‖S y‖₊ : NNReal)
+  let R : ℂ := ∑ y ∈ Icc 1 (p - 1), kernel B (-(y : ZMod p)) * S y
+  have hIco : Ico 1 p = Icc 1 (p - 1) := by
+    rw [← Ico_add_one_right_eq_Icc, Nat.sub_add_cancel hp.one_lt.le]
+  -- The inverse kernel is evaluated at `-y` to give the positive twist in `S y`.
+  have hcomplete : (p : ℂ) * ∑ x ∈ Icc 1 B, g x = (B : ℂ) * S 0 + R := by
+    calc
+      _ = kernel B (-(0 : ZMod p)) * ZMod.dft g (-(0 : ZMod p)) +
+          ∑ y ∈ Icc 1 (p - 1), kernel B (-(y : ZMod p)) * ZMod.dft g (-(y : ZMod p)) := by
+        rw [mul_sum_eq_sum_kernel_mul_dft, ← Equiv.sum_comp (Equiv.neg (ZMod p)), sum_residues,
+          sum_range_eq_add_Ico _ hp.pos, hIco]
+        simp
+      _ = _ := by
+        congr 1
+        · rw [dft_phase_neg f 0, ZMod.val_zero, neg_zero, kernel_zero]
+        · apply sum_congr rfl
+          intro y hy
+          have hyp : y < p := (mem_Ico.mp (hIco ▸ hy)).2
+          rw [dft_phase_neg f (y : ZMod p), ZMod.val_natCast_of_lt hyp]
+  have hR : ‖R‖ ≤ (∑ y ∈ Icc 1 (p - 1), k y) * M := by
+    calc
+      ‖R‖ ≤ ∑ y ∈ Icc 1 (p - 1), ‖kernel B (-(y : ZMod p)) * S y‖ := norm_sum_le ..
+      _ ≤ ∑ y ∈ Icc 1 (p - 1), k y * M := by
+        apply sum_le_sum
+        intro y hy
+        obtain ⟨hy₁, hyp⟩ := mem_Ico.mp (hIco ▸ hy)
+        rw [norm_mul, norm_kernel_neg, norm_kernel_eq B y hy₁ hyp]
+        exact mul_le_mul_of_nonneg_left (NNReal.coe_le_coe.mpr (le_sup (f := fun i => ‖S i‖₊) hy))
+          (abs_nonneg _)
+      _ = _ := (sum_mul ..).symm
+  have hscaled : ‖(p : ℂ)⁻¹ * R‖ ≤ T * M := by
+    rw [norm_mul, norm_inv, Complex.norm_natCast]
+    simpa only [T, one_div, mul_assoc] using
+      mul_le_mul_of_nonneg_left hR (inv_nonneg.mpr (Nat.cast_nonneg p))
+  let C := (T : ℂ) * (M : ℂ)
+  have hC : ‖(p : ℂ)⁻¹ * R‖ ≤ ‖C‖ := by
+    dsimp [C]
+    rw [← ofReal_mul, norm_real, Real.norm_eq_abs, abs_of_nonneg ((norm_nonneg _).trans hscaled)]
+    exact hscaled
+  have hnormalize : ∃ θ : ℂ, ‖θ‖ ≤ 1 ∧ (p : ℂ)⁻¹ * R = θ * C := by
+    by_cases hc : C = 0
+    · have hzero : (p : ℂ)⁻¹ * R = 0 := norm_le_zero_iff.mp (by simpa [hc] using hC)
+      exact ⟨0, by simp, by simp [hzero]⟩
+    · exact ⟨(p : ℂ)⁻¹ * R / C, by rwa [norm_div, div_le_one (norm_pos_iff.mpr hc)],
+        (div_mul_cancel₀ _ hc).symm⟩
+  obtain ⟨θ, hθ, heq⟩ := hnormalize
+  refine ⟨θ, hθ, ?_⟩
+  change (∑ x ∈ Icc 1 B, _) = ((B : ℂ) / p) * _ + θ * (T : ℂ) * (M : ℂ)
+  simp_rw [exp_eval_eq_phase (p := p) f]
+  have hS₀ : (∑ x ∈ Icc 1 p, phase (p := p) f x) = S 0 := by
+    simp [S, completeTwist, exp_eval_eq_phase (p := p) f]
+  rw [hS₀, mul_assoc θ, ← heq]
+  calc
+    _ = (p : ℂ)⁻¹ * ((p : ℂ) * ∑ x ∈ Icc 1 B, g x) := by
+      rw [← mul_assoc, inv_mul_cancel₀ (NeZero.ne _), one_mul]
+    _ = _ := by rw [hcomplete, mul_add]; ring
 
 end MetaMathlibExt

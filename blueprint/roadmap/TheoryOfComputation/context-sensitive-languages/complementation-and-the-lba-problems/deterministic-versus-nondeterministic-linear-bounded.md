@@ -1,8 +1,13 @@
 # Deterministic versus nondeterministic linear bounded automata
 
 Is every language accepted by a nondeterministic [linear bounded automaton](../linear-bounded-automata/linear-bounded-automaton.md) also accepted by a
-deterministic one? Since the context-sensitive languages are the languages of nondeterministic linear bounded automata, this is Kuroda's first
+deterministic one? Since a language of nonempty words is context-sensitive exactly when a nondeterministic linear bounded automaton accepts it, this is Kuroda's first
 problem on linear bounded automata, equivalently whether nondeterministic and deterministic linear space coincide.
+
+## Depends on
+
+- [Linear bounded automaton](../linear-bounded-automata/linear-bounded-automaton.md)
+- [Language of a linear bounded automaton](../linear-bounded-automata/language.md)
 
 ## What would settle it
 

@@ -1,8 +1,7 @@
 # Krohn–Rhodes decomposition theorem
 
-For every finite monoid $M$ there are groups $G_1, \dots, G_n$, each dividing $M$, and [aperiodic monoids](aperiodic-finite-monoids.md)
-$M_0, \dots, M_n$ such that $M$ divides the wreath product $M_0 \circ G_1 \circ M_1 \circ \cdots \circ G_n \circ M_n$ (Krohn and Rhodes). In automata terms,
-every finite automaton is simulated by a cascade of permutation automata and reset automata.
+Let $U_2 = \{1, a, b\}$ be the monoid with $aa = ba = a$ and $ab = bb = b$. Every finite monoid divides a wreath product of finite groups and copies of $U_2$
+(Krohn and Rhodes), and every finite [aperiodic monoid](aperiodic-finite-monoids.md) divides a wreath product of copies of $U_2$.
 
 ## Depends on
 
@@ -14,8 +13,8 @@ every finite automaton is simulated by a cascade of permutation automata and res
 
 This page becomes ready once:
 
-- A proof source: the cited notes state the theorem without proof; K. Krohn and J. Rhodes, "Algebraic theory of machines. I. Prime decomposition theorem for finite semigroups and machines", *Transactions of the American Mathematical Society* 116, 1965, needs a source check (source check)
+- A proof source: the cited chapter states the theorem without proof; K. Krohn and J. Rhodes, "Algebraic theory of machines. I. Prime decomposition theorem for finite semigroups and machines", *Transactions of the American Mathematical Society* 116, 1965, needs a source check (source check)
 
 ## Sources
 
-- J.-É. Pin, *Mathematical Foundations of Automata Theory*, lecture notes, version of March 24, 2025, <https://www.irif.fr/~jep/PDF/MPRI/MPRI.pdf>: Theorem XVIII.3.20 (Krohn–Rhodes) and Section XVIII.3 (wreath products of transformation semigroups).
+- J.-É. Pin, "Syntactic semigroups", in G. Rozenberg and A. Salomaa (eds.), *Handbook of Formal Languages*, vol. 1, Springer, 1997, pp. 679–746, author's copy <https://www.irif.fr/~jep/PDF/HandBook.pdf>: Section 6.3, the definition of $U_2$ and Theorem 6.6, items (3) and (4), with the attribution of (4) to Krohn and Rhodes.

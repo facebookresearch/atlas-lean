@@ -1,0 +1,3 @@
+# Nobody under observation is absorbed
+
+Consider left-truncated competing-risks data on grid times $t_1 < \dots < t_k$: subject $i$ enters after grid index $e_i$ and leaves at grid index $x_i > e_i$, with an observed cause $c_i$ when its event is observed. View it as delayed-entry multi-state data with one transient state and one absorbing state per cause: subject $i$ is in the transient state up to $x_i$, and from $x_i$ on it is in the absorbing state of $c_i$ if its event is observed (a censored subject stays transient). Subject $i$ is under observation at $t_j$ when $e_i < j \le x_i$. Then, at every grid time $t_j$ and for every cause $c$, no subject under observation is in the absorbing state of $c$ just before $t_j$.

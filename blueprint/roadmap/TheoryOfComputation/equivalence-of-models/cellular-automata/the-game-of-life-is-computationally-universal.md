@@ -9,6 +9,7 @@ a given finite configuration of the Game of Life dies.
 
 ## Depends on
 
+- [Cellular automata on $\mathbb{Z}^d$](cellular-automata-on-z-d.md)
 - [Finite, periodic and Garden-of-Eden configurations](finite-periodic-and-garden-of-eden-configurations.md)
 
 ## Proof depends on

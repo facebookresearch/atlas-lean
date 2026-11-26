@@ -16,4 +16,4 @@ with $n$ vertices and $m$ edges can be computed in time $O(n m)$ and space $O(m)
 
 ## Sources
 
-- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, arXiv:2305.10546v2, 2025, Chapter 1 (N. Fijalkow, "Introduction"): Theorem 1.6, with Lemmas 1.5 and 1.6 (fixed-point characterizations of the winning region) and the remark after Theorem 1.6 that positional determinacy also holds for infinite games.
+- N. Fijalkow (ed.), *Games on Graphs: From Logic and Automata to Algorithms*, Cambridge University Press, 2026, doi:10.1017/9781009500678 (numbering of the version arXiv:2305.10546v2, 2025), Chapter 1 (N. Fijalkow, "Introduction"): Theorem 1.6, with Lemmas 1.5 and 1.6 (fixed-point characterizations of the winning region) and the remark after Theorem 1.6 that positional determinacy also holds for infinite games.

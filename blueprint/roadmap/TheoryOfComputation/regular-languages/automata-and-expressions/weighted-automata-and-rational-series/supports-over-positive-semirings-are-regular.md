@@ -7,6 +7,7 @@ the max-plus semiring, but not to the ring $\mathbb{Z}$, over which supports of 
 
 ## Depends on
 
+- [Semirings and formal power series on a free monoid](semirings-and-formal-power-series.md)
 - [Weighted automata over a semiring](weighted-automata-over-a-semiring.md)
 
 ## Sources

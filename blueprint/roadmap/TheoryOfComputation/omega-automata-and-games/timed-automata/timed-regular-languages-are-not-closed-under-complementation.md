@@ -1,9 +1,10 @@
 # Timed regular languages are not closed under complementation
 
 There is a [timed regular language](timed-buchi-automata.md) whose complement, in the set of all timed words over the same
-alphabet, is not timed regular. Otherwise inclusion $L(\mathcal{A}_1) \subseteq L(\mathcal{A}_2)$ would hold exactly when the
-intersection of $L(\mathcal{A}_1)$ with a timed Büchi automaton for the complement of $L(\mathcal{A}_2)$ is empty, and enumerating
-timed Büchi automata, whose emptiness is decidable, would make non-inclusion recursively enumerable, contradicting the
+alphabet, is not timed regular. Otherwise $L(\mathcal{A}_1) \not\subseteq L(\mathcal{A}_2)$ would hold exactly when some timed Büchi
+automaton $\mathcal{C}$ has $L(\mathcal{A}_1) \cap L(\mathcal{C}) \ne \emptyset$ and $L(\mathcal{A}_2) \cap L(\mathcal{C}) = \emptyset$ (closure under complement gives such a $\mathcal{C}$
+when inclusion fails, and any such $\mathcal{C}$ witnesses non-inclusion); both conditions are decidable, by closure under intersection and
+decidability of emptiness, so enumerating candidates $\mathcal{C}$ would make non-inclusion recursively enumerable, contradicting the
 $\Pi^1_1$-hardness of inclusion.
 
 ## Depends on
@@ -12,6 +13,7 @@ $\Pi^1_1$-hardness of inclusion.
 
 ## Proof depends on
 
+- [Timed regular languages are closed under union and intersection](timed-regular-languages-are-closed-under-union-and-intersection.md)
 - [Universality of timed automata is undecidable](universality-of-timed-automata-is-undecidable.md)
 - [Region abstraction decides reachability for timed automata](../../../Logic/temporal-logic/timed-and-infinite-state-verification/region-abstraction-decides-reachability-for.md)
 

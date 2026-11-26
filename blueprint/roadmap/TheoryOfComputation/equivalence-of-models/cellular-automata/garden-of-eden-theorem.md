@@ -8,6 +8,7 @@ configurations have the same image. The direction from surjectivity to injectivi
 
 ## Depends on
 
+- [Cellular automata on $\mathbb{Z}^d$](cellular-automata-on-z-d.md)
 - [Finite, periodic and Garden-of-Eden configurations](finite-periodic-and-garden-of-eden-configurations.md)
 
 ## Sources
