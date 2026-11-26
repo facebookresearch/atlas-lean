@@ -1634,31 +1634,25 @@ class GitTests(unittest.TestCase):
         self.assertEqual(set(self.git.signatures[heads[0]]), {"docs/h0.md", "glob:docs/*.md"})  # watched entries only
 
     def test_the_repositorys_own_checks_can_be_followed(self):
-        """The code and inputs of this repository's staged required workflows stay within the
+        """The code and inputs of this repository's required workflows, at its own HEAD, stay within the
         limit: an incomplete closure would make every pull request NOT READY."""
         root = Path(__file__).resolve().parents[2]
         found = subprocess.run(["git", "-C", str(root), "rev-parse", "--absolute-git-dir"], capture_output=True, text=True)
-        if found.returncode != 0:
+        workflows = [w for w in (".github/workflows/ci.yml", ".github/workflows/bump-guard.yml",
+                                 ".github/workflows/source-diagnostics.yml") if (root / w).exists()]
+        if found.returncode != 0 or not workflows:
             self.skipTest("not in a checkout of the repository")
         own = preflight.Git(Path(found.stdout.strip()), "https://github.com/facebookresearch/atlas-lean.git")
-        # During an uncommitted merge the index holds the merged scripts and workflows.
-        tree = own.out("write-tree")
-        workflows = own.out(
-            "ls-tree", "--name-only", tree, "--", ".github/workflows/ci.yml",
-            ".github/workflows/bump-guard.yml", ".github/workflows/source-diagnostics.yml",
-        ).splitlines()
-        if not workflows:
-            self.skipTest("not in a checkout of the repository")
+        head = own.out("rev-parse", "HEAD")
         for workflow in workflows:
-            code = preflight.workflow_code(own, tree, [workflow])
+            code = preflight.workflow_code(own, head, [workflow])
             self.assertNotIn("?incomplete", code, workflow)
             self.assertLess(len(code), 300, workflow)
-            # Only a Lean module named by the workflow itself may appear among its inputs.
-            named = own.out("show", f"{tree}:{workflow}")
+            named = (root / workflow).read_text()  # a module the workflow names itself is its input; others are not
             self.assertFalse([c for c in code if c.endswith(".lean") and c.split("/", 1)[0] in preflight.LIBRARIES
                               and c not in named], workflow)
         # The paths that scripts/ci_scope.py and its test name are rules and examples, not inputs (NAMES_ONLY).
-        self.assertEqual(preflight._code_closure(own, tree, {"scripts/test_ci_scope.py"}),
+        self.assertEqual(preflight._code_closure(own, head, {"scripts/test_ci_scope.py"}),
                          {"scripts/test_ci_scope.py", "scripts/ci_scope.py"})
 
     def test_a_script_that_only_names_paths(self):
