@@ -1200,6 +1200,7 @@ Topics added since this subject's fields were last revised.
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
 - [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
+- [Modular Model Conductor](modular-model-conductor/README.md)
 - [Invariant Affine Open](exists-invariant-is-affine-open-of-finit.md)
 - [Finite Locally Free Quotient](exists-quotient-of-finite-locally-free-e.md)
 - [Glue](exists-quotient-of-forall-exists-quotien.md)
