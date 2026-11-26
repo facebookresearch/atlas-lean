@@ -19183,7 +19183,7 @@
 "Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted.leGall2012StrictLower": "b76e94e578613397",
 "Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted.leGallUrrutia2018Lower": "dbbe1e7d55f3cb1e",
 "Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted.rectangularNaiveUpper": "493011cf7147edf9",
-"Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted.rectangularOperationRankBridge": "bc0bbe2e06031bd5",
+"Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted.rectangularOperationRankBridge": "e811aa4addb08d07",
 "Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted.upperBoundOne": "e5cd66dff5ad885e",
 "Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted.williamsXuXuZhou2024StrictLower": "f78a4d1a7a2ef1f2",
 "Cslib.Complexity.Algebraic.HasRectangularCircuitExponent": "b31bf43bdb2f8f75",
