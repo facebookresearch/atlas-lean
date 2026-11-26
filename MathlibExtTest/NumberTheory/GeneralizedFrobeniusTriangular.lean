@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.GeneralizedFrobeniusTriangular
 
 /-! # Tests for representations by coprime pairs and reduced triangular triples -/
@@ -57,3 +58,46 @@ example : frobeniusRepCount ![2, 3] (-1) ≤ frobeniusRepCount ![2, 3] 0 := by
     0 0 1 two_three_frobenius 2 (by decide) 1
 
 end MetaMathlibExt.frobeniusRepCount_pair_sub_ge
+
+private theorem countOneOne (m : ℕ) : frobeniusRepCount ![1, 1] m = m + 1 := by
+  simp only [frobeniusRepCount, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Nat.cast_one, mul_one]
+  rw [← ENat.card_coe_set_eq]
+  let e : {x : Fin 2 → ℕ | (x 0 : ℤ) + (x 1 : ℤ) = m} ≃ Fin (m + 1) :=
+    { toFun := fun x => ⟨x.val 0, by have hx := x.property; change _ + _ = (m : ℤ) at hx; omega⟩
+      invFun := fun i => ⟨![(i : ℕ), m - (i : ℕ)], by
+        change ((i : ℕ) : ℤ) + ((m - (i : ℕ) : ℕ) : ℤ) = m
+        have hi := i.isLt
+        omega⟩
+      left_inv := fun x => Subtype.ext (funext (Fin.forall_fin_two.mpr ⟨rfl, by
+        have hx := x.property
+        change (x.val 0 : ℤ) + (x.val 1 : ℤ) = m at hx
+        change m - x.val 0 = x.val 1
+        omega⟩))
+      right_inv := fun _ => rfl }
+  rw [ENat.card_congr e]
+  simp
+
+private theorem oneOneFrobenius (r : ℕ) : IsGenFrobeniusNumber ![1, 1] r ((r : ℤ) - 1) := by
+  constructor
+  · cases r with
+    | zero => rw [frobeniusRepCount_eq_zero_of_neg _ (by omega)]; exact le_rfl
+    | succ r =>
+      rw [show ((r + 1 : ℕ) : ℤ) - 1 = (r : ℤ) by omega, countOneOne, Nat.cast_succ]
+  · intro m hm
+    have hm0 : 0 ≤ m := by omega
+    rw [← Int.toNat_of_nonneg hm0, countOneOne, ← Nat.cast_one, ← Nat.cast_add,
+      ENat.natCast_lt_natCast]
+    omega
+
+-- A negative shift can fall below zero, where the lower cutoff is omitted.
+example : frobeniusRepCount ![1, 1] (-2) = 0 := by
+  apply (frobeniusRepCount_pair_eq_iff 1 1 (by decide) (by decide) (by decide)
+    (fun r => (r : ℤ) - 1) oneOneFrobenius 0 0 1 (by decide) (Or.inl (by decide)) (-1)).2
+  norm_num
+
+-- At the upper endpoint the count is exactly the requested positive level.
+example : frobeniusRepCount ![1, 1] 2 = 3 := by
+  apply (frobeniusRepCount_pair_eq_iff 1 1 (by decide) (by decide) (by decide)
+    (fun r => (r : ℤ) - 1) oneOneFrobenius 3 1 1 (by decide) (Or.inr (by decide)) 2).2
+  norm_num

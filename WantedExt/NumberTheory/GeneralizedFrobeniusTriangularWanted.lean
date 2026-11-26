@@ -26,23 +26,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Representation counts between consecutive two-generator Frobenius numbers.** Let $a$ and $b$
-be coprime positive integers. For a natural number $r$ let $g(a, b; r)$ be the generalized
-Frobenius number of $(a, b)$ at $r$, and for an integer $m$ let $d(m; a, b)$ be the number of
-representations of $m$ by $(a, b)$. Let $i$ and $s$ be natural numbers, let $c$ be a positive
-integer divisible by $a$ or by $b$, and let $j$ be an integer. Then $d(g(a, b; s) + jc; a, b) = i$
-if and only if $g(a, b; s) + jc \le g(a, b; i)$ and, in case $i \ge 1$, also
-$g(a, b; i - 1) < g(a, b; s) + jc$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 3 (`integers-2026-A63-lem-3`), quoted from
-Subwattanachai, *Generalized Frobenius number of three variables*. -/
-public theorem_wanted frobeniusRepCount_pair_eq_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
-    (hab : Nat.Coprime a b) (G : ℕ → ℤ) (hG : ∀ r, IsGenFrobeniusNumber ![a, b] r (G r))
-    (i s c : ℕ) (hc : 0 < c) (hdvd : a ∣ c ∨ b ∣ c) (j : ℤ) :
-    frobeniusRepCount ![a, b] (G s + j * c) = i ↔
-      (i = 0 ∨ G (i - 1) < G s + j * c) ∧ G s + j * c ≤ G i
-
 /-- **Representation count of the reduced triangular triple at a shifted Frobenius number.** For a
 natural number $r$ write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$
 and put $s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
