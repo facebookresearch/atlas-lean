@@ -150,4 +150,62 @@ theorem not_isBonseSeq_of_liminf_lt (a : ℕ → ℕ)
   push_cast at hsum hlogB
   linarith
 
+/-- **A sufficient condition for a Bonse sequence.** Let $a_0 < a_1 < a_2 < \cdots$ be a strictly
+increasing sequence of positive integers and write $A_n = a_0 a_1 \cdots a_{n-1}$ for the product
+of its first $n$ terms. If there is a real number $c > 2$ such that $\log A_n / \log a_n > c$ for
+all sufficiently large $n$, then $a$ is a Bonse sequence.
+
+The hypothesis is equivalent to $\liminf_n \log A_n / \log a_n > 2$, an infinite limit inferior
+included. In the paper's 1-based indexing it reads $\liminf \log A_n / \log a_{n+1} > 2$ with
+$A_n = a_1 \cdots a_n$.
+
+Source: Diego Marques, "Bonse's Inequality along
+Subsequences of Primes", Theorem 1. -/
+theorem isBonseSeq_of_liminf_gt (a : ℕ → ℕ)
+    (hmono : StrictMono a) (hpos : ∀ n, 1 ≤ a n)
+    (hlim : ∃ c : ℝ, 2 < c ∧ ∀ᶠ n in atTop,
+      c < Real.log (∏ k ∈ Finset.range n, (a k : ℝ)) /
+        Real.log (a n)) :
+    IsBonseSeq a := by
+  obtain ⟨c, hc, hratio⟩ := hlim
+  have ha : Tendsto (fun n => Real.log (a n)) atTop atTop :=
+    Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop.comp hmono.tendsto_atTop)
+  have hsmall := ha.eventually (Real.isLittleO_log_id_atTop.bound
+    (show 0 < (c - 2) / 4 by linarith))
+  filter_upwards [hratio, ha.eventually_ge_atTop 32, hsmall] with n hratio hlarge hsmall
+  have ha_pos (k : ℕ) : 0 < (a k : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt (hpos k))
+  have hp_pos (k : ℕ) : 0 < (primeNth (a k) : ℝ) := by exact_mod_cast primeNth_pos _
+  have hlog : 0 < Real.log (a n) := by linarith
+  have hratio' := (lt_div_iff₀ hlog).mp hratio
+  -- Chebyshev's bound gives p_m ≤ m (log m)^2 once log m is large enough.
+  have hlogs : 16 * Real.log (16 * a n) ≤ Real.log (a n) ^ 2 := by
+    rw [Real.log_mul (by norm_num) (ha_pos n).ne']
+    nlinarith [Real.log_le_self (show 0 ≤ (16 : ℝ) by norm_num),
+      mul_nonneg (sub_nonneg.mpr hlarge) hlog.le]
+  have hprime : (primeNth (a n) : ℝ) ≤ a n * Real.log (a n) ^ 2 := by
+    calc
+      _ ≤ 16 * a n * Real.log (16 * a n) := primeNth_le_mul_log (hpos n)
+      _ = a n * (16 * Real.log (16 * a n)) := by ring
+      _ ≤ _ := mul_le_mul_of_nonneg_left hlogs (ha_pos n).le
+  have hlog_prime := Real.log_le_log (hp_pos n) hprime
+  rw [Real.log_mul (ha_pos n).ne' (pow_ne_zero 2 hlog.ne'), Real.log_pow,
+    Nat.cast_ofNat] at hlog_prime
+  -- The log-log correction fits inside the strict margin c - 2.
+  change ‖Real.log (Real.log (a n))‖ ≤ (c - 2) / 4 * ‖Real.log (a n)‖ at hsmall
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_pos hlog] at hsmall
+  have herr := (le_abs_self _).trans hsmall
+  have hprod : (∏ k ∈ Finset.range n, (a k : ℝ)) ≤
+      ∏ k ∈ Finset.range n, (primeNth (a k) : ℝ) := by
+    refine Finset.prod_le_prod₀ (fun k _ => (ha_pos k).le) fun k _ => ?_
+    have hindex : a k ≤ primeNth (a k) := by
+      have := Nat.add_two_le_nth_prime (a k - 1)
+      unfold primeNth
+      omega
+    exact_mod_cast hindex
+  have hlog_prod := Real.log_le_log (Finset.prod_pos fun k _ => ha_pos k) hprod
+  apply (Real.log_lt_log_iff (pow_pos (hp_pos n) 2)
+    (Finset.prod_pos fun k _ => hp_pos k)).mp
+  rw [Real.log_pow, Nat.cast_ofNat]
+  nlinarith only [hlog_prime, herr, hratio', hlog_prod]
+
 end MathlibExt.NumberTheory.BonseWanted

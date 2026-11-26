@@ -49,9 +49,10 @@ abbrev ProductSpace := TopCat.of (X × ProjectiveLine)
 def xProjection : ProductSpace X ⟶ TopCat.of X := TopCat.ofHom ⟨Prod.fst, continuous_fst⟩
 def pProjection : ProductSpace X ⟶ TopCat.of ProjectiveLine := TopCat.ofHom ⟨Prod.snd, continuous_snd⟩
 
-/-- The standard product complex structure on `X × ℙ¹`: both projections are holomorphic, which
-determines it. Dependents are conditional on an instance; a construction is requested in `WantedExt`
-(`ProjectiveProductSourceRequests.actual_product_complex_source`). -/
+/-- For a complex manifold $X$ of dimension $n$ (and the complex structure on $\mathbb{P}^1$ given
+by `ProjectiveComplexSource`), a complex manifold structure on $X \times \mathbb{P}^1$: charts
+modelled on $\mathbb{C}^{n+1}$ with holomorphic transition maps, for which both projections, to $X$
+and to $\mathbb{P}^1$, are holomorphic. -/
 class ProductComplexSource where
   [charts : ChartedSpace (TemperedDistributionSectionModels.ComplexCoordinates (n + 1))
     (X × ProjectiveLine)]
