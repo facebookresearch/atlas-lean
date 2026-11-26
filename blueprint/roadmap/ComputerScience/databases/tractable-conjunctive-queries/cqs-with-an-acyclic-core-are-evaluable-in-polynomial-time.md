@@ -8,8 +8,9 @@ Let ACoreCQ be the class of conjunctive queries that have an acyclic core (a cor
 ACoreCQ-Evaluation, the problem of deciding for $q \in$ ACoreCQ, a database $D$ and a tuple $\bar a$ whether
 $\bar a \in q(D)$, is in polynomial time: for a Boolean query $q$ whose core is acyclic, $q(D)$ is true if and only if the
 [$1$-consistency procedure](k-consistency-procedure.md) on $q$ and $D$ does not fail, so neither the core nor a join
-tree is computed. Some conjunctive queries are not
-acyclic although their core is.
+tree is computed. This is the case $k = 1$ of the result for
+cores of bounded generalized hypertreewidth. Some conjunctive queries are not acyclic although their core is, for
+example $R(x, y), R(y, z), R(z, x), R(u, u)$, whose core is $R(u, u)$.
 
 ## Depends on
 
@@ -21,8 +22,8 @@ acyclic although their core is.
 
 ## Proof depends on
 
-- [Conjunctive queries of bounded generalized hypertreewidth are evaluable in polynomial time](bounded-ghw-cqs-are-evaluable-in-polynomial-time.md)
 - [Generalized hypertreewidth at most one is acyclicity](generalized-hypertreewidth-one-is-acyclicity.md)
+- [Conjunctive queries whose core has bounded generalized hypertreewidth](cqs-whose-core-has-bounded-ghw-are-tractable.md)
 
 ## Sources
 

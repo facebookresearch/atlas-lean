@@ -6,7 +6,12 @@ such a homomorphism from $q'$; a core of $q$ is equivalent to $q$ and unique up 
 
 Fix $k \ge 1$. The evaluation problem for the class of conjunctive queries whose core has generalized hypertreewidth
 at most $k$ is solvable in polynomial time: for a Boolean such query $q$ and a database $D$, $q(D)$ is true if and
-only if the $k$-consistency procedure on $q$ and $D$ does not fail.
+only if the $k$-consistency procedure on $q$ and $D$ does not fail. If $q(D)$ is true the procedure does not fail, for
+any $q$. Conversely, the procedure computes the largest family of sets $\mathrm{Cons}_S \subseteq q_S(D)$ that are pairwise
+consistent; if it does not fail on $q$, the sets it keeps for the sets $S$ of atoms of a core $q'$ of $q$ form such a
+family for $q'$ with no empty member, so the procedure does not fail on $q'$, hence $q'(D)$ is true because $q'$ has
+generalized hypertreewidth at most $k$, and $q(D)$ is true because $q \equiv q'$. Neither the core nor a decomposition is
+computed.
 
 ## Depends on
 
@@ -18,7 +23,6 @@ only if the $k$-consistency procedure on $q$ and $D$ does not fail.
 ## Proof depends on
 
 - [Conjunctive queries of bounded generalized hypertreewidth are evaluable in polynomial time](bounded-ghw-cqs-are-evaluable-in-polynomial-time.md)
-- [Conjunctive queries with an acyclic core are evaluable in polynomial time](cqs-with-an-acyclic-core-are-evaluable-in-polynomial-time.md)
 
 ## Sources
 

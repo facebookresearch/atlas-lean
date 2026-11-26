@@ -20,4 +20,4 @@ is false.
 
 ## Sources
 
-- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definitions 39.1 and 39.2 (pp. 368–369), with the constants and nulls of Chapter 39,, Definition 39.3, Proposition 39.4 and Example 39.5 (pp. 370–371).
+- M. Arenas, P. Barceló, L. Libkin, W. Martens and A. Pieris, *Database Theory: Querying Data*, preliminary version of 19 August 2022, open access at <https://github.com/pdm-book/community>, Definitions 39.1 and 39.2 (pp. 368–369), with the constants and nulls of Chapter 39, Definition 39.3, Proposition 39.4 and Example 39.5 (pp. 370–371).
