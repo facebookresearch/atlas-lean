@@ -232,7 +232,7 @@ set_option linter.unusedDecidableInType false in
 avoiding
 `S` form an infinite set, there is an injective ray from `v` avoiding `S`. König, *Theorie der
 endlichen und unendlichen Graphen* (1936). -/
-theorem ray34_konig {V : Type*} [DecidableEq V] (G : SimpleGraph V) [LocallyFinite G]
+lemma ray34_konig {V : Type*} [DecidableEq V] (G : SimpleGraph V) [LocallyFinite G]
     {S : Set V} {v : V} (hv : v ∉ S) (hinf : (ray34_AvoidCluster G S v).Infinite) :
     ∃ r : ℕ → V, r 0 = v ∧ Function.Injective r ∧
       (∀ k, G.Adj (r k) (r (k + 1))) ∧ (∀ k, r k ∉ S) := by

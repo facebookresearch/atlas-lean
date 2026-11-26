@@ -55,7 +55,7 @@ set_option linter.unusedFintypeInType false in
 /-- **Cut-hub count.** In a finite acyclic graph, if each hub reaches three boundary vertices that
 become pairwise disconnected when the edges at the hub are deleted, there are at most as many hubs
 as boundary vertices. -/
-theorem finite_cutHub_count
+lemma finite_cutHub_count
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (hGac : G.IsAcyclic) (hubs boundary : Finset V)
