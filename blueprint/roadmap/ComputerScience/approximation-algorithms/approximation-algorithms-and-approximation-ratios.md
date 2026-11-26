@@ -33,14 +33,19 @@ the encoded pair of the instance and a fair tape whose length is given by a fixe
 Every tape must return a feasible solution. The [expected value](expected-value.md) is the
 uniform average over the tapes, counting tapes separately when their outputs coincide. For
 example, independent fair assignments satisfy each nonempty MAX SAT clause with probability
-at least $1/2$, so the expected number satisfied is at least half the optimum.
+at least $1/2$, so the expected number satisfied is at least half the optimum. Every assignment
+is feasible in MAX SAT; in contrast, the randomized set-cover algorithm in Theorem 1.17 of
+Williamson and Shmoys produces a feasible cover only with high probability.
 
 A [polynomial-time approximation scheme](../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-ptas.md)
-provides guarantees arbitrarily close to exact optimization rather than one fixed ratio. At a
-fixed precision, [the maximization guarantee](approx-at-iff-is-max-approximation.md) is equivalent
-to the scheme's guarantee at that precision, with the same positive rational threshold and a
-polynomial-time specialized solver.
+provides guarantees arbitrarily close to exact optimization rather than one fixed ratio. For
+one fixed unary precision $k$, the [fixed-precision equivalence](approx-at-iff-is-max-approximation.md)
+identifies `ApproxAt` at a rational threshold $0<\alpha\le1$ with the deterministic maximization
+guarantee for $x\mapsto A(x,1^k)$, provided this specialized solver is polynomial time. It does
+not characterize `IsPTAS`, which additionally requires NPO and a polynomial-time pair-input
+solver for every $k\ge1$, possibly a different solver at each $k$. Its schedule $1-1/k$ gives a
+positive threshold for $k\ge2$, but is $0$ at $k=1$ and is then outside the equivalence.
 
 ## Sources
 
-- D. P. Williamson and D. B. Shmoys, *The Design of Approximation Algorithms*, Cambridge University Press, 2011, electronic edition <http://www.designofapproxalgs.com/book.pdf>, Section 1.1: Definition 1.1 ($\alpha$-approximation algorithms, with the performance guarantee also called the approximation ratio or factor, and the convention $\alpha > 1$ for minimization and $\alpha < 1$ for maximization) and Definition 1.2 (polynomial-time approximation schemes); Theorem 1.17 and Theorem 5.1 (randomized approximation algorithms, judged by the expected value of the solution).
+- D. P. Williamson and D. B. Shmoys, *The Design of Approximation Algorithms*, Cambridge University Press, 2011, [electronic edition](https://www.designofapproxalgs.com/book.pdf), §1.1, Definitions 1.1–1.2 (approximation guarantees and schemes); Theorem 5.1 (MAX SAT guarantee in expectation) and Theorem 1.17 (set-cover guarantee with feasibility only with high probability).
