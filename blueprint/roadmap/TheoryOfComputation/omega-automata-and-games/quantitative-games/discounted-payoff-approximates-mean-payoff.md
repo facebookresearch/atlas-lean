@@ -2,7 +2,9 @@
 
 Let $\mathcal{G}$ be a finite [mean-payoff game](classical-quantitative-objectives.md) with $n$ vertices and weights in $[-W, W]$, and $\mathcal{G}_\lambda$ the
 discounted-payoff game with discount factor $\lambda \in (0, 1)$ on the same arena. Then
+
 $$\lVert \mathrm{val} - \mathrm{val}_\lambda \rVert_\infty \le (1 - \lambda) \cdot 2nW.$$
+
 With $\lambda = 1 - 1/(4n^2(n-1)W)$, whose description has polynomially many bits, this bound and the bound on the denominators of
 mean-payoff values let the discounted values determine the mean-payoff values, which reduces solving mean-payoff games to solving
 discounted-payoff games.

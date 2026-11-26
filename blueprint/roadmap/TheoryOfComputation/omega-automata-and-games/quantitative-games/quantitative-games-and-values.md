@@ -5,7 +5,9 @@ A *quantitative game* is an [arena](../muller-rabin-and-streett-games/arenas-str
 induced by a colouring of the edges and an objective on infinite sequences of colours. A strategy $\sigma$ of Max *ensures* $x$
 from $v$ if $f(\pi) \ge x$ for every play $\pi$ from $v$ consistent with $\sigma$, and dually for Min with $f(\pi) \le x$. Writing $\pi^v_{\sigma,\tau}$
 for the play from $v$ consistent with $\sigma$ and $\tau$, the *value of Max* and the *value of Min* from $v$ are
+
 $$\mathrm{val}^{\mathcal{G}}_{\mathrm{Max}}(v) = \sup_\sigma \inf_\tau f(\pi^v_{\sigma,\tau}), \qquad \mathrm{val}^{\mathcal{G}}_{\mathrm{Min}}(v) = \inf_\tau \sup_\sigma f(\pi^v_{\sigma,\tau}),$$
+
 and always $\mathrm{val}^{\mathcal{G}}_{\mathrm{Max}}(v) \le \mathrm{val}^{\mathcal{G}}_{\mathrm{Min}}(v)$. The game is *determined* at $v$ when they are equal, and the common
 number is the *value* $\mathrm{val}^{\mathcal{G}}(v)$. A strategy $\sigma$ of Max is *optimal* from $v$ if $\inf_\tau f(\pi^v_{\sigma,\tau}) = \mathrm{val}^{\mathcal{G}}_{\mathrm{Max}}(v)$, and
 symmetrically for Min. A quantitative objective is *positional* if Max has positional optimal strategies in every game with that

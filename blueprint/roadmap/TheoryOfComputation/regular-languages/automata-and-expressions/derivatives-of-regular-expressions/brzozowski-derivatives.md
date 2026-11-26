@@ -3,8 +3,11 @@
 Regular expressions over an alphabet $\Sigma$ are built from $0$ (empty language), $1$ (empty word), letters $a$, sum $r + s$, concatenation $r \cdot s$
 and star $r^*$, with their usual [languages](../kleene-s-theorem/is-regex-denoted.md) $L(r)$. Let $\mathrm{nullable}(r)$ hold when the empty word is in $L(r)$, computed by
 structural recursion. The *derivative* of $r$ with respect to a letter $a$ is defined by
+
 $$\partial_a 0 = \partial_a 1 = 0,\quad \partial_a b = (1 \text{ if } b = a \text{ else } 0),\quad \partial_a (r + s) = \partial_a r + \partial_a s,\quad \partial_a r^* = \partial_a r \cdot r^*,$$
+
 $$\partial_a (r \cdot s) = \begin{cases} \partial_a r \cdot s + \partial_a s & \text{if } \mathrm{nullable}(r),\\ \partial_a r \cdot s & \text{otherwise,}\end{cases}$$
+
 and extended to words by $\partial_\varepsilon r = r$ and $\partial_{wa} r = \partial_a(\partial_w r)$. By induction on $r$, $L(\partial_a r) = a^{-1} L(r) = \{w : aw \in L(r)\}$, so $w \in L(r)$ if
 and only if $\partial_w r$ is nullable (Brzozowski).
 

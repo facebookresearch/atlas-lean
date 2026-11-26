@@ -2,7 +2,9 @@
 
 Define $\mathrm{pset}$ from regular expressions to finite sets of regular expressions by $\mathrm{pset}\,0 = \emptyset$, $\mathrm{pset}\,1 = \{1\}$, $\mathrm{pset}\,b = \{b\}$,
 $\mathrm{pset}(r + s) = \mathrm{pset}\,r \cup \mathrm{pset}\,s$, $\mathrm{pset}(r \cdot s) = \mathrm{pset}\,r \odot s$ and $\mathrm{pset}(r^*) = \{r^*\}$. Then for every letter $a$ and regular expression $r$,
+
 $$\mathrm{pset}(\partial_a r) = \mathrm{pder}_a r:$$
+
 the [partial derivative](antimirov-partial-derivatives.md) is the [Brzozowski derivative](brzozowski-derivatives.md) with its top-level sums split into a set (Nipkow and Traytel).
 Representing a finite set by an ordered sum, partial derivatives can therefore be simulated on plain regular expressions by a
 normalization that erases $0$s and distributes concatenation over sums on the left; this normalization and ACI equivalence are
