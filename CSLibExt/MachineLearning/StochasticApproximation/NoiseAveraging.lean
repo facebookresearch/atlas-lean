@@ -20,12 +20,12 @@ public import MathlibExt.Probability.SqMartingaleConvergence
 A scalar process driven by step sizes `α t` and noise `w t` follows the recursion
 `W (t + 1) = (1 - α t) * W t + α t * w t`. Tsitsiklis (1994), Lemma 1: if the noise is
 conditionally centered given the past, with conditional second moment at most an envelope `B t`
-that is bounded along almost every path, and the step sizes lie in `[0, 1]`, have a divergent sum
-and have square sums bounded by a deterministic constant, then `W t → 0` almost surely, from any
-initial value. Lemma 2 of the same paper is the restarted form: almost surely, for every `δ > 0`,
-the recursion restarted from `0` at any late enough time stays within `δ` of `0` forever. Both are
-noise-averaging steps of that paper's convergence proofs for asynchronous stochastic
-approximation and Q-learning.
+that is bounded above along almost every path, and the step sizes lie in `[0, 1]`, have a
+divergent sum and have square sums bounded by a deterministic constant, then `W t → 0` almost
+surely, from any initial value. Lemma 2 of the same paper is the restarted form: almost surely,
+for every `δ > 0`, the recursion restarted from `0` at any late enough time stays within `δ` of
+`0` forever. Both are noise-averaging steps of that paper's convergence proofs for asynchronous
+stochastic approximation and Q-learning.
 
 ## Setting and source conditions
 
@@ -35,31 +35,34 @@ and the envelopes `B t` are real and `ℱ t`-measurable, and the noise `w t` is
 Tsitsiklis (1994), Lemma 1, are hypotheses of `ae_tendsto_zero`, each assumed almost surely:
 
 * (a) `E[w t | ℱ t] = 0` and (b) `E[w t ^ 2 | ℱ t] ≤ B t`:
-  `IsCenteredNoise (ℱ t) μ (w t) (B t)`, together with `0 ≤ B t`;
+  `IsCenteredNoise (ℱ t) μ (w t) (B t)`, which reads a negative `B t` as `0` (see Encoding);
 * (c) `α t ∈ [0, 1]`;
 * (d) `∑ t, α t = ∞`: the partial sums `∑ t ∈ Finset.range n, α t` tend to infinity;
 * (e) `∑ t, α t ^ 2 ≤ C` for a deterministic constant `C`: every partial sum of the squares is
   at most `C`;
-* the sequence `B t` is bounded.
+* the sequence `B t` is bounded above.
 
 The recursion is also assumed almost surely. Nothing is assumed about the initial value `W 0`,
-not even integrability.
+not even integrability, and nothing about the sign of `B t`, which the source takes nonnegative.
 
 ## Encoding
 
 The noise need not be integrable, so (a) and (b) use the conditional Lebesgue expectation
 `μ⁻[· | m]` (`MeasureTheory.condLExp`) of `ℝ≥0∞`-valued functions: `IsCenteredNoise m μ w B`
 asks for `μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B` and `μ⁻[ofReal w | m] = μ⁻[ofReal (-w) | m]`, that
-is, equal conditional expectations of the positive and negative parts of `w`. Both sides of the
-centering equality are finite (`IsCenteredNoise.condLExp_abs_lt_top`), so it is a genuine
-centering condition and not an equality `∞ = ∞`. The Bochner conditional expectation `μ[· | m]`
-is `0` for a non-integrable function, and a real `tsum` is `0` for a divergent series, so neither
-is used to state (a), (b), (d) or (e).
+is, equal conditional expectations of the positive and negative parts of `w`. Since
+`ENNReal.ofReal` sends negative numbers to `0`, the first condition bounds the conditional second
+moment by `max B 0`: for a nonnegative envelope it is (b) itself, and where `B < 0` it asks the
+conditional second moment to vanish. Both sides of the centering equality are finite
+(`IsCenteredNoise.condLExp_abs_lt_top`), so it is a genuine centering condition and not an
+equality `∞ = ∞`. The Bochner conditional expectation `μ[· | m]` is `0` for a non-integrable
+function, and a real `tsum` is `0` for a divergent series, so neither is used to state (a), (b),
+(d) or (e).
 
 ## Main definitions
 
 * `IsCenteredNoise m μ w B`: `w` is conditionally centered given `m` and its conditional second
-  moment is at most `B`.
+  moment is at most `max B 0`.
 * `restart α w t₀ n`: the recursion started from `0` at time `t₀`, at time `t₀ + n` (the source's
   `W(t₀ + n; t₀)`).
 
@@ -80,13 +83,14 @@ is used to state (a), (b), (d) or (e).
 
 ## Implementation notes
 
-Fix a level `k`. On the `ℱ t`-measurable event `A k t` on which `B s ≤ k` for all `s ≤ t`,
-`IsCenteredNoise.localize` turns the contract into Bochner moment bounds, so the partial sums of
-`α t * (A k t).indicator (w t)` form a square-integrable martingale whose predictable quadratic
-variation is at most `k * C`. It converges almost surely by
-`MeasureTheory.Martingale.ae_tendsto_of_tendsto_predictableQuadVar`. Where `B t ≤ k` for every
-`t`, this series is `∑ t, α t * w t`; intersecting over `k : ℕ` and applying the deterministic
-lemma `MetaMathlibExt.tendsto_zero_of_averaging_of_tendsto_sum` path by path gives Lemma 1.
+Fix a level `k`. The cutoff is applied at each step: the localized noise at time `t` is
+`{B t ≤ k}.indicator (w t)`, and on this `ℱ t`-measurable event `IsCenteredNoise.localize` turns
+the contract into Bochner moment bounds. So the partial sums of `α t * {B t ≤ k}.indicator (w t)`
+form a square-integrable martingale whose predictable quadratic variation is at most `k * C`. It
+converges almost surely by `MeasureTheory.Martingale.ae_tendsto_of_tendsto_predictableQuadVar`.
+Where `B t ≤ k` for every `t`, this series is `∑ t, α t * w t`; intersecting over `k : ℕ` and
+applying the deterministic lemma `MetaMathlibExt.tendsto_zero_of_averaging_of_tendsto_sum` path
+by path gives Lemma 1.
 Lemma 2 follows from Lemma 1 applied to `restart α w 0`, since
 `restart α w t₀ n = W (t₀ + n) - (∏ s ∈ Finset.range n, (1 - α (t₀ + s))) * W t₀` for any `W`
 that follows the recursion. No Robbins–Siegmund theorem is needed.
@@ -112,45 +116,53 @@ namespace Cslib.MachineLearning.StochasticApproximation.NoiseAveraging
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- **Noise contract** for one step (Tsitsiklis 1994, Lemma 1 (a) and (b)), stated with the
-conditional Lebesgue expectation `μ⁻[· | m]`, so no integrability of `w` is assumed: the
-conditional second moment of `w` given `m` is at most `B`, and the conditional expectations of
-the positive part `ofReal w` and the negative part `ofReal (-w)` agree. It is meant for a
+/-- **Noise contract.** Conditions (a) and (b) of Tsitsiklis (1994), Lemma 1, for one step,
+stated with the conditional Lebesgue expectation `μ⁻[· | m]`, so no integrability of `w` is
+assumed: the conditional second moment of `w` given `m` is at most `max B 0`, and the
+conditional expectations of the positive part `ofReal w` and the negative part `ofReal (-w)`
+agree. The bound is `μ⁻[ofReal (w ^ 2) | m] ≤ ofReal B`, and `ENNReal.ofReal` sends a negative
+`B` to `0`: for a nonnegative envelope `B` it is the bound by `B` itself, while where `B < 0` it
+asks the conditional second moment to vanish, not to be at most `B`. The contract is meant for a
 sub-σ-algebra `m ≤ m0` such that `μ.trim` is σ-finite, which holds for every σ-algebra of a
 filtration under a finite measure. Square-integrable noise with the usual conditions
 `μ[w | m] = 0` and `μ[w ^ 2 | m] ≤ B` satisfies it (`IsCenteredNoise.of_memLp`). -/
 structure IsCenteredNoise (m : MeasurableSpace Ω) (μ : Measure[m0] Ω) (w B : Ω → ℝ) : Prop where
-  /-- Condition (b): the conditional second moment of `w` given `m` is at most `B`. -/
+  /-- Condition (b): the conditional second moment of `w` given `m` is at most `ofReal B`, that
+  is, at most `B` where `B ≥ 0` and `0` where `B < 0`. -/
   condLExp_sq_le : μ⁻[fun ω => ENNReal.ofReal (w ω ^ 2) | m] ≤ᵐ[μ] fun ω => ENNReal.ofReal (B ω)
   /-- Condition (a): the positive and negative parts of `w` have the same conditional
   expectation given `m`. -/
   condLExp_pos_eq_neg :
     μ⁻[fun ω => ENNReal.ofReal (w ω) | m] =ᵐ[μ] μ⁻[fun ω => ENNReal.ofReal (-w ω) | m]
 
-/-- `restart α w t₀ n` is the recursion `W (t + 1) = (1 - α t) * W t + α t * w t` started from
-`0` at time `t₀` and evaluated at time `t₀ + n`: the process `W(t; t₀)` of Tsitsiklis (1994,
-p. 192) at `t = t₀ + n`. -/
+/-- **Restarted recursion.** `restart α w t₀ n` is the recursion
+`W (t + 1) = (1 - α t) * W t + α t * w t` started from `0` at time `t₀` and evaluated at time
+`t₀ + n`: the process `W(t; t₀)` of Tsitsiklis (1994, p. 192) at `t = t₀ + n`. -/
 noncomputable def restart (α w : ℕ → Ω → ℝ) (t₀ : ℕ) : ℕ → Ω → ℝ
   | 0 => fun _ => 0
   | n + 1 => fun ω => (1 - α (t₀ + n) ω) * restart α w t₀ n ω + α (t₀ + n) ω * w (t₀ + n) ω
 
 /-! ### Bridges between the contract and ordinary moment conditions -/
 
-private theorem nsa_aux_s2_abs_le_one_add_sq (x : ℝ) : |x| ≤ 1 + x ^ 2 := by
+private theorem abs_le_one_add_sq (x : ℝ) : |x| ≤ 1 + x ^ 2 := by
   nlinarith [sq_nonneg (|x| - 1), abs_nonneg x, sq_abs x]
 
-/-- Conditional first moments are finite: if `w` satisfies the contract, then
+/-- **Finite conditional first moments.** If `w` satisfies the contract, then
 `μ⁻[ofReal |w| | m] < ∞` almost surely. Hence both sides of
 `IsCenteredNoise.condLExp_pos_eq_neg` are finite almost surely, and that equality is a genuine
 centering condition. -/
-theorem IsCenteredNoise.condLExp_abs_lt_top [IsFiniteMeasure μ] {m : MeasurableSpace Ω}
-    (hm : m ≤ m0) {w B : Ω → ℝ} (hw : IsCenteredNoise m μ w B) :
+theorem IsCenteredNoise.condLExp_abs_lt_top {m : MeasurableSpace Ω} {w B : Ω → ℝ}
+    (hw : IsCenteredNoise m μ w B) :
     ∀ᵐ ω ∂μ, μ⁻[fun ω => ENNReal.ofReal |w ω| | m] ω < ∞ := by
+  by_cases hm : m ≤ m0
+  swap; · simp [condLExp_of_not_le hm]
+  by_cases hσ : SigmaFinite (μ.trim hm)
+  swap; · simp [condLExp_of_not_sigmaFinite hm hσ]
   have hle : (fun ω => ENNReal.ofReal |w ω|) ≤ᵐ[μ]
       (fun ω => ENNReal.ofReal 1 + ENNReal.ofReal (w ω ^ 2)) := by
     filter_upwards with ω
     calc ENNReal.ofReal |w ω| ≤ ENNReal.ofReal (1 + w ω ^ 2) :=
-            ENNReal.ofReal_le_ofReal (nsa_aux_s2_abs_le_one_add_sq _)
+            ENNReal.ofReal_le_ofReal (abs_le_one_add_sq _)
       _ = ENNReal.ofReal 1 + ENNReal.ofReal (w ω ^ 2) :=
             ENNReal.ofReal_add zero_le_one (sq_nonneg _)
   have hmono : μ⁻[fun ω => ENNReal.ofReal |w ω| | m] ≤ᵐ[μ]
@@ -176,10 +188,11 @@ theorem IsCenteredNoise.condLExp_abs_lt_top [IsFiniteMeasure μ] {m : Measurable
   exact lt_of_le_of_lt h
     (ENNReal.add_lt_top.mpr ⟨ENNReal.ofReal_lt_top, ENNReal.ofReal_lt_top⟩)
 
-/-- **Localized moment bridge.** Let `w` satisfy the contract and let `A` be an `m`-measurable
-event on which `B ≤ k`. Then the localized noise `A.indicator w` is square integrable, its
-Bochner conditional expectation given `m` vanishes, and its Bochner conditional second moment is
-at most `k`. The hypothesis `hwm` is measurability for the ambient σ-algebra `m0`. -/
+/-- **Localized moment bridge.** Let `μ` be a finite measure and `m ≤ m0` a sub-σ-algebra, let
+`w` be measurable and satisfy the contract, and let `A` be an `m`-measurable event on which
+`B ≤ k`, for a constant `k ≥ 0`. Then the localized noise `A.indicator w` is square integrable,
+its Bochner conditional expectation given `m` vanishes, and its Bochner conditional second moment
+is at most `k`. Measurability of `w` is for the ambient σ-algebra `m0`. -/
 theorem IsCenteredNoise.localize [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : m ≤ m0)
     {w B : Ω → ℝ} (hwm : Measurable[m0] w)
     (hw : IsCenteredNoise m μ w B) {A : Set Ω} (hA : MeasurableSet[m] A) {k : ℝ} (hk : 0 ≤ k)
@@ -200,7 +213,7 @@ theorem IsCenteredNoise.localize [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (
       rw [h00, ENNReal.ofReal_zero]
   have hpull : μ⁻[A.indicator (fun ω => ENNReal.ofReal (w ω ^ 2)) | m]
       =ᵐ[μ] A.indicator (μ⁻[fun ω => ENNReal.ofReal (w ω ^ 2) | m]) :=
-    condLExp_indicator hm hA hXsq
+    condLExp_indicator hA hXsq
   have hle : μ⁻[A.indicator (fun ω => ENNReal.ofReal (w ω ^ 2)) | m] ≤ᵐ[μ]
       fun _ => ENNReal.ofReal k := by
     filter_upwards [hpull, hw.condLExp_sq_le] with ω hp hsq
@@ -227,10 +240,7 @@ theorem IsCenteredNoise.localize [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (
   have hmem : MemLp (A.indicator w) 2 μ := by
     rw [memLp_two_iff_integrable_sq hw_ind.aestronglyMeasurable]
     exact hsq_int
-  have hq1 : (1 : ℝ≥0∞) ≤ 2 := by
-    rw [← one_add_one_eq_two]
-    exact le_add_of_nonneg_right zero_le_one
-  have hg_int : Integrable (A.indicator w) μ := hmem.integrable hq1
+  have hg_int : Integrable (A.indicator w) μ := hmem.integrable one_le_two
   have hcond0 : μ[A.indicator w | m] =ᵐ[μ] 0 := by
     have h0 : (0 : Ω → ℝ) =ᵐ[μ] μ[A.indicator w | m] := by
       refine ae_eq_condExp_of_forall_setIntegral_eq hm hg_int ?_ ?_ ?_
@@ -317,16 +327,14 @@ theorem IsCenteredNoise.localize [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (
     exact (ENNReal.ofReal_le_ofReal_iff hk).mp h
   exact ⟨hmem, hcond0, hcondle⟩
 
-/-- Square-integrable noise with the usual conditional moment conditions, `μ[w | m] = 0` and
-`μ[w ^ 2 | m] ≤ B` almost surely, satisfies the contract. -/
+/-- **Square-integrable noise satisfies the contract.** Under a finite measure `μ`, if `w` is
+square integrable with the usual conditional moment conditions, `μ[w | m] = 0` and
+`μ[w ^ 2 | m] ≤ B` almost surely, then `IsCenteredNoise m μ w B`. -/
 theorem IsCenteredNoise.of_memLp [IsFiniteMeasure μ] {m : MeasurableSpace Ω}
     {w B : Ω → ℝ} (hw2 : MemLp w 2 μ) (hmean : μ[w | m] =ᵐ[μ] 0)
     (hsq : μ[fun ω => w ω ^ 2 | m] ≤ᵐ[μ] B) :
     IsCenteredNoise m μ w B := by
-  have hq1 : (1 : ℝ≥0∞) ≤ 2 := by
-    rw [← one_add_one_eq_two]
-    exact le_add_of_nonneg_right zero_le_one
-  have hw_int : Integrable w μ := hw2.integrable hq1
+  have hw_int : Integrable w μ := hw2.integrable one_le_two
   have hsq_int : Integrable (fun ω => w ω ^ 2) μ := hw2.integrable_sq
   have hwfin : ∫⁻ x, ‖w x‖ₑ ∂μ < ∞ := hw_int.2
   refine ⟨?_, ?_⟩
@@ -410,11 +418,12 @@ theorem IsCenteredNoise.of_memLp [IsFiniteMeasure μ] {m : MeasurableSpace Ω}
       have e2 : μ⁻[fun ω => ENNReal.ofReal (-w ω) | m] = 0 := condLExp_of_not_le hm
       rw [e1, e2]
 
-/-- **Predictable positive-scaling bridge.** If `w` satisfies the contract with envelope `B`, and
-`G` is `m`-measurable with `G ≥ G₀ > 0` almost surely, then `w / G` satisfies the contract with
-envelope `B / G ^ 2`. This is the rescaled noise `w(t) / G(t)` of Tsitsiklis (1994, pp. 191–192,
-proof of Theorem 1). The hypothesis `hwm` is measurability for the ambient σ-algebra `m0`. -/
-theorem IsCenteredNoise.div [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : m ≤ m0)
+/-- **Predictable positive-scaling bridge.** If `w` is measurable and satisfies the contract with
+envelope `B`, and `G` is `m`-measurable with `G ≥ G₀` almost surely for a constant `G₀ > 0`, then
+`w / G` satisfies the contract with envelope `B / G ^ 2`. This is the rescaled noise
+`w(t) / G(t)` of Tsitsiklis (1994, pp. 191–192, proof of Theorem 1). Measurability of `w` is for
+the ambient σ-algebra `m0`. -/
+theorem IsCenteredNoise.div {m : MeasurableSpace Ω}
     {w B G : Ω → ℝ} {G₀ : ℝ} (hwm : Measurable[m0] w) (hGm : StronglyMeasurable[m] G)
     (hG₀ : 0 < G₀) (hG : ∀ᵐ ω ∂μ, G₀ ≤ G ω) (hw : IsCenteredNoise m μ w B) :
     IsCenteredNoise m μ (fun ω => w ω / G ω) (fun ω => B ω / G ω ^ 2) := by
@@ -453,7 +462,7 @@ theorem IsCenteredNoise.div [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : 
     have hpull1 :
         μ⁻[(fun ω => ENNReal.ofReal (1 / G ω ^ 2)) * (fun ω => ENNReal.ofReal (w ω ^ 2)) | m]
         =ᵐ[μ] (fun ω => ENNReal.ofReal (1 / G ω ^ 2)) * μ⁻[fun ω => ENNReal.ofReal (w ω ^ 2) | m] :=
-      condLExp_mul_of_measurable_left hm hInv2E hXsq
+      condLExp_mul_of_measurable_left hInv2E hXsq
     have heq1 : μ⁻[fun ω => ENNReal.ofReal ((w ω / G ω) ^ 2) | m] =ᵐ[μ]
         (fun ω => ENNReal.ofReal (1 / G ω ^ 2)) * μ⁻[fun ω => ENNReal.ofReal (w ω ^ 2) | m] :=
       (condLExp_congr_ae hcongr1).trans hpull1
@@ -494,16 +503,16 @@ theorem IsCenteredNoise.div [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : 
       rw [halb, ENNReal.ofReal_mul hnn, Pi.mul_apply]
     have hpullL : μ⁻[(fun ω => ENNReal.ofReal (1 / G ω)) * (fun ω => ENNReal.ofReal (w ω)) | m]
         =ᵐ[μ] (fun ω => ENNReal.ofReal (1 / G ω)) * μ⁻[fun ω => ENNReal.ofReal (w ω) | m] :=
-      condLExp_mul_of_measurable_left hm hInvE hXpos
+      condLExp_mul_of_measurable_left hInvE hXpos
     have hpullR : μ⁻[(fun ω => ENNReal.ofReal (1 / G ω)) * (fun ω => ENNReal.ofReal (-w ω)) | m]
         =ᵐ[μ] (fun ω => ENNReal.ofReal (1 / G ω)) * μ⁻[fun ω => ENNReal.ofReal (-w ω) | m] :=
-      condLExp_mul_of_measurable_left hm hInvE hXneg
+      condLExp_mul_of_measurable_left hInvE hXneg
     calc μ⁻[fun ω => ENNReal.ofReal (w ω / G ω) | m]
         =ᵐ[μ] (fun ω => ENNReal.ofReal (1 / G ω)) * μ⁻[fun ω => ENNReal.ofReal (w ω) | m] :=
           (condLExp_congr_ae hcongrL).trans hpullL
       _ =ᵐ[μ] (fun ω => ENNReal.ofReal (1 / G ω)) * μ⁻[fun ω => ENNReal.ofReal (-w ω) | m] := by
           filter_upwards [hw.condLExp_pos_eq_neg] with ω h
-          show ENNReal.ofReal (1 / G ω) * μ⁻[fun ω => ENNReal.ofReal (w ω) | m] ω
+          change ENNReal.ofReal (1 / G ω) * μ⁻[fun ω => ENNReal.ofReal (w ω) | m] ω
             = ENNReal.ofReal (1 / G ω) * μ⁻[fun ω => ENNReal.ofReal (-w ω) | m] ω
           rw [h]
       _ =ᵐ[μ] μ⁻[fun ω => ENNReal.ofReal (-(w ω / G ω)) | m] :=
@@ -511,41 +520,41 @@ theorem IsCenteredNoise.div [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : 
 
 variable [IsProbabilityMeasure μ] {ℱ : Filtration ℕ m0} {α w B W : ℕ → Ω → ℝ} {C : ℝ}
 
-private noncomputable def nsa_aux_s3_wk (B w : ℕ → Ω → ℝ) (k : ℝ) (t : ℕ) : Ω → ℝ :=
+private noncomputable def localizedNoise (B w : ℕ → Ω → ℝ) (k : ℝ) (t : ℕ) : Ω → ℝ :=
   {ω | B t ω ≤ k}.indicator (w t)
 
-private noncomputable def nsa_aux_s3_M (α B w : ℕ → Ω → ℝ) (k : ℝ) (n : ℕ) : Ω → ℝ :=
-  ∑ t ∈ Finset.range n, (α t * nsa_aux_s3_wk B w k t)
+private noncomputable def localizedSum (α B w : ℕ → Ω → ℝ) (k : ℝ) (n : ℕ) : Ω → ℝ :=
+  ∑ t ∈ Finset.range n, (α t * localizedNoise B w k t)
 
-private theorem nsa_aux_s3_diff (α B w : ℕ → Ω → ℝ) (k : ℝ) (i : ℕ) :
-    nsa_aux_s3_M α B w k (i + 1) - nsa_aux_s3_M α B w k i
-      = α i * nsa_aux_s3_wk B w k i := by
+private theorem localizedSum_succ_sub (α B w : ℕ → Ω → ℝ) (k : ℝ) (i : ℕ) :
+    localizedSum α B w k (i + 1) - localizedSum α B w k i
+      = α i * localizedNoise B w k i := by
   funext ω
-  simp only [nsa_aux_s3_M, Pi.sub_apply, Finset.sum_apply, Finset.sum_range_succ,
+  simp only [localizedSum, Pi.sub_apply, Finset.sum_apply, Finset.sum_range_succ,
     Pi.mul_apply, Pi.add_apply]
   ring
 
-private theorem nsa_aux_s3_measSet {Ω : Type*} {m0 : MeasurableSpace Ω}
+private theorem measurableSet_envelope_le {Ω : Type*} {m0 : MeasurableSpace Ω}
     {ℱ : Filtration ℕ m0} {B : ℕ → Ω → ℝ}
     (hB_adapted : StronglyAdapted ℱ B) (t : ℕ) (k : ℕ) :
     MeasurableSet[ℱ t] {ω | B t ω ≤ (k : ℝ)} :=
   measurableSet_le (hB_adapted t).measurable measurable_const
 
-private theorem nsa_aux_s3_localize {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
+private theorem localizedNoise_moments {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {ℱ : Filtration ℕ m0} {w B : ℕ → Ω → ℝ}
     (hB_adapted : StronglyAdapted ℱ B)
     (hw_meas : ∀ t, StronglyMeasurable[ℱ (t + 1)] (w t))
     (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t))
     (t : ℕ) (k : ℕ) :
-    MemLp (nsa_aux_s3_wk B w ↑k t) 2 μ
-      ∧ μ[nsa_aux_s3_wk B w ↑k t | ℱ t] =ᵐ[μ] 0
-      ∧ μ[fun ω => nsa_aux_s3_wk B w ↑k t ω ^ 2 | ℱ t] ≤ᵐ[μ] fun _ => (k : ℝ) := by
-  have hA := nsa_aux_s3_measSet hB_adapted t k
+    MemLp (localizedNoise B w ↑k t) 2 μ
+      ∧ μ[localizedNoise B w ↑k t | ℱ t] =ᵐ[μ] 0
+      ∧ μ[fun ω => localizedNoise B w ↑k t ω ^ 2 | ℱ t] ≤ᵐ[μ] fun _ => (k : ℝ) := by
+  have hA := measurableSet_envelope_le hB_adapted t k
   have hw0 : Measurable[m0] (w t) := ((hw_meas t).mono (ℱ.le (t + 1))).measurable
   exact (hw t).localize (ℱ.le t) hw0 hA (Nat.cast_nonneg k) (fun ω h => h)
 
-private theorem nsa_aux_s3_alpha {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {ℱ : Filtration ℕ m0} {α : ℕ → Ω → ℝ}
+private theorem stepSize_bounds {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
+    {ℱ : Filtration ℕ m0} {α : ℕ → Ω → ℝ}
     (hα_adapted : StronglyAdapted ℱ α)
     (hα01 : ∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1) (t : ℕ) :
     AEStronglyMeasurable (α t) μ ∧ (∀ᵐ ω ∂μ, ‖α t ω‖ ≤ (1 : ℝ))
@@ -562,25 +571,25 @@ private theorem nsa_aux_s3_alpha {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Me
     rw [Pi.pow_apply, Real.norm_eq_abs, abs_of_nonneg (sq_nonneg (α t ω))]
     exact h2
 
-private theorem nsa_aux_s3_martingale {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
+private theorem martingale_localizedSum {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {ℱ : Filtration ℕ m0} {α w B : ℕ → Ω → ℝ}
     (hα_adapted : StronglyAdapted ℱ α) (hB_adapted : StronglyAdapted ℱ B)
     (hw_meas : ∀ t, StronglyMeasurable[ℱ (t + 1)] (w t))
     (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t))
     (hα01 : ∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1) (k : ℕ) :
-    Martingale (nsa_aux_s3_M α B w ↑k) ℱ μ := by
-  have hmem : ∀ t, MemLp (nsa_aux_s3_wk B w ↑k t) 2 μ :=
-    fun t => (nsa_aux_s3_localize hB_adapted hw_meas hw t k).1
-  have hmean : ∀ t, μ[nsa_aux_s3_wk B w ↑k t | ℱ t] =ᵐ[μ] 0 :=
-    fun t => (nsa_aux_s3_localize hB_adapted hw_meas hw t k).2.1
-  have hα := fun t => nsa_aux_s3_alpha hα_adapted hα01 t
-  have hwk_int : ∀ t, Integrable (nsa_aux_s3_wk B w ↑k t) μ :=
+    Martingale (localizedSum α B w ↑k) ℱ μ := by
+  have hmem : ∀ t, MemLp (localizedNoise B w ↑k t) 2 μ :=
+    fun t => (localizedNoise_moments hB_adapted hw_meas hw t k).1
+  have hmean : ∀ t, μ[localizedNoise B w ↑k t | ℱ t] =ᵐ[μ] 0 :=
+    fun t => (localizedNoise_moments hB_adapted hw_meas hw t k).2.1
+  have hα := fun t => stepSize_bounds hα_adapted hα01 t
+  have hwk_int : ∀ t, Integrable (localizedNoise B w ↑k t) μ :=
     fun t => (hmem t).integrable (by norm_num)
-  have hterm_int : ∀ t, Integrable (α t * nsa_aux_s3_wk B w ↑k t) μ := fun t =>
+  have hterm_int : ∀ t, Integrable (α t * localizedNoise B w ↑k t) μ := fun t =>
     Integrable.bdd_mul (hwk_int t) (hα t).1 (hα t).2.1
-  have hadp : StronglyAdapted ℱ (nsa_aux_s3_M α B w ↑k) := fun n => by
-    show StronglyMeasurable[ℱ n]
-      (∑ t ∈ Finset.range n, (α t * nsa_aux_s3_wk B w ↑k t))
+  have hadp : StronglyAdapted ℱ (localizedSum α B w ↑k) := fun n => by
+    change StronglyMeasurable[ℱ n]
+      (∑ t ∈ Finset.range n, (α t * localizedNoise B w ↑k t))
     refine Finset.stronglyMeasurable_sum _ (fun t ht => ?_)
     have htn : t < n := Finset.mem_range.mp ht
     have hαn : StronglyMeasurable[ℱ n] (α t) :=
@@ -592,21 +601,21 @@ private theorem nsa_aux_s3_martingale {Ω : Type*} {m0 : MeasurableSpace Ω} {μ
     have hAn : MeasurableSet[ℱ n] {ω | B t ω ≤ (k : ℝ)} :=
       measurableSet_le hBtn.measurable measurable_const
     exact hαn.mul (hwn.indicator hAn)
-  have hint : ∀ n, Integrable (nsa_aux_s3_M α B w ↑k n) μ := fun n => by
-    show Integrable (∑ t ∈ Finset.range n, (α t * nsa_aux_s3_wk B w ↑k t)) μ
+  have hint : ∀ n, Integrable (localizedSum α B w ↑k n) μ := fun n => by
+    change Integrable (∑ t ∈ Finset.range n, (α t * localizedNoise B w ↑k t)) μ
     exact integrable_finsetSum' _ (fun t _ => hterm_int t)
-  have hsub : ∀ i, μ[nsa_aux_s3_M α B w ↑k (i + 1) - nsa_aux_s3_M α B w ↑k i
+  have hsub : ∀ i, μ[localizedSum α B w ↑k (i + 1) - localizedSum α B w ↑k i
       | ℱ i] =ᵐ[μ] 0 := fun i => by
-    rw [nsa_aux_s3_diff]
-    calc μ[α i * nsa_aux_s3_wk B w ↑k i | ℱ i]
-        =ᵐ[μ] α i * μ[nsa_aux_s3_wk B w ↑k i | ℱ i] :=
+    rw [localizedSum_succ_sub]
+    calc μ[α i * localizedNoise B w ↑k i | ℱ i]
+        =ᵐ[μ] α i * μ[localizedNoise B w ↑k i | ℱ i] :=
           condExp_mul_of_stronglyMeasurable_left (hα_adapted i) (hterm_int i)
             (hwk_int i)
       _ =ᵐ[μ] α i * 0 := (hmean i).mul_left
       _ = 0 := by simp
   exact martingale_of_condExp_sub_eq_zero_nat hadp hint hsub
 
-private theorem nsa_aux_s3_tendsto {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
+private theorem ae_exists_tendsto_localizedSum {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {ℱ : Filtration ℕ m0} {α w B : ℕ → Ω → ℝ} {C : ℝ}
     (hα_adapted : StronglyAdapted ℱ α) (hB_adapted : StronglyAdapted ℱ B)
     (hw_meas : ∀ t, StronglyMeasurable[ℱ (t + 1)] (w t))
@@ -614,57 +623,57 @@ private theorem nsa_aux_s3_tendsto {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : 
     (hα01 : ∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1)
     (hα_sq : ∀ᵐ ω ∂μ, ∀ n, ∑ t ∈ Finset.range n, α t ω ^ 2 ≤ C)
     (k : ℕ) :
-    ∀ᵐ ω ∂μ, ∃ l, Tendsto (fun n => nsa_aux_s3_M α B w ↑k n ω) atTop (𝓝 l) := by
-  have hmem : ∀ t, MemLp (nsa_aux_s3_wk B w ↑k t) 2 μ :=
-    fun t => (nsa_aux_s3_localize hB_adapted hw_meas hw t k).1
-  have hsqc : ∀ t, μ[fun ω => nsa_aux_s3_wk B w ↑k t ω ^ 2 | ℱ t] ≤ᵐ[μ]
+    ∀ᵐ ω ∂μ, ∃ l, Tendsto (fun n => localizedSum α B w ↑k n ω) atTop (𝓝 l) := by
+  have hmem : ∀ t, MemLp (localizedNoise B w ↑k t) 2 μ :=
+    fun t => (localizedNoise_moments hB_adapted hw_meas hw t k).1
+  have hsqc : ∀ t, μ[fun ω => localizedNoise B w ↑k t ω ^ 2 | ℱ t] ≤ᵐ[μ]
       fun _ => (k : ℝ) :=
-    fun t => (nsa_aux_s3_localize hB_adapted hw_meas hw t k).2.2
-  have hα := fun t => nsa_aux_s3_alpha hα_adapted hα01 t
-  have hwk2_int : ∀ t, Integrable (fun ω => nsa_aux_s3_wk B w ↑k t ω ^ 2) μ :=
+    fun t => (localizedNoise_moments hB_adapted hw_meas hw t k).2.2
+  have hα := fun t => stepSize_bounds hα_adapted hα01 t
+  have hwk2_int : ∀ t, Integrable (fun ω => localizedNoise B w ↑k t ω ^ 2) μ :=
     fun t => (memLp_two_iff_integrable_sq (hmem t).aestronglyMeasurable).mp (hmem t)
   have hprod_int : ∀ t,
-      Integrable ((α t) ^ 2 * (fun ω => nsa_aux_s3_wk B w ↑k t ω ^ 2)) μ :=
+      Integrable ((α t) ^ 2 * (fun ω => localizedNoise B w ↑k t ω ^ 2)) μ :=
     fun t => by
-      show Integrable (fun ω => ((α t) ^ 2) ω * nsa_aux_s3_wk B w ↑k t ω ^ 2) μ
+      change Integrable (fun ω => ((α t) ^ 2) ω * localizedNoise B w ↑k t ω ^ 2) μ
       exact Integrable.bdd_mul (hwk2_int t) (hα t).2.2.1 (hα t).2.2.2
-  have hQeq : ∀ t, (fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-        - nsa_aux_s3_M α B w ↑k t ω') ^ 2)
-      = (α t) ^ 2 * (fun ω => nsa_aux_s3_wk B w ↑k t ω ^ 2) := fun t => by
+  have hQeq : ∀ t, (fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+        - localizedSum α B w ↑k t ω') ^ 2)
+      = (α t) ^ 2 * (fun ω => localizedNoise B w ↑k t ω ^ 2) := fun t => by
     funext ω'
-    have h := congrFun (nsa_aux_s3_diff α B w ↑k t) ω'
+    have h := congrFun (localizedSum_succ_sub α B w ↑k t) ω'
     simp only [Pi.sub_apply, Pi.mul_apply] at h
     rw [h, mul_pow, Pi.mul_apply, Pi.pow_apply]
-  have hpull2 : ∀ t, μ[fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-        - nsa_aux_s3_M α B w ↑k t ω') ^ 2 | ℱ t]
-      =ᵐ[μ] (α t) ^ 2 * μ[fun ω => nsa_aux_s3_wk B w ↑k t ω ^ 2 | ℱ t] :=
+  have hpull2 : ∀ t, μ[fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+        - localizedSum α B w ↑k t ω') ^ 2 | ℱ t]
+      =ᵐ[μ] (α t) ^ 2 * μ[fun ω => localizedNoise B w ↑k t ω ^ 2 | ℱ t] :=
     fun t => by
       rw [hQeq t]
       exact condExp_mul_of_stronglyMeasurable_left ((hα_adapted t).pow 2)
         (hprod_int t) (hwk2_int t)
-  have hQ : ∀ t, ∀ᵐ ω ∂μ, 0 ≤ (μ[fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-        - nsa_aux_s3_M α B w ↑k t ω') ^ 2 | ℱ t]) ω
-        ∧ (μ[fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-          - nsa_aux_s3_M α B w ↑k t ω') ^ 2 | ℱ t]) ω
+  have hQ : ∀ t, ∀ᵐ ω ∂μ, 0 ≤ (μ[fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+        - localizedSum α B w ↑k t ω') ^ 2 | ℱ t]) ω
+        ∧ (μ[fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+          - localizedSum α B w ↑k t ω') ^ 2 | ℱ t]) ω
           ≤ (α t ω) ^ 2 * (k : ℝ) := fun t => by
-    have hnn : ∀ᵐ ω ∂μ, 0 ≤ (μ[fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-        - nsa_aux_s3_M α B w ↑k t ω') ^ 2 | ℱ t]) ω :=
+    have hnn : ∀ᵐ ω ∂μ, 0 ≤ (μ[fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+        - localizedSum α B w ↑k t ω') ^ 2 | ℱ t]) ω :=
       condExp_nonneg (Eventually.of_forall (fun ω' => sq_nonneg _))
-    have hle : ∀ᵐ ω ∂μ, (μ[fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-        - nsa_aux_s3_M α B w ↑k t ω') ^ 2 | ℱ t]) ω
+    have hle : ∀ᵐ ω ∂μ, (μ[fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+        - localizedSum α B w ↑k t ω') ^ 2 | ℱ t]) ω
         ≤ (α t ω) ^ 2 * (k : ℝ) := by
       filter_upwards [hpull2 t, hsqc t] with ω heqω hsqω
       rw [heqω, Pi.mul_apply, Pi.pow_apply]
       exact mul_le_mul_of_nonneg_left hsqω (sq_nonneg _)
     exact hnn.and hle
-  have hQall : ∀ᵐ ω ∂μ, ∀ t, 0 ≤ (μ[fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-        - nsa_aux_s3_M α B w ↑k t ω') ^ 2 | ℱ t]) ω
-        ∧ (μ[fun ω' => (nsa_aux_s3_M α B w ↑k (t + 1) ω'
-          - nsa_aux_s3_M α B w ↑k t ω') ^ 2 | ℱ t]) ω
+  have hQall : ∀ᵐ ω ∂μ, ∀ t, 0 ≤ (μ[fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+        - localizedSum α B w ↑k t ω') ^ 2 | ℱ t]) ω
+        ∧ (μ[fun ω' => (localizedSum α B w ↑k (t + 1) ω'
+          - localizedSum α B w ↑k t ω') ^ 2 | ℱ t]) ω
           ≤ (α t ω) ^ 2 * (k : ℝ) :=
     ae_all_iff.mpr hQ
   have hquad : ∀ᵐ ω ∂μ, ∃ l, Tendsto
-      (fun n => predictableQuadraticVariation μ ℱ (nsa_aux_s3_M α B w ↑k) n ω)
+      (fun n => predictableQuadraticVariation μ ℱ (localizedSum α B w ↑k) n ω)
       atTop (𝓝 l) := by
     filter_upwards [hQall, hα_sq] with ω hQω hsqω
     refine ⟨_, tendsto_atTop_ciSup ?_ ?_⟩
@@ -676,8 +685,8 @@ private theorem nsa_aux_s3_tendsto {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : 
     · refine ⟨(k : ℝ) * C, ?_⟩
       rintro _ ⟨n, rfl⟩
       simp only [predictableQuadraticVariation]
-      calc ∑ j ∈ Finset.range n, (μ[fun ω' => (nsa_aux_s3_M α B w ↑k (j + 1) ω'
-              - nsa_aux_s3_M α B w ↑k j ω') ^ 2 | ℱ j]) ω
+      calc ∑ j ∈ Finset.range n, (μ[fun ω' => (localizedSum α B w ↑k (j + 1) ω'
+              - localizedSum α B w ↑k j ω') ^ 2 | ℱ j]) ω
             ≤ ∑ j ∈ Finset.range n, ((α j ω) ^ 2 * (k : ℝ)) :=
               Finset.sum_le_sum (fun j _ => (hQω j).2)
         _ = (∑ j ∈ Finset.range n, (α j ω) ^ 2) * (k : ℝ) := by
@@ -685,24 +694,24 @@ private theorem nsa_aux_s3_tendsto {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : 
         _ ≤ C * (k : ℝ) :=
               mul_le_mul_of_nonneg_right (hsqω n) (Nat.cast_nonneg k)
         _ = (k : ℝ) * C := mul_comm _ _
-  have hmem2 : ∀ t, MemLp (α t * nsa_aux_s3_wk B w ↑k t) 2 μ := fun t => by
+  have hmem2 : ∀ t, MemLp (α t * localizedNoise B w ↑k t) 2 μ := fun t => by
     refine (memLp_two_iff_integrable_sq ?_).mpr ?_
     · have hαm0 : StronglyMeasurable[m0] (α t) := (hα_adapted t).mono (ℱ.le t)
       have hwm0 : StronglyMeasurable[m0] (w t) := (hw_meas t).mono (ℱ.le (t + 1))
       have hBm0 : StronglyMeasurable[m0] (B t) := (hB_adapted t).mono (ℱ.le t)
       have hAm0 : MeasurableSet[m0] {ω | B t ω ≤ (k : ℝ)} :=
         measurableSet_le hBm0.measurable measurable_const
-      have hwkm0 : StronglyMeasurable[m0] (nsa_aux_s3_wk B w ↑k t) :=
+      have hwkm0 : StronglyMeasurable[m0] (localizedNoise B w ↑k t) :=
         hwm0.indicator hAm0
       exact (hαm0.mul hwkm0).aestronglyMeasurable
-    · have hfeq : (fun ω => ((α t * nsa_aux_s3_wk B w ↑k t) ω) ^ 2)
-          = fun ω => ((α t) ^ 2) ω * nsa_aux_s3_wk B w ↑k t ω ^ 2 := by
+    · have hfeq : (fun ω => ((α t * localizedNoise B w ↑k t) ω) ^ 2)
+          = fun ω => ((α t) ^ 2) ω * localizedNoise B w ↑k t ω ^ 2 := by
         funext ω
         simp only [Pi.mul_apply, Pi.pow_apply, mul_pow]
       rw [hfeq]
       exact Integrable.bdd_mul (hwk2_int t) (hα t).2.2.1 (hα t).2.2.2
-  have hMmem : ∀ n, MemLp (nsa_aux_s3_M α B w ↑k n) 2 μ := fun n => by
-    show MemLp (∑ t ∈ Finset.range n, (α t * nsa_aux_s3_wk B w ↑k t)) 2 μ
+  have hMmem : ∀ n, MemLp (localizedSum α B w ↑k n) 2 μ := fun n => by
+    change MemLp (∑ t ∈ Finset.range n, (α t * localizedNoise B w ↑k t)) 2 μ
     induction n with
     | zero =>
       simp only [Finset.range_zero, Finset.sum_empty]
@@ -710,39 +719,37 @@ private theorem nsa_aux_s3_tendsto {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : 
     | succ n ih =>
       rw [Finset.sum_range_succ]
       exact ih.add (hmem2 n)
-  have hinteg : ∀ n, Integrable (fun ω => (nsa_aux_s3_M α B w ↑k n ω) ^ 2) μ :=
+  have hinteg : ∀ n, Integrable (fun ω => (localizedSum α B w ↑k n ω) ^ 2) μ :=
     fun n => (memLp_two_iff_integrable_sq (hMmem n).aestronglyMeasurable).mp
       (hMmem n)
-  have hmart := nsa_aux_s3_martingale hα_adapted hB_adapted hw_meas hw hα01 k
+  have hmart := martingale_localizedSum hα_adapted hB_adapted hw_meas hw hα01 k
   have hprov := MeasureTheory.Martingale.ae_tendsto_of_tendsto_predictableQuadVar
     hmart hinteg
   filter_upwards [hprov, hquad] with ω h1 h2
   exact h1 h2
 
-/-- **Tsitsiklis (1994), Lemma 1.** Let `W (t + 1) = (1 - α t) * W t + α t * w t` almost surely,
-where the step sizes `α t` and the envelopes `B t` are `ℱ t`-measurable and the noise `w t` is
-`ℱ (t + 1)`-measurable. Suppose that (a), (b) the noise `w t` is conditionally centered given
-`ℱ t`, with conditional second moment at most `B t` (`IsCenteredNoise`), and that almost surely
-`0 ≤ B t`, (c) `α t ∈ [0, 1]`, (d) `∑ t, α t = ∞`, (e) every partial sum of `α t ^ 2` is at most
-the deterministic constant `C`, and the sequence `B t` is bounded. Then `W t → 0` almost surely,
-for any initial value `W 0`. The hypothesis `hB_nonneg` records that the source's envelope is
-nonnegative; the conclusion holds without it. -/
+/-- **Tsitsiklis (1994), Lemma 1.** On a probability space with a filtration `ℱ` indexed by `ℕ`,
+let `W (t + 1) = (1 - α t) * W t + α t * w t` almost surely, where the step sizes `α t` and the
+envelopes `B t` are `ℱ t`-measurable and the noise `w t` is `ℱ (t + 1)`-measurable. Suppose that
+(a), (b) for every `t` the noise `w t` is conditionally centered given `ℱ t`, with conditional
+second moment at most `max (B t) 0` (`IsCenteredNoise`), and that almost surely (c) `α t ∈ [0, 1]`
+for every `t`, (d) `∑ t, α t = ∞`, (e) every partial sum of `α t ^ 2` is at most the
+deterministic constant `C`, and the sequence `B t` is bounded above. Then `W t → 0` almost
+surely, for any initial value `W 0`. -/
 theorem ae_tendsto_zero
     (hα_adapted : StronglyAdapted ℱ α) (hB_adapted : StronglyAdapted ℱ B)
     (hw_meas : ∀ t, StronglyMeasurable[ℱ (t + 1)] (w t))
     (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t)) -- (a), (b)
-    (hB_nonneg : ∀ᵐ ω ∂μ, ∀ t, 0 ≤ B t ω)
     (hα01 : ∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1) -- (c)
     (hα_div : ∀ᵐ ω ∂μ, Tendsto (fun n => ∑ t ∈ Finset.range n, α t ω) atTop atTop) -- (d)
     (hα_sq : ∀ᵐ ω ∂μ, ∀ n, ∑ t ∈ Finset.range n, α t ω ^ 2 ≤ C) -- (e)
     (hB_bdd : ∀ᵐ ω ∂μ, BddAbove (Set.range fun t => B t ω))
     (hW : ∀ᵐ ω ∂μ, ∀ t, W (t + 1) ω = (1 - α t ω) * W t ω + α t ω * w t ω) :
     ∀ᵐ ω ∂μ, Tendsto (fun t => W t ω) atTop (𝓝 0) := by
-  have _hB_nonneg := hB_nonneg
   have hall : ∀ᵐ ω ∂μ, ∀ k : ℕ, ∃ l,
-      Tendsto (fun n => nsa_aux_s3_M α B w ↑k n ω) atTop (𝓝 l) :=
+      Tendsto (fun n => localizedSum α B w ↑k n ω) atTop (𝓝 l) :=
     ae_all_iff.mpr
-      (fun k => nsa_aux_s3_tendsto hα_adapted hB_adapted hw_meas hw hα01 hα_sq k)
+      (fun k => ae_exists_tendsto_localizedSum hα_adapted hB_adapted hw_meas hw hα01 hα_sq k)
   filter_upwards [hall, hα01, hα_div, hW, hB_bdd] with ω hallω hα01ω hαdivω hWω
     hBddω
   obtain ⟨K, hK⟩ := hBddω
@@ -750,23 +757,23 @@ theorem ae_tendsto_zero
   have hkle : ∀ t, B t ω ≤ ((Nat.ceil (max K 0) : ℕ) : ℝ) := fun t =>
     le_trans (hKt t) (le_trans (le_max_left K 0) (Nat.le_ceil _))
   obtain ⟨l, hl⟩ := hallω (Nat.ceil (max K 0))
-  have hMeq : ∀ n, nsa_aux_s3_M α B w ↑(Nat.ceil (max K 0)) n ω
+  have hMeq : ∀ n, localizedSum α B w ↑(Nat.ceil (max K 0)) n ω
       = ∑ t ∈ Finset.range n, α t ω * w t ω := fun n => by
-    show (∑ t ∈ Finset.range n, (α t * nsa_aux_s3_wk B w ↑(Nat.ceil (max K 0)) t)) ω
+    change (∑ t ∈ Finset.range n, (α t * localizedNoise B w ↑(Nat.ceil (max K 0)) t)) ω
       = _
     rw [Finset.sum_apply]
     refine Finset.sum_congr rfl (fun t _ => ?_)
-    show (α t * nsa_aux_s3_wk B w ↑(Nat.ceil (max K 0)) t) ω = α t ω * w t ω
+    show (α t * localizedNoise B w ↑(Nat.ceil (max K 0)) t) ω = α t ω * w t ω
     rw [Pi.mul_apply]
     congr 1
-    show nsa_aux_s3_wk B w ↑(Nat.ceil (max K 0)) t ω = w t ω
-    show ({ω | B t ω ≤ ↑(Nat.ceil (max K 0))}.indicator (w t)) ω = w t ω
+    show localizedNoise B w ↑(Nat.ceil (max K 0)) t ω = w t ω
+    change ({ω | B t ω ≤ ↑(Nat.ceil (max K 0))}.indicator (w t)) ω = w t ω
     exact Set.indicator_of_mem (hkle t) _
   have hS : Tendsto (fun n => ∑ t ∈ Finset.range n, α t ω * w t ω) atTop (𝓝 l) :=
     Tendsto.congr hMeq hl
   exact MetaMathlibExt.tendsto_zero_of_averaging_of_tendsto_sum hα01ω hαdivω hS hWω
 
-private theorem nsa_aux_s4_restart_decomp {Ω : Type*} (α w : ℕ → Ω → ℝ) (ω : Ω) (t₀ n : ℕ) :
+private theorem restart_zero_add {Ω : Type*} (α w : ℕ → Ω → ℝ) (ω : Ω) (t₀ n : ℕ) :
     restart α w 0 (t₀ + n) ω
       = (∏ k ∈ Finset.range n, (1 - α (t₀ + k) ω)) * restart α w 0 t₀ ω
         + restart α w t₀ n ω := by
@@ -782,27 +789,16 @@ private theorem nsa_aux_s4_restart_decomp {Ω : Type*} (α w : ℕ → Ω → �
     rw [hadd, hsucc, hsucc, Nat.zero_add, ih, Finset.prod_range_succ]
     ring
 
-private theorem nsa_aux_s4_prod_mem_Icc {Ω : Type*} (α : ℕ → Ω → ℝ) (ω : Ω) (t₀ n : ℕ)
-    (h01 : ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1) :
-    (∏ k ∈ Finset.range n, (1 - α (t₀ + k) ω)) ∈ Set.Icc (0 : ℝ) 1 := by
-  induction n with
-  | zero =>
-    simp only [Finset.prod_range_zero]
-    exact Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩
-  | succ n ih =>
-    rw [Finset.prod_range_succ]
-    obtain ⟨hP0, hP1⟩ := Set.mem_Icc.mp ih
-    obtain ⟨ha0, ha1⟩ := Set.mem_Icc.mp (h01 (t₀ + n))
-    have hf0 : (0 : ℝ) ≤ 1 - α (t₀ + n) ω := by linarith
-    have hf1 : (1 : ℝ) - α (t₀ + n) ω ≤ 1 := by linarith
-    refine Set.mem_Icc.mpr ⟨mul_nonneg hP0 hf0, (mul_le_of_le_one_left hf0 hP1).trans hf1⟩
-
-private theorem nsa_aux_s4_restart_abs_le {Ω : Type*} (α w : ℕ → Ω → ℝ) (ω : Ω) (t₀ n : ℕ)
+private theorem abs_restart_le {Ω : Type*} (α w : ℕ → Ω → ℝ) (ω : Ω) (t₀ n : ℕ)
     (h01 : ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1) :
     |restart α w t₀ n ω| ≤ |restart α w 0 (t₀ + n) ω| + |restart α w 0 t₀ ω| := by
-  have hdecomp := nsa_aux_s4_restart_decomp α w ω t₀ n
-  have hprod := nsa_aux_s4_prod_mem_Icc α ω t₀ n h01
-  obtain ⟨hP0, hP1⟩ := Set.mem_Icc.mp hprod
+  have hdecomp := restart_zero_add α w ω t₀ n
+  have hfac : ∀ k ∈ Finset.range n, 0 ≤ 1 - α (t₀ + k) ω ∧ 1 - α (t₀ + k) ω ≤ 1 :=
+    fun k _ => ⟨sub_nonneg.mpr (h01 (t₀ + k)).2, sub_le_self _ (h01 (t₀ + k)).1⟩
+  have hP0 : 0 ≤ ∏ k ∈ Finset.range n, (1 - α (t₀ + k) ω) :=
+    Finset.prod_nonneg fun k hk => (hfac k hk).1
+  have hP1 : ∏ k ∈ Finset.range n, (1 - α (t₀ + k) ω) ≤ 1 :=
+    Finset.prod_le_one₀ (fun k hk => (hfac k hk).1) fun k hk => (hfac k hk).2
   have heq : restart α w t₀ n ω = restart α w 0 (t₀ + n) ω
       - (∏ k ∈ Finset.range n, (1 - α (t₀ + k) ω)) * restart α w 0 t₀ ω := by
     linarith
@@ -823,15 +819,15 @@ private theorem nsa_aux_s4_restart_abs_le {Ω : Type*} (α w : ℕ → Ω → �
       _ ≤ |restart α w 0 (t₀ + n) ω| + |restart α w 0 t₀ ω| :=
           add_le_add_right hmul _
 
-/-- **Tsitsiklis (1994), Lemma 2** (restart, uniform tail). Under the hypotheses of
-`ae_tendsto_zero` on `α`, `w` and `B`, almost surely: for every `δ > 0` there is a time `T` such
-that the recursion restarted from `0` at any time `t₀ ≥ T` stays in `[-δ, δ]` forever, that is,
-`|W(t; t₀)| ≤ δ` whenever `T ≤ t₀ ≤ t`. One full-measure event serves every `δ`. -/
+/-- **Tsitsiklis (1994), Lemma 2.** The restarted recursion has a uniform tail: under the
+hypotheses of `ae_tendsto_zero` on `α`, `w` and `B`, almost surely, for every `δ > 0` there is a
+time `T` such that the recursion restarted from `0` at any time `t₀ ≥ T` stays in `[-δ, δ]`
+forever, that is, `|W(t; t₀)| ≤ δ` whenever `T ≤ t₀ ≤ t`. One full-measure event serves every
+`δ`. -/
 theorem ae_uniform_tail_restart
     (hα_adapted : StronglyAdapted ℱ α) (hB_adapted : StronglyAdapted ℱ B)
     (hw_meas : ∀ t, StronglyMeasurable[ℱ (t + 1)] (w t))
     (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t))
-    (hB_nonneg : ∀ᵐ ω ∂μ, ∀ t, 0 ≤ B t ω)
     (hα01 : ∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1)
     (hα_div : ∀ᵐ ω ∂μ, Tendsto (fun n => ∑ t ∈ Finset.range n, α t ω) atTop atTop)
     (hα_sq : ∀ᵐ ω ∂μ, ∀ n, ∑ t ∈ Finset.range n, α t ω ^ 2 ≤ C)
@@ -844,13 +840,13 @@ theorem ae_uniform_tail_restart
         = (1 - α (0 + t) ω) * restart α w 0 t ω + α (0 + t) ω * w (0 + t) ω := rfl
     rw [hdef, Nat.zero_add]
   have hlim := ae_tendsto_zero (W := restart α w 0) hα_adapted hB_adapted hw_meas hw
-    hB_nonneg hα01 hα_div hα_sq hB_bdd hW
+    hα01 hα_div hα_sq hB_bdd hW
   filter_upwards [hlim, hα01] with ω hlimω h01ω
   intro δ hδ
   have hδ2 : (0 : ℝ) < δ / 2 := by linarith
   obtain ⟨T, hT⟩ := (Metric.tendsto_atTop.mp hlimω) (δ / 2) hδ2
   refine ⟨T, fun t₀ ht₀ n => ?_⟩
-  have hle := nsa_aux_s4_restart_abs_le α w ω t₀ n h01ω
+  have hle := abs_restart_le α w ω t₀ n h01ω
   have habs : ∀ t ≥ T, |restart α w 0 t ω| ≤ δ / 2 := by
     intro t ht
     have h := hT t ht
@@ -870,7 +866,6 @@ theorem ae_tendsto_zero_and_uniform_tail_fintype {ι : Type*} [Finite ι]
     (hα_adapted : ∀ i, StronglyAdapted ℱ (α i)) (hB_adapted : ∀ i, StronglyAdapted ℱ (B i))
     (hw_meas : ∀ i t, StronglyMeasurable[ℱ (t + 1)] (w i t))
     (hw : ∀ i t, IsCenteredNoise (ℱ t) μ (w i t) (B i t))
-    (hB_nonneg : ∀ᵐ ω ∂μ, ∀ i t, 0 ≤ B i t ω)
     (hα01 : ∀ᵐ ω ∂μ, ∀ i t, α i t ω ∈ Set.Icc (0 : ℝ) 1)
     (hα_div : ∀ᵐ ω ∂μ, ∀ i, Tendsto (fun n => ∑ t ∈ Finset.range n, α i t ω) atTop atTop)
     (hα_sq : ∀ᵐ ω ∂μ, ∀ i n, ∑ t ∈ Finset.range n, α i t ω ^ 2 ≤ C)
@@ -885,7 +880,6 @@ theorem ae_tendsto_zero_and_uniform_tail_fintype {ι : Type*} [Finite ι]
     · exact hB_adapted i
     · exact hw_meas i
     · exact hw i
-    · filter_upwards [hB_nonneg] with ω h using fun t => h i t
     · filter_upwards [hα01] with ω h using fun t => h i t
     · filter_upwards [hα_div] with ω h using h i
     · filter_upwards [hα_sq] with ω h using fun n => h i n
@@ -899,7 +893,6 @@ theorem ae_tendsto_zero_and_uniform_tail_fintype {ι : Type*} [Finite ι]
     · exact hB_adapted i
     · exact hw_meas i
     · exact hw i
-    · filter_upwards [hB_nonneg] with ω h using fun t => h i t
     · filter_upwards [hα01] with ω h using fun t => h i t
     · filter_upwards [hα_div] with ω h using h i
     · filter_upwards [hα_sq] with ω h using fun n => h i n

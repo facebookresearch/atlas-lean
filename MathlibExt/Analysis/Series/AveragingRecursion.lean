@@ -50,7 +50,8 @@ open Filter Topology
 
 namespace MetaMathlibExt
 
-private theorem nsa_aux_s1b_eventually_abs_le {a z x : ℕ → ℝ} (ha : ∀ t, a t ∈ Set.Icc (0 : ℝ) 1)
+private theorem eventually_abs_le_two_mul_of_averaging {a z x : ℕ → ℝ}
+    (ha : ∀ t, a t ∈ Set.Icc (0 : ℝ) 1)
     (hdiv : Tendsto (fun n => ∑ t ∈ Finset.range n, a t) atTop atTop)
     (hz : Tendsto z atTop (𝓝 0))
     (hx : ∀ t, x (t + 1) = (1 - a t) * x t + a t * z t)
@@ -161,7 +162,7 @@ theorem tendsto_zero_of_averaging {a z x : ℕ → ℝ} (ha : ∀ t, a t ∈ Set
     Tendsto x atTop (𝓝 0) := by
   rw [Metric.tendsto_nhds]
   intro ε hε
-  have h := nsa_aux_s1b_eventually_abs_le ha hdiv hz hx (show 0 < ε / 3 by linarith)
+  have h := eventually_abs_le_two_mul_of_averaging ha hdiv hz hx (show 0 < ε / 3 by linarith)
   filter_upwards [h] with t ht
   rw [Real.dist_eq, sub_zero]
   linarith [ht]
@@ -189,7 +190,7 @@ theorem tendsto_zero_of_averaging_of_tendsto_sum {a w W : ℕ → ℝ} {l : ℝ}
       = (1 - a t) * (fun t => W t - ((∑ u ∈ Finset.range t, a u * w u) - l)) t
         + a t * (fun t => -((∑ u ∈ Finset.range t, a u * w u) - l)) t := by
     intro t
-    show W (t + 1) - ((∑ u ∈ Finset.range (t + 1), a u * w u) - l)
+    change W (t + 1) - ((∑ u ∈ Finset.range (t + 1), a u * w u) - l)
       = (1 - a t) * (W t - ((∑ u ∈ Finset.range t, a u * w u) - l))
         + a t * (-((∑ u ∈ Finset.range t, a u * w u) - l))
     rw [hW t, hS1 t]

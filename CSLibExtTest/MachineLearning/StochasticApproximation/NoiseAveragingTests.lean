@@ -15,8 +15,9 @@ import Mathlib.Analysis.PSeries
 # Tests for noise averaging in stochastic approximation
 
 Boundary probes for `ae_tendsto_zero` (Tsitsiklis 1994, Lemma 1). Each negative control keeps all
-hypotheses but one, adds the initial value `W 0 = 0`, and asserts that the conclusion then fails
-on an explicit model, so the dropped hypothesis cannot be removed:
+hypotheses but one, adds the initial value `W 0 = 0` and the source's nonnegative envelope
+`0 ≤ B t`, and asserts that the conclusion then fails on an explicit model, so the dropped
+hypothesis cannot be removed even in the source's setting:
 
 * `lemma1_needs_divergence` drops (d), the divergence of the step sums. Model: a fair coin,
   `ℱ 0` trivial and `ℱ t` everything for `t ≥ 1`, one noisy step `α 0 = 1 / 2` with
@@ -26,8 +27,10 @@ on an explicit model, so the dropped hypothesis cannot be removed:
   for every `t ≥ 1`.
 
 The positive control `ae_tendsto_zero_hypotheses_satisfiable` shows that the hypotheses of
-`ae_tendsto_zero` hold together for noise that is not almost surely zero. The remaining examples
-apply the bridges and the two lemmas in the shapes their consumers use.
+`ae_tendsto_zero` hold together for noise that is not almost surely zero, and
+`restart_coin_tendsto_zero` applies the lemma to that model. `isCenteredNoise_neg_one_iff` pins
+how the contract reads a negative envelope. The remaining examples apply the bridges and the
+lemmas in the shapes their consumers use.
 -/
 
 @[expose] public section
@@ -85,11 +88,11 @@ private def nsa_aux_s5_w0 : Fin 2 → ℝ := fun ω => if ω = 0 then 1 else -1
 
 private theorem nsa_aux_s5_w0_zero : nsa_aux_s5_w0 0 = 1 := by
   show (if (0 : Fin 2) = 0 then (1 : ℝ) else -1) = 1
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 private theorem nsa_aux_s5_w0_one : nsa_aux_s5_w0 1 = -1 := by
   show (if (1 : Fin 2) = 0 then (1 : ℝ) else -1) = -1
-  exact if_neg (by decide)
+  exact ite_eq_right (by decide)
 
 private theorem nsa_aux_s5_w0_sq (ω : Fin 2) : nsa_aux_s5_w0 ω ^ 2 = 1 := by
   by_cases h : ω = 0
@@ -98,7 +101,7 @@ private theorem nsa_aux_s5_w0_sq (ω : Fin 2) : nsa_aux_s5_w0 ω ^ 2 = 1 := by
     norm_num
   · have hw : nsa_aux_s5_w0 ω = -1 := by
       show (if ω = 0 then (1 : ℝ) else -1) = -1
-      exact if_neg h
+      exact ite_eq_right h
     rw [hw]
     norm_num
 
@@ -203,11 +206,11 @@ private noncomputable def nsa_aux_s5_a1 : ℕ → Fin 2 → ℝ := fun t _ => if
 
 private theorem nsa_aux_s5_a1_zero (ω : Fin 2) : nsa_aux_s5_a1 0 ω = 1 / 2 := by
   show (if (0 : ℕ) = 0 then (1 / 2 : ℝ) else 0) = 1 / 2
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 private theorem nsa_aux_s5_a1_succ (t : ℕ) (ω : Fin 2) : nsa_aux_s5_a1 (t + 1) ω = 0 := by
   show (if t + 1 = 0 then (1 / 2 : ℝ) else 0) = 0
-  exact if_neg (by omega)
+  exact ite_eq_right (by omega)
 
 private theorem nsa_aux_s5_a1_sq_le (n : ℕ) (ω : Fin 2) :
     ∑ t ∈ Finset.range n, nsa_aux_s5_a1 t ω ^ 2 ≤ 1 := by
@@ -231,11 +234,11 @@ private def nsa_aux_s5_w1 : ℕ → Fin 2 → ℝ := fun t ω => if t = 0 then n
 
 private theorem nsa_aux_s5_w1_zero (ω : Fin 2) : nsa_aux_s5_w1 0 ω = nsa_aux_s5_w0 ω := by
   show (if (0 : ℕ) = 0 then nsa_aux_s5_w0 ω else 0) = nsa_aux_s5_w0 ω
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 private theorem nsa_aux_s5_w1_succ (t : ℕ) (ω : Fin 2) : nsa_aux_s5_w1 (t + 1) ω = 0 := by
   show (if t + 1 = 0 then nsa_aux_s5_w0 ω else 0) = 0
-  exact if_neg (by omega)
+  exact ite_eq_right (by omega)
 
 private theorem nsa_aux_s5_w1_zero_fun : nsa_aux_s5_w1 0 = nsa_aux_s5_w0 := by
   ext ω
@@ -265,12 +268,12 @@ private noncomputable def nsa_aux_s5_W1 : ℕ → Fin 2 → ℝ :=
 
 private theorem nsa_aux_s5_W1_zero (ω : Fin 2) : nsa_aux_s5_W1 0 ω = 0 := by
   show (if (0 : ℕ) = 0 then (0 : ℝ) else nsa_aux_s5_w0 ω / 2) = 0
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 private theorem nsa_aux_s5_W1_succ (t : ℕ) (ω : Fin 2) :
     nsa_aux_s5_W1 (t + 1) ω = nsa_aux_s5_w0 ω / 2 := by
   show (if t + 1 = 0 then (0 : ℝ) else nsa_aux_s5_w0 ω / 2) = nsa_aux_s5_w0 ω / 2
-  exact if_neg (by omega)
+  exact ite_eq_right (by omega)
 
 private theorem nsa_aux_s5_W1_of_ge_one {t : ℕ} (ht : 1 ≤ t) (ω : Fin 2) :
     nsa_aux_s5_W1 t ω = nsa_aux_s5_w0 ω / 2 := by
@@ -368,11 +371,11 @@ private def nsa_aux_s5_W2 : ℕ → Fin 2 → ℝ := fun t _ => if t = 0 then 0 
 
 private theorem nsa_aux_s5_W2_zero (ω : Fin 2) : nsa_aux_s5_W2 0 ω = 0 := by
   show (if (0 : ℕ) = 0 then (0 : ℝ) else 1) = 0
-  exact if_pos rfl
+  exact ite_eq_left rfl
 
 private theorem nsa_aux_s5_W2_succ (t : ℕ) (ω : Fin 2) : nsa_aux_s5_W2 (t + 1) ω = 1 := by
   show (if t + 1 = 0 then (0 : ℝ) else 1) = 1
-  exact if_neg (by omega)
+  exact ite_eq_right (by omega)
 
 private theorem nsa_aux_s5_W2_of_ge_one {t : ℕ} (ht : 1 ≤ t) (ω : Fin 2) :
     nsa_aux_s5_W2 t ω = 1 := by
@@ -397,7 +400,7 @@ private theorem nsa_aux_s5_w1_not_ae_zero : ¬ nsa_aux_s5_w1 0 =ᵐ[nsa_aux_s5_�
     ext ω
     constructor
     · intro hmem
-      simp only [Set.mem_setOf_eq] at hmem
+      simp only [Set.mem_ofPred_eq] at hmem
       have hsq := nsa_aux_s5_w0_sq ω
       rw [hmem] at hsq
       norm_num at hsq
@@ -514,25 +517,55 @@ theorem ae_tendsto_zero_hypotheses_satisfiable :
     ∃ (Ω : Type) (m0 : MeasurableSpace Ω) (μ : Measure[m0] Ω) (_ : IsProbabilityMeasure μ)
       (ℱ : Filtration ℕ m0) (α w B : ℕ → Ω → ℝ) (C : ℝ),
       StronglyAdapted ℱ α ∧ StronglyAdapted ℱ B ∧ (∀ t, StronglyMeasurable[ℱ (t + 1)] (w t)) ∧
-      (∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t)) ∧ (∀ᵐ ω ∂μ, ∀ t, 0 ≤ B t ω) ∧
+      (∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t)) ∧
       (∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1) ∧
       (∀ᵐ ω ∂μ, Tendsto (fun n => ∑ t ∈ Finset.range n, α t ω) atTop atTop) ∧
       (∀ᵐ ω ∂μ, ∀ n, ∑ t ∈ Finset.range n, α t ω ^ 2 ≤ C) ∧
       (∀ᵐ ω ∂μ, BddAbove (Set.range fun t => B t ω)) ∧
       ¬ ∀ t, w t =ᵐ[μ] 0 := by
   refine ⟨Fin 2, ⊤, nsa_aux_s5_μ, nsa_aux_s5_prob, nsa_aux_s5_ℱ, nsa_aux_s5_a2, nsa_aux_s5_w1,
-    nsa_aux_s5_B, (2 : ℝ), ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    nsa_aux_s5_B, (2 : ℝ), ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact fun t => stronglyMeasurable_const
   · exact fun t => stronglyMeasurable_const
   · exact fun t => nsa_aux_s5_w1_meas t
   · exact fun t => nsa_aux_s5_w1_centered t
-  · exact nsa_aux_s5_B_nonneg
   · exact Eventually.of_forall fun ω t => nsa_aux_s5_a2_mem t ω
   · exact Eventually.of_forall fun ω => nsa_aux_s5_a2_div ω
   · exact Eventually.of_forall fun ω n => nsa_aux_s5_a2_sq_le n ω
   · exact nsa_aux_s5_B_bdd
   · intro hall
     exact nsa_aux_s5_w1_not_ae_zero (hall 0)
+
+/-- `ae_tendsto_zero` applied to the model of `ae_tendsto_zero_hypotheses_satisfiable`: the
+recursion started from `0` tends to `0` almost surely. -/
+private theorem restart_coin_tendsto_zero :
+    ∀ᵐ ω ∂nsa_aux_s5_μ,
+      Tendsto (fun t => restart nsa_aux_s5_a2 nsa_aux_s5_w1 0 t ω) atTop (𝓝 0) :=
+  ae_tendsto_zero (ℱ := nsa_aux_s5_ℱ) (α := nsa_aux_s5_a2) (w := nsa_aux_s5_w1)
+    (B := nsa_aux_s5_B) (W := restart nsa_aux_s5_a2 nsa_aux_s5_w1 0) (C := 2)
+    (fun _ => stronglyMeasurable_const) (fun _ => stronglyMeasurable_const)
+    nsa_aux_s5_w1_meas nsa_aux_s5_w1_centered
+    (Eventually.of_forall fun ω t => nsa_aux_s5_a2_mem t ω)
+    (Eventually.of_forall fun ω => nsa_aux_s5_a2_div ω)
+    (Eventually.of_forall fun ω n => nsa_aux_s5_a2_sq_le n ω) nsa_aux_s5_B_bdd
+    (Eventually.of_forall fun ω t => by simp only [restart, Nat.zero_add])
+
+/-- The model's recursion is not identically `0`: at time `1` it is the coin flip `±1`. -/
+example (ω : Fin 2) : restart nsa_aux_s5_a2 nsa_aux_s5_w1 0 1 ω = nsa_aux_s5_w0 ω := by
+  simp only [restart, Nat.zero_add, nsa_aux_s5_a2_zero, nsa_aux_s5_w1_zero]
+  ring
+
+/-- The contract reads a negative envelope as `0`: with envelope `-1` it is the contract with
+envelope `0`, which asks the conditional second moment to vanish. -/
+theorem isCenteredNoise_neg_one_iff {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
+    {m : MeasurableSpace Ω} {w : Ω → ℝ} :
+    IsCenteredNoise m μ w (fun _ => -1) ↔ IsCenteredNoise m μ w (fun _ => 0) := by
+  have h : ENNReal.ofReal (-1) = ENNReal.ofReal 0 := by simp
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨by simpa only [h] using h1, h2⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨by simpa only [h] using h1, h2⟩
 
 section Interface
 
@@ -541,12 +574,12 @@ variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 /-- `IsCenteredNoise.of_memLp` and `IsCenteredNoise.div` compose: square-integrable noise with the
 usual conditional moments, divided by an `m`-measurable `G ≥ G₀ > 0`, satisfies the contract
 with envelope `B / G ^ 2`. -/
-example [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : m ≤ m0) {w B G : Ω → ℝ} {G₀ : ℝ}
+example [IsFiniteMeasure μ] {m : MeasurableSpace Ω} {w B G : Ω → ℝ} {G₀ : ℝ}
     (hwm : Measurable[m0] w) (hw2 : MemLp w 2 μ) (hmean : μ[w | m] =ᵐ[μ] 0)
     (hsq : μ[fun ω => w ω ^ 2 | m] ≤ᵐ[μ] B) (hGm : StronglyMeasurable[m] G) (hG₀ : 0 < G₀)
     (hG : ∀ᵐ ω ∂μ, G₀ ≤ G ω) :
     IsCenteredNoise m μ (fun ω => w ω / G ω) (fun ω => B ω / G ω ^ 2) :=
-  (IsCenteredNoise.of_memLp hw2 hmean hsq).div hm hwm hGm hG₀ hG
+  (IsCenteredNoise.of_memLp hw2 hmean hsq).div hwm hGm hG₀ hG
 
 /-- The localized moment bridge gives the Bochner centering of the localized noise. -/
 example [IsFiniteMeasure μ] {m : MeasurableSpace Ω} (hm : m ≤ m0) {w B : Ω → ℝ}
@@ -560,26 +593,43 @@ variable [IsProbabilityMeasure μ] {ℱ : Filtration ℕ m0} {α w B W : ℕ →
 /-- Lemma 1 takes its hypotheses in the order of the source's conditions. -/
 example (hα_adapted : StronglyAdapted ℱ α) (hB_adapted : StronglyAdapted ℱ B)
     (hw_meas : ∀ t, StronglyMeasurable[ℱ (t + 1)] (w t))
-    (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t)) (hB_nonneg : ∀ᵐ ω ∂μ, ∀ t, 0 ≤ B t ω)
+    (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t))
     (hα01 : ∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1)
     (hα_div : ∀ᵐ ω ∂μ, Tendsto (fun n => ∑ t ∈ Finset.range n, α t ω) atTop atTop)
     (hα_sq : ∀ᵐ ω ∂μ, ∀ n, ∑ t ∈ Finset.range n, α t ω ^ 2 ≤ C)
     (hB_bdd : ∀ᵐ ω ∂μ, BddAbove (Set.range fun t => B t ω))
     (hW : ∀ᵐ ω ∂μ, ∀ t, W (t + 1) ω = (1 - α t ω) * W t ω + α t ω * w t ω) :
     ∀ᵐ ω ∂μ, Tendsto (fun t => W t ω) atTop (𝓝 0) :=
-  ae_tendsto_zero hα_adapted hB_adapted hw_meas hw hB_nonneg hα01 hα_div hα_sq hB_bdd hW
+  ae_tendsto_zero hα_adapted hB_adapted hw_meas hw hα01 hα_div hα_sq hB_bdd hW
 
 /-- Lemma 2 at a fixed tolerance `δ > 0`. -/
 example (hα_adapted : StronglyAdapted ℱ α) (hB_adapted : StronglyAdapted ℱ B)
     (hw_meas : ∀ t, StronglyMeasurable[ℱ (t + 1)] (w t))
-    (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t)) (hB_nonneg : ∀ᵐ ω ∂μ, ∀ t, 0 ≤ B t ω)
+    (hw : ∀ t, IsCenteredNoise (ℱ t) μ (w t) (B t))
     (hα01 : ∀ᵐ ω ∂μ, ∀ t, α t ω ∈ Set.Icc (0 : ℝ) 1)
     (hα_div : ∀ᵐ ω ∂μ, Tendsto (fun n => ∑ t ∈ Finset.range n, α t ω) atTop atTop)
     (hα_sq : ∀ᵐ ω ∂μ, ∀ n, ∑ t ∈ Finset.range n, α t ω ^ 2 ≤ C)
     (hB_bdd : ∀ᵐ ω ∂μ, BddAbove (Set.range fun t => B t ω)) {δ : ℝ} (hδ : 0 < δ) :
     ∀ᵐ ω ∂μ, ∃ T, ∀ t₀ ≥ T, ∀ n, |restart α w t₀ n ω| ≤ δ := by
-  filter_upwards [ae_uniform_tail_restart hα_adapted hB_adapted hw_meas hw hB_nonneg hα01
+  filter_upwards [ae_uniform_tail_restart hα_adapted hB_adapted hw_meas hw hα01
     hα_div hα_sq hB_bdd] with ω hω using hω δ hδ
+
+/-- The finite-coordinate form at a fixed tolerance `δ > 0`: every coordinate tends to `0`, and
+one restart threshold serves all coordinates. -/
+example {ι : Type*} [Finite ι] {α w B W : ι → ℕ → Ω → ℝ}
+    (hα_adapted : ∀ i, StronglyAdapted ℱ (α i)) (hB_adapted : ∀ i, StronglyAdapted ℱ (B i))
+    (hw_meas : ∀ i t, StronglyMeasurable[ℱ (t + 1)] (w i t))
+    (hw : ∀ i t, IsCenteredNoise (ℱ t) μ (w i t) (B i t))
+    (hα01 : ∀ᵐ ω ∂μ, ∀ i t, α i t ω ∈ Set.Icc (0 : ℝ) 1)
+    (hα_div : ∀ᵐ ω ∂μ, ∀ i, Tendsto (fun n => ∑ t ∈ Finset.range n, α i t ω) atTop atTop)
+    (hα_sq : ∀ᵐ ω ∂μ, ∀ i n, ∑ t ∈ Finset.range n, α i t ω ^ 2 ≤ C)
+    (hB_bdd : ∀ᵐ ω ∂μ, ∀ i, BddAbove (Set.range fun t => B i t ω))
+    (hW : ∀ᵐ ω ∂μ, ∀ i t, W i (t + 1) ω = (1 - α i t ω) * W i t ω + α i t ω * w i t ω)
+    {δ : ℝ} (hδ : 0 < δ) :
+    ∀ᵐ ω ∂μ, (∀ i, Tendsto (fun t => W i t ω) atTop (𝓝 0)) ∧
+      ∃ T, ∀ i, ∀ t₀ ≥ T, ∀ n, |restart (α i) (w i) t₀ n ω| ≤ δ := by
+  filter_upwards [ae_tendsto_zero_and_uniform_tail_fintype hα_adapted hB_adapted hw_meas hw
+    hα01 hα_div hα_sq hB_bdd hW] with ω hω using ⟨hω.1, hω.2 δ hδ⟩
 
 end Interface
 
