@@ -25,7 +25,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -41,7 +41,7 @@ INSTANCE: a graph `G = (V, E)` that is an edge (line) graph, and a positive inte
 QUESTION: is there a dominating set of size `K` or less for `G`, i.e. a subset `V' ⊆ V` with
 `|V'| ≤ K` such that for all `u ∈ V - V'` there is a `v ∈ V'` with `{u, v} ∈ E`?
 
-This is DOMINATING SET ([GT2], `DominatingSetWanted`) restricted to line graphs: a dominating set
+This is DOMINATING SET ([GT2], `DominatingSetDefs`) restricted to line graphs: a dominating set
 of the line graph `L(H)` is exactly an edge dominating set of `H`, so the entry's EDGE DOMINATING
 SET result is the hint Johnson's table cites. The instance type, `DominatingSet.Graph`,
 `DominatingSet.WellFormed` (simple edge list) and `DominatingSet.DominatingSetFeasible` are the

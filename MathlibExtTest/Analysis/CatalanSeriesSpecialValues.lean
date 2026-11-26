@@ -13,7 +13,7 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
-/-! # The tail of the second Catalan series -/
+/-! # Tail regressions for the Catalan series special values -/
 
 namespace MetaMathlibExt.CatalanSeriesSpecialValuesTest
 
@@ -34,5 +34,22 @@ example :
     ring
   · norm_num [f, catalan_zero]
     ring
+
+-- The zero-index term of the first odd-weighted series contributes one.
+example :
+    HasSum (fun n : ℕ ↦ (2 * ((n : ℝ) + 1) + 1) / ((n : ℝ) + 2) * catalan (n + 1) /
+      4 ^ (n + 1)) (4 * Real.log 2 - 1) := by
+  let f (n : ℕ) : ℝ := (2 * (n : ℝ) + 1) / ((n : ℝ) + 1) * catalan n / 4 ^ n
+  have h : ∑' n, f n = 4 * Real.log 2 := tsum_odd_mul_catalan_div_four_pow_special.1
+  have hs : Summable f := by
+    by_contra hn
+    rw [tsum_eq_zero_of_not_summable hn] at h
+    linarith [Real.log_pos (by norm_num : (1 : ℝ) < 2)]
+  have htail := (hasSum_nat_add_iff' 1).2 (hs.hasSum_iff.2 h)
+  convert htail using 1
+  · ext n
+    simp only [f, Nat.cast_add, Nat.cast_one]
+    ring
+  · norm_num [f, catalan_zero]
 
 end MetaMathlibExt.CatalanSeriesSpecialValuesTest
