@@ -14,12 +14,16 @@ highest-graded distinct objects among the old buffer and the objects just read (
 than $k$), ties resolved arbitrarily. Between rounds it keeps only the number of rounds done and the buffer. It stops
 after the first round at which the buffer holds $k$ objects with aggregate grade at least
 $\tau = t(\underline{x}_1,\ldots,\underline{x}_m)$, where $\underline{x}_i$ is the last grade read from list $i$, and
-returns the buffer.
+returns the buffer. Fagin, Lotem and Naor state the stopping rule for all objects seen: at least $k$ objects seen so
+far have aggregate grade at least $\tau$. The buffered form is used here so that every decision of the algorithm
+depends only on its buffer and the round; by the first property below, the two forms hold after the same rounds.
 
 Then, whatever the resolution of ties:
 
 - after each round, the buffer holds the $k$ highest-graded distinct objects encountered so far, or all of them if
   fewer than $k$ have been encountered; in particular it never holds more than $k$ objects, however large $N$ is;
+- after each round, the stopping rule holds exactly when at least $k$ of the objects encountered so far have
+  aggregate grade at least $\tau$;
 - the stopping rule holds after some round $d \le N$, so the algorithm stops after at most $N$ rounds;
 - after every round at which the stopping rule holds, in particular the round at which the algorithm stops, the
   buffer consists of $k$ distinct objects each having aggregate grade at least that of every object outside it.
@@ -33,13 +37,16 @@ be several such answers.
 Each round keeps the $k$ highest-graded objects among the old buffer and the new objects. Suppose the old buffer
 holds the $k$ highest-graded objects seen, and some object seen earlier is left out of it. Then the old buffer is
 full, the left-out object grades at most every object of the old buffer, and a new object enters the buffer only in
-place of an old one of no higher grade; so the buffer stays the $k$ highest-graded objects seen. When the stopping
-rule holds after the round reading position $p$, the buffer, which never holds more than $k$ objects, holds exactly
-$k$, all of aggregate grade at least $\tau$. An object not yet seen sits after position $p$ in every list $i$, so
-its grade under attribute $i$ is at most $\underline{x}_i$, and by monotonicity its aggregate grade is at most
-$\tau$; an object seen but not buffered grades at most every buffered object. After round $N$ every object has been
-seen, so the buffer holds $k$ objects; every object has every grade at least the last grade read from that list, so
-by monotonicity every object has aggregate grade at least $\tau$, and the stopping rule holds.
+place of an old one of no higher grade; so the buffer stays the $k$ highest-graded objects seen. The two forms of
+the stopping rule then agree: the buffer consists of objects seen; and if at least $k$ objects seen reach $\tau$,
+the buffer is full, and were some buffered object below $\tau$, so would be every object seen but not buffered,
+leaving fewer than $k$ objects seen that reach $\tau$. When the stopping rule holds after the round reading position
+$p$, the buffer, which never holds more than $k$ objects, holds exactly $k$, all of aggregate grade at least $\tau$.
+An object not yet seen sits after position $p$ in every list $i$, so its grade under attribute $i$ is at most
+$\underline{x}_i$, and by monotonicity its aggregate grade is at most $\tau$; an object seen but not buffered grades
+at most every buffered object. After round $N$ every object has been seen, so the buffer holds $k$ objects; every
+object has every grade at least the last grade read from that list, so by monotonicity every object has aggregate
+grade at least $\tau$, and the stopping rule holds.
 
 ## Sources
 
