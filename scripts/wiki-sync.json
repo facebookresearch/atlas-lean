@@ -391,7 +391,7 @@
 "AlgebraicCurve.RationalFunctionField.finite_setOf_ord_ne_zero": "dc75fbcccb22790c",
 "AlgebraicCurve.RationalFunctionField.hasPrincipalDivisors": "582472e64d8c8565",
 "AlgebraicCurve.WeilReciprocity": "0a8bbf814bf9967f",
-"AlgebraicCurve.exists_ratFunc_algebra_of_transcendental": "b495e4b439341144",
+"AlgebraicCurve.exists_ratFunc_algebra_of_transcendental": "ef25c409b38c805c",
 "AlgebraicCurve.hasPrincipalDivisors_of_finiteDimensional_of_isSeparable": "b92e079779526e83",
 "AlgebraicCurve.isCurveOver_of_transcendental": "8d18e38ca37e99aa",
 "AlgebraicCurve.isCurveOver_of_transcendental_of_perfectField": "35d1b33152f6d548",
