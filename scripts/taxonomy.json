@@ -13056,6 +13056,7 @@
   "MathlibExt/NumberTheory/EgyptianFraction": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Egyptian fraction underapproximations"},
   "MathlibExt/NumberTheory/EisensteinRamanujanCongruence": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Congruences between Eisenstein series and cusp forms"},
   "MathlibExt/NumberTheory/EllipticCurveNaiveHeightLowerBounds": {"to": "NumberTheory/arithmetic-geometry", "title": "Heights of rational points on elliptic curves"},
+  "MathlibExt/NumberTheory/EllipticCurveNaiveHeightSpecialCoeff": {"to": "NumberTheory/arithmetic-geometry", "title": "Heights of rational points on elliptic curves"},
   "MathlibExt/NumberTheory/EllipticCurveNaiveHeightUnitCoeff": {"to": "NumberTheory/arithmetic-geometry", "title": "Heights of rational points on elliptic curves"},
   "MathlibExt/NumberTheory/EngelExpansion": {"to": "NumberTheory/continued-fractions-expansions", "title": "Engel expansions"},
   "MathlibExt/NumberTheory/ErdosDivisibilityFamilyGrowth": {"to": "NumberTheory/additive-number-theory", "title": "Sets with no element dividing a product of two others"},
