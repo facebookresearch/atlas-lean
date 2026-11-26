@@ -24,9 +24,11 @@ import Mathlib.Topology.ContinuousMap.Basic
 /-!
 # Floor gaps of Farey staircases are dense above `1 - log 2`
 
-For `n ≥ 1` and `x ∈ ℝ`, the floor gap `⌊nx⌋ - n * A_n(x)` at the rational point `t = p / q`
-converges, along `n = pqM`, to the gap limit `m - ∑_{k=1}^m log (t / k)` where `m = ⌊t⌋₊`.
-These limits cover every envelope interval, so the set of floor gaps is dense in `[1 - log 2, ∞)`.
+For a rational number `t = p / q ≥ 1` with `m = ⌊t⌋₊`, the floor gap `⌊nx⌋ - n * A_n(x)` taken
+at `x = t / n` (so that `nx = t`) converges, along `n = pqM` as `M → ∞`, to the gap limit
+`m - ∑_{k=1}^m log (t / k)`. For each `m ≥ 1`, the gap limits at the rationals `t ∈ [m, m + 1)`
+are dense in the envelope interval between the gap limits at `t = m + 1` and `t = m`. These
+intervals cover `[1 - log 2, ∞)`, so the set of floor gaps is dense in `[1 - log 2, ∞)`.
 
 Statements from David Harry Richman, *Lower Rational Approximations and Farey Staircases*,
 INTEGERS 24 (2024), Article A37 (primary text: arXiv:2303.02935).
@@ -185,7 +187,8 @@ private theorem delta_lt_half {m : ℕ} (hm : 1 ≤ m) :
     rw [heq, ← Real.log_pow]
     exact Real.log_le_log (by norm_num) hbern
   have h4 : (1 : ℝ) < Real.log 4 := by
-    have h := Real.log_lt_log (Real.exp_pos 1) (show Real.exp 1 < 4 by linarith [Real.exp_one_lt_d9])
+    have h := Real.log_lt_log (Real.exp_pos 1)
+      (show Real.exp 1 < 4 by linarith [Real.exp_one_lt_d9])
     rwa [Real.log_exp] at h
   have hlog4 : Real.log 4 = 2 * Real.log 2 := by
     rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
@@ -248,7 +251,7 @@ private theorem psi_nonneg {x : ℝ} (hx : 0 ≤ x) : 0 ≤ psi x := by
         · apply Real.continuousOn_log.comp (continuousOn_const.add continuousOn_id)
           intro y hy
           have h0y : (0 : ℝ) ≤ y := Set.mem_Ici.mp hy
-          show (1 : ℝ) + y ≠ 0
+          change (1 : ℝ) + y ≠ 0
           exact ne_of_gt (by linarith)
     · rw [interior_Ici]
       intro y hy
@@ -368,7 +371,7 @@ private theorem tendsto_block_full {q j : ℕ} (hq : 0 < q) (hj : 1 ≤ j) :
     omega
   have ha : Filter.Tendsto (fun M : ℕ => j * (q * q * (M + 1))) Filter.atTop Filter.atTop := by
     apply Filter.tendsto_atTop_mono (fun M => ?_) Filter.tendsto_id
-    show M ≤ j * (q * q * (M + 1))
+    change M ≤ j * (q * q * (M + 1))
     have hJ : 1 ≤ j * (q * q) := by
       have hpos : 0 < j * (q * q) := by positivity
       omega
@@ -411,7 +414,8 @@ private theorem tendsto_block_full {q j : ℕ} (hq : 0 < q) (hj : 1 ≤ j) :
     rw [sub_zero] at hlim
     exact Filter.Tendsto.congr' (Filter.Eventually.of_forall (fun M => (heq M).symm)) hlim
   have hI : Filter.Tendsto
-      (fun M : ℕ => ∫ t in (((j * (q * q * (M + 1)) : ℕ)) : ℝ)..((((j + 1) * (q * q * (M + 1)) - 1 : ℕ)) : ℝ), t⁻¹)
+      (fun M : ℕ => ∫ t in (((j * (q * q * (M + 1)) : ℕ)) : ℝ)..
+        ((((j + 1) * (q * q * (M + 1)) - 1 : ℕ)) : ℝ), t⁻¹)
       Filter.atTop (nhds (Real.log (((j : ℝ) + 1) / j))) := by
     have hne : ((j : ℝ) + 1) / j ≠ 0 := div_ne_zero (by positivity) hj0
     have hlog := (Real.continuousAt_log hne).tendsto.comp hratio
@@ -451,7 +455,7 @@ private theorem tendsto_block_last {p q m : ℕ} (hq : 0 < q) (hm : 1 ≤ m) (hl
     exact mul_le_mul_of_nonneg_right hle (Nat.zero_le _)
   have ha : Filter.Tendsto (fun M : ℕ => m * (q * q * (M + 1))) Filter.atTop Filter.atTop := by
     apply Filter.tendsto_atTop_mono (fun M => ?_) Filter.tendsto_id
-    show M ≤ m * (q * q * (M + 1))
+    change M ≤ m * (q * q * (M + 1))
     have hJ : 1 ≤ m * (q * q) := by
       have hpos : 0 < m * (q * q) := by positivity
       omega
@@ -468,7 +472,8 @@ private theorem tendsto_block_last {p q m : ℕ} (hq : 0 < q) (hm : 1 ≤ m) (hl
     push_cast
     field_simp
   have hI : Filter.Tendsto
-      (fun M : ℕ => ∫ t in ((((m * (q * q * (M + 1)) : ℕ))) : ℝ)..((((p * q * (M + 1) : ℕ))) : ℝ), t⁻¹)
+      (fun M : ℕ => ∫ t in ((((m * (q * q * (M + 1)) : ℕ))) : ℝ)..
+        ((((p * q * (M + 1) : ℕ))) : ℝ), t⁻¹)
       Filter.atTop (nhds (Real.log ((p : ℝ) / ((m : ℝ) * q)))) := by
     have hconst : Filter.Tendsto (fun _ : ℕ => Real.log ((p : ℝ) / ((m : ℝ) * q))) Filter.atTop
         (nhds (Real.log ((p : ℝ) / ((m : ℝ) * q)))) :=
@@ -785,7 +790,7 @@ private theorem gapLimit_continuousOn {m : ℕ} (hm : 1 ≤ m) :
   have hk0 : (k : ℝ) ≠ 0 := by
     have hk1 : 1 ≤ k := (Finset.mem_Icc.mp hk).1
     exact_mod_cast (by omega : k ≠ 0)
-  show y / (k : ℝ) ≠ 0
+  change y / (k : ℝ) ≠ 0
   exact div_ne_zero (ne_of_gt (lt_of_lt_of_le hmpos hylo)) hk0
 
 /-- Rational points with controlled floor approximate any envelope value. -/
