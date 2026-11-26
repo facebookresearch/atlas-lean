@@ -25,6 +25,7 @@ public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BinaryFundamentalSequence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
 
 /-!
 # Fundamental sequences and the duality formula for Zeckendorf binary expansions
@@ -483,17 +484,6 @@ public def IsProperLStarBlock (L : List ℕ) (ζ : ℕ → ℕ) (s k : ℕ) : Pr
   s ≤ k ∧ (∀ i, i < k → ζ i = maxLStarBlock L s i) ∧ ζ k < maxLStarBlock L s k ∧
     ∀ i, k < i → ζ i = 0
 
-/-- **The periodic collection $E^*$.** For a list $L$ of natural numbers, $E^*$ is the set of
-nonzero coefficient functions $\varepsilon : \mathbb{N} \to \mathbb{N}$ that are sums of finitely
-or infinitely many disjoint proper $L^*$-blocks, that is, the $\varepsilon \ne 0$ that are
-$L^*$-block sums over some set of support intervals. It is the collection $E^*$ for the interval
-$(0, 1)$ determined by $L$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def lStarCollection (L : List ℕ) : Set (ℕ → ℕ) :=
-  {ε | ε ≠ 0 ∧ ∃ I, IsLStarBlockSum L I ε}
-
 /-- **The zero function is not in the periodic Zeckendorf collection for $(0, 1)$.** For every
 list $L$ of natural numbers, the zero coefficient function $\mathbb{N} \to \mathbb{N}$ does not
 belong to the periodic Zeckendorf collection $E^*$ for the interval $(0, 1)$ determined by $L$.
@@ -666,28 +656,6 @@ public theorem_wanted mem_lStarCollection_of_lStarBar_decomposition (L L' : List
     (hμ : maxLStarBlock L b = (fun i => if i < b then 0 else ε i) ∨
       DescLexLT (maxLStarBlock L b) (fun i => if i < b then 0 else ε i)) :
     (fun i => if i < b then 0 else ε i) ∈ lStarCollection L'
-
-/-- **Shifted maximal blocks scale geometrically.** Let $L = (e_1, \dots, e_N)$ and $\tilde L$ be
-lists of natural numbers of length at least $2$ with nonzero first entries, and let $\tilde Q$ be
-a strictly decreasing sequence with values in $(0, 1)$ such that
-$\varepsilon \mapsto \sum_k \varepsilon_k \tilde Q_k$ is a bijection from $\tilde E^*$, the
-periodic Zeckendorf collection for $(0, 1)$ determined by $\tilde L$, onto $(0, 1)$. For
-$s \in \mathbb{N}$ let $\bar\beta_s$ be the maximal $L^*$-block starting at index $s$: it is $0$
-at indices $i < s$ and $e_j$ at indices $i \ge s$ with $j - 1 \equiv i - s \pmod N$. Then
-$\sum_k (\bar\beta_s)_k \tilde Q_k = \tilde Q_0^{\,s} \sum_k (\bar\beta_0)_k \tilde Q_k$ for every
-$s \in \mathbb{N}$.
-
-Indices are zero-based: $\bar\beta_s$ is the paper's $\bar\beta^{s+1}$ and $\tilde Q_0$ is its
-$\tilde Q_1 = \tilde\omega$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 16 (`integers-2025-A25-lem-16`; arXiv:2308.12872v1, Section 4.1). -/
-public theorem_wanted tsum_maxLStarBlock_mul_eq (L L' : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) (hL' : 2 ≤ L'.length) (he' : L'.getD 0 0 ≠ 0) {Q' : ℕ → ℝ}
-    (hQ' : StrictAnti Q') (hQ'01 : ∀ n, 0 < Q' n ∧ Q' n < 1)
-    (hbij' : Set.BijOn (fun ε : ℕ → ℕ => ∑' k, (ε k : ℝ) * Q' k) (lStarCollection L')
-      (Set.Ioo 0 1)) (s : ℕ) :
-    ∑' k, (maxLStarBlock L s k : ℝ) * Q' k = Q' 0 ^ s * ∑' k, (maxLStarBlock L 0 k : ℝ) * Q' k
 
 /-- **Number of proper $L^*$-blocks with a given support interval.** Let
 $L = (e_1, \dots, e_N)$ be a list of natural numbers with $N \ge 2$ and $e_1 \ne 0$, let $s \le k$
