@@ -14,7 +14,7 @@ List (Buzzard, Fornaess, Gavosto, Krantz, arXiv:math/9509202). `WantedExt` canno
 `OpenConjectures`: `lakefile.toml` and `scripts/check_health.sh` let it import only `MathlibExt`,
 `CSLibExt` and `PhyslibExt`. The definitions below are therefore copies, under the same names and
 with the same bodies, of the open entries that introduced them (as
-`WantedExt.GroupTheory.BranchGroupShared` repeats the definitions of an OpenConjectures entry):
+`MathlibExt.GroupTheory.BranchGroupShared` repeats the definitions of an OpenConjectures entry):
 
 * `IsFatouBieberbachDomain`, `IsPseudoconvexDomain`: from
   `OpenConjectures/Analysis/FatouBieberbachIntermediatePseudoconvex/Statement.lean`;
