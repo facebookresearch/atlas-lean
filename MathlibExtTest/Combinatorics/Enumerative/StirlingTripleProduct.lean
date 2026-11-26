@@ -76,3 +76,59 @@ example :
         (Nat.choose 2 1 : ℚ) :=
   stirling_triple_ratio_bounds_choose (n := 2) (p := 1) (j := 1)
     (hp := by decide) (hj := by decide) (hpn := by decide)
+
+private def factorialSeq (k : ℕ) : ℝ := k.factorial
+
+private theorem factorialSeq_pos (k : ℕ) : 0 < factorialSeq k := by
+  change 0 < (k.factorial : ℝ)
+  exact_mod_cast Nat.factorial_pos k
+
+private theorem factorialSeq_succ (k : ℕ) :
+    factorialSeq (k + 1) = (k + 1 : ℝ) * factorialSeq k := by
+  simp only [factorialSeq, Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
+
+private theorem factorialSeq_logConvex (k : ℕ) (hk : 2 ≤ k) :
+    factorialSeq k ^ 2 < factorialSeq (k - 1) * factorialSeq (k + 1) := by
+  have h : factorialSeq k = (k : ℝ) * factorialSeq (k - 1) := by
+    have hs := Nat.factorial_succ (k - 1)
+    rw [Nat.sub_add_cancel (by omega : 1 ≤ k)] at hs
+    change (k.factorial : ℝ) = (k : ℝ) * ((k - 1).factorial : ℝ)
+    exact_mod_cast hs
+  calc
+    factorialSeq k ^ 2 = (k : ℝ) * (factorialSeq (k - 1) * factorialSeq k) := by
+      rw [← mul_assoc, ← h, pow_two]
+    _ < (k + 1 : ℝ) * (factorialSeq (k - 1) * factorialSeq k) :=
+      mul_lt_mul_of_pos_right (by linarith)
+        (mul_pos (factorialSeq_pos _) (factorialSeq_pos _))
+    _ = _ := by rw [factorialSeq_succ]; ac_rfl
+
+private abbrev factorialE (m k : ℕ) : ℝ :=
+  MvPolynomial.eval (fun i : Fin m => factorialSeq ((i : ℕ) + 1)) (MvPolynomial.esymm (Fin m) ℝ k)
+
+private abbrev factorialH (m k : ℕ) : ℝ :=
+  MvPolynomial.eval (fun i : Fin m => factorialSeq ((i : ℕ) + 1)) (MvPolynomial.hsymm (Fin m) ℝ k)
+
+-- Use strictly log-convex factorials and test each disjunct without the other two.
+example : factorialE 5 1 / factorialE 4 1 * (factorialE 4 1 / factorialE 3 1) ≤
+      factorialE 5 2 / factorialE 4 2 ∧
+    factorialH 4 2 / factorialH 3 2 ≤
+      factorialH 5 1 / factorialH 4 1 * (factorialH 4 1 / factorialH 3 1) :=
+  symm_triple_ratio_of_logConvex factorialSeq (n := 1) (p := 1) (j := 3)
+    (hpos := fun k _ => factorialSeq_pos k) (hlc := fun k hk => (factorialSeq_logConvex k hk).le)
+    (hn := by decide) (hp := by decide) (hj := by decide) (h11 := Or.inl ⟨rfl, rfl⟩)
+
+example : factorialE 5 1 / factorialE 4 1 * (factorialE 4 3 / factorialE 3 3) ≤
+      factorialE 5 4 / factorialE 4 4 ∧
+    factorialH 2 4 / factorialH 1 4 ≤
+      factorialH 5 1 / factorialH 4 1 * (factorialH 2 3 / factorialH 1 3) :=
+  symm_triple_ratio_of_logConvex factorialSeq (n := 1) (p := 3) (j := 1)
+    (hpos := fun k _ => factorialSeq_pos k) (hlc := fun k hk => (factorialSeq_logConvex k hk).le)
+    (hn := by decide) (hp := by decide) (hj := by decide) (h11 := Or.inr (Or.inl ⟨rfl, rfl⟩))
+
+example : factorialE 5 3 / factorialE 4 3 * (factorialE 2 1 / factorialE 1 1) ≤
+      factorialE 5 4 / factorialE 4 4 ∧
+    factorialH 2 4 / factorialH 1 4 ≤
+      factorialH 3 3 / factorialH 2 3 * (factorialH 2 1 / factorialH 1 1) :=
+  symm_triple_ratio_of_logConvex factorialSeq (n := 3) (p := 1) (j := 1)
+    (hpos := fun k _ => factorialSeq_pos k) (hlc := fun k hk => (factorialSeq_logConvex k hk).le)
+    (hn := by decide) (hp := by decide) (hj := by decide) (h11 := Or.inr (Or.inr ⟨rfl, rfl⟩))
