@@ -6,6 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`src/HOL/Data_Structures/Set2_Join_RBT.thy` (Isabelle/HOL, `HOL-Data_Structures`):
+Copyright (c) 1986-2026, University of Cambridge, Technische Universitaet Muenchen,
+and contributors. All rights reserved.
+Licensed under the 3-clause BSD license in Isabelle's `COPYRIGHT` file
+(https://github.com/isabelle-prover/mirror-isabelle/blob/master/COPYRIGHT).
+Authors: Tobias Nipkow
+-/
+
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.JoinableBinarySearchTree.Basic
@@ -1339,7 +1350,9 @@ public theorem bst_rbtJoin (l : Tree α Color) (x : α) (r : Tree α Color) (c :
     · rw [ite_eq_left h2, bst_paint]; exact bst_joinL l x r c h
     · rw [ite_eq_right h2]; exact bst_N l r x .Black h.1 h.2.1 h.2.2.1 h.2.2.2
 
-/-- Invariants for `rbtJoin` (Isabelle `rbt_join`, `inv_join`). -/
+/-- `rbtJoin` preserves `invc ∧ invh` (Isabelle `inv_join`). Isabelle's
+`rbt_join` additionally states that the root is black, which this
+declaration does not. -/
 public theorem inv_rbtJoin (l : Tree α Color) (x : α) (r : Tree α Color)
     (hinv_l : invc l ∧ invh l) (hinv_r : invc r ∧ invh r) :
     invc (rbtJoin l x r) ∧ invh (rbtJoin l x r) := by

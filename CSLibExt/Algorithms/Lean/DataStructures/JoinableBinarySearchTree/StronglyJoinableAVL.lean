@@ -6,6 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Joinable_BST_Work_Bounds/StronglyJoinableAVL.thy` (Archive of Formal Proofs, entry
+`Joinable_BST_Work_Bounds`, https://www.isa-afp.org/entries/Joinable_BST_Work_Bounds.html):
+Copyright (c) 2004, Gerwin Klein, Tobias Nipkow, Lawrence C. Paulson
+Copyright (c) 2004, contributing authors (see author notice in individual files)
+All rights reserved.
+Licensed under the BSD License of the Archive of Formal Proofs (https://isa-afp.org/LICENSE).
+Authors: Marco Haucke
+-/
+
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.JoinableBinarySearchTree.Basic
@@ -97,16 +109,18 @@ public theorem avl_rule_sub {l' l r' r : Tree α Nat} {a : α} {b : Nat} {x : �
     exact le_refl _
   linarith
 
-/-- Timing function for `avlJoinR`: one unit per recursive descent
-(`ht` / `node` / `balR` cost 0, as in AFP `T_joinR`). -/
+/-- Timing function for `avlJoinR` (AFP `T_joinR` for AVL): every
+invocation, the stopping one included, costs one, as AFP's `time_fun`
+charges every call; `ht` / `node` / `balR` cost 0. -/
 public def TavlJoinR : Tree α Nat → α → Tree α Nat → ℕ
-  | .Leaf, _, _ => 0
-  | .Node l' _ r', a, r => if ht r' ≤ ht r + 1 then 0 else TavlJoinR r' a r + 1
+  | .Leaf, _, _ => 1
+  | .Node _ _ r', a, r => if ht r' ≤ ht r + 1 then 1 else TavlJoinR r' a r + 1
 
-/-- Timing function for `avlJoinL` (mirror of `TavlJoinR`). -/
+/-- Timing function for `avlJoinL` (AFP `T_joinL` for AVL, mirror of
+`TavlJoinR`): every invocation, the stopping one included, costs one. -/
 public def TavlJoinL : Tree α Nat → α → Tree α Nat → ℕ
-  | _, _, .Leaf => 0
-  | l, a, .Node l' _ r' => if ht l' ≤ ht l + 1 then 0 else TavlJoinL l a l' + 1
+  | _, _, .Leaf => 1
+  | l, a, .Node l' _ _ => if ht l' ≤ ht l + 1 then 1 else TavlJoinL l a l' + 1
 
 /-- Timing function for `avlJoin` (AFP `T_join` for AVL): the
 equal-height case costs 0. -/
@@ -126,7 +140,7 @@ public theorem TavlJoinR_bound (l : Tree α Nat) (a : α) (r : Tree α Nat)
   | Node l' kv r' ihl ihr =>
     obtain ⟨k', n'⟩ := kv
     by_cases hc : ht r' ≤ ht r + 1
-    · have hT : TavlJoinR (Tree.Node l' (k', n') r') a r = 0 := by
+    · have hT : TavlJoinR (Tree.Node l' (k', n') r') a r = 1 := by
         simp only [TavlJoinR, ite_eq_left hc]
       rw [hT]
       omega
@@ -151,7 +165,7 @@ public theorem TavlJoinL_bound (l : Tree α Nat) (a : α) (r : Tree α Nat)
   | Node l' kv r' ihl ihr =>
     obtain ⟨k', n'⟩ := kv
     by_cases hc : ht l' ≤ ht l + 1
-    · have hT : TavlJoinL l a (Tree.Node l' (k', n') r') = 0 := by
+    · have hT : TavlJoinL l a (Tree.Node l' (k', n') r') = 1 := by
         simp only [TavlJoinL, ite_eq_left hc]
       rw [hT]
       omega

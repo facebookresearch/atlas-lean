@@ -6,6 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Joinable_BST_Work_Bounds/StronglyJoinableRBT.thy` (Archive of Formal Proofs, entry
+`Joinable_BST_Work_Bounds`, https://www.isa-afp.org/entries/Joinable_BST_Work_Bounds.html):
+Copyright (c) 2004, Gerwin Klein, Tobias Nipkow, Lawrence C. Paulson
+Copyright (c) 2004, contributing authors (see author notice in individual files)
+All rights reserved.
+Licensed under the BSD License of the Archive of Formal Proofs (https://isa-afp.org/LICENSE).
+Authors: Marco Haucke
+-/
+
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.JoinableBinarySearchTree.Basic
@@ -30,8 +42,9 @@ Two deviations from the Figure 10.4 join are essential here: `sblacken`
 paints the root black only when it is red with a red child, and `sjoin`
 combines two black inputs of equal black height with a *red* node; both
 are necessary for the rank of a join to exceed the larger input rank by
-at most one. The timing functions count one unit per recursive descent
-and zero for non-recursive helpers and for the equal-height case.
+at most one. The timing functions charge one unit for every call of
+`sjoinL` / `sjoinR`, the stopping call included (as AFP's `time_fun`
+does), and zero for non-recursive helpers and for the equal-height case.
 
 ## Provenance
 
@@ -1098,8 +1111,8 @@ public theorem srk_of_scol_red (t : Tree α (Color × ℕ)) (h : scol t = .Red) 
     rfl
 
 /-- The balancing rule for the rank (AFP `rk_children`): the rank of a
-well-formed node is one more than the max of the children's ranks, and at
-most two more than the min. -/
+well-formed node is at least one more than the max of the children's
+ranks, and at most two more than the min. -/
 public theorem srk_children {l r : Tree α (Color × ℕ)} {a : α} {c : Color} {hst : ℕ}
     (h : srbt (Tree.Node l (a, (c, hst)) r)) :
     max (srk l) (srk r) + 1 ≤ srk (Tree.Node l (a, (c, hst)) r) ∧
@@ -1330,22 +1343,24 @@ public theorem srbt_rule_sub {l' l r' r : Tree α (Color × ℕ)} {a : α} {b : 
     exact_mod_cast (srk_children hnode).1
   linarith
 
-/-- Timing function for `sjoinL`: one unit per recursive descent (helpers
-`sbh` / `scol` / `sbaliL` cost 0, as in AFP `T_joinL`). -/
+/-- Timing function for `sjoinL` (AFP `T_joinL`): every invocation, the
+stopping one included, costs one, as AFP's `time_fun` charges every call;
+the helpers `sbh` / `scol` / `sbaliL` cost 0. -/
 public def TsjoinL : Tree α (Color × ℕ) → α → Tree α (Color × ℕ) → ℕ
   | l, x, r =>
-    if sbh r ≤ sbh l then 0
+    if sbh r ≤ sbh l then 1
     else match r with
-      | .Leaf => 0
+      | .Leaf => 1
       | .Node l' (x', (c, _)) r' => TsjoinL l x l' + 1
 termination_by l x r => r
 
-/-- Timing function for `sjoinR` (mirror of `TsjoinL`). -/
+/-- Timing function for `sjoinR` (AFP `T_joinR`, mirror of `TsjoinL`):
+every invocation, the stopping one included, costs one. -/
 public def TsjoinR : Tree α (Color × ℕ) → α → Tree α (Color × ℕ) → ℕ
   | l, x, r =>
-    if sbh l ≤ sbh r then 0
+    if sbh l ≤ sbh r then 1
     else match l with
-      | .Leaf => 0
+      | .Leaf => 1
       | .Node l' (x', (c, _)) r' => TsjoinR r' x r + 1
 termination_by l x r => l
 
@@ -1365,7 +1380,7 @@ public theorem TsjoinL_bound (l : Tree α (Color × ℕ)) (x : α) (r : Tree α 
   | Leaf =>
     intro hinvc_r hinvh_r hbh
     have h0 : sbh (Tree.Leaf : Tree α (Color × ℕ)) = 0 := rfl
-    have hT : TsjoinL l x (Tree.Leaf : Tree α (Color × ℕ)) = 0 := by
+    have hT : TsjoinL l x (Tree.Leaf : Tree α (Color × ℕ)) = 1 := by
       simp only [TsjoinL, sbh.eq_1, Nat.zero_le, ite_true]
     rw [hT]
     simp only [sbh.eq_1, scol.eq_1, reduceCtorEq, ite_false]
@@ -1408,7 +1423,7 @@ public theorem TsjoinR_bound (l : Tree α (Color × ℕ)) (x : α) (r : Tree α 
   | Leaf =>
     intro hinvc_l hinvh_l hbh
     have h0 : sbh (Tree.Leaf : Tree α (Color × ℕ)) = 0 := rfl
-    have hT : TsjoinR (Tree.Leaf : Tree α (Color × ℕ)) x r = 0 := by
+    have hT : TsjoinR (Tree.Leaf : Tree α (Color × ℕ)) x r = 1 := by
       simp only [TsjoinR, sbh.eq_1, Nat.zero_le, ite_true]
     rw [hT]
     simp only [sbh.eq_1, scol.eq_1, reduceCtorEq, ite_false]

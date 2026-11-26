@@ -39,12 +39,9 @@ namespace JoinableBinarySearchTree
 
 variable {α : Type u}
 
-/-- ## Exercise 10.3: `join` for 2-3-trees (book Ch. 7 + Ch. 10, Ex. 10.3)
-
-Following the general idea of the `join` function for red–black trees,
-`joinL23`/`joinR23` return a `Upi23`, combined into `join23` below.
-The stated properties are `complete23` + `inorder23` only (the book
-does not ask for `bst` here). -/
+/-- 2-3-trees (book Ch. 7): a leaf, a 2-node `Node2 l a r` with one key
+and two children, or a 3-node `Node3 l a m b r` with two keys and three
+children. -/
 public inductive Tree23 (α : Type u) where
   | Leaf : Tree23 α
   | Node2 : Tree23 α → α → Tree23 α → Tree23 α
@@ -278,7 +275,11 @@ public theorem inorder_treei_joinR23 (l : Tree23 α) (x : α) (r : Tree23 α)
   · rw [hrec]; exact hin
 
 /-- The overall 2-3-tree `join` (Ex. 10.3): descend into the taller side,
-or build a `Node2` at equal heights. -/
+or build a `Node2` at equal heights. Following the general idea of the
+`join` function for red–black trees, `joinL23` / `joinR23` return a
+`Upi23`, which `treei` turns into a tree. The stated properties are
+`complete23` and `inorder23` only (`complete_join23`, `inorder_join23`;
+the book does not ask for `bst` here). -/
 public def join23 : Tree23 α → α → Tree23 α → Tree23 α
   | l, x, r =>
     if height23 l > height23 r then treei (joinR23 l x r)

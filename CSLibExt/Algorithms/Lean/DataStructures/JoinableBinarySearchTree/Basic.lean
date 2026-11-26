@@ -6,6 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`src/HOL/Data_Structures/Set2_Join.thy` (Isabelle/HOL, `HOL-Data_Structures`):
+Copyright (c) 1986-2026, University of Cambridge, Technische Universitaet Muenchen,
+and contributors. All rights reserved.
+Licensed under the 3-clause BSD license in Isabelle's `COPYRIGHT` file
+(https://github.com/isabelle-prover/mirror-isabelle/blob/master/COPYRIGHT).
+Authors: Tobias Nipkow
+-/
+
 module
 
 public import Mathlib.Tactic

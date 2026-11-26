@@ -6,6 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`thys/Joinable_BST_Work_Bounds/BalancedBinary.thy` and
+`thys/Joinable_BST_Work_Bounds/StronglyJoinable.thy` (Archive of Formal Proofs, entry
+`Joinable_BST_Work_Bounds`, https://www.isa-afp.org/entries/Joinable_BST_Work_Bounds.html):
+Copyright (c) 2004, Gerwin Klein, Tobias Nipkow, Lawrence C. Paulson
+Copyright (c) 2004, contributing authors (see author notice in individual files)
+All rights reserved.
+Licensed under the BSD License of the Archive of Formal Proofs (https://isa-afp.org/LICENSE).
+Authors: Marco Haucke
+-/
+
 module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.JoinableBinarySearchTree.Basic
@@ -27,6 +40,7 @@ scope (the book cites Blelloch et al. for it).
 
 ## Provenance
 
+`BalancedBinary.thy` (the `BalancedShape` / `BalancedTree` locales) and
 `StronglyJoinable.thy` in the AFP entry `Joinable_BST_Work_Bounds`.
 -/
 
