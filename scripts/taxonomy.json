@@ -1335,7 +1335,6 @@
   "CSLibExt/Complexity/Algebraic/MatrixMultiplication": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Arithmetic circuits for matrix multiplication"},
   "CSLibExt/Complexity/Algebraic/MatrixMultiplicationExponent": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Matrix multiplication exponent"},
   "CSLibExt/Complexity/Algebraic/RectangularCircuitExponent": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Arithmetic circuits for matrix multiplication"},
-  "CSLibExt/Complexity/Algebraic/SquareMatrixMultiplicationBounds": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Matrix multiplication exponent"},
   "CSLibExt/Complexity/Algebraic/StrassenCircuit": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Matrix multiplication exponent"},
   "CSLibExt/Complexity/BooleanFunctions/Hypercontractivity": {"to": "Probability/concentration-inequalities", "title": "Bonami–Beckner hypercontractivity"},
   "CSLibExt/Complexity/BooleanFunctions/Hypercontractivity/CappedExponentGap": {"to": "Combinatorics/boolean-functions", "title": "Kahn–Kalai–Linial inequality"},

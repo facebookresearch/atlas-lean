@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.Complexity.Algebraic.SquareMatrixMultiplicationBounds
 public import CSLibExt.Complexity.Algebraic.StrassenCircuit
 public import Mathlib.Algebra.CharP.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import CSLibExt.Complexity.Algebraic.SquareMatrixMultiplicationBounds
 
 /-!
 # Square matrix-multiplication exponent: source-bound requests
@@ -26,7 +26,9 @@ The output-cost lower bound `2 ≤ ω` is proved upstream as
 
 The catalogue rows are stated for every field; the invariance row below and the
 bridge row in `CSLibExt.Complexity.Algebraic.SquareMatrixMultiplicationBounds`
-are stated for infinite fields. Transfers from approximate or border-rank algorithms, recursive tensor constructions, division elimination and characteristic invariance are not proved here.
+are stated for infinite fields. Transfers from approximate or border-rank
+algorithms, recursive tensor constructions, division elimination and
+characteristic invariance are not proved here.
 The final sharpness proposition records the catalogue comment that `2` is
 conjectured sharp; it is a definition, not an asserted theorem.
 -/
