@@ -12647,6 +12647,7 @@
   "MathlibExt/NumberTheory/Cyclotomic/CyclotomicUnitOmegaTwo": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Galois action on units modulo p-th powers"},
   "MathlibExt/NumberTheory/Cyclotomic/ThaineRelation": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Thaine relation"},
   "MathlibExt/NumberTheory/CyclotomicTraceMetric": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Trace metric on cyclotomic fields"},
+  "MathlibExt/NumberTheory/CyclotomicTraceMetricCyclotomicBoxDiam": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Trace metric on cyclotomic fields"},
   "MathlibExt/NumberTheory/CyclotomicTraceMetricEventuallyAdjoinAddNsmulEq": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Trace metric on cyclotomic fields"},
   "MathlibExt/NumberTheory/DPRM": {"to": "TheoryOfComputation/undecidable-problems", "title": "Diophantine sets and Hilbert's tenth problem"},
   "MathlibExt/NumberTheory/DeBruijnNewman": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "De Bruijn–Newman constant"},
