@@ -4,6 +4,7 @@ Topics added since this subject's fields were last revised.
 
 - [Center Star](center-star/README.md)
 - [Chao Lower Bound](chao-lower-bound/README.md)
+- [Capture Recapture](capture-recapture/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
 - [Complex Balanced Stability](complex-balanced-stability/README.md)
