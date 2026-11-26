@@ -15,6 +15,8 @@ Topics added since this subject's fields were last revised.
 - [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
 - [QGram](qgram/README.md)
 - [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
+- [Smith Hazel](smith-hazel/README.md)
+- [Smith Hazel Index](smith-hazel-index/README.md)
 - [Spearman Karber](spearman-karber/README.md)
 - [Split Decomposition](split-decomposition/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
