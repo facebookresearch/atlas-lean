@@ -101,6 +101,6 @@
 - [THIRD NORMAL FORM TEST as a decision problem](third-normal-form-test-dec.md)
 - [THIRD NORMAL FORM TEST is NP-complete](third-normal-form-test-np-complete.md)
 - [Values read by a transaction](read-values.md)
-- [View Serializability Feasible](view-serializability-feasible.md)
+- [Feasible instances of VIEW SERIALIZABILITY](view-serializability-feasible.md)
 - [VIEW SERIALIZABILITY as a decision problem](view-serializability-dec.md)
 - [VIEW SERIALIZABILITY is NP-complete](view-serializability-np-complete.md)
