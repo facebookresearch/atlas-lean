@@ -38,4 +38,28 @@ example (l d : ℕ) : ¬ KLDeficientPerfectWith 1 l (2 ^ 0) d := by
   have h2 := (klDeficientPerfectWith_one_prime_pow_iff 2 0 l d Nat.prime_two).mp h
   exact absurd h2.2.2.2 (by decide)
 
+-- `18 = 2 ^ 1 * 3 ^ 2` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 18 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    3 1 2 (by decide) (by decide)
+
+-- `2500 = 2 ^ 2 * 5 ^ 4` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 2500 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    5 2 4 (by decide) (by decide)
+
+-- `8 = 2 ^ 3 * 11 ^ 0` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 8 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    11 3 0 (by decide) (by decide)
+
+-- Twice three is not `[k,ℓ]`-near-perfect.
+example (k l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect k l 6 :=
+  not_isKLNearPerfect_two_mul_prime (k := k) (l := l) (p := 3)
+    (hl := hl) (hp := by decide) (hpo := ⟨1, rfl⟩)
+
+example : ¬ IsKLNearPerfect 2 1 10 :=
+  not_isKLNearPerfect_two_mul_prime (k := 2) (l := 1) (p := 5)
+    (hl := by decide) (hp := by decide) (hpo := ⟨2, rfl⟩)
+
 end MathlibExtTest.NumberTheory.FkPerfect
