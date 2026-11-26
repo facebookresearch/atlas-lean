@@ -10,6 +10,7 @@ whatever the distribution of $B$. In particular the fraction of customers lost i
 
 ## Depends on
 
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Erlang's loss formula](../markovian-queues/erlang-loss-formula.md)
 
 ## Expansion

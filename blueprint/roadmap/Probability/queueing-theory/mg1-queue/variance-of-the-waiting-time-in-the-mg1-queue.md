@@ -11,6 +11,7 @@ with $E[W] = \rho E[R]/(1 - \rho)$. Both follow by differentiating the transform
 
 ## Depends on
 
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Pollaczek–Khinchine formula for the waiting time](pollaczek-khinchine-formula-for-the-waiting-time.md)
 
 ## Expansion

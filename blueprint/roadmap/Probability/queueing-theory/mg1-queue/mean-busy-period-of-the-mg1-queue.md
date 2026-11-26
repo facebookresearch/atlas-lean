@@ -8,6 +8,10 @@ $$
 
 In the renewal argument, a cycle consists of a busy period followed by an idle period, which is exponential with mean $1/\lambda$ by the memoryless property of the arrival process, and the fraction of time the server works is $\rho = E[BP]/(E[BP] + 1/\lambda)$. For exponential service times with rate $\mu$ this is $(1/\mu)/(1 - \rho)$.
 
+## Depends on
+
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:

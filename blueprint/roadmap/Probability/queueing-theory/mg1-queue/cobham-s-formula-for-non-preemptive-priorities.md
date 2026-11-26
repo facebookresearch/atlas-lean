@@ -10,6 +10,7 @@ and its mean sojourn time is $E[S_i] = E[W_i] + E[B_i]$. For $i = 1$ the formula
 
 ## Depends on
 
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Little's law](../littles-law/littles-law.md)
 
 ## Expansion

@@ -10,6 +10,7 @@ where $\tilde R(s) = (1 - \tilde B(s))/(sE[B])$ is the transform of the residual
 
 ## Depends on
 
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Pollaczek–Khinchine formula for the sojourn time](pollaczek-khinchine-formula-for-the-sojourn-time.md)
 
 ## Expansion

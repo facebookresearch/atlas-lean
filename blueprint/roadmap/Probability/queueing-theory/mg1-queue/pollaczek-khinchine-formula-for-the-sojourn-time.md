@@ -10,6 +10,7 @@ Under first-come first-served service, the customers a departing customer leaves
 
 ## Depends on
 
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Pollaczek–Khinchine formula for the queue length](pollaczek-khinchine-formula-for-the-queue-length.md)
 
 ## Expansion

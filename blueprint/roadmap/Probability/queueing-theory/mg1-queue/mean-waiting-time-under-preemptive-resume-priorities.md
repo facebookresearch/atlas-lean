@@ -11,6 +11,7 @@ Lower classes are invisible to a class-$i$ customer, and the work in the system 
 
 ## Depends on
 
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Cobham's formula for non-preemptive priorities](cobham-s-formula-for-non-preemptive-priorities.md)
 
 ## Expansion

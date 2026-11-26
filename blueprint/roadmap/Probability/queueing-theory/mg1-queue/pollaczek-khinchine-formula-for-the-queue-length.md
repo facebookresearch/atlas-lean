@@ -8,6 +8,10 @@ $$
 
 Since customers arrive and leave one at a time, arriving customers, departing customers and outside observers all see the same limiting distribution of the number in the system, so this is also the generating function of the time-stationary number in the system. The formula comes from the embedded Markov chain $L^d_{k+1} = L^d_k - \mathbf 1\{L^d_k > 0\} + A_{k+1}$ at departure epochs, where $A_{k+1}$, the number of arrivals during a service time, has generating function $\tilde B(\lambda - \lambda z)$.
 
+## Depends on
+
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
+
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:

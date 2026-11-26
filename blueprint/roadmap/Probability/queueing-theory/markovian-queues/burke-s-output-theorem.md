@@ -9,6 +9,7 @@ Statement 1 implies that the second queue of a tandem of exponential single-serv
 
 ## Depends on
 
+- [Poisson process](../../point-processes/poisson-processes/is-poisson-process.md)
 - [Balance distribution of the M/M/s queue](mms-balance-distribution.md)
 
 ## Expansion

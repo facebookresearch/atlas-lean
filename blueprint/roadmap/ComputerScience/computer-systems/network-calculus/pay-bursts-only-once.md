@@ -6,13 +6,13 @@ $$
 D_0 = \frac{b}{R} + T_1 + T_2,
 $$
 
-and $D_0$ is smaller than the sum of the per-node bounds,
+and $D_0$ is at most the sum of the per-node bounds,
 
 $$
 D_1 + D_2 = \frac{b}{R_1} + T_1 + \frac{b + rT_1}{R_2} + T_2,
 $$
 
-obtained by bounding the delay at the first node, the arrival curve $\gamma_{r, b + rT_1}$ of its output, and the delay at the second node. The term due to the burst $b$ appears once in $D_0$ and twice in $D_1 + D_2$, and the burstiness $rT_1$ added by the first node does not increase the end-to-end bound.
+obtained by bounding the delay at the first node, the arrival curve $\gamma_{r, b + rT_1}$ of its output, and the delay at the second node: $D_1 + D_2 - D_0 = b/\max(R_1, R_2) + rT_1/R_2 \ge 0$, with strict inequality when $b > 0$. The term due to the burst $b$ appears once in $D_0$ and twice in $D_1 + D_2$, and the burstiness $rT_1$ added by the first node does not increase the end-to-end bound.
 
 ## Depends on
 
