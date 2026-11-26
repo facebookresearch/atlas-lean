@@ -12,7 +12,7 @@ Assume no four points of $P$ lie on a common circle and let $t = 4\pi\sqrt{3}/9 
 
 This page becomes ready once:
 
-- Source check: the proof is in J. M. Keil and C. A. Gutwin, "Classes of graphs which approximate the complete Euclidean graph" (1992), which has not been opened; the lecture notes state the result without proof.
+- Source check: the proof is in J. M. Keil and C. A. Gutwin, "Classes of graphs which approximate the complete Euclidean graph" (1992), which has not been opened; the lecture notes state the result without proof. Its Section 2, Lemma 1 (the upper-arc prerequisite) and Theorem 1 (the stretch constant) are the locators to check.
 
 ## Sources
 
