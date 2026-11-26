@@ -19,6 +19,75 @@ open CategoryTheory CategoryTheory.Limits Opposite
 universe u w
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
+
+-- Check the native comparison equations over abstract categories before
+-- substituting the sheaf and Galois-action functors.
+section DerivedComparisonProofs
+
+universe uC vC uD vD uA vA
+
+variable {C : Type uC} [Category.{vC} C] [Abelian C] [HasInjectiveResolutions C]
+variable {D : Type uD} [Category.{vD} D] [Abelian D] [HasInjectiveResolutions D]
+variable {A : Type uA} [Category.{vA} A] [Abelian A]
+variable (T : C ⥤ D) [T.Additive] [T.PreservesInjectiveObjects] [T.PreservesHomology]
+variable (G : D ⥤ A) [G.Additive]
+variable {P : C ⥤ A} [P.Additive]
+
+private theorem derivedResolutionFormulaProof (α : P ≅ T ⋙ G) (q : ℕ)
+    {Q : C} (I : InjectiveResolution Q) :
+    (Functor.rightDerivedPrecompIsoOfIso T G α q).hom.app Q =
+      (I.isoRightDerivedObj P q).hom ≫
+        (HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q).map
+          ((NatTrans.mapHomologicalComplex α.hom (ComplexShape.up ℕ)).app I.cocomplex) ≫
+        (Functor.rightDerivedPrecompHomologyIso T G q I).hom ≫
+        ((T.mapInjectiveResolution I).isoRightDerivedObj G q).inv :=
+  Functor.rightDerivedPrecompIsoOfIso_resolution_formula T G α q I
+
+private theorem derivedZeroMapProof (α : P ≅ T ⋙ G) (Q : C) :
+    P.toRightDerivedZero.app Q ≫
+        (Functor.rightDerivedPrecompIsoOfIso T G α 0).hom.app Q =
+      α.hom.app Q ≫ G.toRightDerivedZero.app (T.obj Q) :=
+  Functor.rightDerivedPrecompIsoOfIso_toRightDerivedZero T G α Q
+
+private theorem derivedZeroIsoProof
+    [PreservesFiniteLimits P] [PreservesFiniteLimits G]
+    (α : P ≅ T ⋙ G) (Q : C) :
+    (Functor.rightDerivedPrecompIsoOfIso T G α 0).hom.app Q ≫
+        G.rightDerivedZeroIsoSelf.hom.app (T.obj Q) =
+      P.rightDerivedZeroIsoSelf.hom.app Q ≫ α.hom.app Q :=
+  Functor.rightDerivedPrecompIsoOfIso_zeroIsoSelf T G α Q
+
+private theorem derivedResolutionNaturalityProof (α : P ≅ T ⋙ G) (q : ℕ)
+    {Q Q' : C} {f : Q ⟶ Q'} {I : InjectiveResolution Q}
+    {J : InjectiveResolution Q'} (φ : InjectiveResolution.Hom I J f) :
+    (HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q).map
+        ((P.mapHomologicalComplex (ComplexShape.up ℕ)).map φ.hom) ≫
+      (Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J).hom =
+    (Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I).hom ≫
+      (HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q).map
+        ((G.mapHomologicalComplex (ComplexShape.up ℕ)).map
+          (T.mapInjectiveResolutionHom φ).hom) :=
+  Functor.rightDerivedPrecompHomologyIsoOfIso_naturality T G α q φ
+
+private theorem derivedResolutionChoiceProof (α : P ≅ T ⋙ G) (q : ℕ)
+    {Q : C} (I J : InjectiveResolution Q) :
+    (InjectiveResolution.cohomologyComparisonIso I J P q).hom ≫
+        (Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J).hom =
+      (Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I).hom ≫
+        (InjectiveResolution.cohomologyComparisonIso
+          (T.mapInjectiveResolution I) (T.mapInjectiveResolution J) G q).hom :=
+  Functor.rightDerivedPrecompHomologyIsoOfIso_comparison T G α q I J
+
+private theorem derivedResolutionIsoProof (α : P ≅ T ⋙ G) (q : ℕ)
+    {Q : C} (I : InjectiveResolution Q) :
+    (Functor.rightDerivedPrecompIsoOfIso T G α q).hom.app Q =
+      (I.isoRightDerivedObj P q).hom ≫
+        (Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I).hom ≫
+        ((T.mapInjectiveResolution I).isoRightDerivedObj G q).inv :=
+  Functor.rightDerivedPrecompIsoOfIso_resolution_iso T G α q I
+
+end DerivedComparisonProofs
+
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
@@ -78,148 +147,75 @@ theorem fieldDerivedSectionsInvariantsIso_naturality (q : ℕ)
   (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.naturality f
 
 
-set_option linter.defProp false in
--- Cache the kernel-checked generic proof with inferred actual field instances.
--- Explicitly restating this private proof type exceeded 1600000 in v13;
--- public theorems retain their complete types and standard-only axiom checks.
-private def fieldResolutionFormulaProof (q : ℕ)
-    {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
-    (I : InjectiveResolution Q) :=
-  Functor.rightDerivedPrecompIsoOfIso_resolution_formula
-    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
-    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
-
-set_option linter.defProp false in
--- Cache the kernel-checked generic proof with inferred actual field instances.
--- Explicitly restating this private proof type exceeded 1600000 in v13;
--- public theorems retain their complete types and standard-only axiom checks.
-private def fieldToRightDerivedZeroProof
-    (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :=
-  Functor.rightDerivedPrecompIsoOfIso_toRightDerivedZero
-    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
-    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) Q
-
-set_option linter.defProp false in
--- Cache the kernel-checked generic proof with inferred actual field instances.
--- Explicitly restating this private proof type exceeded 1600000 in v13;
--- public theorems retain their complete types and standard-only axiom checks.
-private def fieldZeroComparisonProof
-    (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :=
-  Functor.rightDerivedPrecompIsoOfIso_zeroIsoSelf
-    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
-    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) Q
-
-set_option linter.defProp false in
--- Cache the kernel-checked generic proof with inferred actual field instances.
--- Explicitly restating this private proof type exceeded 1600000 in v13;
--- public theorems retain their complete types and standard-only axiom checks.
-private def fieldResolutionMapProof (q : ℕ)
-    {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
-    {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
-    (φ : InjectiveResolution.Hom I J f) :=
-  Functor.rightDerivedPrecompHomologyIsoOfIso_naturality
-    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
-    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q φ
-
-set_option linter.defProp false in
--- Cache the kernel-checked generic proof with inferred actual field instances.
--- Explicitly restating this private proof type exceeded 1600000 in v13;
--- public theorems retain their complete types and standard-only axiom checks.
-private def fieldResolutionChoiceProof (q : ℕ)
-    {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
-    (I J : InjectiveResolution Q) :=
-  Functor.rightDerivedPrecompHomologyIsoOfIso_comparison
-    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
-    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I J
-
-set_option linter.defProp false in
--- Cache the kernel-checked generic proof with inferred actual field instances.
--- Explicitly restating this private proof type exceeded 1600000 in v13;
--- public theorems retain their complete types and standard-only axiom checks.
-private def fieldResolutionIsoFormulaProof (q : ℕ)
-    {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
-    (I : InjectiveResolution Q) :=
-  Functor.rightDerivedPrecompIsoOfIso_resolution_iso
-    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
-    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
-
--- Actual field/stalk alias comparisons exceeded 200000/800000 in v8/v5;
--- the identical zero adapter passed under this finite scope in v10.
 /-- The comparison keeps the actual homology of the SAME termwise cut2 map on ANY resolution. -/
 theorem fieldDerivedSectionsInvariantsIso_resolution_formula (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
-    (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.app Q =
-      (I.isoRightDerivedObj
-        (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) q).hom ≫
-      (HomologicalComplex.homologyFunctor AddCommGrpCat.{max u w} (ComplexShape.up ℕ) q).map
-        ((NatTrans.mapHomologicalComplex (fieldGlobalSectionsInvariantsIso.{u, w} k Ω).hom
-          (ComplexShape.up ℕ)).app I.cocomplex) ≫
-      (Functor.rightDerivedPrecompHomologyIso
-        (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω) q I).hom ≫
-      ((fieldMappedInjectiveResolution.{u, w} k Ω I).isoRightDerivedObj
-        (fieldInvariantFunctor.{u, w} k Ω) q).inv := by
-  let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let B := FieldCohomologyModule.{u, w} k Ω
-  let A := AddCommGrpCat.{max u w}
-  let T : C ⥤ B := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
-  let G : B ⥤ A := fieldInvariantFunctor.{u, w} k Ω
-  let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let _ : T.Additive := inferInstance
-  let _ : T.PreservesInjectiveObjects := inferInstance
-  let _ : T.PreservesHomology := inferInstance
-  let _ : P.Additive := inferInstance
-  let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
-  let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
-  let I' : InjectiveResolution (T.obj Q) := T.mapInjectiveResolution I
-  let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
-  let K₁ : CochainComplex A ℕ := ((T ⋙ G).mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
-  let K₂ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
-  let H : CochainComplex A ℕ ⥤ A :=
-    HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
-  let τ : K₀ ⟶ K₁ :=
-    (NatTrans.mapHomologicalComplex α.hom (ComplexShape.up ℕ)).app I.cocomplex
-  let a : (P.rightDerived q).obj Q ≅ K₀.homology q := I.isoRightDerivedObj P q
-  let b : K₁.homology q ≅ K₂.homology q := Functor.rightDerivedPrecompHomologyIso T G q I
-  let c : (G.rightDerived q).obj (T.obj Q) ≅ K₂.homology q := I'.isoRightDerivedObj G q
-  let e : P.rightDerived q ≅ T ⋙ G.rightDerived q := Functor.rightDerivedPrecompIsoOfIso T G α q
-  have h : e.hom.app Q = a.hom ≫ H.map τ ≫ b.hom ≫ c.inv :=
-    fieldResolutionFormulaProof.{u, w} k Ω q I
-  change e.hom.app Q = a.hom ≫ H.map τ ≫ b.hom ≫ c.inv
-  exact h
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let H : CochainComplex A ℕ ⥤ A :=
+      HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
+    let I' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution I
+    let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₁ : CochainComplex A ℕ :=
+      ((T ⋙ G).mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₂ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
+    let e : P.rightDerived q ≅ T ⋙ G.rightDerived q :=
+      Functor.rightDerivedPrecompIsoOfIso T G α q
+    let a : (P.rightDerived q).obj Q ≅ H.obj K₀ := I.isoRightDerivedObj P q
+    let b : H.obj K₁ ≅ H.obj K₂ := Functor.rightDerivedPrecompHomologyIso T G q I
+    let c : (G.rightDerived q).obj (T.obj Q) ≅ H.obj K₂ := I'.isoRightDerivedObj G q
+    let τ : K₀ ⟶ K₁ :=
+      (NatTrans.mapHomologicalComplex α.hom (ComplexShape.up ℕ)).app I.cocomplex
+    (e.hom.app Q : (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q)) =
+      (a.hom ≫ H.map τ ≫ b.hom ≫ c.inv :
+        (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q)) := by
+  exact derivedResolutionFormulaProof
+    (C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (D := FieldCohomologyModule.{u, w} k Ω) (A := AddCommGrpCat.{max u w})
+    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
+    (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
 
--- Actual field/stalk alias comparisons exceeded 200000/800000 in v8/v5;
--- the identical zero adapter passed under this finite scope in v10.
 /-- The full family preserves the SAME canonical map into degree-zero derived objects. -/
 theorem fieldDerivedSectionsInvariantsIso_toRightDerivedZero
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
-    (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).toRightDerivedZero.app Q ≫
-      (fieldDerivedSectionsInvariantsIso.{u, w} k Ω 0).hom.app Q =
-    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω).hom.app Q ≫
-      (fieldInvariantFunctor.{u, w} k Ω).toRightDerivedZero.app
-        ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q) := by
-  let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let B := FieldCohomologyModule.{u, w} k Ω
-  let A := AddCommGrpCat.{max u w}
-  let T : C ⥤ B := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
-  let G : B ⥤ A := fieldInvariantFunctor.{u, w} k Ω
-  let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let _ : T.Additive := inferInstance
-  let _ : T.PreservesInjectiveObjects := inferInstance
-  let _ : T.PreservesHomology := inferInstance
-  let _ : P.Additive := inferInstance
-  let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
-  let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
-  let e : P.rightDerived 0 ≅ T ⋙ G.rightDerived 0 := Functor.rightDerivedPrecompIsoOfIso T G α 0
-  let p : P ⟶ P.rightDerived 0 := P.toRightDerivedZero
-  let g : G ⟶ G.rightDerived 0 := G.toRightDerivedZero
-  have h : p.app Q ≫ e.hom.app Q = α.hom.app Q ≫ g.app (T.obj Q) :=
-    fieldToRightDerivedZeroProof.{u, w} k Ω Q
-  change p.app Q ≫ e.hom.app Q = α.hom.app Q ≫ g.app (T.obj Q)
-  exact h
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let e : P.rightDerived 0 ≅ T ⋙ G.rightDerived 0 :=
+      Functor.rightDerivedPrecompIsoOfIso T G α 0
+    (P.toRightDerivedZero.app Q ≫ e.hom.app Q :
+        P.obj Q ⟶ (G.rightDerived 0).obj (T.obj Q)) =
+      (α.hom.app Q ≫ G.toRightDerivedZero.app (T.obj Q) :
+        P.obj Q ⟶ (G.rightDerived 0).obj (T.obj Q)) := by
+  exact derivedZeroMapProof
+    (C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (D := FieldCohomologyModule.{u, w} k Ω) (A := AddCommGrpCat.{max u w})
+    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
+    (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) Q
 
--- Actual field/stalk alias comparisons exceeded 200000/800000 in v8/v5;
--- the identical zero adapter passed under this finite scope in v10.
 /-- In degree zero this is exactly the previously fixed original section/invariant map. -/
 theorem fieldDerivedSectionsInvariantsIso_zero
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
@@ -229,27 +225,12 @@ theorem fieldDerivedSectionsInvariantsIso_zero
       (Sheaf.Γ (Spec (.of k)).smallEtaleTopology
         AddCommGrpCat.{max u w}).rightDerivedZeroIsoSelf.hom.app Q ≫
         (fieldGlobalSectionsInvariantsIso.{u, w} k Ω).hom.app Q := by
-  let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let B := FieldCohomologyModule.{u, w} k Ω
-  let A := AddCommGrpCat.{max u w}
-  let T : C ⥤ B := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
-  let G : B ⥤ A := fieldInvariantFunctor.{u, w} k Ω
-  let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let _ : T.Additive := inferInstance
-  let _ : T.PreservesInjectiveObjects := inferInstance
-  let _ : T.PreservesHomology := inferInstance
-  let _ : P.Additive := inferInstance
-  let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
-  let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
-  let _ : PreservesFiniteLimits P := inferInstance
-  let _ : PreservesFiniteLimits G := fieldInvariantFunctor_preservesFiniteLimits.{u, w} k Ω
-  let e : P.rightDerived 0 ≅ T ⋙ G.rightDerived 0 := Functor.rightDerivedPrecompIsoOfIso T G α 0
-  let zP : P.rightDerived 0 ≅ P := P.rightDerivedZeroIsoSelf
-  let zG : G.rightDerived 0 ≅ G := G.rightDerivedZeroIsoSelf
-  have h : e.hom.app Q ≫ zG.hom.app (T.obj Q) = zP.hom.app Q ≫ α.hom.app Q :=
-    fieldZeroComparisonProof.{u, w} k Ω Q
-  change e.hom.app Q ≫ zG.hom.app (T.obj Q) = zP.hom.app Q ≫ α.hom.app Q
-  exact h
+  exact derivedZeroIsoProof
+    (C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (D := FieldCohomologyModule.{u, w} k Ω) (A := AddCommGrpCat.{max u w})
+    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
+    (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) Q
 
 /-- Actual Gamma-resolution homology is identified with the SAME mapped-invariant homology. -/
 def fieldDerivedSectionsInvariantsResolutionIso (q : ℕ)
@@ -259,134 +240,126 @@ def fieldDerivedSectionsInvariantsResolutionIso (q : ℕ)
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
 
--- Actual field/stalk alias comparisons exceeded 200000/800000 in v8/v5;
--- the identical zero adapter passed under this finite scope in v10.
 /-- Every original bundled map of resolutions gives the SAME literal homology square. -/
 theorem fieldDerivedSectionsInvariantsResolutionIso_naturality (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
     (φ : InjectiveResolution.Hom I J f) :
-    (HomologicalComplex.homologyFunctor AddCommGrpCat.{max u w} (ComplexShape.up ℕ) q).map
-        (((Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).mapHomologicalComplex
-          (ComplexShape.up ℕ)).map φ.hom) ≫
-      (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q J).hom =
-    (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q I).hom ≫
-      (HomologicalComplex.homologyFunctor AddCommGrpCat.{max u w} (ComplexShape.up ℕ) q).map
-        (((fieldInvariantFunctor.{u, w} k Ω).mapHomologicalComplex (ComplexShape.up ℕ)).map
-          ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapInjectiveResolutionHom φ).hom) := by
-  let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let B := FieldCohomologyModule.{u, w} k Ω
-  let A := AddCommGrpCat.{max u w}
-  let T : C ⥤ B := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
-  let G : B ⥤ A := fieldInvariantFunctor.{u, w} k Ω
-  let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let _ : T.Additive := inferInstance
-  let _ : T.PreservesInjectiveObjects := inferInstance
-  let _ : T.PreservesHomology := inferInstance
-  let _ : P.Additive := inferInstance
-  let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
-  let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
-  let I' : InjectiveResolution (T.obj Q) := T.mapInjectiveResolution I
-  let J' : InjectiveResolution (T.obj Q') := T.mapInjectiveResolution J
-  let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
-  let K₀' : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj J.cocomplex
-  let K₁ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
-  let K₁' : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj J'.cocomplex
-  let eI : K₀.homology q ≅ K₁.homology q :=
-    Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
-  let eJ : K₀'.homology q ≅ K₁'.homology q :=
-    Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J
-  let H : CochainComplex A ℕ ⥤ A :=
-    HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
-  let ψ₀ : K₀ ⟶ K₀' := (P.mapHomologicalComplex (ComplexShape.up ℕ)).map φ.hom
-  let ψ₁ : K₁ ⟶ K₁' :=
-    (G.mapHomologicalComplex (ComplexShape.up ℕ)).map (T.mapInjectiveResolutionHom φ).hom
-  have h : H.map ψ₀ ≫ eJ.hom = eI.hom ≫ H.map ψ₁ :=
-    fieldResolutionMapProof.{u, w} k Ω q φ
-  change H.map ψ₀ ≫ eJ.hom = eI.hom ≫ H.map ψ₁
-  exact h
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let H : CochainComplex A ℕ ⥤ A :=
+      HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
+    let I' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution I
+    let J' : InjectiveResolution (T.obj Q') :=
+      T.mapInjectiveResolution J
+    let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₀' : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj J.cocomplex
+    let K₁ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
+    let K₁' : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj J'.cocomplex
+    let eI : H.obj K₀ ≅ H.obj K₁ :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
+    let eJ : H.obj K₀' ≅ H.obj K₁' :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J
+    (H.map ((P.mapHomologicalComplex (ComplexShape.up ℕ)).map φ.hom) ≫ eJ.hom :
+        H.obj K₀ ⟶ H.obj K₁') =
+      (eI.hom ≫ H.map ((G.mapHomologicalComplex (ComplexShape.up ℕ)).map
+        (T.mapInjectiveResolutionHom φ).hom) : H.obj K₀ ⟶ H.obj K₁') := by
+  exact derivedResolutionNaturalityProof
+    (C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (D := FieldCohomologyModule.{u, w} k Ω) (A := AddCommGrpCat.{max u w})
+    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
+    (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q φ
 
--- Actual field/stalk alias comparisons exceeded 200000/800000 in v8/v5;
--- the identical zero adapter passed under this finite scope in v10.
 /-- EVERY canonical comparison of original resolution choices preserves the fixed map. -/
 theorem fieldDerivedSectionsInvariantsResolutionIso_comparison (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I J : InjectiveResolution Q) :
-    (InjectiveResolution.cohomologyComparisonIso I J
-      (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) q).hom ≫
-        (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q J).hom =
-    (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q I).hom ≫
-      (InjectiveResolution.cohomologyComparisonIso
-        (fieldMappedInjectiveResolution.{u, w} k Ω I)
-        (fieldMappedInjectiveResolution.{u, w} k Ω J)
-        (fieldInvariantFunctor.{u, w} k Ω) q).hom := by
-  let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let B := FieldCohomologyModule.{u, w} k Ω
-  let A := AddCommGrpCat.{max u w}
-  let T : C ⥤ B := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
-  let G : B ⥤ A := fieldInvariantFunctor.{u, w} k Ω
-  let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let _ : T.Additive := inferInstance
-  let _ : T.PreservesInjectiveObjects := inferInstance
-  let _ : T.PreservesHomology := inferInstance
-  let _ : P.Additive := inferInstance
-  let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
-  let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
-  let I' : InjectiveResolution (T.obj Q) := T.mapInjectiveResolution I
-  let J' : InjectiveResolution (T.obj Q) := T.mapInjectiveResolution J
-  let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
-  let K₀' : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj J.cocomplex
-  let K₁ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
-  let K₁' : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj J'.cocomplex
-  let eI : K₀.homology q ≅ K₁.homology q :=
-    Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
-  let eJ : K₀'.homology q ≅ K₁'.homology q :=
-    Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J
-  let a : K₀.homology q ≅ K₀'.homology q :=
-    InjectiveResolution.cohomologyComparisonIso I J P q
-  let b : K₁.homology q ≅ K₁'.homology q :=
-    InjectiveResolution.cohomologyComparisonIso I' J' G q
-  have h : a.hom ≫ eJ.hom = eI.hom ≫ b.hom :=
-    fieldResolutionChoiceProof.{u, w} k Ω q I J
-  change a.hom ≫ eJ.hom = eI.hom ≫ b.hom
-  exact h
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let H : CochainComplex A ℕ ⥤ A :=
+      HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
+    let I' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution I
+    let J' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution J
+    let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₀' : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj J.cocomplex
+    let K₁ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
+    let K₁' : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj J'.cocomplex
+    let eI : H.obj K₀ ≅ H.obj K₁ :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
+    let eJ : H.obj K₀' ≅ H.obj K₁' :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J
+    let a : H.obj K₀ ≅ H.obj K₀' := InjectiveResolution.cohomologyComparisonIso I J P q
+    let b : H.obj K₁ ≅ H.obj K₁' := InjectiveResolution.cohomologyComparisonIso I' J' G q
+    (a.hom ≫ eJ.hom : H.obj K₀ ⟶ H.obj K₁') =
+      (eI.hom ≫ b.hom : H.obj K₀ ⟶ H.obj K₁') := by
+  exact derivedResolutionChoiceProof
+    (C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (D := FieldCohomologyModule.{u, w} k Ω) (A := AddCommGrpCat.{max u w})
+    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
+    (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I J
 
--- Actual field/stalk alias comparisons exceeded 200000/800000 in v8/v5;
--- the identical zero adapter passed under this finite scope in v10.
 /-- The field family agrees with the actual arbitrary-resolution isomorphism. -/
 theorem fieldDerivedSectionsInvariantsIso_resolution_iso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
-    (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.app Q =
-      (I.isoRightDerivedObj
-        (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) q).hom ≫
-        (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q I).hom ≫
-          ((fieldMappedInjectiveResolution.{u, w} k Ω I).isoRightDerivedObj
-            (fieldInvariantFunctor.{u, w} k Ω) q).inv := by
-  let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let B := FieldCohomologyModule.{u, w} k Ω
-  let A := AddCommGrpCat.{max u w}
-  let T : C ⥤ B := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
-  let G : B ⥤ A := fieldInvariantFunctor.{u, w} k Ω
-  let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
-  let _ : T.Additive := inferInstance
-  let _ : T.PreservesInjectiveObjects := inferInstance
-  let _ : T.PreservesHomology := inferInstance
-  let _ : P.Additive := inferInstance
-  let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
-  let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
-  let I' : InjectiveResolution (T.obj Q) := T.mapInjectiveResolution I
-  let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
-  let K₁ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
-  let a : (P.rightDerived q).obj Q ≅ K₀.homology q := I.isoRightDerivedObj P q
-  let b : K₀.homology q ≅ K₁.homology q :=
-    Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
-  let c : (G.rightDerived q).obj (T.obj Q) ≅ K₁.homology q := I'.isoRightDerivedObj G q
-  let e : P.rightDerived q ≅ T ⋙ G.rightDerived q := Functor.rightDerivedPrecompIsoOfIso T G α q
-  have h : e.hom.app Q = a.hom ≫ b.hom ≫ c.inv :=
-    fieldResolutionIsoFormulaProof.{u, w} k Ω q I
-  change e.hom.app Q = a.hom ≫ b.hom ≫ c.inv
-  exact h
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let H : CochainComplex A ℕ ⥤ A :=
+      HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
+    let I' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution I
+    let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₂ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
+    let e : P.rightDerived q ≅ T ⋙ G.rightDerived q :=
+      Functor.rightDerivedPrecompIsoOfIso T G α q
+    let a : (P.rightDerived q).obj Q ≅ H.obj K₀ := I.isoRightDerivedObj P q
+    let b : H.obj K₀ ≅ H.obj K₂ :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
+    let c : (G.rightDerived q).obj (T.obj Q) ≅ H.obj K₂ := I'.isoRightDerivedObj G q
+    (e.hom.app Q : (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q)) =
+      (a.hom ≫ b.hom ≫ c.inv :
+        (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q)) := by
+  exact derivedResolutionIsoProof
+    (C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (D := FieldCohomologyModule.{u, w} k Ω) (A := AddCommGrpCat.{max u w})
+    (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
+    (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
+    (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
 
 /-- The actual mapped cocomplex is literally the original cocomplex mapped along T. -/
 theorem fieldMappedInjectiveResolution_cocomplex
@@ -546,8 +519,6 @@ theorem originalFieldDerivedSectionsInvariantsIso_eq (q : ℕ)
         ((liftCoefficients.{u, w} (Spec (.of k))).obj F) := rfl
 
 
--- The complete all-resolution/original-section law structure type reached
--- 200000 heartbeats in field-derived-full-v13; every source clause is retained.
 /-- The full original source unit fixes the actual family, all resolutions/maps and both
 common and original degree-zero section/germ normalizations. -/
 structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
@@ -614,35 +585,100 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
   every_resolution_formula : ∀ (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q),
-    (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.app Q =
-          (I.isoRightDerivedObj
-            (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) q).hom ≫
-            (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q I).hom ≫
-              ((fieldMappedInjectiveResolution.{u, w} k Ω I).isoRightDerivedObj
-                (fieldInvariantFunctor.{u, w} k Ω) q).inv
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let H : CochainComplex A ℕ ⥤ A :=
+      HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
+    let I' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution I
+    let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₂ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
+    let e : P.rightDerived q ≅ T ⋙ G.rightDerived q :=
+      Functor.rightDerivedPrecompIsoOfIso T G α q
+    let a : (P.rightDerived q).obj Q ≅ H.obj K₀ := I.isoRightDerivedObj P q
+    let b : H.obj K₀ ≅ H.obj K₂ :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
+    let c : (G.rightDerived q).obj (T.obj Q) ≅ H.obj K₂ := I'.isoRightDerivedObj G q
+    (e.hom.app Q : (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q)) =
+      (a.hom ≫ b.hom ≫ c.inv :
+        (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q))
   every_resolution_map_square : ∀ (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
     (φ : InjectiveResolution.Hom I J f),
-    (HomologicalComplex.homologyFunctor AddCommGrpCat.{max u w} (ComplexShape.up ℕ) q).map
-            (((Sheaf.Γ (Spec (.of k)).smallEtaleTopology
-              AddCommGrpCat.{max u w}).mapHomologicalComplex
-              (ComplexShape.up ℕ)).map φ.hom) ≫
-          (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q J).hom =
-        (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q I).hom ≫
-          (HomologicalComplex.homologyFunctor AddCommGrpCat.{max u w} (ComplexShape.up ℕ) q).map
-            (((fieldInvariantFunctor.{u, w} k Ω).mapHomologicalComplex (ComplexShape.up ℕ)).map
-              ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapInjectiveResolutionHom φ).hom)
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let H : CochainComplex A ℕ ⥤ A :=
+      HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
+    let I' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution I
+    let J' : InjectiveResolution (T.obj Q') :=
+      T.mapInjectiveResolution J
+    let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₀' : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj J.cocomplex
+    let K₁ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
+    let K₁' : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj J'.cocomplex
+    let eI : H.obj K₀ ≅ H.obj K₁ :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
+    let eJ : H.obj K₀' ≅ H.obj K₁' :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J
+    (H.map ((P.mapHomologicalComplex (ComplexShape.up ℕ)).map φ.hom) ≫ eJ.hom :
+        H.obj K₀ ⟶ H.obj K₁') =
+      (eI.hom ≫ H.map ((G.mapHomologicalComplex (ComplexShape.up ℕ)).map
+        (T.mapInjectiveResolutionHom φ).hom) : H.obj K₀ ⟶ H.obj K₁')
   every_canonical_choice_square : ∀ (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I J : InjectiveResolution Q),
-    (InjectiveResolution.cohomologyComparisonIso I J
-          (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) q).hom ≫
-            (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q J).hom =
-        (fieldDerivedSectionsInvariantsResolutionIso.{u, w} k Ω q I).hom ≫
-          (InjectiveResolution.cohomologyComparisonIso
-            (fieldMappedInjectiveResolution.{u, w} k Ω I)
-            (fieldMappedInjectiveResolution.{u, w} k Ω J) (fieldInvariantFunctor.{u, w} k Ω) q).hom
+    let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let D := FieldCohomologyModule.{u, w} k Ω
+    let A := AddCommGrpCat.{max u w}
+    let T : C ⥤ D := fieldGeometricStalkGaloisFunctor.{u, w} k Ω
+    let G : D ⥤ A := fieldInvariantFunctor.{u, w} k Ω
+    let P : C ⥤ A := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
+    let _ : T.Additive := inferInstance
+    let _ : T.PreservesInjectiveObjects := inferInstance
+    let _ : T.PreservesHomology := inferInstance
+    let _ : P.Additive := inferInstance
+    let _ : G.Additive := fieldInvariantFunctor_additive.{u, w} k Ω
+    let α : P ≅ T ⋙ G := fieldGlobalSectionsInvariantsIso.{u, w} k Ω
+    let H : CochainComplex A ℕ ⥤ A :=
+      HomologicalComplex.homologyFunctor A (ComplexShape.up ℕ) q
+    let I' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution I
+    let J' : InjectiveResolution (T.obj Q) :=
+      T.mapInjectiveResolution J
+    let K₀ : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj I.cocomplex
+    let K₀' : CochainComplex A ℕ := (P.mapHomologicalComplex (ComplexShape.up ℕ)).obj J.cocomplex
+    let K₁ : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj I'.cocomplex
+    let K₁' : CochainComplex A ℕ := (G.mapHomologicalComplex (ComplexShape.up ℕ)).obj J'.cocomplex
+    let eI : H.obj K₀ ≅ H.obj K₁ :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q I
+    let eJ : H.obj K₀' ≅ H.obj K₁' :=
+      Functor.rightDerivedPrecompHomologyIsoOfIso T G α q J
+    let a : H.obj K₀ ≅ H.obj K₀' := InjectiveResolution.cohomologyComparisonIso I J P q
+    let b : H.obj K₁ ≅ H.obj K₁' := InjectiveResolution.cohomologyComparisonIso I' J' G q
+    (a.hom ≫ eJ.hom : H.obj K₀ ⟶ H.obj K₁') =
+      (eI.hom ≫ b.hom : H.obj K₀ ⟶ H.obj K₁')
   same_zero_identification : ∀
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}),
     (fieldDerivedSectionsInvariantsIso.{u, w} k Ω 0).hom.app Q ≫
