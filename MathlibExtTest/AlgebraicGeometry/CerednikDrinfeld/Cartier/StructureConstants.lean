@@ -14,19 +14,20 @@ public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.Cartier.StructureCon
 
 namespace CartierStructureConstantsTest
 
-open CerednikDrinfeld MvPolynomial
+open CerednikDrinfeld
 
-/-- Consumer with the original binders: division by a non-zero-divisor `π` inside the ideal
-`(X u * X v - π)`. -/
-theorem exactSource {σ : Type*} {R : Type*} [CommRing R] {π : R}
-    (hπ : ∀ r : R, π * r = 0 → r = 0) (u v : σ) {g : MvPolynomial σ R}
-    (h : C π * g ∈ Ideal.span {(X u * X v - C π : MvPolynomial σ R)}) :
-    g ∈ Ideal.span {(X u * X v - C π : MvPolynomial σ R)} :=
-  mem_span_of_C_mul_mem_span_X_mul_X_sub_C hπ u v h
+/-- Under `CartierLift.liftHom`, the lifts of structure constants to `CartierLift.LiftRing` map
+back to them. -/
+theorem exactSource (p : ℕ) [Fact p.Prime] {B : Type*} [CommRing B] (j : Zp2 p →+* B)
+    (a : ℕ → Fin 2 → B) (h : a 0 0 * a 0 1 = p) :
+    (fun m i => CartierLift.liftHom j (a 0 0) (a 0 1) h
+      (CartierLift.liftConstants (p := p) (R := Zp2 p) a m i)) = a :=
+  FormalODModule.liftHom_comp_liftConstants j a h
 
-/-- The lift ring maps back to `B`, sending each variable to itself. -/
-example (p : ℕ) {R B : Type*} [CommRing R] [CommRing B] (j : R →+* B) (u v : B)
-    (huv : u * v = p) (b : B) : CartierLift.liftHom j u v huv (CartierLift.liftVar u v b) = b :=
-  CartierLift.liftHom_liftVar j u v huv b
+/-- The index of the `m`-th term of a structure-constant expansion alternates, starting from the
+other piece. -/
+example : FormalODModule.piIndex 0 0 = 1 ∧ FormalODModule.piIndex 0 1 = 0 ∧
+    FormalODModule.piIndex 1 0 = 0 := by
+  decide
 
 end CartierStructureConstantsTest

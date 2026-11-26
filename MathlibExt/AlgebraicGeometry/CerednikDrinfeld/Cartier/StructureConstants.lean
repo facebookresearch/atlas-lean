@@ -28,15 +28,16 @@ module
 public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.Cartier.GradedPiece
 public import MathlibExt.RingTheory.MvFormalGroup.Cartier.BaseChange
 public import MathlibExt.RingTheory.MvFormalGroup.Cartier.IntVerschiebung
+public import MathlibExt.RingTheory.WittVector.CartierLift
 
 /-!
 # Structure constants of Cartier modules
 
-Base change compatibilities of the integral Verschiebung and of `V`-adic expansions, the ring
-`CartierLift.LiftRing p R u v = R[B] ⧸ (X u * X v - p)` used to lift structure constants, and,
-for a formal `O_D`-module, homogeneous `V`-bases (`FormalODModule.IsHomogeneousVBasis`) and
-structure constants of `ϖ` in such a basis (`FormalODModule.HasStructureConstants`), with their
-behavior under base change.
+Base change compatibilities of the integral Verschiebung and of `V`-adic expansions and, for a
+formal `O_D`-module, homogeneous `V`-bases (`FormalODModule.IsHomogeneousVBasis`) and structure
+constants of `ϖ` in such a basis (`FormalODModule.HasStructureConstants`), with their behavior
+under base change. Under `CartierLift.liftHom`, the lifts `CartierLift.liftConstants` of structure
+constants map back to them (`FormalODModule.liftHom_comp_liftConstants`).
 
 ## References
 
@@ -158,118 +159,7 @@ end CartierModule
 
 end MvFormalGroup
 
-namespace MvPolynomial
-
-variable {σ : Type*} {R : Type*} [CommRing R]
-
-theorem mem_span_of_C_mul_mem_span_X_mul_X_sub_C {π : R} (hπ : ∀ r : R, π * r = 0 → r = 0)
-    (u v : σ) {g : MvPolynomial σ R}
-    (h : C π * g ∈ Ideal.span {(X u * X v - C π : MvPolynomial σ R)}) :
-    g ∈ Ideal.span {(X u * X v - C π : MvPolynomial σ R)} := by
-  classical
-  obtain ⟨q, hq⟩ := Ideal.mem_span_singleton'.mp h
-  have hXq : q * X u * X v = C π * (g + q) := by
-    have : q * (X u * X v - C π) = C π * g := hq
-    linear_combination this
-  have hdvd : ∀ e, π ∣ q.coeff e := by
-    intro e
-    have hc := congrArg (fun r => r.coeff (e + Finsupp.single u 1 + Finsupp.single v 1)) hXq
-    rw [coeff_mul_X, coeff_mul_X, coeff_C_mul] at hc
-    exact ⟨_, hc⟩
-  obtain ⟨q₁, rfl⟩ := (C_dvd_iff_dvd_coeff _ _).2 hdvd
-  have hreg : IsLeftRegular (C π : MvPolynomial σ R) := by
-    rw [C_apply]
-    exact (isLeftRegular_iff_isRegular.mp
-      (isLeftRegular_iff_right_eq_zero_of_mul.mpr hπ)).monomial.left
-  have hcancel : g + C π * q₁ = q₁ * X u * X v := by
-    have h0 : C π * (g + C π * q₁ - q₁ * X u * X v) = 0 := by
-      have := hXq
-      linear_combination (-1 : MvPolynomial σ R) * this
-    have := isLeftRegular_iff_right_eq_zero_of_mul.mp hreg _ h0
-    linear_combination this
-  refine Ideal.mem_span_singleton'.mpr ⟨q₁, ?_⟩
-  linear_combination (-1 : MvPolynomial σ R) * hcancel
-
-end MvPolynomial
-
 namespace CerednikDrinfeld
-
-namespace CartierLift
-
-open MvPolynomial
-
-variable (p : ℕ) (R : Type v) [CommRing R] {B : Type u}
-
-def liftRel (u v : B) : MvPolynomial B R := X u * X v - C (p : R)
-
-abbrev LiftRing (u v : B) : Type (max u v) := MvPolynomial B R ⧸ Ideal.span {liftRel p R u v}
-
-variable {p R}
-
-def liftVar (u v : B) (b : B) : LiftRing p R u v := Ideal.Quotient.mk _ (X b)
-
-theorem liftVar_mul_liftVar (u v : B) :
-    liftVar (p := p) (R := R) u v u * liftVar (p := p) (R := R) u v v = p := by
-  rw [liftVar, liftVar, ← map_mul, ← map_natCast (Ideal.Quotient.mk (Ideal.span {liftRel p R u v})),
-    ← MvPolynomial.C_eq_natCast]
-  refine (Ideal.Quotient.eq).mpr (Ideal.subset_span ?_)
-  simp [liftRel]
-
-def liftHom [CommRing B] (j : R →+* B) (u v : B) (huv : u * v = p) : LiftRing p R u v →+* B :=
-  Ideal.Quotient.lift _ (eval₂Hom j id) (fun a ha => by
-    obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp ha
-    rw
-        [map_mul, liftRel, map_sub, map_mul, eval₂Hom_X', eval₂Hom_X', eval₂Hom_C, map_natCast,
-            id, id,
-      huv, sub_self, mul_zero])
-
-@[simp] theorem liftHom_liftVar [CommRing B] (j : R →+* B) (u v : B) (huv : u * v = p) (b : B) :
-    liftHom j u v huv (liftVar u v b) = b := by
-  rw [liftHom, liftVar, Ideal.Quotient.lift_mk, eval₂Hom_X']
-  rfl
-
-theorem liftHom_mk_C [CommRing B] (j : R →+* B) (u v : B) (huv : u * v = p) (r : R) :
-    liftHom j u v huv (Ideal.Quotient.mk _ (C r)) = j r := by
-  rw [liftHom, Ideal.Quotient.lift_mk, eval₂Hom_C]
-
-theorem liftHom_comp_algebraMap [CommRing B] (j : R →+* B) (u v : B) (huv : u * v = p) :
-    (liftHom j u v huv).comp (algebraMap R (LiftRing p R u v)) = j :=
-  RingHom.ext fun r => liftHom_mk_C j u v huv r
-
-theorem liftHom_surjective [CommRing B] (j : R →+* B) (u v : B) (huv : u * v = p) :
-    Function.Surjective (liftHom j u v huv) :=
-  fun b => ⟨liftVar u v b, liftHom_liftVar j u v huv b⟩
-
-theorem natCast_mul_eq_zero (hR : ∀ r : R, (p : R) * r = 0 → r = 0) (u v : B) (x : LiftRing p R u v)
-    (hx : (p : LiftRing p R u v) * x = 0) : x = 0 := by
-  obtain ⟨g, rfl⟩ := Ideal.Quotient.mk_surjective x
-  rw [Ideal.Quotient.eq_zero_iff_mem]
-  refine MvPolynomial.mem_span_of_C_mul_mem_span_X_mul_X_sub_C hR u v ?_
-  rw [← Ideal.Quotient.eq_zero_iff_mem, map_mul, MvPolynomial.C_eq_natCast, map_natCast]
-  exact hx
-
-def liftConstants (a : ℕ → Fin 2 → B) (m : ℕ) (i : Fin 2) : LiftRing p R (a 0 0) (a 0 1) :=
-  liftVar (a 0 0) (a 0 1) (a m i)
-
-@[simp] theorem liftHom_liftConstants [CommRing B] (j : R →+* B) (a : ℕ → Fin 2 → B)
-    (h : a 0 0 * a 0 1 = p)
-    (m : ℕ) (i : Fin 2) : liftHom j (a 0 0) (a 0 1) h (liftConstants (p := p) a m i) = a m i :=
-  liftHom_liftVar j _ _ h _
-
-theorem liftConstants_zero_zero_mul (a : ℕ → Fin 2 → B) :
-    liftConstants (p := p) (R := R) a 0 0 * liftConstants (p := p) (R := R) a 0 1 = p :=
-  liftVar_mul_liftVar _ _
-
-theorem zp2_natCast_mul_eq_zero [Fact p.Prime] (r : Zp2 p) (h : (p : Zp2 p) * r = 0) : r = 0 := by
-  rcases mul_eq_zero.mp h with h0 | h0
-  · exact absurd h0 (WittVector.p_ne_zero p (GaloisField p 2))
-  · exact h0
-
-theorem natCast_mul_eq_zero_zp2 [Fact p.Prime] (u v : B) (x : LiftRing p (Zp2 p) u v)
-    (hx : (p : LiftRing p (Zp2 p) u v) * x = 0) : x = 0 :=
-  natCast_mul_eq_zero (zp2_natCast_mul_eq_zero (p := p)) u v x hx
-
-end CartierLift
 
 namespace FormalODModule
 

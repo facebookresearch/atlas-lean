@@ -34,9 +34,10 @@ public import MathlibExt.RingTheory.MvFormalGroup.Cartier.BaseChange
 For a formal `O_D`-module `X`, `FormalODModule.cartierBaseChange` transports Cartier modules
 along compatible ring homomorphisms. An index `i` is critical (`CritChart.IsCritical`) when
 `ϖ` maps the graded piece `i` into the image of Verschiebung. The file defines the invariants
-`CritChart.invariants` (where `ϖ = V`), the elements `CritChart.preInvariants` where `ϖ = V`
-up to the image of `V ^ (2 * n + 1)`, their quotients `CritChart.truncInvariants` by the image
-of `V ^ (2 * n)`, and the functoriality of all of these in `B`-algebras.
+`CritChart.invariants` (where `ϖ = V`), the elements `CritChart.preInvariants` of the graded
+piece `i` where `ϖ = V` up to the image of that piece under `V ^ (2 * n + 1)`
+(`CritChart.vPowRange`), their quotients `CritChart.truncInvariants` by the image of the piece
+under `V ^ (2 * n)`, and the functoriality of all of these in `B`-algebras.
 
 ## References
 

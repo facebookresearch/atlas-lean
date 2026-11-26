@@ -25,9 +25,9 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.Cartier.GradedModuleData
 public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.Cartier.GradedPiece
 public import MathlibExt.RingTheory.MvFormalGroup.Cartier.IntVerschiebung
+public import MathlibExt.RingTheory.WittVector.GradedCartierModuleData
 
 /-!
 # Cartier module models of formal `O_D`-modules
@@ -235,7 +235,7 @@ and `1` of the Cartier module are complementary, the Cartier module with its `Wi
 action, the Frobenius, the Verschiebung `verschiebungInt`, the action of `ϖ`, and the graded
 pieces `0` and `1`. -/
 def toGradedCartierModuleData {B : Type u} [CommRing B] (X : FormalODModule p B) (j : Zp2 p →+* B)
-    (hc : IsCompl (X.gradedPiece j 0) (X.gradedPiece j 1)) : GradedCartierModuleData p B j where
+    (hc : IsCompl (X.gradedPiece j 0) (X.gradedPiece j 1)) : GradedCartierModuleData p j where
   M := CartierModule p X.F
   frobenius := MvFormalGroup.CartierModule.frobenius
   verschiebung := MvFormalGroup.CartierModule.verschiebungInt
