@@ -103,18 +103,20 @@ structure HMMFamily.Regular {p r K : ℕ} (M : HMMFamily p r K) : Prop where
   /-- `π_θ` is stationary for `P_θ`. -/
   π_stationary : ∀ θ ∈ M.Θ, ∀ x', ∑ x, M.π θ x * M.P θ x x' = M.π θ x'
 
-/-- The hidden Markov model of the parameter `θ`, with initial weights `π_θ`, transition weights
-`P_θ` and emission weights `e_θ`. Its `likelihood` of the observations `y_0, …, y_n` is the
-stationary observation probability `p̄_θ(y_0, …, y_n)` when `π_θ` is stationary. -/
+/-- The raw `HMM` structure built from the parameter weights `M.π θ`, `M.P θ`, and `M.e θ`. When
+`M` is regular (`M.Regular`) and `θ ∈ M.Θ`, these weights are stochastic with stationary initial
+law `M.π θ`, and `likelihood (M.toHMM θ) y n` is the stationary observation probability
+`p̄_θ(y_0, …, y_n)`. -/
 def HMMFamily.toHMM {p r K : ℕ} (M : HMMFamily p r K) (θ : EuclideanSpace ℝ (Fin p)) :
     HMM (Fin r) (Fin K) ℝ where
   init := M.π θ
   trans := M.P θ
   emit := M.e θ
 
-/-- `Q` is the **stationary observation law** of `θ`: for every `n` and every observation
-sequence `y`, the cylinder `{ω | ω_i = y_i for i ≤ n}` has `Q`-probability
-`likelihood (M.toHMM θ) y n = p̄_θ(y_0, …, y_n)`. -/
+/-- Cylinder-measure identity equating the real-valued cylinder measures
+`Q.real {ω | ∀ i : Fin (n + 1), ω i = y i}` to `likelihood (M.toHMM θ) y n` for every `n` and
+every sequence `y`. When `M` is regular (`M.Regular`), `θ ∈ M.Θ`, and `Q` is a probability
+measure, this expresses that `Q` is the stationary observation law of `θ`. -/
 def HMMFamily.IsObsLaw {p r K : ℕ} (M : HMMFamily p r K) (θ : EuclideanSpace ℝ (Fin p))
     (Q : Measure (ℕ → Fin K)) : Prop :=
   ∀ (n : ℕ) (y : ℕ → Fin K),
