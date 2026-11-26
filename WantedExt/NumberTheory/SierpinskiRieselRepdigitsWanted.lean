@@ -13,6 +13,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.NumberTheory.InfiniteRieselRepdigits
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.RieselRepdigit101
 public import MathlibExt.NumberTheory.SierpinskiRepinteger18107
@@ -78,17 +79,6 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.
 public theorem_wanted infinite_sierpinski_repdigits {b : ℕ} (hb : 78557 < b) :
     {N : ℕ | ∃ k t : ℕ, 1 ≤ k ∧ k < b ∧ 1 ≤ t ∧ N = repstring b k 0 t ∧
       IsSierpinskiNumber N}.Infinite
-
-/-- **Infinitely many Riesel repdigits in every base $b > 509203$.** Let $b > 509203$ be a
-natural number. Then there are infinitely many Riesel numbers of the form $k(b^t - 1)/(b - 1)$ with
-$1 \le k < b$ and $t \ge 1$, that is, $b$-repdigits: the digit $k$ written $t$ times in base $b$.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.8
-(`integers-2026-A12-cor-3-8`). -/
-public theorem_wanted infinite_riesel_repdigits {b : ℕ} (hb : 509203 < b) :
-    {N : ℕ | ∃ k t : ℕ, 1 ≤ k ∧ k < b ∧ 1 ≤ t ∧ N = repstring b k 0 t ∧
-      IsRieselNumber N}.Infinite
 
 /-- **Repdigits with digit 41 that are Sierpiński numbers.** Let $b$ and $t$ be natural numbers
 with $b \equiv 87 \pmod{11184810}$ and $t \equiv 59 \pmod{120}$. Then the base-$b$ repdigit
