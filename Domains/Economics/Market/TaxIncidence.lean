@@ -40,7 +40,8 @@ open Filter Topology
 
 namespace MathlibExt.Economics.Market
 
-/-- **Seller-price incidence.** Along a differentiable equilibrium path, the seller price moves
+/-- **Seller-price incidence.** Along a differentiable equilibrium path, with `D'` and `S'` the
+slopes of demand and supply at the buyer and seller prices and `S' ≠ D'`, the seller price moves
 at rate `D' / (S' - D')` in the tax. -/
 theorem hasDerivAt_sellerPrice {D S p : ℝ → ℝ} {τ₀ D' S' p' : ℝ}
     (hpath : ∀ᶠ τ in 𝓝 τ₀, IsBuyerTaxEquilibrium D S τ (p τ)) (hp : HasDerivAt p p' τ₀)
@@ -60,7 +61,8 @@ theorem hasDerivAt_sellerPrice {D S p : ℝ → ℝ} {τ₀ D' S' p' : ℝ}
     linear_combination -huniq
   rwa [hval] at hp
 
-/-- **Buyer-price incidence.** Along a differentiable equilibrium path, the buyer price
+/-- **Buyer-price incidence.** Along a differentiable equilibrium path, with `D'` and `S'` the
+slopes of demand and supply at the buyer and seller prices and `S' ≠ D'`, the buyer price
 `p τ + τ` moves at rate `S' / (S' - D')` in the tax. -/
 theorem hasDerivAt_buyerPrice {D S p : ℝ → ℝ} {τ₀ D' S' p' : ℝ}
     (hpath : ∀ᶠ τ in 𝓝 τ₀, IsBuyerTaxEquilibrium D S τ (p τ)) (hp : HasDerivAt p p' τ₀)
@@ -76,8 +78,8 @@ theorem hasDerivAt_buyerPrice {D S p : ℝ → ℝ} {τ₀ D' S' p' : ℝ}
   rw [halg] at hAdd
   exact hAdd
 
-/-- With downward-sloping demand and upward-sloping supply, the buyers' share
-`S' / (S' - D')` of a small tax lies in `[0, 1]`. -/
+/-- With downward-sloping demand and upward-sloping supply (`D' ≤ 0 ≤ S'`, `S' ≠ D'`), the buyers'
+share `S' / (S' - D')` of a small tax lies in `[0, 1]`. -/
 theorem buyerShare_mem_Icc {D' S' : ℝ} (hD' : D' ≤ 0) (hS' : 0 ≤ S') (hslope : S' ≠ D') :
     S' / (S' - D') ∈ Set.Icc (0 : ℝ) 1 := by
   have hlt : D' < S' := lt_of_le_of_ne (le_trans hD' hS') (Ne.symm hslope)

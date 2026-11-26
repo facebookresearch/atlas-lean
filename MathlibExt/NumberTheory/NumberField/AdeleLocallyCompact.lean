@@ -6,6 +6,25 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Definitions/Def_NumberField_Completion_Finite.lean`
+(https://github.com/anthropics/fermats-last-theorem):
+Compared with the source file at commit
+`6e837e75355538c7f80bab5b956861e86c4eacc2`.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
+The source is machine-generated proof code built around a proof-extraction
+framework; the statements and proofs are reused here with that machinery
+removed and the names restated in Mathlib style.
+-/
+
 module
 
 public import Mathlib.NumberTheory.NumberField.AdeleRing
@@ -57,13 +76,26 @@ namespace IsDedekindDomain.HeightOneSpectrum
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- The residue field of the adic completion integers is finite. -/
+/-- **Finite residue field of a completed number ring.** Let $K$ be a number field and $v$ a
+nonzero prime ideal of its ring of integers $\mathcal{O}_K$. The residue field of the ring of
+integers $\mathcal{O}_v$ of the $v$-adic completion $K_v$ of $K$ is finite. -/
 theorem finite_residueField (v : HeightOneSpectrum (𝓞 K)) :
     Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)) := by
   have : v.asIdeal.IsMaximal := v.isPrime.isMaximal v.ne_bot
   have hfin : Finite (𝓞 K ⧸ v.asIdeal) := inferInstance
   exact Finite.of_equiv (𝓞 K ⧸ v.asIdeal)
     (v.completionResidueFieldEquiv (K := K)).symm.toEquiv
+
+/-- Finiteness of the residue field, registered as an instance so that
+compactness and properness criteria for valued fields can use it. -/
+instance finite_residueField_instance (v : HeightOneSpectrum (𝓞 K)) :
+    Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)) :=
+  finite_residueField K v
+
+/-- Finiteness of the residue field in valued-field notation. -/
+instance finite_residueField_valued (v : HeightOneSpectrum (𝓞 K)) :
+    Finite 𝓀[v.adicCompletion K] :=
+  inferInstanceAs (Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)))
 
 /-- The adic completion integers form a compact space. -/
 noncomputable instance compactSpace (v : HeightOneSpectrum (𝓞 K)) :
@@ -101,7 +133,9 @@ noncomputable instance properSpace (v : HeightOneSpectrum (𝓞 K)) :
     ProperSpace (v.adicCompletion K) := by
   exact Valued.integer.properSpace_iff_compactSpace_integer.mpr (compactSpace K v)
 
-/-- The adic completion integers are compact as a subset of the completion. -/
+/-- **Compactness of the completed ring of integers.** Let $K$ be a number field and $v$ a
+nonzero prime ideal of its ring of integers $\mathcal{O}_K$. The ring of integers $\mathcal{O}_v$
+of the $v$-adic completion $K_v$ of $K$ is a compact subset of $K_v$. -/
 theorem isCompact_adicCompletionIntegers (v : HeightOneSpectrum (𝓞 K)) :
     IsCompact (↑(v.adicCompletionIntegers K) : Set (v.adicCompletion K)) := by
   change IsCompact (Valued.integer (v.adicCompletion K) : Set (v.adicCompletion K))

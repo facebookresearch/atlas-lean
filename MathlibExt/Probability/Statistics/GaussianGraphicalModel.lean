@@ -396,7 +396,7 @@ private theorem trace_eq_of_supported {ι : Type*} [Fintype ι] [DecidableEq ι]
     (hmatch : ∀ i j, (i = j ∨ G.Adj i j) → K₀⁻¹ i j = S i j)
     (hsupp : IsSupportedOn G K) : (S * K).trace = (K₀⁻¹ * K).trace := by
   classical
-  simp only [trace, diag_apply, mul_apply]
+  simp only [trace, diag_apply, Matrix.mul_apply]
   apply Finset.sum_congr rfl
   intro i _
   apply Finset.sum_congr rfl

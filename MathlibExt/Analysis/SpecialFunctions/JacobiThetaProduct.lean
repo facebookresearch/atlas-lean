@@ -42,24 +42,41 @@ impose `x ≠ 0`; no convergence or triple-product identity is asserted here.
 
 namespace MetaMathlibExt.QPochhammer
 
-/-- The product-side Jacobi theta function
-`j(x; q) = (x; q)∞ (q / x; q)∞ (q; q)∞`, for `‖q‖ < 1`. -/
+/-- **Jacobi theta function, product form.** For complex numbers $x$ and $q$ with $|q| < 1$,
+
+$$j(x; q) = (x; q)_\infty \, (q/x; q)_\infty \, (q; q)_\infty,$$
+
+where $(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ is the infinite $q$-Pochhammer symbol.
+Division by zero is read as $q/0 = 0$, so $j(0; q) = (q; q)_\infty$. -/
 noncomputable def jacobiThetaProduct (x q : ℂ) (hq : ‖q‖ < 1) : ℂ :=
   qPochhammerInf x q hq * qPochhammerInf (q / x) q hq * qPochhammerInf q q hq
 
-/-- Involutive parameter symmetry: `j(q / x; q) = j(x; q)` when `q ≠ 0`. -/
+/-- **Symmetry of the Jacobi theta product under $x \mapsto q/x$.** Write
+$(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ for the infinite $q$-Pochhammer symbol and
+$j(x; q) = (x; q)_\infty \, (q/x; q)_\infty \, (q; q)_\infty$ for the product-form Jacobi theta
+function. For all complex numbers $x$ and $q$ with $0 < |q| < 1$, $j(q/x; q) = j(x; q)$.
+This includes $x = 0$, where $q/0$ is read as $0$. -/
 theorem jacobiThetaProduct_symm (x q : ℂ) (hq : ‖q‖ < 1) (h0 : q ≠ 0) :
     jacobiThetaProduct (q / x) q hq = jacobiThetaProduct x q hq := by
   unfold jacobiThetaProduct
   rw [div_div_cancel₀ h0, mul_comm (qPochhammerInf (q / x) q hq) (qPochhammerInf x q hq)]
 
-/-- At `x = 0`, the first two q-Pochhammer factors are one. -/
+/-- **Jacobi theta product with vanishing first argument.** Write
+$(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ for the infinite $q$-Pochhammer symbol and
+$j(x; q) = (x; q)_\infty \, (q/x; q)_\infty \, (q; q)_\infty$ for the product-form Jacobi theta
+function. For every complex number $q$ with $|q| < 1$, $j(0; q) = (q; q)_\infty$.
+Here $q/0$ is read as $0$, so the first two factors of $j(0; q)$ both equal $(0; q)_\infty = 1$. -/
 @[simp]
 theorem jacobiThetaProduct_zero_left (q : ℂ) (hq : ‖q‖ < 1) :
     jacobiThetaProduct 0 q hq = qPochhammerInf q q hq := by
   simp [jacobiThetaProduct]
 
-/-- At `q = 0`, the last two q-Pochhammer factors are one. -/
+/-- **Jacobi theta product at nome zero.** Write $(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$
+for the infinite $q$-Pochhammer symbol and
+$j(x; q) = (x; q)_\infty \, (q/x; q)_\infty \, (q; q)_\infty$ for the product-form Jacobi theta
+function, where $|q| < 1$. For every complex number $x$, $j(x; 0) = (x; 0)_\infty$: since
+$0/x = 0$ (also for $x = 0$, reading $0/0$ as $0$), the last two factors of $j(x; 0)$ both equal
+$(0; 0)_\infty = 1$. -/
 @[simp]
 theorem jacobiThetaProduct_zero_right (x : ℂ) :
     jacobiThetaProduct x 0 (by simp) = qPochhammerInf x 0 (by simp) := by

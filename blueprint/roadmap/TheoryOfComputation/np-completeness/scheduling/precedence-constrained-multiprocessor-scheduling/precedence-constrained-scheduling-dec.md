@@ -1,0 +1,3 @@
+# PRECEDENCE CONSTRAINED SCHEDULING as a decision problem
+
+The decision problem PRECEDENCE CONSTRAINED SCHEDULING accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(l, m, P, D)$ (a list of natural numbers, a natural number, a list of pairs and a natural number), to an instance that is well-formed and feasible for PRECEDENCE CONSTRAINED SCHEDULING. It rejects every bitstring that does not decode to such an instance.

@@ -75,23 +75,13 @@ private theorem passesInverseTest_eq_true {s : Nat} (g : BitVec s) :
     · exact Or.inl hx
     · exact Or.inr ⟨y, mem_binaryWords y, hy⟩
 
-private theorem zero_toPolynomial (s : Nat) : (0#s).toPolynomial = 0 := by
-  ext i
-  simp [BitVec.coeff_toPolynomial]
-
 private theorem adjoinRootEquiv_zero {s : Nat} (g : BitVec s) :
     g.adjoinRootEquiv (0#s) = 0 := by
-  rw [BitVec.adjoinRootEquiv_apply, zero_toPolynomial, map_zero]
-
-private theorem one_toPolynomial {s : Nat} (hs : 0 < s) :
-    (1#s).toPolynomial = 1 := by
-  ext i
-  rw [BitVec.coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
-  simp [hs]
+  rw [BitVec.adjoinRootEquiv_apply, toPolynomial_zero, map_zero]
 
 private theorem adjoinRootEquiv_one {s : Nat} (g : BitVec s) (hs : 0 < s) :
     g.adjoinRootEquiv (1#s) = 1 := by
-  rw [BitVec.adjoinRootEquiv_apply, one_toPolynomial hs, map_one]
+  rw [BitVec.adjoinRootEquiv_apply, toPolynomial_one hs, map_one]
 
 /-- At positive width, the exhaustive inverse test succeeds exactly for irreducible monic
 moduli. -/
@@ -152,30 +142,6 @@ theorem passesInverseTest_iff_irreducible {s : Nat} (g : BitVec s) (hs : 0 < s) 
             g.adjoinRootEquiv.apply_symm_apply]
         _ = 1 := mul_inv_cancel₀ hne
         _ = g.adjoinRootEquiv (1#s) := (adjoinRootEquiv_one g hs).symm
-
-private theorem if_decide_eq_one_zmod_two (c : ZMod 2) :
-    (if decide (c = 1) then 1 else 0) = c := by
-  revert c
-  decide
-
-private theorem monicModulus_toBitVec {s : Nat} (f : Polynomial (ZMod 2))
-    (hf : f.Monic) (hd : f.natDegree = s) :
-    (f.toBitVec s).monicModulus = f := by
-  ext n
-  rw [BitVec.monicModulus, Polynomial.coeff_add, Polynomial.coeff_X_pow,
-    BitVec.coeff_toPolynomial]
-  by_cases hn : n < s
-  · rw [ite_eq_right hn.ne, zero_add, Polynomial.toBitVec,
-      BitVec.getLsbD_cast, BitVec.getLsbD_ofBoolListLE,
-      List.getD_eq_getElem _ _ (by simpa using hn), List.getElem_ofFn,
-      if_decide_eq_one_zmod_two]
-  · by_cases heq : n = s
-    · subst n
-      rw [ite_eq_left rfl, BitVec.getLsbD_of_ge _ _ le_rfl]
-      simp [← hd, hf.coeff_natDegree]
-    · have hsn : s < n := by omega
-      rw [ite_eq_right hsn.ne', BitVec.getLsbD_of_ge _ _ hsn.le]
-      simp [Polynomial.coeff_eq_zero_of_natDegree_lt (hd.trans_lt hsn)]
 
 /-- Search the lower coefficient words in ascending order for the first word passing the
 exhaustive inverse test. Width zero is deliberately reported as failure. -/

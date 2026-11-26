@@ -7,7 +7,7 @@
 - [Letters of the first row of an induced alignment](induced-pair-filter-map-fst.md)
 - [Letters of the second row of an induced alignment](induced-pair-filter-map-snd.md)
 - [Induced pairwise alignments are valid](induced-pair-is-alignment.md)
-- [Pairs of rows](pair-finset.md)
+- [Increasing pairs of finite indices](pair-finset.md)
 - [Sum-of-pairs score of a column](column-sp.md)
 - [Sum-of-pairs score](msa-score.md)
 - [Score of an induced pairwise alignment](alignment-score-induced-pair.md)

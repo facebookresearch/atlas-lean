@@ -13,18 +13,20 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.ArithmeticFunction.SquarefulTwoPowOmega
 public import MathlibExt.NumberTheory.KFull
+public import MathlibExt.NumberTheory.LSeries.LindelofOfRiemannHypothesis
 
 /-!
 # Venkatasubbareddy–Sankaranarayanan, `2^{ω(n)}` on squareful integers — wishlist
 
-Statement-only records for the lemmas of Venkatasubbareddy and
-Sankaranarayanan, INTEGERS 24 (2024), Article A110, that are stated over
-explicit objects: the factorizations of `F(s) = ∑_{n squareful} 2^{ω(n)} n^{-s}`
-(squareful is `Nat.IsKFull 2`)
-through zeta products (Lemmas 1 and 2) and the classical zeta estimates the
-paper quotes (Lemmas 4, 5, 6 and 8). A positive integer `n` is squareful when
-`p ∣ n` implies `p^2 ∣ n` for every prime `p`; `n = 1` is squareful. The
+Statement-only records for the classical zeta estimates quoted by Venkatasubbareddy and
+Sankaranarayanan, INTEGERS 24 (2024), Article A110 (Lemmas 4, 5, 6 and 8), and their
+asymptotic for the weighted count of squareful integers. This module re-exports the
+factorizations of `F(s) = ∑_{n squareful} 2^{ω(n)} n^{-s}` through zeta products
+(Lemmas 1 and 2), with squareful expressed as `Nat.IsKFull 2`, and the Lindelöf bound for `ζ`
+under the Riemann hypothesis (the bound for `ζ` in Lemma 8). A positive integer `n` is squareful
+when `p ∣ n` implies `p^2 ∣ n` for every prime `p`; `n = 1` is squareful. The
 paper's Lemma 7 (`N(T) ≪ T log T`) is implied by
 `MetaMathlibExt.bellotti_wong_zero_count_bound`.
 -/
@@ -35,42 +37,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-open Classical in
-/-- Lemma 1: for `Re s > 1/2`,
-`F(s) = ζ²(2s)ζ²(3s)ζ²(7s)ζ⁴(8s)ζ⁵(12s)ζ¹⁴(13s)ζ⁵(14s) /
-(ζ(4s)ζ²(5s)ζ³(6s)ζ⁵(10s)ζ⁶(11s)) · H₁(s)`, where `H₁` is a Dirichlet series
-converging absolutely for `Re s > 1/15`.
-
-Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
-Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
-(2024), Article A110, Lemma 1 (`integers-2024-A110-lem-1`). -/
-public theorem_wanted squareful_two_pow_omega_LSeries_eq_zeta_quotient_fifteen :
-    ∃ h : ℕ → ℂ, (∀ s : ℂ, 1 / 15 < s.re → LSeriesSummable h s) ∧
-      ∀ s : ℂ, 1 / 2 < s.re →
-        LSeries (fun n => if Nat.IsKFull 2 n then
-            (2 : ℂ) ^ ArithmeticFunction.cardDistinctFactors n else 0) s =
-          riemannZeta (2 * s) ^ 2 * riemannZeta (3 * s) ^ 2 * riemannZeta (7 * s) ^ 2 *
-              riemannZeta (8 * s) ^ 4 * riemannZeta (12 * s) ^ 5 *
-              riemannZeta (13 * s) ^ 14 * riemannZeta (14 * s) ^ 5 /
-            (riemannZeta (4 * s) * riemannZeta (5 * s) ^ 2 * riemannZeta (6 * s) ^ 3 *
-              riemannZeta (10 * s) ^ 5 * riemannZeta (11 * s) ^ 6) * LSeries h s
-
-open Classical in
-/-- Lemma 2: for `Re s > 1/2`, `F(s) = ζ²(2s)ζ²(3s)/ζ(4s) · H₂(s)`, where `H₂` is a
-Dirichlet series converging absolutely for `Re s > 1/5`.
-
-Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
-Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
-(2024), Article A110, Lemma 2 (`integers-2024-A110-lem-2`). -/
-public theorem_wanted squareful_two_pow_omega_LSeries_eq_zeta_quotient_five :
-    ∃ h : ℕ → ℂ, (∀ s : ℂ, 1 / 5 < s.re → LSeriesSummable h s) ∧
-      ∀ s : ℂ, 1 / 2 < s.re →
-        LSeries (fun n => if Nat.IsKFull 2 n then
-            (2 : ℂ) ^ ArithmeticFunction.cardDistinctFactors n else 0) s =
-          riemannZeta (2 * s) ^ 2 * riemannZeta (3 * s) ^ 2 / riemannZeta (4 * s) * LSeries h s
-
-/-- Lemma 4 (quoted classical result): uniformly for `1/2 ≤ σ ≤ 1` and large `T`,
-`∫_1^T |ζ(σ + it)|⁴ dt ≪ T (log T)⁴`.
+/-- **Uniform fourth-moment bound for the Riemann zeta function.** There are real constants $C$
+and $T_0$ such that for every real $\sigma$ with $1/2 \le \sigma \le 1$ and every real
+$T \ge T_0$,
+$$\int_1^T |\zeta(\sigma + it)|^4 \, dt \le C T (\log T)^4.$$
 
 Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
 Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
@@ -79,10 +49,10 @@ public theorem_wanted zeta_fourth_moment_le_uniform :
     ∃ C T₀ : ℝ, ∀ σ : ℝ, 1 / 2 ≤ σ → σ ≤ 1 → ∀ T : ℝ, T₀ ≤ T →
       ∫ t in (1 : ℝ)..T, ‖riemannZeta (σ + t * I)‖ ^ 4 ≤ C * T * Real.log T ^ 4
 
-/-- Lemma 5 (quoted classical result, Vinogradov–Korobov): there is `C > 0` such
-that `1/ζ(s) ≪ (log T)^{2/3} (log log T)^{1/3}` in the region
-`σ ≥ 1 - C / ((log T)^{2/3} (log log T)^{1/3})`, `T₀ < t ≤ T`; `ζ(s) ≠ 0` is stated with
-the bound, since Lean's `0⁻¹ = 0` would make the bound alone vacuous at a zero.
+/-- **Vinogradov–Korobov bound for $1/\zeta$.** Write $s = \sigma + it$ and
+$g(T) = (\log T)^{2/3} (\log \log T)^{1/3}$. There are real constants $C > 0$, $K$ and
+$T_0 \ge 3$ such that for every real $T$ and every complex $s$ with $T_0 < t \le T$ and
+$\sigma \ge 1 - C / g(T)$, we have $\zeta(s) \ne 0$ and $|1/\zeta(s)| \le K g(T)$.
 
 Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
 Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
@@ -93,9 +63,9 @@ public theorem_wanted inv_zeta_le_vinogradov_korobov :
         riemannZeta s ≠ 0 ∧ ‖(riemannZeta s)⁻¹‖ ≤
           K * Real.log T ^ ((2 : ℝ) / 3) * Real.log (Real.log T) ^ ((1 : ℝ) / 3)
 
-/-- Lemma 6 (quoted classical result, Vinogradov–Korobov zero-free region):
-there is `C* > 0` with `ζ(s) ≠ 0` for
-`σ ≥ 1 - C* / ((log |t|)^{2/3} (log log |t|)^{1/3})`, `|t| ≥ t₀`.
+/-- **Vinogradov–Korobov zero-free region.** There are real constants $C > 0$ and $t_0 \ge 3$
+such that $\zeta(\sigma + it) \ne 0$ for all real $\sigma$ and $t$ with $|t| \ge t_0$ and
+$\sigma \ge 1 - C / \bigl((\log |t|)^{2/3} (\log \log |t|)^{1/3}\bigr)$.
 
 Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
 Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
@@ -106,20 +76,10 @@ public theorem_wanted zeta_ne_zero_vinogradov_korobov :
           Real.log (Real.log |s.im|) ^ ((1 : ℝ) / 3)) ≤ s.re →
         riemannZeta s ≠ 0
 
-/-- Lemma 8, equation (24) (quoted classical result): the Riemann hypothesis
-implies `ζ(σ + it) = O(|t|^ε)` uniformly for `1/2 ≤ σ ≤ 1`, `|t| ≥ t₀`.
-
-Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
-Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
-(2024), Article A110, Lemma 8 (`integers-2024-A110-lem-8`). -/
-public theorem_wanted zeta_le_rpow_of_riemannHypothesis (hRH : RiemannHypothesis)
-    (ε : ℝ) (hε : 0 < ε) :
-    ∃ C t₀ : ℝ, ∀ σ t : ℝ, 1 / 2 ≤ σ → σ ≤ 1 → t₀ ≤ |t| →
-      ‖riemannZeta (σ + t * I)‖ ≤ C * |t| ^ ε
-
-/-- Lemma 8, equation (25) (quoted classical result): the Riemann hypothesis
-implies `1/ζ(σ + it) = O(|t|^ε)` for each fixed `1/2 < σ ≤ 1`, `|t| ≥ t₀`; the
-constants depend on `σ` and `ε`.
+/-- **Bound for $1/\zeta$ from the Riemann hypothesis.** Assume the Riemann hypothesis, and let
+$1/2 < \sigma \le 1$ and $\varepsilon > 0$ be real. Then there are real constants $C$ and $t_0$,
+depending on $\sigma$ and $\varepsilon$, such that $|1/\zeta(\sigma + it)| \le C |t|^{\varepsilon}$
+for every real $t$ with $|t| \ge t_0$.
 
 Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
 Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24
@@ -129,16 +89,23 @@ public theorem_wanted inv_zeta_le_rpow_of_riemannHypothesis (hRH : RiemannHypoth
     ∃ C t₀ : ℝ, ∀ t : ℝ, t₀ ≤ |t| → ‖(riemannZeta (σ + t * I))⁻¹‖ ≤ C * |t| ^ ε
 
 open Classical in
-/-- Theorem 1 (unconditional): with `f(n) = 2^{ω(n)}` for squareful `n` and `0` otherwise
-(`f(1) = 1`), there are real constants `C₁, C₂, C₃, C₄` and `c > 0` with
-`∑_{n ≤ x} f(n) = C₁ x^{1/2} log x + C₂ x^{1/2} + C₃ x^{1/3} log x + C₄ x^{1/3}
-  + O(x^{1/4} exp(c (log x / log log x)^{1/3}))` for large `x`. The paper writes the
-coefficient as `c_ε`, "for some `c > 0`", after "let `ε > 0`": a constant chosen after `ε`, not
-a product with an arbitrarily small factor. Its proof (equations (28)-(30)) produces the
-exponent `(4 + ε) c (log T / log log T)^{1/3}` with `ε` small and `c > 0` the fixed constant of
-its contour shift to `Re s = 1/4 - c/g(T)`, `g(T) = (log T)^{2/3} (log log T)^{1/3}`, chosen in
-terms of the Vinogradov-Korobov zero-free region and the bound for `1/ζ` there (its Lemmas 5 and
-6), so the coefficient stays bounded away from `0` and the statement is one existential `c > 0`.
+/-- **Asymptotic for the sum of $2^{\omega(n)}$ over squareful $n$.** Let $\omega(n)$ be the
+number of distinct prime factors of $n$, and let $f(n) = 2^{\omega(n)}$ if $n$ is squareful
+($n \ne 0$ and $p^2 \mid n$ for every prime $p \mid n$; so $f(1) = 1$) and $f(n) = 0$ otherwise.
+There are real constants $C_1$, $C_2$, $C_3$, $C_4$, $c > 0$, $K$ and $x_0$ such that for every
+real $x \ge x_0$,
+$$\Bigl|\sum_{1 \le n \le x} f(n) - \bigl(C_1 x^{1/2} \log x + C_2 x^{1/2} +
+C_3 x^{1/3} \log x + C_4 x^{1/3}\bigr)\Bigr| \le
+K x^{1/4} \exp\Bigl(c \Bigl(\frac{\log x}{\log \log x}\Bigr)^{1/3}\Bigr).$$
+
+The paper writes the coefficient as $c_\varepsilon$, "for some $c > 0$", after "let
+$\varepsilon > 0$": a constant chosen after $\varepsilon$, not a product with an arbitrarily small
+factor. Its proof (equations (28)–(30)) produces, with $T$ the height parameter of its contour,
+the exponent $(4 + \varepsilon) c (\log T / \log \log T)^{1/3}$ with $\varepsilon$ small and
+$c > 0$ the fixed constant of its contour shift to $\operatorname{Re} s = 1/4 - c/g(T)$, where
+$g(T) = (\log T)^{2/3} (\log \log T)^{1/3}$, chosen in terms of the Vinogradov–Korobov
+zero-free region and the bound for $1/\zeta$ there (its Lemmas 5 and 6), so the coefficient
+stays bounded away from $0$ and the statement is one existential $c > 0$.
 
 Source: Kampamolla Venkatasubbareddy and Ayyadurai Sankaranarayanan, *On the
 Distribution of the Restricted Sequence of Integers 2^{ω(n)}*, INTEGERS 24

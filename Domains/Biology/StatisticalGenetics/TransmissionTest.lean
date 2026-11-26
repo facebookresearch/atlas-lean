@@ -157,23 +157,25 @@ namespace MathlibExt.Probability.Statistics.ExactTests
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- **TDT with a random number of informative transmissions.** Let `D ω` be the number of
-informative transmissions (from heterozygous parents) and `B ω` the number that pass on the
-allele of interest. If, given each value `D = d` of positive probability, `B ~ Bin(d, 1/2)` (the
-null of no linkage, with the transmissions treated as independent fair coins given `d`), then
-the TDT p-value evaluated at the observed total, `ω ↦ P(Bin(D ω, 1/2) ≥ B ω)`, is valid under
-`μ`. This is the generic averaging lemma `isValidPValue_of_forall_cond_of_ne_zero` (over the
-values of `D`) applied to the fixed-`d` guarantee `isValidPValue_tdtPValue`. -/
+/-- **TDT with a random number of informative transmissions.** Let `μ` be a probability measure,
+`D ω` the number of informative transmissions (from heterozygous parents), a measurable count, and
+`B ω` the number that pass on the allele of interest. If, given each value `D = d` of positive
+probability, `B ~ Bin(d, 1/2)` (the null of no linkage, with the transmissions treated as
+independent fair coins given `d`), then the TDT p-value evaluated at the observed total,
+`ω ↦ P(Bin(D ω, 1/2) ≥ B ω)`, is valid under `μ`. This is the generic averaging lemma
+`isValidPValue_of_forall_cond_of_ne_zero` (over the values of `D`) applied to the fixed-`d`
+guarantee `isValidPValue_tdtPValue`. -/
 theorem isValidPValue_tdtPValue_total_of_cond [IsProbabilityMeasure μ] {D B : Ω → ℕ}
     (hDm : Measurable D)
     (hcond : ∀ d, μ {ω | D ω = d} ≠ 0 → HasLaw B Bin(d, fairCoin) (μ[|{ω | D ω = d}])) :
     IsValidPValue μ (fun ω => tdtPValue (D ω) B ω) :=
   isValidPValue_binomialUpperTail_total_of_cond hDm hcond
 
-/-- **McNemar's test with a random number of discordant pairs.** Let `X ω` and `Y ω` count the
-discordant pairs of the two types. If, given each number `X + Y = N` of discordant pairs of
-positive probability, `X ~ Bin(N, 1/2)`, then the McNemar p-value at the observed number of
-discordant pairs, `ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is valid under `μ`.
+/-- **McNemar's test with a random number of discordant pairs.** Let `μ` be a probability measure
+and let the measurable counts `X ω` and `Y ω` count the discordant pairs of the two types. If, given
+each number `X + Y = N` of discordant pairs of positive probability, `X ~ Bin(N, 1/2)`, then the
+McNemar p-value at the observed number of discordant pairs, `ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is
+valid under `μ`.
 
 The conditional law is a hypothesis. The Poissonized model does not need it:
 `isValidPValue_mcnemarPValue_total` gets validity there from
@@ -187,14 +189,15 @@ theorem isValidPValue_mcnemarPValue_total_of_cond [IsProbabilityMeasure μ] {X Y
     IsValidPValue μ (fun ω => mcnemarPValue (X ω + Y ω) X ω) :=
   isValidPValue_tdtPValue_total_of_cond (D := fun ω => X ω + Y ω) (hXm.add hYm) hcond
 
-/-- **McNemar's test under the equal-rate Poisson null.** Let the discordant counts `X ~ Po(r)`
-and `Y ~ Po(r)` be independent with a common rate `r ≥ 0` (the Poissonized null of marginal
-homogeneity). Then the McNemar p-value at the observed number of discordant pairs,
-`ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is valid under `μ`, whatever `r`. The same statement is the
-TDT when `X` and `Y` are the transmitted and untransmitted counts *modeled* as independent
-Poisson counts with equal rates; that is a statistical model of the counts, not a consequence of
-Mendelian segregation. This is the merged `GLM.CountData.isValidPValue_countExactPValue` with
-library sizes `s₁ = s₂ = 1`, restated for `mcnemarPValue`. -/
+/-- **McNemar's test under the equal-rate Poisson null.** Let the measurable discordant counts
+`X ~ Po(r)` and `Y ~ Po(r)` be independent with a common rate `r ≥ 0` (the Poissonized null of
+marginal homogeneity); `μ` is then a probability measure. Then the McNemar p-value at the observed
+number of discordant pairs, `ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is valid under `μ`, whatever `r`.
+The same statement is the TDT when `X` and `Y` are the transmitted and untransmitted counts
+*modeled* as independent Poisson counts with equal rates; that is a statistical model of the counts,
+not a consequence of Mendelian segregation. This is the merged
+`GLM.CountData.isValidPValue_countExactPValue` with library sizes `s₁ = s₂ = 1`, restated for
+`mcnemarPValue`. -/
 theorem isValidPValue_mcnemarPValue_total {X Y : Ω → ℕ} {r : ℝ≥0} (hXm : Measurable X)
     (hYm : Measurable Y) (hX : HasLaw X (poissonMeasure r) μ) (hY : HasLaw Y (poissonMeasure r) μ)
     (hXY : IndepFun X Y μ) :

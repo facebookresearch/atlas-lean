@@ -33,6 +33,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.DistinctEisensteinPrimes
 
 set_option autoImplicit false
 
@@ -40,26 +41,15 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.DistinctEisensteinPrimesWanted
 
-/-- **Lemma 2** (Breusch): if `x ≥ 7`, then between `x`
-and `2x` there is at least one prime of the form
-`6k - 1`.
+/-- **Breusch's theorem for primes of the form $6k - 1$.** For every natural number $x \ge 7$
+there is a prime $p$ with $x < p < 2x$ and $p \equiv 5 \pmod 6$, that is, a prime of the form
+$6k - 1$ strictly between $x$ and $2x$.
 
 Source: Elchin Hasanalizade, "Sums of Distinct
 Eisenstein Primes", Lemma 2 (citing Breusch). -/
 theorem_wanted exists_prime_modEq_five_between (x : ℕ)
     (hx : 7 ≤ x) :
     ∃ p : ℕ, p.Prime ∧ x < p ∧ p < 2 * x ∧ p % 6 = 5
-
-/-- **Lemma 3** (Makowski): every integer greater than
-`161` is the sum of distinct primes of the form
-`6k - 1`.
-
-Source: Elchin Hasanalizade, "Sums of Distinct
-Eisenstein Primes", Lemma 3 (citing Makowski). -/
-theorem_wanted eq_sum_distinct_primes_modEq_five (n : ℕ)
-    (hn : 161 < n) :
-    ∃ S : Finset ℕ, (∀ p ∈ S, p.Prime ∧ p % 6 = 5) ∧
-      (∑ p ∈ S, p) = n
 
 /-- **Lemma 1** (analogue of Kløve's lemma): let `H ⊆ E`
 contain the distinct positive integers `x₁, x₂, …` with

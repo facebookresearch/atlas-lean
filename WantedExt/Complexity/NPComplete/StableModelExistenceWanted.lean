@@ -19,7 +19,7 @@ programming", Logic Programming: Proceedings of the Fifth International Conferen
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Algorithms.SAT.Horn.Basic
@@ -28,7 +28,7 @@ public import CSLibExt.Algorithms.SAT.Horn.Basic
 
 namespace MetaMathlibExt.Complexity.NPComplete.StableModelExistence
 
-open Cslib.Logic.PL (CNF)
+open Cslib.Logic.LegacyPL (CNF)
 
 /-!
 # STABLE MODEL EXISTENCE is NP-complete

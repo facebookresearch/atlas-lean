@@ -7,8 +7,9 @@ topics of `scripts/taxonomy.json`, and links the ATLAS statements to the
 Mathlib declarations they use. `scripts/build_mathlib_pages.py` writes it from
 the built site and the layer's `mathlib-graph` artifact of the same revision.
 Like the layer, these pages are build outputs and are never committed: they
-are about 1 GB of generated HTML. The site that GitHub Pages publishes is
-unchanged.
+are about 1 GB of generated HTML. GitHub Pages, which publishes sites of up to
+1 GB, gets the full site with its pages stored gzipped
+([BLUEPRINT.md](BLUEPRINT.md#the-github-pages-copy)).
 
 ## What a page shows
 
@@ -79,7 +80,9 @@ since the pin.
 - A link whose title is a declaration and whose address is written exactly as
   that declaration's source line at the pinned revision points to its Mathlib
   page. One that disagrees with its title is reported and left as written;
-  `--strict-links`, as pull requests run it, fails the build on it.
+  `--strict-links`, as a pull request's build runs it, fails the build on it.
+  A pull request builds the site when it changes the wiki, among others
+  ([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)).
 - The links that Autoform's Lean code blocks make to Mathlib's documentation
   point to the Mathlib page when they name a declaration that has one, and stay
   as written otherwise. Links to the documentation elsewhere are left alone.
@@ -119,7 +122,17 @@ python scripts/build_mathlib_pages.py check site mathlib-graph site-full
 
 `build` needs the site's MkDocs environment, since MkDocs renders each page's
 chrome with the site's theme, and refuses a layer of another ATLAS revision
-than the site's. The workflow's `build the Mathlib pages` job runs the tests and
-both commands once the wiki and the Mathlib layer are built, and keeps the
-result of `main` builds for three days as the `blueprint-site-full` artifact.
-A failure fails that job only: the site and its deployment never wait for it.
+than the site's. The workflow's `build the Mathlib pages` job runs the tests,
+builds and checks the full site, keeping `main`'s for three days as the
+`blueprint-site-full` artifact, then packs and checks the GitHub Pages copy
+([BLUEPRINT.md](BLUEPRINT.md#the-github-pages-copy)) and uploads it as a second
+Pages artifact, `github-pages-full`, once `scripts/pages_size.sh` has measured
+it as the upload packs it: at most 950 MB. Deployment publishes the wiki job's
+site, packed the same way, as soon as it is built; then, if the Mathlib pages
+job succeeded, the `publish the full site` job publishes the packed full site
+in its place. The two come from the same run, and each publishes only over a
+site of the run's commit or of one of its ancestors, failing otherwise, so a
+later run's site is never replaced by an earlier one's. Runs of the workflow
+from before that check have no such guard: do not re-run their deployment. A
+failed, cancelled or timed-out Mathlib pages job leaves the wiki job's site
+published.

@@ -19,7 +19,7 @@ algorithms", Scientific American 238(1) (1978), 96-109, doi:10.1038/scientificam
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.CrosswordPuzzleConstructionWanted
