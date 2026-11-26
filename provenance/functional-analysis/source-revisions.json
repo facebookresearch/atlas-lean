@@ -10,8 +10,8 @@
       "directory": "provenance/functional-analysis/kernel-spectral-tensor-apis",
       "source_revision": "632b19d0721122e67fcdd66ab75bd37a9f89de86",
       "documentation_revision": "bd599a2704f61645eea9650a5caa8da7f27b9c44",
-      "file_count": 8,
-      "source_content_binding": "Eight readable .lean.txt originals and source/export/Git-blob hashes."
+      "file_count": 6,
+      "source_content_binding": "Six active exports with exact source/export/Git-blob hashes; eight whole original snapshots retained as aggregate custody, including two GNS exports transferred to PR8932 and bound in transferred-exports.jsonl."
     }
   ]
 }

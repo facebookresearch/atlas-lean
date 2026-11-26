@@ -1,20 +1,21 @@
-# Kernel, spectral, and Hilbert tensor API source snapshots
+# Spectral and Hilbert tensor API source snapshots
 
-The source/MathlibExt/ tree stores readable byte-exact original snapshots of the eight
-MathlibExt files in this contribution. Each .lean.txt file is reference text, preserving
-all original author notices and mathematical documentation.
+The source/MathlibExt/ tree retains eight readable, byte-exact original MathlibExt
+snapshots, including all author notices and mathematical documentation. Six exports
+remain active in this aggregate: rectangular Hilbert closed-graph transforms, adjoint
+restrictions, continuous-functional-calculus spectral projections, completed tensor
+Hilbert bases, and bounded measurable reciprocal cuts.
 
-The files.jsonl records identify each original library path and its source version by
-SHA-256 and Git blob hash. Each row binds that source to its snapshot path and contributed
-MathlibExt file hash. The source and documentation revisions are recorded as content
-identifiers; the committed snapshot bytes provide the reproducible source within this
-contribution.
+The GNS NullKernel and NullSubmodule sources, their smoke consumer, ten statement pages
+and two module navigation identities have transferred to pull request 8932. Their
+whole original snapshots remain here as historical aggregate custody. The published
+NullKernel export records its observed proof-only removal of one unused iff_true simp
+argument; the original snapshot is unchanged.
 
-The exports add the required Meta header and preserve every original source byte after
-that header: imports, domains, norms, scalar actions, independent universes, zero/empty
-cases, declarations and proofs. Adaptations use a uniform array schema.
-
-The reusable scope covers GNS null kernels/submodules, rectangular Hilbert closed-graph
-transforms, adjoint restrictions, continuous-functional-calculus spectral projections,
-completed tensor Hilbert bases, and bounded measurable reciprocal cuts. The contribution
-contains only MathlibExt production sources and their readable snapshots.
+files.jsonl binds the six remaining active exports by original and exported SHA-256,
+Git blob, source/documentation revision and snapshot path. These six exports add the
+required Meta header and preserve their original source bytes after that header,
+including mathematical documentation, imports, domains, norms, scalar actions,
+universes, zero cases and proofs. The transferred snapshots are listed separately in
+transferred-exports.jsonl, preserving their original aggregate records and published
+split references.

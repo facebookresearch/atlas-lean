@@ -595,8 +595,6 @@ Topics added since this subject's fields were last revised.
 - [Iterated FDeriv Permutations](iterated-fderiv-permutations/README.md)
 - [Iterated FDeriv Symmetric](iterated-fderiv-symmetric/README.md)
 - [Nonpositive](nonpositive/README.md)
-- [Null Kernel](null-kernel/README.md)
-- [Null Submodule](null-submodule/README.md)
 - [Order Analyticity](order-analyticity/README.md)
 - [Power Series](power-series/README.md)
 - [Quotient Seminorm](quotient-seminorm/README.md)
