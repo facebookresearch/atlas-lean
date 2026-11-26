@@ -1,11 +1,13 @@
 # Discrete Pontryagin conditions for regional vaccination in a multi-region SIR model
 
 **Model.** Regions $\Omega_1, \dots, \Omega_p$ have populations $N^j = S_i^j + I_i^j + R_i^j$ at time steps $i = 0, 1, \dots, N$. Infection in $\Omega_j$ is driven by infectives of every region, with coefficients $\beta_{jk} \ge 0$, under standard incidence; $d_j$ is the common birth and death rate and $\gamma_j$ the recovery rate. A vaccination control $u_i^j \in [u_{\min}^j, u_{\max}^j] \subset (0, 1)$ moves susceptibles to the removed class:
+
 $$\begin{aligned}
 S_{i+1}^j &= S_i^j - \sum_{k=1}^{p} \beta_{jk} \frac{I_i^k}{N^j} S_i^j + d_j (N^j - S_i^j) - u_i^j S_i^j,\\
 I_{i+1}^j &= I_i^j + \sum_{k=1}^{p} \beta_{jk} \frac{I_i^k}{N^j} S_i^j - (\gamma_j + d_j) I_i^j,\\
 R_{i+1}^j &= R_i^j + \gamma_j I_i^j - d_j R_i^j + u_i^j S_i^j .
 \end{aligned}$$
+
 Summing the three equations shows that $N^j$ is constant in time.
 
 **Control problem.** For weights $\alpha_j^I, \alpha_j^R, A_j > 0$, minimize

@@ -1,11 +1,13 @@
 # Ribosome flow model and its globally attracting steady state
 
 **Model.** An mRNA is coarse-grained into $n$ consecutive sites; $x_i(t) \in [0,1]$ is the normalized ribosome occupancy of site $i$ ($1$ full, $0$ empty). With initiation rate $\lambda_0 > 0$ and transition rates $\lambda_1, \dots, \lambda_n > 0$ ($\lambda_n$ the exit rate),
+
 $$\begin{aligned}
 \dot x_1 &= \lambda_0 (1 - x_1) - \lambda_1 x_1 (1 - x_2),\\
 \dot x_i &= \lambda_{i-1} x_{i-1}(1 - x_i) - \lambda_i x_i (1 - x_{i+1}), \qquad 2 \le i \le n-1,\\
 \dot x_n &= \lambda_{n-1} x_{n-1}(1 - x_n) - \lambda_n x_n ,
 \end{aligned}$$
+
 and the translation (protein production) rate is $R(t) = \lambda_n x_n(t)$. The flow from site $i$ to $i+1$ is proportional to the occupancy of site $i$ and the vacancy of site $i+1$, the mean-field version of the exclusion rule of TASEP. The unit cube $C^n = [0,1]^n$ is invariant.
 
 **Theorem.** The RFM admits a unique equilibrium $e \in \operatorname{int} C^n$, and $\lim_{t\to\infty} x(t, a) = e$ for every initial condition $a \in C^n$. Moreover the flow is non-expanding in the $\ell_1$ norm:

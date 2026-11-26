@@ -1,12 +1,14 @@
 # Reinfection threshold for backward bifurcation in a recurrent tuberculosis model
 
 **Model.** Susceptible $S$, latently infected $E$, actively infectious $I$ and recovered $R$ individuals, with $N = S + E + I + R$ and frequency-dependent force of infection $\lambda = c\beta I / N$, satisfy
+
 $$\begin{aligned}
 \dot S &= \Lambda - \lambda S - \mu S, \\
 \dot E &= (1-q)\lambda S + (1-\sigma)\theta\lambda R - p\lambda E - (k+\mu) E, \\
 \dot I &= q\lambda S + \sigma\theta\lambda R + p\lambda E + kE - (\mu + r + \mu_d) I, \\
 \dot R &= rI - \theta\lambda R - \mu R,
 \end{aligned}$$
+
 with recruitment $\Lambda$, natural mortality $\mu$, TB mortality $\mu_d$, treatment/recovery rate $r$, reactivation rate $k$, fraction $q \in [0,1]$ of new infections progressing fast, relative susceptibility $p \ge 0$ of latently infected individuals to exogenous reinfection, relative susceptibility $\theta \ge 0$ of recovered individuals to reinfection, and probability $\sigma \in [0,1]$ of fast progression after reinfection of a recovered individual. All parameters are positive except where stated; $N$ varies in time.
 
 **Reproduction number.** The disease-free equilibrium $(\Lambda/\mu, 0, 0, 0)$ is locally asymptotically stable if

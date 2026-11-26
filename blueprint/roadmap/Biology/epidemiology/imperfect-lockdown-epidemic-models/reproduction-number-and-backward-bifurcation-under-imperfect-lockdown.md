@@ -1,11 +1,13 @@
 # Reproduction number and backward bifurcation under imperfect lockdown
 
 **Model.** Let susceptibles $S$, locked-down susceptibles $L$, exposed $E$, un-notified infectious $I$, hospitalized or isolated $J$ and recovered $R$ have total $N$. Recruitment is $\Pi > 0$, natural mortality $\mu > 0$, susceptibles enter lockdown at rate $l > 0$ and leave it at rate $\psi > 0$, the lockdown efficacy parameter $r \in (0, 1)$ is the relative susceptibility of locked-down individuals, and isolated individuals do not mix, so the force of infection is $\lambda = \beta I / (N - J)$:
+
 $$\begin{aligned}
 S' &= \Pi + \psi L - \lambda S - (\mu + l) S, & L' &= l S - r\lambda L - (\mu + \psi) L,\\
 E' &= \lambda (S + r L) - (\gamma + \mu) E, & I' &= \gamma E - (\eta + \tau_1 + \mu) I,\\
 J' &= \eta I - (\tau_2 + \delta + \mu) J, & R' &= \tau_1 I + \tau_2 J - \mu R .
 \end{aligned}$$
+
 The region $\{N \le \Pi / \mu\}$ of $\mathbb{R}^6_{\ge 0}$ is positively invariant and attracting.
 
 **Disease-free equilibrium and threshold.** The disease-free equilibrium is

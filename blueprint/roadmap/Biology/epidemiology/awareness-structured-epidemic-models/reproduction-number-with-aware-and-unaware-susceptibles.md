@@ -1,6 +1,7 @@
 # Reproduction number of an SEIR model with aware and unaware susceptibles
 
 **Model.** In a closed population of size $N$ without demography, the compartments are aware susceptibles $S_a$, unaware susceptibles $S_u$, exposed $E$, asymptomatic infectious $A$, symptomatic infectious $I$, hospitalized with mild $H_m$ or severe $H_s$ disease, recovered $R$ and deceased $D$. All parameters are positive, $0 < k < 1$, and $0 < \alpha \le 1$ is the relative susceptibility of aware individuals:
+
 $$\begin{aligned}
 S_a' &= -\alpha \beta S_a \frac{\sigma A + I}{N} + v S_u, &
 S_u' &= -\beta S_u \frac{\sigma A + I}{N} - v S_u,\\
@@ -11,6 +12,7 @@ H_m' &= \tau I + \psi H_s - q_2 H_m,\\
 H_s' &= \rho I + \varphi H_m - q_3 H_s, &
 R' &= \eta_a A + \eta_i I + \eta_{H_m} H_m + \eta_{H_s} H_s,
 \end{aligned}$$
+
 with $D' = \delta_i I + \delta_{H_s} H_s$, $q_1 = \eta_i + \tau + \rho + \delta_i$, $q_2 = \eta_{H_m} + \varphi$, $q_3 = \eta_{H_s} + \psi + \delta_{H_s}$. Hospitalized individuals are isolated and do not transmit.
 
 **Disease-free equilibrium.** Since unaware susceptibles convert to aware at rate $v$, the only infection-free equilibrium is $S_a = N$, with every other compartment zero.

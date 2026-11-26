@@ -5,12 +5,14 @@
 $$[XYZ] \approx \frac{n-1}{n}\,\frac{[XY][YZ]}{[Y]} .$$
 
 Using the degree constraints $[SS] + [SI] + [SR] = n[S]$, $[SI] + [II] + [IR] = n[I]$, the closed system is
+
 $$\begin{aligned}
 [S]' &= -\beta[SI] + \epsilon(1 - [S] - [I]), \qquad [I]' = \beta[SI] - \gamma[I],\\
 [SS]' &= 2\epsilon(n[S] - [SS] - [SI]) - 2\beta\tfrac{n-1}{n}\tfrac{[SS][SI]}{[S]},\\
 [SI]' &= -(\gamma + \beta)[SI] + \epsilon(n[I] - [SI] - [II]) + \beta\tfrac{n-1}{n}\tfrac{SI}{[S]},\\
 [II]' &= 2\beta[SI] - 2\gamma[II] + 2\beta\tfrac{n-1}{n}\tfrac{[SI]^2}{[S]} .
 \end{aligned}$$
+
 It is well posed on the forward-invariant convex set $\{0 \le [S] + [I] \le 1,\ 0 \le [SS] + [SI] \le n[S],\ 0 \le [SI] + [II] \le n[I]\}$.
 
 **Thresholds.** For $\epsilon \to 0$, the pairwise SIR threshold is $\mathcal{R}_0 = \beta(n-2)/\gamma$, equivalently

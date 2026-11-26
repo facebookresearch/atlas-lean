@@ -1,12 +1,14 @@
 # SARS-CoV-2 within-host model with cytokine-mediated immunity
 
 **Model.** Healthy target cells $H$, infected cells $I$, virions $V$, cytokines $C$ (interferons), natural killer cells $N$, cytotoxic T cells $T$, B cells $B$ and antibodies $A$ satisfy
+
 $$\begin{aligned}
 \dot H &= \Pi - \beta H V - \mu_1 H, & \dot N &= r C - \mu_5 N,\\
 \dot I &= \beta H V - p_1 T I - p_5 N I - \mu_2 I, & \dot T &= \lambda_1 C T - \mu_6 T,\\
 \dot V &= k_1 I - p_2 C V - p_3 A V - \mu_3 V, & \dot B &= \lambda_2 T B - \mu_7 B,\\
 \dot C &= \frac{k_2 I}{1 + \gamma V} - \mu_4 C, & \dot A &= G(t - \tau)\,\eta B - p_4 A V - \mu_8 A,
 \end{aligned}$$
+
 where the factor $1/(1 + \gamma V)$ models viral suppression of interferon production (immunosuppression through the JAK/STAT pathway), $G$ is the Heaviside function and $\tau$ the delay before antibody production starts. All parameters are positive.
 
 **Reproduction number.** The disease-free equilibrium is $E_0 = (\Pi/\mu_1, 0, \dots, 0)$ and

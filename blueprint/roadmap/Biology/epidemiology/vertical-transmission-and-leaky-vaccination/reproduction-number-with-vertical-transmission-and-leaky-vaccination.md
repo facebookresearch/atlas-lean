@@ -1,6 +1,7 @@
 # Reproduction number with vertical transmission and leaky vaccination
 
 **Model.** Population fractions $S, V, E, I, L, R$ (susceptible, vaccinated, exposed, severe infectious, mild infectious, recovered) with equal birth and death rate $\mu$ evolve as
+
 $$\begin{aligned}
 \dot S &= \mu - \rho\mu E - \beta S(I + L) + \lambda V - (\varepsilon + \mu)S, &
 \dot V &= \varepsilon S + \varepsilon_1 E - \lambda V - \kappa\beta V(I + L) - \mu V,\\
@@ -9,6 +10,7 @@ $$\begin{aligned}
 \dot L &= \alpha(1 - \gamma) E - (\delta_2 + \mu) L, &
 \dot R &= \delta_1 I + \delta_2 L - \mu R,
 \end{aligned}$$
+
 where a fraction $\rho \in [0,1]$ of the offspring of exposed parents is born exposed (vertical transmission), $\varepsilon$ and $\varepsilon_1$ are vaccination rates of susceptible and exposed individuals, $\lambda$ is waning of vaccine protection, $\kappa \in [0,1]$ is the relative susceptibility of vaccinated individuals (leaky vaccine), $\alpha$ the progression rate, $\gamma$ the severe fraction and $\delta_1, \delta_2$ recovery rates. The disease-free equilibrium is $S_0 = (\lambda + \mu)/(\varepsilon + \lambda + \mu)$, $V_0 = \varepsilon/(\varepsilon + \lambda + \mu)$.
 
 **Proposition.** With infected classes $(E, I, L)$ and new infections $F$ comprising both horizontal transmission and vertical births into $E$,

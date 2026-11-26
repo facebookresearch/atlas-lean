@@ -1,11 +1,13 @@
 # Reproduction number and final size with asymptomatic and hospitalized classes
 
 **Model.** A closed population (no births or background deaths) is split into susceptible $S$, exposed $E$, asymptomatic infectious $I_a$, symptomatic infectious $I_s$, hospitalized or isolated $I_h$ and recovered $R$, with $N = S + E + I_a + I_s + I_h + R$ and
+
 $$\begin{aligned}
 \dot S &= -\frac{\beta_a I_a + \beta_s I_s + \beta_h I_h}{N} S, & \dot E &= \frac{\beta_a I_a + \beta_s I_s + \beta_h I_h}{N} S - \sigma E,\\
 \dot I_a &= r\sigma E - \gamma_a I_a, & \dot I_s &= (1-r)\sigma E - (\varphi_s + \gamma_s + \delta_s) I_s,\\
 \dot I_h &= \varphi_s I_s - (\gamma_h + \delta_h) I_h, & \dot R &= \gamma_a I_a + \gamma_s I_s + \gamma_h I_h,
 \end{aligned}$$
+
 where $0 < r \le 1$ is the asymptomatic fraction, $\varphi_s$ the hospitalization (isolation) rate and $\delta_s, \delta_h \ge 0$ disease-induced death rates; all other parameters are positive. Every point $(S^\ast, 0, 0, 0, 0, R^\ast)$ with $0 < S^\ast \le N(0)$ is a disease-free equilibrium (a continuum), with $N^\ast = S^\ast + R^\ast$.
 
 **Theorem.**

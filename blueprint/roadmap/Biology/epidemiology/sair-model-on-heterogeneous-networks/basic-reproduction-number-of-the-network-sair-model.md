@@ -5,6 +5,7 @@
 $$\Theta_A = \frac{1}{\langle k \rangle}\sum_{k'} k' p(k') A_{k'}, \qquad \Theta_I = \frac{1}{\langle k \rangle}\sum_{k'} k' p(k') I_{k'} .$$
 
 With transmission rates $\beta_1$ (asymptomatic) and $\beta_2$ (symptomatic), probability $\alpha \in [0,1]$ that a new infection is asymptomatic, progression rate $m$ from $A$ to $I$ after a latent delay $\tau \ge 0$, and removal rates $\gamma_1, \gamma_2 > 0$,
+
 $$\begin{aligned}
 \dot S_k &= -k S_k(\beta_1\Theta_A + \beta_2 \Theta_I), \\
 \dot A_k &= \alpha\, k S_k(\beta_1\Theta_A + \beta_2 \Theta_I) - m A_k(t-\tau) - \gamma_1 A_k, \\

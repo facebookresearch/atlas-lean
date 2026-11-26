@@ -1,14 +1,18 @@
 # Reproduction numbers of a zoonotic monkeypox and HIV co-infection model
 
 **Model.** An animal reservoir $(S_n, I_n, R_n)$ with recruitment $\Lambda_n$ transmits monkeypox within itself with force $\lambda_n = \beta_{n1} c_{n1} I_n / N_n$ and to humans. Humans are split into susceptibles $S$, monkeypox-only infected $I_m$ and recovered $R_m$, HIV-only $I_h$ and AIDS $A_h$, dually infected $I_{hm}$ and $A_{hm}$, and monkeypox-recovered HIV-positive $R_{hm}$ and $R_{am}$, with recruitment $\Lambda_h$ and natural mortality $\mu_h$. The forces of infection are
+
 $$\lambda_m = \frac{\beta_{nm} c_n I_n}{N_n} + \frac{\beta_m c_m (I_m + \theta_1 I_{hm} + \theta_2 A_{hm})}{N_h}, \qquad
 \lambda_h = \frac{\beta_h c_h \bigl(I_h + R_{hm} + \phi_1 I_{hm} + \phi_2 [A_h + R_{am} + \phi_3 A_{hm}]\bigr)}{N_h},$$
+
 where $\theta_i, \phi_i > 1$ are infectiousness enhancements; HIV-positive individuals acquire monkeypox at the enhanced rates $\sigma_1 \lambda_m$ ($I_h$) and $\sigma_2 \lambda_m$ ($A_h$). Monkeypox infections end at rates $\rho_{m1}$ (recovery) and $d_m$ (death); HIV progresses to AIDS at rate $\rho_{a1}$ and AIDS kills at rate $d_a$.
 
 **Reproduction numbers.** At the infection-free equilibrium $(\Lambda_n/\mu_n, 0, 0, \Lambda_h/\mu_h, 0, \dots, 0)$,
+
 $$\mathcal{R}_0^{n} = \frac{\beta_{n1} c_{n1}}{\mu_n + \rho_n + d_n}, \qquad
 \mathcal{R}_0^{m} = \frac{\beta_m c_m}{\mu_h + \rho_{m1} + d_m}, \qquad
 \mathcal{R}_0^{h} = \frac{\beta_h c_h\, (\mu_h + d_a + \phi_2 \rho_{a1})}{(\mu_h + \rho_{a1})(\mu_h + d_a)},$$
+
 for monkeypox in the reservoir, monkeypox between humans, and HIV between humans. With $\mathcal{R}_0 = \max\{\mathcal{R}_0^{m}, \mathcal{R}_0^{h}\}$, the infection-free equilibrium is locally asymptotically stable if $\mathcal{R}_0 < 1$ and $\mathcal{R}_0^{n} < 1$, and unstable if either exceeds $1$.
 
 ## Expansion

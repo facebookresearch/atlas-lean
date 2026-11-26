@@ -1,6 +1,7 @@
 # Reproduction-number decomposition for direct and environmental routes
 
 **Model.** Let $S, E, A, I, R$ be susceptible, exposed, asymptomatic, symptomatic and recovered hosts, and $V$ the concentration of pathogen on surfaces. With recruitment $\Lambda$, natural death $\omega$, disease death $\alpha$, direct transmission $\beta$ (asymptomatic relative infectiousness $\eta$), environmental transmission $\beta_1$, progression $E \to A$ at rate $k_2(1-\gamma)$ and $E \to I$ at rate $k_1\gamma$, $A \to I$ at rate $v_1\phi$, $A \to R$ at rate $v_2(1-\phi)$, $I \to R$ at rate $\epsilon$, waning $\rho$, shedding $m_1, m_2$ and environmental decay $\tau_1$ (all positive):
+
 $$\begin{aligned}
 \dot S &= \Lambda - \omega S - \beta(I + \eta A) S - \beta_1 V S + \rho R, &
 \dot E &= \beta(I + \eta A) S + \beta_1 V S - T_1 E,\\
@@ -9,6 +10,7 @@ $$\begin{aligned}
 \dot R &= v_2(1-\phi) A + \epsilon I - (\rho + \omega) R, &
 \dot V &= m_1 A + m_2 I - \tau_1 V,
 \end{aligned}$$
+
 with $T_1 = k_1\gamma + k_2(1-\gamma) + \omega$, $X_1 = k_2(1-\gamma)$, $C_1 = \omega + v_1\phi + v_2(1-\phi)$, $Y_1 = \alpha + \epsilon + \omega$, $Q_1 = X_1 v_1 \phi$. The disease-free equilibrium has $S^0 = \Lambda/\omega$.
 
 **Proposition.** The basic reproduction number $R_0 = \rho(FV^{-1})$ over the infected classes $(E, A, I, V)$ is

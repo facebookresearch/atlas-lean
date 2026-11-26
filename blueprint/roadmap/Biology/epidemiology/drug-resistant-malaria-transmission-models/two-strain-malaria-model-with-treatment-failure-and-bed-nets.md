@@ -1,12 +1,14 @@
 # Two-strain malaria model with treatment failure and bed nets
 
 **Model.** Human proportions $s, i_r, i_s, \tau_r, \tau_s, r$ (susceptible; infected with resistant or sensitive strain; treated with resistant or sensitive strain; temporarily immune) sum to $1$, and mosquito proportions $x, y$ (susceptible, infected) sum to $1$. With $m$ female mosquitoes per human, biting-adjusted transmission rates $\beta$ (mosquito to human) and $\alpha_r, \alpha_s$ (human to mosquito), bed-net efficacy $c \in [0,1)$, resistant fraction of new infections $\rho \in [0,1]$, human and mosquito turnover $\mu, \xi$,
+
 $$\begin{aligned}
 \dot s &= \mu - \Lambda s y - \mu s + \omega r, & \dot \tau_r &= \sigma_r i_r - k_r \tau_r,\\
 \dot i_r &= \rho \Lambda s y - b_r i_r + \epsilon_r \tau_r, & \dot \tau_s &= \sigma_s i_s - k_s \tau_s,\\
 \dot i_s &= (1-\rho)\Lambda s y - b_s i_s + \epsilon_s \tau_s, & \dot r &= \gamma_r \tau_r + \gamma_s \tau_s - (\omega + \mu) r,\\
 \dot x &= \xi - (a_r i_r + a_s i_s) x - \xi x, & \dot y &= (a_r i_r + a_s i_s) x - \xi y,
 \end{aligned}$$
+
 where $\Lambda = (1-c) m \beta$, $a_j = (1-c)\alpha_j$, $b_j = \sigma_j + \mu$, $k_j = \gamma_j + \epsilon_j + \mu$, $l_j = \gamma_j + \mu$ ($j \in \{r, s\}$), $\sigma_j$ is the treatment rate, $\gamma_j$ the recovery rate under treatment, $\epsilon_j$ the treatment-failure rate and $\omega$ the rate of waning immunity.
 
 **Reproduction number.** The disease-free equilibrium is $(s, i_r, i_s, \tau_r, \tau_s, r, x, y) = (1,0,0,0,0,0,1,0)$. With infected variables $(i_r, i_s, \tau_r, \tau_s, y)$, the next-generation matrix $FV^{-1}$ has spectral radius $\sqrt{\mathcal{R}_0}$, where

@@ -1,6 +1,7 @@
 # Receptor-dependent within-host reproduction number with a CTL response
 
 **Model.** Uninfected epithelial cells $T$, infected cells $I$, free virus $V$, surface receptor (ACE2) concentration $E$ and virus-specific CTLs $C$ satisfy
+
 $$\begin{aligned}
 T' &= \lambda_1 - \beta E V T - d_T T, &
 I' &= \beta E V T - d_I I - p I C, &
@@ -8,6 +9,7 @@ V' &= m d_I I - d_V V, \\
 E' &= \lambda_2 - \theta\beta E V T - d_E E, &
 C' &= \alpha I C \Big(1 - \frac{C}{C_{\max}}\Big) - d_c C, & &
 \end{aligned}$$
+
 with positive parameters: infection needs a receptor, so the incidence is $\beta E V T$; each entry destroys receptor at relative rate $\theta$; an infected cell releases on average $m$ virions; CTLs kill infected cells at rate $p$ and proliferate logistically up to $C_{\max}$ in response to antigen.
 
 **Proposition.** Let $T_0 = \lambda_1/d_T$, $E_0 = \lambda_2/d_E$ and

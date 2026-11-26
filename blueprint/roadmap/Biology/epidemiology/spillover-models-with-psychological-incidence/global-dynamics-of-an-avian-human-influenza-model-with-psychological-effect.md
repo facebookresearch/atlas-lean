@@ -1,10 +1,12 @@
 # Global dynamics of an avian–human influenza model with psychological effect
 
 **Model.** Birds are susceptible $S_a$ or infective $I_a$; humans are susceptible $S_h$, infective $I_h$ or recovered $R_h$. Infection spreads bird-to-bird with saturating incidence and bird-to-human with a nonmonotone incidence that decreases in human prevalence (people avoid contact when many are ill); there is no human-to-human transmission:
+
 $$\begin{aligned}
 \dot S_a &= \Pi_a - \mu_a S_a - \frac{\beta_a I_a S_a}{1 + bI_a}, & \dot I_a &= \frac{\beta_a I_a S_a}{1 + bI_a} - (\mu_a + \delta_a) I_a,\\
 \dot S_h &= \Pi_h - \mu_h S_h - \frac{\beta_h I_a S_h}{1 + cI_h^2}, & \dot I_h &= \frac{\beta_h I_a S_h}{1 + cI_h^2} - (\mu_h + \delta_h + \gamma) I_h, \qquad \dot R_h = \gamma I_h - \mu_h R_h,
 \end{aligned}$$
+
 with $b, c \ge 0$ and all other parameters positive.
 
 **Theorem.** Let $R_0 = \dfrac{\beta_a \Pi_a}{\mu_a(\mu_a + \delta_a)}$, the spectral radius of the next-generation matrix (which is lower triangular, so humans, being dead-end hosts, do not contribute).

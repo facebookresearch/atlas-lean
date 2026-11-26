@@ -1,12 +1,14 @@
 # Critical vaccination rate in an SVEIAHR model with a leaky vaccine
 
 **Model.** Compartments $S, V, E, I, A, H, R$ (susceptible, vaccinated, exposed, symptomatic, asymptomatic, hospitalized, recovered), $N$ their sum:
+
 $$\begin{aligned}
 \dot S &= (1-p)\Pi + \eta R - (\beta_S + \mu + v) S, & \dot A &= \sigma(1-\psi) E - g_5 A,\\
 \dot V &= p\Pi + v S - (\beta_V + \mu) V, & \dot H &= \gamma(1-\kappa) I - g_6 H,\\
 \dot E &= \beta_S S + \beta_V V - g_3 E, & \dot R &= \gamma\kappa I + \lambda\phi A + \tau H - (\eta + \mu) R,\\
 \dot I &= \sigma\psi E + \lambda(1-\phi) A - g_4 I, & &
 \end{aligned}$$
+
 with forces of infection $\beta_S = b(\omega_A A + \omega_I I + \omega_H H)/N$ and $\beta_V = (1-\varepsilon)\beta_S$, recruitment $\Pi$ with vaccinated fraction $p$, vaccination rate $v \ge 0$, vaccine efficacy $\varepsilon \in [0,1]$, and $g_1 = \mu + v$, $g_2 = \mu$, $g_3 = \sigma + \mu$, $g_4 = \gamma + \mu + \delta$, $g_5 = \lambda + \mu$, $g_6 = \tau + \mu + \delta$. The region $\{N \le \Pi/\mu\}$ of $\mathbb{R}^7_{\ge 0}$ is positively invariant.
 
 **Reproduction number.** The disease-free equilibrium has $S^0 = (1-p)\Pi/g_1$, $V^0 = \Pi(p g_1 + v(1-p))/(g_1 g_2)$, and

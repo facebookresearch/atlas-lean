@@ -1,11 +1,13 @@
 # Network SIVS model with imperfect vaccination and backward bifurcation
 
 **Model.** On an uncorrelated network with degree distribution $P(k)$, $k = 1, \dots, n$, and mean degree $\langle k\rangle$, let $S_k, I_k, V_k \ge 0$ with $S_k + I_k + V_k = 1$ be the susceptible, infected and vaccinated fractions of degree-$k$ nodes, and $\Theta = \langle k\rangle^{-1}\sum_k k P(k) I_k$. With degree-dependent transmission rates $0 < \beta_V(k) < \beta_S(k)$ for vaccinated and unvaccinated nodes, vaccination rates $\varphi_k \ge 0$, waning rate $\phi > 0$ and recovery rate $\gamma > 0$:
+
 $$\begin{aligned}
 S_k' &= \gamma I_k - \beta_S(k) S_k\Theta + \phi V_k - \varphi_k S_k, \\
 I_k' &= \big[\beta_S(k) S_k + \beta_V(k) V_k\big]\Theta - \gamma I_k, \\
 V_k' &= \varphi_k S_k - \beta_V(k) V_k\Theta - \phi V_k .
 \end{aligned}$$
+
 The disease-free equilibrium is $S_k^0 = \phi/(\varphi_k + \phi)$, $I_k^0 = 0$, $V_k^0 = \varphi_k/(\varphi_k + \phi)$.
 
 **Theorem.** Define

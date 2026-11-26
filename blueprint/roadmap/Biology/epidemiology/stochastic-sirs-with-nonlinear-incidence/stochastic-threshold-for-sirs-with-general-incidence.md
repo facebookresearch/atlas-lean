@@ -1,11 +1,13 @@
 # Stochastic threshold for SIRS with general incidence
 
 **Model.** With recruitment $A > 0$, mortalities $\mu_1 \le \min\{\mu_2, \mu_3\}$ of susceptible, infectious and recovered individuals, recovery rate $\delta$, loss of immunity rate $\lambda$, and transmission rate perturbed as $\beta \mapsto \beta + \sigma\,\xi(t)$ with Gaussian white noise $\xi$ of intensity $\sigma > 0$, the Itô system is
+
 $$\begin{aligned}
 dS &= \big(A - \mu_1 S + \lambda R - \beta S G(I)\big)dt - \sigma S G(I)\,dB(t), \\
 dI &= \big(\beta S G(I) - (\mu_2 + \delta) I\big)dt + \sigma S G(I)\,dB(t), \\
 dR &= \big(\delta I - (\mu_3 + \lambda) R\big)dt,
 \end{aligned}$$
+
 where $B$ is a standard Brownian motion and the incidence function satisfies $G(0) = 0$, $0 < G(I) \le I$ for $I > 0$, $G'(0) = 1$, and $G(x)/x$ Lipschitz on $[0, A/\mu_1]$ ($G$ need not be monotone, allowing behavioural saturation). For every positive initial value there is a unique global solution that stays in $\mathbb R^3_+$ almost surely.
 
 **Thresholds.** Let

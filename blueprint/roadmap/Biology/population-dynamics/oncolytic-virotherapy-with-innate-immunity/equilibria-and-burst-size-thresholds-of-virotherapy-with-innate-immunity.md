@@ -1,10 +1,12 @@
 # Equilibria and burst-size thresholds of virotherapy with innate immunity
 
 **Model.** Let $x, y, v, z \ge 0$ be the nondimensionalized densities of uninfected tumour cells, infected tumour cells, free oncolytic virus and innate immune cells (time scaled by the infected-cell death rate, densities by the tumour carrying capacity). With tumour growth rate $r > 0$, infection rate $a > 0$, burst size $b > 0$, viral clearance rate $e > 0$, immune killing rates $c, d > 0$ of infected cells and virions, immune stimulation rate $m > 0$ and immune clearance rate $n > 0$,
+
 $$\begin{aligned}
 \dot x &= r x (1 - x - y) - a x v, & \dot y &= a x v - c y z - y, \\
 \dot v &= b y - a x v - d v z - e v, & \dot z &= m y z - n z .
 \end{aligned}$$
+
 The set $D = \{x, y, v, z \ge 0,\ x + y \le 1\}$ is positively invariant. Write $N = n/m$ (relative immune decay rate) and $b_{s1} = 1 + e/a$.
 
 **Theorem (equilibria and thresholds).**

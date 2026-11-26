@@ -1,11 +1,13 @@
 # Sensitive–resistant Hahnfeldt model under chemotherapy and anti-angiogenic therapy
 
 **Model.** Drug-sensitive and drug-resistant tumour volumes $N_1, N_2$ and the vascular carrying capacity $K$ evolve as
+
 $$\begin{aligned}
 \dot N_1 &= -\lambda_1 N_1 \ln\frac{N_1 + N_2}{K} - \tau_1 N_1 + \tau_2 N_2 - \beta_1 N_1 u(t),\\
 \dot N_2 &= -\lambda_2 N_2 \ln\frac{N_1 + N_2}{K} + \tau_1 N_1 - \tau_2 N_2,\\
 \dot K &= -\mu K + b(N_1 + N_2) - d (N_1 + N_2)^{2/3} K - \beta K u(t) - \gamma K v(t),
 \end{aligned}$$
+
 with Gompertz proliferation rates $\lambda_1, \lambda_2$, mutation rates $\tau_1$ (to resistance) and $\tau_2$ (back to sensitivity), log-kill chemotherapy of sensitive cells at rate $\beta_1 u(t)$, vascular stimulation $b$ and inhibition $d$ by the tumour (Hahnfeldt et al.), endothelial death $\mu$, and vascular sensitivities $\beta, \gamma$ to the chemotherapeutic dose $u(t)$ and anti-angiogenic dose $v(t)$. For bounded continuous doses, $\{N_1, N_2, K > 0\}$ is positively invariant and solutions exist for all $t \ge 0$.
 
 **Steady state under constant doses** $u, v$. Let $A = \lambda_1\tau_1$, $B = \lambda_2\tau_1 - \lambda_1\tau_2 + \beta_1\lambda_2 u$, $C = -\lambda_2\tau_2$, $\Delta = B^2 - 4AC > 0$, and

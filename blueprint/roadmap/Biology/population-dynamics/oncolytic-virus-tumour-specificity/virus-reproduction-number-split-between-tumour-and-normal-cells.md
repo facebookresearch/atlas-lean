@@ -1,6 +1,7 @@
 # Virus reproduction number split between tumour and normal cells
 
 **Model.** Let $N_S, N_I$ be uninfected and infected normal cells, $T_S, T_I$ uninfected and infected tumour cells, $V$ free virus, $Y_T$ tumour-specific and $Y_V$ virus-specific immune cells, with a delay $\tau \ge 0$ in the antiviral response and all parameters positive:
+
 $$\begin{aligned}
 N_S' &= r_N N_S \Bigl(1 - \tfrac{N_S + N_I}{K_N}\Bigr) - \beta_N N_S V, \qquad
 T_S' = r_T T_S \Bigl(1 - \tfrac{T_S + T_I}{K_T}\Bigr) - \beta_T T_S V - \gamma_T \tfrac{Y_T}{h + Y_T} T_S,\\
@@ -14,9 +15,11 @@ Y_V' = p_V \bigl(T_I(t - \tau) + N_I(t - \tau)\bigr) - \delta_V Y_V .
 **Virus-free states.** With $N_I = T_I = V = Y_V = 0$ the model has tumour-free, tumour-only and coexistence equilibria; at the coexistence state $N_S = K_N$, $T_S = T_S^0 > 0$ is the positive root of a quadratic determined by the tumour growth, killing and immune-recruitment parameters, and $Y_T^0 = p_T T_S^0 / (\delta_T (T_S^0 + h))$.
 
 **Reproduction number.** At a virus-free state with uninfected populations $N_S, T_S$ and tumour immunity $Y_T$,
+
 $$\mathcal{R}_0 = \mathcal{R}_0^N + \mathcal{R}_0^T, \qquad
 \mathcal{R}_0^N = \frac{b_N \beta_N N_S}{\omega}, \qquad
 \mathcal{R}_0^T = \frac{b_T \beta_T T_S}{\omega} \cdot \frac{\lambda_T (Y_T + h)}{\lambda_T (Y_T + h) + \gamma_T Y_T},$$
+
 the expected number of virions produced, through infection of normal and of tumour cells respectively, by one virion introduced into the virus-free population. The ratio $\mathcal{R}_0^T / \mathcal{R}_0^N$ measures the tumour specificity of the virus.
 
 ## Expansion

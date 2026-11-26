@@ -1,12 +1,14 @@
 # Seasonal brucellosis model with livestock vaccination
 
 **Model.** Sheep/cattle are susceptible $S$, exposed $E$, infected $I$ or vaccinated $V$; humans are susceptible $S_h$, acutely infected $I_{ha}$ or chronically infected $I_{hc}$. With seasonal transmission rates $\beta(t) = \alpha[1 + b\sin(\frac{\pi}{2}t + c)]$ (livestock to livestock) and $\beta_h(t) = \alpha_h[1 + b_h\sin(\frac{\pi}{2}t + c_h)]$ (livestock to humans), period $\omega = 4$ (time in seasons),
+
 $$\begin{aligned}
 \dot S &= A - \beta(t) S (E + I) - (\mu + \nu) S + \delta V, & \dot S_h &= B - \beta_h(t) S_h (E + I) + \omega_h\eta I_{ha} - \mu_1 S_h,\\
 \dot E &= \beta(t)(S + \epsilon V)(E + I) - (\lambda + \mu) E, & \dot I_{ha} &= \beta_h(t) S_h (E + I) - \omega_h I_{ha} - \mu_1 I_{ha},\\
 \dot I &= \lambda E - (\mu + f) I, & \dot I_{hc} &= \omega_h(1-\eta) I_{ha} - \mu_1 I_{hc},\\
 \dot V &= \nu S - (\mu + \delta) V - \epsilon\beta(t) V (E + I), & &
 \end{aligned}$$
+
 with livestock recruitment $A$, vaccination rate $\nu$, vaccine waning $\delta$, vaccine failure factor $\epsilon$, progression $\lambda$, natural death $\mu$ and culling of infected animals $f$; both exposed and infected animals transmit, and humans do not transmit (dead-end hosts).
 
 **Results.**

@@ -9,6 +9,7 @@ Hence $u$ is a function of $\varepsilon$ alone,
 $$u(\varepsilon) = u_{\mathrm{high}} + (u_{\mathrm{low}} - u_{\mathrm{high}})\,e^{\varepsilon_0 - \varepsilon}, \qquad \varepsilon_0 = \varepsilon(0).$$
 
 **Model.** Humans $S, E, Y$ (symptomatic), $A$ (asymptomatic), $R$ with $N_H = S+E+Y+A+R$, and mosquitoes $M_S, M_E, M_I$:
+
 $$\begin{aligned}
 \dot S &= \Omega_H + \lambda_{RS}R - \Big(\sigma\beta_M\frac{M_I}{N_H} + \xi_H\Big)S, &
 \dot E &= \sigma\beta_M\frac{M_I}{N_H}S - (\gamma + \xi_H)E,\\
@@ -19,6 +20,7 @@ $$\begin{aligned}
 \dot M_E &= \sigma\Big(\beta_Y\frac{Y}{N_H} + \beta_A\frac{A}{N_H}\Big)M_S - (\xi_M + \tau)M_E, &
 \dot M_I &= \tau M_E - \xi_M M_I,
 \end{aligned}$$
+
 with biting rate $\sigma$, transmission probabilities $\beta_M$ (mosquito to human), $\beta_Y, \beta_A$ (symptomatic and asymptomatic human to mosquito), recruitment $\Omega_H, \Omega_M$, natural mortalities $\xi_H, \xi_M$, disease death $\delta$, progression rates $\gamma, \tau$ and recovery rates $\lambda_{YR}, \lambda_{AR}$. The disease-free equilibrium is $(\Omega_H/\xi_H, 0,0,0,0, \Omega_M/\xi_M, 0, 0)$.
 
 **Proposition.** With $U_{\mathrm{low}} = u(0) = e^{\varepsilon_0}(u_{\mathrm{low}} - u_{\mathrm{high}}) + u_{\mathrm{high}}$, the asymptomatic share of new infections at the disease-free state, the basic reproduction number is

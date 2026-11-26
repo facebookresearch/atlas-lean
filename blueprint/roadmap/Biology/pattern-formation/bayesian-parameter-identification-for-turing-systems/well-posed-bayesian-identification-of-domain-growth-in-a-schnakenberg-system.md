@@ -1,10 +1,12 @@
 # Well-posed Bayesian identification of domain growth in a Schnakenberg system
 
 **Forward model.** A bounded domain $\Omega_t \subset \mathbb R^m$ ($m = 1, 2$) grows uniformly and isotropically, $x(t) = \rho(t)\, x(0)$ with $\rho \in C^1$, $\rho(0) = 1$, $\rho > 0$. Mapping back to the initial domain $\Omega_0$, the concentrations $u, v$ satisfy
+
 $$\begin{aligned}
 u_t + m\frac{\dot\rho(t)}{\rho(t)}\, u &= \frac{1}{\rho(t)^2}\, \Delta u + \gamma f(u, v), \\
 v_t + m\frac{\dot\rho(t)}{\rho(t)}\, v &= \frac{d}{\rho(t)^2}\, \Delta v + \gamma g(u, v),
 \end{aligned} \qquad x \in \Omega_0,$$
+
 with zero-flux boundary conditions, non-negative bounded initial data, and Schnakenberg (activator-depleted) kinetics
 
 $$f(u, v) = a - u + u^2 v, \qquad g(u, v) = b - u^2 v,$$

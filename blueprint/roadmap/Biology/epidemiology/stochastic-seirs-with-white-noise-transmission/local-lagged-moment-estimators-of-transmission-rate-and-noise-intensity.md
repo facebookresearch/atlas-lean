@@ -1,18 +1,22 @@
 # Local lagged moment estimators of transmission rate and noise intensity in the stochastic SEIRS model
 
 **Model.** Let $S, E, I, R$ be population fractions with $S + E + I + R = 1$, birth and death rate $\delta > 0$, latency rate $\alpha > 0$, recovery rate $\nu > 0$ and loss-of-immunity rate $\gamma > 0$. The transmission rate is $\beta(t) = \beta_0(t)\,(1 + \sigma \zeta(t))$ with $\beta_0$ positive, bounded and continuous, noise intensity $\sigma > 0$, and $\zeta\,dt = dW_t$ for a standard Wiener process $W$. Interpreted in the Stratonovich sense ($\circ$), the model is
+
 $$\begin{aligned}
 dS &= (\delta - \beta_0 S I + \gamma R - \delta S)\,dt - \sigma \beta_0 S I \circ dW_t, \\
 dE &= (\beta_0 S I - (\alpha + \delta) E)\,dt + \sigma \beta_0 S I \circ dW_t, \\
 dI &= (\alpha E - (\nu + \delta) I)\,dt, \qquad dR = (\nu I - (\gamma + \delta) R)\,dt .
 \end{aligned}$$
+
 It has a unique global solution that stays in $[0,1]^4$ when started there.
 
 **Proposition (Itô form).** By the Stratonovich-to-Itô drift correction $f_i = \bar f_i + \tfrac12 \sum_k g_k\, \partial g_i / \partial x_k$, the same solution satisfies the Itô system
+
 $$\begin{aligned}
 dS &= \big(\delta - \beta_0 S I + \gamma R - \delta S + \tfrac12 \sigma^2 \beta_0^2 S I^2\big)\,dt - \sigma \beta_0 S I\, dW_t, \\
 dE &= \big(\beta_0 S I - (\alpha + \delta) E - \tfrac12 \sigma^2 \beta_0^2 S I^2\big)\,dt + \sigma \beta_0 S I\, dW_t,
 \end{aligned}$$
+
 with the $I$ and $R$ equations unchanged, and the quadratic variation of $E$ is $d\langle E \rangle_t = \sigma^2 \beta_0^2 S^2 I^2\, dt$.
 
 **Moment estimators.** Observe the state at times $t_k = k\,\Delta t$ and write $\Delta E_k = E_k - E_{k-1}$, with $\mathcal{F}_{k}$ the information up to $t_k$. Fix a local window size $m_j \in \{2, \dots, M\}$. Integrating $S\,dE$ over $[t_{j - m_j + 1}, t_j]$, applying the integral mean value theorem to the continuous $\beta_0$, discretizing and taking conditional expectations gives the local estimators

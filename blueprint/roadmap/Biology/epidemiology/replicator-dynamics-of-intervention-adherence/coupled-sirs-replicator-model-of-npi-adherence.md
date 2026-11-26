@@ -5,11 +5,13 @@
 $$\pi_N = -\beta I \xi (1 - x) - p \beta I \xi x, \qquad \pi_A = p\, \pi_N - c,$$
 
 and
+
 $$\begin{aligned}
 \dot S &= \mu - b(x)\beta S I - \mu S + \delta(1 - S - I),\\
 \dot I &= b(x)\beta S I - (\gamma + \mu) I,\\
 \dot x &= x(1 - x)(\pi_A - \pi_N), \qquad b(x) = p x + (1 - x).
 \end{aligned}$$
+
 Let $\mathcal{R}_0 = \beta/(\gamma + \mu)$.
 
 **Equilibria and stability.**
