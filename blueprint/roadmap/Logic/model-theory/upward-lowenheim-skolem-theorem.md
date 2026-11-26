@@ -1,6 +1,6 @@
 # Upward Löwenheim–Skolem theorem
 
-Let $L$ be a first-order language, $M$ an infinite $L$-structure and $\kappa$ a cardinal with $|L| \le \kappa$ and $|M| \le \kappa$. Then $M$ has an elementary extension of cardinality exactly $\kappa$: there are an $L$-structure $N$ with $|N| = \kappa$ and an elementary embedding of $M$ into $N$. Together with the downward theorem, every infinite structure has elementarily equivalent structures of every cardinality $\kappa \ge |L| + \aleph_0$.
+Let $L$ be a first-order language, $M$ an infinite $L$-structure and $\kappa$ a cardinal with $|L| \le \kappa$ and $|M| \le \kappa$. Then $M$ has an elementary extension of cardinality exactly $\kappa$: there are an $L$-structure $N$ with $|N| = \kappa$ and an elementary embedding of $M$ into $N$.
 
 ## Sources
 
