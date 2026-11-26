@@ -86,25 +86,6 @@ public theorem_wanted lGeneralizedFibonacciZeta_residue
       (𝓝[≠] lGeneralizedFibonacciZetaPole ℓ α κ n)
       (𝓝 (lGeneralizedFibonacciZetaResidue ℓ α κ n))
 
-/-- **Explicit possible poles of the ℓ-generalized Fibonacci zeta function.** Let $\ell \ge 2$, let
-$\alpha > 1$ be a real number with $\alpha^\ell = \sum_{i=0}^{\ell-1} \alpha^i$, and let $k$ be a
-natural number divisible by $\ell - 1$; write $q = k/(\ell - 1)$. Then for every integer $n$, the
-point $-(k + q) + i\pi(2n + q)/\log \alpha$ if $\ell$ is even, and $-(k + q) + 2\pi i n/\log \alpha$
-if $\ell$ is odd, belongs to the set $S$ of possible poles of the $\ell$-generalized Fibonacci
-zeta function determined by $\ell$ and $\alpha$.
-
-A witnessing exponent tuple takes the constant value $q$ at every root of the characteristic
-polynomial other than $\alpha$.
-
-Source: Nabin Kumar Meher and Dilip Kumar Sahoo, *Analytic Continuation of the
-ℓ-Generalized Fibonacci Zeta Function*, INTEGERS 24 (2024), Article A85, Corollary 1. -/
-public theorem_wanted lGeneralizedFibonacciZeta_corollaryPole_mem
-    (ℓ : ℕ) (hℓ : 2 ≤ ℓ) (α : ℝ) (hα : 1 < α)
-    (hαroot : α ^ ℓ = ∑ i ∈ Finset.range ℓ, α ^ i)
-    (k : ℕ) (hk : ℓ - 1 ∣ k) (n : ℤ) :
-    lGeneralizedFibonacciZetaCorollaryPole ℓ k α n ∈
-      lGeneralizedFibonacciZetaPoleSet ℓ α
-
 /-- **Rational values of the ℓ-generalized Fibonacci zeta function at negative integers.** Let
 $\ell \ge 2$, let $F$ be an $\ell$-generalized Fibonacci sequence, let $\alpha > 1$ be a real
 number with $\alpha^\ell = \sum_{i=0}^{\ell-1} \alpha^i$, and let $S$ be the set of possible
