@@ -11,10 +11,6 @@ Apply the isolation lemma to the family of proof trees of each gate, whose numbe
 - [Layered semi-unbounded circuits and proof trees](semi-unbounded-circuits-and-proof-trees.md)
 - [Isolation lemma](../../../Combinatorics/probabilistic-combinatorics/isolation-lemma.md)
 
-## Proof depends on
-
-- [Isolation lemma](../../../Combinatorics/probabilistic-combinatorics/isolation-lemma.md)
-
 ## Sources
 
 - Klaus Reinhardt, Eric Allender, "Making Nondeterminism Unambiguous", SIAM Journal on Computing, 2000.

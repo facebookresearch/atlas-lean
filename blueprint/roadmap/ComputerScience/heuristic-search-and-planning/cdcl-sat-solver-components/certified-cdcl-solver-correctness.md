@@ -20,7 +20,6 @@ Every move is a move of abstract DPLL with learning, whose invariant gives sound
 - [Completeness of propagation with two watched literals](watched-literal-invariant.md)
 - [Minimized learned clauses are derivable by unit propagation](minimized-clause-is-rup.md)
 - [Final states of abstract DPLL with learning](../../../Logic/propositional-logic/sat-solving/final-states-of-abstract-dpll-with-learning.md)
-- [Accepted LRAT proofs refute CNF formulas](../../../Logic/propositional-logic/proof-certificates/accepted-lrat-proofs-refute-cnf-formulas.md)
 
 ## Sources
 

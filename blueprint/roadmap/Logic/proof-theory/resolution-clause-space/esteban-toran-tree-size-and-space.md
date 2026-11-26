@@ -1,6 +1,6 @@
 # Esteban–Torán: tree-like size is exponential in clause space
 
-For every unsatisfiable CNF formula $\varphi$, the minimum number of nodes of a tree-like resolution refutation is at least $2^{\mathrm{Sp}(\varphi \vdash \bot)} - 1$, where $\mathrm{Sp}$ is the clause space. More precisely, a tree-like refutation of Horton–Strahler number $d$ can be executed in clause space $d + 1$, and it has at least $2^{d+1} - 1$ nodes. Consequently clause space is at most $\log_2(\text{tree-like size} + 1)$.
+For every unsatisfiable CNF formula $\varphi$, the minimum number of nodes of a tree-like resolution refutation is at least $2^{\mathrm{Sp}(\varphi \vdash \bot) - 1} - 1$, where $\mathrm{Sp}$ is the clause space. More precisely, a tree-like refutation of Horton–Strahler number $d$ can be executed in clause space $d + 2$, and it has at least $2^{d+1} - 1$ nodes. Consequently clause space is at most $\log_2(\text{tree-like size} + 1) + 1$.
 
 ## Proof sketch
 

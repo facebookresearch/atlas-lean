@@ -13,4 +13,4 @@ Row additions preserve the solution set; after all columns are eliminated only c
 ## Sources
 
 - Hubie Chen, "A Rendezvous of Logic, Complexity, and Algebra", arXiv:cs/0611018, 2006.
-- Thomas J. Schaefer, "On the Complexity of Some Two-Person Perfect-Information Games", Journal of Computer and System Sciences 16(2), 1978.
+- Thomas J. Schaefer, "The Complexity of Satisfiability Problems", Proceedings of the 10th ACM Symposium on Theory of Computing (STOC), 216–226, 1978.

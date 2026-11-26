@@ -4,7 +4,7 @@ If $n < 2^{\beta(c)}$ for the threshold exponent $\beta(c) = \Theta(c^6)$, a det
 
 ## Proof sketch
 
-Storing full keys costs $n \lceil \log_2 U \rceil \le \lceil \log_2 \binom{U}{n} \rceil + n \lceil \log_2 n \rceil$ bits by the power–binomial inequality, and $n \lceil \log_2 n \rceil \le (\beta(c) + 1)\, n \le (\beta(c)+2)\, n\, \lambda(n)$ because $\log_2 n < \beta(c)$ and $\lambda(n) \ge 1$; scanning $n < 2^{\beta(c)}$ entries is constant time for fixed $c$.
+Storing full keys costs $n \lceil \log_2 U \rceil < \lceil \log_2 \binom{U}{n} \rceil + n \lceil \log_2 n \rceil + n$ bits by the power–binomial inequality (the extra $n$ covers rounding), and $n \lceil \log_2 n \rceil \le (\beta(c) + 1)\, n \le (\beta(c)+2)\, n\, \lambda(n)$ because $\log_2 n < \beta(c)$ and $\lambda(n) \ge 1$; scanning $n < 2^{\beta(c)}$ entries is constant time for fixed $c$.
 
 ## Depends on
 

@@ -1,6 +1,6 @@
 # Robinson's aperiodic tile set and substitution hierarchy
 
-There is an explicit finite Wang tile set (a corrected Robinson palette, together with shading and signal layers) that tiles the plane, such that every tiling of the plane by it has a hierarchical structure: it decomposes uniquely into $3\times3$-like supertiles of every level, every matching plane has a matching substitution parent, and every tile type occurs at every level of the resulting tower. In particular every tiling contains arbitrarily large marked square 'free grids' at prescribed nested positions, and no tiling is periodic.
+There is an explicit finite Wang tile set (a corrected Robinson palette, together with shading and signal layers) that tiles the plane, such that every tiling of the plane by it has a hierarchical structure: it decomposes uniquely into supertiles of every level $n$, each of side $2^{n+1}-1$ and formed by four level-$(n-1)$ supertiles in a $2\times2$ arrangement joined by a central cross, every matching plane has a matching substitution parent, and every tile type occurs at every level of the resulting tower. In particular every tiling contains arbitrarily large marked square 'free grids' at prescribed nested positions, and no tiling is periodic.
 
 ## Proof sketch
 

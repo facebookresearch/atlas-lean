@@ -1,6 +1,6 @@
 # Every exact dynamic dictionary makes linearly many probes on the hard distribution
 
-Every deterministic step-indexed cell-probe scheme with words of $w = O(\log U + \log V)$ bits that implements the dynamic dictionary exactly on the admissible histories of the insert–query–delete distribution on $n$ keys makes $\Omega(n)$ expected probes on that distribution, regardless of its space.
+For $V \ge 2$, every deterministic step-indexed cell-probe scheme with words of $w = O(\log U + \log V)$ bits that implements the dynamic dictionary exactly on the admissible histories of the insert–query–delete distribution on $n$ keys makes $\Omega(n)$ expected probes on that distribution, regardless of its space.
 
 ## Proof sketch
 

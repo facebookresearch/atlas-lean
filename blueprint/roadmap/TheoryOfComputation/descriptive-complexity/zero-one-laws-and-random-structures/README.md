@@ -8,6 +8,5 @@
 - [0-1 laws for random relational structures with constant probabilities](zero-one-law-bernoulli-structures.md)
 - [The Rado graph is the countable random graph](rado-graph-countable-random-graph.md)
 - [The 0-1 law for $G(n,p)$ with constant edge probability](zero-one-law-for-binomial-random-graphs.md)
-- [Glebskiĭ et al. and Fagin: the 0-1 law for random graphs](zero-one-law-for-random-graphs.md)
 - [Kolaitis–Vardi: the 0-1 law for finite-variable infinitary logic $L^k_{\infty\omega}$](kolaitis-vardi-zero-one-law.md)
 - [EVEN is not definable in fixed-point logic on unordered structures](even-not-definable-in-fixed-point-logic.md)

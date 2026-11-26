@@ -1,6 +1,6 @@
 # ETH and SH lower bounds for classical graph problems
 
-Assuming ETH, none of 3-Colouring, Independent Set, Vertex Cover, Clique, and directed or undirected Hamiltonian Path and Cycle is decidable in time $2^{o(|V|+|E|)}$; moreover Independent Set, Clique and 3-Colouring have no $2^{o(|V|)}$ algorithm. Assuming the Satisfiability Hypothesis, none of these problems admits an algorithm with a fixed power saving, i.e. in time $2^{O((|V|+|E|)^{p})}$ for some $p<1$.
+Assuming ETH, none of 3-Colouring, Independent Set, Vertex Cover, and directed or undirected Hamiltonian Path and Cycle is decidable in time $2^{o(|V|+|E|)}$, and Clique has no $2^{o(|V|)}$ algorithm (Clique is solvable in $2^{O(\sqrt{|E|}\log|V|)}$ time, so it is excluded from the $|V|+|E|$ and SH statements); moreover Independent Set, Clique and 3-Colouring have no $2^{o(|V|)}$ algorithm. Assuming the Satisfiability Hypothesis, none of these problems admits an algorithm with a fixed power saving, i.e. in time $2^{O((|V|+|E|)^{p})}$ for some $p<1$.
 
 ## Proof sketch
 

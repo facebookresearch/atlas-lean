@@ -4,7 +4,7 @@ For undirected graphs $G$ given by adjacency matrices, non-bipartiteness and $\m
 
 ## Proof sketch
 
-$G$ is non-bipartite iff some vertex $v$ has $(v,0)$ connected to $(v,1)$ in the bipartite double cover $G\times K_2$; taking $n$ disjoint copies of the double cover chained through these pairs gives a single USTCON instance. Conversely, USTCON reduces to non-bipartiteness by subdividing every edge (making the graph bipartite) and adding an odd path between $s$ and $t$. Membership in $\mathsf{L}$ follows from Reingold's theorem.
+$G$ is non-bipartite iff some vertex $v$ has $(v,0)$ connected to $(v,1)$ in the bipartite double cover $G\times K_2$; taking $n$ disjoint copies of the double cover, one per vertex $v$, and joining a new vertex $s$ to $(v,0)$ and a new vertex $t$ to $(v,1)$ in the $v$-th copy gives a single USTCON instance $(s,t)$. Conversely, USTCON reduces to non-bipartiteness by subdividing every edge (making the graph bipartite) and adding an odd path between $s$ and $t$. Membership in $\mathsf{L}$ follows from Reingold's theorem.
 
 ## Depends on
 

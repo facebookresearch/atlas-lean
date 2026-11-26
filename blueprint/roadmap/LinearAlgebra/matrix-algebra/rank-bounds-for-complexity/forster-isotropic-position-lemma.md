@@ -4,7 +4,7 @@ Let $u_1,\dots,u_m\in\mathbb{R}^d$ be in general position (every $d$ of them are
 
 ## Proof sketch
 
-Choose probability weights $p_x$ maximizing $\log\det\bigl(\sum_xp_xu_xu_x^{T}\bigr)$; general position keeps the maximizer in the interior of the simplex, and the stationarity conditions give $u_x^{T}A^{-1}u_x=d$ for $A=\sum_xp_xu_xu_x^{T}$, so $B=A^{-1/2}$ puts the normalized vectors in isotropic position.
+Choose weights $c_x = e^{t_x}$ maximizing $\log\det\bigl(\sum_x c_x u_xu_x^{T}\bigr)$ subject to $\sum_x t_x = 0$; general position makes the maximum attained, and stationarity gives $c_x\,u_x^{T}A^{-1}u_x=d/m$ for $A=\sum_x c_x u_xu_x^{T}$, so with $B=A^{-1/2}$, $\sum_x w_xw_x^T = \frac{m}{d}\sum_x c_x Bu_xu_x^TB = \frac md I_d$.
 
 ## Depends on
 

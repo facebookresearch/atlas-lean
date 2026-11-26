@@ -13,10 +13,6 @@ For imperfect seeds, replace $S$ by a uniform seed at cost $\eta$; for weak seed
 - [F2-linear strong seeded extractors](linear-strong-seeded-extractors.md)
 - [Pointwise min-entropy chain rule and uniform lifting](../weak-sources-and-extractors/pointwise-min-entropy-chain-rule.md)
 
-## Proof depends on
-
-- [Pointwise min-entropy chain rule and uniform lifting](../weak-sources-and-extractors/pointwise-min-entropy-chain-rule.md)
-
 ## Sources
 
 - E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics, 2019.

@@ -10,7 +10,6 @@
 - [The full binary basis B2 and the basis U2](full-binary-basis-b2-and-u2.md)
 - [Register evaluation of straight-line programs is black pebbling](register-evaluation-equals-black-pebbling.md)
 - [Tseitin encoding of a Boolean circuit](tseitin-encoding-of-a-circuit.md)
-- [Weft of a circuit and the W-hierarchy circuit classes](weft-of-a-circuit.md)
 - [Counting functions with small De Morgan circuits](counting-functions-with-small-circuits.md)
 - [Changing one value changes circuit complexity by at most 2n + 3](one-point-update-changes-complexity-by-2n-plus-3.md)
 - [Sahai–Vadhan polarization lemma for circuit samplers](sahai-vadhan-polarization-lemma.md)

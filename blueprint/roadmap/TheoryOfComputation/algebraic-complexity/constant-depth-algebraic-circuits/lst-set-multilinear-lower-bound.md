@@ -4,7 +4,7 @@ In the setting of the relative-rank upper bound, every set-multilinear formula o
 
 ## Proof sketch
 
-$P_w$ has relative rank one, while small set-multilinear formulas have relative rank at most $s\,2^{-k(d^{1/(4^\Delta-1)}/20-1/2)}$.
+$P_w$ has relative rank at least $2^{-k/2}$ for the $k$-unbiased word $w$ (its matrix has full rank and $|w_1+\dots+w_d|\le k$), while small set-multilinear formulas have relative rank at most $s\,2^{-k(d^{1/(4^\Delta-1)}/20-1/2)}$.
 
 ## Depends on
 

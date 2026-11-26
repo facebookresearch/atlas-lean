@@ -8,7 +8,7 @@ Mollification: $f(1 - \tilde E)$ vanishes wherever $F' \vee E$ is false and is $
 
 ## Depends on
 
-- [k-wise independent hash families](../../data-structures/hashing/limited-independence-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash families](../../data-structures/hashing/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # The palindrome separates non-commutative ABPs from circuits
 
-Over $n$ variables, the *palindrome* $\mathrm{Pal}_{2m}=\sum_{|w|=m}w\cdot w^{\mathrm{rev}}$ requires homogeneous non-commutative ABPs of size at least $n^m$ (its middle matrix $M_m$ is a permutation matrix of size $n^m$), while it has non-commutative arithmetic circuits (indeed formulas) of size $O(nm)$. The same lower bound holds for $\mathrm{Doub}_{2m}=\sum_{|w|=m}w\cdot w$.
+Over $n$ variables, the *palindrome* $\mathrm{Pal}_{2m}=\sum_{|w|=m}w\cdot w^{\mathrm{rev}}$ requires homogeneous non-commutative ABPs of size at least $n^m$ (its middle matrix $M_m$ is a permutation matrix of size $n^m$), while it has non-commutative arithmetic circuits of size $O(nm)$ (but, since formulas convert to ABPs of comparable size, no formulas of size below $n^m/O(1)$). The same lower bound holds for $\mathrm{Doub}_{2m}=\sum_{|w|=m}w\cdot w$.
 
 ## Proof sketch
 

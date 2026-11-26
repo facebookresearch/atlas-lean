@@ -3,7 +3,7 @@
 A well-formed classic B-tree of minimum degree $t \ge 2$ and height $h \ge 1$ (counting nodes) with $N$ entries satisfies
 
 $$
-2 t^{h-1} - 1 \le N \le (2t)^h - 1, \qquad h \le \left\lfloor \log_t \frac{N+1}{2} \right\rfloor + 1 .
+2 t^{h-1} - 1 \le N \le (2t)^h - 1, \qquad h \le \left\lfloor \log_t \frac{N+1}{2} \right\rfloor + 1 \quad (N \ge 1).
 $$
 
 Moreover any cost that spends at most one more than a node's key count at each node along a root-to-leaf descent is at most $2 t h$.

@@ -4,7 +4,7 @@ Let $Q$ be a formal multilinear polynomial of degree at most $k$ with variance a
 
 ## Proof sketch
 
-Replace variables one at a time as in Lindeberg's method; the error at step $i$ is controlled by the fourth moment of the part of $Q$ depending on $z_i$, which by hypercontractivity of the invariance ensemble ($9$-reasonable variables) is at most $9^k\mathrm{Inf}_i[Q]^2$; summing gives $9^k\varepsilon$ for $C^4$ tests, and smoothing a step function gives the Lévy bound.
+Replace variables one at a time as in Lindeberg's method; the error at step $i$ is controlled by the fourth moment of the part of $Q$ depending on $z_i$, which by hypercontractivity of the invariance ensemble ($9$-reasonable variables) is at most $9^k\mathrm{Inf}_i[Q]^2$; summing gives $9^k\sum_i\mathrm{Inf}_i[Q]^2\le9^k\varepsilon\sum_i\mathrm{Inf}_i[Q]\le k\,9^k\varepsilon$ for $C^4$ tests (the total influence of $Q$ is at most $k\,\mathrm{Var}[Q]\le k$), and smoothing a step function gives the Lévy bound.
 
 ## Depends on
 

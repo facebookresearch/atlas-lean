@@ -14,7 +14,6 @@ The permanent of a $0/1$ matrix, which is $\#\mathsf{P}$-complete by Valiant's t
 ## Proof depends on
 
 - [Exactly-one partition functions count perfect matchings and permanents](exactly-one-partition-function-permanent.md)
-- [The permanent is #P-complete (Valiant)](../complexity-of-the-permanent/permanent-sharp-p-complete.md)
 
 ## Sources
 

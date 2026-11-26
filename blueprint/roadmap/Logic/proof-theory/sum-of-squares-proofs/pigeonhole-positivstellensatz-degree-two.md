@@ -4,7 +4,7 @@ For $m > n$, the inequality translation of $\mathrm{PHP}^m_n$ with the Boolean a
 
 $$\sum_i P_i + \sum_j \Big(1 - \sum_i x_{ij}\Big)^2 + \sum_j \sum_{i \ne i'} x_{ij} H_{ii'j} + (m - n - 1) + (m-2)\sum_{i,j}(x_{ij}^2 - x_{ij}) = -1$$
 
-with pigeon constraints $P_i = \sum_j x_{ij} - 1 \ge 0$ and hole constraints $H_{ii'j} = 1 - x_{ij} - x_{i'j} \ge 0$; it has no refutation of degree $1$, since the fractional point $x_{ij} = 1/n$ satisfies all linear constraints.
+with pigeon constraints $P_i = \sum_j x_{ij} - 1 \ge 0$ and hole constraints $H_{ii'j} = 1 - x_{ij} - x_{i'j} \ge 0$; for $n \ge 2$ it has no refutation of degree $1$, since the fractional point $x_{ij} = 1/n$ satisfies all linear constraints (for $n = 1$, $P_1 + P_2 + H_{1,2,1} = -1$ is a degree-1 refutation).
 
 ## Proof sketch
 

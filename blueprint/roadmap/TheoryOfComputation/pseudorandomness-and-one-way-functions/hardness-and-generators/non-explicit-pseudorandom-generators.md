@@ -1,6 +1,6 @@
 # Non-explicit pseudorandom generators of exponential stretch exist
 
-There is a function $G$ on bit strings with $|G(z)|=S(|z|)$, where $S(\ell)=\lceil 2^{\ell/10}\rceil$ for $\ell\ge2$ (and $S(\ell)=\ell$ for $\ell\le1$), such that for every $\ell$ and every De Morgan circuit $C$ with at most $S(\ell)^{3}$ gates, $\bigl|\Pr_{z}[C(G(z))=1]-\Pr_{u}[C(u)=1]\bigr|<1/10$ for uniform $z\in\{0,1\}^{\ell}$ and $u\in\{0,1\}^{S(\ell)}$. On the other hand a circuit of size linear in its input length distinguishes every such map when the seed length is at most $1$.
+There is a function $G$ on bit strings with $|G(z)|=S(|z|)$, where $S(\ell)=\lceil 2^{\ell/10}\rceil$ for $\ell\ge2$ (and $S(\ell)=\ell$ for $\ell\le1$), such that for every $\ell$ and every De Morgan circuit $C$ with at most $S(\ell)^{3}$ gates, $\bigl|\Pr_{z}[C(G(z))=1]-\Pr_{u}[C(u)=1]\bigr|<1/10$ for uniform $z\in\{0,1\}^{\ell}$ and $u\in\{0,1\}^{S(\ell)}$. On the other hand, for seed length $\ell\le1$ every map $\{0,1\}^{\ell}\to\{0,1\}^{\ell+1}$ is distinguished with advantage at least $1/2$ by a linear-size circuit testing membership in its image.
 
 ## Proof sketch
 

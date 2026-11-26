@@ -14,7 +14,6 @@ The description is the final assignment followed by the execution log; decoding 
 ## Proof depends on
 
 - [Entropy compression: Moser's algorithm runs in linear expected resamplings](moser-entropy-compression.md)
-- [Incompressible strings exist at every length](../../../kolmogorov-complexity/incompressible-strings-and-kolmogorov-complexity/exists-incompressible.md)
 
 ## Sources
 

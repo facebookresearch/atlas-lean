@@ -8,13 +8,9 @@ Pairwise independence of signs kills cross terms $\mathbb{E}\epsilon(g(x))\epsil
 
 ## Depends on
 
-- [k-wise independent hash families](../../data-structures/hashing/limited-independence-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash families](../../data-structures/hashing/word-ram-hash-families/k-wise-independent-hash-family.md)
 - [Chebyshev's inequality](../../../Probability/moments/chebyshev-s-inequality/meas-ge-le-variance-div-sq.md)
 - [Bounded universal hash functions](../../cryptography/hash-functions/bounded-universal-hash-functions.md)
-
-## Proof depends on
-
-- [Chebyshev's inequality](../../../Probability/moments/chebyshev-s-inequality/meas-ge-le-variance-div-sq.md)
 
 ## Sources
 

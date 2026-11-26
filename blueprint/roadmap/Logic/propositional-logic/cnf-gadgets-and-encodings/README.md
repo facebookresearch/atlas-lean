@@ -8,6 +8,5 @@
 - [Truth-table CNF of a Boolean function](truth-table-cnf.md)
 - [Counting models of DNF formulas is #P-complete](dnf-model-counting-sharp-p-complete.md)
 - [Occurrence splitting of a CNF formula](occurrence-splitting.md)
-- [Karp–Luby–Madras: an FPRAS for counting DNF models](karp-luby-madras-dnf-fpras.md)
 - [Occurrence splitting preserves satisfiability and not-all-equal satisfiability](occurrence-splitting-preserves-satisfiability.md)
 - [CNF encoding of a parity constraint](cnf-encoding-of-a-parity-constraint.md)

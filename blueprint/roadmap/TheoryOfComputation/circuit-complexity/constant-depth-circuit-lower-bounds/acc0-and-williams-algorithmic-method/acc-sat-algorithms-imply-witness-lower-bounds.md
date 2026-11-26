@@ -14,7 +14,6 @@ Reduce an $\mathsf{NTIME}[2^n]$ language to succinct 3SAT with $\mathsf{ACC}^0$-
 
 ## Proof depends on
 
-- [Verifying a succinct satisfying assignment by circuit unsatisfiability](verifying-succinct-assignments-by-circuit-unsat.md)
 - [Nondeterministic time hierarchy](../../../hierarchy-theorems-and-barriers/nondet-time-hierarchy.md)
 - [Cook–Levin theorem: SAT is NP-complete](../../../np-completeness/cook-levin/cook-levin-sat-np-complete.md)
 

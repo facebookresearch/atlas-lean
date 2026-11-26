@@ -11,10 +11,6 @@ Each clause of $\mathrm{PG}(A)$ is a clause of the full Tseitin encoding of $A$,
 - [Plaisted–Greenbaum clause form](plaisted-greenbaum-clause-form.md)
 - [Tseitin correctness](../tseitin-transformation/eval-bool-iff-exists-satisfies-tseitin.md)
 
-## Proof depends on
-
-- [Tseitin correctness](../tseitin-transformation/eval-bool-iff-exists-satisfies-tseitin.md)
-
 ## Sources
 
 - D. A. Plaisted and S. Greenbaum, "A Structure-Preserving Clause Form Translation", Journal of Symbolic Computation 2(3), 293–304, 1986.

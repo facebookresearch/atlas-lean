@@ -11,7 +11,7 @@ For distinct inputs the pair $(h_i(x), h_i(x'))$ is uniform on $Y \times Y$, so 
 ## Depends on
 
 - [Almost Δ-universal (difference-universal) hash families](almost-delta-universal-hash-family.md)
-- [k-wise independent hash families](k-wise-independent-hash-family.md)
+- [k-wise independent hash families](../word-ram-hash-families/k-wise-independent-hash-family.md)
 - [Universal hash family](../universal-hashing/is-universal.md)
 
 ## Sources

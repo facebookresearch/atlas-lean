@@ -1,10 +1,10 @@
 # Double hashing with limited independence takes expected constant probes
 
-Let $2 n \le 2^M$ and let $L = \lceil \log_2 \max(n, 4) \rceil + 4$. Consider an open-addressed table of $2^M$ slots filled by inserting at most $n$ keys with odd-stride double hashing, in an order fixed before the hash functions are drawn. If $(h_1, h_2)$ is $(2L + 1)$-wise independent, then the expected number of probes of an unsuccessful search (equivalently, of inserting a fresh key) is at most $2$. If instead $(h_1, h_2)$ is drawn by double tabulation with high-probability $(2L+1)$-wise independence on a universe of size polynomial in $n$, the expected number of probes is at most $3$.
+Let $2 n \le 2^M$ and let $L = \lceil \log_2 \max(n, 4) \rceil + 4$. Consider an open-addressed table of $2^M$ slots filled by inserting at most $n$ keys with odd-stride double hashing, in an order fixed before the hash functions are drawn. If $(h_1, h_2)$ is $(2L + 1)$-wise independent, then the expected number of probes of an unsuccessful search (equivalently, of inserting a fresh key) is at most an absolute constant $C$, independent of $n$ and $M$. The same holds, with a larger absolute constant, if instead $(h_1, h_2)$ is drawn by double tabulation with high-probability $(2L+1)$-wise independence on a universe of size polynomial in $n$.
 
 ## Proof sketch
 
-Probes beyond the first $L$ are rare: by the $(2L+1)$-wise independence of the stored keys' probe positions and the query's first $L$ probe positions, the probability that the first $i \le L$ probes all hit occupied slots is at most about $2^{-i}$, as under uniform hashing at load $1/2$. The tail beyond $L$ is bounded by $n + 1$ probes times a probability $O(1/n)$. Under double tabulation the failure probability of independence adds a lower-order term.
+Probes beyond the first $L$ are rare: by the $(2L+1)$-wise independence of the stored keys' probe positions and the query's first $L$ probe positions, the probability that the first $i \le L$ probes all hit occupied slots is at most $c_0\,2^{-i}$ for an absolute constant $c_0$, as under uniform hashing at load $1/2$, so the first $L$ probes contribute $O(1)$ in expectation. The tail beyond $L$ is bounded by $n + 1$ probes times the probability $c_0\,2^{-L} \le c_0/(16n)$ that the first $L$ probes are all occupied, which is again $O(1)$. Under double tabulation the failure probability of independence adds a lower-order term.
 
 ## Depends on
 

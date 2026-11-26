@@ -4,7 +4,7 @@ Every De Morgan formula of depth $d$ (negations free) is $\sigma$-computed, for 
 
 ## Proof sketch
 
-Induction on the formula. A variable is one instruction; negation multiplies by $\sigma^{-1}$ after computing the argument for $\sigma^{-1}$; for a conjunction write $\sigma=\alpha\beta\alpha^{-1}\beta^{-1}$ as a commutator of two $5$-cycles, and concatenate programs for the two arguments computing $\alpha,\beta,\alpha^{-1},\beta^{-1}$, which multiplies the length by four. Conversely a width-$5$ program of polynomial length is evaluated by a balanced product tree of logarithmic depth.
+Induction on the formula. A variable is one instruction; negation appends $\sigma$ after a program that $\sigma^{-1}$-computes the argument (giving $e$ when the argument is true and $\sigma$ when it is false); for a conjunction write $\sigma=\alpha\beta\alpha^{-1}\beta^{-1}$ as a commutator of two $5$-cycles, and concatenate programs for the two arguments computing $\alpha,\beta,\alpha^{-1},\beta^{-1}$, which multiplies the length by four. Conversely a width-$5$ program of polynomial length is evaluated by a balanced product tree of logarithmic depth.
 
 ## Depends on
 

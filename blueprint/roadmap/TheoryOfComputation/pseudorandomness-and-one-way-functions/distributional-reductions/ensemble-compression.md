@@ -4,7 +4,7 @@ For every polynomial-time computable ensemble $\mathcal{D}$ there is a polynomia
 
 ## Proof sketch
 
-If $D_n(x)\le2^{-|x|}$, let $C(x)=0x$. Otherwise let $C(x)=1z$ where $z$ is the shortest binary fraction in the interval $(F(x^-),F(x)]$ of the cumulative distribution, which has length at most $\log_2(1/D_n(x))$ and is computable since $F$ is; intervals of distinct $x$ are disjoint, giving injectivity.
+If $D_n(x)\le2^{-|x|}$, let $C(x)=0x$. Otherwise let $C(x)=1z$ where $z$ is the longest common prefix of the binary expansions of $F(x^-)$ and $F(x)$, which has length at most $\log_2(1/D_n(x))$ and is computable since $F$ is; intervals of distinct $x$ are disjoint, giving injectivity.
 
 ## Depends on
 

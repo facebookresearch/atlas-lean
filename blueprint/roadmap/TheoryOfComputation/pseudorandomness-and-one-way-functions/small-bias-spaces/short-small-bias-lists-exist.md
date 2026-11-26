@@ -11,10 +11,6 @@ For a fixed nonempty $S$, the parities on $S$ of $d$ independent uniform strings
 - [Bias, ε-biased and k-wise ε-biased distributions](small-bias-distributions.md)
 - [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
 
-## Proof depends on
-
-- [Hoeffding's inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-avg-sub-ge-le.md)
-
 ## Sources
 
 - J. Naor and M. Naor, "Small-Bias Probability Spaces: Efficient Constructions and Applications", SIAM Journal on Computing, 1993.

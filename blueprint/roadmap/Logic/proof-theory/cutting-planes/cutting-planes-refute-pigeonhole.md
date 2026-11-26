@@ -4,7 +4,7 @@ For $m > n$, the inequality translation of $\mathrm{PHP}^m_n$ has a cutting plan
 
 ## Proof sketch
 
-To derive $\sum_{i \le t+1} x_{ij} \le 1$ from $\sum_{i \le t} x_{ij} \le 1$ and the pairwise inequalities $x_{ij} + x_{t+1,j} \le 1$, add all of them to get twice the target plus slack, then divide by two and round.
+To derive $\sum_{i \le t+1} x_{ij} \le 1$, multiply $\sum_{i \le t} x_{ij} \le 1$ by $t-1$ and add the $t$ pairwise inequalities $x_{ij} + x_{t+1,j} \le 1$ ($i \le t$), giving $t\sum_{i \le t+1} x_{ij} \le 2t - 1$; divide by $t$ and round down.
 
 ## Depends on
 

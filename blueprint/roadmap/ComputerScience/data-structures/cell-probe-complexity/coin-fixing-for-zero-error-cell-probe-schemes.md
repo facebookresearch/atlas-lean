@@ -13,10 +13,6 @@ Every randomized tree is a finite mixture of deterministic trees indexed by its 
 - [Randomized cell-probe scheme with private coins](randomized-cell-probe-scheme.md)
 - [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
 
-## Proof depends on
-
-- [Yao's minimax principle](../../../TheoryOfComputation/randomized-and-quantum-complexity/yao-s-minimax-principle/yao-minimax.md)
-
 ## Sources
 
 - A. C.-C. Yao, "Probabilistic Computations: Toward a Unified Measure of Complexity", Proceedings of the 18th IEEE Symposium on Foundations of Computer Science (FOCS), 1977.

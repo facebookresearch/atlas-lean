@@ -1,6 +1,6 @@
 # The theory of the random graph is $\aleph_0$-categorical and complete
 
-Every model of $T_{\mathrm{rg}}$ is infinite, and between any two countable models the finite partial isomorphisms form a back-and-forth system; hence any two countable models are isomorphic ($T_{\mathrm{rg}}$ is $\aleph_0$-categorical). Since $T_{\mathrm{rg}}$ has no finite models, it is complete: for every sentence $\varphi$, either $T_{\mathrm{rg}} \models \varphi$ or $T_{\mathrm{rg}} \models \neg\varphi$. The analogous statements hold for the extension theory of every finite relational vocabulary.
+Every model of $T_{\mathrm{rg}}$ is infinite, and between any two countable models the finite partial isomorphisms form a back-and-forth system; hence any two countable models are isomorphic ($T_{\mathrm{rg}}$ is $\aleph_0$-categorical). Since $T_{\mathrm{rg}}$ has no finite models, it is complete: for every sentence $\varphi$, either $T_{\mathrm{rg}} \models \varphi$ or $T_{\mathrm{rg}} \models \neg\varphi$. The analogous statements hold for the extension theory of every finite relational vocabulary without nullary symbols.
 
 ## Proof sketch
 

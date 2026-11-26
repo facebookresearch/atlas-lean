@@ -1,6 +1,6 @@
 # Lynch: languages outside P have infinite polynomial complexity cores
 
-Let $\mathcal{C}$ be a countable class of sets containing all finite sets and closed under finite unions. If $A$ is a recursive set with $A\notin\mathcal{C}$ for $\mathcal{C}$ such as $\mathsf{P}$, then $A$ has an infinite (recursive) complexity core for $\mathcal{C}$. In particular every recursive $A\notin\mathsf{P}$ has an infinite polynomial complexity core: an infinite set $X$ such that every machine deciding $A$ runs in super-polynomial time on all but finitely many elements of $X$.
+Let $\mathcal{C}$ be a countable class of sets containing all finite sets and closed under finite unions, and let $A\notin\mathcal{C}$. Then $A$ has an infinite complexity core for $\mathcal{C}$; if $\mathcal{C}$ is recursively presentable (e.g. $\mathsf{P}$) and $A$ is recursive, the core can be taken recursive. In particular every recursive $A\notin\mathsf{P}$ has an infinite polynomial complexity core: an infinite set $X$ such that every machine deciding $A$ runs in super-polynomial time on all but finitely many elements of $X$.
 
 ## Proof sketch
 

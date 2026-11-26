@@ -1,6 +1,6 @@
 # Gap-ETH
 
-For $0\le s< c\le1$, $\mathrm{Gap}\text{-}k\text{-SAT}_{c,s}$ is the promise problem of distinguishing $k$-CNFs in which a $c$ fraction of clauses can be satisfied (yes) from those in which at most an $s$ fraction can (no). The **Gap Exponential Time Hypothesis** states that for some $\varepsilon>0$ and $s<1$, $\mathrm{Gap}\text{-}3\text{-SAT}_{1,s}$ has no deterministic (resp. randomized, for rGap-ETH) algorithm in time $2^{o(n)}$. Exhaustive search solves every gap problem in time $2^{n}\mathrm{poly}$; Gap-ETH implies ETH.
+For $0\le s< c\le1$, $\mathrm{Gap}\text{-}k\text{-SAT}_{c,s}$ is the promise problem of distinguishing $k$-CNFs in which a $c$ fraction of clauses can be satisfied (yes) from those in which at most an $s$ fraction can (no). The **Gap Exponential Time Hypothesis** states that for some $\varepsilon>0$, with $s=1-\varepsilon$, $\mathrm{Gap}\text{-}3\text{-SAT}_{1,s}$ has no deterministic (resp. randomized, for rGap-ETH) algorithm in time $2^{o(n)}$. Exhaustive search solves every gap problem in time $2^{n}\mathrm{poly}$; Gap-ETH implies ETH.
 
 ## Depends on
 

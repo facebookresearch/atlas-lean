@@ -3,7 +3,7 @@
 Let $L(f)$ denote De Morgan formula leaf size. For every Boolean function $f$ on $n$ variables and every $1\le k\le n$, if $\rho$ is a random restriction leaving exactly $k$ variables free (chosen uniformly) and fixing the others to independent uniform bits, then
 
 $$
-\mathbb{E}_\rho\bigl[L(f|_\rho)\bigr]\le 4\Bigl(\frac{k}{n}\Bigr)^{3/2}L(f).
+\mathbb{E}_\rho\bigl[L(f|_\rho)\bigr]\le 4\Bigl(\frac{k}{n}\Bigr)^{3/2}L(f)+1.
 $$
 
 The key step: fixing one random variable of a leaf-minimal formula with $L\ge 2$ leaves to a random constant removes on average at least $3L/(2n)$ leaves.

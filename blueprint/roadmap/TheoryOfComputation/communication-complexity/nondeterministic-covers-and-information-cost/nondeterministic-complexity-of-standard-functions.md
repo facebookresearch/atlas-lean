@@ -4,7 +4,7 @@ For $n$-bit strings: $N^1(\mathrm{EQ}_n) = n$ and $N^0(\mathrm{EQ}_n) \le \lceil
 
 ## Proof sketch
 
-Lower bounds come from fooling sets of size $2^n$ (diagonal pairs for equality, complementary pairs for disjointness) and, for inner product, from the fact that a monochromatic rectangle of $\mathrm{IP}_n$ has at most $2^n$ (resp. $2^{n+1}$) entries. Upper bounds guess a position where the inputs differ, or a common element.
+Lower bounds come from fooling sets of size $2^n$ (diagonal pairs for equality, complementary pairs for disjointness) and, for inner product, from the fact that a monochromatic rectangle of $\mathrm{IP}_n$ of either colour has at most $2^n$ entries (Lindsey's lemma), while $\mathrm{IP}_n$ has $2^{2n-1}-2^{n-1}$ ones and $2^{2n-1}+2^{n-1}$ zeros. Upper bounds guess a position where the inputs differ, or a common element.
 
 ## Depends on
 

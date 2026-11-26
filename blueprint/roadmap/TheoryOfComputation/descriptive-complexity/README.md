@@ -16,7 +16,7 @@ Logical characterizations of complexity classes on finite structures: Fagin's th
 - [Fixed-Point and Transitive-Closure Logics](fixed-point-and-closure-logics/README.md)
 - [Hanf and Gaifman Locality](hanf-and-gaifman-locality/README.md)
 - [Logic over Finite Words](logic-over-finite-words/README.md)
-- [Logical Characterizations of L, NL, P and NP; First-Order Reductions](logical-characterizations-of-l-nl-p-np/README.md)
+- [Logical Characterizations of L, NL, P and NP](logical-characterizations-of-l-nl-p-np/README.md)
 - [Ordered Structures and Definable Arithmetic](ordered-structures-and-arithmetic/README.md)
 - [Quantifier-Free Projections and Complete Problems](quantifier-free-projections/README.md)
 - [Second-Order Horn Logic](second-order-horn-logic/README.md)

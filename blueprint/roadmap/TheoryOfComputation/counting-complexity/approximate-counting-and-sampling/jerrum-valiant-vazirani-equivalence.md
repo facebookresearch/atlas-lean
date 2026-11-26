@@ -4,7 +4,7 @@ For every self-reducible relation $R$: $|R(x)|$ has an FPRAS if and only if $R$ 
 
 ## Proof sketch
 
-Sampling to counting: write $|R(x)|=|R(x_{\mathrm{last}})|\prod_i\frac{|R(x_{i-1})|}{|R(x_i)|}$ along a path of self-reduction steps, choosing at each step the more popular branch; each ratio is at least $1/2$ and is estimated by sampling. Counting to sampling: choose the bit $b$ with probability proportional to the estimated $|R(x_b)|$ and recurse, correcting the accumulated bias by rejection.
+Sampling to counting: write $|R(x)|=|R(x_{\mathrm{last}})|\prod_i\frac{|R(x_{i-1})|}{|R(x_i)|}$ along a path of self-reduction steps, choosing at each step the more popular branch; each inverse ratio $|R(x_i)|/|R(x_{i-1})|$ is at least $1/2$ and is estimated by sampling. Counting to sampling: choose the bit $b$ with probability proportional to the estimated $|R(x_b)|$ and recurse, correcting the accumulated bias by rejection.
 
 ## Depends on
 

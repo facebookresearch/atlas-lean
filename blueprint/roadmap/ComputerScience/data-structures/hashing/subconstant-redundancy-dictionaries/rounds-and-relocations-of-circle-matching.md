@@ -3,7 +3,7 @@
 For the multi-round circle matching with $|A| \le n'$ active balls, every round matches at least one ball, so the process ends within $|A|$ rounds, and the matching is injective. The number of rounds $T$ satisfies
 
 $$
-\mathbb{E}[T] \le \lceil \log_2 |A| \rceil + 2 \le 3 \lceil \log_2 \max(|A|, 2) \rceil .
+\mathbb{E}[T] \le \lceil \log_2 \max(|A|, 1) \rceil + 2 \le 3 \lceil \log_2 \max(|A|, 2) \rceil .
 $$
 
 Inserting, deleting or replacing one ball changes the bins of $O(T)$ balls deterministically, and hence of $O(\log \max(|A|, 2))$ balls in expectation.

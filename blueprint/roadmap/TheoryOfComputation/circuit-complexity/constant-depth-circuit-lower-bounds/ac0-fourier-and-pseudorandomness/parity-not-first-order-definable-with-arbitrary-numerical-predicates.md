@@ -13,7 +13,6 @@ A definition would give, by first-order model checking, constant-depth polynomia
 
 ## Proof depends on
 
-- [First-order model checking in constant depth](first-order-model-checking-in-ac0.md)
 - [Parity is not in AC0](../../lower-bounds-for-ac0-circuits/parity-not-in-ac0.md)
 
 ## Sources

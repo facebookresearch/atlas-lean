@@ -11,10 +11,6 @@ A collision of two messages means the reduced prefix digests differ by the diffe
 - [The Hxpoly hash remains difference universal after modulus reduction](hxpoly-difference-universal-after-modulus-reduction.md)
 - [Bounded universal hash functions](../bounded-universal-hash-functions.md)
 
-## Proof depends on
-
-- [The Hxpoly hash remains difference universal after modulus reduction](hxpoly-difference-universal-after-modulus-reduction.md)
-
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", version 0.6, 2023.

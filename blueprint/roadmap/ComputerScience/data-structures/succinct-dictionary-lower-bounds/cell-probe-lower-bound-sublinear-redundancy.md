@@ -20,7 +20,6 @@ Use a meta-operation tree with constant fanout and about $\log_2(n/R)$ levels: w
 
 - [Outer lemma: each tree level forces linearly many probes](outer-lemma.md)
 - [Coin fixing for zero-error randomized cell-probe schemes](../cell-probe-complexity/coin-fixing-for-zero-error-cell-probe-schemes.md)
-- [Cell-probe lower bound Ω(k) for dynamic dictionaries with n·log^(k) n redundancy](cell-probe-lower-bound-iterated-log-redundancy.md)
 
 ## Sources
 

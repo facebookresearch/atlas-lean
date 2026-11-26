@@ -4,7 +4,7 @@ There is a deterministic polynomial-time algorithm that, given a prime $P$, a qu
 
 ## Proof sketch
 
-Write $P-1=2^{k}m$ with $m$ odd. Starting from $s^{(P-1)/2}=1$, repeatedly halve the exponent of $s$; whenever the current power of $s$ times the accumulated power of $t$ equals $-1$, multiply by $t^{(P-1)/2^{j}}$, which is $-1$ because $t$ is a non-residue. This maintains $s^{e}t^{e'}=1$ until $e$ becomes odd, with $e'$ even throughout.
+Write $P-1=2^{k}m$ with $m$ odd. Starting from $s^{(P-1)/2}=1$, repeatedly halve the exponent of $s$; whenever the current power of $s$ times the accumulated power of $t$ equals $-1$, multiply by $t^{(P-1)/2}$, which is $-1$ because $t$ is a non-residue. This maintains $s^{e}t^{e'}=1$ until $e$ becomes odd, with $e'$ even throughout.
 
 ## Depends on
 

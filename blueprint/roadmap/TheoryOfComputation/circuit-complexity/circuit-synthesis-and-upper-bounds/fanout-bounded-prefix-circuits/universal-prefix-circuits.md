@@ -11,4 +11,4 @@ A *prefix circuit* on $N$ inputs is a circuit over the basis $\{\ast,\mathrm{id}
 
 - Igor S. Sergeev, "A Note on the Depth of Optimal Fanout-Bounded Prefix Circuits", 2025.
 - Richard E. Ladner, Michael J. Fischer, "Parallel Prefix Computation", Journal of the ACM, 1980.
-- Marc Snir, "Lower Bounds on Probabilistic Linear Decision Trees", Theoretical Computer Science, 1985.
+- Marc Snir, "Depth-Size Trade-offs for Parallel Prefix Computation", Journal of Algorithms 7(2), 185–201, 1986.

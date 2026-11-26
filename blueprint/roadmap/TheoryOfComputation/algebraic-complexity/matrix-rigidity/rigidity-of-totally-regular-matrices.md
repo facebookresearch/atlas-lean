@@ -1,6 +1,6 @@
 # Rigidity of totally regular matrices
 
-Let $A$ be an $n\times n$ totally regular matrix (all square submatrices nonsingular; for example a Cauchy matrix). Then for $1\le r<n$,
+Let $A$ be an $n\times n$ totally regular matrix (all square submatrices nonsingular; for example a Cauchy matrix). Then for $\log_2^2 n\le r\le n/2$,
 
 $$
 R_A(r)\ge\frac{n^2}{4(r+1)}\log_2\frac nr .

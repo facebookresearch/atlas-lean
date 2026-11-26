@@ -8,7 +8,7 @@ and for $N \ge 2$ also $\big(1 - 2\sqrt{\varepsilon(1-\varepsilon)}\big)\sqrt{N}
 
 ## Proof sketch
 
-Partition permutations according to whether $\pi^{-1}(t)$ lies in the first or second half, relate permutations differing by a transposition moving the preimage of $t$ across, and apply the relational adversary bound with $m, m' \approx N/2$ and $L = 1$.
+Partition permutations according to whether $\pi^{-1}(t)$ lies in the first or second half, relate permutations differing by a transposition moving the preimage of $t$ across, and apply the relational adversary bound with $m, m' \approx N/2$ and $L \approx N/2$ (at the preimage position of $t$, $x$ has all $N/2$ partners differing there and each partner $y$ has one), giving $\sqrt{mm'/L} \approx \sqrt{N/2}$.
 
 ## Depends on
 

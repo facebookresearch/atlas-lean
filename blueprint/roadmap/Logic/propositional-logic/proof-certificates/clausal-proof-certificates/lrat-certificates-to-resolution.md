@@ -12,10 +12,6 @@ Each RUP step with hints $h_1,\dots,h_k$ is a trivial resolution chain of at mos
 - [Accepted LRAT proofs refute CNF formulas](../accepted-lrat-proofs-refute-cnf-formulas.md)
 - [Resolution refutation](../../resolution-size-and-width/is-resolution-refutation.md)
 
-## Proof depends on
-
-- [Accepted LRAT proofs refute CNF formulas](../accepted-lrat-proofs-refute-cnf-formulas.md)
-
 ## Sources
 
 - P. Beame, H. Kautz and A. Sabharwal, "Towards Understanding and Harnessing the Potential of Clause Learning", Journal of Artificial Intelligence Research 22, 319–351, 2004.

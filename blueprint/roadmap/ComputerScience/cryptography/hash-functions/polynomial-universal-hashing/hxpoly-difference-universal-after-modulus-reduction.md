@@ -11,11 +11,6 @@ Lifting blocks is injective, so distinct messages stay distinct, and $H_{\mathrm
 - [Difference bound after reducing digests modulo a smaller modulus](difference-universality-under-modulus-reduction.md)
 - [Carter–Wegman MACs](../../symmetric-key/macs-and-modes/carterwegman-macs.md)
 
-## Proof depends on
-
-- [Difference bound after reducing digests modulo a smaller modulus](difference-universality-under-modulus-reduction.md)
-- [Carter–Wegman MACs](../../symmetric-key/macs-and-modes/carterwegman-macs.md)
-
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", version 0.6, 2023.

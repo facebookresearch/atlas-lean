@@ -1,4 +1,4 @@
-# Logical Characterizations of L, NL, P and NP; First-Order Reductions
+# Logical Characterizations of L, NL, P and NP
 
 - [First-order model checking for a fixed sentence is in L](first-order-queries-in-logspace.md)
 - [Immerman: REACH is NL-complete under first-order reductions](reach-nl-complete-first-order.md)

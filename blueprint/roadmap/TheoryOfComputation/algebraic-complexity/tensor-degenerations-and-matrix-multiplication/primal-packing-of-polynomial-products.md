@@ -4,7 +4,7 @@ Let $c,t,a,b\ge1$ with $ct\ge a+2b-1$. Then the $c+1$ full products $\mathrm{Ful
 
 ## Proof sketch
 
-The telescoping sum $\sum_\nu z^{t\nu}AE_\nu=AP_1+\varepsilon z^bAQ-z^{ct}AP_{c+1}$ exposes the middle coefficients of $AQ$ at order $\varepsilon$, and the products $AP_\nu$ are recovered from consecutive differences because the condition $ct\ge a+2b-1$ prevents overlaps of coefficient ranges.
+The telescoping sum $\sum_{\nu=1}^{c} z^{t(\nu-1)}AE_\nu=AP_1+\varepsilon z^bAQ-z^{ct}AP_{c+1}$ (with $Q=\sum_\nu z^{t(\nu-1)}Q^{(\nu)}$) exposes the middle coefficients of $AQ$ at order $\varepsilon$, and the products $AP_\nu$ are recovered from consecutive differences because the condition $ct\ge a+2b-1$ prevents overlaps of coefficient ranges.
 
 ## Depends on
 

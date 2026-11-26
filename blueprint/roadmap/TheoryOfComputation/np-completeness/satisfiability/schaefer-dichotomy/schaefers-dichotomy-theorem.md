@@ -4,7 +4,7 @@ Let $\Gamma$ be a finite Boolean constraint language. If $\Gamma$ satisfies Scha
 
 ## Proof sketch
 
-Tractability uses the normal forms of each class (Horn, dual Horn, 2-CNF, affine systems). For hardness, by the lemma all polymorphisms are (negated) projections, which preserve the 1-in-3 relation (together with $\ne$ in the self-dual case); by the Galois connection these relations are pp-definable from $\Gamma$, so 1-in-3-SAT or NAE-3-SAT reduces to $\mathrm{CSP}(\Gamma)$ by gadget replacement.
+Tractability uses the normal forms of each class (Horn, dual Horn, 2-CNF, affine systems). For hardness, by the lemma all polymorphisms are projections, which preserve the 1-in-3 relation, or projections and negated projections, which preserve the NAE-3 relation (the self-dual case); by the Galois connection these relations are pp-definable from $\Gamma$, so 1-in-3-SAT or NAE-3-SAT reduces to $\mathrm{CSP}(\Gamma)$ by gadget replacement.
 
 ## Depends on
 

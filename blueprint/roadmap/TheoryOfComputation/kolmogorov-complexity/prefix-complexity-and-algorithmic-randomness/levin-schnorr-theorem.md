@@ -4,7 +4,7 @@ For an infinite binary sequence $\omega$ the following are equivalent: (1) $\ome
 
 ## Proof sketch
 
-(2)⇒(1): the sets $V_k = \{w : K(w) \le |w| - k\}$ form a test, since $\sum_w 2^{-K(w)} \le 1$ bounds their measure by $2^{-k}$, and conversely a universal test can be compressed via Kraft–Chaitin: strings in $V_{2k}$ receive codewords of length $|w| - k$, so (1)⇒(2). A Martin-Löf test is a Solovay test, and from a Solovay test one builds a Martin-Löf test of sequences extending at least $2^k$ of its strings.
+(1)⇒(2): the sets $V_k = \{w : K(w) \le |w| - k\}$ form a test, since $\sum_w 2^{-K(w)} \le 1$ bounds their measure by $2^{-k}$, and conversely a universal test can be compressed via Kraft–Chaitin: strings in $V_{2k}$ receive codewords of length $|w| - k$, so (2)⇒(1). A Martin-Löf test is a Solovay test, and from a Solovay test one builds a Martin-Löf test of sequences extending at least $2^k$ of its strings.
 
 ## Depends on
 

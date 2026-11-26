@@ -1,6 +1,6 @@
 # Kolaitis–Vardi: the 0-1 law for finite-variable infinitary logic $L^k_{\infty\omega}$
 
-Fix $k \in \mathbb{N}$ and $0 < p < 1$. For every sentence $\varphi$ of the infinitary $k$-variable logic $L^k_{\infty\omega}$ in the language of graphs (of any quantifier depth), $\Pr[G(n,p) \models \varphi]$ converges to $0$ or to $1$, with limit $1$ iff the Rado graph satisfies $\varphi$. The same holds for uniform random structures over any finite relational vocabulary. Consequently every query definable in fixed-point logics (which embed into $\bigcup_k L^k_{\infty\omega}$), such as transitive closure or least-fixed-point logic without order, has a 0-1 law, so EVEN is not expressible in them.
+Fix $k \in \mathbb{N}$ and $0 < p < 1$. For every sentence $\varphi$ of the infinitary $k$-variable logic $L^k_{\infty\omega}$ in the language of graphs (of any quantifier depth), $\Pr[G(n,p) \models \varphi]$ converges to $0$ or to $1$, with limit $1$ iff the Rado graph satisfies $\varphi$. The same holds for uniform random structures over any finite relational vocabulary without nullary symbols. Consequently every query definable in fixed-point logics (which embed into $\bigcup_k L^k_{\infty\omega}$), such as transitive closure or least-fixed-point logic without order, has a 0-1 law, so EVEN is not expressible in them.
 
 ## Proof sketch
 

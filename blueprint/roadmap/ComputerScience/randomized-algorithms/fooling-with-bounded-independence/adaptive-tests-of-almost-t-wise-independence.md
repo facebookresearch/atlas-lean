@@ -11,10 +11,6 @@ Each subcube fixing at most $t$ coordinates has probability within $\varepsilon$
 - [Subcube bounds transfer to adaptive decision-tree tests](subcube-bounds-transfer-to-decision-trees.md)
 - [Total variation distance of functions on a finite set](../../../Probability/markov-chains/mixing-times-of-markov-chains/tv-dist.md)
 
-## Proof depends on
-
-- [Subcube bounds transfer to adaptive decision-tree tests](subcube-bounds-transfer-to-decision-trees.md)
-
 ## Sources
 
 - O. Goldreich, "Computational Complexity: A Conceptual Perspective", public draft of Chapters 7–8, March 2007.

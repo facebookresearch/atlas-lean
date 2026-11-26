@@ -6,7 +6,7 @@ $$
 M + \log_2 K - \log_2 X \le \frac{2}{r}.
 $$
 
-Hence $n$ independent payloads encoded with $r = n$ waste at most $2$ bits in total once their spill values are jointly encoded in $\lceil n \log_2 K \rceil$ bits.
+Hence $n$ independent payloads encoded with $r = n$ waste at most $3$ bits in total (at most $2$ from the spillover and at most $1$ from rounding) once their spill values are jointly encoded in $\lceil n \log_2 K \rceil$ bits.
 
 ## Proof sketch
 

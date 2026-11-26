@@ -10,11 +10,11 @@ Also each point is retained in $B$ with probability exactly $p$ and two distinct
 
 ## Proof sketch
 
-Restrict to a subset $S'$ of size $\min(m, \lceil 1/p\rceil)$. Inclusion–exclusion (Bonferroni) gives $\Pr[\exists] \ge |S'|p - \binom{|S'|}{2}p^2$ by pairwise independence, which is at least $|S'|p(1 - |S'|p/2)$, yielding both bounds.
+For the first bound use the second-moment method: the count $X$ of points landing in $B$ has $\mathbb{E}X = mp$ and $\mathbb{E}X^2 = mp(1-p) + (mp)^2$ by pairwise independence, so $\Pr[X > 0] \ge (\mathbb{E}X)^2/\mathbb{E}X^2 = mp/(1 - p + mp) \ge \min(mp, 1)/2$. For the second bound, Bonferroni on all of $S$ gives $\Pr[\exists] \ge mp - \binom{m}{2}p^2 \ge mp(1 - mp/2) \ge 3mp/4$ when $2mp \le 1$.
 
 ## Depends on
 
-- [k-wise independent hash families](../../data-structures/hashing/limited-independence-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash families](../../data-structures/hashing/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 

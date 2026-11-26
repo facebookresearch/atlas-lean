@@ -10,4 +10,4 @@ A *dag-like protocol* for a search problem $R \subseteq X \times Y \times O$ is 
 ## Sources
 
 - S. Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
-- M. Sipser, "Introduction to the Theory of Computation", 3rd ed., Cengage Learning, 2013.
+- J. Krajíček, "Interpolation Theorems, Lower Bounds for Proof Systems, and Independence Results for Bounded Arithmetic", Journal of Symbolic Logic 62(2), 457–486, 1997.

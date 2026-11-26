@@ -3,7 +3,7 @@
 Let $T$ be a cell-probe tree over $S$ cells of $w$ bits with depth $d$.
 
 1. The value and final memory returned by $T$ on a memory $m$ depend only on the contents of the at most $d$ distinct cells probed along the run on $m$; in particular, two memories agreeing on those cells give the same result.
-2. $T$ has at most $2^{w d}$ leaves, so if the map $m \mapsto (\text{result of } T \text{ on } m)$ takes $N$ distinct values then $N \le 2^{wd}$, i.e. $d \ge \log_2 N / w$.
+2. $T$ has at most $2^{w d}$ leaves, so if the map $m \mapsto (\text{value returned by } T \text{ on } m)$ (the leaf label) takes $N$ distinct values then $N \le 2^{wd}$, i.e. $d \ge \log_2 N / w$.
 
 ## Proof sketch
 

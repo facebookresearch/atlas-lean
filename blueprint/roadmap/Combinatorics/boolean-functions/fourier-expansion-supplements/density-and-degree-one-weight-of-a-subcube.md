@@ -4,7 +4,7 @@ Let $K \subseteq [n]$ with $|K| = k$ and $b \in \{-1,1\}^K$, and let $f = \mathb
 
 $$\mathbf{W}^1[f] = k\, 2^{-2k}.$$
 
-So subcubes nearly attain the Level-1 inequality up to the logarithmic factor.
+So subcubes attain the Level-1 inequality up to a constant factor: $\mathbf{W}^1[f] = \alpha^2\log_2(1/\alpha)$ with $\alpha = 2^{-k}$.
 
 ## Proof sketch
 

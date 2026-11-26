@@ -4,7 +4,7 @@ For capacity $n \ge 1$, assign each key a bucket address of $b(n) = \lfloor \log
 
 ## Proof sketch
 
-The address identity is arithmetic. The total number of chains is at most $n$ while each chain has expected load at most $1$, so pairwise independence bounds the expected collisions, and the third moment controls the overflow of the bucket above four times its mean.
+The address identity is arithmetic. There are more than $n/2$ chains, so each chain has expected load less than $2$, so pairwise independence bounds the expected collisions, and the third moment controls the overflow of the bucket above four times its mean.
 
 ## Depends on
 

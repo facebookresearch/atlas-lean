@@ -3,7 +3,7 @@
 Let a well-formed B+-tree of minimum degree $t \ge 2$ have height $h$ (counting the nodes on a root-to-leaf path, so a leaf has height $1$) and $N$ entries. A balanced subtree of height $h$ all of whose nodes are occupied holds at least $(t-1) t^{h-1}$ entries, and if $h \ge 2$ the whole tree holds at least $2(t-1) t^{h-2} \ge t^{h-1}$ entries. Consequently
 
 $$
-h \le \lfloor \log_t N \rfloor + 1 .
+h \le \lfloor \log_t N \rfloor + 1 \quad (N \ge 1).
 $$
 
 ## Proof sketch

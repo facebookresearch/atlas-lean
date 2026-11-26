@@ -8,11 +8,7 @@ Apply the subcube transfer with $d$ the difference between $G$'s law and the uni
 
 ## Depends on
 
-- [k-wise independent hash families](../../data-structures/hashing/limited-independence-hash-families/k-wise-independent-hash-family.md)
-- [Subcube bounds transfer to adaptive decision-tree tests](subcube-bounds-transfer-to-decision-trees.md)
-
-## Proof depends on
-
+- [k-wise independent hash families](../../data-structures/hashing/word-ram-hash-families/k-wise-independent-hash-family.md)
 - [Subcube bounds transfer to adaptive decision-tree tests](subcube-bounds-transfer-to-decision-trees.md)
 
 ## Sources

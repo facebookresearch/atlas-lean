@@ -1,6 +1,6 @@
 # Both randomness and approximation are needed for F_k in sublinear space
 
-For every $k \ne 1$: (1) every deterministic streaming algorithm that approximates $F_k$ within a factor $1 \pm 0.1$ on all streams of length $O(n)$ over a universe of size $O(n)$ uses $\Omega(n)$ bits; (2) every randomized streaming algorithm that computes $F_k$ exactly with error at most $1/3$ uses $\Omega(n)$ bits.
+For every nonnegative integer $k \ne 1$: (1) every deterministic streaming algorithm that approximates $F_k$ within a factor $1 \pm 0.1$ on all streams of length $O(n)$ over a universe of size $O(n)$ uses $\Omega(n)$ bits; (2) every randomized streaming algorithm that computes $F_k$ exactly with error at most $1/3$ uses $\Omega(n)$ bits.
 
 ## Proof sketch
 

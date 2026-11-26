@@ -4,7 +4,7 @@ For independent distributions $A, B$ on $\{0,1\}^n$, $\mathrm{bias}_{A+B}(S) = \
 
 ## Proof sketch
 
-Characters are multiplicative under XOR and $A, B$ are independent. Expand the bias of $f(A+B)$ in the Fourier basis, bound each coefficient by $\beta$, and apply Cauchy–Schwarz and Parseval to $\sum_S|\mathrm{bias}_A(S)\mathrm{bias}_B(S)|$ as in Chor–Goldreich. A bent function has $\beta = 2^{-n/2}$. For exactness, take $A$ uniform on $\{(u,0)\}$ and $B$ uniform on $\{(0,v)\}$, where the sum has inner product $0$.
+Characters are multiplicative under XOR and $A, B$ are independent. Expand the bias of $f(A+B)$ in the Fourier basis, bound each coefficient by $\beta$, and apply Cauchy–Schwarz and Parseval to $\sum_S|\mathrm{bias}_A(S)\mathrm{bias}_B(S)|$ as in Chor–Goldreich. A bent function has $\beta = 2^{-n/2}$. For exactness, take $A$ and $B$ both uniform on $\{(u,0)\}$ (each of min-entropy $r$), so $A+B$ lies in $\{(w,0)\}$, where the inner product is $0$.
 
 ## Depends on
 

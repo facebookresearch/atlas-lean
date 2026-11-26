@@ -6,4 +6,3 @@
 - [Coordinate-factoring rank bounds and high-rank 0-1 tensors](high-rank-zero-one-tensors.md)
 - [Polynomial multiplication tensors](polynomial-multiplication-tensors.md)
 - [Pass's primal packing of polynomial products](primal-packing-of-polynomial-products.md)
-- [The matrix multiplication exponent is at most 9/4](omega-at-most-nine-quarters.md)

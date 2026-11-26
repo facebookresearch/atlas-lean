@@ -11,10 +11,6 @@ For fixed $k$, the hash of a uniform two-block message is uniform on $F$, so the
 - [Birthday lower bound](../birthday-bound/collision-prob-ge.md)
 - [Carter–Wegman MACs](../../symmetric-key/macs-and-modes/carterwegman-macs.md)
 
-## Proof depends on
-
-- [Birthday lower bound](../birthday-bound/collision-prob-ge.md)
-
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", version 0.6, 2023.

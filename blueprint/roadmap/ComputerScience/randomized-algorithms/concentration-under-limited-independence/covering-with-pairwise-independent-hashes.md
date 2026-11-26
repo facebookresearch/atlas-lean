@@ -10,10 +10,6 @@ For a fixed target $y$ the number of points of $S$ mapped to $y$ has mean $|S|/|
 
 - [Pairwise independent samples hit dense sets](pairwise-independent-samples-hit-dense-sets.md)
 
-## Proof depends on
-
-- [Pairwise independent samples hit dense sets](pairwise-independent-samples-hit-dense-sets.md)
-
 ## Sources
 
 - S. Arora and B. Barak, "Computational Complexity: A Modern Approach", Cambridge University Press, 2009.

@@ -1,10 +1,10 @@
-# Håstad's 3-query linearity test is a $(1/2, 1-\delta)$ Dictator-vs.-No-Notables test
+# Håstad's 3-query linearity test is a $(1-\delta, 1/2)$ Dictator-vs.-No-Notables test
 
-For every $0 < \delta < 1/2$ there is a $(1-\delta, 1/2)$-Dictator-vs.-No-Notables test using only Max-E3-Lin predicates $x_1 x_2 x_3 = \pm 1$ (equivalently, $x_1 \oplus x_2 \oplus x_3 = b$): choose $x, y$ uniformly, $z$ by flipping each coordinate of $xy$ independently with probability $\delta$, and check $f(x) f(y) f(z) = 1$. Dictators pass with probability $1 - \delta$, while every function without notable coordinates passes with probability at most $1/2 + \varepsilon$. Via the label-cover framework this yields Håstad's optimal inapproximability of Max-E3-Lin.
+For every $0 < \delta < 1/2$ there is a $(1-\delta, 1/2)$-Dictator-vs.-No-Notables test using only Max-E3-Lin predicates $x_1 x_2 x_3 = \pm 1$ (equivalently, $x_1 \oplus x_2 \oplus x_3 = b$): choose $x, y$ uniformly and a uniform sign $b$, let $z$ be $b\,xy$ with each coordinate flipped independently with probability $\delta$, and check $f(x) f(y) f(z) = b$. Dictators pass with probability $1 - \delta$, while every function without notable coordinates passes with probability at most $1/2 + \varepsilon$ Via the label-cover framework this yields Håstad's optimal inapproximability of Max-E3-Lin.
 
 ## Proof sketch
 
-The acceptance probability equals $\tfrac12 + \tfrac12 \sum_S (1-2\delta)^{|S|} \hat f(S)^3$; for a dictator this is $1-\delta$, and when all low-degree influences are small, $\max_S (1-2\delta)^{|S|}|\hat f(S)|$ is small, so the cubic sum is at most $\varepsilon$ by Parseval.
+The acceptance probability equals $\tfrac12 + \tfrac12 \sum_{|S|\text{ odd}} (1-2\delta)^{|S|} \hat f(S)^3$ (the random sign $b$ cancels the even-size terms, including $S=\emptyset$); for a dictator this is $1-\delta$, and when all low-degree influences are small, $\max_S (1-2\delta)^{|S|}|\hat f(S)|$ is small, so the cubic sum is at most $\varepsilon$ by Parseval.
 
 ## Depends on
 

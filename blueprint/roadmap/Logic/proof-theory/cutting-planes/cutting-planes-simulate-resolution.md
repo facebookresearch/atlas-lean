@@ -1,6 +1,6 @@
 # Cutting planes polynomially simulate resolution
 
-Every resolution refutation of a CNF formula with $s$ lines translates line by line into a cutting planes refutation of its inequality translation with $O(s \cdot N)$ lines, where $N$ is the number of variables. A resolution step from $A \vee v$ and $B \vee \neg v$ to $A \vee B$ is simulated by adding the two inequalities, which cancels $v$, adding axioms to reduce coefficients of literals shared by $A$ and $B$ to an even number, and dividing by $2$ with rounding.
+Every resolution refutation of a CNF formula with $s$ lines translates line by line into a cutting planes refutation of its inequality translation with $O(s \cdot N)$ lines, where $N$ is the number of variables. A resolution step from $A \vee v$ and $B \vee \neg v$ to $A \vee B$ is simulated by adding the two inequalities, which cancels $v$, adding the axioms $\ell \ge 0$ for the literals occurring in only one of $A$, $B$ so that every coefficient becomes $2$, and dividing by $2$ with rounding.
 
 ## Proof sketch
 

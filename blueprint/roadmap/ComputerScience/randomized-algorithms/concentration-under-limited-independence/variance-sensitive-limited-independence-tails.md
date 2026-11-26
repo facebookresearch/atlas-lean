@@ -16,10 +16,6 @@ Group $2m$-tuples by the number $r \le m$ of distinct points; tuples with a sing
 
 - [Moment and tail bounds under 2m-wise independence](moment-bounds-under-limited-independence.md)
 
-## Proof depends on
-
-- [Moment and tail bounds under 2m-wise independence](moment-bounds-under-limited-independence.md)
-
 ## Sources
 
 - J. P. Schmidt, A. Siegel and A. Srinivasan, "Chernoff–Hoeffding Bounds for Applications with Limited Independence", SIAM Journal on Discrete Mathematics, 1995.

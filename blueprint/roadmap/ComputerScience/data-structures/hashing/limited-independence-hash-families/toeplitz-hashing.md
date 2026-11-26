@@ -11,10 +11,6 @@ By the shift criterion it suffices that for every nonzero $d \in F^n$ the map $T
 - [Pairwise independence, universality and the shift criterion](pairwise-independence-and-the-shift-criterion.md)
 - [Pairwise-independent hashing by affine maps over GF(2)](../../../../TheoryOfComputation/counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
 
-## Proof depends on
-
-- [Pairwise independence, universality and the shift criterion](pairwise-independence-and-the-shift-criterion.md)
-
 ## Sources
 
 - J. Katz and Y. Lindell, "Introduction to Modern Cryptography", CRC Press, 2020.

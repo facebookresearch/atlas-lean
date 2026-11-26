@@ -14,7 +14,7 @@ Conditioned on the rank of $x$, the indicators that competitors have smaller ran
 
 ## Depends on
 
-- [k-wise independent hash families](../../data-structures/hashing/limited-independence-hash-families/k-wise-independent-hash-family.md)
+- [k-wise independent hash families](../../data-structures/hashing/word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 

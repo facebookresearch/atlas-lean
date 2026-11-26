@@ -1,6 +1,6 @@
 # Batched lookup and routing circuits from sorting networks
 
-Let $N$ records of $\ell$ bits each carry a $k$-bit key and a tag marking them as sources or queries. Using one Batcher sorting network on the records (comparators acting on whole records and sharing their comparison bit), a broadcast pass along runs of equal keys, and the reversal of the saved comparator decisions, there are De Morgan circuits of size $O(N\log^2N\cdot(k+\ell))$ and depth $O(\log^2N\cdot\log(k+\ell))$ that deliver to every query the value (or the bitwise OR of the values) of the sources with the same key, at the query's original position. In particular a fixed table of $2^a$ entries can be read at $N$ computed addresses with $O\bigl((2^a+N)\log^2(2^a+N)\cdot(a+r)\bigr)$ gates.
+Let $N$ records of $\ell$ bits each carry a $k$-bit key and a tag marking them as sources or queries. Using one Batcher sorting network on the records (comparators acting on whole records and sharing their comparison bit), a broadcast pass along runs of equal keys, and the reversal of the saved comparator decisions, there are De Morgan circuits of size $O(N\log^2N\cdot(k+\ell))$ and depth $O(\log^2N\cdot\log(k+\ell))$ that deliver to every query the value (or the bitwise OR of the values) of the sources with the same key, at the query's original position. In particular a fixed table of $2^a$ entries can be read at $N$ computed addresses with $O\bigl((2^a+N)\log^2(2^a+N)\cdot(a+r)\bigr)$ gates, where $r$ is the bit width of each table entry.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # AM ⊆ NP/poly
 
-$\mathsf{MA}\subseteq\mathsf{AM}\subseteq\mathsf{NP}/\mathrm{poly}$.
+$\mathsf{AM}\subseteq\mathsf{NP}/\mathrm{poly}$.
 
 ## Proof sketch
 

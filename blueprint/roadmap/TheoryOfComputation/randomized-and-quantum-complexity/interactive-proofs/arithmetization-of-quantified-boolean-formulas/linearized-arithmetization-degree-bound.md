@@ -10,10 +10,6 @@ Linearization keeps each variable at degree one; a following quantifier or conne
 
 - [Arithmetization of quantified Boolean formulas](arithmetization-of-qbf.md)
 
-## Proof depends on
-
-- [IP = PSPACE (Shamir)](../../ip-eq-pspace.md)
-
 ## Sources
 
 - A. Shen, "IP = PSPACE: Simplified Proof", Journal of the ACM 39(4), 878–880, 1992.

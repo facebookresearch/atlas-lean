@@ -4,7 +4,7 @@ For every $t \in \mathbb{N}$ there is no first-order sentence in the language of
 
 ## Proof sketch
 
-The step-two graph on $\{0,\dots,n-1\}$ with an edge between the second and the last element is a single cycle when $n$ is odd and two cycles when $n$ is even; apply parity transfer.
+The step-two graph on $\{0,\dots,n-1\}$ with an edge between the second and the last element is a single path when $n$ is odd, and the disjoint union of a cycle (on the odd elements) and a path (on the even elements) when $n$ is even; apply parity transfer.
 
 ## Depends on
 

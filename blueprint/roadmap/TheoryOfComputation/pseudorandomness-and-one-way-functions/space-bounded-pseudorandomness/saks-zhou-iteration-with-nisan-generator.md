@@ -15,11 +15,6 @@ By the hash mixing lemma and a union bound over $2^k - 1$ levels and the entries
 - [Toeplitz hashing is pairwise independent](../../../ComputerScience/data-structures/hashing/limited-independence-hash-families/toeplitz-hashing.md)
 - [Read-once branching programs and space-bounded pseudorandom generators](space-bounded-pseudorandom-generators.md)
 
-## Proof depends on
-
-- [Saks–Zhou randomized rounding with a random shift](saks-zhou-random-shift-rounding.md)
-- [Nisan's hash mixing lemma](hash-mixing-lemma.md)
-
 ## Sources
 
 - M. Saks and S. Zhou, "BP_H SPACE(S) ⊆ DSPACE(S^{3/2})", Journal of Computer and System Sciences, 1999.

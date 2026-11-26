@@ -10,10 +10,6 @@ Each pair collides with probability $2^{-m}$ since $A(x - y)$ is uniform; linear
 
 - [Subset-sum and random-matrix hashing are optimally Δ-universal](subset-sum-and-matrix-hashing.md)
 
-## Proof depends on
-
-- [Subset-sum and random-matrix hashing are optimally Δ-universal](subset-sum-and-matrix-hashing.md)
-
 ## Sources
 
 - S. Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.

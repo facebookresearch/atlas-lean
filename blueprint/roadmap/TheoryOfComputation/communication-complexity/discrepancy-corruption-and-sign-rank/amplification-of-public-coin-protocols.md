@@ -4,7 +4,7 @@ Let a public-coin protocol of cost $c$ compute a Boolean function with error $\v
 
 ## Proof sketch
 
-The majority errs only if at least $r$ of the $2r$ runs err; the probability is at most $\binom{2r}{r}\varepsilon^r(1-\varepsilon)^r \le (4\varepsilon(1-\varepsilon))^r$.
+The majority errs only if at least $r$ of the $2r$ runs err; the probability is $\sum_{j\ge r}\binom{2r}{j}\varepsilon^j(1-\varepsilon)^{2r-j}\le\varepsilon^r(1-\varepsilon)^r\sum_{j}\binom{2r}{j}=(4\varepsilon(1-\varepsilon))^r$.
 
 ## Depends on
 

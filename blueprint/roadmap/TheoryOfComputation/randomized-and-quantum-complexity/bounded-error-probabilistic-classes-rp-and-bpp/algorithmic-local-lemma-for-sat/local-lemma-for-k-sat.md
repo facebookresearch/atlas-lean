@@ -11,10 +11,6 @@ Apply the symmetric Lovász Local Lemma to the violation events: each has probab
 - [CNF formula](../../../../Logic/propositional-logic/conjunctive-normal-form/cnf.md)
 - [Symmetric Lovász Local Lemma](../../../../Combinatorics/probabilistic-combinatorics/lovasz-local-lemma-symmetric-finite.md)
 
-## Proof depends on
-
-- [Symmetric Lovász Local Lemma](../../../../Combinatorics/probabilistic-combinatorics/lovasz-local-lemma-symmetric-finite.md)
-
 ## Sources
 
 - N. Alon and J. H. Spencer, The Probabilistic Method, 4th ed., Wiley, 2016.

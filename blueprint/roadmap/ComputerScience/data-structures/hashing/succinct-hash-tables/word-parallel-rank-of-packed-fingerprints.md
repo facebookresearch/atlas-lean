@@ -1,6 +1,6 @@
 # Word-parallel rank of packed fingerprints
 
-Let $m$ fingerprints $k_0, \dots, k_{m-1} < 2^f$ be packed into one machine word in lanes of width $f + 2$ bits (one guard bit per lane), with $m (f + 2) \le w$. Then for a query $q < 2^f$ the count $|\{j < m : k_j < q\}|$ is computed by a constant number of word operations: replicate $q$ into every lane by multiplying with the all-lanes-one constant, subtract lane-wise from the packed word with the guard bits set (no borrow crosses lanes), mask the guard bits, and sum them by one more multiplication.
+Let $m$ fingerprints $k_0, \dots, k_{m-1} < 2^f$ be packed into one machine word in lanes of width $f + 2$ bits (one guard bit per lane), with $m (f + 2) \le w$ and $m < 2^{f+2}$. Then for a query $q < 2^f$ the count $|\{j < m : k_j < q\}|$ is computed by a constant number of word operations: replicate $q$ into every lane by multiplying with the all-lanes-one constant, subtract lane-wise from the packed word with the guard bits set (no borrow crosses lanes), mask the guard bits, and sum them by one more multiplication.
 
 ## Proof sketch
 

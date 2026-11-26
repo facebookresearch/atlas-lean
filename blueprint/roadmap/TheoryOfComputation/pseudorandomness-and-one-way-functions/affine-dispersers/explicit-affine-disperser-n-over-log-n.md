@@ -10,10 +10,6 @@ Every prime factor of $n$ exceeds $L$, so proper subfields have at most $2^s$ el
 
 - [Ben-Sasson–Kopparty: the trace of an elementary symmetric polynomial is an affine disperser](ben-sasson-kopparty-trace-disperser.md)
 
-## Proof depends on
-
-- [Ben-Sasson–Kopparty: the trace of an elementary symmetric polynomial is an affine disperser](ben-sasson-kopparty-trace-disperser.md)
-
 ## Sources
 
 - E. Ben-Sasson and S. Kopparty, "Affine Dispersers from Subspace Polynomials", SIAM Journal on Computing, 2012.

@@ -11,10 +11,6 @@ Minimize $x^{T}Mx$ over the standard simplex; at a minimizer with negative value
 - [Small integer solutions of linear systems (Siegel-type bounds)](small-integer-solutions-of-linear-systems.md)
 - [The complexity class NP](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/np.md)
 
-## Proof depends on
-
-- [Small integer solutions of linear systems (Siegel-type bounds)](small-integer-solutions-of-linear-systems.md)
-
 ## Sources
 
 - Katta G. Murty, Santosh N. Kabadi, "Some NP-Complete Problems in Quadratic and Nonlinear Programming", Mathematical Programming, 1987.

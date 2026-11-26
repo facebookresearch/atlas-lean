@@ -14,7 +14,6 @@ Translate the certificate into a resolution refutation with the LRAT-to-resoluti
 ## Proof depends on
 
 - [Accepted LRAT certificates translate into resolution refutations](../../../Logic/propositional-logic/proof-certificates/clausal-proof-certificates/lrat-certificates-to-resolution.md)
-- [Haken's lower bound for the pigeonhole principle](../../../Logic/propositional-logic/propositional-proof-complexity/haken-s-lower-bound-for-the-pigeonhole-principle.md)
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # $k$-dimensional Weisfeiler–Leman refinement
 
-For $k \ge 1$ and a finite graph $G = (V,E)$, the $k$-dimensional Weisfeiler–Leman algorithm ($k$-WL, in the Cai–Fürer–Immerman numbering) colors $k$-tuples. The initial color of $\bar u \in V^k$ is its atomic type (equalities and adjacencies among its entries). Then $c_{t+1}(\bar u) = \big(c_t(\bar u), \{\!\{ (c_t(\bar u[1/w]), \dots, c_t(\bar u[k/w])) : w \in V \}\!\}\big)$, where $\bar u[i/w]$ replaces the $i$-th entry by $w$. The partitions stabilize after at most $|V|^k$ rounds. Two graphs are *distinguished by $k$-WL* if the stable color histograms (multisets of colors of all $k$-tuples, computed jointly) differ.
+For $k \ge 1$ and a finite graph $G = (V,E)$, the $k$-dimensional Weisfeiler–Leman algorithm ($k$-WL, in the Cai–Fürer–Immerman numbering) colors $k$-tuples. The initial color of $\bar u \in V^k$ is its atomic type (equalities and adjacencies among its entries). Then $c_{t+1}(\bar u) = \big(c_t(\bar u), \{\!\{ (\mathrm{atp}(\bar u w), c_t(\bar u[1/w]), \dots, c_t(\bar u[k/w])) : w \in V \}\!\}\big)$, where $\mathrm{atp}(\bar u w)$ is the atomic type of the $(k+1)$-tuple (redundant for $k\ge2$; for $k=1$ this is color refinement), where $\bar u[i/w]$ replaces the $i$-th entry by $w$. The partitions stabilize after at most $|V|^k$ rounds. Two graphs are *distinguished by $k$-WL* if the stable color histograms (multisets of colors of all $k$-tuples, computed jointly) differ.
 
 ## Depends on
 

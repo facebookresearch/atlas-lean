@@ -4,12 +4,11 @@ Let $n, k, t \ge 0$ and $\delta > 0$. Let $\{h_s : \{0,1\}^n \to \{0,1\}^k\}_{s 
 
 ## Proof sketch
 
-The collision probability of $(h_S(X), S)$ is at most $2^{-t}\bigl((1+\delta)2^{-k} + 2^{-k/\delta}\bigr)$. The standard bound $\Delta \le \tfrac12\sqrt{2^{k+t}\mathrm{cp} - 1}$ gives at most $\tfrac12\sqrt{\delta + 2^{k - k/\delta}}$, and an elementary estimate shows this is at most $\sqrt{2\delta}$.
+If $k = 0$ the digest is constant, $(h_S(X), S)$ is uniform and the distance is $0$; if $\delta \ge 1/2$ then $\sqrt{2\delta} \ge 1$ bounds every statistical distance. Otherwise $k \ge 1$ and $\delta < 1/2$. The collision probability of $(h_S(X), S)$ is at most $2^{-t}\bigl((1+\delta)2^{-k} + 2^{-k/\delta}\bigr)$, and the standard bound $\Delta \le \tfrac12\sqrt{2^{k+t}\mathrm{cp} - 1}$ gives at most $\tfrac12\sqrt{\delta + 2^{k(1 - 1/\delta)}}$. Since $1 - 1/\delta < 0$, $2^{k(1-1/\delta)} \le 2^{1 - 1/\delta} \le \delta$ (the ratio $2^{1-1/\delta}/\delta$ increases on $(0, 1/2]$ and equals $1$ at $1/2$), so the distance is at most $\tfrac12\sqrt{2\delta} \le \sqrt{2\delta}$.
 
 ## Depends on
 
 - [Seeded randomness extractors](seeded-randomness-extractors.md)
-- [Leftover hash lemma](../../../ComputerScience/cryptography/randomness-extraction/leftover-hash-lemma.md)
 - [Bounded universal hash functions](../../../ComputerScience/cryptography/hash-functions/bounded-universal-hash-functions.md)
 
 ## Proof depends on

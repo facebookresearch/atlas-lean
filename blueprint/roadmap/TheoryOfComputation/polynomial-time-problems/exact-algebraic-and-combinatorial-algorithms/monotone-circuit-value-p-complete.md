@@ -11,10 +11,6 @@ It is a special case of the circuit value problem. Hardness: push negations to t
 - [The Circuit Value Problem is P-complete](../../completeness-other-classes/circuit-value-problem/cvp-p-complete.md)
 - [Log-space many-one reductions](../../complexity-classes/time-and-space-complexity-classes/log-space-red.md)
 
-## Proof depends on
-
-- [The Circuit Value Problem is P-complete](../../completeness-other-classes/circuit-value-problem/cvp-p-complete.md)
-
 ## Sources
 
 - Leslie M. Goldschlager, "The Monotone and Planar Circuit Value Problems Are Log Space Complete for P", ACM SIGACT News 9(2), 1977.

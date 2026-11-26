@@ -10,10 +10,6 @@ Weak duality is $c^{T}x=y^{T}Ax\le y^{T}b$. For strong duality, apply Farkas' le
 
 - [Farkas' lemma over linearly ordered fields](farkas-lemma-over-ordered-fields.md)
 
-## Proof depends on
-
-- [Farkas' lemma over linearly ordered fields](farkas-lemma-over-ordered-fields.md)
-
 ## Sources
 
 - Alexander Schrijver, "Theory of Linear and Integer Programming", John Wiley & Sons, 1986.

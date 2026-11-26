@@ -4,7 +4,7 @@ For every $A \subseteq \{-1,1\}^n$ of volume $\alpha \in [0, 1]$,
 
 $$\mathbf{W}^1[\mathbf{1}_A] \le 2\alpha^2\ln\frac{1}{\alpha}$$
 
-(both sides $0$ at $\alpha = 0$). The constant $2$ is asymptotically optimal, as shown by subcubes of large codimension.
+(both sides $0$ at $\alpha = 0$). The constant $2$ is asymptotically optimal, as shown by Hamming balls (threshold functions $\mathbf{1}\{\sum_i x_i > t\sqrt n\}$ with $n \to \infty$, then $t \to \infty$); subcubes give only $\alpha^2\log_2(1/\alpha)$.
 
 ## Proof sketch
 

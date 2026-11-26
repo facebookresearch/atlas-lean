@@ -1,14 +1,10 @@
 # The Margulis–Russo formula
 
-For every real $h$ on $\{0,1\}^n$ and $0 < p < 1$, viewing $\mathbb{E}_p[h]$ as a function of the mean $\mu = 1 - 2p$ of the $\pm1$ bits,
+Let $0 < p < 1$, let the bits $x_1,\dots,x_n \in \{0,1\}$ be independent with $\Pr[x_i = 1] = p$, and let $\mu = 1 - 2p$ and $\sigma = 2\sqrt{p(1-p)}$ be the mean and standard deviation of each sign $(-1)^{x_i}$. For every real $h$ on $\{0,1\}^n$, with $\hat h^{(p)}$ its Fourier coefficients in the $p$-biased basis $\phi_i(x) = ((-1)^{x_i} - \mu)/\sigma$ and $\mathbb{E}_p[h]$ viewed as a function of $\mu$,
 
 $$\frac{d}{d\mu}\mathbb{E}_{p}[h] = \frac{1}{\sigma}\sum_{i=1}^n \hat h^{(p)}(\{i\}).$$
 
-For monotone Boolean $f$ (with values in $\{0,1\}$, increasing in each bit), as polynomials in $p$,
-
-$$\frac{d}{dp}\Pr_p[f = 1] = \sum_{i=1}^n \Pr_p[x_i \text{ is pivotal for } f],$$
-
-the expected number of pivotal coordinates (Russo's formula).
+For a monotone Boolean $f$ this is [Russo's formula](../../../Probability/correlation-inequalities/harris-fkg-bk/russo-s-formula-and-pivotal-coordinates/has-deriv-at-prob-eq-sum-pivotal-prob.md) for the derivative in $p$ of the probability of an increasing event, rewritten in the $p$-biased Fourier basis.
 
 ## Proof sketch
 

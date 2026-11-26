@@ -1,6 +1,6 @@
 # Without Schaefer polymorphisms, all polymorphisms are projections or negated projections
 
-Let $\Gamma$ be a Boolean constraint language that has none of the six Schaefer polymorphisms. Then every polymorphism of $\Gamma$ is either a projection or a negated projection; in particular all polymorphisms are self-dual, and if additionally some relation of $\Gamma$ lacks the constant tuples, every polymorphism is a projection. Moreover the failure of each of the six operations is witnessed by a single relation of $\Gamma$, so the conclusion already holds for a sublanguage of at most six relations.
+Let $\Gamma$ be a Boolean constraint language that has none of the six Schaefer polymorphisms. Then every polymorphism of $\Gamma$ is either a projection or a negated projection; in particular all polymorphisms are self-dual, and if additionally some relation of $\Gamma$ is not closed under complementation (some tuple's complement is missing), every polymorphism is a projection. Moreover the failure of each of the six operations is witnessed by a single relation of $\Gamma$, so the conclusion already holds for a sublanguage of at most six relations.
 
 ## Proof sketch
 

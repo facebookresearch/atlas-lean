@@ -1,6 +1,6 @@
 # Transitive closure and reachability are not first-order definable
 
-There is no first-order formula $\varphi(x, y)$ over a binary relation $E$ such that on every finite structure $\varphi$ defines the transitive closure of $E$, and none defining its reflexive–transitive closure; likewise no formula defines $s$–$t$ reachability on all finite directed graphs. Indeed if $\varphi$ has quantifier rank $n$, it already fails on a directed path of length exceeding $2 \cdot (3^{n+1}-1)/2 + 1$ elements.
+There is no first-order formula $\varphi(x, y)$ over a binary relation $E$ such that on every finite structure $\varphi$ defines the transitive closure of $E$, and none defining its reflexive–transitive closure; likewise no formula defines $s$–$t$ reachability on all finite directed graphs. Indeed if $\varphi$ has quantifier rank $n$, it already fails on every directed path with at least $4r+3 = 2\cdot 3^{n+1}+1$ elements, where $r=(3^{n+1}-1)/2$.
 
 ## Proof sketch
 

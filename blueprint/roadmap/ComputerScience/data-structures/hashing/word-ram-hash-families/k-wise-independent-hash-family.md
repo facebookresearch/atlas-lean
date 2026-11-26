@@ -1,12 +1,14 @@
 # k-wise independent hash family
 
-Let $\Theta$ be a finite seed set with the uniform distribution and $h : \Theta \times X \to Y$ with $Y$ finite. The family $\{h_\theta\}$ is *$k$-wise independent* if for all pairwise distinct $x_1, \dots, x_k \in X$ and all $y_1, \dots, y_k \in Y$,
+Let $\Theta$ be a finite nonempty seed set with the uniform distribution and $h : \Theta \times X \to Y$ with $Y$ finite and nonempty. The family $\{h_\theta\}$ is *$k$-wise independent* if for every $T \subseteq X$ with $|T| \le k$ and every $g : T \to Y$,
 
 $$
-\Pr_\theta\left[h_\theta(x_1) = y_1, \dots, h_\theta(x_k) = y_k\right] = |Y|^{-k}.
+\Pr_\theta\left[h_\theta(x) = g(x) \text{ for all } x \in T\right] = |Y|^{-|T|},
 $$
 
-It is *$\varepsilon$-universal* if $\Pr_\theta[h_\theta(x) = h_\theta(x')] \le \varepsilon$ for all $x \ne x'$; a $2$-wise independent family is $1/|Y|$-universal. A $k$-wise independent family is also $j$-wise independent for every $j \le k$.
+that is, the restriction $h_\theta|_T$ is uniformly distributed on $Y^T$; equivalently, the values at any at most $k$ distinct points are independent and uniform on $Y$.
+
+It is *$\varepsilon$-universal* if $\Pr_\theta[h_\theta(x) = h_\theta(x')] \le \varepsilon$ for all $x \ne x'$; a $2$-wise independent family is $1/|Y|$-universal. A $k$-wise independent family is also $j$-wise independent for every $j \le k$. Consequently, for any functions $g_x : Y \to \mathbb{R}$, $x \in T$, with $T \subseteq X$ and $|T| \le k$, the average over seeds of $\prod_{x \in T} g_x(h_\theta(x))$ equals $\prod_{x \in T} \mathbb{E}_{y \in Y}\, g_x(y)$.
 
 ## Depends on
 

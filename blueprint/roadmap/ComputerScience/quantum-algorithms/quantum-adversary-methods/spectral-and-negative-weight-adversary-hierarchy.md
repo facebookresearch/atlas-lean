@@ -19,7 +19,6 @@ The upper bounds on $Q$ follow the progress method with the principal eigenvecto
 ## Proof depends on
 
 - [Weighted adversary bounds (Ambainis, Zhang)](weighted-quantum-adversary-bounds.md)
-- [Generalized adversary lower bound](../quantum-query-lower-bounds/generalized-adversary-lower-bound.md)
 
 ## Sources
 

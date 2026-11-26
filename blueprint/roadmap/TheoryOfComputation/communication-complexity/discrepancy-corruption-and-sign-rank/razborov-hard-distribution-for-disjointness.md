@@ -11,10 +11,6 @@ For a rectangle $A \times B$, condition on the partition; the events "$x \cup\{i
 - [Set intersection function](../randomized-communication-protocols/disj-fn.md)
 - [The corruption (rectangle) bound](the-corruption-bound.md)
 
-## Proof depends on
-
-- [The corruption (rectangle) bound](the-corruption-bound.md)
-
 ## Sources
 
 - A. A. Razborov, "On the Distributional Complexity of Disjointness", Theoretical Computer Science 106(2), 1992.

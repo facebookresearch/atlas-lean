@@ -1,6 +1,6 @@
 # A linear-size reduction from 3SAT to Hamiltonian path and cycle
 
-There is a polynomial-time reduction from 3-CNF formulas with $n$ variables and $m$ clauses to directed graphs with $O(n+m)$ vertices and arcs that have a Hamiltonian path (equivalently, after closing the path, a Hamiltonian cycle) iff the formula is satisfiable; an undirected version is obtained by the standard three-vertex splitting with linear blow-up. (Sipser's diamond construction gives each row a pair of nodes per clause and thus $\Theta(m^2)$ size; the sparse version attaches each clause node only to the rows of its three variables.)
+There is a polynomial-time reduction from 3-CNF formulas with $n$ variables and $m$ clauses to directed graphs with $O(n+m)$ vertices and arcs that have a Hamiltonian path (equivalently, after closing the path, a Hamiltonian cycle) iff the formula is satisfiable; an undirected version is obtained by the standard three-vertex splitting with linear blow-up. (Sipser's diamond construction gives each of the $n$ rows a pair of nodes per clause and thus $\Theta(nm)$ size; the sparse version attaches each clause node only to the rows of its three variables.)
 
 ## Proof sketch
 

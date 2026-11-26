@@ -4,7 +4,7 @@ Over every field $K$ of characteristic different from $2$, the permanent family 
 
 ## Proof sketch
 
-Given $f=\sum_e g(x,e)$ with $g$ of polynomial formula size (formulas suffice after depth reduction), write $g$ as a projection of a permanent via its formula, then sum out each Boolean selector by an additional row and column (which needs $2$ invertible), keeping the result a projection of a polynomially larger permanent.
+Given $f=\sum_e g(x,e)$ with $g$ of polynomial formula size (formula-size summands suffice by Valiant's theorem that p-definability with formulas equals p-definability with circuits), write $g$ as a projection of a permanent via its formula, then sum out each Boolean selector by an additional row and column (which needs $2$ invertible), keeping the result a projection of a polynomially larger permanent.
 
 ## Depends on
 

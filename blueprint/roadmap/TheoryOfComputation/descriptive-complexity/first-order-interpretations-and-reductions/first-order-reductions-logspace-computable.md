@@ -1,6 +1,6 @@
 # First-order reductions are computable in logarithmic space
 
-Let $I$ be a first-order interpretation (possibly over ordered structures with $\mathrm{BIT}$). The map sending the binary encoding of a finite structure $\mathfrak{A}$ to the encoding of $I(\mathfrak{A})$ is computable in deterministic logarithmic space (indeed in $\mathrm{DLOGTIME}$-uniform $\mathrm{AC}^0$). Consequently $K \le_{\mathrm{fo}} K'$ implies that $K$ is logspace many-one reducible to $K'$, and completeness under first-order reductions implies completeness under logspace reductions.
+Let $I$ be a first-order interpretation (possibly over ordered structures with $\mathrm{BIT}$). The map sending the binary encoding of a finite structure $\mathfrak{A}$ to the encoding of $I(\mathfrak{A})$ is computable in deterministic logarithmic space (and in $\mathrm{DLOGTIME}$-uniform $\mathrm{AC}^0$ when the domain formula is trivial, i.e. the image universe is all of $A^d$). Consequently $K \le_{\mathrm{fo}} K'$ implies that $K$ is logspace many-one reducible to $K'$, and completeness under first-order reductions implies completeness under logspace reductions.
 
 ## Proof sketch
 

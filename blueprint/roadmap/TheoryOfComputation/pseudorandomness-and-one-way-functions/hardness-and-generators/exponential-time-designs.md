@@ -4,7 +4,7 @@ For every real $\gamma>0$ there are $c>0$, $k_0$ and functions $m(k)\ge ck$, $\e
 
 ## Proof sketch
 
-Greedy construction: split $[k]$ into $q$ blocks of $t\approx k/B$ elements for $B=10q^2+1$, $q=\max(2,\lceil1/\gamma\rceil)$, and repeatedly add any set choosing one element per block whose overlap with all previous sets is at most $t$. A counting argument shows that greedy never gets stuck before $2^{\Omega(k)}$ sets, and each step searches $2^{O(k)}$ candidates.
+Greedy construction: split $[k]$ into $t=\lfloor k/B\rfloor$ blocks of $B$ elements for $B=10q^2+1$, $q=\max(2,\lceil1/\gamma\rceil)$, and repeatedly add any set choosing one element per block whose overlap with all previous sets is at most $t/q$. A counting argument shows that greedy never gets stuck before $2^{\Omega(k)}$ sets, and each step searches $2^{O(k)}$ candidates.
 
 ## Depends on
 

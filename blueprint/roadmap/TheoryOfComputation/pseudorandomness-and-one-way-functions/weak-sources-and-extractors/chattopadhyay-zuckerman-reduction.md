@@ -14,10 +14,6 @@ Fix $Y$ and drop its bad seeds as a coalition. Conditioned on the good seeds, no
 - [Resilient functions extract from non-oblivious bit-fixing sources](resilient-functions-extract-from-nobf-sources.md)
 - [Seeded randomness extractors](seeded-randomness-extractors.md)
 
-## Proof depends on
-
-- [Resilient functions extract from non-oblivious bit-fixing sources](resilient-functions-extract-from-nobf-sources.md)
-
 ## Sources
 
 - E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics, 2019.

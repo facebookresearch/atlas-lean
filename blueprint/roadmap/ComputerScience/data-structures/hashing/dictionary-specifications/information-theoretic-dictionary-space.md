@@ -6,7 +6,7 @@ $$
 \mathrm{OPT}(U, V, n) = \log_2 \binom{U}{n} + n \log_2 V
 $$
 
-bits, and its integer variant is $\mathrm{opt}(U,V,n) = \lceil \log_2 \binom{U}{n} \rceil + n \lceil \log_2 V \rceil$, which equals $\lceil \log_2(\binom{U}{n} V^n)\rceil$ when $V$ is a power of two and exceeds it by at most $n$ bits otherwise. A dictionary representation using $\mathrm{OPT} + R$ bits has *redundancy* (wasted bits) $R$; it is *succinct* if $R = o(\mathrm{OPT})$, and in particular if it uses $\mathrm{OPT} + O(n \log \log n)$ bits.
+bits, and its integer variant is $\mathrm{opt}(U,V,n) = \lceil \log_2 \binom{U}{n} \rceil + n \lceil \log_2 V \rceil$, which equals $\lceil \log_2(\binom{U}{n} V^n)\rceil$ when $V$ is a power of two and exceeds it by at most $n$ bits otherwise. A dictionary representation using $\mathrm{OPT} + R$ bits has *redundancy* (wasted bits) $R$; it is *succinct* if $R = o(\mathrm{OPT})$; in particular a representation using $\mathrm{OPT} + O(n \log \log n)$ bits is succinct whenever $n \log \log n = o(\mathrm{OPT})$.
 
 ## Depends on
 

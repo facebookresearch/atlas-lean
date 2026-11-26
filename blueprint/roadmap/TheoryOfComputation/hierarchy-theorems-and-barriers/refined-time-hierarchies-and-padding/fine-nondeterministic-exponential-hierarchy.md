@@ -24,4 +24,4 @@ Lazy diagonalization (Žák): on an interval of input lengths, mirror the simula
 ## Sources
 
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
-- Stanislav vZák, "A Turing Machine Time Hierarchy", Theoretical Computer Science 26(3), 1983.
+- Stanislav Žák, "A Turing Machine Time Hierarchy", Theoretical Computer Science 26(3), 1983.

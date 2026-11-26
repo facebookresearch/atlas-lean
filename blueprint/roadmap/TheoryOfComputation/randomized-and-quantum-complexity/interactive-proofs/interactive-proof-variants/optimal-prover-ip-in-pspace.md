@@ -1,6 +1,6 @@
 # Optimal provers and IP ⊆ PSPACE
 
-For every interactive proof with a polynomial-time private-coin verifier, there is an optimal prover maximizing the acceptance probability on each input, and that maximum is computable in polynomial space by evaluating the game tree over verifier coins and prover messages with an explicit stack; hence $\mathsf{IP}\subseteq\mathsf{PSPACE}$. Sequential repetition of a proof system with error $\varepsilon$ $k$ times gives error $\varepsilon^{k}$.
+For every interactive proof with a polynomial-time private-coin verifier, there is an optimal prover maximizing the acceptance probability on each input, and that maximum is computable in polynomial space by evaluating the game tree over verifier coins and prover messages with an explicit stack; hence $\mathsf{IP}\subseteq\mathsf{PSPACE}$. Sequential repetition $k$ times of a proof system with perfect completeness and soundness error $\varepsilon$, accepting iff all runs accept, gives soundness error $\varepsilon^{k}$.
 
 ## Proof sketch
 

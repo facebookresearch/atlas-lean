@@ -21,8 +21,6 @@ Simulate the Word-RAM implementation by a cell-probe scheme using one extra cell
 
 - [Simulation of Word-RAM data structures by cell-probe schemes](../cell-probe-complexity/word-ram-simulation-by-cell-probe-schemes.md)
 - [Cell-probe lower bound Ω(k) for dynamic dictionaries with n·log^(k) n redundancy](cell-probe-lower-bound-iterated-log-redundancy.md)
-- [Cell-probe lower bound Ω(log(n/R)) for dynamic dictionaries with sublinear redundancy](cell-probe-lower-bound-sublinear-redundancy.md)
-- [Update-only cell-probe lower bounds for succinct dictionaries with large values](update-only-cell-probe-lower-bounds.md)
 
 ## Sources
 

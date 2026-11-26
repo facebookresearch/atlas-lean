@@ -4,7 +4,7 @@ Over a field of characteristic zero, there is an explicit set of $n$-tuples of $
 
 ## Proof sketch
 
-Forbes–Shpilka reduction: substituting upper-triangular shift matrices $x_i\mapsto\sum_{k}y_{k,i}E_{k,k+1}$ turns the non-commutative ABP into a commutative ROABP in $d$ new variables with width $W$ and layer degree $n-1$; apply a hitting set for ROABPs in known order.
+Forbes–Shpilka reduction: substituting upper-triangular shift matrices $x_i\mapsto\sum_{k}y_k^{\,i-1}E_{k,k+1}$ turns the non-commutative ABP into a commutative ROABP in $d$ new variables with width $W$ and layer degree $n-1$; apply a hitting set for ROABPs in known order.
 
 ## Depends on
 

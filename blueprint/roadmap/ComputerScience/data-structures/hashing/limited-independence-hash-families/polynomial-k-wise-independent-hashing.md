@@ -8,7 +8,7 @@ For distinct points $x_1, \dots, x_t$ with $t \le k$, evaluation $c \mapsto (h_c
 
 ## Depends on
 
-- [k-wise independent hash families](k-wise-independent-hash-family.md)
+- [k-wise independent hash families](../word-ram-hash-families/k-wise-independent-hash-family.md)
 
 ## Sources
 

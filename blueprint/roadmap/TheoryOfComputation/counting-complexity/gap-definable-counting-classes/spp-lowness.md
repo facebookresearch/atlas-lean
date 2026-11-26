@@ -1,6 +1,6 @@
 # Fenner–Fortnow–Kurtz: GapP-lowness characterizes SPP
 
-For every language $A$: $\mathsf{GapP}^{A}=\mathsf{GapP}$ if and only if $A\in\mathsf{SPP}$, and $\mathsf{SPP}^{A}=\mathsf{SPP}$ if and only if $A\in\mathsf{SPP}$. Analogous lowness holds for $\mathsf{LWPP}$ and $\mathsf{WPP}$ relative to $\mathsf{SPP}$, and $\mathsf{FewP}\subseteq\mathsf{SPP}$, so $\mathsf{FewP}$ is low for $\mathsf{SPP}$ and $\mathsf{GapP}$.
+For every language $A$: $\mathsf{GapP}^{A}=\mathsf{GapP}$ if and only if $A\in\mathsf{SPP}$, and $\mathsf{SPP}^{A}=\mathsf{SPP}$ if and only if $A\in\mathsf{SPP}$. Consequently $\mathsf{SPP}$ is low for $\mathsf{LWPP}$ and for $\mathsf{WPP}$: $\mathsf{LWPP}^{\mathsf{SPP}}=\mathsf{LWPP}$ and $\mathsf{WPP}^{\mathsf{SPP}}=\mathsf{WPP}$, and $\mathsf{FewP}\subseteq\mathsf{SPP}$, so $\mathsf{FewP}$ is low for $\mathsf{SPP}$ and $\mathsf{GapP}$.
 
 ## Proof sketch
 

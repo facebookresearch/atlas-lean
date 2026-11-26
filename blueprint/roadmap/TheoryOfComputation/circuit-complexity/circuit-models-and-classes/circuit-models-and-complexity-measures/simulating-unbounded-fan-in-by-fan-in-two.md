@@ -1,6 +1,6 @@
 # Simulating unbounded fan-in by fan-in two
 
-A conjunction or disjunction of $k\ge 1$ arguments is computed by a balanced tree of $k-1$ binary gates of the same kind and depth $\lceil\log_2 k\rceil$. Consequently every circuit over the unbounded fan-in basis $\{\neg,\bigwedge,\bigvee\}$ with $s$ gates, depth $d$ and total fan-in (number of wires) $w$ has an equivalent De Morgan circuit of fan-in two with at most $w$ binary gates and depth at most $d\lceil\log_2 w\rceil$.
+A conjunction or disjunction of $k\ge 1$ arguments is computed by a balanced tree of $k-1$ binary gates of the same kind and depth $\lceil\log_2 k\rceil$. Consequently every circuit over the unbounded fan-in basis $\{\neg,\bigwedge,\bigvee\}$ with $s$ gates, depth $d$ and total fan-in (number of wires) $w$ has an equivalent De Morgan circuit of fan-in two with at most $w$ binary gates and depth at most $d\max(1,\lceil\log_2 w\rceil)$.
 
 ## Proof sketch
 

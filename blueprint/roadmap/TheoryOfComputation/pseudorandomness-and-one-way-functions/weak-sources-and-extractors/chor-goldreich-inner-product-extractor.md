@@ -18,10 +18,6 @@ The distance of a bit from uniform is half its bias. For fixed $y$, the bias of 
 - [Inner product of bit strings modulo two](../../../ComputerScience/quantum-algorithms/deutsch-jozsa-and-bernstein-vazirani-algorithms/bit-dot.md)
 - [Parseval's identity on the Boolean cube](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-parseval.md)
 
-## Proof depends on
-
-- [Parseval's identity on the Boolean cube](../../../Combinatorics/boolean-functions/kahn-kalai-linial-inequality/walsh-fourier-analysis-on-the-uniform-cube-and-t/khc-parseval.md)
-
 ## Sources
 
 - B. Chor and O. Goldreich, "Unbiased Bits from Sources of Weak Randomness and Probabilistic Communication Complexity", SIAM Journal on Computing, 1988.

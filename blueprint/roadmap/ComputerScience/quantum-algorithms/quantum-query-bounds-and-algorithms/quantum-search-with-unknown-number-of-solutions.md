@@ -11,10 +11,6 @@ After $j$ iterations the success probability is $\sin^2((2j+1)\theta)$ with $\si
 - [Quantum query algorithms with phase and value oracles](../quantum-adversary-methods/quantum-query-algorithms.md)
 - [Exact success probability of Grover search](../grover-s-algorithm/marked-probability-grover-iterate-unifor.md)
 
-## Proof depends on
-
-- [Exact success probability of Grover search](../grover-s-algorithm/marked-probability-grover-iterate-unifor.md)
-
 ## Sources
 
 - M. Boyer, G. Brassard, P. Høyer and A. Tapp, "Tight Bounds on Quantum Searching", Fortschritte der Physik 46(4-5), 1998 (arXiv:quant-ph/9605034), Lemma 2 and Theorem 3.

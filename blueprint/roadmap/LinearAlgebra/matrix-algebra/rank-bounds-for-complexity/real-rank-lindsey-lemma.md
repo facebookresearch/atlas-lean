@@ -16,10 +16,6 @@ Decompose $M$ into $\operatorname{rank}M$ orthogonal rank-one pieces (orthogonal
 
 - [Lindsey's lemma over GF(2)](lindsey-lemma-over-gf2.md)
 
-## Proof depends on
-
-- [Lindsey's lemma over GF(2)](lindsey-lemma-over-gf2.md)
-
 ## Sources
 
 - Stasys Jukna, "Extremal Combinatorics: With Applications in Computer Science", Springer, 2011.

@@ -14,7 +14,6 @@ The failing search tree is a decision tree that finds a falsified clause on ever
 ## Proof depends on
 
 - [Failing DPLL search trees give tree-like resolution refutations](../../../Logic/propositional-logic/sat-solving/failing-dpll-search-trees-give-tree-like.md)
-- [A DPLL solver that emits LRAT certificates](dpll-solver-with-lrat-certificates.md)
 
 ## Sources
 

@@ -1,10 +1,10 @@
 # The Wronskian of a derivative-closed space depends only on t
 
-Let $V$ be an $r$-dimensional space of polynomials in $x_1,\dots,x_n$ closed under every partial derivative, with basis $g_1,\dots,g_r$, and let $D=Q\,\partial_t+\sum_ib_i\partial_{x_i}$ be a derivation of $F[t][x]$ with $b_i,Q\in F[t]$. Then the Wronskian $\det\bigl(D^{a}g_j\bigr)_{0\le a<r,\,1\le j\le r}$ is a polynomial in $t$ alone (independent of $x$), of degree at most $nr^2$ after clearing the denominator $Q$.
+Let $F$ be a field of characteristic $0$, let $V$ be an $r$-dimensional space of polynomials in $x_1,\dots,x_n$ over $F$ closed under every partial derivative $\partial_{x_i}$, with basis $g_1,\dots,g_r$, and let $D=Q\,\partial_t+\sum_ib_i\partial_{x_i}$ be a derivation of $F[t][x]$ with $b_i,Q\in F[t]$. Put $\delta=\max(\deg Q-1,\ \max_i\deg b_i)$. Then the Wronskian $W=\det\bigl(D^{a}g_j\bigr)_{0\le a<r,\,1\le j\le r}$ is a polynomial in $t$ alone (independent of $x$), of degree at most $\delta\binom r2$. In particular, if $\deg Q\le n$ and $\deg b_i\le n-1$ for every $i$, as for the curve of the hitting-set construction, then $\deg W\le (n-1)\binom r2\le nr^2$.
 
 ## Proof sketch
 
-Each $\partial_{x_i}$ commutes with $D$ and acts on $V$ by a matrix $T_i$; applying $\partial_{x_i}$ to the Wronskian gives $\operatorname{tr}(T_i)$ times the Wronskian, and $\operatorname{tr}T_i=0$ because $\partial_{x_i}$ is nilpotent on $V$. So all $x$-derivatives of the Wronskian vanish.
+Each $\partial_{x_i}$ commutes with $D$ and acts on $V$ by a matrix $T_i$; applying $\partial_{x_i}$ to the Wronskian gives $\operatorname{tr}(T_i)$ times the Wronskian, and $\operatorname{tr}T_i=0$ because $\partial_{x_i}$ is nilpotent on $V$. So all $x$-derivatives of the Wronskian vanish, and in characteristic $0$ it lies in $F[t]$. For the degree, $D$ maps $c(t)\,m(x)$ to $Qc'\,m+c\sum_ib_i\,\partial_{x_i}m$, so each application raises the $t$-degree of the coefficients by at most $\delta$; row $a$ has $t$-degree at most $a\delta$, and the determinant at most $\delta\sum_{a<r}a=\delta\binom r2$.
 
 ## Depends on
 

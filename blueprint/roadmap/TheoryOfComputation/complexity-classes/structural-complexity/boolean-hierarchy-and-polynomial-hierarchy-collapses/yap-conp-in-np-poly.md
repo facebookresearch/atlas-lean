@@ -8,7 +8,7 @@ $$
 
 ## Proof sketch
 
-Given $L\in\Pi_3^p$ of the form $\forall\exists\forall$, a $\Sigma_3^p$ machine guesses advice for the inner $\mathsf{coNP}$ (hence $\mathsf{NP}/\mathrm{poly}$) predicate, universally checks that the advice is correct on all instances of the relevant length (a $\mathsf{coNP}$ condition relative to the guessed advice), and then evaluates; this gives $\Pi_3^p\subseteq\Sigma_3^p$.
+Given $L\in\Pi_3^p$ of the form $\forall\exists\forall$, a $\Sigma_3^p$ machine guesses advice for the inner $\mathsf{coNP}$ (hence $\mathsf{NP}/\mathrm{poly}$) predicate, universally checks that the advice is correct on all instances of the relevant length (soundness is a $\mathsf{coNP}$ condition and completeness a $\Pi_2^p$ condition, so the whole test stays within $\Sigma_3^p$), and then evaluates; this gives $\Pi_3^p\subseteq\Sigma_3^p$.
 
 ## Depends on
 

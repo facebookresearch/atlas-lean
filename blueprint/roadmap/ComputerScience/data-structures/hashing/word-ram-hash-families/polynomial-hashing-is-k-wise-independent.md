@@ -11,10 +11,6 @@ For distinct $x_1, \dots, x_k$ the map $a \mapsto (p_a(x_1), \dots, p_a(x_k))$ i
 - [k-wise independent hash family](k-wise-independent-hash-family.md)
 - [The trinomials x^(2·3^t) + x^(3^t) + 1 are irreducible over GF(2)](irreducible-trinomials-over-gf2.md)
 
-## Proof depends on
-
-- [The trinomials x^(2·3^t) + x^(3^t) + 1 are irreducible over GF(2)](irreducible-trinomials-over-gf2.md)
-
 ## Sources
 
 - M. N. Wegman and J. L. Carter, "New Hash Functions and Their Use in Authentication and Set Equality", Journal of Computer and System Sciences 22(3), 1981.

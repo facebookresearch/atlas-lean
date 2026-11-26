@@ -6,11 +6,6 @@ Let $K$ be a linearly ordered field, $A\in K^{p\times q}$ and $b\in K^p$. Exactl
 
 Eliminate the variables one by one by Fourier–Motzkin elimination; each derived inequality is a nonnegative combination of the original rows. Either the final variable-free system is consistent, and back substitution produces $x$, or it contains $0\le c$ with $c<0$, whose combination coefficients give $y$.
 
-## Depends on
-
-- [Fourier–Motzkin elimination](../../../TheoryOfComputation/decision-procedures/satisfiability-modulo-theories/fouriermotzkin-elimination.md)
-- [Farkas certificates for linear rational arithmetic](../../../TheoryOfComputation/decision-procedures/satisfiability-modulo-theories/farkas-certificates-for-linear-rational.md)
-
 ## Proof depends on
 
 - [Fourier–Motzkin elimination](../../../TheoryOfComputation/decision-procedures/satisfiability-modulo-theories/fouriermotzkin-elimination.md)

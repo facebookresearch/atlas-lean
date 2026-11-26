@@ -1,6 +1,6 @@
 # Kolmogorov complexity relative to a universal Turing machine
 
-Let $U$ be a deterministic multi-tape Turing machine that is universal in the sense that on input the pair $(\langle M \rangle, x)$, encoded by writing each bit $b$ of the description $\langle M \rangle$ as $1b$ followed by the terminator $0$ and then $x$, it halts with output $o$ exactly when $M$ halts on $x$ with output $o$. Then for every finite-state binary machine $M$ and every $x$,
+Let $U$ be a deterministic multi-tape Turing machine that is universal in the sense that on input the pair $(\langle M \rangle, x)$, encoded by writing each bit $b$ of the description $\langle M \rangle$ as $1b$ followed by the terminator $0$ and then $x$, it halts with output $o$ exactly when $M$ halts on $x$ with output $o$. For a machine $M$ write $K_M(x)$ for the length of a shortest binary input on which $M$ halts with output $x$ (plain description complexity, not the prefix-free complexity of the neighbouring pages). Then for every Turing machine $M$ with binary description $\langle M \rangle$ and every $x$,
 
 $$K_U(x) \le K_M(x) + 2|\langle M \rangle| + 1.$$
 

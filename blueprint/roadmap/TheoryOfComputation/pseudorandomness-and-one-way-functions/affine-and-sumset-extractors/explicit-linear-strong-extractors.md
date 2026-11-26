@@ -18,12 +18,6 @@ Toeplitz: $Td$ is uniform for $d \ne 0$, so the leftover hash lemma applies. Tre
 - [Local decoding of the Hadamard code](../../../InformationTheory/error-correcting-codes/hadamard-code-local-decoding.md)
 - [Johnson bound](../../../InformationTheory/error-correcting-codes/list-decoding/johnson-bound.md)
 
-## Proof depends on
-
-- [Toeplitz hashing is pairwise independent](../../../ComputerScience/data-structures/hashing/limited-independence-hash-families/toeplitz-hashing.md)
-- [Leftover hash lemma](../../../ComputerScience/cryptography/randomness-extraction/leftover-hash-lemma.md)
-- [Johnson bound](../../../InformationTheory/error-correcting-codes/list-decoding/johnson-bound.md)
-
 ## Sources
 
 - S. P. Vadhan, "Pseudorandomness", Foundations and Trends in Theoretical Computer Science, 2012.

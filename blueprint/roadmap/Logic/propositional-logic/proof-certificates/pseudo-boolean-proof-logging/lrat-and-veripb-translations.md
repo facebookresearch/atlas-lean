@@ -14,7 +14,6 @@ Clausal unit propagation coincides with pseudo-Boolean propagation on clauses wi
 ## Proof depends on
 
 - [Soundness of the VeriPB kernel proof format](veripb-kernel-soundness.md)
-- [Accepted LRAT proofs refute CNF formulas](../accepted-lrat-proofs-refute-cnf-formulas.md)
 
 ## Sources
 

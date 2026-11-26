@@ -14,7 +14,6 @@ An accepted LRAT certificate shows that $\mathrm{PG}(\neg A)$ has no model; by e
 ## Proof depends on
 
 - [Plaisted–Greenbaum: the polarity-aware clause form is equisatisfiable](plaisted-greenbaum-equisatisfiability.md)
-- [Accepted LRAT proofs refute CNF formulas](../proof-certificates/accepted-lrat-proofs-refute-cnf-formulas.md)
 
 ## Sources
 

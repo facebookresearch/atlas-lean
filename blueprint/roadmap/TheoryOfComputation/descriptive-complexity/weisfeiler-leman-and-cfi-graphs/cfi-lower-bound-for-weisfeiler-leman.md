@@ -1,6 +1,6 @@
 # Cai–Fürer–Immerman: $k$-WL and $C^{k+1}$ do not capture graph isomorphism
 
-For every $k$ there are finite, non-isomorphic graphs $G_k, H_k$ (the even and odd CFI graphs over $K_{2k+4}$, or over any base graph of treewidth larger than $k$), with $O(k^2 2^{k})$-size gadgets, that satisfy the same $C^{k+1}$ sentences, the same $\mathrm{FO}^{k+1}$ sentences, and are not distinguished by $k$-WL. Hence no fixed number of variables in counting logic (equivalently no fixed dimension of Weisfeiler–Leman) decides graph isomorphism, and fixed-point logic with counting does not capture polynomial time.
+For every $k$ there are finite, non-isomorphic graphs $G_k, H_k$ (the even and odd CFI graphs over $K_{2k+4}$, or over any base graph of treewidth larger than $k$), with gadgets of size $2^{2k+2}+O(k)$ over $K_{2k+4}$ (constant size over a $3$-regular base graph of treewidth larger than $k$), that satisfy the same $C^{k+1}$ sentences, the same $\mathrm{FO}^{k+1}$ sentences, and are not distinguished by $k$-WL. Hence no fixed number of variables in counting logic (equivalently no fixed dimension of Weisfeiler–Leman) decides graph isomorphism, and fixed-point logic with counting does not capture polynomial time.
 
 ## Proof sketch
 

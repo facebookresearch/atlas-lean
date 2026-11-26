@@ -11,10 +11,6 @@ Couple $Z$ with $D$ on the good coordinates up to their distance; where $f$ is d
 - [Coalition influence and resilient functions](resilient-functions.md)
 - [k-wise small bias is close to exact k-wise independence](../small-bias-spaces/almost-k-wise-independence-smoothing.md)
 
-## Proof depends on
-
-- [k-wise small bias is close to exact k-wise independence](../small-bias-spaces/almost-k-wise-independence-smoothing.md)
-
 ## Sources
 
 - E. Chattopadhyay and D. Zuckerman, "Explicit Two-Source Extractors and Resilient Functions", Annals of Mathematics, 2019.
