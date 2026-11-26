@@ -18,4 +18,4 @@ multi-step reduction: ${\to_\beta} \cup {=} \subseteq {\Rightarrow} \subseteq {\
 ## Sources
 
 - M. H. B. Sørensen and P. Urzyczyn, *Lectures on the Curry–Howard Isomorphism*, lecture notes, University of Copenhagen, May 1998: Definition 1.4.3 and Lemma 1.4.6.
-- J.-L. Krivine, *Lambda-Calculus, Types and Models*, translated from the French by R. Cori, revised online edition, 2011, <https://www.irif.fr/~krivine/articles/Lambda.pdf>: Chapter 1, the relation $\rho$ of Proposition 1.22 and the remark after Proposition 1.26.
+- J.-L. Krivine, *Lambda-Calculus, Types and Models*, translated from the French by R. Cori, revised online edition, 2011, <https://www.irif.fr/~krivine/articles/Lambda.pdf>: Chapter 1, the relation ρ defined by rules 1–4 in the proof of Theorem 1.24, Lemma 1.26 and the remark after the proof.

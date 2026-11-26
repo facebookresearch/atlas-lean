@@ -13,6 +13,10 @@ with Gödel number $e$ and $2^a 3^b$ for the coded pair:
 A closed formula is *realizable* if some number realizes it, and a formula with free variables $x_1, \dots, x_k$ is realizable if a total recursive $f$ gives a
 realizer $f(n_1, \dots, n_k)$ of each instance. No number realizes $\bot$.
 
+## Depends on
+
+- [Heyting arithmetic](heyting-arithmetic.md)
+
 ## Expansion
 
 This page becomes ready once:
