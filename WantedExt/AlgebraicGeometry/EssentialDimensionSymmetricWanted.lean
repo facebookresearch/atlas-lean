@@ -32,6 +32,11 @@ only: arbitrary `Sₙ`-torsors, versal torsors, and the
 Buhler--Reichstein equivalence are not formalized. The elementary bound
 `edSn n ≤ n`, hence `C₇₉ ≤ 1`, is proved in the provider; the sharper
 bounds below are recorded as proof requests.
+
+The lower bound `n / 2 ≤ edSn n` (`buhlerReichsteinDuncanLowerBound_wanted`)
+and the exact value `edSn 4 = 2` (`edSn_four_wanted`) are proved in
+`MathlibExt.FieldTheory.EssentialDimensionSymmetricLowerBound` and
+`MathlibExt.FieldTheory.EssentialDimensionSymmetricFour`, and re-exported here.
 -/
 
 /-- **Upper bound for the essential dimension of symmetric groups.** Write

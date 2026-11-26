@@ -16,6 +16,10 @@ import all MathlibExt.NumberTheory.TruncatedLogDiscriminant
 
 For a prime `p ≡ 1 (mod 4)` and a positive exponent `e`, the resultant product
 in degree `p ^ e` is nonzero modulo `p`.
+
+The argument, a reduction of the resultant modulo `p`, does not use `p ≡ 1 (mod 4)` and
+works for every prime `p`. The hypothesis stays in the statement, so the unused-variables
+linter is turned off for this one declaration.
 -/
 
 namespace MetaMathlibExt

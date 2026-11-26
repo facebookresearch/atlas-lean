@@ -47,9 +47,10 @@ import MathlibExt.Analysis.InnerProductSpace.PeierlsKlein
 Hermitian matrices by the ℓᵖ norm of the spectrum of their difference.
 
 §99 of Oliver Knill's *Some Fundamental Theorems in Mathematics* (an
-additional statement of the section on spectral perturbation; the boxed
-main theorem `lidskii_last` follows as the `p = 1` case combined with an
-entrywise bound).
+additional statement of the section on spectral perturbation, whose main
+theorem, the Lidskii–Last theorem, is
+`MathlibExt.LinearAlgebra.LidskiiWanted.LinearAlgebra.lidskii_last` in
+`MathlibExt.LinearAlgebra.Lidskii`).
 
 For two self-adjoint complex `n × n` matrices `A, B` with eigenvalues
 sorted in the same order, the `ℓ^p` displacement of the eigenvalues is
@@ -57,11 +58,6 @@ bounded by the `ℓ^p` norm of the eigenvalues of `C := B − A`, for every
 real `p ≥ 1`:
 
   `∑ⱼ |αⱼ − βⱼ|^p ≤ ∑ⱼ |γⱼ|^p`.
-
-mathlib has `Matrix.IsHermitian.eigenvalues₀` (the spectral-theorem
-eigenvalues) but none of the classical eigenvalue-perturbation bounds
-(Lidskii, Ky Fan, Hoffman–Wielandt). No formalization of Lidskii's
-inequality was found in any other proof assistant.
 -/
 
 namespace MathlibExt.LinearAlgebra.LidskiiInequalityWanted.LinearAlgebra

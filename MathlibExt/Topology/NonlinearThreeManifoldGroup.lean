@@ -33,12 +33,15 @@ Modification notice (Apache License 2.0, Section 4). Changes made: converted eac
 `def_wanted`), replaced `EvalTools.Markers` with `Batteries.Util.ProofWanted`, inlined any
 `LeanEval` helper modules, and placed the declarations in the
 `MathlibExt.Topology.NonlinearThreeManifoldGroupWanted` namespace. Mathematical statements are
-unchanged. Source: J. O. Button, *Aspherical 3-manifold groups not in GL(4, k) for any field k*,
-arXiv:1404.4639 (2014). See the discussion of [Kir97, Problem 3.33] in the K3 problem list.
-Later change (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
+unchanged. Source: J. O. Button, *A 3-manifold group which is not four dimensional linear*,
+arXiv:1210.3068 (2012). See the discussion of [Kir97, Problem 3.33] in the K3 problem list.
+Later changes (ATLAS, 2026): the `theorem_wanted` was proved and the declarations moved from
 `WantedExt/Topology/NonlinearThreeManifoldGroupWanted.lean` to this `MathlibExt` module with
 unchanged names, statements and docstrings, and the imports of `Batteries.Util.ProofWanted` and of
-all of Mathlib were replaced by narrower Mathlib imports.
+all of Mathlib were replaced by narrower Mathlib imports. The citation of Button's paper, here and
+in the module documentation, was corrected: it gave another title and arXiv:1404.4639, the number
+of an unrelated paper. The `Source:` line of `nonlinear_three_manifold_group`, part of its
+unchanged docstring, still gives the old citation.
 
 The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
 `nonlinear_three_manifold_group`, the private definitions and lemmas it uses, and the parts of
@@ -62,7 +65,7 @@ generated 3-manifold group admits a faithful (injective) representation into
 `GL(4, ℝ)`. This is true for hyperbolic 3-manifolds, but Button gave a negative
 answer in general: the fundamental groups of certain closed graph manifolds
 admit no faithful representation into `GL(4, k)` for *any* field `k` (J. O.
-Button, *Aspherical 3-manifold groups not in `GL(4, k)`*, 2014).
+Button, *A 3-manifold group which is not four dimensional linear*, arXiv:1210.3068, 2012).
 
 We prove the negative answer to Thurston's question over `ℝ`
 (`nonlinear_three_manifold_group`): there is a closed connected 3-manifold whose
@@ -104,10 +107,10 @@ obstruction it uses is special to the field `ℝ`.
 * A faithful representation in `GL(4, ℝ)` would send both `a₁²` and `a₂²` to
   `-1`, contradicting `a₁² ≠ a₂²`.
 
-Button's construction is in the arXiv preprint arXiv:1210.3068 (J. O. Button,
-*A 3-manifold group which is not four dimensional linear*); the arXiv number in
-the `Source:` line of `nonlinear_three_manifold_group`, kept from lean-eval, is
-that of an unrelated paper.
+The `Source:` line of `nonlinear_three_manifold_group` keeps the citation of
+the former wanted statement; its title and its arXiv number, arXiv:1404.4639
+(an unrelated paper), are not those of Button's preprint arXiv:1210.3068
+cited above.
 -/
 
 @[expose] public section

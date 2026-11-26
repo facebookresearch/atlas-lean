@@ -6,4 +6,4 @@ homomorphism from the fundamental group $\pi_1(M, x)$ to $GL_4(\mathbb{R})$ is i
 
 ## Sources
 
-- J. O. Button, *Aspherical 3-manifold groups not in GL(4, k) for any field k*, arXiv:1404.4639 (2014). See Problem 3.33 of R. Kirby's problem list, *Problems in low-dimensional topology* (1997). Problem `nonlinear_three_manifold_group` of the lean-eval benchmark.
+- J. O. Button, *A 3-manifold group which is not four dimensional linear*, arXiv:1210.3068 (2012). See Problem 3.33 of R. Kirby's problem list, *Problems in low-dimensional topology* (1997). Problem `nonlinear_three_manifold_group` of the lean-eval benchmark.

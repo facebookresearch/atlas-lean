@@ -15,7 +15,7 @@ public import MathlibExt.SetTheory.Cardinal.LargeCardinal.Measurable
 public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
-# Borel determinacy and analytic determinacy (wanted)
+# Borel determinacy (wanted)
 
 Two determinacy theorems beyond the Gale–Stewart theorem
 (`MathlibExt.SetTheory.Determinacy.determined_of_isClosed`):
@@ -27,7 +27,7 @@ Two determinacy theorems beyond the Gale–Stewart theorem
 * Martin's theorem (1970): if a measurable cardinal exists, every analytic (`Σ¹₁`) subset of
   Baire space is determined. ZFC alone does not prove this (Moschovakis, *Descriptive Set
   Theory*, 2nd ed., AMS 2009, Exercise 6A.12). It is proved in
-  `MathlibExt.SetTheory.Determinacy.AnalyticDeterminacy`, which this module imports.
+  `MathlibExt.SetTheory.Determinacy.AnalyticDeterminacy` and re-exported here.
 -/
 
 @[expose] public section

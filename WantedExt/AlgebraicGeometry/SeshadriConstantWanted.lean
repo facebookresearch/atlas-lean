@@ -28,6 +28,9 @@ affine ten-point configurations of the infimum of degree over summed
 multiplicities. Harbourne--Roé define the generic constant by this
 supremum and identify it with the value at very general points; the
 projective chart identification is not formalized here.
+
+Eckl's 2008 lower bound `4 / 13 ≤ seshadriConstant10` (`eckl2008LowerBound_wanted`) is
+proved in `MathlibExt.AlgebraicGeometry.SeshadriConstantEckl` and re-exported here.
 -/
 
 /-- **Nagata's conjecture for ten points.** The proposition that the generic ten-point
