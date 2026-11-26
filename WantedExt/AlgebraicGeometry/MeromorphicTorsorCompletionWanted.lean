@@ -13,6 +13,7 @@ public import MathlibExt.AlgebraicGeometry.ReductiveGroupSchemeModels
 public import MathlibExt.AlgebraicGeometry.AnalyticProObjectSites
 public import MathlibExt.AlgebraicGeometry.MeromorphicTorsorCompletionGenericRefinementComp
 public import MathlibExt.AlgebraicGeometry.MeromorphicTorsorCompletionGenericRefinementIdentity
+public import MathlibExt.AlgebraicGeometry.MeromorphicTorsorCompletionPositiveRefinementIdentity
 
 /-!
 # Source constructions for actual meromorphic torsor completion
@@ -194,18 +195,6 @@ public def_wanted meromorphicHeckeRefinement (p : ℕ) [Fact p.Prime]
     (C' : MathlibExt.AlgebraicGeometry.MeromorphicTorsorCompletion.CompletionComparison
       p E G H P d U Q' A' B' F' h') :
     HeckeRefinement p E d U Q Q' r R G H P V S A B A' B' F F' T h h' C C'
-
-/-- The identity refinement induces the identity of completed rings: for a prime $p$, a field $E$, a
-map $d : D \to X$ of $E$-spaces with a puncture `U` and a pole chart `Q` at `U`, a refinement $r$ of
-`Q` by itself whose map of chart spaces is the identity, and a coefficient refinement `R` for $r$,
-the induced map of the completion of the chart's coefficient ring along the divisor (`positiveMap`)
-is the identity. -/
-public theorem_wanted positiveRefinement_identity (p : ℕ) [Fact p.Prime]
-    (E : Type) [Field E] {X D : ESpace p E}
-    (d : D ⟶ X) (U : Puncture p E d) (Q : PoleChart p E d U)
-    (r : PoleRefinement p E d U Q Q) (hr : r.map = 𝟙 Q.space)
-    (R : CoefficientRefinement p E d U Q Q r) :
-    positiveMap p E d U Q Q r R.powers R.finite = RingHom.id _
 
 /-- Refinement maps of completed rings compose: for a prime $p$, a field $E$, a map $d : D \to X$ of
 $E$-spaces with a puncture `U` and refinements $r$ of a pole chart `Q` by `Q'`, $s$ of `Q'` by `Q''`
