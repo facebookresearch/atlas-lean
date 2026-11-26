@@ -23,6 +23,22 @@ Boolean cube. The proof uses the butterfly argument and partitions pairs of conf
 their common coordinates. The linear algebra adapts the archived proofs in
 `Atlas/StatisticalMechanics/Code/Walls/rbtbutterfly.lean` and
 `Atlas/StatisticalMechanics/Code/Walls/rb2butterflyclose.lean`.
+
+## Main statements
+
+* `reimer_inequality`: `wprob φ (A □ B) ≤ wprob φ A * wprob φ B` for every product probability
+  weight `φ` on `Fin n` and all events `A`, `B`.
+* `reimer_wprob_core`: the same statement in the form `StatMech.ReimerWprobCore`. With it,
+  `StatMech.reimer_wprob_general_of_core` gives the inequality for product probability weights
+  on any finite coordinate set, and `StatMech.reimer_inequality_of_core` for every Bernoulli
+  product measure on a finite set.
+
+## References
+
+* D. Reimer, *Proof of the van den Berg–Kesten conjecture*, Combin. Probab. Comput. 9 (2000),
+  27–32.
+* J. van den Berg, H. Kesten, *Inequalities with applications to percolation and reliability*,
+  J. Appl. Probab. 22 (1985), 556–569.
 -/
 
 @[expose] public section
@@ -424,5 +440,13 @@ theorem reimer_inequality :
       simp only [Fintype.sum_sigma]
       exact Finset.sum_le_sum (fun k _ => sum_cell_weight_le φ hφ0 A B k)
     _ = wprob φ A * wprob φ B := sum_pair_weight φ A B
+
+/-- Reimer's inequality in the form of the ported hypothesis `StatMech.ReimerWprobCore`
+(definitionally `reimer_inequality`).
+
+Source: D. Reimer, *Proof of the van den Berg–Kesten conjecture*, Combin. Probab. Comput. 9
+(2000), 27–32. -/
+theorem reimer_wprob_core : ReimerWprobCore :=
+  reimer_inequality
 
 end MathlibExt.Probability.ReimerInequalityWanted
