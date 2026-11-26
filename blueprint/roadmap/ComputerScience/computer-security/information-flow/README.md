@@ -4,7 +4,7 @@
 - [Security levels, policies and low equivalence](security-levels-policies-and-low-equivalence.md)
 - [Low equivalence is an equivalence relation](low-equiv-equivalence.md)
 - [Low equivalence is antitone in the observer level](antitone-low-equiv.md)
-- [Permitted flows are those that preserve low equivalence](forall-low-equiv-update-iff-le.md)
+- [Copying $x$ into $y$ keeps low equivalence exactly when $\Gamma(x) \sqsubseteq \Gamma(y)$](forall-low-equiv-update-iff-le.md)
 - [Joins give the level of combined information](forall-low-equiv-eq-on-iff-sup-le.md)
 - [Unwinding theorem for noninterference](unwinding-theorem-for-noninterference.md)
 - [Constant-time programs as leakage noninterference](constant-time-programs-as-leakage.md)

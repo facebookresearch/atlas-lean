@@ -45,8 +45,8 @@ equivalence is agreement on the variables of the least level (`lowEquiv_bot_iff`
   flows and least upper bounds) and Theorem 6.8 (agreement on all locations of level at most
   `τ`).
 * A. Sabelfeld and A. C. Myers, "Language-based information-flow security", *IEEE Journal on
-  Selected Areas in Communications* 21(1):5–19, 2003: Sections II-G and III-A (low-equivalent
-  states).
+  Selected Areas in Communications* 21(1):5–19, 2003: Section II-G (public and confidential
+  data) and Section III-A (the relation `=_L`).
 -/
 
 @[expose] public section
@@ -150,11 +150,11 @@ distinguishes at least the stores that one at a lower level distinguishes. -/
 theorem antitone_lowEquiv (Γ : V → L) : Antitone (LowEquiv (α := α) Γ) :=
   fun _ _ hℓ _ _ h => h.mono hℓ
 
-/-- **Permitted flows are those that preserve low equivalence.** Let security levels be
-preordered by $\sqsubseteq$, let $\Gamma : V \to \mathcal{L}$ be a security policy, let
-$x, y \in V$, and let the set $A$ of values have at least two elements. Copying $x$ into $y$,
-which maps a store $\sigma$ to $\sigma[y \mapsto \sigma(x)]$, maps stores with
-$\sigma_1 =_\ell \sigma_2$ to stores with
+/-- **Copying $x$ into $y$ keeps low equivalence exactly when $\Gamma(x) \sqsubseteq \Gamma(y)$.**
+Let security levels be preordered by $\sqsubseteq$, let $\Gamma : V \to \mathcal{L}$ be a
+security policy, let $x, y \in V$, and let the set $A$ of values have at least two elements.
+Copying $x$ into $y$, which maps a store $\sigma$ to $\sigma[y \mapsto \sigma(x)]$, maps stores
+with $\sigma_1 =_\ell \sigma_2$ to stores with
 $\sigma_1[y \mapsto \sigma_1(x)] =_\ell \sigma_2[y \mapsto \sigma_2(x)]$ for every observer level
 $\ell$ if and only if $\Gamma(x) \sqsubseteq \Gamma(y)$. -/
 theorem forall_lowEquiv_update_iff_le [DecidableEq V] [Nontrivial α] {x y : V} :
