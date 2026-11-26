@@ -28,7 +28,6 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.Basic
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-import MathlibExt.NumberTheory.ModularForms.HeckeUGammaH
 
 /-!
 # The Fricke involution on modular forms of level `Γ₀(N)`
@@ -173,9 +172,12 @@ def fricke (k : ℤ) : ModularForm (Gamma0 N) k →ₗ[ℂ] ModularForm (Gamma0 
     { toFun := ⇑f ∣[k] frickeGL N
       slash_action_eq' := fun _ hγ => slash_frickeGL_slash_eq_self N f hγ
       holo' := (ModularFormClass.holo f).slash k (frickeGL N)
-      bdd_at_cusps' := fun hc => by
-        rw [← frickeGLQ_map]
-        exact ModularForm.S06W2.isBoundedAt_slash_ratCast f _ hc }
+      bdd_at_cusps' := fun {c} hc => by
+        rw [← frickeGLQ_map, ← OnePoint.IsBoundedAt.smul_iff]
+        refine ModularFormClass.bdd_at_cusps f ?_
+        rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z, isCusp_SL2Z_iff] at hc ⊢
+        obtain ⟨c, rfl⟩ := hc
+        exact ⟨frickeGLQ N • c, by rw [← Rat.coe_castHom, OnePoint.map_smul]⟩ }
   map_add' f g := by
     ext τ
     change ((⇑f + ⇑g) ∣[k] frickeGL N) τ = (⇑f ∣[k] frickeGL N) τ + (⇑g ∣[k] frickeGL N) τ

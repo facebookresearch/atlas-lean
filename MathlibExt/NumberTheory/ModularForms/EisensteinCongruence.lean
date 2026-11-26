@@ -40,7 +40,7 @@ public import MathlibExt.NumberTheory.ModularForms.EisensteinTwoGamma0
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 import Mathlib.NumberTheory.ModularForms.QExpansion
 import MathlibExt.NumberTheory.ModularForms.FrickeGamma0
-import MathlibExt.NumberTheory.ModularForms.HeckeUGammaH
+import MathlibExt.NumberTheory.ModularForms.HeckeOperator
 import MathlibExt.NumberTheory.ModularForms.LevelOneTrace
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
