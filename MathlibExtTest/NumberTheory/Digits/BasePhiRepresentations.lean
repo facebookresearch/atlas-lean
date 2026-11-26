@@ -11,8 +11,10 @@ module
 import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
 
 /-!
-# Tests for natural base phi expansions
+# Tests for base phi expansions
 -/
+
+open scoped goldenRatio
 
 namespace MetaMathlibExt
 
@@ -32,5 +34,32 @@ example : ({0, -1, -2} : Finset ℤ) ∈ naturalExpansions 2 :=
 -- The Knott condition excludes an expansion that ends in 011.
 example : ({-1, -2} : Finset ℤ) ∉ naturalExpansions 1 :=
   fun h => not_satisfiesKnottCondition_neg_one_neg_two h.1.2
+
+-- Zero has no occupied positions and needs no flips.
+example : Relation.ReflTransGen IsGoldenMeanFlip ∅ ∅ :=
+  reflTransGen_isGoldenMeanFlip_of_isBergmanExpansion 0
+    (by simp [IsBergmanExpansion]) (by norm_num [basePhiValue_empty])
+    (by norm_num [basePhiValue_empty])
+
+-- The three adjacent occupied positions in 1.11 require choosing the highest pair to carry.
+example : Relation.ReflTransGen IsGoldenMeanFlip {1, -2} {0, -1, -2} :=
+  reflTransGen_isGoldenMeanFlip_of_isBergmanExpansion 2 isBergmanExpansion_one_neg_two
+    (by norm_num [basePhiValue_one_neg_two]) (by norm_num [basePhiValue_zero_neg_one_neg_two])
+
+-- This expansion of 2 has two more occupied positions than the Bergman expansion.
+example : Relation.ReflTransGen IsGoldenMeanFlip {1, -2} {0, -1, -3, -4} := by
+  apply reflTransGen_isGoldenMeanFlip_of_isBergmanExpansion 2 isBergmanExpansion_one_neg_two
+    (by norm_num [basePhiValue_one_neg_two])
+  have hcarry : φ ^ (-3 : ℤ) + φ ^ (-4 : ℤ) = φ ^ (-2 : ℤ) := calc
+    _ = φ ^ (-4 : ℤ) * (φ + 1) := by
+      rw [show (-3 : ℤ) = -4 + 1 by decide, zpow_add_one₀ Real.goldenRatio_ne_zero]
+      ring
+    _ = φ ^ (-4 : ℤ) * φ ^ (2 : ℤ) := by rw [zpow_ofNat, Real.goldenRatio_sq]
+    _ = _ := by rw [show (-2 : ℤ) = -4 + 2 by decide, zpow_add₀ Real.goldenRatio_ne_zero]
+  change basePhiValue {0, -1, -3, -4} = (2 : ℝ)
+  rw [← basePhiValue_zero_neg_one_neg_two]
+  unfold basePhiValue
+  rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_pair (by decide),
+    Finset.sum_insert (by decide), Finset.sum_pair (by decide), hcarry]
 
 end MetaMathlibExt
