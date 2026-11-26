@@ -17,6 +17,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.GroupTheory.SpecificGroups.Dihedral
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
+public import MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd
 
 namespace MetaMathlibExt
 
@@ -239,19 +240,8 @@ public theorem_wanted rectangularGrid_r2f_odd {T : Type*} [Fintype T] [Decidable
 -- The case of the identity, `squareGrid_identity`, is proved in
 -- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`, which this module imports.
 
-/-- **Square-grid tilings fixed by the half-turn for odd $n$.** Let $n$ be an odd positive
-integer, let $T$ be a finite set, let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$, and
-write $t_\sigma$ for the number of elements $t \in T$ with $\sigma(t) = t$. Let $r^2$ be the
-half-turn of the grid $(\mathbb{Z}/n\mathbb{Z})^2$ given by $r^2(x, y) = (-1 - x, -1 - y)$.
-Then the number of maps $F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(r^2(c)) = \sigma(F(c))$
-for every cell $c$ is $|T|^{(n^2 - 1)/2} \cdot t_\sigma$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
-public theorem_wanted squareGrid_r2_odd {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (hodd : Odd n) :
-    fixedTilingCount (cellR2 n n) σ =
-      Fintype.card T ^ ((n ^ 2 - 1) / 2) * tileFixedCount σ 1
+-- The odd half-turn case, `squareGrid_r2_odd`, is proved in
+-- `MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd`, which this module imports.
 
 /-- **Square-grid tilings fixed by the reflection $f$ for even $n$.** Let $n$ be an even positive
 integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$.
@@ -663,22 +653,8 @@ public theorem_wanted rectangularTorus_r2f_odd {T : Type*} [Fintype T] [Decidabl
         Fintype.card T ^ (n * (m - 1) / Nat.lcm d 2) *
           tileFixedCount σ d ^ (n / d)
 
-/-- **Square-torus fixed points of the identity.** Let $n$ be a positive integer, let $T$ be a
-finite set of tile designs, and let $\sigma$ be the identity permutation of $T$. Let $S$ be the
-sum, over all shifts $v \in (\mathbb{Z}/n\mathbb{Z})^2$, of the number of tilings
-$F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$ with $F(c + v) = \sigma(F(c))$ for every cell $c$. Then
-$S = \sum_{d_1 \mid n} \sum_{d_2 \mid n} \varphi(d_1) \, \varphi(d_2) \,
-|T|^{n^2/\operatorname{lcm}(d_1, d_2)}$, where $d_1$ and $d_2$ run over the positive divisors of
-$n$ and $\varphi$ is Euler's totient function.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 38. -/
-public theorem_wanted squareTorus_identity {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 1 = 1) :
-    torusShiftSum n n id σ =
-      ∑ d₁ ∈ n.divisors, ∑ d₂ ∈ n.divisors,
-        Nat.totient d₁ * Nat.totient d₂ *
-          Fintype.card T ^ (n ^ 2 / Nat.lcm d₁ d₂)
+-- `squareTorus_identity` is proved in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`.
 
 /-- **Fixed tilings of the odd square torus under a half-turn.** Let $n$ be an odd positive
 integer, $T$ a finite set of tile designs and $\sigma$ a permutation of $T$ with $\sigma^2 = 1$,

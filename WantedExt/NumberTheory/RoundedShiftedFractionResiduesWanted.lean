@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.FloorDivisionCounts
 public import MathlibExt.NumberTheory.FloorQuotientDivisorSummatory
 public import MathlibExt.NumberTheory.FloorQuotientOddCount
 public import MathlibExt.NumberTheory.RoundQuotientOddCount
+public import MathlibExt.NumberTheory.RoundedQuotientLatticeDisc
 public import MathlibExt.NumberTheory.RoundedQuotientThresholdCounts
 public import MathlibExt.NumberTheory.ShiftedFloorThresholdCounts
 
@@ -60,21 +61,6 @@ public theorem shiftedFloorResidueCount_modulus_one (n : ℕ) (α ν : ℝ)
   unfold shiftedFloorResidueCount
   rw [Finset.filter_true_of_mem (fun k _ => by simp [Int.ModEq])]
   simp
-
-/-- **Odd floor quotients as a hyperbolic lattice-point difference.** For every natural number
-$n$, the floor sequence parity count $\mathcal{F}_n$ equals the number of integer pairs $(x, y)$
-with $x, y \ge 1$ and $n/2 < xy \le n$ minus the number of integer pairs $(x, y)$ with
-$x, y \ge 1$ and $xy \le n/2$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 4 (`jis-2024-24.2.5-prop-4`). -/
-public theorem_wanted floorQuotientOddCount_eq_hyperbolic_lattice_difference
-    (n : ℕ) :
-    (floorQuotientOddCount n : ℤ) =
-      (Nat.card {p : ℤ × ℤ // 1 ≤ p.1 ∧ 1 ≤ p.2 ∧
-          (n : ℤ) < 2 * (p.1 * p.2) ∧ p.1 * p.2 ≤ n} : ℤ) -
-        Nat.card {p : ℤ × ℤ // 1 ≤ p.1 ∧ 1 ≤ p.2 ∧ 2 * (p.1 * p.2) ≤ n}
 
 /-- **Dirichlet's asymptotic for the divisor summatory function.** Let $\tau(m)$ be the number of
 positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$ for real $x$, and let
@@ -145,19 +131,6 @@ public theorem_wanted card_sq_add_sq_eq (n : ℕ) (hn : 0 < n) :
     (Nat.card {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 = n} : ℤ) =
       4 * (((n.divisors.filter (fun d : ℕ => d % 4 = 1)).card : ℤ) -
         (n.divisors.filter (fun d : ℕ => d % 4 = 3)).card)
-
-/-- **Lattice points in the disc of radius $\sqrt{2n}$.** For every natural number $n$, the
-number of pairs $(x, y) \in \mathbb{Z}^2$ with $x^2 + y^2 \le 2n$ equals
-$4\,\mathcal{R}_n + 4n + 1$, where $\mathcal{R}_n$ is the number of $k \in \{1, \dots, n\}$ for
-which the nearest integer to $n/k$, with half-integers rounded up, is odd. At $n = 0$ both sides
-are $1$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 17 (`jis-2024-24.2.5-prop-17`). -/
-public theorem_wanted card_lattice_disc_two_mul (n : ℕ) :
-    Nat.card {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 ≤ 2 * n} =
-      4 * roundQuotientOddCount n + 4 * n + 1
 
 /-- **The rounding sequence parity count drops by at most one.** For every natural number $n$,
 the rounding sequence parity count $\mathcal{R}$ satisfies
