@@ -11,7 +11,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.QAnalogCollatz
+public import MathlibExt.NumberTheory.QCollatzConjugacy
 public import MathlibExt.NumberTheory.QCollatzParityFlip
+public import MathlibExt.NumberTheory.QCollatzPerturbation
 
 namespace MetaMathlibExt
 
@@ -32,18 +34,6 @@ public theorem_wanted qCollatz_conjugate_twoAdicCollatz (A B : PowerSeries (ZMod
     ∃ h : ℤ_[2] ≃ PowerSeries (ZMod 2),
       ∀ x, h.symm (qCollatz A B (h x)) = twoAdicCollatz x
 
-/-- **The map $T_{1+q,1}$ is conjugate to the $2$-adic $3x+1$ map.** Let $T_q = T_{1+q,1}$
-be the $q$-analog of the $3x+1$ map with $A = 1 + q$ and $B = 1$, so that $T_q(x) = x/q$ if $q$
-divides $x$ and $T_q(x) = ((1+q)x + 1)/q$ otherwise, and let $T$ be the $3x+1$ map on the
-$2$-adic integers $\mathbb{Z}_2$. Then there is a bijection $h : \mathbb{Z}_2 \to \mathbb{F}_2[[q]]$
-with $h^{-1}(T_q(h(x))) = T(x)$ for every $x \in \mathbb{Z}_2$.
-
-Source: Kenneth G. Monks, *On q-Analogs of the 3x+1 Dynamical System*, Journal of Integer
-Sequences 28 (2025), Article 25.6.8, Corollary 3 (`jis-2025-25.6.8-cor-3`). -/
-public theorem_wanted qCollatz_one_add_X_conjugate_twoAdicCollatz :
-    ∃ h : ℤ_[2] ≃ PowerSeries (ZMod 2),
-      ∀ x, h.symm (qCollatz (1 + X) 1 (h x)) = twoAdicCollatz x
-
 /-- **Polynomial orbits of $T_{1,1+q^2}$.** Let $T = T_{1,1+q^2}$ be the $q$-analog of the $3x+1$
 map with $A = 1$ and $B = 1 + q^2$. For every polynomial $p$ over $\mathbb{F}_2$, some iterate
 $T^k(p)$ with $k \ge 0$ lies in $\{0, 1 + q, 1, q\}$, the set formed by the fixed points $0$ and
@@ -59,19 +49,6 @@ public theorem_wanted qCollatz_one_one_add_X_sq_polynomial :
     ∀ x : PowerSeries (ZMod 2),
       (∃ p : Polynomial (ZMod 2), qCollatz 1 (1 + X ^ 2) x = p) ↔
         ∃ p : Polynomial (ZMod 2), x = p
-
-/-- **A perturbation at $q^{n+1}$ moves to $q^n$ under $T_{A,B}$.** Let $A, B, U, V$ be power
-series in $\mathbb{F}_2[[q]]$ with $A$, $B$ and $V$ odd (constant term $1$), let $T_{A,B}$ be the
-$q$-analog of the $3x+1$ map, and let $n \ge 0$ be an integer. Then there is an odd power series
-$W \in \mathbb{F}_2[[q]]$ with $T_{A,B}(U + q^{n+1} V) = T_{A,B}(U) + q^n W$.
-
-Source: Kenneth G. Monks, *On q-Analogs of the 3x+1 Dynamical System*, Journal of Integer
-Sequences 28 (2025), Article 25.6.8, Lemma 7 (`jis-2025-25.6.8-lem-7`). -/
-public theorem_wanted qCollatz_add_X_pow_mul (A B : PowerSeries (ZMod 2))
-    (hA : constantCoeff A ≠ 0) (hB : constantCoeff B ≠ 0) (n : ℕ) (U V : PowerSeries (ZMod 2))
-    (hV : constantCoeff V ≠ 0) :
-    ∃ W : PowerSeries (ZMod 2), constantCoeff W ≠ 0 ∧
-      qCollatz A B (U + X ^ (n + 1) * V) = qCollatz A B U + X ^ n * W
 
 /-- **Parity vectors detect congruence modulo $q^{n+1}$.** Let $A, B \in \mathbb{F}_2[[q]]$ be odd
 (constant term $1$), let $\mathrm{PV}_{A,B}$ be the parity vector map of the $q$-analog $T_{A,B}$
