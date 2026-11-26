@@ -898,6 +898,7 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
 {"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
+{"statement": "af_a151da47d041132e76b05670", "page": "Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics", "replaced_by": "af_f94a233790a941a5f344136d"}
 {"folder": "Logic/not-yet-classified/part-01/basic", "to": "Logic/model-theory/ws1s-syntax-semantics-and-g-del-numbering", "article_id": "af_111ba4987b7deb0151c2eb56"}
 {"page": "Logic/not-yet-classified/part-01/basic/ws1-sformula", "to": "Logic/model-theory/ws1s-syntax-semantics-and-g-del-numbering/ws1-sformula", "article_id": "af_8e1c8345e68170672f2b84b7"}
 {"folder": "Logic/not-yet-classified/part-01/kmrevision", "to": "Logic/modal-logic/katsuno-mendelzon-belief-revision-postulates-and", "article_id": "af_4c9cf64fa0b875e891c57601"}
