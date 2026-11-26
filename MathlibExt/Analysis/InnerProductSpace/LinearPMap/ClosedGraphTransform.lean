@@ -23,6 +23,15 @@ The canonical l2 product carries the actual graph of a partial linear map.
 For a closed graph between complete Hilbert spaces, its orthogonal projection
 computes the first and second graph coordinates. Their original domain,
 inner-product and norm characteristics follow from that projection.
+
+## References
+
+J. B. Conway, *A Course in Functional Analysis*, second edition, Graduate Texts in Mathematics
+96, Springer, 1990, Chapter X §4, Proposition 4.2(a)–(c), treats the graph-coordinate
+construction for a closed densely defined operator: the first coordinate is `B=(I+A* A)⁻¹` and
+the second is `C=AB`. The orthogonal graph projection here defines both coordinates for any
+closed partial linear map between complete real or complex Hilbert spaces; density is needed for
+the adjoint/inverse characterization, not for the coordinate definitions.
 -/
 
 @[expose] public section

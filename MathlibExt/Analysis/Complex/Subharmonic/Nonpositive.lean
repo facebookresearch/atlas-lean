@@ -31,6 +31,20 @@ all smaller positive radii, the negative circle average is at most `-u(z)`
 in the stated nonnegative-extended-real encoding. Thus the sign-reversed
 condition is the local circular submean inequality. Nonpositive values are
 always strictly below positive infinity; negative infinity remains allowed.
+
+## References
+
+Jiří Lebl, *Tasty Bits of Several Complex Variables*, Chapter 2 §4, “From harmonic to
+plurisubharmonic functions”: the subharmonic-function definition uses upper semicontinuity and
+harmonic comparison. The proposition “Mean-value property and sub-mean-value property”, part
+(ii), gives the full-circle normalized submean inequality; the local-subharmonicity proposition
+(`prop:shlocal`) permits that inequality for all sufficiently small positive radii at each
+point. The nonpositive range, connected domain, and exclusion of the identically
+negative-infinite function are additional restrictions of this interface. For `u≤0`, multiplying
+the circular submean inequality by `-1` gives exactly the nonnegative extended-real average used
+here.
+
+[Source](https://github.com/jirilebl/scv/blob/ff52ab21051ac64190f28ce3dadbb9f881049a5e/scv.tex)
 -/
 
 @[expose] public section

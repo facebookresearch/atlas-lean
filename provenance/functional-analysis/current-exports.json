@@ -40,7 +40,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Complex/Subharmonic/Nonpositive.lean",
-      "exported_sha256": "1ca1b6e8942c4c1872012bfe0ed43c5ec7058df590b8693d710e041ee1e410b2",
+      "exported_sha256": "eaf092965f90ffd329829d511fcf5a02dbbb2f1da306c58fd9806708339a7e3f",
       "original_sha256": "a483ad32124a047066e30d2f42c1f50a741fb993757416f811bdc6aa3c6ffff6",
       "ledger": "provenance/functional-analysis/residual-analysis/files-01.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
@@ -355,7 +355,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Complex/AnalyticL2/BergmanProjection.lean",
-      "exported_sha256": "5c7bf792d5259794ba52c9f904ac5fa210ab4818735b8a1b280f234d7b065383",
+      "exported_sha256": "d632d4f15b0e0c842e840272820785251715a8fe9e50bc27bd6d0e27a1c0231a",
       "original_sha256": "bcc5bdccebaf0d0c92883143ba0046aef50eb14c9b1777c92dfd90c6092fc4f6",
       "ledger": "provenance/functional-analysis/residual-analysis/files-04.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
@@ -380,7 +380,7 @@
     },
     {
       "path": "MathlibExt/Analysis/InnerProductSpace/LinearPMap/ClosedGraphTransform.lean",
-      "exported_sha256": "44e32b1d8ede5e586eefc47bc7292426def7c0418c3ddedd9a17a00699468a26",
+      "exported_sha256": "d7fe9eb92707bdf629ae960c80beb0b152eb517135db182489af2c8adda77707",
       "original_sha256": "ac22de1524bcc9735f38b7c5f3e3430c1567f8800fc9cc8e1f80c3f510512903",
       "ledger": "provenance/functional-analysis/kernel-spectral-tensor-apis/files.jsonl",
       "snapshot_path": "provenance/functional-analysis/kernel-spectral-tensor-apis/source/MathlibExt/Analysis/InnerProductSpace/LinearPMap/ClosedGraphTransform.lean.txt"
