@@ -225,7 +225,8 @@ the trace of $\Phi(a)$ from $K$ to $F$ is $0$.
 Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
 Journal of Integer Sequences 29 (2026), Article 26.4.6, Theorem 30
 (`jis-2026-26.4.6-thm-30`). -/
-public theorem_wanted normalBasisMap_sum_eq_zero_iff_trace (n : ℕ)
+public theorem_wanted normalBasisMap_sum_eq_zero_iff_trace (F K : Type*)
+    [Field F] [Fintype F] [Field K] [Fintype K] [Algebra F K] (n : ℕ)
     (hn : Module.finrank F K = n) (β : K)
     (hβ : LinearIndependent F (fun i : Fin n => β ^ (Fintype.card F ^ (i : ℕ))))
     (a : Fin n → F) :
