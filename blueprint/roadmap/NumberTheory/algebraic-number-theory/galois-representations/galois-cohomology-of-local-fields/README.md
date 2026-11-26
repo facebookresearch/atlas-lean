@@ -15,3 +15,4 @@ $\operatorname{Gal}(\mathbb{C}/\mathbb{R})$, following Neukirch–Schmidt–Wing
 - [Galois cohomology of Tate twists over a p-adic field](cohomology-of-tate-twists-over-p-adic-fields.md)
 - [Galois cohomology of ℓ-adic representations of a p-adic field](galois-cohomology-of-l-adic-representations.md)
 - [Tate duality for the real numbers](tate-duality-for-the-real-numbers.md)
+- [Tate local duality for abelian varieties](tate-local-duality-for-abelian-varieties.md)
