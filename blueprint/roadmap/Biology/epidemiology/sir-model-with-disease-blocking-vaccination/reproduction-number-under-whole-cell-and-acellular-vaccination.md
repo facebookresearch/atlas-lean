@@ -1,6 +1,7 @@
 # Reproduction number under infection-blocking and disease-blocking vaccination
 
 **Model.** In an SIR model with births and deaths (rates $\mu = \nu$, population normalized to one), a fraction $w$ of newborns receives a vaccine that blocks infection (whole-cell-type, entering $R$) and a fraction $a$ receives a vaccine that blocks disease but not infection (acellular-type, entering a vaccinated class $V$), with $w + a \le 1$. Unvaccinated susceptibles $S$ are infected at rate $\beta(I_s + I_a)$ and become symptomatic ($I_s$) with probability $\sigma$ or asymptomatic ($I_a$) otherwise; vaccinated individuals in $V$ are infected at the same rate but always asymptomatically. Symptomatic and asymptomatic infections are equally infectious and recover at rates $\gamma_s, \gamma_a$; immunity wanes at rate $\omega$:
+
 $$\begin{aligned}
 S' &= \mu(1 - w - a) - \beta(I_s + I_a)S + \omega R - \nu S,\\
 I_s' &= \beta\sigma(I_s + I_a)S - (\gamma_s + \nu) I_s,\\

@@ -1,11 +1,13 @@
 # Three-compartment mammillary model with an effect site
 
 **Model.** A central compartment of volume $V_1$ exchanges drug with a fast peripheral compartment ($V_2$) and a slow peripheral compartment ($V_3$) through intercompartmental clearances $Q_2, Q_3$, and eliminates it with clearance $\mathrm{CL}$. With amounts $A_1, A_2, A_3 \ge 0$, concentrations $C_i = A_i/V_i$, and infusion rate $u(t) \ge 0$ into the central compartment,
+
 $$\begin{aligned}
 \dot A_1 &= u(t) - \mathrm{CL}\,C_1 - Q_2\,(C_1 - C_2) - Q_3\,(C_1 - C_3),\\
 \dot A_2 &= Q_2\,(C_1 - C_2),\\
 \dot A_3 &= Q_3\,(C_1 - C_3).
 \end{aligned}$$
+
 The effect-site concentration $C_e$ lags the plasma concentration $C_p = C_1$ through
 
 $$\dot C_e = k_{e0}\,(C_p - C_e), \qquad k_{e0} > 0,$$

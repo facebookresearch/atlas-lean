@@ -1,10 +1,12 @@
 # Hierarchical dynamic models with separated time-scales
 
 **Model.** A two-level hierarchical dynamic model generates data $y$ from hidden states $x^{(1)}, x^{(2)}$ and a causal state $v^{(1)}$ by
+
 $$\begin{aligned}
 y &= g\big(x^{(1)}\big) + z^{(1)}, & \dot x^{(1)} &= f\big(x^{(1)}, v^{(1)}\big)/T^{(1)} + w^{(1)},\\
 v^{(1)} &= g\big(x^{(2)}\big) + z^{(2)}, & \dot x^{(2)} &= f\big(x^{(2)}, v^{(2)}\big)/T^{(2)} + w^{(2)},
 \end{aligned}$$
+
 with Gaussian fluctuations $z^{(i)}, w^{(i)}$ of fixed precisions, time constants $T^{(2)} \gg T^{(1)}$, and the output of the slow level acting as a control parameter of the fast level. In the birdsong example both levels are Lorenz systems,
 
 $$f(x, v) = \begin{pmatrix} a(x_2 - x_1) \\ v x_1 - x_2 - x_1 x_3 \\ x_1 x_2 - c x_3 \end{pmatrix}, \qquad a = 10,\ c = 8/3,$$

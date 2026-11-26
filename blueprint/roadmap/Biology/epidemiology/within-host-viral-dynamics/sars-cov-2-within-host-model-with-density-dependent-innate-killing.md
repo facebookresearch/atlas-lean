@@ -1,6 +1,7 @@
 # SARS-CoV-2 within-host model with density-dependent innate killing
 
 **Model.** Susceptible target cells $S$, infected cells $I$, free virus $V$, two precursor compartments $M_1, M_2$ and virus-specific effector cells $E$ evolve by
+
 $$\begin{aligned}
 \dot S &= -\beta V S,\\
 \dot I &= \beta V S - \delta I^{k} I - m\,\frac{E^{r}}{E^{r} + \phi^{r}}\, I,\\
@@ -9,6 +10,7 @@ $$\begin{aligned}
 \dot M_2 &= q\,(M_1 - M_2),\\
 \dot E &= q M_2 - \delta_E E,
 \end{aligned}$$
+
 with infection rate $\beta$, per-cell virus production $\pi$, virus clearance $\gamma$, innate killing rate $\delta$ with density exponent $k \ge 0$, maximal adaptive killing $m$ with Hill coefficient $r$ and half-saturation effector level $\phi$, precursor proliferation $\omega$, transition rate $q$ and effector death rate $\delta_E$. Initial conditions are $S_0 = 10^7$ cells/mL, $I_0 = 1$, $V_0 = \pi I_0/\gamma$, $M_1(0) = 1$, $M_2(0) = E(0) = 0$.
 
 **Reduction.** Setting $k = 0$ and $m = 0$ removes density dependence and the adaptive response and gives the target-cell-limited model $\dot S = -\beta VS$, $\dot I = \beta VS - \delta I$, $\dot V = \pi I - \gamma V$, used for influenza.
