@@ -91,4 +91,29 @@
 - [Decrease-key preserves the number of elements](decrease-key-card-elements.md)
 - [Minimum after decrease-key](decrease-key-find-min.md)
 - [Decrease-key yields a valid forest](decrease-key-valid.md)
+
+## Marked heaps in the handle model
+
+The following operations track child loss and cascading cuts. Their costs count handle and bin operations, not traversals of the persistent lists above.
+
+- [Marked heap with a cached minimum address](heap.md)
+- [Empty](empty-2.md)
+- [Rank](rank.md)
+- [Potential](potential.md)
+- [View](view.md)
+- [Fibonacci subtree size from link order](fib-le-card.md)
+- [Insert](insert-2.md)
+- [Meld](meld-2.md)
+- [Potential meld](potential-meld.md)
+- [Cascade](cascade.md)
+- [Decrease](decrease.md)
+- [Extract](extract.md)
+- [Cascade potential](cascade-potential.md)
+- [Decrease potential](decrease-potential.md)
+- [Op](op.md)
+- [Insertions](insertions.md)
+- [Core](core.md)
+- [Allowance](allowance.md)
+- [Step](step.md)
+- [History](history.md)
 - [Rank bound and amortized costs of Fibonacci heaps](rank-bound-and-amortized-costs-of-fibonacci-heaps.md)
