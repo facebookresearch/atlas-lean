@@ -50,3 +50,17 @@ example : (fun x : (Set.univ : Set ℤ) => 2 * (x : ℤ) - 1) ∈ lipSubring Set
   funext x
   simp only [polynomialToLIP_apply, eval_pow, eval_X]
   ring
+
+-- A single negative prime value repeated on an infinite domain suffices.
+example {U : Set ℤ} (hU : U.Infinite) : Irreducible (polynomialToLIP U (C (-2))) := by
+  have := hU.to_subtype
+  apply irreducible_of_infinite_prime_values
+  simpa [Nat.prime_two] using (Set.infinite_univ (α := U))
+
+-- A unit taking the value -1 at the origin is -1 everywhere.
+example (u : (lipSubring Set.univ)ˣ) (h : (u : lipSubring Set.univ).val ⟨0, trivial⟩ = -1) :
+    u = -1 := by
+  obtain rfl | hneg := lipSubring_units_eq Set.infinite_univ u
+  · change (1 : ℤ) = -1 at h
+    norm_num at h
+  · exact hneg
