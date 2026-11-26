@@ -48,6 +48,7 @@ Topics added since this subject's fields were last revised.
 - [Semiperfect Crystalline Residues](semiperfect-crystalline-residues/README.md)
 - [Semiperfect Witt PDEnvelopes](semiperfect-witt-pdenvelopes/README.md)
 - [Subst Basis](subst-basis/README.md)
+- [Tame Character](tame-character/README.md)
 - [Is Base Change Span](span-range-eq-top.md)
 - [Freeness from a balanced perfect pairing](free-of-torsion-by-set-eq-annihilator-sm.md)
 - [Jacobian Square Presentation](associated-discr-norm-jacobian-det-of-sq.md)
