@@ -39,14 +39,6 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public theorem_wanted ulamWordCount_sq_le_sum (n : ℕ) :
     ulamWordCount n ^ 2 ≤ ∑ i ∈ Finset.Icc n (2 * n), ulamWordCount i
 
-/-- **Linear lower bound on the number of Ulam words.** For every natural number $n \ge 6$, the
-number of Ulam words of length $n$ is at least $2n + 4$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 1. -/
-public theorem_wanted two_mul_add_four_le_ulamWordCount (n : ℕ) (hn : 6 ≤ n) :
-    2 * n + 4 ≤ ulamWordCount n
-
 /-- **Exponential lower bound for Ulam word counts along a subsequence.** Let $\#U_n$ be the
 number of Ulam words of length $n$ and $\alpha_0 = (\#U_{30} / (2 \cdot 31))^{1/30}$. For every
 real $\alpha$ with $1 < \alpha < \alpha_0$, every real $C$ and every natural number $N$, there
@@ -73,19 +65,6 @@ sentence). -/
 public theorem_wanted ulamDensity_inv_isTheta_ulamGapMean :
     (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
       fun n => (ulamGapMean n : ℝ)
-
-/-- **Counting Ulam words with a single one.** For every $n \ge 1$, the number of
-$a \in \{0, \dots, n - 1\}$ for which the word $0^a 1 0^{n-1-a}$ ($a$ zeros, then a one, then
-$n - 1 - a$ zeros) is an Ulam word equals $2^{s_2(n-1)}$, where $s_2(m)$ is the sum of the binary
-digits of $m$. This number is the term $G(n - 1)$ of Gould's sequence.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 5
-(Corollary 3.4 of Bade, Cui, Labelle, and Li). -/
-public theorem_wanted card_ulam_zeros_one_zeros (n : ℕ) (hn : 1 ≤ n) :
-    ((Finset.range n).filter fun a =>
-        IsUlamWord (List.replicate a false ++ [true] ++ List.replicate (n - 1 - a) false)).card =
-      2 ^ (Nat.digits 2 (n - 1)).sum
 
 /-- **Ulam words with one 101 block.** For natural numbers $a$ and $b$ with $a + b \ge 2$, the
 binary word $0^a 101 0^b$ ($a$ zeros, then the letters $1, 0, 1$, then $b$ zeros) is an Ulam word
