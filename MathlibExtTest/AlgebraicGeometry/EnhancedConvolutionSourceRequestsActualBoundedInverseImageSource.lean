@@ -13,10 +13,10 @@ import Mathlib.Algebra.Homology.DerivedCategory.TStructure
 /-!
 # Tests for boundedness of the actual Ind inverse image
 
-The inverse image of an Ind sheaf concentrated in one degree has bounded cohomology.
+The inverse image of an Ind sheaf concentrated in one degree has bounded cohomology: the
+boundedness consequence for the model's given exact inverse image.
 
-Source: D'Agnolo--Kashiwara1311.2374v2, Section2 conventions,
-Sections3.3--3.4 and4.1--4.4, especially Proposition4.1.5.
+Source: D'Agnolo--Kashiwara, arXiv:1311.2374v2, Section 2 conventions and Proposition 3.4.4(ii).
 -/
 
 set_option autoImplicit false

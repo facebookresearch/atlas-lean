@@ -18,10 +18,11 @@ import Mathlib.Algebra.Homology.DerivedCategory.TStructure
 /-!
 # Boundedness of the actual Ind inverse image
 
-The exact Ind inverse image preserves bounded cohomology on the native derived categories.
+The model's given exact Ind inverse image preserves bounded cohomology on the native derived
+categories: this is the boundedness consequence of inverse image preserving both halves of the
+standard t-structure.
 
-Source: D'Agnolo--Kashiwara1311.2374v2, Section2 conventions,
-Sections3.3--3.4 and4.1--4.4, especially Proposition4.1.5.
+Source: D'Agnolo--Kashiwara, arXiv:1311.2374v2, Section 2 conventions and Proposition 3.4.4(ii).
 -/
 
 set_option autoImplicit false
