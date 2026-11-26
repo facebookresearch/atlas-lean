@@ -12,6 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956FiveTwelfthsHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundGGSWT2025AlphaEvolveHolds
 
 @[expose] public section
@@ -57,13 +58,6 @@ the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 1/
 
 Source: Erdős 1955; Optimization Problems, Constant 1b. -/
 def upperBound_E1955_half : Prop := C₁ᵦ ≤ (1 : ℝ) / 2
-
-/-- **Statement of the Motzkin–Ralston–Selfridge upper bound $5/12$ for the minimum-overlap
-constant.** The proposition that the continuous Erdős minimum-overlap constant $C_{1b}$
-satisfies $C_{1b} \le 5/12$.
-
-Source: Motzkin--Ralston--Selfridge 1956; Optimization Problems, Constant 1b. -/
-def upperBound_MRS1956_fiveTwelfths : Prop := C₁ᵦ ≤ (5 : ℝ) / 12
 
 /-- **Statement of Haugland's unpublished 1993 upper bound for the minimum-overlap constant.**
 The proposition that the continuous Erdős minimum-overlap constant $C_{1b}$ satisfies
@@ -151,12 +145,6 @@ Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 4/9$.
 Source: Erdős, unpublished, recorded by Optimization Problems 1b. -/
 public theorem_wanted upperBound_Erdos_unpublished_fourNinths_holds :
   upperBound_Erdos_unpublished_fourNinths
-
-/-- **Motzkin–Ralston–Selfridge upper bound $5/12$ for the minimum-overlap constant.** The
-continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 5/12$.
-
-Source: Motzkin--Ralston--Selfridge 1956 and Optimization Problems 1b. -/
-public theorem_wanted upperBound_MRS1956_fiveTwelfths_holds : upperBound_MRS1956_fiveTwelfths
 
 /-- **Motzkin–Ralston–Selfridge upper bound $0.4$ for the minimum-overlap constant.** The
 continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.4$.
