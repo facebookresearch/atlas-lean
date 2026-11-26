@@ -45,8 +45,9 @@ Source: CLRS (4th ed.), Section 7.4.
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- The randomized-quicksort expected-comparison recurrence:
-`E 0 = 0` and `E (n + 1) = n + (2 / (n + 1)) * ∑_{k ≤ n} E k`
+/-- The pair `(E n, S n)`, `S n = ∑_{k ≤ n} E k`, from base `(0, 0)` by
+`(e, S n + e)` with `e = n + 2 S n / (n + 1)`; its first component is the randomized-quicksort
+expected-comparison recurrence `E 0 = 0` and `E (n + 1) = n + (2 / (n + 1)) * ∑_{k ≤ n} E k`
 (the pivot is uniform, and after splitting, the two subproblems
 have sizes `k` and `n - k`; summing the recurrence solution
 against the pair-count identity gives the closed form below). -/

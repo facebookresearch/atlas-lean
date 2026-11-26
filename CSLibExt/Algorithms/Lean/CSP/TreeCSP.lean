@@ -177,9 +177,9 @@ theorem isSolution_dac (hedge : ∀ x p, parent x = some p → (p, x) ∈ P.arcs
   isSolution_dacPass hedge _ hσ
 
 omit [DecidableEq D] in
-/-- The DAC pass invariant on the list `ys` of variables still to process: no listed variable
-has an unlisted (processed) parent, and the arc from each processed variable's parent is
-consistent. -/
+/-- The DAC pass makes every parent-to-child arc consistent, given no self-parent and, for the
+list `ys` still to process: no earlier listed variable is the parent of a later one, every parent
+of a listed variable is listed, and arcs into unlisted children are already consistent. -/
 theorem dirArcConsistent_dacPass (hirr : ∀ x, parent x ≠ some x) :
     ∀ (ys : List X) (dom : X → Finset D),
       ys.Pairwise (fun a b => parent b ≠ some a) →

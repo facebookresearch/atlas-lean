@@ -1,4 +1,4 @@
-# Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered trees
+# Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered uniform trees
 
 ## Game trees whose leaves are variables
 
@@ -40,4 +40,4 @@
 - [The alpha-beta query algorithm agrees with alpha-beta](alpha-beta-query-spec.md)
 - [The query scan over children agrees with alpha-beta](alpha-beta-query-list-spec.md)
 - [Run alpha Beta Query bot top](run-alpha-beta-query-bot-top.md)
-- [Alpha-beta is optimal on perfectly ordered trees](alpha-beta-query-optimal.md)
+- [Alpha-beta is query-optimal on perfectly ordered uniform trees](alpha-beta-query-optimal.md)

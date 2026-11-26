@@ -1,3 +1,3 @@
-# Tree ancestry does not depend on the order of the parent list
+# Reversing the parent list preserves tree ancestry
 
-Tree ancestry given by a list of parent edges does not depend on the order of the list: reversing it gives the same ancestor relation.
+For a list $l$ of parent edges and vertices $a$, $d$: $a$ is a tree ancestor of $d$ for the reversed list exactly when it is for $l$, $\mathrm{TreeAncestor}(l^{\mathrm{rev}}, a, d) \iff \mathrm{TreeAncestor}(l, a, d)$.

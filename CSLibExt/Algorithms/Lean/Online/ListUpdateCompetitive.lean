@@ -39,10 +39,10 @@ def traceCost {α : Type*} [DecidableEq α] (M : List α) :
   | [] => 0
   | (x, L') :: τ => stepCost M x L' + traceCost L' τ
 
-/-- List update as an online problem over a fixed duplicate-free item
-list `M`: legal requests are items of `M`; answers are the list after
-serving and rearranging, always a permutation of `M`; cost is access plus
-paid exchanges with free forward moves of the accessed item. -/
+/-- List update as an online problem over a fixed item list `M` (any list; the lower bound
+assumes it nonempty and duplicate-free): legal requests are items of `M`; answers are the list
+after serving and rearranging, always a permutation of `M`; cost is access plus paid exchanges
+with free forward moves of the accessed item. -/
 def listUpdateProblem {α : Type*} [DecidableEq α] (M : List α) :
     OnlineProblem α (List α) where
   legal := fun σ => ∀ x ∈ σ, x ∈ M

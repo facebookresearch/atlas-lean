@@ -73,8 +73,8 @@ theorem run_map_fst {Req Ans : Type*} (A : Strategy Req Ans) (σ : List Req) :
     (run A σ).map Prod.fst = σ := by
   exact runFrom_map_fst A [] σ
 
-/-- Causality: the run on a request prefix is the corresponding prefix of
-the run on any extension. -/
+/-- The run from history `past` on `σ ++ τ` is the run on `σ` followed by the run from
+`past ++ σ` on `τ`; in particular runs are causal. -/
 theorem runFrom_append {Req Ans : Type*} (A : Strategy Req Ans)
     (past σ τ : List Req) :
     runFrom A past (σ ++ τ)
@@ -530,7 +530,8 @@ theorem exists_optimal_of_natCost {Req Ans : Type*} (P : OnlineProblem Req Ans)
 /-- A request-preserving simulation of `X` by `Y`: the same request type
 and sequence throughout. `F` turns `Y`-strategies into `X`-strategies;
 `G` turns feasible `X`-traces into feasible `Y`-traces on the same input;
-the two cost laws bound both translations. -/
+with nonnegative constants, `ALG_X (F A) ≤ a * ALG_Y A + p` on legal `X` inputs and
+`cost_Y (G σ τ) ≤ d * cost_X τ + q` on feasible `X` traces over `σ`. -/
 structure Simulation {Req AnsX AnsY : Type*} (X : OnlineProblem Req AnsX)
     (Y : OnlineProblem Req AnsY) where
   F : Strategy Req AnsY → Strategy Req AnsX

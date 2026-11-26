@@ -8,7 +8,7 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [Alpha–beta pruning](alpha-beta-pruning/README.md)
 - [Backtracking search with forward checking: soundness and completeness](backtracking-search-with-forward-checking-soundn/README.md)
 - [Expectimax and the finite-horizon MDP value](expectimax-and-the-finite-horizon-mdp-value/README.md)
-- [Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered trees](knuth-and-moore-s-lower-bound-alpha-beta-is-opti/README.md)
+- [Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered uniform trees](knuth-and-moore-s-lower-bound-alpha-beta-is-opti/README.md)
 - [Value iteration](value-iteration/README.md)
 - [Policy iteration](policy-iteration/README.md)
 - [Optimality of stationary policies](optimality-of-stationary-policies/README.md)

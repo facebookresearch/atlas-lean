@@ -1,5 +1,3 @@
 # Reports Spec iff match At
 
-The specified reports in the shared string-matching semantics: a nonempty pattern `p` is
-reported ending at position `i` iff it fits before `i + 1` and matches at the offset
-`i + 1 - p.length` in the sense of `MatchAt`.
+For a pattern $p$ in the dictionary with $p \ne [\,]$ and a position $i < |\mathrm{text}|$, $p$ is reported ending at position $i$ if and only if $|p| \le i + 1$ and $p$ matches the text at offset $i + 1 - |p|$ in the shared string-matching sense.

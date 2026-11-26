@@ -1,4 +1,3 @@
 # Forward Check
 
-Forward checking after `x = a`: `x` keeps only `a`; a variable joined to `x` by an arc
-keeps the values compatible with `x = a`; any other variable keeps its domain unchanged.
+Forward checking after assigning $x = a$: the domain of $x$ is replaced by $\{a\}$; the domain of a different variable $y$ joined to $x$ by an arc in either direction is filtered to the values compatible with $x = a$ on those arcs; the domain of any other variable is unchanged.

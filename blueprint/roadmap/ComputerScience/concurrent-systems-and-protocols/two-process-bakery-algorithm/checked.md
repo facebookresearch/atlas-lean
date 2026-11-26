@@ -1,3 +1,3 @@
 # Checked
 
-Program counters after the `choosing` check.
+The program counters after the `choosing` check: exactly `waitNumber` and `critical`.

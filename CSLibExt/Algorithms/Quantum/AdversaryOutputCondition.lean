@@ -77,8 +77,8 @@ private theorem aux_sum_le (P Q a b ε : ℝ) (hP0 : 0 ≤ P)
         Real.sqrt_le_sqrt hfin
     _ = 2 * Real.sqrt (ε * (1 - ε)) := Real.sqrt_sq (by positivity)
 
-/-- For inputs with different outputs, only the two cross terms between the
-output components survive. -/
+/-- For inputs with different outputs, only the terms with matching component labels survive:
+`⟪ψ x, ψ y⟫ = ⟪u (f x) x, u (f x) y⟫ + ⟪u (f y) x, u (f y) y⟫`. -/
 theorem inner_eq_cross_terms {X E : Type*}
     [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (f : X → Bool) (ψ : X → E) (u : Bool → X → E)

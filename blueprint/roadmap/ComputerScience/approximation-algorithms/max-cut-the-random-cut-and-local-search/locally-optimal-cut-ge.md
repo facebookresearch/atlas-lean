@@ -1,5 +1,3 @@
 # Locally optimal cut ge
 
-Local-search optimality gives a `1 / 2`-approximation: if no
-single-vertex flip increases the cut, then the cut has at least
-half the edges.
+For a finite simple, unweighted graph $G$, each unordered edge counted once, and a Boolean assignment $x$: if no single-vertex flip increases the number of cut edges, then $x$ cuts at least half of the edges, $|E| \le 2 \cdot \mathrm{cut}(x)$. This gives a $1/2$-approximation for local search.

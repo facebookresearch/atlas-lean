@@ -1,3 +1,5 @@
 # Snell computed abs le
 
-Let `0 ≤ p ≤ 1`, `disc > 0` and `ε ≥ 0`. Any computed recursion `V` with exact terminal values (`V 0 = g`) whose every update deviates by at most `ε` from the exact Snell update `max (g s) (disc · (p V(true :: s) + (1 - p) V(false :: s)))` stays within `ε ∑_{j < N} disc^j` of the Snell envelope `snell p disc g` after `N` steps, at every node and in particular at the root.
+Let $0 \le p \le 1$, $\mathrm{disc} > 0$ and $\varepsilon \ge 0$, and let $V(k, s)$ be a computed recursion over the number $k$ of steps and the path $s$, with exact terminal values $V(0, \cdot) = g$, such that at every $k$ and $s$
+$$\bigl| V(k+1, s) - \max\bigl(g(s),\ \mathrm{disc} \cdot [\,p\, V(k, \mathrm{true} :: s) + (1 - p)\, V(k, \mathrm{false} :: s)\,]\bigr) \bigr| \le \varepsilon,$$
+the children being the computed values at step $k$, not exact envelope values. Then after $N$ steps, $|\mathrm{snell}(N, s) - V(N, s)| \le \varepsilon \sum_{j < N} \mathrm{disc}^j$ at every node, in particular at the root.

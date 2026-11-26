@@ -1,6 +1,3 @@
-# Alpha-beta is optimal on perfectly ordered trees
+# Alpha-beta is query-optimal on perfectly ordered uniform trees
 
-**Alpha-beta is optimal on perfectly ordered trees** (Knuth and Moore 1975). On a uniform shape
-with distinct leaf variables, if the input `f` makes the tree perfectly ordered with a value
-strictly between `⊥` and `⊤`, alpha-beta with the full window makes no more queries on `f` than
-any correct query algorithm reads distinct leaves on `f`.
+**Alpha-beta is query-optimal on perfectly ordered uniform trees** (Knuth and Moore 1975). Let the tree shape be uniform (every inner node has the same number of children and every leaf is at the same depth) with distinct leaf variables, and let the input $f$ make the tree perfectly ordered (at every inner node the first child attains the node's minimax value) with root value strictly between $\bot$ and $\top$. Then alpha-beta with the full window makes no more queries on $f$ than any query algorithm that computes the minimax value correctly on every valuation reads distinct leaves on $f$. Uniformity is needed: with ties, a nonuniform tree can be perfectly ordered in two orders that visit different numbers of leaves.

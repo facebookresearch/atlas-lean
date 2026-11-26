@@ -1093,7 +1093,7 @@
   "CSLibExt/Algorithms/Lean/GameTree/AlphaBeta": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Alpha–beta pruning"},
   "CSLibExt/Algorithms/Lean/GameTree/Expectimax": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Expectimax and the finite-horizon MDP value"},
   "CSLibExt/Algorithms/Lean/GameTree/KnuthMoore": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Alpha-beta on a perfectly ordered uniform tree (Knuth and Moore)"},
-  "CSLibExt/Algorithms/Lean/GameTree/KnuthMooreLowerBound": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered trees"},
+  "CSLibExt/Algorithms/Lean/GameTree/KnuthMooreLowerBound": {"to": "ComputerScience/heuristic-search-and-planning", "title": "Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered uniform trees"},
   "CSLibExt/Algorithms/Lean/Geometry/AnySegmentsIntersect": {"to": "ComputerScience/computational-geometry", "title": "Sweep-line segment intersection detection"},
   "CSLibExt/Algorithms/Lean/Geometry/ClosestPair": {"to": "ComputerScience/computational-geometry", "title": "Closest pair of points problem"},
   "CSLibExt/Algorithms/Lean/Geometry/ClosestPairTime": {"to": "ComputerScience/computational-geometry", "title": "Closest pair of points problem"},

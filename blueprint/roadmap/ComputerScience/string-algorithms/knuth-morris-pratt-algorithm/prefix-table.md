@@ -1,3 +1,3 @@
 # The KMP prefix table
 
-The prefix table of the Knuth–Morris–Pratt algorithm: an array `t = [(x₀, n₀), (x₁, n₁), (x₂, n₂), …]` where each `nᵢ` is the length of the longest proper prefix of `[x₀, x₁, …, xᵢ]` that is also a suffix of it; every stored length satisfies `nᵢ ≤ i`.
+The prefix-table representation used by the Knuth–Morris–Pratt algorithm: an array $t = [(x_0, n_0), (x_1, n_1), \dots]$ of symbols paired with fallback lengths, subject only to $n_i \le i$ for every entry. The representation does not require $n_i$ to be a longest border: $[(a, 0), (a, 0)]$ is a valid table although $aa$ has a proper border of length $1$. For the table built from a pattern, each $n_i$ is the length of the longest proper prefix of $x_0 \dots x_i$ that is also a suffix of it; see [the failure-function specification](mk-prefix-table-failure-spec.md).

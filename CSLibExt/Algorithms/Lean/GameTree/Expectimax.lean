@@ -70,7 +70,7 @@ inductive ChanceTree.WellFormed : ChanceTree → Prop where
       WellFormed (.affine c γ t)
 
 /-- Trees with no opponent node: leaves, max and chance nodes, and affine
-edges. These are the trees an ordinary MDP unfolding can generate. -/
+edges. Every MDP unfolding has this property, but not every such tree is an unfolding. -/
 inductive ChanceTree.IsMaxChance : ChanceTree → Prop where
   | leaf (u : ℝ) : IsMaxChance (.leaf u)
   | maxNode {ts : List ChanceTree}

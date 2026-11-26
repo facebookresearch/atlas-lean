@@ -543,10 +543,10 @@ theorem run_alphaBetaQuery_bot_top (f : ι → α) (p : Bool) (s : GameTree ι) 
     (alphaBetaQuery p ⊥ ⊤ s).run f = minimax p (s.map f) := by
   rw [run_alphaBetaQuery, alphaBeta_bot_top]
 
-/-- **Alpha-beta is optimal on perfectly ordered trees** (Knuth and Moore 1975). On a uniform shape
-with distinct leaf variables, if the input `f` makes the tree perfectly ordered with a value
-strictly between `⊥` and `⊤`, alpha-beta with the full window makes no more queries on `f` than
-any correct query algorithm reads distinct leaves on `f`. -/
+/-- **Alpha-beta is optimal on perfectly ordered uniform trees** (Knuth and Moore 1975). On a
+uniform shape with distinct leaf variables, if the input `f` makes the tree perfectly ordered with
+a value strictly between `⊥` and `⊤`, alpha-beta with the full window makes no more queries on `f`
+than any correct query algorithm reads distinct leaves on `f`. -/
 theorem alphaBetaQuery_optimal [DecidableEq ι] {k d : ℕ} {p : Bool} {s : GameTree ι}
     (hu : Uniform k d s) (hs : (leafValues s).Nodup) {f : ι → α}
     (hpo : PerfectlyOrdered p (s.map f)) (hbot : ⊥ < minimax p (s.map f))

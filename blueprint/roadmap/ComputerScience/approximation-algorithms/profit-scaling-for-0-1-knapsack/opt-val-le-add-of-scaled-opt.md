@@ -1,7 +1,3 @@
 # Opt Val le add of scaled Opt
 
-Profit scaling loses at most `n * K`: if no feasible set has a larger
-rounded profit (`p i / K`, natural-number division, `K ≥ 1`) than `S`, as for a
-feasible set `S` that is optimal for the rounded profits, then the true optimum
-exceeds the true profit of `S` by at most `n * K`. The bound does not need `S`
-itself to be feasible.
+For $n$ items with natural weights $w$ and profits $p$, a capacity $W$ and $K \ge 1$, write $R(S) = \sum_{i \in S} \lfloor p_i / K \rfloor$, rounding each item separately. If $R(T) \le R(S)$ for every feasible $T$, then the optimum satisfies $\mathrm{OPT} \le P(S) + nK$. The theorem does not require $S$ to be feasible, nor $\mathrm{OPT}$ to exceed $P(S)$.
