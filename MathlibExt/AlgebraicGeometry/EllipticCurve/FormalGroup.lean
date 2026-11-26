@@ -61,56 +61,22 @@ one-dimensional formal group law over every commutative ring, and bundles it as 
 
 ## Proof
 
-Over a domain on which the curve is elliptic, a power series `t` with zero constant coefficient
-gives the point `(t / w(t), -1 / w(t))` of the curve over the fraction field of a power series
-ring. These points add as their parameters do under `F`, and the map is injective, so the group
-law of `WeierstrassCurve.Affine.Point` gives associativity and commutativity. The general case
-follows by base change from the curve over `ℤ[A₁, A₂, A₃, A₄, A₆]` whose coefficients are the
-variables.
+The proof first works over a domain on which the curve is elliptic. There a power series `t` with
+zero constant coefficient and `w(t) ≠ 0` (over a domain, exactly when `t ≠ 0`) gives the affine
+point `(t / w(t), -1 / w(t))` of the curve over the fraction field of a power series ring; the
+parameter `t = 0` stands for the point at infinity, which has no affine coordinates, and every
+parameter used in the proof is nonzero. These points add as their parameters do under `F`, and
+`t ↦ (t / w(t), -1 / w(t))` is injective, so the group law of `WeierstrassCurve.Affine.Point`
+gives associativity and commutativity.
+
+Ellipticity is used only in that step, for the curve over `ℤ[A₁, A₂, A₃, A₄, A₆]` whose
+coefficients are the variables: it is elliptic over the fraction field of that ring. Base change
+from that curve then gives `formalGroupLaw_assoc` and `formalGroupLaw_comm` for every Weierstrass
+curve over every commutative ring, with no ellipticity or domain hypothesis.
 -/
 
 set_option autoImplicit false
 set_option linter.unusedSectionVars false
-
-namespace MvPowerSeries
-
-variable {R : Type*} [CommRing R]
-
-theorem subst_X_pair_eq_self (h : MvPowerSeries (Fin 2) R) :
-    MvPowerSeries.subst
-      ![(MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R), MvPowerSeries.X 1] h = h := by
-  have hXX : MvPowerSeries.HasSubst
-      (![(MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R), MvPowerSeries.X 1]) :=
-    MvPowerSeries.hasSubst_of_constantCoeff_zero
-      (fun i => by fin_cases i <;> exact MvPowerSeries.constantCoeff_X _)
-  ext d
-  rw [MvPowerSeries.coeff_subst hXX]
-  have hXeq : (![(MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R),
-      MvPowerSeries.X 1]) = MvPowerSeries.X := by
-    funext i; fin_cases i <;> rfl
-  simp only [hXeq]
-  have hprod : ∀ e : Fin 2 →₀ ℕ,
-      (e.prod fun i k => (MvPowerSeries.X i : MvPowerSeries (Fin 2) R) ^ k) =
-      MvPowerSeries.monomial e (1 : R) := fun e => by
-    have hde : e = Finsupp.single 0 (e 0) + Finsupp.single 1 (e 1) := by
-      ext i; fin_cases i <;> simp
-    conv_lhs => rw [hde]
-    rw [Finsupp.prod_add_index (by intro i _; exact pow_zero _)
-        (by intro i _ a b; exact pow_add _ a b)]
-    rw [show (Finsupp.single (0 : Fin 2) (e 0)).prod
-          (fun i k => (MvPowerSeries.X i : MvPowerSeries (Fin 2) R) ^ k)
-        = (MvPowerSeries.X 0) ^ (e 0) from Finsupp.prod_single_index (pow_zero _),
-      show (Finsupp.single (1 : Fin 2) (e 1)).prod
-          (fun i k => (MvPowerSeries.X i : MvPowerSeries (Fin 2) R) ^ k)
-        = (MvPowerSeries.X 1) ^ (e 1) from Finsupp.prod_single_index (pow_zero _),
-      MvPowerSeries.X_pow_eq, MvPowerSeries.X_pow_eq,
-      MvPowerSeries.monomial_mul_monomial, one_mul, ← hde]
-  rw [finsum_eq_single _ d]
-  · rw [hprod, MvPowerSeries.coeff_monomial, ite_eq_left rfl, smul_eq_mul, mul_one]
-  · intro e he
-    rw [hprod, MvPowerSeries.coeff_monomial, ite_eq_right (Ne.symm he), smul_zero]
-
-end MvPowerSeries
 
 noncomputable section
 
@@ -394,30 +360,9 @@ theorem kwB_Rb {σ : Type*} {a b : MvPowerSeries σ R}
 theorem kwB_constantCoeff_subst_pair {σ : Type*} {a b : MvPowerSeries σ R}
     (ha : MvPowerSeries.constantCoeff a = 0) (hb : MvPowerSeries.constantCoeff b = 0)
     {g : MvPowerSeries (Fin 2) R} (hg : MvPowerSeries.constantCoeff g = 0) :
-    MvPowerSeries.constantCoeff (MvPowerSeries.subst ![a, b] g) = 0 := by
-  have hab : MvPowerSeries.HasSubst (![a, b] : Fin 2 → MvPowerSeries σ R) := kwB_hasSubst_pair ha hb
-  have hv0 : ∀ s : Fin 2,
-      MvPowerSeries.constantCoeff ((![a, b] : Fin 2 → MvPowerSeries σ R) s) = 0 := by
-    rw [Fin.forall_fin_two]
-    refine ⟨?_, ?_⟩ <;>
-      simp [Matrix.cons_val_zero, Matrix.cons_val_one, ha, hb]
-  rw [MvPowerSeries.constantCoeff_subst hab]
-  have hterm : ∀ d : Fin 2 →₀ ℕ,
-      (MvPowerSeries.coeff d) g • MvPowerSeries.constantCoeff
-        (d.prod fun s e => (![a, b] : Fin 2 → MvPowerSeries σ R) s ^ e) = 0 := by
-    intro d
-    by_cases hd : d = 0
-    · subst hd
-      rw [Finsupp.prod_zero_index, map_one, smul_eq_mul, mul_one,
-        MvPowerSeries.coeff_zero_eq_constantCoeff, hg]
-    · have hprod : MvPowerSeries.constantCoeff
-          (d.prod fun s e => (![a, b] : Fin 2 → MvPowerSeries σ R) s ^ e) = 0 := by
-        rw [Finsupp.prod, map_prod]
-        obtain ⟨s, hs⟩ := Finsupp.support_nonempty_iff.mpr hd
-        apply Finset.prod_eq_zero hs
-        rw [map_pow, hv0 s, zero_pow (Finsupp.mem_support_iff.mp hs)]
-      rw [hprod, smul_zero]
-  rw [finsum_congr hterm, finsum_zero]
+    MvPowerSeries.constantCoeff (MvPowerSeries.subst ![a, b] g) = 0 :=
+  MvPowerSeries.constantCoeff_subst_eq_zero (kwB_hasSubst_pair ha hb)
+    (fun s => by fin_cases s <;> simpa) hg
 
 theorem kwB_Rc {σ : Type*} {a b : MvPowerSeries σ R}
     (ha : MvPowerSeries.constantCoeff a = 0) (hb : MvPowerSeries.constantCoeff b = 0)
@@ -1550,14 +1495,17 @@ theorem formalGroupLaw_comm_of_isElliptic [W.IsElliptic] :
   have nX1 : (MvPowerSeries.X (1 : Fin 2) : MvPowerSeries (Fin 2) R) ≠ 0 := fun h => by
     simpa [MvPowerSeries.coeff_X] using
       congrArg (MvPowerSeries.coeff (Finsupp.single (1 : Fin 2) 1)) h
+  have hXX : ![(MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R), MvPowerSeries.X 1] =
+      MvPowerSeries.X := by
+    funext i; fin_cases i <;> rfl
   have hF01 : MvPowerSeries.subst
       ![(MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R), MvPowerSeries.X 1]
-      W.formalGroupLaw = W.formalGroupLaw :=
-    MvPowerSeries.subst_X_pair_eq_self W.formalGroupLaw
+      W.formalGroupLaw = W.formalGroupLaw := by
+    rw [hXX]; exact congrFun MvPowerSeries.subst_self _
   have hZ01 : MvPowerSeries.subst
       ![(MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R), MvPowerSeries.X 1]
-      W.fgZ3 = W.fgZ3 :=
-    MvPowerSeries.subst_X_pair_eq_self W.fgZ3
+      W.fgZ3 = W.fgZ3 := by
+    rw [hXX]; exact congrFun MvPowerSeries.subst_self _
   have nF : W.formalGroupLaw ≠ 0 := fun h => by
     simpa [W.coeff_zero_formalGroupLaw] using
       congrArg (MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) 1)) h
@@ -1590,8 +1538,8 @@ theorem formalGroupLaw_comm_of_isElliptic [W.IsElliptic] :
           ((![(MvPowerSeries.X (1 : Fin 2) : MvPowerSeries (Fin 2) R), MvPowerSeries.X 0]) s))
           = ![(MvPowerSeries.X (0 : Fin 2) : MvPowerSeries (Fin 2) R), MvPowerSeries.X 1] := by
         funext s; fin_cases s <;> simp [MvPowerSeries.subst_X hSwapSub]
-      rw [heq]
-      exact MvPowerSeries.subst_X_pair_eq_self h
+      rw [heq, hXX]
+      exact congrFun MvPowerSeries.subst_self h
     calc f = MvPowerSeries.subst _ (MvPowerSeries.subst _ f) := (hid f).symm
       _ = MvPowerSeries.subst _ (MvPowerSeries.subst _ g) := by rw [hfg]
       _ = g := hid g
@@ -1826,7 +1774,7 @@ end Universal
 
 variable {R S : Type*} [CommRing R] [CommRing S] (W : WeierstrassCurve R)
 
-/-- Associativity of the formal group law of a Weierstrass curve over any commutative ring:
+/-- **Associativity of the formal group law of a Weierstrass curve.** Over any commutative ring,
 `F(F(X, Y), Z) = F(X, F(Y, Z))`. -/
 public theorem formalGroupLaw_assoc :
     MvPowerSeries.subst
@@ -1847,7 +1795,7 @@ public theorem formalGroupLaw_assoc :
   rw [hF] at h
   exact h
 
-/-- Commutativity of the formal group law of a Weierstrass curve over any commutative ring:
+/-- **Commutativity of the formal group law of a Weierstrass curve.** Over any commutative ring,
 `F(Y, X) = F(X, Y)`. -/
 public theorem formalGroupLaw_comm :
     MvPowerSeries.subst ![(MvPowerSeries.X (1 : Fin 2) : MvPowerSeries (Fin 2) R),
@@ -1863,8 +1811,8 @@ public theorem formalGroupLaw_comm :
   rw [map_universalCurve] at h
   exact h.symm
 
-/-- The formal group of a Weierstrass curve: `formalGroupLaw` bundled as a one-dimensional
-formal group law, over any commutative ring. -/
+/-- **Formal group of a Weierstrass curve.** `formalGroupLaw` bundled as a one-dimensional formal
+group law (`FormalGroup R`), over any commutative ring. -/
 @[expose] public noncomputable def formalGroup : FormalGroup R where
   toPowerSeries := W.formalGroupLaw
   zero_constantCoeff := W.constantCoeff_formalGroupLaw

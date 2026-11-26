@@ -165,9 +165,10 @@ theorem X_pow_succ_dvd_wIter_sub_wIter {k m : ℕ} (h : k ≤ m) :
       exact dvd_add
         (dvd_trans (pow_dvd_pow X (by omega)) (W.X_pow_succ_dvd_wIter_succ_sub m)) ih
 
-/-- The series `w(z)` attached to a Weierstrass curve, the unique series
-with zero constant coefficient satisfying the Weierstrass equation in
-the form `w = z ^ 3 + a₁ z w + a₂ z ^ 2 w + a₃ w ^ 2 + a₄ z w ^ 2 + a₆ w ^ 3`. -/
+/-- **Power series w(z) of a Weierstrass curve.** The unique power series `w(z)` with zero
+constant coefficient satisfying
+`w = z ^ 3 + a₁ z w + a₂ z ^ 2 w + a₃ w ^ 2 + a₄ z w ^ 2 + a₆ w ^ 3`, the Weierstrass equation
+in the coordinates `z = -x / y` and `w = -1 / y`. -/
 def formalW : R⟦X⟧ := PowerSeries.mk fun n => coeff n (W.wIter n)
 
 theorem coeff_formalW (n : ℕ) : coeff n W.formalW = coeff n (W.wIter n) := coeff_mk _ _
@@ -580,8 +581,8 @@ noncomputable def fgZ3 : MvPowerSeries (Fin 2) R :=
   - MvPowerSeries.X (0 : Fin 2) - MvPowerSeries.X (1 : Fin 2)
     + W.fgZ3Num * MvPowerSeries.invOfUnit W.fgZ3Denom (1 : Rˣ)
 
-/-- The formal group law `F(z₁, z₂)` of a Weierstrass curve: `fgZ3` is the third point
-where the chord through `(z₁, w(z₁))` and `(z₂, w(z₂))` meets the curve, and
+/-- **Formal group law of a Weierstrass curve.** The power series `F(z₁, z₂)`: `fgZ3` is the
+third point where the chord through `(z₁, w(z₁))` and `(z₂, w(z₂))` meets the curve, and
 `F(z₁, z₂)` is its image under the formal inverse `fgInv`. -/
 noncomputable def formalGroupLaw : MvPowerSeries (Fin 2) R :=
   PowerSeries.subst W.fgZ3 W.fgInv
@@ -735,15 +736,8 @@ theorem three_le_order_fgNu : (3 : ℕ∞) ≤ W.fgNu.order := by
       MvPowerSeries.coeff_of_lt_order (lt_of_lt_of_le hd hSX), sub_zero]
 
 theorem eq_zero_of_degree_lt_one (e : Fin 2 →₀ ℕ) (he : (↑(Finsupp.degree e) : ℕ∞) < 1) :
-    e = 0 := by
-  have h : e 0 + e 1 = 0 := by
-    have h1 : Finsupp.degree e < 1 := by exact_mod_cast he
-    rw [degree_fin2] at h1; omega
-  have h0 : e 0 = 0 := by omega
-  have h1 : e 1 = 0 := by omega
-  ext j; fin_cases j
-  · simpa using h0
-  · simpa using h1
+    e = 0 :=
+  (Finsupp.degree_eq_zero_iff e).mp (Nat.lt_one_iff.mp (by exact_mod_cast he))
 
 theorem coeff_sq_mul_invD {Num : MvPowerSeries (Fin 2) R} (hNum : (2 : ℕ∞) ≤ Num.order)
     (i : Fin 2) :
