@@ -13327,6 +13327,7 @@
   "MathlibExt/NumberTheory/PrimeDvdChoose": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/PrimeDvdChoosePowMulPowMul": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/PrimeDvdPowAddOfDvdRadicalCoeffsGcd": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
+  "MathlibExt/NumberTheory/PrimeDvdOfDvdRadicalCoeffsGcd": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/PrimeGCDCubeSplit": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Consecutive powerful numbers"},
   "MathlibExt/NumberTheory/PrimeGap": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Prime gaps"},
   "MathlibExt/NumberTheory/PrimeGapLiminf": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Prime gaps"},
