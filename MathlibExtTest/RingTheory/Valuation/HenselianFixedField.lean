@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.RingTheory.Valuation.HenselianFixedField
+import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 
 @[expose] public section
 
@@ -21,12 +22,27 @@ private theorem exactSource
     HenselianLocalRing ↥(A.toSubring ⊓ (IntermediateField.fixedField I).toSubring) :=
   ValuationSubring.henselianLocalRing_inf_fixedField_of_le_inertiaSubgroupIn A I hI
 
+-- The ring in the conclusion consists of the elements of `A` fixed by every element of `I`.
+example {K L : Type u} [Field K] [Field L] [Algebra K L] (A : ValuationSubring L)
+    (I : Subgroup (L ≃ₐ[K] L)) (x : L) :
+    x ∈ A.toSubring ⊓ (IntermediateField.fixedField I).toSubring ↔
+      x ∈ A ∧ ∀ σ ∈ I, σ x = x := by
+  rw [Subring.mem_inf]
+  exact and_congr Iff.rfl (IntermediateField.mem_fixedField_iff I x)
+
 -- Higher-universe consumer: the fields live in `Type 1`.
 example
     {K L : Type 1} [Field K] [Field L] [Algebra K L] [IsAlgClosed L] (A : ValuationSubring L)
     (I : Subgroup (L ≃ₐ[K] L)) (hI : I ≤ A.inertiaSubgroupIn K) :
     HenselianLocalRing ↥(A.toSubring ⊓ (IntermediateField.fixedField I).toSubring) :=
   ValuationSubring.henselianLocalRing_inf_fixedField_of_le_inertiaSubgroupIn A I hI
+
+-- Concrete instance: `ℚ̄ / ℚ`, with `I` the whole inertia subgroup of `A`, so the ring is the
+-- valuation ring of `A` on the inertia field.
+example (A : ValuationSubring (AlgebraicClosure ℚ)) :
+    HenselianLocalRing ↥(A.toSubring ⊓
+      (IntermediateField.fixedField (A.inertiaSubgroupIn ℚ)).toSubring) :=
+  ValuationSubring.henselianLocalRing_inf_fixedField_of_le_inertiaSubgroupIn A _ le_rfl
 
 -- Boundary: for the trivial subgroup the fixed field is all of `L`, so the
 -- intersection is the valuation subring itself, which is Henselian.
