@@ -46,6 +46,7 @@ Jacobi symbol $+1$.
 - [Correctness of Goldwasser–Micali encryption of one bit](decrypt-bit-encrypt-bit.md)
 - [The Goldwasser–Micali scheme for one-bit messages](scheme.md)
 - [Correctness of the Goldwasser–Micali scheme](scheme-correct.md)
+- [Quadratic Residuosity, Blum Integers and Modulus Generation](quadratic-residuosity-and-modulus-generation/README.md)
 
 ## Security from the residuosity experiment, per adversary
 

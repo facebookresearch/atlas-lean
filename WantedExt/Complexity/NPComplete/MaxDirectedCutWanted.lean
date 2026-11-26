@@ -43,7 +43,7 @@ This is the decision version of MAXIMUM DIRECTED CUT of Crescenzi and Kann, the 
 Max-di-Cut of Håstad (Definition 2.7). Håstad (Theorem 8.3) proves that approximating Max-di-Cut
 within a constant factor is NP-hard; the gap reduction behind it is a polynomial-time many-one
 reduction to this decision problem. Hardness also follows from SIMPLE MAX CUT (Garey, Johnson
-and Stockmeyer, 1976; `MaxCutWanted`): replacing every edge `{u, v}` of an undirected graph by
+and Stockmeyer, 1976; `MaxCutDefs`): replacing every edge `{u, v}` of an undirected graph by
 the two arcs `(u, v)` and `(v, u)` gives a loop-free digraph in which the arcs from `V₁` to `V₂`
 are exactly one per edge between `V₁` and `V₂`. Membership in NP: the side of every endpoint of
 an arc is a certificate; vertices on no arc do not affect the count, so the certificate stays
