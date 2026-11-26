@@ -53,6 +53,21 @@ example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 8 := by
   simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
     11 3 0 (by decide) (by decide)
 
+-- A concrete instance with `k = 2`, `p₁ = 3`, `p₂ = 5` and `a = 1`.
+example : ¬ IsNearFkPerfect 2 (3 ^ 1 * 5) :=
+  not_isNearFkPerfect_prime_pow_mul 2 3 5 1 (by decide) (by decide) (by decide)
+    (⟨1, rfl⟩ : Odd (3 : ℕ)) (⟨2, rfl⟩ : Odd (5 : ℕ)) (by decide)
+
+-- A concrete instance with `k = 3`, `p₁ = 5`, `p₂ = 7` and `a = 2`.
+example : ¬ IsNearFkPerfect 3 (5 ^ 2 * 7) :=
+  not_isNearFkPerfect_prime_pow_mul 3 5 7 2 (by decide) (by decide) (by decide)
+    (⟨2, rfl⟩ : Odd (5 : ℕ)) (⟨3, rfl⟩ : Odd (7 : ℕ)) (by decide)
+
+-- Fixing the primes gives a corollary for every `k > 1` and every exponent.
+example (k a : ℕ) (hk : 1 < k) : ¬ IsNearFkPerfect k (3 ^ a * 5) :=
+  not_isNearFkPerfect_prime_pow_mul k 3 5 a hk (by decide) (by decide)
+    (⟨1, rfl⟩ : Odd (3 : ℕ)) (⟨2, rfl⟩ : Odd (5 : ℕ)) (by decide)
+
 -- A counterexample to the printed conclusion `a = k` of Theorem 4:
 -- σ₃(4) = 73 = 4³ + 1³ + 2 * 4, with a = 2 ≠ 3 = k.
 example : KLNearPerfectWith 3 2 (2 ^ 2) 1 := by
