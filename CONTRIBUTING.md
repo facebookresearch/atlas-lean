@@ -71,6 +71,17 @@ one, and people and agents follow the same steps:
    that others see the task is taken. Mark it ready for review when it is done,
    or close it if you stop.
 
+Proving a task needs a built checkout. `lake exe cache get` fetches only
+Mathlib's build, and ATLAS's own modules take hours to build from source, so
+start from CI's build of `main` instead. It needs a `gh` login, `zstd` and
+about 15 GB free:
+
+```sh
+lake exe cache get    # Mathlib
+scripts/get_build.sh  # ATLAS, from CI's build of the nearest commit of main
+lake build            # what changed since
+```
+
 ### Which areas come first
 
 [`blueprint/priorities.json`](blueprint/priorities.json) weighs the areas of
