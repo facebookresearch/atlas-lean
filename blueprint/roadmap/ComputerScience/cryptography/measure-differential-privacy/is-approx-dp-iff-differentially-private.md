@@ -1,0 +1,3 @@
+# Discrete approximate differential privacy as a measure condition
+
+Let $\Omega$ be a countable measurable space with measurable singletons, $M$ a mechanism with values in probability mass functions on $\Omega$, $\mathrm{adj}$ a relation on databases and $\varepsilon, \delta \in \mathbb{R}$. Then $M$ is [$(\varepsilon, \delta)$-differentially private](../approximate-differential-privacy/is-approx-dp.md) if and only if $\varepsilon \ge 0$, $\delta \ge 0$, and the family of measures induced by $M(d)$ is [$(\varepsilon, \delta)$-differentially private](../differential-privacy/differentially-private.md) in the measure sense, which bounds only measurable events. On such a space every subset is measurable.
